@@ -11,18 +11,17 @@
  * - Compliance LGPD/ANVISA embarcado
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -42,13 +41,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,9 +69,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -144,7 +141,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClinicalFormEnhanced = ClinicalFormEnhanced;
 var react_1 = require("react");
@@ -173,13 +170,11 @@ var clinicalFormSchema = z.object({
   cpf: z
     .string()
     .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve estar no formato XXX.XXX.XXX-XX")
-    .refine(function (cpf) {
-      return validateCPF(cpf);
-    }, "CPF inválido"),
+    .refine((cpf) => validateCPF(cpf), "CPF inválido"),
   birthDate: z
     .string()
     .min(1, "Data de nascimento é obrigatória")
-    .refine(function (date) {
+    .refine((date) => {
       var birth = new Date(date);
       var today = new Date();
       var age = today.getFullYear() - birth.getFullYear();
@@ -197,9 +192,9 @@ var clinicalFormSchema = z.object({
   treatmentType: z.string().min(1, "Tipo de tratamento é obrigatório"),
   treatmentGoals: z.string().min(10, "Objetivos devem ter pelo menos 10 caracteres"),
   // Consentimentos LGPD
-  dataConsent: z.boolean().refine(function (val) {
-    return val === true;
-  }, "Consentimento para uso de dados é obrigatório"),
+  dataConsent: z
+    .boolean()
+    .refine((val) => val === true, "Consentimento para uso de dados é obrigatório"),
   marketingConsent: z.boolean().optional(),
   // Campos específicos estéticos
   skinType: z.enum(["oleosa", "seca", "mista", "sensivel", "normal"]).optional(),
@@ -226,7 +221,6 @@ function validateCPF(cpf) {
   return digit === parseInt(cpf.charAt(10));
 }
 function ClinicalFormEnhanced(_a) {
-  var _this = this;
   var className = _a.className,
     onSubmit = _a.onSubmit,
     initialData = _a.initialData,
@@ -257,21 +251,18 @@ function ClinicalFormEnhanced(_a) {
     isValid = _e.isValid,
     dirtyFields = _e.dirtyFields;
   // Calcular progresso do formulário
-  (0, react_1.useEffect)(
-    function () {
-      var totalFields = Object.keys(clinicalFormSchema.shape).length;
-      var filledFields = Object.keys(dirtyFields).length;
-      var progress = Math.round((filledFields / totalFields) * 100);
-      setFormProgress(progress);
-    },
-    [dirtyFields],
-  );
+  (0, react_1.useEffect)(() => {
+    var totalFields = Object.keys(clinicalFormSchema.shape).length;
+    var filledFields = Object.keys(dirtyFields).length;
+    var progress = Math.round((filledFields / totalFields) * 100);
+    setFormProgress(progress);
+  }, [dirtyFields]);
   // IA Suggestions baseado em dados inseridos
   var generateAISuggestions = (0, react_1.useCallback)(
-    function (treatmentType, skinType) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (treatmentType, skinType) =>
+      __awaiter(this, void 0, void 0, function () {
         var suggestions, typeSuggestions;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (!treatmentType) return [2 /*return*/];
           suggestions = {
             botox: [
@@ -300,25 +291,21 @@ function ClinicalFormEnhanced(_a) {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [announceToScreenReader],
   );
   // Watch para ativar AI suggestions
   var treatmentType = watch("treatmentType");
   var skinType = watch("skinType");
-  (0, react_1.useEffect)(
-    function () {
-      if (treatmentType && skinType) {
-        generateAISuggestions(treatmentType, skinType);
-      }
-    },
-    [treatmentType, skinType, generateAISuggestions],
-  );
-  var handleSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (treatmentType && skinType) {
+      generateAISuggestions(treatmentType, skinType);
+    }
+  }, [treatmentType, skinType, generateAISuggestions]);
+  var handleSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsSubmitting(true);
@@ -345,25 +332,22 @@ function ClinicalFormEnhanced(_a) {
         }
       });
     });
-  };
   // Máscara para CPF
-  var formatCPF = function (value) {
-    return value
+  var formatCPF = (value) =>
+    value
       .replace(/\D/g, "")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d)/, "$1.$2")
       .replace(/(\d{3})(\d{1,2})/, "$1-$2")
       .replace(/(-\d{2})\d+?$/, "$1");
-  };
   // Máscara para telefone
-  var formatPhone = function (value) {
-    return value
+  var formatPhone = (value) =>
+    value
       .replace(/\D/g, "")
       .replace(/(\d{2})(\d)/, "($1) $2")
       .replace(/(\d{4})(\d)/, "$1-$2")
       .replace(/(\d{4})-(\d)(\d{4})/, "$1$2-$3")
       .replace(/(-\d{4})\d+?$/, "$1");
-  };
   return (
     <div className={(0, utils_1.cn)("max-w-4xl mx-auto space-y-6", className)}>
       {/* Header com progresso */}
@@ -423,16 +407,14 @@ function ClinicalFormEnhanced(_a) {
               <react_hook_form_1.Controller
                 name="cpf"
                 control={form.control}
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <input_1.Input
                       id="cpf"
                       placeholder="000.000.000-00"
                       value={field.value || ""}
-                      onChange={function (e) {
-                        return field.onChange(formatCPF(e.target.value));
-                      }}
+                      onChange={(e) => field.onChange(formatCPF(e.target.value))}
                       className={errors.cpf ? "border-red-500" : ""}
                       maxLength={14}
                       aria-describedby="cpf-error"
@@ -472,16 +454,14 @@ function ClinicalFormEnhanced(_a) {
               <react_hook_form_1.Controller
                 name="phone"
                 control={form.control}
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <input_1.Input
                       id="phone"
                       placeholder="(00) 00000-0000"
                       value={field.value || ""}
-                      onChange={function (e) {
-                        return field.onChange(formatPhone(e.target.value));
-                      }}
+                      onChange={(e) => field.onChange(formatPhone(e.target.value))}
                       className={errors.phone ? "border-red-500" : ""}
                       maxLength={15}
                       aria-describedby="phone-error"
@@ -574,7 +554,7 @@ function ClinicalFormEnhanced(_a) {
                 <react_hook_form_1.Controller
                   name="treatmentType"
                   control={form.control}
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -614,7 +594,7 @@ function ClinicalFormEnhanced(_a) {
                 <react_hook_form_1.Controller
                   name="skinType"
                   control={form.control}
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -685,14 +665,12 @@ function ClinicalFormEnhanced(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-2">
-                {aiSuggestions.map(function (suggestion, index) {
-                  return (
-                    <div key={index} className="flex items-start space-x-2">
-                      <lucide_react_1.CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                      <p className="text-sm text-blue-800">{suggestion}</p>
-                    </div>
-                  );
-                })}
+                {aiSuggestions.map((suggestion, index) => (
+                  <div key={index} className="flex items-start space-x-2">
+                    <lucide_react_1.CheckCircle2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-sm text-blue-800">{suggestion}</p>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -712,7 +690,7 @@ function ClinicalFormEnhanced(_a) {
               <react_hook_form_1.Controller
                 name="dataConsent"
                 control={form.control}
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <checkbox_1.Checkbox
@@ -745,7 +723,7 @@ function ClinicalFormEnhanced(_a) {
               <react_hook_form_1.Controller
                 name="marketingConsent"
                 control={form.control}
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <checkbox_1.Checkbox

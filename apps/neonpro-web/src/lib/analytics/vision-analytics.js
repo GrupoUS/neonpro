@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Vision Analytics Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,10 +151,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -166,7 +163,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.visionAnalyticsEngine =
   exports.VisionAnalyticsEngine =
@@ -177,7 +174,7 @@ var zod_1 = require("zod");
 var logger_1 = require("@/lib/utils/logger");
 var client_1 = require("@/lib/supabase/client");
 // Main Analytics Engine Class
-var createvisionAnalyticsEngine = /** @class */ (function () {
+var createvisionAnalyticsEngine = /** @class */ (() => {
   function createvisionAnalyticsEngine() {
     this.supabase = (0, client_1.createClient)();
     this.metricsBuffer = [];
@@ -479,9 +476,7 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
           case 1:
             outcomes = _b.sent();
             filteredOutcomes = treatmentType
-              ? outcomes.filter(function (o) {
-                  return o.treatmentType === treatmentType;
-                })
+              ? outcomes.filter((o) => o.treatmentType === treatmentType)
               : outcomes;
             _a = {
               treatmentType: treatmentType || "all",
@@ -614,8 +609,7 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
   createvisionAnalyticsEngine.prototype.loadPerformanceBenchmarks = function () {
     return __awaiter(this, void 0, void 0, function () {
       var defaultBenchmarks;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         defaultBenchmarks = [
           {
             id: "face_detection_accuracy",
@@ -648,8 +642,8 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
             category: "accuracy",
           },
         ];
-        defaultBenchmarks.forEach(function (benchmark) {
-          _this.benchmarks.set(benchmark.id, benchmark);
+        defaultBenchmarks.forEach((benchmark) => {
+          this.benchmarks.set(benchmark.id, benchmark);
         });
         return [2 /*return*/];
       });
@@ -666,7 +660,7 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
           case 1:
             data = _a.sent().data;
             if (data) {
-              data.forEach(function (rule) {
+              data.forEach((rule) => {
                 _this.alertRules.set(rule.id, rule);
               });
             }
@@ -676,34 +670,35 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
     });
   };
   createvisionAnalyticsEngine.prototype.startRealTimeProcessing = function () {
-    var _this = this;
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_10;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 4, , 5]);
-              return [4 /*yield*/, this.processMetricsBuffer()];
-            case 1:
-              _a.sent();
-              return [4 /*yield*/, this.generateRealtimeInsights()];
-            case 2:
-              _a.sent();
-              return [4 /*yield*/, this.updateDashboards()];
-            case 3:
-              _a.sent();
-              return [3 /*break*/, 5];
-            case 4:
-              error_10 = _a.sent();
-              logger_1.logger.error("Real-time processing error:", error_10);
-              return [3 /*break*/, 5];
-            case 5:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.refreshInterval);
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_10;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, this.processMetricsBuffer()];
+              case 1:
+                _a.sent();
+                return [4 /*yield*/, this.generateRealtimeInsights()];
+              case 2:
+                _a.sent();
+                return [4 /*yield*/, this.updateDashboards()];
+              case 3:
+                _a.sent();
+                return [3 /*break*/, 5];
+              case 4:
+                error_10 = _a.sent();
+                logger_1.logger.error("Real-time processing error:", error_10);
+                return [3 /*break*/, 5];
+              case 5:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.refreshInterval,
+    );
   };
   createvisionAnalyticsEngine.prototype.processMetricsBuffer = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -760,8 +755,8 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.aggregateMetrics = function (metrics) {
-    var grouped = metrics.reduce(function (acc, metric) {
+  createvisionAnalyticsEngine.prototype.aggregateMetrics = (metrics) => {
+    var grouped = metrics.reduce((acc, metric) => {
       var key = "".concat(metric.component, "_").concat(metric.metricType);
       if (!acc[key]) {
         acc[key] = [];
@@ -770,36 +765,27 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
       return acc;
     }, {});
     var aggregated = {};
-    Object.entries(grouped).forEach(function (_a) {
+    Object.entries(grouped).forEach((_a) => {
       var key = _a[0],
         metricGroup = _a[1];
       aggregated[key] = {
         count: metricGroup.length,
-        avg:
-          metricGroup.reduce(function (sum, m) {
-            return sum + m.value;
-          }, 0) / metricGroup.length,
+        avg: metricGroup.reduce((sum, m) => sum + m.value, 0) / metricGroup.length,
         min: Math.min.apply(
           Math,
-          metricGroup.map(function (m) {
-            return m.value;
-          }),
+          metricGroup.map((m) => m.value),
         ),
         max: Math.max.apply(
           Math,
-          metricGroup.map(function (m) {
-            return m.value;
-          }),
+          metricGroup.map((m) => m.value),
         ),
-        sum: metricGroup.reduce(function (sum, m) {
-          return sum + m.value;
-        }, 0),
+        sum: metricGroup.reduce((sum, m) => sum + m.value, 0),
         timestamp: new Date().toISOString(),
       };
     });
     return aggregated;
   };
-  createvisionAnalyticsEngine.prototype.getTimeRangeStart = function (timeRange) {
+  createvisionAnalyticsEngine.prototype.getTimeRangeStart = (timeRange) => {
     var now = new Date();
     var ranges = {
       realtime: 5 * 60 * 1000, // 5 minutes
@@ -870,7 +856,7 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.evaluateAlertRule = function (metric, rule) {
+  createvisionAnalyticsEngine.prototype.evaluateAlertRule = (metric, rule) => {
     var value = metric.value;
     var threshold = rule.threshold;
     switch (rule.operator) {
@@ -892,57 +878,40 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
   };
   createvisionAnalyticsEngine.prototype.triggerAlert = function (rule, metric) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.warn("Alert triggered: ".concat(rule.name, " (").concat(metric.value, ")"));
         return [2 /*return*/];
       });
     });
   };
   // Additional helper methods would be implemented here...
-  createvisionAnalyticsEngine.prototype.calculateSuccessRate = function (outcomes) {
+  createvisionAnalyticsEngine.prototype.calculateSuccessRate = (outcomes) => {
     if (outcomes.length === 0) return 0;
-    var successful = outcomes.filter(function (o) {
-      return o.treatmentSuccess;
-    }).length;
+    var successful = outcomes.filter((o) => o.treatmentSuccess).length;
     return (successful / outcomes.length) * 100;
   };
-  createvisionAnalyticsEngine.prototype.calculateAverageImprovement = function (outcomes) {
-    var improvementRates = outcomes.map(function (o) {
-      return o.improvementRate;
-    });
-    return (
-      improvementRates.reduce(function (sum, rate) {
-        return sum + rate;
-      }, 0) / improvementRates.length
-    );
+  createvisionAnalyticsEngine.prototype.calculateAverageImprovement = (outcomes) => {
+    var improvementRates = outcomes.map((o) => o.improvementRate);
+    return improvementRates.reduce((sum, rate) => sum + rate, 0) / improvementRates.length;
   };
-  createvisionAnalyticsEngine.prototype.calculateAverageSatisfaction = function (outcomes) {
-    var scores = outcomes.map(function (o) {
-      return o.satisfactionScore;
-    });
-    return (
-      scores.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / scores.length
-    );
+  createvisionAnalyticsEngine.prototype.calculateAverageSatisfaction = (outcomes) => {
+    var scores = outcomes.map((o) => o.satisfactionScore);
+    return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   };
-  createvisionAnalyticsEngine.prototype.calculateComplicationRate = function (outcomes) {
+  createvisionAnalyticsEngine.prototype.calculateComplicationRate = (outcomes) => {
     if (outcomes.length === 0) return 0;
-    var complications = outcomes.filter(function (o) {
-      return o.complicationDetected;
-    }).length;
+    var complications = outcomes.filter((o) => o.complicationDetected).length;
     return (complications / outcomes.length) * 100;
   };
-  createvisionAnalyticsEngine.prototype.groupOutcomesByType = function (outcomes) {
-    return outcomes.reduce(function (acc, outcome) {
+  createvisionAnalyticsEngine.prototype.groupOutcomesByType = (outcomes) =>
+    outcomes.reduce((acc, outcome) => {
       acc[outcome.outcomeType] = (acc[outcome.outcomeType] || 0) + 1;
       return acc;
     }, {});
-  };
   // Placeholder methods that would be fully implemented
   createvisionAnalyticsEngine.prototype.getDashboard = function (dashboardId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch dashboard from database
         return [2 /*return*/, null];
       });
@@ -950,7 +919,7 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
   };
   createvisionAnalyticsEngine.prototype.getWidgetData = function (widgets, filters, timeRange) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch data for each widget
         return [2 /*return*/, []];
       });
@@ -958,7 +927,7 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
   };
   createvisionAnalyticsEngine.prototype.generateRealtimeInsights = function (filters, timeRange) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate real-time insights
         return [2 /*return*/, []];
       });
@@ -966,7 +935,7 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
   };
   createvisionAnalyticsEngine.prototype.getActiveAlerts = function (filters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch active alerts
         return [2 /*return*/, []];
       });
@@ -974,7 +943,7 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
   };
   createvisionAnalyticsEngine.prototype.getDashboardSummary = function (filters, timeRange) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate dashboard summary
         return [2 /*return*/, {}];
       });
@@ -982,74 +951,72 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
   };
   createvisionAnalyticsEngine.prototype.saveInsight = function (insight) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createvisionAnalyticsEngine.prototype.analyzeTrends = function (timeframe, categories) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze trends
         return [2 /*return*/, []];
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.generateTrendInsights = function (trends) {
+  createvisionAnalyticsEngine.prototype.generateTrendInsights = (trends) => {
     // Implementation would generate insights from trends
     return [];
   };
   createvisionAnalyticsEngine.prototype.detectAnomalies = function (timeframe, categories) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would detect anomalies
         return [2 /*return*/, []];
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.generateAnomalyInsights = function (anomalies) {
+  createvisionAnalyticsEngine.prototype.generateAnomalyInsights = (anomalies) => {
     // Implementation would generate insights from anomalies
     return [];
   };
   createvisionAnalyticsEngine.prototype.analyzeCorrelations = function (timeframe, categories) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze correlations
         return [2 /*return*/, []];
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.generateCorrelationInsights = function (correlations) {
+  createvisionAnalyticsEngine.prototype.generateCorrelationInsights = (correlations) => {
     // Implementation would generate insights from correlations
     return [];
   };
   createvisionAnalyticsEngine.prototype.analyzePerformance = function (timeframe) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze performance
         return [2 /*return*/, []];
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.generatePerformanceInsights = function (performance) {
+  createvisionAnalyticsEngine.prototype.generatePerformanceInsights = (performance) => {
     // Implementation would generate insights from performance
     return [];
   };
   createvisionAnalyticsEngine.prototype.analyzeTreatmentTrends = function (outcomes) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze treatment trends
         return [2 /*return*/, []];
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.generateTreatmentRecommendations = function (outcomes) {
+  createvisionAnalyticsEngine.prototype.generateTreatmentRecommendations = (outcomes) => {
     // Implementation would generate treatment recommendations
     return [];
   };
   createvisionAnalyticsEngine.prototype.findSimilarCases = function (patientId, treatmentType) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would find similar cases
         return [2 /*return*/, []];
       });
@@ -1057,101 +1024,90 @@ var createvisionAnalyticsEngine = /** @class */ (function () {
   };
   createvisionAnalyticsEngine.prototype.analyzePatterns = function (cases) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze patterns
         return [2 /*return*/, {}];
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.predictOutcome = function (patterns) {
+  createvisionAnalyticsEngine.prototype.predictOutcome = (patterns) => {
     // Implementation would predict outcome
     return "positive";
   };
-  createvisionAnalyticsEngine.prototype.calculateSuccessProbability = function (patterns) {
+  createvisionAnalyticsEngine.prototype.calculateSuccessProbability = (patterns) => {
     // Implementation would calculate success probability
     return 0.85;
   };
-  createvisionAnalyticsEngine.prototype.assessComplicationRisk = function (patterns) {
+  createvisionAnalyticsEngine.prototype.assessComplicationRisk = (patterns) => {
     // Implementation would assess complication risk
     return "low";
   };
-  createvisionAnalyticsEngine.prototype.estimateRecoveryTime = function (patterns) {
+  createvisionAnalyticsEngine.prototype.estimateRecoveryTime = (patterns) => {
     // Implementation would estimate recovery time
     return 14; // days
   };
-  createvisionAnalyticsEngine.prototype.generateRecommendedActions = function (patterns) {
+  createvisionAnalyticsEngine.prototype.generateRecommendedActions = (patterns) => {
     // Implementation would generate recommended actions
     return [];
   };
-  createvisionAnalyticsEngine.prototype.calculatePredictionConfidence = function (patterns) {
+  createvisionAnalyticsEngine.prototype.calculatePredictionConfidence = (patterns) => {
     // Implementation would calculate prediction confidence
     return 0.9;
   };
-  createvisionAnalyticsEngine.prototype.identifyInfluencingFactors = function (patterns) {
+  createvisionAnalyticsEngine.prototype.identifyInfluencingFactors = (patterns) => {
     // Implementation would identify influencing factors
     return {};
   };
-  createvisionAnalyticsEngine.prototype.calculateUsageMetrics = function (metrics) {
+  createvisionAnalyticsEngine.prototype.calculateUsageMetrics = (metrics) => {
     // Implementation would calculate usage metrics
     return {};
   };
-  createvisionAnalyticsEngine.prototype.aggregatePerformanceMetrics = function (performance) {
+  createvisionAnalyticsEngine.prototype.aggregatePerformanceMetrics = (performance) => {
     // Implementation would aggregate performance metrics
     return {};
   };
-  createvisionAnalyticsEngine.prototype.analyzeOutcomeMetrics = function (outcomes) {
+  createvisionAnalyticsEngine.prototype.analyzeOutcomeMetrics = (outcomes) => {
     // Implementation would analyze outcome metrics
     return {};
   };
-  createvisionAnalyticsEngine.prototype.calculateEfficiencyMetrics = function (metrics, outcomes) {
+  createvisionAnalyticsEngine.prototype.calculateEfficiencyMetrics = (metrics, outcomes) => {
     // Implementation would calculate efficiency metrics
     return {};
   };
   createvisionAnalyticsEngine.prototype.calculateROI = function (clinicId, timeRange) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate ROI
         return [2 /*return*/, {}];
       });
     });
   };
-  createvisionAnalyticsEngine.prototype.identifyTrends = function (metrics) {
+  createvisionAnalyticsEngine.prototype.identifyTrends = (metrics) => {
     // Implementation would identify trends
     return {};
   };
-  createvisionAnalyticsEngine.prototype.generateClinicRecommendations = function (
-    metrics,
-    outcomes,
-  ) {
+  createvisionAnalyticsEngine.prototype.generateClinicRecommendations = (metrics, outcomes) => {
     // Implementation would generate clinic recommendations
     return [];
   };
   createvisionAnalyticsEngine.prototype.updatePerformanceMetrics = function (aggregated) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createvisionAnalyticsEngine.prototype.checkAnomalies = function (aggregated) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createvisionAnalyticsEngine.prototype.updateTrends = function (aggregated) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createvisionAnalyticsEngine.prototype.updateDashboards = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return createvisionAnalyticsEngine;

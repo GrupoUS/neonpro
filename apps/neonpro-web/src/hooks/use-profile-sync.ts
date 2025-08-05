@@ -5,10 +5,10 @@
 
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
-import { useAuth } from "@/contexts/auth-context";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
+import { createClient } from "@/lib/supabase/client";
 
 export interface Profile {
   id: string;

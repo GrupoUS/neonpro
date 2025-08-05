@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Webhook & Event System Utilities
  * Story 7.3: Webhook & Event System Implementation
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,7 +44,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,8 +73,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -96,9 +93,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,7 +166,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MonitoringUtils =
   exports.ValidationUtils =
@@ -178,16 +175,16 @@ exports.MonitoringUtils =
   exports.WebhookUtils =
   exports.EventUtils =
     void 0;
-var crypto_1 = require("crypto");
+var crypto_1 = require("node:crypto");
 /**
  * Event Utilities
  */
-var EventUtils = /** @class */ (function () {
+var EventUtils = /** @class */ (() => {
   function EventUtils() {}
   /**
    * Validate event data structure
    */
-  EventUtils.validateEvent = function (event) {
+  EventUtils.validateEvent = (event) => {
     var _a;
     var errors = [];
     // Required fields
@@ -246,7 +243,7 @@ var EventUtils = /** @class */ (function () {
   /**
    * Sanitize event data for webhook delivery
    */
-  EventUtils.sanitizeEventForWebhook = function (event, webhook) {
+  EventUtils.sanitizeEventForWebhook = function (event, _webhook) {
     var sanitized = {
       id: event.id,
       type: event.type,
@@ -324,7 +321,7 @@ var EventUtils = /** @class */ (function () {
   /**
    * Generate event fingerprint for deduplication
    */
-  EventUtils.generateEventFingerprint = function (event) {
+  EventUtils.generateEventFingerprint = (event) => {
     var _a;
     var fingerprintData = {
       type: event.type,
@@ -343,12 +340,12 @@ exports.EventUtils = EventUtils;
 /**
  * Webhook Utilities
  */
-var WebhookUtils = /** @class */ (function () {
+var WebhookUtils = /** @class */ (() => {
   function WebhookUtils() {}
   /**
    * Generate webhook signature for payload verification
    */
-  WebhookUtils.generateSignature = function (payload, secret, algorithm) {
+  WebhookUtils.generateSignature = (payload, secret, algorithm) => {
     if (algorithm === void 0) {
       algorithm = "sha256";
     }
@@ -368,14 +365,14 @@ var WebhookUtils = /** @class */ (function () {
         Buffer.from(signature, "hex"),
         Buffer.from(expectedSignature, "hex"),
       );
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   };
   /**
    * Validate webhook URL
    */
-  WebhookUtils.validateWebhookUrl = function (url) {
+  WebhookUtils.validateWebhookUrl = (url) => {
     var errors = [];
     try {
       var parsedUrl = new URL(url);
@@ -400,7 +397,7 @@ var WebhookUtils = /** @class */ (function () {
       if (parsedUrl.port && (parseInt(parsedUrl.port) < 1 || parseInt(parsedUrl.port) > 65535)) {
         errors.push("Invalid port number");
       }
-    } catch (error) {
+    } catch (_error) {
       errors.push("Invalid URL format");
     }
     return {
@@ -439,7 +436,7 @@ var WebhookUtils = /** @class */ (function () {
   /**
    * Parse webhook signature header
    */
-  WebhookUtils.parseSignatureHeader = function (signatureHeader) {
+  WebhookUtils.parseSignatureHeader = (signatureHeader) => {
     try {
       var parts = signatureHeader.split("=");
       if (parts.length !== 2) {
@@ -449,7 +446,7 @@ var WebhookUtils = /** @class */ (function () {
         algorithm: parts[0],
         signature: parts[1],
       };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   };
@@ -459,7 +456,7 @@ exports.WebhookUtils = WebhookUtils;
 /**
  * Rate Limiting Utilities
  */
-var RateLimitUtils = /** @class */ (function () {
+var RateLimitUtils = /** @class */ (() => {
   function RateLimitUtils() {}
   /**
    * Check if request is within rate limit (Token Bucket algorithm)
@@ -532,12 +529,12 @@ exports.RateLimitUtils = RateLimitUtils;
 /**
  * Retry Utilities
  */
-var RetryUtils = /** @class */ (function () {
+var RetryUtils = /** @class */ (() => {
   function RetryUtils() {}
   /**
    * Calculate next retry delay based on strategy
    */
-  RetryUtils.calculateRetryDelay = function (attempt, strategy, baseDelayMs) {
+  RetryUtils.calculateRetryDelay = (attempt, strategy, baseDelayMs) => {
     if (baseDelayMs === void 0) {
       baseDelayMs = 1000;
     }
@@ -545,12 +542,11 @@ var RetryUtils = /** @class */ (function () {
     var delay;
     switch (strategy.strategy) {
       case "exponential":
-        delay = Math.min(strategy.delayMs * Math.pow(2, attempt - 1), maxDelay);
+        delay = Math.min(strategy.delayMs * 2 ** (attempt - 1), maxDelay);
         break;
       case "linear":
         delay = Math.min(strategy.delayMs * attempt, maxDelay);
         break;
-      case "fixed":
       default:
         delay = strategy.delayMs;
         break;
@@ -562,7 +558,7 @@ var RetryUtils = /** @class */ (function () {
   /**
    * Determine if error is retryable
    */
-  RetryUtils.isRetryableError = function (error, httpStatus) {
+  RetryUtils.isRetryableError = (error, httpStatus) => {
     var _a;
     // Network errors are retryable
     if (error.code === "ECONNRESET" || error.code === "ENOTFOUND" || error.code === "ETIMEDOUT") {
@@ -593,10 +589,10 @@ var RetryUtils = /** @class */ (function () {
           case 0:
             _loop_1 = function (attempt) {
               var _b, error_1, delay_1;
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
-                    _c.trys.push([0, 2, , 4]);
+                    _c.trys.push([0, 2, undefined, 4]);
                     _b = {};
                     return [4 /*yield*/, fn()];
                   case 1:
@@ -616,12 +612,7 @@ var RetryUtils = /** @class */ (function () {
                     if (onRetry) {
                       onRetry(attempt, error_1);
                     }
-                    return [
-                      4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, delay_1);
-                      }),
-                    ];
+                    return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, delay_1))];
                   case 3:
                     _c.sent();
                     return [3 /*break*/, 4];
@@ -656,12 +647,12 @@ exports.RetryUtils = RetryUtils;
 /**
  * Validation Utilities
  */
-var ValidationUtils = /** @class */ (function () {
+var ValidationUtils = /** @class */ (() => {
   function ValidationUtils() {}
   /**
    * Validate JSON payload
    */
-  ValidationUtils.validateJsonPayload = function (payload) {
+  ValidationUtils.validateJsonPayload = (payload) => {
     try {
       var data = JSON.parse(payload);
       return { isValid: true, data: data };
@@ -675,7 +666,7 @@ var ValidationUtils = /** @class */ (function () {
   /**
    * Validate webhook configuration
    */
-  ValidationUtils.validateWebhookConfig = function (config) {
+  ValidationUtils.validateWebhookConfig = (config) => {
     var _a, _b, _c;
     var errors = [];
     // Validate required fields
@@ -725,7 +716,7 @@ var ValidationUtils = /** @class */ (function () {
   /**
    * Sanitize webhook name
    */
-  ValidationUtils.sanitizeWebhookName = function (name) {
+  ValidationUtils.sanitizeWebhookName = (name) => {
     return name
       .trim()
       .replace(/[^a-zA-Z0-9\s\-_]/g, "") // Remove special characters
@@ -738,33 +729,29 @@ exports.ValidationUtils = ValidationUtils;
 /**
  * Monitoring Utilities
  */
-var MonitoringUtils = /** @class */ (function () {
+var MonitoringUtils = /** @class */ (() => {
   function MonitoringUtils() {}
   /**
    * Calculate delivery success rate
    */
-  MonitoringUtils.calculateSuccessRate = function (successful, total) {
+  MonitoringUtils.calculateSuccessRate = (successful, total) => {
     if (total === 0) return 0;
     return Math.round((successful / total) * 100 * 100) / 100; // Round to 2 decimal places
   };
   /**
    * Calculate average response time
    */
-  MonitoringUtils.calculateAverageResponseTime = function (responseTimes) {
+  MonitoringUtils.calculateAverageResponseTime = (responseTimes) => {
     if (responseTimes.length === 0) return 0;
-    var sum = responseTimes.reduce(function (acc, time) {
-      return acc + time;
-    }, 0);
+    var sum = responseTimes.reduce((acc, time) => acc + time, 0);
     return Math.round(sum / responseTimes.length);
   };
   /**
    * Calculate percentile response time
    */
-  MonitoringUtils.calculatePercentileResponseTime = function (responseTimes, percentile) {
+  MonitoringUtils.calculatePercentileResponseTime = (responseTimes, percentile) => {
     if (responseTimes.length === 0) return 0;
-    var sorted = __spreadArray([], responseTimes, true).sort(function (a, b) {
-      return a - b;
-    });
+    var sorted = __spreadArray([], responseTimes, true).sort((a, b) => a - b);
     var index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[Math.max(0, index)];
   };
@@ -773,19 +760,11 @@ var MonitoringUtils = /** @class */ (function () {
    */
   MonitoringUtils.generatePerformanceMetrics = function (deliveries) {
     var total = deliveries.length;
-    var successful = deliveries.filter(function (d) {
-      return d.status === "delivered";
-    }).length;
-    var failed = deliveries.filter(function (d) {
-      return d.status === "failed";
-    }).length;
+    var successful = deliveries.filter((d) => d.status === "delivered").length;
+    var failed = deliveries.filter((d) => d.status === "failed").length;
     var responseTimes = deliveries
-      .filter(function (d) {
-        return d.responseTimeMs !== undefined;
-      })
-      .map(function (d) {
-        return d.responseTimeMs;
-      });
+      .filter((d) => d.responseTimeMs !== undefined)
+      .map((d) => d.responseTimeMs);
     return {
       totalDeliveries: total,
       successfulDeliveries: successful,

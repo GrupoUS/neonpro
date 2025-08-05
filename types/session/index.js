@@ -1,24 +1,23 @@
-"use strict";
 // Session Management Types
 // Comprehensive TypeScript definitions for the session management system
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+        (Array.isArray({ __proto__: [] }) &&
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        throw new TypeError(`Class extends value ${String(b)} is not a constructor or null`);
       extendStatics(d, b);
       function __() {
         this.constructor = d;
@@ -38,7 +37,7 @@ exports.SESSION_TYPES =
   exports.SessionError =
     void 0;
 // Error Types
-var SessionError = /** @class */ (function (_super) {
+var SessionError = /** @class */ ((_super) => {
   __extends(SessionError, _super);
   function SessionError(message, code, statusCode, metadata) {
     if (statusCode === void 0) {
@@ -54,7 +53,7 @@ var SessionError = /** @class */ (function (_super) {
   return SessionError;
 })(Error);
 exports.SessionError = SessionError;
-var SecurityError = /** @class */ (function (_super) {
+var SecurityError = /** @class */ ((_super) => {
   __extends(SecurityError, _super);
   function SecurityError(message, securityCode, severity, metadata) {
     if (severity === void 0) {
@@ -69,7 +68,7 @@ var SecurityError = /** @class */ (function (_super) {
   return SecurityError;
 })(SessionError);
 exports.SecurityError = SecurityError;
-var ValidationError = /** @class */ (function (_super) {
+var ValidationError = /** @class */ ((_super) => {
   __extends(ValidationError, _super);
   function ValidationError(message, field, metadata) {
     var _this = _super.call(this, message, "VALIDATION_ERROR", 400, metadata) || this;

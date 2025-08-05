@@ -5,9 +5,9 @@
  * that manages computer vision analysis configuration and user preferences.
  */
 
-import { renderHook, act, waitFor } from "@testing-library/react";
-import { useVisionConfig } from "@/hooks/useVisionConfig";
+import { act, renderHook } from "@testing-library/react";
 import { toast } from "sonner";
+import { useVisionConfig } from "@/hooks/useVisionConfig";
 
 // Mock dependencies
 jest.mock("sonner", () => ({

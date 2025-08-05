@@ -1,19 +1,18 @@
-"use strict";
 // Brazilian Tax System Integration Tests
 // Story 5.5: Comprehensive test suite for Brazilian tax compliance
 // Author: VoidBeast V6.0 Master Orchestrator
 // Date: 2025-01-30
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -23,7 +22,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -52,8 +51,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -74,9 +71,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -135,153 +132,123 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
 // Mock Supabase client
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(function () {
-                return Promise.resolve({
-                  data: {
-                    id: "test-config-id",
-                    clinic_id: "test-clinic-id",
-                    tax_regime: "simples_nacional",
-                    active: true,
-                  },
-                  error: null,
-                });
-              }),
-            };
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(() =>
+          Promise.resolve({
+            data: {
+              id: "test-config-id",
+              clinic_id: "test-clinic-id",
+              tax_regime: "simples_nacional",
+              active: true,
+            },
+            error: null,
           }),
-        };
-      }),
-      insert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(function () {
-                return Promise.resolve({
-                  data: { id: "test-calculation-id" },
-                  error: null,
-                });
-              }),
-            };
+        ),
+      })),
+    })),
+    insert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(() =>
+          Promise.resolve({
+            data: { id: "test-calculation-id" },
+            error: null,
           }),
-        };
-      }),
-      upsert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(function () {
-                return Promise.resolve({
-                  data: { id: "test-validation-id" },
-                  error: null,
-                });
-              }),
-            };
+        ),
+      })),
+    })),
+    upsert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(() =>
+          Promise.resolve({
+            data: { id: "test-validation-id" },
+            error: null,
           }),
-        };
-      }),
-    };
-  }),
+        ),
+      })),
+    })),
+  })),
 };
 // Mock services
-globals_1.jest.mock("@/lib/services/tax/tax-engine", function () {
-  return {
-    BrazilianTaxEngine: globals_1.jest.fn().mockImplementation(function () {
-      return {
-        calculateTaxes: globals_1.jest.fn().mockResolvedValue({
-          total_taxes: 150.5,
-          breakdown: {
-            iss: 50.0,
-            pis: 25.25,
-            cofins: 75.25,
-          },
-          effective_rate: 15.05,
-        }),
-      };
+globals_1.jest.mock("@/lib/services/tax/tax-engine", () => ({
+  BrazilianTaxEngine: globals_1.jest.fn().mockImplementation(() => ({
+    calculateTaxes: globals_1.jest.fn().mockResolvedValue({
+      total_taxes: 150.5,
+      breakdown: {
+        iss: 50.0,
+        pis: 25.25,
+        cofins: 75.25,
+      },
+      effective_rate: 15.05,
     }),
-  };
-});
-globals_1.jest.mock("@/lib/services/tax/nfe-service", function () {
-  return {
-    NFEIntegrationService: globals_1.jest.fn().mockImplementation(function () {
-      return {
-        generateNFE: globals_1.jest.fn().mockResolvedValue({
-          clinic_id: "test-clinic-id",
-          invoice_id: "test-invoice-id",
-          numero_nfe: "000000001",
-          serie_nfe: 1,
-          chave_nfe: "test-chave-nfe",
-          valor_total: 1000.0,
-          status: "generated",
-        }),
-        emitNFE: globals_1.jest.fn().mockResolvedValue({
-          status: "emitted",
-          chave_nfe: "test-chave-nfe",
-          protocolo: "test-protocol",
-          data_emissao: new Date().toISOString(),
-        }),
-      };
+  })),
+}));
+globals_1.jest.mock("@/lib/services/tax/nfe-service", () => ({
+  NFEIntegrationService: globals_1.jest.fn().mockImplementation(() => ({
+    generateNFE: globals_1.jest.fn().mockResolvedValue({
+      clinic_id: "test-clinic-id",
+      invoice_id: "test-invoice-id",
+      numero_nfe: "000000001",
+      serie_nfe: 1,
+      chave_nfe: "test-chave-nfe",
+      valor_total: 1000.0,
+      status: "generated",
     }),
-  };
-});
-globals_1.jest.mock("@/lib/services/brazilian-tax/cnpj-validator", function () {
-  return {
-    CNPJValidator: globals_1.jest.fn().mockImplementation(function () {
-      return {
-        validateCNPJ: globals_1.jest.fn().mockResolvedValue({
-          valid: true,
-          formatted: "12.345.678/0001-90",
-          companyData: {
-            cnpj: "12345678000190",
-            razao_social: "CLINICA TESTE LTDA",
-            nome_fantasia: "Clínica Teste",
-            situacao: "ATIVA",
-            atividade_principal: {
-              code: "8630-5/01",
-              text: "Atividade médica ambulatorial",
-            },
-          },
-        }),
-      };
+    emitNFE: globals_1.jest.fn().mockResolvedValue({
+      status: "emitted",
+      chave_nfe: "test-chave-nfe",
+      protocolo: "test-protocol",
+      data_emissao: new Date().toISOString(),
     }),
-  };
-});
-globals_1.jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: function () {
-      return mockSupabase;
-    },
-  };
-});
+  })),
+}));
+globals_1.jest.mock("@/lib/services/brazilian-tax/cnpj-validator", () => ({
+  CNPJValidator: globals_1.jest.fn().mockImplementation(() => ({
+    validateCNPJ: globals_1.jest.fn().mockResolvedValue({
+      valid: true,
+      formatted: "12.345.678/0001-90",
+      companyData: {
+        cnpj: "12345678000190",
+        razao_social: "CLINICA TESTE LTDA",
+        nome_fantasia: "Clínica Teste",
+        situacao: "ATIVA",
+        atividade_principal: {
+          code: "8630-5/01",
+          text: "Atividade médica ambulatorial",
+        },
+      },
+    }),
+  })),
+}));
+globals_1.jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: () => mockSupabase,
+}));
 // Import API handlers
 var route_1 = require("@/app/api/tax/route");
 var route_2 = require("@/app/api/tax/nfe/route");
 var route_3 = require("@/app/api/tax/cnpj/route");
-(0, globals_1.describe)("Story 5.5: Brazilian Tax System Integration", function () {
+(0, globals_1.describe)("Story 5.5: Brazilian Tax System Integration", () => {
   var testClinicId = "test-clinic-id";
   var testInvoiceId = "test-invoice-id";
-  (0, globals_1.beforeAll)(function () {
+  (0, globals_1.beforeAll)(() => {
     // Setup test environment
     process.env.NODE_ENV = "test";
   });
-  (0, globals_1.afterAll)(function () {
+  (0, globals_1.afterAll)(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("AC1: Automated NFSe Generation and Submission", function () {
-    (0, globals_1.it)("should generate NFSe with correct tax calculations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("AC1: Automated NFSe Generation and Submission", () => {
+    (0, globals_1.it)("should generate NFSe with correct tax calculations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost/api/tax", {
@@ -326,12 +293,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should generate NFE document successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate NFE document successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost/api/tax", {
@@ -357,12 +324,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should emit NFE to municipal authority", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should emit NFE to municipal authority", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost/api/tax/nfe", {
@@ -386,14 +353,14 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("AC2: Real-time CNPJ Validation and Customer Verification", function () {
-    (0, globals_1.it)("should validate CNPJ format and check digit", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("AC2: Real-time CNPJ Validation and Customer Verification", () => {
+    (0, globals_1.it)("should validate CNPJ format and check digit", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -412,12 +379,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should retrieve company data from Receita Federal", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should retrieve company data from Receita Federal", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -444,12 +411,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should perform batch CNPJ validation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should perform batch CNPJ validation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -474,14 +441,14 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("AC3: Comprehensive Brazilian Tax Calculation", function () {
-    (0, globals_1.it)("should calculate ISS (Imposto Sobre Serviços)", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("AC3: Comprehensive Brazilian Tax Calculation", () => {
+    (0, globals_1.it)("should calculate ISS (Imposto Sobre Serviços)", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost/api/tax", {
@@ -529,35 +496,31 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle multiple tax regimes correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle multiple tax regimes correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock different tax configuration
               mockSupabase.from.mockReturnValueOnce({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        single: globals_1.jest.fn(function () {
-                          return Promise.resolve({
-                            data: {
-                              tax_regime: "lucro_presumido",
-                              iss_rate: 5.0,
-                              pis_rate: 0.65,
-                              cofins_rate: 3.0,
-                            },
-                            error: null,
-                          });
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    single: globals_1.jest.fn(() =>
+                      Promise.resolve({
+                        data: {
+                          tax_regime: "lucro_presumido",
+                          iss_rate: 5.0,
+                          pis_rate: 0.65,
+                          cofins_rate: 3.0,
+                        },
+                        error: null,
+                      }),
+                    ),
+                  })),
+                })),
               });
               request = new server_1.NextRequest(
                 "http://localhost/api/tax?clinic_id=".concat(testClinicId, "&action=config"),
@@ -573,14 +536,14 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("AC4: Integration with Municipal Tax Authorities", function () {
-    (0, globals_1.it)("should retrieve NFE status from municipal system", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("AC4: Integration with Municipal Tax Authorities", () => {
+    (0, globals_1.it)("should retrieve NFE status from municipal system", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -598,12 +561,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle multiple municipalities correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle multiple municipalities correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -624,14 +587,14 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("AC5: Automated Tax Reporting and Declaration Generation", function () {
-    (0, globals_1.it)("should generate DEFIS declaration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("AC5: Automated Tax Reporting and Declaration Generation", () => {
+    (0, globals_1.it)("should generate DEFIS declaration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockGenerateDeclaration;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           mockGenerateDeclaration = globals_1.jest.fn().mockResolvedValue({
             data: {
               declaration_id: "test-defis-id",
@@ -645,14 +608,14 @@ var route_3 = require("@/app/api/tax/cnpj/route");
           (0, globals_1.expect)(mockGenerateDeclaration).toBeDefined();
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("AC10: Shadow Testing for Tax Calculations", function () {
-    (0, globals_1.it)("should validate tax calculation accuracy with shadow testing", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("AC10: Shadow Testing for Tax Calculations", () => {
+    (0, globals_1.it)("should validate tax calculation accuracy with shadow testing", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var testScenarios, _i, testScenarios_1, scenario, request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               testScenarios = [
@@ -709,14 +672,14 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling and Edge Cases", function () {
-    (0, globals_1.it)("should handle invalid CNPJ gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error Handling and Edge Cases", () => {
+    (0, globals_1.it)("should handle invalid CNPJ gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -725,14 +688,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               // Mock invalid CNPJ response
               globals_1.jest
                 .mocked(require("@/lib/services/brazilian-tax/cnpj-validator").CNPJValidator)
-                .mockImplementationOnce(function () {
-                  return {
-                    validateCNPJ: globals_1.jest.fn().mockResolvedValue({
-                      valid: false,
-                      errors: ["Invalid CNPJ format"],
-                    }),
-                  };
-                });
+                .mockImplementationOnce(() => ({
+                  validateCNPJ: globals_1.jest.fn().mockResolvedValue({
+                    valid: false,
+                    errors: ["Invalid CNPJ format"],
+                  }),
+                }));
               return [4 /*yield*/, (0, route_3.GET)(request)];
             case 1:
               response = _a.sent();
@@ -745,12 +706,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle missing clinic_id parameter", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle missing clinic_id parameter", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost/api/tax?action=config");
@@ -765,30 +726,26 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle database connection errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle database connection errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock database error
               mockSupabase.from.mockReturnValueOnce({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        single: globals_1.jest.fn(function () {
-                          return Promise.resolve({
-                            data: null,
-                            error: { message: "Database connection failed" },
-                          });
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    single: globals_1.jest.fn(() =>
+                      Promise.resolve({
+                        data: null,
+                        error: { message: "Database connection failed" },
+                      }),
+                    ),
+                  })),
+                })),
               });
               request = new server_1.NextRequest(
                 "http://localhost/api/tax?clinic_id=".concat(testClinicId, "&action=config"),
@@ -804,14 +761,14 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Performance and Compliance Requirements", function () {
-    (0, globals_1.it)("should complete NFSe generation within 3 seconds", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Performance and Compliance Requirements", () => {
+    (0, globals_1.it)("should complete NFSe generation within 3 seconds", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, request, response, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -833,12 +790,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should complete CNPJ validation within 1 second", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should complete CNPJ validation within 1 second", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, request, response, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -854,12 +811,12 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should maintain 100% accuracy in tax calculations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should maintain 100% accuracy in tax calculations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var testCases, _i, testCases_1, testCase, request, response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               testCases = [
@@ -909,16 +866,16 @@ var route_3 = require("@/app/api/tax/cnpj/route");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });
 // Integration test for complete workflow
-(0, globals_1.describe)("Story 5.5: Complete Tax Workflow Integration", function () {
+(0, globals_1.describe)("Story 5.5: Complete Tax Workflow Integration", () => {
   (0, globals_1.it)(
     "should execute complete tax workflow: validation → calculation → NFE → submission",
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var workflowSteps,
           cnpjRequest,
           cnpjResponse,
@@ -927,7 +884,7 @@ var route_3 = require("@/app/api/tax/cnpj/route");
           nfeRequest,
           nfeResponse,
           allStepsSuccessful;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               workflowSteps = [];
@@ -976,16 +933,13 @@ var route_3 = require("@/app/api/tax/cnpj/route");
             case 3:
               nfeResponse = _a.sent();
               workflowSteps.push({ step: "nfe_generation", success: nfeResponse.status === 200 });
-              allStepsSuccessful = workflowSteps.every(function (step) {
-                return step.success;
-              });
+              allStepsSuccessful = workflowSteps.every((step) => step.success);
               (0, globals_1.expect)(allStepsSuccessful).toBe(true);
               // Verify workflow completed within reasonable time
               (0, globals_1.expect)(workflowSteps).toHaveLength(3);
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
   );
 });

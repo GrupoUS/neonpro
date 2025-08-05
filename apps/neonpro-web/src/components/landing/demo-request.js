@@ -1,31 +1,30 @@
 // components/landing/demo-request.tsx
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DemoRequest = DemoRequest;
 var react_1 = require("react");
@@ -161,7 +158,6 @@ var badge_1 = require("@/components/ui/badge");
 var checkbox_1 = require("@/components/ui/checkbox");
 var lucide_react_1 = require("lucide-react");
 function DemoRequest() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       name: "",
       email: "",
@@ -185,26 +181,21 @@ function DemoRequest() {
   var _c = (0, react_1.useState)(false),
     isSubmitted = _c[0],
     setIsSubmitted = _c[1];
-  var handleInputChange = function (field, value) {
-    setFormData(function (prev) {
+  var handleInputChange = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
   };
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
             setIsSubmitting(true);
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 1:
             // Simulate API call
             _a.sent();
@@ -214,7 +205,6 @@ function DemoRequest() {
         }
       });
     });
-  };
   var benefits = [
     {
       icon: lucide_react_1.Calendar,
@@ -344,23 +334,21 @@ function DemoRequest() {
               O que você terá:
             </h3>
 
-            {benefits.map(function (benefit, index) {
-              return (
-                <div key={index} className="flex items-start space-x-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900 flex-shrink-0">
-                    <benefit.icon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-slate-900 dark:text-white mb-1">
-                      {benefit.title}
-                    </h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                      {benefit.description}
-                    </p>
-                  </div>
+            {benefits.map((benefit, index) => (
+              <div key={index} className="flex items-start space-x-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900 flex-shrink-0">
+                  <benefit.icon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
                 </div>
-              );
-            })}
+                <div>
+                  <h4 className="font-semibold text-slate-900 dark:text-white mb-1">
+                    {benefit.title}
+                  </h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {benefit.description}
+                  </p>
+                </div>
+              </div>
+            ))}
 
             {/* Contact Info */}
             <card_1.Card className="border-0 shadow-md bg-gradient-to-br from-sky-50 to-blue-50 dark:from-sky-950 dark:to-blue-950">
@@ -414,9 +402,7 @@ function DemoRequest() {
                         id="name"
                         type="text"
                         value={formData.name}
-                        onChange={function (e) {
-                          return handleInputChange("name", e.target.value);
-                        }}
+                        onChange={(e) => handleInputChange("name", e.target.value)}
                         required
                         placeholder="Dr. João Silva"
                       />
@@ -428,9 +414,7 @@ function DemoRequest() {
                         id="email"
                         type="email"
                         value={formData.email}
-                        onChange={function (e) {
-                          return handleInputChange("email", e.target.value);
-                        }}
+                        onChange={(e) => handleInputChange("email", e.target.value)}
                         required
                         placeholder="joao@clinica.com.br"
                       />
@@ -444,9 +428,7 @@ function DemoRequest() {
                         id="phone"
                         type="tel"
                         value={formData.phone}
-                        onChange={function (e) {
-                          return handleInputChange("phone", e.target.value);
-                        }}
+                        onChange={(e) => handleInputChange("phone", e.target.value)}
                         required
                         placeholder="(11) 99999-0000"
                       />
@@ -455,9 +437,7 @@ function DemoRequest() {
                     <div className="space-y-2">
                       <label_1.Label htmlFor="bestTime">Melhor Horário</label_1.Label>
                       <select_1.Select
-                        onValueChange={function (value) {
-                          return handleInputChange("bestTime", value);
-                        }}
+                        onValueChange={(value) => handleInputChange("bestTime", value)}
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue placeholder="Selecione o horário" />
@@ -481,9 +461,7 @@ function DemoRequest() {
                         id="clinicName"
                         type="text"
                         value={formData.clinicName}
-                        onChange={function (e) {
-                          return handleInputChange("clinicName", e.target.value);
-                        }}
+                        onChange={(e) => handleInputChange("clinicName", e.target.value)}
                         required
                         placeholder="Clínica Bella Vita"
                       />
@@ -492,9 +470,7 @@ function DemoRequest() {
                     <div className="space-y-2">
                       <label_1.Label htmlFor="clinicType">Tipo de Clínica *</label_1.Label>
                       <select_1.Select
-                        onValueChange={function (value) {
-                          return handleInputChange("clinicType", value);
-                        }}
+                        onValueChange={(value) => handleInputChange("clinicType", value)}
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue placeholder="Selecione o tipo" />
@@ -523,9 +499,7 @@ function DemoRequest() {
                         id="city"
                         type="text"
                         value={formData.city}
-                        onChange={function (e) {
-                          return handleInputChange("city", e.target.value);
-                        }}
+                        onChange={(e) => handleInputChange("city", e.target.value)}
                         required
                         placeholder="São Paulo"
                       />
@@ -533,22 +507,16 @@ function DemoRequest() {
 
                     <div className="space-y-2">
                       <label_1.Label htmlFor="state">Estado *</label_1.Label>
-                      <select_1.Select
-                        onValueChange={function (value) {
-                          return handleInputChange("state", value);
-                        }}
-                      >
+                      <select_1.Select onValueChange={(value) => handleInputChange("state", value)}>
                         <select_1.SelectTrigger>
                           <select_1.SelectValue placeholder="UF" />
                         </select_1.SelectTrigger>
                         <select_1.SelectContent>
-                          {states.map(function (state) {
-                            return (
-                              <select_1.SelectItem key={state} value={state}>
-                                {state}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {states.map((state) => (
+                            <select_1.SelectItem key={state} value={state}>
+                              {state}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                     </div>
@@ -556,9 +524,7 @@ function DemoRequest() {
                     <div className="space-y-2">
                       <label_1.Label htmlFor="currentPatients">Pacientes/Mês</label_1.Label>
                       <select_1.Select
-                        onValueChange={function (value) {
-                          return handleInputChange("currentPatients", value);
-                        }}
+                        onValueChange={(value) => handleInputChange("currentPatients", value)}
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue placeholder="Quantidade" />
@@ -580,9 +546,7 @@ function DemoRequest() {
                     <textarea_1.Textarea
                       id="painPoints"
                       value={formData.painPoints}
-                      onChange={function (e) {
-                        return handleInputChange("painPoints", e.target.value);
-                      }}
+                      onChange={(e) => handleInputChange("painPoints", e.target.value)}
                       placeholder="Ex: conflitos de agenda, dificuldade com compliance, relatórios manuais..."
                       rows={3}
                     />
@@ -594,9 +558,7 @@ function DemoRequest() {
                       <checkbox_1.Checkbox
                         id="gdprConsent"
                         checked={formData.gdprConsent}
-                        onCheckedChange={function (checked) {
-                          return handleInputChange("gdprConsent", checked);
-                        }}
+                        onCheckedChange={(checked) => handleInputChange("gdprConsent", checked)}
                         required
                       />
                       <label_1.Label htmlFor="gdprConsent" className="text-sm leading-5">
@@ -616,9 +578,9 @@ function DemoRequest() {
                       <checkbox_1.Checkbox
                         id="marketingConsent"
                         checked={formData.marketingConsent}
-                        onCheckedChange={function (checked) {
-                          return handleInputChange("marketingConsent", checked);
-                        }}
+                        onCheckedChange={(checked) =>
+                          handleInputChange("marketingConsent", checked)
+                        }
                       />
                       <label_1.Label htmlFor="marketingConsent" className="text-sm leading-5">
                         Aceito receber comunicações sobre produtos, serviços e conteúdos relevantes

@@ -1,4 +1,3 @@
-"use strict";
 // Brazilian Tax System Validation Schemas
 // Story 5.5: Comprehensive validation for Brazilian tax compliance
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,15 +24,11 @@ var zod_1 = require("zod");
 exports.cnpjSchema = zod_1.z
   .string()
   .regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, "CNPJ deve estar no formato XX.XXX.XXX/XXXX-XX")
-  .refine(function (cnpj) {
+  .refine((cnpj) => {
     // Remove formatting
     var digits = cnpj.replace(/[^\d]/g, "");
     // Check if all digits are the same
-    if (
-      digits.split("").every(function (digit) {
-        return digit === digits[0];
-      })
-    ) {
+    if (digits.split("").every((digit) => digit === digits[0])) {
       return false;
     }
     // Validate CNPJ check digits
@@ -59,14 +54,10 @@ exports.cnpjSchema = zod_1.z
 exports.cpfSchema = zod_1.z
   .string()
   .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF deve estar no formato XXX.XXX.XXX-XX")
-  .refine(function (cpf) {
+  .refine((cpf) => {
     var digits = cpf.replace(/[^\d]/g, "");
     // Check if all digits are the same
-    if (
-      digits.split("").every(function (digit) {
-        return digit === digits[0];
-      })
-    ) {
+    if (digits.split("").every((digit) => digit === digits[0])) {
       return false;
     }
     // Validate CPF check digits
@@ -87,11 +78,11 @@ exports.cpfSchema = zod_1.z
   }, "CPF inválido");
 exports.cnpjCpfSchema = zod_1.z
   .string()
-  .refine(function (value) {
+  .refine((value) => {
     var digits = value.replace(/[^\d]/g, "");
     return digits.length === 11 || digits.length === 14;
   }, "Deve ser um CNPJ ou CPF válido")
-  .refine(function (value) {
+  .refine((value) => {
     var digits = value.replace(/[^\d]/g, "");
     if (digits.length === 11) {
       return exports.cpfSchema.safeParse(
@@ -108,7 +99,7 @@ exports.ufSchema = zod_1.z
   .string()
   .length(2, "UF deve ter 2 caracteres")
   .regex(/^[A-Z]{2}$/, "UF deve conter apenas letras maiúsculas")
-  .refine(function (uf) {
+  .refine((uf) => {
     var validUFs = [
       "AC",
       "AL",
@@ -162,9 +153,7 @@ exports.taxConfigurationSchema = zod_1.z.object({
   inscricao_municipal: zod_1.z.string().max(20, "Inscrição municipal muito longa").optional(),
   // Tax Regime
   regime_tributario: zod_1.z.enum(["simples_nacional", "lucro_presumido", "lucro_real"], {
-    errorMap: function () {
-      return { message: "Regime tributário inválido" };
-    },
+    errorMap: () => ({ message: "Regime tributário inválido" }),
   }),
   optante_simples_nacional: zod_1.z.boolean(),
   // Tax Rates (0-100%)
@@ -194,9 +183,7 @@ exports.taxConfigurationSchema = zod_1.z.object({
     .max(15, "Taxa CSLL não pode exceder 15%"),
   // Simples Nacional
   simples_nacional_anexo: zod_1.z.enum(["I", "II", "III", "IV", "V"], {
-    errorMap: function () {
-      return { message: "Anexo do Simples Nacional inválido" };
-    },
+    errorMap: () => ({ message: "Anexo do Simples Nacional inválido" }),
   }),
   simples_nacional_rate: zod_1.z
     .number()
@@ -223,7 +210,7 @@ exports.serviceItemSchema = zod_1.z
     discriminacao: zod_1.z.string().max(500, "Discriminação muito longa").optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       var calculatedTotal = data.quantidade * data.valor_unitario;
       return Math.abs(calculatedTotal - data.valor_total) < 0.01;
     },
@@ -257,14 +244,10 @@ exports.nfeDocumentSchema = zod_1.z.object({
     .default(1),
   // Document Information
   tipo_documento: zod_1.z.enum(["nfe", "nfce", "nfse"], {
-    errorMap: function () {
-      return { message: "Tipo de documento inválido" };
-    },
+    errorMap: () => ({ message: "Tipo de documento inválido" }),
   }),
   modelo_documento: zod_1.z.enum(["55", "65", "57"], {
-    errorMap: function () {
-      return { message: "Modelo de documento inválido" };
-    },
+    errorMap: () => ({ message: "Modelo de documento inválido" }),
   }),
   natureza_operacao: zod_1.z
     .string()
@@ -289,9 +272,7 @@ exports.nfeDocumentSchema = zod_1.z.object({
   // Status
   status: zod_1.z
     .enum(["draft", "authorized", "cancelled", "rejected"], {
-      errorMap: function () {
-        return { message: "Status inválido" };
-      },
+      errorMap: () => ({ message: "Status inválido" }),
     })
     .default("draft"),
 });
@@ -325,9 +306,7 @@ exports.spedEntrySchema = zod_1.z
       .string()
       .regex(/^\d{4}-\d{2}-01$/, "Período deve estar no formato YYYY-MM-01"),
     tipo_escrituracao: zod_1.z.enum(["ECD", "ECF", "EFD"], {
-      errorMap: function () {
-        return { message: "Tipo de escrituração inválido" };
-      },
+      errorMap: () => ({ message: "Tipo de escrituração inválido" }),
     }),
     // Entry Details
     codigo_conta: zod_1.z
@@ -352,14 +331,12 @@ exports.spedEntrySchema = zod_1.z
     natureza_operacao: zod_1.z.string().max(100, "Natureza da operação muito longa").optional(),
     origem_lancamento: zod_1.z
       .enum(["system", "manual", "imported"], {
-        errorMap: function () {
-          return { message: "Origem do lançamento inválida" };
-        },
+        errorMap: () => ({ message: "Origem do lançamento inválida" }),
       })
       .default("system"),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Either debit or credit must be greater than zero, but not both
       return data.valor_debito > 0 !== data.valor_credito > 0;
     },
@@ -373,9 +350,7 @@ exports.taxComplianceReportSchema = zod_1.z.object({
   clinic_id: zod_1.z.string().uuid("ID da clínica inválido"),
   // Report Information
   tipo_relatorio: zod_1.z.enum(["sped_ecd", "sped_ecf", "livro_registro", "dctf", "defis"], {
-    errorMap: function () {
-      return { message: "Tipo de relatório inválido" };
-    },
+    errorMap: () => ({ message: "Tipo de relatório inválido" }),
   }),
   periodo_referencia: zod_1.z
     .string()
@@ -386,9 +361,7 @@ exports.taxComplianceReportSchema = zod_1.z.object({
   // Submission
   status_envio: zod_1.z
     .enum(["pending", "sent", "accepted", "rejected"], {
-      errorMap: function () {
-        return { message: "Status de envio inválido" };
-      },
+      errorMap: () => ({ message: "Status de envio inválido" }),
     })
     .default("pending"),
 });
@@ -411,9 +384,7 @@ exports.serviceTaxCodeSchema = zod_1.z
       .min(0, "Alíquota máxima não pode ser negativa")
       .max(25, "Alíquota máxima não pode exceder 25%"),
     tributacao_pis_cofins: zod_1.z.enum(["cumulativo", "nao_cumulativo"], {
-      errorMap: function () {
-        return { message: "Tributação PIS/COFINS inválida" };
-      },
+      errorMap: () => ({ message: "Tributação PIS/COFINS inválida" }),
     }),
     // Healthcare Specific
     aplicavel_saude: zod_1.z.boolean().default(true),
@@ -421,15 +392,10 @@ exports.serviceTaxCodeSchema = zod_1.z
     // Status
     ativo: zod_1.z.boolean().default(true),
   })
-  .refine(
-    function (data) {
-      return data.iss_aliquota_minima <= data.iss_aliquota_maxima;
-    },
-    {
-      message: "Alíquota mínima deve ser menor ou igual à máxima",
-      path: ["iss_aliquota_maxima"],
-    },
-  );
+  .refine((data) => data.iss_aliquota_minima <= data.iss_aliquota_maxima, {
+    message: "Alíquota mínima deve ser menor ou igual à máxima",
+    path: ["iss_aliquota_maxima"],
+  });
 // Bulk Tax Calculation Request Schema
 exports.bulkTaxCalculationRequestSchema = zod_1.z.object({
   clinic_id: zod_1.z.string().uuid("ID da clínica inválido"),
@@ -453,9 +419,7 @@ exports.nfeCreateRequestSchema = zod_1.z.object({
   items: zod_1.z.array(exports.serviceItemSchema).min(1, "Pelo menos um item é necessário"),
   payment_method: zod_1.z
     .enum(["cash", "card", "bank_transfer", "pix", "check"], {
-      errorMap: function () {
-        return { message: "Método de pagamento inválido" };
-      },
+      errorMap: () => ({ message: "Método de pagamento inválido" }),
     })
     .optional(),
   additional_info: zod_1.z.string().max(1000, "Informações adicionais muito longas").optional(),

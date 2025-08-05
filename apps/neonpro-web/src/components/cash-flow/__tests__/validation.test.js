@@ -1,4 +1,3 @@
-"use strict";
 // Cash Flow Validation Tests
 // Testing Zod validation schemas
 var __assign =
@@ -6,19 +5,19 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
 var validation_1 = require("../utils/validation");
-describe("Cash Flow Validation", function () {
-  describe("CashFlowEntrySchema", function () {
+describe("Cash Flow Validation", () => {
+  describe("CashFlowEntrySchema", () => {
     var validEntry = {
       clinic_id: "123e4567-e89b-12d3-a456-426614174000",
       transaction_type: "receipt",
@@ -29,11 +28,11 @@ describe("Cash Flow Validation", function () {
       payment_method: "cash",
       created_by: "123e4567-e89b-12d3-a456-426614174001",
     };
-    it("validates correct cash flow entry", function () {
+    it("validates correct cash flow entry", () => {
       var result = (0, validation_1.validateCashFlowEntry)(validEntry);
       expect(result.success).toBe(true);
     });
-    it("rejects invalid clinic_id", function () {
+    it("rejects invalid clinic_id", () => {
       var _a;
       var result = (0, validation_1.validateCashFlowEntry)(
         __assign(__assign({}, validEntry), { clinic_id: "invalid-uuid" }),
@@ -43,7 +42,7 @@ describe("Cash Flow Validation", function () {
         (_a = result.error) === null || _a === void 0 ? void 0 : _a.issues[0].message,
       ).toContain("Invalid clinic ID");
     });
-    it("rejects negative amounts", function () {
+    it("rejects negative amounts", () => {
       var _a;
       var result = (0, validation_1.validateCashFlowEntry)(
         __assign(__assign({}, validEntry), { amount: -50 }),
@@ -53,7 +52,7 @@ describe("Cash Flow Validation", function () {
         (_a = result.error) === null || _a === void 0 ? void 0 : _a.issues[0].message,
       ).toContain("Amount must be positive");
     });
-    it("rejects empty description", function () {
+    it("rejects empty description", () => {
       var _a;
       var result = (0, validation_1.validateCashFlowEntry)(
         __assign(__assign({}, validEntry), { description: "" }),
@@ -63,14 +62,14 @@ describe("Cash Flow Validation", function () {
         (_a = result.error) === null || _a === void 0 ? void 0 : _a.issues[0].message,
       ).toContain("Description is required");
     });
-    it("rejects invalid transaction type", function () {
+    it("rejects invalid transaction type", () => {
       var result = (0, validation_1.validateCashFlowEntry)(
         __assign(__assign({}, validEntry), { transaction_type: "invalid_type" }),
       );
       expect(result.success).toBe(false);
     });
   });
-  describe("CashRegisterSchema", function () {
+  describe("CashRegisterSchema", () => {
     var validRegister = {
       clinic_id: "123e4567-e89b-12d3-a456-426614174000",
       register_name: "Caixa Principal",
@@ -80,11 +79,11 @@ describe("Cash Flow Validation", function () {
       opening_balance: 1000.0,
       is_active: true,
     };
-    it("validates correct cash register", function () {
+    it("validates correct cash register", () => {
       var result = (0, validation_1.validateCashRegister)(validRegister);
       expect(result.success).toBe(true);
     });
-    it("rejects empty register name", function () {
+    it("rejects empty register name", () => {
       var _a;
       var result = (0, validation_1.validateCashRegister)(
         __assign(__assign({}, validRegister), { register_name: "" }),
@@ -94,7 +93,7 @@ describe("Cash Flow Validation", function () {
         (_a = result.error) === null || _a === void 0 ? void 0 : _a.issues[0].message,
       ).toContain("Register name is required");
     });
-    it("rejects negative opening balance", function () {
+    it("rejects negative opening balance", () => {
       var _a;
       var result = (0, validation_1.validateCashRegister)(
         __assign(__assign({}, validRegister), { opening_balance: -100 }),
@@ -105,8 +104,8 @@ describe("Cash Flow Validation", function () {
       ).toContain("Opening balance cannot be negative");
     });
   });
-  describe("CashFlowFiltersSchema", function () {
-    it("validates correct filters", function () {
+  describe("CashFlowFiltersSchema", () => {
+    it("validates correct filters", () => {
       var _a;
       try {
         process.stderr.write("🚀 TEST STARTED: validates correct filters\n");
@@ -142,7 +141,7 @@ describe("Cash Flow Validation", function () {
           process.stderr.write("- Error exists: " + !!result.error + "\n");
           if ((_a = result.error) === null || _a === void 0 ? void 0 : _a.issues) {
             process.stderr.write("- Issues count: " + result.error.issues.length + "\n");
-            result.error.issues.forEach(function (issue, index) {
+            result.error.issues.forEach((issue, index) => {
               process.stderr.write("  Issue ".concat(index + 1, ":\n"));
               process.stderr.write("    - Code: ".concat(issue.code, "\n"));
               process.stderr.write("    - Path: ".concat(JSON.stringify(issue.path), "\n"));
@@ -166,7 +165,7 @@ describe("Cash Flow Validation", function () {
         throw testError;
       }
     });
-    it("rejects invalid date range", function () {
+    it("rejects invalid date range", () => {
       var _a, _b;
       var filters = {
         dateFrom: "2025-01-31",
@@ -194,7 +193,7 @@ describe("Cash Flow Validation", function () {
         (_b = result.error) === null || _b === void 0 ? void 0 : _b.issues[0].message,
       ).toContain("Start date must be before end date");
     });
-    it("validates empty filters", function () {
+    it("validates empty filters", () => {
       var result = (0, validation_1.validateCashFlowFilters)({});
       expect(result.success).toBe(true);
     });

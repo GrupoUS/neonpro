@@ -9,10 +9,10 @@
  * @created 2024
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import { DataCleanupService } from "@/lib/auth/session/DataCleanupService";
 import { createClient } from "@supabase/supabase-js";
+import type { NextRequest } from "next/server";
 import { sessionConfig } from "@/lib/auth/session/config";
+import { DataCleanupService } from "@/lib/auth/session/DataCleanupService";
 
 // Initialize cleanup service
 const cleanupService = new DataCleanupService({
@@ -282,7 +282,7 @@ async function verifyCleanupPermissions(
 /**
  * Helper function to validate cleanup tasks
  */
-function validateCleanupTasks(tasks: string[]): { valid: boolean; invalidTasks?: string[] } {
+function _validateCleanupTasks(tasks: string[]): { valid: boolean; invalidTasks?: string[] } {
   const validTasks = [
     "expired_sessions",
     "inactive_devices",
@@ -305,7 +305,7 @@ function validateCleanupTasks(tasks: string[]): { valid: boolean; invalidTasks?:
  */
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
 
-function checkRateLimit(identifier: string, maxRequests = 10, windowMs = 60000): boolean {
+function _checkRateLimit(identifier: string, maxRequests = 10, windowMs = 60000): boolean {
   const now = Date.now();
   const userLimit = rateLimitMap.get(identifier);
 

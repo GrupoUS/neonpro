@@ -1,6 +1,23 @@
 "use client";
 
-import React from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  DollarSign,
+  PieChart,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import type { Badge } from "@/components/ui/badge";
 import type {
   Card,
   CardContent,
@@ -8,25 +25,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
 import type { Skeleton } from "@/components/ui/skeleton";
-import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  Calendar,
-  Target,
-  Activity,
-  CreditCard,
-  PieChart,
-  BarChart3,
-  Zap,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-} from "lucide-react";
 import type { FinancialKPIs } from "@/lib/financial";
 
 interface FinancialKPICardsProps {

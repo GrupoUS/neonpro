@@ -15,7 +15,27 @@
 
 "use client";
 
-import type { useState, useEffect, useMemo } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  ArrowRight,
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Clock,
+  Eye,
+  Lightbulb,
+  Shield,
+  Star,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -23,35 +43,11 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Lightbulb,
-  AlertTriangle,
-  CheckCircle,
-  Target,
-  BarChart3,
-  Brain,
-  Star,
-  Clock,
-  Users,
-  Activity,
-  ArrowRight,
-  Eye,
-  Zap,
-  Shield,
-} from "lucide-react";
 
 // Analytics Engine
-import type {
-  type AnalyticsInsight,
-  type AnalyticsTimeframe,
-  AnalyticsUtils,
-} from "@/lib/analytics";
+import type { AnalyticsInsight, AnalyticsTimeframe, AnalyticsUtils } from "@/lib/analytics";
 
 // Types
 interface InsightsPanelProps {
@@ -236,9 +232,10 @@ export function InsightsPanel({ insights, isLoading, timeframe }: InsightsPanelP
 
     return insightsToSort.sort((a, b) => {
       switch (sortBy) {
-        case "priority":
+        case "priority": {
           const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
           return priorityOrder[b.priority] - priorityOrder[a.priority];
+        }
         case "confidence":
           return b.confidence - a.confidence;
         case "impact":

@@ -1,17 +1,16 @@
-"use strict";
 // Custom Hook for Intelligent Threshold Management
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,12 +130,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useIntelligentThresholds = useIntelligentThresholds;
 var react_1 = require("react");
 function useIntelligentThresholds(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     filters = _a.filters,
     _b = _a.autoRefresh,
@@ -165,11 +161,11 @@ function useIntelligentThresholds(_a) {
     setError = _j[1];
   // Fetch thresholds with filters
   var fetchThresholds = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response, data, err_1;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, , 4]);
@@ -211,16 +207,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId, filters],
   );
   // Fetch optimization analysis
   var fetchOptimizations = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -244,16 +239,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
   // Fetch alert statistics
   var fetchAlertStats = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -277,16 +271,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
   // Load all data
   var loadData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var err_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setLoading(true);
@@ -312,16 +305,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchThresholds, fetchOptimizations, fetchAlertStats],
   );
   // Create new threshold
   var createThreshold = (0, react_1.useCallback)(
-    function (thresholdData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (thresholdData) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, errorData, data, err_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 6, , 7]);
@@ -335,7 +327,7 @@ function useIntelligentThresholds(_a) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               errorData = _a.sent();
@@ -356,16 +348,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchThresholds],
   );
   // Update threshold
   var updateThreshold = (0, react_1.useCallback)(
-    function (id, updates) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (id, updates) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, errorData, data, err_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 6, , 7]);
@@ -379,7 +370,7 @@ function useIntelligentThresholds(_a) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               errorData = _a.sent();
@@ -400,16 +391,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchThresholds],
   );
   // Delete threshold (soft delete)
   var deleteThreshold = (0, react_1.useCallback)(
-    function (id) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (id) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, errorData, err_7;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -421,7 +411,7 @@ function useIntelligentThresholds(_a) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               errorData = _a.sent();
@@ -439,16 +429,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchThresholds],
   );
   // Generate demand forecast
   var generateForecast = (0, react_1.useCallback)(
-    function (itemId, forecastPeriod, forecastDate) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (itemId, forecastPeriod, forecastDate) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, errorData, data, err_8;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -470,7 +459,7 @@ function useIntelligentThresholds(_a) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               errorData = _a.sent();
@@ -488,16 +477,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
   // Bulk forecast generation
   var generateBulkForecast = (0, react_1.useCallback)(
-    function (items, forecastDate) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (items, forecastDate) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, errorData, data, err_9;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -518,7 +506,7 @@ function useIntelligentThresholds(_a) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               errorData = _a.sent();
@@ -536,16 +524,15 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
   // Alert actions
   var acknowledgeAlert = (0, react_1.useCallback)(
-    function (alertId, userId, notes) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (alertId, userId, notes) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, errorData, err_10;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -559,7 +546,7 @@ function useIntelligentThresholds(_a) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               errorData = _a.sent();
@@ -577,15 +564,14 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchAlertStats],
   );
   var resolveAlert = (0, react_1.useCallback)(
-    function (alertId, userId, notes) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (alertId, userId, notes) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, errorData, err_11;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -599,7 +585,7 @@ function useIntelligentThresholds(_a) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               errorData = _a.sent();
@@ -617,15 +603,14 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchAlertStats],
   );
   var escalateAlert = (0, react_1.useCallback)(
-    function (alertId, escalateTo, level) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (alertId, escalateTo, level) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, errorData, err_12;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -639,7 +624,7 @@ function useIntelligentThresholds(_a) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               errorData = _a.sent();
@@ -657,28 +642,19 @@ function useIntelligentThresholds(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchAlertStats],
   );
   // Initial load
-  (0, react_1.useEffect)(
-    function () {
-      loadData();
-    },
-    [loadData],
-  );
+  (0, react_1.useEffect)(() => {
+    loadData();
+  }, [loadData]);
   // Auto-refresh
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoRefresh) return;
-      var interval = setInterval(loadData, refreshInterval);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [autoRefresh, refreshInterval, loadData],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!autoRefresh) return;
+    var interval = setInterval(loadData, refreshInterval);
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, loadData]);
   return {
     // Data
     thresholds: thresholds,
@@ -700,15 +676,9 @@ function useIntelligentThresholds(_a) {
     escalateAlert: escalateAlert,
     // Computed values
     totalThresholds: thresholds.length,
-    activeThresholds: thresholds.filter(function (t) {
-      return t.is_active;
-    }).length,
-    autoReorderEnabled: thresholds.filter(function (t) {
-      return t.auto_reorder_enabled;
-    }).length,
+    activeThresholds: thresholds.filter((t) => t.is_active).length,
+    autoReorderEnabled: thresholds.filter((t) => t.auto_reorder_enabled).length,
     optimizationOpportunities: optimizations.length,
-    totalPotentialSavings: optimizations.reduce(function (sum, opt) {
-      return sum + opt.potential_savings;
-    }, 0),
+    totalPotentialSavings: optimizations.reduce((sum, opt) => sum + opt.potential_savings, 0),
   };
 }

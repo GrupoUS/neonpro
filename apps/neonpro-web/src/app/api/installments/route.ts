@@ -2,12 +2,12 @@
 // Story 6.1 - Task 3: Installment Management System
 // API endpoints for installment processing and management
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { cookies } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
-import type { getInstallmentProcessor } from "@/lib/payments/installments/installment-processor";
 import type { getInstallmentManager } from "@/lib/payments/installments/installment-manager";
+import type { getInstallmentProcessor } from "@/lib/payments/installments/installment-processor";
+import type { createClient } from "@/lib/supabase/server";
 
 // Validation schemas
 const processInstallmentSchema = z.object({
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
     let result;
 
     switch (action) {
-      case "process_single":
+      case "process_single": {
         const singleData = processInstallmentSchema.parse(body.data);
         result = await installmentProcessor.processInstallmentPayment(
           singleData.installmentId,
@@ -170,8 +170,9 @@ export async function POST(request: NextRequest) {
           singleData.customerId,
         );
         break;
+      }
 
-      case "process_bulk":
+      case "process_bulk": {
         const bulkData = bulkProcessSchema.parse(body.data);
         result = await installmentProcessor.processBulkInstallments(bulkData.installmentIds, {
           paymentMethodId: bulkData.paymentMethodId,
@@ -179,8 +180,9 @@ export async function POST(request: NextRequest) {
           maxConcurrent: bulkData.maxConcurrent,
         });
         break;
+      }
 
-      case "process_overdue":
+      case "process_overdue": {
         const overdueOptions = {
           maxDaysOverdue: body.data?.maxDaysOverdue || 30,
           maxInstallments: body.data?.maxInstallments || 100,
@@ -188,8 +190,9 @@ export async function POST(request: NextRequest) {
         };
         result = await installmentProcessor.processOverdueInstallments(overdueOptions);
         break;
+      }
 
-      case "retry_failed":
+      case "retry_failed": {
         const retryData = z
           .object({
             installmentId: z.string().uuid(),
@@ -202,6 +205,7 @@ export async function POST(request: NextRequest) {
           retryData.paymentMethodId,
         );
         break;
+      }
 
       default:
         return NextResponse.json(
@@ -267,7 +271,7 @@ export async function PUT(request: NextRequest) {
     let results;
 
     switch (action) {
-      case "mark_paid":
+      case "mark_paid": {
         const paymentData = z
           .object({
             paymentIntentId: z.string(),
@@ -294,6 +298,7 @@ export async function PUT(request: NextRequest) {
           }),
         );
         break;
+      }
 
       case "mark_overdue":
         results = await Promise.all(
@@ -312,7 +317,7 @@ export async function PUT(request: NextRequest) {
         );
         break;
 
-      case "cancel":
+      case "cancel": {
         const cancelReason = updateData?.reason || "Cancelled by user";
         results = await Promise.all(
           installmentIds.map(async (id) => {
@@ -329,6 +334,7 @@ export async function PUT(request: NextRequest) {
           }),
         );
         break;
+      }
 
       default:
         return NextResponse.json(

@@ -4,7 +4,7 @@
  * Debounces values to prevent excessive API calls
  */
 
-import type { useState, useEffect } from "react";
+import type { useEffect, useState } from "react";
 
 /**
  * Hook that debounces a value

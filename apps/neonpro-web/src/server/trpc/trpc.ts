@@ -1,7 +1,5 @@
-import type { initTRPC } from "@trpc/server";
-import type { type Context } from "./context";
 import superjson from "superjson";
-import type { ZodError } from "zod";
+import type { Context } from "./context";
 
 // Initialize tRPC with healthcare context
 const t = initTRPC.context<Context>().create({

@@ -1,10 +1,5 @@
 "use client";
 
-import type { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import type { useState } from "react";
-import type { trpc, trpcClient } from "./client";
-
 /**
  * tRPC Provider for NeonPro Healthcare
  *

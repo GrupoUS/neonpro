@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Sistema de Otimização Inteligente com ML - NeonPro
  *
@@ -18,15 +17,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,10 +145,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -160,7 +157,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.notificationMLEngine = exports.NotificationMLEngine = void 0;
 var zod_1 = require("zod");
@@ -221,7 +218,7 @@ var OptimizationConfigSchema = zod_1.z.object({
 // ================================================================================
 // ML OPTIMIZATION ENGINE
 // ================================================================================
-var NotificationMLEngine = /** @class */ (function () {
+var NotificationMLEngine = /** @class */ (() => {
   function NotificationMLEngine(config) {
     if (config === void 0) {
       config = {};
@@ -327,22 +324,18 @@ var NotificationMLEngine = /** @class */ (function () {
             }
             notificationHistory = notifications || [];
             totalNotifications = notificationHistory.length;
-            totalOpened = notificationHistory.filter(function (n) {
-              return n.opened_at;
-            }).length;
-            totalClicked = notificationHistory.filter(function (n) {
-              return n.clicked_at;
-            }).length;
+            totalOpened = notificationHistory.filter((n) => n.opened_at).length;
+            totalClicked = notificationHistory.filter((n) => n.clicked_at).length;
             engagementScore = totalNotifications > 0 ? totalOpened / totalNotifications : 0.5;
             channelStats_1 = new Map();
-            notificationHistory.forEach(function (n) {
+            notificationHistory.forEach((n) => {
               var current = channelStats_1.get(n.channel) || { sent: 0, opened: 0 };
               current.sent++;
               if (n.opened_at) current.opened++;
               channelStats_1.set(n.channel, current);
             });
             preferredChannels = Array.from(channelStats_1.entries())
-              .map(function (_a) {
+              .map((_a) => {
                 var channel = _a[0],
                   stats = _a[1];
                 return {
@@ -350,62 +343,44 @@ var NotificationMLEngine = /** @class */ (function () {
                   rate: stats.sent > 0 ? stats.opened / stats.sent : 0,
                 };
               })
-              .sort(function (a, b) {
-                return b.rate - a.rate;
-              })
+              .sort((a, b) => b.rate - a.rate)
               .slice(0, 3)
-              .map(function (c) {
-                return c.channel;
-              });
-            hourlyEngagement_1 = new Array(24).fill(0).map(function () {
-              return { sent: 0, opened: 0 };
-            });
-            notificationHistory.forEach(function (n) {
+              .map((c) => c.channel);
+            hourlyEngagement_1 = new Array(24).fill(0).map(() => ({ sent: 0, opened: 0 }));
+            notificationHistory.forEach((n) => {
               var hour = new Date(n.sent_at).getHours();
               hourlyEngagement_1[hour].sent++;
               if (n.opened_at) hourlyEngagement_1[hour].opened++;
             });
             bestHours = hourlyEngagement_1
-              .map(function (stats, hour) {
-                return {
-                  hour: hour,
-                  rate: stats.sent > 0 ? stats.opened / stats.sent : 0,
-                  count: stats.sent,
-                };
-              })
-              .filter(function (h) {
-                return h.count >= 3;
-              }) // Mínimo de dados
-              .sort(function (a, b) {
-                return b.rate - a.rate;
-              })
+              .map((stats, hour) => ({
+                hour: hour,
+                rate: stats.sent > 0 ? stats.opened / stats.sent : 0,
+                count: stats.sent,
+              }))
+              .filter((h) => h.count >= 3) // Mínimo de dados
+              .sort((a, b) => b.rate - a.rate)
               .slice(0, 5)
-              .map(function (h) {
-                return h.hour;
-              });
+              .map((h) => h.hour);
             responseTimes = notificationHistory
-              .filter(function (n) {
-                return n.opened_at;
-              })
-              .map(function (n) {
+              .filter((n) => n.opened_at)
+              .map((n) => {
                 var sent = new Date(n.sent_at).getTime();
                 var opened = new Date(n.opened_at).getTime();
                 return (opened - sent) / (1000 * 60); // minutos
               });
             avgResponseTime =
               responseTimes.length > 0
-                ? responseTimes.reduce(function (a, b) {
-                    return a + b;
-                  }, 0) / responseTimes.length
+                ? responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length
                 : 60;
             responsePattern = "immediate";
             if (avgResponseTime > 60) responsePattern = "delayed";
-            weekendEngagement = notificationHistory.filter(function (n) {
+            weekendEngagement = notificationHistory.filter((n) => {
               var day = new Date(n.sent_at).getDay();
               return (day === 0 || day === 6) && n.opened_at;
             }).length;
             weekdayEngagement = totalOpened - weekendEngagement;
-            weekendSent = notificationHistory.filter(function (n) {
+            weekendSent = notificationHistory.filter((n) => {
               var day = new Date(n.sent_at).getDay();
               return day === 0 || day === 6;
             }).length;
@@ -416,9 +391,7 @@ var NotificationMLEngine = /** @class */ (function () {
             weekendRate = weekendSent > 0 ? weekendEngagement / weekendSent : 0;
             if (weekendRate > weekdayRate * 1.2) responsePattern = "weekend";
             else if (weekdayRate > weekendRate * 1.2) responsePattern = "weekday";
-            lastEngagement = notificationHistory.find(function (n) {
-              return n.opened_at || n.clicked_at;
-            });
+            lastEngagement = notificationHistory.find((n) => n.opened_at || n.clicked_at);
             daysSinceLastEngagement = lastEngagement
               ? (Date.now() - new Date(lastEngagement.sent_at).getTime()) / (1000 * 60 * 60 * 24)
               : 30;
@@ -594,7 +567,7 @@ var NotificationMLEngine = /** @class */ (function () {
         channels = availableChannels || Object.values(types_1.NotificationChannel);
         engagementModel = this.models.get("engagement");
         channelScores = channels
-          .map(function (channel) {
+          .map((channel) => {
             var score = 0.5; // Base score
             // Score baseado no histórico do usuário
             if (profile.behavior.preferredChannels.includes(channel)) {
@@ -618,9 +591,7 @@ var NotificationMLEngine = /** @class */ (function () {
             }
             return { channel: channel, score: Math.min(score, 1) };
           })
-          .sort(function (a, b) {
-            return b.score - a.score;
-          });
+          .sort((a, b) => b.score - a.score);
         recommended = channelScores[0];
         alternatives = channelScores.slice(1, 4);
         return [
@@ -648,7 +619,7 @@ var NotificationMLEngine = /** @class */ (function () {
         dayOfWeek,
         daysToWeekend,
         confidence;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         optimizedTime = new Date(baseTime);
         factors = [];
         // Otimizar hora baseada no perfil
@@ -701,7 +672,7 @@ var NotificationMLEngine = /** @class */ (function () {
   NotificationMLEngine.prototype.personalizeContent = function (profile, baseContent) {
     return __awaiter(this, void 0, void 0, function () {
       var personalizedContent, adjustments, confidence;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         personalizedContent = baseContent;
         adjustments = [];
         // Ajuste de tom baseado no engagement
@@ -745,7 +716,7 @@ var NotificationMLEngine = /** @class */ (function () {
   NotificationMLEngine.prototype.optimizeFrequency = function (profile) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendedFrequency, confidence;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (profile.preferences.frequency) {
           case "high":
             recommendedFrequency = profile.behavior.engagementScore > 0.7 ? 5 : 3;
@@ -798,15 +769,13 @@ var NotificationMLEngine = /** @class */ (function () {
             if (error || !profiles || profiles.length < 10) {
               throw new Error("Dados insuficientes para segmentação");
             }
-            features = profiles.map(function (profile) {
-              return [
-                profile.behavior.engagementScore,
-                profile.behavior.churnRisk,
-                profile.history.avgResponseTime / 1440, // Normalizar para dias
-                profile.behavior.preferredChannels.length,
-                profile.demographics.age || 35, // Valor padrão
-              ];
-            });
+            features = profiles.map((profile) => [
+              profile.behavior.engagementScore,
+              profile.behavior.churnRisk,
+              profile.history.avgResponseTime / 1440, // Normalizar para dias
+              profile.behavior.preferredChannels.length,
+              profile.demographics.age || 35, // Valor padrão
+            ]);
             segments = this.performKMeans(features, profiles, 4);
             return [
               2 /*return*/,
@@ -831,22 +800,21 @@ var NotificationMLEngine = /** @class */ (function () {
    * Implementa K-means simplificado
    */
   NotificationMLEngine.prototype.performKMeans = function (features, profiles, k) {
-    var _this = this;
     // Inicializar centroids aleatoriamente
-    var centroids = Array.from({ length: k }, function () {
-      return features[Math.floor(Math.random() * features.length)].slice();
-    });
+    var centroids = Array.from({ length: k }, () =>
+      features[Math.floor(Math.random() * features.length)].slice(),
+    );
     var assignments = new Array(features.length).fill(0);
     var converged = false;
     var iterations = 0;
-    var _loop_1 = function () {
+    var _loop_1 = () => {
       var newAssignments = __spreadArray([], assignments, true);
       // Atribuir cada ponto ao centroid mais próximo
-      features.forEach(function (feature, i) {
+      features.forEach((feature, i) => {
         var minDistance = Infinity;
         var nearestCentroid = 0;
-        centroids.forEach(function (centroid, j) {
-          var distance = _this.euclideanDistance(feature, centroid);
+        centroids.forEach((centroid, j) => {
+          var distance = this.euclideanDistance(feature, centroid);
           if (distance < minDistance) {
             minDistance = distance;
             nearestCentroid = j;
@@ -855,20 +823,14 @@ var NotificationMLEngine = /** @class */ (function () {
         newAssignments[i] = nearestCentroid;
       });
       // Verificar convergência
-      converged = newAssignments.every(function (assignment, i) {
-        return assignment === assignments[i];
-      });
+      converged = newAssignments.every((assignment, i) => assignment === assignments[i]);
       assignments = newAssignments;
-      var _loop_3 = function (j) {
-        var clusterPoints = features.filter(function (_, i) {
-          return assignments[i] === j;
-        });
+      var _loop_3 = (j) => {
+        var clusterPoints = features.filter((_, i) => assignments[i] === j);
         if (clusterPoints.length > 0) {
-          var _loop_4 = function (d) {
+          var _loop_4 = (d) => {
             centroids[j][d] =
-              clusterPoints.reduce(function (sum, point) {
-                return sum + point[d];
-              }, 0) / clusterPoints.length;
+              clusterPoints.reduce((sum, point) => sum + point[d], 0) / clusterPoints.length;
           };
           for (var d = 0; d < centroids[j].length; d++) {
             _loop_4(d);
@@ -886,19 +848,14 @@ var NotificationMLEngine = /** @class */ (function () {
     }
     // Criar segmentos
     var segments = [];
-    var _loop_2 = function (i) {
-      var segmentUsers = profiles.filter(function (_, idx) {
-        return assignments[idx] === i;
-      });
+    var _loop_2 = (i) => {
+      var segmentUsers = profiles.filter((_, idx) => assignments[idx] === i);
       if (segmentUsers.length === 0) return "continue";
       var avgEngagement =
-        segmentUsers.reduce(function (sum, user) {
-          return sum + user.behavior.engagementScore;
-        }, 0) / segmentUsers.length;
+        segmentUsers.reduce((sum, user) => sum + user.behavior.engagementScore, 0) /
+        segmentUsers.length;
       var avgChurnRisk =
-        segmentUsers.reduce(function (sum, user) {
-          return sum + user.behavior.churnRisk;
-        }, 0) / segmentUsers.length;
+        segmentUsers.reduce((sum, user) => sum + user.behavior.churnRisk, 0) / segmentUsers.length;
       var name_1 = "";
       var description = "";
       var strategy = {
@@ -942,9 +899,7 @@ var NotificationMLEngine = /** @class */ (function () {
         id: "segment_".concat(i),
         name: name_1,
         description: description,
-        userIds: segmentUsers.map(function (user) {
-          return user.user_id;
-        }),
+        userIds: segmentUsers.map((user) => user.user_id),
         characteristics: {
           avgEngagement: avgEngagement,
           avgChurnRisk: avgChurnRisk,
@@ -962,13 +917,8 @@ var NotificationMLEngine = /** @class */ (function () {
   /**
    * Calcula distância euclidiana entre dois pontos
    */
-  NotificationMLEngine.prototype.euclideanDistance = function (a, b) {
-    return Math.sqrt(
-      a.reduce(function (sum, val, i) {
-        return sum + Math.pow(val - b[i], 2);
-      }, 0),
-    );
-  };
+  NotificationMLEngine.prototype.euclideanDistance = (a, b) =>
+    Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
   // ================================================================================
   // MODEL TRAINING
   // ================================================================================
@@ -1039,7 +989,7 @@ var NotificationMLEngine = /** @class */ (function () {
         model.weights.channel.clear();
         model.weights.dayOfWeek.fill(0);
         // Treinar com dados
-        data.forEach(function (notification) {
+        data.forEach((notification) => {
           var engaged = notification.opened_at || notification.clicked_at;
           var hour = new Date(notification.sent_at).getHours();
           var dayOfWeek = new Date(notification.sent_at).getDay();
@@ -1054,13 +1004,9 @@ var NotificationMLEngine = /** @class */ (function () {
             currentChannelWeight + _this.config.learningRate * (label - 0.5),
           );
         });
-        hourSum = model.weights.hour.reduce(function (a, b) {
-          return a + Math.abs(b);
-        }, 0);
+        hourSum = model.weights.hour.reduce((a, b) => a + Math.abs(b), 0);
         if (hourSum > 0) {
-          model.weights.hour = model.weights.hour.map(function (w) {
-            return w / hourSum;
-          });
+          model.weights.hour = model.weights.hour.map((w) => w / hourSum);
         }
         model.version = "1.".concat(Date.now().toString().slice(-6));
         console.log("📊 Modelo de engajamento atualizado");
@@ -1078,7 +1024,7 @@ var NotificationMLEngine = /** @class */ (function () {
         model = this.models.get("timing");
         if (!model) return [2 /*return*/];
         userHours = new Map();
-        data.forEach(function (notification) {
+        data.forEach((notification) => {
           if (notification.opened_at) {
             var userId = notification.user_id;
             var hour = new Date(notification.sent_at).getHours();
@@ -1090,19 +1036,17 @@ var NotificationMLEngine = /** @class */ (function () {
         });
         // Criar clusters de timing
         model.clusters.clear();
-        userHours.forEach(function (hours, userId) {
+        userHours.forEach((hours, userId) => {
           if (hours.length >= 3) {
             // Encontrar horários mais frequentes
             var hourCounts_1 = new Map();
-            hours.forEach(function (hour) {
+            hours.forEach((hour) => {
               hourCounts_1.set(hour, (hourCounts_1.get(hour) || 0) + 1);
             });
             var bestHours = Array.from(hourCounts_1.entries())
-              .sort(function (a, b) {
-                return b[1] - a[1];
-              })
+              .sort((a, b) => b[1] - a[1])
               .slice(0, 3)
-              .map(function (_a) {
+              .map((_a) => {
                 var hour = _a[0];
                 return hour;
               });

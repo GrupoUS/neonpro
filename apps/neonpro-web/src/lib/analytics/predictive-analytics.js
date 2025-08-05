@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Predictive Analytics Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.predictiveAnalyticsEngine =
   exports.PredictiveAnalyticsEngine =
@@ -166,7 +163,7 @@ var zod_1 = require("zod");
 var logger_1 = require("@/lib/utils/logger");
 var client_1 = require("@/lib/supabase/client");
 // Main Predictive Analytics Engine
-var createpredictiveAnalyticsEngine = /** @class */ (function () {
+var createpredictiveAnalyticsEngine = /** @class */ (() => {
   function createpredictiveAnalyticsEngine() {
     this.supabase = (0, client_1.createClient)();
     this.models = new Map();
@@ -585,7 +582,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
               throw error;
             }
             if (data) {
-              data.forEach(function (modelData) {
+              data.forEach((modelData) => {
                 var model = _this.deserializeModel(modelData);
                 _this.models.set(model.id, model);
               });
@@ -698,7 +695,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   createpredictiveAnalyticsEngine.prototype.createDefaultModel = function (modelData) {
     return __awaiter(this, void 0, void 0, function () {
       var model;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         model = {
           id: "model_".concat(modelData.type, "_").concat(Date.now()),
           name: modelData.name || "Default Model",
@@ -764,11 +761,10 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
     });
   };
   createpredictiveAnalyticsEngine.prototype.startBackgroundTasks = function () {
-    var _this = this;
     // Model performance monitoring
     setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -778,21 +774,20 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       60 * 60 * 1000,
     ); // 1 hour
     // Cache cleanup
     setInterval(
-      function () {
-        _this.cleanupCache();
+      () => {
+        this.cleanupCache();
       },
       10 * 60 * 1000,
     ); // 10 minutes
     // Model drift detection
     setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -802,12 +797,11 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       24 * 60 * 60 * 1000,
     ); // 24 hours
   };
-  createpredictiveAnalyticsEngine.prototype.generateCacheKey = function (request) {
+  createpredictiveAnalyticsEngine.prototype.generateCacheKey = (request) => {
     var features = JSON.stringify(request.features);
     return ""
       .concat(request.modelId, "_")
@@ -822,11 +816,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
           feature = _a[_i];
           value = features[feature.name];
           if (value === undefined || value === null) {
-            if (
-              feature.validationRules.some(function (rule) {
-                return rule.type === "required";
-              })
-            ) {
+            if (feature.validationRules.some((rule) => rule.type === "required")) {
               throw new Error("Required feature missing: ".concat(feature.name));
             }
             continue;
@@ -850,7 +840,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.validateRule = function (value, rule) {
+  createpredictiveAnalyticsEngine.prototype.validateRule = (value, rule) => {
     switch (rule.type) {
       case "range":
         return value >= rule.parameters.min && value <= rule.parameters.max;
@@ -878,7 +868,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.applyPreprocessingStep = function (value, step) {
+  createpredictiveAnalyticsEngine.prototype.applyPreprocessingStep = (value, step) => {
     switch (step.type) {
       case "normalize":
         return (value - step.parameters.min) / (step.parameters.max - step.parameters.min);
@@ -908,10 +898,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.simulateRandomForestPrediction = function (
-    model,
-    features,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.simulateRandomForestPrediction = (model, features) => {
     // Simulate random forest prediction
     var probability = 0.7 + Math.random() * 0.25; // 0.7-0.95
     var value = probability > 0.8 ? "positive" : "negative";
@@ -919,16 +906,13 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       value: value,
       probability: probability,
       confidence: probability,
-      contributions: model.features.reduce(function (acc, feature) {
+      contributions: model.features.reduce((acc, feature) => {
         acc[feature.name] = (Math.random() - 0.5) * feature.importance;
         return acc;
       }, {}),
     };
   };
-  createpredictiveAnalyticsEngine.prototype.simulateNeuralNetworkPrediction = function (
-    model,
-    features,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.simulateNeuralNetworkPrediction = (model, features) => {
     // Simulate neural network prediction
     var probability = 0.75 + Math.random() * 0.2; // 0.75-0.95
     var value = model.type === "complication" ? "low_risk" : "favorable";
@@ -936,16 +920,16 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       value: value,
       probability: probability,
       confidence: probability,
-      contributions: model.features.reduce(function (acc, feature) {
+      contributions: model.features.reduce((acc, feature) => {
         acc[feature.name] = Math.random() * feature.importance;
         return acc;
       }, {}),
     };
   };
-  createpredictiveAnalyticsEngine.prototype.simulateLinearRegressionPrediction = function (
+  createpredictiveAnalyticsEngine.prototype.simulateLinearRegressionPrediction = (
     model,
     features,
-  ) {
+  ) => {
     // Simulate linear regression prediction
     var value = 7.5 + Math.random() * 2; // 7.5-9.5 score
     var probability = value / 10;
@@ -953,13 +937,13 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       value: value,
       probability: probability,
       confidence: 0.8 + Math.random() * 0.15,
-      contributions: model.features.reduce(function (acc, feature) {
+      contributions: model.features.reduce((acc, feature) => {
         acc[feature.name] = (Math.random() - 0.5) * feature.importance;
         return acc;
       }, {}),
     };
   };
-  createpredictiveAnalyticsEngine.prototype.simulateDefaultPrediction = function (model, features) {
+  createpredictiveAnalyticsEngine.prototype.simulateDefaultPrediction = (model, features) => {
     // Default simulation
     var probability = 0.6 + Math.random() * 0.3;
     return {
@@ -969,7 +953,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       contributions: {},
     };
   };
-  createpredictiveAnalyticsEngine.prototype.formatPrediction = function (type, rawPrediction) {
+  createpredictiveAnalyticsEngine.prototype.formatPrediction = (type, rawPrediction) => {
     switch (type) {
       case "outcome":
         return {
@@ -1001,7 +985,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
         };
     }
   };
-  createpredictiveAnalyticsEngine.prototype.calculateConfidence = function (rawPrediction) {
+  createpredictiveAnalyticsEngine.prototype.calculateConfidence = (rawPrediction) => {
     var confidence = rawPrediction.confidence || rawPrediction.probability || 0;
     if (confidence >= 0.9) return "very_high";
     if (confidence >= 0.8) return "high";
@@ -1013,7 +997,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   createpredictiveAnalyticsEngine.prototype.assessRisk = function (model, rawPrediction, features) {
     return __awaiter(this, void 0, void 0, function () {
       var riskScore;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         riskScore = Math.random() * 0.3 + 0.1;
         return [
           2 /*return*/,
@@ -1044,17 +1028,16 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var explanations;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         explanations = [];
-        Object.entries(rawPrediction.contributions || {}).forEach(function (_a) {
+        Object.entries(rawPrediction.contributions || {}).forEach((_a) => {
           var feature = _a[0],
             contribution = _a[1];
           explanations.push({
             feature: feature,
             contribution: contribution,
             value: features[feature],
-            interpretation: _this.interpretContribution(feature, contribution),
+            interpretation: this.interpretContribution(feature, contribution),
             confidence: 0.8,
           });
         });
@@ -1062,10 +1045,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.interpretContribution = function (
-    feature,
-    contribution,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.interpretContribution = (feature, contribution) => {
     if (contribution > 0.1) return "".concat(feature, " strongly supports the prediction");
     if (contribution > 0.05) return "".concat(feature, " moderately supports the prediction");
     if (contribution < -0.1) return "".concat(feature, " strongly opposes the prediction");
@@ -1079,7 +1059,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
         if (model.type === "complication" && rawPrediction.probability > 0.3) {
           recommendations.push({
@@ -1106,100 +1086,78 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         return [
           2 /*return*/,
-          Array.from(this.models.values()).find(function (m) {
-            return m.type === type;
-          }) || null,
+          Array.from(this.models.values()).find((m) => m.type === type) || null,
         ];
       });
     });
   };
   createpredictiveAnalyticsEngine.prototype.prepareTimeSeriesData = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Implementation would prepare time series data
       });
     });
   };
   createpredictiveAnalyticsEngine.prototype.generateForecast = function (model, data, request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Implementation would generate forecast points
       });
     });
   };
   createpredictiveAnalyticsEngine.prototype.analyzeTrend = function (points) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            direction: "stable",
-            strength: 0.5,
-            changeRate: 0,
-            significance: 0.5,
-            inflectionPoints: [],
-            projections: [],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          direction: "stable",
+          strength: 0.5,
+          changeRate: 0,
+          significance: 0.5,
+          inflectionPoints: [],
+          projections: [],
+        },
+      ]);
     });
   };
   createpredictiveAnalyticsEngine.prototype.analyzeSeasonality = function (data, points) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            type: "none",
-            strength: 0,
-            period: 0,
-            patterns: [],
-            peaks: [],
-            troughs: [],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          type: "none",
+          strength: 0,
+          period: 0,
+          patterns: [],
+          peaks: [],
+          troughs: [],
+        },
+      ]);
     });
   };
-  createpredictiveAnalyticsEngine.prototype.calculateForecastConfidence = function (points) {
-    return "medium";
-  };
+  createpredictiveAnalyticsEngine.prototype.calculateForecastConfidence = (points) => "medium";
   createpredictiveAnalyticsEngine.prototype.calculateForecastAccuracy = function (model, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, 0.85];
-      });
+      return __generator(this, (_a) => [2 /*return*/, 0.85]);
     });
   };
-  createpredictiveAnalyticsEngine.prototype.calculateDataQuality = function (data) {
-    return 0.9;
-  };
-  createpredictiveAnalyticsEngine.prototype.generateForecastWarnings = function (data, points) {
-    return [];
-  };
+  createpredictiveAnalyticsEngine.prototype.calculateDataQuality = (data) => 0.9;
+  createpredictiveAnalyticsEngine.prototype.generateForecastWarnings = (data, points) => [];
   // Additional placeholder methods...
-  createpredictiveAnalyticsEngine.prototype.deserializeModel = function (data) {
-    return data;
-  };
+  createpredictiveAnalyticsEngine.prototype.deserializeModel = (data) => data;
   createpredictiveAnalyticsEngine.prototype.savePrediction = function (prediction) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createpredictiveAnalyticsEngine.prototype.saveForecast = function (forecast) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createpredictiveAnalyticsEngine.prototype.saveModel = function (model) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createpredictiveAnalyticsEngine.prototype.cleanupCache = function () {
@@ -1215,16 +1173,12 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   };
   createpredictiveAnalyticsEngine.prototype.monitorModelPerformance = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createpredictiveAnalyticsEngine.prototype.detectModelDriftForAllModels = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return createpredictiveAnalyticsEngine;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Management Hooks
  * Story 1.4: Session Management & Security
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,10 +149,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -164,7 +161,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSession = useSession;
 exports.useSecurityEvents = useSecurityEvents;
@@ -174,7 +171,6 @@ var session_1 = require("@/lib/auth/session");
 var use_toast_1 = require("@/hooks/use-toast");
 var logger_1 = require("@/lib/logger");
 function useSession() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     session = _a[0],
     setSession = _a[1];
@@ -201,10 +197,10 @@ function useSession() {
   // SESSION MANAGEMENT
   // ============================================================================
   var createSession = (0, react_1.useCallback)(
-    function (request) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (request) =>
+      __awaiter(this, void 0, void 0, function () {
         var newSession, err_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, 4, 5]);
@@ -252,15 +248,14 @@ function useSession() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [toast],
   );
   var updateSession = (0, react_1.useCallback)(
-    function (updates) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (updates) =>
+      __awaiter(this, void 0, void 0, function () {
         var updatedSession, err_2, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!session) return [2 /*return*/];
@@ -289,78 +284,74 @@ function useSession() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session],
   );
-  var terminateSession = (0, react_1.useCallback)(
-    function () {
-      var args_1 = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args_1[_i] = arguments[_i];
+  var terminateSession = (0, react_1.useCallback)(() => {
+    var args_1 = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args_1[_i] = arguments[_i];
+    }
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (reason) {
+      var err_3, errorMessage;
+      if (reason === void 0) {
+        reason = "user_logout";
       }
-      return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (reason) {
-        var err_3, errorMessage;
-        if (reason === void 0) {
-          reason = "user_logout";
+      return __generator(this, (_a) => {
+        switch (_a.label) {
+          case 0:
+            if (!session) return [2 /*return*/];
+            _a.label = 1;
+          case 1:
+            _a.trys.push([1, 3, 4, 5]);
+            setIsLoading(true);
+            return [4 /*yield*/, session_1.sessionManager.terminateSession(session.id, reason)];
+          case 2:
+            _a.sent();
+            // Stop monitoring
+            stopSessionMonitoring();
+            // Clear state
+            setSession(null);
+            setSecurityEvents([]);
+            setDevices([]);
+            setAnalytics(null);
+            setError(null);
+            toast({
+              title: "Session Ended",
+              description: "You have been successfully logged out.",
+              variant: "default",
+            });
+            // Redirect to login
+            router.push("/auth/login");
+            logger_1.logger.info("Session terminated via hook", {
+              session_id: session.id,
+              reason: reason,
+            });
+            return [3 /*break*/, 5];
+          case 3:
+            err_3 = _a.sent();
+            errorMessage = err_3 instanceof Error ? err_3.message : "Failed to terminate session";
+            setError(errorMessage);
+            toast({
+              title: "Logout Failed",
+              description: errorMessage,
+              variant: "destructive",
+            });
+            return [3 /*break*/, 5];
+          case 4:
+            setIsLoading(false);
+            return [7 /*endfinally*/];
+          case 5:
+            return [2 /*return*/];
         }
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!session) return [2 /*return*/];
-              _a.label = 1;
-            case 1:
-              _a.trys.push([1, 3, 4, 5]);
-              setIsLoading(true);
-              return [4 /*yield*/, session_1.sessionManager.terminateSession(session.id, reason)];
-            case 2:
-              _a.sent();
-              // Stop monitoring
-              stopSessionMonitoring();
-              // Clear state
-              setSession(null);
-              setSecurityEvents([]);
-              setDevices([]);
-              setAnalytics(null);
-              setError(null);
-              toast({
-                title: "Session Ended",
-                description: "You have been successfully logged out.",
-                variant: "default",
-              });
-              // Redirect to login
-              router.push("/auth/login");
-              logger_1.logger.info("Session terminated via hook", {
-                session_id: session.id,
-                reason: reason,
-              });
-              return [3 /*break*/, 5];
-            case 3:
-              err_3 = _a.sent();
-              errorMessage = err_3 instanceof Error ? err_3.message : "Failed to terminate session";
-              setError(errorMessage);
-              toast({
-                title: "Logout Failed",
-                description: errorMessage,
-                variant: "destructive",
-              });
-              return [3 /*break*/, 5];
-            case 4:
-              setIsLoading(false);
-              return [7 /*endfinally*/];
-            case 5:
-              return [2 /*return*/];
-          }
-        });
       });
-    },
-    [session, router, toast],
-  );
+    });
+  }, [session, router, toast]);
   var terminateAllSessions = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var activeSessions, err_4, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!session) return [2 /*return*/];
@@ -383,12 +374,9 @@ function useSession() {
               return [
                 4 /*yield*/,
                 Promise.all(
-                  activeSessions.map(function (s) {
-                    return session_1.sessionManager.terminateSession(
-                      s.id,
-                      "terminate_all_sessions",
-                    );
-                  }),
+                  activeSessions.map((s) =>
+                    session_1.sessionManager.terminateSession(s.id, "terminate_all_sessions"),
+                  ),
                 ),
               ];
             case 3:
@@ -433,15 +421,14 @@ function useSession() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session, router, toast],
   );
   var refreshSession = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var currentSession, err_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!session) return [2 /*return*/];
@@ -495,15 +482,14 @@ function useSession() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session, terminateSession],
   );
   var extendSession = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var err_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!session) return [2 /*return*/];
@@ -531,18 +517,17 @@ function useSession() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session, updateSession],
   );
   // ============================================================================
   // SECURITY MONITORING
   // ============================================================================
   var reportSuspiciousActivity = (0, react_1.useCallback)(
-    function (eventType, details) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (eventType, details) =>
+      __awaiter(this, void 0, void 0, function () {
         var err_7, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!session) return [2 /*return*/];
@@ -601,18 +586,17 @@ function useSession() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session, toast],
   );
   // ============================================================================
   // DEVICE MANAGEMENT
   // ============================================================================
   var trustDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var err_8, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -652,16 +636,15 @@ function useSession() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session, toast],
   );
   var blockDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var deviceSessions, err_9, errorMessage;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 7, , 8]);
@@ -681,9 +664,7 @@ function useSession() {
                   .select("id")
                   .eq(
                     "device_fingerprint",
-                    (_a = devices.find(function (d) {
-                      return d.id === deviceId;
-                    })) === null || _a === void 0
+                    (_a = devices.find((d) => d.id === deviceId)) === null || _a === void 0
                       ? void 0
                       : _a.device_fingerprint,
                   )
@@ -695,9 +676,9 @@ function useSession() {
               return [
                 4 /*yield*/,
                 Promise.all(
-                  deviceSessions.map(function (s) {
-                    return session_1.sessionManager.terminateSession(s.id, "device_blocked");
-                  }),
+                  deviceSessions.map((s) =>
+                    session_1.sessionManager.terminateSession(s.id, "device_blocked"),
+                  ),
                 ),
               ];
             case 3:
@@ -731,186 +712,179 @@ function useSession() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session, devices, toast],
   );
   // ============================================================================
   // DATA LOADING
   // ============================================================================
-  var loadSecurityEvents = (0, react_1.useCallback)(function (sessionId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var events, err_10;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              session_1.sessionManager.supabase
-                .from("session_security_events")
-                .select("*")
-                .eq("session_id", sessionId)
-                .order("timestamp", { ascending: false })
-                .limit(50),
-            ];
-          case 1:
-            events = _a.sent().data;
-            setSecurityEvents(events || []);
-            return [3 /*break*/, 3];
-          case 2:
-            err_10 = _a.sent();
-            logger_1.logger.error("Failed to load security events", {
-              error: err_10,
-              session_id: sessionId,
-            });
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var loadUserDevices = (0, react_1.useCallback)(function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var userDevices, err_11;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              session_1.sessionManager.supabase
-                .from("device_registrations")
-                .select("*")
-                .eq("user_id", userId)
-                .order("last_seen", { ascending: false }),
-            ];
-          case 1:
-            userDevices = _a.sent().data;
-            setDevices(userDevices || []);
-            return [3 /*break*/, 3];
-          case 2:
-            err_11 = _a.sent();
-            logger_1.logger.error("Failed to load user devices", {
-              error: err_11,
-              user_id: userId,
-            });
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var loadSessionAnalytics = (0, react_1.useCallback)(function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var thirtyDaysAgo,
-        sessions,
-        analytics_1,
-        completedSessions,
-        totalDuration,
-        securityCount,
-        err_12;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 4, , 5]);
-            thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-            return [
-              4 /*yield*/,
-              session_1.sessionManager.supabase
-                .from("user_sessions")
-                .select("*")
-                .eq("user_id", userId)
-                .gte("created_at", thirtyDaysAgo),
-            ];
-          case 1:
-            sessions = _a.sent().data;
-            if (!sessions) return [3 /*break*/, 3];
-            analytics_1 = {
-              total_sessions: sessions.length,
-              active_sessions: sessions.filter(function (s) {
-                return s.is_active;
-              }).length,
-              average_duration_minutes: 0,
-              unique_devices: new Set(
-                sessions.map(function (s) {
-                  return s.device_fingerprint;
-                }),
-              ).size,
-              unique_locations: new Set(
-                sessions.map(function (s) {
-                  return s.ip_address;
-                }),
-              ).size,
-              security_events_count: 0,
-              last_login: sessions.length > 0 ? sessions[0].created_at : null,
-              most_used_device: "",
-              risk_score: 0,
-            };
-            completedSessions = sessions.filter(function (s) {
-              return !s.is_active;
-            });
-            if (completedSessions.length > 0) {
-              totalDuration = completedSessions.reduce(function (sum, session) {
-                var start = new Date(session.created_at).getTime();
-                var end = new Date(session.expires_at).getTime();
-                return sum + (end - start);
-              }, 0);
-              analytics_1.average_duration_minutes = Math.round(
-                totalDuration / completedSessions.length / 60000,
+  var loadSecurityEvents = (0, react_1.useCallback)(
+    (sessionId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var events, err_10;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                session_1.sessionManager.supabase
+                  .from("session_security_events")
+                  .select("*")
+                  .eq("session_id", sessionId)
+                  .order("timestamp", { ascending: false })
+                  .limit(50),
+              ];
+            case 1:
+              events = _a.sent().data;
+              setSecurityEvents(events || []);
+              return [3 /*break*/, 3];
+            case 2:
+              err_10 = _a.sent();
+              logger_1.logger.error("Failed to load security events", {
+                error: err_10,
+                session_id: sessionId,
+              });
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var loadUserDevices = (0, react_1.useCallback)(
+    (userId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var userDevices, err_11;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                session_1.sessionManager.supabase
+                  .from("device_registrations")
+                  .select("*")
+                  .eq("user_id", userId)
+                  .order("last_seen", { ascending: false }),
+              ];
+            case 1:
+              userDevices = _a.sent().data;
+              setDevices(userDevices || []);
+              return [3 /*break*/, 3];
+            case 2:
+              err_11 = _a.sent();
+              logger_1.logger.error("Failed to load user devices", {
+                error: err_11,
+                user_id: userId,
+              });
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var loadSessionAnalytics = (0, react_1.useCallback)(
+    (userId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var thirtyDaysAgo,
+          sessions,
+          analytics_1,
+          completedSessions,
+          totalDuration,
+          securityCount,
+          err_12;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 4, , 5]);
+              thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+              return [
+                4 /*yield*/,
+                session_1.sessionManager.supabase
+                  .from("user_sessions")
+                  .select("*")
+                  .eq("user_id", userId)
+                  .gte("created_at", thirtyDaysAgo),
+              ];
+            case 1:
+              sessions = _a.sent().data;
+              if (!sessions) return [3 /*break*/, 3];
+              analytics_1 = {
+                total_sessions: sessions.length,
+                active_sessions: sessions.filter((s) => s.is_active).length,
+                average_duration_minutes: 0,
+                unique_devices: new Set(sessions.map((s) => s.device_fingerprint)).size,
+                unique_locations: new Set(sessions.map((s) => s.ip_address)).size,
+                security_events_count: 0,
+                last_login: sessions.length > 0 ? sessions[0].created_at : null,
+                most_used_device: "",
+                risk_score: 0,
+              };
+              completedSessions = sessions.filter((s) => !s.is_active);
+              if (completedSessions.length > 0) {
+                totalDuration = completedSessions.reduce((sum, session) => {
+                  var start = new Date(session.created_at).getTime();
+                  var end = new Date(session.expires_at).getTime();
+                  return sum + (end - start);
+                }, 0);
+                analytics_1.average_duration_minutes = Math.round(
+                  totalDuration / completedSessions.length / 60000,
+                );
+              }
+              return [
+                4 /*yield*/,
+                session_1.sessionManager.supabase
+                  .from("session_security_events")
+                  .select("*", { count: "exact", head: true })
+                  .eq("user_id", userId)
+                  .gte("timestamp", thirtyDaysAgo),
+              ];
+            case 2:
+              securityCount = _a.sent().count;
+              analytics_1.security_events_count = securityCount || 0;
+              // Calculate risk score (simplified)
+              analytics_1.risk_score = Math.min(
+                100,
+                analytics_1.security_events_count * 10 +
+                  (analytics_1.unique_locations > 5 ? 20 : 0) +
+                  (analytics_1.unique_devices > 3 ? 15 : 0),
               );
-            }
-            return [
-              4 /*yield*/,
-              session_1.sessionManager.supabase
-                .from("session_security_events")
-                .select("*", { count: "exact", head: true })
-                .eq("user_id", userId)
-                .gte("timestamp", thirtyDaysAgo),
-            ];
-          case 2:
-            securityCount = _a.sent().count;
-            analytics_1.security_events_count = securityCount || 0;
-            // Calculate risk score (simplified)
-            analytics_1.risk_score = Math.min(
-              100,
-              analytics_1.security_events_count * 10 +
-                (analytics_1.unique_locations > 5 ? 20 : 0) +
-                (analytics_1.unique_devices > 3 ? 15 : 0),
-            );
-            setAnalytics(analytics_1);
-            _a.label = 3;
-          case 3:
-            return [3 /*break*/, 5];
-          case 4:
-            err_12 = _a.sent();
-            logger_1.logger.error("Failed to load session analytics", {
-              error: err_12,
-              user_id: userId,
-            });
-            return [3 /*break*/, 5];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+              setAnalytics(analytics_1);
+              _a.label = 3;
+            case 3:
+              return [3 /*break*/, 5];
+            case 4:
+              err_12 = _a.sent();
+              logger_1.logger.error("Failed to load session analytics", {
+                error: err_12,
+                user_id: userId,
+              });
+              return [3 /*break*/, 5];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // ============================================================================
   // SESSION MONITORING
   // ============================================================================
   var startSessionMonitoring = (0, react_1.useCallback)(
-    function (sessionData) {
+    (sessionData) => {
       // Heartbeat to keep session alive
       heartbeatRef.current = setInterval(
-        function () {
+        () => {
           extendSession();
         },
         5 * 60 * 1000,
       ); // Every 5 minutes
       // Security monitoring
-      securityMonitorRef.current = setInterval(function () {
+      securityMonitorRef.current = setInterval(() => {
         if (sessionData.id) {
           loadSecurityEvents(sessionData.id);
         }
@@ -919,7 +893,7 @@ function useSession() {
     },
     [extendSession, loadSecurityEvents],
   );
-  var stopSessionMonitoring = (0, react_1.useCallback)(function () {
+  var stopSessionMonitoring = (0, react_1.useCallback)(() => {
     if (heartbeatRef.current) {
       clearInterval(heartbeatRef.current);
       heartbeatRef.current = null;
@@ -935,30 +909,23 @@ function useSession() {
   // ============================================================================
   // Cleanup on unmount
   (0, react_1.useEffect)(
-    function () {
-      return function () {
-        stopSessionMonitoring();
-      };
+    () => () => {
+      stopSessionMonitoring();
     },
     [stopSessionMonitoring],
   );
   // Auto-refresh session periodically
-  (0, react_1.useEffect)(
-    function () {
-      if (session) {
-        var refreshInterval_1 = setInterval(
-          function () {
-            refreshSession();
-          },
-          10 * 60 * 1000,
-        ); // Every 10 minutes
-        return function () {
-          return clearInterval(refreshInterval_1);
-        };
-      }
-    },
-    [session, refreshSession],
-  );
+  (0, react_1.useEffect)(() => {
+    if (session) {
+      var refreshInterval_1 = setInterval(
+        () => {
+          refreshSession();
+        },
+        10 * 60 * 1000,
+      ); // Every 10 minutes
+      return () => clearInterval(refreshInterval_1);
+    }
+  }, [session, refreshSession]);
   return {
     session: session,
     isLoading: isLoading,
@@ -979,7 +946,6 @@ function useSession() {
   };
 }
 function useSecurityEvents(sessionId) {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     events = _a[0],
     setEvents = _a[1];
@@ -991,10 +957,10 @@ function useSecurityEvents(sessionId) {
     setError = _c[1];
   var toast = (0, use_toast_1.useToast)().toast;
   var loadEvents = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, securityEvents, loadError, err_13, errorMessage;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!sessionId) return [2 /*return*/];
@@ -1033,15 +999,14 @@ function useSecurityEvents(sessionId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [sessionId],
   );
   var resolveEvent = (0, react_1.useCallback)(
-    function (eventId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (eventId) =>
+      __awaiter(this, void 0, void 0, function () {
         var err_14, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -1082,15 +1047,14 @@ function useSecurityEvents(sessionId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadEvents, toast],
   );
   var dismissEvent = (0, react_1.useCallback)(
-    function (eventId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (eventId) =>
+      __awaiter(this, void 0, void 0, function () {
         var err_15, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -1132,43 +1096,27 @@ function useSecurityEvents(sessionId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadEvents, toast],
   );
   var getEventsByType = (0, react_1.useCallback)(
-    function (eventType) {
-      return events.filter(function (event) {
-        return event.event_type === eventType;
-      });
-    },
+    (eventType) => events.filter((event) => event.event_type === eventType),
     [events],
   );
   var getUnresolvedEvents = (0, react_1.useCallback)(
-    function () {
-      return events.filter(function (event) {
-        return !event.resolved;
-      });
-    },
+    () => events.filter((event) => !event.resolved),
     [events],
   );
   var getCriticalEvents = (0, react_1.useCallback)(
-    function () {
-      return events.filter(function (event) {
-        return event.severity === "critical" && !event.resolved;
-      });
-    },
+    () => events.filter((event) => event.severity === "critical" && !event.resolved),
     [events],
   );
   // Load events when sessionId changes
-  (0, react_1.useEffect)(
-    function () {
-      if (sessionId) {
-        loadEvents();
-      }
-    },
-    [sessionId, loadEvents],
-  );
+  (0, react_1.useEffect)(() => {
+    if (sessionId) {
+      loadEvents();
+    }
+  }, [sessionId, loadEvents]);
   return {
     events: events,
     isLoading: isLoading,

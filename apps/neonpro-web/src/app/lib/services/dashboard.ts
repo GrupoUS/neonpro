@@ -548,13 +548,14 @@ export class DashboardService {
         start.setHours(0, 0, 0, 0);
         end.setHours(23, 59, 59, 999);
         break;
-      case "weekly":
+      case "weekly": {
         const day = start.getDay();
         start.setDate(start.getDate() - day);
         start.setHours(0, 0, 0, 0);
         end.setDate(start.getDate() + 6);
         end.setHours(23, 59, 59, 999);
         break;
+      }
       case "monthly":
         start.setDate(1);
         start.setHours(0, 0, 0, 0);

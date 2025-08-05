@@ -8,8 +8,8 @@
  */
 
 import type {
-  IntegrationConnector,
   IntegrationConfig,
+  IntegrationConnector,
   IntegrationRequest,
   IntegrationResponse,
   WebhookConfig,
@@ -640,7 +640,7 @@ export class StripeConnector implements IntegrationConnector {
     const params: string[] = [];
 
     for (const key in data) {
-      if (data.hasOwnProperty(key)) {
+      if (Object.hasOwn(data, key)) {
         const value = data[key];
         const encodedKey = prefix ? `${prefix}[${key}]` : key;
 

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🏥 ADVANCED MEDICAL AI DASHBOARD - NEONPRO HEALTHCARE SYSTEM
  *
@@ -19,15 +18,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AdvancedMedicalAIDashboard;
 var card_1 = require("@/components/ui/card");
@@ -240,18 +237,13 @@ var mockHealthcareData = {
 // Server Component for fetching real-time data (Next.js pattern from Context7)
 function getHealthcareMetrics() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           // In production, this would fetch from Supabase with RLS policies
           // await supabase.from('healthcare_metrics').select('*').eq('clinic_id', session.user.id)
           // Simulate network delay
-          return [
-            4 /*yield*/,
-            new Promise(function (resolve) {
-              return setTimeout(resolve, 100);
-            }),
-          ];
+          return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 100))];
         case 1:
           // In production, this would fetch from Supabase with RLS policies
           // await supabase.from('healthcare_metrics').select('*').eq('clinic_id', session.user.id)
@@ -265,7 +257,7 @@ function getHealthcareMetrics() {
 // AI Model Status Component
 function AIModelCard(_a) {
   var model = _a.model;
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "active":
         return "bg-green-500";
@@ -277,7 +269,7 @@ function AIModelCard(_a) {
         return "bg-gray-500";
     }
   };
-  var getAccuracyColor = function (accuracy) {
+  var getAccuracyColor = (accuracy) => {
     if (accuracy >= 90) return "text-green-600";
     if (accuracy >= 85) return "text-yellow-600";
     return "text-red-600";
@@ -329,7 +321,7 @@ function AIModelCard(_a) {
 function AdvancedMedicalAIDashboard() {
   return __awaiter(this, void 0, void 0, function () {
     var metrics;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, getHealthcareMetrics()];
@@ -432,9 +424,9 @@ function AdvancedMedicalAIDashboard() {
                 {/* AI Models Tab */}
                 <tabs_1.TabsContent value="ai-models" className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {metrics.aiModels.map(function (model, index) {
-                      return <AIModelCard key={index} model={model} />;
-                    })}
+                    {metrics.aiModels.map((model, index) => (
+                      <AIModelCard key={index} model={model} />
+                    ))}
                   </div>
 
                   {/* AI Performance Summary */}
@@ -453,9 +445,8 @@ function AdvancedMedicalAIDashboard() {
                         <div>
                           <div className="text-2xl font-bold text-green-600">
                             {(
-                              metrics.aiModels.reduce(function (acc, model) {
-                                return acc + model.accuracy;
-                              }, 0) / metrics.aiModels.length
+                              metrics.aiModels.reduce((acc, model) => acc + model.accuracy, 0) /
+                              metrics.aiModels.length
                             ).toFixed(1)}
                             %
                           </div>
@@ -464,9 +455,10 @@ function AdvancedMedicalAIDashboard() {
                         <div>
                           <div className="text-2xl font-bold text-blue-600">
                             {Math.round(
-                              metrics.aiModels.reduce(function (acc, model) {
-                                return acc + model.inferenceTime;
-                              }, 0) / metrics.aiModels.length,
+                              metrics.aiModels.reduce(
+                                (acc, model) => acc + model.inferenceTime,
+                                0,
+                              ) / metrics.aiModels.length,
                             )}
                             ms
                           </div>
@@ -474,20 +466,14 @@ function AdvancedMedicalAIDashboard() {
                         </div>
                         <div>
                           <div className="text-2xl font-bold text-purple-600">
-                            {metrics.aiModels.reduce(function (acc, model) {
-                              return acc + model.predictions;
-                            }, 0)}
+                            {metrics.aiModels.reduce((acc, model) => acc + model.predictions, 0)}
                           </div>
                           <p className="text-xs text-muted-foreground">Total Predições</p>
                         </div>
                         <div>
                           <div className="text-2xl font-bold text-orange-600">
-                            {
-                              metrics.aiModels.filter(function (model) {
-                                return model.status === "active";
-                              }).length
-                            }
-                            /{metrics.aiModels.length}
+                            {metrics.aiModels.filter((model) => model.status === "active").length}/
+                            {metrics.aiModels.length}
                           </div>
                           <p className="text-xs text-muted-foreground">Modelos Ativos</p>
                         </div>

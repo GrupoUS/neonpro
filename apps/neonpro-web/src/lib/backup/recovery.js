@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Recovery Service
  * Story 1.8: Sistema de Backup e Recovery
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RecoveryService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -148,7 +145,7 @@ var notifications_1 = require("../notifications");
 /**
  * Serviço de recuperação
  */
-var RecoveryService = /** @class */ (function () {
+var RecoveryService = /** @class */ (() => {
   function RecoveryService(storageManager, monitoring) {
     this.activeRecoveries = new Map();
     this.recoveryQueue = [];
@@ -319,7 +316,7 @@ var RecoveryService = /** @class */ (function () {
    */
   RecoveryService.prototype.verifyBackupIntegrity = function (backup) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Implementar verificação de checksum
           // Por enquanto, retorna true
@@ -349,7 +346,7 @@ var RecoveryService = /** @class */ (function () {
               return [2 /*return*/];
             }
             // Ordenar por prioridade
-            this.recoveryQueue.sort(function (a, b) {
+            this.recoveryQueue.sort((a, b) => {
               var priorityOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
               return priorityOrder[b.priority] - priorityOrder[a.priority];
             });
@@ -452,9 +449,7 @@ var RecoveryService = /** @class */ (function () {
           case 16:
             this.activeRecoveries.delete(request.id);
             // Processar próximo na fila
-            setTimeout(function () {
-              return _this.processRecoveryQueue();
-            }, 1000);
+            setTimeout(() => _this.processRecoveryQueue(), 1000);
             return [7 /*endfinally*/];
           case 17:
             return [2 /*return*/];
@@ -507,7 +502,7 @@ var RecoveryService = /** @class */ (function () {
             return [
               4 /*yield*/,
               this.storageManager.download(backup.path, {
-                onProgress: function (downloaded, total) {
+                onProgress: (downloaded, total) => {
                   progress.progress = 10 + (downloaded / total) * 40;
                   _this.updateProgress(progress);
                 },
@@ -553,9 +548,7 @@ var RecoveryService = /** @class */ (function () {
             result.success = true;
             result.message = "Restore completo realizado com sucesso";
             result.restoredFiles = restoredFiles;
-            result.restoredSize = restoredFiles.reduce(function (sum, f) {
-              return sum + f.size;
-            }, 0);
+            result.restoredSize = restoredFiles.reduce((sum, f) => sum + f.size, 0);
             result.duration = Date.now() - startTime;
             return [3 /*break*/, 13];
           case 12:
@@ -657,7 +650,7 @@ var RecoveryService = /** @class */ (function () {
    */
   RecoveryService.prototype.extractBackup = function (backupData, options) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar extração baseada no formato do backup
         return [2 /*return*/, []];
       });
@@ -668,7 +661,7 @@ var RecoveryService = /** @class */ (function () {
    */
   RecoveryService.prototype.restoreFiles = function (files, options) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar restauração de arquivos
         return [2 /*return*/, []];
       });
@@ -679,16 +672,14 @@ var RecoveryService = /** @class */ (function () {
    */
   RecoveryService.prototype.verifyRestoration = function (files) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            isValid: true,
-            errors: [],
-            warnings: [],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          isValid: true,
+          errors: [],
+          warnings: [],
+        },
+      ]);
     });
   };
   /**
@@ -849,7 +840,7 @@ var RecoveryService = /** @class */ (function () {
   RecoveryService.prototype.notifyRecoveryCompletion = function (request, result) {
     return __awaiter(this, void 0, void 0, function () {
       var notification, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -884,7 +875,7 @@ var RecoveryService = /** @class */ (function () {
   RecoveryService.prototype.notifyRecoveryFailure = function (request, errorMessage) {
     return __awaiter(this, void 0, void 0, function () {
       var notification, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -994,9 +985,7 @@ var RecoveryService = /** @class */ (function () {
               this.activeRecoveries.set(requestId, activeProgress);
             }
             // Remover da fila se estiver pendente
-            this.recoveryQueue = this.recoveryQueue.filter(function (r) {
-              return r.id !== requestId;
-            });
+            this.recoveryQueue = this.recoveryQueue.filter((r) => r.id !== requestId);
             return [
               4 /*yield*/,
               this.supabase
@@ -1118,24 +1107,22 @@ var RecoveryService = /** @class */ (function () {
           case 1:
             (_a = _b.sent()), (backups = _a.data), (error = _a.error);
             if (error) throw error;
-            recoveryPoints = (backups || []).map(function (backup) {
-              return {
-                id: backup.id,
-                timestamp: new Date(backup.startTime),
-                type: backup.type,
-                size: backup.size,
-                description: "Backup "
-                  .concat(backup.type, " - ")
-                  .concat(new Date(backup.startTime).toLocaleString()),
-                configId: backup.configId,
-                isValid: true,
-                metadata: {
-                  duration: backup.duration,
-                  checksum: backup.checksum,
-                  compression: backup.compression,
-                },
-              };
-            });
+            recoveryPoints = (backups || []).map((backup) => ({
+              id: backup.id,
+              timestamp: new Date(backup.startTime),
+              type: backup.type,
+              size: backup.size,
+              description: "Backup "
+                .concat(backup.type, " - ")
+                .concat(new Date(backup.startTime).toLocaleString()),
+              configId: backup.configId,
+              isValid: true,
+              metadata: {
+                duration: backup.duration,
+                checksum: backup.checksum,
+                compression: backup.compression,
+              },
+            }));
             return [
               2 /*return*/,
               {
@@ -1157,7 +1144,7 @@ var RecoveryService = /** @class */ (function () {
       });
     });
   };
-  RecoveryService.prototype.handleError = function (message, error) {
+  RecoveryService.prototype.handleError = (message, error) => {
     console.error(message, error);
     return {
       success: false,

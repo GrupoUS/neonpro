@@ -13,16 +13,16 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import type { supabase } from "@/lib/supabase";
 import type {
   addDays,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
   endOfMonth,
+  endOfWeek,
   format,
   parseISO,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
+import type { supabase } from "@/lib/supabase";
 
 // Types
 export interface DemandForecast {
@@ -1060,7 +1060,7 @@ export const ForecastingUtils = {
 
       mapeSum += percentError;
       maeSum += error;
-      mseSum += Math.pow(error, 2);
+      mseSum += error ** 2;
       totalActual += actual[i];
       totalPredicted += predicted[i];
     }
@@ -1075,8 +1075,8 @@ export const ForecastingUtils = {
     let residualSumSquares = 0;
 
     for (let i = 0; i < n; i++) {
-      totalSumSquares += Math.pow(actual[i] - actualMean, 2);
-      residualSumSquares += Math.pow(actual[i] - predicted[i], 2);
+      totalSumSquares += (actual[i] - actualMean) ** 2;
+      residualSumSquares += (actual[i] - predicted[i]) ** 2;
     }
 
     const r2Score = 1 - residualSumSquares / totalSumSquares;

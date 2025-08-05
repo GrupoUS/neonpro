@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BatchTracking = BatchTracking;
 var alert_1 = require("@/components/ui/alert");
@@ -148,8 +147,8 @@ function BatchTracking() {
     viewMode = _d[0],
     setViewMode = _d[1];
   var filteredBatches = (0, react_1.useMemo)(
-    function () {
-      return mockBatches.filter(function (batch) {
+    () =>
+      mockBatches.filter((batch) => {
         var matchesSearch =
           batch.batchNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
           batch.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -157,11 +156,10 @@ function BatchTracking() {
         var matchesStatus = selectedStatus === "all" || batch.status === selectedStatus;
         var matchesCategory = selectedCategory === "all" || batch.category === selectedCategory;
         return matchesSearch && matchesStatus && matchesCategory;
-      });
-    },
+      }),
     [searchTerm, selectedStatus, selectedCategory],
   );
-  var getBatchAlert = function (batch) {
+  var getBatchAlert = (batch) => {
     var today = new Date();
     var expDate = new Date(batch.expirationDate);
     var daysToExpiry = Math.ceil((expDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
@@ -186,9 +184,7 @@ function BatchTracking() {
     }
     return null;
   };
-  var formatBrazilianDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  };
+  var formatBrazilianDate = (dateString) => new Date(dateString).toLocaleDateString("pt-BR");
   return (
     <div className="space-y-6">
       {/* Search and Filters */}
@@ -198,9 +194,7 @@ function BatchTracking() {
           <input_1.Input
             placeholder="Buscar por lote, produto ou fornecedor..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -233,12 +227,7 @@ function BatchTracking() {
           </select_1.SelectContent>
         </select_1.Select>
 
-        <tabs_1.Tabs
-          value={viewMode}
-          onValueChange={function (value) {
-            return setViewMode(value);
-          }}
-        >
+        <tabs_1.Tabs value={viewMode} onValueChange={(value) => setViewMode(value)}>
           <tabs_1.TabsList>
             <tabs_1.TabsTrigger value="summary">Resumo</tabs_1.TabsTrigger>
             <tabs_1.TabsTrigger value="detailed">Detalhado</tabs_1.TabsTrigger>
@@ -253,11 +242,7 @@ function BatchTracking() {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Lotes Ativos</p>
                 <p className="text-2xl font-bold">
-                  {
-                    mockBatches.filter(function (b) {
-                      return b.status === "available";
-                    }).length
-                  }
+                  {mockBatches.filter((b) => b.status === "available").length}
                 </p>
               </div>
               <lucide_react_1.Barcode className="h-8 w-8 text-green-500" />
@@ -272,7 +257,7 @@ function BatchTracking() {
                 <p className="text-sm font-medium text-muted-foreground">Vencendo (30 dias)</p>
                 <p className="text-2xl font-bold text-amber-600">
                   {
-                    mockBatches.filter(function (b) {
+                    mockBatches.filter((b) => {
                       var daysToExpiry = Math.ceil(
                         (new Date(b.expirationDate).getTime() - new Date().getTime()) /
                           (1000 * 60 * 60 * 24),
@@ -293,11 +278,7 @@ function BatchTracking() {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Controle Temp.</p>
                 <p className="text-2xl font-bold text-blue-600">
-                  {
-                    mockBatches.filter(function (b) {
-                      return b.temperatureControlled;
-                    }).length
-                  }
+                  {mockBatches.filter((b) => b.temperatureControlled).length}
                 </p>
               </div>
               <lucide_react_1.Thermometer className="h-8 w-8 text-blue-500" />
@@ -311,11 +292,7 @@ function BatchTracking() {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">ANVISA Compliant</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {
-                    mockBatches.filter(function (b) {
-                      return b.anvisaRegistration;
-                    }).length
-                  }
+                  {mockBatches.filter((b) => b.anvisaRegistration).length}
                 </p>
               </div>
               <lucide_react_1.Shield className="h-8 w-8 text-green-500" />
@@ -361,7 +338,7 @@ function BatchTracking() {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredBatches.map(function (batch) {
+                {filteredBatches.map((batch) => {
                   var alert = getBatchAlert(batch);
                   var statusConfig_ = statusConfig[batch.status];
                   var StatusIcon = statusConfig_.icon;
@@ -394,9 +371,10 @@ function BatchTracking() {
                           <div className="text-sm text-muted-foreground">{batch.unit}</div>
                           {batch.utilizationTracking.length > 0 && (
                             <div className="text-xs text-blue-600">
-                              {batch.utilizationTracking.reduce(function (acc, util) {
-                                return acc + util.quantityUsed;
-                              }, 0)}{" "}
+                              {batch.utilizationTracking.reduce(
+                                (acc, util) => acc + util.quantityUsed,
+                                0,
+                              )}{" "}
                               utilizados
                             </div>
                           )}
@@ -496,16 +474,14 @@ function BatchTracking() {
                         <table_1.TableCell>
                           <div className="space-y-1 max-w-[200px]">
                             <div className="text-xs font-medium">Última Movimentação:</div>
-                            {batch.traceabilityChain.slice(-1).map(function (entry) {
-                              return (
-                                <div key={entry.id} className="text-xs text-muted-foreground">
-                                  <div>{entry.action}</div>
-                                  <div>
-                                    {entry.user} • {formatBrazilianDate(entry.date)}
-                                  </div>
+                            {batch.traceabilityChain.slice(-1).map((entry) => (
+                              <div key={entry.id} className="text-xs text-muted-foreground">
+                                <div>{entry.action}</div>
+                                <div>
+                                  {entry.user} • {formatBrazilianDate(entry.date)}
                                 </div>
-                              );
-                            })}
+                              </div>
+                            ))}
                             <div className="text-xs text-blue-600 font-medium">
                               {batch.traceabilityChain.length} registros
                             </div>
@@ -538,113 +514,105 @@ function BatchTracking() {
           </card_1.CardHeader>
           <card_1.CardContent className="space-y-6">
             {filteredBatches.slice(0, 1).map(
-              function (
+              (
                 batch, // Show details for first batch as example
-              ) {
-                return (
-                  <div key={batch.id} className="space-y-4">
-                    <div className="flex items-center gap-2 pb-2 border-b">
-                      <lucide_react_1.Barcode className="w-5 h-5" />
-                      <span className="font-mono font-medium">{batch.batchNumber}</span>
-                      <span className="text-muted-foreground">•</span>
-                      <span className="font-medium">{batch.productName}</span>
+              ) => (
+                <div key={batch.id} className="space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b">
+                    <lucide_react_1.Barcode className="w-5 h-5" />
+                    <span className="font-mono font-medium">{batch.batchNumber}</span>
+                    <span className="text-muted-foreground">•</span>
+                    <span className="font-medium">{batch.productName}</span>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {/* Traceability Chain */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium flex items-center gap-2">
+                        <lucide_react_1.FileText className="w-4 h-4" />
+                        Cadeia de Rastreabilidade
+                      </h4>
+                      <div className="space-y-2">
+                        {batch.traceabilityChain.map((entry, index) => (
+                          <div
+                            key={entry.id}
+                            className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg"
+                          >
+                            <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1 space-y-1">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium text-sm">{entry.action}</span>
+                                {entry.validated && (
+                                  <badge_1.Badge
+                                    variant="outline"
+                                    className="bg-green-50 text-green-700 border-green-200"
+                                  >
+                                    <lucide_react_1.CheckCircle className="w-3 h-3 mr-1" />
+                                    Validado
+                                  </badge_1.Badge>
+                                )}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {entry.user} • {entry.location}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {new Date(entry.date).toLocaleString("pt-BR")}
+                              </div>
+                              {entry.temperature && (
+                                <div className="flex items-center gap-1 text-xs text-blue-600">
+                                  <lucide_react_1.Thermometer className="w-3 h-3" />
+                                  {entry.temperature}°C
+                                </div>
+                              )}
+                              <p className="text-xs text-muted-foreground">{entry.details}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
-                    <div className="grid gap-4 md:grid-cols-2">
-                      {/* Traceability Chain */}
-                      <div className="space-y-3">
-                        <h4 className="font-medium flex items-center gap-2">
-                          <lucide_react_1.FileText className="w-4 h-4" />
-                          Cadeia de Rastreabilidade
-                        </h4>
-                        <div className="space-y-2">
-                          {batch.traceabilityChain.map(function (entry, index) {
-                            return (
+                    {/* Utilization Tracking */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium flex items-center gap-2">
+                        <lucide_react_1.Package className="w-4 h-4" />
+                        Rastreamento de Utilização
+                      </h4>
+                      {batch.utilizationTracking.length > 0
+                        ? <div className="space-y-2">
+                            {batch.utilizationTracking.map((util) => (
                               <div
-                                key={entry.id}
-                                className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg"
+                                key={util.id}
+                                className="p-3 bg-blue-50 border border-blue-200 rounded-lg"
                               >
-                                <div className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium">
-                                  {index + 1}
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="font-medium text-sm">{util.procedureType}</span>
+                                  <badge_1.Badge
+                                    variant="outline"
+                                    className="bg-blue-100 text-blue-800 border-blue-300"
+                                  >
+                                    {util.quantityUsed} {batch.unit}
+                                  </badge_1.Badge>
                                 </div>
-                                <div className="flex-1 space-y-1">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-medium text-sm">{entry.action}</span>
-                                    {entry.validated && (
-                                      <badge_1.Badge
-                                        variant="outline"
-                                        className="bg-green-50 text-green-700 border-green-200"
-                                      >
-                                        <lucide_react_1.CheckCircle className="w-3 h-3 mr-1" />
-                                        Validado
-                                      </badge_1.Badge>
-                                    )}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {entry.user} • {entry.location}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {new Date(entry.date).toLocaleString("pt-BR")}
-                                  </div>
-                                  {entry.temperature && (
-                                    <div className="flex items-center gap-1 text-xs text-blue-600">
-                                      <lucide_react_1.Thermometer className="w-3 h-3" />
-                                      {entry.temperature}°C
-                                    </div>
+                                <div className="space-y-1 text-xs text-muted-foreground">
+                                  <div>Profissional: {util.professionalName}</div>
+                                  <div>Data: {new Date(util.date).toLocaleString("pt-BR")}</div>
+                                  {util.patientId && (
+                                    <div>Paciente ID: {util.patientId} (LGPD Protected)</div>
                                   )}
-                                  <p className="text-xs text-muted-foreground">{entry.details}</p>
+                                  {util.notes && <div>Obs: {util.notes}</div>}
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Utilization Tracking */}
-                      <div className="space-y-3">
-                        <h4 className="font-medium flex items-center gap-2">
-                          <lucide_react_1.Package className="w-4 h-4" />
-                          Rastreamento de Utilização
-                        </h4>
-                        {batch.utilizationTracking.length > 0
-                          ? <div className="space-y-2">
-                              {batch.utilizationTracking.map(function (util) {
-                                return (
-                                  <div
-                                    key={util.id}
-                                    className="p-3 bg-blue-50 border border-blue-200 rounded-lg"
-                                  >
-                                    <div className="flex items-center justify-between mb-2">
-                                      <span className="font-medium text-sm">
-                                        {util.procedureType}
-                                      </span>
-                                      <badge_1.Badge
-                                        variant="outline"
-                                        className="bg-blue-100 text-blue-800 border-blue-300"
-                                      >
-                                        {util.quantityUsed} {batch.unit}
-                                      </badge_1.Badge>
-                                    </div>
-                                    <div className="space-y-1 text-xs text-muted-foreground">
-                                      <div>Profissional: {util.professionalName}</div>
-                                      <div>Data: {new Date(util.date).toLocaleString("pt-BR")}</div>
-                                      {util.patientId && (
-                                        <div>Paciente ID: {util.patientId} (LGPD Protected)</div>
-                                      )}
-                                      {util.notes && <div>Obs: {util.notes}</div>}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          : <p className="text-sm text-muted-foreground">
-                              Nenhuma utilização registrada ainda.
-                            </p>}
-                      </div>
+                            ))}
+                          </div>
+                        : <p className="text-sm text-muted-foreground">
+                            Nenhuma utilização registrada ainda.
+                          </p>}
                     </div>
                   </div>
-                );
-              },
+                </div>
+              ),
             )}
           </card_1.CardContent>
         </card_1.Card>

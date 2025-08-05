@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnhancedAppointmentForm = EnhancedAppointmentForm;
 var alert_1 = require("@/components/ui/alert");
@@ -163,7 +160,6 @@ var appointmentFormSchema = zod_2.z.object({
   notes: zod_2.z.string().optional(),
 });
 function EnhancedAppointmentForm(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     editingAppointment = _a.editingAppointment,
     onSave = _a.onSave,
@@ -230,39 +226,31 @@ function EnhancedAppointmentForm(_a) {
     },
   });
   // Load data on mount
-  (0, react_1.useEffect)(
-    function () {
-      Promise.all([loadPatients(), loadProfessionals(), loadServices()]);
-    },
-    [clinicId],
-  );
+  (0, react_1.useEffect)(() => {
+    Promise.all([loadPatients(), loadProfessionals(), loadServices()]);
+  }, [clinicId]);
   // Auto-calculate end time when start time or service changes
-  (0, react_1.useEffect)(
-    function () {
-      var startTime = form.watch("start_time");
-      var serviceId = form.watch("service_type_id");
-      if (startTime && serviceId) {
-        var service = services.find(function (s) {
-          return s.id === serviceId;
-        });
-        if (service) {
-          setEstimatedDuration(service.duration);
-          var endTime = (0, date_fns_1.addMinutes)(
-            (0, date_fns_1.parseISO)(startTime),
-            service.duration,
-          ).toISOString();
-          form.setValue("end_time", endTime);
-          // Trigger validation for new time slot
-          triggerValidation();
-        }
+  (0, react_1.useEffect)(() => {
+    var startTime = form.watch("start_time");
+    var serviceId = form.watch("service_type_id");
+    if (startTime && serviceId) {
+      var service = services.find((s) => s.id === serviceId);
+      if (service) {
+        setEstimatedDuration(service.duration);
+        var endTime = (0, date_fns_1.addMinutes)(
+          (0, date_fns_1.parseISO)(startTime),
+          service.duration,
+        ).toISOString();
+        form.setValue("end_time", endTime);
+        // Trigger validation for new time slot
+        triggerValidation();
       }
-    },
-    [form.watch("start_time"), form.watch("service_type_id"), services],
-  );
-  var loadPatients = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+    }
+  }, [form.watch("start_time"), form.watch("service_type_id"), services]);
+  var loadPatients = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -273,11 +261,7 @@ function EnhancedAppointmentForm(_a) {
             return [4 /*yield*/, response.json()];
           case 2:
             data = _a.sent();
-            setPatients(
-              data.map(function (p) {
-                return { id: p.id, name: p.name };
-              }),
-            );
+            setPatients(data.map((p) => ({ id: p.id, name: p.name })));
             _a.label = 3;
           case 3:
             return [3 /*break*/, 5];
@@ -290,11 +274,10 @@ function EnhancedAppointmentForm(_a) {
         }
       });
     });
-  };
-  var loadProfessionals = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadProfessionals = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -305,11 +288,7 @@ function EnhancedAppointmentForm(_a) {
             return [4 /*yield*/, response.json()];
           case 2:
             data = _a.sent();
-            setProfessionals(
-              data.map(function (p) {
-                return { id: p.id, name: p.name };
-              }),
-            );
+            setProfessionals(data.map((p) => ({ id: p.id, name: p.name })));
             _a.label = 3;
           case 3:
             return [3 /*break*/, 5];
@@ -322,11 +301,10 @@ function EnhancedAppointmentForm(_a) {
         }
       });
     });
-  };
-  var loadServices = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadServices = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -338,13 +316,11 @@ function EnhancedAppointmentForm(_a) {
           case 2:
             data = _a.sent();
             setServices(
-              data.map(function (s) {
-                return {
-                  id: s.id,
-                  name: s.name,
-                  duration: s.duration_minutes || 60,
-                };
-              }),
+              data.map((s) => ({
+                id: s.id,
+                name: s.name,
+                duration: s.duration_minutes || 60,
+              })),
             );
             _a.label = 3;
           case 3:
@@ -358,11 +334,10 @@ function EnhancedAppointmentForm(_a) {
         }
       });
     });
-  };
-  var triggerValidation = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var triggerValidation = () =>
+    __awaiter(this, void 0, void 0, function () {
       var values, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             values = form.getValues();
@@ -403,17 +378,16 @@ function EnhancedAppointmentForm(_a) {
         }
       });
     });
-  };
-  var applyAlternativeSlot = function (slot) {
+  var applyAlternativeSlot = (slot) => {
     form.setValue("start_time", slot.start_time);
     form.setValue("end_time", slot.end_time);
     clearValidation();
     // This will trigger validation through the useEffect
   };
-  var handleSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Final validation before submission
@@ -447,8 +421,7 @@ function EnhancedAppointmentForm(_a) {
         }
       });
     });
-  };
-  var formatDateTime = function (dateTime) {
+  var formatDateTime = (dateTime) => {
     try {
       return (0, date_fns_1.format)((0, date_fns_1.parseISO)(dateTime), "dd/MM/yyyy HH:mm", {
         locale: locale_1.ptBR,
@@ -457,7 +430,7 @@ function EnhancedAppointmentForm(_a) {
       return dateTime;
     }
   };
-  var getValidationStatusIcon = function () {
+  var getValidationStatusIcon = () => {
     if (isValidating) {
       return <lucide_react_1.Loader2 className="h-4 w-4 animate-spin text-blue-600" />;
     }
@@ -487,7 +460,7 @@ function EnhancedAppointmentForm(_a) {
             <react_hook_form_1.Controller
               name="patient_id"
               control={form.control}
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <select_1.Select value={field.value} onValueChange={field.onChange}>
@@ -495,16 +468,14 @@ function EnhancedAppointmentForm(_a) {
                       <select_1.SelectValue placeholder="Selecione um paciente" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {patients.map(function (patient) {
-                        return (
-                          <select_1.SelectItem key={patient.id} value={patient.id}>
-                            <div className="flex items-center gap-2">
-                              <lucide_react_1.User className="h-4 w-4" />
-                              {patient.name}
-                            </div>
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {patients.map((patient) => (
+                        <select_1.SelectItem key={patient.id} value={patient.id}>
+                          <div className="flex items-center gap-2">
+                            <lucide_react_1.User className="h-4 w-4" />
+                            {patient.name}
+                          </div>
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 );
@@ -523,12 +494,12 @@ function EnhancedAppointmentForm(_a) {
             <react_hook_form_1.Controller
               name="professional_id"
               control={form.control}
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <select_1.Select
                     value={field.value}
-                    onValueChange={function (value) {
+                    onValueChange={(value) => {
                       field.onChange(value);
                       clearValidation();
                     }}
@@ -537,13 +508,11 @@ function EnhancedAppointmentForm(_a) {
                       <select_1.SelectValue placeholder="Selecione um profissional" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {professionals.map(function (professional) {
-                        return (
-                          <select_1.SelectItem key={professional.id} value={professional.id}>
-                            {professional.name}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {professionals.map((professional) => (
+                        <select_1.SelectItem key={professional.id} value={professional.id}>
+                          {professional.name}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 );
@@ -562,12 +531,12 @@ function EnhancedAppointmentForm(_a) {
             <react_hook_form_1.Controller
               name="service_type_id"
               control={form.control}
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <select_1.Select
                     value={field.value}
-                    onValueChange={function (value) {
+                    onValueChange={(value) => {
                       field.onChange(value);
                       clearValidation();
                     }}
@@ -576,18 +545,16 @@ function EnhancedAppointmentForm(_a) {
                       <select_1.SelectValue placeholder="Selecione um serviço" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {services.map(function (service) {
-                        return (
-                          <select_1.SelectItem key={service.id} value={service.id}>
-                            <div className="flex items-center justify-between w-full">
-                              {service.name}
-                              <badge_1.Badge variant="secondary" className="ml-2">
-                                {service.duration}min
-                              </badge_1.Badge>
-                            </div>
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {services.map((service) => (
+                        <select_1.SelectItem key={service.id} value={service.id}>
+                          <div className="flex items-center justify-between w-full">
+                            {service.name}
+                            <badge_1.Badge variant="secondary" className="ml-2">
+                              {service.duration}min
+                            </badge_1.Badge>
+                          </div>
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 );
@@ -607,13 +574,13 @@ function EnhancedAppointmentForm(_a) {
               <react_hook_form_1.Controller
                 name="start_time"
                 control={form.control}
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <input_1.Input
                       type="datetime-local"
                       {...field}
-                      onChange={function (e) {
+                      onChange={(e) => {
                         field.onChange(e.target.value);
                         clearValidation();
                       }}
@@ -645,30 +612,24 @@ function EnhancedAppointmentForm(_a) {
           {(hasErrors || hasWarnings) && (
             <div className="space-y-3">
               {conflicts
-                .filter(function (c) {
-                  return c.severity === "error";
-                })
-                .map(function (conflict, index) {
-                  return (
-                    <alert_1.Alert key={index} className="border-red-200 bg-red-50">
-                      <lucide_react_1.AlertCircle className="h-4 w-4 text-red-600" />
-                      <alert_1.AlertDescription className="text-red-700">
-                        <strong>Conflito:</strong> {conflict.message}
-                      </alert_1.AlertDescription>
-                    </alert_1.Alert>
-                  );
-                })}
-
-              {warnings.map(function (warning, index) {
-                return (
-                  <alert_1.Alert key={index} className="border-amber-200 bg-amber-50">
-                    <lucide_react_1.AlertCircle className="h-4 w-4 text-amber-600" />
-                    <alert_1.AlertDescription className="text-amber-700">
-                      <strong>Aviso:</strong> {warning.message}
+                .filter((c) => c.severity === "error")
+                .map((conflict, index) => (
+                  <alert_1.Alert key={index} className="border-red-200 bg-red-50">
+                    <lucide_react_1.AlertCircle className="h-4 w-4 text-red-600" />
+                    <alert_1.AlertDescription className="text-red-700">
+                      <strong>Conflito:</strong> {conflict.message}
                     </alert_1.AlertDescription>
                   </alert_1.Alert>
-                );
-              })}
+                ))}
+
+              {warnings.map((warning, index) => (
+                <alert_1.Alert key={index} className="border-amber-200 bg-amber-50">
+                  <lucide_react_1.AlertCircle className="h-4 w-4 text-amber-600" />
+                  <alert_1.AlertDescription className="text-amber-700">
+                    <strong>Aviso:</strong> {warning.message}
+                  </alert_1.AlertDescription>
+                </alert_1.Alert>
+              ))}
             </div>
           )}
 
@@ -681,22 +642,18 @@ function EnhancedAppointmentForm(_a) {
                   Horários Alternativos Sugeridos
                 </h4>
                 <div className="space-y-2">
-                  {suggestedSlots.map(function (slot, index) {
-                    return (
-                      <button_1.Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        onClick={function () {
-                          return applyAlternativeSlot(slot);
-                        }}
-                        className="w-full justify-between text-sm"
-                      >
-                        <span>{formatDateTime(slot.start_time)}</span>
-                        <lucide_react_1.ArrowRight className="h-3 w-3" />
-                      </button_1.Button>
-                    );
-                  })}
+                  {suggestedSlots.map((slot, index) => (
+                    <button_1.Button
+                      key={index}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => applyAlternativeSlot(slot)}
+                      className="w-full justify-between text-sm"
+                    >
+                      <span>{formatDateTime(slot.start_time)}</span>
+                      <lucide_react_1.ArrowRight className="h-3 w-3" />
+                    </button_1.Button>
+                  ))}
                 </div>
                 <p className="text-xs text-blue-700 mt-2">
                   Clique em um horário para aplicar automaticamente
@@ -721,7 +678,7 @@ function EnhancedAppointmentForm(_a) {
             <react_hook_form_1.Controller
               name="notes"
               control={form.control}
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <textarea_1.Textarea
@@ -758,18 +715,16 @@ function EnhancedAppointmentForm(_a) {
 }
 // Export with Error Boundary protection for critical appointment functionality
 exports.default = (0, error_boundary_1.withErrorBoundary)(EnhancedAppointmentForm, {
-  onError: function (error, errorInfo) {
+  onError: (error, errorInfo) => {
     console.error("Critical error in appointment form:", error, errorInfo);
     // Send to Sentry monitoring service
     if (typeof window !== "undefined") {
       Promise.resolve()
-        .then(function () {
-          return require("@sentry/nextjs");
-        })
-        .then(function (_a) {
+        .then(() => require("@sentry/nextjs"))
+        .then((_a) => {
           var withScope = _a.withScope,
             captureException = _a.captureException;
-          withScope(function (scope) {
+          withScope((scope) => {
             scope.setTag("component", "EnhancedAppointmentForm");
             scope.setTag("criticalError", true);
             scope.setContext("appointmentForm", {
@@ -790,7 +745,7 @@ exports.default = (0, error_boundary_1.withErrorBoundary)(EnhancedAppointmentFor
             });
           });
         })
-        .catch(function (sentryError) {
+        .catch((sentryError) => {
           console.error("Failed to report error to Sentry:", sentryError);
         });
     }

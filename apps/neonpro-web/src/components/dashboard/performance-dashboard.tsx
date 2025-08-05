@@ -5,7 +5,20 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Gauge,
+  RefreshCw,
+  Timer,
+  TrendingDown,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,21 +26,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Progress } from "@/components/ui/progress";
-import type {
-  Activity,
-  Gauge,
-  Timer,
-  Zap,
-  AlertTriangle,
-  CheckCircle,
-  RefreshCw,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface PerformanceMetrics {
   lcp: number;

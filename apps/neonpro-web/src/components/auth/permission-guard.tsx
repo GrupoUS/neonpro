@@ -13,9 +13,10 @@
 
 "use client";
 
-import React, { ReactNode, useEffect, useState, useCallback } from "react";
-import type { AlertTriangle, Shield, ShieldAlert, Clock, User, Building } from "lucide-react";
+import type { AlertTriangle, Building, Clock, Shield, ShieldAlert, User } from "lucide-react";
+import React, { type ReactNode, useCallback, useEffect, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -24,7 +25,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Skeleton } from "@/components/ui/skeleton";
 import type { usePermissions } from "@/hooks/use-permissions";
 import type { HealthcareRole, MedicalSpecialty } from "@/lib/auth/permissions";

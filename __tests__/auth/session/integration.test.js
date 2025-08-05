@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Management System - Integration Tests
  *
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,7 +42,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,8 +71,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -94,9 +91,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -155,7 +152,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var UnifiedSessionSystem_1 = require("../../../lib/auth/session/UnifiedSessionSystem");
@@ -165,102 +162,66 @@ var SecurityEventLogger_1 = require("../../../lib/auth/session/SecurityEventLogg
 var setup_1 = require("./setup");
 // Mock Supabase with comprehensive responses
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-              maybeSingle: globals_1.jest.fn(),
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-          in: globals_1.jest.fn(function () {
-            return {
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-          gte: globals_1.jest.fn(function () {
-            return {
-              lte: globals_1.jest.fn(function () {
-                return {
-                  order: globals_1.jest.fn(function () {
-                    return {
-                      limit: globals_1.jest.fn(),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      insert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-            };
-          }),
-        };
-      }),
-      update: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              select: globals_1.jest.fn(function () {
-                return {
-                  single: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-          in: globals_1.jest.fn(function () {
-            return {
-              select: globals_1.jest.fn(),
-            };
-          }),
-        };
-      }),
-      delete: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(),
-          in: globals_1.jest.fn(),
-          lt: globals_1.jest.fn(),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+        maybeSingle: globals_1.jest.fn(),
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(),
+        })),
+      })),
+      in: globals_1.jest.fn(() => ({
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(),
+        })),
+      })),
+      gte: globals_1.jest.fn(() => ({
+        lte: globals_1.jest.fn(() => ({
+          order: globals_1.jest.fn(() => ({
+            limit: globals_1.jest.fn(),
+          })),
+        })),
+      })),
+    })),
+    insert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+      })),
+    })),
+    update: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        select: globals_1.jest.fn(() => ({
+          single: globals_1.jest.fn(),
+        })),
+      })),
+      in: globals_1.jest.fn(() => ({
+        select: globals_1.jest.fn(),
+      })),
+    })),
+    delete: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(),
+      in: globals_1.jest.fn(),
+      lt: globals_1.jest.fn(),
+    })),
+  })),
   rpc: globals_1.jest.fn(),
   auth: {
     getUser: globals_1.jest.fn(),
     signOut: globals_1.jest.fn(),
   },
 };
-globals_1.jest.mock("@supabase/supabase-js", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return mockSupabase;
-    }),
-  };
-});
-(0, globals_1.describe)("Session Management System - Integration Tests", function () {
+globals_1.jest.mock("@supabase/supabase-js", () => ({
+  createClient: globals_1.jest.fn(() => mockSupabase),
+}));
+(0, globals_1.describe)("Session Management System - Integration Tests", () => {
   var unifiedSystem;
-  var sessionManager;
-  var deviceManager;
-  var securityLogger;
+  var _sessionManager;
+  var _deviceManager;
+  var _securityLogger;
   var testDb;
   var testUser;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     testDb = (0, setup_1.createTestDatabase)();
     var seedData = testDb.seed();
     testUser = seedData.user;
@@ -309,25 +270,25 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
         severity: "medium",
       },
     };
-    sessionManager = new SessionManager_1.SessionManager(sessionConfig);
-    deviceManager = new DeviceManager_1.DeviceManager(deviceConfig);
-    securityLogger = new SecurityEventLogger_1.SecurityEventLogger(securityConfig);
+    _sessionManager = new SessionManager_1.SessionManager(sessionConfig);
+    _deviceManager = new DeviceManager_1.DeviceManager(deviceConfig);
+    _securityLogger = new SecurityEventLogger_1.SecurityEventLogger(securityConfig);
     unifiedSystem = new UnifiedSessionSystem_1.UnifiedSessionSystem({
       session: sessionConfig,
       device: deviceConfig,
       security: securityConfig,
     });
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     (0, setup_1.cleanup)();
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("Complete Authentication Flow", function () {
-    (0, globals_1.it)("should handle complete login flow with device registration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Complete Authentication Flow", () => {
+    (0, globals_1.it)("should handle complete login flow with device registration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var loginData, mockDevice, mockSession, mockSecurityEvent, result;
         var _a, _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               loginData = {
@@ -405,13 +366,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle trusted device login", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle trusted device login", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var trustedDevice, loginData, mockSession, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               trustedDevice = (0, setup_1.createMockDevice)({
@@ -457,13 +418,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle suspicious login attempt", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle suspicious login attempt", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var suspiciousLoginData, suspiciousDevice, securityEvent, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               suspiciousLoginData = {
@@ -522,15 +483,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Session Lifecycle Management", function () {
-    (0, globals_1.it)("should handle session activity updates", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Session Lifecycle Management", () => {
+    (0, globals_1.it)("should handle session activity updates", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var activeSession, updatedSession, activityEvent, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               activeSession = (0, setup_1.createMockSession)({
@@ -573,13 +534,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle session termination with cleanup", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle session termination with cleanup", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var activeSession, terminatedSession, logoutEvent, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               activeSession = (0, setup_1.createMockSession)({
@@ -617,13 +578,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle bulk session cleanup", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle bulk session cleanup", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expiredSessions, cleanupEvent, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               expiredSessions = [
@@ -675,12 +636,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Device Trust Workflow", function () {
-    (0, globals_1.it)("should handle device trust verification process", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Device Trust Workflow", () => {
+    (0, globals_1.it)("should handle device trust verification process", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var untrustedDevice,
           verificationCode,
           verificationResult,
@@ -688,7 +649,7 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
           trustEvent,
           trustResult;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               untrustedDevice = (0, setup_1.createMockDevice)({
@@ -741,13 +702,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle automatic trust revocation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle automatic trust revocation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expiredTrustDevice, revokedDevice, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               expiredTrustDevice = (0, setup_1.createMockDevice)({
@@ -785,15 +746,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Security Monitoring Integration", function () {
-    (0, globals_1.it)("should detect and respond to security threats", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Security Monitoring Integration", () => {
+    (0, globals_1.it)("should detect and respond to security threats", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var threatData, threatEvents, blockEvent, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               threatData = {
@@ -802,14 +763,14 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
                 userAgent: "Malicious Bot/1.0",
                 attempts: 10,
               };
-              threatEvents = Array.from({ length: 10 }, function (_, i) {
-                return (0, setup_1.createMockSecurityEvent)({
+              threatEvents = Array.from({ length: 10 }, (_, _i) =>
+                (0, setup_1.createMockSecurityEvent)({
                   userId: threatData.userId,
                   type: "unauthorized_access",
                   severity: "high",
                   ipAddress: threatData.ipAddress,
-                });
-              });
+                }),
+              );
               mockSupabase.from().select().eq().gte().order().limit.mockResolvedValueOnce({
                 data: threatEvents,
                 error: null,
@@ -837,13 +798,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should generate security reports", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate security reports", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var reportPeriod, securityEvents, result;
         var _a, _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               reportPeriod = {
@@ -891,18 +852,18 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Performance and Scalability", function () {
-    (0, globals_1.it)("should handle concurrent session operations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Performance and Scalability", () => {
+    (0, globals_1.it)("should handle concurrent session operations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var concurrentOperations, i, results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              concurrentOperations = Array.from({ length: 10 }, function (_, i) {
-                return unifiedSystem.authenticateUser({
+              concurrentOperations = Array.from({ length: 10 }, (_, i) =>
+                unifiedSystem.authenticateUser({
                   userId: "user-".concat(i),
                   ipAddress: "192.168.1.".concat(i + 100),
                   userAgent: "Test Browser",
@@ -910,8 +871,8 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
                     name: "Device ".concat(i),
                     type: "desktop",
                   },
-                });
-              });
+                }),
+              );
               // Mock concurrent responses
               for (i = 0; i < 10; i++) {
                 mockSupabase
@@ -955,20 +916,16 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
             case 1:
               results = _a.sent();
               (0, globals_1.expect)(results).toHaveLength(10);
-              (0, globals_1.expect)(
-                results.every(function (result) {
-                  return result.success;
-                }),
-              ).toBe(true);
+              (0, globals_1.expect)(results.every((result) => result.success)).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should maintain performance under load", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should maintain performance under load", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, operations, endTime, duration;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -1028,7 +985,7 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

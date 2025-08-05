@@ -1,9 +1,31 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  Calendar,
+  Clock,
+  Database,
+  FileText,
+  FolderOpen,
+  HardDrive,
+  Info,
+  Save,
+  Settings,
+  Shield,
+  TestTube,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import type { useForm } from "react-hook-form";
 import * as z from "zod";
+import type {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -22,8 +44,6 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Switch } from "@/components/ui/switch";
 import type {
   Select,
   SelectContent,
@@ -31,28 +51,9 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import type {
-  Calendar,
-  Clock,
-  Database,
-  FileText,
-  FolderOpen,
-  HardDrive,
-  Info,
-  Save,
-  Settings,
-  Shield,
-  TestTube,
-} from "lucide-react";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Validation schema
 const backupConfigSchema = z.object({
@@ -221,23 +222,26 @@ const BackupConfigForm: React.FC<BackupConfigFormProps> = ({
     switch (frequency) {
       case "HOURLY":
         return "0 * * * *";
-      case "DAILY":
+      case "DAILY": {
         const hour = config.time_of_day
           ? new Date(`2000-01-01T${config.time_of_day}`).getHours()
           : 2;
         return `0 ${hour} * * *`;
-      case "WEEKLY":
+      }
+      case "WEEKLY": {
         const weekHour = config.time_of_day
           ? new Date(`2000-01-01T${config.time_of_day}`).getHours()
           : 2;
         const dayOfWeek = config.day_of_week || 0;
         return `0 ${weekHour} * * ${dayOfWeek}`;
-      case "MONTHLY":
+      }
+      case "MONTHLY": {
         const monthHour = config.time_of_day
           ? new Date(`2000-01-01T${config.time_of_day}`).getHours()
           : 2;
         const dayOfMonth = config.day_of_month || 1;
         return `0 ${monthHour} ${dayOfMonth} * *`;
+      }
       default:
         return config.cron_expression || "0 2 * * *";
     }

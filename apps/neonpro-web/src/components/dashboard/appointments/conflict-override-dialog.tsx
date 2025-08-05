@@ -1,14 +1,14 @@
 // Conflict Override Dialog Component with Manager Approval Workflow
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import dayjs from "dayjs";
+import type { AlertTriangle, Bell, CheckCircle, Clock, User, XCircle } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Select,
   SelectContent,
@@ -17,14 +17,14 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Separator } from "@/components/ui/separator";
-import type { AlertTriangle, Clock, User, CheckCircle, XCircle, Bell } from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type {
+  OverrideReason,
+  OverrideRequest,
   useConflictOverride,
-  type OverrideRequest,
-  type OverrideReason,
 } from "@/hooks/use-conflict-override";
 import type { useToast } from "@/hooks/use-toast";
-import dayjs from "dayjs";
 
 interface ConflictOverrideDialogProps {
   open: boolean;

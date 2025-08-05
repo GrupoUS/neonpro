@@ -2,24 +2,24 @@
 // Story 1.3: SSO Integration Implementation
 
 import { createClient } from "@supabase/supabase-js";
-import {
-  SSOProvider,
-  SSOSession,
-  SSOUserInfo,
-  SSOAuthRequest,
-  SSOAuthResponse,
-  SSOTokenResponse,
-  SSOAccountLinking,
-  SSOAuditLog,
-  SSOError,
-  SSOErrorCode,
-  SSOConfiguration,
-  DEFAULT_SSO_PROVIDERS,
-} from "@/types/sso";
-import { Database } from "@/types/database";
-import { logger } from "@/lib/logger";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import { logger } from "@/lib/logger";
+import type { Database } from "@/types/database";
+import {
+  DEFAULT_SSO_PROVIDERS,
+  type SSOAccountLinking,
+  type SSOAuditLog,
+  type SSOAuthRequest,
+  type SSOAuthResponse,
+  type SSOConfiguration,
+  type SSOError,
+  type SSOErrorCode,
+  type SSOProvider,
+  type SSOSession,
+  type SSOTokenResponse,
+  type SSOUserInfo,
+} from "@/types/sso";
 
 export class SSOManager {
   private supabase;

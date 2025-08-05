@@ -5,11 +5,11 @@
  */
 
 import type {
-  cleanCNPJ,
   CNPJCache,
   CNPJCompanyData,
   CNPJConsultationResult,
   CNPJRateLimiter,
+  cleanCNPJ,
   validateCNPJFormat,
 } from "./cnpj-validator";
 
@@ -156,9 +156,12 @@ export class CNPJConsultationService {
 
     // Make API request with retry logic
     try {
-      const data = await this.fetchWithRetry(`${this.BASE_URL}/${cleanedCNPJ}`, finalConfig);
+      const data = await CNPJConsultationService.fetchWithRetry(
+        `${CNPJConsultationService.BASE_URL}/${cleanedCNPJ}`,
+        finalConfig,
+      );
 
-      const transformed = this.transformBrasilAPIResponse(data);
+      const transformed = CNPJConsultationService.transformBrasilAPIResponse(data);
 
       // Cache successful result
       if (finalConfig.useCache) {
@@ -175,7 +178,7 @@ export class CNPJConsultationService {
         },
       };
     } catch (error) {
-      return this.handleConsultationError(error, clientIP);
+      return CNPJConsultationService.handleConsultationError(error, clientIP);
     }
   }
 
@@ -225,7 +228,7 @@ export class CNPJConsultationService {
       ) {
         await new Promise((resolve) => setTimeout(resolve, config.retryDelay * attempt));
 
-        return this.fetchWithRetry(url, config, attempt + 1);
+        return CNPJConsultationService.fetchWithRetry(url, config, attempt + 1);
       }
 
       throw error;
@@ -334,7 +337,7 @@ export class CNPJConsultationService {
       const batch = cnpjs.slice(i, i + batchSize);
 
       const batchPromises = batch.map(async (cnpj) => {
-        const result = await this.consultCNPJ(cnpj, clientIP, config);
+        const result = await CNPJConsultationService.consultCNPJ(cnpj, clientIP, config);
         results.set(cnpj, result);
       });
 

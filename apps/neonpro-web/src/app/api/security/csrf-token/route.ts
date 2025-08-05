@@ -1,6 +1,6 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { CSRFProtection } from "@/lib/security/csrf-protection";
 import type { requireAuth } from "@/lib/auth";
+import type { CSRFProtection } from "@/lib/security/csrf-protection";
 
 /**
  * CSRF Token API Route

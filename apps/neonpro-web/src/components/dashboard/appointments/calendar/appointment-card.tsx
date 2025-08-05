@@ -1,16 +1,5 @@
 "use client";
 
-import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent } from "@/components/ui/card";
-import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type { cn } from "@/lib/utils";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
@@ -23,7 +12,18 @@ import type {
   User,
   User2,
 } from "lucide-react";
-import React from "react";
+import type React from "react";
+import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { cn } from "@/lib/utils";
 
 interface AppointmentCardProps {
   appointment: AppointmentWithRelations;

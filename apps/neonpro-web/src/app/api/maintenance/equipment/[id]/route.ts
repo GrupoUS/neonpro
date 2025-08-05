@@ -1,6 +1,6 @@
+import { type NextRequest, NextResponse } from "next/server";
 import { equipmentMaintenanceService } from "@/app/lib/services/equipment-maintenance-service";
 import { updateEquipmentSchema } from "@/app/lib/validations/maintenance";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

@@ -1,18 +1,17 @@
-"use strict";
 // Caching Utilities for Stock Alert System
 // Story 11.4: Alertas e Relatórios de Estoque
 // Caching layer for performance optimization
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CACHE_KEYS =
   exports.CACHE_TTL =
@@ -161,30 +158,14 @@ var CACHE_TTL = {
 };
 exports.CACHE_TTL = CACHE_TTL;
 var CACHE_KEYS = {
-  ALERT_CONFIGS: function (clinicId) {
-    return "alerts:configs:".concat(clinicId);
-  },
-  ACTIVE_ALERTS: function (clinicId) {
-    return "alerts:active:".concat(clinicId);
-  },
-  DASHBOARD_DATA: function (clinicId, period) {
-    return "dashboard:".concat(clinicId, ":").concat(period);
-  },
-  PRODUCT_STOCK: function (productId) {
-    return "stock:product:".concat(productId);
-  },
-  CLINIC_PRODUCTS: function (clinicId) {
-    return "products:clinic:".concat(clinicId);
-  },
-  REPORT_DATA: function (reportId) {
-    return "report:".concat(reportId);
-  },
-  USER_PERMISSIONS: function (userId, clinicId) {
-    return "permissions:".concat(userId, ":").concat(clinicId);
-  },
-  NOTIFICATION_QUEUE: function (clinicId) {
-    return "notifications:queue:".concat(clinicId);
-  },
+  ALERT_CONFIGS: (clinicId) => "alerts:configs:".concat(clinicId),
+  ACTIVE_ALERTS: (clinicId) => "alerts:active:".concat(clinicId),
+  DASHBOARD_DATA: (clinicId, period) => "dashboard:".concat(clinicId, ":").concat(period),
+  PRODUCT_STOCK: (productId) => "stock:product:".concat(productId),
+  CLINIC_PRODUCTS: (clinicId) => "products:clinic:".concat(clinicId),
+  REPORT_DATA: (reportId) => "report:".concat(reportId),
+  USER_PERMISSIONS: (userId, clinicId) => "permissions:".concat(userId, ":").concat(clinicId),
+  NOTIFICATION_QUEUE: (clinicId) => "notifications:queue:".concat(clinicId),
 };
 exports.CACHE_KEYS = CACHE_KEYS;
 // =====================================================
@@ -204,7 +185,7 @@ function getRedisClient() {
   }
   return redisClient;
 }
-var InMemoryCache = /** @class */ (function () {
+var InMemoryCache = /** @class */ (() => {
   function InMemoryCache() {
     this.cache = new Map();
     this.maxSize = 1000; // Prevent memory leaks
@@ -251,7 +232,7 @@ var inMemoryCache = new InMemoryCache();
 // =====================================================
 // CACHE INTERFACE
 // =====================================================
-var CacheManager = /** @class */ (function () {
+var CacheManager = /** @class */ (() => {
   function CacheManager() {
     this.redis = getRedisClient();
   }
@@ -515,12 +496,7 @@ var CacheManager = /** @class */ (function () {
             return [4 /*yield*/, this.redis.lrange(key, start, end)];
           case 1:
             items = _a.sent();
-            return [
-              2 /*return*/,
-              items.map(function (item) {
-                return JSON.parse(item);
-              }),
-            ];
+            return [2 /*return*/, items.map((item) => JSON.parse(item))];
           case 2:
             list = inMemoryCache.get(key) || [];
             return [2 /*return*/, list.slice(start, end === -1 ? undefined : end + 1)];
@@ -542,7 +518,7 @@ exports.CacheManager = CacheManager;
 // =====================================================
 // CACHE STRATEGIES
 // =====================================================
-var StockAlertCache = /** @class */ (function () {
+var StockAlertCache = /** @class */ (() => {
   function StockAlertCache() {
     this.cache = new CacheManager();
   }
@@ -817,7 +793,7 @@ exports.StockAlertCache = StockAlertCache;
 // =====================================================
 // PERFORMANCE MONITORING
 // =====================================================
-var CacheMetrics = /** @class */ (function () {
+var CacheMetrics = /** @class */ (() => {
   function CacheMetrics() {
     this.cache = new CacheManager();
   }

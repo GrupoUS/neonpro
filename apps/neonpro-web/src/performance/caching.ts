@@ -5,8 +5,8 @@ export const cacheConfig = {
 };
 
 export const performanceCache = {
-  get: (key: string) => null,
-  set: (key: string, value: any) => true,
+  get: (_key: string) => null,
+  set: (_key: string, _value: any) => true,
   clear: () => true,
 };
 

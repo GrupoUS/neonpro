@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.patientEmergencyDataSchema =
   exports.treatmentConsentSchema =
@@ -33,9 +32,7 @@ exports.patientSchema = zod_1.z.object({
   // Informações de relacionamento com a clínica
   clinicInfo: zod_1.z
     .object({
-      registrationDate: zod_1.z.date().default(function () {
-        return new Date();
-      }),
+      registrationDate: zod_1.z.date().default(() => new Date()),
       lastVisit: zod_1.z.date().optional(),
       totalVisits: zod_1.z.number().min(0).default(0),
       totalSpent: zod_1.z.number().min(0).default(0),
@@ -44,21 +41,15 @@ exports.patientSchema = zod_1.z.object({
     })
     .default({}),
   // Metadados
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
+  updatedAt: zod_1.z.date().default(() => new Date()),
   createdBy: zod_1.z.string().uuid(),
   updatedBy: zod_1.z.string().uuid().optional(),
 });
 // Schema para atualização de paciente (todos os campos opcionais exceto ID)
 exports.updatePatientSchema = exports.patientSchema.partial().extend({
   id: zod_1.z.string().uuid(),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  updatedAt: zod_1.z.date().default(() => new Date()),
   updatedBy: zod_1.z.string().uuid(),
 });
 // Schema para listagem de pacientes com filtros
@@ -101,18 +92,12 @@ exports.patientMedicalHistorySchema = zod_1.z.object({
             name: zod_1.z.string(),
             type: zod_1.z.enum(["image", "document", "video"]),
             url: zod_1.z.string().url(),
-            uploadedAt: zod_1.z.date().default(function () {
-              return new Date();
-            }),
+            uploadedAt: zod_1.z.date().default(() => new Date()),
           }),
         )
         .default([]),
-      createdAt: zod_1.z.date().default(function () {
-        return new Date();
-      }),
-      updatedAt: zod_1.z.date().default(function () {
-        return new Date();
-      }),
+      createdAt: zod_1.z.date().default(() => new Date()),
+      updatedAt: zod_1.z.date().default(() => new Date()),
     }),
   ),
 });
@@ -122,9 +107,7 @@ exports.treatmentConsentSchema = zod_1.z.object({
   treatmentId: zod_1.z.string().uuid(),
   consentType: zod_1.z.enum(["informed_consent", "photo_consent", "data_sharing", "marketing"]),
   granted: zod_1.z.boolean(),
-  consentDate: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  consentDate: zod_1.z.date().default(() => new Date()),
   documnetPath: zod_1.z.string().url().optional(), // PDF do consentimento assinado
   witnessId: zod_1.z.string().uuid().optional(), // Profissional que testemunhou
   notes: zod_1.z.string().max(500).optional(),

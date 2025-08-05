@@ -1,4 +1,3 @@
-"use strict";
 // ============================================================================
 // Supplier Management Hooks - Epic 6, Story 6.3
 // ============================================================================
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,20 +148,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSuppliers = useSuppliers;
 exports.useSupplier = useSupplier;
@@ -192,7 +188,6 @@ var client_1 = require("@/lib/supabase/client");
  * Hook for managing suppliers - CRUD operations with validation and caching
  */
 function useSuppliers(clinicId, filters) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
   // Use demo clinic ID if not provided (for testing)
@@ -200,11 +195,11 @@ function useSuppliers(clinicId, filters) {
   // Query for fetching suppliers
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["suppliers", effectiveClinicId, filters],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var query, _a, data, error;
           var _b, _c, _d;
-          return __generator(this, function (_e) {
+          return __generator(this, (_e) => {
             switch (_e.label) {
               case 0:
                 query = supabase
@@ -253,8 +248,7 @@ function useSuppliers(clinicId, filters) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       staleTime: 5 * 60 * 1000, // 5 minutes
       retry: 2,
     }),
@@ -265,10 +259,10 @@ function useSuppliers(clinicId, filters) {
     refetch = _a.refetch;
   // Create supplier mutation
   var createSupplier = (0, react_query_1.useMutation)({
-    mutationFn: function (supplierData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (supplierData) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               return [
@@ -291,25 +285,24 @@ function useSuppliers(clinicId, filters) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function (newSupplier) {
+      }),
+    onSuccess: (newSupplier) => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       sonner_1.toast.success("Fornecedor ".concat(newSupplier.name, " criado com sucesso!"));
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao criar fornecedor:", error);
       sonner_1.toast.error("Erro ao criar fornecedor. Tente novamente.");
     },
   });
   // Update supplier mutation
   var updateSupplier = (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (_a) =>
+      __awaiter(this, void 0, void 0, function () {
         var _b, data, error;
         var id = _a.id,
           supplierData = __rest(_a, ["id"]);
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -329,26 +322,25 @@ function useSuppliers(clinicId, filters) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function (updatedSupplier) {
+      }),
+    onSuccess: (updatedSupplier) => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       queryClient.invalidateQueries({ queryKey: ["supplier", updatedSupplier.id] });
       sonner_1.toast.success(
         "Fornecedor ".concat(updatedSupplier.name, " atualizado com sucesso!"),
       );
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao atualizar fornecedor:", error);
       sonner_1.toast.error("Erro ao atualizar fornecedor. Tente novamente.");
     },
   });
   // Delete supplier mutation
   var deleteSupplier = (0, react_query_1.useMutation)({
-    mutationFn: function (supplierId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (supplierId) =>
+      __awaiter(this, void 0, void 0, function () {
         var error;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, supabase.from("suppliers").delete().eq("id", supplierId)];
@@ -358,25 +350,24 @@ function useSuppliers(clinicId, filters) {
               return [2 /*return*/, supplierId];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       sonner_1.toast.success("Fornecedor removido com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao remover fornecedor:", error);
       sonner_1.toast.error("Erro ao remover fornecedor. Tente novamente.");
     },
   });
   // Activate/Deactivate supplier
   var toggleSupplierStatus = (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var _c, data, error;
         var supplierId = _b.supplierId,
           newStatus = _b.newStatus;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [
@@ -397,9 +388,8 @@ function useSuppliers(clinicId, filters) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function (updatedSupplier) {
+      }),
+    onSuccess: (updatedSupplier) => {
       queryClient.invalidateQueries({ queryKey: ["suppliers"] });
       var statusText =
         updatedSupplier.status === supplier_1.SupplierStatus.ACTIVE ? "ativado" : "desativado";
@@ -407,7 +397,7 @@ function useSuppliers(clinicId, filters) {
         "Fornecedor ".concat(updatedSupplier.name, " ").concat(statusText, " com sucesso!"),
       );
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao alterar status do fornecedor:", error);
       sonner_1.toast.error("Erro ao alterar status do fornecedor. Tente novamente.");
     },
@@ -431,15 +421,14 @@ function useSuppliers(clinicId, filters) {
  * Hook for managing a single supplier - detailed view with relationships
  */
 function useSupplier(supplierId) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier", supplierId],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 return [
@@ -458,8 +447,7 @@ function useSupplier(supplierId) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       enabled: !!supplierId,
       staleTime: 2 * 60 * 1000, // 2 minutes
     }),
@@ -470,9 +458,7 @@ function useSupplier(supplierId) {
     supplier: supplier,
     isLoading: isLoading,
     error: error,
-    refetch: function () {
-      return queryClient.invalidateQueries({ queryKey: ["supplier", supplierId] });
-    },
+    refetch: () => queryClient.invalidateQueries({ queryKey: ["supplier", supplierId] }),
   };
 }
 // ============================================================================
@@ -482,16 +468,15 @@ function useSupplier(supplierId) {
  * Hook for managing supplier performance tracking and analytics
  */
 function useSupplierPerformance(supplierId, period) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
   // Get performance data for supplier
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-performance", supplierId, period],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var query, _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 query = supabase
@@ -511,8 +496,7 @@ function useSupplierPerformance(supplierId, period) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       enabled: !!supplierId,
       staleTime: 10 * 60 * 1000, // 10 minutes
     }),
@@ -521,10 +505,10 @@ function useSupplierPerformance(supplierId, period) {
     error = _a.error;
   // Create performance evaluation
   var createPerformanceEvaluation = (0, react_query_1.useMutation)({
-    mutationFn: function (performanceData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (performanceData) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               return [
@@ -545,49 +529,39 @@ function useSupplierPerformance(supplierId, period) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["supplier-performance"] });
       sonner_1.toast.success("Avaliação de performance criada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao criar avaliação:", error);
       sonner_1.toast.error("Erro ao criar avaliação. Tente novamente.");
     },
   });
   // Calculate performance metrics
-  var performanceMetrics = (0, react_1.useMemo)(
-    function () {
-      if (!(performance === null || performance === void 0 ? void 0 : performance.length))
-        return null;
-      var latest = performance[0];
-      var previous = performance[1];
-      return {
-        current: latest,
-        trend: previous
-          ? {
-              scoreChange: latest.quality_score - previous.quality_score,
-              deliveryChange: latest.on_time_delivery_rate - previous.on_time_delivery_rate,
-              serviceChange: latest.customer_satisfaction - previous.customer_satisfaction,
-            }
-          : null,
-        averageQualityScore:
-          performance.reduce(function (sum, p) {
-            return sum + p.quality_score;
-          }, 0) / performance.length,
-        averageDeliveryRate:
-          performance.reduce(function (sum, p) {
-            return sum + p.on_time_delivery_rate;
-          }, 0) / performance.length,
-        averageServiceScore:
-          performance.reduce(function (sum, p) {
-            return sum + p.customer_satisfaction;
-          }, 0) / performance.length,
-      };
-    },
-    [performance],
-  );
+  var performanceMetrics = (0, react_1.useMemo)(() => {
+    if (!(performance === null || performance === void 0 ? void 0 : performance.length))
+      return null;
+    var latest = performance[0];
+    var previous = performance[1];
+    return {
+      current: latest,
+      trend: previous
+        ? {
+            scoreChange: latest.quality_score - previous.quality_score,
+            deliveryChange: latest.on_time_delivery_rate - previous.on_time_delivery_rate,
+            serviceChange: latest.customer_satisfaction - previous.customer_satisfaction,
+          }
+        : null,
+      averageQualityScore:
+        performance.reduce((sum, p) => sum + p.quality_score, 0) / performance.length,
+      averageDeliveryRate:
+        performance.reduce((sum, p) => sum + p.on_time_delivery_rate, 0) / performance.length,
+      averageServiceScore:
+        performance.reduce((sum, p) => sum + p.customer_satisfaction, 0) / performance.length,
+    };
+  }, [performance]);
   return {
     performance: performance,
     performanceMetrics: performanceMetrics,
@@ -601,15 +575,14 @@ function useSupplierPerformance(supplierId, period) {
  * Hook for performance analytics across all suppliers
  */
 function useSupplierAnalytics(clinicId, options) {
-  var _this = this;
   var supabase = yield (0, client_1.createClient)();
   var effectiveClinicId = clinicId || "89084c3a-9200-4058-a15a-b440d3c60687";
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-analytics", clinicId, options],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 return [
@@ -628,8 +601,7 @@ function useSupplierAnalytics(clinicId, options) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       staleTime: 30 * 60 * 1000, // 30 minutes
     }),
     analytics = _a.data,
@@ -648,17 +620,16 @@ function useSupplierAnalytics(clinicId, options) {
  * Hook for managing procurement requests
  */
 function useProcurementRequests(clinicId, filters) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
   var effectiveClinicId = clinicId || "89084c3a-9200-4058-a15a-b440d3c60687";
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["procurement-requests", clinicId, filters],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var query, _a, data, error;
           var _b, _c;
-          return __generator(this, function (_d) {
+          return __generator(this, (_d) => {
             switch (_d.label) {
               case 0:
                 query = supabase
@@ -697,8 +668,7 @@ function useProcurementRequests(clinicId, filters) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       staleTime: 5 * 60 * 1000,
     }),
     _b = _a.data,
@@ -707,10 +677,10 @@ function useProcurementRequests(clinicId, filters) {
     error = _a.error;
   // Create procurement request
   var createProcurementRequest = (0, react_query_1.useMutation)({
-    mutationFn: function (requestData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (requestData) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               return [
@@ -732,15 +702,14 @@ function useProcurementRequests(clinicId, filters) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function (newRequest) {
+      }),
+    onSuccess: (newRequest) => {
       queryClient.invalidateQueries({ queryKey: ["procurement-requests"] });
       sonner_1.toast.success(
         "Solicita\u00E7\u00E3o ".concat(newRequest.title, " criada com sucesso!"),
       );
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao criar solicitação:", error);
       sonner_1.toast.error("Erro ao criar solicitação. Tente novamente.");
     },
@@ -757,15 +726,14 @@ function useProcurementRequests(clinicId, filters) {
  * Hook for managing supplier bids
  */
 function useSupplierBids(procurementRequestId) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-bids", procurementRequestId],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 return [
@@ -784,8 +752,7 @@ function useSupplierBids(procurementRequestId) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       enabled: !!procurementRequestId,
       staleTime: 2 * 60 * 1000,
     }),
@@ -795,15 +762,15 @@ function useSupplierBids(procurementRequestId) {
     error = _a.error;
   // Submit bid evaluation
   var evaluateBid = (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var _c, data, error;
         var bidId = _b.bidId,
           technicalScore = _b.technicalScore,
           commercialScore = _b.commercialScore,
           overallScore = _b.overallScore,
           notes = _b.notes;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [
@@ -827,13 +794,12 @@ function useSupplierBids(procurementRequestId) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["supplier-bids"] });
       sonner_1.toast.success("Avaliação da proposta salva com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao avaliar proposta:", error);
       sonner_1.toast.error("Erro ao avaliar proposta. Tente novamente.");
     },
@@ -853,17 +819,16 @@ function useSupplierBids(procurementRequestId) {
  * Hook for managing quality issues
  */
 function useQualityIssues(clinicId, filters) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
   var effectiveClinicId = clinicId || "89084c3a-9200-4058-a15a-b440d3c60687";
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["quality-issues", clinicId, filters],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var query, _a, data, error;
           var _b, _c, _d;
-          return __generator(this, function (_e) {
+          return __generator(this, (_e) => {
             switch (_e.label) {
               case 0:
                 query = supabase
@@ -908,8 +873,7 @@ function useQualityIssues(clinicId, filters) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       staleTime: 3 * 60 * 1000,
     }),
     _b = _a.data,
@@ -918,10 +882,10 @@ function useQualityIssues(clinicId, filters) {
     error = _a.error;
   // Create quality issue
   var createQualityIssue = (0, react_query_1.useMutation)({
-    mutationFn: function (issueData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (issueData) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               return [
@@ -945,28 +909,27 @@ function useQualityIssues(clinicId, filters) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function (newIssue) {
+      }),
+    onSuccess: (newIssue) => {
       queryClient.invalidateQueries({ queryKey: ["quality-issues"] });
       sonner_1.toast.success(
         "Problema de qualidade #".concat(newIssue.issue_number, " registrado com sucesso!"),
       );
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao registrar problema:", error);
       sonner_1.toast.error("Erro ao registrar problema. Tente novamente.");
     },
   });
   // Update issue status
   var updateIssueStatus = (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var updates, _c, data, error;
         var issueId = _b.issueId,
           newStatus = _b.newStatus,
           notes = _b.notes;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               updates = {
@@ -991,15 +954,14 @@ function useQualityIssues(clinicId, filters) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function (updatedIssue) {
+      }),
+    onSuccess: (updatedIssue) => {
       queryClient.invalidateQueries({ queryKey: ["quality-issues"] });
       sonner_1.toast.success(
         "Status do problema #".concat(updatedIssue.issue_number, " atualizado!"),
       );
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao atualizar status:", error);
       sonner_1.toast.error("Erro ao atualizar status. Tente novamente.");
     },
@@ -1021,17 +983,16 @@ function useQualityIssues(clinicId, filters) {
  * Hook for managing supplier contracts
  */
 function useSupplierContracts(clinicId, filters) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
   var effectiveClinicId = clinicId || "89084c3a-9200-4058-a15a-b440d3c60687";
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-contracts", clinicId, filters],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var query, futureDate, _a, data, error;
           var _b, _c;
-          return __generator(this, function (_d) {
+          return __generator(this, (_d) => {
             switch (_d.label) {
               case 0:
                 query = supabase
@@ -1073,8 +1034,7 @@ function useSupplierContracts(clinicId, filters) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       staleTime: 10 * 60 * 1000,
     }),
     _b = _a.data,
@@ -1082,20 +1042,16 @@ function useSupplierContracts(clinicId, filters) {
     isLoading = _a.isLoading,
     error = _a.error;
   // Get contracts expiring soon
-  var expiringContracts = (0, react_1.useMemo)(
-    function () {
-      var thirtyDaysFromNow = new Date();
-      thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-      return contracts.filter(function (contract) {
-        return (
-          contract.end_date &&
-          new Date(contract.end_date) <= thirtyDaysFromNow &&
-          contract.status === "active"
-        );
-      });
-    },
-    [contracts],
-  );
+  var expiringContracts = (0, react_1.useMemo)(() => {
+    var thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+    return contracts.filter(
+      (contract) =>
+        contract.end_date &&
+        new Date(contract.end_date) <= thirtyDaysFromNow &&
+        contract.status === "active",
+    );
+  }, [contracts]);
   return {
     contracts: contracts,
     expiringContracts: expiringContracts,
@@ -1110,15 +1066,14 @@ function useSupplierContracts(clinicId, filters) {
  * Hook for managing supplier communications
  */
 function useSupplierCommunications(supplierId) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-communications", supplierId],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 return [
@@ -1137,8 +1092,7 @@ function useSupplierCommunications(supplierId) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       enabled: !!supplierId,
       staleTime: 2 * 60 * 1000,
     }),
@@ -1148,10 +1102,10 @@ function useSupplierCommunications(supplierId) {
     error = _a.error;
   // Create communication record
   var createCommunication = (0, react_query_1.useMutation)({
-    mutationFn: function (communicationData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (communicationData) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               return [
@@ -1172,13 +1126,12 @@ function useSupplierCommunications(supplierId) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["supplier-communications"] });
       sonner_1.toast.success("Comunicação registrada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao registrar comunicação:", error);
       sonner_1.toast.error("Erro ao registrar comunicação. Tente novamente.");
     },
@@ -1211,17 +1164,15 @@ function useSupplierSearch() {
     selectedRiskLevels = _d[0],
     setSelectedRiskLevels = _d[1];
   var filters = (0, react_1.useMemo)(
-    function () {
-      return {
-        search: searchTerm.trim() || undefined,
-        category: selectedCategories.length > 0 ? selectedCategories : undefined,
-        status: selectedStatuses.length > 0 ? selectedStatuses : undefined,
-        riskLevel: selectedRiskLevels.length > 0 ? selectedRiskLevels : undefined,
-      };
-    },
+    () => ({
+      search: searchTerm.trim() || undefined,
+      category: selectedCategories.length > 0 ? selectedCategories : undefined,
+      status: selectedStatuses.length > 0 ? selectedStatuses : undefined,
+      riskLevel: selectedRiskLevels.length > 0 ? selectedRiskLevels : undefined,
+    }),
     [searchTerm, selectedCategories, selectedStatuses, selectedRiskLevels],
   );
-  var clearFilters = (0, react_1.useCallback)(function () {
+  var clearFilters = (0, react_1.useCallback)(() => {
     setSearchTerm("");
     setSelectedCategories([]);
     setSelectedStatuses([]);
@@ -1245,12 +1196,11 @@ function useSupplierSearch() {
  * Hook for supplier dashboard statistics
  */
 function useSupplierDashboard(clinicId) {
-  var _this = this;
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-dashboard", clinicId],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             // This would typically be a complex aggregation query
             // For now, we'll return placeholder data
             return [
@@ -1265,8 +1215,7 @@ function useSupplierDashboard(clinicId) {
               },
             ];
           });
-        });
-      },
+        }),
       staleTime: 15 * 60 * 1000, // 15 minutes
     }),
     stats = _a.data,
@@ -1280,14 +1229,13 @@ function useSupplierDashboard(clinicId) {
  * Hook for supplier procurement metrics and management
  */
 function useSupplierProcurement(supplierId, clinicId) {
-  var _this = this;
   var effectiveClinicId = clinicId || "demo-clinic-id";
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-procurement", supplierId, effectiveClinicId],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var supabase, procurements;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1313,17 +1261,17 @@ function useSupplierProcurement(supplierId, clinicId) {
                     totalValue:
                       (procurements === null || procurements === void 0
                         ? void 0
-                        : procurements.reduce(function (sum, p) {
-                            return sum + p.unit_price * p.minimum_order_quantity;
-                          }, 0)) || 0,
+                        : procurements.reduce(
+                            (sum, p) => sum + p.unit_price * p.minimum_order_quantity,
+                            0,
+                          )) || 0,
                     averageOrderTime: 7, // placeholder
                     onTimeDeliveryRate: 0.85, // placeholder
                   },
                 ];
             }
           });
-        });
-      },
+        }),
       enabled: !!supplierId,
     }),
     procurementData = _a.data,
@@ -1337,14 +1285,13 @@ function useSupplierProcurement(supplierId, clinicId) {
  * Hook for supplier quality metrics and tracking
  */
 function useSupplierQuality(supplierId, clinicId) {
-  var _this = this;
   var effectiveClinicId = clinicId || "demo-clinic-id";
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-quality", supplierId, effectiveClinicId],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var supabase, performance;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1368,9 +1315,7 @@ function useSupplierQuality(supplierId, clinicId) {
                     averageRating:
                       (performance === null || performance === void 0
                         ? void 0
-                        : performance.reduce(function (sum, p) {
-                            return sum + p.overall_rating;
-                          }, 0)) /
+                        : performance.reduce((sum, p) => sum + p.overall_rating, 0)) /
                         ((performance === null || performance === void 0
                           ? void 0
                           : performance.length) || 1) || 0,
@@ -1380,8 +1325,7 @@ function useSupplierQuality(supplierId, clinicId) {
                 ];
             }
           });
-        });
-      },
+        }),
       enabled: !!supplierId,
     }),
     qualityData = _a.data,
@@ -1395,14 +1339,13 @@ function useSupplierQuality(supplierId, clinicId) {
  * Hook for supplier statistics and analytics
  */
 function useSupplierStats(clinicId) {
-  var _this = this;
   var effectiveClinicId = clinicId || "demo-clinic-id";
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["supplier-stats", effectiveClinicId],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var supabase, suppliers, totalSuppliers, activeSuppliers, categoryCounts;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1419,13 +1362,11 @@ function useSupplierStats(clinicId) {
                 activeSuppliers =
                   (suppliers === null || suppliers === void 0
                     ? void 0
-                    : suppliers.filter(function (s) {
-                        return s.status === "active";
-                      }).length) || 0;
+                    : suppliers.filter((s) => s.status === "active").length) || 0;
                 categoryCounts =
                   (suppliers === null || suppliers === void 0
                     ? void 0
-                    : suppliers.reduce(function (acc, s) {
+                    : suppliers.reduce((acc, s) => {
                         acc[s.category] = (acc[s.category] || 0) + 1;
                         return acc;
                       }, {})) || {};
@@ -1439,28 +1380,21 @@ function useSupplierStats(clinicId) {
                       low:
                         (suppliers === null || suppliers === void 0
                           ? void 0
-                          : suppliers.filter(function (s) {
-                              return s.risk_level === "low";
-                            }).length) || 0,
+                          : suppliers.filter((s) => s.risk_level === "low").length) || 0,
                       medium:
                         (suppliers === null || suppliers === void 0
                           ? void 0
-                          : suppliers.filter(function (s) {
-                              return s.risk_level === "medium";
-                            }).length) || 0,
+                          : suppliers.filter((s) => s.risk_level === "medium").length) || 0,
                       high:
                         (suppliers === null || suppliers === void 0
                           ? void 0
-                          : suppliers.filter(function (s) {
-                              return s.risk_level === "high";
-                            }).length) || 0,
+                          : suppliers.filter((s) => s.risk_level === "high").length) || 0,
                     },
                   },
                 ];
             }
           });
-        });
-      },
+        }),
       staleTime: 10 * 60 * 1000, // 10 minutes
     }),
     stats = _a.data,

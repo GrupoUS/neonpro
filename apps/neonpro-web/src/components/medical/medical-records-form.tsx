@@ -1,6 +1,37 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  Calendar,
+  Camera,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  Eye,
+  FileImage,
+  FileText,
+  Filter,
+  History,
+  Paperclip,
+  Plus,
+  Save,
+  Search,
+  Shield,
+  Signature,
+  Stethoscope,
+  Tag,
+  Trash2,
+  Upload,
+  User,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,10 +39,11 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
+import type { Progress } from "@/components/ui/progress";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -19,40 +51,9 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Progress } from "@/components/ui/progress";
-import type {
-  Save,
-  FileText,
-  Upload,
-  Download,
-  Eye,
-  Edit,
-  Trash2,
-  Plus,
-  Search,
-  Filter,
-  Calendar,
-  User,
-  Stethoscope,
-  FileImage,
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Tag,
-  History,
-  Signature,
-  Camera,
-  Paperclip,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Types
 interface MedicalRecord {

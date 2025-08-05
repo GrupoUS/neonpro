@@ -1,4 +1,3 @@
-"use strict";
 /**
  * CNPJ Consultation Service
  * Integration with Brasil API for company data consultation
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CNPJConsultationService = exports.CNPJConsultationError = void 0;
 var cnpj_validator_1 = require("./cnpj-validator");
@@ -158,7 +155,7 @@ var cnpj_validator_1 = require("./cnpj-validator");
  * Error types for API consultation
  */
 var CNPJConsultationError;
-(function (CNPJConsultationError) {
+((CNPJConsultationError) => {
   CNPJConsultationError["INVALID_FORMAT"] = "INVALID_FORMAT";
   CNPJConsultationError["RATE_LIMIT_EXCEEDED"] = "RATE_LIMIT_EXCEEDED";
   CNPJConsultationError["API_ERROR"] = "API_ERROR";
@@ -176,7 +173,7 @@ var DEFAULT_CONFIG = {
 /**
  * Main CNPJ consultation service
  */
-var CNPJConsultationService = /** @class */ (function () {
+var CNPJConsultationService = /** @class */ (() => {
   function CNPJConsultationService() {}
   /**
    * Consult CNPJ data from Brasil API
@@ -290,9 +287,7 @@ var CNPJConsultationService = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             controller = new AbortController();
-            timeoutId = setTimeout(function () {
-              return controller.abort();
-            }, config.timeout);
+            timeoutId = setTimeout(() => controller.abort(), config.timeout);
             _a.label = 1;
           case 1:
             _a.trys.push([1, 4, , 7]);
@@ -336,9 +331,7 @@ var CNPJConsultationService = /** @class */ (function () {
               return [3 /*break*/, 6];
             return [
               4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, config.retryDelay * attempt);
-              }),
+              new Promise((resolve) => setTimeout(resolve, config.retryDelay * attempt)),
             ];
           case 5:
             _a.sent();
@@ -354,7 +347,7 @@ var CNPJConsultationService = /** @class */ (function () {
   /**
    * Transform Brasil API response to our interface
    */
-  CNPJConsultationService.transformBrasilAPIResponse = function (response) {
+  CNPJConsultationService.transformBrasilAPIResponse = (response) => {
     var _a;
     return {
       cnpj: response.cnpj,
@@ -365,12 +358,10 @@ var CNPJConsultationService = /** @class */ (function () {
         code: response.cnae_fiscal,
         text: response.cnae_fiscal_descricao,
       },
-      atividades_secundarias: response.cnaes_secundarios.map(function (cnae) {
-        return {
-          code: cnae.codigo,
-          text: cnae.descricao,
-        };
-      }),
+      atividades_secundarias: response.cnaes_secundarios.map((cnae) => ({
+        code: cnae.codigo,
+        text: cnae.descricao,
+      })),
       endereco: {
         logradouro: "".concat(response.descricao_tipo_logradouro, " ").concat(response.logradouro),
         numero: response.numero,
@@ -394,20 +385,18 @@ var CNPJConsultationService = /** @class */ (function () {
       qsa:
         (_a = response.qsa) === null || _a === void 0
           ? void 0
-          : _a.map(function (socio) {
-              return {
-                nome: socio.nome_socio,
-                qual: socio.codigo_qualificacao_socio,
-                nome_rep_legal: socio.nome_representante_legal,
-                qual_rep_legal: socio.codigo_qualificacao_representante_legal,
-              };
-            }),
+          : _a.map((socio) => ({
+              nome: socio.nome_socio,
+              qual: socio.codigo_qualificacao_socio,
+              nome_rep_legal: socio.nome_representante_legal,
+              qual_rep_legal: socio.codigo_qualificacao_representante_legal,
+            })),
     };
   };
   /**
    * Handle consultation errors
    */
-  CNPJConsultationService.handleConsultationError = function (error, clientIP) {
+  CNPJConsultationService.handleConsultationError = (error, clientIP) => {
     var errorType = CNPJConsultationError.API_ERROR;
     var errorMessage = "Erro desconhecido na consulta";
     if (error instanceof Error) {
@@ -447,14 +436,13 @@ var CNPJConsultationService = /** @class */ (function () {
   CNPJConsultationService.batchConsultCNPJ = function (cnpjs_1) {
     return __awaiter(this, arguments, void 0, function (cnpjs, clientIP, config) {
       var results, batchSize, delay, i, batch, batchPromises;
-      var _this = this;
       if (clientIP === void 0) {
         clientIP = "unknown";
       }
       if (config === void 0) {
         config = {};
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             results = new Map();
@@ -465,8 +453,8 @@ var CNPJConsultationService = /** @class */ (function () {
           case 1:
             if (!(i < cnpjs.length)) return [3 /*break*/, 5];
             batch = cnpjs.slice(i, i + batchSize);
-            batchPromises = batch.map(function (cnpj) {
-              return __awaiter(_this, void 0, void 0, function () {
+            batchPromises = batch.map((cnpj) =>
+              __awaiter(this, void 0, void 0, function () {
                 var result;
                 return __generator(this, function (_a) {
                   switch (_a.label) {
@@ -478,18 +466,13 @@ var CNPJConsultationService = /** @class */ (function () {
                       return [2 /*return*/];
                   }
                 });
-              });
-            });
+              }),
+            );
             return [4 /*yield*/, Promise.all(batchPromises)];
           case 2:
             _a.sent();
             if (!(i + batchSize < cnpjs.length)) return [3 /*break*/, 4];
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, delay);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, delay))];
           case 3:
             _a.sent();
             _a.label = 4;
@@ -505,13 +488,13 @@ var CNPJConsultationService = /** @class */ (function () {
   /**
    * Clear all caches (for admin purposes)
    */
-  CNPJConsultationService.clearCache = function () {
+  CNPJConsultationService.clearCache = () => {
     cnpj_validator_1.CNPJCache.clear();
   };
   /**
    * Get cache statistics
    */
-  CNPJConsultationService.getCacheStats = function () {
+  CNPJConsultationService.getCacheStats = () => {
     var _a;
     // Note: This is a simplified implementation
     // In production, you might want more detailed statistics

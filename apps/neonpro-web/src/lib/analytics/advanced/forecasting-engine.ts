@@ -13,8 +13,8 @@
  * - Automated feature engineering
  */
 
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
 
 // Core forecasting types
 export interface TimeSeriesData {
@@ -227,7 +227,7 @@ export class ForecastingEngine {
 
         errors.push({
           absolute: Math.abs(actual - predicted),
-          squared: Math.pow(actual - predicted, 2),
+          squared: (actual - predicted) ** 2,
           percentage: actual !== 0 ? Math.abs((actual - predicted) / actual) * 100 : 0,
         });
       }
@@ -352,7 +352,7 @@ export class ForecastingEngine {
             } else if (stat === "std") {
               const mean = windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
               value = Math.sqrt(
-                windowData.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / windowData.length,
+                windowData.reduce((sum, v) => sum + (v - mean) ** 2, 0) / windowData.length,
               );
             } else if (stat === "min") {
               value = Math.min(...windowData);
@@ -581,7 +581,7 @@ export class ForecastingEngine {
     const finalPredictions = XWithBias.map((row) =>
       row.reduce((sum, xi, i) => sum + xi * weights[i], 0),
     );
-    const residuals = finalPredictions.map((pred, i) => Math.pow(pred - y[i], 2));
+    const residuals = finalPredictions.map((pred, i) => (pred - y[i]) ** 2);
     const residualStd = Math.sqrt(residuals.reduce((sum, r) => sum + r, 0) / (n - 1));
 
     return {
@@ -628,7 +628,7 @@ export class ForecastingEngine {
       smoothedValues.push(smoothed);
     }
 
-    const residuals = y.map((actual, i) => Math.pow(actual - smoothedValues[i], 2));
+    const residuals = y.map((actual, i) => (actual - smoothedValues[i]) ** 2);
     const residualStd = Math.sqrt(residuals.reduce((sum, r) => sum + r, 0) / (y.length - 1));
 
     return {
@@ -712,7 +712,7 @@ export class ForecastingEngine {
           } else if (stat === "std") {
             const mean = windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
             value = Math.sqrt(
-              windowData.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / windowData.length,
+              windowData.reduce((sum, v) => sum + (v - mean) ** 2, 0) / windowData.length,
             );
           } else if (stat === "min") {
             value = Math.min(...windowData);
@@ -794,7 +794,7 @@ export class ForecastingEngine {
 
       // Apply growth rate adjustment
       if (adjustments.growth_rate) {
-        const growthMultiplier = Math.pow(1 + adjustments.growth_rate / 100, i + 1);
+        const growthMultiplier = (1 + adjustments.growth_rate / 100) ** (i + 1);
         adjusted *= growthMultiplier;
       }
 
@@ -887,7 +887,7 @@ export const forecastUtils = {
     const errors = actual.map((a, i) => a - predicted[i]);
     const meanError = errors.reduce((sum, e) => sum + e, 0) / errors.length;
     const stdError = Math.sqrt(
-      errors.reduce((sum, e) => sum + Math.pow(e - meanError, 2), 0) / errors.length,
+      errors.reduce((sum, e) => sum + (e - meanError) ** 2, 0) / errors.length,
     );
 
     return errors.map((error, i) => ({

@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -79,37 +78,30 @@ function BeforeAfterComparison(_a) {
   var afterImageRef = (0, react_1.useRef)(null);
   // Cleanup flicker interval on unmount
   (0, react_1.useEffect)(
-    function () {
-      return function () {
-        if (flickerInterval) {
-          clearInterval(flickerInterval);
-        }
-      };
+    () => () => {
+      if (flickerInterval) {
+        clearInterval(flickerInterval);
+      }
     },
     [flickerInterval],
   );
   // Handle view mode changes
-  (0, react_1.useEffect)(
-    function () {
-      if (viewMode === "flicker") {
-        var interval = setInterval(function () {
-          setFlickerState(function (prev) {
-            return prev === "before" ? "after" : "before";
-          });
-        }, 1000); // 1 second intervals
-        setFlickerInterval(interval);
-      } else {
-        if (flickerInterval) {
-          clearInterval(flickerInterval);
-          setFlickerInterval(null);
-        }
+  (0, react_1.useEffect)(() => {
+    if (viewMode === "flicker") {
+      var interval = setInterval(() => {
+        setFlickerState((prev) => (prev === "before" ? "after" : "before"));
+      }, 1000); // 1 second intervals
+      setFlickerInterval(interval);
+    } else {
+      if (flickerInterval) {
+        clearInterval(flickerInterval);
+        setFlickerInterval(null);
       }
-    },
-    [viewMode],
-  );
+    }
+  }, [viewMode]);
   // Mouse event handlers
   var handleMouseDown = (0, react_1.useCallback)(
-    function (e) {
+    (e) => {
       var _a;
       if (annotationMode === "measure" && onMeasurementClick) {
         var rect =
@@ -131,7 +123,7 @@ function BeforeAfterComparison(_a) {
     [annotationMode, onMeasurementClick, pan, zoom],
   );
   var handleMouseMove = (0, react_1.useCallback)(
-    function (e) {
+    (e) => {
       if (isDragging) {
         setPan({
           x: e.clientX - dragStart.x,
@@ -141,26 +133,18 @@ function BeforeAfterComparison(_a) {
     },
     [isDragging, dragStart],
   );
-  var handleMouseUp = (0, react_1.useCallback)(function () {
+  var handleMouseUp = (0, react_1.useCallback)(() => {
     setIsDragging(false);
   }, []);
   // Zoom controls
-  var handleZoomIn = function () {
-    return setZoom(function (prev) {
-      return Math.min(prev + 25, 400);
-    });
-  };
-  var handleZoomOut = function () {
-    return setZoom(function (prev) {
-      return Math.max(prev - 25, 25);
-    });
-  };
-  var handleResetView = function () {
+  var handleZoomIn = () => setZoom((prev) => Math.min(prev + 25, 400));
+  var handleZoomOut = () => setZoom((prev) => Math.max(prev - 25, 25));
+  var handleResetView = () => {
     setZoom(100);
     setPan({ x: 0, y: 0 });
   };
   // Fullscreen toggle
-  var toggleFullscreen = function () {
+  var toggleFullscreen = () => {
     var _a;
     if (!document.fullscreenElement) {
       (_a = containerRef.current) === null || _a === void 0 ? void 0 : _a.requestFullscreen();
@@ -171,7 +155,7 @@ function BeforeAfterComparison(_a) {
     }
   };
   // Export functionality
-  var handleExport = function () {
+  var handleExport = () => {
     // Create canvas for export
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d");
@@ -188,7 +172,7 @@ function BeforeAfterComparison(_a) {
     link.click();
   };
   // Render annotations overlay
-  var renderAnnotations = function () {
+  var renderAnnotations = () => {
     if (
       !showAnnotations ||
       !(analysisResult === null || analysisResult === void 0 ? void 0 : analysisResult.annotations)
@@ -196,39 +180,35 @@ function BeforeAfterComparison(_a) {
       return null;
     return (
       <div className="absolute inset-0 pointer-events-none">
-        {analysisResult.annotations.map(function (annotation) {
-          return (
-            <div
-              key={annotation.id}
-              className={(0, utils_1.cn)(
-                "absolute border-2 rounded pointer-events-auto cursor-pointer transition-all",
-                selectedAnnotation === annotation.id
-                  ? "border-blue-500 bg-blue-500/20"
-                  : "border-yellow-500 bg-yellow-500/10 hover:bg-yellow-500/20",
-              )}
-              style={{
-                left: "".concat((annotation.coordinates.x * zoom) / 100 + pan.x, "px"),
-                top: "".concat((annotation.coordinates.y * zoom) / 100 + pan.y, "px"),
-                width: "".concat((annotation.coordinates.width * zoom) / 100, "px"),
-                height: "".concat((annotation.coordinates.height * zoom) / 100, "px"),
-              }}
-              onClick={function () {
-                return setSelectedAnnotation(
-                  selectedAnnotation === annotation.id ? null : annotation.id,
-                );
-              }}
-            >
-              <div className="absolute -top-6 left-0 bg-yellow-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                {annotation.description}
-              </div>
+        {analysisResult.annotations.map((annotation) => (
+          <div
+            key={annotation.id}
+            className={(0, utils_1.cn)(
+              "absolute border-2 rounded pointer-events-auto cursor-pointer transition-all",
+              selectedAnnotation === annotation.id
+                ? "border-blue-500 bg-blue-500/20"
+                : "border-yellow-500 bg-yellow-500/10 hover:bg-yellow-500/20",
+            )}
+            style={{
+              left: "".concat((annotation.coordinates.x * zoom) / 100 + pan.x, "px"),
+              top: "".concat((annotation.coordinates.y * zoom) / 100 + pan.y, "px"),
+              width: "".concat((annotation.coordinates.width * zoom) / 100, "px"),
+              height: "".concat((annotation.coordinates.height * zoom) / 100, "px"),
+            }}
+            onClick={() =>
+              setSelectedAnnotation(selectedAnnotation === annotation.id ? null : annotation.id)
+            }
+          >
+            <div className="absolute -top-6 left-0 bg-yellow-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+              {annotation.description}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     );
   };
   // Render measurements overlay
-  var renderMeasurements = function () {
+  var renderMeasurements = () => {
     if (
       !showMeasurements ||
       !(measurementResult === null || measurementResult === void 0
@@ -238,43 +218,41 @@ function BeforeAfterComparison(_a) {
       return null;
     return (
       <div className="absolute inset-0 pointer-events-none">
-        {measurementResult.measurements.map(function (measurement) {
-          return (
-            <div
-              key={measurement.id}
-              className="absolute pointer-events-auto"
-              style={{
-                left: "".concat((measurement.coordinates.region.x * zoom) / 100 + pan.x, "px"),
-                top: "".concat((measurement.coordinates.region.y * zoom) / 100 + pan.y, "px"),
-              }}
-            >
-              {/* Measurement point */}
-              <div className="w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-lg" />
+        {measurementResult.measurements.map((measurement) => (
+          <div
+            key={measurement.id}
+            className="absolute pointer-events-auto"
+            style={{
+              left: "".concat((measurement.coordinates.region.x * zoom) / 100 + pan.x, "px"),
+              top: "".concat((measurement.coordinates.region.y * zoom) / 100 + pan.y, "px"),
+            }}
+          >
+            {/* Measurement point */}
+            <div className="w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-lg" />
 
-              {/* Measurement label */}
-              <div className="absolute -top-8 left-4 bg-red-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-                {measurement.type}: {measurement.afterValue.toFixed(1)}
-                {measurement.unit}
-                {measurement.changePercentage !== 0 && (
-                  <span
-                    className={(0, utils_1.cn)(
-                      "ml-1",
-                      measurement.changePercentage > 0 ? "text-green-200" : "text-red-200",
-                    )}
-                  >
-                    ({measurement.changePercentage > 0 ? "+" : ""}
-                    {measurement.changePercentage.toFixed(1)}%)
-                  </span>
-                )}
-              </div>
+            {/* Measurement label */}
+            <div className="absolute -top-8 left-4 bg-red-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+              {measurement.type}: {measurement.afterValue.toFixed(1)}
+              {measurement.unit}
+              {measurement.changePercentage !== 0 && (
+                <span
+                  className={(0, utils_1.cn)(
+                    "ml-1",
+                    measurement.changePercentage > 0 ? "text-green-200" : "text-red-200",
+                  )}
+                >
+                  ({measurement.changePercentage > 0 ? "+" : ""}
+                  {measurement.changePercentage.toFixed(1)}%)
+                </span>
+              )}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     );
   };
   // Render grid overlay
-  var renderGrid = function () {
+  var renderGrid = () => {
     if (!showGrid) return null;
     return (
       <div className="absolute inset-0 pointer-events-none">
@@ -295,7 +273,7 @@ function BeforeAfterComparison(_a) {
     );
   };
   // Render comparison based on view mode
-  var renderComparison = function () {
+  var renderComparison = () => {
     var imageStyle = {
       transform: "scale("
         .concat(zoom / 100, ") translate(")
@@ -477,12 +455,7 @@ function BeforeAfterComparison(_a) {
         </card_1.CardHeader>
         <card_1.CardContent className="space-y-4">
           {/* View Mode Tabs */}
-          <tabs_1.Tabs
-            value={viewMode}
-            onValueChange={function (value) {
-              return setViewMode(value);
-            }}
-          >
+          <tabs_1.Tabs value={viewMode} onValueChange={(value) => setViewMode(value)}>
             <tabs_1.TabsList className="grid w-full grid-cols-5">
               <tabs_1.TabsTrigger value="split">Dividido</tabs_1.TabsTrigger>
               <tabs_1.TabsTrigger value="overlay">Sobreposição</tabs_1.TabsTrigger>
@@ -513,9 +486,7 @@ function BeforeAfterComparison(_a) {
               <button_1.Button
                 variant={annotationMode === "view" ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setAnnotationMode("view");
-                }}
+                onClick={() => setAnnotationMode("view")}
               >
                 <lucide_react_1.Move className="h-4 w-4 mr-2" />
                 Navegar
@@ -523,9 +494,7 @@ function BeforeAfterComparison(_a) {
               <button_1.Button
                 variant={annotationMode === "measure" ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setAnnotationMode("measure");
-                }}
+                onClick={() => setAnnotationMode("measure")}
               >
                 <lucide_react_1.Ruler className="h-4 w-4 mr-2" />
                 Medir
@@ -533,9 +502,7 @@ function BeforeAfterComparison(_a) {
               <button_1.Button
                 variant={annotationMode === "annotate" ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setAnnotationMode("annotate");
-                }}
+                onClick={() => setAnnotationMode("annotate")}
               >
                 <lucide_react_1.MousePointer2 className="h-4 w-4 mr-2" />
                 Anotar
@@ -547,9 +514,7 @@ function BeforeAfterComparison(_a) {
               <button_1.Button
                 variant={showAnnotations ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setShowAnnotations(!showAnnotations);
-                }}
+                onClick={() => setShowAnnotations(!showAnnotations)}
               >
                 {showAnnotations
                   ? <lucide_react_1.Eye className="h-4 w-4" />
@@ -559,9 +524,7 @@ function BeforeAfterComparison(_a) {
               <button_1.Button
                 variant={showMeasurements ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setShowMeasurements(!showMeasurements);
-                }}
+                onClick={() => setShowMeasurements(!showMeasurements)}
               >
                 {showMeasurements
                   ? <lucide_react_1.Eye className="h-4 w-4" />
@@ -571,9 +534,7 @@ function BeforeAfterComparison(_a) {
               <button_1.Button
                 variant={showGrid ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setShowGrid(!showGrid);
-                }}
+                onClick={() => setShowGrid(!showGrid)}
               >
                 <lucide_react_1.Grid3X3 className="h-4 w-4" />
               </button_1.Button>

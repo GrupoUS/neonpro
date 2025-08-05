@@ -94,18 +94,18 @@ jest.mock("@/app/utils/supabase/server", () => ({
 }));
 
 import {
-  DemandForecastingEngine,
+  type DemandForecast,
+  FORECASTING_CONSTANTS,
+  type ForecastType,
+} from "@/src/app/types/demand-forecasting";
+import {
   calculateDemandForecast,
+  DemandForecastingEngine,
+  detectSeasonalPatterns,
   generateResourceAllocation,
   monitorForecastAccuracy,
-  detectSeasonalPatterns,
   processExternalFactors,
 } from "@/src/lib/analytics/demand-forecasting";
-import {
-  DemandForecast,
-  ForecastType,
-  FORECASTING_CONSTANTS,
-} from "@/src/app/types/demand-forecasting";
 
 // Mock data for testing
 const mockAppointmentData = [

@@ -5,9 +5,9 @@
  * Handles feedback submission for AI predictions to improve model accuracy
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { AIDurationPredictionService, ModelPerformanceService } from "@/lib/ai/duration-prediction";
+import { createClient } from "@/lib/supabase/server";
 
 // Request/Response types
 interface SubmitFeedbackRequest {

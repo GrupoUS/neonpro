@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Stock Alert Service
  * Service for managing stock alerts and notifications
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,14 +132,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createStockAlertService = exports.StockAlertService = void 0;
-var StockAlertService = /** @class */ (function () {
+var StockAlertService = /** @class */ (() => {
   function StockAlertService() {}
   StockAlertService.createAlert = function (itemId, alertType, threshold) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar criação de alerta de estoque
         return [
           2 /*return*/,
@@ -160,7 +157,7 @@ var StockAlertService = /** @class */ (function () {
   };
   StockAlertService.checkStockLevels = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de níveis de estoque
         return [
           2 /*return*/,
@@ -177,7 +174,7 @@ var StockAlertService = /** @class */ (function () {
   };
   StockAlertService.acknowledgeAlert = function (alertId, userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar confirmação de alerta
         return [
           2 /*return*/,

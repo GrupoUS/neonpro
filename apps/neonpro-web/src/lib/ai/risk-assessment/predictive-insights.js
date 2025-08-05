@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Predictive Insights Engine
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,11 +156,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PredictiveInsightsEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var PredictiveInsightsEngine = /** @class */ (function () {
+var PredictiveInsightsEngine = /** @class */ (() => {
   function PredictiveInsightsEngine(config) {
     this.supabase = (0, client_1.createClient)();
     this.insights = new Map();
@@ -628,9 +625,7 @@ var PredictiveInsightsEngine = /** @class */ (function () {
             if (!riskHistory || riskHistory.length < 3) {
               return [2 /*return*/, null]; // Not enough data for trend analysis
             }
-            riskScores = riskHistory.map(function (r) {
-              return r.overall_risk_score;
-            });
+            riskScores = riskHistory.map((r) => r.overall_risk_score);
             trend = this.calculateTrend(riskScores);
             forecast = this.forecastRisk(riskScores, 30); // 30-day forecast
             priority = this.determineRiskTrendPriority(trend, forecast);
@@ -690,26 +685,14 @@ var PredictiveInsightsEngine = /** @class */ (function () {
                 },
                 actionable: {
                   immediate: recommendations
-                    .filter(function (r) {
-                      return r.priority === "critical";
-                    })
-                    .map(function (r) {
-                      return r.action;
-                    }),
+                    .filter((r) => r.priority === "critical")
+                    .map((r) => r.action),
                   shortTerm: recommendations
-                    .filter(function (r) {
-                      return r.priority === "high";
-                    })
-                    .map(function (r) {
-                      return r.action;
-                    }),
+                    .filter((r) => r.priority === "high")
+                    .map((r) => r.action),
                   longTerm: recommendations
-                    .filter(function (r) {
-                      return r.priority === "medium";
-                    })
-                    .map(function (r) {
-                      return r.action;
-                    }),
+                    .filter((r) => r.priority === "medium")
+                    .map((r) => r.action),
                   preventive: this.generatePreventiveActions(trend, patientData),
                 },
                 impact: {
@@ -816,26 +799,14 @@ var PredictiveInsightsEngine = /** @class */ (function () {
                 },
                 actionable: {
                   immediate: prediction.recommendations
-                    .filter(function (r) {
-                      return r.priority === "critical";
-                    })
-                    .map(function (r) {
-                      return r.action;
-                    }),
+                    .filter((r) => r.priority === "critical")
+                    .map((r) => r.action),
                   shortTerm: prediction.recommendations
-                    .filter(function (r) {
-                      return r.priority === "high";
-                    })
-                    .map(function (r) {
-                      return r.action;
-                    }),
+                    .filter((r) => r.priority === "high")
+                    .map((r) => r.action),
                   longTerm: prediction.recommendations
-                    .filter(function (r) {
-                      return r.priority === "medium";
-                    })
-                    .map(function (r) {
-                      return r.action;
-                    }),
+                    .filter((r) => r.priority === "medium")
+                    .map((r) => r.action),
                   preventive: ["Monitor key indicators", "Regular follow-ups"],
                 },
                 impact: {
@@ -915,15 +886,13 @@ var PredictiveInsightsEngine = /** @class */ (function () {
                 details: {
                   patientId: patientId,
                   recommendations: recommendations,
-                  metrics: rankedTreatments.map(function (t) {
-                    return {
-                      name: t.name,
-                      current: 0,
-                      predicted: t.effectiveness,
-                      change: t.effectiveness,
-                      unit: "%",
-                    };
-                  }),
+                  metrics: rankedTreatments.map((t) => ({
+                    name: t.name,
+                    current: 0,
+                    predicted: t.effectiveness,
+                    change: t.effectiveness,
+                    unit: "%",
+                  })),
                 },
                 evidence: {
                   dataPoints: treatmentOptions.length,
@@ -1019,15 +988,13 @@ var PredictiveInsightsEngine = /** @class */ (function () {
                 details: {
                   patientId: patientId,
                   recommendations: recommendations,
-                  metrics: prioritizedOpportunities.map(function (o) {
-                    return {
-                      name: o.intervention,
-                      current: o.currentRisk,
-                      predicted: o.reducedRisk,
-                      change: o.currentRisk - o.reducedRisk,
-                      unit: "%",
-                    };
-                  }),
+                  metrics: prioritizedOpportunities.map((o) => ({
+                    name: o.intervention,
+                    current: o.currentRisk,
+                    predicted: o.reducedRisk,
+                    change: o.currentRisk - o.reducedRisk,
+                    unit: "%",
+                  })),
                 },
                 evidence: {
                   dataPoints: preventiveOpportunities.length,
@@ -1043,22 +1010,12 @@ var PredictiveInsightsEngine = /** @class */ (function () {
                 actionable: {
                   immediate: [],
                   shortTerm: recommendations
-                    .filter(function (r) {
-                      return r.timeline === "short_term";
-                    })
-                    .map(function (r) {
-                      return r.action;
-                    }),
+                    .filter((r) => r.timeline === "short_term")
+                    .map((r) => r.action),
                   longTerm: recommendations
-                    .filter(function (r) {
-                      return r.timeline === "long_term";
-                    })
-                    .map(function (r) {
-                      return r.action;
-                    }),
-                  preventive: recommendations.map(function (r) {
-                    return r.action;
-                  }),
+                    .filter((r) => r.timeline === "long_term")
+                    .map((r) => r.action),
+                  preventive: recommendations.map((r) => r.action),
                 },
                 impact: {
                   clinical: {
@@ -1103,34 +1060,20 @@ var PredictiveInsightsEngine = /** @class */ (function () {
   PredictiveInsightsEngine.prototype.getInsights = function (filters) {
     var insights = Array.from(this.insights.values());
     if (filters) {
-      if (filters.type)
-        insights = insights.filter(function (i) {
-          return i.type === filters.type;
-        });
-      if (filters.priority)
-        insights = insights.filter(function (i) {
-          return i.priority === filters.priority;
-        });
+      if (filters.type) insights = insights.filter((i) => i.type === filters.type);
+      if (filters.priority) insights = insights.filter((i) => i.priority === filters.priority);
       if (filters.confidence)
-        insights = insights.filter(function (i) {
-          return i.confidence === filters.confidence;
-        });
+        insights = insights.filter((i) => i.confidence === filters.confidence);
       if (filters.timeHorizon)
-        insights = insights.filter(function (i) {
-          return i.timeHorizon === filters.timeHorizon;
-        });
+        insights = insights.filter((i) => i.timeHorizon === filters.timeHorizon);
       if (filters.patientId)
-        insights = insights.filter(function (i) {
-          return i.details.patientId === filters.patientId;
-        });
+        insights = insights.filter((i) => i.details.patientId === filters.patientId);
       if (filters.validOnly) {
         var now_1 = new Date();
-        insights = insights.filter(function (i) {
-          return i.metadata.validUntil > now_1;
-        });
+        insights = insights.filter((i) => i.metadata.validUntil > now_1);
       }
     }
-    return insights.sort(function (a, b) {
+    return insights.sort((a, b) => {
       // Sort by priority and generation time
       var priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
       var aPriority = priorityOrder[a.priority];
@@ -1145,9 +1088,7 @@ var PredictiveInsightsEngine = /** @class */ (function () {
   PredictiveInsightsEngine.prototype.getTrendAnalyses = function (metric) {
     var analyses = Array.from(this.trends.values());
     if (metric) {
-      analyses = analyses.filter(function (a) {
-        return a.metric === metric;
-      });
+      analyses = analyses.filter((a) => a.metric === metric);
     }
     return analyses;
   };
@@ -1157,13 +1098,9 @@ var PredictiveInsightsEngine = /** @class */ (function () {
   PredictiveInsightsEngine.prototype.getPatterns = function (type) {
     var patterns = Array.from(this.patterns.values());
     if (type) {
-      patterns = patterns.filter(function (p) {
-        return p.type === type;
-      });
+      patterns = patterns.filter((p) => p.type === type);
     }
-    return patterns.sort(function (a, b) {
-      return b.significance - a.significance;
-    });
+    return patterns.sort((a, b) => b.significance - a.significance);
   };
   /**
    * Get detected anomalies
@@ -1171,13 +1108,9 @@ var PredictiveInsightsEngine = /** @class */ (function () {
   PredictiveInsightsEngine.prototype.getAnomalies = function (severity) {
     var anomalies = Array.from(this.anomalies.values());
     if (severity) {
-      anomalies = anomalies.filter(function (a) {
-        return a.severity === severity;
-      });
+      anomalies = anomalies.filter((a) => a.severity === severity);
     }
-    return anomalies.sort(function (a, b) {
-      return b.detected.getTime() - a.detected.getTime();
-    });
+    return anomalies.sort((a, b) => b.detected.getTime() - a.detected.getTime());
   };
   /**
    * Get population insights
@@ -1189,15 +1122,12 @@ var PredictiveInsightsEngine = /** @class */ (function () {
    * Start insights processing
    */
   PredictiveInsightsEngine.prototype.startInsightsProcessing = function () {
-    var _this = this;
     if (this.isProcessing) return;
     this.isProcessing = true;
     console.log("Starting predictive insights processing");
     // Set up periodic processing
     this.processingInterval = setInterval(
-      function () {
-        return _this.performPeriodicProcessing();
-      },
+      () => this.performPeriodicProcessing(),
       60 * 60 * 1000, // Every hour
     );
   };
@@ -1311,41 +1241,29 @@ var PredictiveInsightsEngine = /** @class */ (function () {
   };
   PredictiveInsightsEngine.prototype.getHistoricalData = function (metric, timeframe, filters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch historical data based on metric and timeframe
         return [2 /*return*/, []];
       });
     });
   };
-  PredictiveInsightsEngine.prototype.calculateTrend = function (values) {
+  PredictiveInsightsEngine.prototype.calculateTrend = (values) => {
     // Simple linear regression for trend calculation
     var n = values.length;
-    var x = Array.from({ length: n }, function (_, i) {
-      return i;
-    });
-    var sumX = x.reduce(function (a, b) {
-      return a + b;
-    }, 0);
-    var sumY = values.reduce(function (a, b) {
-      return a + b;
-    }, 0);
-    var sumXY = x.reduce(function (sum, xi, i) {
-      return sum + xi * values[i];
-    }, 0);
-    var sumXX = x.reduce(function (sum, xi) {
-      return sum + xi * xi;
-    }, 0);
+    var x = Array.from({ length: n }, (_, i) => i);
+    var sumX = x.reduce((a, b) => a + b, 0);
+    var sumY = values.reduce((a, b) => a + b, 0);
+    var sumXY = x.reduce((sum, xi, i) => sum + xi * values[i], 0);
+    var sumXX = x.reduce((sum, xi) => sum + xi * xi, 0);
     var slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     var intercept = (sumY - slope * sumX) / n;
     // Calculate R-squared
     var yMean = sumY / n;
-    var ssRes = values.reduce(function (sum, yi, i) {
+    var ssRes = values.reduce((sum, yi, i) => {
       var predicted = slope * i + intercept;
-      return sum + Math.pow(yi - predicted, 2);
+      return sum + (yi - predicted) ** 2;
     }, 0);
-    var ssTot = values.reduce(function (sum, yi) {
-      return sum + Math.pow(yi - yMean, 2);
-    }, 0);
+    var ssTot = values.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0);
     var rSquared = 1 - ssRes / ssTot;
     return {
       direction: slope > 0.1 ? "increasing" : slope < -0.1 ? "decreasing" : "stable",
@@ -1366,16 +1284,13 @@ var PredictiveInsightsEngine = /** @class */ (function () {
     };
   };
   // Additional helper methods would be implemented here...
-  PredictiveInsightsEngine.prototype.generateInsightId = function () {
-    return "insight_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  PredictiveInsightsEngine.prototype.generatePatternId = function () {
-    return "pattern_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  PredictiveInsightsEngine.prototype.generateAnomalyId = function () {
-    return "anomaly_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  PredictiveInsightsEngine.prototype.generatePopulationId = function (criteria) {
+  PredictiveInsightsEngine.prototype.generateInsightId = () =>
+    "insight_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  PredictiveInsightsEngine.prototype.generatePatternId = () =>
+    "pattern_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  PredictiveInsightsEngine.prototype.generateAnomalyId = () =>
+    "anomaly_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  PredictiveInsightsEngine.prototype.generatePopulationId = (criteria) => {
     var hash = criteria ? JSON.stringify(criteria) : "all";
     return "population_".concat(Date.now(), "_").concat(hash.slice(0, 8));
   };
@@ -1437,7 +1352,7 @@ var PredictiveInsightsEngine = /** @class */ (function () {
           case 1:
             insights = _a.sent().data;
             if (insights) {
-              insights.forEach(function (insightData) {
+              insights.forEach((insightData) => {
                 var insight = {
                   id: insightData.id,
                   type: insightData.type,
@@ -1467,7 +1382,7 @@ var PredictiveInsightsEngine = /** @class */ (function () {
       });
     });
   };
-  PredictiveInsightsEngine.prototype.initializeConfig = function (config) {
+  PredictiveInsightsEngine.prototype.initializeConfig = (config) => {
     var defaultConfig = {
       enabled: true,
       updateFrequency: {
@@ -1522,84 +1437,56 @@ var PredictiveInsightsEngine = /** @class */ (function () {
   // Placeholder methods for complex algorithms
   PredictiveInsightsEngine.prototype.analyzePopulationHealthMetrics = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   PredictiveInsightsEngine.prototype.analyzePopulationRiskProfile = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
   PredictiveInsightsEngine.prototype.analyzePopulationOutcomes = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
   PredictiveInsightsEngine.prototype.generatePopulationInterventions = function (data, risk) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
   PredictiveInsightsEngine.prototype.generatePopulationComparisons = function (data, metrics) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
-  PredictiveInsightsEngine.prototype.formatCriteria = function (criteria) {
-    return [];
-  };
-  PredictiveInsightsEngine.prototype.analyzeDemographics = function (data) {
-    return {};
-  };
-  PredictiveInsightsEngine.prototype.analyzeTrend = function (data) {
-    return {};
-  };
+  PredictiveInsightsEngine.prototype.formatCriteria = (criteria) => [];
+  PredictiveInsightsEngine.prototype.analyzeDemographics = (data) => ({});
+  PredictiveInsightsEngine.prototype.analyzeTrend = (data) => ({});
   PredictiveInsightsEngine.prototype.generateForecast = function (data, trend) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
-  PredictiveInsightsEngine.prototype.generateTrendInsights = function (trend, forecast) {
-    return {};
-  };
+  PredictiveInsightsEngine.prototype.generateTrendInsights = (trend, forecast) => ({});
   PredictiveInsightsEngine.prototype.getPatternAnalysisData = function (type, window, filters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   PredictiveInsightsEngine.prototype.applyPatternRecognition = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   PredictiveInsightsEngine.prototype.generatePatternPredictions = function (pattern) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
   PredictiveInsightsEngine.prototype.getBaselineData = function (metric, context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
   PredictiveInsightsEngine.prototype.applyAnomalyDetection = function (
@@ -1609,153 +1496,91 @@ var PredictiveInsightsEngine = /** @class */ (function () {
     context,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   PredictiveInsightsEngine.prototype.investigateAnomaly = function (anomaly) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
-  PredictiveInsightsEngine.prototype.generateAnomalyRecommendations = function (
+  PredictiveInsightsEngine.prototype.generateAnomalyRecommendations = (
     anomaly,
     investigation,
-  ) {
-    return {};
-  };
-  PredictiveInsightsEngine.prototype.determineRiskTrendPriority = function (trend, forecast) {
-    return "medium";
-  };
-  PredictiveInsightsEngine.prototype.generateRiskTrendRecommendations = function (
+  ) => ({});
+  PredictiveInsightsEngine.prototype.determineRiskTrendPriority = (trend, forecast) => "medium";
+  PredictiveInsightsEngine.prototype.generateRiskTrendRecommendations = (
     trend,
     forecast,
     patient,
-  ) {
-    return [];
-  };
-  PredictiveInsightsEngine.prototype.generateRiskTrendSummary = function (trend, forecast) {
-    return "";
-  };
-  PredictiveInsightsEngine.prototype.extractRiskFactors = function (history) {
-    return [];
-  };
-  PredictiveInsightsEngine.prototype.generatePreventiveActions = function (trend, patient) {
-    return [];
-  };
-  PredictiveInsightsEngine.prototype.calculatePatientSafetyImpact = function (trend) {
-    return 0.2;
-  };
-  PredictiveInsightsEngine.prototype.calculateOutcomeImpact = function (trend) {
-    return 0.15;
-  };
-  PredictiveInsightsEngine.prototype.calculateComplicationReduction = function (trend) {
-    return 0.1;
-  };
-  PredictiveInsightsEngine.prototype.calculateCostSavings = function (trend) {
-    return 5000;
-  };
-  PredictiveInsightsEngine.prototype.calculateROI = function (trend) {
-    return 2.0;
-  };
+  ) => [];
+  PredictiveInsightsEngine.prototype.generateRiskTrendSummary = (trend, forecast) => "";
+  PredictiveInsightsEngine.prototype.extractRiskFactors = (history) => [];
+  PredictiveInsightsEngine.prototype.generatePreventiveActions = (trend, patient) => [];
+  PredictiveInsightsEngine.prototype.calculatePatientSafetyImpact = (trend) => 0.2;
+  PredictiveInsightsEngine.prototype.calculateOutcomeImpact = (trend) => 0.15;
+  PredictiveInsightsEngine.prototype.calculateComplicationReduction = (trend) => 0.1;
+  PredictiveInsightsEngine.prototype.calculateCostSavings = (trend) => 5000;
+  PredictiveInsightsEngine.prototype.calculateROI = (trend) => 2.0;
   PredictiveInsightsEngine.prototype.findSimilarPatients = function (patient) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  PredictiveInsightsEngine.prototype.analyzeOutcomes = function (patients) {
-    return {};
-  };
-  PredictiveInsightsEngine.prototype.predictOutcome = function (patient, analysis) {
-    return {};
-  };
+  PredictiveInsightsEngine.prototype.analyzeOutcomes = (patients) => ({});
+  PredictiveInsightsEngine.prototype.predictOutcome = (patient, analysis) => ({});
   PredictiveInsightsEngine.prototype.analyzeTreatmentOptions = function (patient) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  PredictiveInsightsEngine.prototype.rankTreatments = function (options, patient) {
-    return [];
-  };
-  PredictiveInsightsEngine.prototype.generateTreatmentRecommendations = function (treatments) {
-    return [];
-  };
+  PredictiveInsightsEngine.prototype.rankTreatments = (options, patient) => [];
+  PredictiveInsightsEngine.prototype.generateTreatmentRecommendations = (treatments) => [];
   PredictiveInsightsEngine.prototype.analyzePreventiveCareOpportunities = function (patient) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  PredictiveInsightsEngine.prototype.prioritizePreventiveCare = function (opportunities) {
-    return [];
-  };
-  PredictiveInsightsEngine.prototype.generatePreventiveCareRecommendations = function (
-    opportunities,
-  ) {
-    return [];
-  };
+  PredictiveInsightsEngine.prototype.prioritizePreventiveCare = (opportunities) => [];
+  PredictiveInsightsEngine.prototype.generatePreventiveCareRecommendations = (opportunities) => [];
   PredictiveInsightsEngine.prototype.updateTrendAnalyses = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PredictiveInsightsEngine.prototype.detectNewPatterns = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PredictiveInsightsEngine.prototype.updatePopulationInsights = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PredictiveInsightsEngine.prototype.cleanupExpiredInsights = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PredictiveInsightsEngine.prototype.storeTrendAnalysis = function (id, analysis) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PredictiveInsightsEngine.prototype.storePattern = function (pattern) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PredictiveInsightsEngine.prototype.storeAnomaly = function (anomaly) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PredictiveInsightsEngine.prototype.storePopulationInsight = function (insight) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return PredictiveInsightsEngine;

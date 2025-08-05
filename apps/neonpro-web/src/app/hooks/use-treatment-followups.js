@@ -3,7 +3,6 @@
 // Epic 7.3: React hooks for follow-up automation UI integration
 // =====================================================================================
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useFollowups = useFollowups;
 exports.useFollowup = useFollowup;
@@ -30,30 +29,14 @@ var treatment_followup_service_1 = require("@/app/lib/services/treatment-followu
 // QUERY KEYS
 // =====================================================================================
 var QUERY_KEYS = {
-  followups: function (filters) {
-    return ["followups", filters];
-  },
-  followup: function (id) {
-    return ["followups", id];
-  },
-  templates: function (filters) {
-    return ["followup-templates", filters];
-  },
-  template: function (id) {
-    return ["followup-templates", id];
-  },
-  protocols: function (filters) {
-    return ["treatment-protocols", filters];
-  },
-  protocol: function (id) {
-    return ["treatment-protocols", id];
-  },
-  analytics: function (clinicId, dateFrom, dateTo) {
-    return ["followup-analytics", clinicId, dateFrom, dateTo];
-  },
-  dashboardSummary: function (clinicId) {
-    return ["followup-dashboard", clinicId];
-  },
+  followups: (filters) => ["followups", filters],
+  followup: (id) => ["followups", id],
+  templates: (filters) => ["followup-templates", filters],
+  template: (id) => ["followup-templates", id],
+  protocols: (filters) => ["treatment-protocols", filters],
+  protocol: (id) => ["treatment-protocols", id],
+  analytics: (clinicId, dateFrom, dateTo) => ["followup-analytics", clinicId, dateFrom, dateTo],
+  dashboardSummary: (clinicId) => ["followup-dashboard", clinicId],
 };
 // =====================================================================================
 // FOLLOW-UP HOOKS
@@ -64,9 +47,7 @@ var QUERY_KEYS = {
 function useFollowups(filters) {
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.followups(filters),
-    queryFn: function () {
-      return treatment_followup_service_1.treatmentFollowupService.getFollowups(filters);
-    },
+    queryFn: () => treatment_followup_service_1.treatmentFollowupService.getFollowups(filters),
     staleTime: 1000 * 60 * 5, // 5 minutes
     cacheTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
@@ -79,9 +60,7 @@ function useFollowups(filters) {
 function useFollowup(id) {
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.followup(id),
-    queryFn: function () {
-      return treatment_followup_service_1.treatmentFollowupService.getFollowupById(id);
-    },
+    queryFn: () => treatment_followup_service_1.treatmentFollowupService.getFollowupById(id),
     enabled: !!id,
     staleTime: 1000 * 60 * 5,
     cacheTime: 1000 * 60 * 10,
@@ -94,10 +73,9 @@ function useFollowup(id) {
 function useCreateFollowup() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (data) {
-      return treatment_followup_service_1.treatmentFollowupService.createFollowup(data);
-    },
-    onSuccess: function (newFollowup) {
+    mutationFn: (data) =>
+      treatment_followup_service_1.treatmentFollowupService.createFollowup(data),
+    onSuccess: (newFollowup) => {
       // Invalidate and refetch follow-ups list
       queryClient.invalidateQueries({ queryKey: ["followups"] });
       queryClient.invalidateQueries({ queryKey: ["followup-dashboard"] });
@@ -105,7 +83,7 @@ function useCreateFollowup() {
       queryClient.setQueryData(QUERY_KEYS.followup(newFollowup.id), newFollowup);
       react_hot_toast_1.toast.success("Follow-up criado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error creating follow-up:", error);
       react_hot_toast_1.toast.error("Erro ao criar follow-up: ".concat(error.message));
     },
@@ -117,12 +95,12 @@ function useCreateFollowup() {
 function useUpdateFollowup() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
+    mutationFn: (_a) => {
       var id = _a.id,
         updates = _a.updates;
       return treatment_followup_service_1.treatmentFollowupService.updateFollowup(id, updates);
     },
-    onSuccess: function (updatedFollowup) {
+    onSuccess: (updatedFollowup) => {
       // Update specific follow-up in cache
       queryClient.setQueryData(QUERY_KEYS.followup(updatedFollowup.id), updatedFollowup);
       // Invalidate follow-ups list
@@ -130,7 +108,7 @@ function useUpdateFollowup() {
       queryClient.invalidateQueries({ queryKey: ["followup-dashboard"] });
       react_hot_toast_1.toast.success("Follow-up atualizado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error updating follow-up:", error);
       react_hot_toast_1.toast.error("Erro ao atualizar follow-up: ".concat(error.message));
     },
@@ -142,10 +120,8 @@ function useUpdateFollowup() {
 function useDeleteFollowup() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (id) {
-      return treatment_followup_service_1.treatmentFollowupService.deleteFollowup(id);
-    },
-    onSuccess: function (_, deletedId) {
+    mutationFn: (id) => treatment_followup_service_1.treatmentFollowupService.deleteFollowup(id),
+    onSuccess: (_, deletedId) => {
       // Remove from cache
       queryClient.removeQueries({ queryKey: QUERY_KEYS.followup(deletedId) });
       // Invalidate follow-ups list
@@ -153,7 +129,7 @@ function useDeleteFollowup() {
       queryClient.invalidateQueries({ queryKey: ["followup-dashboard"] });
       react_hot_toast_1.toast.success("Follow-up excluído com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error deleting follow-up:", error);
       react_hot_toast_1.toast.error("Erro ao excluir follow-up: ".concat(error.message));
     },
@@ -165,12 +141,12 @@ function useDeleteFollowup() {
 function useCompleteFollowup() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
+    mutationFn: (_a) => {
       var id = _a.id,
         notes = _a.notes;
       return treatment_followup_service_1.treatmentFollowupService.completeFollowup(id, notes);
     },
-    onSuccess: function (completedFollowup) {
+    onSuccess: (completedFollowup) => {
       // Update specific follow-up in cache
       queryClient.setQueryData(QUERY_KEYS.followup(completedFollowup.id), completedFollowup);
       // Invalidate follow-ups list
@@ -178,7 +154,7 @@ function useCompleteFollowup() {
       queryClient.invalidateQueries({ queryKey: ["followup-dashboard"] });
       react_hot_toast_1.toast.success("Follow-up marcado como concluído!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error completing follow-up:", error);
       react_hot_toast_1.toast.error("Erro ao concluir follow-up: ".concat(error.message));
     },
@@ -193,9 +169,7 @@ function useCompleteFollowup() {
 function useFollowupTemplates(filters) {
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.templates(filters),
-    queryFn: function () {
-      return treatment_followup_service_1.treatmentFollowupService.getTemplates(filters);
-    },
+    queryFn: () => treatment_followup_service_1.treatmentFollowupService.getTemplates(filters),
     staleTime: 1000 * 60 * 10, // 10 minutes (templates change less frequently)
     cacheTime: 1000 * 60 * 30, // 30 minutes
     retry: 2,
@@ -208,17 +182,16 @@ function useFollowupTemplates(filters) {
 function useCreateFollowupTemplate() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (data) {
-      return treatment_followup_service_1.treatmentFollowupService.createTemplate(data);
-    },
-    onSuccess: function (newTemplate) {
+    mutationFn: (data) =>
+      treatment_followup_service_1.treatmentFollowupService.createTemplate(data),
+    onSuccess: (newTemplate) => {
       // Invalidate templates list
       queryClient.invalidateQueries({ queryKey: ["followup-templates"] });
       // Add to cache
       queryClient.setQueryData(QUERY_KEYS.template(newTemplate.id), newTemplate);
       react_hot_toast_1.toast.success("Template de follow-up criado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error creating follow-up template:", error);
       react_hot_toast_1.toast.error("Erro ao criar template: ".concat(error.message));
     },
@@ -230,19 +203,19 @@ function useCreateFollowupTemplate() {
 function useUpdateFollowupTemplate() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
+    mutationFn: (_a) => {
       var id = _a.id,
         updates = _a.updates;
       return treatment_followup_service_1.treatmentFollowupService.updateTemplate(id, updates);
     },
-    onSuccess: function (updatedTemplate) {
+    onSuccess: (updatedTemplate) => {
       // Update specific template in cache
       queryClient.setQueryData(QUERY_KEYS.template(updatedTemplate.id), updatedTemplate);
       // Invalidate templates list
       queryClient.invalidateQueries({ queryKey: ["followup-templates"] });
       react_hot_toast_1.toast.success("Template atualizado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error updating follow-up template:", error);
       react_hot_toast_1.toast.error("Erro ao atualizar template: ".concat(error.message));
     },
@@ -257,9 +230,7 @@ function useUpdateFollowupTemplate() {
 function useTreatmentProtocols(filters) {
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.protocols(filters),
-    queryFn: function () {
-      return treatment_followup_service_1.treatmentFollowupService.getProtocols(filters);
-    },
+    queryFn: () => treatment_followup_service_1.treatmentFollowupService.getProtocols(filters),
     staleTime: 1000 * 60 * 15, // 15 minutes (protocols change rarely)
     cacheTime: 1000 * 60 * 60, // 1 hour
     retry: 2,
@@ -272,17 +243,16 @@ function useTreatmentProtocols(filters) {
 function useCreateTreatmentProtocol() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (data) {
-      return treatment_followup_service_1.treatmentFollowupService.createProtocol(data);
-    },
-    onSuccess: function (newProtocol) {
+    mutationFn: (data) =>
+      treatment_followup_service_1.treatmentFollowupService.createProtocol(data),
+    onSuccess: (newProtocol) => {
       // Invalidate protocols list
       queryClient.invalidateQueries({ queryKey: ["treatment-protocols"] });
       // Add to cache
       queryClient.setQueryData(QUERY_KEYS.protocol(newProtocol.id), newProtocol);
       react_hot_toast_1.toast.success("Protocolo de tratamento criado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error creating treatment protocol:", error);
       react_hot_toast_1.toast.error("Erro ao criar protocolo: ".concat(error.message));
     },
@@ -297,13 +267,12 @@ function useCreateTreatmentProtocol() {
 function useFollowupAnalytics(clinicId, dateFrom, dateTo) {
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.analytics(clinicId, dateFrom, dateTo),
-    queryFn: function () {
-      return treatment_followup_service_1.treatmentFollowupService.getAnalytics(
+    queryFn: () =>
+      treatment_followup_service_1.treatmentFollowupService.getAnalytics(
         clinicId,
         dateFrom,
         dateTo,
-      );
-    },
+      ),
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 5, // 5 minutes
     cacheTime: 1000 * 60 * 15, // 15 minutes
@@ -317,9 +286,8 @@ function useFollowupAnalytics(clinicId, dateFrom, dateTo) {
 function useFollowupDashboardSummary(clinicId) {
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.dashboardSummary(clinicId),
-    queryFn: function () {
-      return treatment_followup_service_1.treatmentFollowupService.getDashboardSummary(clinicId);
-    },
+    queryFn: () =>
+      treatment_followup_service_1.treatmentFollowupService.getDashboardSummary(clinicId),
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 2, // 2 minutes (dashboard needs fresher data)
     cacheTime: 1000 * 60 * 5, // 5 minutes

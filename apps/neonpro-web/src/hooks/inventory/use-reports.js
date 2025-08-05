@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,30 +141,29 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useReports = useReports;
 var react_1 = require("react");
 var react_hot_toast_1 = require("react-hot-toast");
 function useReports() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isGenerating = _a[0],
     setIsGenerating = _a[1];
   var _b = (0, react_1.useState)(false),
     isExporting = _b[0],
     setIsExporting = _b[1];
-  var generateAnalytics = (0, react_1.useCallback)(function () {
+  var generateAnalytics = (0, react_1.useCallback)(() => {
     var args_1 = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args_1[_i] = arguments[_i];
     }
-    return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (filters) {
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (filters) {
       var mockData, error_1;
       if (filters === void 0) {
         filters = {};
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsGenerating(true);
@@ -175,12 +171,7 @@ function useReports() {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Simulate API call with realistic data generation
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
           case 2:
             // Simulate API call with realistic data generation
             _a.sent();
@@ -300,29 +291,24 @@ function useReports() {
       });
     });
   }, []);
-  var generateMetrics = (0, react_1.useCallback)(function () {
+  var generateMetrics = (0, react_1.useCallback)(() => {
     var args_1 = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args_1[_i] = arguments[_i];
     }
-    return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (filters) {
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (filters) {
       var mockMetrics, error_2;
       if (filters === void 0) {
         filters = {};
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsGenerating(true);
             _a.label = 1;
           case 1:
             _a.trys.push([1, 3, 4, 5]);
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 2:
             _a.sent();
             mockMetrics = {
@@ -368,94 +354,89 @@ function useReports() {
       });
     });
   }, []);
-  var exportReport = (0, react_1.useCallback)(function (options) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var type, _a, filters, _b, templateType, timestamp, filename, blob, url, link, error_3;
-      return __generator(this, function (_c) {
-        switch (_c.label) {
-          case 0:
-            setIsExporting(true);
-            _c.label = 1;
-          case 1:
-            _c.trys.push([1, 3, 4, 5]);
-            (type = options.type),
-              (_a = options.filters),
-              (filters = _a === void 0 ? {} : _a),
-              (_b = options.templateType),
-              (templateType = _b === void 0 ? "detailed" : _b);
-            // Simulate report generation and download
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-              // Generate filename with timestamp
-            ];
-          case 2:
-            // Simulate report generation and download
-            _c.sent();
-            timestamp = new Date().toISOString().slice(0, 10);
-            filename = "inventory-analytics-"
-              .concat(templateType, "-")
-              .concat(timestamp, ".")
-              .concat(type);
-            blob = new Blob(["Mock report content"], {
-              type:
-                type === "pdf"
-                  ? "application/pdf"
-                  : type === "excel"
-                    ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    : "text/csv",
-            });
-            url = URL.createObjectURL(blob);
-            link = document.createElement("a");
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            react_hot_toast_1.toast.success(
-              "Relat\u00F3rio ".concat(type.toUpperCase(), " exportado com sucesso!"),
-            );
-            return [3 /*break*/, 5];
-          case 3:
-            error_3 = _c.sent();
-            console.error("Erro ao exportar relatório:", error_3);
-            react_hot_toast_1.toast.error("Erro ao exportar relatório");
-            return [3 /*break*/, 5];
-          case 4:
-            setIsExporting(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var generatePredictiveAnalysis = (0, react_1.useCallback)(function () {
+  var exportReport = (0, react_1.useCallback)(
+    (options) =>
+      __awaiter(this, void 0, void 0, function () {
+        var type, _a, filters, _b, templateType, timestamp, filename, blob, url, link, error_3;
+        return __generator(this, (_c) => {
+          switch (_c.label) {
+            case 0:
+              setIsExporting(true);
+              _c.label = 1;
+            case 1:
+              _c.trys.push([1, 3, 4, 5]);
+              (type = options.type),
+                (_a = options.filters),
+                (filters = _a === void 0 ? {} : _a),
+                (_b = options.templateType),
+                (templateType = _b === void 0 ? "detailed" : _b);
+              // Simulate report generation and download
+              return [
+                4 /*yield*/,
+                new Promise((resolve) => setTimeout(resolve, 2000)),
+                // Generate filename with timestamp
+              ];
+            case 2:
+              // Simulate report generation and download
+              _c.sent();
+              timestamp = new Date().toISOString().slice(0, 10);
+              filename = "inventory-analytics-"
+                .concat(templateType, "-")
+                .concat(timestamp, ".")
+                .concat(type);
+              blob = new Blob(["Mock report content"], {
+                type:
+                  type === "pdf"
+                    ? "application/pdf"
+                    : type === "excel"
+                      ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      : "text/csv",
+              });
+              url = URL.createObjectURL(blob);
+              link = document.createElement("a");
+              link.href = url;
+              link.download = filename;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              react_hot_toast_1.toast.success(
+                "Relat\u00F3rio ".concat(type.toUpperCase(), " exportado com sucesso!"),
+              );
+              return [3 /*break*/, 5];
+            case 3:
+              error_3 = _c.sent();
+              console.error("Erro ao exportar relatório:", error_3);
+              react_hot_toast_1.toast.error("Erro ao exportar relatório");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsExporting(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var generatePredictiveAnalysis = (0, react_1.useCallback)(() => {
     var args_1 = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args_1[_i] = arguments[_i];
     }
-    return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (filters) {
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (filters) {
       var predictiveData, error_4;
       if (filters === void 0) {
         filters = {};
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsGenerating(true);
             _a.label = 1;
           case 1:
             _a.trys.push([1, 3, 4, 5]);
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2500))];
           case 2:
             _a.sent();
             predictiveData = {
@@ -509,48 +490,48 @@ function useReports() {
       });
     });
   }, []);
-  var generateCustomReport = (0, react_1.useCallback)(function (config) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var customData, error_5;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            setIsGenerating(true);
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 3, 4, 5]);
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1800);
-              }),
-              // Custom report generation logic would go here
-            ];
-          case 2:
-            _a.sent();
-            customData = {
-              title: "Relatório Personalizado de Estoque",
-              sections: config.sections,
-              data: {}, // Populated based on selected sections
-              generatedAt: new Date().toISOString(),
-              filters: config,
-            };
-            react_hot_toast_1.toast.success("Relatório personalizado gerado!");
-            return [2 /*return*/, customData];
-          case 3:
-            error_5 = _a.sent();
-            console.error("Erro ao gerar relatório personalizado:", error_5);
-            react_hot_toast_1.toast.error("Erro ao gerar relatório personalizado");
-            return [2 /*return*/, null];
-          case 4:
-            setIsGenerating(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var generateCustomReport = (0, react_1.useCallback)(
+    (config) =>
+      __awaiter(this, void 0, void 0, function () {
+        var customData, error_5;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setIsGenerating(true);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              return [
+                4 /*yield*/,
+                new Promise((resolve) => setTimeout(resolve, 1800)),
+                // Custom report generation logic would go here
+              ];
+            case 2:
+              _a.sent();
+              customData = {
+                title: "Relatório Personalizado de Estoque",
+                sections: config.sections,
+                data: {}, // Populated based on selected sections
+                generatedAt: new Date().toISOString(),
+                filters: config,
+              };
+              react_hot_toast_1.toast.success("Relatório personalizado gerado!");
+              return [2 /*return*/, customData];
+            case 3:
+              error_5 = _a.sent();
+              console.error("Erro ao gerar relatório personalizado:", error_5);
+              react_hot_toast_1.toast.error("Erro ao gerar relatório personalizado");
+              return [2 /*return*/, null];
+            case 4:
+              setIsGenerating(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   return {
     // Generation functions
     generateAnalytics: generateAnalytics,

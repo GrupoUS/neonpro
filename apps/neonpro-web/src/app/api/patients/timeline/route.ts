@@ -3,9 +3,9 @@
  * Handles medical history timeline operations
  */
 
-import type { createClient } from "@/lib/supabase/server";
-import type { createmedicalTimelineService } from "@/lib/patients/medical-timeline";
 import type { NextRequest, NextResponse } from "next/server";
+import type { createmedicalTimelineService } from "@/lib/patients/medical-timeline";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     }
 
     switch (action) {
-      case "timeline":
+      case "timeline": {
         const eventTypes = searchParams.get("eventTypes")?.split(",");
         const categories = searchParams.get("categories")?.split(",");
         const startDate = searchParams.get("startDate");
@@ -53,16 +53,19 @@ export async function GET(request: NextRequest) {
 
         const timeline = await createmedicalTimelineService().getPatientTimeline(patientId, filter);
         return NextResponse.json({ timeline }, { status: 200 });
+      }
 
-      case "milestones":
+      case "milestones": {
         const milestones = await createmedicalTimelineService().getTreatmentMilestones(patientId);
         return NextResponse.json({ milestones }, { status: 200 });
+      }
 
-      case "summary":
+      case "summary": {
         const period =
           (searchParams.get("period") as "week" | "month" | "quarter" | "year") || "month";
         const summary = await createmedicalTimelineService().getTimelineSummary(patientId, period);
         return NextResponse.json({ summary }, { status: 200 });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -88,7 +91,7 @@ export async function POST(request: NextRequest) {
     const { action, ...data } = body;
 
     switch (action) {
-      case "addEvent":
+      case "addEvent": {
         const {
           patientId,
           eventType,
@@ -118,8 +121,9 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json({ event: newEvent }, { status: 201 });
+      }
 
-      case "addNote":
+      case "addNote": {
         const { eventId, note, author, type, visibility } = data;
 
         if (!eventId || !note || !author) {
@@ -135,8 +139,9 @@ export async function POST(request: NextRequest) {
         });
 
         return NextResponse.json({ note: progressNote }, { status: 201 });
+      }
 
-      case "addPhotos":
+      case "addPhotos": {
         const { eventId: photoEventId, comparisonType, notes, quality } = data;
 
         if (!photoEventId || !comparisonType) {
@@ -153,6 +158,7 @@ export async function POST(request: NextRequest) {
         );
 
         return NextResponse.json({ photos: beforeAfterPhotos }, { status: 201 });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -178,7 +184,7 @@ export async function PUT(request: NextRequest) {
     const { action, ...data } = body;
 
     switch (action) {
-      case "updateEvent":
+      case "updateEvent": {
         const { eventId, updates } = data;
 
         if (!eventId) {
@@ -195,8 +201,9 @@ export async function PUT(request: NextRequest) {
           updates,
         );
         return NextResponse.json({ event: updatedEvent }, { status: 200 });
+      }
 
-      case "updateMilestone":
+      case "updateMilestone": {
         const { milestoneId, progress, notes } = data;
 
         if (!milestoneId || progress === undefined) {
@@ -213,6 +220,7 @@ export async function PUT(request: NextRequest) {
         );
 
         return NextResponse.json({ milestone: updatedMilestone }, { status: 200 });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });

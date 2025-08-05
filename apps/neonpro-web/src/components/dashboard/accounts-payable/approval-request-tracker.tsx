@@ -1,21 +1,5 @@
 "use client";
 
-import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import type { Label } from "@/components/ui/label";
-import type { Progress } from "@/components/ui/progress";
-import type { Textarea } from "@/components/ui/textarea";
-import type { cn } from "@/lib/utils";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
@@ -32,6 +16,22 @@ import type {
 } from "lucide-react";
 import type { useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type { Textarea } from "@/components/ui/textarea";
+import type { cn } from "@/lib/utils";
 
 export interface ApprovalRequest {
   id: string;

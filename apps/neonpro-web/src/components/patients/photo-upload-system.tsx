@@ -1,6 +1,31 @@
 "use client";
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  Calendar as CalendarIcon,
+  Camera,
+  CheckCircle,
+  Download,
+  Eye,
+  FileImage,
+  Info,
+  Lock,
+  RotateCcw,
+  Shield,
+  Trash2,
+  Upload,
+  X,
+  ZoomIn,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -8,15 +33,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Progress } from "@/components/ui/progress";
-import type { Badge } from "@/components/ui/badge";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -26,26 +46,7 @@ import type {
 } from "@/components/ui/select";
 import type { Separator } from "@/components/ui/separator";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Upload,
-  X,
-  AlertCircle,
-  CheckCircle,
-  Camera,
-  FileImage,
-  Calendar as CalendarIcon,
-  Shield,
-  Eye,
-  Download,
-  Trash2,
-  ZoomIn,
-  RotateCcw,
-  Info,
-  Lock,
-} from "lucide-react";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { Textarea } from "@/components/ui/textarea";
 import type { cn } from "@/lib/utils";
 
 interface PhotoMetadata {

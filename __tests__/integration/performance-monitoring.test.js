@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Performance Integration Tests
  * Comprehensive testing for performance monitoring system
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -23,7 +22,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -52,8 +51,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -74,9 +71,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -135,22 +132,20 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 require("@testing-library/jest-dom");
 // Mock web-vitals with proper function references
-jest.mock("web-vitals", function () {
-  return {
-    getCLS: jest.fn(),
-    getFID: jest.fn(),
-    getFCP: jest.fn(),
-    getLCP: jest.fn(),
-    getTTFB: jest.fn(),
-    getINP: jest.fn(),
-  };
-});
+jest.mock("web-vitals", () => ({
+  getCLS: jest.fn(),
+  getFID: jest.fn(),
+  getFCP: jest.fn(),
+  getLCP: jest.fn(),
+  getTTFB: jest.fn(),
+  getINP: jest.fn(),
+}));
 // Import components after mocking
 var integration_1 = require("@/lib/performance/integration");
 var performance_dashboard_1 = require("@/components/dashboard/performance-dashboard");
@@ -161,17 +156,13 @@ global.fetch = mockFetch;
 // Mock performance API
 Object.defineProperty(global, "performance", {
   value: {
-    now: jest.fn(function () {
-      return Date.now();
-    }),
+    now: jest.fn(() => Date.now()),
     memory: {
       usedJSHeapSize: 10000000,
       totalJSHeapSize: 20000000,
       jsHeapSizeLimit: 50000000,
     },
-    getEntriesByType: jest.fn(function () {
-      return [];
-    }),
+    getEntriesByType: jest.fn(() => []),
     mark: jest.fn(),
     measure: jest.fn(),
   },
@@ -190,16 +181,16 @@ Object.defineProperty(global, "navigator", {
   },
   writable: true,
 });
-describe("Performance Monitoring Integration", function () {
-  beforeEach(function () {
+describe("Performance Monitoring Integration", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Set environment variable to enable performance tracking in tests
     process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING = "true";
     // Setup default fetch mock
     mockFetch.mockResolvedValue({
       ok: true,
-      json: function () {
-        return Promise.resolve({
+      json: () =>
+        Promise.resolve({
           success: true,
           current: {
             lcp: 2.1,
@@ -225,64 +216,49 @@ describe("Performance Monitoring Integration", function () {
             recommendations: [],
             alerts: [],
           },
-        });
-      },
+        }),
     });
-    web_vitals_1.getCLS.mockImplementation(function (callback) {
-      setTimeout(function () {
-        return callback({ value: 0.1 });
-      }, 0);
+    web_vitals_1.getCLS.mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 0.1 }), 0);
     });
-    web_vitals_1.getFID.mockImplementation(function (callback) {
-      setTimeout(function () {
-        return callback({ value: 100 });
-      }, 0);
+    web_vitals_1.getFID.mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 100 }), 0);
     });
-    web_vitals_1.getFCP.mockImplementation(function (callback) {
-      setTimeout(function () {
-        return callback({ value: 1500 });
-      }, 0);
+    web_vitals_1.getFCP.mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 1500 }), 0);
     });
-    web_vitals_1.getLCP.mockImplementation(function (callback) {
-      setTimeout(function () {
-        return callback({ value: 2500 });
-      }, 0);
+    web_vitals_1.getLCP.mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 2500 }), 0);
     });
-    web_vitals_1.getTTFB.mockImplementation(function (callback) {
-      setTimeout(function () {
-        return callback({ value: 200 });
-      }, 0);
+    web_vitals_1.getTTFB.mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 200 }), 0);
     });
-    web_vitals_1.getINP.mockImplementation(function (callback) {
-      setTimeout(function () {
-        return callback({ value: 150 });
-      }, 0);
+    web_vitals_1.getINP.mockImplementation((callback) => {
+      setTimeout(() => callback({ value: 150 }), 0);
     });
   });
-  afterEach(function () {
+  afterEach(() => {
     // Clean up environment variable
-    delete process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING;
+    process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING = undefined;
     (0, react_2.cleanup)();
   });
-  describe("Performance Monitoring Hook", function () {
-    it("should collect and send Core Web Vitals metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance Monitoring Hook", () => {
+    it("should collect and send Core Web Vitals metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var TestComponent;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              TestComponent = function () {
-                return (
-                  <integration_1.PerformanceMonitor>
-                    <div>Test Content</div>
-                  </integration_1.PerformanceMonitor>
-                );
-              };
+              TestComponent = () => (
+                <integration_1.PerformanceMonitor>
+                  <div>Test Content</div>
+                </integration_1.PerformanceMonitor>
+              );
               (0, react_2.render)(<TestComponent />);
               // Wait for web-vitals to be called
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(web_vitals_1.getCLS).toHaveBeenCalled();
                   expect(web_vitals_1.getFID).toHaveBeenCalled();
                   expect(web_vitals_1.getFCP).toHaveBeenCalled();
@@ -298,7 +274,7 @@ describe("Performance Monitoring Integration", function () {
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(mockFetch).toHaveBeenCalledWith(
                       "/api/analytics/performance",
                       expect.objectContaining({
@@ -318,26 +294,23 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate performance score correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate performance score correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var TestComponent;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              TestComponent = function () {
-                return (
-                  <integration_1.PerformanceMonitor>
-                    <div>Test Content</div>
-                  </integration_1.PerformanceMonitor>
-                );
-              };
+              TestComponent = () => (
+                <integration_1.PerformanceMonitor>
+                  <div>Test Content</div>
+                </integration_1.PerformanceMonitor>
+              );
               (0, react_2.render)(<TestComponent />);
               // Wait for metrics collection
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(web_vitals_1.getCLS).toHaveBeenCalled();
                 }),
                 // Wait for API call with performance data
@@ -349,10 +322,10 @@ describe("Performance Monitoring Integration", function () {
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
-                    var fetchCall = mockFetch.mock.calls.find(function (call) {
-                      return call[0] === "/api/analytics/performance";
-                    });
+                  () => {
+                    var fetchCall = mockFetch.mock.calls.find(
+                      (call) => call[0] === "/api/analytics/performance",
+                    );
                     expect(fetchCall).toBeDefined();
                     if (fetchCall) {
                       var body = JSON.parse(fetchCall[1].body);
@@ -373,29 +346,26 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should detect device type correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should detect device type correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var TestComponent;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              TestComponent = function () {
-                return (
-                  <integration_1.PerformanceMonitor>
-                    <div>Test Content</div>
-                  </integration_1.PerformanceMonitor>
-                );
-              };
+              TestComponent = () => (
+                <integration_1.PerformanceMonitor>
+                  <div>Test Content</div>
+                </integration_1.PerformanceMonitor>
+              );
               (0, react_2.render)(<TestComponent />);
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
-                    var fetchCall = mockFetch.mock.calls.find(function (call) {
-                      return call[0] === "/api/analytics/performance";
-                    });
+                  () => {
+                    var fetchCall = mockFetch.mock.calls.find(
+                      (call) => call[0] === "/api/analytics/performance",
+                    );
                     if (fetchCall) {
                       var body = JSON.parse(fetchCall[1].body);
                       expect(body).toHaveProperty("deviceType");
@@ -410,25 +380,24 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance Dashboard Component", function () {
-    it("should render performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Performance Dashboard Component", () => {
+    it("should render performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_2.render)(<performance_dashboard_1.default />);
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -437,30 +406,29 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display performance score with correct color coding", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should display performance score with correct color coding", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var scoreElement;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_2.render)(<performance_dashboard_1.default />);
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Performance Score")).toBeInTheDocument();
                 }),
                 // Test score display
@@ -472,29 +440,28 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should show performance badges correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should show performance badges correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_2.render)(<performance_dashboard_1.default />);
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   // Check for performance badges - look for specific metric labels
                   expect(react_2.screen.getByText("Largest Contentful Paint")).toBeInTheDocument();
                   expect(react_2.screen.getByText("First Input Delay")).toBeInTheDocument();
@@ -506,29 +473,28 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle loading state", function () {
+      }));
+    it("should handle loading state", () => {
       (0, react_2.render)(<performance_dashboard_1.default />);
       // Initially should show loading
       expect(react_2.screen.getByText("Loading performance metrics...")).toBeInTheDocument();
     });
-    it("should refresh metrics when button is clicked", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should refresh metrics when button is clicked", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var refreshButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_2.render)(<performance_dashboard_1.default />);
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
                 // Wait for initial load
               ];
             case 1:
@@ -536,7 +502,7 @@ describe("Performance Monitoring Integration", function () {
               // Wait for initial load
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.queryByText("Loading performance data..."),
                   ).not.toBeInTheDocument();
@@ -549,14 +515,14 @@ describe("Performance Monitoring Integration", function () {
               refreshButton = react_2.screen.getByText("Refresh");
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       react_2.fireEvent.click(refreshButton);
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
                 // Should make another API call
               ];
             case 3:
@@ -564,7 +530,7 @@ describe("Performance Monitoring Integration", function () {
               // Should make another API call
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(mockFetch).toHaveBeenCalledTimes(2);
                 }),
               ];
@@ -574,31 +540,28 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance API Integration", function () {
-    it("should handle API errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance API Integration", () => {
+    it("should handle API errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var consoleSpy, TestComponent;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock API error
               mockFetch.mockRejectedValueOnce(new Error("API Error"));
               consoleSpy = jest.spyOn(console, "error").mockImplementation();
-              TestComponent = function () {
-                return (
-                  <integration_1.PerformanceMonitor>
-                    <div>Test Content</div>
-                  </integration_1.PerformanceMonitor>
-                );
-              };
+              TestComponent = () => (
+                <integration_1.PerformanceMonitor>
+                  <div>Test Content</div>
+                </integration_1.PerformanceMonitor>
+              );
               (0, react_2.render)(<TestComponent />);
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(consoleSpy).toHaveBeenCalledWith(
                       "❌ Failed to send performance metrics:",
                       expect.any(Error),
@@ -613,30 +576,27 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should respect environment configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should respect environment configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var originalEnv, TestComponent;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               originalEnv = process.env.NODE_ENV;
               process.env.NODE_ENV = "production";
-              TestComponent = function () {
-                return (
-                  <integration_1.PerformanceMonitor>
-                    <div>Test Content</div>
-                  </integration_1.PerformanceMonitor>
-                );
-              };
+              TestComponent = () => (
+                <integration_1.PerformanceMonitor>
+                  <div>Test Content</div>
+                </integration_1.PerformanceMonitor>
+              );
               (0, react_2.render)(<TestComponent />);
               // Restore environment
               process.env.NODE_ENV = originalEnv;
               // Should still collect metrics in production
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(web_vitals_1.getCLS).toHaveBeenCalled();
                 }),
               ];
@@ -646,18 +606,17 @@ describe("Performance Monitoring Integration", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance Calculations", function () {
-    it("should calculate correct performance scores for different metric combinations", function () {
+  describe("Performance Calculations", () => {
+    it("should calculate correct performance scores for different metric combinations", () => {
       // Test performance score calculation logic
       var testCases = [
         { lcp: 2.5, fid: 100, cls: 0.1, fcp: 1.8, expected: "good" },
         { lcp: 4.0, fid: 300, cls: 0.25, fcp: 3.0, expected: "poor" },
         { lcp: 3.0, fid: 200, cls: 0.15, fcp: 2.5, expected: "poor" }, // Corrigido: resultado deveria ser 'poor'
       ];
-      testCases.forEach(function (_a) {
+      testCases.forEach((_a) => {
         var lcp = _a.lcp,
           fid = _a.fid,
           cls = _a.cls,

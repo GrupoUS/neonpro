@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SSOLogin = SSOLogin;
 // SSO Login Component
@@ -150,7 +147,7 @@ function ProviderButton(_a) {
     isLoading = _a.isLoading,
     onClick = _a.onClick,
     disabled = _a.disabled;
-  var getProviderIcon = function (providerId) {
+  var getProviderIcon = (providerId) => {
     switch (providerId) {
       case "google":
         return (
@@ -236,7 +233,6 @@ function ProviderButton(_a) {
   );
 }
 function SSOLogin(_a) {
-  var _this = this;
   var redirectTo = _a.redirectTo,
     className = _a.className,
     _b = _a.showTitle,
@@ -256,25 +252,19 @@ function SSOLogin(_a) {
   var _e = (0, react_1.useState)(null),
     localError = _e[0],
     setLocalError = _e[1];
-  (0, react_1.useEffect)(
-    function () {
-      getProviders();
-    },
-    [getProviders],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      if (ssoError) {
-        setLocalError(ssoError);
-        onError === null || onError === void 0 ? void 0 : onError(ssoError);
-      }
-    },
-    [ssoError, onError],
-  );
-  var handleProviderLogin = function (provider) {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    getProviders();
+  }, [getProviders]);
+  (0, react_1.useEffect)(() => {
+    if (ssoError) {
+      setLocalError(ssoError);
+      onError === null || onError === void 0 ? void 0 : onError(ssoError);
+    }
+  }, [ssoError, onError]);
+  var handleProviderLogin = (provider) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -305,10 +295,7 @@ function SSOLogin(_a) {
         }
       });
     });
-  };
-  var enabledProviders = providers.filter(function (p) {
-    return p.enabled;
-  });
+  var enabledProviders = providers.filter((p) => p.enabled);
   var hasProviders = enabledProviders.length > 0;
   var isLoading = ssoLoading || loadingProvider !== null;
   var error = localError || ssoError;
@@ -347,19 +334,15 @@ function SSOLogin(_a) {
                 </alert_1.AlertDescription>
               </alert_1.Alert>
             : <div className="space-y-3">
-                {enabledProviders.map(function (provider) {
-                  return (
-                    <ProviderButton
-                      key={provider.id}
-                      provider={provider}
-                      isLoading={loadingProvider === provider.id}
-                      onClick={function () {
-                        return handleProviderLogin(provider);
-                      }}
-                      disabled={isLoading}
-                    />
-                  );
-                })}
+                {enabledProviders.map((provider) => (
+                  <ProviderButton
+                    key={provider.id}
+                    provider={provider}
+                    isLoading={loadingProvider === provider.id}
+                    onClick={() => handleProviderLogin(provider)}
+                    disabled={isLoading}
+                  />
+                ))}
               </div>}
 
         {hasProviders && (

@@ -1,4 +1,3 @@
-"use strict";
 // RETENTION CAMPAIGN EXECUTION API ENDPOINT
 // Epic 7.4: Patient Retention Analytics + Predictions - Task 5
 // API endpoint for executing individual retention campaigns
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.PATCH = PATCH;
@@ -225,7 +222,7 @@ function GET(request_1, _a) {
       eligiblePatients,
       error_1;
     var params = _b.params;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           _d.trys.push([0, 4, , 5]);
@@ -307,7 +304,7 @@ function PATCH(request_1, _a) {
   return __awaiter(this, arguments, void 0, function (request, _b) {
     var campaignId, body, validation, updates, supabase, _c, campaign, error, error_2;
     var params = _b.params;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           _d.trys.push([0, 4, , 5]);
@@ -404,7 +401,7 @@ function POST(request_1, _a) {
       metricsError,
       error_3;
     var params = _b.params;
-    return __generator(this, function (_h) {
+    return __generator(this, (_h) => {
       switch (_h.label) {
         case 0:
           _h.trys.push([0, 12, , 13]);
@@ -485,9 +482,7 @@ function POST(request_1, _a) {
           if (patientsError) {
             throw new Error("Failed to fetch eligible patients: ".concat(patientsError.message));
           }
-          targetPatients = patients.map(function (p) {
-            return p.patients;
-          });
+          targetPatients = patients.map((p) => p.patients);
           _h.label = 7;
         case 7:
           if (targetPatients.length === 0) {
@@ -517,13 +512,11 @@ function POST(request_1, _a) {
                   dryRun: dryRun,
                   targetConditions: campaign.trigger_conditions,
                   interventionType: campaign.intervention_strategy.type,
-                  patientsTargeted: targetPatients.map(function (p) {
-                    return {
-                      id: p.id,
-                      name: p.name,
-                      email: p.email,
-                    };
-                  }),
+                  patientsTargeted: targetPatients.map((p) => ({
+                    id: p.id,
+                    name: p.name,
+                    email: p.email,
+                  })),
                 },
                 success_count: dryRun ? 0 : targetPatients.length,
               })
@@ -535,7 +528,7 @@ function POST(request_1, _a) {
           if (executionError) {
             throw new Error("Failed to create execution record: ".concat(executionError.message));
           }
-          if (!!dryRun) return [3 /*break*/, 11];
+          if (dryRun) return [3 /*break*/, 11];
           return [
             4 /*yield*/,
             supabase
@@ -610,7 +603,7 @@ function DELETE(request_1, _a) {
   return __awaiter(this, arguments, void 0, function (request, _b) {
     var campaignId, supabase, _c, activeExecutions, executionsError, error, error_4;
     var params = _b.params;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           _d.trys.push([0, 4, , 5]);

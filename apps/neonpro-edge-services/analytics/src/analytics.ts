@@ -5,7 +5,7 @@
 
 // Patient metrics calculation
 export async function getPatientMetrics(db: D1Database, tenantId: string) {
-  const today = new Date().toISOString().split("T")[0];
+  const _today = new Date().toISOString().split("T")[0];
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
   // Use prepared statements for performance
@@ -244,10 +244,11 @@ function getPeriodRange(period: string) {
     case "current_month":
       startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
       break;
-    case "last_month":
+    case "last_month": {
       const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       startDate = lastMonth.toISOString();
       break;
+    }
     case "current_year":
       startDate = new Date(now.getFullYear(), 0, 1).toISOString();
       break;

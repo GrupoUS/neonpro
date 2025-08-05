@@ -7,18 +7,32 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Badge } from "@/components/ui/badge";
 import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Activity,
+  AlertTriangle,
+  Building2,
+  DollarSign,
+  Download,
+  Edit,
+  Eye,
+  Filter,
+  MoreHorizontal,
+  Plus,
+  RefreshCw,
+  Search,
+  Shield,
+  Star,
+  Trash2,
+  TrendingUp,
+  Upload,
+  Users,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,34 +41,20 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { toast } from "sonner";
+import type { Input } from "@/components/ui/input";
 import type {
-  Building2,
-  Users,
-  TrendingUp,
-  AlertTriangle,
-  Plus,
-  Search,
-  Filter,
-  Download,
-  Upload,
-  RefreshCw,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Trash2,
-  Star,
-  Shield,
-  DollarSign,
-  Activity,
-} from "lucide-react";
-
-import type { Supplier, SupplierStatus, SupplierCategory, RiskLevel } from "@/lib/types/supplier";
-import type { useSuppliers, useSupplierStats } from "@/lib/hooks/use-supplier";
-import type { SupplierList } from "./supplier-list";
-import type { SupplierForm } from "./supplier-form";
-import type { SupplierDetail } from "./supplier-detail";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { useSupplierStats, useSuppliers } from "@/lib/hooks/use-supplier";
+import type { RiskLevel, Supplier, SupplierCategory, SupplierStatus } from "@/lib/types/supplier";
 import type { cn, formatPercentage } from "@/lib/utils";
+import type { SupplierDetail } from "./supplier-detail";
+import type { SupplierForm } from "./supplier-form";
+import type { SupplierList } from "./supplier-list";
 
 // ============================================================================
 // TYPES & INTERFACES

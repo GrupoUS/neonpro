@@ -4,12 +4,12 @@
 
 import type { z } from "zod";
 import type {
-  MetricPeriod,
-  MetricCategory,
-  RevenueAnalytics,
-  ConversionAnalytics,
   CohortData,
+  ConversionAnalytics,
   ForecastData,
+  MetricCategory,
+  MetricPeriod,
+  RevenueAnalytics,
   TrialConversionPrediction,
 } from "../types";
 

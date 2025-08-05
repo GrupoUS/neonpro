@@ -4,35 +4,35 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  Calendar,
+  Clock,
+  Edit,
+  FileText,
+  History,
+  Loader2,
+  Mail,
+  Phone,
+  Save,
+  User,
+  UserCheck,
+  X,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { AppointmentHistoryEntry, AppointmentWithDetails } from "@/app/lib/types/appointments";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
 import type {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
 } from "@/components/ui/sheet";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Edit,
-  X,
-  Calendar,
-  Clock,
-  User,
-  UserCheck,
-  FileText,
-  History,
-  Phone,
-  Mail,
-  Save,
-  Loader2,
-} from "lucide-react";
-import type { toast } from "sonner";
-import type { AppointmentWithDetails, AppointmentHistoryEntry } from "@/app/lib/types/appointments";
 import AppointmentDetails from "./appointment-details";
 import AppointmentEditForm from "./appointment-edit-form";
 import AppointmentHistory from "./appointment-history";

@@ -1,5 +1,6 @@
 import { Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
+import type { HealthcareUser } from "../plugins/auth.js";
 import {
   type CreatePatient,
   CreatePatientSchema,
@@ -38,7 +39,7 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
         },
       },
     },
-    async (request, reply) => {
+    async (request, _reply) => {
       const query = request.query as PatientQuery;
       const {
         page = 1,
@@ -209,7 +210,7 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
           ...patientData,
           medical_record_number: medicalRecordNumber,
           tenant_id: request.tenantId,
-          created_by: request.user.id,
+          created_by: (request.user as HealthcareUser).id,
           lgpd_consent: {
             data_processing: true, // Required for healthcare
             marketing: false,
@@ -293,7 +294,7 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
         const patientUpdate = {
           ...updateData,
           updated_at: new Date().toISOString(),
-          updated_by: request.user.id,
+          updated_by: (request.user as HealthcareUser).id,
         };
 
         const { data: updatedPatient, error } = await request.supabaseClient
@@ -388,7 +389,7 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
           .update({
             is_active: false,
             deactivated_at: deactivatedAt,
-            deactivated_by: request.user.id,
+            deactivated_by: (request.user as HealthcareUser).id,
           })
           .eq("id", id)
           .eq("tenant_id", request.tenantId);
@@ -464,7 +465,10 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
         }
 
         // For patient role, ensure they can only export their own data
-        if (request.user.role === "patient" && request.user.id !== patient.id) {
+        if (
+          (request.user as HealthcareUser).role === "patient" &&
+          (request.user as HealthcareUser).id !== patient.id
+        ) {
           reply.code(403);
           return { error: "Access denied - can only export own data" };
         }
@@ -501,14 +505,14 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
         // Prepare export data
         const exportData = {
           patient,
-          medicalHistory: medicalHistory.map((record) => ({
+          medicalHistory: medicalHistory.map((record: any) => ({
             id: record.id,
             date: record.date,
             description: record.description,
             providerId: record.provider_id,
             providerName: record.providers?.name || "Unknown",
           })),
-          appointments: appointments.map((apt) => ({
+          appointments: appointments.map((apt: any) => ({
             id: apt.id,
             date: apt.date,
             type: apt.type,
@@ -518,7 +522,7 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
           })),
           exportMetadata: {
             exportedAt: new Date().toISOString(),
-            exportedBy: request.user.id,
+            exportedBy: (request.user as HealthcareUser).id,
             dataRetentionUntil: new Date(Date.now() + 7 * 365 * 24 * 60 * 60 * 1000).toISOString(), // 7 years
             lgpdCompliance: true,
           },
@@ -527,7 +531,7 @@ const patientsRoutes: FastifyPluginAsync = async (fastify) => {
         // Audit log for LGPD compliance
         request.auditLog("patient_data_exported", {
           patientId: id,
-          exportedBy: request.user.id,
+          exportedBy: (request.user as HealthcareUser).id,
           exportType: "full_data_export",
           lgpdCompliance: true,
           dataCategories: ["personal_data", "medical_history", "appointments"],

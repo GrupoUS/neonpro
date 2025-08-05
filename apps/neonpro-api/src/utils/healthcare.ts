@@ -78,7 +78,7 @@ export function validateBrazilianPhone(phone: string): boolean {
  */
 export function generateSecurePatientId(patientId: string): string {
   // Create a hash of the patient ID for audit logs (LGPD compliance)
-  const crypto = require("crypto");
+  const crypto = require("node:crypto");
   return crypto.createHash("sha256").update(patientId).digest("hex").slice(0, 16);
 }
 
@@ -134,6 +134,94 @@ export function calculateDataRetentionDate(
     default:
       return new Date(now.getFullYear() + 5, now.getMonth(), now.getDate());
   }
+}
+
+/**
+ * Validate Brazilian CNPJ number
+ * @param cnpj CNPJ number in format XX.XXX.XXX/XXXX-XX
+ */
+export function validateCNPJ(cnpj: string): boolean {
+  const cleanCNPJ = cnpj.replace(/[^\d]/g, "");
+
+  if (cleanCNPJ.length !== 14) return false;
+  if (/^(\d)\1{13}$/.test(cleanCNPJ)) return false;
+
+  // Validate check digits
+  let sum = 0;
+  let remainder;
+  const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+
+  // First check digit
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(cleanCNPJ.charAt(i)) * (weights1[i] || 0);
+  }
+  remainder = sum % 11;
+  remainder = remainder < 2 ? 0 : 11 - remainder;
+  if (remainder !== parseInt(cleanCNPJ.charAt(12))) return false;
+
+  // Second check digit
+  sum = 0;
+  for (let i = 0; i < 13; i++) {
+    sum += parseInt(cleanCNPJ.charAt(i)) * (weights2[i] || 0);
+  }
+  remainder = sum % 11;
+  remainder = remainder < 2 ? 0 : 11 - remainder;
+  if (remainder !== parseInt(cleanCNPJ.charAt(13))) return false;
+
+  return true;
+}
+
+/**
+ * Calculate Brazilian taxes for healthcare services
+ * @param amount Base amount
+ * @param serviceType Type of healthcare service
+ */
+export function calculateBrazilianTaxes(
+  amount: number,
+  _serviceType: "consultation" | "procedure" | "medication" | "other" = "other",
+): {
+  amount: number;
+  taxes: {
+    issQn: number;
+    cofins: number;
+    csll: number;
+    irpj: number;
+    pis: number;
+    total: number;
+  };
+  totalWithTaxes: number;
+} {
+  const taxes = {
+    issQn: amount * 0.02, // 2% ISS for healthcare services
+    cofins: amount * 0.0076, // 0.76% COFINS
+    csll: amount * 0.01, // 1% CSLL
+    irpj: amount * 0.0025, // 0.25% IRPJ
+    pis: amount * 0.0165, // 1.65% PIS
+    total: 0,
+  };
+
+  taxes.total = taxes.issQn + taxes.cofins + taxes.csll + taxes.irpj + taxes.pis;
+
+  return {
+    amount,
+    taxes,
+    totalWithTaxes: amount + taxes.total,
+  };
+}
+
+/**
+ * Format currency in Brazilian Real
+ * @param amount Amount to format
+ * @param currency Currency code (default: BRL)
+ */
+export function formatCurrency(amount: number, currency: string = "BRL"): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
 }
 
 /**

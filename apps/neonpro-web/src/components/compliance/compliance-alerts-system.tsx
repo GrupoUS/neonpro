@@ -1,6 +1,26 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type {
+  AlertTriangle,
+  Bell,
+  BellRing,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Eye,
+  FileText,
+  Filter,
+  Settings,
+  Shield,
+  Trash2,
+  Users,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,17 +28,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import type {
   Dialog,
   DialogContent,
@@ -28,7 +37,6 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Switch } from "@/components/ui/switch";
 import type { Label } from "@/components/ui/label";
 import type {
   Select,
@@ -37,23 +45,15 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
 import type {
-  Bell,
-  BellRing,
-  AlertTriangle,
-  Clock,
-  Shield,
-  FileText,
-  Users,
-  CheckCircle,
-  XCircle,
-  Settings,
-  Calendar,
-  Trash2,
-  Eye,
-  Filter,
-} from "lucide-react";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { useToast } from "@/hooks/use-toast";
 
 interface ComplianceAlert {

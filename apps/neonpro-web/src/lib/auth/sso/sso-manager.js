@@ -1,4 +1,3 @@
-"use strict";
 // SSO Manager - Core SSO Implementation
 // Story 1.3: SSO Integration Implementation
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,14 +144,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ssoManager = exports.SSOManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var sso_1 = require("@/types/sso");
 var logger_1 = require("@/lib/logger");
 var crypto_1 = require("crypto");
-var SSOManager = /** @class */ (function () {
+var SSOManager = /** @class */ (() => {
   function SSOManager(supabaseUrl, supabaseKey, config) {
     this.providers = new Map();
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
@@ -165,36 +162,33 @@ var SSOManager = /** @class */ (function () {
    * Initialize SSO providers from configuration
    */
   SSOManager.prototype.initializeProviders = function () {
-    var _this = this;
-    this.config.providers.forEach(function (provider) {
+    this.config.providers.forEach((provider) => {
       if (provider.enabled) {
-        _this.providers.set(provider.id, provider);
+        this.providers.set(provider.id, provider);
       }
     });
   };
   /**
    * Get default SSO configuration
    */
-  SSOManager.prototype.getDefaultConfig = function () {
-    return {
-      providers: sso_1.DEFAULT_SSO_PROVIDERS,
-      domainMappings: [],
-      globalSettings: {
-        enabled: true,
-        allowLocalFallback: true,
-        sessionTimeout: 3600000, // 1 hour
-        tokenRefreshThreshold: 300000, // 5 minutes
-        maxConcurrentSessions: 3,
-        auditRetentionDays: 90,
-        lgpdCompliance: {
-          consentRequired: true,
-          dataRetentionDays: 365,
-          allowDataExport: true,
-          allowDataDeletion: true,
-        },
+  SSOManager.prototype.getDefaultConfig = () => ({
+    providers: sso_1.DEFAULT_SSO_PROVIDERS,
+    domainMappings: [],
+    globalSettings: {
+      enabled: true,
+      allowLocalFallback: true,
+      sessionTimeout: 3600000, // 1 hour
+      tokenRefreshThreshold: 300000, // 5 minutes
+      maxConcurrentSessions: 3,
+      auditRetentionDays: 90,
+      lgpdCompliance: {
+        consentRequired: true,
+        dataRetentionDays: 365,
+        allowDataExport: true,
+        allowDataDeletion: true,
       },
-    };
-  };
+    },
+  });
   /**
    * Generate SSO authorization URL
    */
@@ -407,7 +401,7 @@ var SSOManager = /** @class */ (function () {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.text()];
           case 2:
             errorData = _a.sent();
@@ -469,7 +463,7 @@ var SSOManager = /** @class */ (function () {
   /**
    * Normalize user info from different providers
    */
-  SSOManager.prototype.normalizeUserInfo = function (providerId, userData) {
+  SSOManager.prototype.normalizeUserInfo = (providerId, userData) => {
     var _a, _b, _c, _d;
     var baseInfo = {
       id: userData.id || userData.sub || userData.oid,
@@ -785,7 +779,7 @@ var SSOManager = /** @class */ (function () {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.text()];
           case 2:
             errorData = _a.sent();
@@ -854,9 +848,9 @@ var SSOManager = /** @class */ (function () {
   SSOManager.prototype.getDomainProvider = function (email) {
     var domain = email.split("@")[1];
     if (!domain) return null;
-    var domainMapping = this.config.domainMappings.find(function (mapping) {
-      return mapping.domain === domain && mapping.autoRedirect;
-    });
+    var domainMapping = this.config.domainMappings.find(
+      (mapping) => mapping.domain === domain && mapping.autoRedirect,
+    );
     if (!domainMapping) return null;
     return this.providers.get(domainMapping.providerId) || null;
   };
@@ -915,7 +909,7 @@ var SSOManager = /** @class */ (function () {
    */
   SSOManager.prototype.storeAuthRequest = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Store in cache/database with expiration
         // Implementation depends on your caching strategy
         logger_1.logger.info("Auth request stored", {
@@ -931,7 +925,7 @@ var SSOManager = /** @class */ (function () {
    */
   SSOManager.prototype.getAuthRequest = function (state) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Retrieve from cache/database
         // Implementation depends on your caching strategy
         logger_1.logger.info("Auth request retrieved", { state: state });
@@ -942,9 +936,8 @@ var SSOManager = /** @class */ (function () {
   /**
    * Generate secure random token
    */
-  SSOManager.prototype.generateSecureToken = function () {
-    return crypto_1.default.randomBytes(32).toString("base64url");
-  };
+  SSOManager.prototype.generateSecureToken = () =>
+    crypto_1.default.randomBytes(32).toString("base64url");
   /**
    * Log audit event
    */
@@ -970,21 +963,17 @@ var SSOManager = /** @class */ (function () {
   /**
    * Create SSO error
    */
-  SSOManager.prototype.createError = function (code, message, details) {
-    return {
-      code: code,
-      message: message,
-      details: details,
-      timestamp: new Date(),
-    };
-  };
+  SSOManager.prototype.createError = (code, message, details) => ({
+    code: code,
+    message: message,
+    details: details,
+    timestamp: new Date(),
+  });
   /**
    * Get available SSO providers
    */
   SSOManager.prototype.getAvailableProviders = function () {
-    return Array.from(this.providers.values()).filter(function (provider) {
-      return provider.enabled;
-    });
+    return Array.from(this.providers.values()).filter((provider) => provider.enabled);
   };
   /**
    * Get SSO configuration

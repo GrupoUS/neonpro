@@ -1,20 +1,20 @@
 "use client";
 
-import type { Card, CardContent } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type {
-  Star,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Heart,
   Quote,
+  Star,
   TrendingUp,
   Users,
-  Calendar,
-  Heart,
-  CheckCircle,
-  BarChart3,
-  Clock,
 } from "lucide-react";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
 
 const testimonials = [
   {

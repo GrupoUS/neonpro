@@ -3,8 +3,8 @@
  * Healthcare-compliant batch resolution with LGPD/ANVISA/CFM compliance
  */
 
-import type { NextRequest, NextResponse } from "next/server";
 import type { createServerClient } from "@supabase/ssr";
+import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
 
 // Validation schema

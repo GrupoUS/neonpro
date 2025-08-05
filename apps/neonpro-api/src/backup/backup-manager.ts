@@ -3,10 +3,10 @@
  * Healthcare-compliant backup system for NeonPro with LGPD compliance
  */
 
-import { spawn } from "child_process";
-import { createReadStream, createWriteStream, promises as fs } from "fs";
-import { pipeline } from "stream/promises";
-import { createGunzip, createGzip } from "zlib";
+import { spawn } from "node:child_process";
+import { createReadStream, createWriteStream, promises as fs } from "node:fs";
+import { pipeline } from "node:stream/promises";
+import { createGunzip, createGzip } from "node:zlib";
 import { z } from "zod";
 import { HealthcareJobType } from "../jobs/job-manager";
 import { healthcareLogger } from "../plugins/logging";
@@ -293,7 +293,7 @@ export class HealthcareBackupManager {
     const now = new Date();
     const expiredBackups: BackupMetadata[] = [];
 
-    for (const [backupId, backup] of this.backupHistory) {
+    for (const [_backupId, backup] of this.backupHistory) {
       if (backup.metadata.retentionUntil < now) {
         expiredBackups.push(backup);
       }
@@ -332,7 +332,7 @@ export class HealthcareBackupManager {
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     const lastBackup = backups[0];
-    const now = new Date();
+    const _now = new Date();
 
     return {
       rpo: 15, // 15 minutes RPO target
@@ -375,7 +375,7 @@ export class HealthcareBackupManager {
     return `backup_${type}${tenant}_${timestamp}`;
   }
 
-  private getBackupFilePath(backupId: string, type: BackupType): string {
+  private getBackupFilePath(backupId: string, _type: BackupType): string {
     const date = new Date().toISOString().split("T")[0];
     return `${this.config.storage.local.path}/${date}/${backupId}.sql`;
   }
@@ -400,7 +400,7 @@ export class HealthcareBackupManager {
   private async validateEncryptionKey(): Promise<void> {
     try {
       await fs.access(this.config.encryption.keyPath);
-    } catch (error) {
+    } catch (_error) {
       throw new Error(`Encryption key not found: ${this.config.encryption.keyPath}`);
     }
   }
@@ -494,7 +494,7 @@ export class HealthcareBackupManager {
     }
   }
 
-  private async calculateChecksum(filePath: string): Promise<string> {
+  private async calculateChecksum(_filePath: string): Promise<string> {
     // Implementation would calculate file checksum
     // For now, return a mock checksum
     return `checksum_${Math.random().toString(36).substring(7)}`;
@@ -600,8 +600,8 @@ export class HealthcareBackupManager {
 
 // Backup scheduler integration
 export class BackupScheduler {
-  private backupManager: HealthcareBackupManager;
   private jobManager: any; // Reference to job manager
+  private backupManager: HealthcareBackupManager; // Add missing property
 
   constructor(backupManager: HealthcareBackupManager, jobManager: any) {
     this.backupManager = backupManager;

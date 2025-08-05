@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Manager - Core Session Management
  *
@@ -7,20 +6,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -35,26 +34,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -74,13 +73,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -102,9 +101,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -176,7 +173,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -186,7 +183,7 @@ var types_1 = require("./types");
 var security_monitor_1 = require("./security-monitor");
 var device_manager_1 = require("./device-manager");
 var audit_logger_1 = require("./audit-logger");
-var SessionManager = /** @class */ (function (_super) {
+var SessionManager = /** @class */ ((_super) => {
   __extends(SessionManager, _super);
   function SessionManager(config) {
     var _this = _super.call(this) || this;
@@ -371,7 +368,7 @@ var SessionManager = /** @class */ (function (_super) {
             return [4 /*yield*/, this.getSessionFromCache(sessionId)];
           case 1:
             session = _a.sent();
-            if (!!session) return [3 /*break*/, 4];
+            if (session) return [3 /*break*/, 4];
             return [4 /*yield*/, this.getSessionFromDatabase(sessionId)];
           case 2:
             // Fallback to database
@@ -418,7 +415,7 @@ var SessionManager = /** @class */ (function (_super) {
             return [4 /*yield*/, this.securityMonitor.validateSessionActivity(session)];
           case 7:
             securityValidation = _a.sent();
-            if (!!securityValidation.allowed) return [3 /*break*/, 9];
+            if (securityValidation.allowed) return [3 /*break*/, 9];
             // Log security event
             return [
               4 /*yield*/,
@@ -659,11 +656,7 @@ var SessionManager = /** @class */ (function (_super) {
             sessions = _a.sent();
             return [
               4 /*yield*/,
-              Promise.all(
-                sessions.map(function (session) {
-                  return _this.terminateSession(session.id, reason);
-                }),
-              ),
+              Promise.all(sessions.map((session) => _this.terminateSession(session.id, reason))),
             ];
           case 2:
             _a.sent();
@@ -892,9 +885,7 @@ var SessionManager = /** @class */ (function (_super) {
                 })
                 .in(
                   "id",
-                  expiredSessions.map(function (s) {
-                    return s.id;
-                  }),
+                  expiredSessions.map((s) => s.id),
                 ),
             ];
           case 2:
@@ -905,7 +896,7 @@ var SessionManager = /** @class */ (function (_super) {
               });
             }
             pipeline_1 = this.redis.pipeline();
-            expiredSessions.forEach(function (session) {
+            expiredSessions.forEach((session) => {
               pipeline_1.del("session:".concat(session.id));
             });
             return [4 /*yield*/, pipeline_1.exec()];
@@ -1001,9 +992,8 @@ var SessionManager = /** @class */ (function (_super) {
   // ============================================================================
   // PRIVATE METHODS
   // ============================================================================
-  SessionManager.prototype.generateSessionId = function () {
-    return "sess_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  SessionManager.prototype.generateSessionId = () =>
+    "sess_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   SessionManager.prototype.getSessionFromCache = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
       var cached, session, error_11;
@@ -1085,26 +1075,24 @@ var SessionManager = /** @class */ (function (_super) {
       });
     });
   };
-  SessionManager.prototype.mapDatabaseToSession = function (data) {
-    return {
-      id: data.id,
-      userId: data.user_id,
-      clinicId: data.clinic_id,
-      deviceFingerprint: data.device_fingerprint,
-      deviceName: data.device_name,
-      ipAddress: data.ip_address,
-      userAgent: data.user_agent,
-      location: data.location,
-      createdAt: new Date(data.created_at),
-      lastActivity: new Date(data.last_activity),
-      expiresAt: new Date(data.expires_at),
-      isActive: data.is_active,
-      securityScore: data.security_score,
-      sessionData: data.session_data || {},
-      metadata: data.metadata,
-    };
-  };
-  SessionManager.prototype.mapSortField = function (field) {
+  SessionManager.prototype.mapDatabaseToSession = (data) => ({
+    id: data.id,
+    userId: data.user_id,
+    clinicId: data.clinic_id,
+    deviceFingerprint: data.device_fingerprint,
+    deviceName: data.device_name,
+    ipAddress: data.ip_address,
+    userAgent: data.user_agent,
+    location: data.location,
+    createdAt: new Date(data.created_at),
+    lastActivity: new Date(data.last_activity),
+    expiresAt: new Date(data.expires_at),
+    isActive: data.is_active,
+    securityScore: data.security_score,
+    sessionData: data.session_data || {},
+    metadata: data.metadata,
+  });
+  SessionManager.prototype.mapSortField = (field) => {
     var fieldMap = {
       createdAt: "created_at",
       lastActivity: "last_activity",
@@ -1240,43 +1228,44 @@ var SessionManager = /** @class */ (function (_super) {
     });
   };
   SessionManager.prototype.setupEventHandlers = function () {
-    this.on("session_created", function (data) {
+    this.on("session_created", (data) => {
       console.log("Session created for user ".concat(data.session.userId));
     });
-    this.on("session_terminated", function (data) {
+    this.on("session_terminated", (data) => {
       console.log("Session ".concat(data.sessionId, " terminated: ").concat(data.reason));
     });
-    this.on("security_event", function (event) {
+    this.on("security_event", (event) => {
       console.warn("Security event: ".concat(event.eventType, " - ").concat(event.description));
     });
   };
   SessionManager.prototype.startCleanupProcess = function () {
-    var _this = this;
     if (this.config.cleanup.enableAutoCleanup) {
-      this.cleanupInterval = setInterval(function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var cleaned, error_14;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, this.cleanupExpiredSessions()];
-              case 1:
-                cleaned = _a.sent();
-                if (cleaned > 0) {
-                  console.log("Cleaned up ".concat(cleaned, " expired sessions"));
-                }
-                return [3 /*break*/, 3];
-              case 2:
-                error_14 = _a.sent();
-                console.error("Session cleanup failed:", error_14);
-                return [3 /*break*/, 3];
-              case 3:
-                return [2 /*return*/];
-            }
-          });
-        });
-      }, this.config.cleanup.interval);
+      this.cleanupInterval = setInterval(
+        () =>
+          __awaiter(this, void 0, void 0, function () {
+            var cleaned, error_14;
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0:
+                  _a.trys.push([0, 2, , 3]);
+                  return [4 /*yield*/, this.cleanupExpiredSessions()];
+                case 1:
+                  cleaned = _a.sent();
+                  if (cleaned > 0) {
+                    console.log("Cleaned up ".concat(cleaned, " expired sessions"));
+                  }
+                  return [3 /*break*/, 3];
+                case 2:
+                  error_14 = _a.sent();
+                  console.error("Session cleanup failed:", error_14);
+                  return [3 /*break*/, 3];
+                case 3:
+                  return [2 /*return*/];
+              }
+            });
+          }),
+        this.config.cleanup.interval,
+      );
     }
   };
   /**

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Stripe Webhooks Handler
  * Epic: EPIC-001 - Advanced Subscription Management
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var server_1 = require("next/server");
@@ -147,7 +144,7 @@ var STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var body, signature, event_1, supabase, _a, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 18, , 19]);
@@ -171,11 +168,9 @@ function POST(request) {
             process.env.SUPABASE_SERVICE_ROLE_KEY,
             {
               cookies: {
-                get: function () {
-                  return undefined;
-                },
-                set: function () {},
-                remove: function () {},
+                get: () => undefined,
+                set: () => {},
+                remove: () => {},
               },
             },
           );
@@ -253,7 +248,7 @@ function POST(request) {
 function handleCheckoutCompleted(supabase, event) {
   return __awaiter(this, void 0, void 0, function () {
     var session, metadata, subscriptionData, error, error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 3, , 4]);
@@ -332,7 +327,7 @@ function handleCheckoutCompleted(supabase, event) {
 function handlePaymentSucceeded(supabase, event) {
   return __awaiter(this, void 0, void 0, function () {
     var invoice, subscription, error_3;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 4, , 5]);
@@ -404,7 +399,7 @@ function handlePaymentSucceeded(supabase, event) {
 function handlePaymentFailed(supabase, event) {
   return __awaiter(this, void 0, void 0, function () {
     var invoice, subscription, error_4;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 4, , 5]);
@@ -472,7 +467,7 @@ function handlePaymentFailed(supabase, event) {
 function handleSubscriptionCreated(supabase, event) {
   return __awaiter(this, void 0, void 0, function () {
     var subscription;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         subscription = event.data.object;
         // Log subscription creation event
@@ -487,7 +482,7 @@ function handleSubscriptionCreated(supabase, event) {
 function handleSubscriptionUpdated(supabase, event) {
   return __awaiter(this, void 0, void 0, function () {
     var subscription, localSub, status_1, error_5;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 3, , 4]);
@@ -551,7 +546,7 @@ function handleSubscriptionUpdated(supabase, event) {
 function handleSubscriptionDeleted(supabase, event) {
   return __awaiter(this, void 0, void 0, function () {
     var subscription, error, error_6;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -587,7 +582,7 @@ function handleSubscriptionDeleted(supabase, event) {
 function handleInvoiceCreated(supabase, event) {
   return __awaiter(this, void 0, void 0, function () {
     var invoice, subscription, error_7;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 3, , 4]);

@@ -9,8 +9,8 @@
  */
 
 import "@testing-library/jest-dom";
+import { TextDecoder, TextEncoder } from "node:util";
 import { configure } from "@testing-library/react";
-import { TextEncoder, TextDecoder } from "util";
 
 // ============================================================================
 // Global Test Configuration

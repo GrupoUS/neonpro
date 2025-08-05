@@ -2,16 +2,16 @@
 // React hooks for LGPD compliance in NeonPro frontend
 // Provides easy-to-use hooks for audit logging, consent management, and data subject rights
 
+import type { useRouter } from "next/navigation";
+import React, { useCallback, useEffect, useState } from "react";
 import type { createClient } from "@/lib/supabase/client";
 import type {
   LGPDComplianceManager,
-  type LGPDConsentType,
-  type LGPDDataSubjectRights,
-  type LGPDEventType,
+  LGPDConsentType,
+  LGPDDataSubjectRights,
+  LGPDEventType,
   lgpdUtils,
 } from "@/lib/supabase/lgpd-compliance";
-import type { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
 
 // Hook return types
 interface UseLGPDAuditReturn {

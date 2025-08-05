@@ -4,8 +4,8 @@
 import type { NextRequest, NextResponse } from "next/server";
 import type { noShowPredictionEngine } from "@/app/lib/services/no-show-prediction";
 import type {
-  GetAnalyticsQuerySchema,
   DashboardPeriodSchema,
+  GetAnalyticsQuerySchema,
 } from "@/app/lib/validations/no-show-prediction";
 import type { createClient } from "@/lib/supabase/server";
 

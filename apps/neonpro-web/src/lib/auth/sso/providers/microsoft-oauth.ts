@@ -1,8 +1,8 @@
 // Microsoft OAuth Provider Implementation
 // Story 1.3: SSO Integration - Microsoft OAuth 2.0 & Azure AD
 
-import type { SSOProvider, SSOUserInfo, SSOTokenResponse } from "@/types/sso";
 import type { logger } from "@/lib/logger";
+import type { SSOProvider, SSOTokenResponse, SSOUserInfo } from "@/types/sso";
 
 export interface MicrosoftOAuthConfig {
   clientId: string;

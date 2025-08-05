@@ -1,39 +1,45 @@
 import type { FastifyInstance, FastifyPluginAsync, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
+import type { HealthcareUser } from "./auth.js";
 
 const auditPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   // Audit logging decorator for requests
-  fastify.decorateRequest("auditLog", function (action: string, metadata: object = {}) {
-    const request = this as FastifyRequest;
+  fastify.decorateRequest(
+    "auditLog",
+    function (action: string, metadata: Record<string, any> = {}) {
+      const request = this as FastifyRequest;
 
-    // Create audit log entry
-    const auditEntry = {
-      user_id: request.user?.id || "anonymous",
-      tenant_id: request.tenantId || "unknown",
-      action,
-      resource_type: getResourceTypeFromPath(request.routeOptions?.url || request.url),
-      resource_id: extractResourceId(request.params as Record<string, string>),
-      metadata: {
-        ...metadata,
-        method: request.method,
-        url: request.url,
-        userRole: request.user?.role,
-      },
-      ip_address: getClientIP(request),
-      user_agent: request.headers["user-agent"] || "unknown",
-    };
+      // Create audit log entry
+      const auditEntry = {
+        user_id: (request.user as HealthcareUser)?.id || "anonymous",
+        tenant_id: request.tenantId || "unknown",
+        action,
+        resource_type: getResourceTypeFromPath(
+          (request.routeOptions?.url ?? request.url) || "unknown",
+        ),
+        resource_id: extractResourceId(request.params as Record<string, string> | undefined),
+        metadata: {
+          ...metadata,
+          method: request.method,
+          url: request.url,
+          userRole: (request.user as HealthcareUser)?.role,
+        },
+        ip_address: getClientIP(request),
+        user_agent: request.headers["user-agent"] || "unknown",
+      };
 
-    // Log locally for immediate debugging
-    request.log.info(auditEntry, `Healthcare audit: ${action}`);
+      // Log locally for immediate debugging
+      request.log.info(auditEntry, `Healthcare audit: ${action}`);
 
-    // Insert into audit log table (async, don't block request)
-    fastify.insertAuditLog(auditEntry).catch((error) => {
-      fastify.log.error(error, "Failed to insert audit log");
-    });
-  });
+      // Insert into audit log table (async, don't block request)
+      fastify.insertAuditLog(auditEntry).catch((error) => {
+        fastify.log.error(error, "Failed to insert audit log");
+      });
+    },
+  );
 
   // Global audit hook for all requests to healthcare endpoints
-  fastify.addHook("preHandler", async (request, reply) => {
+  fastify.addHook("preHandler", async (request, _reply) => {
     // Skip audit for health checks and static assets
     if (
       request.url.startsWith("/health") ||
@@ -56,7 +62,7 @@ const auditPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 
     if (isSensitiveEndpoint) {
       const action = `${request.method.toLowerCase()}_${getResourceTypeFromPath(request.url)}`;
-      request.auditLog(action, {
+      request.auditLog?.(action, {
         autoAudit: true,
         endpoint: request.url,
       });
@@ -71,7 +77,7 @@ const auditPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 
       if (dataModifyingMethods.includes(request.method)) {
         const action = `${request.method.toLowerCase()}_completed`;
-        request.auditLog(action, {
+        request.auditLog?.(action, {
           statusCode: reply.statusCode,
           responseTime: reply.elapsedTime,
           lgpdCompliance: true,
@@ -95,14 +101,14 @@ const auditPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
       },
     ) => {
       const auditEntry = {
-        user_id: request.user?.id || "system",
-        tenant_id: request.tenantId,
+        user_id: (request.user as HealthcareUser)?.id || "system",
+        tenant_id: request.tenantId || "default",
         action: "controlled_substance_prescribed",
         resource_type: "controlled_substance",
         resource_id: substanceInfo.substanceId,
         metadata: {
           ...substanceInfo,
-          prescriber_license: request.user?.licenseNumber,
+          prescriber_license: (request.user as HealthcareUser)?.licenseNumber,
           anvisa_compliance: true,
           cfm_regulation: "CFM Resolution 1246/88",
         },
@@ -127,14 +133,14 @@ const auditPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 // Helper functions
 function getResourceTypeFromPath(path: string): string {
   const segments = path.split("/").filter(Boolean);
-  if (segments.length >= 2 && segments[0] === "api") {
+  if (segments.length >= 2 && segments[0] === "api" && segments[1]) {
     return segments[1].replace(/s$/, ""); // Remove plural 's'
   }
   return "unknown";
 }
 
-function extractResourceId(params: Record<string, string>): string {
-  return params.id || params.patientId || params.appointmentId || "unknown";
+function extractResourceId(params: Record<string, string> | undefined): string {
+  return params?.id || params?.patientId || params?.appointmentId || "unknown";
 }
 
 function getClientIP(request: FastifyRequest): string {

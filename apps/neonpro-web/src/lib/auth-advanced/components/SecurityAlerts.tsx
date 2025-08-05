@@ -3,26 +3,27 @@
 
 "use client";
 
-import React, { useState } from "react";
-import type { useSessionContext } from "../context";
-import type { AuthUtils } from "../utils";
 import type {
-  AlertTriangle,
-  Shield,
-  X,
-  Eye,
-  EyeOff,
-  Clock,
-  MapPin,
-  Monitor,
-  User,
-  Lock,
-  Unlock,
   Activity,
+  AlertTriangle,
   Bell,
   BellOff,
+  Clock,
+  Eye,
+  EyeOff,
+  Lock,
+  MapPin,
+  Monitor,
+  Shield,
+  Unlock,
+  User,
+  X,
 } from "lucide-react";
-import type { SessionSecurityEvent, SecurityEventType } from "../types";
+import type React from "react";
+import { useState } from "react";
+import type { useSessionContext } from "../context";
+import type { SecurityEventType, SessionSecurityEvent } from "../types";
+import type { AuthUtils } from "../utils";
 
 interface SecurityAlertsProps {
   className?: string;

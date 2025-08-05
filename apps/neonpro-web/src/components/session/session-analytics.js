@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -10,7 +9,7 @@ var select_1 = require("@/components/ui/select");
 var use_session_1 = require("@/hooks/use-session");
 var recharts_1 = require("recharts");
 var lucide_react_1 = require("lucide-react");
-var SessionAnalyticsComponent = function (_a) {
+var SessionAnalyticsComponent = (_a) => {
   var _b, _c, _d;
   var userId = _a.userId,
     _e = _a.className,
@@ -26,13 +25,11 @@ var SessionAnalyticsComponent = function (_a) {
     loading = _h.loading,
     error = _h.error,
     refreshAnalytics = _h.refreshAnalytics;
-  var handleRefresh = function () {
-    setRefreshKey(function (prev) {
-      return prev + 1;
-    });
+  var handleRefresh = () => {
+    setRefreshKey((prev) => prev + 1);
     refreshAnalytics();
   };
-  var getTimeframeLabel = function (tf) {
+  var getTimeframeLabel = (tf) => {
     switch (tf) {
       case "24h":
         return "Last 24 Hours";
@@ -46,7 +43,7 @@ var SessionAnalyticsComponent = function (_a) {
         return "Last 7 Days";
     }
   };
-  var formatDuration = function (minutes) {
+  var formatDuration = (minutes) => {
     var hours = Math.floor(minutes / 60);
     var mins = minutes % 60;
     if (hours > 0) {
@@ -54,12 +51,12 @@ var SessionAnalyticsComponent = function (_a) {
     }
     return "".concat(mins, "m");
   };
-  var getHealthScoreColor = function (score) {
+  var getHealthScoreColor = (score) => {
     if (score >= 80) return "text-green-600";
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
-  var getHealthScoreBadge = function (score) {
+  var getHealthScoreBadge = (score) => {
     if (score >= 80)
       return { variant: "default", label: "Excellent", color: "bg-green-100 text-green-800" };
     if (score >= 60)
@@ -81,9 +78,9 @@ var SessionAnalyticsComponent = function (_a) {
           <card_1.CardContent>
             <div className="animate-pulse space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {[1, 2, 3, 4].map(function (i) {
-                  return <div key={i} className="h-24 bg-muted rounded" />;
-                })}
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-24 bg-muted rounded" />
+                ))}
               </div>
               <div className="h-64 bg-muted rounded" />
             </div>
@@ -129,7 +126,7 @@ var SessionAnalyticsComponent = function (_a) {
     );
   }
   var deviceData = analytics.deviceBreakdown
-    ? Object.entries(analytics.deviceBreakdown).map(function (_a) {
+    ? Object.entries(analytics.deviceBreakdown).map((_a) => {
         var type = _a[0],
           count = _a[1];
         return {
@@ -139,7 +136,7 @@ var SessionAnalyticsComponent = function (_a) {
       })
     : [];
   var securityData = analytics.securityEvents
-    ? Object.entries(analytics.securityEvents).map(function (_a) {
+    ? Object.entries(analytics.securityEvents).map((_a) => {
         var type = _a[0],
           count = _a[1];
         return {
@@ -160,12 +157,7 @@ var SessionAnalyticsComponent = function (_a) {
               Session Analytics
             </card_1.CardTitle>
             <div className="flex items-center gap-3">
-              <select_1.Select
-                value={timeframe}
-                onValueChange={function (value) {
-                  return setTimeframe(value);
-                }}
-              >
+              <select_1.Select value={timeframe} onValueChange={(value) => setTimeframe(value)}>
                 <select_1.SelectTrigger className="w-40">
                   <select_1.SelectValue />
                 </select_1.SelectTrigger>
@@ -267,7 +259,7 @@ var SessionAnalyticsComponent = function (_a) {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={function (_a) {
+                      label={(_a) => {
                         var name = _a.name,
                           percent = _a.percent;
                         return "".concat(name, " ").concat((percent * 100).toFixed(0), "%");
@@ -276,14 +268,12 @@ var SessionAnalyticsComponent = function (_a) {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {deviceData.map(function (entry, index) {
-                        return (
-                          <recharts_1.Cell
-                            key={"cell-".concat(index)}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        );
-                      })}
+                      {deviceData.map((entry, index) => (
+                        <recharts_1.Cell
+                          key={"cell-".concat(index)}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
                     </recharts_1.Pie>
                     <recharts_1.Tooltip />
                   </recharts_1.PieChart>

@@ -1,5 +1,8 @@
 "use client";
 
+import type { Building, FileText, Loader2, Mail } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Checkbox } from "@/components/ui/checkbox";
@@ -24,9 +27,6 @@ import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/t
 import type { documentsService } from "@/lib/services/documents";
 import type { VendorService } from "@/lib/services/vendors";
 import type { Vendor, VendorFormData } from "@/lib/types/accounts-payable";
-import type { Building, FileText, Loader2, Mail } from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 import DocumentUpload from "./document-upload";
 
 interface VendorFormProps {

@@ -2,6 +2,14 @@
 // Story 9.5: Comprehensive medical knowledge management backend service
 
 import type {
+  createKnowledgeSourceRequestSchema,
+  createMedicalKnowledgeRequestSchema,
+  drugSearchQuerySchema,
+  evidenceValidationRequestSchema,
+  medicalSearchQuerySchema,
+  updateKnowledgeSourceRequestSchema,
+} from "@/app/lib/validations/medical-knowledge-base";
+import type {
   DrugInformation,
   DrugInteraction,
   DrugSearchQuery,
@@ -15,15 +23,6 @@ import type {
   ResearchCache,
   ValidationResult,
 } from "@/app/types/medical-knowledge-base";
-
-import type {
-  createKnowledgeSourceRequestSchema,
-  createMedicalKnowledgeRequestSchema,
-  drugSearchQuerySchema,
-  evidenceValidationRequestSchema,
-  medicalSearchQuerySchema,
-  updateKnowledgeSourceRequestSchema,
-} from "@/app/lib/validations/medical-knowledge-base";
 
 import type { createClient } from "@/lib/supabase/server";
 

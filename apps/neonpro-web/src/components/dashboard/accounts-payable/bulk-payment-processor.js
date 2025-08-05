@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = BulkPaymentProcessor;
 var badge_1 = require("@/components/ui/badge");
@@ -193,7 +190,6 @@ var filterOptions = [
   { value: "high_amount", label: "Alto Valor (>R$ 1.000)" },
 ];
 function BulkPaymentProcessor(_a) {
-  var _this = this;
   var open = _a.open,
     onOpenChange = _a.onOpenChange,
     onSuccess = _a.onSuccess;
@@ -285,68 +281,51 @@ function BulkPaymentProcessor(_a) {
     payableItems = _j[0],
     setPayableItems = _j[1];
   // Filtered items based on search and filter
-  var filteredItems = (0, react_1.useMemo)(
-    function () {
-      var items = payableItems;
-      // Apply search filter
-      if (searchTerm) {
-        items = items.filter(function (item) {
-          return (
-            item.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.vendor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.category.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        });
+  var filteredItems = (0, react_1.useMemo)(() => {
+    var items = payableItems;
+    // Apply search filter
+    if (searchTerm) {
+      items = items.filter(
+        (item) =>
+          item.invoice_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.vendor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.category.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+    // Apply type filter
+    switch (filterType) {
+      case "overdue":
+        items = items.filter((item) => item.status === "overdue");
+        break;
+      case "due_today": {
+        var today_1 = new Date().toDateString();
+        items = items.filter((item) => new Date(item.due_date).toDateString() === today_1);
+        break;
       }
-      // Apply type filter
-      switch (filterType) {
-        case "overdue":
-          items = items.filter(function (item) {
-            return item.status === "overdue";
-          });
-          break;
-        case "due_today":
-          var today_1 = new Date().toDateString();
-          items = items.filter(function (item) {
-            return new Date(item.due_date).toDateString() === today_1;
-          });
-          break;
-        case "due_week":
-          var weekFromNow_1 = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-          items = items.filter(function (item) {
-            return new Date(item.due_date) <= weekFromNow_1;
-          });
-          break;
-        case "high_priority":
-          items = items.filter(function (item) {
-            return item.priority === "high";
-          });
-          break;
-        case "high_amount":
-          items = items.filter(function (item) {
-            return item.remaining_balance > 1000;
-          });
-          break;
+      case "due_week": {
+        var weekFromNow_1 = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        items = items.filter((item) => new Date(item.due_date) <= weekFromNow_1);
+        break;
       }
-      return items;
-    },
-    [payableItems, searchTerm, filterType],
-  );
+      case "high_priority":
+        items = items.filter((item) => item.priority === "high");
+        break;
+      case "high_amount":
+        items = items.filter((item) => item.remaining_balance > 1000);
+        break;
+    }
+    return items;
+  }, [payableItems, searchTerm, filterType]);
   // Selected items calculations
-  var selectedItems = filteredItems.filter(function (item) {
-    return item.selected;
-  });
-  var totalSelectedAmount = selectedItems.reduce(function (sum, item) {
-    return sum + item.suggested_payment;
-  }, 0);
+  var selectedItems = filteredItems.filter((item) => item.selected);
+  var totalSelectedAmount = selectedItems.reduce((sum, item) => sum + item.suggested_payment, 0);
   var selectedCount = selectedItems.length;
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
         return "bg-red-100 text-red-800";
@@ -358,7 +337,7 @@ function BulkPaymentProcessor(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "overdue":
         return "bg-red-100 text-red-800";
@@ -370,38 +349,36 @@ function BulkPaymentProcessor(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var handleSelectAll = function (checked) {
-    setPayableItems(function (items) {
-      return items.map(function (item) {
-        var isVisible = filteredItems.some(function (fi) {
-          return fi.id === item.id;
-        });
+  var handleSelectAll = (checked) => {
+    setPayableItems((items) =>
+      items.map((item) => {
+        var isVisible = filteredItems.some((fi) => fi.id === item.id);
         return isVisible ? __assign(__assign({}, item), { selected: checked }) : item;
-      });
-    });
+      }),
+    );
   };
-  var handleSelectItem = function (itemId, checked) {
-    setPayableItems(function (items) {
-      return items.map(function (item) {
-        return item.id === itemId ? __assign(__assign({}, item), { selected: checked }) : item;
-      });
-    });
+  var handleSelectItem = (itemId, checked) => {
+    setPayableItems((items) =>
+      items.map((item) =>
+        item.id === itemId ? __assign(__assign({}, item), { selected: checked }) : item,
+      ),
+    );
   };
-  var handleUpdateSuggestedPayment = function (itemId, amount) {
-    setPayableItems(function (items) {
-      return items.map(function (item) {
-        return item.id === itemId
+  var handleUpdateSuggestedPayment = (itemId, amount) => {
+    setPayableItems((items) =>
+      items.map((item) =>
+        item.id === itemId
           ? __assign(__assign({}, item), {
               suggested_payment: Math.min(amount, item.remaining_balance),
             })
-          : item;
-      });
-    });
+          : item,
+      ),
+    );
   };
-  var handleApplyMaxPayment = function () {
+  var handleApplyMaxPayment = () => {
     if (maxPaymentAmount <= 0) return;
     var remainingBudget = maxPaymentAmount;
-    var sortedItems = __spreadArray([], selectedItems, true).sort(function (a, b) {
+    var sortedItems = __spreadArray([], selectedItems, true).sort((a, b) => {
       // Prioritize overdue items first, then by priority, then by amount
       if (a.status === "overdue" && b.status !== "overdue") return -1;
       if (b.status === "overdue" && a.status !== "overdue") return 1;
@@ -410,24 +387,19 @@ function BulkPaymentProcessor(_a) {
       if (priorityDiff !== 0) return priorityDiff;
       return b.remaining_balance - a.remaining_balance;
     });
-    setPayableItems(function (items) {
-      return items.map(function (item) {
-        if (
-          !selectedItems.some(function (si) {
-            return si.id === item.id;
-          })
-        )
-          return item;
+    setPayableItems((items) =>
+      items.map((item) => {
+        if (!selectedItems.some((si) => si.id === item.id)) return item;
         var suggestedAmount = Math.min(item.remaining_balance, remainingBudget);
         remainingBudget = Math.max(0, remainingBudget - suggestedAmount);
         return __assign(__assign({}, item), { suggested_payment: suggestedAmount });
-      });
-    });
+      }),
+    );
   };
-  var handleProcessPayments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleProcessPayments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var i, item, paymentData, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (selectedItems.length === 0) {
@@ -455,12 +427,7 @@ function BulkPaymentProcessor(_a) {
             };
             console.log("Processing payment:", paymentData);
             // Simulate processing time
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
           case 3:
             // Simulate processing time
             _a.sent();
@@ -476,11 +443,9 @@ function BulkPaymentProcessor(_a) {
             onSuccess();
             onOpenChange(false);
             // Reset selections
-            setPayableItems(function (items) {
-              return items.map(function (item) {
-                return __assign(__assign({}, item), { selected: false });
-              });
-            });
+            setPayableItems((items) =>
+              items.map((item) => __assign(__assign({}, item), { selected: false })),
+            );
             return [3 /*break*/, 8];
           case 6:
             error_1 = _a.sent();
@@ -496,14 +461,13 @@ function BulkPaymentProcessor(_a) {
         }
       });
     });
-  };
-  var handleExportSelected = function () {
+  var handleExportSelected = () => {
     var csvContent = __spreadArray(
       [
         "Invoice,Fornecedor,Vencimento,Valor Original,Saldo Devedor,Pagamento Sugerido,Prioridade,Status",
       ],
-      selectedItems.map(function (item) {
-        return [
+      selectedItems.map((item) =>
+        [
           item.invoice_number,
           item.vendor_name,
           (0, date_fns_1.format)(new Date(item.due_date), "dd/MM/yyyy"),
@@ -512,8 +476,8 @@ function BulkPaymentProcessor(_a) {
           item.suggested_payment.toFixed(2),
           item.priority,
           item.status,
-        ].join(",");
-      }),
+        ].join(","),
+      ),
       true,
     ).join("\n");
     var blob = new Blob([csvContent], { type: "text/csv" });
@@ -578,11 +542,7 @@ function BulkPaymentProcessor(_a) {
                 <lucide_react_1.AlertCircle className="h-8 w-8 text-red-600 mr-3" />
                 <div>
                   <p className="text-2xl font-bold">
-                    {
-                      filteredItems.filter(function (i) {
-                        return i.status === "overdue";
-                      }).length
-                    }
+                    {filteredItems.filter((i) => i.status === "overdue").length}
                   </p>
                   <p className="text-xs text-muted-foreground">Em Atraso</p>
                 </div>
@@ -604,9 +564,7 @@ function BulkPaymentProcessor(_a) {
                     <input_1.Input
                       placeholder="Invoice, fornecedor, categoria..."
                       value={searchTerm}
-                      onChange={function (e) {
-                        return setSearchTerm(e.target.value);
-                      }}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-9"
                     />
                   </div>
@@ -619,13 +577,11 @@ function BulkPaymentProcessor(_a) {
                       <select_1.SelectValue />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {filterOptions.map(function (option) {
-                        return (
-                          <select_1.SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {filterOptions.map((option) => (
+                        <select_1.SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -640,16 +596,14 @@ function BulkPaymentProcessor(_a) {
                       <select_1.SelectValue />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {paymentMethods.map(function (method) {
-                        return (
-                          <select_1.SelectItem key={method.value} value={method.value}>
-                            <div className="flex items-center gap-2">
-                              <method.icon className="h-4 w-4" />
-                              {method.label}
-                            </div>
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {paymentMethods.map((method) => (
+                        <select_1.SelectItem key={method.value} value={method.value}>
+                          <div className="flex items-center gap-2">
+                            <method.icon className="h-4 w-4" />
+                            {method.label}
+                          </div>
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -666,9 +620,7 @@ function BulkPaymentProcessor(_a) {
                       type="number"
                       step="0.01"
                       value={maxPaymentAmount || ""}
-                      onChange={function (e) {
-                        return setMaxPaymentAmount(parseFloat(e.target.value) || 0);
-                      }}
+                      onChange={(e) => setMaxPaymentAmount(parseFloat(e.target.value) || 0)}
                       placeholder="Valor máximo para distribuir"
                     />
                   </div>
@@ -743,83 +695,74 @@ function BulkPaymentProcessor(_a) {
                             Nenhum item encontrado.
                           </table_1.TableCell>
                         </table_1.TableRow>
-                      : filteredItems.map(function (item) {
-                          return (
-                            <table_1.TableRow
-                              key={item.id}
-                              className={(0, utils_1.cn)(item.selected && "bg-muted/50")}
-                            >
-                              <table_1.TableCell>
-                                <checkbox_1.Checkbox
-                                  checked={item.selected}
-                                  onCheckedChange={function (checked) {
-                                    return handleSelectItem(item.id, checked);
-                                  }}
-                                />
-                              </table_1.TableCell>
-                              <table_1.TableCell className="font-medium">
-                                {item.invoice_number}
-                                {item.days_overdue && item.days_overdue > 0 && (
-                                  <div className="text-xs text-red-600">
-                                    {item.days_overdue} dias em atraso
-                                  </div>
+                      : filteredItems.map((item) => (
+                          <table_1.TableRow
+                            key={item.id}
+                            className={(0, utils_1.cn)(item.selected && "bg-muted/50")}
+                          >
+                            <table_1.TableCell>
+                              <checkbox_1.Checkbox
+                                checked={item.selected}
+                                onCheckedChange={(checked) => handleSelectItem(item.id, checked)}
+                              />
+                            </table_1.TableCell>
+                            <table_1.TableCell className="font-medium">
+                              {item.invoice_number}
+                              {item.days_overdue && item.days_overdue > 0 && (
+                                <div className="text-xs text-red-600">
+                                  {item.days_overdue} dias em atraso
+                                </div>
+                              )}
+                            </table_1.TableCell>
+                            <table_1.TableCell>{item.vendor_name}</table_1.TableCell>
+                            <table_1.TableCell>
+                              {(0, date_fns_1.format)(new Date(item.due_date), "dd/MM/yyyy", {
+                                locale: locale_1.ptBR,
+                              })}
+                            </table_1.TableCell>
+                            <table_1.TableCell>{formatCurrency(item.net_amount)}</table_1.TableCell>
+                            <table_1.TableCell className="font-semibold">
+                              {formatCurrency(item.remaining_balance)}
+                            </table_1.TableCell>
+                            <table_1.TableCell>
+                              <input_1.Input
+                                type="number"
+                                step="0.01"
+                                value={item.suggested_payment || ""}
+                                onChange={(e) =>
+                                  handleUpdateSuggestedPayment(
+                                    item.id,
+                                    parseFloat(e.target.value) || 0,
+                                  )
+                                }
+                                className="w-24"
+                                max={item.remaining_balance}
+                                disabled={!item.selected}
+                              />
+                            </table_1.TableCell>
+                            <table_1.TableCell>
+                              <badge_1.Badge
+                                className={(0, utils_1.cn)(
+                                  "text-xs",
+                                  getPriorityColor(item.priority),
                                 )}
-                              </table_1.TableCell>
-                              <table_1.TableCell>{item.vendor_name}</table_1.TableCell>
-                              <table_1.TableCell>
-                                {(0, date_fns_1.format)(new Date(item.due_date), "dd/MM/yyyy", {
-                                  locale: locale_1.ptBR,
-                                })}
-                              </table_1.TableCell>
-                              <table_1.TableCell>
-                                {formatCurrency(item.net_amount)}
-                              </table_1.TableCell>
-                              <table_1.TableCell className="font-semibold">
-                                {formatCurrency(item.remaining_balance)}
-                              </table_1.TableCell>
-                              <table_1.TableCell>
-                                <input_1.Input
-                                  type="number"
-                                  step="0.01"
-                                  value={item.suggested_payment || ""}
-                                  onChange={function (e) {
-                                    return handleUpdateSuggestedPayment(
-                                      item.id,
-                                      parseFloat(e.target.value) || 0,
-                                    );
-                                  }}
-                                  className="w-24"
-                                  max={item.remaining_balance}
-                                  disabled={!item.selected}
-                                />
-                              </table_1.TableCell>
-                              <table_1.TableCell>
-                                <badge_1.Badge
-                                  className={(0, utils_1.cn)(
-                                    "text-xs",
-                                    getPriorityColor(item.priority),
-                                  )}
-                                >
-                                  {item.priority.toUpperCase()}
-                                </badge_1.Badge>
-                              </table_1.TableCell>
-                              <table_1.TableCell>
-                                <badge_1.Badge
-                                  className={(0, utils_1.cn)(
-                                    "text-xs",
-                                    getStatusColor(item.status),
-                                  )}
-                                >
-                                  {item.status === "overdue"
-                                    ? "Em Atraso"
-                                    : item.status === "partial"
-                                      ? "Parcial"
-                                      : "Pendente"}
-                                </badge_1.Badge>
-                              </table_1.TableCell>
-                            </table_1.TableRow>
-                          );
-                        })}
+                              >
+                                {item.priority.toUpperCase()}
+                              </badge_1.Badge>
+                            </table_1.TableCell>
+                            <table_1.TableCell>
+                              <badge_1.Badge
+                                className={(0, utils_1.cn)("text-xs", getStatusColor(item.status))}
+                              >
+                                {item.status === "overdue"
+                                  ? "Em Atraso"
+                                  : item.status === "partial"
+                                    ? "Parcial"
+                                    : "Pendente"}
+                              </badge_1.Badge>
+                            </table_1.TableCell>
+                          </table_1.TableRow>
+                        ))}
                   </table_1.TableBody>
                 </table_1.Table>
               </div>
@@ -860,9 +803,7 @@ function BulkPaymentProcessor(_a) {
               <button_1.Button
                 type="button"
                 variant="outline"
-                onClick={function () {
-                  return onOpenChange(false);
-                }}
+                onClick={() => onOpenChange(false)}
                 disabled={processing}
               >
                 Cancelar

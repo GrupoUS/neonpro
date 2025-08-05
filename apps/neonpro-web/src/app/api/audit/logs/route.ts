@@ -12,20 +12,8 @@
  * @version 1.0.0
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
-import type {
-  AuditEventType,
-  AuditSeverity,
-  AuditQueryFilters,
-  auditSystem,
-  logAuditEvent,
-} from "@/lib/audit/audit-system";
-import type { rateLimit } from "@/lib/security/rate-limiting";
-import type { validateCSRF } from "@/lib/security/csrf-protection";
-import type { logSecurityEvent } from "@/lib/security/security-events";
+import type { NextRequest } from "next/server";
+import type { AuditEventType, AuditQueryFilters, AuditSeverity } from "@/lib/audit/audit-system";
 
 // =====================================================
 // SCHEMAS DE VALIDAÇÃO
@@ -351,7 +339,7 @@ export async function POST(request: NextRequest) {
 // OPTIONS: CORS
 // =====================================================
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

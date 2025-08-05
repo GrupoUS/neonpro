@@ -1,17 +1,16 @@
-"use strict";
 // AI-Powered Risk Assessment Engine
 // Story 3.2: Task 1 - AI Risk Assessment Engine
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,11 +130,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RiskAssessmentEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var RiskAssessmentEngine = /** @class */ (function () {
+var RiskAssessmentEngine = /** @class */ (() => {
   function RiskAssessmentEngine() {
     this.supabase = (0, client_1.createClient)();
     this.modelVersion = "1.0.0";
@@ -295,16 +292,11 @@ var RiskAssessmentEngine = /** @class */ (function () {
         if (((_e = patientData.vital_signs) === null || _e === void 0 ? void 0 : _e.length) > 0) {
           riskFactors.push.apply(riskFactors, this.assessVitalSignsRisks(patientData.vital_signs));
         }
-        return [
-          2 /*return*/,
-          riskFactors.filter(function (rf) {
-            return rf.severity !== "low" || rf.weight > 0.3;
-          }),
-        ];
+        return [2 /*return*/, riskFactors.filter((rf) => rf.severity !== "low" || rf.weight > 0.3)];
       });
     });
   };
-  RiskAssessmentEngine.prototype.assessMedicalConditionRisk = function (condition) {
+  RiskAssessmentEngine.prototype.assessMedicalConditionRisk = (condition) => {
     var riskMap = {
       diabetes: { severity: "high", weight: 0.8 },
       hypertension: { severity: "medium", weight: 0.6 },
@@ -328,7 +320,7 @@ var RiskAssessmentEngine = /** @class */ (function () {
       evidenceLevel: "strong",
     };
   };
-  RiskAssessmentEngine.prototype.assessAgeRisk = function (age) {
+  RiskAssessmentEngine.prototype.assessAgeRisk = (age) => {
     var severity = "low";
     var weight = 0.1;
     if (age < 18) {
@@ -352,17 +344,13 @@ var RiskAssessmentEngine = /** @class */ (function () {
       evidenceLevel: "strong",
     };
   };
-  RiskAssessmentEngine.prototype.assessMedicationRisks = function (medications) {
+  RiskAssessmentEngine.prototype.assessMedicationRisks = (medications) => {
     var risks = [];
     // Check for high-risk medications
     var highRiskMeds = ["warfarin", "insulin", "chemotherapy", "immunosuppressants"];
     var polypharmacy = medications.length > 5;
-    medications.forEach(function (med) {
-      if (
-        highRiskMeds.some(function (hrm) {
-          return med.medication_name.toLowerCase().includes(hrm);
-        })
-      ) {
+    medications.forEach((med) => {
+      if (highRiskMeds.some((hrm) => med.medication_name.toLowerCase().includes(hrm))) {
         risks.push({
           id: "medication_".concat(med.id),
           name: "High-risk medication: ".concat(med.medication_name),
@@ -392,8 +380,8 @@ var RiskAssessmentEngine = /** @class */ (function () {
     }
     return risks;
   };
-  RiskAssessmentEngine.prototype.assessAllergyRisks = function (allergies) {
-    return allergies.map(function (allergy) {
+  RiskAssessmentEngine.prototype.assessAllergyRisks = (allergies) =>
+    allergies.map((allergy) => {
       var severity = allergy.severity === "severe" ? "high" : "medium";
       var weight = allergy.severity === "severe" ? 0.8 : 0.4;
       return {
@@ -407,8 +395,7 @@ var RiskAssessmentEngine = /** @class */ (function () {
         evidenceLevel: "strong",
       };
     });
-  };
-  RiskAssessmentEngine.prototype.assessLifestyleRisks = function (lifestyle) {
+  RiskAssessmentEngine.prototype.assessLifestyleRisks = (lifestyle) => {
     var risks = [];
     if (lifestyle.smoking_status === "current") {
       risks.push({
@@ -448,7 +435,7 @@ var RiskAssessmentEngine = /** @class */ (function () {
     }
     return risks;
   };
-  RiskAssessmentEngine.prototype.assessVitalSignsRisks = function (vitalSigns) {
+  RiskAssessmentEngine.prototype.assessVitalSignsRisks = (vitalSigns) => {
     var risks = [];
     var latest = vitalSigns[vitalSigns.length - 1];
     if (latest.systolic_bp > 140 || latest.diastolic_bp > 90) {
@@ -477,9 +464,9 @@ var RiskAssessmentEngine = /** @class */ (function () {
     }
     return risks;
   };
-  RiskAssessmentEngine.prototype.calculateOverallRiskScore = function (riskFactors) {
+  RiskAssessmentEngine.prototype.calculateOverallRiskScore = (riskFactors) => {
     if (riskFactors.length === 0) return 10; // Low risk baseline
-    var weightedScore = riskFactors.reduce(function (total, factor) {
+    var weightedScore = riskFactors.reduce((total, factor) => {
       var severityMultiplier = {
         low: 1,
         medium: 2,
@@ -503,9 +490,7 @@ var RiskAssessmentEngine = /** @class */ (function () {
           prediction: complicationRisk,
           confidence: 0.8,
           timeframe: "1_month",
-          factors: riskFactors.map(function (rf) {
-            return rf.name;
-          }),
+          factors: riskFactors.map((rf) => rf.name),
           evidenceBased: true,
         });
         successRate = this.calculateTreatmentSuccessRate(patientData, riskFactors);
@@ -514,13 +499,7 @@ var RiskAssessmentEngine = /** @class */ (function () {
           prediction: successRate,
           confidence: 0.75,
           timeframe: "3_months",
-          factors: riskFactors
-            .filter(function (rf) {
-              return rf.category === "medical";
-            })
-            .map(function (rf) {
-              return rf.name;
-            }),
+          factors: riskFactors.filter((rf) => rf.category === "medical").map((rf) => rf.name),
           evidenceBased: true,
         });
         recoveryTime = this.calculateRecoveryTime(riskFactors);
@@ -529,18 +508,16 @@ var RiskAssessmentEngine = /** @class */ (function () {
           prediction: recoveryTime,
           confidence: 0.7,
           timeframe: "6_months",
-          factors: riskFactors.map(function (rf) {
-            return rf.name;
-          }),
+          factors: riskFactors.map((rf) => rf.name),
           evidenceBased: true,
         });
         return [2 /*return*/, predictions];
       });
     });
   };
-  RiskAssessmentEngine.prototype.calculateComplicationRisk = function (riskFactors) {
+  RiskAssessmentEngine.prototype.calculateComplicationRisk = (riskFactors) => {
     var baseRisk = 0.05; // 5% baseline
-    var riskMultiplier = riskFactors.reduce(function (multiplier, factor) {
+    var riskMultiplier = riskFactors.reduce((multiplier, factor) => {
       var severityMultiplier = {
         low: 1.1,
         medium: 1.3,
@@ -551,12 +528,9 @@ var RiskAssessmentEngine = /** @class */ (function () {
     }, 1);
     return Math.min(0.95, baseRisk * riskMultiplier);
   };
-  RiskAssessmentEngine.prototype.calculateTreatmentSuccessRate = function (
-    patientData,
-    riskFactors,
-  ) {
+  RiskAssessmentEngine.prototype.calculateTreatmentSuccessRate = (patientData, riskFactors) => {
     var baseSuccessRate = 0.85; // 85% baseline
-    var riskPenalty = riskFactors.reduce(function (penalty, factor) {
+    var riskPenalty = riskFactors.reduce((penalty, factor) => {
       var severityPenalty = {
         low: 0.01,
         medium: 0.03,
@@ -567,9 +541,9 @@ var RiskAssessmentEngine = /** @class */ (function () {
     }, 0);
     return Math.max(0.1, baseSuccessRate - riskPenalty);
   };
-  RiskAssessmentEngine.prototype.calculateRecoveryTime = function (riskFactors) {
+  RiskAssessmentEngine.prototype.calculateRecoveryTime = (riskFactors) => {
     var baseRecoveryDays = 14;
-    var recoveryMultiplier = riskFactors.reduce(function (multiplier, factor) {
+    var recoveryMultiplier = riskFactors.reduce((multiplier, factor) => {
       var severityMultiplier = {
         low: 1.1,
         medium: 1.2,
@@ -588,10 +562,8 @@ var RiskAssessmentEngine = /** @class */ (function () {
         switch (_b.label) {
           case 0:
             alerts = [];
-            criticalFactors = riskFactors.filter(function (rf) {
-              return rf.severity === "critical";
-            });
-            criticalFactors.forEach(function (factor) {
+            criticalFactors = riskFactors.filter((rf) => rf.severity === "critical");
+            criticalFactors.forEach((factor) => {
               alerts.push({
                 id: "alert_".concat(factor.id),
                 severity: "critical",
@@ -634,16 +606,14 @@ var RiskAssessmentEngine = /** @class */ (function () {
   RiskAssessmentEngine.prototype.checkDrugInteractions = function (medications) {
     return __awaiter(this, void 0, void 0, function () {
       var alerts, knownInteractions, medNames;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         alerts = [];
         knownInteractions = [
           { drug1: "warfarin", drug2: "aspirin", severity: "critical" },
           { drug1: "metformin", drug2: "contrast", severity: "warning" },
         ];
-        medNames = medications.map(function (m) {
-          return m.medication_name.toLowerCase();
-        });
-        knownInteractions.forEach(function (interaction) {
+        medNames = medications.map((m) => m.medication_name.toLowerCase());
+        knownInteractions.forEach((interaction) => {
           if (medNames.includes(interaction.drug1) && medNames.includes(interaction.drug2)) {
             alerts.push({
               id: "interaction_".concat(interaction.drug1, "_").concat(interaction.drug2),
@@ -663,18 +633,14 @@ var RiskAssessmentEngine = /** @class */ (function () {
       });
     });
   };
-  RiskAssessmentEngine.prototype.calculateConfidenceScore = function (riskFactors, predictions) {
+  RiskAssessmentEngine.prototype.calculateConfidenceScore = (riskFactors, predictions) => {
     var factorConfidence =
-      riskFactors.reduce(function (sum, rf) {
-        return sum + rf.confidence;
-      }, 0) / riskFactors.length;
+      riskFactors.reduce((sum, rf) => sum + rf.confidence, 0) / riskFactors.length;
     var predictionConfidence =
-      predictions.reduce(function (sum, p) {
-        return sum + p.confidence;
-      }, 0) / predictions.length;
+      predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length;
     return Math.round(((factorConfidence + predictionConfidence) / 2) * 100) / 100;
   };
-  RiskAssessmentEngine.prototype.calculateNextAssessmentDate = function (riskScore) {
+  RiskAssessmentEngine.prototype.calculateNextAssessmentDate = (riskScore) => {
     var nextDate = new Date();
     if (riskScore > 80) {
       nextDate.setDate(nextDate.getDate() + 7); // Weekly for high risk
@@ -685,7 +651,7 @@ var RiskAssessmentEngine = /** @class */ (function () {
     }
     return nextDate;
   };
-  RiskAssessmentEngine.prototype.calculateAge = function (birthDate) {
+  RiskAssessmentEngine.prototype.calculateAge = (birthDate) => {
     var today = new Date();
     var birth = new Date(birthDate);
     var age = today.getFullYear() - birth.getFullYear();

@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentNotesForm = AppointmentNotesForm;
 var alert_1 = require("@/components/ui/alert");
@@ -70,13 +69,11 @@ function AppointmentNotesForm(_a) {
     selectedSuggestions = _c[0],
     setSelectedSuggestions = _c[1];
   var textareaRef = (0, react_1.useRef)(null);
-  var handleSuggestionToggle = function (noteId, noteText) {
+  var handleSuggestionToggle = (noteId, noteText) => {
     var isSelected = selectedSuggestions.includes(noteId);
     var newSuggestions;
     if (isSelected) {
-      newSuggestions = selectedSuggestions.filter(function (id) {
-        return id !== noteId;
-      });
+      newSuggestions = selectedSuggestions.filter((id) => id !== noteId);
     } else {
       newSuggestions = __spreadArray(__spreadArray([], selectedSuggestions, true), [noteId], false);
     }
@@ -98,7 +95,7 @@ function AppointmentNotesForm(_a) {
       onNotesChange(newNotes);
     }
   };
-  var handleNotesChange = function (value) {
+  var handleNotesChange = (value) => {
     onNotesChange(value);
     // Auto-adjust textarea height
     if (textareaRef.current) {
@@ -106,15 +103,11 @@ function AppointmentNotesForm(_a) {
       textareaRef.current.style.height = "".concat(textareaRef.current.scrollHeight, "px");
     }
   };
-  var getCharacterCount = function () {
-    return notes.length;
-  };
-  var isCharacterLimitNear = function () {
+  var getCharacterCount = () => notes.length;
+  var isCharacterLimitNear = () => {
     return getCharacterCount() > 450; // Warning at 450 chars, limit at 500
   };
-  var isCharacterLimitExceeded = function () {
-    return getCharacterCount() > 500;
-  };
+  var isCharacterLimitExceeded = () => getCharacterCount() > 500;
   return (
     <div className={"space-y-6 ".concat(className)}>
       <div>
@@ -136,7 +129,7 @@ function AppointmentNotesForm(_a) {
         </card_1.CardHeader>
         <card_1.CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {SUGGESTED_NOTES.map(function (note) {
+            {SUGGESTED_NOTES.map((note) => {
               var IconComponent = note.icon;
               var isSelected = selectedSuggestions.includes(note.id);
               return (
@@ -144,9 +137,7 @@ function AppointmentNotesForm(_a) {
                   <checkbox_1.Checkbox
                     id={note.id}
                     checked={isSelected}
-                    onCheckedChange={function () {
-                      return handleSuggestionToggle(note.id, note.text);
-                    }}
+                    onCheckedChange={() => handleSuggestionToggle(note.id, note.text)}
                     className="flex-shrink-0"
                   />
                   <label_1.Label
@@ -186,9 +177,7 @@ function AppointmentNotesForm(_a) {
               id="appointment-notes"
               placeholder="Digite aqui qualquer informação adicional que considere importante para sua consulta..."
               value={notes}
-              onChange={function (e) {
-                return handleNotesChange(e.target.value);
-              }}
+              onChange={(e) => handleNotesChange(e.target.value)}
               className={"min-h-[100px] resize-none transition-colors ".concat(
                 isCharacterLimitExceeded()
                   ? "border-red-300 focus:border-red-500"
@@ -260,10 +249,8 @@ function AppointmentNotesForm(_a) {
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">Seleções:</h4>
                 <div className="flex flex-wrap gap-2">
-                  {selectedSuggestions.map(function (suggestionId) {
-                    var suggestion = SUGGESTED_NOTES.find(function (note) {
-                      return note.id === suggestionId;
-                    });
+                  {selectedSuggestions.map((suggestionId) => {
+                    var suggestion = SUGGESTED_NOTES.find((note) => note.id === suggestionId);
                     if (!suggestion) return null;
                     var IconComponent = suggestion.icon;
                     return (
@@ -285,9 +272,9 @@ function AppointmentNotesForm(_a) {
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">Observações:</h4>
                 <div className="bg-white p-3 rounded-md border text-sm text-gray-700">
-                  {notes.split("\n").map(function (line, index) {
-                    return <div key={index}>{line || <br />}</div>;
-                  })}
+                  {notes.split("\n").map((line, index) => (
+                    <div key={index}>{line || <br />}</div>
+                  ))}
                 </div>
               </div>
             )}

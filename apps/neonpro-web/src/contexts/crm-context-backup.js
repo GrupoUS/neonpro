@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CRMProvider = CRMProvider;
 exports.useCRM = useCRM;
@@ -73,15 +72,13 @@ function crmReducer(state, action) {
       });
     case "UPDATE_CUSTOMER":
       return __assign(__assign({}, state), {
-        customers: state.customers.map(function (customer) {
-          return customer.id === action.payload.id ? action.payload : customer;
-        }),
+        customers: state.customers.map((customer) =>
+          customer.id === action.payload.id ? action.payload : customer,
+        ),
       });
     case "DELETE_CUSTOMER":
       return __assign(__assign({}, state), {
-        customers: state.customers.filter(function (customer) {
-          return customer.id !== action.payload;
-        }),
+        customers: state.customers.filter((customer) => customer.id !== action.payload),
       });
     case "SET_SEGMENTS":
       return __assign(__assign({}, state), { segments: action.payload });
@@ -91,15 +88,13 @@ function crmReducer(state, action) {
       });
     case "UPDATE_SEGMENT":
       return __assign(__assign({}, state), {
-        segments: state.segments.map(function (segment) {
-          return segment.id === action.payload.id ? action.payload : segment;
-        }),
+        segments: state.segments.map((segment) =>
+          segment.id === action.payload.id ? action.payload : segment,
+        ),
       });
     case "DELETE_SEGMENT":
       return __assign(__assign({}, state), {
-        segments: state.segments.filter(function (segment) {
-          return segment.id !== action.payload;
-        }),
+        segments: state.segments.filter((segment) => segment.id !== action.payload),
       });
     case "SET_CAMPAIGNS":
       return __assign(__assign({}, state), { campaigns: action.payload });
@@ -109,15 +104,13 @@ function crmReducer(state, action) {
       });
     case "UPDATE_CAMPAIGN":
       return __assign(__assign({}, state), {
-        campaigns: state.campaigns.map(function (campaign) {
-          return campaign.id === action.payload.id ? action.payload : campaign;
-        }),
+        campaigns: state.campaigns.map((campaign) =>
+          campaign.id === action.payload.id ? action.payload : campaign,
+        ),
       });
     case "DELETE_CAMPAIGN":
       return __assign(__assign({}, state), {
-        campaigns: state.campaigns.filter(function (campaign) {
-          return campaign.id !== action.payload;
-        }),
+        campaigns: state.campaigns.filter((campaign) => campaign.id !== action.payload),
       });
     case "SET_FILTER":
       return __assign(__assign({}, state), {
@@ -140,20 +133,20 @@ function CRMProvider(_a) {
     state = _b[0],
     dispatch = _b[1];
   // Helper functions
-  var setLoading = function (key, value) {
+  var setLoading = (key, value) => {
     dispatch({ type: "SET_LOADING", payload: { key: key, value: value } });
   };
-  var setError = function (key, value) {
+  var setError = (key, value) => {
     dispatch({ type: "SET_ERROR", payload: { key: key, value: value } });
   };
-  var setFilter = function (key, value) {
+  var setFilter = (key, value) => {
     dispatch({ type: "SET_FILTER", payload: { key: key, value: value } });
   };
-  var resetFilters = function () {
+  var resetFilters = () => {
     dispatch({ type: "RESET_FILTERS" });
   };
   // Computed values
-  var filteredCustomers = state.customers.filter(function (customer) {
+  var filteredCustomers = state.customers.filter((customer) => {
     var _a, _b, _c, _d;
     var matchesSearch =
       !state.filters.customer_search ||
@@ -170,12 +163,8 @@ function CRMProvider(_a) {
     return matchesSearch && matchesStatus;
   });
   var totalCustomers = state.customers.length;
-  var activeCustomers = state.customers.filter(function (c) {
-    return c.status === "active";
-  }).length;
-  var vipCustomers = state.customers.filter(function (c) {
-    return c.status === "vip";
-  }).length;
+  var activeCustomers = state.customers.filter((c) => c.status === "active").length;
+  var vipCustomers = state.customers.filter((c) => c.status === "vip").length;
   var contextValue = {
     state: state,
     dispatch: dispatch,

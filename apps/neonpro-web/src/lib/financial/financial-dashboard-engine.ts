@@ -12,18 +12,14 @@
  * - Real-time notifications and alerts
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/database.types";
-import type {
-  CashFlowEngine,
-  type CashFlowSummary,
-  type CashFlowMetrics,
-} from "./cash-flow-engine";
-import type { AutomatedAlertsEngine, type FinancialAlert } from "./automated-alerts-engine";
+import type { createClient } from "@/lib/supabase/client";
+import type { AutomatedAlertsEngine, FinancialAlert } from "./automated-alerts-engine";
+import type { CashFlowEngine, CashFlowMetrics, CashFlowSummary } from "./cash-flow-engine";
 import type {
   createpredictiveAnalyticsEngine,
-  type FinancialForecast,
-  type RiskAssessment,
+  FinancialForecast,
+  RiskAssessment,
 } from "./predictive-analytics-engine";
 
 // Dashboard Types and Interfaces

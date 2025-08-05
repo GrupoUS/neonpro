@@ -4,7 +4,6 @@
 // Created: 2025-01-26
 // =====================================================================================
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = InventoryDashboard;
 var useInventoryAlerts_1 = require("@/app/hooks/useInventoryAlerts");
@@ -34,91 +33,87 @@ function InventoryDashboard(_a) {
   // =====================================================================================
   // QUICK STATS COMPONENT
   // =====================================================================================
-  var QuickStats = function () {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <card_1.Card>
-          <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <card_1.CardTitle className="text-sm font-medium">Total Items</card_1.CardTitle>
-            <lucide_react_1.Package className="h-4 w-4 text-muted-foreground" />
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            <div className="text-2xl font-bold">1,247</div>
-            <p className="text-xs text-muted-foreground">+12% from last month</p>
-          </card_1.CardContent>
-        </card_1.Card>
+  var QuickStats = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <card_1.Card>
+        <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <card_1.CardTitle className="text-sm font-medium">Total Items</card_1.CardTitle>
+          <lucide_react_1.Package className="h-4 w-4 text-muted-foreground" />
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="text-2xl font-bold">1,247</div>
+          <p className="text-xs text-muted-foreground">+12% from last month</p>
+        </card_1.CardContent>
+      </card_1.Card>
 
-        <card_1.Card>
-          <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <card_1.CardTitle className="text-sm font-medium">Low Stock Alerts</card_1.CardTitle>
-            <lucide_react_1.AlertTriangle className="h-4 w-4 text-orange-500" />
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            <div className="text-2xl font-bold">{criticalCount}</div>
-            <p className="text-xs text-muted-foreground">Requires immediate attention</p>
-          </card_1.CardContent>
-        </card_1.Card>
+      <card_1.Card>
+        <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <card_1.CardTitle className="text-sm font-medium">Low Stock Alerts</card_1.CardTitle>
+          <lucide_react_1.AlertTriangle className="h-4 w-4 text-orange-500" />
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="text-2xl font-bold">{criticalCount}</div>
+          <p className="text-xs text-muted-foreground">Requires immediate attention</p>
+        </card_1.CardContent>
+      </card_1.Card>
 
-        <card_1.Card>
-          <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <card_1.CardTitle className="text-sm font-medium">Inventory Value</card_1.CardTitle>
-            <lucide_react_1.TrendingUp className="h-4 w-4 text-green-500" />
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            <div className="text-2xl font-bold">R$ 184.2k</div>
-            <p className="text-xs text-muted-foreground">+8.1% from last month</p>
-          </card_1.CardContent>
-        </card_1.Card>
+      <card_1.Card>
+        <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <card_1.CardTitle className="text-sm font-medium">Inventory Value</card_1.CardTitle>
+          <lucide_react_1.TrendingUp className="h-4 w-4 text-green-500" />
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="text-2xl font-bold">R$ 184.2k</div>
+          <p className="text-xs text-muted-foreground">+8.1% from last month</p>
+        </card_1.CardContent>
+      </card_1.Card>
 
-        <card_1.Card>
-          <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <card_1.CardTitle className="text-sm font-medium">Locations</card_1.CardTitle>
-            <lucide_react_1.MapPin className="h-4 w-4 text-blue-500" />
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            <div className="text-2xl font-bold">4</div>
-            <p className="text-xs text-muted-foreground">Active storage locations</p>
-          </card_1.CardContent>
-        </card_1.Card>
-      </div>
-    );
-  };
+      <card_1.Card>
+        <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <card_1.CardTitle className="text-sm font-medium">Locations</card_1.CardTitle>
+          <lucide_react_1.MapPin className="h-4 w-4 text-blue-500" />
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="text-2xl font-bold">4</div>
+          <p className="text-xs text-muted-foreground">Active storage locations</p>
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
   // =====================================================================================
   // QUICK ACTIONS COMPONENT
   // =====================================================================================
-  var QuickActions = function () {
-    return (
-      <card_1.Card className="mb-6">
-        <card_1.CardHeader>
-          <card_1.CardTitle className="text-lg">Quick Actions</card_1.CardTitle>
-          <card_1.CardDescription>Common inventory management tasks</card_1.CardDescription>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <button_1.Button className="h-20 flex-col space-y-2" variant="outline">
-              <lucide_react_1.Plus className="h-6 w-6" />
-              <span className="text-sm">Add Item</span>
-            </button_1.Button>
+  var QuickActions = () => (
+    <card_1.Card className="mb-6">
+      <card_1.CardHeader>
+        <card_1.CardTitle className="text-lg">Quick Actions</card_1.CardTitle>
+        <card_1.CardDescription>Common inventory management tasks</card_1.CardDescription>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <button_1.Button className="h-20 flex-col space-y-2" variant="outline">
+            <lucide_react_1.Plus className="h-6 w-6" />
+            <span className="text-sm">Add Item</span>
+          </button_1.Button>
 
-            <button_1.Button className="h-20 flex-col space-y-2" variant="outline">
-              <lucide_react_1.Barcode className="h-6 w-6" />
-              <span className="text-sm">Scan Barcode</span>
-            </button_1.Button>
+          <button_1.Button className="h-20 flex-col space-y-2" variant="outline">
+            <lucide_react_1.Barcode className="h-6 w-6" />
+            <span className="text-sm">Scan Barcode</span>
+          </button_1.Button>
 
-            <button_1.Button className="h-20 flex-col space-y-2" variant="outline">
-              <lucide_react_1.QrCode className="h-6 w-6" />
-              <span className="text-sm">Scan QR Code</span>
-            </button_1.Button>
+          <button_1.Button className="h-20 flex-col space-y-2" variant="outline">
+            <lucide_react_1.QrCode className="h-6 w-6" />
+            <span className="text-sm">Scan QR Code</span>
+          </button_1.Button>
 
-            <button_1.Button className="h-20 flex-col space-y-2" variant="outline">
-              <lucide_react_1.Clock className="h-6 w-6" />
-              <span className="text-sm">Stock Count</span>
-            </button_1.Button>
-          </div>
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
+          <button_1.Button className="h-20 flex-col space-y-2" variant="outline">
+            <lucide_react_1.Clock className="h-6 w-6" />
+            <span className="text-sm">Stock Count</span>
+          </button_1.Button>
+        </div>
+      </card_1.CardContent>
+    </card_1.Card>
+  );
   // =====================================================================================
   // MAIN RENDER
   // =====================================================================================
@@ -206,11 +201,11 @@ function InventoryDashboard(_a) {
         <tabs_1.TabsContent value="budget" className="space-y-4">
           <budget_approval_workflow_1.BudgetApprovalWorkflow
             clinicId="default-clinic"
-            onBudgetCreated={function () {
+            onBudgetCreated={() => {
               // Refresh budget data or show success message
               console.log("Budget created successfully");
             }}
-            onApprovalActioned={function () {
+            onApprovalActioned={() => {
               // Refresh approval data or show success message
               console.log("Approval action completed");
             }}

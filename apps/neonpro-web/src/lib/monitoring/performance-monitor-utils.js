@@ -1,11 +1,10 @@
-"use strict";
 /**
  * Performance Monitor Utilities - VIBECODE V1.0 Monitoring
  * Utility functions for performance monitoring and analysis
  */
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -14,10 +13,10 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.performanceMonitorUtils = exports.PerformanceMonitorUtils = void 0;
-var PerformanceMonitorUtils = /** @class */ (function () {
+var PerformanceMonitorUtils = /** @class */ (() => {
   function PerformanceMonitorUtils() {
     this.thresholds = new Map();
     this.alerts = [];
@@ -72,14 +71,12 @@ var PerformanceMonitorUtils = /** @class */ (function () {
   /**
    * 📈 Generate performance trends
    */
-  PerformanceMonitorUtils.prototype.generateTrends = function (metrics, buckets) {
+  PerformanceMonitorUtils.prototype.generateTrends = (metrics, buckets) => {
     if (buckets === void 0) {
       buckets = 10;
     }
     if (metrics.length === 0) return [];
-    var sorted = metrics.sort(function (a, b) {
-      return a.timestamp - b.timestamp;
-    });
+    var sorted = metrics.sort((a, b) => a.timestamp - b.timestamp);
     var bucketSize = Math.ceil(sorted.length / buckets);
     var trends = [];
     for (var i = 0; i < buckets; i++) {
@@ -87,10 +84,7 @@ var PerformanceMonitorUtils = /** @class */ (function () {
       var bucketEnd = Math.min((i + 1) * bucketSize, sorted.length);
       var bucketMetrics = sorted.slice(bucketStart, bucketEnd);
       if (bucketMetrics.length > 0) {
-        var avgValue =
-          bucketMetrics.reduce(function (sum, m) {
-            return sum + m.value;
-          }, 0) / bucketMetrics.length;
+        var avgValue = bucketMetrics.reduce((sum, m) => sum + m.value, 0) / bucketMetrics.length;
         var timestamp = bucketMetrics[Math.floor(bucketMetrics.length / 2)].timestamp;
         trends.push({
           timestamp: timestamp,
@@ -108,16 +102,8 @@ var PerformanceMonitorUtils = /** @class */ (function () {
     if (metrics.length === 0) {
       return { count: 0, avg: 0, p50: 0, p90: 0, p95: 0, p99: 0, min: 0, max: 0 };
     }
-    var values = metrics
-      .map(function (m) {
-        return m.value;
-      })
-      .sort(function (a, b) {
-        return a - b;
-      });
-    var sum = values.reduce(function (a, b) {
-      return a + b;
-    }, 0);
+    var values = metrics.map((m) => m.value).sort((a, b) => a - b);
+    var sum = values.reduce((a, b) => a + b, 0);
     return {
       count: metrics.length,
       avg: Math.round(sum / metrics.length),
@@ -132,7 +118,7 @@ var PerformanceMonitorUtils = /** @class */ (function () {
   /**
    * Calculate percentile
    */
-  PerformanceMonitorUtils.prototype.percentile = function (values, p) {
+  PerformanceMonitorUtils.prototype.percentile = (values, p) => {
     if (values.length === 0) return 0;
     var index = (p / 100) * (values.length - 1);
     var lower = Math.floor(index);
@@ -157,9 +143,7 @@ var PerformanceMonitorUtils = /** @class */ (function () {
       maxAge = 3600000;
     }
     var cutoff = Date.now() - maxAge;
-    this.alerts = this.alerts.filter(function (alert) {
-      return alert.timestamp > cutoff;
-    });
+    this.alerts = this.alerts.filter((alert) => alert.timestamp > cutoff);
   };
   /**
    * Get performance score
@@ -168,9 +152,7 @@ var PerformanceMonitorUtils = /** @class */ (function () {
     if (metrics.length === 0) return 100;
     var score = 100;
     var recentAlerts = this.alerts.filter(
-      function (alert) {
-        return Date.now() - alert.timestamp < 300000;
-      }, // Last 5 minutes
+      (alert) => Date.now() - alert.timestamp < 300000, // Last 5 minutes
     );
     // Deduct points for alerts
     for (var _i = 0, recentAlerts_1 = recentAlerts; _i < recentAlerts_1.length; _i++) {
@@ -190,9 +172,7 @@ var PerformanceMonitorUtils = /** @class */ (function () {
     var aggregated = this.aggregateMetrics(metrics);
     var trends = this.generateTrends(metrics);
     var recentAlerts = this.alerts.filter(
-      function (alert) {
-        return Date.now() - alert.timestamp < 3600000;
-      }, // Last hour
+      (alert) => Date.now() - alert.timestamp < 3600000, // Last hour
     );
     var score = this.calculatePerformanceScore(metrics);
     return {

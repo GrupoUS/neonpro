@@ -2,32 +2,31 @@
 // Epic 7.2: Automated Marketing Campaigns + Personalization
 // Author: VoidBeast Agent
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -161,7 +158,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PersonalizationEngine;
 var badge_1 = require("@/components/ui/badge");
@@ -179,7 +176,6 @@ var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function PersonalizationEngine(_a) {
-  var _this = this;
   var campaignId = _a.campaignId,
     onRuleCreated = _a.onRuleCreated;
   var _b = (0, react_1.useState)([]),
@@ -225,10 +221,10 @@ function PersonalizationEngine(_a) {
     }),
     templateForm = _g[0],
     setTemplateForm = _g[1];
-  var loadPersonalizationData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPersonalizationData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockRules, mockTemplates;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           setIsLoading(true);
           mockRules = [
@@ -317,17 +313,13 @@ function PersonalizationEngine(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      loadPersonalizationData();
-    },
-    [campaignId],
-  );
-  var handleCreateRule = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadPersonalizationData();
+  }, [campaignId]);
+  var handleCreateRule = () =>
+    __awaiter(this, void 0, void 0, function () {
       var ruleData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           ruleData = {
             campaign_id: campaignId,
@@ -367,11 +359,10 @@ function PersonalizationEngine(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleCreateTemplate = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateTemplate = () =>
+    __awaiter(this, void 0, void 0, function () {
       var templateData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           templateData = __assign({ campaign_id: campaignId }, templateForm);
           // In a real app, this would call the API
@@ -393,41 +384,38 @@ function PersonalizationEngine(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var getPriorityBadge = function (priority) {
+  var getPriorityBadge = (priority) => {
     if (priority >= 8) return <badge_1.Badge className="bg-red-500 text-white">Alta</badge_1.Badge>;
     if (priority >= 5)
       return <badge_1.Badge className="bg-yellow-500 text-white">Média</badge_1.Badge>;
     return <badge_1.Badge className="bg-green-500 text-white">Baixa</badge_1.Badge>;
   };
-  var getPerformanceColor = function (score) {
+  var getPerformanceColor = (score) => {
     if (!score) return "text-gray-500";
     if (score >= 8) return "text-green-600";
     if (score >= 6) return "text-yellow-600";
     return "text-red-600";
   };
-  var addContentVariable = function () {
+  var addContentVariable = () => {
     var newVar = prompt("Nome da variável (ex: first_name):");
     if (newVar && !templateForm.content_variables.includes(newVar)) {
-      setTemplateForm(function (prev) {
-        return __assign(__assign({}, prev), {
+      setTemplateForm((prev) =>
+        __assign(__assign({}, prev), {
           content_variables: __spreadArray(
             __spreadArray([], prev.content_variables, true),
             [newVar],
             false,
           ),
-        });
-      });
+        }),
+      );
     }
   };
-  var removeContentVariable = function (variable) {
-    setTemplateForm(function (prev) {
-      return __assign(__assign({}, prev), {
-        content_variables: prev.content_variables.filter(function (v) {
-          return v !== variable;
-        }),
-      });
-    });
+  var removeContentVariable = (variable) => {
+    setTemplateForm((prev) =>
+      __assign(__assign({}, prev), {
+        content_variables: prev.content_variables.filter((v) => v !== variable),
+      }),
+    );
   };
   return (
     <div className="space-y-6">
@@ -451,13 +439,7 @@ function PersonalizationEngine(_a) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Regras Ativas</p>
-                <p className="text-2xl font-bold">
-                  {
-                    rules.filter(function (r) {
-                      return r.is_active;
-                    }).length
-                  }
-                </p>
+                <p className="text-2xl font-bold">{rules.filter((r) => r.is_active).length}</p>
               </div>
               <lucide_react_1.Target className="h-8 w-8 text-blue-500" />
             </div>
@@ -526,11 +508,9 @@ function PersonalizationEngine(_a) {
                   <input_1.Input
                     id="rule_name"
                     value={ruleForm.name}
-                    onChange={function (e) {
-                      return setRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), { name: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setRuleForm((prev) => __assign(__assign({}, prev), { name: e.target.value }))
+                    }
                     placeholder="Ex: Personalização VIP"
                   />
                 </div>
@@ -539,11 +519,11 @@ function PersonalizationEngine(_a) {
                   <label_1.Label htmlFor="priority">Prioridade</label_1.Label>
                   <select_1.Select
                     value={ruleForm.priority.toString()}
-                    onValueChange={function (value) {
-                      return setRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), { priority: parseInt(value) });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setRuleForm((prev) =>
+                        __assign(__assign({}, prev), { priority: parseInt(value) }),
+                      )
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -568,15 +548,15 @@ function PersonalizationEngine(_a) {
                     <label_1.Label htmlFor="segment_id">Segmento</label_1.Label>
                     <select_1.Select
                       value={ruleForm.conditions.segment_id}
-                      onValueChange={function (value) {
-                        return setRuleForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onValueChange={(value) =>
+                        setRuleForm((prev) =>
+                          __assign(__assign({}, prev), {
                             conditions: __assign(__assign({}, prev.conditions), {
                               segment_id: value,
                             }),
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o segmento" />
@@ -594,15 +574,15 @@ function PersonalizationEngine(_a) {
                     <label_1.Label htmlFor="engagement_level">Nível de Engajamento</label_1.Label>
                     <select_1.Select
                       value={ruleForm.conditions.engagement_level}
-                      onValueChange={function (value) {
-                        return setRuleForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onValueChange={(value) =>
+                        setRuleForm((prev) =>
+                          __assign(__assign({}, prev), {
                             conditions: __assign(__assign({}, prev.conditions), {
                               engagement_level: value,
                             }),
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o nível" />
@@ -626,15 +606,15 @@ function PersonalizationEngine(_a) {
                     <label_1.Label htmlFor="content_variation">Variação de Conteúdo</label_1.Label>
                     <select_1.Select
                       value={ruleForm.actions.content_variation}
-                      onValueChange={function (value) {
-                        return setRuleForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onValueChange={(value) =>
+                        setRuleForm((prev) =>
+                          __assign(__assign({}, prev), {
                             actions: __assign(__assign({}, prev.actions), {
                               content_variation: value,
                             }),
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Tipo de variação" />
@@ -658,15 +638,15 @@ function PersonalizationEngine(_a) {
                     <label_1.Label htmlFor="channel_preference">Canal Preferido</label_1.Label>
                     <select_1.Select
                       value={ruleForm.actions.channel_preference}
-                      onValueChange={function (value) {
-                        return setRuleForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onValueChange={(value) =>
+                        setRuleForm((prev) =>
+                          __assign(__assign({}, prev), {
                             actions: __assign(__assign({}, prev.actions), {
                               channel_preference: value,
                             }),
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Canal" />
@@ -685,15 +665,15 @@ function PersonalizationEngine(_a) {
                   <switch_1.Switch
                     id="send_time_optimization"
                     checked={ruleForm.actions.send_time_optimization}
-                    onCheckedChange={function (checked) {
-                      return setRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), {
+                    onCheckedChange={(checked) =>
+                      setRuleForm((prev) =>
+                        __assign(__assign({}, prev), {
                           actions: __assign(__assign({}, prev.actions), {
                             send_time_optimization: checked,
                           }),
-                        });
-                      });
-                    }}
+                        }),
+                      )
+                    }
                   />
                   <label_1.Label htmlFor="send_time_optimization">
                     Otimização de Horário de Envio
@@ -705,11 +685,9 @@ function PersonalizationEngine(_a) {
                 <switch_1.Switch
                   id="is_active"
                   checked={ruleForm.is_active}
-                  onCheckedChange={function (checked) {
-                    return setRuleForm(function (prev) {
-                      return __assign(__assign({}, prev), { is_active: checked });
-                    });
-                  }}
+                  onCheckedChange={(checked) =>
+                    setRuleForm((prev) => __assign(__assign({}, prev), { is_active: checked }))
+                  }
                 />
                 <label_1.Label htmlFor="is_active">Regra Ativa</label_1.Label>
               </div>
@@ -728,103 +706,101 @@ function PersonalizationEngine(_a) {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Regras Configuradas ({rules.length})</h3>
 
-            {rules.map(function (rule) {
-              return (
-                <card_1.Card key={rule.id}>
-                  <card_1.CardHeader>
-                    <div className="flex items-center justify-between">
+            {rules.map((rule) => (
+              <card_1.Card key={rule.id}>
+                <card_1.CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <card_1.CardTitle className="text-lg">{rule.name}</card_1.CardTitle>
+                      <card_1.CardDescription>
+                        Criada em {new Date(rule.created_at).toLocaleDateString("pt-BR")}
+                      </card_1.CardDescription>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {getPriorityBadge(rule.priority)}
+                      {rule.is_active
+                        ? <badge_1.Badge className="bg-green-500 text-white">Ativa</badge_1.Badge>
+                        : <badge_1.Badge variant="outline">Inativa</badge_1.Badge>}
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-4">
+                    {/* Performance Score */}
+                    {rule.performance_score && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Performance:</span>
+                        <div className="flex items-center space-x-2">
+                          <span
+                            className={"font-bold ".concat(
+                              getPerformanceColor(rule.performance_score),
+                            )}
+                          >
+                            {rule.performance_score.toFixed(1)}/10
+                          </span>
+                          <progress_1.Progress
+                            value={rule.performance_score * 10}
+                            className="w-20"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <separator_1.Separator />
+
+                    {/* Rule Configuration */}
+                    <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <card_1.CardTitle className="text-lg">{rule.name}</card_1.CardTitle>
-                        <card_1.CardDescription>
-                          Criada em {new Date(rule.created_at).toLocaleDateString("pt-BR")}
-                        </card_1.CardDescription>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {getPriorityBadge(rule.priority)}
-                        {rule.is_active
-                          ? <badge_1.Badge className="bg-green-500 text-white">Ativa</badge_1.Badge>
-                          : <badge_1.Badge variant="outline">Inativa</badge_1.Badge>}
-                      </div>
-                    </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-4">
-                      {/* Performance Score */}
-                      {rule.performance_score && (
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Performance:</span>
-                          <div className="flex items-center space-x-2">
-                            <span
-                              className={"font-bold ".concat(
-                                getPerformanceColor(rule.performance_score),
-                              )}
-                            >
-                              {rule.performance_score.toFixed(1)}/10
-                            </span>
-                            <progress_1.Progress
-                              value={rule.performance_score * 10}
-                              className="w-20"
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      <separator_1.Separator />
-
-                      {/* Rule Configuration */}
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <h4 className="font-medium mb-2">Condições</h4>
-                          <ul className="space-y-1 text-muted-foreground">
-                            {Object.entries(rule.condition).map(function (_a) {
-                              var key = _a[0],
-                                value = _a[1];
-                              return (
-                                <li key={key}>
-                                  <span className="capitalize">{key.replace("_", " ")}: </span>
-                                  {typeof value === "string" ? value : JSON.stringify(value)}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-
-                        <div>
-                          <h4 className="font-medium mb-2">Ações</h4>
-                          <ul className="space-y-1 text-muted-foreground">
-                            {Object.entries(rule.action).map(function (_a) {
-                              var key = _a[0],
-                                value = _a[1];
-                              return (
-                                <li key={key}>
-                                  <span className="capitalize">{key.replace("_", " ")}: </span>
-                                  {typeof value === "string" ? value : JSON.stringify(value)}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
+                        <h4 className="font-medium mb-2">Condições</h4>
+                        <ul className="space-y-1 text-muted-foreground">
+                          {Object.entries(rule.condition).map((_a) => {
+                            var key = _a[0],
+                              value = _a[1];
+                            return (
+                              <li key={key}>
+                                <span className="capitalize">{key.replace("_", " ")}: </span>
+                                {typeof value === "string" ? value : JSON.stringify(value)}
+                              </li>
+                            );
+                          })}
+                        </ul>
                       </div>
 
-                      {/* Action Buttons */}
-                      <div className="flex items-center space-x-2">
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Settings className="h-4 w-4 mr-2" />
-                          Editar
-                        </button_1.Button>
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Eye className="h-4 w-4 mr-2" />
-                          Ver Performance
-                        </button_1.Button>
-                        <button_1.Button variant="outline" size="sm">
-                          {rule.is_active ? "Desativar" : "Ativar"}
-                        </button_1.Button>
+                      <div>
+                        <h4 className="font-medium mb-2">Ações</h4>
+                        <ul className="space-y-1 text-muted-foreground">
+                          {Object.entries(rule.action).map((_a) => {
+                            var key = _a[0],
+                              value = _a[1];
+                            return (
+                              <li key={key}>
+                                <span className="capitalize">{key.replace("_", " ")}: </span>
+                                {typeof value === "string" ? value : JSON.stringify(value)}
+                              </li>
+                            );
+                          })}
+                        </ul>
                       </div>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center space-x-2">
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Settings className="h-4 w-4 mr-2" />
+                        Editar
+                      </button_1.Button>
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Eye className="h-4 w-4 mr-2" />
+                        Ver Performance
+                      </button_1.Button>
+                      <button_1.Button variant="outline" size="sm">
+                        {rule.is_active ? "Desativar" : "Ativar"}
+                      </button_1.Button>
+                    </div>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -845,11 +821,11 @@ function PersonalizationEngine(_a) {
                   <input_1.Input
                     id="template_name"
                     value={templateForm.name}
-                    onChange={function (e) {
-                      return setTemplateForm(function (prev) {
-                        return __assign(__assign({}, prev), { name: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setTemplateForm((prev) =>
+                        __assign(__assign({}, prev), { name: e.target.value }),
+                      )
+                    }
                     placeholder="Ex: Email VIP Personalizado"
                   />
                 </div>
@@ -858,11 +834,9 @@ function PersonalizationEngine(_a) {
                   <label_1.Label htmlFor="template_type">Tipo de Template</label_1.Label>
                   <select_1.Select
                     value={templateForm.type}
-                    onValueChange={function (value) {
-                      return setTemplateForm(function (prev) {
-                        return __assign(__assign({}, prev), { type: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setTemplateForm((prev) => __assign(__assign({}, prev), { type: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -887,25 +861,21 @@ function PersonalizationEngine(_a) {
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {templateForm.content_variables.map(function (variable) {
-                    return (
-                      <badge_1.Badge
-                        key={variable}
-                        variant="outline"
-                        className="flex items-center gap-1"
+                  {templateForm.content_variables.map((variable) => (
+                    <badge_1.Badge
+                      key={variable}
+                      variant="outline"
+                      className="flex items-center gap-1"
+                    >
+                      {"{{".concat(variable, "}}")}
+                      <button
+                        onClick={() => removeContentVariable(variable)}
+                        className="ml-1 text-xs hover:text-red-500"
                       >
-                        {"{{".concat(variable, "}}")}
-                        <button
-                          onClick={function () {
-                            return removeContentVariable(variable);
-                          }}
-                          className="ml-1 text-xs hover:text-red-500"
-                        >
-                          ×
-                        </button>
-                      </badge_1.Badge>
-                    );
-                  })}
+                        ×
+                      </button>
+                    </badge_1.Badge>
+                  ))}
                 </div>
               </div>
 
@@ -914,11 +884,11 @@ function PersonalizationEngine(_a) {
                 <textarea_1.Textarea
                   id="base_template"
                   value={templateForm.base_template}
-                  onChange={function (e) {
-                    return setTemplateForm(function (prev) {
-                      return __assign(__assign({}, prev), { base_template: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setTemplateForm((prev) =>
+                      __assign(__assign({}, prev), { base_template: e.target.value }),
+                    )
+                  }
                   placeholder="Ex: Olá {{first_name}}, como membro {{vip_tier}}..."
                   rows={4}
                 />
@@ -941,68 +911,64 @@ function PersonalizationEngine(_a) {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Templates Criados ({templates.length})</h3>
 
-            {templates.map(function (template) {
-              return (
-                <card_1.Card key={template.id}>
-                  <card_1.CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <card_1.CardTitle className="text-lg">{template.name}</card_1.CardTitle>
-                        <card_1.CardDescription>
-                          Tipo: {template.type.toUpperCase()} •{template.usage_count} usos
-                        </card_1.CardDescription>
+            {templates.map((template) => (
+              <card_1.Card key={template.id}>
+                <card_1.CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <card_1.CardTitle className="text-lg">{template.name}</card_1.CardTitle>
+                      <card_1.CardDescription>
+                        Tipo: {template.type.toUpperCase()} •{template.usage_count} usos
+                      </card_1.CardDescription>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <badge_1.Badge variant="outline">{template.type}</badge_1.Badge>
+                      {template.conversion_rate && (
+                        <badge_1.Badge className="bg-green-500 text-white">
+                          {template.conversion_rate}% conversão
+                        </badge_1.Badge>
+                      )}
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-4">
+                    {/* Template Preview */}
+                    <div>
+                      <h4 className="font-medium mb-2">Preview do Template</h4>
+                      <div className="bg-gray-50 p-3 rounded-lg text-sm">
+                        {template.base_template}
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <badge_1.Badge variant="outline">{template.type}</badge_1.Badge>
-                        {template.conversion_rate && (
-                          <badge_1.Badge className="bg-green-500 text-white">
-                            {template.conversion_rate}% conversão
+                    </div>
+
+                    {/* Variables */}
+                    <div>
+                      <h4 className="font-medium mb-2">Variáveis Disponíveis</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {template.content_variables.map((variable) => (
+                          <badge_1.Badge key={variable} variant="outline">
+                            {"{{".concat(variable, "}}")}
                           </badge_1.Badge>
-                        )}
+                        ))}
                       </div>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-4">
-                      {/* Template Preview */}
-                      <div>
-                        <h4 className="font-medium mb-2">Preview do Template</h4>
-                        <div className="bg-gray-50 p-3 rounded-lg text-sm">
-                          {template.base_template}
-                        </div>
-                      </div>
 
-                      {/* Variables */}
-                      <div>
-                        <h4 className="font-medium mb-2">Variáveis Disponíveis</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {template.content_variables.map(function (variable) {
-                            return (
-                              <badge_1.Badge key={variable} variant="outline">
-                                {"{{".concat(variable, "}}")}
-                              </badge_1.Badge>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Action Buttons */}
-                      <div className="flex items-center space-x-2">
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Settings className="h-4 w-4 mr-2" />
-                          Editar
-                        </button_1.Button>
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Eye className="h-4 w-4 mr-2" />
-                          Preview
-                        </button_1.Button>
-                        <button_1.Button size="sm">Usar Template</button_1.Button>
-                      </div>
+                    {/* Action Buttons */}
+                    <div className="flex items-center space-x-2">
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Settings className="h-4 w-4 mr-2" />
+                        Editar
+                      </button_1.Button>
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Eye className="h-4 w-4 mr-2" />
+                        Preview
+                      </button_1.Button>
+                      <button_1.Button size="sm">Usar Template</button_1.Button>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -1040,14 +1006,10 @@ function PersonalizationEngine(_a) {
                   <h4 className="font-medium mb-3">Regras com Melhor Performance</h4>
                   <div className="space-y-2">
                     {rules
-                      .filter(function (r) {
-                        return r.performance_score;
-                      })
-                      .sort(function (a, b) {
-                        return (b.performance_score || 0) - (a.performance_score || 0);
-                      })
+                      .filter((r) => r.performance_score)
+                      .sort((a, b) => (b.performance_score || 0) - (a.performance_score || 0))
                       .slice(0, 3)
-                      .map(function (rule, index) {
+                      .map((rule, index) => {
                         var _a;
                         return (
                           <div

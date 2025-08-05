@@ -1,18 +1,17 @@
-"use strict";
 // Analytics Repository Layer - STORY-SUB-002 Task 2
 // Data access layer for analytics with optimized queries and caching
 // Created: 2025-01-22
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,11 +131,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsRepository = void 0;
 var server_1 = require("@/lib/supabase/server");
-var AnalyticsRepository = /** @class */ (function () {
+var AnalyticsRepository = /** @class */ (() => {
   function AnalyticsRepository() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -294,7 +291,7 @@ var AnalyticsRepository = /** @class */ (function () {
           .on(
             "postgres_changes",
             { event: "*", schema: "analytics", table: "metrics" },
-            function (payload) {
+            (payload) => {
               var _a, _b, _c, _d, _e, _f;
               var metric = {
                 id: ((_a = payload.new) === null || _a === void 0 ? void 0 : _a.id) || "",
@@ -312,31 +309,24 @@ var AnalyticsRepository = /** @class */ (function () {
             },
           )
           .subscribe();
-        return [
-          2 /*return*/,
-          function () {
-            return channel.unsubscribe();
-          },
-        ];
+        return [2 /*return*/, () => channel.unsubscribe()];
       });
     });
   };
   // ========================================================================
   // UTILITY METHODS
   // ========================================================================
-  AnalyticsRepository.prototype.createEmptyAggregation = function (query) {
-    return {
-      period: query.period,
-      startDate: query.startDate,
-      endDate: query.endDate,
-      total: 0,
-      average: 0,
-      median: 0,
-      percentile95: 0,
-      growth: 0,
-      periodOverPeriod: 0,
-    };
-  };
+  AnalyticsRepository.prototype.createEmptyAggregation = (query) => ({
+    period: query.period,
+    startDate: query.startDate,
+    endDate: query.endDate,
+    total: 0,
+    average: 0,
+    median: 0,
+    percentile95: 0,
+    growth: 0,
+    periodOverPeriod: 0,
+  });
   return AnalyticsRepository;
 })();
 exports.AnalyticsRepository = AnalyticsRepository;

@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialKPICards = FinancialKPICards;
 var react_1 = require("react");
@@ -28,7 +27,7 @@ function FinancialKPICards(_a) {
     _c = _a.className,
     className = _c === void 0 ? "" : _c;
   // Format value based on type
-  var formatValue = function (value, format) {
+  var formatValue = (value, format) => {
     switch (format) {
       case "currency":
         return new Intl.NumberFormat("pt-BR", {
@@ -45,18 +44,18 @@ function FinancialKPICards(_a) {
     }
   };
   // Get trend direction
-  var getTrend = function (current, previous) {
+  var getTrend = (current, previous) => {
     if (current > previous) return "up";
     if (current < previous) return "down";
     return "neutral";
   };
   // Calculate change percentage
-  var calculateChange = function (current, previous) {
+  var calculateChange = (current, previous) => {
     if (previous === 0) return 0;
     return ((current - previous) / previous) * 100;
   };
   // Get timeframe label
-  var getTimeframeLabel = function () {
+  var getTimeframeLabel = () => {
     switch (timeframe) {
       case "day":
         return "hoje";
@@ -170,25 +169,23 @@ function FinancialKPICards(_a) {
   if (loading) {
     return (
       <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ".concat(className)}>
-        {__spreadArray([], Array(8), true).map(function (_, i) {
-          return (
-            <card_1.Card key={i}>
-              <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <skeleton_1.Skeleton className="h-4 w-24" />
-                <skeleton_1.Skeleton className="h-4 w-4" />
-              </card_1.CardHeader>
-              <card_1.CardContent>
-                <skeleton_1.Skeleton className="h-8 w-20 mb-2" />
-                <skeleton_1.Skeleton className="h-4 w-32" />
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+        {__spreadArray([], Array(8), true).map((_, i) => (
+          <card_1.Card key={i}>
+            <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <skeleton_1.Skeleton className="h-4 w-24" />
+              <skeleton_1.Skeleton className="h-4 w-4" />
+            </card_1.CardHeader>
+            <card_1.CardContent>
+              <skeleton_1.Skeleton className="h-8 w-20 mb-2" />
+              <skeleton_1.Skeleton className="h-4 w-32" />
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
     );
   }
   // Get color classes
-  var getColorClasses = function (color) {
+  var getColorClasses = (color) => {
     switch (color) {
       case "green":
         return {
@@ -229,7 +226,7 @@ function FinancialKPICards(_a) {
     }
   };
   // Get trend icon and color
-  var getTrendDisplay = function (trend, change) {
+  var getTrendDisplay = (trend, change) => {
     if (trend === "up") {
       return {
         icon: <lucide_react_1.TrendingUp className="h-3 w-3" />,
@@ -252,7 +249,7 @@ function FinancialKPICards(_a) {
   };
   return (
     <div className={"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 ".concat(className)}>
-      {kpiCards.map(function (kpi, index) {
+      {kpiCards.map((kpi, index) => {
         var colorClasses = getColorClasses(kpi.color);
         var trendDisplay = getTrendDisplay(kpi.trend, kpi.change || 0);
         var progressValue = kpi.target

@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Label } from "@/components/ui/label";
 import type { AlertCircle, FileText } from "lucide-react";
+import React from "react";
 import type { useTranslation } from "@/app/lib/i18n/use-translation";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Label } from "@/components/ui/label";
+import type { Textarea } from "@/components/ui/textarea";
 
 interface AppointmentNotesProps {
   notes: string;

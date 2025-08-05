@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Inventory Reports System Tests
  * Tests core functionality of the inventory reporting system
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -23,7 +22,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -52,8 +51,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -74,9 +71,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -135,169 +132,153 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 // Mock hooks
-jest.mock("../../../app/hooks/use-inventory-reports", function () {
-  return {
-    useInventoryReports: jest.fn(function () {
-      return {
-        data: [
-          {
-            id: "rpt-001",
-            name: "Monthly Inventory Report",
-            description: "Monthly summary of inventory levels",
-            type: "inventory_summary",
-            status: "completed",
-            filters: {
-              dateRange: { from: "2024-01-01", to: "2024-01-31" },
-              locationIds: ["loc-001"],
-              categoryIds: ["cat-001"],
-            },
-            generated_at: "2024-01-31T23:59:59Z",
-            file_url: "https://example.com/reports/monthly.pdf",
-          },
-        ],
-        isLoading: false,
-        error: null,
-        refetch: jest.fn(),
-      };
-    }),
-    useReportDefinitions: jest.fn(function () {
-      return {
-        data: [
-          {
-            id: "def-001",
-            name: "Inventory Summary",
-            description: "Summary of current inventory levels",
-            type: "inventory_summary",
-            template: { columns: ["name", "quantity", "value"] },
-            default_filters: {},
-            is_active: true,
-          },
-        ],
-        isLoading: false,
-        error: null,
-      };
-    }),
-    useReportDashboard: jest.fn(function () {
-      return {
-        data: {
-          total_reports: 45,
-          pending_reports: 3,
-          completed_reports: 42,
-          recent_activity: [
-            {
-              id: "act-001",
-              type: "report_generated",
-              report_name: "Weekly Stock Report",
-              timestamp: "2024-01-31T12:00:00Z",
-            },
-          ],
+jest.mock("../../../app/hooks/use-inventory-reports", () => ({
+  useInventoryReports: jest.fn(() => ({
+    data: [
+      {
+        id: "rpt-001",
+        name: "Monthly Inventory Report",
+        description: "Monthly summary of inventory levels",
+        type: "inventory_summary",
+        status: "completed",
+        filters: {
+          dateRange: { from: "2024-01-01", to: "2024-01-31" },
+          locationIds: ["loc-001"],
+          categoryIds: ["cat-001"],
         },
-        isLoading: false,
-        error: null,
-      };
-    }),
-    useReportAnalytics: jest.fn(function () {
-      return {
-        data: {
-          usage_trends: [
-            { period: "2024-01", reports_generated: 15, most_used_type: "inventory_summary" },
-          ],
-          performance_metrics: {
-            avg_generation_time: 45,
-            success_rate: 98.5,
-            total_downloads: 234,
-          },
+        generated_at: "2024-01-31T23:59:59Z",
+        file_url: "https://example.com/reports/monthly.pdf",
+      },
+    ],
+    isLoading: false,
+    error: null,
+    refetch: jest.fn(),
+  })),
+  useReportDefinitions: jest.fn(() => ({
+    data: [
+      {
+        id: "def-001",
+        name: "Inventory Summary",
+        description: "Summary of current inventory levels",
+        type: "inventory_summary",
+        template: { columns: ["name", "quantity", "value"] },
+        default_filters: {},
+        is_active: true,
+      },
+    ],
+    isLoading: false,
+    error: null,
+  })),
+  useReportDashboard: jest.fn(() => ({
+    data: {
+      total_reports: 45,
+      pending_reports: 3,
+      completed_reports: 42,
+      recent_activity: [
+        {
+          id: "act-001",
+          type: "report_generated",
+          report_name: "Weekly Stock Report",
+          timestamp: "2024-01-31T12:00:00Z",
         },
-        isLoading: false,
-        error: null,
-      };
-    }),
-    useGenerateReport: jest.fn(function () {
-      return {
-        mutate: jest.fn(),
-        isLoading: false,
-        error: null,
-      };
-    }),
-  };
-});
+      ],
+    },
+    isLoading: false,
+    error: null,
+  })),
+  useReportAnalytics: jest.fn(() => ({
+    data: {
+      usage_trends: [
+        { period: "2024-01", reports_generated: 15, most_used_type: "inventory_summary" },
+      ],
+      performance_metrics: {
+        avg_generation_time: 45,
+        success_rate: 98.5,
+        total_downloads: 234,
+      },
+    },
+    isLoading: false,
+    error: null,
+  })),
+  useGenerateReport: jest.fn(() => ({
+    mutate: jest.fn(),
+    isLoading: false,
+    error: null,
+  })),
+}));
 // Mock the inventory reports service
-jest.mock("../../../app/lib/services/inventory-reports-service", function () {
-  return {
-    generateInventoryReport: jest.fn(function () {
-      return Promise.resolve({
-        data: { id: "rpt-001", status: "processing" },
-        error: null,
-      });
+jest.mock("../../../app/lib/services/inventory-reports-service", () => ({
+  generateInventoryReport: jest.fn(() =>
+    Promise.resolve({
+      data: { id: "rpt-001", status: "processing" },
+      error: null,
     }),
-    getReportSummary: jest.fn(function () {
-      return Promise.resolve({
-        data: { total_reports: 45, pending_reports: 3 },
-        error: null,
-      });
+  ),
+  getReportSummary: jest.fn(() =>
+    Promise.resolve({
+      data: { total_reports: 45, pending_reports: 3 },
+      error: null,
     }),
-    getReportDefinitions: jest.fn(function () {
-      return Promise.resolve({
-        data: [
-          {
-            id: "def-001",
-            name: "Inventory Summary",
-            type: "inventory_summary",
-            template: { columns: ["name", "quantity", "value"] },
-          },
-        ],
-        error: null,
-      });
-    }),
-    getDashboardStats: jest.fn(function () {
-      return Promise.resolve({
-        data: {
-          total_reports: 45,
-          pending_reports: 3,
-          completed_reports: 42,
+  ),
+  getReportDefinitions: jest.fn(() =>
+    Promise.resolve({
+      data: [
+        {
+          id: "def-001",
+          name: "Inventory Summary",
+          type: "inventory_summary",
+          template: { columns: ["name", "quantity", "value"] },
         },
-        error: null,
-      });
+      ],
+      error: null,
     }),
-    getReportAnalytics: jest.fn(function () {
-      return Promise.resolve({
-        data: {
-          performance_metrics: { success_rate: 98.5, avg_generation_time: 45 },
-          usage_trends: [{ period: "2024-01", reports_generated: 15 }],
-        },
-        error: null,
-      });
+  ),
+  getDashboardStats: jest.fn(() =>
+    Promise.resolve({
+      data: {
+        total_reports: 45,
+        pending_reports: 3,
+        completed_reports: 42,
+      },
+      error: null,
     }),
-  };
-});
+  ),
+  getReportAnalytics: jest.fn(() =>
+    Promise.resolve({
+      data: {
+        performance_metrics: { success_rate: 98.5, avg_generation_time: 45 },
+        usage_trends: [{ period: "2024-01", reports_generated: 15 }],
+      },
+      error: null,
+    }),
+  ),
+}));
 // Simple test components
-var TestReportsDashboard = function () {
-  return (
-    <div data-testid="reports-dashboard">
-      <h1>Inventory Reports</h1>
-      <div data-testid="dashboard-stats">
-        <span>Total Reports: 45</span>
-        <span>Pending: 3</span>
-        <span>Completed: 42</span>
-      </div>
-      <button data-testid="generate-report-btn">Generate New Report</button>
-      <div data-testid="reports-list">
-        <div data-testid="report-item">Monthly Inventory Report</div>
-      </div>
+var TestReportsDashboard = () => (
+  <div data-testid="reports-dashboard">
+    <h1>Inventory Reports</h1>
+    <div data-testid="dashboard-stats">
+      <span>Total Reports: 45</span>
+      <span>Pending: 3</span>
+      <span>Completed: 42</span>
     </div>
-  );
-};
-var TestReportFilters = function (_a) {
+    <button data-testid="generate-report-btn">Generate New Report</button>
+    <div data-testid="reports-list">
+      <div data-testid="report-item">Monthly Inventory Report</div>
+    </div>
+  </div>
+);
+var TestReportFilters = (_a) => {
   var onSubmit = _a.onSubmit;
   return (
     <form
       data-testid="report-filters"
-      onSubmit={function (e) {
+      onSubmit={(e) => {
         e.preventDefault();
         onSubmit();
       }}
@@ -312,17 +293,17 @@ var TestReportFilters = function (_a) {
     </form>
   );
 };
-describe("Inventory Reports System - Core Functionality", function () {
-  describe("Inventory Reports Service", function () {
-    it("can import and call service functions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+describe("Inventory Reports System - Core Functionality", () => {
+  describe("Inventory Reports Service", () => {
+    it("can import and call service functions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var service,
           generateResult,
           summaryResult,
           definitionsResult,
           dashboardResult,
           analyticsResult;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               service = require("../../../app/lib/services/inventory-reports-service");
@@ -360,11 +341,10 @@ describe("Inventory Reports System - Core Functionality", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Inventory Reports Hooks", function () {
-    it("provides inventory reports data", function () {
+  describe("Inventory Reports Hooks", () => {
+    it("provides inventory reports data", () => {
       var hooks = require("../../../app/hooks/use-inventory-reports");
       var useInventoryReports = hooks.useInventoryReports;
       var result = useInventoryReports();
@@ -376,7 +356,7 @@ describe("Inventory Reports System - Core Functionality", function () {
       expect(result.error).toBe(null);
       expect(result.refetch).toBeDefined();
     });
-    it("provides report definitions", function () {
+    it("provides report definitions", () => {
       var hooks = require("../../../app/hooks/use-inventory-reports");
       var useReportDefinitions = hooks.useReportDefinitions;
       var result = useReportDefinitions();
@@ -387,7 +367,7 @@ describe("Inventory Reports System - Core Functionality", function () {
       expect(result.isLoading).toBe(false);
       expect(result.error).toBe(null);
     });
-    it("provides dashboard data", function () {
+    it("provides dashboard data", () => {
       var hooks = require("../../../app/hooks/use-inventory-reports");
       var useReportDashboard = hooks.useReportDashboard;
       var result = useReportDashboard();
@@ -399,7 +379,7 @@ describe("Inventory Reports System - Core Functionality", function () {
       expect(result.isLoading).toBe(false);
       expect(result.error).toBe(null);
     });
-    it("provides analytics data", function () {
+    it("provides analytics data", () => {
       var hooks = require("../../../app/hooks/use-inventory-reports");
       var useReportAnalytics = hooks.useReportAnalytics;
       var result = useReportAnalytics();
@@ -410,7 +390,7 @@ describe("Inventory Reports System - Core Functionality", function () {
       expect(result.isLoading).toBe(false);
       expect(result.error).toBe(null);
     });
-    it("provides generate report mutation", function () {
+    it("provides generate report mutation", () => {
       var hooks = require("../../../app/hooks/use-inventory-reports");
       var useGenerateReport = hooks.useGenerateReport;
       var result = useGenerateReport();
@@ -420,19 +400,19 @@ describe("Inventory Reports System - Core Functionality", function () {
       expect(result.error).toBe(null);
     });
   });
-  describe("Type System Integration", function () {
-    it("can import inventory reports types", function () {
+  describe("Type System Integration", () => {
+    it("can import inventory reports types", () => {
       var types = require("../../../app/lib/types/inventory-reports");
       expect(types).toBeDefined();
     });
   });
-  describe("API Routes Structure", function () {
-    it("verifies API route files exist", function () {
+  describe("API Routes Structure", () => {
+    it("verifies API route files exist", () => {
       // Test that API route files exist in the file system
       // We can't import them in test environment due to Next.js dependencies
       // but we can verify they're properly structured for the application
-      var fs = require("fs");
-      var path = require("path");
+      var fs = require("node:fs");
+      var path = require("node:path");
       var apiBasePath = path.join(process.cwd(), "app/api/inventory/reports");
       // Check that route files exist
       var generateRoute = path.join(apiBasePath, "generate/route.ts");
@@ -443,8 +423,8 @@ describe("Inventory Reports System - Core Functionality", function () {
       expect(fs.existsSync(dashboardRoute)).toBe(true);
     });
   });
-  describe("Component Integration Tests", function () {
-    it("renders test dashboard component", function () {
+  describe("Component Integration Tests", () => {
+    it("renders test dashboard component", () => {
       (0, react_2.render)(<TestReportsDashboard />);
       expect(react_2.screen.getByTestId("reports-dashboard")).toBeInTheDocument();
       expect(react_2.screen.getByText("Inventory Reports")).toBeInTheDocument();
@@ -454,7 +434,7 @@ describe("Inventory Reports System - Core Functionality", function () {
       expect(react_2.screen.getByTestId("generate-report-btn")).toBeInTheDocument();
       expect(react_2.screen.getByText("Monthly Inventory Report")).toBeInTheDocument();
     });
-    it("renders and handles filter form submission", function () {
+    it("renders and handles filter form submission", () => {
       var mockSubmit = jest.fn();
       (0, react_2.render)(<TestReportFilters onSubmit={mockSubmit} />);
       expect(react_2.screen.getByTestId("report-filters")).toBeInTheDocument();
@@ -466,9 +446,9 @@ describe("Inventory Reports System - Core Functionality", function () {
       expect(mockSubmit).toHaveBeenCalled();
     });
   });
-  describe("Data Flow Integration", function () {
-    it("integrates hooks with service layer", function () {
-      var service = require("../../../app/lib/services/inventory-reports-service");
+  describe("Data Flow Integration", () => {
+    it("integrates hooks with service layer", () => {
+      var _service = require("../../../app/lib/services/inventory-reports-service");
       var hooks = require("../../../app/hooks/use-inventory-reports");
       // Test that hooks can work with service data structure
       var reportsHook = hooks.useInventoryReports();
@@ -491,8 +471,8 @@ describe("Inventory Reports System - Core Functionality", function () {
     });
   });
 });
-describe("Inventory Reports Full System Integration", function () {
-  it("complete end-to-end system integration", function () {
+describe("Inventory Reports Full System Integration", () => {
+  it("complete end-to-end system integration", () => {
     // Import all modules
     var service = require("../../../app/lib/services/inventory-reports-service");
     var hooks = require("../../../app/hooks/use-inventory-reports");
@@ -519,7 +499,7 @@ describe("Inventory Reports Full System Integration", function () {
     react_2.fireEvent.click(react_2.screen.getByTestId("generate-btn"));
     expect(mockSubmit).toHaveBeenCalled();
   });
-  it("validates reporting system completeness", function () {
+  it("validates reporting system completeness", () => {
     // Check that all key components are working together
     var modules = {
       types: require("../../../app/lib/types/inventory-reports"),
@@ -527,8 +507,8 @@ describe("Inventory Reports Full System Integration", function () {
       hooks: require("../../../app/hooks/use-inventory-reports"),
     };
     // Verify all modules exist
-    Object.entries(modules).forEach(function (_a) {
-      var name = _a[0],
+    Object.entries(modules).forEach((_a) => {
+      var _name = _a[0],
         module = _a[1];
       expect(module).toBeDefined();
     });
@@ -540,7 +520,7 @@ describe("Inventory Reports Full System Integration", function () {
       "getDashboardStats",
       "getReportAnalytics",
     ];
-    serviceFunctions.forEach(function (func) {
+    serviceFunctions.forEach((func) => {
       expect(modules.service[func]).toBeDefined();
       expect(typeof modules.service[func]).toBe("function");
     });
@@ -552,13 +532,13 @@ describe("Inventory Reports Full System Integration", function () {
       "useReportAnalytics",
       "useGenerateReport",
     ];
-    hookFunctions.forEach(function (hook) {
+    hookFunctions.forEach((hook) => {
       expect(modules.hooks[hook]).toBeDefined();
       expect(typeof modules.hooks[hook]).toBe("function");
     });
     // Verify API route files exist
-    var fs = require("fs");
-    var path = require("path");
+    var fs = require("node:fs");
+    var path = require("node:path");
     var apiBasePath = path.join(process.cwd(), "app/api/inventory/reports");
     expect(fs.existsSync(path.join(apiBasePath, "generate/route.ts"))).toBe(true);
     expect(fs.existsSync(path.join(apiBasePath, "definitions/route.ts"))).toBe(true);

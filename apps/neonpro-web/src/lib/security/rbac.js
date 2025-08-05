@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,10 +128,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -143,7 +140,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthcareRBAC =
@@ -165,7 +162,7 @@ var zod_1 = require("zod");
  */
 // Healthcare roles with hierarchy
 var Role;
-(function (Role) {
+((Role) => {
   // Administrative roles
   Role["SUPER_ADMIN"] = "super_admin";
   Role["CLINIC_ADMIN"] = "clinic_admin";
@@ -193,7 +190,7 @@ var Role;
 })(Role || (exports.Role = Role = {}));
 // Granular permissions
 var Permission;
-(function (Permission) {
+((Permission) => {
   // Patient data permissions
   Permission["READ_PATIENT_BASIC"] = "read_patient_basic";
   Permission["READ_PATIENT_FULL"] = "read_patient_full";
@@ -237,7 +234,7 @@ var Permission;
 })(Permission || (exports.Permission = Permission = {}));
 // Access context for fine-grained control
 var AccessContext;
-(function (AccessContext) {
+((AccessContext) => {
   AccessContext["NORMAL"] = "normal";
   AccessContext["EMERGENCY"] = "emergency";
   AccessContext["AUDIT"] = "audit";
@@ -259,9 +256,7 @@ exports.permissionSchema = zod_1.z.object({
     .default([]),
   expiresAt: zod_1.z.date().optional(),
   grantedBy: zod_1.z.string().uuid().optional(),
-  grantedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  grantedAt: zod_1.z.date().default(() => new Date()),
 });
 // Role definition schema
 exports.roleSchema = zod_1.z.object({
@@ -287,12 +282,8 @@ exports.roleSchema = zod_1.z.object({
     .optional(),
   // Metadata
   isActive: zod_1.z.boolean().default(true),
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
+  updatedAt: zod_1.z.date().default(() => new Date()),
 });
 // User role assignment schema
 exports.userRoleSchema = zod_1.z.object({
@@ -301,9 +292,7 @@ exports.userRoleSchema = zod_1.z.object({
   role: zod_1.z.nativeEnum(Role),
   // Assignment details
   assignedBy: zod_1.z.string().uuid(),
-  assignedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  assignedAt: zod_1.z.date().default(() => new Date()),
   expiresAt: zod_1.z.date().optional(),
   // Additional permissions (beyond role)
   additionalPermissions: zod_1.z.array(exports.permissionSchema).default([]),
@@ -318,7 +307,7 @@ exports.userRoleSchema = zod_1.z.object({
     .optional(),
   isActive: zod_1.z.boolean().default(true),
 });
-var HealthcareRBAC = /** @class */ (function () {
+var HealthcareRBAC = /** @class */ (() => {
   function HealthcareRBAC() {}
   /**
    * Check if user has permission for specific action
@@ -578,11 +567,9 @@ var HealthcareRBAC = /** @class */ (function () {
             return [4 /*yield*/, this.getRolePermissions(userRole.role)];
           case 3:
             rolePermissions = _a.sent();
-            rolePermissions.forEach(function (p) {
-              return permissions.add(p);
-            });
+            rolePermissions.forEach((p) => permissions.add(p));
             // Add additional permissions
-            userRole.additionalPermissions.forEach(function (perm) {
+            userRole.additionalPermissions.forEach((perm) => {
               if (perm.granted) permissions.add(perm.permission);
             });
             // Collect restrictions
@@ -604,9 +591,7 @@ var HealthcareRBAC = /** @class */ (function () {
             return [
               2 /*return*/,
               {
-                roles: userRoles.map(function (ur) {
-                  return ur.role;
-                }),
+                roles: userRoles.map((ur) => ur.role),
                 permissions: Array.from(permissions),
                 restrictions: restrictions,
                 expiringRoles: expiringRoles,
@@ -621,7 +606,7 @@ var HealthcareRBAC = /** @class */ (function () {
    */
   HealthcareRBAC.generateAccessReport = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Generate comprehensive access control report
         return [
           2 /*return*/,
@@ -642,7 +627,7 @@ var HealthcareRBAC = /** @class */ (function () {
   // Private helper methods
   HealthcareRBAC.getUserRoles = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Query database for user roles
         return [2 /*return*/, []];
       });
@@ -688,7 +673,7 @@ var HealthcareRBAC = /** @class */ (function () {
   };
   HealthcareRBAC.getRoleDefinition = function (role) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Get role definition from database
         return [2 /*return*/, null];
       });
@@ -708,9 +693,7 @@ var HealthcareRBAC = /** @class */ (function () {
           case 0:
             permissions = new Set();
             directPermissions = this.ROLE_PERMISSIONS[role] || [];
-            directPermissions.forEach(function (p) {
-              return permissions.add(p);
-            });
+            directPermissions.forEach((p) => permissions.add(p));
             parentRoles = this.getParentRoles(role);
             (_i = 0), (parentRoles_1 = parentRoles);
             _a.label = 1;
@@ -720,9 +703,7 @@ var HealthcareRBAC = /** @class */ (function () {
             return [4 /*yield*/, this.getRolePermissions(parentRole)];
           case 2:
             parentPermissions = _a.sent();
-            parentPermissions.forEach(function (p) {
-              return permissions.add(p);
-            });
+            parentPermissions.forEach((p) => permissions.add(p));
             _a.label = 3;
           case 3:
             _i++;
@@ -745,7 +726,7 @@ var HealthcareRBAC = /** @class */ (function () {
     }
     return [];
   };
-  HealthcareRBAC.checkTimeRestrictions = function (now, restrictions) {
+  HealthcareRBAC.checkTimeRestrictions = (now, restrictions) => {
     // Check day of week
     var dayOfWeek = now.getDay();
     if (!restrictions.allowedDays.includes(dayOfWeek)) {
@@ -768,7 +749,7 @@ var HealthcareRBAC = /** @class */ (function () {
     }
     return true;
   };
-  HealthcareRBAC.checkUserRestrictions = function (restrictions, resourceId) {
+  HealthcareRBAC.checkUserRestrictions = (restrictions, resourceId) => {
     // Check patient restrictions
     if (restrictions.allowedPatients && resourceId) {
       return restrictions.allowedPatients.includes(resourceId);
@@ -776,7 +757,7 @@ var HealthcareRBAC = /** @class */ (function () {
     // Add more restriction checks as needed
     return true;
   };
-  HealthcareRBAC.requiresAudit = function (permission) {
+  HealthcareRBAC.requiresAudit = (permission) => {
     var auditRequiredPermissions = [
       Permission.READ_MEDICAL_RECORDS,
       Permission.WRITE_MEDICAL_RECORDS,
@@ -817,7 +798,7 @@ var HealthcareRBAC = /** @class */ (function () {
   // Storage and logging methods (to be implemented)
   HealthcareRBAC.storeUserRole = function (userRole) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("User role stored:", userRole);
         return [2 /*return*/];
       });
@@ -825,7 +806,7 @@ var HealthcareRBAC = /** @class */ (function () {
   };
   HealthcareRBAC.deactivateUserRole = function (userId, role) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("User role deactivated:", { userId: userId, role: role });
         return [2 /*return*/];
       });
@@ -833,7 +814,7 @@ var HealthcareRBAC = /** @class */ (function () {
   };
   HealthcareRBAC.storeEmergencyAccess = function (access) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Emergency access stored:", access);
         return [2 /*return*/];
       });
@@ -841,7 +822,7 @@ var HealthcareRBAC = /** @class */ (function () {
   };
   HealthcareRBAC.logAccessDecision = function (userId, permission, context, granted, reason) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Access decision logged:", {
           userId: userId,
           permission: permission,
@@ -855,7 +836,7 @@ var HealthcareRBAC = /** @class */ (function () {
   };
   HealthcareRBAC.logRoleChange = function (userId, action, role, changedBy, reason) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Role change logged:", {
           userId: userId,
           action: action,
@@ -869,7 +850,7 @@ var HealthcareRBAC = /** @class */ (function () {
   };
   HealthcareRBAC.alertEmergencyAccess = function (userId, permission, patientId, justification) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Emergency access alert:", {
           userId: userId,
           permission: permission,

@@ -1,9 +1,15 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertCircle, Loader2, Save } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import type { z } from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
 import type {
   Dialog,
   DialogContent,
@@ -12,7 +18,6 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
 import type {
   Form,
   FormControl,
@@ -30,11 +35,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Textarea } from "@/components/ui/textarea";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Loader2, Save, AlertCircle } from "lucide-react";
-import type { toast } from "sonner";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 import type { Appointment } from "@/hooks/use-appointments-manager";
 
 // Form validation schema

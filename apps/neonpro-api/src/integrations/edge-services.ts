@@ -158,7 +158,7 @@ export class EdgeServicesIntegration {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json();
+        const data = (await response.json()) as T;
         const processingTime = Date.now() - startTime;
 
         return {
@@ -189,7 +189,9 @@ export class EdgeServicesIntegration {
         const processingTime = Date.now() - startTime;
         return {
           success: false,
-          error: `Circuit breaker: ${error instanceof Error ? error.message : "Service unavailable"}`,
+          error: `Circuit breaker: ${
+            error instanceof Error ? error.message : "Service unavailable"
+          }`,
           timestamp: new Date().toISOString(),
           processingTime,
         };
@@ -269,7 +271,7 @@ export class EdgeServicesIntegration {
     const url = `${this.config.fileProcessingUrl}/api/v1/upload`;
 
     const formData = new FormData();
-    formData.append("file", new Blob([file]), metadata.originalName);
+    formData.append("file", new Blob([Buffer.from(file.buffer)]), metadata.originalName);
     formData.append("metadata", JSON.stringify(metadata));
 
     return this.makeRequest(url, "fileProcessing", {
@@ -391,7 +393,7 @@ export class EdgeServicesIntegration {
       body: JSON.stringify({ requests }),
     });
 
-    return response.success ? response.data : [response];
+    return response.success ? (response.data as EdgeServiceResponse[]) : [response];
   }
 
   async batchFileProcessing(requests: FileProcessingRequest[]): Promise<EdgeServiceResponse[]> {
@@ -402,7 +404,7 @@ export class EdgeServicesIntegration {
       body: JSON.stringify({ requests }),
     });
 
-    return response.success ? response.data : [response];
+    return response.success ? (response.data as EdgeServiceResponse[]) : [response];
   }
 
   // Configuration and Management
@@ -455,7 +457,7 @@ export default async function edgeServicesPlugin(fastify: FastifyInstance) {
     {
       preHandler: [fastify.authenticate, fastify.requireRole(["admin"])],
     },
-    async (request, reply) => {
+    async (_request, reply) => {
       const health = await edgeServices.checkEdgeServicesHealth();
       const metrics = edgeServices.getMetrics();
 
@@ -467,11 +469,4 @@ export default async function edgeServicesPlugin(fastify: FastifyInstance) {
       });
     },
   );
-}
-
-// TypeScript module declaration
-declare module "fastify" {
-  interface FastifyInstance {
-    edgeServices: EdgeServicesIntegration;
-  }
 }

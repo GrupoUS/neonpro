@@ -2,18 +2,17 @@
 // Main appointment filters component
 // Story 1.1 Task 6 - Appointment Filtering and Search
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,10 +132,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -147,7 +144,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentFilters;
 var badge_1 = require("@/components/ui/badge");
@@ -174,7 +171,6 @@ var statusOptions = [
   { value: "no_show", label: "Não Compareceu", color: "bg-gray-500" },
 ];
 function AppointmentFilters(_a) {
-  var _this = this;
   var _b, _c, _d;
   var filters = _a.filters,
     onFiltersChange = _a.onFiltersChange,
@@ -194,11 +190,11 @@ function AppointmentFilters(_a) {
     loading = _g[0],
     setLoading = _g[1];
   // Load filter options from API
-  (0, react_1.useEffect)(function () {
-    var loadFilterOptions = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var loadFilterOptions = () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, professionalsRes, servicesRes, professionals, _b, services, _c, error_1;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               _d.trys.push([0, 8, 9, 10]);
@@ -230,24 +226,18 @@ function AppointmentFilters(_a) {
             case 7:
               services = _c;
               setFilterOptionsData({
-                professionals: (professionals.data || []).map(function (p) {
-                  return {
-                    value: p.id,
-                    label: p.full_name,
-                  };
-                }),
-                services: (services.data || []).map(function (s) {
-                  return {
-                    value: s.id,
-                    label: s.name,
-                  };
-                }),
-                statuses: statusOptions.map(function (s) {
-                  return {
-                    value: s.value,
-                    label: s.label,
-                  };
-                }),
+                professionals: (professionals.data || []).map((p) => ({
+                  value: p.id,
+                  label: p.full_name,
+                })),
+                services: (services.data || []).map((s) => ({
+                  value: s.id,
+                  label: s.name,
+                })),
+                statuses: statusOptions.map((s) => ({
+                  value: s.value,
+                  label: s.label,
+                })),
               });
               return [3 /*break*/, 10];
             case 8:
@@ -262,26 +252,20 @@ function AppointmentFilters(_a) {
           }
         });
       });
-    };
     loadFilterOptions();
   }, []);
   // Notify parent when filters change
-  (0, react_1.useEffect)(
-    function () {
-      if (onFiltersChange) {
-        onFiltersChange(filters);
-      }
-    },
-    [filters, onFiltersChange],
-  ); // Handle status filter changes (multiple selection)
-  var handleStatusChange = function (status) {
+  (0, react_1.useEffect)(() => {
+    if (onFiltersChange) {
+      onFiltersChange(filters);
+    }
+  }, [filters, onFiltersChange]); // Handle status filter changes (multiple selection)
+  var handleStatusChange = (status) => {
     var currentStatus = filters.status;
     var newStatus;
     if (Array.isArray(currentStatus)) {
       if (currentStatus.includes(status)) {
-        newStatus = currentStatus.filter(function (s) {
-          return s !== status;
-        });
+        newStatus = currentStatus.filter((s) => s !== status);
         if (newStatus.length === 0) newStatus = undefined;
       } else {
         newStatus = __spreadArray(__spreadArray([], currentStatus, true), [status], false);
@@ -296,7 +280,7 @@ function AppointmentFilters(_a) {
     updateFilter("status", newStatus);
   };
   // Check if status is selected
-  var isStatusSelected = function (status) {
+  var isStatusSelected = (status) => {
     if (Array.isArray(filters.status)) {
       return filters.status.includes(status);
     }
@@ -310,9 +294,7 @@ function AppointmentFilters(_a) {
           <div className="w-full">
             <appointment_search_1.default
               value={filters.search_query || ""}
-              onSearch={function (query) {
-                return updateFilter("search_query", query);
-              }}
+              onSearch={(query) => updateFilter("search_query", query)}
               placeholder="Buscar por nome do paciente, serviço ou observações..."
             />
           </div>
@@ -324,22 +306,18 @@ function AppointmentFilters(_a) {
               <lucide_react_1.User className="h-4 w-4 text-muted-foreground" />
               <select_1.Select
                 value={filters.professional_id || ""}
-                onValueChange={function (value) {
-                  return updateFilter("professional_id", value || undefined);
-                }}
+                onValueChange={(value) => updateFilter("professional_id", value || undefined)}
               >
                 <select_1.SelectTrigger className="w-[200px]">
                   <select_1.SelectValue placeholder="Profissional" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="">Todos os profissionais</select_1.SelectItem>
-                  {filterOptionsData.professionals.map(function (professional) {
-                    return (
-                      <select_1.SelectItem key={professional.value} value={professional.value}>
-                        {professional.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {filterOptionsData.professionals.map((professional) => (
+                    <select_1.SelectItem key={professional.value} value={professional.value}>
+                      {professional.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>{" "}
@@ -348,22 +326,18 @@ function AppointmentFilters(_a) {
               <lucide_react_1.Briefcase className="h-4 w-4 text-muted-foreground" />
               <select_1.Select
                 value={filters.service_type_id || ""}
-                onValueChange={function (value) {
-                  return updateFilter("service_type_id", value || undefined);
-                }}
+                onValueChange={(value) => updateFilter("service_type_id", value || undefined)}
               >
                 <select_1.SelectTrigger className="w-[200px]">
                   <select_1.SelectValue placeholder="Serviço" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="">Todos os serviços</select_1.SelectItem>
-                  {filterOptionsData.services.map(function (service) {
-                    return (
-                      <select_1.SelectItem key={service.value} value={service.value}>
-                        {service.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {filterOptionsData.services.map((service) => (
+                    <select_1.SelectItem key={service.value} value={service.value}>
+                      {service.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -385,26 +359,22 @@ function AppointmentFilters(_a) {
               </popover_1.PopoverTrigger>
               <popover_1.PopoverContent className="w-56 p-2">
                 <div className="space-y-2">
-                  {statusOptions.map(function (status) {
-                    return (
-                      <div
-                        key={status.value}
-                        className={(0, utils_1.cn)(
-                          "flex items-center gap-3 p-2 rounded-md cursor-pointer hover:bg-muted transition-colors",
-                          isStatusSelected(status.value) && "bg-muted",
-                        )}
-                        onClick={function () {
-                          return handleStatusChange(status.value);
-                        }}
-                      >
-                        <div className={(0, utils_1.cn)("w-3 h-3 rounded-full", status.color)} />
-                        <span className="text-sm">{status.label}</span>
-                        {isStatusSelected(status.value) && (
-                          <lucide_react_1.X className="h-3 w-3 ml-auto" />
-                        )}
-                      </div>
-                    );
-                  })}
+                  {statusOptions.map((status) => (
+                    <div
+                      key={status.value}
+                      className={(0, utils_1.cn)(
+                        "flex items-center gap-3 p-2 rounded-md cursor-pointer hover:bg-muted transition-colors",
+                        isStatusSelected(status.value) && "bg-muted",
+                      )}
+                      onClick={() => handleStatusChange(status.value)}
+                    >
+                      <div className={(0, utils_1.cn)("w-3 h-3 rounded-full", status.color)} />
+                      <span className="text-sm">{status.label}</span>
+                      {isStatusSelected(status.value) && (
+                        <lucide_react_1.X className="h-3 w-3 ml-auto" />
+                      )}
+                    </div>
+                  ))}
                 </div>
               </popover_1.PopoverContent>
             </popover_1.Popover>{" "}
@@ -460,9 +430,7 @@ function AppointmentFilters(_a) {
                             <calendar_1.Calendar
                               mode="single"
                               selected={filters.date_from}
-                              onSelect={function (date) {
-                                return updateFilter("date_from", date);
-                              }}
+                              onSelect={(date) => updateFilter("date_from", date)}
                               initialFocus
                             />
                           </popover_1.PopoverContent>
@@ -489,9 +457,7 @@ function AppointmentFilters(_a) {
                             <calendar_1.Calendar
                               mode="single"
                               selected={filters.date_to}
-                              onSelect={function (date) {
-                                return updateFilter("date_to", date);
-                              }}
+                              onSelect={(date) => updateFilter("date_to", date)}
                               initialFocus
                             />
                           </popover_1.PopoverContent>
@@ -503,7 +469,7 @@ function AppointmentFilters(_a) {
                       <button_1.Button
                         variant="outline"
                         size="sm"
-                        onClick={function () {
+                        onClick={() => {
                           var today = new Date();
                           updateFilter("date_from", today);
                           updateFilter("date_to", today);
@@ -514,7 +480,7 @@ function AppointmentFilters(_a) {
                       <button_1.Button
                         variant="outline"
                         size="sm"
-                        onClick={function () {
+                        onClick={() => {
                           var today = new Date();
                           var weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
                           var weekEnd = new Date(
@@ -554,69 +520,59 @@ function AppointmentFilters(_a) {
               {filters.professional_id && (
                 <badge_1.Badge variant="secondary" className="gap-1">
                   Profissional:{" "}
-                  {(_b = filterOptionsData.professionals.find(function (p) {
-                    return p.value === filters.professional_id;
-                  })) === null || _b === void 0
+                  {(_b = filterOptionsData.professionals.find(
+                    (p) => p.value === filters.professional_id,
+                  )) === null || _b === void 0
                     ? void 0
                     : _b.label}
                   <lucide_react_1.X
                     className="h-3 w-3 cursor-pointer"
-                    onClick={function () {
-                      return updateFilter("professional_id", undefined);
-                    }}
+                    onClick={() => updateFilter("professional_id", undefined)}
                   />
                 </badge_1.Badge>
               )}
               {filters.service_type_id && (
                 <badge_1.Badge variant="secondary" className="gap-1">
                   Serviço:{" "}
-                  {(_c = filterOptionsData.services.find(function (s) {
-                    return s.value === filters.service_type_id;
-                  })) === null || _c === void 0
+                  {(_c = filterOptionsData.services.find(
+                    (s) => s.value === filters.service_type_id,
+                  )) === null || _c === void 0
                     ? void 0
                     : _c.label}
                   <lucide_react_1.X
                     className="h-3 w-3 cursor-pointer"
-                    onClick={function () {
-                      return updateFilter("service_type_id", undefined);
-                    }}
+                    onClick={() => updateFilter("service_type_id", undefined)}
                   />
                 </badge_1.Badge>
               )}{" "}
               {filters.status && (
                 <>
                   {Array.isArray(filters.status)
-                    ? filters.status.map(function (status) {
+                    ? filters.status.map((status) => {
                         var _a;
                         return (
                           <badge_1.Badge key={status} variant="secondary" className="gap-1">
                             Status:{" "}
-                            {(_a = statusOptions.find(function (s) {
-                              return s.value === status;
-                            })) === null || _a === void 0
+                            {(_a = statusOptions.find((s) => s.value === status)) === null ||
+                            _a === void 0
                               ? void 0
                               : _a.label}
                             <lucide_react_1.X
                               className="h-3 w-3 cursor-pointer"
-                              onClick={function () {
-                                return handleStatusChange(status);
-                              }}
+                              onClick={() => handleStatusChange(status)}
                             />
                           </badge_1.Badge>
                         );
                       })
                     : <badge_1.Badge variant="secondary" className="gap-1">
                         Status:{" "}
-                        {(_d = statusOptions.find(function (s) {
-                          return s.value === filters.status;
-                        })) === null || _d === void 0
+                        {(_d = statusOptions.find((s) => s.value === filters.status)) === null ||
+                        _d === void 0
                           ? void 0
                           : _d.label}
                         <lucide_react_1.X
                           className="h-3 w-3 cursor-pointer"
-                          onClick={function () {
-                            return updateFilter("status", undefined);
-                          }}
+                          onClick={() => updateFilter("status", undefined)}
                         />
                       </badge_1.Badge>}
                 </>
@@ -629,9 +585,7 @@ function AppointmentFilters(_a) {
                   })}
                   <lucide_react_1.X
                     className="h-3 w-3 cursor-pointer"
-                    onClick={function () {
-                      return updateFilter("date_from", undefined);
-                    }}
+                    onClick={() => updateFilter("date_from", undefined)}
                   />
                 </badge_1.Badge>
               )}
@@ -641,9 +595,7 @@ function AppointmentFilters(_a) {
                   {(0, date_fns_1.format)(filters.date_to, "dd/MM/yyyy", { locale: locale_1.ptBR })}
                   <lucide_react_1.X
                     className="h-3 w-3 cursor-pointer"
-                    onClick={function () {
-                      return updateFilter("date_to", undefined);
-                    }}
+                    onClick={() => updateFilter("date_to", undefined)}
                   />
                 </badge_1.Badge>
               )}
@@ -652,9 +604,7 @@ function AppointmentFilters(_a) {
                   Busca: "{filters.search_query}"
                   <lucide_react_1.X
                     className="h-3 w-3 cursor-pointer"
-                    onClick={function () {
-                      return updateFilter("search_query", undefined);
-                    }}
+                    onClick={() => updateFilter("search_query", undefined)}
                   />
                 </badge_1.Badge>
               )}

@@ -1,21 +1,21 @@
 // React Hooks for Session Management
 // Story 1.4: Session Management & Security Implementation
 
-import type { useState, useEffect, useCallback, useRef } from "react";
+import type { createClient } from "@supabase/supabase-js";
+import type { useCallback, useEffect, useRef, useState } from "react";
+import type { DeviceManager } from "./device-manager";
+import type { SecurityMonitor } from "./security-monitor";
+import type { SessionManager } from "./session-manager";
 import type {
-  UserSession,
-  SessionState,
-  UseSessionReturn,
-  UseSessionSecurityReturn,
-  UseSessionMetricsReturn,
-  SessionSecurityEvent,
   DeviceRegistration,
   SessionMetrics,
+  SessionSecurityEvent,
+  SessionState,
+  UserSession,
+  UseSessionMetricsReturn,
+  UseSessionReturn,
+  UseSessionSecurityReturn,
 } from "./types";
-import type { SessionManager } from "./session-manager";
-import type { SecurityMonitor } from "./security-monitor";
-import type { DeviceManager } from "./device-manager";
-import type { createClient } from "@supabase/supabase-js";
 
 // Global instances (would be provided via context in real app)
 let sessionManager: SessionManager;

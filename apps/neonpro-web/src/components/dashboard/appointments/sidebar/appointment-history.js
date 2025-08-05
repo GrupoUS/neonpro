@@ -2,7 +2,6 @@
 // Appointment history and audit trail component
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentHistory;
 var card_1 = require("@/components/ui/card");
@@ -60,12 +59,11 @@ function AppointmentHistory(_a) {
   var history = _a.history,
     _b = _a.isLoading,
     isLoading = _b === void 0 ? false : _b;
-  var formatDateTime = function (dateString) {
-    return (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
+  var formatDateTime = (dateString) =>
+    (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
       locale: locale_1.ptBR,
     });
-  };
-  var formatFieldValue = function (field, value) {
+  var formatFieldValue = (field, value) => {
     if (!value) return "N/A";
     if (field.includes("time")) {
       return (0, date_fns_1.format)(new Date(value), "dd/MM/yyyy HH:mm", { locale: locale_1.ptBR });
@@ -83,7 +81,7 @@ function AppointmentHistory(_a) {
     }
     return value;
   };
-  var renderFieldChange = function (field, oldValue, newValue) {
+  var renderFieldChange = (field, oldValue, newValue) => {
     var fieldLabel = fieldLabels[field] || field;
     var oldFormatted = formatFieldValue(field, oldValue);
     var newFormatted = formatFieldValue(field, newValue);
@@ -137,7 +135,7 @@ function AppointmentHistory(_a) {
       <card_1.CardContent>
         <scroll_area_1.ScrollArea className="h-[400px]">
           <div className="space-y-4">
-            {history.map(function (entry, index) {
+            {history.map((entry, index) => {
               var actionInfo = actionConfig[entry.action] || actionConfig.update;
               var ActionIcon = actionInfo.icon;
               return (
@@ -185,7 +183,7 @@ function AppointmentHistory(_a) {
                           <p className="text-xs font-medium text-muted-foreground mb-2">
                             Campos alterados:
                           </p>
-                          {entry.changed_fields.map(function (field) {
+                          {entry.changed_fields.map((field) => {
                             var _a, _b;
                             return renderFieldChange(
                               field,

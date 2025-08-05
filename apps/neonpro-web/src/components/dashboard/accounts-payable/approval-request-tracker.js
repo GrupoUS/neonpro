@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ApprovalRequestTracker;
 var avatar_1 = require("@/components/ui/avatar");
@@ -214,7 +211,6 @@ var priorityConfig = {
   urgent: { label: "Urgente", color: "bg-red-100 text-red-800" },
 };
 function ApprovalRequestTracker(_a) {
-  var _this = this;
   var requestId = _a.requestId,
     open = _a.open,
     onOpenChange = _a.onOpenChange;
@@ -236,18 +232,15 @@ function ApprovalRequestTracker(_a) {
   var _g = (0, react_1.useState)(""),
     currentStepId = _g[0],
     setCurrentStepId = _g[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (open && requestId) {
-        loadApprovalRequest();
-      }
-    },
-    [open, requestId],
-  );
-  var loadApprovalRequest = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (open && requestId) {
+      loadApprovalRequest();
+    }
+  }, [open, requestId]);
+  var loadApprovalRequest = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockRequest;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         setLoading(true);
         try {
           mockRequest = {
@@ -330,11 +323,10 @@ function ApprovalRequestTracker(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleApprovalAction = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleApprovalAction = () =>
+    __awaiter(this, void 0, void 0, function () {
       var actionData_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!request || !currentStepId) return [2 /*return*/];
         setLoading(true);
         try {
@@ -350,9 +342,9 @@ function ApprovalRequestTracker(_a) {
           // In real implementation, this would call the API
           console.log("Processing approval action:", actionData_1);
           // Update local state (mock behavior)
-          setRequest(function (prevRequest) {
+          setRequest((prevRequest) => {
             if (!prevRequest) return null;
-            var updatedChain = prevRequest.approval_chain.map(function (step) {
+            var updatedChain = prevRequest.approval_chain.map((step) => {
               if (step.id === currentStepId) {
                 var newApprovers = __spreadArray(
                   __spreadArray([], step.approvers, true),
@@ -377,9 +369,7 @@ function ApprovalRequestTracker(_a) {
               return step;
             });
             // Update request status based on chain
-            var currentStep = updatedChain.find(function (s) {
-              return s.level_order === prevRequest.current_level;
-            });
+            var currentStep = updatedChain.find((s) => s.level_order === prevRequest.current_level);
             var newStatus =
               (currentStep === null || currentStep === void 0 ? void 0 : currentStep.status) ===
               "approved"
@@ -414,36 +404,29 @@ function ApprovalRequestTracker(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var getProgressPercentage = function () {
+  var getProgressPercentage = () => {
     if (!request) return 0;
     var totalSteps = request.approval_chain.length;
-    var completedSteps = request.approval_chain.filter(function (s) {
-      return s.status === "approved";
-    }).length;
+    var completedSteps = request.approval_chain.filter((s) => s.status === "approved").length;
     return Math.round((completedSteps / totalSteps) * 100);
   };
-  var getCurrentStep = function () {
-    return request === null || request === void 0
+  var getCurrentStep = () =>
+    request === null || request === void 0
       ? void 0
-      : request.approval_chain.find(function (s) {
-          return s.level_order === request.current_level;
-        });
-  };
-  var canTakeAction = function (step) {
+      : request.approval_chain.find((s) => s.level_order === request.current_level);
+  var canTakeAction = (step) => {
     // In real implementation, this would check user permissions
     return (
       step.status === "pending" &&
       step.level_order === (request === null || request === void 0 ? void 0 : request.current_level)
     );
   };
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
-  var getTimeRemaining = function (deadline) {
+  var getTimeRemaining = (deadline) => {
     var now = new Date();
     var deadlineDate = new Date(deadline);
     var diff = deadlineDate.getTime() - now.getTime();
@@ -592,7 +575,7 @@ function ApprovalRequestTracker(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {request.approval_chain.map(function (step, index) {
+                {request.approval_chain.map((step, index) => {
                   var _a, _b;
                   var StepStatusIcon =
                     ((_a = statusConfig[step.status]) === null || _a === void 0
@@ -687,61 +670,59 @@ function ApprovalRequestTracker(_a) {
                           </div>
 
                           {/* Actions */}
-                          {step.approvers.map(function (action) {
-                            return (
-                              <div
-                                key={action.id}
-                                className="flex items-start gap-3 p-2 bg-background rounded border"
-                              >
-                                <avatar_1.Avatar className="h-6 w-6">
-                                  <avatar_1.AvatarFallback className="text-xs">
-                                    {action.approver_name.charAt(0)}
-                                  </avatar_1.AvatarFallback>
-                                </avatar_1.Avatar>
-                                <div className="flex-1 text-sm">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-medium">{action.approver_name}</span>
-                                    <badge_1.Badge
-                                      variant="outline"
-                                      className={(0, utils_1.cn)(
-                                        "text-xs",
-                                        action.action === "approve" &&
-                                          "text-green-600 border-green-200",
-                                        action.action === "reject" && "text-red-600 border-red-200",
-                                      )}
-                                    >
-                                      {action.action === "approve" && (
-                                        <lucide_react_1.ThumbsUp className="h-2.5 w-2.5 mr-1" />
-                                      )}
-                                      {action.action === "reject" && (
-                                        <lucide_react_1.ThumbsDown className="h-2.5 w-2.5 mr-1" />
-                                      )}
-                                      {action.action === "approve" ? "Aprovado" : "Rejeitado"}
-                                    </badge_1.Badge>
-                                  </div>
-                                  <p className="text-xs text-muted-foreground">
-                                    {(0, date_fns_1.format)(
-                                      new Date(action.action_date),
-                                      "dd/MM/yyyy HH:mm",
-                                      { locale: locale_1.ptBR },
+                          {step.approvers.map((action) => (
+                            <div
+                              key={action.id}
+                              className="flex items-start gap-3 p-2 bg-background rounded border"
+                            >
+                              <avatar_1.Avatar className="h-6 w-6">
+                                <avatar_1.AvatarFallback className="text-xs">
+                                  {action.approver_name.charAt(0)}
+                                </avatar_1.AvatarFallback>
+                              </avatar_1.Avatar>
+                              <div className="flex-1 text-sm">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-medium">{action.approver_name}</span>
+                                  <badge_1.Badge
+                                    variant="outline"
+                                    className={(0, utils_1.cn)(
+                                      "text-xs",
+                                      action.action === "approve" &&
+                                        "text-green-600 border-green-200",
+                                      action.action === "reject" && "text-red-600 border-red-200",
                                     )}
-                                  </p>
-                                  {action.comments && (
-                                    <p className="text-xs mt-1 p-2 bg-muted rounded">
-                                      {action.comments}
-                                    </p>
-                                  )}
+                                  >
+                                    {action.action === "approve" && (
+                                      <lucide_react_1.ThumbsUp className="h-2.5 w-2.5 mr-1" />
+                                    )}
+                                    {action.action === "reject" && (
+                                      <lucide_react_1.ThumbsDown className="h-2.5 w-2.5 mr-1" />
+                                    )}
+                                    {action.action === "approve" ? "Aprovado" : "Rejeitado"}
+                                  </badge_1.Badge>
                                 </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {(0, date_fns_1.format)(
+                                    new Date(action.action_date),
+                                    "dd/MM/yyyy HH:mm",
+                                    { locale: locale_1.ptBR },
+                                  )}
+                                </p>
+                                {action.comments && (
+                                  <p className="text-xs mt-1 p-2 bg-muted rounded">
+                                    {action.comments}
+                                  </p>
+                                )}
                               </div>
-                            );
-                          })}
+                            </div>
+                          ))}
 
                           {/* Action Buttons */}
                           {canAction && (
                             <div className="flex gap-2 pt-2">
                               <button_1.Button
                                 size="sm"
-                                onClick={function () {
+                                onClick={() => {
                                   setSelectedAction("approve");
                                   setCurrentStepId(step.id);
                                   setShowActionModal(true);
@@ -754,7 +735,7 @@ function ApprovalRequestTracker(_a) {
                               <button_1.Button
                                 size="sm"
                                 variant="outline"
-                                onClick={function () {
+                                onClick={() => {
                                   setSelectedAction("reject");
                                   setCurrentStepId(step.id);
                                   setShowActionModal(true);
@@ -767,7 +748,7 @@ function ApprovalRequestTracker(_a) {
                               <button_1.Button
                                 size="sm"
                                 variant="outline"
-                                onClick={function () {
+                                onClick={() => {
                                   setSelectedAction("request_info");
                                   setCurrentStepId(step.id);
                                   setShowActionModal(true);
@@ -780,7 +761,7 @@ function ApprovalRequestTracker(_a) {
                               <button_1.Button
                                 size="sm"
                                 variant="outline"
-                                onClick={function () {
+                                onClick={() => {
                                   setSelectedAction("escalate");
                                   setCurrentStepId(step.id);
                                   setShowActionModal(true);
@@ -803,13 +784,7 @@ function ApprovalRequestTracker(_a) {
         </div>
 
         <dialog_1.DialogFooter>
-          <button_1.Button
-            type="button"
-            variant="outline"
-            onClick={function () {
-              return onOpenChange(false);
-            }}
-          >
+          <button_1.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Fechar
           </button_1.Button>
         </dialog_1.DialogFooter>
@@ -844,9 +819,7 @@ function ApprovalRequestTracker(_a) {
                 <textarea_1.Textarea
                   id="comments"
                   value={actionComments}
-                  onChange={function (e) {
-                    return setActionComments(e.target.value);
-                  }}
+                  onChange={(e) => setActionComments(e.target.value)}
                   placeholder={
                     selectedAction === "approve"
                       ? "Comentários sobre a aprovação..."
@@ -864,9 +837,7 @@ function ApprovalRequestTracker(_a) {
               <button_1.Button
                 type="button"
                 variant="outline"
-                onClick={function () {
-                  return setShowActionModal(false);
-                }}
+                onClick={() => setShowActionModal(false)}
               >
                 Cancelar
               </button_1.Button>

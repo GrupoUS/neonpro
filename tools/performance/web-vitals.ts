@@ -5,7 +5,18 @@
  * Based on latest 2025 performance optimization patterns
  */
 
-import { getCLS, getFID, getFCP, getLCP, getTTFB, type Metric } from "web-vitals";
+import { type Metric, onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
+
+// Extended metric type for custom metrics
+interface CustomMetric {
+  name: string;
+  value: number;
+  rating: "good" | "poor";
+  delta: number;
+  id: string;
+  navigationType: "navigate";
+  entries: PerformanceEntry[];
+}
 
 // Performance thresholds based on Core Web Vitals 2025 standards
 export const PERFORMANCE_THRESHOLDS = {
@@ -94,11 +105,11 @@ export async function sendToAnalytics(metric: Metric) {
 export function reportWebVitals() {
   try {
     // Core web vitals with enhanced reporting
-    getCLS(sendToAnalytics);
-    getFID(sendToAnalytics);
-    getFCP(sendToAnalytics);
-    getLCP(sendToAnalytics);
-    getTTFB(sendToAnalytics);
+    onCLS(sendToAnalytics);
+    onINP(sendToAnalytics); // INP replaces FID
+    onFCP(sendToAnalytics);
+    onLCP(sendToAnalytics);
+    onTTFB(sendToAnalytics);
 
     // Additional performance observations
     if ("PerformanceObserver" in window) {
@@ -113,13 +124,13 @@ export function reportWebVitals() {
             id: `long-task-${Date.now()}`,
             navigationType: "navigate",
             entries: [entry],
-          } as Metric);
+          } as CustomMetric);
         }
       });
 
       try {
         longTaskObserver.observe({ entryTypes: ["longtask"] });
-      } catch (e) {
+      } catch (_e) {
         // Long Tasks API not supported
       }
 
@@ -139,7 +150,7 @@ export function reportWebVitals() {
               id: `dns-${Date.now()}`,
               navigationType: "navigate",
               entries: [entry],
-            } as Metric);
+            } as CustomMetric);
           }
 
           // Connection time
@@ -153,14 +164,14 @@ export function reportWebVitals() {
               id: `connect-${Date.now()}`,
               navigationType: "navigate",
               entries: [entry],
-            } as Metric);
+            } as CustomMetric);
           }
         }
       });
 
       try {
         navigationObserver.observe({ entryTypes: ["navigation"] });
-      } catch (e) {
+      } catch (_e) {
         // Navigation Timing API not supported
       }
     }
@@ -186,7 +197,7 @@ export function usePerformanceMonitoring() {
         id: `${componentName}-${Date.now()}`,
         navigationType: "navigate",
         entries: [],
-      } as Metric);
+      } as CustomMetric);
     },
 
     // Mark interaction response time
@@ -201,7 +212,7 @@ export function usePerformanceMonitoring() {
         id: `${interactionName}-${Date.now()}`,
         navigationType: "navigate",
         entries: [],
-      } as Metric);
+      } as CustomMetric);
     },
   };
 }
@@ -222,7 +233,7 @@ export const PerformanceUtils = {
       id: `${name}-${Date.now()}`,
       navigationType: "navigate",
       entries: [],
-    } as Metric);
+    } as CustomMetric);
 
     return result;
   },
@@ -245,14 +256,14 @@ export const PerformanceUtils = {
               id: `resource-${Date.now()}`,
               navigationType: "navigate",
               entries: [entry],
-            } as Metric);
+            } as CustomMetric);
           }
         }
       });
 
       try {
         resourceObserver.observe({ entryTypes: ["resource"] });
-      } catch (e) {
+      } catch (_e) {
         // Resource Timing API not supported
       }
     }

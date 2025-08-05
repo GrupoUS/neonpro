@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Notification System - Automation Engine
  * Story 1.7: Sistema de Notificações
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AutomationEngine = void 0;
 var types_1 = require("../types");
@@ -162,7 +159,7 @@ var types_1 = require("../types");
 /**
  * Motor de automação de notificações
  */
-var AutomationEngine = /** @class */ (function () {
+var AutomationEngine = /** @class */ (() => {
   function AutomationEngine(notificationManager, templateEngine) {
     this.notificationManager = notificationManager;
     this.templateEngine = templateEngine;
@@ -219,9 +216,7 @@ var AutomationEngine = /** @class */ (function () {
    * Lista regras ativas
    */
   AutomationEngine.prototype.getActiveRules = function () {
-    return Array.from(this.rules.values()).filter(function (rule) {
-      return rule.isActive;
-    });
+    return Array.from(this.rules.values()).filter((rule) => rule.isActive);
   };
   // ============================================================================
   // PROCESSAMENTO DE EVENTOS
@@ -274,10 +269,9 @@ var AutomationEngine = /** @class */ (function () {
    * Encontra regras aplicáveis ao evento
    */
   AutomationEngine.prototype.findApplicableRules = function (event) {
-    var _this = this;
-    return this.getActiveRules().filter(function (rule) {
+    return this.getActiveRules().filter((rule) => {
       // Verificar se o trigger corresponde ao evento
-      return _this.matchesTrigger(rule.trigger, event);
+      return this.matchesTrigger(rule.trigger, event);
     });
   };
   /**
@@ -387,10 +381,7 @@ var AutomationEngine = /** @class */ (function () {
    * Avalia condições
    */
   AutomationEngine.prototype.evaluateConditions = function (conditions, event) {
-    var _this = this;
-    return conditions.every(function (condition) {
-      return _this.evaluateCondition(condition, event);
-    });
+    return conditions.every((condition) => this.evaluateCondition(condition, event));
   };
   /**
    * Avalia condição individual
@@ -434,7 +425,7 @@ var AutomationEngine = /** @class */ (function () {
   /**
    * Obtém valor do evento baseado no campo
    */
-  AutomationEngine.prototype.getValueFromEvent = function (field, event) {
+  AutomationEngine.prototype.getValueFromEvent = (field, event) => {
     var parts = field.split(".");
     var value = event;
     for (var _i = 0, parts_1 = parts; _i < parts_1.length; _i++) {
@@ -558,16 +549,11 @@ var AutomationEngine = /** @class */ (function () {
   AutomationEngine.prototype.executeDelayAction = function (action) {
     return __awaiter(this, void 0, void 0, function () {
       var delayMs;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             delayMs = action.config.duration || 1000;
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, delayMs);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, delayMs))];
           case 1:
             _a.sent();
             return [2 /*return*/];
@@ -581,7 +567,7 @@ var AutomationEngine = /** @class */ (function () {
   AutomationEngine.prototype.executeWebhookAction = function (action, event) {
     return __awaiter(this, void 0, void 0, function () {
       var config, response;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             config = action.config;
@@ -612,7 +598,7 @@ var AutomationEngine = /** @class */ (function () {
    */
   AutomationEngine.prototype.executeUpdateEntityAction = function (action, event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar atualização de entidade
         console.log("🔄 Atualizando entidade:", {
           entityId: event.entityId,
@@ -632,7 +618,7 @@ var AutomationEngine = /** @class */ (function () {
   AutomationEngine.prototype.resolveRecipients = function (recipientConfig, event) {
     return __awaiter(this, void 0, void 0, function () {
       var recipients, _i, _a, userId;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         recipients = [];
         // Destinatários específicos
         if (recipientConfig.userIds) {
@@ -668,8 +654,8 @@ var AutomationEngine = /** @class */ (function () {
   /**
    * Constrói dados para template
    */
-  AutomationEngine.prototype.buildTemplateData = function (event, rule) {
-    return __assign(
+  AutomationEngine.prototype.buildTemplateData = (event, rule) =>
+    __assign(
       {
         event: {
           type: event.type,
@@ -690,11 +676,10 @@ var AutomationEngine = /** @class */ (function () {
       },
       event.data,
     );
-  };
   /**
    * Valida regra de automação
    */
-  AutomationEngine.prototype.validateRule = function (rule) {
+  AutomationEngine.prototype.validateRule = (rule) => {
     if (!rule.id) {
       throw new Error("ID da regra é obrigatório");
     }
@@ -753,13 +738,9 @@ var AutomationEngine = /** @class */ (function () {
    */
   AutomationEngine.prototype.getStats = function () {
     var totalExecutions = this.executionHistory.length;
-    var successfulExecutions = this.executionHistory.filter(function (e) {
-      return e.errors.length === 0;
-    }).length;
+    var successfulExecutions = this.executionHistory.filter((e) => e.errors.length === 0).length;
     var failedExecutions = totalExecutions - successfulExecutions;
-    var totalDuration = this.executionHistory.reduce(function (sum, e) {
-      return sum + e.duration;
-    }, 0);
+    var totalDuration = this.executionHistory.reduce((sum, e) => sum + e.duration, 0);
     var averageExecutionTime = totalExecutions > 0 ? totalDuration / totalExecutions : 0;
     return {
       totalRules: this.rules.size,

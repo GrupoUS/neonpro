@@ -1,20 +1,19 @@
-"use strict";
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -29,13 +28,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -45,14 +44,14 @@ exports.lgpdEncryptionService =
   exports.EncryptionService =
     void 0;
 var crypto_1 = require("crypto");
-var EncryptionService = /** @class */ (function () {
+var EncryptionService = /** @class */ (() => {
   function EncryptionService() {
     this.algorithm = "aes-256-gcm";
     this.keyLength = 32;
     this.ivLength = 16;
     this.tagLength = 16;
   }
-  EncryptionService.prototype.getKey = function () {
+  EncryptionService.prototype.getKey = () => {
     var key = process.env.ENCRYPTION_KEY;
     if (!key) {
       throw new Error("ENCRYPTION_KEY not found in environment variables");
@@ -82,16 +81,14 @@ var EncryptionService = /** @class */ (function () {
     decrypted += decipher.final("utf8");
     return decrypted;
   };
-  EncryptionService.prototype.hashSensitiveData = function (data) {
-    return crypto_1.default.createHash("sha256").update(data).digest("hex");
-  };
-  EncryptionService.prototype.generateSecureId = function () {
-    return crypto_1.default.randomBytes(16).toString("hex");
-  };
+  EncryptionService.prototype.hashSensitiveData = (data) =>
+    crypto_1.default.createHash("sha256").update(data).digest("hex");
+  EncryptionService.prototype.generateSecureId = () =>
+    crypto_1.default.randomBytes(16).toString("hex");
   return EncryptionService;
 })();
 exports.EncryptionService = EncryptionService;
-var LGPDEncryptionService = /** @class */ (function (_super) {
+var LGPDEncryptionService = /** @class */ ((_super) => {
   __extends(LGPDEncryptionService, _super);
   function LGPDEncryptionService() {
     return (_super !== null && _super.apply(this, arguments)) || this;

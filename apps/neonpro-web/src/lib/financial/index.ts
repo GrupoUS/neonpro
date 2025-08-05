@@ -11,18 +11,14 @@
  * - Real-time financial analytics and insights
  */
 
+import type { Database } from "@/lib/database.types";
+import type { createClient } from "@/lib/supabase/client";
 import type {
   AutomatedInvoiceGenerator,
-  type InvoiceData,
-  type InvoiceGenerationConfig,
+  InvoiceData,
+  InvoiceGenerationConfig,
 } from "./invoice-generator";
-import type {
-  PaymentTracker,
-  type PaymentRecord,
-  type PaymentTrackerConfig,
-} from "./payment-tracker";
-import type { createClient } from "@/lib/supabase/client";
-import type { Database } from "@/lib/database.types";
+import type { PaymentRecord, PaymentTracker, PaymentTrackerConfig } from "./payment-tracker";
 
 // Financial System Types
 interface FinancialSystemConfig {
@@ -248,7 +244,7 @@ class FinancialManagementSystem {
         throw new Error("Either appointmentId or treatmentId must be provided");
       }
 
-      let paymentSetup: any = undefined;
+      let paymentSetup: any;
 
       // Setup payment tracking if requested
       if (invoiceData.autoSetupPayment && invoice.paymentMethods.length > 0) {
@@ -969,35 +965,39 @@ export {
 };
 
 // Re-export from subsystems for convenience
-export {
+export type {
   AutomatedInvoiceGenerator,
   PaymentTracker,
-  type InvoiceData,
-  type PaymentRecord,
-  type InvoiceGenerationConfig,
-  type PaymentTrackerConfig,
+  InvoiceData,
+  PaymentRecord,
+  InvoiceGenerationConfig,
+  PaymentTrackerConfig,
 };
 
-// Story 4.2: Financial Analytics & Business Intelligence - Export new engines
-export { CashFlowEngine } from "./cash-flow-engine";
+export type {
+  AlertChannel,
+  AlertRecipient,
+  AlertRule,
+  FinancialAlert as NewFinancialAlert,
+} from "./automated-alerts-engine";
 export { AutomatedAlertsEngine } from "./automated-alerts-engine";
-export { createpredictiveAnalyticsEngine } from "./predictive-analytics-engine";
-export { FinancialDashboardEngine } from "./financial-dashboard-engine";
-
 // Export types from new engines
 export type {
   CashFlowData,
-  CashFlowSummary,
   CashFlowMetrics,
   CashFlowProjection,
+  CashFlowSummary,
 } from "./cash-flow-engine";
-
+// Story 4.2: Financial Analytics & Business Intelligence - Export new engines
+export { CashFlowEngine } from "./cash-flow-engine";
 export type {
-  FinancialAlert as NewFinancialAlert,
-  AlertRule,
-  AlertChannel,
-  AlertRecipient,
-} from "./automated-alerts-engine";
+  DashboardForecast,
+  FinancialDashboardData,
+  FinancialMetrics,
+  PerformanceIndicators,
+  Recommendation,
+} from "./financial-dashboard-engine";
+export { FinancialDashboardEngine } from "./financial-dashboard-engine";
 
 export type {
   FinancialForecast,
@@ -1005,11 +1005,4 @@ export type {
   RiskAssessment,
   SeasonalPattern,
 } from "./predictive-analytics-engine";
-
-export type {
-  FinancialDashboardData,
-  FinancialMetrics,
-  DashboardForecast,
-  PerformanceIndicators,
-  Recommendation,
-} from "./financial-dashboard-engine";
+export { createpredictiveAnalyticsEngine } from "./predictive-analytics-engine";

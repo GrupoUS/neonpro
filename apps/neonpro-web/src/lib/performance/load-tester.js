@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Load Testing Suite - VIBECODE V1.0 Performance Testing
  * Enterprise-grade load testing for subscription middleware
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,10 +132,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -147,11 +144,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loadTester = exports.LoadTester = void 0;
 var monitor_1 = require("./monitor");
-var LoadTester = /** @class */ (function () {
+var LoadTester = /** @class */ (() => {
   function LoadTester() {
     this.results = [];
   }
@@ -186,24 +183,19 @@ var LoadTester = /** @class */ (function () {
             batches = Math.ceil(config.concurrent / batchSize);
             _loop_1 = function (batch) {
               var batchPromises, rampDelay, i, requestPromise;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     batchPromises = [];
                     rampDelay = (config.rampUpTime * 1000 * batch) / batches;
-                    return [
-                      4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, rampDelay);
-                      }),
-                    ];
+                    return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, rampDelay))];
                   case 1:
                     _b.sent();
                     // Execute batch
                     for (i = 0; i < batchSize && batch * batchSize + i < config.concurrent; i++) {
                       requestPromise = this_1.executeRequest(testFn, config.operation);
                       batchPromises.push(
-                        requestPromise.then(function (result) {
+                        requestPromise.then((result) => {
                           results.push(result);
                           memoryReadings.push(_this.getCurrentMemoryUsage());
                         }),
@@ -243,7 +235,7 @@ var LoadTester = /** @class */ (function () {
   LoadTester.prototype.executeRequest = function (testFn, operation) {
     return __awaiter(this, void 0, void 0, function () {
       var measurementId, startTime, success, endTime, responseTime, error_1, endTime, responseTime;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             measurementId = monitor_1.performanceMonitor.startMeasurement(operation);
@@ -273,7 +265,7 @@ var LoadTester = /** @class */ (function () {
   /**
    * Get current memory usage
    */
-  LoadTester.prototype.getCurrentMemoryUsage = function () {
+  LoadTester.prototype.getCurrentMemoryUsage = () => {
     if (typeof window !== "undefined" && "memory" in performance) {
       return performance.memory.usedJSHeapSize / (1024 * 1024);
     }
@@ -286,17 +278,10 @@ var LoadTester = /** @class */ (function () {
    */
   LoadTester.prototype.calculateResults = function (results, memoryReadings, startTime, config) {
     var totalRequests = results.length;
-    var successfulRequests = results.filter(function (r) {
-      return r.success;
-    }).length;
+    var successfulRequests = results.filter((r) => r.success).length;
     var failedRequests = totalRequests - successfulRequests;
-    var responseTimes = results.map(function (r) {
-      return r.responseTime;
-    });
-    var avgResponseTime =
-      responseTimes.reduce(function (a, b) {
-        return a + b;
-      }, 0) / responseTimes.length;
+    var responseTimes = results.map((r) => r.responseTime);
+    var avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
     var maxResponseTime = Math.max.apply(Math, responseTimes);
     var minResponseTime = Math.min.apply(Math, responseTimes);
     var totalTime = (Date.now() - startTime) / 1000; // in seconds

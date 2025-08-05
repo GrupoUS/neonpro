@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReorderManagement = ReorderManagement;
 var badge_1 = require("@/components/ui/badge");
@@ -148,49 +147,36 @@ function ReorderManagement() {
     isBulkOrderOpen = _d[0],
     setIsBulkOrderOpen = _d[1];
   var filteredSuggestions = (0, react_1.useMemo)(
-    function () {
-      return mockReorderSuggestions.filter(function (suggestion) {
+    () =>
+      mockReorderSuggestions.filter((suggestion) => {
         var matchesUrgency = selectedUrgency === "all" || suggestion.urgency === selectedUrgency;
         var matchesCategory =
           selectedCategory === "all" || suggestion.category === selectedCategory;
         return matchesUrgency && matchesCategory;
-      });
-    },
+      }),
     [selectedUrgency, selectedCategory],
   );
-  var summaryMetrics = (0, react_1.useMemo)(
-    function () {
-      var totalSuggestions = filteredSuggestions.length;
-      var criticalCount = filteredSuggestions.filter(function (s) {
-        return s.urgency === "critical";
-      }).length;
-      var totalValue = filteredSuggestions.reduce(function (sum, s) {
-        return sum + s.totalCost;
-      }, 0);
-      var avgStockoutRisk =
-        filteredSuggestions.reduce(function (sum, s) {
-          return sum + s.stockoutRisk;
-        }, 0) / totalSuggestions || 0;
-      return {
-        totalSuggestions: totalSuggestions,
-        criticalCount: criticalCount,
-        totalValue: totalValue,
-        avgStockoutRisk: avgStockoutRisk,
-      };
-    },
-    [filteredSuggestions],
-  );
-  var formatCurrency = function (value) {
-    return value.toLocaleString("pt-BR", {
+  var summaryMetrics = (0, react_1.useMemo)(() => {
+    var totalSuggestions = filteredSuggestions.length;
+    var criticalCount = filteredSuggestions.filter((s) => s.urgency === "critical").length;
+    var totalValue = filteredSuggestions.reduce((sum, s) => sum + s.totalCost, 0);
+    var avgStockoutRisk =
+      filteredSuggestions.reduce((sum, s) => sum + s.stockoutRisk, 0) / totalSuggestions || 0;
+    return {
+      totalSuggestions: totalSuggestions,
+      criticalCount: criticalCount,
+      totalValue: totalValue,
+      avgStockoutRisk: avgStockoutRisk,
+    };
+  }, [filteredSuggestions]);
+  var formatCurrency = (value) =>
+    value.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
       minimumFractionDigits: 2,
     });
-  };
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  };
-  var getTrendIcon = function (trend) {
+  var formatDate = (dateString) => new Date(dateString).toLocaleDateString("pt-BR");
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "increasing":
         return <lucide_react_1.TrendingUp className="w-3 h-3 text-green-500" />;
@@ -200,25 +186,21 @@ function ReorderManagement() {
         return <div className="w-3 h-3 bg-blue-500 rounded-full" />;
     }
   };
-  var handleSuggestionSelect = function (suggestionId, checked) {
+  var handleSuggestionSelect = (suggestionId, checked) => {
     if (checked) {
       setSelectedSuggestions(
         __spreadArray(__spreadArray([], selectedSuggestions, true), [suggestionId], false),
       );
     } else {
-      setSelectedSuggestions(
-        selectedSuggestions.filter(function (id) {
-          return id !== suggestionId;
-        }),
-      );
+      setSelectedSuggestions(selectedSuggestions.filter((id) => id !== suggestionId));
     }
   };
-  var handleApproveSelected = function () {
+  var handleApproveSelected = () => {
     // In a real implementation, this would update the database
     console.log("Approving suggestions:", selectedSuggestions);
     setSelectedSuggestions([]);
   };
-  var handleGeneratePO = function () {
+  var handleGeneratePO = () => {
     // In a real implementation, this would generate purchase orders
     console.log("Generating purchase orders for approved suggestions");
     setIsBulkOrderOpen(false);
@@ -368,13 +350,9 @@ function ReorderManagement() {
                   <table_1.TableHead className="w-12">
                     <checkbox_1.Checkbox
                       checked={selectedSuggestions.length === filteredSuggestions.length}
-                      onCheckedChange={function (checked) {
+                      onCheckedChange={(checked) => {
                         if (checked) {
-                          setSelectedSuggestions(
-                            filteredSuggestions.map(function (s) {
-                              return s.productId;
-                            }),
-                          );
+                          setSelectedSuggestions(filteredSuggestions.map((s) => s.productId));
                         } else {
                           setSelectedSuggestions([]);
                         }
@@ -391,7 +369,7 @@ function ReorderManagement() {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredSuggestions.map(function (suggestion) {
+                {filteredSuggestions.map((suggestion) => {
                   var urgencyConfig_ = urgencyConfig[suggestion.urgency];
                   var UrgencyIcon = urgencyConfig_.icon;
                   var isSelected = selectedSuggestions.includes(suggestion.productId);
@@ -400,9 +378,9 @@ function ReorderManagement() {
                       <table_1.TableCell>
                         <checkbox_1.Checkbox
                           checked={isSelected}
-                          onCheckedChange={function (checked) {
-                            return handleSuggestionSelect(suggestion.productId, checked);
-                          }}
+                          onCheckedChange={(checked) =>
+                            handleSuggestionSelect(suggestion.productId, checked)
+                          }
                         />
                       </table_1.TableCell>
 

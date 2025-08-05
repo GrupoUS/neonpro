@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - API Gateway Middleware System
  * Comprehensive middleware and plugin system for request processing
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResponseTransformationMiddleware =
   exports.RequestValidationMiddleware =
@@ -168,7 +165,7 @@ exports.ResponseTransformationMiddleware =
  * Middleware Manager
  * Manages and executes middleware chain
  */
-var MiddlewareManager = /** @class */ (function () {
+var MiddlewareManager = /** @class */ (() => {
   function MiddlewareManager(logger) {
     this.middleware = new Map();
     this.plugins = new Map();
@@ -234,8 +231,8 @@ var MiddlewareManager = /** @class */ (function () {
           case 0:
             middlewares = this.getOrderedMiddleware();
             index = 0;
-            next = function () {
-              return __awaiter(_this, void 0, void 0, function () {
+            next = () =>
+              __awaiter(_this, void 0, void 0, function () {
                 var middleware, error_1;
                 var _a;
                 return __generator(this, function (_b) {
@@ -264,7 +261,6 @@ var MiddlewareManager = /** @class */ (function () {
                   }
                 });
               });
-            };
             return [4 /*yield*/, next()];
           case 1:
             _a.sent();
@@ -278,12 +274,8 @@ var MiddlewareManager = /** @class */ (function () {
    */
   MiddlewareManager.prototype.getOrderedMiddleware = function () {
     return Array.from(this.middleware.values())
-      .filter(function (m) {
-        return m.enabled;
-      })
-      .sort(function (a, b) {
-        return a.order - b.order;
-      });
+      .filter((m) => m.enabled)
+      .sort((a, b) => a.order - b.order);
   };
   /**
    * Get middleware by name
@@ -316,19 +308,18 @@ exports.MiddlewareManager = MiddlewareManager;
  * CORS Middleware
  * Handles Cross-Origin Resource Sharing
  */
-var CorsMiddleware = /** @class */ (function () {
+var CorsMiddleware = /** @class */ (() => {
   function CorsMiddleware() {}
   CorsMiddleware.create = function (config) {
-    var _this = this;
     return {
       name: "cors",
       order: 1,
       enabled: true,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var origin;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 // Handle preflight requests
@@ -358,8 +349,7 @@ var CorsMiddleware = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     };
   };
   return CorsMiddleware;
@@ -369,19 +359,18 @@ exports.CorsMiddleware = CorsMiddleware;
  * Request Logging Middleware
  * Logs all API requests and responses
  */
-var RequestLoggingMiddleware = /** @class */ (function () {
+var RequestLoggingMiddleware = /** @class */ (() => {
   function RequestLoggingMiddleware() {}
   RequestLoggingMiddleware.create = function (config, logger) {
-    var _this = this;
     return {
       name: "request-logging",
       order: 2,
       enabled: config.enabled,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var startTime, requestLog, duration, error_2, duration;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 startTime = Date.now();
@@ -438,14 +427,13 @@ var RequestLoggingMiddleware = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     };
   };
   /**
    * Sanitize headers by removing sensitive information
    */
-  RequestLoggingMiddleware.sanitizeHeaders = function (headers, sensitiveHeaders) {
+  RequestLoggingMiddleware.sanitizeHeaders = (headers, sensitiveHeaders) => {
     var sanitized = __assign({}, headers);
     for (var _i = 0, sensitiveHeaders_1 = sensitiveHeaders; _i < sensitiveHeaders_1.length; _i++) {
       var header = sensitiveHeaders_1[_i];
@@ -462,22 +450,21 @@ exports.RequestLoggingMiddleware = RequestLoggingMiddleware;
  * Rate Limiting Middleware
  * Implements rate limiting based on client ID or IP address
  */
-var RateLimitingMiddleware = /** @class */ (function () {
+var RateLimitingMiddleware = /** @class */ (() => {
   function RateLimitingMiddleware() {
     this.rateLimitStore = new Map();
   }
   RateLimitingMiddleware.create = function (config) {
-    var _this = this;
     var instance = new RateLimitingMiddleware();
     return {
       name: "rate-limiting",
       order: 3,
       enabled: true,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var key, allowed, rateLimitInfo;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 key = config.keyGenerator
@@ -500,8 +487,7 @@ var RateLimitingMiddleware = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     };
   };
   /**
@@ -546,23 +532,22 @@ exports.RateLimitingMiddleware = RateLimitingMiddleware;
  * Authentication Middleware
  * Handles API key and JWT authentication
  */
-var AuthenticationMiddleware = /** @class */ (function () {
+var AuthenticationMiddleware = /** @class */ (() => {
   function AuthenticationMiddleware() {}
   AuthenticationMiddleware.create = function (config) {
-    var _this = this;
     return {
       name: "authentication",
       order: 4,
       enabled: config.required,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var apiKey, result, authHeader, token, result;
           var _a;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
-                if (!!context.route.authentication.required) return [3 /*break*/, 2];
+                if (context.route.authentication.required) return [3 /*break*/, 2];
                 return [4 /*yield*/, next()];
               case 1:
                 _b.sent();
@@ -604,8 +589,7 @@ var AuthenticationMiddleware = /** @class */ (function () {
                 throw new Error("Authentication required");
             }
           });
-        });
-      },
+        }),
     };
   };
   return AuthenticationMiddleware;
@@ -615,22 +599,21 @@ exports.AuthenticationMiddleware = AuthenticationMiddleware;
  * Authorization Middleware
  * Handles role-based and permission-based authorization
  */
-var AuthorizationMiddleware = /** @class */ (function () {
+var AuthorizationMiddleware = /** @class */ (() => {
   function AuthorizationMiddleware() {}
   AuthorizationMiddleware.create = function (config) {
-    var _this = this;
     return {
       name: "authorization",
       order: 5,
       enabled: true,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var route, hasAdminRole;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
-                if (!!context.route.authentication.required) return [3 /*break*/, 2];
+                if (context.route.authentication.required) return [3 /*break*/, 2];
                 return [4 /*yield*/, next()];
               case 1:
                 _a.sent();
@@ -638,9 +621,7 @@ var AuthorizationMiddleware = /** @class */ (function () {
               case 2:
                 route = context.route;
                 if (!(config.adminRoles && context.userRoles)) return [3 /*break*/, 4];
-                hasAdminRole = config.adminRoles.some(function (role) {
-                  return context.userRoles.includes(role);
-                });
+                hasAdminRole = config.adminRoles.some((role) => context.userRoles.includes(role));
                 if (!hasAdminRole) return [3 /*break*/, 4];
                 return [4 /*yield*/, next()];
               case 3:
@@ -655,9 +636,7 @@ var AuthorizationMiddleware = /** @class */ (function () {
                 ) {
                   if (
                     !context.userRoles ||
-                    !route.authentication.roles.some(function (role) {
-                      return context.userRoles.includes(role);
-                    })
+                    !route.authentication.roles.some((role) => context.userRoles.includes(role))
                   ) {
                     throw new Error("Insufficient role permissions");
                   }
@@ -670,9 +649,9 @@ var AuthorizationMiddleware = /** @class */ (function () {
                 ) {
                   if (
                     !context.userPermissions ||
-                    !route.authentication.permissions.some(function (perm) {
-                      return context.userPermissions.includes(perm);
-                    })
+                    !route.authentication.permissions.some((perm) =>
+                      context.userPermissions.includes(perm),
+                    )
                   ) {
                     throw new Error("Insufficient permissions");
                   }
@@ -683,8 +662,7 @@ var AuthorizationMiddleware = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     };
   };
   return AuthorizationMiddleware;
@@ -694,19 +672,18 @@ exports.AuthorizationMiddleware = AuthorizationMiddleware;
  * Request Validation Middleware
  * Validates request parameters, query, and body
  */
-var RequestValidationMiddleware = /** @class */ (function () {
+var RequestValidationMiddleware = /** @class */ (() => {
   function RequestValidationMiddleware() {}
   RequestValidationMiddleware.create = function (config) {
-    var _this = this;
     return {
       name: "request-validation",
       order: 6,
       enabled: true,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var route, errors, paramErrors, queryErrors, bodyParam, bodyErrors;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 route = context.route;
@@ -715,9 +692,7 @@ var RequestValidationMiddleware = /** @class */ (function () {
                 if (config.validateParams && route.documentation.parameters) {
                   paramErrors = RequestValidationMiddleware.validateParameters(
                     context.params || {},
-                    route.documentation.parameters.filter(function (p) {
-                      return p.in === "path";
-                    }),
+                    route.documentation.parameters.filter((p) => p.in === "path"),
                     config.strictMode,
                   );
                   errors.push.apply(errors, paramErrors);
@@ -726,18 +701,14 @@ var RequestValidationMiddleware = /** @class */ (function () {
                 if (config.validateQuery && route.documentation.parameters) {
                   queryErrors = RequestValidationMiddleware.validateParameters(
                     context.query || {},
-                    route.documentation.parameters.filter(function (p) {
-                      return p.in === "query";
-                    }),
+                    route.documentation.parameters.filter((p) => p.in === "query"),
                     config.strictMode,
                   );
                   errors.push.apply(errors, queryErrors);
                 }
                 // Validate request body
                 if (config.validateBody && context.body && route.documentation.parameters) {
-                  bodyParam = route.documentation.parameters.find(function (p) {
-                    return p.in === "body";
-                  });
+                  bodyParam = route.documentation.parameters.find((p) => p.in === "body");
                   if (bodyParam) {
                     bodyErrors = RequestValidationMiddleware.validateBody(
                       context.body,
@@ -756,14 +727,13 @@ var RequestValidationMiddleware = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     };
   };
   /**
    * Validate parameters against schema
    */
-  RequestValidationMiddleware.validateParameters = function (values, parameters, strictMode) {
+  RequestValidationMiddleware.validateParameters = (values, parameters, strictMode) => {
     var errors = [];
     for (var _i = 0, parameters_1 = parameters; _i < parameters_1.length; _i++) {
       var param = parameters_1[_i];
@@ -786,13 +756,12 @@ var RequestValidationMiddleware = /** @class */ (function () {
   /**
    * Validate request body against schema
    */
-  RequestValidationMiddleware.validateBody = function (body, schema, strictMode) {
-    return RequestValidationMiddleware.validateValue(body, schema, "body");
-  };
+  RequestValidationMiddleware.validateBody = (body, schema, strictMode) =>
+    RequestValidationMiddleware.validateValue(body, schema, "body");
   /**
    * Validate value against schema
    */
-  RequestValidationMiddleware.validateValue = function (value, schema, fieldName) {
+  RequestValidationMiddleware.validateValue = (value, schema, fieldName) => {
     var errors = [];
     if (!schema) {
       return errors;
@@ -848,7 +817,7 @@ var RequestValidationMiddleware = /** @class */ (function () {
       }
       // Validate array items
       if (schema.items) {
-        value.forEach(function (item, index) {
+        value.forEach((item, index) => {
           var itemErrors = RequestValidationMiddleware.validateValue(
             item,
             schema.items,
@@ -892,18 +861,17 @@ exports.RequestValidationMiddleware = RequestValidationMiddleware;
  * Response Transformation Middleware
  * Transforms and formats API responses
  */
-var ResponseTransformationMiddleware = /** @class */ (function () {
+var ResponseTransformationMiddleware = /** @class */ (() => {
   function ResponseTransformationMiddleware() {}
   ResponseTransformationMiddleware.create = function (config) {
-    var _this = this;
     return {
       name: "response-transformation",
       order: 100, // Execute last
       enabled: true,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [4 /*yield*/, next()];
@@ -920,14 +888,13 @@ var ResponseTransformationMiddleware = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     };
   };
   /**
    * Transform response data
    */
-  ResponseTransformationMiddleware.transformResponse = function (response, config, context) {
+  ResponseTransformationMiddleware.transformResponse = (response, config, context) => {
     var transformed = response;
     // Remove null values
     if (config.removeNullValues) {
@@ -957,14 +924,12 @@ var ResponseTransformationMiddleware = /** @class */ (function () {
   /**
    * Remove null and undefined values
    */
-  ResponseTransformationMiddleware.removeNullValues = function (obj) {
+  ResponseTransformationMiddleware.removeNullValues = (obj) => {
     if (obj === null || obj === undefined) {
       return obj;
     }
     if (Array.isArray(obj)) {
-      return obj.map(function (item) {
-        return ResponseTransformationMiddleware.removeNullValues(item);
-      });
+      return obj.map((item) => ResponseTransformationMiddleware.removeNullValues(item));
     }
     if (typeof obj === "object") {
       var cleaned = {};
@@ -983,14 +948,12 @@ var ResponseTransformationMiddleware = /** @class */ (function () {
   /**
    * Format date objects to ISO strings
    */
-  ResponseTransformationMiddleware.formatDates = function (obj) {
+  ResponseTransformationMiddleware.formatDates = (obj) => {
     if (obj instanceof Date) {
       return obj.toISOString();
     }
     if (Array.isArray(obj)) {
-      return obj.map(function (item) {
-        return ResponseTransformationMiddleware.formatDates(item);
-      });
+      return obj.map((item) => ResponseTransformationMiddleware.formatDates(item));
     }
     if (typeof obj === "object" && obj !== null) {
       var formatted = {};

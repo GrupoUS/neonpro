@@ -1,6 +1,23 @@
 "use client";
 
+import type { Calendar, DollarSign, Eye, Star, Target, TrendingUp, Users, Zap } from "lucide-react";
 import type { useState } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,10 +25,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -19,24 +35,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Separator } from "@/components/ui/separator";
-import type { Progress } from "@/components/ui/progress";
-import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
-import type { TrendingUp, Users, Target, Zap, Calendar, DollarSign, Star, Eye } from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Mock data para analytics
 const performanceData = [

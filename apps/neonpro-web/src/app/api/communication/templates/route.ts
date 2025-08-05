@@ -1,8 +1,4 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
-import type { CommunicationService } from "@/app/lib/services/communication-service";
+import type { NextRequest } from "next/server";
 
 // Input schemas
 const CreateTemplateSchema = z.object({
@@ -24,7 +20,7 @@ const CreateTemplateSchema = z.object({
     .optional(),
 });
 
-const UpdateTemplateSchema = CreateTemplateSchema.partial();
+const _UpdateTemplateSchema = CreateTemplateSchema.partial();
 
 const QuerySchema = z.object({
   category: z.string().optional(),

@@ -8,7 +8,6 @@
  * @version 1.0.0
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionStatusWidget = SubscriptionStatusWidget;
 var utils_1 = require("@/lib/utils");
@@ -44,7 +43,7 @@ function SubscriptionStatusWidget(_a) {
     isLoading = _f.isLoading,
     error = _f.error,
     refresh = _f.refresh;
-  var getStatusColor = function () {
+  var getStatusColor = () => {
     switch (status) {
       case "active":
         return "text-green-600";
@@ -60,26 +59,25 @@ function SubscriptionStatusWidget(_a) {
         return "text-gray-600";
     }
   };
-  var getNextActionDate = function () {
+  var getNextActionDate = () => {
     if (status === "trialing") return nextBilling;
     if (status === "past_due" && gracePeriodEnd) return gracePeriodEnd;
     if (status === "active") return nextBilling;
     return null;
   };
-  var getActionDateLabel = function () {
+  var getActionDateLabel = () => {
     if (status === "trialing") return "Trial ends";
     if (status === "past_due") return "Grace period ends";
     if (status === "active") return "Next billing";
     return null;
   };
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
+  var formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
     });
-  };
-  var getDaysUntil = function (dateString) {
+  var getDaysUntil = (dateString) => {
     var targetDate = new Date(dateString);
     var now = new Date();
     var diffTime = targetDate.getTime() - now.getTime();
@@ -108,12 +106,7 @@ function SubscriptionStatusWidget(_a) {
               </div>
             </div>
             {status !== "active" && (
-              <button_1.Button
-                size="sm"
-                onClick={function () {
-                  return setShowUpgradeModal(true);
-                }}
-              >
+              <button_1.Button size="sm" onClick={() => setShowUpgradeModal(true)}>
                 <lucide_react_1.Crown className="h-3 w-3 mr-1" />
                 Upgrade
               </button_1.Button>
@@ -180,7 +173,7 @@ function SubscriptionStatusWidget(_a) {
             <div>
               <h4 className="font-medium mb-3">Usage Overview</h4>
               <div className="space-y-3">
-                {usageMetrics.map(function (metric, index) {
+                {usageMetrics.map((metric, index) => {
                   var Icon = metric.icon;
                   var percentage = Math.round((metric.current / metric.limit) * 100);
                   return (
@@ -210,13 +203,11 @@ function SubscriptionStatusWidget(_a) {
             <div>
               <h4 className="font-medium mb-3">Active Features</h4>
               <div className="flex flex-wrap gap-2">
-                {features.slice(0, 6).map(function (feature, index) {
-                  return (
-                    <badge_1.Badge key={index} variant="outline" className="text-xs">
-                      {feature}
-                    </badge_1.Badge>
-                  );
-                })}
+                {features.slice(0, 6).map((feature, index) => (
+                  <badge_1.Badge key={index} variant="outline" className="text-xs">
+                    {feature}
+                  </badge_1.Badge>
+                ))}
                 {features.length > 6 && (
                   <badge_1.Badge variant="outline" className="text-xs">
                     +{features.length - 6} more
@@ -232,12 +223,7 @@ function SubscriptionStatusWidget(_a) {
               <separator_1.Separator />
               <div className="flex flex-col gap-2">
                 {status !== "active" && (
-                  <button_1.Button
-                    onClick={function () {
-                      return setShowUpgradeModal(true);
-                    }}
-                    className="w-full"
-                  >
+                  <button_1.Button onClick={() => setShowUpgradeModal(true)} className="w-full">
                     <lucide_react_1.Crown className="h-4 w-4 mr-2" />
                     Upgrade Plan
                   </button_1.Button>
@@ -263,9 +249,7 @@ function SubscriptionStatusWidget(_a) {
       {/* Upgrade Modal */}
       <upgrade_prompt_1.UpgradePrompt
         isOpen={showUpgradeModal}
-        onClose={function () {
-          return setShowUpgradeModal(false);
-        }}
+        onClose={() => setShowUpgradeModal(false)}
         reason={status === "trialing" ? "trial_ended" : "expired"}
         currentPlan={tier || "Free"}
         suggestedPlan="Professional"

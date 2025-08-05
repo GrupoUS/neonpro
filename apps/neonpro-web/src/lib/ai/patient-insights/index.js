@@ -1,4 +1,3 @@
-"use strict";
 // AI-Powered Patient Insights Integration Module
 // Story 3.2: Task 7 - Main Integration Module
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,10 +144,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -159,7 +156,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContinuousLearningSystem =
   exports.HealthTrendMonitor =
@@ -172,46 +169,34 @@ exports.ContinuousLearningSystem =
 var risk_assessment_1 = require("./risk-assessment");
 Object.defineProperty(exports, "RiskAssessmentEngine", {
   enumerable: true,
-  get: function () {
-    return risk_assessment_1.RiskAssessmentEngine;
-  },
+  get: () => risk_assessment_1.RiskAssessmentEngine,
 });
 var treatment_recommendations_1 = require("./treatment-recommendations");
 Object.defineProperty(exports, "TreatmentRecommendationEngine", {
   enumerable: true,
-  get: function () {
-    return treatment_recommendations_1.TreatmentRecommendationEngine;
-  },
+  get: () => treatment_recommendations_1.TreatmentRecommendationEngine,
 });
 var predictive_analytics_1 = require("./predictive-analytics");
 Object.defineProperty(exports, "createpredictiveAnalyticsEngine", {
   enumerable: true,
-  get: function () {
-    return predictive_analytics_1.createpredictiveAnalyticsEngine;
-  },
+  get: () => predictive_analytics_1.createpredictiveAnalyticsEngine,
 });
 var behavior_analysis_1 = require("./behavior-analysis");
 Object.defineProperty(exports, "BehaviorAnalysisEngine", {
   enumerable: true,
-  get: function () {
-    return behavior_analysis_1.BehaviorAnalysisEngine;
-  },
+  get: () => behavior_analysis_1.BehaviorAnalysisEngine,
 });
 var health_trend_monitor_1 = require("./health-trend-monitor");
 Object.defineProperty(exports, "HealthTrendMonitor", {
   enumerable: true,
-  get: function () {
-    return health_trend_monitor_1.HealthTrendMonitor;
-  },
+  get: () => health_trend_monitor_1.HealthTrendMonitor,
 });
 var continuous_learning_1 = require("./continuous-learning");
 Object.defineProperty(exports, "ContinuousLearningSystem", {
   enumerable: true,
-  get: function () {
-    return continuous_learning_1.ContinuousLearningSystem;
-  },
+  get: () => continuous_learning_1.ContinuousLearningSystem,
 });
-var PatientInsightsIntegration = /** @class */ (function () {
+var PatientInsightsIntegration = /** @class */ (() => {
   function PatientInsightsIntegration(config) {
     this.isInitialized = false;
     this.configuration = __assign(
@@ -254,7 +239,7 @@ var PatientInsightsIntegration = /** @class */ (function () {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 11, , 12]);
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _c.sent();
@@ -451,15 +436,9 @@ var PatientInsightsIntegration = /** @class */ (function () {
               {
                 patientId: patientId,
                 totalAlerts: alerts.length,
-                criticalAlerts: prioritizedAlerts.filter(function (a) {
-                  return a.severity === "high";
-                }).length,
-                warningAlerts: prioritizedAlerts.filter(function (a) {
-                  return a.severity === "medium";
-                }).length,
-                infoAlerts: prioritizedAlerts.filter(function (a) {
-                  return a.severity === "low";
-                }).length,
+                criticalAlerts: prioritizedAlerts.filter((a) => a.severity === "high").length,
+                warningAlerts: prioritizedAlerts.filter((a) => a.severity === "medium").length,
+                infoAlerts: prioritizedAlerts.filter((a) => a.severity === "low").length,
                 alerts: prioritizedAlerts,
                 lastChecked: new Date(),
                 nextCheckRecommended: this.calculateNextCheckTime(prioritizedAlerts),
@@ -732,9 +711,9 @@ var PatientInsightsIntegration = /** @class */ (function () {
     }
     // Behavior-based alerts
     if (insights.behaviorAnalysis && insights.behaviorAnalysis.riskFactors.length > 0) {
-      var highRiskFactors = insights.behaviorAnalysis.riskFactors.filter(function (rf) {
-        return rf.severity === "high";
-      });
+      var highRiskFactors = insights.behaviorAnalysis.riskFactors.filter(
+        (rf) => rf.severity === "high",
+      );
       if (highRiskFactors.length > 0) {
         alerts.push({
           type: "behavior_risk",
@@ -753,24 +732,18 @@ var PatientInsightsIntegration = /** @class */ (function () {
     if (insights.healthTrends && insights.healthTrends.alerts.length > 0) {
       alerts.push.apply(
         alerts,
-        insights.healthTrends.alerts.map(function (alert) {
-          return __assign(__assign({}, alert), { source: "health_trends" });
-        }),
+        insights.healthTrends.alerts.map((alert) =>
+          __assign(__assign({}, alert), { source: "health_trends" }),
+        ),
       );
     }
     return {
       patientId:
         ((_a = insights.riskAssessment) === null || _a === void 0 ? void 0 : _a.patientId) || "",
       totalAlerts: alerts.length,
-      criticalAlerts: alerts.filter(function (a) {
-        return a.severity === "high";
-      }).length,
-      warningAlerts: alerts.filter(function (a) {
-        return a.severity === "medium";
-      }).length,
-      infoAlerts: alerts.filter(function (a) {
-        return a.severity === "low";
-      }).length,
+      criticalAlerts: alerts.filter((a) => a.severity === "high").length,
+      warningAlerts: alerts.filter((a) => a.severity === "medium").length,
+      infoAlerts: alerts.filter((a) => a.severity === "low").length,
       alerts: alerts,
       lastChecked: new Date(),
       nextCheckRecommended: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
@@ -789,18 +762,14 @@ var PatientInsightsIntegration = /** @class */ (function () {
     ) {
       recommendations.push.apply(
         recommendations,
-        insights.treatmentRecommendations.primaryRecommendations.map(function (tr) {
-          return tr.recommendation;
-        }),
+        insights.treatmentRecommendations.primaryRecommendations.map((tr) => tr.recommendation),
       );
     }
     // Behavior recommendations
     if (insights.behaviorAnalysis && insights.behaviorAnalysis.recommendations) {
       recommendations.push.apply(
         recommendations,
-        insights.behaviorAnalysis.recommendations.map(function (rec) {
-          return rec.description;
-        }),
+        insights.behaviorAnalysis.recommendations.map((rec) => rec.description),
       );
     }
     // Health trend recommendations
@@ -874,7 +843,7 @@ var PatientInsightsIntegration = /** @class */ (function () {
       });
     });
   };
-  PatientInsightsIntegration.prototype.validateRequest = function (request) {
+  PatientInsightsIntegration.prototype.validateRequest = (request) => {
     if (!request.patientId) {
       throw new Error("Patient ID is required");
     }
@@ -882,7 +851,7 @@ var PatientInsightsIntegration = /** @class */ (function () {
       throw new Error("At least one insight type must be requested");
     }
   };
-  PatientInsightsIntegration.prototype.processParallelResults = function (results, request) {
+  PatientInsightsIntegration.prototype.processParallelResults = (results, request) => {
     var insights = {
       riskAssessment: null,
       treatmentRecommendations: null,
@@ -891,7 +860,7 @@ var PatientInsightsIntegration = /** @class */ (function () {
       healthTrends: null,
       learningInsights: [],
     };
-    results.forEach(function (result, index) {
+    results.forEach((result, index) => {
       if (result.status === "fulfilled") {
         switch (index) {
           case 0:
@@ -910,7 +879,7 @@ var PatientInsightsIntegration = /** @class */ (function () {
     });
     return insights;
   };
-  PatientInsightsIntegration.prototype.calculateOverallConfidence = function (insights) {
+  PatientInsightsIntegration.prototype.calculateOverallConfidence = (insights) => {
     var _a, _b, _c;
     var confidenceScores = [];
     if ((_a = insights.riskAssessment) === null || _a === void 0 ? void 0 : _a.confidence) {
@@ -925,9 +894,7 @@ var PatientInsightsIntegration = /** @class */ (function () {
       confidenceScores.push(insights.behaviorAnalysis.behaviorScore.overall);
     }
     return confidenceScores.length > 0
-      ? confidenceScores.reduce(function (sum, score) {
-          return sum + score;
-        }, 0) / confidenceScores.length
+      ? confidenceScores.reduce((sum, score) => sum + score, 0) / confidenceScores.length
       : 0.5;
   };
   PatientInsightsIntegration.prototype.calculateCompletenessScore = function (insights) {
@@ -951,11 +918,11 @@ var PatientInsightsIntegration = /** @class */ (function () {
     }
     return totalModules > 0 ? completedModules / totalModules : 0;
   };
-  PatientInsightsIntegration.prototype.calculateReliabilityScore = function (insights) {
+  PatientInsightsIntegration.prototype.calculateReliabilityScore = (insights) => {
     // Based on consistency between modules and data quality
     return 0.85; // Simplified implementation
   };
-  PatientInsightsIntegration.prototype.calculateActionabilityScore = function (insights) {
+  PatientInsightsIntegration.prototype.calculateActionabilityScore = (insights) => {
     var _a, _b;
     // Based on number and quality of actionable recommendations
     var actionableItems = 0;
@@ -975,38 +942,34 @@ var PatientInsightsIntegration = /** @class */ (function () {
     return totalItems > 0 ? actionableItems / totalItems : 0;
   };
   // Additional utility methods (simplified implementations)
-  PatientInsightsIntegration.prototype.validateRiskBehaviorConsistency = function (risk, behavior) {
+  PatientInsightsIntegration.prototype.validateRiskBehaviorConsistency = (risk, behavior) => {
     // Validate consistency between risk and behavior assessments
   };
-  PatientInsightsIntegration.prototype.validateTreatmentPredictionConsistency = function (
+  PatientInsightsIntegration.prototype.validateTreatmentPredictionConsistency = (
     treatment,
     prediction,
-  ) {
+  ) => {
     // Validate consistency between treatment recommendations and predictions
   };
-  PatientInsightsIntegration.prototype.prioritizeRecommendations = function (recommendations) {
+  PatientInsightsIntegration.prototype.prioritizeRecommendations = (recommendations) => {
     // Prioritize recommendations based on importance and urgency
     return recommendations.slice(0, 10); // Return top 10
   };
-  PatientInsightsIntegration.prototype.calculateRiskBehaviorCorrelation = function (
-    risk,
-    behavior,
-  ) {
+  PatientInsightsIntegration.prototype.calculateRiskBehaviorCorrelation = (risk, behavior) => {
     return 0.75; // Simplified implementation
   };
-  PatientInsightsIntegration.prototype.calculateTreatmentPredictionCorrelation = function (
+  PatientInsightsIntegration.prototype.calculateTreatmentPredictionCorrelation = (
     treatment,
     prediction,
-  ) {
+  ) => {
     return 0.8; // Simplified implementation
   };
   PatientInsightsIntegration.prototype.categorizeAlerts = function (alerts) {
-    var _this = this;
-    return alerts.map(function (alert) {
-      return __assign(__assign({}, alert), { category: _this.categorizeAlert(alert) });
-    });
+    return alerts.map((alert) =>
+      __assign(__assign({}, alert), { category: this.categorizeAlert(alert) }),
+    );
   };
-  PatientInsightsIntegration.prototype.categorizeAlert = function (alert) {
+  PatientInsightsIntegration.prototype.categorizeAlert = (alert) => {
     var _a, _b, _c;
     if ((_a = alert.type) === null || _a === void 0 ? void 0 : _a.includes("risk")) return "risk";
     if ((_b = alert.type) === null || _b === void 0 ? void 0 : _b.includes("behavior"))
@@ -1015,81 +978,68 @@ var PatientInsightsIntegration = /** @class */ (function () {
       return "health";
     return "general";
   };
-  PatientInsightsIntegration.prototype.prioritizeAlerts = function (alerts) {
-    return alerts.sort(function (a, b) {
+  PatientInsightsIntegration.prototype.prioritizeAlerts = (alerts) =>
+    alerts.sort((a, b) => {
       var severityOrder = { high: 3, medium: 2, low: 1 };
       return (severityOrder[b.severity] || 0) - (severityOrder[a.severity] || 0);
     });
-  };
-  PatientInsightsIntegration.prototype.calculateNextCheckTime = function (alerts) {
-    var hasHighPriority = alerts.some(function (alert) {
-      return alert.severity === "high";
-    });
+  PatientInsightsIntegration.prototype.calculateNextCheckTime = (alerts) => {
+    var hasHighPriority = alerts.some((alert) => alert.severity === "high");
     var hoursToAdd = hasHighPriority ? 4 : 24;
     return new Date(Date.now() + hoursToAdd * 60 * 60 * 1000);
   };
   PatientInsightsIntegration.prototype.getLearningInsights = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   PatientInsightsIntegration.prototype.processLearningFeedback = function (request, insights) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PatientInsightsIntegration.prototype.storeInsights = function (insights) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PatientInsightsIntegration.prototype.checkEngineHealth = function (name, engine) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            name: name,
-            status: "healthy",
-            lastChecked: new Date(),
-            responseTime: Math.random() * 100 + 50,
-            errorRate: Math.random() * 5,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          name: name,
+          status: "healthy",
+          lastChecked: new Date(),
+          responseTime: Math.random() * 100 + 50,
+          errorRate: Math.random() * 5,
+        },
+      ]);
     });
   };
-  PatientInsightsIntegration.prototype.calculateOverallHealth = function (engines) {
-    var unhealthyEngines = engines.filter(function (e) {
-      return e.status !== "healthy";
-    }).length;
+  PatientInsightsIntegration.prototype.calculateOverallHealth = (engines) => {
+    var unhealthyEngines = engines.filter((e) => e.status !== "healthy").length;
     var ratio = unhealthyEngines / engines.length;
     if (ratio === 0) return "healthy";
     if (ratio < 0.5) return "degraded";
     return "critical";
   };
-  PatientInsightsIntegration.prototype.calculateUptime = function () {
+  PatientInsightsIntegration.prototype.calculateUptime = () => {
     // Return uptime in hours (simplified)
     return 24 * 7; // 7 days
   };
   PatientInsightsIntegration.prototype.getPerformanceMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            averageResponseTime: 250,
-            successRate: 98.5,
-            errorRate: 1.5,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          averageResponseTime: 250,
+          successRate: 98.5,
+          errorRate: 1.5,
+        },
+      ]);
     });
   };
   return PatientInsightsIntegration;

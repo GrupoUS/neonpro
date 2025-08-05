@@ -4,11 +4,11 @@
  * Handles: PDFs, Images, Word docs, Medical reports, Lab results, Prescriptions
  */
 
+import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
-import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 
 // Types for Cloudflare Workers environment

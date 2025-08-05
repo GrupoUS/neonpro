@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ProfessionalPerformanceDashboard;
 var react_1 = require("react");
@@ -153,7 +150,7 @@ var metricTypeLabels = {
   compliance: "Conformidade",
   availability: "Disponibilidade",
 };
-var getMetricIcon = function (type) {
+var getMetricIcon = (type) => {
   switch (type) {
     case "quality":
       return <lucide_react_1.Award className="h-4 w-4" />;
@@ -173,7 +170,7 @@ var getMetricIcon = function (type) {
       return <lucide_react_1.Activity className="h-4 w-4" />;
   }
 };
-var getChangeIcon = function (changeType) {
+var getChangeIcon = (changeType) => {
   switch (changeType) {
     case "increase":
       return <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600" />;
@@ -183,7 +180,7 @@ var getChangeIcon = function (changeType) {
       return <lucide_react_1.Activity className="h-4 w-4 text-gray-600" />;
   }
 };
-var getPerformanceColor = function (value, max) {
+var getPerformanceColor = (value, max) => {
   if (max === void 0) {
     max = 100;
   }
@@ -193,7 +190,6 @@ var getPerformanceColor = function (value, max) {
   return "text-red-600";
 };
 function ProfessionalPerformanceDashboard(_a) {
-  var _this = this;
   var professionalId = _a.professionalId;
   var _b = (0, react_1.useState)([]),
     professionals = _b[0],
@@ -256,16 +252,13 @@ function ProfessionalPerformanceDashboard(_a) {
       description: "Pontualidade e duração adequada",
     },
   ];
-  (0, react_1.useEffect)(
-    function () {
-      loadData();
-    },
-    [selectedProfessional, period],
-  );
-  var loadData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadData();
+  }, [selectedProfessional, period]);
+  var loadData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var professionalsData, metricsData, aggregatedData, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 6, 7, 8]);
@@ -308,19 +301,16 @@ function ProfessionalPerformanceDashboard(_a) {
         }
       });
     });
-  };
-  var generateTeamPerformanceData = function (professionalsData) {
-    var teamData = professionalsData.slice(0, 10).map(function (professional) {
-      return {
-        professional: professional,
-        metrics: {
-          satisfaction: Math.random() * 2 + 3, // 3-5 range
-          consultations: Math.floor(Math.random() * 100) + 50, // 50-150 range
-          revenue: Math.floor(Math.random() * 20000) + 10000, // 10k-30k range
-          efficiency: Math.floor(Math.random() * 30) + 70, // 70-100% range
-        },
-      };
-    });
+  var generateTeamPerformanceData = (professionalsData) => {
+    var teamData = professionalsData.slice(0, 10).map((professional) => ({
+      professional: professional,
+      metrics: {
+        satisfaction: Math.random() * 2 + 3, // 3-5 range
+        consultations: Math.floor(Math.random() * 100) + 50, // 50-150 range
+        revenue: Math.floor(Math.random() * 20000) + 10000, // 10k-30k range
+        efficiency: Math.floor(Math.random() * 30) + 70, // 70-100% range
+      },
+    }));
     setTeamPerformance(teamData);
   };
   return (
@@ -332,12 +322,7 @@ function ProfessionalPerformanceDashboard(_a) {
           <p className="text-muted-foreground">Acompanhe métricas de performance e qualidade</p>
         </div>
         <div className="flex items-center gap-4">
-          <select_1.Select
-            value={period}
-            onValueChange={function (value) {
-              return setPeriod(value);
-            }}
-          >
+          <select_1.Select value={period} onValueChange={(value) => setPeriod(value)}>
             <select_1.SelectTrigger className="w-[180px]">
               <select_1.SelectValue placeholder="Período" />
             </select_1.SelectTrigger>
@@ -354,13 +339,11 @@ function ProfessionalPerformanceDashboard(_a) {
             </select_1.SelectTrigger>
             <select_1.SelectContent>
               <select_1.SelectItem value="all">Todos os Profissionais</select_1.SelectItem>
-              {professionals.map(function (professional) {
-                return (
-                  <select_1.SelectItem key={professional.id} value={professional.id}>
-                    {professional.given_name} {professional.family_name}
-                  </select_1.SelectItem>
-                );
-              })}
+              {professionals.map((professional) => (
+                <select_1.SelectItem key={professional.id} value={professional.id}>
+                  {professional.given_name} {professional.family_name}
+                </select_1.SelectItem>
+              ))}
             </select_1.SelectContent>
           </select_1.Select>
         </div>
@@ -378,7 +361,7 @@ function ProfessionalPerformanceDashboard(_a) {
         <tabs_1.TabsContent value="overview" className="space-y-6">
           {/* Key Metrics Cards */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {overviewMetrics.map(function (metric) {
+            {overviewMetrics.map((metric) => {
               var _a;
               return (
                 <card_1.Card key={metric.id}>
@@ -452,44 +435,42 @@ function ProfessionalPerformanceDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {teamPerformance.slice(0, 5).map(function (performer, index) {
-                  return (
-                    <div
-                      key={performer.professional.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                          <span className="text-sm font-bold text-primary">#{index + 1}</span>
-                        </div>
-                        <div>
-                          <div className="font-medium">
-                            {performer.professional.given_name} {performer.professional.family_name}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {performer.professional.qualification}
-                          </div>
-                        </div>
+                {teamPerformance.slice(0, 5).map((performer, index) => (
+                  <div
+                    key={performer.professional.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
+                        <span className="text-sm font-bold text-primary">#{index + 1}</span>
                       </div>
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="text-center">
-                          <div className="font-medium">
-                            {performer.metrics.satisfaction.toFixed(1)}
-                          </div>
-                          <div className="text-muted-foreground">Satisfação</div>
+                      <div>
+                        <div className="font-medium">
+                          {performer.professional.given_name} {performer.professional.family_name}
                         </div>
-                        <div className="text-center">
-                          <div className="font-medium">{performer.metrics.consultations}</div>
-                          <div className="text-muted-foreground">Consultas</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="font-medium">{performer.metrics.efficiency}%</div>
-                          <div className="text-muted-foreground">Eficiência</div>
+                        <div className="text-sm text-muted-foreground">
+                          {performer.professional.qualification}
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center gap-4 text-sm">
+                      <div className="text-center">
+                        <div className="font-medium">
+                          {performer.metrics.satisfaction.toFixed(1)}
+                        </div>
+                        <div className="text-muted-foreground">Satisfação</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-medium">{performer.metrics.consultations}</div>
+                        <div className="text-muted-foreground">Consultas</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="font-medium">{performer.metrics.efficiency}%</div>
+                        <div className="text-muted-foreground">Eficiência</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -511,7 +492,7 @@ function ProfessionalPerformanceDashboard(_a) {
             : <>
                 {/* Individual Metrics */}
                 <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
-                  {Object.entries(metricTypeLabels).map(function (_a) {
+                  {Object.entries(metricTypeLabels).map((_a) => {
                     var type = _a[0],
                       label = _a[1];
                     return (
@@ -647,79 +628,73 @@ function ProfessionalPerformanceDashboard(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {teamPerformance.map(function (performer) {
-                    return (
-                      <table_1.TableRow key={performer.professional.id}>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm">
-                              {performer.professional.given_name[0]}
-                              {performer.professional.family_name[0]}
+                  {teamPerformance.map((performer) => (
+                    <table_1.TableRow key={performer.professional.id}>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm">
+                            {performer.professional.given_name[0]}
+                            {performer.professional.family_name[0]}
+                          </div>
+                          <div>
+                            <div className="font-medium">
+                              {performer.professional.given_name}{" "}
+                              {performer.professional.family_name}
                             </div>
-                            <div>
-                              <div className="font-medium">
-                                {performer.professional.given_name}{" "}
-                                {performer.professional.family_name}
-                              </div>
-                              <div className="text-sm text-muted-foreground">
-                                {performer.professional.qualification}
-                              </div>
+                            <div className="text-sm text-muted-foreground">
+                              {performer.professional.qualification}
                             </div>
                           </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-2">
-                            <lucide_react_1.Star className="h-4 w-4 text-yellow-500" />
-                            <span
-                              className={getPerformanceColor(performer.metrics.satisfaction, 5)}
-                            >
-                              {performer.metrics.satisfaction.toFixed(1)}
-                            </span>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <span
-                            className={getPerformanceColor(performer.metrics.consultations, 150)}
-                          >
-                            {performer.metrics.consultations}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-2">
+                          <lucide_react_1.Star className="h-4 w-4 text-yellow-500" />
+                          <span className={getPerformanceColor(performer.metrics.satisfaction, 5)}>
+                            {performer.metrics.satisfaction.toFixed(1)}
                           </span>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <span className={getPerformanceColor(performer.metrics.revenue, 30000)}>
-                            R$ {performer.metrics.revenue.toLocaleString()}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <span className={getPerformanceColor(performer.metrics.consultations, 150)}>
+                          {performer.metrics.consultations}
+                        </span>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <span className={getPerformanceColor(performer.metrics.revenue, 30000)}>
+                          R$ {performer.metrics.revenue.toLocaleString()}
+                        </span>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-2">
+                          <progress_1.Progress
+                            value={performer.metrics.efficiency}
+                            className="w-16"
+                          />
+                          <span className={getPerformanceColor(performer.metrics.efficiency)}>
+                            {performer.metrics.efficiency}%
                           </span>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-2">
-                            <progress_1.Progress
-                              value={performer.metrics.efficiency}
-                              className="w-16"
-                            />
-                            <span className={getPerformanceColor(performer.metrics.efficiency)}>
-                              {performer.metrics.efficiency}%
-                            </span>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge
-                            variant={
-                              performer.metrics.efficiency >= 90
-                                ? "default"
-                                : performer.metrics.efficiency >= 70
-                                  ? "secondary"
-                                  : "destructive"
-                            }
-                          >
-                            {performer.metrics.efficiency >= 90
-                              ? "Excelente"
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge
+                          variant={
+                            performer.metrics.efficiency >= 90
+                              ? "default"
                               : performer.metrics.efficiency >= 70
-                                ? "Bom"
-                                : "Precisa Melhorar"}
-                          </badge_1.Badge>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                                ? "secondary"
+                                : "destructive"
+                          }
+                        >
+                          {performer.metrics.efficiency >= 90
+                            ? "Excelente"
+                            : performer.metrics.efficiency >= 70
+                              ? "Bom"
+                              : "Precisa Melhorar"}
+                        </badge_1.Badge>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
             </card_1.CardContent>

@@ -186,4 +186,4 @@ export interface BookingValidation {
   errors: Record<string, string>;
 }
 
-export { Service, Professional, TimeSlot, Appointment };
+export type { Service, Professional, TimeSlot, Appointment };

@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,12 +142,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TemplateEngine = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var audit_logger_1 = require("../../auth/audit/audit-logger");
-var TemplateEngine = /** @class */ (function () {
+var TemplateEngine = /** @class */ (() => {
   function TemplateEngine() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -537,9 +534,7 @@ var TemplateEngine = /** @class */ (function () {
           case 3:
             variables = this.extractVariables(template.content, template.subject);
             allowedVariables = this.getAllowedVariables();
-            invalidVariables = variables.filter(function (v) {
-              return !allowedVariables.includes(v);
-            });
+            invalidVariables = variables.filter((v) => !allowedVariables.includes(v));
             if (invalidVariables.length > 0) {
               throw new Error(
                 "Vari\u00E1veis inv\u00E1lidas encontradas: ".concat(invalidVariables.join(", ")),
@@ -626,7 +621,7 @@ var TemplateEngine = /** @class */ (function () {
   TemplateEngine.prototype.renderContent = function (content, context) {
     return __awaiter(this, void 0, void 0, function () {
       var rendered, _i, _a, _b, key, value, regex, now;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         rendered = content;
         // Substituir variáveis do usuário
         if (context.user) {
@@ -697,7 +692,7 @@ var TemplateEngine = /** @class */ (function () {
   TemplateEngine.prototype.validateTemplateSyntax = function (content) {
     return __awaiter(this, void 0, void 0, function () {
       var variableRegex, matches, _i, matches_1, match, variable;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         variableRegex = /{{\s*([^}]+)\s*}}/g;
         matches = content.match(variableRegex);
         if (matches) {
@@ -714,7 +709,7 @@ var TemplateEngine = /** @class */ (function () {
       });
     });
   };
-  TemplateEngine.prototype.extractVariables = function (content, subject) {
+  TemplateEngine.prototype.extractVariables = (content, subject) => {
     var variables = new Set();
     var variableRegex = /{{\s*([^}]+)\s*}}/g;
     // Extrair do conteúdo
@@ -734,28 +729,26 @@ var TemplateEngine = /** @class */ (function () {
   TemplateEngine.prototype.extractUsedVariables = function (content, subject) {
     return this.extractVariables(content, subject);
   };
-  TemplateEngine.prototype.getAllowedVariables = function () {
-    return [
-      "user.name",
-      "user.email",
-      "user.phone",
-      "appointment.date",
-      "appointment.time",
-      "appointment.service",
-      "appointment.professional",
-      "appointment.location",
-      "payment.amount",
-      "payment.due_date",
-      "clinic.name",
-      "clinic.address",
-      "clinic.phone",
-      "clinic.email",
-      "clinic.website",
-      "current.date",
-      "current.time",
-      "current.year",
-    ];
-  };
+  TemplateEngine.prototype.getAllowedVariables = () => [
+    "user.name",
+    "user.email",
+    "user.phone",
+    "appointment.date",
+    "appointment.time",
+    "appointment.service",
+    "appointment.professional",
+    "appointment.location",
+    "payment.amount",
+    "payment.due_date",
+    "clinic.name",
+    "clinic.address",
+    "clinic.phone",
+    "clinic.email",
+    "clinic.website",
+    "current.date",
+    "current.time",
+    "current.year",
+  ];
   TemplateEngine.prototype.getTemplateVariables = function (templateId) {
     return __awaiter(this, void 0, void 0, function () {
       var defaultVariables;
@@ -799,9 +792,7 @@ var TemplateEngine = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var requiredVariables, _i, requiredVariables_1, variable, value;
       return __generator(this, function (_a) {
-        requiredVariables = variables.filter(function (v) {
-          return v.required;
-        });
+        requiredVariables = variables.filter((v) => v.required);
         for (
           _i = 0, requiredVariables_1 = requiredVariables;
           _i < requiredVariables_1.length;
@@ -817,7 +808,7 @@ var TemplateEngine = /** @class */ (function () {
       });
     });
   };
-  TemplateEngine.prototype.getVariableValue = function (context, variableName) {
+  TemplateEngine.prototype.getVariableValue = (context, variableName) => {
     var parts = variableName.split(".");
     var value = context;
     for (var _i = 0, parts_1 = parts; _i < parts_1.length; _i++) {

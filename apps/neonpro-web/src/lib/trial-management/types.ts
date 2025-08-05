@@ -2,8 +2,6 @@
 // AI-powered trial management system with conversion optimization
 // Created: 2025-01-22
 
-import type { z } from "zod";
-
 // ============================================================================
 // CORE TRIAL TYPES
 // ============================================================================

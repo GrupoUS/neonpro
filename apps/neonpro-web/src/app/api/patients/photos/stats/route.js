@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Photo Recognition Statistics API
  * Provides analytics and statistics for photo recognition system
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("next/server");
@@ -174,7 +171,7 @@ function GET(request) {
       stats,
       systemStats,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 5, , 6]);
@@ -268,7 +265,7 @@ function getSystemPhotoStats(timeframe) {
       storageData,
       totalStorageUsed,
       error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           timeframeDays =
@@ -305,7 +302,7 @@ function getSystemPhotoStats(timeframe) {
           typeDistribution =
             (photosByType === null || photosByType === void 0
               ? void 0
-              : photosByType.reduce(function (acc, photo) {
+              : photosByType.reduce((acc, photo) => {
                   acc[photo.photo_type] = (acc[photo.photo_type] || 0) + 1;
                   return acc;
                 }, {})) || {};
@@ -345,9 +342,8 @@ function getSystemPhotoStats(timeframe) {
               ? void 0
               : confidenceData.length
           )
-            ? confidenceData.reduce(function (sum, item) {
-                return sum + (item.confidence || 0);
-              }, 0) / confidenceData.length
+            ? confidenceData.reduce((sum, item) => sum + (item.confidence || 0), 0) /
+              confidenceData.length
             : 0;
           return [
             4 /*yield*/,
@@ -360,7 +356,7 @@ function getSystemPhotoStats(timeframe) {
           privacyStats = (privacyData === null || privacyData === void 0
             ? void 0
             : privacyData.reduce(
-                function (acc, privacy) {
+                (acc, privacy) => {
                   acc.facialRecognitionEnabled += privacy.allow_facial_recognition ? 1 : 0;
                   acc.photoSharingEnabled += privacy.allow_photo_sharing ? 1 : 0;
                   acc.total += 1;
@@ -380,9 +376,7 @@ function getSystemPhotoStats(timeframe) {
           totalStorageUsed =
             (storageData === null || storageData === void 0
               ? void 0
-              : storageData.reduce(function (sum, photo) {
-                  return sum + (photo.file_size || 0);
-                }, 0)) || 0;
+              : storageData.reduce((sum, photo) => sum + (photo.file_size || 0), 0)) || 0;
           return [
             2 /*return*/,
             {

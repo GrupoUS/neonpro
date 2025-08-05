@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Config Package
  * Shared configuration for healthcare platform

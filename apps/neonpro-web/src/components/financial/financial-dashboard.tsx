@@ -14,7 +14,31 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import type {
+  AlertTriangle,
+  ArrowDown,
+  ArrowUp,
+  BarChart3,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  LineChart,
+  Minus,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  XCircle,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -22,45 +46,21 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Progress } from "@/components/ui/progress";
-import type { Separator } from "@/components/ui/separator";
 import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  AlertTriangle,
-  Target,
-  BarChart3,
-  PieChart,
-  LineChart,
-  Calendar,
-  RefreshCw,
-  Download,
-  Settings,
-  Bell,
-  CheckCircle,
-  XCircle,
-  Clock,
-  ArrowUp,
-  ArrowDown,
-  Minus,
-} from "lucide-react";
-import type {
+  DashboardForecast,
+  FinancialAlert,
+  FinancialDashboardData,
   FinancialDashboardEngine,
-  type FinancialDashboardData,
-  type FinancialMetrics,
-  type DashboardForecast,
-  type PerformanceIndicators,
-  type Recommendation,
-  type FinancialAlert,
+  FinancialMetrics,
+  PerformanceIndicators,
+  Recommendation,
 } from "@/lib/financial/financial-dashboard-engine";
-import type { formatCurrency, formatPercentage, formatNumber } from "@/lib/utils/formatters";
 import type { cn } from "@/lib/utils";
+import type { formatCurrency, formatNumber, formatPercentage } from "@/lib/utils/formatters";
 
 // Chart components (simplified for now)
 const LineChartComponent = ({ data, className }: { data: any[]; className?: string }) => (

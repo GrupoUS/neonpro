@@ -3,10 +3,10 @@
 
 import type { createClient } from "@/lib/supabase/client";
 import type {
-  TreatmentRecommendation,
   PatientRiskAssessment,
-  TreatmentRecommendationResponse,
   SafetyAlert,
+  TreatmentRecommendation,
+  TreatmentRecommendationResponse,
 } from "./types";
 
 export class TreatmentRecommendationEngine {

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Revenue Optimization Engine
  *
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,7 +155,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createrevenueOptimizationEngine =
   exports.CLVPredictionSchema =
@@ -228,7 +225,7 @@ exports.CLVPredictionSchema = zod_1.z.object({
   updated_at: zod_1.z.string(),
 });
 // 🎯 Revenue Optimization Engine
-var createrevenueOptimizationEngine = /** @class */ (function () {
+var createrevenueOptimizationEngine = /** @class */ (() => {
   function createrevenueOptimizationEngine() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -287,9 +284,7 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
               2 /*return*/,
               {
                 currentStrategy: currentStrategy,
-                recommendations: recommendations.map(function (r) {
-                  return r.description;
-                }),
+                recommendations: recommendations.map((r) => r.description),
                 projectedIncrease: projectedIncrease,
                 competitiveAnalysis: competitiveAnalysis,
               },
@@ -476,9 +471,10 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
                 timeframe: "3-4 weeks",
               },
             ];
-            totalProjectedIncrease = recommendations.reduce(function (sum, rec) {
-              return sum + rec.expectedImpact;
-            }, 0);
+            totalProjectedIncrease = recommendations.reduce(
+              (sum, rec) => sum + rec.expectedImpact,
+              0,
+            );
             implementationPlan = [
               "1. Phase 1 (Week 1-2): Quick wins - pricing adjustments and service mix optimization",
               "2. Phase 2 (Week 3-4): Medium effort initiatives - dynamic pricing and upselling systems",
@@ -584,19 +580,17 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
             return [4 /*yield*/, query];
           case 1:
             optimizations = _a.sent().data;
-            roiMetrics = (optimizations || []).map(function (opt) {
-              return {
-                id: opt.id,
-                title: opt.title,
-                expectedROI: opt.expected_roi,
-                actualROI: opt.actual_roi || 0,
-                performance: opt.actual_roi
-                  ? ((opt.actual_roi / opt.expected_roi) * 100).toFixed(1) + "%"
-                  : "Pending",
-                status: opt.status,
-                improvementPercentage: opt.improvement_percentage,
-              };
-            });
+            roiMetrics = (optimizations || []).map((opt) => ({
+              id: opt.id,
+              title: opt.title,
+              expectedROI: opt.expected_roi,
+              actualROI: opt.actual_roi || 0,
+              performance: opt.actual_roi
+                ? ((opt.actual_roi / opt.expected_roi) * 100).toFixed(1) + "%"
+                : "Pending",
+              status: opt.status,
+              improvementPercentage: opt.improvement_percentage,
+            }));
             performanceIndicators = this.calculatePerformanceIndicators(roiMetrics);
             trendAnalysis = this.analyzeTrends(roiMetrics);
             recommendations = this.generatePerformanceRecommendations(
@@ -625,7 +619,7 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
   // 🔧 Private Helper Methods
   createrevenueOptimizationEngine.prototype.analyzeMarketDemand = function (clinicId, serviceId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simulate market demand analysis
         return [
           2 /*return*/,
@@ -646,7 +640,7 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
     competitiveAnalysis,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate intelligent pricing recommendations
         return [
           2 /*return*/,
@@ -666,19 +660,17 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
       });
     });
   };
-  createrevenueOptimizationEngine.prototype.calculateProjectedIncrease = function (
+  createrevenueOptimizationEngine.prototype.calculateProjectedIncrease = (
     currentStrategy,
     recommendations,
     marketAnalysis,
-  ) {
+  ) => {
     // Calculate projected revenue increase based on recommendations
-    return recommendations.reduce(function (sum, rec) {
-      return sum + rec.impact;
-    }, 0);
+    return recommendations.reduce((sum, rec) => sum + rec.impact, 0);
   };
   createrevenueOptimizationEngine.prototype.analyzeServicePerformance = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Analyze current service performance metrics
         return [
           2 /*return*/,
@@ -706,7 +698,7 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
   };
   createrevenueOptimizationEngine.prototype.calculateServiceProfitability = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate detailed profitability metrics for each service
         return [
           2 /*return*/,
@@ -723,76 +715,61 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
       });
     });
   };
-  createrevenueOptimizationEngine.prototype.generateOptimizedServiceMix = function (
+  createrevenueOptimizationEngine.prototype.generateOptimizedServiceMix = (
     servicePerformance,
     profitabilityMetrics,
-  ) {
+  ) => {
     // Generate optimized service mix recommendations
-    return servicePerformance.map(function (service) {
-      return __assign(__assign({}, service), {
+    return servicePerformance.map((service) =>
+      __assign(__assign({}, service), {
         recommendedAllocation: service.margin > 0.6 ? "increase" : "maintain",
         targetRevenue: service.revenue * (service.margin > 0.6 ? 1.15 : 1.05),
-      });
-    });
+      }),
+    );
   };
-  createrevenueOptimizationEngine.prototype.calculateMixProfitabilityGain = function (
+  createrevenueOptimizationEngine.prototype.calculateMixProfitabilityGain = (
     currentMix,
     optimizedMix,
-  ) {
+  ) => {
     // Calculate potential profitability gain from optimized mix
-    var currentTotal = currentMix.reduce(function (sum, service) {
-      return sum + service.revenue;
-    }, 0);
-    var optimizedTotal = optimizedMix.reduce(function (sum, service) {
-      return sum + service.targetRevenue;
-    }, 0);
+    var currentTotal = currentMix.reduce((sum, service) => sum + service.revenue, 0);
+    var optimizedTotal = optimizedMix.reduce((sum, service) => sum + service.targetRevenue, 0);
     return ((optimizedTotal - currentTotal) / currentTotal) * 100;
   };
-  createrevenueOptimizationEngine.prototype.segmentCustomersByRisk = function (clvPredictions) {
+  createrevenueOptimizationEngine.prototype.segmentCustomersByRisk = (clvPredictions) => {
     // Segment customers by churn risk and value
     return {
-      highValueLowRisk: clvPredictions.filter(function (c) {
-        return c.predicted_clv > 5000 && c.churn_risk < 0.3;
-      }).length,
-      highValueHighRisk: clvPredictions.filter(function (c) {
-        return c.predicted_clv > 5000 && c.churn_risk >= 0.3;
-      }).length,
-      lowValueLowRisk: clvPredictions.filter(function (c) {
-        return c.predicted_clv <= 5000 && c.churn_risk < 0.3;
-      }).length,
-      lowValueHighRisk: clvPredictions.filter(function (c) {
-        return c.predicted_clv <= 5000 && c.churn_risk >= 0.3;
-      }).length,
+      highValueLowRisk: clvPredictions.filter((c) => c.predicted_clv > 5000 && c.churn_risk < 0.3)
+        .length,
+      highValueHighRisk: clvPredictions.filter((c) => c.predicted_clv > 5000 && c.churn_risk >= 0.3)
+        .length,
+      lowValueLowRisk: clvPredictions.filter((c) => c.predicted_clv <= 5000 && c.churn_risk < 0.3)
+        .length,
+      lowValueHighRisk: clvPredictions.filter((c) => c.predicted_clv <= 5000 && c.churn_risk >= 0.3)
+        .length,
     };
   };
-  createrevenueOptimizationEngine.prototype.generateCLVEnhancementStrategies = function (
+  createrevenueOptimizationEngine.prototype.generateCLVEnhancementStrategies = (
     clvPredictions,
     riskSegmentation,
-  ) {
-    return [
-      "Implement VIP program for high-value, low-risk customers",
-      "Launch retention campaigns for high-value, high-risk customers",
-      "Develop upselling programs for low-value, low-risk customers",
-      "Create win-back campaigns for high-risk customers",
-      "Personalize service recommendations based on CLV predictions",
-    ];
-  };
-  createrevenueOptimizationEngine.prototype.calculateCLVIncrease = function (
-    clvPredictions,
-    strategies,
-  ) {
+  ) => [
+    "Implement VIP program for high-value, low-risk customers",
+    "Launch retention campaigns for high-value, high-risk customers",
+    "Develop upselling programs for low-value, low-risk customers",
+    "Create win-back campaigns for high-risk customers",
+    "Personalize service recommendations based on CLV predictions",
+  ];
+  createrevenueOptimizationEngine.prototype.calculateCLVIncrease = (clvPredictions, strategies) => {
     // Calculate projected CLV increase from enhancement strategies
     var averageCLV =
-      clvPredictions.reduce(function (sum, clv) {
-        return sum + clv.predicted_clv;
-      }, 0) / clvPredictions.length;
+      clvPredictions.reduce((sum, clv) => sum + clv.predicted_clv, 0) / clvPredictions.length;
     return strategies.length * 3.5; // Estimated 3.5% increase per strategy
   };
-  createrevenueOptimizationEngine.prototype.calculateMarketPosition = function (competitorData) {
+  createrevenueOptimizationEngine.prototype.calculateMarketPosition = (competitorData) => {
     // Analyze market position based on competitive data
     return competitorData.length > 5 ? "Strong Competitive Position" : "Market Leader";
   };
-  createrevenueOptimizationEngine.prototype.identifyPricingGaps = function (competitorData) {
+  createrevenueOptimizationEngine.prototype.identifyPricingGaps = (competitorData) => {
     // Identify pricing gaps and opportunities
     return [
       {
@@ -804,7 +781,7 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
       },
     ];
   };
-  createrevenueOptimizationEngine.prototype.calculateBenchmarkMetrics = function (competitorData) {
+  createrevenueOptimizationEngine.prototype.calculateBenchmarkMetrics = (competitorData) => {
     // Calculate benchmark metrics against competitors
     return {
       priceCompetitiveness: 0.85,
@@ -813,42 +790,28 @@ var createrevenueOptimizationEngine = /** @class */ (function () {
       marketShare: 0.15,
     };
   };
-  createrevenueOptimizationEngine.prototype.calculatePerformanceIndicators = function (roiMetrics) {
-    var totalExpected = roiMetrics.reduce(function (sum, metric) {
-      return sum + metric.expectedROI;
-    }, 0);
-    var totalActual = roiMetrics.reduce(function (sum, metric) {
-      return sum + metric.actualROI;
-    }, 0);
+  createrevenueOptimizationEngine.prototype.calculatePerformanceIndicators = (roiMetrics) => {
+    var totalExpected = roiMetrics.reduce((sum, metric) => sum + metric.expectedROI, 0);
+    var totalActual = roiMetrics.reduce((sum, metric) => sum + metric.actualROI, 0);
     return {
       overallROI: totalActual / totalExpected,
       successRate:
-        roiMetrics.filter(function (m) {
-          return m.actualROI >= m.expectedROI;
-        }).length / roiMetrics.length,
+        roiMetrics.filter((m) => m.actualROI >= m.expectedROI).length / roiMetrics.length,
       averagePerformance:
-        roiMetrics.reduce(function (sum, m) {
-          return sum + m.actualROI / m.expectedROI;
-        }, 0) / roiMetrics.length,
+        roiMetrics.reduce((sum, m) => sum + m.actualROI / m.expectedROI, 0) / roiMetrics.length,
     };
   };
-  createrevenueOptimizationEngine.prototype.analyzeTrends = function (roiMetrics) {
-    return {
-      improving: roiMetrics.filter(function (m) {
-        return m.actualROI > m.expectedROI;
-      }).length,
-      declining: roiMetrics.filter(function (m) {
-        return m.actualROI < m.expectedROI * 0.8;
-      }).length,
-      stable: roiMetrics.filter(function (m) {
-        return m.actualROI >= m.expectedROI * 0.8 && m.actualROI <= m.expectedROI;
-      }).length,
-    };
-  };
-  createrevenueOptimizationEngine.prototype.generatePerformanceRecommendations = function (
+  createrevenueOptimizationEngine.prototype.analyzeTrends = (roiMetrics) => ({
+    improving: roiMetrics.filter((m) => m.actualROI > m.expectedROI).length,
+    declining: roiMetrics.filter((m) => m.actualROI < m.expectedROI * 0.8).length,
+    stable: roiMetrics.filter(
+      (m) => m.actualROI >= m.expectedROI * 0.8 && m.actualROI <= m.expectedROI,
+    ).length,
+  });
+  createrevenueOptimizationEngine.prototype.generatePerformanceRecommendations = (
     indicators,
     trends,
-  ) {
+  ) => {
     var recommendations = [];
     if (indicators.overallROI < 0.8) {
       recommendations.push("Review and adjust optimization strategies for better ROI");

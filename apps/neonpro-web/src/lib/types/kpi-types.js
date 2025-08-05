@@ -1,4 +1,3 @@
-"use strict";
 // KPI Dashboard Types
 // Description: TypeScript interfaces and types for comprehensive financial KPI tracking
 // Author: Dev Agent

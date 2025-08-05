@@ -4,32 +4,31 @@
 // Created: 2025-01-26
 // =====================================================================================
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,10 +148,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -163,7 +160,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = InventoryAlerts;
 var alert_1 = require("@/components/ui/alert");
@@ -217,7 +214,6 @@ var SEVERITY_CONFIG = {
 // MAIN COMPONENT
 // =====================================================================================
 function InventoryAlerts() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     alerts = _a[0],
     setAlerts = _a[1];
@@ -233,13 +229,13 @@ function InventoryAlerts() {
   // =====================================================================================
   // DATA FETCHING
   // =====================================================================================
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadAlerts();
   }, []);
-  var loadAlerts = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadAlerts = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -268,14 +264,13 @@ function InventoryAlerts() {
         }
       });
     });
-  };
   // =====================================================================================
   // EVENT HANDLERS
   // =====================================================================================
-  var markAsRead = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var markAsRead = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -290,13 +285,11 @@ function InventoryAlerts() {
             if (!response.ok) {
               throw new Error("Failed to mark alert as read");
             }
-            setAlerts(function (prev) {
-              return prev.map(function (alert) {
-                return alert.id === alertId
-                  ? __assign(__assign({}, alert), { is_read: true })
-                  : alert;
-              });
-            });
+            setAlerts((prev) =>
+              prev.map((alert) =>
+                alert.id === alertId ? __assign(__assign({}, alert), { is_read: true }) : alert,
+              ),
+            );
             return [3 /*break*/, 3];
           case 2:
             err_2 = _a.sent();
@@ -307,11 +300,10 @@ function InventoryAlerts() {
         }
       });
     });
-  };
-  var dismissAlert = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var dismissAlert = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, err_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -326,11 +318,7 @@ function InventoryAlerts() {
             if (!response.ok) {
               throw new Error("Failed to dismiss alert");
             }
-            setAlerts(function (prev) {
-              return prev.filter(function (alert) {
-                return alert.id !== alertId;
-              });
-            });
+            setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
             return [3 /*break*/, 3];
           case 2:
             err_3 = _a.sent();
@@ -341,11 +329,10 @@ function InventoryAlerts() {
         }
       });
     });
-  };
-  var markAllAsRead = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var markAllAsRead = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, err_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -360,11 +347,9 @@ function InventoryAlerts() {
             if (!response.ok) {
               throw new Error("Failed to mark all alerts as read");
             }
-            setAlerts(function (prev) {
-              return prev.map(function (alert) {
-                return __assign(__assign({}, alert), { is_read: true });
-              });
-            });
+            setAlerts((prev) =>
+              prev.map((alert) => __assign(__assign({}, alert), { is_read: true })),
+            );
             return [3 /*break*/, 3];
           case 2:
             err_4 = _a.sent();
@@ -375,12 +360,11 @@ function InventoryAlerts() {
         }
       });
     });
-  };
   // =====================================================================================
   // FILTERING & SORTING
   // =====================================================================================
   var filteredAlerts = alerts
-    .filter(function (alert) {
+    .filter((alert) => {
       switch (filter) {
         case "unread":
           return !alert.is_read;
@@ -390,19 +374,17 @@ function InventoryAlerts() {
           return true;
       }
     })
-    .sort(function (a, b) {
+    .sort((a, b) => {
       // Sort by severity first, then by date
       var severityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
       var severityDiff = severityOrder[b.severity] - severityOrder[a.severity];
       if (severityDiff !== 0) return severityDiff;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
-  var unreadCount = alerts.filter(function (alert) {
-    return !alert.is_read;
-  }).length;
-  var criticalCount = alerts.filter(function (alert) {
-    return alert.severity === "critical" || alert.severity === "high";
-  }).length;
+  var unreadCount = alerts.filter((alert) => !alert.is_read).length;
+  var criticalCount = alerts.filter(
+    (alert) => alert.severity === "critical" || alert.severity === "high",
+  ).length;
   // =====================================================================================
   // LOADING STATE
   // =====================================================================================
@@ -417,25 +399,23 @@ function InventoryAlerts() {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="space-y-3">
-            {__spreadArray([], Array(3), true).map(function (_, i) {
-              return (
-                <div key={i} className="animate-pulse">
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-5 h-5 bg-gray-200 rounded" />
-                      <div className="space-y-2">
-                        <div className="h-4 bg-gray-200 rounded w-48" />
-                        <div className="h-3 bg-gray-200 rounded w-64" />
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-16 h-5 bg-gray-200 rounded" />
-                      <div className="w-8 h-8 bg-gray-200 rounded" />
+            {__spreadArray([], Array(3), true).map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-5 h-5 bg-gray-200 rounded" />
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-48" />
+                      <div className="h-3 bg-gray-200 rounded w-64" />
                     </div>
                   </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-16 h-5 bg-gray-200 rounded" />
+                    <div className="w-8 h-8 bg-gray-200 rounded" />
+                  </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>
@@ -501,27 +481,21 @@ function InventoryAlerts() {
           <button_1.Button
             variant={filter === "all" ? "default" : "outline"}
             size="sm"
-            onClick={function () {
-              return setFilter("all");
-            }}
+            onClick={() => setFilter("all")}
           >
             All ({alerts.length})
           </button_1.Button>
           <button_1.Button
             variant={filter === "unread" ? "default" : "outline"}
             size="sm"
-            onClick={function () {
-              return setFilter("unread");
-            }}
+            onClick={() => setFilter("unread")}
           >
             Unread ({unreadCount})
           </button_1.Button>
           <button_1.Button
             variant={filter === "critical" ? "default" : "outline"}
             size="sm"
-            onClick={function () {
-              return setFilter("critical");
-            }}
+            onClick={() => setFilter("critical")}
           >
             Critical ({criticalCount})
           </button_1.Button>
@@ -542,7 +516,7 @@ function InventoryAlerts() {
               </p>
             </div>
           : <div className="space-y-3">
-              {filteredAlerts.map(function (alert) {
+              {filteredAlerts.map((alert) => {
                 var config = ALERT_CONFIG[alert.type];
                 var Icon = config.icon;
                 var severityConfig = SEVERITY_CONFIG[alert.severity];
@@ -597,9 +571,7 @@ function InventoryAlerts() {
                           <button_1.Button
                             variant="ghost"
                             size="sm"
-                            onClick={function () {
-                              return markAsRead(alert.id);
-                            }}
+                            onClick={() => markAsRead(alert.id)}
                             className="text-gray-500 hover:text-gray-700"
                           >
                             <lucide_react_1.CheckCircle className="h-4 w-4" />
@@ -608,9 +580,7 @@ function InventoryAlerts() {
                         <button_1.Button
                           variant="ghost"
                           size="sm"
-                          onClick={function () {
-                            return dismissAlert(alert.id);
-                          }}
+                          onClick={() => dismissAlert(alert.id)}
                           className="text-gray-500 hover:text-red-600"
                         >
                           <lucide_react_1.X className="h-4 w-4" />

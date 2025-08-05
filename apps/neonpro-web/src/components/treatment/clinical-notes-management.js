@@ -7,32 +7,31 @@
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClinicalNotesManagement = ClinicalNotesManagement;
 var react_1 = require("react");
@@ -205,7 +202,6 @@ var commonTemplates = [
   },
 ];
 function ClinicalNotesManagement(_a) {
-  var _this = this;
   var treatmentPlanId = _a.treatmentPlanId,
     patientId = _a.patientId,
     onSelectNote = _a.onSelectNote;
@@ -257,20 +253,17 @@ function ClinicalNotesManagement(_a) {
     },
   });
   // Load data on component mount
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadData();
     loadPatients();
   }, []);
   // Reload notes when filters change
-  (0, react_1.useEffect)(
-    function () {
-      loadClinicalNotes();
-    },
-    [filters, currentPage, searchText],
-  );
-  var loadData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    loadClinicalNotes();
+  }, [filters, currentPage, searchText]);
+  var loadData = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, loadClinicalNotes()];
@@ -280,11 +273,10 @@ function ClinicalNotesManagement(_a) {
         }
       });
     });
-  };
-  var loadClinicalNotes = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadClinicalNotes = () =>
+    __awaiter(this, void 0, void 0, function () {
       var searchFilters, response, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -318,11 +310,10 @@ function ClinicalNotesManagement(_a) {
         }
       });
     });
-  };
-  var loadPatients = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPatients = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -340,19 +331,18 @@ function ClinicalNotesManagement(_a) {
         }
       });
     });
-  };
-  var handleSearch = function (value) {
+  var handleSearch = (value) => {
     setSearchText(value);
     setCurrentPage(1);
   };
-  var handleFilterChange = function (key, value) {
-    setFilters(function (prev) {
+  var handleFilterChange = (key, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[key] = value), _a));
     });
     setCurrentPage(1);
   };
-  var openCreateDialog = function () {
+  var openCreateDialog = () => {
     setEditingNote(null);
     form.reset({
       treatment_plan_id: treatmentPlanId || "",
@@ -366,7 +356,7 @@ function ClinicalNotesManagement(_a) {
     });
     setIsDialogOpen(true);
   };
-  var openEditDialog = function (note) {
+  var openEditDialog = (note) => {
     setEditingNote(note);
     form.reset({
       treatment_plan_id: note.treatment_plan_id,
@@ -380,10 +370,10 @@ function ClinicalNotesManagement(_a) {
     });
     setIsDialogOpen(true);
   };
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -423,11 +413,10 @@ function ClinicalNotesManagement(_a) {
         }
       });
     });
-  };
-  var handleDeleteNote = function (note) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDeleteNote = (note) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -454,19 +443,13 @@ function ClinicalNotesManagement(_a) {
         }
       });
     });
-  };
-  var applyTemplate = function (template) {
+  var applyTemplate = (template) => {
     form.setValue("title", template.title);
     form.setValue("content", template.content);
   };
-  var formatDate = function (dateString) {
-    return (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy", { locale: locale_1.ptBR });
-  };
-  var getNoteType = function (type) {
-    return noteTypes.find(function (nt) {
-      return nt.value === type;
-    });
-  };
+  var formatDate = (dateString) =>
+    (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy", { locale: locale_1.ptBR });
+  var getNoteType = (type) => noteTypes.find((nt) => nt.value === type);
   var totalPages = Math.ceil(totalCount / perPage);
   return (
     <div className="space-y-6">
@@ -489,9 +472,7 @@ function ClinicalNotesManagement(_a) {
           <input_1.Input
             placeholder="Buscar notas clínicas..."
             value={searchText}
-            onChange={function (e) {
-              return handleSearch(e.target.value);
-            }}
+            onChange={(e) => handleSearch(e.target.value)}
             className="pl-9"
           />
         </div>
@@ -500,16 +481,16 @@ function ClinicalNotesManagement(_a) {
           {!patientId && (
             <select_1.Select
               value={filters.patient_id || "all"}
-              onValueChange={function (value) {
-                return handleFilterChange("patient_id", value === "all" ? undefined : value);
-              }}
+              onValueChange={(value) =>
+                handleFilterChange("patient_id", value === "all" ? undefined : value)
+              }
             >
               <select_1.SelectTrigger className="w-[200px]">
                 <select_1.SelectValue placeholder="Todos os pacientes" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">Todos os pacientes</select_1.SelectItem>
-                {patients.map(function (patient) {
+                {patients.map((patient) => {
                   var _a;
                   return (
                     <select_1.SelectItem key={patient.id} value={patient.id}>
@@ -524,22 +505,20 @@ function ClinicalNotesManagement(_a) {
 
           <select_1.Select
             value={filters.note_type || "all"}
-            onValueChange={function (value) {
-              return handleFilterChange("note_type", value === "all" ? undefined : value);
-            }}
+            onValueChange={(value) =>
+              handleFilterChange("note_type", value === "all" ? undefined : value)
+            }
           >
             <select_1.SelectTrigger className="w-[150px]">
               <select_1.SelectValue placeholder="Todos os tipos" />
             </select_1.SelectTrigger>
             <select_1.SelectContent>
               <select_1.SelectItem value="all">Todos os tipos</select_1.SelectItem>
-              {noteTypes.map(function (type) {
-                return (
-                  <select_1.SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </select_1.SelectItem>
-                );
-              })}
+              {noteTypes.map((type) => (
+                <select_1.SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </select_1.SelectItem>
+              ))}
             </select_1.SelectContent>
           </select_1.Select>
         </div>
@@ -558,18 +537,16 @@ function ClinicalNotesManagement(_a) {
                   <p className="text-muted-foreground">Comece criando uma nova nota clínica.</p>
                 </div>
               </div>
-            : notes.map(function (note) {
+            : notes.map((note) => {
                 var _a, _b, _c;
                 var noteType = getNoteType(note.note_type);
                 return (
                   <card_1.Card
                     key={note.id}
                     className="cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={function () {
-                      return onSelectNote === null || onSelectNote === void 0
-                        ? void 0
-                        : onSelectNote(note);
-                    }}
+                    onClick={() =>
+                      onSelectNote === null || onSelectNote === void 0 ? void 0 : onSelectNote(note)
+                    }
                   >
                     <card_1.CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
@@ -614,9 +591,7 @@ function ClinicalNotesManagement(_a) {
                             <button_1.Button
                               variant="ghost"
                               size="sm"
-                              onClick={function (e) {
-                                return e.stopPropagation();
-                              }}
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <lucide_react_1.MoreHorizontal className="h-4 w-4" />
                             </button_1.Button>
@@ -627,7 +602,7 @@ function ClinicalNotesManagement(_a) {
                             </dropdown_menu_1.DropdownMenuLabel>
                             <dropdown_menu_1.DropdownMenuSeparator />
                             <dropdown_menu_1.DropdownMenuItem
-                              onClick={function (e) {
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 onSelectNote === null || onSelectNote === void 0
                                   ? void 0
@@ -638,7 +613,7 @@ function ClinicalNotesManagement(_a) {
                               Ver detalhes
                             </dropdown_menu_1.DropdownMenuItem>
                             <dropdown_menu_1.DropdownMenuItem
-                              onClick={function (e) {
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 openEditDialog(note);
                               }}
@@ -649,7 +624,7 @@ function ClinicalNotesManagement(_a) {
                             <dropdown_menu_1.DropdownMenuSeparator />
                             <dropdown_menu_1.DropdownMenuItem
                               className="text-red-600"
-                              onClick={function (e) {
+                              onClick={(e) => {
                                 e.stopPropagation();
                                 handleDeleteNote(note);
                               }}
@@ -665,13 +640,11 @@ function ClinicalNotesManagement(_a) {
                       <p className="text-sm text-muted-foreground line-clamp-3">{note.content}</p>
                       {note.tags && note.tags.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-3">
-                          {note.tags.map(function (tag, index) {
-                            return (
-                              <badge_1.Badge key={index} variant="secondary" className="text-xs">
-                                {tag}
-                              </badge_1.Badge>
-                            );
-                          })}
+                          {note.tags.map((tag, index) => (
+                            <badge_1.Badge key={index} variant="secondary" className="text-xs">
+                              {tag}
+                            </badge_1.Badge>
+                          ))}
                         </div>
                       )}
                     </card_1.CardContent>
@@ -690,11 +663,7 @@ function ClinicalNotesManagement(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setCurrentPage(function (prev) {
-                  return Math.max(1, prev - 1);
-                });
-              }}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
             >
               Anterior
@@ -705,11 +674,7 @@ function ClinicalNotesManagement(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setCurrentPage(function (prev) {
-                  return Math.min(totalPages, prev + 1);
-                });
-              }}
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
             >
               Próxima
@@ -735,21 +700,17 @@ function ClinicalNotesManagement(_a) {
               <div className="space-y-3">
                 <label_1.Label>Modelos de Nota</label_1.Label>
                 <div className="flex flex-wrap gap-2">
-                  {commonTemplates.map(function (template, index) {
-                    return (
-                      <badge_1.Badge
-                        key={index}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                        onClick={function () {
-                          return applyTemplate(template);
-                        }}
-                      >
-                        <lucide_react_1.Plus className="mr-1 h-3 w-3" />
-                        {template.title}
-                      </badge_1.Badge>
-                    );
-                  })}
+                  {commonTemplates.map((template, index) => (
+                    <badge_1.Badge
+                      key={index}
+                      variant="outline"
+                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => applyTemplate(template)}
+                    >
+                      <lucide_react_1.Plus className="mr-1 h-3 w-3" />
+                      {template.title}
+                    </badge_1.Badge>
+                  ))}
                 </div>
               </div>
 
@@ -758,7 +719,7 @@ function ClinicalNotesManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="title"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -775,7 +736,7 @@ function ClinicalNotesManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="note_type"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -787,13 +748,11 @@ function ClinicalNotesManagement(_a) {
                             </select_1.SelectTrigger>
                           </form_1.FormControl>
                           <select_1.SelectContent>
-                            {noteTypes.map(function (type) {
-                              return (
-                                <select_1.SelectItem key={type.value} value={type.value}>
-                                  {type.label}
-                                </select_1.SelectItem>
-                              );
-                            })}
+                            {noteTypes.map((type) => (
+                              <select_1.SelectItem key={type.value} value={type.value}>
+                                {type.label}
+                              </select_1.SelectItem>
+                            ))}
                           </select_1.SelectContent>
                         </select_1.Select>
                         <form_1.FormMessage />
@@ -808,7 +767,7 @@ function ClinicalNotesManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="patient_id"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -820,7 +779,7 @@ function ClinicalNotesManagement(_a) {
                             </select_1.SelectTrigger>
                           </form_1.FormControl>
                           <select_1.SelectContent>
-                            {patients.map(function (patient) {
+                            {patients.map((patient) => {
                               var _a;
                               return (
                                 <select_1.SelectItem key={patient.id} value={patient.id}>
@@ -844,7 +803,7 @@ function ClinicalNotesManagement(_a) {
               <form_1.FormField
                 control={form.control}
                 name="created_date"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -863,7 +822,7 @@ function ClinicalNotesManagement(_a) {
               <form_1.FormField
                 control={form.control}
                 name="content"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -889,7 +848,7 @@ function ClinicalNotesManagement(_a) {
               <form_1.FormField
                 control={form.control}
                 name="tags"
-                render={function (_a) {
+                render={(_a) => {
                   var _b;
                   var field = _a.field;
                   return (
@@ -903,15 +862,11 @@ function ClinicalNotesManagement(_a) {
                               ? void 0
                               : _b.join(", ")) || ""
                           }
-                          onChange={function (e) {
+                          onChange={(e) => {
                             var tags = e.target.value
                               .split(",")
-                              .map(function (tag) {
-                                return tag.trim();
-                              })
-                              .filter(function (tag) {
-                                return tag.length > 0;
-                              });
+                              .map((tag) => tag.trim())
+                              .filter((tag) => tag.length > 0);
                             field.onChange(tags);
                           }}
                         />
@@ -930,9 +885,7 @@ function ClinicalNotesManagement(_a) {
                 <button_1.Button
                   type="button"
                   variant="outline"
-                  onClick={function () {
-                    return setIsDialogOpen(false);
-                  }}
+                  onClick={() => setIsDialogOpen(false)}
                 >
                   Cancelar
                 </button_1.Button>

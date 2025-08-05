@@ -1,7 +1,7 @@
 import type { NextRequest, NextResponse } from "next/server";
+import type { AuditLogger } from "@/lib/audit/audit-logger";
 import type { createsystemIntegrationManager } from "@/lib/patients/integration/system-integration-manager";
 import type { createClient } from "@/lib/supabase/server";
-import type { AuditLogger } from "@/lib/audit/audit-logger";
 
 const auditLogger = new AuditLogger();
 

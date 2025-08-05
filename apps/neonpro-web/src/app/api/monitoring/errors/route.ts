@@ -1,6 +1,6 @@
-import type { createClient } from "@/lib/supabase/server";
 import type { NextResponse } from "next/server";
 import type { intelligentErrorHandler } from "@/lib/error-handling/intelligent-error-handler";
+import type { createClient } from "@/lib/supabase/server";
 
 /**
  * 🔧 Error Monitoring & Management API

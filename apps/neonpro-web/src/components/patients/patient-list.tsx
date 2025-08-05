@@ -1,34 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
 import type {
-  Eye,
-  Calendar,
-  Edit,
-  Archive,
-  MoreHorizontal,
-  Phone,
-  Mail,
-  FileText,
   AlertTriangle,
-  Heart,
-  Grid,
-  List,
+  Archive,
+  Calendar,
   ChevronLeft,
   ChevronRight,
+  Edit,
+  Eye,
+  FileText,
+  Grid,
+  Heart,
+  List,
+  Mail,
+  MoreHorizontal,
+  Phone,
 } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import React, { useState } from "react";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type { Checkbox } from "@/components/ui/checkbox";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +30,14 @@ import type {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Skeleton } from "@/components/ui/skeleton";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 import PatientCard from "./patient-card";
 

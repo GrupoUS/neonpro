@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockAlertsManagement = StockAlertsManagement;
 var alert_1 = require("@/components/ui/alert");
@@ -193,7 +190,6 @@ var severityLabels = {
   critical: "Crítica",
 };
 function StockAlertsManagement(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, react_1.useState)([]),
     alerts = _b[0],
@@ -224,10 +220,10 @@ function StockAlertsManagement(_a) {
     setEditingConfig = _k[1];
   var toast = (0, use_toast_1.useToast)().toast;
   // Load alerts and configurations
-  var loadData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, alertsRes, configsRes, alertsData, configsData, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             setIsLoading(true);
@@ -271,12 +267,11 @@ function StockAlertsManagement(_a) {
         }
       });
     });
-  };
   // Resolve alert
-  var resolveAlert = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var resolveAlert = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -291,13 +286,13 @@ function StockAlertsManagement(_a) {
           case 1:
             response = _a.sent();
             if (response.ok) {
-              setAlerts(function (prev) {
-                return prev.map(function (alert) {
-                  return alert.id === alertId
+              setAlerts((prev) =>
+                prev.map((alert) =>
+                  alert.id === alertId
                     ? __assign(__assign({}, alert), { resolvedAt: new Date() })
-                    : alert;
-                });
-              });
+                    : alert,
+                ),
+              );
               toast({
                 title: "Alerta resolvido",
                 description: "O alerta foi marcado como resolvido.",
@@ -317,12 +312,11 @@ function StockAlertsManagement(_a) {
         }
       });
     });
-  };
   // Toggle configuration active status
-  var toggleConfig = function (configId, active) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var toggleConfig = (configId, active) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -337,13 +331,13 @@ function StockAlertsManagement(_a) {
           case 1:
             response = _a.sent();
             if (response.ok) {
-              setConfigs(function (prev) {
-                return prev.map(function (config) {
-                  return config.id === configId
+              setConfigs((prev) =>
+                prev.map((config) =>
+                  config.id === configId
                     ? __assign(__assign({}, config), { isActive: active })
-                    : config;
-                });
-              });
+                    : config,
+                ),
+              );
               toast({
                 title: active ? "Configuração ativada" : "Configuração desativada",
                 description: "A configura\u00E7\u00E3o foi ".concat(
@@ -366,9 +360,8 @@ function StockAlertsManagement(_a) {
         }
       });
     });
-  };
   // Filter alerts
-  var filteredAlerts = alerts.filter(function (alert) {
+  var filteredAlerts = alerts.filter((alert) => {
     if (filterSeverity !== "all" && alert.severityLevel !== filterSeverity) return false;
     if (filterType !== "all" && alert.alertType !== filterType) return false;
     if (filterStatus === "active" && alert.resolvedAt) return false;
@@ -376,11 +369,11 @@ function StockAlertsManagement(_a) {
     return true;
   });
   // Filter configs
-  var filteredConfigs = configs.filter(function (config) {
+  var filteredConfigs = configs.filter((config) => {
     if (filterType !== "all" && config.alertType !== filterType) return false;
     return true;
   });
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadData();
   }, []);
   if (isLoading) {
@@ -409,12 +402,7 @@ function StockAlertsManagement(_a) {
         </div>
       </card_1.CardHeader>
       <card_1.CardContent>
-        <tabs_1.Tabs
-          value={selectedTab}
-          onValueChange={function (value) {
-            return setSelectedTab(value);
-          }}
-        >
+        <tabs_1.Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value)}>
           <tabs_1.TabsList className="grid w-full grid-cols-2">
             <tabs_1.TabsTrigger value="alerts" className="flex items-center gap-2">
               <lucide_react_1.AlertTriangle className="h-4 w-4" />
@@ -435,9 +423,7 @@ function StockAlertsManagement(_a) {
 
             <select_1.Select
               value={filterSeverity}
-              onValueChange={function (value) {
-                return setFilterSeverity(value);
-              }}
+              onValueChange={(value) => setFilterSeverity(value)}
             >
               <select_1.SelectTrigger className="w-32">
                 <select_1.SelectValue placeholder="Severidade" />
@@ -451,12 +437,7 @@ function StockAlertsManagement(_a) {
               </select_1.SelectContent>
             </select_1.Select>
 
-            <select_1.Select
-              value={filterType}
-              onValueChange={function (value) {
-                return setFilterType(value);
-              }}
-            >
+            <select_1.Select value={filterType} onValueChange={(value) => setFilterType(value)}>
               <select_1.SelectTrigger className="w-40">
                 <select_1.SelectValue placeholder="Tipo" />
               </select_1.SelectTrigger>
@@ -472,9 +453,7 @@ function StockAlertsManagement(_a) {
             {selectedTab === "alerts" && (
               <select_1.Select
                 value={filterStatus}
-                onValueChange={function (value) {
-                  return setFilterStatus(value);
-                }}
+                onValueChange={(value) => setFilterStatus(value)}
               >
                 <select_1.SelectTrigger className="w-32">
                   <select_1.SelectValue placeholder="Status" />
@@ -498,7 +477,7 @@ function StockAlertsManagement(_a) {
                 </alert_1.Alert>
               : <scroll_area_1.ScrollArea className="h-96">
                   <div className="space-y-3">
-                    {filteredAlerts.map(function (alert) {
+                    {filteredAlerts.map((alert) => {
                       var Icon = alertTypeIcons[alert.alertType];
                       var isResolved = !!alert.resolvedAt;
                       return (
@@ -555,9 +534,7 @@ function StockAlertsManagement(_a) {
 
                             {!isResolved && (
                               <button_1.Button
-                                onClick={function () {
-                                  return resolveAlert(alert.id);
-                                }}
+                                onClick={() => resolveAlert(alert.id)}
                                 variant="outline"
                                 size="sm"
                               >
@@ -580,11 +557,7 @@ function StockAlertsManagement(_a) {
               </p>
               <dialog_1.Dialog open={showConfigDialog} onOpenChange={setShowConfigDialog}>
                 <dialog_1.DialogTrigger asChild>
-                  <button_1.Button
-                    onClick={function () {
-                      return setEditingConfig(null);
-                    }}
-                  >
+                  <button_1.Button onClick={() => setEditingConfig(null)}>
                     <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                     Nova Configuração
                   </button_1.Button>
@@ -600,14 +573,12 @@ function StockAlertsManagement(_a) {
                   </dialog_1.DialogHeader>
                   <ConfigForm
                     config={editingConfig}
-                    onSave={function (config) {
+                    onSave={(config) => {
                       // Handle save
                       setShowConfigDialog(false);
                       loadData();
                     }}
-                    onCancel={function () {
-                      return setShowConfigDialog(false);
-                    }}
+                    onCancel={() => setShowConfigDialog(false)}
                   />
                 </dialog_1.DialogContent>
               </dialog_1.Dialog>
@@ -631,60 +602,56 @@ function StockAlertsManagement(_a) {
                     </table_1.TableRow>
                   </table_1.TableHeader>
                   <table_1.TableBody>
-                    {filteredConfigs.map(function (config) {
-                      return (
-                        <table_1.TableRow key={config.id}>
-                          <table_1.TableCell>
-                            <div className="flex items-center gap-2">
-                              {(function () {
-                                var Icon = alertTypeIcons[config.alertType];
-                                return <Icon className="h-4 w-4" />;
-                              })()}
-                              {alertTypeLabels[config.alertType]}
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="text-sm">
-                              {config.thresholdUnit === "percentage"
-                                ? "".concat(config.thresholdValue, "%")
-                                : "".concat(config.thresholdValue, " unidades")}
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge
-                              variant={
-                                config.severityLevel === "critical" ? "destructive" : "secondary"
-                              }
-                              className="text-xs"
-                            >
-                              {severityLabels[config.severityLevel]}
-                            </badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <switch_1.Switch
-                              checked={config.isActive}
-                              onCheckedChange={function (checked) {
-                                return toggleConfig(config.id, checked);
+                    {filteredConfigs.map((config) => (
+                      <table_1.TableRow key={config.id}>
+                        <table_1.TableCell>
+                          <div className="flex items-center gap-2">
+                            {(() => {
+                              var Icon = alertTypeIcons[config.alertType];
+                              return <Icon className="h-4 w-4" />;
+                            })()}
+                            {alertTypeLabels[config.alertType]}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">
+                            {config.thresholdUnit === "percentage"
+                              ? "".concat(config.thresholdValue, "%")
+                              : "".concat(config.thresholdValue, " unidades")}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge
+                            variant={
+                              config.severityLevel === "critical" ? "destructive" : "secondary"
+                            }
+                            className="text-xs"
+                          >
+                            {severityLabels[config.severityLevel]}
+                          </badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <switch_1.Switch
+                            checked={config.isActive}
+                            onCheckedChange={(checked) => toggleConfig(config.id, checked)}
+                          />
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center gap-2">
+                            <button_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setEditingConfig(config);
+                                setShowConfigDialog(true);
                               }}
-                            />
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center gap-2">
-                              <button_1.Button
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  setEditingConfig(config);
-                                  setShowConfigDialog(true);
-                                }}
-                              >
-                                <lucide_react_1.Edit className="h-4 w-4" />
-                              </button_1.Button>
-                            </div>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                            >
+                              <lucide_react_1.Edit className="h-4 w-4" />
+                            </button_1.Button>
+                          </div>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
                   </table_1.TableBody>
                 </table_1.Table>}
           </tabs_1.TabsContent>
@@ -707,13 +674,7 @@ function ConfigForm(_a) {
         <button_1.Button variant="outline" onClick={onCancel}>
           Cancelar
         </button_1.Button>
-        <button_1.Button
-          onClick={function () {
-            return onSave({});
-          }}
-        >
-          Salvar
-        </button_1.Button>
+        <button_1.Button onClick={() => onSave({})}>Salvar</button_1.Button>
       </dialog_1.DialogFooter>
     </div>
   );

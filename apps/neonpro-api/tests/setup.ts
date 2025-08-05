@@ -1,4 +1,14 @@
 import "dotenv/config";
+/// <reference types="jest" />
+import { jest, afterEach } from "@jest/globals";
+
+// Global type declarations for tests
+declare global {
+  var testConfig: any;
+  var __HEALTHCARE_DB__: any;
+  var __REDIS_SERVER__: any;
+  var __TEST_FASTIFY__: any;
+}
 
 // Configuração global para testes
 process.env.NODE_ENV = "test";
@@ -54,8 +64,8 @@ jest.mock("../src/plugins/supabase", () => ({
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: {}, error: null }),
-      execute: jest.fn().mockResolvedValue({ data: [], error: null }),
+      single: jest.fn().mockImplementation(() => Promise.resolve({ data: {}, error: null })),
+      execute: jest.fn().mockImplementation(() => Promise.resolve({ data: [], error: null })),
     };
 
     fastify.decorate("supabase", mockSupabase);
@@ -66,7 +76,7 @@ jest.mock("../src/plugins/supabase", () => ({
 jest.mock("../src/plugins/audit", () => ({
   __esModule: true,
   default: async function mockAuditPlugin(fastify: any) {
-    fastify.decorate("auditLog", jest.fn().mockResolvedValue(true));
+    fastify.decorate("auditLog", jest.fn().mockImplementation(() => Promise.resolve(true)));
   },
 }));
 

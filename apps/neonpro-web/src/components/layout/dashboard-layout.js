@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardLayout = DashboardLayout;
 var lucide_react_1 = require("lucide-react");
@@ -105,9 +104,7 @@ function DashboardLayout(_a) {
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={function () {
-            return setSidebarOpen(false);
-          }}
+          onClick={() => setSidebarOpen(false)}
         />
       )}
 
@@ -134,9 +131,7 @@ function DashboardLayout(_a) {
               variant="ghost"
               size="sm"
               className="lg:hidden"
-              onClick={function () {
-                return setSidebarOpen(false);
-              }}
+              onClick={() => setSidebarOpen(false)}
             >
               <lucide_react_1.X className="w-4 h-4" />
             </button_1.Button>
@@ -144,7 +139,7 @@ function DashboardLayout(_a) {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">
-            {navigationItems.map(function (item) {
+            {navigationItems.map((item) => {
               var isActive = pathname === item.href;
               return (
                 <link_1.default
@@ -156,9 +151,7 @@ function DashboardLayout(_a) {
                       : "text-muted-foreground hover:text-foreground hover:bg-accent",
                     "\n                  ",
                   )}
-                  onClick={function () {
-                    return setSidebarOpen(false);
-                  }}
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <item.icon className="w-4 h-4" />
                   <span className="flex-1">{item.title}</span>
@@ -186,9 +179,7 @@ function DashboardLayout(_a) {
                       <avatar_1.AvatarFallback className="bg-primary text-primary-foreground text-xs">
                         {user.name
                           .split(" ")
-                          .map(function (n) {
-                            return n[0];
-                          })
+                          .map((n) => n[0])
                           .join("")}
                       </avatar_1.AvatarFallback>
                     </avatar_1.Avatar>
@@ -231,18 +222,15 @@ function DashboardLayout(_a) {
               variant="ghost"
               size="sm"
               className="lg:hidden"
-              onClick={function () {
-                return setSidebarOpen(true);
-              }}
+              onClick={() => setSidebarOpen(true)}
             >
               <lucide_react_1.Menu className="w-4 h-4" />
             </button_1.Button>
 
             <div>
               <h2 className="text-lg font-semibold text-foreground">
-                {((_b = navigationItems.find(function (item) {
-                  return item.href === pathname;
-                })) === null || _b === void 0
+                {((_b = navigationItems.find((item) => item.href === pathname)) === null ||
+                _b === void 0
                   ? void 0
                   : _b.title) || "Dashboard"}
               </h2>

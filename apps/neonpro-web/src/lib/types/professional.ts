@@ -465,4 +465,4 @@ export interface CredentialingAlert {
   related_workflow?: CredentialingWorkflow;
 }
 
-export { z };
+export type { z };

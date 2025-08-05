@@ -40,10 +40,10 @@ export class TokenEncryptionService {
    */
   static encryptToken(token: string): EncryptionResult {
     try {
-      const masterKey = this.getEncryptionKey();
+      const masterKey = TokenEncryptionService.getEncryptionKey();
       const salt = crypto.randomBytes(SALT_LENGTH);
       const iv = crypto.randomBytes(IV_LENGTH);
-      const key = this.deriveKey(masterKey, salt);
+      const key = TokenEncryptionService.deriveKey(masterKey, salt);
 
       const cipher = crypto.createCipher(ALGORITHM, key);
       cipher.setAAD(Buffer.from("neonpro-oauth-token"));
@@ -71,11 +71,11 @@ export class TokenEncryptionService {
    */
   static decryptToken(encryptionData: EncryptionResult): string {
     try {
-      const masterKey = this.getEncryptionKey();
+      const masterKey = TokenEncryptionService.getEncryptionKey();
       const salt = Buffer.from(encryptionData.salt, "hex");
       const iv = Buffer.from(encryptionData.iv, "hex");
       const tag = Buffer.from(encryptionData.tag, "hex");
-      const key = this.deriveKey(masterKey, salt);
+      const key = TokenEncryptionService.deriveKey(masterKey, salt);
 
       const decipher = crypto.createDecipher(ALGORITHM, key);
       decipher.setAAD(Buffer.from("neonpro-oauth-token"));

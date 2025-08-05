@@ -13,10 +13,27 @@
 
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
-import type { useForm, Controller } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  AlertCircle,
+  Brain,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  FileText,
+  Mail,
+  Phone,
+  Save,
+  Shield,
+  Stethoscope,
+  User,
+} from "lucide-react";
+import type { useCallback, useEffect, useState } from "react";
+import type { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -24,10 +41,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -35,26 +52,9 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Progress } from "@/components/ui/progress";
-import type {
-  Save,
-  AlertCircle,
-  CheckCircle2,
-  User,
-  Phone,
-  Mail,
-  Calendar,
-  Stethoscope,
-  Shield,
-  Brain,
-  Clock,
-  FileText,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useAccessibility } from "@/contexts/accessibility-context";
+import type { cn } from "@/lib/utils";
 
 // Schema de validação com regras médicas específicas
 const clinicalFormSchema = z.object({

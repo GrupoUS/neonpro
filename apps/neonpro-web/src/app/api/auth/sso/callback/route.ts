@@ -1,11 +1,7 @@
 // SSO Callback Route
 // Story 1.3: SSO Integration - OAuth Callback Processing
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { ssoManager } from "@/lib/auth/sso/sso-manager";
-import type { logger } from "@/lib/logger";
-import type { z } from "zod";
-import type { cookies } from "next/headers";
+import type { NextRequest } from "next/server";
 
 const callbackSchema = z.object({
   code: z.string().min(1, "Authorization code is required"),

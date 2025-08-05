@@ -8,26 +8,26 @@
 "use client";
 
 import type {
+  AlertTriangle,
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  Lightbulb,
+  Star,
+  Target,
+  TrendingUp,
+} from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Progress } from "@/components/ui/progress";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Lightbulb,
-  TrendingUp,
-  Clock,
-  Target,
-  ArrowRight,
-  CheckCircle,
-  AlertTriangle,
-  Star,
-} from "lucide-react";
 
 interface Recommendation {
   type: string;

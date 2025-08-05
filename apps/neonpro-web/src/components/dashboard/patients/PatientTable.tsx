@@ -1,23 +1,19 @@
-import React from "react";
 import type {
-  Eye,
-  Edit,
-  Trash2,
+  Calendar,
   ChevronLeft,
   ChevronRight,
+  Edit,
+  Eye,
+  Mail,
   MoreHorizontal,
   Phone,
-  Mail,
-  Calendar,
+  Trash2,
 } from "lucide-react";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import type React from "react";
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,10 +22,14 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface TablePatient {
   id: number;

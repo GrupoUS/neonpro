@@ -1,12 +1,12 @@
+import { v4 as uuidv4 } from "uuid";
 import type {
-  Env,
-  VitalSigns,
-  SystemAlert,
-  AlertType,
   AlertSeverity,
+  AlertType,
+  Env,
+  SystemAlert,
+  VitalSigns,
   VitalSignsRange,
 } from "./types";
-import { v4 as uuidv4 } from "uuid";
 
 export class AlertProcessor {
   private env: Env;
@@ -466,10 +466,10 @@ export class AlertProcessor {
         // Apply filters
         if (filters) {
           if (filters.severity) {
-            alerts = alerts.filter((alert) => filters.severity!.includes(alert.severity));
+            alerts = alerts.filter((alert) => filters.severity?.includes(alert.severity));
           }
           if (filters.type) {
-            alerts = alerts.filter((alert) => filters.type!.includes(alert.type));
+            alerts = alerts.filter((alert) => filters.type?.includes(alert.type));
           }
           if (filters.patientId) {
             alerts = alerts.filter((alert) => alert.patientId === filters.patientId);

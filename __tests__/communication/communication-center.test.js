@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,9 +128,9 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 var user_event_1 = require("@testing-library/user-event");
 var react_query_1 = require("@tanstack/react-query");
@@ -142,45 +139,31 @@ var CommunicationInbox_1 = require("@/app/components/communication/Communication
 var MessageComposer_1 = require("@/app/components/communication/MessageComposer");
 var TemplateManager_1 = require("@/app/components/communication/TemplateManager");
 // Mock the communication hooks
-jest.mock("@/app/hooks/use-communication", function () {
-  return {
-    useMessageThreads: jest.fn(),
-    useMessages: jest.fn(),
-    useCreateMessage: jest.fn(),
-    useMarkMessageRead: jest.fn(),
-    useCreateThread: jest.fn(),
-    useUpdateThread: jest.fn(),
-    useDeleteThread: jest.fn(),
-    useTemplates: jest.fn(),
-    useCreateTemplate: jest.fn(),
-    useUpdateTemplate: jest.fn(),
-    useDeleteTemplate: jest.fn(),
-    useDuplicateTemplate: jest.fn(),
-    useMessageStatistics: jest.fn(),
-  };
-});
+jest.mock("@/app/hooks/use-communication", () => ({
+  useMessageThreads: jest.fn(),
+  useMessages: jest.fn(),
+  useCreateMessage: jest.fn(),
+  useMarkMessageRead: jest.fn(),
+  useCreateThread: jest.fn(),
+  useUpdateThread: jest.fn(),
+  useDeleteThread: jest.fn(),
+  useTemplates: jest.fn(),
+  useCreateTemplate: jest.fn(),
+  useUpdateTemplate: jest.fn(),
+  useDeleteTemplate: jest.fn(),
+  useDuplicateTemplate: jest.fn(),
+  useMessageStatistics: jest.fn(),
+}));
 // Mock date-fns
-jest.mock("date-fns", function () {
-  return {
-    formatDistanceToNow: jest.fn(function () {
-      return "2 horas atrás";
-    }),
-    format: jest.fn(function () {
-      return "30/01/2025 10:30";
-    }),
-    isToday: jest.fn(function () {
-      return true;
-    }),
-    isYesterday: jest.fn(function () {
-      return false;
-    }),
-  };
-});
-jest.mock("date-fns/locale", function () {
-  return {
-    ptBR: {},
-  };
-});
+jest.mock("date-fns", () => ({
+  formatDistanceToNow: jest.fn(() => "2 horas atrás"),
+  format: jest.fn(() => "30/01/2025 10:30"),
+  isToday: jest.fn(() => true),
+  isYesterday: jest.fn(() => false),
+}));
+jest.mock("date-fns/locale", () => ({
+  ptBR: {},
+}));
 var mockHooks = require("@/app/hooks/use-communication");
 // Test utilities
 function createWrapper() {
@@ -190,7 +173,7 @@ function createWrapper() {
       mutations: { retry: false },
     },
   });
-  return function (_a) {
+  return (_a) => {
     var children = _a.children;
     return (
       <react_query_1.QueryClientProvider client={queryClient}>
@@ -331,8 +314,8 @@ var mockTemplates = [
     },
   },
 ];
-describe("Communication Center", function () {
-  beforeEach(function () {
+describe("Communication Center", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Setup default mock returns
     mockHooks.useMessageStatistics.mockReturnValue({
@@ -416,8 +399,8 @@ describe("Communication Center", function () {
       isPending: false,
     });
   });
-  describe("CommunicationDashboard", function () {
-    it("renders dashboard with statistics correctly", function () {
+  describe("CommunicationDashboard", () => {
+    it("renders dashboard with statistics correctly", () => {
       (0, react_2.render)(<CommunicationDashboard_1.CommunicationDashboard />, {
         wrapper: createWrapper(),
       });
@@ -432,17 +415,17 @@ describe("Communication Center", function () {
       expect(react_2.screen.getByRole("tab", { name: /templates/i })).toBeInTheDocument();
       expect(react_2.screen.getByRole("tab", { name: /configurações/i })).toBeInTheDocument();
     });
-    it("shows unread message badge in inbox tab", function () {
+    it("shows unread message badge in inbox tab", () => {
       (0, react_2.render)(<CommunicationDashboard_1.CommunicationDashboard />, {
         wrapper: createWrapper(),
       });
       var inboxTab = react_2.screen.getByRole("tab", { name: /caixa de entrada/i });
       expect((0, react_2.within)(inboxTab).getByText("5")).toBeInTheDocument();
     });
-    it("switches between tabs correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("switches between tabs correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, composeTab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -464,12 +447,11 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles template selection correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles template selection correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, templatesTab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -489,11 +471,10 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("CommunicationInbox", function () {
-    it("renders thread list correctly", function () {
+  describe("CommunicationInbox", () => {
+    it("renders thread list correctly", () => {
       (0, react_2.render)(<CommunicationInbox_1.CommunicationInbox />, {
         wrapper: createWrapper(),
       });
@@ -503,7 +484,7 @@ describe("Communication Center", function () {
       expect(react_2.screen.getByText("Consulta de retorno")).toBeInTheDocument();
       expect(react_2.screen.getByText("Agendamento de consulta")).toBeInTheDocument();
     });
-    it("shows unread count badges correctly", function () {
+    it("shows unread count badges correctly", () => {
       (0, react_2.render)(<CommunicationInbox_1.CommunicationInbox />, {
         wrapper: createWrapper(),
       });
@@ -511,10 +492,10 @@ describe("Communication Center", function () {
       var firstThread = react_2.screen.getByText("Maria Silva").closest("div");
       expect((0, react_2.within)(firstThread).getByText("2")).toBeInTheDocument();
     });
-    it("handles thread filtering", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("handles thread filtering", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, searchInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -538,12 +519,11 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles thread selection and message loading", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles thread selection and message loading", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, firstThread;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -567,22 +547,21 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("MessageComposer", function () {
-    it("renders compose form correctly", function () {
+  describe("MessageComposer", () => {
+    it("renders compose form correctly", () => {
       (0, react_2.render)(<MessageComposer_1.MessageComposer />, { wrapper: createWrapper() });
       expect(react_2.screen.getByText("Nova Mensagem")).toBeInTheDocument();
       expect(react_2.screen.getByLabelText(/destinatário/i)).toBeInTheDocument();
       expect(react_2.screen.getByLabelText(/canal/i)).toBeInTheDocument();
       expect(react_2.screen.getByLabelText(/mensagem/i)).toBeInTheDocument();
     });
-    it("handles template selection", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var user, mockTemplate;
-        return __generator(this, function (_a) {
-          user = user_event_1.default.setup();
+    it("handles template selection", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _user, mockTemplate;
+        return __generator(this, (_a) => {
+          _user = user_event_1.default.setup();
           mockTemplate = mockTemplates[0];
           (0, react_2.render)(
             <MessageComposer_1.MessageComposer selectedTemplate={mockTemplate} />,
@@ -596,12 +575,11 @@ describe("Communication Center", function () {
           expect(react_2.screen.getByText("hora")).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    it("handles variable replacement", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles variable replacement", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, mockTemplate, nomeInput, dataInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -628,12 +606,11 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("sends message correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("sends message correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, mockCreateMessage, recipientSelect, channelSelect, messageInput, sendButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -686,20 +663,19 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("TemplateManager", function () {
-    it("renders template list correctly", function () {
+  describe("TemplateManager", () => {
+    it("renders template list correctly", () => {
       (0, react_2.render)(<TemplateManager_1.TemplateManager />, { wrapper: createWrapper() });
       expect(react_2.screen.getByText("Gerenciar Templates")).toBeInTheDocument();
       expect(react_2.screen.getByText("Lembrete de Consulta")).toBeInTheDocument();
       expect(react_2.screen.getByText("Confirmação de Agendamento")).toBeInTheDocument();
     });
-    it("handles template search and filtering", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("handles template search and filtering", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, searchInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -718,12 +694,11 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("opens create template dialog", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("opens create template dialog", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, createButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -740,12 +715,11 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("creates new template correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("creates new template correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, mockCreateTemplate, createButton, submitButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -797,12 +771,11 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles template selection in selection mode", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles template selection in selection mode", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, mockOnSelect, template;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -822,12 +795,11 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles template duplication", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles template duplication", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, mockDuplicateTemplate, moreButtons, firstMoreButton, duplicateButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -840,7 +812,7 @@ describe("Communication Center", function () {
                 wrapper: createWrapper(),
               });
               moreButtons = react_2.screen.getAllByRole("button");
-              firstMoreButton = moreButtons.find(function (btn) {
+              firstMoreButton = moreButtons.find((btn) => {
                 var _a;
                 return (_a = btn.querySelector("svg")) === null || _a === void 0
                   ? void 0
@@ -863,11 +835,10 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling", function () {
-    it("handles loading states correctly", function () {
+  describe("Error Handling", () => {
+    it("handles loading states correctly", () => {
       mockHooks.useMessageThreads.mockReturnValue({
         data: null,
         isLoading: true,
@@ -878,7 +849,7 @@ describe("Communication Center", function () {
       });
       expect(react_2.screen.getByText("Carregando conversas...")).toBeInTheDocument();
     });
-    it("handles error states correctly", function () {
+    it("handles error states correctly", () => {
       mockHooks.useMessageThreads.mockReturnValue({
         data: null,
         isLoading: false,
@@ -889,7 +860,7 @@ describe("Communication Center", function () {
       });
       expect(react_2.screen.getByText(/erro ao carregar/i)).toBeInTheDocument();
     });
-    it("handles empty states correctly", function () {
+    it("handles empty states correctly", () => {
       mockHooks.useMessageThreads.mockReturnValue({
         data: {
           data: {
@@ -913,11 +884,11 @@ describe("Communication Center", function () {
       expect(react_2.screen.getByText("Nenhuma conversa encontrada")).toBeInTheDocument();
     });
   });
-  describe("Integration", function () {
-    it("integrates all components correctly in dashboard", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Integration", () => {
+    it("integrates all components correctly in dashboard", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -947,9 +918,8 @@ describe("Communication Center", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles patient-specific mode correctly", function () {
+      }));
+    it("handles patient-specific mode correctly", () => {
       (0, react_2.render)(
         <CommunicationDashboard_1.CommunicationDashboard patientId="patient-1" />,
         { wrapper: createWrapper() },

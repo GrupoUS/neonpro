@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useAuth = exports.supabase = void 0;
 exports.AuthProvider = AuthProvider;
@@ -147,72 +144,44 @@ var AuthContext = (0, react_1.createContext)({
   user: null,
   session: null,
   loading: true,
-  signIn: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { error: null }];
-      });
-    });
-  },
-  signUp: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { error: null }];
-      });
-    });
-  },
-  signOut: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
-    });
-  },
-  signInWithGoogle: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { error: null }];
-      });
-    });
-  },
-  refreshSession: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { error: null }];
-      });
-    });
-  },
-  getValidSession: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { session: null, error: null }];
-      });
-    });
-  },
-  checkPermission: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, false];
-      });
-    });
-  },
-  getUserPermissions: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, null];
-      });
-    });
-  },
-  hasRole: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, false];
-      });
-    });
-  },
+  signIn: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/, { error: null }]);
+    }),
+  signUp: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/, { error: null }]);
+    }),
+  signOut: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/]);
+    }),
+  signInWithGoogle: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/, { error: null }]);
+    }),
+  refreshSession: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/, { error: null }]);
+    }),
+  getValidSession: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/, { session: null, error: null }]);
+    }),
+  checkPermission: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/, false]);
+    }),
+  getUserPermissions: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/, null]);
+    }),
+  hasRole: () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => [2 /*return*/, false]);
+    }),
 });
 function AuthProvider(_a) {
-  var _this = this;
   var children = _a.children;
   var _b = (0, react_1.useState)(null),
     user = _b[0],
@@ -223,12 +192,12 @@ function AuthProvider(_a) {
   var _d = (0, react_1.useState)(true),
     loading = _d[0],
     setLoading = _d[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Real auth state setup
-    var initializeAuth = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    var initializeAuth = () =>
+      __awaiter(this, void 0, void 0, function () {
         var session_1, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
@@ -257,13 +226,12 @@ function AuthProvider(_a) {
           }
         });
       });
-    };
     initializeAuth();
     // Set up real auth state listener
-    var subscription = exports.supabase.auth.onAuthStateChange(function (event, session) {
-      return __awaiter(_this, void 0, void 0, function () {
+    var subscription = exports.supabase.auth.onAuthStateChange((event, session) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           console.log("🔄 Auth state change:", event, !!session);
           if (session) {
             console.log(
@@ -280,16 +248,14 @@ function AuthProvider(_a) {
           setLoading(false);
           return [2 /*return*/];
         });
-      });
-    }).data.subscription;
-    return function () {
-      return subscription.unsubscribe();
-    };
+      }),
+    ).data.subscription;
+    return () => subscription.unsubscribe();
   }, []);
-  var signIn = function (email, password) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var signIn = (email, password) =>
+    __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -306,11 +272,10 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
-  var signUp = function (email, password, name) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var signUp = (email, password, name) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, err_1, authError;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -357,11 +322,10 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
-  var signOut = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var signOut = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 6, , 8]);
@@ -409,9 +373,8 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
-  var signInWithGoogle = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var signInWithGoogle = () =>
+    __awaiter(this, void 0, void 0, function () {
       var startTime_1,
         _a,
         data,
@@ -426,8 +389,7 @@ function AuthProvider(_a) {
         authError,
         error_3,
         authError;
-      var _this = this;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 6, , 7]);
@@ -517,78 +479,81 @@ function AuthProvider(_a) {
               // Faster monitoring with aggressive timeout for ≤3s requirement
               return [
                 2 /*return*/,
-                new Promise(function (resolve) {
+                new Promise((resolve) => {
                   var resolved = false;
-                  var checkInterval = setInterval(function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      var session_2, totalTime, authError_2, session_3, totalTime, err_2;
-                      return __generator(this, function (_a) {
-                        switch (_a.label) {
-                          case 0:
-                            _a.trys.push([0, 7, , 8]);
-                            if (!popup_1.closed) return [3 /*break*/, 4];
-                            clearInterval(checkInterval);
-                            if (!!resolved) return [3 /*break*/, 3];
-                            // Shorter wait time for faster response
-                            console.log("🔄 Popup closed, checking session...");
-                            return [
-                              4 /*yield*/,
-                              new Promise(function (resolve) {
-                                return setTimeout(resolve, 500);
-                              }),
-                            ];
-                          case 1:
-                            _a.sent();
-                            return [4 /*yield*/, exports.supabase.auth.getSession()];
-                          case 2:
-                            session_2 = _a.sent().data.session;
-                            totalTime = Date.now() - startTime_1;
-                            if (session_2) {
-                              console.log("\u2705 Auth successful in ".concat(totalTime, "ms"));
-                              resolved = true;
-                              resolve({ error: null });
-                            } else {
-                              console.log("❌ Popup closed without authentication");
-                              resolved = true;
-                              authError_2 = {
-                                message: "Authentication cancelled",
-                                __isAuthError: true,
-                              };
-                              resolve({ error: authError_2 });
-                            }
-                            _a.label = 3;
-                          case 3:
-                            return [3 /*break*/, 6];
-                          case 4:
-                            return [4 /*yield*/, exports.supabase.auth.getSession()];
-                          case 5:
-                            session_3 = _a.sent().data.session;
-                            if (session_3 && !resolved) {
+                  var checkInterval = setInterval(
+                    () =>
+                      __awaiter(this, void 0, void 0, function () {
+                        var session_2, totalTime, authError_2, session_3, totalTime, err_2;
+                        return __generator(this, (_a) => {
+                          switch (_a.label) {
+                            case 0:
+                              _a.trys.push([0, 7, , 8]);
+                              if (!popup_1.closed) return [3 /*break*/, 4];
                               clearInterval(checkInterval);
+                              if (resolved) return [3 /*break*/, 3];
+                              // Shorter wait time for faster response
+                              console.log("🔄 Popup closed, checking session...");
+                              return [
+                                4 /*yield*/,
+                                new Promise((resolve) => setTimeout(resolve, 500)),
+                              ];
+                            case 1:
+                              _a.sent();
+                              return [4 /*yield*/, exports.supabase.auth.getSession()];
+                            case 2:
+                              session_2 = _a.sent().data.session;
                               totalTime = Date.now() - startTime_1;
-                              console.log(
-                                "\u2705 Auth successful in ".concat(totalTime, "ms, closing popup"),
-                              );
-                              // Immediate close for faster completion
-                              popup_1.close();
-                              resolved = true;
-                              resolve({ error: null });
-                            }
-                            _a.label = 6;
-                          case 6:
-                            return [3 /*break*/, 8];
-                          case 7:
-                            err_2 = _a.sent();
-                            console.error("❌ Error checking popup status:", err_2);
-                            return [3 /*break*/, 8];
-                          case 8:
-                            return [2 /*return*/];
-                        }
-                      });
-                    });
-                  }, 300); // Faster polling for quicker response
+                              if (session_2) {
+                                console.log("\u2705 Auth successful in ".concat(totalTime, "ms"));
+                                resolved = true;
+                                resolve({ error: null });
+                              } else {
+                                console.log("❌ Popup closed without authentication");
+                                resolved = true;
+                                authError_2 = {
+                                  message: "Authentication cancelled",
+                                  __isAuthError: true,
+                                };
+                                resolve({ error: authError_2 });
+                              }
+                              _a.label = 3;
+                            case 3:
+                              return [3 /*break*/, 6];
+                            case 4:
+                              return [4 /*yield*/, exports.supabase.auth.getSession()];
+                            case 5:
+                              session_3 = _a.sent().data.session;
+                              if (session_3 && !resolved) {
+                                clearInterval(checkInterval);
+                                totalTime = Date.now() - startTime_1;
+                                console.log(
+                                  "\u2705 Auth successful in ".concat(
+                                    totalTime,
+                                    "ms, closing popup",
+                                  ),
+                                );
+                                // Immediate close for faster completion
+                                popup_1.close();
+                                resolved = true;
+                                resolve({ error: null });
+                              }
+                              _a.label = 6;
+                            case 6:
+                              return [3 /*break*/, 8];
+                            case 7:
+                              err_2 = _a.sent();
+                              console.error("❌ Error checking popup status:", err_2);
+                              return [3 /*break*/, 8];
+                            case 8:
+                              return [2 /*return*/];
+                          }
+                        });
+                      }),
+                    300,
+                  ); // Faster polling for quicker response
                   // Aggressive timeout for ≤3s requirement (3.5s total)
-                  setTimeout(function () {
+                  setTimeout(() => {
                     clearInterval(checkInterval);
                     if (popup_1 && !popup_1.closed) {
                       popup_1.close();
@@ -625,12 +590,11 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
   // Manual refresh session method for critical operations
-  var refreshSession = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var refreshSession = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_4, authError;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -662,10 +626,9 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
   // Get valid session with automatic refresh if needed (for critical operations)
-  var getValidSession = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var getValidSession = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a,
         session_4,
         error,
@@ -676,7 +639,7 @@ function AuthProvider(_a) {
         newSession,
         error_5,
         authError;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 5, , 6]);
@@ -725,12 +688,11 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
   // Permission validation methods
-  var checkPermission = function (resource, action) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkPermission = (resource, action) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!user) return [2 /*return*/, false];
@@ -753,11 +715,10 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
-  var getUserPermissions = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var getUserPermissions = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!user) return [2 /*return*/, null];
@@ -779,12 +740,11 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
-  var hasRole = function (role) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var hasRole = (role) =>
+    __awaiter(this, void 0, void 0, function () {
       var permissions, error_8;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!user) return [2 /*return*/, false];
@@ -803,9 +763,7 @@ function AuthProvider(_a) {
                 permissions === null || permissions === void 0 ? void 0 : permissions.roles) ===
                 null || _a === void 0
                 ? void 0
-                : _a.some(function (r) {
-                    return r.name === role;
-                  })) || false,
+                : _a.some((r) => r.name === role)) || false,
             ];
           case 3:
             error_8 = _b.sent();
@@ -816,7 +774,6 @@ function AuthProvider(_a) {
         }
       });
     });
-  };
   var value = {
     user: user,
     session: session,
@@ -833,7 +790,5 @@ function AuthProvider(_a) {
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-var useAuth = function () {
-  return (0, react_1.useContext)(AuthContext);
-};
+var useAuth = () => (0, react_1.useContext)(AuthContext);
 exports.useAuth = useAuth;

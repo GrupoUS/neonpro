@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,68 +128,40 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var scheduling_optimizer_1 = require("../../../lib/ai/scheduling-optimizer");
 var preference_learner_1 = require("../../../lib/ai/preference-learner");
 // Mock Supabase client
 var mockSupabaseClient = {
-  from: jest.fn(function () {
-    return {
-      select: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              order: jest.fn(function () {
-                return {
-                  limit: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      insert: jest.fn(function () {
-        return Promise.resolve({ data: {}, error: null });
-      }),
-      update: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return Promise.resolve({ data: {}, error: null });
-          }),
-        };
-      }),
-      delete: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return Promise.resolve({ data: {}, error: null });
-          }),
-        };
-      }),
-    };
-  }),
-  rpc: jest.fn(function () {
-    return Promise.resolve({ data: [], error: null });
-  }),
+  from: jest.fn(() => ({
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        order: jest.fn(() => ({
+          limit: jest.fn(() => Promise.resolve({ data: [], error: null })),
+        })),
+      })),
+    })),
+    insert: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+    update: jest.fn(() => ({
+      eq: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+    })),
+    delete: jest.fn(() => ({
+      eq: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+    })),
+  })),
+  rpc: jest.fn(() => Promise.resolve({ data: [], error: null })),
 };
 // Mock AuditLogger
 var mockAuditLogger = {
-  logEvent: jest.fn(function () {
-    return Promise.resolve();
-  }),
-  logError: jest.fn(function () {
-    return Promise.resolve();
-  }),
-  logAccess: jest.fn(function () {
-    return Promise.resolve();
-  }),
+  logEvent: jest.fn(() => Promise.resolve()),
+  logError: jest.fn(() => Promise.resolve()),
+  logAccess: jest.fn(() => Promise.resolve()),
 };
-describe("AI Scheduling Integration Tests", function () {
+describe("AI Scheduling Integration Tests", () => {
   var optimizer;
   var learner;
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Mock the constructor dependencies
     optimizer = new scheduling_optimizer_1.AISchedulingOptimizer();
@@ -203,26 +172,26 @@ describe("AI Scheduling Integration Tests", function () {
     learner.supabase = mockSupabaseClient;
     learner.auditLogger = mockAuditLogger;
   });
-  describe("AISchedulingOptimizer", function () {
-    it("should create optimizer instance", function () {
+  describe("AISchedulingOptimizer", () => {
+    it("should create optimizer instance", () => {
       expect(optimizer).toBeInstanceOf(scheduling_optimizer_1.AISchedulingOptimizer);
     });
-    it("should have suggestOptimalSlots method", function () {
+    it("should have suggestOptimalSlots method", () => {
       expect(typeof optimizer.suggestOptimalSlots).toBe("function");
     });
-    it("should have getPatientPreferenceData method", function () {
+    it("should have getPatientPreferenceData method", () => {
       expect(typeof optimizer.getPatientPreferenceData).toBe("function");
     });
-    it("should have processFeedback method", function () {
+    it("should have processFeedback method", () => {
       expect(typeof optimizer.processFeedback).toBe("function");
     });
-    it("should have getFeedbackHistory method", function () {
+    it("should have getFeedbackHistory method", () => {
       expect(typeof optimizer.getFeedbackHistory).toBe("function");
     });
-    it("should handle suggestOptimalSlots call", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should handle suggestOptimalSlots call", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSlots, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSlots = [
@@ -274,12 +243,11 @@ describe("AI Scheduling Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle getPatientPreferenceData call", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle getPatientPreferenceData call", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockPreferenceData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockPreferenceData = {
@@ -306,26 +274,25 @@ describe("AI Scheduling Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("PatientPreferenceLearner", function () {
-    it("should create learner instance", function () {
+  describe("PatientPreferenceLearner", () => {
+    it("should create learner instance", () => {
       expect(learner).toBeInstanceOf(preference_learner_1.PatientPreferenceLearner);
     });
-    it("should have updatePreferences method", function () {
+    it("should have updatePreferences method", () => {
       expect(typeof learner.updatePreferences).toBe("function");
     });
-    it("should have getPatientPreferences method", function () {
+    it("should have getPatientPreferences method", () => {
       expect(typeof learner.getPatientPreferences).toBe("function");
     });
-    it("should have analyzeSchedulingPatterns method", function () {
+    it("should have analyzeSchedulingPatterns method", () => {
       expect(typeof learner.analyzeSchedulingPatterns).toBe("function");
     });
-    it("should handle updatePreferences call", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should handle updatePreferences call", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockLearningResult, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockLearningResult = {
@@ -361,12 +328,11 @@ describe("AI Scheduling Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle getPatientPreferences call", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle getPatientPreferences call", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockPreferences, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockPreferences = {
@@ -421,14 +387,13 @@ describe("AI Scheduling Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Service Integration", function () {
-    it("should demonstrate integration between optimizer and learner", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Service Integration", () => {
+    it("should demonstrate integration between optimizer and learner", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockPatientData, mockOptimizedSlots, patientPrefs, optimizedSlots;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockPatientData = {
@@ -490,7 +455,6 @@ describe("AI Scheduling Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

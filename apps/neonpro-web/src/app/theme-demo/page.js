@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ThemeDemoPage;
 var react_1 = require("react");
@@ -8,7 +7,7 @@ var button_1 = require("@/components/ui/button");
 var card_1 = require("@/components/ui/card");
 var badge_1 = require("@/components/ui/badge");
 var utils_1 = require("@/lib/utils");
-var NeonGradientCard = function (_a) {
+var NeonGradientCard = (_a) => {
   var className = _a.className,
     children = _a.children,
     _b = _a.borderSize,
@@ -27,8 +26,8 @@ var NeonGradientCard = function (_a) {
   var _e = (0, react_1.useState)({ width: 0, height: 0 }),
     dimensions = _e[0],
     setDimensions = _e[1];
-  (0, react_1.useEffect)(function () {
-    var updateDimensions = function () {
+  (0, react_1.useEffect)(() => {
+    var updateDimensions = () => {
       if (containerRef.current) {
         var _a = containerRef.current,
           offsetWidth = _a.offsetWidth,
@@ -38,9 +37,7 @@ var NeonGradientCard = function (_a) {
     };
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
-    return function () {
-      return window.removeEventListener("resize", updateDimensions);
-    };
+    return () => window.removeEventListener("resize", updateDimensions);
   }, []);
   return (
     <div
@@ -255,7 +252,7 @@ function ThemeDemoPage() {
             Cartões com Efeito Neon (NeonGradientCard)
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {metrics.map(function (metric, index) {
+            {metrics.map((metric, index) => {
               var Icon = metric.icon;
               return (
                 <NeonGradientCard
@@ -265,12 +262,8 @@ function ThemeDemoPage() {
                 >
                   <div
                     className="h-full flex flex-col justify-between cursor-pointer transition-all duration-300 hover:scale-105"
-                    onMouseEnter={function () {
-                      return setActiveMetric(metric.title);
-                    }}
-                    onMouseLeave={function () {
-                      return setActiveMetric(null);
-                    }}
+                    onMouseEnter={() => setActiveMetric(metric.title)}
+                    onMouseLeave={() => setActiveMetric(null)}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="p-3 rounded-xl bg-primary/10">

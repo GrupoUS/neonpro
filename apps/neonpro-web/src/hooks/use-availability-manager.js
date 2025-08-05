@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,14 +143,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useAvailabilityManager = useAvailabilityManager;
 var react_1 = require("react");
 var date_fns_1 = require("date-fns");
 var use_realtime_availability_1 = require("@/hooks/use-realtime-availability");
 function useAvailabilityManager() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       onlyAvailable: true,
     }),
@@ -178,92 +174,71 @@ function useAvailabilityManager() {
     bookSlot = _d.bookSlot,
     refetch = _d.refetch;
   // Slots filtrados e processados
-  var filteredSlots = (0, react_1.useMemo)(
-    function () {
-      var filtered = timeSlots;
-      // Filtrar por disponibilidade
-      if (filters.onlyAvailable) {
-        filtered = filtered.filter(function (slot) {
-          return slot.is_available;
-        });
-      }
-      // Filtrar por data de início
-      if (filters.startDate) {
-        var startDateStr_1 = (0, date_fns_1.format)(filters.startDate, "yyyy-MM-dd");
-        filtered = filtered.filter(function (slot) {
-          return slot.date >= startDateStr_1;
-        });
-      }
-      // Filtrar por data de fim
-      if (filters.endDate) {
-        var endDateStr_1 = (0, date_fns_1.format)(filters.endDate, "yyyy-MM-dd");
-        filtered = filtered.filter(function (slot) {
-          return slot.date <= endDateStr_1;
-        });
-      }
-      return filtered;
-    },
-    [timeSlots, filters],
-  );
+  var filteredSlots = (0, react_1.useMemo)(() => {
+    var filtered = timeSlots;
+    // Filtrar por disponibilidade
+    if (filters.onlyAvailable) {
+      filtered = filtered.filter((slot) => slot.is_available);
+    }
+    // Filtrar por data de início
+    if (filters.startDate) {
+      var startDateStr_1 = (0, date_fns_1.format)(filters.startDate, "yyyy-MM-dd");
+      filtered = filtered.filter((slot) => slot.date >= startDateStr_1);
+    }
+    // Filtrar por data de fim
+    if (filters.endDate) {
+      var endDateStr_1 = (0, date_fns_1.format)(filters.endDate, "yyyy-MM-dd");
+      filtered = filtered.filter((slot) => slot.date <= endDateStr_1);
+    }
+    return filtered;
+  }, [timeSlots, filters]);
   // Slots agrupados por data
-  var groupedSlots = (0, react_1.useMemo)(
-    function () {
-      var grouped = {};
-      filteredSlots.forEach(function (slot) {
-        var dateKey = slot.date;
-        if (!grouped[dateKey]) {
-          grouped[dateKey] = [];
-        }
-        grouped[dateKey].push(slot);
-      });
-      // Ordenar slots dentro de cada data
-      Object.keys(grouped).forEach(function (date) {
-        grouped[date].sort(function (a, b) {
-          return a.start_time.localeCompare(b.start_time);
-        });
-      });
-      return grouped;
-    },
-    [filteredSlots],
-  );
-  // Estatísticas de disponibilidade
-  var availability = (0, react_1.useMemo)(
-    function () {
-      var total = timeSlots.length;
-      var available = timeSlots.filter(function (slot) {
-        return slot.is_available;
-      }).length;
-      var booked = total - available;
-      var availabilityRate = total > 0 ? (available / total) * 100 : 0;
-      return {
-        total: total,
-        available: available,
-        booked: booked,
-        availabilityRate: Math.round(availabilityRate * 100) / 100,
-      };
-    },
-    [timeSlots],
-  );
-  // Função para atualizar filtros
-  var updateFilters = (0, react_1.useCallback)(function (newFilters) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), newFilters);
+  var groupedSlots = (0, react_1.useMemo)(() => {
+    var grouped = {};
+    filteredSlots.forEach((slot) => {
+      var dateKey = slot.date;
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = [];
+      }
+      grouped[dateKey].push(slot);
     });
+    // Ordenar slots dentro de cada data
+    Object.keys(grouped).forEach((date) => {
+      grouped[date].sort((a, b) => a.start_time.localeCompare(b.start_time));
+    });
+    return grouped;
+  }, [filteredSlots]);
+  // Estatísticas de disponibilidade
+  var availability = (0, react_1.useMemo)(() => {
+    var total = timeSlots.length;
+    var available = timeSlots.filter((slot) => slot.is_available).length;
+    var booked = total - available;
+    var availabilityRate = total > 0 ? (available / total) * 100 : 0;
+    return {
+      total: total,
+      available: available,
+      booked: booked,
+      availabilityRate: Math.round(availabilityRate * 100) / 100,
+    };
+  }, [timeSlots]);
+  // Função para atualizar filtros
+  var updateFilters = (0, react_1.useCallback)((newFilters) => {
+    setFilters((prev) => __assign(__assign({}, prev), newFilters));
   }, []);
   // Função para limpar filtros
-  var clearFilters = (0, react_1.useCallback)(function () {
+  var clearFilters = (0, react_1.useCallback)(() => {
     setFilters({ onlyAvailable: true });
   }, []);
   // Função para selecionar slot
-  var selectSlot = (0, react_1.useCallback)(function (slot) {
+  var selectSlot = (0, react_1.useCallback)((slot) => {
     setSelectedSlot(slot);
   }, []);
   // Função para reservar slot selecionado
   var bookSelectedSlot = (0, react_1.useCallback)(
-    function (patientId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (patientId) =>
+      __awaiter(this, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!selectedSlot)
@@ -286,12 +261,11 @@ function useAvailabilityManager() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [selectedSlot, bookSlot],
   );
   // Função para verificar se um slot está disponível para reserva
-  var isSlotBookable = (0, react_1.useCallback)(function (slot) {
+  var isSlotBookable = (0, react_1.useCallback)((slot) => {
     if (!slot.is_available) return false;
     var slotDateTime = new Date("".concat(slot.date, "T").concat(slot.start_time));
     var now = new Date();
@@ -300,13 +274,13 @@ function useAvailabilityManager() {
   }, []);
   // Função para encontrar próximos slots disponíveis
   var getNextAvailableSlots = (0, react_1.useCallback)(
-    function (limit) {
+    (limit) => {
       if (limit === void 0) {
         limit = 5;
       }
       var now = new Date();
       return filteredSlots
-        .filter(function (slot) {
+        .filter((slot) => {
           var slotDateTime = new Date("".concat(slot.date, "T").concat(slot.start_time));
           return slot.is_available && (0, date_fns_1.isAfter)(slotDateTime, now);
         })
@@ -316,8 +290,8 @@ function useAvailabilityManager() {
   );
   // Função para verificar conflitos de horário
   var hasTimeConflict = (0, react_1.useCallback)(
-    function (newSlot, excludeSlotId) {
-      return timeSlots.some(function (existingSlot) {
+    (newSlot, excludeSlotId) =>
+      timeSlots.some((existingSlot) => {
         if (excludeSlotId && existingSlot.id === excludeSlotId) return false;
         if (existingSlot.date !== newSlot.date) return false;
         var newStart = new Date("".concat(newSlot.date, "T").concat(newSlot.start_time));
@@ -333,8 +307,7 @@ function useAvailabilityManager() {
           ((0, date_fns_1.isBefore)(existingStart, newEnd) &&
             (0, date_fns_1.isAfter)(existingEnd, newStart))
         );
-      });
-    },
+      }),
     [timeSlots],
   );
   return {

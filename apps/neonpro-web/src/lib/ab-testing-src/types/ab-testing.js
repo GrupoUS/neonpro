@@ -1,4 +1,3 @@
-"use strict";
 /**
  * A/B Testing Engine Types
  * NeonPro - Sistema de Testes A/B para Comunicação

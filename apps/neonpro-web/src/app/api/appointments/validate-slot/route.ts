@@ -1,12 +1,11 @@
 ﻿// =============================================
+
 // NeonPro Appointment Slot Validation API
 // Story 1.2: Real-time conflict prevention
 // Route: /api/appointments/validate-slot
 // =============================================
 
-import type { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
-import type { z } from "zod";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Validation schema for slot validation request
 const validateSlotSchema = z.object({

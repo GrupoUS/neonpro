@@ -1,8 +1,5 @@
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   AlertTriangle,
   Calendar,
@@ -14,6 +11,9 @@ import type {
   User,
   X,
 } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export interface DuplicateManagerProps {
   onMergeComplete?: () => void;

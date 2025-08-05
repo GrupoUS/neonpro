@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Forecasting System Type Definitions
  * Epic 11 - Story 11.1: Consolidated types for demand forecasting system

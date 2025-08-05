@@ -1,5 +1,5 @@
-describe("Regulatory Documents Dashboard Integration", function () {
-  beforeEach(function () {
+describe("Regulatory Documents Dashboard Integration", () => {
+  beforeEach(() => {
     // Setup authentication session
     cy.visit("/login");
     cy.get('[data-testid="email-input"]').type("admin@neonpro.com");
@@ -7,7 +7,7 @@ describe("Regulatory Documents Dashboard Integration", function () {
     cy.get('[data-testid="login-button"]').click();
     cy.url().should("include", "/dashboard");
   });
-  it("should navigate to regulatory documents from dashboard", function () {
+  it("should navigate to regulatory documents from dashboard", () => {
     // Test dashboard navigation
     cy.get('[data-testid="nav-regulatory-documents"]').click();
     cy.url().should("include", "/dashboard/regulatory-documents");
@@ -17,7 +17,7 @@ describe("Regulatory Documents Dashboard Integration", function () {
     cy.get('[data-testid="regulatory-documents-list"]').should("be.visible");
     cy.get('[data-testid="add-document-button"]').should("be.visible");
   });
-  it("should complete full document management flow", function () {
+  it("should complete full document management flow", () => {
     cy.visit("/dashboard/regulatory-documents");
     // Add new document
     cy.get('[data-testid="add-document-button"]').click();
@@ -38,14 +38,14 @@ describe("Regulatory Documents Dashboard Integration", function () {
       "ANVISA Compliance Document",
     );
   });
-  it("should display expiration alerts", function () {
+  it("should display expiration alerts", () => {
     cy.visit("/dashboard/regulatory-documents");
     // Check alerts section
     cy.get('[data-testid="expiration-alerts"]').should("be.visible");
     // Verify alert functionality
     cy.get('[data-testid="alert-item"]').should("have.length.at.least", 0);
   });
-  it("should handle errors gracefully", function () {
+  it("should handle errors gracefully", () => {
     cy.visit("/dashboard/regulatory-documents");
     // Test error handling for invalid form submission
     cy.get('[data-testid="add-document-button"]').click();

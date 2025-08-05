@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryConfiguration = InventoryConfiguration;
 /**
@@ -169,7 +166,6 @@ var separator_1 = require("@/components/ui/separator");
 var inventory_1 = require("@/lib/inventory");
 var use_toast_1 = require("@/hooks/use-toast");
 function InventoryConfiguration(_a) {
-  var _this = this;
   var onRefresh = _a.onRefresh,
     className = _a.className;
   var _b = (0, react_1.useState)(null),
@@ -219,11 +215,11 @@ function InventoryConfiguration(_a) {
     setIsEditingRule = _k[1];
   var toast = (0, use_toast_1.useToast)().toast;
   var inventoryConfig = new inventory_1.InventoryConfig();
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadConfiguration();
   }, []);
-  var loadConfiguration = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadConfiguration = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a,
         configData,
         configError,
@@ -235,7 +231,7 @@ function InventoryConfiguration(_a) {
         automationRulesError,
         error_1,
         errorMessage;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         switch (_d.label) {
           case 0:
             _d.trys.push([0, 4, 5, 6]);
@@ -295,11 +291,10 @@ function InventoryConfiguration(_a) {
         }
       });
     });
-  };
-  var handleSaveConfiguration = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSaveConfiguration = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_2, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -335,11 +330,10 @@ function InventoryConfiguration(_a) {
         }
       });
     });
-  };
-  var handleSaveAlertRule = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSaveAlertRule = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error, error_3, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!alertRuleForm.name || !alertRuleForm.description) {
@@ -397,11 +391,10 @@ function InventoryConfiguration(_a) {
         }
       });
     });
-  };
-  var handleDeleteAlertRule = function (ruleId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDeleteAlertRule = (ruleId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_4, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -431,8 +424,7 @@ function InventoryConfiguration(_a) {
         }
       });
     });
-  };
-  var handleEditAlertRule = function (rule) {
+  var handleEditAlertRule = (rule) => {
     setAlertRuleForm({
       name: rule.name,
       type: rule.type,
@@ -443,7 +435,7 @@ function InventoryConfiguration(_a) {
     });
     setIsEditingRule(rule.id);
   };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     var colors = {
       baixa: "bg-blue-100 text-blue-800",
       media: "bg-yellow-100 text-yellow-800",
@@ -451,7 +443,7 @@ function InventoryConfiguration(_a) {
     };
     return colors[severity] || "bg-gray-100 text-gray-800";
   };
-  var getTypeLabel = function (type) {
+  var getTypeLabel = (type) => {
     var labels = {
       stock_low: "Estoque Baixo",
       expiry_warning: "Vencimento Próximo",
@@ -523,11 +515,11 @@ function InventoryConfiguration(_a) {
                     <switch_1.Switch
                       id="fifo_enabled"
                       checked={configForm.fifo_enabled}
-                      onCheckedChange={function (checked) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), { fifo_enabled: checked });
-                        });
-                      }}
+                      onCheckedChange={(checked) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), { fifo_enabled: checked }),
+                        )
+                      }
                     />
                   </div>
 
@@ -538,11 +530,11 @@ function InventoryConfiguration(_a) {
                     <switch_1.Switch
                       id="auto_alerts"
                       checked={configForm.auto_alerts}
-                      onCheckedChange={function (checked) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), { auto_alerts: checked });
-                        });
-                      }}
+                      onCheckedChange={(checked) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), { auto_alerts: checked }),
+                        )
+                      }
                     />
                   </div>
 
@@ -553,11 +545,11 @@ function InventoryConfiguration(_a) {
                     <switch_1.Switch
                       id="cost_tracking"
                       checked={configForm.cost_tracking}
-                      onCheckedChange={function (checked) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), { cost_tracking: checked });
-                        });
-                      }}
+                      onCheckedChange={(checked) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), { cost_tracking: checked }),
+                        )
+                      }
                     />
                   </div>
 
@@ -568,13 +560,13 @@ function InventoryConfiguration(_a) {
                     <switch_1.Switch
                       id="transfer_approval_required"
                       checked={configForm.transfer_approval_required}
-                      onCheckedChange={function (checked) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onCheckedChange={(checked) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), {
                             transfer_approval_required: checked,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -596,13 +588,13 @@ function InventoryConfiguration(_a) {
                       min="1"
                       max="100"
                       value={configForm.min_stock_threshold}
-                      onChange={function (e) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onChange={(e) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), {
                             min_stock_threshold: parseInt(e.target.value) || 10,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                   </div>
 
@@ -616,13 +608,13 @@ function InventoryConfiguration(_a) {
                       min="1"
                       max="365"
                       value={configForm.expiry_warning_days}
-                      onChange={function (e) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onChange={(e) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), {
                             expiry_warning_days: parseInt(e.target.value) || 30,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                   </div>
 
@@ -636,13 +628,13 @@ function InventoryConfiguration(_a) {
                       min="7"
                       max="365"
                       value={configForm.consumption_forecast_days}
-                      onChange={function (e) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onChange={(e) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), {
                             consumption_forecast_days: parseInt(e.target.value) || 30,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                   </div>
 
@@ -656,13 +648,13 @@ function InventoryConfiguration(_a) {
                       min="50"
                       max="100"
                       value={configForm.efficiency_target}
-                      onChange={function (e) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onChange={(e) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), {
                             efficiency_target: parseInt(e.target.value) || 85,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -680,11 +672,11 @@ function InventoryConfiguration(_a) {
                   <switch_1.Switch
                     id="auto_reorder_enabled"
                     checked={configForm.auto_reorder_enabled}
-                    onCheckedChange={function (checked) {
-                      return setConfigForm(function (prev) {
-                        return __assign(__assign({}, prev), { auto_reorder_enabled: checked });
-                      });
-                    }}
+                    onCheckedChange={(checked) =>
+                      setConfigForm((prev) =>
+                        __assign(__assign({}, prev), { auto_reorder_enabled: checked }),
+                      )
+                    }
                   />
                 </div>
 
@@ -699,13 +691,13 @@ function InventoryConfiguration(_a) {
                       min="1"
                       max="30"
                       value={configForm.reorder_lead_time}
-                      onChange={function (e) {
-                        return setConfigForm(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onChange={(e) =>
+                        setConfigForm((prev) =>
+                          __assign(__assign({}, prev), {
                             reorder_lead_time: parseInt(e.target.value) || 7,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                   </div>
                 )}
@@ -747,11 +739,11 @@ function InventoryConfiguration(_a) {
                   <input_1.Input
                     id="rule_name"
                     value={alertRuleForm.name}
-                    onChange={function (e) {
-                      return setAlertRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), { name: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setAlertRuleForm((prev) =>
+                        __assign(__assign({}, prev), { name: e.target.value }),
+                      )
+                    }
                     placeholder="Ex: Estoque Crítico Medicamentos"
                   />
                 </div>
@@ -760,11 +752,9 @@ function InventoryConfiguration(_a) {
                   <label_1.Label htmlFor="rule_type">Tipo de Alerta</label_1.Label>
                   <select_1.Select
                     value={alertRuleForm.type}
-                    onValueChange={function (value) {
-                      return setAlertRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), { type: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setAlertRuleForm((prev) => __assign(__assign({}, prev), { type: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -791,13 +781,13 @@ function InventoryConfiguration(_a) {
                     id="rule_threshold"
                     type="number"
                     value={alertRuleForm.threshold}
-                    onChange={function (e) {
-                      return setAlertRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), {
+                    onChange={(e) =>
+                      setAlertRuleForm((prev) =>
+                        __assign(__assign({}, prev), {
                           threshold: parseInt(e.target.value) || 0,
-                        });
-                      });
-                    }}
+                        }),
+                      )
+                    }
                   />
                 </div>
 
@@ -805,11 +795,9 @@ function InventoryConfiguration(_a) {
                   <label_1.Label htmlFor="rule_severity">Severidade</label_1.Label>
                   <select_1.Select
                     value={alertRuleForm.severity}
-                    onValueChange={function (value) {
-                      return setAlertRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), { severity: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setAlertRuleForm((prev) => __assign(__assign({}, prev), { severity: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -827,11 +815,11 @@ function InventoryConfiguration(_a) {
                   <textarea_1.Textarea
                     id="rule_description"
                     value={alertRuleForm.description}
-                    onChange={function (e) {
-                      return setAlertRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), { description: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setAlertRuleForm((prev) =>
+                        __assign(__assign({}, prev), { description: e.target.value }),
+                      )
+                    }
                     placeholder="Descreva quando e como este alerta deve ser acionado..."
                     rows={3}
                   />
@@ -844,11 +832,9 @@ function InventoryConfiguration(_a) {
                   <switch_1.Switch
                     id="rule_enabled"
                     checked={alertRuleForm.enabled}
-                    onCheckedChange={function (checked) {
-                      return setAlertRuleForm(function (prev) {
-                        return __assign(__assign({}, prev), { enabled: checked });
-                      });
-                    }}
+                    onCheckedChange={(checked) =>
+                      setAlertRuleForm((prev) => __assign(__assign({}, prev), { enabled: checked }))
+                    }
                   />
                 </div>
 
@@ -859,7 +845,7 @@ function InventoryConfiguration(_a) {
                   {isEditingRule && (
                     <button_1.Button
                       variant="outline"
-                      onClick={function () {
+                      onClick={() => {
                         setIsEditingRule(null);
                         setAlertRuleForm({
                           name: "",
@@ -908,50 +894,44 @@ function InventoryConfiguration(_a) {
                         </table_1.TableRow>
                       </table_1.TableHeader>
                       <table_1.TableBody>
-                        {alertRules.map(function (rule) {
-                          return (
-                            <table_1.TableRow key={rule.id}>
-                              <table_1.TableCell className="font-medium">
-                                {rule.name}
-                              </table_1.TableCell>
-                              <table_1.TableCell>{getTypeLabel(rule.type)}</table_1.TableCell>
-                              <table_1.TableCell>{rule.threshold}</table_1.TableCell>
-                              <table_1.TableCell>
-                                <div className="flex gap-2">
-                                  <badge_1.Badge className={getSeverityColor(rule.severity)}>
-                                    {rule.severity}
-                                  </badge_1.Badge>
-                                  {rule.enabled
-                                    ? <badge_1.Badge variant="default">Ativa</badge_1.Badge>
-                                    : <badge_1.Badge variant="secondary">Inativa</badge_1.Badge>}
-                                </div>
-                              </table_1.TableCell>
-                              <table_1.TableCell>
-                                <div className="flex gap-2">
-                                  <button_1.Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={function () {
-                                      return handleEditAlertRule(rule);
-                                    }}
-                                  >
-                                    <icons_1.Icons.Edit className="w-4 h-4" />
-                                  </button_1.Button>
-                                  <button_1.Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={function () {
-                                      return handleDeleteAlertRule(rule.id);
-                                    }}
-                                    className="text-red-600 hover:text-red-700"
-                                  >
-                                    <icons_1.Icons.Trash2 className="w-4 h-4" />
-                                  </button_1.Button>
-                                </div>
-                              </table_1.TableCell>
-                            </table_1.TableRow>
-                          );
-                        })}
+                        {alertRules.map((rule) => (
+                          <table_1.TableRow key={rule.id}>
+                            <table_1.TableCell className="font-medium">
+                              {rule.name}
+                            </table_1.TableCell>
+                            <table_1.TableCell>{getTypeLabel(rule.type)}</table_1.TableCell>
+                            <table_1.TableCell>{rule.threshold}</table_1.TableCell>
+                            <table_1.TableCell>
+                              <div className="flex gap-2">
+                                <badge_1.Badge className={getSeverityColor(rule.severity)}>
+                                  {rule.severity}
+                                </badge_1.Badge>
+                                {rule.enabled
+                                  ? <badge_1.Badge variant="default">Ativa</badge_1.Badge>
+                                  : <badge_1.Badge variant="secondary">Inativa</badge_1.Badge>}
+                              </div>
+                            </table_1.TableCell>
+                            <table_1.TableCell>
+                              <div className="flex gap-2">
+                                <button_1.Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditAlertRule(rule)}
+                                >
+                                  <icons_1.Icons.Edit className="w-4 h-4" />
+                                </button_1.Button>
+                                <button_1.Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleDeleteAlertRule(rule.id)}
+                                  className="text-red-600 hover:text-red-700"
+                                >
+                                  <icons_1.Icons.Trash2 className="w-4 h-4" />
+                                </button_1.Button>
+                              </div>
+                            </table_1.TableCell>
+                          </table_1.TableRow>
+                        ))}
                       </table_1.TableBody>
                     </table_1.Table>}
               </card_1.CardContent>

@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -214,8 +213,8 @@ function ANVISACompliance() {
     isNewDeviceOpen = _d[0],
     setIsNewDeviceOpen = _d[1];
   var filteredDevices = (0, react_1.useMemo)(
-    function () {
-      return mockANVISADevices.filter(function (device) {
+    () =>
+      mockANVISADevices.filter((device) => {
         var matchesSearch =
           device.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           device.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -227,19 +226,16 @@ function ANVISACompliance() {
           (selectedCompliance === "compliant" && device.compliance.current) ||
           (selectedCompliance === "non_compliant" && !device.compliance.current);
         return matchesSearch && matchesClass && matchesCompliance;
-      });
-    },
+      }),
     [searchTerm, selectedClass, selectedCompliance],
   );
-  var complianceMetrics = (0, react_1.useMemo)(function () {
+  var complianceMetrics = (0, react_1.useMemo)(() => {
     var total = mockANVISADevices.length;
-    var compliant = mockANVISADevices.filter(function (d) {
-      return d.compliance.current;
-    }).length;
-    var overdueMaintenances = mockANVISADevices.filter(function (d) {
-      return new Date(d.nextMaintenanceDate) < new Date();
-    }).length;
-    var upcomingMaintenances = mockANVISADevices.filter(function (d) {
+    var compliant = mockANVISADevices.filter((d) => d.compliance.current).length;
+    var overdueMaintenances = mockANVISADevices.filter(
+      (d) => new Date(d.nextMaintenanceDate) < new Date(),
+    ).length;
+    var upcomingMaintenances = mockANVISADevices.filter((d) => {
       var nextMaintenance = new Date(d.nextMaintenanceDate);
       var thirtyDaysFromNow = new Date();
       thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
@@ -254,32 +250,29 @@ function ANVISACompliance() {
       upcomingMaintenances: upcomingMaintenances,
     };
   }, []);
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  };
-  var formatCurrency = function (value) {
-    return value.toLocaleString("pt-BR", {
+  var formatDate = (dateString) => new Date(dateString).toLocaleDateString("pt-BR");
+  var formatCurrency = (value) =>
+    value.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
       minimumFractionDigits: 2,
     });
-  };
-  var getDaysUntilMaintenance = function (maintenanceDate) {
+  var getDaysUntilMaintenance = (maintenanceDate) => {
     var today = new Date();
     var maintenance = new Date(maintenanceDate);
     var diffTime = maintenance.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
-  var getMaintenanceStatus = function (scheduledDate, completedDate) {
+  var getMaintenanceStatus = (scheduledDate, completedDate) => {
     if (completedDate) return "completed";
     var daysUntil = getDaysUntilMaintenance(scheduledDate);
     return daysUntil < 0 ? "overdue" : "scheduled";
   };
-  var handleScheduleMaintenance = function (deviceId) {
+  var handleScheduleMaintenance = (deviceId) => {
     // In a real implementation, this would open a maintenance scheduling dialog
     console.log("Scheduling maintenance for device:", deviceId);
   };
-  var handleExportCompliance = function () {
+  var handleExportCompliance = () => {
     // In a real implementation, this would generate a compliance report
     console.log("Exporting compliance report");
   };
@@ -349,9 +342,7 @@ function ANVISACompliance() {
           <input_1.Input
             placeholder="Buscar por nome, modelo, registro ANVISA ou serial..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -443,7 +434,7 @@ function ANVISACompliance() {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredDevices.map(function (device) {
+                {filteredDevices.map((device) => {
                   var classInfo = deviceClassInfo[device.deviceClass];
                   var daysUntilMaintenance = getDaysUntilMaintenance(device.nextMaintenanceDate);
                   var maintenanceStatus = getMaintenanceStatus(device.nextMaintenanceDate);
@@ -555,9 +546,7 @@ function ANVISACompliance() {
                           <button_1.Button
                             size="sm"
                             variant="outline"
-                            onClick={function () {
-                              return handleScheduleMaintenance(device.id);
-                            }}
+                            onClick={() => handleScheduleMaintenance(device.id)}
                           >
                             <lucide_react_1.Wrench className="w-3 h-3 mr-1" />
                             Manutenção
@@ -613,15 +602,15 @@ function ANVISACompliance() {
           <card_1.CardContent>
             <div className="space-y-4">
               {mockANVISADevices
-                .filter(function (device) {
+                .filter((device) => {
                   var daysUntil = getDaysUntilMaintenance(device.nextMaintenanceDate);
                   return daysUntil >= 0 && daysUntil <= 30;
                 })
-                .map(function (device) {
+                .map((device) => {
                   var daysUntil = getDaysUntilMaintenance(device.nextMaintenanceDate);
-                  var maintenanceItem = device.maintenanceSchedule.find(function (m) {
-                    return m.scheduledDate === device.nextMaintenanceDate;
-                  });
+                  var maintenanceItem = device.maintenanceSchedule.find(
+                    (m) => m.scheduledDate === device.nextMaintenanceDate,
+                  );
                   return (
                     <div
                       key={device.id}
@@ -667,7 +656,7 @@ function ANVISACompliance() {
                   );
                 })}
 
-              {mockANVISADevices.filter(function (device) {
+              {mockANVISADevices.filter((device) => {
                 var daysUntil = getDaysUntilMaintenance(device.nextMaintenanceDate);
                 return daysUntil >= 0 && daysUntil <= 30;
               }).length === 0 && (
@@ -691,15 +680,11 @@ function ANVISACompliance() {
           <card_1.CardContent>
             <div className="space-y-4">
               {/* Compliance by Class */}
-              {Object.entries(deviceClassInfo).map(function (_a) {
+              {Object.entries(deviceClassInfo).map((_a) => {
                 var deviceClass = _a[0],
                   info = _a[1];
-                var devicesInClass = mockANVISADevices.filter(function (d) {
-                  return d.deviceClass === deviceClass;
-                });
-                var compliantInClass = devicesInClass.filter(function (d) {
-                  return d.compliance.current;
-                });
+                var devicesInClass = mockANVISADevices.filter((d) => d.deviceClass === deviceClass);
+                var compliantInClass = devicesInClass.filter((d) => d.compliance.current);
                 var classComplianceRate =
                   devicesInClass.length > 0
                     ? (compliantInClass.length / devicesInClass.length) * 100
@@ -763,49 +748,43 @@ function ANVISACompliance() {
         <card_1.CardContent>
           <div className="space-y-4">
             {mockANVISADevices
-              .flatMap(function (device) {
-                return device.usageLog.map(function (usage) {
-                  return __assign(__assign({}, usage), {
+              .flatMap((device) =>
+                device.usageLog.map((usage) =>
+                  __assign(__assign({}, usage), {
                     deviceName: device.name,
                     deviceId: device.id,
-                  });
-                });
-              })
-              .sort(function (a, b) {
-                return new Date(b.date).getTime() - new Date(a.date).getTime();
-              })
+                  }),
+                ),
+              )
+              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
               .slice(0, 5)
-              .map(function (usage, index) {
-                return (
-                  <div
-                    key={"".concat(usage.deviceId, "-").concat(index)}
-                    className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
-                  >
-                    <div className="space-y-1">
-                      <div className="font-medium text-sm">{usage.deviceName}</div>
-                      <div className="text-sm text-muted-foreground">{usage.procedureType}</div>
-                      <div className="text-xs text-muted-foreground">
-                        Profissional: {usage.userId} • Duração: {usage.duration} min
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm">
-                        {new Date(usage.date).toLocaleDateString("pt-BR")}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {new Date(usage.date).toLocaleTimeString("pt-BR", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </div>
+              .map((usage, index) => (
+                <div
+                  key={"".concat(usage.deviceId, "-").concat(index)}
+                  className="flex items-center justify-between p-3 bg-muted/30 rounded-lg"
+                >
+                  <div className="space-y-1">
+                    <div className="font-medium text-sm">{usage.deviceName}</div>
+                    <div className="text-sm text-muted-foreground">{usage.procedureType}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Profissional: {usage.userId} • Duração: {usage.duration} min
                     </div>
                   </div>
-                );
-              })}
+                  <div className="text-right">
+                    <div className="text-sm">
+                      {new Date(usage.date).toLocaleDateString("pt-BR")}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(usage.date).toLocaleTimeString("pt-BR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ))}
 
-            {mockANVISADevices.every(function (device) {
-              return device.usageLog.length === 0;
-            }) && (
+            {mockANVISADevices.every((device) => device.usageLog.length === 0) && (
               <p className="text-sm text-muted-foreground text-center py-4">
                 Nenhuma atividade registrada recentemente.
               </p>

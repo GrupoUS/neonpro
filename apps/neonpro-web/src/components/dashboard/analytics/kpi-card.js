@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KPICard = KPICard;
 var card_1 = require("@/components/ui/card");
@@ -13,7 +12,7 @@ function KPICard(_a) {
     icon = _a.icon,
     _c = _a.className,
     className = _c === void 0 ? "" : _c;
-  var formatValue = function (val, fmt) {
+  var formatValue = (val, fmt) => {
     switch (fmt) {
       case "percentage":
         return "".concat(val, "%");
@@ -25,7 +24,7 @@ function KPICard(_a) {
         return val.toLocaleString("pt-BR");
     }
   };
-  var getTrendIcon = function () {
+  var getTrendIcon = () => {
     switch (trend) {
       case "up":
         return "📈";
@@ -35,7 +34,7 @@ function KPICard(_a) {
         return "➖";
     }
   };
-  var getTrendColor = function () {
+  var getTrendColor = () => {
     // Para métricas onde "down" é positivo (como tempo de espera, custo)
     var isInverseTrend = format === "time" || title.toLowerCase().includes("custo");
     if (isInverseTrend) {

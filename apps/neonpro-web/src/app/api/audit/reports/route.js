@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Audit Reports API
  *
@@ -15,15 +14,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -199,10 +196,10 @@ function validateReportAccess(supabase, userId) {
   return __awaiter(this, void 0, void 0, function () {
     var profile, hasReportAccess, error_1;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
-          _b.trys.push([0, 2, , 3]);
+          _b.trys.push([0, 2, undefined, 3]);
           return [
             4 /*yield*/,
             supabase
@@ -255,10 +252,10 @@ function generateReportData(supabase, filters) {
   return __awaiter(this, void 0, void 0, function () {
     var query, _a, logs, error, error_2;
     var _b, _c, _d, _e;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
-          _f.trys.push([0, 2, , 3]);
+          _f.trys.push([0, 2, undefined, 3]);
           query = supabase
             .from("audit_logs")
             .select("*")
@@ -298,7 +295,7 @@ function generateReportData(supabase, filters) {
 function createReportRecord(supabase, reportData, userId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, report, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -351,10 +348,10 @@ function GET(request) {
       countQuery,
       count,
       error_3;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 10, , 11]);
+          _c.trys.push([0, 10, undefined, 11]);
           clientIP = getClientIP(request);
           return [
             4 /*yield*/,
@@ -387,7 +384,7 @@ function GET(request) {
           return [4 /*yield*/, validateReportAccess(supabase, user.id)];
         case 4:
           hasAccess = _c.sent();
-          if (!!hasAccess) return [3 /*break*/, 6];
+          if (hasAccess) return [3 /*break*/, 6];
           return [
             4 /*yield*/,
             (0, security_events_1.logSecurityEvent)({
@@ -527,10 +524,10 @@ function POST(request) {
       reportLogs,
       generateError_1,
       error_4;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
-          _b.trys.push([0, 17, , 18]);
+          _b.trys.push([0, 17, undefined, 18]);
           clientIP = getClientIP(request);
           return [
             4 /*yield*/,
@@ -563,7 +560,7 @@ function POST(request) {
           return [4 /*yield*/, (0, csrf_protection_1.validateCSRF)(request)];
         case 4:
           csrfValid = _b.sent();
-          if (!!csrfValid) return [3 /*break*/, 6];
+          if (csrfValid) return [3 /*break*/, 6];
           return [
             4 /*yield*/,
             (0, security_events_1.logSecurityEvent)({
@@ -639,7 +636,7 @@ function POST(request) {
           report = _b.sent();
           _b.label = 10;
         case 10:
-          _b.trys.push([10, 13, , 15]);
+          _b.trys.push([10, 13, undefined, 15]);
           return [
             4 /*yield*/,
             generateReportData(supabase, reportData.filters),
@@ -728,20 +725,18 @@ function POST(request) {
 // =====================================================
 // OPTIONS: CORS
 // =====================================================
-function OPTIONS(request) {
+function OPTIONS(_request) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        new server_1.NextResponse(null, {
-          status: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization, X-CSRF-Token",
-          },
-        }),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      new server_1.NextResponse(null, {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization, X-CSRF-Token",
+        },
+      }),
+    ]);
   });
 }

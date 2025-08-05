@@ -1,4 +1,3 @@
-"use strict";
 // Emergency Shutdown System
 // Immediate termination of all sessions in critical situations
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,12 +144,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmergencyShutdownManager = void 0;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
-var EmergencyShutdownManager = /** @class */ (function () {
+var EmergencyShutdownManager = /** @class */ (() => {
   function EmergencyShutdownManager(config) {
     this.activeEmergencies = new Map();
     this.actionQueue = [];
@@ -407,9 +404,9 @@ var EmergencyShutdownManager = /** @class */ (function () {
           case 1:
             // Send immediate notifications
             _a.sent();
-            actionPromises = emergency.actions.map(function (action) {
-              return _this.executeAction(action, emergency.id);
-            });
+            actionPromises = emergency.actions.map((action) =>
+              _this.executeAction(action, emergency.id),
+            );
             // Wait for all actions with timeout
             return [4 /*yield*/, Promise.allSettled(actionPromises)];
           case 2:
@@ -471,12 +468,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
           case 7:
             _b.sent();
             // Small delay between actions
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 8:
             // Small delay between actions
             _b.sent();
@@ -519,11 +511,9 @@ var EmergencyShutdownManager = /** @class */ (function () {
               4 /*yield*/,
               Promise.race([
                 this.performAction(action),
-                new Promise(function (_, reject) {
-                  return setTimeout(function () {
-                    return reject(new Error("Action timeout"));
-                  }, timeout_1);
-                }),
+                new Promise((_, reject) =>
+                  setTimeout(() => reject(new Error("Action timeout")), timeout_1),
+                ),
               ]),
             ];
           case 2:
@@ -667,7 +657,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.terminateSession = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -715,7 +705,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
       if (excludeAdmin === void 0) {
         excludeAdmin = false;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -767,7 +757,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.blockUser = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -812,7 +802,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.blockIP = function (ipAddress) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -861,7 +851,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.disableAccount = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -906,7 +896,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.revokeTokens = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, result, error_9;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -954,7 +944,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.clearCache = function (cacheType) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_10;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -998,7 +988,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.backupData = function (dataTypes) {
     return __awaiter(this, void 0, void 0, function () {
       var response, result, error_11;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -1105,7 +1095,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.notifyUser = function (userId, message) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_13;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -1187,7 +1177,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.isolateSystem = function (systemId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_15;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -1231,7 +1221,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.enableMaintenanceMode = function () {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_16;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -1334,9 +1324,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
             return [4 /*yield*/, this.getAllActiveSessions()];
           case 1:
             sessions = _a.sent();
-            terminationPromises = sessions.map(function (sessionId) {
-              return _this.terminateSession(sessionId);
-            });
+            terminationPromises = sessions.map((sessionId) => _this.terminateSession(sessionId));
             return [4 /*yield*/, Promise.allSettled(terminationPromises)];
           case 2:
             _a.sent();
@@ -1415,7 +1403,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   /**
    * Utility methods
    */
-  EmergencyShutdownManager.prototype.generateEmergencyDescription = function (type, reason) {
+  EmergencyShutdownManager.prototype.generateEmergencyDescription = (type, reason) => {
     var descriptions = {
       security_breach: "Security breach detected requiring immediate response",
       data_leak: "Potential data leak identified requiring system isolation",
@@ -1494,7 +1482,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
     }
     return actions;
   };
-  EmergencyShutdownManager.prototype.generateNotificationMessage = function (emergency, urgency) {
+  EmergencyShutdownManager.prototype.generateNotificationMessage = (emergency, urgency) => {
     var urgencyText = urgency === "immediate" ? "IMMEDIATE" : "WARNING";
     return ""
       .concat(urgencyText, ": ")
@@ -1502,13 +1490,12 @@ var EmergencyShutdownManager = /** @class */ (function () {
       .concat(emergency.triggeredBy, ". Severity: ")
       .concat(emergency.severity.toUpperCase(), ".");
   };
-  EmergencyShutdownManager.prototype.generateUserNotificationMessage = function (emergency) {
-    return "Your session will be terminated due to a security incident. Please save your work and log in again later. We apologize for the inconvenience.";
-  };
+  EmergencyShutdownManager.prototype.generateUserNotificationMessage = (emergency) =>
+    "Your session will be terminated due to a security incident. Please save your work and log in again later. We apologize for the inconvenience.";
   EmergencyShutdownManager.prototype.getAllActiveSessions = function () {
     return __awaiter(this, void 0, void 0, function () {
       var response, sessions, error_20;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -1519,12 +1506,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
             return [4 /*yield*/, response.json()];
           case 2:
             sessions = _a.sent();
-            return [
-              2 /*return*/,
-              sessions.map(function (s) {
-                return s.id;
-              }),
-            ];
+            return [2 /*return*/, sessions.map((s) => s.id)];
           case 3:
             return [3 /*break*/, 5];
           case 4:
@@ -1540,7 +1522,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.getAllActiveUsers = function () {
     return __awaiter(this, void 0, void 0, function () {
       var response, users, error_21;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -1551,12 +1533,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
             return [4 /*yield*/, response.json()];
           case 2:
             users = _a.sent();
-            return [
-              2 /*return*/,
-              users.map(function (u) {
-                return u.id;
-              }),
-            ];
+            return [2 /*return*/, users.map((u) => u.id)];
           case 3:
             return [3 /*break*/, 5];
           case 4:
@@ -1571,31 +1548,28 @@ var EmergencyShutdownManager = /** @class */ (function () {
   };
   EmergencyShutdownManager.prototype.assessImpact = function (affectedSessions, affectedUsers) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            usersAffected:
-              (affectedUsers === null || affectedUsers === void 0
-                ? void 0
-                : affectedUsers.length) || 0,
-            sessionsAffected:
-              (affectedSessions === null || affectedSessions === void 0
-                ? void 0
-                : affectedSessions.length) || 0,
-            dataAtRisk: ["user_sessions", "authentication_tokens"],
-            systemsAffected: ["web_application", "database", "cache"],
-            businessImpact: {
-              severity: "high",
-              revenue: 0,
-              reputation: 0.8,
-              compliance: 0.9,
-              operations: 0.7,
-            },
-            estimatedDowntime: 30 * 60 * 1000, // 30 minutes
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          usersAffected:
+            (affectedUsers === null || affectedUsers === void 0 ? void 0 : affectedUsers.length) ||
+            0,
+          sessionsAffected:
+            (affectedSessions === null || affectedSessions === void 0
+              ? void 0
+              : affectedSessions.length) || 0,
+          dataAtRisk: ["user_sessions", "authentication_tokens"],
+          systemsAffected: ["web_application", "database", "cache"],
+          businessImpact: {
+            severity: "high",
+            revenue: 0,
+            reputation: 0.8,
+            compliance: 0.9,
+            operations: 0.7,
           },
-        ];
-      });
+          estimatedDowntime: 30 * 60 * 1000, // 30 minutes
+        },
+      ]);
     });
   };
   EmergencyShutdownManager.prototype.executeDataBackup = function (emergency) {
@@ -1635,23 +1609,21 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.waitWithProgress = function (duration) {
     return __awaiter(this, void 0, void 0, function () {
       var interval, steps, _loop_1, i;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             interval = 5000;
             steps = Math.ceil(duration / interval);
             _loop_1 = function (i) {
               var remaining;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     remaining = duration - i * interval;
                     console.log("Shutdown in ".concat(Math.ceil(remaining / 1000), " seconds..."));
                     return [
                       4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, Math.min(interval, remaining));
-                      }),
+                      new Promise((resolve) => setTimeout(resolve, Math.min(interval, remaining))),
                     ];
                   case 1:
                     _b.sent();
@@ -1697,7 +1669,7 @@ var EmergencyShutdownManager = /** @class */ (function () {
   EmergencyShutdownManager.prototype.emit = function (event, data) {
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (callback) {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1735,9 +1707,9 @@ var EmergencyShutdownManager = /** @class */ (function () {
     });
   };
   EmergencyShutdownManager.prototype.getActiveEmergencies = function () {
-    return Array.from(this.activeEmergencies.values()).filter(function (e) {
-      return e.status === "triggered" || e.status === "in_progress";
-    });
+    return Array.from(this.activeEmergencies.values()).filter(
+      (e) => e.status === "triggered" || e.status === "in_progress",
+    );
   };
   EmergencyShutdownManager.prototype.getEmergencyHistory = function () {
     return Array.from(this.activeEmergencies.values());
@@ -1800,11 +1772,11 @@ exports.EmergencyShutdownManager = EmergencyShutdownManager;
 /**
  * Helper classes
  */
-var NotificationService = /** @class */ (function () {
+var NotificationService = /** @class */ (() => {
   function NotificationService() {}
   NotificationService.prototype.sendEmergencyAlert = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for sending emergency alerts
         console.log("Sending emergency alert:", params);
         return [2 /*return*/];
@@ -1813,7 +1785,7 @@ var NotificationService = /** @class */ (function () {
   };
   NotificationService.prototype.sendUserAlert = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for sending user alerts
         console.log("Sending user alert:", params);
         return [2 /*return*/];
@@ -1822,7 +1794,7 @@ var NotificationService = /** @class */ (function () {
   };
   NotificationService.prototype.testConnection = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Test notification service connection
         return [2 /*return*/, true];
       });
@@ -1830,11 +1802,11 @@ var NotificationService = /** @class */ (function () {
   };
   return NotificationService;
 })();
-var AuditLogger = /** @class */ (function () {
+var AuditLogger = /** @class */ (() => {
   function AuditLogger() {}
   AuditLogger.prototype.logEmergency = function (emergency) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for logging emergency events
         console.log("Logging emergency:", emergency.id);
         return [2 /*return*/];
@@ -1843,7 +1815,7 @@ var AuditLogger = /** @class */ (function () {
   };
   AuditLogger.prototype.logSecurityEvent = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for logging security events
         console.log("Logging security event:", event);
         return [2 /*return*/];
@@ -1852,7 +1824,7 @@ var AuditLogger = /** @class */ (function () {
   };
   AuditLogger.prototype.logIncident = function (incident) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for logging incidents
         console.log("Logging incident:", incident);
         return [2 /*return*/];
@@ -1861,7 +1833,7 @@ var AuditLogger = /** @class */ (function () {
   };
   AuditLogger.prototype.testConnection = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Test audit logger connection
         return [2 /*return*/, true];
       });

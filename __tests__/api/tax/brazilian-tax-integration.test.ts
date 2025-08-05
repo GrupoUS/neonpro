@@ -3,7 +3,7 @@
 // Author: VoidBeast V6.0 Master Orchestrator
 // Date: 2025-01-30
 
-import { describe, it, expect, beforeAll, afterAll, jest } from "@jest/globals";
+import { afterAll, beforeAll, describe, expect, it, jest } from "@jest/globals";
 import { NextRequest } from "next/server";
 
 // Mock Supabase client
@@ -105,10 +105,10 @@ jest.mock("@/app/utils/supabase/server", () => ({
   createClient: () => mockSupabase,
 }));
 
+import { GET as cnpjGET, POST as cnpjPOST } from "@/app/api/tax/cnpj/route";
+import { GET as nfeGET, POST as nfePOST } from "@/app/api/tax/nfe/route";
 // Import API handlers
 import { GET as taxGET, POST as taxPOST } from "@/app/api/tax/route";
-import { GET as nfeGET, POST as nfePOST } from "@/app/api/tax/nfe/route";
-import { GET as cnpjGET, POST as cnpjPOST } from "@/app/api/tax/cnpj/route";
 
 describe("Story 5.5: Brazilian Tax System Integration", () => {
   const testClinicId = "test-clinic-id";

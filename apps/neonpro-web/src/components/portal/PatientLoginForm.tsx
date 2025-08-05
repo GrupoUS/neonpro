@@ -5,15 +5,14 @@
 // Story 4.3: Patient Portal & Self-Service
 // ===============================================
 
-import type { useState, useEffect } from "react";
-import type { useRouter } from "next/navigation";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type { useRouter } from "next/navigation";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
 import type { z } from "zod";
 import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Switch } from "@/components/ui/switch";
 import type {
   Select,
   SelectContent,
@@ -21,11 +20,12 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
 import type { PatientPortalAuthService } from "@/lib/auth-advanced/patient-portal-auth";
 import type {
-  registerPortalServiceWorker,
-  enableOfflineSupport,
   enableInstallPrompt,
+  enableOfflineSupport,
+  registerPortalServiceWorker,
 } from "@/lib/auth-advanced/pwa-config";
 import type { PatientLoginForm as LoginFormData } from "@/types/patient-portal";
 

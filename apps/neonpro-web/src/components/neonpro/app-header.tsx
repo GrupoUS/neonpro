@@ -4,11 +4,10 @@
  */
 "use client";
 
-import React from "react";
+import type { Bell, ChevronRight, Home, LogOut, Menu, Search, Settings, User } from "lucide-react";
 import Link from "next/link";
 import type { usePathname } from "next/navigation";
-import type { cn } from "@/lib/utils";
-import type { Menu, Bell, Search, User, Settings, LogOut, ChevronRight, Home } from "lucide-react";
+import React from "react";
 import type { Button } from "@/components/ui/button";
 import type {
   DropdownMenu,
@@ -18,6 +17,7 @@ import type {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { Input } from "@/components/ui/input";
+import type { cn } from "@/lib/utils";
 
 interface AppHeaderProps {
   onMenuToggle?: () => void;

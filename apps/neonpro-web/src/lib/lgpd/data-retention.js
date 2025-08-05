@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Data Retention Policy System
  * Implements automated data retention and deletion policies
@@ -17,20 +16,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -45,26 +44,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -84,13 +83,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -112,9 +111,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -186,7 +183,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dataRetentionManager =
   exports.DataRetentionManager =
@@ -204,7 +201,7 @@ var events_1 = require("events");
  * Data Categories for Retention
  */
 var DataCategory;
-(function (DataCategory) {
+((DataCategory) => {
   DataCategory["USER_PROFILE"] = "user_profile";
   DataCategory["AUTHENTICATION"] = "authentication";
   DataCategory["SESSION_DATA"] = "session_data";
@@ -225,7 +222,7 @@ var DataCategory;
  * Retention Period Units
  */
 var RetentionUnit;
-(function (RetentionUnit) {
+((RetentionUnit) => {
   RetentionUnit["DAYS"] = "days";
   RetentionUnit["WEEKS"] = "weeks";
   RetentionUnit["MONTHS"] = "months";
@@ -235,7 +232,7 @@ var RetentionUnit;
  * Retention Trigger Types
  */
 var RetentionTrigger;
-(function (RetentionTrigger) {
+((RetentionTrigger) => {
   RetentionTrigger["CREATION_DATE"] = "creation_date";
   RetentionTrigger["LAST_ACCESS"] = "last_access";
   RetentionTrigger["LAST_UPDATE"] = "last_update";
@@ -249,7 +246,7 @@ var RetentionTrigger;
  * Deletion Method Types
  */
 var DeletionMethod;
-(function (DeletionMethod) {
+((DeletionMethod) => {
   DeletionMethod["SOFT_DELETE"] = "soft_delete";
   DeletionMethod["HARD_DELETE"] = "hard_delete";
   DeletionMethod["ANONYMIZATION"] = "anonymization";
@@ -260,7 +257,7 @@ var DeletionMethod;
  * Legal Hold Status
  */
 var LegalHoldStatus;
-(function (LegalHoldStatus) {
+((LegalHoldStatus) => {
   LegalHoldStatus["ACTIVE"] = "active";
   LegalHoldStatus["PENDING"] = "pending";
   LegalHoldStatus["RELEASED"] = "released";
@@ -278,7 +275,7 @@ var LegalHoldStatus;
  * - Legal hold management
  * - Compliance monitoring and reporting
  */
-var DataRetentionManager = /** @class */ (function (_super) {
+var DataRetentionManager = /** @class */ ((_super) => {
   __extends(DataRetentionManager, _super);
   function DataRetentionManager(config) {
     if (config === void 0) {
@@ -363,7 +360,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -447,11 +444,10 @@ var DataRetentionManager = /** @class */ (function (_super) {
             if (!policy) {
               throw new Error("Policy not found");
             }
-            activeSchedules = Array.from(this.schedules.values()).filter(function (s) {
-              return (
-                s.policyId === policyId && s.status !== "completed" && s.status !== "cancelled"
-              );
-            });
+            activeSchedules = Array.from(this.schedules.values()).filter(
+              (s) =>
+                s.policyId === policyId && s.status !== "completed" && s.status !== "cancelled",
+            );
             if (activeSchedules.length > 0) {
               throw new Error(
                 "Cannot delete policy with ".concat(activeSchedules.length, " active schedules"),
@@ -485,7 +481,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -543,7 +539,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -556,13 +552,12 @@ var DataRetentionManager = /** @class */ (function (_super) {
               createdAt: new Date(),
               updatedAt: new Date(),
             });
-            affectedSchedules = Array.from(this.schedules.values()).filter(function (s) {
-              return (
+            affectedSchedules = Array.from(this.schedules.values()).filter(
+              (s) =>
                 (hold.dataCategories.includes(s.category) ||
                   hold.dataIdentifiers.includes(s.dataIdentifier)) &&
-                s.status === "scheduled"
-              );
-            });
+                s.status === "scheduled",
+            );
             (_i = 0), (affectedSchedules_1 = affectedSchedules);
             _a.label = 3;
           case 3:
@@ -680,7 +675,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -691,12 +686,8 @@ var DataRetentionManager = /** @class */ (function (_super) {
               now.getTime() - this.config.gracePeriodDays * 24 * 60 * 60 * 1000,
             );
             readySchedules = Array.from(this.schedules.values())
-              .filter(function (s) {
-                return s.status === "scheduled" && s.scheduledDeletionDate <= gracePeriod;
-              })
-              .sort(function (a, b) {
-                return a.scheduledDeletionDate.getTime() - b.scheduledDeletionDate.getTime();
-              })
+              .filter((s) => s.status === "scheduled" && s.scheduledDeletionDate <= gracePeriod)
+              .sort((a, b) => a.scheduledDeletionDate.getTime() - b.scheduledDeletionDate.getTime())
               .slice(0, this.config.batchSize);
             processed = 0;
             successful = 0;
@@ -792,9 +783,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    * Get retention policies
    */
   DataRetentionManager.prototype.getRetentionPolicies = function () {
-    return Array.from(this.policies.values()).sort(function (a, b) {
-      return b.priority - a.priority;
-    });
+    return Array.from(this.policies.values()).sort((a, b) => b.priority - a.priority);
   };
   /**
    * Get retention schedules
@@ -803,32 +792,26 @@ var DataRetentionManager = /** @class */ (function (_super) {
     var schedules = Array.from(this.schedules.values());
     if (filters) {
       if (filters.status) {
-        schedules = schedules.filter(function (s) {
-          return s.status === filters.status;
-        });
+        schedules = schedules.filter((s) => s.status === filters.status);
       }
       if (filters.category) {
-        schedules = schedules.filter(function (s) {
-          return s.category === filters.category;
-        });
+        schedules = schedules.filter((s) => s.category === filters.category);
       }
       if (filters.policyId) {
-        schedules = schedules.filter(function (s) {
-          return s.policyId === filters.policyId;
-        });
+        schedules = schedules.filter((s) => s.policyId === filters.policyId);
       }
     }
-    return schedules.sort(function (a, b) {
-      return a.scheduledDeletionDate.getTime() - b.scheduledDeletionDate.getTime();
-    });
+    return schedules.sort(
+      (a, b) => a.scheduledDeletionDate.getTime() - b.scheduledDeletionDate.getTime(),
+    );
   };
   /**
    * Get legal holds
    */
   DataRetentionManager.prototype.getLegalHolds = function () {
-    return Array.from(this.legalHolds.values()).sort(function (a, b) {
-      return b.createdAt.getTime() - a.createdAt.getTime();
-    });
+    return Array.from(this.legalHolds.values()).sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
   };
   /**
    * Generate retention report
@@ -852,76 +835,42 @@ var DataRetentionManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            schedules = Array.from(this.schedules.values()).filter(function (s) {
-              return s.createdAt >= period.startDate && s.createdAt <= period.endDate;
-            });
+            schedules = Array.from(this.schedules.values()).filter(
+              (s) => s.createdAt >= period.startDate && s.createdAt <= period.endDate,
+            );
             policies = Array.from(this.policies.values());
-            holds = Array.from(this.legalHolds.values()).filter(function (h) {
-              return h.createdAt >= period.startDate && h.createdAt <= period.endDate;
-            });
+            holds = Array.from(this.legalHolds.values()).filter(
+              (h) => h.createdAt >= period.startDate && h.createdAt <= period.endDate,
+            );
             summary = {
               totalPolicies: policies.length,
-              activePolicies: policies.filter(function (p) {
-                return p.isActive;
-              }).length,
-              scheduledDeletions: schedules.filter(function (s) {
-                return s.status === "scheduled";
-              }).length,
-              completedDeletions: schedules.filter(function (s) {
-                return s.status === "completed";
-              }).length,
-              failedDeletions: schedules.filter(function (s) {
-                return s.status === "failed";
-              }).length,
-              onHoldDeletions: schedules.filter(function (s) {
-                return s.status === "on_hold";
-              }).length,
+              activePolicies: policies.filter((p) => p.isActive).length,
+              scheduledDeletions: schedules.filter((s) => s.status === "scheduled").length,
+              completedDeletions: schedules.filter((s) => s.status === "completed").length,
+              failedDeletions: schedules.filter((s) => s.status === "failed").length,
+              onHoldDeletions: schedules.filter((s) => s.status === "on_hold").length,
               dataVolume: {
                 scheduled: schedules
-                  .filter(function (s) {
-                    return s.status === "scheduled";
-                  })
-                  .reduce(function (sum, s) {
-                    return sum + (s.metadata.dataSize || 0);
-                  }, 0),
+                  .filter((s) => s.status === "scheduled")
+                  .reduce((sum, s) => sum + (s.metadata.dataSize || 0), 0),
                 deleted: schedules
-                  .filter(function (s) {
-                    return s.status === "completed";
-                  })
-                  .reduce(function (sum, s) {
-                    return sum + (s.metadata.dataSize || 0);
-                  }, 0),
+                  .filter((s) => s.status === "completed")
+                  .reduce((sum, s) => sum + (s.metadata.dataSize || 0), 0),
                 archived: schedules
-                  .filter(function (s) {
-                    return s.status === "completed" && s.metadata.archived;
-                  })
-                  .reduce(function (sum, s) {
-                    return sum + (s.metadata.dataSize || 0);
-                  }, 0),
+                  .filter((s) => s.status === "completed" && s.metadata.archived)
+                  .reduce((sum, s) => sum + (s.metadata.dataSize || 0), 0),
               },
             };
-            policyCompliance = policies.map(function (policy) {
-              var policySchedules = schedules.filter(function (s) {
-                return s.policyId === policy.id;
-              });
-              var completed = policySchedules.filter(function (s) {
-                return s.status === "completed";
-              });
-              var failed = policySchedules.filter(function (s) {
-                return s.status === "failed";
-              });
+            policyCompliance = policies.map((policy) => {
+              var policySchedules = schedules.filter((s) => s.policyId === policy.id);
+              var completed = policySchedules.filter((s) => s.status === "completed");
+              var failed = policySchedules.filter((s) => s.status === "failed");
               var processingTimes = completed
-                .filter(function (s) {
-                  return s.actualDeletionDate;
-                })
-                .map(function (s) {
-                  return s.actualDeletionDate.getTime() - s.scheduledDeletionDate.getTime();
-                });
+                .filter((s) => s.actualDeletionDate)
+                .map((s) => s.actualDeletionDate.getTime() - s.scheduledDeletionDate.getTime());
               var averageProcessingTime =
                 processingTimes.length > 0
-                  ? processingTimes.reduce(function (sum, time) {
-                      return sum + time;
-                    }, 0) / processingTimes.length
+                  ? processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length
                   : 0;
               return {
                 policyId: policy.id,
@@ -937,25 +886,17 @@ var DataRetentionManager = /** @class */ (function (_super) {
               };
             });
             legalHoldStats = {
-              active: holds.filter(function (h) {
-                return h.status === LegalHoldStatus.ACTIVE;
-              }).length,
-              released: holds.filter(function (h) {
-                return h.status === LegalHoldStatus.RELEASED;
-              }).length,
-              affectedData: holds.reduce(function (sum, h) {
-                return sum + h.affectedSchedules.length;
-              }, 0),
+              active: holds.filter((h) => h.status === LegalHoldStatus.ACTIVE).length,
+              released: holds.filter((h) => h.status === LegalHoldStatus.RELEASED).length,
+              affectedData: holds.reduce((sum, h) => sum + h.affectedSchedules.length, 0),
             };
             exceptions = [
               {
                 type: "Failed Deletions",
                 count: summary.failedDeletions,
                 details: schedules
-                  .filter(function (s) {
-                    return s.status === "failed";
-                  })
-                  .map(function (s) {
+                  .filter((s) => s.status === "failed")
+                  .map((s) => {
                     var _a;
                     return ""
                       .concat(s.dataIdentifier, ": ")
@@ -968,31 +909,29 @@ var DataRetentionManager = /** @class */ (function (_super) {
               },
               {
                 type: "Overdue Deletions",
-                count: schedules.filter(function (s) {
-                  return (
+                count: schedules.filter(
+                  (s) =>
                     s.status === "scheduled" &&
                     s.scheduledDeletionDate <
-                      new Date(Date.now() - _this.config.gracePeriodDays * 24 * 60 * 60 * 1000)
-                  );
-                }).length,
+                      new Date(Date.now() - _this.config.gracePeriodDays * 24 * 60 * 60 * 1000),
+                ).length,
                 details: schedules
-                  .filter(function (s) {
-                    return (
+                  .filter(
+                    (s) =>
                       s.status === "scheduled" &&
                       s.scheduledDeletionDate <
-                        new Date(Date.now() - _this.config.gracePeriodDays * 24 * 60 * 60 * 1000)
-                    );
-                  })
-                  .map(function (s) {
-                    return ""
+                        new Date(Date.now() - _this.config.gracePeriodDays * 24 * 60 * 60 * 1000),
+                  )
+                  .map((s) =>
+                    ""
                       .concat(s.dataIdentifier, ": ")
                       .concat(
                         Math.floor(
                           (Date.now() - s.scheduledDeletionDate.getTime()) / (1000 * 60 * 60 * 24),
                         ),
                         " days overdue",
-                      );
-                  }),
+                      ),
+                  ),
               },
             ];
             recommendations = this.generateRetentionRecommendations(
@@ -1025,28 +964,23 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.findApplicablePolicy = function (category) {
     return Array.from(this.policies.values())
-      .filter(function (p) {
-        return p.category === category && p.isActive;
-      })
-      .sort(function (a, b) {
-        return b.priority - a.priority;
-      })[0];
+      .filter((p) => p.category === category && p.isActive)
+      .sort((a, b) => b.priority - a.priority)[0];
   };
   /**
    * Find applicable legal hold
    */
   DataRetentionManager.prototype.findApplicableLegalHold = function (dataIdentifier, category) {
-    return Array.from(this.legalHolds.values()).find(function (h) {
-      return (
+    return Array.from(this.legalHolds.values()).find(
+      (h) =>
         h.status === LegalHoldStatus.ACTIVE &&
-        (h.dataCategories.includes(category) || h.dataIdentifiers.includes(dataIdentifier))
-      );
-    });
+        (h.dataCategories.includes(category) || h.dataIdentifiers.includes(dataIdentifier)),
+    );
   };
   /**
    * Calculate trigger date
    */
-  DataRetentionManager.prototype.calculateTriggerDate = function (creationDate, trigger) {
+  DataRetentionManager.prototype.calculateTriggerDate = (creationDate, trigger) => {
     // For most triggers, the trigger date is the creation date
     // In a real implementation, this would be more sophisticated
     return creationDate;
@@ -1054,7 +988,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
   /**
    * Calculate deletion date
    */
-  DataRetentionManager.prototype.calculateDeletionDate = function (triggerDate, retentionPeriod) {
+  DataRetentionManager.prototype.calculateDeletionDate = (triggerDate, retentionPeriod) => {
     var deletionDate = new Date(triggerDate);
     switch (retentionPeriod.unit) {
       case RetentionUnit.DAYS:
@@ -1171,7 +1105,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.archiveData = function (schedule, policy) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would archive the data
         // For now, we'll just mark it as archived
         schedule.metadata.archived = true;
@@ -1186,7 +1120,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.softDeleteData = function (schedule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would mark data as deleted
         // For now, we'll just simulate
         schedule.metadata.softDeleted = true;
@@ -1199,7 +1133,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.hardDeleteData = function (schedule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would permanently delete data
         // For now, we'll just simulate
         schedule.metadata.hardDeleted = true;
@@ -1212,7 +1146,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.anonymizeData = function (schedule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would anonymize the data
         // For now, we'll just simulate
         schedule.metadata.anonymized = true;
@@ -1225,7 +1159,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.pseudonymizeData = function (schedule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would pseudonymize the data
         // For now, we'll just simulate
         schedule.metadata.pseudonymized = true;
@@ -1236,7 +1170,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
   /**
    * Validate policy
    */
-  DataRetentionManager.prototype.validatePolicy = function (policy) {
+  DataRetentionManager.prototype.validatePolicy = (policy) => {
     if (!policy.name || policy.name.trim().length === 0) {
       throw new Error("Policy name is required");
     }
@@ -1275,9 +1209,9 @@ var DataRetentionManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            affectedSchedules = Array.from(this.schedules.values()).filter(function (s) {
-              return s.policyId === policy.id && s.status === "scheduled";
-            });
+            affectedSchedules = Array.from(this.schedules.values()).filter(
+              (s) => s.policyId === policy.id && s.status === "scheduled",
+            );
             (_i = 0), (affectedSchedules_2 = affectedSchedules);
             _a.label = 1;
           case 1:
@@ -1332,11 +1266,11 @@ var DataRetentionManager = /** @class */ (function (_super) {
   /**
    * Generate retention recommendations
    */
-  DataRetentionManager.prototype.generateRetentionRecommendations = function (
+  DataRetentionManager.prototype.generateRetentionRecommendations = (
     summary,
     policyCompliance,
     exceptions,
-  ) {
+  ) => {
     var recommendations = [];
     // Check for failed deletions
     if (summary.failedDeletions > 0) {
@@ -1348,9 +1282,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
       );
     }
     // Check for low compliance rates
-    var lowCompliancePolicies = policyCompliance.filter(function (p) {
-      return p.complianceRate < 90;
-    });
+    var lowCompliancePolicies = policyCompliance.filter((p) => p.complianceRate < 90);
     if (lowCompliancePolicies.length > 0) {
       recommendations.push(
         "Investigate ".concat(
@@ -1360,9 +1292,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
       );
     }
     // Check for long processing times
-    var slowPolicies = policyCompliance.filter(function (p) {
-      return p.averageProcessingTime > 7;
-    });
+    var slowPolicies = policyCompliance.filter((p) => p.averageProcessingTime > 7);
     if (slowPolicies.length > 0) {
       recommendations.push(
         "Optimize processing for ".concat(
@@ -1372,9 +1302,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
       );
     }
     // Check for overdue deletions
-    var overdueException = exceptions.find(function (e) {
-      return e.type === "Overdue Deletions";
-    });
+    var overdueException = exceptions.find((e) => e.type === "Overdue Deletions");
     if (overdueException && overdueException.count > 0) {
       recommendations.push(
         "Address ".concat(
@@ -1395,10 +1323,9 @@ var DataRetentionManager = /** @class */ (function (_super) {
    * Start processing interval
    */
   DataRetentionManager.prototype.startProcessingInterval = function () {
-    var _this = this;
     this.processingInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1408,8 +1335,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.processingIntervalHours * 60 * 60 * 1000,
     );
   };
@@ -1417,10 +1343,9 @@ var DataRetentionManager = /** @class */ (function (_super) {
    * Start review interval
    */
   DataRetentionManager.prototype.startReviewInterval = function () {
-    var _this = this;
     this.reviewInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1430,8 +1355,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.reviewIntervalDays * 24 * 60 * 60 * 1000,
     );
   };
@@ -1445,9 +1369,9 @@ var DataRetentionManager = /** @class */ (function (_super) {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 7, , 8]);
-            activeHolds = Array.from(this.legalHolds.values()).filter(function (h) {
-              return h.status === LegalHoldStatus.ACTIVE;
-            });
+            activeHolds = Array.from(this.legalHolds.values()).filter(
+              (h) => h.status === LegalHoldStatus.ACTIVE,
+            );
             (_i = 0), (activeHolds_1 = activeHolds);
             _a.label = 1;
           case 1:
@@ -1470,7 +1394,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
             _i++;
             return [3 /*break*/, 1];
           case 6:
-            outdatedPolicies = Array.from(this.policies.values()).filter(function (p) {
+            outdatedPolicies = Array.from(this.policies.values()).filter((p) => {
               var lastUpdate = p.updatedAt;
               var updateThreshold = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000); // 1 year
               return lastUpdate < updateThreshold;
@@ -1482,9 +1406,11 @@ var DataRetentionManager = /** @class */ (function (_super) {
                   " retention policies may need review (not updated in over 1 year)",
                 ),
                 details: {
-                  policies: outdatedPolicies.map(function (p) {
-                    return { id: p.id, name: p.name, lastUpdate: p.updatedAt };
-                  }),
+                  policies: outdatedPolicies.map((p) => ({
+                    id: p.id,
+                    name: p.name,
+                    lastUpdate: p.updatedAt,
+                  })),
                   timestamp: new Date(),
                 },
               });
@@ -1584,9 +1510,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.loadSchedules = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1594,9 +1518,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.loadLegalHolds = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1640,9 +1562,7 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.saveReport = function (report) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1650,27 +1570,21 @@ var DataRetentionManager = /** @class */ (function (_super) {
    */
   DataRetentionManager.prototype.removePolicyFromStorage = function (policyId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
    * Log activity
    */
-  DataRetentionManager.prototype.logActivity = function (actor, action, details) {
+  DataRetentionManager.prototype.logActivity = (actor, action, details) => {
     // In a real implementation, this would log to audit trail
     console.log("[Retention] ".concat(actor, " - ").concat(action, ":"), details);
   };
   /**
    * Generate ID
    */
-  DataRetentionManager.prototype.generateId = function (prefix) {
-    return ""
-      .concat(prefix, "_")
-      .concat(Date.now(), "_")
-      .concat(Math.random().toString(36).substr(2, 9));
-  };
+  DataRetentionManager.prototype.generateId = (prefix) =>
+    "".concat(prefix, "_").concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Shutdown the retention manager
    */
@@ -1708,15 +1622,13 @@ var DataRetentionManager = /** @class */ (function (_super) {
     if (!this.reviewInterval) {
       issues.push("Review interval not running");
     }
-    var activePolicies = Array.from(this.policies.values()).filter(function (p) {
-      return p.isActive;
-    });
+    var activePolicies = Array.from(this.policies.values()).filter((p) => p.isActive);
     if (activePolicies.length === 0) {
       issues.push("No active retention policies");
     }
-    var failedSchedules = Array.from(this.schedules.values()).filter(function (s) {
-      return s.status === "failed";
-    }).length;
+    var failedSchedules = Array.from(this.schedules.values()).filter(
+      (s) => s.status === "failed",
+    ).length;
     if (failedSchedules > 10) {
       issues.push("High number of failed schedules: ".concat(failedSchedules));
     }

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Predictive Analytics Types and Validations Tests
  * Story 8.3: Predictive Analytics for Demand Forecasting (≥85% Accuracy)
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,7 +43,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,8 +72,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -95,9 +92,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -156,14 +153,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var predictive_analytics_1 = require("@/app/lib/validations/predictive-analytics");
 var predictive_analytics_2 = require("@/app/lib/services/predictive-analytics");
-describe("Predictive Analytics Types and Validations", function () {
-  describe("TypeScript Interfaces", function () {
-    describe("ForecastingModel Interface", function () {
-      it("accepts valid forecasting model data", function () {
+describe("Predictive Analytics Types and Validations", () => {
+  describe("TypeScript Interfaces", () => {
+    describe("ForecastingModel Interface", () => {
+      it("accepts valid forecasting model data", () => {
         var validModel = {
           id: "model-123",
           model_type: "appointment_demand",
@@ -184,11 +181,11 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(validModel.accuracy_score).toBeGreaterThanOrEqual(0.85);
         expect(validModel.status).toBe("active");
       });
-      it("enforces required fields", function () {
+      it("enforces required fields", () => {
         // TypeScript compilation would catch missing required fields
         // This test verifies the interface structure is correct
         var model = {};
-        expect(function () {
+        expect(() => {
           // These properties should be required by TypeScript
           var requiredFields = [
             "id",
@@ -199,19 +196,19 @@ describe("Predictive Analytics Types and Validations", function () {
             "created_at",
             "updated_at",
           ];
-          requiredFields.forEach(function (field) {
+          requiredFields.forEach((field) => {
             expect(model).toHaveProperty(field);
           });
         }).not.toThrow();
       });
-      it("supports valid model types", function () {
+      it("supports valid model types", () => {
         var validTypes = [
           "appointment_demand",
           "treatment_demand",
           "revenue_forecast",
           "resource_utilization",
         ];
-        validTypes.forEach(function (type) {
+        validTypes.forEach((type) => {
           var model = {
             id: "test",
             model_type: type,
@@ -225,8 +222,8 @@ describe("Predictive Analytics Types and Validations", function () {
         });
       });
     });
-    describe("DemandPrediction Interface", function () {
-      it("accepts valid prediction data with confidence intervals", function () {
+    describe("DemandPrediction Interface", () => {
+      it("accepts valid prediction data with confidence intervals", () => {
         var validPrediction = {
           id: "pred-123",
           model_id: "model-123",
@@ -248,9 +245,9 @@ describe("Predictive Analytics Types and Validations", function () {
           validPrediction.forecast_value,
         );
       });
-      it("supports multiple forecast periods", function () {
+      it("supports multiple forecast periods", () => {
         var periods = ["hourly", "daily", "weekly", "monthly"];
-        periods.forEach(function (period) {
+        periods.forEach((period) => {
           var prediction = {
             id: "test",
             model_id: "model-123",
@@ -264,9 +261,9 @@ describe("Predictive Analytics Types and Validations", function () {
           expect(prediction.forecast_period).toBe(period);
         });
       });
-      it("supports multiple prediction categories", function () {
+      it("supports multiple prediction categories", () => {
         var categories = ["appointments", "treatments", "revenue", "resources"];
-        categories.forEach(function (category) {
+        categories.forEach((category) => {
           var prediction = {
             id: "test",
             model_id: "model-123",
@@ -281,8 +278,8 @@ describe("Predictive Analytics Types and Validations", function () {
         });
       });
     });
-    describe("DemandAlert Interface", function () {
-      it("accepts valid alert data", function () {
+    describe("DemandAlert Interface", () => {
+      it("accepts valid alert data", () => {
         var validAlert = {
           id: "alert-123",
           alert_type: "demand_spike",
@@ -304,9 +301,9 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(validAlert.severity).toBe("high");
         expect(validAlert.acknowledged).toBe(false);
       });
-      it("supports alert severity levels", function () {
+      it("supports alert severity levels", () => {
         var severities = ["low", "medium", "high", "critical"];
-        severities.forEach(function (severity) {
+        severities.forEach((severity) => {
           var alert = {
             id: "test",
             alert_type: "demand_spike",
@@ -322,9 +319,9 @@ describe("Predictive Analytics Types and Validations", function () {
           expect(alert.severity).toBe(severity);
         });
       });
-      it("supports different alert types", function () {
+      it("supports different alert types", () => {
         var alertTypes = ["demand_spike", "demand_drop", "resource_shortage", "capacity_exceeded"];
-        alertTypes.forEach(function (type) {
+        alertTypes.forEach((type) => {
           var alert = {
             id: "test",
             alert_type: type,
@@ -342,9 +339,9 @@ describe("Predictive Analytics Types and Validations", function () {
       });
     });
   });
-  describe("Zod Schema Validations", function () {
-    describe("ForecastingModel Schema", function () {
-      it("validates valid forecasting model", function () {
+  describe("Zod Schema Validations", () => {
+    describe("ForecastingModel Schema", () => {
+      it("validates valid forecasting model", () => {
         var validData = {
           id: "model-123",
           model_type: "appointment_demand",
@@ -364,7 +361,7 @@ describe("Predictive Analytics Types and Validations", function () {
           expect(result.data.model_type).toBe("appointment_demand");
         }
       });
-      it("rejects invalid model type", function () {
+      it("rejects invalid model type", () => {
         var invalidData = {
           id: "model-123",
           model_type: "invalid_type",
@@ -380,7 +377,7 @@ describe("Predictive Analytics Types and Validations", function () {
           expect(result.error.issues[0].path).toContain("model_type");
         }
       });
-      it("validates accuracy score range (0-1)", function () {
+      it("validates accuracy score range (0-1)", () => {
         var invalidData = {
           id: "model-123",
           model_type: "appointment_demand",
@@ -396,7 +393,7 @@ describe("Predictive Analytics Types and Validations", function () {
           expect(result.error.issues[0].path).toContain("accuracy_score");
         }
       });
-      it("validates required fields", function () {
+      it("validates required fields", () => {
         var incompleteData = {
           id: "model-123",
           // Missing required fields
@@ -408,8 +405,8 @@ describe("Predictive Analytics Types and Validations", function () {
         }
       });
     });
-    describe("DemandPrediction Schema", function () {
-      it("validates valid prediction data", function () {
+    describe("DemandPrediction Schema", () => {
+      it("validates valid prediction data", () => {
         var validData = {
           id: "pred-123",
           model_id: "model-123",
@@ -429,7 +426,7 @@ describe("Predictive Analytics Types and Validations", function () {
           expect(result.data.confidence_score).toBe(0.89);
         }
       });
-      it("validates confidence interval logic", function () {
+      it("validates confidence interval logic", () => {
         var invalidData = {
           id: "pred-123",
           model_id: "model-123",
@@ -445,7 +442,7 @@ describe("Predictive Analytics Types and Validations", function () {
         var result = predictive_analytics_1.demandPredictionSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
       });
-      it("validates confidence score range (0-1)", function () {
+      it("validates confidence score range (0-1)", () => {
         var invalidData = {
           id: "pred-123",
           model_id: "model-123",
@@ -459,7 +456,7 @@ describe("Predictive Analytics Types and Validations", function () {
         var result = predictive_analytics_1.demandPredictionSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
       });
-      it("validates forecast period enum", function () {
+      it("validates forecast period enum", () => {
         var invalidData = {
           id: "pred-123",
           model_id: "model-123",
@@ -474,8 +471,8 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(result.success).toBe(false);
       });
     });
-    describe("Request Schemas", function () {
-      it("validates prediction request", function () {
+    describe("Request Schemas", () => {
+      it("validates prediction request", () => {
         var validRequest = {
           model_id: "model-123",
           prediction_date: "2025-02-01",
@@ -485,7 +482,7 @@ describe("Predictive Analytics Types and Validations", function () {
         var result = predictive_analytics_1.predictionRequestSchema.safeParse(validRequest);
         expect(result.success).toBe(true);
       });
-      it("validates training request", function () {
+      it("validates training request", () => {
         var validRequest = {
           model_id: "model-123",
           training_data_start_date: "2024-01-01",
@@ -494,7 +491,7 @@ describe("Predictive Analytics Types and Validations", function () {
         var result = predictive_analytics_1.trainingRequestSchema.safeParse(validRequest);
         expect(result.success).toBe(true);
       });
-      it("validates training date range logic", function () {
+      it("validates training date range logic", () => {
         var invalidRequest = {
           model_id: "model-123",
           training_data_start_date: "2025-01-26",
@@ -503,7 +500,7 @@ describe("Predictive Analytics Types and Validations", function () {
         var result = predictive_analytics_1.trainingRequestSchema.safeParse(invalidRequest);
         expect(result.success).toBe(false);
       });
-      it("validates alert update request", function () {
+      it("validates alert update request", () => {
         var validRequest = {
           alert_id: "alert-123",
           acknowledged: true,
@@ -514,8 +511,8 @@ describe("Predictive Analytics Types and Validations", function () {
       });
     });
   });
-  describe("Service Layer Functions", function () {
-    describe("generateDemandPrediction", function () {
+  describe("Service Layer Functions", () => {
+    describe("generateDemandPrediction", () => {
       var mockHistoricalData = [
         { date: "2025-01-01", value: 40 },
         { date: "2025-01-02", value: 42 },
@@ -523,7 +520,7 @@ describe("Predictive Analytics Types and Validations", function () {
         { date: "2025-01-04", value: 43 },
         { date: "2025-01-05", value: 47 },
       ];
-      it("generates prediction with confidence intervals", function () {
+      it("generates prediction with confidence intervals", () => {
         var prediction = (0, predictive_analytics_2.generateDemandPrediction)(
           mockHistoricalData,
           "2025-01-06",
@@ -538,9 +535,9 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(prediction.confidence_score).toBeGreaterThanOrEqual(0);
         expect(prediction.confidence_score).toBeLessThanOrEqual(1);
       });
-      it("handles different forecast periods", function () {
+      it("handles different forecast periods", () => {
         var periods = ["daily", "weekly", "monthly"];
-        periods.forEach(function (period) {
+        periods.forEach((period) => {
           var prediction = (0, predictive_analytics_2.generateDemandPrediction)(
             mockHistoricalData,
             "2025-01-06",
@@ -550,7 +547,7 @@ describe("Predictive Analytics Types and Validations", function () {
           expect(prediction.forecast_value).toBeGreaterThan(0);
         });
       });
-      it("adapts to seasonal patterns", function () {
+      it("adapts to seasonal patterns", () => {
         var seasonalData = [
           { date: "2024-12-01", value: 30 }, // Low season
           { date: "2024-12-15", value: 60 }, // High season
@@ -564,7 +561,7 @@ describe("Predictive Analytics Types and Validations", function () {
         );
         expect(prediction.forecast_value).toBeGreaterThan(50); // Should predict high season
       });
-      it("provides higher confidence for stable patterns", function () {
+      it("provides higher confidence for stable patterns", () => {
         var stableData = [
           { date: "2025-01-01", value: 45 },
           { date: "2025-01-02", value: 45 },
@@ -580,10 +577,10 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(prediction.confidence_score).toBeGreaterThan(0.8);
       });
     });
-    describe("calculateAccuracyMetrics", function () {
+    describe("calculateAccuracyMetrics", () => {
       var mockActualValues = [40, 42, 45, 43, 47];
       var mockPredictedValues = [38, 44, 46, 41, 49];
-      it("calculates accuracy score", function () {
+      it("calculates accuracy score", () => {
         var metrics = (0, predictive_analytics_2.calculateAccuracyMetrics)(
           mockActualValues,
           mockPredictedValues,
@@ -592,7 +589,7 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(metrics.accuracy_score).toBeGreaterThanOrEqual(0);
         expect(metrics.accuracy_score).toBeLessThanOrEqual(1);
       });
-      it("calculates MAE (Mean Absolute Error)", function () {
+      it("calculates MAE (Mean Absolute Error)", () => {
         var metrics = (0, predictive_analytics_2.calculateAccuracyMetrics)(
           mockActualValues,
           mockPredictedValues,
@@ -600,7 +597,7 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(metrics).toHaveProperty("mae");
         expect(metrics.mae).toBeGreaterThanOrEqual(0);
       });
-      it("calculates RMSE (Root Mean Square Error)", function () {
+      it("calculates RMSE (Root Mean Square Error)", () => {
         var metrics = (0, predictive_analytics_2.calculateAccuracyMetrics)(
           mockActualValues,
           mockPredictedValues,
@@ -609,7 +606,7 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(metrics.rmse).toBeGreaterThanOrEqual(0);
         expect(metrics.rmse).toBeGreaterThanOrEqual(metrics.mae);
       });
-      it("identifies when accuracy meets threshold", function () {
+      it("identifies when accuracy meets threshold", () => {
         var perfectPredictions = mockActualValues;
         var metrics = (0, predictive_analytics_2.calculateAccuracyMetrics)(
           mockActualValues,
@@ -619,19 +616,19 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(metrics.mae).toBe(0);
         expect(metrics.rmse).toBe(0);
       });
-      it("handles edge cases gracefully", function () {
+      it("handles edge cases gracefully", () => {
         // Empty arrays
-        expect(function () {
+        expect(() => {
           (0, predictive_analytics_2.calculateAccuracyMetrics)([], []);
         }).not.toThrow();
         // Mismatched lengths
-        expect(function () {
+        expect(() => {
           (0, predictive_analytics_2.calculateAccuracyMetrics)([1, 2, 3], [1, 2]);
         }).not.toThrow();
       });
     });
-    describe("createDemandAlert", function () {
-      it("creates spike alert for significant increases", function () {
+    describe("createDemandAlert", () => {
+      it("creates spike alert for significant increases", () => {
         var currentDemand = 45;
         var predictedDemand = 65; // 44% increase
         var alert = (0, predictive_analytics_2.createDemandAlert)(
@@ -644,7 +641,7 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(alert.severity).toBe("high");
         expect(alert.metadata.predicted_increase).toBeGreaterThan(0.3);
       });
-      it("creates drop alert for significant decreases", function () {
+      it("creates drop alert for significant decreases", () => {
         var currentDemand = 65;
         var predictedDemand = 35; // 46% decrease
         var alert = (0, predictive_analytics_2.createDemandAlert)(
@@ -656,14 +653,14 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(alert.alert_type).toBe("demand_drop");
         expect(alert.severity).toBe("medium");
       });
-      it("adjusts severity based on magnitude", function () {
+      it("adjusts severity based on magnitude", () => {
         var scenarios = [
           { current: 50, predicted: 55, expectedSeverity: "low" }, // 10% increase
           { current: 50, predicted: 65, expectedSeverity: "medium" }, // 30% increase
           { current: 50, predicted: 75, expectedSeverity: "high" }, // 50% increase
           { current: 50, predicted: 90, expectedSeverity: "critical" }, // 80% increase
         ];
-        scenarios.forEach(function (scenario) {
+        scenarios.forEach((scenario) => {
           var alert = (0, predictive_analytics_2.createDemandAlert)(
             scenario.current,
             scenario.predicted,
@@ -673,19 +670,19 @@ describe("Predictive Analytics Types and Validations", function () {
           expect(alert.severity).toBe(scenario.expectedSeverity);
         });
       });
-      it("includes confidence in alert metadata", function () {
+      it("includes confidence in alert metadata", () => {
         var alert = (0, predictive_analytics_2.createDemandAlert)(45, 65, "appointments", 0.89);
         expect(alert.metadata).toHaveProperty("confidence_score");
         expect(alert.metadata.confidence_score).toBe(0.89);
       });
-      it("generates appropriate titles and descriptions", function () {
+      it("generates appropriate titles and descriptions", () => {
         var alert = (0, predictive_analytics_2.createDemandAlert)(45, 65, "appointments", 0.9);
         expect(alert.title).toContain("Demanda");
         expect(alert.description).toContain("%");
         expect(alert.description).toContain("appointments");
       });
     });
-    describe("optimizeResourceAllocation", function () {
+    describe("optimizeResourceAllocation", () => {
       var mockDemandForecast = [
         { date: "2025-02-01", predicted_demand: 45, category: "appointments" },
         { date: "2025-02-02", predicted_demand: 52, category: "appointments" },
@@ -696,59 +693,56 @@ describe("Predictive Analytics Types and Validations", function () {
         rooms: 3,
         equipment: 2,
       };
-      it("provides staff optimization recommendations", function () {
+      it("provides staff optimization recommendations", () => {
         var recommendations = (0, predictive_analytics_2.optimizeResourceAllocation)(
           mockDemandForecast,
           mockCurrentResources,
         );
         expect(recommendations).toBeInstanceOf(Array);
         expect(recommendations.length).toBeGreaterThan(0);
-        var staffRec = recommendations.find(function (r) {
-          return (
-            r.recommendation_type === "resource_allocation" && r.metadata.resource_type === "staff"
-          );
-        });
+        var staffRec = recommendations.find(
+          (r) =>
+            r.recommendation_type === "resource_allocation" && r.metadata.resource_type === "staff",
+        );
         expect(staffRec).toBeDefined();
       });
-      it("calculates optimal resource levels", function () {
+      it("calculates optimal resource levels", () => {
         var recommendations = (0, predictive_analytics_2.optimizeResourceAllocation)(
           mockDemandForecast,
           mockCurrentResources,
         );
-        var staffRec = recommendations.find(function (r) {
-          return r.metadata.resource_type === "staff";
-        });
+        var staffRec = recommendations.find((r) => r.metadata.resource_type === "staff");
         if (staffRec) {
           expect(staffRec.metadata).toHaveProperty("recommended_quantity");
           expect(staffRec.metadata.recommended_quantity).toBeGreaterThan(0);
         }
       });
-      it("provides schedule optimization suggestions", function () {
+      it("provides schedule optimization suggestions", () => {
         var recommendations = (0, predictive_analytics_2.optimizeResourceAllocation)(
           mockDemandForecast,
           mockCurrentResources,
         );
-        var scheduleRec = recommendations.find(function (r) {
-          return r.recommendation_type === "schedule_optimization";
-        });
+        var scheduleRec = recommendations.find(
+          (r) => r.recommendation_type === "schedule_optimization",
+        );
         expect(scheduleRec).toBeDefined();
         if (scheduleRec) {
           expect(scheduleRec.priority).toMatch(/low|medium|high/);
         }
       });
-      it("considers confidence scores in recommendations", function () {
-        var highConfidenceForecast = mockDemandForecast.map(function (f) {
-          return __assign(__assign({}, f), { confidence_score: 0.95 });
-        });
+      it("considers confidence scores in recommendations", () => {
+        var highConfidenceForecast = mockDemandForecast.map((f) =>
+          __assign(__assign({}, f), { confidence_score: 0.95 }),
+        );
         var recommendations = (0, predictive_analytics_2.optimizeResourceAllocation)(
           highConfidenceForecast,
           mockCurrentResources,
         );
-        recommendations.forEach(function (rec) {
+        recommendations.forEach((rec) => {
           expect(rec.confidence_score).toBeGreaterThan(0.8);
         });
       });
-      it("handles capacity constraints", function () {
+      it("handles capacity constraints", () => {
         var highDemandForecast = [
           { date: "2025-02-01", predicted_demand: 100, category: "appointments" },
           { date: "2025-02-02", predicted_demand: 120, category: "appointments" },
@@ -757,9 +751,9 @@ describe("Predictive Analytics Types and Validations", function () {
           highDemandForecast,
           mockCurrentResources,
         );
-        var capacityAlert = recommendations.find(function (r) {
-          return r.recommendation_type === "capacity_warning";
-        });
+        var capacityAlert = recommendations.find(
+          (r) => r.recommendation_type === "capacity_warning",
+        );
         expect(capacityAlert).toBeDefined();
         if (capacityAlert) {
           expect(capacityAlert.priority).toBe("high");
@@ -767,16 +761,16 @@ describe("Predictive Analytics Types and Validations", function () {
       });
     });
   });
-  describe("PredictiveAnalyticsService Class", function () {
+  describe("PredictiveAnalyticsService Class", () => {
     var service;
-    beforeEach(function () {
+    beforeEach(() => {
       service = new predictive_analytics_2.PredictiveAnalyticsService();
     });
-    describe("Model Management", function () {
-      it("creates forecasting model with validation", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("Model Management", () => {
+      it("creates forecasting model with validation", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var modelData, createSpy, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 modelData = {
@@ -805,12 +799,11 @@ describe("Predictive Analytics Types and Validations", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("validates model accuracy threshold", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("validates model accuracy threshold", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var lowAccuracyModel, validateSpy, isValid;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             lowAccuracyModel = {
               id: "model-123",
               accuracy_score: 0.75, // Below 85% threshold
@@ -822,12 +815,11 @@ describe("Predictive Analytics Types and Validations", function () {
             validateSpy.mockRestore();
             return [2 /*return*/];
           });
-        });
-      });
-      it("activates models only when accuracy ≥85%", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("activates models only when accuracy ≥85%", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var highAccuracyModel, activateSpy, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 highAccuracyModel = {
@@ -844,14 +836,13 @@ describe("Predictive Analytics Types and Validations", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("Prediction Generation", function () {
-      it("generates predictions with confidence intervals", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("Prediction Generation", () => {
+      it("generates predictions with confidence intervals", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var predictionRequest, generateSpy, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 predictionRequest = {
@@ -881,12 +872,11 @@ describe("Predictive Analytics Types and Validations", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("supports multi-dimensional forecasting", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("supports multi-dimensional forecasting", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var categories, predictions, generateSpy, _i, categories_1, category, prediction;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 categories = ["appointments", "treatments", "revenue"];
@@ -925,23 +915,18 @@ describe("Predictive Analytics Types and Validations", function () {
                 return [3 /*break*/, 1];
               case 4:
                 expect(predictions).toHaveLength(3);
-                expect(
-                  predictions.map(function (p) {
-                    return p.category;
-                  }),
-                ).toEqual(categories);
+                expect(predictions.map((p) => p.category)).toEqual(categories);
                 generateSpy.mockRestore();
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("Alert System", function () {
-      it("creates demand spike alerts", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("Alert System", () => {
+      it("creates demand spike alerts", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var alertData, createSpy, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 alertData = {
@@ -970,12 +955,11 @@ describe("Predictive Analytics Types and Validations", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("manages alert acknowledgment workflow", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("manages alert acknowledgment workflow", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var updateRequest, updateSpy, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 updateRequest = {
@@ -1005,14 +989,13 @@ describe("Predictive Analytics Types and Validations", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("Performance Monitoring", function () {
-      it("tracks accuracy metrics over time", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("Performance Monitoring", () => {
+      it("tracks accuracy metrics over time", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var accuracyData, trackSpy, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 accuracyData = [
@@ -1030,12 +1013,11 @@ describe("Predictive Analytics Types and Validations", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("identifies models needing retraining", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("identifies models needing retraining", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var models, identifySpy, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             models = [
               { id: "model-1", accuracy_score: 0.82 }, // Below threshold
               { id: "model-2", accuracy_score: 0.89 }, // Above threshold
@@ -1048,12 +1030,11 @@ describe("Predictive Analytics Types and Validations", function () {
             identifySpy.mockRestore();
             return [2 /*return*/];
           });
-        });
-      });
+        }));
     });
   });
-  describe("Story 8.3 Acceptance Criteria Type Validation", function () {
-    it("AC1: Enforces ≥85% accuracy requirement in types", function () {
+  describe("Story 8.3 Acceptance Criteria Type Validation", () => {
+    it("AC1: Enforces ≥85% accuracy requirement in types", () => {
       var highAccuracyModel = {
         id: "model-123",
         model_type: "appointment_demand",
@@ -1065,9 +1046,9 @@ describe("Predictive Analytics Types and Validations", function () {
       };
       expect(highAccuracyModel.accuracy_score).toBeGreaterThanOrEqual(0.85);
     });
-    it("AC2: Supports multi-dimensional prediction types", function () {
+    it("AC2: Supports multi-dimensional prediction types", () => {
       var dimensions = ["appointments", "treatments", "revenue", "resources"];
-      dimensions.forEach(function (category) {
+      dimensions.forEach((category) => {
         var prediction = {
           id: "pred-test",
           model_id: "model-123",
@@ -1081,9 +1062,9 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(prediction.category).toBe(category);
       });
     });
-    it("AC4: Supports early warning alert types", function () {
+    it("AC4: Supports early warning alert types", () => {
       var warningTypes = ["demand_spike", "demand_drop", "resource_shortage", "capacity_exceeded"];
-      warningTypes.forEach(function (alertType) {
+      warningTypes.forEach((alertType) => {
         var alert = {
           id: "alert-test",
           alert_type: alertType,
@@ -1099,9 +1080,9 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(alert.alert_type).toBe(alertType);
       });
     });
-    it("AC8: Supports customizable timeframe types", function () {
+    it("AC8: Supports customizable timeframe types", () => {
       var timeframes = ["hourly", "daily", "weekly", "monthly"];
-      timeframes.forEach(function (period) {
+      timeframes.forEach((period) => {
         var prediction = {
           id: "pred-test",
           model_id: "model-123",
@@ -1115,7 +1096,7 @@ describe("Predictive Analytics Types and Validations", function () {
         expect(prediction.forecast_period).toBe(period);
       });
     });
-    it("AC10: Includes performance tracking types", function () {
+    it("AC10: Includes performance tracking types", () => {
       var accuracy = {
         id: "acc-123",
         model_id: "model-123",

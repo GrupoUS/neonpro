@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Caching Strategies for Next.js 15
  *
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,10 +134,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -149,7 +146,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CachePerformanceMonitor =
   exports.CDNOptimization =
@@ -190,23 +187,19 @@ exports.CACHE_CONFIG = {
   },
 };
 // Cache key generators
-var CacheKeyGenerator = /** @class */ (function () {
+var CacheKeyGenerator = /** @class */ (() => {
   function CacheKeyGenerator() {}
   CacheKeyGenerator.analytics = function (userId, dateRange, filters) {
     var filterHash = filters ? this.hashObject(filters) : "no-filters";
     return "analytics:".concat(userId, ":").concat(dateRange, ":").concat(filterHash);
   };
-  CacheKeyGenerator.subscription = function (userId) {
-    return "subscription:".concat(userId);
-  };
-  CacheKeyGenerator.dashboard = function (userId, page) {
-    return "dashboard:".concat(userId, ":").concat(page);
-  };
+  CacheKeyGenerator.subscription = (userId) => "subscription:".concat(userId);
+  CacheKeyGenerator.dashboard = (userId, page) => "dashboard:".concat(userId, ":").concat(page);
   CacheKeyGenerator.apiResponse = function (endpoint, params) {
     var paramHash = params ? this.hashObject(params) : "no-params";
     return "api:".concat(endpoint, ":").concat(paramHash);
   };
-  CacheKeyGenerator.hashObject = function (obj) {
+  CacheKeyGenerator.hashObject = (obj) => {
     var str = JSON.stringify(obj, Object.keys(obj).sort());
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
@@ -220,7 +213,7 @@ var CacheKeyGenerator = /** @class */ (function () {
 })();
 exports.CacheKeyGenerator = CacheKeyGenerator;
 // Multi-level cache manager
-var CacheManager = /** @class */ (function () {
+var CacheManager = /** @class */ (() => {
   function CacheManager() {
     this.memoryCache = new Map();
     this.DEFAULT_TTL = 300000; // 5 minutes
@@ -251,11 +244,7 @@ var CacheManager = /** @class */ (function () {
       var _b = _a[_i],
         key = _b[0],
         cached = _b[1];
-      if (
-        cached.tags.some(function (tag) {
-          return tags.includes(tag);
-        })
-      ) {
+      if (cached.tags.some((tag) => tags.includes(tag))) {
         this.memoryCache.delete(key);
         invalidated++;
       }
@@ -292,7 +281,7 @@ exports.CacheManager = CacheManager;
 exports.cacheManager = new CacheManager();
 // Setup automatic cleanup every 5 minutes
 if (typeof window === "undefined") {
-  setInterval(function () {
+  setInterval(() => {
     var cleaned = exports.cacheManager.cleanup();
     if (cleaned > 0) {
       console.log("\uD83E\uDDF9 Cleaned ".concat(cleaned, " expired cache entries"));
@@ -300,9 +289,9 @@ if (typeof window === "undefined") {
   }, 300000); // 5 minutes
 }
 // HTTP Cache Headers Helper
-var CacheHeaders = /** @class */ (function () {
+var CacheHeaders = /** @class */ (() => {
   function CacheHeaders() {}
-  CacheHeaders.staticAsset = function () {
+  CacheHeaders.staticAsset = () => {
     var headers = new Headers();
     headers.set(
       "Cache-Control",
@@ -311,7 +300,7 @@ var CacheHeaders = /** @class */ (function () {
     headers.set("ETag", '"'.concat(Date.now(), '"'));
     return headers;
   };
-  CacheHeaders.apiResponse = function (config) {
+  CacheHeaders.apiResponse = (config) => {
     if (config === void 0) {
       config = exports.CACHE_CONFIG.API_RESPONSES;
     }
@@ -324,7 +313,7 @@ var CacheHeaders = /** @class */ (function () {
     headers.set("Vary", "Accept, Authorization");
     return headers;
   };
-  CacheHeaders.dynamicContent = function () {
+  CacheHeaders.dynamicContent = () => {
     var headers = new Headers();
     headers.set(
       "Cache-Control",
@@ -335,14 +324,14 @@ var CacheHeaders = /** @class */ (function () {
     headers.set("ETag", '"'.concat(Date.now(), '"'));
     return headers;
   };
-  CacheHeaders.noCache = function () {
+  CacheHeaders.noCache = () => {
     var headers = new Headers();
     headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
     headers.set("Pragma", "no-cache");
     headers.set("Expires", "0");
     return headers;
   };
-  CacheHeaders.conditionalCache = function (request) {
+  CacheHeaders.conditionalCache = (request) => {
     var headers = new Headers();
     // Check if user is authenticated
     var isAuthenticated = request.headers.get("authorization") || request.cookies.get("session");
@@ -359,13 +348,13 @@ var CacheHeaders = /** @class */ (function () {
 })();
 exports.CacheHeaders = CacheHeaders;
 // Cache invalidation strategies
-var CacheInvalidation = /** @class */ (function () {
+var CacheInvalidation = /** @class */ (() => {
   function CacheInvalidation() {}
   // Invalidate user-specific caches
   CacheInvalidation.invalidateUser = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var tags, invalidated;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         tags = [
           "user:".concat(userId),
           "analytics:".concat(userId),
@@ -385,7 +374,7 @@ var CacheInvalidation = /** @class */ (function () {
   CacheInvalidation.invalidateAnalytics = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var tags, invalidated;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         tags = userId ? ["analytics:".concat(userId)] : ["analytics"];
         invalidated = exports.cacheManager.invalidateByTags(tags);
         console.log("\uD83D\uDCCA Invalidated ".concat(invalidated, " analytics cache entries"));
@@ -397,7 +386,7 @@ var CacheInvalidation = /** @class */ (function () {
   CacheInvalidation.invalidateSubscriptions = function () {
     return __awaiter(this, void 0, void 0, function () {
       var invalidated;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         invalidated = exports.cacheManager.invalidateByTags(["subscription"]);
         console.log("\uD83D\uDCB3 Invalidated ".concat(invalidated, " subscription cache entries"));
         return [2 /*return*/];
@@ -407,8 +396,8 @@ var CacheInvalidation = /** @class */ (function () {
   // Time-based invalidation
   CacheInvalidation.scheduleInvalidation = function (key, delay) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        setTimeout(function () {
+      return __generator(this, (_a) => {
+        setTimeout(() => {
           exports.cacheManager.delete(key);
           console.log("\u23F0 Scheduled invalidation executed for key: ".concat(key));
         }, delay);
@@ -420,10 +409,10 @@ var CacheInvalidation = /** @class */ (function () {
 })();
 exports.CacheInvalidation = CacheInvalidation;
 // CDN optimization utilities
-var CDNOptimization = /** @class */ (function () {
+var CDNOptimization = /** @class */ (() => {
   function CDNOptimization() {}
   // Generate CDN-optimized URLs
-  CDNOptimization.imageUrl = function (src, options) {
+  CDNOptimization.imageUrl = (src, options) => {
     if (options === void 0) {
       options = {};
     }
@@ -442,39 +431,32 @@ var CDNOptimization = /** @class */ (function () {
     return "/_next/image?url=".concat(encodeURIComponent(src), "&").concat(params.toString());
   };
   // Preload critical resources
-  CDNOptimization.generatePreloadLinks = function (resources) {
-    return resources
-      .map(function (resource) {
+  CDNOptimization.generatePreloadLinks = (resources) =>
+    resources
+      .map((resource) => {
         var link = '<link rel="preload" href="'
           .concat(resource.href, '" as="')
           .concat(resource.as, '"');
         if (resource.type) link += ' type="'.concat(resource.type, '"');
         if (resource.crossorigin) link += " crossorigin";
-        return link + ">";
+        return `${link}>`;
       })
       .join("\n");
-  };
   // Generate resource hints
-  CDNOptimization.generateResourceHints = function (domains) {
-    return domains
-      .map(function (domain) {
-        return '<link rel="dns-prefetch" href="//'.concat(domain, '">');
-      })
-      .join("\n");
-  };
+  CDNOptimization.generateResourceHints = (domains) =>
+    domains.map((domain) => '<link rel="dns-prefetch" href="//'.concat(domain, '">')).join("\n");
   return CDNOptimization;
 })();
 exports.CDNOptimization = CDNOptimization;
 // Cache middleware for API routes
 function withCache(handler, config) {
-  var _this = this;
   if (config === void 0) {
     config = {};
   }
-  return function (req) {
-    return __awaiter(_this, void 0, void 0, function () {
+  return (req) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, ttl, _b, tags, keyGenerator, skipCache, cacheKey, cached, response, data;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             (_a = config.ttl),
@@ -484,7 +466,7 @@ function withCache(handler, config) {
               (keyGenerator = config.keyGenerator),
               (skipCache = config.skipCache);
             // Skip caching if specified
-            if (skipCache && skipCache(req)) {
+            if (skipCache?.(req)) {
               return [2 /*return*/, handler(req)];
             }
             cacheKey = keyGenerator
@@ -523,10 +505,9 @@ function withCache(handler, config) {
         }
       });
     });
-  };
 }
 // Performance monitoring for cache efficiency
-var CachePerformanceMonitor = /** @class */ (function () {
+var CachePerformanceMonitor = /** @class */ (() => {
   function CachePerformanceMonitor() {}
   CachePerformanceMonitor.recordHit = function () {
     this.hits++;

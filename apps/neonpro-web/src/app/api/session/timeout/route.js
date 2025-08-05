@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -166,7 +163,7 @@ function GET(request) {
       timeRemaining,
       error_1;
     var _d;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 6, , 7]);
@@ -276,7 +273,7 @@ function POST(request) {
       updateError,
       error_2;
     var _d, _e, _f;
-    return __generator(this, function (_g) {
+    return __generator(this, (_g) => {
       switch (_g.label) {
         case 0:
           _g.trys.push([0, 13, , 14]);
@@ -440,7 +437,7 @@ function POST(request) {
 function DELETE(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, _a, user, authError, signOutError_1, error_3;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 8, , 9]);

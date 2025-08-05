@@ -15,7 +15,24 @@
 
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
+import type {
+  Activity,
+  Brain,
+  Calendar,
+  ChevronDown,
+  Clock,
+  Filter,
+  MapPin,
+  RotateCcw,
+  Search,
+  Settings,
+  Stethoscope,
+  User,
+  X,
+} from "lucide-react";
+import type { useCallback, useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -23,10 +40,11 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { DatePicker } from "@/components/ui/date-picker";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Badge } from "@/components/ui/badge";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
   Select,
   SelectContent,
@@ -34,32 +52,14 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { DatePicker } from "@/components/ui/date-picker";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Calendar,
-  Filter,
-  X,
-  Settings,
-  User,
-  Stethoscope,
-  MapPin,
-  Clock,
-  Activity,
-  Brain,
-  ChevronDown,
-  Search,
-  RotateCcw,
-} from "lucide-react";
 
 // Analytics Engine
 import type {
-  type AnalyticsFilter,
-  type AnalyticsTimeframe,
-  type FilterOptions,
+  AnalyticsFilter,
+  AnalyticsTimeframe,
   AnalyticsUtils,
+  FilterOptions,
 } from "@/lib/analytics";
 
 // Types

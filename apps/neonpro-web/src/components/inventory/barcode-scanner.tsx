@@ -6,13 +6,6 @@
 
 "use client";
 
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Input } from "@/components/ui/input";
-import type { useBarcode } from "@/hooks/inventory/use-barcode";
-import type { BarcodeResult, ScannerError } from "@/lib/types/inventory";
 import type {
   AlertCircle,
   Camera,
@@ -24,7 +17,15 @@ import type {
   RotateCw,
   X,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { useBarcode } from "@/hooks/inventory/use-barcode";
+import type { BarcodeResult, ScannerError } from "@/lib/types/inventory";
 
 interface BarcodeScannerProps {
   onScan: (result: BarcodeResult) => void;

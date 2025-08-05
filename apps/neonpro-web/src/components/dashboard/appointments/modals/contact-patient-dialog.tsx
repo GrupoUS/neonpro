@@ -1,9 +1,34 @@
 "use client";
 
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Calendar,
+  Check,
+  Clock,
+  Copy,
+  ExternalLink,
+  Loader2,
+  Mail,
+  MessageSquare,
+  Phone,
+  Send,
+  User,
+} from "lucide-react";
 import type { useState } from "react";
 import type { useForm } from "react-hook-form";
-import type { zodResolver } from "@hookform/resolvers/zod";
+import type { toast } from "sonner";
 import type { z } from "zod";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -12,7 +37,6 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
 import type {
   Form,
   FormControl,
@@ -21,7 +45,6 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Select,
   SelectContent,
@@ -29,31 +52,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  MessageSquare,
-  Phone,
-  Mail,
-  User,
-  Calendar,
-  Clock,
-  Send,
-  ExternalLink,
-  Loader2,
-  Copy,
-  Check,
-} from "lucide-react";
-import type { toast } from "sonner";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { Textarea } from "@/components/ui/textarea";
 import type { Appointment } from "@/hooks/use-appointments-manager";
 
 // Form validation schema

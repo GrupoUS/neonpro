@@ -11,6 +11,8 @@
  * - Storage management
  */
 
+import type { CompressionUtils } from "./compression-utils";
+import type { SecurityUtils } from "./security-utils";
 import type {
   CacheConfig,
   CacheEntry,
@@ -19,8 +21,6 @@ import type {
   CacheStrategy,
   CompressionLevel,
 } from "./types";
-import type { CompressionUtils } from "./compression-utils";
-import type { SecurityUtils } from "./security-utils";
 
 export class MobileCache {
   private config: CacheConfig;

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ServiceSelection;
 var react_1 = require("react");
@@ -159,7 +156,6 @@ var lucide_react_1 = require("lucide-react");
 var use_translation_1 = require("@/app/lib/i18n/use-translation");
 var client_1 = require("@/app/utils/supabase/client");
 function ServiceSelection(_a) {
-  var _this = this;
   var selectedService = _a.selectedService,
     onServiceSelect = _a.onServiceSelect,
     isLoading = _a.isLoading;
@@ -183,13 +179,13 @@ function ServiceSelection(_a) {
     isMobile = _g[0],
     setIsMobile = _g[1];
   // Check if device is mobile
-  (0, react_1.useEffect)(function () {
-    var checkMobile = function () {
+  (0, react_1.useEffect)(() => {
+    var checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    return function () {
+    return () => {
       window.removeEventListener("resize", checkMobile);
     };
   }, []);
@@ -202,11 +198,11 @@ function ServiceSelection(_a) {
     all: lucide_react_1.Star,
   };
   // Load services
-  (0, react_1.useEffect)(function () {
-    var loadServices = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var loadServices = () =>
+      __awaiter(this, void 0, void 0, function () {
         var supabase, _a, data, error, mockServices, error_1;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, 3, 4]);
@@ -315,88 +311,66 @@ function ServiceSelection(_a) {
           }
         });
       });
-    };
     loadServices();
   }, []);
   // Group services by category
-  var serviceCategories = (0, react_1.useMemo)(
-    function () {
-      var grouped = services.reduce(function (acc, service) {
-        if (!acc[service.category]) {
-          acc[service.category] = [];
-        }
-        acc[service.category].push(service);
-        return acc;
-      }, {});
-      return Object.entries(grouped).map(function (_a) {
-        var _b;
-        var category = _a[0],
-          services = _a[1];
-        return {
-          category: category,
-          services: services,
-          icon:
-            ((_b = categoryIcons[category]) === null || _b === void 0 ? void 0 : _b.name) || "Star",
-          description: t("booking.categories.".concat(category, ".description")),
-        };
-      });
-    },
-    [services, t],
-  );
+  var serviceCategories = (0, react_1.useMemo)(() => {
+    var grouped = services.reduce((acc, service) => {
+      if (!acc[service.category]) {
+        acc[service.category] = [];
+      }
+      acc[service.category].push(service);
+      return acc;
+    }, {});
+    return Object.entries(grouped).map((_a) => {
+      var _b;
+      var category = _a[0],
+        services = _a[1];
+      return {
+        category: category,
+        services: services,
+        icon:
+          ((_b = categoryIcons[category]) === null || _b === void 0 ? void 0 : _b.name) || "Star",
+        description: t("booking.categories.".concat(category, ".description")),
+      };
+    });
+  }, [services, t]);
   // Filter services based on search and category
-  var filteredServices = (0, react_1.useMemo)(
-    function () {
-      var filtered = services;
-      // Filter by category
-      if (selectedCategory !== "all") {
-        filtered = filtered.filter(function (service) {
-          return service.category === selectedCategory;
-        });
-      }
-      // Filter by search term
-      if (searchTerm) {
-        var term_1 = searchTerm.toLowerCase();
-        filtered = filtered.filter(function (service) {
-          var _a;
-          return (
-            service.name.toLowerCase().includes(term_1) ||
-            ((_a = service.description) === null || _a === void 0
-              ? void 0
-              : _a.toLowerCase().includes(term_1))
-          );
-        });
-      }
-      return filtered;
-    },
-    [services, selectedCategory, searchTerm],
-  );
+  var filteredServices = (0, react_1.useMemo)(() => {
+    var filtered = services;
+    // Filter by category
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((service) => service.category === selectedCategory);
+    }
+    // Filter by search term
+    if (searchTerm) {
+      var term_1 = searchTerm.toLowerCase();
+      filtered = filtered.filter((service) => {
+        var _a;
+        return (
+          service.name.toLowerCase().includes(term_1) ||
+          ((_a = service.description) === null || _a === void 0
+            ? void 0
+            : _a.toLowerCase().includes(term_1))
+        );
+      });
+    }
+    return filtered;
+  }, [services, selectedCategory, searchTerm]);
   // Get unique categories for filter buttons
-  var categories = (0, react_1.useMemo)(
-    function () {
-      var cats = __spreadArray(
-        [],
-        new Set(
-          services.map(function (s) {
-            return s.category;
-          }),
-        ),
-        true,
-      );
-      return __spreadArray(
-        [{ id: "all", name: t("booking.categories.all"), icon: lucide_react_1.Star }],
-        cats.map(function (cat) {
-          return {
-            id: cat,
-            name: t("booking.categories.".concat(cat, ".name")),
-            icon: categoryIcons[cat] || lucide_react_1.Star,
-          };
-        }),
-        true,
-      );
-    },
-    [services, t],
-  );
-  var handleServiceSelect = function (service) {
+  var categories = (0, react_1.useMemo)(() => {
+    var cats = __spreadArray([], new Set(services.map((s) => s.category)), true);
+    return __spreadArray(
+      [{ id: "all", name: t("booking.categories.all"), icon: lucide_react_1.Star }],
+      cats.map((cat) => ({
+        id: cat,
+        name: t("booking.categories.".concat(cat, ".name")),
+        icon: categoryIcons[cat] || lucide_react_1.Star,
+      })),
+      true,
+    );
+  }, [services, t]);
+  var handleServiceSelect = (service) => {
     if (isLoading) return;
     if (isMobile && service.preparation_instructions) {
       // Show modal with details on mobile for services with preparation instructions
@@ -405,7 +379,7 @@ function ServiceSelection(_a) {
       onServiceSelect(service);
     }
   };
-  var handleModalServiceSelect = function (service) {
+  var handleModalServiceSelect = (service) => {
     setSelectedServiceForModal(null);
     onServiceSelect(service);
   };
@@ -415,15 +389,15 @@ function ServiceSelection(_a) {
         <div className="space-y-4">
           <skeleton_1.Skeleton className="h-10 w-full" />
           <div className="flex gap-2 flex-wrap">
-            {[1, 2, 3, 4].map(function (i) {
-              return <skeleton_1.Skeleton key={i} className="h-9 w-24" />;
-            })}
+            {[1, 2, 3, 4].map((i) => (
+              <skeleton_1.Skeleton key={i} className="h-9 w-24" />
+            ))}
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[1, 2, 3, 4, 5, 6].map(function (i) {
-            return <skeleton_1.Skeleton key={i} className="h-48 w-full" />;
-          })}
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <skeleton_1.Skeleton key={i} className="h-48 w-full" />
+          ))}
         </div>
       </div>
     );
@@ -445,16 +419,14 @@ function ServiceSelection(_a) {
           <input_1.Input
             placeholder={t("booking.service.search.placeholder")}
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
 
         {/* Category Filters */}
         <div className="flex gap-2 flex-wrap">
-          {categories.map(function (category) {
+          {categories.map((category) => {
             var Icon = category.icon;
             var isSelected = selectedCategory === category.id;
             return (
@@ -462,9 +434,7 @@ function ServiceSelection(_a) {
                 key={category.id}
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setSelectedCategory(category.id);
-                }}
+                onClick={() => setSelectedCategory(category.id)}
                 className="flex items-center gap-2"
               >
                 <Icon className="h-4 w-4" />
@@ -488,7 +458,7 @@ function ServiceSelection(_a) {
       </div>{" "}
       {/* Services Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredServices.map(function (service, index) {
+        {filteredServices.map((service, index) => {
           var isSelected =
             (selectedService === null || selectedService === void 0
               ? void 0
@@ -505,9 +475,7 @@ function ServiceSelection(_a) {
                 className={"cursor-pointer transition-all duration-200 hover:shadow-lg "
                   .concat(isSelected ? "ring-2 ring-primary shadow-lg" : "hover:shadow-md", " ")
                   .concat(isLoading ? "pointer-events-none opacity-50" : "")}
-                onClick={function () {
-                  return handleServiceSelect(service);
-                }}
+                onClick={() => handleServiceSelect(service)}
               >
                 <card_1.CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
@@ -569,7 +537,7 @@ function ServiceSelection(_a) {
                       className="flex-1"
                       variant={isSelected ? "default" : "outline"}
                       disabled={isLoading}
-                      onClick={function (e) {
+                      onClick={(e) => {
                         e.stopPropagation();
                         if (!isMobile || !service.preparation_instructions) {
                           handleServiceSelect(service);
@@ -582,7 +550,7 @@ function ServiceSelection(_a) {
                       <button_1.Button
                         variant="outline"
                         size="icon"
-                        onClick={function (e) {
+                        onClick={(e) => {
                           e.stopPropagation();
                           setSelectedServiceForModal(service);
                         }}
@@ -611,7 +579,7 @@ function ServiceSelection(_a) {
           </div>
           <button_1.Button
             variant="outline"
-            onClick={function () {
+            onClick={() => {
               setSearchTerm("");
               setSelectedCategory("all");
             }}
@@ -623,16 +591,14 @@ function ServiceSelection(_a) {
       {/* Service Details Modal for Mobile */}
       <dialog_1.Dialog
         open={!!selectedServiceForModal}
-        onOpenChange={function (open) {
-          return !open && setSelectedServiceForModal(null);
-        }}
+        onOpenChange={(open) => !open && setSelectedServiceForModal(null)}
       >
         <dialog_1.DialogContent className="max-w-md mx-4">
           {selectedServiceForModal && (
             <>
               <dialog_1.DialogHeader>
                 <dialog_1.DialogTitle className="flex items-center gap-2">
-                  {(function () {
+                  {(() => {
                     var Icon =
                       categoryIcons[selectedServiceForModal.category] || lucide_react_1.Star;
                     return <Icon className="h-5 w-5" />;
@@ -690,9 +656,7 @@ function ServiceSelection(_a) {
 
                 <button_1.Button
                   className="w-full"
-                  onClick={function () {
-                    return handleModalServiceSelect(selectedServiceForModal);
-                  }}
+                  onClick={() => handleModalServiceSelect(selectedServiceForModal)}
                   disabled={isLoading}
                 >
                   {(selectedService === null || selectedService === void 0

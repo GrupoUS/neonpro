@@ -1,9 +1,9 @@
-import type { useState, useEffect, useCallback } from "react";
+import type { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
 import type {
-  RegulationCategory,
-  ListCategoriesResponse,
   ListCategoriesRequest,
+  ListCategoriesResponse,
+  RegulationCategory,
 } from "@/types/regulatory-documents";
 
 interface UseRegulatoryCategories {

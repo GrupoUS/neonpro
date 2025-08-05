@@ -5,21 +5,21 @@
 
 "use client";
 
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { toast } from "react-hot-toast";
 import type { treatmentFollowupService } from "@/app/lib/services/treatment-followup-service";
 import type {
-  TreatmentFollowup,
-  FollowupTemplate,
-  TreatmentProtocol,
   CreateFollowupData,
   CreateFollowupTemplateData,
   CreateTreatmentProtocolData,
-  FollowupFilters,
-  TemplateFilters,
-  ProtocolFilters,
   FollowupAnalytics,
   FollowupDashboardSummary,
+  FollowupFilters,
+  FollowupTemplate,
+  ProtocolFilters,
+  TemplateFilters,
+  TreatmentFollowup,
+  TreatmentProtocol,
 } from "@/app/types/treatment-followups";
 
 // =====================================================================================

@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -36,28 +35,23 @@ function GlobalStateProvider(_a) {
   var _c = (0, react_1.useState)({}),
     forceUpdate = _c[1];
   // Initialize persisted state
-  (0, react_1.useEffect)(
-    function () {
-      if (typeof window !== "undefined") {
-        persistKeys.forEach(function (key) {
-          try {
-            var stored = localStorage.getItem("neonpro_state_".concat(key));
-            if (stored) {
-              stateRef.current.set(key, JSON.parse(stored));
-            }
-          } catch (error) {
-            console.warn("Failed to load persisted state for key: ".concat(key), error);
+  (0, react_1.useEffect)(() => {
+    if (typeof window !== "undefined") {
+      persistKeys.forEach((key) => {
+        try {
+          var stored = localStorage.getItem("neonpro_state_".concat(key));
+          if (stored) {
+            stateRef.current.set(key, JSON.parse(stored));
           }
-        });
-      }
-    },
-    [persistKeys],
-  );
-  var getState = (0, react_1.useCallback)(function (key) {
-    return stateRef.current.get(key);
-  }, []);
+        } catch (error) {
+          console.warn("Failed to load persisted state for key: ".concat(key), error);
+        }
+      });
+    }
+  }, [persistKeys]);
+  var getState = (0, react_1.useCallback)((key) => stateRef.current.get(key), []);
   var setState = (0, react_1.useCallback)(
-    function (key, value) {
+    (key, value) => {
       var currentValue = stateRef.current.get(key);
       var newValue = typeof value === "function" ? value(currentValue) : value;
       stateRef.current.set(key, newValue);
@@ -72,7 +66,7 @@ function GlobalStateProvider(_a) {
       // Notify subscribers
       var subscribers = subscribersRef.current.get(key);
       if (subscribers) {
-        subscribers.forEach(function (callback) {
+        subscribers.forEach((callback) => {
           try {
             callback(newValue);
           } catch (error) {
@@ -83,14 +77,14 @@ function GlobalStateProvider(_a) {
     },
     [persistKeys],
   );
-  var subscribe = (0, react_1.useCallback)(function (key, callback) {
+  var subscribe = (0, react_1.useCallback)((key, callback) => {
     if (!subscribersRef.current.has(key)) {
       subscribersRef.current.set(key, new Set());
     }
     var subscribers = subscribersRef.current.get(key);
     subscribers.add(callback);
     // Return unsubscribe function
-    return function () {
+    return () => {
       subscribers.delete(callback);
       if (subscribers.size === 0) {
         subscribersRef.current.delete(key);
@@ -98,7 +92,7 @@ function GlobalStateProvider(_a) {
     };
   }, []);
   var clearState = (0, react_1.useCallback)(
-    function (key) {
+    (key) => {
       stateRef.current.delete(key);
       if (persistKeys.includes(key) && typeof window !== "undefined") {
         localStorage.removeItem("neonpro_state_".concat(key));
@@ -106,34 +100,27 @@ function GlobalStateProvider(_a) {
       // Notify subscribers
       var subscribers = subscribersRef.current.get(key);
       if (subscribers) {
-        subscribers.forEach(function (callback) {
-          return callback(undefined);
-        });
+        subscribers.forEach((callback) => callback(undefined));
       }
     },
     [persistKeys],
   );
-  var clearAllState = (0, react_1.useCallback)(
-    function () {
-      var keys = Array.from(stateRef.current.keys());
-      stateRef.current.clear();
-      if (typeof window !== "undefined") {
-        persistKeys.forEach(function (key) {
-          localStorage.removeItem("neonpro_state_".concat(key));
-        });
-      }
-      // Notify all subscribers
-      keys.forEach(function (key) {
-        var subscribers = subscribersRef.current.get(key);
-        if (subscribers) {
-          subscribers.forEach(function (callback) {
-            return callback(undefined);
-          });
-        }
+  var clearAllState = (0, react_1.useCallback)(() => {
+    var keys = Array.from(stateRef.current.keys());
+    stateRef.current.clear();
+    if (typeof window !== "undefined") {
+      persistKeys.forEach((key) => {
+        localStorage.removeItem("neonpro_state_".concat(key));
       });
-    },
-    [persistKeys],
-  );
+    }
+    // Notify all subscribers
+    keys.forEach((key) => {
+      var subscribers = subscribersRef.current.get(key);
+      if (subscribers) {
+        subscribers.forEach((callback) => callback(undefined));
+      }
+    });
+  }, [persistKeys]);
   var contextValue = {
     getState: getState,
     setState: setState,
@@ -155,33 +142,27 @@ function useGlobalState(key, initialValue) {
   var getState = context.getState,
     setState = context.setState,
     subscribe = context.subscribe;
-  var _a = (0, react_1.useState)(function () {
+  var _a = (0, react_1.useState)(() => {
       var existing = getState(key);
       return existing !== undefined ? existing : initialValue;
     }),
     localState = _a[0],
     setLocalState = _a[1];
   // Subscribe to state changes
-  (0, react_1.useEffect)(
-    function () {
-      var unsubscribe = subscribe(key, function (newValue) {
-        setLocalState(newValue);
-      });
-      return unsubscribe;
-    },
-    [key, subscribe],
-  );
+  (0, react_1.useEffect)(() => {
+    var unsubscribe = subscribe(key, (newValue) => {
+      setLocalState(newValue);
+    });
+    return unsubscribe;
+  }, [key, subscribe]);
   // Initialize state if it doesn't exist
-  (0, react_1.useEffect)(
-    function () {
-      if (initialValue !== undefined && getState(key) === undefined) {
-        setState(key, initialValue);
-      }
-    },
-    [key, initialValue, getState, setState],
-  );
+  (0, react_1.useEffect)(() => {
+    if (initialValue !== undefined && getState(key) === undefined) {
+      setState(key, initialValue);
+    }
+  }, [key, initialValue, getState, setState]);
   var setGlobalState = (0, react_1.useCallback)(
-    function (value) {
+    (value) => {
       setState(key, value);
     },
     [key, setState],
@@ -235,8 +216,8 @@ function useOperationState(operationKey) {
     errorStates = _b[0],
     setErrorStates = _b[1];
   var setLoading = (0, react_1.useCallback)(
-    function (loading) {
-      setLoadingStates(function (prev) {
+    (loading) => {
+      setLoadingStates((prev) => {
         var _a;
         return __assign(__assign({}, prev), ((_a = {}), (_a[operationKey] = loading), _a));
       });
@@ -244,20 +225,17 @@ function useOperationState(operationKey) {
     [operationKey, setLoadingStates],
   );
   var setError = (0, react_1.useCallback)(
-    function (error) {
-      setErrorStates(function (prev) {
+    (error) => {
+      setErrorStates((prev) => {
         var _a;
         return __assign(__assign({}, prev), ((_a = {}), (_a[operationKey] = error), _a));
       });
     },
     [operationKey, setErrorStates],
   );
-  var clearError = (0, react_1.useCallback)(
-    function () {
-      setError(null);
-    },
-    [setError],
-  );
+  var clearError = (0, react_1.useCallback)(() => {
+    setError(null);
+  }, [setError]);
   return {
     isLoading:
       (loadingStates === null || loadingStates === void 0 ? void 0 : loadingStates[operationKey]) ||
@@ -279,27 +257,28 @@ function useTemporaryState(key, initialValue, timeoutMs) {
     setState = _a[1];
   var timeoutRef = (0, react_1.useRef)();
   var setTemporaryState = (0, react_1.useCallback)(
-    function (value) {
+    (value) => {
       setState(value);
       // Clear existing timeout
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
       // Set new timeout to reset state
-      timeoutRef.current = setTimeout(function () {
+      timeoutRef.current = setTimeout(() => {
         setState(initialValue);
       }, timeoutMs);
     },
     [setState, initialValue, timeoutMs],
   );
   // Cleanup timeout on unmount
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-    };
-  }, []);
+    },
+    [],
+  );
   return [state, setTemporaryState];
 }
 exports.default = useGlobalState;

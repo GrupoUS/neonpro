@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Performance Tests for Healthcare Connection Pooling
  * Task 1.3 - CONNECTION POOLING OPTIMIZATION
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,10 +134,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -149,7 +146,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var connection_pool_manager_1 = require("../connection-pool-manager");
@@ -158,25 +155,17 @@ var connection_retry_strategies_1 = require("../connection-retry-strategies");
 var connection_pool_monitor_1 = require("../../monitoring/connection-pool-monitor");
 // Mock Supabase client
 var mockSupabaseClient = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-              limit: globals_1.jest.fn(function () {
-                return { single: globals_1.jest.fn() };
-              }),
-            };
-          }),
-        };
-      }),
-      insert: globals_1.jest.fn(),
-      update: globals_1.jest.fn(),
-      delete: globals_1.jest.fn(),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+        limit: globals_1.jest.fn(() => ({ single: globals_1.jest.fn() })),
+      })),
+    })),
+    insert: globals_1.jest.fn(),
+    update: globals_1.jest.fn(),
+    delete: globals_1.jest.fn(),
+  })),
   auth: {
     getSession: globals_1.jest.fn(),
   },
@@ -185,20 +174,20 @@ var mockSupabaseClient = {
 // Mock environment variables
 process.env.SUPABASE_URL = "https://test.supabase.co";
 process.env.SUPABASE_ANON_KEY = "test-key";
-(0, globals_1.describe)("Healthcare Connection Pool Performance", function () {
+(0, globals_1.describe)("Healthcare Connection Pool Performance", () => {
   var poolManager;
   var queryStrategies;
   var retryManager;
   var monitor;
-  (0, globals_1.beforeAll)(function () {
+  (0, globals_1.beforeAll)(() => {
     poolManager = (0, connection_pool_manager_1.getConnectionPoolManager)("medium");
     queryStrategies = (0, query_strategies_1.getQueryStrategies)();
     retryManager = (0, connection_retry_strategies_1.getRetryManager)();
     monitor = (0, connection_pool_monitor_1.getConnectionPoolMonitor)();
   });
-  (0, globals_1.afterAll)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, globals_1.afterAll)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, poolManager.shutdown()];
@@ -208,16 +197,16 @@ process.env.SUPABASE_ANON_KEY = "test-key";
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.beforeEach)(function () {
+    }),
+  );
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("Connection Pool Manager Performance", function () {
-    (0, globals_1.it)("should create healthcare clients within performance targets", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Connection Pool Manager Performance", () => {
+    (0, globals_1.it)("should create healthcare clients within performance targets", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, clinicId, criticalClient, standardClient, elapsedTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           startTime = Date.now();
           clinicId = "test-clinic-001";
           criticalClient = poolManager.getHealthcareClient(clinicId, "critical");
@@ -229,49 +218,38 @@ process.env.SUPABASE_ANON_KEY = "test-key";
           (0, globals_1.expect)(elapsedTime).toBeLessThan(100);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should handle multiple concurrent client requests efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle multiple concurrent client requests efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var clinicId, concurrentRequests, startTime, promises, clients, elapsedTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               clinicId = "test-clinic-002";
               concurrentRequests = 50;
               startTime = Date.now();
-              promises = Array.from({ length: concurrentRequests }, function (_, i) {
+              promises = Array.from({ length: concurrentRequests }, (_, i) => {
                 var operationType = i % 2 === 0 ? "critical" : "standard";
                 return poolManager.getHealthcareClient(clinicId, operationType);
               });
-              return [
-                4 /*yield*/,
-                Promise.all(
-                  promises.map(function (client) {
-                    return Promise.resolve(client);
-                  }),
-                ),
-              ];
+              return [4 /*yield*/, Promise.all(promises.map((client) => Promise.resolve(client)))];
             case 1:
               clients = _a.sent();
               elapsedTime = Date.now() - startTime;
               (0, globals_1.expect)(clients).toHaveLength(concurrentRequests);
-              (0, globals_1.expect)(
-                clients.every(function (client) {
-                  return client !== null;
-                }),
-              ).toBe(true);
+              (0, globals_1.expect)(clients.every((client) => client !== null)).toBe(true);
               // Should handle 50 concurrent requests within 500ms
               (0, globals_1.expect)(elapsedTime).toBeLessThan(500);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should maintain pool analytics accuracy under load", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should maintain pool analytics accuracy under load", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var clinicId, i, analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           clinicId = "test-clinic-003";
           // Create multiple clients to populate analytics
           for (i = 0; i < 10; i++) {
@@ -284,57 +262,52 @@ process.env.SUPABASE_ANON_KEY = "test-key";
           (0, globals_1.expect)(analytics.pools.length).toBeGreaterThan(0);
           return [2 /*return*/];
         });
-      });
-    });
-  });
-  (0, globals_1.describe)("Query Strategies Performance", function () {
-    (0, globals_1.it)(
-      "should execute patient critical queries within emergency thresholds",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var mockQuery, context, startTime, result, executionTime;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                mockQuery = globals_1.jest.fn().mockResolvedValue({ id: 1, name: "Test Patient" });
-                context = (0, query_strategies_1.createQueryContext)(
-                  "test-clinic-004",
-                  "test-user-001",
-                  "patient_critical",
-                  {
-                    patientId: "patient-001",
-                    priority: "emergency",
-                    userRole: "professional",
-                  },
-                );
-                startTime = Date.now();
-                return [4 /*yield*/, queryStrategies.executeQuery(mockQuery, context)];
-              case 1:
-                result = _a.sent();
-                executionTime = Date.now() - startTime;
-                (0, globals_1.expect)(result.error).toBeNull();
-                (0, globals_1.expect)(result.executionTime).toBeLessThan(5000); // 5 seconds for emergency
-                (0, globals_1.expect)(result.complianceVerified).toBe(true);
-                (0, globals_1.expect)(executionTime).toBeLessThan(6000); // Total time including overhead
-                return [2 /*return*/];
-            }
-          });
-        });
-      },
+      }),
     );
-    (0, globals_1.it)("should handle analytics queries with appropriate timeout", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var mockQuery, context, result;
-        return __generator(this, function (_a) {
+  });
+  (0, globals_1.describe)("Query Strategies Performance", () => {
+    (0, globals_1.it)("should execute patient critical queries within emergency thresholds", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var mockQuery, context, startTime, result, executionTime;
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockQuery = globals_1.jest.fn().mockImplementation(function () {
-                return new Promise(function (resolve) {
-                  return setTimeout(function () {
-                    return resolve({ count: 100 });
-                  }, 2000);
-                });
-              });
+              mockQuery = globals_1.jest.fn().mockResolvedValue({ id: 1, name: "Test Patient" });
+              context = (0, query_strategies_1.createQueryContext)(
+                "test-clinic-004",
+                "test-user-001",
+                "patient_critical",
+                {
+                  patientId: "patient-001",
+                  priority: "emergency",
+                  userRole: "professional",
+                },
+              );
+              startTime = Date.now();
+              return [4 /*yield*/, queryStrategies.executeQuery(mockQuery, context)];
+            case 1:
+              result = _a.sent();
+              executionTime = Date.now() - startTime;
+              (0, globals_1.expect)(result.error).toBeNull();
+              (0, globals_1.expect)(result.executionTime).toBeLessThan(5000); // 5 seconds for emergency
+              (0, globals_1.expect)(result.complianceVerified).toBe(true);
+              (0, globals_1.expect)(executionTime).toBeLessThan(6000); // Total time including overhead
+              return [2 /*return*/];
+          }
+        });
+      }),
+    );
+    (0, globals_1.it)("should handle analytics queries with appropriate timeout", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var mockQuery, context, result;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              mockQuery = globals_1.jest
+                .fn()
+                .mockImplementation(
+                  () => new Promise((resolve) => setTimeout(() => resolve({ count: 100 }), 2000)),
+                );
               context = (0, query_strategies_1.createQueryContext)(
                 "test-clinic-005",
                 "test-user-002",
@@ -353,13 +326,13 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should fail fast on non-retryable errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should fail fast on non-retryable errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockQuery, context, startTime, result, executionTime;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockQuery = globals_1.jest
@@ -387,53 +360,50 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               return [2 /*return*/];
           }
         });
-      });
-    });
-  });
-  (0, globals_1.describe)("Retry Manager Performance", function () {
-    (0, globals_1.it)(
-      "should retry with exponential backoff within healthcare timeouts",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var attempts, mockOperation, startTime, result, totalTime;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                attempts = 0;
-                mockOperation = globals_1.jest.fn().mockImplementation(function () {
-                  attempts++;
-                  if (attempts < 3) {
-                    throw new Error("Connection timeout");
-                  }
-                  return Promise.resolve({ success: true });
-                });
-                startTime = Date.now();
-                return [
-                  4 /*yield*/,
-                  retryManager.executeWithRetry(mockOperation, {
-                    clinicId: "test-clinic-007",
-                    operationType: "patient-data-access",
-                    priority: "standard",
-                    userId: "test-user-004",
-                  }),
-                ];
-              case 1:
-                result = _a.sent();
-                totalTime = Date.now() - startTime;
-                (0, globals_1.expect)(result.success).toBe(true);
-                (0, globals_1.expect)(result.attempts).toBe(3);
-                (0, globals_1.expect)(result.data).toEqual({ success: true });
-                (0, globals_1.expect)(totalTime).toBeLessThan(15000); // Within standard timeout
-                return [2 /*return*/];
-            }
-          });
-        });
-      },
+      }),
     );
-    (0, globals_1.it)("should handle circuit breaker activation correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  });
+  (0, globals_1.describe)("Retry Manager Performance", () => {
+    (0, globals_1.it)("should retry with exponential backoff within healthcare timeouts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var attempts, mockOperation, startTime, result, totalTime;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              attempts = 0;
+              mockOperation = globals_1.jest.fn().mockImplementation(() => {
+                attempts++;
+                if (attempts < 3) {
+                  throw new Error("Connection timeout");
+                }
+                return Promise.resolve({ success: true });
+              });
+              startTime = Date.now();
+              return [
+                4 /*yield*/,
+                retryManager.executeWithRetry(mockOperation, {
+                  clinicId: "test-clinic-007",
+                  operationType: "patient-data-access",
+                  priority: "standard",
+                  userId: "test-user-004",
+                }),
+              ];
+            case 1:
+              result = _a.sent();
+              totalTime = Date.now() - startTime;
+              (0, globals_1.expect)(result.success).toBe(true);
+              (0, globals_1.expect)(result.attempts).toBe(3);
+              (0, globals_1.expect)(result.data).toEqual({ success: true });
+              (0, globals_1.expect)(totalTime).toBeLessThan(15000); // Within standard timeout
+              return [2 /*return*/];
+          }
+        });
+      }),
+    );
+    (0, globals_1.it)("should handle circuit breaker activation correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockOperation, i, startTime, result, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockOperation = globals_1.jest
@@ -478,12 +448,12 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should prioritize emergency operations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should prioritize emergency operations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockEmergencyOperation, startTime, result, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockEmergencyOperation = globals_1.jest.fn().mockResolvedValue({ emergency: true });
@@ -507,15 +477,15 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Healthcare Compliance Performance", function () {
-    (0, globals_1.it)("should validate LGPD compliance within acceptable time", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Healthcare Compliance Performance", () => {
+    (0, globals_1.it)("should validate LGPD compliance within acceptable time", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockQuery, context, startTime, result, executionTime;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               mockQuery = globals_1.jest.fn().mockResolvedValue({ patientData: "sensitive" });
@@ -547,10 +517,10 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should maintain multi-tenant isolation under load", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should maintain multi-tenant isolation under load", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var clinic1Operations,
           clinic2Operations,
           i,
@@ -560,7 +530,7 @@ process.env.SUPABASE_ANON_KEY = "test-key";
           analytics,
           clinic1Pools,
           clinic2Pools;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               clinic1Operations = [];
@@ -571,52 +541,30 @@ process.env.SUPABASE_ANON_KEY = "test-key";
                 clinic2Operations.push(poolManager.getHealthcareClient("clinic-002", "standard"));
               }
               _a = [[]];
-              return [
-                4 /*yield*/,
-                Promise.all(
-                  clinic1Operations.map(function (c) {
-                    return Promise.resolve(c);
-                  }),
-                ),
-              ];
+              return [4 /*yield*/, Promise.all(clinic1Operations.map((c) => Promise.resolve(c)))];
             case 1:
               _b = [__spreadArray.apply(void 0, _a.concat([_c.sent(), true]))];
-              return [
-                4 /*yield*/,
-                Promise.all(
-                  clinic2Operations.map(function (c) {
-                    return Promise.resolve(c);
-                  }),
-                ),
-              ];
+              return [4 /*yield*/, Promise.all(clinic2Operations.map((c) => Promise.resolve(c)))];
             case 2:
               allClients = __spreadArray.apply(void 0, _b.concat([_c.sent(), true]));
               (0, globals_1.expect)(allClients).toHaveLength(50);
-              (0, globals_1.expect)(
-                allClients.every(function (client) {
-                  return client !== null;
-                }),
-              ).toBe(true);
+              (0, globals_1.expect)(allClients.every((client) => client !== null)).toBe(true);
               analytics = poolManager.getPoolAnalytics();
-              clinic1Pools = analytics.pools.filter(function (p) {
-                return p.poolKey.includes("clinic-001");
-              });
-              clinic2Pools = analytics.pools.filter(function (p) {
-                return p.poolKey.includes("clinic-002");
-              });
+              clinic1Pools = analytics.pools.filter((p) => p.poolKey.includes("clinic-001"));
+              clinic2Pools = analytics.pools.filter((p) => p.poolKey.includes("clinic-002"));
               (0, globals_1.expect)(clinic1Pools.length).toBeGreaterThan(0);
               (0, globals_1.expect)(clinic2Pools.length).toBeGreaterThan(0);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Monitoring Performance", function () {
-    (0, globals_1.it)("should provide health summary within acceptable time", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Monitoring Performance", () => {
+    (0, globals_1.it)("should provide health summary within acceptable time", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, healthSummary, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           startTime = Date.now();
           healthSummary = monitor.getHealthSummary();
           executionTime = Date.now() - startTime;
@@ -628,39 +576,35 @@ process.env.SUPABASE_ANON_KEY = "test-key";
           (0, globals_1.expect)(executionTime).toBeLessThan(50); // Should be very fast
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should handle concurrent monitoring requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle concurrent monitoring requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var concurrentRequests, startTime, promises, results, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               concurrentRequests = 20;
               startTime = Date.now();
-              promises = Array.from({ length: concurrentRequests }, function () {
-                return Promise.resolve(monitor.getHealthSummary());
-              });
+              promises = Array.from({ length: concurrentRequests }, () =>
+                Promise.resolve(monitor.getHealthSummary()),
+              );
               return [4 /*yield*/, Promise.all(promises)];
             case 1:
               results = _a.sent();
               executionTime = Date.now() - startTime;
               (0, globals_1.expect)(results).toHaveLength(concurrentRequests);
-              (0, globals_1.expect)(
-                results.every(function (result) {
-                  return result !== null;
-                }),
-              ).toBe(true);
+              (0, globals_1.expect)(results.every((result) => result !== null)).toBe(true);
               (0, globals_1.expect)(executionTime).toBeLessThan(200); // 20 concurrent requests under 200ms
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("End-to-End Performance", function () {
-    (0, globals_1.it)("should handle complete healthcare workflow within SLA", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("End-to-End Performance", () => {
+    (0, globals_1.it)("should handle complete healthcare workflow within SLA", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var clinicId,
           userId,
           patientId,
@@ -670,7 +614,7 @@ process.env.SUPABASE_ANON_KEY = "test-key";
           result,
           healthSummary,
           totalTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               clinicId = "test-clinic-e2e";
@@ -708,10 +652,10 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should maintain performance under healthcare load simulation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should maintain performance under healthcare load simulation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var loadTestDuration,
           operationsPerSecond,
           totalOperations,
@@ -722,7 +666,7 @@ process.env.SUPABASE_ANON_KEY = "test-key";
           results,
           totalTime,
           healthSummary;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               loadTestDuration = 5000; // 5 seconds
@@ -730,13 +674,13 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               totalOperations = (loadTestDuration / 1000) * operationsPerSecond;
               startTime = Date.now();
               operations = [];
-              _loop_1 = function (i) {
+              _loop_1 = (i) => {
                 var clinicId = "clinic-".concat(i % 3); // 3 clinics
                 var operationType = i % 4 === 0 ? "critical" : "standard";
                 operations.push(
-                  new Promise(function (resolve) {
+                  new Promise((resolve) => {
                     setTimeout(
-                      function () {
+                      () => {
                         var client = poolManager.getHealthcareClient(clinicId, operationType);
                         resolve(client);
                       },
@@ -754,25 +698,21 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               results = _a.sent();
               totalTime = Date.now() - startTime;
               (0, globals_1.expect)(results).toHaveLength(totalOperations);
-              (0, globals_1.expect)(
-                results.every(function (result) {
-                  return result !== null;
-                }),
-              ).toBe(true);
+              (0, globals_1.expect)(results.every((result) => result !== null)).toBe(true);
               (0, globals_1.expect)(totalTime).toBeLessThan(loadTestDuration + 1000); // Allow 1s overhead
               healthSummary = monitor.getHealthSummary();
               (0, globals_1.expect)(healthSummary.status).not.toBe("emergency");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Resource Cleanup Performance", function () {
-    (0, globals_1.it)("should cleanup resources efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Resource Cleanup Performance", () => {
+    (0, globals_1.it)("should cleanup resources efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, i, cleanupTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -792,11 +732,11 @@ process.env.SUPABASE_ANON_KEY = "test-key";
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });
-(0, globals_1.describe)("Performance Benchmarks", function () {
+(0, globals_1.describe)("Performance Benchmarks", () => {
   var performanceThresholds = {
     clientCreation: 100, // ms
     queryExecution: 5000, // ms for critical
@@ -805,7 +745,7 @@ process.env.SUPABASE_ANON_KEY = "test-key";
     complianceValidation: 1000, // ms
     endToEndWorkflow: 2000, // ms
   };
-  (0, globals_1.it)("should meet all healthcare performance SLAs", function () {
+  (0, globals_1.it)("should meet all healthcare performance SLAs", () => {
     // This test validates that our thresholds are reasonable
     (0, globals_1.expect)(performanceThresholds.clientCreation).toBeLessThan(200);
     (0, globals_1.expect)(performanceThresholds.queryExecution).toBeLessThan(10000);

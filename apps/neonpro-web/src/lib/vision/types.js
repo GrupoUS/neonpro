@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Vision Analysis System Types
  * Comprehensive TypeScript type definitions for NeonPro Computer Vision System

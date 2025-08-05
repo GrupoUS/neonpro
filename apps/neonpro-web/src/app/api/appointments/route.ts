@@ -1,6 +1,4 @@
 import type { BookingResponse, CreateAppointmentFormData } from "@/app/lib/types/appointments";
-import type { createClient } from "@/lib/supabase/server";
-import type { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {

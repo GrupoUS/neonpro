@@ -5,13 +5,13 @@
  * for the NeonPro application security dashboard.
  */
 
-import type { useState, useEffect, useCallback } from "react";
+import type { useCallback, useEffect, useState } from "react";
 import type {
-  securityAuditLogger,
-  SecurityMetrics,
-  SuspiciousPattern,
   AuditEvent,
   AuditEventType,
+  SecurityMetrics,
+  SuspiciousPattern,
+  securityAuditLogger,
 } from "./security-audit-logger";
 
 export interface SecurityDashboardData {

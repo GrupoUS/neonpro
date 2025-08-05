@@ -4,9 +4,9 @@
  * Part of Story 3.1 - Task 6: System Integration & Search
  */
 
-import type { Patient } from "@/types/patient";
-import type { supabase } from "@/lib/supabase/client";
 import type { logger } from "@/lib/logger";
+import type { supabase } from "@/lib/supabase/client";
+import type { Patient } from "@/types/patient";
 
 export interface SearchFilters {
   name?: string;
@@ -82,12 +82,12 @@ export class AdvancedPatientSearch {
 
       // Apply text search with AI-powered fuzzy matching
       if (query.trim()) {
-        const searchTerms = this.processSearchQuery(query);
-        searchQuery = this.applyTextSearch(searchQuery, searchTerms);
+        const searchTerms = AdvancedPatientSearch.processSearchQuery(query);
+        searchQuery = AdvancedPatientSearch.applyTextSearch(searchQuery, searchTerms);
       }
 
       // Apply filters
-      searchQuery = this.applyFilters(searchQuery, filters);
+      searchQuery = AdvancedPatientSearch.applyFilters(searchQuery, filters);
 
       // Apply pagination
       const offset = (page - 1) * perPage;
@@ -100,7 +100,7 @@ export class AdvancedPatientSearch {
       if (error) throw error;
 
       // Generate AI suggestions
-      const suggestions = await this.generateSearchSuggestions(query, filters);
+      const suggestions = await AdvancedPatientSearch.generateSearchSuggestions(query, filters);
 
       const searchTime = Date.now() - startTime;
 
@@ -160,10 +160,10 @@ export class AdvancedPatientSearch {
   ): Promise<PatientSegment> {
     try {
       // Count patients matching criteria
-      const searchResult = await this.searchPatients("", criteria, 1, 1);
+      const searchResult = await AdvancedPatientSearch.searchPatients("", criteria, 1, 1);
 
       // Calculate segment statistics
-      const stats = await this.calculateSegmentStats(criteria);
+      const stats = await AdvancedPatientSearch.calculateSegmentStats(criteria);
 
       const segment: PatientSegment = {
         id: `segment_${Date.now()}`,
@@ -239,10 +239,10 @@ export class AdvancedPatientSearch {
     // Update counts for each segment
     for (const segment of segments) {
       try {
-        const result = await this.searchPatients("", segment.criteria, 1, 1);
+        const result = await AdvancedPatientSearch.searchPatients("", segment.criteria, 1, 1);
         segment.patient_count = result.total_count;
 
-        const stats = await this.calculateSegmentStats(segment.criteria);
+        const stats = await AdvancedPatientSearch.calculateSegmentStats(segment.criteria);
         segment.avg_satisfaction = stats.avg_satisfaction;
         segment.avg_risk_score = stats.avg_risk_score;
       } catch (error) {

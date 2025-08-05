@@ -1,19 +1,18 @@
-"use strict";
 // ============================================================================
 // Session Management System - Database Migration
 // NeonPro - Session Management & Security
 // ============================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionMigration = void 0;
 exports.runSessionMigration = runSessionMigration;
@@ -146,7 +143,7 @@ var path_1 = require("path");
 /**
  * Classe para gerenciar migrações do sistema de sessões
  */
-var SessionMigration = /** @class */ (function () {
+var SessionMigration = /** @class */ (() => {
   function SessionMigration(supabase) {
     this.supabase = supabase;
   }
@@ -252,12 +249,8 @@ var SessionMigration = /** @class */ (function () {
             schemaSQL = fs_1.default.readFileSync(schemaPath, "utf8");
             commands = schemaSQL
               .split(";")
-              .map(function (cmd) {
-                return cmd.trim();
-              })
-              .filter(function (cmd) {
-                return cmd.length > 0 && !cmd.startsWith("--");
-              });
+              .map((cmd) => cmd.trim())
+              .filter((cmd) => cmd.length > 0 && !cmd.startsWith("--"));
             console.log("\uD83D\uDCDD Executing ".concat(commands.length, " SQL commands..."));
             i = 0;
             _a.label = 1;
@@ -526,7 +519,7 @@ exports.SessionMigration = SessionMigration;
 function runSessionMigration(supabaseUrl, supabaseKey) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, migration;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
@@ -544,7 +537,7 @@ function runSessionMigration(supabaseUrl, supabaseKey) {
 function rollbackSessionMigration(supabaseUrl, supabaseKey) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, migration;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
@@ -570,7 +563,7 @@ if (require.main === module) {
   var migration = new SessionMigration((0, supabase_js_1.createClient)(supabaseUrl, supabaseKey));
   switch (command) {
     case "migrate":
-      migration.runMigration().then(function (result) {
+      migration.runMigration().then((result) => {
         if (result.success) {
           console.log("✅ Migration completed successfully!");
           process.exit(0);
@@ -581,7 +574,7 @@ if (require.main === module) {
       });
       break;
     case "rollback":
-      migration.rollback().then(function (result) {
+      migration.rollback().then((result) => {
         if (result.success) {
           console.log("✅ Rollback completed successfully!");
           process.exit(0);
@@ -592,11 +585,11 @@ if (require.main === module) {
       });
       break;
     case "status":
-      migration.getStatus().then(function (status) {
+      migration.getStatus().then((status) => {
         console.log("📊 Migration Status:");
         console.log("Migrated: ".concat(status.migrated ? "✅" : "❌"));
         console.log("\nTables:");
-        status.tables.forEach(function (table) {
+        status.tables.forEach((table) => {
           console.log("  ".concat(table.name, ": ").concat(table.exists ? "✅" : "❌"));
         });
         if (status.error) {

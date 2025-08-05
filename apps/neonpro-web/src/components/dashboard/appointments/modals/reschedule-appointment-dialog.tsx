@@ -1,9 +1,17 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type { addDays, differenceInMinutes, format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertCircle, Calendar, CheckCircle, Clock, Loader2 } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import type { z } from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -12,7 +20,6 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
 import type {
   Form,
   FormControl,
@@ -23,13 +30,6 @@ import type {
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
 import type { Textarea } from "@/components/ui/textarea";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Badge } from "@/components/ui/badge";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Loader2, Calendar, Clock, AlertCircle, CheckCircle } from "lucide-react";
-import type { toast } from "sonner";
-import type { format, addDays, differenceInMinutes } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 import type { Appointment } from "@/hooks/use-appointments-manager";
 
 // Form validation schema

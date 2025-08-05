@@ -12,8 +12,11 @@
  * @version 2.0.0 - Error Handling Enhanced
  */
 
-import type { ErrorContext, SubscriptionError } from "../types/subscription-errors";
-import type { SubscriptionErrorFactory } from "../types/subscription-errors";
+import type {
+  ErrorContext,
+  SubscriptionError,
+  SubscriptionErrorFactory,
+} from "../types/subscription-errors";
 
 // Circuit breaker states
 export enum CircuitBreakerState {

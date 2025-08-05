@@ -1,8 +1,9 @@
 // POST /api/treatment-prediction/training - Start model training
+
+import type { NextRequest, NextResponse } from "next/server";
 import type { TreatmentPredictionService } from "@/app/lib/services/treatment-prediction";
 import type { TrainingRequest } from "@/app/types/treatment-prediction";
 import type { createServerClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 // POST /api/treatment-prediction/training - Start model training
 export async function POST(request: NextRequest) {

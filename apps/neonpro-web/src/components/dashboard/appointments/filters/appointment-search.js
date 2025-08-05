@@ -2,7 +2,6 @@
 // Search component with debounce for appointments
 // Story 1.1 Task 6 - Appointment Filtering and Search
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentSearch;
 var react_1 = require("react");
@@ -24,21 +23,18 @@ function AppointmentSearch(_a) {
     setIsSearching = _e[1];
   // Debounce search function
   var debouncedSearch = (0, react_1.useCallback)(
-    debounce(function (query) {
+    debounce((query) => {
       onSearch(query);
       setIsSearching(false);
     }, debounceMs),
     [onSearch, debounceMs],
   );
   // Update local value when external value changes
-  (0, react_1.useEffect)(
-    function () {
-      setLocalValue(value);
-    },
-    [value],
-  );
+  (0, react_1.useEffect)(() => {
+    setLocalValue(value);
+  }, [value]);
   // Handle input change
-  var handleInputChange = function (newValue) {
+  var handleInputChange = (newValue) => {
     setLocalValue(newValue);
     if (newValue.trim() !== value.trim()) {
       setIsSearching(true);
@@ -46,13 +42,13 @@ function AppointmentSearch(_a) {
     }
   };
   // Clear search
-  var handleClear = function () {
+  var handleClear = () => {
     setLocalValue("");
     onSearch("");
     setIsSearching(false);
   };
   // Handle key press
-  var handleKeyPress = function (e) {
+  var handleKeyPress = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
       debouncedSearch(localValue);
@@ -69,9 +65,7 @@ function AppointmentSearch(_a) {
           type="text"
           placeholder={placeholder}
           value={localValue}
-          onChange={function (e) {
-            return handleInputChange(e.target.value);
-          }}
+          onChange={(e) => handleInputChange(e.target.value)}
           onKeyDown={handleKeyPress}
           className="pl-10 pr-20"
         />
@@ -99,14 +93,12 @@ function AppointmentSearch(_a) {
 // Debounce utility function
 function debounce(func, wait) {
   var timeout;
-  return function () {
+  return () => {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args[_i] = arguments[_i];
     }
     clearTimeout(timeout);
-    timeout = setTimeout(function () {
-      return func.apply(void 0, args);
-    }, wait);
+    timeout = setTimeout(() => func.apply(void 0, args), wait);
   };
 }

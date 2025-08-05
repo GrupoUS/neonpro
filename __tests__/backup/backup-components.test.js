@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,9 +128,9 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 var globals_1 = require("@jest/globals");
 var backup_dashboard_1 = require("@/components/backup/backup-dashboard");
@@ -142,112 +139,97 @@ var BackupHistory_1 = require("@/components/backup/BackupHistory");
 // Mock fetch globally
 global.fetch = globals_1.jest.fn();
 // Mock toast
-globals_1.jest.mock("sonner", function () {
-  return {
-    toast: {
-      success: globals_1.jest.fn(),
-      error: globals_1.jest.fn(),
-      info: globals_1.jest.fn(),
-    },
-  };
-});
+globals_1.jest.mock("sonner", () => ({
+  toast: {
+    success: globals_1.jest.fn(),
+    error: globals_1.jest.fn(),
+    info: globals_1.jest.fn(),
+  },
+}));
 // Mock router
-globals_1.jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: globals_1.jest.fn(),
-        replace: globals_1.jest.fn(),
-        back: globals_1.jest.fn(),
-      };
-    },
-  };
-});
-describe("BackupDashboard", function () {
-  beforeEach(function () {
+globals_1.jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: globals_1.jest.fn(),
+    replace: globals_1.jest.fn(),
+    back: globals_1.jest.fn(),
+  }),
+}));
+describe("BackupDashboard", () => {
+  beforeEach(() => {
     fetch.mockClear();
   });
-  it("renders backup dashboard correctly", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  it("renders backup dashboard correctly", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock API responses
             fetch
               .mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          data: {
-                            total_backups: 15,
-                            successful_backups: 12,
-                            failed_backups: 2,
-                            pending_backups: 1,
-                            storage_used: 1073741824, // 1GB
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        data: {
+                          total_backups: 15,
+                          successful_backups: 12,
+                          failed_backups: 2,
+                          pending_backups: 1,
+                          storage_used: 1073741824, // 1GB
+                          last_backup: new Date().toISOString(),
+                        },
+                      },
+                    ]);
+                  }),
+              })
+              .mockResolvedValueOnce({
+                ok: true,
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        data: [
+                          {
+                            id: "job-1",
+                            config_name: "Daily Backup",
+                            status: "COMPLETED",
+                            start_time: new Date().toISOString(),
+                            end_time: new Date().toISOString(),
+                            size: 536870912, // 512MB
+                          },
+                        ],
+                      },
+                    ]);
+                  }),
+              })
+              .mockResolvedValueOnce({
+                ok: true,
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        data: [
+                          {
+                            id: "config-1",
+                            name: "Daily Database Backup",
+                            type: "FULL",
+                            enabled: true,
                             last_backup: new Date().toISOString(),
                           },
-                        },
-                      ];
-                    });
-                  });
-                },
-              })
-              .mockResolvedValueOnce({
-                ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          data: [
-                            {
-                              id: "job-1",
-                              config_name: "Daily Backup",
-                              status: "COMPLETED",
-                              start_time: new Date().toISOString(),
-                              end_time: new Date().toISOString(),
-                              size: 536870912, // 512MB
-                            },
-                          ],
-                        },
-                      ];
-                    });
-                  });
-                },
-              })
-              .mockResolvedValueOnce({
-                ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          data: [
-                            {
-                              id: "config-1",
-                              name: "Daily Database Backup",
-                              type: "FULL",
-                              enabled: true,
-                              last_backup: new Date().toISOString(),
-                            },
-                          ],
-                        },
-                      ];
-                    });
-                  });
-                },
+                        ],
+                      },
+                    ]);
+                  }),
               });
             (0, react_2.render)(<backup_dashboard_1.default />);
             // Wait for data to load
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(react_2.screen.getByText("Painel de Backup")).toBeInTheDocument();
               }),
             ];
@@ -261,18 +243,17 @@ describe("BackupDashboard", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("handles API errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("handles API errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             fetch.mockRejectedValue(new Error("API Error"));
             (0, react_2.render)(<backup_dashboard_1.default />);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(react_2.screen.getByText("Painel de Backup")).toBeInTheDocument();
               }),
             ];
@@ -285,18 +266,17 @@ describe("BackupDashboard", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });
-describe("BackupConfigForm", function () {
+describe("BackupConfigForm", () => {
   var mockOnSave = globals_1.jest.fn();
   var mockOnCancel = globals_1.jest.fn();
-  beforeEach(function () {
+  beforeEach(() => {
     mockOnSave.mockClear();
     mockOnCancel.mockClear();
     fetch.mockClear();
   });
-  it("renders form fields correctly", function () {
+  it("renders form fields correctly", () => {
     (0, react_2.render)(
       <backup_config_form_1.default onSave={mockOnSave} onCancel={mockOnCancel} />,
     );
@@ -304,10 +284,10 @@ describe("BackupConfigForm", function () {
     expect(react_2.screen.getByLabelText(/tipo de backup/i)).toBeInTheDocument();
     expect(react_2.screen.getByLabelText(/provedor de armazenamento/i)).toBeInTheDocument();
   });
-  it("validates required fields", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("validates required fields", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var saveButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_2.render)(
@@ -317,7 +297,7 @@ describe("BackupConfigForm", function () {
             react_2.fireEvent.click(saveButton);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(react_2.screen.getByText(/nome é obrigatório/i)).toBeInTheDocument();
               }),
             ];
@@ -327,12 +307,11 @@ describe("BackupConfigForm", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("submits form with valid data", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("submits form with valid data", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var saveButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_2.render)(
@@ -349,7 +328,7 @@ describe("BackupConfigForm", function () {
             react_2.fireEvent.click(saveButton);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(mockOnSave).toHaveBeenCalledWith(
                   expect.objectContaining({
                     name: "Test Backup Config",
@@ -363,9 +342,8 @@ describe("BackupConfigForm", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("edits existing configuration", function () {
+    }));
+  it("edits existing configuration", () => {
     var existingConfig = {
       id: "config-1",
       name: "Existing Config",
@@ -405,14 +383,14 @@ describe("BackupConfigForm", function () {
     expect(react_2.screen.getByDisplayValue("INCREMENTAL")).toBeInTheDocument();
   });
 });
-describe("BackupHistory", function () {
-  beforeEach(function () {
+describe("BackupHistory", () => {
+  beforeEach(() => {
     fetch.mockClear();
   });
-  it("renders backup history table", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("renders backup history table", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockBackups;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockBackups = [
@@ -439,24 +417,21 @@ describe("BackupHistory", function () {
             ];
             fetch.mockResolvedValue({
               ok: true,
-              json: function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
-                    return [
-                      2 /*return*/,
-                      {
-                        data: mockBackups,
-                        total: 2,
-                      },
-                    ];
-                  });
-                });
-              },
+              json: () =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => [
+                    2 /*return*/,
+                    {
+                      data: mockBackups,
+                      total: 2,
+                    },
+                  ]);
+                }),
             });
             (0, react_2.render)(<BackupHistory_1.default />);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(react_2.screen.getByText("Histórico de Backups")).toBeInTheDocument();
               }),
             ];
@@ -469,12 +444,11 @@ describe("BackupHistory", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("filters backups by status", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("filters backups by status", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockBackups, statusFilter;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockBackups = [
@@ -489,24 +463,21 @@ describe("BackupHistory", function () {
             ];
             fetch.mockResolvedValue({
               ok: true,
-              json: function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
-                    return [
-                      2 /*return*/,
-                      {
-                        data: mockBackups,
-                        total: 1,
-                      },
-                    ];
-                  });
-                });
-              },
+              json: () =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => [
+                    2 /*return*/,
+                    {
+                      data: mockBackups,
+                      total: 1,
+                    },
+                  ]);
+                }),
             });
             (0, react_2.render)(<BackupHistory_1.default />);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(react_2.screen.getByText("Histórico de Backups")).toBeInTheDocument();
               }),
             ];
@@ -521,12 +492,11 @@ describe("BackupHistory", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("searches backups by name", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("searches backups by name", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockBackups, searchInput;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockBackups = [
@@ -541,24 +511,21 @@ describe("BackupHistory", function () {
             ];
             fetch.mockResolvedValue({
               ok: true,
-              json: function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
-                    return [
-                      2 /*return*/,
-                      {
-                        data: mockBackups,
-                        total: 1,
-                      },
-                    ];
-                  });
-                });
-              },
+              json: () =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => [
+                    2 /*return*/,
+                    {
+                      data: mockBackups,
+                      total: 1,
+                    },
+                  ]);
+                }),
             });
             (0, react_2.render)(<BackupHistory_1.default />);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(react_2.screen.getByText("Histórico de Backups")).toBeInTheDocument();
               }),
             ];
@@ -571,12 +538,11 @@ describe("BackupHistory", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("handles backup deletion", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("handles backup deletion", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockBackups, actionsButton, deleteButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockBackups = [
@@ -592,34 +558,28 @@ describe("BackupHistory", function () {
             fetch
               .mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          data: mockBackups,
-                          total: 1,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        data: mockBackups,
+                        total: 1,
+                      },
+                    ]);
+                  }),
               })
               .mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [2 /*return*/, { success: true }];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [2 /*return*/, { success: true }]);
+                  }),
               });
             (0, react_2.render)(<BackupHistory_1.default />);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(react_2.screen.getByText("Daily Backup")).toBeInTheDocument();
               }),
             ];
@@ -631,7 +591,7 @@ describe("BackupHistory", function () {
             react_2.fireEvent.click(deleteButton);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(fetch).toHaveBeenCalledWith(
                   "/api/backup/jobs/backup-1",
                   expect.objectContaining({
@@ -645,63 +605,53 @@ describe("BackupHistory", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });
-describe("Backup Components Integration", function () {
-  it("allows creating backup from dashboard", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+describe("Backup Components Integration", () => {
+  it("allows creating backup from dashboard", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var createButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock API calls for dashboard
             fetch
               .mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          data: {
-                            total_backups: 0,
-                            successful_backups: 0,
-                            failed_backups: 0,
-                            pending_backups: 0,
-                            storage_used: 0,
-                          },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        data: {
+                          total_backups: 0,
+                          successful_backups: 0,
+                          failed_backups: 0,
+                          pending_backups: 0,
+                          storage_used: 0,
                         },
-                      ];
-                    });
-                  });
-                },
+                      },
+                    ]);
+                  }),
               })
               .mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [2 /*return*/, { data: [] }];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [2 /*return*/, { data: [] }]);
+                  }),
               })
               .mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [2 /*return*/, { data: [] }];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [2 /*return*/, { data: [] }]);
+                  }),
               });
             (0, react_2.render)(<backup_dashboard_1.default />);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(react_2.screen.getByText("Painel de Backup")).toBeInTheDocument();
               }),
             ];
@@ -713,6 +663,5 @@ describe("Backup Components Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

@@ -12,10 +12,10 @@
  * - Alert analytics and effectiveness tracking
  */
 
-import type { createClient } from "@/lib/supabase/client";
-import type { Database } from "@/lib/database.types";
 import type { CommunicationService } from "@/lib/communication";
-import type { CashFlowEngine, type CashFlowAlert } from "./cash-flow-engine";
+import type { Database } from "@/lib/database.types";
+import type { createClient } from "@/lib/supabase/client";
+import type { CashFlowAlert, CashFlowEngine } from "./cash-flow-engine";
 
 // Alert Types and Interfaces
 export interface FinancialAlert {

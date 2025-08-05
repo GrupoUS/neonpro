@@ -1,10 +1,10 @@
 "use client";
 
-import React, { Component, ErrorInfo, ReactNode } from "react";
+import type { AlertTriangle, Bug, Home, RefreshCw } from "lucide-react";
+import React, { Component, type ErrorInfo, type ReactNode } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { AlertTriangle, RefreshCw, Home, Bug } from "lucide-react";
 
 // =====================================================================================
 // ERROR BOUNDARY COMPONENT

@@ -4,32 +4,31 @@
  * AI-driven patient segmentation with natural language criteria
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,10 +148,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -163,7 +160,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientSegmentation = PatientSegmentation;
 var react_1 = require("react");
@@ -185,7 +182,6 @@ var sonner_1 = require("sonner");
 var use_debounce_1 = require("@/hooks/use-debounce");
 var patient_segmentation_1 = require("@/lib/search/patient-segmentation");
 function PatientSegmentation(_a) {
-  var _this = this;
   var onSegmentSelect = _a.onSegmentSelect,
     className = _a.className;
   // State
@@ -228,64 +224,62 @@ function PatientSegmentation(_a) {
   // Debounced search
   var debouncedSearchQuery = (0, use_debounce_1.useDebounce)(searchQuery, 300);
   // Load segments and analytics
-  var loadData = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _a, segmentsData, analyticsData, error_1;
-      return __generator(this, function (_b) {
-        switch (_b.label) {
-          case 0:
-            setIsLoading(true);
-            _b.label = 1;
-          case 1:
-            _b.trys.push([1, 3, 4, 5]);
-            return [
-              4 /*yield*/,
-              Promise.all([
-                patient_segmentation_1.patientSegmentation.getAllSegments(),
-                patient_segmentation_1.patientSegmentation.getAnalytics(),
-              ]),
-            ];
-          case 2:
-            (_a = _b.sent()), (segmentsData = _a[0]), (analyticsData = _a[1]);
-            setSegments(segmentsData);
-            setAnalytics(analyticsData);
-            return [3 /*break*/, 5];
-          case 3:
-            error_1 = _b.sent();
-            console.error("Error loading segmentation data:", error_1);
-            sonner_1.toast.error("Erro ao carregar dados de segmentação");
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  // Load data on mount
-  (0, react_1.useEffect)(
-    function () {
-      loadData();
-    },
-    [loadData],
+  var loadData = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var _a, segmentsData, analyticsData, error_1;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              setIsLoading(true);
+              _b.label = 1;
+            case 1:
+              _b.trys.push([1, 3, 4, 5]);
+              return [
+                4 /*yield*/,
+                Promise.all([
+                  patient_segmentation_1.patientSegmentation.getAllSegments(),
+                  patient_segmentation_1.patientSegmentation.getAnalytics(),
+                ]),
+              ];
+            case 2:
+              (_a = _b.sent()), (segmentsData = _a[0]), (analyticsData = _a[1]);
+              setSegments(segmentsData);
+              setAnalytics(analyticsData);
+              return [3 /*break*/, 5];
+            case 3:
+              error_1 = _b.sent();
+              console.error("Error loading segmentation data:", error_1);
+              sonner_1.toast.error("Erro ao carregar dados de segmentação");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
   );
+  // Load data on mount
+  (0, react_1.useEffect)(() => {
+    loadData();
+  }, [loadData]);
   // Filter segments based on search
-  var filteredSegments = segments.filter(function (segment) {
-    return (
+  var filteredSegments = segments.filter(
+    (segment) =>
       segment.criteria.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
       segment.criteria.description.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
       segment.criteria.naturalLanguageQuery
         .toLowerCase()
-        .includes(debouncedSearchQuery.toLowerCase())
-    );
-  });
+        .includes(debouncedSearchQuery.toLowerCase()),
+  );
   // Create new segment
-  var handleCreateSegment = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateSegment = () =>
+    __awaiter(this, void 0, void 0, function () {
       var segment_1, updatedAnalytics, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!newSegment.name.trim() || !newSegment.naturalLanguageQuery.trim()) {
@@ -308,9 +302,7 @@ function PatientSegmentation(_a) {
             ];
           case 2:
             segment_1 = _a.sent();
-            setSegments(function (prev) {
-              return __spreadArray([segment_1], prev, true);
-            });
+            setSegments((prev) => __spreadArray([segment_1], prev, true));
             setShowCreateDialog(false);
             setNewSegment({
               name: "",
@@ -339,12 +331,11 @@ function PatientSegmentation(_a) {
         }
       });
     });
-  };
   // Delete segment
-  var handleDeleteSegment = function (segmentId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDeleteSegment = (segmentId) =>
+    __awaiter(this, void 0, void 0, function () {
       var updatedAnalytics, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -354,11 +345,7 @@ function PatientSegmentation(_a) {
             ];
           case 1:
             _a.sent();
-            setSegments(function (prev) {
-              return prev.filter(function (s) {
-                return s.id !== segmentId;
-              });
-            });
+            setSegments((prev) => prev.filter((s) => s.id !== segmentId));
             if (
               (selectedSegment === null || selectedSegment === void 0
                 ? void 0
@@ -383,12 +370,11 @@ function PatientSegmentation(_a) {
         }
       });
     });
-  };
   // Refresh segment
-  var handleRefreshSegment = function (segment) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRefreshSegment = (segment) =>
+    __awaiter(this, void 0, void 0, function () {
       var refreshedSegment_1, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -400,11 +386,7 @@ function PatientSegmentation(_a) {
             ];
           case 1:
             refreshedSegment_1 = _a.sent();
-            setSegments(function (prev) {
-              return prev.map(function (s) {
-                return s.id === segment.id ? refreshedSegment_1 : s;
-              });
-            });
+            setSegments((prev) => prev.map((s) => (s.id === segment.id ? refreshedSegment_1 : s)));
             if (
               (selectedSegment === null || selectedSegment === void 0
                 ? void 0
@@ -424,21 +406,20 @@ function PatientSegmentation(_a) {
         }
       });
     });
-  };
   // Select segment
-  var handleSelectSegment = function (segment) {
+  var handleSelectSegment = (segment) => {
     setSelectedSegment(segment);
     setShowSegmentDetails(true);
     onSegmentSelect === null || onSegmentSelect === void 0 ? void 0 : onSegmentSelect(segment);
   };
   // Get performance color
-  var getPerformanceColor = function (accuracy) {
+  var getPerformanceColor = (accuracy) => {
     if (accuracy >= 0.8) return "text-green-600";
     if (accuracy >= 0.6) return "text-yellow-600";
     return "text-red-600";
   };
   // Get performance icon
-  var getPerformanceIcon = function (accuracy) {
+  var getPerformanceIcon = (accuracy) => {
     if (accuracy >= 0.8) return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />;
     if (accuracy >= 0.6) return <lucide_react_1.Clock className="h-4 w-4 text-yellow-600" />;
     return <lucide_react_1.AlertCircle className="h-4 w-4 text-red-600" />;
@@ -486,11 +467,11 @@ function PatientSegmentation(_a) {
                       id="segment-name"
                       placeholder="Ex: Pacientes Diabéticos Ativos"
                       value={newSegment.name}
-                      onChange={function (e) {
-                        return setNewSegment(function (prev) {
-                          return __assign(__assign({}, prev), { name: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setNewSegment((prev) =>
+                          __assign(__assign({}, prev), { name: e.target.value }),
+                        )
+                      }
                     />
                   </div>
 
@@ -498,11 +479,9 @@ function PatientSegmentation(_a) {
                     <label_1.Label htmlFor="segment-language">Idioma</label_1.Label>
                     <select_1.Select
                       value={newSegment.language}
-                      onValueChange={function (value) {
-                        return setNewSegment(function (prev) {
-                          return __assign(__assign({}, prev), { language: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setNewSegment((prev) => __assign(__assign({}, prev), { language: value }))
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -522,11 +501,11 @@ function PatientSegmentation(_a) {
                     id="segment-description"
                     placeholder="Descrição do segmento..."
                     value={newSegment.description}
-                    onChange={function (e) {
-                      return setNewSegment(function (prev) {
-                        return __assign(__assign({}, prev), { description: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setNewSegment((prev) =>
+                        __assign(__assign({}, prev), { description: e.target.value }),
+                      )
+                    }
                   />
                 </div>
 
@@ -538,13 +517,13 @@ function PatientSegmentation(_a) {
                     id="segment-criteria"
                     placeholder="Ex: Pacientes com diabetes entre 40 e 65 anos que visitaram a clínica nos últimos 6 meses"
                     value={newSegment.naturalLanguageQuery}
-                    onChange={function (e) {
-                      return setNewSegment(function (prev) {
-                        return __assign(__assign({}, prev), {
+                    onChange={(e) =>
+                      setNewSegment((prev) =>
+                        __assign(__assign({}, prev), {
                           naturalLanguageQuery: e.target.value,
-                        });
-                      });
-                    }}
+                        }),
+                      )
+                    }
                     rows={3}
                   />
                   <p className="text-sm text-muted-foreground">
@@ -557,9 +536,7 @@ function PatientSegmentation(_a) {
                 <div className="flex justify-end gap-2">
                   <button_1.Button
                     variant="outline"
-                    onClick={function () {
-                      return setShowCreateDialog(false);
-                    }}
+                    onClick={() => setShowCreateDialog(false)}
                     disabled={isCreating}
                   >
                     Cancelar
@@ -647,9 +624,7 @@ function PatientSegmentation(_a) {
               <input_1.Input
                 placeholder="Buscar segmentos..."
                 value={searchQuery}
-                onChange={function (e) {
-                  return setSearchQuery(e.target.value);
-                }}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -658,17 +633,15 @@ function PatientSegmentation(_a) {
           {/* Segments Grid */}
           {isLoading
             ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {__spreadArray([], Array(6), true).map(function (_, i) {
-                  return (
-                    <card_1.Card key={i} className="animate-pulse">
-                      <card_1.CardContent className="p-4">
-                        <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                        <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                        <div className="h-8 bg-gray-200 rounded"></div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                {__spreadArray([], Array(6), true).map((_, i) => (
+                  <card_1.Card key={i} className="animate-pulse">
+                    <card_1.CardContent className="p-4">
+                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                      <div className="h-8 bg-gray-200 rounded"></div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             : filteredSegments.length === 0
               ? <card_1.Card>
@@ -681,11 +654,7 @@ function PatientSegmentation(_a) {
                         : "Crie seu primeiro segmento de pacientes"}
                     </p>
                     {!searchQuery && (
-                      <button_1.Button
-                        onClick={function () {
-                          return setShowCreateDialog(true);
-                        }}
-                      >
+                      <button_1.Button onClick={() => setShowCreateDialog(true)}>
                         <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                         Criar Primeiro Segmento
                       </button_1.Button>
@@ -693,112 +662,98 @@ function PatientSegmentation(_a) {
                   </card_1.CardContent>
                 </card_1.Card>
               : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredSegments.map(function (segment) {
-                    return (
-                      <card_1.Card
-                        key={segment.id}
-                        className="hover:shadow-md transition-shadow cursor-pointer"
-                      >
-                        <card_1.CardHeader className="pb-3">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <card_1.CardTitle className="text-lg">
-                                {segment.criteria.name}
-                              </card_1.CardTitle>
-                              <card_1.CardDescription className="line-clamp-2">
-                                {segment.criteria.description}
-                              </card_1.CardDescription>
-                            </div>
-                            {getPerformanceIcon(segment.performance.accuracy)}
+                  {filteredSegments.map((segment) => (
+                    <card_1.Card
+                      key={segment.id}
+                      className="hover:shadow-md transition-shadow cursor-pointer"
+                    >
+                      <card_1.CardHeader className="pb-3">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <card_1.CardTitle className="text-lg">
+                              {segment.criteria.name}
+                            </card_1.CardTitle>
+                            <card_1.CardDescription className="line-clamp-2">
+                              {segment.criteria.description}
+                            </card_1.CardDescription>
                           </div>
-                        </card_1.CardHeader>
+                          {getPerformanceIcon(segment.performance.accuracy)}
+                        </div>
+                      </card_1.CardHeader>
 
-                        <card_1.CardContent className="pt-0">
-                          <div className="space-y-3">
-                            {/* Patient Count */}
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm text-muted-foreground">Pacientes</span>
-                              <badge_1.Badge variant="secondary">
-                                <lucide_react_1.Users className="h-3 w-3 mr-1" />
-                                {segment.patientCount}
-                              </badge_1.Badge>
-                            </div>
-
-                            {/* Performance */}
-                            <div className="space-y-1">
-                              <div className="flex items-center justify-between text-sm">
-                                <span className="text-muted-foreground">Precisão</span>
-                                <span className={getPerformanceColor(segment.performance.accuracy)}>
-                                  {Math.round(segment.performance.accuracy * 100)}%
-                                </span>
-                              </div>
-                              <progress_1.Progress
-                                value={segment.performance.accuracy * 100}
-                                className="h-2"
-                              />
-                            </div>
-
-                            {/* Tags */}
-                            {segment.criteria.tags && segment.criteria.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-1">
-                                {segment.criteria.tags.slice(0, 3).map(function (tag, index) {
-                                  return (
-                                    <badge_1.Badge
-                                      key={index}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {tag}
-                                    </badge_1.Badge>
-                                  );
-                                })}
-                                {segment.criteria.tags.length > 3 && (
-                                  <badge_1.Badge variant="outline" className="text-xs">
-                                    +{segment.criteria.tags.length - 3}
-                                  </badge_1.Badge>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Actions */}
-                            <div className="flex items-center gap-1 pt-2">
-                              <button_1.Button
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  return handleSelectSegment(segment);
-                                }}
-                                className="flex-1"
-                              >
-                                <lucide_react_1.Eye className="h-3 w-3 mr-1" />
-                                Ver
-                              </button_1.Button>
-
-                              <button_1.Button
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  return handleRefreshSegment(segment);
-                                }}
-                              >
-                                <lucide_react_1.RefreshCw className="h-3 w-3" />
-                              </button_1.Button>
-
-                              <button_1.Button
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  return handleDeleteSegment(segment.id);
-                                }}
-                              >
-                                <lucide_react_1.Trash2 className="h-3 w-3" />
-                              </button_1.Button>
-                            </div>
+                      <card_1.CardContent className="pt-0">
+                        <div className="space-y-3">
+                          {/* Patient Count */}
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Pacientes</span>
+                            <badge_1.Badge variant="secondary">
+                              <lucide_react_1.Users className="h-3 w-3 mr-1" />
+                              {segment.patientCount}
+                            </badge_1.Badge>
                           </div>
-                        </card_1.CardContent>
-                      </card_1.Card>
-                    );
-                  })}
+
+                          {/* Performance */}
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-muted-foreground">Precisão</span>
+                              <span className={getPerformanceColor(segment.performance.accuracy)}>
+                                {Math.round(segment.performance.accuracy * 100)}%
+                              </span>
+                            </div>
+                            <progress_1.Progress
+                              value={segment.performance.accuracy * 100}
+                              className="h-2"
+                            />
+                          </div>
+
+                          {/* Tags */}
+                          {segment.criteria.tags && segment.criteria.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1">
+                              {segment.criteria.tags.slice(0, 3).map((tag, index) => (
+                                <badge_1.Badge key={index} variant="outline" className="text-xs">
+                                  {tag}
+                                </badge_1.Badge>
+                              ))}
+                              {segment.criteria.tags.length > 3 && (
+                                <badge_1.Badge variant="outline" className="text-xs">
+                                  +{segment.criteria.tags.length - 3}
+                                </badge_1.Badge>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Actions */}
+                          <div className="flex items-center gap-1 pt-2">
+                            <button_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleSelectSegment(segment)}
+                              className="flex-1"
+                            >
+                              <lucide_react_1.Eye className="h-3 w-3 mr-1" />
+                              Ver
+                            </button_1.Button>
+
+                            <button_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRefreshSegment(segment)}
+                            >
+                              <lucide_react_1.RefreshCw className="h-3 w-3" />
+                            </button_1.Button>
+
+                            <button_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDeleteSegment(segment.id)}
+                            >
+                              <lucide_react_1.Trash2 className="h-3 w-3" />
+                            </button_1.Button>
+                          </div>
+                        </div>
+                      </card_1.CardContent>
+                    </card_1.Card>
+                  ))}
                 </div>}
         </tabs_1.TabsContent>
 
@@ -852,13 +807,11 @@ function PatientSegmentation(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {analytics.mostCommonCriteria.map(function (criteria, index) {
-                      return (
-                        <badge_1.Badge key={index} variant="secondary" className="text-sm">
-                          {criteria}
-                        </badge_1.Badge>
-                      );
-                    })}
+                    {analytics.mostCommonCriteria.map((criteria, index) => (
+                      <badge_1.Badge key={index} variant="secondary" className="text-sm">
+                        {criteria}
+                      </badge_1.Badge>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -878,13 +831,11 @@ function PatientSegmentation(_a) {
                             Nenhum segmento em crescimento
                           </p>
                         : <div className="space-y-1">
-                            {analytics.trends.growingSegments.map(function (name, index) {
-                              return (
-                                <div key={index} className="text-sm">
-                                  {name}
-                                </div>
-                              );
-                            })}
+                            {analytics.trends.growingSegments.map((name, index) => (
+                              <div key={index} className="text-sm">
+                                {name}
+                              </div>
+                            ))}
                           </div>}
                     </scroll_area_1.ScrollArea>
                   </card_1.CardContent>
@@ -901,13 +852,11 @@ function PatientSegmentation(_a) {
                       {analytics.trends.stableSegments.length === 0
                         ? <p className="text-sm text-muted-foreground">Nenhum segmento estável</p>
                         : <div className="space-y-1">
-                            {analytics.trends.stableSegments.map(function (name, index) {
-                              return (
-                                <div key={index} className="text-sm">
-                                  {name}
-                                </div>
-                              );
-                            })}
+                            {analytics.trends.stableSegments.map((name, index) => (
+                              <div key={index} className="text-sm">
+                                {name}
+                              </div>
+                            ))}
                           </div>}
                     </scroll_area_1.ScrollArea>
                   </card_1.CardContent>
@@ -926,13 +875,11 @@ function PatientSegmentation(_a) {
                             Nenhum segmento diminuindo
                           </p>
                         : <div className="space-y-1">
-                            {analytics.trends.shrinkingSegments.map(function (name, index) {
-                              return (
-                                <div key={index} className="text-sm">
-                                  {name}
-                                </div>
-                              );
-                            })}
+                            {analytics.trends.shrinkingSegments.map((name, index) => (
+                              <div key={index} className="text-sm">
+                                {name}
+                              </div>
+                            ))}
                           </div>}
                     </scroll_area_1.ScrollArea>
                   </card_1.CardContent>
@@ -1021,15 +968,11 @@ function PatientSegmentation(_a) {
                         </card_1.CardHeader>
                         <card_1.CardContent>
                           <ul className="text-sm space-y-1">
-                            {selectedSegment.insights.commonCharacteristics.map(
-                              function (char, index) {
-                                return (
-                                  <li key={index} className="text-muted-foreground">
-                                    • {char}
-                                  </li>
-                                );
-                              },
-                            )}
+                            {selectedSegment.insights.commonCharacteristics.map((char, index) => (
+                              <li key={index} className="text-muted-foreground">
+                                • {char}
+                              </li>
+                            ))}
                           </ul>
                         </card_1.CardContent>
                       </card_1.Card>
@@ -1040,13 +983,11 @@ function PatientSegmentation(_a) {
                         </card_1.CardHeader>
                         <card_1.CardContent>
                           <ul className="text-sm space-y-1">
-                            {selectedSegment.insights.trends.map(function (trend, index) {
-                              return (
-                                <li key={index} className="text-muted-foreground">
-                                  • {trend}
-                                </li>
-                              );
-                            })}
+                            {selectedSegment.insights.trends.map((trend, index) => (
+                              <li key={index} className="text-muted-foreground">
+                                • {trend}
+                              </li>
+                            ))}
                           </ul>
                         </card_1.CardContent>
                       </card_1.Card>
@@ -1057,13 +998,11 @@ function PatientSegmentation(_a) {
                         </card_1.CardHeader>
                         <card_1.CardContent>
                           <ul className="text-sm space-y-1">
-                            {selectedSegment.insights.recommendations.map(function (rec, index) {
-                              return (
-                                <li key={index} className="text-muted-foreground">
-                                  • {rec}
-                                </li>
-                              );
-                            })}
+                            {selectedSegment.insights.recommendations.map((rec, index) => (
+                              <li key={index} className="text-muted-foreground">
+                                • {rec}
+                              </li>
+                            ))}
                           </ul>
                         </card_1.CardContent>
                       </card_1.Card>
@@ -1080,51 +1019,43 @@ function PatientSegmentation(_a) {
 
                   <scroll_area_1.ScrollArea className="h-64">
                     <div className="space-y-2">
-                      {selectedSegment.patients.slice(0, 50).map(function (patient) {
-                        return (
-                          <card_1.Card key={patient.patientId} className="p-3">
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="font-medium">{patient.patientName}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  {patient.demographics.age} anos • {patient.demographics.gender} •{" "}
-                                  {patient.demographics.location}
-                                </div>
-                                <div className="text-xs text-muted-foreground mt-1">
-                                  Última visita: {patient.medicalSummary.lastVisit}
-                                </div>
+                      {selectedSegment.patients.slice(0, 50).map((patient) => (
+                        <card_1.Card key={patient.patientId} className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <div className="font-medium">{patient.patientName}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {patient.demographics.age} anos • {patient.demographics.gender} •{" "}
+                                {patient.demographics.location}
                               </div>
-
-                              <div className="text-right">
-                                <div
-                                  className={"font-medium ".concat(
-                                    getPerformanceColor(patient.matchScore),
-                                  )}
-                                >
-                                  {Math.round(patient.matchScore * 100)}%
-                                </div>
-                                <div className="text-xs text-muted-foreground">Correspondência</div>
+                              <div className="text-xs text-muted-foreground mt-1">
+                                Última visita: {patient.medicalSummary.lastVisit}
                               </div>
                             </div>
 
-                            {patient.matchedCriteria.length > 0 && (
-                              <div className="mt-2 flex flex-wrap gap-1">
-                                {patient.matchedCriteria.map(function (criteria, index) {
-                                  return (
-                                    <badge_1.Badge
-                                      key={index}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {criteria}
-                                    </badge_1.Badge>
-                                  );
-                                })}
+                            <div className="text-right">
+                              <div
+                                className={"font-medium ".concat(
+                                  getPerformanceColor(patient.matchScore),
+                                )}
+                              >
+                                {Math.round(patient.matchScore * 100)}%
                               </div>
-                            )}
-                          </card_1.Card>
-                        );
-                      })}
+                              <div className="text-xs text-muted-foreground">Correspondência</div>
+                            </div>
+                          </div>
+
+                          {patient.matchedCriteria.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-1">
+                              {patient.matchedCriteria.map((criteria, index) => (
+                                <badge_1.Badge key={index} variant="outline" className="text-xs">
+                                  {criteria}
+                                </badge_1.Badge>
+                              ))}
+                            </div>
+                          )}
+                        </card_1.Card>
+                      ))}
 
                       {selectedSegment.patients.length > 50 && (
                         <div className="text-center text-sm text-muted-foreground py-2">

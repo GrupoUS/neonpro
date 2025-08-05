@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CostAnalysis = CostAnalysis;
 var react_1 = require("react");
@@ -123,51 +122,40 @@ function CostAnalysis() {
     viewMode = _c[0],
     setViewMode = _c[1];
   var filteredAnalysis = (0, react_1.useMemo)(
-    function () {
-      return mockCostAnalysis.filter(function (analysis) {
+    () =>
+      mockCostAnalysis.filter((analysis) => {
         var matchesCategory = selectedCategory === "all" || analysis.category === selectedCategory;
         return matchesCategory;
-      });
-    },
+      }),
     [selectedCategory],
   );
-  var overallMetrics = (0, react_1.useMemo)(
-    function () {
-      var totalCost = filteredAnalysis.reduce(function (sum, item) {
-        return sum + item.finalTotalCost;
-      }, 0);
-      var totalRevenue = filteredAnalysis.reduce(function (sum, item) {
-        return sum + item.salePrice * item.quantity;
-      }, 0);
-      var totalTaxes = filteredAnalysis.reduce(function (sum, item) {
-        return sum + item.totalTaxes;
-      }, 0);
-      var averageMargin =
-        filteredAnalysis.reduce(function (sum, item) {
-          return sum + item.netMarginPercent;
-        }, 0) / filteredAnalysis.length;
-      return {
-        totalCost: totalCost,
-        totalRevenue: totalRevenue,
-        totalTaxes: totalTaxes,
-        totalProfit: totalRevenue - totalCost,
-        averageMargin: averageMargin || 0,
-        taxBurden: (totalTaxes / totalCost) * 100,
-      };
-    },
-    [filteredAnalysis],
-  );
-  var formatCurrency = function (value) {
-    return value.toLocaleString("pt-BR", {
+  var overallMetrics = (0, react_1.useMemo)(() => {
+    var totalCost = filteredAnalysis.reduce((sum, item) => sum + item.finalTotalCost, 0);
+    var totalRevenue = filteredAnalysis.reduce(
+      (sum, item) => sum + item.salePrice * item.quantity,
+      0,
+    );
+    var totalTaxes = filteredAnalysis.reduce((sum, item) => sum + item.totalTaxes, 0);
+    var averageMargin =
+      filteredAnalysis.reduce((sum, item) => sum + item.netMarginPercent, 0) /
+      filteredAnalysis.length;
+    return {
+      totalCost: totalCost,
+      totalRevenue: totalRevenue,
+      totalTaxes: totalTaxes,
+      totalProfit: totalRevenue - totalCost,
+      averageMargin: averageMargin || 0,
+      taxBurden: (totalTaxes / totalCost) * 100,
+    };
+  }, [filteredAnalysis]);
+  var formatCurrency = (value) =>
+    value.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
       minimumFractionDigits: 2,
     });
-  };
-  var formatPercent = function (value) {
-    return "".concat(value.toFixed(2), "%");
-  };
-  var getProfitabilityColor = function (profitability) {
+  var formatPercent = (value) => "".concat(value.toFixed(2), "%");
+  var getProfitabilityColor = (profitability) => {
     switch (profitability) {
       case "high":
         return "bg-green-100 text-green-800 border-green-200";
@@ -181,7 +169,7 @@ function CostAnalysis() {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var exportCostAnalysis = function () {
+  var exportCostAnalysis = () => {
     // In a real implementation, this would generate a detailed Excel/PDF report
     console.log("Exporting cost analysis:", filteredAnalysis);
   };
@@ -251,13 +239,11 @@ function CostAnalysis() {
           </select_1.SelectTrigger>
           <select_1.SelectContent>
             <select_1.SelectItem value="all">Todas as categorias</select_1.SelectItem>
-            {categories.map(function (category) {
-              return (
-                <select_1.SelectItem key={category.id} value={category.id}>
-                  {category.icon} {category.name}
-                </select_1.SelectItem>
-              );
-            })}
+            {categories.map((category) => (
+              <select_1.SelectItem key={category.id} value={category.id}>
+                {category.icon} {category.name}
+              </select_1.SelectItem>
+            ))}
           </select_1.SelectContent>
         </select_1.Select>
 
@@ -273,12 +259,7 @@ function CostAnalysis() {
           </select_1.SelectContent>
         </select_1.Select>
 
-        <tabs_1.Tabs
-          value={viewMode}
-          onValueChange={function (value) {
-            return setViewMode(value);
-          }}
-        >
+        <tabs_1.Tabs value={viewMode} onValueChange={(value) => setViewMode(value)}>
           <tabs_1.TabsList>
             <tabs_1.TabsTrigger value="overview">Visão Geral</tabs_1.TabsTrigger>
             <tabs_1.TabsTrigger value="detailed">Detalhado</tabs_1.TabsTrigger>
@@ -322,10 +303,8 @@ function CostAnalysis() {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredAnalysis.map(function (analysis) {
-                  var category = categories.find(function (c) {
-                    return c.id === analysis.category;
-                  });
+                {filteredAnalysis.map((analysis) => {
+                  var category = categories.find((c) => c.id === analysis.category);
                   return (
                     <table_1.TableRow key={analysis.productId} className="hover:bg-muted/50">
                       <table_1.TableCell>
@@ -471,29 +450,20 @@ function CostAnalysis() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {(function () {
-                  var totalTaxes = filteredAnalysis.reduce(function (sum, item) {
-                    return sum + item.totalTaxes;
-                  }, 0);
+                {(() => {
+                  var totalTaxes = filteredAnalysis.reduce((sum, item) => sum + item.totalTaxes, 0);
                   var taxBreakdown = {
-                    icms: filteredAnalysis.reduce(function (sum, item) {
-                      return sum + item.taxes.icms.value;
-                    }, 0),
-                    ipi: filteredAnalysis.reduce(function (sum, item) {
-                      return sum + item.taxes.ipi.value;
-                    }, 0),
-                    pis: filteredAnalysis.reduce(function (sum, item) {
-                      return sum + item.taxes.pis.value;
-                    }, 0),
-                    cofins: filteredAnalysis.reduce(function (sum, item) {
-                      return sum + item.taxes.cofins.value;
-                    }, 0),
-                    iss: filteredAnalysis.reduce(function (sum, item) {
-                      return sum + item.taxes.iss.value;
-                    }, 0),
+                    icms: filteredAnalysis.reduce((sum, item) => sum + item.taxes.icms.value, 0),
+                    ipi: filteredAnalysis.reduce((sum, item) => sum + item.taxes.ipi.value, 0),
+                    pis: filteredAnalysis.reduce((sum, item) => sum + item.taxes.pis.value, 0),
+                    cofins: filteredAnalysis.reduce(
+                      (sum, item) => sum + item.taxes.cofins.value,
+                      0,
+                    ),
+                    iss: filteredAnalysis.reduce((sum, item) => sum + item.taxes.iss.value, 0),
                   };
                   return Object.entries(taxBreakdown)
-                    .map(function (_a) {
+                    .map((_a) => {
                       var tax = _a[0],
                         value = _a[1];
                       if (value === 0) return null;
@@ -530,23 +500,23 @@ function CostAnalysis() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {(function () {
+                {(() => {
                   var totalCost = overallMetrics.totalCost;
-                  var totalBase = filteredAnalysis.reduce(function (sum, item) {
-                    return sum + item.totalCostBase;
-                  }, 0);
-                  var totalTaxes = filteredAnalysis.reduce(function (sum, item) {
-                    return sum + item.totalTaxes;
-                  }, 0);
-                  var totalAdditional = filteredAnalysis.reduce(function (sum, item) {
-                    return sum + item.totalAdditionalCosts;
-                  }, 0);
+                  var totalBase = filteredAnalysis.reduce(
+                    (sum, item) => sum + item.totalCostBase,
+                    0,
+                  );
+                  var totalTaxes = filteredAnalysis.reduce((sum, item) => sum + item.totalTaxes, 0);
+                  var totalAdditional = filteredAnalysis.reduce(
+                    (sum, item) => sum + item.totalAdditionalCosts,
+                    0,
+                  );
                   var components = [
                     { name: "Custo Base", value: totalBase, color: "bg-blue-500" },
                     { name: "Impostos", value: totalTaxes, color: "bg-amber-500" },
                     { name: "Custos Adicionais", value: totalAdditional, color: "bg-green-500" },
                   ];
-                  return components.map(function (component) {
+                  return components.map((component) => {
                     var percentage = (component.value / totalCost) * 100;
                     return (
                       <div key={component.name} className="space-y-2">
@@ -585,25 +555,19 @@ function CostAnalysis() {
               <h4 className="font-medium text-green-600">Alta Rentabilidade</h4>
               <div className="space-y-2">
                 {filteredAnalysis
-                  .filter(function (p) {
-                    return p.profitability === "high";
-                  })
-                  .map(function (product) {
-                    return (
-                      <div
-                        key={product.productId}
-                        className="p-2 bg-green-50 border border-green-200 rounded"
-                      >
-                        <div className="text-sm font-medium">{product.productName}</div>
-                        <div className="text-xs text-muted-foreground">
-                          Margem: {formatPercent(product.netMarginPercent)}
-                        </div>
+                  .filter((p) => p.profitability === "high")
+                  .map((product) => (
+                    <div
+                      key={product.productId}
+                      className="p-2 bg-green-50 border border-green-200 rounded"
+                    >
+                      <div className="text-sm font-medium">{product.productName}</div>
+                      <div className="text-xs text-muted-foreground">
+                        Margem: {formatPercent(product.netMarginPercent)}
                       </div>
-                    );
-                  })}
-                {filteredAnalysis.filter(function (p) {
-                  return p.profitability === "high";
-                }).length === 0 && (
+                    </div>
+                  ))}
+                {filteredAnalysis.filter((p) => p.profitability === "high").length === 0 && (
                   <p className="text-sm text-muted-foreground">
                     Nenhum produto com alta rentabilidade
                   </p>
@@ -616,22 +580,18 @@ function CostAnalysis() {
               <h4 className="font-medium text-yellow-600">Rentabilidade Média</h4>
               <div className="space-y-2">
                 {filteredAnalysis
-                  .filter(function (p) {
-                    return p.profitability === "medium";
-                  })
-                  .map(function (product) {
-                    return (
-                      <div
-                        key={product.productId}
-                        className="p-2 bg-yellow-50 border border-yellow-200 rounded"
-                      >
-                        <div className="text-sm font-medium">{product.productName}</div>
-                        <div className="text-xs text-muted-foreground">
-                          Margem: {formatPercent(product.netMarginPercent)}
-                        </div>
+                  .filter((p) => p.profitability === "medium")
+                  .map((product) => (
+                    <div
+                      key={product.productId}
+                      className="p-2 bg-yellow-50 border border-yellow-200 rounded"
+                    >
+                      <div className="text-sm font-medium">{product.productName}</div>
+                      <div className="text-xs text-muted-foreground">
+                        Margem: {formatPercent(product.netMarginPercent)}
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
               </div>
             </div>
 
@@ -640,28 +600,22 @@ function CostAnalysis() {
               <h4 className="font-medium text-red-600">Baixa Rentabilidade</h4>
               <div className="space-y-2">
                 {filteredAnalysis
-                  .filter(function (p) {
-                    return p.profitability === "low" || p.profitability === "negative";
-                  })
-                  .map(function (product) {
-                    return (
-                      <div
-                        key={product.productId}
-                        className="p-2 bg-red-50 border border-red-200 rounded"
-                      >
-                        <div className="text-sm font-medium">{product.productName}</div>
-                        <div className="text-xs text-muted-foreground">
-                          Margem: {formatPercent(product.netMarginPercent)}
-                        </div>
-                        <div className="text-xs text-red-600 font-medium">
-                          ⚠️ Revisar precificação
-                        </div>
+                  .filter((p) => p.profitability === "low" || p.profitability === "negative")
+                  .map((product) => (
+                    <div
+                      key={product.productId}
+                      className="p-2 bg-red-50 border border-red-200 rounded"
+                    >
+                      <div className="text-sm font-medium">{product.productName}</div>
+                      <div className="text-xs text-muted-foreground">
+                        Margem: {formatPercent(product.netMarginPercent)}
                       </div>
-                    );
-                  })}
-                {filteredAnalysis.filter(function (p) {
-                  return p.profitability === "low" || p.profitability === "negative";
-                }).length === 0 && (
+                      <div className="text-xs text-red-600 font-medium">⚠️ Revisar precificação</div>
+                    </div>
+                  ))}
+                {filteredAnalysis.filter(
+                  (p) => p.profitability === "low" || p.profitability === "negative",
+                ).length === 0 && (
                   <p className="text-sm text-muted-foreground">
                     Todos os produtos com rentabilidade adequada
                   </p>

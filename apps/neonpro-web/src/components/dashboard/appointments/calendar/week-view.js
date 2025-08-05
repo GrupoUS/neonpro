@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WeekView = WeekView;
 var react_1 = require("react");
@@ -22,12 +21,12 @@ function WeekView(_a) {
   var weekEnd = (0, date_fns_1.endOfWeek)(date, { weekStartsOn: 0 });
   var weekDays = (0, date_fns_1.eachDayOfInterval)({ start: weekStart, end: weekEnd });
   // Filter appointments for the week
-  var weekAppointments = appointments.filter(function (appointment) {
+  var weekAppointments = appointments.filter((appointment) => {
     var appointmentDate = new Date(appointment.start_time);
     return appointmentDate >= weekStart && appointmentDate <= weekEnd;
   });
   // Generate time slots
-  var generateTimeSlots = function () {
+  var generateTimeSlots = () => {
     var slots = [];
     var startHour = 8;
     var endHour = 18;
@@ -47,8 +46,8 @@ function WeekView(_a) {
   };
   var timeSlots = generateTimeSlots();
   // Get appointments for specific day and time slot
-  var getAppointmentsForSlot = function (day, slotHour, slotMinutes) {
-    return weekAppointments.filter(function (appointment) {
+  var getAppointmentsForSlot = (day, slotHour, slotMinutes) =>
+    weekAppointments.filter((appointment) => {
       var appointmentStart = new Date(appointment.start_time);
       var appointmentEnd = new Date(appointment.end_time);
       if (!(0, date_fns_1.isSameDay)(appointmentStart, day)) return false;
@@ -60,8 +59,7 @@ function WeekView(_a) {
         (appointmentStart <= slotStart && appointmentEnd > slotStart)
       );
     });
-  };
-  var handleTimeSlotClick = function (day, time) {
+  var handleTimeSlotClick = (day, time) => {
     if (onTimeSlotClick) {
       onTimeSlotClick(day, time);
     }
@@ -76,36 +74,34 @@ function WeekView(_a) {
         </div>
 
         {/* Day headers */}
-        {weekDays.map(function (day, index) {
-          return (
+        {weekDays.map((day, index) => (
+          <div
+            key={index}
+            className={(0, utils_1.cn)(
+              "p-2 border-r text-center",
+              (0, date_fns_1.isToday)(day) && "bg-primary/10",
+            )}
+          >
+            <div className="text-xs text-muted-foreground">
+              {(0, date_fns_1.format)(day, "EEE", { locale: locale_1.ptBR })}
+            </div>
             <div
-              key={index}
               className={(0, utils_1.cn)(
-                "p-2 border-r text-center",
-                (0, date_fns_1.isToday)(day) && "bg-primary/10",
+                "text-lg font-semibold",
+                (0, date_fns_1.isToday)(day) && "text-primary",
               )}
             >
-              <div className="text-xs text-muted-foreground">
-                {(0, date_fns_1.format)(day, "EEE", { locale: locale_1.ptBR })}
-              </div>
-              <div
-                className={(0, utils_1.cn)(
-                  "text-lg font-semibold",
-                  (0, date_fns_1.isToday)(day) && "text-primary",
-                )}
-              >
-                {(0, date_fns_1.format)(day, "d")}
-              </div>
+              {(0, date_fns_1.format)(day, "d")}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
 
       {/* Time grid */}
       <scroll_area_1.ScrollArea className="flex-1">
         <div className="grid grid-cols-8 gap-px bg-border min-h-full">
           {/* Time slots */}
-          {timeSlots.map(function (_a, slotIndex) {
+          {timeSlots.map((_a, slotIndex) => {
             var hour = _a.hour,
               minutes = _a.minutes,
               time = _a.time;
@@ -124,7 +120,7 @@ function WeekView(_a) {
                 </div>
 
                 {/* Day columns */}
-                {weekDays.map(function (day, dayIndex) {
+                {weekDays.map((day, dayIndex) => {
                   var slotAppointments = getAppointmentsForSlot(day, hour, minutes);
                   return (
                     <div
@@ -135,36 +131,31 @@ function WeekView(_a) {
                         (0, date_fns_1.isToday)(day) && "bg-primary/5",
                       )}
                       style={{ minHeight: "48px" }}
-                      onClick={function () {
-                        return handleTimeSlotClick(day, time);
-                      }}
+                      onClick={() => handleTimeSlotClick(day, time)}
                     >
                       {/* Appointments in this slot */}
                       <div className="p-1">
-                        {slotAppointments.map(function (appointment, appointmentIndex) {
-                          return (
-                            <div
-                              key={"".concat(appointment.id, "-").concat(appointmentIndex)}
-                              className="mb-1"
-                            >
-                              <appointment_card_1.AppointmentCard
-                                appointment={appointment}
-                                variant="compact"
-                                showTime={false}
-                                showPatient={true}
-                                showProfessional={false}
-                                showActions={false}
-                                onClick={function () {
-                                  return onAppointmentClick === null ||
-                                    onAppointmentClick === void 0
-                                    ? void 0
-                                    : onAppointmentClick(appointment);
-                                }}
-                                className="text-xs"
-                              />
-                            </div>
-                          );
-                        })}
+                        {slotAppointments.map((appointment, appointmentIndex) => (
+                          <div
+                            key={"".concat(appointment.id, "-").concat(appointmentIndex)}
+                            className="mb-1"
+                          >
+                            <appointment_card_1.AppointmentCard
+                              appointment={appointment}
+                              variant="compact"
+                              showTime={false}
+                              showPatient={true}
+                              showProfessional={false}
+                              showActions={false}
+                              onClick={() =>
+                                onAppointmentClick === null || onAppointmentClick === void 0
+                                  ? void 0
+                                  : onAppointmentClick(appointment)
+                              }
+                              className="text-xs"
+                            />
+                          </div>
+                        ))}
                       </div>
                     </div>
                   );
@@ -200,15 +191,13 @@ function WeekCurrentTimeIndicator(_a) {
   var _b = react_1.default.useState(null),
     currentTime = _b[0],
     setCurrentTime = _b[1];
-  react_1.default.useEffect(function () {
+  react_1.default.useEffect(() => {
     // Set initial time on client side only
     setCurrentTime(new Date());
-    var interval = setInterval(function () {
+    var interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
   // Don't render during SSR or before client hydration
   if (!currentTime) {

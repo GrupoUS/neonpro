@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientConsentManager = PatientConsentManager;
 var react_1 = require("react");
@@ -144,7 +141,6 @@ var consent_service_1 = require("@/app/services/consent.service");
 var lucide_react_1 = require("lucide-react");
 var use_toast_1 = require("@/hooks/use-toast");
 function PatientConsentManager(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     clinicId = _a.clinicId;
   var _b = (0, react_1.useState)([]),
@@ -161,16 +157,13 @@ function PatientConsentManager(_a) {
     setFilterStatus = _e[1];
   var toast = (0, use_toast_1.useToast)().toast;
   var consentService = new consent_service_1.ConsentService();
-  (0, react_1.useEffect)(
-    function () {
-      loadConsents();
-    },
-    [patientId, clinicId],
-  );
-  var loadConsents = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadConsents();
+  }, [patientId, clinicId]);
+  var loadConsents = () =>
+    __awaiter(this, void 0, void 0, function () {
       var data, _a, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 5, 6, 7]);
@@ -206,11 +199,10 @@ function PatientConsentManager(_a) {
         }
       });
     });
-  };
-  var handleRevokeConsent = function (consentId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRevokeConsent = (consentId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -237,8 +229,7 @@ function PatientConsentManager(_a) {
         }
       });
     });
-  };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "active":
         return <lucide_react_1.CheckCircle className="w-4 h-4 text-green-500" />;
@@ -250,7 +241,7 @@ function PatientConsentManager(_a) {
         return <lucide_react_1.AlertTriangle className="w-4 h-4 text-yellow-500" />;
     }
   };
-  var getStatusLabel = function (status) {
+  var getStatusLabel = (status) => {
     var labels = {
       active: "Ativo",
       withdrawn: "Retirado",
@@ -259,7 +250,7 @@ function PatientConsentManager(_a) {
     };
     return labels[status] || status;
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -271,7 +262,7 @@ function PatientConsentManager(_a) {
         return "bg-yellow-100 text-yellow-800";
     }
   };
-  var isExpiringSoon = function (consent) {
+  var isExpiringSoon = (consent) => {
     if (!consent.expires_at) return false;
     var expiryDate = new Date(consent.expires_at);
     var today = new Date();
@@ -280,7 +271,7 @@ function PatientConsentManager(_a) {
     );
     return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
   };
-  var filteredConsents = consents.filter(function (consent) {
+  var filteredConsents = consents.filter((consent) => {
     var _a, _b, _c, _d;
     var matchesSearch =
       ((_b = (_a = consent.consent_form) === null || _a === void 0 ? void 0 : _a.form_name) ===
@@ -324,17 +315,13 @@ function PatientConsentManager(_a) {
                 patientId ? "Buscar consentimentos..." : "Buscar por paciente ou formulário..."
               }
               value={searchTerm}
-              onChange={function (e) {
-                return setSearchTerm(e.target.value);
-              }}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
           <select
             value={filterStatus}
-            onChange={function (e) {
-              return setFilterStatus(e.target.value);
-            }}
+            onChange={(e) => setFilterStatus(e.target.value)}
             className="px-3 py-2 border border-input bg-background text-sm rounded-md"
           >
             <option value="all">Todos os Status</option>
@@ -354,11 +341,7 @@ function PatientConsentManager(_a) {
               <div>
                 <p className="text-sm font-medium">Ativos</p>
                 <p className="text-2xl font-bold">
-                  {
-                    consents.filter(function (c) {
-                      return c.status === "active";
-                    }).length
-                  }
+                  {consents.filter((c) => c.status === "active").length}
                 </p>
               </div>
             </div>
@@ -372,11 +355,7 @@ function PatientConsentManager(_a) {
               <div>
                 <p className="text-sm font-medium">Revogados</p>
                 <p className="text-2xl font-bold">
-                  {
-                    consents.filter(function (c) {
-                      return c.status === "withdrawn";
-                    }).length
-                  }
+                  {consents.filter((c) => c.status === "withdrawn").length}
                 </p>
               </div>
             </div>
@@ -390,11 +369,7 @@ function PatientConsentManager(_a) {
               <div>
                 <p className="text-sm font-medium">Expirados</p>
                 <p className="text-2xl font-bold">
-                  {
-                    consents.filter(function (c) {
-                      return c.status === "expired";
-                    }).length
-                  }
+                  {consents.filter((c) => c.status === "expired").length}
                 </p>
               </div>
             </div>
@@ -408,11 +383,7 @@ function PatientConsentManager(_a) {
               <div>
                 <p className="text-sm font-medium">Expirando Soon</p>
                 <p className="text-2xl font-bold">
-                  {
-                    consents.filter(function (c) {
-                      return isExpiringSoon(c);
-                    }).length
-                  }
+                  {consents.filter((c) => isExpiringSoon(c)).length}
                 </p>
               </div>
             </div>
@@ -434,7 +405,7 @@ function PatientConsentManager(_a) {
                 </p>
               </card_1.CardContent>
             </card_1.Card>
-          : filteredConsents.map(function (consent) {
+          : filteredConsents.map((consent) => {
               var _a, _b, _c;
               return (
                 <card_1.Card key={consent.id} className="hover:shadow-md transition-shadow">
@@ -517,9 +488,7 @@ function PatientConsentManager(_a) {
                           <button_1.Button
                             variant="outline"
                             size="sm"
-                            onClick={function () {
-                              return handleRevokeConsent(consent.id);
-                            }}
+                            onClick={() => handleRevokeConsent(consent.id)}
                             className="text-red-600 hover:text-red-700 hover:bg-red-50"
                           >
                             <lucide_react_1.XCircle className="w-4 h-4 mr-1" />

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { TextDecoder, TextEncoder } from "util";
+import { TextDecoder, TextEncoder } from "node:util";
 
 // Set timezone to UTC for consistent date testing across all environments
 process.env.TZ = "UTC";
@@ -10,7 +10,6 @@ global.TextEncoder = TextEncoder;
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
-  constructor() {}
   observe() {
     return null;
   }
@@ -24,7 +23,6 @@ global.IntersectionObserver = class IntersectionObserver {
 
 // Mock ResizeObserver for Recharts
 global.ResizeObserver = class ResizeObserver {
-  constructor(callback: ResizeObserverCallback) {}
   observe() {
     return null;
   }

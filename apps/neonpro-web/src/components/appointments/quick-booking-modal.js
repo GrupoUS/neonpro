@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuickBookingModal = QuickBookingModal;
 var react_1 = require("react");
@@ -197,7 +194,6 @@ var equipmentOptions = [
   "Fotobiomodulação",
 ];
 function QuickBookingModal(_a) {
-  var _this = this;
   var isOpen = _a.isOpen,
     onClose = _a.onClose,
     onSubmit = _a.onSubmit,
@@ -229,40 +225,32 @@ function QuickBookingModal(_a) {
     },
   });
   // Auto-fill form when slot is selected
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedSlot) {
-        form.setValue("date", (0, moment_1.default)(selectedSlot.start).format("YYYY-MM-DD"));
-        form.setValue("startTime", (0, moment_1.default)(selectedSlot.start).format("HH:mm"));
-        var suggestedDuration = (0, moment_1.default)(selectedSlot.end).diff(
-          (0, moment_1.default)(selectedSlot.start),
-          "minutes",
-        );
-        if (suggestedDuration >= 15 && suggestedDuration <= 240) {
-          form.setValue("duration", suggestedDuration);
-        }
-        if (selectedSlot.resourceId) {
-          form.setValue("professionalId", selectedSlot.resourceId);
-        }
+  (0, react_1.useEffect)(() => {
+    if (selectedSlot) {
+      form.setValue("date", (0, moment_1.default)(selectedSlot.start).format("YYYY-MM-DD"));
+      form.setValue("startTime", (0, moment_1.default)(selectedSlot.start).format("HH:mm"));
+      var suggestedDuration = (0, moment_1.default)(selectedSlot.end).diff(
+        (0, moment_1.default)(selectedSlot.start),
+        "minutes",
+      );
+      if (suggestedDuration >= 15 && suggestedDuration <= 240) {
+        form.setValue("duration", suggestedDuration);
       }
-    },
-    [selectedSlot, form],
-  );
+      if (selectedSlot.resourceId) {
+        form.setValue("professionalId", selectedSlot.resourceId);
+      }
+    }
+  }, [selectedSlot, form]);
   // Watch service type to auto-adjust duration
   var watchedServiceType = form.watch("serviceType");
-  (0, react_1.useEffect)(
-    function () {
-      var serviceOption = serviceOptions.find(function (s) {
-        return s.value === watchedServiceType;
-      });
-      if (serviceOption) {
-        form.setValue("duration", serviceOption.duration);
-      }
-    },
-    [watchedServiceType, form],
-  );
+  (0, react_1.useEffect)(() => {
+    var serviceOption = serviceOptions.find((s) => s.value === watchedServiceType);
+    if (serviceOption) {
+      form.setValue("duration", serviceOption.duration);
+    }
+  }, [watchedServiceType, form]);
   // Phone number formatting
-  var formatPhoneNumber = function (value) {
+  var formatPhoneNumber = (value) => {
     var numbers = value.replace(/\D/g, "");
     if (numbers.length <= 2) return "(".concat(numbers);
     if (numbers.length <= 6) return "(".concat(numbers.slice(0, 2), ") ").concat(numbers.slice(2));
@@ -277,7 +265,7 @@ function QuickBookingModal(_a) {
       .concat(numbers.slice(7, 11));
   };
   // Validate appointment slot
-  var validateSlot = function (data) {
+  var validateSlot = (data) => {
     var startDateTime = (0, moment_1.default)("".concat(data.date, " ").concat(data.startTime));
     var endDateTime = (0, moment_1.default)(startDateTime).add(data.duration, "minutes");
     var conflicts = [];
@@ -299,19 +287,17 @@ function QuickBookingModal(_a) {
       conflicts.push("Não atendemos aos finais de semana");
     }
     // Check professional availability
-    var professional = professionals.find(function (p) {
-      return p.id === data.professionalId;
-    });
+    var professional = professionals.find((p) => p.id === data.professionalId);
     if (professional && !professional.availability) {
       conflicts.push("".concat(professional.name, " n\u00E3o est\u00E1 dispon\u00EDvel"));
     }
     return conflicts;
   };
-  var onFormSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onFormSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var validationErrors, startDateTime, endDateTime, appointmentData, error_1;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             setIsSubmitting(true);
@@ -366,7 +352,6 @@ function QuickBookingModal(_a) {
         }
       });
     });
-  };
   return (
     <dialog_1.Dialog open={isOpen} onOpenChange={onClose}>
       <dialog_1.DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
@@ -390,9 +375,9 @@ function QuickBookingModal(_a) {
                   <div>
                     <h4 className="font-medium text-red-800">Conflitos encontrados:</h4>
                     <ul className="mt-1 text-sm text-red-700 list-disc list-inside">
-                      {conflicts.map(function (conflict, index) {
-                        return <li key={index}>{conflict}</li>;
-                      })}
+                      {conflicts.map((conflict, index) => (
+                        <li key={index}>{conflict}</li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -404,7 +389,7 @@ function QuickBookingModal(_a) {
               <form_1.FormField
                 control={form.control}
                 name="patientName"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -425,7 +410,7 @@ function QuickBookingModal(_a) {
               <form_1.FormField
                 control={form.control}
                 name="phoneNumber"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -434,7 +419,7 @@ function QuickBookingModal(_a) {
                         <input_1.Input
                           placeholder="(11) 99999-9999"
                           {...field}
-                          onChange={function (e) {
+                          onChange={(e) => {
                             var formatted = formatPhoneNumber(e.target.value);
                             field.onChange(formatted);
                           }}
@@ -450,7 +435,7 @@ function QuickBookingModal(_a) {
             <form_1.FormField
               control={form.control}
               name="email"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -469,7 +454,7 @@ function QuickBookingModal(_a) {
               <form_1.FormField
                 control={form.control}
                 name="serviceType"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -481,24 +466,19 @@ function QuickBookingModal(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {serviceOptions.map(function (service) {
-                            return (
-                              <select_1.SelectItem key={service.value} value={service.value}>
-                                <div className="flex items-center space-x-2">
-                                  <div
-                                    className={(0, utils_1.cn)(
-                                      "w-3 h-3 rounded-full",
-                                      service.color,
-                                    )}
-                                  />
-                                  <span>{service.label}</span>
-                                  <badge_1.Badge variant="secondary" className="ml-2">
-                                    {service.duration}min
-                                  </badge_1.Badge>
-                                </div>
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {serviceOptions.map((service) => (
+                            <select_1.SelectItem key={service.value} value={service.value}>
+                              <div className="flex items-center space-x-2">
+                                <div
+                                  className={(0, utils_1.cn)("w-3 h-3 rounded-full", service.color)}
+                                />
+                                <span>{service.label}</span>
+                                <badge_1.Badge variant="secondary" className="ml-2">
+                                  {service.duration}min
+                                </badge_1.Badge>
+                              </div>
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -510,7 +490,7 @@ function QuickBookingModal(_a) {
               <form_1.FormField
                 control={form.control}
                 name="professionalId"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -522,27 +502,25 @@ function QuickBookingModal(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {professionals.map(function (professional) {
-                            return (
-                              <select_1.SelectItem
-                                key={professional.id}
-                                value={professional.id}
-                                disabled={!professional.availability}
-                              >
-                                <div className="flex items-center justify-between w-full">
-                                  <div>
-                                    <div className="font-medium">{professional.name}</div>
-                                    <div className="text-sm text-muted-foreground">
-                                      {professional.specialization}
-                                    </div>
+                          {professionals.map((professional) => (
+                            <select_1.SelectItem
+                              key={professional.id}
+                              value={professional.id}
+                              disabled={!professional.availability}
+                            >
+                              <div className="flex items-center justify-between w-full">
+                                <div>
+                                  <div className="font-medium">{professional.name}</div>
+                                  <div className="text-sm text-muted-foreground">
+                                    {professional.specialization}
                                   </div>
-                                  {!professional.availability && (
-                                    <badge_1.Badge variant="secondary">Indisponível</badge_1.Badge>
-                                  )}
                                 </div>
-                              </select_1.SelectItem>
-                            );
-                          })}
+                                {!professional.availability && (
+                                  <badge_1.Badge variant="secondary">Indisponível</badge_1.Badge>
+                                )}
+                              </div>
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -557,7 +535,7 @@ function QuickBookingModal(_a) {
               <form_1.FormField
                 control={form.control}
                 name="date"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -578,7 +556,7 @@ function QuickBookingModal(_a) {
               <form_1.FormField
                 control={form.control}
                 name="startTime"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -601,32 +579,23 @@ function QuickBookingModal(_a) {
               <form_1.FormField
                 control={form.control}
                 name="duration"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
                       <form_1.FormLabel>Duração</form_1.FormLabel>
-                      <select_1.Select
-                        onValueChange={function (value) {
-                          return field.onChange(parseInt(value));
-                        }}
-                      >
+                      <select_1.Select onValueChange={(value) => field.onChange(parseInt(value))}>
                         <form_1.FormControl>
                           <select_1.SelectTrigger>
                             <select_1.SelectValue />
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {durationOptions.map(function (option) {
-                            return (
-                              <select_1.SelectItem
-                                key={option.value}
-                                value={option.value.toString()}
-                              >
-                                {option.label}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {durationOptions.map((option) => (
+                            <select_1.SelectItem key={option.value} value={option.value.toString()}>
+                              {option.label}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -640,7 +609,7 @@ function QuickBookingModal(_a) {
             <form_1.FormField
               control={form.control}
               name="notes"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -666,7 +635,7 @@ function QuickBookingModal(_a) {
             <form_1.FormField
               control={form.control}
               name="whatsappReminder"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">

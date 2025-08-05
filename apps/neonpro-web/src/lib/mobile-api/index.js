@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Mobile API System - Main Integration
  * Unified mobile API system with offline sync, push notifications, caching, and optimization
@@ -8,53 +7,50 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -74,13 +70,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -102,9 +98,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -176,7 +170,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultMobileApiConfig = exports.UnifiedMobileApiManager = void 0;
 exports.createMobileApiManager = createMobileApiManager;
@@ -189,7 +183,7 @@ var utils_1 = require("./utils");
  * Unified Mobile API Manager
  * Orchestrates all mobile API functionality including caching, sync, notifications, and optimization
  */
-var UnifiedMobileApiManager = /** @class */ (function () {
+var UnifiedMobileApiManager = /** @class */ (() => {
   function UnifiedMobileApiManager(config) {
     this.isInitialized = false;
     this.config = config;
@@ -589,10 +583,9 @@ var UnifiedMobileApiManager = /** @class */ (function () {
    * Setup cross-system integrations
    */
   UnifiedMobileApiManager.prototype.setupIntegrations = function () {
-    var _this = this;
     // Cache invalidation on sync
-    this.syncManager.on("dataUpdated", function (data) {
-      return __awaiter(_this, void 0, void 0, function () {
+    this.syncManager.on("dataUpdated", (data) =>
+      __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
@@ -602,28 +595,28 @@ var UnifiedMobileApiManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
     // Notification on sync completion
-    this.syncManager.on("syncCompleted", function (status) {
-      return __awaiter(_this, void 0, void 0, function () {
+    this.syncManager.on("syncCompleted", (status) =>
+      __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
           if (this.config.pushNotifications.syncNotifications) {
             // Send sync completion notification
           }
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
     // Performance monitoring integration
-    this.apiSystem.on("requestCompleted", function (metrics) {
-      _this.updatePerformanceMetrics(metrics);
+    this.apiSystem.on("requestCompleted", (metrics) => {
+      this.updatePerformanceMetrics(metrics);
     });
   };
   /**
    * Generate cache key for request
    */
-  UnifiedMobileApiManager.prototype.generateCacheKey = function (request) {
+  UnifiedMobileApiManager.prototype.generateCacheKey = (request) => {
     var keyData = {
       endpoint: request.endpoint,
       method: request.method,
@@ -635,7 +628,7 @@ var UnifiedMobileApiManager = /** @class */ (function () {
   /**
    * Check if request should be queued for sync
    */
-  UnifiedMobileApiManager.prototype.shouldQueueForSync = function (request, response) {
+  UnifiedMobileApiManager.prototype.shouldQueueForSync = (request, response) => {
     // Queue write operations for sync
     var writeMethods = ["POST", "PUT", "PATCH", "DELETE"];
     return writeMethods.includes(request.method) && response.success;
@@ -651,47 +644,46 @@ var UnifiedMobileApiManager = /** @class */ (function () {
   /**
    * Calculate data size
    */
-  UnifiedMobileApiManager.prototype.calculateDataSize = function (response) {
-    return JSON.stringify(response.data || {}).length;
-  };
+  UnifiedMobileApiManager.prototype.calculateDataSize = (response) =>
+    JSON.stringify(response.data || {}).length;
   /**
    * Start health monitoring
    */
   UnifiedMobileApiManager.prototype.startHealthMonitoring = function () {
-    var _this = this;
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              return [4 /*yield*/, this.checkSystemHealth()];
-            case 1:
-              _a.sent();
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.healthCheckInterval || 30000);
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                return [4 /*yield*/, this.checkSystemHealth()];
+              case 1:
+                _a.sent();
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.healthCheckInterval || 30000,
+    );
   };
   /**
    * Stop health monitoring
    */
-  UnifiedMobileApiManager.prototype.stopHealthMonitoring = function () {
+  UnifiedMobileApiManager.prototype.stopHealthMonitoring = () => {
     // Implementation would clear the interval
   };
   /**
    * Start performance monitoring
    */
   UnifiedMobileApiManager.prototype.startPerformanceMonitoring = function () {
-    var _this = this;
-    setInterval(function () {
-      _this.collectPerformanceMetrics();
+    setInterval(() => {
+      this.collectPerformanceMetrics();
     }, this.config.metricsInterval || 60000);
   };
   /**
    * Stop performance monitoring
    */
-  UnifiedMobileApiManager.prototype.stopPerformanceMonitoring = function () {
+  UnifiedMobileApiManager.prototype.stopPerformanceMonitoring = () => {
     // Implementation would clear the interval
   };
   /**

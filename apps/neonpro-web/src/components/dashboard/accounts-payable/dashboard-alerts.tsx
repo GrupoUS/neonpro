@@ -1,14 +1,5 @@
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import type {
   AlertTriangle,
   Bell,
@@ -22,6 +13,15 @@ import type {
 } from "lucide-react";
 import Link from "next/link";
 import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 // Mock data - substituir por dados reais do Supabase
 const mockDashboardAlerts = [

@@ -2,16 +2,16 @@
 // NeonPro - Serviço de Processamento de Linguagem Natural
 // Quality Standard: ≥9.5/10 (BMad Enhanced)
 
-import type { OpenAI } from "openai";
 import type {
-  SearchIntent,
-  SearchContext,
   EntityType,
   NaturalLanguageQuery,
-  SearchFilter,
-  SearchDataCategory,
   NLPProcessingError,
+  SearchContext,
+  SearchDataCategory,
+  SearchFilter,
+  SearchIntent,
 } from "@neonpro/types/search-types";
+import type { OpenAI } from "openai";
 
 export interface NLPServiceConfig {
   provider: "openai" | "claude" | "local";

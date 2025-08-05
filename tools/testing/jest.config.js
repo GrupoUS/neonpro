@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var jest_js_1 = require("next/jest.js");
 // Set timezone to UTC for consistent date testing across all environments

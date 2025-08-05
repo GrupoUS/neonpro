@@ -1,4 +1,3 @@
-"use strict";
 // WhatsApp Business API Integration Types
 // Based on Meta's WhatsApp Cloud API documentation
 // For NeonPro clinic management system
@@ -9,7 +8,7 @@ exports.WhatsAppTemplateStatus =
   exports.WhatsAppMessageType =
     void 0;
 var WhatsAppMessageType;
-(function (WhatsAppMessageType) {
+((WhatsAppMessageType) => {
   WhatsAppMessageType["TEXT"] = "text";
   WhatsAppMessageType["TEMPLATE"] = "template";
   WhatsAppMessageType["IMAGE"] = "image";
@@ -21,7 +20,7 @@ var WhatsAppMessageType;
   WhatsAppMessageType["INTERACTIVE"] = "interactive";
 })(WhatsAppMessageType || (exports.WhatsAppMessageType = WhatsAppMessageType = {}));
 var WhatsAppMessageStatus;
-(function (WhatsAppMessageStatus) {
+((WhatsAppMessageStatus) => {
   WhatsAppMessageStatus["PENDING"] = "pending";
   WhatsAppMessageStatus["SENT"] = "sent";
   WhatsAppMessageStatus["DELIVERED"] = "delivered";
@@ -29,13 +28,13 @@ var WhatsAppMessageStatus;
   WhatsAppMessageStatus["FAILED"] = "failed";
 })(WhatsAppMessageStatus || (exports.WhatsAppMessageStatus = WhatsAppMessageStatus = {}));
 var WhatsAppTemplateCategory;
-(function (WhatsAppTemplateCategory) {
+((WhatsAppTemplateCategory) => {
   WhatsAppTemplateCategory["AUTHENTICATION"] = "authentication";
   WhatsAppTemplateCategory["MARKETING"] = "marketing";
   WhatsAppTemplateCategory["UTILITY"] = "utility";
 })(WhatsAppTemplateCategory || (exports.WhatsAppTemplateCategory = WhatsAppTemplateCategory = {}));
 var WhatsAppTemplateStatus;
-(function (WhatsAppTemplateStatus) {
+((WhatsAppTemplateStatus) => {
   WhatsAppTemplateStatus["PENDING"] = "PENDING";
   WhatsAppTemplateStatus["APPROVED"] = "APPROVED";
   WhatsAppTemplateStatus["REJECTED"] = "REJECTED";

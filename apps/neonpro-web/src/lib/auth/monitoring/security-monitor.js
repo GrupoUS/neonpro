@@ -1,4 +1,3 @@
-"use strict";
 // Real-time Security Monitoring System
 // Advanced threat detection and automated response for session security
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,14 +144,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityMonitor = void 0;
 exports.getSecurityMonitor = getSecurityMonitor;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
 var suspicious_activity_detector_1 = require("@/lib/auth/suspicious/suspicious-activity-detector");
-var SecurityMonitor = /** @class */ (function () {
+var SecurityMonitor = /** @class */ (() => {
   function SecurityMonitor() {
     this.suspiciousActivityDetector = (0,
     suspicious_activity_detector_1.getSuspiciousActivityDetector)();
@@ -172,24 +169,21 @@ var SecurityMonitor = /** @class */ (function () {
   /**
    * Initialize security metrics
    */
-  SecurityMonitor.prototype.initializeMetrics = function () {
-    return {
-      totalThreats: 0,
-      activeThreats: 0,
-      resolvedThreats: 0,
-      falsePositives: 0,
-      averageResponseTime: 0,
-      threatsByType: {},
-      threatsBySeverity: {},
-      mitigationSuccess: 0,
-      lastUpdated: Date.now(),
-    };
-  };
+  SecurityMonitor.prototype.initializeMetrics = () => ({
+    totalThreats: 0,
+    activeThreats: 0,
+    resolvedThreats: 0,
+    falsePositives: 0,
+    averageResponseTime: 0,
+    threatsByType: {},
+    threatsBySeverity: {},
+    mitigationSuccess: 0,
+    lastUpdated: Date.now(),
+  });
   /**
    * Initialize default monitoring rules
    */
   SecurityMonitor.prototype.initializeMonitoringRules = function () {
-    var _this = this;
     var rules = [
       {
         id: "brute_force_detection",
@@ -282,19 +276,18 @@ var SecurityMonitor = /** @class */ (function () {
         cooldown: 0,
       },
     ];
-    rules.forEach(function (rule) {
-      _this.monitoringRules.set(rule.id, rule);
+    rules.forEach((rule) => {
+      this.monitoringRules.set(rule.id, rule);
     });
   };
   /**
    * Start security monitoring
    */
   SecurityMonitor.prototype.startMonitoring = function () {
-    var _this = this;
     if (this.isMonitoring) return;
     this.isMonitoring = true;
-    this.monitoringInterval = setInterval(function () {
-      _this.performSecurityScan();
+    this.monitoringInterval = setInterval(() => {
+      this.performSecurityScan();
     }, 10000); // Scan every 10 seconds
     console.log("Security monitoring started");
     this.emit("monitoring_started", { timestamp: Date.now() });
@@ -371,7 +364,7 @@ var SecurityMonitor = /** @class */ (function () {
    */
   SecurityMonitor.prototype.getRecentAnomalies = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would typically fetch from database or cache
         // For now, we'll simulate with recent data
         return [2 /*return*/, []];
@@ -512,16 +505,14 @@ var SecurityMonitor = /** @class */ (function () {
           case 0:
             _loop_1 = function (action) {
               var mitigationAction, error_4;
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
                     _c.trys.push([0, 4, , 5]);
                     if (!(action.delay > 0)) return [3 /*break*/, 2];
                     return [
                       4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, action.delay);
-                      }),
+                      new Promise((resolve) => setTimeout(resolve, action.delay)),
                     ];
                   case 1:
                     _c.sent();
@@ -711,12 +702,10 @@ var SecurityMonitor = /** @class */ (function () {
   SecurityMonitor.prototype.blockIpAddress = function (threat, parameters) {
     return __awaiter(this, void 0, void 0, function () {
       var ipIndicator;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            ipIndicator = threat.indicators.find(function (i) {
-              return i.type === "ip_address";
-            });
+            ipIndicator = threat.indicators.find((i) => i.type === "ip_address");
             if (!ipIndicator) return [3 /*break*/, 2];
             return [
               4 /*yield*/,
@@ -741,7 +730,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.suspendSession = function (sessionId, reason) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -761,7 +750,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.requireMfa = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -781,7 +770,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.applyRateLimit = function (threat, parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -805,7 +794,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.quarantineUser = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -825,7 +814,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.alertAdministrators = function (threat, parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -849,7 +838,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.logIncident = function (threat, parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -874,7 +863,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.backupUserData = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -894,7 +883,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.isolateSystem = function (threat) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("System isolation triggered for threat ".concat(threat.id));
         return [2 /*return*/];
       });
@@ -902,7 +891,7 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.forceLogout = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -923,7 +912,7 @@ var SecurityMonitor = /** @class */ (function () {
   /**
    * Utility methods
    */
-  SecurityMonitor.prototype.mapAnomalyToThreatType = function (anomalyType) {
+  SecurityMonitor.prototype.mapAnomalyToThreatType = (anomalyType) => {
     var mapping = {
       unusual_typing_pattern: "suspicious_behavior",
       abnormal_mouse_behavior: "malicious_automation",
@@ -940,7 +929,7 @@ var SecurityMonitor = /** @class */ (function () {
     };
     return mapping[anomalyType] || "suspicious_behavior";
   };
-  SecurityMonitor.prototype.determineThreatSource = function (anomaly) {
+  SecurityMonitor.prototype.determineThreatSource = (anomaly) => {
     if (anomaly.alertType.includes("location")) return "suspicious_location";
     if (anomaly.alertType.includes("device")) return "unknown_device";
     if (anomaly.alertType.includes("bot")) return "automated_bot";
@@ -948,15 +937,14 @@ var SecurityMonitor = /** @class */ (function () {
     return "internal_user";
   };
   SecurityMonitor.prototype.extractThreatIndicators = function (anomaly) {
-    var _this = this;
     var indicators = [];
     // Extract indicators from anomaly evidence
     if (anomaly.evidence.comparisonData) {
-      Object.entries(anomaly.evidence.comparisonData).forEach(function (_a) {
+      Object.entries(anomaly.evidence.comparisonData).forEach((_a) => {
         var key = _a[0],
           value = _a[1];
         indicators.push({
-          type: _this.mapFieldToIndicatorType(key),
+          type: this.mapFieldToIndicatorType(key),
           value: String(value),
           confidence: anomaly.evidence.statisticalSignificance,
           source: "anomaly_detector",
@@ -966,7 +954,7 @@ var SecurityMonitor = /** @class */ (function () {
     }
     return indicators;
   };
-  SecurityMonitor.prototype.mapFieldToIndicatorType = function (field) {
+  SecurityMonitor.prototype.mapFieldToIndicatorType = (field) => {
     var mapping = {
       ip: "ip_address",
       userAgent: "user_agent",
@@ -982,18 +970,14 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.findApplicableRules = function (threat) {
     return Array.from(this.monitoringRules.values())
-      .filter(function (rule) {
-        return rule.enabled && rule.threatType === threat.type;
-      })
-      .sort(function (a, b) {
-        return a.priority - b.priority;
-      });
+      .filter((rule) => rule.enabled && rule.threatType === threat.type)
+      .sort((a, b) => a.priority - b.priority);
   };
-  SecurityMonitor.prototype.canTriggerRule = function (rule) {
+  SecurityMonitor.prototype.canTriggerRule = (rule) => {
     if (!rule.lastTriggered) return true;
     return Date.now() - rule.lastTriggered >= rule.cooldown;
   };
-  SecurityMonitor.prototype.evaluateCondition = function (condition, threat) {
+  SecurityMonitor.prototype.evaluateCondition = (condition, threat) => {
     try {
       // Simple condition evaluation - in production, use a proper expression evaluator
       return eval(condition.replace(/threat\./g, "threat."));
@@ -1003,16 +987,12 @@ var SecurityMonitor = /** @class */ (function () {
   };
   SecurityMonitor.prototype.scanActiveSessions = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   SecurityMonitor.prototype.processThreatQueue = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   SecurityMonitor.prototype.updateSecurityMetrics = function () {
@@ -1020,15 +1000,9 @@ var SecurityMonitor = /** @class */ (function () {
     var activeThreats = Array.from(this.activeThreats.values());
     this.securityMetrics = {
       totalThreats: activeThreats.length,
-      activeThreats: activeThreats.filter(function (t) {
-        return t.status === "active";
-      }).length,
-      resolvedThreats: activeThreats.filter(function (t) {
-        return t.status === "resolved";
-      }).length,
-      falsePositives: activeThreats.filter(function (t) {
-        return t.falsePositive;
-      }).length,
+      activeThreats: activeThreats.filter((t) => t.status === "active").length,
+      resolvedThreats: activeThreats.filter((t) => t.status === "resolved").length,
+      falsePositives: activeThreats.filter((t) => t.falsePositive).length,
       averageResponseTime: this.calculateAverageResponseTime(activeThreats),
       threatsByType: this.groupThreatsByType(activeThreats),
       threatsBySeverity: this.groupThreatsBySeverity(activeThreats),
@@ -1036,46 +1010,34 @@ var SecurityMonitor = /** @class */ (function () {
       lastUpdated: now,
     };
   };
-  SecurityMonitor.prototype.calculateAverageResponseTime = function (threats) {
-    var resolvedThreats = threats.filter(function (t) {
-      return t.resolvedAt;
-    });
+  SecurityMonitor.prototype.calculateAverageResponseTime = (threats) => {
+    var resolvedThreats = threats.filter((t) => t.resolvedAt);
     if (resolvedThreats.length === 0) return 0;
-    var totalTime = resolvedThreats.reduce(function (sum, t) {
-      return sum + (t.resolvedAt - t.detectedAt);
-    }, 0);
+    var totalTime = resolvedThreats.reduce((sum, t) => sum + (t.resolvedAt - t.detectedAt), 0);
     return totalTime / resolvedThreats.length;
   };
-  SecurityMonitor.prototype.groupThreatsByType = function (threats) {
+  SecurityMonitor.prototype.groupThreatsByType = (threats) => {
     var groups = {};
-    threats.forEach(function (threat) {
+    threats.forEach((threat) => {
       groups[threat.type] = (groups[threat.type] || 0) + 1;
     });
     return groups;
   };
-  SecurityMonitor.prototype.groupThreatsBySeverity = function (threats) {
+  SecurityMonitor.prototype.groupThreatsBySeverity = (threats) => {
     var groups = {};
-    threats.forEach(function (threat) {
+    threats.forEach((threat) => {
       groups[threat.severity] = (groups[threat.severity] || 0) + 1;
     });
     return groups;
   };
-  SecurityMonitor.prototype.calculateMitigationSuccess = function (threats) {
-    var threatsWithActions = threats.filter(function (t) {
-      return t.mitigationActions.length > 0;
-    });
+  SecurityMonitor.prototype.calculateMitigationSuccess = (threats) => {
+    var threatsWithActions = threats.filter((t) => t.mitigationActions.length > 0);
     if (threatsWithActions.length === 0) return 0;
-    var successfulActions = threatsWithActions.reduce(function (sum, t) {
-      return (
-        sum +
-        t.mitigationActions.filter(function (a) {
-          return a.result === "success";
-        }).length
-      );
-    }, 0);
-    var totalActions = threatsWithActions.reduce(function (sum, t) {
-      return sum + t.mitigationActions.length;
-    }, 0);
+    var successfulActions = threatsWithActions.reduce(
+      (sum, t) => sum + t.mitigationActions.filter((a) => a.result === "success").length,
+      0,
+    );
+    var totalActions = threatsWithActions.reduce((sum, t) => sum + t.mitigationActions.length, 0);
     return totalActions > 0 ? (successfulActions / totalActions) * 100 : 0;
   };
   SecurityMonitor.prototype.createSecurityAlert = function (threat) {
@@ -1150,7 +1112,7 @@ var SecurityMonitor = /** @class */ (function () {
   SecurityMonitor.prototype.logSecurityEvent = function (threat) {
     return __awaiter(this, void 0, void 0, function () {
       var error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -1209,7 +1171,7 @@ var SecurityMonitor = /** @class */ (function () {
   SecurityMonitor.prototype.emit = function (event, data) {
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (callback) {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1222,9 +1184,7 @@ var SecurityMonitor = /** @class */ (function () {
    * Public API methods
    */
   SecurityMonitor.prototype.getActiveThreats = function () {
-    return Array.from(this.activeThreats.values()).filter(function (threat) {
-      return threat.status === "active";
-    });
+    return Array.from(this.activeThreats.values()).filter((threat) => threat.status === "active");
   };
   SecurityMonitor.prototype.getThreatById = function (threatId) {
     return this.activeThreats.get(threatId);

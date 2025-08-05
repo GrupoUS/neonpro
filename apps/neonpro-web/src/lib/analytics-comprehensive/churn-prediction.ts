@@ -27,11 +27,11 @@
  * - Retention strategy optimization and A/B testing
  */
 
-import type { type Database } from "@/lib/database.types";
+import type { Database } from "@/lib/database.types";
 import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/utils/logger";
-import type { type SatisfactionMetrics } from "./satisfaction-metrics";
-import type { type ExperienceQualityAssessment } from "./experience-quality-analyzer";
+import type { ExperienceQualityAssessment } from "./experience-quality-analyzer";
+import type { SatisfactionMetrics } from "./satisfaction-metrics";
 
 // ============================================================================
 // TYPES & INTERFACES

@@ -3,27 +3,27 @@
 
 "use client";
 
-import React, { useState } from "react";
-import type { useSessionContext } from "../context";
-import type { AuthUtils } from "../utils";
 import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Eye,
+  MapPin,
   Monitor,
-  Smartphone,
-  Tablet,
+  MoreVertical,
+  Settings,
   Shield,
   ShieldCheck,
   ShieldX,
-  MapPin,
-  Clock,
-  MoreVertical,
+  Smartphone,
+  Tablet,
   Trash2,
-  CheckCircle,
   XCircle,
-  AlertTriangle,
-  Eye,
-  Settings,
 } from "lucide-react";
+import React, { useState } from "react";
+import type { useSessionContext } from "../context";
 import type { DeviceRegistration } from "../types";
+import type { AuthUtils } from "../utils";
 
 interface DeviceManagerProps {
   className?: string;

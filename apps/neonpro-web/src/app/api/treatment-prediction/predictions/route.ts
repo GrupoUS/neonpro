@@ -1,8 +1,9 @@
 // GET/POST /api/treatment-prediction/predictions - Get/Create predictions
+
+import type { NextRequest, NextResponse } from "next/server";
 import type { TreatmentPredictionService } from "@/app/lib/services/treatment-prediction";
 import type { PredictionFilters, PredictionRequest } from "@/app/types/treatment-prediction";
 import type { createServerClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 // GET /api/treatment-prediction/predictions - Get predictions with filters
 export async function GET(request: NextRequest) {

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DashboardLayout;
 var breadcrumb_1 = require("@/components/ui/breadcrumb");
@@ -143,7 +140,6 @@ var lucide_react_1 = require("lucide-react");
 var navigation_1 = require("next/navigation");
 var client_1 = require("@/app/utils/supabase/client");
 function DashboardLayout(_a) {
-  var _this = this;
   var _b, _c;
   var children = _a.children,
     user = _a.user,
@@ -153,9 +149,9 @@ function DashboardLayout(_a) {
     subtitle = _a.subtitle;
   var router = (0, navigation_1.useRouter)();
   var supabase = (0, client_1.createClient)();
-  var handleSignOut = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleSignOut = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.signOut()];
@@ -166,10 +162,7 @@ function DashboardLayout(_a) {
         }
       });
     });
-  };
-  var getUserInitials = function (email) {
-    return email.slice(0, 2).toUpperCase();
-  };
+  var getUserInitials = (email) => email.slice(0, 2).toUpperCase();
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -249,22 +242,20 @@ function DashboardLayout(_a) {
                       <lucide_react_1.Home className="h-4 w-4" />
                     </breadcrumb_1.BreadcrumbLink>
                   </breadcrumb_1.BreadcrumbItem>
-                  {breadcrumbs.map(function (crumb, index) {
-                    return (
-                      <div key={index} className="flex items-center">
-                        <breadcrumb_1.BreadcrumbSeparator />
-                        <breadcrumb_1.BreadcrumbItem>
-                          {crumb.href && index < breadcrumbs.length - 1
-                            ? <breadcrumb_1.BreadcrumbLink href={crumb.href}>
-                                {crumb.title}
-                              </breadcrumb_1.BreadcrumbLink>
-                            : <breadcrumb_1.BreadcrumbPage>
-                                {crumb.title}
-                              </breadcrumb_1.BreadcrumbPage>}
-                        </breadcrumb_1.BreadcrumbItem>
-                      </div>
-                    );
-                  })}
+                  {breadcrumbs.map((crumb, index) => (
+                    <div key={index} className="flex items-center">
+                      <breadcrumb_1.BreadcrumbSeparator />
+                      <breadcrumb_1.BreadcrumbItem>
+                        {crumb.href && index < breadcrumbs.length - 1
+                          ? <breadcrumb_1.BreadcrumbLink href={crumb.href}>
+                              {crumb.title}
+                            </breadcrumb_1.BreadcrumbLink>
+                          : <breadcrumb_1.BreadcrumbPage>
+                              {crumb.title}
+                            </breadcrumb_1.BreadcrumbPage>}
+                      </breadcrumb_1.BreadcrumbItem>
+                    </div>
+                  ))}
                 </breadcrumb_1.BreadcrumbList>
               </breadcrumb_1.Breadcrumb>
             </div>

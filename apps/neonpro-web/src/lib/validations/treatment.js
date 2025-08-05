@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Treatment & Procedure Validation Schemas
  * Zod validation schemas for HL7 FHIR R4 compliant treatment documentation
@@ -12,13 +11,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -71,7 +70,7 @@ var lgpdConsentSchema = zod_1.z
       .optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.data_consent_given && !data.data_consent_date) {
         return false;
       }
@@ -88,15 +87,11 @@ var lgpdConsentSchema = zod_1.z
 var treatmentPlanStatusSchema = zod_1.z.enum(
   ["draft", "active", "on-hold", "revoked", "completed", "entered-in-error", "unknown"],
   {
-    errorMap: function () {
-      return { message: "Status do plano de tratamento inválido" };
-    },
+    errorMap: () => ({ message: "Status do plano de tratamento inválido" }),
   },
 );
 var treatmentPlanIntentSchema = zod_1.z.enum(["proposal", "plan", "order", "option", "directive"], {
-  errorMap: function () {
-    return { message: "Intenção do plano de tratamento inválida" };
-  },
+  errorMap: () => ({ message: "Intenção do plano de tratamento inválida" }),
 });
 exports.treatmentPlanActivitySchema = zod_1.z.object({
   id: optionalStringSchema,
@@ -198,7 +193,7 @@ exports.treatmentPlanSchema = zod_1.z
     ),
   )
   .refine(
-    function (data) {
+    (data) => {
       if (data.period_start && data.period_end) {
         return new Date(data.period_start) <= new Date(data.period_end);
       }
@@ -230,7 +225,7 @@ exports.treatmentPlanFormSchema = zod_1.z
     }),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.period_start && data.period_end) {
         return new Date(data.period_start) <= new Date(data.period_end);
       }
@@ -256,9 +251,7 @@ var procedureStatusSchema = zod_1.z.enum(
     "unknown",
   ],
   {
-    errorMap: function () {
-      return { message: "Status do procedimento inválido" };
-    },
+    errorMap: () => ({ message: "Status do procedimento inválido" }),
   },
 );
 exports.procedurePerformerSchema = zod_1.z.object({
@@ -320,7 +313,7 @@ exports.procedureSchema = zod_1.z
     ),
   )
   .refine(
-    function (data) {
+    (data) => {
       if (data.performed_period_start && data.performed_period_end) {
         return new Date(data.performed_period_start) <= new Date(data.performed_period_end);
       }
@@ -355,7 +348,7 @@ exports.procedureFormSchema = zod_1.z
     }),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.performed_period_start && data.performed_period_end) {
         return new Date(data.performed_period_start) <= new Date(data.performed_period_end);
       }
@@ -370,14 +363,10 @@ exports.procedureFormSchema = zod_1.z
 // CLINICAL NOTES VALIDATION SCHEMAS
 // ===============================================
 var clinicalNoteStatusSchema = zod_1.z.enum(["current", "superseded", "entered-in-error"], {
-  errorMap: function () {
-    return { message: "Status da nota clínica inválido" };
-  },
+  errorMap: () => ({ message: "Status da nota clínica inválido" }),
 });
 var confidentialityLevelSchema = zod_1.z.enum(["U", "L", "M", "N", "R", "V"], {
-  errorMap: function () {
-    return { message: "Nível de confidencialidade inválido" };
-  },
+  errorMap: () => ({ message: "Nível de confidencialidade inválido" }),
 });
 exports.clinicalNoteRelatesToSchema = zod_1.z.object({
   code: zod_1.z.enum(["replaces", "transforms", "signs", "appends"]),

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Subscription Database Query Optimizer
  *
@@ -14,15 +13,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -42,13 +41,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,9 +69,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -144,13 +141,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createsubscriptionQueryOptimizer = exports.SubscriptionQueryOptimizer = void 0;
 var server_1 = require("@/lib/supabase/server");
 var subscription_cache_enhanced_1 = require("./subscription-cache-enhanced");
 var subscription_performance_monitor_1 = require("./subscription-performance-monitor");
-var SubscriptionQueryOptimizer = /** @class */ (function () {
+var SubscriptionQueryOptimizer = /** @class */ (() => {
   function SubscriptionQueryOptimizer() {
     this.pendingBatches = new Map();
     this.queryStats = new Map();
@@ -530,7 +527,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
       if (options === void 0) {
         options = {};
       }
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             startTime = performance.now();
@@ -543,9 +540,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
             supabase = _c.sent();
             controller = new AbortController();
             if (options.timeout) {
-              setTimeout(function () {
-                return controller.abort();
-              }, options.timeout);
+              setTimeout(() => controller.abort(), options.timeout);
             }
             _c.label = 2;
           case 2:
@@ -616,7 +611,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
       if (options === void 0) {
         options = {};
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             startTime = performance.now();
@@ -645,16 +640,11 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
             resultMap_1 = new Map();
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (item) {
+              : data.forEach((item) => {
                   resultMap_1.set(item.user_id, item);
                 });
             // Return results in the same order as requested
-            return [
-              2 /*return*/,
-              params.map(function (userId) {
-                return resultMap_1.get(userId) || null;
-              }),
-            ];
+            return [2 /*return*/, params.map((userId) => resultMap_1.get(userId) || null)];
           case 4:
             error_6 = _b.sent();
             subscription_performance_monitor_1.subscriptionPerformanceMonitor.recordDatabaseOperation(
@@ -670,16 +660,13 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
   /**
    * Build optimized subscription status query
    */
-  SubscriptionQueryOptimizer.prototype.buildSubscriptionStatusQuery = function () {
-    return "\n      SELECT \n        us.*,\n        sp.id as plan_id,\n        sp.name as plan_name,\n        sp.description as plan_description,\n        sp.price_cents,\n        sp.stripe_price_id,\n        sp.features,\n        sp.max_patients,\n        sp.max_clinics\n      FROM user_subscriptions us\n      JOIN subscription_plans sp ON us.plan_id = sp.id\n      WHERE us.user_id = $1\n      AND us.status IN ('active', 'trialing', 'past_due')\n      ORDER BY us.current_period_end DESC NULLS LAST\n      LIMIT 1\n    ";
-  };
+  SubscriptionQueryOptimizer.prototype.buildSubscriptionStatusQuery = () =>
+    "\n      SELECT \n        us.*,\n        sp.id as plan_id,\n        sp.name as plan_name,\n        sp.description as plan_description,\n        sp.price_cents,\n        sp.stripe_price_id,\n        sp.features,\n        sp.max_patients,\n        sp.max_clinics\n      FROM user_subscriptions us\n      JOIN subscription_plans sp ON us.plan_id = sp.id\n      WHERE us.user_id = $1\n      AND us.status IN ('active', 'trialing', 'past_due')\n      ORDER BY us.current_period_end DESC NULLS LAST\n      LIMIT 1\n    ";
   /**
    * Build batch subscription status query
    */
-  SubscriptionQueryOptimizer.prototype.buildBatchSubscriptionStatusQuery = function (count) {
-    var placeholders = Array.from({ length: count }, function (_, i) {
-      return "$".concat(i + 1);
-    }).join(", ");
+  SubscriptionQueryOptimizer.prototype.buildBatchSubscriptionStatusQuery = (count) => {
+    var placeholders = Array.from({ length: count }, (_, i) => "$".concat(i + 1)).join(", ");
     return "\n      SELECT \n        us.*,\n        sp.id as plan_id,\n        sp.name as plan_name,\n        sp.description as plan_description,\n        sp.price_cents,\n        sp.stripe_price_id,\n        sp.features,\n        sp.max_patients,\n        sp.max_clinics\n      FROM user_subscriptions us\n      JOIN subscription_plans sp ON us.plan_id = sp.id\n      WHERE us.user_id IN (".concat(
       placeholders,
       ")\n      AND us.status IN ('active', 'trialing', 'past_due')\n      ORDER BY us.user_id, us.current_period_end DESC NULLS LAST\n    ",
@@ -688,7 +675,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
   /**
    * Build user plans query with filters
    */
-  SubscriptionQueryOptimizer.prototype.buildUserPlansQuery = function (filters) {
+  SubscriptionQueryOptimizer.prototype.buildUserPlansQuery = (filters) => {
     var sql =
       "\n      SELECT \n        sp.*,\n        COUNT(us.id) as subscriber_count,\n        COUNT(us.id) FILTER (WHERE us.status = 'active') as active_subscribers\n      FROM subscription_plans sp\n      LEFT JOIN user_subscriptions us ON sp.id = us.plan_id\n    ";
     var conditions = [];
@@ -710,7 +697,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
   /**
    * Build analytics query with time aggregation
    */
-  SubscriptionQueryOptimizer.prototype.buildAnalyticsQuery = function (dateRange, aggregation) {
+  SubscriptionQueryOptimizer.prototype.buildAnalyticsQuery = (dateRange, aggregation) => {
     var timeFormat = {
       daily: "date_trunc('day', created_at)",
       weekly: "date_trunc('week', created_at)",
@@ -804,7 +791,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
   /**
    * Determine if user has access
    */
-  SubscriptionQueryOptimizer.prototype.determineAccess = function (subscription, now) {
+  SubscriptionQueryOptimizer.prototype.determineAccess = (subscription, now) => {
     if (!subscription) return false;
     var activeStatuses = ["active", "trialing"];
     if (!activeStatuses.includes(subscription.status)) return false;
@@ -821,7 +808,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
   /**
    * Check if subscription is in grace period
    */
-  SubscriptionQueryOptimizer.prototype.isInGracePeriod = function (subscription, now) {
+  SubscriptionQueryOptimizer.prototype.isInGracePeriod = (subscription, now) => {
     if (!subscription || subscription.status !== "past_due") return false;
     if (subscription.current_period_end) {
       var gracePeriodEnd = new Date(subscription.current_period_end);
@@ -833,11 +820,11 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
   /**
    * Get access message
    */
-  SubscriptionQueryOptimizer.prototype.getAccessMessage = function (
+  SubscriptionQueryOptimizer.prototype.getAccessMessage = (
     subscription,
     hasAccess,
     gracePeriod,
-  ) {
+  ) => {
     if (!subscription) return "No subscription found";
     if (gracePeriod) return "Subscription past due - grace period active";
     if (hasAccess) return "Subscription active";
@@ -881,7 +868,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
   /**
    * Handle query errors
    */
-  SubscriptionQueryOptimizer.prototype.handleQueryError = function (error, queryId, startTime) {
+  SubscriptionQueryOptimizer.prototype.handleQueryError = (error, queryId, startTime) => {
     var duration = performance.now() - startTime;
     console.error("Query error for ".concat(queryId, ":"), error);
     subscription_performance_monitor_1.subscriptionPerformanceMonitor.recordDatabaseOperation(
@@ -905,7 +892,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
   /**
    * Initialize connection pool (placeholder)
    */
-  SubscriptionQueryOptimizer.prototype.initializeConnectionPool = function () {
+  SubscriptionQueryOptimizer.prototype.initializeConnectionPool = () => {
     // Supabase handles connection pooling automatically
     // This is where you'd configure additional pooling if needed
   };
@@ -913,10 +900,9 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
    * Start batch processor for query batching
    */
   SubscriptionQueryOptimizer.prototype.startBatchProcessor = function () {
-    var _this = this;
     // Implement batch processing for similar queries
-    setInterval(function () {
-      _this.processPendingBatches();
+    setInterval(() => {
+      this.processPendingBatches();
     }, this.BATCH_DELAY);
   };
   /**
@@ -952,7 +938,7 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
           case 1:
             results_1 = _a.sent();
             // Call callbacks with results
-            queries.forEach(function (query, index) {
+            queries.forEach((query, index) => {
               if (query.callback) {
                 query.callback(results_1[index]);
               }
@@ -1022,7 +1008,5 @@ var SubscriptionQueryOptimizer = /** @class */ (function () {
 })();
 exports.SubscriptionQueryOptimizer = SubscriptionQueryOptimizer;
 // Global query optimizer instance
-var createsubscriptionQueryOptimizer = function () {
-  return new SubscriptionQueryOptimizer();
-};
+var createsubscriptionQueryOptimizer = () => new SubscriptionQueryOptimizer();
 exports.createsubscriptionQueryOptimizer = createsubscriptionQueryOptimizer;

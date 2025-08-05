@@ -1,9 +1,9 @@
 "use client";
 
 import type { Bell, Menu, Search } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,7 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
 
 interface DashboardHeaderProps {
   onMenuClick: () => void;

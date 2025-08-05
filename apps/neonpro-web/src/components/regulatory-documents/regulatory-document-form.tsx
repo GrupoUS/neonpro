@@ -1,26 +1,15 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
-import type { CalendarIcon, Upload, X } from "lucide-react";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
+import type { CalendarIcon, Upload, X } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { z } from "zod";
 
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type { Calendar } from "@/components/ui/calendar";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
   Card,
   CardContent,
@@ -37,12 +26,23 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
 
 import type { useRegulatoryCategories } from "@/hooks/use-regulatory-categories";
 import type { cn } from "@/lib/utils";
 import type {
-  RegulatoryDocument,
   CreateDocumentRequest,
+  RegulatoryDocument,
   UpdateDocumentRequest,
 } from "@/types/regulatory-documents";
 
@@ -210,7 +210,7 @@ export function RegulatoryDocumentForm({
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   return (

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Predictive Financial Analytics Engine
  * Story 4.2: Financial Analytics & Business Intelligence
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,10 +156,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -171,11 +168,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createpredictiveAnalyticsEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var createpredictiveAnalyticsEngine = /** @class */ (function () {
+var createpredictiveAnalyticsEngine = /** @class */ (() => {
   function createpredictiveAnalyticsEngine() {
     this.supabase = (0, client_1.createClient)();
     this.models = new Map();
@@ -336,18 +333,16 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
             return [
               4 /*yield*/,
               this.supabase.from("seasonal_patterns").upsert(
-                patterns.map(function (pattern) {
-                  return {
-                    clinic_id: clinicId,
-                    pattern_type: pattern.pattern_type,
-                    strength: pattern.strength,
-                    peak_periods: pattern.peak_periods,
-                    low_periods: pattern.low_periods,
-                    average_variation: pattern.average_variation,
-                    confidence: pattern.confidence,
-                    analyzed_at: new Date().toISOString(),
-                  };
-                }),
+                patterns.map((pattern) => ({
+                  clinic_id: clinicId,
+                  pattern_type: pattern.pattern_type,
+                  strength: pattern.strength,
+                  peak_periods: pattern.peak_periods,
+                  low_periods: pattern.low_periods,
+                  average_variation: pattern.average_variation,
+                  confidence: pattern.confidence,
+                  analyzed_at: new Date().toISOString(),
+                })),
               ),
             ];
           case 2:
@@ -672,7 +667,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   createpredictiveAnalyticsEngine.prototype.generatePredictions = function (model, data, months) {
     return __awaiter(this, void 0, void 0, function () {
       var predictions, startDate, i, date, baseValue, trend, seasonal, noise, predictedValue;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         predictions = [];
         startDate = new Date();
         for (i = 0; i < months * 30; i++) {
@@ -707,18 +702,18 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var errorMargin;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errorMargin = (1 - model.accuracy) * 0.5;
         return [
           2 /*return*/,
-          predictions.map(function (pred) {
-            return __assign(__assign({}, pred), {
+          predictions.map((pred) =>
+            __assign(__assign({}, pred), {
               confidence_interval: {
                 lower: pred.predicted_value * (1 - errorMargin),
                 upper: pred.predicted_value * (1 + errorMargin),
               },
-            });
-          }),
+            }),
+          ),
         ];
       });
     });
@@ -729,7 +724,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var commonFactors;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         commonFactors = ["historical_trends", "seasonal_patterns", "market_conditions"];
         switch (forecastType) {
           case "revenue_forecast":
@@ -757,7 +752,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.getModelAssumptions = function (forecastType) {
+  createpredictiveAnalyticsEngine.prototype.getModelAssumptions = (forecastType) => {
     // Return model assumptions based on type
     var commonAssumptions = ["Historical patterns continue", "No major market disruptions"];
     switch (forecastType) {
@@ -778,49 +773,41 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
     }
   };
   // Additional helper methods would be implemented here...
-  createpredictiveAnalyticsEngine.prototype.analyzeWeeklyPattern = function (data) {
-    return {
-      pattern_type: "weekly",
-      strength: 0.3,
-      peak_periods: ["Tuesday", "Wednesday", "Thursday"],
-      low_periods: ["Sunday", "Monday"],
-      average_variation: 0.15,
-      confidence: 0.8,
-    };
-  };
-  createpredictiveAnalyticsEngine.prototype.analyzeMonthlyPattern = function (data) {
-    return {
-      pattern_type: "monthly",
-      strength: 0.2,
-      peak_periods: ["March", "September", "October"],
-      low_periods: ["January", "July", "December"],
-      average_variation: 0.12,
-      confidence: 0.75,
-    };
-  };
-  createpredictiveAnalyticsEngine.prototype.analyzeQuarterlyPattern = function (data) {
-    return {
-      pattern_type: "quarterly",
-      strength: 0.25,
-      peak_periods: ["Q1", "Q4"],
-      low_periods: ["Q3"],
-      average_variation: 0.18,
-      confidence: 0.7,
-    };
-  };
-  createpredictiveAnalyticsEngine.prototype.analyzeYearlyPattern = function (data) {
-    return {
-      pattern_type: "yearly",
-      strength: 0.4,
-      peak_periods: ["2023", "2024"],
-      low_periods: ["2022"],
-      average_variation: 0.22,
-      confidence: 0.85,
-    };
-  };
+  createpredictiveAnalyticsEngine.prototype.analyzeWeeklyPattern = (data) => ({
+    pattern_type: "weekly",
+    strength: 0.3,
+    peak_periods: ["Tuesday", "Wednesday", "Thursday"],
+    low_periods: ["Sunday", "Monday"],
+    average_variation: 0.15,
+    confidence: 0.8,
+  });
+  createpredictiveAnalyticsEngine.prototype.analyzeMonthlyPattern = (data) => ({
+    pattern_type: "monthly",
+    strength: 0.2,
+    peak_periods: ["March", "September", "October"],
+    low_periods: ["January", "July", "December"],
+    average_variation: 0.12,
+    confidence: 0.75,
+  });
+  createpredictiveAnalyticsEngine.prototype.analyzeQuarterlyPattern = (data) => ({
+    pattern_type: "quarterly",
+    strength: 0.25,
+    peak_periods: ["Q1", "Q4"],
+    low_periods: ["Q3"],
+    average_variation: 0.18,
+    confidence: 0.7,
+  });
+  createpredictiveAnalyticsEngine.prototype.analyzeYearlyPattern = (data) => ({
+    pattern_type: "yearly",
+    strength: 0.4,
+    peak_periods: ["2023", "2024"],
+    low_periods: ["2022"],
+    average_variation: 0.22,
+    confidence: 0.85,
+  });
   createpredictiveAnalyticsEngine.prototype.analyzeRiskFactors = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified risk factor analysis
         return [
           2 /*return*/,
@@ -840,7 +827,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
   };
   createpredictiveAnalyticsEngine.prototype.generateScenarioAnalyses = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate scenario analyses
         return [
           2 /*return*/,
@@ -862,88 +849,77 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.calculateOverallRiskScore = function (riskFactors) {
+  createpredictiveAnalyticsEngine.prototype.calculateOverallRiskScore = (riskFactors) => {
     // Calculate weighted risk score
     return (
-      (riskFactors.reduce(function (score, factor) {
-        return score + factor.impact_score * factor.probability;
-      }, 0) /
+      (riskFactors.reduce((score, factor) => score + factor.impact_score * factor.probability, 0) /
         riskFactors.length) *
       10
     );
   };
-  createpredictiveAnalyticsEngine.prototype.generateRiskRecommendations = function (
+  createpredictiveAnalyticsEngine.prototype.generateRiskRecommendations = (
     riskFactors,
     scenarios,
-  ) {
-    return [
-      "Monitor cash flow weekly",
-      "Maintain 3-month expense reserve",
-      "Diversify revenue streams",
-      "Implement early warning systems",
-    ];
-  };
-  createpredictiveAnalyticsEngine.prototype.getMonitoringMetrics = function (riskFactors) {
-    return [
-      "Weekly cash flow",
-      "Patient volume trends",
-      "Payment collection rates",
-      "Expense ratios",
-    ];
-  };
+  ) => [
+    "Monitor cash flow weekly",
+    "Maintain 3-month expense reserve",
+    "Diversify revenue streams",
+    "Implement early warning systems",
+  ];
+  createpredictiveAnalyticsEngine.prototype.getMonitoringMetrics = (riskFactors) => [
+    "Weekly cash flow",
+    "Patient volume trends",
+    "Payment collection rates",
+    "Expense ratios",
+  ];
   // Additional simplified implementations for other methods...
   createpredictiveAnalyticsEngine.prototype.getPatientHistoricalData = function (
     clinicId,
     patientId,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
   createpredictiveAnalyticsEngine.prototype.getClinicAverages = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
-  createpredictiveAnalyticsEngine.prototype.calculateLTVFactors = function (
+  createpredictiveAnalyticsEngine.prototype.calculateLTVFactors = (
     patientData,
     clinicAverages,
-  ) {
-    return {
-      treatment_history: 0.8,
-      payment_behavior: 0.9,
-      engagement_level: 0.7,
-      demographic_factors: 0.6,
-      seasonal_patterns: 0.5,
-    };
-  };
-  createpredictiveAnalyticsEngine.prototype.calculatePredictedLTV = function (factors, model) {
+  ) => ({
+    treatment_history: 0.8,
+    payment_behavior: 0.9,
+    engagement_level: 0.7,
+    demographic_factors: 0.6,
+    seasonal_patterns: 0.5,
+  });
+  createpredictiveAnalyticsEngine.prototype.calculatePredictedLTV = (factors, model) => {
     return 5000; // Simplified
   };
-  createpredictiveAnalyticsEngine.prototype.calculateLTVConfidence = function (factors, model) {
+  createpredictiveAnalyticsEngine.prototype.calculateLTVConfidence = (factors, model) => {
     return 0.85; // Simplified
   };
-  createpredictiveAnalyticsEngine.prototype.calculateRetentionProbability = function (factors) {
+  createpredictiveAnalyticsEngine.prototype.calculateRetentionProbability = (factors) => {
     return 0.75; // Simplified
   };
-  createpredictiveAnalyticsEngine.prototype.calculateNextVisitProbability = function (factors) {
+  createpredictiveAnalyticsEngine.prototype.calculateNextVisitProbability = (factors) => {
     return 0.6; // Simplified
   };
-  createpredictiveAnalyticsEngine.prototype.identifyPatientRiskFactors = function (factors) {
-    return ["Payment delays", "Low engagement"];
-  };
+  createpredictiveAnalyticsEngine.prototype.identifyPatientRiskFactors = (factors) => [
+    "Payment delays",
+    "Low engagement",
+  ];
   createpredictiveAnalyticsEngine.prototype.getTrainingData = function (clinicId, modelType) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.selectBestAlgorithm = function (data, modelType) {
+  createpredictiveAnalyticsEngine.prototype.selectBestAlgorithm = (data, modelType) => {
     return "linear_regression"; // Simplified
   };
   createpredictiveAnalyticsEngine.prototype.performModelTraining = function (
@@ -952,43 +928,39 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
     modelType,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            id: "model_".concat(Date.now()),
-            name: "".concat(modelType, "_model"),
-            type: modelType,
-            algorithm: algorithm,
-            accuracy: 0.85,
-            last_trained: new Date().toISOString(),
-            training_data_points: data.length,
-            features: ["date", "value", "trend"],
-            hyperparameters: {},
-            validation_metrics: {
-              mape: 0.1,
-              rmse: 100,
-              mae: 80,
-              r_squared: 0.85,
-            },
-          },
-        ];
-      });
-    });
-  };
-  createpredictiveAnalyticsEngine.prototype.validateModel = function (model, data) {
-    return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          id: "model_".concat(Date.now()),
+          name: "".concat(modelType, "_model"),
+          type: modelType,
+          algorithm: algorithm,
+          accuracy: 0.85,
+          last_trained: new Date().toISOString(),
+          training_data_points: data.length,
+          features: ["date", "value", "trend"],
+          hyperparameters: {},
+          validation_metrics: {
             mape: 0.1,
             rmse: 100,
             mae: 80,
             r_squared: 0.85,
           },
-        ];
-      });
+        },
+      ]);
+    });
+  };
+  createpredictiveAnalyticsEngine.prototype.validateModel = function (model, data) {
+    return __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          mape: 0.1,
+          rmse: 100,
+          mae: 80,
+          r_squared: 0.85,
+        },
+      ]);
     });
   };
   return createpredictiveAnalyticsEngine;

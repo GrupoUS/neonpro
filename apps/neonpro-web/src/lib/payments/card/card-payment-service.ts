@@ -5,8 +5,8 @@
  * Quality: ≥9.5/10 (VOIDBEAST + Unified System enforced)
  */
 
-import Stripe from "stripe";
 import type { createClient } from "@supabase/supabase-js";
+import Stripe from "stripe";
 import type { z } from "zod";
 
 // Initialize Stripe
@@ -160,7 +160,7 @@ export class CardPaymentService {
       const validatedData = cardPaymentSchema.parse(data);
 
       // Create or retrieve Stripe customer
-      const customer = await this.createOrGetCustomer(validatedData.customer);
+      const customer = await CardPaymentService.createOrGetCustomer(validatedData.customer);
 
       // Create payment method
       const paymentMethod = await stripe.paymentMethods.create({
@@ -214,7 +214,7 @@ export class CardPaymentService {
       });
 
       // Store payment in database
-      await this.storePayment({
+      await CardPaymentService.storePayment({
         stripe_payment_intent_id: paymentIntent.id,
         amount: validatedData.amount,
         currency: validatedData.currency,
@@ -258,7 +258,7 @@ export class CardPaymentService {
       const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId);
 
       // Update payment status in database
-      await this.updatePaymentStatus(paymentIntentId, paymentIntent.status);
+      await CardPaymentService.updatePaymentStatus(paymentIntentId, paymentIntent.status);
 
       return {
         id: paymentIntent.id,
@@ -293,7 +293,7 @@ export class CardPaymentService {
       });
 
       // Update payment status in database
-      await this.updatePaymentStatus(paymentIntentId, paymentIntent.status);
+      await CardPaymentService.updatePaymentStatus(paymentIntentId, paymentIntent.status);
 
       return {
         id: paymentIntent.id,
@@ -386,10 +386,10 @@ export class CardPaymentService {
       });
 
       // Update payment status in database
-      await this.updatePaymentStatus(validatedData.payment_intent_id, "refunded");
+      await CardPaymentService.updatePaymentStatus(validatedData.payment_intent_id, "refunded");
 
       // Store refund in database
-      await this.storeRefund({
+      await CardPaymentService.storeRefund({
         stripe_refund_id: refund.id,
         payment_intent_id: validatedData.payment_intent_id,
         amount: refund.amount,
@@ -424,23 +424,25 @@ export class CardPaymentService {
     try {
       switch (event.type) {
         case "payment_intent.succeeded":
-          await this.handlePaymentSucceeded(event.data.object as Stripe.PaymentIntent);
+          await CardPaymentService.handlePaymentSucceeded(
+            event.data.object as Stripe.PaymentIntent,
+          );
           break;
         case "payment_intent.payment_failed":
-          await this.handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
+          await CardPaymentService.handlePaymentFailed(event.data.object as Stripe.PaymentIntent);
           break;
         case "payment_intent.canceled":
-          await this.handlePaymentCanceled(event.data.object as Stripe.PaymentIntent);
+          await CardPaymentService.handlePaymentCanceled(event.data.object as Stripe.PaymentIntent);
           break;
         case "charge.dispute.created":
-          await this.handleChargeDispute(event.data.object as Stripe.Dispute);
+          await CardPaymentService.handleChargeDispute(event.data.object as Stripe.Dispute);
           break;
         default:
           console.log(`Unhandled event type: ${event.type}`);
       }
 
       // Store webhook event
-      await this.storeWebhookEvent({
+      await CardPaymentService.storeWebhookEvent({
         stripe_event_id: event.id,
         event_type: event.type,
         event_data: event.data.object,
@@ -539,7 +541,7 @@ export class CardPaymentService {
   }
 
   private static async handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    await this.updatePaymentStatus(paymentIntent.id, "succeeded");
+    await CardPaymentService.updatePaymentStatus(paymentIntent.id, "succeeded");
 
     // Update related payable if exists
     const payableId = paymentIntent.metadata.payableId;
@@ -556,11 +558,11 @@ export class CardPaymentService {
   }
 
   private static async handlePaymentFailed(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    await this.updatePaymentStatus(paymentIntent.id, "failed");
+    await CardPaymentService.updatePaymentStatus(paymentIntent.id, "failed");
   }
 
   private static async handlePaymentCanceled(paymentIntent: Stripe.PaymentIntent): Promise<void> {
-    await this.updatePaymentStatus(paymentIntent.id, "canceled");
+    await CardPaymentService.updatePaymentStatus(paymentIntent.id, "canceled");
   }
 
   private static async handleChargeDispute(dispute: Stripe.Dispute): Promise<void> {

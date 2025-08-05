@@ -10,6 +10,19 @@
 
 "use client";
 
+import type {
+  Activity,
+  Calendar,
+  Clock,
+  FileText,
+  Filter,
+  Loader2,
+  MessageCircle,
+  Search,
+  User,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,18 +39,6 @@ import type { Label } from "@/components/ui/label";
 import type { ScrollArea } from "@/components/ui/scroll-area";
 import type { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { SearchResponse, SearchResult, SearchType } from "@/lib/search/types";
-import type {
-  Activity,
-  Calendar,
-  Clock,
-  FileText,
-  Filter,
-  Loader2,
-  MessageCircle,
-  Search,
-  User,
-} from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
 
 interface SmartSearchProps {
   userId: string;

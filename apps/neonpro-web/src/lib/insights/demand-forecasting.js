@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.demandForecastingEngine =
   exports.DemandForecastingEngine =
@@ -14,7 +13,7 @@ exports.FORECASTING_CONSTANTS = {
   SEASONAL_SMOOTHING: 0.1,
   ERROR_SMOOTHING: 0.1,
 };
-var DemandForecastingEngine = /** @class */ (function () {
+var DemandForecastingEngine = /** @class */ (() => {
   function DemandForecastingEngine(historicalData) {
     if (historicalData === void 0) {
       historicalData = [];
@@ -37,14 +36,10 @@ var DemandForecastingEngine = /** @class */ (function () {
     // Filter data by specialty and location if provided
     var data = this.historicalData;
     if (specialty) {
-      data = data.filter(function (d) {
-        return d.specialty === specialty;
-      });
+      data = data.filter((d) => d.specialty === specialty);
     }
     if (location) {
-      data = data.filter(function (d) {
-        return d.location === location;
-      });
+      data = data.filter((d) => d.location === location);
     }
     if (data.length < exports.FORECASTING_CONSTANTS.MIN_HISTORICAL_DATA) {
       throw new Error(
@@ -55,9 +50,7 @@ var DemandForecastingEngine = /** @class */ (function () {
       );
     }
     // Sort data by date
-    data.sort(function (a, b) {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    });
+    data.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
     // For now, return mock forecast data
     var forecasts = [];
     var lastDate = new Date();
@@ -81,9 +74,7 @@ var DemandForecastingEngine = /** @class */ (function () {
   DemandForecastingEngine.prototype.addDataPoint = function (dataPoint) {
     this.historicalData.push(dataPoint);
   };
-  DemandForecastingEngine.prototype.getModelAccuracy = function () {
-    return { mae: 5.2, mape: 8.1, rmse: 7.3 };
-  };
+  DemandForecastingEngine.prototype.getModelAccuracy = () => ({ mae: 5.2, mape: 8.1, rmse: 7.3 });
   return DemandForecastingEngine;
 })();
 exports.DemandForecastingEngine = DemandForecastingEngine;

@@ -6,9 +6,9 @@
 // DELETE /api/followups/[id] - Delete follow-up
 // =====================================================================================
 
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { treatmentFollowupService } from "@/app/lib/services/treatment-followup-service";
+import { createClient } from "@/app/utils/supabase/server";
 
 interface RouteParams {
   params: { id: string };

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PerformanceCalculator = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -139,7 +136,7 @@ var client_1 = require("@/lib/supabase/client");
  * Advanced Performance Calculator
  * Calculates comprehensive performance metrics, benchmarks, and optimization recommendations
  */
-var PerformanceCalculator = /** @class */ (function () {
+var PerformanceCalculator = /** @class */ (() => {
   function PerformanceCalculator() {
     this.CACHE_TTL = 10 * 60 * 1000; // 10 minutes
     // Industry benchmarks (these would typically come from external data sources)
@@ -258,54 +255,48 @@ var PerformanceCalculator = /** @class */ (function () {
             completedAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "completed";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "completed").length) || 0;
             appointmentCompletionRate =
               totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
             totalDuration =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (sum, a) {
-                    return sum + (a.actual_duration || a.scheduled_duration || 0);
-                  }, 0)) || 0;
+                : appointments.reduce(
+                    (sum, a) => sum + (a.actual_duration || a.scheduled_duration || 0),
+                    0,
+                  )) || 0;
             averageAppointmentDuration =
               totalAppointments > 0 ? totalDuration / totalAppointments : 0;
             durationAccuracy =
               (appointments === null || appointments === void 0
                 ? void 0
                 : appointments
-                    .filter(function (a) {
-                      return a.actual_duration && a.scheduled_duration;
-                    })
-                    .map(function (a) {
+                    .filter((a) => a.actual_duration && a.scheduled_duration)
+                    .map((a) => {
                       var variance =
                         Math.abs(a.actual_duration - a.scheduled_duration) / a.scheduled_duration;
                       return Math.max(0, 1 - variance) * 100;
                     })) || [];
             scheduledVsActualDuration =
               durationAccuracy.length > 0
-                ? durationAccuracy.reduce(function (sum, acc) {
-                    return sum + acc;
-                  }, 0) / durationAccuracy.length
+                ? durationAccuracy.reduce((sum, acc) => sum + acc, 0) / durationAccuracy.length
                 : 0;
             scheduledTime =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (sum, a) {
-                    return sum + (a.scheduled_duration || 0);
-                  }, 0)) || 0;
+                : appointments.reduce((sum, a) => sum + (a.scheduled_duration || 0), 0)) || 0;
             actualTime =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (sum, a) {
-                    return sum + (a.actual_duration || a.scheduled_duration || 0);
-                  }, 0)) || 0;
+                : appointments.reduce(
+                    (sum, a) => sum + (a.actual_duration || a.scheduled_duration || 0),
+                    0,
+                  )) || 0;
             timeUtilizationRate = scheduledTime > 0 ? (actualTime / scheduledTime) * 100 : 0;
             onTimeCompletions =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
+                : appointments.filter((a) => {
                     if (!a.actual_duration || !a.scheduled_duration) return false;
                     return a.actual_duration <= a.scheduled_duration * 1.1; // 10% tolerance
                   }).length) || 0;
@@ -373,7 +364,7 @@ var PerformanceCalculator = /** @class */ (function () {
             totalRevenue =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (sum, a) {
+                : appointments.reduce((sum, a) => {
                     var _a;
                     return (
                       sum + (((_a = a.services) === null || _a === void 0 ? void 0 : _a.price) || 0)
@@ -390,9 +381,7 @@ var PerformanceCalculator = /** @class */ (function () {
             uniquePatients = new Set(
               appointments === null || appointments === void 0
                 ? void 0
-                : appointments.map(function (a) {
-                    return a.patient_id;
-                  }),
+                : appointments.map((a) => a.patient_id),
             ).size;
             patientThroughput = totalDays > 0 ? uniquePatients / totalDays : 0;
             return [4 /*yield*/, this.calculateProductivityTrend(filter)];
@@ -457,19 +446,9 @@ var PerformanceCalculator = /** @class */ (function () {
             ratings =
               (feedback === null || feedback === void 0
                 ? void 0
-                : feedback
-                    .map(function (f) {
-                      return f.rating;
-                    })
-                    .filter(function (r) {
-                      return r !== null;
-                    })) || [];
+                : feedback.map((f) => f.rating).filter((r) => r !== null)) || [];
             patientSatisfactionScore =
-              ratings.length > 0
-                ? ratings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / ratings.length
-                : 0;
+              ratings.length > 0 ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length : 0;
             return [
               4 /*yield*/,
               this.supabase
@@ -485,11 +464,9 @@ var PerformanceCalculator = /** @class */ (function () {
             treatmentsWithOutcomes =
               (treatments === null || treatments === void 0
                 ? void 0
-                : treatments.filter(function (t) {
-                    return t.treatment_outcomes;
-                  })) || [];
+                : treatments.filter((t) => t.treatment_outcomes)) || [];
             successfulTreatments =
-              treatmentsWithOutcomes.filter(function (t) {
+              treatmentsWithOutcomes.filter((t) => {
                 var _a;
                 return (_a = t.treatment_outcomes) === null || _a === void 0 ? void 0 : _a.success;
               }) || [];
@@ -498,7 +475,7 @@ var PerformanceCalculator = /** @class */ (function () {
                 ? (successfulTreatments.length / treatmentsWithOutcomes.length) * 100
                 : 0;
             complicatedTreatments =
-              treatmentsWithOutcomes.filter(function (t) {
+              treatmentsWithOutcomes.filter((t) => {
                 var _a;
                 return (_a = t.treatment_outcomes) === null || _a === void 0
                   ? void 0
@@ -524,20 +501,14 @@ var PerformanceCalculator = /** @class */ (function () {
             completedFollowUps =
               (followUps === null || followUps === void 0
                 ? void 0
-                : followUps.filter(function (f) {
-                    return f.status === "completed";
-                  }).length) || 0;
+                : followUps.filter((f) => f.status === "completed").length) || 0;
             followUpComplianceRate =
               totalFollowUps > 0 ? (completedFollowUps / totalFollowUps) * 100 : 0;
             scoreRanges = [1, 2, 3, 4, 5];
-            qualityScoreDistribution = scoreRanges.map(function (score) {
-              return {
-                score: score,
-                count: ratings.filter(function (r) {
-                  return Math.floor(r) === score;
-                }).length,
-              };
-            });
+            qualityScoreDistribution = scoreRanges.map((score) => ({
+              score: score,
+              count: ratings.filter((r) => Math.floor(r) === score).length,
+            }));
             return [4 /*yield*/, this.calculateQualityTrend(filter)];
           case 4:
             qualityTrend = _d.sent();
@@ -598,7 +569,7 @@ var PerformanceCalculator = /** @class */ (function () {
             totalScheduledHours =
               (staffSchedules === null || staffSchedules === void 0
                 ? void 0
-                : staffSchedules.reduce(function (sum, s) {
+                : staffSchedules.reduce((sum, s) => {
                     var start = new Date("".concat(s.date, "T").concat(s.start_time));
                     var end = new Date("".concat(s.date, "T").concat(s.end_time));
                     return sum + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
@@ -606,17 +577,18 @@ var PerformanceCalculator = /** @class */ (function () {
             totalWorkedHours =
               (staffSchedules === null || staffSchedules === void 0
                 ? void 0
-                : staffSchedules.reduce(function (sum, s) {
+                : staffSchedules.reduce((sum, s) => {
                     var _a;
                     return (
                       sum +
                       (((_a = s.appointments) === null || _a === void 0
                         ? void 0
-                        : _a.reduce(function (appointmentSum, a) {
-                            return (
-                              appointmentSum + (a.actual_duration || a.scheduled_duration || 0) / 60
-                            );
-                          }, 0)) || 0)
+                        : _a.reduce(
+                            (appointmentSum, a) =>
+                              appointmentSum +
+                              (a.actual_duration || a.scheduled_duration || 0) / 60,
+                            0,
+                          )) || 0)
                     );
                   }, 0)) || 0;
             staffUtilizationRate =
@@ -637,15 +609,15 @@ var PerformanceCalculator = /** @class */ (function () {
             roomUsageHours =
               (roomBookings === null || roomBookings === void 0
                 ? void 0
-                : roomBookings.reduce(function (sum, booking) {
-                    return sum + (booking.actual_duration || booking.scheduled_duration || 0) / 60;
-                  }, 0)) || 0;
+                : roomBookings.reduce(
+                    (sum, booking) =>
+                      sum + (booking.actual_duration || booking.scheduled_duration || 0) / 60,
+                    0,
+                  )) || 0;
             uniqueRooms = new Set(
               roomBookings === null || roomBookings === void 0
                 ? void 0
-                : roomBookings.map(function (b) {
-                    return b.room_id;
-                  }),
+                : roomBookings.map((b) => b.room_id),
             ).size;
             diffDays =
               (filter.endDate.getTime() - filter.startDate.getTime()) / (1000 * 60 * 60 * 24);
@@ -715,74 +687,36 @@ var PerformanceCalculator = /** @class */ (function () {
             (_a = _b.sent()), (feedback = _a.data), (error = _a.error);
             if (error) throw error;
             feedbackData = feedback || [];
-            overallRatings = feedbackData
-              .map(function (f) {
-                return f.overall_rating;
-              })
-              .filter(function (r) {
-                return r !== null;
-              });
+            overallRatings = feedbackData.map((f) => f.overall_rating).filter((r) => r !== null);
             overallSatisfactionScore =
               overallRatings.length > 0
-                ? overallRatings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / overallRatings.length
+                ? overallRatings.reduce((sum, r) => sum + r, 0) / overallRatings.length
                 : 0;
             serviceRatings = feedbackData
-              .map(function (f) {
-                return f.service_quality_rating;
-              })
-              .filter(function (r) {
-                return r !== null;
-              });
+              .map((f) => f.service_quality_rating)
+              .filter((r) => r !== null);
             serviceQualityScore =
               serviceRatings.length > 0
-                ? serviceRatings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / serviceRatings.length
+                ? serviceRatings.reduce((sum, r) => sum + r, 0) / serviceRatings.length
                 : 0;
-            waitTimeRatings = feedbackData
-              .map(function (f) {
-                return f.wait_time_rating;
-              })
-              .filter(function (r) {
-                return r !== null;
-              });
+            waitTimeRatings = feedbackData.map((f) => f.wait_time_rating).filter((r) => r !== null);
             waitTimeScore =
               waitTimeRatings.length > 0
-                ? waitTimeRatings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / waitTimeRatings.length
+                ? waitTimeRatings.reduce((sum, r) => sum + r, 0) / waitTimeRatings.length
                 : 0;
             staffRatings = feedbackData
-              .map(function (f) {
-                return f.staff_interaction_rating;
-              })
-              .filter(function (r) {
-                return r !== null;
-              });
+              .map((f) => f.staff_interaction_rating)
+              .filter((r) => r !== null);
             staffInteractionScore =
               staffRatings.length > 0
-                ? staffRatings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / staffRatings.length
+                ? staffRatings.reduce((sum, r) => sum + r, 0) / staffRatings.length
                 : 0;
-            facilityRatings = feedbackData
-              .map(function (f) {
-                return f.facility_rating;
-              })
-              .filter(function (r) {
-                return r !== null;
-              });
+            facilityRatings = feedbackData.map((f) => f.facility_rating).filter((r) => r !== null);
             facilityScore =
               facilityRatings.length > 0
-                ? facilityRatings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / facilityRatings.length
+                ? facilityRatings.reduce((sum, r) => sum + r, 0) / facilityRatings.length
                 : 0;
-            recommendations = feedbackData.filter(function (f) {
-              return f.would_recommend === true;
-            }).length;
+            recommendations = feedbackData.filter((f) => f.would_recommend === true).length;
             recommendationRate =
               feedbackData.length > 0 ? (recommendations / feedbackData.length) * 100 : 0;
             return [4 /*yield*/, this.calculateSatisfactionTrend(filter)];
@@ -907,7 +841,7 @@ var PerformanceCalculator = /** @class */ (function () {
   PerformanceCalculator.prototype.setCachedData = function (key, data) {
     this.cache.set(key, { data: data, timestamp: Date.now() });
   };
-  PerformanceCalculator.prototype.calculatePercentileRank = function (currentValue, benchmark) {
+  PerformanceCalculator.prototype.calculatePercentileRank = (currentValue, benchmark) => {
     // Simplified percentile calculation
     if (currentValue >= benchmark) {
       return Math.min(95, 50 + ((currentValue - benchmark) / benchmark) * 45);
@@ -915,7 +849,7 @@ var PerformanceCalculator = /** @class */ (function () {
       return Math.max(5, 50 - ((benchmark - currentValue) / benchmark) * 45);
     }
   };
-  PerformanceCalculator.prototype.calculateAchievabilityScore = function (currentValue, benchmark) {
+  PerformanceCalculator.prototype.calculateAchievabilityScore = (currentValue, benchmark) => {
     var gap = Math.abs(currentValue - benchmark);
     var relativeGap = gap / benchmark;
     if (relativeGap <= 0.05) return 95; // Very achievable
@@ -927,7 +861,7 @@ var PerformanceCalculator = /** @class */ (function () {
   // Placeholder methods for trend calculations
   PerformanceCalculator.prototype.calculateProductivityTrend = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would compare current period with previous period
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -935,7 +869,7 @@ var PerformanceCalculator = /** @class */ (function () {
   };
   PerformanceCalculator.prototype.calculateQualityTrend = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would compare current period with previous period
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -943,7 +877,7 @@ var PerformanceCalculator = /** @class */ (function () {
   };
   PerformanceCalculator.prototype.calculateUtilizationTrend = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would compare current period with previous period
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -951,7 +885,7 @@ var PerformanceCalculator = /** @class */ (function () {
   };
   PerformanceCalculator.prototype.calculateSatisfactionTrend = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would compare current period with previous period
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -959,7 +893,7 @@ var PerformanceCalculator = /** @class */ (function () {
   };
   PerformanceCalculator.prototype.identifyPeakUtilizationHours = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze hourly utilization patterns
         return [2 /*return*/, []]; // Placeholder
       });

@@ -8,9 +8,9 @@
  */
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
 import type { withErrorMonitoring } from "@/lib/monitoring";
+import type { createClient } from "@/lib/supabase/server";
 
 // Configuration validation schema
 const configSchema = z.object({

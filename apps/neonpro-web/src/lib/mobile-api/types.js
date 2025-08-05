@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Mobile API Types & Interfaces
  * Story 7.4: Mobile App API Support Implementation

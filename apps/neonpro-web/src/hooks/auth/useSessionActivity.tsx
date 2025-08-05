@@ -3,11 +3,10 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import React from "react";
-import type { useEffect, useCallback, useRef } from "react";
+import type { usePathname, useRouter } from "next/navigation";
+import type React from "react";
+import type { useCallback, useEffect, useRef } from "react";
 import type { useSession } from "./useSession";
-import type { useRouter } from "next/navigation";
-import type { usePathname } from "next/navigation";
 
 // =====================================================
 // TYPES & INTERFACES

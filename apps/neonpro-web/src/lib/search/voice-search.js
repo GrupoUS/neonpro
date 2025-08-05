@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Voice Search Engine
  * Story 3.4: Smart Search + NLP Integration - Task 5
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.voiceSearch = exports.VoiceSearch = void 0;
 var nlp_engine_1 = require("./nlp-engine");
@@ -159,7 +156,7 @@ var comprehensive_search_1 = require("./comprehensive-search");
  * Voice Search Engine Class
  * Handles speech recognition, voice commands, and audio processing
  */
-var VoiceSearch = /** @class */ (function () {
+var VoiceSearch = /** @class */ (() => {
   function VoiceSearch(options) {
     if (options === void 0) {
       options = {};
@@ -194,7 +191,6 @@ var VoiceSearch = /** @class */ (function () {
    * Initialize speech recognition
    */
   VoiceSearch.prototype.initializeRecognition = function () {
-    var _this = this;
     if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
       console.warn("Speech recognition not supported in this browser");
       return;
@@ -207,26 +203,25 @@ var VoiceSearch = /** @class */ (function () {
     this.recognition.lang = this.options.language;
     this.recognition.maxAlternatives = this.options.maxAlternatives;
     // Event handlers
-    this.recognition.onstart = function () {
-      _this.isListening = true;
-      _this.emit("start");
+    this.recognition.onstart = () => {
+      this.isListening = true;
+      this.emit("start");
     };
-    this.recognition.onresult = function (event) {
-      _this.handleRecognitionResult(event);
+    this.recognition.onresult = (event) => {
+      this.handleRecognitionResult(event);
     };
-    this.recognition.onerror = function (event) {
-      _this.handleRecognitionError(event);
+    this.recognition.onerror = (event) => {
+      this.handleRecognitionError(event);
     };
-    this.recognition.onend = function () {
-      _this.isListening = false;
-      _this.emit("end");
+    this.recognition.onend = () => {
+      this.isListening = false;
+      this.emit("end");
     };
   };
   /**
    * Initialize voice commands
    */
   VoiceSearch.prototype.initializeCommands = function () {
-    var _this = this;
     var defaultCommands = [
       {
         id: "search_patients",
@@ -280,8 +275,8 @@ var VoiceSearch = /** @class */ (function () {
         category: "system",
       },
     ];
-    defaultCommands.forEach(function (command) {
-      _this.commands.set(command.id, command);
+    defaultCommands.forEach((command) => {
+      this.commands.set(command.id, command);
     });
   };
   /**
@@ -345,13 +340,9 @@ var VoiceSearch = /** @class */ (function () {
             session.endTime = Date.now();
             session.totalDuration = session.endTime - session.startTime;
             if (session.queries.length > 0) {
-              successfulQueries = session.queries.filter(function (q) {
-                return q.success;
-              }).length;
+              successfulQueries = session.queries.filter((q) => q.success).length;
               session.successRate = successfulQueries / session.queries.length;
-              totalConfidence = session.queries.reduce(function (sum, q) {
-                return sum + q.confidence;
-              }, 0);
+              totalConfidence = session.queries.reduce((sum, q) => sum + q.confidence, 0);
               session.averageConfidence = totalConfidence / session.queries.length;
             }
             // Save session to database
@@ -384,7 +375,7 @@ var VoiceSearch = /** @class */ (function () {
           this.recognition.start();
           // Set timeout if configured
           if (this.options.timeout) {
-            setTimeout(function () {
+            setTimeout(() => {
               if (_this.isListening) {
                 _this.stopListening();
               }
@@ -445,9 +436,7 @@ var VoiceSearch = /** @class */ (function () {
               this.processVoiceInput(
                 transcript,
                 confidence,
-                alternatives.map(function (a) {
-                  return a.transcript;
-                }),
+                alternatives.map((a) => a.transcript),
               ),
             ];
           case 1:
@@ -456,7 +445,7 @@ var VoiceSearch = /** @class */ (function () {
           case 2:
             // Handle silence detection for auto-stop
             if (this.options.autoStop && isFinal) {
-              this.silenceTimer = setTimeout(function () {
+              this.silenceTimer = setTimeout(() => {
                 _this.stopListening();
               }, 2000); // Stop after 2 seconds of silence
             }
@@ -483,7 +472,7 @@ var VoiceSearch = /** @class */ (function () {
   /**
    * Map speech recognition error to our error types
    */
-  VoiceSearch.prototype.mapErrorType = function (error) {
+  VoiceSearch.prototype.mapErrorType = (error) => {
     switch (error) {
       case "network":
         return "network";
@@ -655,7 +644,7 @@ var VoiceSearch = /** @class */ (function () {
   /**
    * Extract search terms from transcript after removing command patterns
    */
-  VoiceSearch.prototype.extractSearchTerms = function (transcript, patterns) {
+  VoiceSearch.prototype.extractSearchTerms = (transcript, patterns) => {
     var normalizedTranscript = transcript.toLowerCase();
     for (var _i = 0, patterns_1 = patterns; _i < patterns_1.length; _i++) {
       var pattern = patterns_1[_i];
@@ -731,16 +720,13 @@ var VoiceSearch = /** @class */ (function () {
    * Get commands by category
    */
   VoiceSearch.prototype.getCommandsByCategory = function (category) {
-    return Array.from(this.commands.values()).filter(function (cmd) {
-      return cmd.category === category;
-    });
+    return Array.from(this.commands.values()).filter((cmd) => cmd.category === category);
   };
   /**
    * Check if speech recognition is supported
    */
-  VoiceSearch.prototype.isSupported = function () {
-    return "webkitSpeechRecognition" in window || "SpeechRecognition" in window;
-  };
+  VoiceSearch.prototype.isSupported = () =>
+    "webkitSpeechRecognition" in window || "SpeechRecognition" in window;
   /**
    * Check if currently listening
    */
@@ -764,7 +750,7 @@ var VoiceSearch = /** @class */ (function () {
    */
   VoiceSearch.prototype.saveSession = function (session) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would typically save to Supabase
           // Implementation depends on your database schema
@@ -781,7 +767,7 @@ var VoiceSearch = /** @class */ (function () {
    */
   VoiceSearch.prototype.getAnalytics = function (userId, dateRange) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would typically query from Supabase
         // Placeholder implementation
         return [
@@ -825,9 +811,7 @@ var VoiceSearch = /** @class */ (function () {
   VoiceSearch.prototype.emit = function (event, data) {
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (callback) {
-        return callback(data);
-      });
+      listeners.forEach((callback) => callback(data));
     }
   };
   /**

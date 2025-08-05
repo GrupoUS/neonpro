@@ -4,18 +4,17 @@
 // Created: 2025-01-26
 // =====================================================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = InventoryOverview;
 var client_1 = require("@/app/utils/supabase/client");
@@ -153,7 +150,6 @@ var sonner_1 = require("sonner");
 // MAIN COMPONENT
 // =====================================================================================
 function InventoryOverview() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     items = _a[0],
     setItems = _a[1];
@@ -184,10 +180,10 @@ function InventoryOverview() {
   // =====================================================================================
   // DATA FETCHING
   // =====================================================================================
-  var fetchInventoryData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchInventoryData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -227,17 +223,14 @@ function InventoryOverview() {
         }
       });
     });
-  };
-  var calculateStats = function (inventoryItems) {
+  var calculateStats = (inventoryItems) => {
     var stats = inventoryItems.reduce(
-      function (acc, item) {
+      (acc, item) => {
         var _a;
         var totalStock =
           ((_a = item.stock_levels) === null || _a === void 0
             ? void 0
-            : _a.reduce(function (sum, level) {
-                return sum + level.available_quantity;
-              }, 0)) || 0;
+            : _a.reduce((sum, level) => sum + level.available_quantity, 0)) || 0;
         var itemValue = (item.cost || 0) * totalStock;
         acc.totalItems += 1;
         acc.totalValue += itemValue;
@@ -260,23 +253,18 @@ function InventoryOverview() {
   // =====================================================================================
   // EFFECTS
   // =====================================================================================
-  (0, react_1.useEffect)(
-    function () {
-      fetchInventoryData();
-    },
-    [searchTerm, categoryFilter, statusFilter, showLowStock],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchInventoryData();
+  }, [searchTerm, categoryFilter, statusFilter, showLowStock]);
   // =====================================================================================
   // UTILITY FUNCTIONS
   // =====================================================================================
-  var getStockStatus = function (item) {
+  var getStockStatus = (item) => {
     var _a;
     var totalStock =
       ((_a = item.stock_levels) === null || _a === void 0
         ? void 0
-        : _a.reduce(function (sum, level) {
-            return sum + level.available_quantity;
-          }, 0)) || 0;
+        : _a.reduce((sum, level) => sum + level.available_quantity, 0)) || 0;
     if (totalStock === 0) {
       return {
         status: "out-of-stock",
@@ -289,12 +277,11 @@ function InventoryOverview() {
       return { status: "in-stock", color: "success", text: "In Stock" };
     }
   };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   // =====================================================================================
   // RENDER
   // =====================================================================================
@@ -353,13 +340,7 @@ function InventoryOverview() {
           <card_1.CardTitle className="flex items-center justify-between">
             <span>Inventory Items</span>
             <div className="flex items-center space-x-2">
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return fetchInventoryData();
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => fetchInventoryData()}>
                 <lucide_react_1.RefreshCw className="h-4 w-4 mr-1" />
                 Refresh
               </button_1.Button>
@@ -378,9 +359,7 @@ function InventoryOverview() {
                 <input_1.Input
                   placeholder="Search items by name, SKU, or barcode..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -398,9 +377,7 @@ function InventoryOverview() {
               <button_1.Button
                 variant={showLowStock ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setShowLowStock(!showLowStock);
-                }}
+                onClick={() => setShowLowStock(!showLowStock)}
               >
                 <lucide_react_1.Filter className="h-4 w-4 mr-1" />
                 Low Stock
@@ -421,15 +398,13 @@ function InventoryOverview() {
                   <p className="text-muted-foreground">Try adjusting your search or filters</p>
                 </div>
               : <div className="space-y-2">
-                  {items.map(function (item) {
+                  {items.map((item) => {
                     var _a;
                     var stockStatus = getStockStatus(item);
                     var totalStock =
                       ((_a = item.stock_levels) === null || _a === void 0
                         ? void 0
-                        : _a.reduce(function (sum, level) {
-                            return sum + level.available_quantity;
-                          }, 0)) || 0;
+                        : _a.reduce((sum, level) => sum + level.available_quantity, 0)) || 0;
                     return (
                       <div
                         key={item.id}

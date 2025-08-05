@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Forecasting System Module Exports
  * Epic 11 - Story 11.1: Main entry point for demand forecasting system
@@ -14,15 +13,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -42,13 +41,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,9 +69,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -144,7 +141,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ForecastingHelpers =
   exports.forecastingSystemAPI =
@@ -182,185 +179,129 @@ exports.ForecastingHelpers =
 var demand_forecasting_1 = require("./demand-forecasting");
 Object.defineProperty(exports, "DemandForecastingEngine", {
   enumerable: true,
-  get: function () {
-    return demand_forecasting_1.DemandForecastingEngine;
-  },
+  get: () => demand_forecasting_1.DemandForecastingEngine,
 });
 Object.defineProperty(exports, "demandForecastingEngine", {
   enumerable: true,
-  get: function () {
-    return demand_forecasting_1.demandForecastingEngine;
-  },
+  get: () => demand_forecasting_1.demandForecastingEngine,
 });
 Object.defineProperty(exports, "ForecastingUtils", {
   enumerable: true,
-  get: function () {
-    return demand_forecasting_1.ForecastingUtils;
-  },
+  get: () => demand_forecasting_1.ForecastingUtils,
 });
 // Model Management System
 var forecast_models_1 = require("./forecast-models");
 Object.defineProperty(exports, "ForecastModelManager", {
   enumerable: true,
-  get: function () {
-    return forecast_models_1.ForecastModelManager;
-  },
+  get: () => forecast_models_1.ForecastModelManager,
 });
 Object.defineProperty(exports, "forecastModelManager", {
   enumerable: true,
-  get: function () {
-    return forecast_models_1.forecastModelManager;
-  },
+  get: () => forecast_models_1.forecastModelManager,
 });
 // Resource Allocation Optimizer
 var resource_allocation_1 = require("./resource-allocation");
 Object.defineProperty(exports, "ResourceAllocationOptimizer", {
   enumerable: true,
-  get: function () {
-    return resource_allocation_1.ResourceAllocationOptimizer;
-  },
+  get: () => resource_allocation_1.ResourceAllocationOptimizer,
 });
 Object.defineProperty(exports, "resourceAllocationOptimizer", {
   enumerable: true,
-  get: function () {
-    return resource_allocation_1.resourceAllocationOptimizer;
-  },
+  get: () => resource_allocation_1.resourceAllocationOptimizer,
 });
 // Configuration Management
 var config_1 = require("./config");
 Object.defineProperty(exports, "ConfigManager", {
   enumerable: true,
-  get: function () {
-    return config_1.ConfigManager;
-  },
+  get: () => config_1.ConfigManager,
 });
 Object.defineProperty(exports, "configManager", {
   enumerable: true,
-  get: function () {
-    return config_1.configManager;
-  },
+  get: () => config_1.configManager,
 });
 Object.defineProperty(exports, "FORECASTING_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.FORECASTING_CONFIG;
-  },
+  get: () => config_1.FORECASTING_CONFIG,
 });
 Object.defineProperty(exports, "RESOURCE_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.RESOURCE_CONFIG;
-  },
+  get: () => config_1.RESOURCE_CONFIG,
 });
 Object.defineProperty(exports, "MODEL_TRAINING_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.MODEL_TRAINING_CONFIG;
-  },
+  get: () => config_1.MODEL_TRAINING_CONFIG,
 });
 Object.defineProperty(exports, "MODEL_CONFIGS", {
   enumerable: true,
-  get: function () {
-    return config_1.MODEL_CONFIGS;
-  },
+  get: () => config_1.MODEL_CONFIGS,
 });
 Object.defineProperty(exports, "EXTERNAL_FACTOR_CONFIGS", {
   enumerable: true,
-  get: function () {
-    return config_1.EXTERNAL_FACTOR_CONFIGS;
-  },
+  get: () => config_1.EXTERNAL_FACTOR_CONFIGS,
 });
 Object.defineProperty(exports, "PERFORMANCE_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.PERFORMANCE_CONFIG;
-  },
+  get: () => config_1.PERFORMANCE_CONFIG,
 });
 Object.defineProperty(exports, "DATABASE_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.DATABASE_CONFIG;
-  },
+  get: () => config_1.DATABASE_CONFIG,
 });
 Object.defineProperty(exports, "API_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.API_CONFIG;
-  },
+  get: () => config_1.API_CONFIG,
 });
 Object.defineProperty(exports, "SECURITY_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.SECURITY_CONFIG;
-  },
+  get: () => config_1.SECURITY_CONFIG,
 });
 Object.defineProperty(exports, "ENVIRONMENT_CONFIGS", {
   enumerable: true,
-  get: function () {
-    return config_1.ENVIRONMENT_CONFIGS;
-  },
+  get: () => config_1.ENVIRONMENT_CONFIGS,
 });
 Object.defineProperty(exports, "FEATURE_FLAGS", {
   enumerable: true,
-  get: function () {
-    return config_1.FEATURE_FLAGS;
-  },
+  get: () => config_1.FEATURE_FLAGS,
 });
 // Constants
 var types_1 = require("./types");
 Object.defineProperty(exports, "FORECAST_TYPES", {
   enumerable: true,
-  get: function () {
-    return types_1.FORECAST_TYPES;
-  },
+  get: () => types_1.FORECAST_TYPES,
 });
 Object.defineProperty(exports, "MODEL_TYPES", {
   enumerable: true,
-  get: function () {
-    return types_1.MODEL_TYPES;
-  },
+  get: () => types_1.MODEL_TYPES,
 });
 Object.defineProperty(exports, "ALERT_TYPES", {
   enumerable: true,
-  get: function () {
-    return types_1.ALERT_TYPES;
-  },
+  get: () => types_1.ALERT_TYPES,
 });
 Object.defineProperty(exports, "SEVERITY_LEVELS", {
   enumerable: true,
-  get: function () {
-    return types_1.SEVERITY_LEVELS;
-  },
+  get: () => types_1.SEVERITY_LEVELS,
 });
 Object.defineProperty(exports, "OPTIMIZATION_OBJECTIVES", {
   enumerable: true,
-  get: function () {
-    return types_1.OPTIMIZATION_OBJECTIVES;
-  },
+  get: () => types_1.OPTIMIZATION_OBJECTIVES,
 });
 Object.defineProperty(exports, "RESOURCE_TYPES", {
   enumerable: true,
-  get: function () {
-    return types_1.RESOURCE_TYPES;
-  },
+  get: () => types_1.RESOURCE_TYPES,
 });
 Object.defineProperty(exports, "PLAN_STATUSES", {
   enumerable: true,
-  get: function () {
-    return types_1.PLAN_STATUSES;
-  },
+  get: () => types_1.PLAN_STATUSES,
 });
 Object.defineProperty(exports, "JOB_STATUSES", {
   enumerable: true,
-  get: function () {
-    return types_1.JOB_STATUSES;
-  },
+  get: () => types_1.JOB_STATUSES,
 });
 /**
  * Main Forecasting System API
  * High-level interface for the entire forecasting system
  */
-var ForecastingSystemAPI = /** @class */ (function () {
+var ForecastingSystemAPI = /** @class */ (() => {
   function ForecastingSystemAPI() {
     this.initialized = false;
     this.engine = demandForecastingEngine;
@@ -417,7 +358,7 @@ var ForecastingSystemAPI = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
-            if (!!this.initialized) return [3 /*break*/, 2];
+            if (this.initialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize(request.clinic_id)];
           case 1:
             _a.sent();
@@ -478,7 +419,7 @@ var ForecastingSystemAPI = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
-            if (!!this.initialized) return [3 /*break*/, 2];
+            if (this.initialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize(request.clinic_id)];
           case 1:
             _a.sent();
@@ -487,8 +428,8 @@ var ForecastingSystemAPI = /** @class */ (function () {
             startTime = Date.now();
             forecasts_1 = [];
             errors_1 = [];
-            forecastPromises = request.forecasts.map(function (forecastConfig) {
-              return __awaiter(_this, void 0, void 0, function () {
+            forecastPromises = request.forecasts.map((forecastConfig) =>
+              __awaiter(_this, void 0, void 0, function () {
                 var forecast, error_4;
                 return __generator(this, function (_a) {
                   switch (_a.label) {
@@ -525,13 +466,13 @@ var ForecastingSystemAPI = /** @class */ (function () {
                       return [2 /*return*/];
                   }
                 });
-              });
-            });
+              }),
+            );
             return [4 /*yield*/, Promise.all(forecastPromises)];
           case 3:
             results = _a.sent();
             // Separate successful forecasts from errors
-            results.forEach(function (result) {
+            results.forEach((result) => {
               if (result.success && "forecast" in result) {
                 forecasts_1.push(result.forecast);
               } else if (!result.success && "error" in result) {
@@ -584,7 +525,7 @@ var ForecastingSystemAPI = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 6, , 7]);
-            if (!!this.initialized) return [3 /*break*/, 2];
+            if (this.initialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize(request.clinic_id)];
           case 1:
             _a.sent();
@@ -659,7 +600,7 @@ var ForecastingSystemAPI = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
-            if (!!this.initialized) return [3 /*break*/, 2];
+            if (this.initialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize(request.clinic_id)];
           case 1:
             _a.sent();
@@ -745,9 +686,7 @@ var ForecastingSystemAPI = /** @class */ (function () {
             return [4 /*yield*/, this.checkComponentHealth("external_apis")];
           case 5:
             components = ((_a.external_apis = _b.sent()), _a);
-            componentStatuses = Object.values(components).map(function (c) {
-              return c.status;
-            });
+            componentStatuses = Object.values(components).map((c) => c.status);
             overallStatus = "healthy";
             if (componentStatuses.includes("critical")) {
               overallStatus = "critical";
@@ -792,53 +731,46 @@ var ForecastingSystemAPI = /** @class */ (function () {
   /**
    * Helper method to get default training configuration
    */
-  ForecastingSystemAPI.prototype.getDefaultTrainingConfig = function (modelType) {
-    return {
-      model_type: modelType,
-      training_params: {
-        training_period_days: 365,
-        validation_split: 0.2,
-        test_split: 0.1,
-        cross_validation_folds: 5,
-        early_stopping: true,
-        max_epochs: 100,
-        learning_rate: 0.001,
-        regularization: 0.01,
-      },
-      feature_config: {
-        include_seasonality: true,
-        include_trends: true,
-        include_external_factors: true,
-        include_holidays: true,
-        lag_features: [1, 7, 30],
-        rolling_features: [7, 14, 30],
-      },
-      optimization_config: {
-        metric: "mape",
-        minimize: true,
-        patience: 10,
-        min_delta: 0.001,
-      },
-    };
-  };
+  ForecastingSystemAPI.prototype.getDefaultTrainingConfig = (modelType) => ({
+    model_type: modelType,
+    training_params: {
+      training_period_days: 365,
+      validation_split: 0.2,
+      test_split: 0.1,
+      cross_validation_folds: 5,
+      early_stopping: true,
+      max_epochs: 100,
+      learning_rate: 0.001,
+      regularization: 0.01,
+    },
+    feature_config: {
+      include_seasonality: true,
+      include_trends: true,
+      include_external_factors: true,
+      include_holidays: true,
+      lag_features: [1, 7, 30],
+      rolling_features: [7, 14, 30],
+    },
+    optimization_config: {
+      metric: "mape",
+      minimize: true,
+      patience: 10,
+      min_delta: 0.001,
+    },
+  });
   /**
    * Helper method to check component health
    */
   ForecastingSystemAPI.prototype.checkComponentHealth = function (component) {
     return __awaiter(this, void 0, void 0, function () {
       var startTime, responseTime, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             startTime = Date.now();
             // Simulate component health check
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 10);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 10))];
           case 1:
             // Simulate component health check
             _a.sent();
@@ -886,7 +818,7 @@ exports.ForecastingHelpers = {
       if (days === void 0) {
         days = 30;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -925,7 +857,7 @@ exports.ForecastingHelpers = {
       if (days === void 0) {
         days = 30;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -962,7 +894,7 @@ exports.ForecastingHelpers = {
   isSystemReady: function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var health, error_11;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);

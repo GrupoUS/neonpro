@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardLayout = DashboardLayout;
 var breadcrumb_1 = require("@/components/ui/breadcrumb");
@@ -23,24 +22,22 @@ function DashboardLayout(_a) {
             {breadcrumbs && breadcrumbs.length > 0 && (
               <breadcrumb_1.Breadcrumb>
                 <breadcrumb_1.BreadcrumbList>
-                  {breadcrumbs.map(function (breadcrumb, index) {
-                    return (
-                      <React.Fragment key={breadcrumb.title}>
-                        <breadcrumb_1.BreadcrumbItem className="hidden md:block">
-                          {breadcrumb.href
-                            ? <breadcrumb_1.BreadcrumbLink href={breadcrumb.href}>
-                                {breadcrumb.title}
-                              </breadcrumb_1.BreadcrumbLink>
-                            : <breadcrumb_1.BreadcrumbPage>
-                                {breadcrumb.title}
-                              </breadcrumb_1.BreadcrumbPage>}
-                        </breadcrumb_1.BreadcrumbItem>
-                        {index < breadcrumbs.length - 1 && (
-                          <breadcrumb_1.BreadcrumbSeparator className="hidden md:block" />
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
+                  {breadcrumbs.map((breadcrumb, index) => (
+                    <React.Fragment key={breadcrumb.title}>
+                      <breadcrumb_1.BreadcrumbItem className="hidden md:block">
+                        {breadcrumb.href
+                          ? <breadcrumb_1.BreadcrumbLink href={breadcrumb.href}>
+                              {breadcrumb.title}
+                            </breadcrumb_1.BreadcrumbLink>
+                          : <breadcrumb_1.BreadcrumbPage>
+                              {breadcrumb.title}
+                            </breadcrumb_1.BreadcrumbPage>}
+                      </breadcrumb_1.BreadcrumbItem>
+                      {index < breadcrumbs.length - 1 && (
+                        <breadcrumb_1.BreadcrumbSeparator className="hidden md:block" />
+                      )}
+                    </React.Fragment>
+                  ))}
                 </breadcrumb_1.BreadcrumbList>
               </breadcrumb_1.Breadcrumb>
             )}

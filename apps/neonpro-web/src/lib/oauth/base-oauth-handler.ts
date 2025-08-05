@@ -1,12 +1,12 @@
 import type { createClient } from "@/lib/supabase/server";
 import type { TokenEncryptionService } from "./token-encryption";
 import type {
+  EncryptedTokenData,
   IOAuthHandler,
   OAuthConfig,
-  OAuthTokens,
   OAuthState,
+  OAuthTokens,
   OAuthUserProfile,
-  EncryptedTokenData,
   SocialMediaPlatform,
 } from "./types";
 

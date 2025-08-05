@@ -104,7 +104,7 @@ export class NLPSearchEngine {
         .replace(/won't/g, "will not")
         .replace(/n't/g, " not")
         // Remove punctuation except for important ones
-        .replace(/[^\w\s\-\.]/g, " ")
+        .replace(/[^\w\s\-.]/g, " ")
         .trim()
     );
   }
@@ -325,7 +325,7 @@ export class NLPSearchEngine {
           };
           break;
 
-        case "date":
+        case "date": {
           // Parse and convert to date range
           const date = this.parseDate(entity.value);
           if (date) {
@@ -335,14 +335,16 @@ export class NLPSearchEngine {
             };
           }
           break;
+        }
 
-        case "age":
+        case "age": {
           const age = parseInt(entity.value);
           filters.birthDate = {
             gte: new Date(new Date().getFullYear() - age - 1, 0, 1),
             lte: new Date(new Date().getFullYear() - age, 11, 31),
           };
           break;
+        }
 
         case "condition":
           filters.medicalHistory = {
@@ -434,18 +436,21 @@ export class NLPSearchEngine {
         return new Date(today.getTime() - 24 * 60 * 60 * 1000);
       case "tomorrow":
         return new Date(today.getTime() + 24 * 60 * 60 * 1000);
-      case "this week":
+      case "this week": {
         const startOfWeek = new Date(today);
         startOfWeek.setDate(today.getDate() - today.getDay());
         return startOfWeek;
-      case "last week":
+      }
+      case "last week": {
         const lastWeek = new Date(today);
         lastWeek.setDate(today.getDate() - 7 - today.getDay());
         return lastWeek;
-      case "next week":
+      }
+      case "next week": {
         const nextWeek = new Date(today);
         nextWeek.setDate(today.getDate() + 7 - today.getDay());
         return nextWeek;
+      }
     }
 
     // Try to parse standard date formats

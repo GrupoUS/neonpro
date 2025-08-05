@@ -6,18 +6,17 @@
  * conflict detection, and real-time updates
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,13 +36,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,9 +64,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -139,7 +136,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var alert_1 = require("@/components/ui/alert");
 var button_1 = require("@/components/ui/button");
@@ -153,7 +150,7 @@ var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
-var CalendarView = function (_a) {
+var CalendarView = (_a) => {
   var onAppointmentClick = _a.onAppointmentClick,
     onTimeSlotClick = _a.onTimeSlotClick,
     onCreateAppointment = _a.onCreateAppointment;
@@ -180,10 +177,10 @@ var CalendarView = function (_a) {
   // Fetch appointments
   var _h = (0, react_query_1.useQuery)({
       queryKey: ["appointments", selectedDate, selectedProfessional, selectedStatus],
-      queryFn: function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var startDate, endDate, query, _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 startDate =
@@ -215,8 +212,7 @@ var CalendarView = function (_a) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       refetchInterval: 30000, // Refresh every 30 seconds for real-time updates
     }),
     _j = _h.data,
@@ -226,10 +222,10 @@ var CalendarView = function (_a) {
   // Fetch professionals
   var _k = (0, react_query_1.useQuery)({
       queryKey: ["professionals"],
-      queryFn: function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 return [
@@ -246,17 +242,16 @@ var CalendarView = function (_a) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
     }).data,
     professionals = _k === void 0 ? [] : _k;
   // Fetch service types
   var _l = (0, react_query_1.useQuery)({
       queryKey: ["service_types"],
-      queryFn: function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 return [
@@ -269,24 +264,23 @@ var CalendarView = function (_a) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
     }).data,
     serviceTypes = _l === void 0 ? [] : _l;
   // Week navigation
-  var goToPreviousWeek = function () {
+  var goToPreviousWeek = () => {
     setCurrentWeek((0, date_fns_1.subWeeks)(currentWeek, 1));
   };
-  var goToNextWeek = function () {
+  var goToNextWeek = () => {
     setCurrentWeek((0, date_fns_1.addWeeks)(currentWeek, 1));
   };
-  var goToToday = function () {
+  var goToToday = () => {
     var today = new Date();
     setCurrentWeek(today);
     setSelectedDate(today);
   };
   // Generate time slots for display
-  var timeSlots = (0, react_1.useMemo)(function () {
+  var timeSlots = (0, react_1.useMemo)(() => {
     var slots = [];
     for (var hour = 8; hour <= 18; hour++) {
       for (var minute = 0; minute < 60; minute += 30) {
@@ -300,22 +294,21 @@ var CalendarView = function (_a) {
   }, []);
   // Generate week days
   var weekDays = (0, react_1.useMemo)(
-    function () {
-      return (0, date_fns_1.eachDayOfInterval)({
+    () =>
+      (0, date_fns_1.eachDayOfInterval)({
         start: (0, date_fns_1.startOfWeek)(currentWeek, { weekStartsOn: 1 }), // Monday start
         end: (0, date_fns_1.endOfWeek)(currentWeek, { weekStartsOn: 1 }),
-      });
-    },
+      }),
     [currentWeek],
   );
   // Get appointments for a specific date and time
-  var getAppointmentsForSlot = function (date, time, professionalId) {
+  var getAppointmentsForSlot = (date, time, professionalId) => {
     var slotDateTime = new Date(date);
     var _a = time.split(":").map(Number),
       hours = _a[0],
       minutes = _a[1];
     slotDateTime.setHours(hours, minutes, 0, 0);
-    return appointments.filter(function (appointment) {
+    return appointments.filter((appointment) => {
       var appointmentStart = new Date(appointment.start_time);
       var appointmentEnd = new Date(appointment.end_time);
       var slotEnd = new Date(slotDateTime);
@@ -329,7 +322,7 @@ var CalendarView = function (_a) {
     });
   };
   // Get status color
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "scheduled":
         return "bg-blue-100 text-blue-800 border-blue-200";
@@ -350,24 +343,24 @@ var CalendarView = function (_a) {
     }
   };
   // Get priority indicator
-  var getPriorityIcon = function (priority) {
+  var getPriorityIcon = (priority) => {
     if (priority >= 4) return <lucide_react_1.AlertTriangle className="w-3 h-3 text-red-500" />;
     if (priority >= 3) return <lucide_react_1.Clock className="w-3 h-3 text-yellow-500" />;
     return null;
   };
   // Appointment Card Component
-  var AppointmentCard = function (_a) {
+  var AppointmentCard = (_a) => {
     var appointment = _a.appointment;
     return (
       <div
         className={"p-2 rounded-md text-xs cursor-pointer transition-all hover:shadow-md border ".concat(
           getStatusColor(appointment.status),
         )}
-        onClick={function () {
-          return onAppointmentClick === null || onAppointmentClick === void 0
+        onClick={() =>
+          onAppointmentClick === null || onAppointmentClick === void 0
             ? void 0
-            : onAppointmentClick(appointment);
-        }}
+            : onAppointmentClick(appointment)
+        }
         style={{
           borderLeftWidth: "4px",
           borderLeftColor: appointment.professionals.color || "#3B82F6",
@@ -387,109 +380,97 @@ var CalendarView = function (_a) {
     );
   };
   // Week View Component
-  var WeekView = function () {
-    return (
-      <div className="overflow-x-auto">
-        <div className="min-w-[800px]">
-          {/* Header with days */}
-          <div className="grid grid-cols-8 gap-1 mb-4">
-            <div className="p-2 font-medium text-sm text-gray-600">Horário</div>
-            {weekDays.map(function (day) {
-              return (
-                <div key={day.toISOString()} className="p-2 text-center">
-                  <div className="font-medium text-sm">
-                    {(0, date_fns_1.format)(day, "EEEEEE", { locale: locale_1.ptBR })}
-                  </div>
-                  <div
-                    className={"text-lg ".concat(
-                      (0, date_fns_1.isSameDay)(day, new Date()) ? "text-blue-600 font-bold" : "",
-                    )}
-                  >
-                    {(0, date_fns_1.format)(day, "d")}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+  var WeekView = () => (
+    <div className="overflow-x-auto">
+      <div className="min-w-[800px]">
+        {/* Header with days */}
+        <div className="grid grid-cols-8 gap-1 mb-4">
+          <div className="p-2 font-medium text-sm text-gray-600">Horário</div>
+          {weekDays.map((day) => (
+            <div key={day.toISOString()} className="p-2 text-center">
+              <div className="font-medium text-sm">
+                {(0, date_fns_1.format)(day, "EEEEEE", { locale: locale_1.ptBR })}
+              </div>
+              <div
+                className={"text-lg ".concat(
+                  (0, date_fns_1.isSameDay)(day, new Date()) ? "text-blue-600 font-bold" : "",
+                )}
+              >
+                {(0, date_fns_1.format)(day, "d")}
+              </div>
+            </div>
+          ))}
+        </div>
 
-          {/* Time slots */}
-          <div className="space-y-1">
-            {timeSlots.map(function (time) {
-              return (
-                <div key={time} className="grid grid-cols-8 gap-1">
-                  <div className="p-2 text-sm text-gray-600 font-mono border-r">{time}</div>
-                  {weekDays.map(function (day) {
-                    var slotAppointments = getAppointmentsForSlot(day, time);
-                    return (
-                      <div
-                        key={"".concat(day.toISOString(), "-").concat(time)}
-                        className="min-h-[60px] border border-gray-200 p-1 hover:bg-gray-50 cursor-pointer transition-colors"
-                        onClick={function () {
-                          return onTimeSlotClick === null || onTimeSlotClick === void 0
-                            ? void 0
-                            : onTimeSlotClick(day, time);
-                        }}
-                      >
-                        <div className="space-y-1">
-                          {slotAppointments.map(function (appointment) {
-                            return (
-                              <AppointmentCard key={appointment.id} appointment={appointment} />
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
+        {/* Time slots */}
+        <div className="space-y-1">
+          {timeSlots.map((time) => (
+            <div key={time} className="grid grid-cols-8 gap-1">
+              <div className="p-2 text-sm text-gray-600 font-mono border-r">{time}</div>
+              {weekDays.map((day) => {
+                var slotAppointments = getAppointmentsForSlot(day, time);
+                return (
+                  <div
+                    key={"".concat(day.toISOString(), "-").concat(time)}
+                    className="min-h-[60px] border border-gray-200 p-1 hover:bg-gray-50 cursor-pointer transition-colors"
+                    onClick={() =>
+                      onTimeSlotClick === null || onTimeSlotClick === void 0
+                        ? void 0
+                        : onTimeSlotClick(day, time)
+                    }
+                  >
+                    <div className="space-y-1">
+                      {slotAppointments.map((appointment) => (
+                        <AppointmentCard key={appointment.id} appointment={appointment} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </div>
-    );
-  };
+    </div>
+  );
   // Month View Component
-  var MonthView = function () {
-    return (
-      <div className="space-y-4">
-        <calendar_1.Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={function (date) {
-            return date && setSelectedDate(date);
-          }}
-          className="rounded-md border"
-          locale={locale_1.ptBR}
-        />
+  var MonthView = () => (
+    <div className="space-y-4">
+      <calendar_1.Calendar
+        mode="single"
+        selected={selectedDate}
+        onSelect={(date) => date && setSelectedDate(date)}
+        className="rounded-md border"
+        locale={locale_1.ptBR}
+      />
 
-        {/* Appointments for selected date */}
-        <card_1.Card>
-          <card_1.CardHeader>
-            <card_1.CardTitle className="text-lg">
-              Agendamentos -{" "}
-              {(0, date_fns_1.format)(selectedDate, "dd/MM/yyyy", { locale: locale_1.ptBR })}
-            </card_1.CardTitle>
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            <div className="space-y-2">
-              {appointments
-                .filter(function (appointment) {
-                  return (0, date_fns_1.isSameDay)(new Date(appointment.start_time), selectedDate);
-                })
-                .map(function (appointment) {
-                  return <AppointmentCard key={appointment.id} appointment={appointment} />;
-                })}
-              {appointments.filter(function (appointment) {
-                return (0, date_fns_1.isSameDay)(new Date(appointment.start_time), selectedDate);
-              }).length === 0 && (
-                <p className="text-gray-500 text-center py-4">Nenhum agendamento para este dia</p>
-              )}
-            </div>
-          </card_1.CardContent>
-        </card_1.Card>
-      </div>
-    );
-  };
+      {/* Appointments for selected date */}
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="text-lg">
+            Agendamentos -{" "}
+            {(0, date_fns_1.format)(selectedDate, "dd/MM/yyyy", { locale: locale_1.ptBR })}
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="space-y-2">
+            {appointments
+              .filter((appointment) =>
+                (0, date_fns_1.isSameDay)(new Date(appointment.start_time), selectedDate),
+              )
+              .map((appointment) => (
+                <AppointmentCard key={appointment.id} appointment={appointment} />
+              ))}
+            {appointments.filter((appointment) =>
+              (0, date_fns_1.isSameDay)(new Date(appointment.start_time), selectedDate),
+            ).length === 0 && (
+              <p className="text-gray-500 text-center py-4">Nenhum agendamento para este dia</p>
+            )}
+          </div>
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
   return (
     <div className="space-y-6">
       {/* Header Controls */}
@@ -522,9 +503,7 @@ var CalendarView = function (_a) {
             {/* View Mode Tabs */}
             <tabs_1.Tabs
               value={viewMode}
-              onValueChange={function (value) {
-                return setViewMode(value);
-              }}
+              onValueChange={(value) => setViewMode(value)}
               className="w-full lg:w-auto"
             >
               <tabs_1.TabsList>
@@ -572,13 +551,11 @@ var CalendarView = function (_a) {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todos os profissionais</select_1.SelectItem>
-                  {professionals.map(function (professional) {
-                    return (
-                      <select_1.SelectItem key={professional.id} value={professional.id}>
-                        {professional.full_name}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {professionals.map((professional) => (
+                    <select_1.SelectItem key={professional.id} value={professional.id}>
+                      {professional.full_name}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
 
@@ -597,9 +574,7 @@ var CalendarView = function (_a) {
               </select_1.Select>
 
               <button_1.Button
-                onClick={function () {
-                  return queryClient.invalidateQueries({ queryKey: ["appointments"] });
-                }}
+                onClick={() => queryClient.invalidateQueries({ queryKey: ["appointments"] })}
                 variant="outline"
                 size="sm"
                 disabled={appointmentsLoading}
@@ -651,9 +626,9 @@ var CalendarView = function (_a) {
                 <p className="text-sm text-gray-600">Total Hoje</p>
                 <p className="text-2xl font-bold">
                   {
-                    appointments.filter(function (apt) {
-                      return (0, date_fns_1.isSameDay)(new Date(apt.start_time), new Date());
-                    }).length
+                    appointments.filter((apt) =>
+                      (0, date_fns_1.isSameDay)(new Date(apt.start_time), new Date()),
+                    ).length
                   }
                 </p>
               </div>
@@ -668,11 +643,7 @@ var CalendarView = function (_a) {
               <div>
                 <p className="text-sm text-gray-600">Confirmados</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {
-                    appointments.filter(function (apt) {
-                      return apt.status === "confirmed";
-                    }).length
-                  }
+                  {appointments.filter((apt) => apt.status === "confirmed").length}
                 </p>
               </div>
               <lucide_react_1.CheckCircle className="w-8 h-8 text-green-500" />
@@ -686,11 +657,7 @@ var CalendarView = function (_a) {
               <div>
                 <p className="text-sm text-gray-600">Em Andamento</p>
                 <p className="text-2xl font-bold text-yellow-600">
-                  {
-                    appointments.filter(function (apt) {
-                      return apt.status === "in_progress";
-                    }).length
-                  }
+                  {appointments.filter((apt) => apt.status === "in_progress").length}
                 </p>
               </div>
               <lucide_react_1.Clock className="w-8 h-8 text-yellow-500" />

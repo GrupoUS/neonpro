@@ -3,6 +3,20 @@
 
 "use client";
 
+import type {
+  AlertCircle,
+  AlertTriangle,
+  ArrowUp,
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Lightbulb,
+  Settings,
+  Target,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type { useState } from "react";
 import type { useIntelligentThresholds } from "@/app/hooks/useIntelligentThresholds";
 import type { ReorderThreshold, ThresholdOptimization } from "@/app/types/reorder-alerts";
 import type { Badge } from "@/components/ui/badge";
@@ -27,20 +41,6 @@ import type { Label } from "@/components/ui/label";
 import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Textarea } from "@/components/ui/textarea";
-import type {
-  AlertCircle,
-  AlertTriangle,
-  ArrowUp,
-  BarChart3,
-  Brain,
-  CheckCircle,
-  Lightbulb,
-  Settings,
-  Target,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
-import type { useState } from "react";
 
 interface IntelligentThresholdManagerProps {
   clinicId: string;

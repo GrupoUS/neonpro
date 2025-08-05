@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccessibleAuthForm = AccessibleAuthForm;
 var react_1 = require("react");
@@ -171,7 +168,6 @@ var lucide_react_1 = require("lucide-react");
 var client_1 = require("@/app/utils/supabase/client");
 var sonner_1 = require("sonner");
 function AccessibleAuthForm(_a) {
-  var _this = this;
   var onSuccess = _a.onSuccess,
     _b = _a.mode,
     mode = _b === void 0 ? "login" : _b;
@@ -207,63 +203,57 @@ function AccessibleAuthForm(_a) {
     setAccessibility = _j[1];
   var supabase = (0, client_1.createClient)();
   // Detect screen reader and accessibility preferences
-  (0, react_1.useEffect)(function () {
-    var checkAccessibilityPreferences = function () {
+  (0, react_1.useEffect)(() => {
+    var checkAccessibilityPreferences = () => {
       var hasScreenReader =
         window.navigator.userAgent.includes("NVDA") ||
         window.navigator.userAgent.includes("JAWS") ||
         "speechSynthesis" in window;
       var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var prefersHighContrast = window.matchMedia("(prefers-contrast: high)").matches;
-      setAccessibility(function (prev) {
-        return __assign(__assign({}, prev), {
+      setAccessibility((prev) =>
+        __assign(__assign({}, prev), {
           screenReaderActive: hasScreenReader,
           reducedMotion: prefersReducedMotion,
           highContrast: prefersHighContrast,
-        });
-      });
+        }),
+      );
     };
     checkAccessibilityPreferences();
     // Listen for changes in accessibility preferences
     var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     var contrastQuery = window.matchMedia("(prefers-contrast: high)");
-    var handleMotionChange = function (e) {
-      setAccessibility(function (prev) {
-        return __assign(__assign({}, prev), { reducedMotion: e.matches });
-      });
+    var handleMotionChange = (e) => {
+      setAccessibility((prev) => __assign(__assign({}, prev), { reducedMotion: e.matches }));
     };
-    var handleContrastChange = function (e) {
-      setAccessibility(function (prev) {
-        return __assign(__assign({}, prev), { highContrast: e.matches });
-      });
+    var handleContrastChange = (e) => {
+      setAccessibility((prev) => __assign(__assign({}, prev), { highContrast: e.matches }));
     };
     motionQuery.addEventListener("change", handleMotionChange);
     contrastQuery.addEventListener("change", handleContrastChange);
-    return function () {
+    return () => {
       motionQuery.removeEventListener("change", handleMotionChange);
       contrastQuery.removeEventListener("change", handleContrastChange);
     };
   }, []);
   // Announce messages to screen readers
-  var announceToScreenReader = function (message) {
-    setAccessibility(function (prev) {
-      return __assign(__assign({}, prev), {
+  var announceToScreenReader = (message) => {
+    setAccessibility((prev) =>
+      __assign(__assign({}, prev), {
         announcements: __spreadArray(__spreadArray([], prev.announcements, true), [message], false),
-      });
-    });
+      }),
+    );
     // Clear announcement after it's been read
-    setTimeout(function () {
-      setAccessibility(function (prev) {
-        return __assign(__assign({}, prev), {
-          announcements: prev.announcements.filter(function (a) {
-            return a !== message;
-          }),
-        });
-      });
+    setTimeout(() => {
+      setAccessibility((prev) =>
+        __assign(__assign({}, prev), {
+          announcements: prev.announcements.filter((a) => a !== message),
+        }),
+      );
     }, 3000);
   };
   // Validate form with accessibility-friendly error messages
-  var validateForm = function () {
+  var validateForm = () => {
     var newErrors = {};
     // Email validation
     if (!formData.email) {
@@ -297,10 +287,10 @@ function AccessibleAuthForm(_a) {
     return errorCount === 0;
   };
   // Handle form submission
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error, error, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
@@ -392,23 +382,22 @@ function AccessibleAuthForm(_a) {
         }
       });
     });
-  };
   // Handle input changes with real-time validation feedback
-  var handleInputChange = function (field, value) {
-    setFormData(function (prev) {
+  var handleInputChange = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
     // Clear field-specific error when user starts typing
     if (errors[field]) {
-      setErrors(function (prev) {
+      setErrors((prev) => {
         var _a;
         return __assign(__assign({}, prev), ((_a = {}), (_a[field] = undefined), _a));
       });
     }
   };
   // Get form title and description based on mode
-  var getFormContent = function () {
+  var getFormContent = () => {
     switch (formMode) {
       case "register":
         return {
@@ -416,9 +405,7 @@ function AccessibleAuthForm(_a) {
           description: "Preencha os dados para criar sua conta no NeonPro",
           submitText: "Criar conta",
           switchText: "Já tem uma conta? Faça login",
-          switchAction: function () {
-            return setFormMode("login");
-          },
+          switchAction: () => setFormMode("login"),
         };
       case "reset":
         return {
@@ -426,9 +413,7 @@ function AccessibleAuthForm(_a) {
           description: "Digite seu email para receber instruções de recuperação",
           submitText: "Enviar email",
           switchText: "Lembrou da senha? Faça login",
-          switchAction: function () {
-            return setFormMode("login");
-          },
+          switchAction: () => setFormMode("login"),
         };
       default:
         return {
@@ -436,9 +421,7 @@ function AccessibleAuthForm(_a) {
           description: "Digite suas credenciais para acessar o NeonPro",
           submitText: "Entrar",
           switchText: "Não tem uma conta? Cadastre-se",
-          switchAction: function () {
-            return setFormMode("register");
-          },
+          switchAction: () => setFormMode("register"),
         };
     }
   };
@@ -452,9 +435,9 @@ function AccessibleAuthForm(_a) {
     >
       {/* Screen reader announcements */}
       <div aria-live="polite" aria-atomic="true" className="sr-only" role="status">
-        {accessibility.announcements.map(function (announcement, index) {
-          return <div key={index}>{announcement}</div>;
-        })}
+        {accessibility.announcements.map((announcement, index) => (
+          <div key={index}>{announcement}</div>
+        ))}
       </div>
 
       <card_1.Card className="border-2 focus-within:border-primary">
@@ -484,9 +467,7 @@ function AccessibleAuthForm(_a) {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={function (e) {
-                  return handleInputChange("email", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("email", e.target.value)}
                 className={"".concat(errors.email ? "border-red-500 focus:border-red-500" : "")}
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? "email-error" : "email-help"}
@@ -520,9 +501,7 @@ function AccessibleAuthForm(_a) {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
-                    onChange={function (e) {
-                      return handleInputChange("password", e.target.value);
-                    }}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
                     className={"pr-10 ".concat(
                       errors.password ? "border-red-500 focus:border-red-500" : "",
                     )}
@@ -539,9 +518,7 @@ function AccessibleAuthForm(_a) {
                     variant="ghost"
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={function () {
-                      return setShowPassword(!showPassword);
-                    }}
+                    onClick={() => setShowPassword(!showPassword)}
                     aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
                     tabIndex={-1}
                   >
@@ -579,9 +556,7 @@ function AccessibleAuthForm(_a) {
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     value={formData.confirmPassword}
-                    onChange={function (e) {
-                      return handleInputChange("confirmPassword", e.target.value);
-                    }}
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                     className={"pr-10 ".concat(
                       errors.confirmPassword ? "border-red-500 focus:border-red-500" : "",
                     )}
@@ -598,9 +573,7 @@ function AccessibleAuthForm(_a) {
                     variant="ghost"
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={function () {
-                      return setShowConfirmPassword(!showConfirmPassword);
-                    }}
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     aria-label={showConfirmPassword ? "Ocultar confirmação" : "Mostrar confirmação"}
                     tabIndex={-1}
                   >
@@ -670,9 +643,7 @@ function AccessibleAuthForm(_a) {
                 <button_1.Button
                   type="button"
                   variant="link"
-                  onClick={function () {
-                    return setFormMode("reset");
-                  }}
+                  onClick={() => setFormMode("reset")}
                   className="text-sm text-muted-foreground"
                   disabled={isLoading}
                 >

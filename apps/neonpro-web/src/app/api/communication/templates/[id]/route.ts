@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { CommunicationService } from "@/app/lib/services/communication-service";
 
@@ -32,7 +32,7 @@ type RouteContext = {
  * GET /api/communication/templates/[id]
  * Get a specific template by ID
  */
-export async function GET(request: NextRequest, { params }: RouteContext) {
+export async function GET(_request: NextRequest, { params }: RouteContext) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
     const {
@@ -207,7 +207,7 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
  * DELETE /api/communication/templates/[id]
  * Delete a specific template
  */
-export async function DELETE(request: NextRequest, { params }: RouteContext) {
+export async function DELETE(_request: NextRequest, { params }: RouteContext) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
     const {

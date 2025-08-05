@@ -17,32 +17,31 @@
  * Quality: APEX Framework v4.0 standards (≥9.5/10)
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -62,13 +61,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -90,9 +89,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -164,10 +161,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -176,7 +173,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnhancedPatientList = void 0;
 var react_1 = require("react");
@@ -204,7 +201,7 @@ var utils_1 = require("@/lib/utils");
  * 5. Intersection Observer cleanup
  * 6. Proper dependency arrays
  */
-var EnhancedPatientList = function () {
+var EnhancedPatientList = () => {
   // State management
   var _a = (0, react_1.useState)([]),
     patients = _a[0],
@@ -254,10 +251,10 @@ var EnhancedPatientList = function () {
    * Uses AbortController to cancel requests on unmount
    */
   var fetchPatients = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var signal, _a, data, fetchError, err_1, errorMessage;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, 3, 4]);
@@ -317,17 +314,16 @@ var EnhancedPatientList = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, toast],
   );
   /**
    * Refresh patients data with loading indicator
    */
   var refreshPatients = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsRefreshing(true);
@@ -342,75 +338,61 @@ var EnhancedPatientList = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchPatients, toast],
   );
   /**
    * Setup real-time subscription with proper cleanup
    */
-  var setupRealtimeSubscription = (0, react_1.useCallback)(
-    function () {
-      // Clean up existing subscription
-      if (supabaseSubscriptionRef.current) {
-        supabaseSubscriptionRef.current.unsubscribe();
-      }
-      // Create new subscription
-      supabaseSubscriptionRef.current = supabase
-        .channel("patients-changes")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "patients",
-          },
-          function (payload) {
-            console.log("[Real-time] Patient data change:", payload);
-            if (payload.eventType === "INSERT") {
-              setPatients(function (prev) {
-                return __spreadArray([payload.new], prev, true);
-              });
-              toast({
-                title: "New Patient",
-                description: "Patient ".concat(payload.new.name, " was added"),
-              });
-            } else if (payload.eventType === "UPDATE") {
-              setPatients(function (prev) {
-                return prev.map(function (p) {
-                  return p.id === payload.new.id ? payload.new : p;
-                });
-              });
-            } else if (payload.eventType === "DELETE") {
-              setPatients(function (prev) {
-                return prev.filter(function (p) {
-                  return p.id !== payload.old.id;
-                });
-              });
-              toast({
-                title: "Patient Removed",
-                description: "A patient record was removed",
-              });
-            }
-          },
-        )
-        .subscribe();
-      return supabaseSubscriptionRef.current;
-    },
-    [supabase, toast],
-  );
+  var setupRealtimeSubscription = (0, react_1.useCallback)(() => {
+    // Clean up existing subscription
+    if (supabaseSubscriptionRef.current) {
+      supabaseSubscriptionRef.current.unsubscribe();
+    }
+    // Create new subscription
+    supabaseSubscriptionRef.current = supabase
+      .channel("patients-changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "patients",
+        },
+        (payload) => {
+          console.log("[Real-time] Patient data change:", payload);
+          if (payload.eventType === "INSERT") {
+            setPatients((prev) => __spreadArray([payload.new], prev, true));
+            toast({
+              title: "New Patient",
+              description: "Patient ".concat(payload.new.name, " was added"),
+            });
+          } else if (payload.eventType === "UPDATE") {
+            setPatients((prev) => prev.map((p) => (p.id === payload.new.id ? payload.new : p)));
+          } else if (payload.eventType === "DELETE") {
+            setPatients((prev) => prev.filter((p) => p.id !== payload.old.id));
+            toast({
+              title: "Patient Removed",
+              description: "A patient record was removed",
+            });
+          }
+        },
+      )
+      .subscribe();
+    return supabaseSubscriptionRef.current;
+  }, [supabase, toast]);
   /**
    * Setup intersection observer for lazy loading with cleanup
    */
-  var setupIntersectionObserver = (0, react_1.useCallback)(function () {
+  var setupIntersectionObserver = (0, react_1.useCallback)(() => {
     // Clean up existing observer
     if (observerRef.current) {
       observerRef.current.disconnect();
     }
     // Create new observer for performance optimization
     observerRef.current = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
+      (entries) => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             // Load patient details on demand
             var patientId = entry.target.getAttribute("data-patient-id");
@@ -431,160 +413,135 @@ var EnhancedPatientList = function () {
   /**
    * Initial data fetch with proper cleanup
    */
-  (0, react_1.useEffect)(
-    function () {
-      fetchPatients();
-      // Cleanup function
-      return function () {
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-          abortControllerRef.current = null;
-        }
-      };
-    },
-    [fetchPatients],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchPatients();
+    // Cleanup function
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    };
+  }, [fetchPatients]);
   /**
    * Setup real-time subscription with cleanup
    */
-  (0, react_1.useEffect)(
-    function () {
-      var subscription = setupRealtimeSubscription();
-      // Cleanup function
-      return function () {
-        if (subscription) {
-          subscription.unsubscribe();
-        }
-        supabaseSubscriptionRef.current = null;
-      };
-    },
-    [setupRealtimeSubscription],
-  );
+  (0, react_1.useEffect)(() => {
+    var subscription = setupRealtimeSubscription();
+    // Cleanup function
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+      supabaseSubscriptionRef.current = null;
+    };
+  }, [setupRealtimeSubscription]);
   /**
    * Setup intersection observer with cleanup
    */
-  (0, react_1.useEffect)(
-    function () {
-      var observer = setupIntersectionObserver();
-      // Cleanup function
-      return function () {
-        if (observer) {
-          observer.disconnect();
-        }
-        observerRef.current = null;
-      };
-    },
-    [setupIntersectionObserver],
-  );
+  (0, react_1.useEffect)(() => {
+    var observer = setupIntersectionObserver();
+    // Cleanup function
+    return () => {
+      if (observer) {
+        observer.disconnect();
+      }
+      observerRef.current = null;
+    };
+  }, [setupIntersectionObserver]);
   /**
    * Auto-refresh interval with cleanup
    */
-  (0, react_1.useEffect)(
-    function () {
-      // Setup auto-refresh every 5 minutes for critical healthcare data
-      intervalRef.current = setInterval(
-        function () {
-          console.log("[Auto-refresh] Updating patient data");
-          fetchPatients();
-        },
-        5 * 60 * 1000,
-      ); // 5 minutes
-      // Cleanup function
-      return function () {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
-      };
-    },
-    [fetchPatients],
-  );
+  (0, react_1.useEffect)(() => {
+    // Setup auto-refresh every 5 minutes for critical healthcare data
+    intervalRef.current = setInterval(
+      () => {
+        console.log("[Auto-refresh] Updating patient data");
+        fetchPatients();
+      },
+      5 * 60 * 1000,
+    ); // 5 minutes
+    // Cleanup function
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [fetchPatients]);
   /**
    * Window focus event listener with cleanup for data freshness
    */
-  (0, react_1.useEffect)(
-    function () {
-      var handleWindowFocus = function () {
-        console.log("[Focus] Window focused, refreshing patient data");
-        fetchPatients();
-      };
-      window.addEventListener("focus", handleWindowFocus);
-      // Cleanup function
-      return function () {
-        window.removeEventListener("focus", handleWindowFocus);
-      };
-    },
-    [fetchPatients],
-  );
+  (0, react_1.useEffect)(() => {
+    var handleWindowFocus = () => {
+      console.log("[Focus] Window focused, refreshing patient data");
+      fetchPatients();
+    };
+    window.addEventListener("focus", handleWindowFocus);
+    // Cleanup function
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, [fetchPatients]);
   /**
    * Keyboard shortcuts with cleanup
    */
-  (0, react_1.useEffect)(
-    function () {
-      var handleKeyboardShortcuts = function (event) {
-        // Ctrl+R or F5: Refresh
-        if ((event.ctrlKey && event.key === "r") || event.key === "F5") {
-          event.preventDefault();
-          refreshPatients();
+  (0, react_1.useEffect)(() => {
+    var handleKeyboardShortcuts = (event) => {
+      // Ctrl+R or F5: Refresh
+      if ((event.ctrlKey && event.key === "r") || event.key === "F5") {
+        event.preventDefault();
+        refreshPatients();
+      }
+      // Ctrl+F: Focus search
+      if (event.ctrlKey && event.key === "f") {
+        event.preventDefault();
+        var searchInput = document.getElementById("patient-search");
+        if (searchInput) {
+          searchInput.focus();
         }
-        // Ctrl+F: Focus search
-        if (event.ctrlKey && event.key === "f") {
-          event.preventDefault();
-          var searchInput = document.getElementById("patient-search");
-          if (searchInput) {
-            searchInput.focus();
-          }
-        }
-      };
-      document.addEventListener("keydown", handleKeyboardShortcuts);
-      // Cleanup function
-      return function () {
-        document.removeEventListener("keydown", handleKeyboardShortcuts);
-      };
-    },
-    [refreshPatients],
-  ); /**
+      }
+    };
+    document.addEventListener("keydown", handleKeyboardShortcuts);
+    // Cleanup function
+    return () => {
+      document.removeEventListener("keydown", handleKeyboardShortcuts);
+    };
+  }, [refreshPatients]); /**
    * Filter patients based on current filters
    */
-  var filteredAndSearchedPatients = (0, react_1.useMemo)(
-    function () {
-      var filtered = filteredPatients;
-      // Apply status filter
-      if (filters.status !== "all") {
-        filtered = filtered.filter(function (patient) {
-          return patient.status === filters.status;
-        });
-      }
-      // Apply upcoming appointment filter
-      if (filters.hasUpcomingAppointment) {
-        filtered = filtered.filter(function (patient) {
-          return patient.next_appointment && new Date(patient.next_appointment) > new Date();
-        });
-      }
-      // Apply health plan filter
-      if (filters.healthPlan) {
-        filtered = filtered.filter(function (patient) {
-          var _a;
-          return (_a = patient.health_plan) === null || _a === void 0
-            ? void 0
-            : _a.toLowerCase().includes(filters.healthPlan.toLowerCase());
-        });
-      }
-      // Apply gender filter
-      if (filters.gender !== "all") {
-        filtered = filtered.filter(function (patient) {
-          return patient.gender === filters.gender;
-        });
-      }
-      return filtered;
-    },
-    [filteredPatients, filters],
-  );
+  var filteredAndSearchedPatients = (0, react_1.useMemo)(() => {
+    var filtered = filteredPatients;
+    // Apply status filter
+    if (filters.status !== "all") {
+      filtered = filtered.filter((patient) => patient.status === filters.status);
+    }
+    // Apply upcoming appointment filter
+    if (filters.hasUpcomingAppointment) {
+      filtered = filtered.filter(
+        (patient) => patient.next_appointment && new Date(patient.next_appointment) > new Date(),
+      );
+    }
+    // Apply health plan filter
+    if (filters.healthPlan) {
+      filtered = filtered.filter((patient) => {
+        var _a;
+        return (_a = patient.health_plan) === null || _a === void 0
+          ? void 0
+          : _a.toLowerCase().includes(filters.healthPlan.toLowerCase());
+      });
+    }
+    // Apply gender filter
+    if (filters.gender !== "all") {
+      filtered = filtered.filter((patient) => patient.gender === filters.gender);
+    }
+    return filtered;
+  }, [filteredPatients, filters]);
   /**
    * Handle patient selection for batch operations
    */
-  var handlePatientSelection = (0, react_1.useCallback)(function (patientId, selected) {
-    setSelectedPatients(function (prev) {
+  var handlePatientSelection = (0, react_1.useCallback)((patientId, selected) => {
+    setSelectedPatients((prev) => {
       var newSet = new Set(prev);
       if (selected) {
         newSet.add(patientId);
@@ -598,15 +555,9 @@ var EnhancedPatientList = function () {
    * Handle select all patients
    */
   var handleSelectAll = (0, react_1.useCallback)(
-    function (selected) {
+    (selected) => {
       if (selected) {
-        setSelectedPatients(
-          new Set(
-            filteredAndSearchedPatients.map(function (p) {
-              return p.id;
-            }),
-          ),
-        );
+        setSelectedPatients(new Set(filteredAndSearchedPatients.map((p) => p.id)));
       } else {
         setSelectedPatients(new Set());
       }
@@ -616,8 +567,8 @@ var EnhancedPatientList = function () {
   /**
    * Handle filter changes
    */
-  var handleFilterChange = (0, react_1.useCallback)(function (key, value) {
-    setFilters(function (prev) {
+  var handleFilterChange = (0, react_1.useCallback)((key, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[key] = value), _a));
     });
@@ -625,7 +576,7 @@ var EnhancedPatientList = function () {
   /**
    * Format date for display
    */
-  var formatDate = (0, react_1.useCallback)(function (dateString) {
+  var formatDate = (0, react_1.useCallback)((dateString) => {
     if (!dateString) return "N/A";
     try {
       return new Intl.DateTimeFormat("pt-BR", {
@@ -642,7 +593,7 @@ var EnhancedPatientList = function () {
   /**
    * Get patient status badge variant
    */
-  var getStatusVariant = (0, react_1.useCallback)(function (status) {
+  var getStatusVariant = (0, react_1.useCallback)((status) => {
     switch (status) {
       case "active":
         return "default";
@@ -657,9 +608,10 @@ var EnhancedPatientList = function () {
   /**
    * Check LGPD consent compliance
    */
-  var checkLGPDCompliance = (0, react_1.useCallback)(function (patient) {
-    return patient.lgpd_consent && patient.lgpd_consent === true;
-  }, []);
+  var checkLGPDCompliance = (0, react_1.useCallback)(
+    (patient) => patient.lgpd_consent && patient.lgpd_consent === true,
+    [],
+  );
   // Loading state
   if (loading) {
     return (
@@ -673,22 +625,20 @@ var EnhancedPatientList = function () {
         </div>
         <skeleton_1.Skeleton className="h-10 w-full" />
         <div className="grid gap-4">
-          {Array.from({ length: 5 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardContent className="p-4">
-                  <div className="flex items-center space-x-4">
-                    <skeleton_1.Skeleton className="h-12 w-12 rounded-full" />
-                    <div className="space-y-2 flex-1">
-                      <skeleton_1.Skeleton className="h-4 w-48" />
-                      <skeleton_1.Skeleton className="h-3 w-32" />
-                    </div>
-                    <skeleton_1.Skeleton className="h-6 w-16" />
+          {Array.from({ length: 5 }).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardContent className="p-4">
+                <div className="flex items-center space-x-4">
+                  <skeleton_1.Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="space-y-2 flex-1">
+                    <skeleton_1.Skeleton className="h-4 w-48" />
+                    <skeleton_1.Skeleton className="h-3 w-32" />
                   </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+                  <skeleton_1.Skeleton className="h-6 w-16" />
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -748,9 +698,7 @@ var EnhancedPatientList = function () {
               id="patient-search"
               placeholder="Search patients by name, email, phone, or CPF..."
               value={searchTerm}
-              onChange={function (e) {
-                return setSearchTerm(e.target.value);
-              }}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
             {isSearching && (
@@ -767,9 +715,7 @@ var EnhancedPatientList = function () {
               <label className="text-sm font-medium">Status</label>
               <select
                 value={filters.status}
-                onChange={function (e) {
-                  return handleFilterChange("status", e.target.value);
-                }}
+                onChange={(e) => handleFilterChange("status", e.target.value)}
                 className="w-full p-2 border rounded-md"
               >
                 <option value="all">All Status</option>
@@ -784,9 +730,7 @@ var EnhancedPatientList = function () {
               <label className="text-sm font-medium">Gender</label>
               <select
                 value={filters.gender}
-                onChange={function (e) {
-                  return handleFilterChange("gender", e.target.value);
-                }}
+                onChange={(e) => handleFilterChange("gender", e.target.value)}
                 className="w-full p-2 border rounded-md"
               >
                 <option value="all">All Genders</option>
@@ -802,9 +746,7 @@ var EnhancedPatientList = function () {
               <input_1.Input
                 placeholder="Filter by health plan..."
                 value={filters.healthPlan}
-                onChange={function (e) {
-                  return handleFilterChange("healthPlan", e.target.value);
-                }}
+                onChange={(e) => handleFilterChange("healthPlan", e.target.value)}
               />
             </div>
 
@@ -816,9 +758,7 @@ var EnhancedPatientList = function () {
                   type="checkbox"
                   id="upcoming-appointments"
                   checked={filters.hasUpcomingAppointment}
-                  onChange={function (e) {
-                    return handleFilterChange("hasUpcomingAppointment", e.target.checked);
-                  }}
+                  onChange={(e) => handleFilterChange("hasUpcomingAppointment", e.target.checked)}
                   className="rounded"
                 />
                 <label htmlFor="upcoming-appointments" className="text-sm">
@@ -846,9 +786,7 @@ var EnhancedPatientList = function () {
               type="checkbox"
               id="select-all"
               checked={selectedPatients.size === filteredAndSearchedPatients.length}
-              onChange={function (e) {
-                return handleSelectAll(e.target.checked);
-              }}
+              onChange={(e) => handleSelectAll(e.target.checked)}
               className="rounded"
             />
             <label htmlFor="select-all" className="text-sm">
@@ -872,7 +810,7 @@ var EnhancedPatientList = function () {
                   </p>
                 </card_1.CardContent>
               </card_1.Card>
-            : filteredAndSearchedPatients.map(function (patient) {
+            : filteredAndSearchedPatients.map((patient) => {
                 var _a, _b, _c, _d, _e, _f;
                 return (
                   <card_1.Card
@@ -889,9 +827,7 @@ var EnhancedPatientList = function () {
                         <input
                           type="checkbox"
                           checked={selectedPatients.has(patient.id)}
-                          onChange={function (e) {
-                            return handlePatientSelection(patient.id, e.target.checked);
-                          }}
+                          onChange={(e) => handlePatientSelection(patient.id, e.target.checked)}
                           className="rounded"
                           aria-label={"Select patient ".concat(patient.name)}
                         />
@@ -901,9 +837,7 @@ var EnhancedPatientList = function () {
                           <span className="text-sm font-semibold text-primary">
                             {patient.name
                               .split(" ")
-                              .map(function (n) {
-                                return n[0];
-                              })
+                              .map((n) => n[0])
                               .join("")
                               .slice(0, 2)
                               .toUpperCase()}
@@ -987,17 +921,15 @@ var EnhancedPatientList = function () {
                                   <div>
                                     <span className="font-medium">Conditions:</span>
                                     <div className="mt-1 flex flex-wrap gap-1">
-                                      {patient.medical_conditions.map(function (condition, index) {
-                                        return (
-                                          <badge_1.Badge
-                                            key={index}
-                                            variant="outline"
-                                            className="text-xs"
-                                          >
-                                            {condition}
-                                          </badge_1.Badge>
-                                        );
-                                      })}
+                                      {patient.medical_conditions.map((condition, index) => (
+                                        <badge_1.Badge
+                                          key={index}
+                                          variant="outline"
+                                          className="text-xs"
+                                        >
+                                          {condition}
+                                        </badge_1.Badge>
+                                      ))}
                                     </div>
                                   </div>
                                 )}
@@ -1008,17 +940,15 @@ var EnhancedPatientList = function () {
                                   <div>
                                     <span className="font-medium">Allergies:</span>
                                     <div className="mt-1 flex flex-wrap gap-1">
-                                      {patient.allergies.map(function (allergy, index) {
-                                        return (
-                                          <badge_1.Badge
-                                            key={index}
-                                            variant="destructive"
-                                            className="text-xs"
-                                          >
-                                            {allergy}
-                                          </badge_1.Badge>
-                                        );
-                                      })}
+                                      {patient.allergies.map((allergy, index) => (
+                                        <badge_1.Badge
+                                          key={index}
+                                          variant="destructive"
+                                          className="text-xs"
+                                        >
+                                          {allergy}
+                                        </badge_1.Badge>
+                                      ))}
                                     </div>
                                   </div>
                                 )}
@@ -1029,17 +959,15 @@ var EnhancedPatientList = function () {
                                   <div>
                                     <span className="font-medium">Medications:</span>
                                     <div className="mt-1 flex flex-wrap gap-1">
-                                      {patient.medications.map(function (medication, index) {
-                                        return (
-                                          <badge_1.Badge
-                                            key={index}
-                                            variant="secondary"
-                                            className="text-xs"
-                                          >
-                                            {medication}
-                                          </badge_1.Badge>
-                                        );
-                                      })}
+                                      {patient.medications.map((medication, index) => (
+                                        <badge_1.Badge
+                                          key={index}
+                                          variant="secondary"
+                                          className="text-xs"
+                                        >
+                                          {medication}
+                                        </badge_1.Badge>
+                                      ))}
                                     </div>
                                   </div>
                                 )}
@@ -1090,9 +1018,7 @@ var EnhancedPatientList = function () {
                 <button_1.Button
                   variant="destructive"
                   size="sm"
-                  onClick={function () {
-                    return setSelectedPatients(new Set());
-                  }}
+                  onClick={() => setSelectedPatients(new Set())}
                 >
                   Clear Selection
                 </button_1.Button>

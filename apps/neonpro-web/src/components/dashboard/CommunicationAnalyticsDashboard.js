@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommunicationAnalyticsDashboard = CommunicationAnalyticsDashboard;
 var react_1 = require("react");
@@ -170,7 +167,6 @@ var CHART_COLORS = [
   "#6366F1",
 ];
 function CommunicationAnalyticsDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userRole = _a.userRole;
   // Estado do dashboard
@@ -199,10 +195,10 @@ function CommunicationAnalyticsDashboard(_a) {
     viewMode = _h[0],
     setViewMode = _h[1];
   // Função para carregar dados do dashboard
-  var loadDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var filter, data, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -236,16 +232,12 @@ function CommunicationAnalyticsDashboard(_a) {
         }
       });
     });
-  };
   // Carregar dados quando filtros mudarem
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-    },
-    [clinicId, dateRange, selectedChannels],
-  );
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+  }, [clinicId, dateRange, selectedChannels]);
   // Função para atualizar timeframe predefinido
-  var handleTimeframeChange = function (timeframe) {
+  var handleTimeframeChange = (timeframe) => {
     setSelectedTimeframe(timeframe);
     var now = new Date();
     var from;
@@ -268,30 +260,27 @@ function CommunicationAnalyticsDashboard(_a) {
     setDateRange({ from: from, to: now });
   };
   // Métricas calculadas
-  var calculatedMetrics = (0, react_1.useMemo)(
-    function () {
-      if (!dashboardData) return null;
-      var overview = dashboardData.overview,
-        channelPerformance = dashboardData.channelPerformance,
-        roiMetrics = dashboardData.roiMetrics,
-        trends = dashboardData.trends;
-      return {
-        totalRevenue: roiMetrics.totalRevenue,
-        totalCost: roiMetrics.totalCost,
-        profit: roiMetrics.totalRevenue - roiMetrics.totalCost,
-        avgROI: roiMetrics.roi,
-        bestChannel: channelPerformance.reduce(function (best, current) {
-          return current.roi > best.roi ? current : best;
-        }),
-        worstChannel: channelPerformance.reduce(function (worst, current) {
-          return current.roi < worst.roi ? current : worst;
-        }),
-        totalMessages: overview.totalMessages,
-        avgEngagement: overview.engagementScore,
-      };
-    },
-    [dashboardData],
-  );
+  var calculatedMetrics = (0, react_1.useMemo)(() => {
+    if (!dashboardData) return null;
+    var overview = dashboardData.overview,
+      channelPerformance = dashboardData.channelPerformance,
+      roiMetrics = dashboardData.roiMetrics,
+      trends = dashboardData.trends;
+    return {
+      totalRevenue: roiMetrics.totalRevenue,
+      totalCost: roiMetrics.totalCost,
+      profit: roiMetrics.totalRevenue - roiMetrics.totalCost,
+      avgROI: roiMetrics.roi,
+      bestChannel: channelPerformance.reduce((best, current) =>
+        current.roi > best.roi ? current : best,
+      ),
+      worstChannel: channelPerformance.reduce((worst, current) =>
+        current.roi < worst.roi ? current : worst,
+      ),
+      totalMessages: overview.totalMessages,
+      avgEngagement: overview.engagementScore,
+    };
+  }, [dashboardData]);
   // Componente de loading
   if (loading) {
     return (
@@ -409,12 +398,7 @@ function CommunicationAnalyticsDashboard(_a) {
       </div>
 
       {/* Tabs para diferentes visualizações */}
-      <tabs_1.Tabs
-        value={viewMode}
-        onValueChange={function (value) {
-          return setViewMode(value);
-        }}
-      >
+      <tabs_1.Tabs value={viewMode} onValueChange={(value) => setViewMode(value)}>
         <tabs_1.TabsList className="grid w-full grid-cols-3">
           <tabs_1.TabsTrigger value="overview">Visão Geral</tabs_1.TabsTrigger>
           <tabs_1.TabsTrigger value="detailed">Detalhado</tabs_1.TabsTrigger>
@@ -438,26 +422,22 @@ function CommunicationAnalyticsDashboard(_a) {
                     <recharts_1.CartesianGrid strokeDasharray="3 3" />
                     <recharts_1.XAxis
                       dataKey="date"
-                      tickFormatter={function (date) {
-                        return (0, date_fns_1.format)(new Date(date), "dd/MM", {
+                      tickFormatter={(date) =>
+                        (0, date_fns_1.format)(new Date(date), "dd/MM", {
                           locale: locale_1.ptBR,
-                        });
-                      }}
+                        })
+                      }
                     />
                     <recharts_1.YAxis
-                      tickFormatter={function (value) {
-                        return "R$ ".concat(value.toLocaleString());
-                      }}
+                      tickFormatter={(value) => "R$ ".concat(value.toLocaleString())}
                     />
                     <recharts_1.Tooltip
-                      labelFormatter={function (date) {
-                        return (0, date_fns_1.format)(new Date(date), "dd/MM/yyyy", {
+                      labelFormatter={(date) =>
+                        (0, date_fns_1.format)(new Date(date), "dd/MM/yyyy", {
                           locale: locale_1.ptBR,
-                        });
-                      }}
-                      formatter={function (value) {
-                        return ["R$ ".concat(value.toLocaleString()), "Receita"];
-                      }}
+                        })
+                      }
+                      formatter={(value) => ["R$ ".concat(value.toLocaleString()), "Receita"]}
                     />
                     <recharts_1.Line
                       type="monotone"
@@ -487,7 +467,7 @@ function CommunicationAnalyticsDashboard(_a) {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={function (_a) {
+                      label={(_a) => {
                         var channel = _a.channel,
                           percentage = _a.percentage;
                         return "".concat(channel, ": ").concat(percentage.toFixed(1), "%");
@@ -496,22 +476,18 @@ function CommunicationAnalyticsDashboard(_a) {
                       fill="#8884d8"
                       dataKey="totalMessages"
                     >
-                      {dashboardData.channelPerformance.map(function (entry, index) {
-                        return (
-                          <recharts_1.Cell
-                            key={"cell-".concat(index)}
-                            fill={
-                              CHANNEL_COLORS[entry.channel] ||
-                              CHART_COLORS[index % CHART_COLORS.length]
-                            }
-                          />
-                        );
-                      })}
+                      {dashboardData.channelPerformance.map((entry, index) => (
+                        <recharts_1.Cell
+                          key={"cell-".concat(index)}
+                          fill={
+                            CHANNEL_COLORS[entry.channel] ||
+                            CHART_COLORS[index % CHART_COLORS.length]
+                          }
+                        />
+                      ))}
                     </recharts_1.Pie>
                     <recharts_1.Tooltip
-                      formatter={function (value) {
-                        return [value.toLocaleString(), "Mensagens"];
-                      }}
+                      formatter={(value) => [value.toLocaleString(), "Mensagens"]}
                     />
                   </recharts_1.PieChart>
                 </recharts_1.ResponsiveContainer>
@@ -529,9 +505,9 @@ function CommunicationAnalyticsDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {dashboardData.channelPerformance.map(function (channel) {
-                  return <ChannelPerformanceCard key={channel.channel} performance={channel} />;
-                })}
+                {dashboardData.channelPerformance.map((channel) => (
+                  <ChannelPerformanceCard key={channel.channel} performance={channel} />
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -624,19 +600,19 @@ function CommunicationAnalyticsDashboard(_a) {
                     <recharts_1.CartesianGrid strokeDasharray="3 3" />
                     <recharts_1.XAxis
                       dataKey="date"
-                      tickFormatter={function (date) {
-                        return (0, date_fns_1.format)(new Date(date), "dd/MM", {
+                      tickFormatter={(date) =>
+                        (0, date_fns_1.format)(new Date(date), "dd/MM", {
                           locale: locale_1.ptBR,
-                        });
-                      }}
+                        })
+                      }
                     />
                     <recharts_1.YAxis />
                     <recharts_1.Tooltip
-                      labelFormatter={function (date) {
-                        return (0, date_fns_1.format)(new Date(date), "dd/MM/yyyy", {
+                      labelFormatter={(date) =>
+                        (0, date_fns_1.format)(new Date(date), "dd/MM/yyyy", {
                           locale: locale_1.ptBR,
-                        });
-                      }}
+                        })
+                      }
                     />
                     <recharts_1.Line
                       type="monotone"
@@ -704,7 +680,7 @@ function MetricCard(_a) {
     trend = _a.trend,
     icon = _a.icon,
     color = _a.color;
-  var formatValue = function (val, fmt) {
+  var formatValue = (val, fmt) => {
     switch (fmt) {
       case "currency":
         return "R$ ".concat(val.toLocaleString("pt-BR", { minimumFractionDigits: 2 }));
@@ -716,7 +692,7 @@ function MetricCard(_a) {
         return val.toString();
     }
   };
-  var getTrendIcon = function (trendValue) {
+  var getTrendIcon = (trendValue) => {
     if (!trendValue) return <lucide_react_1.Minus className="w-3 h-3" />;
     if (trendValue > 0) return <lucide_react_1.ArrowUpRight className="w-3 h-3 text-green-600" />;
     if (trendValue < 0) return <lucide_react_1.ArrowDownRight className="w-3 h-3 text-red-600" />;
@@ -746,7 +722,7 @@ function MetricCard(_a) {
 // Componente para performance de canal
 function ChannelPerformanceCard(_a) {
   var performance = _a.performance;
-  var getChannelIcon = function (channel) {
+  var getChannelIcon = (channel) => {
     switch (channel) {
       case "email":
         return <lucide_react_1.Mail className="w-4 h-4" />;
@@ -849,7 +825,7 @@ function ROIMetricsDisplay(_a) {
 // Componente para análise de tendências
 function TrendsAnalysisDisplay(_a) {
   var trends = _a.trends;
-  var getTrendBadge = function (value, label) {
+  var getTrendBadge = (value, label) => {
     var variant = value > 5 ? "default" : value < -5 ? "destructive" : "secondary";
     var icon =
       value > 0
@@ -911,14 +887,12 @@ function BenchmarkComparisonDisplay(_a) {
       <div className="space-y-2">
         <h4 className="font-semibold">Recomendações</h4>
         <ul className="space-y-1">
-          {comparison.recommendations.map(function (rec, index) {
-            return (
-              <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                <lucide_react_1.CheckCircle className="w-3 h-3 mt-1 text-green-600 flex-shrink-0" />
-                {rec}
-              </li>
-            );
-          })}
+          {comparison.recommendations.map((rec, index) => (
+            <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+              <lucide_react_1.CheckCircle className="w-3 h-3 mt-1 text-green-600 flex-shrink-0" />
+              {rec}
+            </li>
+          ))}
         </ul>
       </div>
     </div>

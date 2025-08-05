@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Medical Records System
  * Story 2.2: Medical History & Records Implementation
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,7 +153,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.medicalRecordsManager =
   exports.MedicalRecordsManager =
@@ -171,7 +168,7 @@ var lgpd_manager_1 = require("../auth/lgpd/lgpd-manager");
 var audit_logger_1 = require("../audit/audit-logger");
 // Enums
 var MedicalRecordType;
-(function (MedicalRecordType) {
+((MedicalRecordType) => {
   MedicalRecordType["CONSULTATION"] = "consultation";
   MedicalRecordType["PROCEDURE"] = "procedure";
   MedicalRecordType["TREATMENT"] = "treatment";
@@ -181,14 +178,14 @@ var MedicalRecordType;
   MedicalRecordType["AESTHETIC"] = "aesthetic";
 })(MedicalRecordType || (exports.MedicalRecordType = MedicalRecordType = {}));
 var RecordStatus;
-(function (RecordStatus) {
+((RecordStatus) => {
   RecordStatus["DRAFT"] = "draft";
   RecordStatus["ACTIVE"] = "active";
   RecordStatus["ARCHIVED"] = "archived";
   RecordStatus["DELETED"] = "deleted";
 })(RecordStatus || (exports.RecordStatus = RecordStatus = {}));
 var AttachmentCategory;
-(function (AttachmentCategory) {
+((AttachmentCategory) => {
   AttachmentCategory["PHOTO_BEFORE"] = "photo_before";
   AttachmentCategory["PHOTO_AFTER"] = "photo_after";
   AttachmentCategory["DOCUMENT"] = "document";
@@ -247,7 +244,7 @@ var MedicalRecordSchema = zod_1.z.object({
 // ============================================================================
 // MEDICAL RECORDS MANAGER
 // ============================================================================
-var MedicalRecordsManager = /** @class */ (function () {
+var MedicalRecordsManager = /** @class */ (() => {
   function MedicalRecordsManager() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -1195,7 +1192,7 @@ var MedicalRecordsManager = /** @class */ (function () {
             };
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (record) {
+              : data.forEach((record) => {
                   // Count by type
                   stats_1.by_type[record.record_type] =
                     (stats_1.by_type[record.record_type] || 0) + 1;

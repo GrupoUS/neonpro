@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.visionAnalysisEngine = exports.VisionAnalysisEngine = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -140,7 +137,7 @@ var tf = require("@tensorflow/tfjs");
  * Advanced Computer Vision Analysis Engine for Medical Images
  * Provides ≥95% accuracy with <30s processing time
  */
-var VisionAnalysisEngine = /** @class */ (function () {
+var VisionAnalysisEngine = /** @class */ (() => {
   function VisionAnalysisEngine() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -159,7 +156,7 @@ var VisionAnalysisEngine = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 2, , 3]);
+            _b.trys.push([0, 2, undefined, 3]);
             // Load pre-trained model for medical image analysis
             // In production, this would be a custom trained model
             _a = this;
@@ -210,7 +207,7 @@ var VisionAnalysisEngine = /** @class */ (function () {
             startTime = Date.now();
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 8, , 9]);
+            _a.trys.push([1, 8, undefined, 9]);
             return [4 /*yield*/, this.loadAndPreprocessImage(beforeImageUrl)];
           case 2:
             beforeImage = _a.sent();
@@ -274,7 +271,7 @@ var VisionAnalysisEngine = /** @class */ (function () {
   /**
    * Load and preprocess image for analysis
    */
-  VisionAnalysisEngine.prototype.loadAndPreprocessImage = function (imageUrl_1) {
+  VisionAnalysisEngine.prototype.loadAndPreprocessImage = function (_imageUrl_1) {
     return __awaiter(this, arguments, void 0, function (imageUrl, options) {
       var image, _a, _b, targetSize, processedImage, error_3;
       if (options === void 0) {
@@ -283,7 +280,7 @@ var VisionAnalysisEngine = /** @class */ (function () {
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
-            _c.trys.push([0, 3, , 4]);
+            _c.trys.push([0, 3, undefined, 4]);
             _b = (_a = tf.browser).fromPixels;
             return [4 /*yield*/, this.loadImageElement(imageUrl)];
           case 1:
@@ -329,7 +326,7 @@ var VisionAnalysisEngine = /** @class */ (function () {
       return __generator(this, function (_h) {
         switch (_h.label) {
           case 0:
-            _h.trys.push([0, 11, , 12]);
+            _h.trys.push([0, 11, undefined, 12]);
             difference = tf.sub(afterImage, beforeImage);
             absoluteDifference = tf.abs(difference);
             metrics = {
@@ -395,13 +392,13 @@ var VisionAnalysisEngine = /** @class */ (function () {
    * Generate visual annotations for analysis results
    */
   VisionAnalysisEngine.prototype.generateAnnotations = function (
-    beforeImage,
-    afterImage,
+    _beforeImage,
+    _afterImage,
     changeMetrics,
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var annotations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         annotations = [];
         try {
           // Generate measurement annotations
@@ -449,15 +446,12 @@ var VisionAnalysisEngine = /** @class */ (function () {
   /**
    * Calculate overall improvement percentage
    */
-  VisionAnalysisEngine.prototype.calculateOverallImprovement = function (metrics) {
-    var values = Object.values(metrics).filter(function (value) {
-      return typeof value === "number" && value !== metrics.overallImprovement;
-    });
+  VisionAnalysisEngine.prototype.calculateOverallImprovement = (metrics) => {
+    var values = Object.values(metrics).filter(
+      (value) => typeof value === "number" && value !== metrics.overallImprovement,
+    );
     if (values.length === 0) return 0;
-    var average =
-      values.reduce(function (sum, value) {
-        return sum + value;
-      }, 0) / values.length;
+    var average = values.reduce((sum, value) => sum + value, 0) / values.length;
     return Math.round(average * 100) / 100;
   };
   /**
@@ -473,7 +467,7 @@ var VisionAnalysisEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 4, , 5]);
+            _a.trys.push([0, 4, undefined, 5]);
             if (!(this.isModelLoaded && this.model)) return [3 /*break*/, 2];
             combinedInput = tf.concat([beforeImage, afterImage], 2);
             prediction = this.model.predict(combinedInput.expandDims(0));
@@ -502,74 +496,77 @@ var VisionAnalysisEngine = /** @class */ (function () {
   };
   // Helper methods for specific analysis types
   VisionAnalysisEngine.prototype.calculateSkinTextureImprovement = function (
-    beforeImage,
-    afterImage,
+    _beforeImage,
+    _afterImage,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement skin texture analysis using computer vision
         // This would use advanced algorithms to detect texture changes
         return [2 /*return*/, Math.random() * 30 + 10]; // Placeholder: 10-40% improvement
       });
     });
   };
-  VisionAnalysisEngine.prototype.calculateWrinkleReduction = function (beforeImage, afterImage) {
+  VisionAnalysisEngine.prototype.calculateWrinkleReduction = function (_beforeImage, _afterImage) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement wrinkle detection and comparison
         return [2 /*return*/, Math.random() * 25 + 15]; // Placeholder: 15-40% reduction
       });
     });
   };
   VisionAnalysisEngine.prototype.calculatePigmentationImprovement = function (
-    beforeImage,
-    afterImage,
+    _beforeImage,
+    _afterImage,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement pigmentation analysis
         return [2 /*return*/, Math.random() * 20 + 20]; // Placeholder: 20-40% improvement
       });
     });
   };
-  VisionAnalysisEngine.prototype.calculateLesionHealing = function (beforeImage, afterImage) {
+  VisionAnalysisEngine.prototype.calculateLesionHealing = function (_beforeImage, _afterImage) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement lesion detection and healing analysis
         return [2 /*return*/, Math.random() * 35 + 25]; // Placeholder: 25-60% healing
       });
     });
   };
-  VisionAnalysisEngine.prototype.calculateScarReduction = function (beforeImage, afterImage) {
+  VisionAnalysisEngine.prototype.calculateScarReduction = function (_beforeImage, _afterImage) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement scar analysis
         return [2 /*return*/, Math.random() * 30 + 20]; // Placeholder: 20-50% reduction
       });
     });
   };
-  VisionAnalysisEngine.prototype.calculateVolumeChange = function (beforeImage, afterImage) {
+  VisionAnalysisEngine.prototype.calculateVolumeChange = function (_beforeImage, _afterImage) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement volume measurement and comparison
         return [2 /*return*/, Math.random() * 15 + 5]; // Placeholder: 5-20% change
       });
     });
   };
-  VisionAnalysisEngine.prototype.calculateSymmetryImprovement = function (beforeImage, afterImage) {
+  VisionAnalysisEngine.prototype.calculateSymmetryImprovement = function (
+    _beforeImage,
+    _afterImage,
+  ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement symmetry analysis
         return [2 /*return*/, Math.random() * 25 + 10]; // Placeholder: 10-35% improvement
       });
     });
   };
   // Image processing helper methods
-  VisionAnalysisEngine.prototype.enhanceContrast = function (image) {
+  VisionAnalysisEngine.prototype.enhanceContrast = (image) => {
     // Implement contrast enhancement
     return tf.clipByValue(tf.mul(image, 1.2), 0, 1);
   };
-  VisionAnalysisEngine.prototype.normalizeColors = function (image) {
+  VisionAnalysisEngine.prototype.normalizeColors = (image) => {
     // Implement color normalization
     var mean = tf.mean(image, [0, 1], true);
     var std = tf.moments(image, [0, 1]).variance.sqrt();
@@ -578,26 +575,22 @@ var VisionAnalysisEngine = /** @class */ (function () {
     std.dispose();
     return normalized;
   };
-  VisionAnalysisEngine.prototype.removeNoise = function (image) {
+  VisionAnalysisEngine.prototype.removeNoise = (image) => {
     // Implement noise reduction (simplified)
     return tf.avgPool(image, 3, 1, "same");
   };
   VisionAnalysisEngine.prototype.loadImageElement = function (imageUrl) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          new Promise(function (resolve, reject) {
-            var img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = function () {
-              return resolve(img);
-            };
-            img.onerror = reject;
-            img.src = imageUrl;
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        new Promise((resolve, reject) => {
+          var img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = imageUrl;
+        }),
+      ]);
     });
   };
   /**
@@ -609,7 +602,7 @@ var VisionAnalysisEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase.from("image_analysis").insert({
@@ -652,7 +645,7 @@ var VisionAnalysisEngine = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 2, , 3]);
+            _b.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase
@@ -669,21 +662,19 @@ var VisionAnalysisEngine = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              data.map(function (row) {
-                return {
-                  id: row.id,
-                  patientId: row.patient_id,
-                  beforeImageId: row.before_image_id,
-                  afterImageId: row.after_image_id,
-                  accuracyScore: row.accuracy_score,
-                  processingTime: row.processing_time,
-                  improvementPercentage: row.improvement_percentage,
-                  changeMetrics: row.change_metrics,
-                  annotations: row.annotations,
-                  confidence: row.confidence,
-                  analysisDate: new Date(row.analysis_date),
-                };
-              }),
+              data.map((row) => ({
+                id: row.id,
+                patientId: row.patient_id,
+                beforeImageId: row.before_image_id,
+                afterImageId: row.after_image_id,
+                accuracyScore: row.accuracy_score,
+                processingTime: row.processing_time,
+                improvementPercentage: row.improvement_percentage,
+                changeMetrics: row.change_metrics,
+                annotations: row.annotations,
+                confidence: row.confidence,
+                analysisDate: new Date(row.analysis_date),
+              })),
             ];
           case 2:
             error_7 = _b.sent();

@@ -4,6 +4,9 @@
 
 "use client";
 
+import type { BarChart3, Pause, Play, TestTube, Trophy } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -25,9 +28,6 @@ import type {
 } from "@/components/ui/select";
 import type { Separator } from "@/components/ui/separator";
 import type { Textarea } from "@/components/ui/textarea";
-import type { BarChart3, Pause, Play, TestTube, Trophy } from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 
 interface ABTest {
   id: string;

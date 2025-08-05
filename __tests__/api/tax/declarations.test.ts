@@ -2,7 +2,7 @@
 // Testing automated tax reporting and declaration generation
 // Author: VoidBeast V6.0 Master Orchestrator
 
-import { describe, it, expect, beforeAll, afterAll, jest } from "@jest/globals";
+import { afterAll, beforeAll, describe, expect, it, jest } from "@jest/globals";
 import { NextRequest } from "next/server";
 
 // Mock Supabase client for Tax Declarations operations

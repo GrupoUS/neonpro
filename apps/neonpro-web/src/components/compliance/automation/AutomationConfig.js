@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AutomationConfig;
 var react_1 = require("react");
@@ -215,7 +212,6 @@ var defaultConfig = {
   },
 };
 function AutomationConfig() {
-  var _this = this;
   var _a = (0, react_1.useState)(defaultConfig),
     config = _a[0],
     setConfig = _a[1];
@@ -229,10 +225,10 @@ function AutomationConfig() {
     hasChanges = _d[0],
     setHasChanges = _d[1];
   var toast = (0, use_toast_1.useToast)().toast;
-  var loadConfig = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadConfig = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -265,11 +261,10 @@ function AutomationConfig() {
         }
       });
     });
-  };
-  var saveConfig = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveConfig = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -313,12 +308,11 @@ function AutomationConfig() {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadConfig();
   }, []);
-  var updateConfig = function (path, value) {
-    setConfig(function (prev) {
+  var updateConfig = (path, value) => {
+    setConfig((prev) => {
       var newConfig = __assign({}, prev);
       var keys = path.split(".");
       var current = newConfig;
@@ -381,9 +375,7 @@ function AutomationConfig() {
             <switch_1.Switch
               id="automation-enabled"
               checked={config.enabled}
-              onCheckedChange={function (checked) {
-                return updateConfig("enabled", checked);
-              }}
+              onCheckedChange={(checked) => updateConfig("enabled", checked)}
             />
           </div>
         </card_1.CardContent>
@@ -418,9 +410,9 @@ function AutomationConfig() {
                   </label_1.Label>
                   <switch_1.Switch
                     checked={config.schedules.fullAutomation.enabled}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("schedules.fullAutomation.enabled", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("schedules.fullAutomation.enabled", checked)
+                    }
                   />
                 </div>
                 {config.schedules.fullAutomation.enabled && (
@@ -430,9 +422,9 @@ function AutomationConfig() {
                       <input_1.Input
                         id="full-cron"
                         value={config.schedules.fullAutomation.cron}
-                        onChange={function (e) {
-                          return updateConfig("schedules.fullAutomation.cron", e.target.value);
-                        }}
+                        onChange={(e) =>
+                          updateConfig("schedules.fullAutomation.cron", e.target.value)
+                        }
                         placeholder="0 2 * * *"
                       />
                       <p className="text-xs text-muted-foreground mt-1">Diariamente às 02:00</p>
@@ -441,9 +433,9 @@ function AutomationConfig() {
                       <label_1.Label htmlFor="timezone">Fuso Horário</label_1.Label>
                       <select_1.Select
                         value={config.schedules.fullAutomation.timezone}
-                        onValueChange={function (value) {
-                          return updateConfig("schedules.fullAutomation.timezone", value);
-                        }}
+                        onValueChange={(value) =>
+                          updateConfig("schedules.fullAutomation.timezone", value)
+                        }
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue />
@@ -481,9 +473,9 @@ function AutomationConfig() {
                   </div>
                   <switch_1.Switch
                     checked={config.schedules.consentManagement.enabled}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("schedules.consentManagement.enabled", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("schedules.consentManagement.enabled", checked)
+                    }
                   />
                 </div>
                 {config.schedules.consentManagement.enabled && (
@@ -492,9 +484,9 @@ function AutomationConfig() {
                     <input_1.Input
                       id="consent-cron"
                       value={config.schedules.consentManagement.cron}
-                      onChange={function (e) {
-                        return updateConfig("schedules.consentManagement.cron", e.target.value);
-                      }}
+                      onChange={(e) =>
+                        updateConfig("schedules.consentManagement.cron", e.target.value)
+                      }
                       placeholder="0 */6 * * *"
                     />
                     <p className="text-xs text-muted-foreground mt-1">A cada 6 horas</p>
@@ -517,9 +509,9 @@ function AutomationConfig() {
                   </div>
                   <switch_1.Switch
                     checked={config.schedules.dataSubjectRights.enabled}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("schedules.dataSubjectRights.enabled", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("schedules.dataSubjectRights.enabled", checked)
+                    }
                   />
                 </div>
                 {config.schedules.dataSubjectRights.enabled && (
@@ -528,9 +520,9 @@ function AutomationConfig() {
                     <input_1.Input
                       id="rights-cron"
                       value={config.schedules.dataSubjectRights.cron}
-                      onChange={function (e) {
-                        return updateConfig("schedules.dataSubjectRights.cron", e.target.value);
-                      }}
+                      onChange={(e) =>
+                        updateConfig("schedules.dataSubjectRights.cron", e.target.value)
+                      }
                       placeholder="0 */4 * * *"
                     />
                     <p className="text-xs text-muted-foreground mt-1">A cada 4 horas</p>
@@ -564,9 +556,9 @@ function AutomationConfig() {
                   </div>
                   <switch_1.Switch
                     checked={config.features.autoConsentManagement}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("features.autoConsentManagement", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.autoConsentManagement", checked)
+                    }
                   />
                 </div>
 
@@ -581,9 +573,9 @@ function AutomationConfig() {
                   </div>
                   <switch_1.Switch
                     checked={config.features.autoDataSubjectRights}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("features.autoDataSubjectRights", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.autoDataSubjectRights", checked)
+                    }
                   />
                 </div>
 
@@ -598,9 +590,9 @@ function AutomationConfig() {
                   </div>
                   <switch_1.Switch
                     checked={config.features.autoAuditReporting}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("features.autoAuditReporting", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.autoAuditReporting", checked)
+                    }
                   />
                 </div>
 
@@ -615,9 +607,9 @@ function AutomationConfig() {
                   </div>
                   <switch_1.Switch
                     checked={config.features.autoAnonymization}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("features.autoAnonymization", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.autoAnonymization", checked)
+                    }
                   />
                 </div>
 
@@ -632,9 +624,9 @@ function AutomationConfig() {
                   </div>
                   <switch_1.Switch
                     checked={config.features.realTimeMonitoring}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("features.realTimeMonitoring", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("features.realTimeMonitoring", checked)
+                    }
                   />
                 </div>
 
@@ -649,9 +641,7 @@ function AutomationConfig() {
                   </div>
                   <switch_1.Switch
                     checked={config.features.smartAlerts}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("features.smartAlerts", checked);
-                    }}
+                    onCheckedChange={(checked) => updateConfig("features.smartAlerts", checked)}
                   />
                 </div>
               </div>
@@ -679,9 +669,9 @@ function AutomationConfig() {
                   </label_1.Label>
                   <switch_1.Switch
                     checked={config.notifications.email.enabled}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("notifications.email.enabled", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("notifications.email.enabled", checked)
+                    }
                   />
                 </div>
                 {config.notifications.email.enabled && (
@@ -691,14 +681,12 @@ function AutomationConfig() {
                       <textarea_1.Textarea
                         id="email-recipients"
                         value={config.notifications.email.recipients.join("\n")}
-                        onChange={function (e) {
-                          return updateConfig(
+                        onChange={(e) =>
+                          updateConfig(
                             "notifications.email.recipients",
-                            e.target.value.split("\n").filter(function (email) {
-                              return email.trim();
-                            }),
-                          );
-                        }}
+                            e.target.value.split("\n").filter((email) => email.trim()),
+                          )
+                        }
                         placeholder="admin@clinica.com\nresponsavel@clinica.com"
                         rows={3}
                       />
@@ -716,9 +704,9 @@ function AutomationConfig() {
                   <label_1.Label className="text-base font-medium">Webhook</label_1.Label>
                   <switch_1.Switch
                     checked={config.notifications.webhook.enabled}
-                    onCheckedChange={function (checked) {
-                      return updateConfig("notifications.webhook.enabled", checked);
-                    }}
+                    onCheckedChange={(checked) =>
+                      updateConfig("notifications.webhook.enabled", checked)
+                    }
                   />
                 </div>
                 {config.notifications.webhook.enabled && (
@@ -727,9 +715,7 @@ function AutomationConfig() {
                     <input_1.Input
                       id="webhook-url"
                       value={config.notifications.webhook.url}
-                      onChange={function (e) {
-                        return updateConfig("notifications.webhook.url", e.target.value);
-                      }}
+                      onChange={(e) => updateConfig("notifications.webhook.url", e.target.value)}
                       placeholder="https://api.exemplo.com/webhook"
                     />
                   </div>
@@ -760,9 +746,9 @@ function AutomationConfig() {
                     min="1"
                     max="10"
                     value={config.limits.maxConcurrentJobs}
-                    onChange={function (e) {
-                      return updateConfig("limits.maxConcurrentJobs", parseInt(e.target.value));
-                    }}
+                    onChange={(e) =>
+                      updateConfig("limits.maxConcurrentJobs", parseInt(e.target.value))
+                    }
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Número máximo de processos executando simultaneamente
@@ -777,9 +763,7 @@ function AutomationConfig() {
                     min="300"
                     max="7200"
                     value={config.limits.jobTimeout}
-                    onChange={function (e) {
-                      return updateConfig("limits.jobTimeout", parseInt(e.target.value));
-                    }}
+                    onChange={(e) => updateConfig("limits.jobTimeout", parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Tempo limite para execução de cada job
@@ -794,9 +778,7 @@ function AutomationConfig() {
                     min="0"
                     max="5"
                     value={config.limits.retryAttempts}
-                    onChange={function (e) {
-                      return updateConfig("limits.retryAttempts", parseInt(e.target.value));
-                    }}
+                    onChange={(e) => updateConfig("limits.retryAttempts", parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Número de tentativas em caso de falha
@@ -811,9 +793,7 @@ function AutomationConfig() {
                     min="10"
                     max="1000"
                     value={config.limits.batchSize}
-                    onChange={function (e) {
-                      return updateConfig("limits.batchSize", parseInt(e.target.value));
-                    }}
+                    onChange={(e) => updateConfig("limits.batchSize", parseInt(e.target.value))}
                   />
                   <p className="text-xs text-muted-foreground mt-1">
                     Número de registros processados por lote

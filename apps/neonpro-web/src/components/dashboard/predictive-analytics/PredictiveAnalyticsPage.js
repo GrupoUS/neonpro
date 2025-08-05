@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PredictiveAnalyticsPage;
 var badge_1 = require("@/components/ui/badge");
@@ -144,7 +141,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function PredictiveAnalyticsPage() {
-  var _this = this;
   var _a = (0, react_1.useState)("dashboard"),
     activeTab = _a[0],
     setActiveTab = _a[1];
@@ -173,11 +169,11 @@ function PredictiveAnalyticsPage() {
     statusFilter = _j[0],
     setStatusFilter = _j[1];
   // Carregar dados iniciais
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadData();
   }, []);
-  var loadData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a,
         modelsRes,
         predictionsRes,
@@ -191,7 +187,7 @@ function PredictiveAnalyticsPage() {
         accuracyData,
         recommendationsData,
         error_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             setIsLoading(true);
@@ -250,8 +246,7 @@ function PredictiveAnalyticsPage() {
         }
       });
     });
-  };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
         return "destructive";
@@ -263,7 +258,7 @@ function PredictiveAnalyticsPage() {
         return "outline";
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "active":
         return "default";
@@ -315,11 +310,7 @@ function PredictiveAnalyticsPage() {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">
-              {
-                models.filter(function (m) {
-                  return m.status === "active";
-                }).length
-              }
+              {models.filter((m) => m.status === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">Total de modelos treinados</p>
           </card_1.CardContent>
@@ -345,11 +336,7 @@ function PredictiveAnalyticsPage() {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">
-              {
-                alerts.filter(function (a) {
-                  return a.status === "active";
-                }).length
-              }
+              {alerts.filter((a) => a.status === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">Requerem atenção</p>
           </card_1.CardContent>
@@ -363,9 +350,9 @@ function PredictiveAnalyticsPage() {
           <card_1.CardContent>
             <div className="text-2xl font-bold">
               {
-                predictions.filter(function (p) {
-                  return new Date(p.prediction_date).toDateString() === new Date().toDateString();
-                }).length
+                predictions.filter(
+                  (p) => new Date(p.prediction_date).toDateString() === new Date().toDateString(),
+                ).length
               }
             </div>
             <p className="text-xs text-muted-foreground">Geradas automaticamente</p>
@@ -398,7 +385,7 @@ function PredictiveAnalyticsPage() {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {recommendations.slice(0, 3).map(function (rec, index) {
+                  {recommendations.slice(0, 3).map((rec, index) => {
                     var _a;
                     return (
                       <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
@@ -413,9 +400,7 @@ function PredictiveAnalyticsPage() {
                             <ul className="text-xs text-muted-foreground list-disc list-inside">
                               {(_a = rec.suggested_actions) === null || _a === void 0
                                 ? void 0
-                                : _a.map(function (action, i) {
-                                    return <li key={i}>{action}</li>;
-                                  })}
+                                : _a.map((action, i) => <li key={i}>{action}</li>)}
                             </ul>
                           </div>
                         </div>
@@ -437,29 +422,27 @@ function PredictiveAnalyticsPage() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {models.slice(0, 5).map(function (model) {
-                  return (
-                    <div
-                      key={model.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div>
-                        <h4 className="font-medium">{model.name}</h4>
-                        <p className="text-sm text-muted-foreground">{model.description}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <badge_1.Badge variant={getStatusColor(model.status)}>
-                          {model.status}
-                        </badge_1.Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {model.accuracy_score
-                            ? "".concat((model.accuracy_score * 100).toFixed(1), "%")
-                            : "N/A"}
-                        </span>
-                      </div>
+                {models.slice(0, 5).map((model) => (
+                  <div
+                    key={model.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
+                    <div>
+                      <h4 className="font-medium">{model.name}</h4>
+                      <p className="text-sm text-muted-foreground">{model.description}</p>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center gap-2">
+                      <badge_1.Badge variant={getStatusColor(model.status)}>
+                        {model.status}
+                      </badge_1.Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {model.accuracy_score
+                          ? "".concat((model.accuracy_score * 100).toFixed(1), "%")
+                          : "N/A"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -472,9 +455,7 @@ function PredictiveAnalyticsPage() {
               <input_1.Input
                 placeholder="Buscar modelos..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return setSearchTerm(e.target.value);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="max-w-sm"
               />
             </div>
@@ -494,65 +475,62 @@ function PredictiveAnalyticsPage() {
           {/* Lista de Modelos */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {models
-              .filter(function (model) {
-                return (
+              .filter(
+                (model) =>
                   (statusFilter === "all" || model.status === statusFilter) &&
-                  model.name.toLowerCase().includes(searchTerm.toLowerCase())
-                );
-              })
-              .map(function (model) {
-                return (
-                  <card_1.Card key={model.id}>
-                    <card_1.CardHeader>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <card_1.CardTitle className="text-lg">{model.name}</card_1.CardTitle>
-                          <card_1.CardDescription>{model.description}</card_1.CardDescription>
-                        </div>
-                        <badge_1.Badge variant={getStatusColor(model.status)}>
-                          {model.status}
-                        </badge_1.Badge>
+                  model.name.toLowerCase().includes(searchTerm.toLowerCase()),
+              )
+              .map((model) => (
+                <card_1.Card key={model.id}>
+                  <card_1.CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <card_1.CardTitle className="text-lg">{model.name}</card_1.CardTitle>
+                        <card_1.CardDescription>{model.description}</card_1.CardDescription>
                       </div>
-                    </card_1.CardHeader>
-                    <card_1.CardContent>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Tipo:</span>
-                          <p className="font-medium">{model.model_type}</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Precisão:</span>
-                          <p className="font-medium">
-                            {model.accuracy_score
-                              ? "".concat((model.accuracy_score * 100).toFixed(1), "%")
-                              : "N/A"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Última Atualização:</span>
-                          <p className="font-medium">
-                            {new Date(model.updated_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Versão:</span>
-                          <p className="font-medium">{model.version}</p>
-                        </div>
+                      <badge_1.Badge variant={getStatusColor(model.status)}>
+                        {model.status}
+                      </badge_1.Badge>
+                    </div>
+                  </card_1.CardHeader>
+                  <card_1.CardContent>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Tipo:</span>
+                        <p className="font-medium">{model.model_type}</p>
                       </div>
-                      <div className="flex gap-2 mt-4">
-                        <button_1.Button size="sm" variant="outline">
-                          <lucide_react_1.Settings className="h-4 w-4 mr-2" />
-                          Configurar
-                        </button_1.Button>
-                        <button_1.Button size="sm" variant="outline">
-                          <lucide_react_1.BarChart3 className="h-4 w-4 mr-2" />
-                          Métricas
-                        </button_1.Button>
+                      <div>
+                        <span className="text-muted-foreground">Precisão:</span>
+                        <p className="font-medium">
+                          {model.accuracy_score
+                            ? "".concat((model.accuracy_score * 100).toFixed(1), "%")
+                            : "N/A"}
+                        </p>
                       </div>
-                    </card_1.CardContent>
-                  </card_1.Card>
-                );
-              })}
+                      <div>
+                        <span className="text-muted-foreground">Última Atualização:</span>
+                        <p className="font-medium">
+                          {new Date(model.updated_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Versão:</span>
+                        <p className="font-medium">{model.version}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                      <button_1.Button size="sm" variant="outline">
+                        <lucide_react_1.Settings className="h-4 w-4 mr-2" />
+                        Configurar
+                      </button_1.Button>
+                      <button_1.Button size="sm" variant="outline">
+                        <lucide_react_1.BarChart3 className="h-4 w-4 mr-2" />
+                        Métricas
+                      </button_1.Button>
+                    </div>
+                  </card_1.CardContent>
+                </card_1.Card>
+              ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -566,27 +544,25 @@ function PredictiveAnalyticsPage() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {predictions.slice(0, 10).map(function (prediction) {
-                  return (
-                    <div
-                      key={prediction.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div>
-                        <h4 className="font-medium">Predição #{prediction.id.slice(0, 8)}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Data: {new Date(prediction.prediction_date).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">{prediction.predicted_value}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Confiança: {(prediction.confidence_score * 100).toFixed(0)}%
-                        </p>
-                      </div>
+                {predictions.slice(0, 10).map((prediction) => (
+                  <div
+                    key={prediction.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
+                    <div>
+                      <h4 className="font-medium">Predição #{prediction.id.slice(0, 8)}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Data: {new Date(prediction.prediction_date).toLocaleDateString()}
+                      </p>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <p className="font-medium">{prediction.predicted_value}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Confiança: {(prediction.confidence_score * 100).toFixed(0)}%
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -602,25 +578,23 @@ function PredictiveAnalyticsPage() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {alerts.map(function (alert) {
-                  return (
-                    <div key={alert.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                      <lucide_react_1.AlertTriangle className="h-5 w-5 text-orange-500 mt-0.5" />
-                      <div className="flex-1">
-                        <div className="flex justify-between items-start">
-                          <h4 className="font-medium">{alert.title}</h4>
-                          <badge_1.Badge variant={getPriorityColor(alert.severity)}>
-                            {alert.severity}
-                          </badge_1.Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-1">{alert.message}</p>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          {new Date(alert.created_at).toLocaleString()}
-                        </p>
+                {alerts.map((alert) => (
+                  <div key={alert.id} className="flex items-start gap-3 p-3 border rounded-lg">
+                    <lucide_react_1.AlertTriangle className="h-5 w-5 text-orange-500 mt-0.5" />
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <h4 className="font-medium">{alert.title}</h4>
+                        <badge_1.Badge variant={getPriorityColor(alert.severity)}>
+                          {alert.severity}
+                        </badge_1.Badge>
                       </div>
+                      <p className="text-sm text-muted-foreground mt-1">{alert.message}</p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {new Date(alert.created_at).toLocaleString()}
+                      </p>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

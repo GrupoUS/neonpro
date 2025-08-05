@@ -5,10 +5,10 @@
  * This hook provides permission checking and role management for React components
  */
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
-import type { UserRole, Permission, PermissionResult } from "@/types/rbac";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 import type { useAuth } from "@/contexts/auth-context";
 import type { createClient } from "@/lib/supabase/client";
+import type { Permission, PermissionResult, UserRole } from "@/types/rbac";
 
 /**
  * Permission check cache for frontend optimization

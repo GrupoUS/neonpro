@@ -1,21 +1,21 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { Calendar, Edit, MessageSquare, MoreVertical, Plus, Trash2 } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
 import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Plus, MessageSquare, MoreVertical, Trash2, Edit, Calendar } from "lucide-react";
-import type { toast } from "sonner";
-import type { formatDistanceToNow } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
 
 interface Conversation {
   id: string;

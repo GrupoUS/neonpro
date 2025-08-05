@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Report Generator Component
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportGenerator = void 0;
 var react_1 = require("react");
@@ -229,24 +226,25 @@ var DEFAULT_TEMPLATES = [
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
-var formatFileSize = function (bytes) {
+var formatFileSize = (bytes) => {
   if (bytes === 0) return "0 Bytes";
   var k = 1024;
   var sizes = ["Bytes", "KB", "MB", "GB"];
   var i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
 };
-var getNextRunTime = function (schedule) {
+var getNextRunTime = (schedule) => {
   var now = new Date();
   var nextRun = new Date();
   switch (schedule.frequency) {
     case "daily":
       nextRun.setDate(now.getDate() + 1);
       break;
-    case "weekly":
+    case "weekly": {
       var daysUntilNext = (schedule.dayOfWeek - now.getDay() + 7) % 7;
       nextRun.setDate(now.getDate() + (daysUntilNext || 7));
       break;
+    }
     case "monthly":
       nextRun.setMonth(now.getMonth() + 1);
       nextRun.setDate(schedule.dayOfMonth);
@@ -265,7 +263,7 @@ var getNextRunTime = function (schedule) {
 // ============================================================================
 // REPORT ITEM COMPONENT
 // ============================================================================
-var ReportItem = function (_a) {
+var ReportItem = (_a) => {
   var report = _a.report,
     onDelete = _a.onDelete,
     onDownload = _a.onDownload,
@@ -301,9 +299,7 @@ var ReportItem = function (_a) {
         <button_1.Button
           variant="ghost"
           size="sm"
-          onClick={function () {
-            return onDownload(report.id);
-          }}
+          onClick={() => onDownload(report.id)}
           disabled={report.status !== "completed"}
         >
           <lucide_react_1.Download className="h-4 w-4" />
@@ -312,9 +308,7 @@ var ReportItem = function (_a) {
         <button_1.Button
           variant="ghost"
           size="sm"
-          onClick={function () {
-            return onShare(report.id);
-          }}
+          onClick={() => onShare(report.id)}
           disabled={report.status !== "completed"}
         >
           <lucide_react_1.Share className="h-4 w-4" />
@@ -323,9 +317,7 @@ var ReportItem = function (_a) {
         <button_1.Button
           variant="ghost"
           size="sm"
-          onClick={function () {
-            return onDelete(report.id);
-          }}
+          onClick={() => onDelete(report.id)}
           className="text-red-600 hover:text-red-700"
         >
           <lucide_react_1.Trash2 className="h-4 w-4" />
@@ -337,7 +329,7 @@ var ReportItem = function (_a) {
 // ============================================================================
 // SCHEDULE ITEM COMPONENT
 // ============================================================================
-var ScheduleItem = function (_a) {
+var ScheduleItem = (_a) => {
   var schedule = _a.schedule,
     onEdit = _a.onEdit,
     onDelete = _a.onDelete,
@@ -368,27 +360,17 @@ var ScheduleItem = function (_a) {
       <div className="flex items-center gap-2">
         <switch_1.Switch
           checked={schedule.enabled}
-          onCheckedChange={function (enabled) {
-            return onToggle(schedule.id, enabled);
-          }}
+          onCheckedChange={(enabled) => onToggle(schedule.id, enabled)}
         />
 
-        <button_1.Button
-          variant="ghost"
-          size="sm"
-          onClick={function () {
-            return onEdit(schedule);
-          }}
-        >
+        <button_1.Button variant="ghost" size="sm" onClick={() => onEdit(schedule)}>
           <lucide_react_1.Edit className="h-4 w-4" />
         </button_1.Button>
 
         <button_1.Button
           variant="ghost"
           size="sm"
-          onClick={function () {
-            return onDelete(schedule.id);
-          }}
+          onClick={() => onDelete(schedule.id)}
           className="text-red-600 hover:text-red-700"
         >
           <lucide_react_1.Trash2 className="h-4 w-4" />
@@ -400,7 +382,7 @@ var ScheduleItem = function (_a) {
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
-var ReportGenerator = function (_a) {
+var ReportGenerator = (_a) => {
   // ============================================================================
   // STATE MANAGEMENT
   // ============================================================================
@@ -460,10 +442,10 @@ var ReportGenerator = function (_a) {
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  var handleGenerateReport = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleGenerateReport = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!reportConfig.templateId || !reportConfig.title) {
@@ -506,11 +488,10 @@ var ReportGenerator = function (_a) {
         }
       });
     });
-  };
-  var handleScheduleReport = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleScheduleReport = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!scheduleConfig.name || !scheduleConfig.templateId) {
@@ -547,21 +528,18 @@ var ReportGenerator = function (_a) {
         }
       });
     });
-  };
-  var handleEditSchedule = function (schedule) {
+  var handleEditSchedule = (schedule) => {
     setEditingSchedule(schedule);
     setScheduleConfig(schedule);
     setShowScheduleDialog(true);
   };
-  var handleToggleSchedule = function (scheduleId, enabled) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleToggleSchedule = (scheduleId, enabled) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var schedule;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            schedule = schedules.find(function (s) {
-              return s.id === scheduleId;
-            });
+            schedule = schedules.find((s) => s.id === scheduleId);
             if (!schedule) return [3 /*break*/, 2];
             return [
               4 /*yield*/,
@@ -575,50 +553,88 @@ var ReportGenerator = function (_a) {
         }
       });
     });
-  };
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  var renderNewReportDialog = function () {
-    return (
-      <dialog_1.Dialog open={showNewReportDialog} onOpenChange={setShowNewReportDialog}>
-        <dialog_1.DialogTrigger asChild>
-          <button_1.Button className="gap-2">
-            <lucide_react_1.Plus className="h-4 w-4" />
-            Novo Relatório
-          </button_1.Button>
-        </dialog_1.DialogTrigger>
+  var renderNewReportDialog = () => (
+    <dialog_1.Dialog open={showNewReportDialog} onOpenChange={setShowNewReportDialog}>
+      <dialog_1.DialogTrigger asChild>
+        <button_1.Button className="gap-2">
+          <lucide_react_1.Plus className="h-4 w-4" />
+          Novo Relatório
+        </button_1.Button>
+      </dialog_1.DialogTrigger>
 
-        <dialog_1.DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <dialog_1.DialogHeader>
-            <dialog_1.DialogTitle>Gerar Novo Relatório</dialog_1.DialogTitle>
-            <dialog_1.DialogDescription>
-              Configure os parâmetros para gerar um novo relatório do dashboard.
-            </dialog_1.DialogDescription>
-          </dialog_1.DialogHeader>
+      <dialog_1.DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <dialog_1.DialogHeader>
+          <dialog_1.DialogTitle>Gerar Novo Relatório</dialog_1.DialogTitle>
+          <dialog_1.DialogDescription>
+            Configure os parâmetros para gerar um novo relatório do dashboard.
+          </dialog_1.DialogDescription>
+        </dialog_1.DialogHeader>
 
-          <div className="space-y-6">
-            {/* Template Selection */}
+        <div className="space-y-6">
+          {/* Template Selection */}
+          <div className="space-y-2">
+            <label_1.Label>Template</label_1.Label>
+            <select_1.Select
+              value={reportConfig.templateId}
+              onValueChange={(value) =>
+                setReportConfig((prev) => __assign(__assign({}, prev), { templateId: value }))
+              }
+            >
+              <select_1.SelectTrigger>
+                <select_1.SelectValue placeholder="Selecione um template" />
+              </select_1.SelectTrigger>
+              <select_1.SelectContent>
+                {templates.map((template) => (
+                  <select_1.SelectItem key={template.id} value={template.id}>
+                    <div>
+                      <div className="font-medium">{template.name}</div>
+                      <div className="text-sm text-gray-500">{template.description}</div>
+                    </div>
+                  </select_1.SelectItem>
+                ))}
+              </select_1.SelectContent>
+            </select_1.Select>
+          </div>
+
+          {/* Basic Info */}
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label_1.Label>Template</label_1.Label>
+              <label_1.Label>Título</label_1.Label>
+              <input_1.Input
+                value={reportConfig.title}
+                onChange={(e) =>
+                  setReportConfig((prev) => __assign(__assign({}, prev), { title: e.target.value }))
+                }
+                placeholder="Nome do relatório"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label_1.Label>Formato</label_1.Label>
               <select_1.Select
-                value={reportConfig.templateId}
-                onValueChange={function (value) {
-                  return setReportConfig(function (prev) {
-                    return __assign(__assign({}, prev), { templateId: value });
-                  });
-                }}
+                value={reportConfig.format}
+                onValueChange={(value) =>
+                  setReportConfig((prev) => __assign(__assign({}, prev), { format: value }))
+                }
               >
                 <select_1.SelectTrigger>
-                  <select_1.SelectValue placeholder="Selecione um template" />
+                  <select_1.SelectValue />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {templates.map(function (template) {
+                  {Object.entries(REPORT_FORMATS).map((_a) => {
+                    var key = _a[0],
+                      config = _a[1];
                     return (
-                      <select_1.SelectItem key={template.id} value={template.id}>
-                        <div>
-                          <div className="font-medium">{template.name}</div>
-                          <div className="text-sm text-gray-500">{template.description}</div>
+                      <select_1.SelectItem key={key} value={key}>
+                        <div className="flex items-center gap-2">
+                          <config.icon className="h-4 w-4" />
+                          <div>
+                            <div>{config.label}</div>
+                            <div className="text-xs text-gray-500">{config.description}</div>
+                          </div>
                         </div>
                       </select_1.SelectItem>
                     );
@@ -626,179 +642,125 @@ var ReportGenerator = function (_a) {
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
+          </div>
 
-            {/* Basic Info */}
+          {/* Description */}
+          <div className="space-y-2">
+            <label_1.Label>Descrição (opcional)</label_1.Label>
+            <textarea_1.Textarea
+              value={reportConfig.description}
+              onChange={(e) =>
+                setReportConfig((prev) =>
+                  __assign(__assign({}, prev), { description: e.target.value }),
+                )
+              }
+              placeholder="Descrição do relatório"
+              rows={3}
+            />
+          </div>
+
+          {/* Date Range */}
+          <div className="space-y-2">
+            <label_1.Label>Período</label_1.Label>
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label_1.Label>Título</label_1.Label>
+              <div>
+                <label_1.Label className="text-sm text-gray-600">Data Inicial</label_1.Label>
                 <input_1.Input
-                  value={reportConfig.title}
-                  onChange={function (e) {
-                    return setReportConfig(function (prev) {
-                      return __assign(__assign({}, prev), { title: e.target.value });
-                    });
-                  }}
-                  placeholder="Nome do relatório"
+                  type="date"
+                  value={reportConfig.dateRange.start.toISOString().split("T")[0]}
+                  onChange={(e) =>
+                    setReportConfig((prev) =>
+                      __assign(__assign({}, prev), {
+                        dateRange: __assign(__assign({}, prev.dateRange), {
+                          start: new Date(e.target.value),
+                        }),
+                      }),
+                    )
+                  }
                 />
               </div>
 
-              <div className="space-y-2">
-                <label_1.Label>Formato</label_1.Label>
-                <select_1.Select
-                  value={reportConfig.format}
-                  onValueChange={function (value) {
-                    return setReportConfig(function (prev) {
-                      return __assign(__assign({}, prev), { format: value });
-                    });
-                  }}
-                >
-                  <select_1.SelectTrigger>
-                    <select_1.SelectValue />
-                  </select_1.SelectTrigger>
-                  <select_1.SelectContent>
-                    {Object.entries(REPORT_FORMATS).map(function (_a) {
-                      var key = _a[0],
-                        config = _a[1];
-                      return (
-                        <select_1.SelectItem key={key} value={key}>
-                          <div className="flex items-center gap-2">
-                            <config.icon className="h-4 w-4" />
-                            <div>
-                              <div>{config.label}</div>
-                              <div className="text-xs text-gray-500">{config.description}</div>
-                            </div>
-                          </div>
-                        </select_1.SelectItem>
-                      );
-                    })}
-                  </select_1.SelectContent>
-                </select_1.Select>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="space-y-2">
-              <label_1.Label>Descrição (opcional)</label_1.Label>
-              <textarea_1.Textarea
-                value={reportConfig.description}
-                onChange={function (e) {
-                  return setReportConfig(function (prev) {
-                    return __assign(__assign({}, prev), { description: e.target.value });
-                  });
-                }}
-                placeholder="Descrição do relatório"
-                rows={3}
-              />
-            </div>
-
-            {/* Date Range */}
-            <div className="space-y-2">
-              <label_1.Label>Período</label_1.Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label_1.Label className="text-sm text-gray-600">Data Inicial</label_1.Label>
-                  <input_1.Input
-                    type="date"
-                    value={reportConfig.dateRange.start.toISOString().split("T")[0]}
-                    onChange={function (e) {
-                      return setReportConfig(function (prev) {
-                        return __assign(__assign({}, prev), {
-                          dateRange: __assign(__assign({}, prev.dateRange), {
-                            start: new Date(e.target.value),
-                          }),
-                        });
-                      });
-                    }}
-                  />
-                </div>
-
-                <div>
-                  <label_1.Label className="text-sm text-gray-600">Data Final</label_1.Label>
-                  <input_1.Input
-                    type="date"
-                    value={reportConfig.dateRange.end.toISOString().split("T")[0]}
-                    onChange={function (e) {
-                      return setReportConfig(function (prev) {
-                        return __assign(__assign({}, prev), {
-                          dateRange: __assign(__assign({}, prev.dateRange), {
-                            end: new Date(e.target.value),
-                          }),
-                        });
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Filters */}
-            <div className="space-y-4">
-              <label_1.Label>Opções de Conteúdo</label_1.Label>
-
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <checkbox_1.Checkbox
-                    id="includeCharts"
-                    checked={reportConfig.filters.includeCharts}
-                    onCheckedChange={function (checked) {
-                      return setReportConfig(function (prev) {
-                        return __assign(__assign({}, prev), {
-                          filters: __assign(__assign({}, prev.filters), {
-                            includeCharts: !!checked,
-                          }),
-                        });
-                      });
-                    }}
-                  />
-                  <label_1.Label htmlFor="includeCharts" className="text-sm">
-                    Incluir gráficos e visualizações
-                  </label_1.Label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <checkbox_1.Checkbox
-                    id="includeRawData"
-                    checked={reportConfig.filters.includeRawData}
-                    onCheckedChange={function (checked) {
-                      return setReportConfig(function (prev) {
-                        return __assign(__assign({}, prev), {
-                          filters: __assign(__assign({}, prev.filters), {
-                            includeRawData: !!checked,
-                          }),
-                        });
-                      });
-                    }}
-                  />
-                  <label_1.Label htmlFor="includeRawData" className="text-sm">
-                    Incluir dados brutos (tabelas detalhadas)
-                  </label_1.Label>
-                </div>
+              <div>
+                <label_1.Label className="text-sm text-gray-600">Data Final</label_1.Label>
+                <input_1.Input
+                  type="date"
+                  value={reportConfig.dateRange.end.toISOString().split("T")[0]}
+                  onChange={(e) =>
+                    setReportConfig((prev) =>
+                      __assign(__assign({}, prev), {
+                        dateRange: __assign(__assign({}, prev.dateRange), {
+                          end: new Date(e.target.value),
+                        }),
+                      }),
+                    )
+                  }
+                />
               </div>
             </div>
           </div>
 
-          <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowNewReportDialog(false);
-              }}
-            >
-              Cancelar
-            </button_1.Button>
-            <button_1.Button
-              onClick={handleGenerateReport}
-              disabled={isGenerating || !reportConfig.templateId || !reportConfig.title}
-            >
-              {isGenerating && <lucide_react_1.Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Gerar Relatório
-            </button_1.Button>
-          </dialog_1.DialogFooter>
-        </dialog_1.DialogContent>
-      </dialog_1.Dialog>
-    );
-  };
-  var renderScheduleDialog = function () {
+          {/* Filters */}
+          <div className="space-y-4">
+            <label_1.Label>Opções de Conteúdo</label_1.Label>
+
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <checkbox_1.Checkbox
+                  id="includeCharts"
+                  checked={reportConfig.filters.includeCharts}
+                  onCheckedChange={(checked) =>
+                    setReportConfig((prev) =>
+                      __assign(__assign({}, prev), {
+                        filters: __assign(__assign({}, prev.filters), {
+                          includeCharts: !!checked,
+                        }),
+                      }),
+                    )
+                  }
+                />
+                <label_1.Label htmlFor="includeCharts" className="text-sm">
+                  Incluir gráficos e visualizações
+                </label_1.Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <checkbox_1.Checkbox
+                  id="includeRawData"
+                  checked={reportConfig.filters.includeRawData}
+                  onCheckedChange={(checked) =>
+                    setReportConfig((prev) =>
+                      __assign(__assign({}, prev), {
+                        filters: __assign(__assign({}, prev.filters), {
+                          includeRawData: !!checked,
+                        }),
+                      }),
+                    )
+                  }
+                />
+                <label_1.Label htmlFor="includeRawData" className="text-sm">
+                  Incluir dados brutos (tabelas detalhadas)
+                </label_1.Label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <dialog_1.DialogFooter>
+          <button_1.Button variant="outline" onClick={() => setShowNewReportDialog(false)}>
+            Cancelar
+          </button_1.Button>
+          <button_1.Button
+            onClick={handleGenerateReport}
+            disabled={isGenerating || !reportConfig.templateId || !reportConfig.title}
+          >
+            {isGenerating && <lucide_react_1.Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+            Gerar Relatório
+          </button_1.Button>
+        </dialog_1.DialogFooter>
+      </dialog_1.DialogContent>
+    </dialog_1.Dialog>
+  );
+  var renderScheduleDialog = () => {
     var _a;
     return (
       <dialog_1.Dialog open={showScheduleDialog} onOpenChange={setShowScheduleDialog}>
@@ -826,11 +788,11 @@ var ReportGenerator = function (_a) {
                 <label_1.Label>Nome do Agendamento</label_1.Label>
                 <input_1.Input
                   value={scheduleConfig.name}
-                  onChange={function (e) {
-                    return setScheduleConfig(function (prev) {
-                      return __assign(__assign({}, prev), { name: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setScheduleConfig((prev) =>
+                      __assign(__assign({}, prev), { name: e.target.value }),
+                    )
+                  }
                   placeholder="Ex: Relatório Semanal Executivo"
                 />
               </div>
@@ -839,23 +801,19 @@ var ReportGenerator = function (_a) {
                 <label_1.Label>Template</label_1.Label>
                 <select_1.Select
                   value={scheduleConfig.templateId}
-                  onValueChange={function (value) {
-                    return setScheduleConfig(function (prev) {
-                      return __assign(__assign({}, prev), { templateId: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setScheduleConfig((prev) => __assign(__assign({}, prev), { templateId: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Selecione um template" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {templates.map(function (template) {
-                      return (
-                        <select_1.SelectItem key={template.id} value={template.id}>
-                          {template.name}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {templates.map((template) => (
+                      <select_1.SelectItem key={template.id} value={template.id}>
+                        {template.name}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -866,17 +824,15 @@ var ReportGenerator = function (_a) {
               <label_1.Label>Frequência</label_1.Label>
               <select_1.Select
                 value={scheduleConfig.frequency}
-                onValueChange={function (value) {
-                  return setScheduleConfig(function (prev) {
-                    return __assign(__assign({}, prev), { frequency: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setScheduleConfig((prev) => __assign(__assign({}, prev), { frequency: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {Object.entries(FREQUENCY_OPTIONS).map(function (_a) {
+                  {Object.entries(FREQUENCY_OPTIONS).map((_a) => {
                     var key = _a[0],
                       config = _a[1];
                     return (
@@ -900,11 +856,11 @@ var ReportGenerator = function (_a) {
                   <input_1.Input
                     type="time"
                     value={scheduleConfig.time || "09:00"}
-                    onChange={function (e) {
-                      return setScheduleConfig(function (prev) {
-                        return __assign(__assign({}, prev), { time: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setScheduleConfig((prev) =>
+                        __assign(__assign({}, prev), { time: e.target.value }),
+                      )
+                    }
                   />
                 </div>
 
@@ -917,23 +873,21 @@ var ReportGenerator = function (_a) {
                           ? void 0
                           : _a.toString()) || "1"
                       }
-                      onValueChange={function (value) {
-                        return setScheduleConfig(function (prev) {
-                          return __assign(__assign({}, prev), { dayOfWeek: parseInt(value) });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setScheduleConfig((prev) =>
+                          __assign(__assign({}, prev), { dayOfWeek: parseInt(value) }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {WEEKDAYS.map(function (day, index) {
-                          return (
-                            <select_1.SelectItem key={index} value={index.toString()}>
-                              {day}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {WEEKDAYS.map((day, index) => (
+                          <select_1.SelectItem key={index} value={index.toString()}>
+                            {day}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -947,13 +901,13 @@ var ReportGenerator = function (_a) {
                       min="1"
                       max="31"
                       value={scheduleConfig.dayOfMonth || 1}
-                      onChange={function (e) {
-                        return setScheduleConfig(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onChange={(e) =>
+                        setScheduleConfig((prev) =>
+                          __assign(__assign({}, prev), {
                             dayOfMonth: parseInt(e.target.value),
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                   </div>
                 )}
@@ -966,17 +920,15 @@ var ReportGenerator = function (_a) {
                 <label_1.Label>Formato</label_1.Label>
                 <select_1.Select
                   value={scheduleConfig.format}
-                  onValueChange={function (value) {
-                    return setScheduleConfig(function (prev) {
-                      return __assign(__assign({}, prev), { format: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setScheduleConfig((prev) => __assign(__assign({}, prev), { format: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {Object.entries(REPORT_FORMATS).map(function (_a) {
+                    {Object.entries(REPORT_FORMATS).map((_a) => {
                       var key = _a[0],
                         config = _a[1];
                       return (
@@ -997,11 +949,11 @@ var ReportGenerator = function (_a) {
                 <div className="flex items-center space-x-2 pt-2">
                   <switch_1.Switch
                     checked={scheduleConfig.enabled}
-                    onCheckedChange={function (enabled) {
-                      return setScheduleConfig(function (prev) {
-                        return __assign(__assign({}, prev), { enabled: enabled });
-                      });
-                    }}
+                    onCheckedChange={(enabled) =>
+                      setScheduleConfig((prev) =>
+                        __assign(__assign({}, prev), { enabled: enabled }),
+                      )
+                    }
                   />
                   <label_1.Label className="text-sm">
                     {scheduleConfig.enabled ? "Ativo" : "Inativo"}
@@ -1014,7 +966,7 @@ var ReportGenerator = function (_a) {
           <dialog_1.DialogFooter>
             <button_1.Button
               variant="outline"
-              onClick={function () {
+              onClick={() => {
                 setShowScheduleDialog(false);
                 setEditingSchedule(null);
               }}
@@ -1087,23 +1039,17 @@ var ReportGenerator = function (_a) {
                     <p className="text-sm mt-1">Clique em "Novo Relatório" para começar</p>
                   </div>
                 : <div className="space-y-3">
-                    {reports.map(function (report, index) {
-                      return (
-                        <react_1.default.Fragment key={report.id}>
-                          <ReportItem
-                            report={report}
-                            onDelete={onDeleteReport}
-                            onDownload={function (id) {
-                              return console.log("Download report:", id);
-                            }}
-                            onShare={function (id) {
-                              return console.log("Share report:", id);
-                            }}
-                          />
-                          {index < reports.length - 1 && <separator_1.Separator />}
-                        </react_1.default.Fragment>
-                      );
-                    })}
+                    {reports.map((report, index) => (
+                      <react_1.default.Fragment key={report.id}>
+                        <ReportItem
+                          report={report}
+                          onDelete={onDeleteReport}
+                          onDownload={(id) => console.log("Download report:", id)}
+                          onShare={(id) => console.log("Share report:", id)}
+                        />
+                        {index < reports.length - 1 && <separator_1.Separator />}
+                      </react_1.default.Fragment>
+                    ))}
                   </div>}
             </card_1.CardContent>
           </card_1.Card>
@@ -1127,19 +1073,17 @@ var ReportGenerator = function (_a) {
                     <p className="text-sm mt-1">Configure relatórios automáticos</p>
                   </div>
                 : <div className="space-y-3">
-                    {schedules.map(function (schedule, index) {
-                      return (
-                        <react_1.default.Fragment key={schedule.id}>
-                          <ScheduleItem
-                            schedule={schedule}
-                            onEdit={handleEditSchedule}
-                            onDelete={onDeleteSchedule}
-                            onToggle={handleToggleSchedule}
-                          />
-                          {index < schedules.length - 1 && <separator_1.Separator />}
-                        </react_1.default.Fragment>
-                      );
-                    })}
+                    {schedules.map((schedule, index) => (
+                      <react_1.default.Fragment key={schedule.id}>
+                        <ScheduleItem
+                          schedule={schedule}
+                          onEdit={handleEditSchedule}
+                          onDelete={onDeleteSchedule}
+                          onToggle={handleToggleSchedule}
+                        />
+                        {index < schedules.length - 1 && <separator_1.Separator />}
+                      </react_1.default.Fragment>
+                    ))}
                   </div>}
             </card_1.CardContent>
           </card_1.Card>
@@ -1157,43 +1101,41 @@ var ReportGenerator = function (_a) {
 
             <card_1.CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {templates.map(function (template) {
-                  return (
-                    <div key={template.id} className="p-4 border rounded-lg">
-                      <h4 className="font-medium text-gray-900">{template.name}</h4>
-                      <p className="text-sm text-gray-600 mt-1">{template.description}</p>
+                {templates.map((template) => (
+                  <div key={template.id} className="p-4 border rounded-lg">
+                    <h4 className="font-medium text-gray-900">{template.name}</h4>
+                    <p className="text-sm text-gray-600 mt-1">{template.description}</p>
 
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="flex items-center gap-2">
-                          <badge_1.Badge variant="outline">
-                            {REPORT_FORMATS[template.defaultFormat].label}
-                          </badge_1.Badge>
-                          <span className="text-xs text-gray-500">
-                            {template.sections.length} seções
-                          </span>
-                        </div>
-
-                        <button_1.Button
-                          variant="outline"
-                          size="sm"
-                          onClick={function () {
-                            setReportConfig(function (prev) {
-                              return __assign(__assign({}, prev), {
-                                templateId: template.id,
-                                title: template.name,
-                                format: template.defaultFormat,
-                              });
-                            });
-                            setShowNewReportDialog(true);
-                          }}
-                        >
-                          <lucide_react_1.Play className="h-4 w-4 mr-2" />
-                          Usar Template
-                        </button_1.Button>
+                    <div className="flex items-center justify-between mt-4">
+                      <div className="flex items-center gap-2">
+                        <badge_1.Badge variant="outline">
+                          {REPORT_FORMATS[template.defaultFormat].label}
+                        </badge_1.Badge>
+                        <span className="text-xs text-gray-500">
+                          {template.sections.length} seções
+                        </span>
                       </div>
+
+                      <button_1.Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setReportConfig((prev) =>
+                            __assign(__assign({}, prev), {
+                              templateId: template.id,
+                              title: template.name,
+                              format: template.defaultFormat,
+                            }),
+                          );
+                          setShowNewReportDialog(true);
+                        }}
+                      >
+                        <lucide_react_1.Play className="h-4 w-4 mr-2" />
+                        Usar Template
+                      </button_1.Button>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

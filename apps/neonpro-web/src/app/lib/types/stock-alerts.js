@@ -1,23 +1,22 @@
-"use strict";
 // Stock Alerts and Reports Types
 // Story 11.4: Alertas e Relatórios de Estoque
 // Implementation with Zod validation (QA Enhanced)
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -165,15 +164,10 @@ exports.stockAlertConfigSchema = zod_1.z
     createdBy: uuidSchema.optional(),
     updatedBy: uuidSchema.optional(),
   })
-  .refine(
-    function (data) {
-      return data.productId || data.categoryId || (!data.productId && !data.categoryId);
-    },
-    {
-      message: "Either productId, categoryId, or neither should be provided (not both)",
-      path: ["productId", "categoryId"],
-    },
-  );
+  .refine((data) => data.productId || data.categoryId || (!data.productId && !data.categoryId), {
+    message: "Either productId, categoryId, or neither should be provided (not both)",
+    path: ["productId", "categoryId"],
+  });
 // Create alert config schema (for API requests)
 exports.createStockAlertConfigSchema = zod_1.z
   .object({
@@ -189,15 +183,10 @@ exports.createStockAlertConfigSchema = zod_1.z
       .array(notificationChannelSchema)
       .min(1, "At least one notification channel required"),
   })
-  .refine(
-    function (data) {
-      return data.productId || data.categoryId || (!data.productId && !data.categoryId);
-    },
-    {
-      message: "Either productId, categoryId, or neither should be provided (not both)",
-      path: ["productId", "categoryId"],
-    },
-  );
+  .refine((data) => data.productId || data.categoryId || (!data.productId && !data.categoryId), {
+    message: "Either productId, categoryId, or neither should be provided (not both)",
+    path: ["productId", "categoryId"],
+  });
 // Update alert config schema (for API requests)
 exports.updateStockAlertConfigSchema = zod_1.z
   .object({
@@ -233,7 +222,7 @@ exports.stockAlertSchema = zod_1.z
     createdAt: zod_1.z.date().optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // If acknowledged, must have both acknowledgedBy and acknowledgedAt
       if (data.acknowledgedBy || data.acknowledgedAt) {
         return data.acknowledgedBy && data.acknowledgedAt;
@@ -253,9 +242,7 @@ exports.acknowledgeAlertSchema = zod_1.z.object({
   note: zod_1.z
     .string()
     .optional()
-    .transform(function (val) {
-      return val === null || val === void 0 ? void 0 : val.trim();
-    })
+    .transform((val) => (val === null || val === void 0 ? void 0 : val.trim()))
     .pipe(zod_1.z.string().max(500, "Note too long").optional()),
 });
 // Resolve alert schema
@@ -278,12 +265,9 @@ var reportFiltersSchema = zod_1.z.object({
       end: zod_1.z.date(),
     })
     .optional()
-    .refine(
-      function (data) {
-        return !data || data.start <= data.end;
-      },
-      { message: "Start date must be before or equal to end date" },
-    ),
+    .refine((data) => !data || data.start <= data.end, {
+      message: "Start date must be before or equal to end date",
+    }),
   productIds: zod_1.z.array(uuidSchema).optional(),
   categoryIds: zod_1.z.array(uuidSchema).optional(),
   supplierId: uuidSchema.optional(),
@@ -302,7 +286,7 @@ var reportScheduleConfigSchema = zod_1.z
     enabled: zod_1.z.boolean().default(true),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.frequency === "weekly" && !data.dayOfWeek) {
         return false;
       }
@@ -424,9 +408,7 @@ exports.recommendationSchema = zod_1.z.object({
     )
     .optional(),
   dismissible: zod_1.z.boolean().default(true),
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
 });
 exports.stockDashboardDataSchema = zod_1.z.object({
   kpis: exports.stockKPIsSchema,
@@ -438,9 +420,7 @@ exports.stockDashboardDataSchema = zod_1.z.object({
   }),
   alerts: zod_1.z.array(exports.stockAlertSchema),
   recommendations: zod_1.z.array(exports.recommendationSchema),
-  lastUpdated: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  lastUpdated: zod_1.z.date().default(() => new Date()),
 });
 // =====================================================
 // API REQUEST/RESPONSE SCHEMAS
@@ -468,38 +448,24 @@ exports.reportsQuerySchema = zod_1.z.object({
 // =====================================================
 // UTILITY FUNCTIONS FOR VALIDATION
 // =====================================================
-var validateStockAlertConfig = function (data) {
-  return exports.stockAlertConfigSchema.parse(data);
-};
+var validateStockAlertConfig = (data) => exports.stockAlertConfigSchema.parse(data);
 exports.validateStockAlertConfig = validateStockAlertConfig;
-var validateCreateStockAlertConfig = function (data) {
-  return exports.createStockAlertConfigSchema.parse(data);
-};
+var validateCreateStockAlertConfig = (data) => exports.createStockAlertConfigSchema.parse(data);
 exports.validateCreateStockAlertConfig = validateCreateStockAlertConfig;
-var validateAcknowledgeAlert = function (data) {
-  return exports.acknowledgeAlertSchema.parse(data);
-};
+var validateAcknowledgeAlert = (data) => exports.acknowledgeAlertSchema.parse(data);
 exports.validateAcknowledgeAlert = validateAcknowledgeAlert;
-var validateResolveAlert = function (data) {
-  return exports.resolveAlertSchema.parse(data);
-};
+var validateResolveAlert = (data) => exports.resolveAlertSchema.parse(data);
 exports.validateResolveAlert = validateResolveAlert;
-var validateCustomStockReport = function (data) {
-  return exports.customStockReportSchema.parse(data);
-};
+var validateCustomStockReport = (data) => exports.customStockReportSchema.parse(data);
 exports.validateCustomStockReport = validateCustomStockReport;
-var validateAlertsQuery = function (data) {
-  return exports.alertsQuerySchema.parse(data);
-};
+var validateAlertsQuery = (data) => exports.alertsQuerySchema.parse(data);
 exports.validateAlertsQuery = validateAlertsQuery;
-var validateReportsQuery = function (data) {
-  return exports.reportsQuerySchema.parse(data);
-};
+var validateReportsQuery = (data) => exports.reportsQuerySchema.parse(data);
 exports.validateReportsQuery = validateReportsQuery;
 // =====================================================
 // ERROR TYPES
 // =====================================================
-var StockAlertValidationError = /** @class */ (function (_super) {
+var StockAlertValidationError = /** @class */ ((_super) => {
   __extends(StockAlertValidationError, _super);
   function StockAlertValidationError(message, field, code) {
     var _this = _super.call(this, message) || this;

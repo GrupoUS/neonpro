@@ -13,24 +13,23 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -39,7 +38,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlertsPanel = AlertsPanel;
 var react_1 = require("react");
@@ -62,8 +61,8 @@ function AlertsPanel(_a) {
    * Process alerts with additional metadata
    */
   var processedAlerts = (0, react_1.useMemo)(
-    function () {
-      return alerts.map(function (alert) {
+    () =>
+      alerts.map((alert) => {
         // Category icon
         var categoryIcon;
         switch (alert.category) {
@@ -133,16 +132,15 @@ function AlertsPanel(_a) {
           timeAgo: timeAgo,
           isRecent: isRecent,
         });
-      });
-    },
+      }),
     [alerts],
   );
   /**
    * Filter alerts
    */
   var filteredAlerts = (0, react_1.useMemo)(
-    function () {
-      return processedAlerts.filter(function (alert) {
+    () =>
+      processedAlerts.filter((alert) => {
         // Category filter
         if (selectedCategory !== "all" && alert.category !== selectedCategory) {
           return false;
@@ -152,68 +150,59 @@ function AlertsPanel(_a) {
           return false;
         }
         return true;
-      });
-    },
+      }),
     [processedAlerts, selectedCategory, showAcknowledged],
   );
   /**
    * Alert summary statistics
    */
   var alertSummary = (0, react_1.useMemo)(
-    function () {
-      return processedAlerts.reduce(
-        function (summary, alert) {
-          return {
-            total: summary.total + 1,
-            critical: summary.critical + (alert.severity === "critical" ? 1 : 0),
-            warning: summary.warning + (alert.severity === "warning" ? 1 : 0),
-            info: summary.info + (alert.severity === "info" ? 1 : 0),
-            acknowledged: summary.acknowledged + (alert.acknowledged ? 1 : 0),
-          };
-        },
+    () =>
+      processedAlerts.reduce(
+        (summary, alert) => ({
+          total: summary.total + 1,
+          critical: summary.critical + (alert.severity === "critical" ? 1 : 0),
+          warning: summary.warning + (alert.severity === "warning" ? 1 : 0),
+          info: summary.info + (alert.severity === "info" ? 1 : 0),
+          acknowledged: summary.acknowledged + (alert.acknowledged ? 1 : 0),
+        }),
         { total: 0, critical: 0, warning: 0, info: 0, acknowledged: 0 },
-      );
-    },
+      ),
     [processedAlerts],
   );
   /**
    * Group alerts by category
    */
-  var alertsByCategory = (0, react_1.useMemo)(
-    function () {
-      var categories = new Map();
-      processedAlerts.forEach(function (alert) {
-        if (!categories.has(alert.category)) {
-          categories.set(alert.category, []);
-        }
-        categories.get(alert.category).push(alert);
-      });
-      return Array.from(categories.entries()).map(function (_a) {
-        var category = _a[0],
-          alerts = _a[1];
-        return {
-          category: category,
-          alerts: alerts,
-          count: alerts.length,
-          criticalCount: alerts.filter(function (a) {
-            return a.severity === "critical";
-          }).length,
-        };
-      });
-    },
-    [processedAlerts],
-  );
+  var alertsByCategory = (0, react_1.useMemo)(() => {
+    var categories = new Map();
+    processedAlerts.forEach((alert) => {
+      if (!categories.has(alert.category)) {
+        categories.set(alert.category, []);
+      }
+      categories.get(alert.category).push(alert);
+    });
+    return Array.from(categories.entries()).map((_a) => {
+      var category = _a[0],
+        alerts = _a[1];
+      return {
+        category: category,
+        alerts: alerts,
+        count: alerts.length,
+        criticalCount: alerts.filter((a) => a.severity === "critical").length,
+      };
+    });
+  }, [processedAlerts]);
   /**
    * Handle alert acknowledgment
    */
-  var handleAcknowledge = function (alertId) {
+  var handleAcknowledge = (alertId) => {
     // In a real implementation, this would call an API
     console.log("Acknowledging alert:", alertId);
   };
   /**
    * Alert card component
    */
-  var AlertCard = function (_a) {
+  var AlertCard = (_a) => {
     var alert = _a.alert;
     return (
       <card_1.Card
@@ -257,9 +246,9 @@ function AlertsPanel(_a) {
                   <div className="mt-3 p-2 bg-gray-50 rounded text-xs">
                     <div className="font-medium text-gray-700 mb-1">Resolution Steps:</div>
                     <ol className="list-decimal list-inside space-y-0.5 text-gray-600">
-                      {alert.resolutionSteps.slice(0, 2).map(function (step, index) {
-                        return <li key={index}>{step}</li>;
-                      })}
+                      {alert.resolutionSteps.slice(0, 2).map((step, index) => (
+                        <li key={index}>{step}</li>
+                      ))}
                     </ol>
                   </div>
                 )}
@@ -278,9 +267,7 @@ function AlertsPanel(_a) {
                 <button_1.Button
                   size="sm"
                   variant="outline"
-                  onClick={function () {
-                    return handleAcknowledge(alert.id);
-                  }}
+                  onClick={() => handleAcknowledge(alert.id)}
                   className="text-xs"
                 >
                   <lucide_react_1.CheckCircle className="w-3 h-3 mr-1" />
@@ -311,9 +298,9 @@ function AlertsPanel(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="animate-pulse space-y-4">
-            {__spreadArray([], Array(3), true).map(function (_, i) {
-              return <div key={i} className="h-24 bg-gray-200 rounded"></div>;
-            })}
+            {__spreadArray([], Array(3), true).map((_, i) => (
+              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>
@@ -342,9 +329,7 @@ function AlertsPanel(_a) {
             <button_1.Button
               variant="ghost"
               size="sm"
-              onClick={function () {
-                return setShowAcknowledged(!showAcknowledged);
-              }}
+              onClick={() => setShowAcknowledged(!showAcknowledged)}
             >
               {showAcknowledged ? "Hide" : "Show"} Acknowledged
             </button_1.Button>
@@ -386,7 +371,7 @@ function AlertsPanel(_a) {
                     {alertSummary.total}
                   </badge_1.Badge>
                 </tabs_1.TabsTrigger>
-                {alertsByCategory.slice(0, 5).map(function (_a) {
+                {alertsByCategory.slice(0, 5).map((_a) => {
                   var category = _a.category,
                     count = _a.count,
                     criticalCount = _a.criticalCount;
@@ -419,7 +404,7 @@ function AlertsPanel(_a) {
                           <p className="text-gray-600">No alerts in this category.</p>
                         </div>
                       : filteredAlerts
-                          .sort(function (a, b) {
+                          .sort((a, b) => {
                             // Sort by severity (critical first), then by timestamp (newest first)
                             var severityOrder = { critical: 3, warning: 2, info: 1 };
                             var severityDiff =
@@ -429,14 +414,9 @@ function AlertsPanel(_a) {
                               new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
                             );
                           })
-                          .map(function (alert, index) {
-                            return (
-                              <AlertCard
-                                key={"".concat(alert.id, "-").concat(index)}
-                                alert={alert}
-                              />
-                            );
-                          })}
+                          .map((alert, index) => (
+                            <AlertCard key={"".concat(alert.id, "-").concat(index)} alert={alert} />
+                          ))}
                   </div>
                 </scroll_area_1.ScrollArea>
               </tabs_1.TabsContent>

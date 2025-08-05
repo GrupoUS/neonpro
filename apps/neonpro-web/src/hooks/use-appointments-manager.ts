@@ -1,18 +1,18 @@
 "use client";
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
-import type { createClient } from "@/lib/supabase/client";
-import type { useToast } from "@/hooks/use-toast";
 import type {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
   format,
   startOfDay,
-  endOfDay,
-  startOfWeek,
-  endOfWeek,
   startOfMonth,
-  endOfMonth,
+  startOfWeek,
 } from "date-fns";
 import type { pt } from "date-fns/locale";
+import type { useCallback, useEffect, useMemo, useState } from "react";
+import type { useToast } from "@/hooks/use-toast";
+import type { createClient } from "@/lib/supabase/client";
 
 export interface Appointment {
   id: string;

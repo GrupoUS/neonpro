@@ -1,4 +1,3 @@
-"use strict";
 /**
  * React Email Template - Appointment Reminder
  * HIPAA-compliant email template for appointment reminders
@@ -6,7 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentReminderEmail = void 0;
 var components_1 = require("@react-email/components");
-var AppointmentReminderEmail = function (_a) {
+var AppointmentReminderEmail = (_a) => {
   var _b = _a.patientName,
     patientName = _b === void 0 ? "Patient" : _b,
     _c = _a.appointmentDate,

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReceiptInvoiceManager = void 0;
 var zod_1 = require("zod");
@@ -225,7 +222,7 @@ var EmailConfigSchema = zod_1.z.object({
  * Receipt and Invoice Management System
  * Handles PDF generation, NFSe integration, and email delivery
  */
-var ReceiptInvoiceManager = /** @class */ (function () {
+var ReceiptInvoiceManager = /** @class */ (() => {
   function ReceiptInvoiceManager(supabaseUrl, supabaseKey, companyInfo, nfseConfig, emailConfig) {
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
     this.companyInfo = CompanyInfoSchema.parse(companyInfo);
@@ -256,12 +253,10 @@ var ReceiptInvoiceManager = /** @class */ (function () {
             validatedData_1 = ReceiptDataSchema.parse(data);
             doc_1 = new pdfkit_1.default({ margin: 50 });
             chunks_1 = [];
-            doc_1.on("data", function (chunk) {
-              return chunks_1.push(chunk);
-            });
+            doc_1.on("data", (chunk) => chunks_1.push(chunk));
             return [
               4 /*yield*/,
-              new Promise(function (resolve) {
+              new Promise((resolve) => {
                 doc_1.on("end", resolve);
                 // Generate PDF content based on template
                 _this.generatePDFContent(doc_1, validatedData_1, options);
@@ -673,7 +668,7 @@ var ReceiptInvoiceManager = /** @class */ (function () {
     // Items
     var currentY = tableTop + 25;
     doc.fontSize(9).font(fonts.body).fillColor("#000");
-    data.items.forEach(function (item) {
+    data.items.forEach((item) => {
       doc
         .text(item.description, 50, currentY, { width: 240 })
         .text(item.quantity.toString(), 300, currentY)
@@ -736,7 +731,7 @@ var ReceiptInvoiceManager = /** @class */ (function () {
   ReceiptInvoiceManager.prototype.processNFSe = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var nfseNumber;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         nfseNumber = "NFSe-".concat(Date.now());
         // TODO: Implement actual NFSe provider integration
         // - Generate XML according to provider specifications

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientSearch;
 var react_1 = require("react");
@@ -18,25 +17,20 @@ function PatientSearch(_a) {
     localSearchTerm = _c[0],
     setLocalSearchTerm = _c[1];
   // Optimized debounce search to avoid excessive API calls
-  (0, react_1.useEffect)(
-    function () {
-      // Only search if term has minimum length or is empty (for reset)
-      if (localSearchTerm.length === 0 || localSearchTerm.length >= 2) {
-        var timer_1 = setTimeout(function () {
-          onSearchChange(localSearchTerm);
-        }, 500); // Increased debounce time for better performance
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [localSearchTerm, onSearchChange],
-  );
-  var handleClearSearch = function () {
+  (0, react_1.useEffect)(() => {
+    // Only search if term has minimum length or is empty (for reset)
+    if (localSearchTerm.length === 0 || localSearchTerm.length >= 2) {
+      var timer_1 = setTimeout(() => {
+        onSearchChange(localSearchTerm);
+      }, 500); // Increased debounce time for better performance
+      return () => clearTimeout(timer_1);
+    }
+  }, [localSearchTerm, onSearchChange]);
+  var handleClearSearch = () => {
     setLocalSearchTerm("");
     onSearchChange("");
   };
-  var getSearchPlaceholder = function () {
+  var getSearchPlaceholder = () => {
     switch (searchType) {
       case "name":
         return "Digite o nome do paciente...";
@@ -50,7 +44,7 @@ function PatientSearch(_a) {
         return "Digite para buscar...";
     }
   };
-  var getSearchIcon = function () {
+  var getSearchIcon = () => {
     switch (searchType) {
       case "name":
         return <lucide_react_1.User className="h-4 w-4" />;
@@ -64,7 +58,7 @@ function PatientSearch(_a) {
         return <lucide_react_1.Search className="h-4 w-4" />;
     }
   };
-  var formatSearchInput = function (value) {
+  var formatSearchInput = (value) => {
     switch (searchType) {
       case "cpf":
         // Format CPF as user types
@@ -86,7 +80,7 @@ function PatientSearch(_a) {
         return value;
     }
   };
-  var handleInputChange = function (e) {
+  var handleInputChange = (e) => {
     var rawValue = e.target.value;
     var formattedValue = formatSearchInput(rawValue);
     setLocalSearchTerm(formattedValue);
@@ -100,9 +94,7 @@ function PatientSearch(_a) {
           <button_1.Button
             variant={searchType === "name" ? "default" : "outline"}
             size="sm"
-            onClick={function () {
-              return setSearchType("name");
-            }}
+            onClick={() => setSearchType("name")}
             className="h-8"
           >
             <lucide_react_1.User className="h-3 w-3 mr-1" />
@@ -111,9 +103,7 @@ function PatientSearch(_a) {
           <button_1.Button
             variant={searchType === "phone" ? "default" : "outline"}
             size="sm"
-            onClick={function () {
-              return setSearchType("phone");
-            }}
+            onClick={() => setSearchType("phone")}
             className="h-8"
           >
             <lucide_react_1.Phone className="h-3 w-3 mr-1" />
@@ -122,9 +112,7 @@ function PatientSearch(_a) {
           <button_1.Button
             variant={searchType === "email" ? "default" : "outline"}
             size="sm"
-            onClick={function () {
-              return setSearchType("email");
-            }}
+            onClick={() => setSearchType("email")}
             className="h-8"
           >
             <lucide_react_1.Mail className="h-3 w-3 mr-1" />
@@ -133,9 +121,7 @@ function PatientSearch(_a) {
           <button_1.Button
             variant={searchType === "cpf" ? "default" : "outline"}
             size="sm"
-            onClick={function () {
-              return setSearchType("cpf");
-            }}
+            onClick={() => setSearchType("cpf")}
             className="h-8"
           >
             <lucide_react_1.FileText className="h-3 w-3 mr-1" />

@@ -3,8 +3,8 @@
 // Story 1.4 - OAuth Google Integration Enhancement
 // Created: 2025-07-23
 
-import type { createClient } from "@/lib/supabase/server";
 import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {

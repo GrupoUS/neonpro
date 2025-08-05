@@ -11,10 +11,9 @@
  * - Healthcare-specific shortcuts
  */
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -23,7 +22,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SkipLinks = SkipLinks;
 exports.KeyboardNavigationProvider = KeyboardNavigationProvider;
@@ -54,7 +53,7 @@ function SkipLinks() {
       <a
         href="#main-content"
         className="inline-block px-4 py-2 bg-primary-foreground text-primary rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        onClick={function (e) {
+        onClick={(e) => {
           e.preventDefault();
           var element = document.getElementById("main-content");
           element === null || element === void 0 ? void 0 : element.focus();
@@ -72,7 +71,7 @@ function SkipLinks() {
       <a
         href="#main-navigation"
         className="inline-block px-4 py-2 bg-primary-foreground text-primary rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        onClick={function (e) {
+        onClick={(e) => {
           e.preventDefault();
           var element = document.getElementById("main-navigation");
           element === null || element === void 0 ? void 0 : element.focus();
@@ -90,7 +89,7 @@ function SkipLinks() {
       <a
         href="#search"
         className="inline-block px-4 py-2 bg-primary-foreground text-primary rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-        onClick={function (e) {
+        onClick={(e) => {
           e.preventDefault();
           var element = document.getElementById("search");
           element === null || element === void 0 ? void 0 : element.focus();
@@ -114,99 +113,81 @@ function KeyboardNavigationProvider(_a) {
     focusTrapStack = _b[0],
     setFocusTrapStack = _b[1];
   var t = (0, use_translation_1.useTranslation)().t;
-  var pushFocusTrap = (0, react_1.useCallback)(function (element) {
-    setFocusTrapStack(function (prev) {
-      return __spreadArray(__spreadArray([], prev, true), [element], false);
-    });
+  var pushFocusTrap = (0, react_1.useCallback)((element) => {
+    setFocusTrapStack((prev) => __spreadArray(__spreadArray([], prev, true), [element], false));
   }, []);
-  var popFocusTrap = (0, react_1.useCallback)(function () {
-    setFocusTrapStack(function (prev) {
-      return prev.slice(0, -1);
-    });
+  var popFocusTrap = (0, react_1.useCallback)(() => {
+    setFocusTrapStack((prev) => prev.slice(0, -1));
   }, []);
-  var skipToContent = (0, react_1.useCallback)(
-    function () {
-      var element = document.getElementById("main-content");
-      if (element) {
-        element.focus();
-        element.scrollIntoView({ behavior: "smooth" });
-        (0, accessibility_utils_1.announceToScreenReader)(
-          t("accessibility.skipToContent"),
-          "assertive",
-        );
-      }
-    },
-    [t],
-  );
-  var skipToNavigation = (0, react_1.useCallback)(
-    function () {
-      var element = document.getElementById("main-navigation");
-      if (element) {
-        element.focus();
-        element.scrollIntoView({ behavior: "smooth" });
-        (0, accessibility_utils_1.announceToScreenReader)(
-          t("accessibility.skipToNavigation"),
-          "assertive",
-        );
-      }
-    },
-    [t],
-  );
-  var skipToSearch = (0, react_1.useCallback)(
-    function () {
-      var element = document.getElementById("search");
-      if (element) {
-        element.focus();
-        element.scrollIntoView({ behavior: "smooth" });
-        (0, accessibility_utils_1.announceToScreenReader)(
-          t("accessibility.skipToSearch"),
-          "assertive",
-        );
-      }
-    },
-    [t],
-  );
-  var announceNavigation = (0, react_1.useCallback)(function (message) {
+  var skipToContent = (0, react_1.useCallback)(() => {
+    var element = document.getElementById("main-content");
+    if (element) {
+      element.focus();
+      element.scrollIntoView({ behavior: "smooth" });
+      (0, accessibility_utils_1.announceToScreenReader)(
+        t("accessibility.skipToContent"),
+        "assertive",
+      );
+    }
+  }, [t]);
+  var skipToNavigation = (0, react_1.useCallback)(() => {
+    var element = document.getElementById("main-navigation");
+    if (element) {
+      element.focus();
+      element.scrollIntoView({ behavior: "smooth" });
+      (0, accessibility_utils_1.announceToScreenReader)(
+        t("accessibility.skipToNavigation"),
+        "assertive",
+      );
+    }
+  }, [t]);
+  var skipToSearch = (0, react_1.useCallback)(() => {
+    var element = document.getElementById("search");
+    if (element) {
+      element.focus();
+      element.scrollIntoView({ behavior: "smooth" });
+      (0, accessibility_utils_1.announceToScreenReader)(
+        t("accessibility.skipToSearch"),
+        "assertive",
+      );
+    }
+  }, [t]);
+  var announceNavigation = (0, react_1.useCallback)((message) => {
     (0, accessibility_utils_1.announceToScreenReader)(message, "assertive");
   }, []);
   // Global keyboard shortcuts
-  (0, react_1.useEffect)(
-    function () {
-      var handleKeyDown = function (event) {
-        // Alt + 1: Skip to main content
-        if (event.altKey && event.key === "1") {
-          event.preventDefault();
-          skipToContent();
-          return;
-        }
-        // Alt + 2: Skip to navigation
-        if (event.altKey && event.key === "2") {
-          event.preventDefault();
-          skipToNavigation();
-          return;
-        }
-        // Alt + 3: Skip to search
-        if (event.altKey && event.key === "3") {
-          event.preventDefault();
-          skipToSearch();
-          return;
-        }
-        // Escape: Close modal/dropdown (handled by focus trap)
-        if (event.key === accessibility_utils_1.KEYBOARD_KEYS.ESCAPE && focusTrapStack.length > 0) {
-          event.preventDefault();
-          var currentTrap = focusTrapStack[focusTrapStack.length - 1];
-          var closeButton = currentTrap.querySelector("[data-close-button]");
-          closeButton === null || closeButton === void 0 ? void 0 : closeButton.click();
-          return;
-        }
-      };
-      document.addEventListener("keydown", handleKeyDown);
-      return function () {
-        return document.removeEventListener("keydown", handleKeyDown);
-      };
-    },
-    [focusTrapStack, skipToContent, skipToNavigation, skipToSearch],
-  );
+  (0, react_1.useEffect)(() => {
+    var handleKeyDown = (event) => {
+      // Alt + 1: Skip to main content
+      if (event.altKey && event.key === "1") {
+        event.preventDefault();
+        skipToContent();
+        return;
+      }
+      // Alt + 2: Skip to navigation
+      if (event.altKey && event.key === "2") {
+        event.preventDefault();
+        skipToNavigation();
+        return;
+      }
+      // Alt + 3: Skip to search
+      if (event.altKey && event.key === "3") {
+        event.preventDefault();
+        skipToSearch();
+        return;
+      }
+      // Escape: Close modal/dropdown (handled by focus trap)
+      if (event.key === accessibility_utils_1.KEYBOARD_KEYS.ESCAPE && focusTrapStack.length > 0) {
+        event.preventDefault();
+        var currentTrap = focusTrapStack[focusTrapStack.length - 1];
+        var closeButton = currentTrap.querySelector("[data-close-button]");
+        closeButton === null || closeButton === void 0 ? void 0 : closeButton.click();
+        return;
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [focusTrapStack, skipToContent, skipToNavigation, skipToSearch]);
   var value = {
     focusTrapStack: focusTrapStack,
     pushFocusTrap: pushFocusTrap,
@@ -238,42 +219,36 @@ function useKeyboardNavigation() {
  * For lists and menus with arrow key navigation
  */
 function useRovingTabindex(items, activeIndex) {
-  (0, react_1.useEffect)(
-    function () {
-      items.forEach(function (item, index) {
-        item.tabIndex = index === activeIndex ? 0 : -1;
-      });
-    },
-    [items, activeIndex],
-  );
+  (0, react_1.useEffect)(() => {
+    items.forEach((item, index) => {
+      item.tabIndex = index === activeIndex ? 0 : -1;
+    });
+  }, [items, activeIndex]);
 }
 /**
  * Arrow Navigation Hook
  * Provides arrow key navigation for lists and menus
  */
 function useArrowNavigation() {
-  var handleArrowNavigation = (0, react_1.useCallback)(function (
-    event,
-    items,
-    currentIndex,
-    onIndexChange,
-    options,
-  ) {
-    if (options === void 0) {
-      options = {};
-    }
-    var _a = options.circular,
-      circular = _a === void 0 ? true : _a,
-      _b = options.orientation,
-      orientation = _b === void 0 ? "vertical" : _b;
-    accessibility_utils_1.KeyboardNavigation.handleArrowNavigation(
-      event.nativeEvent,
-      items,
-      currentIndex,
-      onIndexChange,
-      circular,
-    );
-  }, []);
+  var handleArrowNavigation = (0, react_1.useCallback)(
+    (event, items, currentIndex, onIndexChange, options) => {
+      if (options === void 0) {
+        options = {};
+      }
+      var _a = options.circular,
+        circular = _a === void 0 ? true : _a,
+        _b = options.orientation,
+        orientation = _b === void 0 ? "vertical" : _b;
+      accessibility_utils_1.KeyboardNavigation.handleArrowNavigation(
+        event.nativeEvent,
+        items,
+        currentIndex,
+        onIndexChange,
+        circular,
+      );
+    },
+    [],
+  );
   return handleArrowNavigation;
 }
 /**
@@ -288,20 +263,17 @@ function useFocusTrap(isActive) {
   var _a = useKeyboardNavigation(),
     pushFocusTrap = _a.pushFocusTrap,
     popFocusTrap = _a.popFocusTrap;
-  (0, react_1.useEffect)(
-    function () {
-      if (isActive && containerRef.current) {
-        var container = containerRef.current;
-        pushFocusTrap(container);
-        var cleanup_1 = accessibility_utils_1.FocusManager.trapFocus({ current: container });
-        return function () {
-          cleanup_1 === null || cleanup_1 === void 0 ? void 0 : cleanup_1();
-          popFocusTrap();
-        };
-      }
-    },
-    [isActive, pushFocusTrap, popFocusTrap],
-  );
+  (0, react_1.useEffect)(() => {
+    if (isActive && containerRef.current) {
+      var container = containerRef.current;
+      pushFocusTrap(container);
+      var cleanup_1 = accessibility_utils_1.FocusManager.trapFocus({ current: container });
+      return () => {
+        cleanup_1 === null || cleanup_1 === void 0 ? void 0 : cleanup_1();
+        popFocusTrap();
+      };
+    }
+  }, [isActive, pushFocusTrap, popFocusTrap]);
   return containerRef;
 }
 function AccessibleMenu(_a) {
@@ -318,7 +290,7 @@ function AccessibleMenu(_a) {
   var handleArrowNavigation = useArrowNavigation();
   // Set up roving tabindex
   useRovingTabindex(itemRefs.current.filter(Boolean), activeIndex);
-  var handleKeyDown = function (event) {
+  var handleKeyDown = (event) => {
     var _a, _b, _c, _d;
     var validItems = itemRefs.current.filter(Boolean);
     // Arrow navigation
@@ -395,12 +367,12 @@ function AccessibleMenu(_a) {
       )}
       onKeyDown={handleKeyDown}
     >
-      {items.map(function (item, index) {
+      {items.map((item, index) => {
         var Icon = item.icon;
         return (
           <div
             key={item.id}
-            ref={function (el) {
+            ref={(el) => {
               itemRefs.current[index] = el;
             }}
             role="menuitem"
@@ -413,16 +385,14 @@ function AccessibleMenu(_a) {
               index === activeIndex && "bg-accent text-accent-foreground",
             )}
             aria-disabled={item.disabled}
-            onClick={function () {
+            onClick={() => {
               var _a;
               if (!item.disabled) {
                 (_a = item.onClick) === null || _a === void 0 ? void 0 : _a.call(item);
                 onClose === null || onClose === void 0 ? void 0 : onClose();
               }
             }}
-            onFocus={function () {
-              return setActiveIndex(index);
-            }}
+            onFocus={() => setActiveIndex(index)}
           >
             {Icon && <Icon className="mr-2 h-4 w-4" />}
             {item.label}
@@ -439,7 +409,7 @@ function AccessibleBreadcrumb(_a) {
   return (
     <nav aria-label="Navegação estrutural" className={(0, utils_1.cn)("flex", className)}>
       <ol className="flex items-center space-x-2">
-        {items.map(function (item, index) {
+        {items.map((item, index) => {
           var isLast = index === items.length - 1;
           return (
             <li key={index} className="flex items-center">
@@ -484,12 +454,10 @@ function AccessibleTabs(_a) {
     setFocusedTab = _b[1];
   var tabRefs = (0, react_1.useRef)([]);
   var handleArrowNavigation = useArrowNavigation();
-  var activeIndex = tabs.findIndex(function (tab) {
-    return tab.id === focusedTab;
-  });
+  var activeIndex = tabs.findIndex((tab) => tab.id === focusedTab);
   // Set up roving tabindex
   useRovingTabindex(tabRefs.current.filter(Boolean), activeIndex);
-  var handleKeyDown = function (event) {
+  var handleKeyDown = (event) => {
     var validTabs = tabRefs.current.filter(Boolean);
     // Arrow key navigation
     if (
@@ -502,7 +470,7 @@ function AccessibleTabs(_a) {
         event,
         validTabs,
         activeIndex,
-        function (newIndex) {
+        (newIndex) => {
           var _a;
           var newTab = tabs[newIndex];
           if (newTab && !newTab.disabled) {
@@ -520,9 +488,7 @@ function AccessibleTabs(_a) {
       event.key === accessibility_utils_1.KEYBOARD_KEYS.SPACE
     ) {
       event.preventDefault();
-      var focusedTabData = tabs.find(function (tab) {
-        return tab.id === focusedTab;
-      });
+      var focusedTabData = tabs.find((tab) => tab.id === focusedTab);
       if (focusedTabData && !focusedTabData.disabled) {
         onTabChange(focusedTab);
       }
@@ -531,40 +497,36 @@ function AccessibleTabs(_a) {
   return (
     <div className={(0, utils_1.cn)("space-y-4", className)}>
       <div role="tablist" className="flex border-b border-border" onKeyDown={handleKeyDown}>
-        {tabs.map(function (tab, index) {
-          return (
-            <button
-              key={tab.id}
-              ref={function (el) {
-                tabRefs.current[index] = el;
-              }}
-              role="tab"
-              tabIndex={tab.id === focusedTab ? 0 : -1}
-              aria-selected={tab.id === activeTab}
-              aria-controls={"tabpanel-".concat(tab.id)}
-              disabled={tab.disabled}
-              className={(0, utils_1.cn)(
-                "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
-                "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                "hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed",
-                tab.id === activeTab
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:border-border",
-              )}
-              onClick={function () {
-                if (!tab.disabled) {
-                  onTabChange(tab.id);
-                  setFocusedTab(tab.id);
-                }
-              }}
-              onFocus={function () {
-                return setFocusedTab(tab.id);
-              }}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
+        {tabs.map((tab, index) => (
+          <button
+            key={tab.id}
+            ref={(el) => {
+              tabRefs.current[index] = el;
+            }}
+            role="tab"
+            tabIndex={tab.id === focusedTab ? 0 : -1}
+            aria-selected={tab.id === activeTab}
+            aria-controls={"tabpanel-".concat(tab.id)}
+            disabled={tab.disabled}
+            className={(0, utils_1.cn)(
+              "px-4 py-2 text-sm font-medium border-b-2 transition-colors",
+              "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+              "hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed",
+              tab.id === activeTab
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:border-border",
+            )}
+            onClick={() => {
+              if (!tab.disabled) {
+                onTabChange(tab.id);
+                setFocusedTab(tab.id);
+              }
+            }}
+            onFocus={() => setFocusedTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       <div

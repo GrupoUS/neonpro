@@ -5,7 +5,7 @@
  * Tests for WebAuthn/FIDO2 authentication implementation
  */
 
-import { describe, it, expect } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 
 describe("WebAuthn Implementation Verification", () => {
   it("should have WebAuthn service utilities", () => {
@@ -25,8 +25,8 @@ describe("WebAuthn Implementation Verification", () => {
 
   it("should have WebAuthn API endpoints", async () => {
     // Test that API route files exist
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const apiPaths = [
       "app/api/auth/webauthn/register/options/route.ts",
@@ -44,8 +44,8 @@ describe("WebAuthn Implementation Verification", () => {
   });
 
   it("should have WebAuthn React component", () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const componentPath = path.join(process.cwd(), "components/auth/webauthn-manager.tsx");
     expect(fs.existsSync(componentPath)).toBe(true);
@@ -110,8 +110,8 @@ describe("TASK-002 Authentication Performance Requirements", () => {
 
 describe("WebAuthn Security Features", () => {
   it("should have comprehensive security audit preparation", () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     // Check that security audit schema is prepared
     const migrationPath = path.join(
@@ -129,8 +129,8 @@ describe("WebAuthn Security Features", () => {
   });
 
   it("should have proper database schema for WebAuthn", () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const migrationPath = path.join(
       process.cwd(),

@@ -1,26 +1,26 @@
 // Story 11.2: No-Show Prediction Engine Service
 // =80% accuracy ML-based prediction system with multi-factor analysis
 
-import { createClient } from "@/lib/supabase/server";
 import {
-  NoShowPrediction,
-  RiskFactor,
-  InterventionStrategy,
+  type AppointmentOutcomeValue,
+  type CreateInterventionInput,
+  type CreatePredictionInput,
+  type CreateRiskFactorInput,
+  type InterventionStrategy,
+  type InterventionTypeValue,
+  type ModelPerformance,
   NoShowAnalytics,
-  CreatePredictionInput,
-  UpdatePredictionInput,
-  CreateRiskFactorInput,
-  CreateInterventionInput,
-  UpdateInterventionInput,
-  PredictionAnalysis,
-  ModelPerformance,
-  NoShowTrends,
-  NoShowDashboardStats,
+  type NoShowDashboardStats,
+  type NoShowPrediction,
+  type NoShowTrends,
+  type PredictionAnalysis,
+  type RiskFactor,
   RiskFactorAnalysis,
-  RiskFactorTypeValue,
-  InterventionTypeValue,
-  AppointmentOutcomeValue,
+  type RiskFactorTypeValue,
+  type UpdateInterventionInput,
+  type UpdatePredictionInput,
 } from "@/app/types/no-show-prediction";
+import { createClient } from "@/lib/supabase/server";
 
 // Configuration interface
 interface NoShowPredictionConfig {

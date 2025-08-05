@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var alert_1 = require("@/components/ui/alert");
 var badge_1 = require("@/components/ui/badge");
@@ -165,7 +162,7 @@ var react_1 = require("react");
 var PerformanceTracking_1 = require("./PerformanceTracking");
 var PrivacyCompliance_1 = require("./PrivacyCompliance");
 var SegmentBuilder_1 = require("./SegmentBuilder");
-var SegmentationDashboard = function () {
+var SegmentationDashboard = () => {
   var _a = (0, react_1.useState)([]),
     segments = _a[0],
     setSegments = _a[1];
@@ -201,11 +198,11 @@ var SegmentationDashboard = function () {
     }),
     newSegment = _j[0],
     setNewSegment = _j[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadSegmentationData();
   }, []);
-  var loadSegmentationData = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadSegmentationData = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var segmentsResponse,
         segmentsData,
         performanceData,
@@ -218,7 +215,7 @@ var SegmentationDashboard = function () {
         rulesResponse,
         rulesData,
         error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 14, 15, 16]);
@@ -293,11 +290,10 @@ var SegmentationDashboard = function () {
         }
       });
     });
-  };
-  var createSegment = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var createSegment = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, errorData, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -313,7 +309,7 @@ var SegmentationDashboard = function () {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             errorData = _a.sent();
@@ -343,8 +339,7 @@ var SegmentationDashboard = function () {
         }
       });
     });
-  };
-  var getSegmentTypeColor = function (type) {
+  var getSegmentTypeColor = (type) => {
     var colors = {
       demographic: "bg-blue-100 text-blue-800",
       behavioral: "bg-green-100 text-green-800",
@@ -356,27 +351,14 @@ var SegmentationDashboard = function () {
     };
     return colors[type] || colors.custom;
   };
-  var formatPercentage = function (value) {
-    return "".concat((value * 100).toFixed(1), "%");
-  };
-  var formatCurrency = function (value) {
-    return "R$ ".concat(value.toLocaleString("pt-BR", { minimumFractionDigits: 2 }));
-  };
+  var formatPercentage = (value) => "".concat((value * 100).toFixed(1), "%");
+  var formatCurrency = (value) =>
+    "R$ ".concat(value.toLocaleString("pt-BR", { minimumFractionDigits: 2 }));
   var filteredSegments =
-    selectedSegment === "all"
-      ? segments
-      : segments.filter(function (s) {
-          return s.id === selectedSegment;
-        });
-  var totalPatients = segments.reduce(function (sum, segment) {
-    return sum + segment.member_count;
-  }, 0);
-  var aiGeneratedCount = segments.filter(function (s) {
-    return s.ai_generated;
-  }).length;
-  var activeSegmentsCount = segments.filter(function (s) {
-    return s.is_active;
-  }).length;
+    selectedSegment === "all" ? segments : segments.filter((s) => s.id === selectedSegment);
+  var totalPatients = segments.reduce((sum, segment) => sum + segment.member_count, 0);
+  var aiGeneratedCount = segments.filter((s) => s.ai_generated).length;
+  var activeSegmentsCount = segments.filter((s) => s.is_active).length;
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -415,11 +397,9 @@ var SegmentationDashboard = function () {
                   <input_1.Input
                     id="segment-name"
                     value={newSegment.name}
-                    onChange={function (e) {
-                      return setNewSegment(
-                        __assign(__assign({}, newSegment), { name: e.target.value }),
-                      );
-                    }}
+                    onChange={(e) =>
+                      setNewSegment(__assign(__assign({}, newSegment), { name: e.target.value }))
+                    }
                     placeholder="Ex: Pacientes Premium"
                   />
                 </div>
@@ -428,11 +408,11 @@ var SegmentationDashboard = function () {
                   <textarea_1.Textarea
                     id="segment-description"
                     value={newSegment.description}
-                    onChange={function (e) {
-                      return setNewSegment(
+                    onChange={(e) =>
+                      setNewSegment(
                         __assign(__assign({}, newSegment), { description: e.target.value }),
-                      );
-                    }}
+                      )
+                    }
                     placeholder="Descreva o segmento..."
                   />
                 </div>
@@ -440,11 +420,9 @@ var SegmentationDashboard = function () {
                   <label_1.Label htmlFor="segment-type">Tipo de Segmento</label_1.Label>
                   <select_1.Select
                     value={newSegment.segment_type}
-                    onValueChange={function (value) {
-                      return setNewSegment(
-                        __assign(__assign({}, newSegment), { segment_type: value }),
-                      );
-                    }}
+                    onValueChange={(value) =>
+                      setNewSegment(__assign(__assign({}, newSegment), { segment_type: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -463,21 +441,14 @@ var SegmentationDashboard = function () {
                   <switch_1.Switch
                     id="auto-update"
                     checked={newSegment.auto_update}
-                    onCheckedChange={function (checked) {
-                      return setNewSegment(
-                        __assign(__assign({}, newSegment), { auto_update: checked }),
-                      );
-                    }}
+                    onCheckedChange={(checked) =>
+                      setNewSegment(__assign(__assign({}, newSegment), { auto_update: checked }))
+                    }
                   />
                   <label_1.Label htmlFor="auto-update">Atualização Automática</label_1.Label>
                 </div>
                 <div className="flex space-x-2">
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setShowCreateDialog(false);
-                    }}
-                  >
+                  <button_1.Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                     Cancelar
                   </button_1.Button>
                   <button_1.Button onClick={createSegment} disabled={!newSegment.name}>
@@ -545,13 +516,7 @@ var SegmentationDashboard = function () {
             <lucide_react_1.Zap className="h-4 w-4 text-muted-foreground" />
           </card_1.CardHeader>
           <card_1.CardContent>
-            <div className="text-2xl font-bold">
-              {
-                rules.filter(function (r) {
-                  return r.is_active;
-                }).length
-              }
-            </div>
+            <div className="text-2xl font-bold">{rules.filter((r) => r.is_active).length}</div>
             <p className="text-xs text-muted-foreground">{rules.length} regras totais</p>
           </card_1.CardContent>
         </card_1.Card>
@@ -577,13 +542,11 @@ var SegmentationDashboard = function () {
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">Todos os Segmentos</select_1.SelectItem>
-                {segments.map(function (segment) {
-                  return (
-                    <select_1.SelectItem key={segment.id} value={segment.id}>
-                      {segment.name}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {segments.map((segment) => (
+                  <select_1.SelectItem key={segment.id} value={segment.id}>
+                    {segment.name}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
           </div>
@@ -591,7 +554,7 @@ var SegmentationDashboard = function () {
 
         <tabs_1.TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4">
-            {filteredSegments.map(function (segment) {
+            {filteredSegments.map((segment) => {
               var segmentPerf = performance[segment.id];
               return (
                 <card_1.Card key={segment.id}>
@@ -667,58 +630,56 @@ var SegmentationDashboard = function () {
 
         <tabs_1.TabsContent value="segments" className="space-y-4">
           <div className="grid gap-4">
-            {filteredSegments.map(function (segment) {
-              return (
-                <card_1.Card key={segment.id}>
-                  <card_1.CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <card_1.CardTitle>{segment.name}</card_1.CardTitle>
-                        <card_1.CardDescription>
-                          Criado em {new Date(segment.created_at).toLocaleDateString("pt-BR")}
-                        </card_1.CardDescription>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Eye className="h-4 w-4 mr-2" />
-                          Visualizar
-                        </button_1.Button>
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Settings className="h-4 w-4 mr-2" />
-                          Configurar
-                        </button_1.Button>
-                      </div>
+            {filteredSegments.map((segment) => (
+              <card_1.Card key={segment.id}>
+                <card_1.CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <card_1.CardTitle>{segment.name}</card_1.CardTitle>
+                      <card_1.CardDescription>
+                        Criado em {new Date(segment.created_at).toLocaleDateString("pt-BR")}
+                      </card_1.CardDescription>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span>Membros:</span>
-                        <span className="font-medium">{segment.member_count}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Tipo:</span>
-                        <badge_1.Badge className={getSegmentTypeColor(segment.segment_type)}>
-                          {segment.segment_type}
-                        </badge_1.Badge>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Status:</span>
-                        <badge_1.Badge variant={segment.is_active ? "default" : "secondary"}>
-                          {segment.is_active ? "Ativo" : "Inativo"}
-                        </badge_1.Badge>
-                      </div>
+                    <div className="flex space-x-2">
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Eye className="h-4 w-4 mr-2" />
+                        Visualizar
+                      </button_1.Button>
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Settings className="h-4 w-4 mr-2" />
+                        Configurar
+                      </button_1.Button>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span>Membros:</span>
+                      <span className="font-medium">{segment.member_count}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Tipo:</span>
+                      <badge_1.Badge className={getSegmentTypeColor(segment.segment_type)}>
+                        {segment.segment_type}
+                      </badge_1.Badge>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Status:</span>
+                      <badge_1.Badge variant={segment.is_active ? "default" : "secondary"}>
+                        {segment.is_active ? "Ativo" : "Inativo"}
+                      </badge_1.Badge>
+                    </div>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
         <tabs_1.TabsContent value="performance" className="space-y-4">
           <div className="grid gap-4">
-            {filteredSegments.map(function (segment) {
+            {filteredSegments.map((segment) => {
               var segmentPerf = performance[segment.id];
               if (!segmentPerf) return null;
               return (
@@ -790,62 +751,60 @@ var SegmentationDashboard = function () {
 
         <tabs_1.TabsContent value="rules" className="space-y-4">
           <div className="grid gap-4">
-            {rules.map(function (rule) {
-              return (
-                <card_1.Card key={rule.id}>
-                  <card_1.CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <card_1.CardTitle>{rule.rule_name}</card_1.CardTitle>
-                        <card_1.CardDescription>{rule.rule_description}</card_1.CardDescription>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        {rule.requires_ai && (
-                          <badge_1.Badge variant="secondary">
-                            <lucide_react_1.Brain className="w-3 h-3 mr-1" />
-                            IA
-                          </badge_1.Badge>
-                        )}
-                        <badge_1.Badge variant={rule.is_active ? "default" : "secondary"}>
-                          {rule.is_active ? "Ativa" : "Inativa"}
+            {rules.map((rule) => (
+              <card_1.Card key={rule.id}>
+                <card_1.CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <card_1.CardTitle>{rule.rule_name}</card_1.CardTitle>
+                      <card_1.CardDescription>{rule.rule_description}</card_1.CardDescription>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {rule.requires_ai && (
+                        <badge_1.Badge variant="secondary">
+                          <lucide_react_1.Brain className="w-3 h-3 mr-1" />
+                          IA
                         </badge_1.Badge>
+                      )}
+                      <badge_1.Badge variant={rule.is_active ? "default" : "secondary"}>
+                        {rule.is_active ? "Ativa" : "Inativa"}
+                      </badge_1.Badge>
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <label_1.Label>Correspondências</label_1.Label>
+                      <div className="text-lg font-semibold">{rule.matches_count}</div>
+                    </div>
+                    <div>
+                      <label_1.Label>Precisão</label_1.Label>
+                      <div className="text-lg font-semibold">
+                        {rule.accuracy_rate ? formatPercentage(rule.accuracy_rate) : "N/A"}
                       </div>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <label_1.Label>Correspondências</label_1.Label>
-                        <div className="text-lg font-semibold">{rule.matches_count}</div>
-                      </div>
-                      <div>
-                        <label_1.Label>Precisão</label_1.Label>
-                        <div className="text-lg font-semibold">
-                          {rule.accuracy_rate ? formatPercentage(rule.accuracy_rate) : "N/A"}
-                        </div>
-                      </div>
-                      <div>
-                        <label_1.Label>Última Avaliação</label_1.Label>
-                        <div className="text-sm text-muted-foreground">
-                          {new Date(rule.last_evaluated).toLocaleDateString("pt-BR")}
-                        </div>
-                      </div>
-                      <div>
-                        <label_1.Label>Ações</label_1.Label>
-                        <div className="flex space-x-2">
-                          <button_1.Button variant="outline" size="sm">
-                            Editar
-                          </button_1.Button>
-                          <button_1.Button variant="outline" size="sm">
-                            Executar
-                          </button_1.Button>
-                        </div>
+                    <div>
+                      <label_1.Label>Última Avaliação</label_1.Label>
+                      <div className="text-sm text-muted-foreground">
+                        {new Date(rule.last_evaluated).toLocaleDateString("pt-BR")}
                       </div>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    <div>
+                      <label_1.Label>Ações</label_1.Label>
+                      <div className="flex space-x-2">
+                        <button_1.Button variant="outline" size="sm">
+                          Editar
+                        </button_1.Button>
+                        <button_1.Button variant="outline" size="sm">
+                          Executar
+                        </button_1.Button>
+                      </div>
+                    </div>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 

@@ -856,8 +856,7 @@ export class SuspiciousActivityDetector {
     if (movements.length === 0) return 0;
 
     const mean = movements.reduce((sum, m) => sum + m, 0) / movements.length;
-    const variance =
-      movements.reduce((sum, m) => sum + Math.pow(m - mean, 2), 0) / movements.length;
+    const variance = movements.reduce((sum, m) => sum + (m - mean) ** 2, 0) / movements.length;
 
     return Math.sqrt(variance);
   }

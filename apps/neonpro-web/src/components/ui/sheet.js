@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SheetDescription =
   exports.SheetTitle =
@@ -38,7 +36,7 @@ var SheetClose = SheetPrimitive.Close;
 exports.SheetClose = SheetClose;
 var SheetPortal = SheetPrimitive.Portal;
 exports.SheetPortal = SheetPortal;
-var SheetOverlay = React.forwardRef(function (_a, ref) {
+var SheetOverlay = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -72,7 +70,7 @@ var sheetVariants = (0, class_variance_authority_1.cva)(
     },
   },
 );
-var SheetContent = React.forwardRef(function (_a, ref) {
+var SheetContent = React.forwardRef((_a, ref) => {
   var _b = _a.side,
     side = _b === void 0 ? "right" : _b,
     className = _a.className,
@@ -97,7 +95,7 @@ var SheetContent = React.forwardRef(function (_a, ref) {
 });
 exports.SheetContent = SheetContent;
 SheetContent.displayName = SheetPrimitive.Content.displayName;
-var SheetHeader = function (_a) {
+var SheetHeader = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -109,7 +107,7 @@ var SheetHeader = function (_a) {
 };
 exports.SheetHeader = SheetHeader;
 SheetHeader.displayName = "SheetHeader";
-var SheetFooter = function (_a) {
+var SheetFooter = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -124,7 +122,7 @@ var SheetFooter = function (_a) {
 };
 exports.SheetFooter = SheetFooter;
 SheetFooter.displayName = "SheetFooter";
-var SheetTitle = React.forwardRef(function (_a, ref) {
+var SheetTitle = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -137,7 +135,7 @@ var SheetTitle = React.forwardRef(function (_a, ref) {
 });
 exports.SheetTitle = SheetTitle;
 SheetTitle.displayName = SheetPrimitive.Title.displayName;
-var SheetDescription = React.forwardRef(function (_a, ref) {
+var SheetDescription = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

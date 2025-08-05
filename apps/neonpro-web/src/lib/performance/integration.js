@@ -3,32 +3,31 @@
  * Seamlessly integrate performance monitor into NeonPro layout
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usePerformanceMonitoring = usePerformanceMonitoring;
 exports.PerformanceMonitor = PerformanceMonitor;
@@ -160,8 +157,7 @@ var web_vitals_1 = require("web-vitals");
  * Custom hook for automatic performance monitoring
  */
 function usePerformanceMonitoring() {
-  var _this = this;
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Only run in production or when explicitly enabled
     if (
       process.env.NODE_ENV !== "production" &&
@@ -174,11 +170,11 @@ function usePerformanceMonitoring() {
     /**
      * Send metrics to API when all are collected
      */
-    var sendMetrics = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    var sendMetrics = () =>
+      __awaiter(this, void 0, void 0, function () {
         var score, performanceData, error_1;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               score = calculatePerformanceScore(metrics);
@@ -219,11 +215,10 @@ function usePerformanceMonitoring() {
           }
         });
       });
-    };
     /**
      * Collect metrics with debounced reporting
      */
-    var collectMetric = function (name, value) {
+    var collectMetric = (name, value) => {
       metrics[name] = value;
       // Clear existing timeout
       if (reportingTimeout) {
@@ -235,23 +230,13 @@ function usePerformanceMonitoring() {
       reportingTimeout = setTimeout(sendMetrics, delay);
     };
     // Collect Core Web Vitals
-    (0, web_vitals_1.onCLS)(function (metric) {
-      return collectMetric("cls", metric.value);
-    });
-    (0, web_vitals_1.onFID)(function (metric) {
-      return collectMetric("fid", metric.value);
-    });
-    (0, web_vitals_1.onFCP)(function (metric) {
-      return collectMetric("fcp", metric.value / 1000);
-    }); // Convert to seconds
-    (0, web_vitals_1.onLCP)(function (metric) {
-      return collectMetric("lcp", metric.value / 1000);
-    }); // Convert to seconds
-    (0, web_vitals_1.onTTFB)(function (metric) {
-      return collectMetric("ttfb", metric.value);
-    });
+    (0, web_vitals_1.onCLS)((metric) => collectMetric("cls", metric.value));
+    (0, web_vitals_1.onFID)((metric) => collectMetric("fid", metric.value));
+    (0, web_vitals_1.onFCP)((metric) => collectMetric("fcp", metric.value / 1000)); // Convert to seconds
+    (0, web_vitals_1.onLCP)((metric) => collectMetric("lcp", metric.value / 1000)); // Convert to seconds
+    (0, web_vitals_1.onTTFB)((metric) => collectMetric("ttfb", metric.value));
     // Cleanup on unmount
-    return function () {
+    return () => {
       if (reportingTimeout) {
         clearTimeout(reportingTimeout);
       }
@@ -284,7 +269,7 @@ function calculatePerformanceScore(metrics) {
   };
   var totalScore = 0;
   // Calculate score for each metric
-  Object.entries(metrics).forEach(function (_a) {
+  Object.entries(metrics).forEach((_a) => {
     var key = _a[0],
       value = _a[1];
     var threshold = thresholds[key];

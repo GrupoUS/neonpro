@@ -1,8 +1,6 @@
 // Brazilian Tax System Validation Schemas
 // Story 5.5: Comprehensive validation for Brazilian tax compliance
 
-import type { z } from "zod";
-
 // Brazilian Document Validators
 export const cnpjSchema = z
   .string()

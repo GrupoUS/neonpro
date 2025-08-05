@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Third-party Integrations Framework
  * Core framework implementation
@@ -9,20 +8,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -37,26 +36,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -76,13 +75,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -104,9 +103,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -178,7 +175,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntegrationFrameworkError = exports.NeonProIntegrationFramework = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -186,7 +183,7 @@ var supabase_js_1 = require("@supabase/supabase-js");
  * Main Integration Framework Class
  * Manages all third-party integrations
  */
-var NeonProIntegrationFramework = /** @class */ (function () {
+var NeonProIntegrationFramework = /** @class */ (() => {
   function NeonProIntegrationFramework(
     supabaseUrl,
     supabaseKey,
@@ -750,9 +747,7 @@ var NeonProIntegrationFramework = /** @class */ (function () {
                 id,
               );
             }
-            endpointConfig = integration.endpoints.find(function (ep) {
-              return ep.name === endpoint;
-            });
+            endpointConfig = integration.endpoints.find((ep) => ep.name === endpoint);
             if (!endpointConfig) {
               throw new IntegrationFrameworkError(
                 "Endpoint not found: ".concat(endpoint),
@@ -969,7 +964,7 @@ var NeonProIntegrationFramework = /** @class */ (function () {
   NeonProIntegrationFramework.prototype.getMetrics = function (id, period) {
     return __awaiter(this, void 0, void 0, function () {
       var metrics;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           metrics = {
             integrationId: id,
@@ -1033,7 +1028,7 @@ var NeonProIntegrationFramework = /** @class */ (function () {
   // Private helper methods
   NeonProIntegrationFramework.prototype.encryptCredentials = function (credentials) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use proper encryption
         return [2 /*return*/, JSON.stringify(credentials)];
       });
@@ -1041,7 +1036,7 @@ var NeonProIntegrationFramework = /** @class */ (function () {
   };
   NeonProIntegrationFramework.prototype.decryptCredentials = function (encrypted) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use proper decryption
         return [2 /*return*/, JSON.parse(encrypted)];
       });
@@ -1092,7 +1087,7 @@ exports.NeonProIntegrationFramework = NeonProIntegrationFramework;
 /**
  * Custom error class for integration framework
  */
-var IntegrationFrameworkError = /** @class */ (function (_super) {
+var IntegrationFrameworkError = /** @class */ ((_super) => {
   __extends(IntegrationFrameworkError, _super);
   function IntegrationFrameworkError(
     message,

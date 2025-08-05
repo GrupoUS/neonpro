@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Clerk Configuration and Setup
  * Production-ready configuration for healthcare applications

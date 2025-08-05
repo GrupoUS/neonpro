@@ -6,8 +6,8 @@
  * Usage: node scripts/update-roadmap.js [--dry-run]
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 const StoryValidator = require("./validate-stories");
 
 // Configurações
@@ -78,7 +78,7 @@ class RoadmapUpdater {
    * Atualiza o conteúdo do roadmap
    */
   updateRoadmapContent(validationResults) {
-    let content = fs.readFileSync(ROADMAP_FILE, "utf8");
+    const content = fs.readFileSync(ROADMAP_FILE, "utf8");
     const lines = content.split("\n");
     const updatedLines = [];
 
@@ -173,7 +173,7 @@ class RoadmapUpdater {
 
         if (pattern.source.includes("Priority")) {
           // Linha com Priority e Status
-          updatedLine = line.replace(pattern, (match, priority, oldStatus) => {
+          updatedLine = line.replace(pattern, (_match, priority, _oldStatus) => {
             return `**Priority**: ${priority.trim()} | **Status**: ${statusInfo.text}`;
           });
         } else {
@@ -255,7 +255,7 @@ class RoadmapUpdater {
 
 `;
 
-      content = content.replace(statsPattern, newStats + "\n## ");
+      content = content.replace(statsPattern, `${newStats}\n## `);
     }
 
     return content;
@@ -292,7 +292,7 @@ class RoadmapUpdater {
       this.log(`   Depois: ${change.to}`, "green");
     });
 
-    this.log("\n" + "=".repeat(60));
+    this.log(`\n${"=".repeat(60)}`);
   }
 
   /**

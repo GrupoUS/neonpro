@@ -3,13 +3,13 @@
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {
+  type ServiceTaxCode,
+  serviceTaxCodeSchema,
+  type TaxBreakdown,
+  type TaxCalculation,
+  type TaxConfiguration,
   taxCalculationRequestSchema,
   taxConfigurationSchema,
-  serviceTaxCodeSchema,
-  type TaxConfiguration,
-  type ServiceTaxCode,
-  type TaxCalculation,
-  type TaxBreakdown,
 } from "@/lib/types/brazilian-tax";
 
 export class BrazilianTaxEngine {
@@ -425,7 +425,7 @@ export class BrazilianTaxEngine {
 
     for (const calculation of calculations) {
       try {
-        const result = await this.calculateServiceTax(
+        const result = await BrazilianTaxEngine.calculateServiceTax(
           calculation.service_type,
           calculation.amount,
           clinicId,

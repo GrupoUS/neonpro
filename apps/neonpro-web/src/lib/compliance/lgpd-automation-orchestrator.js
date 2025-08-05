@@ -1,18 +1,17 @@
-"use strict";
 // ============================================================================
 // LGPD AUTOMATION ORCHESTRATOR
 // ============================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LGPDAutomationOrchestrator = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -145,7 +142,7 @@ var lgpd_1 = require("@/types/lgpd");
  * Orquestrador principal da automação LGPD
  * Coordena todos os serviços de automação e fornece interface unificada
  */
-var LGPDAutomationOrchestrator = /** @class */ (function () {
+var LGPDAutomationOrchestrator = /** @class */ (() => {
   function LGPDAutomationOrchestrator() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -363,9 +360,7 @@ var LGPDAutomationOrchestrator = /** @class */ (function () {
                 startTime: startTime,
                 endTime: new Date(),
                 itemsProcessed: processedRequests.length,
-                itemsSuccessful: processedRequests.filter(function (r) {
-                  return r.status === "completed";
-                }).length,
+                itemsSuccessful: processedRequests.filter((r) => r.status === "completed").length,
                 errors: [],
                 details: { processedRequests: processedRequests },
               },
@@ -419,12 +414,8 @@ var LGPDAutomationOrchestrator = /** @class */ (function () {
                 itemsProcessed: 1,
                 itemsSuccessful: auditResult.complianceScore >= 80 ? 1 : 0,
                 errors: auditResult.actionItems
-                  .filter(function (item) {
-                    return item.priority === "critical";
-                  })
-                  .map(function (item) {
-                    return item.description;
-                  }),
+                  .filter((item) => item.priority === "critical")
+                  .map((item) => item.description),
                 details: auditResult,
               },
             ];
@@ -601,21 +592,13 @@ var LGPDAutomationOrchestrator = /** @class */ (function () {
             healthCheck = _b.sent();
             criticalIssues = healthCheck.criticalIssues.length;
             nextScheduledTasks = schedules
-              .filter(function (s) {
-                return s.enabled;
-              })
-              .sort(function (a, b) {
-                return a.nextRun.getTime() - b.nextRun.getTime();
-              })
+              .filter((s) => s.enabled)
+              .sort((a, b) => a.nextRun.getTime() - b.nextRun.getTime())
               .slice(0, 5);
             recentAlerts = auditLogs
-              .filter(function (log) {
-                return log.riskLevel === "high" || log.riskLevel === "critical";
-              })
+              .filter((log) => log.riskLevel === "high" || log.riskLevel === "critical")
               .slice(0, 5)
-              .map(function (log) {
-                return "".concat(log.eventType, ": ").concat(log.action);
-              });
+              .map((log) => "".concat(log.eventType, ": ").concat(log.action));
             return [
               2 /*return*/,
               {
@@ -845,15 +828,9 @@ var LGPDAutomationOrchestrator = /** @class */ (function () {
                 startTime: startTime,
                 endTime: new Date(),
                 results: results,
-                totalItemsProcessed: results.reduce(function (sum, r) {
-                  return sum + r.itemsProcessed;
-                }, 0),
-                totalItemsSuccessful: results.reduce(function (sum, r) {
-                  return sum + r.itemsSuccessful;
-                }, 0),
-                totalErrors: results.reduce(function (sum, r) {
-                  return sum + r.errors.length;
-                }, 0),
+                totalItemsProcessed: results.reduce((sum, r) => sum + r.itemsProcessed, 0),
+                totalItemsSuccessful: results.reduce((sum, r) => sum + r.itemsSuccessful, 0),
+                totalErrors: results.reduce((sum, r) => sum + r.errors.length, 0),
               },
               ipAddress: "system",
               userAgent: "LGPD Automation Orchestrator",
@@ -869,9 +846,7 @@ var LGPDAutomationOrchestrator = /** @class */ (function () {
   };
   LGPDAutomationOrchestrator.prototype.updateAutomationSchedules = function (clinicId, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   LGPDAutomationOrchestrator.prototype.executeScheduledTask = function (task) {
@@ -925,7 +900,7 @@ var LGPDAutomationOrchestrator = /** @class */ (function () {
       });
     });
   };
-  LGPDAutomationOrchestrator.prototype.calculateNextRun = function (frequency, lastRun) {
+  LGPDAutomationOrchestrator.prototype.calculateNextRun = (frequency, lastRun) => {
     var next = new Date(lastRun);
     switch (frequency) {
       case "daily":

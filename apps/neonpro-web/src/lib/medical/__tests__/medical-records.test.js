@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,131 +142,91 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var vitest_1 = require("vitest");
 var medical_records_1 = require("../medical-records");
 // Mock Supabase
 var mockSupabase = {
-  from: vitest_1.vi.fn(function () {
-    return {
-      select: vitest_1.vi.fn(function () {
-        return {
-          eq: vitest_1.vi.fn(function () {
-            return {
-              order: vitest_1.vi.fn(function () {
-                return {
-                  data: [],
-                  error: null,
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      insert: vitest_1.vi.fn(function () {
-        return {
-          select: vitest_1.vi.fn(function () {
-            return {
-              single: vitest_1.vi.fn(function () {
-                return {
-                  data: null,
-                  error: null,
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      update: vitest_1.vi.fn(function () {
-        return {
-          eq: vitest_1.vi.fn(function () {
-            return {
-              select: vitest_1.vi.fn(function () {
-                return {
-                  single: vitest_1.vi.fn(function () {
-                    return {
-                      data: null,
-                      error: null,
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      delete: vitest_1.vi.fn(function () {
-        return {
-          eq: vitest_1.vi.fn(function () {
-            return {
-              data: null,
-              error: null,
-            };
-          }),
-        };
-      }),
-    };
-  }),
-  storage: {
-    from: vitest_1.vi.fn(function () {
-      return {
-        upload: vitest_1.vi.fn(function () {
-          return {
-            data: { path: "test-path" },
-            error: null,
-          };
-        }),
-        download: vitest_1.vi.fn(function () {
-          return {
-            data: new Blob(["test"]),
-            error: null,
-          };
-        }),
-        remove: vitest_1.vi.fn(function () {
-          return {
+  from: vitest_1.vi.fn(() => ({
+    select: vitest_1.vi.fn(() => ({
+      eq: vitest_1.vi.fn(() => ({
+        order: vitest_1.vi.fn(() => ({
+          data: [],
+          error: null,
+        })),
+      })),
+    })),
+    insert: vitest_1.vi.fn(() => ({
+      select: vitest_1.vi.fn(() => ({
+        single: vitest_1.vi.fn(() => ({
+          data: null,
+          error: null,
+        })),
+      })),
+    })),
+    update: vitest_1.vi.fn(() => ({
+      eq: vitest_1.vi.fn(() => ({
+        select: vitest_1.vi.fn(() => ({
+          single: vitest_1.vi.fn(() => ({
             data: null,
             error: null,
-          };
-        }),
-      };
-    }),
+          })),
+        })),
+      })),
+    })),
+    delete: vitest_1.vi.fn(() => ({
+      eq: vitest_1.vi.fn(() => ({
+        data: null,
+        error: null,
+      })),
+    })),
+  })),
+  storage: {
+    from: vitest_1.vi.fn(() => ({
+      upload: vitest_1.vi.fn(() => ({
+        data: { path: "test-path" },
+        error: null,
+      })),
+      download: vitest_1.vi.fn(() => ({
+        data: new Blob(["test"]),
+        error: null,
+      })),
+      remove: vitest_1.vi.fn(() => ({
+        data: null,
+        error: null,
+      })),
+    })),
   },
 };
 // Mock dependencies
-vitest_1.vi.mock("@/lib/supabase", function () {
-  return {
-    supabase: mockSupabase,
-  };
-});
-vitest_1.vi.mock("@/lib/audit/audit-logger", function () {
-  return {
-    AuditLogger: {
-      log: vitest_1.vi.fn(),
-    },
-  };
-});
-vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
-  return {
-    LGPDManager: {
-      logDataProcessing: vitest_1.vi.fn(),
-      checkDataRetention: vitest_1.vi.fn(),
-    },
-  };
-});
-(0, vitest_1.describe)("MedicalRecordsManager", function () {
+vitest_1.vi.mock("@/lib/supabase", () => ({
+  supabase: mockSupabase,
+}));
+vitest_1.vi.mock("@/lib/audit/audit-logger", () => ({
+  AuditLogger: {
+    log: vitest_1.vi.fn(),
+  },
+}));
+vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", () => ({
+  LGPDManager: {
+    logDataProcessing: vitest_1.vi.fn(),
+    checkDataRetention: vitest_1.vi.fn(),
+  },
+}));
+(0, vitest_1.describe)("MedicalRecordsManager", () => {
   var manager;
   var mockPatientId = "patient-123";
   var mockClinicId = "clinic-456";
   var mockUserId = "user-789";
-  (0, vitest_1.beforeEach)(function () {
+  (0, vitest_1.beforeEach)(() => {
     manager = new medical_records_1.MedicalRecordsManager();
     vitest_1.vi.clearAllMocks();
   });
-  (0, vitest_1.afterEach)(function () {
+  (0, vitest_1.afterEach)(() => {
     vitest_1.vi.resetAllMocks();
   });
-  (0, vitest_1.describe)("Medical Records", function () {
+  (0, vitest_1.describe)("Medical Records", () => {
     var mockMedicalRecord = {
       id: "record-1",
       patientId: mockPatientId,
@@ -288,11 +245,11 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
       version: 1,
       isDeleted: false,
     };
-    (0, vitest_1.describe)("createMedicalRecord", function () {
-      (0, vitest_1.it)("should create a medical record successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("createMedicalRecord", () => {
+      (0, vitest_1.it)("should create a medical record successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var createData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 createData = {
@@ -318,12 +275,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should handle creation errors", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should handle creation errors", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var createData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 createData = {
@@ -352,12 +309,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should validate required fields", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should validate required fields", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var invalidData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidData = {
@@ -378,14 +335,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("getMedicalRecord", function () {
-      (0, vitest_1.it)("should retrieve a medical record by id", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("getMedicalRecord", () => {
+      (0, vitest_1.it)("should retrieve a medical record by id", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -404,12 +361,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should handle record not found", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should handle record not found", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase.from().select().eq().order.mockResolvedValueOnce({
@@ -424,15 +381,15 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("updateMedicalRecord", function () {
-      (0, vitest_1.it)("should update a medical record successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("updateMedicalRecord", () => {
+      (0, vitest_1.it)("should update a medical record successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var updateData, updatedRecord, result;
           var _a, _b;
-          return __generator(this, function (_c) {
+          return __generator(this, (_c) => {
             switch (_c.label) {
               case 0:
                 updateData = {
@@ -463,12 +420,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should handle update errors", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should handle update errors", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var updateData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 updateData = {
@@ -494,14 +451,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("deleteMedicalRecord", function () {
-      (0, vitest_1.it)("should soft delete a medical record", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("deleteMedicalRecord", () => {
+      (0, vitest_1.it)("should soft delete a medical record", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -523,14 +480,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("getPatientMedicalRecords", function () {
-      (0, vitest_1.it)("should retrieve all medical records for a patient", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("getPatientMedicalRecords", () => {
+      (0, vitest_1.it)("should retrieve all medical records for a patient", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockRecords, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockRecords = [mockMedicalRecord];
@@ -550,12 +507,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should filter by type when specified", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should filter by type when specified", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockRecords, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockRecords = [mockMedicalRecord];
@@ -576,11 +533,11 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
   });
-  (0, vitest_1.describe)("Medical History", function () {
+  (0, vitest_1.describe)("Medical History", () => {
     var mockMedicalHistory = {
       id: "history-1",
       patientId: mockPatientId,
@@ -600,11 +557,11 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
       createdBy: mockUserId,
       isDeleted: false,
     };
-    (0, vitest_1.describe)("createMedicalHistory", function () {
-      (0, vitest_1.it)("should create medical history successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("createMedicalHistory", () => {
+      (0, vitest_1.it)("should create medical history successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var createData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 createData = {
@@ -633,12 +590,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should validate required fields for medical history", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should validate required fields for medical history", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var invalidData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidData = {
@@ -661,14 +618,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("getMedicalHistory", function () {
-      (0, vitest_1.it)("should retrieve medical history by id", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("getMedicalHistory", () => {
+      (0, vitest_1.it)("should retrieve medical history by id", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -687,14 +644,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("getPatientMedicalHistory", function () {
-      (0, vitest_1.it)("should retrieve all medical history for a patient", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("getPatientMedicalHistory", () => {
+      (0, vitest_1.it)("should retrieve all medical history for a patient", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockHistories, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockHistories = [mockMedicalHistory];
@@ -710,12 +667,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should filter by category when specified", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should filter by category when specified", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockHistories, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockHistories = [mockMedicalHistory];
@@ -736,11 +693,11 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
   });
-  (0, vitest_1.describe)("Attachments", function () {
+  (0, vitest_1.describe)("Attachments", () => {
     var mockAttachment = {
       id: "attachment-1",
       recordId: "record-1",
@@ -758,11 +715,11 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
       uploadedBy: mockUserId,
       isDeleted: false,
     };
-    (0, vitest_1.describe)("uploadAttachment", function () {
-      (0, vitest_1.it)("should upload attachment successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("uploadAttachment", () => {
+      (0, vitest_1.it)("should upload attachment successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockFile, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockFile = new File(["test content"], "test.pdf", { type: "application/pdf" });
@@ -798,12 +755,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should handle upload errors", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should handle upload errors", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockFile, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockFile = new File(["test content"], "test.pdf", { type: "application/pdf" });
@@ -830,12 +787,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should validate file size", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should validate file size", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var largeFile, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 largeFile = new File(["x".repeat(11 * 1024 * 1024)], "large.pdf", {
@@ -860,12 +817,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should validate file type", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should validate file type", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var invalidFile, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidFile = new File(["test"], "test.exe", { type: "application/x-executable" });
@@ -888,14 +845,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("getAttachment", function () {
-      (0, vitest_1.it)("should retrieve attachment by id", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("getAttachment", () => {
+      (0, vitest_1.it)("should retrieve attachment by id", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -914,14 +871,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("downloadAttachment", function () {
-      (0, vitest_1.it)("should download attachment successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("downloadAttachment", () => {
+      (0, vitest_1.it)("should download attachment successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockBlob, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockBlob = new Blob(["test content"], { type: "application/pdf" });
@@ -945,12 +902,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should handle download errors", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should handle download errors", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -973,14 +930,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("deleteAttachment", function () {
-      (0, vitest_1.it)("should delete attachment successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("deleteAttachment", () => {
+      (0, vitest_1.it)("should delete attachment successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -1012,16 +969,16 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
   });
-  (0, vitest_1.describe)("Search and Analytics", function () {
-    (0, vitest_1.describe)("searchMedicalRecords", function () {
-      (0, vitest_1.it)("should search medical records by query", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Search and Analytics", () => {
+    (0, vitest_1.describe)("searchMedicalRecords", () => {
+      (0, vitest_1.it)("should search medical records by query", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockRecords, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockRecords = [
@@ -1054,12 +1011,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should handle search with filters", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should handle search with filters", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockRecords, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockRecords = [];
@@ -1086,14 +1043,14 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("getPatientSummary", function () {
-      (0, vitest_1.it)("should generate patient summary", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.describe)("getPatientSummary", () => {
+      (0, vitest_1.it)("should generate patient summary", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSummary, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSummary = {
@@ -1128,43 +1085,37 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
   });
-  (0, vitest_1.describe)("Utility Methods", function () {
-    (0, vitest_1.describe)("generateThumbnail", function () {
-      (0, vitest_1.it)("should generate thumbnail for image files", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Utility Methods", () => {
+    (0, vitest_1.describe)("generateThumbnail", () => {
+      (0, vitest_1.it)("should generate thumbnail for image files", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockImageFile, mockCanvas, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockImageFile = new File(["fake image data"], "test.jpg", { type: "image/jpeg" });
                 mockCanvas = {
-                  getContext: vitest_1.vi.fn(function () {
-                    return {
-                      drawImage: vitest_1.vi.fn(),
-                      canvas: {
-                        toBlob: vitest_1.vi.fn(function (callback) {
-                          return callback(new Blob(["thumbnail"], { type: "image/jpeg" }));
-                        }),
-                      },
-                    };
-                  }),
+                  getContext: vitest_1.vi.fn(() => ({
+                    drawImage: vitest_1.vi.fn(),
+                    canvas: {
+                      toBlob: vitest_1.vi.fn((callback) =>
+                        callback(new Blob(["thumbnail"], { type: "image/jpeg" })),
+                      ),
+                    },
+                  })),
                   width: 0,
                   height: 0,
                 };
-                global.HTMLCanvasElement = vitest_1.vi.fn(function () {
-                  return mockCanvas;
-                });
-                global.Image = vitest_1.vi.fn(function () {
-                  return {
-                    onload: null,
-                    onerror: null,
-                    src: "",
-                  };
-                });
+                global.HTMLCanvasElement = vitest_1.vi.fn(() => mockCanvas);
+                global.Image = vitest_1.vi.fn(() => ({
+                  onload: null,
+                  onerror: null,
+                  src: "",
+                }));
                 return [4 /*yield*/, manager.generateThumbnail(mockImageFile)];
               case 1:
                 result = _a.sent();
@@ -1172,12 +1123,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, vitest_1.it)("should return null for non-image files", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, vitest_1.it)("should return null for non-image files", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockPdfFile, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockPdfFile = new File(["pdf content"], "test.pdf", { type: "application/pdf" });
@@ -1188,11 +1139,11 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, vitest_1.describe)("validateFileType", function () {
-      (0, vitest_1.it)("should validate allowed file types", function () {
+    (0, vitest_1.describe)("validateFileType", () => {
+      (0, vitest_1.it)("should validate allowed file types", () => {
         (0, vitest_1.expect)(manager.validateFileType("image/jpeg")).toBe(true);
         (0, vitest_1.expect)(manager.validateFileType("application/pdf")).toBe(true);
         (0, vitest_1.expect)(manager.validateFileType("text/plain")).toBe(true);
@@ -1200,8 +1151,8 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
         (0, vitest_1.expect)(manager.validateFileType("application/javascript")).toBe(false);
       });
     });
-    (0, vitest_1.describe)("formatFileSize", function () {
-      (0, vitest_1.it)("should format file sizes correctly", function () {
+    (0, vitest_1.describe)("formatFileSize", () => {
+      (0, vitest_1.it)("should format file sizes correctly", () => {
         (0, vitest_1.expect)(manager.formatFileSize(1024)).toBe("1.0 KB");
         (0, vitest_1.expect)(manager.formatFileSize(1048576)).toBe("1.0 MB");
         (0, vitest_1.expect)(manager.formatFileSize(1073741824)).toBe("1.0 GB");
@@ -1209,11 +1160,11 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
       });
     });
   });
-  (0, vitest_1.describe)("Error Handling", function () {
-    (0, vitest_1.it)("should handle database connection errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Error Handling", () => {
+    (0, vitest_1.it)("should handle database connection errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase
@@ -1229,12 +1180,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle invalid input data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle invalid input data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidData = null;
@@ -1246,12 +1197,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle missing user ID", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle missing user ID", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var createData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               createData = {
@@ -1272,15 +1223,15 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Integration Tests", function () {
-    (0, vitest_1.it)("should create record with attachment workflow", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Integration Tests", () => {
+    (0, vitest_1.it)("should create record with attachment workflow", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var createData, mockRecord, recordResult, mockFile, mockAttachment, attachmentResult;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               createData = {
@@ -1350,12 +1301,12 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle complete patient data retrieval", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle complete patient data retrieval", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var recordsResult, historyResult;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock all patient data
@@ -1378,7 +1329,7 @@ vitest_1.vi.mock("@/lib/lgpd/lgpd-manager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

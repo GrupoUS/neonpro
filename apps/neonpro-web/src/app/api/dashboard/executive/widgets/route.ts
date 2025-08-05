@@ -1,8 +1,4 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
-import type { WidgetService } from "@/lib/dashboard/executive/widget-service";
+import type { NextRequest } from "next/server";
 
 // Schema for widget creation/update
 const CreateWidgetSchema = z.object({
@@ -36,7 +32,7 @@ const CreateWidgetSchema = z.object({
   cacheDuration: z.number().min(10).default(60), // minimum 10 seconds
 });
 
-const UpdateWidgetSchema = CreateWidgetSchema.partial();
+const _UpdateWidgetSchema = CreateWidgetSchema.partial();
 
 // GET /api/dashboard/executive/widgets
 export async function GET(request: NextRequest) {

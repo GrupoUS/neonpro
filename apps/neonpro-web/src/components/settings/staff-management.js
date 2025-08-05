@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = StaffManagement;
 var react_1 = require("react");
@@ -177,7 +174,7 @@ var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 // CRM validation function for different states
-var validateCRM = function (crm, state) {
+var validateCRM = (crm, state) => {
   var cleanCRM = crm.replace(/[^\d]/g, "");
   // Basic validation - CRM numbers typically have 4-6 digits
   if (cleanCRM.length < 4 || cleanCRM.length > 6) return false;
@@ -185,7 +182,7 @@ var validateCRM = function (crm, state) {
   return true;
 };
 // CPF validation function
-var validateCPF = function (cpf) {
+var validateCPF = (cpf) => {
   var cleanCPF = cpf.replace(/[^\d]/g, "");
   if (cleanCPF.length !== 11) return false;
   if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
@@ -259,10 +256,8 @@ var staffMemberSchema = z
     canManageSchedule: z.boolean().default(false),
     isAdmin: z.boolean().default(false),
   })
-  .superRefine(function (data, ctx) {
-    var professionalType = professionalTypes.find(function (pt) {
-      return pt.value === data.professionalType;
-    });
+  .superRefine((data, ctx) => {
+    var professionalType = professionalTypes.find((pt) => pt.value === data.professionalType);
     if (
       professionalType === null || professionalType === void 0
         ? void 0
@@ -291,7 +286,6 @@ var staffMemberSchema = z
     }
   });
 function StaffManagement() {
-  var _this = this;
   var _a;
   var _b = (0, react_1.useState)([]),
     staffMembers = _b[0],
@@ -331,21 +325,20 @@ function StaffManagement() {
   });
   var watchedProfessionalType = form.watch("professionalType");
   var requiresCRM =
-    ((_a = professionalTypes.find(function (pt) {
-      return pt.value === watchedProfessionalType;
-    })) === null || _a === void 0
+    ((_a = professionalTypes.find((pt) => pt.value === watchedProfessionalType)) === null ||
+    _a === void 0
       ? void 0
       : _a.requiresCRM) || false;
   // Format CPF input
-  var formatCPF = function (value) {
+  var formatCPF = (value) => {
     var cleaned = value.replace(/[^\d]/g, "");
     return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   };
   // Load staff members
-  (0, react_1.useEffect)(function () {
-    var loadStaffMembers = function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    var loadStaffMembers = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           setIsLoading(true);
           try {
             // TODO: Replace with actual API call
@@ -382,30 +375,27 @@ function StaffManagement() {
           return [2 /*return*/];
         });
       });
-    };
     loadStaffMembers();
   }, []);
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var updatedMember_1, newMember_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           if (editingMember) {
             updatedMember_1 = __assign(__assign({}, editingMember), data);
-            setStaffMembers(function (prev) {
-              return prev.map(function (member) {
-                return member.id === editingMember.id ? updatedMember_1 : member;
-              });
-            });
+            setStaffMembers((prev) =>
+              prev.map((member) => (member.id === editingMember.id ? updatedMember_1 : member)),
+            );
             sonner_1.toast.success("Profissional atualizado com sucesso!");
           } else {
             newMember_1 = __assign(__assign({}, data), {
               id: Date.now().toString(),
               createdAt: new Date(),
             });
-            setStaffMembers(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [newMember_1], false);
-            });
+            setStaffMembers((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [newMember_1], false),
+            );
             sonner_1.toast.success("Profissional adicionado com sucesso!");
           }
           setIsDialogOpen(false);
@@ -418,22 +408,17 @@ function StaffManagement() {
         return [2 /*return*/];
       });
     });
-  };
-  var handleEdit = function (member) {
+  var handleEdit = (member) => {
     setEditingMember(member);
     form.reset(member);
     setIsDialogOpen(true);
   };
-  var handleDelete = function (memberId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDelete = (memberId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         if (confirm("Tem certeza que deseja remover este profissional?")) {
           try {
-            setStaffMembers(function (prev) {
-              return prev.filter(function (member) {
-                return member.id !== memberId;
-              });
-            });
+            setStaffMembers((prev) => prev.filter((member) => member.id !== memberId));
             sonner_1.toast.success("Profissional removido com sucesso!");
           } catch (error) {
             console.error("Erro ao remover profissional:", error);
@@ -443,18 +428,17 @@ function StaffManagement() {
         return [2 /*return*/];
       });
     });
-  };
-  var handleToggleActive = function (memberId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleToggleActive = (memberId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
-          setStaffMembers(function (prev) {
-            return prev.map(function (member) {
-              return member.id === memberId
+          setStaffMembers((prev) =>
+            prev.map((member) =>
+              member.id === memberId
                 ? __assign(__assign({}, member), { active: !member.active })
-                : member;
-            });
-          });
+                : member,
+            ),
+          );
           sonner_1.toast.success("Status atualizado com sucesso!");
         } catch (error) {
           console.error("Erro ao atualizar status:", error);
@@ -463,8 +447,7 @@ function StaffManagement() {
         return [2 /*return*/];
       });
     });
-  };
-  var filteredMembers = staffMembers.filter(function (member) {
+  var filteredMembers = staffMembers.filter((member) => {
     var matchesSearch =
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -472,20 +455,19 @@ function StaffManagement() {
     var matchesFilter = filterType === "all" || member.professionalType === filterType;
     return matchesSearch && matchesFilter;
   });
-  var exportStaffData = function () {
+  var exportStaffData = () => {
     var csvContent =
       "data:text/csv;charset=utf-8," +
       "Nome,Email,Telefone,Tipo,CRM,Estado CRM,Especialidade,Ativo\n" +
       staffMembers
-        .map(function (member) {
+        .map((member) => {
           var _a;
           return [
             member.name,
             member.email,
             member.phone,
-            ((_a = professionalTypes.find(function (pt) {
-              return pt.value === member.professionalType;
-            })) === null || _a === void 0
+            ((_a = professionalTypes.find((pt) => pt.value === member.professionalType)) === null ||
+            _a === void 0
               ? void 0
               : _a.label) || member.professionalType,
             member.crm || "",
@@ -531,7 +513,7 @@ function StaffManagement() {
           <dialog_1.Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <dialog_1.DialogTrigger asChild>
               <button_1.Button
-                onClick={function () {
+                onClick={() => {
                   setEditingMember(null);
                   form.reset();
                 }}
@@ -557,7 +539,7 @@ function StaffManagement() {
                     <form_1.FormField
                       control={form.control}
                       name="name"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -573,7 +555,7 @@ function StaffManagement() {
                     <form_1.FormField
                       control={form.control}
                       name="email"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -596,7 +578,7 @@ function StaffManagement() {
                     <form_1.FormField
                       control={form.control}
                       name="phone"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -612,7 +594,7 @@ function StaffManagement() {
                     <form_1.FormField
                       control={form.control}
                       name="cpf"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -621,7 +603,7 @@ function StaffManagement() {
                               <input_1.Input
                                 placeholder="000.000.000-00"
                                 {...field}
-                                onChange={function (e) {
+                                onChange={(e) => {
                                   var formatted = formatCPF(e.target.value);
                                   field.onChange(formatted);
                                 }}
@@ -639,7 +621,7 @@ function StaffManagement() {
                   <form_1.FormField
                     control={form.control}
                     name="professionalType"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -654,20 +636,18 @@ function StaffManagement() {
                               </select_1.SelectTrigger>
                             </form_1.FormControl>
                             <select_1.SelectContent>
-                              {professionalTypes.map(function (type) {
-                                return (
-                                  <select_1.SelectItem key={type.value} value={type.value}>
-                                    <div className="flex items-center gap-2">
-                                      {type.label}
-                                      {type.requiresCRM && (
-                                        <badge_1.Badge variant="secondary" className="text-xs">
-                                          CRM
-                                        </badge_1.Badge>
-                                      )}
-                                    </div>
-                                  </select_1.SelectItem>
-                                );
-                              })}
+                              {professionalTypes.map((type) => (
+                                <select_1.SelectItem key={type.value} value={type.value}>
+                                  <div className="flex items-center gap-2">
+                                    {type.label}
+                                    {type.requiresCRM && (
+                                      <badge_1.Badge variant="secondary" className="text-xs">
+                                        CRM
+                                      </badge_1.Badge>
+                                    )}
+                                  </div>
+                                </select_1.SelectItem>
+                              ))}
                             </select_1.SelectContent>
                           </select_1.Select>
                           <form_1.FormMessage />
@@ -681,7 +661,7 @@ function StaffManagement() {
                       <form_1.FormField
                         control={form.control}
                         name="crm"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -700,7 +680,7 @@ function StaffManagement() {
                       <form_1.FormField
                         control={form.control}
                         name="crmState"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -715,13 +695,11 @@ function StaffManagement() {
                                   </select_1.SelectTrigger>
                                 </form_1.FormControl>
                                 <select_1.SelectContent>
-                                  {brazilianStates.map(function (state) {
-                                    return (
-                                      <select_1.SelectItem key={state} value={state}>
-                                        {state}
-                                      </select_1.SelectItem>
-                                    );
-                                  })}
+                                  {brazilianStates.map((state) => (
+                                    <select_1.SelectItem key={state} value={state}>
+                                      {state}
+                                    </select_1.SelectItem>
+                                  ))}
                                 </select_1.SelectContent>
                               </select_1.Select>
                               <form_1.FormMessage />
@@ -735,7 +713,7 @@ function StaffManagement() {
                   <form_1.FormField
                     control={form.control}
                     name="specialty"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -756,7 +734,7 @@ function StaffManagement() {
                       <form_1.FormField
                         control={form.control}
                         name="canPerformProcedures"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center space-x-3 space-y-0">
@@ -781,7 +759,7 @@ function StaffManagement() {
                       <form_1.FormField
                         control={form.control}
                         name="canManageSchedule"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center space-x-3 space-y-0">
@@ -806,7 +784,7 @@ function StaffManagement() {
                       <form_1.FormField
                         control={form.control}
                         name="canAccessFinancial"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center space-x-3 space-y-0">
@@ -831,7 +809,7 @@ function StaffManagement() {
                       <form_1.FormField
                         control={form.control}
                         name="isAdmin"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center space-x-3 space-y-0">
@@ -860,7 +838,7 @@ function StaffManagement() {
                     <button_1.Button
                       type="button"
                       variant="outline"
-                      onClick={function () {
+                      onClick={() => {
                         setIsDialogOpen(false);
                         setEditingMember(null);
                         form.reset();
@@ -889,9 +867,7 @@ function StaffManagement() {
                 <input_1.Input
                   placeholder="Buscar por nome, email ou CRM..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -903,13 +879,11 @@ function StaffManagement() {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todos os tipos</select_1.SelectItem>
-                  {professionalTypes.map(function (type) {
-                    return (
-                      <select_1.SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {professionalTypes.map((type) => (
+                    <select_1.SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -956,10 +930,10 @@ function StaffManagement() {
                       </table_1.TableRow>
                     </table_1.TableHeader>
                     <table_1.TableBody>
-                      {filteredMembers.map(function (member) {
-                        var professionalType = professionalTypes.find(function (pt) {
-                          return pt.value === member.professionalType;
-                        });
+                      {filteredMembers.map((member) => {
+                        var professionalType = professionalTypes.find(
+                          (pt) => pt.value === member.professionalType,
+                        );
                         var permissions = [
                           member.canPerformProcedures && "Procedimentos",
                           member.canManageSchedule && "Agenda",
@@ -996,24 +970,20 @@ function StaffManagement() {
                             <table_1.TableCell>{member.specialty || "-"}</table_1.TableCell>
                             <table_1.TableCell>
                               <div className="flex flex-wrap gap-1">
-                                {permissions.map(function (permission) {
-                                  return (
-                                    <badge_1.Badge
-                                      key={permission}
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {permission}
-                                    </badge_1.Badge>
-                                  );
-                                })}
+                                {permissions.map((permission) => (
+                                  <badge_1.Badge
+                                    key={permission}
+                                    variant="outline"
+                                    className="text-xs"
+                                  >
+                                    {permission}
+                                  </badge_1.Badge>
+                                ))}
                               </div>
                             </table_1.TableCell>
                             <table_1.TableCell>
                               <button
-                                onClick={function () {
-                                  return handleToggleActive(member.id);
-                                }}
+                                onClick={() => handleToggleActive(member.id)}
                                 className="flex items-center gap-1"
                               >
                                 {member.active
@@ -1032,18 +1002,14 @@ function StaffManagement() {
                                 <button_1.Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={function () {
-                                    return handleEdit(member);
-                                  }}
+                                  onClick={() => handleEdit(member)}
                                 >
                                   <lucide_react_1.Edit className="h-4 w-4" />
                                 </button_1.Button>
                                 <button_1.Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={function () {
-                                    return handleDelete(member.id);
-                                  }}
+                                  onClick={() => handleDelete(member.id)}
                                   className="text-red-600 hover:text-red-800"
                                 >
                                   <lucide_react_1.Trash2 className="h-4 w-4" />

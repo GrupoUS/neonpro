@@ -1,8 +1,9 @@
 // GET /api/treatment-prediction/performance - Model performance metrics
+
+import type { NextRequest, NextResponse } from "next/server";
 import type { TreatmentPredictionService } from "@/app/lib/services/treatment-prediction";
 import type { PerformanceFilters } from "@/app/types/treatment-prediction";
 import type { createServerClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 // GET /api/treatment-prediction/performance - Get model performance data
 export async function GET(request: NextRequest) {

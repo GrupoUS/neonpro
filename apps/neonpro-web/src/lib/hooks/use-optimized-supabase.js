@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🎯 Optimized Supabase Hooks
  * Task 1.3 - CONNECTION POOLING OPTIMIZATION
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,10 +153,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -168,7 +165,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useOptimizedSupabase = useOptimizedSupabase;
 exports.useOptimizedServerSupabase = useOptimizedServerSupabase;
@@ -182,7 +179,6 @@ var react_1 = require("react");
  * Main hook for optimized Supabase connections
  */
 function useOptimizedSupabase(options) {
-  var _this = this;
   var clinicId = options.clinicId,
     _a = options.operationType,
     operationType = _a === void 0 ? "standard" : _a,
@@ -205,31 +201,29 @@ function useOptimizedSupabase(options) {
   var _h = (0, react_1.useState)(null),
     metrics = _h[0],
     setMetrics = _h[1];
-  var poolManager = (0, react_1.useMemo)(function () {
-    return (0, connection_pool_manager_1.getConnectionPoolManager)();
-  }, []);
+  var poolManager = (0, react_1.useMemo)(
+    () => (0, connection_pool_manager_1.getConnectionPoolManager)(),
+    [],
+  );
   var retryTimeoutRef = (0, react_1.useRef)();
   var healthCheckIntervalRef = (0, react_1.useRef)();
   // Get optimized client based on operation type
-  var client = (0, react_1.useMemo)(
-    function () {
-      try {
-        var clientType = operationType === "critical" ? "critical" : "standard";
-        return poolManager.getHealthcareClient(clinicId, clientType);
-      } catch (err) {
-        setError(err);
-        setIsLoading(false);
-        return null;
-      }
-    },
-    [poolManager, clinicId, operationType],
-  );
+  var client = (0, react_1.useMemo)(() => {
+    try {
+      var clientType = operationType === "critical" ? "critical" : "standard";
+      return poolManager.getHealthcareClient(clinicId, clientType);
+    } catch (err) {
+      setError(err);
+      setIsLoading(false);
+      return null;
+    }
+  }, [poolManager, clinicId, operationType]);
   // Connection health check
   var checkConnection = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var testError, err_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!client) return [2 /*return*/];
@@ -263,67 +257,52 @@ function useOptimizedSupabase(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [client, autoRetry],
   );
   // Schedule retry with exponential backoff
-  var scheduleRetry = (0, react_1.useCallback)(
-    function () {
+  var scheduleRetry = (0, react_1.useCallback)(() => {
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+    }
+    retryTimeoutRef.current = setTimeout(() => {
+      checkConnection();
+    }, 2000); // 2 second retry delay
+  }, [checkConnection]);
+  // Manual retry function
+  var retry = (0, react_1.useCallback)(() => {
+    checkConnection();
+  }, [checkConnection]);
+  // Update health monitoring
+  var updateHealthMetrics = (0, react_1.useCallback)(() => {
+    if (!healthMonitoring) return;
+    var analytics = poolManager.getPoolAnalytics();
+    var poolKey = "healthcare_".concat(clinicId, "_").concat(operationType);
+    var poolData = analytics.pools.find((p) => p.poolKey === poolKey);
+    if (poolData) {
+      setHealthStatus(poolData.health);
+      setMetrics(poolData.metrics);
+    }
+  }, [poolManager, clinicId, operationType, healthMonitoring]);
+  // Initialize connection and monitoring
+  (0, react_1.useEffect)(() => {
+    checkConnection();
+    if (healthMonitoring) {
+      updateHealthMetrics();
+      // Set up health monitoring interval
+      healthCheckIntervalRef.current = setInterval(() => {
+        updateHealthMetrics();
+      }, 30000); // Check every 30 seconds
+    }
+    return () => {
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
       }
-      retryTimeoutRef.current = setTimeout(function () {
-        checkConnection();
-      }, 2000); // 2 second retry delay
-    },
-    [checkConnection],
-  );
-  // Manual retry function
-  var retry = (0, react_1.useCallback)(
-    function () {
-      checkConnection();
-    },
-    [checkConnection],
-  );
-  // Update health monitoring
-  var updateHealthMetrics = (0, react_1.useCallback)(
-    function () {
-      if (!healthMonitoring) return;
-      var analytics = poolManager.getPoolAnalytics();
-      var poolKey = "healthcare_".concat(clinicId, "_").concat(operationType);
-      var poolData = analytics.pools.find(function (p) {
-        return p.poolKey === poolKey;
-      });
-      if (poolData) {
-        setHealthStatus(poolData.health);
-        setMetrics(poolData.metrics);
+      if (healthCheckIntervalRef.current) {
+        clearInterval(healthCheckIntervalRef.current);
       }
-    },
-    [poolManager, clinicId, operationType, healthMonitoring],
-  );
-  // Initialize connection and monitoring
-  (0, react_1.useEffect)(
-    function () {
-      checkConnection();
-      if (healthMonitoring) {
-        updateHealthMetrics();
-        // Set up health monitoring interval
-        healthCheckIntervalRef.current = setInterval(function () {
-          updateHealthMetrics();
-        }, 30000); // Check every 30 seconds
-      }
-      return function () {
-        if (retryTimeoutRef.current) {
-          clearTimeout(retryTimeoutRef.current);
-        }
-        if (healthCheckIntervalRef.current) {
-          clearInterval(healthCheckIntervalRef.current);
-        }
-      };
-    },
-    [checkConnection, updateHealthMetrics, healthMonitoring],
-  );
+    };
+  }, [checkConnection, updateHealthMetrics, healthMonitoring]);
   return {
     client: client,
     isConnected: isConnected,
@@ -338,7 +317,6 @@ function useOptimizedSupabase(options) {
  * Hook for server-side operations with session management
  */
 function useOptimizedServerSupabase(clinicId) {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     client = _a[0],
     setClient = _a[1];
@@ -348,55 +326,51 @@ function useOptimizedServerSupabase(clinicId) {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var poolManager = (0, react_1.useMemo)(function () {
-    return (0, connection_pool_manager_1.getConnectionPoolManager)();
-  }, []);
-  (0, react_1.useEffect)(
-    function () {
-      var initializeServerClient = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var serverClient, err_2;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                _a.trys.push([0, 2, 3, 4]);
-                setIsLoading(true);
-                return [4 /*yield*/, poolManager.getServerClient(clinicId)];
-              case 1:
-                serverClient = _a.sent();
-                setClient(serverClient);
-                setError(null);
-                return [3 /*break*/, 4];
-              case 2:
-                err_2 = _a.sent();
-                setError(err_2);
-                return [3 /*break*/, 4];
-              case 3:
-                setIsLoading(false);
-                return [7 /*endfinally*/];
-              case 4:
-                return [2 /*return*/];
-            }
-          });
-        });
-      };
-      initializeServerClient();
-    },
-    [poolManager, clinicId],
+  var poolManager = (0, react_1.useMemo)(
+    () => (0, connection_pool_manager_1.getConnectionPoolManager)(),
+    [],
   );
+  (0, react_1.useEffect)(() => {
+    var initializeServerClient = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var serverClient, err_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, 3, 4]);
+              setIsLoading(true);
+              return [4 /*yield*/, poolManager.getServerClient(clinicId)];
+            case 1:
+              serverClient = _a.sent();
+              setClient(serverClient);
+              setError(null);
+              return [3 /*break*/, 4];
+            case 2:
+              err_2 = _a.sent();
+              setError(err_2);
+              return [3 /*break*/, 4];
+            case 3:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      });
+    initializeServerClient();
+  }, [poolManager, clinicId]);
   return { client: client, isLoading: isLoading, error: error };
 }
 /**
  * Hook for browser-side operations
  */
 function useOptimizedBrowserSupabase(clinicId) {
-  var poolManager = (0, react_1.useMemo)(function () {
-    return (0, connection_pool_manager_1.getConnectionPoolManager)();
-  }, []);
+  var poolManager = (0, react_1.useMemo)(
+    () => (0, connection_pool_manager_1.getConnectionPoolManager)(),
+    [],
+  );
   var client = (0, react_1.useMemo)(
-    function () {
-      return poolManager.getBrowserClient(clinicId);
-    },
+    () => poolManager.getBrowserClient(clinicId),
     [poolManager, clinicId],
   );
   return { client: client };
@@ -405,7 +379,6 @@ function useOptimizedBrowserSupabase(clinicId) {
  * Hook for healthcare-specific operations with compliance monitoring
  */
 function useHealthcareCompliantSupabase(clinicId, operationType) {
-  var _this = this;
   if (operationType === void 0) {
     operationType = "standard";
   }
@@ -416,27 +389,24 @@ function useHealthcareCompliantSupabase(clinicId, operationType) {
     healthMonitoring: true,
   });
   // Enhanced compliance monitoring
-  var complianceStatus = (0, react_1.useMemo)(
-    function () {
-      if (!baseHook.healthStatus) return null;
-      return {
-        lgpdCompliant: baseHook.healthStatus.compliance.lgpdCompliant,
-        anvisaCompliant: baseHook.healthStatus.compliance.anvisaCompliant,
-        cfmCompliant: baseHook.healthStatus.compliance.cfmCompliant,
-        overallCompliant:
-          baseHook.healthStatus.compliance.lgpdCompliant &&
-          baseHook.healthStatus.compliance.anvisaCompliant &&
-          baseHook.healthStatus.compliance.cfmCompliant,
-      };
-    },
-    [baseHook.healthStatus],
-  );
+  var complianceStatus = (0, react_1.useMemo)(() => {
+    if (!baseHook.healthStatus) return null;
+    return {
+      lgpdCompliant: baseHook.healthStatus.compliance.lgpdCompliant,
+      anvisaCompliant: baseHook.healthStatus.compliance.anvisaCompliant,
+      cfmCompliant: baseHook.healthStatus.compliance.cfmCompliant,
+      overallCompliant:
+        baseHook.healthStatus.compliance.lgpdCompliant &&
+        baseHook.healthStatus.compliance.anvisaCompliant &&
+        baseHook.healthStatus.compliance.cfmCompliant,
+    };
+  }, [baseHook.healthStatus]);
   // Healthcare-specific query wrapper with audit trail
   var executeHealthcareQuery = (0, react_1.useCallback)(
-    function (queryFn, auditInfo) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (queryFn, auditInfo) =>
+      __awaiter(this, void 0, void 0, function () {
         var auditHeaders, result, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (
@@ -490,8 +460,7 @@ function useHealthcareCompliantSupabase(clinicId, operationType) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [baseHook.client, complianceStatus, clinicId],
   );
   return __assign(__assign({}, baseHook), {
@@ -509,34 +478,27 @@ function usePoolAnalytics() {
   var _b = (0, react_1.useState)(true),
     isLoading = _b[0],
     setIsLoading = _b[1];
-  var poolManager = (0, react_1.useMemo)(function () {
-    return (0, connection_pool_manager_1.getConnectionPoolManager)();
-  }, []);
-  var refreshAnalytics = (0, react_1.useCallback)(
-    function () {
-      try {
-        setIsLoading(true);
-        var data = poolManager.getPoolAnalytics();
-        setAnalytics(data);
-      } catch (error) {
-        console.error("Failed to fetch pool analytics:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [poolManager],
+  var poolManager = (0, react_1.useMemo)(
+    () => (0, connection_pool_manager_1.getConnectionPoolManager)(),
+    [],
   );
-  (0, react_1.useEffect)(
-    function () {
-      refreshAnalytics();
-      // Update analytics every 30 seconds
-      var interval = setInterval(refreshAnalytics, 30000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [refreshAnalytics],
-  );
+  var refreshAnalytics = (0, react_1.useCallback)(() => {
+    try {
+      setIsLoading(true);
+      var data = poolManager.getPoolAnalytics();
+      setAnalytics(data);
+    } catch (error) {
+      console.error("Failed to fetch pool analytics:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [poolManager]);
+  (0, react_1.useEffect)(() => {
+    refreshAnalytics();
+    // Update analytics every 30 seconds
+    var interval = setInterval(refreshAnalytics, 30000);
+    return () => clearInterval(interval);
+  }, [refreshAnalytics]);
   return {
     analytics: analytics,
     isLoading: isLoading,
@@ -547,17 +509,16 @@ function usePoolAnalytics() {
  * Hook for critical healthcare operations with enhanced monitoring
  */
 function useCriticalHealthcareSupabase(clinicId) {
-  var _this = this;
   var baseHook = useHealthcareCompliantSupabase(clinicId, "critical");
   // Additional monitoring for critical operations
   var _a = (0, react_1.useState)([]),
     operationHistory = _a[0],
     setOperationHistory = _a[1];
   var executeCriticalOperation = (0, react_1.useCallback)(
-    function (queryFn, auditInfo) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (queryFn, auditInfo) =>
+      __awaiter(this, void 0, void 0, function () {
         var startTime, success, result, responseTime_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -573,8 +534,8 @@ function useCriticalHealthcareSupabase(clinicId) {
             case 3:
               responseTime_1 = Date.now() - startTime;
               // Track critical operation
-              setOperationHistory(function (prev) {
-                return __spreadArray(
+              setOperationHistory((prev) =>
+                __spreadArray(
                   __spreadArray([], prev, true),
                   [
                     {
@@ -585,15 +546,14 @@ function useCriticalHealthcareSupabase(clinicId) {
                     },
                   ],
                   false,
-                ).slice(-100);
-              }); // Keep last 100 operations
+                ).slice(-100),
+              ); // Keep last 100 operations
               return [7 /*endfinally*/];
             case 4:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [baseHook],
   );
   return __assign(__assign({}, baseHook), {

@@ -11,10 +11,9 @@
  * - Error handling and edge cases
  */
 
-import type { describe, it, expect, beforeEach, afterEach, vi, Mock } from "vitest";
+import type { Mock } from "vitest";
+import type { BaseEvent, WebhookEndpoint } from "../types";
 import type { WebhookManager } from "../webhook-manager";
-import type { WebhookUtils, RetryUtils } from "../utils";
-import type { BaseEvent, WebhookEndpoint, EventDelivery, RetryStrategy } from "../types";
 
 // Mock fetch for HTTP requests
 global.fetch = vi.fn();

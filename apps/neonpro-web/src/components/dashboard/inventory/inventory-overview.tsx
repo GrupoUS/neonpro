@@ -6,18 +6,6 @@
 
 "use client";
 
-import type { createClient } from "@/app/utils/supabase/client";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Input } from "@/components/ui/input";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   AlertTriangle,
   Archive,
@@ -33,6 +21,18 @@ import type {
 } from "lucide-react";
 import type { useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // =====================================================================================
 // TYPES & INTERFACES

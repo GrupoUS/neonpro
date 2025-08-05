@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LGPDComplianceManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -161,7 +158,7 @@ var crypto_1 = require("crypto");
  * - Breach detection and notification
  * - Data retention policy automation
  */
-var LGPDComplianceManager = /** @class */ (function () {
+var LGPDComplianceManager = /** @class */ (() => {
   function LGPDComplianceManager(supabaseUrl, supabaseKey, config) {
     this.auditChain = [];
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
@@ -1023,12 +1020,11 @@ var LGPDComplianceManager = /** @class */ (function () {
   // ============================================================================
   // UTILITY METHODS
   // ============================================================================
-  LGPDComplianceManager.prototype.generateConsentText = function (dataType, purpose) {
-    return "Eu autorizo o processamento dos meus dados de "
+  LGPDComplianceManager.prototype.generateConsentText = (dataType, purpose) =>
+    "Eu autorizo o processamento dos meus dados de "
       .concat(dataType, " para a finalidade de ")
       .concat(purpose, ", conforme descrito na pol\u00EDtica de privacidade.");
-  };
-  LGPDComplianceManager.prototype.calculateConsentExpiry = function (dataType) {
+  LGPDComplianceManager.prototype.calculateConsentExpiry = (dataType) => {
     var expiry = new Date();
     // Different data types have different expiry periods
     switch (dataType) {
@@ -1045,7 +1041,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.triggerDataCleanup = function (userId, dataType) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would trigger data cleanup based on data type
         console.log(
           "Triggering data cleanup for user ".concat(userId, ", data type: ").concat(dataType),
@@ -1056,7 +1052,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.scheduleRequestProcessing = function (requestId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would schedule automated processing
         console.log("Scheduling processing for request ".concat(requestId));
         return [2 /*return*/];
@@ -1065,7 +1061,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.fulfillAccessRequest = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would gather and export user data
         console.log("Fulfilling access request for user ".concat(request.user_id));
         return [2 /*return*/];
@@ -1074,7 +1070,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.fulfillDeletionRequest = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would delete user data
         console.log("Fulfilling deletion request for user ".concat(request.user_id));
         return [2 /*return*/];
@@ -1083,7 +1079,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.fulfillPortabilityRequest = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would export user data in portable format
         console.log("Fulfilling portability request for user ".concat(request.user_id));
         return [2 /*return*/];
@@ -1092,7 +1088,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.fulfillRectificationRequest = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would correct user data
         console.log("Fulfilling rectification request for user ".concat(request.user_id));
         return [2 /*return*/];
@@ -1101,7 +1097,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.notifyAffectedUsers = function (incidentId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would notify affected users
         console.log("Notifying affected users for incident ".concat(incidentId));
         return [2 /*return*/];
@@ -1110,7 +1106,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.emitComplianceEvent = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would emit compliance events for monitoring
         console.log("Compliance event:", event);
         return [2 /*return*/];
@@ -1119,7 +1115,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.calculateConsentManagementScore = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate consent management compliance score
         return [2 /*return*/, 85];
       });
@@ -1127,7 +1123,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.calculateDataSubjectRightsScore = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate data subject rights compliance score
         return [2 /*return*/, 90];
       });
@@ -1135,7 +1131,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.calculateAuditTrailScore = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate audit trail compliance score
         return [2 /*return*/, 95];
       });
@@ -1143,7 +1139,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.calculateRetentionPolicyScore = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate retention policy compliance score
         return [2 /*return*/, 80];
       });
@@ -1151,7 +1147,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.calculateBreachResponseScore = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate breach response compliance score
         return [2 /*return*/, 88];
       });
@@ -1159,7 +1155,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.identifyComplianceGaps = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would identify compliance gaps
         return [
           2 /*return*/,
@@ -1170,14 +1166,9 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.generateRecommendations = function (gaps) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate recommendations based on gaps
-        return [
-          2 /*return*/,
-          gaps.map(function (gap) {
-            return "Address: ".concat(gap);
-          }),
-        ];
+        return [2 /*return*/, gaps.map((gap) => "Address: ".concat(gap))];
       });
     });
   };
@@ -1215,15 +1206,11 @@ var LGPDComplianceManager = /** @class */ (function () {
                 active:
                   (data === null || data === void 0
                     ? void 0
-                    : data.filter(function (c) {
-                        return c.consent_given && !c.withdrawn_at;
-                      }).length) || 0,
+                    : data.filter((c) => c.consent_given && !c.withdrawn_at).length) || 0,
                 withdrawn:
                   (data === null || data === void 0
                     ? void 0
-                    : data.filter(function (c) {
-                        return c.withdrawn_at;
-                      }).length) || 0,
+                    : data.filter((c) => c.withdrawn_at).length) || 0,
               },
             ];
         }
@@ -1245,15 +1232,11 @@ var LGPDComplianceManager = /** @class */ (function () {
                 pending:
                   (data === null || data === void 0
                     ? void 0
-                    : data.filter(function (r) {
-                        return r.status === "pending";
-                      }).length) || 0,
+                    : data.filter((r) => r.status === "pending").length) || 0,
                 fulfilled:
                   (data === null || data === void 0
                     ? void 0
-                    : data.filter(function (r) {
-                        return r.status === "fulfilled";
-                      }).length) || 0,
+                    : data.filter((r) => r.status === "fulfilled").length) || 0,
               },
             ];
         }
@@ -1349,7 +1332,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.calculateRetentionCompliance = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate retention policy compliance percentage
         return [2 /*return*/, 92];
       });

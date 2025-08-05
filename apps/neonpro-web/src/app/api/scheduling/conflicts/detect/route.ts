@@ -6,11 +6,11 @@
  * Detects scheduling conflicts for a proposed appointment
  */
 
-import type { NextRequest, NextResponse } from "next/server";
 import type { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import type { cookies } from "next/headers";
-import type { ConflictDetectionService } from "@/lib/scheduling/conflict-resolution";
+import type { NextRequest, NextResponse } from "next/server";
 import type { AuditLogger } from "@/lib/auth/audit/audit-logger";
+import type { ConflictDetectionService } from "@/lib/scheduling/conflict-resolution";
 
 interface ConflictDetectionRequest {
   appointmentStart: string; // ISO string

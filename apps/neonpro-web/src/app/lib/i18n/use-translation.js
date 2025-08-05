@@ -2,13 +2,12 @@
 // Story 1.3, Task 2: Simple i18n hook for PT-BR translations
 // Created: Lightweight internationalization for patient portal
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useTranslation = useTranslation;
 exports.translate = translate;
 var pt_br_1 = require("./pt-br");
 function useTranslation() {
-  var t = function (key, fallback) {
+  var t = (key, fallback) => {
     try {
       var keys = key.split(".");
       var value = pt_br_1.ptBR;

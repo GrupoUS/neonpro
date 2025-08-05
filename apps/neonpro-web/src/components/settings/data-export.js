@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DataExport;
 var react_1 = require("react");
@@ -283,7 +280,7 @@ var exportSchema = z
     password: z.string().optional(),
     notificationEmail: z.string().email("Email inválido").optional().or(z.literal("")),
   })
-  .superRefine(function (data, ctx) {
+  .superRefine((data, ctx) => {
     if (data.dateRange === "custom") {
       if (!data.startDate) {
         ctx.addIssue({
@@ -316,7 +313,6 @@ var exportSchema = z
     }
   });
 function DataExport() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isExporting = _a[0],
     setIsExporting = _a[1];
@@ -369,13 +365,11 @@ function DataExport() {
   var watchedExportType = form.watch("exportType");
   var watchedDateRange = form.watch("dateRange");
   var watchedPasswordProtection = form.watch("passwordProtection");
-  var selectedExportType = exportTypes.find(function (type) {
-    return type.id === watchedExportType;
-  });
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var selectedExportType = exportTypes.find((type) => type.id === watchedExportType);
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var newExport_1, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsExporting(true);
@@ -389,12 +383,7 @@ function DataExport() {
             //   body: JSON.stringify(data),
             // });
             // Simulate export process
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // TODO: Replace with actual API call
             // const response = await fetch("/api/exports/generate", {
@@ -412,9 +401,7 @@ function DataExport() {
               createdAt: new Date(),
               status: "processing",
             };
-            setExportHistory(function (prev) {
-              return __spreadArray([newExport_1], prev, true);
-            });
+            setExportHistory((prev) => __spreadArray([newExport_1], prev, true));
             sonner_1.toast.success(
               "Exportação iniciada! Você será notificado quando estiver pronta.",
             );
@@ -433,8 +420,7 @@ function DataExport() {
         }
       });
     });
-  };
-  var downloadExport = function (exportItem) {
+  var downloadExport = (exportItem) => {
     if (exportItem.downloadUrl) {
       // TODO: Implement secure download with authentication
       window.open(exportItem.downloadUrl, "_blank");
@@ -444,10 +430,8 @@ function DataExport() {
   var filteredExportTypes =
     selectedCategory === "all"
       ? exportTypes
-      : exportTypes.filter(function (type) {
-          return type.category === selectedCategory;
-        });
-  var getStatusBadge = function (status) {
+      : exportTypes.filter((type) => type.category === selectedCategory);
+  var getStatusBadge = (status) => {
     switch (status) {
       case "completed":
         return <badge_1.Badge className="bg-green-100 text-green-800">Concluído</badge_1.Badge>;
@@ -459,11 +443,7 @@ function DataExport() {
         return <badge_1.Badge variant="outline">{status}</badge_1.Badge>;
     }
   };
-  var getExportTypeInfo = function (typeId) {
-    return exportTypes.find(function (type) {
-      return type.id === typeId;
-    });
-  };
+  var getExportTypeInfo = (typeId) => exportTypes.find((type) => type.id === typeId);
   return (
     <div className="space-y-6">
       {/* Brazilian Compliance Alert */}
@@ -524,54 +504,42 @@ function DataExport() {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredExportTypes.map(function (exportType) {
-                      return (
-                        <div
-                          key={exportType.id}
-                          className={"border rounded-lg p-4 cursor-pointer transition-colors ".concat(
-                            watchedExportType === exportType.id
-                              ? "border-blue-500 bg-blue-50"
-                              : "border-gray-200 hover:border-gray-300",
-                          )}
-                          onClick={function () {
-                            return form.setValue("exportType", exportType.id);
-                          }}
-                        >
-                          <div className="flex items-start justify-between mb-2">
-                            <h4 className="font-medium">{exportType.name}</h4>
-                            <input
-                              type="radio"
-                              checked={watchedExportType === exportType.id}
-                              onChange={function () {
-                                return form.setValue("exportType", exportType.id);
-                              }}
-                              className="mt-1"
-                            />
+                    {filteredExportTypes.map((exportType) => (
+                      <div
+                        key={exportType.id}
+                        className={"border rounded-lg p-4 cursor-pointer transition-colors ".concat(
+                          watchedExportType === exportType.id
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-gray-300",
+                        )}
+                        onClick={() => form.setValue("exportType", exportType.id)}
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <h4 className="font-medium">{exportType.name}</h4>
+                          <input
+                            type="radio"
+                            checked={watchedExportType === exportType.id}
+                            onChange={() => form.setValue("exportType", exportType.id)}
+                            className="mt-1"
+                          />
+                        </div>
+                        <p className="text-sm text-gray-600 mb-3">{exportType.description}</p>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <badge_1.Badge variant="outline" className="text-xs">
+                              {exportType.regulation}
+                            </badge_1.Badge>
                           </div>
-                          <p className="text-sm text-gray-600 mb-3">{exportType.description}</p>
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <badge_1.Badge variant="outline" className="text-xs">
-                                {exportType.regulation}
+                          <div className="flex flex-wrap gap-1">
+                            {exportType.formats.map((format) => (
+                              <badge_1.Badge key={format} variant="secondary" className="text-xs">
+                                {format}
                               </badge_1.Badge>
-                            </div>
-                            <div className="flex flex-wrap gap-1">
-                              {exportType.formats.map(function (format) {
-                                return (
-                                  <badge_1.Badge
-                                    key={format}
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
-                                    {format}
-                                  </badge_1.Badge>
-                                );
-                              })}
-                            </div>
+                            ))}
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -601,7 +569,7 @@ function DataExport() {
                       <form_1.FormField
                         control={form.control}
                         name="format"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -618,13 +586,11 @@ function DataExport() {
                                 <select_1.SelectContent>
                                   {selectedExportType === null || selectedExportType === void 0
                                     ? void 0
-                                    : selectedExportType.formats.map(function (format) {
-                                        return (
-                                          <select_1.SelectItem key={format} value={format}>
-                                            {format}
-                                          </select_1.SelectItem>
-                                        );
-                                      })}
+                                    : selectedExportType.formats.map((format) => (
+                                        <select_1.SelectItem key={format} value={format}>
+                                          {format}
+                                        </select_1.SelectItem>
+                                      ))}
                                 </select_1.SelectContent>
                               </select_1.Select>
                               <form_1.FormMessage />
@@ -636,7 +602,7 @@ function DataExport() {
                       <form_1.FormField
                         control={form.control}
                         name="dateRange"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -651,13 +617,11 @@ function DataExport() {
                                   </select_1.SelectTrigger>
                                 </form_1.FormControl>
                                 <select_1.SelectContent>
-                                  {dateRanges.map(function (range) {
-                                    return (
-                                      <select_1.SelectItem key={range.value} value={range.value}>
-                                        {range.label}
-                                      </select_1.SelectItem>
-                                    );
-                                  })}
+                                  {dateRanges.map((range) => (
+                                    <select_1.SelectItem key={range.value} value={range.value}>
+                                      {range.label}
+                                    </select_1.SelectItem>
+                                  ))}
                                 </select_1.SelectContent>
                               </select_1.Select>
                               <form_1.FormMessage />
@@ -671,7 +635,7 @@ function DataExport() {
                           <form_1.FormField
                             control={form.control}
                             name="startDate"
-                            render={function (_a) {
+                            render={(_a) => {
                               var field = _a.field;
                               return (
                                 <form_1.FormItem>
@@ -687,7 +651,7 @@ function DataExport() {
                           <form_1.FormField
                             control={form.control}
                             name="endDate"
-                            render={function (_a) {
+                            render={(_a) => {
                               var field = _a.field;
                               return (
                                 <form_1.FormItem>
@@ -709,7 +673,7 @@ function DataExport() {
                         <form_1.FormField
                           control={form.control}
                           name="anonymizeData"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem className="flex flex-row items-center justify-between">
@@ -735,7 +699,7 @@ function DataExport() {
                         <form_1.FormField
                           control={form.control}
                           name="includeMetadata"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem className="flex flex-row items-center justify-between">
@@ -761,7 +725,7 @@ function DataExport() {
                         <form_1.FormField
                           control={form.control}
                           name="compressionEnabled"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem className="flex flex-row items-center justify-between">
@@ -787,7 +751,7 @@ function DataExport() {
                         <form_1.FormField
                           control={form.control}
                           name="passwordProtection"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem className="flex flex-row items-center justify-between">
@@ -814,7 +778,7 @@ function DataExport() {
                           <form_1.FormField
                             control={form.control}
                             name="password"
-                            render={function (_a) {
+                            render={(_a) => {
                               var field = _a.field;
                               return (
                                 <form_1.FormItem>
@@ -836,7 +800,7 @@ function DataExport() {
                         <form_1.FormField
                           control={form.control}
                           name="notificationEmail"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -900,7 +864,7 @@ function DataExport() {
                     <p className="text-gray-600">Suas exportações aparecerão aqui</p>
                   </div>
                 : <div className="space-y-4">
-                    {exportHistory.map(function (exportItem) {
+                    {exportHistory.map((exportItem) => {
                       var typeInfo = getExportTypeInfo(exportItem.type);
                       return (
                         <div key={exportItem.id} className="border rounded-lg p-4">
@@ -924,9 +888,7 @@ function DataExport() {
                                 <button_1.Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={function () {
-                                    return downloadExport(exportItem);
-                                  }}
+                                  onClick={() => downloadExport(exportItem)}
                                 >
                                   <lucide_react_1.Download className="h-4 w-4 mr-2" />
                                   Download

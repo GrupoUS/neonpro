@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Audit Logger - Session Activity Tracking & LGPD Compliance
  *
@@ -7,20 +6,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -35,26 +34,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -74,13 +73,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -102,9 +101,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -176,10 +173,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -188,12 +185,12 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuditLogger = void 0;
 var events_1 = require("events");
 var types_1 = require("./types");
-var AuditLogger = /** @class */ (function (_super) {
+var AuditLogger = /** @class */ ((_super) => {
   __extends(AuditLogger, _super);
   function AuditLogger(supabase, options) {
     var _this = _super.call(this) || this;
@@ -358,10 +355,9 @@ var AuditLogger = /** @class */ (function (_super) {
    * Create correlation between related events
    */
   AuditLogger.prototype.createCorrelation = function (eventIds, correlationType) {
-    var _this = this;
     var correlationId = this.generateCorrelationId();
-    eventIds.forEach(function (eventId) {
-      _this.correlationMap.set(eventId, correlationId);
+    eventIds.forEach((eventId) => {
+      this.correlationMap.set(eventId, correlationId);
     });
     // Store correlation in database
     this.storeCorrelation(correlationId, eventIds, correlationType);
@@ -647,22 +643,12 @@ var AuditLogger = /** @class */ (function (_super) {
             events = result.logs;
             report = {
               totalEvents: events.length,
-              consentEvents: events.filter(function (e) {
-                return e.action.includes("consent");
-              }).length,
-              dataAccessEvents: events.filter(function (e) {
-                return e.action === "data_access";
-              }).length,
-              dataExportEvents: events.filter(function (e) {
-                return e.action === "data_exported";
-              }).length,
-              dataDeletionEvents: events.filter(function (e) {
-                return e.action === "data_deleted";
-              }).length,
+              consentEvents: events.filter((e) => e.action.includes("consent")).length,
+              dataAccessEvents: events.filter((e) => e.action === "data_access").length,
+              dataExportEvents: events.filter((e) => e.action === "data_exported").length,
+              dataDeletionEvents: events.filter((e) => e.action === "data_deleted").length,
               complianceScore: 0,
-              violations: events.filter(function (e) {
-                return e.severity === "critical";
-              }),
+              violations: events.filter((e) => e.severity === "critical"),
             };
             totalRequiredEvents = report.consentEvents + report.dataAccessEvents;
             violationPenalty = report.violations.length * 10;
@@ -783,11 +769,13 @@ var AuditLogger = /** @class */ (function (_super) {
             }
             return [
               4 /*yield*/,
-              this.supabase.from("session_audit_logs_archive").insert(
-                oldLogs.map(function (log) {
-                  return __assign(__assign({}, log), { archived_at: new Date().toISOString() });
-                }),
-              ),
+              this.supabase
+                .from("session_audit_logs_archive")
+                .insert(
+                  oldLogs.map((log) =>
+                    __assign(__assign({}, log), { archived_at: new Date().toISOString() }),
+                  ),
+                ),
             ];
           case 2:
             archiveError = _b.sent().error;
@@ -803,9 +791,7 @@ var AuditLogger = /** @class */ (function (_super) {
                 .delete()
                 .in(
                   "id",
-                  oldLogs.map(function (log) {
-                    return log.id;
-                  }),
+                  oldLogs.map((log) => log.id),
                 ),
             ];
           case 3:
@@ -929,26 +915,24 @@ var AuditLogger = /** @class */ (function (_super) {
             _c.label = 1;
           case 1:
             _c.trys.push([1, 3, , 4]);
-            dbEntries = entries.map(function (entry) {
-              return {
-                id: entry.id,
-                session_id: entry.sessionId,
-                user_id: entry.userId,
-                clinic_id: entry.clinicId,
-                action: entry.action,
-                category: entry.category,
-                severity: entry.severity,
-                details: entry.details,
-                ip_address: entry.ipAddress,
-                user_agent: entry.userAgent,
-                device_fingerprint: entry.deviceFingerprint,
-                location: entry.location,
-                timestamp: entry.timestamp.toISOString(),
-                lgpd_data: entry.lgpdData,
-                correlation_id: entry.correlationId,
-                parent_event_id: entry.parentEventId,
-              };
-            });
+            dbEntries = entries.map((entry) => ({
+              id: entry.id,
+              session_id: entry.sessionId,
+              user_id: entry.userId,
+              clinic_id: entry.clinicId,
+              action: entry.action,
+              category: entry.category,
+              severity: entry.severity,
+              details: entry.details,
+              ip_address: entry.ipAddress,
+              user_agent: entry.userAgent,
+              device_fingerprint: entry.deviceFingerprint,
+              location: entry.location,
+              timestamp: entry.timestamp.toISOString(),
+              lgpd_data: entry.lgpdData,
+              correlation_id: entry.correlationId,
+              parent_event_id: entry.parentEventId,
+            }));
             return [4 /*yield*/, this.supabase.from("session_audit_logs").insert(dbEntries)];
           case 2:
             error = _c.sent().error;
@@ -971,12 +955,11 @@ var AuditLogger = /** @class */ (function (_super) {
     });
   };
   AuditLogger.prototype.startFlushTimer = function () {
-    var _this = this;
-    this.flushTimer = setInterval(function () {
-      _this.flushBuffer();
+    this.flushTimer = setInterval(() => {
+      this.flushBuffer();
     }, this.flushInterval);
   };
-  AuditLogger.prototype.categorizeAction = function (action) {
+  AuditLogger.prototype.categorizeAction = (action) => {
     if (action.includes("session")) return "session";
     if (action.includes("login") || action.includes("logout") || action.includes("mfa"))
       return "authentication";
@@ -993,7 +976,7 @@ var AuditLogger = /** @class */ (function (_super) {
       return "system";
     return "user_activity";
   };
-  AuditLogger.prototype.determineSeverity = function (action) {
+  AuditLogger.prototype.determineSeverity = (action) => {
     var criticalActions = [
       "session_hijack_detected",
       "security_violation",
@@ -1022,7 +1005,7 @@ var AuditLogger = /** @class */ (function (_super) {
     if (mediumActions.includes(action)) return "medium";
     return "low";
   };
-  AuditLogger.prototype.isLGPDRelevant = function (action) {
+  AuditLogger.prototype.isLGPDRelevant = (action) => {
     var lgpdActions = [
       "consent_given",
       "consent_withdrawn",
@@ -1045,20 +1028,20 @@ var AuditLogger = /** @class */ (function (_super) {
       encryptionStatus: "encrypted",
     };
   };
-  AuditLogger.prototype.determinePurpose = function (action) {
+  AuditLogger.prototype.determinePurpose = (action) => {
     if (action.includes("session")) return "Session management and security";
     if (action.includes("login")) return "User authentication";
     if (action.includes("device")) return "Device security and management";
     if (action.includes("security")) return "Security monitoring and protection";
     return "System operation and compliance";
   };
-  AuditLogger.prototype.determineLegalBasis = function (action) {
+  AuditLogger.prototype.determineLegalBasis = (action) => {
     if (action.includes("security") || action.includes("session")) return "Legitimate interest";
     if (action.includes("consent")) return "Consent";
     if (action.includes("data_")) return "Legal obligation";
     return "Legitimate interest";
   };
-  AuditLogger.prototype.determineDataCategories = function (action) {
+  AuditLogger.prototype.determineDataCategories = (action) => {
     var categories = ["audit_logs"];
     if (action.includes("session") || action.includes("login")) {
       categories.push("authentication_data");
@@ -1071,7 +1054,7 @@ var AuditLogger = /** @class */ (function (_super) {
     }
     return categories;
   };
-  AuditLogger.prototype.getRetentionPeriod = function (dataType) {
+  AuditLogger.prototype.getRetentionPeriod = (dataType) => {
     var retentionPeriods = {
       audit_log: "7 years",
       session_data: "1 year",
@@ -1080,7 +1063,7 @@ var AuditLogger = /** @class */ (function (_super) {
     };
     return retentionPeriods[dataType] || "1 year";
   };
-  AuditLogger.prototype.mapThreatToSeverity = function (threatLevel) {
+  AuditLogger.prototype.mapThreatToSeverity = (threatLevel) => {
     switch (threatLevel) {
       case "critical":
         return "critical";
@@ -1191,7 +1174,7 @@ var AuditLogger = /** @class */ (function (_super) {
       });
     });
   };
-  AuditLogger.prototype.calculateStatistics = function (data) {
+  AuditLogger.prototype.calculateStatistics = (data) => {
     var stats = {
       totalEvents: data.length,
       eventsByCategory: {
@@ -1220,7 +1203,7 @@ var AuditLogger = /** @class */ (function (_super) {
     var actionCounts = {};
     var userCounts = {};
     var ipCounts = {};
-    data.forEach(function (event) {
+    data.forEach((event) => {
       stats.eventsByCategory[event.category]++;
       stats.eventsBySeverity[event.severity]++;
       if (event.category === "security") stats.securityEvents++;
@@ -1231,51 +1214,49 @@ var AuditLogger = /** @class */ (function (_super) {
     });
     // Top actions
     stats.topActions = Object.entries(actionCounts)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
       .slice(0, 10)
-      .map(function (_a) {
+      .map((_a) => {
         var action = _a[0],
           count = _a[1];
         return { action: action, count: count };
       });
     // Top users
     stats.topUsers = Object.entries(userCounts)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
       .slice(0, 10)
-      .map(function (_a) {
+      .map((_a) => {
         var userId = _a[0],
           count = _a[1];
         return { userId: userId, count: count };
       });
     // Top IPs
     stats.topIPs = Object.entries(ipCounts)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
       .slice(0, 10)
-      .map(function (_a) {
+      .map((_a) => {
         var ipAddress = _a[0],
           count = _a[1];
         return { ipAddress: ipAddress, count: count };
       });
     // Recent trends (simplified - last 7 days)
     var now = new Date();
-    var _loop_1 = function (i) {
+    var _loop_1 = (i) => {
       var date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
       var dateStr = date.toISOString().split("T")[0];
-      var count = data.filter(function (event) {
-        return event.timestamp.startsWith(dateStr);
-      }).length;
+      var count = data.filter((event) => event.timestamp.startsWith(dateStr)).length;
       stats.recentTrends.push({ date: dateStr, count: count });
     };
     for (var i = 6; i >= 0; i--) {
@@ -1283,7 +1264,7 @@ var AuditLogger = /** @class */ (function (_super) {
     }
     return stats;
   };
-  AuditLogger.prototype.convertToCSV = function (logs) {
+  AuditLogger.prototype.convertToCSV = (logs) => {
     var headers = [
       "ID",
       "Session ID",
@@ -1297,45 +1278,33 @@ var AuditLogger = /** @class */ (function (_super) {
       "Timestamp",
       "Details",
     ];
-    var rows = logs.map(function (log) {
-      return [
-        log.id,
-        log.sessionId || "",
-        log.userId,
-        log.clinicId,
-        log.action,
-        log.category,
-        log.severity,
-        log.ipAddress,
-        log.userAgent,
-        log.timestamp.toISOString(),
-        JSON.stringify(log.details),
-      ];
-    });
+    var rows = logs.map((log) => [
+      log.id,
+      log.sessionId || "",
+      log.userId,
+      log.clinicId,
+      log.action,
+      log.category,
+      log.severity,
+      log.ipAddress,
+      log.userAgent,
+      log.timestamp.toISOString(),
+      JSON.stringify(log.details),
+    ]);
     return __spreadArray([headers], rows, true)
-      .map(function (row) {
-        return row
-          .map(function (cell) {
-            return '"'.concat(cell, '"');
-          })
-          .join(",");
-      })
+      .map((row) => row.map((cell) => '"'.concat(cell, '"')).join(","))
       .join("\n");
   };
-  AuditLogger.prototype.anonymizeLogDetails = function (details) {
+  AuditLogger.prototype.anonymizeLogDetails = (details) => {
     var sensitiveFields = ["password", "token", "secret", "key", "email", "phone"];
     var anonymized = __assign({}, details);
-    var anonymizeObject = function (obj) {
+    var anonymizeObject = (obj) => {
       if (typeof obj !== "object" || obj === null) {
         return obj;
       }
       var result = {};
-      var _loop_2 = function (key, value) {
-        if (
-          sensitiveFields.some(function (field) {
-            return key.toLowerCase().includes(field);
-          })
-        ) {
+      var _loop_2 = (key, value) => {
+        if (sensitiveFields.some((field) => key.toLowerCase().includes(field))) {
           result[key] = "[ANONYMIZED]";
         } else if (typeof value === "object") {
           result[key] = anonymizeObject(value);
@@ -1353,32 +1322,28 @@ var AuditLogger = /** @class */ (function (_super) {
     };
     return anonymizeObject(anonymized);
   };
-  AuditLogger.prototype.mapDatabaseToAuditLog = function (data) {
-    return {
-      id: data.id,
-      sessionId: data.session_id,
-      userId: data.user_id,
-      clinicId: data.clinic_id,
-      action: data.action,
-      category: data.category,
-      severity: data.severity,
-      details: data.details,
-      ipAddress: data.ip_address,
-      userAgent: data.user_agent,
-      deviceFingerprint: data.device_fingerprint,
-      location: data.location,
-      timestamp: new Date(data.timestamp),
-      lgpdData: data.lgpd_data,
-      correlationId: data.correlation_id,
-      parentEventId: data.parent_event_id,
-    };
-  };
-  AuditLogger.prototype.generateEventId = function () {
-    return "evt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  AuditLogger.prototype.generateCorrelationId = function () {
-    return "corr_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  AuditLogger.prototype.mapDatabaseToAuditLog = (data) => ({
+    id: data.id,
+    sessionId: data.session_id,
+    userId: data.user_id,
+    clinicId: data.clinic_id,
+    action: data.action,
+    category: data.category,
+    severity: data.severity,
+    details: data.details,
+    ipAddress: data.ip_address,
+    userAgent: data.user_agent,
+    deviceFingerprint: data.device_fingerprint,
+    location: data.location,
+    timestamp: new Date(data.timestamp),
+    lgpdData: data.lgpd_data,
+    correlationId: data.correlation_id,
+    parentEventId: data.parent_event_id,
+  });
+  AuditLogger.prototype.generateEventId = () =>
+    "evt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  AuditLogger.prototype.generateCorrelationId = () =>
+    "corr_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Cleanup resources
    */

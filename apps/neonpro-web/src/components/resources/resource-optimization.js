@@ -3,18 +3,17 @@
 // Story 2.4: Smart Resource Management - Frontend
 // =====================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ResourceOptimization;
 var react_1 = require("react");
@@ -149,7 +146,6 @@ var recharts_1 = require("recharts");
 var outline_1 = require("@heroicons/react/24/outline");
 var sonner_1 = require("sonner");
 function ResourceOptimization(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userRole = _a.userRole;
   var _b = (0, react_1.useState)(null),
@@ -176,14 +172,11 @@ function ResourceOptimization(_a) {
   // =====================================================
   // Data Fetching
   // =====================================================
-  (0, react_1.useEffect)(
-    function () {
-      fetchOptimizationData();
-    },
-    [clinicId, selectedPeriod],
-  );
-  var fetchOptimizationData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    fetchOptimizationData();
+  }, [clinicId, selectedPeriod]);
+  var fetchOptimizationData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a,
         metricsRes,
         utilizationRes,
@@ -193,7 +186,7 @@ function ResourceOptimization(_a) {
         utilizationData,
         suggestionsData,
         error_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 3, 4, 5]);
@@ -247,8 +240,7 @@ function ResourceOptimization(_a) {
         }
       });
     });
-  };
-  var generateTimeSeriesData = function () {
+  var generateTimeSeriesData = () => {
     var days = parseInt(selectedPeriod);
     var data = [];
     var today = new Date();
@@ -267,10 +259,10 @@ function ResourceOptimization(_a) {
   // =====================================================
   // Optimization Actions
   // =====================================================
-  var runOptimization = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var runOptimization = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -312,11 +304,10 @@ function ResourceOptimization(_a) {
         }
       });
     });
-  };
   // =====================================================
   // UI Helpers
   // =====================================================
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return <outline_1.TrendingUpIcon className="h-4 w-4 text-green-500" />;
@@ -326,7 +317,7 @@ function ResourceOptimization(_a) {
         return <div className="h-4 w-4 bg-gray-400 rounded-full" />;
     }
   };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "critical":
         return "bg-red-100 text-red-800";
@@ -340,7 +331,7 @@ function ResourceOptimization(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getEffortColor = function (effort) {
+  var getEffortColor = (effort) => {
     switch (effort) {
       case "high":
         return "bg-red-100 text-red-800";
@@ -352,7 +343,7 @@ function ResourceOptimization(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getSuggestionIcon = function (type) {
+  var getSuggestionIcon = (type) => {
     switch (type) {
       case "schedule_optimization":
         return <outline_1.CalendarIcon className="h-5 w-5" />;
@@ -373,7 +364,7 @@ function ResourceOptimization(_a) {
   // =====================================================
   // Render Components
   // =====================================================
-  var MetricsOverview = function () {
+  var MetricsOverview = () => {
     var _a, _b, _c;
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -477,123 +468,103 @@ function ResourceOptimization(_a) {
       </div>
     );
   };
-  var UtilizationChart = function () {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle>Resource Utilization</card_1.CardTitle>
-          <card_1.CardDescription>
-            Utilization percentage by resource over the selected period
-          </card_1.CardDescription>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          <recharts_1.ResponsiveContainer width="100%" height={300}>
-            <recharts_1.BarChart data={utilization}>
-              <recharts_1.CartesianGrid strokeDasharray="3 3" />
-              <recharts_1.XAxis dataKey="resource_name" angle={-45} textAnchor="end" height={100} />
-              <recharts_1.YAxis />
-              <recharts_1.Tooltip
-                formatter={function (value, name) {
-                  return ["".concat(value, "%"), "Utilization"];
-                }}
-                labelFormatter={function (label) {
-                  return "Resource: ".concat(label);
-                }}
-              />
-              <recharts_1.Bar dataKey="utilization_percentage" fill="#8884d8" />
-            </recharts_1.BarChart>
-          </recharts_1.ResponsiveContainer>
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
-  var TimeSeriesChart = function () {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle>Trends Over Time</card_1.CardTitle>
-          <card_1.CardDescription>
-            Key metrics trends over the selected period
-          </card_1.CardDescription>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          <recharts_1.ResponsiveContainer width="100%" height={300}>
-            <recharts_1.LineChart data={timeSeriesData}>
-              <recharts_1.CartesianGrid strokeDasharray="3 3" />
-              <recharts_1.XAxis dataKey="date" />
-              <recharts_1.YAxis />
-              <recharts_1.Tooltip />
-              <recharts_1.Line
-                type="monotone"
-                dataKey="utilization"
-                stroke="#8884d8"
-                name="Utilization %"
-              />
-              <recharts_1.Line
-                type="monotone"
-                dataKey="efficiency"
-                stroke="#82ca9d"
-                name="Efficiency %"
-              />
-            </recharts_1.LineChart>
-          </recharts_1.ResponsiveContainer>
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
-  var SuggestionsList = function () {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle>Optimization Suggestions</card_1.CardTitle>
-          <card_1.CardDescription>
-            AI-powered recommendations to improve resource efficiency
-          </card_1.CardDescription>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          <div className="space-y-4">
-            {suggestions.length === 0
-              ? <p className="text-gray-500 text-center py-4">No suggestions available</p>
-              : suggestions.map(function (suggestion) {
-                  return (
-                    <div key={suggestion.id} className="border rounded-lg p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3">
-                          <div className="mt-1">
-                            {getSuggestionIcon(suggestion.suggestion_type)}
-                          </div>
-                          <div className="flex-1">
-                            <div className="font-medium">{suggestion.resource_name}</div>
-                            <div className="text-sm text-gray-600 mt-1">
-                              {suggestion.description}
-                            </div>
-                            <div className="text-sm text-blue-600 mt-1">
-                              <strong>Potential Impact:</strong> {suggestion.potential_impact}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-col space-y-2">
-                          <badge_1.Badge className={getPriorityColor(suggestion.priority)}>
-                            {suggestion.priority}
-                          </badge_1.Badge>
-                          <badge_1.Badge
-                            className={getEffortColor(suggestion.implementation_effort)}
-                          >
-                            {suggestion.implementation_effort} effort
-                          </badge_1.Badge>
-                          <badge_1.Badge variant="outline">
-                            {Math.round(suggestion.confidence_score * 100)}% confidence
-                          </badge_1.Badge>
+  var UtilizationChart = () => (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle>Resource Utilization</card_1.CardTitle>
+        <card_1.CardDescription>
+          Utilization percentage by resource over the selected period
+        </card_1.CardDescription>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        <recharts_1.ResponsiveContainer width="100%" height={300}>
+          <recharts_1.BarChart data={utilization}>
+            <recharts_1.CartesianGrid strokeDasharray="3 3" />
+            <recharts_1.XAxis dataKey="resource_name" angle={-45} textAnchor="end" height={100} />
+            <recharts_1.YAxis />
+            <recharts_1.Tooltip
+              formatter={(value, name) => ["".concat(value, "%"), "Utilization"]}
+              labelFormatter={(label) => "Resource: ".concat(label)}
+            />
+            <recharts_1.Bar dataKey="utilization_percentage" fill="#8884d8" />
+          </recharts_1.BarChart>
+        </recharts_1.ResponsiveContainer>
+      </card_1.CardContent>
+    </card_1.Card>
+  );
+  var TimeSeriesChart = () => (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle>Trends Over Time</card_1.CardTitle>
+        <card_1.CardDescription>Key metrics trends over the selected period</card_1.CardDescription>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        <recharts_1.ResponsiveContainer width="100%" height={300}>
+          <recharts_1.LineChart data={timeSeriesData}>
+            <recharts_1.CartesianGrid strokeDasharray="3 3" />
+            <recharts_1.XAxis dataKey="date" />
+            <recharts_1.YAxis />
+            <recharts_1.Tooltip />
+            <recharts_1.Line
+              type="monotone"
+              dataKey="utilization"
+              stroke="#8884d8"
+              name="Utilization %"
+            />
+            <recharts_1.Line
+              type="monotone"
+              dataKey="efficiency"
+              stroke="#82ca9d"
+              name="Efficiency %"
+            />
+          </recharts_1.LineChart>
+        </recharts_1.ResponsiveContainer>
+      </card_1.CardContent>
+    </card_1.Card>
+  );
+  var SuggestionsList = () => (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle>Optimization Suggestions</card_1.CardTitle>
+        <card_1.CardDescription>
+          AI-powered recommendations to improve resource efficiency
+        </card_1.CardDescription>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        <div className="space-y-4">
+          {suggestions.length === 0
+            ? <p className="text-gray-500 text-center py-4">No suggestions available</p>
+            : suggestions.map((suggestion) => (
+                <div key={suggestion.id} className="border rounded-lg p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3">
+                      <div className="mt-1">{getSuggestionIcon(suggestion.suggestion_type)}</div>
+                      <div className="flex-1">
+                        <div className="font-medium">{suggestion.resource_name}</div>
+                        <div className="text-sm text-gray-600 mt-1">{suggestion.description}</div>
+                        <div className="text-sm text-blue-600 mt-1">
+                          <strong>Potential Impact:</strong> {suggestion.potential_impact}
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-          </div>
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
+                    <div className="flex flex-col space-y-2">
+                      <badge_1.Badge className={getPriorityColor(suggestion.priority)}>
+                        {suggestion.priority}
+                      </badge_1.Badge>
+                      <badge_1.Badge className={getEffortColor(suggestion.implementation_effort)}>
+                        {suggestion.implementation_effort} effort
+                      </badge_1.Badge>
+                      <badge_1.Badge variant="outline">
+                        {Math.round(suggestion.confidence_score * 100)}% confidence
+                      </badge_1.Badge>
+                    </div>
+                  </div>
+                </div>
+              ))}
+        </div>
+      </card_1.CardContent>
+    </card_1.Card>
+  );
   // =====================================================
   // Main Render
   // =====================================================
@@ -617,9 +588,7 @@ function ResourceOptimization(_a) {
         <div className="flex space-x-3">
           <select
             value={selectedPeriod}
-            onChange={function (e) {
-              return setSelectedPeriod(e.target.value);
-            }}
+            onChange={(e) => setSelectedPeriod(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md"
           >
             <option value="7">Last 7 days</option>

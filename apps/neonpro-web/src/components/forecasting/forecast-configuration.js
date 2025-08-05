@@ -12,32 +12,31 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,7 +156,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ForecastConfiguration = ForecastConfiguration;
 var react_1 = require("react");
@@ -222,7 +219,6 @@ var AVAILABLE_MODELS = [
   },
 ];
 function ForecastConfiguration(_a) {
-  var _this = this;
   var _b = _a.className,
     className = _b === void 0 ? "" : _b;
   var _c = (0, react_1.useState)(DEFAULT_CONFIG),
@@ -235,17 +231,15 @@ function ForecastConfiguration(_a) {
     hasChanges = _e[0],
     setHasChanges = _e[1];
   // Handle configuration changes
-  var updateConfig = function (updates) {
-    setConfig(function (prev) {
-      return __assign(__assign({}, prev), updates);
-    });
+  var updateConfig = (updates) => {
+    setConfig((prev) => __assign(__assign({}, prev), updates));
     setHasChanges(true);
   };
   // Save configuration
-  var saveConfiguration = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveConfiguration = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -263,12 +257,7 @@ function ForecastConfiguration(_a) {
             // Simulate API call
             _a.sent();
             // Mock successful save
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 2:
             // Mock successful save
             _a.sent();
@@ -288,15 +277,14 @@ function ForecastConfiguration(_a) {
         }
       });
     });
-  };
   // Reset to defaults
-  var resetToDefaults = function () {
+  var resetToDefaults = () => {
     setConfig(DEFAULT_CONFIG);
     setHasChanges(true);
     sonner_1.toast.info("Configuration reset to defaults");
   };
   // Export configuration
-  var exportConfiguration = function () {
+  var exportConfiguration = () => {
     var dataStr = JSON.stringify(config, null, 2);
     var dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
     var exportFileDefaultName = "forecast-config-".concat(
@@ -310,10 +298,10 @@ function ForecastConfiguration(_a) {
     sonner_1.toast.success("Configuration exported");
   };
   // Test configuration
-  var testConfiguration = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var testConfiguration = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -330,12 +318,7 @@ function ForecastConfiguration(_a) {
           case 1:
             // Simulate configuration test
             _a.sent();
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             _a.sent();
             sonner_1.toast.success("Configuration test passed");
@@ -353,7 +336,6 @@ function ForecastConfiguration(_a) {
         }
       });
     });
-  };
   return (
     <card_1.Card className={className}>
       <card_1.CardHeader>
@@ -438,26 +420,22 @@ function ForecastConfiguration(_a) {
                     <label_1.Label htmlFor="primary-model">Primary Model</label_1.Label>
                     <select_1.Select
                       value={config.primaryModel}
-                      onValueChange={function (value) {
-                        return updateConfig({ primaryModel: value });
-                      }}
+                      onValueChange={(value) => updateConfig({ primaryModel: value })}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Select primary model" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {AVAILABLE_MODELS.map(function (model) {
-                          return (
-                            <select_1.SelectItem key={model.id} value={model.id}>
-                              <div>
-                                <div className="font-medium">{model.name}</div>
-                                <div className="text-xs text-muted-foreground">
-                                  {model.description}
-                                </div>
+                        {AVAILABLE_MODELS.map((model) => (
+                          <select_1.SelectItem key={model.id} value={model.id}>
+                            <div>
+                              <div className="font-medium">{model.name}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {model.description}
                               </div>
-                            </select_1.SelectItem>
-                          );
-                        })}
+                            </div>
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -466,18 +444,14 @@ function ForecastConfiguration(_a) {
                     <label_1.Label htmlFor="fallback-model">Fallback Model</label_1.Label>
                     <select_1.Select
                       value={config.fallbackModel}
-                      onValueChange={function (value) {
-                        return updateConfig({ fallbackModel: value });
-                      }}
+                      onValueChange={(value) => updateConfig({ fallbackModel: value })}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Select fallback model" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {AVAILABLE_MODELS.filter(function (m) {
-                          return m.id !== config.primaryModel;
-                        }).map(function (model) {
-                          return (
+                        {AVAILABLE_MODELS.filter((m) => m.id !== config.primaryModel).map(
+                          (model) => (
                             <select_1.SelectItem key={model.id} value={model.id}>
                               <div>
                                 <div className="font-medium">{model.name}</div>
@@ -486,8 +460,8 @@ function ForecastConfiguration(_a) {
                                 </div>
                               </div>
                             </select_1.SelectItem>
-                          );
-                        })}
+                          ),
+                        )}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -504,9 +478,7 @@ function ForecastConfiguration(_a) {
                     <switch_1.Switch
                       id="ensemble-enabled"
                       checked={config.ensembleEnabled}
-                      onCheckedChange={function (checked) {
-                        return updateConfig({ ensembleEnabled: checked });
-                      }}
+                      onCheckedChange={(checked) => updateConfig({ ensembleEnabled: checked })}
                     />
                   </div>
 
@@ -520,9 +492,7 @@ function ForecastConfiguration(_a) {
                     <switch_1.Switch
                       id="auto-retraining"
                       checked={config.autoRetraining}
-                      onCheckedChange={function (checked) {
-                        return updateConfig({ autoRetraining: checked });
-                      }}
+                      onCheckedChange={(checked) => updateConfig({ autoRetraining: checked })}
                     />
                   </div>
 
@@ -534,7 +504,7 @@ function ForecastConfiguration(_a) {
                       <div className="flex items-center space-x-4">
                         <slider_1.Slider
                           value={[config.retrainingInterval]}
-                          onValueChange={function (_a) {
+                          onValueChange={(_a) => {
                             var value = _a[0];
                             return updateConfig({ retrainingInterval: value });
                           }}
@@ -572,7 +542,7 @@ function ForecastConfiguration(_a) {
                     <label_1.Label>Accuracy Threshold: {config.accuracyThreshold}%</label_1.Label>
                     <slider_1.Slider
                       value={[config.accuracyThreshold]}
-                      onValueChange={function (_a) {
+                      onValueChange={(_a) => {
                         var value = _a[0];
                         return updateConfig({ accuracyThreshold: value });
                       }}
@@ -591,7 +561,7 @@ function ForecastConfiguration(_a) {
                     </label_1.Label>
                     <slider_1.Slider
                       value={[config.confidenceThreshold]}
-                      onValueChange={function (_a) {
+                      onValueChange={(_a) => {
                         var value = _a[0];
                         return updateConfig({ confidenceThreshold: value });
                       }}
@@ -610,7 +580,7 @@ function ForecastConfiguration(_a) {
                     </label_1.Label>
                     <slider_1.Slider
                       value={[config.driftThreshold * 100]}
-                      onValueChange={function (_a) {
+                      onValueChange={(_a) => {
                         var value = _a[0];
                         return updateConfig({ driftThreshold: value / 100 });
                       }}
@@ -650,9 +620,7 @@ function ForecastConfiguration(_a) {
                     </div>
                     <switch_1.Switch
                       checked={config.alertsEnabled}
-                      onCheckedChange={function (checked) {
-                        return updateConfig({ alertsEnabled: checked });
-                      }}
+                      onCheckedChange={(checked) => updateConfig({ alertsEnabled: checked })}
                     />
                   </div>
 
@@ -670,9 +638,9 @@ function ForecastConfiguration(_a) {
                           </div>
                           <switch_1.Switch
                             checked={config.emailNotifications}
-                            onCheckedChange={function (checked) {
-                              return updateConfig({ emailNotifications: checked });
-                            }}
+                            onCheckedChange={(checked) =>
+                              updateConfig({ emailNotifications: checked })
+                            }
                           />
                         </div>
 
@@ -685,9 +653,9 @@ function ForecastConfiguration(_a) {
                           </div>
                           <switch_1.Switch
                             checked={config.slackNotifications}
-                            onCheckedChange={function (checked) {
-                              return updateConfig({ slackNotifications: checked });
-                            }}
+                            onCheckedChange={(checked) =>
+                              updateConfig({ slackNotifications: checked })
+                            }
                           />
                         </div>
                       </div>
@@ -703,7 +671,7 @@ function ForecastConfiguration(_a) {
                           </label_1.Label>
                           <slider_1.Slider
                             value={[config.alertThresholds.demandSpike]}
-                            onValueChange={function (_a) {
+                            onValueChange={(_a) => {
                               var value = _a[0];
                               return updateConfig({
                                 alertThresholds: __assign(__assign({}, config.alertThresholds), {
@@ -726,7 +694,7 @@ function ForecastConfiguration(_a) {
                           </label_1.Label>
                           <slider_1.Slider
                             value={[config.alertThresholds.resourceShortage]}
-                            onValueChange={function (_a) {
+                            onValueChange={(_a) => {
                               var value = _a[0];
                               return updateConfig({
                                 alertThresholds: __assign(__assign({}, config.alertThresholds), {
@@ -768,7 +736,7 @@ function ForecastConfiguration(_a) {
                     <label_1.Label>Data Retention: {config.dataRetentionDays} days</label_1.Label>
                     <slider_1.Slider
                       value={[config.dataRetentionDays]}
-                      onValueChange={function (_a) {
+                      onValueChange={(_a) => {
                         var value = _a[0];
                         return updateConfig({ dataRetentionDays: value });
                       }}
@@ -795,9 +763,9 @@ function ForecastConfiguration(_a) {
                       </div>
                       <switch_1.Switch
                         checked={config.externalFactorsEnabled}
-                        onCheckedChange={function (checked) {
-                          return updateConfig({ externalFactorsEnabled: checked });
-                        }}
+                        onCheckedChange={(checked) =>
+                          updateConfig({ externalFactorsEnabled: checked })
+                        }
                       />
                     </div>
 
@@ -810,9 +778,7 @@ function ForecastConfiguration(_a) {
                       </div>
                       <switch_1.Switch
                         checked={config.seasonalAdjustment}
-                        onCheckedChange={function (checked) {
-                          return updateConfig({ seasonalAdjustment: checked });
-                        }}
+                        onCheckedChange={(checked) => updateConfig({ seasonalAdjustment: checked })}
                       />
                     </div>
 
@@ -825,9 +791,7 @@ function ForecastConfiguration(_a) {
                       </div>
                       <switch_1.Switch
                         checked={config.holidayAdjustment}
-                        onCheckedChange={function (checked) {
-                          return updateConfig({ holidayAdjustment: checked });
-                        }}
+                        onCheckedChange={(checked) => updateConfig({ holidayAdjustment: checked })}
                       />
                     </div>
                   </div>
@@ -859,9 +823,7 @@ function ForecastConfiguration(_a) {
                     </div>
                     <switch_1.Switch
                       checked={config.parallelProcessing}
-                      onCheckedChange={function (checked) {
-                        return updateConfig({ parallelProcessing: checked });
-                      }}
+                      onCheckedChange={(checked) => updateConfig({ parallelProcessing: checked })}
                     />
                   </div>
 
@@ -874,9 +836,7 @@ function ForecastConfiguration(_a) {
                     </div>
                     <switch_1.Switch
                       checked={config.cacheEnabled}
-                      onCheckedChange={function (checked) {
-                        return updateConfig({ cacheEnabled: checked });
-                      }}
+                      onCheckedChange={(checked) => updateConfig({ cacheEnabled: checked })}
                     />
                   </div>
 
@@ -889,9 +849,7 @@ function ForecastConfiguration(_a) {
                     </div>
                     <switch_1.Switch
                       checked={config.debugMode}
-                      onCheckedChange={function (checked) {
-                        return updateConfig({ debugMode: checked });
-                      }}
+                      onCheckedChange={(checked) => updateConfig({ debugMode: checked })}
                     />
                   </div>
 
@@ -901,7 +859,7 @@ function ForecastConfiguration(_a) {
                     </label_1.Label>
                     <slider_1.Slider
                       value={[config.apiRateLimit]}
-                      onValueChange={function (_a) {
+                      onValueChange={(_a) => {
                         var value = _a[0];
                         return updateConfig({ apiRateLimit: value });
                       }}

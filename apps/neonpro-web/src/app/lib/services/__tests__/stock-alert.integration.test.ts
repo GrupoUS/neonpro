@@ -2,17 +2,17 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests for complete stock alert workflow
 
-import type { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import type { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { createClient } from "@supabase/supabase-js";
-import type { StockAlertService } from "../stock-alert.service";
 import type {
-  CreateStockAlertConfigRequest,
-  StockAlertConfig,
-  StockAlert,
   AlertType,
+  CreateStockAlertConfigRequest,
   SeverityLevel,
+  StockAlert,
+  StockAlertConfig,
   StockAlertError,
 } from "../../types/stock";
+import type { StockAlertService } from "../stock-alert.service";
 
 // =====================================================
 // TEST SETUP AND CONFIGURATION

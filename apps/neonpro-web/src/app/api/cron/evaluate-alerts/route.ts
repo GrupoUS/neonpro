@@ -2,10 +2,7 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Cron job para avaliar e gerar alertas automaticamente
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { StockAlertService } from "@/app/lib/services/stock-alert.service";
-import type { StockAlertError } from "@/app/lib/types/stock";
+import type { NextRequest } from "next/server";
 
 // =====================================================
 // CONFIGURATION
@@ -122,7 +119,7 @@ async function processClinicAlerts(
   result: ProcessingResult,
 ): Promise<void> {
   // Create a service instance for this clinic
-  const alertService = new StockAlertService(supabase);
+  const _alertService = new StockAlertService(supabase);
 
   let attempts = 0;
   while (attempts < RETRY_ATTEMPTS) {
@@ -142,7 +139,7 @@ async function processClinicAlerts(
       }
 
       // Exponential backoff
-      await new Promise((resolve) => setTimeout(resolve, Math.pow(2, attempts) * 1000));
+      await new Promise((resolve) => setTimeout(resolve, 2 ** attempts * 1000));
     }
   }
 }
@@ -238,12 +235,13 @@ async function evaluateConfigCondition(config: any, supabase: any): Promise<any 
       }
       break;
 
-    case "overstock":
+    case "overstock": {
       currentValue = product.current_stock || 0;
       const maxStock = product.max_stock || product.min_stock * 3; // Default max = 3x min
       shouldAlert = currentValue >= maxStock;
       message = `Excesso de estoque para ${product.name}: ${currentValue} unidades (máximo: ${maxStock})`;
       break;
+    }
 
     default:
       return null;

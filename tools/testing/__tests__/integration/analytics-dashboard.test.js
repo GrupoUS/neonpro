@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var user_event_1 = require("@testing-library/user-event");
@@ -157,11 +154,11 @@ var mockData_1 = require("@/../../__tests__/utils/mockData");
 // MSW server setup for API mocking
 var server = (0, node_1.setupServer)(
   // Mock analytics data endpoint
-  msw_1.rest.get("/api/analytics/data", function (req, res, ctx) {
-    return res(ctx.status(200), ctx.json(mockData_1.mockAnalyticsData));
-  }),
+  msw_1.rest.get("/api/analytics/data", (_req, res, ctx) =>
+    res(ctx.status(200), ctx.json(mockData_1.mockAnalyticsData)),
+  ),
   // Mock export endpoint
-  msw_1.rest.post("/api/analytics/export", function (req, res, ctx) {
+  msw_1.rest.post("/api/analytics/export", (req, res, ctx) => {
     var format = req.body.format;
     switch (format) {
       case "pdf":
@@ -193,11 +190,11 @@ var server = (0, node_1.setupServer)(
     }
   }),
   // Mock error scenarios
-  msw_1.rest.get("/api/analytics/data-error", function (req, res, ctx) {
-    return res(ctx.status(500), ctx.json({ error: "Database connection failed" }));
-  }),
+  msw_1.rest.get("/api/analytics/data-error", (_req, res, ctx) =>
+    res(ctx.status(500), ctx.json({ error: "Database connection failed" })),
+  ),
 );
-var createWrapper = function () {
+var createWrapper = () => {
   var queryClient = new react_query_1.QueryClient({
     defaultOptions: {
       queries: {
@@ -205,7 +202,7 @@ var createWrapper = function () {
       },
     },
   });
-  return function (_a) {
+  return (_a) => {
     var children = _a.children;
     return (
       <react_query_1.QueryClientProvider client={queryClient}>
@@ -215,22 +212,16 @@ var createWrapper = function () {
   };
 };
 // Start server before all tests
-beforeAll(function () {
-  return server.listen();
-});
+beforeAll(() => server.listen());
 // Reset handlers after each test
-afterEach(function () {
-  return server.resetHandlers();
-});
+afterEach(() => server.resetHandlers());
 // Close server after all tests
-afterAll(function () {
-  return server.close();
-});
-describe("Analytics Dashboard Integration", function () {
-  it("should load data and export to PDF end-to-end", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+afterAll(() => server.close());
+describe("Analytics Dashboard Integration", () => {
+  it("should load data and export to PDF end-to-end", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, exportButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
@@ -238,7 +229,7 @@ describe("Analytics Dashboard Integration", function () {
             // Wait for data to load
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("1,250")).toBeInTheDocument();
               }),
               // Verify dashboard displays data correctly
@@ -261,7 +252,7 @@ describe("Analytics Dashboard Integration", function () {
             // Verify export was initiated
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   react_1.screen.getByText("Export completed successfully"),
                 ).toBeInTheDocument();
@@ -273,20 +264,19 @@ describe("Analytics Dashboard Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle date range filtering end-to-end", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle date range filtering end-to-end", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, startDateInput, endDateInput, applyButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
             // Mock API with date range filtering
             server.use(
-              msw_1.rest.get("/api/analytics/data", function (req, res, ctx) {
+              msw_1.rest.get("/api/analytics/data", (req, res, ctx) => {
                 var startDate = req.url.searchParams.get("startDate");
-                var endDate = req.url.searchParams.get("endDate");
+                var _endDate = req.url.searchParams.get("endDate");
                 // Return different data based on date range
                 var filteredData = __assign(__assign({}, mockData_1.mockAnalyticsData), {
                   totalPatients: startDate === "2024-02-01" ? 800 : 1250,
@@ -298,7 +288,7 @@ describe("Analytics Dashboard Integration", function () {
             // Wait for initial data
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("1,250")).toBeInTheDocument();
               }),
               // Change date range
@@ -335,7 +325,7 @@ describe("Analytics Dashboard Integration", function () {
             // Verify filtered data is displayed
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("800")).toBeInTheDocument();
               }),
             ];
@@ -345,24 +335,23 @@ describe("Analytics Dashboard Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle API errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("should handle API errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock API error
             server.use(
-              msw_1.rest.get("/api/analytics/data", function (req, res, ctx) {
-                return res(ctx.status(500), ctx.json({ error: "Database connection failed" }));
-              }),
+              msw_1.rest.get("/api/analytics/data", (_req, res, ctx) =>
+                res(ctx.status(500), ctx.json({ error: "Database connection failed" })),
+              ),
             );
             (0, react_1.render)(<AnalyticsDashboard_1.default />, { wrapper: createWrapper() });
             // Wait for error state
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Database connection failed")).toBeInTheDocument();
               }),
               // Verify error UI is displayed
@@ -376,26 +365,25 @@ describe("Analytics Dashboard Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle export errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle export errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, exportButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
             // Mock export error
             server.use(
-              msw_1.rest.post("/api/analytics/export", function (req, res, ctx) {
-                return res(ctx.status(500), ctx.json({ error: "Export service unavailable" }));
-              }),
+              msw_1.rest.post("/api/analytics/export", (_req, res, ctx) =>
+                res(ctx.status(500), ctx.json({ error: "Export service unavailable" })),
+              ),
             );
             (0, react_1.render)(<AnalyticsDashboard_1.default />, { wrapper: createWrapper() });
             // Wait for data to load
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("1,250")).toBeInTheDocument();
               }),
               // Try to export
@@ -414,7 +402,7 @@ describe("Analytics Dashboard Integration", function () {
             // Verify error handling
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Export service unavailable")).toBeInTheDocument();
               }),
             ];
@@ -424,12 +412,11 @@ describe("Analytics Dashboard Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle multiple simultaneous operations", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle multiple simultaneous operations", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, exportPDFButton, exportExcelButton, refreshButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
@@ -437,7 +424,7 @@ describe("Analytics Dashboard Integration", function () {
             // Wait for data to load
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("1,250")).toBeInTheDocument();
               }),
               // Trigger multiple operations simultaneously
@@ -462,7 +449,7 @@ describe("Analytics Dashboard Integration", function () {
             // Verify all operations complete successfully
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.queryByText("Loading...")).not.toBeInTheDocument();
               }),
             ];
@@ -472,12 +459,11 @@ describe("Analytics Dashboard Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should maintain state during navigation", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should maintain state during navigation", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, startDateInput, treatmentFilter, facialOption, applyButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
@@ -515,18 +501,17 @@ describe("Analytics Dashboard Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle real-time data updates", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle real-time data updates", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var callCount, refreshButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             callCount = 0;
             // Mock API with changing data
             server.use(
-              msw_1.rest.get("/api/analytics/data", function (req, res, ctx) {
+              msw_1.rest.get("/api/analytics/data", (_req, res, ctx) => {
                 callCount++;
                 var data = __assign(__assign({}, mockData_1.mockAnalyticsData), {
                   totalPatients: mockData_1.mockAnalyticsData.totalPatients + callCount * 10,
@@ -538,7 +523,7 @@ describe("Analytics Dashboard Integration", function () {
             // Initial data load
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("1,260")).toBeInTheDocument(); // 1250 + 10
               }),
               // Trigger refresh
@@ -557,7 +542,7 @@ describe("Analytics Dashboard Integration", function () {
             // Verify updated data
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("1,270")).toBeInTheDocument(); // 1250 + 20
               }),
             ];
@@ -567,24 +552,23 @@ describe("Analytics Dashboard Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle offline/network errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("should handle offline/network errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock network error
             server.use(
-              msw_1.rest.get("/api/analytics/data", function (req, res, ctx) {
-                return res.networkError("Network connection failed");
-              }),
+              msw_1.rest.get("/api/analytics/data", (_req, res, _ctx) =>
+                res.networkError("Network connection failed"),
+              ),
             );
             (0, react_1.render)(<AnalyticsDashboard_1.default />, { wrapper: createWrapper() });
             // Wait for error state
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText(/network/i)).toBeInTheDocument();
               }),
               // Verify offline UI
@@ -597,6 +581,5 @@ describe("Analytics Dashboard Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

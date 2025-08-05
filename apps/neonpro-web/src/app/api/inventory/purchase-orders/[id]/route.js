@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.PATCH = PATCH;
@@ -158,7 +155,7 @@ function GET(request_1, _a) {
     var supabase, user, _c, purchaseOrder, error, transformedOrder, error_1;
     var _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     var params = _b.params;
-    return __generator(this, function (_p) {
+    return __generator(this, (_p) => {
       switch (_p.label) {
         case 0:
           _p.trys.push([0, 4, , 5]);
@@ -237,7 +234,7 @@ function GET(request_1, _a) {
             items:
               ((_o = purchaseOrder.purchase_order_items) === null || _o === void 0
                 ? void 0
-                : _o.map(function (item) {
+                : _o.map((item) => {
                     var _a, _b, _c, _d;
                     return {
                       id: item.id,
@@ -294,7 +291,7 @@ function PATCH(request_1, _a) {
       purchaseOrderData,
       error_2;
     var params = _b.params;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 9, , 10]);
@@ -423,16 +420,14 @@ function PATCH(request_1, _a) {
             expected_delivery_date: new Date(fullPO.expected_delivery_date),
             created_at: new Date(fullPO.created_at),
             created_by: fullPO.created_by,
-            items: fullPO.purchase_order_items.map(function (item) {
-              return {
-                item_id: item.item_id,
-                item_name: item.inventory_items.name,
-                quantity: item.quantity,
-                unit_price: item.unit_price,
-                total_price: item.total_price,
-                supplier_sku: item.supplier_sku,
-              };
-            }),
+            items: fullPO.purchase_order_items.map((item) => ({
+              item_id: item.item_id,
+              item_name: item.inventory_items.name,
+              quantity: item.quantity,
+              unit_price: item.unit_price,
+              total_price: item.total_price,
+              supplier_sku: item.supplier_sku,
+            })),
           };
           return [
             4 /*yield*/,
@@ -491,7 +486,7 @@ function DELETE(request_1, _a) {
       cancelError,
       error_3;
     var params = _b.params;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 5, , 6]);

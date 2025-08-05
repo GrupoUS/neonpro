@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 6.1 Task 2: Barcode/QR Integration Hooks
  * Custom React hooks for barcode scanning and QR code management
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,10 +133,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -148,7 +145,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useBarcodeGeneration = useBarcodeGeneration;
 exports.useBarcodeScanner = useBarcodeScanner;
@@ -164,13 +161,12 @@ var barcode_service_1 = require("@/app/lib/services/barcode-service");
 var sonner_1 = require("sonner");
 // Barcode Generation Hook
 function useBarcodeGeneration() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var generateBarcode = (0, react_query_1.useMutation)({
-    mutationFn: function (options) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (options) =>
+      __awaiter(this, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, barcode_service_1.barcodeService.generateBarcode(options)];
@@ -182,15 +178,14 @@ function useBarcodeGeneration() {
               return [2 /*return*/, result];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       sonner_1.toast.success("Código de barras gerado com sucesso!");
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ["barcode-data", variables.item_id] });
       queryClient.invalidateQueries({ queryKey: ["inventory-items"] });
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao gerar barcode:", error);
       sonner_1.toast.error("Falha ao gerar c\u00F3digo: ".concat(error.message));
     },
@@ -204,7 +199,6 @@ function useBarcodeGeneration() {
 }
 // Barcode Scanning Hook
 function useBarcodeScanner() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isScanning = _a[0],
     setIsScanning = _a[1];
@@ -214,53 +208,53 @@ function useBarcodeScanner() {
   var _c = (0, react_1.useState)(null),
     lastScanResult = _c[0],
     setLastScanResult = _c[1];
-  var scanBarcode = (0, react_1.useCallback)(function (options) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var result_1, error_1, errorResult;
-      var _a;
-      return __generator(this, function (_b) {
-        switch (_b.label) {
-          case 0:
-            setIsScanning(true);
-            _b.label = 1;
-          case 1:
-            _b.trys.push([1, 3, 4, 5]);
-            return [4 /*yield*/, barcode_service_1.barcodeService.scanBarcode(options)];
-          case 2:
-            result_1 = _b.sent();
-            setLastScanResult(result_1);
-            setScanHistory(function (prev) {
-              return __spreadArray([result_1], prev.slice(0, 19), true);
-            }); // Keep last 20 scans
-            if (result_1.success) {
-              sonner_1.toast.success(
-                "Item escaneado: ".concat(
-                  (_a = result_1.data) === null || _a === void 0 ? void 0 : _a.item_name,
-                ),
-              );
-            } else {
-              sonner_1.toast.error("Erro no scan: ".concat(result_1.error));
-            }
-            return [2 /*return*/, result_1];
-          case 3:
-            error_1 = _b.sent();
-            errorResult = {
-              success: false,
-              error: error_1 instanceof Error ? error_1.message : "Erro desconhecido",
-            };
-            setLastScanResult(errorResult);
-            sonner_1.toast.error("Falha no scan: ".concat(errorResult.error));
-            return [2 /*return*/, errorResult];
-          case 4:
-            setIsScanning(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var clearHistory = (0, react_1.useCallback)(function () {
+  var scanBarcode = (0, react_1.useCallback)(
+    (options) =>
+      __awaiter(this, void 0, void 0, function () {
+        var result_1, error_1, errorResult;
+        var _a;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              setIsScanning(true);
+              _b.label = 1;
+            case 1:
+              _b.trys.push([1, 3, 4, 5]);
+              return [4 /*yield*/, barcode_service_1.barcodeService.scanBarcode(options)];
+            case 2:
+              result_1 = _b.sent();
+              setLastScanResult(result_1);
+              setScanHistory((prev) => __spreadArray([result_1], prev.slice(0, 19), true)); // Keep last 20 scans
+              if (result_1.success) {
+                sonner_1.toast.success(
+                  "Item escaneado: ".concat(
+                    (_a = result_1.data) === null || _a === void 0 ? void 0 : _a.item_name,
+                  ),
+                );
+              } else {
+                sonner_1.toast.error("Erro no scan: ".concat(result_1.error));
+              }
+              return [2 /*return*/, result_1];
+            case 3:
+              error_1 = _b.sent();
+              errorResult = {
+                success: false,
+                error: error_1 instanceof Error ? error_1.message : "Erro desconhecido",
+              };
+              setLastScanResult(errorResult);
+              sonner_1.toast.error("Falha no scan: ".concat(errorResult.error));
+              return [2 /*return*/, errorResult];
+            case 4:
+              setIsScanning(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var clearHistory = (0, react_1.useCallback)(() => {
     setScanHistory([]);
     setLastScanResult(null);
   }, []);
@@ -274,7 +268,6 @@ function useBarcodeScanner() {
 }
 // Bulk Scanning Hook
 function useBulkScanning() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     activeOperation = _a[0],
     setActiveOperation = _a[1];
@@ -282,10 +275,10 @@ function useBulkScanning() {
     operationProgress = _b[0],
     setOperationProgress = _b[1];
   var startBulkOperation = (0, react_query_1.useMutation)({
-    mutationFn: function (options) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (options) =>
+      __awaiter(this, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -300,22 +293,21 @@ function useBulkScanning() {
               return [2 /*return*/, result];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
+      }),
+    onSuccess: (data) => {
       sonner_1.toast.success("Operação em lote iniciada com sucesso!");
       // You would fetch the operation details here in a real implementation
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Erro ao iniciar operação bulk:", error);
       sonner_1.toast.error("Falha ao iniciar opera\u00E7\u00E3o: ".concat(error.message));
     },
   });
   var processBulkScan = (0, react_1.useCallback)(
-    function (operationId, scanValue, userId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (operationId, scanValue, userId) =>
+      __awaiter(this, void 0, void 0, function () {
         var result, newProgress, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -341,8 +333,7 @@ function useBulkScanning() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [activeOperation],
   );
   return {
@@ -358,15 +349,12 @@ function useBulkScanning() {
 function useBarcodeData(itemId) {
   return (0, react_query_1.useQuery)({
     queryKey: ["barcode-data", itemId],
-    queryFn: function () {
-      return barcode_service_1.barcodeService.getBarcodeData(itemId);
-    },
+    queryFn: () => barcode_service_1.barcodeService.getBarcodeData(itemId),
     enabled: !!itemId,
   });
 }
 // Camera Scanner Hook (for web-based scanning)
 function useCameraScanner() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isActive = _a[0],
     setIsActive = _a[1];
@@ -377,88 +365,78 @@ function useCameraScanner() {
     error = _c[0],
     setError = _c[1];
   var videoRef = (0, react_1.useRef)(null);
-  var startCamera = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var mediaStream, err_1, errorMessage;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            setError(null);
-            return [
-              4 /*yield*/,
-              navigator.mediaDevices.getUserMedia({
-                video: {
-                  facingMode: "environment", // Use back camera on mobile
-                  width: { ideal: 1280 },
-                  height: { ideal: 720 },
-                },
-              }),
-            ];
-          case 1:
-            mediaStream = _a.sent();
-            setStream(mediaStream);
-            setIsActive(true);
-            if (videoRef.current) {
-              videoRef.current.srcObject = mediaStream;
-            }
-            sonner_1.toast.success("Câmera iniciada com sucesso!");
-            return [3 /*break*/, 3];
-          case 2:
-            err_1 = _a.sent();
-            errorMessage = err_1 instanceof Error ? err_1.message : "Erro ao acessar câmera";
-            setError(errorMessage);
-            sonner_1.toast.error("Erro na c\u00E2mera: ".concat(errorMessage));
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var stopCamera = (0, react_1.useCallback)(
-    function () {
-      if (stream) {
-        stream.getTracks().forEach(function (track) {
-          return track.stop();
+  var startCamera = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var mediaStream, err_1, errorMessage;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              setError(null);
+              return [
+                4 /*yield*/,
+                navigator.mediaDevices.getUserMedia({
+                  video: {
+                    facingMode: "environment", // Use back camera on mobile
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
+                  },
+                }),
+              ];
+            case 1:
+              mediaStream = _a.sent();
+              setStream(mediaStream);
+              setIsActive(true);
+              if (videoRef.current) {
+                videoRef.current.srcObject = mediaStream;
+              }
+              sonner_1.toast.success("Câmera iniciada com sucesso!");
+              return [3 /*break*/, 3];
+            case 2:
+              err_1 = _a.sent();
+              errorMessage = err_1 instanceof Error ? err_1.message : "Erro ao acessar câmera";
+              setError(errorMessage);
+              sonner_1.toast.error("Erro na c\u00E2mera: ".concat(errorMessage));
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
         });
-        setStream(null);
-      }
-      setIsActive(false);
-      if (videoRef.current) {
-        videoRef.current.srcObject = null;
-      }
-      sonner_1.toast.info("Câmera desligada");
-    },
-    [stream],
+      }),
+    [],
   );
-  var captureFrame = (0, react_1.useCallback)(
-    function () {
-      if (!videoRef.current || !isActive) {
-        return null;
-      }
-      var canvas = document.createElement("canvas");
-      var context = canvas.getContext("2d");
-      if (!context) {
-        return null;
-      }
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      context.drawImage(videoRef.current, 0, 0);
-      return canvas.toDataURL("image/jpeg", 0.8);
-    },
-    [isActive],
-  );
+  var stopCamera = (0, react_1.useCallback)(() => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+    setIsActive(false);
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    sonner_1.toast.info("Câmera desligada");
+  }, [stream]);
+  var captureFrame = (0, react_1.useCallback)(() => {
+    if (!videoRef.current || !isActive) {
+      return null;
+    }
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
+    if (!context) {
+      return null;
+    }
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    context.drawImage(videoRef.current, 0, 0);
+    return canvas.toDataURL("image/jpeg", 0.8);
+  }, [isActive]);
   // Cleanup on unmount
   (0, react_1.useEffect)(
-    function () {
-      return function () {
-        if (stream) {
-          stream.getTracks().forEach(function (track) {
-            return track.stop();
-          });
-        }
-      };
+    () => () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
     },
     [stream],
   );
@@ -474,29 +452,28 @@ function useCameraScanner() {
 }
 // Barcode Validation Hook
 function useBarcodeValidation() {
-  var _this = this;
-  var validateBarcode = (0, react_1.useCallback)(function (barcode, type) {
-    return barcode_service_1.barcodeService.validateBarcodeFormat(barcode, type);
-  }, []);
+  var validateBarcode = (0, react_1.useCallback)(
+    (barcode, type) => barcode_service_1.barcodeService.validateBarcodeFormat(barcode, type),
+    [],
+  );
   var validateBarcodeAsync = (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var result;
         var barcode = _b.barcode,
           type = _b.type;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           result = barcode_service_1.barcodeService.validateBarcodeFormat(barcode, type);
           if (!result.valid) {
             throw new Error(result.error);
           }
           return [2 /*return*/, result];
         });
-      });
-    },
-    onError: function (error) {
+      }),
+    onError: (error) => {
       sonner_1.toast.error("C\u00F3digo inv\u00E1lido: ".concat(error.message));
     },
-    onSuccess: function () {
+    onSuccess: () => {
       sonner_1.toast.success("Código válido!");
     },
   });
@@ -509,33 +486,34 @@ function useBarcodeValidation() {
 }
 // QR Code Management Hook
 function useQRCodeManager() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     qrData = _a[0],
     setQrData = _a[1];
   var _b = (0, react_1.useState)(""),
     qrCode = _b[0],
     setQrCode = _b[1];
-  var generateQRCode = (0, react_1.useCallback)(function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var qrString;
-      return __generator(this, function (_a) {
-        try {
-          qrString = JSON.stringify(data);
-          setQrData(data);
-          setQrCode(qrString);
-          sonner_1.toast.success("QR Code gerado com sucesso!");
-          return [2 /*return*/, qrString];
-        } catch (error) {
-          console.error("Erro ao gerar QR:", error);
-          sonner_1.toast.error("Falha ao gerar QR Code");
-          throw error;
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  var parseQRCode = (0, react_1.useCallback)(function (qrString) {
+  var generateQRCode = (0, react_1.useCallback)(
+    (data) =>
+      __awaiter(this, void 0, void 0, function () {
+        var qrString;
+        return __generator(this, (_a) => {
+          try {
+            qrString = JSON.stringify(data);
+            setQrData(data);
+            setQrCode(qrString);
+            sonner_1.toast.success("QR Code gerado com sucesso!");
+            return [2 /*return*/, qrString];
+          } catch (error) {
+            console.error("Erro ao gerar QR:", error);
+            sonner_1.toast.error("Falha ao gerar QR Code");
+            throw error;
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
+  var parseQRCode = (0, react_1.useCallback)((qrString) => {
     try {
       var parsed = JSON.parse(qrString);
       setQrData(parsed);
@@ -546,7 +524,7 @@ function useQRCodeManager() {
       return null;
     }
   }, []);
-  var clearQRData = (0, react_1.useCallback)(function () {
+  var clearQRData = (0, react_1.useCallback)(() => {
     setQrData(null);
     setQrCode("");
   }, []);
@@ -560,45 +538,49 @@ function useQRCodeManager() {
 }
 // Print Labels Hook
 function useLabelPrinting() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isPrinting = _a[0],
     setIsPrinting = _a[1];
-  var printLabel = (0, react_1.useCallback)(function (options) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var printWindow_1, labelHTML;
-      return __generator(this, function (_a) {
-        setIsPrinting(true);
-        try {
-          printWindow_1 = window.open("", "_blank");
-          if (!printWindow_1) {
-            throw new Error("Bloqueador de pop-up ativado");
+  var printLabel = (0, react_1.useCallback)(
+    (options) =>
+      __awaiter(this, void 0, void 0, function () {
+        var printWindow_1, labelHTML;
+        return __generator(this, (_a) => {
+          setIsPrinting(true);
+          try {
+            printWindow_1 = window.open("", "_blank");
+            if (!printWindow_1) {
+              throw new Error("Bloqueador de pop-up ativado");
+            }
+            labelHTML = createLabelHTML(options);
+            printWindow_1.document.write(labelHTML);
+            printWindow_1.document.close();
+            // Auto-print after a short delay
+            setTimeout(() => {
+              printWindow_1.print();
+              printWindow_1.close();
+            }, 1000);
+            sonner_1.toast.success(
+              "Etiqueta enviada para impress\u00E3o (".concat(
+                options.copies || 1,
+                " c\u00F3pia(s))",
+              ),
+            );
+          } catch (error) {
+            console.error("Erro na impressão:", error);
+            sonner_1.toast.error(
+              "Falha na impress\u00E3o: ".concat(
+                error instanceof Error ? error.message : "Erro desconhecido",
+              ),
+            );
+          } finally {
+            setIsPrinting(false);
           }
-          labelHTML = createLabelHTML(options);
-          printWindow_1.document.write(labelHTML);
-          printWindow_1.document.close();
-          // Auto-print after a short delay
-          setTimeout(function () {
-            printWindow_1.print();
-            printWindow_1.close();
-          }, 1000);
-          sonner_1.toast.success(
-            "Etiqueta enviada para impress\u00E3o (".concat(options.copies || 1, " c\u00F3pia(s))"),
-          );
-        } catch (error) {
-          console.error("Erro na impressão:", error);
-          sonner_1.toast.error(
-            "Falha na impress\u00E3o: ".concat(
-              error instanceof Error ? error.message : "Erro desconhecido",
-            ),
-          );
-        } finally {
-          setIsPrinting(false);
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
   return {
     printLabel: printLabel,
     isPrinting: isPrinting,

@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import type {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +12,6 @@ import type {
 import type { OfflineStatus } from "@/components/ui/offline-status";
 import type { Separator } from "@/components/ui/separator";
 import type { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import * as React from "react";
 import type { AppSidebar } from "./app-sidebar";
 
 interface DashboardLayoutProps {

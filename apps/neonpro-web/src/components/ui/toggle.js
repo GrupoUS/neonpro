@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.toggleVariants = exports.Toggle = void 0;
 var React = require("react");
@@ -40,7 +38,7 @@ var toggleVariants = (0, class_variance_authority_1.cva)(
   },
 );
 exports.toggleVariants = toggleVariants;
-var Toggle = React.forwardRef(function (_a, ref) {
+var Toggle = React.forwardRef((_a, ref) => {
   var className = _a.className,
     variant = _a.variant,
     size = _a.size,

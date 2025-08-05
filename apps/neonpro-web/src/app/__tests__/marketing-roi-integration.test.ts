@@ -1,8 +1,9 @@
 ﻿// Marketing ROI Integration Test
+
 // Tests the complete Story 8.5 implementation
 
-import { createClient } from "@/lib/supabase/client";
 import { MarketingROIService } from "@/app/lib/services/marketing-roi-service";
+import { createClient } from "@/lib/supabase/client";
 
 describe("Marketing ROI Analysis - Story 8.5 Integration", () => {
   let supabase: ReturnType<typeof createClient>;
@@ -91,5 +92,3 @@ describe("Marketing ROI Analysis - Story 8.5 Integration", () => {
     });
   });
 });
-
-export {};

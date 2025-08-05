@@ -3,6 +3,7 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
+import type { useCallback, useEffect, useState } from "react";
 import type {
   ContractRenewalAlert,
   CreateContractRequest,
@@ -23,7 +24,6 @@ import type {
   SupplierQualityIssue,
   UpdateSupplierRequest,
 } from "@/app/types/suppliers";
-import type { useCallback, useEffect, useState } from "react";
 
 interface UseSupplierManagementProps {
   clinicId: string;

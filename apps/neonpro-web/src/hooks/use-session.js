@@ -1,19 +1,18 @@
-"use strict";
 /**
  * useSession Hook - React Hook for Session Management
  * Provides comprehensive session management with real-time updates and security monitoring
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,10 +132,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -147,7 +144,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSession = useSession;
 exports.useSessionSecurity = useSessionSecurity;
@@ -168,7 +165,6 @@ var SESSION_API = {
   active: "/api/auth/session/active",
 };
 function useSession(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -204,10 +200,10 @@ function useSession(options) {
   var sessionManagerRef = (0, react_1.useRef)(null);
   // Initialize session validation
   var validateSession = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, result, alerts_1, errorMessage, err_1, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsValidating(true);
@@ -240,24 +236,22 @@ function useSession(options) {
                 setupExpiryWarnings(result.session);
                 // Handle security alerts
                 if (result.warnings && result.warnings.length > 0) {
-                  alerts_1 = result.warnings.map(function (warning, index) {
-                    return {
-                      id: "warning-".concat(Date.now(), "-").concat(index),
-                      type: session_1.SecurityEventType.SUSPICIOUS_ACTIVITY,
-                      severity: session_1.SecuritySeverity.MEDIUM,
-                      message: warning,
-                      timestamp: new Date(),
-                      requires_action: false,
-                    };
-                  });
-                  setSecurityAlerts(function (prev) {
-                    return __spreadArray(__spreadArray([], prev, true), alerts_1, true);
-                  });
-                  alerts_1.forEach(function (alert) {
-                    return onSecurityAlert === null || onSecurityAlert === void 0
+                  alerts_1 = result.warnings.map((warning, index) => ({
+                    id: "warning-".concat(Date.now(), "-").concat(index),
+                    type: session_1.SecurityEventType.SUSPICIOUS_ACTIVITY,
+                    severity: session_1.SecuritySeverity.MEDIUM,
+                    message: warning,
+                    timestamp: new Date(),
+                    requires_action: false,
+                  }));
+                  setSecurityAlerts((prev) =>
+                    __spreadArray(__spreadArray([], prev, true), alerts_1, true),
+                  );
+                  alerts_1.forEach((alert) =>
+                    onSecurityAlert === null || onSecurityAlert === void 0
                       ? void 0
-                      : onSecurityAlert(alert);
-                  });
+                      : onSecurityAlert(alert),
+                  );
                 }
               } else {
                 setSession(null);
@@ -294,16 +288,15 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [onExpiry, onSecurityAlert, router],
   );
   // Refresh session
   var refresh = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, refreshedSession, err_2, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!session) return [2 /*return*/];
@@ -343,16 +336,15 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session],
   );
   // Terminate session
   var terminate = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var err_3, error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -384,16 +376,15 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [router],
   );
   // Extend session
   var extend = (0, react_1.useCallback)(
-    function (minutes) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (minutes) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, extendedSession, err_4, error_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!session) return [2 /*return*/];
@@ -434,16 +425,15 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [session],
   );
   // Register device
   var registerDevice = (0, react_1.useCallback)(
-    function (deviceName) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceName) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, device, err_5, error_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -481,115 +471,120 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [onDeviceChange],
   );
   // Get active sessions
-  var getActiveSessions = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, err_6, error_6;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, , 4]);
-            return [
-              4 /*yield*/,
-              fetch(SESSION_API.active, {
-                method: "GET",
-                credentials: "include",
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to get active sessions: ".concat(response.statusText));
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            return [2 /*return*/, _a.sent()];
-          case 3:
-            err_6 = _a.sent();
-            error_6 = err_6 instanceof Error ? err_6 : new Error("Failed to get active sessions");
-            setError(error_6);
-            throw error_6;
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var getActiveSessions = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, err_6, error_6;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, , 4]);
+              return [
+                4 /*yield*/,
+                fetch(SESSION_API.active, {
+                  method: "GET",
+                  credentials: "include",
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to get active sessions: ".concat(response.statusText));
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              return [2 /*return*/, _a.sent()];
+            case 3:
+              err_6 = _a.sent();
+              error_6 = err_6 instanceof Error ? err_6 : new Error("Failed to get active sessions");
+              setError(error_6);
+              throw error_6;
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Terminate specific session
-  var terminateSession = (0, react_1.useCallback)(function (sessionId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, err_7, error_7;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              fetch("".concat(SESSION_API.terminate, "/").concat(sessionId), {
-                method: "POST",
-                credentials: "include",
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to terminate session: ".concat(response.statusText));
-            }
-            sonner_1.toast.success("Session terminated successfully");
-            return [3 /*break*/, 3];
-          case 2:
-            err_7 = _a.sent();
-            error_7 = err_7 instanceof Error ? err_7 : new Error("Failed to terminate session");
-            setError(error_7);
-            sonner_1.toast.error("Failed to terminate session");
-            throw error_7;
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var terminateSession = (0, react_1.useCallback)(
+    (sessionId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, err_7, error_7;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                fetch("".concat(SESSION_API.terminate, "/").concat(sessionId), {
+                  method: "POST",
+                  credentials: "include",
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to terminate session: ".concat(response.statusText));
+              }
+              sonner_1.toast.success("Session terminated successfully");
+              return [3 /*break*/, 3];
+            case 2:
+              err_7 = _a.sent();
+              error_7 = err_7 instanceof Error ? err_7 : new Error("Failed to terminate session");
+              setError(error_7);
+              sonner_1.toast.error("Failed to terminate session");
+              throw error_7;
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Get security events
-  var getSecurityEvents = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, err_8, error_8;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, , 4]);
-            return [
-              4 /*yield*/,
-              fetch(SESSION_API.security, {
-                method: "GET",
-                credentials: "include",
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to get security events: ".concat(response.statusText));
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            return [2 /*return*/, _a.sent()];
-          case 3:
-            err_8 = _a.sent();
-            error_8 = err_8 instanceof Error ? err_8 : new Error("Failed to get security events");
-            setError(error_8);
-            throw error_8;
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var getSecurityEvents = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, err_8, error_8;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, , 4]);
+              return [
+                4 /*yield*/,
+                fetch(SESSION_API.security, {
+                  method: "GET",
+                  credentials: "include",
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to get security events: ".concat(response.statusText));
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              return [2 /*return*/, _a.sent()];
+            case 3:
+              err_8 = _a.sent();
+              error_8 = err_8 instanceof Error ? err_8 : new Error("Failed to get security events");
+              setError(error_8);
+              throw error_8;
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Setup expiry warnings
   var setupExpiryWarnings = (0, react_1.useCallback)(
-    function (currentSession) {
+    (currentSession) => {
       clearTimeout(warningTimeoutRef.current);
       var now = new Date().getTime();
       var expiresAt = new Date(currentSession.expires_at).getTime();
@@ -597,13 +592,11 @@ function useSession(options) {
       // 5-minute warning
       var fiveMinuteWarning = timeUntilExpiry - 5 * 60 * 1000;
       if (fiveMinuteWarning > 0) {
-        setTimeout(function () {
+        setTimeout(() => {
           sonner_1.toast.warning("Your session will expire in 5 minutes", {
             action: {
               label: "Extend",
-              onClick: function () {
-                return extend(30);
-              },
+              onClick: () => extend(30),
             },
           });
         }, fiveMinuteWarning);
@@ -611,13 +604,11 @@ function useSession(options) {
       // 1-minute warning
       var oneMinuteWarning = timeUntilExpiry - 1 * 60 * 1000;
       if (oneMinuteWarning > 0) {
-        warningTimeoutRef.current = setTimeout(function () {
+        warningTimeoutRef.current = setTimeout(() => {
           sonner_1.toast.error("Your session will expire in 1 minute!", {
             action: {
               label: "Extend Now",
-              onClick: function () {
-                return extend(30);
-              },
+              onClick: () => extend(30),
             },
           });
         }, oneMinuteWarning);
@@ -626,22 +617,19 @@ function useSession(options) {
     [extend],
   );
   // Track user activity
-  var trackActivity = (0, react_1.useCallback)(
-    function () {
-      setLastActivity(new Date());
-      // Reset activity timeout
-      clearTimeout(activityTimeoutRef.current);
-      activityTimeoutRef.current = setTimeout(function () {
-        // Auto-refresh session on activity
-        if (session && autoRefresh) {
-          validateSession();
-        }
-      }, 30000); // 30 seconds after activity
-    },
-    [session, autoRefresh, validateSession],
-  );
+  var trackActivity = (0, react_1.useCallback)(() => {
+    setLastActivity(new Date());
+    // Reset activity timeout
+    clearTimeout(activityTimeoutRef.current);
+    activityTimeoutRef.current = setTimeout(() => {
+      // Auto-refresh session on activity
+      if (session && autoRefresh) {
+        validateSession();
+      }
+    }, 30000); // 30 seconds after activity
+  }, [session, autoRefresh, validateSession]);
   // Clear all timeouts
-  var clearAllTimeouts = (0, react_1.useCallback)(function () {
+  var clearAllTimeouts = (0, react_1.useCallback)(() => {
     if (refreshIntervalRef.current) {
       clearInterval(refreshIntervalRef.current);
       refreshIntervalRef.current = null;
@@ -656,88 +644,72 @@ function useSession(options) {
     }
   }, []);
   // Setup activity listeners
-  (0, react_1.useEffect)(
-    function () {
-      var events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart", "click"];
-      var handleActivity = function () {
-        return trackActivity();
-      };
-      events.forEach(function (event) {
-        document.addEventListener(event, handleActivity, { passive: true });
+  (0, react_1.useEffect)(() => {
+    var events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart", "click"];
+    var handleActivity = () => trackActivity();
+    events.forEach((event) => {
+      document.addEventListener(event, handleActivity, { passive: true });
+    });
+    return () => {
+      events.forEach((event) => {
+        document.removeEventListener(event, handleActivity);
       });
-      return function () {
-        events.forEach(function (event) {
-          document.removeEventListener(event, handleActivity);
-        });
-      };
-    },
-    [trackActivity],
-  );
+    };
+  }, [trackActivity]);
   // Setup auto-refresh interval
-  (0, react_1.useEffect)(
-    function () {
-      if (autoRefresh && session) {
-        refreshIntervalRef.current = setInterval(function () {
-          validateSession();
-        }, refreshInterval);
+  (0, react_1.useEffect)(() => {
+    if (autoRefresh && session) {
+      refreshIntervalRef.current = setInterval(() => {
+        validateSession();
+      }, refreshInterval);
+    }
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
       }
-      return function () {
-        if (refreshIntervalRef.current) {
-          clearInterval(refreshIntervalRef.current);
-        }
-      };
-    },
-    [autoRefresh, session, refreshInterval, validateSession],
-  );
+    };
+  }, [autoRefresh, session, refreshInterval, validateSession]);
   // Initial session validation
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     validateSession();
   }, []);
   // Cleanup on unmount
   (0, react_1.useEffect)(
-    function () {
-      return function () {
-        clearAllTimeouts();
-      };
+    () => () => {
+      clearAllTimeouts();
     },
     [clearAllTimeouts],
   );
   // Handle visibility change (tab focus/blur)
-  (0, react_1.useEffect)(
-    function () {
-      var handleVisibilityChange = function () {
-        if (!document.hidden && session) {
-          // Validate session when tab becomes visible
-          validateSession();
-        }
-      };
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-      return function () {
-        document.removeEventListener("visibilitychange", handleVisibilityChange);
-      };
-    },
-    [session, validateSession],
-  );
+  (0, react_1.useEffect)(() => {
+    var handleVisibilityChange = () => {
+      if (!document.hidden && session) {
+        // Validate session when tab becomes visible
+        validateSession();
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [session, validateSession]);
   // Handle online/offline events
-  (0, react_1.useEffect)(
-    function () {
-      var handleOnline = function () {
-        if (session) {
-          validateSession();
-        }
-      };
-      var handleOffline = function () {
-        sonner_1.toast.warning("You are offline. Session validation paused.");
-      };
-      window.addEventListener("online", handleOnline);
-      window.addEventListener("offline", handleOffline);
-      return function () {
-        window.removeEventListener("online", handleOnline);
-        window.removeEventListener("offline", handleOffline);
-      };
-    },
-    [session, validateSession],
-  );
+  (0, react_1.useEffect)(() => {
+    var handleOnline = () => {
+      if (session) {
+        validateSession();
+      }
+    };
+    var handleOffline = () => {
+      sonner_1.toast.warning("You are offline. Session validation paused.");
+    };
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [session, validateSession]);
   return {
     session: session,
     isLoading: isLoading,
@@ -758,7 +730,6 @@ function useSession(options) {
  * Hook for monitoring session security events
  */
 function useSessionSecurity() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     securityEvents = _a[0],
     setSecurityEvents = _a[1];
@@ -768,44 +739,43 @@ function useSessionSecurity() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var fetchSecurityEvents = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, events, err_9;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            return [4 /*yield*/, fetch(SESSION_API.security)];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch security events");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            events = _a.sent();
-            setSecurityEvents(events);
-            return [3 /*break*/, 5];
-          case 3:
-            err_9 = _a.sent();
-            setError(err_9 instanceof Error ? err_9 : new Error("Unknown error"));
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  (0, react_1.useEffect)(
-    function () {
-      fetchSecurityEvents();
-    },
-    [fetchSecurityEvents],
+  var fetchSecurityEvents = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, events, err_9;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              return [4 /*yield*/, fetch(SESSION_API.security)];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch security events");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              events = _a.sent();
+              setSecurityEvents(events);
+              return [3 /*break*/, 5];
+            case 3:
+              err_9 = _a.sent();
+              setError(err_9 instanceof Error ? err_9 : new Error("Unknown error"));
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
   );
+  (0, react_1.useEffect)(() => {
+    fetchSecurityEvents();
+  }, [fetchSecurityEvents]);
   return {
     securityEvents: securityEvents,
     isLoading: isLoading,
@@ -817,7 +787,6 @@ function useSessionSecurity() {
  * Hook for managing user devices
  */
 function useDeviceManagement() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     devices = _a[0],
     setDevices = _a[1];
@@ -827,43 +796,45 @@ function useDeviceManagement() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var fetchDevices = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, deviceList, err_10;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            return [4 /*yield*/, fetch(SESSION_API.devices)];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch devices");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            deviceList = _a.sent();
-            setDevices(deviceList);
-            return [3 /*break*/, 5];
-          case 3:
-            err_10 = _a.sent();
-            setError(err_10 instanceof Error ? err_10 : new Error("Unknown error"));
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var fetchDevices = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, deviceList, err_10;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              return [4 /*yield*/, fetch(SESSION_API.devices)];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch devices");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              deviceList = _a.sent();
+              setDevices(deviceList);
+              return [3 /*break*/, 5];
+            case 3:
+              err_10 = _a.sent();
+              setError(err_10 instanceof Error ? err_10 : new Error("Unknown error"));
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var trustDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, err_11;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -892,15 +863,14 @@ function useDeviceManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchDevices],
   );
   var revokeDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, err_12;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -929,16 +899,12 @@ function useDeviceManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchDevices],
   );
-  (0, react_1.useEffect)(
-    function () {
-      fetchDevices();
-    },
-    [fetchDevices],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchDevices();
+  }, [fetchDevices]);
   return {
     devices: devices,
     isLoading: isLoading,
@@ -952,7 +918,6 @@ function useDeviceManagement() {
  * Hook for session analytics and metrics
  */
 function useSessionAnalytics() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     metrics = _a[0],
     setMetrics = _a[1];
@@ -962,49 +927,46 @@ function useSessionAnalytics() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var fetchMetrics = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data, err_13;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            return [4 /*yield*/, fetch("/api/auth/session/analytics")];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch session metrics");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            setMetrics(data);
-            return [3 /*break*/, 5];
-          case 3:
-            err_13 = _a.sent();
-            setError(err_13 instanceof Error ? err_13 : new Error("Unknown error"));
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  (0, react_1.useEffect)(
-    function () {
-      fetchMetrics();
-      // Refresh metrics every 5 minutes
-      var interval = setInterval(fetchMetrics, 5 * 60 * 1000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [fetchMetrics],
+  var fetchMetrics = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, err_13;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              return [4 /*yield*/, fetch("/api/auth/session/analytics")];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch session metrics");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setMetrics(data);
+              return [3 /*break*/, 5];
+            case 3:
+              err_13 = _a.sent();
+              setError(err_13 instanceof Error ? err_13 : new Error("Unknown error"));
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
   );
+  (0, react_1.useEffect)(() => {
+    fetchMetrics();
+    // Refresh metrics every 5 minutes
+    var interval = setInterval(fetchMetrics, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [fetchMetrics]);
   return {
     metrics: metrics,
     isLoading: isLoading,

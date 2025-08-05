@@ -5,10 +5,7 @@
  * Generates registration options for WebAuthn credential creation
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { createwebAuthnService } from "@/lib/auth/webauthn-service";
-import type { trackLoginPerformance } from "@/lib/auth/performance-tracker";
+import type { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   return trackLoginPerformance(

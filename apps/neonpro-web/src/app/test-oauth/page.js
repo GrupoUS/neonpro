@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = TestOAuthPage;
 // app/test-oauth/page.tsx

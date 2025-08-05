@@ -1,4 +1,3 @@
-"use strict";
 // Story 9.2: Personalized Treatment Recommendations - Backend Service
 // AI-powered personalized treatment recommendation engine
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,18 +144,18 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createpersonalizedRecommendationsService = exports.PersonalizedRecommendationService =
   void 0;
 var server_1 = require("../../utils/supabase/server");
-var PersonalizedRecommendationService = /** @class */ (function () {
+var PersonalizedRecommendationService = /** @class */ (() => {
   function PersonalizedRecommendationService() {}
   // Recommendation Profile Management
   PersonalizedRecommendationService.prototype.createRecommendationProfile = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, profile, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -191,7 +188,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getRecommendationProfile = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -221,7 +218,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -321,8 +318,8 @@ var PersonalizedRecommendationService = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                safeOptions.slice(0, 3).map(function (option, index) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                safeOptions.slice(0, 3).map((option, index) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var recommendation;
                     var _a, _b, _c;
                     return __generator(this, function (_d) {
@@ -356,27 +353,24 @@ var PersonalizedRecommendationService = /** @class */ (function () {
                       };
                       return [2 /*return*/, recommendation];
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 2:
             recommendations = _a.sent();
-            alternatives = safeOptions.slice(3, 6).map(function (option) {
-              return {
-                option: option,
-                ranking_score: option.success_probability * 0.8, // Slightly lower than primary
-                comparison_rationale:
-                  "Alternative option with good suitability for patient profile",
-                pros: [
-                  "".concat(option.intensity, " intensity"),
-                  "Good success rate",
-                  "Suitable for patient profile",
-                ],
-                cons: ["Lower ranking than primary options", "May require longer duration"],
-                suitability_score: option.success_probability * 0.85,
-              };
-            });
+            alternatives = safeOptions.slice(3, 6).map((option) => ({
+              option: option,
+              ranking_score: option.success_probability * 0.8, // Slightly lower than primary
+              comparison_rationale: "Alternative option with good suitability for patient profile",
+              pros: [
+                "".concat(option.intensity, " intensity"),
+                "Good success rate",
+                "Suitable for patient profile",
+              ],
+              cons: ["Lower ranking than primary options", "May require longer duration"],
+              suitability_score: option.success_probability * 0.85,
+            }));
             return [
               2 /*return*/,
               {
@@ -398,7 +392,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getBaseTreatmentOptions = function (category) {
     return __awaiter(this, void 0, void 0, function () {
       var options;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         options = [
           {
             id: "treatment_1",
@@ -471,27 +465,17 @@ var PersonalizedRecommendationService = /** @class */ (function () {
             alternatives: ["laser_therapy", "chemical_peel"],
           },
         ];
-        return [
-          2 /*return*/,
-          category
-            ? options.filter(function (opt) {
-                return opt.type === category;
-              })
-            : options,
-        ];
+        return [2 /*return*/, category ? options.filter((opt) => opt.type === category) : options];
       });
     });
   };
-  PersonalizedRecommendationService.prototype.applyPersonalizationFactors = function (
-    options,
-    factors,
-  ) {
-    return options.map(function (option) {
+  PersonalizedRecommendationService.prototype.applyPersonalizationFactors = (options, factors) =>
+    options.map((option) => {
       var adjustedProbability = option.success_probability;
       // Apply age factor
-      var ageFactor = factors.find(function (f) {
-        return f.factor_type === "demographic" && f.factor_category === "age_related";
-      });
+      var ageFactor = factors.find(
+        (f) => f.factor_type === "demographic" && f.factor_category === "age_related",
+      );
       if (ageFactor) {
         var age = ageFactor.factor_value.age;
         if (age < 30)
@@ -499,9 +483,9 @@ var PersonalizedRecommendationService = /** @class */ (function () {
         else if (age > 60) adjustedProbability *= 0.95; // Slightly lower for older patients
       }
       // Apply treatment history factor
-      var historyFactor = factors.find(function (f) {
-        return f.factor_type === "medical_history" && f.factor_category === "treatment_history";
-      });
+      var historyFactor = factors.find(
+        (f) => f.factor_type === "medical_history" && f.factor_category === "treatment_history",
+      );
       if (historyFactor) {
         var previousTreatments = historyFactor.factor_value.previous_treatments || [];
         if (previousTreatments.includes(option.type)) {
@@ -509,9 +493,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
         }
       }
       // Apply lifestyle factors
-      var lifestyleFactor = factors.find(function (f) {
-        return f.factor_type === "lifestyle";
-      });
+      var lifestyleFactor = factors.find((f) => f.factor_type === "lifestyle");
       if (lifestyleFactor) {
         var sunExposure = lifestyleFactor.factor_value.sun_exposure;
         if (sunExposure === "high" && option.type === "aesthetic") {
@@ -522,43 +504,34 @@ var PersonalizedRecommendationService = /** @class */ (function () {
         success_probability: Math.max(0.1, Math.min(0.99, adjustedProbability)),
       });
     });
-  };
-  PersonalizedRecommendationService.prototype.applySafetyFiltering = function (
-    options,
-    safetyProfile,
-  ) {
+  PersonalizedRecommendationService.prototype.applySafetyFiltering = (options, safetyProfile) => {
     if (!safetyProfile) return options;
-    return options.filter(function (option) {
+    return options.filter((option) => {
       // Check contraindications
-      var hasContraindication = safetyProfile.contraindications.some(function (contraindication) {
-        return option.contraindications.includes(contraindication.description);
-      });
+      var hasContraindication = safetyProfile.contraindications.some((contraindication) =>
+        option.contraindications.includes(contraindication.description),
+      );
       // Check allergies
-      var hasAllergy = safetyProfile.allergies.some(function (allergy) {
-        return option.contraindications.includes(allergy.allergen);
-      });
+      var hasAllergy = safetyProfile.allergies.some((allergy) =>
+        option.contraindications.includes(allergy.allergen),
+      );
       return !hasContraindication && !hasAllergy;
     });
   };
-  PersonalizedRecommendationService.prototype.generateRiskAssessment = function (
-    option,
-    safetyProfile,
-  ) {
+  PersonalizedRecommendationService.prototype.generateRiskAssessment = (option, safetyProfile) => {
     var riskFactors =
       (safetyProfile === null || safetyProfile === void 0 ? void 0 : safetyProfile.risk_factors) ||
       [];
     return {
       risk_level: option.risk_level,
-      risk_factors: riskFactors.map(function (rf) {
-        return {
-          id: rf.id,
-          factor_name: rf.factor_name,
-          factor_type: rf.factor_type,
-          risk_level: rf.risk_level,
-          description: rf.description,
-          mitigation_strategies: rf.mitigation_strategies,
-        };
-      }),
+      risk_factors: riskFactors.map((rf) => ({
+        id: rf.id,
+        factor_name: rf.factor_name,
+        factor_type: rf.factor_type,
+        risk_level: rf.risk_level,
+        description: rf.description,
+        mitigation_strategies: rf.mitigation_strategies,
+      })),
       mitigation_strategies: [
         "Follow pre-treatment instructions",
         "Monitor for adverse reactions",
@@ -576,37 +549,29 @@ var PersonalizedRecommendationService = /** @class */ (function () {
       ],
     };
   };
-  PersonalizedRecommendationService.prototype.calculatePersonalizationScore = function (
+  PersonalizedRecommendationService.prototype.calculatePersonalizationScore = (
     factors,
     profile,
-  ) {
+  ) => {
     var factorCount = factors.length;
     var profileCompleteness = profile ? Object.keys(profile.profile_data).length / 10 : 0; // Assume 10 key fields
     return Math.min(1.0, factorCount * 0.1 + profileCompleteness * 0.5);
   };
-  PersonalizedRecommendationService.prototype.calculateConfidenceLevel = function (
+  PersonalizedRecommendationService.prototype.calculateConfidenceLevel = (
     factors,
     safetyProfile,
-  ) {
+  ) => {
     var factorConfidence =
-      factors.reduce(function (sum, f) {
-        return sum + f.confidence_score;
-      }, 0) / Math.max(factors.length, 1);
+      factors.reduce((sum, f) => sum + f.confidence_score, 0) / Math.max(factors.length, 1);
     var safetyCompleteness = safetyProfile ? 0.9 : 0.5; // Higher confidence with complete safety profile
     return factorConfidence * 0.7 + safetyCompleteness * 0.3;
   };
-  PersonalizedRecommendationService.prototype.generateExplanation = function (
+  PersonalizedRecommendationService.prototype.generateExplanation = (
     factors,
     safetyProfile,
     recommendationCount,
-  ) {
-    var factorTypes = Array.from(
-      new Set(
-        factors.map(function (f) {
-          return f.factor_type;
-        }),
-      ),
-    );
+  ) => {
+    var factorTypes = Array.from(new Set(factors.map((f) => f.factor_type)));
     var hasCommonFactors =
       factorTypes.includes("demographic") && factorTypes.includes("medical_history");
     var explanation = "Generated ".concat(
@@ -631,7 +596,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.createTreatmentRecommendation = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, recommendation, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -669,7 +634,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getTreatmentRecommendations = function (query) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, queryBuilder, _a, data, count, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -710,7 +675,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getTreatmentRecommendation = function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -739,7 +704,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.approveRecommendation = function (id, approval) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -769,7 +734,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.rejectRecommendation = function (id, rejectedBy) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -800,7 +765,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.createRecommendationFeedback = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, feedback, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -837,7 +802,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getRecommendationFeedback = function (query) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, queryBuilder, _a, data, count, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -876,7 +841,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.createPersonalizationFactor = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, factor, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -910,7 +875,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getPersonalizationFactors = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -937,7 +902,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.createDefaultSafetyProfile = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -970,7 +935,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getSafetyProfile = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -993,7 +958,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.updateSafetyProfile = function (patientId, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1022,7 +987,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.recordRecommendationPerformance = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, performance, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1060,7 +1025,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getRecommendationPerformance = function (query) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, queryBuilder, _a, data, count, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1121,7 +1086,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
         avgQuality,
         avgUsefulness,
         avgAccuracy;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1148,58 +1113,32 @@ var PersonalizedRecommendationService = /** @class */ (function () {
             adoptedFeedback =
               (feedback === null || feedback === void 0
                 ? void 0
-                : feedback.filter(function (f) {
-                    return f.adoption_status === "adopted";
-                  })) || [];
+                : feedback.filter((f) => f.adoption_status === "adopted")) || [];
             adoptionRate =
               totalRecommendations > 0 ? (adoptedFeedback.length / totalRecommendations) * 100 : 0;
             qualityRatings =
               (feedback === null || feedback === void 0
                 ? void 0
-                : feedback
-                    .map(function (f) {
-                      return f.quality_rating;
-                    })
-                    .filter(function (r) {
-                      return r;
-                    })) || [];
+                : feedback.map((f) => f.quality_rating).filter((r) => r)) || [];
             usefulnessRatings =
               (feedback === null || feedback === void 0
                 ? void 0
-                : feedback
-                    .map(function (f) {
-                      return f.usefulness_rating;
-                    })
-                    .filter(function (r) {
-                      return r;
-                    })) || [];
+                : feedback.map((f) => f.usefulness_rating).filter((r) => r)) || [];
             accuracyRatings =
               (feedback === null || feedback === void 0
                 ? void 0
-                : feedback
-                    .map(function (f) {
-                      return f.accuracy_rating;
-                    })
-                    .filter(function (r) {
-                      return r;
-                    })) || [];
+                : feedback.map((f) => f.accuracy_rating).filter((r) => r)) || [];
             avgQuality =
               qualityRatings.length > 0
-                ? qualityRatings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / qualityRatings.length
+                ? qualityRatings.reduce((sum, r) => sum + r, 0) / qualityRatings.length
                 : 0;
             avgUsefulness =
               usefulnessRatings.length > 0
-                ? usefulnessRatings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / usefulnessRatings.length
+                ? usefulnessRatings.reduce((sum, r) => sum + r, 0) / usefulnessRatings.length
                 : 0;
             avgAccuracy =
               accuracyRatings.length > 0
-                ? accuracyRatings.reduce(function (sum, r) {
-                    return sum + r;
-                  }, 0) / accuracyRatings.length
+                ? accuracyRatings.reduce((sum, r) => sum + r, 0) / accuracyRatings.length
                 : 0;
             return [
               2 /*return*/,
@@ -1222,7 +1161,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
   PersonalizedRecommendationService.prototype.getPersonalizationInsights = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, factorsQuery, factors, mostInfluential;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1234,9 +1173,7 @@ var PersonalizedRecommendationService = /** @class */ (function () {
           case 2:
             factors = _a.sent().data;
             mostInfluential = (factors || [])
-              .sort(function (a, b) {
-                return b.weight * b.confidence_score - a.weight * a.confidence_score;
-              })
+              .sort((a, b) => b.weight * b.confidence_score - a.weight * a.confidence_score)
               .slice(0, 10);
             return [
               2 /*return*/,
@@ -1255,7 +1192,5 @@ var PersonalizedRecommendationService = /** @class */ (function () {
 })();
 exports.PersonalizedRecommendationService = PersonalizedRecommendationService;
 // Export service instance
-var createpersonalizedRecommendationsService = function () {
-  return new PersonalizedRecommendationService();
-};
+var createpersonalizedRecommendationsService = () => new PersonalizedRecommendationService();
 exports.createpersonalizedRecommendationsService = createpersonalizedRecommendationsService;

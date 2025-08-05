@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen, waitFor, fireEvent, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 
 // Mock the treatment success dashboard component
 const MockTreatmentSuccessPage = () => (
@@ -160,7 +160,7 @@ describe("Treatment Success Rate Tracking Dashboard", () => {
     render(<MockTreatmentSuccessPage />);
 
     const successRate = screen.getByTestId("overall-success-rate");
-    const rateValue = parseFloat(successRate.textContent!.replace("%", ""));
+    const rateValue = parseFloat(successRate.textContent?.replace("%", ""));
 
     // Story 8.4 Acceptance Criteria: Success rate tracking with ≥85% accuracy
     expect(rateValue).toBeGreaterThanOrEqual(85);
@@ -170,7 +170,7 @@ describe("Treatment Success Rate Tracking Dashboard", () => {
     render(<MockTreatmentSuccessPage />);
 
     const forecastAccuracy = screen.getByTestId("forecast-accuracy");
-    const accuracyValue = parseFloat(forecastAccuracy.textContent!.replace("%", ""));
+    const accuracyValue = parseFloat(forecastAccuracy.textContent?.replace("%", ""));
 
     // Story 8.4 Acceptance Criteria: Predictive analytics with ≥85% accuracy
     expect(accuracyValue).toBeGreaterThanOrEqual(85);

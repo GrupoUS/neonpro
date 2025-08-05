@@ -7,9 +7,9 @@
  * Includes Web Vitals, bundle analysis, caching, and optimization
  */
 
-const { spawnSync } = require("child_process");
-const { existsSync, readFileSync } = require("fs");
-const path = require("path");
+const { spawnSync } = require("node:child_process");
+const { existsSync, readFileSync } = require("node:fs");
+const path = require("node:path");
 
 // Colors for console output
 const colors = {
@@ -152,7 +152,7 @@ function testPerformanceIntegration() {
       throw testResult.error;
     }
     return true;
-  } catch (err) {
+  } catch (_err) {
     warning(`Performance tests completed with some warnings`);
     return true; // Non-critical for deployment
   }
@@ -224,7 +224,7 @@ function generateDeploymentReport() {
     status: "DEPLOYED",
   };
 
-  log("\n" + "=".repeat(80), colors.bold);
+  log(`\n${"=".repeat(80)}`, colors.bold);
   log("📊 PERFORMANCE OPTIMIZATION DEPLOYMENT REPORT", colors.bold);
   log("=".repeat(80), colors.bold);
 
@@ -245,7 +245,7 @@ function generateDeploymentReport() {
 }
 
 async function deployPerformanceOptimization() {
-  log("\n" + "=".repeat(80), colors.bold);
+  log(`\n${"=".repeat(80)}`, colors.bold);
   log("🚀 NEONPRO PERFORMANCE OPTIMIZATION DEPLOYMENT", colors.bold);
   log("=".repeat(80), colors.bold);
 
@@ -276,7 +276,7 @@ async function deployPerformanceOptimization() {
   }
 
   // Generate deployment report
-  const report = generateDeploymentReport();
+  const _report = generateDeploymentReport();
 
   // Summary
   const successful = results.filter((r) => r.success).length;

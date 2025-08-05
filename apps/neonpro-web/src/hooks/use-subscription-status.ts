@@ -12,8 +12,11 @@
 
 import type { useCallback, useEffect, useRef, useState } from "react";
 import type { useAuth } from "../contexts/auth-context";
-import type { RealtimeMetrics, SubscriptionRealtimeUpdate } from "../lib/subscription-realtime";
-import type { subscriptionRealtimeManager } from "../lib/subscription-realtime";
+import type {
+  RealtimeMetrics,
+  SubscriptionRealtimeUpdate,
+  subscriptionRealtimeManager,
+} from "../lib/subscription-realtime";
 import type { SubscriptionStatus } from "../lib/subscription-status";
 
 export interface SubscriptionState {

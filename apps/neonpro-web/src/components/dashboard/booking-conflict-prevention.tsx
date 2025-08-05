@@ -1,6 +1,13 @@
 "use client";
 
-import type { useState, useRef } from "react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type { AlertTriangle, CheckCircle, Clock, RefreshCw, Shield, Users } from "lucide-react";
+import type { useRef, useState } from "react";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,16 +15,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
-import type { Shield, AlertTriangle, CheckCircle, Clock, Users, RefreshCw } from "lucide-react";
-import type { format } from "date-fns";
-import type { pt } from "date-fns/locale";
-import type { useToast } from "@/hooks/use-toast";
-import type { createClient } from "@/app/utils/supabase/client";
 import type { TimeSlot } from "@/hooks/use-realtime-availability";
+import type { useToast } from "@/hooks/use-toast";
 
 interface ConflictDetector {
   hasConflict: boolean;

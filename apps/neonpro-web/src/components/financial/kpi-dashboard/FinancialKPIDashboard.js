@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = FinancialKPIDashboard;
 var react_1 = require("react");
@@ -150,7 +147,7 @@ var lucide_react_1 = require("lucide-react");
 var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 // Mock data generator for demonstration
-var generateMockKPIs = function () {
+var generateMockKPIs = () => {
   var baseDate = new Date();
   return [
     {
@@ -301,66 +298,63 @@ var generateMockKPIs = function () {
     },
   ];
 };
-var generateMockWidgets = function () {
-  return [
-    {
-      id: "revenue-kpi",
-      type: "kpi",
-      title: "Receita Total",
-      size: "medium",
-      position: { x: 0, y: 0 },
-      visible: true,
-      config: {},
-    },
-    {
-      id: "profit-kpi",
-      type: "kpi",
-      title: "Margem de Lucro",
-      size: "medium",
-      position: { x: 1, y: 0 },
-      visible: true,
-      config: {},
-    },
-    {
-      id: "ebitda-kpi",
-      type: "kpi",
-      title: "EBITDA",
-      size: "medium",
-      position: { x: 2, y: 0 },
-      visible: true,
-      config: {},
-    },
-    {
-      id: "cash-flow-kpi",
-      type: "kpi",
-      title: "Fluxo de Caixa",
-      size: "medium",
-      position: { x: 0, y: 1 },
-      visible: true,
-      config: {},
-    },
-    {
-      id: "roi-kpi",
-      type: "kpi",
-      title: "ROI",
-      size: "medium",
-      position: { x: 1, y: 1 },
-      visible: true,
-      config: {},
-    },
-    {
-      id: "ltv-kpi",
-      type: "kpi",
-      title: "LTV Paciente",
-      size: "medium",
-      position: { x: 2, y: 1 },
-      visible: true,
-      config: {},
-    },
-  ];
-};
+var generateMockWidgets = () => [
+  {
+    id: "revenue-kpi",
+    type: "kpi",
+    title: "Receita Total",
+    size: "medium",
+    position: { x: 0, y: 0 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "profit-kpi",
+    type: "kpi",
+    title: "Margem de Lucro",
+    size: "medium",
+    position: { x: 1, y: 0 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "ebitda-kpi",
+    type: "kpi",
+    title: "EBITDA",
+    size: "medium",
+    position: { x: 2, y: 0 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "cash-flow-kpi",
+    type: "kpi",
+    title: "Fluxo de Caixa",
+    size: "medium",
+    position: { x: 0, y: 1 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "roi-kpi",
+    type: "kpi",
+    title: "ROI",
+    size: "medium",
+    position: { x: 1, y: 1 },
+    visible: true,
+    config: {},
+  },
+  {
+    id: "ltv-kpi",
+    type: "kpi",
+    title: "LTV Paciente",
+    size: "medium",
+    position: { x: 2, y: 1 },
+    visible: true,
+    config: {},
+  },
+];
 function FinancialKPIDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userId = _a.userId,
     userRole = _a.userRole,
@@ -412,10 +406,10 @@ function FinancialKPIDashboard(_a) {
     setFilters = _m[1];
   // Load dashboard data
   var loadDashboardData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var mockKPIs, mockWidgets, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsLoading(true);
@@ -423,12 +417,7 @@ function FinancialKPIDashboard(_a) {
             case 1:
               _a.trys.push([1, 3, 4, 5]);
               // Simulate API call with realistic delay
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 800);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 800))];
             case 2:
               // Simulate API call with realistic delay
               _a.sent();
@@ -449,40 +438,29 @@ function FinancialKPIDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [filters],
   );
   // Auto-refresh effect
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-      if (autoRefresh) {
-        var interval_1 = setInterval(loadDashboardData, refreshInterval * 1000);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [loadDashboardData, autoRefresh, refreshInterval],
-  );
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+    if (autoRefresh) {
+      var interval_1 = setInterval(loadDashboardData, refreshInterval * 1000);
+      return () => clearInterval(interval_1);
+    }
+  }, [loadDashboardData, autoRefresh, refreshInterval]);
   // Format currency
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   // Format percentage
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(1), "%");
-  };
+  var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
   // Format number
-  var formatNumber = function (value) {
-    return new Intl.NumberFormat("pt-BR").format(value);
-  };
+  var formatNumber = (value) => new Intl.NumberFormat("pt-BR").format(value);
   // Get formatted value based on unit
-  var getFormattedValue = function (kpi) {
+  var getFormattedValue = (kpi) => {
     switch (kpi.unit) {
       case "currency":
         return formatCurrency(kpi.value);
@@ -495,7 +473,7 @@ function FinancialKPIDashboard(_a) {
     }
   };
   // Get trend icon
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return <lucide_react_1.TrendingUp className="h-4 w-4 text-green-500" />;
@@ -506,7 +484,7 @@ function FinancialKPIDashboard(_a) {
     }
   };
   // Get category icon
-  var getCategoryIcon = function (category) {
+  var getCategoryIcon = (category) => {
     switch (category) {
       case "revenue":
         return <lucide_react_1.DollarSign className="h-5 w-5" />;
@@ -521,31 +499,19 @@ function FinancialKPIDashboard(_a) {
     }
   };
   // Handle KPI click for drill-down
-  var handleKPIClick = function (kpi) {
+  var handleKPIClick = (kpi) => {
     setSelectedKPI(kpi);
     onKPIClick === null || onKPIClick === void 0 ? void 0 : onKPIClick(kpi);
   };
   // Handle export
-  var handleExport = function (format) {
+  var handleExport = (format) => {
     onExport === null || onExport === void 0 ? void 0 : onExport(format);
   };
   // Filter KPIs by category
-  var getKPIsByCategory = function (category) {
-    return kpis.filter(function (kpi) {
-      return kpi.category === category;
-    });
-  };
+  var getKPIsByCategory = (category) => kpis.filter((kpi) => kpi.category === category);
   // Get active alerts
   var activeAlerts = (0, react_1.useMemo)(
-    function () {
-      return kpis
-        .flatMap(function (kpi) {
-          return kpi.alerts || [];
-        })
-        .filter(function (alert) {
-          return !alert.acknowledged;
-        });
-    },
+    () => kpis.flatMap((kpi) => kpi.alerts || []).filter((alert) => !alert.acknowledged),
     [kpis],
   );
   if (isLoading) {
@@ -604,20 +570,14 @@ function FinancialKPIDashboard(_a) {
           <button_1.Button
             variant="outline"
             size="sm"
-            onClick={function () {
-              return setIsCustomizing(!isCustomizing);
-            }}
+            onClick={() => setIsCustomizing(!isCustomizing)}
           >
             <lucide_react_1.Settings className="h-4 w-4 mr-2" />
             Personalizar
           </button_1.Button>
 
           {/* Export dropdown */}
-          <select_1.Select
-            onValueChange={function (value) {
-              return handleExport(value);
-            }}
-          >
+          <select_1.Select onValueChange={(value) => handleExport(value)}>
             <select_1.SelectTrigger className="w-32">
               <lucide_react_1.Download className="h-4 w-4 mr-2" />
               <select_1.SelectValue placeholder="Exportar" />
@@ -634,25 +594,23 @@ function FinancialKPIDashboard(_a) {
       {/* Active Alerts */}
       {activeAlerts.length > 0 && (
         <div className="space-y-2">
-          {activeAlerts.map(function (alert) {
-            return (
-              <alert_1.Alert
-                key={alert.id}
-                className={"border-l-4 ".concat(
-                  alert.type === "critical"
-                    ? "border-red-500 bg-red-50"
-                    : alert.type === "warning"
-                      ? "border-yellow-500 bg-yellow-50"
-                      : alert.type === "info"
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-green-500 bg-green-50",
-                )}
-              >
-                <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
-              </alert_1.Alert>
-            );
-          })}
+          {activeAlerts.map((alert) => (
+            <alert_1.Alert
+              key={alert.id}
+              className={"border-l-4 ".concat(
+                alert.type === "critical"
+                  ? "border-red-500 bg-red-50"
+                  : alert.type === "warning"
+                    ? "border-yellow-500 bg-yellow-50"
+                    : alert.type === "info"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-green-500 bg-green-50",
+              )}
+            >
+              <lucide_react_1.AlertTriangle className="h-4 w-4" />
+              <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
+            </alert_1.Alert>
+          ))}
         </div>
       )}
 
@@ -668,244 +626,219 @@ function FinancialKPIDashboard(_a) {
         {/* Overview Tab */}
         <tabs_1.TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {kpis.map(function (kpi) {
-              return (
-                <card_1.Card
-                  key={kpi.id}
-                  className="cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={function () {
-                    return handleKPIClick(kpi);
-                  }}
-                >
-                  <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <card_1.CardTitle className="text-sm font-medium">{kpi.name}</card_1.CardTitle>
-                    {getCategoryIcon(kpi.category)}
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="text-2xl font-bold">{getFormattedValue(kpi)}</div>
-                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                      {getTrendIcon(kpi.trend)}
-                      <span
-                        className={"".concat(
-                          kpi.trend === "up"
-                            ? "text-green-600"
-                            : kpi.trend === "down"
-                              ? "text-red-600"
-                              : "text-yellow-600",
-                        )}
-                      >
-                        {kpi.changePercentage > 0 ? "+" : ""}
-                        {kpi.changePercentage.toFixed(1)}%
-                      </span>
-                      <span>vs período anterior</span>
+            {kpis.map((kpi) => (
+              <card_1.Card
+                key={kpi.id}
+                className="cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={() => handleKPIClick(kpi)}
+              >
+                <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <card_1.CardTitle className="text-sm font-medium">{kpi.name}</card_1.CardTitle>
+                  {getCategoryIcon(kpi.category)}
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="text-2xl font-bold">{getFormattedValue(kpi)}</div>
+                  <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                    {getTrendIcon(kpi.trend)}
+                    <span
+                      className={"".concat(
+                        kpi.trend === "up"
+                          ? "text-green-600"
+                          : kpi.trend === "down"
+                            ? "text-red-600"
+                            : "text-yellow-600",
+                      )}
+                    >
+                      {kpi.changePercentage > 0 ? "+" : ""}
+                      {kpi.changePercentage.toFixed(1)}%
+                    </span>
+                    <span>vs período anterior</span>
+                  </div>
+
+                  {kpi.target && (
+                    <div className="mt-2">
+                      <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                        <span>Meta</span>
+                        <span>
+                          {kpi.unit === "currency"
+                            ? formatCurrency(kpi.target)
+                            : kpi.unit === "percentage"
+                              ? formatPercentage(kpi.target)
+                              : formatNumber(kpi.target)}
+                        </span>
+                      </div>
+                      <progress_1.Progress value={(kpi.value / kpi.target) * 100} className="h-2" />
                     </div>
+                  )}
 
-                    {kpi.target && (
-                      <div className="mt-2">
-                        <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                          <span>Meta</span>
-                          <span>
-                            {kpi.unit === "currency"
-                              ? formatCurrency(kpi.target)
-                              : kpi.unit === "percentage"
-                                ? formatPercentage(kpi.target)
-                                : formatNumber(kpi.target)}
-                          </span>
-                        </div>
-                        <progress_1.Progress
-                          value={(kpi.value / kpi.target) * 100}
-                          className="h-2"
-                        />
-                      </div>
-                    )}
-
-                    {kpi.alerts && kpi.alerts.length > 0 && (
-                      <div className="mt-2">
-                        <badge_1.Badge variant="outline" className="text-xs">
-                          {kpi.alerts.length} alerta{kpi.alerts.length > 1 ? "s" : ""}
-                        </badge_1.Badge>
-                      </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  {kpi.alerts && kpi.alerts.length > 0 && (
+                    <div className="mt-2">
+                      <badge_1.Badge variant="outline" className="text-xs">
+                        {kpi.alerts.length} alerta{kpi.alerts.length > 1 ? "s" : ""}
+                      </badge_1.Badge>
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
         {/* Revenue Tab */}
         <tabs_1.TabsContent value="revenue" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {getKPIsByCategory("revenue").map(function (kpi) {
-              return (
-                <card_1.Card
-                  key={kpi.id}
-                  className="cursor-pointer"
-                  onClick={function () {
-                    return handleKPIClick(kpi);
-                  }}
-                >
-                  <card_1.CardHeader>
-                    <card_1.CardTitle className="flex items-center space-x-2">
-                      <lucide_react_1.DollarSign className="h-5 w-5" />
-                      <span>{kpi.name}</span>
-                    </card_1.CardTitle>
-                    <card_1.CardDescription>{kpi.description}</card_1.CardDescription>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
+            {getKPIsByCategory("revenue").map((kpi) => (
+              <card_1.Card
+                key={kpi.id}
+                className="cursor-pointer"
+                onClick={() => handleKPIClick(kpi)}
+              >
+                <card_1.CardHeader>
+                  <card_1.CardTitle className="flex items-center space-x-2">
+                    <lucide_react_1.DollarSign className="h-5 w-5" />
+                    <span>{kpi.name}</span>
+                  </card_1.CardTitle>
+                  <card_1.CardDescription>{kpi.description}</card_1.CardDescription>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
 
-                    {kpi.drillDownData && (
-                      <div className="space-y-2">
-                        <h4 className="font-medium text-sm">Detalhamento:</h4>
-                        {kpi.drillDownData.map(function (item) {
-                          return (
-                            <div key={item.id} className="flex justify-between items-center">
-                              <span className="text-sm">{item.label}</span>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-sm font-medium">
-                                  {formatCurrency(item.value)}
-                                </span>
-                                <badge_1.Badge variant="outline" className="text-xs">
-                                  {item.percentage.toFixed(1)}%
-                                </badge_1.Badge>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {kpi.benchmarkData && (
-                      <div className="mt-4 pt-4 border-t">
-                        <h4 className="font-medium text-sm mb-2">Benchmark:</h4>
-                        <div className="text-xs text-muted-foreground space-y-1">
-                          <div>
-                            Média do setor: {formatCurrency(kpi.benchmarkData.industryAverage)}
-                          </div>
-                          <div>
-                            Top performers: {formatCurrency(kpi.benchmarkData.topPerformers)}
-                          </div>
-                          <div>
-                            Ranking: {kpi.benchmarkData.clinicRanking}º de{" "}
-                            {kpi.benchmarkData.totalClinics}
+                  {kpi.drillDownData && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-sm">Detalhamento:</h4>
+                      {kpi.drillDownData.map((item) => (
+                        <div key={item.id} className="flex justify-between items-center">
+                          <span className="text-sm">{item.label}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium">
+                              {formatCurrency(item.value)}
+                            </span>
+                            <badge_1.Badge variant="outline" className="text-xs">
+                              {item.percentage.toFixed(1)}%
+                            </badge_1.Badge>
                           </div>
                         </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {kpi.benchmarkData && (
+                    <div className="mt-4 pt-4 border-t">
+                      <h4 className="font-medium text-sm mb-2">Benchmark:</h4>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        <div>
+                          Média do setor: {formatCurrency(kpi.benchmarkData.industryAverage)}
+                        </div>
+                        <div>Top performers: {formatCurrency(kpi.benchmarkData.topPerformers)}</div>
+                        <div>
+                          Ranking: {kpi.benchmarkData.clinicRanking}º de{" "}
+                          {kpi.benchmarkData.totalClinics}
+                        </div>
                       </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
         {/* Profitability Tab */}
         <tabs_1.TabsContent value="profitability" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {getKPIsByCategory("profitability").map(function (kpi) {
-              return (
-                <card_1.Card
-                  key={kpi.id}
-                  className="cursor-pointer"
-                  onClick={function () {
-                    return handleKPIClick(kpi);
-                  }}
-                >
-                  <card_1.CardHeader>
-                    <card_1.CardTitle className="flex items-center space-x-2">
-                      <lucide_react_1.PieChart className="h-5 w-5" />
-                      <span>{kpi.name}</span>
-                    </card_1.CardTitle>
-                    <card_1.CardDescription>{kpi.description}</card_1.CardDescription>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
+            {getKPIsByCategory("profitability").map((kpi) => (
+              <card_1.Card
+                key={kpi.id}
+                className="cursor-pointer"
+                onClick={() => handleKPIClick(kpi)}
+              >
+                <card_1.CardHeader>
+                  <card_1.CardTitle className="flex items-center space-x-2">
+                    <lucide_react_1.PieChart className="h-5 w-5" />
+                    <span>{kpi.name}</span>
+                  </card_1.CardTitle>
+                  <card_1.CardDescription>{kpi.description}</card_1.CardDescription>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
 
-                    {kpi.drillDownData && (
-                      <div className="space-y-2">
-                        <h4 className="font-medium text-sm">Análise:</h4>
-                        {kpi.drillDownData.map(function (item) {
-                          return (
-                            <div key={item.id} className="flex justify-between items-center">
-                              <span className="text-sm">{item.label}</span>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-sm font-medium">
-                                  {kpi.unit === "percentage"
-                                    ? formatPercentage(item.value)
-                                    : formatCurrency(item.value)}
-                                </span>
-                                {getTrendIcon(item.trend)}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  {kpi.drillDownData && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-sm">Análise:</h4>
+                      {kpi.drillDownData.map((item) => (
+                        <div key={item.id} className="flex justify-between items-center">
+                          <span className="text-sm">{item.label}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium">
+                              {kpi.unit === "percentage"
+                                ? formatPercentage(item.value)
+                                : formatCurrency(item.value)}
+                            </span>
+                            {getTrendIcon(item.trend)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
         {/* Efficiency Tab */}
         <tabs_1.TabsContent value="efficiency" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {getKPIsByCategory("efficiency").map(function (kpi) {
-              return (
-                <card_1.Card
-                  key={kpi.id}
-                  className="cursor-pointer"
-                  onClick={function () {
-                    return handleKPIClick(kpi);
-                  }}
-                >
-                  <card_1.CardHeader>
-                    <card_1.CardTitle className="flex items-center space-x-2">
-                      <lucide_react_1.Target className="h-5 w-5" />
-                      <span>{kpi.name}</span>
-                    </card_1.CardTitle>
-                    <card_1.CardDescription>{kpi.description}</card_1.CardDescription>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
+            {getKPIsByCategory("efficiency").map((kpi) => (
+              <card_1.Card
+                key={kpi.id}
+                className="cursor-pointer"
+                onClick={() => handleKPIClick(kpi)}
+              >
+                <card_1.CardHeader>
+                  <card_1.CardTitle className="flex items-center space-x-2">
+                    <lucide_react_1.Target className="h-5 w-5" />
+                    <span>{kpi.name}</span>
+                  </card_1.CardTitle>
+                  <card_1.CardDescription>{kpi.description}</card_1.CardDescription>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="text-3xl font-bold mb-4">{getFormattedValue(kpi)}</div>
 
-                    {kpi.benchmarkData && (
+                  {kpi.benchmarkData && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-sm mb-2">Performance vs Mercado:</h4>
                       <div className="space-y-2">
-                        <h4 className="font-medium text-sm mb-2">Performance vs Mercado:</h4>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span>Sua clínica</span>
-                            <span className="font-medium">{getFormattedValue(kpi)}</span>
-                          </div>
-                          <div className="flex justify-between text-sm text-muted-foreground">
-                            <span>Média do setor</span>
-                            <span>
-                              {kpi.unit === "percentage"
-                                ? formatPercentage(kpi.benchmarkData.industryAverage)
-                                : formatCurrency(kpi.benchmarkData.industryAverage)}
-                            </span>
-                          </div>
-                          <div className="flex justify-between text-sm text-muted-foreground">
-                            <span>Top 10%</span>
-                            <span>
-                              {kpi.unit === "percentage"
-                                ? formatPercentage(kpi.benchmarkData.topPerformers)
-                                : formatCurrency(kpi.benchmarkData.topPerformers)}
-                            </span>
-                          </div>
-                          <progress_1.Progress
-                            value={(kpi.value / kpi.benchmarkData.topPerformers) * 100}
-                            className="h-2 mt-2"
-                          />
+                        <div className="flex justify-between text-sm">
+                          <span>Sua clínica</span>
+                          <span className="font-medium">{getFormattedValue(kpi)}</span>
                         </div>
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                          <span>Média do setor</span>
+                          <span>
+                            {kpi.unit === "percentage"
+                              ? formatPercentage(kpi.benchmarkData.industryAverage)
+                              : formatCurrency(kpi.benchmarkData.industryAverage)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                          <span>Top 10%</span>
+                          <span>
+                            {kpi.unit === "percentage"
+                              ? formatPercentage(kpi.benchmarkData.topPerformers)
+                              : formatCurrency(kpi.benchmarkData.topPerformers)}
+                          </span>
+                        </div>
+                        <progress_1.Progress
+                          value={(kpi.value / kpi.benchmarkData.topPerformers) * 100}
+                          className="h-2 mt-2"
+                        />
                       </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
       </tabs_1.Tabs>
@@ -921,13 +854,7 @@ function FinancialKPIDashboard(_a) {
               </card_1.CardTitle>
               <card_1.CardDescription>{selectedKPI.description}</card_1.CardDescription>
             </div>
-            <button_1.Button
-              variant="ghost"
-              size="sm"
-              onClick={function () {
-                return setSelectedKPI(null);
-              }}
-            >
+            <button_1.Button variant="ghost" size="sm" onClick={() => setSelectedKPI(null)}>
               <lucide_react_1.Minimize2 className="h-4 w-4" />
             </button_1.Button>
           </card_1.CardHeader>
@@ -977,33 +904,31 @@ function FinancialKPIDashboard(_a) {
                   <div>
                     <h3 className="font-semibold mb-4">Detalhamento por Categoria</h3>
                     <div className="space-y-3">
-                      {selectedKPI.drillDownData.map(function (item) {
-                        return (
-                          <div
-                            key={item.id}
-                            className="flex items-center justify-between p-3 bg-muted rounded-lg"
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div>
-                                <div className="font-medium">{item.label}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  {item.percentage.toFixed(1)}% do total
-                                </div>
+                      {selectedKPI.drillDownData.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <div>
+                              <div className="font-medium">{item.label}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {item.percentage.toFixed(1)}% do total
                               </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <span className="font-semibold">
-                                {selectedKPI.unit === "currency"
-                                  ? formatCurrency(item.value)
-                                  : selectedKPI.unit === "percentage"
-                                    ? formatPercentage(item.value)
-                                    : formatNumber(item.value)}
-                              </span>
-                              {getTrendIcon(item.trend)}
-                            </div>
                           </div>
-                        );
-                      })}
+                          <div className="flex items-center space-x-2">
+                            <span className="font-semibold">
+                              {selectedKPI.unit === "currency"
+                                ? formatCurrency(item.value)
+                                : selectedKPI.unit === "percentage"
+                                  ? formatPercentage(item.value)
+                                  : formatNumber(item.value)}
+                            </span>
+                            {getTrendIcon(item.trend)}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -1059,32 +984,30 @@ function FinancialKPIDashboard(_a) {
                   <div>
                     <h3 className="font-semibold mb-4">Alertas Ativos</h3>
                     <div className="space-y-2">
-                      {selectedKPI.alerts.map(function (alert) {
-                        return (
-                          <alert_1.Alert
-                            key={alert.id}
-                            className={"".concat(
-                              alert.type === "critical"
-                                ? "border-red-500"
-                                : alert.type === "warning"
-                                  ? "border-yellow-500"
-                                  : alert.type === "info"
-                                    ? "border-blue-500"
-                                    : "border-green-500",
-                            )}
-                          >
-                            <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                            <alert_1.AlertDescription>
-                              <div className="flex justify-between items-start">
-                                <span>{alert.message}</span>
-                                <badge_1.Badge variant="outline" className="ml-2">
-                                  {alert.type}
-                                </badge_1.Badge>
-                              </div>
-                            </alert_1.AlertDescription>
-                          </alert_1.Alert>
-                        );
-                      })}
+                      {selectedKPI.alerts.map((alert) => (
+                        <alert_1.Alert
+                          key={alert.id}
+                          className={"".concat(
+                            alert.type === "critical"
+                              ? "border-red-500"
+                              : alert.type === "warning"
+                                ? "border-yellow-500"
+                                : alert.type === "info"
+                                  ? "border-blue-500"
+                                  : "border-green-500",
+                          )}
+                        >
+                          <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                          <alert_1.AlertDescription>
+                            <div className="flex justify-between items-start">
+                              <span>{alert.message}</span>
+                              <badge_1.Badge variant="outline" className="ml-2">
+                                {alert.type}
+                              </badge_1.Badge>
+                            </div>
+                          </alert_1.AlertDescription>
+                        </alert_1.Alert>
+                      ))}
                     </div>
                   </div>
                 )}

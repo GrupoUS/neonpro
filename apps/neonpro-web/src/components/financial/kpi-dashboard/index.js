@@ -1,16 +1,15 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -76,307 +75,211 @@ exports.checkBrowserCompatibility =
 var FinancialKPIDashboard_1 = require("./FinancialKPIDashboard");
 Object.defineProperty(exports, "FinancialKPIDashboard", {
   enumerable: true,
-  get: function () {
-    return FinancialKPIDashboard_1.default;
-  },
+  get: () => FinancialKPIDashboard_1.default,
 });
 var KPIFilters_1 = require("./KPIFilters");
 Object.defineProperty(exports, "KPIFilters", {
   enumerable: true,
-  get: function () {
-    return KPIFilters_1.default;
-  },
+  get: () => KPIFilters_1.default,
 });
 var KPIDrillDown_1 = require("./KPIDrillDown");
 Object.defineProperty(exports, "KPIDrillDown", {
   enumerable: true,
-  get: function () {
-    return KPIDrillDown_1.default;
-  },
+  get: () => KPIDrillDown_1.default,
 });
 // Hooks
 var useFinancialKPIs_1 = require("./hooks/useFinancialKPIs");
 Object.defineProperty(exports, "useFinancialKPIs", {
   enumerable: true,
-  get: function () {
-    return useFinancialKPIs_1.default;
-  },
+  get: () => useFinancialKPIs_1.default,
 });
 // Services
 var services_1 = require("./services");
 Object.defineProperty(exports, "FinancialKPIService", {
   enumerable: true,
-  get: function () {
-    return services_1.FinancialKPIService;
-  },
+  get: () => services_1.FinancialKPIService,
 });
 Object.defineProperty(exports, "SupabaseKPIService", {
   enumerable: true,
-  get: function () {
-    return services_1.SupabaseKPIService;
-  },
+  get: () => services_1.SupabaseKPIService,
 });
 Object.defineProperty(exports, "PerformanceService", {
   enumerable: true,
-  get: function () {
-    return services_1.PerformanceService;
-  },
+  get: () => services_1.PerformanceService,
 });
 // Utilities
 var utils_1 = require("./utils");
 Object.defineProperty(exports, "formatCurrency", {
   enumerable: true,
-  get: function () {
-    return utils_1.formatCurrency;
-  },
+  get: () => utils_1.formatCurrency,
 });
 Object.defineProperty(exports, "formatPercentage", {
   enumerable: true,
-  get: function () {
-    return utils_1.formatPercentage;
-  },
+  get: () => utils_1.formatPercentage,
 });
 Object.defineProperty(exports, "formatNumber", {
   enumerable: true,
-  get: function () {
-    return utils_1.formatNumber;
-  },
+  get: () => utils_1.formatNumber,
 });
 Object.defineProperty(exports, "formatDate", {
   enumerable: true,
-  get: function () {
-    return utils_1.formatDate;
-  },
+  get: () => utils_1.formatDate,
 });
 Object.defineProperty(exports, "formatDateRange", {
   enumerable: true,
-  get: function () {
-    return utils_1.formatDateRange;
-  },
+  get: () => utils_1.formatDateRange,
 });
 Object.defineProperty(exports, "calculateTrend", {
   enumerable: true,
-  get: function () {
-    return utils_1.calculateTrend;
-  },
+  get: () => utils_1.calculateTrend,
 });
 Object.defineProperty(exports, "calculatePercentageChange", {
   enumerable: true,
-  get: function () {
-    return utils_1.calculatePercentageChange;
-  },
+  get: () => utils_1.calculatePercentageChange,
 });
 Object.defineProperty(exports, "calculateGrowthRate", {
   enumerable: true,
-  get: function () {
-    return utils_1.calculateGrowthRate;
-  },
+  get: () => utils_1.calculateGrowthRate,
 });
 Object.defineProperty(exports, "calculateCAGR", {
   enumerable: true,
-  get: function () {
-    return utils_1.calculateCAGR;
-  },
+  get: () => utils_1.calculateCAGR,
 });
 Object.defineProperty(exports, "calculateMovingAverage", {
   enumerable: true,
-  get: function () {
-    return utils_1.calculateMovingAverage;
-  },
+  get: () => utils_1.calculateMovingAverage,
 });
 Object.defineProperty(exports, "getKPIStatus", {
   enumerable: true,
-  get: function () {
-    return utils_1.getKPIStatus;
-  },
+  get: () => utils_1.getKPIStatus,
 });
 Object.defineProperty(exports, "getKPIStatusColor", {
   enumerable: true,
-  get: function () {
-    return utils_1.getKPIStatusColor;
-  },
+  get: () => utils_1.getKPIStatusColor,
 });
 Object.defineProperty(exports, "getTrendColor", {
   enumerable: true,
-  get: function () {
-    return utils_1.getTrendColor;
-  },
+  get: () => utils_1.getTrendColor,
 });
 Object.defineProperty(exports, "getDateRangePreset", {
   enumerable: true,
-  get: function () {
-    return utils_1.getDateRangePreset;
-  },
+  get: () => utils_1.getDateRangePreset,
 });
 Object.defineProperty(exports, "sortKPIs", {
   enumerable: true,
-  get: function () {
-    return utils_1.sortKPIs;
-  },
+  get: () => utils_1.sortKPIs,
 });
 Object.defineProperty(exports, "filterAlerts", {
   enumerable: true,
-  get: function () {
-    return utils_1.filterAlerts;
-  },
+  get: () => utils_1.filterAlerts,
 });
 Object.defineProperty(exports, "generateMockTimeSeries", {
   enumerable: true,
-  get: function () {
-    return utils_1.generateMockTimeSeries;
-  },
+  get: () => utils_1.generateMockTimeSeries,
 });
 Object.defineProperty(exports, "calculateStatistics", {
   enumerable: true,
-  get: function () {
-    return utils_1.calculateStatistics;
-  },
+  get: () => utils_1.calculateStatistics,
 });
 Object.defineProperty(exports, "detectAnomalies", {
   enumerable: true,
-  get: function () {
-    return utils_1.detectAnomalies;
-  },
+  get: () => utils_1.detectAnomalies,
 });
 Object.defineProperty(exports, "calculateCorrelation", {
   enumerable: true,
-  get: function () {
-    return utils_1.calculateCorrelation;
-  },
+  get: () => utils_1.calculateCorrelation,
 });
 // Configuration
 var config_1 = require("./config");
 Object.defineProperty(exports, "DASHBOARD_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.DASHBOARD_CONFIG;
-  },
+  get: () => config_1.DASHBOARD_CONFIG,
 });
 Object.defineProperty(exports, "API_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.API_CONFIG;
-  },
+  get: () => config_1.API_CONFIG,
 });
 Object.defineProperty(exports, "CHART_COLORS", {
   enumerable: true,
-  get: function () {
-    return config_1.CHART_COLORS;
-  },
+  get: () => config_1.CHART_COLORS,
 });
 Object.defineProperty(exports, "CHART_PALETTES", {
   enumerable: true,
-  get: function () {
-    return config_1.CHART_PALETTES;
-  },
+  get: () => config_1.CHART_PALETTES,
 });
 Object.defineProperty(exports, "KPI_THRESHOLDS", {
   enumerable: true,
-  get: function () {
-    return config_1.KPI_THRESHOLDS;
-  },
+  get: () => config_1.KPI_THRESHOLDS,
 });
 Object.defineProperty(exports, "DEFAULT_KPI_CONFIGS", {
   enumerable: true,
-  get: function () {
-    return config_1.DEFAULT_KPI_CONFIGS;
-  },
+  get: () => config_1.DEFAULT_KPI_CONFIGS,
 });
 Object.defineProperty(exports, "DEFAULT_CHART_CONFIGS", {
   enumerable: true,
-  get: function () {
-    return config_1.DEFAULT_CHART_CONFIGS;
-  },
+  get: () => config_1.DEFAULT_CHART_CONFIGS,
 });
 Object.defineProperty(exports, "DEFAULT_ALERT_RULES", {
   enumerable: true,
-  get: function () {
-    return config_1.DEFAULT_ALERT_RULES;
-  },
+  get: () => config_1.DEFAULT_ALERT_RULES,
 });
 Object.defineProperty(exports, "WIDGET_SIZES", {
   enumerable: true,
-  get: function () {
-    return config_1.WIDGET_SIZES;
-  },
+  get: () => config_1.WIDGET_SIZES,
 });
 Object.defineProperty(exports, "EXPORT_FORMATS", {
   enumerable: true,
-  get: function () {
-    return config_1.EXPORT_FORMATS;
-  },
+  get: () => config_1.EXPORT_FORMATS,
 });
 Object.defineProperty(exports, "DATE_RANGE_PRESETS", {
   enumerable: true,
-  get: function () {
-    return config_1.DATE_RANGE_PRESETS;
-  },
+  get: () => config_1.DATE_RANGE_PRESETS,
 });
 Object.defineProperty(exports, "PERFORMANCE_BENCHMARKS", {
   enumerable: true,
-  get: function () {
-    return config_1.PERFORMANCE_BENCHMARKS;
-  },
+  get: () => config_1.PERFORMANCE_BENCHMARKS,
 });
 Object.defineProperty(exports, "ERROR_MESSAGES", {
   enumerable: true,
-  get: function () {
-    return config_1.ERROR_MESSAGES;
-  },
+  get: () => config_1.ERROR_MESSAGES,
 });
 Object.defineProperty(exports, "SUCCESS_MESSAGES", {
   enumerable: true,
-  get: function () {
-    return config_1.SUCCESS_MESSAGES;
-  },
+  get: () => config_1.SUCCESS_MESSAGES,
 });
 Object.defineProperty(exports, "FEATURE_FLAGS", {
   enumerable: true,
-  get: function () {
-    return config_1.FEATURE_FLAGS;
-  },
+  get: () => config_1.FEATURE_FLAGS,
 });
 Object.defineProperty(exports, "API_ENDPOINTS", {
   enumerable: true,
-  get: function () {
-    return config_1.API_ENDPOINTS;
-  },
+  get: () => config_1.API_ENDPOINTS,
 });
 Object.defineProperty(exports, "CACHE_KEYS", {
   enumerable: true,
-  get: function () {
-    return config_1.CACHE_KEYS;
-  },
+  get: () => config_1.CACHE_KEYS,
 });
 Object.defineProperty(exports, "STORAGE_KEYS", {
   enumerable: true,
-  get: function () {
-    return config_1.STORAGE_KEYS;
-  },
+  get: () => config_1.STORAGE_KEYS,
 });
 Object.defineProperty(exports, "ANIMATIONS", {
   enumerable: true,
-  get: function () {
-    return config_1.ANIMATIONS;
-  },
+  get: () => config_1.ANIMATIONS,
 });
 // Re-export default configuration
 var config_2 = require("./config");
 Object.defineProperty(exports, "config", {
   enumerable: true,
-  get: function () {
-    return config_2.default;
-  },
+  get: () => config_2.default,
 });
 var services_2 = require("./services");
 Object.defineProperty(exports, "services", {
   enumerable: true,
-  get: function () {
-    return services_2.default;
-  },
+  get: () => services_2.default,
 });
 // Utility function to create a complete KPI dashboard setup
-var createKPIDashboard = function (_a) {
+var createKPIDashboard = (_a) => {
   var containerId = _a.containerId,
     _b = _a.initialFilters,
     initialFilters = _b === void 0 ? {} : _b,
@@ -403,15 +306,13 @@ var createKPIDashboard = function (_a) {
 };
 exports.createKPIDashboard = createKPIDashboard;
 // Utility function to validate KPI configuration
-var validateKPIConfig = function (config) {
+var validateKPIConfig = (config) => {
   var required = ["id", "name", "formula", "dataSource"];
-  return required.every(function (field) {
-    return field in config && config[field];
-  });
+  return required.every((field) => field in config && config[field]);
 };
 exports.validateKPIConfig = validateKPIConfig;
 // Utility function to create custom alert rules
-var createAlertRule = function (_a) {
+var createAlertRule = (_a) => {
   var kpiId = _a.kpiId,
     name = _a.name,
     condition = _a.condition,
@@ -433,7 +334,7 @@ var createAlertRule = function (_a) {
 };
 exports.createAlertRule = createAlertRule;
 // Utility function to create custom chart configuration
-var createChartConfig = function (_a) {
+var createChartConfig = (_a) => {
   var type = _a.type,
     title = _a.title,
     subtitle = _a.subtitle,
@@ -479,7 +380,7 @@ exports.FEATURES = {
   INTERSECTION_OBSERVER: typeof IntersectionObserver !== "undefined",
 };
 // Browser compatibility check
-var checkBrowserCompatibility = function () {
+var checkBrowserCompatibility = () => {
   var requiredFeatures = {
         'ES6 Modules': typeof , import:  !== 'undefined',
         'Fetch API': typeof fetch !== 'undefined',
@@ -487,11 +388,11 @@ var checkBrowserCompatibility = function () {
         'Local Storage': typeof localStorage !== 'undefined'
     };
   var missingFeatures = Object.entries(requiredFeatures)
-    .filter(function (_a) {
+    .filter((_a) => {
       var supported = _a[1];
       return !supported;
     })
-    .map(function (_a) {
+    .map((_a) => {
       var feature = _a[0];
       return feature;
     });

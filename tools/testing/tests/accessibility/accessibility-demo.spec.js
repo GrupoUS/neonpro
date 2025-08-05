@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,14 +128,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var test_1 = require("@playwright/test");
-test_1.test.describe("Accessibility Demo", function () {
-  test_1.test.beforeEach(function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Accessibility Demo", () => {
+  test_1.test.beforeEach((_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [4 /*yield*/, page.goto("/dashboard/accessibility-demo")];
@@ -147,13 +144,13 @@ test_1.test.describe("Accessibility Demo", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should have accessible form elements", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should have accessible form elements", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var mainHeading, form, nameInput, emailInput, phoneInput, genderSelect;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             mainHeading = page.getByRole("heading", { level: 1, name: "Cadastro de Paciente" });
@@ -204,13 +201,13 @@ test_1.test.describe("Accessibility Demo", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should navigate with keyboard", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should navigate with keyboard", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var skipLink, nameInput, emailInput, phoneInput, genderSelect, submitButton;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Test skip link
@@ -266,13 +263,13 @@ test_1.test.describe("Accessibility Demo", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should show validation errors accessibly", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should show validation errors accessibly", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var submitButton, nameError, emailError, phoneError, nameInput;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             submitButton = page.getByRole("button", { name: /salvar/i });
@@ -309,13 +306,13 @@ test_1.test.describe("Accessibility Demo", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should handle loading states accessibly", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should handle loading states accessibly", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var submitButton, loadingButton, successMessage;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Fill form
@@ -359,13 +356,13 @@ test_1.test.describe("Accessibility Demo", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should open and close dialog accessibly", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should open and close dialog accessibly", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var helpButton, dialog, closeButton;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             helpButton = page.getByRole("button", { name: /ajuda/i });
@@ -412,19 +409,19 @@ test_1.test.describe("Accessibility Demo", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should work with screen reader announcements", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should work with screen reader announcements", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var submitButton, announcements;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Enable announcements tracking
             return [
               4 /*yield*/,
-              page.addInitScript(function () {
+              page.addInitScript(() => {
                 window.ariaAnnouncements = [];
                 var originalSetAttribute = Element.prototype.setAttribute;
                 Element.prototype.setAttribute = function (name, value) {
@@ -463,31 +460,22 @@ test_1.test.describe("Accessibility Demo", function () {
           case 6:
             // Wait for success message and check announcements
             _c.sent();
-            return [
-              4 /*yield*/,
-              page.evaluate(function () {
-                return window.ariaAnnouncements;
-              }),
-            ];
+            return [4 /*yield*/, page.evaluate(() => window.ariaAnnouncements)];
           case 7:
             announcements = _c.sent();
-            (0, test_1.expect)(
-              announcements.some(function (text) {
-                return text.includes("sucesso");
-              }),
-            ).toBeTruthy();
+            (0, test_1.expect)(announcements.some((text) => text.includes("sucesso"))).toBeTruthy();
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-test_1.test.describe("Accessibility Audit", function () {
-  (0, test_1.test)("should pass automated accessibility checks", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Accessibility Audit", () => {
+  (0, test_1.test)("should pass automated accessibility checks", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var results;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [
@@ -510,10 +498,10 @@ test_1.test.describe("Accessibility Audit", function () {
             _c.sent();
             return [
               4 /*yield*/,
-              page.evaluate(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
+              page.evaluate(() =>
+                __awaiter(void 0, void 0, void 0, function () {
                   var axe;
-                  return __generator(this, function (_a) {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         axe = window.axe;
@@ -522,8 +510,8 @@ test_1.test.describe("Accessibility Audit", function () {
                         return [2 /*return*/, _a.sent()];
                     }
                   });
-                });
-              }),
+                }),
+              ),
               // Check for violations
             ];
           case 3:
@@ -533,13 +521,13 @@ test_1.test.describe("Accessibility Audit", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should meet WCAG contrast requirements", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should meet WCAG contrast requirements", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var textElements, _i, textElements_1, element, styles;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [
@@ -559,7 +547,7 @@ test_1.test.describe("Accessibility Audit", function () {
             element = textElements_1[_i];
             return [
               4 /*yield*/,
-              element.evaluate(function (el) {
+              element.evaluate((el) => {
                 var computed = window.getComputedStyle(el);
                 return {
                   color: computed.color,
@@ -581,13 +569,13 @@ test_1.test.describe("Accessibility Audit", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should support reduced motion preferences", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should support reduced motion preferences", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var animatedElements, _i, animatedElements_1, element, duration;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Set reduced motion preference
@@ -612,9 +600,7 @@ test_1.test.describe("Accessibility Audit", function () {
             element = animatedElements_1[_i];
             return [
               4 /*yield*/,
-              element.evaluate(function (el) {
-                return window.getComputedStyle(el).animationDuration;
-              }),
+              element.evaluate((el) => window.getComputedStyle(el).animationDuration),
               // Should be 0s or very short for reduced motion
             ];
           case 5:
@@ -629,6 +615,6 @@ test_1.test.describe("Accessibility Audit", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

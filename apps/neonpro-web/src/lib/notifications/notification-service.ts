@@ -1,4 +1,4 @@
-import type { NotificationMessage, DeliveryStatus } from "./types";
+import type { DeliveryStatus, NotificationMessage } from "./types";
 
 export async function sendNotification(message: NotificationMessage) {
   try {
@@ -22,4 +22,4 @@ export async function sendNotification(message: NotificationMessage) {
   }
 }
 
-export { DeliveryStatus };
+export type { DeliveryStatus };

@@ -1,9 +1,9 @@
 // Story 11.2: No-Show Prediction API Tests
 // Test suite for main prediction API endpoints
 
+import { NextRequest } from "next/server";
 import { GET, POST } from "@/app/api/no-show-prediction/route";
 import { createClient } from "@/app/utils/supabase/server";
-import { NextRequest } from "next/server";
 
 // Mock Supabase client
 jest.mock("@/app/utils/supabase/server", () => ({

@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { AlertCircle, CheckCircle, Clock, Copy, QrCode, RefreshCw } from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,15 +14,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Separator } from "@/components/ui/separator";
-import type { QrCode, Copy, CheckCircle, Clock, AlertCircle, RefreshCw } from "lucide-react";
-import type { toast } from "sonner";
+import type { Textarea } from "@/components/ui/textarea";
 import type {
   PixPaymentData,
   PixPaymentResponse,

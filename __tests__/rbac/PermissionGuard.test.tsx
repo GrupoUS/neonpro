@@ -5,20 +5,18 @@
  * Test suite for React components that control access based on permissions
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
-  PermissionGuard,
-  RoleGuard,
-  FeatureGuard,
   ConditionalRender,
+  FeatureGuard,
   PermissionButton,
+  PermissionGuard,
   PermissionLink,
+  RoleGuard,
 } from "@/components/rbac/PermissionGuard";
-import { UserRole } from "@/types/rbac";
-import { AuthUser } from "@/lib/middleware/auth";
-import React from "react";
+import type { AuthUser } from "@/lib/middleware/auth";
 
 // Mock the usePermissions hook
 const mockUsePermissions = {
@@ -220,7 +218,7 @@ describe("RBAC Permission Guard Components", () => {
       mockUsePermissions.hasRole.mockReturnValue(true);
 
       render(
-        <RoleGuard role="manager">
+        <RoleGuard>
           <TestComponent />
         </RoleGuard>,
       );
@@ -233,7 +231,7 @@ describe("RBAC Permission Guard Components", () => {
       mockUsePermissions.hasRole.mockReturnValue(false);
 
       render(
-        <RoleGuard role="owner">
+        <RoleGuard>
           <TestComponent />
         </RoleGuard>,
       );
@@ -270,7 +268,7 @@ describe("RBAC Permission Guard Components", () => {
       mockUsePermissions.hasRole.mockReturnValue(false);
 
       render(
-        <RoleGuard role="owner" fallback={<FallbackComponent />}>
+        <RoleGuard fallback={<FallbackComponent />}>
           <TestComponent />
         </RoleGuard>,
       );
@@ -577,7 +575,7 @@ describe("RBAC Permission Guard Components", () => {
       mockUsePermissions.hasRole.mockReturnValue(true);
 
       render(
-        <RoleGuard role="manager">
+        <RoleGuard>
           <PermissionGuard permissions={["patients.read", "appointments.read"]} requireAll={true}>
             <TestComponent />
           </PermissionGuard>

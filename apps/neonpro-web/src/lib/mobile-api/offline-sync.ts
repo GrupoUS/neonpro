@@ -13,20 +13,20 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
+  ApiError,
+  OfflineAppointment,
   OfflineConfig,
-  SyncOperation,
+  OfflineMetadata,
+  OfflinePatient,
+  OfflinePayment,
+  OfflineStorage,
+  OfflineTreatment,
   SyncBatch,
   SyncConflict,
+  SyncOperation,
+  SyncOptions,
   SyncResult,
   SyncStatus,
-  SyncOptions,
-  OfflineStorage,
-  OfflinePatient,
-  OfflineAppointment,
-  OfflineTreatment,
-  OfflinePayment,
-  OfflineMetadata,
-  ApiError,
 } from "./types";
 
 export class OfflineSync {
@@ -462,7 +462,7 @@ export class OfflineSync {
       case "server":
         return { resolution: "server", resolvedData: conflict.serverData };
 
-      case "timestamp":
+      case "timestamp": {
         const localTimestamp = conflict.localData.updated_at || conflict.localData.created_at;
         const serverTimestamp = conflict.serverData.updated_at || conflict.serverData.created_at;
 
@@ -471,6 +471,7 @@ export class OfflineSync {
         } else {
           return { resolution: "server", resolvedData: conflict.serverData };
         }
+      }
 
       case "manual":
       default:

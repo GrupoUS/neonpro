@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { clerkMiddleware } from "@clerk/nextjs/server";
 
 // Mock Clerk middleware for testing
 jest.mock("@clerk/nextjs/server", () => ({
@@ -21,7 +20,7 @@ describe("Clerk v6 Middleware - TypeError Fix Validation", () => {
     const mockReq = new NextRequest("http://localhost:3000/dashboard");
 
     // Mock the middleware handler
-    const middlewareHandler = (auth: any, req: any) => {
+    const middlewareHandler = (auth: any, _req: any) => {
       if (!auth().userId) {
         return auth().redirectToSignIn();
       }
@@ -43,7 +42,7 @@ describe("Clerk v6 Middleware - TypeError Fix Validation", () => {
 
     const mockReq = new NextRequest("http://localhost:3000/dashboard");
 
-    const middlewareHandler = (auth: any, req: any) => {
+    const middlewareHandler = (auth: any, _req: any) => {
       if (!auth().userId) {
         return auth().redirectToSignIn();
       }

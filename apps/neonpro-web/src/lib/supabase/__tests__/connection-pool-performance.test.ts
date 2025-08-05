@@ -5,11 +5,11 @@
  * Comprehensive performance validation and healthcare compliance testing
  */
 
-import type { describe, it, expect, beforeAll, afterAll, beforeEach, jest } from "@jest/globals";
-import type { getConnectionPoolManager } from "../connection-pool-manager";
-import type { getQueryStrategies, createQueryContext } from "../query-strategies";
-import type { getRetryManager } from "../connection-retry-strategies";
+import type { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { getConnectionPoolMonitor } from "../../monitoring/connection-pool-monitor";
+import type { getConnectionPoolManager } from "../connection-pool-manager";
+import type { getRetryManager } from "../connection-retry-strategies";
+import type { createQueryContext, getQueryStrategies } from "../query-strategies";
 
 // Mock Supabase client
 const mockSupabaseClient = {

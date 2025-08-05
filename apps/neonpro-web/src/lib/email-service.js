@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendAppointmentNotificationEmail = sendAppointmentNotificationEmail;
 exports.sendScheduledReminders = sendScheduledReminders;
@@ -139,7 +136,7 @@ var resend_1 = require("resend");
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 // FIXED: Removed direct import of 'next/headers' to avoid client-side errors
 var resend = new resend_1.Resend(process.env.RESEND_API_KEY);
-var EmailService = /** @class */ (function () {
+var EmailService = /** @class */ (() => {
   function EmailService() {
     this.supabase = null;
     this.defaultFrom = process.env.DEFAULT_FROM_EMAIL || "neonpro@example.com";
@@ -159,12 +156,7 @@ var EmailService = /** @class */ (function () {
             _a.label = 1;
           case 1:
             _a.trys.push([1, 3, , 5]);
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("next/headers");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("next/headers"))];
           case 2:
             cookies = _a.sent().cookies;
             this.supabase = (0, auth_helpers_nextjs_1.createServerComponentClient)({
@@ -174,12 +166,7 @@ var EmailService = /** @class */ (function () {
           case 3:
             error_1 = _a.sent();
             console.error("Error importing next/headers:", error_1);
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("@supabase/supabase-js");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("@supabase/supabase-js"))];
           case 4:
             createClient = _a.sent().createClient;
             this.supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
@@ -187,12 +174,7 @@ var EmailService = /** @class */ (function () {
           case 5:
             return [3 /*break*/, 8];
           case 6:
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("@supabase/supabase-js");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("@supabase/supabase-js"))];
           case 7:
             createClient = _a.sent().createClient;
             this.supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
@@ -239,9 +221,9 @@ var EmailService = /** @class */ (function () {
       });
     });
   };
-  EmailService.prototype.replaceVariables = function (content, variables) {
+  EmailService.prototype.replaceVariables = (content, variables) => {
     var result = content;
-    Object.entries(variables).forEach(function (_a) {
+    Object.entries(variables).forEach((_a) => {
       var key = _a[0],
         value = _a[1];
       var regex = new RegExp("{{".concat(key, "}}"), "g");
@@ -340,21 +322,19 @@ var EmailService = /** @class */ (function () {
                 2 /*return*/,
                 {
                   success: false,
-                  results: recipients.map(function (r) {
-                    return {
-                      email: r.email,
-                      success: false,
-                      error: "Template '".concat(templateName, "' not found"),
-                    };
-                  }),
+                  results: recipients.map((r) => ({
+                    email: r.email,
+                    success: false,
+                    error: "Template '".concat(templateName, "' not found"),
+                  })),
                 },
               ];
             }
             return [
               4 /*yield*/,
               Promise.allSettled(
-                recipients.map(function (recipient) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                recipients.map((recipient) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var subject, html, text, _a, data, error;
                     return __generator(this, function (_b) {
                       switch (_b.label) {
@@ -391,13 +371,13 @@ var EmailService = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 2:
             results = _e.sent();
-            processedResults = results.map(function (result, index) {
+            processedResults = results.map((result, index) => {
               var _a;
               if (result.status === "fulfilled") {
                 return result.value;
@@ -411,9 +391,7 @@ var EmailService = /** @class */ (function () {
                 };
               }
             });
-            overallSuccess = processedResults.every(function (r) {
-              return r.success;
-            });
+            overallSuccess = processedResults.every((r) => r.success);
             return [
               2 /*return*/,
               {
@@ -428,13 +406,11 @@ var EmailService = /** @class */ (function () {
               2 /*return*/,
               {
                 success: false,
-                results: recipients.map(function (r) {
-                  return {
-                    email: r.email,
-                    success: false,
-                    error: error_4 instanceof Error ? error_4.message : "Unknown error",
-                  };
-                }),
+                results: recipients.map((r) => ({
+                  email: r.email,
+                  success: false,
+                  error: error_4 instanceof Error ? error_4.message : "Unknown error",
+                })),
               },
             ];
           case 4:
@@ -569,7 +545,7 @@ exports.default = emailService;
 // Utility functions for common use cases
 function sendAppointmentNotificationEmail(appointmentId, type, cancellationReason) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         // This would typically fetch appointment details from the database
         // For now, this is a placeholder that would be implemented with actual data fetching
@@ -597,7 +573,7 @@ function sendAppointmentNotificationEmail(appointmentId, type, cancellationReaso
 // Background job function for sending reminder emails
 function sendScheduledReminders() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         // This would be called by a cron job to send reminder emails
         // Implementation would:

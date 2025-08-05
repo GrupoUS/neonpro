@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.APDashboardStats = APDashboardStats;
 var card_1 = require("@/components/ui/card");
@@ -141,7 +138,6 @@ var vendors_1 = require("@/lib/services/vendors");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function APDashboardStats() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       pending: 0,
       totalOpenAmount: 0,
@@ -153,13 +149,13 @@ function APDashboardStats() {
   var _b = (0, react_1.useState)(true),
     loading = _b[0],
     setLoading = _b[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadStats();
   }, []);
-  var loadStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, apStats, vendorStats, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -192,13 +188,11 @@ function APDashboardStats() {
         }
       });
     });
-  };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <card_1.Card>

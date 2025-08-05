@@ -1,6 +1,6 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from "@jest/globals";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import AnalyticsDashboard from "@/components/dashboard/analytics-dashboard";
 
 // Mock the recharts library
@@ -30,7 +30,7 @@ jest.mock("recharts", () => ({
 
 // Mock date-fns
 jest.mock("date-fns", () => ({
-  format: jest.fn((date, formatStr) => {
+  format: jest.fn((_date, formatStr) => {
     if (formatStr === "MMM yyyy") return "Jan 2024";
     if (formatStr === "dd/MM/yyyy") return "01/01/2024";
     return "2024-01-01";

@@ -2,12 +2,12 @@
 // Testing Zod validation schemas
 
 import type {
-  validateCashFlowEntry,
-  validateCashRegister,
-  validateCashFlowFilters,
   CashFlowEntrySchema,
-  CashRegisterSchema,
   CashFlowFiltersSchema,
+  CashRegisterSchema,
+  validateCashFlowEntry,
+  validateCashFlowFilters,
+  validateCashRegister,
 } from "../utils/validation";
 
 describe("Cash Flow Validation", () => {

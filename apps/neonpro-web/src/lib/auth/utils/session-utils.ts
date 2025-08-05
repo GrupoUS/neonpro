@@ -1,11 +1,11 @@
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type {
-  SessionInfo,
   DeviceInfo,
-  SecurityEvent,
-  SessionPolicy,
   DeviceType,
+  SecurityEvent,
   SecurityEventType,
+  SessionInfo,
+  SessionPolicy,
 } from "@/types/session";
 
 /**
@@ -44,7 +44,7 @@ export class SessionUtils {
       canvas.toDataURL(),
     ].join("|");
 
-    return this.hashString(fingerprint);
+    return SessionUtils.hashString(fingerprint);
   }
 
   /**
@@ -220,7 +220,7 @@ export class SessionUtils {
     });
 
     // Deduct points for session age
-    const sessionAge = this.calculateSessionDuration(session.created_at);
+    const sessionAge = SessionUtils.calculateSessionDuration(session.created_at);
     if (sessionAge > 24 * 60) {
       // More than 24 hours
       score -= 10;
@@ -392,7 +392,7 @@ export class SessionStorage {
    */
   static setSession(session: Partial<SessionInfo>): void {
     try {
-      localStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
+      localStorage.setItem(SessionStorage.SESSION_KEY, JSON.stringify(session));
     } catch (error) {
       console.warn("Failed to store session data:", error);
     }
@@ -403,7 +403,7 @@ export class SessionStorage {
    */
   static getSession(): Partial<SessionInfo> | null {
     try {
-      const data = localStorage.getItem(this.SESSION_KEY);
+      const data = localStorage.getItem(SessionStorage.SESSION_KEY);
       return data ? JSON.parse(data) : null;
     } catch (error) {
       console.warn("Failed to retrieve session data:", error);
@@ -416,8 +416,8 @@ export class SessionStorage {
    */
   static clearSession(): void {
     try {
-      localStorage.removeItem(this.SESSION_KEY);
-      localStorage.removeItem(this.DEVICE_KEY);
+      localStorage.removeItem(SessionStorage.SESSION_KEY);
+      localStorage.removeItem(SessionStorage.DEVICE_KEY);
     } catch (error) {
       console.warn("Failed to clear session data:", error);
     }
@@ -428,7 +428,7 @@ export class SessionStorage {
    */
   static setDevice(device: Partial<DeviceInfo>): void {
     try {
-      localStorage.setItem(this.DEVICE_KEY, JSON.stringify(device));
+      localStorage.setItem(SessionStorage.DEVICE_KEY, JSON.stringify(device));
     } catch (error) {
       console.warn("Failed to store device data:", error);
     }
@@ -439,7 +439,7 @@ export class SessionStorage {
    */
   static getDevice(): Partial<DeviceInfo> | null {
     try {
-      const data = localStorage.getItem(this.DEVICE_KEY);
+      const data = localStorage.getItem(SessionStorage.DEVICE_KEY);
       return data ? JSON.parse(data) : null;
     } catch (error) {
       console.warn("Failed to retrieve device data:", error);

@@ -8,24 +8,6 @@
 
 "use client";
 
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Button } from "@/components/ui/button";
-import type { Calendar } from "@/components/ui/calendar";
-import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
@@ -51,7 +33,26 @@ import type {
   RefreshCw,
   Users,
 } from "lucide-react";
-import React, { useMemo, useState } from "react";
+import type React from "react";
+import { useMemo, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Types
 interface Appointment {

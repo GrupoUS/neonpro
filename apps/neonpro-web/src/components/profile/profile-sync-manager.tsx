@@ -1,5 +1,18 @@
 "use client";
 
+import type {
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Mail,
+  Phone,
+  RefreshCw,
+  Shield,
+  Stethoscope,
+  User,
+} from "lucide-react";
+import type { useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,19 +27,6 @@ import type {
 } from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
 import type { useProfileSync } from "@/hooks/use-profile-sync";
-import type {
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Mail,
-  Phone,
-  RefreshCw,
-  Shield,
-  Stethoscope,
-  User,
-} from "lucide-react";
-import type { useState } from "react";
-import type { toast } from "sonner";
 
 interface ProfileSyncManagerProps {
   className?: string;

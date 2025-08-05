@@ -11,17 +11,17 @@
  * Integrates with ForecastingEngine service and provides UI-ready prediction data.
  */
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { createClient } from "@/lib/supabase/client";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 import type {
+  createForecastingEngine,
   ForecastingConfig,
   ForecastResult,
-  ScenarioConfig,
-  ModelEvaluation,
-  createForecastingEngine,
   forecastingUtils,
+  ModelEvaluation,
+  ScenarioConfig,
 } from "@/lib/analytics/advanced/forecasting-engine";
+import type { createClient } from "@/lib/supabase/client";
 
 // Types for hook configuration and state
 export interface ForecastingHookConfig {

@@ -5,10 +5,47 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
-import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  Calendar,
+  CheckCircle,
+  Download,
+  Eye,
+  Filter,
+  PieChart as PieChartIcon,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -17,47 +54,10 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Progress } from "@/components/ui/progress";
 import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  ScatterChart,
-  Scatter,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-} from "recharts";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Target,
-  Brain,
-  BarChart3,
-  PieChart as PieChartIcon,
-  Activity,
-  Users,
-  Calendar,
-  AlertTriangle,
-  CheckCircle,
-  Eye,
-  Download,
-  Filter,
-  RefreshCw,
-  Settings,
-} from "lucide-react";
-import type {
+  ModelPerformanceMetrics,
   NoShowPrediction,
   PatientRiskProfile,
-  ModelPerformanceMetrics,
 } from "@/lib/analytics/no-show-prediction";
 
 interface PredictionAnalyticsProps {

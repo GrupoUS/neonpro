@@ -9,14 +9,10 @@
  * @created 2024
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { SecurityEventLogger } from "../../../lib/auth/session/SecurityEventLogger";
-import { createMockSecurityEvent, createTestDatabase, cleanup } from "./setup";
-import type {
-  SecurityConfig,
-  SecurityEvent,
-  SecurityEventType,
-} from "../../../lib/auth/session/types";
+import type { SecurityConfig, SecurityEventType } from "../../../lib/auth/session/types";
+import { cleanup, createMockSecurityEvent, createTestDatabase } from "./setup";
 
 // Mock Supabase
 const mockSupabase = {
@@ -68,11 +64,11 @@ jest.mock("@supabase/supabase-js", () => ({
 
 describe("SecurityEventLogger", () => {
   let securityLogger: SecurityEventLogger;
-  let testDb: ReturnType<typeof createTestDatabase>;
+  let _testDb: ReturnType<typeof createTestDatabase>;
   let mockConfig: SecurityConfig;
 
   beforeEach(() => {
-    testDb = createTestDatabase();
+    _testDb = createTestDatabase();
 
     mockConfig = {
       enableLogging: true,
@@ -465,7 +461,7 @@ describe("SecurityEventLogger", () => {
 
   describe("Alert System", () => {
     it("should trigger alerts for threshold violations", async () => {
-      const failedLoginEvents = Array.from({ length: 6 }, (_, i) =>
+      const failedLoginEvents = Array.from({ length: 6 }, (_, _i) =>
         createMockSecurityEvent({
           type: "login_attempt",
           details: { success: false },
@@ -494,7 +490,7 @@ describe("SecurityEventLogger", () => {
     });
 
     it("should auto-block users exceeding thresholds", async () => {
-      const suspiciousEvents = Array.from({ length: 11 }, (_, i) =>
+      const suspiciousEvents = Array.from({ length: 11 }, (_, _i) =>
         createMockSecurityEvent({
           type: "suspicious_activity",
           severity: "high",

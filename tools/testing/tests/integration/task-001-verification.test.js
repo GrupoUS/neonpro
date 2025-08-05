@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Integration Verification for TASK-001 Foundation Setup
  * Simplified tests to verify monitoring infrastructure components exist
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -23,7 +22,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -52,8 +51,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -74,9 +71,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -135,23 +132,23 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
-(0, globals_1.describe)("TASK-001 Infrastructure Verification", function () {
-  (0, globals_1.describe)("Component Exports Verification", function () {
-    (0, globals_1.it)("should have FeatureFlagManager component available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("TASK-001 Infrastructure Verification", () => {
+  (0, globals_1.describe)("Component Exports Verification", () => {
+    (0, globals_1.it)("should have FeatureFlagManager component available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var module_1, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 2, , 3]);
+              _a.trys.push([0, 2, undefined, 3]);
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../components/monitoring/FeatureFlagManager");
-                }),
+                Promise.resolve().then(() =>
+                  require("../../components/monitoring/FeatureFlagManager"),
+                ),
               ];
             case 1:
               module_1 = _a.sent();
@@ -165,20 +162,20 @@ var globals_1 = require("@jest/globals");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should have SystemHealthWidget component available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should have SystemHealthWidget component available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var module_2, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 2, , 3]);
+              _a.trys.push([0, 2, undefined, 3]);
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../components/monitoring/SystemHealthWidget");
-                }),
+                Promise.resolve().then(() =>
+                  require("../../components/monitoring/SystemHealthWidget"),
+                ),
               ];
             case 1:
               module_2 = _a.sent();
@@ -192,20 +189,20 @@ var globals_1 = require("@jest/globals");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should have PerformanceDashboard component available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should have PerformanceDashboard component available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var module_3, error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 2, , 3]);
+              _a.trys.push([0, 2, undefined, 3]);
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../components/monitoring/performance-dashboard");
-                }),
+                Promise.resolve().then(() =>
+                  require("../../components/monitoring/performance-dashboard"),
+                ),
               ];
             case 1:
               module_3 = _a.sent();
@@ -219,22 +216,20 @@ var globals_1 = require("@jest/globals");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Monitoring Utilities Verification", function () {
-    (0, globals_1.it)("should have monitoring performance utilities available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Monitoring Utilities Verification", () => {
+    (0, globals_1.it)("should have monitoring performance utilities available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var module_4, error_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 2, , 3]);
+              _a.trys.push([0, 2, undefined, 3]);
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../lib/monitoring/performance");
-                }),
+                Promise.resolve().then(() => require("../../lib/monitoring/performance")),
               ];
             case 1:
               module_4 = _a.sent();
@@ -248,20 +243,18 @@ var globals_1 = require("@jest/globals");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should have monitoring analytics utilities available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should have monitoring analytics utilities available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var module_5, error_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 2, , 3]);
+              _a.trys.push([0, 2, undefined, 3]);
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../lib/monitoring/analytics");
-                }),
+                Promise.resolve().then(() => require("../../lib/monitoring/analytics")),
               ];
             case 1:
               module_5 = _a.sent();
@@ -275,20 +268,18 @@ var globals_1 = require("@jest/globals");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should have feature flags utilities available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should have feature flags utilities available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var module_6, error_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 2, , 3]);
+              _a.trys.push([0, 2, undefined, 3]);
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../lib/monitoring/feature-flags");
-                }),
+                Promise.resolve().then(() => require("../../lib/monitoring/feature-flags")),
               ];
             case 1:
               module_6 = _a.sent();
@@ -302,20 +293,18 @@ var globals_1 = require("@jest/globals");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should have error tracking utilities available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should have error tracking utilities available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var module_7, error_7;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 2, , 3]);
+              _a.trys.push([0, 2, undefined, 3]);
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../lib/monitoring/error-tracking");
-                }),
+                Promise.resolve().then(() => require("../../lib/monitoring/error-tracking")),
               ];
             case 1:
               module_7 = _a.sent();
@@ -329,22 +318,20 @@ var globals_1 = require("@jest/globals");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Monitoring Index Export Verification", function () {
-    (0, globals_1.it)("should have monitoring index with all utilities exported", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Monitoring Index Export Verification", () => {
+    (0, globals_1.it)("should have monitoring index with all utilities exported", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var module_8, error_8;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 2, , 3]);
+              _a.trys.push([0, 2, undefined, 3]);
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../lib/monitoring/index");
-                }),
+                Promise.resolve().then(() => require("../../lib/monitoring/index")),
               ];
             case 1:
               module_8 = _a.sent();
@@ -371,45 +358,45 @@ var globals_1 = require("@jest/globals");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("API Endpoints Structure Verification", function () {
-    (0, globals_1.it)("should have monitoring health API route file", function () {
-      var fs = require("fs");
-      var path = require("path");
+  (0, globals_1.describe)("API Endpoints Structure Verification", () => {
+    (0, globals_1.it)("should have monitoring health API route file", () => {
+      var fs = require("node:fs");
+      var path = require("node:path");
       var routePath = path.join(process.cwd(), "app/api/monitoring/health/route.ts");
       (0, globals_1.expect)(fs.existsSync(routePath)).toBe(true);
     });
-    (0, globals_1.it)("should have monitoring metrics API route file", function () {
-      var fs = require("fs");
-      var path = require("path");
+    (0, globals_1.it)("should have monitoring metrics API route file", () => {
+      var fs = require("node:fs");
+      var path = require("node:path");
       var routePath = path.join(process.cwd(), "app/api/monitoring/metrics/route.ts");
       (0, globals_1.expect)(fs.existsSync(routePath)).toBe(true);
     });
-    (0, globals_1.it)("should have monitoring feature-flags API route file", function () {
-      var fs = require("fs");
-      var path = require("path");
+    (0, globals_1.it)("should have monitoring feature-flags API route file", () => {
+      var fs = require("node:fs");
+      var path = require("node:path");
       var routePath = path.join(process.cwd(), "app/api/monitoring/feature-flags/route.ts");
       (0, globals_1.expect)(fs.existsSync(routePath)).toBe(true);
     });
   });
-  (0, globals_1.describe)("Database Schema Verification", function () {
-    (0, globals_1.it)("should have performance_metrics table (verified manually)", function () {
+  (0, globals_1.describe)("Database Schema Verification", () => {
+    (0, globals_1.it)("should have performance_metrics table (verified manually)", () => {
       // This table was verified manually via MCP Supabase
       (0, globals_1.expect)(true).toBe(true);
     });
-    (0, globals_1.it)("should have feature_flags table (created and verified)", function () {
+    (0, globals_1.it)("should have feature_flags table (created and verified)", () => {
       // This table was created and verified via MCP Supabase
       (0, globals_1.expect)(true).toBe(true);
     });
-    (0, globals_1.it)("should have system_health table (created and verified)", function () {
+    (0, globals_1.it)("should have system_health table (created and verified)", () => {
       // This table was created and verified via MCP Supabase
       (0, globals_1.expect)(true).toBe(true);
     });
   });
-  (0, globals_1.describe)("System Integration Status", function () {
-    (0, globals_1.it)("should have all TASK-001 foundation components ready", function () {
+  (0, globals_1.describe)("System Integration Status", () => {
+    (0, globals_1.it)("should have all TASK-001 foundation components ready", () => {
       // This test verifies that all major components of TASK-001 are in place
       var foundationComplete = {
         monitoringUtilities: true, // ✅ lib/monitoring/* files created

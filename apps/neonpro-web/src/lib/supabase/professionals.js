@@ -1,4 +1,3 @@
-"use strict";
 // Professional Management Supabase Functions
 // FHIR-compliant healthcare professional data management with modern automation
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createProfessional = createProfessional;
 exports.updateProfessional = updateProfessional;
@@ -193,7 +190,7 @@ var supabase = await (0, client_1.createClient)();
 function createProfessional(data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, professional, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -228,7 +225,7 @@ function createProfessional(data) {
 function updateProfessional(id, data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, professional, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -258,7 +255,7 @@ function updateProfessional(id, data) {
 function getProfessional(id) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, professional, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -289,7 +286,7 @@ function getProfessional(id) {
 function searchProfessionals(filters) {
   return __awaiter(this, void 0, void 0, function () {
     var query, futureDate, from, to, _a, professionals, error, count;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -376,7 +373,7 @@ function getProfessionalsWithExpiringLicenses() {
     if (daysAhead === void 0) {
       daysAhead = 30;
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           futureDate = new Date();
@@ -413,7 +410,7 @@ function getProfessionalsWithExpiringLicenses() {
 function getMedicalSpecialties() {
   return __awaiter(this, void 0, void 0, function () {
     var _a, specialties, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -436,7 +433,7 @@ function getMedicalSpecialties() {
 function getSpecialtiesByCategory(category) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, specialties, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -464,7 +461,7 @@ function getSpecialtiesByCategory(category) {
 function addProfessionalSpecialty(data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, specialty, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -497,7 +494,7 @@ function addProfessionalSpecialty(data) {
 function createCredential(data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, credential, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -530,7 +527,7 @@ function createCredential(data) {
 function updateCredential(id, data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, credential, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -560,7 +557,7 @@ function updateCredential(id, data) {
 function searchCredentials(filters) {
   return __awaiter(this, void 0, void 0, function () {
     var query, futureDate, from, to, _a, credentials, error, count;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -642,7 +639,7 @@ function getExpiringCredentials() {
     if (daysAhead === void 0) {
       daysAhead = 30;
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           futureDate = new Date();
@@ -677,7 +674,7 @@ function getExpiringCredentials() {
 function createService(data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, service, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -706,7 +703,7 @@ function createService(data) {
 function updateService(id, data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, service, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -736,7 +733,7 @@ function updateService(id, data) {
 function getServicesByProfessional(professionalId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, services, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -765,7 +762,7 @@ function getServicesByProfessional(professionalId) {
 function searchAvailableServices(filters) {
   return __awaiter(this, void 0, void 0, function () {
     var query, _a, services, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -811,7 +808,7 @@ function searchAvailableServices(filters) {
 function createMetric(data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, metric, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -840,7 +837,7 @@ function createMetric(data) {
 function getMetricsByProfessional(professionalId, timeframe, metricTypes) {
   return __awaiter(this, void 0, void 0, function () {
     var query, _a, metrics, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -873,7 +870,7 @@ function getMetricsByProfessional(professionalId, timeframe, metricTypes) {
 function getPerformanceDashboardData(filters) {
   return __awaiter(this, void 0, void 0, function () {
     var query, _a, metrics, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -918,7 +915,7 @@ function getPerformanceDashboardData(filters) {
 function createDevelopmentActivity(data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, activity, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -947,7 +944,7 @@ function createDevelopmentActivity(data) {
 function getDevelopmentByProfessional(professionalId, year) {
   return __awaiter(this, void 0, void 0, function () {
     var query, startOfYear, endOfYear, _a, activities, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -977,7 +974,7 @@ function getDevelopmentByProfessional(professionalId, year) {
 function getCMECreditsSummary(professionalId, year) {
   return __awaiter(this, void 0, void 0, function () {
     var startOfYear, endOfYear, _a, activities, error, totalCredits;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           startOfYear = new Date(year, 0, 1).toISOString();
@@ -998,9 +995,10 @@ function getCMECreditsSummary(professionalId, year) {
           if (error) {
             throw new Error("Failed to get CME credits summary: ".concat(error.message));
           }
-          totalCredits = (activities || []).reduce(function (sum, activity) {
-            return sum + (activity.cme_credits || 0);
-          }, 0);
+          totalCredits = (activities || []).reduce(
+            (sum, activity) => sum + (activity.cme_credits || 0),
+            0,
+          );
           return [
             2 /*return*/,
             {
@@ -1022,7 +1020,7 @@ function getCMECreditsSummary(professionalId, year) {
 function createWorkflow(data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, workflow, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -1051,7 +1049,7 @@ function createWorkflow(data) {
 function updateWorkflowStatus(id, status, updates) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, workflow, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -1085,7 +1083,7 @@ function updateWorkflowStatus(id, status, updates) {
 function getActiveWorkflows(assignedTo) {
   return __awaiter(this, void 0, void 0, function () {
     var query, _a, workflows, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -1118,7 +1116,7 @@ function getActiveWorkflows(assignedTo) {
 function createAlert(data) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, alert, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -1147,7 +1145,7 @@ function createAlert(data) {
 function getActiveAlerts(professionalId, severity) {
   return __awaiter(this, void 0, void 0, function () {
     var query, _a, alerts, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -1183,7 +1181,7 @@ function getActiveAlerts(professionalId, severity) {
 function acknowledgeAlert(id, acknowledgedBy) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, alert, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -1216,7 +1214,7 @@ function acknowledgeAlert(id, acknowledgedBy) {
 function resolveAlert(id, resolvedBy, actionTaken) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, alert, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -1253,7 +1251,7 @@ function resolveAlert(id, resolvedBy, actionTaken) {
 function bulkUpdateProfessionalStatus(professionalIds, status, statusReason) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, professionals, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -1288,7 +1286,7 @@ function generateExpirationAlerts() {
     if (daysAhead === void 0) {
       daysAhead = 30;
     }
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, getExpiringCredentials(daysAhead)];
@@ -1353,7 +1351,7 @@ function getComprehensiveProfessionalProfile(id) {
       recentDevelopment,
       activeWorkflows,
       activeAlerts;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, getProfessional(id)];
@@ -1390,9 +1388,7 @@ function getComprehensiveProfessionalProfile(id) {
               activeCredentials: activeCredentials.data,
               currentServices: currentServices,
               recentDevelopment: recentDevelopment,
-              activeWorkflows: activeWorkflows.filter(function (w) {
-                return w.professional_id === id;
-              }),
+              activeWorkflows: activeWorkflows.filter((w) => w.professional_id === id),
               activeAlerts: activeAlerts,
             },
           ];

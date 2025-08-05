@@ -8,10 +8,10 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import type { z } from "zod";
-import type { logger } from "@/lib/utils/logger";
-import type { createClient } from "@/lib/supabase/client";
 import type { EventEmitter } from "events";
+import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/client";
+import type { logger } from "@/lib/utils/logger";
 
 // Audit Trail Types
 export type AuditEventType =

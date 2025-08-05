@@ -1,17 +1,15 @@
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TableCaption =
   exports.TableCell =
@@ -24,7 +22,7 @@ exports.TableCaption =
     void 0;
 var React = require("react");
 var utils_1 = require("@/lib/utils");
-var Table = React.forwardRef(function (_a, ref) {
+var Table = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -39,14 +37,14 @@ var Table = React.forwardRef(function (_a, ref) {
 });
 exports.Table = Table;
 Table.displayName = "Table";
-var TableHeader = React.forwardRef(function (_a, ref) {
+var TableHeader = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return <thead ref={ref} className={(0, utils_1.cn)("[&_tr]:border-b", className)} {...props} />;
 });
 exports.TableHeader = TableHeader;
 TableHeader.displayName = "TableHeader";
-var TableBody = React.forwardRef(function (_a, ref) {
+var TableBody = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -59,7 +57,7 @@ var TableBody = React.forwardRef(function (_a, ref) {
 });
 exports.TableBody = TableBody;
 TableBody.displayName = "TableBody";
-var TableFooter = React.forwardRef(function (_a, ref) {
+var TableFooter = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -75,7 +73,7 @@ var TableFooter = React.forwardRef(function (_a, ref) {
 });
 exports.TableFooter = TableFooter;
 TableFooter.displayName = "TableFooter";
-var TableRow = React.forwardRef(function (_a, ref) {
+var TableRow = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -91,7 +89,7 @@ var TableRow = React.forwardRef(function (_a, ref) {
 });
 exports.TableRow = TableRow;
 TableRow.displayName = "TableRow";
-var TableHead = React.forwardRef(function (_a, ref) {
+var TableHead = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -107,7 +105,7 @@ var TableHead = React.forwardRef(function (_a, ref) {
 });
 exports.TableHead = TableHead;
 TableHead.displayName = "TableHead";
-var TableCell = React.forwardRef(function (_a, ref) {
+var TableCell = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -120,7 +118,7 @@ var TableCell = React.forwardRef(function (_a, ref) {
 });
 exports.TableCell = TableCell;
 TableCell.displayName = "TableCell";
-var TableCaption = React.forwardRef(function (_a, ref) {
+var TableCaption = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

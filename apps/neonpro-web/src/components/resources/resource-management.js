@@ -3,32 +3,31 @@
 // Story 2.4: Smart Resource Management - Frontend
 // =====================================================
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ResourceManagement;
 var react_1 = require("react");
@@ -164,7 +161,6 @@ var dialog_1 = require("@/components/ui/dialog");
 var outline_1 = require("@heroicons/react/24/outline");
 var sonner_1 = require("sonner");
 function ResourceManagement(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userRole = _a.userRole;
   var _b = (0, react_1.useState)([]),
@@ -189,16 +185,13 @@ function ResourceManagement(_a) {
   // =====================================================
   // Data Fetching
   // =====================================================
-  (0, react_1.useEffect)(
-    function () {
-      fetchResources();
-    },
-    [clinicId, filters],
-  );
-  var fetchResources = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    fetchResources();
+  }, [clinicId, filters]);
+  var fetchResources = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -240,11 +233,10 @@ function ResourceManagement(_a) {
         }
       });
     });
-  };
-  var fetchAllocations = function (resourceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchAllocations = (resourceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var today, params, response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -273,14 +265,13 @@ function ResourceManagement(_a) {
         }
       });
     });
-  };
   // =====================================================
   // Resource Actions
   // =====================================================
-  var updateResourceStatus = function (resourceId, newStatus) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateResourceStatus = (resourceId, newStatus) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -314,11 +305,10 @@ function ResourceManagement(_a) {
         }
       });
     });
-  };
   // =====================================================
   // UI Helpers
   // =====================================================
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "available":
         return "bg-green-100 text-green-800";
@@ -334,7 +324,7 @@ function ResourceManagement(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getResourceIcon = function (type) {
+  var getResourceIcon = (type) => {
     switch (type) {
       case "room":
         return <outline_1.MapPinIcon className="h-5 w-5" />;
@@ -346,18 +336,17 @@ function ResourceManagement(_a) {
         return <outline_1.SettingsIcon className="h-5 w-5" />;
     }
   };
-  var formatTime = function (dateString) {
-    return new Date(dateString).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
+  var formatTime = (dateString) =>
+    new Date(dateString).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   // =====================================================
   // Render Components
   // =====================================================
-  var ResourceCard = function (_a) {
+  var ResourceCard = (_a) => {
     var resource = _a.resource;
     return (
       <card_1.Card
         className="cursor-pointer hover:shadow-md transition-shadow"
-        onClick={function () {
+        onClick={() => {
           setSelectedResource(resource);
           fetchAllocations(resource.id);
         }}
@@ -408,7 +397,7 @@ function ResourceManagement(_a) {
               <button_1.Button
                 size="sm"
                 variant="outline"
-                onClick={function (e) {
+                onClick={(e) => {
                   e.stopPropagation();
                   updateResourceStatus(
                     resource.id,
@@ -424,46 +413,42 @@ function ResourceManagement(_a) {
       </card_1.Card>
     );
   };
-  var AllocationsList = function () {
-    return (
-      <div className="space-y-3">
-        {allocations.length === 0
-          ? <p className="text-gray-500 text-center py-4">No allocations for today</p>
-          : allocations.map(function (allocation) {
-              return (
-                <card_1.Card key={allocation.id} className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">
-                        {formatTime(allocation.start_time)} - {formatTime(allocation.end_time)}
-                      </div>
-                      <div className="text-sm text-gray-600">
-                        {allocation.allocation_type} {allocation.appointment_id && "• Appointment"}
-                      </div>
-                      {allocation.notes && (
-                        <div className="text-sm text-gray-500 mt-1">{allocation.notes}</div>
-                      )}
-                    </div>
-                    <badge_1.Badge
-                      className={
-                        allocation.status === "confirmed"
-                          ? "bg-green-100 text-green-800"
-                          : allocation.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : allocation.status === "cancelled"
-                              ? "bg-red-100 text-red-800"
-                              : "bg-gray-100 text-gray-800"
-                      }
-                    >
-                      {allocation.status}
-                    </badge_1.Badge>
+  var AllocationsList = () => (
+    <div className="space-y-3">
+      {allocations.length === 0
+        ? <p className="text-gray-500 text-center py-4">No allocations for today</p>
+        : allocations.map((allocation) => (
+            <card_1.Card key={allocation.id} className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-medium">
+                    {formatTime(allocation.start_time)} - {formatTime(allocation.end_time)}
                   </div>
-                </card_1.Card>
-              );
-            })}
-      </div>
-    );
-  };
+                  <div className="text-sm text-gray-600">
+                    {allocation.allocation_type} {allocation.appointment_id && "• Appointment"}
+                  </div>
+                  {allocation.notes && (
+                    <div className="text-sm text-gray-500 mt-1">{allocation.notes}</div>
+                  )}
+                </div>
+                <badge_1.Badge
+                  className={
+                    allocation.status === "confirmed"
+                      ? "bg-green-100 text-green-800"
+                      : allocation.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : allocation.status === "cancelled"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-800"
+                  }
+                >
+                  {allocation.status}
+                </badge_1.Badge>
+              </div>
+            </card_1.Card>
+          ))}
+    </div>
+  );
   // =====================================================
   // Main Render
   // =====================================================
@@ -512,11 +497,9 @@ function ResourceManagement(_a) {
               <label_1.Label htmlFor="type-filter">Resource Type</label_1.Label>
               <select_1.Select
                 value={filters.type}
-                onValueChange={function (value) {
-                  return setFilters(function (prev) {
-                    return __assign(__assign({}, prev), { type: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFilters((prev) => __assign(__assign({}, prev), { type: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="All Types" />
@@ -533,11 +516,9 @@ function ResourceManagement(_a) {
               <label_1.Label htmlFor="status-filter">Status</label_1.Label>
               <select_1.Select
                 value={filters.status}
-                onValueChange={function (value) {
-                  return setFilters(function (prev) {
-                    return __assign(__assign({}, prev), { status: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFilters((prev) => __assign(__assign({}, prev), { status: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="All Statuses" />
@@ -556,11 +537,9 @@ function ResourceManagement(_a) {
               <label_1.Label htmlFor="category-filter">Category</label_1.Label>
               <select_1.Select
                 value={filters.category}
-                onValueChange={function (value) {
-                  return setFilters(function (prev) {
-                    return __assign(__assign({}, prev), { category: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFilters((prev) => __assign(__assign({}, prev), { category: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="All Categories" />
@@ -597,9 +576,9 @@ function ResourceManagement(_a) {
               {loading
                 ? <div className="text-center py-8">Loading resources...</div>
                 : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {resources.map(function (resource) {
-                      return <ResourceCard key={resource.id} resource={resource} />;
-                    })}
+                    {resources.map((resource) => (
+                      <ResourceCard key={resource.id} resource={resource} />
+                    ))}
                   </div>}
             </card_1.CardContent>
           </card_1.Card>
@@ -663,17 +642,11 @@ function ResourceManagement(_a) {
                           <div>
                             <strong>Skills:</strong>
                             <div className="flex flex-wrap gap-1 mt-1">
-                              {selectedResource.skills.map(function (skill) {
-                                return (
-                                  <badge_1.Badge
-                                    key={skill}
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
-                                    {skill}
-                                  </badge_1.Badge>
-                                );
-                              })}
+                              {selectedResource.skills.map((skill) => (
+                                <badge_1.Badge key={skill} variant="secondary" className="text-xs">
+                                  {skill}
+                                </badge_1.Badge>
+                              ))}
                             </div>
                           </div>
                         )}

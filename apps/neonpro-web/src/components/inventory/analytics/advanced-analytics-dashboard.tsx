@@ -1,6 +1,52 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  Clock,
+  DollarSign,
+  Download,
+  Filter,
+  Package,
+  PieChart as PieChartIcon,
+  RotateCcw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import { useMemo, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Funnel,
+  FunnelChart,
+  LabelList,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,9 +54,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import type { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import type {
   Select,
   SelectContent,
@@ -18,53 +62,10 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { DatePickerWithRange } from "@/components/ui/date-range-picker";
-import type {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  FunnelChart,
-  Funnel,
-  LabelList,
-} from "recharts";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Package,
-  AlertTriangle,
-  DollarSign,
-  BarChart3,
-  Calendar,
-  Download,
-  Filter,
-  RotateCcw,
-  PieChart as PieChartIcon,
-  Activity,
-  Clock,
-  Target,
-  Zap,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useInventory } from "@/hooks/inventory/use-inventory";
 import type { useReports } from "@/hooks/inventory/use-reports";
 import type { CustomReportBuilder } from "./custom-report-builder";
-import type { DateRange } from "react-day-picker";
 
 interface AnalyticsKPI {
   id: string;

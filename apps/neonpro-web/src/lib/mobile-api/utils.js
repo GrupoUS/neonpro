@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Mobile API Utilities
  * Utility functions for mobile API optimization, data compression, and performance
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MobileApiUtils =
   exports.OptimizationUtils =
@@ -163,7 +160,7 @@ var crypto_1 = require("crypto");
 /**
  * Data Compression Utilities
  */
-var CompressionUtils = /** @class */ (function () {
+var CompressionUtils = /** @class */ (() => {
   function CompressionUtils() {}
   /**
    * Compress data using various algorithms
@@ -321,7 +318,7 @@ var CompressionUtils = /** @class */ (function () {
   CompressionUtils.gzipCompress = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var jsonString;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         jsonString = JSON.stringify(data);
         return [2 /*return*/, Buffer.from(jsonString).toString("base64")];
       });
@@ -333,7 +330,7 @@ var CompressionUtils = /** @class */ (function () {
   CompressionUtils.gzipDecompress = function (compressedData) {
     return __awaiter(this, void 0, void 0, function () {
       var jsonString;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         jsonString = Buffer.from(compressedData, "base64").toString();
         return [2 /*return*/, JSON.parse(jsonString)];
       });
@@ -345,7 +342,7 @@ var CompressionUtils = /** @class */ (function () {
   CompressionUtils.brotliCompress = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var jsonString, compressed;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         jsonString = JSON.stringify(data);
         compressed = Buffer.from(jsonString).toString("base64");
         return [2 /*return*/, compressed.substring(0, Math.floor(compressed.length * 0.7))]; // Simulate better compression
@@ -358,7 +355,7 @@ var CompressionUtils = /** @class */ (function () {
   CompressionUtils.brotliDecompress = function (compressedData) {
     return __awaiter(this, void 0, void 0, function () {
       var jsonString;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         jsonString = Buffer.from(compressedData, "base64").toString();
         return [2 /*return*/, JSON.parse(jsonString)];
       });
@@ -370,7 +367,7 @@ var CompressionUtils = /** @class */ (function () {
   CompressionUtils.lz4Compress = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var jsonString;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         jsonString = JSON.stringify(data);
         return [2 /*return*/, Buffer.from(jsonString).toString("base64")];
       });
@@ -382,7 +379,7 @@ var CompressionUtils = /** @class */ (function () {
   CompressionUtils.lz4Decompress = function (compressedData) {
     return __awaiter(this, void 0, void 0, function () {
       var jsonString;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         jsonString = Buffer.from(compressedData, "base64").toString();
         return [2 /*return*/, JSON.parse(jsonString)];
       });
@@ -393,9 +390,10 @@ var CompressionUtils = /** @class */ (function () {
    */
   CompressionUtils.defaultCompress = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, Buffer.from(JSON.stringify(data)).toString("base64")];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        Buffer.from(JSON.stringify(data)).toString("base64"),
+      ]);
     });
   };
   /**
@@ -404,7 +402,7 @@ var CompressionUtils = /** @class */ (function () {
   CompressionUtils.defaultDecompress = function (compressedData) {
     return __awaiter(this, void 0, void 0, function () {
       var jsonString;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         jsonString = Buffer.from(compressedData, "base64").toString();
         return [2 /*return*/, JSON.parse(jsonString)];
       });
@@ -413,11 +411,7 @@ var CompressionUtils = /** @class */ (function () {
   /**
    * Choose optimal compression algorithm based on data characteristics
    */
-  CompressionUtils.chooseOptimalCompression = function (
-    data,
-    networkCondition,
-    deviceCapabilities,
-  ) {
+  CompressionUtils.chooseOptimalCompression = (data, networkCondition, deviceCapabilities) => {
     var dataSize = JSON.stringify(data).length;
     // For small data, compression overhead might not be worth it
     if (dataSize < 1024) {
@@ -440,12 +434,12 @@ exports.CompressionUtils = CompressionUtils;
 /**
  * Security Utilities
  */
-var SecurityUtils = /** @class */ (function () {
+var SecurityUtils = /** @class */ (() => {
   function SecurityUtils() {}
   /**
    * Encrypt sensitive data
    */
-  SecurityUtils.encryptData = function (data, config) {
+  SecurityUtils.encryptData = (data, config) => {
     try {
       var algorithm = "aes-256-gcm";
       var key = Buffer.from(config.encryptionKey, "hex");
@@ -476,7 +470,7 @@ var SecurityUtils = /** @class */ (function () {
   /**
    * Decrypt sensitive data
    */
-  SecurityUtils.decryptData = function (encryptedData, iv, authTag, config) {
+  SecurityUtils.decryptData = (encryptedData, iv, authTag, config) => {
     try {
       var algorithm = "aes-256-gcm";
       var key = Buffer.from(config.encryptionKey, "hex");
@@ -492,7 +486,7 @@ var SecurityUtils = /** @class */ (function () {
   /**
    * Generate secure hash
    */
-  SecurityUtils.generateHash = function (data, algorithm) {
+  SecurityUtils.generateHash = (data, algorithm) => {
     if (algorithm === void 0) {
       algorithm = "sha256";
     }
@@ -501,7 +495,7 @@ var SecurityUtils = /** @class */ (function () {
   /**
    * Generate API signature
    */
-  SecurityUtils.generateSignature = function (method, url, body, timestamp, secretKey) {
+  SecurityUtils.generateSignature = (method, url, body, timestamp, secretKey) => {
     var message = "".concat(method, "\n").concat(url, "\n").concat(body, "\n").concat(timestamp);
     return (0, crypto_1.createHash)("sha256")
       .update(message + secretKey)
@@ -535,7 +529,6 @@ var SecurityUtils = /** @class */ (function () {
    * Sanitize user input
    */
   SecurityUtils.sanitizeInput = function (input) {
-    var _this = this;
     if (typeof input === "string") {
       return input
         .replace(/<script[^>]*>.*?<\/script>/gi, "")
@@ -543,9 +536,7 @@ var SecurityUtils = /** @class */ (function () {
         .trim();
     }
     if (Array.isArray(input)) {
-      return input.map(function (item) {
-        return _this.sanitizeInput(item);
-      });
+      return input.map((item) => this.sanitizeInput(item));
     }
     if (typeof input === "object" && input !== null) {
       var sanitized = {};
@@ -565,7 +556,7 @@ exports.SecurityUtils = SecurityUtils;
 /**
  * Performance Utilities
  */
-var PerformanceUtils = /** @class */ (function () {
+var PerformanceUtils = /** @class */ (() => {
   function PerformanceUtils() {}
   /**
    * Start performance measurement
@@ -598,7 +589,7 @@ var PerformanceUtils = /** @class */ (function () {
   /**
    * Get current memory usage
    */
-  PerformanceUtils.getMemoryUsage = function () {
+  PerformanceUtils.getMemoryUsage = () => {
     if (typeof process !== "undefined" && process.memoryUsage) {
       return process.memoryUsage().heapUsed;
     }
@@ -610,7 +601,7 @@ var PerformanceUtils = /** @class */ (function () {
   PerformanceUtils.measureNetworkLatency = function (url) {
     return __awaiter(this, void 0, void 0, function () {
       var startTime, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             startTime = Date.now();
@@ -633,19 +624,17 @@ var PerformanceUtils = /** @class */ (function () {
   /**
    * Calculate cache hit rate
    */
-  PerformanceUtils.calculateCacheHitRate = function (hits, total) {
-    return total > 0 ? (hits / total) * 100 : 0;
-  };
+  PerformanceUtils.calculateCacheHitRate = (hits, total) => (total > 0 ? (hits / total) * 100 : 0);
   /**
    * Calculate throughput
    */
-  PerformanceUtils.calculateThroughput = function (operations, timeMs) {
+  PerformanceUtils.calculateThroughput = (operations, timeMs) => {
     return timeMs > 0 ? (operations / timeMs) * 1000 : 0; // Operations per second
   };
   /**
    * Get performance recommendations
    */
-  PerformanceUtils.getPerformanceRecommendations = function (metrics, thresholds) {
+  PerformanceUtils.getPerformanceRecommendations = (metrics, thresholds) => {
     var recommendations = [];
     if (metrics.duration > thresholds.maxDuration) {
       recommendations.push("Consider optimizing slow operations or implementing caching");
@@ -671,12 +660,12 @@ exports.PerformanceUtils = PerformanceUtils;
 /**
  * Network Utilities
  */
-var NetworkUtils = /** @class */ (function () {
+var NetworkUtils = /** @class */ (() => {
   function NetworkUtils() {}
   /**
    * Detect network condition
    */
-  NetworkUtils.detectNetworkCondition = function () {
+  NetworkUtils.detectNetworkCondition = () => {
     // In a real implementation, this would use navigator.connection API
     // For now, we'll simulate based on available information
     var connection = navigator === null || navigator === void 0 ? void 0 : navigator.connection;
@@ -711,7 +700,7 @@ var NetworkUtils = /** @class */ (function () {
   /**
    * Optimize request based on network condition
    */
-  NetworkUtils.optimizeRequest = function (request, networkCondition) {
+  NetworkUtils.optimizeRequest = (request, networkCondition) => {
     var optimizedRequest = __assign({}, request);
     // Adjust based on network speed
     if (networkCondition.speed === "slow") {
@@ -746,7 +735,7 @@ var NetworkUtils = /** @class */ (function () {
   /**
    * Batch requests for efficiency
    */
-  NetworkUtils.batchRequests = function (requests, maxBatchSize) {
+  NetworkUtils.batchRequests = (requests, maxBatchSize) => {
     if (maxBatchSize === void 0) {
       maxBatchSize = 10;
     }
@@ -768,12 +757,12 @@ var NetworkUtils = /** @class */ (function () {
       if (baseDelay === void 0) {
         baseDelay = 1000;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _loop_1 = function (attempt) {
               var _b, error_4, delay_1;
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
                     _c.trys.push([0, 2, , 4]);
@@ -787,13 +776,8 @@ var NetworkUtils = /** @class */ (function () {
                     if (attempt === maxRetries) {
                       throw lastError;
                     }
-                    delay_1 = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
-                    return [
-                      4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, delay_1);
-                      }),
-                    ];
+                    delay_1 = baseDelay * 2 ** attempt + Math.random() * 1000;
+                    return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, delay_1))];
                   case 3:
                     _c.sent();
                     return [3 /*break*/, 4];
@@ -826,12 +810,12 @@ exports.NetworkUtils = NetworkUtils;
 /**
  * Data Validation Utilities
  */
-var ValidationUtils = /** @class */ (function () {
+var ValidationUtils = /** @class */ (() => {
   function ValidationUtils() {}
   /**
    * Validate mobile API request
    */
-  ValidationUtils.validateRequest = function (request) {
+  ValidationUtils.validateRequest = (request) => {
     var errors = [];
     // Validate required fields
     if (!request.endpoint) {
@@ -869,7 +853,7 @@ var ValidationUtils = /** @class */ (function () {
   /**
    * Validate mobile API response
    */
-  ValidationUtils.validateResponse = function (response) {
+  ValidationUtils.validateResponse = (response) => {
     var errors = [];
     var warnings = [];
     // Validate status code
@@ -897,7 +881,7 @@ var ValidationUtils = /** @class */ (function () {
   /**
    * Validate device capabilities
    */
-  ValidationUtils.validateDeviceCapabilities = function (capabilities) {
+  ValidationUtils.validateDeviceCapabilities = (capabilities) => {
     var errors = [];
     // Validate CPU level
     var validCpuLevels = ["low", "medium", "high"];
@@ -924,12 +908,12 @@ exports.ValidationUtils = ValidationUtils;
 /**
  * Optimization Strategy Utilities
  */
-var OptimizationUtils = /** @class */ (function () {
+var OptimizationUtils = /** @class */ (() => {
   function OptimizationUtils() {}
   /**
    * Determine optimization strategy based on context
    */
-  OptimizationUtils.determineStrategy = function (networkCondition, deviceCapabilities, dataSize) {
+  OptimizationUtils.determineStrategy = (networkCondition, deviceCapabilities, dataSize) => {
     var strategy = {
       compression: {
         enabled: false,
@@ -990,7 +974,7 @@ var OptimizationUtils = /** @class */ (function () {
   /**
    * Apply optimization strategy to request
    */
-  OptimizationUtils.applyOptimization = function (request, strategy) {
+  OptimizationUtils.applyOptimization = (request, strategy) => {
     var optimizedRequest = __assign({}, request);
     // Apply compression settings
     if (strategy.compression.enabled) {

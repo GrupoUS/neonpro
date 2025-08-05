@@ -6,6 +6,7 @@ const client = new TriggerClient({
   apiKey: process.env.TRIGGER_API_KEY!,
   apiUrl: process.env.TRIGGER_API_URL,
 });
+
 import type { AppointmentJobPayload, InvoiceJobPayload } from "@/trigger/client";
 
 /**
@@ -262,10 +263,10 @@ export class NeonProAutomation {
 
     try {
       // 1. Enviar confirmação imediatamente
-      results.confirmation = await this.sendAppointmentConfirmation(appointmentData);
+      results.confirmation = await NeonProAutomation.sendAppointmentConfirmation(appointmentData);
 
       // 2. Agendar lembrete para 24h antes
-      results.reminder = await this.scheduleAppointmentReminder(appointmentData);
+      results.reminder = await NeonProAutomation.scheduleAppointmentReminder(appointmentData);
 
       console.log("✅ New appointment automation completed", {
         appointmentId: appointmentData.appointmentId,
@@ -301,13 +302,13 @@ export class NeonProAutomation {
 
     try {
       // 1. Enviar fatura imediatamente
-      results.invoiceEmail = await this.sendInvoiceEmail(invoiceData);
+      results.invoiceEmail = await NeonProAutomation.sendInvoiceEmail(invoiceData);
 
       // 2. Agendar lembrete de pagamento para 1 dia após vencimento
       const dueDate = new Date(invoiceData.dueDate);
       const reminderDate = new Date(dueDate.getTime() + 24 * 60 * 60 * 1000); // 1 dia após vencimento
 
-      results.paymentReminder = await this.sendPaymentReminder({
+      results.paymentReminder = await NeonProAutomation.sendPaymentReminder({
         ...invoiceData,
         delayDays: Math.ceil(
           (reminderDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),

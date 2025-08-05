@@ -1,42 +1,42 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { endOfMonth, format, isToday, isYesterday, startOfMonth, subDays } from "date-fns";
 import type {
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Target,
-  Clock,
-  Users,
-  DollarSign,
   Activity,
   AlertTriangle,
-  CheckCircle,
-  XCircle,
-  BarChart3,
-  PieChart,
-  LineChart,
-  RefreshCw,
-  Download,
-  Calendar,
-  Award,
-  Zap,
-  Brain,
-  Eye,
-  MessageSquare,
-  FileText,
+  ArrowDown,
   ArrowRight,
   ArrowUp,
-  ArrowDown,
+  Award,
+  BarChart3,
+  Brain,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  FileText,
+  LineChart,
+  MessageSquare,
+  Minus,
+  PieChart,
+  RefreshCw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
 } from "lucide-react";
-import type { format, subDays, startOfMonth, endOfMonth, isToday, isYesterday } from "date-fns";
+import React, { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Types
 interface ExecutiveSummaryData {
@@ -297,10 +297,11 @@ export function ExecutiveSummary({
         }).format(value);
       case "percentage":
         return `${value.toFixed(1)}%`;
-      case "duration":
+      case "duration": {
         const hours = Math.floor(value / 60);
         const minutes = value % 60;
         return `${hours}h ${minutes}m`;
+      }
       default:
         return value.toLocaleString("pt-BR");
     }

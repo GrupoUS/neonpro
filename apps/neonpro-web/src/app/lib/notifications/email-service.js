@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Email Service for React Email Integration
  * HIPAA-compliant email notifications using React Email templates
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailService = void 0;
 var resend_1 = require("resend");
@@ -166,7 +163,7 @@ var follow_up_reminder_1 = require("./templates/follow-up-reminder");
 var emergency_alert_1 = require("./templates/emergency-alert");
 var billing_reminder_1 = require("./templates/billing-reminder");
 var resend = new resend_1.Resend(process.env.RESEND_API_KEY);
-var EmailService = /** @class */ (function () {
+var EmailService = /** @class */ (() => {
   function EmailService() {
     this.config = config_1.NOTIFICATION_CONFIG.email;
   }
@@ -250,7 +247,7 @@ var EmailService = /** @class */ (function () {
   }; /**
    * Get React Email template component for notification type
    */
-  EmailService.prototype.getTemplateComponent = function (type) {
+  EmailService.prototype.getTemplateComponent = (type) => {
     var templates = {
       appointment_reminder: appointment_reminder_1.AppointmentReminderEmail,
       appointment_confirmation: appointment_confirmation_1.AppointmentConfirmationEmail,
@@ -266,7 +263,7 @@ var EmailService = /** @class */ (function () {
   /**
    * Get email priority header value
    */
-  EmailService.prototype.getPriorityHeader = function (priority) {
+  EmailService.prototype.getPriorityHeader = (priority) => {
     switch (priority) {
       case "urgent":
         return "1";
@@ -285,7 +282,7 @@ var EmailService = /** @class */ (function () {
    */
   EmailService.prototype.getDeliveryStatus = function (messageId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Note: This is a placeholder for Resend's delivery status API
           // Resend doesn't currently provide detailed delivery status
@@ -309,7 +306,7 @@ var EmailService = /** @class */ (function () {
   /**
    * Validate email template data against schema
    */
-  EmailService.prototype.validateTemplateData = function (type, data) {
+  EmailService.prototype.validateTemplateData = (type, data) => {
     try {
       // Define schemas for each template type
       var appointmentSchema = zod_1.z.object({

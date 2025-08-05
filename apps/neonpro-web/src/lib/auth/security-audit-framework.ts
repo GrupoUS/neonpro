@@ -1,5 +1,4 @@
-import type { createClient } from "@/lib/supabase/client";
-import type { createClient as createBrowserClient } from "@/lib/supabase/client";
+import type { createClient as createBrowserClient, createClient } from "@/lib/supabase/client";
 import type { createClient as createServerClient } from "@/lib/supabase/server";
 import type { performanceTracker } from "./performance-tracker";
 

@@ -1,7 +1,7 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { FacebookOAuthHandler } from "@/lib/oauth/platforms/facebook-handler";
 import type { TokenEncryptionService } from "@/lib/oauth/token-encryption";
+import type { createClient } from "@/lib/supabase/server";
 
 /**
  * Facebook OAuth Token Refresh Endpoint

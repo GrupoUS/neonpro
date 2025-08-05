@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Impact Assessment System
  * Implements automated Data Protection Impact Assessment (DPIA) for LGPD compliance
@@ -17,20 +16,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -45,26 +44,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -84,13 +83,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -112,9 +111,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -186,7 +183,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.impactAssessmentManager =
   exports.ImpactAssessmentManager =
@@ -203,7 +200,7 @@ var events_1 = require("events");
  * Risk Categories for LGPD Assessment
  */
 var RiskCategory;
-(function (RiskCategory) {
+((RiskCategory) => {
   RiskCategory["DATA_BREACH"] = "data_breach";
   RiskCategory["UNAUTHORIZED_ACCESS"] = "unauthorized_access";
   RiskCategory["DATA_LOSS"] = "data_loss";
@@ -221,7 +218,7 @@ var RiskCategory;
  * Risk Severity Levels
  */
 var RiskSeverity;
-(function (RiskSeverity) {
+((RiskSeverity) => {
   RiskSeverity["VERY_LOW"] = "very_low";
   RiskSeverity["LOW"] = "low";
   RiskSeverity["MEDIUM"] = "medium";
@@ -233,7 +230,7 @@ var RiskSeverity;
  * Risk Likelihood
  */
 var RiskLikelihood;
-(function (RiskLikelihood) {
+((RiskLikelihood) => {
   RiskLikelihood["VERY_UNLIKELY"] = "very_unlikely";
   RiskLikelihood["UNLIKELY"] = "unlikely";
   RiskLikelihood["POSSIBLE"] = "possible";
@@ -245,7 +242,7 @@ var RiskLikelihood;
  * Assessment Status
  */
 var AssessmentStatus;
-(function (AssessmentStatus) {
+((AssessmentStatus) => {
   AssessmentStatus["DRAFT"] = "draft";
   AssessmentStatus["IN_REVIEW"] = "in_review";
   AssessmentStatus["STAKEHOLDER_CONSULTATION"] = "stakeholder_consultation";
@@ -267,7 +264,7 @@ var AssessmentStatus;
  * - Mitigation planning and tracking
  * - Assessment reporting and approval workflow
  */
-var ImpactAssessmentManager = /** @class */ (function (_super) {
+var ImpactAssessmentManager = /** @class */ ((_super) => {
   __extends(ImpactAssessmentManager, _super);
   function ImpactAssessmentManager(config) {
     if (config === void 0) {
@@ -338,7 +335,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _c.sent();
@@ -478,17 +475,15 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Calculate risk factors
    */
-  ImpactAssessmentManager.prototype.calculateRiskFactors = function (context) {
+  ImpactAssessmentManager.prototype.calculateRiskFactors = (context) => {
     // Data volume assessment
-    var totalVolume = context.dataTypes.reduce(function (sum, dt) {
+    var totalVolume = context.dataTypes.reduce((sum, dt) => {
       var volumeScore = { low: 1, medium: 2, high: 3, very_high: 4 }[dt.volume];
       return sum + volumeScore;
     }, 0);
     var dataVolume = Math.min(5, Math.ceil(totalVolume / context.dataTypes.length));
     // Data sensitivity assessment
-    var sensitiveDataCount = context.dataTypes.filter(function (dt) {
-      return dt.sensitive;
-    }).length;
+    var sensitiveDataCount = context.dataTypes.filter((dt) => dt.sensitive).length;
     var dataSensitivity = Math.min(
       5,
       Math.ceil((sensitiveDataCount / context.dataTypes.length) * 5),
@@ -517,7 +512,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Assess risk likelihood
    */
-  ImpactAssessmentManager.prototype.assessRiskLikelihood = function (category, context, factors) {
+  ImpactAssessmentManager.prototype.assessRiskLikelihood = (category, context, factors) => {
     var _a;
     var score = 0;
     // Base likelihood by category
@@ -558,7 +553,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Assess risk impact
    */
-  ImpactAssessmentManager.prototype.assessRiskImpact = function (category, context, factors) {
+  ImpactAssessmentManager.prototype.assessRiskImpact = (category, context, factors) => {
     var _a;
     var score = 0;
     // Base impact by category
@@ -601,7 +596,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Calculate overall risk level
    */
-  ImpactAssessmentManager.prototype.calculateRiskLevel = function (likelihood, impact) {
+  ImpactAssessmentManager.prototype.calculateRiskLevel = (likelihood, impact) => {
     var _a, _b;
     var likelihoodScore = ((_a = {}),
     (_a[RiskLikelihood.VERY_UNLIKELY] = 1),
@@ -630,9 +625,9 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Calculate overall risk from multiple risks
    */
-  ImpactAssessmentManager.prototype.calculateOverallRisk = function (risks) {
+  ImpactAssessmentManager.prototype.calculateOverallRisk = (risks) => {
     if (risks.length === 0) return RiskSeverity.VERY_LOW;
-    var riskScores = risks.map(function (risk) {
+    var riskScores = risks.map((risk) => {
       var _a;
       var scores =
         ((_a = {}),
@@ -660,7 +655,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Check if risk is acceptable
    */
-  ImpactAssessmentManager.prototype.isRiskAcceptable = function (riskLevel, threshold) {
+  ImpactAssessmentManager.prototype.isRiskAcceptable = (riskLevel, threshold) => {
     var _a;
     var scores =
       ((_a = {}),
@@ -676,7 +671,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Identify existing controls
    */
-  ImpactAssessmentManager.prototype.identifyExistingControls = function (category, context) {
+  ImpactAssessmentManager.prototype.identifyExistingControls = (category, context) => {
     var technical = [];
     var organizational = [];
     // Technical controls
@@ -758,7 +753,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Get category-specific recommendations
    */
-  ImpactAssessmentManager.prototype.getCategoryRecommendations = function (category) {
+  ImpactAssessmentManager.prototype.getCategoryRecommendations = (category) => {
     var _a;
     var recommendations =
       ((_a = {}),
@@ -832,10 +827,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Calculate residual risk
    */
-  ImpactAssessmentManager.prototype.calculateResidualRisk = function (
-    originalRisk,
-    mitigationCount,
-  ) {
+  ImpactAssessmentManager.prototype.calculateResidualRisk = (originalRisk, mitigationCount) => {
     var _a;
     var riskScores =
       ((_a = {}),
@@ -896,9 +888,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
             _i++;
             return [3 /*break*/, 1];
           case 4:
-            criticalGaps = gaps.filter(function (g) {
-              return g.gapSeverity === "critical";
-            }).length;
+            criticalGaps = gaps.filter((g) => g.gapSeverity === "critical").length;
             totalRequirements = lgpdRequirements.length;
             compliantRequirements = totalRequirements - gaps.length;
             overallCompliance = (compliantRequirements / totalRequirements) * 100;
@@ -918,36 +908,34 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Get LGPD requirements for assessment
    */
-  ImpactAssessmentManager.prototype.getLGPDRequirements = function () {
-    return [
-      {
-        article: "Art. 6",
-        requirement: "Legal basis for processing",
-        description: "Processing must have a valid legal basis",
-      },
-      {
-        article: "Art. 8",
-        requirement: "Consent requirements",
-        description: "Consent must be free, informed, and unambiguous",
-      },
-      {
-        article: "Art. 9",
-        requirement: "Data subject rights",
-        description: "Mechanisms to exercise data subject rights",
-      },
-      {
-        article: "Art. 46",
-        requirement: "Security measures",
-        description: "Appropriate technical and organizational measures",
-      },
-      {
-        article: "Art. 48",
-        requirement: "Incident notification",
-        description: "Data breach notification procedures",
-      },
-      // Add more requirements as needed
-    ];
-  };
+  ImpactAssessmentManager.prototype.getLGPDRequirements = () => [
+    {
+      article: "Art. 6",
+      requirement: "Legal basis for processing",
+      description: "Processing must have a valid legal basis",
+    },
+    {
+      article: "Art. 8",
+      requirement: "Consent requirements",
+      description: "Consent must be free, informed, and unambiguous",
+    },
+    {
+      article: "Art. 9",
+      requirement: "Data subject rights",
+      description: "Mechanisms to exercise data subject rights",
+    },
+    {
+      article: "Art. 46",
+      requirement: "Security measures",
+      description: "Appropriate technical and organizational measures",
+    },
+    {
+      article: "Art. 48",
+      requirement: "Incident notification",
+      description: "Data breach notification procedures",
+    },
+    // Add more requirements as needed
+  ];
   /**
    * Assess compliance gap
    */
@@ -981,7 +969,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Assess current compliance state
    */
-  ImpactAssessmentManager.prototype.assessCurrentCompliance = function (requirement, context) {
+  ImpactAssessmentManager.prototype.assessCurrentCompliance = (requirement, context) => {
     // Simplified assessment logic
     switch (requirement.article) {
       case "Art. 6":
@@ -1003,7 +991,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
                 },
               ],
         };
-      case "Art. 46":
+      case "Art. 46": {
         var hasBasicSecurity =
           context.technicalMeasures.encryption && context.technicalMeasures.accessControls;
         return {
@@ -1026,6 +1014,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
                 },
               ],
         };
+      }
       default:
         return {
           compliant: false,
@@ -1048,20 +1037,18 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Apply template to assessment
    */
-  ImpactAssessmentManager.prototype.applyTemplate = function (assessment, template) {
+  ImpactAssessmentManager.prototype.applyTemplate = (assessment, template) => {
     // Apply template defaults
     assessment.riskAnalysis.acceptableRiskThreshold = template.defaults.riskThreshold;
     assessment.scope.nextReviewDate = new Date(
       Date.now() + template.defaults.reviewFrequency * 30 * 24 * 60 * 60 * 1000,
     );
     // Set up workflow
-    assessment.workflow.reviewers = template.defaults.requiredApprovers.map(function (approver) {
-      return {
-        role: approver,
-        name: "",
-        status: "pending",
-      };
-    });
+    assessment.workflow.reviewers = template.defaults.requiredApprovers.map((approver) => ({
+      role: approver,
+      name: "",
+      status: "pending",
+    }));
     // Set consultation requirement
     assessment.stakeholderConsultation.required = template.defaults.consultationRequired;
     return assessment;
@@ -1069,7 +1056,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Get risk description
    */
-  ImpactAssessmentManager.prototype.getRiskDescription = function (category) {
+  ImpactAssessmentManager.prototype.getRiskDescription = (category) => {
     var _a;
     var descriptions =
       ((_a = {}),
@@ -1100,7 +1087,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
   /**
    * Validate assessment
    */
-  ImpactAssessmentManager.prototype.validateAssessment = function (assessment) {
+  ImpactAssessmentManager.prototype.validateAssessment = (assessment) => {
     if (!assessment.name || assessment.name.trim().length === 0) {
       throw new Error("Assessment name is required");
     }
@@ -1115,10 +1102,9 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
    * Start review monitoring
    */
   ImpactAssessmentManager.prototype.startReviewMonitoring = function () {
-    var _this = this;
     this.reviewCheckInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1128,8 +1114,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       24 * 60 * 60 * 1000,
     ); // Daily check
   };
@@ -1182,42 +1167,32 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
     var assessments = Array.from(this.assessments.values());
     if (filters) {
       if (filters.status) {
-        assessments = assessments.filter(function (a) {
-          return a.status === filters.status;
-        });
+        assessments = assessments.filter((a) => a.status === filters.status);
       }
       if (filters.riskLevel) {
-        assessments = assessments.filter(function (a) {
-          return a.riskAnalysis.overallRiskLevel === filters.riskLevel;
-        });
+        assessments = assessments.filter(
+          (a) => a.riskAnalysis.overallRiskLevel === filters.riskLevel,
+        );
       }
       if (filters.dateRange) {
-        assessments = assessments.filter(function (a) {
-          return a.createdAt >= filters.dateRange.start && a.createdAt <= filters.dateRange.end;
-        });
+        assessments = assessments.filter(
+          (a) => a.createdAt >= filters.dateRange.start && a.createdAt <= filters.dateRange.end,
+        );
       }
     }
-    return assessments.sort(function (a, b) {
-      return b.updatedAt.getTime() - a.updatedAt.getTime();
-    });
+    return assessments.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   };
   /**
    * Generate ID
    */
-  ImpactAssessmentManager.prototype.generateId = function (prefix) {
-    return ""
-      .concat(prefix, "_")
-      .concat(Date.now(), "_")
-      .concat(Math.random().toString(36).substr(2, 9));
-  };
+  ImpactAssessmentManager.prototype.generateId = (prefix) =>
+    "".concat(prefix, "_").concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Load templates
    */
   ImpactAssessmentManager.prototype.loadTemplates = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1225,9 +1200,7 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
    */
   ImpactAssessmentManager.prototype.loadAssessments = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1235,15 +1208,13 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
    */
   ImpactAssessmentManager.prototype.saveAssessment = function (assessment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
    * Log activity
    */
-  ImpactAssessmentManager.prototype.logActivity = function (actor, action, details) {
+  ImpactAssessmentManager.prototype.logActivity = (actor, action, details) => {
     // In a real implementation, this would log to audit trail
     console.log("[ImpactAssessment] ".concat(actor, " - ").concat(action, ":"), details);
   };
@@ -1277,9 +1248,9 @@ var ImpactAssessmentManager = /** @class */ (function (_super) {
     if (!this.reviewCheckInterval) {
       issues.push("Review monitoring not running");
     }
-    var dueReviews = Array.from(this.assessments.values()).filter(function (a) {
-      return a.scope.nextReviewDate <= new Date() && a.status === AssessmentStatus.APPROVED;
-    });
+    var dueReviews = Array.from(this.assessments.values()).filter(
+      (a) => a.scope.nextReviewDate <= new Date() && a.status === AssessmentStatus.APPROVED,
+    );
     if (dueReviews.length > 0) {
       issues.push("".concat(dueReviews.length, " assessments require review"));
     }

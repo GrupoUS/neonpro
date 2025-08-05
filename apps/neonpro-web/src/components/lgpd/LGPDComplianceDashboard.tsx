@@ -8,7 +8,43 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertCircle,
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  Eye,
+  FileText,
+  Filter,
+  RefreshCw,
+  Settings,
+  Shield,
+  Trash2,
+  TrendingUp,
+  UserCheck,
+  Users,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -16,28 +52,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
 import type {
   Dialog,
   DialogContent,
@@ -47,61 +61,46 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Textarea } from "@/components/ui/textarea";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
 import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-} from "recharts";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type {
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  FileText,
-  Users,
-  Database,
-  Settings,
-  Download,
-  RefreshCw,
-  Eye,
-  Trash2,
-  UserCheck,
-  AlertCircle,
-  TrendingUp,
-  Calendar,
-  Filter,
-} from "lucide-react";
-
+  AuditTrailAnalytics,
+  auditTrailManager,
+  DataSubjectRequest,
+  LGPDAuditEventType,
+  LGPDAuditRecord,
+  LGPDAuditSeverity,
+} from "@/lib/lgpd/audit-trail-manager";
 // Import LGPD managers
 import type {
+  ConsentAnalytics,
+  ConsentRecord,
   consentAutomationManager,
   LGPDDataType,
   LGPDPurpose,
-  ConsentRecord,
-  ConsentAnalytics,
 } from "@/lib/lgpd/consent-automation-manager";
 import type {
-  auditTrailManager,
-  LGPDAuditEventType,
-  LGPDAuditSeverity,
-  LGPDAuditRecord,
-  AuditTrailAnalytics,
-  DataSubjectRequest,
-} from "@/lib/lgpd/audit-trail-manager";
-import type {
-  dataRetentionManager,
   DataRetentionPolicy,
+  dataRetentionManager,
   RetentionAnalytics,
 } from "@/lib/lgpd/data-retention-manager";
 

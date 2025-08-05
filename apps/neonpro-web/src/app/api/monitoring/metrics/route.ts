@@ -7,8 +7,8 @@
  */
 
 import type { NextRequest, NextResponse } from "next/server";
+import type { getPerformanceMetrics, recordPerformanceMetric } from "@/lib/monitoring/performance";
 import type { createClient } from "@/lib/supabase/server";
-import type { recordPerformanceMetric, getPerformanceMetrics } from "@/lib/monitoring/performance";
 
 export async function GET(request: NextRequest) {
   try {

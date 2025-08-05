@@ -1,10 +1,10 @@
 "use client";
 
 import type { useState } from "react";
-import type { DashboardSidebar } from "./dashboard-sidebar";
-import type { DashboardHeader } from "./dashboard-header";
 import type { ErrorBoundary } from "@/components/ui/error-boundary";
 import type { cn } from "@/lib/utils";
+import type { DashboardHeader } from "./dashboard-header";
+import type { DashboardSidebar } from "./dashboard-sidebar";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

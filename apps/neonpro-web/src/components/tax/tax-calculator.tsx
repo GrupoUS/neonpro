@@ -3,7 +3,18 @@
 
 "use client";
 
+import type {
+  AlertCircle,
+  Calculator,
+  CheckCircle,
+  DollarSign,
+  Info,
+  Percent,
+  RefreshCw,
+} from "lucide-react";
 import type { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,7 +22,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type {
@@ -21,17 +31,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Calculator,
-  AlertCircle,
-  CheckCircle,
-  Info,
-  DollarSign,
-  Percent,
-  RefreshCw,
-} from "lucide-react";
 import type { formatCurrency, formatPercentage } from "@/lib/utils";
 
 interface TaxCalculatorProps {

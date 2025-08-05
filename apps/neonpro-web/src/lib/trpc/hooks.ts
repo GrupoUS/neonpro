@@ -1,7 +1,3 @@
-import type { trpc } from "./client";
-import type { useRouter } from "next/navigation";
-import type { useCallback } from "react";
-
 /**
  * Healthcare-specific tRPC hooks for NeonPro
  *

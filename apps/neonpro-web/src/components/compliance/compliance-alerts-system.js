@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ComplianceAlertsSystem;
 var react_1 = require("react");
@@ -175,7 +172,6 @@ var lucide_react_1 = require("lucide-react");
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 var use_toast_1 = require("@/hooks/use-toast");
 function ComplianceAlertsSystem(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userId = _a.userId;
   var _b = (0, react_1.useState)([]),
@@ -205,47 +201,42 @@ function ComplianceAlertsSystem(_a) {
     setShowResolved = _g[1];
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      fetchAlerts();
-      loadSettings();
-      // Set up real-time subscription for new alerts
-      var channel = supabase
-        .channel("compliance_alerts")
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "compliance_alerts",
-            filter: "clinic_id=eq.".concat(clinicId),
-          },
-          function (payload) {
-            var newAlert = payload.new;
-            setAlerts(function (prev) {
-              return __spreadArray([newAlert], prev, true);
+  (0, react_1.useEffect)(() => {
+    fetchAlerts();
+    loadSettings();
+    // Set up real-time subscription for new alerts
+    var channel = supabase
+      .channel("compliance_alerts")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "compliance_alerts",
+          filter: "clinic_id=eq.".concat(clinicId),
+        },
+        (payload) => {
+          var newAlert = payload.new;
+          setAlerts((prev) => __spreadArray([newAlert], prev, true));
+          // Show toast notification for high/critical alerts
+          if (newAlert.severity === "high" || newAlert.severity === "critical") {
+            toast({
+              title: "🚨 Critical Compliance Alert",
+              description: newAlert.title,
+              variant: "destructive",
             });
-            // Show toast notification for high/critical alerts
-            if (newAlert.severity === "high" || newAlert.severity === "critical") {
-              toast({
-                title: "🚨 Critical Compliance Alert",
-                description: newAlert.title,
-                variant: "destructive",
-              });
-            }
-          },
-        )
-        .subscribe();
-      return function () {
-        supabase.removeChannel(channel);
-      };
-    },
-    [clinicId, selectedSeverity, selectedType, showResolved],
-  );
-  var fetchAlerts = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+          }
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [clinicId, selectedSeverity, selectedType, showResolved]);
+  var fetchAlerts = () =>
+    __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -295,15 +286,14 @@ function ComplianceAlertsSystem(_a) {
         }
       });
     });
-  };
-  var loadSettings = function () {
+  var loadSettings = () => {
     // Load from localStorage or API
     var saved = localStorage.getItem("compliance_notifications_".concat(clinicId));
     if (saved) {
       setSettings(JSON.parse(saved));
     }
   };
-  var saveSettings = function (newSettings) {
+  var saveSettings = (newSettings) => {
     setSettings(newSettings);
     localStorage.setItem("compliance_notifications_".concat(clinicId), JSON.stringify(newSettings));
     toast({
@@ -312,10 +302,10 @@ function ComplianceAlertsSystem(_a) {
       variant: "default",
     });
   };
-  var markAsRead = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var markAsRead = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -329,13 +319,11 @@ function ComplianceAlertsSystem(_a) {
               console.error("Error marking alert as read:", error);
               return [2 /*return*/];
             }
-            setAlerts(function (prev) {
-              return prev.map(function (alert) {
-                return alert.id === alertId
-                  ? __assign(__assign({}, alert), { is_read: true })
-                  : alert;
-              });
-            });
+            setAlerts((prev) =>
+              prev.map((alert) =>
+                alert.id === alertId ? __assign(__assign({}, alert), { is_read: true }) : alert,
+              ),
+            );
             return [3 /*break*/, 3];
           case 2:
             error_2 = _a.sent();
@@ -346,11 +334,10 @@ function ComplianceAlertsSystem(_a) {
         }
       });
     });
-  };
-  var resolveAlert = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var resolveAlert = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -375,11 +362,7 @@ function ComplianceAlertsSystem(_a) {
               });
               return [2 /*return*/];
             }
-            setAlerts(function (prev) {
-              return prev.filter(function (alert) {
-                return alert.id !== alertId;
-              });
-            });
+            setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
             toast({
               title: "Alert Resolved",
               description: "The alert has been marked as resolved",
@@ -395,11 +378,10 @@ function ComplianceAlertsSystem(_a) {
         }
       });
     });
-  };
-  var deleteAlert = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteAlert = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -415,11 +397,7 @@ function ComplianceAlertsSystem(_a) {
               });
               return [2 /*return*/];
             }
-            setAlerts(function (prev) {
-              return prev.filter(function (alert) {
-                return alert.id !== alertId;
-              });
-            });
+            setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
             toast({
               title: "Alert Deleted",
               description: "The alert has been permanently deleted",
@@ -435,8 +413,7 @@ function ComplianceAlertsSystem(_a) {
         }
       });
     });
-  };
-  var getSeverityBadge = function (severity) {
+  var getSeverityBadge = (severity) => {
     var variants = {
       low: "default",
       medium: "secondary",
@@ -455,7 +432,7 @@ function ComplianceAlertsSystem(_a) {
       </badge_1.Badge>
     );
   };
-  var getAlertIcon = function (alertType) {
+  var getAlertIcon = (alertType) => {
     switch (alertType) {
       case "consent_expiring":
       case "consent_pending":
@@ -472,21 +449,18 @@ function ComplianceAlertsSystem(_a) {
         return <lucide_react_1.Bell className="h-4 w-4" />;
     }
   };
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
+  var formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-  var unreadCount = alerts.filter(function (alert) {
-    return !alert.is_read;
-  }).length;
-  var criticalCount = alerts.filter(function (alert) {
-    return alert.severity === "critical" && !alert.resolved_at;
-  }).length;
+  var unreadCount = alerts.filter((alert) => !alert.is_read).length;
+  var criticalCount = alerts.filter(
+    (alert) => alert.severity === "critical" && !alert.resolved_at,
+  ).length;
   if (loading) {
     return (
       <card_1.Card>
@@ -623,11 +597,9 @@ function ComplianceAlertsSystem(_a) {
                       <switch_1.Switch
                         id="email-notifications"
                         checked={settings.email_enabled}
-                        onCheckedChange={function (checked) {
-                          return saveSettings(
-                            __assign(__assign({}, settings), { email_enabled: checked }),
-                          );
-                        }}
+                        onCheckedChange={(checked) =>
+                          saveSettings(__assign(__assign({}, settings), { email_enabled: checked }))
+                        }
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -635,11 +607,9 @@ function ComplianceAlertsSystem(_a) {
                       <switch_1.Switch
                         id="push-notifications"
                         checked={settings.push_enabled}
-                        onCheckedChange={function (checked) {
-                          return saveSettings(
-                            __assign(__assign({}, settings), { push_enabled: checked }),
-                          );
-                        }}
+                        onCheckedChange={(checked) =>
+                          saveSettings(__assign(__assign({}, settings), { push_enabled: checked }))
+                        }
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -647,11 +617,9 @@ function ComplianceAlertsSystem(_a) {
                       <switch_1.Switch
                         id="sms-notifications"
                         checked={settings.sms_enabled}
-                        onCheckedChange={function (checked) {
-                          return saveSettings(
-                            __assign(__assign({}, settings), { sms_enabled: checked }),
-                          );
-                        }}
+                        onCheckedChange={(checked) =>
+                          saveSettings(__assign(__assign({}, settings), { sms_enabled: checked }))
+                        }
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -659,11 +627,11 @@ function ComplianceAlertsSystem(_a) {
                       <switch_1.Switch
                         id="real-time"
                         checked={settings.real_time_enabled}
-                        onCheckedChange={function (checked) {
-                          return saveSettings(
+                        onCheckedChange={(checked) =>
+                          saveSettings(
                             __assign(__assign({}, settings), { real_time_enabled: checked }),
-                          );
-                        }}
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -671,11 +639,11 @@ function ComplianceAlertsSystem(_a) {
                     <label_1.Label htmlFor="severity-threshold">Minimum Severity</label_1.Label>
                     <select_1.Select
                       value={settings.severity_threshold}
-                      onValueChange={function (value) {
-                        return saveSettings(
+                      onValueChange={(value) =>
+                        saveSettings(
                           __assign(__assign({}, settings), { severity_threshold: value }),
-                        );
-                      }}
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -690,7 +658,7 @@ function ComplianceAlertsSystem(_a) {
                   </div>
                 </div>
                 <dialog_1.DialogFooter>
-                  <button_1.Button onClick={function () {}}>Save Settings</button_1.Button>
+                  <button_1.Button onClick={() => {}}>Save Settings</button_1.Button>
                 </dialog_1.DialogFooter>
               </dialog_1.DialogContent>
             </dialog_1.Dialog>
@@ -726,88 +694,78 @@ function ComplianceAlertsSystem(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {alerts.map(function (alert) {
-                    return (
-                      <table_1.TableRow
-                        key={alert.id}
-                        className={!alert.is_read ? "bg-blue-50 dark:bg-blue-950/20" : ""}
-                      >
-                        <table_1.TableCell>
-                          <div className="flex items-start gap-3">
-                            {getAlertIcon(alert.alert_type)}
-                            <div>
-                              <div className="font-medium">{alert.title}</div>
-                              <div className="text-sm text-muted-foreground">
-                                {alert.description}
-                              </div>
-                            </div>
+                  {alerts.map((alert) => (
+                    <table_1.TableRow
+                      key={alert.id}
+                      className={!alert.is_read ? "bg-blue-50 dark:bg-blue-950/20" : ""}
+                    >
+                      <table_1.TableCell>
+                        <div className="flex items-start gap-3">
+                          {getAlertIcon(alert.alert_type)}
+                          <div>
+                            <div className="font-medium">{alert.title}</div>
+                            <div className="text-sm text-muted-foreground">{alert.description}</div>
                           </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge variant="outline" className="capitalize">
-                            {alert.alert_type.replace("_", " ")}
-                          </badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell>{getSeverityBadge(alert.severity)}</table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-1 text-sm">
-                            <lucide_react_1.Clock className="h-3 w-3" />
-                            {formatDate(alert.created_at)}
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-2">
-                            {!alert.is_read && (
-                              <badge_1.Badge variant="default" className="text-xs">
-                                Unread
-                              </badge_1.Badge>
-                            )}
-                            {alert.resolved_at && (
-                              <badge_1.Badge variant="outline" className="text-xs">
-                                Resolved
-                              </badge_1.Badge>
-                            )}
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-2">
-                            {!alert.is_read && (
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return markAsRead(alert.id);
-                                }}
-                              >
-                                <lucide_react_1.Eye className="h-4 w-4" />
-                              </button_1.Button>
-                            )}
-                            {!alert.resolved_at && (
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return resolveAlert(alert.id);
-                                }}
-                              >
-                                <lucide_react_1.CheckCircle className="h-4 w-4" />
-                              </button_1.Button>
-                            )}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge variant="outline" className="capitalize">
+                          {alert.alert_type.replace("_", " ")}
+                        </badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell>{getSeverityBadge(alert.severity)}</table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-1 text-sm">
+                          <lucide_react_1.Clock className="h-3 w-3" />
+                          {formatDate(alert.created_at)}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-2">
+                          {!alert.is_read && (
+                            <badge_1.Badge variant="default" className="text-xs">
+                              Unread
+                            </badge_1.Badge>
+                          )}
+                          {alert.resolved_at && (
+                            <badge_1.Badge variant="outline" className="text-xs">
+                              Resolved
+                            </badge_1.Badge>
+                          )}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-2">
+                          {!alert.is_read && (
                             <button_1.Button
                               variant="ghost"
                               size="sm"
-                              onClick={function () {
-                                return deleteAlert(alert.id);
-                              }}
-                              className="text-red-600 hover:text-red-700"
+                              onClick={() => markAsRead(alert.id)}
                             >
-                              <lucide_react_1.Trash2 className="h-4 w-4" />
+                              <lucide_react_1.Eye className="h-4 w-4" />
                             </button_1.Button>
-                          </div>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                          )}
+                          {!alert.resolved_at && (
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => resolveAlert(alert.id)}
+                            >
+                              <lucide_react_1.CheckCircle className="h-4 w-4" />
+                            </button_1.Button>
+                          )}
+                          <button_1.Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteAlert(alert.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <lucide_react_1.Trash2 className="h-4 w-4" />
+                          </button_1.Button>
+                        </div>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>}
         </card_1.CardContent>

@@ -1,19 +1,18 @@
-"use strict";
 // Brazilian Tax Management API
 // Story 5.5: API endpoints for Brazilian tax system integration
 // Author: VoidBeast V6.0 Master Orchestrator
 // Date: 2025-01-30
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -182,7 +179,7 @@ var nfeGenerationSchema = zod_1.z.object({
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, searchParams, clinicId, action, _a, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 11, , 12]);
@@ -248,7 +245,7 @@ function GET(request) {
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, body, action, _a, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 11, , 12]);
@@ -305,7 +302,7 @@ function POST(request) {
 function getTaxConfiguration(supabase, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -333,7 +330,7 @@ function getTaxConfiguration(supabase, clinicId) {
 function getTaxStatistics(supabase, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, nfeStats, nfeError, totalDocuments, totalValue, byStatus;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -356,10 +353,8 @@ function getTaxStatistics(supabase, clinicId) {
             ];
           }
           totalDocuments = nfeStats.length;
-          totalValue = nfeStats.reduce(function (sum, doc) {
-            return sum + doc.valor_total;
-          }, 0);
-          byStatus = nfeStats.reduce(function (acc, doc) {
+          totalValue = nfeStats.reduce((sum, doc) => sum + doc.valor_total, 0);
+          byStatus = nfeStats.reduce((acc, doc) => {
             acc[doc.status] = (acc[doc.status] || 0) + 1;
             return acc;
           }, {});
@@ -381,7 +376,7 @@ function getTaxStatistics(supabase, clinicId) {
 function getNFEStatus(supabase, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -409,7 +404,7 @@ function getNFEStatus(supabase, clinicId) {
 function getTaxOverview(supabase, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, configResult, statsResult, nfeResult;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -449,15 +444,13 @@ function calculateTaxes(supabase, body) {
       _b,
       data,
       error;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           validatedData = taxCalculationSchema.parse(body);
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/tax-engine");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/tax-engine")),
           ];
         case 1:
           BrazilianTaxEngine = _c.sent().BrazilianTaxEngine;
@@ -496,12 +489,8 @@ function calculateTaxes(supabase, body) {
                 clinic_id: validatedData.clinic_id,
                 invoice_id: validatedData.invoice_id,
                 calculations: calculations,
-                total_base: validatedData.services.reduce(function (sum, s) {
-                  return sum + s.valor_total;
-                }, 0),
-                total_taxes: calculations.reduce(function (sum, c) {
-                  return sum + c.calculation.total_taxes;
-                }, 0),
+                total_base: validatedData.services.reduce((sum, s) => sum + s.valor_total, 0),
+                total_taxes: calculations.reduce((sum, c) => sum + c.calculation.total_taxes, 0),
                 created_at: new Date().toISOString(),
               })
               .select()
@@ -549,15 +538,13 @@ function generateNFE(supabase, body) {
       data,
       error,
       error_3;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           validatedData = nfeGenerationSchema.parse(body);
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/nfe-service");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/nfe-service")),
           ];
         case 1:
           NFEIntegrationService = _c.sent().NFEIntegrationService;
@@ -644,7 +631,7 @@ function generateNFE(supabase, body) {
 function validateCNPJ(supabase, body) {
   return __awaiter(this, void 0, void 0, function () {
     var cnpj, CNPJValidator, validator, validation, error_4;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           cnpj = body.cnpj;
@@ -656,9 +643,7 @@ function validateCNPJ(supabase, body) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/brazilian-tax/cnpj-validator");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/brazilian-tax/cnpj-validator")),
           ];
         case 1:
           CNPJValidator = _a.sent().CNPJValidator;

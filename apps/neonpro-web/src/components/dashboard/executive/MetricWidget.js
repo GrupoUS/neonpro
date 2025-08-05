@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MetricWidget = MetricWidget;
 var react_1 = require("react");
@@ -209,7 +206,6 @@ var STATUS_CONFIG = {
   },
 };
 function MetricWidget(_a) {
-  var _this = this;
   var widget = _a.widget,
     isEditing = _a.isEditing,
     onUpdate = _a.onUpdate;
@@ -238,113 +234,93 @@ function MetricWidget(_a) {
     widget.config,
   );
   // Fetch metric data
-  (0, react_1.useEffect)(
-    function () {
-      var fetchData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var mockData, err_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (!widget.dataSource) {
-                  setError("No data source configured");
-                  setIsLoading(false);
-                  return [2 /*return*/];
-                }
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                setIsLoading(true);
-                setError(null);
-                // Simulate API call - replace with actual implementation
-                return [
-                  4 /*yield*/,
-                  new Promise(function (resolve) {
-                    return setTimeout(resolve, 1000);
-                  }),
-                ];
-              case 2:
-                // Simulate API call - replace with actual implementation
-                _a.sent();
-                mockData = generateMockData(widget.dataSource);
-                setData(mockData);
-                setLastUpdate(new Date());
-                return [3 /*break*/, 5];
-              case 3:
-                err_1 = _a.sent();
-                setError(err_1 instanceof Error ? err_1.message : "Failed to load data");
-                return [3 /*break*/, 5];
-              case 4:
+  (0, react_1.useEffect)(() => {
+    var fetchData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var mockData, err_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (!widget.dataSource) {
+                setError("No data source configured");
                 setIsLoading(false);
-                return [7 /*endfinally*/];
-              case 5:
                 return [2 /*return*/];
-            }
-          });
+              }
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              setIsLoading(true);
+              setError(null);
+              // Simulate API call - replace with actual implementation
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
+            case 2:
+              // Simulate API call - replace with actual implementation
+              _a.sent();
+              mockData = generateMockData(widget.dataSource);
+              setData(mockData);
+              setLastUpdate(new Date());
+              return [3 /*break*/, 5];
+            case 3:
+              err_1 = _a.sent();
+              setError(err_1 instanceof Error ? err_1.message : "Failed to load data");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      fetchData();
-      // Set up auto-refresh
-      if (widget.refreshInterval && widget.refreshInterval > 0) {
-        var interval_1 = setInterval(fetchData, widget.refreshInterval * 1000);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [widget.dataSource, widget.refreshInterval],
-  );
+      });
+    fetchData();
+    // Set up auto-refresh
+    if (widget.refreshInterval && widget.refreshInterval > 0) {
+      var interval_1 = setInterval(fetchData, widget.refreshInterval * 1000);
+      return () => clearInterval(interval_1);
+    }
+  }, [widget.dataSource, widget.refreshInterval]);
   // Calculate metric value and trend
-  var metricValue = (0, react_1.useMemo)(
-    function () {
-      if (!data) return null;
-      return {
-        current: data.value,
-        previous: data.previousValue,
-        target: data.targetValue,
-        unit: data.unit || "",
-        format: data.format || "number",
-      };
-    },
-    [data],
-  );
-  var metricTrend = (0, react_1.useMemo)(
-    function () {
-      if (!metricValue || metricValue.previous === undefined) return null;
-      var change = metricValue.current - metricValue.previous;
-      var percentage = metricValue.previous !== 0 ? (change / metricValue.previous) * 100 : 0;
-      var direction = "stable";
-      if (Math.abs(percentage) > 0.1) {
-        direction = change > 0 ? "up" : "down";
-      }
-      // Determine if trend is good based on metric type
-      var isGood = determineTrendGoodness(direction, widget.dataSource);
-      return {
-        direction: direction,
-        percentage: Math.abs(percentage),
-        isGood: isGood,
-      };
-    },
-    [metricValue, widget.dataSource],
-  );
-  var metricStatus = (0, react_1.useMemo)(
-    function () {
-      if (!metricValue || !data) return "neutral";
-      if (data.status) return data.status;
-      // Calculate status based on target and thresholds
-      if (metricValue.target) {
-        var ratio = metricValue.current / metricValue.target;
-        if (ratio >= 1.1) return "excellent";
-        if (ratio >= 0.9) return "good";
-        if (ratio >= 0.7) return "warning";
-        return "critical";
-      }
-      return "neutral";
-    },
-    [metricValue, data],
-  );
+  var metricValue = (0, react_1.useMemo)(() => {
+    if (!data) return null;
+    return {
+      current: data.value,
+      previous: data.previousValue,
+      target: data.targetValue,
+      unit: data.unit || "",
+      format: data.format || "number",
+    };
+  }, [data]);
+  var metricTrend = (0, react_1.useMemo)(() => {
+    if (!metricValue || metricValue.previous === undefined) return null;
+    var change = metricValue.current - metricValue.previous;
+    var percentage = metricValue.previous !== 0 ? (change / metricValue.previous) * 100 : 0;
+    var direction = "stable";
+    if (Math.abs(percentage) > 0.1) {
+      direction = change > 0 ? "up" : "down";
+    }
+    // Determine if trend is good based on metric type
+    var isGood = determineTrendGoodness(direction, widget.dataSource);
+    return {
+      direction: direction,
+      percentage: Math.abs(percentage),
+      isGood: isGood,
+    };
+  }, [metricValue, widget.dataSource]);
+  var metricStatus = (0, react_1.useMemo)(() => {
+    if (!metricValue || !data) return "neutral";
+    if (data.status) return data.status;
+    // Calculate status based on target and thresholds
+    if (metricValue.target) {
+      var ratio = metricValue.current / metricValue.target;
+      if (ratio >= 1.1) return "excellent";
+      if (ratio >= 0.9) return "good";
+      if (ratio >= 0.7) return "warning";
+      return "critical";
+    }
+    return "neutral";
+  }, [metricValue, data]);
   // Format value based on type
-  var formatValue = function (value, format) {
+  var formatValue = (value, format) => {
     switch (format) {
       case "currency":
         return new Intl.NumberFormat("pt-BR", {
@@ -353,30 +329,30 @@ function MetricWidget(_a) {
         }).format(value);
       case "percentage":
         return "".concat(value.toFixed(1), "%");
-      case "duration":
+      case "duration": {
         var hours = Math.floor(value / 60);
         var minutes = value % 60;
         return "".concat(hours, "h ").concat(minutes, "m");
+      }
       default:
         return new Intl.NumberFormat("pt-BR").format(value);
     }
   };
   // Handle refresh
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsLoading(true);
         // Trigger data refresh
-        setTimeout(function () {
+        setTimeout(() => {
           setLastUpdate(new Date());
           setIsLoading(false);
         }, 1000);
         return [2 /*return*/];
       });
     });
-  };
   // Render trend indicator
-  var renderTrendIndicator = function () {
+  var renderTrendIndicator = () => {
     if (!config.showTrend || !metricTrend) return null;
     var TrendIcon =
       metricTrend.direction === "up"
@@ -393,7 +369,7 @@ function MetricWidget(_a) {
     );
   };
   // Render status indicator
-  var renderStatusIndicator = function () {
+  var renderStatusIndicator = () => {
     if (!config.showStatus) return null;
     var statusConfig = STATUS_CONFIG[metricStatus];
     var StatusIcon = statusConfig.icon;
@@ -412,7 +388,7 @@ function MetricWidget(_a) {
     );
   };
   // Render target indicator
-  var renderTargetIndicator = function () {
+  var renderTargetIndicator = () => {
     if (
       !config.showTarget ||
       !(metricValue === null || metricValue === void 0 ? void 0 : metricValue.target)
@@ -609,12 +585,12 @@ function determineTrendGoodness(direction, dataSource) {
     "delays",
     "turnover",
   ];
-  var isPositiveMetric = positiveMetrics.some(function (metric) {
-    return dataSource.toLowerCase().includes(metric);
-  });
-  var isNegativeMetric = negativeMetrics.some(function (metric) {
-    return dataSource.toLowerCase().includes(metric);
-  });
+  var isPositiveMetric = positiveMetrics.some((metric) =>
+    dataSource.toLowerCase().includes(metric),
+  );
+  var isNegativeMetric = negativeMetrics.some((metric) =>
+    dataSource.toLowerCase().includes(metric),
+  );
   if (direction === "up") {
     return isPositiveMetric || !isNegativeMetric;
   } else if (direction === "down") {

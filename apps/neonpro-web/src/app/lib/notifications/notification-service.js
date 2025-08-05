@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Core Notification Service
  * Manages email, SMS, and in-app notifications with HIPAA compliance
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationService = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -179,7 +176,7 @@ var NotificationPayloadSchema = zod_1.z.object({
   scheduledFor: zod_1.z.date().optional(),
   metadata: zod_1.z.record(zod_1.z.any()).optional(),
 });
-var NotificationService = /** @class */ (function () {
+var NotificationService = /** @class */ (() => {
   function NotificationService() {
     this.emailService = new email_service_1.EmailService();
     this.smsService = new sms_service_1.SMSService();
@@ -204,7 +201,7 @@ var NotificationService = /** @class */ (function () {
             if (!preferences) {
               throw new Error("User preferences not found");
             }
-            if (!!preferences.consentGranted) return [3 /*break*/, 3];
+            if (preferences.consentGranted) return [3 /*break*/, 3];
             return [
               4 /*yield*/,
               this.auditService.log({
@@ -456,7 +453,7 @@ var NotificationService = /** @class */ (function () {
   NotificationService.prototype.getUserPreferences = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_4;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -516,7 +513,7 @@ var NotificationService = /** @class */ (function () {
   /**
    * Check if a specific channel is enabled for a notification type
    */
-  NotificationService.prototype.isChannelEnabled = function (channel, type, preferences) {
+  NotificationService.prototype.isChannelEnabled = (channel, type, preferences) => {
     var channelPrefs = preferences.channels[channel];
     if (!(channelPrefs === null || channelPrefs === void 0 ? void 0 : channelPrefs.enabled))
       return false;
@@ -526,7 +523,7 @@ var NotificationService = /** @class */ (function () {
   /**
    * Get channels appropriate for notification priority
    */
-  NotificationService.prototype.getChannelsForPriority = function (priority) {
+  NotificationService.prototype.getChannelsForPriority = (priority) => {
     switch (priority) {
       case "urgent":
         return ["sms", "in_app", "email"];
@@ -542,10 +539,10 @@ var NotificationService = /** @class */ (function () {
   }; /**
    * Get channels enabled for specific notification type
    */
-  NotificationService.prototype.getChannelsForType = function (type, preferences) {
+  NotificationService.prototype.getChannelsForType = (type, preferences) => {
     var channels = [];
     // Check each channel to see if it supports this notification type
-    Object.entries(preferences.channels).forEach(function (_a) {
+    Object.entries(preferences.channels).forEach((_a) => {
       var channelKey = _a[0],
         channelPrefs = _a[1];
       if (channelPrefs.enabled && channelPrefs.enabledTypes.includes(type)) {
@@ -560,7 +557,7 @@ var NotificationService = /** @class */ (function () {
   NotificationService.prototype.sendInAppNotification = function (payload) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_5;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);

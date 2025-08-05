@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI-Powered Automatic Scheduling System
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
@@ -22,26 +21,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -61,13 +60,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -89,9 +88,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -163,7 +160,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AISchedulingSystem = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -171,7 +168,7 @@ var ai_scheduling_core_1 = require("./ai-scheduling-core");
 var optimization_engine_1 = require("./optimization-engine");
 var real_time_adaptive_1 = require("./real-time-adaptive");
 var compliance_rules_engine_1 = require("./compliance-rules-engine");
-var AISchedulingSystem = /** @class */ (function () {
+var AISchedulingSystem = /** @class */ (() => {
   function AISchedulingSystem(config) {
     this.supabase = (0, client_1.createClient)();
     this.eventListeners = new Map();
@@ -316,11 +313,7 @@ var AISchedulingSystem = /** @class */ (function () {
             } else {
               warnings.push(
                 "Recommendation excluded due to compliance violations: ".concat(
-                  validation.violations
-                    .map(function (v) {
-                      return v.description;
-                    })
-                    .join(", "),
+                  validation.violations.map((v) => v.description).join(", "),
                 ),
               );
             }
@@ -608,27 +601,19 @@ var AISchedulingSystem = /** @class */ (function () {
             successfulSchedules =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "scheduled";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "scheduled").length) || 0;
             rescheduledAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.reschedule_reason;
-                  }).length) || 0;
+                : appointments.filter((a) => a.reschedule_reason).length) || 0;
             cancelledAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "cancelled";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "cancelled").length) || 0;
             averageComplianceScore =
               (validations === null || validations === void 0
                 ? void 0
-                : validations.reduce(function (sum, v) {
-                    return sum + (v.compliance_score || 0);
-                  }, 0)) /
+                : validations.reduce((sum, v) => sum + (v.compliance_score || 0), 0)) /
               ((validations === null || validations === void 0 ? void 0 : validations.length) || 1);
             recommendations = this.generateAnalyticsRecommendations({
               totalAppointments: totalAppointments,
@@ -717,11 +702,11 @@ var AISchedulingSystem = /** @class */ (function () {
   /**
    * Calculate confidence score for recommendations
    */
-  AISchedulingSystem.prototype.calculateConfidenceScore = function (
+  AISchedulingSystem.prototype.calculateConfidenceScore = (
     recommendations,
     optimizationResult,
     complianceResult,
-  ) {
+  ) => {
     if (recommendations.length === 0) return 0;
     var score = 70; // Base score
     // Add points for optimization
@@ -734,9 +719,7 @@ var AISchedulingSystem = /** @class */ (function () {
     }
     // Add points for recommendation quality
     var avgRecommendationScore =
-      recommendations.reduce(function (sum, r) {
-        return sum + r.score;
-      }, 0) / recommendations.length;
+      recommendations.reduce((sum, r) => sum + r.score, 0) / recommendations.length;
     score += avgRecommendationScore * 0.1;
     return Math.min(100, Math.max(0, score));
   };
@@ -778,10 +761,9 @@ var AISchedulingSystem = /** @class */ (function () {
    * Setup event listeners for system components
    */
   AISchedulingSystem.prototype.setupEventListeners = function () {
-    var _this = this;
     // Listen for real-time adaptive events
-    this.realTimeAdaptive.on("conflict_detected", function (data) {
-      _this.emitEvent({
+    this.realTimeAdaptive.on("conflict_detected", (data) => {
+      this.emitEvent({
         id: "conflict-".concat(Date.now()),
         type: "conflict",
         status: "processing",
@@ -789,8 +771,8 @@ var AISchedulingSystem = /** @class */ (function () {
         data: data,
       });
     });
-    this.realTimeAdaptive.on("auto_rescheduled", function (data) {
-      _this.emitEvent({
+    this.realTimeAdaptive.on("auto_rescheduled", (data) => {
+      this.emitEvent({
         id: "reschedule-".concat(Date.now()),
         type: "recommendation",
         status: "completed",
@@ -804,7 +786,7 @@ var AISchedulingSystem = /** @class */ (function () {
    */
   AISchedulingSystem.prototype.emitEvent = function (event) {
     var listeners = this.eventListeners.get(event.type) || [];
-    listeners.forEach(function (listener) {
+    listeners.forEach((listener) => {
       try {
         listener(event);
       } catch (error) {
@@ -842,7 +824,7 @@ var AISchedulingSystem = /** @class */ (function () {
     reason,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would integrate with notification system
           console.log(
@@ -863,7 +845,7 @@ var AISchedulingSystem = /** @class */ (function () {
   /**
    * Generate analytics recommendations
    */
-  AISchedulingSystem.prototype.generateAnalyticsRecommendations = function (metrics) {
+  AISchedulingSystem.prototype.generateAnalyticsRecommendations = (metrics) => {
     var recommendations = [];
     var successRate = metrics.successfulSchedules / metrics.totalAppointments;
     var rescheduleRate = metrics.rescheduledAppointments / metrics.totalAppointments;

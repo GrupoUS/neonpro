@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 11.2: Patient Risk Scoring System
  * Advanced risk assessment algorithms for no-show prediction and patient management
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.riskScoringEngine = exports.RiskScoringEngine = void 0;
 exports.formatRiskScore = formatRiskScore;
@@ -157,7 +154,7 @@ exports.getRiskLevelColor = getRiskLevelColor;
 exports.getRiskTrendIcon = getRiskTrendIcon;
 exports.calculateRiskReduction = calculateRiskReduction;
 // Main risk scoring engine class
-var RiskScoringEngine = /** @class */ (function () {
+var RiskScoringEngine = /** @class */ (() => {
   function RiskScoringEngine() {
     var _a;
     this.supabase = createClient(ComponentClient());
@@ -336,15 +333,9 @@ var RiskScoringEngine = /** @class */ (function () {
         if (appointmentHistory.length < this.config.minimumDataPoints) {
           return [2 /*return*/, 50]; // Default medium risk for insufficient data
         }
-        noShows = appointmentHistory.filter(function (apt) {
-          return apt.status === "NO_SHOW";
-        });
-        cancellations = appointmentHistory.filter(function (apt) {
-          return apt.status === "CANCELLED";
-        });
-        lateArrival = appointmentHistory.filter(function (apt) {
-          return apt.late_arrival === true;
-        });
+        noShows = appointmentHistory.filter((apt) => apt.status === "NO_SHOW");
+        cancellations = appointmentHistory.filter((apt) => apt.status === "CANCELLED");
+        lateArrival = appointmentHistory.filter((apt) => apt.late_arrival === true);
         noShowRate = noShows.length / appointmentHistory.length;
         cancellationRate = cancellations.length / appointmentHistory.length;
         lateRate = lateArrival.length / appointmentHistory.length;
@@ -376,9 +367,8 @@ var RiskScoringEngine = /** @class */ (function () {
             riskScore += bookingPatterns.lastMinuteBookings * 20;
             riskScore += bookingPatterns.inconsistentTiming * 15;
             reschedulingRate =
-              appointmentHistory.filter(function (apt) {
-                return apt.reschedule_count && apt.reschedule_count > 0;
-              }).length / appointmentHistory.length;
+              appointmentHistory.filter((apt) => apt.reschedule_count && apt.reschedule_count > 0)
+                .length / appointmentHistory.length;
             riskScore += reschedulingRate * 25;
             return [
               4 /*yield*/,
@@ -447,22 +437,14 @@ var RiskScoringEngine = /** @class */ (function () {
       var responses, responseRate, responseTimes, avgResponseTime, riskScore, channelEffectiveness;
       return __generator(this, function (_a) {
         if (communicationHistory.length === 0) return [2 /*return*/, 30]; // Default low-medium risk
-        responses = communicationHistory.filter(function (comm) {
-          return comm.response_received;
-        });
+        responses = communicationHistory.filter((comm) => comm.response_received);
         responseRate = responses.length / communicationHistory.length;
         responseTimes = responses
-          .filter(function (r) {
-            return r.response_time_minutes;
-          })
-          .map(function (r) {
-            return r.response_time_minutes;
-          });
+          .filter((r) => r.response_time_minutes)
+          .map((r) => r.response_time_minutes);
         avgResponseTime =
           responseTimes.length > 0
-            ? responseTimes.reduce(function (sum, time) {
-                return sum + time;
-              }, 0) / responseTimes.length
+            ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
             : 1440;
         riskScore = 0;
         riskScore += (1 - responseRate) * 50; // Poor response rate increases risk
@@ -478,7 +460,7 @@ var RiskScoringEngine = /** @class */ (function () {
    */
   RiskScoringEngine.prototype.calculateContextualRisk = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would integrate with current patient status, health conditions, etc.
         // For now, returning a base contextual risk
         return [2 /*return*/, 25]; // Base contextual risk
@@ -514,8 +496,7 @@ var RiskScoringEngine = /** @class */ (function () {
         trendDifference,
         trendConfidence,
         riskTrend;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (appointmentHistory.length < 6) {
           return [
             2 /*return*/,
@@ -526,25 +507,23 @@ var RiskScoringEngine = /** @class */ (function () {
             },
           ];
         }
-        monthlyGroups = appointmentHistory.reduce(function (groups, apt) {
+        monthlyGroups = appointmentHistory.reduce((groups, apt) => {
           var month = new Date(apt.scheduled_date).toISOString().substring(0, 7);
           if (!groups[month]) groups[month] = [];
           groups[month].push(apt);
           return groups;
         }, {});
         monthlyHistory = Object.entries(monthlyGroups)
-          .map(function (_a) {
+          .map((_a) => {
             var month = _a[0],
               appointments = _a[1];
             return {
               month: month,
-              riskScore: _this.calculateMonthlyRiskScore(appointments),
+              riskScore: this.calculateMonthlyRiskScore(appointments),
               appointmentCount: appointments.length,
             };
           })
-          .sort(function (a, b) {
-            return a.month.localeCompare(b.month);
-          });
+          .sort((a, b) => a.month.localeCompare(b.month));
         recentMonths = monthlyHistory.slice(-6);
         if (recentMonths.length < 3) {
           return [
@@ -558,14 +537,8 @@ var RiskScoringEngine = /** @class */ (function () {
         }
         firstHalf = recentMonths.slice(0, 3);
         secondHalf = recentMonths.slice(-3);
-        firstAvg =
-          firstHalf.reduce(function (sum, m) {
-            return sum + m.riskScore;
-          }, 0) / firstHalf.length;
-        secondAvg =
-          secondHalf.reduce(function (sum, m) {
-            return sum + m.riskScore;
-          }, 0) / secondHalf.length;
+        firstAvg = firstHalf.reduce((sum, m) => sum + m.riskScore, 0) / firstHalf.length;
+        secondAvg = secondHalf.reduce((sum, m) => sum + m.riskScore, 0) / secondHalf.length;
         trendDifference = secondAvg - firstAvg;
         trendConfidence = Math.min(recentMonths.length / 6, 1);
         if (trendDifference > 10) {
@@ -591,7 +564,7 @@ var RiskScoringEngine = /** @class */ (function () {
    */
   RiskScoringEngine.prototype.identifyTopRiskFactors = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would analyze all factors and return the most significant ones
         // Placeholder implementation
         return [
@@ -615,7 +588,7 @@ var RiskScoringEngine = /** @class */ (function () {
    */
   RiskScoringEngine.prototype.identifyProtectiveFactors = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would identify factors that positively influence attendance
         // Placeholder implementation
         return [
@@ -643,7 +616,7 @@ var RiskScoringEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
         if (riskScore >= 75) {
           recommendations.push("Personal phone call 48 hours before appointment");
@@ -696,43 +669,40 @@ var RiskScoringEngine = /** @class */ (function () {
   };
   // Helper methods
   RiskScoringEngine.prototype.applyTimeDecay = function (events, allEvents) {
-    var _this = this;
     if (events.length === 0) return 0;
     var now = new Date();
     var weightedSum = 0;
     var totalWeight = 0;
-    events.forEach(function (event) {
+    events.forEach((event) => {
       var eventDate = new Date(event.scheduled_date);
       var monthsAgo = Math.max(
         0,
         (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
       );
-      var weight = Math.pow(_this.config.decayFactors.timeDecay, monthsAgo);
+      var weight = this.config.decayFactors.timeDecay ** monthsAgo;
       weightedSum += weight;
       totalWeight += weight;
     });
     var totalEvents = allEvents.length;
-    var totalEventWeight = allEvents.reduce(function (sum, event) {
+    var totalEventWeight = allEvents.reduce((sum, event) => {
       var eventDate = new Date(event.scheduled_date);
       var monthsAgo = Math.max(
         0,
         (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
       );
-      return sum + Math.pow(_this.config.decayFactors.timeDecay, monthsAgo);
+      return sum + this.config.decayFactors.timeDecay ** monthsAgo;
     }, 0);
     return totalEventWeight > 0 ? weightedSum / totalEventWeight : 0;
   };
-  RiskScoringEngine.prototype.analyzePatterns = function (appointmentHistory) {
+  RiskScoringEngine.prototype.analyzePatterns = (appointmentHistory) => {
     // Look for concerning patterns
     var patternPenalty = 0;
     // Consecutive no-shows
     var consecutiveNoShows = 0;
     var maxConsecutive = 0;
     appointmentHistory
-      .sort(function (a, b) {
-        return new Date(b.scheduled_date).getTime() - new Date(a.scheduled_date).getTime();
-      })
-      .forEach(function (apt) {
+      .sort((a, b) => new Date(b.scheduled_date).getTime() - new Date(a.scheduled_date).getTime())
+      .forEach((apt) => {
         if (apt.status === "NO_SHOW") {
           consecutiveNoShows++;
           maxConsecutive = Math.max(maxConsecutive, consecutiveNoShows);
@@ -743,62 +713,42 @@ var RiskScoringEngine = /** @class */ (function () {
     patternPenalty += maxConsecutive * 5; // 5 points per consecutive no-show
     return Math.min(patternPenalty, 25); // Cap at 25 points
   };
-  RiskScoringEngine.prototype.analyzeBookingPatterns = function (appointmentHistory) {
+  RiskScoringEngine.prototype.analyzeBookingPatterns = (appointmentHistory) => {
     var bookings = appointmentHistory
-      .filter(function (apt) {
-        return apt.created_at && apt.scheduled_date;
-      })
-      .map(function (apt) {
+      .filter((apt) => apt.created_at && apt.scheduled_date)
+      .map((apt) => {
         var booking = new Date(apt.created_at);
         var appointment = new Date(apt.scheduled_date);
         return (appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24);
       });
-    var lastMinuteBookings =
-      bookings.filter(function (days) {
-        return days < 1;
-      }).length / bookings.length;
+    var lastMinuteBookings = bookings.filter((days) => days < 1).length / bookings.length;
     // Calculate timing consistency
-    var avgBookingTime =
-      bookings.reduce(function (sum, days) {
-        return sum + days;
-      }, 0) / bookings.length;
+    var avgBookingTime = bookings.reduce((sum, days) => sum + days, 0) / bookings.length;
     var variance =
-      bookings.reduce(function (sum, days) {
-        return sum + Math.pow(days - avgBookingTime, 2);
-      }, 0) / bookings.length;
+      bookings.reduce((sum, days) => sum + (days - avgBookingTime) ** 2, 0) / bookings.length;
     var inconsistentTiming = Math.min(variance / 100, 1); // Normalize variance
     return {
       lastMinuteBookings: lastMinuteBookings,
       inconsistentTiming: inconsistentTiming,
     };
   };
-  RiskScoringEngine.prototype.analyzeAppointmentFrequency = function (appointmentHistory) {
+  RiskScoringEngine.prototype.analyzeAppointmentFrequency = (appointmentHistory) => {
     // Analyze gaps between appointments
     var dates = appointmentHistory
-      .map(function (apt) {
-        return new Date(apt.scheduled_date);
-      })
-      .sort(function (a, b) {
-        return a.getTime() - b.getTime();
-      });
+      .map((apt) => new Date(apt.scheduled_date))
+      .sort((a, b) => a.getTime() - b.getTime());
     if (dates.length < 2) return 0;
     var gaps = [];
     for (var i = 1; i < dates.length; i++) {
       var gap = (dates[i].getTime() - dates[i - 1].getTime()) / (1000 * 60 * 60 * 24);
       gaps.push(gap);
     }
-    var avgGap =
-      gaps.reduce(function (sum, gap) {
-        return sum + gap;
-      }, 0) / gaps.length;
-    var variance =
-      gaps.reduce(function (sum, gap) {
-        return sum + Math.pow(gap - avgGap, 2);
-      }, 0) / gaps.length;
+    var avgGap = gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
+    var variance = gaps.reduce((sum, gap) => sum + (gap - avgGap) ** 2, 0) / gaps.length;
     // Higher variance indicates inconsistent scheduling patterns
     return Math.min(Math.sqrt(variance) / 30, 1); // Normalize
   };
-  RiskScoringEngine.prototype.getAgeGroupRisk = function (ageGroup) {
+  RiskScoringEngine.prototype.getAgeGroupRisk = (ageGroup) => {
     var riskMap = {
       "18-25": 0.8,
       "26-35": 0.6,
@@ -809,9 +759,9 @@ var RiskScoringEngine = /** @class */ (function () {
     };
     return riskMap[ageGroup] || 0.5;
   };
-  RiskScoringEngine.prototype.analyzeChannelEffectiveness = function (communicationHistory) {
+  RiskScoringEngine.prototype.analyzeChannelEffectiveness = (communicationHistory) => {
     if (communicationHistory.length === 0) return 0.5;
-    var channels = communicationHistory.reduce(function (acc, comm) {
+    var channels = communicationHistory.reduce((acc, comm) => {
       if (!acc[comm.channel]) {
         acc[comm.channel] = { sent: 0, responded: 0 };
       }
@@ -821,51 +771,41 @@ var RiskScoringEngine = /** @class */ (function () {
       }
       return acc;
     }, {});
-    var channelRates = Object.values(channels).map(function (ch) {
-      return ch.responded / ch.sent;
-    });
+    var channelRates = Object.values(channels).map((ch) => ch.responded / ch.sent);
     return channelRates.length > 0 ? Math.max.apply(Math, channelRates) : 0.5;
   };
-  RiskScoringEngine.prototype.calculateMonthlyRiskScore = function (appointments) {
-    var noShows = appointments.filter(function (apt) {
-      return apt.status === "NO_SHOW";
-    }).length;
+  RiskScoringEngine.prototype.calculateMonthlyRiskScore = (appointments) => {
+    var noShows = appointments.filter((apt) => apt.status === "NO_SHOW").length;
     var total = appointments.length;
     return total > 0 ? (noShows / total) * 100 : 0;
   };
-  RiskScoringEngine.prototype.analyzeInterventionEffectiveness = function (interventionHistory) {
+  RiskScoringEngine.prototype.analyzeInterventionEffectiveness = (interventionHistory) => {
     var effectiveness = {};
-    interventionHistory.forEach(function (intervention) {
+    interventionHistory.forEach((intervention) => {
       if (!effectiveness[intervention.type]) {
         effectiveness[intervention.type] = 0;
       }
       effectiveness[intervention.type] += intervention.effectivenessScore;
     });
     // Average the effectiveness scores
-    Object.keys(effectiveness).forEach(function (type) {
-      var count = interventionHistory.filter(function (i) {
-        return i.type === type;
-      }).length;
+    Object.keys(effectiveness).forEach((type) => {
+      var count = interventionHistory.filter((i) => i.type === type).length;
       effectiveness[type] = effectiveness[type] / count;
     });
     return effectiveness;
   };
-  RiskScoringEngine.prototype.analyzeTimePreferences = function (appointmentHistory) {
+  RiskScoringEngine.prototype.analyzeTimePreferences = (appointmentHistory) => {
     var timeSlots = appointmentHistory
-      .filter(function (apt) {
-        return apt.status === "ATTENDED";
-      })
-      .map(function (apt) {
-        return new Date(apt.scheduled_date).getHours();
-      });
+      .filter((apt) => apt.status === "ATTENDED")
+      .map((apt) => new Date(apt.scheduled_date).getHours());
     if (timeSlots.length === 0) {
       return { preferredTime: "10:00", confidence: 0 };
     }
-    var timeCounts = timeSlots.reduce(function (acc, hour) {
+    var timeCounts = timeSlots.reduce((acc, hour) => {
       acc[hour] = (acc[hour] || 0) + 1;
       return acc;
     }, {});
-    var _a = Object.entries(timeCounts).sort(function (_a, _b) {
+    var _a = Object.entries(timeCounts).sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
@@ -876,23 +816,21 @@ var RiskScoringEngine = /** @class */ (function () {
     var preferredTime = "".concat(mostFrequentHour, ":00");
     return { preferredTime: preferredTime, confidence: confidence };
   };
-  RiskScoringEngine.prototype.calculateOptimalAdvanceTime = function (appointmentHistory) {
+  RiskScoringEngine.prototype.calculateOptimalAdvanceTime = (appointmentHistory) => {
     var advanceTimes = appointmentHistory
-      .filter(function (apt) {
-        return apt.created_at && apt.scheduled_date && apt.status === "ATTENDED";
-      })
-      .map(function (apt) {
+      .filter((apt) => apt.created_at && apt.scheduled_date && apt.status === "ATTENDED")
+      .map((apt) => {
         var booking = new Date(apt.created_at);
         var appointment = new Date(apt.scheduled_date);
         return Math.round((appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24));
       });
     if (advanceTimes.length === 0) return 7; // Default to 1 week
     // Find the most common advance time for attended appointments
-    var timeFrequency = advanceTimes.reduce(function (acc, time) {
+    var timeFrequency = advanceTimes.reduce((acc, time) => {
       acc[time] = (acc[time] || 0) + 1;
       return acc;
     }, {});
-    var optimalTime = Object.entries(timeFrequency).sort(function (_a, _b) {
+    var optimalTime = Object.entries(timeFrequency).sort((_a, _b) => {
       var a = _a[1];
       var b = _b[1];
       return b - a;
@@ -901,7 +839,7 @@ var RiskScoringEngine = /** @class */ (function () {
   };
   RiskScoringEngine.prototype.getCommunicationScore = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for communication score calculation
         return [2 /*return*/, 0.75];
       });
@@ -947,7 +885,7 @@ var RiskScoringEngine = /** @class */ (function () {
   };
   RiskScoringEngine.prototype.getPatientDemographics = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder implementation
         return [
           2 /*return*/,
@@ -967,7 +905,7 @@ var RiskScoringEngine = /** @class */ (function () {
   };
   RiskScoringEngine.prototype.getCommunicationHistory = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder implementation
         return [2 /*return*/, []];
       });
@@ -975,7 +913,7 @@ var RiskScoringEngine = /** @class */ (function () {
   };
   RiskScoringEngine.prototype.getInterventionHistory = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder implementation
         return [2 /*return*/, []];
       });
@@ -983,7 +921,7 @@ var RiskScoringEngine = /** @class */ (function () {
   };
   RiskScoringEngine.prototype.calculateSeasonalPatterns = function (appointmentHistory) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder implementation
         return [
           2 /*return*/,
@@ -1002,7 +940,7 @@ var RiskScoringEngine = /** @class */ (function () {
    */
   RiskScoringEngine.prototype.updateRiskProfile = function (patientId, appointmentOutcome) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for updating risk profile based on new data
         console.log(
           "Updating risk profile for patient "

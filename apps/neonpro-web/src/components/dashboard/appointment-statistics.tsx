@@ -1,6 +1,23 @@
 "use client";
 
+import type { endOfDay, format, startOfDay, subDays } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  PieChart,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
 import type { useMemo } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type {
   Card,
   CardContent,
@@ -9,25 +26,8 @@ import type {
   CardTitle,
 } from "@/components/ui/card";
 import type { Progress } from "@/components/ui/progress";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  Clock,
-  Users,
-  DollarSign,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Target,
-  BarChart3,
-  PieChart,
-} from "lucide-react";
-import type { format, subDays, startOfDay, endOfDay } from "date-fns";
-import type { pt } from "date-fns/locale";
-import type { cn } from "@/lib/utils";
 import type { Appointment } from "@/hooks/use-appointments-manager";
+import type { cn } from "@/lib/utils";
 
 interface AppointmentStatisticsProps {
   appointments: Appointment[];

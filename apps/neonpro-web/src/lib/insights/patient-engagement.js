@@ -1,7 +1,6 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.patientEngagementInsights = exports.PatientEngagementInsights = void 0;
-var PatientEngagementInsights = /** @class */ (function () {
+var PatientEngagementInsights = /** @class */ (() => {
   function PatientEngagementInsights() {
     this.metrics = new Map();
   }
@@ -23,7 +22,7 @@ var PatientEngagementInsights = /** @class */ (function () {
       next_actions: nextActions,
     };
   };
-  PatientEngagementInsights.prototype.generateInsights = function (metrics) {
+  PatientEngagementInsights.prototype.generateInsights = (metrics) => {
     var insights = [];
     // High risk insight
     if (metrics.engagement_score < 30) {
@@ -82,7 +81,7 @@ var PatientEngagementInsights = /** @class */ (function () {
   PatientEngagementInsights.prototype.generateNextActions = function (metrics, insights) {
     var actions = [];
     // Add actions based on insights
-    insights.forEach(function (insight) {
+    insights.forEach((insight) => {
       if (insight.priority === "critical" || insight.priority === "high") {
         actions.push.apply(actions, insight.recommendations.slice(0, 2));
       }
@@ -97,27 +96,22 @@ var PatientEngagementInsights = /** @class */ (function () {
     }
     return actions;
   };
-  PatientEngagementInsights.prototype.calculateTrend = function (metrics) {
+  PatientEngagementInsights.prototype.calculateTrend = (metrics) => {
     // Simplified trend calculation - in real implementation, this would use historical data
     if (metrics.engagement_score > 70) return "increasing";
     if (metrics.engagement_score < 40) return "decreasing";
     return "stable";
   };
-  PatientEngagementInsights.prototype.getDaysSinceLastInteraction = function (lastInteraction) {
+  PatientEngagementInsights.prototype.getDaysSinceLastInteraction = (lastInteraction) => {
     var lastDate = new Date(lastInteraction);
     var now = new Date();
     var diffTime = Math.abs(now.getTime() - lastDate.getTime());
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
   PatientEngagementInsights.prototype.getBulkAnalysis = function (patientIds) {
-    var _this = this;
     return patientIds
-      .map(function (id) {
-        return _this.analyzePatientEngagement(id);
-      })
-      .filter(function (analysis) {
-        return analysis !== null;
-      });
+      .map((id) => this.analyzePatientEngagement(id))
+      .filter((analysis) => analysis !== null);
   };
   PatientEngagementInsights.prototype.getEngagementSummary = function () {
     var allMetrics = Array.from(this.metrics.values());
@@ -131,19 +125,12 @@ var PatientEngagementInsights = /** @class */ (function () {
         average_score: 0,
       };
     }
-    var high = allMetrics.filter(function (m) {
-      return m.engagement_score >= 70;
-    }).length;
-    var medium = allMetrics.filter(function (m) {
-      return m.engagement_score >= 40 && m.engagement_score < 70;
-    }).length;
-    var low = allMetrics.filter(function (m) {
-      return m.engagement_score < 40;
-    }).length;
-    var average =
-      allMetrics.reduce(function (sum, m) {
-        return sum + m.engagement_score;
-      }, 0) / total;
+    var high = allMetrics.filter((m) => m.engagement_score >= 70).length;
+    var medium = allMetrics.filter(
+      (m) => m.engagement_score >= 40 && m.engagement_score < 70,
+    ).length;
+    var low = allMetrics.filter((m) => m.engagement_score < 40).length;
+    var average = allMetrics.reduce((sum, m) => sum + m.engagement_score, 0) / total;
     return {
       total_patients: total,
       high_engagement: high,

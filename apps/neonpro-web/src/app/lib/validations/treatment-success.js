@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.complianceReportQuerySchema =
   exports.qualityBenchmarkQuerySchema =
@@ -26,20 +25,18 @@ exports.createTreatmentOutcomeSchema = zod_1.z.object({
   treatment_id: zod_1.z.string().min(1, "ID do tratamento é obrigatório"),
   provider_id: zod_1.z.string().uuid("ID do profissional deve ser um UUID válido"),
   treatment_type: zod_1.z.string().min(1, "Tipo de tratamento é obrigatório").max(100),
-  treatment_date: zod_1.z.string().refine(function (date) {
-    return !isNaN(Date.parse(date));
-  }, "Data de tratamento inválida"),
-  success_criteria: zod_1.z.record(zod_1.z.any()).refine(function (obj) {
-    return Object.keys(obj).length > 0;
-  }, "Critérios de sucesso são obrigatórios"),
+  treatment_date: zod_1.z
+    .string()
+    .refine((date) => !isNaN(Date.parse(date)), "Data de tratamento inválida"),
+  success_criteria: zod_1.z
+    .record(zod_1.z.any())
+    .refine((obj) => Object.keys(obj).length > 0, "Critérios de sucesso são obrigatórios"),
   notes: zod_1.z.string().optional(),
 });
 exports.updateTreatmentOutcomeSchema = zod_1.z.object({
   outcome_date: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data de resultado inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data de resultado inválida")
     .optional(),
   success_score: zod_1.z
     .number()
@@ -65,16 +62,12 @@ exports.createSuccessMetricsSchema = zod_1.z
     treatment_type: zod_1.z.string().min(1, "Tipo de tratamento é obrigatório").max(100),
     provider_id: zod_1.z.string().uuid("ID do profissional deve ser um UUID válido").optional(),
     time_period: zod_1.z.enum(["monthly", "quarterly", "yearly"], {
-      errorMap: function () {
-        return { message: "Período deve ser monthly, quarterly ou yearly" };
-      },
+      errorMap: () => ({ message: "Período deve ser monthly, quarterly ou yearly" }),
     }),
-    period_start: zod_1.z.string().refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data de início inválida"),
-    period_end: zod_1.z.string().refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data de fim inválida"),
+    period_start: zod_1.z
+      .string()
+      .refine((date) => !isNaN(Date.parse(date)), "Data de início inválida"),
+    period_end: zod_1.z.string().refine((date) => !isNaN(Date.parse(date)), "Data de fim inválida"),
     total_treatments: zod_1.z.number().int().min(0, "Total de tratamentos deve ser positivo"),
     successful_treatments: zod_1.z
       .number()
@@ -94,25 +87,18 @@ exports.createSuccessMetricsSchema = zod_1.z
     benchmarks: zod_1.z.record(zod_1.z.any()).optional(),
     industry_comparison: zod_1.z.record(zod_1.z.any()).optional(),
   })
-  .refine(
-    function (data) {
-      return data.successful_treatments <= data.total_treatments;
-    },
-    {
-      message: "Tratamentos bem-sucedidos não pode ser maior que o total",
-      path: ["successful_treatments"],
-    },
-  );
+  .refine((data) => data.successful_treatments <= data.total_treatments, {
+    message: "Tratamentos bem-sucedidos não pode ser maior que o total",
+    path: ["successful_treatments"],
+  });
 // Provider Performance Schemas
 exports.createProviderPerformanceSchema = zod_1.z.object({
   provider_id: zod_1.z.string().uuid("ID do profissional deve ser um UUID válido"),
   evaluation_period: zod_1.z.string().min(1, "Período de avaliação é obrigatório"),
-  period_start: zod_1.z.string().refine(function (date) {
-    return !isNaN(Date.parse(date));
-  }, "Data de início inválida"),
-  period_end: zod_1.z.string().refine(function (date) {
-    return !isNaN(Date.parse(date));
-  }, "Data de fim inválida"),
+  period_start: zod_1.z
+    .string()
+    .refine((date) => !isNaN(Date.parse(date)), "Data de início inválida"),
+  period_end: zod_1.z.string().refine((date) => !isNaN(Date.parse(date)), "Data de fim inválida"),
   overall_success_rate: zod_1.z
     .number()
     .min(0)
@@ -134,21 +120,19 @@ exports.createProviderPerformanceSchema = zod_1.z.object({
 // Protocol Optimization Schemas
 exports.createProtocolOptimizationSchema = zod_1.z.object({
   treatment_type: zod_1.z.string().min(1, "Tipo de tratamento é obrigatório").max(100),
-  current_protocol: zod_1.z.record(zod_1.z.any()).refine(function (obj) {
-    return Object.keys(obj).length > 0;
-  }, "Protocolo atual é obrigatório"),
-  recommended_changes: zod_1.z.record(zod_1.z.any()).refine(function (obj) {
-    return Object.keys(obj).length > 0;
-  }, "Mudanças recomendadas são obrigatórias"),
+  current_protocol: zod_1.z
+    .record(zod_1.z.any())
+    .refine((obj) => Object.keys(obj).length > 0, "Protocolo atual é obrigatório"),
+  recommended_changes: zod_1.z
+    .record(zod_1.z.any())
+    .refine((obj) => Object.keys(obj).length > 0, "Mudanças recomendadas são obrigatórias"),
   success_rate_improvement: zod_1.z
     .number()
     .min(0, "Melhoria da taxa de sucesso deve ser positiva")
     .optional(),
   evidence_data: zod_1.z.record(zod_1.z.any()).optional(),
   implementation_priority: zod_1.z.enum(["low", "medium", "high", "critical"], {
-    errorMap: function () {
-      return { message: "Prioridade deve ser low, medium, high ou critical" };
-    },
+    errorMap: () => ({ message: "Prioridade deve ser low, medium, high ou critical" }),
   }),
   cost_impact: zod_1.z.number().optional(),
   timeline_estimate: zod_1.z.string().optional(),
@@ -168,9 +152,7 @@ exports.updateProtocolOptimizationSchema = zod_1.z.object({
   approved_by: zod_1.z.string().uuid("ID do aprovador deve ser um UUID válido").optional(),
   implementation_date: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data de implementação inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data de implementação inválida")
     .optional(),
   results_tracking: zod_1.z.record(zod_1.z.any()).optional(),
 });
@@ -178,11 +160,9 @@ exports.updateProtocolOptimizationSchema = zod_1.z.object({
 exports.createQualityBenchmarkSchema = zod_1.z.object({
   treatment_type: zod_1.z.string().min(1, "Tipo de tratamento é obrigatório").max(100),
   benchmark_type: zod_1.z.enum(["industry_standard", "clinic_target", "best_practice"], {
-    errorMap: function () {
-      return {
-        message: "Tipo de benchmark deve ser industry_standard, clinic_target ou best_practice",
-      };
-    },
+    errorMap: () => ({
+      message: "Tipo de benchmark deve ser industry_standard, clinic_target ou best_practice",
+    }),
   }),
   metric_name: zod_1.z.string().min(1, "Nome da métrica é obrigatório").max(100),
   target_value: zod_1.z.number().min(0, "Valor alvo deve ser positivo"),
@@ -199,9 +179,7 @@ exports.updateQualityBenchmarkSchema = zod_1.z.object({
   update_frequency: zod_1.z.string().optional(),
   last_updated: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data de atualização inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data de atualização inválida")
     .optional(),
   status: zod_1.z.enum(["active", "inactive", "deprecated"]).optional(),
 });
@@ -209,9 +187,9 @@ exports.updateQualityBenchmarkSchema = zod_1.z.object({
 exports.createSuccessPredictionSchema = zod_1.z.object({
   patient_id: zod_1.z.string().uuid("ID do paciente deve ser um UUID válido"),
   treatment_type: zod_1.z.string().min(1, "Tipo de tratamento é obrigatório").max(100),
-  prediction_factors: zod_1.z.record(zod_1.z.any()).refine(function (obj) {
-    return Object.keys(obj).length > 0;
-  }, "Fatores de predição são obrigatórios"),
+  prediction_factors: zod_1.z
+    .record(zod_1.z.any())
+    .refine((obj) => Object.keys(obj).length > 0, "Fatores de predição são obrigatórios"),
   confidence_score: zod_1.z
     .number()
     .min(0)
@@ -239,15 +217,13 @@ exports.updateSuccessPredictionSchema = zod_1.z.object({
 exports.createComplianceReportSchema = zod_1.z.object({
   report_type: zod_1.z.string().min(1, "Tipo de relatório é obrigatório").max(100),
   reporting_period: zod_1.z.string().min(1, "Período de relatório é obrigatório"),
-  period_start: zod_1.z.string().refine(function (date) {
-    return !isNaN(Date.parse(date));
-  }, "Data de início inválida"),
-  period_end: zod_1.z.string().refine(function (date) {
-    return !isNaN(Date.parse(date));
-  }, "Data de fim inválida"),
-  report_data: zod_1.z.record(zod_1.z.any()).refine(function (obj) {
-    return Object.keys(obj).length > 0;
-  }, "Dados do relatório são obrigatórios"),
+  period_start: zod_1.z
+    .string()
+    .refine((date) => !isNaN(Date.parse(date)), "Data de início inválida"),
+  period_end: zod_1.z.string().refine((date) => !isNaN(Date.parse(date)), "Data de fim inválida"),
+  report_data: zod_1.z
+    .record(zod_1.z.any())
+    .refine((obj) => Object.keys(obj).length > 0, "Dados do relatório são obrigatórios"),
   compliance_score: zod_1.z
     .number()
     .min(0)
@@ -282,15 +258,11 @@ exports.treatmentSuccessQuerySchema = zod_1.z.object({
   provider_id: zod_1.z.string().uuid().optional(),
   date_from: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data inicial inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data inicial inválida")
     .optional(),
   date_to: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data final inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data final inválida")
     .optional(),
   success_rate_min: zod_1.z
     .string()
@@ -310,9 +282,7 @@ exports.treatmentSuccessQuerySchema = zod_1.z.object({
   status: zod_1.z.enum(["active", "completed", "cancelled"]).optional(),
   has_complications: zod_1.z
     .string()
-    .transform(function (val) {
-      return val === "true";
-    })
+    .transform((val) => val === "true")
     .optional(),
 });
 exports.successMetricsQuerySchema = zod_1.z.object({
@@ -332,15 +302,11 @@ exports.successMetricsQuerySchema = zod_1.z.object({
     .optional(),
   period_start: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data inicial inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data inicial inválida")
     .optional(),
   period_end: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data final inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data final inválida")
     .optional(),
 });
 exports.providerPerformanceQuerySchema = zod_1.z.object({
@@ -359,15 +325,11 @@ exports.providerPerformanceQuerySchema = zod_1.z.object({
     .optional(),
   period_start: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data inicial inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data inicial inválida")
     .optional(),
   period_end: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data final inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data final inválida")
     .optional(),
 });
 exports.protocolOptimizationQuerySchema = zod_1.z.object({
@@ -409,14 +371,10 @@ exports.complianceReportQuerySchema = zod_1.z.object({
   status: zod_1.z.enum(["draft", "review", "approved", "published"]).optional(),
   period_start: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data inicial inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data inicial inválida")
     .optional(),
   period_end: zod_1.z
     .string()
-    .refine(function (date) {
-      return !isNaN(Date.parse(date));
-    }, "Data final inválida")
+    .refine((date) => !isNaN(Date.parse(date)), "Data final inválida")
     .optional(),
 });

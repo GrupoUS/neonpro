@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.routeProtector =
   exports.healthCheck =
@@ -149,53 +146,37 @@ var server_1 = require("next/server");
 var route_protection_1 = require("../lib/route-protection");
 Object.defineProperty(exports, "routeProtector", {
   enumerable: true,
-  get: function () {
-    return route_protection_1.routeProtector;
-  },
+  get: () => route_protection_1.routeProtector,
 });
 var subscription_cache_1 = require("../lib/subscription-cache");
 Object.defineProperty(exports, "cacheManager", {
   enumerable: true,
-  get: function () {
-    return subscription_cache_1.cacheManager;
-  },
+  get: () => subscription_cache_1.cacheManager,
 });
 Object.defineProperty(exports, "globalSubscriptionCache", {
   enumerable: true,
-  get: function () {
-    return subscription_cache_1.globalSubscriptionCache;
-  },
+  get: () => subscription_cache_1.globalSubscriptionCache,
 });
 var subscription_status_1 = require("../lib/subscription-status");
 Object.defineProperty(exports, "clearSubscriptionCache", {
   enumerable: true,
-  get: function () {
-    return subscription_status_1.clearSubscriptionCache;
-  },
+  get: () => subscription_status_1.clearSubscriptionCache,
 });
 Object.defineProperty(exports, "getCacheStats", {
   enumerable: true,
-  get: function () {
-    return subscription_status_1.getCacheStats;
-  },
+  get: () => subscription_status_1.getCacheStats,
 });
 Object.defineProperty(exports, "getPerformanceMetrics", {
   enumerable: true,
-  get: function () {
-    return subscription_status_1.getPerformanceMetrics;
-  },
+  get: () => subscription_status_1.getPerformanceMetrics,
 });
 Object.defineProperty(exports, "getPerformanceSummary", {
   enumerable: true,
-  get: function () {
-    return subscription_status_1.getPerformanceSummary;
-  },
+  get: () => subscription_status_1.getPerformanceSummary,
 });
 Object.defineProperty(exports, "healthCheck", {
   enumerable: true,
-  get: function () {
-    return subscription_status_1.healthCheck;
-  },
+  get: () => subscription_status_1.healthCheck,
 });
 /**
  * Enhanced subscription middleware with granular route protection
@@ -214,36 +195,36 @@ function subscriptionMiddleware(req) {
       subscription,
       accessResult,
       redirectUrl,
-      response,
+      _response,
       processingTime,
       error_1,
       errorTime,
       errorUrl,
       response;
     var _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           startTime = Date.now();
           pathname = req.nextUrl.pathname;
           _c.label = 1;
         case 1:
-          _c.trys.push([1, 9, , 10]);
+          _c.trys.push([1, 9, undefined, 10]);
           console.log("🔐 Enhanced Subscription Middleware: Processing request for:", pathname);
           supabase = (0, ssr_1.createServerClient)(
             process.env.NEXT_PUBLIC_SUPABASE_URL,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
             {
               cookies: {
-                get: function (name) {
+                get: (name) => {
                   var _a;
                   return (
                     ((_a = req.cookies.get(name)) === null || _a === void 0 ? void 0 : _a.value) ||
                     ""
                   );
                 },
-                set: function () {}, // Not needed for middleware
-                remove: function () {}, // Not needed for middleware
+                set: () => {}, // Not needed for middleware
+                remove: () => {}, // Not needed for middleware
               },
             },
           );
@@ -403,10 +384,10 @@ function subscriptionMiddleware(req) {
 function getUserFeatureFlags(userId, supabase) {
   return __awaiter(this, void 0, void 0, function () {
     var data, flags_1, defaultFlags, error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
-          _a.trys.push([0, 2, , 3]);
+          _a.trys.push([0, 2, undefined, 3]);
           return [
             4 /*yield*/,
             supabase.from("user_feature_flags").select("flag_name, enabled").eq("user_id", userId),
@@ -428,7 +409,7 @@ function getUserFeatureFlags(userId, supabase) {
           Object.assign(flags_1, defaultFlags);
           // Override with user-specific flags
           if (data) {
-            data.forEach(function (flag) {
+            data.forEach((flag) => {
               flags_1[flag.flag_name] = flag.enabled;
             });
           }
@@ -461,24 +442,24 @@ function validateUserAccess(req, userId) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, profile, subscription, routeContext, result, error_3;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
-          _b.trys.push([0, 5, , 6]);
+          _b.trys.push([0, 5, undefined, 6]);
           supabase = (0, ssr_1.createServerClient)(
             process.env.NEXT_PUBLIC_SUPABASE_URL,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
             {
               cookies: {
-                get: function (name) {
+                get: (name) => {
                   var _a;
                   return (
                     ((_a = req.cookies.get(name)) === null || _a === void 0 ? void 0 : _a.value) ||
                     ""
                   );
                 },
-                set: function () {},
-                remove: function () {},
+                set: () => {},
+                remove: () => {},
               },
             },
           );

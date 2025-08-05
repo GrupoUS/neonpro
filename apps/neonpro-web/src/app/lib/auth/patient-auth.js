@@ -1,18 +1,17 @@
-"use strict";
 // Patient Authentication Utils
 // Story 1.3, Task 1: Patient Authentication System with LGPD Compliance
 // Created: Healthcare-grade authentication utilities for patient portal
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,18 +131,18 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientAuthClient = exports.PatientAuthServer = void 0;
 var server_1 = require("@/lib/supabase/server");
 var client_1 = require("@/lib/supabase/client");
 // Server-side patient authentication utilities
-var PatientAuthServer = /** @class */ (function () {
+var PatientAuthServer = /** @class */ (() => {
   function PatientAuthServer() {}
   PatientAuthServer.getCurrentPatient = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, user, userError, _b, profile, profileError, error_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 5, , 6]);
@@ -201,7 +198,7 @@ var PatientAuthServer = /** @class */ (function () {
   PatientAuthServer.recordDataAccess = function (patientId, action, details) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -235,7 +232,7 @@ var PatientAuthServer = /** @class */ (function () {
   PatientAuthServer.checkPatientConsent = function (patientId, consentType) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -269,7 +266,7 @@ var PatientAuthServer = /** @class */ (function () {
   PatientAuthServer.isPatientRoute = function (path) {
     return __awaiter(this, void 0, void 0, function () {
       var patientRoutes;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         patientRoutes = [
           "/portal",
           "/portal/dashboard",
@@ -278,19 +275,14 @@ var PatientAuthServer = /** @class */ (function () {
           "/portal/history",
           "/portal/payments",
         ];
-        return [
-          2 /*return*/,
-          patientRoutes.some(function (route) {
-            return path.startsWith(route);
-          }),
-        ];
+        return [2 /*return*/, patientRoutes.some((route) => path.startsWith(route))];
       });
     });
   };
   PatientAuthServer.validatePatientAccess = function () {
     return __awaiter(this, void 0, void 0, function () {
       var patient;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, PatientAuthServer.getCurrentPatient()];
@@ -348,12 +340,12 @@ var PatientAuthServer = /** @class */ (function () {
   return PatientAuthServer;
 })(); // Client-side patient authentication utilities
 exports.PatientAuthServer = PatientAuthServer;
-var PatientAuthClient = /** @class */ (function () {
+var PatientAuthClient = /** @class */ (() => {
   function PatientAuthClient() {}
   PatientAuthClient.registerPatient = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, authData, authError, error_4;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -428,7 +420,7 @@ var PatientAuthClient = /** @class */ (function () {
   PatientAuthClient.loginPatient = function (email, password) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, updateError, error_5;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 4, , 5]);

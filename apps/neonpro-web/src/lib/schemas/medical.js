@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.financialDataSchema =
   exports.treatmentSchema =
@@ -18,7 +17,7 @@ exports.cpfSchema = zod_1.z
     /^\d{3}\.\d{3}\.\d{3}-\d{2}$|^\d{11}$/,
     "CPF deve estar no formato 000.000.000-00 ou conter 11 dígitos",
   )
-  .refine(function (cpf) {
+  .refine((cpf) => {
     // Remove pontos e traços
     var numbers = cpf.replace(/[.-]/g, "");
     // Verifica se tem 11 dígitos
@@ -60,7 +59,7 @@ exports.personalDataSchema = zod_1.z.object({
   email: exports.medicalEmailSchema,
   phone: exports.phoneSchema,
   cpf: exports.cpfSchema,
-  birthDate: zod_1.z.string().refine(function (date) {
+  birthDate: zod_1.z.string().refine((date) => {
     var birthDate = new Date(date);
     var today = new Date();
     var age = today.getFullYear() - birthDate.getFullYear();
@@ -96,14 +95,12 @@ exports.medicalInfoSchema = zod_1.z.object({
 });
 // Schema para consentimento LGPD
 exports.consentSchema = zod_1.z.object({
-  dataProcessing: zod_1.z.boolean().refine(function (val) {
-    return val === true;
-  }, "Consentimento para processamento de dados é obrigatório"),
+  dataProcessing: zod_1.z
+    .boolean()
+    .refine((val) => val === true, "Consentimento para processamento de dados é obrigatório"),
   marketingCommunication: zod_1.z.boolean().default(false),
   dataSharing: zod_1.z.boolean().default(false),
-  consentDate: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  consentDate: zod_1.z.date().default(() => new Date()),
   ipAddress: zod_1.z
     .string()
     .regex(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, "IP inválido")
@@ -116,9 +113,7 @@ exports.medicalAuditSchema = zod_1.z.object({
   action: zod_1.z.enum(["create", "read", "update", "delete", "export"]),
   resourceType: zod_1.z.enum(["patient", "appointment", "treatment", "medical_record"]),
   resourceId: zod_1.z.string(),
-  timestamp: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  timestamp: zod_1.z.date().default(() => new Date()),
   ipAddress: zod_1.z.string().regex(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/, "IP inválido"),
   userAgent: zod_1.z.string(),
   details: zod_1.z.record(zod_1.z.any()).optional(),
@@ -137,12 +132,8 @@ exports.treatmentSchema = zod_1.z.object({
   requiresConsent: zod_1.z.boolean().default(true),
   contraindications: zod_1.z.array(zod_1.z.string()).default([]),
   postTreatmentCare: zod_1.z.array(zod_1.z.string()).default([]),
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
+  updatedAt: zod_1.z.date().default(() => new Date()),
 });
 // Schema para validação de dados financeiros
 exports.financialDataSchema = zod_1.z.object({

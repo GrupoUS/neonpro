@@ -1,9 +1,27 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  AlertCircle,
+  CheckCircle2,
+  Download,
+  Edit,
+  FileCheck,
+  Filter,
+  Loader2,
+  Search,
+  Shield,
+  Trash2,
+  UserPlus,
+  Users,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import * as z from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,6 +29,14 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type {
   Form,
   FormControl,
@@ -21,8 +47,6 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type {
   Select,
   SelectContent,
@@ -31,14 +55,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import type {
   Table,
   TableBody,
   TableCell,
@@ -46,22 +62,6 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Users,
-  UserPlus,
-  Edit,
-  Trash2,
-  FileCheck,
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-  Search,
-  Filter,
-  Download,
-  Shield,
-} from "lucide-react";
-import type { toast } from "sonner";
 
 // CRM validation function for different states
 const validateCRM = (crm: string, state: string): boolean => {

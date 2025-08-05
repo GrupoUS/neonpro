@@ -7,12 +7,14 @@
  * @author APEX Master Developer
  */
 
-import React, { useState, useRef, useCallback } from "react";
-import type { Upload, Camera, AlertCircle, CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { AlertCircle, Camera, CheckCircle, Eye, EyeOff, Loader2, Upload } from "lucide-react";
+import type React from "react";
+import { useCallback, useRef, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Label } from "@/components/ui/label";
 import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
@@ -22,7 +24,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
-import type { Label } from "@/components/ui/label";
 import type { useToast } from "@/components/ui/use-toast";
 
 interface PhotoUploadProps {

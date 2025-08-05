@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Compliance System - Main Integration Module
  * Story 1.5: LGPD Compliance Automation
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataSubjectRequestStatus =
   exports.DataSubjectRequestType =
@@ -168,46 +165,34 @@ exports.createLGPDComplianceSystem = createLGPDComplianceSystem;
 var consent_automation_manager_1 = require("./consent-automation-manager");
 Object.defineProperty(exports, "LGPDDataType", {
   enumerable: true,
-  get: function () {
-    return consent_automation_manager_1.LGPDDataType;
-  },
+  get: () => consent_automation_manager_1.LGPDDataType,
 });
 Object.defineProperty(exports, "LGPDPurpose", {
   enumerable: true,
-  get: function () {
-    return consent_automation_manager_1.LGPDPurpose;
-  },
+  get: () => consent_automation_manager_1.LGPDPurpose,
 });
 var audit_trail_manager_1 = require("./audit-trail-manager");
 Object.defineProperty(exports, "LGPDAuditEventType", {
   enumerable: true,
-  get: function () {
-    return audit_trail_manager_1.LGPDAuditEventType;
-  },
+  get: () => audit_trail_manager_1.LGPDAuditEventType,
 });
 Object.defineProperty(exports, "LGPDAuditSeverity", {
   enumerable: true,
-  get: function () {
-    return audit_trail_manager_1.LGPDAuditSeverity;
-  },
+  get: () => audit_trail_manager_1.LGPDAuditSeverity,
 });
 Object.defineProperty(exports, "DataSubjectRequestType", {
   enumerable: true,
-  get: function () {
-    return audit_trail_manager_1.DataSubjectRequestType;
-  },
+  get: () => audit_trail_manager_1.DataSubjectRequestType,
 });
 Object.defineProperty(exports, "DataSubjectRequestStatus", {
   enumerable: true,
-  get: function () {
-    return audit_trail_manager_1.DataSubjectRequestStatus;
-  },
+  get: () => audit_trail_manager_1.DataSubjectRequestStatus,
 });
 var data_retention_manager_1 = require("./data-retention-manager");
 /**
  * Main LGPD Compliance System Class
  */
-var LGPDComplianceSystem = /** @class */ (function () {
+var LGPDComplianceSystem = /** @class */ (() => {
   function LGPDComplianceSystem(config) {
     this.alerts = [];
     this.config = config;
@@ -817,18 +802,18 @@ var LGPDComplianceSystem = /** @class */ (function () {
   /**
    * Private helper methods
    */
-  LGPDComplianceSystem.prototype.calculateRiskLevel = function (overallScore, auditRiskScore) {
+  LGPDComplianceSystem.prototype.calculateRiskLevel = (overallScore, auditRiskScore) => {
     var combinedRisk = 100 - overallScore + auditRiskScore;
     if (combinedRisk <= 20) return "LOW";
     if (combinedRisk <= 50) return "MEDIUM";
     if (combinedRisk <= 80) return "HIGH";
     return "CRITICAL";
   };
-  LGPDComplianceSystem.prototype.generateRecommendations = function (
+  LGPDComplianceSystem.prototype.generateRecommendations = (
     consentAnalytics,
     auditAnalytics,
     retentionAnalytics,
-  ) {
+  ) => {
     var recommendations = [];
     // Consent recommendations
     if (consentAnalytics.expiredConsents > consentAnalytics.activeConsents * 0.1) {
@@ -859,12 +844,12 @@ var LGPDComplianceSystem = /** @class */ (function () {
     }
     return recommendations;
   };
-  LGPDComplianceSystem.prototype.generateExecutiveSummary = function (
+  LGPDComplianceSystem.prototype.generateExecutiveSummary = (
     complianceStatus,
     consentAnalytics,
     auditAnalytics,
     retentionAnalytics,
-  ) {
+  ) => {
     var riskText = {
       LOW: "baixo",
       MEDIUM: "médio",
@@ -939,12 +924,7 @@ var LGPDComplianceSystem = /** @class */ (function () {
   LGPDComplianceSystem.prototype.getActiveAlerts = function () {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          this.alerts.filter(function (alert) {
-            return !alert.resolvedAt;
-          }),
-        ];
+        return [2 /*return*/, this.alerts.filter((alert) => !alert.resolvedAt)];
       });
     });
   };

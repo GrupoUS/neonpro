@@ -1,9 +1,9 @@
 // API Routes Index
 // Story 1.4: Session Management & Security Implementation
 
-export { SessionRoutes, createSessionRoutes } from "./session-routes";
-export { SecurityRoutes, createSecurityRoutes } from "./security-routes";
-export { DeviceRoutes, createDeviceRoutes } from "./device-routes";
+export { createDeviceRoutes, DeviceRoutes } from "./device-routes";
+export { createSecurityRoutes, SecurityRoutes } from "./security-routes";
+export { createSessionRoutes, SessionRoutes } from "./session-routes";
 
 // Combined API routes factory
 export function createAuthAPIRoutes(sessionManager: any, securityMonitor: any, deviceManager: any) {

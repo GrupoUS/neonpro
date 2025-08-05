@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Backup & Recovery System Types
  * Story 1.8: Sistema de Backup e Recovery
@@ -25,7 +24,7 @@ exports.ScheduleFrequency =
  * Tipos de backup disponíveis
  */
 var BackupType;
-(function (BackupType) {
+((BackupType) => {
   BackupType["FULL"] = "FULL";
   BackupType["INCREMENTAL"] = "INCREMENTAL";
   BackupType["DIFFERENTIAL"] = "DIFFERENTIAL";
@@ -35,7 +34,7 @@ var BackupType;
  * Status do backup
  */
 var BackupStatus;
-(function (BackupStatus) {
+((BackupStatus) => {
   BackupStatus["PENDING"] = "PENDING";
   BackupStatus["RUNNING"] = "RUNNING";
   BackupStatus["COMPLETED"] = "COMPLETED";
@@ -47,7 +46,7 @@ var BackupStatus;
  * Prioridade do backup
  */
 var BackupPriority;
-(function (BackupPriority) {
+((BackupPriority) => {
   BackupPriority["LOW"] = "LOW";
   BackupPriority["MEDIUM"] = "MEDIUM";
   BackupPriority["HIGH"] = "HIGH";
@@ -57,7 +56,7 @@ var BackupPriority;
  * Tipos de storage para backup
  */
 var StorageType;
-(function (StorageType) {
+((StorageType) => {
   StorageType["LOCAL"] = "LOCAL";
   StorageType["S3"] = "S3";
   StorageType["AZURE"] = "AZURE";
@@ -69,7 +68,7 @@ var StorageType;
  * Status de recuperação
  */
 var RecoveryStatus;
-(function (RecoveryStatus) {
+((RecoveryStatus) => {
   RecoveryStatus["NOT_STARTED"] = "NOT_STARTED";
   RecoveryStatus["IN_PROGRESS"] = "IN_PROGRESS";
   RecoveryStatus["COMPLETED"] = "COMPLETED";
@@ -80,7 +79,7 @@ var RecoveryStatus;
  * Tipos de dados para backup
  */
 var DataType;
-(function (DataType) {
+((DataType) => {
   DataType["DATABASE"] = "DATABASE";
   DataType["FILES"] = "FILES";
   DataType["LOGS"] = "LOGS";
@@ -90,7 +89,7 @@ var DataType;
 })(DataType || (exports.DataType = DataType = {}));
 // Adicionar os tipos que estavam faltando
 var AlertType;
-(function (AlertType) {
+((AlertType) => {
   AlertType["BACKUP_FAILURE"] = "BACKUP_FAILURE";
   AlertType["STORAGE_FULL"] = "STORAGE_FULL";
   AlertType["PERFORMANCE_DEGRADATION"] = "PERFORMANCE_DEGRADATION";
@@ -98,14 +97,14 @@ var AlertType;
   AlertType["SYSTEM_ERROR"] = "SYSTEM_ERROR";
 })(AlertType || (exports.AlertType = AlertType = {}));
 var AlertSeverity;
-(function (AlertSeverity) {
+((AlertSeverity) => {
   AlertSeverity["LOW"] = "LOW";
   AlertSeverity["MEDIUM"] = "MEDIUM";
   AlertSeverity["HIGH"] = "HIGH";
   AlertSeverity["CRITICAL"] = "CRITICAL";
 })(AlertSeverity || (exports.AlertSeverity = AlertSeverity = {}));
 var TaskStatus;
-(function (TaskStatus) {
+((TaskStatus) => {
   TaskStatus["PENDING"] = "PENDING";
   TaskStatus["RUNNING"] = "RUNNING";
   TaskStatus["COMPLETED"] = "COMPLETED";
@@ -113,7 +112,7 @@ var TaskStatus;
   TaskStatus["CANCELLED"] = "CANCELLED";
 })(TaskStatus || (exports.TaskStatus = TaskStatus = {}));
 var ScheduleFrequency;
-(function (ScheduleFrequency) {
+((ScheduleFrequency) => {
   ScheduleFrequency["HOURLY"] = "HOURLY";
   ScheduleFrequency["DAILY"] = "DAILY";
   ScheduleFrequency["WEEKLY"] = "WEEKLY";

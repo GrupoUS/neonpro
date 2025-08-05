@@ -2,10 +2,10 @@
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Automated bank statement import and processing service
 
-import type { z } from "zod";
-import type { createClient } from "@/lib/supabase/client";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
+import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/client";
 import type { BankStatement, BankTransaction } from "./bank-reconciliation-manager";
 
 // Validation schemas

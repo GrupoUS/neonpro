@@ -1,5 +1,9 @@
 "use client";
 
+import type { Check, Loader2 } from "lucide-react";
+import type { useRouter } from "next/navigation";
+import type { useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -11,10 +15,6 @@ import type {
   CardTitle,
 } from "@/components/ui/card";
 import type { NEONPRO_PLANS } from "@/lib/constants/plans";
-import type { Check, Loader2 } from "lucide-react";
-import type { useRouter } from "next/navigation";
-import type { useState } from "react";
-import type { toast } from "sonner";
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);

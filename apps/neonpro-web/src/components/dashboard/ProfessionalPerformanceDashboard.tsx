@@ -1,6 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  Award,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  LineChart,
+  PieChart,
+  Star,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,8 +28,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -17,7 +36,6 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Table,
   TableBody,
@@ -26,30 +44,13 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  TrendingUp,
-  TrendingDown,
-  Award,
-  Calendar,
-  Users,
-  Star,
-  Target,
-  Clock,
-  DollarSign,
-  Activity,
-  CheckCircle,
-  AlertTriangle,
-  BarChart3,
-  PieChart,
-  LineChart,
-} from "lucide-react";
-import type { Professional, PerformanceMetric, MetricType } from "@/lib/types/professional";
-import type {
-  getProfessionals,
-  getProfessionalMetrics,
   getAggregatedMetrics,
+  getProfessionalMetrics,
+  getProfessionals,
 } from "@/lib/supabase/professionals";
+import type { MetricType, PerformanceMetric, Professional } from "@/lib/types/professional";
 
 interface ProfessionalPerformanceDashboardProps {
   professionalId?: string;

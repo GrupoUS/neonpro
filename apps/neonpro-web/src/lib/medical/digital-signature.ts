@@ -10,8 +10,8 @@
  * - Auditoria completa
  */
 
-import crypto from "crypto";
 import type { createClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 import type { AuditLogger } from "../audit/audit-logger";
 import type { LGPDManager } from "../auth/lgpd/lgpd-manager";
 
@@ -216,7 +216,7 @@ export class DigitalSignatureManager {
       let certificateThumbprint: string | undefined;
 
       switch (options.signatureType) {
-        case SignatureType.DIGITAL_CERTIFICATE:
+        case SignatureType.DIGITAL_CERTIFICATE: {
           const certResult = await this.createCertificateSignature(
             documentHash,
             options.certificatePath!,
@@ -227,6 +227,7 @@ export class DigitalSignatureManager {
           certificateData = certResult.certificate;
           certificateThumbprint = certResult.thumbprint;
           break;
+        }
 
         case SignatureType.ELECTRONIC_SIGNATURE:
           signatureData = await this.createElectronicSignature(documentHash, signerId, timestamp);
@@ -370,25 +371,29 @@ export class DigitalSignatureManager {
 
       // Verify signature based on type
       switch (signature.signature_type) {
-        case SignatureType.DIGITAL_CERTIFICATE:
+        case SignatureType.DIGITAL_CERTIFICATE: {
           const certValidation = await this.verifyCertificateSignature(signature, options);
           Object.assign(validationDetails, certValidation);
           break;
+        }
 
-        case SignatureType.ELECTRONIC_SIGNATURE:
+        case SignatureType.ELECTRONIC_SIGNATURE: {
           const electronicValidation = await this.verifyElectronicSignature(signature);
           validationDetails.signature_intact = electronicValidation;
           break;
+        }
 
-        case SignatureType.BIOMETRIC_SIGNATURE:
+        case SignatureType.BIOMETRIC_SIGNATURE: {
           const biometricValidation = await this.verifyBiometricSignature(signature);
           validationDetails.signature_intact = biometricValidation;
           break;
+        }
 
-        case SignatureType.PIN_SIGNATURE:
+        case SignatureType.PIN_SIGNATURE: {
           const pinValidation = await this.verifyPinSignature(signature);
           validationDetails.signature_intact = pinValidation;
           break;
+        }
       }
 
       // Check signature age

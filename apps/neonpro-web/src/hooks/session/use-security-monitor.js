@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSecurityMonitor = useSecurityMonitor;
 var react_1 = require("react");
@@ -166,7 +163,6 @@ var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
 var session_config_1 = require("@/lib/auth/config/session-config");
 function useSecurityMonitor() {
-  var _this = this;
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   var _a = (0, react_1.useState)({
       alerts: [],
@@ -194,60 +190,56 @@ function useSecurityMonitor() {
   var alertCallbacks = (0, react_1.useRef)([]);
   // Start security monitoring
   var startMonitoring = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (state.isMonitoring) return [2 /*return*/];
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isMonitoring: true });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isMonitoring: true }));
               // Initial security check
               return [4 /*yield*/, performSecurityCheck()];
             case 1:
               // Initial security check
               _a.sent();
               // Set up periodic monitoring
-              monitoringInterval.current = setInterval(function () {
-                return __awaiter(_this, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
-                    switch (_a.label) {
-                      case 0:
-                        return [4 /*yield*/, performSecurityCheck()];
-                      case 1:
-                        _a.sent();
-                        return [2 /*return*/];
-                    }
-                  });
-                });
-              }, session_config_1.SessionConfig.security.monitoringInterval);
+              monitoringInterval.current = setInterval(
+                () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
+                      switch (_a.label) {
+                        case 0:
+                          return [4 /*yield*/, performSecurityCheck()];
+                        case 1:
+                          _a.sent();
+                          return [2 /*return*/];
+                      }
+                    });
+                  }),
+                session_config_1.SessionConfig.security.monitoringInterval,
+              );
               console.log("Security monitoring started");
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state.isMonitoring],
   );
   // Stop security monitoring
-  var stopMonitoring = (0, react_1.useCallback)(function () {
+  var stopMonitoring = (0, react_1.useCallback)(() => {
     if (monitoringInterval.current) {
       clearInterval(monitoringInterval.current);
       monitoringInterval.current = null;
     }
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { isMonitoring: false });
-    });
+    setState((prev) => __assign(__assign({}, prev), { isMonitoring: false }));
     console.log("Security monitoring stopped");
   }, []);
   // Perform comprehensive security check
   var performSecurityCheck = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var user, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 6, , 7]);
@@ -276,9 +268,7 @@ function useSecurityMonitor() {
               // Calculate risk score
               _a.sent();
               // Update last check timestamp
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { lastCheck: new Date() });
-              });
+              setState((prev) => __assign(__assign({}, prev), { lastCheck: new Date() }));
               return [3 /*break*/, 7];
             case 6:
               error_1 = _a.sent();
@@ -288,82 +278,77 @@ function useSecurityMonitor() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   // Check for new security events
-  var checkSecurityEvents = (0, react_1.useCallback)(function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data, newEvents_1, error_2;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 4, , 5]);
-            return [
-              4 /*yield*/,
-              fetch("/api/auth/session/security?limit=50&severity=medium,high,critical", {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) return [3 /*break*/, 3];
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            newEvents_1 = data.events || [];
-            setState(function (prev) {
-              var existingIds = new Set(
-                prev.alerts.map(function (alert) {
-                  return alert.id;
+  var checkSecurityEvents = (0, react_1.useCallback)(
+    (userId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, newEvents_1, error_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 4, , 5]);
+              return [
+                4 /*yield*/,
+                fetch("/api/auth/session/security?limit=50&severity=medium,high,critical", {
+                  method: "GET",
+                  headers: { "Content-Type": "application/json" },
                 }),
-              );
-              var freshEvents = newEvents_1.filter(function (event) {
-                return !existingIds.has(event.id);
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) return [3 /*break*/, 3];
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              newEvents_1 = data.events || [];
+              setState((prev) => {
+                var existingIds = new Set(prev.alerts.map((alert) => alert.id));
+                var freshEvents = newEvents_1.filter((event) => !existingIds.has(event.id));
+                // Trigger alerts for new high-severity events
+                freshEvents.forEach((event) => {
+                  if (event.severity === "high" || event.severity === "critical") {
+                    triggerThreatAlert({
+                      id: event.id,
+                      type: event.eventType,
+                      severity: event.severity,
+                      description: event.description || "Security event: ".concat(event.eventType),
+                      timestamp: new Date(event.createdAt),
+                      metadata: event.metadata || {},
+                      resolved: false,
+                    });
+                  }
+                });
+                return __assign(__assign({}, prev), {
+                  alerts: __spreadArray(
+                    __spreadArray([], freshEvents, true),
+                    prev.alerts,
+                    true,
+                  ).slice(0, 100), // Keep last 100 alerts
+                });
               });
-              // Trigger alerts for new high-severity events
-              freshEvents.forEach(function (event) {
-                if (event.severity === "high" || event.severity === "critical") {
-                  triggerThreatAlert({
-                    id: event.id,
-                    type: event.eventType,
-                    severity: event.severity,
-                    description: event.description || "Security event: ".concat(event.eventType),
-                    timestamp: new Date(event.createdAt),
-                    metadata: event.metadata || {},
-                    resolved: false,
-                  });
-                }
-              });
-              return __assign(__assign({}, prev), {
-                alerts: __spreadArray(
-                  __spreadArray([], freshEvents, true),
-                  prev.alerts,
-                  true,
-                ).slice(0, 100), // Keep last 100 alerts
-              });
-            });
-            _a.label = 3;
-          case 3:
-            return [3 /*break*/, 5];
-          case 4:
-            error_2 = _a.sent();
-            console.error("Failed to check security events:", error_2);
-            return [3 /*break*/, 5];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+              _a.label = 3;
+            case 3:
+              return [3 /*break*/, 5];
+            case 4:
+              error_2 = _a.sent();
+              console.error("Failed to check security events:", error_2);
+              return [3 /*break*/, 5];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Check for suspicious activities
   var checkSuspiciousActivities = (0, react_1.useCallback)(
-    function (userId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (userId) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, activities_1, error, error_3;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, , 3]);
@@ -380,13 +365,13 @@ function useSecurityMonitor() {
             case 1:
               (_a = _b.sent()), (activities_1 = _a.data), (error = _a.error);
               if (error) throw error;
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { suspiciousActivities: activities_1 || [] });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { suspiciousActivities: activities_1 || [] }),
+              );
               // Check for new suspicious activities
               activities_1 === null || activities_1 === void 0
                 ? void 0
-                : activities_1.forEach(function (activity) {
+                : activities_1.forEach((activity) => {
                     if (activity.riskScore >= 70) {
                       triggerThreatAlert({
                         id: activity.id,
@@ -408,16 +393,15 @@ function useSecurityMonitor() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   // Analyze device usage patterns
   var analyzeDevicePatterns = (0, react_1.useCallback)(
-    function (userId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (userId) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, devices, error, currentFingerprint_1, currentDevice, anomalies, error_4;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, , 3]);
@@ -436,13 +420,11 @@ function useSecurityMonitor() {
               currentDevice =
                 devices === null || devices === void 0
                   ? void 0
-                  : devices.find(function (device) {
-                      return device.fingerprint === currentFingerprint_1;
-                    });
+                  : devices.find((device) => device.fingerprint === currentFingerprint_1);
               // Check for device anomalies
               if (devices) {
                 anomalies = detectDeviceAnomalies(devices, currentDevice);
-                anomalies.forEach(function (anomaly) {
+                anomalies.forEach((anomaly) => {
                   triggerThreatAlert({
                     id: "device-anomaly-".concat(Date.now()),
                     type: "device_anomaly",
@@ -463,12 +445,11 @@ function useSecurityMonitor() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   // Detect device anomalies
-  var detectDeviceAnomalies = function (devices, currentDevice) {
+  var detectDeviceAnomalies = (devices, currentDevice) => {
     var anomalies = [];
     // Check for too many devices
     if (devices.length > session_config_1.SessionConfig.security.maxDevicesPerUser) {
@@ -483,34 +464,22 @@ function useSecurityMonitor() {
       });
     }
     // Check for untrusted device usage
-    var untrustedDevices = devices.filter(function (device) {
-      return !device.isTrusted && device.lastUsed;
-    });
+    var untrustedDevices = devices.filter((device) => !device.isTrusted && device.lastUsed);
     if (untrustedDevices.length > 0) {
       anomalies.push({
         description: "".concat(untrustedDevices.length, " untrusted device(s) recently used"),
         metadata: {
-          untrustedDevices: untrustedDevices.map(function (d) {
-            return d.id;
-          }),
+          untrustedDevices: untrustedDevices.map((d) => d.id),
         },
       });
     }
     // Check for suspicious device locations
     if (currentDevice && currentDevice.location) {
       var recentDevices = devices.filter(
-        function (device) {
-          return (
-            device.lastUsed &&
-            new Date(device.lastUsed) > new Date(Date.now() - 24 * 60 * 60 * 1000)
-          );
-        }, // Last 24 hours
+        (device) =>
+          device.lastUsed && new Date(device.lastUsed) > new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
       );
-      var locations = recentDevices
-        .map(function (device) {
-          return device.location;
-        })
-        .filter(Boolean);
+      var locations = recentDevices.map((device) => device.location).filter(Boolean);
       var uniqueLocations = new Set(locations);
       if (uniqueLocations.size > 3) {
         anomalies.push({
@@ -526,16 +495,16 @@ function useSecurityMonitor() {
   };
   // Calculate overall risk score
   var calculateRiskScore = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var riskScore, threatLevel, recentAlerts, recentSuspicious, unresolvedThreats;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           riskScore = 0;
           threatLevel = "low";
-          recentAlerts = state.alerts.filter(function (alert) {
-            return new Date(alert.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000);
-          });
-          recentAlerts.forEach(function (alert) {
+          recentAlerts = state.alerts.filter(
+            (alert) => new Date(alert.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000),
+          );
+          recentAlerts.forEach((alert) => {
             switch (alert.severity) {
               case "low":
                 riskScore += 10;
@@ -551,65 +520,57 @@ function useSecurityMonitor() {
                 break;
             }
           });
-          recentSuspicious = state.suspiciousActivities.filter(function (activity) {
-            return new Date(activity.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000);
-          });
-          recentSuspicious.forEach(function (activity) {
+          recentSuspicious = state.suspiciousActivities.filter(
+            (activity) => new Date(activity.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000),
+          );
+          recentSuspicious.forEach((activity) => {
             riskScore += activity.riskScore || 0;
           });
-          unresolvedThreats = threats.filter(function (threat) {
-            return !threat.resolved;
-          });
+          unresolvedThreats = threats.filter((threat) => !threat.resolved);
           riskScore += unresolvedThreats.length * 15;
           // Determine threat level
           if (riskScore >= 200) threatLevel = "critical";
           else if (riskScore >= 100) threatLevel = "high";
           else if (riskScore >= 50) threatLevel = "medium";
           else threatLevel = "low";
-          setState(function (prev) {
-            return __assign(__assign({}, prev), { riskScore: riskScore, threatLevel: threatLevel });
-          });
+          setState((prev) =>
+            __assign(__assign({}, prev), { riskScore: riskScore, threatLevel: threatLevel }),
+          );
           // Update metrics
-          setMetrics(function (prev) {
-            return __assign(__assign({}, prev), {
-              failedLogins: recentAlerts.filter(function (alert) {
-                return alert.eventType === "login_failed";
-              }).length,
-              deviceAnomalies: unresolvedThreats.filter(function (threat) {
-                return threat.type === "device_anomaly";
-              }).length,
-              sessionViolations: recentAlerts.filter(function (alert) {
-                return alert.eventType === "session_violation";
-              }).length,
+          setMetrics((prev) =>
+            __assign(__assign({}, prev), {
+              failedLogins: recentAlerts.filter((alert) => alert.eventType === "login_failed")
+                .length,
+              deviceAnomalies: unresolvedThreats.filter(
+                (threat) => threat.type === "device_anomaly",
+              ).length,
+              sessionViolations: recentAlerts.filter(
+                (alert) => alert.eventType === "session_violation",
+              ).length,
               lastIncident:
                 recentAlerts.length > 0
                   ? new Date(
                       Math.max.apply(
                         Math,
-                        recentAlerts.map(function (alert) {
-                          return new Date(alert.createdAt).getTime();
-                        }),
+                        recentAlerts.map((alert) => new Date(alert.createdAt).getTime()),
                       ),
                     )
                   : null,
-            });
-          });
+            }),
+          );
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [state.alerts, state.suspiciousActivities, threats],
   );
   // Trigger threat alert
-  var triggerThreatAlert = (0, react_1.useCallback)(function (threat) {
-    setThreats(function (prev) {
-      var exists = prev.some(function (t) {
-        return t.id === threat.id;
-      });
+  var triggerThreatAlert = (0, react_1.useCallback)((threat) => {
+    setThreats((prev) => {
+      var exists = prev.some((t) => t.id === threat.id);
       if (exists) return prev;
       var newThreats = __spreadArray([threat], prev, true).slice(0, 50); // Keep last 50 threats
       // Notify callbacks
-      alertCallbacks.current.forEach(function (callback) {
+      alertCallbacks.current.forEach((callback) => {
         try {
           callback(threat);
         } catch (error) {
@@ -620,68 +581,61 @@ function useSecurityMonitor() {
     });
   }, []);
   // Resolve threat
-  var resolveThreat = (0, react_1.useCallback)(function (threatId) {
-    setThreats(function (prev) {
-      return prev.map(function (threat) {
-        return threat.id === threatId ? __assign(__assign({}, threat), { resolved: true }) : threat;
-      });
-    });
+  var resolveThreat = (0, react_1.useCallback)((threatId) => {
+    setThreats((prev) =>
+      prev.map((threat) =>
+        threat.id === threatId ? __assign(__assign({}, threat), { resolved: true }) : threat,
+      ),
+    );
   }, []);
   // Subscribe to threat alerts
-  var onThreatAlert = (0, react_1.useCallback)(function (callback) {
+  var onThreatAlert = (0, react_1.useCallback)((callback) => {
     alertCallbacks.current.push(callback);
     // Return unsubscribe function
-    return function () {
-      alertCallbacks.current = alertCallbacks.current.filter(function (cb) {
-        return cb !== callback;
-      });
+    return () => {
+      alertCallbacks.current = alertCallbacks.current.filter((cb) => cb !== callback);
     };
   }, []);
   // Get security recommendations
-  var getSecurityRecommendations = (0, react_1.useCallback)(
-    function () {
-      var recommendations = [];
-      if (state.riskScore > 100) {
-        recommendations.push("Consider changing your password immediately");
-        recommendations.push("Review and remove untrusted devices");
-      }
-      if (state.suspiciousActivities.length > 0) {
-        recommendations.push("Review recent login activities");
-      }
-      if (metrics.deviceAnomalies > 0) {
-        recommendations.push("Verify all registered devices are yours");
-      }
-      if (state.threatLevel === "critical") {
-        recommendations.push("Contact support immediately");
-        recommendations.push("Consider temporarily disabling account access");
-      }
-      return recommendations;
-    },
-    [
-      state.riskScore,
-      state.suspiciousActivities.length,
-      state.threatLevel,
-      metrics.deviceAnomalies,
-    ],
-  );
+  var getSecurityRecommendations = (0, react_1.useCallback)(() => {
+    var recommendations = [];
+    if (state.riskScore > 100) {
+      recommendations.push("Consider changing your password immediately");
+      recommendations.push("Review and remove untrusted devices");
+    }
+    if (state.suspiciousActivities.length > 0) {
+      recommendations.push("Review recent login activities");
+    }
+    if (metrics.deviceAnomalies > 0) {
+      recommendations.push("Verify all registered devices are yours");
+    }
+    if (state.threatLevel === "critical") {
+      recommendations.push("Contact support immediately");
+      recommendations.push("Consider temporarily disabling account access");
+    }
+    return recommendations;
+  }, [
+    state.riskScore,
+    state.suspiciousActivities.length,
+    state.threatLevel,
+    metrics.deviceAnomalies,
+  ]);
   // Initialize monitoring on mount
-  (0, react_1.useEffect)(
-    function () {
-      startMonitoring();
-      return function () {
-        stopMonitoring();
-      };
-    },
-    [startMonitoring, stopMonitoring],
-  );
+  (0, react_1.useEffect)(() => {
+    startMonitoring();
+    return () => {
+      stopMonitoring();
+    };
+  }, [startMonitoring, stopMonitoring]);
   // Cleanup on unmount
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       if (monitoringInterval.current) {
         clearInterval(monitoringInterval.current);
       }
-    };
-  }, []);
+    },
+    [],
+  );
   return __assign(__assign({}, state), {
     threats: threats,
     metrics: metrics,
@@ -693,12 +647,8 @@ function useSecurityMonitor() {
     onThreatAlert: onThreatAlert,
     getSecurityRecommendations: getSecurityRecommendations,
     // Computed
-    hasActiveThreats: threats.some(function (threat) {
-      return !threat.resolved;
-    }),
-    criticalThreats: threats.filter(function (threat) {
-      return !threat.resolved && threat.severity === "critical";
-    }),
+    hasActiveThreats: threats.some((threat) => !threat.resolved),
+    criticalThreats: threats.filter((threat) => !threat.resolved && threat.severity === "critical"),
     isHighRisk:
       state.riskScore > 100 || state.threatLevel === "high" || state.threatLevel === "critical",
   });

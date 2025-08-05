@@ -1,7 +1,6 @@
 // app/api/auth/mfa/email/send/route.ts
 // API route for sending email verification codes
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
+import type { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {

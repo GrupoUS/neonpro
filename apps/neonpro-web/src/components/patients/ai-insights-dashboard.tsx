@@ -1,6 +1,21 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  Heart,
+  Lightbulb,
+  Minus,
+  Shield,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,23 +23,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Progress } from "@/components/ui/progress";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Brain,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  AlertTriangle,
-  Target,
-  Activity,
-  Heart,
-  BarChart3,
-  Lightbulb,
-  Shield,
-} from "lucide-react";
 
 interface RiskFactor {
   factor: string;

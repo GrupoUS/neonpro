@@ -1,9 +1,10 @@
 // Purchase Order Approval API Endpoint
 // POST /api/inventory/purchase-orders/[id]/approve - Approve purchase order
 // POST /api/inventory/purchase-orders/[id]/reject - Reject purchase order
-import { createClient } from "@/app/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { createClient } from "@/app/utils/supabase/server";
 
 const approvalActionSchema = z.object({
   action: z.enum(["approve", "reject"]),

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientRegistrationForm = PatientRegistrationForm;
 var zod_1 = require("@hookform/resolvers/zod");
@@ -149,7 +146,6 @@ var schemas_1 = require("@/lib/healthcare/schemas");
 var utils_1 = require("@/lib/utils");
 var sonner_1 = require("sonner");
 function PatientRegistrationForm(_a) {
-  var _this = this;
   var onSubmit = _a.onSubmit,
     _b = _a.isLoading,
     isLoading = _b === void 0 ? false : _b;
@@ -188,10 +184,10 @@ function PatientRegistrationForm(_a) {
       legal_basis: "consent",
     },
   });
-  var handleSubmitForm = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmitForm = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -215,13 +211,12 @@ function PatientRegistrationForm(_a) {
         }
       });
     });
-  };
-  var nextStep = function () {
+  var nextStep = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
   };
-  var prevStep = function () {
+  var prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
@@ -243,16 +238,14 @@ function PatientRegistrationForm(_a) {
 
         {/* Progress indicator */}
         <div className="flex items-center gap-2">
-          {Array.from({ length: totalSteps }, function (_, i) {
-            return (
-              <div
-                key={i}
-                className={"flex-1 h-2 rounded-full transition-colors ".concat(
-                  i + 1 <= currentStep ? "bg-primary" : "bg-muted",
-                )}
-              />
-            );
-          })}
+          {Array.from({ length: totalSteps }, (_, i) => (
+            <div
+              key={i}
+              className={"flex-1 h-2 rounded-full transition-colors ".concat(
+                i + 1 <= currentStep ? "bg-primary" : "bg-muted",
+              )}
+            />
+          ))}
         </div>
         <div className="text-sm text-muted-foreground text-center">
           Passo {currentStep} de {totalSteps}
@@ -275,7 +268,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="name"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -296,7 +289,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="cpf"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -305,7 +298,7 @@ function PatientRegistrationForm(_a) {
                             <input_1.Input
                               placeholder="000.000.000-00"
                               {...field}
-                              onChange={function (e) {
+                              onChange={(e) => {
                                 var formatted = (0, utils_1.formatCpf)(e.target.value);
                                 field.onChange(formatted);
                               }}
@@ -322,7 +315,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="email"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -347,7 +340,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="phone"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -356,7 +349,7 @@ function PatientRegistrationForm(_a) {
                             <input_1.Input
                               placeholder="(11) 99999-9999"
                               {...field}
-                              onChange={function (e) {
+                              onChange={(e) => {
                                 var formatted = (0, utils_1.formatPhone)(e.target.value);
                                 field.onChange(formatted);
                               }}
@@ -372,7 +365,7 @@ function PatientRegistrationForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="birthdate"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -384,7 +377,7 @@ function PatientRegistrationForm(_a) {
                             value={
                               field.value ? (0, date_fns_1.format)(field.value, "yyyy-MM-dd") : ""
                             }
-                            onChange={function (e) {
+                            onChange={(e) => {
                               var date = e.target.value ? new Date(e.target.value) : null;
                               field.onChange(date);
                             }}
@@ -417,7 +410,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="emergency_contact_name"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -438,7 +431,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="emergency_contact"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -447,7 +440,7 @@ function PatientRegistrationForm(_a) {
                             <input_1.Input
                               placeholder="(11) 99999-9999"
                               {...field}
-                              onChange={function (e) {
+                              onChange={(e) => {
                                 var formatted = (0, utils_1.formatPhone)(e.target.value);
                                 field.onChange(formatted);
                               }}
@@ -467,7 +460,7 @@ function PatientRegistrationForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="address.street"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="md:col-span-2">
@@ -488,7 +481,7 @@ function PatientRegistrationForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="address.number"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -511,7 +504,7 @@ function PatientRegistrationForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="address.complement"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -532,7 +525,7 @@ function PatientRegistrationForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="address.neighborhood"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -588,7 +581,7 @@ function PatientRegistrationForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="medical_conditions"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -613,7 +606,7 @@ function PatientRegistrationForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="allergies"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -638,7 +631,7 @@ function PatientRegistrationForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="medications"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -697,9 +690,7 @@ function PatientRegistrationForm(_a) {
                         type="button"
                         variant="link"
                         className="text-blue-600 p-0 h-auto"
-                        onClick={function () {
-                          return setShowLgpdDetails(!showLgpdDetails);
-                        }}
+                        onClick={() => setShowLgpdDetails(!showLgpdDetails)}
                       >
                         {showLgpdDetails
                           ? <>
@@ -748,7 +739,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="consent_lgpd"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="lgpd-consent">
@@ -781,7 +772,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="consent_marketing"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -813,7 +804,7 @@ function PatientRegistrationForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="consent_whatsapp"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>

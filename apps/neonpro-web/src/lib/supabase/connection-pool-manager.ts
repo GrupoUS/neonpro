@@ -13,9 +13,9 @@
  * Performance Target: Optimized connection usage with sub-100ms latency
  */
 
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { createBrowserClient, createServerClient } from "@supabase/ssr";
-import { Database } from "@/types/database";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
 
 // Healthcare-specific connection pool types
 interface PoolConfiguration {
@@ -453,7 +453,7 @@ export class NeonProConnectionPoolManager {
   private async retryConnection(poolKey: string, maxRetries: number): Promise<void> {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        const backoffTime = Math.pow(2, attempt) * 1000; // Exponential backoff
+        const backoffTime = 2 ** attempt * 1000; // Exponential backoff
         await new Promise((resolve) => setTimeout(resolve, backoffTime));
 
         // Recreate the connection

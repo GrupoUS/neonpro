@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var user_event_1 = require("@testing-library/user-event");
@@ -139,62 +136,40 @@ var react_query_1 = require("@tanstack/react-query");
 var AnalyticsDashboard_1 = require("@/components/dashboard/AnalyticsDashboard");
 var mockData_1 = require("@/../../__tests__/utils/mockData");
 // Mock Recharts components
-jest.mock("recharts", function () {
-  return {
-    LineChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="line-chart">{children}</div>;
-    },
-    BarChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="bar-chart">{children}</div>;
-    },
-    PieChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="pie-chart">{children}</div>;
-    },
-    Line: function () {
-      return <div data-testid="line" />;
-    },
-    Bar: function () {
-      return <div data-testid="bar" />;
-    },
-    Cell: function () {
-      return <div data-testid="cell" />;
-    },
-    XAxis: function () {
-      return <div data-testid="x-axis" />;
-    },
-    YAxis: function () {
-      return <div data-testid="y-axis" />;
-    },
-    CartesianGrid: function () {
-      return <div data-testid="cartesian-grid" />;
-    },
-    Tooltip: function () {
-      return <div data-testid="tooltip" />;
-    },
-    Legend: function () {
-      return <div data-testid="legend" />;
-    },
-    ResponsiveContainer: function (_a) {
-      var children = _a.children;
-      return <div data-testid="responsive-container">{children}</div>;
-    },
-  };
-});
+jest.mock("recharts", () => ({
+  LineChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="line-chart">{children}</div>;
+  },
+  BarChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="bar-chart">{children}</div>;
+  },
+  PieChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="pie-chart">{children}</div>;
+  },
+  Line: () => <div data-testid="line" />,
+  Bar: () => <div data-testid="bar" />,
+  Cell: () => <div data-testid="cell" />,
+  XAxis: () => <div data-testid="x-axis" />,
+  YAxis: () => <div data-testid="y-axis" />,
+  CartesianGrid: () => <div data-testid="cartesian-grid" />,
+  Tooltip: () => <div data-testid="tooltip" />,
+  Legend: () => <div data-testid="legend" />,
+  ResponsiveContainer: (_a) => {
+    var children = _a.children;
+    return <div data-testid="responsive-container">{children}</div>;
+  },
+}));
 // Mock hooks
-jest.mock("@/hooks/analytics/useAnalyticsData", function () {
-  return {
-    useAnalyticsData: jest.fn(),
-  };
-});
-jest.mock("@/hooks/analytics/useExportData", function () {
-  return {
-    useExportData: jest.fn(),
-  };
-});
-var createWrapper = function () {
+jest.mock("@/hooks/analytics/useAnalyticsData", () => ({
+  useAnalyticsData: jest.fn(),
+}));
+jest.mock("@/hooks/analytics/useExportData", () => ({
+  useExportData: jest.fn(),
+}));
+var createWrapper = () => {
   var queryClient = new react_query_1.QueryClient({
     defaultOptions: {
       queries: {
@@ -202,7 +177,7 @@ var createWrapper = function () {
       },
     },
   });
-  return function (_a) {
+  return (_a) => {
     var children = _a.children;
     return (
       <react_query_1.QueryClientProvider client={queryClient}>
@@ -211,10 +186,10 @@ var createWrapper = function () {
     );
   };
 };
-describe("AnalyticsDashboard", function () {
+describe("AnalyticsDashboard", () => {
   var mockUseAnalyticsData = require("@/hooks/analytics/useAnalyticsData").useAnalyticsData;
   var mockUseExportData = require("@/hooks/analytics/useExportData").useExportData;
-  beforeEach(function () {
+  beforeEach(() => {
     mockUseAnalyticsData.mockReturnValue({
       data: mockData_1.mockAnalyticsData,
       isLoading: false,
@@ -229,12 +204,12 @@ describe("AnalyticsDashboard", function () {
       exportError: null,
     });
   });
-  afterEach(function () {
+  afterEach(() => {
     jest.clearAllMocks();
   });
-  it("should render dashboard with analytics data", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  it("should render dashboard with analytics data", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         (0, react_1.render)(<AnalyticsDashboard_1.default />, { wrapper: createWrapper() });
         // Check if key metrics are displayed
         expect(react_1.screen.getByText("1,250")).toBeInTheDocument(); // totalPatients
@@ -247,9 +222,8 @@ describe("AnalyticsDashboard", function () {
         expect(react_1.screen.getByTestId("pie-chart")).toBeInTheDocument();
         return [2 /*return*/];
       });
-    });
-  });
-  it("should show loading state", function () {
+    }));
+  it("should show loading state", () => {
     mockUseAnalyticsData.mockReturnValue({
       data: undefined,
       isLoading: true,
@@ -260,7 +234,7 @@ describe("AnalyticsDashboard", function () {
     expect(react_1.screen.getByTestId("analytics-loading")).toBeInTheDocument();
     expect(react_1.screen.getByText("Loading analytics...")).toBeInTheDocument();
   });
-  it("should show error state", function () {
+  it("should show error state", () => {
     mockUseAnalyticsData.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -271,10 +245,10 @@ describe("AnalyticsDashboard", function () {
     expect(react_1.screen.getByTestId("analytics-error")).toBeInTheDocument();
     expect(react_1.screen.getByText("Failed to load analytics")).toBeInTheDocument();
   });
-  it("should handle export to PDF", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should handle export to PDF", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockExportToPDF, user, exportButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockExportToPDF = jest.fn();
@@ -300,12 +274,11 @@ describe("AnalyticsDashboard", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle date range filter changes", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle date range filter changes", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, startDateInput, endDateInput, applyButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
@@ -339,7 +312,7 @@ describe("AnalyticsDashboard", function () {
             // Verify hook was called with new filters
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(mockUseAnalyticsData).toHaveBeenCalledWith(
                   expect.objectContaining({
                     dateRange: { start: "2024-02-01", end: "2024-02-28" },
@@ -353,12 +326,11 @@ describe("AnalyticsDashboard", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle treatment filter changes", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle treatment filter changes", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, treatmentFilter, facialOption, botoxOption, applyButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
@@ -394,7 +366,7 @@ describe("AnalyticsDashboard", function () {
             // Verify hook was called with selected treatments
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(mockUseAnalyticsData).toHaveBeenCalledWith(
                   expect.objectContaining({
                     treatments: ["facial", "botox"],
@@ -408,9 +380,8 @@ describe("AnalyticsDashboard", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should show export loading state", function () {
+    }));
+  it("should show export loading state", () => {
     mockUseExportData.mockReturnValue({
       exportToPDF: jest.fn(),
       exportToExcel: jest.fn(),
@@ -422,7 +393,7 @@ describe("AnalyticsDashboard", function () {
     expect(react_1.screen.getByText("Exporting...")).toBeInTheDocument();
     expect(react_1.screen.getByRole("button", { name: "Export PDF" })).toBeDisabled();
   });
-  it("should display export error", function () {
+  it("should display export error", () => {
     mockUseExportData.mockReturnValue({
       exportToPDF: jest.fn(),
       exportToExcel: jest.fn(),
@@ -434,10 +405,10 @@ describe("AnalyticsDashboard", function () {
     expect(react_1.screen.getByText("Export failed")).toBeInTheDocument();
     expect(react_1.screen.getByTestId("export-error-alert")).toBeInTheDocument();
   });
-  it("should be accessible", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should be accessible", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var exportButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         (0, react_1.render)(<AnalyticsDashboard_1.default />, { wrapper: createWrapper() });
         // Check for proper headings hierarchy
         expect(react_1.screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
@@ -450,24 +421,21 @@ describe("AnalyticsDashboard", function () {
         expect(exportButton).toHaveAttribute("tabindex", "0");
         return [2 /*return*/];
       });
-    });
-  });
-  it("should handle responsive design", function () {
+    }));
+  it("should handle responsive design", () => {
     // Mock window.matchMedia for mobile viewport
     Object.defineProperty(window, "matchMedia", {
       writable: true,
-      value: jest.fn().mockImplementation(function (query) {
-        return {
-          matches: query === "(max-width: 768px)",
-          media: query,
-          onchange: null,
-          addListener: jest.fn(),
-          removeListener: jest.fn(),
-          addEventListener: jest.fn(),
-          removeEventListener: jest.fn(),
-          dispatchEvent: jest.fn(),
-        };
-      }),
+      value: jest.fn().mockImplementation((query) => ({
+        matches: query === "(max-width: 768px)",
+        media: query,
+        onchange: null,
+        addListener: jest.fn(),
+        removeListener: jest.fn(),
+        addEventListener: jest.fn(),
+        removeEventListener: jest.fn(),
+        dispatchEvent: jest.fn(),
+      })),
     });
     (0, react_1.render)(<AnalyticsDashboard_1.default />, { wrapper: createWrapper() });
     // Check mobile-specific elements

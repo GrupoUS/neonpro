@@ -1,15 +1,15 @@
 // RBAC React Hook for Frontend Permission Management
 // Story 1.2: Role-Based Permissions Enhancement
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
 import type { useUser } from "@supabase/auth-helpers-react";
-import type { createClient } from "@/lib/supabase/client";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 import type { rbacManager } from "@/lib/auth/rbac/permissions";
+import type { createClient } from "@/lib/supabase/client";
 import type {
   Permission,
-  UserRole,
   PermissionResult,
   RoleDefinition,
+  UserRole,
   UserRoleAssignment,
 } from "@/types/rbac";
 

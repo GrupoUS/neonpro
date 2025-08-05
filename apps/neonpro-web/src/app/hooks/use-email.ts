@@ -1,17 +1,17 @@
 import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { useToast } from "@/components/ui/use-toast";
 import type {
-  EmailTemplate,
-  EmailMessage,
-  EmailServiceResponse,
   BulkEmailResponse,
   EmailAnalytics,
-  EmailPreview,
   EmailDeliveryReport,
-  EmailSettings,
+  EmailMessage,
+  EmailPreview,
   EmailProviderConfig,
+  EmailServiceResponse,
+  EmailSettings,
+  EmailTemplate,
   EmailValidationResult,
 } from "@/app/types/email";
+import type { useToast } from "@/components/ui/use-toast";
 
 // =======================================
 // EMAIL TEMPLATE HOOKS

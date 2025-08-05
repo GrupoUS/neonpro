@@ -3,32 +3,31 @@
  * NeonPro - Interface completa para gestão de testes A/B e otimização de conteúdo
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,10 +147,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -162,7 +159,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ContentOptimizationInterface;
 var react_1 = require("react");
@@ -184,7 +181,6 @@ var sonner_1 = require("sonner");
 var utils_1 = require("@/lib/utils");
 var ab_testing_engine_1 = require("@/lib/ab-testing/ab-testing-engine");
 function ContentOptimizationInterface(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userId = _a.userId;
   // State Management
@@ -247,36 +243,31 @@ function ContentOptimizationInterface(_a) {
     testCreationState = _l[0],
     setTestCreationState = _l[1];
   // Load initial data
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadTests();
     loadTemplates();
   }, []);
   // Auto-refresh active tests
-  (0, react_1.useEffect)(
-    function () {
-      var interval = setInterval(function () {
-        if (
-          (selectedTest === null || selectedTest === void 0 ? void 0 : selectedTest.status) ===
-          "active"
-        ) {
-          loadTestResults(selectedTest.id);
-        }
-      }, 30000); // 30 seconds
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [selectedTest],
-  );
+  (0, react_1.useEffect)(() => {
+    var interval = setInterval(() => {
+      if (
+        (selectedTest === null || selectedTest === void 0 ? void 0 : selectedTest.status) ===
+        "active"
+      ) {
+        loadTestResults(selectedTest.id);
+      }
+    }, 30000); // 30 seconds
+    return () => clearInterval(interval);
+  }, [selectedTest]);
   /**
    * ====================================================================
    * DATA LOADING
    * ====================================================================
    */
-  var loadTests = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTests = () =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -299,10 +290,9 @@ function ContentOptimizationInterface(_a) {
         }
       });
     });
-  };
-  var loadTemplates = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var loadTemplates = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // Implementar busca de templates do banco
           // Por enquanto, usando dados mock
@@ -331,11 +321,10 @@ function ContentOptimizationInterface(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var loadTestResults = function (testId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTestResults = (testId) =>
+    __awaiter(this, void 0, void 0, function () {
       var results, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -353,16 +342,15 @@ function ContentOptimizationInterface(_a) {
         }
       });
     });
-  };
   /**
    * ====================================================================
    * TEST MANAGEMENT
    * ====================================================================
    */
-  var createTest = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createTest = () =>
+    __awaiter(this, void 0, void 0, function () {
       var testConfig, newTest_1, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -387,9 +375,7 @@ function ContentOptimizationInterface(_a) {
             return [4 /*yield*/, ab_testing_engine_1.abTestingEngine.createTest(testConfig)];
           case 1:
             newTest_1 = _a.sent();
-            setTests(function (prev) {
-              return __spreadArray([newTest_1], prev, true);
-            });
+            setTests((prev) => __spreadArray([newTest_1], prev, true));
             setIsCreating(false);
             setCreationStep(1);
             sonner_1.toast.success("Teste A/B criado com sucesso!");
@@ -407,11 +393,10 @@ function ContentOptimizationInterface(_a) {
         }
       });
     });
-  };
-  var startTest = function (testId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var startTest = (testId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -433,11 +418,10 @@ function ContentOptimizationInterface(_a) {
         }
       });
     });
-  };
-  var pauseTest = function (testId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var pauseTest = (testId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -462,11 +446,10 @@ function ContentOptimizationInterface(_a) {
         }
       });
     });
-  };
-  var completeTest = function (testId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var completeTest = (testId) =>
+    __awaiter(this, void 0, void 0, function () {
       var results, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -492,35 +475,34 @@ function ContentOptimizationInterface(_a) {
         }
       });
     });
-  };
   /**
    * ====================================================================
    * TEMPLATE MANAGEMENT
    * ====================================================================
    */
-  var duplicateTemplate = function (template) {
+  var duplicateTemplate = (template) => {
     var newVariation = {
       name: "Baseado em ".concat(template.name),
       content: template.content,
       trafficPercentage: 50,
     };
-    setTestCreationState(function (prev) {
-      return __assign(__assign({}, prev), {
+    setTestCreationState((prev) =>
+      __assign(__assign({}, prev), {
         variations: __spreadArray(__spreadArray([], prev.variations, true), [newVariation], false),
-      });
-    });
+      }),
+    );
     sonner_1.toast.success("Template adicionado como variação");
   };
-  var applyTemplate = function (template, variationIndex) {
-    setTestCreationState(function (prev) {
-      return __assign(__assign({}, prev), {
-        variations: prev.variations.map(function (variation, index) {
-          return index === variationIndex
+  var applyTemplate = (template, variationIndex) => {
+    setTestCreationState((prev) =>
+      __assign(__assign({}, prev), {
+        variations: prev.variations.map((variation, index) =>
+          index === variationIndex
             ? __assign(__assign({}, variation), { content: template.content })
-            : variation;
-        }),
-      });
-    });
+            : variation,
+        ),
+      }),
+    );
     sonner_1.toast.success("Template aplicado à variação");
   };
   /**
@@ -528,7 +510,7 @@ function ContentOptimizationInterface(_a) {
    * VALIDATION
    * ====================================================================
    */
-  var validateTestCreation = function () {
+  var validateTestCreation = () => {
     if (!testCreationState.name.trim()) {
       sonner_1.toast.error("Nome do teste é obrigatório");
       return false;
@@ -537,9 +519,10 @@ function ContentOptimizationInterface(_a) {
       sonner_1.toast.error("É necessário pelo menos 2 variações");
       return false;
     }
-    var totalTraffic = testCreationState.variations.reduce(function (sum, v) {
-      return sum + (v.trafficPercentage || 0);
-    }, 0);
+    var totalTraffic = testCreationState.variations.reduce(
+      (sum, v) => sum + (v.trafficPercentage || 0),
+      0,
+    );
     if (Math.abs(totalTraffic - 100) > 0.01) {
       sonner_1.toast.error("A soma das porcentagens de tráfego deve ser 100%");
       return false;
@@ -551,7 +534,7 @@ function ContentOptimizationInterface(_a) {
    * RENDER HELPERS
    * ====================================================================
    */
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var variants = {
       draft: { variant: "secondary", icon: lucide_react_1.Edit },
       active: { variant: "default", icon: lucide_react_1.Play },
@@ -567,7 +550,7 @@ function ContentOptimizationInterface(_a) {
       </badge_1.Badge>
     );
   };
-  var getPerformanceIndicator = function (metric, threshold) {
+  var getPerformanceIndicator = (metric, threshold) => {
     if (threshold === void 0) {
       threshold = 50;
     }
@@ -578,7 +561,7 @@ function ContentOptimizationInterface(_a) {
     }
     return <lucide_react_1.Activity className="h-4 w-4 text-yellow-500" />;
   };
-  var getSignificanceColor = function (significance) {
+  var getSignificanceColor = (significance) => {
     switch (significance) {
       case "highly_significant":
         return "text-green-600";
@@ -595,7 +578,7 @@ function ContentOptimizationInterface(_a) {
    * RENDER COMPONENTS
    * ====================================================================
    */
-  var renderTestsList = function () {
+  var renderTestsList = () => {
     var _a;
     return (
       <div className="space-y-4">
@@ -605,23 +588,21 @@ function ContentOptimizationInterface(_a) {
             <input_1.Input
               placeholder="Buscar testes..."
               value={filter.searchTerm || ""}
-              onChange={function (e) {
-                return setFilter(function (prev) {
-                  return __assign(__assign({}, prev), { searchTerm: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setFilter((prev) => __assign(__assign({}, prev), { searchTerm: e.target.value }))
+              }
               className="w-full"
             />
           </div>
           <select_1.Select
             value={((_a = filter.status) === null || _a === void 0 ? void 0 : _a[0]) || "all"}
-            onValueChange={function (value) {
-              return setFilter(function (prev) {
-                return __assign(__assign({}, prev), {
+            onValueChange={(value) =>
+              setFilter((prev) =>
+                __assign(__assign({}, prev), {
                   status: value === "all" ? undefined : [value],
-                });
-              });
-            }}
+                }),
+              )
+            }
           >
             <select_1.SelectTrigger className="w-[180px]">
               <select_1.SelectValue placeholder="Status" />
@@ -634,11 +615,7 @@ function ContentOptimizationInterface(_a) {
               <select_1.SelectItem value="completed">Finalizado</select_1.SelectItem>
             </select_1.SelectContent>
           </select_1.Select>
-          <button_1.Button
-            onClick={function () {
-              return setIsCreating(true);
-            }}
-          >
+          <button_1.Button onClick={() => setIsCreating(true)}>
             <lucide_react_1.Zap className="h-4 w-4 mr-2" />
             Novo Teste A/B
           </button_1.Button>
@@ -646,93 +623,89 @@ function ContentOptimizationInterface(_a) {
 
         {/* Tests Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tests.map(function (test) {
-            return (
-              <card_1.Card
-                key={test.id}
-                className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={function () {
-                  return setSelectedTest(test);
-                }}
-              >
-                <card_1.CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <card_1.CardTitle className="text-lg">{test.name}</card_1.CardTitle>
-                      <card_1.CardDescription className="text-sm">
-                        {test.description}
-                      </card_1.CardDescription>
-                    </div>
-                    {getStatusBadge(test.status)}
+          {tests.map((test) => (
+            <card_1.Card
+              key={test.id}
+              className="cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => setSelectedTest(test)}
+            >
+              <card_1.CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <card_1.CardTitle className="text-lg">{test.name}</card_1.CardTitle>
+                    <card_1.CardDescription className="text-sm">
+                      {test.description}
+                    </card_1.CardDescription>
                   </div>
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-1">
-                        <lucide_react_1.Users className="h-3 w-3" />
-                        {test.currentSampleSize || 0} / {test.sampleSize} amostras
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <lucide_react_1.Target className="h-3 w-3" />
-                        {test.confidenceLevel}% confiança
-                      </span>
-                    </div>
+                  {getStatusBadge(test.status)}
+                </div>
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-1">
+                      <lucide_react_1.Users className="h-3 w-3" />
+                      {test.currentSampleSize || 0} / {test.sampleSize} amostras
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <lucide_react_1.Target className="h-3 w-3" />
+                      {test.confidenceLevel}% confiança
+                    </span>
+                  </div>
 
-                    {test.status === "active" && (
-                      <progress_1.Progress
-                        value={(test.currentSampleSize / test.sampleSize) * 100}
-                        className="h-2"
-                      />
-                    )}
+                  {test.status === "active" && (
+                    <progress_1.Progress
+                      value={(test.currentSampleSize / test.sampleSize) * 100}
+                      className="h-2"
+                    />
+                  )}
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
-                        {test.variations.length} variações
-                      </span>
-                      <div className="flex gap-1">
-                        {test.status === "draft" && (
-                          <button_1.Button
-                            size="sm"
-                            variant="outline"
-                            onClick={function (e) {
-                              e.stopPropagation();
-                              startTest(test.id);
-                            }}
-                          >
-                            <lucide_react_1.Play className="h-3 w-3" />
-                          </button_1.Button>
-                        )}
-                        {test.status === "active" && (
-                          <button_1.Button
-                            size="sm"
-                            variant="outline"
-                            onClick={function (e) {
-                              e.stopPropagation();
-                              pauseTest(test.id);
-                            }}
-                          >
-                            <lucide_react_1.Pause className="h-3 w-3" />
-                          </button_1.Button>
-                        )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">
+                      {test.variations.length} variações
+                    </span>
+                    <div className="flex gap-1">
+                      {test.status === "draft" && (
                         <button_1.Button
                           size="sm"
                           variant="outline"
-                          onClick={function (e) {
+                          onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedTest(test);
-                            loadTestResults(test.id);
+                            startTest(test.id);
                           }}
                         >
-                          <lucide_react_1.BarChart3 className="h-3 w-3" />
+                          <lucide_react_1.Play className="h-3 w-3" />
                         </button_1.Button>
-                      </div>
+                      )}
+                      {test.status === "active" && (
+                        <button_1.Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            pauseTest(test.id);
+                          }}
+                        >
+                          <lucide_react_1.Pause className="h-3 w-3" />
+                        </button_1.Button>
+                      )}
+                      <button_1.Button
+                        size="sm"
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedTest(test);
+                          loadTestResults(test.id);
+                        }}
+                      >
+                        <lucide_react_1.BarChart3 className="h-3 w-3" />
+                      </button_1.Button>
                     </div>
                   </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
 
         {tests.length === 0 && !isLoading && (
@@ -743,11 +716,7 @@ function ContentOptimizationInterface(_a) {
               <p className="text-muted-foreground mb-4">
                 Comece criando seu primeiro teste A/B para otimizar suas comunicações.
               </p>
-              <button_1.Button
-                onClick={function () {
-                  return setIsCreating(true);
-                }}
-              >
+              <button_1.Button onClick={() => setIsCreating(true)}>
                 Criar Primeiro Teste
               </button_1.Button>
             </card_1.CardContent>
@@ -756,164 +725,145 @@ function ContentOptimizationInterface(_a) {
       </div>
     );
   };
-  var renderTestCreation = function () {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle>Criar Novo Teste A/B</card_1.CardTitle>
-          <card_1.CardDescription>
-            Configure um teste para otimizar suas comunicações
-          </card_1.CardDescription>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          <div className="space-y-6">
-            {/* Progress Indicator */}
-            <div className="flex items-center justify-between">
-              {[1, 2, 3, 4].map(function (step) {
-                return (
-                  <div
-                    key={step}
-                    className={(0, utils_1.cn)(
-                      "flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium",
-                      step <= creationStep
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground",
-                    )}
-                  >
-                    {step}
-                  </div>
-                );
-              })}
-            </div>
+  var renderTestCreation = () => (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle>Criar Novo Teste A/B</card_1.CardTitle>
+        <card_1.CardDescription>
+          Configure um teste para otimizar suas comunicações
+        </card_1.CardDescription>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        <div className="space-y-6">
+          {/* Progress Indicator */}
+          <div className="flex items-center justify-between">
+            {[1, 2, 3, 4].map((step) => (
+              <div
+                key={step}
+                className={(0, utils_1.cn)(
+                  "flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium",
+                  step <= creationStep
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground",
+                )}
+              >
+                {step}
+              </div>
+            ))}
+          </div>
 
-            {/* Step Content */}
-            {creationStep === 1 && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Configuração Básica</h3>
+          {/* Step Content */}
+          {creationStep === 1 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Configuração Básica</h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label_1.Label htmlFor="test-name">Nome do Teste</label_1.Label>
-                    <input_1.Input
-                      id="test-name"
-                      value={testCreationState.name}
-                      onChange={function (e) {
-                        return setTestCreationState(function (prev) {
-                          return __assign(__assign({}, prev), { name: e.target.value });
-                        });
-                      }}
-                      placeholder="Ex: Teste de Subject Line - Janeiro 2025"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label_1.Label htmlFor="test-type">Tipo de Comunicação</label_1.Label>
-                    <select_1.Select
-                      value={testCreationState.type}
-                      onValueChange={function (value) {
-                        return setTestCreationState(function (prev) {
-                          return __assign(__assign({}, prev), { type: value });
-                        });
-                      }}
-                    >
-                      <select_1.SelectTrigger>
-                        <select_1.SelectValue />
-                      </select_1.SelectTrigger>
-                      <select_1.SelectContent>
-                        <select_1.SelectItem value="email">
-                          <div className="flex items-center gap-2">
-                            <lucide_react_1.Mail className="h-4 w-4" />
-                            Email
-                          </div>
-                        </select_1.SelectItem>
-                        <select_1.SelectItem value="sms">
-                          <div className="flex items-center gap-2">
-                            <lucide_react_1.MessageSquare className="h-4 w-4" />
-                            SMS
-                          </div>
-                        </select_1.SelectItem>
-                        <select_1.SelectItem value="whatsapp">
-                          <div className="flex items-center gap-2">
-                            <lucide_react_1.MessageSquare className="h-4 w-4" />
-                            WhatsApp
-                          </div>
-                        </select_1.SelectItem>
-                        <select_1.SelectItem value="notification">
-                          <div className="flex items-center gap-2">
-                            <lucide_react_1.Bell className="h-4 w-4" />
-                            Notificação
-                          </div>
-                        </select_1.SelectItem>
-                      </select_1.SelectContent>
-                    </select_1.Select>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label_1.Label htmlFor="test-name">Nome do Teste</label_1.Label>
+                  <input_1.Input
+                    id="test-name"
+                    value={testCreationState.name}
+                    onChange={(e) =>
+                      setTestCreationState((prev) =>
+                        __assign(__assign({}, prev), { name: e.target.value }),
+                      )
+                    }
+                    placeholder="Ex: Teste de Subject Line - Janeiro 2025"
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <label_1.Label htmlFor="test-description">Descrição</label_1.Label>
-                  <textarea_1.Textarea
-                    id="test-description"
-                    value={testCreationState.description}
-                    onChange={function (e) {
-                      return setTestCreationState(function (prev) {
-                        return __assign(__assign({}, prev), { description: e.target.value });
-                      });
-                    }}
-                    placeholder="Descreva o objetivo e hipótese do teste..."
-                    rows={3}
-                  />
+                  <label_1.Label htmlFor="test-type">Tipo de Comunicação</label_1.Label>
+                  <select_1.Select
+                    value={testCreationState.type}
+                    onValueChange={(value) =>
+                      setTestCreationState((prev) => __assign(__assign({}, prev), { type: value }))
+                    }
+                  >
+                    <select_1.SelectTrigger>
+                      <select_1.SelectValue />
+                    </select_1.SelectTrigger>
+                    <select_1.SelectContent>
+                      <select_1.SelectItem value="email">
+                        <div className="flex items-center gap-2">
+                          <lucide_react_1.Mail className="h-4 w-4" />
+                          Email
+                        </div>
+                      </select_1.SelectItem>
+                      <select_1.SelectItem value="sms">
+                        <div className="flex items-center gap-2">
+                          <lucide_react_1.MessageSquare className="h-4 w-4" />
+                          SMS
+                        </div>
+                      </select_1.SelectItem>
+                      <select_1.SelectItem value="whatsapp">
+                        <div className="flex items-center gap-2">
+                          <lucide_react_1.MessageSquare className="h-4 w-4" />
+                          WhatsApp
+                        </div>
+                      </select_1.SelectItem>
+                      <select_1.SelectItem value="notification">
+                        <div className="flex items-center gap-2">
+                          <lucide_react_1.Bell className="h-4 w-4" />
+                          Notificação
+                        </div>
+                      </select_1.SelectItem>
+                    </select_1.SelectContent>
+                  </select_1.Select>
                 </div>
               </div>
-            )}
 
-            {/* Navigation */}
-            <div className="flex justify-between">
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setIsCreating(false);
-                }}
-              >
-                Cancelar
-              </button_1.Button>
-              <div className="flex gap-2">
-                {creationStep > 1 && (
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setCreationStep(function (prev) {
-                        return prev - 1;
-                      });
-                    }}
-                  >
-                    Voltar
-                  </button_1.Button>
-                )}
-                {creationStep < 4
-                  ? <button_1.Button
-                      onClick={function () {
-                        return setCreationStep(function (prev) {
-                          return prev + 1;
-                        });
-                      }}
-                      disabled={creationStep === 1 && !testCreationState.name.trim()}
-                    >
-                      Próximo
-                    </button_1.Button>
-                  : <button_1.Button
-                      onClick={createTest}
-                      disabled={!validateTestCreation() || isLoading}
-                    >
-                      {isLoading ? "Criando..." : "Criar Teste"}
-                    </button_1.Button>}
+              <div className="space-y-2">
+                <label_1.Label htmlFor="test-description">Descrição</label_1.Label>
+                <textarea_1.Textarea
+                  id="test-description"
+                  value={testCreationState.description}
+                  onChange={(e) =>
+                    setTestCreationState((prev) =>
+                      __assign(__assign({}, prev), { description: e.target.value }),
+                    )
+                  }
+                  placeholder="Descreva o objetivo e hipótese do teste..."
+                  rows={3}
+                />
               </div>
             </div>
+          )}
+
+          {/* Navigation */}
+          <div className="flex justify-between">
+            <button_1.Button variant="outline" onClick={() => setIsCreating(false)}>
+              Cancelar
+            </button_1.Button>
+            <div className="flex gap-2">
+              {creationStep > 1 && (
+                <button_1.Button
+                  variant="outline"
+                  onClick={() => setCreationStep((prev) => prev - 1)}
+                >
+                  Voltar
+                </button_1.Button>
+              )}
+              {creationStep < 4
+                ? <button_1.Button
+                    onClick={() => setCreationStep((prev) => prev + 1)}
+                    disabled={creationStep === 1 && !testCreationState.name.trim()}
+                  >
+                    Próximo
+                  </button_1.Button>
+                : <button_1.Button
+                    onClick={createTest}
+                    disabled={!validateTestCreation() || isLoading}
+                  >
+                    {isLoading ? "Criando..." : "Criar Teste"}
+                  </button_1.Button>}
+            </div>
           </div>
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
-  var renderTestResults = function () {
+        </div>
+      </card_1.CardContent>
+    </card_1.Card>
+  );
+  var renderTestResults = () => {
     if (!selectedTest || !testResults) return null;
     return (
       <div className="space-y-6">
@@ -925,12 +875,7 @@ function ContentOptimizationInterface(_a) {
           </div>
           <div className="flex items-center gap-2">
             {getStatusBadge(selectedTest.status)}
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setSelectedTest(null);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setSelectedTest(null)}>
               Voltar
             </button_1.Button>
           </div>
@@ -1013,7 +958,7 @@ function ContentOptimizationInterface(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {testResults.variationResults.map(function (result, index) {
+              {testResults.variationResults.map((result, index) => {
                 var _a;
                 return (
                   <div key={result.variationId} className="border rounded-lg p-4">
@@ -1083,27 +1028,23 @@ function ContentOptimizationInterface(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {testResults.insights.map(function (insight, index) {
-                  return (
-                    <alert_1.Alert key={index}>
-                      <lucide_react_1.Star className="h-4 w-4" />
-                      <alert_1.AlertTitle>Insight {index + 1}</alert_1.AlertTitle>
-                      <alert_1.AlertDescription>{insight}</alert_1.AlertDescription>
-                    </alert_1.Alert>
-                  );
-                })}
+                {testResults.insights.map((insight, index) => (
+                  <alert_1.Alert key={index}>
+                    <lucide_react_1.Star className="h-4 w-4" />
+                    <alert_1.AlertTitle>Insight {index + 1}</alert_1.AlertTitle>
+                    <alert_1.AlertDescription>{insight}</alert_1.AlertDescription>
+                  </alert_1.Alert>
+                ))}
 
                 {testResults.recommendations.length > 0 && (
                   <div className="mt-4">
                     <h4 className="font-medium mb-2">Recomendações:</h4>
                     <ul className="list-disc list-inside space-y-1">
-                      {testResults.recommendations.map(function (rec, index) {
-                        return (
-                          <li key={index} className="text-sm text-muted-foreground">
-                            {rec}
-                          </li>
-                        );
-                      })}
+                      {testResults.recommendations.map((rec, index) => (
+                        <li key={index} className="text-sm text-muted-foreground">
+                          {rec}
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 )}
@@ -1157,47 +1098,43 @@ function ContentOptimizationInterface(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {templates.map(function (template) {
-                    return (
-                      <card_1.Card key={template.id} className="cursor-pointer hover:shadow-md">
-                        <card_1.CardContent className="p-4">
-                          <div className="space-y-3">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <h4 className="font-medium">{template.name}</h4>
-                                <p className="text-sm text-muted-foreground">
-                                  {template.description}
-                                </p>
-                              </div>
-                              <badge_1.Badge variant="outline">{template.type}</badge_1.Badge>
+                  {templates.map((template) => (
+                    <card_1.Card key={template.id} className="cursor-pointer hover:shadow-md">
+                      <card_1.CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h4 className="font-medium">{template.name}</h4>
+                              <p className="text-sm text-muted-foreground">
+                                {template.description}
+                              </p>
                             </div>
-
-                            <div className="flex items-center justify-between text-sm">
-                              <span>Taxa de conversão: {template.performance.conversionRate}%</span>
-                              <span>{template.usage} usos</span>
-                            </div>
-
-                            <div className="flex gap-2">
-                              <button_1.Button
-                                size="sm"
-                                variant="outline"
-                                onClick={function () {
-                                  return duplicateTemplate(template);
-                                }}
-                              >
-                                <lucide_react_1.Copy className="h-3 w-3 mr-1" />
-                                Usar
-                              </button_1.Button>
-                              <button_1.Button size="sm" variant="outline">
-                                <lucide_react_1.Eye className="h-3 w-3 mr-1" />
-                                Preview
-                              </button_1.Button>
-                            </div>
+                            <badge_1.Badge variant="outline">{template.type}</badge_1.Badge>
                           </div>
-                        </card_1.CardContent>
-                      </card_1.Card>
-                    );
-                  })}
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span>Taxa de conversão: {template.performance.conversionRate}%</span>
+                            <span>{template.usage} usos</span>
+                          </div>
+
+                          <div className="flex gap-2">
+                            <button_1.Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => duplicateTemplate(template)}
+                            >
+                              <lucide_react_1.Copy className="h-3 w-3 mr-1" />
+                              Usar
+                            </button_1.Button>
+                            <button_1.Button size="sm" variant="outline">
+                              <lucide_react_1.Eye className="h-3 w-3 mr-1" />
+                              Preview
+                            </button_1.Button>
+                          </div>
+                        </div>
+                      </card_1.CardContent>
+                    </card_1.Card>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RealTimeAvailability = RealTimeAvailability;
 var react_1 = require("react");
@@ -145,7 +142,6 @@ var alert_1 = require("@/components/ui/alert");
 var sonner_1 = require("sonner");
 var utils_1 = require("@/lib/utils");
 function RealTimeAvailability(_a) {
-  var _this = this;
   var professionalId = _a.professionalId,
     serviceId = _a.serviceId,
     dateRange = _a.dateRange,
@@ -182,10 +178,10 @@ function RealTimeAvailability(_a) {
    * Handle slot selection with optimistic reservation
    */
   var handleSlotSelect = (0, react_1.useCallback)(
-    function (slot) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (slot) =>
+      __awaiter(this, void 0, void 0, function () {
         var reserved, confirmed, alternatives_1, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (reservingSlot) return [2 /*return*/];
@@ -229,9 +225,7 @@ function RealTimeAvailability(_a) {
                     ),
                     action: {
                       label: "Ver alternativas",
-                      onClick: function () {
-                        return scrollToAlternatives();
-                      },
+                      onClick: () => scrollToAlternatives(),
                     },
                   });
                 } else {
@@ -259,8 +253,7 @@ function RealTimeAvailability(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       reservingSlot,
       reserveSlot,
@@ -275,7 +268,7 @@ function RealTimeAvailability(_a) {
   /**
    * Scroll to alternatives section
    */
-  var scrollToAlternatives = function () {
+  var scrollToAlternatives = () => {
     var alternativesElement = document.getElementById("alternatives-section");
     if (alternativesElement) {
       alternativesElement.scrollIntoView({ behavior: "smooth" });
@@ -284,7 +277,7 @@ function RealTimeAvailability(_a) {
   /**
    * Format time slot for display
    */
-  var formatTimeSlot = function (date, time, duration) {
+  var formatTimeSlot = (date, time, duration) => {
     var startTime = new Date("".concat(date, "T").concat(time));
     var endTime = new Date(startTime.getTime() + duration * 60 * 1000);
     return {
@@ -312,7 +305,7 @@ function RealTimeAvailability(_a) {
   /**
    * Get connection status indicator
    */
-  var getConnectionStatusIndicator = function () {
+  var getConnectionStatusIndicator = () => {
     switch (connectionStatus) {
       case "connected":
         return <lucide_react_1.Wifi className="h-4 w-4 text-green-500" aria-label="Conectado" />;
@@ -335,7 +328,7 @@ function RealTimeAvailability(_a) {
   /**
    * Render slot card
    */
-  var renderSlotCard = function (slot, isAlternative) {
+  var renderSlotCard = (slot, isAlternative) => {
     if (isAlternative === void 0) {
       isAlternative = false;
     }
@@ -352,9 +345,7 @@ function RealTimeAvailability(_a) {
           isAlternative && "border-amber-200 bg-amber-50",
           !slot.available && "opacity-50 cursor-not-allowed",
         )}
-        onClick={function () {
-          return slot.available && handleSlotSelect(slot);
-        }}
+        onClick={() => slot.available && handleSlotSelect(slot)}
       >
         <card_1.CardContent className="p-4">
           <div className="flex items-center justify-between">
@@ -410,9 +401,7 @@ function RealTimeAvailability(_a) {
   var alternatives =
     selectedSlot && showAlternatives
       ? getAlternatives(
-          slots.find(function (s) {
-            return s.id === selectedSlot;
-          }),
+          slots.find((s) => s.id === selectedSlot),
           maxAlternatives,
         )
       : [];
@@ -475,9 +464,7 @@ function RealTimeAvailability(_a) {
                 <p>Nenhum horário disponível no período selecionado</p>
                 <p className="text-sm">Tente selecionar outras datas ou profissionais</p>
               </div>
-            : slots.map(function (slot) {
-                return renderSlotCard(slot);
-              })}
+            : slots.map((slot) => renderSlotCard(slot))}
         </card_1.CardContent>
       </card_1.Card>
 
@@ -498,9 +485,7 @@ function RealTimeAvailability(_a) {
               </alert_1.AlertDescription>
             </alert_1.Alert>
 
-            {alternatives.map(function (slot) {
-              return renderSlotCard(slot, true);
-            })}
+            {alternatives.map((slot) => renderSlotCard(slot, true))}
           </card_1.CardContent>
         </card_1.Card>
       )}

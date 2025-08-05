@@ -3,32 +3,31 @@
  * Story 1.4 - Task 1: Session timeout configuration interface for admins
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,10 +147,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -162,7 +159,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SessionTimeoutConfig;
 var react_1 = require("react");
@@ -224,7 +221,6 @@ var ROLE_DESCRIPTIONS = {
   patient: "Acesso limitado com sessões de curta duração",
 };
 function SessionTimeoutConfig(_a) {
-  var _this = this;
   var onConfigUpdate = _a.onConfigUpdate;
   var _b = (0, react_1.useState)(DEFAULT_CONFIGS),
     configs = _b[0],
@@ -241,13 +237,13 @@ function SessionTimeoutConfig(_a) {
   var _f = (0, react_1.useState)({}),
     validationErrors = _f[0],
     setValidationErrors = _f[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadCurrentConfigs();
   }, []);
-  var loadCurrentConfigs = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadCurrentConfigs = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -276,8 +272,7 @@ function SessionTimeoutConfig(_a) {
         }
       });
     });
-  };
-  var validateConfig = function (role, config) {
+  var validateConfig = (role, config) => {
     var errors = {};
     if (config.defaultTimeoutMinutes <= 0) {
       errors.defaultTimeout = "Timeout padrão deve ser maior que 0";
@@ -291,18 +286,10 @@ function SessionTimeoutConfig(_a) {
     if (config.gracePeriodMinutes <= 0) {
       errors.gracePeriod = "Período de graça deve ser maior que 0";
     }
-    if (
-      config.warningThresholds.some(function (threshold) {
-        return threshold <= 0;
-      })
-    ) {
+    if (config.warningThresholds.some((threshold) => threshold <= 0)) {
       errors.warningThresholds = "Todos os avisos devem ser maiores que 0";
     }
-    if (
-      config.warningThresholds.some(function (threshold) {
-        return threshold >= config.defaultTimeoutMinutes;
-      })
-    ) {
+    if (config.warningThresholds.some((threshold) => threshold >= config.defaultTimeoutMinutes)) {
       errors.warningThresholds = "Avisos devem ser menores que o timeout padrão";
     }
     // Role-specific validations
@@ -314,7 +301,7 @@ function SessionTimeoutConfig(_a) {
     }
     return errors;
   };
-  var handleConfigChange = function (role, field, value) {
+  var handleConfigChange = (role, field, value) => {
     var _a, _b;
     var newConfigs = __assign(
       __assign({}, configs),
@@ -328,12 +315,12 @@ function SessionTimeoutConfig(_a) {
     var errors = validateConfig(role, newConfigs[role]);
     setValidationErrors(errors);
   };
-  var handleWarningThresholdChange = function (role, index, value) {
+  var handleWarningThresholdChange = (role, index, value) => {
     var newThresholds = __spreadArray([], configs[role].warningThresholds, true);
     newThresholds[index] = value;
     handleConfigChange(role, "warningThresholds", newThresholds);
   };
-  var addWarningThreshold = function (role) {
+  var addWarningThreshold = (role) => {
     var newThresholds = __spreadArray(
       __spreadArray([], configs[role].warningThresholds, true),
       [5],
@@ -341,22 +328,20 @@ function SessionTimeoutConfig(_a) {
     );
     handleConfigChange(role, "warningThresholds", newThresholds);
   };
-  var removeWarningThreshold = function (role, index) {
-    var newThresholds = configs[role].warningThresholds.filter(function (_, i) {
-      return i !== index;
-    });
+  var removeWarningThreshold = (role, index) => {
+    var newThresholds = configs[role].warningThresholds.filter((_, i) => i !== index);
     handleConfigChange(role, "warningThresholds", newThresholds);
   };
-  var saveConfigs = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveConfigs = () =>
+    __awaiter(this, void 0, void 0, function () {
       var allErrors_1, response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
             setIsLoading(true);
             allErrors_1 = {};
-            Object.entries(configs).forEach(function (_a) {
+            Object.entries(configs).forEach((_a) => {
               var role = _a[0],
                 config = _a[1];
               var errors = validateConfig(role, config);
@@ -383,7 +368,7 @@ function SessionTimeoutConfig(_a) {
               throw new Error("Failed to save configurations");
             }
             // Notify parent component
-            Object.entries(configs).forEach(function (_a) {
+            Object.entries(configs).forEach((_a) => {
               var role = _a[0],
                 config = _a[1];
               var sessionConfig = {
@@ -415,14 +400,13 @@ function SessionTimeoutConfig(_a) {
         }
       });
     });
-  };
-  var resetToDefaults = function () {
+  var resetToDefaults = () => {
     setConfigs(DEFAULT_CONFIGS);
     setHasChanges(true);
     setValidationErrors({});
     sonner_1.toast.info("Configurações resetadas para os valores padrão");
   };
-  var formatDuration = function (minutes) {
+  var formatDuration = (minutes) => {
     if (minutes < 60) {
       return "".concat(minutes, " min");
     }
@@ -432,7 +416,7 @@ function SessionTimeoutConfig(_a) {
       ? "".concat(hours, "h ").concat(remainingMinutes, "min")
       : "".concat(hours, "h");
   };
-  var getRoleSecurityLevel = function (role) {
+  var getRoleSecurityLevel = (role) => {
     switch (role) {
       case "owner":
         return { level: "Máxima", color: "bg-red-100 text-red-800" };
@@ -479,14 +463,9 @@ function SessionTimeoutConfig(_a) {
         </alert_1.Alert>
       )}
 
-      <tabs_1.Tabs
-        value={activeRole}
-        onValueChange={function (value) {
-          return setActiveRole(value);
-        }}
-      >
+      <tabs_1.Tabs value={activeRole} onValueChange={(value) => setActiveRole(value)}>
         <tabs_1.TabsList className="grid w-full grid-cols-4">
-          {Object.entries(ROLE_LABELS).map(function (_a) {
+          {Object.entries(ROLE_LABELS).map((_a) => {
             var role = _a[0],
               label = _a[1];
             var securityLevel = getRoleSecurityLevel(role);
@@ -501,7 +480,7 @@ function SessionTimeoutConfig(_a) {
           })}
         </tabs_1.TabsList>
 
-        {Object.entries(configs).map(function (_a) {
+        {Object.entries(configs).map((_a) => {
           var role = _a[0],
             config = _a[1];
           return (
@@ -526,13 +505,13 @@ function SessionTimeoutConfig(_a) {
                         type="number"
                         min="1"
                         value={config.defaultTimeoutMinutes}
-                        onChange={function (e) {
-                          return handleConfigChange(
+                        onChange={(e) =>
+                          handleConfigChange(
                             role,
                             "defaultTimeoutMinutes",
                             parseInt(e.target.value) || 0,
-                          );
-                        }}
+                          )
+                        }
                         className={validationErrors.defaultTimeout ? "border-red-500" : ""}
                       />
                       <p className="text-sm text-muted-foreground">
@@ -549,13 +528,13 @@ function SessionTimeoutConfig(_a) {
                         type="number"
                         min="1"
                         value={config.maxTimeoutMinutes}
-                        onChange={function (e) {
-                          return handleConfigChange(
+                        onChange={(e) =>
+                          handleConfigChange(
                             role,
                             "maxTimeoutMinutes",
                             parseInt(e.target.value) || 0,
-                          );
-                        }}
+                          )
+                        }
                         className={validationErrors.maxTimeout ? "border-red-500" : ""}
                       />
                       <p className="text-sm text-muted-foreground">
@@ -577,13 +556,13 @@ function SessionTimeoutConfig(_a) {
                         type="number"
                         min="1"
                         value={config.activityExtensionMinutes}
-                        onChange={function (e) {
-                          return handleConfigChange(
+                        onChange={(e) =>
+                          handleConfigChange(
                             role,
                             "activityExtensionMinutes",
                             parseInt(e.target.value) || 0,
-                          );
-                        }}
+                          )
+                        }
                         className={validationErrors.activityExtension ? "border-red-500" : ""}
                       />
                       <p className="text-sm text-muted-foreground">
@@ -600,13 +579,13 @@ function SessionTimeoutConfig(_a) {
                         type="number"
                         min="1"
                         value={config.gracePeriodMinutes}
-                        onChange={function (e) {
-                          return handleConfigChange(
+                        onChange={(e) =>
+                          handleConfigChange(
                             role,
                             "gracePeriodMinutes",
                             parseInt(e.target.value) || 0,
-                          );
-                        }}
+                          )
+                        }
                         className={validationErrors.gracePeriod ? "border-red-500" : ""}
                       />
                       <p className="text-sm text-muted-foreground">
@@ -624,44 +603,38 @@ function SessionTimeoutConfig(_a) {
                       <button_1.Button
                         variant="outline"
                         size="sm"
-                        onClick={function () {
-                          return addWarningThreshold(role);
-                        }}
+                        onClick={() => addWarningThreshold(role)}
                       >
                         Adicionar Aviso
                       </button_1.Button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                      {config.warningThresholds.map(function (threshold, index) {
-                        return (
-                          <div key={index} className="flex items-center gap-2">
-                            <input_1.Input
-                              type="number"
-                              min="1"
-                              value={threshold}
-                              onChange={function (e) {
-                                return handleWarningThresholdChange(
-                                  role,
-                                  index,
-                                  parseInt(e.target.value) || 0,
-                                );
-                              }}
-                              className={validationErrors.warningThresholds ? "border-red-500" : ""}
-                            />
-                            {config.warningThresholds.length > 1 && (
-                              <button_1.Button
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  return removeWarningThreshold(role, index);
-                                }}
-                              >
-                                ×
-                              </button_1.Button>
-                            )}
-                          </div>
-                        );
-                      })}
+                      {config.warningThresholds.map((threshold, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input_1.Input
+                            type="number"
+                            min="1"
+                            value={threshold}
+                            onChange={(e) =>
+                              handleWarningThresholdChange(
+                                role,
+                                index,
+                                parseInt(e.target.value) || 0,
+                              )
+                            }
+                            className={validationErrors.warningThresholds ? "border-red-500" : ""}
+                          />
+                          {config.warningThresholds.length > 1 && (
+                            <button_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeWarningThreshold(role, index)}
+                            >
+                              ×
+                            </button_1.Button>
+                          )}
+                        </div>
+                      ))}
                     </div>
                     {validationErrors.warningThresholds && (
                       <p className="text-sm text-red-500">{validationErrors.warningThresholds}</p>
@@ -680,9 +653,9 @@ function SessionTimeoutConfig(_a) {
                     </div>
                     <switch_1.Switch
                       checked={config.autoExtendEnabled}
-                      onCheckedChange={function (checked) {
-                        return handleConfigChange(role, "autoExtendEnabled", checked);
-                      }}
+                      onCheckedChange={(checked) =>
+                        handleConfigChange(role, "autoExtendEnabled", checked)
+                      }
                     />
                   </div>
 

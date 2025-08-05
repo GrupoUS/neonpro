@@ -1,4 +1,3 @@
-"use strict";
 /**
  * tRPC Root Router
  * Main router combining all healthcare modules

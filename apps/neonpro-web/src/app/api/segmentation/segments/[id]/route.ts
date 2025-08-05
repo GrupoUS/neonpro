@@ -1,7 +1,7 @@
+import { type NextRequest, NextResponse } from "next/server";
 import { patientSegmentationService } from "@/app/lib/services/patient-segmentation-service";
 import { UpdateSegmentSchema } from "@/app/lib/validations/segmentation";
 import { createClient } from "@/app/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
 
 interface RouteParams {
   id: string;

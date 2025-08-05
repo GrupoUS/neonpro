@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InteractiveBarChart = InteractiveBarChart;
 var recharts_1 = require("recharts");
@@ -20,7 +19,7 @@ function InteractiveBarChart(_a) {
     formatTooltip = _a.formatTooltip,
     formatXAxisLabel = _a.formatXAxisLabel,
     formatYAxisLabel = _a.formatYAxisLabel;
-  var defaultTooltipFormatter = function (value, name) {
+  var defaultTooltipFormatter = (value, name) => {
     if (formatTooltip) {
       return formatTooltip(value, name);
     }
@@ -65,17 +64,15 @@ function InteractiveBarChart(_a) {
               }}
             />
             {showLegend && <recharts_1.Legend />}
-            {bars.map(function (bar) {
-              return (
-                <recharts_1.Bar
-                  key={bar.dataKey}
-                  dataKey={bar.dataKey}
-                  fill={bar.color}
-                  name={bar.name}
-                  radius={[4, 4, 0, 0]}
-                />
-              );
-            })}
+            {bars.map((bar) => (
+              <recharts_1.Bar
+                key={bar.dataKey}
+                dataKey={bar.dataKey}
+                fill={bar.color}
+                name={bar.name}
+                radius={[4, 4, 0, 0]}
+              />
+            ))}
           </recharts_1.BarChart>
         </recharts_1.ResponsiveContainer>
       </card_1.CardContent>

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,12 +128,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createduplicateDetectionSystem = exports.DuplicateDetectionSystem = void 0;
 // lib/patients/duplicate-detection.ts
 var server_1 = require("@/lib/supabase/server");
-var DuplicateDetectionSystem = /** @class */ (function () {
+var DuplicateDetectionSystem = /** @class */ (() => {
   function DuplicateDetectionSystem() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -146,7 +143,7 @@ var DuplicateDetectionSystem = /** @class */ (function () {
   DuplicateDetectionSystem.prototype.detectDuplicates = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var mockDuplicates;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mockDuplicates = [
             {
@@ -173,9 +170,9 @@ var DuplicateDetectionSystem = /** @class */ (function () {
           if (patientId) {
             return [
               2 /*return*/,
-              mockDuplicates.filter(function (dup) {
-                return dup.primaryPatientId === patientId || dup.duplicatePatientId === patientId;
-              }),
+              mockDuplicates.filter(
+                (dup) => dup.primaryPatientId === patientId || dup.duplicatePatientId === patientId,
+              ),
             ];
           }
           return [2 /*return*/, mockDuplicates];
@@ -193,7 +190,7 @@ var DuplicateDetectionSystem = /** @class */ (function () {
   DuplicateDetectionSystem.prototype.comparePatients = function (patientId1, patientId2) {
     return __awaiter(this, void 0, void 0, function () {
       var comparisons;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           comparisons = [
             {
@@ -276,11 +273,7 @@ var DuplicateDetectionSystem = /** @class */ (function () {
   /**
    * Calcula similaridade entre campos específicos
    */
-  DuplicateDetectionSystem.prototype.calculateFieldSimilarity = function (
-    value1,
-    value2,
-    fieldType,
-  ) {
+  DuplicateDetectionSystem.prototype.calculateFieldSimilarity = (value1, value2, fieldType) => {
     if (value1 === value2) return 1.0;
     // Normalizar valores
     var norm1 = value1.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -314,7 +307,7 @@ var DuplicateDetectionSystem = /** @class */ (function () {
    */
   DuplicateDetectionSystem.prototype.confirmDuplicate = function (duplicateId, reviewedBy) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simular confirmação de duplicata
           console.log("Duplicata ".concat(duplicateId, " confirmada por ").concat(reviewedBy));
@@ -332,7 +325,7 @@ var DuplicateDetectionSystem = /** @class */ (function () {
    */
   DuplicateDetectionSystem.prototype.rejectDuplicate = function (duplicateId, reviewedBy, reason) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simular rejeição de duplicata
           console.log(
@@ -361,7 +354,7 @@ var DuplicateDetectionSystem = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var mergeResult;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mergeResult = {
             success: true,
@@ -456,9 +449,7 @@ var DuplicateDetectionSystem = /** @class */ (function () {
             potentialDuplicates = _a.sent();
             return [
               2 /*return*/,
-              potentialDuplicates.filter(function (dup) {
-                return dup.confidenceScore >= threshold_1;
-              }),
+              potentialDuplicates.filter((dup) => dup.confidenceScore >= threshold_1),
             ];
           case 2:
             error_2 = _a.sent();
@@ -487,29 +478,17 @@ var DuplicateDetectionSystem = /** @class */ (function () {
               generatedAt: new Date(),
               summary: {
                 totalDuplicates: allDuplicates.length,
-                pendingReview: allDuplicates.filter(function (d) {
-                  return d.status === "pending";
-                }).length,
-                confirmed: allDuplicates.filter(function (d) {
-                  return d.status === "confirmed";
-                }).length,
-                merged: allDuplicates.filter(function (d) {
-                  return d.status === "merged";
-                }).length,
-                rejected: allDuplicates.filter(function (d) {
-                  return d.status === "rejected";
-                }).length,
+                pendingReview: allDuplicates.filter((d) => d.status === "pending").length,
+                confirmed: allDuplicates.filter((d) => d.status === "confirmed").length,
+                merged: allDuplicates.filter((d) => d.status === "merged").length,
+                rejected: allDuplicates.filter((d) => d.status === "rejected").length,
               },
               confidenceDistribution: {
-                high: allDuplicates.filter(function (d) {
-                  return d.confidenceScore >= 0.9;
-                }).length,
-                medium: allDuplicates.filter(function (d) {
-                  return d.confidenceScore >= 0.7 && d.confidenceScore < 0.9;
-                }).length,
-                low: allDuplicates.filter(function (d) {
-                  return d.confidenceScore < 0.7;
-                }).length,
+                high: allDuplicates.filter((d) => d.confidenceScore >= 0.9).length,
+                medium: allDuplicates.filter(
+                  (d) => d.confidenceScore >= 0.7 && d.confidenceScore < 0.9,
+                ).length,
+                low: allDuplicates.filter((d) => d.confidenceScore < 0.7).length,
               },
               duplicates: allDuplicates,
               recommendations: [
@@ -532,7 +511,5 @@ var DuplicateDetectionSystem = /** @class */ (function () {
   return DuplicateDetectionSystem;
 })();
 exports.DuplicateDetectionSystem = DuplicateDetectionSystem;
-var createduplicateDetectionSystem = function () {
-  return new DuplicateDetectionSystem();
-};
+var createduplicateDetectionSystem = () => new DuplicateDetectionSystem();
 exports.createduplicateDetectionSystem = createduplicateDetectionSystem;

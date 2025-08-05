@@ -1,8 +1,4 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
-import type { AlertSystem } from "@/lib/dashboard/executive/alert-system";
+import type { NextRequest } from "next/server";
 
 // Schema for alert rule creation/update
 const CreateAlertRuleSchema = z.object({
@@ -44,10 +40,10 @@ const CreateAlertRuleSchema = z.object({
   cooldownMinutes: z.number().min(1).default(60),
 });
 
-const UpdateAlertRuleSchema = CreateAlertRuleSchema.partial();
+const _UpdateAlertRuleSchema = CreateAlertRuleSchema.partial();
 
 // Schema for alert instance actions
-const AlertActionSchema = z.object({
+const _AlertActionSchema = z.object({
   action: z.enum(["acknowledge", "resolve", "dismiss"]),
   comment: z.string().optional(),
 });

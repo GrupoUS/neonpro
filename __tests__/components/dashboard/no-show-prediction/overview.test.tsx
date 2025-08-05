@@ -2,7 +2,6 @@
 // Test suite for overview dashboard component
 
 import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import NoShowPredictionOverview from "@/components/dashboard/no-show-prediction/overview";
 
 // Mock fetch

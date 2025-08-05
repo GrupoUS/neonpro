@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentStatistics = AppointmentStatistics;
 var react_1 = require("react");
@@ -13,74 +12,53 @@ function AppointmentStatistics(_a) {
     _b = _a.previousPeriodAppointments,
     previousPeriodAppointments = _b === void 0 ? [] : _b,
     className = _a.className;
-  var statistics = (0, react_1.useMemo)(
-    function () {
-      // Current period stats
-      var total = appointments.length;
-      var completed = appointments.filter(function (apt) {
-        return apt.status === "completed";
-      }).length;
-      var cancelled = appointments.filter(function (apt) {
-        return apt.status === "cancelled";
-      }).length;
-      var noShow = appointments.filter(function (apt) {
-        return apt.status === "no_show";
-      }).length;
-      var pending = appointments.filter(function (apt) {
-        return apt.status === "pending";
-      }).length;
-      var confirmed = appointments.filter(function (apt) {
-        return apt.status === "confirmed";
-      }).length;
-      // Revenue calculation
-      var revenue = appointments
-        .filter(function (apt) {
-          return apt.status === "completed";
-        })
-        .reduce(function (sum, apt) {
-          return sum + (apt.service.price || 0);
-        }, 0);
-      // Success rate
-      var totalFinished = completed + cancelled + noShow;
-      var successRate = totalFinished > 0 ? (completed / totalFinished) * 100 : 0;
-      // No-show rate
-      var noShowRate = totalFinished > 0 ? (noShow / totalFinished) * 100 : 0;
-      // Previous period comparison
-      var prevTotal = previousPeriodAppointments.length;
-      var prevCompleted = previousPeriodAppointments.filter(function (apt) {
-        return apt.status === "completed";
-      }).length;
-      var prevRevenue = previousPeriodAppointments
-        .filter(function (apt) {
-          return apt.status === "completed";
-        })
-        .reduce(function (sum, apt) {
-          return sum + (apt.service.price || 0);
-        }, 0);
-      // Calculate trends
-      var totalTrend = prevTotal > 0 ? ((total - prevTotal) / prevTotal) * 100 : 0;
-      var completedTrend =
-        prevCompleted > 0 ? ((completed - prevCompleted) / prevCompleted) * 100 : 0;
-      var revenueTrend = prevRevenue > 0 ? ((revenue - prevRevenue) / prevRevenue) * 100 : 0;
-      return {
-        total: total,
-        completed: completed,
-        cancelled: cancelled,
-        noShow: noShow,
-        pending: pending,
-        confirmed: confirmed,
-        revenue: revenue,
-        successRate: successRate,
-        noShowRate: noShowRate,
-        trends: {
-          total: totalTrend,
-          completed: completedTrend,
-          revenue: revenueTrend,
-        },
-      };
-    },
-    [appointments, previousPeriodAppointments],
-  );
+  var statistics = (0, react_1.useMemo)(() => {
+    // Current period stats
+    var total = appointments.length;
+    var completed = appointments.filter((apt) => apt.status === "completed").length;
+    var cancelled = appointments.filter((apt) => apt.status === "cancelled").length;
+    var noShow = appointments.filter((apt) => apt.status === "no_show").length;
+    var pending = appointments.filter((apt) => apt.status === "pending").length;
+    var confirmed = appointments.filter((apt) => apt.status === "confirmed").length;
+    // Revenue calculation
+    var revenue = appointments
+      .filter((apt) => apt.status === "completed")
+      .reduce((sum, apt) => sum + (apt.service.price || 0), 0);
+    // Success rate
+    var totalFinished = completed + cancelled + noShow;
+    var successRate = totalFinished > 0 ? (completed / totalFinished) * 100 : 0;
+    // No-show rate
+    var noShowRate = totalFinished > 0 ? (noShow / totalFinished) * 100 : 0;
+    // Previous period comparison
+    var prevTotal = previousPeriodAppointments.length;
+    var prevCompleted = previousPeriodAppointments.filter(
+      (apt) => apt.status === "completed",
+    ).length;
+    var prevRevenue = previousPeriodAppointments
+      .filter((apt) => apt.status === "completed")
+      .reduce((sum, apt) => sum + (apt.service.price || 0), 0);
+    // Calculate trends
+    var totalTrend = prevTotal > 0 ? ((total - prevTotal) / prevTotal) * 100 : 0;
+    var completedTrend =
+      prevCompleted > 0 ? ((completed - prevCompleted) / prevCompleted) * 100 : 0;
+    var revenueTrend = prevRevenue > 0 ? ((revenue - prevRevenue) / prevRevenue) * 100 : 0;
+    return {
+      total: total,
+      completed: completed,
+      cancelled: cancelled,
+      noShow: noShow,
+      pending: pending,
+      confirmed: confirmed,
+      revenue: revenue,
+      successRate: successRate,
+      noShowRate: noShowRate,
+      trends: {
+        total: totalTrend,
+        completed: completedTrend,
+        revenue: revenueTrend,
+      },
+    };
+  }, [appointments, previousPeriodAppointments]);
   var statCards = [
     {
       title: "Total de Agendamentos",
@@ -166,14 +144,12 @@ function AppointmentStatistics(_a) {
     { status: "pending", label: "Pendentes", value: statistics.pending, color: "bg-yellow-500" },
     { status: "cancelled", label: "Cancelados", value: statistics.cancelled, color: "bg-red-500" },
     { status: "no_show", label: "Não Compareceram", value: statistics.noShow, color: "bg-red-400" },
-  ].filter(function (item) {
-    return item.value > 0;
-  });
+  ].filter((item) => item.value > 0);
   return (
     <div className={(0, utils_1.cn)("space-y-6", className)}>
       {/* Main Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {statCards.map(function (stat, index) {
+        {statCards.map((stat, index) => {
           var Icon = stat.icon;
           return (
             <card_1.Card key={index}>
@@ -229,31 +205,29 @@ function AppointmentStatistics(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {statusDistribution.map(function (item) {
-                return (
-                  <div key={item.status} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <div className="flex items-center space-x-2">
-                        <div className={(0, utils_1.cn)("w-3 h-3 rounded-full", item.color)} />
-                        <span>{item.label}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="font-medium">{item.value}</span>
-                        <badge_1.Badge variant="outline">
-                          {statistics.total > 0
-                            ? ((item.value / statistics.total) * 100).toFixed(1)
-                            : 0}
-                          %
-                        </badge_1.Badge>
-                      </div>
+              {statusDistribution.map((item) => (
+                <div key={item.status} className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <div className={(0, utils_1.cn)("w-3 h-3 rounded-full", item.color)} />
+                      <span>{item.label}</span>
                     </div>
-                    <progress_1.Progress
-                      value={statistics.total > 0 ? (item.value / statistics.total) * 100 : 0}
-                      className="h-2"
-                    />
+                    <div className="flex items-center space-x-2">
+                      <span className="font-medium">{item.value}</span>
+                      <badge_1.Badge variant="outline">
+                        {statistics.total > 0
+                          ? ((item.value / statistics.total) * 100).toFixed(1)
+                          : 0}
+                        %
+                      </badge_1.Badge>
+                    </div>
                   </div>
-                );
-              })}
+                  <progress_1.Progress
+                    value={statistics.total > 0 ? (item.value / statistics.total) * 100 : 0}
+                    className="h-2"
+                  />
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>

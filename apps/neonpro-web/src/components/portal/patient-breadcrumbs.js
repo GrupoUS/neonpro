@@ -2,7 +2,6 @@
 // Story 1.3, Task 2: Accessible breadcrumb navigation for patient portal
 // Created: WCAG 2.1 AA compliant breadcrumb navigation
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientBreadcrumbs = PatientBreadcrumbs;
 var React = require("react");
@@ -46,45 +45,42 @@ function PatientBreadcrumbs(_a) {
     className = _a.className;
   var pathname = (0, navigation_1.usePathname)();
   // Use provided items or generate from current route
-  var breadcrumbItems = React.useMemo(
-    function () {
-      if (items) return items;
-      // Try exact match first
-      if (routeBreadcrumbs[pathname]) {
-        return routeBreadcrumbs[pathname];
+  var breadcrumbItems = React.useMemo(() => {
+    if (items) return items;
+    // Try exact match first
+    if (routeBreadcrumbs[pathname]) {
+      return routeBreadcrumbs[pathname];
+    }
+    // Try pattern matching for dynamic routes
+    for (var _i = 0, _a = Object.entries(routeBreadcrumbs); _i < _a.length; _i++) {
+      var _b = _a[_i],
+        pattern = _b[0],
+        breadcrumbs = _b[1];
+      if (pattern.includes("[") && pathname.match(pattern.replace(/\[.*?\]/g, "[^/]+"))) {
+        return breadcrumbs;
       }
-      // Try pattern matching for dynamic routes
-      for (var _i = 0, _a = Object.entries(routeBreadcrumbs); _i < _a.length; _i++) {
-        var _b = _a[_i],
-          pattern = _b[0],
-          breadcrumbs = _b[1];
-        if (pattern.includes("[") && pathname.match(pattern.replace(/\[.*?\]/g, "[^/]+"))) {
-          return breadcrumbs;
+    }
+    // Fallback: generate from path segments
+    var segments = pathname.split("/").filter(Boolean);
+    var generatedItems = [];
+    // Always start with home for portal routes
+    if (pathname.startsWith("/portal")) {
+      generatedItems.push({ title: "Início", href: "/portal" });
+      // Add intermediate segments
+      for (var i = 2; i < segments.length; i++) {
+        var segment = segments[i];
+        var href = "/" + segments.slice(0, i + 1).join("/");
+        var title = segment.charAt(0).toUpperCase() + segment.slice(1);
+        if (i === segments.length - 1) {
+          // Last item is current page (no href)
+          generatedItems.push({ title: title });
+        } else {
+          generatedItems.push({ title: title, href: href });
         }
       }
-      // Fallback: generate from path segments
-      var segments = pathname.split("/").filter(Boolean);
-      var generatedItems = [];
-      // Always start with home for portal routes
-      if (pathname.startsWith("/portal")) {
-        generatedItems.push({ title: "Início", href: "/portal" });
-        // Add intermediate segments
-        for (var i = 2; i < segments.length; i++) {
-          var segment = segments[i];
-          var href = "/" + segments.slice(0, i + 1).join("/");
-          var title = segment.charAt(0).toUpperCase() + segment.slice(1);
-          if (i === segments.length - 1) {
-            // Last item is current page (no href)
-            generatedItems.push({ title: title });
-          } else {
-            generatedItems.push({ title: title, href: href });
-          }
-        }
-      }
-      return generatedItems;
-    },
-    [pathname, items],
-  );
+    }
+    return generatedItems;
+  }, [pathname, items]);
   // Don't render if no breadcrumbs or only one item
   if (!breadcrumbItems || breadcrumbItems.length <= 1) {
     return null;
@@ -93,7 +89,7 @@ function PatientBreadcrumbs(_a) {
     <nav aria-label="Navegação estrutural" className={(0, utils_1.cn)("mb-6", className)}>
       <breadcrumb_1.Breadcrumb>
         <breadcrumb_1.BreadcrumbList>
-          {breadcrumbItems.map(function (item, index) {
+          {breadcrumbItems.map((item, index) => {
             var isLast = index === breadcrumbItems.length - 1;
             return (
               <React.Fragment key={index}>

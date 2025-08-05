@@ -1,5 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import type { AISchedulingOptimizer } from "../../../../../lib/ai/scheduling-optimizer";
+﻿import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {

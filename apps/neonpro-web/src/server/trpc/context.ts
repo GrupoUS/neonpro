@@ -1,7 +1,7 @@
-﻿import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { createServerClient } from "@supabase/ssr";
+﻿import { createServerClient } from "@supabase/ssr";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { cookies } from "next/headers";
-import { type Database } from "@/types/supabase";
+import type { Database } from "@/types/supabase";
 
 // Healthcare user context with medical role validation
 export interface HealthcareUser {

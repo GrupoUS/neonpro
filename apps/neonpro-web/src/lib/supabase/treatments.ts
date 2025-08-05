@@ -8,22 +8,22 @@
  */
 
 import type { createClient } from "@/lib/supabase/client";
+import type { FHIRCodeableConcept } from "@/lib/types/fhir";
 import type {
-  TreatmentPlan,
-  Procedure,
   ClinicalNote,
-  TreatmentPlanFormData,
-  ProcedureFormData,
   ClinicalNoteFormData,
-  TreatmentPlanSearchFilters,
-  ProcedureSearchFilters,
-  ClinicalNoteSearchFilters,
-  TreatmentPlanListResponse,
-  ProcedureListResponse,
   ClinicalNoteListResponse,
+  ClinicalNoteSearchFilters,
+  Procedure,
+  ProcedureFormData,
+  ProcedureListResponse,
+  ProcedureSearchFilters,
+  TreatmentPlan,
+  TreatmentPlanFormData,
+  TreatmentPlanListResponse,
+  TreatmentPlanSearchFilters,
   TreatmentStatistics,
 } from "@/lib/types/treatment";
-import type { FHIRCodeableConcept } from "@/lib/types/fhir";
 
 const supabase = await createClient();
 

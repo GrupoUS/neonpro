@@ -10,10 +10,10 @@
  * - Real-time alert management
  */
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { RiskAssessmentService } from "@/app/lib/services/risk-assessment-automation";
 import type { RiskAssessmentSchema } from "@/app/lib/validations/risk-assessment-automation";
 import type { CreateRiskAssessmentRequest } from "@/app/types/risk-assessment-automation";
-import type { NextRequest, NextResponse } from "next/server";
 
 const riskAssessmentService = new RiskAssessmentService();
 

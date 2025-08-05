@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthWithFallback = AuthWithFallback;
 var button_1 = require("@/components/ui/button");
@@ -145,7 +142,6 @@ var react_1 = require("react");
 var sonner_1 = require("sonner");
 var google_popup_button_1 = require("./google-popup-button");
 function AuthWithFallback(_a) {
-  var _this = this;
   var onSuccess = _a.onSuccess,
     _b = _a.showSignUp,
     showSignUp = _b === void 0 ? false : _b,
@@ -172,11 +168,11 @@ function AuthWithFallback(_a) {
   var _k = (0, auth_context_1.useAuth)(),
     signIn = _k.signIn,
     signUp = _k.signUp;
-  var handleEmailAuth = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleEmailAuth = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var startTime, error, _a, totalTime, errorMessage, action, error_1, errorMessage;
       var _b, _c, _d, _e, _f;
-      return __generator(this, function (_g) {
+      return __generator(this, (_g) => {
         switch (_g.label) {
           case 0:
             e.preventDefault();
@@ -272,11 +268,8 @@ function AuthWithFallback(_a) {
         }
       });
     });
-  };
-  var toggleAuthMode = function () {
-    setAuthMode(function (prev) {
-      return prev === "signin" ? "signup" : "signin";
-    });
+  var toggleAuthMode = () => {
+    setAuthMode((prev) => (prev === "signin" ? "signup" : "signin"));
     setEmail("");
     setPassword("");
     setConfirmPassword("");
@@ -316,9 +309,7 @@ function AuthWithFallback(_a) {
             type="email"
             placeholder="seu@email.com"
             value={email}
-            onChange={function (e) {
-              return setEmail(e.target.value);
-            }}
+            onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading}
             required
             autoComplete="email"
@@ -333,9 +324,7 @@ function AuthWithFallback(_a) {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               value={password}
-              onChange={function (e) {
-                return setPassword(e.target.value);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
               required
               minLength={6}
@@ -346,9 +335,7 @@ function AuthWithFallback(_a) {
               variant="ghost"
               size="sm"
               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              onClick={function () {
-                return setShowPassword(!showPassword);
-              }}
+              onClick={() => setShowPassword(!showPassword)}
               disabled={isLoading}
             >
               {showPassword
@@ -366,9 +353,7 @@ function AuthWithFallback(_a) {
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               value={confirmPassword}
-              onChange={function (e) {
-                return setConfirmPassword(e.target.value);
-              }}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
               required
               minLength={6}

@@ -6,7 +6,22 @@
 
 "use client";
 
-import type { useState, useMemo } from "react";
+import type {
+  AlertCircle,
+  ArrowRight,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Filter,
+  Search,
+  Star,
+  Target,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import type { useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,10 +29,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Select,
   SelectContent,
@@ -25,30 +39,16 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  TrendingUp,
-  Target,
-  Users,
-  DollarSign,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Star,
-  ArrowRight,
-  Filter,
-  Search,
-} from "lucide-react";
-import type {
-  Customer,
   Appointment,
-  LeadScore,
+  Customer,
+  calculateCustomerLifetimeValue,
   calculateLeadScore,
   categorizeLeadPriority,
   determineCustomerLifecycle,
+  LeadScore,
   predictChurnRisk,
-  calculateCustomerLifetimeValue,
   rankCustomersByValue,
 } from "./utils";
 

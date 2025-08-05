@@ -4,7 +4,7 @@
  */
 
 import type { supabase } from "@/lib/supabase/client";
-import type { NotificationType, NotificationChannel } from "./config";
+import type { NotificationChannel, NotificationType } from "./config";
 
 interface AuditLogEntry {
   action:

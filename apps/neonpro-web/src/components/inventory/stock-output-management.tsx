@@ -5,7 +5,10 @@
  * Comprehensive stock output creation and management interface
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,13 +16,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Icons } from "@/components/ui/icons";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
   Dialog,
   DialogContent,
@@ -28,6 +24,9 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Icons } from "@/components/ui/icons";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
   Select,
   SelectContent,
@@ -43,8 +42,9 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { StockOutputManager, type StockOutput, type StockRequest } from "@/lib/inventory";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useToast } from "@/hooks/use-toast";
+import type { StockOutput, StockOutputManager, StockRequest } from "@/lib/inventory";
 
 interface StockOutputManagementProps {
   onRefresh: () => void;

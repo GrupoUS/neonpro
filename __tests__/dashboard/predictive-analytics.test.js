@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,12 +128,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 require("@testing-library/jest-dom");
 var react_1 = require("@testing-library/react");
 var react_query_1 = require("@tanstack/react-query");
-var react_2 = require("react");
+var _react_2 = require("react");
 var PredictiveAnalyticsPage_1 = require("@/components/dashboard/predictive-analytics/PredictiveAnalyticsPage");
 // Mock fetch globally
 var mockFetch = jest.fn();
@@ -244,7 +241,7 @@ var mockRecommendations = [
   },
 ];
 // Test wrapper with providers
-var TestWrapper = function (_a) {
+var TestWrapper = (_a) => {
   var children = _a.children;
   var queryClient = new react_query_1.QueryClient({
     defaultOptions: {
@@ -258,86 +255,71 @@ var TestWrapper = function (_a) {
     </react_query_1.QueryClientProvider>
   );
 };
-describe("PredictiveAnalyticsPage Component", function () {
-  beforeEach(function () {
+describe("PredictiveAnalyticsPage Component", () => {
+  beforeEach(() => {
     // Reset fetch mock before each test
     jest.clearAllMocks();
     // Mock API responses for each endpoint
-    mockFetch.mockImplementation(function (url) {
+    mockFetch.mockImplementation((url) => {
       if (url.includes("/api/predictive-analytics/models")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return __awaiter(void 0, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                return [2 /*return*/, { data: mockModels }];
-              });
-            });
-          },
+          json: () =>
+            __awaiter(void 0, void 0, void 0, function () {
+              return __generator(this, (_a) => [2 /*return*/, { data: mockModels }]);
+            }),
         });
       }
       if (url.includes("/api/predictive-analytics/predictions")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return __awaiter(void 0, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                return [2 /*return*/, { data: mockPredictions }];
-              });
-            });
-          },
+          json: () =>
+            __awaiter(void 0, void 0, void 0, function () {
+              return __generator(this, (_a) => [2 /*return*/, { data: mockPredictions }]);
+            }),
         });
       }
       if (url.includes("/api/predictive-analytics/alerts")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return __awaiter(void 0, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                return [2 /*return*/, { data: mockAlerts }];
-              });
-            });
-          },
+          json: () =>
+            __awaiter(void 0, void 0, void 0, function () {
+              return __generator(this, (_a) => [2 /*return*/, { data: mockAlerts }]);
+            }),
         });
       }
       if (url.includes("/api/predictive-analytics/accuracy/stats")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return __awaiter(void 0, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                return [2 /*return*/, mockAccuracyStats];
-              });
-            });
-          },
+          json: () =>
+            __awaiter(void 0, void 0, void 0, function () {
+              return __generator(this, (_a) => [2 /*return*/, mockAccuracyStats]);
+            }),
         });
       }
       if (url.includes("/api/predictive-analytics/recommendations")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return __awaiter(void 0, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                return [2 /*return*/, mockRecommendations];
-              });
-            });
-          },
+          json: () =>
+            __awaiter(void 0, void 0, void 0, function () {
+              return __generator(this, (_a) => [2 /*return*/, mockRecommendations]);
+            }),
         });
       }
       return Promise.reject(new Error("Unknown endpoint"));
     });
   });
-  describe("Component Rendering", function () {
-    it("renders predictive analytics interface correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Component Rendering", () => {
+    it("renders predictive analytics interface correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -345,14 +327,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                   expect(
                     react_1.screen.getByText(
@@ -366,18 +348,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("displays main navigation tabs", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("displays main navigation tabs", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -385,14 +366,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByRole("tab", { name: /dashboard/i }),
                   ).toBeInTheDocument();
@@ -411,18 +392,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("shows forecasting dashboard with key metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("shows forecasting dashboard with key metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -430,14 +410,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Modelos Ativos")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Precisão Média")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Alertas Ativos")).toBeInTheDocument();
@@ -449,20 +429,19 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Forecasting Models Interface", function () {
-    it("displays active forecasting models", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Forecasting Models Interface", () => {
+    it("displays active forecasting models", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -470,15 +449,15 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               // Switch to models tab
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var modelsTab = react_1.screen.getByRole("tab", { name: /modelos/i });
                   react_1.fireEvent.click(modelsTab);
                 }),
@@ -488,7 +467,7 @@ describe("PredictiveAnalyticsPage Component", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   // Look for the specific metric card for active models
                   var modelsCard = react_1.screen
                     .getByText("Modelos Ativos")
@@ -502,18 +481,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("shows model performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("shows model performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -521,14 +499,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("87.5%")).toBeInTheDocument(); // Average accuracy
                 }),
               ];
@@ -537,46 +515,39 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles model retraining action", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("handles model retraining action", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockFetch.mockImplementation(function (url) {
+              mockFetch.mockImplementation((url) => {
                 if (url.includes("/models") && url.includes("retrain")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                          return [
-                            2 /*return*/,
-                            { success: true, message: "Retreinamento iniciado" },
-                          ];
-                        });
-                      });
-                    },
+                    json: () =>
+                      __awaiter(void 0, void 0, void 0, function () {
+                        return __generator(this, (_a) => [
+                          2 /*return*/,
+                          { success: true, message: "Retreinamento iniciado" },
+                        ]);
+                      }),
                   });
                 }
                 // Default responses for other endpoints
                 return Promise.resolve({
                   ok: true,
-                  json: function () {
-                    return __awaiter(void 0, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [2 /*return*/, { data: [] }];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(void 0, void 0, void 0, function () {
+                      return __generator(this, (_a) => [2 /*return*/, { data: [] }]);
+                    }),
                 });
               });
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -584,14 +555,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -600,20 +571,19 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Predictions Display", function () {
-    it("displays demand predictions with confidence intervals", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Predictions Display", () => {
+    it("displays demand predictions with confidence intervals", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -621,15 +591,15 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               // Switch to predictions tab
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var predictionsTab = react_1.screen.getByRole("tab", { name: /predições/i });
                   react_1.fireEvent.click(predictionsTab);
                 }),
@@ -639,7 +609,7 @@ describe("PredictiveAnalyticsPage Component", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Predições Hoje")).toBeInTheDocument();
                 }),
               ];
@@ -648,18 +618,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("shows prediction charts and visualizations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("shows prediction charts and visualizations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -667,14 +636,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -683,18 +652,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles prediction filtering by category", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("handles prediction filtering by category", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -702,14 +670,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -718,20 +686,19 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Alerts and Notifications", function () {
-    it("displays active demand alerts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Alerts and Notifications", () => {
+    it("displays active demand alerts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -739,15 +706,15 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               // Switch to alerts tab
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var alertsTab = react_1.screen.getByRole("tab", { name: /alertas/i });
                   react_1.fireEvent.click(alertsTab);
                 }),
@@ -757,7 +724,7 @@ describe("PredictiveAnalyticsPage Component", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Alertas Ativos")).toBeInTheDocument();
                 }),
               ];
@@ -766,18 +733,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles alert acknowledgment", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("handles alert acknowledgment", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -785,14 +751,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -801,18 +767,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("shows alert severity indicators", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("shows alert severity indicators", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -820,14 +785,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -836,20 +801,19 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Interactive Elements", function () {
-    it("handles tab navigation correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Interactive Elements", () => {
+    it("handles tab navigation correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -857,14 +821,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var dashboardTab = react_1.screen.getByRole("tab", { name: /dashboard/i });
                   var modelsTab = react_1.screen.getByRole("tab", { name: /modelos/i });
                   var predictionsTab = react_1.screen.getByRole("tab", { name: /predições/i });
@@ -890,18 +854,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles search and filtering", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("handles search and filtering", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -909,14 +872,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -925,18 +888,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles refresh functionality", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("handles refresh functionality", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -944,14 +906,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var refreshButton = react_1.screen.getByText("Atualizar");
                   react_1.fireEvent.click(refreshButton);
                   expect(mockFetch).toHaveBeenCalled();
@@ -962,36 +924,33 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Responsive Design", function () {
-    it("renders without errors on different screen sizes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Responsive Design", () => {
+    it("renders without errors on different screen sizes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock window.matchMedia for responsive tests
               Object.defineProperty(window, "matchMedia", {
                 writable: true,
-                value: jest.fn().mockImplementation(function (query) {
-                  return {
-                    matches: false,
-                    media: query,
-                    onchange: null,
-                    addListener: jest.fn(),
-                    removeListener: jest.fn(),
-                    addEventListener: jest.fn(),
-                    removeEventListener: jest.fn(),
-                    dispatchEvent: jest.fn(),
-                  };
-                }),
+                value: jest.fn().mockImplementation((query) => ({
+                  matches: false,
+                  media: query,
+                  onchange: null,
+                  addListener: jest.fn(),
+                  removeListener: jest.fn(),
+                  addEventListener: jest.fn(),
+                  removeEventListener: jest.fn(),
+                  dispatchEvent: jest.fn(),
+                })),
               });
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -999,14 +958,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -1015,18 +974,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("maintains functionality across viewport sizes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("maintains functionality across viewport sizes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1034,14 +992,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -1050,20 +1008,19 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Accessibility Features", function () {
-    it("provides proper ARIA labels and roles", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Accessibility Features", () => {
+    it("provides proper ARIA labels and roles", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1071,14 +1028,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByRole("tablist")).toBeInTheDocument();
                   expect(react_1.screen.getAllByRole("tab")).toHaveLength(5);
                 }),
@@ -1088,18 +1045,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("supports keyboard navigation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("supports keyboard navigation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1107,14 +1063,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var firstTab = react_1.screen.getByRole("tab", { name: /dashboard/i });
                   expect(firstTab).toBeInTheDocument();
                 }),
@@ -1124,18 +1080,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("has proper semantic structure", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("has proper semantic structure", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1143,14 +1098,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByRole("heading", { name: /análise preditiva/i }),
                   ).toBeInTheDocument();
@@ -1161,22 +1116,21 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance Requirements", function () {
-    it("renders within acceptable time frame", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance Requirements", () => {
+    it("renders within acceptable time frame", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = performance.now();
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1184,14 +1138,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -1202,18 +1156,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles multiple rapid interactions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("handles multiple rapid interactions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1221,17 +1174,17 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var tabs = react_1.screen.getAllByRole("tab");
                   // Rapidly click through tabs
-                  tabs.forEach(function (tab) {
+                  tabs.forEach((tab) => {
                     react_1.fireEvent.click(tab);
                   });
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
@@ -1242,20 +1195,19 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Story 8.3 Acceptance Criteria Validation", function () {
-    it("AC1: Machine learning-based forecasting with ≥85% accuracy", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Story 8.3 Acceptance Criteria Validation", () => {
+    it("AC1: Machine learning-based forecasting with ≥85% accuracy", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1263,14 +1215,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("87.5%")).toBeInTheDocument(); // Accuracy metric
                   expect(react_1.screen.getByText("Precisão Média")).toBeInTheDocument();
                 }),
@@ -1280,18 +1232,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC2: Multi-dimensional forecasting capabilities", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("AC2: Multi-dimensional forecasting capabilities", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1299,14 +1250,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Modelos Ativos")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Predições Hoje")).toBeInTheDocument();
                 }),
@@ -1316,18 +1267,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC4: Early warning system for demand spikes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("AC4: Early warning system for demand spikes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1335,14 +1285,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Alertas Ativos")).toBeInTheDocument();
                   expect(react_1.screen.getByText("2")).toBeInTheDocument(); // Alert count
                 }),
@@ -1352,18 +1302,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC7: Forecasting dashboard with visual predictions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("AC7: Forecasting dashboard with visual predictions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1371,14 +1320,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                   expect(
                     react_1.screen.getByRole("tab", { name: /dashboard/i }),
@@ -1392,18 +1341,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC8: Customizable forecasting timeframes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("AC8: Customizable forecasting timeframes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1411,15 +1359,15 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               // Switch to predictions tab
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var predictionsTab = react_1.screen.getByRole("tab", { name: /predições/i });
                   react_1.fireEvent.click(predictionsTab);
                 }),
@@ -1429,7 +1377,7 @@ describe("PredictiveAnalyticsPage Component", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Predições Hoje")).toBeInTheDocument();
                 }),
               ];
@@ -1438,18 +1386,17 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC10: Performance tracking and accuracy monitoring", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("AC10: Performance tracking and accuracy monitoring", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1457,14 +1404,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Precisão Média")).toBeInTheDocument();
                   expect(react_1.screen.getByText("87.5%")).toBeInTheDocument();
                 }),
@@ -1474,32 +1421,28 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling", function () {
-    it("renders gracefully with missing data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Error Handling", () => {
+    it("renders gracefully with missing data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockFetch.mockImplementation(function () {
-                return Promise.resolve({
+              mockFetch.mockImplementation(() =>
+                Promise.resolve({
                   ok: true,
-                  json: function () {
-                    return __awaiter(void 0, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [2 /*return*/, { data: [] }];
-                      });
-                    });
-                  },
-                });
-              });
+                  json: () =>
+                    __awaiter(void 0, void 0, void 0, function () {
+                      return __generator(this, (_a) => [2 /*return*/, { data: [] }]);
+                    }),
+                }),
+              );
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1507,14 +1450,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -1523,19 +1466,18 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("maintains stability during state changes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("maintains stability during state changes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var tabs, _loop_1, _i, tabs_1, tab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1543,14 +1485,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -1558,19 +1500,19 @@ describe("PredictiveAnalyticsPage Component", function () {
               _a.sent();
               tabs = react_1.screen.getAllByRole("tab");
               _loop_1 = function (tab) {
-                return __generator(this, function (_b) {
+                return __generator(this, (_b) => {
                   switch (_b.label) {
                     case 0:
                       return [
                         4 /*yield*/,
-                        (0, react_1.act)(function () {
-                          return __awaiter(void 0, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
+                        (0, react_1.act)(() =>
+                          __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, (_a) => {
                               react_1.fireEvent.click(tab);
                               return [2 /*return*/];
                             });
-                          });
-                        }),
+                          }),
+                        ),
                       ];
                     case 1:
                       _b.sent();
@@ -1595,19 +1537,18 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles API errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("handles API errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockRejectedValue(new Error("API Error"));
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       (0, react_1.render)(
                         <TestWrapper>
                           <PredictiveAnalyticsPage_1.default />
@@ -1615,14 +1556,14 @@ describe("PredictiveAnalyticsPage Component", function () {
                       );
                       return [2 /*return*/];
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Análise Preditiva")).toBeInTheDocument();
                 }),
               ];
@@ -1631,7 +1572,6 @@ describe("PredictiveAnalyticsPage Component", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

@@ -9,10 +9,9 @@
  */
 
 import { jest } from "@jest/globals";
-import { NextResponse } from "next/server";
-import { POST, PUT, GET } from "@/app/api/notifications/send/route";
-import { GET as StatusGET } from "@/app/api/notifications/status/route";
 import { GET as AnalyticsGET } from "@/app/api/notifications/analytics/route";
+import { GET, POST, PUT } from "@/app/api/notifications/send/route";
+import { GET as StatusGET } from "@/app/api/notifications/status/route";
 
 // Mock NextRequest for testing
 class MockNextRequest {

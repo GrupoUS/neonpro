@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Simplified and Production-Ready Session Manager
  * Optimized for Clerk integration and healthcare compliance
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,12 +132,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sessionManager = exports.ClerkSessionManager = void 0;
 var server_1 = require("@clerk/nextjs/server");
 var clerk_config_1 = require("./clerk-config");
-var ClerkSessionManager = /** @class */ (function () {
+var ClerkSessionManager = /** @class */ (() => {
   function ClerkSessionManager(options) {
     if (options === void 0) {
       options = {};
@@ -154,7 +151,7 @@ var ClerkSessionManager = /** @class */ (function () {
         (_b = options.enforceConcurrentLimits) !== null && _b !== void 0 ? _b : true,
     };
   }
-  ClerkSessionManager.getInstance = function (options) {
+  ClerkSessionManager.getInstance = (options) => {
     if (!ClerkSessionManager.instance) {
       ClerkSessionManager.instance = new ClerkSessionManager(options);
     }
@@ -239,10 +236,9 @@ var ClerkSessionManager = /** @class */ (function () {
    * Get active sessions for a user
    */
   ClerkSessionManager.prototype.getUserActiveSessions = function (userId) {
-    var _this = this;
-    return Array.from(this.sessionStore.values()).filter(function (session) {
-      return session.userId === userId && _this.isSessionValid(session.sessionId);
-    });
+    return Array.from(this.sessionStore.values()).filter(
+      (session) => session.userId === userId && this.isSessionValid(session.sessionId),
+    );
   };
   /**
    * Enforce concurrent session limits
@@ -254,9 +250,7 @@ var ClerkSessionManager = /** @class */ (function () {
         if (!this.options.enforceConcurrentLimits) return [2 /*return*/, true];
         activeSessions = this.getUserActiveSessions(userId);
         if (activeSessions.length > clerk_config_1.clerkConfig.maxConcurrentSessions) {
-          sortedSessions = activeSessions.sort(function (a, b) {
-            return a.lastActivity - b.lastActivity;
-          });
+          sortedSessions = activeSessions.sort((a, b) => a.lastActivity - b.lastActivity);
           sessionsToRemove = sortedSessions.slice(
             0,
             activeSessions.length - clerk_config_1.clerkConfig.maxConcurrentSessions,
@@ -297,20 +291,15 @@ var ClerkSessionManager = /** @class */ (function () {
    * Get session statistics
    */
   ClerkSessionManager.prototype.getSessionStats = function () {
-    var _this = this;
     var now = Date.now();
-    var activeSessions = Array.from(this.sessionStore.values()).filter(function (session) {
-      return _this.isSessionValid(session.sessionId);
-    });
+    var activeSessions = Array.from(this.sessionStore.values()).filter((session) =>
+      this.isSessionValid(session.sessionId),
+    );
     return {
       totalSessions: this.sessionStore.size,
       activeSessions: activeSessions.length,
       expiredSessions: this.sessionStore.size - activeSessions.length,
-      uniqueUsers: new Set(
-        activeSessions.map(function (s) {
-          return s.userId;
-        }),
-      ).size,
+      uniqueUsers: new Set(activeSessions.map((s) => s.userId)).size,
       lastCleanup: now,
     };
   };

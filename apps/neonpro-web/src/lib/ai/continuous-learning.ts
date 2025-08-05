@@ -11,14 +11,14 @@
  * - Real-time learning from user feedback
  */
 
+import type { HealthMetric } from "@/types/health";
 import type { Patient } from "@/types/patient";
 import type { TreatmentHistory } from "@/types/treatment";
-import type { HealthMetric } from "@/types/health";
-import type { RiskAssessment } from "./risk-assessment";
-import type { TreatmentRecommendation } from "./treatment-recommendations";
-import type { OutcomePrediction } from "./predictive-analytics";
 import type { BehaviorAnalysis } from "./behavior-analysis";
 import type { HealthTrendAnalysis } from "./health-monitoring";
+import type { OutcomePrediction } from "./predictive-analytics";
+import type { RiskAssessment } from "./risk-assessment";
+import type { TreatmentRecommendation } from "./treatment-recommendations";
 
 // Continuous Learning Types
 export interface LearningSystem {

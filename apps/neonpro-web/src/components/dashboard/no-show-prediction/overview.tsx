@@ -3,7 +3,9 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,11 +13,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Icons } from "@/components/ui/icons";
-import type { cn } from "@/lib/utils";
 import type { useToast } from "@/hooks/use-toast";
+import type { cn } from "@/lib/utils";
 
 interface OverviewMetrics {
   total_predictions: number;

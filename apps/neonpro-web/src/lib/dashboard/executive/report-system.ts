@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/logger";
+import type { createClient } from "@/lib/supabase/client";
 import type { createkpiCalculationService } from "./kpi-calculation-service";
 import type { widgetService } from "./widget-service";
 
@@ -658,13 +658,14 @@ export class ReportSystem {
           periodEnd,
         );
 
-      case "financial_kpis":
+      case "financial_kpis": {
         const allKPIs = await createkpiCalculationService().calculateClinicKPIs(
           clinicId,
           periodStart,
           periodEnd,
         );
         return allKPIs.filter((kpi) => kpi.kpi.category === "financial");
+      }
 
       default:
         return [];

@@ -1,31 +1,30 @@
 // components/auth/login-modal.tsx
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginModal = LoginModal;
 var react_1 = require("react");
@@ -160,7 +157,6 @@ var badge_1 = require("@/components/ui/badge");
 var separator_1 = require("@/components/ui/separator");
 var lucide_react_1 = require("lucide-react");
 function LoginModal(_a) {
-  var _this = this;
   var open = _a.open,
     onOpenChange = _a.onOpenChange,
     type = _a.type;
@@ -180,17 +176,17 @@ function LoginModal(_a) {
   var _e = (0, react_1.useState)(""),
     error = _e[0],
     setError = _e[1];
-  var handleInputChange = function (field, value) {
-    setFormData(function (prev) {
+  var handleInputChange = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
     if (error) setError("");
   };
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
@@ -200,12 +196,7 @@ function LoginModal(_a) {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simulate API call
             _a.sent();
@@ -233,7 +224,6 @@ function LoginModal(_a) {
         }
       });
     });
-  };
   var securityFeatures = [
     "Autenticação multi-fator disponível",
     "Criptografia end-to-end",
@@ -288,9 +278,7 @@ function LoginModal(_a) {
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={function (e) {
-                    return handleInputChange("email", e.target.value);
-                  }}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
                   className="pl-10"
                   placeholder={
                     type === "professional"
@@ -310,18 +298,14 @@ function LoginModal(_a) {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={formData.password}
-                  onChange={function (e) {
-                    return handleInputChange("password", e.target.value);
-                  }}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
                   className="pl-10 pr-10"
                   placeholder="Digite sua senha"
                   required
                 />
                 <button
                   type="button"
-                  onClick={function () {
-                    return setShowPassword(!showPassword);
-                  }}
+                  onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
                 >
                   {showPassword
@@ -336,9 +320,7 @@ function LoginModal(_a) {
                 <checkbox_1.Checkbox
                   id="rememberMe"
                   checked={formData.rememberMe}
-                  onCheckedChange={function (checked) {
-                    return handleInputChange("rememberMe", checked);
-                  }}
+                  onCheckedChange={(checked) => handleInputChange("rememberMe", checked)}
                 />
                 <label_1.Label htmlFor="rememberMe" className="text-sm">
                   Lembrar-me
@@ -380,14 +362,12 @@ function LoginModal(_a) {
                   Recursos Profissionais:
                 </h4>
                 <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400">
-                  {securityFeatures.map(function (feature, index) {
-                    return (
-                      <div key={index} className="flex items-center space-x-2">
-                        <div className="w-1.5 h-1.5 bg-sky-600 rounded-full flex-shrink-0"></div>
-                        <span>{feature}</span>
-                      </div>
-                    );
-                  })}
+                  {securityFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <div className="w-1.5 h-1.5 bg-sky-600 rounded-full flex-shrink-0"></div>
+                      <span>{feature}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -403,9 +383,7 @@ function LoginModal(_a) {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={function () {
-                      return window.open("/setup-guide", "_blank");
-                    }}
+                    onClick={() => window.open("/setup-guide", "_blank")}
                   >
                     Guia de Configuração
                     <lucide_react_1.ExternalLink className="ml-1 h-3 w-3" />
@@ -414,9 +392,7 @@ function LoginModal(_a) {
                     variant="outline"
                     size="sm"
                     className="flex-1"
-                    onClick={function () {
-                      return window.open("/contact-support", "_blank");
-                    }}
+                    onClick={() => window.open("/contact-support", "_blank")}
                   >
                     Suporte Técnico
                   </button_1.Button>
@@ -441,9 +417,7 @@ function LoginModal(_a) {
                   variant="outline"
                   size="sm"
                   className="w-full"
-                  onClick={function () {
-                    return window.open("/patient-help", "_blank");
-                  }}
+                  onClick={() => window.open("/patient-help", "_blank")}
                 >
                   Como acessar minha conta
                   <lucide_react_1.ExternalLink className="ml-1 h-3 w-3" />

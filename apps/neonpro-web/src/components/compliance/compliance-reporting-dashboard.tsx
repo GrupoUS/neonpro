@@ -1,6 +1,25 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  FileText,
+  PieChart,
+  Shield,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,8 +27,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -17,9 +36,6 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Label } from "@/components/ui/label";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
   Table,
   TableBody,
@@ -28,22 +44,6 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  FileText,
-  Users,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  Download,
-  BarChart3,
-  PieChart,
-  Shield,
-} from "lucide-react";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { useToast } from "@/hooks/use-toast";
 
 interface ComplianceAnalytic {

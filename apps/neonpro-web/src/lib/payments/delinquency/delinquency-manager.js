@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DelinquencyManager = void 0;
 var zod_1 = require("zod");
@@ -215,7 +212,7 @@ var NotificationSchema = zod_1.z.object({
  * Delinquency Management System
  * Handles overdue payment detection, escalating notifications, and collection workflows
  */
-var DelinquencyManager = /** @class */ (function () {
+var DelinquencyManager = /** @class */ (() => {
   function DelinquencyManager(supabaseUrl, supabaseKey, emailConfig) {
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
     if (emailConfig) {
@@ -271,7 +268,7 @@ var DelinquencyManager = /** @class */ (function () {
             // Process overdue invoices
             overdueInvoices === null || overdueInvoices === void 0
               ? void 0
-              : overdueInvoices.forEach(function (invoice) {
+              : overdueInvoices.forEach((invoice) => {
                   var dueDate = new Date(invoice.data.dueDate);
                   var daysOverdue = (0, date_fns_1.differenceInDays)(new Date(), dueDate);
                   overduePayments_1.push({
@@ -293,7 +290,7 @@ var DelinquencyManager = /** @class */ (function () {
             // Process overdue installments
             overdueInstallments === null || overdueInstallments === void 0
               ? void 0
-              : overdueInstallments.forEach(function (installment) {
+              : overdueInstallments.forEach((installment) => {
                   var dueDate = new Date(installment.due_date);
                   var daysOverdue = (0, date_fns_1.differenceInDays)(new Date(), dueDate);
                   overduePayments_1.push({
@@ -347,12 +344,10 @@ var DelinquencyManager = /** @class */ (function () {
             rules = _a.sent();
             _loop_1 = function (payment) {
               var applicableRules, _b, applicableRules_1, rule;
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
-                    applicableRules = rules.filter(function (rule) {
-                      return _this.isRuleApplicable(rule, payment);
-                    });
+                    applicableRules = rules.filter((rule) => _this.isRuleApplicable(rule, payment));
                     (_b = 0), (applicableRules_1 = applicableRules);
                     _c.label = 1;
                   case 1:
@@ -730,7 +725,7 @@ var DelinquencyManager = /** @class */ (function () {
     });
   };
   // Private methods
-  DelinquencyManager.prototype.calculateRiskLevel = function (riskProfile, daysOverdue) {
+  DelinquencyManager.prototype.calculateRiskLevel = (riskProfile, daysOverdue) => {
     if (daysOverdue > 90) return "critical";
     if (daysOverdue > 60) return "high";
     if (daysOverdue > 30) return "medium";
@@ -798,22 +793,20 @@ var DelinquencyManager = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (rule) {
-                    return {
-                      id: rule.id,
-                      name: rule.name,
-                      description: rule.description,
-                      triggerConditions: rule.trigger_conditions,
-                      actions: rule.actions,
-                      isActive: rule.is_active,
-                    };
-                  })) || [],
+                : data.map((rule) => ({
+                    id: rule.id,
+                    name: rule.name,
+                    description: rule.description,
+                    triggerConditions: rule.trigger_conditions,
+                    actions: rule.actions,
+                    isActive: rule.is_active,
+                  }))) || [],
             ];
         }
       });
     });
   };
-  DelinquencyManager.prototype.isRuleApplicable = function (rule, payment) {
+  DelinquencyManager.prototype.isRuleApplicable = (rule, payment) => {
     var conditions = rule.triggerConditions;
     if (conditions.daysOverdue && payment.daysOverdue < conditions.daysOverdue) {
       return false;
@@ -931,7 +924,7 @@ var DelinquencyManager = /** @class */ (function () {
   };
   DelinquencyManager.prototype.sendSMSNotification = function (customer, template, metadata) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for SMS integration
         // Would integrate with services like Twilio, AWS SNS, etc.
         console.log("SMS notification would be sent to:", customer.phone);
@@ -939,7 +932,7 @@ var DelinquencyManager = /** @class */ (function () {
       });
     });
   };
-  DelinquencyManager.prototype.processTemplate = function (template, customer, metadata) {
+  DelinquencyManager.prototype.processTemplate = (template, customer, metadata) => {
     var processed = template
       .replace(/{{customerName}}/g, customer.name)
       .replace(/{{customerEmail}}/g, customer.email)
@@ -948,7 +941,7 @@ var DelinquencyManager = /** @class */ (function () {
         (0, date_fns_1.format)(new Date(), "dd/MM/yyyy", { locale: locale_1.ptBR }),
       );
     if (metadata) {
-      Object.entries(metadata).forEach(function (_a) {
+      Object.entries(metadata).forEach((_a) => {
         var key = _a[0],
           value = _a[1];
         processed = processed.replace(new RegExp("{{".concat(key, "}}"), "g"), String(value));

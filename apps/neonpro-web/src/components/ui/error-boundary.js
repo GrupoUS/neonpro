@@ -1,21 +1,20 @@
 "use client";
-"use strict";
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -32,19 +31,17 @@ var button_1 = require("@/components/ui/button");
 var card_1 = require("@/components/ui/card");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
-var ErrorBoundary = /** @class */ (function (_super) {
+var ErrorBoundary = /** @class */ ((_super) => {
   __extends(ErrorBoundary, _super);
   function ErrorBoundary(props) {
     var _this = _super.call(this, props) || this;
-    _this.handleReset = function () {
+    _this.handleReset = () => {
       _this.setState({ hasError: false, error: undefined });
     };
     _this.state = { hasError: false };
     return _this;
   }
-  ErrorBoundary.getDerivedStateFromError = function (error) {
-    return { hasError: true, error: error };
-  };
+  ErrorBoundary.getDerivedStateFromError = (error) => ({ hasError: true, error: error });
   ErrorBoundary.prototype.componentDidCatch = function (error, errorInfo) {
     console.error("Error caught by boundary:", error, errorInfo);
     this.setState({

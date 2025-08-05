@@ -1,4 +1,3 @@
-"use strict";
 // Interactive Drill-down Analysis System
 // Description: Multi-level drill-down navigation and contextual filtering system
 // Author: Dev Agent
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,11 +146,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.drillDownSystem = exports.DrillDownSystem = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var DrillDownSystem = /** @class */ (function () {
+var DrillDownSystem = /** @class */ (() => {
   function DrillDownSystem() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -296,11 +293,7 @@ var DrillDownSystem = /** @class */ (function () {
               .concat(
                 filters.service_types
                   ? "AND service_type = ANY(ARRAY[".concat(
-                      filters.service_types
-                        .map(function (s) {
-                          return "'".concat(s, "'");
-                        })
-                        .join(","),
+                      filters.service_types.map((s) => "'".concat(s, "'")).join(","),
                       "])",
                     )
                   : "",
@@ -312,25 +305,21 @@ var DrillDownSystem = /** @class */ (function () {
           case 1:
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
             if (error) throw error;
-            totalValue_1 = data.reduce(function (sum, row) {
-              return sum + parseFloat(row.value);
-            }, 0);
+            totalValue_1 = data.reduce((sum, row) => sum + parseFloat(row.value), 0);
             results.push.apply(
               results,
-              data.map(function (row) {
-                return {
-                  dimension_value: row.period,
-                  value: parseFloat(row.value),
-                  percentage_of_total: totalValue_1
-                    ? (parseFloat(row.value) / totalValue_1) * 100
-                    : 0,
-                  transaction_count: parseInt(row.transaction_count),
-                  metadata: {
-                    aggregation_level: aggregationLevel,
-                    period_start: row.period,
-                  },
-                };
-              }),
+              data.map((row) => ({
+                dimension_value: row.period,
+                value: parseFloat(row.value),
+                percentage_of_total: totalValue_1
+                  ? (parseFloat(row.value) / totalValue_1) * 100
+                  : 0,
+                transaction_count: parseInt(row.transaction_count),
+                metadata: {
+                  aggregation_level: aggregationLevel,
+                  period_start: row.period,
+                },
+              })),
             );
             _b.label = 2;
           case 2:
@@ -369,7 +358,7 @@ var DrillDownSystem = /** @class */ (function () {
           case 1:
             (_a = _c.sent()), (data = _a.data), (error = _a.error);
             if (error) throw error;
-            serviceGroups = data.reduce(function (acc, invoice) {
+            serviceGroups = data.reduce((acc, invoice) => {
               var service = invoice.service_type || "Unknown";
               if (!acc[service]) {
                 acc[service] = {
@@ -383,12 +372,13 @@ var DrillDownSystem = /** @class */ (function () {
               acc[service].count += 1;
               return acc;
             }, {});
-            totalRevenue_1 = Object.values(serviceGroups).reduce(function (sum, group) {
-              return sum + group.revenue;
-            }, 0);
+            totalRevenue_1 = Object.values(serviceGroups).reduce(
+              (sum, group) => sum + group.revenue,
+              0,
+            );
             results.push.apply(
               results,
-              Object.entries(serviceGroups).map(function (_a) {
+              Object.entries(serviceGroups).map((_a) => {
                 var service = _a[0],
                   data = _a[1];
                 return {
@@ -447,7 +437,7 @@ var DrillDownSystem = /** @class */ (function () {
           case 1:
             (_a = _c.sent()), (data = _a.data), (error = _a.error);
             if (error) throw error;
-            providerGroups = data.reduce(function (acc, appointment) {
+            providerGroups = data.reduce((acc, appointment) => {
               var _a;
               var providerId = appointment.provider_id;
               var providerName =
@@ -472,12 +462,13 @@ var DrillDownSystem = /** @class */ (function () {
               }
               return acc;
             }, {});
-            totalRevenue = Object.values(providerGroups).reduce(function (sum, group) {
-              return sum + group.revenue;
-            }, 0);
+            totalRevenue = Object.values(providerGroups).reduce(
+              (sum, group) => sum + group.revenue,
+              0,
+            );
             results.push.apply(
               results,
-              Object.entries(providerGroups).map(function (_a) {
+              Object.entries(providerGroups).map((_a) => {
                 var providerId = _a[0],
                   data = _a[1];
                 return {
@@ -535,7 +526,7 @@ var DrillDownSystem = /** @class */ (function () {
           case 1:
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
             if (error) throw error;
-            ageSegments = data.reduce(function (acc, patient) {
+            ageSegments = data.reduce((acc, patient) => {
               var _a, _b;
               var ageGroup;
               var age = patient.age || 0;
@@ -555,19 +546,18 @@ var DrillDownSystem = /** @class */ (function () {
               acc[ageGroup].revenue +=
                 ((_a = patient.invoices) === null || _a === void 0
                   ? void 0
-                  : _a.reduce(function (sum, inv) {
-                      return sum + (inv.amount || 0);
-                    }, 0)) || 0;
+                  : _a.reduce((sum, inv) => sum + (inv.amount || 0), 0)) || 0;
               acc[ageGroup].appointments +=
                 ((_b = patient.appointments) === null || _b === void 0 ? void 0 : _b.length) || 0;
               return acc;
             }, {});
-            totalPatients = Object.values(ageSegments).reduce(function (sum, segment) {
-              return sum + segment.count;
-            }, 0);
+            totalPatients = Object.values(ageSegments).reduce(
+              (sum, segment) => sum + segment.count,
+              0,
+            );
             results.push.apply(
               results,
-              Object.entries(ageSegments).map(function (_a) {
+              Object.entries(ageSegments).map((_a) => {
                 var segment = _a[0],
                   data = _a[1];
                 return {
@@ -629,7 +619,7 @@ var DrillDownSystem = /** @class */ (function () {
     };
   };
   // Helper methods
-  DrillDownSystem.prototype.getDrillDownStrategy = function (kpi, dimension) {
+  DrillDownSystem.prototype.getDrillDownStrategy = (kpi, dimension) => {
     // Return optimal strategy based on KPI type and dimension
     return "".concat(kpi.kpi_category, "_").concat(dimension);
   };
@@ -675,7 +665,7 @@ var DrillDownSystem = /** @class */ (function () {
       });
     });
   };
-  DrillDownSystem.prototype.getAvailableDimensions = function (kpi) {
+  DrillDownSystem.prototype.getAvailableDimensions = (kpi) => {
     var baseDimensions = ["time", "service_type"];
     if (kpi.kpi_category === "operational") {
       baseDimensions.push("provider", "patient_segment");
@@ -685,11 +675,11 @@ var DrillDownSystem = /** @class */ (function () {
     }
     return baseDimensions;
   };
-  DrillDownSystem.prototype.getMaxDrillLevels = function (kpi) {
+  DrillDownSystem.prototype.getMaxDrillLevels = (kpi) => {
     // Most KPIs support 3-4 drill levels
     return 4;
   };
-  DrillDownSystem.prototype.getNextLevelOptions = function (dimension, level) {
+  DrillDownSystem.prototype.getNextLevelOptions = (dimension, level) => {
     var dimensionHierarchy = {
       time: ["service_type", "provider"],
       service_type: ["provider", "patient_segment"],
@@ -698,7 +688,7 @@ var DrillDownSystem = /** @class */ (function () {
     };
     return dimensionHierarchy[dimension];
   };
-  DrillDownSystem.prototype.getNextDimension = function (currentDimension) {
+  DrillDownSystem.prototype.getNextDimension = (currentDimension) => {
     var nextDimensions = {
       time: "service_type",
       service_type: "provider",
@@ -706,7 +696,7 @@ var DrillDownSystem = /** @class */ (function () {
     };
     return nextDimensions[currentDimension] || null;
   };
-  DrillDownSystem.prototype.getDimensionLabel = function (dimension) {
+  DrillDownSystem.prototype.getDimensionLabel = (dimension) => {
     var labels = {
       time: "Time Period",
       service_type: "Service Type",

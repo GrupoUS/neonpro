@@ -1,24 +1,24 @@
 "use client";
 
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type {
-  Calendar,
-  Users,
   BarChart3,
+  Brain,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  FileText,
+  HeartHandshake,
   Shield,
   Smartphone,
-  Clock,
-  HeartHandshake,
-  Zap,
-  Brain,
-  FileText,
-  CreditCard,
-  UserCheck,
-  CheckCircle,
   Star,
   TrendingUp,
+  UserCheck,
+  Users,
+  Zap,
 } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const features = [
   {

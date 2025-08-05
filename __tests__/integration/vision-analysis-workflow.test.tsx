@@ -37,7 +37,7 @@ global.FileReader = class {
   onload: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null = null;
   onerror: ((this: FileReader, ev: ProgressEvent<FileReader>) => any) | null = null;
 
-  readAsDataURL(file: Blob) {
+  readAsDataURL(_file: Blob) {
     setTimeout(() => {
       this.result = "data:image/jpeg;base64,mock-base64-data";
       if (this.onload) {

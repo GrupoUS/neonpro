@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🎯 Connection Pool Monitoring for Healthcare
  * Task 1.3 - CONNECTION POOLING OPTIMIZATION
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,11 +166,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getConnectionPoolMonitor = void 0;
 var connection_pool_manager_1 = require("@/lib/supabase/connection-pool-manager");
-var ConnectionPoolMonitor = /** @class */ (function () {
+var ConnectionPoolMonitor = /** @class */ (() => {
   function ConnectionPoolMonitor() {
     this.alerts = new Map();
     this.metrics = [];
@@ -203,7 +200,7 @@ var ConnectionPoolMonitor = /** @class */ (function () {
     };
     this.startMonitoring();
   }
-  ConnectionPoolMonitor.getInstance = function () {
+  ConnectionPoolMonitor.getInstance = () => {
     if (!ConnectionPoolMonitor.instance) {
       ConnectionPoolMonitor.instance = new ConnectionPoolMonitor();
     }
@@ -213,12 +210,11 @@ var ConnectionPoolMonitor = /** @class */ (function () {
    * Start continuous monitoring
    */
   ConnectionPoolMonitor.prototype.startMonitoring = function () {
-    var _this = this;
     if (this.isMonitoring) return;
     this.isMonitoring = true;
     console.log("🔍 Starting healthcare connection pool monitoring...");
-    this.monitoringInterval = setInterval(function () {
-      _this.performMonitoringCycle();
+    this.monitoringInterval = setInterval(() => {
+      this.performMonitoringCycle();
     }, 15000); // Monitor every 15 seconds for healthcare
   };
   /**
@@ -248,23 +244,18 @@ var ConnectionPoolMonitor = /** @class */ (function () {
               timestamp: new Date(),
               totalPools: analytics.summary.totalPools,
               healthyPools: analytics.summary.healthyPools,
-              degradedPools: analytics.pools.filter(function (p) {
-                return p.health.status === "degraded";
-              }).length,
-              unhealthyPools: analytics.pools.filter(function (p) {
-                return p.health.status === "unhealthy";
-              }).length,
+              degradedPools: analytics.pools.filter((p) => p.health.status === "degraded").length,
+              unhealthyPools: analytics.pools.filter((p) => p.health.status === "unhealthy").length,
               avgResponseTime: analytics.summary.avgResponseTime,
-              totalConnections: analytics.pools.reduce(function (sum, p) {
-                return sum + p.metrics.totalConnections;
-              }, 0),
+              totalConnections: analytics.pools.reduce(
+                (sum, p) => sum + p.metrics.totalConnections,
+                0,
+              ),
               complianceScore: analytics.summary.complianceScore,
-              activeAlerts: Array.from(this.alerts.values()).filter(function (a) {
-                return !a.resolved;
-              }).length,
-              criticalAlerts: Array.from(this.alerts.values()).filter(function (a) {
-                return !a.resolved && (a.severity === "critical" || a.severity === "emergency");
-              }).length,
+              activeAlerts: Array.from(this.alerts.values()).filter((a) => !a.resolved).length,
+              criticalAlerts: Array.from(this.alerts.values()).filter(
+                (a) => !a.resolved && (a.severity === "critical" || a.severity === "emergency"),
+              ).length,
             };
             this.metrics.push(currentMetrics);
             // Keep only last 1000 metrics (about 4 hours at 15s intervals)
@@ -610,15 +601,12 @@ var ConnectionPoolMonitor = /** @class */ (function () {
               .concat(alertData.type, "_")
               .concat(Date.now());
             existingAlert = Array.from(this.alerts.values()).find(
-              function (alert) {
-                return (
-                  alert.poolKey === alertData.poolKey &&
-                  alert.type === alertData.type &&
-                  alert.severity === alertData.severity &&
-                  !alert.resolved &&
-                  Date.now() - alert.timestamp.getTime() < 300000
-                );
-              }, // 5 minutes
+              (alert) =>
+                alert.poolKey === alertData.poolKey &&
+                alert.type === alertData.type &&
+                alert.severity === alertData.severity &&
+                !alert.resolved &&
+                Date.now() - alert.timestamp.getTime() < 300000, // 5 minutes
             );
             if (existingAlert) {
               return [2 /*return*/]; // Avoid alert spam
@@ -744,7 +732,7 @@ var ConnectionPoolMonitor = /** @class */ (function () {
   ConnectionPoolMonitor.prototype.handleComplianceEmergency = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         console.error("🔒 COMPLIANCE EMERGENCY - Implementing protective measures");
         // Additional protective measures could be implemented here
         // For now, log the emergency response
@@ -764,7 +752,7 @@ var ConnectionPoolMonitor = /** @class */ (function () {
   ConnectionPoolMonitor.prototype.handleSecurityEmergency = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         console.error("🛡️ SECURITY EMERGENCY - Implementing security protocols");
         // Security emergency response
         console.error("Security emergency response activated for:", {
@@ -783,7 +771,7 @@ var ConnectionPoolMonitor = /** @class */ (function () {
    */
   ConnectionPoolMonitor.prototype.handleAvailabilityEmergency = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.error("⚡ AVAILABILITY EMERGENCY - Implementing recovery protocols");
         // Availability emergency response
         console.error("Availability emergency response activated for:", {
@@ -801,7 +789,7 @@ var ConnectionPoolMonitor = /** @class */ (function () {
    */
   ConnectionPoolMonitor.prototype.handlePerformanceEmergency = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.error("🚀 PERFORMANCE EMERGENCY - Implementing optimization protocols");
         // Performance emergency response
         console.error("Performance emergency response activated for:", {
@@ -821,7 +809,7 @@ var ConnectionPoolMonitor = /** @class */ (function () {
   ConnectionPoolMonitor.prototype.sendAlertNotifications = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
       var notificationData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         notificationData = {
           alertId: alert.id,
           severity: alert.severity,
@@ -855,10 +843,8 @@ var ConnectionPoolMonitor = /** @class */ (function () {
    */
   ConnectionPoolMonitor.prototype.getActiveAlerts = function () {
     return Array.from(this.alerts.values())
-      .filter(function (alert) {
-        return !alert.resolved;
-      })
-      .sort(function (a, b) {
+      .filter((alert) => !alert.resolved)
+      .sort((a, b) => {
         // Sort by severity (emergency first) then by timestamp
         var severityOrder = { emergency: 0, critical: 1, warning: 2, info: 3 };
         var severityDiff = severityOrder[a.severity] - severityOrder[b.severity];
@@ -893,12 +879,10 @@ var ConnectionPoolMonitor = /** @class */ (function () {
    */
   ConnectionPoolMonitor.prototype.getHealthSummary = function () {
     var activeAlerts = this.getActiveAlerts();
-    var criticalAlerts = activeAlerts.filter(function (a) {
-      return a.severity === "critical" || a.severity === "emergency";
-    });
-    var emergencyAlerts = activeAlerts.filter(function (a) {
-      return a.severity === "emergency";
-    });
+    var criticalAlerts = activeAlerts.filter(
+      (a) => a.severity === "critical" || a.severity === "emergency",
+    );
+    var emergencyAlerts = activeAlerts.filter((a) => a.severity === "emergency");
     var latestMetrics = this.metrics[this.metrics.length - 1];
     var status = "healthy";
     if (emergencyAlerts.length > 0) status = "emergency";
@@ -929,7 +913,5 @@ var ConnectionPoolMonitor = /** @class */ (function () {
   return ConnectionPoolMonitor;
 })();
 // Export singleton
-var getConnectionPoolMonitor = function () {
-  return ConnectionPoolMonitor.getInstance();
-};
+var getConnectionPoolMonitor = () => ConnectionPoolMonitor.getInstance();
 exports.getConnectionPoolMonitor = getConnectionPoolMonitor;

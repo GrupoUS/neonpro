@@ -6,7 +6,23 @@
 
 "use client";
 
+import type {
+  Activity,
+  AlertTriangle,
+  Award,
+  BarChart3,
+  Calendar,
+  Clock,
+  DollarSign,
+  Heart,
+  PieChart,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import type { useMemo } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type {
   Card,
   CardContent,
@@ -14,38 +30,22 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  TrendingUp,
-  TrendingDown,
-  Users,
-  DollarSign,
-  Calendar,
-  Heart,
-  AlertTriangle,
-  BarChart3,
-  PieChart,
-  Activity,
-  Target,
-  Award,
-  Clock,
-} from "lucide-react";
-import type {
-  Customer,
   Appointment,
+  Customer,
   CustomerSegment,
-  SegmentCriteria,
-  RetentionAnalysis,
-  calculateLeadScore,
-  determineCustomerLifecycle,
-  calculateCustomerLifetimeValue,
   calculateAverageAppointmentValue,
-  rankCustomersByValue,
-  segmentCustomers,
+  calculateCustomerLifetimeValue,
+  calculateLeadScore,
   calculateRetentionRate,
+  determineCustomerLifecycle,
   predictChurnRisk,
+  RetentionAnalysis,
+  rankCustomersByValue,
+  SegmentCriteria,
+  segmentCustomers,
 } from "./utils";
 
 interface CustomerAnalyticsProps {

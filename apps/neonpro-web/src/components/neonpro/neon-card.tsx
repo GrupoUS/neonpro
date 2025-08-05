@@ -3,7 +3,6 @@
  * Healthcare-optimized card component with NEONPROV1 styling
  */
 import React from "react";
-import type { cn } from "@/lib/utils";
 import type {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { cn } from "@/lib/utils";
 
 interface NeonCardProps {
   children?: React.ReactNode;

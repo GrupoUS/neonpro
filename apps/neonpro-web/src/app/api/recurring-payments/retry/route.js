@@ -1,18 +1,17 @@
-"use strict";
 // NeonPro - Payment Retry API Routes
 // Story 6.1 - Task 2: Recurring Payment System
 // Payment retry processing endpoints
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.PUT = PUT;
@@ -177,7 +174,7 @@ function POST(request) {
       result,
       error_1;
     var _d, _e, _f;
-    return __generator(this, function (_g) {
+    return __generator(this, (_g) => {
       switch (_g.label) {
         case 0:
           _g.trys.push([0, 7, , 8]);
@@ -341,7 +338,7 @@ function PUT(request) {
       error_2,
       error_3;
     var _c, _d, _e;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 12, , 13]);
@@ -516,7 +513,7 @@ function GET(request) {
       retryablePayments,
       eligibleForRetry,
       error_4;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 6, , 7]);
@@ -564,25 +561,19 @@ function GET(request) {
           successfulRetries =
             (retryLogs === null || retryLogs === void 0
               ? void 0
-              : retryLogs.filter(function (log) {
-                  return log.status === "success";
-                }).length) || 0;
+              : retryLogs.filter((log) => log.status === "success").length) || 0;
           failedRetries =
             (retryLogs === null || retryLogs === void 0
               ? void 0
-              : retryLogs.filter(function (log) {
-                  return log.status === "failed";
-                }).length) || 0;
+              : retryLogs.filter((log) => log.status === "failed").length) || 0;
           pendingRetries =
             (retryLogs === null || retryLogs === void 0
               ? void 0
-              : retryLogs.filter(function (log) {
-                  return log.status === "pending";
-                }).length) || 0;
+              : retryLogs.filter((log) => log.status === "pending").length) || 0;
           retryAttemptStats =
             (retryLogs === null || retryLogs === void 0
               ? void 0
-              : retryLogs.reduce(function (acc, log) {
+              : retryLogs.reduce((acc, log) => {
                   var attempt = log.retry_attempt;
                   if (!acc[attempt]) {
                     acc[attempt] = { total: 0, successful: 0, failed: 0 };
@@ -607,7 +598,7 @@ function GET(request) {
           eligibleForRetry =
             (retryablePayments === null || retryablePayments === void 0
               ? void 0
-              : retryablePayments.filter(function (payment) {
+              : retryablePayments.filter((payment) => {
                   var _a, _b, _c;
                   var retryCount =
                     ((_a = payment.payment_retry_logs) === null || _a === void 0
@@ -638,9 +629,10 @@ function GET(request) {
                 retry_attempt_breakdown: retryAttemptStats,
                 eligible_for_retry: {
                   count: eligibleForRetry.length,
-                  total_amount: eligibleForRetry.reduce(function (sum, payment) {
-                    return sum + (payment.amount || 0);
-                  }, 0),
+                  total_amount: eligibleForRetry.reduce(
+                    (sum, payment) => sum + (payment.amount || 0),
+                    0,
+                  ),
                   payments: eligibleForRetry.slice(0, 20), // Limit to first 20 for performance
                 },
                 recent_retry_logs:

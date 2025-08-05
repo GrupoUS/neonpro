@@ -132,7 +132,7 @@ serve(async (req) => {
     // Insert new alerts (avoiding duplicates)
     if (generatedAlerts.length > 0) {
       // Check for existing active alerts to avoid duplicates
-      const alertKeys = generatedAlerts.map(
+      const _alertKeys = generatedAlerts.map(
         (alert) => `${alert.clinic_id}-${alert.product_id}-${alert.alert_type}`,
       );
 

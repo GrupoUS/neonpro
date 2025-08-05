@@ -3,19 +3,39 @@
 
 import type { HealthcareUser } from "../plugins/auth";
 
+// Audit Log Interface
+export interface AuditLogEntry {
+  action: string;
+  resourceId?: string;
+  userId?: string;
+  timestamp?: Date;
+  details?: Record<string, any>;
+  patientId?: string;
+  recordId?: string;
+  jobId?: string;
+}
+
 declare module "fastify" {
   interface FastifyRequest {
     user?: HealthcareUser;
     tenantId?: string;
+    auditLog: (action: string, metadata?: Record<string, any>) => void;
+    supabaseClient?: any; // Supabase client instance
   }
 
   interface FastifyInstance {
     // Authentication decorations
-    requireRole: (role: string) => any;
+    requireRole: (
+      allowedRoles: string[],
+    ) => (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
     authenticate: (request: FastifyRequest, reply: FastifyReply) => Promise<void>;
 
     // Database decorations
     supabase: any;
+    checkDatabaseHealth?: () => Promise<{ status: string; details?: any }>;
+
+    // Redis decorations
+    redis?: any;
 
     // Audit logging decorations
     auditLog: any;
@@ -26,6 +46,9 @@ declare module "fastify" {
 
     // Cache decorations
     cache: any;
+
+    // Edge services integration
+    edgeServices: any;
   }
 
   interface FastifyReply {

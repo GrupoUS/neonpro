@@ -7,11 +7,26 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { CardElement, Elements, useElements, useStripe } from "@stripe/react-stripe-js";
 import type { loadStripe, StripeElementsOptions } from "@stripe/stripe-js";
-import type { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import type { z } from "zod";
+import type {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  CreditCard,
+  DollarSign,
+  Loader2,
+  Lock,
+  Receipt,
+  Shield,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { z } from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -19,14 +34,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Separator } from "@/components/ui/separator";
-import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Select,
   SelectContent,
@@ -34,17 +44,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  CreditCard,
-  Lock,
-  AlertCircle,
-  CheckCircle,
-  Loader2,
-  Shield,
-  Receipt,
-  Calendar,
-  DollarSign,
-} from "lucide-react";
+import type { Separator } from "@/components/ui/separator";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Initialize Stripe
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);

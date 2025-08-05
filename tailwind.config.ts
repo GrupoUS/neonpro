@@ -98,6 +98,8 @@ const config: Config = {
         "slide-in": "slideIn 0.3s ease-out",
         "pulse-neon": "pulseNeon 2s ease-in-out infinite",
         "bounce-soft": "bounceSoft 0.6s ease-out",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
       keyframes: {
         fadeIn: {
@@ -117,14 +119,6 @@ const config: Config = {
           "40%, 43%": { transform: "translateY(-8px)" },
           "70%": { transform: "translateY(-4px)" },
         },
-      },
-      // Healthcare specific spacing
-      spacing: {
-        "18": "4.5rem",
-        "88": "22rem",
-        "128": "32rem",
-      },
-      keyframes: {
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -134,9 +128,11 @@ const config: Config = {
           to: { height: "0" },
         },
       },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+      // Healthcare specific spacing
+      spacing: {
+        "18": "4.5rem",
+        "88": "22rem",
+        "128": "32rem",
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],

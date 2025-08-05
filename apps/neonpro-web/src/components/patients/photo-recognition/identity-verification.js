@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IdentityVerification = IdentityVerification;
 /**
@@ -159,7 +156,6 @@ var VERIFICATION_CONTEXTS = [
   { value: "payment_authorization", label: "Autorização de Pagamento" },
 ];
 function IdentityVerification(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     patientName = _a.patientName,
     onVerificationComplete = _a.onVerificationComplete,
@@ -195,7 +191,7 @@ function IdentityVerification(_a) {
   var canvasRef = (0, react_1.useRef)(null);
   var toast = (0, use_toast_1.useToast)().toast;
   var handleFileSelect = (0, react_1.useCallback)(
-    function (file) {
+    (file) => {
       // Validate file type
       var allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
       if (!allowedTypes.includes(file.type)) {
@@ -219,7 +215,7 @@ function IdentityVerification(_a) {
       setVerificationResult(null);
       // Create preview
       var reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = (e) => {
         var _a;
         setPreviewUrl((_a = e.target) === null || _a === void 0 ? void 0 : _a.result);
       };
@@ -227,17 +223,17 @@ function IdentityVerification(_a) {
     },
     [toast],
   );
-  var handleFileInputChange = function (event) {
+  var handleFileInputChange = (event) => {
     var _a;
     var file = (_a = event.target.files) === null || _a === void 0 ? void 0 : _a[0];
     if (file) {
       handleFileSelect(file);
     }
   };
-  var startCamera = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var startCamera = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mediaStream, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -268,17 +264,14 @@ function IdentityVerification(_a) {
         }
       });
     });
-  };
-  var stopCamera = function () {
+  var stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach(function (track) {
-        return track.stop();
-      });
+      stream.getTracks().forEach((track) => track.stop());
       setStream(null);
     }
     setIsUsingCamera(false);
   };
-  var capturePhoto = function () {
+  var capturePhoto = () => {
     if (!videoRef.current || !canvasRef.current) return;
     var canvas = canvasRef.current;
     var video = videoRef.current;
@@ -288,7 +281,7 @@ function IdentityVerification(_a) {
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0);
     canvas.toBlob(
-      function (blob) {
+      (blob) => {
         if (blob) {
           var file = new File([blob], "verification-photo.jpg", { type: "image/jpeg" });
           handleFileSelect(file);
@@ -299,10 +292,10 @@ function IdentityVerification(_a) {
       0.9,
     );
   };
-  var verifyIdentity = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var verifyIdentity = () =>
+    __awaiter(this, void 0, void 0, function () {
       var formData, progressInterval, response, error, result, isVerified, error_2, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedFile) return [2 /*return*/];
@@ -315,10 +308,8 @@ function IdentityVerification(_a) {
             formData.append("photo", selectedFile);
             formData.append("patientId", patientId);
             formData.append("context", verificationContext);
-            progressInterval = setInterval(function () {
-              setVerificationProgress(function (prev) {
-                return Math.min(prev + 15, 90);
-              });
+            progressInterval = setInterval(() => {
+              setVerificationProgress((prev) => Math.min(prev + 15, 90));
             }, 300);
             return [
               4 /*yield*/,
@@ -334,7 +325,7 @@ function IdentityVerification(_a) {
             response = _a.sent();
             clearInterval(progressInterval);
             setVerificationProgress(100);
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.json()];
           case 3:
             error = _a.sent();
@@ -375,8 +366,7 @@ function IdentityVerification(_a) {
         }
       });
     });
-  };
-  var resetVerification = function () {
+  var resetVerification = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
     setVerificationResult(null);
@@ -386,12 +376,12 @@ function IdentityVerification(_a) {
       fileInputRef.current.value = "";
     }
   };
-  var getConfidenceColor = function (confidence) {
+  var getConfidenceColor = (confidence) => {
     if (confidence >= 0.9) return "text-green-600";
     if (confidence >= 0.7) return "text-yellow-600";
     return "text-red-600";
   };
-  var getConfidenceBadge = function (confidence) {
+  var getConfidenceBadge = (confidence) => {
     if (confidence >= 0.9) return "default";
     if (confidence >= 0.7) return "secondary";
     return "destructive";
@@ -413,13 +403,11 @@ function IdentityVerification(_a) {
               <select_1.SelectValue placeholder="Selecione o contexto" />
             </select_1.SelectTrigger>
             <select_1.SelectContent>
-              {VERIFICATION_CONTEXTS.map(function (context) {
-                return (
-                  <select_1.SelectItem key={context.value} value={context.value}>
-                    {context.label}
-                  </select_1.SelectItem>
-                );
-              })}
+              {VERIFICATION_CONTEXTS.map((context) => (
+                <select_1.SelectItem key={context.value} value={context.value}>
+                  {context.label}
+                </select_1.SelectItem>
+              ))}
             </select_1.SelectContent>
           </select_1.Select>
         </div>
@@ -439,7 +427,7 @@ function IdentityVerification(_a) {
             <button_1.Button
               type="button"
               variant="outline"
-              onClick={function () {
+              onClick={() => {
                 var _a;
                 return (_a = fileInputRef.current) === null || _a === void 0 ? void 0 : _a.click();
               }}
@@ -530,21 +518,19 @@ function IdentityVerification(_a) {
                   <div>
                     <p className="text-sm font-medium mb-2">Fotos correspondentes:</p>
                     <div className="space-y-1">
-                      {verificationResult.matchedPhotos.map(function (photo, index) {
-                        return (
-                          <div key={photo.id} className="flex items-center justify-between text-sm">
-                            <span>
-                              {photo.type} - {new Date(photo.uploadedAt).toLocaleDateString()}
-                            </span>
-                            <badge_1.Badge
-                              variant="outline"
-                              className={getConfidenceColor(photo.confidence)}
-                            >
-                              {Math.round(photo.confidence * 100)}%
-                            </badge_1.Badge>
-                          </div>
-                        );
-                      })}
+                      {verificationResult.matchedPhotos.map((photo, index) => (
+                        <div key={photo.id} className="flex items-center justify-between text-sm">
+                          <span>
+                            {photo.type} - {new Date(photo.uploadedAt).toLocaleDateString()}
+                          </span>
+                          <badge_1.Badge
+                            variant="outline"
+                            className={getConfidenceColor(photo.confidence)}
+                          >
+                            {Math.round(photo.confidence * 100)}%
+                          </badge_1.Badge>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -553,9 +539,9 @@ function IdentityVerification(_a) {
                   <div>
                     <p className="text-sm font-medium mb-1">Recomendações:</p>
                     <ul className="text-sm list-disc list-inside space-y-1">
-                      {verificationResult.recommendations.map(function (rec, index) {
-                        return <li key={index}>{rec}</li>;
-                      })}
+                      {verificationResult.recommendations.map((rec, index) => (
+                        <li key={index}>{rec}</li>
+                      ))}
                     </ul>
                   </div>
                 )}

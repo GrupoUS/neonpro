@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+
 /**
  * RBAC Setup Script
  * Story 1.2: Role-Based Access Control Implementation
@@ -10,9 +11,9 @@
  * - Verification tests
  */
 
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
-import { readFileSync } from "fs";
-import { join } from "path";
 import { config } from "dotenv";
 
 // Load environment variables
@@ -73,7 +74,6 @@ class RBACSetup {
               console.warn(`⚠️  Statement ${i + 1} warning:`, error.message);
               // Continue with other statements unless it's a critical error
               if (error.message.includes("already exists")) {
-                continue; // Skip "already exists" errors
               }
             }
           } catch (err) {
@@ -278,7 +278,7 @@ class RBACSetup {
     results.push(testResult);
 
     // Summary
-    console.log("\n" + "=".repeat(50));
+    console.log(`\n${"=".repeat(50)}`);
     console.log("📊 RBAC Setup Summary:");
     console.log("=".repeat(50));
 
@@ -293,7 +293,7 @@ class RBACSetup {
       }
     });
 
-    console.log("\n" + "=".repeat(50));
+    console.log(`\n${"=".repeat(50)}`);
 
     if (successCount === totalSteps) {
       console.log("🎉 RBAC Setup completed successfully!");

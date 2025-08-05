@@ -1,4 +1,3 @@
-"use strict";
 // Trial-Analytics Integration Layer - STORY-SUB-002 Task 3
 // Connects trial management system with analytics for comprehensive tracking
 // Created: 2025-01-22
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,7 +35,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,8 +64,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -87,9 +84,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -148,12 +145,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrialAnalyticsIntegration = void 0;
 var analytics_1 = require("../analytics");
 var index_1 = require("./index");
-var TrialAnalyticsIntegration = /** @class */ (function () {
+var TrialAnalyticsIntegration = /** @class */ (() => {
   function TrialAnalyticsIntegration() {
     this.trialManager = index_1.TrialManager;
     this.analytics = new analytics_1.AnalyticsService();
@@ -309,7 +306,7 @@ var TrialAnalyticsIntegration = /** @class */ (function () {
    */
   TrialAnalyticsIntegration.prototype.getTrialOptimizationInsights = function (trialId) {
     return __awaiter(this, void 0, void 0, function () {
-      var prediction, journey, analyticsData;
+      var prediction, journey, _analyticsData;
       var _a;
       return __generator(this, function (_b) {
         switch (_b.label) {
@@ -322,15 +319,11 @@ var TrialAnalyticsIntegration = /** @class */ (function () {
             journey = _b.sent();
             return [4 /*yield*/, this.analytics.getUserAnalytics(journey.userId)];
           case 3:
-            analyticsData = _b.sent();
+            _analyticsData = _b.sent();
             _a = {
               conversionProbability: prediction.probability,
-              riskFactors: prediction.factors.filter(function (f) {
-                return f.impact < 0;
-              }),
-              opportunities: prediction.factors.filter(function (f) {
-                return f.impact > 0;
-              }),
+              riskFactors: prediction.factors.filter((f) => f.impact < 0),
+              opportunities: prediction.factors.filter((f) => f.impact > 0),
               recommendedActions: prediction.recommendations,
               journeyInsights: this.analyzeJourneyPatterns(journey),
             };
@@ -388,29 +381,30 @@ var TrialAnalyticsIntegration = /** @class */ (function () {
     });
   };
   // Helper methods
-  TrialAnalyticsIntegration.prototype.calculateTrialDays = function (trial) {
-    return Math.floor((Date.now() - trial.startDate.getTime()) / (1000 * 60 * 60 * 24));
-  };
-  TrialAnalyticsIntegration.prototype.updateCampaignMetrics = function (campaignId, trial, action) {
+  TrialAnalyticsIntegration.prototype.calculateTrialDays = (trial) =>
+    Math.floor((Date.now() - trial.startDate.getTime()) / (1000 * 60 * 60 * 24));
+  TrialAnalyticsIntegration.prototype.updateCampaignMetrics = function (
+    _campaignId,
+    _trial,
+    _action,
+  ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   TrialAnalyticsIntegration.prototype.analyzeJourneyPatterns = function (journey) {
     return {
       engagementScore: this.calculateEngagementScore(journey.events),
-      criticalEvents: journey.events.filter(function (e) {
-        return e.type === "feature_discovered" || e.type === "milestone_reached";
-      }),
+      criticalEvents: journey.events.filter(
+        (e) => e.type === "feature_discovered" || e.type === "milestone_reached",
+      ),
       timeToValue: this.calculateTimeToValue(journey),
       dropOffPoints: this.identifyDropOffPoints(journey),
     };
   };
-  TrialAnalyticsIntegration.prototype.compareWithBenchmarks = function (trialId) {
+  TrialAnalyticsIntegration.prototype.compareWithBenchmarks = function (_trialId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would compare trial performance with industry benchmarks
         return [
           2 /*return*/,
@@ -423,7 +417,7 @@ var TrialAnalyticsIntegration = /** @class */ (function () {
       });
     });
   };
-  TrialAnalyticsIntegration.prototype.calculateEngagementScore = function (events) {
+  TrialAnalyticsIntegration.prototype.calculateEngagementScore = (events) => {
     var weights = {
       login: 1,
       feature_used: 3,
@@ -432,22 +426,18 @@ var TrialAnalyticsIntegration = /** @class */ (function () {
       support_contacted: -1,
       error_encountered: -2,
     };
-    return events.reduce(function (score, event) {
-      return score + (weights[event.type] || 0);
-    }, 0);
+    return events.reduce((score, event) => score + (weights[event.type] || 0), 0);
   };
-  TrialAnalyticsIntegration.prototype.calculateTimeToValue = function (journey) {
-    var firstValueEvent = journey.events.find(function (e) {
-      return e.type === "feature_used" || e.type === "milestone_reached";
-    });
+  TrialAnalyticsIntegration.prototype.calculateTimeToValue = (journey) => {
+    var firstValueEvent = journey.events.find(
+      (e) => e.type === "feature_used" || e.type === "milestone_reached",
+    );
     if (!firstValueEvent) return -1;
     return firstValueEvent.timestamp.getTime() - journey.startDate.getTime();
   };
-  TrialAnalyticsIntegration.prototype.identifyDropOffPoints = function (journey) {
+  TrialAnalyticsIntegration.prototype.identifyDropOffPoints = (journey) => {
     var dropOffs = [];
-    var events = journey.events.sort(function (a, b) {
-      return a.timestamp.getTime() - b.timestamp.getTime();
-    });
+    var events = journey.events.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
     for (var i = 1; i < events.length; i++) {
       var timeDiff = events[i].timestamp.getTime() - events[i - 1].timestamp.getTime();
       if (timeDiff > 24 * 60 * 60 * 1000) {
@@ -457,21 +447,21 @@ var TrialAnalyticsIntegration = /** @class */ (function () {
     }
     return dropOffs;
   };
-  TrialAnalyticsIntegration.prototype.calculateTrend = function (current, previous) {
+  TrialAnalyticsIntegration.prototype.calculateTrend = (current, previous) => {
     if (previous === 0) return 0;
     return (current - previous) / previous;
   };
-  TrialAnalyticsIntegration.prototype.calculateAverageEngagement = function (since) {
+  TrialAnalyticsIntegration.prototype.calculateAverageEngagement = function (_since) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate average engagement score
         return [2 /*return*/, 0.75]; // Placeholder
       });
     });
   };
-  TrialAnalyticsIntegration.prototype.calculateEngagementTrend = function (since) {
+  TrialAnalyticsIntegration.prototype.calculateEngagementTrend = function (_since) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate engagement trend
         return [2 /*return*/, 0.05]; // Placeholder - 5% increase
       });

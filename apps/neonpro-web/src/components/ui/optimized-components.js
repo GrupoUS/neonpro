@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deepEqual =
   exports.shallowEqual =
@@ -16,7 +15,7 @@ var card_1 = require("@/components/ui/card");
 var badge_1 = require("@/components/ui/badge");
 var button_1 = require("@/components/ui/button");
 var utils_1 = require("@/lib/utils");
-exports.OptimizedCard = (0, react_1.memo)(function (_a) {
+exports.OptimizedCard = (0, react_1.memo)((_a) => {
   var title = _a.title,
     value = _a.value,
     subtitle = _a.subtitle,
@@ -25,29 +24,23 @@ exports.OptimizedCard = (0, react_1.memo)(function (_a) {
     trendValue = _a.trendValue,
     className = _a.className,
     loading = _a.loading;
-  var trendColor = (0, react_1.useMemo)(
-    function () {
-      switch (trend) {
-        case "up":
-          return "text-green-600";
-        case "down":
-          return "text-red-600";
-        default:
-          return "text-gray-600";
-      }
-    },
-    [trend],
-  );
-  var formattedValue = (0, react_1.useMemo)(
-    function () {
-      if (loading) return "...";
-      if (typeof value === "number") {
-        return value.toLocaleString("pt-BR");
-      }
-      return value;
-    },
-    [value, loading],
-  );
+  var trendColor = (0, react_1.useMemo)(() => {
+    switch (trend) {
+      case "up":
+        return "text-green-600";
+      case "down":
+        return "text-red-600";
+      default:
+        return "text-gray-600";
+    }
+  }, [trend]);
+  var formattedValue = (0, react_1.useMemo)(() => {
+    if (loading) return "...";
+    if (typeof value === "number") {
+      return value.toLocaleString("pt-BR");
+    }
+    return value;
+  }, [value, loading]);
   return (
     <card_1.Card className={(0, utils_1.cn)("relative overflow-hidden", className)}>
       <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -67,7 +60,7 @@ exports.OptimizedCard = (0, react_1.memo)(function (_a) {
   );
 });
 exports.OptimizedCard.displayName = "OptimizedCard";
-exports.OptimizedTableRow = (0, react_1.memo)(function (_a) {
+exports.OptimizedTableRow = (0, react_1.memo)((_a) => {
   var id = _a.id,
     data = _a.data,
     columns = _a.columns,
@@ -75,34 +68,22 @@ exports.OptimizedTableRow = (0, react_1.memo)(function (_a) {
     onDelete = _a.onDelete,
     selected = _a.selected,
     onSelect = _a.onSelect;
-  var handleEdit = (0, react_1.useCallback)(
-    function () {
-      onEdit === null || onEdit === void 0 ? void 0 : onEdit(id);
-    },
-    [id, onEdit],
-  );
-  var handleDelete = (0, react_1.useCallback)(
-    function () {
-      onDelete === null || onDelete === void 0 ? void 0 : onDelete(id);
-    },
-    [id, onDelete],
-  );
-  var handleSelect = (0, react_1.useCallback)(
-    function () {
-      onSelect === null || onSelect === void 0 ? void 0 : onSelect(id);
-    },
-    [id, onSelect],
-  );
+  var handleEdit = (0, react_1.useCallback)(() => {
+    onEdit === null || onEdit === void 0 ? void 0 : onEdit(id);
+  }, [id, onEdit]);
+  var handleDelete = (0, react_1.useCallback)(() => {
+    onDelete === null || onDelete === void 0 ? void 0 : onDelete(id);
+  }, [id, onDelete]);
+  var handleSelect = (0, react_1.useCallback)(() => {
+    onSelect === null || onSelect === void 0 ? void 0 : onSelect(id);
+  }, [id, onSelect]);
   var renderedCells = (0, react_1.useMemo)(
-    function () {
-      return columns.map(function (column) {
-        return (
-          <td key={"".concat(id, "-").concat(column.key)} className="px-4 py-2">
-            {column.render ? column.render(data[column.key], data) : data[column.key]}
-          </td>
-        );
-      });
-    },
+    () =>
+      columns.map((column) => (
+        <td key={"".concat(id, "-").concat(column.key)} className="px-4 py-2">
+          {column.render ? column.render(data[column.key], data) : data[column.key]}
+        </td>
+      )),
     [columns, data, id],
   );
   return (
@@ -138,44 +119,38 @@ exports.OptimizedTableRow = (0, react_1.memo)(function (_a) {
   );
 });
 exports.OptimizedTableRow.displayName = "OptimizedTableRow";
-exports.OptimizedBadge = (0, react_1.memo)(function (_a) {
+exports.OptimizedBadge = (0, react_1.memo)((_a) => {
   var status = _a.status,
     children = _a.children,
     className = _a.className;
-  var badgeVariant = (0, react_1.useMemo)(
-    function () {
-      switch (status) {
-        case "success":
-          return "default";
-        case "warning":
-          return "secondary";
-        case "error":
-          return "destructive";
-        case "info":
-          return "outline";
-        default:
-          return "secondary";
-      }
-    },
-    [status],
-  );
-  var badgeColor = (0, react_1.useMemo)(
-    function () {
-      switch (status) {
-        case "success":
-          return "bg-green-100 text-green-800 hover:bg-green-200";
-        case "warning":
-          return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200";
-        case "error":
-          return "bg-red-100 text-red-800 hover:bg-red-200";
-        case "info":
-          return "bg-blue-100 text-blue-800 hover:bg-blue-200";
-        default:
-          return "";
-      }
-    },
-    [status],
-  );
+  var badgeVariant = (0, react_1.useMemo)(() => {
+    switch (status) {
+      case "success":
+        return "default";
+      case "warning":
+        return "secondary";
+      case "error":
+        return "destructive";
+      case "info":
+        return "outline";
+      default:
+        return "secondary";
+    }
+  }, [status]);
+  var badgeColor = (0, react_1.useMemo)(() => {
+    switch (status) {
+      case "success":
+        return "bg-green-100 text-green-800 hover:bg-green-200";
+      case "warning":
+        return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200";
+      case "error":
+        return "bg-red-100 text-red-800 hover:bg-red-200";
+      case "info":
+        return "bg-blue-100 text-blue-800 hover:bg-blue-200";
+      default:
+        return "";
+    }
+  }, [status]);
   return (
     <badge_1.Badge variant={badgeVariant} className={(0, utils_1.cn)(badgeColor, className)}>
       {children}
@@ -183,7 +158,7 @@ exports.OptimizedBadge = (0, react_1.memo)(function (_a) {
   );
 });
 exports.OptimizedBadge.displayName = "OptimizedBadge";
-exports.OptimizedListItem = (0, react_1.memo)(function (_a) {
+exports.OptimizedListItem = (0, react_1.memo)((_a) => {
   var id = _a.id,
     title = _a.title,
     subtitle = _a.subtitle,
@@ -192,33 +167,25 @@ exports.OptimizedListItem = (0, react_1.memo)(function (_a) {
     actions = _a.actions,
     onClick = _a.onClick,
     className = _a.className;
-  var handleClick = (0, react_1.useCallback)(
-    function () {
-      onClick === null || onClick === void 0 ? void 0 : onClick(id);
-    },
-    [id, onClick],
-  );
-  var actionButtons = (0, react_1.useMemo)(
-    function () {
-      if (!actions) return null;
-      return actions.map(function (action, index) {
-        return (
-          <button_1.Button
-            key={index}
-            size="sm"
-            variant={action.variant || "outline"}
-            onClick={function (e) {
-              e.stopPropagation();
-              action.onClick(id);
-            }}
-          >
-            {action.label}
-          </button_1.Button>
-        );
-      });
-    },
-    [actions, id],
-  );
+  var handleClick = (0, react_1.useCallback)(() => {
+    onClick === null || onClick === void 0 ? void 0 : onClick(id);
+  }, [id, onClick]);
+  var actionButtons = (0, react_1.useMemo)(() => {
+    if (!actions) return null;
+    return actions.map((action, index) => (
+      <button_1.Button
+        key={index}
+        size="sm"
+        variant={action.variant || "outline"}
+        onClick={(e) => {
+          e.stopPropagation();
+          action.onClick(id);
+        }}
+      >
+        {action.label}
+      </button_1.Button>
+    ));
+  }, [actions, id]);
   return (
     <div
       className={(0, utils_1.cn)(
@@ -253,7 +220,7 @@ exports.OptimizedListItem = (0, react_1.memo)(function (_a) {
   );
 });
 exports.OptimizedListItem.displayName = "OptimizedListItem";
-exports.OptimizedFormField = (0, react_1.memo)(function (_a) {
+exports.OptimizedFormField = (0, react_1.memo)((_a) => {
   var label = _a.label,
     value = _a.value,
     onChange = _a.onChange,
@@ -265,15 +232,13 @@ exports.OptimizedFormField = (0, react_1.memo)(function (_a) {
     disabled = _a.disabled,
     className = _a.className;
   var handleChange = (0, react_1.useCallback)(
-    function (e) {
+    (e) => {
       onChange(e.target.value);
     },
     [onChange],
   );
   var inputId = (0, react_1.useMemo)(
-    function () {
-      return "field-".concat(label.toLowerCase().replace(/\s+/g, "-"));
-    },
+    () => "field-".concat(label.toLowerCase().replace(/\s+/g, "-")),
     [label],
   );
   return (
@@ -306,7 +271,7 @@ function withMemoization(Component, areEqual) {
   return MemoizedComponent;
 }
 // Custom areEqual functions for common patterns
-var shallowEqual = function (prevProps, nextProps) {
+var shallowEqual = (prevProps, nextProps) => {
   var keys1 = Object.keys(prevProps);
   var keys2 = Object.keys(nextProps);
   if (keys1.length !== keys2.length) {
@@ -321,15 +286,13 @@ var shallowEqual = function (prevProps, nextProps) {
   return true;
 };
 exports.shallowEqual = shallowEqual;
-var deepEqual = function (prevProps, nextProps) {
-  return JSON.stringify(prevProps) === JSON.stringify(nextProps);
-};
+var deepEqual = (prevProps, nextProps) => JSON.stringify(prevProps) === JSON.stringify(nextProps);
 exports.deepEqual = deepEqual;
 // Performance monitoring HOC
 function withPerformanceMonitoring(Component, componentName) {
-  return (0, react_1.memo)(function (props) {
+  return (0, react_1.memo)((props) => {
     var startTime = performance.now();
-    react_1.default.useEffect(function () {
+    react_1.default.useEffect(() => {
       var endTime = performance.now();
       var renderTime = endTime - startTime;
       if (renderTime > 16) {

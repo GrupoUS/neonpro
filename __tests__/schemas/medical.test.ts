@@ -1,12 +1,12 @@
-import { describe, test, expect } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 import {
   cpfSchema,
-  phoneSchema,
-  personalDataSchema,
-  treatmentSchema,
   financialDataSchema,
-  validateData,
   healthcareValidators,
+  personalDataSchema,
+  phoneSchema,
+  treatmentSchema,
+  validateData,
 } from "@/lib/schemas";
 
 describe("Medical Schemas Validation", () => {
@@ -80,7 +80,7 @@ describe("Medical Schemas Validation", () => {
 
     test("should reject incomplete personal data", () => {
       const incompleteData = { ...validPersonalData };
-      delete incompleteData.email;
+      incompleteData.email = undefined;
 
       const result = personalDataSchema.safeParse(incompleteData);
       expect(result.success).toBe(false);
@@ -188,7 +188,7 @@ describe("Medical Schemas Validation", () => {
       const result = validateData(schema, data);
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      expect(result.errors?.length).toBeGreaterThan(0);
     });
   });
 

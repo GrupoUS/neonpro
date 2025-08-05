@@ -5,9 +5,9 @@
  * Provides access to ML model performance metrics and statistics
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { AIABTestingService, ModelPerformanceService } from "@/lib/ai/duration-prediction";
 import { createClient } from "@/lib/supabase/server";
-import { ModelPerformanceService, AIABTestingService } from "@/lib/ai/duration-prediction";
 
 // Response types
 interface ModelPerformanceResponse {
@@ -165,7 +165,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const performanceService = new ModelPerformanceService();
 
     switch (action) {
-      case "update_performance":
+      case "update_performance": {
         // Update model performance metrics
         const updatedModel = await performanceService.updateModelPerformance(modelVersion);
 
@@ -181,8 +181,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             isActive: updatedModel.isActive,
           },
         });
+      }
 
-      case "deploy_model":
+      case "deploy_model": {
         // Deploy new model version
         const { hyperparameters, featureImportance, trainingDataCount } = body;
 
@@ -208,6 +209,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           success: true,
           message: `Model ${modelVersion} deployed successfully`,
         });
+      }
 
       default:
         return NextResponse.json(

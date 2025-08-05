@@ -2,8 +2,8 @@
 // Analyze and manage patient risk factors
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
 
 const RiskFactorQuerySchema = z.object({
   patient_id: z.string().uuid().optional(),

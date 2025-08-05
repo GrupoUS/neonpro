@@ -3,7 +3,6 @@
  * Main header with breadcrumbs and user menu
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppHeader = void 0;
 var react_1 = require("react");
@@ -22,14 +21,14 @@ var routeLabels = {
   profile: "Perfil",
   settings: "Configurações",
 };
-var AppHeader = function (_a) {
+var AppHeader = (_a) => {
   var onMenuToggle = _a.onMenuToggle,
     className = _a.className;
   var pathname = (0, navigation_1.usePathname)();
-  var generateBreadcrumbs = function (pathname) {
+  var generateBreadcrumbs = (pathname) => {
     var segments = pathname.split("/").filter(Boolean);
     var breadcrumbs = [{ label: "Home", href: "/dashboard" }];
-    segments.forEach(function (segment, index) {
+    segments.forEach((segment, index) => {
       var href = "/" + segments.slice(0, index + 1).join("/");
       var label = routeLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1);
       var isActive = index === segments.length - 1;
@@ -65,30 +64,28 @@ var AppHeader = function (_a) {
 
           {/* Breadcrumbs */}
           <nav className="hidden sm:flex items-center space-x-2 text-sm">
-            {breadcrumbs.map(function (item, index) {
-              return (
-                <react_1.default.Fragment key={index}>
-                  {index > 0 && <lucide_react_1.ChevronRight className="w-4 h-4 text-slate-400" />}
-                  {item.href && !item.isActive
-                    ? <link_1.default
-                        href={item.href}
-                        className="text-slate-600 hover:text-neon-primary dark:text-slate-400 dark:hover:text-neon-accent transition-colors"
-                      >
-                        {item.label}
-                      </link_1.default>
-                    : <span
-                        className={(0, utils_1.cn)(
-                          "font-medium",
-                          item.isActive
-                            ? "text-neon-primary dark:text-neon-accent"
-                            : "text-slate-600 dark:text-slate-400",
-                        )}
-                      >
-                        {item.label}
-                      </span>}
-                </react_1.default.Fragment>
-              );
-            })}
+            {breadcrumbs.map((item, index) => (
+              <react_1.default.Fragment key={index}>
+                {index > 0 && <lucide_react_1.ChevronRight className="w-4 h-4 text-slate-400" />}
+                {item.href && !item.isActive
+                  ? <link_1.default
+                      href={item.href}
+                      className="text-slate-600 hover:text-neon-primary dark:text-slate-400 dark:hover:text-neon-accent transition-colors"
+                    >
+                      {item.label}
+                    </link_1.default>
+                  : <span
+                      className={(0, utils_1.cn)(
+                        "font-medium",
+                        item.isActive
+                          ? "text-neon-primary dark:text-neon-accent"
+                          : "text-slate-600 dark:text-slate-400",
+                      )}
+                    >
+                      {item.label}
+                    </span>}
+              </react_1.default.Fragment>
+            ))}
           </nav>
         </div>
 

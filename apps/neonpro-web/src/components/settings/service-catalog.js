@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ServiceCatalog;
 var react_1 = require("react");
@@ -220,7 +217,6 @@ var serviceSchema = z.object({
   tags: z.string().optional(),
 });
 function ServiceCatalog() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     services = _a[0],
     setServices = _a[1];
@@ -262,10 +258,10 @@ function ServiceCatalog() {
     },
   });
   // Load services
-  (0, react_1.useEffect)(function () {
-    var loadServices = function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    var loadServices = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           setIsLoading(true);
           try {
             // TODO: Replace with actual API call
@@ -330,23 +326,22 @@ function ServiceCatalog() {
           return [2 /*return*/];
         });
       });
-    };
     loadServices();
   }, []);
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var updatedService_1, newService_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           if (editingService) {
             updatedService_1 = __assign(__assign(__assign({}, editingService), data), {
               updatedAt: new Date(),
             });
-            setServices(function (prev) {
-              return prev.map(function (service) {
-                return service.id === editingService.id ? updatedService_1 : service;
-              });
-            });
+            setServices((prev) =>
+              prev.map((service) =>
+                service.id === editingService.id ? updatedService_1 : service,
+              ),
+            );
             sonner_1.toast.success("Serviço atualizado com sucesso!");
           } else {
             newService_1 = __assign(__assign({}, data), {
@@ -354,9 +349,9 @@ function ServiceCatalog() {
               createdAt: new Date(),
               updatedAt: new Date(),
             });
-            setServices(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [newService_1], false);
-            });
+            setServices((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [newService_1], false),
+            );
             sonner_1.toast.success("Serviço adicionado com sucesso!");
           }
           setIsDialogOpen(false);
@@ -369,22 +364,17 @@ function ServiceCatalog() {
         return [2 /*return*/];
       });
     });
-  };
-  var handleEdit = function (service) {
+  var handleEdit = (service) => {
     setEditingService(service);
     form.reset(__assign(__assign({}, service), { tags: service.tags || "" }));
     setIsDialogOpen(true);
   };
-  var handleDelete = function (serviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDelete = (serviceId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         if (confirm("Tem certeza que deseja remover este serviço?")) {
           try {
-            setServices(function (prev) {
-              return prev.filter(function (service) {
-                return service.id !== serviceId;
-              });
-            });
+            setServices((prev) => prev.filter((service) => service.id !== serviceId));
             sonner_1.toast.success("Serviço removido com sucesso!");
           } catch (error) {
             console.error("Erro ao remover serviço:", error);
@@ -394,21 +384,20 @@ function ServiceCatalog() {
         return [2 /*return*/];
       });
     });
-  };
-  var handleToggleActive = function (serviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleToggleActive = (serviceId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
-          setServices(function (prev) {
-            return prev.map(function (service) {
-              return service.id === serviceId
+          setServices((prev) =>
+            prev.map((service) =>
+              service.id === serviceId
                 ? __assign(__assign({}, service), {
                     active: !service.active,
                     updatedAt: new Date(),
                   })
-                : service;
-            });
-          });
+                : service,
+            ),
+          );
           sonner_1.toast.success("Status atualizado com sucesso!");
         } catch (error) {
           console.error("Erro ao atualizar status:", error);
@@ -417,21 +406,20 @@ function ServiceCatalog() {
         return [2 /*return*/];
       });
     });
-  };
-  var handleToggleFeatured = function (serviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleToggleFeatured = (serviceId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
-          setServices(function (prev) {
-            return prev.map(function (service) {
-              return service.id === serviceId
+          setServices((prev) =>
+            prev.map((service) =>
+              service.id === serviceId
                 ? __assign(__assign({}, service), {
                     featured: !service.featured,
                     updatedAt: new Date(),
                   })
-                : service;
-            });
-          });
+                : service,
+            ),
+          );
           sonner_1.toast.success("Destaque atualizado com sucesso!");
         } catch (error) {
           console.error("Erro ao atualizar destaque:", error);
@@ -440,8 +428,7 @@ function ServiceCatalog() {
         return [2 /*return*/];
       });
     });
-  };
-  var filteredServices = services.filter(function (service) {
+  var filteredServices = services.filter((service) => {
     var matchesSearch =
       service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (service.description &&
@@ -455,13 +442,12 @@ function ServiceCatalog() {
       (filterStatus === "featured" && service.featured);
     return matchesSearch && matchesCategory && matchesStatus;
   });
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-  var formatDuration = function (minutes) {
+  var formatDuration = (minutes) => {
     var hours = Math.floor(minutes / 60);
     var mins = minutes % 60;
     if (hours > 0) {
@@ -469,7 +455,7 @@ function ServiceCatalog() {
     }
     return "".concat(mins, "min");
   };
-  var calculateProfit = function (price, cost) {
+  var calculateProfit = (price, cost) => {
     if (cost === void 0) {
       cost = 0;
     }
@@ -491,7 +477,7 @@ function ServiceCatalog() {
         <dialog_1.Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <dialog_1.DialogTrigger asChild>
             <button_1.Button
-              onClick={function () {
+              onClick={() => {
                 setEditingService(null);
                 form.reset();
               }}
@@ -521,7 +507,7 @@ function ServiceCatalog() {
                     <form_1.FormField
                       control={form.control}
                       name="name"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -538,7 +524,7 @@ function ServiceCatalog() {
                     <form_1.FormField
                       control={form.control}
                       name="description"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -564,7 +550,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="category"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -579,16 +565,14 @@ function ServiceCatalog() {
                                   </select_1.SelectTrigger>
                                 </form_1.FormControl>
                                 <select_1.SelectContent>
-                                  {serviceCategories.map(function (category) {
-                                    return (
-                                      <select_1.SelectItem
-                                        key={category.value}
-                                        value={category.value}
-                                      >
-                                        {category.label}
-                                      </select_1.SelectItem>
-                                    );
-                                  })}
+                                  {serviceCategories.map((category) => (
+                                    <select_1.SelectItem
+                                      key={category.value}
+                                      value={category.value}
+                                    >
+                                      {category.label}
+                                    </select_1.SelectItem>
+                                  ))}
                                 </select_1.SelectContent>
                               </select_1.Select>
                               <form_1.FormMessage />
@@ -600,7 +584,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="duration"
-                        render={function (_a) {
+                        render={(_a) => {
                           var _b;
                           var field = _a.field;
                           return (
@@ -612,9 +596,7 @@ function ServiceCatalog() {
                                     ? void 0
                                     : _b.toString()
                                 }
-                                onValueChange={function (value) {
-                                  return field.onChange(parseInt(value));
-                                }}
+                                onValueChange={(value) => field.onChange(parseInt(value))}
                               >
                                 <form_1.FormControl>
                                   <select_1.SelectTrigger>
@@ -622,16 +604,14 @@ function ServiceCatalog() {
                                   </select_1.SelectTrigger>
                                 </form_1.FormControl>
                                 <select_1.SelectContent>
-                                  {durationOptions.map(function (option) {
-                                    return (
-                                      <select_1.SelectItem
-                                        key={option.value}
-                                        value={option.value.toString()}
-                                      >
-                                        {option.label}
-                                      </select_1.SelectItem>
-                                    );
-                                  })}
+                                  {durationOptions.map((option) => (
+                                    <select_1.SelectItem
+                                      key={option.value}
+                                      value={option.value.toString()}
+                                    >
+                                      {option.label}
+                                    </select_1.SelectItem>
+                                  ))}
                                 </select_1.SelectContent>
                               </select_1.Select>
                               <form_1.FormMessage />
@@ -644,7 +624,7 @@ function ServiceCatalog() {
                     <form_1.FormField
                       control={form.control}
                       name="tags"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -676,7 +656,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="price"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -688,9 +668,7 @@ function ServiceCatalog() {
                                   min="0"
                                   placeholder="150.00"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseFloat(e.target.value) || 0);
-                                  }}
+                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -705,7 +683,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="cost"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -717,9 +695,7 @@ function ServiceCatalog() {
                                   min="0"
                                   placeholder="45.00"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseFloat(e.target.value) || 0);
-                                  }}
+                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -777,7 +753,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="active"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -803,7 +779,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="featured"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -829,7 +805,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="requiresSpecialist"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -855,7 +831,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="allowOnlineBooking"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -884,7 +860,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="maxAdvanceBookingDays"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -895,9 +871,7 @@ function ServiceCatalog() {
                                   min="0"
                                   max="365"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseInt(e.target.value) || 0);
-                                  }}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -912,7 +886,7 @@ function ServiceCatalog() {
                       <form_1.FormField
                         control={form.control}
                         name="minAdvanceBookingHours"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -923,9 +897,7 @@ function ServiceCatalog() {
                                   min="0"
                                   max="168"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseInt(e.target.value) || 0);
-                                  }}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -944,7 +916,7 @@ function ServiceCatalog() {
                   <button_1.Button
                     type="button"
                     variant="outline"
-                    onClick={function () {
+                    onClick={() => {
                       setIsDialogOpen(false);
                       setEditingService(null);
                       form.reset();
@@ -972,9 +944,7 @@ function ServiceCatalog() {
                 <input_1.Input
                   placeholder="Buscar por nome, descrição ou tags..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -986,13 +956,11 @@ function ServiceCatalog() {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todas as categorias</select_1.SelectItem>
-                  {serviceCategories.map(function (category) {
-                    return (
-                      <select_1.SelectItem key={category.value} value={category.value}>
-                        {category.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {serviceCategories.map((category) => (
+                    <select_1.SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
               <select_1.Select value={filterStatus} onValueChange={setFilterStatus}>
@@ -1049,10 +1017,10 @@ function ServiceCatalog() {
                       </table_1.TableRow>
                     </table_1.TableHeader>
                     <table_1.TableBody>
-                      {filteredServices.map(function (service) {
-                        var category = serviceCategories.find(function (cat) {
-                          return cat.value === service.category;
-                        });
+                      {filteredServices.map((service) => {
+                        var category = serviceCategories.find(
+                          (cat) => cat.value === service.category,
+                        );
                         var _a = calculateProfit(service.price, service.cost),
                           profit = _a.profit,
                           margin = _a.margin;
@@ -1076,17 +1044,15 @@ function ServiceCatalog() {
                                     {service.tags
                                       .split(",")
                                       .slice(0, 3)
-                                      .map(function (tag, index) {
-                                        return (
-                                          <badge_1.Badge
-                                            key={index}
-                                            variant="outline"
-                                            className="text-xs"
-                                          >
-                                            {tag.trim()}
-                                          </badge_1.Badge>
-                                        );
-                                      })}
+                                      .map((tag, index) => (
+                                        <badge_1.Badge
+                                          key={index}
+                                          variant="outline"
+                                          className="text-xs"
+                                        >
+                                          {tag.trim()}
+                                        </badge_1.Badge>
+                                      ))}
                                   </div>
                                 )}
                               </div>
@@ -1121,9 +1087,7 @@ function ServiceCatalog() {
                             <table_1.TableCell>
                               <div className="flex flex-col gap-1">
                                 <button
-                                  onClick={function () {
-                                    return handleToggleActive(service.id);
-                                  }}
+                                  onClick={() => handleToggleActive(service.id)}
                                   className="flex items-center gap-1 text-sm"
                                 >
                                   {service.active
@@ -1168,9 +1132,7 @@ function ServiceCatalog() {
                                 <button_1.Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={function () {
-                                    return handleToggleFeatured(service.id);
-                                  }}
+                                  onClick={() => handleToggleFeatured(service.id)}
                                   className={service.featured ? "text-yellow-600" : ""}
                                 >
                                   <lucide_react_1.Star
@@ -1182,18 +1144,14 @@ function ServiceCatalog() {
                                 <button_1.Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={function () {
-                                    return handleEdit(service);
-                                  }}
+                                  onClick={() => handleEdit(service)}
                                 >
                                   <lucide_react_1.Edit className="h-4 w-4" />
                                 </button_1.Button>
                                 <button_1.Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={function () {
-                                    return handleDelete(service.id);
-                                  }}
+                                  onClick={() => handleDelete(service.id)}
                                   className="text-red-600 hover:text-red-800"
                                 >
                                   <lucide_react_1.Trash2 className="h-4 w-4" />

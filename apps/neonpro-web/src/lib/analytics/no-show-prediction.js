@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Story 11.2: No-Show Prediction System (≥80% Accuracy)
  * Core prediction engine with machine learning models for appointment no-show prediction
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.noShowPredictionEngine =
   exports.NoShowPredictionEngine =
@@ -146,7 +143,7 @@ exports.getRiskColor = getRiskColor;
 exports.getRiskBadgeColor = getRiskBadgeColor;
 // Risk factor categories for comprehensive analysis
 var RiskFactorCategory;
-(function (RiskFactorCategory) {
+((RiskFactorCategory) => {
   RiskFactorCategory["PATIENT_HISTORY"] = "patient_history";
   RiskFactorCategory["APPOINTMENT_CHARACTERISTICS"] = "appointment_characteristics";
   RiskFactorCategory["DEMOGRAPHICS"] = "demographics";
@@ -154,7 +151,7 @@ var RiskFactorCategory;
   RiskFactorCategory["COMMUNICATION_PATTERNS"] = "communication_patterns";
 })(RiskFactorCategory || (exports.RiskFactorCategory = RiskFactorCategory = {}));
 // Main no-show prediction engine class
-var NoShowPredictionEngine = /** @class */ (function () {
+var NoShowPredictionEngine = /** @class */ (() => {
   function NoShowPredictionEngine() {
     this.supabase = createClient(ComponentClient());
     this.modelVersion = "2.1.0";
@@ -247,24 +244,22 @@ var NoShowPredictionEngine = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var batchSize, results, _loop_1, i;
       var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             batchSize = 50;
             results = [];
             _loop_1 = function (i) {
               var batch, batchPromises, batchResults;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     batch = appointments.slice(i, i + batchSize);
-                    batchPromises = batch.map(function (apt) {
-                      return _this.predictNoShow(apt.id, apt);
-                    });
+                    batchPromises = batch.map((apt) => _this.predictNoShow(apt.id, apt));
                     return [4 /*yield*/, Promise.allSettled(batchPromises)];
                   case 1:
                     batchResults = _b.sent();
-                    batchResults.forEach(function (result, index) {
+                    batchResults.forEach((result, index) => {
                       if (result.status === "fulfilled") {
                         results.push(result.value);
                       } else {
@@ -329,44 +324,38 @@ var NoShowPredictionEngine = /** @class */ (function () {
             ) {
               return [2 /*return*/, this.getDefaultPattern(patientId)];
             }
-            noShows = appointments.filter(function (apt) {
-              return apt.status === "NO_SHOW";
-            });
+            noShows = appointments.filter((apt) => apt.status === "NO_SHOW");
             totalAppointments = appointments.length;
             noShowCount = noShows.length;
             bookingDelays = appointments
-              .filter(function (apt) {
-                return apt.created_at && apt.scheduled_date;
-              })
-              .map(function (apt) {
+              .filter((apt) => apt.created_at && apt.scheduled_date)
+              .map((apt) => {
                 var booking = new Date(apt.created_at);
                 var appointment = new Date(apt.scheduled_date);
                 return Math.abs(appointment.getTime() - booking.getTime()) / (1000 * 60 * 60 * 24);
               });
             avgDaysBetweenBookingAndAppointment =
               bookingDelays.length > 0
-                ? bookingDelays.reduce(function (sum, days) {
-                    return sum + days;
-                  }, 0) / bookingDelays.length
+                ? bookingDelays.reduce((sum, days) => sum + days, 0) / bookingDelays.length
                 : 0;
-            timeSlots = appointments.map(function (apt) {
+            timeSlots = appointments.map((apt) => {
               var date = new Date(apt.scheduled_date);
               return ""
                 .concat(date.getHours(), ":")
                 .concat(date.getMinutes().toString().padStart(2, "0"));
             });
-            timeSlotCounts = timeSlots.reduce(function (acc, slot) {
+            timeSlotCounts = timeSlots.reduce((acc, slot) => {
               acc[slot] = (acc[slot] || 0) + 1;
               return acc;
             }, {});
             preferredTimeSlots = Object.entries(timeSlotCounts)
-              .sort(function (_a, _b) {
+              .sort((_a, _b) => {
                 var a = _a[1];
                 var b = _b[1];
                 return b - a;
               })
               .slice(0, 3)
-              .map(function (_a) {
+              .map((_a) => {
                 var slot = _a[0];
                 return slot;
               });
@@ -397,7 +386,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.extractAppointmentFeatures = function (appointmentData) {
     return __awaiter(this, void 0, void 0, function () {
       var scheduledDate, createdDate;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         scheduledDate = new Date(appointmentData.scheduled_date);
         createdDate = new Date(appointmentData.created_at);
         return [
@@ -463,7 +452,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
    */
   NoShowPredictionEngine.prototype.getCommunicationPatterns = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would integrate with communication logs
         // For now, returning default patterns
         return [
@@ -489,7 +478,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.calculateRiskFactors = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var factors, isWeekendRisk, earlyMorningRisk, holidayRisk, lowResponseRisk;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         factors = [];
         // Patient history factors
         factors.push({
@@ -580,9 +569,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
         variance,
         confidence;
       return __generator(this, function (_a) {
-        totalContribution = riskFactors.reduce(function (sum, factor) {
-          return sum + factor.contribution;
-        }, 0);
+        totalContribution = riskFactors.reduce((sum, factor) => sum + factor.contribution, 0);
         baseRiskScore = Math.min(Math.max(totalContribution, 0), 100);
         logisticScore = this.logisticRegressionScore(riskFactors);
         treeScore = this.decisionTreeScore(riskFactors);
@@ -590,14 +577,8 @@ var NoShowPredictionEngine = /** @class */ (function () {
         ensembleScore =
           baseRiskScore * 0.4 + logisticScore * 0.3 + treeScore * 0.2 + neuralScore * 0.1;
         scores = [baseRiskScore, logisticScore, treeScore, neuralScore];
-        meanScore =
-          scores.reduce(function (sum, score) {
-            return sum + score;
-          }, 0) / scores.length;
-        variance =
-          scores.reduce(function (sum, score) {
-            return sum + Math.pow(score - meanScore, 2);
-          }, 0) / scores.length;
+        meanScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+        variance = scores.reduce((sum, score) => sum + (score - meanScore) ** 2, 0) / scores.length;
         confidence = Math.max(0.5, 1 - variance / 1000);
         return [
           2 /*return*/,
@@ -619,7 +600,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
         if (riskScore >= 80) {
           // Critical risk - multiple interventions
@@ -680,59 +661,42 @@ var NoShowPredictionEngine = /** @class */ (function () {
   /**
    * Determine risk level based on score
    */
-  NoShowPredictionEngine.prototype.getRiskLevel = function (riskScore) {
+  NoShowPredictionEngine.prototype.getRiskLevel = (riskScore) => {
     if (riskScore >= 80) return "CRITICAL";
     if (riskScore >= 50) return "HIGH";
     if (riskScore >= 25) return "MEDIUM";
     return "LOW";
   };
   // Placeholder methods for ensemble models (would be replaced with actual ML implementations)
-  NoShowPredictionEngine.prototype.logisticRegressionScore = function (factors) {
-    return (
-      factors.reduce(function (sum, factor) {
-        return sum + factor.contribution;
-      }, 0) * 0.95
-    );
-  };
-  NoShowPredictionEngine.prototype.decisionTreeScore = function (factors) {
-    return (
-      factors.reduce(function (sum, factor) {
-        return sum + factor.contribution;
-      }, 0) * 1.05
-    );
-  };
-  NoShowPredictionEngine.prototype.neuralNetworkScore = function (factors) {
-    return (
-      factors.reduce(function (sum, factor) {
-        return sum + factor.contribution;
-      }, 0) * 0.98
-    );
-  };
+  NoShowPredictionEngine.prototype.logisticRegressionScore = (factors) =>
+    factors.reduce((sum, factor) => sum + factor.contribution, 0) * 0.95;
+  NoShowPredictionEngine.prototype.decisionTreeScore = (factors) =>
+    factors.reduce((sum, factor) => sum + factor.contribution, 0) * 1.05;
+  NoShowPredictionEngine.prototype.neuralNetworkScore = (factors) =>
+    factors.reduce((sum, factor) => sum + factor.contribution, 0) * 0.98;
   // Helper methods
-  NoShowPredictionEngine.prototype.getDefaultPattern = function (patientId) {
-    return {
-      patientId: patientId,
-      totalAppointments: 0,
-      noShowCount: 0,
-      noShowRate: 0,
-      avgDaysBetweenBookingAndAppointment: 7,
-      preferredTimeSlots: [],
-      seasonalPatterns: {},
-      improvementTrend: "STABLE",
-    };
-  };
-  NoShowPredictionEngine.prototype.calculateSeasonalPatterns = function (appointments) {
+  NoShowPredictionEngine.prototype.getDefaultPattern = (patientId) => ({
+    patientId: patientId,
+    totalAppointments: 0,
+    noShowCount: 0,
+    noShowRate: 0,
+    avgDaysBetweenBookingAndAppointment: 7,
+    preferredTimeSlots: [],
+    seasonalPatterns: {},
+    improvementTrend: "STABLE",
+  });
+  NoShowPredictionEngine.prototype.calculateSeasonalPatterns = (appointments) => {
     var patterns = {};
     // Implementation for seasonal analysis
     return patterns;
   };
-  NoShowPredictionEngine.prototype.calculateImprovementTrend = function (appointments) {
+  NoShowPredictionEngine.prototype.calculateImprovementTrend = (appointments) => {
     // Implementation for trend analysis
     return "STABLE";
   };
   NoShowPredictionEngine.prototype.isHoliday = function (date) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for holiday checking
         return [2 /*return*/, false];
       });
@@ -740,20 +704,20 @@ var NoShowPredictionEngine = /** @class */ (function () {
   };
   NoShowPredictionEngine.prototype.isSchoolHoliday = function (date) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for school holiday checking
         return [2 /*return*/, false];
       });
     });
   };
-  NoShowPredictionEngine.prototype.getSeason = function (date) {
+  NoShowPredictionEngine.prototype.getSeason = (date) => {
     var month = date.getMonth() + 1;
     if (month >= 3 && month <= 5) return "spring";
     if (month >= 6 && month <= 8) return "summer";
     if (month >= 9 && month <= 11) return "autumn";
     return "winter";
   };
-  NoShowPredictionEngine.prototype.isLastDayOfMonth = function (date) {
+  NoShowPredictionEngine.prototype.isLastDayOfMonth = (date) => {
     var nextDay = new Date(date);
     nextDay.setDate(nextDay.getDate() + 1);
     return nextDay.getMonth() !== date.getMonth();

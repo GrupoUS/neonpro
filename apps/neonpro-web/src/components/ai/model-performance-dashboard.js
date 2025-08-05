@@ -5,18 +5,17 @@
  * and provides model management capabilities for administrators.
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ModelPerformanceDashboard;
 var react_1 = require("react");
@@ -151,7 +148,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 function ModelPerformanceDashboard(_a) {
-  var _this = this;
   var _b;
   var _c = _a.className,
     className = _c === void 0 ? "" : _c,
@@ -176,19 +172,16 @@ function ModelPerformanceDashboard(_a) {
     updatingModel = _k[0],
     setUpdatingModel = _k[1];
   // Load data on component mount
-  (0, react_1.useEffect)(
-    function () {
-      loadPerformanceData();
-    },
-    [showABStats],
-  );
+  (0, react_1.useEffect)(() => {
+    loadPerformanceData();
+  }, [showABStats]);
   /**
    * Load model performance data
    */
-  var loadPerformanceData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPerformanceData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var url, response, result, err_1, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -222,13 +215,12 @@ function ModelPerformanceDashboard(_a) {
         }
       });
     });
-  };
   /**
    * Refresh performance data
    */
-  var refreshData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var refreshData = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setRefreshing(true);
@@ -241,14 +233,13 @@ function ModelPerformanceDashboard(_a) {
         }
       });
     });
-  };
   /**
    * Update model performance
    */
-  var updateModelPerformance = function (modelVersion) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateModelPerformance = (modelVersion) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, err_2, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setUpdatingModel(modelVersion);
@@ -294,11 +285,10 @@ function ModelPerformanceDashboard(_a) {
         }
       });
     });
-  };
   /**
    * Get accuracy badge variant
    */
-  var getAccuracyBadge = function (accuracy) {
+  var getAccuracyBadge = (accuracy) => {
     if (accuracy >= 85)
       return { variant: "default", icon: lucide_react_1.CheckCircle, color: "text-green-600" };
     if (accuracy >= 70)
@@ -308,7 +298,7 @@ function ModelPerformanceDashboard(_a) {
   /**
    * Format metrics for display
    */
-  var formatMetric = function (value, type) {
+  var formatMetric = (value, type) => {
     switch (type) {
       case "accuracy":
         return "".concat(value.toFixed(1), "%");
@@ -348,9 +338,7 @@ function ModelPerformanceDashboard(_a) {
   var activeModel =
     (_b = data === null || data === void 0 ? void 0 : data.models) === null || _b === void 0
       ? void 0
-      : _b.find(function (m) {
-          return m.isActive;
-        });
+      : _b.find((m) => m.isActive);
   var allModels = (data === null || data === void 0 ? void 0 : data.models) || [];
   return (
     <div className={"space-y-6 ".concat(className)}>
@@ -462,78 +450,72 @@ function ModelPerformanceDashboard(_a) {
         {/* Model Details Tab */}
         <tabs_1.TabsContent value="models" className="space-y-4">
           <div className="space-y-4">
-            {allModels.map(function (model) {
-              return (
-                <card_1.Card key={model.version}>
-                  <card_1.CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <card_1.CardTitle className="flex items-center gap-2">
-                          {model.version}
-                          {model.isActive && (
-                            <badge_1.Badge variant="default">Active</badge_1.Badge>
-                          )}
-                        </card_1.CardTitle>
-                        <card_1.CardDescription>
-                          {(function () {
-                            var _a = getAccuracyBadge(model.accuracy),
-                              variant = _a.variant,
-                              Icon = _a.icon;
-                            return (
-                              <badge_1.Badge
-                                variant={variant}
-                                className="flex items-center gap-1 w-fit mt-1"
-                              >
-                                <Icon className="h-3 w-3" />
-                                {formatMetric(model.accuracy, "accuracy")} accuracy
-                              </badge_1.Badge>
-                            );
-                          })()}
-                        </card_1.CardDescription>
-                      </div>
-                      {allowModelManagement && (
-                        <button_1.Button
-                          variant="outline"
-                          size="sm"
-                          onClick={function () {
-                            return updateModelPerformance(model.version);
-                          }}
-                          disabled={updatingModel === model.version}
-                        >
-                          {updatingModel === model.version
-                            ? <lucide_react_1.RefreshCw className="h-4 w-4 animate-spin" />
-                            : "Update Metrics"}
-                        </button_1.Button>
-                      )}
+            {allModels.map((model) => (
+              <card_1.Card key={model.version}>
+                <card_1.CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <card_1.CardTitle className="flex items-center gap-2">
+                        {model.version}
+                        {model.isActive && <badge_1.Badge variant="default">Active</badge_1.Badge>}
+                      </card_1.CardTitle>
+                      <card_1.CardDescription>
+                        {(() => {
+                          var _a = getAccuracyBadge(model.accuracy),
+                            variant = _a.variant,
+                            Icon = _a.icon;
+                          return (
+                            <badge_1.Badge
+                              variant={variant}
+                              className="flex items-center gap-1 w-fit mt-1"
+                            >
+                              <Icon className="h-3 w-3" />
+                              {formatMetric(model.accuracy, "accuracy")} accuracy
+                            </badge_1.Badge>
+                          );
+                        })()}
+                      </card_1.CardDescription>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">MAE</p>
-                        <p className="text-lg font-semibold">{formatMetric(model.mae, "error")}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">RMSE</p>
-                        <p className="text-lg font-semibold">{formatMetric(model.rmse, "error")}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">Confidence</p>
-                        <p className="text-lg font-semibold">
-                          {formatMetric(model.confidenceThreshold, "threshold")}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-500">Status</p>
-                        <p className="text-lg font-semibold">
-                          {model.isActive ? "Active" : "Inactive"}
-                        </p>
-                      </div>
+                    {allowModelManagement && (
+                      <button_1.Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => updateModelPerformance(model.version)}
+                        disabled={updatingModel === model.version}
+                      >
+                        {updatingModel === model.version
+                          ? <lucide_react_1.RefreshCw className="h-4 w-4 animate-spin" />
+                          : "Update Metrics"}
+                      </button_1.Button>
+                    )}
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">MAE</p>
+                      <p className="text-lg font-semibold">{formatMetric(model.mae, "error")}</p>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">RMSE</p>
+                      <p className="text-lg font-semibold">{formatMetric(model.rmse, "error")}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Confidence</p>
+                      <p className="text-lg font-semibold">
+                        {formatMetric(model.confidenceThreshold, "threshold")}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Status</p>
+                      <p className="text-lg font-semibold">
+                        {model.isActive ? "Active" : "Inactive"}
+                      </p>
+                    </div>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 

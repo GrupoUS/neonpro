@@ -1,7 +1,7 @@
 // Device Manager Tests
 // Story 1.4: Session Management & Security Implementation
 
-import type { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import type { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DeviceManager } from "../device-manager";
 import type { DeviceInfo, DeviceRegistration } from "../types";
 

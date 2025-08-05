@@ -13,6 +13,8 @@
   ],
   "scripts": {
     "build": "turbo build",
+    "build:vercel": "node scripts/vercel-build.js",
+    "prisma:generate": "npx prisma generate || echo 'Prisma generate skipped'",
     "dev": "turbo dev",
     "lint": "npx ultracite@latest lint",
     "start": "turbo start",
@@ -20,9 +22,10 @@
     "clean": "turbo clean",
     "format": "npx ultracite@latest format",
     "format:check": "turbo format:check",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
+    "@prisma/client": "^6.13.0",
     "@clerk/nextjs": "^6.28.1",
     "@cloudflare/workers-types": "^4.20250805.0",
     "@fastify/cookie": "^11.0.2",
@@ -59,6 +62,7 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "prisma": "^6.13.0",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@jest/globals": "^30.0.5",

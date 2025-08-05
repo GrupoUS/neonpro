@@ -2,32 +2,31 @@
 // VIBECODE V1.0 - Healthcare PWA Excellence Standards
 // Purpose: Register and manage Service Worker with healthcare-specific configurations
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,14 +146,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PWAServiceWorker = PWAServiceWorker;
 exports.PWAInstallPrompt = PWAInstallPrompt;
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function PWAServiceWorker() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       isSupported: false,
       isRegistered: false,
@@ -166,26 +162,22 @@ function PWAServiceWorker() {
     }),
     state = _a[0],
     setState = _a[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Check if Service Worker is supported
     if (!("serviceWorker" in navigator)) {
       console.warn("Service Worker not supported");
       return;
     }
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { isSupported: true });
-    });
+    setState((prev) => __assign(__assign({}, prev), { isSupported: true }));
     // Register Service Worker
-    var registerServiceWorker = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    var registerServiceWorker = () =>
+      __awaiter(this, void 0, void 0, function () {
         var registration_1, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isInstalling: true });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isInstalling: true }));
               return [
                 4 /*yield*/,
                 navigator.serviceWorker.register("/sw.js", {
@@ -195,29 +187,27 @@ function PWAServiceWorker() {
               ];
             case 1:
               registration_1 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isRegistered: true,
                   isInstalling: false,
                   registration: registration_1,
-                });
-              });
+                }),
+              );
               console.log("✅ NeonPro Service Worker registered:", registration_1.scope);
               // Check for updates
-              registration_1.addEventListener("updatefound", function () {
+              registration_1.addEventListener("updatefound", () => {
                 var newWorker = registration_1.installing;
                 if (newWorker) {
-                  newWorker.addEventListener("statechange", function () {
+                  newWorker.addEventListener("statechange", () => {
                     if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
                       // New version available
-                      setState(function (prev) {
-                        return __assign(__assign({}, prev), { isWaitingUpdate: true });
-                      });
+                      setState((prev) => __assign(__assign({}, prev), { isWaitingUpdate: true }));
                       sonner_1.toast.info("Nova versão disponível", {
                         description: "Clique para atualizar o aplicativo",
                         action: {
                           label: "Atualizar",
-                          onClick: function () {
+                          onClick: () => {
                             newWorker.postMessage({ action: "SKIP_WAITING" });
                             window.location.reload();
                           },
@@ -229,12 +219,12 @@ function PWAServiceWorker() {
                 }
               });
               // Listen for controlling Service Worker change
-              navigator.serviceWorker.addEventListener("controllerchange", function () {
+              navigator.serviceWorker.addEventListener("controllerchange", () => {
                 console.log("🔄 Service Worker controller changed - reloading page");
                 window.location.reload();
               });
               // Background sync event listeners
-              navigator.serviceWorker.addEventListener("message", function (event) {
+              navigator.serviceWorker.addEventListener("message", (event) => {
                 if (event.data && event.data.type === "BACKGROUND_SYNC") {
                   var _a = event.data,
                     success = _a.success,
@@ -259,13 +249,11 @@ function PWAServiceWorker() {
               });
               // Manual update check on page load
               if (registration_1.waiting) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), { isWaitingUpdate: true });
-                });
+                setState((prev) => __assign(__assign({}, prev), { isWaitingUpdate: true }));
               }
               // Check for updates every 5 minutes
               setInterval(
-                function () {
+                () => {
                   registration_1.update().catch(console.warn);
                 },
                 5 * 60 * 1000,
@@ -274,9 +262,7 @@ function PWAServiceWorker() {
             case 2:
               error_1 = _a.sent();
               console.error("❌ Service Worker registration failed:", error_1);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isInstalling: false });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isInstalling: false }));
               sonner_1.toast.error("Erro ao carregar funcionalidades offline", {
                 description: "Algumas funcionalidades podem não estar disponíveis",
               });
@@ -286,13 +272,12 @@ function PWAServiceWorker() {
           }
         });
       });
-    };
     // Register when page loads
     registerServiceWorker();
     // Register on page visibility change (for mobile app switching)
-    var handleVisibilityChange = function () {
+    var handleVisibilityChange = () => {
       if (!document.hidden && "serviceWorker" in navigator) {
-        navigator.serviceWorker.getRegistration().then(function (registration) {
+        navigator.serviceWorker.getRegistration().then((registration) => {
           if (registration) {
             registration.update().catch(console.warn);
           }
@@ -300,7 +285,7 @@ function PWAServiceWorker() {
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return function () {
+    return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
@@ -309,85 +294,80 @@ function PWAServiceWorker() {
 }
 // Install prompt component
 function PWAInstallPrompt() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     installPrompt = _a[0],
     setInstallPrompt = _a[1];
   var _b = (0, react_1.useState)(false),
     isInstalled = _b[0],
     setIsInstalled = _b[1];
-  (0, react_1.useEffect)(
-    function () {
-      // Check if already installed
-      var checkInstalled = function () {
-        var isInstalled =
-          window.matchMedia("(display-mode: standalone)").matches ||
-          window.navigator.standalone === true;
-        setIsInstalled(isInstalled);
-      };
-      checkInstalled();
-      // Listen for install prompt
-      var handleBeforeInstallPrompt = function (e) {
-        e.preventDefault();
-        setInstallPrompt(e);
-        // Show install prompt after 30 seconds
-        setTimeout(function () {
-          if (!isInstalled) {
-            sonner_1.toast.info("Instalar NeonPro", {
-              description: "Adicione o NeonPro à sua tela inicial para acesso rápido",
-              action: {
-                label: "Instalar",
-                onClick: handleInstall,
-              },
-              duration: 15000,
-            });
-          }
-        }, 30000);
-      };
-      var handleInstall = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var outcome, error_2;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (!installPrompt) return [2 /*return*/];
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, , 4]);
-                installPrompt.prompt();
-                return [4 /*yield*/, installPrompt.userChoice];
-              case 2:
-                outcome = _a.sent().outcome;
-                if (outcome === "accepted") {
-                  sonner_1.toast.success("NeonPro instalado com sucesso!");
-                  setIsInstalled(true);
-                }
-                setInstallPrompt(null);
-                return [3 /*break*/, 4];
-              case 3:
-                error_2 = _a.sent();
-                console.error("Install prompt failed:", error_2);
-                return [3 /*break*/, 4];
-              case 4:
-                return [2 /*return*/];
-            }
+  (0, react_1.useEffect)(() => {
+    // Check if already installed
+    var checkInstalled = () => {
+      var isInstalled =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+      setIsInstalled(isInstalled);
+    };
+    checkInstalled();
+    // Listen for install prompt
+    var handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      // Show install prompt after 30 seconds
+      setTimeout(() => {
+        if (!isInstalled) {
+          sonner_1.toast.info("Instalar NeonPro", {
+            description: "Adicione o NeonPro à sua tela inicial para acesso rápido",
+            action: {
+              label: "Instalar",
+              onClick: handleInstall,
+            },
+            duration: 15000,
           });
+        }
+      }, 30000);
+    };
+    var handleInstall = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var outcome, error_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (!installPrompt) return [2 /*return*/];
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, , 4]);
+              installPrompt.prompt();
+              return [4 /*yield*/, installPrompt.userChoice];
+            case 2:
+              outcome = _a.sent().outcome;
+              if (outcome === "accepted") {
+                sonner_1.toast.success("NeonPro instalado com sucesso!");
+                setIsInstalled(true);
+              }
+              setInstallPrompt(null);
+              return [3 /*break*/, 4];
+            case 3:
+              error_2 = _a.sent();
+              console.error("Install prompt failed:", error_2);
+              return [3 /*break*/, 4];
+            case 4:
+              return [2 /*return*/];
+          }
         });
-      };
-      // Listen for app installed
-      var handleAppInstalled = function () {
-        sonner_1.toast.success("NeonPro foi adicionado à sua tela inicial!");
-        setIsInstalled(true);
-        setInstallPrompt(null);
-      };
-      window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-      window.addEventListener("appinstalled", handleAppInstalled);
-      return function () {
-        window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-        window.removeEventListener("appinstalled", handleAppInstalled);
-      };
-    },
-    [installPrompt, isInstalled],
-  );
+      });
+    // Listen for app installed
+    var handleAppInstalled = () => {
+      sonner_1.toast.success("NeonPro foi adicionado à sua tela inicial!");
+      setIsInstalled(true);
+      setInstallPrompt(null);
+    };
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, [installPrompt, isInstalled]);
   return null;
 }

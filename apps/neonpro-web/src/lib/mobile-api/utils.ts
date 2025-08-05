@@ -3,21 +3,21 @@
  * Utility functions for mobile API optimization, data compression, and performance
  */
 
-import type { createHash, createCipheriv, createDecipheriv, randomBytes } from "crypto";
+import type { createCipheriv, createDecipheriv, createHash, randomBytes } from "crypto";
 import type {
+  CacheConfig,
+  CompressionConfig,
+  CompressionResult,
+  DataSyncConfig,
+  DeviceCapabilities,
+  EncryptionResult,
   MobileApiRequest,
   MobileApiResponse,
-  CompressionConfig,
-  CacheConfig,
-  SecurityConfig,
-  PerformanceMetrics,
-  DataSyncConfig,
   NetworkCondition,
-  DeviceCapabilities,
   OptimizationStrategy,
+  PerformanceMetrics,
+  SecurityConfig,
   ValidationResult,
-  CompressionResult,
-  EncryptionResult,
 } from "./types";
 
 /**
@@ -37,19 +37,19 @@ export class CompressionUtils {
 
       switch (config.algorithm) {
         case "gzip":
-          compressedData = await this.gzipCompress(data);
+          compressedData = await CompressionUtils.gzipCompress(data);
           algorithm = "gzip";
           break;
         case "brotli":
-          compressedData = await this.brotliCompress(data);
+          compressedData = await CompressionUtils.brotliCompress(data);
           algorithm = "brotli";
           break;
         case "lz4":
-          compressedData = await this.lz4Compress(data);
+          compressedData = await CompressionUtils.lz4Compress(data);
           algorithm = "lz4";
           break;
         default:
-          compressedData = await this.defaultCompress(data);
+          compressedData = await CompressionUtils.defaultCompress(data);
           algorithm = "default";
       }
 
@@ -95,13 +95,13 @@ export class CompressionUtils {
     try {
       switch (algorithm) {
         case "gzip":
-          return await this.gzipDecompress(compressedData);
+          return await CompressionUtils.gzipDecompress(compressedData);
         case "brotli":
-          return await this.brotliDecompress(compressedData);
+          return await CompressionUtils.brotliDecompress(compressedData);
         case "lz4":
-          return await this.lz4Decompress(compressedData);
+          return await CompressionUtils.lz4Decompress(compressedData);
         default:
-          return await this.defaultDecompress(compressedData);
+          return await CompressionUtils.defaultDecompress(compressedData);
       }
     } catch (error) {
       throw new Error(`Decompression failed: ${error.message}`);
@@ -313,7 +313,13 @@ export class SecurityUtils {
     }
 
     // Generate expected signature
-    const expectedSignature = this.generateSignature(method, url, body, timestamp, secretKey);
+    const expectedSignature = SecurityUtils.generateSignature(
+      method,
+      url,
+      body,
+      timestamp,
+      secretKey,
+    );
 
     return signature === expectedSignature;
   }
@@ -330,13 +336,13 @@ export class SecurityUtils {
     }
 
     if (Array.isArray(input)) {
-      return input.map((item) => this.sanitizeInput(item));
+      return input.map((item) => SecurityUtils.sanitizeInput(item));
     }
 
     if (typeof input === "object" && input !== null) {
       const sanitized: any = {};
       for (const [key, value] of Object.entries(input)) {
-        sanitized[key] = this.sanitizeInput(value);
+        sanitized[key] = SecurityUtils.sanitizeInput(value);
       }
       return sanitized;
     }
@@ -355,12 +361,12 @@ export class PerformanceUtils {
    * Start performance measurement
    */
   static startMeasurement(operationId: string): void {
-    this.metrics.set(operationId, {
+    PerformanceUtils.metrics.set(operationId, {
       operationId,
       startTime: Date.now(),
       endTime: 0,
       duration: 0,
-      memoryUsage: this.getMemoryUsage(),
+      memoryUsage: PerformanceUtils.getMemoryUsage(),
       networkLatency: 0,
       cacheHitRate: 0,
       errorRate: 0,
@@ -372,14 +378,14 @@ export class PerformanceUtils {
    * End performance measurement
    */
   static endMeasurement(operationId: string): PerformanceMetrics | null {
-    const metrics = this.metrics.get(operationId);
+    const metrics = PerformanceUtils.metrics.get(operationId);
     if (!metrics) return null;
 
     const endTime = Date.now();
     metrics.endTime = endTime;
     metrics.duration = endTime - metrics.startTime;
 
-    this.metrics.delete(operationId);
+    PerformanceUtils.metrics.delete(operationId);
     return metrics;
   }
 
@@ -573,7 +579,7 @@ export class NetworkUtils {
           throw lastError;
         }
 
-        const delay = baseDelay * Math.pow(2, attempt) + Math.random() * 1000;
+        const delay = baseDelay * 2 ** attempt + Math.random() * 1000;
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }

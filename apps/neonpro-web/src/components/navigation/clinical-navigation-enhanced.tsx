@@ -13,12 +13,33 @@
 
 "use client";
 
-import type { useState, useEffect, useMemo } from "react";
-import type { useRouter, usePathname } from "next/navigation";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Badge } from "@/components/ui/badge";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  Calendar,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  FileText,
+  Home,
+  Keyboard,
+  LogOut,
+  Menu,
+  Phone,
+  Plus,
+  Search,
+  Settings,
+  Stethoscope,
+  User,
+  Users,
+} from "lucide-react";
+import type { usePathname, useRouter } from "next/navigation";
+import type { useEffect, useMemo, useState } from "react";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,31 +48,10 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { Input } from "@/components/ui/input";
 import type { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import type {
-  Calendar,
-  Users,
-  Activity,
-  BarChart3,
-  Settings,
-  Search,
-  Bell,
-  Menu,
-  Plus,
-  Stethoscope,
-  Phone,
-  FileText,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Home,
-  ChevronRight,
-  Keyboard,
-  LogOut,
-  User,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
 import type { useAccessibility } from "@/contexts/accessibility-context";
+import type { cn } from "@/lib/utils";
 
 interface NavigationItem {
   id: string;

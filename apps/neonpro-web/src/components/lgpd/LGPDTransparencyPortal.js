@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = LGPDTransparencyPortal;
 var react_1 = require("react");
@@ -145,7 +142,6 @@ var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 var lgpd_1 = require("@/types/lgpd");
 function LGPDTransparencyPortal(_a) {
-  var _this = this;
   var userId = _a.userId,
     clinicId = _a.clinicId;
   var _b = (0, react_1.useState)([]),
@@ -166,16 +162,13 @@ function LGPDTransparencyPortal(_a) {
   var _g = (0, react_1.useState)("overview"),
     activeTab = _g[0],
     setActiveTab = _g[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadPortalData();
-    },
-    [userId, clinicId],
-  );
-  var loadPortalData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadPortalData();
+  }, [userId, clinicId]);
+  var loadPortalData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, consentsData, requestsData, reportsData, configData, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -212,34 +205,30 @@ function LGPDTransparencyPortal(_a) {
         }
       });
     });
-  };
-  var fetchUserConsents = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var fetchUserConsents = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Implementar chamada à API
         return [2 /*return*/, []];
       });
     });
-  };
-  var fetchUserRequests = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var fetchUserRequests = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Implementar chamada à API
         return [2 /*return*/, []];
       });
     });
-  };
-  var fetchComplianceReports = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var fetchComplianceReports = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Implementar chamada à API
         return [2 /*return*/, []];
       });
     });
-  };
-  var fetchLGPDConfig = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var fetchLGPDConfig = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Implementar chamada à API
         return [
           2 /*return*/,
@@ -264,11 +253,10 @@ function LGPDTransparencyPortal(_a) {
         ];
       });
     });
-  };
-  var handleConsentAction = function (consentId, action) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleConsentAction = (consentId, action) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -287,11 +275,10 @@ function LGPDTransparencyPortal(_a) {
         }
       });
     });
-  };
-  var handleDataRequest = function (requestType) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDataRequest = (requestType) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -310,10 +297,9 @@ function LGPDTransparencyPortal(_a) {
         }
       });
     });
-  };
-  var downloadData = function (format) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var downloadData = (format) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // Implementar download de dados
           console.log("Download data:", format);
@@ -323,8 +309,7 @@ function LGPDTransparencyPortal(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var getConsentStatusIcon = function (status) {
+  var getConsentStatusIcon = (status) => {
     switch (status) {
       case lgpd_1.ConsentStatus.GRANTED:
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -336,7 +321,7 @@ function LGPDTransparencyPortal(_a) {
         return <lucide_react_1.AlertTriangle className="h-4 w-4 text-yellow-500" />;
     }
   };
-  var getRequestStatusBadge = function (status) {
+  var getRequestStatusBadge = (status) => {
     var _a;
     var variants =
       ((_a = {}),
@@ -347,14 +332,12 @@ function LGPDTransparencyPortal(_a) {
       _a);
     return <badge_1.Badge variant={variants[status] || "secondary"}>{status}</badge_1.Badge>;
   };
-  var calculateComplianceScore = function () {
-    var activeConsents = consents.filter(function (c) {
-      return c.status === lgpd_1.ConsentStatus.GRANTED;
-    }).length;
+  var calculateComplianceScore = () => {
+    var activeConsents = consents.filter((c) => c.status === lgpd_1.ConsentStatus.GRANTED).length;
     var totalConsents = consents.length;
-    var completedRequests = requests.filter(function (r) {
-      return r.status === lgpd_1.RequestStatus.COMPLETED;
-    }).length;
+    var completedRequests = requests.filter(
+      (r) => r.status === lgpd_1.RequestStatus.COMPLETED,
+    ).length;
     var totalRequests = requests.length;
     if (totalConsents === 0 && totalRequests === 0) return 100;
     var consentScore = totalConsents > 0 ? (activeConsents / totalConsents) * 50 : 50;
@@ -398,11 +381,7 @@ function LGPDTransparencyPortal(_a) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {
-                  consents.filter(function (c) {
-                    return c.status === lgpd_1.ConsentStatus.GRANTED;
-                  }).length
-                }
+                {consents.filter((c) => c.status === lgpd_1.ConsentStatus.GRANTED).length}
               </div>
               <div className="text-sm text-gray-600">Consentimentos Ativos</div>
             </div>
@@ -452,27 +431,23 @@ function LGPDTransparencyPortal(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {consents.slice(0, 3).map(function (consent) {
-                    return (
-                      <div key={consent.id} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          {getConsentStatusIcon(consent.status)}
-                          <span className="text-sm">{consent.consentType}</span>
-                        </div>
-                        <badge_1.Badge variant="outline" className="text-xs">
-                          {consent.status}
-                        </badge_1.Badge>
+                  {consents.slice(0, 3).map((consent) => (
+                    <div key={consent.id} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {getConsentStatusIcon(consent.status)}
+                        <span className="text-sm">{consent.consentType}</span>
                       </div>
-                    );
-                  })}
+                      <badge_1.Badge variant="outline" className="text-xs">
+                        {consent.status}
+                      </badge_1.Badge>
+                    </div>
+                  ))}
                 </div>
                 {consents.length > 3 && (
                   <button_1.Button
                     variant="link"
                     className="mt-2 p-0 h-auto"
-                    onClick={function () {
-                      return setActiveTab("consents");
-                    }}
+                    onClick={() => setActiveTab("consents")}
                   >
                     Ver todos os consentimentos
                   </button_1.Button>
@@ -489,27 +464,23 @@ function LGPDTransparencyPortal(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {requests.slice(0, 3).map(function (request) {
-                    return (
-                      <div key={request.id} className="flex items-center justify-between">
-                        <div>
-                          <div className="text-sm font-medium">{request.requestType}</div>
-                          <div className="text-xs text-gray-500">
-                            {new Date(request.createdAt).toLocaleDateString()}
-                          </div>
+                  {requests.slice(0, 3).map((request) => (
+                    <div key={request.id} className="flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-medium">{request.requestType}</div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(request.createdAt).toLocaleDateString()}
                         </div>
-                        {getRequestStatusBadge(request.status)}
                       </div>
-                    );
-                  })}
+                      {getRequestStatusBadge(request.status)}
+                    </div>
+                  ))}
                 </div>
                 {requests.length > 3 && (
                   <button_1.Button
                     variant="link"
                     className="mt-2 p-0 h-auto"
-                    onClick={function () {
-                      return setActiveTab("requests");
-                    }}
+                    onClick={() => setActiveTab("requests")}
                   >
                     Ver todas as solicitações
                   </button_1.Button>
@@ -531,9 +502,7 @@ function LGPDTransparencyPortal(_a) {
                 <button_1.Button
                   variant="outline"
                   className="h-20 flex-col space-y-2"
-                  onClick={function () {
-                    return handleDataRequest(lgpd_1.DataSubjectRight.ACCESS);
-                  }}
+                  onClick={() => handleDataRequest(lgpd_1.DataSubjectRight.ACCESS)}
                 >
                   <lucide_react_1.Eye className="h-6 w-6" />
                   <span className="text-xs">Acessar Dados</span>
@@ -541,9 +510,7 @@ function LGPDTransparencyPortal(_a) {
                 <button_1.Button
                   variant="outline"
                   className="h-20 flex-col space-y-2"
-                  onClick={function () {
-                    return downloadData("json");
-                  }}
+                  onClick={() => downloadData("json")}
                 >
                   <lucide_react_1.Download className="h-6 w-6" />
                   <span className="text-xs">Baixar Dados</span>
@@ -551,9 +518,7 @@ function LGPDTransparencyPortal(_a) {
                 <button_1.Button
                   variant="outline"
                   className="h-20 flex-col space-y-2"
-                  onClick={function () {
-                    return handleDataRequest(lgpd_1.DataSubjectRight.RECTIFICATION);
-                  }}
+                  onClick={() => handleDataRequest(lgpd_1.DataSubjectRight.RECTIFICATION)}
                 >
                   <lucide_react_1.Edit className="h-6 w-6" />
                   <span className="text-xs">Corrigir Dados</span>
@@ -561,9 +526,7 @@ function LGPDTransparencyPortal(_a) {
                 <button_1.Button
                   variant="outline"
                   className="h-20 flex-col space-y-2"
-                  onClick={function () {
-                    return handleDataRequest(lgpd_1.DataSubjectRight.ERASURE);
-                  }}
+                  onClick={() => handleDataRequest(lgpd_1.DataSubjectRight.ERASURE)}
                 >
                   <lucide_react_1.Trash2 className="h-6 w-6" />
                   <span className="text-xs">Excluir Dados</span>
@@ -583,64 +546,58 @@ function LGPDTransparencyPortal(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {consents.map(function (consent) {
-                  return (
-                    <div key={consent.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          {getConsentStatusIcon(consent.status)}
-                          <h3 className="font-medium">{consent.consentType}</h3>
-                        </div>
-                        <badge_1.Badge variant="outline">{consent.status}</badge_1.Badge>
+                {consents.map((consent) => (
+                  <div key={consent.id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        {getConsentStatusIcon(consent.status)}
+                        <h3 className="font-medium">{consent.consentType}</h3>
                       </div>
+                      <badge_1.Badge variant="outline">{consent.status}</badge_1.Badge>
+                    </div>
 
-                      <p className="text-sm text-gray-600 mb-3">{consent.purpose}</p>
+                    <p className="text-sm text-gray-600 mb-3">{consent.purpose}</p>
 
-                      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-                        <div>
-                          <span className="font-medium">Concedido em:</span>
-                          <div>{new Date(consent.grantedAt).toLocaleDateString()}</div>
-                        </div>
-                        <div>
-                          <span className="font-medium">Expira em:</span>
-                          <div>
-                            {consent.expiresAt
-                              ? new Date(consent.expiresAt).toLocaleDateString()
-                              : "Nunca"}
-                          </div>
-                        </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                      <div>
+                        <span className="font-medium">Concedido em:</span>
+                        <div>{new Date(consent.grantedAt).toLocaleDateString()}</div>
                       </div>
-
-                      <div className="flex space-x-2">
-                        {consent.status === lgpd_1.ConsentStatus.GRANTED
-                          ? <button_1.Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={function () {
-                                return handleConsentAction(consent.id, "withdraw");
-                              }}
-                            >
-                              <lucide_react_1.XCircle className="h-4 w-4 mr-1" />
-                              Retirar Consentimento
-                            </button_1.Button>
-                          : <button_1.Button
-                              variant="default"
-                              size="sm"
-                              onClick={function () {
-                                return handleConsentAction(consent.id, "grant");
-                              }}
-                            >
-                              <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
-                              Conceder Consentimento
-                            </button_1.Button>}
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Info className="h-4 w-4 mr-1" />
-                          Detalhes
-                        </button_1.Button>
+                      <div>
+                        <span className="font-medium">Expira em:</span>
+                        <div>
+                          {consent.expiresAt
+                            ? new Date(consent.expiresAt).toLocaleDateString()
+                            : "Nunca"}
+                        </div>
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div className="flex space-x-2">
+                      {consent.status === lgpd_1.ConsentStatus.GRANTED
+                        ? <button_1.Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleConsentAction(consent.id, "withdraw")}
+                          >
+                            <lucide_react_1.XCircle className="h-4 w-4 mr-1" />
+                            Retirar Consentimento
+                          </button_1.Button>
+                        : <button_1.Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => handleConsentAction(consent.id, "grant")}
+                          >
+                            <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
+                            Conceder Consentimento
+                          </button_1.Button>}
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Info className="h-4 w-4 mr-1" />
+                        Detalhes
+                      </button_1.Button>
+                    </div>
+                  </div>
+                ))}
 
                 {consents.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
@@ -676,9 +633,7 @@ function LGPDTransparencyPortal(_a) {
                       Solicite acesso aos seus dados pessoais que processamos
                     </p>
                     <button_1.Button
-                      onClick={function () {
-                        return handleDataRequest(lgpd_1.DataSubjectRight.ACCESS);
-                      }}
+                      onClick={() => handleDataRequest(lgpd_1.DataSubjectRight.ACCESS)}
                       className="w-full"
                     >
                       Solicitar Acesso
@@ -698,9 +653,7 @@ function LGPDTransparencyPortal(_a) {
                       Baixe seus dados em formato estruturado
                     </p>
                     <button_1.Button
-                      onClick={function () {
-                        return handleDataRequest(lgpd_1.DataSubjectRight.PORTABILITY);
-                      }}
+                      onClick={() => handleDataRequest(lgpd_1.DataSubjectRight.PORTABILITY)}
                       className="w-full"
                     >
                       Solicitar Portabilidade
@@ -720,9 +673,7 @@ function LGPDTransparencyPortal(_a) {
                       Solicite correção de dados incorretos ou incompletos
                     </p>
                     <button_1.Button
-                      onClick={function () {
-                        return handleDataRequest(lgpd_1.DataSubjectRight.RECTIFICATION);
-                      }}
+                      onClick={() => handleDataRequest(lgpd_1.DataSubjectRight.RECTIFICATION)}
                       className="w-full"
                     >
                       Solicitar Correção
@@ -742,9 +693,7 @@ function LGPDTransparencyPortal(_a) {
                       Solicite a exclusão dos seus dados pessoais
                     </p>
                     <button_1.Button
-                      onClick={function () {
-                        return handleDataRequest(lgpd_1.DataSubjectRight.ERASURE);
-                      }}
+                      onClick={() => handleDataRequest(lgpd_1.DataSubjectRight.ERASURE)}
                       variant="destructive"
                       className="w-full"
                     >
@@ -758,36 +707,34 @@ function LGPDTransparencyPortal(_a) {
               <div>
                 <h3 className="text-lg font-medium mb-4">Histórico de Solicitações</h3>
                 <div className="space-y-3">
-                  {requests.map(function (request) {
-                    return (
-                      <div key={request.id} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium">{request.requestType}</h4>
-                          {getRequestStatusBadge(request.status)}
-                        </div>
-
-                        <p className="text-sm text-gray-600 mb-2">{request.description}</p>
-
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <span className="font-medium">Solicitado em:</span>
-                            <div>{new Date(request.createdAt).toLocaleDateString()}</div>
-                          </div>
-                          <div>
-                            <span className="font-medium">Prazo:</span>
-                            <div>{new Date(request.dueDate).toLocaleDateString()}</div>
-                          </div>
-                        </div>
-
-                        {request.response && (
-                          <div className="mt-3 p-3 bg-gray-50 rounded">
-                            <span className="font-medium text-sm">Resposta:</span>
-                            <p className="text-sm mt-1">{request.response}</p>
-                          </div>
-                        )}
+                  {requests.map((request) => (
+                    <div key={request.id} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">{request.requestType}</h4>
+                        {getRequestStatusBadge(request.status)}
                       </div>
-                    );
-                  })}
+
+                      <p className="text-sm text-gray-600 mb-2">{request.description}</p>
+
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="font-medium">Solicitado em:</span>
+                          <div>{new Date(request.createdAt).toLocaleDateString()}</div>
+                        </div>
+                        <div>
+                          <span className="font-medium">Prazo:</span>
+                          <div>{new Date(request.dueDate).toLocaleDateString()}</div>
+                        </div>
+                      </div>
+
+                      {request.response && (
+                        <div className="mt-3 p-3 bg-gray-50 rounded">
+                          <span className="font-medium text-sm">Resposta:</span>
+                          <p className="text-sm mt-1">{request.response}</p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
 
                   {requests.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
@@ -910,29 +857,15 @@ function LGPDTransparencyPortal(_a) {
                   Baixe todos os seus dados pessoais em formato estruturado
                 </p>
                 <div className="flex space-x-2">
-                  <button_1.Button
-                    onClick={function () {
-                      return downloadData("json");
-                    }}
-                  >
+                  <button_1.Button onClick={() => downloadData("json")}>
                     <lucide_react_1.Download className="h-4 w-4 mr-1" />
                     JSON
                   </button_1.Button>
-                  <button_1.Button
-                    onClick={function () {
-                      return downloadData("csv");
-                    }}
-                    variant="outline"
-                  >
+                  <button_1.Button onClick={() => downloadData("csv")} variant="outline">
                     <lucide_react_1.Download className="h-4 w-4 mr-1" />
                     CSV
                   </button_1.Button>
-                  <button_1.Button
-                    onClick={function () {
-                      return downloadData("pdf");
-                    }}
-                    variant="outline"
-                  >
+                  <button_1.Button onClick={() => downloadData("pdf")} variant="outline">
                     <lucide_react_1.Download className="h-4 w-4 mr-1" />
                     PDF
                   </button_1.Button>
@@ -952,39 +885,37 @@ function LGPDTransparencyPortal(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {reports.map(function (report) {
-                  return (
-                    <div key={report.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium">{report.title}</h3>
-                        <badge_1.Badge variant="outline">
-                          {new Date(report.generatedAt).toLocaleDateString()}
-                        </badge_1.Badge>
-                      </div>
-
-                      <p className="text-sm text-gray-600 mb-3">{report.description}</p>
-
-                      <div className="grid grid-cols-2 gap-4 text-sm mb-3">
-                        <div>
-                          <span className="font-medium">Período:</span>
-                          <div>
-                            {new Date(report.period.startDate).toLocaleDateString()} -
-                            {new Date(report.period.endDate).toLocaleDateString()}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="font-medium">Tipo:</span>
-                          <div>{report.reportType}</div>
-                        </div>
-                      </div>
-
-                      <button_1.Button size="sm" variant="outline">
-                        <lucide_react_1.Download className="h-4 w-4 mr-1" />
-                        Baixar Relatório
-                      </button_1.Button>
+                {reports.map((report) => (
+                  <div key={report.id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium">{report.title}</h3>
+                      <badge_1.Badge variant="outline">
+                        {new Date(report.generatedAt).toLocaleDateString()}
+                      </badge_1.Badge>
                     </div>
-                  );
-                })}
+
+                    <p className="text-sm text-gray-600 mb-3">{report.description}</p>
+
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                      <div>
+                        <span className="font-medium">Período:</span>
+                        <div>
+                          {new Date(report.period.startDate).toLocaleDateString()} -
+                          {new Date(report.period.endDate).toLocaleDateString()}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="font-medium">Tipo:</span>
+                        <div>{report.reportType}</div>
+                      </div>
+                    </div>
+
+                    <button_1.Button size="sm" variant="outline">
+                      <lucide_react_1.Download className="h-4 w-4 mr-1" />
+                      Baixar Relatório
+                    </button_1.Button>
+                  </div>
+                ))}
 
                 {reports.length === 0 && (
                   <div className="text-center py-8 text-gray-500">

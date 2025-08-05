@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceSelection = ServiceSelection;
 var client_1 = require("@/app/utils/supabase/client");
@@ -156,7 +153,6 @@ var loading_spinner_1 = require("@/components/ui/loading-spinner");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function ServiceSelection(_a) {
-  var _this = this;
   var selectedService = _a.selectedService,
     onServiceSelect = _a.onServiceSelect,
     _b = _a.className,
@@ -173,13 +169,13 @@ function ServiceSelection(_a) {
   var _f = (0, react_1.useState)("all"),
     selectedCategory = _f[0],
     setSelectedCategory = _f[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     fetchServices();
   }, []);
-  var fetchServices = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchServices = () =>
+    __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, fetchError, err_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -211,22 +207,15 @@ function ServiceSelection(_a) {
         }
       });
     });
-  };
   var categories = __spreadArray(
     ["all"],
-    new Set(
-      services.map(function (service) {
-        return service.category;
-      }),
-    ),
+    new Set(services.map((service) => service.category)),
     true,
   );
   var filteredServices =
     selectedCategory === "all"
       ? services
-      : services.filter(function (service) {
-          return service.category === selectedCategory;
-        });
+      : services.filter((service) => service.category === selectedCategory);
   if (loading) {
     return (
       <div className={"flex justify-center p-8 ".concat(className)}>
@@ -252,85 +241,77 @@ function ServiceSelection(_a) {
 
       {/* Category Filter */}
       <div className="flex flex-wrap gap-2">
-        {categories.map(function (category) {
-          return (
-            <button_1.Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
-              size="sm"
-              onClick={function () {
-                return setSelectedCategory(category);
-              }}
-              className="capitalize"
-            >
-              {category === "all" ? "Todos" : category}
-            </button_1.Button>
-          );
-        })}
+        {categories.map((category) => (
+          <button_1.Button
+            key={category}
+            variant={selectedCategory === category ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedCategory(category)}
+            className="capitalize"
+          >
+            {category === "all" ? "Todos" : category}
+          </button_1.Button>
+        ))}
       </div>
 
       {/* Services Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredServices.map(function (service) {
-          return (
-            <card_1.Card
-              key={service.id}
-              className={"cursor-pointer transition-all hover:shadow-md ".concat(
-                (selectedService === null || selectedService === void 0
-                  ? void 0
-                  : selectedService.id) === service.id
-                  ? "ring-2 ring-blue-500 bg-blue-50"
-                  : "hover:border-blue-300",
-              )}
-              onClick={function () {
-                return onServiceSelect(service);
-              }}
-              role="button"
-              tabIndex={0}
-              aria-pressed={
-                (selectedService === null || selectedService === void 0
-                  ? void 0
-                  : selectedService.id) === service.id
+        {filteredServices.map((service) => (
+          <card_1.Card
+            key={service.id}
+            className={"cursor-pointer transition-all hover:shadow-md ".concat(
+              (selectedService === null || selectedService === void 0
+                ? void 0
+                : selectedService.id) === service.id
+                ? "ring-2 ring-blue-500 bg-blue-50"
+                : "hover:border-blue-300",
+            )}
+            onClick={() => onServiceSelect(service)}
+            role="button"
+            tabIndex={0}
+            aria-pressed={
+              (selectedService === null || selectedService === void 0
+                ? void 0
+                : selectedService.id) === service.id
+            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onServiceSelect(service);
               }
-              onKeyDown={function (e) {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  onServiceSelect(service);
-                }
-              }}
-            >
-              <card_1.CardHeader className="pb-3">
-                <card_1.CardTitle className="text-lg flex items-center justify-between">
-                  <span>{service.name}</span>
-                  {(selectedService === null || selectedService === void 0
-                    ? void 0
-                    : selectedService.id) === service.id && (
-                    <badge_1.Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                      Selecionado
-                    </badge_1.Badge>
-                  )}
-                </card_1.CardTitle>
-                <badge_1.Badge variant="outline" className="w-fit capitalize">
-                  {service.category}
-                </badge_1.Badge>
-              </card_1.CardHeader>
-              <card_1.CardContent className="space-y-3">
-                <p className="text-gray-600 text-sm">{service.description}</p>
+            }}
+          >
+            <card_1.CardHeader className="pb-3">
+              <card_1.CardTitle className="text-lg flex items-center justify-between">
+                <span>{service.name}</span>
+                {(selectedService === null || selectedService === void 0
+                  ? void 0
+                  : selectedService.id) === service.id && (
+                  <badge_1.Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                    Selecionado
+                  </badge_1.Badge>
+                )}
+              </card_1.CardTitle>
+              <badge_1.Badge variant="outline" className="w-fit capitalize">
+                {service.category}
+              </badge_1.Badge>
+            </card_1.CardHeader>
+            <card_1.CardContent className="space-y-3">
+              <p className="text-gray-600 text-sm">{service.description}</p>
 
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <lucide_react_1.Clock className="h-4 w-4" />
-                    <span>{service.duration_minutes} min</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <lucide_react_1.DollarSign className="h-4 w-4" />
-                    <span>R$ {service.price.toFixed(2)}</span>
-                  </div>
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center gap-1">
+                  <lucide_react_1.Clock className="h-4 w-4" />
+                  <span>{service.duration_minutes} min</span>
                 </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+                <div className="flex items-center gap-1">
+                  <lucide_react_1.DollarSign className="h-4 w-4" />
+                  <span>R$ {service.price.toFixed(2)}</span>
+                </div>
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
 
       {filteredServices.length === 0 && (

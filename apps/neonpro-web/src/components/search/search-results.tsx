@@ -1,7 +1,6 @@
 // components/search/search-results.tsx
 "use client";
 
-import type { SearchResult, SearchType } from "@/lib/search/unified-search";
 import type {
   Activity,
   Brain,
@@ -16,6 +15,7 @@ import type {
   Users,
 } from "lucide-react";
 import type { useState } from "react";
+import type { SearchResult, SearchType } from "@/lib/search/unified-search";
 
 interface SearchResultsProps {
   results: SearchResult[];

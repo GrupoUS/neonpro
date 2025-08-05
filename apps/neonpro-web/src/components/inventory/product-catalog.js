@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductCatalog = ProductCatalog;
 var badge_1 = require("@/components/ui/badge");
@@ -119,8 +118,8 @@ function ProductCatalog() {
     viewMode = _d[0],
     setViewMode = _d[1];
   var filteredProducts = (0, react_1.useMemo)(
-    function () {
-      return mockProducts.filter(function (product) {
+    () =>
+      mockProducts.filter((product) => {
         var matchesSearch =
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -128,11 +127,10 @@ function ProductCatalog() {
         var matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
         var matchesStatus = selectedStatus === "all" || product.status === selectedStatus;
         return matchesSearch && matchesCategory && matchesStatus;
-      });
-    },
+      }),
     [searchTerm, selectedCategory, selectedStatus],
   );
-  var getStockStatus = function (product) {
+  var getStockStatus = (product) => {
     if (product.currentStock <= product.minStock) {
       return {
         status: "low",
@@ -153,7 +151,7 @@ function ProductCatalog() {
       icon: lucide_react_1.Package,
     };
   };
-  var isExpiringSoon = function (expirationDate) {
+  var isExpiringSoon = (expirationDate) => {
     if (!expirationDate) return false;
     var expDate = new Date(expirationDate);
     var today = new Date();
@@ -170,9 +168,7 @@ function ProductCatalog() {
           <input_1.Input
             placeholder="Buscar produtos por nome, marca ou NCM..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -183,13 +179,11 @@ function ProductCatalog() {
           </select_1.SelectTrigger>
           <select_1.SelectContent>
             <select_1.SelectItem value="all">Todas as categorias</select_1.SelectItem>
-            {categories.map(function (category) {
-              return (
-                <select_1.SelectItem key={category.id} value={category.id}>
-                  {category.icon} {category.name}
-                </select_1.SelectItem>
-              );
-            })}
+            {categories.map((category) => (
+              <select_1.SelectItem key={category.id} value={category.id}>
+                {category.icon} {category.name}
+              </select_1.SelectItem>
+            ))}
           </select_1.SelectContent>
         </select_1.Select>
 
@@ -212,19 +206,19 @@ function ProductCatalog() {
       </div>
       {/* Category Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {categories.map(function (category) {
-          var categoryCount = mockProducts.filter(function (p) {
-            return p.category === category.id && p.status === "active";
-          }).length;
+        {categories.map((category) => {
+          var categoryCount = mockProducts.filter(
+            (p) => p.category === category.id && p.status === "active",
+          ).length;
           return (
             <card_1.Card
               key={category.id}
               className={"cursor-pointer transition-colors hover:shadow-md ".concat(
                 selectedCategory === category.id ? "ring-2 ring-primary" : "",
               )}
-              onClick={function () {
-                return setSelectedCategory(selectedCategory === category.id ? "all" : category.id);
-              }}
+              onClick={() =>
+                setSelectedCategory(selectedCategory === category.id ? "all" : category.id)
+              }
             >
               <card_1.CardContent className="p-4 text-center">
                 <div className="text-2xl mb-2">{category.icon}</div>
@@ -269,12 +263,10 @@ function ProductCatalog() {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredProducts.map(function (product) {
+                {filteredProducts.map((product) => {
                   var stockStatus = getStockStatus(product);
                   var StockIcon = stockStatus.icon;
-                  var category = categories.find(function (c) {
-                    return c.id === product.category;
-                  });
+                  var category = categories.find((c) => c.id === product.category);
                   var expiringSoon = isExpiringSoon(product.expirationDate);
                   return (
                     <table_1.TableRow key={product.id} className="hover:bg-muted/50">

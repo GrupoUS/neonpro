@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PortalAuthManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -154,7 +151,7 @@ var crypto_1 = require("crypto");
  * Gerenciador de autenticação específico para o portal do paciente
  * Implementa autenticação segura, gestão de sessões e compliance LGPD
  */
-var PortalAuthManager = /** @class */ (function () {
+var PortalAuthManager = /** @class */ (() => {
   function PortalAuthManager(
     supabaseUrl,
     supabaseKey,
@@ -287,7 +284,7 @@ var PortalAuthManager = /** @class */ (function () {
             return [4 /*yield*/, this.verifyPassword(password, patient.password_hash)];
           case 8:
             passwordValid = _b.sent();
-            if (!!passwordValid) return [3 /*break*/, 11];
+            if (passwordValid) return [3 /*break*/, 11];
             return [
               4 /*yield*/,
               this.recordLoginAttempt({
@@ -616,7 +613,7 @@ var PortalAuthManager = /** @class */ (function () {
               },
             ];
           case 5:
-            if (!!patient.is_active) return [3 /*break*/, 7];
+            if (patient.is_active) return [3 /*break*/, 7];
             return [4 /*yield*/, this.invalidateSession(sessionToken)];
           case 6:
             _b.sent();
@@ -765,16 +762,14 @@ var PortalAuthManager = /** @class */ (function () {
       });
     });
   };
-  PortalAuthManager.prototype.generateSessionToken = function () {
-    return crypto_1.default.randomBytes(32).toString("hex");
-  };
-  PortalAuthManager.prototype.generateTwoFactorToken = function () {
-    return crypto_1.default.randomBytes(16).toString("hex");
-  };
+  PortalAuthManager.prototype.generateSessionToken = () =>
+    crypto_1.default.randomBytes(32).toString("hex");
+  PortalAuthManager.prototype.generateTwoFactorToken = () =>
+    crypto_1.default.randomBytes(16).toString("hex");
   PortalAuthManager.prototype.verifyPassword = function (password, hash) {
     return __awaiter(this, void 0, void 0, function () {
       var bcrypt;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             bcrypt = require("bcrypt");
@@ -787,7 +782,7 @@ var PortalAuthManager = /** @class */ (function () {
   };
   PortalAuthManager.prototype.verifyTwoFactorToken = function (token, code) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de código 2FA
         // Por enquanto, simulação simples
         return [2 /*return*/, code.length === 6 && /^\d{6}$/.test(code)];
@@ -796,7 +791,7 @@ var PortalAuthManager = /** @class */ (function () {
   };
   PortalAuthManager.prototype.sendTwoFactorCode = function (patient, token) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar envio de código 2FA via SMS/Email
         console.log("Enviando c\u00F3digo 2FA para ".concat(patient.email));
         return [2 /*return*/];
@@ -937,9 +932,7 @@ var PortalAuthManager = /** @class */ (function () {
     var key = "".concat(email, ":").concat(ipAddress);
     var attempts = this.loginAttempts.get(key) || [];
     var fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
-    return attempts.filter(function (attempt) {
-      return attempt.timestamp > fifteenMinutesAgo;
-    });
+    return attempts.filter((attempt) => attempt.timestamp > fifteenMinutesAgo);
   };
   PortalAuthManager.prototype.recordLoginAttempt = function (attempt) {
     return __awaiter(this, void 0, void 0, function () {
@@ -982,7 +975,7 @@ var PortalAuthManager = /** @class */ (function () {
             this.blockedIps.add(ipAddress);
             // Remover bloqueio após 15 minutos
             setTimeout(
-              function () {
+              () => {
                 _this.blockedIps.delete(ipAddress);
               },
               15 * 60 * 1000,
@@ -1094,11 +1087,10 @@ var PortalAuthManager = /** @class */ (function () {
     });
   };
   PortalAuthManager.prototype.startSessionCleanup = function () {
-    var _this = this;
     // Limpeza a cada 30 minutos
     setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1108,8 +1100,7 @@ var PortalAuthManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       30 * 60 * 1000,
     );
   };
@@ -1223,18 +1214,16 @@ var PortalAuthManager = /** @class */ (function () {
             data = _a.sent().data;
             return [
               2 /*return*/,
-              (data || []).map(function (session) {
-                return {
-                  id: session.id,
-                  patientId: session.patient_id,
-                  sessionToken: session.session_token,
-                  expiresAt: new Date(session.expires_at),
-                  lastActivity: new Date(session.last_activity),
-                  ipAddress: session.ip_address,
-                  userAgent: session.user_agent,
-                  isActive: true,
-                };
-              }),
+              (data || []).map((session) => ({
+                id: session.id,
+                patientId: session.patient_id,
+                sessionToken: session.session_token,
+                expiresAt: new Date(session.expires_at),
+                lastActivity: new Date(session.last_activity),
+                ipAddress: session.ip_address,
+                userAgent: session.user_agent,
+                isActive: true,
+              })),
             ];
         }
       });

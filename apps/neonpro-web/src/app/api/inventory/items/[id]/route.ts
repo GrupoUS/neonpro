@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { MultiLocationInventoryService } from "@/app/lib/services/multi-location-inventory-service";
 import type { UpdateInventoryItem } from "@/app/lib/types/inventory";
+import { createClient } from "@/app/utils/supabase/server";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

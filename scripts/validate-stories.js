@@ -6,14 +6,14 @@
  * Usage: node scripts/validate-stories.js
  */
 
-const fs = require("fs");
-const path = require("path");
-const { execSync } = require("child_process");
+const fs = require("node:fs");
+const path = require("node:path");
+const { execSync } = require("node:child_process");
 
 // Configurações
 const STORIES_DIR = "docs/shards/stories";
-const ROADMAP_FILE = "docs/NEONPRO_DETAILED_ROADMAP_2025.md";
-const IMPLEMENTATION_GUIDE = "docs/IMPLEMENTATION_GUIDE_2025.md";
+const _ROADMAP_FILE = "docs/NEONPRO_DETAILED_ROADMAP_2025.md";
+const _IMPLEMENTATION_GUIDE = "docs/IMPLEMENTATION_GUIDE_2025.md";
 const SRC_DIR = "src";
 
 // Cores para output
@@ -196,7 +196,7 @@ class StoryValidator {
             implementationScore += 20;
             foundImplementations.push(keyword);
           }
-        } catch (error) {
+        } catch (_error) {
           // Ignorar erros de grep
         }
       }
@@ -267,7 +267,7 @@ class StoryValidator {
                 testsFound++;
               }
               testsTotal++;
-            } catch (error) {
+            } catch (_error) {
               // Ignorar erros
             }
           }
@@ -377,7 +377,7 @@ class StoryValidator {
    * Gera relatório final
    */
   generateReport() {
-    this.log("\n" + "=".repeat(60), "bold");
+    this.log(`\n${"=".repeat(60)}`, "bold");
     this.log("📊 RELATÓRIO DE VALIDAÇÃO DE STORIES", "bold");
     this.log("=".repeat(60), "bold");
 
@@ -443,7 +443,7 @@ class StoryValidator {
       });
     }
 
-    this.log("\n" + "=".repeat(60), "bold");
+    this.log(`\n${"=".repeat(60)}`, "bold");
 
     // Salvar relatório em arquivo
     this.saveReportToFile();

@@ -1,4 +1,3 @@
-"use strict";
 // Intelligent Threshold Management Service
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,16 +144,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntelligentThresholdService = void 0;
 var server_1 = require("@/lib/supabase/server");
-var IntelligentThresholdService = /** @class */ (function () {
+var IntelligentThresholdService = /** @class */ (() => {
   function IntelligentThresholdService() {}
   IntelligentThresholdService.prototype.getSupabaseClient = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -266,7 +263,7 @@ var IntelligentThresholdService = /** @class */ (function () {
   IntelligentThresholdService.prototype.getThreshold = function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -291,7 +288,7 @@ var IntelligentThresholdService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error;
       var _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             query = supabase
@@ -358,7 +355,7 @@ var IntelligentThresholdService = /** @class */ (function () {
             demandDuringLeadTime = avgDailyDemand * baseParams.lead_time_days;
             variabilityFactor = Math.sqrt(
               demandStats.variance * baseParams.lead_time_days +
-                Math.pow(avgDailyDemand, 2) * leadTimeVariability,
+                avgDailyDemand ** 2 * leadTimeVariability,
             );
             serviceLevel = 1.645;
             calculatedSafetyStock = Math.ceil(serviceLevel * variabilityFactor * seasonalFactor);
@@ -492,7 +489,7 @@ var IntelligentThresholdService = /** @class */ (function () {
   IntelligentThresholdService.prototype.updateAlert = function (id, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -600,9 +597,7 @@ var IntelligentThresholdService = /** @class */ (function () {
           case 5:
             return [
               2 /*return*/,
-              optimizations.sort(function (a, b) {
-                return b.potential_savings - a.potential_savings;
-              }),
+              optimizations.sort((a, b) => b.potential_savings - a.potential_savings),
             ];
         }
       });
@@ -629,21 +624,16 @@ var IntelligentThresholdService = /** @class */ (function () {
             if (error) throw error;
             stats = {
               total_alerts: alerts.length,
-              pending_alerts: alerts.filter(function (a) {
-                return a.status === "pending";
-              }).length,
-              critical_alerts: alerts.filter(function (a) {
-                return a.priority === "critical" || a.priority === "emergency";
-              }).length,
-              emergency_alerts: alerts.filter(function (a) {
-                return a.priority === "emergency";
-              }).length,
-              resolved_today: alerts.filter(function (a) {
-                return (
+              pending_alerts: alerts.filter((a) => a.status === "pending").length,
+              critical_alerts: alerts.filter(
+                (a) => a.priority === "critical" || a.priority === "emergency",
+              ).length,
+              emergency_alerts: alerts.filter((a) => a.priority === "emergency").length,
+              resolved_today: alerts.filter(
+                (a) =>
                   a.status === "resolved" &&
-                  new Date(a.resolved_at).toDateString() === new Date().toDateString()
-                );
-              }).length,
+                  new Date(a.resolved_at).toDateString() === new Date().toDateString(),
+              ).length,
               average_resolution_time_hours: this.calculateAverageResolutionTime(alerts),
               alerts_by_type: this.groupBy(alerts, "alert_type"),
               alerts_by_priority: this.groupBy(alerts, "priority"),
@@ -657,7 +647,7 @@ var IntelligentThresholdService = /** @class */ (function () {
   IntelligentThresholdService.prototype.getHistoricalDemand = function (itemId, clinicId, days) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, startDate;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -672,21 +662,13 @@ var IntelligentThresholdService = /** @class */ (function () {
       });
     });
   };
-  IntelligentThresholdService.prototype.calculateDemandStatistics = function (demandHistory) {
+  IntelligentThresholdService.prototype.calculateDemandStatistics = (demandHistory) => {
     if (demandHistory.length === 0) {
       return { average: 0, variance: 0, standardDeviation: 0 };
     }
-    var values = demandHistory.map(function (d) {
-      return d.quantity;
-    });
-    var average =
-      values.reduce(function (sum, val) {
-        return sum + val;
-      }, 0) / values.length;
-    var variance =
-      values.reduce(function (sum, val) {
-        return sum + Math.pow(val - average, 2);
-      }, 0) / values.length;
+    var values = demandHistory.map((d) => d.quantity);
+    var average = values.reduce((sum, val) => sum + val, 0) / values.length;
+    var variance = values.reduce((sum, val) => sum + (val - average) ** 2, 0) / values.length;
     var standardDeviation = Math.sqrt(variance);
     return { average: average, variance: variance, standardDeviation: standardDeviation };
   };
@@ -697,7 +679,7 @@ var IntelligentThresholdService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var currentDate, month, seasonalFactors;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         currentDate = date || new Date();
         month = currentDate.getMonth();
         seasonalFactors = [
@@ -721,7 +703,7 @@ var IntelligentThresholdService = /** @class */ (function () {
   IntelligentThresholdService.prototype.getLeadTimeVariability = function (itemId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, leadTimes, avg, variance;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -734,18 +716,10 @@ var IntelligentThresholdService = /** @class */ (function () {
           case 2:
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
             if (error || !data.length) return [2 /*return*/, 0.5]; // Default variability
-            leadTimes = data.map(function (d) {
-              return d.average_lead_time_days;
-            });
-            avg =
-              leadTimes.reduce(function (sum, val) {
-                return sum + val;
-              }, 0) / leadTimes.length;
-            variance =
-              leadTimes.reduce(function (sum, val) {
-                return sum + Math.pow(val - avg, 2);
-              }, 0) / leadTimes.length;
-            return [2 /*return*/, variance / Math.pow(avg, 2)]; // Coefficient of variation
+            leadTimes = data.map((d) => d.average_lead_time_days);
+            avg = leadTimes.reduce((sum, val) => sum + val, 0) / leadTimes.length;
+            variance = leadTimes.reduce((sum, val) => sum + (val - avg) ** 2, 0) / leadTimes.length;
+            return [2 /*return*/, variance / avg ** 2]; // Coefficient of variation
         }
       });
     });
@@ -757,7 +731,7 @@ var IntelligentThresholdService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, recentData, average;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -766,9 +740,7 @@ var IntelligentThresholdService = /** @class */ (function () {
             recentData = historicalData.slice(-30);
             average =
               recentData.length > 0
-                ? recentData.reduce(function (sum, d) {
-                    return sum + d.quantity;
-                  }, 0) / recentData.length
+                ? recentData.reduce((sum, d) => sum + d.quantity, 0) / recentData.length
                 : 0;
             return [
               2 /*return*/,
@@ -791,14 +763,14 @@ var IntelligentThresholdService = /** @class */ (function () {
     date,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate demand based on scheduled appointments
         // This would integrate with appointment system
         return [2 /*return*/, 0];
       });
     });
   };
-  IntelligentThresholdService.prototype.estimateNotificationDeliveryTime = function (channels) {
+  IntelligentThresholdService.prototype.estimateNotificationDeliveryTime = (channels) => {
     // Estimate delivery time based on channels
     if (channels.includes("sms") || channels.includes("push")) return 5000; // 5 seconds
     if (channels.includes("email")) return 30000; // 30 seconds
@@ -812,12 +784,7 @@ var IntelligentThresholdService = /** @class */ (function () {
           case 0:
             startTime = Date.now();
             // Simulate notification delivery
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 100);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 100))];
           case 1:
             // Simulate notification delivery
             _a.sent();
@@ -841,7 +808,7 @@ var IntelligentThresholdService = /** @class */ (function () {
   IntelligentThresholdService.prototype.calculateOptimalThresholds = function (threshold) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -865,25 +832,22 @@ var IntelligentThresholdService = /** @class */ (function () {
       });
     });
   };
-  IntelligentThresholdService.prototype.calculateAverageResolutionTime = function (alerts) {
-    var resolvedAlerts = alerts.filter(function (a) {
-      return a.status === "resolved" && a.resolved_at;
-    });
+  IntelligentThresholdService.prototype.calculateAverageResolutionTime = (alerts) => {
+    var resolvedAlerts = alerts.filter((a) => a.status === "resolved" && a.resolved_at);
     if (resolvedAlerts.length === 0) return 0;
-    var totalTime = resolvedAlerts.reduce(function (sum, alert) {
+    var totalTime = resolvedAlerts.reduce((sum, alert) => {
       var created = new Date(alert.created_at).getTime();
       var resolved = new Date(alert.resolved_at).getTime();
       return sum + (resolved - created);
     }, 0);
     return totalTime / resolvedAlerts.length / (1000 * 60 * 60); // Convert to hours
   };
-  IntelligentThresholdService.prototype.groupBy = function (array, key) {
-    return array.reduce(function (groups, item) {
+  IntelligentThresholdService.prototype.groupBy = (array, key) =>
+    array.reduce((groups, item) => {
       var value = String(item[key]);
       groups[value] = (groups[value] || 0) + 1;
       return groups;
     }, {});
-  };
   return IntelligentThresholdService;
 })();
 exports.IntelligentThresholdService = IntelligentThresholdService;

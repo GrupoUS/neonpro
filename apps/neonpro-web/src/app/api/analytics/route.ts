@@ -1,6 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@supabase/supabase-js";
-import type { z } from "zod";
+﻿import { type NextRequest, NextResponse } from "next/server";
 
 // Initialize Supabase client with service role key for server-side operations
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -30,7 +28,7 @@ export async function GET(request: NextRequest) {
     // Extract user info from middleware headers
     const userId = request.headers.get("x-user-id");
     const userRole = request.headers.get("x-user-role");
-    const subscriptionStatus = request.headers.get("x-user-subscription");
+    const _subscriptionStatus = request.headers.get("x-user-subscription");
 
     if (!userId) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
@@ -292,7 +290,7 @@ async function getDashboardAnalytics(
   startDate: string,
   endDate: string,
   userId: string,
-  userRole: string | null,
+  _userRole: string | null,
 ) {
   // Get comprehensive dashboard data
   const [revenue, subscriptions, trials, conversions] = await Promise.all([

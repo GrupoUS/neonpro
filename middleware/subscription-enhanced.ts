@@ -14,7 +14,7 @@
  */
 
 import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { enhancedSubscriptionCache } from "../lib/subscription-cache-enhanced";
 import { subscriptionPerformanceMonitor } from "../lib/subscription-performance-monitor";
 import { subscriptionQueryOptimizer } from "../lib/subscription-query-optimizer";
@@ -66,7 +66,7 @@ const defaultConfig: MiddlewareConfig = {
 };
 
 // Route patterns cache for performance
-const routePatternsCache = new Map<string, RegExp>();
+const _routePatternsCache = new Map<string, RegExp>();
 const routeMatchCache = new Map<string, string>();
 
 // Circuit breaker state
@@ -388,7 +388,7 @@ async function getOptimizedSubscriptionStatus(
   pathname: string,
   config: MiddlewareConfig,
 ): Promise<SubscriptionValidationResult> {
-  const cacheKey = `subscription_${userId}`;
+  const _cacheKey = `subscription_${userId}`;
 
   // Check for existing pending request to avoid duplicate calls
   const pendingRequest = pendingRequests.get(userId);
@@ -516,8 +516,8 @@ function getRequestPriority(pathname: string): "high" | "medium" | "low" {
 async function validateRouteAccess(
   subscriptionResult: SubscriptionValidationResult,
   routeProtection: any,
-  user: any,
-  config: MiddlewareConfig,
+  _user: any,
+  _config: MiddlewareConfig,
 ): Promise<boolean> {
   // Basic access check
   if (!subscriptionResult.hasAccess) {
@@ -551,7 +551,7 @@ async function validateRouteAccess(
 /**
  * Handle circuit breaker failures
  */
-function handleCircuitBreakerFailure(error: any, config: MiddlewareConfig): void {
+function handleCircuitBreakerFailure(_error: any, config: MiddlewareConfig): void {
   if (!config.circuitBreaker.enabled) return;
 
   circuitBreakerFailures++;

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import type { useAuth } from "@/contexts/auth-context";
-import type { securityAuditLogger } from "@/lib/auth/security-audit-logger";
 import type { permissionValidator } from "@/lib/auth/permission-validator";
+import type { securityAuditLogger } from "@/lib/auth/security-audit-logger";
 import type { sessionManager } from "@/lib/auth/session/SessionManager";
 
 interface AuditLog {

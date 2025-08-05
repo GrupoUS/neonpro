@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Device Manager - Device Registration & Validation
  *
@@ -7,20 +6,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -32,15 +31,15 @@ var __extends =
   })();
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -60,13 +59,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -88,9 +87,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -162,13 +159,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeviceManager = void 0;
 var events_1 = require("events");
 var crypto_1 = require("crypto");
 var types_1 = require("./types");
-var DeviceManager = /** @class */ (function (_super) {
+var DeviceManager = /** @class */ ((_super) => {
   __extends(DeviceManager, _super);
   function DeviceManager(supabase) {
     var _this = _super.call(this) || this;
@@ -726,14 +723,14 @@ var DeviceManager = /** @class */ (function (_super) {
   /**
    * Generate a hash from device fingerprint
    */
-  DeviceManager.prototype.generateFingerprintHash = function (fingerprint) {
+  DeviceManager.prototype.generateFingerprintHash = (fingerprint) => {
     var fingerprintString = JSON.stringify(fingerprint, Object.keys(fingerprint).sort());
     return crypto_1.default.createHash("sha256").update(fingerprintString).digest("hex");
   };
   /**
    * Compare two device fingerprints for similarity
    */
-  DeviceManager.prototype.compareFingerprintSimilarity = function (fp1, fp2) {
+  DeviceManager.prototype.compareFingerprintSimilarity = (fp1, fp2) => {
     var fields = [
       "userAgent",
       "screenResolution",
@@ -788,12 +785,8 @@ var DeviceManager = /** @class */ (function (_super) {
             }
             stats_1 = {
               totalDevices: data.length,
-              trustedDevices: data.filter(function (d) {
-                return d.is_trusted;
-              }).length,
-              blockedDevices: data.filter(function (d) {
-                return d.is_blocked;
-              }).length,
+              trustedDevices: data.filter((d) => d.is_trusted).length,
+              blockedDevices: data.filter((d) => d.is_blocked).length,
               deviceTypes: {
                 desktop: 0,
                 laptop: 0,
@@ -805,16 +798,14 @@ var DeviceManager = /** @class */ (function (_super) {
               averageUsageCount: 0,
             };
             // Count device types
-            data.forEach(function (device) {
+            data.forEach((device) => {
               stats_1.deviceTypes[device.device_type]++;
             });
             sevenDaysAgo_1 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-            stats_1.recentRegistrations = data.filter(function (d) {
-              return new Date(d.registered_at) > sevenDaysAgo_1;
-            }).length;
-            totalUsage = data.reduce(function (sum, d) {
-              return sum + (d.usage_count || 0);
-            }, 0);
+            stats_1.recentRegistrations = data.filter(
+              (d) => new Date(d.registered_at) > sevenDaysAgo_1,
+            ).length;
+            totalUsage = data.reduce((sum, d) => sum + (d.usage_count || 0), 0);
             stats_1.averageUsageCount = data.length > 0 ? totalUsage / data.length : 0;
             return [2 /*return*/, stats_1];
           case 2:
@@ -873,9 +864,7 @@ var DeviceManager = /** @class */ (function (_super) {
                 .delete()
                 .in(
                   "id",
-                  oldDevices.map(function (d) {
-                    return d.id;
-                  }),
+                  oldDevices.map((d) => d.id),
                 ),
             ];
           case 2:
@@ -886,7 +875,7 @@ var DeviceManager = /** @class */ (function (_super) {
               });
             }
             // Clear from cache
-            oldDevices.forEach(function (device) {
+            oldDevices.forEach((device) => {
               _this.deviceCache.delete(device.id);
             });
             return [2 /*return*/, oldDevices.length];
@@ -1073,7 +1062,7 @@ var DeviceManager = /** @class */ (function (_super) {
   DeviceManager.prototype.assessDeviceRisk = function (device) {
     return __awaiter(this, void 0, void 0, function () {
       var reasons, riskScore, daysSinceRegistration, daysSinceLastUse;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         reasons = [];
         riskScore = 0;
         daysSinceRegistration =
@@ -1114,7 +1103,7 @@ var DeviceManager = /** @class */ (function (_super) {
   };
   DeviceManager.prototype.verifyDeviceTrust = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified verification - in a real implementation, this would:
         // - Send verification codes via email/SMS
         // - Validate biometric data
@@ -1176,7 +1165,7 @@ var DeviceManager = /** @class */ (function (_super) {
       });
     });
   };
-  DeviceManager.prototype.detectDeviceType = function (fingerprint) {
+  DeviceManager.prototype.detectDeviceType = (fingerprint) => {
     var userAgent = fingerprint.userAgent.toLowerCase();
     if (/mobile|android|iphone|ipod|blackberry|windows phone/i.test(userAgent)) {
       return "mobile";
@@ -1214,7 +1203,7 @@ var DeviceManager = /** @class */ (function (_super) {
     var deviceType = this.detectDeviceType(fingerprint);
     return "".concat(os, " ").concat(deviceType, " (").concat(browser, ")");
   };
-  DeviceManager.prototype.extractBrowser = function (userAgent) {
+  DeviceManager.prototype.extractBrowser = (userAgent) => {
     if (/chrome/i.test(userAgent)) return "Chrome";
     if (/firefox/i.test(userAgent)) return "Firefox";
     if (/safari/i.test(userAgent)) return "Safari";
@@ -1222,7 +1211,7 @@ var DeviceManager = /** @class */ (function (_super) {
     if (/opera/i.test(userAgent)) return "Opera";
     return "Unknown";
   };
-  DeviceManager.prototype.extractOS = function (userAgent) {
+  DeviceManager.prototype.extractOS = (userAgent) => {
     if (/windows/i.test(userAgent)) return "Windows";
     if (/macintosh|mac os/i.test(userAgent)) return "macOS";
     if (/linux/i.test(userAgent)) return "Linux";
@@ -1230,7 +1219,7 @@ var DeviceManager = /** @class */ (function (_super) {
     if (/iphone|ipad|ipod/i.test(userAgent)) return "iOS";
     return "Unknown";
   };
-  DeviceManager.prototype.extractOSVersion = function (userAgent) {
+  DeviceManager.prototype.extractOSVersion = (userAgent) => {
     // Simplified OS version extraction
     var windowsMatch = userAgent.match(/Windows NT ([\d.]+)/);
     if (windowsMatch) return windowsMatch[1];
@@ -1242,7 +1231,7 @@ var DeviceManager = /** @class */ (function (_super) {
     if (iosMatch) return iosMatch[1].replace(/_/g, ".");
     return "Unknown";
   };
-  DeviceManager.prototype.extractBrowserVersion = function (userAgent) {
+  DeviceManager.prototype.extractBrowserVersion = (userAgent) => {
     // Simplified browser version extraction
     var chromeMatch = userAgent.match(/Chrome\/([\d.]+)/);
     if (chromeMatch) return chromeMatch[1];
@@ -1254,7 +1243,7 @@ var DeviceManager = /** @class */ (function (_super) {
     if (edgeMatch) return edgeMatch[1];
     return "Unknown";
   };
-  DeviceManager.prototype.generateAudioFingerprint = function (audioContext) {
+  DeviceManager.prototype.generateAudioFingerprint = (audioContext) => {
     // Simplified audio fingerprinting
     try {
       var oscillator = audioContext.createOscillator();
@@ -1272,7 +1261,7 @@ var DeviceManager = /** @class */ (function (_super) {
       return "audio_error";
     }
   };
-  DeviceManager.prototype.generateCanvasFingerprint = function (canvas) {
+  DeviceManager.prototype.generateCanvasFingerprint = (canvas) => {
     try {
       var ctx = canvas.getContext("2d");
       if (!ctx) return "canvas_error";
@@ -1287,30 +1276,27 @@ var DeviceManager = /** @class */ (function (_super) {
       return "canvas_error";
     }
   };
-  DeviceManager.prototype.generateDeviceId = function () {
-    return "dev_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  DeviceManager.prototype.mapDatabaseToDevice = function (data) {
-    return {
-      id: data.id,
-      userId: data.user_id,
-      clinicId: data.clinic_id,
-      deviceFingerprint: data.device_fingerprint,
-      deviceName: data.device_name,
-      deviceType: data.device_type,
-      platform: data.platform,
-      browser: data.browser,
-      screenResolution: data.screen_resolution,
-      timezone: data.timezone,
-      isTrusted: data.is_trusted,
-      isBlocked: data.is_blocked,
-      registeredAt: new Date(data.registered_at),
-      lastUsed: new Date(data.last_used),
-      usageCount: data.usage_count,
-      securityEvents: data.security_events,
-      metadata: data.metadata,
-    };
-  };
+  DeviceManager.prototype.generateDeviceId = () =>
+    "dev_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  DeviceManager.prototype.mapDatabaseToDevice = (data) => ({
+    id: data.id,
+    userId: data.user_id,
+    clinicId: data.clinic_id,
+    deviceFingerprint: data.device_fingerprint,
+    deviceName: data.device_name,
+    deviceType: data.device_type,
+    platform: data.platform,
+    browser: data.browser,
+    screenResolution: data.screen_resolution,
+    timezone: data.timezone,
+    isTrusted: data.is_trusted,
+    isBlocked: data.is_blocked,
+    registeredAt: new Date(data.registered_at),
+    lastUsed: new Date(data.last_used),
+    usageCount: data.usage_count,
+    securityEvents: data.security_events,
+    metadata: data.metadata,
+  });
   DeviceManager.prototype.logDeviceEvent = function (params) {
     return __awaiter(this, void 0, void 0, function () {
       var error_14;
@@ -1356,9 +1342,7 @@ var DeviceManager = /** @class */ (function (_super) {
           case 1:
             blockedDevices = _a.sent().data;
             if (blockedDevices) {
-              blockedDevices.forEach(function (device) {
-                return _this.blockedDevices.add(device.id);
-              });
+              blockedDevices.forEach((device) => _this.blockedDevices.add(device.id));
             }
             return [3 /*break*/, 3];
           case 2:

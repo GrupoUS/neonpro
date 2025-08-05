@@ -1,6 +1,22 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Download,
+  FileText,
+  RefreshCw,
+  Shield,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
 import React from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,24 +24,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Button } from "@/components/ui/button";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Shield,
-  Users,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  TrendingUp,
-  TrendingDown,
-  Clock,
-  Download,
-  RefreshCw,
-} from "lucide-react";
 import type { useLGPDDashboard } from "@/hooks/useLGPD";
 import type { LGPDMetrics } from "@/types/lgpd";
 

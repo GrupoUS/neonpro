@@ -3,32 +3,31 @@
 // Story 2.4: Smart Resource Management - Frontend
 // =====================================================
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ResourceAllocationForm;
 var react_1 = require("react");
@@ -165,7 +162,6 @@ var dialog_1 = require("@/components/ui/dialog");
 var outline_1 = require("@heroicons/react/24/outline");
 var sonner_1 = require("sonner");
 function ResourceAllocationForm(_a) {
-  var _this = this;
   var _b, _c, _d, _e, _f, _g;
   var open = _a.open,
     onOpenChange = _a.onOpenChange,
@@ -196,34 +192,26 @@ function ResourceAllocationForm(_a) {
   // =====================================================
   // Effects
   // =====================================================
-  (0, react_1.useEffect)(
-    function () {
-      if (open) {
-        fetchResources();
-        if (defaultValues) {
-          setFormData(function (prev) {
-            return __assign(__assign({}, prev), defaultValues);
-          });
-        }
+  (0, react_1.useEffect)(() => {
+    if (open) {
+      fetchResources();
+      if (defaultValues) {
+        setFormData((prev) => __assign(__assign({}, prev), defaultValues));
       }
-    },
-    [open, defaultValues],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      if (formData.resource_id && formData.start_time && formData.end_time) {
-        checkConflicts();
-      }
-    },
-    [formData.resource_id, formData.start_time, formData.end_time],
-  );
+    }
+  }, [open, defaultValues]);
+  (0, react_1.useEffect)(() => {
+    if (formData.resource_id && formData.start_time && formData.end_time) {
+      checkConflicts();
+    }
+  }, [formData.resource_id, formData.start_time, formData.end_time]);
   // =====================================================
   // Data Fetching
   // =====================================================
-  var fetchResources = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchResources = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -252,11 +240,10 @@ function ResourceAllocationForm(_a) {
         }
       });
     });
-  };
-  var checkConflicts = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkConflicts = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -294,20 +281,19 @@ function ResourceAllocationForm(_a) {
         }
       });
     });
-  };
   // =====================================================
   // Form Handlers
   // =====================================================
-  var handleInputChange = function (field, value) {
-    setFormData(function (prev) {
+  var handleInputChange = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
   };
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
@@ -358,8 +344,7 @@ function ResourceAllocationForm(_a) {
         }
       });
     });
-  };
-  var resetForm = function () {
+  var resetForm = () => {
     setFormData({
       resource_id: "",
       start_time: "",
@@ -372,16 +357,12 @@ function ResourceAllocationForm(_a) {
   // =====================================================
   // UI Helpers
   // =====================================================
-  var getSelectedResource = function () {
-    return resources.find(function (r) {
-      return r.id === formData.resource_id;
-    });
-  };
-  var formatDateTime = function (dateTime) {
+  var getSelectedResource = () => resources.find((r) => r.id === formData.resource_id);
+  var formatDateTime = (dateTime) => {
     if (!dateTime) return "";
     return new Date(dateTime).toLocaleString();
   };
-  var getConflictSeverity = function (confidence) {
+  var getConflictSeverity = (confidence) => {
     if (confidence >= 0.8) return "high";
     if (confidence >= 0.5) return "medium";
     return "low";
@@ -389,7 +370,7 @@ function ResourceAllocationForm(_a) {
   // =====================================================
   // Render Components
   // =====================================================
-  var ConflictAlert = function (_a) {
+  var ConflictAlert = (_a) => {
     var conflict = _a.conflict;
     return (
       <div
@@ -456,22 +437,18 @@ function ResourceAllocationForm(_a) {
             <label_1.Label htmlFor="resource">Resource *</label_1.Label>
             <select_1.Select
               value={formData.resource_id}
-              onValueChange={function (value) {
-                return handleInputChange("resource_id", value);
-              }}
+              onValueChange={(value) => handleInputChange("resource_id", value)}
             >
               <select_1.SelectTrigger>
                 <select_1.SelectValue placeholder="Select a resource" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
-                {resources.map(function (resource) {
-                  return (
-                    <select_1.SelectItem key={resource.id} value={resource.id}>
-                      {resource.name} ({resource.type})
-                      {resource.location && " - ".concat(resource.location)}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {resources.map((resource) => (
+                  <select_1.SelectItem key={resource.id} value={resource.id}>
+                    {resource.name} ({resource.type})
+                    {resource.location && " - ".concat(resource.location)}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
             {getSelectedResource() && (
@@ -506,9 +483,7 @@ function ResourceAllocationForm(_a) {
                 id="start_time"
                 type="datetime-local"
                 value={formData.start_time}
-                onChange={function (e) {
-                  return handleInputChange("start_time", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("start_time", e.target.value)}
                 required
               />
             </div>
@@ -518,9 +493,7 @@ function ResourceAllocationForm(_a) {
                 id="end_time"
                 type="datetime-local"
                 value={formData.end_time}
-                onChange={function (e) {
-                  return handleInputChange("end_time", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("end_time", e.target.value)}
                 required
               />
             </div>
@@ -531,9 +504,7 @@ function ResourceAllocationForm(_a) {
             <label_1.Label htmlFor="allocation_type">Allocation Type</label_1.Label>
             <select_1.Select
               value={formData.allocation_type}
-              onValueChange={function (value) {
-                return handleInputChange("allocation_type", value);
-              }}
+              onValueChange={(value) => handleInputChange("allocation_type", value)}
             >
               <select_1.SelectTrigger>
                 <select_1.SelectValue placeholder="Select allocation type" />
@@ -556,9 +527,7 @@ function ResourceAllocationForm(_a) {
               <input_1.Input
                 id="appointment_id"
                 value={formData.appointment_id || ""}
-                onChange={function (e) {
-                  return handleInputChange("appointment_id", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("appointment_id", e.target.value)}
                 placeholder="Optional - link to specific appointment"
               />
             </div>
@@ -570,9 +539,7 @@ function ResourceAllocationForm(_a) {
             <textarea_1.Textarea
               id="notes"
               value={formData.notes || ""}
-              onChange={function (e) {
-                return handleInputChange("notes", e.target.value);
-              }}
+              onChange={(e) => handleInputChange("notes", e.target.value)}
               placeholder="Additional notes or instructions"
               rows={3}
             />
@@ -596,9 +563,9 @@ function ResourceAllocationForm(_a) {
                 </card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-3">
-                {conflicts.map(function (conflict, index) {
-                  return <ConflictAlert key={index} conflict={conflict} />;
-                })}
+                {conflicts.map((conflict, index) => (
+                  <ConflictAlert key={index} conflict={conflict} />
+                ))}
               </card_1.CardContent>
             </card_1.Card>
           )}
@@ -640,13 +607,7 @@ function ResourceAllocationForm(_a) {
         </form>
 
         <dialog_1.DialogFooter>
-          <button_1.Button
-            type="button"
-            variant="outline"
-            onClick={function () {
-              return onOpenChange(false);
-            }}
-          >
+          <button_1.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </button_1.Button>
           <button_1.Button

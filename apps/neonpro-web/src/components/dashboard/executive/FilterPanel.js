@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FilterPanel = FilterPanel;
 var react_1 = require("react");
@@ -295,7 +292,6 @@ var METRIC_CATEGORIES = [
   { value: "efficiency", label: "Efficiency", icon: lucide_react_1.Clock },
 ];
 function FilterPanel(_a) {
-  var _this = this;
   var _b, _c, _d, _e, _f, _g, _h, _j, _k;
   var filters = _a.filters,
     onFiltersChange = _a.onFiltersChange,
@@ -328,35 +324,31 @@ function FilterPanel(_a) {
     presetDescription = _v[0],
     setPresetDescription = _v[1];
   // Load saved presets
-  (0, react_1.useEffect)(
-    function () {
-      var loadPresets = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var mockPresets;
-          return __generator(this, function (_a) {
-            try {
-              mockPresets = generateMockPresets(clinicId, userId);
-              setSavedPresets(mockPresets);
-            } catch (err) {
-              console.error("Failed to load filter presets:", err);
-            }
-            return [2 /*return*/];
-          });
+  (0, react_1.useEffect)(() => {
+    var loadPresets = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var mockPresets;
+        return __generator(this, (_a) => {
+          try {
+            mockPresets = generateMockPresets(clinicId, userId);
+            setSavedPresets(mockPresets);
+          } catch (err) {
+            console.error("Failed to load filter presets:", err);
+          }
+          return [2 /*return*/];
         });
-      };
-      loadPresets();
-    },
-    [clinicId, userId],
-  );
+      });
+    loadPresets();
+  }, [clinicId, userId]);
   // Handle filter changes
-  var updateFilters = function (updates) {
+  var updateFilters = (updates) => {
     onFiltersChange(__assign(__assign({}, filters), updates));
   };
   // Handle date range selection
-  var handleDatePresetSelect = function (preset) {
+  var handleDatePresetSelect = (preset) => {
     updateFilters({ dateRange: preset.value });
   };
-  var handleCustomDateRange = function (from, to) {
+  var handleCustomDateRange = (from, to) => {
     if (from && to) {
       updateFilters({
         dateRange: {
@@ -368,85 +360,67 @@ function FilterPanel(_a) {
     }
   };
   // Handle department selection
-  var handleDepartmentChange = function (department, checked) {
+  var handleDepartmentChange = (department, checked) => {
     var currentDepartments = filters.departments || [];
     var newDepartments;
     if (department === "all") {
-      newDepartments = checked
-        ? DEPARTMENT_OPTIONS.slice(1).map(function (d) {
-            return d.value;
-          })
-        : [];
+      newDepartments = checked ? DEPARTMENT_OPTIONS.slice(1).map((d) => d.value) : [];
     } else {
       if (checked) {
         newDepartments = __spreadArray(
           __spreadArray(
             [],
-            currentDepartments.filter(function (d) {
-              return d !== "all";
-            }),
+            currentDepartments.filter((d) => d !== "all"),
             true,
           ),
           [department],
           false,
         );
       } else {
-        newDepartments = currentDepartments.filter(function (d) {
-          return d !== department && d !== "all";
-        });
+        newDepartments = currentDepartments.filter((d) => d !== department && d !== "all");
       }
     }
     updateFilters({ departments: newDepartments });
   };
   // Handle provider selection
-  var handleProviderChange = function (provider, checked) {
+  var handleProviderChange = (provider, checked) => {
     var currentProviders = filters.providers || [];
     var newProviders;
     if (provider === "all") {
-      newProviders = checked
-        ? PROVIDER_OPTIONS.slice(1).map(function (p) {
-            return p.value;
-          })
-        : [];
+      newProviders = checked ? PROVIDER_OPTIONS.slice(1).map((p) => p.value) : [];
     } else {
       if (checked) {
         newProviders = __spreadArray(
           __spreadArray(
             [],
-            currentProviders.filter(function (p) {
-              return p !== "all";
-            }),
+            currentProviders.filter((p) => p !== "all"),
             true,
           ),
           [provider],
           false,
         );
       } else {
-        newProviders = currentProviders.filter(function (p) {
-          return p !== provider && p !== "all";
-        });
+        newProviders = currentProviders.filter((p) => p !== provider && p !== "all");
       }
     }
     updateFilters({ providers: newProviders });
   };
   // Handle metric category selection
-  var handleCategoryChange = function (category, checked) {
+  var handleCategoryChange = (category, checked) => {
     var currentCategories = filters.categories || [];
     var newCategories;
     if (checked) {
       newCategories = __spreadArray(__spreadArray([], currentCategories, true), [category], false);
     } else {
-      newCategories = currentCategories.filter(function (c) {
-        return c !== category;
-      });
+      newCategories = currentCategories.filter((c) => c !== category);
     }
     updateFilters({ categories: newCategories });
   };
   // Save filter preset
-  var handleSavePreset = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSavePreset = () =>
+    __awaiter(this, void 0, void 0, function () {
       var newPreset, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!presetName.trim()) return [2 /*return*/];
@@ -462,18 +436,13 @@ function FilterPanel(_a) {
           case 1:
             _a.trys.push([1, 3, , 4]);
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 500))];
           case 2:
             // Simulate API call
             _a.sent();
-            setSavedPresets(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [newPreset], false);
-            });
+            setSavedPresets((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [newPreset], false),
+            );
             setShowSaveDialog(false);
             setPresetName("");
             setPresetDescription("");
@@ -487,34 +456,24 @@ function FilterPanel(_a) {
         }
       });
     });
-  };
   // Load filter preset
-  var handleLoadPreset = function (preset) {
+  var handleLoadPreset = (preset) => {
     onFiltersChange(preset.filters);
   };
   // Delete filter preset
-  var handleDeletePreset = function (presetId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDeletePreset = (presetId) =>
+    __awaiter(this, void 0, void 0, function () {
       var err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 300);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 300))];
           case 1:
             // Simulate API call
             _a.sent();
-            setSavedPresets(function (prev) {
-              return prev.filter(function (p) {
-                return p.id !== presetId;
-              });
-            });
+            setSavedPresets((prev) => prev.filter((p) => p.id !== presetId));
             return [3 /*break*/, 3];
           case 2:
             err_2 = _a.sent();
@@ -525,9 +484,8 @@ function FilterPanel(_a) {
         }
       });
     });
-  };
   // Reset filters
-  var handleResetFilters = function () {
+  var handleResetFilters = () => {
     var defaultFilters = {
       dateRange: {
         from: (0, date_fns_1.subDays)(new Date(), 29),
@@ -543,7 +501,7 @@ function FilterPanel(_a) {
     onFiltersChange(defaultFilters);
   };
   // Export filters
-  var handleExportFilters = function () {
+  var handleExportFilters = () => {
     var dataStr = JSON.stringify(filters, null, 2);
     var dataBlob = new Blob([dataStr], { type: "application/json" });
     var url = URL.createObjectURL(dataBlob);
@@ -573,7 +531,7 @@ function FilterPanel(_a) {
         </label_1.Label>
 
         <div className="grid grid-cols-2 gap-2">
-          {DATE_PRESETS.slice(0, 6).map(function (preset) {
+          {DATE_PRESETS.slice(0, 6).map((preset) => {
             var _a;
             return (
               <button_1.Button
@@ -586,9 +544,7 @@ function FilterPanel(_a) {
                 }
                 size="sm"
                 className="text-xs h-8"
-                onClick={function () {
-                  return handleDatePresetSelect(preset);
-                }}
+                onClick={() => handleDatePresetSelect(preset)}
               >
                 {preset.label}
               </button_1.Button>
@@ -615,7 +571,7 @@ function FilterPanel(_a) {
                 from: (_h = filters.dateRange) === null || _h === void 0 ? void 0 : _h.from,
                 to: (_j = filters.dateRange) === null || _j === void 0 ? void 0 : _j.to,
               }}
-              onSelect={function (range) {
+              onSelect={(range) => {
                 if (
                   (range === null || range === void 0 ? void 0 : range.from) &&
                   (range === null || range === void 0 ? void 0 : range.to)
@@ -637,9 +593,9 @@ function FilterPanel(_a) {
         <label_1.Label className="text-sm font-medium">Compare With</label_1.Label>
         <select_1.Select
           value={filters.compareWith || "none"}
-          onValueChange={function (value) {
-            return updateFilters({ compareWith: value === "none" ? undefined : value });
-          }}
+          onValueChange={(value) =>
+            updateFilters({ compareWith: value === "none" ? undefined : value })
+          }
         >
           <select_1.SelectTrigger className="h-8 text-xs">
             <select_1.SelectValue />
@@ -663,7 +619,7 @@ function FilterPanel(_a) {
           Metric Categories
         </label_1.Label>
         <div className="space-y-2">
-          {METRIC_CATEGORIES.map(function (category) {
+          {METRIC_CATEGORIES.map((category) => {
             var _a;
             var Icon = category.icon;
             var isChecked =
@@ -675,9 +631,7 @@ function FilterPanel(_a) {
                 <checkbox_1.Checkbox
                   id={"category-".concat(category.value)}
                   checked={isChecked}
-                  onCheckedChange={function (checked) {
-                    return handleCategoryChange(category.value, !!checked);
-                  }}
+                  onCheckedChange={(checked) => handleCategoryChange(category.value, !!checked)}
                 />
                 <label
                   htmlFor={"category-".concat(category.value)}
@@ -713,7 +667,7 @@ function FilterPanel(_a) {
         <collapsible_1.CollapsibleContent className="space-y-2 mt-2">
           <scroll_area_1.ScrollArea className="h-32">
             <div className="space-y-2">
-              {DEPARTMENT_OPTIONS.map(function (dept) {
+              {DEPARTMENT_OPTIONS.map((dept) => {
                 var _a, _b;
                 var isChecked =
                   dept.value === "all"
@@ -729,9 +683,7 @@ function FilterPanel(_a) {
                     <checkbox_1.Checkbox
                       id={"dept-".concat(dept.value)}
                       checked={isChecked}
-                      onCheckedChange={function (checked) {
-                        return handleDepartmentChange(dept.value, !!checked);
-                      }}
+                      onCheckedChange={(checked) => handleDepartmentChange(dept.value, !!checked)}
                     />
                     <label
                       htmlFor={"dept-".concat(dept.value)}
@@ -768,7 +720,7 @@ function FilterPanel(_a) {
         <collapsible_1.CollapsibleContent className="space-y-2 mt-2">
           <scroll_area_1.ScrollArea className="h-32">
             <div className="space-y-2">
-              {PROVIDER_OPTIONS.map(function (provider) {
+              {PROVIDER_OPTIONS.map((provider) => {
                 var _a, _b;
                 var isChecked =
                   provider.value === "all"
@@ -782,9 +734,7 @@ function FilterPanel(_a) {
                     <checkbox_1.Checkbox
                       id={"provider-".concat(provider.value)}
                       checked={isChecked}
-                      onCheckedChange={function (checked) {
-                        return handleProviderChange(provider.value, !!checked);
-                      }}
+                      onCheckedChange={(checked) => handleProviderChange(provider.value, !!checked)}
                     />
                     <label
                       htmlFor={"provider-".concat(provider.value)}
@@ -807,21 +757,17 @@ function FilterPanel(_a) {
         <label_1.Label className="text-sm font-medium">Patient Types</label_1.Label>
         <select_1.Select
           value={((_k = filters.patientTypes) === null || _k === void 0 ? void 0 : _k[0]) || "all"}
-          onValueChange={function (value) {
-            return updateFilters({ patientTypes: value === "all" ? [] : [value] });
-          }}
+          onValueChange={(value) => updateFilters({ patientTypes: value === "all" ? [] : [value] })}
         >
           <select_1.SelectTrigger className="h-8 text-xs">
             <select_1.SelectValue />
           </select_1.SelectTrigger>
           <select_1.SelectContent>
-            {PATIENT_TYPE_OPTIONS.map(function (type) {
-              return (
-                <select_1.SelectItem key={type.value} value={type.value}>
-                  {type.label}
-                </select_1.SelectItem>
-              );
-            })}
+            {PATIENT_TYPE_OPTIONS.map((type) => (
+              <select_1.SelectItem key={type.value} value={type.value}>
+                {type.label}
+              </select_1.SelectItem>
+            ))}
           </select_1.SelectContent>
         </select_1.Select>
       </div>
@@ -833,43 +779,37 @@ function FilterPanel(_a) {
           <div className="space-y-2">
             <label_1.Label className="text-sm font-medium">Saved Presets</label_1.Label>
             <div className="space-y-1">
-              {savedPresets.map(function (preset) {
-                return (
-                  <div
-                    key={preset.id}
-                    className="flex items-center justify-between p-2 border rounded text-xs"
-                  >
-                    <div className="flex-1">
-                      <div className="font-medium">{preset.name}</div>
-                      {preset.description && (
-                        <div className="text-muted-foreground text-xs">{preset.description}</div>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button_1.Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 w-6 p-0"
-                        onClick={function () {
-                          return handleLoadPreset(preset);
-                        }}
-                      >
-                        <lucide_react_1.Upload className="h-3 w-3" />
-                      </button_1.Button>
-                      <button_1.Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-6 w-6 p-0 text-red-600"
-                        onClick={function () {
-                          return handleDeletePreset(preset.id);
-                        }}
-                      >
-                        <lucide_react_1.Trash2 className="h-3 w-3" />
-                      </button_1.Button>
-                    </div>
+              {savedPresets.map((preset) => (
+                <div
+                  key={preset.id}
+                  className="flex items-center justify-between p-2 border rounded text-xs"
+                >
+                  <div className="flex-1">
+                    <div className="font-medium">{preset.name}</div>
+                    {preset.description && (
+                      <div className="text-muted-foreground text-xs">{preset.description}</div>
+                    )}
                   </div>
-                );
-              })}
+                  <div className="flex items-center gap-1">
+                    <button_1.Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 w-6 p-0"
+                      onClick={() => handleLoadPreset(preset)}
+                    >
+                      <lucide_react_1.Upload className="h-3 w-3" />
+                    </button_1.Button>
+                    <button_1.Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-6 w-6 p-0 text-red-600"
+                      onClick={() => handleDeletePreset(preset.id)}
+                    >
+                      <lucide_react_1.Trash2 className="h-3 w-3" />
+                    </button_1.Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </>
@@ -890,13 +830,7 @@ function FilterPanel(_a) {
 
         {showSaveLoad && (
           <>
-            <button_1.Button
-              size="sm"
-              variant="outline"
-              onClick={function () {
-                return setShowSaveDialog(true);
-              }}
-            >
+            <button_1.Button size="sm" variant="outline" onClick={() => setShowSaveDialog(true)}>
               <lucide_react_1.Save className="h-3 w-3 mr-2" />
               Save
             </button_1.Button>
@@ -914,30 +848,20 @@ function FilterPanel(_a) {
           <input_1.Input
             placeholder="Preset name"
             value={presetName}
-            onChange={function (e) {
-              return setPresetName(e.target.value);
-            }}
+            onChange={(e) => setPresetName(e.target.value)}
             className="h-8 text-xs"
           />
           <input_1.Input
             placeholder="Description (optional)"
             value={presetDescription}
-            onChange={function (e) {
-              return setPresetDescription(e.target.value);
-            }}
+            onChange={(e) => setPresetDescription(e.target.value)}
             className="h-8 text-xs"
           />
           <div className="flex gap-2">
             <button_1.Button size="sm" onClick={handleSavePreset} disabled={!presetName.trim()}>
               Save
             </button_1.Button>
-            <button_1.Button
-              size="sm"
-              variant="outline"
-              onClick={function () {
-                return setShowSaveDialog(false);
-              }}
-            >
+            <button_1.Button size="sm" variant="outline" onClick={() => setShowSaveDialog(false)}>
               Cancel
             </button_1.Button>
           </div>
@@ -962,9 +886,7 @@ function FilterPanel(_a) {
             <button_1.Button
               size="sm"
               variant="ghost"
-              onClick={function () {
-                return setIsExpanded(!isExpanded);
-              }}
+              onClick={() => setIsExpanded(!isExpanded)}
               className="h-6 w-6 p-0"
             >
               {isExpanded

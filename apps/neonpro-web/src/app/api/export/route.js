@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var server_1 = require("next/server");
@@ -171,7 +168,7 @@ function POST(request) {
       csvContent,
       jsonContent,
       error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 15, , 16]);
@@ -276,10 +273,10 @@ function POST(request) {
           }
           // Filter columns if specified
           if (validatedRequest_1.columns && validatedRequest_1.columns.length > 0) {
-            data = data.map(function (row) {
+            data = data.map((row) => {
               var filteredRow = {};
-              validatedRequest_1.columns.forEach(function (col) {
-                if (row.hasOwnProperty(col)) {
+              validatedRequest_1.columns.forEach((col) => {
+                if (Object.hasOwn(row, col)) {
                   filteredRow[col] = row[col];
                 }
               });
@@ -376,7 +373,7 @@ function POST(request) {
 function getAnalyticsData(request, userId, userRole) {
   return __awaiter(this, void 0, void 0, function () {
     var startDate, endDate, filters, query, _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           (startDate = request.startDate), (endDate = request.endDate), (filters = request.filters);
@@ -394,7 +391,7 @@ function getAnalyticsData(request, userId, userRole) {
           }
           // Apply additional filters
           if (filters) {
-            Object.entries(filters).forEach(function (_a) {
+            Object.entries(filters).forEach((_a) => {
               var key = _a[0],
                 value = _a[1];
               query = query.eq(key, value);
@@ -412,7 +409,7 @@ function getAnalyticsData(request, userId, userRole) {
 function getTrialsData(request, userId, userRole) {
   return __awaiter(this, void 0, void 0, function () {
     var startDate, endDate, filters, query, _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           (startDate = request.startDate), (endDate = request.endDate), (filters = request.filters);
@@ -434,7 +431,7 @@ function getTrialsData(request, userId, userRole) {
           }
           // Apply additional filters
           if (filters) {
-            Object.entries(filters).forEach(function (_a) {
+            Object.entries(filters).forEach((_a) => {
               var key = _a[0],
                 value = _a[1];
               query = query.eq(key, value);
@@ -452,7 +449,7 @@ function getTrialsData(request, userId, userRole) {
 function getSubscriptionsData(request, userId, userRole) {
   return __awaiter(this, void 0, void 0, function () {
     var startDate, endDate, filters, query, _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           (startDate = request.startDate), (endDate = request.endDate), (filters = request.filters);
@@ -472,7 +469,7 @@ function getSubscriptionsData(request, userId, userRole) {
           }
           // Apply additional filters
           if (filters) {
-            Object.entries(filters).forEach(function (_a) {
+            Object.entries(filters).forEach((_a) => {
               var key = _a[0],
                 value = _a[1];
               query = query.eq(key, value);
@@ -490,7 +487,7 @@ function getSubscriptionsData(request, userId, userRole) {
 function getUsersData(request) {
   return __awaiter(this, void 0, void 0, function () {
     var startDate, endDate, filters, query, _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           (startDate = request.startDate), (endDate = request.endDate), (filters = request.filters);
@@ -508,7 +505,7 @@ function getUsersData(request) {
           }
           // Apply additional filters
           if (filters) {
-            Object.entries(filters).forEach(function (_a) {
+            Object.entries(filters).forEach((_a) => {
               var key = _a[0],
                 value = _a[1];
               query = query.eq(key, value);
@@ -526,7 +523,7 @@ function getUsersData(request) {
 function getCampaignsData(request) {
   return __awaiter(this, void 0, void 0, function () {
     var startDate, endDate, filters, query, _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           (startDate = request.startDate), (endDate = request.endDate), (filters = request.filters);
@@ -540,7 +537,7 @@ function getCampaignsData(request) {
           }
           // Apply additional filters
           if (filters) {
-            Object.entries(filters).forEach(function (_a) {
+            Object.entries(filters).forEach((_a) => {
               var key = _a[0],
                 value = _a[1];
               query = query.eq(key, value);
@@ -562,8 +559,8 @@ function convertToCSV(data) {
   var csvRows = [];
   // Add headers
   csvRows.push(headers.join(","));
-  var _loop_1 = function (row) {
-    var values = headers.map(function (header) {
+  var _loop_1 = (row) => {
+    var values = headers.map((header) => {
       var value = row[header];
       // Handle nested objects and arrays
       if (typeof value === "object" && value !== null) {

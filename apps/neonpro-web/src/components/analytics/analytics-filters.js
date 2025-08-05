@@ -13,32 +13,31 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -58,13 +57,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -86,9 +85,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -160,10 +157,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -172,7 +169,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsFilters = AnalyticsFilters;
 var react_1 = require("react");
@@ -188,7 +185,6 @@ var lucide_react_1 = require("lucide-react");
 // Analytics Engine
 var analytics_1 = require("@/lib/analytics");
 function AnalyticsFilters(_a) {
-  var _this = this;
   var filters = _a.filters,
     onFiltersChange = _a.onFiltersChange,
     clinicId = _a.clinicId;
@@ -208,8 +204,8 @@ function AnalyticsFilters(_a) {
    * Load filter options from analytics engine
    */
   var loadFilterOptions = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var options, categories, error_1;
         var _a,
           _b,
@@ -243,7 +239,7 @@ function AnalyticsFilters(_a) {
           _5,
           _6,
           _7;
-        return __generator(this, function (_8) {
+        return __generator(this, (_8) => {
           switch (_8.label) {
             case 0:
               if (!clinicId) return [2 /*return*/];
@@ -474,14 +470,12 @@ function AnalyticsFilters(_a) {
                   options:
                     ((_6 = options.providers) === null || _6 === void 0
                       ? void 0
-                      : _6.map(function (provider) {
-                          return {
-                            value: provider.id,
-                            label: provider.name,
-                            count: provider.procedure_count,
-                            description: provider.specialization,
-                          };
-                        })) || [],
+                      : _6.map((provider) => ({
+                          value: provider.id,
+                          label: provider.name,
+                          count: provider.procedure_count,
+                          description: provider.specialization,
+                        }))) || [],
                 },
                 {
                   id: "locations",
@@ -490,13 +484,11 @@ function AnalyticsFilters(_a) {
                   options:
                     ((_7 = options.locations) === null || _7 === void 0
                       ? void 0
-                      : _7.map(function (location) {
-                          return {
-                            value: location.id,
-                            label: location.name,
-                            count: location.procedure_count,
-                          };
-                        })) || [],
+                      : _7.map((location) => ({
+                          value: location.id,
+                          label: location.name,
+                          count: location.procedure_count,
+                        }))) || [],
                 },
                 {
                   id: "ai_models",
@@ -521,52 +513,39 @@ function AnalyticsFilters(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
-  (0, react_1.useEffect)(
-    function () {
-      loadFilterOptions();
-    },
-    [loadFilterOptions],
-  );
+  (0, react_1.useEffect)(() => {
+    loadFilterOptions();
+  }, [loadFilterOptions]);
   /**
    * Get active filters grouped by category
    */
-  var activeFilters = React.useMemo(
-    function () {
-      var grouped = [];
-      filters.forEach(function (filter) {
-        var category = filterOptions.find(function (cat) {
-          return cat.id === filter.category;
+  var activeFilters = React.useMemo(() => {
+    var grouped = [];
+    filters.forEach((filter) => {
+      var category = filterOptions.find((cat) => cat.id === filter.category);
+      if (category) {
+        var labels = filter.values.map((value) => {
+          var option = category.options.find((opt) => opt.value === value);
+          return (option === null || option === void 0 ? void 0 : option.label) || value;
         });
-        if (category) {
-          var labels = filter.values.map(function (value) {
-            var option = category.options.find(function (opt) {
-              return opt.value === value;
-            });
-            return (option === null || option === void 0 ? void 0 : option.label) || value;
-          });
-          grouped.push({
-            category: filter.category,
-            values: filter.values,
-            label: "".concat(category.label, ": ").concat(labels.join(", ")),
-          });
-        }
-      });
-      return grouped;
-    },
-    [filters, filterOptions],
-  );
+        grouped.push({
+          category: filter.category,
+          values: filter.values,
+          label: "".concat(category.label, ": ").concat(labels.join(", ")),
+        });
+      }
+    });
+    return grouped;
+  }, [filters, filterOptions]);
   /**
    * Handle filter change
    */
   var handleFilterChange = (0, react_1.useCallback)(
-    function (category, values) {
-      var updatedFilters = filters.filter(function (f) {
-        return f.category !== category;
-      });
+    (category, values) => {
+      var updatedFilters = filters.filter((f) => f.category !== category);
       if (values.length > 0) {
         updatedFilters.push({
           category: category,
@@ -581,30 +560,23 @@ function AnalyticsFilters(_a) {
   /**
    * Handle custom date range
    */
-  var handleCustomDateRange = (0, react_1.useCallback)(
-    function () {
-      if (customDateRange.start && customDateRange.end) {
-        var updatedFilters = filters.filter(function (f) {
-          return f.category !== "custom_date_range";
-        });
-        updatedFilters.push({
-          category: "custom_date_range",
-          values: [customDateRange.start.toISOString(), customDateRange.end.toISOString()],
-          operator: "between",
-        });
-        onFiltersChange(updatedFilters);
-      }
-    },
-    [customDateRange, filters, onFiltersChange],
-  );
+  var handleCustomDateRange = (0, react_1.useCallback)(() => {
+    if (customDateRange.start && customDateRange.end) {
+      var updatedFilters = filters.filter((f) => f.category !== "custom_date_range");
+      updatedFilters.push({
+        category: "custom_date_range",
+        values: [customDateRange.start.toISOString(), customDateRange.end.toISOString()],
+        operator: "between",
+      });
+      onFiltersChange(updatedFilters);
+    }
+  }, [customDateRange, filters, onFiltersChange]);
   /**
    * Remove specific filter
    */
   var removeFilter = (0, react_1.useCallback)(
-    function (category) {
-      var updatedFilters = filters.filter(function (f) {
-        return f.category !== category;
-      });
+    (category) => {
+      var updatedFilters = filters.filter((f) => f.category !== category);
       onFiltersChange(updatedFilters);
     },
     [filters, onFiltersChange],
@@ -612,26 +584,21 @@ function AnalyticsFilters(_a) {
   /**
    * Clear all filters
    */
-  var clearAllFilters = (0, react_1.useCallback)(
-    function () {
-      onFiltersChange([]);
-      setCustomDateRange({ start: null, end: null });
-    },
-    [onFiltersChange],
-  );
+  var clearAllFilters = (0, react_1.useCallback)(() => {
+    onFiltersChange([]);
+    setCustomDateRange({ start: null, end: null });
+  }, [onFiltersChange]);
   /**
    * Filter category component
    */
-  var FilterCategory = function (_a) {
+  var FilterCategory = (_a) => {
     var category = _a.category;
-    var currentFilter = filters.find(function (f) {
-      return f.category === category.id;
-    });
+    var currentFilter = filters.find((f) => f.category === category.id);
     var selectedValues =
       (currentFilter === null || currentFilter === void 0 ? void 0 : currentFilter.values) || [];
-    var filteredOptions = category.options.filter(function (option) {
-      return option.label.toLowerCase().includes(searchTerm.toLowerCase());
-    });
+    var filteredOptions = category.options.filter((option) =>
+      option.label.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
     return (
       <div className="space-y-3">
         <div className="flex items-center gap-2">
@@ -643,21 +610,17 @@ function AnalyticsFilters(_a) {
           <div className="space-y-2">
             <select_1.Select
               value={selectedValues[0] || ""}
-              onValueChange={function (value) {
-                return handleFilterChange(category.id, value ? [value] : []);
-              }}
+              onValueChange={(value) => handleFilterChange(category.id, value ? [value] : [])}
             >
               <select_1.SelectTrigger>
                 <select_1.SelectValue placeholder="Select time range" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
-                {category.options.map(function (option) {
-                  return (
-                    <select_1.SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {category.options.map((option) => (
+                  <select_1.SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
 
@@ -668,22 +631,18 @@ function AnalyticsFilters(_a) {
                     <label_1.Label className="text-xs">Start Date</label_1.Label>
                     <date_picker_1.DatePicker
                       date={customDateRange.start}
-                      onDateChange={function (date) {
-                        return setCustomDateRange(function (prev) {
-                          return __assign(__assign({}, prev), { start: date });
-                        });
-                      }}
+                      onDateChange={(date) =>
+                        setCustomDateRange((prev) => __assign(__assign({}, prev), { start: date }))
+                      }
                     />
                   </div>
                   <div>
                     <label_1.Label className="text-xs">End Date</label_1.Label>
                     <date_picker_1.DatePicker
                       date={customDateRange.end}
-                      onDateChange={function (date) {
-                        return setCustomDateRange(function (prev) {
-                          return __assign(__assign({}, prev), { end: date });
-                        });
-                      }}
+                      onDateChange={(date) =>
+                        setCustomDateRange((prev) => __assign(__assign({}, prev), { end: date }))
+                      }
                     />
                   </div>
                 </div>
@@ -701,49 +660,45 @@ function AnalyticsFilters(_a) {
 
         {category.id !== "timeframe" && (
           <div className="space-y-2 max-h-40 overflow-y-auto">
-            {filteredOptions.map(function (option) {
-              return (
-                <div key={option.value} className="flex items-center space-x-2">
-                  <checkbox_1.Checkbox
-                    id={"".concat(category.id, "-").concat(option.value)}
-                    checked={selectedValues.includes(option.value)}
-                    onCheckedChange={function (checked) {
-                      if (checked) {
-                        handleFilterChange(
-                          category.id,
-                          __spreadArray(
-                            __spreadArray([], selectedValues, true),
-                            [option.value],
-                            false,
-                          ),
-                        );
-                      } else {
-                        handleFilterChange(
-                          category.id,
-                          selectedValues.filter(function (v) {
-                            return v !== option.value;
-                          }),
-                        );
-                      }
-                    }}
-                  />
-                  <label
-                    htmlFor={"".concat(category.id, "-").concat(option.value)}
-                    className="text-sm flex-1 cursor-pointer"
-                  >
-                    <div className="flex justify-between items-center">
-                      <span>{option.label}</span>
-                      {option.count !== undefined && (
-                        <span className="text-xs text-gray-500">({option.count})</span>
-                      )}
-                    </div>
-                    {option.description && (
-                      <div className="text-xs text-gray-400">{option.description}</div>
+            {filteredOptions.map((option) => (
+              <div key={option.value} className="flex items-center space-x-2">
+                <checkbox_1.Checkbox
+                  id={"".concat(category.id, "-").concat(option.value)}
+                  checked={selectedValues.includes(option.value)}
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      handleFilterChange(
+                        category.id,
+                        __spreadArray(
+                          __spreadArray([], selectedValues, true),
+                          [option.value],
+                          false,
+                        ),
+                      );
+                    } else {
+                      handleFilterChange(
+                        category.id,
+                        selectedValues.filter((v) => v !== option.value),
+                      );
+                    }
+                  }}
+                />
+                <label
+                  htmlFor={"".concat(category.id, "-").concat(option.value)}
+                  className="text-sm flex-1 cursor-pointer"
+                >
+                  <div className="flex justify-between items-center">
+                    <span>{option.label}</span>
+                    {option.count !== undefined && (
+                      <span className="text-xs text-gray-500">({option.count})</span>
                     )}
-                  </label>
-                </div>
-              );
-            })}
+                  </div>
+                  {option.description && (
+                    <div className="text-xs text-gray-400">{option.description}</div>
+                  )}
+                </label>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -784,18 +739,16 @@ function AnalyticsFilters(_a) {
                   <input_1.Input
                     placeholder="Search filters..."
                     value={searchTerm}
-                    onChange={function (e) {
-                      return setSearchTerm(e.target.value);
-                    }}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
                 </div>
               </div>
 
               <div className="max-h-96 overflow-y-auto p-4 space-y-6">
-                {filterOptions.map(function (category) {
-                  return <FilterCategory key={category.id} category={category} />;
-                })}
+                {filterOptions.map((category) => (
+                  <FilterCategory key={category.id} category={category} />
+                ))}
               </div>
             </popover_1.PopoverContent>
           </popover_1.Popover>
@@ -812,23 +765,19 @@ function AnalyticsFilters(_a) {
       {/* Active Filters Display */}
       {activeFilters.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {activeFilters.map(function (filter, index) {
-            return (
-              <badge_1.Badge key={index} variant="secondary" className="pl-2 pr-1">
-                {filter.label}
-                <button_1.Button
-                  variant="ghost"
-                  size="sm"
-                  className="ml-1 h-auto p-0 text-gray-500 hover:text-gray-700"
-                  onClick={function () {
-                    return removeFilter(filter.category);
-                  }}
-                >
-                  <lucide_react_1.X className="w-3 h-3" />
-                </button_1.Button>
-              </badge_1.Badge>
-            );
-          })}
+          {activeFilters.map((filter, index) => (
+            <badge_1.Badge key={index} variant="secondary" className="pl-2 pr-1">
+              {filter.label}
+              <button_1.Button
+                variant="ghost"
+                size="sm"
+                className="ml-1 h-auto p-0 text-gray-500 hover:text-gray-700"
+                onClick={() => removeFilter(filter.category)}
+              >
+                <lucide_react_1.X className="w-3 h-3" />
+              </button_1.Button>
+            </badge_1.Badge>
+          ))}
         </div>
       )}
     </div>

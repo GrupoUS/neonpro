@@ -8,7 +8,32 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { format, formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Eye,
+  EyeOff,
+  Lock,
+  LogOut,
+  MapPin,
+  Monitor,
+  RefreshCw,
+  Settings,
+  Shield,
+  Smartphone,
+  Unlock,
+  Users,
+  X,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -16,42 +41,17 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { useSecurityEvents, useSession } from "@/hooks/useSession";
 import type {
-  Shield,
-  Monitor,
-  Smartphone,
-  AlertTriangle,
-  Clock,
-  MapPin,
-  Activity,
-  Users,
-  Lock,
-  Unlock,
-  X,
-  CheckCircle,
-  XCircle,
-  Eye,
-  EyeOff,
-  RefreshCw,
-  LogOut,
-  Settings,
-} from "lucide-react";
-import type { useSession, useSecurityEvents } from "@/hooks/useSession";
-import type {
-  UserSession,
-  SessionSecurityEvent,
   DeviceRegistration,
+  DeviceType,
   SecurityEventType,
   SecuritySeverity,
-  DeviceType,
+  SessionSecurityEvent,
+  UserSession,
 } from "@/types/session";
-import type { formatDistanceToNow, format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 
 // ============================================================================
 // MAIN DASHBOARD COMPONENT

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LGPDDashboard = LGPDDashboard;
 var react_1 = require("react");
@@ -43,12 +42,12 @@ function LGPDDashboard(_a) {
       </alert_1.Alert>
     );
   }
-  var getComplianceColor = function (score) {
+  var getComplianceColor = (score) => {
     if (score >= 90) return "text-green-600";
     if (score >= 70) return "text-yellow-600";
     return "text-red-600";
   };
-  var getComplianceVariant = function (score) {
+  var getComplianceVariant = (score) => {
     if (score >= 90) return "default";
     if (score >= 70) return "secondary";
     return "destructive";

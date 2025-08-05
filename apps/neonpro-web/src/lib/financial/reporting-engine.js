@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // Financial Reporting Engine - Core System
 // Epic 5, Story 5.1: Advanced Financial Reporting + Real-time Insights
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,13 +148,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialReportingEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
 var financial_reporting_1 = require("@/lib/types/financial-reporting");
 var financial_reporting_2 = require("@/lib/validations/financial-reporting");
-var FinancialReportingEngine = /** @class */ (function () {
+var FinancialReportingEngine = /** @class */ (() => {
   function FinancialReportingEngine() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -240,161 +237,125 @@ var FinancialReportingEngine = /** @class */ (function () {
               (revenueData === null || revenueData === void 0
                 ? void 0
                 : revenueData
-                    .filter(function (inv) {
-                      return inv.invoice_items.some(function (item) {
+                    .filter((inv) =>
+                      inv.invoice_items.some((item) => {
                         var _a;
                         return (_a = item.description) === null || _a === void 0
                           ? void 0
                           : _a.includes("consulta");
-                      });
-                    })
-                    .reduce(function (sum, inv) {
-                      return sum + inv.total_amount;
-                    }, 0)) || 0;
+                      }),
+                    )
+                    .reduce((sum, inv) => sum + inv.total_amount, 0)) || 0;
             treatmentRevenue =
               (revenueData === null || revenueData === void 0
                 ? void 0
                 : revenueData
-                    .filter(function (inv) {
-                      return inv.invoice_items.some(function (item) {
+                    .filter((inv) =>
+                      inv.invoice_items.some((item) => {
                         var _a;
                         return (_a = item.description) === null || _a === void 0
                           ? void 0
                           : _a.includes("tratamento");
-                      });
-                    })
-                    .reduce(function (sum, inv) {
-                      return sum + inv.total_amount;
-                    }, 0)) || 0;
+                      }),
+                    )
+                    .reduce((sum, inv) => sum + inv.total_amount, 0)) || 0;
             productRevenue =
               (revenueData === null || revenueData === void 0
                 ? void 0
                 : revenueData
-                    .filter(function (inv) {
-                      return inv.invoice_items.some(function (item) {
+                    .filter((inv) =>
+                      inv.invoice_items.some((item) => {
                         var _a;
                         return (_a = item.description) === null || _a === void 0
                           ? void 0
                           : _a.includes("produto");
-                      });
-                    })
-                    .reduce(function (sum, inv) {
-                      return sum + inv.total_amount;
-                    }, 0)) || 0;
+                      }),
+                    )
+                    .reduce((sum, inv) => sum + inv.total_amount, 0)) || 0;
             otherRevenue =
               (revenueData === null || revenueData === void 0
                 ? void 0
                 : revenueData
-                    .filter(function (inv) {
-                      return !inv.invoice_items.some(function (item) {
-                        var _a, _b, _c;
-                        return (
-                          ((_a = item.description) === null || _a === void 0
-                            ? void 0
-                            : _a.includes("consulta")) ||
-                          ((_b = item.description) === null || _b === void 0
-                            ? void 0
-                            : _b.includes("tratamento")) ||
-                          ((_c = item.description) === null || _c === void 0
-                            ? void 0
-                            : _c.includes("produto"))
-                        );
-                      });
-                    })
-                    .reduce(function (sum, inv) {
-                      return sum + inv.total_amount;
-                    }, 0)) || 0;
+                    .filter(
+                      (inv) =>
+                        !inv.invoice_items.some((item) => {
+                          var _a, _b, _c;
+                          return (
+                            ((_a = item.description) === null || _a === void 0
+                              ? void 0
+                              : _a.includes("consulta")) ||
+                            ((_b = item.description) === null || _b === void 0
+                              ? void 0
+                              : _b.includes("tratamento")) ||
+                            ((_c = item.description) === null || _c === void 0
+                              ? void 0
+                              : _c.includes("produto"))
+                          );
+                        }),
+                    )
+                    .reduce((sum, inv) => sum + inv.total_amount, 0)) || 0;
             totalRevenue = consultationRevenue + treatmentRevenue + productRevenue + otherRevenue;
             staffCosts =
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return exp.category === "staff" || exp.category === "payroll";
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter((exp) => exp.category === "staff" || exp.category === "payroll")
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             rentUtilities =
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return exp.category === "rent" || exp.category === "utilities";
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter((exp) => exp.category === "rent" || exp.category === "utilities")
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             marketingExpenses =
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return exp.category === "marketing";
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter((exp) => exp.category === "marketing")
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             administrativeExpenses =
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return exp.category === "administrative";
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter((exp) => exp.category === "administrative")
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             directCosts =
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return exp.category === "materials" || exp.category === "supplies";
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter((exp) => exp.category === "materials" || exp.category === "supplies")
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             materialsCosts =
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return exp.category === "materials";
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter((exp) => exp.category === "materials")
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             equipmentCosts =
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return exp.category === "equipment";
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter((exp) => exp.category === "equipment")
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             otherExpenses =
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return ![
-                        "staff",
-                        "payroll",
-                        "rent",
-                        "utilities",
-                        "marketing",
-                        "administrative",
-                        "materials",
-                        "supplies",
-                        "equipment",
-                      ].includes(exp.category);
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter(
+                      (exp) =>
+                        ![
+                          "staff",
+                          "payroll",
+                          "rent",
+                          "utilities",
+                          "marketing",
+                          "administrative",
+                          "materials",
+                          "supplies",
+                          "equipment",
+                        ].includes(exp.category),
+                    )
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             totalCostOfServices = directCosts + materialsCosts + equipmentCosts;
             grossProfit = totalRevenue - totalCostOfServices;
             grossProfitMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
@@ -553,9 +514,7 @@ var FinancialReportingEngine = /** @class */ (function () {
             accountsReceivable =
               (receivableData === null || receivableData === void 0
                 ? void 0
-                : receivableData.reduce(function (sum, inv) {
-                    return sum + inv.total_amount;
-                  }, 0)) || 0;
+                : receivableData.reduce((sum, inv) => sum + inv.total_amount, 0)) || 0;
             inventory = 0;
             prepaidExpenses = 0;
             otherCurrentAssets = 0;
@@ -575,9 +534,7 @@ var FinancialReportingEngine = /** @class */ (function () {
             accountsPayable =
               (payableData === null || payableData === void 0
                 ? void 0
-                : payableData.reduce(function (sum, exp) {
-                    return sum + exp.amount;
-                  }, 0)) || 0;
+                : payableData.reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             accruedExpenses = 0;
             shortTermDebt = 0;
             otherCurrentLiabilities = 0;
@@ -740,26 +697,19 @@ var FinancialReportingEngine = /** @class */ (function () {
               (cashFlowData === null || cashFlowData === void 0
                 ? void 0
                 : cashFlowData
-                    .filter(function (entry) {
-                      return entry.transaction_type === "revenue";
-                    })
-                    .reduce(function (sum, entry) {
-                      return sum + entry.amount;
-                    }, 0)) || 0;
+                    .filter((entry) => entry.transaction_type === "revenue")
+                    .reduce((sum, entry) => sum + entry.amount, 0)) || 0;
             operatingExpenses =
               (cashFlowData === null || cashFlowData === void 0
                 ? void 0
                 : cashFlowData
-                    .filter(function (entry) {
-                      return (
+                    .filter(
+                      (entry) =>
                         entry.transaction_type === "expense" &&
                         entry.category !== "equipment" &&
-                        entry.category !== "investment"
-                      );
-                    })
-                    .reduce(function (sum, entry) {
-                      return sum + entry.amount;
-                    }, 0)) || 0;
+                        entry.category !== "investment",
+                    )
+                    .reduce((sum, entry) => sum + entry.amount, 0)) || 0;
             netProfit = operatingRevenue - operatingExpenses;
             depreciation = 0;
             accountsReceivableChange = 0;
@@ -777,34 +727,29 @@ var FinancialReportingEngine = /** @class */ (function () {
               (cashFlowData === null || cashFlowData === void 0
                 ? void 0
                 : cashFlowData
-                    .filter(function (entry) {
-                      return entry.transaction_type === "expense" && entry.category === "equipment";
-                    })
-                    .reduce(function (sum, entry) {
-                      return sum + entry.amount;
-                    }, 0)) || 0;
+                    .filter(
+                      (entry) =>
+                        entry.transaction_type === "expense" && entry.category === "equipment",
+                    )
+                    .reduce((sum, entry) => sum + entry.amount, 0)) || 0;
             softwarePurchases =
               (cashFlowData === null || cashFlowData === void 0
                 ? void 0
                 : cashFlowData
-                    .filter(function (entry) {
-                      return entry.transaction_type === "expense" && entry.category === "software";
-                    })
-                    .reduce(function (sum, entry) {
-                      return sum + entry.amount;
-                    }, 0)) || 0;
+                    .filter(
+                      (entry) =>
+                        entry.transaction_type === "expense" && entry.category === "software",
+                    )
+                    .reduce((sum, entry) => sum + entry.amount, 0)) || 0;
             otherInvestments =
               (cashFlowData === null || cashFlowData === void 0
                 ? void 0
                 : cashFlowData
-                    .filter(function (entry) {
-                      return (
-                        entry.transaction_type === "expense" && entry.category === "investment"
-                      );
-                    })
-                    .reduce(function (sum, entry) {
-                      return sum + entry.amount;
-                    }, 0)) || 0;
+                    .filter(
+                      (entry) =>
+                        entry.transaction_type === "expense" && entry.category === "investment",
+                    )
+                    .reduce((sum, entry) => sum + entry.amount, 0)) || 0;
             netCashFromInvesting = -(equipmentPurchases + softwarePurchases + otherInvestments);
             debtProceeds = 0;
             debtPayments = 0;
@@ -897,14 +842,12 @@ var FinancialReportingEngine = /** @class */ (function () {
             totalRevenue =
               (revenueData === null || revenueData === void 0
                 ? void 0
-                : revenueData.reduce(function (sum, inv) {
-                    return sum + inv.total_amount;
-                  }, 0)) || 0;
+                : revenueData.reduce((sum, inv) => sum + inv.total_amount, 0)) || 0;
             serviceRevenue = new Map();
             revenueData === null || revenueData === void 0
               ? void 0
-              : revenueData.forEach(function (invoice) {
-                  invoice.invoice_items.forEach(function (item) {
+              : revenueData.forEach((invoice) => {
+                  invoice.invoice_items.forEach((item) => {
                     var serviceName = item.description || "Other";
                     serviceRevenue.set(
                       serviceName,
@@ -912,7 +855,7 @@ var FinancialReportingEngine = /** @class */ (function () {
                     );
                   });
                 });
-            revenueByService = Array.from(serviceRevenue.entries()).map(function (_a) {
+            revenueByService = Array.from(serviceRevenue.entries()).map((_a) => {
               var service_name = _a[0],
                 revenue = _a[1];
               return {
@@ -924,7 +867,7 @@ var FinancialReportingEngine = /** @class */ (function () {
             providerRevenue = new Map();
             revenueData === null || revenueData === void 0
               ? void 0
-              : revenueData.forEach(function (invoice) {
+              : revenueData.forEach((invoice) => {
                   var _a, _b;
                   var providerName =
                     ((_b =
@@ -941,7 +884,7 @@ var FinancialReportingEngine = /** @class */ (function () {
                   current.patient_count += 1;
                   providerRevenue.set(providerName, current);
                 });
-            revenueByProvider = Array.from(providerRevenue.entries()).map(function (_a) {
+            revenueByProvider = Array.from(providerRevenue.entries()).map((_a) => {
               var provider_name = _a[0],
                 data = _a[1];
               return {
@@ -1008,20 +951,18 @@ var FinancialReportingEngine = /** @class */ (function () {
             totalExpenses =
               (expenseData === null || expenseData === void 0
                 ? void 0
-                : expenseData.reduce(function (sum, exp) {
-                    return sum + exp.amount;
-                  }, 0)) || 0;
+                : expenseData.reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             categoryExpenses = new Map();
             expenseData === null || expenseData === void 0
               ? void 0
-              : expenseData.forEach(function (expense) {
+              : expenseData.forEach((expense) => {
                   var category = expense.category || "Other";
                   categoryExpenses.set(
                     category,
                     (categoryExpenses.get(category) || 0) + expense.amount,
                   );
                 });
-            expenseByCategory = Array.from(categoryExpenses.entries()).map(function (_a) {
+            expenseByCategory = Array.from(categoryExpenses.entries()).map((_a) => {
               var category_name = _a[0],
                 amount = _a[1];
               return {
@@ -1034,12 +975,10 @@ var FinancialReportingEngine = /** @class */ (function () {
               (expenseData === null || expenseData === void 0
                 ? void 0
                 : expenseData
-                    .filter(function (exp) {
-                      return ["rent", "utilities", "insurance", "software"].includes(exp.category);
-                    })
-                    .reduce(function (sum, exp) {
-                      return sum + exp.amount;
-                    }, 0)) || 0;
+                    .filter((exp) =>
+                      ["rent", "utilities", "insurance", "software"].includes(exp.category),
+                    )
+                    .reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             variableExpenses = totalExpenses - fixedExpenses;
             return [
               2 /*return*/,
@@ -1146,19 +1085,17 @@ var FinancialReportingEngine = /** @class */ (function () {
   /**
    * Validate report parameters and data integrity
    */
-  FinancialReportingEngine.prototype.validateReportParameters = function (parameters) {
+  FinancialReportingEngine.prototype.validateReportParameters = (parameters) => {
     var validation = financial_reporting_2.reportParametersSchema.safeParse(parameters);
     if (!validation.success) {
       return {
         is_valid: false,
-        errors: validation.error.errors.map(function (err) {
-          return {
-            code: "VALIDATION_ERROR",
-            message: err.message,
-            details: { path: err.path, value: err.input },
-            timestamp: new Date().toISOString(),
-          };
-        }),
+        errors: validation.error.errors.map((err) => ({
+          code: "VALIDATION_ERROR",
+          message: err.message,
+          details: { path: err.path, value: err.input },
+          timestamp: new Date().toISOString(),
+        })),
         warnings: [],
       };
     }

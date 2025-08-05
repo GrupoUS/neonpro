@@ -11,7 +11,6 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ForecastMetrics = ForecastMetrics;
 var react_1 = require("react");
@@ -40,118 +39,100 @@ function ForecastMetrics(_a) {
     _b = _a.className,
     className = _b === void 0 ? "" : _b;
   // Calculate comprehensive metrics
-  var metrics = (0, react_1.useMemo)(
-    function () {
-      if (!forecasts.length) {
-        return {
-          overallAccuracy: 0,
-          averageConfidence: 0,
-          totalForecasts: 0,
-          highConfidenceCount: 0,
-          modelDistribution: [],
-          typeDistribution: [],
-          confidenceDistribution: [],
-          qualityIndicators: { excellent: 0, good: 0, fair: 0, poor: 0 },
-        };
-      }
-      // Calculate basic metrics
-      var totalForecasts = forecasts.length;
-      var confidenceValues = forecasts.map(function (f) {
-        return f.confidence_level * 100;
-      });
-      var averageConfidence =
-        confidenceValues.reduce(function (sum, val) {
-          return sum + val;
-        }, 0) / totalForecasts;
-      var highConfidenceCount = forecasts.filter(function (f) {
-        return f.confidence_level >= 0.8;
-      }).length;
-      // Model distribution
-      var modelCounts = forecasts.reduce(function (acc, forecast) {
-        var model = forecast.model_version || "unknown";
-        acc[model] = (acc[model] || 0) + 1;
-        return acc;
-      }, {});
-      var modelDistribution = Object.entries(modelCounts).map(function (_a) {
-        var name = _a[0],
-          count = _a[1];
-        return {
-          name: name.replace(/-v\d+(\.\d+)?/, "").toUpperCase(),
-          value: Math.round((count / totalForecasts) * 100),
-          count: count,
-        };
-      });
-      // Type distribution with mock accuracy
-      var typeCounts = forecasts.reduce(function (acc, forecast) {
-        var type = forecast.forecast_type;
-        if (!acc[type]) {
-          acc[type] = { count: 0, totalConfidence: 0 };
-        }
-        acc[type].count += 1;
-        acc[type].totalConfidence += forecast.confidence_level * 100;
-        return acc;
-      }, {});
-      var typeDistribution = Object.entries(typeCounts).map(function (_a) {
-        var type = _a[0],
-          data = _a[1];
-        return {
-          name: type.replace("_", " ").replace(/\b\w/g, function (l) {
-            return l.toUpperCase();
-          }),
-          value: data.count,
-          accuracy: Math.round(data.totalConfidence / data.count),
-        };
-      });
-      // Confidence distribution
-      var confidenceRanges = [
-        { range: "90-100%", min: 90, max: 100 },
-        { range: "80-89%", min: 80, max: 89 },
-        { range: "70-79%", min: 70, max: 79 },
-        { range: "60-69%", min: 60, max: 69 },
-        { range: "<60%", min: 0, max: 59 },
-      ];
-      var confidenceDistribution = confidenceRanges.map(function (range) {
-        var count = confidenceValues.filter(function (val) {
-          return val >= range.min && val <= range.max;
-        }).length;
-        return {
-          range: range.range,
-          count: count,
-          percentage: Math.round((count / totalForecasts) * 100),
-        };
-      });
-      // Quality indicators
-      var qualityIndicators = {
-        excellent: confidenceValues.filter(function (val) {
-          return val >= QUALITY_THRESHOLDS.excellent;
-        }).length,
-        good: confidenceValues.filter(function (val) {
-          return val >= QUALITY_THRESHOLDS.good && val < QUALITY_THRESHOLDS.excellent;
-        }).length,
-        fair: confidenceValues.filter(function (val) {
-          return val >= QUALITY_THRESHOLDS.fair && val < QUALITY_THRESHOLDS.good;
-        }).length,
-        poor: confidenceValues.filter(function (val) {
-          return val < QUALITY_THRESHOLDS.fair;
-        }).length,
-      };
-      // Calculate overall accuracy (using confidence as proxy)
-      var overallAccuracy = averageConfidence;
+  var metrics = (0, react_1.useMemo)(() => {
+    if (!forecasts.length) {
       return {
-        overallAccuracy: overallAccuracy,
-        averageConfidence: averageConfidence,
-        totalForecasts: totalForecasts,
-        highConfidenceCount: highConfidenceCount,
-        modelDistribution: modelDistribution,
-        typeDistribution: typeDistribution,
-        confidenceDistribution: confidenceDistribution,
-        qualityIndicators: qualityIndicators,
+        overallAccuracy: 0,
+        averageConfidence: 0,
+        totalForecasts: 0,
+        highConfidenceCount: 0,
+        modelDistribution: [],
+        typeDistribution: [],
+        confidenceDistribution: [],
+        qualityIndicators: { excellent: 0, good: 0, fair: 0, poor: 0 },
       };
-    },
-    [forecasts],
-  );
+    }
+    // Calculate basic metrics
+    var totalForecasts = forecasts.length;
+    var confidenceValues = forecasts.map((f) => f.confidence_level * 100);
+    var averageConfidence = confidenceValues.reduce((sum, val) => sum + val, 0) / totalForecasts;
+    var highConfidenceCount = forecasts.filter((f) => f.confidence_level >= 0.8).length;
+    // Model distribution
+    var modelCounts = forecasts.reduce((acc, forecast) => {
+      var model = forecast.model_version || "unknown";
+      acc[model] = (acc[model] || 0) + 1;
+      return acc;
+    }, {});
+    var modelDistribution = Object.entries(modelCounts).map((_a) => {
+      var name = _a[0],
+        count = _a[1];
+      return {
+        name: name.replace(/-v\d+(\.\d+)?/, "").toUpperCase(),
+        value: Math.round((count / totalForecasts) * 100),
+        count: count,
+      };
+    });
+    // Type distribution with mock accuracy
+    var typeCounts = forecasts.reduce((acc, forecast) => {
+      var type = forecast.forecast_type;
+      if (!acc[type]) {
+        acc[type] = { count: 0, totalConfidence: 0 };
+      }
+      acc[type].count += 1;
+      acc[type].totalConfidence += forecast.confidence_level * 100;
+      return acc;
+    }, {});
+    var typeDistribution = Object.entries(typeCounts).map((_a) => {
+      var type = _a[0],
+        data = _a[1];
+      return {
+        name: type.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+        value: data.count,
+        accuracy: Math.round(data.totalConfidence / data.count),
+      };
+    });
+    // Confidence distribution
+    var confidenceRanges = [
+      { range: "90-100%", min: 90, max: 100 },
+      { range: "80-89%", min: 80, max: 89 },
+      { range: "70-79%", min: 70, max: 79 },
+      { range: "60-69%", min: 60, max: 69 },
+      { range: "<60%", min: 0, max: 59 },
+    ];
+    var confidenceDistribution = confidenceRanges.map((range) => {
+      var count = confidenceValues.filter((val) => val >= range.min && val <= range.max).length;
+      return {
+        range: range.range,
+        count: count,
+        percentage: Math.round((count / totalForecasts) * 100),
+      };
+    });
+    // Quality indicators
+    var qualityIndicators = {
+      excellent: confidenceValues.filter((val) => val >= QUALITY_THRESHOLDS.excellent).length,
+      good: confidenceValues.filter(
+        (val) => val >= QUALITY_THRESHOLDS.good && val < QUALITY_THRESHOLDS.excellent,
+      ).length,
+      fair: confidenceValues.filter(
+        (val) => val >= QUALITY_THRESHOLDS.fair && val < QUALITY_THRESHOLDS.good,
+      ).length,
+      poor: confidenceValues.filter((val) => val < QUALITY_THRESHOLDS.fair).length,
+    };
+    // Calculate overall accuracy (using confidence as proxy)
+    var overallAccuracy = averageConfidence;
+    return {
+      overallAccuracy: overallAccuracy,
+      averageConfidence: averageConfidence,
+      totalForecasts: totalForecasts,
+      highConfidenceCount: highConfidenceCount,
+      modelDistribution: modelDistribution,
+      typeDistribution: typeDistribution,
+      confidenceDistribution: confidenceDistribution,
+      qualityIndicators: qualityIndicators,
+    };
+  }, [forecasts]);
   // Custom tooltip for charts
-  var CustomTooltip = function (_a) {
+  var CustomTooltip = (_a) => {
     var active = _a.active,
       payload = _a.payload,
       label = _a.label;
@@ -159,22 +140,20 @@ function ForecastMetrics(_a) {
     return (
       <div className="bg-white p-3 border rounded-lg shadow-lg">
         <p className="font-medium">{label}</p>
-        {payload.map(function (entry, index) {
-          return (
-            <div key={index} className="flex items-center justify-between space-x-4 mt-1">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
-                <span className="text-sm">{entry.dataKey}</span>
-              </div>
-              <span className="font-medium">{entry.value}</span>
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center justify-between space-x-4 mt-1">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
+              <span className="text-sm">{entry.dataKey}</span>
             </div>
-          );
-        })}
+            <span className="font-medium">{entry.value}</span>
+          </div>
+        ))}
       </div>
     );
   };
   // Render quality status badge
-  var renderQualityBadge = function (accuracy) {
+  var renderQualityBadge = (accuracy) => {
     if (accuracy >= QUALITY_THRESHOLDS.excellent) {
       return <badge_1.Badge className="bg-green-100 text-green-800">Excellent</badge_1.Badge>;
     } else if (accuracy >= QUALITY_THRESHOLDS.good) {
@@ -285,20 +264,18 @@ function ForecastMetrics(_a) {
                     outerRadius={80}
                     paddingAngle={5}
                     dataKey="value"
-                    label={function (_a) {
+                    label={(_a) => {
                       var name = _a.name,
                         value = _a.value;
                       return "".concat(name, ": ").concat(value, "%");
                     }}
                   >
-                    {metrics.modelDistribution.map(function (entry, index) {
-                      return (
-                        <recharts_1.Cell
-                          key={"cell-".concat(index)}
-                          fill={Object.values(COLORS)[index % Object.values(COLORS).length]}
-                        />
-                      );
-                    })}
+                    {metrics.modelDistribution.map((entry, index) => (
+                      <recharts_1.Cell
+                        key={"cell-".concat(index)}
+                        fill={Object.values(COLORS)[index % Object.values(COLORS).length]}
+                      />
+                    ))}
                   </recharts_1.Pie>
                   <recharts_1.Tooltip />
                 </recharts_1.PieChart>
@@ -338,19 +315,17 @@ function ForecastMetrics(_a) {
         <div className="space-y-4">
           <h4 className="font-medium">Confidence Distribution</h4>
           <div className="space-y-3">
-            {metrics.confidenceDistribution.map(function (range, index) {
-              return (
-                <div key={range.range} className="flex items-center space-x-4">
-                  <div className="w-20 text-sm font-medium">{range.range}</div>
-                  <div className="flex-1">
-                    <progress_1.Progress value={range.percentage} className="h-2" />
-                  </div>
-                  <div className="w-16 text-sm text-muted-foreground text-right">
-                    {range.count} ({range.percentage}%)
-                  </div>
+            {metrics.confidenceDistribution.map((range, index) => (
+              <div key={range.range} className="flex items-center space-x-4">
+                <div className="w-20 text-sm font-medium">{range.range}</div>
+                <div className="flex-1">
+                  <progress_1.Progress value={range.percentage} className="h-2" />
                 </div>
-              );
-            })}
+                <div className="w-16 text-sm text-muted-foreground text-right">
+                  {range.count} ({range.percentage}%)
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 

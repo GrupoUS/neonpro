@@ -4,11 +4,11 @@
  * @since 2024-12-01
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from "vitest";
-import { renderHook, act, waitFor } from "@testing-library/react";
-import { useSession, useSecurityEvents, useDeviceManagement } from "@/hooks/useSession";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "vitest";
+import { useDeviceManagement, useSecurityEvents, useSession } from "@/hooks/useSession";
 import { SessionManager } from "@/lib/auth/session";
-import type { SessionData, SecurityEvent, DeviceInfo } from "@/types/session";
+import type { DeviceInfo, SecurityEvent, SessionData } from "@/types/session";
 
 // Mock SessionManager
 vi.mock("@/lib/auth/session");

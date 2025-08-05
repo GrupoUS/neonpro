@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,7 +154,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 // Mock the MedicalTimelineService
 jest.mock("@/lib/patients/medical-timeline");
@@ -249,11 +246,11 @@ var mockTimelineEvents = [
   },
 ];
 // Mock implementation
-var mockGetPatientTimeline = jest.fn().mockImplementation(function (patientId, filter) {
-  return __awaiter(void 0, void 0, void 0, function () {
+var mockGetPatientTimeline = jest.fn().mockImplementation((_patientId, filter) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var events;
     var _a, _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       events = __spreadArray([], mockTimelineEvents, true);
       if (
         (_a = filter === null || filter === void 0 ? void 0 : filter.eventTypes) === null ||
@@ -261,9 +258,7 @@ var mockGetPatientTimeline = jest.fn().mockImplementation(function (patientId, f
           ? void 0
           : _a.length
       ) {
-        events = events.filter(function (e) {
-          return filter.eventTypes.includes(e.eventType);
-        });
+        events = events.filter((e) => filter.eventTypes.includes(e.eventType));
       }
       if (
         (_b = filter === null || filter === void 0 ? void 0 : filter.categories) === null ||
@@ -271,37 +266,31 @@ var mockGetPatientTimeline = jest.fn().mockImplementation(function (patientId, f
           ? void 0
           : _b.length
       ) {
-        events = events.filter(function (e) {
-          return filter.categories.includes(e.category);
-        });
+        events = events.filter((e) => filter.categories.includes(e.category));
       }
       if (filter === null || filter === void 0 ? void 0 : filter.dateRange) {
-        events = events.filter(function (e) {
+        events = events.filter((e) => {
           var eventDate = new Date(e.date);
           return eventDate >= filter.dateRange.start && eventDate <= filter.dateRange.end;
         });
       }
       return [2 /*return*/, events];
     });
-  });
-});
-var mockAddTimelineEvent = jest.fn().mockImplementation(function (event) {
-  return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, __assign({ id: "mock_" + Date.now() }, event)];
-    });
-  });
-});
-var mockUpdateTimelineEvent = jest.fn().mockImplementation(function (eventId, updates) {
-  return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        __assign(__assign(__assign({}, mockTimelineEvents[0]), updates), { id: eventId }),
-      ];
-    });
-  });
-});
+  }),
+);
+var mockAddTimelineEvent = jest.fn().mockImplementation((event) =>
+  __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, (_a) => [2 /*return*/, __assign({ id: `mock_${Date.now()}` }, event)]);
+  }),
+);
+var mockUpdateTimelineEvent = jest.fn().mockImplementation((eventId, updates) =>
+  __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      __assign(__assign(__assign({}, mockTimelineEvents[0]), updates), { id: eventId }),
+    ]);
+  }),
+);
 var mockGetTreatmentMilestones = jest.fn().mockResolvedValue([
   { id: "1", title: "Início do Tratamento", date: "2025-01-10" },
   { id: "2", title: "Primeira Avaliação", date: "2025-01-12" },
@@ -312,25 +301,23 @@ var mockGetTimelineSummary = jest.fn().mockResolvedValue({
   categories: { aesthetic: 2 },
 });
 // Mock the constructor
-medical_timeline_1.MedicalTimelineService.mockImplementation(function () {
-  return {
-    getPatientTimeline: mockGetPatientTimeline,
-    addTimelineEvent: mockAddTimelineEvent,
-    updateTimelineEvent: mockUpdateTimelineEvent,
-    getTreatmentMilestones: mockGetTreatmentMilestones,
-    getTimelineSummary: mockGetTimelineSummary,
-  };
-});
-describe("Medical Timeline Service", function () {
+medical_timeline_1.MedicalTimelineService.mockImplementation(() => ({
+  getPatientTimeline: mockGetPatientTimeline,
+  addTimelineEvent: mockAddTimelineEvent,
+  updateTimelineEvent: mockUpdateTimelineEvent,
+  getTreatmentMilestones: mockGetTreatmentMilestones,
+  getTimelineSummary: mockGetTimelineSummary,
+}));
+describe("Medical Timeline Service", () => {
   var medicalTimelineService;
-  beforeEach(function () {
+  beforeEach(() => {
     medicalTimelineService = new medical_timeline_1.MedicalTimelineService();
   });
-  describe("getPatientTimeline", function () {
-    it("should fetch timeline events for a patient", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getPatientTimeline", () => {
+    it("should fetch timeline events for a patient", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var events;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, medicalTimelineService.getPatientTimeline("123")];
@@ -342,12 +329,11 @@ describe("Medical Timeline Service", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should filter events by type", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should filter events by type", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var events;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -364,12 +350,11 @@ describe("Medical Timeline Service", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should filter events by date range", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should filter events by date range", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var events;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -388,12 +373,11 @@ describe("Medical Timeline Service", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should filter events by category", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should filter events by category", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var events;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -406,20 +390,19 @@ describe("Medical Timeline Service", function () {
               events = _a.sent();
               // Both events are aesthetic category
               expect(events).toHaveLength(2);
-              events.forEach(function (event) {
+              events.forEach((event) => {
                 expect(event.category).toBe("aesthetic");
               });
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("addTimelineEvent", function () {
-    it("should add a new timeline event", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("addTimelineEvent", () => {
+    it("should add a new timeline event", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var newEvent, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               newEvent = {
@@ -449,14 +432,13 @@ describe("Medical Timeline Service", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("updateTimelineEvent", function () {
-    it("should update a timeline event", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("updateTimelineEvent", () => {
+    it("should update a timeline event", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updates, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updates = {
@@ -472,14 +454,13 @@ describe("Medical Timeline Service", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getTreatmentMilestones", function () {
-    it("should get treatment milestones", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getTreatmentMilestones", () => {
+    it("should get treatment milestones", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, medicalTimelineService.getTreatmentMilestones("123")];
@@ -499,14 +480,13 @@ describe("Medical Timeline Service", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getTimelineSummary", function () {
-    it("should get timeline summary", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getTimelineSummary", () => {
+    it("should get timeline summary", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, medicalTimelineService.getTimelineSummary("123", "month")];
@@ -520,7 +500,6 @@ describe("Medical Timeline Service", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

@@ -4,18 +4,17 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = RevenueAnalyticsDashboard;
 var react_1 = require("react");
@@ -150,7 +147,6 @@ var select_1 = require("@/components/ui/select");
 var lucide_react_1 = require("lucide-react");
 var revenue_analytics_engine_1 = require("@/lib/financial/revenue-analytics-engine");
 function RevenueAnalyticsDashboard() {
-  var _this = this;
   var _a, _b;
   var _c = (0, react_1.useState)(true),
     loading = _c[0],
@@ -177,14 +173,11 @@ function RevenueAnalyticsDashboard() {
     summaryMetrics = _k[0],
     setSummaryMetrics = _k[1];
   var revenueEngine = new revenue_analytics_engine_1.RevenueAnalyticsEngine();
-  (0, react_1.useEffect)(
-    function () {
-      loadRevenueAnalytics();
-    },
-    [dateRange],
-  );
-  var loadRevenueAnalytics = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadRevenueAnalytics();
+  }, [dateRange]);
+  var loadRevenueAnalytics = () =>
+    __awaiter(this, void 0, void 0, function () {
       var clinicId,
         dateRanges,
         _a,
@@ -195,7 +188,7 @@ function RevenueAnalyticsDashboard() {
         forecast,
         dashboardData,
         error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             setLoading(true);
@@ -248,8 +241,7 @@ function RevenueAnalyticsDashboard() {
         }
       });
     });
-  };
-  var parseDateRange = function (range) {
+  var parseDateRange = (range) => {
     var now = new Date();
     switch (range) {
       case "current_month":
@@ -257,12 +249,13 @@ function RevenueAnalyticsDashboard() {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
           end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case "last_quarter":
+      case "last_quarter": {
         var quarterStart = Math.floor(now.getMonth() / 3) * 3 - 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
           end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
+      }
       case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),
@@ -275,15 +268,12 @@ function RevenueAnalyticsDashboard() {
         };
     }
   };
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
-  var formatPercent = function (percent) {
-    return "".concat(percent.toFixed(1), "%");
-  };
+  var formatPercent = (percent) => "".concat(percent.toFixed(1), "%");
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -408,56 +398,54 @@ function RevenueAnalyticsDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {serviceData.map(function (service) {
-                  return (
-                    <div
-                      key={service.serviceId}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">{service.serviceName}</h4>
-                          <badge_1.Badge
-                            variant={
-                              service.profitMargin > 30
-                                ? "default"
-                                : service.profitMargin > 15
-                                  ? "secondary"
-                                  : "destructive"
-                            }
-                          >
-                            {formatPercent(service.profitMargin)} margem
-                          </badge_1.Badge>
+                {serviceData.map((service) => (
+                  <div
+                    key={service.serviceId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{service.serviceName}</h4>
+                        <badge_1.Badge
+                          variant={
+                            service.profitMargin > 30
+                              ? "default"
+                              : service.profitMargin > 15
+                                ? "secondary"
+                                : "destructive"
+                          }
+                        >
+                          {formatPercent(service.profitMargin)} margem
+                        </badge_1.Badge>
+                      </div>
+                      <div className="grid grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Receita Total</p>
+                          <p className="font-medium">{formatCurrency(service.totalRevenue)}</p>
                         </div>
-                        <div className="grid grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">Receita Total</p>
-                            <p className="font-medium">{formatCurrency(service.totalRevenue)}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Transações</p>
-                            <p className="font-medium">{service.transactionCount}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Valor Médio</p>
-                            <p className="font-medium">{formatCurrency(service.averageValue)}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Crescimento</p>
-                            <p
-                              className={"font-medium ".concat(
-                                service.growthRate > 0 ? "text-green-600" : "text-red-600",
-                              )}
-                            >
-                              {service.growthRate > 0 ? "+" : ""}
-                              {formatPercent(service.growthRate)}
-                            </p>
-                          </div>
+                        <div>
+                          <p className="text-muted-foreground">Transações</p>
+                          <p className="font-medium">{service.transactionCount}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Valor Médio</p>
+                          <p className="font-medium">{formatCurrency(service.averageValue)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Crescimento</p>
+                          <p
+                            className={"font-medium ".concat(
+                              service.growthRate > 0 ? "text-green-600" : "text-red-600",
+                            )}
+                          >
+                            {service.growthRate > 0 ? "+" : ""}
+                            {formatPercent(service.growthRate)}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -473,53 +461,51 @@ function RevenueAnalyticsDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {providerData.map(function (provider) {
-                  return (
-                    <div
-                      key={provider.providerId}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">{provider.providerName}</h4>
-                          <badge_1.Badge variant="outline">{provider.specialization}</badge_1.Badge>
+                {providerData.map((provider) => (
+                  <div
+                    key={provider.providerId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{provider.providerName}</h4>
+                        <badge_1.Badge variant="outline">{provider.specialization}</badge_1.Badge>
+                      </div>
+                      <div className="grid grid-cols-5 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Receita Total</p>
+                          <p className="font-medium">{formatCurrency(provider.totalRevenue)}</p>
                         </div>
-                        <div className="grid grid-cols-5 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">Receita Total</p>
-                            <p className="font-medium">{formatCurrency(provider.totalRevenue)}</p>
+                        <div>
+                          <p className="text-muted-foreground">Pacientes</p>
+                          <p className="font-medium">{provider.patientCount}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Receita/Paciente</p>
+                          <p className="font-medium">
+                            {formatCurrency(provider.averageRevenuePerPatient)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Utilização</p>
+                          <div className="flex items-center space-x-2">
+                            <progress_1.Progress
+                              value={provider.utilizationRate}
+                              className="flex-1"
+                            />
+                            <span className="text-xs">
+                              {formatPercent(provider.utilizationRate)}
+                            </span>
                           </div>
-                          <div>
-                            <p className="text-muted-foreground">Pacientes</p>
-                            <p className="font-medium">{provider.patientCount}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Receita/Paciente</p>
-                            <p className="font-medium">
-                              {formatCurrency(provider.averageRevenuePerPatient)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Utilização</p>
-                            <div className="flex items-center space-x-2">
-                              <progress_1.Progress
-                                value={provider.utilizationRate}
-                                className="flex-1"
-                              />
-                              <span className="text-xs">
-                                {formatPercent(provider.utilizationRate)}
-                              </span>
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Conversão</p>
-                            <p className="font-medium">{formatPercent(provider.conversionRate)}</p>
-                          </div>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Conversão</p>
+                          <p className="font-medium">{formatPercent(provider.conversionRate)}</p>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -535,73 +521,65 @@ function RevenueAnalyticsDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {patientLTVData.slice(0, 10).map(function (patient) {
-                  return (
-                    <div
-                      key={patient.patientId}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">Paciente {patient.patientId.slice(-8)}</h4>
-                          <div className="flex items-center space-x-2">
-                            {patient.churnRisk > 0.7 && (
-                              <badge_1.Badge variant="destructive">
-                                <lucide_react_1.AlertTriangle className="h-3 w-3 mr-1" />
-                                Alto Risco
-                              </badge_1.Badge>
-                            )}
-                            <badge_1.Badge
-                              variant={patient.totalLifetimeValue > 5000 ? "default" : "secondary"}
-                            >
-                              {formatCurrency(patient.totalLifetimeValue)} LTV
+                {patientLTVData.slice(0, 10).map((patient) => (
+                  <div
+                    key={patient.patientId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">Paciente {patient.patientId.slice(-8)}</h4>
+                        <div className="flex items-center space-x-2">
+                          {patient.churnRisk > 0.7 && (
+                            <badge_1.Badge variant="destructive">
+                              <lucide_react_1.AlertTriangle className="h-3 w-3 mr-1" />
+                              Alto Risco
                             </badge_1.Badge>
-                          </div>
+                          )}
+                          <badge_1.Badge
+                            variant={patient.totalLifetimeValue > 5000 ? "default" : "secondary"}
+                          >
+                            {formatCurrency(patient.totalLifetimeValue)} LTV
+                          </badge_1.Badge>
                         </div>
-                        <div className="grid grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">Valor por Visita</p>
-                            <p className="font-medium">
-                              {formatCurrency(patient.averageVisitValue)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Frequência</p>
-                            <p className="font-medium">
-                              {patient.visitFrequency.toFixed(1)} visitas/ano
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Retenção</p>
-                            <p className="font-medium">{formatPercent(patient.retentionRate)}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Próxima Visita</p>
-                            <p className="font-medium">
-                              {formatPercent(patient.nextVisitProbability)}
-                            </p>
-                          </div>
-                        </div>
-                        {patient.recommendedActions.length > 0 && (
-                          <div className="mt-2">
-                            <p className="text-xs text-muted-foreground mb-1">
-                              Ações Recomendadas:
-                            </p>
-                            <div className="flex flex-wrap gap-1">
-                              {patient.recommendedActions.map(function (action, index) {
-                                return (
-                                  <badge_1.Badge key={index} variant="outline" className="text-xs">
-                                    {action}
-                                  </badge_1.Badge>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
                       </div>
+                      <div className="grid grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Valor por Visita</p>
+                          <p className="font-medium">{formatCurrency(patient.averageVisitValue)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Frequência</p>
+                          <p className="font-medium">
+                            {patient.visitFrequency.toFixed(1)} visitas/ano
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Retenção</p>
+                          <p className="font-medium">{formatPercent(patient.retentionRate)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Próxima Visita</p>
+                          <p className="font-medium">
+                            {formatPercent(patient.nextVisitProbability)}
+                          </p>
+                        </div>
+                      </div>
+                      {patient.recommendedActions.length > 0 && (
+                        <div className="mt-2">
+                          <p className="text-xs text-muted-foreground mb-1">Ações Recomendadas:</p>
+                          <div className="flex flex-wrap gap-1">
+                            {patient.recommendedActions.map((action, index) => (
+                              <badge_1.Badge key={index} variant="outline" className="text-xs">
+                                {action}
+                              </badge_1.Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -617,62 +595,60 @@ function RevenueAnalyticsDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {forecastData.map(function (forecast, index) {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">{forecast.period}</h4>
-                          <badge_1.Badge
-                            variant={
-                              forecast.trend === "increasing"
-                                ? "default"
-                                : forecast.trend === "decreasing"
-                                  ? "destructive"
-                                  : "secondary"
-                            }
-                          >
-                            {forecast.trend === "increasing"
-                              ? <lucide_react_1.TrendingUp className="h-3 w-3 mr-1" />
+                {forecastData.map((forecast, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{forecast.period}</h4>
+                        <badge_1.Badge
+                          variant={
+                            forecast.trend === "increasing"
+                              ? "default"
                               : forecast.trend === "decreasing"
-                                ? <lucide_react_1.TrendingDown className="h-3 w-3 mr-1" />
-                                : null}
-                            {forecast.trend}
-                          </badge_1.Badge>
+                                ? "destructive"
+                                : "secondary"
+                          }
+                        >
+                          {forecast.trend === "increasing"
+                            ? <lucide_react_1.TrendingUp className="h-3 w-3 mr-1" />
+                            : forecast.trend === "decreasing"
+                              ? <lucide_react_1.TrendingDown className="h-3 w-3 mr-1" />
+                              : null}
+                          {forecast.trend}
+                        </badge_1.Badge>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Receita Prevista</p>
+                          <p className="font-medium">
+                            {formatCurrency(forecast.forecastedRevenue)}
+                          </p>
                         </div>
-                        <div className="grid grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">Receita Prevista</p>
-                            <p className="font-medium">
-                              {formatCurrency(forecast.forecastedRevenue)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Intervalo de Confiança</p>
-                            <p className="font-medium">
-                              {formatCurrency(forecast.confidenceInterval.lower)} -{" "}
-                              {formatCurrency(forecast.confidenceInterval.upper)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Taxa de Crescimento</p>
-                            <p
-                              className={"font-medium ".concat(
-                                forecast.growthRate > 0 ? "text-green-600" : "text-red-600",
-                              )}
-                            >
-                              {forecast.growthRate > 0 ? "+" : ""}
-                              {formatPercent(forecast.growthRate)}
-                            </p>
-                          </div>
+                        <div>
+                          <p className="text-muted-foreground">Intervalo de Confiança</p>
+                          <p className="font-medium">
+                            {formatCurrency(forecast.confidenceInterval.lower)} -{" "}
+                            {formatCurrency(forecast.confidenceInterval.upper)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Taxa de Crescimento</p>
+                          <p
+                            className={"font-medium ".concat(
+                              forecast.growthRate > 0 ? "text-green-600" : "text-red-600",
+                            )}
+                          >
+                            {forecast.growthRate > 0 ? "+" : ""}
+                            {formatPercent(forecast.growthRate)}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

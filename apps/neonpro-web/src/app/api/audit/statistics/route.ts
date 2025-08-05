@@ -13,13 +13,7 @@
  * @version 1.0.0
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
-import type { AuditSeverity, logAuditEvent, AuditEventType } from "@/lib/audit/audit-system";
-import type { rateLimit } from "@/lib/security/rate-limiting";
-import type { logSecurityEvent } from "@/lib/security/security-events";
+import type { NextRequest } from "next/server";
 
 // =====================================================
 // SCHEMAS DE VALIDAÇÃO
@@ -200,28 +194,28 @@ async function getTrendData(supabase: any, filters: any) {
   const { startDate, endDate } = getPeriodDates(filters.period);
 
   let dateFormat: string;
-  let interval: string;
+  let _interval: string;
 
   switch (filters.granularity) {
     case "hour":
       dateFormat = "YYYY-MM-DD HH24:00:00";
-      interval = "1 hour";
+      _interval = "1 hour";
       break;
     case "day":
       dateFormat = "YYYY-MM-DD";
-      interval = "1 day";
+      _interval = "1 day";
       break;
     case "week":
       dateFormat = 'YYYY-"W"WW';
-      interval = "1 week";
+      _interval = "1 week";
       break;
     case "month":
       dateFormat = "YYYY-MM";
-      interval = "1 month";
+      _interval = "1 month";
       break;
     default:
       dateFormat = "YYYY-MM-DD";
-      interval = "1 day";
+      _interval = "1 day";
   }
 
   let query: string;
@@ -475,7 +469,7 @@ export async function GET(request: NextRequest) {
 // OPTIONS: CORS
 // =====================================================
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

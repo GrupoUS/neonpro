@@ -1,14 +1,14 @@
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
+import type { useCallback, useEffect, useState } from "react";
+import type { useToast } from "@/hooks/use-toast";
 import type { LGPDComplianceManager } from "@/lib/lgpd/LGPDComplianceManager";
 import type {
-  ConsentRecord,
-  ConsentPurpose,
   ConsentFilters,
+  ConsentPurpose,
+  ConsentRecord,
   PaginatedResponse,
 } from "@/types/lgpd";
-import type { useToast } from "@/hooks/use-toast";
 
 interface UseConsentManagementReturn {
   // Data

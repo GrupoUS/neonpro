@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Data Minimization System
  * Implements data minimization principles to ensure only necessary data is collected and processed
@@ -17,20 +16,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -45,26 +44,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -84,13 +83,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -112,9 +111,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -186,7 +183,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dataMinimizationManager =
   exports.DataMinimizationManager =
@@ -203,7 +200,7 @@ var events_1 = require("events");
  * Data Categories for Minimization
  */
 var DataCategory;
-(function (DataCategory) {
+((DataCategory) => {
   DataCategory["PERSONAL_IDENTIFIERS"] = "personal_identifiers";
   DataCategory["CONTACT_INFORMATION"] = "contact_information";
   DataCategory["DEMOGRAPHIC_DATA"] = "demographic_data";
@@ -221,7 +218,7 @@ var DataCategory;
  * Processing Purposes
  */
 var ProcessingPurpose;
-(function (ProcessingPurpose) {
+((ProcessingPurpose) => {
   ProcessingPurpose["SERVICE_PROVISION"] = "service_provision";
   ProcessingPurpose["ACCOUNT_MANAGEMENT"] = "account_management";
   ProcessingPurpose["PAYMENT_PROCESSING"] = "payment_processing";
@@ -237,7 +234,7 @@ var ProcessingPurpose;
  * Data Necessity Levels
  */
 var DataNecessity;
-(function (DataNecessity) {
+((DataNecessity) => {
   DataNecessity["ESSENTIAL"] = "essential";
   DataNecessity["FUNCTIONAL"] = "functional";
   DataNecessity["ANALYTICAL"] = "analytical";
@@ -248,7 +245,7 @@ var DataNecessity;
  * Minimization Actions
  */
 var MinimizationAction;
-(function (MinimizationAction) {
+((MinimizationAction) => {
   MinimizationAction["COLLECT"] = "collect";
   MinimizationAction["FILTER"] = "filter";
   MinimizationAction["ANONYMIZE"] = "anonymize";
@@ -268,7 +265,7 @@ var MinimizationAction;
  * - Consent-based processing controls
  * - Compliance monitoring and reporting
  */
-var DataMinimizationManager = /** @class */ (function (_super) {
+var DataMinimizationManager = /** @class */ ((_super) => {
   __extends(DataMinimizationManager, _super);
   function DataMinimizationManager(config) {
     if (config === void 0) {
@@ -347,7 +344,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -386,7 +383,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -472,7 +469,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -517,12 +514,10 @@ var DataMinimizationManager = /** @class */ (function (_super) {
             requestedFields = Object.keys(request.requestedData);
             _loop_1 = function (fieldName) {
               var fieldDef, fieldValue, action;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
-                    fieldDef = schema.fields.find(function (f) {
-                      return f.name === fieldName;
-                    });
+                    fieldDef = schema.fields.find((f) => f.name === fieldName);
                     fieldValue = request.requestedData[fieldName];
                     if (!fieldDef) {
                       // Field not in schema - reject if strict mode
@@ -640,12 +635,8 @@ var DataMinimizationManager = /** @class */ (function (_super) {
               }
             }
             applicableRules = Array.from(this.rules.values())
-              .filter(function (rule) {
-                return rule.enabled && rule.category === fieldDef.category;
-              })
-              .sort(function (a, b) {
-                return b.priority - a.priority;
-              });
+              .filter((rule) => rule.enabled && rule.category === fieldDef.category)
+              .sort((a, b) => b.priority - a.priority);
             (_b = 0), (applicableRules_1 = applicableRules);
             _c.label = 1;
           case 1:
@@ -711,11 +702,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
   /**
    * Evaluate rule conditions
    */
-  DataMinimizationManager.prototype.evaluateRuleConditions = function (
-    conditions,
-    request,
-    fieldDef,
-  ) {
+  DataMinimizationManager.prototype.evaluateRuleConditions = (conditions, request, fieldDef) => {
     // Simple condition evaluation - in a real implementation this would be more sophisticated
     if (conditions.purpose && conditions.purpose !== request.purpose) {
       return false;
@@ -731,11 +718,11 @@ var DataMinimizationManager = /** @class */ (function (_super) {
   /**
    * Evaluate global rule conditions
    */
-  DataMinimizationManager.prototype.evaluateGlobalRuleConditions = function (
+  DataMinimizationManager.prototype.evaluateGlobalRuleConditions = (
     conditions,
     request,
     fieldDef,
-  ) {
+  ) => {
     if (conditions.purpose && conditions.purpose !== request.purpose) {
       return false;
     }
@@ -840,7 +827,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
   DataMinimizationManager.prototype.validateConsent = function (request, schema) {
     return __awaiter(this, void 0, void 0, function () {
       var consentAge, maxAge;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!request.userConsent) {
           throw new Error("Consent required but not provided");
         }
@@ -894,19 +881,15 @@ var DataMinimizationManager = /** @class */ (function (_super) {
       return __generator(this, function (_d) {
         switch (_d.label) {
           case 0:
-            requests = Array.from(this.requests.values()).filter(function (r) {
-              return r.createdAt >= period.start && r.createdAt <= period.end;
-            });
+            requests = Array.from(this.requests.values()).filter(
+              (r) => r.createdAt >= period.start && r.createdAt <= period.end,
+            );
             totalRequests = requests.length;
-            processedRequests = requests.filter(function (r) {
-              return r.processing.status === "processed";
-            }).length;
-            rejectedRequests = requests.filter(function (r) {
-              return r.processing.status === "rejected";
-            }).length;
-            minimizedRequests = requests.filter(function (r) {
-              return r.processing.appliedActions.length > 0;
-            }).length;
+            processedRequests = requests.filter((r) => r.processing.status === "processed").length;
+            rejectedRequests = requests.filter((r) => r.processing.status === "rejected").length;
+            minimizedRequests = requests.filter(
+              (r) => r.processing.appliedActions.length > 0,
+            ).length;
             totalFieldsRequested = 0;
             totalFieldsCollected = 0;
             categoryStats = {};
@@ -941,7 +924,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
               }
             }
             topActions = Object.entries(actionCounts)
-              .map(function (_a) {
+              .map((_a) => {
                 var action = _a[0],
                   count = _a[1];
                 return {
@@ -950,9 +933,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
                   percentage: totalRequests > 0 ? (count / totalRequests) * 100 : 0,
                 };
               })
-              .sort(function (a, b) {
-                return b.count - a.count;
-              })
+              .sort((a, b) => b.count - a.count)
               .slice(0, 5);
             recommendations = this.generateRecommendations({
               reductionPercentage: reductionPercentage,
@@ -1009,59 +990,46 @@ var DataMinimizationManager = /** @class */ (function (_super) {
     var requests = Array.from(this.requests.values());
     if (filters) {
       if (filters.schemaId) {
-        requests = requests.filter(function (r) {
-          return r.schemaId === filters.schemaId;
-        });
+        requests = requests.filter((r) => r.schemaId === filters.schemaId);
       }
       if (filters.purpose) {
-        requests = requests.filter(function (r) {
-          return r.purpose === filters.purpose;
-        });
+        requests = requests.filter((r) => r.purpose === filters.purpose);
       }
       if (filters.status) {
-        requests = requests.filter(function (r) {
-          return r.processing.status === filters.status;
-        });
+        requests = requests.filter((r) => r.processing.status === filters.status);
       }
       if (filters.dateRange) {
-        requests = requests.filter(function (r) {
-          return r.createdAt >= filters.dateRange.start && r.createdAt <= filters.dateRange.end;
-        });
+        requests = requests.filter(
+          (r) => r.createdAt >= filters.dateRange.start && r.createdAt <= filters.dateRange.end,
+        );
       }
     }
-    return requests.sort(function (a, b) {
-      return b.createdAt.getTime() - a.createdAt.getTime();
-    });
+    return requests.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   };
   /**
    * Get schemas
    */
   DataMinimizationManager.prototype.getSchemas = function () {
-    return Array.from(this.schemas.values()).sort(function (a, b) {
-      return b.updatedAt.getTime() - a.updatedAt.getTime();
-    });
+    return Array.from(this.schemas.values()).sort(
+      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
+    );
   };
   /**
    * Get minimization rules
    */
   DataMinimizationManager.prototype.getRules = function () {
-    return Array.from(this.rules.values()).sort(function (a, b) {
-      return b.priority - a.priority;
-    });
+    return Array.from(this.rules.values()).sort((a, b) => b.priority - a.priority);
   };
   /**
    * Calculate consent compliance
    */
   DataMinimizationManager.prototype.calculateConsentCompliance = function (requests) {
-    var _this = this;
-    var consentRequiredRequests = requests.filter(function (r) {
-      var schema = _this.schemas.get(r.schemaId);
+    var consentRequiredRequests = requests.filter((r) => {
+      var schema = this.schemas.get(r.schemaId);
       return schema === null || schema === void 0 ? void 0 : schema.consentRequired;
     });
     if (consentRequiredRequests.length === 0) return 100;
-    var validConsentRequests = consentRequiredRequests.filter(function (r) {
-      return r.userConsent;
-    });
+    var validConsentRequests = consentRequiredRequests.filter((r) => r.userConsent);
     return (validConsentRequests.length / consentRequiredRequests.length) * 100;
   };
   /**
@@ -1081,21 +1049,17 @@ var DataMinimizationManager = /** @class */ (function (_super) {
   /**
    * Calculate data accuracy
    */
-  DataMinimizationManager.prototype.calculateDataAccuracy = function (requests) {
+  DataMinimizationManager.prototype.calculateDataAccuracy = (requests) => {
     // Simplified calculation - in a real implementation this would be more sophisticated
-    var processedRequests = requests.filter(function (r) {
-      return r.processing.status === "processed";
-    });
-    var errorRequests = requests.filter(function (r) {
-      return r.processing.status === "error";
-    });
+    var processedRequests = requests.filter((r) => r.processing.status === "processed");
+    var errorRequests = requests.filter((r) => r.processing.status === "error");
     if (requests.length === 0) return 100;
     return ((requests.length - errorRequests.length) / requests.length) * 100;
   };
   /**
    * Convert stats to reduction format
    */
-  DataMinimizationManager.prototype.convertToReductionStats = function (stats) {
+  DataMinimizationManager.prototype.convertToReductionStats = (stats) => {
     var result = {};
     for (var _i = 0, _a = Object.entries(stats); _i < _a.length; _i++) {
       var _b = _a[_i],
@@ -1111,7 +1075,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
   /**
    * Generate recommendations
    */
-  DataMinimizationManager.prototype.generateRecommendations = function (metrics) {
+  DataMinimizationManager.prototype.generateRecommendations = (metrics) => {
     var recommendations = [];
     if (metrics.reductionPercentage < 20) {
       recommendations.push({
@@ -1153,7 +1117,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
   /**
    * Validate schema
    */
-  DataMinimizationManager.prototype.validateSchema = function (schema) {
+  DataMinimizationManager.prototype.validateSchema = (schema) => {
     if (!schema.name || schema.name.trim().length === 0) {
       throw new Error("Schema name is required");
     }
@@ -1175,10 +1139,9 @@ var DataMinimizationManager = /** @class */ (function (_super) {
    * Start monitoring
    */
   DataMinimizationManager.prototype.startMonitoring = function () {
-    var _this = this;
     this.monitoringInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1188,8 +1151,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.monitoringIntervalMinutes * 60 * 1000,
     );
   };
@@ -1202,18 +1164,18 @@ var DataMinimizationManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         try {
           oneHourAgo_1 = new Date(Date.now() - 60 * 60 * 1000);
-          recentRequests = Array.from(this.requests.values()).filter(function (r) {
-            return r.createdAt >= oneHourAgo_1;
-          });
+          recentRequests = Array.from(this.requests.values()).filter(
+            (r) => r.createdAt >= oneHourAgo_1,
+          );
           if (recentRequests.length > this.config.maxRequestsPerHour) {
             this.logActivity("system", "high_request_volume", {
               requestsLastHour: recentRequests.length,
               threshold: this.config.maxRequestsPerHour,
             });
           }
-          violations = recentRequests.filter(function (r) {
-            return r.processing.status === "error" || r.processing.rejectedFields.length > 0;
-          });
+          violations = recentRequests.filter(
+            (r) => r.processing.status === "error" || r.processing.rejectedFields.length > 0,
+          );
           if (violations.length > recentRequests.length * 0.1) {
             // More than 10% violations
             this.logActivity("system", "high_violation_rate", {
@@ -1234,7 +1196,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
   /**
    * Generate hash
    */
-  DataMinimizationManager.prototype.generateHash = function (input) {
+  DataMinimizationManager.prototype.generateHash = (input) => {
     // Simple hash function - in a real implementation use crypto
     var hash = 0;
     for (var i = 0; i < input.length; i++) {
@@ -1247,20 +1209,14 @@ var DataMinimizationManager = /** @class */ (function (_super) {
   /**
    * Generate ID
    */
-  DataMinimizationManager.prototype.generateId = function (prefix) {
-    return ""
-      .concat(prefix, "_")
-      .concat(Date.now(), "_")
-      .concat(Math.random().toString(36).substr(2, 9));
-  };
+  DataMinimizationManager.prototype.generateId = (prefix) =>
+    "".concat(prefix, "_").concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Load schemas
    */
   DataMinimizationManager.prototype.loadSchemas = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1268,9 +1224,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
    */
   DataMinimizationManager.prototype.loadRules = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1278,9 +1232,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
    */
   DataMinimizationManager.prototype.loadRequests = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1288,9 +1240,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
    */
   DataMinimizationManager.prototype.saveSchema = function (schema) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1298,9 +1248,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
    */
   DataMinimizationManager.prototype.saveRule = function (rule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1308,9 +1256,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
    */
   DataMinimizationManager.prototype.saveRequest = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1318,15 +1264,13 @@ var DataMinimizationManager = /** @class */ (function (_super) {
    */
   DataMinimizationManager.prototype.saveReport = function (report) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
    * Log activity
    */
-  DataMinimizationManager.prototype.logActivity = function (actor, action, details) {
+  DataMinimizationManager.prototype.logActivity = (actor, action, details) => {
     // In a real implementation, this would log to audit trail
     console.log("[DataMinimization] ".concat(actor, " - ").concat(action, ":"), details);
   };
@@ -1363,9 +1307,7 @@ var DataMinimizationManager = /** @class */ (function (_super) {
     if (this.schemas.size === 0) {
       issues.push("No data collection schemas defined");
     }
-    var enabledRules = Array.from(this.rules.values()).filter(function (r) {
-      return r.enabled;
-    });
+    var enabledRules = Array.from(this.rules.values()).filter((r) => r.enabled);
     if (enabledRules.length === 0) {
       issues.push("No enabled minimization rules");
     }

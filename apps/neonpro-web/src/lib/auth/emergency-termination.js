@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Emergency Session Termination System
  * Story 1.4 - Task 8: Emergency termination capabilities
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmergencyTermination = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -265,9 +262,8 @@ var DEFAULT_PROTOCOLS = [
     createdAt: new Date(),
   },
 ];
-var EmergencyTermination = /** @class */ (function () {
+var EmergencyTermination = /** @class */ (() => {
   function EmergencyTermination(supabaseUrl, supabaseKey, sessionPreservation, customConfig) {
-    var _this = this;
     this.protocols = new Map();
     this.pendingRequests = new Map();
     this.rateLimitTracker = new Map();
@@ -277,8 +273,8 @@ var EmergencyTermination = /** @class */ (function () {
     this.sessionPreservation = sessionPreservation;
     this.config = __assign(__assign({}, DEFAULT_CONFIG), customConfig);
     // Initialize default protocols
-    DEFAULT_PROTOCOLS.forEach(function (protocol) {
-      _this.protocols.set(protocol.protocolId, protocol);
+    DEFAULT_PROTOCOLS.forEach((protocol) => {
+      this.protocols.set(protocol.protocolId, protocol);
     });
     if (this.config.enabled) {
       this.initialize();
@@ -437,11 +433,7 @@ var EmergencyTermination = /** @class */ (function () {
             if (!protocol.actions.lockAccounts) return [3 /*break*/, 4];
             return [
               4 /*yield*/,
-              this.lockUserAccounts(
-                result.terminatedSessions.map(function (s) {
-                  return s.userId;
-                }),
-              ),
+              this.lockUserAccounts(result.terminatedSessions.map((s) => s.userId)),
             ];
           case 3:
             _a.sent();
@@ -842,7 +834,7 @@ var EmergencyTermination = /** @class */ (function () {
                 schema: "public",
                 table: "user_sessions",
               },
-              function (payload) {
+              (payload) => {
                 _this.handleSessionChange(payload);
               },
             )
@@ -1279,7 +1271,7 @@ var EmergencyTermination = /** @class */ (function () {
   };
   EmergencyTermination.prototype.notifyApprovers = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for notifying approvers
         console.log("Notifying approvers for termination request ".concat(request.requestId));
         return [2 /*return*/];
@@ -1288,7 +1280,7 @@ var EmergencyTermination = /** @class */ (function () {
   };
   EmergencyTermination.prototype.notifyAffectedUsers = function (terminatedSessions, reason) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for notifying affected users
         console.log(
           "Notifying "
@@ -1301,7 +1293,7 @@ var EmergencyTermination = /** @class */ (function () {
   };
   EmergencyTermination.prototype.lockUserAccounts = function (userIds) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for locking user accounts
         console.log("Locking ".concat(userIds.length, " user accounts"));
         return [2 /*return*/];
@@ -1310,7 +1302,7 @@ var EmergencyTermination = /** @class */ (function () {
   };
   EmergencyTermination.prototype.disableNewLogins = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for disabling new logins
         console.log("Disabling new logins system-wide");
         return [2 /*return*/];
@@ -1319,7 +1311,7 @@ var EmergencyTermination = /** @class */ (function () {
   };
   EmergencyTermination.prototype.escalateToSecurity = function (request, result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for escalating to security team
         console.log(
           "Escalating emergency termination to security team: ".concat(request.requestId),
@@ -1328,7 +1320,7 @@ var EmergencyTermination = /** @class */ (function () {
       });
     });
   };
-  EmergencyTermination.prototype.hasTerminationPermission = function (role, terminationType) {
+  EmergencyTermination.prototype.hasTerminationPermission = (role, terminationType) => {
     var _a;
     var permissions = {
       owner: [
@@ -1356,44 +1348,40 @@ var EmergencyTermination = /** @class */ (function () {
       this.activeSessions.set(sessionData.session_id, sessionData);
     }
   };
-  EmergencyTermination.prototype.mapDatabaseToProtocol = function (data) {
-    return {
-      protocolId: data.protocol_id,
-      name: data.name,
-      description: data.description,
-      triggerConditions: data.trigger_conditions,
-      automaticTrigger: data.automatic_trigger,
-      severity: data.severity,
-      actions: data.actions,
-      approvalRequired: data.approval_required,
-      approverRoles: data.approver_roles,
-      cooldownPeriod: data.cooldown_period,
-      isActive: data.is_active,
-      createdAt: new Date(data.created_at),
-      lastTriggered: data.last_triggered ? new Date(data.last_triggered) : undefined,
-    };
-  };
-  EmergencyTermination.prototype.mapDatabaseToAuditLog = function (data) {
-    return {
-      logId: data.log_id,
-      requestId: data.request_id,
-      sessionId: data.session_id,
-      userId: data.user_id,
-      deviceId: data.device_id,
-      initiatedBy: data.initiated_by,
-      initiatorRole: data.initiator_role,
-      terminationType: data.termination_type,
-      reason: data.reason,
-      severity: data.severity,
-      terminatedAt: new Date(data.terminated_at),
-      preservationBackupId: data.preservation_backup_id,
-      success: data.success,
-      errorMessage: data.error_message,
-      ipAddress: data.ip_address,
-      userAgent: data.user_agent,
-      metadata: data.metadata || {},
-    };
-  };
+  EmergencyTermination.prototype.mapDatabaseToProtocol = (data) => ({
+    protocolId: data.protocol_id,
+    name: data.name,
+    description: data.description,
+    triggerConditions: data.trigger_conditions,
+    automaticTrigger: data.automatic_trigger,
+    severity: data.severity,
+    actions: data.actions,
+    approvalRequired: data.approval_required,
+    approverRoles: data.approver_roles,
+    cooldownPeriod: data.cooldown_period,
+    isActive: data.is_active,
+    createdAt: new Date(data.created_at),
+    lastTriggered: data.last_triggered ? new Date(data.last_triggered) : undefined,
+  });
+  EmergencyTermination.prototype.mapDatabaseToAuditLog = (data) => ({
+    logId: data.log_id,
+    requestId: data.request_id,
+    sessionId: data.session_id,
+    userId: data.user_id,
+    deviceId: data.device_id,
+    initiatedBy: data.initiated_by,
+    initiatorRole: data.initiator_role,
+    terminationType: data.termination_type,
+    reason: data.reason,
+    severity: data.severity,
+    terminatedAt: new Date(data.terminated_at),
+    preservationBackupId: data.preservation_backup_id,
+    success: data.success,
+    errorMessage: data.error_message,
+    ipAddress: data.ip_address,
+    userAgent: data.user_agent,
+    metadata: data.metadata || {},
+  });
   return EmergencyTermination;
 })();
 exports.EmergencyTermination = EmergencyTermination;

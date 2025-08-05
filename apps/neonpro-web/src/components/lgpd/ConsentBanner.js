@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentBanner = ConsentBanner;
 var react_1 = require("react");
@@ -159,7 +156,6 @@ var accordion_1 = require("@/components/ui/accordion");
 var lucide_react_1 = require("lucide-react");
 var useLGPD_1 = require("@/hooks/useLGPD");
 function ConsentBanner(_a) {
-  var _this = this;
   var _b = _a.position,
     position = _b === void 0 ? "bottom" : _b,
     _c = _a.theme,
@@ -188,38 +184,33 @@ function ConsentBanner(_a) {
   var _k = (0, react_1.useState)(false),
     showDetails = _k[0],
     setShowDetails = _k[1];
-  (0, react_1.useEffect)(
-    function () {
-      // Inicializar com consentimentos existentes
-      var initialConsents = {};
-      purposes === null || purposes === void 0
-        ? void 0
-        : purposes.forEach(function (purpose) {
-            var existingConsent =
-              userConsents === null || userConsents === void 0
-                ? void 0
-                : userConsents.find(function (c) {
-                    return c.purpose_id === purpose.id;
-                  });
-            initialConsents[purpose.id] =
-              (existingConsent === null || existingConsent === void 0
-                ? void 0
-                : existingConsent.status) === "given";
-          });
-      setSelectedPurposes(initialConsents);
-    },
-    [purposes, userConsents],
-  );
-  var handlePurposeToggle = function (purposeId, checked) {
-    setSelectedPurposes(function (prev) {
+  (0, react_1.useEffect)(() => {
+    // Inicializar com consentimentos existentes
+    var initialConsents = {};
+    purposes === null || purposes === void 0
+      ? void 0
+      : purposes.forEach((purpose) => {
+          var existingConsent =
+            userConsents === null || userConsents === void 0
+              ? void 0
+              : userConsents.find((c) => c.purpose_id === purpose.id);
+          initialConsents[purpose.id] =
+            (existingConsent === null || existingConsent === void 0
+              ? void 0
+              : existingConsent.status) === "given";
+        });
+    setSelectedPurposes(initialConsents);
+  }, [purposes, userConsents]);
+  var handlePurposeToggle = (purposeId, checked) => {
+    setSelectedPurposes((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[purposeId] = checked), _a));
     });
   };
-  var handleSavePreferences = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSavePreferences = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _i, _a, _b, purposeId, granted, error_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 7, , 8]);
@@ -253,11 +244,10 @@ function ConsentBanner(_a) {
         }
       });
     });
-  };
-  var handleAcceptAll = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAcceptAll = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -275,11 +265,10 @@ function ConsentBanner(_a) {
         }
       });
     });
-  };
-  var handleRejectAll = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRejectAll = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -297,8 +286,7 @@ function ConsentBanner(_a) {
         }
       });
     });
-  };
-  var getPurposeIcon = function (category) {
+  var getPurposeIcon = (category) => {
     switch (category) {
       case "essential":
         return <lucide_react_1.Shield className="h-4 w-4" />;
@@ -314,7 +302,7 @@ function ConsentBanner(_a) {
         return <lucide_react_1.Cookie className="h-4 w-4" />;
     }
   };
-  var getPurposeColor = function (category) {
+  var getPurposeColor = (category) => {
     switch (category) {
       case "essential":
         return "bg-green-100 text-green-800";
@@ -336,15 +324,11 @@ function ConsentBanner(_a) {
   var essentialPurposes =
     (purposes === null || purposes === void 0
       ? void 0
-      : purposes.filter(function (p) {
-          return p.category === "essential";
-        })) || [];
+      : purposes.filter((p) => p.category === "essential")) || [];
   var optionalPurposes =
     (purposes === null || purposes === void 0
       ? void 0
-      : purposes.filter(function (p) {
-          return p.category !== "essential";
-        })) || [];
+      : purposes.filter((p) => p.category !== "essential")) || [];
   return (
     <>
       {/* Overlay */}
@@ -387,9 +371,7 @@ function ConsentBanner(_a) {
               <button_1.Button
                 variant="ghost"
                 size="sm"
-                onClick={function () {
-                  return hideConsentBanner();
-                }}
+                onClick={() => hideConsentBanner()}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <lucide_react_1.X className="h-4 w-4" />
@@ -435,37 +417,33 @@ function ConsentBanner(_a) {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ml-6">
-                    {optionalPurposes.map(function (purpose) {
-                      return (
-                        <div key={purpose.id} className="flex items-center space-x-3">
-                          <checkbox_1.Checkbox
-                            id={purpose.id}
-                            checked={selectedPurposes[purpose.id] || false}
-                            onCheckedChange={function (checked) {
-                              return handlePurposeToggle(purpose.id, checked);
-                            }}
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              {getPurposeIcon(purpose.category)}
-                              <label
-                                htmlFor={purpose.id}
-                                className="text-sm font-medium cursor-pointer"
-                              >
-                                {purpose.name}
-                              </label>
-                              <badge_1.Badge
-                                variant="outline"
-                                className={getPurposeColor(purpose.category)}
-                              >
-                                {purpose.category}
-                              </badge_1.Badge>
-                            </div>
-                            <p className="text-xs text-gray-600 mt-1">{purpose.description}</p>
+                    {optionalPurposes.map((purpose) => (
+                      <div key={purpose.id} className="flex items-center space-x-3">
+                        <checkbox_1.Checkbox
+                          id={purpose.id}
+                          checked={selectedPurposes[purpose.id] || false}
+                          onCheckedChange={(checked) => handlePurposeToggle(purpose.id, checked)}
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            {getPurposeIcon(purpose.category)}
+                            <label
+                              htmlFor={purpose.id}
+                              className="text-sm font-medium cursor-pointer"
+                            >
+                              {purpose.name}
+                            </label>
+                            <badge_1.Badge
+                              variant="outline"
+                              className={getPurposeColor(purpose.category)}
+                            >
+                              {purpose.category}
+                            </badge_1.Badge>
                           </div>
+                          <p className="text-xs text-gray-600 mt-1">{purpose.description}</p>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -543,68 +521,66 @@ function ConsentBanner(_a) {
                         <accordion_1.Accordion type="single" collapsible className="w-full">
                           {purposes === null || purposes === void 0
                             ? void 0
-                            : purposes.map(function (purpose) {
-                                return (
-                                  <accordion_1.AccordionItem key={purpose.id} value={purpose.id}>
-                                    <accordion_1.AccordionTrigger className="text-left">
-                                      <div className="flex items-center gap-3">
-                                        {getPurposeIcon(purpose.category)}
-                                        <div>
-                                          <div className="font-medium">{purpose.name}</div>
-                                          <badge_1.Badge
-                                            variant="outline"
-                                            className={"".concat(
-                                              getPurposeColor(purpose.category),
-                                              " text-xs",
-                                            )}
-                                          >
-                                            {purpose.category}
+                            : purposes.map((purpose) => (
+                                <accordion_1.AccordionItem key={purpose.id} value={purpose.id}>
+                                  <accordion_1.AccordionTrigger className="text-left">
+                                    <div className="flex items-center gap-3">
+                                      {getPurposeIcon(purpose.category)}
+                                      <div>
+                                        <div className="font-medium">{purpose.name}</div>
+                                        <badge_1.Badge
+                                          variant="outline"
+                                          className={"".concat(
+                                            getPurposeColor(purpose.category),
+                                            " text-xs",
+                                          )}
+                                        >
+                                          {purpose.category}
+                                        </badge_1.Badge>
+                                      </div>
+                                    </div>
+                                  </accordion_1.AccordionTrigger>
+                                  <accordion_1.AccordionContent className="space-y-3">
+                                    <p className="text-sm text-gray-600">{purpose.description}</p>
+
+                                    {purpose.legal_basis && (
+                                      <div>
+                                        <h5 className="text-sm font-medium mb-1">Base Legal:</h5>
+                                        <p className="text-sm text-gray-600">
+                                          {purpose.legal_basis}
+                                        </p>
+                                      </div>
+                                    )}
+
+                                    {purpose.data_retention_days && (
+                                      <div>
+                                        <h5 className="text-sm font-medium mb-1">
+                                          Retenção de Dados:
+                                        </h5>
+                                        <p className="text-sm text-gray-600">
+                                          {purpose.data_retention_days} dias
+                                        </p>
+                                      </div>
+                                    )}
+
+                                    <div className="flex items-center gap-2 pt-2">
+                                      <span className="text-sm font-medium">Status:</span>
+                                      {purpose.category === "essential"
+                                        ? <badge_1.Badge className="bg-green-100 text-green-800">
+                                            <lucide_react_1.Shield className="h-3 w-3 mr-1" />
+                                            Sempre Ativo
                                           </badge_1.Badge>
-                                        </div>
-                                      </div>
-                                    </accordion_1.AccordionTrigger>
-                                    <accordion_1.AccordionContent className="space-y-3">
-                                      <p className="text-sm text-gray-600">{purpose.description}</p>
-
-                                      {purpose.legal_basis && (
-                                        <div>
-                                          <h5 className="text-sm font-medium mb-1">Base Legal:</h5>
-                                          <p className="text-sm text-gray-600">
-                                            {purpose.legal_basis}
-                                          </p>
-                                        </div>
-                                      )}
-
-                                      {purpose.data_retention_days && (
-                                        <div>
-                                          <h5 className="text-sm font-medium mb-1">
-                                            Retenção de Dados:
-                                          </h5>
-                                          <p className="text-sm text-gray-600">
-                                            {purpose.data_retention_days} dias
-                                          </p>
-                                        </div>
-                                      )}
-
-                                      <div className="flex items-center gap-2 pt-2">
-                                        <span className="text-sm font-medium">Status:</span>
-                                        {purpose.category === "essential"
-                                          ? <badge_1.Badge className="bg-green-100 text-green-800">
-                                              <lucide_react_1.Shield className="h-3 w-3 mr-1" />
-                                              Sempre Ativo
-                                            </badge_1.Badge>
-                                          : <badge_1.Badge
-                                              variant={
-                                                selectedPurposes[purpose.id] ? "default" : "outline"
-                                              }
-                                            >
-                                              {selectedPurposes[purpose.id] ? "Ativo" : "Inativo"}
-                                            </badge_1.Badge>}
-                                      </div>
-                                    </accordion_1.AccordionContent>
-                                  </accordion_1.AccordionItem>
-                                );
-                              })}
+                                        : <badge_1.Badge
+                                            variant={
+                                              selectedPurposes[purpose.id] ? "default" : "outline"
+                                            }
+                                          >
+                                            {selectedPurposes[purpose.id] ? "Ativo" : "Inativo"}
+                                          </badge_1.Badge>}
+                                    </div>
+                                  </accordion_1.AccordionContent>
+                                </accordion_1.AccordionItem>
+                              ))}
                         </accordion_1.Accordion>
 
                         <div className="bg-blue-50 p-4 rounded-lg">

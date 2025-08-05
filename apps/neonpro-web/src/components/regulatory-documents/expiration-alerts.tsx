@@ -1,12 +1,12 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { AlertTriangle, Calendar, FileText, Settings, Bell, Eye, Edit, X } from "lucide-react";
+import type { AlertTriangle, Bell, Calendar, Edit, Eye, FileText, Settings, X } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Skeleton } from "@/components/ui/skeleton";
 
 interface RegulatoryAlert {

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Backup Manager
  * Story 1.8: Sistema de Backup e Recovery
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.backupManager = exports.BackupManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -165,7 +162,7 @@ var audit_logger_1 = require("../auth/audit/audit-logger");
 /**
  * Gerenciador principal do sistema de backup
  */
-var BackupManager = /** @class */ (function () {
+var BackupManager = /** @class */ (() => {
   function BackupManager() {
     // private security: SecurityService;
     this.activeBackups = new Map();
@@ -723,7 +720,7 @@ var BackupManager = /** @class */ (function () {
   // ============================================================================
   BackupManager.prototype.backupDatabase = function (config, progress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup do banco de dados
         // Usar pg_dump para PostgreSQL/Supabase
         return [2 /*return*/, { size: 0, filesCount: 0 }];
@@ -732,7 +729,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.backupFiles = function (config, progress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup de arquivos
         return [2 /*return*/, { size: 0, filesCount: 0 }];
       });
@@ -740,7 +737,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.backupLogs = function (config, progress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup de logs
         return [2 /*return*/, { size: 0, filesCount: 0 }];
       });
@@ -748,7 +745,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.backupConfig = function (config, progress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup de configurações
         return [2 /*return*/, { size: 0, filesCount: 0 }];
       });
@@ -756,7 +753,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.backupMedia = function (config, progress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup de mídia
         return [2 /*return*/, { size: 0, filesCount: 0 }];
       });
@@ -764,7 +761,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.backupDocuments = function (config, progress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup de documentos
         return [2 /*return*/, { size: 0, filesCount: 0 }];
       });
@@ -953,7 +950,7 @@ var BackupManager = /** @class */ (function () {
   // ============================================================================
   BackupManager.prototype.validateBackupConfig = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!config.name || config.name.trim().length === 0) {
           throw new Error("Nome da configuração é obrigatório");
         }
@@ -1002,7 +999,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.calculateChecksum = function (filePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar cálculo de checksum
         return [2 /*return*/, "sha256-checksum"];
       });
@@ -1010,7 +1007,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.compressBackup = function (path, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar compressão
         return [2 /*return*/, { path: path + ".gz", size: 0 }];
       });
@@ -1018,7 +1015,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.encryptBackup = function (path, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar criptografia
         return [2 /*return*/, { path: path + ".enc" }];
       });
@@ -1045,9 +1042,7 @@ var BackupManager = /** @class */ (function () {
             retention = config.retention;
             now = new Date();
             cutoffDate = new Date(now.getTime() - retention.maxAge * 24 * 60 * 60 * 1000);
-            toDelete = oldBackups.filter(function (backup) {
-              return new Date(backup.startTime) < cutoffDate;
-            });
+            toDelete = oldBackups.filter((backup) => new Date(backup.startTime) < cutoffDate);
             (_i = 0), (toDelete_1 = toDelete);
             _a.label = 2;
           case 2:
@@ -1087,7 +1082,7 @@ var BackupManager = /** @class */ (function () {
       });
     });
   };
-  BackupManager.prototype.handleError = function (message, error) {
+  BackupManager.prototype.handleError = (message, error) => {
     console.error(message, error);
     return {
       success: false,

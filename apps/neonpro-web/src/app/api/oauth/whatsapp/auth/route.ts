@@ -1,8 +1,8 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { WhatsAppOAuthHandler } from "@/lib/oauth/platforms/whatsapp-handler";
-import type { Logger } from "@/lib/logger";
 import type { randomBytes } from "crypto";
+import type { NextRequest, NextResponse } from "next/server";
+import type { Logger } from "@/lib/logger";
+import type { WhatsAppOAuthHandler } from "@/lib/oauth/platforms/whatsapp-handler";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   const requestId = randomBytes(16).toString("hex");

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Row Level Security (RLS) Policies for NeonPro RBAC
  * Story 1.2: Role-Based Access Control Implementation
@@ -7,7 +6,7 @@
  */
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -16,7 +15,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DROP_POLICIES_COMMANDS = exports.ENABLE_RLS_COMMANDS = exports.RLS_POLICIES = void 0;
 exports.generateAllPolicies = generateAllPolicies;
@@ -147,10 +146,10 @@ function generateAllPolicies() {
   // Add enable RLS commands
   policies.push.apply(policies, exports.ENABLE_RLS_COMMANDS);
   // Add all table policies
-  Object.entries(exports.RLS_POLICIES).forEach(function (_a) {
+  Object.entries(exports.RLS_POLICIES).forEach((_a) => {
     var table = _a[0],
       tablePolicies = _a[1];
-    Object.entries(tablePolicies).forEach(function (_a) {
+    Object.entries(tablePolicies).forEach((_a) => {
       var operation = _a[0],
         policy = _a[1];
       policies.push(policy);

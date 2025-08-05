@@ -1,4 +1,3 @@
-"use strict";
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -318,7 +317,7 @@ exports.messageTemplateSchema = zod_1.z
     max_length: zod_1.z.number().int().min(1).optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Channel-specific length validation
       var lengths = {
         sms: 160,

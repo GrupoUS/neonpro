@@ -1,17 +1,16 @@
-"use strict";
 // API Tests for Patient Insights Endpoints
 // Story 3.2: Task 9 - API Integration Testing
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -21,7 +20,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -50,8 +49,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -72,9 +69,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("next/server");
 var route_1 = require("../../../../../../app/api/patients/[patientId]/insights/risk-assessment/route");
@@ -141,138 +138,124 @@ var route_2 = require("../../../../../../app/api/patients/[patientId]/insights/a
 var route_3 = require("../../../../../../app/api/patients/[patientId]/insights/treatments/route");
 var route_4 = require("../../../../../../app/api/patients/[patientId]/insights/comprehensive/route");
 // Mock Supabase
-jest.mock("@supabase/auth-helpers-nextjs", function () {
-  return {
-    createRouteHandlerClient: jest.fn(function () {
-      return {
-        auth: {
-          getSession: jest.fn(function () {
-            return Promise.resolve({
-              data: {
-                session: {
-                  user: { id: "user-123" },
-                },
-              },
-            });
-          }),
-        },
-        from: jest.fn(function () {
-          return {
-            select: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return {
-                    single: jest.fn(function () {
-                      return Promise.resolve({
-                        data: {
-                          id: "patient-123",
-                          clinic_id: "clinic-abc",
-                        },
-                      });
-                    }),
-                  };
-                }),
-              };
-            }),
-          };
+jest.mock("@supabase/auth-helpers-nextjs", () => ({
+  createRouteHandlerClient: jest.fn(() => ({
+    auth: {
+      getSession: jest.fn(() =>
+        Promise.resolve({
+          data: {
+            session: {
+              user: { id: "user-123" },
+            },
+          },
         }),
-      };
-    }),
-  };
-});
+      ),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          single: jest.fn(() =>
+            Promise.resolve({
+              data: {
+                id: "patient-123",
+                clinic_id: "clinic-abc",
+              },
+            }),
+          ),
+        })),
+      })),
+    })),
+  })),
+}));
 // Mock next/headers
-jest.mock("next/headers", function () {
-  return {
-    cookies: jest.fn(),
-  };
-});
+jest.mock("next/headers", () => ({
+  cookies: jest.fn(),
+}));
 // Mock the patient insights integration
-jest.mock("@/lib/ai/patient-insights", function () {
-  return jest.fn().mockImplementation(function () {
-    return {
-      generateQuickRiskAssessment: jest.fn(function () {
-        return Promise.resolve({
+jest.mock("@/lib/ai/patient-insights", () =>
+  jest.fn().mockImplementation(() => ({
+    generateQuickRiskAssessment: jest.fn(() =>
+      Promise.resolve({
+        patientId: "patient-123",
+        overallRiskScore: 0.45,
+        confidence: 0.85,
+        recommendations: ["Monitor blood pressure", "Follow up in 2 weeks"],
+      }),
+    ),
+    generateComprehensiveInsights: jest.fn(() =>
+      Promise.resolve({
+        patientId: "patient-123",
+        requestId: "req-456",
+        riskAssessment: {
           patientId: "patient-123",
           overallRiskScore: 0.45,
           confidence: 0.85,
-          recommendations: ["Monitor blood pressure", "Follow up in 2 weeks"],
-        });
-      }),
-      generateComprehensiveInsights: jest.fn(function () {
-        return Promise.resolve({
-          patientId: "patient-123",
-          requestId: "req-456",
-          riskAssessment: {
-            patientId: "patient-123",
-            overallRiskScore: 0.45,
-            confidence: 0.85,
-          },
-          alerts: {
-            totalAlerts: 2,
-            criticalAlerts: 0,
-            warningAlerts: 1,
-            infoAlerts: 1,
-          },
-          recommendations: ["Follow treatment plan"],
-          processingTime: 1500,
-          generatedAt: new Date(),
-          version: "1.0.0",
-        });
-      }),
-      generateTreatmentGuidance: jest.fn(function () {
-        return Promise.resolve({
-          patientId: "patient-123",
-          primaryRecommendations: [
-            {
-              recommendation: "Continue current medication",
-              confidence: 0.9,
-              priority: "high",
-            },
-          ],
-          confidence: 0.88,
-        });
-      }),
-      monitorPatientAlerts: jest.fn(function () {
-        return Promise.resolve({
-          patientId: "patient-123",
-          totalAlerts: 3,
-          criticalAlerts: 1,
+        },
+        alerts: {
+          totalAlerts: 2,
+          criticalAlerts: 0,
           warningAlerts: 1,
           infoAlerts: 1,
-          alerts: [
-            {
-              id: "alert-1",
-              severity: "high",
-              title: "High Risk Alert",
-              description: "Patient shows high risk factors",
-            },
-          ],
-          lastChecked: new Date(),
-          nextCheckRecommended: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        });
+        },
+        recommendations: ["Follow treatment plan"],
+        processingTime: 1500,
+        generatedAt: new Date(),
+        version: "1.0.0",
       }),
-      updatePatientOutcome: jest.fn(function () {
-        return Promise.resolve([
+    ),
+    generateTreatmentGuidance: jest.fn(() =>
+      Promise.resolve({
+        patientId: "patient-123",
+        primaryRecommendations: [
           {
-            insight: "Treatment effectiveness improved",
-            confidence: 0.85,
+            recommendation: "Continue current medication",
+            confidence: 0.9,
+            priority: "high",
           },
-        ]);
+        ],
+        confidence: 0.88,
       }),
-    };
-  });
-});
-describe("Patient Insights API Endpoints", function () {
+    ),
+    monitorPatientAlerts: jest.fn(() =>
+      Promise.resolve({
+        patientId: "patient-123",
+        totalAlerts: 3,
+        criticalAlerts: 1,
+        warningAlerts: 1,
+        infoAlerts: 1,
+        alerts: [
+          {
+            id: "alert-1",
+            severity: "high",
+            title: "High Risk Alert",
+            description: "Patient shows high risk factors",
+          },
+        ],
+        lastChecked: new Date(),
+        nextCheckRecommended: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      }),
+    ),
+    updatePatientOutcome: jest.fn(() =>
+      Promise.resolve([
+        {
+          insight: "Treatment effectiveness improved",
+          confidence: 0.85,
+        },
+      ]),
+    ),
+  })),
+);
+describe("Patient Insights API Endpoints", () => {
   var mockParams = { patientId: "patient-123" };
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("Risk Assessment API", function () {
-    describe("GET /api/patients/[patientId]/insights/risk-assessment", function () {
-      it("should return risk assessment for authenticated user", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("Risk Assessment API", () => {
+    describe("GET /api/patients/[patientId]/insights/risk-assessment", () => {
+      it("should return risk assessment for authenticated user", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -292,21 +275,18 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should return 401 for unauthenticated user", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should return 401 for unauthenticated user", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var createRouteHandlerClient, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 createRouteHandlerClient =
                   require("@supabase/auth-helpers-nextjs").createRouteHandlerClient;
                 createRouteHandlerClient.mockReturnValueOnce({
                   auth: {
-                    getSession: jest.fn(function () {
-                      return Promise.resolve({ data: { session: null } });
-                    }),
+                    getSession: jest.fn(() => Promise.resolve({ data: { session: null } })),
                   },
                 });
                 request = new server_1.NextRequest(
@@ -323,14 +303,13 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("POST /api/patients/[patientId]/insights/risk-assessment", function () {
-      it("should update risk factors successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("POST /api/patients/[patientId]/insights/risk-assessment", () => {
+      it("should update risk factors successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var requestBody, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 requestBody = {
@@ -362,12 +341,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should return 400 for missing risk factors", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should return 400 for missing risk factors", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -388,16 +366,15 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Comprehensive Insights API", function () {
-    describe("POST /api/patients/[patientId]/insights/comprehensive", function () {
-      it("should generate comprehensive insights successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("Comprehensive Insights API", () => {
+    describe("POST /api/patients/[patientId]/insights/comprehensive", () => {
+      it("should generate comprehensive insights successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var requestBody, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 requestBody = {
@@ -429,12 +406,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should handle default insight types", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should handle default insight types", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -455,14 +431,13 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("GET /api/patients/[patientId]/insights/comprehensive", function () {
-      it("should return recent insights with pagination", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("GET /api/patients/[patientId]/insights/comprehensive", () => {
+      it("should return recent insights with pagination", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -482,12 +457,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should filter by date when since parameter is provided", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should filter by date when since parameter is provided", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var since, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days ago
@@ -507,16 +481,15 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Alerts API", function () {
-    describe("GET /api/patients/[patientId]/insights/alerts", function () {
-      it("should return patient alerts successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("Alerts API", () => {
+    describe("GET /api/patients/[patientId]/insights/alerts", () => {
+      it("should return patient alerts successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -537,12 +510,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should filter alerts by severity", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should filter alerts by severity", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -559,12 +531,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should filter alerts by category", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should filter alerts by category", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -581,12 +552,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should filter active alerts only", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should filter active alerts only", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -603,14 +573,13 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("POST /api/patients/[patientId]/insights/alerts", function () {
-      it("should acknowledge alert successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("POST /api/patients/[patientId]/insights/alerts", () => {
+      it("should acknowledge alert successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var requestBody, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 requestBody = {
@@ -637,12 +606,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should resolve alert successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should resolve alert successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var requestBody, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 requestBody = {
@@ -669,12 +637,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should return 400 for invalid action", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should return 400 for invalid action", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var requestBody, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 requestBody = {
@@ -699,16 +666,15 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Treatment Guidance API", function () {
-    describe("GET /api/patients/[patientId]/insights/treatments", function () {
-      it("should return treatment guidance successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("Treatment Guidance API", () => {
+    describe("GET /api/patients/[patientId]/insights/treatments", () => {
+      it("should return treatment guidance successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -728,12 +694,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should include treatment context when provided", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should include treatment context when provided", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -751,14 +716,13 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("POST /api/patients/[patientId]/insights/treatments", function () {
-      it("should record treatment outcome successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("POST /api/patients/[patientId]/insights/treatments", () => {
+      it("should record treatment outcome successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var requestBody, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 requestBody = {
@@ -788,12 +752,11 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should return 400 for missing required fields", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should return 400 for missing required fields", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var requestBody, request, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 requestBody = {
@@ -818,42 +781,33 @@ describe("Patient Insights API Endpoints", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Error Handling", function () {
-    it("should handle patient not found", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling", () => {
+    it("should handle patient not found", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var createRouteHandlerClient, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               createRouteHandlerClient =
                 require("@supabase/auth-helpers-nextjs").createRouteHandlerClient;
               createRouteHandlerClient.mockReturnValueOnce({
                 auth: {
-                  getSession: jest.fn(function () {
-                    return Promise.resolve({
+                  getSession: jest.fn(() =>
+                    Promise.resolve({
                       data: { session: { user: { id: "user-123" } } },
-                    });
-                  }),
-                },
-                from: jest.fn(function () {
-                  return {
-                    select: jest.fn(function () {
-                      return {
-                        eq: jest.fn(function () {
-                          return {
-                            single: jest.fn(function () {
-                              return Promise.resolve({ data: null });
-                            }),
-                          };
-                        }),
-                      };
                     }),
-                  };
-                }),
+                  ),
+                },
+                from: jest.fn(() => ({
+                  select: jest.fn(() => ({
+                    eq: jest.fn(() => ({
+                      single: jest.fn(() => Promise.resolve({ data: null })),
+                    })),
+                  })),
+                })),
               });
               request = new server_1.NextRequest(
                 "http://localhost:3000/api/patients/nonexistent/insights/risk-assessment",
@@ -872,56 +826,47 @@ describe("Patient Insights API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle access denied for different clinic", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle access denied for different clinic", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var createRouteHandlerClient, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               createRouteHandlerClient =
                 require("@supabase/auth-helpers-nextjs").createRouteHandlerClient;
               createRouteHandlerClient.mockReturnValueOnce({
                 auth: {
-                  getSession: jest.fn(function () {
-                    return Promise.resolve({
+                  getSession: jest.fn(() =>
+                    Promise.resolve({
                       data: { session: { user: { id: "user-123" } } },
-                    });
-                  }),
+                    }),
+                  ),
                 },
-                from: jest.fn(function (table) {
+                from: jest.fn((table) => {
                   if (table === "patients") {
                     return {
-                      select: jest.fn(function () {
-                        return {
-                          eq: jest.fn(function () {
-                            return {
-                              single: jest.fn(function () {
-                                return Promise.resolve({
-                                  data: { id: "patient-123", clinic_id: "different-clinic" },
-                                });
-                              }),
-                            };
-                          }),
-                        };
-                      }),
+                      select: jest.fn(() => ({
+                        eq: jest.fn(() => ({
+                          single: jest.fn(() =>
+                            Promise.resolve({
+                              data: { id: "patient-123", clinic_id: "different-clinic" },
+                            }),
+                          ),
+                        })),
+                      })),
                     };
                   } else if (table === "profiles") {
                     return {
-                      select: jest.fn(function () {
-                        return {
-                          eq: jest.fn(function () {
-                            return {
-                              single: jest.fn(function () {
-                                return Promise.resolve({
-                                  data: { clinic_id: "original-clinic", role: "doctor" },
-                                });
-                              }),
-                            };
-                          }),
-                        };
-                      }),
+                      select: jest.fn(() => ({
+                        eq: jest.fn(() => ({
+                          single: jest.fn(() =>
+                            Promise.resolve({
+                              data: { clinic_id: "original-clinic", role: "doctor" },
+                            }),
+                          ),
+                        })),
+                      })),
                     };
                   }
                 }),
@@ -940,34 +885,36 @@ describe("Patient Insights API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance and Quality", function () {
-    it("should respond within reasonable time", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var start, request, duration;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              start = Date.now();
-              request = new server_1.NextRequest(
-                "http://localhost:3000/api/patients/patient-123/insights/risk-assessment",
-              );
-              return [4 /*yield*/, (0, route_1.GET)(request, { params: mockParams })];
-            case 1:
-              _a.sent();
-              duration = Date.now() - start;
-              expect(duration).toBeLessThan(5000); // 5 seconds max for API
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 10000);
-    it("should include proper audit logging", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance and Quality", () => {
+    it(
+      "should respond within reasonable time",
+      () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          var start, request, duration;
+          return __generator(this, (_a) => {
+            switch (_a.label) {
+              case 0:
+                start = Date.now();
+                request = new server_1.NextRequest(
+                  "http://localhost:3000/api/patients/patient-123/insights/risk-assessment",
+                );
+                return [4 /*yield*/, (0, route_1.GET)(request, { params: mockParams })];
+              case 1:
+                _a.sent();
+                duration = Date.now() - start;
+                expect(duration).toBeLessThan(5000); // 5 seconds max for API
+                return [2 /*return*/];
+            }
+          });
+        }),
+      10000,
+    );
+    it("should include proper audit logging", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -980,7 +927,6 @@ describe("Patient Insights API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

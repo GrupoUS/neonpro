@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -162,36 +161,29 @@ function DashboardGrid(_a) {
     lockedWidgets = _j[0],
     setLockedWidgets = _j[1];
   // Convert widgets to grid layout format
-  var gridLayouts = (0, react_1.useMemo)(
-    function () {
-      var layouts = {};
-      Object.keys(BREAKPOINTS).forEach(function (breakpoint) {
-        layouts[breakpoint] = widgets
-          .filter(function (widget) {
-            return !hiddenWidgets.has(widget.id);
-          })
-          .map(function (widget) {
-            return {
-              i: widget.id,
-              x: widget.position.x || 0,
-              y: widget.position.y || 0,
-              w: widget.position.width || 4,
-              h: widget.position.height || 3,
-              minW: widget.position.minWidth || 2,
-              minH: widget.position.minHeight || 2,
-              maxW: widget.position.maxWidth || 12,
-              maxH: widget.position.maxHeight || 8,
-              static: lockedWidgets.has(widget.id),
-            };
-          });
-      });
-      return layouts;
-    },
-    [widgets, hiddenWidgets, lockedWidgets],
-  );
+  var gridLayouts = (0, react_1.useMemo)(() => {
+    var layouts = {};
+    Object.keys(BREAKPOINTS).forEach((breakpoint) => {
+      layouts[breakpoint] = widgets
+        .filter((widget) => !hiddenWidgets.has(widget.id))
+        .map((widget) => ({
+          i: widget.id,
+          x: widget.position.x || 0,
+          y: widget.position.y || 0,
+          w: widget.position.width || 4,
+          h: widget.position.height || 3,
+          minW: widget.position.minWidth || 2,
+          minH: widget.position.minHeight || 2,
+          maxW: widget.position.maxWidth || 12,
+          maxH: widget.position.maxHeight || 8,
+          static: lockedWidgets.has(widget.id),
+        }));
+    });
+    return layouts;
+  }, [widgets, hiddenWidgets, lockedWidgets]);
   // Handle layout changes
   var handleLayoutChange = (0, react_1.useCallback)(
-    function (currentLayout, allLayouts) {
+    (currentLayout, allLayouts) => {
       if (onLayoutChange && !isDragging && !isResizing) {
         onLayoutChange(currentLayout, allLayouts);
       }
@@ -199,14 +191,14 @@ function DashboardGrid(_a) {
     [onLayoutChange, isDragging, isResizing],
   );
   // Handle widget operations
-  var handleAddWidget = (0, react_1.useCallback)(function () {
+  var handleAddWidget = (0, react_1.useCallback)(() => {
     setWidgetDialog({ isOpen: true, mode: "add" });
   }, []);
-  var handleEditWidget = (0, react_1.useCallback)(function (widget) {
+  var handleEditWidget = (0, react_1.useCallback)((widget) => {
     setWidgetDialog({ isOpen: true, mode: "edit", widget: widget });
   }, []);
   var handleDeleteWidget = (0, react_1.useCallback)(
-    function (widgetId) {
+    (widgetId) => {
       if (onWidgetDelete) {
         onWidgetDelete(widgetId);
       }
@@ -214,15 +206,15 @@ function DashboardGrid(_a) {
     [onWidgetDelete],
   );
   var handleDuplicateWidget = (0, react_1.useCallback)(
-    function (widgetId) {
+    (widgetId) => {
       if (onWidgetDuplicate) {
         onWidgetDuplicate(widgetId);
       }
     },
     [onWidgetDuplicate],
   );
-  var handleToggleWidgetVisibility = (0, react_1.useCallback)(function (widgetId) {
-    setHiddenWidgets(function (prev) {
+  var handleToggleWidgetVisibility = (0, react_1.useCallback)((widgetId) => {
+    setHiddenWidgets((prev) => {
       var newSet = new Set(prev);
       if (newSet.has(widgetId)) {
         newSet.delete(widgetId);
@@ -232,8 +224,8 @@ function DashboardGrid(_a) {
       return newSet;
     });
   }, []);
-  var handleToggleWidgetLock = (0, react_1.useCallback)(function (widgetId) {
-    setLockedWidgets(function (prev) {
+  var handleToggleWidgetLock = (0, react_1.useCallback)((widgetId) => {
+    setLockedWidgets((prev) => {
       var newSet = new Set(prev);
       if (newSet.has(widgetId)) {
         newSet.delete(widgetId);
@@ -245,26 +237,22 @@ function DashboardGrid(_a) {
   }, []);
   // Apply layout preset
   var handleApplyPreset = (0, react_1.useCallback)(
-    function (presetId) {
+    (presetId) => {
       var _a;
-      var preset = LAYOUT_PRESETS.find(function (p) {
-        return p.id === presetId;
-      });
+      var preset = LAYOUT_PRESETS.find((p) => p.id === presetId);
       if (preset && onLayoutChange) {
         // Convert preset to grid layout format
-        var newLayout = preset.layout.areas.map(function (area) {
-          return {
-            i: area.id,
-            x: area.x,
-            y: area.y,
-            w: area.width,
-            h: area.height,
-            minW: area.minWidth || 2,
-            minH: area.minHeight || 2,
-            maxW: area.maxWidth || 12,
-            maxH: area.maxHeight || 8,
-          };
-        });
+        var newLayout = preset.layout.areas.map((area) => ({
+          i: area.id,
+          x: area.x,
+          y: area.y,
+          w: area.width,
+          h: area.height,
+          minW: area.minWidth || 2,
+          minH: area.minHeight || 2,
+          maxW: area.maxWidth || 12,
+          maxH: area.maxHeight || 8,
+        }));
         var layouts = ((_a = {}), (_a[currentBreakpoint] = newLayout), _a);
         onLayoutChange(newLayout, layouts);
       }
@@ -274,15 +262,14 @@ function DashboardGrid(_a) {
   );
   // Render widget based on type
   var renderWidget = (0, react_1.useCallback)(
-    function (widget) {
+    (widget) => {
       var commonProps = {
         widget: widget,
         isEditing: isEditing,
-        onUpdate: function (updates) {
-          return onWidgetUpdate === null || onWidgetUpdate === void 0
+        onUpdate: (updates) =>
+          onWidgetUpdate === null || onWidgetUpdate === void 0
             ? void 0
-            : onWidgetUpdate(widget.id, updates);
-        },
+            : onWidgetUpdate(widget.id, updates),
       };
       switch (widget.widgetType) {
         case "kpi":
@@ -325,27 +312,23 @@ function DashboardGrid(_a) {
                 <select_1.SelectValue placeholder="Apply Layout Preset" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
-                {LAYOUT_PRESETS.map(function (preset) {
-                  return (
-                    <select_1.SelectItem key={preset.id} value={preset.id}>
-                      <div className="flex items-center gap-2">
-                        <span>{preset.preview}</span>
-                        <div>
-                          <div className="font-medium">{preset.name}</div>
-                          <div className="text-xs text-muted-foreground">{preset.description}</div>
-                        </div>
+                {LAYOUT_PRESETS.map((preset) => (
+                  <select_1.SelectItem key={preset.id} value={preset.id}>
+                    <div className="flex items-center gap-2">
+                      <span>{preset.preview}</span>
+                      <div>
+                        <div className="font-medium">{preset.name}</div>
+                        <div className="text-xs text-muted-foreground">{preset.description}</div>
                       </div>
-                    </select_1.SelectItem>
-                  );
-                })}
+                    </div>
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
 
             {selectedPreset && (
               <button_1.Button
-                onClick={function () {
-                  return handleApplyPreset(selectedPreset);
-                }}
+                onClick={() => handleApplyPreset(selectedPreset)}
                 size="sm"
                 variant="outline"
               >
@@ -359,9 +342,7 @@ function DashboardGrid(_a) {
               <tooltip_1.Tooltip>
                 <tooltip_1.TooltipTrigger asChild>
                   <button_1.Button
-                    onClick={function () {
-                      return setCurrentBreakpoint("xxs");
-                    }}
+                    onClick={() => setCurrentBreakpoint("xxs")}
                     size="sm"
                     variant={currentBreakpoint === "xxs" ? "default" : "outline"}
                   >
@@ -374,9 +355,7 @@ function DashboardGrid(_a) {
               <tooltip_1.Tooltip>
                 <tooltip_1.TooltipTrigger asChild>
                   <button_1.Button
-                    onClick={function () {
-                      return setCurrentBreakpoint("sm");
-                    }}
+                    onClick={() => setCurrentBreakpoint("sm")}
                     size="sm"
                     variant={currentBreakpoint === "sm" ? "default" : "outline"}
                   >
@@ -389,9 +368,7 @@ function DashboardGrid(_a) {
               <tooltip_1.Tooltip>
                 <tooltip_1.TooltipTrigger asChild>
                   <button_1.Button
-                    onClick={function () {
-                      return setCurrentBreakpoint("lg");
-                    }}
+                    onClick={() => setCurrentBreakpoint("lg")}
                     size="sm"
                     variant={currentBreakpoint === "lg" ? "default" : "outline"}
                   >
@@ -430,138 +407,116 @@ function DashboardGrid(_a) {
         isResizable={isEditing}
         onLayoutChange={handleLayoutChange}
         onBreakpointChange={setCurrentBreakpoint}
-        onDragStart={function () {
-          return setIsDragging(true);
-        }}
-        onDragStop={function () {
-          return setIsDragging(false);
-        }}
-        onResizeStart={function () {
-          return setIsResizing(true);
-        }}
-        onResizeStop={function () {
-          return setIsResizing(false);
-        }}
+        onDragStart={() => setIsDragging(true)}
+        onDragStop={() => setIsDragging(false)}
+        onResizeStart={() => setIsResizing(true)}
+        onResizeStop={() => setIsResizing(false)}
         useCSSTransforms
         preventCollision={false}
         compactType="vertical"
       >
         {widgets
-          .filter(function (widget) {
-            return !hiddenWidgets.has(widget.id);
-          })
-          .map(function (widget) {
-            return (
-              <div key={widget.id} className="relative group">
-                {/* Widget Controls */}
-                {isEditing && (
-                  <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="flex items-center gap-1 bg-background/90 backdrop-blur-sm rounded-md p-1 shadow-sm border">
-                      <tooltip_1.TooltipProvider>
-                        <tooltip_1.Tooltip>
-                          <tooltip_1.TooltipTrigger asChild>
-                            <button_1.Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 w-6 p-0"
-                              onClick={function () {
-                                return handleEditWidget(widget);
-                              }}
-                            >
-                              <lucide_react_1.Settings className="h-3 w-3" />
-                            </button_1.Button>
-                          </tooltip_1.TooltipTrigger>
-                          <tooltip_1.TooltipContent>Edit Widget</tooltip_1.TooltipContent>
-                        </tooltip_1.Tooltip>
+          .filter((widget) => !hiddenWidgets.has(widget.id))
+          .map((widget) => (
+            <div key={widget.id} className="relative group">
+              {/* Widget Controls */}
+              {isEditing && (
+                <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1 bg-background/90 backdrop-blur-sm rounded-md p-1 shadow-sm border">
+                    <tooltip_1.TooltipProvider>
+                      <tooltip_1.Tooltip>
+                        <tooltip_1.TooltipTrigger asChild>
+                          <button_1.Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0"
+                            onClick={() => handleEditWidget(widget)}
+                          >
+                            <lucide_react_1.Settings className="h-3 w-3" />
+                          </button_1.Button>
+                        </tooltip_1.TooltipTrigger>
+                        <tooltip_1.TooltipContent>Edit Widget</tooltip_1.TooltipContent>
+                      </tooltip_1.Tooltip>
 
-                        <tooltip_1.Tooltip>
-                          <tooltip_1.TooltipTrigger asChild>
-                            <button_1.Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 w-6 p-0"
-                              onClick={function () {
-                                return handleDuplicateWidget(widget.id);
-                              }}
-                            >
-                              <lucide_react_1.Copy className="h-3 w-3" />
-                            </button_1.Button>
-                          </tooltip_1.TooltipTrigger>
-                          <tooltip_1.TooltipContent>Duplicate Widget</tooltip_1.TooltipContent>
-                        </tooltip_1.Tooltip>
+                      <tooltip_1.Tooltip>
+                        <tooltip_1.TooltipTrigger asChild>
+                          <button_1.Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0"
+                            onClick={() => handleDuplicateWidget(widget.id)}
+                          >
+                            <lucide_react_1.Copy className="h-3 w-3" />
+                          </button_1.Button>
+                        </tooltip_1.TooltipTrigger>
+                        <tooltip_1.TooltipContent>Duplicate Widget</tooltip_1.TooltipContent>
+                      </tooltip_1.Tooltip>
 
-                        <tooltip_1.Tooltip>
-                          <tooltip_1.TooltipTrigger asChild>
-                            <button_1.Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 w-6 p-0"
-                              onClick={function () {
-                                return handleToggleWidgetLock(widget.id);
-                              }}
-                            >
-                              {lockedWidgets.has(widget.id)
-                                ? <lucide_react_1.Lock className="h-3 w-3" />
-                                : <lucide_react_1.Unlock className="h-3 w-3" />}
-                            </button_1.Button>
-                          </tooltip_1.TooltipTrigger>
-                          <tooltip_1.TooltipContent>
-                            {lockedWidgets.has(widget.id) ? "Unlock" : "Lock"} Widget
-                          </tooltip_1.TooltipContent>
-                        </tooltip_1.Tooltip>
+                      <tooltip_1.Tooltip>
+                        <tooltip_1.TooltipTrigger asChild>
+                          <button_1.Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0"
+                            onClick={() => handleToggleWidgetLock(widget.id)}
+                          >
+                            {lockedWidgets.has(widget.id)
+                              ? <lucide_react_1.Lock className="h-3 w-3" />
+                              : <lucide_react_1.Unlock className="h-3 w-3" />}
+                          </button_1.Button>
+                        </tooltip_1.TooltipTrigger>
+                        <tooltip_1.TooltipContent>
+                          {lockedWidgets.has(widget.id) ? "Unlock" : "Lock"} Widget
+                        </tooltip_1.TooltipContent>
+                      </tooltip_1.Tooltip>
 
-                        <tooltip_1.Tooltip>
-                          <tooltip_1.TooltipTrigger asChild>
-                            <button_1.Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 w-6 p-0"
-                              onClick={function () {
-                                return handleToggleWidgetVisibility(widget.id);
-                              }}
-                            >
-                              <lucide_react_1.EyeOff className="h-3 w-3" />
-                            </button_1.Button>
-                          </tooltip_1.TooltipTrigger>
-                          <tooltip_1.TooltipContent>Hide Widget</tooltip_1.TooltipContent>
-                        </tooltip_1.Tooltip>
+                      <tooltip_1.Tooltip>
+                        <tooltip_1.TooltipTrigger asChild>
+                          <button_1.Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0"
+                            onClick={() => handleToggleWidgetVisibility(widget.id)}
+                          >
+                            <lucide_react_1.EyeOff className="h-3 w-3" />
+                          </button_1.Button>
+                        </tooltip_1.TooltipTrigger>
+                        <tooltip_1.TooltipContent>Hide Widget</tooltip_1.TooltipContent>
+                      </tooltip_1.Tooltip>
 
-                        <tooltip_1.Tooltip>
-                          <tooltip_1.TooltipTrigger asChild>
-                            <button_1.Button
-                              size="sm"
-                              variant="ghost"
-                              className="h-6 w-6 p-0 text-destructive hover:text-destructive"
-                              onClick={function () {
-                                return handleDeleteWidget(widget.id);
-                              }}
-                            >
-                              <lucide_react_1.Trash2 className="h-3 w-3" />
-                            </button_1.Button>
-                          </tooltip_1.TooltipTrigger>
-                          <tooltip_1.TooltipContent>Delete Widget</tooltip_1.TooltipContent>
-                        </tooltip_1.Tooltip>
-                      </tooltip_1.TooltipProvider>
-                    </div>
+                      <tooltip_1.Tooltip>
+                        <tooltip_1.TooltipTrigger asChild>
+                          <button_1.Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+                            onClick={() => handleDeleteWidget(widget.id)}
+                          >
+                            <lucide_react_1.Trash2 className="h-3 w-3" />
+                          </button_1.Button>
+                        </tooltip_1.TooltipTrigger>
+                        <tooltip_1.TooltipContent>Delete Widget</tooltip_1.TooltipContent>
+                      </tooltip_1.Tooltip>
+                    </tooltip_1.TooltipProvider>
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Widget Status Indicators */}
-                {isEditing && (
-                  <div className="absolute top-2 left-2 z-10 flex gap-1">
-                    {lockedWidgets.has(widget.id) && (
-                      <badge_1.Badge variant="secondary" className="h-5 px-1 text-xs">
-                        <lucide_react_1.Lock className="h-2 w-2" />
-                      </badge_1.Badge>
-                    )}
-                  </div>
-                )}
+              {/* Widget Status Indicators */}
+              {isEditing && (
+                <div className="absolute top-2 left-2 z-10 flex gap-1">
+                  {lockedWidgets.has(widget.id) && (
+                    <badge_1.Badge variant="secondary" className="h-5 px-1 text-xs">
+                      <lucide_react_1.Lock className="h-2 w-2" />
+                    </badge_1.Badge>
+                  )}
+                </div>
+              )}
 
-                {/* Widget Content */}
-                {renderWidget(widget)}
-              </div>
-            );
-          })}
+              {/* Widget Content */}
+              {renderWidget(widget)}
+            </div>
+          ))}
       </ResponsiveGridLayout>
 
       {/* Hidden Widgets Panel */}
@@ -573,24 +528,18 @@ function DashboardGrid(_a) {
           </h3>
           <div className="flex flex-wrap gap-2">
             {widgets
-              .filter(function (widget) {
-                return hiddenWidgets.has(widget.id);
-              })
-              .map(function (widget) {
-                return (
-                  <badge_1.Badge
-                    key={widget.id}
-                    variant="outline"
-                    className="cursor-pointer hover:bg-muted"
-                    onClick={function () {
-                      return handleToggleWidgetVisibility(widget.id);
-                    }}
-                  >
-                    <lucide_react_1.Eye className="h-3 w-3 mr-1" />
-                    {widget.title}
-                  </badge_1.Badge>
-                );
-              })}
+              .filter((widget) => hiddenWidgets.has(widget.id))
+              .map((widget) => (
+                <badge_1.Badge
+                  key={widget.id}
+                  variant="outline"
+                  className="cursor-pointer hover:bg-muted"
+                  onClick={() => handleToggleWidgetVisibility(widget.id)}
+                >
+                  <lucide_react_1.Eye className="h-3 w-3 mr-1" />
+                  {widget.title}
+                </badge_1.Badge>
+              ))}
           </div>
         </div>
       )}
@@ -600,10 +549,8 @@ function DashboardGrid(_a) {
         isOpen={widgetDialog.isOpen}
         mode={widgetDialog.mode}
         widget={widgetDialog.widget}
-        onClose={function () {
-          return setWidgetDialog({ isOpen: false, mode: "add" });
-        }}
-        onSave={function (widget) {
+        onClose={() => setWidgetDialog({ isOpen: false, mode: "add" })}
+        onSave={(widget) => {
           if (widgetDialog.mode === "add" && onWidgetAdd) {
             onWidgetAdd(widget);
           } else if (widgetDialog.mode === "edit" && onWidgetUpdate && widgetDialog.widget) {
@@ -633,24 +580,21 @@ function WidgetConfigDialog(_a) {
     formData = _g[0],
     setFormData = _g[1];
   // Update form data when widget changes
-  react_1.default.useEffect(
-    function () {
-      if (widget && mode === "edit") {
-        setFormData(widget);
-      } else {
-        setFormData({
-          title: "",
-          widgetType: "kpi",
-          dataSource: "",
-          config: {},
-          position: { x: 0, y: 0, width: 4, height: 3 },
-          refreshInterval: 300,
-        });
-      }
-    },
-    [widget, mode],
-  );
-  var handleSave = function () {
+  react_1.default.useEffect(() => {
+    if (widget && mode === "edit") {
+      setFormData(widget);
+    } else {
+      setFormData({
+        title: "",
+        widgetType: "kpi",
+        dataSource: "",
+        config: {},
+        position: { x: 0, y: 0, width: 4, height: 3 },
+        refreshInterval: 300,
+      });
+    }
+  }, [widget, mode]);
+  var handleSave = () => {
     onSave(formData);
   };
   return (
@@ -669,11 +613,9 @@ function WidgetConfigDialog(_a) {
               <input_1.Input
                 id="title"
                 value={formData.title || ""}
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), { title: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setFormData((prev) => __assign(__assign({}, prev), { title: e.target.value }))
+                }
                 placeholder="Enter widget title"
               />
             </div>
@@ -682,26 +624,22 @@ function WidgetConfigDialog(_a) {
               <label_1.Label htmlFor="type">Widget Type</label_1.Label>
               <select_1.Select
                 value={formData.widgetType}
-                onValueChange={function (value) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), { widgetType: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFormData((prev) => __assign(__assign({}, prev), { widgetType: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {WIDGET_TYPES.map(function (type) {
-                    return (
-                      <select_1.SelectItem key={type.value} value={type.value}>
-                        <div>
-                          <div className="font-medium">{type.label}</div>
-                          <div className="text-xs text-muted-foreground">{type.description}</div>
-                        </div>
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {WIDGET_TYPES.map((type) => (
+                    <select_1.SelectItem key={type.value} value={type.value}>
+                      <div>
+                        <div className="font-medium">{type.label}</div>
+                        <div className="text-xs text-muted-foreground">{type.description}</div>
+                      </div>
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -712,11 +650,9 @@ function WidgetConfigDialog(_a) {
             <input_1.Input
               id="dataSource"
               value={formData.dataSource || ""}
-              onChange={function (e) {
-                return setFormData(function (prev) {
-                  return __assign(__assign({}, prev), { dataSource: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setFormData((prev) => __assign(__assign({}, prev), { dataSource: e.target.value }))
+              }
               placeholder="Enter data source endpoint or query"
             />
           </div>
@@ -732,15 +668,15 @@ function WidgetConfigDialog(_a) {
                 value={
                   ((_b = formData.position) === null || _b === void 0 ? void 0 : _b.width) || 4
                 }
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), {
+                onChange={(e) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), {
                       position: __assign(__assign({}, prev.position), {
                         width: parseInt(e.target.value),
                       }),
-                    });
-                  });
-                }}
+                    }),
+                  )
+                }
               />
             </div>
 
@@ -754,15 +690,15 @@ function WidgetConfigDialog(_a) {
                 value={
                   ((_c = formData.position) === null || _c === void 0 ? void 0 : _c.height) || 3
                 }
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), {
+                onChange={(e) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), {
                       position: __assign(__assign({}, prev.position), {
                         height: parseInt(e.target.value),
                       }),
-                    });
-                  });
-                }}
+                    }),
+                  )
+                }
               />
             </div>
 
@@ -774,15 +710,15 @@ function WidgetConfigDialog(_a) {
                 min="0"
                 max="11"
                 value={((_d = formData.position) === null || _d === void 0 ? void 0 : _d.x) || 0}
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), {
+                onChange={(e) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), {
                       position: __assign(__assign({}, prev.position), {
                         x: parseInt(e.target.value),
                       }),
-                    });
-                  });
-                }}
+                    }),
+                  )
+                }
               />
             </div>
 
@@ -793,15 +729,15 @@ function WidgetConfigDialog(_a) {
                 type="number"
                 min="0"
                 value={((_e = formData.position) === null || _e === void 0 ? void 0 : _e.y) || 0}
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), {
+                onChange={(e) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), {
                       position: __assign(__assign({}, prev.position), {
                         y: parseInt(e.target.value),
                       }),
-                    });
-                  });
-                }}
+                    }),
+                  )
+                }
               />
             </div>
           </div>
@@ -814,11 +750,11 @@ function WidgetConfigDialog(_a) {
                   ? void 0
                   : _f.toString()) || "300"
               }
-              onValueChange={function (value) {
-                return setFormData(function (prev) {
-                  return __assign(__assign({}, prev), { refreshInterval: parseInt(value) });
-                });
-              }}
+              onValueChange={(value) =>
+                setFormData((prev) =>
+                  __assign(__assign({}, prev), { refreshInterval: parseInt(value) }),
+                )
+              }
             >
               <select_1.SelectTrigger>
                 <select_1.SelectValue />

@@ -3,19 +3,19 @@ import type { ConflictDetector } from "./conflict-detector";
 import type { ResolutionEngine } from "./resolution-engine";
 import type { ResourceOptimizer } from "./resource-optimizer";
 import type {
+  AutomationSettings,
   ConflictDetails,
-  ResolutionOption,
-  ResourceOptimization,
+  ConflictResolutionResult,
+  ConflictType,
   LoadBalancingResult,
   OptimizationConfig,
   OptimizationConstraints,
-  ConflictType,
-  ResolutionStrategy,
   OptimizationStrategy,
-  ConflictResolutionResult,
-  SystemAnalytics,
   PerformanceMetrics,
-  AutomationSettings,
+  ResolutionOption,
+  ResolutionStrategy,
+  ResourceOptimization,
+  SystemAnalytics,
 } from "./types";
 
 /**
@@ -632,11 +632,11 @@ export class IntelligentConflictResolutionSystem {
   }
 }
 
-// Export all types and classes
-export * from "./types";
 export { ConflictDetector } from "./conflict-detector";
 export { ResolutionEngine } from "./resolution-engine";
 export { ResourceOptimizer } from "./resource-optimizer";
+// Export all types and classes
+export * from "./types";
 
 // Default export
 export default IntelligentConflictResolutionSystem;

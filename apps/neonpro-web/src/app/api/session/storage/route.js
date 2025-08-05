@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.GET = GET;
@@ -161,7 +158,7 @@ function POST(request) {
       query,
       revokeError,
       error_1;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           _d.trys.push([0, 11, , 12]);
@@ -362,7 +359,7 @@ function GET(request) {
       expired_tokens,
       revoked_tokens,
       error_2;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 4, , 5]);
@@ -404,21 +401,16 @@ function GET(request) {
           active_tokens =
             (tokens === null || tokens === void 0
               ? void 0
-              : tokens.filter(function (t) {
-                  return t.is_active && new Date(t.expires_at) > new Date();
-                }).length) || 0;
+              : tokens.filter((t) => t.is_active && new Date(t.expires_at) > new Date()).length) ||
+            0;
           expired_tokens =
             (tokens === null || tokens === void 0
               ? void 0
-              : tokens.filter(function (t) {
-                  return new Date(t.expires_at) <= new Date();
-                }).length) || 0;
+              : tokens.filter((t) => new Date(t.expires_at) <= new Date()).length) || 0;
           revoked_tokens =
             (tokens === null || tokens === void 0
               ? void 0
-              : tokens.filter(function (t) {
-                  return !t.is_active;
-                }).length) || 0;
+              : tokens.filter((t) => !t.is_active).length) || 0;
           return [
             2 /*return*/,
             server_1.NextResponse.json({
@@ -448,7 +440,7 @@ function GET(request) {
 function DELETE(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, _a, user, authError, searchParams, action, revokeError, cleanupError, error_3;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 7, , 8]);

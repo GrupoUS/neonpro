@@ -3,18 +3,17 @@
 // Based on research: Recharts patterns + SaaS conversion best practices
 // Created: 2025-01-22
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConversionCharts = ConversionCharts;
 var react_1 = require("react");
@@ -161,7 +158,7 @@ var CHART_COLORS = {
   chart5: "hsl(var(--chart-5))",
 };
 // Custom tooltip component following shadcn/ui patterns
-var CustomTooltip = function (_a) {
+var CustomTooltip = (_a) => {
   var active = _a.active,
     payload = _a.payload,
     label = _a.label;
@@ -169,22 +166,19 @@ var CustomTooltip = function (_a) {
     return (
       <div className="rounded-lg border bg-background p-3 shadow-md">
         <p className="font-medium text-sm mb-2">{label}</p>
-        {payload.map(function (entry, index) {
-          return (
-            <div key={index} className="flex items-center gap-2 text-xs">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-              <span className="text-muted-foreground">{entry.dataKey}:</span>
-              <span className="font-medium">{entry.value}</span>
-            </div>
-          );
-        })}
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center gap-2 text-xs">
+            <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="text-muted-foreground">{entry.dataKey}:</span>
+            <span className="font-medium">{entry.value}</span>
+          </div>
+        ))}
       </div>
     );
   }
   return null;
 };
 function ConversionCharts(_a) {
-  var _this = this;
   var className = _a.className,
     _b = _a.timeRange,
     timeRange = _b === void 0 ? "30d" : _b;
@@ -197,44 +191,40 @@ function ConversionCharts(_a) {
   var _e = (0, react_1.useState)(timeRange),
     selectedTimeRange = _e[0],
     setSelectedTimeRange = _e[1]; // Fetch chart data
-  (0, react_1.useEffect)(
-    function () {
-      var fetchChartData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var response, chartData, error_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                _a.trys.push([0, 3, 4, 5]);
-                setLoading(true);
-                return [
-                  4 /*yield*/,
-                  fetch("/api/analytics/charts?timeRange=".concat(selectedTimeRange)),
-                ];
-              case 1:
-                response = _a.sent();
-                return [4 /*yield*/, response.json()];
-              case 2:
-                chartData = _a.sent();
-                setData(chartData);
-                return [3 /*break*/, 5];
-              case 3:
-                error_1 = _a.sent();
-                console.error("Failed to fetch chart data:", error_1);
-                return [3 /*break*/, 5];
-              case 4:
-                setLoading(false);
-                return [7 /*endfinally*/];
-              case 5:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var fetchChartData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, chartData, error_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setLoading(true);
+              return [
+                4 /*yield*/,
+                fetch("/api/analytics/charts?timeRange=".concat(selectedTimeRange)),
+              ];
+            case 1:
+              response = _a.sent();
+              return [4 /*yield*/, response.json()];
+            case 2:
+              chartData = _a.sent();
+              setData(chartData);
+              return [3 /*break*/, 5];
+            case 3:
+              error_1 = _a.sent();
+              console.error("Failed to fetch chart data:", error_1);
+              return [3 /*break*/, 5];
+            case 4:
+              setLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      fetchChartData();
-    },
-    [selectedTimeRange],
-  );
+      });
+    fetchChartData();
+  }, [selectedTimeRange]);
   // Mock data for demonstration (will be replaced by API)
   var mockConversionTrend = [
     { period: "Week 1", trials: 125, conversions: 31, conversionRate: 24.8, revenue: 15500 },
@@ -284,19 +274,17 @@ function ConversionCharts(_a) {
     return (
       <div className={(0, utils_1.cn)("space-y-6", className)}>
         <div className="grid gap-4 md:grid-cols-2">
-          {Array.from({ length: 4 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="animate-pulse">
-                <card_1.CardHeader>
-                  <div className="h-4 w-32 bg-muted rounded"></div>
-                  <div className="h-3 w-48 bg-muted rounded"></div>
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="h-64 bg-muted rounded"></div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {Array.from({ length: 4 }).map((_, i) => (
+            <card_1.Card key={i} className="animate-pulse">
+              <card_1.CardHeader>
+                <div className="h-4 w-32 bg-muted rounded"></div>
+                <div className="h-3 w-48 bg-muted rounded"></div>
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="h-64 bg-muted rounded"></div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -403,41 +391,39 @@ function ConversionCharts(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {mockFunnelData.map(function (stage, index) {
-                  return (
-                    <div key={stage.stage} className="relative">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <badge_1.Badge variant="outline" className="text-xs">
-                            {index + 1}
-                          </badge_1.Badge>
-                          <span className="font-medium">{stage.stage}</span>
-                        </div>
-                        <div className="flex items-center gap-4 text-sm">
-                          <span>{stage.users.toLocaleString()} users</span>
-                          <span className="text-muted-foreground">{stage.percentage}%</span>
-                          {index > 0 && (
-                            <div className="flex items-center text-red-600">
-                              <lucide_react_1.TrendingDown className="mr-1 h-3 w-3" />
-                              <span>{stage.dropOff}% drop-off</span>
-                            </div>
-                          )}
-                        </div>
+                {mockFunnelData.map((stage, index) => (
+                  <div key={stage.stage} className="relative">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <badge_1.Badge variant="outline" className="text-xs">
+                          {index + 1}
+                        </badge_1.Badge>
+                        <span className="font-medium">{stage.stage}</span>
                       </div>
-                      <div className="w-full bg-muted rounded-full h-3">
-                        <div
-                          className="bg-gradient-to-r from-chart-1 to-chart-2 h-3 rounded-full transition-all duration-500"
-                          style={{
-                            width: "".concat(stage.percentage, "%"),
-                            background: "linear-gradient(to right, "
-                              .concat(CHART_COLORS.chart1, ", ")
-                              .concat(CHART_COLORS.chart2, ")"),
-                          }}
-                        />
+                      <div className="flex items-center gap-4 text-sm">
+                        <span>{stage.users.toLocaleString()} users</span>
+                        <span className="text-muted-foreground">{stage.percentage}%</span>
+                        {index > 0 && (
+                          <div className="flex items-center text-red-600">
+                            <lucide_react_1.TrendingDown className="mr-1 h-3 w-3" />
+                            <span>{stage.dropOff}% drop-off</span>
+                          </div>
+                        )}
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="w-full bg-muted rounded-full h-3">
+                      <div
+                        className="bg-gradient-to-r from-chart-1 to-chart-2 h-3 rounded-full transition-all duration-500"
+                        style={{
+                          width: "".concat(stage.percentage, "%"),
+                          background: "linear-gradient(to right, "
+                            .concat(CHART_COLORS.chart1, ", ")
+                            .concat(CHART_COLORS.chart2, ")"),
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -461,7 +447,7 @@ function ConversionCharts(_a) {
                       cy="50%"
                       outerRadius={80}
                       dataKey="conversions"
-                      label={function (_a) {
+                      label={(_a) => {
                         var name = _a.name,
                           value = _a.value,
                           percent = _a.percent;
@@ -471,9 +457,9 @@ function ConversionCharts(_a) {
                           .concat((percent * 100).toFixed(1), "%)");
                       }}
                     >
-                      {mockSourceData.map(function (entry, index) {
-                        return <recharts_1.Cell key={"cell-".concat(index)} fill={entry.fill} />;
-                      })}
+                      {mockSourceData.map((entry, index) => (
+                        <recharts_1.Cell key={"cell-".concat(index)} fill={entry.fill} />
+                      ))}
                     </recharts_1.Pie>
                     <recharts_1.Tooltip content={<CustomTooltip />} />
                   </recharts_1.PieChart>

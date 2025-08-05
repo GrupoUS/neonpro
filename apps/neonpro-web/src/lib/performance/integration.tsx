@@ -6,7 +6,7 @@
 "use client";
 
 import type { useEffect } from "react";
-import type { onCLS, onFID, onFCP, onLCP, onTTFB } from "web-vitals";
+import type { onCLS, onFCP, onFID, onLCP, onTTFB } from "web-vitals";
 
 interface PerformanceMetrics {
   lcp: number;

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,12 +128,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createphotoRecognitionSystem = exports.PhotoRecognitionSystem = void 0;
 // lib/patients/photo-recognition.ts
 var server_1 = require("@/lib/supabase/server");
-var PhotoRecognitionSystem = /** @class */ (function () {
+var PhotoRecognitionSystem = /** @class */ (() => {
   function PhotoRecognitionSystem() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -150,8 +147,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var photoData_1;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           photoData_1 = {
             id: "photo_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9)),
@@ -189,8 +185,8 @@ var PhotoRecognitionSystem = /** @class */ (function () {
             },
           };
           // Simular processamento assíncrono
-          setTimeout(function () {
-            _this.processPhotoRecognition(photoData_1.id);
+          setTimeout(() => {
+            this.processPhotoRecognition(photoData_1.id);
           }, 2000);
           return [2 /*return*/, photoData_1];
         } catch (error) {
@@ -241,7 +237,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
     verificationScore,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simular atualização do status no banco
           console.log("Foto ".concat(photoId, " atualizada para status: ").concat(status));
@@ -261,7 +257,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
   PhotoRecognitionSystem.prototype.verifyPatientIdentity = function (patientId, photoFile) {
     return __awaiter(this, void 0, void 0, function () {
       var verification;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           verification = {
             success: true,
@@ -301,7 +297,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
       if (threshold === void 0) {
         threshold = 0.7;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           similarPatients = [
             {
@@ -325,9 +321,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
           ];
           return [
             2 /*return*/,
-            similarPatients.filter(function (patient) {
-              return patient.similarity >= threshold;
-            }),
+            similarPatients.filter((patient) => patient.similarity >= threshold),
           ];
         } catch (error) {
           console.error("Erro na busca de pacientes similares:", error);
@@ -346,7 +340,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
       if (algorithm === void 0) {
         algorithm = "facenet";
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           template = {
             id: "template_".concat(Date.now()),
@@ -371,7 +365,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
   PhotoRecognitionSystem.prototype.comparePhotos = function (photo1Id, photo2Id) {
     return __awaiter(this, void 0, void 0, function () {
       var comparison;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           comparison = {
             similarity: 0.87,
@@ -404,7 +398,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
   PhotoRecognitionSystem.prototype.validatePhotoQuality = function (photoFile) {
     return __awaiter(this, void 0, void 0, function () {
       var validation;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           validation = {
             isValid: true,
@@ -442,7 +436,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
   PhotoRecognitionSystem.prototype.getPatientPhotos = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var photos;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           photos = [
             {
@@ -477,7 +471,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
    */
   PhotoRecognitionSystem.prototype.deletePatientPhoto = function (photoId, deletedBy) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simular remoção da foto
           console.log("Foto ".concat(photoId, " removida por ").concat(deletedBy));
@@ -499,7 +493,7 @@ var PhotoRecognitionSystem = /** @class */ (function () {
       if (timeframe === void 0) {
         timeframe = "30days";
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           report = {
             generatedAt: new Date(),
@@ -543,7 +537,5 @@ var PhotoRecognitionSystem = /** @class */ (function () {
   return PhotoRecognitionSystem;
 })();
 exports.PhotoRecognitionSystem = PhotoRecognitionSystem;
-var createphotoRecognitionSystem = function () {
-  return new PhotoRecognitionSystem();
-};
+var createphotoRecognitionSystem = () => new PhotoRecognitionSystem();
 exports.createphotoRecognitionSystem = createphotoRecognitionSystem;

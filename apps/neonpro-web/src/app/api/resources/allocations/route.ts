@@ -4,9 +4,9 @@
 // =====================================================
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { ResourceManager } from "@/lib/resources/resource-manager";
 import type { AllocationEngine } from "@/lib/resources/allocation-engine";
+import type { ResourceManager } from "@/lib/resources/resource-manager";
+import type { createClient } from "@/lib/supabase/server";
 
 // =====================================================
 // GET /api/resources/allocations - List allocations

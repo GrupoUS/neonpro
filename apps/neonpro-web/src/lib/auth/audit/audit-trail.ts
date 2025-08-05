@@ -1,9 +1,9 @@
 // Audit Trail System
 // Comprehensive logging and tracking of all session-related activities
 
-import type { UserSession, SecurityEvent } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
 import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { SecurityEvent, UserSession } from "@/types/session";
 
 export interface AuditEvent {
   id: string;

@@ -1,4 +1,3 @@
-"use strict";
 // Story 11.2: No-Show Prediction Engine Service
 // =80% accuracy ML-based prediction system with multi-factor analysis
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,11 +144,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.noShowPredictionEngine = exports.NoShowPredictionEngine = void 0;
 var server_1 = require("@/lib/supabase/server");
-var NoShowPredictionEngine = /** @class */ (function () {
+var NoShowPredictionEngine = /** @class */ (() => {
   function NoShowPredictionEngine() {
     this.config = {
       minimumAccuracy: 0.8, // =80% requirement
@@ -227,7 +224,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var outcome, supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             outcome = actualOutcome ? "no_show" : "attended";
@@ -297,7 +294,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
             correctPredictions =
               (predictions === null || predictions === void 0
                 ? void 0
-                : predictions.filter(function (p) {
+                : predictions.filter((p) => {
                     var predictedNoShow = p.risk_score >= _this.config.confidenceThreshold;
                     var actualNoShow = p.actual_outcome === "no_show";
                     return predictedNoShow === actualNoShow;
@@ -359,7 +356,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.createPrediction = function (input) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -380,7 +377,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.updatePrediction = function (id, input) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -401,7 +398,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.getPrediction = function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -422,7 +419,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.getPredictionsByAppointment = function (appointmentId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -450,7 +447,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
       if (threshold === void 0) {
         threshold = 0.7;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -477,7 +474,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.createRiskFactor = function (input) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -495,7 +492,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.getRiskFactorsByPatient = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -568,7 +565,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.createIntervention = function (input) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -589,7 +586,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.executeIntervention = function (id, input) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -636,9 +633,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
             existingTypes =
               (existing === null || existing === void 0
                 ? void 0
-                : existing.map(function (i) {
-                    return i.intervention_type;
-                  })) || [];
+                : existing.map((i) => i.intervention_type)) || [];
             return [
               4 /*yield*/,
               this.generateInterventionRecommendations(prediction, existingTypes),
@@ -698,7 +693,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
             trueNegatives = 0;
             predictions === null || predictions === void 0
               ? void 0
-              : predictions.forEach(function (pred) {
+              : predictions.forEach((pred) => {
                   var predictedNoShow = pred.risk_score >= 0.5;
                   var actualNoShow = pred.actual_outcome === "no_show";
                   if (predictedNoShow === actualNoShow) correctPredictions++;
@@ -770,9 +765,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
                 today: {
                   high_risk_appointments: todayHighRisk.length,
                   interventions_scheduled: todayInterventions.scheduled,
-                  predicted_no_shows: todayHighRisk.filter(function (p) {
-                    return p.risk_score >= 0.8;
-                  }).length,
+                  predicted_no_shows: todayHighRisk.filter((p) => p.risk_score >= 0.8).length,
                   estimated_cost_impact: todayInterventions.estimatedCost,
                 },
                 this_week: {
@@ -827,39 +820,30 @@ var NoShowPredictionEngine = /** @class */ (function () {
             totalAppointments =
               (analytics === null || analytics === void 0
                 ? void 0
-                : analytics.reduce(function (sum, a) {
-                    return sum + (a.predicted_no_shows + a.actual_no_shows);
-                  }, 0)) || 0;
+                : analytics.reduce(
+                    (sum, a) => sum + (a.predicted_no_shows + a.actual_no_shows),
+                    0,
+                  )) || 0;
             totalPredicted =
               (analytics === null || analytics === void 0
                 ? void 0
-                : analytics.reduce(function (sum, a) {
-                    return sum + a.predicted_no_shows;
-                  }, 0)) || 0;
+                : analytics.reduce((sum, a) => sum + a.predicted_no_shows, 0)) || 0;
             totalActual =
               (analytics === null || analytics === void 0
                 ? void 0
-                : analytics.reduce(function (sum, a) {
-                    return sum + a.actual_no_shows;
-                  }, 0)) || 0;
+                : analytics.reduce((sum, a) => sum + a.actual_no_shows, 0)) || 0;
             totalCost =
               (analytics === null || analytics === void 0
                 ? void 0
-                : analytics.reduce(function (sum, a) {
-                    return sum + a.cost_impact;
-                  }, 0)) || 0;
+                : analytics.reduce((sum, a) => sum + a.cost_impact, 0)) || 0;
             totalRevenue =
               (analytics === null || analytics === void 0
                 ? void 0
-                : analytics.reduce(function (sum, a) {
-                    return sum + a.revenue_recovered;
-                  }, 0)) || 0;
+                : analytics.reduce((sum, a) => sum + a.revenue_recovered, 0)) || 0;
             avgAccuracy =
               (analytics === null || analytics === void 0
                 ? void 0
-                : analytics.reduce(function (sum, a) {
-                    return sum + a.accuracy_rate;
-                  }, 0)) /
+                : analytics.reduce((sum, a) => sum + a.accuracy_rate, 0)) /
                 ((analytics === null || analytics === void 0 ? void 0 : analytics.length) || 1) ||
               0;
             _b = {
@@ -885,42 +869,34 @@ var NoShowPredictionEngine = /** @class */ (function () {
   };
   // Helper methods for metrics calculation
   NoShowPredictionEngine.prototype.calculatePrecision = function (predictions) {
-    var _this = this;
-    var predictedPositives = predictions.filter(function (p) {
-      return p.risk_score >= _this.config.confidenceThreshold;
-    });
-    var truePositives = predictedPositives.filter(function (p) {
-      return p.actual_outcome === "no_show";
-    });
+    var predictedPositives = predictions.filter(
+      (p) => p.risk_score >= this.config.confidenceThreshold,
+    );
+    var truePositives = predictedPositives.filter((p) => p.actual_outcome === "no_show");
     return predictedPositives.length > 0 ? truePositives.length / predictedPositives.length : 0;
   };
   NoShowPredictionEngine.prototype.calculateRecall = function (predictions) {
-    var _this = this;
-    var actualPositives = predictions.filter(function (p) {
-      return p.actual_outcome === "no_show";
-    });
-    var truePositives = actualPositives.filter(function (p) {
-      return p.risk_score >= _this.config.confidenceThreshold;
-    });
+    var actualPositives = predictions.filter((p) => p.actual_outcome === "no_show");
+    var truePositives = actualPositives.filter(
+      (p) => p.risk_score >= this.config.confidenceThreshold,
+    );
     return actualPositives.length > 0 ? truePositives.length / actualPositives.length : 0;
   };
   NoShowPredictionEngine.prototype.calculateFalsePositives = function (predictions) {
-    var _this = this;
-    return predictions.filter(function (p) {
-      return p.risk_score >= _this.config.confidenceThreshold && p.actual_outcome === "attended";
-    }).length;
+    return predictions.filter(
+      (p) => p.risk_score >= this.config.confidenceThreshold && p.actual_outcome === "attended",
+    ).length;
   };
   NoShowPredictionEngine.prototype.calculateFalseNegatives = function (predictions) {
-    var _this = this;
-    return predictions.filter(function (p) {
-      return p.risk_score < _this.config.confidenceThreshold && p.actual_outcome === "no_show";
-    }).length;
+    return predictions.filter(
+      (p) => p.risk_score < this.config.confidenceThreshold && p.actual_outcome === "no_show",
+    ).length;
   };
   // Private helper methods
   NoShowPredictionEngine.prototype.getAppointmentDetails = function (appointmentId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -947,7 +923,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, appointments, error, total, noShows, attended, lastAttendance;
       var _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -970,22 +946,16 @@ var NoShowPredictionEngine = /** @class */ (function () {
             noShows =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "no_show";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "no_show").length) || 0;
             attended =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "completed";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "completed").length) || 0;
             lastAttendance =
               (_b =
                 appointments === null || appointments === void 0
                   ? void 0
-                  : appointments.find(function (a) {
-                      return a.status === "completed";
-                    })) === null || _b === void 0
+                  : appointments.find((a) => a.status === "completed")) === null || _b === void 0
                 ? void 0
                 : _b.start_time;
             return [
@@ -1099,7 +1069,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
             totalWeight = 0;
             keyFactors = [];
             // Calculate weighted risk score
-            riskFactors.forEach(function (factor) {
+            riskFactors.forEach((factor) => {
               var weightedRisk = factor.factor_value * factor.weight_score;
               totalRisk += weightedRisk;
               totalWeight += factor.weight_score;
@@ -1125,22 +1095,22 @@ var NoShowPredictionEngine = /** @class */ (function () {
       });
     });
   };
-  NoShowPredictionEngine.prototype.calculateTimingRisk = function (hour) {
+  NoShowPredictionEngine.prototype.calculateTimingRisk = (hour) => {
     // Higher risk for very early or very late appointments
     if (hour < 8 || hour > 18) return 0.8;
     if (hour < 9 || hour > 17) return 0.6;
     return 0.3;
   };
-  NoShowPredictionEngine.prototype.calculateDayOfWeekRisk = function (day) {
+  NoShowPredictionEngine.prototype.calculateDayOfWeekRisk = (day) => {
     // Monday = 1, Sunday = 0
     // Higher risk on Mondays and Fridays
     var riskByDay = [0.4, 0.7, 0.3, 0.3, 0.3, 0.6, 0.5]; // Sun-Sat
     return riskByDay[day] || 0.4;
   };
-  NoShowPredictionEngine.prototype.calculatePredictionConfidence = function (
+  NoShowPredictionEngine.prototype.calculatePredictionConfidence = (
     riskFactors,
     historicalPattern,
-  ) {
+  ) => {
     var confidence = 0.7; // Base confidence
     // Increase confidence with more data points
     if (historicalPattern.total_appointments > 5) confidence += 0.1;
@@ -1206,7 +1176,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.getRecentAppointments = function (patientId, days) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, startDate, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1243,7 +1213,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.getTodayInterventions = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, today, _a, data, error, interventions, scheduled, estimatedCost;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1261,12 +1231,8 @@ var NoShowPredictionEngine = /** @class */ (function () {
           case 2:
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
             interventions = data || [];
-            scheduled = interventions.filter(function (i) {
-              return !i.executed_at;
-            }).length;
-            estimatedCost = interventions.reduce(function (sum, i) {
-              return sum + (i.cost_impact || 0);
-            }, 0);
+            scheduled = interventions.filter((i) => !i.executed_at).length;
+            estimatedCost = interventions.reduce((sum, i) => sum + (i.cost_impact || 0), 0);
             return [2 /*return*/, { scheduled: scheduled, estimatedCost: estimatedCost }];
         }
       });
@@ -1275,7 +1241,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   NoShowPredictionEngine.prototype.getAnalyticsForPeriod = function (startDate, endDate) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, analytics;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1296,22 +1262,21 @@ var NoShowPredictionEngine = /** @class */ (function () {
               2 /*return*/,
               {
                 averageAccuracy:
-                  analytics.reduce(function (sum, a) {
-                    return sum + a.accuracy_rate;
-                  }, 0) / (analytics.length || 1),
-                interventionsExecuted: analytics.reduce(function (sum, a) {
-                  return sum + a.interventions_executed;
-                }, 0),
-                successfulInterventions: analytics.reduce(function (sum, a) {
-                  return sum + a.interventions_executed * 0.7;
-                }, 0), // Estimated
-                revenueSaved: analytics.reduce(function (sum, a) {
-                  return sum + a.revenue_recovered;
-                }, 0),
+                  analytics.reduce((sum, a) => sum + a.accuracy_rate, 0) / (analytics.length || 1),
+                interventionsExecuted: analytics.reduce(
+                  (sum, a) => sum + a.interventions_executed,
+                  0,
+                ),
+                successfulInterventions: analytics.reduce(
+                  (sum, a) => sum + a.interventions_executed * 0.7,
+                  0,
+                ), // Estimated
+                revenueSaved: analytics.reduce((sum, a) => sum + a.revenue_recovered, 0),
                 totalPredictions: analytics.length * 10, // Estimated
-                costSavings: analytics.reduce(function (sum, a) {
-                  return sum + a.revenue_recovered - a.cost_impact;
-                }, 0),
+                costSavings: analytics.reduce(
+                  (sum, a) => sum + a.revenue_recovered - a.cost_impact,
+                  0,
+                ),
                 trendDirection:
                   analytics.length > 1
                     ? analytics[analytics.length - 1].accuracy_rate > analytics[0].accuracy_rate
@@ -1335,7 +1300,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
           case 1:
             supabase = _a.sent();
             factors = {};
-            Object.keys(this.config.factorWeights).forEach(function (factor) {
+            Object.keys(this.config.factorWeights).forEach((factor) => {
               factors[factor] = {
                 factor_impact: _this.config.factorWeights[factor],
                 trend_direction: "stable",
@@ -1353,7 +1318,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, interventions, interventionTypes;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1368,7 +1333,7 @@ var NoShowPredictionEngine = /** @class */ (function () {
               "personal_call",
               "priority_booking",
             ];
-            interventionTypes.forEach(function (type) {
+            interventionTypes.forEach((type) => {
               interventions[type] = {
                 success_rate: 0.75, // Placeholder
                 cost_per_prevention: 25.0, // Placeholder

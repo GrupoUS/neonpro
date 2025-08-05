@@ -3,7 +3,7 @@
 // End-to-end tests for automated marketing campaigns functionality
 // =====================================================================================
 
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Marketing Campaigns Dashboard - E2E Tests", () => {
   test.beforeEach(async ({ page }) => {

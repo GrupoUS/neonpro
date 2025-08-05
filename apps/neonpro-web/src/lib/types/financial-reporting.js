@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // Advanced Financial Reporting Types
 // Epic 5, Story 5.1: Advanced Financial Reporting + Real-time Insights

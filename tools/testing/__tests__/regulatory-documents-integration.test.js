@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 require("@testing-library/jest-dom");
 var react_1 = require("@testing-library/react");
@@ -141,17 +138,13 @@ var use_regulatory_documents_1 = require("@/hooks/use-regulatory-documents");
 jest.mock("@/hooks/use-regulatory-documents");
 var mockUseRegulatoryDocuments = use_regulatory_documents_1.useRegulatoryDocuments;
 // Mock next/navigation
-jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: jest.fn(),
-        refresh: jest.fn(),
-      };
-    },
-  };
-});
-describe("RegulatoryDocumentsList Integration", function () {
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    refresh: jest.fn(),
+  }),
+}));
+describe("RegulatoryDocumentsList Integration", () => {
   var mockDocuments = [
     {
       id: "1",
@@ -174,7 +167,7 @@ describe("RegulatoryDocumentsList Integration", function () {
       updated_at: "2025-01-22",
     },
   ];
-  beforeEach(function () {
+  beforeEach(() => {
     mockUseRegulatoryDocuments.mockReturnValue({
       documents: mockDocuments,
       loading: false,
@@ -185,17 +178,17 @@ describe("RegulatoryDocumentsList Integration", function () {
       deleteDocument: jest.fn(),
     });
   });
-  afterEach(function () {
+  afterEach(() => {
     jest.clearAllMocks();
   });
-  it("renders documents list with proper data", function () {
+  it("renders documents list with proper data", () => {
     (0, react_1.render)(<regulatory_documents_list_1.RegulatoryDocumentsList />);
     expect(react_1.screen.getByText("ANVISA Compliance Document")).toBeInTheDocument();
     expect(react_1.screen.getByText("CFM Guidelines")).toBeInTheDocument();
     expect(react_1.screen.getByText("ANVISA")).toBeInTheDocument();
     expect(react_1.screen.getByText("CFM")).toBeInTheDocument();
   });
-  it("shows loading state when fetching documents", function () {
+  it("shows loading state when fetching documents", () => {
     mockUseRegulatoryDocuments.mockReturnValue({
       documents: [],
       loading: true,
@@ -208,7 +201,7 @@ describe("RegulatoryDocumentsList Integration", function () {
     (0, react_1.render)(<regulatory_documents_list_1.RegulatoryDocumentsList />);
     expect(react_1.screen.getByTestId("loading-skeleton")).toBeInTheDocument();
   });
-  it("displays error message when fetch fails", function () {
+  it("displays error message when fetch fails", () => {
     mockUseRegulatoryDocuments.mockReturnValue({
       documents: [],
       loading: false,
@@ -222,10 +215,10 @@ describe("RegulatoryDocumentsList Integration", function () {
     expect(react_1.screen.getByText("Error loading documents")).toBeInTheDocument();
     expect(react_1.screen.getByText("Failed to fetch documents")).toBeInTheDocument();
   });
-  it("handles document deletion", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("handles document deletion", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockDeleteDocument, deleteButtons, confirmButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockDeleteDocument = jest.fn().mockResolvedValue(undefined);
@@ -245,7 +238,7 @@ describe("RegulatoryDocumentsList Integration", function () {
             react_1.fireEvent.click(confirmButton);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(mockDeleteDocument).toHaveBeenCalledWith("1");
               }),
             ];
@@ -254,9 +247,8 @@ describe("RegulatoryDocumentsList Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("filters documents by category", function () {
+    }));
+  it("filters documents by category", () => {
     (0, react_1.render)(<regulatory_documents_list_1.RegulatoryDocumentsList />);
     // Select ANVISA filter
     var categoryFilter = react_1.screen.getByTestId("category-filter");
@@ -265,7 +257,7 @@ describe("RegulatoryDocumentsList Integration", function () {
     expect(react_1.screen.getByText("ANVISA Compliance Document")).toBeInTheDocument();
     expect(react_1.screen.queryByText("CFM Guidelines")).not.toBeInTheDocument();
   });
-  it("sorts documents by expiration date", function () {
+  it("sorts documents by expiration date", () => {
     (0, react_1.render)(<regulatory_documents_list_1.RegulatoryDocumentsList />);
     // Select expiration date sort
     var sortSelect = react_1.screen.getByTestId("sort-select");

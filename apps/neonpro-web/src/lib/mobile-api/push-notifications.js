@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Push Notifications System for Mobile API
  * Handles push notification delivery, device management, and notification analytics
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultNotificationTemplates = exports.PushNotificationsManager = void 0;
@@ -160,7 +157,7 @@ var types_1 = require("./types");
  * Push Notifications Manager
  * Comprehensive push notification system for mobile devices
  */
-var PushNotificationsManager = /** @class */ (function () {
+var PushNotificationsManager = /** @class */ (() => {
   function PushNotificationsManager(config) {
     this.deviceRegistry = new Map();
     this.notificationQueue = [];
@@ -353,13 +350,13 @@ var PushNotificationsManager = /** @class */ (function () {
           case 2:
             if (!(i < batch.deviceIds.length)) return [3 /*break*/, 6];
             chunk = batch.deviceIds.slice(i, i + batchSize);
-            chunkPromises = chunk.map(function (deviceId) {
-              return _this.sendNotification(deviceId, batch.payload);
-            });
+            chunkPromises = chunk.map((deviceId) =>
+              _this.sendNotification(deviceId, batch.payload),
+            );
             return [4 /*yield*/, Promise.allSettled(chunkPromises)];
           case 3:
             chunkResults = _a.sent();
-            chunkResults.forEach(function (result) {
+            chunkResults.forEach((result) => {
               if (result.status === "fulfilled") {
                 results.push(result.value);
               } else {
@@ -622,7 +619,7 @@ var PushNotificationsManager = /** @class */ (function () {
   /**
    * Validate device token format
    */
-  PushNotificationsManager.prototype.validateDeviceToken = function (token, platform) {
+  PushNotificationsManager.prototype.validateDeviceToken = (token, platform) => {
     if (platform === "ios") {
       // APNS token validation (64 hex characters)
       return /^[a-fA-F0-9]{64}$/.test(token);
@@ -634,7 +631,7 @@ var PushNotificationsManager = /** @class */ (function () {
   /**
    * Check if notification should be sent based on preferences
    */
-  PushNotificationsManager.prototype.shouldSendNotification = function (device, payload) {
+  PushNotificationsManager.prototype.shouldSendNotification = (device, payload) => {
     var prefs = device.preferences;
     // Check if notifications are enabled
     if (!prefs.notificationsEnabled) return false;
@@ -674,7 +671,7 @@ var PushNotificationsManager = /** @class */ (function () {
             if (error) throw error;
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (device) {
+              : data.forEach((device) => {
                   _this.deviceRegistry.set(device.device_id, {
                     deviceId: device.device_id,
                     userId: device.user_id,
@@ -779,7 +776,7 @@ var PushNotificationsManager = /** @class */ (function () {
     var totalFailed = 0;
     var totalDeliveryTime = 0;
     var deliveryCount = 0;
-    data.forEach(function (record) {
+    data.forEach((record) => {
       totalSent += record.sent_count || 0;
       totalDelivered += record.delivered_count || 0;
       totalFailed += record.failed_count || 0;
@@ -865,60 +862,62 @@ var PushNotificationsManager = /** @class */ (function () {
    * Start notification processor
    */
   PushNotificationsManager.prototype.startNotificationProcessor = function () {
-    var _this = this;
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var batch, error_14;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!(this.notificationQueue.length > 0)) return [3 /*break*/, 4];
-              batch = this.notificationQueue.shift();
-              if (!batch) return [3 /*break*/, 4];
-              _a.label = 1;
-            case 1:
-              _a.trys.push([1, 3, , 4]);
-              return [4 /*yield*/, this.sendBatchNotifications(batch)];
-            case 2:
-              _a.sent();
-              return [3 /*break*/, 4];
-            case 3:
-              error_14 = _a.sent();
-              console.error("Batch processing failed:", error_14);
-              return [3 /*break*/, 4];
-            case 4:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.processingInterval || 5000);
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var batch, error_14;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                if (!(this.notificationQueue.length > 0)) return [3 /*break*/, 4];
+                batch = this.notificationQueue.shift();
+                if (!batch) return [3 /*break*/, 4];
+                _a.label = 1;
+              case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, this.sendBatchNotifications(batch)];
+              case 2:
+                _a.sent();
+                return [3 /*break*/, 4];
+              case 3:
+                error_14 = _a.sent();
+                console.error("Batch processing failed:", error_14);
+                return [3 /*break*/, 4];
+              case 4:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.processingInterval || 5000,
+    );
   };
   /**
    * Start analytics collector
    */
   PushNotificationsManager.prototype.startAnalyticsCollector = function () {
-    var _this = this;
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_15;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.collectAndStoreAnalytics()];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_15 = _a.sent();
-              console.error("Analytics collection failed:", error_15);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.analyticsInterval || 60000);
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_15;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.collectAndStoreAnalytics()];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_15 = _a.sent();
+                console.error("Analytics collection failed:", error_15);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.analyticsInterval || 60000,
+    );
   };
   /**
    * Collect and store analytics
@@ -959,11 +958,8 @@ var PushNotificationsManager = /** @class */ (function () {
   /**
    * Utility delay function
    */
-  PushNotificationsManager.prototype.delay = function (ms) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, ms);
-    });
-  };
+  PushNotificationsManager.prototype.delay = (ms) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   return PushNotificationsManager;
 })();
 exports.PushNotificationsManager = PushNotificationsManager;

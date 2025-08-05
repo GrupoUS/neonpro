@@ -1,10 +1,10 @@
+import type { logger } from "@/lib/logger";
 import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
-import type { logger } from "@/lib/logger";
 import type {
   ConflictDetectionResult,
-  DetectedConflict,
   ConflictType,
+  DetectedConflict,
 } from "./conflict-detection-engine";
 
 type Tables = Database["public"]["Tables"];
@@ -1184,7 +1184,7 @@ export class SuggestionEngine {
 
       // Aplicar mudanças baseadas no tipo de sugestão
       switch (suggestion.type) {
-        case SuggestionType.REASSIGN_STAFF:
+        case SuggestionType.REASSIGN_STAFF: {
           const staffChange = suggestion.impact.resourceChanges.find(
             (c) => c.resourceType === "staff",
           );
@@ -1202,8 +1202,9 @@ export class SuggestionEngine {
             });
           }
           break;
+        }
 
-        case SuggestionType.CHANGE_ROOM:
+        case SuggestionType.CHANGE_ROOM: {
           const roomChange = suggestion.impact.resourceChanges.find(
             (c) => c.resourceType === "room",
           );
@@ -1217,8 +1218,9 @@ export class SuggestionEngine {
             changes.push({ type: "room_change", from: roomChange.from, to: roomChange.to });
           }
           break;
+        }
 
-        case SuggestionType.SUBSTITUTE_EQUIPMENT:
+        case SuggestionType.SUBSTITUTE_EQUIPMENT: {
           const equipmentChange = suggestion.impact.resourceChanges.find(
             (c) => c.resourceType === "equipment",
           );
@@ -1250,6 +1252,7 @@ export class SuggestionEngine {
             }
           }
           break;
+        }
 
         default:
           return {

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PrivacyCompliance;
 var alert_1 = require("@/components/ui/alert");
@@ -162,7 +159,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function PrivacyCompliance() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     complianceRules = _a[0],
     setComplianceRules = _a[1];
@@ -186,13 +182,13 @@ function PrivacyCompliance() {
   var _e = (0, react_1.useState)(0),
     complianceScore = _e[0],
     setComplianceScore = _e[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadComplianceData();
   }, []);
-  var loadComplianceData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadComplianceData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockRules, mockConsents, totalRules, activeRules, violationsCount, score, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
@@ -200,12 +196,7 @@ function PrivacyCompliance() {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Mock data - replace with actual API calls
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 2:
             // Mock data - replace with actual API calls
             _a.sent();
@@ -293,12 +284,8 @@ function PrivacyCompliance() {
             setComplianceRules(mockRules);
             setConsentRecords(mockConsents);
             totalRules = mockRules.length;
-            activeRules = mockRules.filter(function (r) {
-              return r.isActive;
-            }).length;
-            violationsCount = mockRules.reduce(function (acc, r) {
-              return acc + r.violations;
-            }, 0);
+            activeRules = mockRules.filter((r) => r.isActive).length;
+            violationsCount = mockRules.reduce((acc, r) => acc + r.violations, 0);
             score = Math.max(0, ((activeRules - violationsCount) / totalRules) * 100);
             setComplianceScore(Math.round(score));
             return [3 /*break*/, 5];
@@ -314,8 +301,7 @@ function PrivacyCompliance() {
         }
       });
     });
-  };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     var colors = {
       LOW: "bg-blue-100 text-blue-800",
       MEDIUM: "bg-yellow-100 text-yellow-800",
@@ -324,7 +310,7 @@ function PrivacyCompliance() {
     };
     return colors[severity] || colors.LOW;
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     var colors = {
       GRANTED: "bg-green-100 text-green-800",
       WITHDRAWN: "bg-red-100 text-red-800",
@@ -332,31 +318,25 @@ function PrivacyCompliance() {
     };
     return colors[status] || colors.PENDING;
   };
-  var toggleRule = function (ruleId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        setComplianceRules(function (rules) {
-          return rules.map(function (rule) {
-            return rule.id === ruleId
-              ? __assign(__assign({}, rule), { isActive: !rule.isActive })
-              : rule;
-          });
-        });
+  var toggleRule = (ruleId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
+        setComplianceRules((rules) =>
+          rules.map((rule) =>
+            rule.id === ruleId ? __assign(__assign({}, rule), { isActive: !rule.isActive }) : rule,
+          ),
+        );
         return [2 /*return*/];
       });
     });
-  };
-  var updatePrivacySettings = function (newSettings) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        setPrivacySettings(function (current) {
-          return __assign(__assign({}, current), newSettings);
-        });
+  var updatePrivacySettings = (newSettings) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
+        setPrivacySettings((current) => __assign(__assign({}, current), newSettings));
         return [2 /*return*/];
       });
     });
-  };
-  var exportComplianceReport = function () {
+  var exportComplianceReport = () => {
     var reportData = {
       complianceScore: complianceScore,
       rules: complianceRules,
@@ -380,18 +360,16 @@ function PrivacyCompliance() {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardContent className="p-6">
-                  <div className="animate-pulse">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                  </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {Array.from({ length: 4 }).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardContent className="p-6">
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -422,11 +400,7 @@ function PrivacyCompliance() {
               <div className="ml-2">
                 <p className="text-sm font-medium text-muted-foreground">Regras Ativas</p>
                 <div className="text-2xl font-bold">
-                  {
-                    complianceRules.filter(function (r) {
-                      return r.isActive;
-                    }).length
-                  }
+                  {complianceRules.filter((r) => r.isActive).length}
                 </div>
               </div>
             </div>
@@ -440,9 +414,7 @@ function PrivacyCompliance() {
               <div className="ml-2">
                 <p className="text-sm font-medium text-muted-foreground">Violações</p>
                 <div className="text-2xl font-bold">
-                  {complianceRules.reduce(function (acc, r) {
-                    return acc + r.violations;
-                  }, 0)}
+                  {complianceRules.reduce((acc, r) => acc + r.violations, 0)}
                 </div>
               </div>
             </div>
@@ -456,11 +428,7 @@ function PrivacyCompliance() {
               <div className="ml-2">
                 <p className="text-sm font-medium text-muted-foreground">Consentimentos</p>
                 <div className="text-2xl font-bold">
-                  {
-                    consentRecords.filter(function (c) {
-                      return c.status === "GRANTED";
-                    }).length
-                  }
+                  {consentRecords.filter((c) => c.status === "GRANTED").length}
                 </div>
               </div>
             </div>
@@ -469,17 +437,12 @@ function PrivacyCompliance() {
       </div>
 
       {/* Compliance Alerts */}
-      {complianceRules.some(function (r) {
-        return r.violations > 0;
-      }) && (
+      {complianceRules.some((r) => r.violations > 0) && (
         <alert_1.Alert variant="destructive">
           <lucide_react_1.AlertTriangle className="h-4 w-4" />
           <alert_1.AlertDescription>
-            Foram detectadas{" "}
-            {complianceRules.reduce(function (acc, r) {
-              return acc + r.violations;
-            }, 0)}{" "}
-            violações de conformidade. Revise as regras e tome as ações necessárias.
+            Foram detectadas {complianceRules.reduce((acc, r) => acc + r.violations, 0)} violações
+            de conformidade. Revise as regras e tome as ações necessárias.
           </alert_1.AlertDescription>
         </alert_1.Alert>
       )}
@@ -512,58 +475,52 @@ function PrivacyCompliance() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {complianceRules.map(function (rule) {
-                  return (
-                    <card_1.Card key={rule.id} className="border">
-                      <card_1.CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold">{rule.name}</h4>
-                              <badge_1.Badge className={getSeverityColor(rule.severity)}>
-                                {rule.severity}
+                {complianceRules.map((rule) => (
+                  <card_1.Card key={rule.id} className="border">
+                    <card_1.CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-semibold">{rule.name}</h4>
+                            <badge_1.Badge className={getSeverityColor(rule.severity)}>
+                              {rule.severity}
+                            </badge_1.Badge>
+                            <badge_1.Badge variant={rule.type === "LGPD" ? "default" : "secondary"}>
+                              {rule.type}
+                            </badge_1.Badge>
+                            {rule.violations > 0 && (
+                              <badge_1.Badge variant="destructive">
+                                {rule.violations} violações
                               </badge_1.Badge>
-                              <badge_1.Badge
-                                variant={rule.type === "LGPD" ? "default" : "secondary"}
-                              >
-                                {rule.type}
-                              </badge_1.Badge>
-                              {rule.violations > 0 && (
-                                <badge_1.Badge variant="destructive">
-                                  {rule.violations} violações
-                                </badge_1.Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-2">{rule.description}</p>
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              <span>
-                                Última verificação:{" "}
-                                {new Date(rule.lastChecked).toLocaleString("pt-BR")}
-                              </span>
-                              {rule.autoRemediation && (
-                                <span className="flex items-center gap-1">
-                                  <lucide_react_1.CheckCircle className="h-3 w-3" />
-                                  Remediação automática
-                                </span>
-                              )}
-                            </div>
+                            )}
                           </div>
-                          <div className="flex items-center gap-2">
-                            <switch_1.Switch
-                              checked={rule.isActive}
-                              onCheckedChange={function () {
-                                return toggleRule(rule.id);
-                              }}
-                            />
-                            <button_1.Button variant="outline" size="sm">
-                              <lucide_react_1.Settings className="h-4 w-4" />
-                            </button_1.Button>
+                          <p className="text-sm text-muted-foreground mb-2">{rule.description}</p>
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>
+                              Última verificação:{" "}
+                              {new Date(rule.lastChecked).toLocaleString("pt-BR")}
+                            </span>
+                            {rule.autoRemediation && (
+                              <span className="flex items-center gap-1">
+                                <lucide_react_1.CheckCircle className="h-3 w-3" />
+                                Remediação automática
+                              </span>
+                            )}
                           </div>
                         </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                        <div className="flex items-center gap-2">
+                          <switch_1.Switch
+                            checked={rule.isActive}
+                            onCheckedChange={() => toggleRule(rule.id)}
+                          />
+                          <button_1.Button variant="outline" size="sm">
+                            <lucide_react_1.Settings className="h-4 w-4" />
+                          </button_1.Button>
+                        </div>
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -586,11 +543,11 @@ function PrivacyCompliance() {
                       id="retention"
                       type="number"
                       value={privacySettings.dataRetentionDays}
-                      onChange={function (e) {
-                        return updatePrivacySettings({
+                      onChange={(e) =>
+                        updatePrivacySettings({
                           dataRetentionDays: parseInt(e.target.value),
-                        });
-                      }}
+                        })
+                      }
                     />
                   </div>
 
@@ -600,11 +557,11 @@ function PrivacyCompliance() {
                       id="anonymize"
                       type="number"
                       value={privacySettings.anonymizeAfterDays}
-                      onChange={function (e) {
-                        return updatePrivacySettings({
+                      onChange={(e) =>
+                        updatePrivacySettings({
                           anonymizeAfterDays: parseInt(e.target.value),
-                        });
-                      }}
+                        })
+                      }
                     />
                   </div>
 
@@ -612,9 +569,7 @@ function PrivacyCompliance() {
                     <label_1.Label htmlFor="encryption">Nível de Criptografia</label_1.Label>
                     <select_1.Select
                       value={privacySettings.encryptionLevel}
-                      onValueChange={function (value) {
-                        return updatePrivacySettings({ encryptionLevel: value });
-                      }}
+                      onValueChange={(value) => updatePrivacySettings({ encryptionLevel: value })}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -634,11 +589,11 @@ function PrivacyCompliance() {
                     <switch_1.Switch
                       id="export"
                       checked={privacySettings.allowDataExport}
-                      onCheckedChange={function (checked) {
-                        return updatePrivacySettings({
+                      onCheckedChange={(checked) =>
+                        updatePrivacySettings({
                           allowDataExport: checked,
-                        });
-                      }}
+                        })
+                      }
                     />
                   </div>
 
@@ -647,11 +602,11 @@ function PrivacyCompliance() {
                     <switch_1.Switch
                       id="consent"
                       checked={privacySettings.requireExplicitConsent}
-                      onCheckedChange={function (checked) {
-                        return updatePrivacySettings({
+                      onCheckedChange={(checked) =>
+                        updatePrivacySettings({
                           requireExplicitConsent: checked,
-                        });
-                      }}
+                        })
+                      }
                     />
                   </div>
 
@@ -660,11 +615,11 @@ function PrivacyCompliance() {
                     <switch_1.Switch
                       id="deletion"
                       checked={privacySettings.enableDataDeletion}
-                      onCheckedChange={function (checked) {
-                        return updatePrivacySettings({
+                      onCheckedChange={(checked) =>
+                        updatePrivacySettings({
                           enableDataDeletion: checked,
-                        });
-                      }}
+                        })
+                      }
                     />
                   </div>
 
@@ -673,11 +628,11 @@ function PrivacyCompliance() {
                     <switch_1.Switch
                       id="audit"
                       checked={privacySettings.auditLogging}
-                      onCheckedChange={function (checked) {
-                        return updatePrivacySettings({
+                      onCheckedChange={(checked) =>
+                        updatePrivacySettings({
                           auditLogging: checked,
-                        });
-                      }}
+                        })
+                      }
                     />
                   </div>
                 </div>
@@ -696,49 +651,47 @@ function PrivacyCompliance() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {consentRecords.map(function (consent) {
-                  return (
-                    <card_1.Card key={consent.id} className="border">
-                      <card_1.CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <h4 className="font-semibold">{consent.patientName}</h4>
-                              <badge_1.Badge className={getStatusColor(consent.status)}>
-                                {consent.status}
-                              </badge_1.Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-1">
-                              {consent.consentType} - {consent.purpose}
-                            </p>
-                            <p className="text-xs text-muted-foreground mb-2">
-                              Dados: {consent.dataTypes.join(", ")}
-                            </p>
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              <span>
-                                Concedido: {new Date(consent.grantedAt).toLocaleDateString("pt-BR")}
-                              </span>
-                              {consent.withdrawnAt && (
-                                <span>
-                                  Retirado:{" "}
-                                  {new Date(consent.withdrawnAt).toLocaleDateString("pt-BR")}
-                                </span>
-                              )}
-                            </div>
+                {consentRecords.map((consent) => (
+                  <card_1.Card key={consent.id} className="border">
+                    <card_1.CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="font-semibold">{consent.patientName}</h4>
+                            <badge_1.Badge className={getStatusColor(consent.status)}>
+                              {consent.status}
+                            </badge_1.Badge>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <button_1.Button variant="outline" size="sm">
-                              <lucide_react_1.Eye className="h-4 w-4" />
-                            </button_1.Button>
-                            <button_1.Button variant="outline" size="sm">
-                              <lucide_react_1.FileText className="h-4 w-4" />
-                            </button_1.Button>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            {consent.consentType} - {consent.purpose}
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-2">
+                            Dados: {consent.dataTypes.join(", ")}
+                          </p>
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>
+                              Concedido: {new Date(consent.grantedAt).toLocaleDateString("pt-BR")}
+                            </span>
+                            {consent.withdrawnAt && (
+                              <span>
+                                Retirado:{" "}
+                                {new Date(consent.withdrawnAt).toLocaleDateString("pt-BR")}
+                              </span>
+                            )}
                           </div>
                         </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                        <div className="flex items-center gap-2">
+                          <button_1.Button variant="outline" size="sm">
+                            <lucide_react_1.Eye className="h-4 w-4" />
+                          </button_1.Button>
+                          <button_1.Button variant="outline" size="sm">
+                            <lucide_react_1.FileText className="h-4 w-4" />
+                          </button_1.Button>
+                        </div>
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

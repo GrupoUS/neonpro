@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PerformanceMetrics = PerformanceMetrics;
 var react_1 = require("react");
@@ -184,7 +181,6 @@ var STATUS_CONFIG = {
   },
 };
 function PerformanceMetrics(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     dateRange = _a.dateRange,
     _b = _a.className,
@@ -224,88 +220,71 @@ function PerformanceMetrics(_a) {
     sortOrder = _q[0],
     setSortOrder = _q[1];
   // Load performance metrics
-  (0, react_1.useEffect)(
-    function () {
-      var loadMetrics = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var mockMetrics, mockSummary, err_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                setIsLoading(true);
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                // Simulate API call - replace with actual implementation
-                return [
-                  4 /*yield*/,
-                  new Promise(function (resolve) {
-                    return setTimeout(resolve, 1000);
-                  }),
-                ];
-              case 2:
-                // Simulate API call - replace with actual implementation
-                _a.sent();
-                mockMetrics = generateMockMetrics(clinicId, dateRange);
-                mockSummary = calculatePerformanceSummary(mockMetrics);
-                setMetrics(mockMetrics);
-                setSummary(mockSummary);
-                setLastRefresh(new Date());
-                return [3 /*break*/, 5];
-              case 3:
-                err_1 = _a.sent();
-                console.error("Failed to load performance metrics:", err_1);
-                return [3 /*break*/, 5];
-              case 4:
-                setIsLoading(false);
-                return [7 /*endfinally*/];
-              case 5:
-                return [2 /*return*/];
+  (0, react_1.useEffect)(() => {
+    var loadMetrics = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var mockMetrics, mockSummary, err_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setIsLoading(true);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              // Simulate API call - replace with actual implementation
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
+            case 2:
+              // Simulate API call - replace with actual implementation
+              _a.sent();
+              mockMetrics = generateMockMetrics(clinicId, dateRange);
+              mockSummary = calculatePerformanceSummary(mockMetrics);
+              setMetrics(mockMetrics);
+              setSummary(mockSummary);
+              setLastRefresh(new Date());
+              return [3 /*break*/, 5];
+            case 3:
+              err_1 = _a.sent();
+              console.error("Failed to load performance metrics:", err_1);
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      });
+    loadMetrics();
+  }, [clinicId, dateRange]);
+  // Auto-refresh
+  (0, react_1.useEffect)(() => {
+    if (!autoRefresh) return;
+    var interval = setInterval(() => {
+      // Refresh metrics
+      var refreshMetrics = () =>
+        __awaiter(this, void 0, void 0, function () {
+          var mockMetrics, mockSummary;
+          return __generator(this, (_a) => {
+            try {
+              mockMetrics = generateMockMetrics(clinicId, dateRange);
+              mockSummary = calculatePerformanceSummary(mockMetrics);
+              setMetrics(mockMetrics);
+              setSummary(mockSummary);
+              setLastRefresh(new Date());
+            } catch (err) {
+              console.error("Failed to refresh metrics:", err);
             }
+            return [2 /*return*/];
           });
         });
-      };
-      loadMetrics();
-    },
-    [clinicId, dateRange],
-  );
-  // Auto-refresh
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoRefresh) return;
-      var interval = setInterval(function () {
-        // Refresh metrics
-        var refreshMetrics = function () {
-          return __awaiter(_this, void 0, void 0, function () {
-            var mockMetrics, mockSummary;
-            return __generator(this, function (_a) {
-              try {
-                mockMetrics = generateMockMetrics(clinicId, dateRange);
-                mockSummary = calculatePerformanceSummary(mockMetrics);
-                setMetrics(mockMetrics);
-                setSummary(mockSummary);
-                setLastRefresh(new Date());
-              } catch (err) {
-                console.error("Failed to refresh metrics:", err);
-              }
-              return [2 /*return*/];
-            });
-          });
-        };
-        refreshMetrics();
-      }, refreshInterval);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [autoRefresh, refreshInterval, clinicId, dateRange],
-  );
+      refreshMetrics();
+    }, refreshInterval);
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, clinicId, dateRange]);
   // Filter and sort metrics
   var filteredMetrics = metrics
-    .filter(function (metric) {
-      return selectedCategory === "all" || metric.category === selectedCategory;
-    })
-    .sort(function (a, b) {
+    .filter((metric) => selectedCategory === "all" || metric.category === selectedCategory)
+    .sort((a, b) => {
       var aValue, bValue;
       switch (sortBy) {
         case "name":
@@ -320,11 +299,12 @@ function PerformanceMetrics(_a) {
           aValue = a.target;
           bValue = b.target;
           break;
-        case "status":
+        case "status": {
           var statusOrder = { critical: 0, warning: 1, good: 2, excellent: 3 };
           aValue = statusOrder[a.status];
           bValue = statusOrder[b.status];
           break;
+        }
         default:
           return 0;
       }
@@ -335,7 +315,7 @@ function PerformanceMetrics(_a) {
       }
     });
   // Format value based on unit
-  var formatValue = function (value, unit) {
+  var formatValue = (value, unit) => {
     switch (unit) {
       case "currency":
         return new Intl.NumberFormat("pt-BR", {
@@ -344,10 +324,11 @@ function PerformanceMetrics(_a) {
         }).format(value);
       case "percentage":
         return "".concat(value.toFixed(1), "%");
-      case "duration":
+      case "duration": {
         var hours = Math.floor(value / 60);
         var minutes = value % 60;
         return "".concat(hours, "h ").concat(minutes, "m");
+      }
       case "ratio":
         return "".concat(value.toFixed(2), ":1");
       default:
@@ -355,11 +336,9 @@ function PerformanceMetrics(_a) {
     }
   };
   // Calculate progress percentage
-  var calculateProgress = function (value, target) {
-    return Math.min((value / target) * 100, 100);
-  };
+  var calculateProgress = (value, target) => Math.min((value / target) * 100, 100);
   // Get trend icon
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600" />;
@@ -370,22 +349,17 @@ function PerformanceMetrics(_a) {
     }
   };
   // Handle manual refresh
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockMetrics, mockSummary, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
             _a.label = 1;
           case 1:
             _a.trys.push([1, 3, 4, 5]);
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 500))];
           case 2:
             _a.sent();
             mockMetrics = generateMockMetrics(clinicId, dateRange);
@@ -406,9 +380,8 @@ function PerformanceMetrics(_a) {
         }
       });
     });
-  };
   // Export metrics
-  var handleExport = function () {
+  var handleExport = () => {
     var exportData = {
       summary: summary,
       metrics: filteredMetrics,
@@ -463,7 +436,7 @@ function PerformanceMetrics(_a) {
                 <select_1.SelectValue />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
-                {METRIC_CATEGORIES.map(function (category) {
+                {METRIC_CATEGORIES.map((category) => {
                   var Icon = category.icon;
                   return (
                     <select_1.SelectItem key={category.value} value={category.value}>
@@ -506,12 +479,7 @@ function PerformanceMetrics(_a) {
       </card_1.CardHeader>
 
       <card_1.CardContent>
-        <tabs_1.Tabs
-          value={selectedView}
-          onValueChange={function (value) {
-            return setSelectedView(value);
-          }}
-        >
+        <tabs_1.Tabs value={selectedView} onValueChange={(value) => setSelectedView(value)}>
           <div className="flex items-center justify-between mb-4">
             <tabs_1.TabsList>
               <tabs_1.TabsTrigger value="summary">Summary</tabs_1.TabsTrigger>
@@ -520,12 +488,7 @@ function PerformanceMetrics(_a) {
             </tabs_1.TabsList>
 
             <div className="flex items-center gap-2">
-              <select_1.Select
-                value={sortBy}
-                onValueChange={function (value) {
-                  return setSortBy(value);
-                }}
-              >
+              <select_1.Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
                 <select_1.SelectTrigger className="w-32">
                   <select_1.SelectValue />
                 </select_1.SelectTrigger>
@@ -540,9 +503,7 @@ function PerformanceMetrics(_a) {
               <button_1.Button
                 size="sm"
                 variant="outline"
-                onClick={function () {
-                  return setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                }}
+                onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
               >
                 {sortOrder === "asc" ? "↑" : "↓"}
               </button_1.Button>
@@ -634,14 +595,12 @@ function PerformanceMetrics(_a) {
                     </card_1.CardHeader>
                     <card_1.CardContent>
                       <div className="space-y-2">
-                        {summary.achievements.map(function (achievement, index) {
-                          return (
-                            <div key={index} className="flex items-center gap-2 text-sm">
-                              <div className="w-2 h-2 bg-green-600 rounded-full" />
-                              {achievement}
-                            </div>
-                          );
-                        })}
+                        {summary.achievements.map((achievement, index) => (
+                          <div key={index} className="flex items-center gap-2 text-sm">
+                            <div className="w-2 h-2 bg-green-600 rounded-full" />
+                            {achievement}
+                          </div>
+                        ))}
                       </div>
                     </card_1.CardContent>
                   </card_1.Card>
@@ -655,14 +614,12 @@ function PerformanceMetrics(_a) {
                     </card_1.CardHeader>
                     <card_1.CardContent>
                       <div className="space-y-2">
-                        {summary.improvementAreas.map(function (area, index) {
-                          return (
-                            <div key={index} className="flex items-center gap-2 text-sm">
-                              <div className="w-2 h-2 bg-yellow-600 rounded-full" />
-                              {area}
-                            </div>
-                          );
-                        })}
+                        {summary.improvementAreas.map((area, index) => (
+                          <div key={index} className="flex items-center gap-2 text-sm">
+                            <div className="w-2 h-2 bg-yellow-600 rounded-full" />
+                            {area}
+                          </div>
+                        ))}
                       </div>
                     </card_1.CardContent>
                   </card_1.Card>
@@ -673,7 +630,7 @@ function PerformanceMetrics(_a) {
 
           <tabs_1.TabsContent value="grid">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredMetrics.map(function (metric) {
+              {filteredMetrics.map((metric) => {
                 var statusConfig = STATUS_CONFIG[metric.status];
                 var StatusIcon = statusConfig.icon;
                 var progress = calculateProgress(metric.value, metric.target);
@@ -735,7 +692,7 @@ function PerformanceMetrics(_a) {
 
           <tabs_1.TabsContent value="list">
             <div className="space-y-2">
-              {filteredMetrics.map(function (metric) {
+              {filteredMetrics.map((metric) => {
                 var statusConfig = STATUS_CONFIG[metric.status];
                 var StatusIcon = statusConfig.icon;
                 var progress = calculateProgress(metric.value, metric.target);
@@ -904,27 +861,17 @@ function generateMockMetrics(clinicId, dateRange) {
 }
 // Helper function to calculate performance summary
 function calculatePerformanceSummary(metrics) {
-  var excellentCount = metrics.filter(function (m) {
-    return m.status === "excellent";
-  }).length;
-  var goodCount = metrics.filter(function (m) {
-    return m.status === "good";
-  }).length;
-  var warningCount = metrics.filter(function (m) {
-    return m.status === "warning";
-  }).length;
-  var criticalCount = metrics.filter(function (m) {
-    return m.status === "critical";
-  }).length;
+  var excellentCount = metrics.filter((m) => m.status === "excellent").length;
+  var goodCount = metrics.filter((m) => m.status === "good").length;
+  var warningCount = metrics.filter((m) => m.status === "warning").length;
+  var criticalCount = metrics.filter((m) => m.status === "critical").length;
   var statusScores = {
     excellent: 10,
     good: 7,
     warning: 4,
     critical: 1,
   };
-  var totalScore = metrics.reduce(function (sum, metric) {
-    return sum + statusScores[metric.status];
-  }, 0);
+  var totalScore = metrics.reduce((sum, metric) => sum + statusScores[metric.status], 0);
   var overallScore = totalScore / metrics.length;
   var achievements = [
     "Revenue growth exceeded target by 3.2%",

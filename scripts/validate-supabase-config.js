@@ -6,8 +6,8 @@
  * Project: https://supabase.com/dashboard/project/gfkskrkbnawkuppazkpt
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 const chalk = require("chalk");
 
 // Target Supabase project configuration
@@ -64,7 +64,6 @@ class SupabaseConfigValidator {
       case "warning":
         console.log(chalk.yellow(`${prefix} ⚠️  ${message}`));
         break;
-      case "info":
       default:
         console.log(chalk.blue(`${prefix} ℹ️  ${message}`));
         break;
@@ -186,7 +185,7 @@ class SupabaseConfigValidator {
   }
 
   generateReport() {
-    console.log("\n" + "=".repeat(60));
+    console.log(`\n${"=".repeat(60)}`);
     console.log(chalk.bold.blue("VIBECODE SUPABASE CONFIGURATION REPORT"));
     console.log("=".repeat(60));
 
@@ -206,7 +205,7 @@ class SupabaseConfigValidator {
       this.warnings.forEach((warning) => console.log(chalk.yellow(`  • ${warning}`)));
     }
 
-    console.log("\n" + "=".repeat(60));
+    console.log(`\n${"=".repeat(60)}`);
     return this.errors.length === 0;
   }
 

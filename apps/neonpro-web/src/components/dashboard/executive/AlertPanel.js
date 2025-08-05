@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlertPanel = AlertPanel;
 var react_1 = require("react");
@@ -240,7 +237,6 @@ var CATEGORY_CONFIG = {
   },
 };
 function AlertPanel(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userId = _a.userId,
     _b = _a.className,
@@ -278,172 +274,129 @@ function AlertPanel(_a) {
     filters = _l[0],
     setFilters = _l[1];
   // Fetch alerts
-  (0, react_1.useEffect)(
-    function () {
-      var fetchAlerts = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var mockAlerts, err_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                _a.trys.push([0, 2, 3, 4]);
-                setIsLoading(true);
-                setError(null);
-                // Simulate API call - replace with actual implementation
-                return [
-                  4 /*yield*/,
-                  new Promise(function (resolve) {
-                    return setTimeout(resolve, 1000);
-                  }),
-                ];
-              case 1:
-                // Simulate API call - replace with actual implementation
-                _a.sent();
-                mockAlerts = generateMockAlerts(clinicId, userId);
-                setAlerts(mockAlerts);
-                return [3 /*break*/, 4];
-              case 2:
-                err_1 = _a.sent();
-                setError(err_1 instanceof Error ? err_1.message : "Failed to load alerts");
-                return [3 /*break*/, 4];
-              case 3:
-                setIsLoading(false);
-                return [7 /*endfinally*/];
-              case 4:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var fetchAlerts = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var mockAlerts, err_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, 3, 4]);
+              setIsLoading(true);
+              setError(null);
+              // Simulate API call - replace with actual implementation
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
+            case 1:
+              // Simulate API call - replace with actual implementation
+              _a.sent();
+              mockAlerts = generateMockAlerts(clinicId, userId);
+              setAlerts(mockAlerts);
+              return [3 /*break*/, 4];
+            case 2:
+              err_1 = _a.sent();
+              setError(err_1 instanceof Error ? err_1.message : "Failed to load alerts");
+              return [3 /*break*/, 4];
+            case 3:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 4:
+              return [2 /*return*/];
+          }
         });
-      };
-      fetchAlerts();
-      // Set up auto-refresh
-      if (autoRefresh) {
-        var interval_1 = setInterval(fetchAlerts, 30000); // 30 seconds
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [clinicId, userId, autoRefresh],
-  );
-  // Filter and sort alerts
-  var filteredAlerts = (0, react_1.useMemo)(
-    function () {
-      var filtered = alerts;
-      // Apply tab filter
-      switch (activeTab) {
-        case "unread":
-          filtered = filtered.filter(function (alert) {
-            return !alert.isRead;
-          });
-          break;
-        case "critical":
-          filtered = filtered.filter(function (alert) {
-            return alert.severity === "critical";
-          });
-          break;
-      }
-      // Apply filters
-      if (filters.severity.length > 0) {
-        filtered = filtered.filter(function (alert) {
-          return filters.severity.includes(alert.severity);
-        });
-      }
-      if (filters.status.length > 0) {
-        filtered = filtered.filter(function (alert) {
-          return filters.status.includes(alert.status);
-        });
-      }
-      if (filters.category.length > 0) {
-        filtered = filtered.filter(function (alert) {
-          return filters.category.includes(alert.category);
-        });
-      }
-      if (filters.assignedToMe) {
-        filtered = filtered.filter(function (alert) {
-          return alert.assignedTo === userId;
-        });
-      }
-      if (filters.search) {
-        var searchLower_1 = filters.search.toLowerCase();
-        filtered = filtered.filter(function (alert) {
-          return (
-            alert.title.toLowerCase().includes(searchLower_1) ||
-            alert.message.toLowerCase().includes(searchLower_1)
-          );
-        });
-      }
-      // Apply date range filter
-      var now = new Date();
-      var dateThreshold = new Date();
-      switch (filters.dateRange) {
-        case "today":
-          dateThreshold.setHours(0, 0, 0, 0);
-          break;
-        case "week":
-          dateThreshold.setDate(now.getDate() - 7);
-          break;
-        case "month":
-          dateThreshold.setMonth(now.getMonth() - 1);
-          break;
-        default:
-          dateThreshold.setFullYear(2000); // Show all
-      }
-      if (filters.dateRange !== "all") {
-        filtered = filtered.filter(function (alert) {
-          return new Date(alert.createdAt) >= dateThreshold;
-        });
-      }
-      // Sort by priority and date
-      return filtered.sort(function (a, b) {
-        var aPriority = SEVERITY_CONFIG[a.severity].priority;
-        var bPriority = SEVERITY_CONFIG[b.severity].priority;
-        if (aPriority !== bPriority) {
-          return aPriority - bPriority; // Lower number = higher priority
-        }
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
-    },
-    [alerts, activeTab, filters, userId],
-  );
+    fetchAlerts();
+    // Set up auto-refresh
+    if (autoRefresh) {
+      var interval_1 = setInterval(fetchAlerts, 30000); // 30 seconds
+      return () => clearInterval(interval_1);
+    }
+  }, [clinicId, userId, autoRefresh]);
+  // Filter and sort alerts
+  var filteredAlerts = (0, react_1.useMemo)(() => {
+    var filtered = alerts;
+    // Apply tab filter
+    switch (activeTab) {
+      case "unread":
+        filtered = filtered.filter((alert) => !alert.isRead);
+        break;
+      case "critical":
+        filtered = filtered.filter((alert) => alert.severity === "critical");
+        break;
+    }
+    // Apply filters
+    if (filters.severity.length > 0) {
+      filtered = filtered.filter((alert) => filters.severity.includes(alert.severity));
+    }
+    if (filters.status.length > 0) {
+      filtered = filtered.filter((alert) => filters.status.includes(alert.status));
+    }
+    if (filters.category.length > 0) {
+      filtered = filtered.filter((alert) => filters.category.includes(alert.category));
+    }
+    if (filters.assignedToMe) {
+      filtered = filtered.filter((alert) => alert.assignedTo === userId);
+    }
+    if (filters.search) {
+      var searchLower_1 = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (alert) =>
+          alert.title.toLowerCase().includes(searchLower_1) ||
+          alert.message.toLowerCase().includes(searchLower_1),
+      );
+    }
+    // Apply date range filter
+    var now = new Date();
+    var dateThreshold = new Date();
+    switch (filters.dateRange) {
+      case "today":
+        dateThreshold.setHours(0, 0, 0, 0);
+        break;
+      case "week":
+        dateThreshold.setDate(now.getDate() - 7);
+        break;
+      case "month":
+        dateThreshold.setMonth(now.getMonth() - 1);
+        break;
+      default:
+        dateThreshold.setFullYear(2000); // Show all
+    }
+    if (filters.dateRange !== "all") {
+      filtered = filtered.filter((alert) => new Date(alert.createdAt) >= dateThreshold);
+    }
+    // Sort by priority and date
+    return filtered.sort((a, b) => {
+      var aPriority = SEVERITY_CONFIG[a.severity].priority;
+      var bPriority = SEVERITY_CONFIG[b.severity].priority;
+      if (aPriority !== bPriority) {
+        return aPriority - bPriority; // Lower number = higher priority
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [alerts, activeTab, filters, userId]);
   // Calculate stats
   var stats = (0, react_1.useMemo)(
-    function () {
-      return {
-        total: alerts.length,
-        critical: alerts.filter(function (a) {
-          return a.severity === "critical";
-        }).length,
-        warning: alerts.filter(function (a) {
-          return a.severity === "warning";
-        }).length,
-        info: alerts.filter(function (a) {
-          return a.severity === "info";
-        }).length,
-        unread: alerts.filter(function (a) {
-          return !a.isRead;
-        }).length,
-        resolved: alerts.filter(function (a) {
-          return a.status === "resolved";
-        }).length,
-      };
-    },
+    () => ({
+      total: alerts.length,
+      critical: alerts.filter((a) => a.severity === "critical").length,
+      warning: alerts.filter((a) => a.severity === "warning").length,
+      info: alerts.filter((a) => a.severity === "info").length,
+      unread: alerts.filter((a) => !a.isRead).length,
+      resolved: alerts.filter((a) => a.status === "resolved").length,
+    }),
     [alerts],
   );
   // Handle alert actions
-  var handleAlertClick = function (alert) {
+  var handleAlertClick = (alert) => {
     // Mark as read
-    setAlerts(function (prev) {
-      return prev.map(function (a) {
-        return a.id === alert.id ? __assign(__assign({}, a), { isRead: true }) : a;
-      });
-    });
+    setAlerts((prev) =>
+      prev.map((a) => (a.id === alert.id ? __assign(__assign({}, a), { isRead: true }) : a)),
+    );
     onAlertClick === null || onAlertClick === void 0 ? void 0 : onAlertClick(alert);
   };
-  var handleBulkAction = function (action) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBulkAction = (action) =>
+    __awaiter(this, void 0, void 0, function () {
       var alertIds, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             alertIds = Array.from(selectedAlerts);
@@ -451,18 +404,13 @@ function AlertPanel(_a) {
           case 1:
             _a.trys.push([1, 3, , 4]);
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 500))];
           case 2:
             // Simulate API call
             _a.sent();
-            setAlerts(function (prev) {
-              return prev
-                .map(function (alert) {
+            setAlerts((prev) =>
+              prev
+                .map((alert) => {
                   if (alertIds.includes(alert.id)) {
                     switch (action) {
                       case "acknowledge":
@@ -482,8 +430,8 @@ function AlertPanel(_a) {
                   }
                   return alert;
                 })
-                .filter(Boolean);
-            });
+                .filter(Boolean),
+            );
             setSelectedAlerts(new Set());
             return [3 /*break*/, 4];
           case 3:
@@ -495,20 +443,18 @@ function AlertPanel(_a) {
         }
       });
     });
-  };
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsLoading(true);
-        setTimeout(function () {
+        setTimeout(() => {
           setIsLoading(false);
         }, 1000);
         return [2 /*return*/];
       });
     });
-  };
   // Render alert item
-  var renderAlertItem = function (alert) {
+  var renderAlertItem = (alert) => {
     var severityConfig = SEVERITY_CONFIG[alert.severity];
     var statusConfig = STATUS_CONFIG[alert.status];
     var categoryConfig = CATEGORY_CONFIG[alert.category];
@@ -523,14 +469,12 @@ function AlertPanel(_a) {
         className={"p-3 border rounded-lg cursor-pointer transition-all duration-200 hover:shadow-sm "
           .concat(!alert.isRead ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200", " ")
           .concat(isSelected ? "ring-2 ring-blue-500" : "")}
-        onClick={function () {
-          return handleAlertClick(alert);
-        }}
+        onClick={() => handleAlertClick(alert)}
       >
         <div className="flex items-start gap-3">
           <checkbox_1.Checkbox
             checked={isSelected}
-            onCheckedChange={function (checked) {
+            onCheckedChange={(checked) => {
               var newSelected = new Set(selectedAlerts);
               if (checked) {
                 newSelected.add(alert.id);
@@ -539,9 +483,7 @@ function AlertPanel(_a) {
               }
               setSelectedAlerts(newSelected);
             }}
-            onClick={function (e) {
-              return e.stopPropagation();
-            }}
+            onClick={(e) => e.stopPropagation()}
           />
 
           <div className={"p-1 rounded ".concat(severityConfig.bgColor)}>
@@ -607,18 +549,16 @@ function AlertPanel(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="space-y-3">
-            {Array.from({ length: 5 }).map(function (_, i) {
-              return (
-                <div key={i} className="flex items-start gap-3">
-                  <skeleton_1.Skeleton className="h-4 w-4" />
-                  <skeleton_1.Skeleton className="h-8 w-8 rounded" />
-                  <div className="flex-1 space-y-2">
-                    <skeleton_1.Skeleton className="h-4 w-3/4" />
-                    <skeleton_1.Skeleton className="h-3 w-1/2" />
-                  </div>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <skeleton_1.Skeleton className="h-4 w-4" />
+                <skeleton_1.Skeleton className="h-8 w-8 rounded" />
+                <div className="flex-1 space-y-2">
+                  <skeleton_1.Skeleton className="h-4 w-3/4" />
+                  <skeleton_1.Skeleton className="h-3 w-1/2" />
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>
@@ -691,12 +631,7 @@ function AlertPanel(_a) {
 
       <card_1.CardContent className="pt-0">
         {/* Tabs */}
-        <tabs_1.Tabs
-          value={activeTab}
-          onValueChange={function (value) {
-            return setActiveTab(value);
-          }}
-        >
+        <tabs_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
           <tabs_1.TabsList className="grid w-full grid-cols-3">
             <tabs_1.TabsTrigger value="all" className="text-xs">
               All ({stats.total})
@@ -718,22 +653,18 @@ function AlertPanel(_a) {
                   <input_1.Input
                     placeholder="Search alerts..."
                     value={filters.search}
-                    onChange={function (e) {
-                      return setFilters(function (prev) {
-                        return __assign(__assign({}, prev), { search: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setFilters((prev) => __assign(__assign({}, prev), { search: e.target.value }))
+                    }
                     className="pl-7 h-7 text-xs"
                   />
                 </div>
 
                 <select_1.Select
                   value={filters.dateRange}
-                  onValueChange={function (value) {
-                    return setFilters(function (prev) {
-                      return __assign(__assign({}, prev), { dateRange: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setFilters((prev) => __assign(__assign({}, prev), { dateRange: value }))
+                  }
                 >
                   <select_1.SelectTrigger className="w-24 h-7 text-xs">
                     <select_1.SelectValue />
@@ -751,11 +682,9 @@ function AlertPanel(_a) {
                 <checkbox_1.Checkbox
                   id="assigned-to-me"
                   checked={filters.assignedToMe}
-                  onCheckedChange={function (checked) {
-                    return setFilters(function (prev) {
-                      return __assign(__assign({}, prev), { assignedToMe: !!checked });
-                    });
-                  }}
+                  onCheckedChange={(checked) =>
+                    setFilters((prev) => __assign(__assign({}, prev), { assignedToMe: !!checked }))
+                  }
                 />
                 <label htmlFor="assigned-to-me" className="text-xs text-muted-foreground">
                   Assigned to me
@@ -776,9 +705,7 @@ function AlertPanel(_a) {
                   <button_1.Button
                     size="sm"
                     variant="outline"
-                    onClick={function () {
-                      return handleBulkAction("acknowledge");
-                    }}
+                    onClick={() => handleBulkAction("acknowledge")}
                   >
                     <lucide_react_1.Eye className="h-3 w-3 mr-1" />
                     Acknowledge
@@ -786,9 +713,7 @@ function AlertPanel(_a) {
                   <button_1.Button
                     size="sm"
                     variant="outline"
-                    onClick={function () {
-                      return handleBulkAction("resolve");
-                    }}
+                    onClick={() => handleBulkAction("resolve")}
                   >
                     <lucide_react_1.CheckCircle className="h-3 w-3 mr-1" />
                     Resolve
@@ -796,9 +721,7 @@ function AlertPanel(_a) {
                   <button_1.Button
                     size="sm"
                     variant="outline"
-                    onClick={function () {
-                      return handleBulkAction("delete");
-                    }}
+                    onClick={() => handleBulkAction("delete")}
                   >
                     <lucide_react_1.Trash2 className="h-3 w-3 mr-1" />
                     Delete
@@ -867,7 +790,7 @@ function generateMockAlerts(clinicId, userId) {
       createdAt: new Date(now.getTime() - 24 * 60 * 60 * 1000), // 1 day ago
     },
   ];
-  mockData.forEach(function (data, index) {
+  mockData.forEach((data, index) => {
     alerts.push({
       id: "alert-".concat(index + 1),
       clinicId: clinicId,

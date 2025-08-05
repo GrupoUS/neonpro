@@ -1,8 +1,8 @@
-import React from "react";
-import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useExportData } from "@/hooks/analytics/useExportData";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import React from "react";
 import { mockExportData } from "@/../../__tests__/utils/mockData";
+import { useExportData } from "@/hooks/analytics/useExportData";
 
 // Mock fetch for API calls
 global.fetch = jest.fn();
@@ -131,7 +131,7 @@ describe("useExportData", () => {
 
     // Resolve the promise
     act(() => {
-      resolvePromise!({
+      resolvePromise?.({
         ok: true,
         blob: () => Promise.resolve(new Blob(["PDF content"], { type: "application/pdf" })),
       });

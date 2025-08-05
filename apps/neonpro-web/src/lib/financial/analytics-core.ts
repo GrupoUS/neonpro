@@ -7,14 +7,14 @@
 
 import type { createClient } from "@/lib/supabase/client";
 import type {
+  ComparisonAnalysis,
+  DASHBOARD_REFRESH_INTERVALS,
+  FINANCIAL_CONSTANTS,
+  FinancialDashboardData,
   KPICalculation,
   PerformanceMetrics,
-  FinancialDashboardData,
-  ReportParameters,
-  ComparisonAnalysis,
   PredictiveInsights,
-  FINANCIAL_CONSTANTS,
-  DASHBOARD_REFRESH_INTERVALS,
+  ReportParameters,
 } from "@/lib/types/financial-reporting";
 import type { FinancialReportingEngine } from "./reporting-engine";
 

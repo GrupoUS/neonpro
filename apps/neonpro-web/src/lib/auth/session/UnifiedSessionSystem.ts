@@ -11,40 +11,40 @@
  */
 
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { SessionManager } from "./SessionManager";
-import type { DeviceManager } from "./DeviceManager";
-import type { SecurityEventLogger } from "./SecurityEventLogger";
-import type { NotificationService } from "./NotificationService";
-import type { DataCleanupService } from "./DataCleanupService";
 import type { sessionConfig } from "./config";
+import type { DataCleanupService } from "./DataCleanupService";
+import type { DeviceManager } from "./DeviceManager";
+import type { NotificationService } from "./NotificationService";
+import type { SecurityEventLogger } from "./SecurityEventLogger";
+import type { SessionManager } from "./SessionManager";
 import type {
-  generateSessionToken,
-  generateDeviceFingerprint,
-  validateUUID,
-  calculateRiskScore,
-  formatDuration,
-  removeUndefined,
-  debounce,
-} from "./utils";
-import type {
-  SessionConfig,
-  DeviceConfig,
-  SecurityConfig,
-  SessionData,
-  DeviceData,
-  SecurityEvent,
   AuthenticationRequest,
   AuthenticationResponse,
-  SessionValidationResult,
-  SessionActivityUpdate,
   CleanupConfig,
   CleanupResult,
-  SecurityThreatData,
-  SecurityReport,
-  SessionMetrics,
+  DeviceConfig,
+  DeviceData,
   DeviceStats,
   NotificationData,
+  SecurityConfig,
+  SecurityEvent,
+  SecurityReport,
+  SecurityThreatData,
+  SessionActivityUpdate,
+  SessionConfig,
+  SessionData,
+  SessionMetrics,
+  SessionValidationResult,
 } from "./types";
+import type {
+  calculateRiskScore,
+  debounce,
+  formatDuration,
+  generateDeviceFingerprint,
+  generateSessionToken,
+  removeUndefined,
+  validateUUID,
+} from "./utils";
 
 /**
  * Unified Session Management System

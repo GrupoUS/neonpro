@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Compliance & Security Engine - NeonPro Notifications
  *
@@ -22,26 +21,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -61,13 +60,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -89,9 +88,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -163,10 +160,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -175,7 +172,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createnotificationComplianceEngine = exports.NotificationComplianceEngine = void 0;
 var zod_1 = require("zod");
@@ -282,17 +279,14 @@ var DPIASchema = zod_1.z.object({
 // ================================================================================
 // COMPLIANCE ENGINE
 // ================================================================================
-var NotificationComplianceEngine = /** @class */ (function () {
+var NotificationComplianceEngine = /** @class */ (() => {
   function NotificationComplianceEngine() {
-    var _this = this;
     this.auditBuffer = [];
     this.supabase = (0, server_1.createClient)();
     this.encryptionKey = this.deriveEncryptionKey();
     this.initializeRetentionPolicies();
     // Flush audit logs a cada 30 segundos
-    setInterval(function () {
-      return _this.flushAuditLogs();
-    }, 30000);
+    setInterval(() => this.flushAuditLogs(), 30000);
   }
   // ================================================================================
   // LGPD COMPLIANCE
@@ -393,11 +387,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
                   notificationType: notificationType,
                   hasConsent: !!consent,
                 },
-                severity: violations.some(function (v) {
-                  return v.severity === "critical";
-                })
-                  ? "critical"
-                  : "medium",
+                severity: violations.some((v) => v.severity === "critical") ? "critical" : "medium",
                 complianceFramework: ["LGPD"],
                 userId: userId,
                 clinicId: clinicId,
@@ -481,9 +471,9 @@ var NotificationComplianceEngine = /** @class */ (function () {
               (_b[types_1.NotificationType.FOLLOW_UP] = ["healthcare", "follow_up", "medical"]),
               _b);
             requiredPurposes = purposeMapping[notificationType] || [];
-            hasPurpose = requiredPurposes.some(function (purpose) {
-              return consent_1.purpose_details.toLowerCase().includes(purpose);
-            });
+            hasPurpose = requiredPurposes.some((purpose) =>
+              consent_1.purpose_details.toLowerCase().includes(purpose),
+            );
             if (!hasPurpose) {
               return [2 /*return*/, null];
             }
@@ -501,7 +491,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
   /**
    * Verifica se período de retenção foi excedido
    */
-  NotificationComplianceEngine.prototype.isRetentionPeriodExceeded = function (consent) {
+  NotificationComplianceEngine.prototype.isRetentionPeriodExceeded = (consent) => {
     var consentDate = new Date(consent.consentGivenAt);
     var expiryDate = new Date(consentDate);
     expiryDate.setDate(expiryDate.getDate() + consent.retentionPeriod);
@@ -517,7 +507,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var requiredFields, required;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         requiredFields =
           ((_a = {}),
           (_a[types_1.NotificationType.APPOINTMENT_REMINDER] = [
@@ -555,7 +545,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
   NotificationComplianceEngine.prototype.validateChannelCompliance = function (userId, channel) {
     return __awaiter(this, void 0, void 0, function () {
       var secureChannels;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         secureChannels = [types_1.NotificationChannel.EMAIL, types_1.NotificationChannel.WHATSAPP];
         // Para simplificar, consideramos todos os canais seguros no contexto clínico
         return [
@@ -631,11 +621,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
                   sensitiveInfo: hasSensitiveInfo.detected,
                   notificationType: notificationType,
                 },
-                severity: violations.some(function (v) {
-                  return v.severity === "critical";
-                })
-                  ? "critical"
-                  : "low",
+                severity: violations.some((v) => v.severity === "critical") ? "critical" : "low",
                 complianceFramework: ["ANVISA", "CFM"],
                 userId: userId,
                 clinicId: clinicId,
@@ -659,7 +645,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
   /**
    * Detecta informações médicas sensíveis
    */
-  NotificationComplianceEngine.prototype.detectSensitiveMedicalInfo = function (content) {
+  NotificationComplianceEngine.prototype.detectSensitiveMedicalInfo = (content) => {
     var patterns = {
       diagnosis: /diagnóstico|doença|patologia|síndrome|transtorno/i,
       medication: /medicamento|remédio|dose|posologia|mg|ml/i,
@@ -684,7 +670,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
   /**
    * Valida conformidade ANVISA para medicamentos
    */
-  NotificationComplianceEngine.prototype.validateANVISADrugCompliance = function (content) {
+  NotificationComplianceEngine.prototype.validateANVISADrugCompliance = (content) => {
     var controlledSubstances = /ritalina|morfina|codeína|tramadol|clonazepam/i;
     var hasControlled = controlledSubstances.test(content);
     if (hasControlled) {
@@ -698,7 +684,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
   /**
    * Verifica se contém informações protegidas de saúde
    */
-  NotificationComplianceEngine.prototype.containsProtectedHealthInfo = function (content) {
+  NotificationComplianceEngine.prototype.containsProtectedHealthInfo = (content) => {
     var phiPatterns = [
       /CPF.*\d{3}\.?\d{3}\.?\d{3}-?\d{2}/,
       /RG.*\d+/,
@@ -708,9 +694,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
       /exame.*sangue/i,
       /resultado.*laboratorial/i,
     ];
-    return phiPatterns.some(function (pattern) {
-      return pattern.test(content);
-    });
+    return phiPatterns.some((pattern) => pattern.test(content));
   };
   /**
    * Criptografa dados sensíveis
@@ -824,19 +808,18 @@ var NotificationComplianceEngine = /** @class */ (function () {
   /**
    * Deriva chave de criptografia
    */
-  NotificationComplianceEngine.prototype.deriveEncryptionKey = function () {
+  NotificationComplianceEngine.prototype.deriveEncryptionKey = () => {
     var secret = process.env.ENCRYPTION_SECRET || "default-secret-key-change-in-production";
     return Buffer.from((0, crypto_1.createHash)("sha256").update(secret).digest("hex"), "hex");
   };
   /**
    * Gera ID único para chave
    */
-  NotificationComplianceEngine.prototype.generateKeyId = function () {
-    return (0, crypto_1.createHash)("sha256")
+  NotificationComplianceEngine.prototype.generateKeyId = () =>
+    (0, crypto_1.createHash)("sha256")
       .update((0, crypto_1.randomBytes)(32))
       .digest("hex")
       .substring(0, 16);
-  };
   /**
    * Registra evento de auditoria
    */
@@ -904,7 +887,7 @@ var NotificationComplianceEngine = /** @class */ (function () {
   /**
    * Inicializa políticas de retenção
    */
-  NotificationComplianceEngine.prototype.initializeRetentionPolicies = function () {
+  NotificationComplianceEngine.prototype.initializeRetentionPolicies = () => {
     // Políticas baseadas na LGPD e regulamentações médicas
     var policies = [
       {
@@ -1083,7 +1066,5 @@ exports.NotificationComplianceEngine = NotificationComplianceEngine;
 // ================================================================================
 // EXPORT
 // ================================================================================
-var createnotificationComplianceEngine = function () {
-  return new NotificationComplianceEngine();
-};
+var createnotificationComplianceEngine = () => new NotificationComplianceEngine();
 exports.createnotificationComplianceEngine = createnotificationComplianceEngine;

@@ -6,8 +6,8 @@
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { Database } from "@/types/database";
 import type {
-  NoShowPrediction,
   InterventionRecommendation,
+  NoShowPrediction,
   PatientRiskProfile,
 } from "./no-show-prediction";
 

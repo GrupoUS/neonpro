@@ -25,7 +25,7 @@
  * - Advanced analytics and pattern recognition
  */
 
-import type { type Database } from "@/lib/database.types";
+import type { Database } from "@/lib/database.types";
 import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/utils/logger";
 
@@ -258,7 +258,7 @@ export class JourneyStateMachine {
    * Validate if state transition is allowed
    */
   static isValidTransition(currentState: JourneyState, newState: JourneyState): boolean {
-    const allowedTransitions = this.STATE_TRANSITIONS[currentState] || [];
+    const allowedTransitions = JourneyStateMachine.STATE_TRANSITIONS[currentState] || [];
     return allowedTransitions.includes(newState);
   }
 
@@ -266,7 +266,7 @@ export class JourneyStateMachine {
    * Get possible next states
    */
   static getPossibleNextStates(currentState: JourneyState): JourneyState[] {
-    return this.STATE_TRANSITIONS[currentState] || [];
+    return JourneyStateMachine.STATE_TRANSITIONS[currentState] || [];
   }
 
   /**

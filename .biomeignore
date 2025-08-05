@@ -1,0 +1,50 @@
+# Build outputs
+.next/
+dist/
+build/
+out/
+*.js.map
+*.d.ts.map
+
+# Node modules
+node_modules/
+
+# Dependencies
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Test coverage
+coverage/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Generated files
+apps/neonpro-web/.next/
+apps/neonpro-api/dist/
+*.generated.*
+
+# Large bundled files (over 1MB)
+*.chunk.js
+*.bundle.js
+chunks/

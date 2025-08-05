@@ -8,12 +8,12 @@
  */
 
 import type {
-  ApiMiddleware,
-  ApiGatewayPlugin,
-  ApiRequestContext,
-  ApiResponseContext,
   ApiGatewayConfig,
   ApiGatewayLogger,
+  ApiGatewayPlugin,
+  ApiMiddleware,
+  ApiRequestContext,
+  ApiResponseContext,
 } from "./types";
 
 /**

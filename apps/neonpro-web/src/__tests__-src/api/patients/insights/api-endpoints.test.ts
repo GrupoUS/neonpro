@@ -1,24 +1,6 @@
 // API Tests for Patient Insights Endpoints
 // Story 3.2: Task 9 - API Integration Testing
 
-import type { NextRequest } from "next/server";
-import type {
-  GET as getRiskAssessment,
-  POST as postRiskAssessment,
-} from "../../../../../../app/api/patients/[patientId]/insights/risk-assessment/route";
-import type {
-  GET as getAlerts,
-  POST as postAlerts,
-} from "../../../../../../app/api/patients/[patientId]/insights/alerts/route";
-import type {
-  GET as getTreatments,
-  POST as postTreatments,
-} from "../../../../../../app/api/patients/[patientId]/insights/treatments/route";
-import type {
-  GET as getComprehensive,
-  POST as postComprehensive,
-} from "../../../../../../app/api/patients/[patientId]/insights/comprehensive/route";
-
 // Mock Supabase
 jest.mock("@supabase/auth-helpers-nextjs", () => ({
   createRouteHandlerClient: jest.fn(() => ({

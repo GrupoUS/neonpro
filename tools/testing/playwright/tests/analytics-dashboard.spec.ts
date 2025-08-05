@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("Analytics Dashboard E2E", () => {
   test.beforeEach(async ({ page }) => {
@@ -140,8 +140,8 @@ test.describe("Analytics Dashboard E2E", () => {
     await expect(page.getByTestId("analytics-dashboard")).toBeVisible();
 
     // Get initial values
-    const initialPatients = await page.getByTestId("total-patients-value").textContent();
-    const initialRevenue = await page.getByTestId("total-revenue-value").textContent();
+    const _initialPatients = await page.getByTestId("total-patients-value").textContent();
+    const _initialRevenue = await page.getByTestId("total-revenue-value").textContent();
 
     // Click refresh button
     await page.getByRole("button", { name: "Refresh Data" }).click();

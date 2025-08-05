@@ -1,26 +1,27 @@
 // lib/search/unified-search.ts - Server-side search implementation
-import type { createClient } from "@/lib/supabase/server";
+
 import type { AIInsightsEngine } from "@/lib/ai/insights-engine";
 import type { MedicalTimelineManager } from "@/lib/medical/timeline-manager";
 import type { DuplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
 import type { PhotoRecognitionSystem } from "@/lib/patients/photo-recognition";
 import type { ProfileManager } from "@/lib/patients/profile-manager";
-import type { nlpSearchEngine, type NLPSearchQuery, type SearchContext } from "./nlp-engine";
+import type { createClient } from "@/lib/supabase/server";
+import type { NLPSearchQuery, nlpSearchEngine, SearchContext } from "./nlp-engine";
 
 // Re-export types from the shared types file
 export type {
-  SearchQuery,
-  SearchType,
-  SearchResult,
-  SearchResponse,
   GlobalSearchStats,
-  NLPSearchQuery,
-  SearchContext,
   NLPInsights,
-  SearchFacets,
-  SearchStats,
+  NLPSearchQuery,
   SavedSearch,
+  SearchContext,
+  SearchFacets,
   SearchHistory,
+  SearchQuery,
+  SearchResponse,
+  SearchResult,
+  SearchStats,
+  SearchType,
 } from "./types";
 
 export interface SearchAction {

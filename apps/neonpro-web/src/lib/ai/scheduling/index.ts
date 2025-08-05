@@ -20,15 +20,12 @@
 import type { createClient } from "@/lib/supabase/client";
 import type {
   AISchedulingCore,
-  type SchedulingCriteria,
-  type SchedulingRecommendation,
+  SchedulingCriteria,
+  SchedulingRecommendation,
 } from "./ai-scheduling-core";
-import type { OptimizationEngine, type OptimizationResult } from "./optimization-engine";
+import type { ComplianceRulesEngine, ComplianceValidationResult } from "./compliance-rules-engine";
+import type { OptimizationEngine, OptimizationResult } from "./optimization-engine";
 import type { RealTimeAdaptiveScheduling } from "./real-time-adaptive";
-import type {
-  ComplianceRulesEngine,
-  type ComplianceValidationResult,
-} from "./compliance-rules-engine";
 
 // Main AI Scheduling System Configuration
 interface AISchedulingConfig {
@@ -778,18 +775,16 @@ export {
 };
 
 // Export component types for external use
-export {
-  type SchedulingCriteria,
-  type SchedulingRecommendation,
+export type {
+  SchedulingCriteria,
+  SchedulingRecommendation,
 } from "./ai-scheduling-core";
-
-export { type OptimizationResult } from "./optimization-engine";
-
-export {
-  type ComplianceValidationResult,
-  type RuleViolation,
-  type RuleWarning,
+export type {
+  ComplianceValidationResult,
+  RuleViolation,
+  RuleWarning,
 } from "./compliance-rules-engine";
+export type { OptimizationResult } from "./optimization-engine";
 
 // Default export
 export default AISchedulingSystem;

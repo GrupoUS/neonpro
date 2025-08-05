@@ -1,7 +1,7 @@
 import type { createClient } from "@supabase/supabase-js";
 import type { AuditLogger } from "../../audit/audit-logger";
-import type { EncryptionService } from "../../security/encryption-service";
 import type { LGPDManager } from "../../lgpd/lgpd-manager";
+import type { EncryptionService } from "../../security/encryption-service";
 import type { BackupStrategyManager, DataSourceHandler } from "../strategies/backup-strategies";
 
 export interface RecoveryPlan {
@@ -726,12 +726,13 @@ export class RecoveryManager {
         await strategy.restore(step.backup_location, step.target_location);
         break;
 
-      case "validate":
+      case "validate": {
         const isValid = await strategy.validate(step.backup_location);
         if (!isValid) {
           throw new Error(`Validação falhou para ${step.name}`);
         }
         break;
+      }
 
       case "cleanup":
         await this.cleanupRecoveryStep(step, execution);

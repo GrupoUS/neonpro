@@ -1,6 +1,27 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Edit,
+  Eye,
+  FileText,
+  Filter,
+  Heart,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Search,
+  Trash2,
+  Users,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,19 +29,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Dialog,
   DialogContent,
@@ -29,7 +37,16 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { LoadingSpinner } from "@/components/ui/loading-spinner";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type {
   Table,
   TableBody,
@@ -38,25 +55,8 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { LoadingSpinner } from "@/components/ui/loading-spinner";
-import type {
-  Users,
-  Search,
-  Plus,
-  Edit,
-  Trash2,
-  Phone,
-  Mail,
-  Calendar,
-  MapPin,
-  FileText,
-  Activity,
-  AlertCircle,
-  Heart,
-  Eye,
-  Filter,
-  CheckCircle,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 
 interface Patient {
   id: string;

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpcomingAppointments = UpcomingAppointments;
 var badge_1 = require("@/components/ui/badge");
@@ -27,7 +26,7 @@ function UpcomingAppointments(_a) {
       </div>
     );
   }
-  var getStatusBadge = function (appointment) {
+  var getStatusBadge = (appointment) => {
     switch (appointment.status) {
       case "confirmed":
         return (
@@ -44,7 +43,7 @@ function UpcomingAppointments(_a) {
         return <badge_1.Badge variant="outline">{appointment.status}</badge_1.Badge>;
     }
   };
-  var getUrgencyIndicator = function (hoursUntil) {
+  var getUrgencyIndicator = (hoursUntil) => {
     if (hoursUntil <= 24) {
       return (
         <div title="Menos de 24h - não pode cancelar">
@@ -64,7 +63,7 @@ function UpcomingAppointments(_a) {
       </div>
     );
   };
-  var formatAppointmentDateTime = function (date, time) {
+  var formatAppointmentDateTime = (date, time) => {
     try {
       var dateTime = (0, date_fns_1.parseISO)("".concat(date, "T").concat(time));
       return {
@@ -76,7 +75,7 @@ function UpcomingAppointments(_a) {
     }
   };
   // Group appointments by date for better organization
-  var groupedAppointments = appointments.reduce(function (groups, appointment) {
+  var groupedAppointments = appointments.reduce((groups, appointment) => {
     var date = appointment.appointment_date;
     if (!groups[date]) {
       groups[date] = [];
@@ -88,7 +87,7 @@ function UpcomingAppointments(_a) {
   var sortedDates = Object.keys(groupedAppointments).sort();
   return (
     <div className="space-y-4">
-      {sortedDates.map(function (date) {
+      {sortedDates.map((date) => {
         var dayAppointments = groupedAppointments[date];
         var formattedDate = formatAppointmentDateTime(date, "00:00").date;
         return (
@@ -98,7 +97,7 @@ function UpcomingAppointments(_a) {
               {formattedDate}
             </div>
 
-            {dayAppointments.map(function (appointment) {
+            {dayAppointments.map((appointment) => {
               var time = formatAppointmentDateTime(
                 appointment.appointment_date,
                 appointment.appointment_time,
@@ -189,9 +188,7 @@ function UpcomingAppointments(_a) {
                         <button_1.Button
                           variant="outline"
                           size="sm"
-                          onClick={function () {
-                            return onView(appointment.id);
-                          }}
+                          onClick={() => onView(appointment.id)}
                           className="text-xs"
                         >
                           Detalhes
@@ -201,9 +198,7 @@ function UpcomingAppointments(_a) {
                           <button_1.Button
                             variant="outline"
                             size="sm"
-                            onClick={function () {
-                              return onReschedule(appointment.id);
-                            }}
+                            onClick={() => onReschedule(appointment.id)}
                             className="text-xs"
                           >
                             <lucide_react_1.RotateCcw className="h-3 w-3 mr-1" />
@@ -215,9 +210,7 @@ function UpcomingAppointments(_a) {
                           <button_1.Button
                             variant="destructive"
                             size="sm"
-                            onClick={function () {
-                              return onCancel(appointment.id);
-                            }}
+                            onClick={() => onCancel(appointment.id)}
                             className="text-xs"
                           >
                             <lucide_react_1.XCircle className="h-3 w-3 mr-1" />

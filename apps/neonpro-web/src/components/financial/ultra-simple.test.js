@@ -1,11 +1,10 @@
-"use strict";
 /**
  * Ultra simple test to isolate the validateAppointmentSlot issue
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("./utils");
-describe("Ultra Simple Debug", function () {
-  it("should validate the simplest possible case", function () {
+describe("Ultra Simple Debug", () => {
+  it("should validate the simplest possible case", () => {
     var result = (0, utils_1.validateAppointmentSlot)("2026-12-31T14:00:00.000Z", 60);
     // Force display in test name
     console.error("FORCED ERROR FOR DISPLAY - Result:", result);

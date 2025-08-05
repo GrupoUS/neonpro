@@ -10,14 +10,14 @@
  * - Emergency scheduling protocols
  */
 
+import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { createClient } from "@/lib/supabase/client";
 import type {
   AISchedulingCore,
   SchedulingCriteria,
   SchedulingRecommendation,
 } from "./ai-scheduling-core";
 import type { OptimizationEngine, OptimizationResult } from "./optimization-engine";
-import type { createClient } from "@/lib/supabase/client";
-import type { RealtimeChannel } from "@supabase/supabase-js";
 
 // Real-time Event Types
 type ScheduleEvent =

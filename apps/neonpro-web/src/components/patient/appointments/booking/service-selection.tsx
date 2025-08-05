@@ -1,13 +1,13 @@
 "use client";
 
+import type { Clock, DollarSign, User } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { createClient } from "@/app/utils/supabase/client";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { LoadingSpinner } from "@/components/ui/loading-spinner";
-import type { Clock, DollarSign, User } from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface Service {
   id: string;

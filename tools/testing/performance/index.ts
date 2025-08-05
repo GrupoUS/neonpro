@@ -5,61 +5,58 @@
  * Based on 2025 industry best practices and expert recommendations
  */
 
-// Core Web Vitals and Performance Monitoring
-export {
-  reportWebVitals,
-  sendToAnalytics,
-  getPerformanceGrade,
-  usePerformanceMonitoring,
-  PerformanceUtils,
-  PERFORMANCE_THRESHOLDS,
-} from "./web-vitals";
-
 // Bundle Analysis and Optimization
 export {
   analyzeBundleStats,
-  generateBundleReport,
-  runBundleAnalysis,
-  formatBytes,
   BUNDLE_THRESHOLDS,
   type BundleAnalysis,
+  formatBytes,
+  generateBundleReport,
+  runBundleAnalysis,
 } from "./bundle-analyzer";
-
 // Caching Strategies
 export {
-  CacheManager,
-  CacheKeyGenerator,
+  CACHE_CONFIG,
   CacheHeaders,
   CacheInvalidation,
-  CDNOptimization,
+  CacheKeyGenerator,
+  CacheManager,
   CachePerformanceMonitor,
-  withCache,
+  CDNOptimization,
   cacheManager,
-  CACHE_CONFIG,
+  withCache,
 } from "./caching";
+// Production Deployment
+export {
+  BuildOptimizer,
+  DEPLOYMENT_CONFIG,
+  DeploymentAutomation,
+  PreBuildOptimizer,
+  ProductionHealthCheck,
+} from "./deployment";
 
 // React Performance Hooks
 export {
-  useOptimizedCallback,
-  useOptimizedMemo,
-  useRenderPerformance,
   useDebouncedState,
-  useVirtualScrolling,
   useIntersectionObserver,
   useMemoryMonitor,
+  useOptimizedCallback,
   useOptimizedChartData,
-  usePreloadResources,
+  useOptimizedMemo,
   usePerformanceProfiler,
+  usePreloadResources,
+  useRenderPerformance,
+  useVirtualScrolling,
 } from "./react-hooks";
-
-// Production Deployment
+// Core Web Vitals and Performance Monitoring
 export {
-  PreBuildOptimizer,
-  BuildOptimizer,
-  ProductionHealthCheck,
-  DeploymentAutomation,
-  DEPLOYMENT_CONFIG,
-} from "./deployment";
+  getPerformanceGrade,
+  PERFORMANCE_THRESHOLDS,
+  PerformanceUtils,
+  reportWebVitals,
+  sendToAnalytics,
+  usePerformanceMonitoring,
+} from "./web-vitals";
 
 // Performance utility functions
 export const PerformanceSuite = {

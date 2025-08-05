@@ -4,14 +4,14 @@
 
 "use client";
 
+import type { AlertTriangle, CheckCircle, Clock, XCircle } from "lucide-react";
 import * as React from "react";
-import type { PatientNavigation } from "./patient-navigation";
-import type { PatientBreadcrumbs } from "./patient-breadcrumbs";
+import type { PatientProfile } from "@/app/lib/auth/patient-auth";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
-import type { AlertTriangle, CheckCircle, Clock, XCircle } from "lucide-react";
 import type { cn } from "@/lib/utils";
-import type { PatientProfile } from "@/app/lib/auth/patient-auth";
+import type { PatientBreadcrumbs } from "./patient-breadcrumbs";
+import type { PatientNavigation } from "./patient-navigation";
 
 interface BreadcrumbItem {
   title: string;

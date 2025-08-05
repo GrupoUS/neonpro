@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Supabase Storage Utility Functions
  * Secure file management for medical images with LGPD compliance
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
 var _o;
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -164,7 +161,7 @@ exports.checkPatientPhotoConsent =
   exports.storageManager =
   exports.SupabaseStorageManager =
     void 0;
-var SupabaseStorageManager = /** @class */ (function () {
+var SupabaseStorageManager = /** @class */ (() => {
   function SupabaseStorageManager() {
     this.supabase = createClient(ComponentClient(), private, readonly, BUCKET_NAME = 'patient-photos', private, readonly, MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
         , // 10MB
@@ -210,7 +207,7 @@ Promise <
       (_d = options.format),
       (format = _d === void 0 ? file.type : _d),
       options),
-    return: new Promise(function (resolve, reject) {
+    return: new Promise((resolve, reject) => {
       var canvas = document.createElement("canvas");
       var ctx = canvas.getContext("2d");
       var img = new Image();
@@ -218,7 +215,7 @@ Promise <
         reject(new Error("Canvas context não disponível"));
         return;
       }
-      img.onload = function () {
+      img.onload = () => {
         try {
           // Calculate dimensions maintaining aspect ratio
           var width = img.width,
@@ -235,7 +232,7 @@ Promise <
           ctx.fillRect(0, 0, width, height);
           ctx.drawImage(img, 0, 0, width, height);
           canvas.toBlob(
-            function (blob) {
+            (blob) => {
               if (blob) {
                 resolve(blob);
               } else {
@@ -249,9 +246,7 @@ Promise <
           reject(error);
         }
       };
-      img.onerror = function () {
-        return reject(new Error("Falha ao carregar imagem"));
-      };
+      img.onerror = () => reject(new Error("Falha ao carregar imagem"));
       img.src = URL.createObjectURL(file);
     }),
   };
@@ -283,12 +278,12 @@ Promise <
         (data = _e.data),
         (error = _e.error),
         _e),
-      if: function (error) {},
+      if: (error) => {},
       throw: error,
       const: (consents = data === null || data === void 0 ? void 0 : data.lgpd_consents),
       return: (consents === null || consents === void 0 ? void 0 : consents.photo_consent) === true,
     },
-    catch: function (error) {
+    catch: (error) => {
       console.error("Erro ao verificar consentimento LGPD:", error);
       return false;
     },
@@ -311,10 +306,10 @@ Promise < UploadResult > {
     try: {
         // Validate file
         const: validation = this.validateFile(file),
-        if: function (, validation) { },
+        if: (, validation) => { },
         : .valid
     }
-};
+}
 {
   return { success: false, error: validation.error };
 }
@@ -388,7 +383,7 @@ try {
  * Upload multiple photos with progress callback
  */
 async;
-uploadMultiplePhotos(files, File[], patientId, string, metadata, PhotoMetadata, onProgress ?  : function (progress) { return void ; }, options, CompressionOptions = {});
+uploadMultiplePhotos(files, File[], patientId, string, metadata, PhotoMetadata, onProgress ?  : ((progress) => void), options, CompressionOptions = {});
 Promise < {
     success: boolean,
     results: UploadResult[],
@@ -403,7 +398,7 @@ Promise < {
     _f.successCount = successCount,
     _f.let = let,
     _f.errorCount = errorCount,
-    _f.for = function (let, i, i, , files) {
+    _f.for = (let, i, i, , files) => {
         if (i === void 0) { i = 0; }
     },
     _f. =
@@ -476,8 +471,8 @@ async;
     if (error) throw error;
     // Generate signed URLs for each photo
     var photosWithUrls = await Promise.all(
-      (data || []).map(function (photo) {
-        return __awaiter(void 0, void 0, void 0, function () {
+      (data || []).map((photo) =>
+        __awaiter(void 0, void 0, void 0, function () {
           var urlData;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -500,8 +495,8 @@ async;
                 ];
             }
           });
-        });
-      }),
+        }),
+      ),
     );
     return {
             success: true,
@@ -540,7 +535,7 @@ Promise <
         (photo = _h.data),
         (fetchError = _h.error),
         _h),
-      if: function (fetchError) {},
+      if: (fetchError) => {},
       throw: fetchError,
       // Delete from storage
       // Delete from storage
@@ -548,7 +543,7 @@ Promise <
         ((_j = await this.supabase.storage.from(this.BUCKET_NAME).remove([photo.file_path])),
         (storageError = _j.error),
         _j),
-      if: function (storageError) {
+      if: (storageError) => {
         console.error("Storage deletion error:", storageError);
         // Continue with database deletion even if storage fails
       },
@@ -558,11 +553,11 @@ Promise <
         ((_k = await this.supabase.from("patient_photos").delete().eq("id", photoId)),
         (dbError = _k.error),
         _k),
-      if: function (dbError) {},
+      if: (dbError) => {},
       throw: dbError,
       return: { success: true },
     },
-    catch: function (error) {
+    catch: (error) => {
       console.error("Delete error:", error);
       return {
         success: false,
@@ -584,11 +579,11 @@ Promise <
         (data = _l.data),
         (error = _l.error),
         _l),
-      if: function (error) {},
+      if: (error) => {},
       throw: error,
       return: { success: true, blob: data },
     },
-    catch: function (error) {
+    catch: (error) => {
       console.error("Download error:", error);
       return {
         success: false,
@@ -612,11 +607,11 @@ Promise <
         (data = _m.data),
         (error = _m.error),
         _m),
-      if: function (error) {},
+      if: (error) => {},
       throw: error,
       return: { success: true, url: data.signedUrl },
     },
-    catch: function (error) {
+    catch: (error) => {
       console.error("Signed URL error:", error);
       return {
         success: false,
@@ -678,7 +673,7 @@ Promise < { success: boolean, deletedCount: number, error: string } > {
         // Apply filters
         ,
         // Apply filters
-        if: function (criteria) { },
+        if: (criteria) => { },
         : .category
     }
 };
@@ -702,18 +697,14 @@ if (!photos || photos.length === 0) {
   return { success: true, deletedCount: 0 };
 }
 // Delete from storage
-var filePaths = photos.map(function (photo) {
-  return photo.file_path;
-});
+var filePaths = photos.map((photo) => photo.file_path);
 var storageError = (await this.supabase.storage.from(this.BUCKET_NAME).remove(filePaths)).error;
 if (storageError) {
   console.error("Bulk storage deletion error:", storageError);
   // Continue with database deletion
 }
 // Delete from database
-var photoIds = photos.map(function (photo) {
-  return photo.id;
-});
+var photoIds = photos.map((photo) => photo.id);
 var dbError = (await this.supabase.from("patient_photos").delete().in("id", photoIds)).error;
 if (dbError) throw dbError;
 return { success: true, deletedCount: photos.length };

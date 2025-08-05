@@ -1,10 +1,7 @@
 // SSO Authorization Route
 // Story 1.3: SSO Integration - Authorization URL Generation
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { ssoManager } from "@/lib/auth/sso/sso-manager";
-import type { logger } from "@/lib/logger";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 const authorizeSchema = z.object({
   provider: z.string().min(1, "Provider is required"),

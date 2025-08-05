@@ -1,4 +1,3 @@
-"use strict";
 // RBAC React Hook for Frontend Permission Management
 // Story 1.2: Role-Based Permissions Enhancement
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useRBAC = useRBAC;
 exports.usePermission = usePermission;
@@ -161,7 +158,6 @@ var permissions_1 = require("@/lib/auth/rbac/permissions");
  * Main RBAC Hook
  */
 function useRBAC(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -188,27 +184,25 @@ function useRBAC(options) {
    * Load user role and permissions
    */
   var loadUserRole = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, roleAssignment, roleError, _b, roleDef, roleDefError, permissions, error_1;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               if (!(user === null || user === void 0 ? void 0 : user.id) || !clinicId) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     isLoading: false,
                     error: "Missing user or clinic context",
-                  });
-                });
+                  }),
+                );
                 return [2 /*return*/];
               }
               _c.label = 1;
             case 1:
               _c.trys.push([1, 5, , 6]);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
               return [
                 4 /*yield*/,
                 supabase
@@ -225,12 +219,12 @@ function useRBAC(options) {
                 throw new Error("Failed to load user role: ".concat(roleError.message));
               }
               if (!roleAssignment) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     isLoading: false,
                     error: "No role assigned for this clinic",
-                  });
-                });
+                  }),
+                );
                 return [2 /*return*/];
               }
               return [
@@ -262,29 +256,28 @@ function useRBAC(options) {
             case 5:
               error_1 = _c.sent();
               console.error("Error loading user role:", error_1);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isLoading: false,
                   error: error_1 instanceof Error ? error_1.message : "Failed to load user role",
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 6];
             case 6:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user === null || user === void 0 ? void 0 : user.id, clinicId, supabase],
   );
   /**
    * Check if user has specific permission
    */
   var hasPermission = (0, react_1.useCallback)(
-    function (permission) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (permission) =>
+      __awaiter(this, void 0, void 0, function () {
         var cacheKey, cached, result_1, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!(user === null || user === void 0 ? void 0 : user.id) || !clinicId) {
@@ -309,7 +302,7 @@ function useRBAC(options) {
             case 2:
               result_1 = _a.sent();
               // Update cache
-              setPermissionCache(function (prev) {
+              setPermissionCache((prev) => {
                 var _a;
                 return __assign(
                   __assign({}, prev),
@@ -331,18 +324,17 @@ function useRBAC(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user === null || user === void 0 ? void 0 : user.id, clinicId, permissionCache, cacheTimeout],
   );
   /**
    * Check multiple permissions at once
    */
   var hasPermissions = (0, react_1.useCallback)(
-    function (permissions) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (permissions) =>
+      __awaiter(this, void 0, void 0, function () {
         var results, _i, permissions_2, permission, _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               results = {};
@@ -364,18 +356,17 @@ function useRBAC(options) {
               return [2 /*return*/, results];
           }
         });
-      });
-    },
+      }),
     [hasPermission],
   );
   /**
    * Check if user can manage another user
    */
   var canManageUser = (0, react_1.useCallback)(
-    function (targetUserId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (targetUserId) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!(user === null || user === void 0 ? void 0 : user.id) || !clinicId) {
@@ -398,36 +389,25 @@ function useRBAC(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user === null || user === void 0 ? void 0 : user.id, clinicId],
   );
   /**
    * Get role hierarchy level
    */
-  var getHierarchyLevel = (0, react_1.useCallback)(
-    function () {
-      var _a;
-      return (
-        ((_a = state.roleDefinition) === null || _a === void 0 ? void 0 : _a.hierarchy) || null
-      );
-    },
-    [state.roleDefinition],
-  );
+  var getHierarchyLevel = (0, react_1.useCallback)(() => {
+    var _a;
+    return ((_a = state.roleDefinition) === null || _a === void 0 ? void 0 : _a.hierarchy) || null;
+  }, [state.roleDefinition]);
   /**
    * Check if user is in specific role
    */
-  var isRole = (0, react_1.useCallback)(
-    function (role) {
-      return state.userRole === role;
-    },
-    [state.userRole],
-  );
+  var isRole = (0, react_1.useCallback)((role) => state.userRole === role, [state.userRole]);
   /**
    * Check if user is at least specific role level
    */
   var isAtLeastRole = (0, react_1.useCallback)(
-    function (role) {
+    (role) => {
       if (!state.roleDefinition) return false;
       var roleHierarchy = {
         owner: 1,
@@ -442,72 +422,60 @@ function useRBAC(options) {
   /**
    * Refresh permissions
    */
-  var refreshPermissions = (0, react_1.useCallback)(
-    function () {
-      setPermissionCache({});
-      loadUserRole();
-    },
-    [loadUserRole],
-  );
+  var refreshPermissions = (0, react_1.useCallback)(() => {
+    setPermissionCache({});
+    loadUserRole();
+  }, [loadUserRole]);
   /**
    * Clear permission cache
    */
-  var clearCache = (0, react_1.useCallback)(function () {
+  var clearCache = (0, react_1.useCallback)(() => {
     setPermissionCache({});
   }, []);
   // Load role on mount and when dependencies change
-  (0, react_1.useEffect)(
-    function () {
-      loadUserRole();
-    },
-    [loadUserRole],
-  );
+  (0, react_1.useEffect)(() => {
+    loadUserRole();
+  }, [loadUserRole]);
   // Auto refresh on role changes if enabled
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoRefresh || !(user === null || user === void 0 ? void 0 : user.id) || !clinicId)
-        return;
-      var channel = supabase
-        .channel("role_changes")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "user_role_assignments",
-            filter: "user_id=eq.".concat(user.id),
-          },
-          function () {
-            console.log("Role assignment changed, refreshing permissions");
-            refreshPermissions();
-          },
-        )
-        .subscribe();
-      return function () {
-        supabase.removeChannel(channel);
-      };
-    },
-    [
-      user === null || user === void 0 ? void 0 : user.id,
-      clinicId,
-      autoRefresh,
-      supabase,
-      refreshPermissions,
-    ],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!autoRefresh || !(user === null || user === void 0 ? void 0 : user.id) || !clinicId) return;
+    var channel = supabase
+      .channel("role_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "user_role_assignments",
+          filter: "user_id=eq.".concat(user.id),
+        },
+        () => {
+          console.log("Role assignment changed, refreshing permissions");
+          refreshPermissions();
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [
+    user === null || user === void 0 ? void 0 : user.id,
+    clinicId,
+    autoRefresh,
+    supabase,
+    refreshPermissions,
+  ]);
   // Memoized computed values
   var computedValues = (0, react_1.useMemo)(
-    function () {
-      return {
-        isOwner: state.userRole === "owner",
-        isManager: state.userRole === "manager",
-        isStaff: state.userRole === "staff",
-        isPatient: state.userRole === "patient",
-        isStaffOrAbove: state.roleDefinition ? state.roleDefinition.hierarchy <= 3 : false,
-        isManagerOrAbove: state.roleDefinition ? state.roleDefinition.hierarchy <= 2 : false,
-        hasAnyRole: state.userRole !== null,
-      };
-    },
+    () => ({
+      isOwner: state.userRole === "owner",
+      isManager: state.userRole === "manager",
+      isStaff: state.userRole === "staff",
+      isPatient: state.userRole === "patient",
+      isStaffOrAbove: state.roleDefinition ? state.roleDefinition.hierarchy <= 3 : false,
+      isManagerOrAbove: state.roleDefinition ? state.roleDefinition.hierarchy <= 2 : false,
+      hasAnyRole: state.userRole !== null,
+    }),
     [state.userRole, state.roleDefinition],
   );
   return __assign(__assign(__assign({}, state), computedValues), {
@@ -536,53 +504,50 @@ function usePermission(permission, clinicId) {
     isChecking = _b[0],
     setIsChecking = _b[1];
   var user = (0, auth_helpers_react_1.useUser)();
-  (0, react_1.useEffect)(
-    function () {
-      function checkPermission() {
-        return __awaiter(this, void 0, void 0, function () {
-          var result, error_4;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (!(user === null || user === void 0 ? void 0 : user.id) || !clinicId) {
-                  setHasAccess(false);
-                  setIsChecking(false);
-                  return [2 /*return*/];
-                }
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                setIsChecking(true);
-                return [
-                  4 /*yield*/,
-                  permissions_1.rbacManager.checkPermission({
-                    userId: user.id,
-                    permission: permission,
-                    clinicId: clinicId,
-                  }),
-                ];
-              case 2:
-                result = _a.sent();
-                setHasAccess(result.granted);
-                return [3 /*break*/, 5];
-              case 3:
-                error_4 = _a.sent();
-                console.error("Permission check error:", error_4);
+  (0, react_1.useEffect)(() => {
+    function checkPermission() {
+      return __awaiter(this, void 0, void 0, function () {
+        var result, error_4;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (!(user === null || user === void 0 ? void 0 : user.id) || !clinicId) {
                 setHasAccess(false);
-                return [3 /*break*/, 5];
-              case 4:
                 setIsChecking(false);
-                return [7 /*endfinally*/];
-              case 5:
                 return [2 /*return*/];
-            }
-          });
+              }
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              setIsChecking(true);
+              return [
+                4 /*yield*/,
+                permissions_1.rbacManager.checkPermission({
+                  userId: user.id,
+                  permission: permission,
+                  clinicId: clinicId,
+                }),
+              ];
+            case 2:
+              result = _a.sent();
+              setHasAccess(result.granted);
+              return [3 /*break*/, 5];
+            case 3:
+              error_4 = _a.sent();
+              console.error("Permission check error:", error_4);
+              setHasAccess(false);
+              return [3 /*break*/, 5];
+            case 4:
+              setIsChecking(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      }
-      checkPermission();
-    },
-    [user === null || user === void 0 ? void 0 : user.id, permission, clinicId],
-  );
+      });
+    }
+    checkPermission();
+  }, [user === null || user === void 0 ? void 0 : user.id, permission, clinicId]);
   return {
     hasAccess: hasAccess,
     isChecking: isChecking,
@@ -596,13 +561,10 @@ function useRoleGuard(allowedRoles, clinicId) {
   var _a = useRBAC({ clinicId: clinicId }),
     userRole = _a.userRole,
     isLoading = _a.isLoading;
-  var isAllowed = (0, react_1.useMemo)(
-    function () {
-      if (!userRole) return false;
-      return allowedRoles.includes(userRole);
-    },
-    [userRole, allowedRoles],
-  );
+  var isAllowed = (0, react_1.useMemo)(() => {
+    if (!userRole) return false;
+    return allowedRoles.includes(userRole);
+  }, [userRole, allowedRoles]);
   return {
     isAllowed: isAllowed,
     isLoading: isLoading,
@@ -620,76 +582,65 @@ function usePermissionGuard(requiredPermissions, clinicId) {
     isLoading = _b[0],
     setIsLoading = _b[1];
   var user = (0, auth_helpers_react_1.useUser)();
-  (0, react_1.useEffect)(
-    function () {
-      function checkPermissions() {
-        return __awaiter(this, void 0, void 0, function () {
-          var results, _i, requiredPermissions_1, permission, result, error_5;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (!(user === null || user === void 0 ? void 0 : user.id) || !clinicId) {
-                  setIsLoading(false);
-                  return [2 /*return*/];
-                }
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 6, 7, 8]);
-                results = {};
-                (_i = 0), (requiredPermissions_1 = requiredPermissions);
-                _a.label = 2;
-              case 2:
-                if (!(_i < requiredPermissions_1.length)) return [3 /*break*/, 5];
-                permission = requiredPermissions_1[_i];
-                return [
-                  4 /*yield*/,
-                  permissions_1.rbacManager.checkPermission({
-                    userId: user.id,
-                    permission: permission,
-                    clinicId: clinicId,
-                  }),
-                ];
-              case 3:
-                result = _a.sent();
-                results[permission] = result.granted;
-                _a.label = 4;
-              case 4:
-                _i++;
-                return [3 /*break*/, 2];
-              case 5:
-                setPermissions(results);
-                return [3 /*break*/, 8];
-              case 6:
-                error_5 = _a.sent();
-                console.error("Permission guard error:", error_5);
-                return [3 /*break*/, 8];
-              case 7:
+  (0, react_1.useEffect)(() => {
+    function checkPermissions() {
+      return __awaiter(this, void 0, void 0, function () {
+        var results, _i, requiredPermissions_1, permission, result, error_5;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (!(user === null || user === void 0 ? void 0 : user.id) || !clinicId) {
                 setIsLoading(false);
-                return [7 /*endfinally*/];
-              case 8:
                 return [2 /*return*/];
-            }
-          });
+              }
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 6, 7, 8]);
+              results = {};
+              (_i = 0), (requiredPermissions_1 = requiredPermissions);
+              _a.label = 2;
+            case 2:
+              if (!(_i < requiredPermissions_1.length)) return [3 /*break*/, 5];
+              permission = requiredPermissions_1[_i];
+              return [
+                4 /*yield*/,
+                permissions_1.rbacManager.checkPermission({
+                  userId: user.id,
+                  permission: permission,
+                  clinicId: clinicId,
+                }),
+              ];
+            case 3:
+              result = _a.sent();
+              results[permission] = result.granted;
+              _a.label = 4;
+            case 4:
+              _i++;
+              return [3 /*break*/, 2];
+            case 5:
+              setPermissions(results);
+              return [3 /*break*/, 8];
+            case 6:
+              error_5 = _a.sent();
+              console.error("Permission guard error:", error_5);
+              return [3 /*break*/, 8];
+            case 7:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 8:
+              return [2 /*return*/];
+          }
         });
-      }
-      checkPermissions();
-    },
-    [user === null || user === void 0 ? void 0 : user.id, clinicId, requiredPermissions],
-  );
-  var hasAllPermissions = (0, react_1.useMemo)(
-    function () {
-      return requiredPermissions.every(function (permission) {
-        return permissions[permission];
       });
-    },
+    }
+    checkPermissions();
+  }, [user === null || user === void 0 ? void 0 : user.id, clinicId, requiredPermissions]);
+  var hasAllPermissions = (0, react_1.useMemo)(
+    () => requiredPermissions.every((permission) => permissions[permission]),
     [requiredPermissions, permissions],
   );
   var hasAnyPermission = (0, react_1.useMemo)(
-    function () {
-      return requiredPermissions.some(function (permission) {
-        return permissions[permission];
-      });
-    },
+    () => requiredPermissions.some((permission) => permissions[permission]),
     [requiredPermissions, permissions],
   );
   return {

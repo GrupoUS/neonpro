@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("@/lib/supabase/server");
@@ -158,10 +155,10 @@ function GET(request) {
       currentDate,
       response,
       error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
-          _b.trys.push([0, 7, , 8]);
+          _b.trys.push([0, 7, undefined, 8]);
           searchParams = new URL(request.url).searchParams;
           professionalId = searchParams.get("professional_id");
           clinicId = searchParams.get("clinic_id");
@@ -199,14 +196,12 @@ function GET(request) {
           days = [];
           _loop_1 = function (currentDate) {
             var dayOfWeek, daySchedule, dayAvailability;
-            return __generator(this, function (_c) {
+            return __generator(this, (_c) => {
               switch (_c.label) {
                 case 0:
                   dayOfWeek = currentDate.getDay();
-                  daySchedule = professionalSchedule.find(function (s) {
-                    return s.day_of_week === dayOfWeek;
-                  });
-                  if (!(daySchedule && daySchedule.is_available)) return [3 /*break*/, 2];
+                  daySchedule = professionalSchedule.find((s) => s.day_of_week === dayOfWeek);
+                  if (!daySchedule?.is_available) return [3 /*break*/, 2];
                   return [
                     4 /*yield*/,
                     generateDayAvailability(
@@ -275,7 +270,7 @@ function GET(request) {
 function getProfessionalSchedule(supabase, professionalId, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -300,7 +295,7 @@ function getProfessionalSchedule(supabase, professionalId, clinicId) {
 function getExistingAppointments(supabase, professionalId, clinicId, startDate, endDate) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -328,7 +323,7 @@ function getExistingAppointments(supabase, professionalId, clinicId, startDate, 
 function getServiceRules(supabase, serviceTypeId, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -355,7 +350,7 @@ function getServiceRules(supabase, serviceTypeId, clinicId) {
 function getClinicHolidays(supabase, clinicId, startDate, endDate) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -394,14 +389,14 @@ function generateDayAvailability(date, schedule, appointments, serviceRules, hol
       slotEnd,
       slot,
       summary;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           slots = [];
           intervalMinutes = 30;
           startTime = parseTime(schedule.start_time);
           endTime = parseTime(schedule.end_time);
-          dayHolidays = holidays.filter(function (holiday) {
+          dayHolidays = holidays.filter((holiday) => {
             var holidayStart = (0, date_fns_1.parseISO)(holiday.start_date);
             var holidayEnd = (0, date_fns_1.parseISO)(holiday.end_date);
             return date >= holidayStart && date <= holidayEnd;
@@ -427,20 +422,11 @@ function generateDayAvailability(date, schedule, appointments, serviceRules, hol
         case 4:
           summary = {
             total_slots: slots.length,
-            available_slots: slots.filter(function (s) {
-              return s.available && s.conflicts.length === 0;
-            }).length,
-            blocked_slots: slots.filter(function (s) {
-              return !s.available;
-            }).length,
-            warning_slots: slots.filter(function (s) {
-              return (
-                s.available &&
-                s.conflicts.some(function (c) {
-                  return c.severity === "warning";
-                })
-              );
-            }).length,
+            available_slots: slots.filter((s) => s.available && s.conflicts.length === 0).length,
+            blocked_slots: slots.filter((s) => !s.available).length,
+            warning_slots: slots.filter(
+              (s) => s.available && s.conflicts.some((c) => c.severity === "warning"),
+            ).length,
           };
           return [
             2 /*return*/,
@@ -465,8 +451,8 @@ function analyzeSlot(slotStart, slotEnd, schedule, appointments, serviceRules, h
       holiday,
       holidayStartTime,
       holidayEndTime,
-      slotStartTime,
-      slotEndTime,
+      _slotStartTime,
+      _slotEndTime,
       breakStart,
       breakEnd,
       slotStartTime,
@@ -478,7 +464,7 @@ function analyzeSlot(slotStart, slotEnd, schedule, appointments, serviceRules, h
       bufferBefore_1,
       bufferAfter_1,
       bufferConflicts;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       conflicts = [];
       available = true;
       capacityUsed = 0;
@@ -531,7 +517,7 @@ function analyzeSlot(slotStart, slotEnd, schedule, appointments, serviceRules, h
       hourStart = new Date(slotStart);
       hourStart.setMinutes(0, 0, 0);
       hourEnd = (0, date_fns_1.addMinutes)(hourStart, 60);
-      appointmentsInHour = appointments.filter(function (apt) {
+      appointmentsInHour = appointments.filter((apt) => {
         var aptStart = (0, date_fns_1.parseISO)(apt.start_time);
         return aptStart >= hourStart && aptStart < hourEnd;
       });
@@ -551,7 +537,7 @@ function analyzeSlot(slotStart, slotEnd, schedule, appointments, serviceRules, h
           severity: "warning",
         });
       }
-      directOverlaps = appointments.filter(function (apt) {
+      directOverlaps = appointments.filter((apt) => {
         var aptStart = (0, date_fns_1.parseISO)(apt.start_time);
         var aptEnd = (0, date_fns_1.parseISO)(apt.end_time);
         return (
@@ -573,7 +559,7 @@ function analyzeSlot(slotStart, slotEnd, schedule, appointments, serviceRules, h
         bufferBefore_1 = serviceRules.buffer_before || 0;
         bufferAfter_1 = serviceRules.buffer_after || 0;
         if (bufferBefore_1 > 0 || bufferAfter_1 > 0) {
-          bufferConflicts = appointments.filter(function (apt) {
+          bufferConflicts = appointments.filter((apt) => {
             var aptStart = (0, date_fns_1.parseISO)(apt.start_time);
             var aptEnd = (0, date_fns_1.parseISO)(apt.end_time);
             var slotWithBufferStart = (0, date_fns_1.addMinutes)(slotStart, -bufferBefore_1);

@@ -5,10 +5,6 @@
 // Story 1.2: Unified business rules management
 // =============================================
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Calendar,
   CheckCircle,
@@ -20,6 +16,10 @@ import type {
 } from "lucide-react";
 import type { useState } from "react";
 import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ClinicHolidayManager } from "./clinic-holiday-manager";
 import type { ServiceTypeRuleManager } from "./service-type-rule-manager";
 

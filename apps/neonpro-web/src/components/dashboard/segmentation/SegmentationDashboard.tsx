@@ -1,5 +1,21 @@
 "use client";
 
+import type {
+  AlertCircle,
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Clock,
+  Eye,
+  Filter,
+  Plus,
+  Settings,
+  Target,
+  Users,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -31,21 +47,6 @@ import type {
 import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Textarea } from "@/components/ui/textarea";
-import type {
-  AlertCircle,
-  BarChart3,
-  Brain,
-  CheckCircle,
-  Clock,
-  Eye,
-  Filter,
-  Plus,
-  Settings,
-  Target,
-  Users,
-  Zap,
-} from "lucide-react";
-import React, { useEffect, useState } from "react";
 import PerformanceTracking from "./PerformanceTracking";
 import PrivacyCompliance from "./PrivacyCompliance";
 import SegmentBuilder from "./SegmentBuilder";

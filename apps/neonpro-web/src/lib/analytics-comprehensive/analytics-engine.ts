@@ -8,8 +8,8 @@
  * @author NeonPro Development Team
  */
 
-import type { createClient } from "@/lib/supabase/server";
 import type { cache } from "react";
+import type { createClient } from "@/lib/supabase/server";
 
 export interface AnalyticsTimeRange {
   start: Date;
@@ -262,7 +262,7 @@ export function createTimeRange(
         end: now,
         period: "month",
       };
-    case "custom":
+    case "custom": {
       if (!customStart || !customEnd) {
         throw new Error("Custom period requires start and end dates");
       }
@@ -276,6 +276,7 @@ export function createTimeRange(
         end: customEnd,
         period: periodType,
       };
+    }
     default:
       throw new Error(`Unsupported period: ${period}`);
   }

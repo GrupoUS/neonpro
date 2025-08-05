@@ -12,35 +12,35 @@
  */
 
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type {
-  MobileApiSystem,
-  MobileApiConfig,
-  MobileAuthRequest,
-  MobileAuthResponse,
-  MobileApiRequest,
-  MobileApiResponse,
-  SyncOptions,
-  SyncResult,
-  PushNotification,
-  PushResult,
-  OfflineStorage,
-  SystemStatus,
-  MobileApiEventHandlers,
-  DeviceInfo,
-  SyncOperation,
-  SyncBatch,
-  CacheEntry,
-  NetworkStatus,
-  ApiError,
-  CompressionResult,
-  MobileUser,
-  MobileClinic,
-} from "./types";
 import type { MobileCache } from "./cache-manager";
+import type { CompressionUtils } from "./compression-utils";
 import type { OfflineSync } from "./offline-sync";
 import type { PushManager } from "./push-manager";
-import type { CompressionUtils } from "./compression-utils";
 import type { SecurityUtils } from "./security-utils";
+import type {
+  ApiError,
+  CacheEntry,
+  CompressionResult,
+  DeviceInfo,
+  MobileApiConfig,
+  MobileApiEventHandlers,
+  MobileApiRequest,
+  MobileApiResponse,
+  MobileApiSystem,
+  MobileAuthRequest,
+  MobileAuthResponse,
+  MobileClinic,
+  MobileUser,
+  NetworkStatus,
+  OfflineStorage,
+  PushNotification,
+  PushResult,
+  SyncBatch,
+  SyncOperation,
+  SyncOptions,
+  SyncResult,
+  SystemStatus,
+} from "./types";
 
 export class MobileApiSystemImpl implements MobileApiSystem {
   private supabase: SupabaseClient;

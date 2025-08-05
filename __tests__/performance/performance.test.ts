@@ -8,7 +8,7 @@
  * @created 2025-07-22
  */
 
-import { describe, it, expect, jest, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { createMockSubscription } from "../utils/testUtils";
 
 // ============================================================================
@@ -73,7 +73,7 @@ describe("Subscription System Performance", () => {
       for (let i = 0; i < 1000; i++) {
         const subscription = createMockSubscription({ id: `test-${i}` });
         // Simulate processing
-        const processed = { ...subscription, processed: true };
+        const _processed = { ...subscription, processed: true };
       }
 
       // Force garbage collection if available
@@ -97,7 +97,7 @@ describe("Subscription System Performance", () => {
 
       // Simulate filtering operations
       const activeSubscriptions = largeDataset.filter((sub) => sub.status === "active");
-      const premiumSubscriptions = activeSubscriptions.filter((sub) => sub.tier === "premium");
+      const _premiumSubscriptions = activeSubscriptions.filter((sub) => sub.tier === "premium");
 
       const endTime = performance.now();
       const processingTime = endTime - startTime;
@@ -121,7 +121,7 @@ describe("Subscription System Performance", () => {
 
       // Simulate cache hit (subsequent call)
       const startTimeCached = performance.now();
-      const subscription2 = { ...subscription1 }; // Simulate cached result
+      const _subscription2 = { ...subscription1 }; // Simulate cached result
       const endTimeCached = performance.now();
       const cachedTime = endTimeCached - startTimeCached;
 
@@ -174,7 +174,7 @@ describe("Subscription System Performance", () => {
       // Performance should remain consistent (standard deviation < 50% of mean)
       const mean = performanceResults.reduce((a, b) => a + b) / performanceResults.length;
       const variance =
-        performanceResults.reduce((acc, time) => acc + Math.pow(time - mean, 2), 0) /
+        performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0) /
         performanceResults.length;
       const standardDeviation = Math.sqrt(variance);
 

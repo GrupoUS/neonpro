@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
-import { NextRequest, NextResponse } from "next/server";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Import the modules we're testing
 import { POST as sessionExtendHandler } from "../../app/api/auth/session/extend/route";
 import { POST as sessionValidateHandler } from "../../app/api/auth/session/validate/route";
 import { POST as securityAuditHandler } from "../../app/api/security/audit/route";
-import { sessionManager } from "../../lib/auth/session-manager";
-import { securityAuditFramework } from "../../lib/auth/security-audit-framework";
 import { PerformanceTracker } from "../../lib/auth/performance-tracker";
+import { securityAuditFramework } from "../../lib/auth/security-audit-framework";
+import { sessionManager } from "../../lib/auth/session-manager";
 
 describe("TASK-002: Core Foundation Enhancement Integration Test", () => {
   let performanceTracker: any;
@@ -224,7 +224,7 @@ describe("TASK-002: Core Foundation Enhancement Integration Test", () => {
       };
 
       // Verify all accessibility features are properly configured
-      Object.entries(accessibilityFeatures).forEach(([feature, enabled]) => {
+      Object.entries(accessibilityFeatures).forEach(([_feature, enabled]) => {
         expect(enabled).toBe(true);
       });
     });
@@ -301,7 +301,7 @@ describe("TASK-002: Core Foundation Enhancement Integration Test", () => {
       const results = await Promise.allSettled(operations);
 
       // Verify all operations completed successfully
-      results.forEach((result, index) => {
+      results.forEach((result, _index) => {
         expect(result.status).toBe("fulfilled");
         if (result.status === "fulfilled") {
           expect(result.value).toBeDefined();

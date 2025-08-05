@@ -1,46 +1,42 @@
-"use strict";
 // Central export file for all medical schemas
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lgpdHelpers =
   exports.healthcareValidators =
@@ -68,76 +64,52 @@ __exportStar(require("./appointment"), exports);
 var medical_1 = require("./medical");
 Object.defineProperty(exports, "CreatePatientSchema", {
   enumerable: true,
-  get: function () {
-    return medical_1.patientSchema;
-  },
+  get: () => medical_1.patientSchema,
 });
 Object.defineProperty(exports, "UpdatePatientSchema", {
   enumerable: true,
-  get: function () {
-    return medical_1.updatePatientSchema;
-  },
+  get: () => medical_1.updatePatientSchema,
 });
 Object.defineProperty(exports, "CreateAppointmentSchema", {
   enumerable: true,
-  get: function () {
-    return medical_1.appointmentSchema;
-  },
+  get: () => medical_1.appointmentSchema,
 });
 Object.defineProperty(exports, "UpdateAppointmentSchema", {
   enumerable: true,
-  get: function () {
-    return medical_1.updateAppointmentSchema;
-  },
+  get: () => medical_1.updateAppointmentSchema,
 });
 Object.defineProperty(exports, "TreatmentSchema", {
   enumerable: true,
-  get: function () {
-    return medical_1.treatmentSchema;
-  },
+  get: () => medical_1.treatmentSchema,
 });
 Object.defineProperty(exports, "FinancialDataSchema", {
   enumerable: true,
-  get: function () {
-    return medical_1.financialDataSchema;
-  },
+  get: () => medical_1.financialDataSchema,
 });
 Object.defineProperty(exports, "LGPDConsentSchema", {
   enumerable: true,
-  get: function () {
-    return medical_1.consentSchema;
-  },
+  get: () => medical_1.consentSchema,
 });
 Object.defineProperty(exports, "AuditLogSchema", {
   enumerable: true,
-  get: function () {
-    return medical_1.medicalAuditSchema;
-  },
+  get: () => medical_1.medicalAuditSchema,
 });
 var patient_1 = require("./patient");
 Object.defineProperty(exports, "PatientListFiltersSchema", {
   enumerable: true,
-  get: function () {
-    return patient_1.patientFiltersSchema;
-  },
+  get: () => patient_1.patientFiltersSchema,
 });
 Object.defineProperty(exports, "PatientSearchSchema", {
   enumerable: true,
-  get: function () {
-    return patient_1.patientSearchSchema;
-  },
+  get: () => patient_1.patientSearchSchema,
 });
 Object.defineProperty(exports, "AppointmentListFiltersSchema", {
   enumerable: true,
-  get: function () {
-    return patient_1.appointmentFiltersSchema;
-  },
+  get: () => patient_1.appointmentFiltersSchema,
 });
 Object.defineProperty(exports, "AvailableTimesSearchSchema", {
   enumerable: true,
-  get: function () {
-    return patient_1.availableTimesSchema;
-  },
+  get: () => patient_1.availableTimesSchema,
 });
 // Utility function to validate data against any schema
 function validateData(schema, data) {
@@ -148,9 +120,9 @@ function validateData(schema, data) {
   } catch (error) {
     var errors = ((_a = error.errors) === null || _a === void 0
       ? void 0
-      : _a.map(function (err) {
-          return "".concat(err.path.join("."), ": ").concat(err.message);
-        })) || ["Validation failed"];
+      : _a.map((err) => "".concat(err.path.join("."), ": ").concat(err.message))) || [
+      "Validation failed",
+    ];
     return { success: false, errors: errors };
   }
 }
@@ -211,7 +183,7 @@ exports.commonPatterns = {
 // Healthcare-specific validation helpers
 exports.healthcareValidators = {
   // Validate if patient is adult (18+)
-  isAdult: function (birthDate) {
+  isAdult: (birthDate) => {
     var birth = new Date(birthDate);
     var today = new Date();
     var age = today.getFullYear() - birth.getFullYear();
@@ -222,7 +194,7 @@ exports.healthcareValidators = {
     return age >= 18;
   },
   // Validate appointment time is in business hours
-  isBusinessHours: function (time) {
+  isBusinessHours: (time) => {
     var _a = time.split(":").map(Number),
       hours = _a[0],
       minutes = _a[1];
@@ -232,31 +204,29 @@ exports.healthcareValidators = {
     return timeInMinutes >= startTime && timeInMinutes <= endTime;
   },
   // Validate appointment is not in the past
-  isFutureDate: function (date) {
+  isFutureDate: (date) => {
     var appointmentDate = new Date(date);
     var now = new Date();
     return appointmentDate > now;
   },
   // Validate treatment duration is reasonable
-  isValidTreatmentDuration: function (duration) {
+  isValidTreatmentDuration: (duration) => {
     return duration >= 15 && duration <= 480; // 15 minutes to 8 hours
   },
 };
 // LGPD compliance helpers
 exports.lgpdHelpers = {
   // Generate consent record
-  generateConsentRecord: function (patientId, consentTypes) {
-    return {
-      patientId: patientId,
-      consentTypes: consentTypes,
-      consentDate: new Date(),
-      ipAddress: "", // Should be filled by the calling code
-      userAgent: "", // Should be filled by the calling code
-      version: "1.0",
-    };
-  },
+  generateConsentRecord: (patientId, consentTypes) => ({
+    patientId: patientId,
+    consentTypes: consentTypes,
+    consentDate: new Date(),
+    ipAddress: "", // Should be filled by the calling code
+    userAgent: "", // Should be filled by the calling code
+    version: "1.0",
+  }),
   // Check if consent is still valid
-  isConsentValid: function (consentDate, validityPeriod) {
+  isConsentValid: (consentDate, validityPeriod) => {
     if (validityPeriod === void 0) {
       validityPeriod = 365;
     }
@@ -264,15 +234,13 @@ exports.lgpdHelpers = {
     return daysSinceConsent <= validityPeriod;
   },
   // Generate audit log entry
-  generateAuditLog: function (userId, action, resourceType, resourceId) {
-    return {
-      userId: userId,
-      action: action,
-      resourceType: resourceType,
-      resourceId: resourceId,
-      timestamp: new Date(),
-      ipAddress: "", // Should be filled by the calling code
-      userAgent: "", // Should be filled by the calling code
-    };
-  },
+  generateAuditLog: (userId, action, resourceType, resourceId) => ({
+    userId: userId,
+    action: action,
+    resourceType: resourceType,
+    resourceId: resourceId,
+    timestamp: new Date(),
+    ipAddress: "", // Should be filled by the calling code
+    userAgent: "", // Should be filled by the calling code
+  }),
 };

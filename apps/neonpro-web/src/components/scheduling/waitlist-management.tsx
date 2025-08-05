@@ -7,7 +7,23 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type {
+  AlertTriangle,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Plus,
+  RefreshCw,
+  Send,
+  UserPlus,
+  Users,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -16,10 +32,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -27,23 +42,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type {
-  Clock,
-  Bell,
-  Calendar,
-  Users,
-  Plus,
-  AlertTriangle,
-  CheckCircle,
-  UserPlus,
-  Send,
-  RefreshCw,
-} from "lucide-react";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Types matching our backend service
 interface WaitlistEntry {

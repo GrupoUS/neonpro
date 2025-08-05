@@ -6,9 +6,9 @@
 // =====================================================================================
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { createtreatmentFollowupService } from "@/app/lib/services/treatment-followup-service";
-import type { FollowupFilters, CreateFollowupData } from "@/app/types/treatment-followups";
+import type { CreateFollowupData, FollowupFilters } from "@/app/types/treatment-followups";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {

@@ -36,7 +36,7 @@ const CACHEABLE_API_PATTERNS = [
 ];
 
 // Network-first patterns (real-time data)
-const NETWORK_FIRST_PATTERNS = [
+const _NETWORK_FIRST_PATTERNS = [
   /\/api\/appointments/,
   /\/api\/patients\/[^/]+$/,
   /\/api\/auth/,
@@ -44,11 +44,11 @@ const NETWORK_FIRST_PATTERNS = [
 ];
 
 // Offline queue for failed requests
-let offlineQueue = [];
+const _offlineQueue = [];
 
 // Install Event - Cache static assets
 self.addEventListener("install", (event) => {
-  console.log("🚀 NeonPro SW: Installing v" + CACHE_VERSION);
+  console.log(`🚀 NeonPro SW: Installing v${CACHE_VERSION}`);
 
   event.waitUntil(
     Promise.all([
@@ -63,7 +63,7 @@ self.addEventListener("install", (event) => {
 
 // Activate Event - Clean old caches and take control
 self.addEventListener("activate", (event) => {
-  console.log("✅ NeonPro SW: Activating v" + CACHE_VERSION);
+  console.log(`✅ NeonPro SW: Activating v${CACHE_VERSION}`);
 
   event.waitUntil(
     Promise.all([
@@ -140,7 +140,7 @@ async function handleOfflineCapableRequest(request) {
     }
 
     throw new Error(`HTTP ${response.status}`);
-  } catch (error) {
+  } catch (_error) {
     console.log("📱 Network failed, queuing for background sync:", request.url);
 
     // Queue the request for background sync
@@ -404,7 +404,7 @@ async function handleApiRequest(request) {
 
 // Handle offline requests
 async function handleOfflineRequest(request) {
-  const url = new URL(request.url);
+  const _url = new URL(request.url);
 
   // Navigation requests - Return offline page
   if (request.mode === "navigate") {

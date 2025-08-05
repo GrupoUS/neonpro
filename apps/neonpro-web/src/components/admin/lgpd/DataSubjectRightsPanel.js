@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataSubjectRightsPanel = DataSubjectRightsPanel;
 var react_1 = require("react");
@@ -163,7 +160,6 @@ var textarea_1 = require("@/components/ui/textarea");
 var lucide_react_1 = require("lucide-react");
 var useLGPD_1 = require("@/hooks/useLGPD");
 function DataSubjectRightsPanel(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, useLGPD_1.useDataSubjectRights)(),
     requests = _b.requests,
@@ -199,7 +195,7 @@ function DataSubjectRightsPanel(_a) {
   var filteredRequests =
     (requests === null || requests === void 0
       ? void 0
-      : requests.filter(function (request) {
+      : requests.filter((request) => {
           var _a, _b;
           var matchesSearch =
             ((_a = request.user_email) === null || _a === void 0
@@ -212,7 +208,7 @@ function DataSubjectRightsPanel(_a) {
           var matchesType = typeFilter === "all" || request.request_type === typeFilter;
           return matchesSearch && matchesStatus && matchesType;
         })) || [];
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "pending":
         return (
@@ -246,7 +242,7 @@ function DataSubjectRightsPanel(_a) {
         return <badge_1.Badge variant="secondary">{status}</badge_1.Badge>;
     }
   };
-  var getTypeBadge = function (type) {
+  var getTypeBadge = (type) => {
     var typeLabels = {
       access: "Acesso",
       rectification: "Retificação",
@@ -257,7 +253,7 @@ function DataSubjectRightsPanel(_a) {
     };
     return <badge_1.Badge variant="outline">{typeLabels[type] || type}</badge_1.Badge>;
   };
-  var getPriorityColor = function (createdAt) {
+  var getPriorityColor = (createdAt) => {
     var daysSinceCreated = Math.floor(
       (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24),
     );
@@ -265,10 +261,10 @@ function DataSubjectRightsPanel(_a) {
     if (daysSinceCreated > 10) return "text-yellow-600";
     return "text-green-600";
   };
-  var handleProcessRequest = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleProcessRequest = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedRequest) return [2 /*return*/];
@@ -291,8 +287,7 @@ function DataSubjectRightsPanel(_a) {
         }
       });
     });
-  };
-  var openProcessingDialog = function (request) {
+  var openProcessingDialog = (request) => {
     setSelectedRequest(request);
     setProcessingData({
       status: request.status,
@@ -349,9 +344,7 @@ function DataSubjectRightsPanel(_a) {
                 <p className="text-2xl font-bold">
                   {(requests === null || requests === void 0
                     ? void 0
-                    : requests.filter(function (r) {
-                        return r.status === "pending";
-                      }).length) || 0}
+                    : requests.filter((r) => r.status === "pending").length) || 0}
                 </p>
               </div>
               <lucide_react_1.Clock className="h-8 w-8 text-yellow-600" />
@@ -367,9 +360,7 @@ function DataSubjectRightsPanel(_a) {
                 <p className="text-2xl font-bold">
                   {(requests === null || requests === void 0
                     ? void 0
-                    : requests.filter(function (r) {
-                        return r.status === "in_progress";
-                      }).length) || 0}
+                    : requests.filter((r) => r.status === "in_progress").length) || 0}
                 </p>
               </div>
               <lucide_react_1.RefreshCw className="h-8 w-8 text-blue-600" />
@@ -385,9 +376,7 @@ function DataSubjectRightsPanel(_a) {
                 <p className="text-2xl font-bold">
                   {(requests === null || requests === void 0
                     ? void 0
-                    : requests.filter(function (r) {
-                        return r.status === "completed";
-                      }).length) || 0}
+                    : requests.filter((r) => r.status === "completed").length) || 0}
                 </p>
               </div>
               <lucide_react_1.CheckCircle className="h-8 w-8 text-green-600" />
@@ -423,9 +412,7 @@ function DataSubjectRightsPanel(_a) {
                   id="search"
                   placeholder="Email ou tipo..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8"
                 />
               </div>
@@ -468,7 +455,7 @@ function DataSubjectRightsPanel(_a) {
             <div className="flex items-end">
               <button_1.Button
                 variant="outline"
-                onClick={function () {
+                onClick={() => {
                   setSearchTerm("");
                   setStatusFilter("all");
                   setTypeFilter("all");
@@ -501,7 +488,7 @@ function DataSubjectRightsPanel(_a) {
               </table_1.TableRow>
             </table_1.TableHeader>
             <table_1.TableBody>
-              {filteredRequests.map(function (request) {
+              {filteredRequests.map((request) => {
                 var daysSinceCreated = Math.floor(
                   (Date.now() - new Date(request.created_at).getTime()) / (1000 * 60 * 60 * 24),
                 );
@@ -608,12 +595,7 @@ function DataSubjectRightsPanel(_a) {
                         </dialog_1.Dialog>
 
                         {(request.status === "pending" || request.status === "in_progress") && (
-                          <button_1.Button
-                            size="sm"
-                            onClick={function () {
-                              return openProcessingDialog(request);
-                            }}
-                          >
+                          <button_1.Button size="sm" onClick={() => openProcessingDialog(request)}>
                             <lucide_react_1.MessageSquare className="h-3 w-3 mr-1" />
                             Processar
                           </button_1.Button>
@@ -661,11 +643,9 @@ function DataSubjectRightsPanel(_a) {
                 <label_1.Label htmlFor="status">Novo Status</label_1.Label>
                 <select_1.Select
                   value={processingData.status}
-                  onValueChange={function (value) {
-                    return setProcessingData(
-                      __assign(__assign({}, processingData), { status: value }),
-                    );
-                  }}
+                  onValueChange={(value) =>
+                    setProcessingData(__assign(__assign({}, processingData), { status: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Selecione o status" />
@@ -683,11 +663,11 @@ function DataSubjectRightsPanel(_a) {
                 <textarea_1.Textarea
                   id="response"
                   value={processingData.response}
-                  onChange={function (e) {
-                    return setProcessingData(
+                  onChange={(e) =>
+                    setProcessingData(
                       __assign(__assign({}, processingData), { response: e.target.value }),
-                    );
-                  }}
+                    )
+                  }
                   placeholder="Resposta que será enviada ao usuário..."
                   rows={4}
                 />
@@ -700,11 +680,11 @@ function DataSubjectRightsPanel(_a) {
                 <textarea_1.Textarea
                   id="admin_notes"
                   value={processingData.admin_notes}
-                  onChange={function (e) {
-                    return setProcessingData(
+                  onChange={(e) =>
+                    setProcessingData(
                       __assign(__assign({}, processingData), { admin_notes: e.target.value }),
-                    );
-                  }}
+                    )
+                  }
                   placeholder="Notas internas sobre o processamento..."
                   rows={3}
                 />
@@ -713,12 +693,7 @@ function DataSubjectRightsPanel(_a) {
           )}
 
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setIsProcessingOpen(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setIsProcessingOpen(false)}>
               Cancelar
             </button_1.Button>
             <button_1.Button onClick={handleProcessRequest}>Processar Solicitação</button_1.Button>

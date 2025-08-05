@@ -1,8 +1,8 @@
-import type { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import type { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { toast } from "sonner";
 import type { createClient } from "@/app/utils/supabase/client";
 import PatientRegistrationForm from "../PatientRegistrationForm";
-import type { toast } from "sonner";
 
 // Mock dependencies
 jest.mock("@/app/utils/supabase/client");

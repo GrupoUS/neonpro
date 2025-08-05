@@ -1,18 +1,17 @@
-"use strict";
 // Test Setup for Tax APIs - Story 5.5
 // Brazilian Tax System Integration Test Environment
 // Author: VoidBeast V6.0 Master Orchestrator
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -22,7 +21,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -51,8 +50,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -73,9 +70,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -134,11 +131,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 // Global test setup for Tax APIs
-beforeAll(function () {
+beforeAll(() => {
   // Set test environment variables
   process.env.NODE_ENV = "test";
   process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
@@ -155,30 +152,29 @@ beforeAll(function () {
   console.log("📊 Brazilian Tax System Integration Tests - Story 5.5");
 });
 // Global test cleanup
-afterAll(function () {
+afterAll(() => {
   // Cleanup test environment
   globals_1.jest.clearAllMocks();
   console.log("✅ Tax APIs Test Environment Cleaned Up");
 });
 // Mock global fetch for external API calls
-global.fetch = globals_1.jest.fn(function () {
-  return Promise.resolve({
+global.fetch = globals_1.jest.fn(() =>
+  Promise.resolve({
     ok: true,
     status: 200,
-    json: function () {
-      return Promise.resolve({
+    json: () =>
+      Promise.resolve({
         cnpj: "12345678000190",
         razao_social: "CLINICA TESTE LTDA",
         situacao: "ATIVA",
-      });
-    },
-  });
-});
+      }),
+  }),
+);
 // Mock console methods to reduce test noise
 var originalConsoleLog = console.log;
 var originalConsoleError = console.error;
 var originalConsoleWarn = console.warn;
-beforeEach(function () {
+beforeEach(() => {
   // Suppress console logs during tests unless in debug mode
   if (!process.env.DEBUG_TESTS) {
     console.log = globals_1.jest.fn();
@@ -186,7 +182,7 @@ beforeEach(function () {
     console.warn = globals_1.jest.fn();
   }
 });
-afterEach(function () {
+afterEach(() => {
   // Restore console methods
   if (!process.env.DEBUG_TESTS) {
     console.log = originalConsoleLog;
@@ -237,33 +233,31 @@ global.testUtils = {
     },
   },
   // Test assertion helpers
-  assertValidCNPJ: function (cnpj) {
+  assertValidCNPJ: (cnpj) => {
     expect(cnpj).toMatch(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/);
   },
-  assertValidNFENumber: function (numero) {
+  assertValidNFENumber: (numero) => {
     expect(numero).toMatch(/^\d{9}$/);
   },
-  assertValidTaxCalculation: function (calculation) {
+  assertValidTaxCalculation: (calculation) => {
     expect(calculation).toHaveProperty("total_taxes");
     expect(calculation).toHaveProperty("effective_rate");
     expect(calculation.total_taxes).toBeGreaterThanOrEqual(0);
     expect(calculation.effective_rate).toBeGreaterThanOrEqual(0);
   },
   // Mock data generators
-  generateMockNFE: function () {
-    return {
-      id: "nfe-".concat(Date.now()),
-      clinic_id: "test-clinic-id",
-      invoice_id: "test-invoice-id",
-      numero_nfe: "000000001",
-      serie_nfe: 1,
-      chave_nfe: "test-chave-".concat(Date.now()),
-      valor_total: 1000.0,
-      status: "generated",
-      created_at: new Date().toISOString(),
-    };
-  },
-  generateMockDeclaration: function (type) {
+  generateMockNFE: () => ({
+    id: "nfe-".concat(Date.now()),
+    clinic_id: "test-clinic-id",
+    invoice_id: "test-invoice-id",
+    numero_nfe: "000000001",
+    serie_nfe: 1,
+    chave_nfe: "test-chave-".concat(Date.now()),
+    valor_total: 1000.0,
+    status: "generated",
+    created_at: new Date().toISOString(),
+  }),
+  generateMockDeclaration: (type) => {
     if (type === void 0) {
       type = "DEFIS";
     }
@@ -281,28 +275,24 @@ global.testUtils = {
 };
 // Error simulation utilities
 global.simulateError = {
-  databaseError: function () {
-    return {
-      data: null,
-      error: { message: "Database connection failed" },
-    };
-  },
-  apiError: function (status, message) {
+  databaseError: () => ({
+    data: null,
+    error: { message: "Database connection failed" },
+  }),
+  apiError: (status, message) => {
     throw new Error("API Error ".concat(status, ": ").concat(message));
   },
-  validationError: function (field) {
-    return {
-      valid: false,
-      errors: ["Invalid ".concat(field, " format")],
-    };
-  },
+  validationError: (field) => ({
+    valid: false,
+    errors: ["Invalid ".concat(field, " format")],
+  }),
 };
 // Performance testing utilities
 global.performanceUtils = {
-  measureExecutionTime: function (fn) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  measureExecutionTime: (fn) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var startTime, result, endTime;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             startTime = Date.now();
@@ -319,9 +309,8 @@ global.performanceUtils = {
             ];
         }
       });
-    });
-  },
-  assertPerformance: function (executionTime, maxTime, operation) {
+    }),
+  assertPerformance: (executionTime, maxTime, operation) => {
     expect(executionTime).toBeLessThan(maxTime);
     if (executionTime >= maxTime) {
       console.warn(
@@ -335,18 +324,18 @@ global.performanceUtils = {
 };
 // Compliance testing utilities
 global.complianceUtils = {
-  validateLGPDCompliance: function (data) {
+  validateLGPDCompliance: (data) => {
     // Mock LGPD compliance validation
     expect(data).not.toHaveProperty("personal_sensitive_data");
     return true;
   },
-  validateTaxCompliance: function (calculation) {
+  validateTaxCompliance: (calculation) => {
     // Mock tax compliance validation
     expect(calculation).toHaveProperty("calculation_method");
     expect(calculation).toHaveProperty("legal_basis");
     return true;
   },
-  validateAuditTrail: function (auditData) {
+  validateAuditTrail: (auditData) => {
     // Mock audit trail validation
     expect(auditData).toHaveProperty("timestamp");
     expect(auditData).toHaveProperty("user_id");

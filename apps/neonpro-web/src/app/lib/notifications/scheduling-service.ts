@@ -3,9 +3,9 @@
  * Manages scheduled notifications with timezone support and retry logic
  */
 
-import type { supabase } from "@/lib/supabase/client";
-import type { NotificationType, NotificationChannel, NotificationPreferences } from "./config";
 import type { z } from "zod";
+import type { supabase } from "@/lib/supabase/client";
+import type { NotificationChannel, NotificationPreferences, NotificationType } from "./config";
 
 interface ScheduleNotificationPayload {
   recipientId: string;

@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialReports = FinancialReports;
 var react_1 = require("react");
@@ -133,13 +132,13 @@ function FinancialReports(_a) {
     },
   ];
   // Filter functions
-  var filteredReports = mockReports.filter(function (report) {
+  var filteredReports = mockReports.filter((report) => {
     var matchesSearch = report.name.toLowerCase().includes(searchTerm.toLowerCase());
     var matchesType = filterType === "all" || report.type === filterType;
     var matchesStatus = filterStatus === "all" || report.status === filterStatus;
     return matchesSearch && matchesType && matchesStatus;
   });
-  var filteredTemplates = mockTemplates.filter(function (template) {
+  var filteredTemplates = mockTemplates.filter((template) => {
     var matchesSearch =
       template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       template.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -147,17 +146,16 @@ function FinancialReports(_a) {
     return matchesSearch && matchesType;
   });
   // Format date
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
+  var formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
   // Get status badge
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var statusConfig = {
       completed: { label: "Concluído", variant: "default", icon: lucide_react_1.CheckCircle },
       generating: { label: "Gerando", variant: "secondary", icon: lucide_react_1.Clock },
@@ -175,7 +173,7 @@ function FinancialReports(_a) {
     );
   };
   // Get type icon
-  var getTypeIcon = function (type) {
+  var getTypeIcon = (type) => {
     var icons = {
       revenue: lucide_react_1.DollarSign,
       expenses: lucide_react_1.TrendingUp,
@@ -186,10 +184,8 @@ function FinancialReports(_a) {
     return icons[type] || lucide_react_1.FileText;
   };
   // Handle report generation
-  var handleGenerateReport = function (templateId) {
-    var template = mockTemplates.find(function (t) {
-      return t.id === templateId;
-    });
+  var handleGenerateReport = (templateId) => {
+    var template = mockTemplates.find((t) => t.id === templateId);
     if (template && onGenerateReport) {
       onGenerateReport({
         templateId: templateId,
@@ -207,19 +203,17 @@ function FinancialReports(_a) {
           <skeleton_1.Skeleton className="h-10 w-32" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {__spreadArray([], Array(6), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardHeader>
-                  <skeleton_1.Skeleton className="h-6 w-32" />
-                  <skeleton_1.Skeleton className="h-4 w-48" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <skeleton_1.Skeleton className="h-20 w-full" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(6), true).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardHeader>
+                <skeleton_1.Skeleton className="h-6 w-32" />
+                <skeleton_1.Skeleton className="h-4 w-48" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <skeleton_1.Skeleton className="h-20 w-full" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -236,20 +230,11 @@ function FinancialReports(_a) {
         </div>
 
         <div className="flex items-center gap-2">
-          <button_1.Button
-            onClick={function () {
-              return setShowScheduleDialog(true);
-            }}
-            variant="outline"
-          >
+          <button_1.Button onClick={() => setShowScheduleDialog(true)} variant="outline">
             <lucide_react_1.Calendar className="h-4 w-4 mr-2" />
             Agendar
           </button_1.Button>
-          <button_1.Button
-            onClick={function () {
-              return setShowCreateDialog(true);
-            }}
-          >
+          <button_1.Button onClick={() => setShowCreateDialog(true)}>
             <lucide_react_1.Plus className="h-4 w-4 mr-2" />
             Novo Relatório
           </button_1.Button>
@@ -264,9 +249,7 @@ function FinancialReports(_a) {
             <input_1.Input
               placeholder="Buscar relatórios..."
               value={searchTerm}
-              onChange={function (e) {
-                return setSearchTerm(e.target.value);
-              }}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -305,12 +288,7 @@ function FinancialReports(_a) {
       </div>
 
       {/* Tabs */}
-      <tabs_1.Tabs
-        value={activeTab}
-        onValueChange={function (value) {
-          return setActiveTab(value);
-        }}
-      >
+      <tabs_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
         <tabs_1.TabsList>
           <tabs_1.TabsTrigger value="reports">Relatórios Gerados</tabs_1.TabsTrigger>
           <tabs_1.TabsTrigger value="templates">Templates</tabs_1.TabsTrigger>
@@ -329,18 +307,14 @@ function FinancialReports(_a) {
                       ? "Tente ajustar os filtros de busca"
                       : "Comece criando seu primeiro relatório"}
                   </p>
-                  <button_1.Button
-                    onClick={function () {
-                      return setShowCreateDialog(true);
-                    }}
-                  >
+                  <button_1.Button onClick={() => setShowCreateDialog(true)}>
                     <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                     Criar Relatório
                   </button_1.Button>
                 </card_1.CardContent>
               </card_1.Card>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredReports.map(function (report) {
+                {filteredReports.map((report) => {
                   var TypeIcon = getTypeIcon(report.type);
                   return (
                     <card_1.Card key={report.id} className="hover:shadow-md transition-shadow">
@@ -398,18 +372,14 @@ function FinancialReports(_a) {
                       ? "Tente ajustar os filtros de busca"
                       : "Comece criando seu primeiro template"}
                   </p>
-                  <button_1.Button
-                    onClick={function () {
-                      return setShowCreateDialog(true);
-                    }}
-                  >
+                  <button_1.Button onClick={() => setShowCreateDialog(true)}>
                     <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                     Criar Template
                   </button_1.Button>
                 </card_1.CardContent>
               </card_1.Card>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredTemplates.map(function (template) {
+                {filteredTemplates.map((template) => {
                   var TypeIcon = getTypeIcon(template.type);
                   return (
                     <card_1.Card key={template.id} className="hover:shadow-md transition-shadow">
@@ -438,9 +408,7 @@ function FinancialReports(_a) {
                           <div className="flex items-center gap-2">
                             <button_1.Button
                               size="sm"
-                              onClick={function () {
-                                return handleGenerateReport(template.id);
-                              }}
+                              onClick={() => handleGenerateReport(template.id)}
                             >
                               <lucide_react_1.FileText className="h-4 w-4 mr-2" />
                               Gerar
@@ -452,7 +420,7 @@ function FinancialReports(_a) {
                             <button_1.Button
                               size="sm"
                               variant="outline"
-                              onClick={function () {
+                              onClick={() => {
                                 setSelectedTemplate(template);
                                 setShowScheduleDialog(true);
                               }}
@@ -478,11 +446,7 @@ function FinancialReports(_a) {
               <p className="text-muted-foreground text-center mb-4">
                 Visualize e gerencie relatórios agendados para geração automática
               </p>
-              <button_1.Button
-                onClick={function () {
-                  return setShowScheduleDialog(true);
-                }}
-              >
+              <button_1.Button onClick={() => setShowScheduleDialog(true)}>
                 <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                 Agendar Relatório
               </button_1.Button>
@@ -567,19 +531,10 @@ function FinancialReports(_a) {
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setShowCreateDialog(false);
-                }}
-              >
+              <button_1.Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                 Cancelar
               </button_1.Button>
-              <button_1.Button
-                onClick={function () {
-                  return setShowCreateDialog(false);
-                }}
-              >
+              <button_1.Button onClick={() => setShowCreateDialog(false)}>
                 Criar Relatório
               </button_1.Button>
             </div>
@@ -605,13 +560,11 @@ function FinancialReports(_a) {
                   <select_1.SelectValue placeholder="Selecione um template" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {mockTemplates.map(function (template) {
-                    return (
-                      <select_1.SelectItem key={template.id} value={template.id}>
-                        {template.name}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {mockTemplates.map((template) => (
+                    <select_1.SelectItem key={template.id} value={template.id}>
+                      {template.name}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -638,19 +591,10 @@ function FinancialReports(_a) {
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setShowScheduleDialog(false);
-                }}
-              >
+              <button_1.Button variant="outline" onClick={() => setShowScheduleDialog(false)}>
                 Cancelar
               </button_1.Button>
-              <button_1.Button
-                onClick={function () {
-                  return setShowScheduleDialog(false);
-                }}
-              >
+              <button_1.Button onClick={() => setShowScheduleDialog(false)}>
                 Agendar
               </button_1.Button>
             </div>

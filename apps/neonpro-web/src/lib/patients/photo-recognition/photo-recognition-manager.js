@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Photo Recognition Manager
  * Handles patient photo recognition, verification, and biometric matching
@@ -15,15 +14,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultPhotoRecognitionConfig = exports.PhotoRecognitionManager = void 0;
-var PhotoRecognitionManager = /** @class */ (function () {
+var PhotoRecognitionManager = /** @class */ (() => {
   function PhotoRecognitionManager(supabase, auditLogger, lgpdManager, config) {
     this.supabase = supabase;
     this.auditLogger = auditLogger;
@@ -384,12 +381,8 @@ var PhotoRecognitionManager = /** @class */ (function () {
               ];
             }
             bestMatch = recognitionResult.matches
-              .filter(function (match) {
-                return match.patientId === request.patientId;
-              })
-              .sort(function (a, b) {
-                return b.confidence - a.confidence;
-              })[0];
+              .filter((match) => match.patientId === request.patientId)
+              .sort((a, b) => b.confidence - a.confidence)[0];
             verified = bestMatch && bestMatch.confidence >= this.config.confidenceThreshold;
             securityFlags = [];
             recommendations = [];
@@ -542,16 +535,14 @@ var PhotoRecognitionManager = /** @class */ (function () {
   PhotoRecognitionManager.prototype.extractFacialFeatures = function (photoBase64) {
     return __awaiter(this, void 0, void 0, function () {
       var mockFeatures, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             // Simulate ML processing delay
             return [
               4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 100);
-              }),
+              new Promise((resolve) => setTimeout(resolve, 100)),
               // Mock facial features extraction
             ];
           case 1:
@@ -565,9 +556,7 @@ var PhotoRecognitionManager = /** @class */ (function () {
                 [110, 160],
                 [140, 160], // Mouth corners
               ],
-              encoding: Array.from({ length: 128 }, function () {
-                return Math.random() * 2 - 1;
-              }),
+              encoding: Array.from({ length: 128 }, () => Math.random() * 2 - 1),
               confidence: 0.85 + Math.random() * 0.1,
               boundingBox: {
                 x: 80,
@@ -635,12 +624,7 @@ var PhotoRecognitionManager = /** @class */ (function () {
               }
             }
             // Sort by confidence (highest first)
-            return [
-              2 /*return*/,
-              matches.sort(function (a, b) {
-                return b.confidence - a.confidence;
-              }),
-            ];
+            return [2 /*return*/, matches.sort((a, b) => b.confidence - a.confidence)];
           case 2:
             error_5 = _d.sent();
             console.error("Facial match search failed:", error_5);
@@ -654,14 +638,14 @@ var PhotoRecognitionManager = /** @class */ (function () {
   /**
    * Calculate facial similarity between two encodings
    */
-  PhotoRecognitionManager.prototype.calculateFacialSimilarity = function (encoding1, encoding2) {
+  PhotoRecognitionManager.prototype.calculateFacialSimilarity = (encoding1, encoding2) => {
     if (encoding1.length !== encoding2.length) {
       return 0;
     }
     // Calculate Euclidean distance
     var distance = 0;
     for (var i = 0; i < encoding1.length; i++) {
-      distance += Math.pow(encoding1[i] - encoding2[i], 2);
+      distance += (encoding1[i] - encoding2[i]) ** 2;
     }
     distance = Math.sqrt(distance);
     // Convert distance to similarity (0-1 scale)
@@ -676,7 +660,7 @@ var PhotoRecognitionManager = /** @class */ (function () {
   PhotoRecognitionManager.prototype.assessPhotoQuality = function (photoFile) {
     return __awaiter(this, void 0, void 0, function () {
       var fileSize, recommendations, sharpness, lighting, faceVisibility, resolution, overall;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           fileSize = photoFile instanceof File ? photoFile.size : Buffer.byteLength(photoFile);
           recommendations = [];
@@ -732,7 +716,7 @@ var PhotoRecognitionManager = /** @class */ (function () {
   PhotoRecognitionManager.prototype.extractImageDimensions = function (photoFile) {
     return __awaiter(this, void 0, void 0, function () {
       var fileSize;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           fileSize = photoFile instanceof File ? photoFile.size : Buffer.byteLength(photoFile);
           if (fileSize > 500000) {
@@ -754,15 +738,15 @@ var PhotoRecognitionManager = /** @class */ (function () {
    */
   PhotoRecognitionManager.prototype.convertToBase64 = function (file) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (file instanceof Buffer) {
           return [2 /*return*/, file.toString("base64")];
         }
         return [
           2 /*return*/,
-          new Promise(function (resolve, reject) {
+          new Promise((resolve, reject) => {
             var reader = new FileReader();
-            reader.onload = function () {
+            reader.onload = () => {
               var result = reader.result;
               var base64 = result.split(",")[1]; // Remove data:image/... prefix
               resolve(base64);
@@ -777,7 +761,7 @@ var PhotoRecognitionManager = /** @class */ (function () {
   /**
    * Get file extension from file
    */
-  PhotoRecognitionManager.prototype.getFileExtension = function (file) {
+  PhotoRecognitionManager.prototype.getFileExtension = (file) => {
     if (file instanceof File) {
       var name_1 = file.name;
       return name_1.substring(name_1.lastIndexOf(".") + 1).toLowerCase();
@@ -814,7 +798,7 @@ var PhotoRecognitionManager = /** @class */ (function () {
             filteredPhotos =
               (photos === null || photos === void 0
                 ? void 0
-                : photos.filter(function (photo) {
+                : photos.filter((photo) => {
                     // Check if photo sharing is allowed
                     if (!privacyControls_1.allowPhotoSharing && userId !== photo.uploaded_by) {
                       return false;
@@ -830,21 +814,19 @@ var PhotoRecognitionManager = /** @class */ (function () {
                   })) || [];
             return [
               2 /*return*/,
-              filteredPhotos.map(function (photo) {
-                return {
-                  id: photo.id,
-                  patientId: photo.patient_id,
-                  filename: photo.filename,
-                  originalName: photo.original_name,
-                  mimeType: photo.mime_type,
-                  size: photo.size,
-                  width: photo.width,
-                  height: photo.height,
-                  quality: photo.quality,
-                  uploadDate: new Date(photo.upload_date),
-                  lastAccessed: photo.last_accessed ? new Date(photo.last_accessed) : undefined,
-                };
-              }),
+              filteredPhotos.map((photo) => ({
+                id: photo.id,
+                patientId: photo.patient_id,
+                filename: photo.filename,
+                originalName: photo.original_name,
+                mimeType: photo.mime_type,
+                size: photo.size,
+                width: photo.width,
+                height: photo.height,
+                quality: photo.quality,
+                uploadDate: new Date(photo.upload_date),
+                lastAccessed: photo.last_accessed ? new Date(photo.last_accessed) : undefined,
+              })),
             ];
           case 3:
             error_6 = _b.sent();
@@ -1071,41 +1053,32 @@ var PhotoRecognitionManager = /** @class */ (function () {
             recognizedPhotos =
               (photos === null || photos === void 0
                 ? void 0
-                : photos.filter(function (p) {
-                    return p.recognition_data;
-                  }).length) || 0;
+                : photos.filter((p) => p.recognition_data).length) || 0;
             confidenceScores =
               (photos === null || photos === void 0
                 ? void 0
                 : photos
-                    .filter(function (p) {
+                    .filter((p) => {
                       var _a;
                       return (_a = p.recognition_data) === null || _a === void 0
                         ? void 0
                         : _a.confidence;
                     })
-                    .map(function (p) {
-                      return p.recognition_data.confidence;
-                    })) || [];
+                    .map((p) => p.recognition_data.confidence)) || [];
             averageConfidence =
               confidenceScores.length > 0
-                ? confidenceScores.reduce(function (sum, score) {
-                    return sum + score;
-                  }, 0) / confidenceScores.length
+                ? confidenceScores.reduce((sum, score) => sum + score, 0) / confidenceScores.length
                 : 0;
             lastRecognition =
               (_b =
                 photos === null || photos === void 0
                   ? void 0
                   : photos
-                      .filter(function (p) {
-                        return p.recognition_data;
-                      })
-                      .sort(function (a, b) {
-                        return (
-                          new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime()
-                        );
-                      })[0]) === null || _b === void 0
+                      .filter((p) => p.recognition_data)
+                      .sort(
+                        (a, b) =>
+                          new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime(),
+                      )[0]) === null || _b === void 0
                 ? void 0
                 : _b.upload_date;
             return [

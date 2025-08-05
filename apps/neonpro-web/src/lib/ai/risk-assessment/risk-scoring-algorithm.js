@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Risk Scoring Algorithm
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,11 +166,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RiskScoringAlgorithm = void 0;
 var client_1 = require("@/lib/supabase/client");
-var RiskScoringAlgorithm = /** @class */ (function () {
+var RiskScoringAlgorithm = /** @class */ (() => {
   function RiskScoringAlgorithm(config) {
     this.supabase = (0, client_1.createClient)();
     this.riskFactors = new Map();
@@ -362,7 +359,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate demographic risk score
    */
-  RiskScoringAlgorithm.prototype.calculateDemographicScore = function (patientData) {
+  RiskScoringAlgorithm.prototype.calculateDemographicScore = (patientData) => {
     var score = 0;
     // Age factor
     var age = patientData.age;
@@ -404,7 +401,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate medical history risk score
    */
-  RiskScoringAlgorithm.prototype.calculateMedicalScore = function (patientData) {
+  RiskScoringAlgorithm.prototype.calculateMedicalScore = (patientData) => {
     var score = 0;
     var conditions = patientData.medicalHistory || [];
     // High-risk conditions
@@ -426,19 +423,11 @@ var RiskScoringAlgorithm = /** @class */ (function () {
       "arthritis",
       "osteoporosis",
     ];
-    conditions.forEach(function (condition) {
+    conditions.forEach((condition) => {
       var conditionLower = condition.toLowerCase();
-      if (
-        highRiskConditions.some(function (risk) {
-          return conditionLower.includes(risk);
-        })
-      ) {
+      if (highRiskConditions.some((risk) => conditionLower.includes(risk))) {
         score += 20;
-      } else if (
-        mediumRiskConditions.some(function (risk) {
-          return conditionLower.includes(risk);
-        })
-      ) {
+      } else if (mediumRiskConditions.some((risk) => conditionLower.includes(risk))) {
         score += 10;
       } else {
         score += 5; // Other conditions
@@ -446,12 +435,8 @@ var RiskScoringAlgorithm = /** @class */ (function () {
     });
     // Family history factor
     var familyHistory = patientData.familyHistory || [];
-    familyHistory.forEach(function (condition) {
-      if (
-        highRiskConditions.some(function (risk) {
-          return condition.toLowerCase().includes(risk);
-        })
-      ) {
+    familyHistory.forEach((condition) => {
+      if (highRiskConditions.some((risk) => condition.toLowerCase().includes(risk))) {
         score += 5;
       }
     });
@@ -460,7 +445,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate lifestyle risk score
    */
-  RiskScoringAlgorithm.prototype.calculateLifestyleScore = function (patientData) {
+  RiskScoringAlgorithm.prototype.calculateLifestyleScore = (patientData) => {
     var score = 0;
     var lifestyle = patientData.lifestyle || {};
     // Smoking
@@ -517,7 +502,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate medication risk score
    */
-  RiskScoringAlgorithm.prototype.calculateMedicationScore = function (patientData) {
+  RiskScoringAlgorithm.prototype.calculateMedicationScore = (patientData) => {
     var score = 0;
     var medications = patientData.medications || [];
     // High-risk medications
@@ -538,19 +523,11 @@ var RiskScoringAlgorithm = /** @class */ (function () {
       "beta_blockers",
       "ace_inhibitors",
     ];
-    medications.forEach(function (medication) {
+    medications.forEach((medication) => {
       var medLower = medication.toLowerCase();
-      if (
-        highRiskMeds.some(function (risk) {
-          return medLower.includes(risk);
-        })
-      ) {
+      if (highRiskMeds.some((risk) => medLower.includes(risk))) {
         score += 15;
-      } else if (
-        mediumRiskMeds.some(function (risk) {
-          return medLower.includes(risk);
-        })
-      ) {
+      } else if (mediumRiskMeds.some((risk) => medLower.includes(risk))) {
         score += 8;
       } else {
         score += 3; // Other medications
@@ -570,7 +547,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate treatment complexity score
    */
-  RiskScoringAlgorithm.prototype.calculateComplexityScore = function (treatmentData) {
+  RiskScoringAlgorithm.prototype.calculateComplexityScore = (treatmentData) => {
     var _a;
     var score = 0;
     // Base complexity by treatment type
@@ -606,7 +583,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate invasiveness score
    */
-  RiskScoringAlgorithm.prototype.calculateInvasivenessScore = function (treatmentData) {
+  RiskScoringAlgorithm.prototype.calculateInvasivenessScore = (treatmentData) => {
     var invasivenessMap = {
       non_invasive: 5,
       minimally_invasive: 20,
@@ -618,7 +595,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate duration score
    */
-  RiskScoringAlgorithm.prototype.calculateDurationScore = function (treatmentData) {
+  RiskScoringAlgorithm.prototype.calculateDurationScore = (treatmentData) => {
     var duration = treatmentData.duration || 30;
     if (duration > 240) return 40; // >4 hours
     if (duration > 180) return 30; // 3-4 hours
@@ -629,7 +606,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate anesthesia score
    */
-  RiskScoringAlgorithm.prototype.calculateAnesthesiaScore = function (treatmentData) {
+  RiskScoringAlgorithm.prototype.calculateAnesthesiaScore = (treatmentData) => {
     if (!treatmentData.anesthesiaRequired) return 0;
     var anesthesiaMap = {
       local: 10,
@@ -641,7 +618,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate facility score
    */
-  RiskScoringAlgorithm.prototype.calculateFacilityScore = function (environmentalFactors) {
+  RiskScoringAlgorithm.prototype.calculateFacilityScore = (environmentalFactors) => {
     var score = 0;
     // Facility type
     var facilityMap = {
@@ -659,7 +636,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate staff experience score
    */
-  RiskScoringAlgorithm.prototype.calculateStaffScore = function (environmentalFactors) {
+  RiskScoringAlgorithm.prototype.calculateStaffScore = (environmentalFactors) => {
     var experienceMap = {
       expert: 5,
       experienced: 10,
@@ -670,7 +647,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate equipment quality score
    */
-  RiskScoringAlgorithm.prototype.calculateEquipmentScore = function (environmentalFactors) {
+  RiskScoringAlgorithm.prototype.calculateEquipmentScore = (environmentalFactors) => {
     var qualityMap = {
       advanced: 5,
       standard: 10,
@@ -681,7 +658,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate emergency preparedness score
    */
-  RiskScoringAlgorithm.prototype.calculateEmergencyScore = function (environmentalFactors) {
+  RiskScoringAlgorithm.prototype.calculateEmergencyScore = (environmentalFactors) => {
     var score = 0;
     if (!environmentalFactors.emergencyCapability) {
       score += 20;
@@ -727,21 +704,21 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate previous outcomes score
    */
-  RiskScoringAlgorithm.prototype.calculateOutcomesScore = function (historicalData) {
+  RiskScoringAlgorithm.prototype.calculateOutcomesScore = (historicalData) => {
     if (historicalData.length === 0) return 0;
-    var complications = historicalData.filter(function (record) {
-      return record.outcome === "complication" || record.outcome === "failure";
-    });
+    var complications = historicalData.filter(
+      (record) => record.outcome === "complication" || record.outcome === "failure",
+    );
     var complicationRate = complications.length / historicalData.length;
     return Math.round(complicationRate * 50); // Max 50 points
   };
   /**
    * Calculate complications score
    */
-  RiskScoringAlgorithm.prototype.calculateComplicationsScore = function (historicalData) {
+  RiskScoringAlgorithm.prototype.calculateComplicationsScore = (historicalData) => {
     if (historicalData.length === 0) return 0;
     var score = 0;
-    historicalData.forEach(function (record) {
+    historicalData.forEach((record) => {
       var complications = JSON.parse(record.complications || "[]");
       score += complications.length * 5;
     });
@@ -750,23 +727,21 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate recovery patterns score
    */
-  RiskScoringAlgorithm.prototype.calculateRecoveryScore = function (historicalData) {
+  RiskScoringAlgorithm.prototype.calculateRecoveryScore = (historicalData) => {
     if (historicalData.length === 0) return 0;
-    var slowRecoveries = historicalData.filter(function (record) {
-      return record.recovery_time > record.expected_recovery_time * 1.5;
-    });
+    var slowRecoveries = historicalData.filter(
+      (record) => record.recovery_time > record.expected_recovery_time * 1.5,
+    );
     var slowRecoveryRate = slowRecoveries.length / historicalData.length;
     return Math.round(slowRecoveryRate * 30); // Max 30 points
   };
   /**
    * Calculate treatment adherence score
    */
-  RiskScoringAlgorithm.prototype.calculateAdherenceScore = function (historicalData) {
+  RiskScoringAlgorithm.prototype.calculateAdherenceScore = (historicalData) => {
     if (historicalData.length === 0) return 0;
     var poorAdherence = historicalData.filter(
-      function (record) {
-        return record.adherence_score < 0.7;
-      }, // Less than 70% adherence
+      (record) => record.adherence_score < 0.7, // Less than 70% adherence
     );
     var poorAdherenceRate = poorAdherence.length / historicalData.length;
     return Math.round(poorAdherenceRate * 20); // Max 20 points
@@ -833,7 +808,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate confidence in the score
    */
-  RiskScoringAlgorithm.prototype.calculateConfidence = function (components, inputData) {
+  RiskScoringAlgorithm.prototype.calculateConfidence = (components, inputData) => {
     var _a, _b, _c;
     var confidence = 100;
     // Reduce confidence for missing data
@@ -853,9 +828,10 @@ var RiskScoringAlgorithm = /** @class */ (function () {
       confidence -= 15;
     }
     // Reduce confidence for missing historical data
-    var totalHistorical = Object.values(components.historicalFactors).reduce(function (sum, score) {
-      return sum + score;
-    }, 0);
+    var totalHistorical = Object.values(components.historicalFactors).reduce(
+      (sum, score) => sum + score,
+      0,
+    );
     if (totalHistorical === 0) confidence -= 20;
     return Math.max(0, confidence);
   };
@@ -867,9 +843,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
     var weights = this.config.weights;
     // Patient factors
     var patientTotal =
-      Object.values(components.patientFactors).reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / 4;
+      Object.values(components.patientFactors).reduce((sum, score) => sum + score, 0) / 4;
     breakdown.push({
       category: "Patient Factors",
       score: Math.round(patientTotal),
@@ -879,9 +853,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
     });
     // Treatment factors
     var treatmentTotal =
-      Object.values(components.treatmentFactors).reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / 4;
+      Object.values(components.treatmentFactors).reduce((sum, score) => sum + score, 0) / 4;
     breakdown.push({
       category: "Treatment Factors",
       score: Math.round(treatmentTotal),
@@ -891,9 +863,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
     });
     // Environmental factors
     var environmentalTotal =
-      Object.values(components.environmentalFactors).reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / 4;
+      Object.values(components.environmentalFactors).reduce((sum, score) => sum + score, 0) / 4;
     breakdown.push({
       category: "Environmental Factors",
       score: Math.round(environmentalTotal),
@@ -903,9 +873,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
     });
     // Historical factors
     var historicalTotal =
-      Object.values(components.historicalFactors).reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / 4;
+      Object.values(components.historicalFactors).reduce((sum, score) => sum + score, 0) / 4;
     breakdown.push({
       category: "Historical Factors",
       score: Math.round(historicalTotal),
@@ -948,9 +916,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
             }
             scores = __spreadArray(
               [currentScore],
-              historicalScores.map(function (h) {
-                return h.score;
-              }),
+              historicalScores.map((h) => h.score),
               true,
             );
             trend = this.calculateTrend(scores);
@@ -982,7 +948,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Calculate trend from score array
    */
-  RiskScoringAlgorithm.prototype.calculateTrend = function (scores) {
+  RiskScoringAlgorithm.prototype.calculateTrend = (scores) => {
     if (scores.length < 2) return 0;
     var trend = 0;
     for (var i = 1; i < scores.length; i++) {
@@ -1058,7 +1024,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Get age group for benchmarking
    */
-  RiskScoringAlgorithm.prototype.getAgeGroup = function (age) {
+  RiskScoringAlgorithm.prototype.getAgeGroup = (age) => {
     if (age < 18) return "pediatric";
     if (age < 35) return "young_adult";
     if (age < 50) return "middle_aged";
@@ -1069,11 +1035,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Generate recommendations based on score and trends
    */
-  RiskScoringAlgorithm.prototype.generateRecommendations = function (
-    components,
-    riskLevel,
-    trends,
-  ) {
+  RiskScoringAlgorithm.prototype.generateRecommendations = (components, riskLevel, trends) => {
     var recommendations = {
       immediate: [],
       shortTerm: [],
@@ -1098,17 +1060,13 @@ var RiskScoringAlgorithm = /** @class */ (function () {
     }
     // Component-specific recommendations
     var patientTotal =
-      Object.values(components.patientFactors).reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / 4;
+      Object.values(components.patientFactors).reduce((sum, score) => sum + score, 0) / 4;
     if (patientTotal > 40) {
       recommendations.longTerm.push("Lifestyle modification counseling");
       recommendations.longTerm.push("Chronic disease management optimization");
     }
     var treatmentTotal =
-      Object.values(components.treatmentFactors).reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / 4;
+      Object.values(components.treatmentFactors).reduce((sum, score) => sum + score, 0) / 4;
     if (treatmentTotal > 40) {
       recommendations.immediate.push("Consider less invasive alternatives");
       recommendations.immediate.push("Staged treatment approach evaluation");
@@ -1155,7 +1113,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Initialize scoring configuration
    */
-  RiskScoringAlgorithm.prototype.initializeConfig = function (config) {
+  RiskScoringAlgorithm.prototype.initializeConfig = (config) => {
     var defaultConfig = {
       weights: {
         patientFactors: 0.4,
@@ -1210,7 +1168,7 @@ var RiskScoringAlgorithm = /** @class */ (function () {
           case 1:
             factors = _a.sent().data;
             if (factors) {
-              factors.forEach(function (factor) {
+              factors.forEach((factor) => {
                 _this.riskFactors.set(factor.id, {
                   id: factor.id,
                   name: factor.name,
@@ -1271,10 +1229,10 @@ var RiskScoringAlgorithm = /** @class */ (function () {
   /**
    * Create score function from string definition
    */
-  RiskScoringAlgorithm.prototype.createScoreFunction = function (functionDef) {
+  RiskScoringAlgorithm.prototype.createScoreFunction = (functionDef) => {
     // This would parse and create a function from the database definition
     // For now, return a simple function
-    return function (value, context) {
+    return (value, context) => {
       if (typeof value === "number") return Math.min(100, Math.max(0, value));
       if (typeof value === "boolean") return value ? 20 : 0;
       return 10; // Default score

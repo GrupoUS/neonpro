@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { createClient } from "@/app/utils/supabase/server";
 
 // Request validation schemas
 const UpdateDocumentSchema = z.object({

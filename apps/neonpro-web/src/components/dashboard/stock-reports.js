@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockReports = StockReports;
 var alert_1 = require("@/components/ui/alert");
@@ -166,7 +163,6 @@ var reportTypeLabels = {
   performance: "Métricas de Performance",
 };
 function StockReports(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, react_1.useState)([]),
     reports = _b[0],
@@ -197,11 +193,11 @@ function StockReports(_a) {
     setShowCreateDialog = _k[1];
   var toast = (0, use_toast_1.useToast)().toast;
   // Load dashboard data and reports
-  var loadData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, dashboardRes, reportsRes, dashboardData, reportsData, error_1;
       var _b, _c, _d;
-      return __generator(this, function (_e) {
+      return __generator(this, (_e) => {
         switch (_e.label) {
           case 0:
             setIsLoading(true);
@@ -261,12 +257,11 @@ function StockReports(_a) {
         }
       });
     });
-  };
   // Generate report
-  var generateReport = function (reportId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generateReport = (reportId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, blob, url, a, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -312,13 +307,12 @@ function StockReports(_a) {
         }
       });
     });
-  };
   // Filter reports
-  var filteredReports = reports.filter(function (report) {
+  var filteredReports = reports.filter((report) => {
     if (filterType !== "all" && report.reportType !== filterType) return false;
     return true;
   });
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadData();
   }, []);
   if (isLoading) {
@@ -347,12 +341,7 @@ function StockReports(_a) {
         </div>
       </card_1.CardHeader>
       <card_1.CardContent>
-        <tabs_1.Tabs
-          value={selectedTab}
-          onValueChange={function (value) {
-            return setSelectedTab(value);
-          }}
-        >
+        <tabs_1.Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value)}>
           <tabs_1.TabsList className="grid w-full grid-cols-2">
             <tabs_1.TabsTrigger value="dashboard" className="flex items-center gap-2">
               <lucide_react_1.PieChart className="h-4 w-4" />
@@ -438,32 +427,30 @@ function StockReports(_a) {
                         </alert_1.AlertDescription>
                       </alert_1.Alert>
                     : <div className="space-y-3">
-                        {topProducts.slice(0, 5).map(function (product, index) {
-                          return (
-                            <div
-                              key={product.productId}
-                              className="flex items-center justify-between"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold">
-                                  {index + 1}
-                                </div>
-                                <div>
-                                  <p className="font-medium">{product.name}</p>
-                                  {product.sku && (
-                                    <p className="text-sm text-muted-foreground">{product.sku}</p>
-                                  )}
-                                </div>
+                        {topProducts.slice(0, 5).map((product, index) => (
+                          <div
+                            key={product.productId}
+                            className="flex items-center justify-between"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold">
+                                {index + 1}
                               </div>
-                              <div className="text-right">
-                                <p className="font-medium">{product.consumption}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  R$ {product.value.toLocaleString("pt-BR")}
-                                </p>
+                              <div>
+                                <p className="font-medium">{product.name}</p>
+                                {product.sku && (
+                                  <p className="text-sm text-muted-foreground">{product.sku}</p>
+                                )}
                               </div>
                             </div>
-                          );
-                        })}
+                            <div className="text-right">
+                              <p className="font-medium">{product.consumption}</p>
+                              <p className="text-sm text-muted-foreground">
+                                R$ {product.value.toLocaleString("pt-BR")}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
                       </div>}
                 </card_1.CardContent>
               </card_1.Card>
@@ -482,37 +469,35 @@ function StockReports(_a) {
                         </alert_1.AlertDescription>
                       </alert_1.Alert>
                     : <div className="space-y-3">
-                        {wasteAnalysis.map(function (waste, index) {
-                          return (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between p-3 rounded-lg border"
-                            >
-                              <div>
-                                <p className="font-medium">{waste.period}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {waste.percentage.toFixed(1)}% de desperdício
-                                </p>
-                              </div>
-                              <div className="text-right">
-                                <p className="font-medium text-red-600">
-                                  R$ {waste.waste.toLocaleString("pt-BR")}
-                                </p>
-                                {waste.trend && (
-                                  <div className="flex items-center gap-1">
-                                    {waste.trend === "improving" && (
-                                      <lucide_react_1.TrendingDown className="h-4 w-4 text-green-600" />
-                                    )}
-                                    {waste.trend === "worsening" && (
-                                      <lucide_react_1.TrendingUp className="h-4 w-4 text-red-600" />
-                                    )}
-                                    <span className="text-sm capitalize">{waste.trend}</span>
-                                  </div>
-                                )}
-                              </div>
+                        {wasteAnalysis.map((waste, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-3 rounded-lg border"
+                          >
+                            <div>
+                              <p className="font-medium">{waste.period}</p>
+                              <p className="text-sm text-muted-foreground">
+                                {waste.percentage.toFixed(1)}% de desperdício
+                              </p>
                             </div>
-                          );
-                        })}
+                            <div className="text-right">
+                              <p className="font-medium text-red-600">
+                                R$ {waste.waste.toLocaleString("pt-BR")}
+                              </p>
+                              {waste.trend && (
+                                <div className="flex items-center gap-1">
+                                  {waste.trend === "improving" && (
+                                    <lucide_react_1.TrendingDown className="h-4 w-4 text-green-600" />
+                                  )}
+                                  {waste.trend === "worsening" && (
+                                    <lucide_react_1.TrendingUp className="h-4 w-4 text-red-600" />
+                                  )}
+                                  <span className="text-sm capitalize">{waste.trend}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>}
                 </card_1.CardContent>
               </card_1.Card>
@@ -527,12 +512,7 @@ function StockReports(_a) {
                   <label_1.Label>Filtrar por tipo:</label_1.Label>
                 </div>
 
-                <select_1.Select
-                  value={filterType}
-                  onValueChange={function (value) {
-                    return setFilterType(value);
-                  }}
-                >
+                <select_1.Select value={filterType} onValueChange={(value) => setFilterType(value)}>
                   <select_1.SelectTrigger className="w-48">
                     <select_1.SelectValue placeholder="Tipo de relatório" />
                   </select_1.SelectTrigger>
@@ -563,13 +543,11 @@ function StockReports(_a) {
                     </dialog_1.DialogDescription>
                   </dialog_1.DialogHeader>
                   <ReportForm
-                    onSave={function (report) {
+                    onSave={(report) => {
                       setShowCreateDialog(false);
                       loadData();
                     }}
-                    onCancel={function () {
-                      return setShowCreateDialog(false);
-                    }}
+                    onCancel={() => setShowCreateDialog(false)}
                   />
                 </dialog_1.DialogContent>
               </dialog_1.Dialog>
@@ -593,7 +571,7 @@ function StockReports(_a) {
                     </table_1.TableRow>
                   </table_1.TableHeader>
                   <table_1.TableBody>
-                    {filteredReports.map(function (report) {
+                    {filteredReports.map((report) => {
                       var Icon = reportTypeIcons[report.reportType];
                       return (
                         <table_1.TableRow key={report.id}>
@@ -639,9 +617,7 @@ function StockReports(_a) {
                               <button_1.Button
                                 variant="outline"
                                 size="sm"
-                                onClick={function () {
-                                  return generateReport(report.id);
-                                }}
+                                onClick={() => generateReport(report.id)}
                               >
                                 <lucide_react_1.Download className="h-4 w-4" />
                               </button_1.Button>
@@ -677,13 +653,7 @@ function ReportForm(_a) {
         <button_1.Button variant="outline" onClick={onCancel}>
           Cancelar
         </button_1.Button>
-        <button_1.Button
-          onClick={function () {
-            return onSave({});
-          }}
-        >
-          Criar Relatório
-        </button_1.Button>
+        <button_1.Button onClick={() => onSave({})}>Criar Relatório</button_1.Button>
       </dialog_1.DialogFooter>
     </div>
   );

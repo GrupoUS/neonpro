@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
 import type { motion } from "framer-motion";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Skeleton } from "@/components/ui/skeleton";
+import type { Award, Calendar, Clock, Info, MapPin, Star, User, X } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import type { useTranslation } from "@/app/lib/i18n/use-translation";
+import type { Professional, ProfessionalSpecialty } from "@/app/types/appointments";
+import type { createClient } from "@/app/utils/supabase/client";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -14,10 +17,7 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Star, User, Award, Clock, MapPin, Calendar, Info, X } from "lucide-react";
-import type { useTranslation } from "@/app/lib/i18n/use-translation";
-import type { createClient } from "@/app/utils/supabase/client";
-import type { Professional, ProfessionalSpecialty } from "@/app/types/appointments";
+import type { Skeleton } from "@/components/ui/skeleton";
 
 interface ProfessionalSelectionProps {
   serviceId?: string;

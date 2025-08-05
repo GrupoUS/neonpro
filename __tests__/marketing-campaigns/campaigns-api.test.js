@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // MARKETING CAMPAIGNS API TESTS - Story 7.2
 // Integration tests for marketing campaigns API endpoints
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,7 +36,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,8 +65,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -88,9 +85,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -149,97 +146,67 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_mocks_http_1 = require("node-mocks-http");
 var server_1 = require("next/server");
 var route_1 = require("@/app/api/campaigns/route");
 // Mock Supabase client
 var mockSupabaseClient = {
-  from: jest.fn(function () {
-    return {
-      select: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              single: jest.fn(),
-              data: null,
-              error: null,
-            };
-          }),
-          data: [],
-          error: null,
-        };
-      }),
-      insert: jest.fn(function () {
-        return {
-          select: jest.fn(function () {
-            return {
-              single: jest.fn(function () {
-                return {
-                  data: null,
-                  error: null,
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      update: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              select: jest.fn(function () {
-                return {
-                  single: jest.fn(function () {
-                    return {
-                      data: null,
-                      error: null,
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      delete: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              data: null,
-              error: null,
-            };
-          }),
-        };
-      }),
-    };
-  }),
-  auth: {
-    getUser: jest.fn(function () {
-      return {
-        data: { user: { id: "test-user-id" } },
+  from: jest.fn(() => ({
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        single: jest.fn(),
+        data: null,
         error: null,
-      };
-    }),
+      })),
+      data: [],
+      error: null,
+    })),
+    insert: jest.fn(() => ({
+      select: jest.fn(() => ({
+        single: jest.fn(() => ({
+          data: null,
+          error: null,
+        })),
+      })),
+    })),
+    update: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        select: jest.fn(() => ({
+          single: jest.fn(() => ({
+            data: null,
+            error: null,
+          })),
+        })),
+      })),
+    })),
+    delete: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        data: null,
+        error: null,
+      })),
+    })),
+  })),
+  auth: {
+    getUser: jest.fn(() => ({
+      data: { user: { id: "test-user-id" } },
+      error: null,
+    })),
   },
 };
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return mockSupabaseClient;
-    }),
-  };
-});
-describe("/api/campaigns API Routes", function () {
-  beforeEach(function () {
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
+describe("/api/campaigns API Routes", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("GET /api/campaigns", function () {
-    it("should fetch all campaigns successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET /api/campaigns", () => {
+    it("should fetch all campaigns successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockCampaigns, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockCampaigns = [
@@ -280,12 +247,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.from().select().error = new Error("Database connection failed");
@@ -307,12 +273,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should require authentication", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should require authentication", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.auth.getUser.mockResolvedValueOnce({
@@ -337,10 +302,9 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("POST /api/campaigns", function () {
+  describe("POST /api/campaigns", () => {
     var validCampaignData = {
       name: "New Test Campaign",
       description: "Test campaign description",
@@ -353,10 +317,10 @@ describe("/api/campaigns API Routes", function () {
       lgpd_compliance: true,
       schedule_type: "trigger_based",
     };
-    it("should create a new campaign successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should create a new campaign successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockCreatedCampaign, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockCreatedCampaign = __assign(
@@ -389,12 +353,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidData, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidData = {
@@ -421,12 +384,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate automation rate threshold", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate automation rate threshold", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var lowAutomationData, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               lowAutomationData = __assign(__assign({}, validCampaignData), {
@@ -456,12 +418,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should enforce LGPD compliance", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should enforce LGPD compliance", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var nonCompliantData, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               nonCompliantData = __assign(__assign({}, validCampaignData), {
@@ -488,19 +449,18 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("PUT /api/campaigns", function () {
+  describe("PUT /api/campaigns", () => {
     var updateData = {
       id: "existing-campaign-id",
       name: "Updated Campaign Name",
       status: "paused",
     };
-    it("should update campaign successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should update campaign successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUpdatedCampaign, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUpdatedCampaign = __assign(__assign({}, updateData), {
@@ -531,12 +491,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should require campaign ID for updates", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should require campaign ID for updates", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidUpdateData, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidUpdateData = {
@@ -564,14 +523,13 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("DELETE /api/campaigns", function () {
-    it("should delete campaign successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("DELETE /api/campaigns", () => {
+    it("should delete campaign successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.from().delete().eq.mockResolvedValueOnce({
@@ -596,12 +554,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should require campaign ID for deletion", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should require campaign ID for deletion", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               req = (0, node_mocks_http_1.createMocks)({
@@ -623,12 +580,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle non-existent campaign deletion", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle non-existent campaign deletion", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient
@@ -656,14 +612,13 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Campaign Automation Features", function () {
-    it("should calculate automation rate correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Campaign Automation Features", () => {
+    it("should calculate automation rate correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var campaignWithHighAutomation, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               campaignWithHighAutomation = {
@@ -708,12 +663,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should support multi-channel campaigns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should support multi-channel campaigns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var multiChannelCampaign, req, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               multiChannelCampaign = {
@@ -749,14 +703,13 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("A/B Testing Integration", function () {
-    it("should handle A/B testing enabled campaigns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("A/B Testing Integration", () => {
+    it("should handle A/B testing enabled campaigns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var abTestCampaign, req, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               abTestCampaign = {
@@ -795,14 +748,13 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Analytics and Metrics", function () {
-    it("should track campaign performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Analytics and Metrics", () => {
+    it("should track campaign performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var campaignWithMetrics, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               campaignWithMetrics = {
@@ -841,14 +793,13 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Story 7.2 Acceptance Criteria Validation", function () {
-    it("should enforce ≥80% automation rate requirement", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Story 7.2 Acceptance Criteria Validation", () => {
+    it("should enforce ≥80% automation rate requirement", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var lowAutomationCampaign, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               lowAutomationCampaign = {
@@ -883,12 +834,11 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should require LGPD compliance for all campaigns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should require LGPD compliance for all campaigns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var nonCompliantCampaign, req, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               nonCompliantCampaign = {
@@ -920,7 +870,6 @@ describe("/api/campaigns API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

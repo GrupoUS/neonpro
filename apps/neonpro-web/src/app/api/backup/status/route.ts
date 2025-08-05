@@ -3,9 +3,7 @@
  * Story 1.8: Sistema de Backup e Recovery
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { BackupManager } from "@/lib/backup/backup-manager";
-import type { createClient } from "@/lib/supabase/server";
+import type { NextRequest } from "next/server";
 
 const backupManager = new BackupManager();
 

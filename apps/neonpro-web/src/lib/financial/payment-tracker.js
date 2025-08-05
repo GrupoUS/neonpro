@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Payment Tracking System
  * Story 4.1: Automated Invoice Generation + Payment Tracking Implementation
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,11 +155,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentTracker = void 0;
 var client_1 = require("@/lib/supabase/client");
-var PaymentTracker = /** @class */ (function () {
+var PaymentTracker = /** @class */ (() => {
   function PaymentTracker(config) {
     this.supabase = (0, client_1.createClient)();
     this.webhookHandlers = new Map();
@@ -467,17 +464,11 @@ var PaymentTracker = /** @class */ (function () {
               date: date,
               gateway: gateway,
               totalTransactions: gatewayPayments.length,
-              totalAmount: gatewayPayments.reduce(function (sum, p) {
-                return sum + p.amount;
-              }, 0),
+              totalAmount: gatewayPayments.reduce((sum, p) => sum + p.amount, 0),
               reconciledTransactions: ourPayments.length - discrepancies_1.missingPayments.length,
               reconciledAmount: ourPayments
-                .filter(function (p) {
-                  return !discrepancies_1.missingPayments.includes(p.id);
-                })
-                .reduce(function (sum, p) {
-                  return sum + p.amount;
-                }, 0),
+                .filter((p) => !discrepancies_1.missingPayments.includes(p.id))
+                .reduce((sum, p) => sum + p.amount, 0),
               discrepancies: discrepancies_1,
               status:
                 discrepancies_1.missingPayments.length > 0 ||
@@ -642,7 +633,7 @@ var PaymentTracker = /** @class */ (function () {
     });
   };
   // Private helper methods
-  PaymentTracker.prototype.initializeConfig = function (config) {
+  PaymentTracker.prototype.initializeConfig = (config) => {
     var defaultConfig = {
       gateways: {
         stripe: {
@@ -726,7 +717,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.setupReconciliationScheduler = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Setting up reconciliation scheduler...");
         return [2 /*return*/];
       });
@@ -734,7 +725,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.setupDunningWorkflows = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Setting up dunning workflows...");
         return [2 /*return*/];
       });
@@ -743,7 +734,7 @@ var PaymentTracker = /** @class */ (function () {
   PaymentTracker.prototype.calculateFees = function (amount, method, gateway) {
     return __awaiter(this, void 0, void 0, function () {
       var gatewayFee, processingFee;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         gatewayFee = 0;
         processingFee = 0;
         switch (gateway) {
@@ -1137,7 +1128,7 @@ var PaymentTracker = /** @class */ (function () {
   // Gateway-specific implementations
   PaymentTracker.prototype.initializeGateway = function (gateway, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Initializing ".concat(gateway, " gateway..."));
         return [2 /*return*/];
       });
@@ -1145,59 +1136,47 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.initializeStripePayment = function (payment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PaymentTracker.prototype.initializePagarmePayment = function (payment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PaymentTracker.prototype.initializeMercadoPagoPayment = function (payment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PaymentTracker.prototype.handleStripeWebhook = function (webhook) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PaymentTracker.prototype.handlePagarmeWebhook = function (webhook) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PaymentTracker.prototype.handleMercadoPagoWebhook = function (webhook) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   PaymentTracker.prototype.verifyWebhookSignature = function (gateway, data, signature) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Verify webhook signature based on gateway
         return [2 /*return*/, true]; // Simplified for now
       });
     });
   };
-  PaymentTracker.prototype.extractPaymentIdFromWebhook = function (gateway, data) {
+  PaymentTracker.prototype.extractPaymentIdFromWebhook = (gateway, data) => {
     // Extract payment ID from webhook data based on gateway
     return data.payment_id || data.id || "unknown";
   };
-  PaymentTracker.prototype.mapGatewayStatusToPaymentStatus = function (gateway, gatewayStatus) {
+  PaymentTracker.prototype.mapGatewayStatusToPaymentStatus = (gateway, gatewayStatus) => {
     // Map gateway-specific status to our payment status
     var statusMap = {
       paid: "confirmed",
@@ -1248,7 +1227,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.getGatewayPayments = function (gateway, date) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get payments from gateway API for reconciliation
         // Implementation would vary by gateway
         return [2 /*return*/, []];
@@ -1259,18 +1238,17 @@ var PaymentTracker = /** @class */ (function () {
     var missingPayments = [];
     var extraPayments = [];
     var amountMismatches = [];
-    var _loop_1 = function (ourPayment) {
-      var gatewayPayment = gatewayPayments.find(function (gp) {
-        return (
+    var _loop_1 = (ourPayment) => {
+      var gatewayPayment = gatewayPayments.find(
+        (gp) =>
           gp.transaction_id === ourPayment.transactionId ||
-          gp.id === ourPayment.gatewayTransactionId
-        );
-      });
+          gp.id === ourPayment.gatewayTransactionId,
+      );
       if (!gatewayPayment) {
         missingPayments.push(ourPayment.id);
       } else if (
         Math.abs(gatewayPayment.amount - ourPayment.amount) >
-        this_1.config.reconciliation.toleranceAmount
+        this.config.reconciliation.toleranceAmount
       ) {
         amountMismatches.push({
           paymentId: ourPayment.id,
@@ -1279,19 +1257,17 @@ var PaymentTracker = /** @class */ (function () {
         });
       }
     };
-    var this_1 = this;
     // Find missing and mismatched payments
     for (var _i = 0, ourPayments_1 = ourPayments; _i < ourPayments_1.length; _i++) {
       var ourPayment = ourPayments_1[_i];
       _loop_1(ourPayment);
     }
-    var _loop_2 = function (gatewayPayment) {
-      var ourPayment = ourPayments.find(function (op) {
-        return (
+    var _loop_2 = (gatewayPayment) => {
+      var ourPayment = ourPayments.find(
+        (op) =>
           op.transactionId === gatewayPayment.transaction_id ||
-          op.gatewayTransactionId === gatewayPayment.id
-        );
-      });
+          op.gatewayTransactionId === gatewayPayment.id,
+      );
       if (!ourPayment) {
         extraPayments.push(gatewayPayment.id);
       }
@@ -1363,9 +1339,7 @@ var PaymentTracker = /** @class */ (function () {
         new Date(
           Math.min.apply(
             Math,
-            payments.map(function (p) {
-              return new Date(p.created_at).getTime();
-            }),
+            payments.map((p) => new Date(p.created_at).getTime()),
           ),
         ),
       endDate:
@@ -1373,22 +1347,14 @@ var PaymentTracker = /** @class */ (function () {
         new Date(
           Math.max.apply(
             Math,
-            payments.map(function (p) {
-              return new Date(p.created_at).getTime();
-            }),
+            payments.map((p) => new Date(p.created_at).getTime()),
           ),
         ),
     };
     var totalPayments = payments.length;
-    var totalAmount = payments.reduce(function (sum, p) {
-      return sum + p.amount;
-    }, 0);
-    var confirmedPayments = payments.filter(function (p) {
-      return p.status === "confirmed";
-    });
-    var refundedPayments = payments.filter(function (p) {
-      return p.status === "refunded";
-    });
+    var totalAmount = payments.reduce((sum, p) => sum + p.amount, 0);
+    var confirmedPayments = payments.filter((p) => p.status === "confirmed");
+    var refundedPayments = payments.filter((p) => p.status === "refunded");
     var summary = {
       totalPayments: totalPayments,
       totalAmount: totalAmount,
@@ -1400,7 +1366,7 @@ var PaymentTracker = /** @class */ (function () {
     var byMethod = {};
     var byGateway = {};
     // Group by method
-    var methodGroups = payments.reduce(function (groups, payment) {
+    var methodGroups = payments.reduce((groups, payment) => {
       var method = payment.method;
       if (!groups[method]) groups[method] = [];
       groups[method].push(payment);
@@ -1410,20 +1376,16 @@ var PaymentTracker = /** @class */ (function () {
       var _b = _a[_i],
         method = _b[0],
         methodPayments = _b[1];
-      var confirmed = methodPayments.filter(function (p) {
-        return p.status === "confirmed";
-      });
+      var confirmed = methodPayments.filter((p) => p.status === "confirmed");
       byMethod[method] = {
         count: methodPayments.length,
-        amount: methodPayments.reduce(function (sum, p) {
-          return sum + p.amount;
-        }, 0),
+        amount: methodPayments.reduce((sum, p) => sum + p.amount, 0),
         successRate: confirmed.length / methodPayments.length || 0,
         averageProcessingTime: this.calculateAverageProcessingTime(confirmed),
       };
     }
     // Group by gateway
-    var gatewayGroups = payments.reduce(function (groups, payment) {
+    var gatewayGroups = payments.reduce((groups, payment) => {
       var gateway = payment.gateway;
       if (!groups[gateway]) groups[gateway] = [];
       groups[gateway].push(payment);
@@ -1433,17 +1395,11 @@ var PaymentTracker = /** @class */ (function () {
       var _e = _d[_c],
         gateway = _e[0],
         gatewayPayments = _e[1];
-      var confirmed = gatewayPayments.filter(function (p) {
-        return p.status === "confirmed";
-      });
+      var confirmed = gatewayPayments.filter((p) => p.status === "confirmed");
       byGateway[gateway] = {
         count: gatewayPayments.length,
-        amount: gatewayPayments.reduce(function (sum, p) {
-          return sum + p.amount;
-        }, 0),
-        fees: gatewayPayments.reduce(function (sum, p) {
-          return sum + (JSON.parse(p.fees || "{}").total || 0);
-        }, 0),
+        amount: gatewayPayments.reduce((sum, p) => sum + p.amount, 0),
+        fees: gatewayPayments.reduce((sum, p) => sum + (JSON.parse(p.fees || "{}").total || 0), 0),
         successRate: confirmed.length / gatewayPayments.length || 0,
       };
     }
@@ -1454,9 +1410,7 @@ var PaymentTracker = /** @class */ (function () {
       monthly: [],
     };
     // Calculate top failure reasons
-    var failedPayments = payments.filter(function (p) {
-      return p.status === "failed";
-    });
+    var failedPayments = payments.filter((p) => p.status === "failed");
     var topFailureReasons = [
       { reason: "Insufficient funds", count: 0, percentage: 0 },
       { reason: "Card declined", count: 0, percentage: 0 },
@@ -1471,20 +1425,12 @@ var PaymentTracker = /** @class */ (function () {
       topFailureReasons: topFailureReasons,
     };
   };
-  PaymentTracker.prototype.calculateAverageProcessingTime = function (payments) {
+  PaymentTracker.prototype.calculateAverageProcessingTime = (payments) => {
     var processingTimes = payments
-      .filter(function (p) {
-        return p.processed_at && p.created_at;
-      })
-      .map(function (p) {
-        return new Date(p.processed_at).getTime() - new Date(p.created_at).getTime();
-      });
+      .filter((p) => p.processed_at && p.created_at)
+      .map((p) => new Date(p.processed_at).getTime() - new Date(p.created_at).getTime());
     return processingTimes.length > 0
-      ? processingTimes.reduce(function (sum, time) {
-          return sum + time;
-        }, 0) /
-          processingTimes.length /
-          1000 // Convert to seconds
+      ? processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length / 1000 // Convert to seconds
       : 0;
   };
   PaymentTracker.prototype.getOverdueInvoices = function () {
@@ -1518,7 +1464,7 @@ var PaymentTracker = /** @class */ (function () {
             daysPastDue = Math.floor(
               (new Date().getTime() - new Date(invoice.due_date).getTime()) / (1000 * 60 * 60 * 24),
             );
-            stage = this.config.dunning.stages.find(function (s) {
+            stage = this.config.dunning.stages.find((s) => {
               var _a;
               return (
                 daysPastDue >= s.daysAfterDue &&
@@ -1602,43 +1548,41 @@ var PaymentTracker = /** @class */ (function () {
       });
     });
   };
-  PaymentTracker.prototype.convertDbRecordToPaymentRecord = function (data) {
-    return {
-      id: data.id,
-      invoiceId: data.invoice_id,
-      amount: data.amount,
-      currency: data.currency,
-      method: data.method,
-      gateway: data.gateway,
-      status: data.status,
-      transactionId: data.transaction_id,
-      gatewayTransactionId: data.gateway_transaction_id,
-      authorizationCode: data.authorization_code,
-      nsu: data.nsu,
-      tid: data.tid,
-      installments: data.installments,
-      fees: JSON.parse(data.fees || "{}"),
-      metadata: {
-        patientId: data.patient_id,
-        clinicId: data.clinic_id,
-        appointmentId: data.appointment_id,
-        treatmentId: data.treatment_id,
-        createdBy: data.created_by,
-        createdAt: new Date(data.created_at),
-        updatedAt: new Date(data.updated_at),
-        processedAt: data.processed_at ? new Date(data.processed_at) : undefined,
-        confirmedAt: data.confirmed_at ? new Date(data.confirmed_at) : undefined,
-        notes: data.notes,
-      },
-      pixData: data.pix_data ? JSON.parse(data.pix_data) : undefined,
-      boletoData: data.boleto_data ? JSON.parse(data.boleto_data) : undefined,
-      cardData: data.card_data ? JSON.parse(data.card_data) : undefined,
-    };
-  };
+  PaymentTracker.prototype.convertDbRecordToPaymentRecord = (data) => ({
+    id: data.id,
+    invoiceId: data.invoice_id,
+    amount: data.amount,
+    currency: data.currency,
+    method: data.method,
+    gateway: data.gateway,
+    status: data.status,
+    transactionId: data.transaction_id,
+    gatewayTransactionId: data.gateway_transaction_id,
+    authorizationCode: data.authorization_code,
+    nsu: data.nsu,
+    tid: data.tid,
+    installments: data.installments,
+    fees: JSON.parse(data.fees || "{}"),
+    metadata: {
+      patientId: data.patient_id,
+      clinicId: data.clinic_id,
+      appointmentId: data.appointment_id,
+      treatmentId: data.treatment_id,
+      createdBy: data.created_by,
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at),
+      processedAt: data.processed_at ? new Date(data.processed_at) : undefined,
+      confirmedAt: data.confirmed_at ? new Date(data.confirmed_at) : undefined,
+      notes: data.notes,
+    },
+    pixData: data.pix_data ? JSON.parse(data.pix_data) : undefined,
+    boletoData: data.boleto_data ? JSON.parse(data.boleto_data) : undefined,
+    cardData: data.card_data ? JSON.parse(data.card_data) : undefined,
+  });
   // Notification methods (simplified implementations)
   PaymentTracker.prototype.sendPaymentConfirmationNotification = function (payment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Sending payment confirmation for ".concat(payment.id));
         return [2 /*return*/];
       });
@@ -1646,7 +1590,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.sendPaymentFailureNotification = function (payment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Sending payment failure notification for ".concat(payment.id));
         return [2 /*return*/];
       });
@@ -1654,7 +1598,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.sendReconciliationAlert = function (reconciliation) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Sending reconciliation alert for ".concat(reconciliation.gateway));
         return [2 /*return*/];
       });
@@ -1662,7 +1606,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.sendDunningEmail = function (invoice, template) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log(
           "Sending dunning email for invoice "
             .concat(invoice.number, " using template ")
@@ -1674,7 +1618,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.sendDunningSMS = function (invoice, template) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log(
           "Sending dunning SMS for invoice "
             .concat(invoice.number, " using template ")
@@ -1686,7 +1630,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.sendDunningWhatsApp = function (invoice, template) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log(
           "Sending dunning WhatsApp for invoice "
             .concat(invoice.number, " using template ")
@@ -1698,7 +1642,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.scheduleDunningCall = function (invoice) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Scheduling dunning call for invoice ".concat(invoice.number));
         return [2 /*return*/];
       });
@@ -1706,7 +1650,7 @@ var PaymentTracker = /** @class */ (function () {
   };
   PaymentTracker.prototype.generateDunningLetter = function (invoice) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Generating dunning letter for invoice ".concat(invoice.number));
         return [2 /*return*/];
       });
@@ -1816,13 +1760,11 @@ var PaymentTracker = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (record) {
-                    return {
-                      timestamp: new Date(record.timestamp),
-                      status: record.action,
-                      notes: record.details,
-                    };
-                  })) || [],
+                : data.map((record) => ({
+                    timestamp: new Date(record.timestamp),
+                    status: record.action,
+                    notes: record.details,
+                  }))) || [],
             ];
         }
       });

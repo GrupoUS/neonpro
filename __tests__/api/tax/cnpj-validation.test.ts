@@ -2,7 +2,7 @@
 // Testing real-time CNPJ validation and customer verification
 // Author: VoidBeast V6.0 Master Orchestrator
 
-import { describe, it, expect, beforeAll, afterAll, jest } from "@jest/globals";
+import { afterAll, beforeAll, describe, expect, it, jest } from "@jest/globals";
 import { NextRequest } from "next/server";
 
 // Mock Supabase client for CNPJ operations
@@ -662,7 +662,7 @@ describe("CNPJ Validation API - Story 5.5 AC2: Real-time CNPJ Validation and Cus
       const results = await Promise.all(responses.map((r) => r.json()));
 
       // All requests should return valid results
-      results.forEach((result, index) => {
+      results.forEach((result, _index) => {
         expect(result.data).toHaveProperty("valid");
         expect(result.data.cnpj || result.data.validation_errors).toBeDefined();
       });

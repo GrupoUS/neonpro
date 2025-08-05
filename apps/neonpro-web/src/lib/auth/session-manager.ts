@@ -4,31 +4,31 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
-import Redis from "ioredis";
+import type { createHash, createHmac, randomBytes } from "crypto";
 import type { EventEmitter } from "events";
+import Redis from "ioredis";
+import type { UAParser } from "ua-parser-js";
 import type {
-  UserSession,
-  SessionSecurityEvent,
-  DeviceRegistration,
-  SessionAuditLog,
-  SessionPolicy,
-  SessionConfiguration,
-  SuspiciousActivity,
   CrossDeviceSync,
+  DeviceRegistration,
+  DeviceType,
+  EmergencySessionControls,
   SecurityEventType,
+  SecurityLevel,
   SecuritySeverity,
   SessionAction,
-  SecurityLevel,
-  SuspiciousActivityType,
-  SessionValidationResult,
-  SessionManagerConfig,
-  EmergencySessionControls,
+  SessionAuditLog,
+  SessionConfiguration,
   SessionEventHandlers,
-  DeviceType,
+  SessionManagerConfig,
+  SessionPolicy,
+  SessionSecurityEvent,
+  SessionValidationResult,
+  SuspiciousActivity,
+  SuspiciousActivityType,
+  UserSession,
 } from "@/types/session";
 import type { Database } from "@/types/supabase";
-import type { createHash, randomBytes, createHmac } from "crypto";
-import type { UAParser } from "ua-parser-js";
 
 export class SessionManager extends EventEmitter {
   private supabase: ReturnType<typeof createClient<Database>>;

@@ -3,7 +3,6 @@
  * Advanced card with gradient backgrounds and cosmic animations
  */
 import React from "react";
-import type { cn } from "@/lib/utils";
 import type {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { cn } from "@/lib/utils";
 
 interface NeonGradientCardProps {
   children?: React.ReactNode;

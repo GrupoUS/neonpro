@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,7 +154,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_ts_1 = require("https://deno.land/std@0.168.0/http/server.ts");
 var supabase_js_2_1 = require("https://esm.sh/@supabase/supabase-js@2");
@@ -165,8 +162,8 @@ var corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-(0, server_ts_1.serve)(function (req) {
-  return __awaiter(void 0, void 0, void 0, function () {
+(0, server_ts_1.serve)((req) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var supabaseUrl,
       supabaseServiceKey,
       supabase,
@@ -180,7 +177,7 @@ var corsHeaders = {
       _i,
       clinicIds_1,
       clinicId,
-      alertKeys,
+      _alertKeys,
       existingAlerts,
       existingKeys_1,
       newAlerts,
@@ -190,7 +187,7 @@ var corsHeaders = {
       newAlerts_1,
       alert_1,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           // Handle CORS
@@ -199,7 +196,7 @@ var corsHeaders = {
           }
           _c.label = 1;
         case 1:
-          _c.trys.push([1, 11, , 12]);
+          _c.trys.push([1, 11, undefined, 12]);
           supabaseUrl = Deno.env.get("SUPABASE_URL");
           supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
           supabase = (0, supabase_js_2_1.createClient)(supabaseUrl, supabaseServiceKey);
@@ -228,24 +225,20 @@ var corsHeaders = {
             new Set(
               (alertConfigs === null || alertConfigs === void 0
                 ? void 0
-                : alertConfigs.map(function (config) {
-                    return config.clinic_id;
-                  })) || [],
+                : alertConfigs.map((config) => config.clinic_id)) || [],
             ),
             true,
           );
           _loop_1 = function (clinicId) {
             var clinicConfigs, _d, inventory, inventoryError, _loop_3, _e, clinicConfigs_1, config;
-            return __generator(this, function (_f) {
+            return __generator(this, (_f) => {
               switch (_f.label) {
                 case 0:
                   console.log("Processing alerts for clinic: ".concat(clinicId));
                   clinicConfigs =
                     (alertConfigs === null || alertConfigs === void 0
                       ? void 0
-                      : alertConfigs.filter(function (config) {
-                          return config.clinic_id === clinicId;
-                        })) || [];
+                      : alertConfigs.filter((config) => config.clinic_id === clinicId)) || [];
                   return [
                     4 /*yield*/,
                     supabase
@@ -276,13 +269,13 @@ var corsHeaders = {
                   );
                   _loop_3 = function (config) {
                     var relevantProducts, _g, relevantProducts_1, product, alerts;
-                    return __generator(this, function (_h) {
+                    return __generator(this, (_h) => {
                       switch (_h.label) {
                         case 0:
                           relevantProducts =
                             (inventory === null || inventory === void 0
                               ? void 0
-                              : inventory.filter(function (item) {
+                              : inventory.filter((item) => {
                                   if (config.product_id) {
                                     return item.product_id === config.product_id;
                                   }
@@ -342,12 +335,9 @@ var corsHeaders = {
         case 6:
           console.log("Generated ".concat(generatedAlerts.length, " new alerts"));
           if (!(generatedAlerts.length > 0)) return [3 /*break*/, 9];
-          alertKeys = generatedAlerts.map(function (alert) {
-            return ""
-              .concat(alert.clinic_id, "-")
-              .concat(alert.product_id, "-")
-              .concat(alert.alert_type);
-          });
+          _alertKeys = generatedAlerts.map((alert) =>
+            "".concat(alert.clinic_id, "-").concat(alert.product_id, "-").concat(alert.alert_type),
+          );
           return [
             4 /*yield*/,
             supabase
@@ -356,15 +346,7 @@ var corsHeaders = {
               .eq("status", "active")
               .in(
                 "clinic_id",
-                __spreadArray(
-                  [],
-                  new Set(
-                    generatedAlerts.map(function (a) {
-                      return a.clinic_id;
-                    }),
-                  ),
-                  true,
-                ),
+                __spreadArray([], new Set(generatedAlerts.map((a) => a.clinic_id)), true),
               ),
           ];
         case 7:
@@ -372,21 +354,22 @@ var corsHeaders = {
           existingKeys_1 = new Set(
             (existingAlerts === null || existingAlerts === void 0
               ? void 0
-              : existingAlerts.map(function (alert) {
-                  return ""
+              : existingAlerts.map((alert) =>
+                  ""
                     .concat(alert.clinic_id, "-")
                     .concat(alert.product_id, "-")
-                    .concat(alert.alert_type);
-                })) || [],
+                    .concat(alert.alert_type),
+                )) || [],
           );
-          newAlerts = generatedAlerts.filter(function (alert) {
-            return !existingKeys_1.has(
-              ""
-                .concat(alert.clinic_id, "-")
-                .concat(alert.product_id, "-")
-                .concat(alert.alert_type),
-            );
-          });
+          newAlerts = generatedAlerts.filter(
+            (alert) =>
+              !existingKeys_1.has(
+                ""
+                  .concat(alert.clinic_id, "-")
+                  .concat(alert.product_id, "-")
+                  .concat(alert.alert_type),
+              ),
+          );
           console.log(
             "Inserting "
               .concat(newAlerts.length, " new alerts (")
@@ -400,13 +383,11 @@ var corsHeaders = {
             console.error("Error inserting alerts:", insertError);
             throw insertError;
           }
-          _loop_2 = function (alert_1) {
+          _loop_2 = (alert_1) => {
             var config =
               alertConfigs === null || alertConfigs === void 0
                 ? void 0
-                : alertConfigs.find(function (c) {
-                    return c.id === alert_1.alert_config_id;
-                  });
+                : alertConfigs.find((c) => c.id === alert_1.alert_config_id);
             if (
               (config === null || config === void 0 ? void 0 : config.notification_channels) &&
               config.notification_channels.length > 0
@@ -478,12 +459,12 @@ var corsHeaders = {
           return [2 /*return*/];
       }
     });
-  });
-});
+  }),
+);
 function generateAlertsForProduct(product, config) {
   return __awaiter(this, void 0, void 0, function () {
-    var alerts, productData, expiryDate, today, daysToExpiry, expiryDate, today, daysExpired;
-    return __generator(this, function (_a) {
+    var alerts, productData, _expiryDate, _today, daysToExpiry, expiryDate, today, daysExpired;
+    return __generator(this, (_a) => {
       alerts = [];
       productData = product.products || {};
       switch (config.alert_type) {
@@ -594,7 +575,7 @@ function updatePerformanceMetrics(supabase, clinicIds) {
       accuracyPercentage,
       metricsError,
       error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           console.log("Updating performance metrics...");
@@ -605,7 +586,7 @@ function updatePerformanceMetrics(supabase, clinicIds) {
           clinicId = clinicIds_2[_i];
           _a.label = 2;
         case 2:
-          _a.trys.push([2, 5, , 6]);
+          _a.trys.push([2, 5, undefined, 6]);
           today = new Date().toISOString().split("T")[0];
           return [
             4 /*yield*/,
@@ -618,12 +599,13 @@ function updatePerformanceMetrics(supabase, clinicIds) {
         case 3:
           inventory = _a.sent().data;
           if (!inventory || inventory.length === 0) return [3 /*break*/, 6];
-          totalValue = inventory.reduce(function (sum, item) {
-            return sum + item.quantity_available * item.unit_cost;
-          }, 0);
-          productsInRange = inventory.filter(function (item) {
-            return item.quantity_available >= item.min_stock_level;
-          }).length;
+          totalValue = inventory.reduce(
+            (sum, item) => sum + item.quantity_available * item.unit_cost,
+            0,
+          );
+          productsInRange = inventory.filter(
+            (item) => item.quantity_available >= item.min_stock_level,
+          ).length;
           accuracyPercentage = (productsInRange / inventory.length) * 100;
           return [
             4 /*yield*/,

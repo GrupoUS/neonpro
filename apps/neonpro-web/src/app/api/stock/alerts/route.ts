@@ -3,10 +3,10 @@
  * API para gerenciamento de alertas de estoque
  */
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { StockAlertsService } from "@/app/lib/services/stock-alerts.service";
 import type { validateAlertsQuery } from "@/app/lib/types/stock-alerts";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 const alertsService = new StockAlertsService();
 
@@ -98,21 +98,23 @@ export async function POST(request: NextRequest) {
     const action = body.action;
 
     switch (action) {
-      case "acknowledge":
+      case "acknowledge": {
         const ackResult = await alertsService.acknowledgeAlert(body.data, user.id);
         if (!ackResult.success) {
           return NextResponse.json({ error: ackResult.error }, { status: 400 });
         }
         return NextResponse.json({ data: ackResult.data });
+      }
 
-      case "resolve":
+      case "resolve": {
         const resolveResult = await alertsService.resolveAlert(body.data, user.id);
         if (!resolveResult.success) {
           return NextResponse.json({ error: resolveResult.error }, { status: 400 });
         }
         return NextResponse.json({ data: resolveResult.data });
+      }
 
-      case "dismiss":
+      case "dismiss": {
         const dismissResult = await alertsService.dismissAlert(
           body.data.alert_id,
           user.id,
@@ -122,13 +124,15 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: dismissResult.error }, { status: 400 });
         }
         return NextResponse.json({ data: dismissResult.data });
+      }
 
-      case "generate":
+      case "generate": {
         const generateResult = await alertsService.generateAlerts(profile.clinic_id);
         if (!generateResult.success) {
           return NextResponse.json({ error: generateResult.error }, { status: 500 });
         }
         return NextResponse.json({ data: generateResult.data });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });

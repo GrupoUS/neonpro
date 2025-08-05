@@ -12,8 +12,8 @@
  * - Real-time payment tracking and reconciliation
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/database.types";
+import type { createClient } from "@/lib/supabase/client";
 
 // Brazilian Tax and Invoice Types
 interface BrazilianTaxInfo {
@@ -721,18 +721,21 @@ class AutomatedInvoiceGenerator {
       expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiration
 
       switch (method.type) {
-        case "pix":
+        case "pix": {
           const pixCode = await this.generatePixCode(invoice);
           return { pixCode, expiresAt };
+        }
 
-        case "boleto":
+        case "boleto": {
           const boletoUrl = await this.generateBoleto(invoice);
           return { boletoUrl, expiresAt };
+        }
 
         case "credit_card":
-        case "debit_card":
+        case "debit_card": {
           const paymentUrl = await this.generateCardPaymentUrl(invoice, method);
           return { paymentUrl, expiresAt };
+        }
 
         default:
           throw new Error("Unsupported payment method");

@@ -1,6 +1,6 @@
-import type { demandForecastingService } from "@/app/lib/services/demand-forecasting-service";
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
+import type { demandForecastingService } from "@/app/lib/services/demand-forecasting-service";
 
 // Validation schemas
 const forecastRequestSchema = z.object({

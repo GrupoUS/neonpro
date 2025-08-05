@@ -3,10 +3,10 @@
  * Story 1.8: Sistema de Backup e Recovery
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { BackupManager } from "@/lib/backup/backup-manager";
-import { createClient } from "@/lib/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import type { BackupManager } from "@/lib/backup/backup-manager";
+import { createClient } from "@/lib/supabase/server";
 
 // Initialize BackupManager only if Supabase is configured
 const backupManager: BackupManager | null = null;
@@ -41,7 +41,7 @@ const updateConfigSchema = z.object({
  * GET /api/backup/configs/[id]
  * Busca configuração específica de backup
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     if (!backupManager) {
       return NextResponse.json({ error: "Backup service not configured" }, { status: 503 });
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * DELETE /api/backup/configs/[id]
  * Remove configuração de backup
  */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     if (!backupManager) {
       return NextResponse.json({ error: "Backup service not configured" }, { status: 503 });

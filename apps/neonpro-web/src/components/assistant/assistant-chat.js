@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssistantChat = AssistantChat;
 var react_1 = require("react");
@@ -147,7 +144,6 @@ var separator_1 = require("@/components/ui/separator");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 function AssistantChat(_a) {
-  var _this = this;
   var conversationId = _a.conversationId,
     onConversationChange = _a.onConversationChange;
   var scrollAreaRef = (0, react_1.useRef)(null);
@@ -160,13 +156,13 @@ function AssistantChat(_a) {
         conversationId: conversationId,
         model: selectedModel,
       },
-      onResponse: function (response) {
-        return __awaiter(_this, void 0, void 0, function () {
+      onResponse: (response) =>
+        __awaiter(this, void 0, void 0, function () {
           var error;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
-                if (!!response.ok) return [3 /*break*/, 2];
+                if (response.ok) return [3 /*break*/, 2];
                 return [4 /*yield*/, response.text()];
               case 1:
                 error = _a.sent();
@@ -176,11 +172,10 @@ function AssistantChat(_a) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
-      onFinish: function (message) {
+        }),
+      onFinish: (message) => {
         // Scroll to bottom after response
-        setTimeout(function () {
+        setTimeout(() => {
           if (scrollAreaRef.current) {
             scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
           }
@@ -194,27 +189,21 @@ function AssistantChat(_a) {
     isLoading = _c.isLoading,
     setMessages = _c.setMessages;
   // Auto-scroll to bottom when new messages arrive
-  (0, react_1.useEffect)(
-    function () {
-      if (scrollAreaRef.current) {
-        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-      }
-    },
-    [messages],
-  );
+  (0, react_1.useEffect)(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    }
+  }, [messages]);
   // Load conversation messages if conversationId provided
-  (0, react_1.useEffect)(
-    function () {
-      if (conversationId) {
-        loadConversationMessages(conversationId);
-      }
-    },
-    [conversationId],
-  );
-  var loadConversationMessages = function (convId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (conversationId) {
+      loadConversationMessages(conversationId);
+    }
+  }, [conversationId]);
+  var loadConversationMessages = (convId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, formattedMessages, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -225,14 +214,12 @@ function AssistantChat(_a) {
             return [4 /*yield*/, response.json()];
           case 2:
             data = _a.sent();
-            formattedMessages = data.messages.map(function (msg) {
-              return {
-                id: msg.id,
-                role: msg.role,
-                content: msg.content,
-                createdAt: new Date(msg.created_at),
-              };
-            });
+            formattedMessages = data.messages.map((msg) => ({
+              id: msg.id,
+              role: msg.role,
+              content: msg.content,
+              createdAt: new Date(msg.created_at),
+            }));
             setMessages(formattedMessages);
             _a.label = 3;
           case 3:
@@ -247,8 +234,7 @@ function AssistantChat(_a) {
         }
       });
     });
-  };
-  var getModelBadgeColor = function (model) {
+  var getModelBadgeColor = (model) => {
     switch (model) {
       case "gpt4":
         return "bg-green-100 text-green-800";
@@ -260,7 +246,7 @@ function AssistantChat(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getModelName = function (model) {
+  var getModelName = (model) => {
     switch (model) {
       case "gpt4":
         return "GPT-4";
@@ -307,42 +293,40 @@ function AssistantChat(_a) {
                     muito mais. Como posso ajudar hoje?
                   </p>
                 </div>
-              : messages.map(function (message) {
-                  return (
+              : messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={"flex gap-3 ".concat(
+                      message.role === "user" ? "justify-end" : "justify-start",
+                    )}
+                  >
+                    {message.role === "assistant" && (
+                      <avatar_1.Avatar className="h-8 w-8 mt-1">
+                        <avatar_1.AvatarFallback className="bg-blue-100 text-blue-600">
+                          <lucide_react_1.Bot className="h-4 w-4" />
+                        </avatar_1.AvatarFallback>
+                      </avatar_1.Avatar>
+                    )}
+
                     <div
-                      key={message.id}
-                      className={"flex gap-3 ".concat(
-                        message.role === "user" ? "justify-end" : "justify-start",
+                      className={"max-w-[80%] rounded-lg px-4 py-2 ".concat(
+                        message.role === "user"
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 text-gray-900",
                       )}
                     >
-                      {message.role === "assistant" && (
-                        <avatar_1.Avatar className="h-8 w-8 mt-1">
-                          <avatar_1.AvatarFallback className="bg-blue-100 text-blue-600">
-                            <lucide_react_1.Bot className="h-4 w-4" />
-                          </avatar_1.AvatarFallback>
-                        </avatar_1.Avatar>
-                      )}
-
-                      <div
-                        className={"max-w-[80%] rounded-lg px-4 py-2 ".concat(
-                          message.role === "user"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-900",
-                        )}
-                      >
-                        <div className="text-sm whitespace-pre-wrap">{message.content}</div>
-                      </div>
-
-                      {message.role === "user" && (
-                        <avatar_1.Avatar className="h-8 w-8 mt-1">
-                          <avatar_1.AvatarFallback className="bg-gray-100 text-gray-600">
-                            <lucide_react_1.User className="h-4 w-4" />
-                          </avatar_1.AvatarFallback>
-                        </avatar_1.Avatar>
-                      )}
+                      <div className="text-sm whitespace-pre-wrap">{message.content}</div>
                     </div>
-                  );
-                })}
+
+                    {message.role === "user" && (
+                      <avatar_1.Avatar className="h-8 w-8 mt-1">
+                        <avatar_1.AvatarFallback className="bg-gray-100 text-gray-600">
+                          <lucide_react_1.User className="h-4 w-4" />
+                        </avatar_1.AvatarFallback>
+                      </avatar_1.Avatar>
+                    )}
+                  </div>
+                ))}
 
             {isLoading && (
               <div className="flex gap-3 justify-start">

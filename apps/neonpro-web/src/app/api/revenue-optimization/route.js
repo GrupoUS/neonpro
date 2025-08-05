@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Revenue Optimization API
  *
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,20 +153,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -221,7 +217,7 @@ function GET(request) {
       optimizations,
       overview,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 6, , 7]);
@@ -316,15 +312,11 @@ function GET(request) {
               activeOptimizations:
                 (optimizations === null || optimizations === void 0
                   ? void 0
-                  : optimizations.filter(function (o) {
-                      return o.status === "active";
-                    }).length) || 0,
+                  : optimizations.filter((o) => o.status === "active").length) || 0,
               completedOptimizations:
                 (optimizations === null || optimizations === void 0
                   ? void 0
-                  : optimizations.filter(function (o) {
-                      return o.status === "completed";
-                    }).length) || 0,
+                  : optimizations.filter((o) => o.status === "completed").length) || 0,
               totalProjectedIncrease: automatedRecommendations.totalProjectedIncrease,
               averageROI: roiTracking.performanceIndicators.overallROI,
               successRate: roiTracking.performanceIndicators.successRate,
@@ -397,7 +389,7 @@ function POST(request) {
       optimization,
       error,
       error_2;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           _d.trys.push([0, 20, , 21]);
@@ -618,7 +610,7 @@ function PUT(request) {
       optimization,
       error,
       error_3;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 6, , 7]);
@@ -716,7 +708,7 @@ function PUT(request) {
 function DELETE(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, _a, user, authError, searchParams, id, clinicId, professional, error, error_4;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 5, , 6]);

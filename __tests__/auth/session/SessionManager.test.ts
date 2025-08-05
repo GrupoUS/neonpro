@@ -9,10 +9,10 @@
  * @created 2024
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { SessionManager } from "../../../lib/auth/session/SessionManager";
-import { createMockSession, createMockDevice, createTestDatabase, cleanup } from "./setup";
-import type { SessionConfig, SessionData, DeviceData } from "../../../lib/auth/session/types";
+import type { SessionConfig } from "../../../lib/auth/session/types";
+import { cleanup, createMockSession, createTestDatabase } from "./setup";
 
 // Mock Supabase
 const mockSupabase = {
@@ -53,11 +53,11 @@ jest.mock("@supabase/supabase-js", () => ({
 
 describe("SessionManager", () => {
   let sessionManager: SessionManager;
-  let testDb: ReturnType<typeof createTestDatabase>;
+  let _testDb: ReturnType<typeof createTestDatabase>;
   let mockConfig: SessionConfig;
 
   beforeEach(() => {
-    testDb = createTestDatabase();
+    _testDb = createTestDatabase();
 
     mockConfig = {
       maxSessions: 5,

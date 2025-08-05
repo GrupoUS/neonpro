@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Analytics API Routes for NeonPro
  *
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -40,7 +39,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -69,8 +68,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -91,9 +88,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.GET = GET;
@@ -219,13 +216,13 @@ function handleAPIError(error, context) {
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, _a, user, authError, url, endpoint, _b, error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           supabase = (0, server_1.createClient)();
           _c.label = 1;
         case 1:
-          _c.trys.push([1, 11, , 12]);
+          _c.trys.push([1, 11, undefined, 12]);
           return [4 /*yield*/, supabase.auth.getUser()];
         case 2:
           (_a = _c.sent()), (user = _a.data.user), (authError = _a.error);
@@ -294,10 +291,10 @@ function handleCohortAnalysis(request, supabase, userId) {
       response,
       cacheKey,
       error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
-          _a.trys.push([0, 7, , 8]);
+          _a.trys.push([0, 7, undefined, 8]);
           return [4 /*yield*/, request.json()];
         case 1:
           body = _a.sent();
@@ -387,10 +384,10 @@ function handleForecasting(request, supabase, userId) {
       cacheKey,
       error_3;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
-          _b.trys.push([0, 8, , 9]);
+          _b.trys.push([0, 8, undefined, 9]);
           return [4 /*yield*/, request.json()];
         case 1:
           body = _b.sent();
@@ -520,10 +517,10 @@ function handleStatisticalAnalysis(request, supabase, userId) {
       response,
       error_4;
     var _e, _f;
-    return __generator(this, function (_g) {
+    return __generator(this, (_g) => {
       switch (_g.label) {
         case 0:
-          _g.trys.push([0, 11, , 12]);
+          _g.trys.push([0, 11, undefined, 12]);
           return [4 /*yield*/, request.json()];
         case 1:
           body = _g.sent();
@@ -661,13 +658,13 @@ function handleStatisticalAnalysis(request, supabase, userId) {
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, _a, user, authError, url, cacheKey, _b, cachedData, cacheError, error_5;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           supabase = (0, server_1.createClient)();
           _c.label = 1;
         case 1:
-          _c.trys.push([1, 4, , 5]);
+          _c.trys.push([1, 4, undefined, 5]);
           return [4 /*yield*/, supabase.auth.getUser()];
         case 2:
           (_a = _c.sent()), (user = _a.data.user), (authError = _a.error);
@@ -722,9 +719,9 @@ function GET(request) {
   });
 }
 // Helper Functions - Statistical calculations and data processing
-function processAnalyticsDataForStatistics(rawData, metrics) {
+function processAnalyticsDataForStatistics(rawData, _metrics) {
   // Group data by date and calculate daily metrics
-  var dailyData = rawData.reduce(function (acc, event) {
+  var dailyData = rawData.reduce((acc, event) => {
     var _a, _b;
     var date = event.created_at.split("T")[0];
     if (!acc[date]) {
@@ -758,34 +755,22 @@ function processAnalyticsDataForStatistics(rawData, metrics) {
     return acc;
   }, {});
   // Convert to array and calculate derived metrics
-  return Object.values(dailyData).map(function (day) {
+  return Object.values(dailyData).map((day) => {
     day.churn_rate = day.subscriptions > 0 ? (day.churn_rate / day.subscriptions) * 100 : 0;
     return day;
   });
 }
-function calculateCorrelations(data, metrics, confidenceLevel) {
+function calculateCorrelations(data, metrics, _confidenceLevel) {
   return __awaiter(this, void 0, void 0, function () {
     var correlations, i, _loop_1, j;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       correlations = [];
       for (i = 0; i < metrics.length; i++) {
-        _loop_1 = function (j) {
+        _loop_1 = (j) => {
           var metric1 = metrics[i];
           var metric2 = metrics[j];
-          var values1 = data
-            .map(function (d) {
-              return d[metric1];
-            })
-            .filter(function (v) {
-              return !isNaN(v);
-            });
-          var values2 = data
-            .map(function (d) {
-              return d[metric2];
-            })
-            .filter(function (v) {
-              return !isNaN(v);
-            });
+          var values1 = data.map((d) => d[metric1]).filter((v) => !Number.isNaN(v));
+          var values2 = data.map((d) => d[metric2]).filter((v) => !Number.isNaN(v));
           if (values1.length > 2 && values2.length > 2) {
             var correlation = calculatePearsonCorrelation(values1, values2);
             var pValue = calculateCorrelationPValue(
@@ -808,9 +793,7 @@ function calculateCorrelations(data, metrics, confidenceLevel) {
       }
       return [
         2 /*return*/,
-        correlations.sort(function (a, b) {
-          return Math.abs(b.correlation) - Math.abs(a.correlation);
-        }),
+        correlations.sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation)),
       ];
     });
   });
@@ -818,21 +801,11 @@ function calculateCorrelations(data, metrics, confidenceLevel) {
 function calculatePearsonCorrelation(x, y) {
   var n = Math.min(x.length, y.length);
   if (n < 2) return 0;
-  var sumX = x.slice(0, n).reduce(function (sum, val) {
-    return sum + val;
-  }, 0);
-  var sumY = y.slice(0, n).reduce(function (sum, val) {
-    return sum + val;
-  }, 0);
-  var sumXY = x.slice(0, n).reduce(function (sum, val, i) {
-    return sum + val * y[i];
-  }, 0);
-  var sumX2 = x.slice(0, n).reduce(function (sum, val) {
-    return sum + val * val;
-  }, 0);
-  var sumY2 = y.slice(0, n).reduce(function (sum, val) {
-    return sum + val * val;
-  }, 0);
+  var sumX = x.slice(0, n).reduce((sum, val) => sum + val, 0);
+  var sumY = y.slice(0, n).reduce((sum, val) => sum + val, 0);
+  var sumXY = x.slice(0, n).reduce((sum, val, i) => sum + val * y[i], 0);
+  var sumX2 = x.slice(0, n).reduce((sum, val) => sum + val * val, 0);
+  var sumY2 = y.slice(0, n).reduce((sum, val) => sum + val * val, 0);
   var numerator = n * sumXY - sumX * sumY;
   var denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
   return denominator === 0 ? 0 : numerator / denominator;
@@ -853,53 +826,34 @@ function getSignificanceCategory(pValue) {
   if (pValue < 0.05) return "low";
   return "none";
 }
-function performRegressionAnalysis(data, dependent, independent, confidenceLevel) {
+function performRegressionAnalysis(data, dependent, independent, _confidenceLevel) {
   return __awaiter(this, void 0, void 0, function () {
-    var y, X, meanY, rSquared;
-    return __generator(this, function (_a) {
-      y = data
-        .map(function (d) {
-          return d[dependent];
-        })
-        .filter(function (v) {
-          return !isNaN(v);
-        });
-      X = data.map(function (d) {
-        return independent.map(function (metric) {
-          return d[metric] || 0;
-        });
-      });
+    var y, _X, _meanY, rSquared;
+    return __generator(this, (_a) => {
+      y = data.map((d) => d[dependent]).filter((v) => !Number.isNaN(v));
+      _X = data.map((d) => independent.map((metric) => d[metric] || 0));
       if (y.length < independent.length + 2) {
         return [2 /*return*/, null];
       }
-      meanY =
-        y.reduce(function (sum, val) {
-          return sum + val;
-        }, 0) / y.length;
+      _meanY = y.reduce((sum, val) => sum + val, 0) / y.length;
       rSquared = Math.max(0.3, Math.random() * 0.7); // Placeholder: 30-100%
       return [
         2 /*return*/,
         {
           equation: "".concat(dependent, " = ").concat(independent.join(" + ")),
           rSquared: rSquared,
-          coefficients: independent.map(function (variable) {
-            return {
-              variable: variable,
-              coefficient: (Math.random() - 0.5) * 2,
-              pValue: Math.random() * 0.1,
-              significance: Math.random() > 0.5,
-            };
-          }),
-          residuals: y.map(function () {
-            return (Math.random() - 0.5) * 0.2;
-          }),
-          predictions: y.map(function (actual, i) {
-            return {
-              actual: actual,
-              predicted: actual * (0.8 + Math.random() * 0.4),
-              residual: (Math.random() - 0.5) * 0.2,
-            };
-          }),
+          coefficients: independent.map((variable) => ({
+            variable: variable,
+            coefficient: (Math.random() - 0.5) * 2,
+            pValue: Math.random() * 0.1,
+            significance: Math.random() > 0.5,
+          })),
+          residuals: y.map(() => (Math.random() - 0.5) * 0.2),
+          predictions: y.map((actual, _i) => ({
+            actual: actual,
+            predicted: actual * (0.8 + Math.random() * 0.4),
+            residual: (Math.random() - 0.5) * 0.2,
+          })),
         },
       ];
     });
@@ -908,26 +862,14 @@ function performRegressionAnalysis(data, dependent, independent, confidenceLevel
 function performSignificanceTests(data, metrics, confidenceLevel) {
   return __awaiter(this, void 0, void 0, function () {
     var tests, _loop_2, _i, metrics_1, metric;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       tests = [];
-      _loop_2 = function (metric) {
-        var values = data
-          .map(function (d) {
-            return d[metric];
-          })
-          .filter(function (v) {
-            return !isNaN(v);
-          });
+      _loop_2 = (metric) => {
+        var values = data.map((d) => d[metric]).filter((v) => !Number.isNaN(v));
         if (values.length > 5) {
-          var mean_1 =
-            values.reduce(function (sum, v) {
-              return sum + v;
-            }, 0) / values.length;
+          var mean_1 = values.reduce((sum, v) => sum + v, 0) / values.length;
           var variance =
-            values.reduce(function (sum, v) {
-              return sum + Math.pow(v - mean_1, 2);
-            }, 0) /
-            (values.length - 1);
+            values.reduce((sum, v) => sum + (v - mean_1) ** 2, 0) / (values.length - 1);
           var standardError = Math.sqrt(variance / values.length);
           var tStatistic = mean_1 / standardError;
           var pValue = 2 * (1 - studentTCDF(Math.abs(tStatistic), values.length - 1));
@@ -957,7 +899,7 @@ function performSignificanceTests(data, metrics, confidenceLevel) {
 function assessDataQuality(data, includeOutliers) {
   return __awaiter(this, void 0, void 0, function () {
     var quality, outliers, _loop_3, _i, _a, key;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       quality = {
         completeness: 90 + Math.random() * 10,
         accuracy: 85 + Math.random() * 15,
@@ -967,25 +909,14 @@ function assessDataQuality(data, includeOutliers) {
       };
       outliers = [];
       if (includeOutliers && data.length > 0) {
-        _loop_3 = function (key) {
-          var values = data
-            .map(function (d) {
-              return d[key];
-            })
-            .filter(function (v) {
-              return !isNaN(v);
-            });
+        _loop_3 = (key) => {
+          var values = data.map((d) => d[key]).filter((v) => !Number.isNaN(v));
           if (values.length > 0) {
-            var mean_2 =
-              values.reduce(function (sum, v) {
-                return sum + v;
-              }, 0) / values.length;
+            var mean_2 = values.reduce((sum, v) => sum + v, 0) / values.length;
             var stdDev_1 = Math.sqrt(
-              values.reduce(function (sum, v) {
-                return sum + Math.pow(v - mean_2, 2);
-              }, 0) / values.length,
+              values.reduce((sum, v) => sum + (v - mean_2) ** 2, 0) / values.length,
             );
-            values.forEach(function (value) {
+            values.forEach((value) => {
               var zScore = Math.abs((value - mean_2) / stdDev_1);
               if (zScore > 2.5) {
                 outliers.push({
@@ -998,14 +929,7 @@ function assessDataQuality(data, includeOutliers) {
             });
           }
         };
-        for (
-          _i = 0,
-            _a = Object.keys(data[0]).filter(function (k) {
-              return k !== "date";
-            });
-          _i < _a.length;
-          _i++
-        ) {
+        for (_i = 0, _a = Object.keys(data[0]).filter((k) => k !== "date"); _i < _a.length; _i++) {
           key = _a[_i];
           _loop_3(key);
         }
@@ -1017,35 +941,27 @@ function assessDataQuality(data, includeOutliers) {
 function evaluatePredictiveModels(data, metrics) {
   return __awaiter(this, void 0, void 0, function () {
     var modelTypes;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       modelTypes = ["linear", "polynomial", "exponential", "seasonal"];
       return [
         2 /*return*/,
-        modelTypes.map(function (modelType) {
-          return {
-            modelType: modelType,
-            accuracy: 70 + Math.random() * 25,
-            features: metrics,
-            featureImportance: metrics
-              .map(function (metric) {
-                return {
-                  feature: metric,
-                  importance: Math.random(),
-                };
-              })
-              .sort(function (a, b) {
-                return b.importance - a.importance;
-              }),
-            crossValidationScore: 0.7 + Math.random() * 0.25,
-            predictions: data.slice(-10).map(function (d) {
-              return {
-                date: d.date,
-                predicted: d[metrics[0]] * (0.9 + Math.random() * 0.2),
-                confidence: 0.8 + Math.random() * 0.15,
-              };
-            }),
-          };
-        }),
+        modelTypes.map((modelType) => ({
+          modelType: modelType,
+          accuracy: 70 + Math.random() * 25,
+          features: metrics,
+          featureImportance: metrics
+            .map((metric) => ({
+              feature: metric,
+              importance: Math.random(),
+            }))
+            .sort((a, b) => b.importance - a.importance),
+          crossValidationScore: 0.7 + Math.random() * 0.25,
+          predictions: data.slice(-10).map((d) => ({
+            date: d.date,
+            predicted: d[metrics[0]] * (0.9 + Math.random() * 0.2),
+            confidence: 0.8 + Math.random() * 0.15,
+          })),
+        })),
       ];
     });
   });

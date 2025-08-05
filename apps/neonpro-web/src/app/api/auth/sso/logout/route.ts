@@ -1,11 +1,7 @@
 // SSO Logout Route
 // Story 1.3: SSO Integration - Session Termination & Token Revocation
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { ssoManager } from "@/lib/auth/sso/sso-manager";
-import type { logger } from "@/lib/logger";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 const logoutSchema = z.object({
   redirect_to: z.string().url().optional(),

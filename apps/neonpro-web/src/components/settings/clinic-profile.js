@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ClinicProfile;
 var react_1 = require("react");
@@ -149,7 +146,7 @@ var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 // CNPJ validation function
-var validateCNPJ = function (cnpj) {
+var validateCNPJ = (cnpj) => {
   // Remove non-numeric characters
   var cleanCNPJ = cnpj.replace(/[^\d]/g, "");
   if (cleanCNPJ.length !== 14) return false;
@@ -177,7 +174,7 @@ var validateCNPJ = function (cnpj) {
   return parseInt(cleanCNPJ.charAt(13)) === digit2;
 };
 // CEP validation function
-var validateCEP = function (cep) {
+var validateCEP = (cep) => {
   var cleanCEP = cep.replace(/[^\d]/g, "");
   return cleanCEP.length === 8;
 };
@@ -219,7 +216,6 @@ var clinicProfileSchema = z.object({
     .or(z.literal("")),
 });
 function ClinicProfile() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -255,20 +251,20 @@ function ClinicProfile() {
     },
   });
   // Format CNPJ input
-  var formatCNPJ = function (value) {
+  var formatCNPJ = (value) => {
     var cleaned = value.replace(/[^\d]/g, "");
     return cleaned.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
   };
   // Format CEP input
-  var formatCEP = function (value) {
+  var formatCEP = (value) => {
     var cleaned = value.replace(/[^\d]/g, "");
     return cleaned.replace(/(\d{5})(\d{3})/, "$1-$2");
   };
   // Auto-fetch address by CEP
-  var fetchAddressByCEP = function (cep) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchAddressByCEP = (cep) =>
+    __awaiter(this, void 0, void 0, function () {
       var cleanCEP, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             cleanCEP = cep.replace(/[^\d]/g, "");
@@ -298,36 +294,31 @@ function ClinicProfile() {
         }
       });
     });
-  };
   // Load existing data
-  (0, react_1.useEffect)(
-    function () {
-      var loadClinicData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            setIsLoading(true);
-            try {
-              // TODO: Replace with actual API call
-              // const response = await fetch("/api/settings/clinic-profile");
-              // const data = await response.json();
-              // form.reset(data);
-            } catch (error) {
-              console.error("Erro ao carregar dados da clínica:", error);
-              sonner_1.toast.error("Erro ao carregar dados da clínica");
-            } finally {
-              setIsLoading(false);
-            }
-            return [2 /*return*/];
-          });
+  (0, react_1.useEffect)(() => {
+    var loadClinicData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setIsLoading(true);
+          try {
+            // TODO: Replace with actual API call
+            // const response = await fetch("/api/settings/clinic-profile");
+            // const data = await response.json();
+            // form.reset(data);
+          } catch (error) {
+            console.error("Erro ao carregar dados da clínica:", error);
+            sonner_1.toast.error("Erro ao carregar dados da clínica");
+          } finally {
+            setIsLoading(false);
+          }
+          return [2 /*return*/];
         });
-      };
-      loadClinicData();
-    },
-    [form],
-  );
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      });
+    loadClinicData();
+  }, [form]);
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsSaving(true);
         try {
           // TODO: Replace with actual API call
@@ -347,7 +338,6 @@ function ClinicProfile() {
         return [2 /*return*/];
       });
     });
-  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -385,7 +375,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="name"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -401,7 +391,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="tradeName"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -420,7 +410,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="cnpj"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -429,7 +419,7 @@ function ClinicProfile() {
                           <input_1.Input
                             placeholder="00.000.000/0000-00"
                             {...field}
-                            onChange={function (e) {
+                            onChange={(e) => {
                               var formatted = formatCNPJ(e.target.value);
                               field.onChange(formatted);
                             }}
@@ -447,7 +437,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="stateRegistration"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -463,7 +453,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="municipalRegistration"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -481,7 +471,7 @@ function ClinicProfile() {
               <form_1.FormField
                 control={form.control}
                 name="description"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -519,7 +509,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="phone"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -535,7 +525,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="whatsapp"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -557,7 +547,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="email"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -577,7 +567,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="website"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -607,7 +597,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="zipCode"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -616,7 +606,7 @@ function ClinicProfile() {
                           <input_1.Input
                             placeholder="00000-000"
                             {...field}
-                            onChange={function (e) {
+                            onChange={(e) => {
                               var formatted = formatCEP(e.target.value);
                               field.onChange(formatted);
                               if (formatted.replace(/[^\d]/g, "").length === 8) {
@@ -642,7 +632,7 @@ function ClinicProfile() {
                   <form_1.FormField
                     control={form.control}
                     name="address"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -659,7 +649,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="addressNumber"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -678,7 +668,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="complement"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -694,7 +684,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="neighborhood"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -710,7 +700,7 @@ function ClinicProfile() {
                 <form_1.FormField
                   control={form.control}
                   name="city"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -728,7 +718,7 @@ function ClinicProfile() {
               <form_1.FormField
                 control={form.control}
                 name="state"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="md:w-1/4">
@@ -762,7 +752,7 @@ function ClinicProfile() {
               <form_1.FormField
                 control={form.control}
                 name="privacyPolicyUrl"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -784,7 +774,7 @@ function ClinicProfile() {
               <form_1.FormField
                 control={form.control}
                 name="termsOfServiceUrl"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>

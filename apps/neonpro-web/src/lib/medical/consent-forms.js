@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Consent Forms System
  * Story 2.2: Medical History & Records - Consent Form Integration
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,7 +153,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.consentFormsManager =
   exports.ConsentFormsManager =
@@ -176,7 +173,7 @@ var lgpd_manager_1 = require("../auth/lgpd/lgpd-manager");
 var digital_signature_1 = require("./digital-signature");
 // Enums
 var ConsentFormType;
-(function (ConsentFormType) {
+((ConsentFormType) => {
   ConsentFormType["TREATMENT_CONSENT"] = "treatment_consent";
   ConsentFormType["DATA_PROCESSING"] = "data_processing";
   ConsentFormType["PHOTOGRAPHY"] = "photography";
@@ -189,7 +186,7 @@ var ConsentFormType;
   ConsentFormType["CUSTOM"] = "custom";
 })(ConsentFormType || (exports.ConsentFormType = ConsentFormType = {}));
 var ConsentMethod;
-(function (ConsentMethod) {
+((ConsentMethod) => {
   ConsentMethod["DIGITAL_SIGNATURE"] = "digital_signature";
   ConsentMethod["ELECTRONIC_CONSENT"] = "electronic_consent";
   ConsentMethod["VERBAL_RECORDED"] = "verbal_recorded";
@@ -198,7 +195,7 @@ var ConsentMethod;
   ConsentMethod["WITNESSED"] = "witnessed";
 })(ConsentMethod || (exports.ConsentMethod = ConsentMethod = {}));
 var FieldType;
-(function (FieldType) {
+((FieldType) => {
   FieldType["TEXT"] = "text";
   FieldType["TEXTAREA"] = "textarea";
   FieldType["EMAIL"] = "email";
@@ -215,7 +212,7 @@ var FieldType;
   FieldType["CONSENT_CHECKBOX"] = "consent_checkbox";
 })(FieldType || (exports.FieldType = FieldType = {}));
 var DataCategory;
-(function (DataCategory) {
+((DataCategory) => {
   DataCategory["PERSONAL_DATA"] = "personal_data";
   DataCategory["SENSITIVE_DATA"] = "sensitive_data";
   DataCategory["HEALTH_DATA"] = "health_data";
@@ -226,7 +223,7 @@ var DataCategory;
   DataCategory["TECHNICAL_DATA"] = "technical_data";
 })(DataCategory || (exports.DataCategory = DataCategory = {}));
 var LegalBasisType;
-(function (LegalBasisType) {
+((LegalBasisType) => {
   LegalBasisType["CONSENT"] = "consent";
   LegalBasisType["CONTRACT"] = "contract";
   LegalBasisType["LEGAL_OBLIGATION"] = "legal_obligation";
@@ -235,7 +232,7 @@ var LegalBasisType;
   LegalBasisType["LEGITIMATE_INTERESTS"] = "legitimate_interests";
 })(LegalBasisType || (exports.LegalBasisType = LegalBasisType = {}));
 var ValidationType;
-(function (ValidationType) {
+((ValidationType) => {
   ValidationType["REQUIRED"] = "required";
   ValidationType["MIN_LENGTH"] = "min_length";
   ValidationType["MAX_LENGTH"] = "max_length";
@@ -247,7 +244,7 @@ var ValidationType;
   ValidationType["CUSTOM"] = "custom";
 })(ValidationType || (exports.ValidationType = ValidationType = {}));
 var LogicCondition;
-(function (LogicCondition) {
+((LogicCondition) => {
   LogicCondition["EQUALS"] = "equals";
   LogicCondition["NOT_EQUALS"] = "not_equals";
   LogicCondition["CONTAINS"] = "contains";
@@ -257,7 +254,7 @@ var LogicCondition;
   LogicCondition["IS_NOT_EMPTY"] = "is_not_empty";
 })(LogicCondition || (exports.LogicCondition = LogicCondition = {}));
 var LogicAction;
-(function (LogicAction) {
+((LogicAction) => {
   LogicAction["SHOW"] = "show";
   LogicAction["HIDE"] = "hide";
   LogicAction["REQUIRE"] = "require";
@@ -267,7 +264,7 @@ var LogicAction;
 // ============================================================================
 // CONSENT FORMS MANAGER
 // ============================================================================
-var ConsentFormsManager = /** @class */ (function () {
+var ConsentFormsManager = /** @class */ (() => {
   function ConsentFormsManager() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -861,260 +858,244 @@ var ConsentFormsManager = /** @class */ (function () {
   // ========================================================================
   // TEMPLATE CONTENT GENERATORS
   // ========================================================================
-  ConsentFormsManager.prototype.getTreatmentConsentContent = function () {
-    return {
-      introduction:
-        "Este documento tem por objetivo obter seu consentimento livre e esclarecido para a realização do tratamento médico proposto.",
-      sections: [
-        {
-          id: "treatment-info",
-          title: "Informações sobre o Tratamento",
-          content: "Descrição detalhada do procedimento, riscos, benefícios e alternativas.",
-          order: 1,
-          is_required: true,
-        },
-        {
-          id: "risks-benefits",
-          title: "Riscos e Benefícios",
-          content: "Explicação dos possíveis riscos e benefícios do tratamento.",
-          order: 2,
-          is_required: true,
-        },
-        {
-          id: "alternatives",
-          title: "Alternativas de Tratamento",
-          content: "Outras opções de tratamento disponíveis.",
-          order: 3,
-          is_required: true,
-        },
-      ],
-      conclusion:
-        "Declaro que recebi todas as informações necessárias e concordo com o tratamento proposto.",
-      legal_notice: "Este consentimento está em conformidade com a LGPD e regulamentações médicas.",
-      contact_info: {
-        clinic_name: "Clínica NeonPro",
-        address: "Endereço da clínica",
-        phone: "(11) 9999-9999",
-        email: "contato@neonpro.com.br",
-        dpo_contact: "dpo@neonpro.com.br",
-      },
-    };
-  };
-  ConsentFormsManager.prototype.getTreatmentConsentFields = function () {
-    return [
+  ConsentFormsManager.prototype.getTreatmentConsentContent = () => ({
+    introduction:
+      "Este documento tem por objetivo obter seu consentimento livre e esclarecido para a realização do tratamento médico proposto.",
+    sections: [
       {
-        id: "patient-name",
-        name: "patient_name",
-        label: "Nome Completo do Paciente",
-        type: FieldType.TEXT,
-        validation: { required: true, min_length: 2 },
-        is_required: true,
+        id: "treatment-info",
+        title: "Informações sobre o Tratamento",
+        content: "Descrição detalhada do procedimento, riscos, benefícios e alternativas.",
         order: 1,
-        data_category: DataCategory.PERSONAL_DATA,
+        is_required: true,
       },
       {
-        id: "treatment-understanding",
-        name: "treatment_understanding",
-        label: "Declaro que compreendi as informações sobre o tratamento",
-        type: FieldType.CONSENT_CHECKBOX,
-        validation: { required: true },
-        is_required: true,
+        id: "risks-benefits",
+        title: "Riscos e Benefícios",
+        content: "Explicação dos possíveis riscos e benefícios do tratamento.",
         order: 2,
-        data_category: DataCategory.HEALTH_DATA,
+        is_required: true,
       },
       {
-        id: "risks-understanding",
-        name: "risks_understanding",
-        label: "Declaro que compreendi os riscos e benefícios",
-        type: FieldType.CONSENT_CHECKBOX,
-        validation: { required: true },
-        is_required: true,
+        id: "alternatives",
+        title: "Alternativas de Tratamento",
+        content: "Outras opções de tratamento disponíveis.",
         order: 3,
-        data_category: DataCategory.HEALTH_DATA,
+        is_required: true,
+      },
+    ],
+    conclusion:
+      "Declaro que recebi todas as informações necessárias e concordo com o tratamento proposto.",
+    legal_notice: "Este consentimento está em conformidade com a LGPD e regulamentações médicas.",
+    contact_info: {
+      clinic_name: "Clínica NeonPro",
+      address: "Endereço da clínica",
+      phone: "(11) 9999-9999",
+      email: "contato@neonpro.com.br",
+      dpo_contact: "dpo@neonpro.com.br",
+    },
+  });
+  ConsentFormsManager.prototype.getTreatmentConsentFields = () => [
+    {
+      id: "patient-name",
+      name: "patient_name",
+      label: "Nome Completo do Paciente",
+      type: FieldType.TEXT,
+      validation: { required: true, min_length: 2 },
+      is_required: true,
+      order: 1,
+      data_category: DataCategory.PERSONAL_DATA,
+    },
+    {
+      id: "treatment-understanding",
+      name: "treatment_understanding",
+      label: "Declaro que compreendi as informações sobre o tratamento",
+      type: FieldType.CONSENT_CHECKBOX,
+      validation: { required: true },
+      is_required: true,
+      order: 2,
+      data_category: DataCategory.HEALTH_DATA,
+    },
+    {
+      id: "risks-understanding",
+      name: "risks_understanding",
+      label: "Declaro que compreendi os riscos e benefícios",
+      type: FieldType.CONSENT_CHECKBOX,
+      validation: { required: true },
+      is_required: true,
+      order: 3,
+      data_category: DataCategory.HEALTH_DATA,
+    },
+    {
+      id: "consent-signature",
+      name: "consent_signature",
+      label: "Assinatura Digital",
+      type: FieldType.SIGNATURE,
+      validation: { required: true },
+      is_required: true,
+      order: 4,
+      data_category: DataCategory.BIOMETRIC_DATA,
+    },
+  ];
+  ConsentFormsManager.prototype.getDataProcessingContent = () => ({
+    introduction:
+      "Solicitamos seu consentimento para o tratamento de seus dados pessoais conforme a Lei Geral de Proteção de Dados (LGPD).",
+    sections: [
+      {
+        id: "data-collection",
+        title: "Coleta de Dados",
+        content: "Informações sobre quais dados são coletados e como.",
+        order: 1,
+        is_required: true,
       },
       {
-        id: "consent-signature",
-        name: "consent_signature",
-        label: "Assinatura Digital",
-        type: FieldType.SIGNATURE,
-        validation: { required: true },
+        id: "data-usage",
+        title: "Uso dos Dados",
+        content: "Como seus dados serão utilizados pela clínica.",
+        order: 2,
         is_required: true,
+      },
+      {
+        id: "data-sharing",
+        title: "Compartilhamento",
+        content: "Com quem seus dados podem ser compartilhados.",
+        order: 3,
+        is_required: true,
+      },
+      {
+        id: "data-rights",
+        title: "Seus Direitos",
+        content: "Direitos do titular dos dados conforme a LGPD.",
         order: 4,
-        data_category: DataCategory.BIOMETRIC_DATA,
-      },
-    ];
-  };
-  ConsentFormsManager.prototype.getDataProcessingContent = function () {
-    return {
-      introduction:
-        "Solicitamos seu consentimento para o tratamento de seus dados pessoais conforme a Lei Geral de Proteção de Dados (LGPD).",
-      sections: [
-        {
-          id: "data-collection",
-          title: "Coleta de Dados",
-          content: "Informações sobre quais dados são coletados e como.",
-          order: 1,
-          is_required: true,
-        },
-        {
-          id: "data-usage",
-          title: "Uso dos Dados",
-          content: "Como seus dados serão utilizados pela clínica.",
-          order: 2,
-          is_required: true,
-        },
-        {
-          id: "data-sharing",
-          title: "Compartilhamento",
-          content: "Com quem seus dados podem ser compartilhados.",
-          order: 3,
-          is_required: true,
-        },
-        {
-          id: "data-rights",
-          title: "Seus Direitos",
-          content: "Direitos do titular dos dados conforme a LGPD.",
-          order: 4,
-          is_required: true,
-        },
-      ],
-      conclusion:
-        "Ao concordar, você autoriza o tratamento de seus dados pessoais conforme descrito.",
-      legal_notice: "Este consentimento está em conformidade com a LGPD (Lei 13.709/2018).",
-      privacy_policy_link: "https://neonpro.com.br/privacidade",
-      contact_info: {
-        clinic_name: "Clínica NeonPro",
-        address: "Endereço da clínica",
-        phone: "(11) 9999-9999",
-        email: "contato@neonpro.com.br",
-        dpo_contact: "dpo@neonpro.com.br",
-      },
-    };
-  };
-  ConsentFormsManager.prototype.getDataProcessingFields = function () {
-    return [
-      {
-        id: "data-collection-consent",
-        name: "data_collection_consent",
-        label: "Autorizo a coleta de meus dados pessoais",
-        type: FieldType.CONSENT_CHECKBOX,
-        validation: { required: true },
         is_required: true,
+      },
+    ],
+    conclusion:
+      "Ao concordar, você autoriza o tratamento de seus dados pessoais conforme descrito.",
+    legal_notice: "Este consentimento está em conformidade com a LGPD (Lei 13.709/2018).",
+    privacy_policy_link: "https://neonpro.com.br/privacidade",
+    contact_info: {
+      clinic_name: "Clínica NeonPro",
+      address: "Endereço da clínica",
+      phone: "(11) 9999-9999",
+      email: "contato@neonpro.com.br",
+      dpo_contact: "dpo@neonpro.com.br",
+    },
+  });
+  ConsentFormsManager.prototype.getDataProcessingFields = () => [
+    {
+      id: "data-collection-consent",
+      name: "data_collection_consent",
+      label: "Autorizo a coleta de meus dados pessoais",
+      type: FieldType.CONSENT_CHECKBOX,
+      validation: { required: true },
+      is_required: true,
+      order: 1,
+      data_category: DataCategory.PERSONAL_DATA,
+    },
+    {
+      id: "data-processing-consent",
+      name: "data_processing_consent",
+      label: "Autorizo o processamento de meus dados para prestação de serviços",
+      type: FieldType.CONSENT_CHECKBOX,
+      validation: { required: true },
+      is_required: true,
+      order: 2,
+      data_category: DataCategory.PERSONAL_DATA,
+    },
+    {
+      id: "marketing-consent",
+      name: "marketing_consent",
+      label: "Autorizo o envio de comunicações de marketing (opcional)",
+      type: FieldType.CHECKBOX,
+      validation: { required: false },
+      is_required: false,
+      order: 3,
+      data_category: DataCategory.CONTACT_DATA,
+    },
+  ];
+  ConsentFormsManager.prototype.getPhotographyContent = () => ({
+    introduction:
+      "Solicitamos sua autorização para captura e uso de fotografias para fins médicos.",
+    sections: [
+      {
+        id: "photo-purpose",
+        title: "Finalidade das Fotografias",
+        content:
+          "As fotografias serão utilizadas para documentação médica e acompanhamento do tratamento.",
         order: 1,
-        data_category: DataCategory.PERSONAL_DATA,
+        is_required: true,
       },
       {
-        id: "data-processing-consent",
-        name: "data_processing_consent",
-        label: "Autorizo o processamento de meus dados para prestação de serviços",
-        type: FieldType.CONSENT_CHECKBOX,
-        validation: { required: true },
-        is_required: true,
+        id: "photo-storage",
+        title: "Armazenamento e Segurança",
+        content: "Como as imagens serão armazenadas e protegidas.",
         order: 2,
-        data_category: DataCategory.PERSONAL_DATA,
-      },
-      {
-        id: "marketing-consent",
-        name: "marketing_consent",
-        label: "Autorizo o envio de comunicações de marketing (opcional)",
-        type: FieldType.CHECKBOX,
-        validation: { required: false },
-        is_required: false,
-        order: 3,
-        data_category: DataCategory.CONTACT_DATA,
-      },
-    ];
-  };
-  ConsentFormsManager.prototype.getPhotographyContent = function () {
-    return {
-      introduction:
-        "Solicitamos sua autorização para captura e uso de fotografias para fins médicos.",
-      sections: [
-        {
-          id: "photo-purpose",
-          title: "Finalidade das Fotografias",
-          content:
-            "As fotografias serão utilizadas para documentação médica e acompanhamento do tratamento.",
-          order: 1,
-          is_required: true,
-        },
-        {
-          id: "photo-storage",
-          title: "Armazenamento e Segurança",
-          content: "Como as imagens serão armazenadas e protegidas.",
-          order: 2,
-          is_required: true,
-        },
-      ],
-      conclusion: "Autorizo a captura e uso das fotografias conforme descrito.",
-      legal_notice: "Esta autorização respeita seus direitos de imagem e privacidade.",
-      contact_info: {
-        clinic_name: "Clínica NeonPro",
-        address: "Endereço da clínica",
-        phone: "(11) 9999-9999",
-        email: "contato@neonpro.com.br",
-      },
-    };
-  };
-  ConsentFormsManager.prototype.getPhotographyFields = function () {
-    return [
-      {
-        id: "photo-consent",
-        name: "photo_consent",
-        label: "Autorizo a captura de fotografias médicas",
-        type: FieldType.CONSENT_CHECKBOX,
-        validation: { required: true },
         is_required: true,
-        order: 1,
-        data_category: DataCategory.BIOMETRIC_DATA,
       },
-      {
-        id: "photo-usage",
-        name: "photo_usage",
-        label: "Autorizo o uso das fotografias para documentação médica",
-        type: FieldType.CONSENT_CHECKBOX,
-        validation: { required: true },
-        is_required: true,
-        order: 2,
-        data_category: DataCategory.BIOMETRIC_DATA,
-      },
-    ];
-  };
-  ConsentFormsManager.prototype.getGenericContent = function () {
-    return {
-      introduction: "Formulário de consentimento personalizado.",
-      sections: [],
-      conclusion: "Declaro meu consentimento conforme especificado.",
-      legal_notice: "Este formulário está em conformidade com a legislação aplicável.",
-      contact_info: {
-        clinic_name: "Clínica NeonPro",
-        address: "Endereço da clínica",
-        phone: "(11) 9999-9999",
-        email: "contato@neonpro.com.br",
-      },
-    };
-  };
-  ConsentFormsManager.prototype.getGenericFields = function () {
-    return [
-      {
-        id: "generic-consent",
-        name: "generic_consent",
-        label: "Declaro meu consentimento",
-        type: FieldType.CONSENT_CHECKBOX,
-        validation: { required: true },
-        is_required: true,
-        order: 1,
-        data_category: DataCategory.PERSONAL_DATA,
-      },
-    ];
-  };
+    ],
+    conclusion: "Autorizo a captura e uso das fotografias conforme descrito.",
+    legal_notice: "Esta autorização respeita seus direitos de imagem e privacidade.",
+    contact_info: {
+      clinic_name: "Clínica NeonPro",
+      address: "Endereço da clínica",
+      phone: "(11) 9999-9999",
+      email: "contato@neonpro.com.br",
+    },
+  });
+  ConsentFormsManager.prototype.getPhotographyFields = () => [
+    {
+      id: "photo-consent",
+      name: "photo_consent",
+      label: "Autorizo a captura de fotografias médicas",
+      type: FieldType.CONSENT_CHECKBOX,
+      validation: { required: true },
+      is_required: true,
+      order: 1,
+      data_category: DataCategory.BIOMETRIC_DATA,
+    },
+    {
+      id: "photo-usage",
+      name: "photo_usage",
+      label: "Autorizo o uso das fotografias para documentação médica",
+      type: FieldType.CONSENT_CHECKBOX,
+      validation: { required: true },
+      is_required: true,
+      order: 2,
+      data_category: DataCategory.BIOMETRIC_DATA,
+    },
+  ];
+  ConsentFormsManager.prototype.getGenericContent = () => ({
+    introduction: "Formulário de consentimento personalizado.",
+    sections: [],
+    conclusion: "Declaro meu consentimento conforme especificado.",
+    legal_notice: "Este formulário está em conformidade com a legislação aplicável.",
+    contact_info: {
+      clinic_name: "Clínica NeonPro",
+      address: "Endereço da clínica",
+      phone: "(11) 9999-9999",
+      email: "contato@neonpro.com.br",
+    },
+  });
+  ConsentFormsManager.prototype.getGenericFields = () => [
+    {
+      id: "generic-consent",
+      name: "generic_consent",
+      label: "Declaro meu consentimento",
+      type: FieldType.CONSENT_CHECKBOX,
+      validation: { required: true },
+      is_required: true,
+      order: 1,
+      data_category: DataCategory.PERSONAL_DATA,
+    },
+  ];
   // ========================================================================
   // VALIDATION METHODS
   // ========================================================================
   ConsentFormsManager.prototype.validateFormStructure = function (form) {
     return __awaiter(this, void 0, void 0, function () {
       var _i, _a, field;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         try {
           // Check required fields
           if (!form.title || !form.content || !form.fields) {
@@ -1156,13 +1137,9 @@ var ConsentFormsManager = /** @class */ (function () {
       var requiredFields, _loop_1, this_1, _i, requiredFields_1, field, state_1;
       return __generator(this, function (_a) {
         try {
-          requiredFields = form.fields.filter(function (f) {
-            return f.is_required;
-          });
-          _loop_1 = function (field) {
-            var response = responses.find(function (r) {
-              return r.field_id === field.id;
-            });
+          requiredFields = form.fields.filter((f) => f.is_required);
+          _loop_1 = (field) => {
+            var response = responses.find((r) => r.field_id === field.id);
             if (!response || !response.value) {
               return {
                 value: { isValid: false, error: "Required field missing: ".concat(field.label) },
@@ -1194,7 +1171,7 @@ var ConsentFormsManager = /** @class */ (function () {
       });
     });
   };
-  ConsentFormsManager.prototype.validateFieldResponse = function (field, value) {
+  ConsentFormsManager.prototype.validateFieldResponse = (field, value) => {
     try {
       var validation = field.validation;
       // Required check
@@ -1203,13 +1180,14 @@ var ConsentFormsManager = /** @class */ (function () {
       }
       // Type-specific validation
       switch (field.type) {
-        case FieldType.EMAIL:
+        case FieldType.EMAIL: {
           var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (value && !emailRegex.test(value)) {
             return { isValid: false, error: "".concat(field.label, " must be a valid email") };
           }
           break;
-        case FieldType.PHONE:
+        }
+        case FieldType.PHONE: {
           var phoneRegex = /^\+?[1-9]\d{1,14}$/;
           if (value && !phoneRegex.test(value.replace(/\s/g, ""))) {
             return {
@@ -1218,6 +1196,7 @@ var ConsentFormsManager = /** @class */ (function () {
             };
           }
           break;
+        }
         case FieldType.NUMBER:
           if (value && isNaN(Number(value))) {
             return { isValid: false, error: "".concat(field.label, " must be a number") };
@@ -1269,16 +1248,14 @@ var ConsentFormsManager = /** @class */ (function () {
       };
     }
   };
-  ConsentFormsManager.prototype.checkConsentGiven = function (form, responses) {
+  ConsentFormsManager.prototype.checkConsentGiven = (form, responses) => {
     try {
       // Check if all required consent fields are true
-      var consentFields = form.fields.filter(function (f) {
-        return f.type === FieldType.CONSENT_CHECKBOX && f.is_required;
-      });
-      var _loop_2 = function (field) {
-        var response = responses.find(function (r) {
-          return r.field_id === field.id;
-        });
+      var consentFields = form.fields.filter(
+        (f) => f.type === FieldType.CONSENT_CHECKBOX && f.is_required,
+      );
+      var _loop_2 = (field) => {
+        var response = responses.find((r) => r.field_id === field.id);
         if (!response || !response.value || response.value !== true) {
           return { value: false };
         }
@@ -1342,7 +1319,7 @@ var ConsentFormsManager = /** @class */ (function () {
           case 0:
             _b.trys.push([0, 5, , 6]);
             dataCategories_2 = new Set();
-            responses.forEach(function (response) {
+            responses.forEach((response) => {
               if (response.consent_given) {
                 dataCategories_2.add(response.data_category);
               }
@@ -1407,21 +1384,17 @@ var ConsentFormsManager = /** @class */ (function () {
               consent_given:
                 (data === null || data === void 0
                   ? void 0
-                  : data.filter(function (r) {
-                      return r.consent_given;
-                    }).length) || 0,
+                  : data.filter((r) => r.consent_given).length) || 0,
               consent_denied:
                 (data === null || data === void 0
                   ? void 0
-                  : data.filter(function (r) {
-                      return !r.consent_given;
-                    }).length) || 0,
+                  : data.filter((r) => !r.consent_given).length) || 0,
               by_method: {},
               by_month: {},
             };
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (response) {
+              : data.forEach((response) => {
                   // Count by method
                   stats_1.by_method[response.consent_method] =
                     (stats_1.by_method[response.consent_method] || 0) + 1;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Consent Management System
  * Implements automated consent tracking and management for LGPD compliance
@@ -16,20 +15,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -44,26 +43,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -83,13 +82,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -111,9 +110,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -185,7 +182,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.consentManager =
   exports.ConsentValidator =
@@ -203,7 +200,7 @@ var events_1 = require("events");
  * LGPD Data Types for Consent Management
  */
 var LGPDDataType;
-(function (LGPDDataType) {
+((LGPDDataType) => {
   LGPDDataType["PERSONAL_DATA"] = "personal_data";
   LGPDDataType["SENSITIVE_DATA"] = "sensitive_data";
   LGPDDataType["BIOMETRIC_DATA"] = "biometric_data";
@@ -219,7 +216,7 @@ var LGPDDataType;
  * LGPD Processing Purposes
  */
 var LGPDProcessingPurpose;
-(function (LGPDProcessingPurpose) {
+((LGPDProcessingPurpose) => {
   LGPDProcessingPurpose["AUTHENTICATION"] = "authentication";
   LGPDProcessingPurpose["AUTHORIZATION"] = "authorization";
   LGPDProcessingPurpose["SESSION_MANAGEMENT"] = "session_management";
@@ -235,7 +232,7 @@ var LGPDProcessingPurpose;
  * LGPD Legal Basis for Processing
  */
 var LGPDLegalBasis;
-(function (LGPDLegalBasis) {
+((LGPDLegalBasis) => {
   LGPDLegalBasis["CONSENT"] = "consent";
   LGPDLegalBasis["CONTRACT"] = "contract";
   LGPDLegalBasis["LEGAL_OBLIGATION"] = "legal_obligation";
@@ -247,7 +244,7 @@ var LGPDLegalBasis;
  * Consent Status Types
  */
 var ConsentStatus;
-(function (ConsentStatus) {
+((ConsentStatus) => {
   ConsentStatus["GIVEN"] = "given";
   ConsentStatus["WITHDRAWN"] = "withdrawn";
   ConsentStatus["EXPIRED"] = "expired";
@@ -266,7 +263,7 @@ var ConsentStatus;
  * - Consent analytics and reporting
  * - Audit trail and compliance monitoring
  */
-var ConsentManager = /** @class */ (function (_super) {
+var ConsentManager = /** @class */ ((_super) => {
   __extends(ConsentManager, _super);
   function ConsentManager(config) {
     if (config === void 0) {
@@ -533,12 +530,8 @@ var ConsentManager = /** @class */ (function (_super) {
    */
   ConsentManager.prototype.getUserConsents = function (userId) {
     return Array.from(this.consents.values())
-      .filter(function (consent) {
-        return consent.userId === userId;
-      })
-      .sort(function (a, b) {
-        return b.updatedAt.getTime() - a.updatedAt.getTime();
-      });
+      .filter((consent) => consent.userId === userId)
+      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   };
   /**
    * Check if user has valid consent
@@ -561,7 +554,7 @@ var ConsentManager = /** @class */ (function (_super) {
   ConsentManager.prototype.getConsentsRequiringRenewal = function (userId) {
     var renewalDate = new Date();
     renewalDate.setDate(renewalDate.getDate() + this.config.renewalReminderDays);
-    return Array.from(this.consents.values()).filter(function (consent) {
+    return Array.from(this.consents.values()).filter((consent) => {
       if (userId && consent.userId !== userId) {
         return false;
       }
@@ -604,24 +597,18 @@ var ConsentManager = /** @class */ (function (_super) {
         now = new Date();
         thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         totalConsents = consents.length;
-        activeConsents = consents.filter(function (c) {
-          return c.status === ConsentStatus.GIVEN;
-        }).length;
-        withdrawnConsents = consents.filter(function (c) {
-          return c.status === ConsentStatus.WITHDRAWN;
-        }).length;
-        expiredConsents = consents.filter(function (c) {
-          return c.status === ConsentStatus.EXPIRED;
-        }).length;
-        consentsByType = consents.reduce(function (acc, consent) {
+        activeConsents = consents.filter((c) => c.status === ConsentStatus.GIVEN).length;
+        withdrawnConsents = consents.filter((c) => c.status === ConsentStatus.WITHDRAWN).length;
+        expiredConsents = consents.filter((c) => c.status === ConsentStatus.EXPIRED).length;
+        consentsByType = consents.reduce((acc, consent) => {
           acc[consent.dataType] = (acc[consent.dataType] || 0) + 1;
           return acc;
         }, {});
-        consentsByPurpose = consents.reduce(function (acc, consent) {
+        consentsByPurpose = consents.reduce((acc, consent) => {
           acc[consent.purpose] = (acc[consent.purpose] || 0) + 1;
           return acc;
         }, {});
-        consentsByStatus = consents.reduce(function (acc, consent) {
+        consentsByStatus = consents.reduce((acc, consent) => {
           acc[consent.status] = (acc[consent.status] || 0) + 1;
           return acc;
         }, {});
@@ -629,20 +616,16 @@ var ConsentManager = /** @class */ (function (_super) {
         withdrawalRate = totalConsents > 0 ? (withdrawnConsents / totalConsents) * 100 : 0;
         renewalRate =
           totalConsents > 0
-            ? (consents.filter(function (c) {
-                return c.auditTrail.some(function (entry) {
-                  return entry.action === "renewed";
-                });
-              }).length /
+            ? (consents.filter((c) => c.auditTrail.some((entry) => entry.action === "renewed"))
+                .length /
                 totalConsents) *
               100
             : 0;
-        expiringConsents = consents.filter(function (consent) {
-          return (
+        expiringConsents = consents.filter(
+          (consent) =>
             consent.expiryDate &&
-            consent.expiryDate <= new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
-          );
-        }).length;
+            consent.expiryDate <= new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000),
+        ).length;
         compliance = this.assessCompliance(consents);
         this.analytics = {
           totalConsents: totalConsents,
@@ -673,18 +656,16 @@ var ConsentManager = /** @class */ (function (_super) {
     var recommendations = [];
     var score = 100;
     // Check for expired consents
-    var expiredConsents = consents.filter(function (c) {
-      return c.expiryDate && c.expiryDate < new Date() && c.status === ConsentStatus.GIVEN;
-    });
+    var expiredConsents = consents.filter(
+      (c) => c.expiryDate && c.expiryDate < new Date() && c.status === ConsentStatus.GIVEN,
+    );
     if (expiredConsents.length > 0) {
       issues.push("".concat(expiredConsents.length, " expired consents still active"));
       recommendations.push("Update expired consents to expired status");
       score -= 10;
     }
     // Check for missing audit trails
-    var missingAuditTrails = consents.filter(function (c) {
-      return c.auditTrail.length === 0;
-    });
+    var missingAuditTrails = consents.filter((c) => c.auditTrail.length === 0);
     if (missingAuditTrails.length > 0) {
       issues.push("".concat(missingAuditTrails.length, " consents without audit trails"));
       recommendations.push("Ensure all consents have complete audit trails");
@@ -880,9 +861,7 @@ var ConsentManager = /** @class */ (function (_super) {
    */
   ConsentManager.prototype.loadConsents = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -890,19 +869,16 @@ var ConsentManager = /** @class */ (function (_super) {
    */
   ConsentManager.prototype.saveConsent = function (consent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
    * Start cleanup interval
    */
   ConsentManager.prototype.startCleanupInterval = function () {
-    var _this = this;
     this.cleanupInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -912,8 +888,7 @@ var ConsentManager = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.cleanupIntervalHours * 60 * 60 * 1000,
     );
   };
@@ -921,10 +896,9 @@ var ConsentManager = /** @class */ (function (_super) {
    * Start analytics interval
    */
   ConsentManager.prototype.startAnalyticsInterval = function () {
-    var _this = this;
     this.analyticsInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -934,8 +908,7 @@ var ConsentManager = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.analyticsIntervalHours * 60 * 60 * 1000,
     );
   };
@@ -1006,21 +979,18 @@ var ConsentManager = /** @class */ (function (_super) {
   /**
    * Generate consent key
    */
-  ConsentManager.prototype.generateConsentKey = function (userId, dataType, purpose) {
-    return "".concat(userId, ":").concat(dataType, ":").concat(purpose);
-  };
+  ConsentManager.prototype.generateConsentKey = (userId, dataType, purpose) =>
+    "".concat(userId, ":").concat(dataType, ":").concat(purpose);
   /**
    * Generate configuration key
    */
-  ConsentManager.prototype.generateConfigKey = function (dataType, purpose) {
-    return "".concat(dataType, ":").concat(purpose);
-  };
+  ConsentManager.prototype.generateConfigKey = (dataType, purpose) =>
+    "".concat(dataType, ":").concat(purpose);
   /**
    * Generate unique ID
    */
-  ConsentManager.prototype.generateId = function () {
-    return "consent_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  ConsentManager.prototype.generateId = () =>
+    "consent_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Shutdown the consent manager
    */
@@ -1081,12 +1051,12 @@ exports.ConsentManager = ConsentManager;
 /**
  * Consent validation utilities
  */
-var ConsentValidator = /** @class */ (function () {
+var ConsentValidator = /** @class */ (() => {
   function ConsentValidator() {}
   /**
    * Validate consent request
    */
-  ConsentValidator.validateConsentRequest = function (request) {
+  ConsentValidator.validateConsentRequest = (request) => {
     var errors = [];
     if (!request.userId) {
       errors.push("User ID is required");
@@ -1124,7 +1094,7 @@ var ConsentValidator = /** @class */ (function () {
   /**
    * Validate consent record
    */
-  ConsentValidator.validateConsentRecord = function (consent) {
+  ConsentValidator.validateConsentRecord = (consent) => {
     var errors = [];
     if (!consent.id) {
       errors.push("Consent ID is required");

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationProvider = NotificationProvider;
 exports.useNotificationContext = useNotificationContext;
@@ -156,7 +153,6 @@ var sonner_1 = require("sonner");
 var use_notifications_1 = require("@/hooks/use-notifications");
 var NotificationContext = (0, react_1.createContext)(undefined);
 function NotificationProvider(_a) {
-  var _this = this;
   var children = _a.children,
     userId = _a.userId,
     _b = _a.disabled,
@@ -181,16 +177,14 @@ function NotificationProvider(_a) {
     getUnreadNotifications = notificationHook.getUnreadNotifications,
     hasUnreadNotifications = notificationHook.hasUnreadNotifications;
   // Show toast notification
-  var showNotificationToast = function (notification) {
+  var showNotificationToast = (notification) => {
     var toastProps = {
       id: notification.id,
       duration: notification.priority === "high" ? 10000 : 5000,
       action: notification.action_url
         ? {
             label: "Ver",
-            onClick: function () {
-              return (window.location.href = notification.action_url);
-            },
+            onClick: () => (window.location.href = notification.action_url),
           }
         : undefined,
     };
@@ -240,10 +234,10 @@ function NotificationProvider(_a) {
     }
   };
   // Request notification permission
-  var requestPermission = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var requestPermission = () =>
+    __awaiter(this, void 0, void 0, function () {
       var permission;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!("Notification" in window)) {
@@ -268,9 +262,8 @@ function NotificationProvider(_a) {
         }
       });
     });
-  };
   // Send push notification
-  var sendPushNotification = function (title, options) {
+  var sendPushNotification = (title, options) => {
     if (options === void 0) {
       options = {};
     }
@@ -293,84 +286,67 @@ function NotificationProvider(_a) {
     }
   };
   // Handle new notifications with toast
-  (0, react_1.useEffect)(
-    function () {
-      if (!disabled && notifications.length > 0) {
-        var latestNotification = notifications[0];
-        var isNewNotification =
-          !latestNotification.read_at &&
-          new Date(latestNotification.created_at).getTime() > Date.now() - 5000; // Created in last 5 seconds
-        if (isNewNotification) {
-          // Show toast notification
-          if (
-            (preferences === null || preferences === void 0 ? void 0 : preferences.push_enabled) !==
-            false
-          ) {
-            showNotificationToast(latestNotification);
-          }
-          // Send browser push notification for high priority
-          if (
-            latestNotification.priority === "high" &&
-            (preferences === null || preferences === void 0 ? void 0 : preferences.push_enabled)
-          ) {
-            sendPushNotification(latestNotification.title, {
-              body: latestNotification.message,
-              tag: "notification-".concat(latestNotification.id),
-              data: latestNotification.data,
-            });
-          }
-        }
-      }
-    },
-    [notifications, preferences, disabled],
-  );
-  // Auto-request permission on mount if preferences allow
-  (0, react_1.useEffect)(
-    function () {
-      if (
-        !disabled &&
-        (preferences === null || preferences === void 0 ? void 0 : preferences.push_enabled) &&
-        Notification.permission === "default"
-      ) {
-        // Don't auto-request immediately, wait for user interaction
-        var timer_1 = setTimeout(function () {
-          requestPermission();
-        }, 10000); // Wait 10 seconds
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [preferences, disabled],
-  );
-  // Handle browser focus to mark notifications as read
-  (0, react_1.useEffect)(
-    function () {
-      var handleFocus = function () {
+  (0, react_1.useEffect)(() => {
+    if (!disabled && notifications.length > 0) {
+      var latestNotification = notifications[0];
+      var isNewNotification =
+        !latestNotification.read_at &&
+        new Date(latestNotification.created_at).getTime() > Date.now() - 5000; // Created in last 5 seconds
+      if (isNewNotification) {
+        // Show toast notification
         if (
-          hasUnreadNotifications &&
+          (preferences === null || preferences === void 0 ? void 0 : preferences.push_enabled) !==
+          false
+        ) {
+          showNotificationToast(latestNotification);
+        }
+        // Send browser push notification for high priority
+        if (
+          latestNotification.priority === "high" &&
           (preferences === null || preferences === void 0 ? void 0 : preferences.push_enabled)
         ) {
-          // Auto-mark recent notifications as read when user focuses the app
-          var recentNotifications = getUnreadNotifications().filter(
-            function (notif) {
-              return new Date(notif.created_at).getTime() > Date.now() - 30000;
-            }, // Last 30 seconds
-          );
-          recentNotifications.forEach(function (notif) {
-            setTimeout(function () {
-              return markAsRead(notif.id);
-            }, 2000);
+          sendPushNotification(latestNotification.title, {
+            body: latestNotification.message,
+            tag: "notification-".concat(latestNotification.id),
+            data: latestNotification.data,
           });
         }
-      };
-      window.addEventListener("focus", handleFocus);
-      return function () {
-        return window.removeEventListener("focus", handleFocus);
-      };
-    },
-    [hasUnreadNotifications, getUnreadNotifications, markAsRead, preferences],
-  );
+      }
+    }
+  }, [notifications, preferences, disabled]);
+  // Auto-request permission on mount if preferences allow
+  (0, react_1.useEffect)(() => {
+    if (
+      !disabled &&
+      (preferences === null || preferences === void 0 ? void 0 : preferences.push_enabled) &&
+      Notification.permission === "default"
+    ) {
+      // Don't auto-request immediately, wait for user interaction
+      var timer_1 = setTimeout(() => {
+        requestPermission();
+      }, 10000); // Wait 10 seconds
+      return () => clearTimeout(timer_1);
+    }
+  }, [preferences, disabled]);
+  // Handle browser focus to mark notifications as read
+  (0, react_1.useEffect)(() => {
+    var handleFocus = () => {
+      if (
+        hasUnreadNotifications &&
+        (preferences === null || preferences === void 0 ? void 0 : preferences.push_enabled)
+      ) {
+        // Auto-mark recent notifications as read when user focuses the app
+        var recentNotifications = getUnreadNotifications().filter(
+          (notif) => new Date(notif.created_at).getTime() > Date.now() - 30000, // Last 30 seconds
+        );
+        recentNotifications.forEach((notif) => {
+          setTimeout(() => markAsRead(notif.id), 2000);
+        });
+      }
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [hasUnreadNotifications, getUnreadNotifications, markAsRead, preferences]);
   var value = {
     // State from hook
     notifications: notifications,
@@ -404,16 +380,16 @@ function useNotificationContext() {
 }
 // Utility hook for toast notifications only (lightweight)
 function useNotificationToast() {
-  var showSuccess = function (title, description, action) {
+  var showSuccess = (title, description, action) => {
     sonner_1.toast.success(title, { description: description, action: action });
   };
-  var showError = function (title, description) {
+  var showError = (title, description) => {
     sonner_1.toast.error(title, { description: description });
   };
-  var showInfo = function (title, description) {
+  var showInfo = (title, description) => {
     sonner_1.toast.info(title, { description: description });
   };
-  var showWarning = function (title, description) {
+  var showWarning = (title, description) => {
     sonner_1.toast.warning(title, { description: description });
   };
   return {

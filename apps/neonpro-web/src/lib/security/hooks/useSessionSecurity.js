@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSessionSecurity = useSessionSecurity;
 exports.useCSRFToken = useCSRFToken;
@@ -175,7 +172,6 @@ var DEFAULT_TIMEOUT_CONFIG = {
  * Main session security hook
  */
 function useSessionSecurity(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -208,10 +204,10 @@ function useSessionSecurity(options) {
    * Initialize session security
    */
   var initializeSecurity = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var sessionId_1, csrfToken_1, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!user) return [2 /*return*/];
@@ -241,43 +237,42 @@ function useSessionSecurity(options) {
               if (enableActivityTracking) {
                 setupActivityTracking(sessionId_1);
               }
-              setSecurityState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setSecurityState((prev) =>
+                __assign(__assign({}, prev), {
                   sessionId: sessionId_1,
                   csrfToken: csrfToken_1,
                   lastActivity: new Date(),
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 7];
             case 6:
               error_1 = _a.sent();
               console.error("Failed to initialize session security:", error_1);
-              setSecurityState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setSecurityState((prev) =>
+                __assign(__assign({}, prev), {
                   isSecure: false,
                   warnings: __spreadArray(
                     __spreadArray([], prev.warnings, true),
                     ["Failed to initialize security"],
                     false,
                   ),
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 7];
             case 7:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user, enableCSRF, enableTimeout, enableActivityTracking],
   );
   /**
    * Fetch CSRF token from server
    */
-  var fetchCSRFToken = function (sessionId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchCSRFToken = (sessionId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -311,14 +306,13 @@ function useSessionSecurity(options) {
         }
       });
     });
-  };
   /**
    * Initialize session timeout
    */
-  var initializeSessionTimeout = function (sessionId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var initializeSessionTimeout = (sessionId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -354,34 +348,31 @@ function useSessionSecurity(options) {
         }
       });
     });
-  };
   /**
    * Setup timeout monitoring
    */
-  var setupTimeoutMonitoring = function (sessionId) {
+  var setupTimeoutMonitoring = (sessionId) => {
     // Clear existing timeouts
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    warningTimeoutsRef.current.forEach(function (timeout) {
-      return clearTimeout(timeout);
-    });
+    warningTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
     warningTimeoutsRef.current = [];
     var timeoutMs = config.timeoutMinutes * 60 * 1000;
     var now = Date.now();
     // Setup warning timeouts
-    config.warningMinutes.forEach(function (warningMinutes) {
+    config.warningMinutes.forEach((warningMinutes) => {
       var warningMs = (config.timeoutMinutes - warningMinutes) * 60 * 1000;
-      var warningTimeout = setTimeout(function () {
+      var warningTimeout = setTimeout(() => {
         var warning = "Session will expire in "
           .concat(warningMinutes, " minute")
           .concat(warningMinutes !== 1 ? "s" : "");
-        setSecurityState(function (prev) {
-          return __assign(__assign({}, prev), {
+        setSecurityState((prev) =>
+          __assign(__assign({}, prev), {
             timeoutWarning: warning,
             warnings: __spreadArray(__spreadArray([], prev.warnings, true), [warning], false),
-          });
-        });
+          }),
+        );
         if (config.showWarnings) {
           onSecurityWarning === null || onSecurityWarning === void 0
             ? void 0
@@ -391,17 +382,17 @@ function useSessionSecurity(options) {
       warningTimeoutsRef.current.push(warningTimeout);
     });
     // Setup final timeout
-    timeoutRef.current = setTimeout(function () {
+    timeoutRef.current = setTimeout(() => {
       handleSessionTimeout(sessionId);
     }, timeoutMs);
   };
   /**
    * Handle session timeout
    */
-  var handleSessionTimeout = function (sessionId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSessionTimeout = (sessionId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -423,16 +414,16 @@ function useSessionSecurity(options) {
             // Clear local session data
             sessionStorage.removeItem("session-id");
             localStorage.clear();
-            setSecurityState(function (prev) {
-              return __assign(__assign({}, prev), {
+            setSecurityState((prev) =>
+              __assign(__assign({}, prev), {
                 isSecure: false,
                 warnings: __spreadArray(
                   __spreadArray([], prev.warnings, true),
                   ["Session has expired"],
                   false,
                 ),
-              });
-            });
+              }),
+            );
             onSessionTimeout === null || onSessionTimeout === void 0 ? void 0 : onSessionTimeout();
             return [3 /*break*/, 3];
           case 2:
@@ -444,11 +435,10 @@ function useSessionSecurity(options) {
         }
       });
     });
-  };
   /**
    * Setup activity tracking
    */
-  var setupActivityTracking = function (sessionId) {
+  var setupActivityTracking = (sessionId) => {
     // Remove existing listener
     if (activityListenerRef.current) {
       activityListenerRef.current();
@@ -456,10 +446,10 @@ function useSessionSecurity(options) {
     var activities = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
     var lastActivityTime = Date.now();
     var throttleMs = 30000; // 30 seconds throttle
-    var handleActivity = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    var handleActivity = () =>
+      __awaiter(this, void 0, void 0, function () {
         var now, error_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               now = Date.now();
@@ -488,9 +478,9 @@ function useSessionSecurity(options) {
               // Update activity on server
               _a.sent();
               // Update local state
-              setSecurityState(function (prev) {
-                return __assign(__assign({}, prev), { lastActivity: new Date() });
-              });
+              setSecurityState((prev) =>
+                __assign(__assign({}, prev), { lastActivity: new Date() }),
+              );
               // Extend session if configured
               if (config.extendOnActivity && enableTimeout) {
                 setupTimeoutMonitoring(sessionId);
@@ -505,14 +495,13 @@ function useSessionSecurity(options) {
           }
         });
       });
-    };
     // Add event listeners
-    activities.forEach(function (activity) {
+    activities.forEach((activity) => {
       document.addEventListener(activity, handleActivity, { passive: true });
     });
     // Store cleanup function
-    activityListenerRef.current = function () {
-      activities.forEach(function (activity) {
+    activityListenerRef.current = () => {
+      activities.forEach((activity) => {
         document.removeEventListener(activity, handleActivity);
       });
     };
@@ -520,73 +509,68 @@ function useSessionSecurity(options) {
   /**
    * Extend session manually
    */
-  var extendSession = (0, react_1.useCallback)(
-    function () {
-      var args_1 = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args_1[_i] = arguments[_i];
+  var extendSession = (0, react_1.useCallback)(() => {
+    var args_1 = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args_1[_i] = arguments[_i];
+    }
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (minutes) {
+      var error_6;
+      if (minutes === void 0) {
+        minutes = config.timeoutMinutes;
       }
-      return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (minutes) {
-        var error_6;
-        if (minutes === void 0) {
-          minutes = config.timeoutMinutes;
-        }
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!securityState.sessionId) return [2 /*return*/];
-              _a.label = 1;
-            case 1:
-              _a.trys.push([1, 3, , 4]);
-              return [
-                4 /*yield*/,
-                fetch("/api/security/session-timeout/extend", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "X-Session-ID": securityState.sessionId,
-                  },
-                  body: JSON.stringify({
-                    sessionId: securityState.sessionId,
-                    extensionMinutes: minutes,
-                  }),
+      return __generator(this, (_a) => {
+        switch (_a.label) {
+          case 0:
+            if (!securityState.sessionId) return [2 /*return*/];
+            _a.label = 1;
+          case 1:
+            _a.trys.push([1, 3, , 4]);
+            return [
+              4 /*yield*/,
+              fetch("/api/security/session-timeout/extend", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "X-Session-ID": securityState.sessionId,
+                },
+                body: JSON.stringify({
+                  sessionId: securityState.sessionId,
+                  extensionMinutes: minutes,
                 }),
-              ];
-            case 2:
-              _a.sent();
-              // Reset timeout monitoring
-              if (enableTimeout) {
-                setupTimeoutMonitoring(securityState.sessionId);
-              }
-              setSecurityState(function (prev) {
-                return __assign(__assign({}, prev), {
-                  timeoutWarning: undefined,
-                  warnings: prev.warnings.filter(function (w) {
-                    return !w.includes("expire");
-                  }),
-                });
-              });
-              return [3 /*break*/, 4];
-            case 3:
-              error_6 = _a.sent();
-              console.error("Failed to extend session:", error_6);
-              return [3 /*break*/, 4];
-            case 4:
-              return [2 /*return*/];
-          }
-        });
+              }),
+            ];
+          case 2:
+            _a.sent();
+            // Reset timeout monitoring
+            if (enableTimeout) {
+              setupTimeoutMonitoring(securityState.sessionId);
+            }
+            setSecurityState((prev) =>
+              __assign(__assign({}, prev), {
+                timeoutWarning: undefined,
+                warnings: prev.warnings.filter((w) => !w.includes("expire")),
+              }),
+            );
+            return [3 /*break*/, 4];
+          case 3:
+            error_6 = _a.sent();
+            console.error("Failed to extend session:", error_6);
+            return [3 /*break*/, 4];
+          case 4:
+            return [2 /*return*/];
+        }
       });
-    },
-    [securityState.sessionId, config.timeoutMinutes, enableTimeout],
-  );
+    });
+  }, [securityState.sessionId, config.timeoutMinutes, enableTimeout]);
   /**
    * Refresh CSRF token
    */
   var refreshCSRFToken = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var newToken_1, error_7;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!enableCSRF || !securityState.sessionId) return [2 /*return*/];
@@ -596,9 +580,7 @@ function useSessionSecurity(options) {
               return [4 /*yield*/, fetchCSRFToken(securityState.sessionId)];
             case 2:
               newToken_1 = _a.sent();
-              setSecurityState(function (prev) {
-                return __assign(__assign({}, prev), { csrfToken: newToken_1 });
-              });
+              setSecurityState((prev) => __assign(__assign({}, prev), { csrfToken: newToken_1 }));
               return [2 /*return*/, newToken_1];
             case 3:
               error_7 = _a.sent();
@@ -608,53 +590,45 @@ function useSessionSecurity(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [enableCSRF, securityState.sessionId],
   );
   /**
    * Get headers for secure requests
    */
-  var getSecureHeaders = (0, react_1.useCallback)(
-    function () {
-      var headers = {};
-      if (securityState.sessionId) {
-        headers["X-Session-ID"] = securityState.sessionId;
-      }
-      if (enableCSRF && securityState.csrfToken) {
-        headers["X-CSRF-Token"] = securityState.csrfToken;
-      }
-      return headers;
-    },
-    [securityState.sessionId, securityState.csrfToken, enableCSRF],
-  );
+  var getSecureHeaders = (0, react_1.useCallback)(() => {
+    var headers = {};
+    if (securityState.sessionId) {
+      headers["X-Session-ID"] = securityState.sessionId;
+    }
+    if (enableCSRF && securityState.csrfToken) {
+      headers["X-CSRF-Token"] = securityState.csrfToken;
+    }
+    return headers;
+  }, [securityState.sessionId, securityState.csrfToken, enableCSRF]);
   /**
    * Cleanup on unmount
    */
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      warningTimeoutsRef.current.forEach(function (timeout) {
-        return clearTimeout(timeout);
-      });
+      warningTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
       if (activityListenerRef.current) {
         activityListenerRef.current();
       }
-    };
-  }, []);
+    },
+    [],
+  );
   /**
    * Initialize on mount and user change
    */
-  (0, react_1.useEffect)(
-    function () {
-      if (user) {
-        initializeSecurity();
-      }
-    },
-    [user, initializeSecurity],
-  );
+  (0, react_1.useEffect)(() => {
+    if (user) {
+      initializeSecurity();
+    }
+  }, [user, initializeSecurity]);
   return {
     securityState: securityState,
     extendSession: extendSession,
@@ -672,7 +646,6 @@ function useSessionSecurity(options) {
  * Hook for CSRF token management
  */
 function useCSRFToken(sessionId) {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     token = _a[0],
     setToken = _a[1];
@@ -683,10 +656,10 @@ function useCSRFToken(sessionId) {
     error = _c[0],
     setError = _c[1];
   var fetchToken = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!sessionId) return [2 /*return*/];
@@ -727,76 +700,65 @@ function useCSRFToken(sessionId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [sessionId],
   );
-  (0, react_1.useEffect)(
-    function () {
-      fetchToken();
-    },
-    [fetchToken],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchToken();
+  }, [fetchToken]);
   return { token: token, loading: loading, error: error, refetch: fetchToken };
 }
 /**
  * Hook for session timeout warnings
  */
 function useSessionTimeout(sessionId, onTimeout) {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     timeRemaining = _a[0],
     setTimeRemaining = _a[1];
   var _b = (0, react_1.useState)(null),
     warning = _b[0],
     setWarning = _b[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (!sessionId) return;
-      var checkTimeout = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var response, data, error_8;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                _a.trys.push([0, 4, , 5]);
-                return [
-                  4 /*yield*/,
-                  fetch("/api/security/session-timeout/status?sessionId=".concat(sessionId)),
-                ];
-              case 1:
-                response = _a.sent();
-                if (!response.ok) return [3 /*break*/, 3];
-                return [4 /*yield*/, response.json()];
-              case 2:
-                data = _a.sent();
-                setTimeRemaining(data.timeRemaining);
-                setWarning(data.warning);
-                if (data.shouldTimeout) {
-                  onTimeout === null || onTimeout === void 0 ? void 0 : onTimeout();
-                }
-                _a.label = 3;
-              case 3:
-                return [3 /*break*/, 5];
-              case 4:
-                error_8 = _a.sent();
-                console.error("Failed to check session timeout:", error_8);
-                return [3 /*break*/, 5];
-              case 5:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    if (!sessionId) return;
+    var checkTimeout = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, error_8;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 4, , 5]);
+              return [
+                4 /*yield*/,
+                fetch("/api/security/session-timeout/status?sessionId=".concat(sessionId)),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) return [3 /*break*/, 3];
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setTimeRemaining(data.timeRemaining);
+              setWarning(data.warning);
+              if (data.shouldTimeout) {
+                onTimeout === null || onTimeout === void 0 ? void 0 : onTimeout();
+              }
+              _a.label = 3;
+            case 3:
+              return [3 /*break*/, 5];
+            case 4:
+              error_8 = _a.sent();
+              console.error("Failed to check session timeout:", error_8);
+              return [3 /*break*/, 5];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      // Check immediately
-      checkTimeout();
-      // Check every minute
-      var interval = setInterval(checkTimeout, 60000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [sessionId, onTimeout],
-  );
+      });
+    // Check immediately
+    checkTimeout();
+    // Check every minute
+    var interval = setInterval(checkTimeout, 60000);
+    return () => clearInterval(interval);
+  }, [sessionId, onTimeout]);
   return { timeRemaining: timeRemaining, warning: warning };
 }

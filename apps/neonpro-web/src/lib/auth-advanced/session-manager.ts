@@ -4,30 +4,30 @@
 import type { createClient } from "@supabase/supabase-js";
 import type { v4 as uuidv4 } from "uuid";
 import type {
-  UserSession,
-  SessionSecurityEvent,
-  DeviceRegistration,
-  SessionAuditLog,
-  SessionManager,
+  DEVICE_TRUST_FACTORS,
+  getLocationRiskScore,
+  getSecurityEventRiskScore,
+  getSessionConfig,
+  getSessionPolicyForRole,
+  isHighRiskLocation,
+  SUSPICIOUS_ACTIVITY_PATTERNS,
+} from "./config";
+import type { DeviceFingerprint } from "./device-fingerprint";
+import type { LocationService } from "./location-service";
+import type { SecurityMonitor } from "./security-monitor";
+import type {
   DeviceInfo,
+  DeviceRegistration,
   LocationInfo,
   SecurityEventType,
+  SessionAuditLog,
   SessionError,
   SessionErrorCode,
   SessionHooks,
+  SessionManager,
+  SessionSecurityEvent,
+  UserSession,
 } from "./types";
-import type {
-  getSessionConfig,
-  getSessionPolicyForRole,
-  getSecurityEventRiskScore,
-  isHighRiskLocation,
-  getLocationRiskScore,
-  SUSPICIOUS_ACTIVITY_PATTERNS,
-  DEVICE_TRUST_FACTORS,
-} from "./config";
-import type { SecurityMonitor } from "./security-monitor";
-import type { DeviceFingerprint } from "./device-fingerprint";
-import type { LocationService } from "./location-service";
 
 export class SessionManagerService implements SessionManager {
   private supabase;

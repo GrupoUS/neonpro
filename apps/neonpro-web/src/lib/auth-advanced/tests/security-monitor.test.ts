@@ -1,9 +1,9 @@
 // Security Monitor Tests
 // Story 1.4: Session Management & Security Implementation
 
-import type { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import type { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SecurityMonitor } from "../security-monitor";
-import type { SecurityConfig, SecurityEvent, SecurityAlert, ThreatLevel } from "../types";
+import type { SecurityAlert, SecurityConfig, SecurityEvent, ThreatLevel } from "../types";
 
 describe("SecurityMonitor", () => {
   let securityMonitor: SecurityMonitor;

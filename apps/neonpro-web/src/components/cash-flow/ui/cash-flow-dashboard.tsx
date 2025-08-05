@@ -1,31 +1,33 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
 import type {
+  endOfDay,
   format,
   startOfDay,
-  endOfDay,
   subDays,
-  subWeeks,
   subMonths,
+  subWeeks,
   subYears,
 } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
+  AlertTriangle,
   BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Filter,
+  Plus,
   RefreshCw,
   Settings,
-  Plus,
-  Calendar,
-  Filter,
+  TrendingDown,
+  TrendingUp,
   Wallet,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
 } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -33,8 +35,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -42,21 +43,18 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Hooks para dados
 import type {
+  useCashFlowAnalytics,
   useCashFlowEntries,
   useCashRegisters,
-  useCashFlowAnalytics,
 } from "../hooks/useCashFlow";
-
+// Tipos
+import type { CashFlowAnalytics, CashFlowEntry, CashFlowFilters, CashRegister } from "../types";
 // Utilitários
 import type { formatCurrency, getCashFlowSummary } from "../utils/calculations";
-
-// Tipos
-import type { CashFlowEntry, CashRegister, CashFlowAnalytics, CashFlowFilters } from "../types";
 
 // Componentes
 import type { TransactionEntryForm } from "./transaction-entry-form";

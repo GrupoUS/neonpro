@@ -1,4 +1,3 @@
-"use strict";
 /**
  * DeviceManager Unit Tests
  *
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,7 +42,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,8 +71,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -94,9 +91,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -155,78 +152,52 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var DeviceManager_1 = require("../../../lib/auth/session/DeviceManager");
 var setup_1 = require("./setup");
 // Mock Supabase
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-              maybeSingle: globals_1.jest.fn(),
-            };
-          }),
-          in: globals_1.jest.fn(function () {
-            return {
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      insert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-            };
-          }),
-        };
-      }),
-      update: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              select: globals_1.jest.fn(function () {
-                return {
-                  single: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      delete: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+        maybeSingle: globals_1.jest.fn(),
+      })),
+      in: globals_1.jest.fn(() => ({
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(),
+        })),
+      })),
+    })),
+    insert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+      })),
+    })),
+    update: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        select: globals_1.jest.fn(() => ({
+          single: globals_1.jest.fn(),
+        })),
+      })),
+    })),
+    delete: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(),
+    })),
+  })),
   rpc: globals_1.jest.fn(),
 };
-globals_1.jest.mock("@supabase/supabase-js", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return mockSupabase;
-    }),
-  };
-});
-(0, globals_1.describe)("DeviceManager", function () {
+globals_1.jest.mock("@supabase/supabase-js", () => ({
+  createClient: globals_1.jest.fn(() => mockSupabase),
+}));
+(0, globals_1.describe)("DeviceManager", () => {
   var deviceManager;
-  var testDb;
+  var _testDb;
   var mockConfig;
-  (0, globals_1.beforeEach)(function () {
-    testDb = (0, setup_1.createTestDatabase)();
+  (0, globals_1.beforeEach)(() => {
+    _testDb = (0, setup_1.createTestDatabase)();
     mockConfig = {
       maxDevicesPerUser: 10,
       trustDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
@@ -238,15 +209,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
     };
     deviceManager = new DeviceManager_1.DeviceManager(mockConfig);
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     (0, setup_1.cleanup)();
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("Device Registration", function () {
-    (0, globals_1.it)("should register a new device successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Device Registration", () => {
+    (0, globals_1.it)("should register a new device successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceData, mockDevice, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceData = {
@@ -275,12 +246,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should detect existing device by fingerprint", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should detect existing device by fingerprint", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var existingDevice, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               existingDevice = (0, setup_1.createMockDevice)({
@@ -299,22 +270,22 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should enforce device limit per user", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should enforce device limit per user", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var existingDevices, deviceData, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
-              existingDevices = Array.from({ length: 10 }, function (_, i) {
-                return (0, setup_1.createMockDevice)({
+              existingDevices = Array.from({ length: 10 }, (_, i) =>
+                (0, setup_1.createMockDevice)({
                   id: "device-".concat(i),
                   userId: "user-123",
                   fingerprint: "fingerprint-".concat(i),
-                });
-              });
+                }),
+              );
               mockSupabase.from().select().eq().mockResolvedValue({
                 data: existingDevices,
                 error: null,
@@ -336,33 +307,33 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should generate unique device fingerprints", function () {
+      }),
+    );
+    (0, globals_1.it)("should generate unique device fingerprints", () => {
       var userAgents = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
       ];
-      var fingerprints = userAgents.map(function (ua) {
-        return deviceManager.generateFingerprint({
+      var fingerprints = userAgents.map((ua) =>
+        deviceManager.generateFingerprint({
           userAgent: ua,
           screen: { width: 1920, height: 1080 },
           timezone: "America/New_York",
           language: "en-US",
-        });
-      });
+        }),
+      );
       // All fingerprints should be unique
       var uniqueFingerprints = new Set(fingerprints);
       (0, globals_1.expect)(uniqueFingerprints.size).toBe(fingerprints.length);
     });
   });
-  (0, globals_1.describe)("Device Trust Management", function () {
-    (0, globals_1.it)("should trust a device successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Device Trust Management", () => {
+    (0, globals_1.it)("should trust a device successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockDevice, trustedDevice, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               mockDevice = (0, setup_1.createMockDevice)({ trusted: false });
@@ -387,13 +358,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should revoke device trust", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should revoke device trust", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockDevice, untrustedDevice, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               mockDevice = (0, setup_1.createMockDevice)({ trusted: true });
@@ -418,9 +389,9 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check if device trust is expired", function () {
+      }),
+    );
+    (0, globals_1.it)("should check if device trust is expired", () => {
       var expiredDevice = (0, setup_1.createMockDevice)({
         trusted: true,
         trustExpiresAt: new Date(Date.now() - 60000).toISOString(), // 1 minute ago
@@ -432,11 +403,11 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
       (0, globals_1.expect)(deviceManager.isTrustExpired(expiredDevice)).toBe(true);
       (0, globals_1.expect)(deviceManager.isTrustExpired(validDevice)).toBe(false);
     });
-    (0, globals_1.it)("should auto-trust devices on same network", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should auto-trust devices on same network", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var configWithAutoTrust, existingDevice, newDeviceData, autoTrustedDevice, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               configWithAutoTrust = __assign(__assign({}, mockConfig), {
@@ -481,15 +452,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Device Blocking", function () {
-    (0, globals_1.it)("should block a suspicious device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Device Blocking", () => {
+    (0, globals_1.it)("should block a suspicious device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockDevice, blockedDevice, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               mockDevice = (0, setup_1.createMockDevice)({ blocked: false });
@@ -518,13 +489,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should unblock a device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should unblock a device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockDevice, unblockedDevice, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockDevice = (0, setup_1.createMockDevice)({ blocked: true });
@@ -547,12 +518,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should detect suspicious device patterns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should detect suspicious device patterns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var suspiciousDevices, _i, suspiciousDevices_1, device, riskScore;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           suspiciousDevices = [
             (0, setup_1.createMockDevice)({
               userAgent: "Bot/1.0",
@@ -578,15 +549,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
           }
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Device Information", function () {
-    (0, globals_1.it)("should get user devices", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Device Information", () => {
+    (0, globals_1.it)("should get user devices", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var userDevices, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               userDevices = [
@@ -608,12 +579,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should get device statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should get device statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockStats, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockStats = {
@@ -634,9 +605,9 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should parse user agent information", function () {
+      }),
+    );
+    (0, globals_1.it)("should parse user agent information", () => {
       var userAgents = [
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
@@ -647,7 +618,7 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
         { browser: "Safari", os: "iOS", device: "mobile" },
         { browser: "Chrome", os: "macOS", device: "desktop" },
       ];
-      userAgents.forEach(function (ua, index) {
+      userAgents.forEach((ua, index) => {
         var parsed = deviceManager.parseUserAgent(ua);
         (0, globals_1.expect)(parsed.browser).toContain(expectedResults[index].browser);
         (0, globals_1.expect)(parsed.os).toContain(expectedResults[index].os);
@@ -655,12 +626,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
       });
     });
   });
-  (0, globals_1.describe)("Device Cleanup", function () {
-    (0, globals_1.it)("should clean up inactive devices", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Device Cleanup", () => {
+    (0, globals_1.it)("should clean up inactive devices", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var inactiveDevices, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               inactiveDevices = [
@@ -691,13 +662,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should revoke expired trust", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should revoke expired trust", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expiredTrustDevices, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               expiredTrustDevices = [
@@ -716,9 +687,9 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
                 .update()
                 .in()
                 .mockResolvedValue({
-                  data: expiredTrustDevices.map(function (d) {
-                    return __assign(__assign({}, d), { trusted: false, trustExpiresAt: null });
-                  }),
+                  data: expiredTrustDevices.map((d) =>
+                    __assign(__assign({}, d), { trusted: false, trustExpiresAt: null }),
+                  ),
                   error: null,
                 });
               return [4 /*yield*/, deviceManager.revokeExpiredTrust()];
@@ -731,15 +702,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.it)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.it)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase
@@ -769,13 +740,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle invalid device data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle invalid device data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidDeviceData, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               invalidDeviceData = {
@@ -795,15 +766,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Security Features", function () {
-    (0, globals_1.it)("should detect device fingerprint collisions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Security Features", () => {
+    (0, globals_1.it)("should detect device fingerprint collisions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var existingDevice, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               existingDevice = (0, setup_1.createMockDevice)({
@@ -833,9 +804,9 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate device fingerprint format", function () {
+      }),
+    );
+    (0, globals_1.it)("should validate device fingerprint format", () => {
       var invalidFingerprints = [
         "", // Empty
         "short", // Too short

@@ -1,6 +1,22 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertCircle,
+  Calendar,
+  Clock,
+  DollarSign,
+  Eye,
+  FileText,
+  Plus,
+  Settings,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,26 +24,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Progress } from "@/components/ui/progress";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Chart } from "@/components/ui/chart";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { LoadingSpinner } from "@/components/ui/loading-spinner";
-import type {
-  Calendar,
-  Users,
-  DollarSign,
-  Activity,
-  TrendingUp,
-  Clock,
-  AlertCircle,
-  Plus,
-  Eye,
-  FileText,
-  Settings,
-} from "lucide-react";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface DashboardStats {
   totalPatients: number;

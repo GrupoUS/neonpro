@@ -1,17 +1,16 @@
-"use strict";
 // Story 11.2: No-Show Prediction Engine Tests
 // Comprehensive test suite for no-show prediction service
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -21,7 +20,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -50,8 +49,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -72,9 +69,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -133,18 +130,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var no_show_prediction_1 = require("@/app/lib/services/no-show-prediction");
 var server_1 = require("@/app/utils/supabase/server");
 // Mock Supabase client
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(),
-  };
-});
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: jest.fn(),
+}));
 // Mock data
-var mockPatient = {
+var _mockPatient = {
   id: "patient-123",
   name: "João Silva",
   email: "joao@example.com",
@@ -176,9 +171,9 @@ var mockHistoricalData = [
     created_at: "2024-01-05T00:00:00Z",
   },
 ];
-describe("NoShowPredictionEngine", function () {
+describe("NoShowPredictionEngine", () => {
   var mockSupabase;
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     mockSupabase = {
       from: jest.fn().mockReturnThis(),
@@ -195,11 +190,11 @@ describe("NoShowPredictionEngine", function () {
     };
     server_1.createClient.mockResolvedValue(mockSupabase);
   });
-  describe("generatePrediction", function () {
-    it("should generate prediction for valid appointment", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("generatePrediction", () => {
+    it("should generate prediction for valid appointment", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock database responses
@@ -238,11 +233,10 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle missing appointment", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle missing appointment", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.single.mockResolvedValueOnce({
@@ -262,14 +256,13 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("analyzeRiskFactors", function () {
-    it("should analyze patient risk factors correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("analyzeRiskFactors", () => {
+    it("should analyze patient risk factors correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var riskFactors;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.select.mockResolvedValueOnce({
@@ -289,7 +282,7 @@ describe("NoShowPredictionEngine", function () {
               expect(Array.isArray(riskFactors)).toBe(true);
               expect(riskFactors.length).toBeGreaterThan(0);
               // Verify risk factor structure
-              riskFactors.forEach(function (factor) {
+              riskFactors.forEach((factor) => {
                 expect(factor).toHaveProperty("factor_type");
                 expect(factor).toHaveProperty("factor_value");
                 expect(factor).toHaveProperty("impact_weight");
@@ -299,12 +292,11 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle patient with no history", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle patient with no history", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var riskFactors;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.select.mockResolvedValueOnce({
@@ -325,14 +317,13 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("updatePredictionOutcome", function () {
-    it("should update prediction with actual outcome", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("updatePredictionOutcome", () => {
+    it("should update prediction with actual outcome", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.single.mockResolvedValueOnce({
@@ -357,14 +348,13 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("calculateAccuracyMetrics", function () {
-    it("should calculate accuracy metrics correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("calculateAccuracyMetrics", () => {
+    it("should calculate accuracy metrics correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockPredictions, metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockPredictions = [
@@ -395,14 +385,13 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getHighRiskPatients", function () {
-    it("should return high-risk patients for given date range", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getHighRiskPatients", () => {
+    it("should return high-risk patients for given date range", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockHighRiskPredictions, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockHighRiskPredictions = [
@@ -442,14 +431,13 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("generateInterventionRecommendations", function () {
-    it("should recommend appropriate interventions based on risk score", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("generateInterventionRecommendations", () => {
+    it("should recommend appropriate interventions based on risk score", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var highRiskPrediction, recommendations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               highRiskPrediction = {
@@ -475,12 +463,11 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should recommend fewer interventions for medium risk", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should recommend fewer interventions for medium risk", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mediumRiskPrediction, recommendations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mediumRiskPrediction = {
@@ -503,7 +490,6 @@ describe("NoShowPredictionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

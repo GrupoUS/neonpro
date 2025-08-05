@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Automated Communication Workflow for Scheduling
  * Story 5.3: Automated Communication for Scheduling
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,14 +146,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createschedulingCommunicationWorkflow = exports.SchedulingCommunicationWorkflow = void 0;
 var server_1 = require("@/lib/supabase/server");
 var communication_service_1 = require("./communication-service");
 var no_show_predictor_1 = require("./no-show-predictor");
 var scheduling_templates_1 = require("./scheduling-templates");
-var SchedulingCommunicationWorkflow = /** @class */ (function () {
+var SchedulingCommunicationWorkflow = /** @class */ (() => {
   function SchedulingCommunicationWorkflow() {
     this.supabase = (0, server_1.createClient)();
     this.communicationService = new communication_service_1.CommunicationService();
@@ -327,11 +324,11 @@ var SchedulingCommunicationWorkflow = /** @class */ (function () {
    * Create reminder workflows based on configuration
    * This method is used for testing and direct workflow creation
    */
-  SchedulingCommunicationWorkflow.prototype.createReminderWorkflows = function (
+  SchedulingCommunicationWorkflow.prototype.createReminderWorkflows = (
     appointmentId,
     config,
     appointment,
-  ) {
+  ) => {
     var _a, _b;
     var workflows = [];
     if ((_a = config.reminderSettings) === null || _a === void 0 ? void 0 : _a.enabled24h) {
@@ -776,7 +773,7 @@ var SchedulingCommunicationWorkflow = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var workflowId;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         workflowId = "reminder_".concat(timing, "_").concat(appointment.id, "_").concat(Date.now());
         return [
           2 /*return*/,
@@ -913,7 +910,7 @@ var SchedulingCommunicationWorkflow = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var workflowId;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         workflowId = "no_show_prevention_".concat(appointment.id, "_").concat(Date.now());
         return [
           2 /*return*/,
@@ -976,10 +973,10 @@ var SchedulingCommunicationWorkflow = /** @class */ (function () {
   /**
    * Helper methods
    */
-  SchedulingCommunicationWorkflow.prototype.calculateConfirmationTime = function (
+  SchedulingCommunicationWorkflow.prototype.calculateConfirmationTime = (
     appointmentDate,
     sendTime,
-  ) {
+  ) => {
     var _a = sendTime.split(":").map(Number),
       hours = _a[0],
       minutes = _a[1];
@@ -988,18 +985,15 @@ var SchedulingCommunicationWorkflow = /** @class */ (function () {
     confirmationDate.setHours(hours, minutes, 0, 0);
     return confirmationDate;
   };
-  SchedulingCommunicationWorkflow.prototype.calculateInterventionTime = function (
+  SchedulingCommunicationWorkflow.prototype.calculateInterventionTime = (
     appointmentDate,
     timing,
-  ) {
+  ) => {
     var hours = parseInt(timing.replace("h", ""));
     return new Date(appointmentDate.getTime() - hours * 60 * 60 * 1000);
   };
-  SchedulingCommunicationWorkflow.prototype.generateConfirmationToken = function () {
-    return (
-      Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-    );
-  };
+  SchedulingCommunicationWorkflow.prototype.generateConfirmationToken = () =>
+    Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   SchedulingCommunicationWorkflow.prototype.saveWorkflow = function (workflow) {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
@@ -1083,34 +1077,30 @@ var SchedulingCommunicationWorkflow = /** @class */ (function () {
       });
     });
   };
-  SchedulingCommunicationWorkflow.prototype.mapToWorkflowExecution = function (data) {
-    return {
-      id: data.id,
-      appointmentId: data.appointment_id,
-      patientId: data.patient_id,
-      clinicId: data.clinic_id,
-      workflowType: data.workflow_type,
-      status: data.status,
-      steps: data.steps || [],
-      scheduledAt: new Date(data.scheduled_at),
-      startedAt: data.started_at ? new Date(data.started_at) : undefined,
-      completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
-      results: data.results || {
-        messagesSent: 0,
-        messagesDelivered: 0,
-        responseReceived: false,
-        noShowPrevented: false,
-        waitlistFilled: false,
-        cost: 0,
-        effectiveness: 0,
-      },
-      metadata: data.metadata || {},
-    };
-  };
+  SchedulingCommunicationWorkflow.prototype.mapToWorkflowExecution = (data) => ({
+    id: data.id,
+    appointmentId: data.appointment_id,
+    patientId: data.patient_id,
+    clinicId: data.clinic_id,
+    workflowType: data.workflow_type,
+    status: data.status,
+    steps: data.steps || [],
+    scheduledAt: new Date(data.scheduled_at),
+    startedAt: data.started_at ? new Date(data.started_at) : undefined,
+    completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
+    results: data.results || {
+      messagesSent: 0,
+      messagesDelivered: 0,
+      responseReceived: false,
+      noShowPrevented: false,
+      waitlistFilled: false,
+      cost: 0,
+      effectiveness: 0,
+    },
+    metadata: data.metadata || {},
+  });
   return SchedulingCommunicationWorkflow;
 })();
 exports.SchedulingCommunicationWorkflow = SchedulingCommunicationWorkflow;
-var createschedulingCommunicationWorkflow = function () {
-  return new SchedulingCommunicationWorkflow();
-};
+var createschedulingCommunicationWorkflow = () => new SchedulingCommunicationWorkflow();
 exports.createschedulingCommunicationWorkflow = createschedulingCommunicationWorkflow;

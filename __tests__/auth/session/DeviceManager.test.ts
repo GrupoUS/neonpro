@@ -9,10 +9,10 @@
  * @created 2024
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { DeviceManager } from "../../../lib/auth/session/DeviceManager";
-import { createMockDevice, createTestDatabase, cleanup } from "./setup";
-import type { DeviceConfig, DeviceData } from "../../../lib/auth/session/types";
+import type { DeviceConfig } from "../../../lib/auth/session/types";
+import { cleanup, createMockDevice, createTestDatabase } from "./setup";
 
 // Mock Supabase
 const mockSupabase = {
@@ -53,11 +53,11 @@ jest.mock("@supabase/supabase-js", () => ({
 
 describe("DeviceManager", () => {
   let deviceManager: DeviceManager;
-  let testDb: ReturnType<typeof createTestDatabase>;
+  let _testDb: ReturnType<typeof createTestDatabase>;
   let mockConfig: DeviceConfig;
 
   beforeEach(() => {
-    testDb = createTestDatabase();
+    _testDb = createTestDatabase();
 
     mockConfig = {
       maxDevicesPerUser: 10,

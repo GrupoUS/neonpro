@@ -387,8 +387,8 @@ export class HealthcareMetrics {
   }
 
   // Health check
-  getHealthStatus(): { status: string; metrics: number } {
-    const metricNames = promClient.register.getMetricsAsJSON();
+  async getHealthStatus(): Promise<{ status: string; metrics: number }> {
+    const metricNames = await promClient.register.getMetricsAsJSON();
     return {
       status: "healthy",
       metrics: metricNames.length,
@@ -405,7 +405,7 @@ export async function registerMonitoring(fastify: FastifyInstance) {
   fastify.decorate("metrics", healthcareMetrics);
 
   // Metrics endpoint
-  fastify.get("/metrics", async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.get("/metrics", async (_request: FastifyRequest, reply: FastifyReply) => {
     const metrics = await healthcareMetrics.getMetrics();
     reply.header("Content-Type", promClient.register.contentType).send(metrics);
   });
@@ -441,4 +441,4 @@ export async function registerMonitoring(fastify: FastifyInstance) {
 }
 
 // Default export for the plugin function
-export default monitoringPlugin;
+export default registerMonitoring;

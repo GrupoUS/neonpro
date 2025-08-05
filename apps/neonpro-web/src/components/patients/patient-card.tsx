@@ -1,25 +1,25 @@
 "use client";
 
-import React from "react";
 import type {
-  Eye,
-  Calendar,
-  Edit,
+  Activity,
+  AlertTriangle,
   Archive,
+  Calendar,
+  Clock,
+  Edit,
+  Eye,
+  Heart,
+  Mail,
+  MapPin,
   MoreHorizontal,
   Phone,
-  Mail,
-  AlertTriangle,
-  Heart,
-  Clock,
-  MapPin,
-  Activity,
 } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import React from "react";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Checkbox } from "@/components/ui/checkbox";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   DropdownMenu,
   DropdownMenuContent,

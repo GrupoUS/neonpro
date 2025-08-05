@@ -1,14 +1,14 @@
 // Example API route with Sentry integration
 // This demonstrates how to use the monitoring utilities
 
+import * as Sentry from "@sentry/nextjs";
 import type { NextRequest, NextResponse } from "next/server";
 import type {
-  withErrorMonitoring,
   reportError,
-  trackUserAction,
   trackBusinessMetric,
+  trackUserAction,
+  withErrorMonitoring,
 } from "@/lib/monitoring";
-import * as Sentry from "@sentry/nextjs";
 
 // Example of a protected API route with error monitoring
 export const POST = withErrorMonitoring(async (request: NextRequest) => {

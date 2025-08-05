@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateProtocolVersionSchema =
   exports.createProtocolVersionSchema =
@@ -25,9 +24,7 @@ exports.createProtocolFeedbackSchema = zod_1.z.object({
   rating: zod_1.z.number().min(1).max(5),
   comment: zod_1.z.string().optional(),
   metrics: zod_1.z.record(zod_1.z.number()),
-  timestamp: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  timestamp: zod_1.z.date().default(() => new Date()),
 });
 exports.updateProtocolFeedbackSchema = exports.createProtocolFeedbackSchema.partial();
 exports.createProtocolOutcomeSchema = zod_1.z.object({
@@ -36,9 +33,7 @@ exports.createProtocolOutcomeSchema = zod_1.z.object({
   success: zod_1.z.boolean(),
   analysis: zod_1.z.string(),
   recommendations: zod_1.z.array(zod_1.z.string()),
-  timestamp: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  timestamp: zod_1.z.date().default(() => new Date()),
 });
 exports.createProtocolVersionSchema = zod_1.z.object({
   protocolId: zod_1.z.string().uuid(),

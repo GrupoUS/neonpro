@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentBookingFlow;
 var client_1 = require("@/app/utils/supabase/client");
@@ -165,7 +162,6 @@ var STEP_DESCRIPTIONS = {
   confirmation: "Revise e confirme seu agendamento",
 };
 function AppointmentBookingFlow(_a) {
-  var _this = this;
   var _b = _a.className,
     className = _b === void 0 ? "" : _b;
   var _c = (0, react_1.useState)("service"),
@@ -197,13 +193,13 @@ function AppointmentBookingFlow(_a) {
     setError = _l[1];
   var router = (0, navigation_1.useRouter)();
   // Initialize bookingStartTime on client side only
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     setBookingStartTime(Date.now());
   }, []);
   var steps = ["service", "professional", "time", "notes", "confirmation"];
   var currentStepIndex = steps.indexOf(currentStep);
   var progress = ((currentStepIndex + 1) / steps.length) * 100;
-  var canProceedToNext = function () {
+  var canProceedToNext = () => {
     switch (currentStep) {
       case "service":
         return selectedService !== null;
@@ -219,10 +215,8 @@ function AppointmentBookingFlow(_a) {
         return false;
     }
   };
-  var canGoBack = function () {
-    return currentStepIndex > 0 && currentStep !== "confirmation";
-  };
-  var handleNext = function () {
+  var canGoBack = () => currentStepIndex > 0 && currentStep !== "confirmation";
+  var handleNext = () => {
     if (!canProceedToNext()) return;
     var nextIndex = currentStepIndex + 1;
     if (nextIndex < steps.length) {
@@ -230,7 +224,7 @@ function AppointmentBookingFlow(_a) {
       setError("");
     }
   };
-  var handleBack = function () {
+  var handleBack = () => {
     if (!canGoBack()) return;
     var prevIndex = currentStepIndex - 1;
     if (prevIndex >= 0) {
@@ -238,8 +232,8 @@ function AppointmentBookingFlow(_a) {
       setError("");
     }
   };
-  var handleConfirmBooking = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleConfirmBooking = () =>
+    __awaiter(this, void 0, void 0, function () {
       var supabase,
         _a,
         availabilityCheck,
@@ -250,7 +244,7 @@ function AppointmentBookingFlow(_a) {
         bookingError,
         bookingDuration,
         err_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             if (!selectedService || !selectedTimeSlot) {
@@ -326,8 +320,7 @@ function AppointmentBookingFlow(_a) {
         }
       });
     });
-  };
-  var getElapsedTime = function () {
+  var getElapsedTime = () => {
     if (!bookingStartTime) return "0s";
     var elapsed = (Date.now() - bookingStartTime) / 1000;
     var minutes = Math.floor(elapsed / 60);
@@ -337,7 +330,7 @@ function AppointmentBookingFlow(_a) {
     }
     return "".concat(seconds, "s");
   };
-  var renderStepContent = function () {
+  var renderStepContent = () => {
     switch (currentStep) {
       case "service":
         return (
@@ -368,7 +361,7 @@ function AppointmentBookingFlow(_a) {
               start: new Date().toISOString().split("T")[0],
               end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
             }}
-            onSlotSelect={function (slot) {
+            onSlotSelect={(slot) => {
               // Convert RTTimeSlot to TimeSlot format for backward compatibility
               setSelectedTimeSlot({
                 datetime: "".concat(slot.date, "T").concat(slot.time),
@@ -380,10 +373,10 @@ function AppointmentBookingFlow(_a) {
                     : selectedProfessional.name,
               });
             }}
-            onSlotReserve={function (slotId) {
-              return __awaiter(_this, void 0, void 0, function () {
+            onSlotReserve={(slotId) =>
+              __awaiter(this, void 0, void 0, function () {
                 var supabase, error_2, error_1;
-                return __generator(this, function (_a) {
+                return __generator(this, (_a) => {
                   switch (_a.label) {
                     case 0:
                       _a.trys.push([0, 2, , 3]);
@@ -417,8 +410,8 @@ function AppointmentBookingFlow(_a) {
                       return [2 /*return*/];
                   }
                 });
-              });
-            }}
+              })
+            }
             patientId="current_user"
             showAlternatives={true}
             maxAlternatives={3}
@@ -484,35 +477,33 @@ function AppointmentBookingFlow(_a) {
 
           {/* Step Navigation */}
           <div className="flex justify-between items-center mt-6">
-            {steps.map(function (step, index) {
-              return (
+            {steps.map((step, index) => (
+              <div
+                key={step}
+                className={"flex items-center ".concat(index < steps.length - 1 ? "flex-1" : "")}
+              >
                 <div
-                  key={step}
-                  className={"flex items-center ".concat(index < steps.length - 1 ? "flex-1" : "")}
-                >
-                  <div
-                    className={"flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ".concat(
-                      index < currentStepIndex
-                        ? "bg-green-100 text-green-600"
-                        : index === currentStepIndex
-                          ? "bg-blue-100 text-blue-600"
-                          : "bg-gray-100 text-gray-400",
-                    )}
-                  >
-                    {index < currentStepIndex
-                      ? <lucide_react_1.CheckCircle2 className="h-4 w-4" />
-                      : index + 1}
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div
-                      className={"flex-1 h-1 mx-2 ".concat(
-                        index < currentStepIndex ? "bg-green-200" : "bg-gray-200",
-                      )}
-                    />
+                  className={"flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium ".concat(
+                    index < currentStepIndex
+                      ? "bg-green-100 text-green-600"
+                      : index === currentStepIndex
+                        ? "bg-blue-100 text-blue-600"
+                        : "bg-gray-100 text-gray-400",
                   )}
+                >
+                  {index < currentStepIndex
+                    ? <lucide_react_1.CheckCircle2 className="h-4 w-4" />
+                    : index + 1}
                 </div>
-              );
-            })}
+                {index < steps.length - 1 && (
+                  <div
+                    className={"flex-1 h-1 mx-2 ".concat(
+                      index < currentStepIndex ? "bg-green-200" : "bg-gray-200",
+                    )}
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>

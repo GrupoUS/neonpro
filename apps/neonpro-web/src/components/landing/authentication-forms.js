@@ -1,6 +1,5 @@
 // components/landing/authentication-forms.tsx
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthenticationForms = AuthenticationForms;
 var button_1 = require("@/components/ui/button");
@@ -86,23 +85,21 @@ function AuthenticationForms(_a) {
             <card_1.CardContent className="p-6">
               {/* Features List */}
               <div className="space-y-4 mb-6">
-                {professionalFeatures.map(function (feature, index) {
-                  return (
-                    <div key={index} className="flex items-start space-x-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900 flex-shrink-0 mt-0.5">
-                        <feature.icon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-slate-900 dark:text-white text-sm">
-                          {feature.title}
-                        </h4>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm">
-                          {feature.description}
-                        </p>
-                      </div>
+                {professionalFeatures.map((feature, index) => (
+                  <div key={index} className="flex items-start space-x-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100 dark:bg-sky-900 flex-shrink-0 mt-0.5">
+                      <feature.icon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
                     </div>
-                  );
-                })}
+                    <div>
+                      <h4 className="font-semibold text-slate-900 dark:text-white text-sm">
+                        {feature.title}
+                      </h4>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* Professional Access Features */}
@@ -178,23 +175,21 @@ function AuthenticationForms(_a) {
             <card_1.CardContent className="p-6">
               {/* Features List */}
               <div className="space-y-4 mb-6">
-                {patientFeatures.map(function (feature, index) {
-                  return (
-                    <div key={index} className="flex items-start space-x-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-100 dark:bg-pink-900 flex-shrink-0 mt-0.5">
-                        <feature.icon className="h-4 w-4 text-pink-600 dark:text-pink-400" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-slate-900 dark:text-white text-sm">
-                          {feature.title}
-                        </h4>
-                        <p className="text-slate-600 dark:text-slate-400 text-sm">
-                          {feature.description}
-                        </p>
-                      </div>
+                {patientFeatures.map((feature, index) => (
+                  <div key={index} className="flex items-start space-x-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-100 dark:bg-pink-900 flex-shrink-0 mt-0.5">
+                      <feature.icon className="h-4 w-4 text-pink-600 dark:text-pink-400" />
                     </div>
-                  );
-                })}
+                    <div>
+                      <h4 className="font-semibold text-slate-900 dark:text-white text-sm">
+                        {feature.title}
+                      </h4>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm">
+                        {feature.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* Patient Access Features */}

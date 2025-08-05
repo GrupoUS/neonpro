@@ -1,12 +1,7 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentFormFields = exports.AppointmentForm = void 0;
 // Healthcare-specific appointment form component
-var AppointmentForm = function () {
-  return null;
-};
+var AppointmentForm = () => null;
 exports.AppointmentForm = AppointmentForm;
-var AppointmentFormFields = function () {
-  return null;
-};
+var AppointmentFormFields = () => null;
 exports.AppointmentFormFields = AppointmentFormFields;

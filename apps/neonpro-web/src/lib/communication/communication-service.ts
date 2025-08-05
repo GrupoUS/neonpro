@@ -4,21 +4,21 @@
  */
 
 import type { createClient } from "@/lib/supabase/server";
-import type {
-  CommunicationChannel,
-  MessageType,
-  CommunicationLog,
-  MessageTemplate,
-  PatientCommPreferences,
-  TemplateVariables,
-  CommunicationJob,
-  NoShowPrediction,
-} from "./types";
-import type { SMSProvider } from "./providers/sms-provider";
+import type { NoShowPredictor } from "./no-show-predictor";
 import type { EmailProvider } from "./providers/email-provider";
+import type { SMSProvider } from "./providers/sms-provider";
 import type { WhatsAppProvider } from "./providers/whatsapp-provider";
 import type { TemplateEngine } from "./template-engine";
-import type { NoShowPredictor } from "./no-show-predictor";
+import type {
+  CommunicationChannel,
+  CommunicationJob,
+  CommunicationLog,
+  MessageTemplate,
+  MessageType,
+  NoShowPrediction,
+  PatientCommPreferences,
+  TemplateVariables,
+} from "./types";
 import type { WaitlistManager } from "./waitlist-manager";
 
 export class CommunicationService {

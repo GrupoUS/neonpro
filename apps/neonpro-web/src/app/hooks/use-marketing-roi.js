@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Marketing ROI Analysis Hooks
  * React hooks for managing marketing ROI data and operations
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,7 +155,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useMarketingCampaigns = useMarketingCampaigns;
 exports.useMarketingCampaign = useMarketingCampaign;
@@ -192,7 +189,6 @@ var sonner_1 = require("sonner");
  * Hook to get marketing campaigns with filtering and pagination
  */
 function useMarketingCampaigns(clinicId, filters, page, limit) {
-  var _this = this;
   if (page === void 0) {
     page = 1;
   }
@@ -201,10 +197,10 @@ function useMarketingCampaigns(clinicId, filters, page, limit) {
   }
   return (0, react_query_1.useQuery)({
     queryKey: ["marketing-campaigns", clinicId, filters, page, limit],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams({
@@ -235,8 +231,7 @@ function useMarketingCampaigns(clinicId, filters, page, limit) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId,
   });
 }
@@ -244,13 +239,12 @@ function useMarketingCampaigns(clinicId, filters, page, limit) {
  * Hook to get a specific marketing campaign
  */
 function useMarketingCampaign(campaignId) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["marketing-campaign", campaignId],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/marketing-roi/campaigns/".concat(campaignId))];
@@ -262,8 +256,7 @@ function useMarketingCampaign(campaignId) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!campaignId,
   });
 }
@@ -271,15 +264,14 @@ function useMarketingCampaign(campaignId) {
  * Hook to create a new marketing campaign
  */
 function useCreateMarketingCampaign() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var clinicId = _b.clinicId,
           campaignData = _b.campaignData;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -294,7 +286,7 @@ function useCreateMarketingCampaign() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -303,9 +295,8 @@ function useCreateMarketingCampaign() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["marketing-campaigns", variables.clinicId],
       });
@@ -314,7 +305,7 @@ function useCreateMarketingCampaign() {
       });
       sonner_1.toast.success("Campanha de marketing criada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao criar campanha: ".concat(error.message));
     },
   });
@@ -323,15 +314,14 @@ function useCreateMarketingCampaign() {
  * Hook to update campaign metrics and recalculate ROI
  */
 function useUpdateCampaignMetrics() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var campaignId = _b.campaignId,
           metrics = _b.metrics;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -346,7 +336,7 @@ function useUpdateCampaignMetrics() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -355,9 +345,8 @@ function useUpdateCampaignMetrics() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["marketing-campaign", variables.campaignId],
       });
@@ -372,7 +361,7 @@ function useUpdateCampaignMetrics() {
       });
       sonner_1.toast.success("Métricas da campanha atualizadas com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao atualizar m\u00E9tricas: ".concat(error.message));
     },
   });
@@ -382,14 +371,13 @@ function useUpdateCampaignMetrics() {
  * Hook to get treatment profitability analysis
  */
 function useTreatmentProfitabilityAnalysis(clinicId, filters) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["treatment-profitability", clinicId, filters],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               params = new URLSearchParams({
@@ -401,9 +389,7 @@ function useTreatmentProfitabilityAnalysis(clinicId, filters) {
                   ? void 0
                   : _a.length
               ) {
-                filters.treatment_ids.forEach(function (id) {
-                  return params.append("treatment_ids", id);
-                });
+                filters.treatment_ids.forEach((id) => params.append("treatment_ids", id));
               }
               if (filters === null || filters === void 0 ? void 0 : filters.min_roi)
                 params.append("min_roi", filters.min_roi.toString());
@@ -429,8 +415,7 @@ function useTreatmentProfitabilityAnalysis(clinicId, filters) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId,
   });
 }
@@ -438,17 +423,16 @@ function useTreatmentProfitabilityAnalysis(clinicId, filters) {
  * Hook to calculate treatment ROI for a specific treatment
  */
 function useCalculateTreatmentROI() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var clinicId = _b.clinicId,
           treatmentId = _b.treatmentId,
           periodStart = _b.periodStart,
           periodEnd = _b.periodEnd;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -468,7 +452,7 @@ function useCalculateTreatmentROI() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -477,9 +461,8 @@ function useCalculateTreatmentROI() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["treatment-profitability", variables.clinicId],
       });
@@ -488,7 +471,7 @@ function useCalculateTreatmentROI() {
       });
       sonner_1.toast.success("Análise de ROI do tratamento calculada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao calcular ROI do tratamento: ".concat(error.message));
     },
   });
@@ -498,13 +481,12 @@ function useCalculateTreatmentROI() {
  * Hook to get CAC & LTV analysis
  */
 function useCACLTVAnalysis(clinicId, periodStart, periodEnd) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["cac-ltv-analysis", clinicId, periodStart, periodEnd],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams({
@@ -521,8 +503,7 @@ function useCACLTVAnalysis(clinicId, periodStart, periodEnd) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId && !!periodStart && !!periodEnd,
   });
 }
@@ -530,17 +511,16 @@ function useCACLTVAnalysis(clinicId, periodStart, periodEnd) {
  * Hook to calculate CAC for a specific channel
  */
 function useCalculateCAC() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var clinicId = _b.clinicId,
           channel = _b.channel,
           periodStart = _b.periodStart,
           periodEnd = _b.periodEnd;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -560,7 +540,7 @@ function useCalculateCAC() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -569,15 +549,14 @@ function useCalculateCAC() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["cac-ltv-analysis", variables.clinicId],
       });
       sonner_1.toast.success("CAC calculado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao calcular CAC: ".concat(error.message));
     },
   });
@@ -586,16 +565,15 @@ function useCalculateCAC() {
  * Hook to calculate LTV for customers
  */
 function useCalculateLTV() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var clinicId = _b.clinicId,
           patientId = _b.patientId,
           acquisitionChannel = _b.acquisitionChannel;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -614,7 +592,7 @@ function useCalculateLTV() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -623,15 +601,14 @@ function useCalculateLTV() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["cac-ltv-analysis", variables.clinicId],
       });
       sonner_1.toast.success("LTV calculado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao calcular LTV: ".concat(error.message));
     },
   });
@@ -641,13 +618,12 @@ function useCalculateLTV() {
  * Hook to get active ROI alerts
  */
 function useROIAlerts(clinicId) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["roi-alerts", clinicId],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/marketing-roi/alerts?clinic_id=".concat(clinicId))];
@@ -659,8 +635,7 @@ function useROIAlerts(clinicId) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId,
     refetchInterval: 30000, // Refetch every 30 seconds for real-time alerts
   });
@@ -669,15 +644,14 @@ function useROIAlerts(clinicId) {
  * Hook to create a new ROI alert
  */
 function useCreateROIAlert() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var clinicId = _b.clinicId,
           alertData = _b.alertData;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -692,7 +666,7 @@ function useCreateROIAlert() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -701,15 +675,14 @@ function useCreateROIAlert() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["roi-alerts", variables.clinicId],
       });
       sonner_1.toast.success("Alerta de ROI criado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao criar alerta: ".concat(error.message));
     },
   });
@@ -718,15 +691,14 @@ function useCreateROIAlert() {
  * Hook to acknowledge/resolve ROI alerts
  */
 function useUpdateROIAlert() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var alertId = _b.alertId,
           status = _b.status;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -741,7 +713,7 @@ function useUpdateROIAlert() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -750,9 +722,8 @@ function useUpdateROIAlert() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
+      }),
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["roi-alerts"],
       });
@@ -763,7 +734,7 @@ function useUpdateROIAlert() {
       };
       sonner_1.toast.success(statusMessages[data.status] || "Alerta atualizado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao atualizar alerta: ".concat(error.message));
     },
   });
@@ -773,13 +744,12 @@ function useUpdateROIAlert() {
  * Hook to get optimization recommendations
  */
 function useOptimizationRecommendations(clinicId) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["optimization-recommendations", clinicId],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -796,8 +766,7 @@ function useOptimizationRecommendations(clinicId) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId,
   });
 }
@@ -805,14 +774,13 @@ function useOptimizationRecommendations(clinicId) {
  * Hook to generate new optimization recommendations
  */
 function useGenerateOptimizationRecommendations() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var clinicId = _b.clinicId;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -827,7 +795,7 @@ function useGenerateOptimizationRecommendations() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -836,15 +804,14 @@ function useGenerateOptimizationRecommendations() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["optimization-recommendations", variables.clinicId],
       });
       sonner_1.toast.success("Recomendações de otimização geradas com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao gerar recomenda\u00E7\u00F5es: ".concat(error.message));
     },
   });
@@ -853,15 +820,14 @@ function useGenerateOptimizationRecommendations() {
  * Hook to update recommendation status
  */
 function useUpdateRecommendationStatus() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var recommendationId = _b.recommendationId,
           status = _b.status;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -876,7 +842,7 @@ function useUpdateRecommendationStatus() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -885,9 +851,8 @@ function useUpdateRecommendationStatus() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
+      }),
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["optimization-recommendations"],
       });
@@ -899,7 +864,7 @@ function useUpdateRecommendationStatus() {
       };
       sonner_1.toast.success(statusMessages[data.status] || "Recomendação atualizada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao atualizar recomenda\u00E7\u00E3o: ".concat(error.message));
     },
   });
@@ -916,7 +881,6 @@ function useROIDashboardMetrics(
   includeComparisons,
   includeForecasts,
 ) {
-  var _this = this;
   if (includeTrends === void 0) {
     includeTrends = false;
   }
@@ -936,10 +900,10 @@ function useROIDashboardMetrics(
       includeComparisons,
       includeForecasts,
     ],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams({
@@ -959,8 +923,7 @@ function useROIDashboardMetrics(
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId && !!periodStart && !!periodEnd,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -969,16 +932,15 @@ function useROIDashboardMetrics(
  * Hook to get ROI trend data for visualization
  */
 function useROITrendData(clinicId, periodStart, periodEnd, granularity) {
-  var _this = this;
   if (granularity === void 0) {
     granularity = "daily";
   }
   return (0, react_query_1.useQuery)({
     queryKey: ["roi-trend-data", clinicId, periodStart, periodEnd, granularity],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams({
@@ -996,8 +958,7 @@ function useROITrendData(clinicId, periodStart, periodEnd, granularity) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId && !!periodStart && !!periodEnd,
   });
 }
@@ -1012,7 +973,6 @@ function useROIComparisons(
   previousPeriodStart,
   previousPeriodEnd,
 ) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: [
       "roi-comparisons",
@@ -1023,10 +983,10 @@ function useROIComparisons(
       previousPeriodStart,
       previousPeriodEnd,
     ],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams({
@@ -1046,8 +1006,7 @@ function useROIComparisons(
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled:
       !!clinicId &&
       !!currentPeriodStart &&
@@ -1061,18 +1020,17 @@ function useROIComparisons(
  * Hook to generate ROI forecasts
  */
 function useGenerateROIForecast() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var clinicId = _b.clinicId,
           forecastType = _b.forecastType,
           entityId = _b.entityId,
           forecastPeriodStart = _b.forecastPeriodStart,
           forecastPeriodEnd = _b.forecastPeriodEnd;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -1093,7 +1051,7 @@ function useGenerateROIForecast() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -1102,15 +1060,14 @@ function useGenerateROIForecast() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data, variables) {
+      }),
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["roi-forecasts", variables.clinicId],
       });
       sonner_1.toast.success("Previsão de ROI gerada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao gerar previs\u00E3o: ".concat(error.message));
     },
   });
@@ -1119,13 +1076,12 @@ function useGenerateROIForecast() {
  * Hook to get ROI forecasts
  */
 function useROIForecasts(clinicId, forecastType) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["roi-forecasts", clinicId, forecastType],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams({
@@ -1143,8 +1099,7 @@ function useROIForecasts(clinicId, forecastType) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId,
   });
 }
@@ -1153,13 +1108,12 @@ function useROIForecasts(clinicId, forecastType) {
  * Hook to get marketing ROI insights and recommendations
  */
 function useMarketingROIInsights(clinicId) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["marketing-roi-insights", clinicId],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -1174,8 +1128,7 @@ function useMarketingROIInsights(clinicId) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId,
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
@@ -1184,13 +1137,12 @@ function useMarketingROIInsights(clinicId) {
  * Hook to get key ROI metrics summary
  */
 function useROIMetricsSummary(clinicId, periodStart, periodEnd) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["roi-metrics-summary", clinicId, periodStart, periodEnd],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams({
@@ -1207,8 +1159,7 @@ function useROIMetricsSummary(clinicId, periodStart, periodEnd) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId && !!periodStart && !!periodEnd,
   });
 }
@@ -1216,16 +1167,15 @@ function useROIMetricsSummary(clinicId, periodStart, periodEnd) {
  * Hook for bulk operations on campaigns
  */
 function useBulkCampaignOperations() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response, error;
         var operation = _b.operation,
           campaignIds = _b.campaignIds,
           data = _b.data;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -1244,7 +1194,7 @@ function useBulkCampaignOperations() {
               ];
             case 1:
               response = _c.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _c.sent();
@@ -1253,9 +1203,8 @@ function useBulkCampaignOperations() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["marketing-campaigns"],
       });
@@ -1264,7 +1213,7 @@ function useBulkCampaignOperations() {
       });
       sonner_1.toast.success("Operação em lote executada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro na opera\u00E7\u00E3o em lote: ".concat(error.message));
     },
   });
@@ -1273,16 +1222,15 @@ function useBulkCampaignOperations() {
  * Hook for real-time ROI monitoring
  */
 function useRealTimeROIMonitoring(clinicId, enabled) {
-  var _this = this;
   if (enabled === void 0) {
     enabled = true;
   }
   return (0, react_query_1.useQuery)({
     queryKey: ["real-time-roi-monitoring", clinicId],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -1297,8 +1245,7 @@ function useRealTimeROIMonitoring(clinicId, enabled) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!clinicId && enabled,
     refetchInterval: 10000, // Refetch every 10 seconds
     refetchIntervalInBackground: true,
@@ -1308,14 +1255,13 @@ function useRealTimeROIMonitoring(clinicId, enabled) {
  * Custom hook for managing ROI calculation settings
  */
 function useROICalculationSettings(clinicId) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var _a = (0, react_query_1.useQuery)({
       queryKey: ["roi-calculation-settings", clinicId],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var response;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -1330,17 +1276,16 @@ function useROICalculationSettings(clinicId) {
                 return [2 /*return*/, response.json()];
             }
           });
-        });
-      },
+        }),
       enabled: !!clinicId,
     }),
     settings = _a.data,
     isLoading = _a.isLoading;
   var updateSettings = (0, react_query_1.useMutation)({
-    mutationFn: function (newSettings) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (newSettings) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, error;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -1355,7 +1300,7 @@ function useROICalculationSettings(clinicId) {
               ];
             case 1:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 3];
+              if (response.ok) return [3 /*break*/, 3];
               return [4 /*yield*/, response.json()];
             case 2:
               error = _a.sent();
@@ -1364,9 +1309,8 @@ function useROICalculationSettings(clinicId) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["roi-calculation-settings", clinicId],
       });
@@ -1382,7 +1326,7 @@ function useROICalculationSettings(clinicId) {
       });
       sonner_1.toast.success("Configurações de cálculo de ROI atualizadas com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Erro ao atualizar configura\u00E7\u00F5es: ".concat(error.message));
     },
   });

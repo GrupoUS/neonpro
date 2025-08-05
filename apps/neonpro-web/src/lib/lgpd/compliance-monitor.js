@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Compliance Monitoring System
  * Implements real-time compliance monitoring and violation detection
@@ -17,20 +16,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -42,15 +41,15 @@ var __extends =
   })();
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -70,13 +69,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -98,9 +97,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -172,7 +169,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.complianceMonitor =
   exports.ComplianceMonitor =
@@ -189,7 +186,7 @@ var events_1 = require("events");
  * LGPD Compliance Categories
  */
 var ComplianceCategory;
-(function (ComplianceCategory) {
+((ComplianceCategory) => {
   ComplianceCategory["CONSENT"] = "consent";
   ComplianceCategory["DATA_SUBJECT_RIGHTS"] = "data_subject_rights";
   ComplianceCategory["DATA_SECURITY"] = "data_security";
@@ -210,7 +207,7 @@ var ComplianceCategory;
  * LGPD Article References
  */
 var LGPDArticle;
-(function (LGPDArticle) {
+((LGPDArticle) => {
   LGPDArticle["ART_5"] = "art_5";
   LGPDArticle["ART_6"] = "art_6";
   LGPDArticle["ART_7"] = "art_7";
@@ -232,7 +229,7 @@ var LGPDArticle;
  * Violation Severity Levels
  */
 var ViolationSeverity;
-(function (ViolationSeverity) {
+((ViolationSeverity) => {
   ViolationSeverity["INFO"] = "info";
   ViolationSeverity["LOW"] = "low";
   ViolationSeverity["MEDIUM"] = "medium";
@@ -243,7 +240,7 @@ var ViolationSeverity;
  * Compliance Status Types
  */
 var ComplianceStatus;
-(function (ComplianceStatus) {
+((ComplianceStatus) => {
   ComplianceStatus["COMPLIANT"] = "compliant";
   ComplianceStatus["PARTIALLY_COMPLIANT"] = "partially_compliant";
   ComplianceStatus["NON_COMPLIANT"] = "non_compliant";
@@ -262,7 +259,7 @@ var ComplianceStatus;
  * - Regulatory requirement tracking
  * - Continuous improvement recommendations
  */
-var ComplianceMonitor = /** @class */ (function (_super) {
+var ComplianceMonitor = /** @class */ ((_super) => {
   __extends(ComplianceMonitor, _super);
   function ComplianceMonitor(config) {
     if (config === void 0) {
@@ -357,7 +354,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -376,7 +373,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
             return [4 /*yield*/, this.evaluateRule(rule, operation, context)];
           case 5:
             result = _a.sent();
-            if (!!result.compliant) return [3 /*break*/, 7];
+            if (result.compliant) return [3 /*break*/, 7];
             return [
               4 /*yield*/,
               this.createViolation({
@@ -400,9 +397,9 @@ var ComplianceMonitor = /** @class */ (function (_super) {
             _i++;
             return [3 /*break*/, 4];
           case 8:
-            criticalViolations = violations.filter(function (v) {
-              return v.severity === ViolationSeverity.CRITICAL;
-            });
+            criticalViolations = violations.filter(
+              (v) => v.severity === ViolationSeverity.CRITICAL,
+            );
             if (criticalViolations.length > 0 && this.config.notificationEnabled) {
               this.emit("compliance:critical_alert", {
                 alert: "".concat(
@@ -411,9 +408,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
                 ),
                 details: {
                   operation: operation,
-                  violations: criticalViolations.map(function (v) {
-                    return v.id;
-                  }),
+                  violations: criticalViolations.map((v) => v.id),
                   timestamp: new Date(),
                 },
               });
@@ -546,10 +541,8 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    */
   ComplianceMonitor.prototype.getActiveViolations = function () {
     return Array.from(this.violations.values())
-      .filter(function (v) {
-        return v.status === "detected" || v.status === "investigating";
-      })
-      .sort(function (a, b) {
+      .filter((v) => v.status === "detected" || v.status === "investigating")
+      .sort((a, b) => {
         var _a;
         // Sort by severity first, then by timestamp
         var severityOrder =
@@ -571,12 +564,8 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    */
   ComplianceMonitor.prototype.getViolationsByCategory = function (category) {
     return Array.from(this.violations.values())
-      .filter(function (v) {
-        return v.category === category;
-      })
-      .sort(function (a, b) {
-        return b.timestamp.getTime() - a.timestamp.getTime();
-      });
+      .filter((v) => v.category === category)
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   };
   /**
    * Get compliance requirements
@@ -705,12 +694,8 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    */
   ComplianceMonitor.prototype.getLatestAudit = function () {
     return Array.from(this.audits.values())
-      .filter(function (a) {
-        return a.status === "completed";
-      })
-      .sort(function (a, b) {
-        return b.endDate.getTime() - a.endDate.getTime();
-      })[0];
+      .filter((a) => a.status === "completed")
+      .sort((a, b) => b.endDate.getTime() - a.endDate.getTime())[0];
   };
   /**
    * Get compliance dashboard data
@@ -721,20 +706,20 @@ var ComplianceMonitor = /** @class */ (function (_super) {
     var requirements = this.getComplianceRequirements();
     var latestAudit = this.getLatestAudit();
     // Count violations by severity and category
-    var bySeverity = activeViolations.reduce(function (acc, v) {
+    var bySeverity = activeViolations.reduce((acc, v) => {
       acc[v.severity] = (acc[v.severity] || 0) + 1;
       return acc;
     }, {});
-    var byCategory = activeViolations.reduce(function (acc, v) {
+    var byCategory = activeViolations.reduce((acc, v) => {
       acc[v.category] = (acc[v.category] || 0) + 1;
       return acc;
     }, {});
     // Count requirements by status and risk
-    var byStatus = requirements.reduce(function (acc, r) {
+    var byStatus = requirements.reduce((acc, r) => {
       acc[r.implementationStatus] = (acc[r.implementationStatus] || 0) + 1;
       return acc;
     }, {});
-    var byRisk = requirements.reduce(function (acc, r) {
+    var byRisk = requirements.reduce((acc, r) => {
       acc[r.riskLevel] = (acc[r.riskLevel] || 0) + 1;
       return acc;
     }, {});
@@ -793,16 +778,16 @@ var ComplianceMonitor = /** @class */ (function (_super) {
           case 0:
             requirements = Array.from(this.requirements.values());
             violations = Array.from(this.violations.values());
-            activeViolations = violations.filter(function (v) {
-              return v.status === "detected" || v.status === "investigating";
-            });
+            activeViolations = violations.filter(
+              (v) => v.status === "detected" || v.status === "investigating",
+            );
             totalRequirements = requirements.length;
-            compliantRequirements = requirements.filter(function (r) {
-              return r.implementationStatus === ComplianceStatus.COMPLIANT;
-            }).length;
-            partiallyCompliantRequirements = requirements.filter(function (r) {
-              return r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT;
-            }).length;
+            compliantRequirements = requirements.filter(
+              (r) => r.implementationStatus === ComplianceStatus.COMPLIANT,
+            ).length;
+            partiallyCompliantRequirements = requirements.filter(
+              (r) => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT,
+            ).length;
             weightedScore =
               (compliantRequirements + partiallyCompliantRequirements * 0.5) / totalRequirements;
             violationPenalty = 0;
@@ -834,26 +819,22 @@ var ComplianceMonitor = /** @class */ (function (_super) {
             violationPenalty = Math.min(violationPenalty, 0.5);
             overallScore = Math.max(0, Math.min(100, weightedScore * 100 * (1 - violationPenalty)));
             byCategory = {};
-            _loop_1 = function (category) {
-              var categoryRequirements = requirements.filter(function (r) {
-                return r.category === category;
-              });
+            _loop_1 = (category) => {
+              var categoryRequirements = requirements.filter((r) => r.category === category);
               if (categoryRequirements.length === 0) {
                 byCategory[category] = 100; // Default if no requirements
                 return "continue";
               }
-              var compliant = categoryRequirements.filter(function (r) {
-                return r.implementationStatus === ComplianceStatus.COMPLIANT;
-              }).length;
-              var partiallyCompliant = categoryRequirements.filter(function (r) {
-                return r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT;
-              }).length;
+              var compliant = categoryRequirements.filter(
+                (r) => r.implementationStatus === ComplianceStatus.COMPLIANT,
+              ).length;
+              var partiallyCompliant = categoryRequirements.filter(
+                (r) => r.implementationStatus === ComplianceStatus.PARTIALLY_COMPLIANT,
+              ).length;
               var categoryWeightedScore =
                 (compliant + partiallyCompliant * 0.5) / categoryRequirements.length;
               // Adjust for violations in this category
-              var categoryViolations = activeViolations.filter(function (v) {
-                return v.category === category;
-              });
+              var categoryViolations = activeViolations.filter((v) => v.category === category);
               var categoryPenalty = 0;
               for (
                 var _d = 0, categoryViolations_1 = categoryViolations;
@@ -891,12 +872,12 @@ var ComplianceMonitor = /** @class */ (function (_super) {
               _loop_1(category);
             }
             riskAreas = Object.entries(byCategory)
-              .filter(function (_a) {
+              .filter((_a) => {
                 var _ = _a[0],
                   score = _a[1];
                 return score < 80;
               })
-              .map(function (_a) {
+              .map((_a) => {
                 var category = _a[0],
                   score = _a[1];
                 return {
@@ -906,9 +887,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
                   recommendations: _this.generateRecommendations(category),
                 };
               })
-              .sort(function (a, b) {
-                return a.score - b.score;
-              });
+              .sort((a, b) => a.score - b.score);
             // Create score object
             this.complianceScore = {
               overall: Math.round(overallScore),
@@ -937,9 +916,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
                 details: {
                   score: Math.round(overallScore),
                   threshold: this.config.alertThreshold,
-                  riskAreas: riskAreas.map(function (r) {
-                    return r.category;
-                  }),
+                  riskAreas: riskAreas.map((r) => r.category),
                   timestamp: new Date(),
                 },
               });
@@ -970,9 +947,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
               metadata: {
                 detectionSource: "automated_monitoring",
                 relatedRequirements: this.findRelatedRequirements(data.category, data.article).map(
-                  function (r) {
-                    return r.id;
-                  },
+                  (r) => r.id,
                 ),
               },
             };
@@ -990,10 +965,9 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    * Start monitoring interval
    */
   ComplianceMonitor.prototype.startMonitoringInterval = function () {
-    var _this = this;
     this.monitoringInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1003,8 +977,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.monitoringIntervalMinutes * 60 * 1000,
     );
   };
@@ -1012,10 +985,9 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    * Start score update interval
    */
   ComplianceMonitor.prototype.startScoreUpdateInterval = function () {
-    var _this = this;
     this.scoreUpdateInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1025,8 +997,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.scoreUpdateIntervalHours * 60 * 60 * 1000,
     );
   };
@@ -1039,7 +1010,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
       var _this = this;
       return __generator(this, function (_a) {
         try {
-          outdatedRequirements = Array.from(this.requirements.values()).filter(function (r) {
+          outdatedRequirements = Array.from(this.requirements.values()).filter((r) => {
             if (!r.lastVerified) return true;
             var lastVerified = new Date(r.lastVerified);
             var updateThreshold = new Date();
@@ -1051,12 +1022,10 @@ var ComplianceMonitor = /** @class */ (function (_super) {
           if (outdatedRequirements.length > 0) {
             this.logActivity("system", "outdated_requirements_detected", {
               count: outdatedRequirements.length,
-              requirements: outdatedRequirements.map(function (r) {
-                return r.id;
-              }),
+              requirements: outdatedRequirements.map((r) => r.id),
             });
           }
-          longStandingViolations = Array.from(this.violations.values()).filter(function (v) {
+          longStandingViolations = Array.from(this.violations.values()).filter((v) => {
             if (v.status !== "detected" && v.status !== "investigating") return false;
             var violationAge = Date.now() - v.timestamp.getTime();
             var ageInDays = violationAge / (1000 * 60 * 60 * 24);
@@ -1074,14 +1043,12 @@ var ComplianceMonitor = /** @class */ (function (_super) {
                 " long-standing compliance violations require attention",
               ),
               details: {
-                violations: longStandingViolations.map(function (v) {
-                  return {
-                    id: v.id,
-                    category: v.category,
-                    severity: v.severity,
-                    age: Math.floor((Date.now() - v.timestamp.getTime()) / (1000 * 60 * 60 * 24)),
-                  };
-                }),
+                violations: longStandingViolations.map((v) => ({
+                  id: v.id,
+                  category: v.category,
+                  severity: v.severity,
+                  age: Math.floor((Date.now() - v.timestamp.getTime()) / (1000 * 60 * 60 * 24)),
+                })),
                 timestamp: new Date(),
               },
             });
@@ -1113,7 +1080,6 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    * Get compliance rules for category
    */
   ComplianceMonitor.prototype.getComplianceRules = function (category) {
-    var _this = this;
     // In a real implementation, this would return actual rules
     // For now, we'll return placeholder rules
     return [
@@ -1121,13 +1087,10 @@ var ComplianceMonitor = /** @class */ (function (_super) {
         id: "rule_1",
         category: category,
         article: this.getCategoryArticle(category),
-        check: function () {
-          return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-              return [2 /*return*/, { compliant: true }];
-            });
-          });
-        },
+        check: () =>
+          __awaiter(this, void 0, void 0, function () {
+            return __generator(this, (_a) => [2 /*return*/, { compliant: true }]);
+          }),
       },
     ];
   };
@@ -1137,7 +1100,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
   ComplianceMonitor.prototype.evaluateRule = function (rule, operation, context) {
     return __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -1176,14 +1139,14 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    * Find related requirements
    */
   ComplianceMonitor.prototype.findRelatedRequirements = function (category, article) {
-    return Array.from(this.requirements.values()).filter(function (r) {
-      return r.category === category && r.article === article;
-    });
+    return Array.from(this.requirements.values()).filter(
+      (r) => r.category === category && r.article === article,
+    );
   };
   /**
    * Get category article
    */
-  ComplianceMonitor.prototype.getCategoryArticle = function (category) {
+  ComplianceMonitor.prototype.getCategoryArticle = (category) => {
     var _a;
     var articleMap =
       ((_a = {}),
@@ -1208,7 +1171,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
   /**
    * Calculate score trend
    */
-  ComplianceMonitor.prototype.calculateScoreTrend = function (period) {
+  ComplianceMonitor.prototype.calculateScoreTrend = (period) => {
     // In a real implementation, this would calculate from historical data
     // For now, we'll return placeholder data
     var result = {};
@@ -1228,7 +1191,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
   /**
    * Calculate category trend
    */
-  ComplianceMonitor.prototype.calculateCategoryTrend = function (category) {
+  ComplianceMonitor.prototype.calculateCategoryTrend = (category) => {
     // In a real implementation, this would calculate from historical data
     // For now, we'll return a random trend
     var trends = ["improving", "stable", "declining"];
@@ -1237,7 +1200,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
   /**
    * Calculate violation trend
    */
-  ComplianceMonitor.prototype.calculateViolationTrend = function () {
+  ComplianceMonitor.prototype.calculateViolationTrend = () => {
     // In a real implementation, this would calculate from historical data
     // For now, we'll return placeholder data
     var result = {};
@@ -1254,7 +1217,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
   /**
    * Generate recommendations
    */
-  ComplianceMonitor.prototype.generateRecommendations = function (category) {
+  ComplianceMonitor.prototype.generateRecommendations = (category) => {
     var _a;
     // In a real implementation, this would generate specific recommendations
     // For now, we'll return placeholder recommendations
@@ -1373,9 +1336,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    */
   ComplianceMonitor.prototype.loadViolations = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1383,9 +1344,7 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    */
   ComplianceMonitor.prototype.loadAudits = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1432,15 +1391,13 @@ var ComplianceMonitor = /** @class */ (function (_super) {
    */
   ComplianceMonitor.prototype.saveScoreHistory = function (score) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
    * Log activity
    */
-  ComplianceMonitor.prototype.logActivity = function (actor, action, details) {
+  ComplianceMonitor.prototype.logActivity = (actor, action, details) => {
     // In a real implementation, this would log to audit trail
     // For now, we'll just log to console
     console.log("[Compliance] ".concat(actor, " - ").concat(action, ":"), details);
@@ -1448,12 +1405,8 @@ var ComplianceMonitor = /** @class */ (function (_super) {
   /**
    * Generate ID
    */
-  ComplianceMonitor.prototype.generateId = function (prefix) {
-    return ""
-      .concat(prefix, "_")
-      .concat(Date.now(), "_")
-      .concat(Math.random().toString(36).substr(2, 9));
-  };
+  ComplianceMonitor.prototype.generateId = (prefix) =>
+    "".concat(prefix, "_").concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Shutdown the compliance monitor
    */
@@ -1495,12 +1448,11 @@ var ComplianceMonitor = /** @class */ (function (_super) {
     if (!this.complianceScore) {
       issues.push("Compliance score not calculated");
     }
-    var criticalViolations = Array.from(this.violations.values()).filter(function (v) {
-      return (
+    var criticalViolations = Array.from(this.violations.values()).filter(
+      (v) =>
         v.severity === ViolationSeverity.CRITICAL &&
-        (v.status === "detected" || v.status === "investigating")
-      );
-    }).length;
+        (v.status === "detected" || v.status === "investigating"),
+    ).length;
     if (criticalViolations > 0) {
       issues.push("".concat(criticalViolations, " critical violations active"));
     }

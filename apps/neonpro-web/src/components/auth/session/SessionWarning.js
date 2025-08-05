@@ -3,18 +3,17 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionWarning = SessionWarning;
 var react_1 = require("react");
@@ -152,7 +149,6 @@ var utils_1 = require("@/lib/utils");
 // MAIN COMPONENT
 // =====================================================
 function SessionWarning(_a) {
-  var _this = this;
   var className = _a.className,
     _b = _a.warningThreshold,
     warningThreshold = _b === void 0 ? 5 : _b, // 5 minutes
@@ -186,7 +182,7 @@ function SessionWarning(_a) {
     lastWarningLevel = _l[0],
     setLastWarningLevel = _l[1];
   // Determine warning level
-  var getWarningLevel = function () {
+  var getWarningLevel = () => {
     if (!isAuthenticated) return "none";
     if (isExpired) return "expired";
     if (timeRemainingMinutes <= criticalThreshold) return "critical";
@@ -195,26 +191,23 @@ function SessionWarning(_a) {
   };
   var warningLevel = getWarningLevel();
   // Auto-show logic
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoShow || !isAuthenticated) return;
-      var shouldShow = warningLevel !== "none" && !isDismissed;
-      // Reset dismissal if warning level escalates
-      if (warningLevel !== lastWarningLevel && warningLevel !== "none") {
-        setIsDismissed(false);
-        setIsVisible(shouldShow);
-      } else if (shouldShow && !isVisible) {
-        setIsVisible(true);
-      }
-      setLastWarningLevel(warningLevel);
-    },
-    [warningLevel, isDismissed, autoShow, isAuthenticated, lastWarningLevel, isVisible],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!autoShow || !isAuthenticated) return;
+    var shouldShow = warningLevel !== "none" && !isDismissed;
+    // Reset dismissal if warning level escalates
+    if (warningLevel !== lastWarningLevel && warningLevel !== "none") {
+      setIsDismissed(false);
+      setIsVisible(shouldShow);
+    } else if (shouldShow && !isVisible) {
+      setIsVisible(true);
+    }
+    setLastWarningLevel(warningLevel);
+  }, [warningLevel, isDismissed, autoShow, isAuthenticated, lastWarningLevel, isVisible]);
   // Handle actions
-  var handleExtend = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleExtend = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -234,19 +227,18 @@ function SessionWarning(_a) {
         }
       });
     });
-  };
-  var handleLogout = function () {
+  var handleLogout = () => {
     logout();
     onLogout === null || onLogout === void 0 ? void 0 : onLogout();
     setIsVisible(false);
   };
-  var handleDismiss = function () {
+  var handleDismiss = () => {
     setIsVisible(false);
     setIsDismissed(true);
     onDismiss === null || onDismiss === void 0 ? void 0 : onDismiss();
   };
   // Get warning configuration based on level
-  var getWarningConfig = function (level) {
+  var getWarningConfig = (level) => {
     switch (level) {
       case "expired":
         return {
@@ -314,12 +306,7 @@ function SessionWarning(_a) {
   // Dialog variant
   if (showAsDialog) {
     return (
-      <dialog_1.Dialog
-        open={isVisible}
-        onOpenChange={function (open) {
-          return !open && handleDismiss();
-        }}
-      >
+      <dialog_1.Dialog open={isVisible} onOpenChange={(open) => !open && handleDismiss()}>
         <dialog_1.DialogContent className={(0, utils_1.cn)("sm:max-w-md", className)}>
           <dialog_1.DialogHeader>
             <dialog_1.DialogTitle className="flex items-center gap-2">

@@ -4,7 +4,7 @@ require("dotenv").config({ path: "../.env.local" });
 // Configurações do Supabase - USAR VARIÁVEIS DE AMBIENTE
 const supabaseUrl =
   process.env.NEXT_PUBLIC_SUPABASE_URL || "https://gfkskrkbnawkuppazkpt.supabase.co";
-const supabaseAccessToken = process.env.SUPABASE_ACCESS_TOKEN;
+const _supabaseAccessToken = process.env.SUPABASE_ACCESS_TOKEN;
 const projectRef =
   process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1]?.split(".")[0] || "gfkskrkbnawkuppazkpt";
 

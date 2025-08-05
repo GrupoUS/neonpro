@@ -1,10 +1,10 @@
 // Story 10.2: Progress Tracking through Computer Vision - Analytics API
 // API endpoint for progress tracking analytics and dashboard data
 
-import type { progressTrackingService } from "@/app/lib/services/progress-tracking";
 import type { cookies } from "next/headers";
-import type { createClient } from "@/lib/supabase/server";
 import type { NextRequest, NextResponse } from "next/server";
+import type { progressTrackingService } from "@/app/lib/services/progress-tracking";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,11 +25,12 @@ export async function GET(request: NextRequest) {
     const treatmentType = searchParams.get("treatment_type") || undefined;
 
     switch (type) {
-      case "dashboard_stats":
+      case "dashboard_stats": {
         const stats = await progressTrackingService.getProgressDashboardStats(patientId);
         return NextResponse.json(stats);
+      }
 
-      case "trend_data":
+      case "trend_data": {
         if (!patientId) {
           return NextResponse.json(
             { error: "patient_id is required for trend data" },
@@ -41,10 +42,12 @@ export async function GET(request: NextRequest) {
           treatmentType,
         );
         return NextResponse.json(trendData);
+      }
 
-      case "multi_session_analysis":
+      case "multi_session_analysis": {
         const analyses = await progressTrackingService.getMultiSessionAnalyses(patientId);
         return NextResponse.json(analyses);
+      }
 
       default:
         return NextResponse.json(

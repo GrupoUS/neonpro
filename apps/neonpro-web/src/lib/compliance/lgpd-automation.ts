@@ -11,27 +11,27 @@
 import type { createClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import type {
-  ConsentType,
-  ConsentStatus,
-  LegalBasis,
-  ConsentRecord,
-  DataSubjectRight,
-  DataSubjectRequest,
-  RequestStatus,
   AuditEventType,
-  LGPDAuditLog,
-  SensitiveDataType,
-  ComplianceReportType,
+  BreachIncident,
   ComplianceReport,
+  ComplianceReportType,
+  ConsentCheckResult,
+  ConsentRecord,
+  ConsentStatus,
+  ConsentType,
+  DataSubjectRequest,
+  DataSubjectRight,
+  LegalBasis,
+  LGPDApiResponse,
+  LGPDAuditLog,
   LGPDConfig,
   LGPDContext,
-  ConsentCheckResult,
-  LGPDApiResponse,
-  BreachIncident,
+  RequestStatus,
+  SensitiveDataType,
 } from "../../types/lgpd";
-import type { LGPDComplianceService } from "./lgpd-core";
 import type { LGPDAuditTrailService } from "./audit-trail";
 import type { LGPDEncryptionService } from "./encryption";
+import type { LGPDComplianceService } from "./lgpd-core";
 
 // ============================================================================
 // AUTOMATION CONFIGURATION TYPES
@@ -815,9 +815,6 @@ export class LGPDAutoAuditService {
         .gte("timestamp", last24Hours.toISOString());
 
       if (!criticalLogs?.length) {
-        // Verificar se houve eventos que deveriam ter sido auditados
-        // Esta é uma verificação simplificada
-        continue;
       }
     }
 
@@ -865,10 +862,7 @@ export class LGPDAutoAuditService {
           unencryptedFields.push(`${table}.${field}`);
           score -= 15;
         }
-      } catch (error) {
-        // Campo pode não existir ou não ser acessível
-        continue;
-      }
+      } catch (error) {}
     }
 
     if (unencryptedFields.length) {
@@ -1535,7 +1529,7 @@ export class LGPDAutoAnonymizationService {
 
     // Aplicar filtros baseados no trigger
     switch (rule.trigger) {
-      case "consent_withdrawn":
+      case "consent_withdrawn": {
         // Buscar registros de usuários que retiraram consentimento
         const { data: withdrawnConsents } = await this.supabase
           .from("lgpd_consent_records")
@@ -1550,12 +1544,14 @@ export class LGPDAutoAnonymizationService {
           return [];
         }
         break;
+      }
 
-      case "retention_expired":
+      case "retention_expired": {
         // Buscar registros que excederam período de retenção
         const retentionDate = this.calculateRetentionDate(rule.tableName);
         query = query.lt("created_at", retentionDate.toISOString());
         break;
+      }
 
       case "scheduled":
         // Buscar registros marcados para anonimização agendada

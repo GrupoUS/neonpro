@@ -5,8 +5,8 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
+import type { nlpEngine, SupportedLanguage } from "./nlp-engine";
 import type { searchIndexer } from "./search-indexer";
-import type { nlpEngine, type SupportedLanguage } from "./nlp-engine";
 
 // Types
 export interface SearchableDataType {
@@ -641,7 +641,7 @@ export class ComprehensiveSearch {
     const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   }
 
   /**

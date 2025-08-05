@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { jest } from "@jest/globals";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import ProfessionalPerformanceDashboard from "@/components/dashboard/ProfessionalPerformanceDashboard";
 import { getProfessionalPerformanceMetrics } from "@/lib/supabase/professionals";
 

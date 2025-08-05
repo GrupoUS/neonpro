@@ -1,5 +1,22 @@
 "use client";
 
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Eye,
+  FileText,
+  Loader2,
+  Search,
+  TrendingUp,
+  User,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,23 +38,6 @@ import type {
 } from "@/components/ui/table";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { cn } from "@/lib/utils";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type {
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  DollarSign,
-  Eye,
-  FileText,
-  Loader2,
-  Search,
-  TrendingUp,
-  User,
-  XCircle,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 import ApprovalHierarchyConfig from "./approval-hierarchy-config";
 import ApprovalRequestTracker from "./approval-request-tracker";
 

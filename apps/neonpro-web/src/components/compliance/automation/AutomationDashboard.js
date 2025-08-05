@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AutomationDashboard;
 var react_1 = require("react");
@@ -146,7 +143,6 @@ var progress_1 = require("@/components/ui/progress");
 var lucide_react_1 = require("lucide-react");
 var use_toast_1 = require("@/components/ui/use-toast");
 function AutomationDashboard() {
-  var _this = this;
   var _a;
   var _b = (0, react_1.useState)(null),
     metrics = _b[0],
@@ -167,8 +163,8 @@ function AutomationDashboard() {
     refreshing = _g[0],
     setRefreshing = _g[1];
   var toast = (0, use_toast_1.useToast)().toast;
-  var loadDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var monitoringResponse,
         monitoringData,
         statusResponse,
@@ -176,7 +172,7 @@ function AutomationDashboard() {
         alertsResponse,
         alertsData,
         error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 10, 11, 12]);
@@ -231,16 +227,13 @@ function AutomationDashboard() {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadDashboardData();
     // Atualizar dados a cada 30 segundos
     var interval = setInterval(loadDashboardData, 30000);
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "destructive";
@@ -254,7 +247,7 @@ function AutomationDashboard() {
         return "default";
     }
   };
-  var getComplianceScoreColor = function (score) {
+  var getComplianceScoreColor = (score) => {
     if (score >= 90) return "text-green-600";
     if (score >= 70) return "text-yellow-600";
     return "text-red-600";
@@ -370,19 +363,10 @@ function AutomationDashboard() {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {
-                alerts.filter(function (a) {
-                  return a.status === "active";
-                }).length
-              }
+              {alerts.filter((a) => a.status === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">
-              {
-                alerts.filter(function (a) {
-                  return a.severity === "critical";
-                }).length
-              }{" "}
-              críticos
+              {alerts.filter((a) => a.severity === "critical").length} críticos
             </p>
           </card_1.CardContent>
         </card_1.Card>
@@ -547,26 +531,24 @@ function AutomationDashboard() {
                     <p className="text-muted-foreground">Nenhum alerta ativo</p>
                   </div>
                 : <div className="space-y-3">
-                    {alerts.map(function (alert) {
-                      return (
-                        <alert_1.Alert key={alert.id} className="border-l-4 border-l-red-500">
-                          <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                          <alert_1.AlertTitle className="flex items-center justify-between">
-                            <span>{alert.title}</span>
-                            <badge_1.Badge variant={getSeverityColor(alert.severity)}>
-                              {alert.severity}
-                            </badge_1.Badge>
-                          </alert_1.AlertTitle>
-                          <alert_1.AlertDescription>
-                            <p className="mb-2">{alert.description}</p>
-                            <div className="flex items-center justify-between text-xs text-muted-foreground">
-                              <span>Categoria: {alert.category}</span>
-                              <span>{new Date(alert.created_at).toLocaleString("pt-BR")}</span>
-                            </div>
-                          </alert_1.AlertDescription>
-                        </alert_1.Alert>
-                      );
-                    })}
+                    {alerts.map((alert) => (
+                      <alert_1.Alert key={alert.id} className="border-l-4 border-l-red-500">
+                        <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                        <alert_1.AlertTitle className="flex items-center justify-between">
+                          <span>{alert.title}</span>
+                          <badge_1.Badge variant={getSeverityColor(alert.severity)}>
+                            {alert.severity}
+                          </badge_1.Badge>
+                        </alert_1.AlertTitle>
+                        <alert_1.AlertDescription>
+                          <p className="mb-2">{alert.description}</p>
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>Categoria: {alert.category}</span>
+                            <span>{new Date(alert.created_at).toLocaleString("pt-BR")}</span>
+                          </div>
+                        </alert_1.AlertDescription>
+                      </alert_1.Alert>
+                    ))}
                   </div>}
             </card_1.CardContent>
           </card_1.Card>
@@ -669,7 +651,7 @@ function AutomationDashboard() {
                     </span>
                   </div>
                   {(metrics === null || metrics === void 0 ? void 0 : metrics.audit.bySeverity) &&
-                    Object.entries(metrics.audit.bySeverity).map(function (_a) {
+                    Object.entries(metrics.audit.bySeverity).map((_a) => {
                       var severity = _a[0],
                         count = _a[1];
                       return (

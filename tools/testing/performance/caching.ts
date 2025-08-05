@@ -5,7 +5,7 @@
  * Includes multi-level caching, CDN optimization, and cache invalidation
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Cache configuration constants
 export const CACHE_CONFIG = {
@@ -41,7 +41,7 @@ export const CACHE_CONFIG = {
 // Cache key generators
 export class CacheKeyGenerator {
   static analytics(userId: string, dateRange: string, filters?: Record<string, any>): string {
-    const filterHash = filters ? this.hashObject(filters) : "no-filters";
+    const filterHash = filters ? CacheKeyGenerator.hashObject(filters) : "no-filters";
     return `analytics:${userId}:${dateRange}:${filterHash}`;
   }
 
@@ -54,7 +54,7 @@ export class CacheKeyGenerator {
   }
 
   static apiResponse(endpoint: string, params?: Record<string, any>): string {
-    const paramHash = params ? this.hashObject(params) : "no-params";
+    const paramHash = params ? CacheKeyGenerator.hashObject(params) : "no-params";
     return `api:${endpoint}:${paramHash}`;
   }
 
@@ -279,7 +279,7 @@ export class CDNOptimization {
         if (resource.type) link += ` type="${resource.type}"`;
         if (resource.crossorigin) link += ` crossorigin`;
 
-        return link + ">";
+        return `${link}>`;
       })
       .join("\n");
   }
@@ -304,7 +304,7 @@ export function withCache(
     const { ttl = 300000, tags = [], keyGenerator, skipCache } = config;
 
     // Skip caching if specified
-    if (skipCache && skipCache(req)) {
+    if (skipCache?.(req)) {
       return handler(req);
     }
 
@@ -344,21 +344,21 @@ export class CachePerformanceMonitor {
   private static startTime = Date.now();
 
   static recordHit(): void {
-    this.hits++;
+    CachePerformanceMonitor.hits++;
   }
 
   static recordMiss(): void {
-    this.misses++;
+    CachePerformanceMonitor.misses++;
   }
 
   static getStats() {
-    const total = this.hits + this.misses;
-    const hitRate = total > 0 ? (this.hits / total) * 100 : 0;
-    const uptime = Date.now() - this.startTime;
+    const total = CachePerformanceMonitor.hits + CachePerformanceMonitor.misses;
+    const hitRate = total > 0 ? (CachePerformanceMonitor.hits / total) * 100 : 0;
+    const uptime = Date.now() - CachePerformanceMonitor.startTime;
 
     return {
-      hits: this.hits,
-      misses: this.misses,
+      hits: CachePerformanceMonitor.hits,
+      misses: CachePerformanceMonitor.misses,
       total,
       hitRate: parseFloat(hitRate.toFixed(2)),
       uptime,
@@ -367,8 +367,8 @@ export class CachePerformanceMonitor {
   }
 
   static reset(): void {
-    this.hits = 0;
-    this.misses = 0;
-    this.startTime = Date.now();
+    CachePerformanceMonitor.hits = 0;
+    CachePerformanceMonitor.misses = 0;
+    CachePerformanceMonitor.startTime = Date.now();
   }
 }

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🎯 NeonPro Touchpoint Analysis System
  *
@@ -30,26 +29,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -69,13 +68,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -97,9 +96,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -171,7 +168,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TouchpointAnalysisEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -183,7 +180,7 @@ var logger_1 = require("@/lib/utils/logger");
  * Touchpoint Analysis System
  * Sistema completo para análise e otimização de touchpoints
  */
-var TouchpointAnalysisEngine = /** @class */ (function () {
+var TouchpointAnalysisEngine = /** @class */ (() => {
   function TouchpointAnalysisEngine(config) {
     this.supabase = (0, client_1.createClient)();
     this.criticalMomentConfig = __assign(
@@ -213,14 +210,14 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
         switch (_d.label) {
           case 0:
             _d.trys.push([0, 10, , 11]);
-            if (!!touchpointData.interaction_quality) return [3 /*break*/, 2];
+            if (touchpointData.interaction_quality) return [3 /*break*/, 2];
             _a = touchpointData;
             return [4 /*yield*/, this.calculateInteractionQuality(touchpointData)];
           case 1:
             _a.interaction_quality = _d.sent();
             _d.label = 2;
           case 2:
-            if (!!touchpointData.sentiment_score) return [3 /*break*/, 4];
+            if (touchpointData.sentiment_score) return [3 /*break*/, 4];
             _b = touchpointData;
             return [4 /*yield*/, this.analyzeSentiment(touchpointData)];
           case 3:
@@ -408,42 +405,27 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
             }
             totalInteractions = touchpoints.length;
             avgQualityScore =
-              touchpoints.reduce(function (sum, t) {
-                return sum + t.interaction_quality;
-              }, 0) / totalInteractions;
-            conversions = touchpoints.filter(function (t) {
-              return t.outcome === "conversion" || t.outcome === "engagement";
-            }).length;
+              touchpoints.reduce((sum, t) => sum + t.interaction_quality, 0) / totalInteractions;
+            conversions = touchpoints.filter(
+              (t) => t.outcome === "conversion" || t.outcome === "engagement",
+            ).length;
             conversionRate = conversions / totalInteractions;
             satisfactionScores = touchpoints
-              .filter(function (t) {
-                return t.metadata.satisfaction_rating;
-              })
-              .map(function (t) {
-                return t.metadata.satisfaction_rating;
-              });
+              .filter((t) => t.metadata.satisfaction_rating)
+              .map((t) => t.metadata.satisfaction_rating);
             avgSatisfaction =
               satisfactionScores.length > 0
-                ? satisfactionScores.reduce(function (sum, score) {
-                    return sum + score;
-                  }, 0) / satisfactionScores.length
+                ? satisfactionScores.reduce((sum, score) => sum + score, 0) /
+                  satisfactionScores.length
                 : 0;
             responseTimes = touchpoints
-              .filter(function (t) {
-                return t.metadata.response_time_seconds;
-              })
-              .map(function (t) {
-                return t.metadata.response_time_seconds;
-              })
-              .sort(function (a, b) {
-                return a - b;
-              });
+              .filter((t) => t.metadata.response_time_seconds)
+              .map((t) => t.metadata.response_time_seconds)
+              .sort((a, b) => a - b);
             responseTimeMetrics = {
               average_seconds:
                 responseTimes.length > 0
-                  ? responseTimes.reduce(function (sum, time) {
-                      return sum + time;
-                    }, 0) / responseTimes.length
+                  ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
                   : 0,
               median_seconds:
                 responseTimes.length > 0 ? responseTimes[Math.floor(responseTimes.length / 2)] : 0,
@@ -631,7 +613,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
   TouchpointAnalysisEngine.prototype.analyzeSentiment = function (touchpoint) {
     return __awaiter(this, void 0, void 0, function () {
       var sentimentScore, outcomeSentiments, normalizedSatisfaction, normalizedEffort;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         sentimentScore = 0;
         outcomeSentiments = {
           conversion: 0.8,
@@ -666,18 +648,17 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
    * Calculate touchpoint breakdown statistics
    */
   TouchpointAnalysisEngine.prototype.calculateTouchpointBreakdown = function (touchpoints) {
-    var _this = this;
     var byType = {};
     var byChannel = {};
     var byQuality = {};
     var byOutcome = {};
-    touchpoints.forEach(function (tp) {
+    touchpoints.forEach((tp) => {
       // By type
       byType[tp.touchpoint_type] = (byType[tp.touchpoint_type] || 0) + 1;
       // By channel
       byChannel[tp.channel] = (byChannel[tp.channel] || 0) + 1;
       // By quality
-      var qualityLevel = _this.getQualityLevel(tp.interaction_quality);
+      var qualityLevel = this.getQualityLevel(tp.interaction_quality);
       byQuality[qualityLevel] = (byQuality[qualityLevel] || 0) + 1;
       // By outcome
       byOutcome[tp.outcome] = (byOutcome[tp.outcome] || 0) + 1;
@@ -688,33 +669,21 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
    * Calculate quality metrics
    */
   TouchpointAnalysisEngine.prototype.calculateQualityMetrics = function (touchpoints) {
-    var _this = this;
-    var qualityScores = touchpoints.map(function (tp) {
-      return tp.interaction_quality;
-    });
-    var avgQuality =
-      qualityScores.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / qualityScores.length;
+    var qualityScores = touchpoints.map((tp) => tp.interaction_quality);
+    var avgQuality = qualityScores.reduce((sum, score) => sum + score, 0) / qualityScores.length;
     // Quality trend (last 30 days) - simplified calculation
     var trend = qualityScores.slice(-30);
     // Quality distribution
     var distribution = {};
-    touchpoints.forEach(function (tp) {
-      var level = _this.getQualityLevel(tp.interaction_quality);
+    touchpoints.forEach((tp) => {
+      var level = this.getQualityLevel(tp.interaction_quality);
       distribution[level] = (distribution[level] || 0) + 1;
     });
     // Improvement rate (comparing first half vs second half)
     var firstHalf = qualityScores.slice(0, Math.floor(qualityScores.length / 2));
     var secondHalf = qualityScores.slice(Math.floor(qualityScores.length / 2));
-    var firstAvg =
-      firstHalf.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / firstHalf.length;
-    var secondAvg =
-      secondHalf.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / secondHalf.length;
+    var firstAvg = firstHalf.reduce((sum, score) => sum + score, 0) / firstHalf.length;
+    var secondAvg = secondHalf.reduce((sum, score) => sum + score, 0) / secondHalf.length;
     var improvementRate = secondHalf.length > 0 ? (secondAvg - firstAvg) / firstAvg : 0;
     return {
       average_quality_score: Math.round(avgQuality * 100) / 100,
@@ -729,12 +698,11 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
   TouchpointAnalysisEngine.prototype.analyzeChannelEffectiveness = function (touchpoints) {
     return __awaiter(this, void 0, void 0, function () {
       var channelStats, channelRankings, bestChannel, underperformingChannels;
-      var _this = this;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         channelStats = {};
         // Group by channel
-        touchpoints.forEach(function (tp) {
+        touchpoints.forEach((tp) => {
           if (!channelStats[tp.channel]) {
             channelStats[tp.channel] = {
               count: 0,
@@ -758,31 +726,28 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
           }
         });
         channelRankings = Object.keys(channelStats)
-          .map(function (channel) {
+          .map((channel) => {
             var stats = channelStats[channel];
             var avgQuality =
-              stats.quality_scores.reduce(function (sum, score) {
-                return sum + score;
-              }, 0) / stats.quality_scores.length;
+              stats.quality_scores.reduce((sum, score) => sum + score, 0) /
+              stats.quality_scores.length;
             var conversionRate = stats.conversions / stats.count;
             var avgSatisfaction =
               stats.satisfaction_scores.length > 0
-                ? stats.satisfaction_scores.reduce(function (sum, score) {
-                    return sum + score;
-                  }, 0) / stats.satisfaction_scores.length
+                ? stats.satisfaction_scores.reduce((sum, score) => sum + score, 0) /
+                  stats.satisfaction_scores.length
                 : 0;
             var avgResponseTime =
               stats.response_times.length > 0
-                ? stats.response_times.reduce(function (sum, time) {
-                    return sum + time;
-                  }, 0) / stats.response_times.length
+                ? stats.response_times.reduce((sum, time) => sum + time, 0) /
+                  stats.response_times.length
                 : 0;
-            var effectivenessScore = _this.calculateChannelEffectivenessScore({
+            var effectivenessScore = this.calculateChannelEffectivenessScore({
               quality_score: avgQuality,
               conversion_rate: conversionRate,
               satisfaction_score: avgSatisfaction,
               response_time: avgResponseTime,
-              cost_efficiency: _this.calculateChannelROI(channel, touchpoints),
+              cost_efficiency: this.calculateChannelROI(channel, touchpoints),
             });
             return {
               channel: channel,
@@ -790,20 +755,14 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
               conversion_rate: Math.round(conversionRate * 100) / 100,
               satisfaction_score: Math.round(avgSatisfaction * 100) / 100,
               response_time_avg: Math.round(avgResponseTime),
-              cost_efficiency: _this.getCostPerInteraction(channel),
+              cost_efficiency: this.getCostPerInteraction(channel),
             };
           })
-          .sort(function (a, b) {
-            return b.effectiveness_score - a.effectiveness_score;
-          });
+          .sort((a, b) => b.effectiveness_score - a.effectiveness_score);
         bestChannel = (_a = channelRankings[0]) === null || _a === void 0 ? void 0 : _a.channel;
         underperformingChannels = channelRankings
-          .filter(function (c) {
-            return c.effectiveness_score < 3.0;
-          })
-          .map(function (c) {
-            return c.channel;
-          });
+          .filter((c) => c.effectiveness_score < 3.0)
+          .map((c) => c.channel);
         return [
           2 /*return*/,
           {
@@ -819,28 +778,22 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
    * Identify critical moments in journey
    */
   TouchpointAnalysisEngine.prototype.identifyCriticalMoments = function (touchpoints) {
-    var _this = this;
     return touchpoints
-      .filter(function (tp) {
-        return (
-          tp.interaction_quality < _this.criticalMomentConfig.quality_threshold ||
-          tp.sentiment_score < _this.criticalMomentConfig.sentiment_threshold ||
-          _this.criticalMomentConfig.escalation_triggers.includes(tp.touchpoint_type)
-        );
-      })
-      .map(function (tp) {
-        return {
-          touchpoint_id: tp.id,
-          timestamp: new Date(tp.timestamp),
-          criticality_score: _this.calculateCriticalityScore(tp),
-          impact_on_journey: _this.assessJourneyImpact(tp),
-          recommended_action: _this.getRecommendedAction(tp),
-          urgency_level: _this.getUrgencyLevel(tp),
-        };
-      })
-      .sort(function (a, b) {
-        return b.criticality_score - a.criticality_score;
-      });
+      .filter(
+        (tp) =>
+          tp.interaction_quality < this.criticalMomentConfig.quality_threshold ||
+          tp.sentiment_score < this.criticalMomentConfig.sentiment_threshold ||
+          this.criticalMomentConfig.escalation_triggers.includes(tp.touchpoint_type),
+      )
+      .map((tp) => ({
+        touchpoint_id: tp.id,
+        timestamp: new Date(tp.timestamp),
+        criticality_score: this.calculateCriticalityScore(tp),
+        impact_on_journey: this.assessJourneyImpact(tp),
+        recommended_action: this.getRecommendedAction(tp),
+        urgency_level: this.getUrgencyLevel(tp),
+      }))
+      .sort((a, b) => b.criticality_score - a.criticality_score);
   };
   /**
    * Generate optimization opportunities
@@ -848,9 +801,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
   TouchpointAnalysisEngine.prototype.generateOptimizationOpportunities = function (touchpoints) {
     var opportunities = [];
     // Low quality touchpoints
-    var lowQualityCount = touchpoints.filter(function (tp) {
-      return tp.interaction_quality < 3.0;
-    }).length;
+    var lowQualityCount = touchpoints.filter((tp) => tp.interaction_quality < 3.0).length;
     if (lowQualityCount > touchpoints.length * 0.2) {
       opportunities.push({
         opportunity_type: "quality_improvement",
@@ -863,9 +814,9 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
     }
     // Channel optimization
     var channelPerformance = this.analyzeSimpleChannelPerformance(touchpoints);
-    var underperformingChannels = Object.keys(channelPerformance).filter(function (channel) {
-      return channelPerformance[channel].avg_quality < 3.0;
-    });
+    var underperformingChannels = Object.keys(channelPerformance).filter(
+      (channel) => channelPerformance[channel].avg_quality < 3.0,
+    );
     if (underperformingChannels.length > 0) {
       opportunities.push({
         opportunity_type: "channel_optimization",
@@ -881,15 +832,9 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
     // Response time improvement
     var avgResponseTime =
       touchpoints
-        .filter(function (tp) {
-          return tp.metadata.response_time_seconds;
-        })
-        .reduce(function (sum, tp) {
-          return sum + tp.metadata.response_time_seconds;
-        }, 0) /
-      touchpoints.filter(function (tp) {
-        return tp.metadata.response_time_seconds;
-      }).length;
+        .filter((tp) => tp.metadata.response_time_seconds)
+        .reduce((sum, tp) => sum + tp.metadata.response_time_seconds, 0) /
+      touchpoints.filter((tp) => tp.metadata.response_time_seconds).length;
     if (avgResponseTime > 1800) {
       // More than 30 minutes
       opportunities.push({
@@ -902,36 +847,27 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
         priority_score: 9,
       });
     }
-    return opportunities.sort(function (a, b) {
-      return b.priority_score - a.priority_score;
-    });
+    return opportunities.sort((a, b) => b.priority_score - a.priority_score);
   };
   /**
    * Analyze touchpoint sentiment trends
    */
   TouchpointAnalysisEngine.prototype.analyzeTouchpointSentiment = function (touchpoints) {
-    var _this = this;
-    var sentimentScores = touchpoints.map(function (tp) {
-      return tp.sentiment_score;
-    });
+    var sentimentScores = touchpoints.map((tp) => tp.sentiment_score);
     var overallSentiment =
-      sentimentScores.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / sentimentScores.length;
+      sentimentScores.reduce((sum, score) => sum + score, 0) / sentimentScores.length;
     // Sentiment trend (last 30 touchpoints)
     var trend = sentimentScores.slice(-30);
     // Emotional journey
-    var emotionalJourney = touchpoints.map(function (tp) {
-      return {
-        touchpoint_id: tp.id,
-        emotion: _this.getEmotionFromSentiment(tp.sentiment_score),
-        intensity: Math.abs(tp.sentiment_score),
-      };
-    });
+    var emotionalJourney = touchpoints.map((tp) => ({
+      touchpoint_id: tp.id,
+      emotion: this.getEmotionFromSentiment(tp.sentiment_score),
+      intensity: Math.abs(tp.sentiment_score),
+    }));
     // Sentiment by channel
     var sentimentByChannel = {};
     var channelCounts = {};
-    touchpoints.forEach(function (tp) {
+    touchpoints.forEach((tp) => {
       if (!sentimentByChannel[tp.channel]) {
         sentimentByChannel[tp.channel] = 0;
         channelCounts[tp.channel] = 0;
@@ -940,7 +876,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
       channelCounts[tp.channel]++;
     });
     // Calculate averages
-    Object.keys(sentimentByChannel).forEach(function (channel) {
+    Object.keys(sentimentByChannel).forEach((channel) => {
       sentimentByChannel[channel] = sentimentByChannel[channel] / channelCounts[channel];
     });
     return {
@@ -953,48 +889,34 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
   /**
    * Calculate performance indicators
    */
-  TouchpointAnalysisEngine.prototype.calculatePerformanceIndicators = function (touchpoints) {
+  TouchpointAnalysisEngine.prototype.calculatePerformanceIndicators = (touchpoints) => {
     var responseTimes = touchpoints
-      .filter(function (tp) {
-        return tp.metadata.response_time_seconds;
-      })
-      .map(function (tp) {
-        return tp.metadata.response_time_seconds;
-      });
+      .filter((tp) => tp.metadata.response_time_seconds)
+      .map((tp) => tp.metadata.response_time_seconds);
     var firstResponseTime =
       responseTimes.length > 0
-        ? responseTimes.reduce(function (sum, time) {
-            return sum + time;
-          }, 0) / responseTimes.length
+        ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
         : 0;
-    var resolvedIssues = touchpoints.filter(function (tp) {
-      return tp.outcome === "issue_resolved";
-    }).length;
-    var totalIssues = touchpoints.filter(function (tp) {
-      return (
-        tp.touchpoint_type === "complaint_handling" || tp.touchpoint_type === "support_request"
-      );
-    }).length;
+    var resolvedIssues = touchpoints.filter((tp) => tp.outcome === "issue_resolved").length;
+    var totalIssues = touchpoints.filter(
+      (tp) =>
+        tp.touchpoint_type === "complaint_handling" || tp.touchpoint_type === "support_request",
+    ).length;
     var resolutionRate = totalIssues > 0 ? resolvedIssues / totalIssues : 0;
-    var escalations = touchpoints.filter(function (tp) {
-      return tp.outcome === "escalation_required";
-    }).length;
+    var escalations = touchpoints.filter((tp) => tp.outcome === "escalation_required").length;
     var escalationRate = touchpoints.length > 0 ? escalations / touchpoints.length : 0;
-    var satisfiedCustomers = touchpoints.filter(function (tp) {
-      return tp.metadata.satisfaction_rating && tp.metadata.satisfaction_rating >= 4;
-    }).length;
-    var totalRatings = touchpoints.filter(function (tp) {
-      return tp.metadata.satisfaction_rating;
-    }).length;
+    var satisfiedCustomers = touchpoints.filter(
+      (tp) => tp.metadata.satisfaction_rating && tp.metadata.satisfaction_rating >= 4,
+    ).length;
+    var totalRatings = touchpoints.filter((tp) => tp.metadata.satisfaction_rating).length;
     var satisfactionRate = totalRatings > 0 ? satisfiedCustomers / totalRatings : 0;
     // Retention impact (simplified calculation)
-    var positiveOutcomes = touchpoints.filter(function (tp) {
-      return (
+    var positiveOutcomes = touchpoints.filter(
+      (tp) =>
         tp.outcome === "conversion" ||
         tp.outcome === "engagement" ||
-        tp.outcome === "issue_resolved"
-      );
-    }).length;
+        tp.outcome === "issue_resolved",
+    ).length;
     var retentionImpact = touchpoints.length > 0 ? positiveOutcomes / touchpoints.length : 0;
     return {
       first_response_time: Math.round(firstResponseTime),
@@ -1007,14 +929,14 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
   // ============================================================================
   // HELPER METHODS
   // ============================================================================
-  TouchpointAnalysisEngine.prototype.getQualityLevel = function (score) {
+  TouchpointAnalysisEngine.prototype.getQualityLevel = (score) => {
     if (score >= 4.5) return "excellent";
     if (score >= 3.5) return "good";
     if (score >= 2.5) return "average";
     if (score >= 1.5) return "poor";
     return "critical";
   };
-  TouchpointAnalysisEngine.prototype.getChannelEfficiencyScore = function (channel) {
+  TouchpointAnalysisEngine.prototype.getChannelEfficiencyScore = (channel) => {
     var efficiency = {
       whatsapp: 0.9,
       phone: 0.8,
@@ -1029,7 +951,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
     };
     return efficiency[channel] || 0.5;
   };
-  TouchpointAnalysisEngine.prototype.getCostPerInteraction = function (channel) {
+  TouchpointAnalysisEngine.prototype.getCostPerInteraction = (channel) => {
     // Placeholder cost data - would come from actual business metrics
     var costs = {
       whatsapp: 0.5,
@@ -1047,17 +969,13 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
   };
   TouchpointAnalysisEngine.prototype.calculateChannelROI = function (channel, touchpoints) {
     // Simplified ROI calculation
-    var channelTouchpoints = touchpoints.filter(function (tp) {
-      return tp.channel === channel;
-    });
-    var conversions = channelTouchpoints.filter(function (tp) {
-      return tp.outcome === "conversion";
-    }).length;
+    var channelTouchpoints = touchpoints.filter((tp) => tp.channel === channel);
+    var conversions = channelTouchpoints.filter((tp) => tp.outcome === "conversion").length;
     var cost = this.getCostPerInteraction(channel) * channelTouchpoints.length;
     var revenue = conversions * 500; // Placeholder average revenue per conversion
     return cost > 0 ? (revenue - cost) / cost : 0;
   };
-  TouchpointAnalysisEngine.prototype.calculateChannelEffectivenessScore = function (metrics) {
+  TouchpointAnalysisEngine.prototype.calculateChannelEffectivenessScore = (metrics) => {
     var quality_score = metrics.quality_score,
       conversion_rate = metrics.conversion_rate,
       satisfaction_score = metrics.satisfaction_score,
@@ -1074,10 +992,10 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
       Math.min(5, Math.max(0, cost_efficiency + 3)) * 0.15; // Normalize ROI to 0-5 scale
     return Math.max(0, Math.min(5, effectiveness));
   };
-  TouchpointAnalysisEngine.prototype.generateChannelOptimizationRecommendations = function (
+  TouchpointAnalysisEngine.prototype.generateChannelOptimizationRecommendations = (
     channel,
     metrics,
-  ) {
+  ) => {
     var recommendations = [];
     if (metrics.quality_score < 3.0) {
       recommendations.push("Melhorar qualidade das intera\u00E7\u00F5es no canal ".concat(channel));
@@ -1093,22 +1011,22 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
     }
     return recommendations;
   };
-  TouchpointAnalysisEngine.prototype.analyzeSimpleChannelPerformance = function (touchpoints) {
+  TouchpointAnalysisEngine.prototype.analyzeSimpleChannelPerformance = (touchpoints) => {
     var performance = {};
-    touchpoints.forEach(function (tp) {
+    touchpoints.forEach((tp) => {
       if (!performance[tp.channel]) {
         performance[tp.channel] = { total: 0, quality_sum: 0, avg_quality: 0 };
       }
       performance[tp.channel].total++;
       performance[tp.channel].quality_sum += tp.interaction_quality;
     });
-    Object.keys(performance).forEach(function (channel) {
+    Object.keys(performance).forEach((channel) => {
       performance[channel].avg_quality =
         performance[channel].quality_sum / performance[channel].total;
     });
     return performance;
   };
-  TouchpointAnalysisEngine.prototype.calculateCriticalityScore = function (touchpoint) {
+  TouchpointAnalysisEngine.prototype.calculateCriticalityScore = (touchpoint) => {
     var score = 0;
     // Quality factor
     if (touchpoint.interaction_quality < 2.0) score += 0.4;
@@ -1122,7 +1040,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
     }
     return Math.min(1.0, score);
   };
-  TouchpointAnalysisEngine.prototype.assessJourneyImpact = function (touchpoint) {
+  TouchpointAnalysisEngine.prototype.assessJourneyImpact = (touchpoint) => {
     if (touchpoint.sentiment_score < -0.5) {
       return "Alto risco de abandono da jornada";
     }
@@ -1134,7 +1052,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
     }
     return "Impacto moderado na jornada";
   };
-  TouchpointAnalysisEngine.prototype.getRecommendedAction = function (touchpoint) {
+  TouchpointAnalysisEngine.prototype.getRecommendedAction = (touchpoint) => {
     if (touchpoint.outcome === "complaint_registered") {
       return "Contato imediato do gerente para resolução";
     }
@@ -1146,7 +1064,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
     }
     return "Monitoramento contínuo";
   };
-  TouchpointAnalysisEngine.prototype.getUrgencyLevel = function (touchpoint) {
+  TouchpointAnalysisEngine.prototype.getUrgencyLevel = (touchpoint) => {
     if (touchpoint.outcome === "complaint_registered" || touchpoint.sentiment_score < -0.7) {
       return "critical";
     }
@@ -1158,17 +1076,14 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
     }
     return "low";
   };
-  TouchpointAnalysisEngine.prototype.getEmotionFromSentiment = function (sentiment) {
+  TouchpointAnalysisEngine.prototype.getEmotionFromSentiment = (sentiment) => {
     if (sentiment > 0.5) return "joy";
     if (sentiment > 0.2) return "satisfaction";
     if (sentiment > -0.2) return "neutral";
     if (sentiment > -0.5) return "disappointment";
     return "frustration";
   };
-  TouchpointAnalysisEngine.prototype.evaluateInterventionCondition = function (
-    condition,
-    touchpoint,
-  ) {
+  TouchpointAnalysisEngine.prototype.evaluateInterventionCondition = (condition, touchpoint) => {
     // Simple condition evaluation - in production this would be more sophisticated
     if (condition.includes("quality <")) {
       var threshold = parseFloat(condition.split("<")[1].trim());
@@ -1186,7 +1101,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
   };
   TouchpointAnalysisEngine.prototype.executeInterventionAction = function (action, touchpoint) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.info("Executing intervention action: ".concat(action), {
           touchpoint_id: touchpoint.id,
           patient_id: touchpoint.patient_id,
@@ -1209,7 +1124,7 @@ var TouchpointAnalysisEngine = /** @class */ (function () {
   };
   TouchpointAnalysisEngine.prototype.updateChannelMetrics = function (channel, touchpointData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Update channel performance metrics in database
         // This would typically update aggregated metrics tables
         logger_1.logger.debug("Updated metrics for channel: ".concat(channel));

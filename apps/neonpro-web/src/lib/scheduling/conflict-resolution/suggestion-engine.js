@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createsuggestionEngine = exports.SuggestionEngine = exports.SuggestionType = void 0;
 exports.generateResolutionSuggestions = generateResolutionSuggestions;
@@ -153,7 +150,7 @@ var client_1 = require("@/lib/supabase/client");
 var logger_1 = require("@/lib/logger");
 var conflict_detection_engine_1 = require("./conflict-detection-engine");
 var SuggestionType;
-(function (SuggestionType) {
+((SuggestionType) => {
   SuggestionType["RESCHEDULE_APPOINTMENT"] = "reschedule_appointment";
   SuggestionType["REASSIGN_STAFF"] = "reassign_staff";
   SuggestionType["CHANGE_ROOM"] = "change_room";
@@ -168,7 +165,7 @@ var SuggestionType;
  * Engine de Sugestões Automatizadas
  * Gera sugestões inteligentes para resolução de conflitos
  */
-var SuggestionEngine = /** @class */ (function () {
+var SuggestionEngine = /** @class */ (() => {
   function SuggestionEngine(config) {
     if (config === void 0) {
       config = {};
@@ -243,10 +240,8 @@ var SuggestionEngine = /** @class */ (function () {
             optimizationSuggestions = _b.sent();
             suggestions.push.apply(suggestions, optimizationSuggestions);
             filteredSuggestions = suggestions
-              .filter(function (s) {
-                return s.confidence >= _this.config.minConfidenceThreshold;
-              })
-              .sort(function (a, b) {
+              .filter((s) => s.confidence >= _this.config.minConfidenceThreshold)
+              .sort((a, b) => {
                 // Ordenar por prioridade e depois por confiança
                 var priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
                 var priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
@@ -256,9 +251,7 @@ var SuggestionEngine = /** @class */ (function () {
               .slice(0, this.config.maxSuggestionsPerConflict * conflictResult.conflicts.length);
             logger_1.logger.info("Generated suggestions", {
               totalSuggestions: filteredSuggestions.length,
-              autoApplicable: filteredSuggestions.filter(function (s) {
-                return s.autoApplicable;
-              }).length,
+              autoApplicable: filteredSuggestions.filter((s) => s.autoApplicable).length,
             });
             return [2 /*return*/, filteredSuggestions];
           case 6:
@@ -1038,7 +1031,7 @@ var SuggestionEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var suggestions;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         suggestions = [];
         try {
           // Sugestão de otimização de agenda
@@ -1051,9 +1044,9 @@ var SuggestionEngine = /** @class */ (function () {
               description: "Reorganize multiple appointments for optimal resource utilization",
               impact: {
                 resolvedConflicts: conflictResult.conflicts.length,
-                affectedAppointments: conflictResult.conflicts.flatMap(function (c) {
-                  return c.affectedAppointments;
-                }),
+                affectedAppointments: conflictResult.conflicts.flatMap(
+                  (c) => c.affectedAppointments,
+                ),
                 resourceChanges: [],
                 timeChanges: [],
                 costImpact: 0,
@@ -1092,9 +1085,7 @@ var SuggestionEngine = /** @class */ (function () {
               estimatedTime: 30,
               confidence: 75,
               autoApplicable: false,
-              conflictIds: conflictResult.conflicts.map(function (c) {
-                return c.id;
-              }),
+              conflictIds: conflictResult.conflicts.map((c) => c.id),
             });
           }
           return [2 /*return*/, suggestions];
@@ -1157,7 +1148,7 @@ var SuggestionEngine = /** @class */ (function () {
                 staffSpecialties_1,
                 hasRequiredSkills,
                 isAvailable;
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
                     return [
@@ -1177,9 +1168,9 @@ var SuggestionEngine = /** @class */ (function () {
                     ) {
                       requiredSpecialties = serviceData.required_specialties;
                       staffSpecialties_1 = staff.specialties || [];
-                      hasRequiredSkills = requiredSpecialties.every(function (specialty) {
-                        return staffSpecialties_1.includes(specialty);
-                      });
+                      hasRequiredSkills = requiredSpecialties.every((specialty) =>
+                        staffSpecialties_1.includes(specialty),
+                      );
                       if (!hasRequiredSkills) return [2 /*return*/, "continue"];
                     }
                     return [
@@ -1664,9 +1655,7 @@ var SuggestionEngine = /** @class */ (function () {
             }
             return [3 /*break*/, 11];
           case 1:
-            staffChange = suggestion.impact.resourceChanges.find(function (c) {
-              return c.resourceType === "staff";
-            });
+            staffChange = suggestion.impact.resourceChanges.find((c) => c.resourceType === "staff");
             if (!staffChange) return [3 /*break*/, 3];
             return [
               4 /*yield*/,
@@ -1687,9 +1676,7 @@ var SuggestionEngine = /** @class */ (function () {
           case 3:
             return [3 /*break*/, 12];
           case 4:
-            roomChange = suggestion.impact.resourceChanges.find(function (c) {
-              return c.resourceType === "room";
-            });
+            roomChange = suggestion.impact.resourceChanges.find((c) => c.resourceType === "room");
             if (!roomChange) return [3 /*break*/, 6];
             return [
               4 /*yield*/,
@@ -1706,9 +1693,9 @@ var SuggestionEngine = /** @class */ (function () {
           case 6:
             return [3 /*break*/, 12];
           case 7:
-            equipmentChange_1 = suggestion.impact.resourceChanges.find(function (c) {
-              return c.resourceType === "equipment";
-            });
+            equipmentChange_1 = suggestion.impact.resourceChanges.find(
+              (c) => c.resourceType === "equipment",
+            );
             if (!equipmentChange_1) return [3 /*break*/, 10];
             return [
               4 /*yield*/,
@@ -1722,9 +1709,9 @@ var SuggestionEngine = /** @class */ (function () {
             appointment = _b.sent().data;
             if (!appointment) return [3 /*break*/, 10];
             currentEquipment = appointment.required_equipment || [];
-            updatedEquipment = currentEquipment.map(function (eq) {
-              return eq === equipmentChange_1.from ? equipmentChange_1.to : eq;
-            });
+            updatedEquipment = currentEquipment.map((eq) =>
+              eq === equipmentChange_1.from ? equipmentChange_1.to : eq,
+            );
             return [
               4 /*yield*/,
               this.supabase
@@ -1823,15 +1810,13 @@ var SuggestionEngine = /** @class */ (function () {
 })();
 exports.SuggestionEngine = SuggestionEngine;
 // Instância singleton
-var createsuggestionEngine = function () {
-  return new SuggestionEngine();
-};
+var createsuggestionEngine = () => new SuggestionEngine();
 exports.createsuggestionEngine = createsuggestionEngine;
 // Função utilitária
 function generateResolutionSuggestions(conflictResult, appointmentData, clinicId, config) {
   return __awaiter(this, void 0, void 0, function () {
     var engine;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       engine = config ? new SuggestionEngine(config) : suggestionEngine;
       return [2 /*return*/, engine.generateSuggestions(conflictResult, appointmentData, clinicId)];
     });

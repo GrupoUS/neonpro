@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Performance Optimization Hooks for React Components
  *
@@ -7,7 +6,7 @@
  */
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -16,7 +15,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useOptimizedCallback = useOptimizedCallback;
 exports.useOptimizedMemo = useOptimizedMemo;
@@ -43,7 +42,7 @@ function useOptimizedCallback(callback, deps, debugName) {
     totalTime: 0,
     lastCall: 0,
   });
-  return (0, react_1.useCallback)(function () {
+  return (0, react_1.useCallback)(() => {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args[_i] = arguments[_i];
@@ -81,7 +80,7 @@ function useOptimizedMemo(factory, deps, debugName) {
     totalTime: 0,
     lastCompute: 0,
   });
-  return (0, react_1.useMemo)(function () {
+  return (0, react_1.useMemo)(() => {
     var start = performance.now();
     try {
       var result = factory();
@@ -116,7 +115,7 @@ function useRenderPerformance(componentName) {
   // Mark render start
   renderStartRef.current = performance.now();
   renderCountRef.current++;
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Mark render end
     var renderTime = performance.now() - renderStartRef.current;
     totalRenderTimeRef.current += renderTime;
@@ -158,7 +157,7 @@ function useDebouncedState(initialValue, delay) {
     setDebouncedValue = _b[1];
   var timeoutRef = (0, react_1.useRef)();
   var setValue = (0, react_1.useCallback)(
-    function (value) {
+    (value) => {
       // Update immediate value for UI responsiveness
       setImmediateValue(value);
       // Clear existing timeout
@@ -166,21 +165,22 @@ function useDebouncedState(initialValue, delay) {
         clearTimeout(timeoutRef.current);
       }
       // Set debounced value with transition
-      timeoutRef.current = setTimeout(function () {
-        (0, react_1.startTransition)(function () {
+      timeoutRef.current = setTimeout(() => {
+        (0, react_1.startTransition)(() => {
           setDebouncedValue(value);
         });
       }, delay);
     },
     [delay],
   );
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-    };
-  }, []);
+    },
+    [],
+  );
   return [immediateValue, debouncedValue, setValue];
 }
 // Virtual scrolling hook for large lists
@@ -188,35 +188,29 @@ function useVirtualScrolling(items, itemHeight, containerHeight) {
   var _a = (0, react_1.useState)(0),
     scrollTop = _a[0],
     setScrollTop = _a[1];
-  var visibleRange = (0, react_1.useMemo)(
-    function () {
-      var start = Math.floor(scrollTop / itemHeight);
-      var visibleCount = Math.ceil(containerHeight / itemHeight);
-      var end = Math.min(start + visibleCount + 1, items.length);
-      return { start: Math.max(0, start - 1), end: end };
-    },
-    [scrollTop, itemHeight, containerHeight, items.length],
-  );
+  var visibleRange = (0, react_1.useMemo)(() => {
+    var start = Math.floor(scrollTop / itemHeight);
+    var visibleCount = Math.ceil(containerHeight / itemHeight);
+    var end = Math.min(start + visibleCount + 1, items.length);
+    return { start: Math.max(0, start - 1), end: end };
+  }, [scrollTop, itemHeight, containerHeight, items.length]);
   var visibleItems = (0, react_1.useMemo)(
-    function () {
-      return items.slice(visibleRange.start, visibleRange.end).map(function (item, index) {
-        return {
-          item: item,
-          index: visibleRange.start + index,
-          style: {
-            position: "absolute",
-            top: (visibleRange.start + index) * itemHeight,
-            height: itemHeight,
-            width: "100%",
-          },
-        };
-      });
-    },
+    () =>
+      items.slice(visibleRange.start, visibleRange.end).map((item, index) => ({
+        item: item,
+        index: visibleRange.start + index,
+        style: {
+          position: "absolute",
+          top: (visibleRange.start + index) * itemHeight,
+          height: itemHeight,
+          width: "100%",
+        },
+      })),
     [items, visibleRange, itemHeight],
   );
   var totalHeight = items.length * itemHeight;
   var handleScroll = useOptimizedCallback(
-    function (event) {
+    (event) => {
       setScrollTop(event.currentTarget.scrollTop);
     },
     [],
@@ -241,58 +235,50 @@ function useIntersectionObserver(options) {
     hasIntersected = _b[0],
     setHasIntersected = _b[1];
   var ref = (0, react_1.useRef)(null);
-  (0, react_1.useEffect)(
-    function () {
-      var element = ref.current;
-      if (!element) return;
-      var observer = new IntersectionObserver(function (_a) {
-        var entry = _a[0];
-        var intersecting = entry.isIntersecting;
-        setIsIntersecting(intersecting);
-        if (intersecting && !hasIntersected) {
-          setHasIntersected(true);
-        }
-      }, options);
-      observer.observe(element);
-      return function () {
-        observer.unobserve(element);
-      };
-    },
-    [options, hasIntersected],
-  );
+  (0, react_1.useEffect)(() => {
+    var element = ref.current;
+    if (!element) return;
+    var observer = new IntersectionObserver((_a) => {
+      var entry = _a[0];
+      var intersecting = entry.isIntersecting;
+      setIsIntersecting(intersecting);
+      if (intersecting && !hasIntersected) {
+        setHasIntersected(true);
+      }
+    }, options);
+    observer.observe(element);
+    return () => {
+      observer.unobserve(element);
+    };
+  }, [options, hasIntersected]);
   return { ref: ref, isIntersecting: isIntersecting, hasIntersected: hasIntersected };
 }
 // Memory usage monitor hook
 function useMemoryMonitor(componentName) {
-  (0, react_1.useEffect)(
-    function () {
-      if (process.env.NODE_ENV === "development" && "memory" in performance) {
-        var checkMemory = function () {
-          var memory = performance.memory;
-          var used = memory.usedJSHeapSize;
-          var total = memory.totalJSHeapSize;
-          if (used > PERFORMANCE_THRESHOLDS.MEMORY_USAGE_WARNING) {
-            console.warn(
-              "\uD83E\uDDE0 High memory usage in "
-                .concat(componentName, ": ")
-                .concat((used / 1024 / 1024).toFixed(2), "MB"),
-            );
-          }
-          return { used: used, total: total, percentage: (used / total) * 100 };
-        };
-        var interval_1 = setInterval(checkMemory, 5000); // Check every 5 seconds
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [componentName],
-  );
+  (0, react_1.useEffect)(() => {
+    if (process.env.NODE_ENV === "development" && "memory" in performance) {
+      var checkMemory = () => {
+        var memory = performance.memory;
+        var used = memory.usedJSHeapSize;
+        var total = memory.totalJSHeapSize;
+        if (used > PERFORMANCE_THRESHOLDS.MEMORY_USAGE_WARNING) {
+          console.warn(
+            "\uD83E\uDDE0 High memory usage in "
+              .concat(componentName, ": ")
+              .concat((used / 1024 / 1024).toFixed(2), "MB"),
+          );
+        }
+        return { used: used, total: total, percentage: (used / total) * 100 };
+      };
+      var interval_1 = setInterval(checkMemory, 5000); // Check every 5 seconds
+      return () => clearInterval(interval_1);
+    }
+  }, [componentName]);
 }
 // Optimized chart data processor for analytics
 function useOptimizedChartData(rawData, processor, deps) {
   return useOptimizedMemo(
-    function () {
+    () => {
       if (!rawData || rawData.length === 0) return [];
       // Batch process large datasets
       if (rawData.length > 1000) {
@@ -301,9 +287,10 @@ function useOptimizedChartData(rawData, processor, deps) {
         for (var i = 0; i < rawData.length; i += batchSize) {
           batches.push(rawData.slice(i, i + batchSize));
         }
-        return batches.reduce(function (acc, batch) {
-          return __spreadArray(__spreadArray([], acc, true), processor(batch), true);
-        }, []);
+        return batches.reduce(
+          (acc, batch) => __spreadArray(__spreadArray([], acc, true), processor(batch), true),
+          [],
+        );
       }
       return processor(rawData);
     },
@@ -313,37 +300,34 @@ function useOptimizedChartData(rawData, processor, deps) {
 }
 // Preload resources hook
 function usePreloadResources(resources) {
-  (0, react_1.useEffect)(
-    function () {
-      var links = [];
-      resources.forEach(function (resource) {
-        var link = document.createElement("link");
-        link.rel = "preload";
-        // Determine resource type
-        if (resource.endsWith(".js")) {
-          link.as = "script";
-        } else if (resource.endsWith(".css")) {
-          link.as = "style";
-        } else if (resource.match(/\.(woff|woff2|ttf|otf)$/)) {
-          link.as = "font";
-          link.crossOrigin = "anonymous";
-        } else if (resource.match(/\.(jpg|jpeg|png|webp|avif|svg)$/)) {
-          link.as = "image";
+  (0, react_1.useEffect)(() => {
+    var links = [];
+    resources.forEach((resource) => {
+      var link = document.createElement("link");
+      link.rel = "preload";
+      // Determine resource type
+      if (resource.endsWith(".js")) {
+        link.as = "script";
+      } else if (resource.endsWith(".css")) {
+        link.as = "style";
+      } else if (resource.match(/\.(woff|woff2|ttf|otf)$/)) {
+        link.as = "font";
+        link.crossOrigin = "anonymous";
+      } else if (resource.match(/\.(jpg|jpeg|png|webp|avif|svg)$/)) {
+        link.as = "image";
+      }
+      link.href = resource;
+      document.head.appendChild(link);
+      links.push(link);
+    });
+    return () => {
+      links.forEach((link) => {
+        if (link.parentNode) {
+          link.parentNode.removeChild(link);
         }
-        link.href = resource;
-        document.head.appendChild(link);
-        links.push(link);
       });
-      return function () {
-        links.forEach(function (link) {
-          if (link.parentNode) {
-            link.parentNode.removeChild(link);
-          }
-        });
-      };
-    },
-    [resources],
-  );
+    };
+  }, [resources]);
 }
 // Performance profiler hook for development
 function usePerformanceProfiler(name, enabled) {
@@ -352,7 +336,7 @@ function usePerformanceProfiler(name, enabled) {
   }
   var marksRef = (0, react_1.useRef)({});
   var mark = (0, react_1.useCallback)(
-    function (markName) {
+    (markName) => {
       if (!enabled) return;
       var fullName = "".concat(name, "-").concat(markName);
       performance.mark(fullName);
@@ -361,7 +345,7 @@ function usePerformanceProfiler(name, enabled) {
     [name, enabled],
   );
   var measure = (0, react_1.useCallback)(
-    function (startMark, endMark) {
+    (startMark, endMark) => {
       if (!enabled) return;
       var startName = "".concat(name, "-").concat(startMark);
       var endName = "".concat(name, "-").concat(endMark);

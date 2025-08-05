@@ -1,6 +1,4 @@
-﻿import type { createClient } from "@/lib/supabase/server";
-import type { addDays, addMinutes, format, parseISO } from "date-fns";
-import { NextRequest, NextResponse } from "next/server";
+﻿import { type NextRequest, NextResponse } from "next/server";
 
 // =============================================
 // NeonPro Availability Heat Map API
@@ -92,7 +90,7 @@ export async function GET(request: NextRequest) {
       const dayOfWeek = currentDate.getDay();
       const daySchedule = professionalSchedule.find((s) => s.day_of_week === dayOfWeek);
 
-      if (daySchedule && daySchedule.is_available) {
+      if (daySchedule?.is_available) {
         const dayAvailability = await generateDayAvailability(
           currentDate,
           daySchedule,

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PixPaymentForm = PixPaymentForm;
 var react_1 = require("react");
@@ -162,7 +159,6 @@ var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 var pix_integration_1 = require("@/lib/payments/gateways/pix-integration");
 function PixPaymentForm(_a) {
-  var _this = this;
   var amount = _a.amount,
     description = _a.description,
     onPaymentSuccess = _a.onPaymentSuccess,
@@ -192,34 +188,29 @@ function PixPaymentForm(_a) {
     errors = _g[0],
     setErrors = _g[1];
   // Countdown timer for payment expiration
-  (0, react_1.useEffect)(
-    function () {
-      if (payment && payment.expiresAt) {
-        var interval_1 = setInterval(function () {
-          var now = new Date().getTime();
-          var expiry = new Date(payment.expiresAt).getTime();
-          var remaining = Math.max(0, expiry - now);
-          setTimeRemaining(remaining);
-          if (remaining === 0) {
-            setStatus(pix_integration_1.PixPaymentStatus.EXPIRED);
-            clearInterval(interval_1);
-          }
-        }, 1000);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [payment],
-  );
+  (0, react_1.useEffect)(() => {
+    if (payment && payment.expiresAt) {
+      var interval_1 = setInterval(() => {
+        var now = new Date().getTime();
+        var expiry = new Date(payment.expiresAt).getTime();
+        var remaining = Math.max(0, expiry - now);
+        setTimeRemaining(remaining);
+        if (remaining === 0) {
+          setStatus(pix_integration_1.PixPaymentStatus.EXPIRED);
+          clearInterval(interval_1);
+        }
+      }, 1000);
+      return () => clearInterval(interval_1);
+    }
+  }, [payment]);
   // Poll payment status
-  (0, react_1.useEffect)(
-    function () {
-      if (payment && status === pix_integration_1.PixPaymentStatus.PENDING) {
-        var pollInterval_1 = setInterval(function () {
-          return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (payment && status === pix_integration_1.PixPaymentStatus.PENDING) {
+      var pollInterval_1 = setInterval(
+        () =>
+          __awaiter(this, void 0, void 0, function () {
             var response, data, error_1;
-            return __generator(this, function (_a) {
+            return __generator(this, (_a) => {
               switch (_a.label) {
                 case 0:
                   _a.trys.push([0, 3, , 4]);
@@ -250,16 +241,13 @@ function PixPaymentForm(_a) {
                   return [2 /*return*/];
               }
             });
-          });
-        }, 3000); // Poll every 3 seconds
-        return function () {
-          return clearInterval(pollInterval_1);
-        };
-      }
-    },
-    [payment, status, onPaymentSuccess],
-  );
-  var validateForm = function () {
+          }),
+        3000,
+      ); // Poll every 3 seconds
+      return () => clearInterval(pollInterval_1);
+    }
+  }, [payment, status, onPaymentSuccess]);
+  var validateForm = () => {
     var _a, _b, _c;
     var newErrors = {};
     if (!((_a = formData.payerName) === null || _a === void 0 ? void 0 : _a.trim())) {
@@ -278,10 +266,10 @@ function PixPaymentForm(_a) {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, paymentData, error_2, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
@@ -330,11 +318,10 @@ function PixPaymentForm(_a) {
         }
       });
     });
-  };
-  var copyQRCode = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var copyQRCode = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!(payment === null || payment === void 0 ? void 0 : payment.qrCode))
@@ -356,21 +343,19 @@ function PixPaymentForm(_a) {
         }
       });
     });
-  };
-  var formatTime = function (milliseconds) {
+  var formatTime = (milliseconds) => {
     var minutes = Math.floor(milliseconds / 60000);
     var seconds = Math.floor((milliseconds % 60000) / 1000);
     return ""
       .concat(minutes.toString().padStart(2, "0"), ":")
       .concat(seconds.toString().padStart(2, "0"));
   };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-  var getStatusIcon = function () {
+  var getStatusIcon = () => {
     switch (status) {
       case pix_integration_1.PixPaymentStatus.PENDING:
         return <lucide_react_1.Clock className="h-4 w-4" />;
@@ -382,7 +367,7 @@ function PixPaymentForm(_a) {
         return <lucide_react_1.QrCode className="h-4 w-4" />;
     }
   };
-  var getStatusColor = function () {
+  var getStatusColor = () => {
     switch (status) {
       case pix_integration_1.PixPaymentStatus.PENDING:
         return "bg-yellow-100 text-yellow-800";
@@ -473,7 +458,7 @@ function PixPaymentForm(_a) {
                 </p>
               </div>
               <button_1.Button
-                onClick={function () {
+                onClick={() => {
                   setPayment(null);
                   setStatus(null);
                 }}
@@ -508,11 +493,9 @@ function PixPaymentForm(_a) {
               <input_1.Input
                 id="payerName"
                 value={formData.payerName || ""}
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), { payerName: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setFormData((prev) => __assign(__assign({}, prev), { payerName: e.target.value }))
+                }
                 placeholder="Seu nome completo"
                 className={errors.payerName ? "border-red-500" : ""}
               />
@@ -524,11 +507,11 @@ function PixPaymentForm(_a) {
               <input_1.Input
                 id="payerDocument"
                 value={formData.payerDocument || ""}
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), { payerDocument: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), { payerDocument: e.target.value }),
+                  )
+                }
                 placeholder="000.000.000-00"
                 className={errors.payerDocument ? "border-red-500" : ""}
               />
@@ -544,11 +527,9 @@ function PixPaymentForm(_a) {
               id="payerEmail"
               type="email"
               value={formData.payerEmail || ""}
-              onChange={function (e) {
-                return setFormData(function (prev) {
-                  return __assign(__assign({}, prev), { payerEmail: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setFormData((prev) => __assign(__assign({}, prev), { payerEmail: e.target.value }))
+              }
               placeholder="seu@email.com"
               className={errors.payerEmail ? "border-red-500" : ""}
             />
@@ -560,11 +541,11 @@ function PixPaymentForm(_a) {
             <textarea_1.Textarea
               id="additionalInfo"
               value={formData.additionalInfo || ""}
-              onChange={function (e) {
-                return setFormData(function (prev) {
-                  return __assign(__assign({}, prev), { additionalInfo: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setFormData((prev) =>
+                  __assign(__assign({}, prev), { additionalInfo: e.target.value }),
+                )
+              }
               placeholder="Observações sobre o pagamento (opcional)"
               rows={3}
             />

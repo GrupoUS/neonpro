@@ -1,6 +1,6 @@
-import type { demandForecastingService } from "@/app/lib/services/demand-forecasting-service";
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
+import type { demandForecastingService } from "@/app/lib/services/demand-forecasting-service";
 
 const seasonalAnalysisSchema = z.object({
   itemId: z.string().uuid(),
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     const consumptionValues = Array.from(dailyConsumption.values());
     const variance =
       consumptionValues.reduce((sum, val) => {
-        return sum + Math.pow(val - averageDailyConsumption, 2);
+        return sum + (val - averageDailyConsumption) ** 2;
       }, 0) / consumptionValues.length;
 
     const standardDeviation = Math.sqrt(variance);

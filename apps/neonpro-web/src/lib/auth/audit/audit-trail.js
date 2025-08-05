@@ -1,4 +1,3 @@
-"use strict";
 // Audit Trail System
 // Comprehensive logging and tracking of all session-related activities
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,10 +144,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -159,12 +156,12 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuditTrailManager = void 0;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
-var AuditTrailManager = /** @class */ (function () {
+var AuditTrailManager = /** @class */ (() => {
   function AuditTrailManager() {
     this.eventListeners = new Map();
     this.bufferSize = 1000;
@@ -382,45 +379,43 @@ var AuditTrailManager = /** @class */ (function () {
    */
   AuditTrailManager.prototype.buildMetadata = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            source: "neonpro_audit_trail",
-            version: "1.0.0",
-            schema: "audit_event_v1",
-            retention: {
-              period: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
-              archiveAfter: 365 * 24 * 60 * 60 * 1000, // 1 year
-              deleteAfter: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
-              reason: "compliance_requirement",
-            },
-            classification: {
-              level: "confidential",
-              categories: ["audit", "security"],
-              handling: ["encrypt", "backup", "monitor"],
-            },
-            compliance: {
-              frameworks: ["LGPD", "ISO27001", "SOC2"],
-              requirements: ["audit_logging", "data_retention", "access_control"],
-              controls: ["AC-2", "AU-2", "AU-3", "AU-12"],
-              evidence: true,
-            },
-            encryption: {
-              encrypted: false,
-              algorithm: undefined,
-              keyId: undefined,
-              strength: undefined,
-            },
-            integrity: {
-              hash: "",
-              algorithm: "SHA-256",
-              verified: false,
-              timestamp: Date.now(),
-            },
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          source: "neonpro_audit_trail",
+          version: "1.0.0",
+          schema: "audit_event_v1",
+          retention: {
+            period: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
+            archiveAfter: 365 * 24 * 60 * 60 * 1000, // 1 year
+            deleteAfter: 7 * 365 * 24 * 60 * 60 * 1000, // 7 years
+            reason: "compliance_requirement",
           },
-        ];
-      });
+          classification: {
+            level: "confidential",
+            categories: ["audit", "security"],
+            handling: ["encrypt", "backup", "monitor"],
+          },
+          compliance: {
+            frameworks: ["LGPD", "ISO27001", "SOC2"],
+            requirements: ["audit_logging", "data_retention", "access_control"],
+            controls: ["AC-2", "AU-2", "AU-3", "AU-12"],
+            evidence: true,
+          },
+          encryption: {
+            encrypted: false,
+            algorithm: undefined,
+            keyId: undefined,
+            strength: undefined,
+          },
+          integrity: {
+            hash: "",
+            algorithm: "SHA-256",
+            verified: false,
+            timestamp: Date.now(),
+          },
+        },
+      ]);
     });
   };
   /**
@@ -474,28 +469,29 @@ var AuditTrailManager = /** @class */ (function () {
    * Start flush timer
    */
   AuditTrailManager.prototype.startFlushTimer = function () {
-    var _this = this;
-    this.flushTimer = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_4;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.flushBuffer()];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_4 = _a.sent();
-              console.error("Error in flush timer:", error_4);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.flushInterval);
+    this.flushTimer = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_4;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.flushBuffer()];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_4 = _a.sent();
+                console.error("Error in flush timer:", error_4);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.flushInterval,
+    );
   };
   /**
    * Check for real-time alerts
@@ -545,11 +541,7 @@ var AuditTrailManager = /** @class */ (function () {
                 event: event,
                 violations: violations,
                 message: "Compliance violation detected: ".concat(
-                  violations
-                    .map(function (v) {
-                      return v.requirement;
-                    })
-                    .join(", "),
+                  violations.map((v) => v.requirement).join(", "),
                 ),
               }),
             ];
@@ -741,40 +733,28 @@ var AuditTrailManager = /** @class */ (function () {
   /**
    * Generate summary
    */
-  AuditTrailManager.prototype.generateSummary = function (events) {
+  AuditTrailManager.prototype.generateSummary = (events) => {
     var summary = {
       totalEvents: events.length,
       eventsByType: {},
       eventsByCategory: {},
       eventsBySeverity: {},
       eventsByStatus: {},
-      uniqueActors: new Set(
-        events.map(function (e) {
-          return e.actor.id;
-        }),
-      ).size,
-      uniqueTargets: new Set(
-        events.map(function (e) {
-          return e.target.id;
-        }),
-      ).size,
+      uniqueActors: new Set(events.map((e) => e.actor.id)).size,
+      uniqueTargets: new Set(events.map((e) => e.target.id)).size,
       timeRange: {
         start: Math.min.apply(
           Math,
-          events.map(function (e) {
-            return e.timestamp;
-          }),
+          events.map((e) => e.timestamp),
         ),
         end: Math.max.apply(
           Math,
-          events.map(function (e) {
-            return e.timestamp;
-          }),
+          events.map((e) => e.timestamp),
         ),
       },
     };
     // Count by type
-    events.forEach(function (event) {
+    events.forEach((event) => {
       summary.eventsByType[event.type] = (summary.eventsByType[event.type] || 0) + 1;
       summary.eventsByCategory[event.category] =
         (summary.eventsByCategory[event.category] || 0) + 1;
@@ -900,7 +880,7 @@ var AuditTrailManager = /** @class */ (function () {
   /**
    * Check if event should be encrypted
    */
-  AuditTrailManager.prototype.shouldEncrypt = function (event) {
+  AuditTrailManager.prototype.shouldEncrypt = (event) => {
     // Encrypt events with sensitive data
     var sensitiveTypes = ["authentication", "authorization", "data_access", "security_incident"];
     var sensitiveCategories = ["security", "data", "compliance"];
@@ -1067,7 +1047,7 @@ var AuditTrailManager = /** @class */ (function () {
   AuditTrailManager.prototype.emit = function (event, data) {
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (callback) {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1161,9 +1141,9 @@ var AuditTrailManager = /** @class */ (function () {
               (_a.bufferSize = this.eventBuffer.length),
               (_a.flushTimer = !!this.flushTimer),
               _a);
-            allHealthy = Object.values(checks).every(function (check) {
-              return typeof check === "boolean" ? check : check.status === "healthy";
-            });
+            allHealthy = Object.values(checks).every((check) =>
+              typeof check === "boolean" ? check : check.status === "healthy",
+            );
             return [
               2 /*return*/,
               {
@@ -1192,18 +1172,16 @@ exports.AuditTrailManager = AuditTrailManager;
 /**
  * Helper classes (simplified implementations)
  */
-var AuditEventStore = /** @class */ (function () {
+var AuditEventStore = /** @class */ (() => {
   function AuditEventStore() {}
   AuditEventStore.prototype.initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AuditEventStore.prototype.storeEvents = function (events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Store events in database
         console.log("Storing ".concat(events.length, " audit events"));
         return [2 /*return*/];
@@ -1212,7 +1190,7 @@ var AuditEventStore = /** @class */ (function () {
   };
   AuditEventStore.prototype.queryEvents = function (query) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Query events from database
         return [2 /*return*/, []];
       });
@@ -1220,32 +1198,26 @@ var AuditEventStore = /** @class */ (function () {
   };
   AuditEventStore.prototype.healthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { status: "healthy" }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { status: "healthy" }]);
     });
   };
   AuditEventStore.prototype.shutdown = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return AuditEventStore;
 })();
-var EncryptionService = /** @class */ (function () {
+var EncryptionService = /** @class */ (() => {
   function EncryptionService() {}
   EncryptionService.prototype.initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   EncryptionService.prototype.encrypt = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Encrypt sensitive event data
         return [
           2 /*return*/,
@@ -1261,7 +1233,7 @@ var EncryptionService = /** @class */ (function () {
   };
   EncryptionService.prototype.decrypt = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Decrypt event data
         return [2 /*return*/, event];
       });
@@ -1269,33 +1241,27 @@ var EncryptionService = /** @class */ (function () {
   };
   EncryptionService.prototype.healthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { status: "healthy" }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { status: "healthy" }]);
     });
   };
   EncryptionService.prototype.shutdown = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return EncryptionService;
 })();
-var IntegrityService = /** @class */ (function () {
+var IntegrityService = /** @class */ (() => {
   function IntegrityService() {}
   IntegrityService.prototype.initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   IntegrityService.prototype.generateHash = function (event) {
     return __awaiter(this, void 0, void 0, function () {
       var hash;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         hash = "sha256_hash_placeholder";
         return [
           2 /*return*/,
@@ -1311,7 +1277,7 @@ var IntegrityService = /** @class */ (function () {
   };
   IntegrityService.prototype.verifyHash = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Verify integrity hash
         return [2 /*return*/, true];
       });
@@ -1319,32 +1285,26 @@ var IntegrityService = /** @class */ (function () {
   };
   IntegrityService.prototype.healthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { status: "healthy" }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { status: "healthy" }]);
     });
   };
   IntegrityService.prototype.shutdown = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return IntegrityService;
 })();
-var ComplianceEngine = /** @class */ (function () {
+var ComplianceEngine = /** @class */ (() => {
   function ComplianceEngine() {}
   ComplianceEngine.prototype.initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ComplianceEngine.prototype.processEvents = function (events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Process events for compliance
         console.log("Processing ".concat(events.length, " events for compliance"));
         return [2 /*return*/];
@@ -1353,7 +1313,7 @@ var ComplianceEngine = /** @class */ (function () {
   };
   ComplianceEngine.prototype.checkViolations = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Check for compliance violations
         return [2 /*return*/, []];
       });
@@ -1361,7 +1321,7 @@ var ComplianceEngine = /** @class */ (function () {
   };
   ComplianceEngine.prototype.generateReport = function (events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate compliance report
         return [
           2 /*return*/,
@@ -1378,32 +1338,26 @@ var ComplianceEngine = /** @class */ (function () {
   };
   ComplianceEngine.prototype.healthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { status: "healthy" }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { status: "healthy" }]);
     });
   };
   ComplianceEngine.prototype.shutdown = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return ComplianceEngine;
 })();
-var AnalyticsEngine = /** @class */ (function () {
+var AnalyticsEngine = /** @class */ (() => {
   function AnalyticsEngine() {}
   AnalyticsEngine.prototype.initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AnalyticsEngine.prototype.processEvents = function (events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Process events for analytics
         console.log("Processing ".concat(events.length, " events for analytics"));
         return [2 /*return*/];
@@ -1412,7 +1366,7 @@ var AnalyticsEngine = /** @class */ (function () {
   };
   AnalyticsEngine.prototype.generateStatistics = function (events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate statistics
         return [
           2 /*return*/,
@@ -1432,7 +1386,7 @@ var AnalyticsEngine = /** @class */ (function () {
   };
   AnalyticsEngine.prototype.generateInsights = function (events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate insights
         return [2 /*return*/, []];
       });
@@ -1440,7 +1394,7 @@ var AnalyticsEngine = /** @class */ (function () {
   };
   AnalyticsEngine.prototype.generateRecommendations = function (events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate recommendations
         return [2 /*return*/, []];
       });
@@ -1448,16 +1402,12 @@ var AnalyticsEngine = /** @class */ (function () {
   };
   AnalyticsEngine.prototype.healthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { status: "healthy" }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { status: "healthy" }]);
     });
   };
   AnalyticsEngine.prototype.shutdown = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return AnalyticsEngine;

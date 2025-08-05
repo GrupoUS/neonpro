@@ -4,9 +4,8 @@
  * Quality: ≥9.5/10 with full coverage and edge cases
  */
 
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { vi, describe, it, expect, beforeEach } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import BarcodeGenerator from "@/app/components/inventory/barcode/barcode-generator";
 
 // Mock the hooks

@@ -1098,19 +1098,21 @@ export class ConsentFormsManager {
 
       // Type-specific validation
       switch (field.type) {
-        case FieldType.EMAIL:
+        case FieldType.EMAIL: {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           if (value && !emailRegex.test(value)) {
             return { isValid: false, error: `${field.label} must be a valid email` };
           }
           break;
+        }
 
-        case FieldType.PHONE:
+        case FieldType.PHONE: {
           const phoneRegex = /^\+?[1-9]\d{1,14}$/;
           if (value && !phoneRegex.test(value.replace(/\s/g, ""))) {
             return { isValid: false, error: `${field.label} must be a valid phone number` };
           }
           break;
+        }
 
         case FieldType.NUMBER:
           if (value && isNaN(Number(value))) {

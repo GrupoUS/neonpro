@@ -1,12 +1,12 @@
 "use client";
 
-import type { useState } from "react";
-import type { useForm, useFieldArray } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type { FileText, Plus, Trash2, Save, AlertTriangle } from "lucide-react";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
-
+import type { AlertTriangle, FileText, Plus, Save, Trash2 } from "lucide-react";
+import type { useState } from "react";
+import type { useFieldArray, useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -15,8 +15,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Form,
   FormControl,
@@ -26,6 +24,7 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
 import type {
   Select,
   SelectContent,
@@ -33,8 +32,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { medicalRecordSchema, type MedicalRecordFormData } from "@/lib/healthcare/schemas";
-import type { toast } from "sonner";
+import type { Textarea } from "@/components/ui/textarea";
+import type { MedicalRecordFormData, medicalRecordSchema } from "@/lib/healthcare/schemas";
 
 interface MedicalRecordFormProps {
   patientId: string;

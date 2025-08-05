@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI-powered Treatment Recommendation Engine
  * Provides intelligent treatment suggestions based on patient profile and evidence-based medicine
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,14 +166,14 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AITreatmentRecommendationEngine = void 0;
 /**
  * AI Treatment Recommendation Engine
  * Core system for intelligent treatment suggestions and optimization
  */
-var AITreatmentRecommendationEngine = /** @class */ (function () {
+var AITreatmentRecommendationEngine = /** @class */ (() => {
   function AITreatmentRecommendationEngine() {
     this.treatmentDatabase = new Map();
     this.protocolDatabase = new Map();
@@ -231,9 +228,7 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
             // Sort by recommendation score
             return [
               2 /*return*/,
-              recommendations.sort(function (a, b) {
-                return b.recommendation_score - a.recommendation_score;
-              }),
+              recommendations.sort((a, b) => b.recommendation_score - a.recommendation_score),
             ];
           case 4:
             error_1 = _a.sent();
@@ -320,12 +315,7 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
             _i++;
             return [3 /*break*/, 1];
           case 4:
-            return [
-              2 /*return*/,
-              combinations.sort(function (a, b) {
-                return b.synergy_score - a.synergy_score;
-              }),
-            ];
+            return [2 /*return*/, combinations.sort((a, b) => b.synergy_score - a.synergy_score)];
         }
       });
     });
@@ -379,12 +369,8 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
       age: this.calculateAge(patient.birth_date),
       riskLevel: riskAssessment.risk_level,
       overallRiskScore: riskAssessment.overall_score,
-      previousTreatments: treatmentHistory.map(function (t) {
-        return t.treatment_type;
-      }),
-      chronicConditions: medicalHistory.filter(function (m) {
-        return m.condition_type === "chronic";
-      }),
+      previousTreatments: treatmentHistory.map((t) => t.treatment_type),
+      chronicConditions: medicalHistory.filter((m) => m.condition_type === "chronic"),
       allergies: patient.allergies || [],
       lifestyle: patient.lifestyle_factors,
       biometrics: patient.biometrics,
@@ -569,7 +555,7 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     });
   };
   // Additional helper methods
-  AITreatmentRecommendationEngine.prototype.calculateAge = function (birthDate) {
+  AITreatmentRecommendationEngine.prototype.calculateAge = (birthDate) => {
     var birth = new Date(birthDate);
     var today = new Date();
     var age = today.getFullYear() - birth.getFullYear();
@@ -583,16 +569,15 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     treatments,
     patientProfile,
   ) {
-    var _this = this;
-    return treatments.filter(function (treatment) {
+    return treatments.filter((treatment) => {
       // Basic suitability checks
-      if (patientProfile.age < 18 && _this.requiresAdultConsent(treatment)) {
+      if (patientProfile.age < 18 && this.requiresAdultConsent(treatment)) {
         return false;
       }
       if (
-        patientProfile.allergies.some(function (allergy) {
-          return _this.hasAllergyContraindication(treatment, allergy);
-        })
+        patientProfile.allergies.some((allergy) =>
+          this.hasAllergyContraindication(treatment, allergy),
+        )
       ) {
         return false;
       }
@@ -619,10 +604,7 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
   AITreatmentRecommendationEngine.prototype.calculateEvidenceQuality = function (treatmentId) {
     var evidence = this.evidenceDatabase.get(treatmentId) || [];
     if (evidence.length === 0) return 0.3;
-    var avgConfidence =
-      evidence.reduce(function (sum, e) {
-        return sum + e.confidence_level;
-      }, 0) / evidence.length;
+    var avgConfidence = evidence.reduce((sum, e) => sum + e.confidence_level, 0) / evidence.length;
     return avgConfidence;
   };
   AITreatmentRecommendationEngine.prototype.calculatePreferenceMatch = function (
@@ -641,7 +623,6 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
   };
   // Mock data initialization methods
   AITreatmentRecommendationEngine.prototype.initializeTreatmentDatabase = function () {
-    var _this = this;
     // Initialize with sample treatments
     var treatments = [
       {
@@ -669,24 +650,24 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
         recovery_time: "7-10 days",
       },
     ];
-    treatments.forEach(function (treatment) {
-      _this.treatmentDatabase.set(treatment.id, treatment);
+    treatments.forEach((treatment) => {
+      this.treatmentDatabase.set(treatment.id, treatment);
     });
   };
-  AITreatmentRecommendationEngine.prototype.initializeProtocolDatabase = function () {
+  AITreatmentRecommendationEngine.prototype.initializeProtocolDatabase = () => {
     // Initialize with sample protocols
     console.log("Initializing treatment protocols...");
   };
-  AITreatmentRecommendationEngine.prototype.loadEvidenceDatabase = function () {
+  AITreatmentRecommendationEngine.prototype.loadEvidenceDatabase = () => {
     // Load evidence sources
     console.log("Loading evidence database...");
   };
-  AITreatmentRecommendationEngine.prototype.loadSuccessRateModels = function () {
+  AITreatmentRecommendationEngine.prototype.loadSuccessRateModels = () => {
     // Load ML models for success rate prediction
     console.log("Loading success rate prediction models...");
   };
   // Additional utility methods would be implemented here...
-  AITreatmentRecommendationEngine.prototype.getBaselineSuccessRate = function (treatmentId) {
+  AITreatmentRecommendationEngine.prototype.getBaselineSuccessRate = (treatmentId) => {
     var rates = {
       botox: 0.92,
       dermal_fillers: 0.88,
@@ -696,7 +677,7 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     };
     return rates[treatmentId] || 0.75;
   };
-  AITreatmentRecommendationEngine.prototype.calculateRiskAdjustment = function (riskAssessment) {
+  AITreatmentRecommendationEngine.prototype.calculateRiskAdjustment = (riskAssessment) => {
     var adjustments = {
       low: 1.05,
       moderate: 1.0,
@@ -705,51 +686,44 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     };
     return adjustments[riskAssessment.risk_level];
   };
-  AITreatmentRecommendationEngine.prototype.calculateAgeAdjustment = function (patient) {
+  AITreatmentRecommendationEngine.prototype.calculateAgeAdjustment = (patient) => {
     var age = patient.age;
     if (age < 25) return 1.02;
     if (age < 40) return 1.0;
     if (age < 60) return 0.98;
     return 0.95;
   };
-  AITreatmentRecommendationEngine.prototype.calculateHistoryAdjustment = function (patient) {
+  AITreatmentRecommendationEngine.prototype.calculateHistoryAdjustment = (patient) => {
     var previousTreatments = patient.previousTreatments || [];
     if (previousTreatments.length === 0) return 0.98; // Slight reduction for first-time
     if (previousTreatments.length > 5) return 1.05; // Bonus for experienced patients
     return 1.0;
   };
-  AITreatmentRecommendationEngine.prototype.extractPredictionFeatures = function (
+  AITreatmentRecommendationEngine.prototype.extractPredictionFeatures = (
     patient,
     riskAssessment,
-  ) {
-    return {
-      age: patient.age,
-      riskScore: riskAssessment.overall_score,
-      chronicConditions: patient.chronicConditions.length,
-      previousTreatments: patient.previousTreatments.length,
-      lifestyle: patient.lifestyle,
-    };
-  };
+  ) => ({
+    age: patient.age,
+    riskScore: riskAssessment.overall_score,
+    chronicConditions: patient.chronicConditions.length,
+    previousTreatments: patient.previousTreatments.length,
+    lifestyle: patient.lifestyle,
+  });
   // More utility methods...
-  AITreatmentRecommendationEngine.prototype.requiresAdultConsent = function (treatmentId) {
+  AITreatmentRecommendationEngine.prototype.requiresAdultConsent = (treatmentId) => {
     var adultOnlyTreatments = ["botox", "dermal_fillers", "laser_resurfacing"];
     return adultOnlyTreatments.includes(treatmentId);
   };
-  AITreatmentRecommendationEngine.prototype.hasAllergyContraindication = function (
-    treatmentId,
-    allergy,
-  ) {
+  AITreatmentRecommendationEngine.prototype.hasAllergyContraindication = (treatmentId, allergy) => {
     var contraindications = {
       botox: ["botulinum", "albumin"],
       dermal_fillers: ["hyaluronic", "lidocaine"],
       laser_resurfacing: ["photosensitivity"],
     };
     var treatmentContras = contraindications[treatmentId] || [];
-    return treatmentContras.some(function (contra) {
-      return allergy.toLowerCase().includes(contra);
-    });
+    return treatmentContras.some((contra) => allergy.toLowerCase().includes(contra));
   };
-  AITreatmentRecommendationEngine.prototype.getTreatmentRiskProfile = function (treatmentId) {
+  AITreatmentRecommendationEngine.prototype.getTreatmentRiskProfile = (treatmentId) => {
     var riskProfiles = {
       botox: "low",
       dermal_fillers: "low",
@@ -759,15 +733,15 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     };
     return riskProfiles[treatmentId] || "medium";
   };
-  AITreatmentRecommendationEngine.prototype.isMinimallyInvasive = function (treatmentId) {
+  AITreatmentRecommendationEngine.prototype.isMinimallyInvasive = (treatmentId) => {
     var minimallyInvasive = ["botox", "dermal_fillers", "microneedling", "chemical_peel"];
     return minimallyInvasive.includes(treatmentId);
   };
-  AITreatmentRecommendationEngine.prototype.hasNoDowntime = function (treatmentId) {
+  AITreatmentRecommendationEngine.prototype.hasNoDowntime = (treatmentId) => {
     var noDowntime = ["botox", "microneedling", "light_therapy"];
     return noDowntime.includes(treatmentId);
   };
-  AITreatmentRecommendationEngine.prototype.getEvidenceLevel = function (treatmentId) {
+  AITreatmentRecommendationEngine.prototype.getEvidenceLevel = (treatmentId) => {
     var evidenceLevels = {
       botox: "A",
       dermal_fillers: "A",
@@ -777,27 +751,21 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     };
     return evidenceLevels[treatmentId] || "C";
   };
-  AITreatmentRecommendationEngine.prototype.generateRationale = function (
+  AITreatmentRecommendationEngine.prototype.generateRationale = (
     treatmentId,
     patientProfile,
     score,
-  ) {
-    return (
-      "Based on patient profile analysis, this treatment shows ".concat(
-        score,
-        "% compatibility. ",
-      ) +
-      "Factors considered include age ("
-        .concat(patientProfile.age, "), risk level (")
-        .concat(patientProfile.riskLevel, "), ") +
-      "and treatment history."
-    );
-  };
-  AITreatmentRecommendationEngine.prototype.generateExpectedOutcomes = function (
+  ) =>
+    "Based on patient profile analysis, this treatment shows ".concat(score, "% compatibility. ") +
+    "Factors considered include age ("
+      .concat(patientProfile.age, "), risk level (")
+      .concat(patientProfile.riskLevel, "), ") +
+    "and treatment history.";
+  AITreatmentRecommendationEngine.prototype.generateExpectedOutcomes = (
     treatmentId,
     patientProfile,
     successProbability,
-  ) {
+  ) => {
     // Generate expected outcomes based on treatment type
     return [
       {
@@ -809,22 +777,22 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
       },
     ];
   };
-  AITreatmentRecommendationEngine.prototype.identifyContraindications = function (
+  AITreatmentRecommendationEngine.prototype.identifyContraindications = (
     treatmentId,
     patientProfile,
     riskAssessment,
-  ) {
+  ) => {
     var contraindications = [];
     if (riskAssessment.risk_level === "critical") {
       contraindications.push("High-risk patient profile requires specialist consultation");
     }
     return contraindications;
   };
-  AITreatmentRecommendationEngine.prototype.identifyPrerequisites = function (
+  AITreatmentRecommendationEngine.prototype.identifyPrerequisites = (
     treatmentId,
     patientProfile,
     riskAssessment,
-  ) {
+  ) => {
     var prerequisites = [];
     if (patientProfile.age < 21) {
       prerequisites.push("Parental consent required");
@@ -834,7 +802,7 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     }
     return prerequisites;
   };
-  AITreatmentRecommendationEngine.prototype.getAlternativeTreatments = function (treatmentId) {
+  AITreatmentRecommendationEngine.prototype.getAlternativeTreatments = (treatmentId) => {
     var alternatives = {
       botox: ["dermal_fillers", "microneedling"],
       dermal_fillers: ["botox", "laser_resurfacing"],
@@ -842,27 +810,27 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     };
     return alternatives[treatmentId] || [];
   };
-  AITreatmentRecommendationEngine.prototype.generateProtocolCustomizations = function (
+  AITreatmentRecommendationEngine.prototype.generateProtocolCustomizations = (
     protocol,
     patient,
     riskAssessment,
-  ) {
+  ) => {
     // Generate protocol customizations based on patient factors
     return [];
   };
-  AITreatmentRecommendationEngine.prototype.calculateProtocolSuitability = function (
+  AITreatmentRecommendationEngine.prototype.calculateProtocolSuitability = (
     protocol,
     patient,
     riskAssessment,
-  ) {
+  ) => {
     // Calculate how suitable the protocol is for this patient
     return 0.85;
   };
-  AITreatmentRecommendationEngine.prototype.getCompatibleTreatments = function (
+  AITreatmentRecommendationEngine.prototype.getCompatibleTreatments = (
     primaryTreatment,
     patient,
     riskAssessment,
-  ) {
+  ) => {
     // Return treatments compatible with the primary treatment
     return [];
   };
@@ -873,7 +841,7 @@ var AITreatmentRecommendationEngine = /** @class */ (function () {
     riskAssessment,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Analyze synergy between treatments
         return [
           2 /*return*/,

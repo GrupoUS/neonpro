@@ -1,5 +1,8 @@
 "use client";
 
+import { AlertCircle, Download, Eye, Plus, Share2, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { z } from "zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,9 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertCircle, Download, Eye, Plus, Share2, Trash2 } from "lucide-react";
-import { useState } from "react";
-import { z } from "zod";
+
 // import { CreateSegmentSchema } from '@/lib/validations/segmentation';
 
 const CreateSegmentSchema = z.object({

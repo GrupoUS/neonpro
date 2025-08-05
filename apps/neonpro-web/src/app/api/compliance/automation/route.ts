@@ -1,11 +1,7 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { LGPDAutomationOrchestrator } from "@/lib/compliance/lgpd-automation-orchestrator";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 // Schema de validaï¿½ï¿½o para configuraï¿½ï¿½o de automaï¿½ï¿½o
-const AutomationConfigSchema = z.object({
+const _AutomationConfigSchema = z.object({
   enabled: z.boolean(),
   schedules: z.object({
     consentExpiry: z.string(),
@@ -26,7 +22,7 @@ const AutomationConfigSchema = z.object({
 });
 
 // GET - Obter status da automaï¿½ï¿½o
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
 

@@ -1,4 +1,3 @@
-"use strict";
 // Story 10.2: Progress Tracking through Computer Vision Service
 // Backend service for progress tracking system
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,11 +144,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.progressTrackingService = void 0;
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
-var ProgressTrackingService = /** @class */ (function () {
+var ProgressTrackingService = /** @class */ (() => {
   function ProgressTrackingService() {
     this.supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   }
@@ -187,7 +184,7 @@ var ProgressTrackingService = /** @class */ (function () {
       if (filters === void 0) {
         filters = {};
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase.from("progress_tracking").select("*", { count: "exact" });
@@ -246,7 +243,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ProgressTrackingService.prototype.getProgressTrackingById = function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, createClient()];
@@ -296,7 +293,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ProgressTrackingService.prototype.deleteProgressTracking = function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase.from("progress_tracking").delete().eq("id", id)];
@@ -340,7 +337,7 @@ var ProgressTrackingService = /** @class */ (function () {
       if (filters === void 0) {
         filters = {};
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase.from("progress_milestones").select("*", { count: "exact" });
@@ -450,7 +447,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ProgressTrackingService.prototype.getProgressPredictions = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase
@@ -541,7 +538,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ProgressTrackingService.prototype.getMultiSessionAnalyses = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase
@@ -589,7 +586,7 @@ var ProgressTrackingService = /** @class */ (function () {
       if (filters === void 0) {
         filters = {};
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase.from("progress_alerts").select("*", { count: "exact" });
@@ -735,7 +732,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ProgressTrackingService.prototype.getTrackingMetrics = function (treatmentType) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase
@@ -767,7 +764,7 @@ var ProgressTrackingService = /** @class */ (function () {
         predictionData,
         averageProgress,
         predictionsAccuracy;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             baseQuery = patientId
@@ -806,15 +803,12 @@ var ProgressTrackingService = /** @class */ (function () {
               (predictionData = _a[4].data);
             averageProgress =
               activeData && activeData.length > 0
-                ? activeData.reduce(function (sum, item) {
-                    return sum + item.progress_score;
-                  }, 0) / activeData.length
+                ? activeData.reduce((sum, item) => sum + item.progress_score, 0) / activeData.length
                 : 0;
             predictionsAccuracy =
               predictionData && predictionData.length > 0
-                ? predictionData.reduce(function (sum, item) {
-                    return sum + item.accuracy_score;
-                  }, 0) / predictionData.length
+                ? predictionData.reduce((sum, item) => sum + item.accuracy_score, 0) /
+                  predictionData.length
                 : 0;
             return [
               2 /*return*/,
@@ -823,9 +817,7 @@ var ProgressTrackingService = /** @class */ (function () {
                 active_treatments: new Set(
                   activeData === null || activeData === void 0
                     ? void 0
-                    : activeData.map(function (item) {
-                        return item.treatment_type;
-                      }),
+                    : activeData.map((item) => item.treatment_type),
                 ).size,
                 average_progress: Math.round(averageProgress * 10) / 10,
                 milestone_achievements:
@@ -846,7 +838,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ProgressTrackingService.prototype.getProgressTrendData = function (patientId, treatmentType) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error, groupedData;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase
@@ -862,7 +854,7 @@ var ProgressTrackingService = /** @class */ (function () {
           case 1:
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
             if (error) throw error;
-            groupedData = (data || []).reduce(function (acc, tracking) {
+            groupedData = (data || []).reduce((acc, tracking) => {
               var key = "".concat(tracking.treatment_type, "-").concat(tracking.treatment_area);
               if (!acc[key]) {
                 acc[key] = {
@@ -880,7 +872,7 @@ var ProgressTrackingService = /** @class */ (function () {
               return acc;
             }, {});
             // Calculate trend direction for each group
-            Object.values(groupedData).forEach(function (trendData) {
+            Object.values(groupedData).forEach((trendData) => {
               var data = trendData;
               var points = data.progress_points;
               if (points.length < 2) {
@@ -911,7 +903,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var simulatedAnalysis;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         simulatedAnalysis = {
           measurement_id: crypto.randomUUID(),
           analysis_type: analysisType,
@@ -958,7 +950,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ProgressTrackingService.prototype.getCurrentUser = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, user, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, createClient()];
@@ -976,7 +968,7 @@ var ProgressTrackingService = /** @class */ (function () {
   ProgressTrackingService.prototype.getTrackingDataForSessions = function (sessionIds) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, createClient()];
@@ -998,7 +990,7 @@ var ProgressTrackingService = /** @class */ (function () {
       });
     });
   };
-  ProgressTrackingService.prototype.calculateProgressionAnalysis = function (trackingData) {
+  ProgressTrackingService.prototype.calculateProgressionAnalysis = (trackingData) => {
     if (trackingData.length < 2) {
       return {
         progressionScore: 0,
@@ -1007,9 +999,7 @@ var ProgressTrackingService = /** @class */ (function () {
         detailedData: {},
       };
     }
-    var scores = trackingData.map(function (t) {
-      return t.progress_score;
-    });
+    var scores = trackingData.map((t) => t.progress_score);
     var firstScore = scores[0];
     var lastScore = scores[scores.length - 1];
     var progressionScore = lastScore - firstScore;
@@ -1023,9 +1013,8 @@ var ProgressTrackingService = /** @class */ (function () {
     }
     // Calculate statistical significance (simplified)
     var variance =
-      scores.reduce(function (sum, score) {
-        return sum + Math.pow(score - (firstScore + lastScore) / 2, 2);
-      }, 0) / scores.length;
+      scores.reduce((sum, score) => sum + (score - (firstScore + lastScore) / 2) ** 2, 0) /
+      scores.length;
     var statisticalSignificance = Math.min(
       100,
       (Math.abs(progressionScore) * 10) / Math.sqrt(variance),

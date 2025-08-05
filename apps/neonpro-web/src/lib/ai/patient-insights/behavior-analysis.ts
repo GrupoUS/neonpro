@@ -2,7 +2,7 @@
 // Story 3.2: Task 4 - Behavioral Analysis Engine
 
 import type { createClient } from "@/lib/supabase/client";
-import type { PatientBehaviorPattern, BehaviorAnalysis, BehaviorAlert } from "./types";
+import type { BehaviorAlert, BehaviorAnalysis, PatientBehaviorPattern } from "./types";
 
 export class BehaviorAnalysisEngine {
   private supabase = createClient();

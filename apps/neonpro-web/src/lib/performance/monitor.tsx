@@ -5,8 +5,8 @@
 
 "use client";
 
-import type { onCLS, onFCP, onFID, onLCP, onTTFB, onINP } from "web-vitals";
 import type { useEffect } from "react";
+import type { onCLS, onFCP, onFID, onINP, onLCP, onTTFB } from "web-vitals";
 
 // Performance thresholds based on Google's recommendations
 const PERFORMANCE_THRESHOLDS = {

@@ -1,10 +1,10 @@
 // Test Suite Index
 // Story 1.4: Session Management & Security Implementation
 
+export * from "./device-manager.test";
+export * from "./security-monitor.test";
 // Export all test modules
 export * from "./session-manager.test";
-export * from "./security-monitor.test";
-export * from "./device-manager.test";
 
 // Test utilities and helpers
 export const TestUtils = {

@@ -1,4 +1,3 @@
-"use strict";
 // Marketing Campaigns Validation Schemas
 // Epic 7.2: Automated Marketing Campaigns + Personalization
 // Author: VoidBeast Agent
@@ -106,7 +105,7 @@ exports.CreateCampaignSchema = zod_1.z
     end_date: zod_1.z.string().optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.start_date && data.end_date) {
         return new Date(data.start_date) < new Date(data.end_date);
       }
@@ -218,9 +217,7 @@ exports.CreateConsentSchema = zod_1.z.object({
   consent_type: zod_1.z.enum(["email", "sms", "whatsapp", "push", "all"]),
   consent_status: zod_1.z.boolean(),
   consent_source: zod_1.z.string().optional(),
-  consent_date: zod_1.z.string().default(function () {
-    return new Date().toISOString();
-  }),
+  consent_date: zod_1.z.string().default(() => new Date().toISOString()),
   expiry_date: zod_1.z.string().optional(),
   legal_basis: zod_1.z.string().optional(),
   consent_text: zod_1.z.string().optional(),

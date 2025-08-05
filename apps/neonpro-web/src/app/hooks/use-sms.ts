@@ -5,11 +5,6 @@ import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-quer
 import type { toast } from "sonner";
 import type { smsService } from "@/app/lib/services/sms-service";
 import type {
-  SMSProvider,
-  SMSProviderConfig,
-  SMSMessage,
-  SMSTemplate,
-  SMSOptIn,
   BulkSMSRequest,
   BulkSMSResponse,
   SendSMSResponse,
@@ -17,6 +12,11 @@ import type {
   SMSIntegrationStatus,
   SMSListParams,
   SMSListResponse,
+  SMSMessage,
+  SMSOptIn,
+  SMSProvider,
+  SMSProviderConfig,
+  SMSTemplate,
 } from "@/app/types/sms";
 
 // ==================== QUERY KEYS ====================

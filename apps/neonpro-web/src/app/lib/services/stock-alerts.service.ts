@@ -4,7 +4,7 @@
  */
 
 import type { createClient } from "@/lib/supabase/server";
-import type { AlertsQuery, AcknowledgeAlert, ResolveAlert } from "../types/stock-alerts";
+import type { AcknowledgeAlert, AlertsQuery, ResolveAlert } from "../types/stock-alerts";
 
 export class StockAlertsService {
   async getActiveAlerts(

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Predictive Analytics API Integration Tests
  * Story 8.3: Predictive Analytics for Demand Forecasting (≥85% Accuracy)
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,7 +44,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,8 +73,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -96,9 +93,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_mocks_http_1 = require("node-mocks-http");
 // API Route Handlers
@@ -167,32 +164,26 @@ var route_3 = require("@/app/api/predictive-analytics/accuracy/route");
 var route_4 = require("@/app/api/predictive-analytics/alerts/route");
 var route_5 = require("@/app/api/predictive-analytics/recommendations/route");
 // Mock Supabase
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return {
-        from: jest.fn(function () {
-          return {
-            select: jest.fn().mockReturnThis(),
-            insert: jest.fn().mockReturnThis(),
-            update: jest.fn().mockReturnThis(),
-            delete: jest.fn().mockReturnThis(),
-            eq: jest.fn().mockReturnThis(),
-            gte: jest.fn().mockReturnThis(),
-            lte: jest.fn().mockReturnThis(),
-            order: jest.fn().mockReturnThis(),
-            limit: jest.fn().mockReturnThis(),
-            single: jest.fn(),
-          };
-        }),
-        auth: {
-          getUser: jest.fn(),
-          getSession: jest.fn(),
-        },
-      };
-    }),
-  };
-});
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => ({
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      gte: jest.fn().mockReturnThis(),
+      lte: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      single: jest.fn(),
+    })),
+    auth: {
+      getUser: jest.fn(),
+      getSession: jest.fn(),
+    },
+  })),
+}));
 // Mock data
 var mockForecastingModel = {
   id: "model-123",
@@ -249,9 +240,9 @@ var mockSession = {
   access_token: "mock-token",
   expires_at: Date.now() + 3600000,
 };
-describe("Predictive Analytics API Integration Tests", function () {
+describe("Predictive Analytics API Integration Tests", () => {
   var mockSupabase = require("@/app/utils/supabase/server").createClient();
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Mock successful authentication
     mockSupabase.auth.getUser.mockResolvedValue({
@@ -263,15 +254,15 @@ describe("Predictive Analytics API Integration Tests", function () {
       error: null,
     });
   });
-  afterEach(function () {
+  afterEach(() => {
     jest.resetAllMocks();
   });
-  describe("/api/predictive-analytics/models", function () {
-    describe("GET - List forecasting models", function () {
-      it("returns active forecasting models successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("/api/predictive-analytics/models", () => {
+    describe("GET - List forecasting models", () => {
+      it("returns active forecasting models successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -302,12 +293,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("filters models by type when specified", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("filters models by type when specified", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -338,12 +328,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("handles database errors gracefully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("handles database errors gracefully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -369,12 +358,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("requires authentication", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("requires authentication", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase.auth.getUser.mockResolvedValue({
@@ -392,10 +380,9 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("POST - Create new forecasting model", function () {
+    describe("POST - Create new forecasting model", () => {
       var newModelData = {
         model_type: "treatment_demand",
         model_name: "Tratamentos - Modelo Sazonal",
@@ -404,10 +391,10 @@ describe("Predictive Analytics API Integration Tests", function () {
           algorithm: "Linear Regression",
         },
       };
-      it("creates new forecasting model successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      it("creates new forecasting model successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -438,12 +425,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("validates required fields", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("validates required fields", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var invalidData, req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidData = {
@@ -467,12 +453,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("handles database insert errors", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("handles database insert errors", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -499,16 +484,15 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("/api/predictive-analytics/predictions", function () {
-    describe("GET - List demand predictions", function () {
-      it("returns predictions with filtering options", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("/api/predictive-analytics/predictions", () => {
+    describe("GET - List demand predictions", () => {
+      it("returns predictions with filtering options", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -537,12 +521,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("supports date range filtering", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("supports date range filtering", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var startDate, endDate, req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 startDate = "2025-02-01";
@@ -576,12 +559,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("includes confidence intervals and scores", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("includes confidence intervals and scores", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -609,20 +591,19 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("POST - Generate new predictions", function () {
+    describe("POST - Generate new predictions", () => {
       var predictionRequest = {
         model_id: "model-123",
         prediction_date: "2025-02-01",
         forecast_period: "daily",
         category: "appointments",
       };
-      it("generates new predictions successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      it("generates new predictions successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 // Mock model exists
@@ -653,12 +634,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("validates model exists and is active", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("validates model exists and is active", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -687,12 +667,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("validates prediction parameters", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("validates prediction parameters", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var invalidRequest, req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidRequest = {
@@ -716,12 +695,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("/api/predictive-analytics/accuracy", function () {
-    describe("GET - Model accuracy tracking", function () {
+  describe("/api/predictive-analytics/accuracy", () => {
+    describe("GET - Model accuracy tracking", () => {
       var accuracyData = [
         {
           id: "acc-123",
@@ -733,10 +711,10 @@ describe("Predictive Analytics API Integration Tests", function () {
           evaluation_period: "weekly",
         },
       ];
-      it("returns accuracy metrics for models", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      it("returns accuracy metrics for models", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase.from().select().mockResolvedValue({
@@ -762,12 +740,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("filters by model_id when specified", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("filters by model_id when specified", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase.from().select().eq().mockResolvedValue({
@@ -791,12 +768,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("calculates average accuracy across models", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("calculates average accuracy across models", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var multipleAccuracy, req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 multipleAccuracy = [
@@ -823,12 +799,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("identifies models meeting accuracy threshold", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("identifies models meeting accuracy threshold", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var varyingAccuracy, req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 varyingAccuracy = [
@@ -856,16 +831,15 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("/api/predictive-analytics/alerts", function () {
-    describe("GET - List demand alerts", function () {
-      it("returns active demand alerts", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("/api/predictive-analytics/alerts", () => {
+    describe("GET - List demand alerts", () => {
+      it("returns active demand alerts", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -893,12 +867,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("filters alerts by severity", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("filters alerts by severity", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -926,12 +899,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("filters alerts by acknowledgment status", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("filters alerts by acknowledgment status", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -959,19 +931,18 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("PATCH - Update alert status", function () {
+    describe("PATCH - Update alert status", () => {
       var updateRequest = {
         alert_id: "alert-123",
         acknowledged: true,
         resolution_status: "resolved",
       };
-      it("acknowledges alert successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      it("acknowledges alert successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -1004,12 +975,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("validates alert exists", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("validates alert exists", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase
@@ -1038,12 +1008,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("validates update parameters", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("validates update parameters", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var invalidRequest, req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidRequest = {
@@ -1067,12 +1036,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("/api/predictive-analytics/recommendations", function () {
-    describe("GET - Resource optimization recommendations", function () {
+  describe("/api/predictive-analytics/recommendations", () => {
+    describe("GET - Resource optimization recommendations", () => {
       var mockRecommendations = [
         {
           id: "rec-123",
@@ -1091,10 +1059,10 @@ describe("Predictive Analytics API Integration Tests", function () {
           created_at: "2025-01-26T09:00:00Z",
         },
       ];
-      it("returns optimization recommendations", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      it("returns optimization recommendations", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase.from().select().mockResolvedValue({
@@ -1120,12 +1088,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("filters recommendations by type", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("filters recommendations by type", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase.from().select().eq().mockResolvedValue({
@@ -1152,12 +1119,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("filters recommendations by priority", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("filters recommendations by priority", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase.from().select().eq().mockResolvedValue({
@@ -1181,12 +1147,11 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("orders recommendations by confidence score", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("orders recommendations by confidence score", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var req, response, data;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabase.from().select().order().mockResolvedValue({
@@ -1211,15 +1176,14 @@ describe("Predictive Analytics API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Authentication and Authorization", function () {
-    it("requires valid session for all endpoints", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Authentication and Authorization", () => {
+    it("requires valid session for all endpoints", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var endpoints, _i, endpoints_1, endpoint, req, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -1254,12 +1218,11 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("validates user permissions for write operations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("validates user permissions for write operations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var limitedUser, req, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               limitedUser = __assign(__assign({}, mockUser), { role: "user" });
@@ -1280,14 +1243,13 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Story 8.3 API Acceptance Criteria Validation", function () {
-    it("AC1: ML-based forecasting with ≥85% accuracy tracking", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Story 8.3 API Acceptance Criteria Validation", () => {
+    it("AC1: ML-based forecasting with ≥85% accuracy tracking", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var highAccuracyMetrics, req, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               highAccuracyMetrics = [
@@ -1314,12 +1276,11 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC2: Multi-dimensional forecasting capabilities", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("AC2: Multi-dimensional forecasting capabilities", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var multiDimensionalPredictions, req, response, data, categories;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               multiDimensionalPredictions = [
@@ -1343,21 +1304,18 @@ describe("Predictive Analytics API Integration Tests", function () {
               data = _a.sent();
               expect(response.status).toBe(200);
               expect(data.predictions).toHaveLength(3);
-              categories = data.predictions.map(function (p) {
-                return p.category;
-              });
+              categories = data.predictions.map((p) => p.category);
               expect(categories).toContain("appointments");
               expect(categories).toContain("treatments");
               expect(categories).toContain("revenue");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC4: Early warning system implementation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("AC4: Early warning system implementation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var demandAlerts, req, response, data, alertTypes;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               demandAlerts = [
@@ -1380,20 +1338,17 @@ describe("Predictive Analytics API Integration Tests", function () {
               data = _a.sent();
               expect(response.status).toBe(200);
               expect(data.alerts).toHaveLength(2);
-              alertTypes = data.alerts.map(function (a) {
-                return a.alert_type;
-              });
+              alertTypes = data.alerts.map((a) => a.alert_type);
               expect(alertTypes).toContain("demand_spike");
               expect(alertTypes).toContain("resource_shortage");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC5: Resource optimization recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("AC5: Resource optimization recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var optimizationRecs, req, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               optimizationRecs = [
@@ -1420,12 +1375,11 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC8: Customizable forecasting timeframes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("AC8: Customizable forecasting timeframes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var timeframePredictions, req, response, data, periods;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               timeframePredictions = [
@@ -1448,21 +1402,18 @@ describe("Predictive Analytics API Integration Tests", function () {
             case 2:
               data = _a.sent();
               expect(response.status).toBe(200);
-              periods = data.predictions.map(function (p) {
-                return p.forecast_period;
-              });
+              periods = data.predictions.map((p) => p.forecast_period);
               expect(periods).toContain("daily");
               expect(periods).toContain("weekly");
               expect(periods).toContain("monthly");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("AC10: Performance tracking and continuous improvement", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("AC10: Performance tracking and continuous improvement", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var performanceMetrics, req, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               performanceMetrics = [
@@ -1495,14 +1446,13 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling and Edge Cases", function () {
-    it("handles malformed request bodies gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling and Edge Cases", () => {
+    it("handles malformed request bodies gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var req, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               req = (0, node_mocks_http_1.createMocks)({
@@ -1521,12 +1471,11 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles database connection timeouts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles database connection timeouts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var req, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from().select().mockRejectedValue(new Error("Connection timeout"));
@@ -1545,12 +1494,11 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("validates date formats in requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("validates date formats in requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidRequest, req, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidRequest = {
@@ -1576,20 +1524,19 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles concurrent access gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles concurrent access gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requests, responses;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              requests = Array.from({ length: 5 }, function () {
-                return (0, node_mocks_http_1.createMocks)({
+              requests = Array.from({ length: 5 }, () =>
+                (0, node_mocks_http_1.createMocks)({
                   method: "GET",
                   url: "/api/predictive-analytics/models",
-                });
-              });
+                }),
+              );
               mockSupabase
                 .from()
                 .select()
@@ -1600,7 +1547,7 @@ describe("Predictive Analytics API Integration Tests", function () {
               return [
                 4 /*yield*/,
                 Promise.all(
-                  requests.map(function (_a) {
+                  requests.map((_a) => {
                     var req = _a.req;
                     return (0, route_1.GET)(req);
                   }),
@@ -1608,13 +1555,12 @@ describe("Predictive Analytics API Integration Tests", function () {
               ];
             case 1:
               responses = _a.sent();
-              responses.forEach(function (response) {
+              responses.forEach((response) => {
                 expect(response.status).toBe(200);
               });
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ProfessionalManagement;
 var react_1 = require("react");
@@ -149,7 +146,7 @@ var dropdown_menu_1 = require("@/components/ui/dropdown-menu");
 var sonner_1 = require("sonner");
 var lucide_react_1 = require("lucide-react");
 var professionals_1 = require("@/lib/supabase/professionals");
-var getStatusBadgeVariant = function (status) {
+var getStatusBadgeVariant = (status) => {
   switch (status) {
     case "active":
       return "default";
@@ -163,7 +160,7 @@ var getStatusBadgeVariant = function (status) {
       return "secondary";
   }
 };
-var getCredentialStatusIcon = function (status) {
+var getCredentialStatusIcon = (status) => {
   switch (status) {
     case "verified":
       return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />;
@@ -176,7 +173,6 @@ var getCredentialStatusIcon = function (status) {
   }
 };
 function ProfessionalManagement(_a) {
-  var _this = this;
   var _b = _a.initialProfessionals,
     initialProfessionals = _b === void 0 ? [] : _b;
   var router = (0, navigation_1.useRouter)();
@@ -224,19 +220,16 @@ function ProfessionalManagement(_a) {
   var _q = (0, react_1.useState)(null),
     professionalToDelete = _q[0],
     setProfessionalToDelete = _q[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadProfessionals();
   }, []);
-  (0, react_1.useEffect)(
-    function () {
-      filterProfessionals();
-    },
-    [professionals, searchTerm, statusFilter, specialtyFilter],
-  );
-  var loadProfessionals = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    filterProfessionals();
+  }, [professionals, searchTerm, statusFilter, specialtyFilter]);
+  var loadProfessionals = () =>
+    __awaiter(this, void 0, void 0, function () {
       var data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -260,20 +253,17 @@ function ProfessionalManagement(_a) {
         }
       });
     });
-  };
-  var calculateStats = function (professionalsData) {
+  var calculateStats = (professionalsData) => {
     var total = professionalsData.length;
-    var active = professionalsData.filter(function (p) {
-      return p.status === "active";
-    }).length;
-    var pending_verification = professionalsData.filter(function (p) {
-      return p.status === "pending_verification";
-    }).length;
+    var active = professionalsData.filter((p) => p.status === "active").length;
+    var pending_verification = professionalsData.filter(
+      (p) => p.status === "pending_verification",
+    ).length;
     // Calculate credentials expiring in next 30 days
     var thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
     var credentialsExpiringSoon = 0;
-    professionalsData.forEach(function (professional) {
+    professionalsData.forEach((professional) => {
       // This would need to be calculated from actual credential data
       // For now, using a placeholder calculation
       credentialsExpiringSoon += Math.floor(Math.random() * 2); // Placeholder
@@ -285,11 +275,11 @@ function ProfessionalManagement(_a) {
       credentialsExpiringSoon: credentialsExpiringSoon,
     });
   };
-  var filterProfessionals = function () {
+  var filterProfessionals = () => {
     var filtered = professionals;
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(function (professional) {
+      filtered = filtered.filter((professional) => {
         var _a, _b;
         return (
           professional.given_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -305,9 +295,7 @@ function ProfessionalManagement(_a) {
     }
     // Status filter
     if (statusFilter !== "all") {
-      filtered = filtered.filter(function (professional) {
-        return professional.status === statusFilter;
-      });
+      filtered = filtered.filter((professional) => professional.status === statusFilter);
     }
     // Specialty filter (would need to join with professional_specialties)
     if (specialtyFilter !== "all") {
@@ -316,10 +304,10 @@ function ProfessionalManagement(_a) {
     }
     setFilteredProfessionals(filtered);
   };
-  var handleViewDetails = function (professional) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleViewDetails = (professional) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, credentialsData, servicesData, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -351,19 +339,18 @@ function ProfessionalManagement(_a) {
         }
       });
     });
-  };
-  var handleEdit = function (professional) {
+  var handleEdit = (professional) => {
     // Navigate to edit form
     router.push("/dashboard/professionals/".concat(professional.id, "/edit"));
   };
-  var handleDelete = function (professional) {
+  var handleDelete = (professional) => {
     setProfessionalToDelete(professional);
     setShowDeleteDialog(true);
   };
-  var confirmDelete = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var confirmDelete = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!professionalToDelete) return [2 /*return*/];
@@ -374,11 +361,7 @@ function ProfessionalManagement(_a) {
             return [4 /*yield*/, (0, professionals_1.deleteProfessional)(professionalToDelete.id)];
           case 2:
             _a.sent();
-            setProfessionals(function (prev) {
-              return prev.filter(function (p) {
-                return p.id !== professionalToDelete.id;
-              });
-            });
+            setProfessionals((prev) => prev.filter((p) => p.id !== professionalToDelete.id));
             sonner_1.toast.success("Profissional removido com sucesso");
             setShowDeleteDialog(false);
             setProfessionalToDelete(null);
@@ -396,11 +379,10 @@ function ProfessionalManagement(_a) {
         }
       });
     });
-  };
-  var handleVerifyCredential = function (credentialId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleVerifyCredential = (credentialId) =>
+    __awaiter(this, void 0, void 0, function () {
       var updatedCredentials, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -437,7 +419,6 @@ function ProfessionalManagement(_a) {
         }
       });
     });
-  };
   return (
     <div className="flex-1 space-y-6">
       {/* Header */}
@@ -448,11 +429,7 @@ function ProfessionalManagement(_a) {
             Gerencie perfis profissionais, credenciais e especialidades
           </p>
         </div>
-        <button_1.Button
-          onClick={function () {
-            return router.push("/dashboard/professionals/new");
-          }}
-        >
+        <button_1.Button onClick={() => router.push("/dashboard/professionals/new")}>
           <lucide_react_1.UserPlus className="mr-2 h-4 w-4" />
           Cadastrar Profissional
         </button_1.Button>
@@ -520,9 +497,7 @@ function ProfessionalManagement(_a) {
                 <input_1.Input
                   placeholder="Buscar profissionais..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8"
                 />
               </div>
@@ -590,96 +565,88 @@ function ProfessionalManagement(_a) {
                         Nenhum profissional encontrado
                       </table_1.TableCell>
                     </table_1.TableRow>
-                  : filteredProfessionals.map(function (professional) {
-                      return (
-                        <table_1.TableRow key={professional.id}>
-                          <table_1.TableCell>
-                            <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
-                                {professional.given_name[0]}
-                                {professional.family_name[0]}
+                  : filteredProfessionals.map((professional) => (
+                      <table_1.TableRow key={professional.id}>
+                        <table_1.TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                              {professional.given_name[0]}
+                              {professional.family_name[0]}
+                            </div>
+                            <div>
+                              <div className="font-medium">
+                                {professional.given_name} {professional.family_name}
                               </div>
-                              <div>
-                                <div className="font-medium">
-                                  {professional.given_name} {professional.family_name}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                  {professional.email}
-                                </div>
+                              <div className="text-sm text-muted-foreground">
+                                {professional.email}
                               </div>
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex flex-wrap gap-1">
-                              {/* This would come from joined specialty data */}
-                              <badge_1.Badge variant="outline">Estética</badge_1.Badge>
-                              <badge_1.Badge variant="outline">Dermatologia</badge_1.Badge>
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center gap-2">
-                              <lucide_react_1.Certificate className="h-4 w-4 text-muted-foreground" />
-                              <span className="text-sm">3 credenciais</span>
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge variant={getStatusBadgeVariant(professional.status)}>
-                              {professional.status === "active" && "Ativo"}
-                              {professional.status === "inactive" && "Inativo"}
-                              {professional.status === "suspended" && "Suspenso"}
-                              {professional.status === "pending_verification" && "Pendente"}
-                            </badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="text-sm text-muted-foreground">
-                              {professional.updated_at
-                                ? new Date(professional.updated_at).toLocaleDateString("pt-BR")
-                                : "N/A"}
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell className="text-right">
-                            <dropdown_menu_1.DropdownMenu>
-                              <dropdown_menu_1.DropdownMenuTrigger asChild>
-                                <button_1.Button variant="ghost" className="h-8 w-8 p-0">
-                                  <lucide_react_1.MoreVertical className="h-4 w-4" />
-                                </button_1.Button>
-                              </dropdown_menu_1.DropdownMenuTrigger>
-                              <dropdown_menu_1.DropdownMenuContent align="end">
-                                <dropdown_menu_1.DropdownMenuLabel>
-                                  Ações
-                                </dropdown_menu_1.DropdownMenuLabel>
-                                <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleViewDetails(professional);
-                                  }}
-                                >
-                                  <lucide_react_1.Eye className="mr-2 h-4 w-4" />
-                                  Ver Detalhes
-                                </dropdown_menu_1.DropdownMenuItem>
-                                <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleEdit(professional);
-                                  }}
-                                >
-                                  <lucide_react_1.Edit className="mr-2 h-4 w-4" />
-                                  Editar
-                                </dropdown_menu_1.DropdownMenuItem>
-                                <dropdown_menu_1.DropdownMenuSeparator />
-                                <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleDelete(professional);
-                                  }}
-                                  className="text-destructive"
-                                >
-                                  <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
-                                  Remover
-                                </dropdown_menu_1.DropdownMenuItem>
-                              </dropdown_menu_1.DropdownMenuContent>
-                            </dropdown_menu_1.DropdownMenu>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {/* This would come from joined specialty data */}
+                            <badge_1.Badge variant="outline">Estética</badge_1.Badge>
+                            <badge_1.Badge variant="outline">Dermatologia</badge_1.Badge>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center gap-2">
+                            <lucide_react_1.Certificate className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm">3 credenciais</span>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge variant={getStatusBadgeVariant(professional.status)}>
+                            {professional.status === "active" && "Ativo"}
+                            {professional.status === "inactive" && "Inativo"}
+                            {professional.status === "suspended" && "Suspenso"}
+                            {professional.status === "pending_verification" && "Pendente"}
+                          </badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm text-muted-foreground">
+                            {professional.updated_at
+                              ? new Date(professional.updated_at).toLocaleDateString("pt-BR")
+                              : "N/A"}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell className="text-right">
+                          <dropdown_menu_1.DropdownMenu>
+                            <dropdown_menu_1.DropdownMenuTrigger asChild>
+                              <button_1.Button variant="ghost" className="h-8 w-8 p-0">
+                                <lucide_react_1.MoreVertical className="h-4 w-4" />
+                              </button_1.Button>
+                            </dropdown_menu_1.DropdownMenuTrigger>
+                            <dropdown_menu_1.DropdownMenuContent align="end">
+                              <dropdown_menu_1.DropdownMenuLabel>
+                                Ações
+                              </dropdown_menu_1.DropdownMenuLabel>
+                              <dropdown_menu_1.DropdownMenuItem
+                                onClick={() => handleViewDetails(professional)}
+                              >
+                                <lucide_react_1.Eye className="mr-2 h-4 w-4" />
+                                Ver Detalhes
+                              </dropdown_menu_1.DropdownMenuItem>
+                              <dropdown_menu_1.DropdownMenuItem
+                                onClick={() => handleEdit(professional)}
+                              >
+                                <lucide_react_1.Edit className="mr-2 h-4 w-4" />
+                                Editar
+                              </dropdown_menu_1.DropdownMenuItem>
+                              <dropdown_menu_1.DropdownMenuSeparator />
+                              <dropdown_menu_1.DropdownMenuItem
+                                onClick={() => handleDelete(professional)}
+                                className="text-destructive"
+                              >
+                                <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
+                                Remover
+                              </dropdown_menu_1.DropdownMenuItem>
+                            </dropdown_menu_1.DropdownMenuContent>
+                          </dropdown_menu_1.DropdownMenu>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
             </table_1.TableBody>
           </table_1.Table>
         </card_1.CardContent>
@@ -764,53 +731,49 @@ function ProfessionalManagement(_a) {
                   </button_1.Button>
                 </div>
                 <div className="space-y-3">
-                  {credentials.map(function (credential) {
-                    return (
-                      <card_1.Card key={credential.id}>
-                        <card_1.CardContent className="p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              {getCredentialStatusIcon(credential.verification_status)}
-                              <div>
-                                <div className="font-medium">{credential.credential_type}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  Número: {credential.credential_number}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                  Validade:{" "}
-                                  {credential.expiry_date
-                                    ? new Date(credential.expiry_date).toLocaleDateString("pt-BR")
-                                    : "N/A"}
-                                </div>
+                  {credentials.map((credential) => (
+                    <card_1.Card key={credential.id}>
+                      <card_1.CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            {getCredentialStatusIcon(credential.verification_status)}
+                            <div>
+                              <div className="font-medium">{credential.credential_type}</div>
+                              <div className="text-sm text-muted-foreground">
+                                Número: {credential.credential_number}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                Validade:{" "}
+                                {credential.expiry_date
+                                  ? new Date(credential.expiry_date).toLocaleDateString("pt-BR")
+                                  : "N/A"}
                               </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <badge_1.Badge
-                                variant={
-                                  credential.verification_status === "verified"
-                                    ? "default"
-                                    : "outline"
-                                }
-                              >
-                                {credential.verification_status}
-                              </badge_1.Badge>
-                              {credential.verification_status === "pending" && (
-                                <button_1.Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={function () {
-                                    return handleVerifyCredential(credential.id);
-                                  }}
-                                >
-                                  Verificar
-                                </button_1.Button>
-                              )}
-                            </div>
                           </div>
-                        </card_1.CardContent>
-                      </card_1.Card>
-                    );
-                  })}
+                          <div className="flex items-center gap-2">
+                            <badge_1.Badge
+                              variant={
+                                credential.verification_status === "verified"
+                                  ? "default"
+                                  : "outline"
+                              }
+                            >
+                              {credential.verification_status}
+                            </badge_1.Badge>
+                            {credential.verification_status === "pending" && (
+                              <button_1.Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleVerifyCredential(credential.id)}
+                              >
+                                Verificar
+                              </button_1.Button>
+                            )}
+                          </div>
+                        </div>
+                      </card_1.CardContent>
+                    </card_1.Card>
+                  ))}
                 </div>
               </tabs_1.TabsContent>
 
@@ -823,7 +786,7 @@ function ProfessionalManagement(_a) {
                   </button_1.Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {services.map(function (service) {
+                  {services.map((service) => {
                     var _a;
                     return (
                       <card_1.Card key={service.id}>
@@ -881,20 +844,11 @@ function ProfessionalManagement(_a) {
           )}
 
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowDetailsDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowDetailsDialog(false)}>
               Fechar
             </button_1.Button>
             {selectedProfessional && (
-              <button_1.Button
-                onClick={function () {
-                  return handleEdit(selectedProfessional);
-                }}
-              >
+              <button_1.Button onClick={() => handleEdit(selectedProfessional)}>
                 <lucide_react_1.Edit className="mr-2 h-4 w-4" />
                 Editar Profissional
               </button_1.Button>
@@ -922,9 +876,7 @@ function ProfessionalManagement(_a) {
           <dialog_1.DialogFooter>
             <button_1.Button
               variant="outline"
-              onClick={function () {
-                return setShowDeleteDialog(false);
-              }}
+              onClick={() => setShowDeleteDialog(false)}
               disabled={loading}
             >
               Cancelar

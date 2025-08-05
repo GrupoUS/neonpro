@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 11.3: Stock Output Management System
  * Sistema completo de controle de saídas e consumo de materiais
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,14 +147,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.stockOutputManager = exports.StockOutputManager = void 0;
 /**
  * Stock Output Management Class
  * Core logic for managing all stock outputs with FIFO and consumption tracking
  */
-var StockOutputManager = /** @class */ (function () {
+var StockOutputManager = /** @class */ (() => {
   function StockOutputManager() {
     this.supabase = createClient(ComponentClient());
   }
@@ -241,19 +238,17 @@ var StockOutputManager = /** @class */ (function () {
           case 5:
             (_a = _c.sent()), (output_1 = _a.data), (outputError = _a.error);
             if (outputError) throw outputError;
-            itemsData = itemsWithFIFO.map(function (item) {
-              return {
-                saida_id: output_1.id,
-                produto_id: item.produto_id,
-                lote_id: item.lote_id,
-                quantidade: item.quantidade,
-                custo_unitario: item.custo_unitario,
-                localizacao_origem: item.localizacao_origem,
-                ordem_fifo: item.ordem_fifo,
-                selecionado_automaticamente: item.automatico,
-                motivo_item: item.motivo_item,
-              };
-            });
+            itemsData = itemsWithFIFO.map((item) => ({
+              saida_id: output_1.id,
+              produto_id: item.produto_id,
+              lote_id: item.lote_id,
+              quantidade: item.quantidade,
+              custo_unitario: item.custo_unitario,
+              localizacao_origem: item.localizacao_origem,
+              ordem_fifo: item.ordem_fifo,
+              selecionado_automaticamente: item.automatico,
+              motivo_item: item.motivo_item,
+            }));
             return [
               4 /*yield*/,
               this.supabase.from("itens_saida_estoque").insert(itemsData).select(),
@@ -261,7 +256,7 @@ var StockOutputManager = /** @class */ (function () {
           case 6:
             (_b = _c.sent()), (items = _b.data), (itemsError = _b.error);
             if (itemsError) throw itemsError;
-            if (!!requiresApproval) return [3 /*break*/, 8];
+            if (requiresApproval) return [3 /*break*/, 8];
             return [4 /*yield*/, this.updateBatchQuantities(items)];
           case 7:
             _c.sent();
@@ -338,13 +333,11 @@ var StockOutputManager = /** @class */ (function () {
                 profissional_id: data.profissional_id,
                 procedimento_id: data.procedimento_id,
                 agendamento_id: data.agendamento_id,
-                itens: materialsForDeduction.map(function (material) {
-                  return {
-                    produto_id: material.produto_id,
-                    quantidade: material.quantidade_padrao,
-                    localizacao_origem: "estoque_principal",
-                  };
-                }),
+                itens: materialsForDeduction.map((material) => ({
+                  produto_id: material.produto_id,
+                  quantidade: material.quantidade_padrao,
+                  localizacao_origem: "estoque_principal",
+                })),
                 motivo_saida: "Baixa autom\u00E1tica - Procedimento realizado",
                 automatico: true,
               }),
@@ -482,7 +475,7 @@ var StockOutputManager = /** @class */ (function () {
             recommendations = [];
             _loop_1 = function (item) {
               var batchSummary, totalAvailable, sortedBatches;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     return [
@@ -502,9 +495,10 @@ var StockOutputManager = /** @class */ (function () {
                     totalAvailable =
                       (batchSummary === null || batchSummary === void 0
                         ? void 0
-                        : batchSummary.reduce(function (sum, batch) {
-                            return sum + batch.quantidade_disponivel;
-                          }, 0)) || 0;
+                        : batchSummary.reduce(
+                            (sum, batch) => sum + batch.quantidade_disponivel,
+                            0,
+                          )) || 0;
                     if (totalAvailable < item.quantidade) {
                       unavailableItems.push(item.produto_id);
                     } else {
@@ -512,7 +506,7 @@ var StockOutputManager = /** @class */ (function () {
                         batchSummary === null || batchSummary === void 0
                           ? void 0
                           : batchSummary
-                              .sort(function (a, b) {
+                              .sort((a, b) => {
                                 // FIFO logic: expiry date first, then priority
                                 if (a.data_validade && b.data_validade) {
                                   return (
@@ -526,22 +520,20 @@ var StockOutputManager = /** @class */ (function () {
                       recommendations.push.apply(
                         // Top 3 recommendations
                         recommendations,
-                        sortedBatches.map(function (batch) {
-                          return {
-                            lote_id: batch.id,
-                            produto_id: item.produto_id,
-                            numero_lote: batch.numero_lote,
-                            quantidade_disponivel: batch.quantidade_disponivel,
-                            data_validade: new Date(batch.data_validade),
-                            dias_para_vencer: batch.dias_para_vencer,
-                            prioridade_uso: batch.prioridade_uso,
-                            recomendado: batch.dias_para_vencer <= 30,
-                            motivo_recomendacao:
-                              batch.dias_para_vencer <= 30
-                                ? "Próximo ao vencimento"
-                                : "FIFO otimizado",
-                          };
-                        }),
+                        sortedBatches.map((batch) => ({
+                          lote_id: batch.id,
+                          produto_id: item.produto_id,
+                          numero_lote: batch.numero_lote,
+                          quantidade_disponivel: batch.quantidade_disponivel,
+                          data_validade: new Date(batch.data_validade),
+                          dias_para_vencer: batch.dias_para_vencer,
+                          prioridade_uso: batch.prioridade_uso,
+                          recomendado: batch.dias_para_vencer <= 30,
+                          motivo_recomendacao:
+                            batch.dias_para_vencer <= 30
+                              ? "Próximo ao vencimento"
+                              : "FIFO otimizado",
+                        })),
                       );
                     }
                     return [2 /*return*/];
@@ -673,26 +665,21 @@ var StockOutputManager = /** @class */ (function () {
   /**
    * Calculate output totals
    */
-  StockOutputManager.prototype.calculateOutputTotals = function (items) {
-    return items.reduce(
-      function (totals, item) {
-        return {
-          quantidade: totals.quantidade + item.quantidade,
-          valor: totals.valor + item.quantidade * item.custo_unitario,
-          custo: totals.custo + item.quantidade * item.custo_unitario,
-        };
-      },
+  StockOutputManager.prototype.calculateOutputTotals = (items) =>
+    items.reduce(
+      (totals, item) => ({
+        quantidade: totals.quantidade + item.quantidade,
+        valor: totals.valor + item.quantidade * item.custo_unitario,
+        custo: totals.custo + item.quantidade * item.custo_unitario,
+      }),
       { quantidade: 0, valor: 0, custo: 0 },
     );
-  };
   /**
    * Apply manual adjustments to standard materials
    */
-  StockOutputManager.prototype.applyManualAdjustments = function (standardMaterials, adjustments) {
-    return standardMaterials.map(function (material) {
-      var adjustment = adjustments.find(function (adj) {
-        return adj.produto_id === material.produto_id;
-      });
+  StockOutputManager.prototype.applyManualAdjustments = (standardMaterials, adjustments) =>
+    standardMaterials.map((material) => {
+      var adjustment = adjustments.find((adj) => adj.produto_id === material.produto_id);
       return __assign(__assign({}, material), {
         quantidade_padrao:
           (adjustment === null || adjustment === void 0
@@ -700,7 +687,6 @@ var StockOutputManager = /** @class */ (function () {
             : adjustment.quantidade_ajustada) || material.quantidade_padrao,
       });
     });
-  };
   /**
    * Log consumption analytics for ML and reporting
    */
@@ -778,7 +764,7 @@ var StockOutputManager = /** @class */ (function () {
    */
   StockOutputManager.prototype.calculateConsumptionMetrics = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would contain complex SQL aggregations and calculations
         // Returning a mock structure for now
         return [

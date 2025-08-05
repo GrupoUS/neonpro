@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContactSection = ContactSection;
 var card_1 = require("@/components/ui/card");
@@ -245,7 +242,6 @@ var supportServices = [
   },
 ];
 function ContactSection() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isSubmitting = _a[0],
     setIsSubmitting = _a[1];
@@ -263,10 +259,10 @@ function ContactSection() {
       message: "",
     },
   });
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsSubmitting(true);
@@ -274,21 +270,14 @@ function ContactSection() {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simulate API call
             _a.sent();
             setSubmitSuccess(true);
             form.reset();
             // Reset success message after 5 seconds
-            setTimeout(function () {
-              return setSubmitSuccess(false);
-            }, 5000);
+            setTimeout(() => setSubmitSuccess(false), 5000);
             return [3 /*break*/, 5];
           case 3:
             error_1 = _a.sent();
@@ -304,7 +293,6 @@ function ContactSection() {
         }
       });
     });
-  };
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header */}
@@ -359,7 +347,7 @@ function ContactSection() {
                       <form_1.FormField
                         control={form.control}
                         name="name"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -381,7 +369,7 @@ function ContactSection() {
                       <form_1.FormField
                         control={form.control}
                         name="email"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -406,7 +394,7 @@ function ContactSection() {
                       <form_1.FormField
                         control={form.control}
                         name="phone"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -429,7 +417,7 @@ function ContactSection() {
                       <form_1.FormField
                         control={form.control}
                         name="clinic"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -452,7 +440,7 @@ function ContactSection() {
                     <form_1.FormField
                       control={form.control}
                       name="specialty"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -467,13 +455,11 @@ function ContactSection() {
                                 </select_1.SelectTrigger>
                               </form_1.FormControl>
                               <select_1.SelectContent>
-                                {specialties.map(function (specialty) {
-                                  return (
-                                    <select_1.SelectItem key={specialty} value={specialty}>
-                                      {specialty}
-                                    </select_1.SelectItem>
-                                  );
-                                })}
+                                {specialties.map((specialty) => (
+                                  <select_1.SelectItem key={specialty} value={specialty}>
+                                    {specialty}
+                                  </select_1.SelectItem>
+                                ))}
                               </select_1.SelectContent>
                             </select_1.Select>
                             <form_1.FormMessage />
@@ -485,7 +471,7 @@ function ContactSection() {
                     <form_1.FormField
                       control={form.control}
                       name="message"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -537,33 +523,31 @@ function ContactSection() {
         <div className="space-y-8">
           {/* Contact Methods */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {contactMethods.map(function (method, index) {
-              return (
-                <card_1.Card
-                  key={index}
-                  className="group hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30"
-                >
-                  <card_1.CardContent className="p-6 text-center space-y-4">
-                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6366f1] to-purple-600 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                      <method.icon className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-slate-900 mb-1">{method.title}</h4>
-                      <p className="text-lg font-medium text-[#6366f1] mb-1">{method.value}</p>
-                      <p className="text-sm text-slate-600 mb-3">{method.description}</p>
-                      <button_1.Button
-                        size="sm"
-                        variant="outline"
-                        className="w-full border-[#6366f1] text-[#6366f1] hover:bg-[#6366f1] hover:text-white"
-                        asChild
-                      >
-                        <a href={method.action}>{method.actionText}</a>
-                      </button_1.Button>
-                    </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+            {contactMethods.map((method, index) => (
+              <card_1.Card
+                key={index}
+                className="group hover:shadow-lg transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30"
+              >
+                <card_1.CardContent className="p-6 text-center space-y-4">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6366f1] to-purple-600 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                    <method.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 mb-1">{method.title}</h4>
+                    <p className="text-lg font-medium text-[#6366f1] mb-1">{method.value}</p>
+                    <p className="text-sm text-slate-600 mb-3">{method.description}</p>
+                    <button_1.Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full border-[#6366f1] text-[#6366f1] hover:bg-[#6366f1] hover:text-white"
+                      asChild
+                    >
+                      <a href={method.action}>{method.actionText}</a>
+                    </button_1.Button>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
 
           {/* Support Services */}
@@ -574,19 +558,17 @@ function ContactSection() {
               </card_1.CardTitle>
             </card_1.CardHeader>
             <card_1.CardContent className="space-y-4">
-              {supportServices.map(function (service, index) {
-                return (
-                  <div key={index} className="flex items-start space-x-3">
-                    <div className="h-8 w-8 rounded-lg bg-[#6366f1] flex items-center justify-center flex-shrink-0 mt-1">
-                      <service.icon className="h-4 w-4 text-white" />
-                    </div>
-                    <div>
-                      <h5 className="font-semibold text-slate-900">{service.title}</h5>
-                      <p className="text-sm text-slate-600">{service.description}</p>
-                    </div>
+              {supportServices.map((service, index) => (
+                <div key={index} className="flex items-start space-x-3">
+                  <div className="h-8 w-8 rounded-lg bg-[#6366f1] flex items-center justify-center flex-shrink-0 mt-1">
+                    <service.icon className="h-4 w-4 text-white" />
                   </div>
-                );
-              })}
+                  <div>
+                    <h5 className="font-semibold text-slate-900">{service.title}</h5>
+                    <p className="text-sm text-slate-600">{service.description}</p>
+                  </div>
+                </div>
+              ))}
             </card_1.CardContent>
           </card_1.Card>
         </div>
@@ -597,34 +579,32 @@ function ContactSection() {
         <h3 className="text-2xl font-bold text-slate-900 text-center mb-8">Nossos Escritórios</h3>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {offices.map(function (office, index) {
-            return (
-              <card_1.Card key={index} className="text-center hover:shadow-lg transition-shadow">
-                <card_1.CardContent className="p-6 space-y-4">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6366f1] to-purple-600 flex items-center justify-center mx-auto">
-                    <lucide_react_1.MapPin className="h-6 w-6 text-white" />
-                  </div>
+          {offices.map((office, index) => (
+            <card_1.Card key={index} className="text-center hover:shadow-lg transition-shadow">
+              <card_1.CardContent className="p-6 space-y-4">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6366f1] to-purple-600 flex items-center justify-center mx-auto">
+                  <lucide_react_1.MapPin className="h-6 w-6 text-white" />
+                </div>
 
-                  <div>
-                    <h4 className="font-semibold text-slate-900 mb-2">{office.city}</h4>
-                    <p className="text-sm text-slate-600 mb-3 whitespace-pre-line">
-                      {office.address}
-                    </p>
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-center text-sm text-slate-600">
-                        <lucide_react_1.Phone className="h-4 w-4 mr-2" />
-                        {office.phone}
-                      </div>
-                      <div className="flex items-center justify-center text-sm text-slate-600">
-                        <lucide_react_1.Clock className="h-4 w-4 mr-2" />
-                        {office.hours}
-                      </div>
+                <div>
+                  <h4 className="font-semibold text-slate-900 mb-2">{office.city}</h4>
+                  <p className="text-sm text-slate-600 mb-3 whitespace-pre-line">
+                    {office.address}
+                  </p>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-center text-sm text-slate-600">
+                      <lucide_react_1.Phone className="h-4 w-4 mr-2" />
+                      {office.phone}
+                    </div>
+                    <div className="flex items-center justify-center text-sm text-slate-600">
+                      <lucide_react_1.Clock className="h-4 w-4 mr-2" />
+                      {office.hours}
                     </div>
                   </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
 

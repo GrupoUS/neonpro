@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,13 +128,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UploadManager = void 0;
 /**
  * Patient upload manager
  */
-var UploadManager = /** @class */ (function () {
+var UploadManager = /** @class */ (() => {
   function UploadManager(
     supabase,
     auditLogger,
@@ -547,7 +544,7 @@ var UploadManager = /** @class */ (function () {
    */
   UploadManager.prototype.performVirusScan = function (filePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would integrate with an actual antivirus service
         // For now, return clean as placeholder
         return [2 /*return*/, "clean"];
@@ -559,7 +556,7 @@ var UploadManager = /** @class */ (function () {
    */
   UploadManager.prototype.generateThumbnail = function (filePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would integrate with image processing service
         // For now, return undefined as placeholder
         return [2 /*return*/, undefined];
@@ -595,11 +592,11 @@ var UploadManager = /** @class */ (function () {
   /**
    * Format file size for display
    */
-  UploadManager.prototype.formatFileSize = function (bytes) {
+  UploadManager.prototype.formatFileSize = (bytes) => {
     var sizes = ["Bytes", "KB", "MB", "GB"];
     if (bytes === 0) return "0 Bytes";
     var i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
+    return Math.round((bytes / 1024 ** i) * 100) / 100 + " " + sizes[i];
   };
   /**
    * Get upload statistics for a patient
@@ -639,14 +636,14 @@ var UploadManager = /** @class */ (function () {
               byStatus: {},
               recentActivity: [],
             };
-            uploads.forEach(function (upload) {
+            uploads.forEach((upload) => {
               // Count by category
               stats.byCategory[upload.category] = (stats.byCategory[upload.category] || 0) + 1;
               // Count by status
               stats.byStatus[upload.status] = (stats.byStatus[upload.status] || 0) + 1;
               // Calculate total size
               if (upload.patient_files) {
-                upload.patient_files.forEach(function (file) {
+                upload.patient_files.forEach((file) => {
                   stats.totalSize += file.size || 0;
                 });
               }

@@ -2,32 +2,31 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Formulário para criar e editar configurações de alertas
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -161,7 +158,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var react_hook_form_1 = require("react-hook-form");
@@ -180,7 +177,7 @@ var stock_1 = require("@/app/lib/types/stock");
 // =====================================================
 // UTILITY FUNCTIONS
 // =====================================================
-var getNotificationIcon = function (channel) {
+var getNotificationIcon = (channel) => {
   var iconProps = { className: "h-4 w-4" };
   switch (channel) {
     case "in_app":
@@ -198,7 +195,7 @@ var getNotificationIcon = function (channel) {
 // =====================================================
 // MAIN COMPONENT
 // =====================================================
-var AlertConfigForm = function (_a) {
+var AlertConfigForm = (_a) => {
   var onSubmit = _a.onSubmit,
     onCancel = _a.onCancel,
     initialData = _a.initialData,
@@ -238,39 +235,33 @@ var AlertConfigForm = function (_a) {
   // =====================================================
   // EFFECTS
   // =====================================================
-  (0, react_1.useEffect)(
-    function () {
-      if (initialData === null || initialData === void 0 ? void 0 : initialData.productId) {
-        setSelectedScope("product");
-      } else if (initialData === null || initialData === void 0 ? void 0 : initialData.categoryId) {
-        setSelectedScope("category");
-      } else {
-        setSelectedScope("global");
-      }
-    },
-    [initialData],
-  );
+  (0, react_1.useEffect)(() => {
+    if (initialData === null || initialData === void 0 ? void 0 : initialData.productId) {
+      setSelectedScope("product");
+    } else if (initialData === null || initialData === void 0 ? void 0 : initialData.categoryId) {
+      setSelectedScope("category");
+    } else {
+      setSelectedScope("global");
+    }
+  }, [initialData]);
   // Reset product/category fields when scope changes
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedScope === "global") {
-        form.setValue("productId", undefined);
-        form.setValue("categoryId", undefined);
-      } else if (selectedScope === "product") {
-        form.setValue("categoryId", undefined);
-      } else if (selectedScope === "category") {
-        form.setValue("productId", undefined);
-      }
-    },
-    [selectedScope, form],
-  );
+  (0, react_1.useEffect)(() => {
+    if (selectedScope === "global") {
+      form.setValue("productId", undefined);
+      form.setValue("categoryId", undefined);
+    } else if (selectedScope === "product") {
+      form.setValue("categoryId", undefined);
+    } else if (selectedScope === "category") {
+      form.setValue("productId", undefined);
+    }
+  }, [selectedScope, form]);
   // =====================================================
   // FORM HANDLERS
   // =====================================================
-  var handleSubmit = function (data) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleSubmit = (data) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -294,8 +285,7 @@ var AlertConfigForm = function (_a) {
         }
       });
     });
-  };
-  var handleNotificationChannelChange = function (channel, checked) {
+  var handleNotificationChannelChange = (channel, checked) => {
     var currentChannels = form.getValues("notificationChannels") || [];
     if (checked) {
       if (!currentChannels.includes(channel)) {
@@ -307,9 +297,7 @@ var AlertConfigForm = function (_a) {
     } else {
       form.setValue(
         "notificationChannels",
-        currentChannels.filter(function (c) {
-          return c !== channel;
-        }),
+        currentChannels.filter((c) => c !== channel),
       );
     }
   };
@@ -348,9 +336,7 @@ var AlertConfigForm = function (_a) {
                     name="scope"
                     value="global"
                     checked={selectedScope === "global"}
-                    onChange={function (e) {
-                      return e.target.checked && setSelectedScope("global");
-                    }}
+                    onChange={(e) => e.target.checked && setSelectedScope("global")}
                     className="radio"
                   />
                   <label_1.Label htmlFor="scope-global" className="cursor-pointer">
@@ -364,9 +350,7 @@ var AlertConfigForm = function (_a) {
                     name="scope"
                     value="product"
                     checked={selectedScope === "product"}
-                    onChange={function (e) {
-                      return e.target.checked && setSelectedScope("product");
-                    }}
+                    onChange={(e) => e.target.checked && setSelectedScope("product")}
                     className="radio"
                   />
                   <label_1.Label htmlFor="scope-product" className="cursor-pointer">
@@ -380,9 +364,7 @@ var AlertConfigForm = function (_a) {
                     name="scope"
                     value="category"
                     checked={selectedScope === "category"}
-                    onChange={function (e) {
-                      return e.target.checked && setSelectedScope("category");
-                    }}
+                    onChange={(e) => e.target.checked && setSelectedScope("category")}
                     className="radio"
                   />
                   <label_1.Label htmlFor="scope-category" className="cursor-pointer">
@@ -397,7 +379,7 @@ var AlertConfigForm = function (_a) {
               <form_1.FormField
                 control={form.control}
                 name="productId"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -409,13 +391,11 @@ var AlertConfigForm = function (_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {products.map(function (product) {
-                            return (
-                              <select_1.SelectItem key={product.id} value={product.id}>
-                                {product.name} {product.sku && "(".concat(product.sku, ")")}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {products.map((product) => (
+                            <select_1.SelectItem key={product.id} value={product.id}>
+                              {product.name} {product.sku && "(".concat(product.sku, ")")}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -430,7 +410,7 @@ var AlertConfigForm = function (_a) {
               <form_1.FormField
                 control={form.control}
                 name="categoryId"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -442,13 +422,11 @@ var AlertConfigForm = function (_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {categories.map(function (category) {
-                            return (
-                              <select_1.SelectItem key={category.id} value={category.id}>
-                                {category.name}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {categories.map((category) => (
+                            <select_1.SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -462,7 +440,7 @@ var AlertConfigForm = function (_a) {
             <form_1.FormField
               control={form.control}
               name="alertType"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -474,7 +452,7 @@ var AlertConfigForm = function (_a) {
                         </select_1.SelectTrigger>
                       </form_1.FormControl>
                       <select_1.SelectContent>
-                        {Object.entries(stock_1.ALERT_TYPE_LABELS).map(function (_a) {
+                        {Object.entries(stock_1.ALERT_TYPE_LABELS).map((_a) => {
                           var value = _a[0],
                             label = _a[1];
                           return (
@@ -496,7 +474,7 @@ var AlertConfigForm = function (_a) {
               <form_1.FormField
                 control={form.control}
                 name="thresholdValue"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -507,9 +485,7 @@ var AlertConfigForm = function (_a) {
                           step="0.01"
                           min="0"
                           {...field}
-                          onChange={function (e) {
-                            return field.onChange(parseFloat(e.target.value) || 0);
-                          }}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                         />
                       </form_1.FormControl>
                       <form_1.FormMessage />
@@ -521,7 +497,7 @@ var AlertConfigForm = function (_a) {
               <form_1.FormField
                 control={form.control}
                 name="thresholdUnit"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -533,7 +509,7 @@ var AlertConfigForm = function (_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {Object.entries(stock_1.THRESHOLD_UNIT_LABELS).map(function (_a) {
+                          {Object.entries(stock_1.THRESHOLD_UNIT_LABELS).map((_a) => {
                             var value = _a[0],
                               label = _a[1];
                             return (
@@ -555,7 +531,7 @@ var AlertConfigForm = function (_a) {
             <form_1.FormField
               control={form.control}
               name="severityLevel"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -567,7 +543,7 @@ var AlertConfigForm = function (_a) {
                         </select_1.SelectTrigger>
                       </form_1.FormControl>
                       <select_1.SelectContent>
-                        {Object.entries(stock_1.SEVERITY_LABELS).map(function (_a) {
+                        {Object.entries(stock_1.SEVERITY_LABELS).map((_a) => {
                           var value = _a[0],
                             label = _a[1];
                           return (
@@ -588,7 +564,7 @@ var AlertConfigForm = function (_a) {
             <div className="space-y-3">
               <label_1.Label className="text-sm font-medium">Canais de Notificação</label_1.Label>
               <div className="grid grid-cols-2 gap-3">
-                {Object.entries(stock_1.NOTIFICATION_CHANNEL_LABELS).map(function (_a) {
+                {Object.entries(stock_1.NOTIFICATION_CHANNEL_LABELS).map((_a) => {
                   var _b;
                   var channel = _a[0],
                     label = _a[1];
@@ -601,9 +577,9 @@ var AlertConfigForm = function (_a) {
                             ? void 0
                             : _b.includes(channel)
                         }
-                        onCheckedChange={function (checked) {
-                          return handleNotificationChannelChange(channel, !!checked);
-                        }}
+                        onCheckedChange={(checked) =>
+                          handleNotificationChannelChange(channel, !!checked)
+                        }
                       />
                       <label_1.Label
                         htmlFor={"channel-".concat(channel)}
@@ -627,7 +603,7 @@ var AlertConfigForm = function (_a) {
             <form_1.FormField
               control={form.control}
               name="isActive"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">

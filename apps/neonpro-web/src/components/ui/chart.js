@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartStyle =
   exports.ChartLegendContent =
@@ -34,7 +32,7 @@ function useChart() {
   }
   return context;
 }
-var ChartContainer = React.forwardRef(function (_a, ref) {
+var ChartContainer = React.forwardRef((_a, ref) => {
   var id = _a.id,
     className = _a.className,
     children = _a.children,
@@ -61,10 +59,10 @@ var ChartContainer = React.forwardRef(function (_a, ref) {
 });
 exports.ChartContainer = ChartContainer;
 ChartContainer.displayName = "Chart";
-var ChartStyle = function (_a) {
+var ChartStyle = (_a) => {
   var id = _a.id,
     config = _a.config;
-  var colorConfig = Object.entries(config).filter(function (_a) {
+  var colorConfig = Object.entries(config).filter((_a) => {
     var _ = _a[0],
       config = _a[1];
     return config.theme || config.color;
@@ -76,7 +74,7 @@ var ChartStyle = function (_a) {
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
-          .map(function (_a) {
+          .map((_a) => {
             var theme = _a[0],
               prefix = _a[1];
             return "\n"
@@ -84,7 +82,7 @@ var ChartStyle = function (_a) {
               .concat(id, "] {\n")
               .concat(
                 colorConfig
-                  .map(function (_a) {
+                  .map((_a) => {
                     var _b;
                     var key = _a[0],
                       itemConfig = _a[1];
@@ -105,7 +103,7 @@ var ChartStyle = function (_a) {
 exports.ChartStyle = ChartStyle;
 var ChartTooltip = RechartsPrimitive.Tooltip;
 exports.ChartTooltip = ChartTooltip;
-var ChartTooltipContent = React.forwardRef(function (_a, ref) {
+var ChartTooltipContent = React.forwardRef((_a, ref) => {
   var active = _a.active,
     payload = _a.payload,
     className = _a.className,
@@ -123,35 +121,32 @@ var ChartTooltipContent = React.forwardRef(function (_a, ref) {
     nameKey = _a.nameKey,
     labelKey = _a.labelKey;
   var config = useChart().config;
-  var tooltipLabel = React.useMemo(
-    function () {
-      var _a;
-      if (hideLabel || !(payload === null || payload === void 0 ? void 0 : payload.length)) {
-        return null;
-      }
-      var item = payload[0];
-      var key = "".concat(labelKey || item.dataKey || item.name || "value");
-      var itemConfig = getPayloadConfigFromPayload(config, item, key);
-      var value =
-        !labelKey && typeof label === "string"
-          ? ((_a = config[label]) === null || _a === void 0 ? void 0 : _a.label) || label
-          : itemConfig === null || itemConfig === void 0
-            ? void 0
-            : itemConfig.label;
-      if (labelFormatter) {
-        return (
-          <div className={(0, utils_1.cn)("font-medium", labelClassName)}>
-            {labelFormatter(value, payload)}
-          </div>
-        );
-      }
-      if (!value) {
-        return null;
-      }
-      return <div className={(0, utils_1.cn)("font-medium", labelClassName)}>{value}</div>;
-    },
-    [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey],
-  );
+  var tooltipLabel = React.useMemo(() => {
+    var _a;
+    if (hideLabel || !(payload === null || payload === void 0 ? void 0 : payload.length)) {
+      return null;
+    }
+    var item = payload[0];
+    var key = "".concat(labelKey || item.dataKey || item.name || "value");
+    var itemConfig = getPayloadConfigFromPayload(config, item, key);
+    var value =
+      !labelKey && typeof label === "string"
+        ? ((_a = config[label]) === null || _a === void 0 ? void 0 : _a.label) || label
+        : itemConfig === null || itemConfig === void 0
+          ? void 0
+          : itemConfig.label;
+    if (labelFormatter) {
+      return (
+        <div className={(0, utils_1.cn)("font-medium", labelClassName)}>
+          {labelFormatter(value, payload)}
+        </div>
+      );
+    }
+    if (!value) {
+      return null;
+    }
+    return <div className={(0, utils_1.cn)("font-medium", labelClassName)}>{value}</div>;
+  }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey]);
   if (!active || !(payload === null || payload === void 0 ? void 0 : payload.length)) {
     return null;
   }
@@ -166,7 +161,7 @@ var ChartTooltipContent = React.forwardRef(function (_a, ref) {
     >
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
-        {payload.map(function (item, index) {
+        {payload.map((item, index) => {
           var key = "".concat(nameKey || item.name || item.dataKey || "value");
           var itemConfig = getPayloadConfigFromPayload(config, item, key);
           var indicatorColor = color || item.payload.fill || item.color;
@@ -235,7 +230,7 @@ exports.ChartTooltipContent = ChartTooltipContent;
 ChartTooltipContent.displayName = "ChartTooltip";
 var ChartLegend = RechartsPrimitive.Legend;
 exports.ChartLegend = ChartLegend;
-var ChartLegendContent = React.forwardRef(function (_a, ref) {
+var ChartLegendContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     _b = _a.hideIcon,
     hideIcon = _b === void 0 ? false : _b,
@@ -256,7 +251,7 @@ var ChartLegendContent = React.forwardRef(function (_a, ref) {
         className,
       )}
     >
-      {payload.map(function (item) {
+      {payload.map((item) => {
         var key = "".concat(nameKey || item.dataKey || "value");
         var itemConfig = getPayloadConfigFromPayload(config, item, key);
         return (

@@ -1,4 +1,3 @@
-"use strict";
 // Custom Report Builder Service
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,10 +144,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -159,11 +156,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportBuilderService = void 0;
 var server_1 = require("@/lib/supabase/server");
-var ReportBuilderService = /** @class */ (function () {
+var ReportBuilderService = /** @class */ (() => {
   // Supabase client created per method for proper request context
   function ReportBuilderService() {}
   // Custom Reports Management
@@ -268,7 +265,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.deleteReport = function (reportId) {
     return __awaiter(this, void 0, void 0, function () {
       var user, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -334,7 +331,7 @@ var ReportBuilderService = /** @class */ (function () {
       if (perPage === void 0) {
         perPage = 10;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -442,7 +439,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.getTemplates = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, templates, error, categories, featured;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -465,18 +462,14 @@ var ReportBuilderService = /** @class */ (function () {
               new Set(
                 (templates === null || templates === void 0
                   ? void 0
-                  : templates.map(function (t) {
-                      return t.category;
-                    })) || [],
+                  : templates.map((t) => t.category)) || [],
               ),
               true,
             );
             featured =
               (templates === null || templates === void 0
                 ? void 0
-                : templates.filter(function (t) {
-                    return t.is_featured;
-                  })) || [];
+                : templates.filter((t) => t.is_featured)) || [];
             return [
               2 /*return*/,
               {
@@ -494,7 +487,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.createTemplate = function (reportId, templateData) {
     return __awaiter(this, void 0, void 0, function () {
       var user, profile, report, template, _a, newTemplate, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -607,7 +600,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.getDataSources = function () {
     return __awaiter(this, void 0, void 0, function () {
       var user, profile, _a, connectors, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -641,7 +634,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.testDataSource = function (connectorId) {
     return __awaiter(this, void 0, void 0, function () {
       var user, connector, testResult;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -682,7 +675,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.addCollaborator = function (reportId, userId, permissionLevel) {
     return __awaiter(this, void 0, void 0, function () {
       var user, collaborator, _a, newCollaborator, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -711,7 +704,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.removeCollaborator = function (reportId, userId) {
     return __awaiter(this, void 0, void 0, function () {
       var user, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -737,7 +730,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.getCollaborators = function (reportId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, collaborators, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -764,7 +757,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.addComment = function (reportId, commentText, parentCommentId) {
     return __awaiter(this, void 0, void 0, function () {
       var user, comment, _a, newComment, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -793,7 +786,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.getComments = function (reportId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, comments, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -820,7 +813,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.resolveComment = function (commentId) {
     return __awaiter(this, void 0, void 0, function () {
       var user, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -871,7 +864,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.getSchedules = function (reportId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, schedules, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -900,7 +893,7 @@ var ReportBuilderService = /** @class */ (function () {
       if (duration === void 0) {
         duration = 0;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 7, , 8]);
@@ -974,7 +967,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.getReportAnalytics = function (reportId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, usageStats, usageError, totalViews, uniqueUsers, avgDuration;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -996,24 +989,18 @@ var ReportBuilderService = /** @class */ (function () {
             totalViews =
               (usageStats === null || usageStats === void 0
                 ? void 0
-                : usageStats.reduce(function (sum, stat) {
-                    return sum + stat.access_count;
-                  }, 0)) || 0;
+                : usageStats.reduce((sum, stat) => sum + stat.access_count, 0)) || 0;
             uniqueUsers = new Set(
               (usageStats === null || usageStats === void 0
                 ? void 0
-                : usageStats.map(function (stat) {
-                    return stat.user_id;
-                  })) || [],
+                : usageStats.map((stat) => stat.user_id)) || [],
             ).size;
             avgDuration = (
               usageStats === null || usageStats === void 0
                 ? void 0
                 : usageStats.length
             )
-              ? usageStats.reduce(function (sum, stat) {
-                  return sum + stat.usage_duration;
-                }, 0) / usageStats.length
+              ? usageStats.reduce((sum, stat) => sum + stat.usage_duration, 0) / usageStats.length
               : 0;
             return [
               2 /*return*/,
@@ -1038,7 +1025,7 @@ var ReportBuilderService = /** @class */ (function () {
     });
   };
   // Utility Methods
-  ReportBuilderService.prototype.calculateNextRun = function (scheduleConfig) {
+  ReportBuilderService.prototype.calculateNextRun = (scheduleConfig) => {
     var now = new Date();
     var nextRun = new Date(now);
     switch (scheduleConfig.frequency) {
@@ -1068,7 +1055,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.searchReports = function (query, filters) {
     return __awaiter(this, void 0, void 0, function () {
       var user, dbQuery, _a, reports, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -1104,7 +1091,7 @@ var ReportBuilderService = /** @class */ (function () {
       if (limit === void 0) {
         limit = 5;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -1131,7 +1118,7 @@ var ReportBuilderService = /** @class */ (function () {
   ReportBuilderService.prototype.getFavoriteReports = function () {
     return __awaiter(this, void 0, void 0, function () {
       var user, analytics, reportIds, _a, reports, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, supabase.auth.getUser()];
@@ -1151,9 +1138,7 @@ var ReportBuilderService = /** @class */ (function () {
             analytics = _b.sent().data;
             if (!(analytics === null || analytics === void 0 ? void 0 : analytics.length))
               return [2 /*return*/, []];
-            reportIds = analytics.map(function (a) {
-              return a.report_id;
-            });
+            reportIds = analytics.map((a) => a.report_id);
             return [
               4 /*yield*/,
               supabase

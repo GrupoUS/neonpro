@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentSlot = AppointmentSlot;
 exports.AppointmentSlotAgenda = AppointmentSlotAgenda;
@@ -194,15 +193,13 @@ function AppointmentSlot(_a) {
       {event.equipmentNeeded && event.equipmentNeeded.length > 0 && (
         <div className="absolute bottom-1 left-1">
           <div className="flex space-x-1">
-            {event.equipmentNeeded.slice(0, 2).map(function (equipment, index) {
-              return (
-                <div
-                  key={index}
-                  className="w-2 h-2 rounded-full bg-current opacity-60"
-                  title={equipment}
-                />
-              );
-            })}
+            {event.equipmentNeeded.slice(0, 2).map((equipment, index) => (
+              <div
+                key={index}
+                className="w-2 h-2 rounded-full bg-current opacity-60"
+                title={equipment}
+              />
+            ))}
             {event.equipmentNeeded.length > 2 && (
               <div
                 className="text-xs text-muted-foreground"

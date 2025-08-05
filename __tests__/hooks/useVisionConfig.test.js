@@ -1,4 +1,3 @@
-"use strict";
 /**
  * useVisionConfig Hook Tests
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,21 +148,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var useVisionConfig_1 = require("@/hooks/useVisionConfig");
 var sonner_1 = require("sonner");
 // Mock dependencies
-jest.mock("sonner", function () {
-  return {
-    toast: {
-      success: jest.fn(),
-      error: jest.fn(),
-      info: jest.fn(),
-    },
-  };
-});
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+  },
+}));
 // Mock fetch
 global.fetch = jest.fn();
 var mockDefaultConfig = {
@@ -212,52 +207,47 @@ var mockUserConfig = __assign(__assign({}, mockDefaultConfig), {
     emailNotifications: true,
   }),
 });
-describe("useVisionConfig", function () {
-  beforeEach(function () {
+describe("useVisionConfig", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     fetch.mockClear();
   });
-  it("should initialize with default state", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, useVisionConfig_1.useVisionConfig)();
-    }).result;
+  it("should initialize with default state", () => {
+    var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
     expect(result.current.config).toBeNull();
     expect(result.current.isLoading).toBe(false);
     expect(result.current.isSaving).toBe(false);
     expect(result.current.hasUnsavedChanges).toBe(false);
     expect(result.current.error).toBeNull();
   });
-  describe("loadConfig", function () {
-    it("should load user configuration successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("loadConfig", () => {
+    it("should load user configuration successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          config: mockUserConfig,
-                          isDefault: false,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        config: mockUserConfig,
+                        isDefault: false,
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.loadConfig()];
@@ -266,8 +256,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -277,38 +267,34 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should load default configuration when user config not found", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should load default configuration when user config not found", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          config: mockDefaultConfig,
-                          isDefault: true,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        config: mockDefaultConfig,
+                        isDefault: true,
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.loadConfig()];
@@ -317,8 +303,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -327,23 +313,22 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle loading errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle loading errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockRejectedValueOnce(new Error("Network error"));
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.loadConfig()];
@@ -352,8 +337,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -363,17 +348,14 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("updateConfig", function () {
-    it("should update configuration and mark as unsaved", function () {
+  describe("updateConfig", () => {
+    it("should update configuration and mark as unsaved", () => {
       var _a;
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
       // Set initial config
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.config = mockDefaultConfig;
       });
       var updates = {
@@ -381,7 +363,7 @@ describe("useVisionConfig", function () {
           accuracyThreshold: 0.9,
         }),
       };
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.updateConfig(updates);
       });
       expect(
@@ -391,16 +373,14 @@ describe("useVisionConfig", function () {
       ).toBe(0.9);
       expect(result.current.hasUnsavedChanges).toBe(true);
     });
-    it("should handle nested configuration updates", function () {
+    it("should handle nested configuration updates", () => {
       var _a, _b;
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
       // Set initial config
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.config = mockDefaultConfig;
       });
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.updateConfig({
           notifications: __assign(__assign({}, mockDefaultConfig.notifications), {
             emailNotifications: true,
@@ -421,42 +401,39 @@ describe("useVisionConfig", function () {
       expect(result.current.hasUnsavedChanges).toBe(true);
     });
   });
-  describe("saveConfig", function () {
-    it("should save configuration successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("saveConfig", () => {
+    it("should save configuration successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: true,
-                          config: mockUserConfig,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: true,
+                        config: mockUserConfig,
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               // Set config with changes
-              (0, react_1.act)(function () {
+              (0, react_1.act)(() => {
                 result.current.config = mockUserConfig;
                 result.current.hasUnsavedChanges = true;
               });
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.saveConfig()];
@@ -465,8 +442,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -478,42 +455,38 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle save errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle save errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: false,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Validation failed",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Validation failed",
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               // Set config with changes
-              (0, react_1.act)(function () {
+              (0, react_1.act)(() => {
                 result.current.config = mockUserConfig;
                 result.current.hasUnsavedChanges = true;
               });
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.saveConfig()];
@@ -522,8 +495,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -534,22 +507,21 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should not save when no config is loaded", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should not save when no config is loaded", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.saveConfig()];
@@ -558,8 +530,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -568,44 +540,40 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("resetToDefaults", function () {
-    it("should reset configuration to defaults successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("resetToDefaults", () => {
+    it("should reset configuration to defaults successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: true,
-                          config: mockDefaultConfig,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: true,
+                        config: mockDefaultConfig,
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               // Set custom config first
-              (0, react_1.act)(function () {
+              (0, react_1.act)(() => {
                 result.current.config = mockUserConfig;
               });
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.resetToDefaults()];
@@ -614,8 +582,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -627,37 +595,33 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle reset errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle reset errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: false,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Reset failed",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Reset failed",
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.resetToDefaults()];
@@ -666,8 +630,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -676,37 +640,33 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("discardChanges", function () {
-    it("should discard unsaved changes and reload config", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("discardChanges", () => {
+    it("should discard unsaved changes and reload config", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          config: mockDefaultConfig,
-                          isDefault: false,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        config: mockDefaultConfig,
+                        isDefault: false,
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               // Set config with changes
-              (0, react_1.act)(function () {
+              (0, react_1.act)(() => {
                 result.current.config = __assign(__assign({}, mockDefaultConfig), {
                   analysisThresholds: __assign(__assign({}, mockDefaultConfig.analysisThresholds), {
                     accuracyThreshold: 0.95, // Modified value
@@ -716,9 +676,9 @@ describe("useVisionConfig", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.discardChanges()];
@@ -727,8 +687,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -738,20 +698,17 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("validation", function () {
-    it("should validate accuracy threshold range", function () {
+  describe("validation", () => {
+    it("should validate accuracy threshold range", () => {
       var _a;
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
-      (0, react_1.act)(function () {
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
+      (0, react_1.act)(() => {
         result.current.config = mockDefaultConfig;
       });
       // Test invalid accuracy threshold
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.updateConfig({
           analysisThresholds: __assign(__assign({}, mockDefaultConfig.analysisThresholds), {
             accuracyThreshold: 1.5, // Invalid: > 1.0
@@ -765,16 +722,14 @@ describe("useVisionConfig", function () {
           : _a.analysisThresholds.accuracyThreshold,
       ).toBe(1.0);
     });
-    it("should validate processing time limit", function () {
+    it("should validate processing time limit", () => {
       var _a;
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
-      (0, react_1.act)(function () {
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
+      (0, react_1.act)(() => {
         result.current.config = mockDefaultConfig;
       });
       // Test invalid processing time
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.updateConfig({
           analysisThresholds: __assign(__assign({}, mockDefaultConfig.analysisThresholds), {
             processingTimeLimit: -1000, // Invalid: negative
@@ -788,16 +743,14 @@ describe("useVisionConfig", function () {
           : _a.analysisThresholds.processingTimeLimit,
       ).toBe(1000);
     });
-    it("should validate image size limits", function () {
+    it("should validate image size limits", () => {
       var _a;
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
-      (0, react_1.act)(function () {
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
+      (0, react_1.act)(() => {
         result.current.config = mockDefaultConfig;
       });
       // Test invalid image size
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.updateConfig({
           imageProcessing: __assign(__assign({}, mockDefaultConfig.imageProcessing), {
             maxImageSize: 50 * 1024 * 1024, // 50MB - too large
@@ -812,16 +765,14 @@ describe("useVisionConfig", function () {
       ).toBe(20 * 1024 * 1024); // 20MB max
     });
   });
-  describe("configuration presets", function () {
-    it("should apply conservative preset", function () {
+  describe("configuration presets", () => {
+    it("should apply conservative preset", () => {
       var _a, _b;
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
-      (0, react_1.act)(function () {
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
+      (0, react_1.act)(() => {
         result.current.config = mockDefaultConfig;
       });
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.applyPreset("conservative");
       });
       expect(
@@ -836,15 +787,13 @@ describe("useVisionConfig", function () {
       ).toBe(0.9);
       expect(result.current.hasUnsavedChanges).toBe(true);
     });
-    it("should apply performance preset", function () {
+    it("should apply performance preset", () => {
       var _a, _b, _c;
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
-      (0, react_1.act)(function () {
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
+      (0, react_1.act)(() => {
         result.current.config = mockDefaultConfig;
       });
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.applyPreset("performance");
       });
       expect(
@@ -864,15 +813,13 @@ describe("useVisionConfig", function () {
       ).toBe(true);
       expect(result.current.hasUnsavedChanges).toBe(true);
     });
-    it("should apply balanced preset", function () {
+    it("should apply balanced preset", () => {
       var _a, _b, _c;
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
-      (0, react_1.act)(function () {
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
+      (0, react_1.act)(() => {
         result.current.config = mockDefaultConfig;
       });
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.applyPreset("balanced");
       });
       expect(
@@ -893,18 +840,16 @@ describe("useVisionConfig", function () {
       expect(result.current.hasUnsavedChanges).toBe(true);
     });
   });
-  describe("error handling", function () {
-    it("should clear errors when updating config", function () {
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionConfig_1.useVisionConfig)();
-      }).result;
+  describe("error handling", () => {
+    it("should clear errors when updating config", () => {
+      var result = (0, react_1.renderHook)(() => (0, useVisionConfig_1.useVisionConfig)()).result;
       // Set an error
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.error = "Test error";
         result.current.config = mockDefaultConfig;
       });
       // Update config should clear error
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.updateConfig({
           notifications: __assign(__assign({}, mockDefaultConfig.notifications), {
             emailNotifications: true,
@@ -913,21 +858,21 @@ describe("useVisionConfig", function () {
       });
       expect(result.current.error).toBeNull();
     });
-    it("should handle network errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should handle network errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockRejectedValueOnce(new Error("Network error"));
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionConfig_1.useVisionConfig)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionConfig_1.useVisionConfig)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.loadConfig()];
@@ -936,8 +881,8 @@ describe("useVisionConfig", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -946,7 +891,6 @@ describe("useVisionConfig", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

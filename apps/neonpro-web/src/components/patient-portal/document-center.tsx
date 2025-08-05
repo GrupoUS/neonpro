@@ -1,17 +1,5 @@
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Input } from "@/components/ui/input";
-import LoadingSpinner from "@/components/ui/loading-spinner";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
@@ -29,6 +17,18 @@ import type {
   User,
 } from "lucide-react";
 import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import LoadingSpinner from "@/components/ui/loading-spinner";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Tipos de documentos brasileiros para clínicas estéticas
 interface PatientDocument {

@@ -1,4 +1,3 @@
-"use strict";
 // Revenue & Profitability Analytics Engine
 // Epic 5, Story 5.1, Task 4: Revenue & Profitability Analysis
 // Created: 2025-01-27
@@ -6,15 +5,15 @@
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,11 +133,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RevenueAnalyticsEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var RevenueAnalyticsEngine = /** @class */ (function () {
+var RevenueAnalyticsEngine = /** @class */ (() => {
   function RevenueAnalyticsEngine() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -175,8 +172,8 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                serviceData.map(function (service) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                serviceData.map((service) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var costAllocation, seasonalIndex, growthRate;
                     return __generator(this, function (_a) {
                       switch (_a.label) {
@@ -219,18 +216,13 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 2:
             enrichedData = _b.sent();
-            return [
-              2 /*return*/,
-              enrichedData.sort(function (a, b) {
-                return b.totalRevenue - a.totalRevenue;
-              }),
-            ];
+            return [2 /*return*/, enrichedData.sort((a, b) => b.totalRevenue - a.totalRevenue)];
         }
       });
     });
@@ -277,9 +269,7 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
             directCostTotal =
               (directCosts === null || directCosts === void 0
                 ? void 0
-                : directCosts.reduce(function (sum, cost) {
-                    return sum + parseFloat(cost.amount);
-                  }, 0)) || 0;
+                : directCosts.reduce((sum, cost) => sum + parseFloat(cost.amount), 0)) || 0;
             overheadCost =
               ((_a =
                 overheadData === null || overheadData === void 0 ? void 0 : overheadData[0]) ===
@@ -365,8 +355,8 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                providerData.map(function (provider) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                providerData.map((provider) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var utilizationRate, conversionRate, growthTrend;
                     return __generator(this, function (_a) {
                       switch (_a.label) {
@@ -407,18 +397,13 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 2:
             enrichedData = _b.sent();
-            return [
-              2 /*return*/,
-              enrichedData.sort(function (a, b) {
-                return b.totalRevenue - a.totalRevenue;
-              }),
-            ];
+            return [2 /*return*/, enrichedData.sort((a, b) => b.totalRevenue - a.totalRevenue)];
         }
       });
     });
@@ -522,17 +507,15 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
             if (error) throw new Error("Time series analysis failed: ".concat(error.message));
             return [
               2 /*return*/,
-              timeSeriesData.map(function (period) {
-                return {
-                  period: period.period,
-                  revenue: parseFloat(period.revenue),
-                  transactions: parseInt(period.transactions),
-                  averageValue: parseFloat(period.average_value),
-                  growthRate: parseFloat(period.growth_rate),
-                  seasonalIndex: parseFloat(period.seasonal_index),
-                  trendDirection: period.trend_direction,
-                };
-              }),
+              timeSeriesData.map((period) => ({
+                period: period.period,
+                revenue: parseFloat(period.revenue),
+                transactions: parseInt(period.transactions),
+                averageValue: parseFloat(period.average_value),
+                growthRate: parseFloat(period.growth_rate),
+                seasonalIndex: parseFloat(period.seasonal_index),
+                trendDirection: period.trend_direction,
+              })),
             ];
         }
       });
@@ -595,18 +578,16 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
             if (error) throw new Error("Patient LTV calculation failed: ".concat(error.message));
             return [
               2 /*return*/,
-              ltvData.map(function (patient) {
-                return {
-                  patientId: patient.patient_id,
-                  totalLifetimeValue: parseFloat(patient.total_ltv),
-                  averageVisitValue: parseFloat(patient.avg_visit_value),
-                  visitFrequency: parseFloat(patient.visit_frequency),
-                  retentionRate: parseFloat(patient.retention_rate),
-                  churnRisk: parseFloat(patient.churn_risk),
-                  nextVisitProbability: parseFloat(patient.next_visit_probability),
-                  recommendedActions: _this.generatePatientRecommendations(patient),
-                };
-              }),
+              ltvData.map((patient) => ({
+                patientId: patient.patient_id,
+                totalLifetimeValue: parseFloat(patient.total_ltv),
+                averageVisitValue: parseFloat(patient.avg_visit_value),
+                visitFrequency: parseFloat(patient.visit_frequency),
+                retentionRate: parseFloat(patient.retention_rate),
+                churnRisk: parseFloat(patient.churn_risk),
+                nextVisitProbability: parseFloat(patient.next_visit_probability),
+                recommendedActions: _this.generatePatientRecommendations(patient),
+              })),
             ];
         }
       });
@@ -615,7 +596,7 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
   /**
    * Generate recommendations based on patient behavior patterns
    */
-  RevenueAnalyticsEngine.prototype.generatePatientRecommendations = function (patientData) {
+  RevenueAnalyticsEngine.prototype.generatePatientRecommendations = (patientData) => {
     var recommendations = [];
     if (patientData.churn_risk > 0.7) {
       recommendations.push("High churn risk - Schedule follow-up call");
@@ -662,19 +643,17 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
             if (error) throw new Error("Revenue forecasting failed: ".concat(error.message));
             return [
               2 /*return*/,
-              forecastData.map(function (forecast) {
-                return {
-                  period: forecast.period,
-                  forecastedRevenue: parseFloat(forecast.forecasted_revenue),
-                  confidenceInterval: {
-                    lower: parseFloat(forecast.confidence_lower),
-                    upper: parseFloat(forecast.confidence_upper),
-                  },
-                  trend: forecast.trend,
-                  seasonalFactor: parseFloat(forecast.seasonal_factor),
-                  growthRate: parseFloat(forecast.growth_rate),
-                };
-              }),
+              forecastData.map((forecast) => ({
+                period: forecast.period,
+                forecastedRevenue: parseFloat(forecast.forecasted_revenue),
+                confidenceInterval: {
+                  lower: parseFloat(forecast.confidence_lower),
+                  upper: parseFloat(forecast.confidence_upper),
+                },
+                trend: forecast.trend,
+                seasonalFactor: parseFloat(forecast.seasonal_factor),
+                growthRate: parseFloat(forecast.growth_rate),
+              })),
             ];
         }
       });
@@ -798,13 +777,10 @@ var RevenueAnalyticsEngine = /** @class */ (function () {
                 topPatientsByLTV: topPatients.slice(0, 10),
                 revenueForecast: forecast,
                 summary: {
-                  totalRevenue: serviceRevenue.reduce(function (sum, s) {
-                    return sum + s.totalRevenue;
-                  }, 0),
+                  totalRevenue: serviceRevenue.reduce((sum, s) => sum + s.totalRevenue, 0),
                   averageProfitMargin:
-                    serviceRevenue.reduce(function (sum, s) {
-                      return sum + s.profitMargin;
-                    }, 0) / serviceRevenue.length,
+                    serviceRevenue.reduce((sum, s) => sum + s.profitMargin, 0) /
+                    serviceRevenue.length,
                   topServiceRevenue:
                     ((_b = serviceRevenue[0]) === null || _b === void 0
                       ? void 0

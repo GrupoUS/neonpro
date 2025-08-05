@@ -4,7 +4,6 @@
  * Created: January 24, 2025
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomerManagement = CustomerManagement;
 var react_1 = require("react");
@@ -42,8 +41,8 @@ function CustomerManagement(_a) {
     setFilterLifecycle = _h[1];
   // Filter and search customers
   var filteredCustomers = (0, react_1.useMemo)(
-    function () {
-      return customers.filter(function (customer) {
+    () =>
+      customers.filter((customer) => {
         var matchesSearch =
           customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -52,55 +51,37 @@ function CustomerManagement(_a) {
         var lifecycle = (0, utils_1.determineCustomerLifecycle)(customer);
         var matchesLifecycle = filterLifecycle === "all" || lifecycle === filterLifecycle;
         return matchesSearch && matchesStatus && matchesLifecycle;
-      });
-    },
+      }),
     [customers, searchTerm, filterStatus, filterLifecycle],
   );
   // Calculate customer analytics
-  var customerAnalytics = (0, react_1.useMemo)(
-    function () {
-      var totalCustomers = customers.length;
-      var activeCustomers = customers.filter(function (c) {
-        return c.status === "active";
-      }).length;
-      var averageLifetimeValue =
-        customers.reduce(function (sum, c) {
-          return sum + c.totalSpent;
-        }, 0) / totalCustomers;
-      var averageSatisfaction =
-        customers
-          .filter(function (c) {
-            return c.satisfactionRating;
-          })
-          .reduce(function (sum, c) {
-            return sum + (c.satisfactionRating || 0);
-          }, 0) /
-        customers.filter(function (c) {
-          return c.satisfactionRating;
-        }).length;
-      return {
-        totalCustomers: totalCustomers,
-        activeCustomers: activeCustomers,
-        averageLifetimeValue: averageLifetimeValue || 0,
-        averageSatisfaction: averageSatisfaction || 0,
-        retentionRate: totalCustomers > 0 ? (activeCustomers / totalCustomers) * 100 : 0,
-      };
-    },
-    [customers],
-  );
+  var customerAnalytics = (0, react_1.useMemo)(() => {
+    var totalCustomers = customers.length;
+    var activeCustomers = customers.filter((c) => c.status === "active").length;
+    var averageLifetimeValue = customers.reduce((sum, c) => sum + c.totalSpent, 0) / totalCustomers;
+    var averageSatisfaction =
+      customers
+        .filter((c) => c.satisfactionRating)
+        .reduce((sum, c) => sum + (c.satisfactionRating || 0), 0) /
+      customers.filter((c) => c.satisfactionRating).length;
+    return {
+      totalCustomers: totalCustomers,
+      activeCustomers: activeCustomers,
+      averageLifetimeValue: averageLifetimeValue || 0,
+      averageSatisfaction: averageSatisfaction || 0,
+      retentionRate: totalCustomers > 0 ? (activeCustomers / totalCustomers) * 100 : 0,
+    };
+  }, [customers]);
   // Get customer appointments
-  var getCustomerAppointments = function (customerId) {
-    return appointments.filter(function (apt) {
-      return apt.customerId === customerId;
-    });
-  };
+  var getCustomerAppointments = (customerId) =>
+    appointments.filter((apt) => apt.customerId === customerId);
   // Handle customer selection
-  var handleCustomerSelect = function (customer) {
+  var handleCustomerSelect = (customer) => {
     setSelectedCustomer(customer);
     onCustomerSelect === null || onCustomerSelect === void 0 ? void 0 : onCustomerSelect(customer);
   };
   // Handle follow-up scheduling
-  var handleScheduleFollowUp = function (customer, context) {
+  var handleScheduleFollowUp = (customer, context) => {
     var lifecycle = (0, utils_1.determineCustomerLifecycle)(customer);
     var lastContactDate = customer.lastVisitDate || customer.registrationDate;
     var followUpDate = (0, utils_1.determineNextFollowUpDate)(lastContactDate, lifecycle);
@@ -110,7 +91,7 @@ function CustomerManagement(_a) {
       : onFollowUpSchedule(customer.id, followUpDate, message);
   };
   // Render customer card
-  var renderCustomerCard = function (customer) {
+  var renderCustomerCard = (customer) => {
     var customerAppointments = getCustomerAppointments(customer.id);
     var leadScore = (0, utils_1.calculateLeadScore)(customer, customerAppointments);
     var lifecycle = (0, utils_1.determineCustomerLifecycle)(customer);
@@ -119,7 +100,7 @@ function CustomerManagement(_a) {
     var daysSinceLastVisit = customer.lastVisitDate
       ? (0, utils_1.calculateDaysSinceLastVisit)(customer.lastVisitDate)
       : null;
-    var getLifecycleColor = function (lifecycle) {
+    var getLifecycleColor = (lifecycle) => {
       switch (lifecycle) {
         case "new":
           return "bg-blue-100 text-blue-800";
@@ -133,7 +114,7 @@ function CustomerManagement(_a) {
           return "bg-gray-100 text-gray-800";
       }
     };
-    var getPriorityColor = function (priority) {
+    var getPriorityColor = (priority) => {
       switch (priority) {
         case "high":
           return "bg-red-100 text-red-800";
@@ -149,9 +130,7 @@ function CustomerManagement(_a) {
       <card_1.Card
         key={customer.id}
         className="cursor-pointer hover:shadow-md transition-shadow"
-        onClick={function () {
-          return handleCustomerSelect(customer);
-        }}
+        onClick={() => handleCustomerSelect(customer)}
       >
         <card_1.CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -160,9 +139,7 @@ function CustomerManagement(_a) {
                 <avatar_1.AvatarFallback>
                   {customer.name
                     .split(" ")
-                    .map(function (n) {
-                      return n[0];
-                    })
+                    .map((n) => n[0])
                     .join("")}
                 </avatar_1.AvatarFallback>
               </avatar_1.Avatar>
@@ -214,18 +191,16 @@ function CustomerManagement(_a) {
 
           {customer.satisfactionRating && (
             <div className="mt-2 flex items-center space-x-1">
-              {[1, 2, 3, 4, 5].map(function (star) {
-                return (
-                  <lucide_react_1.Star
-                    key={star}
-                    className={"h-3 w-3 ".concat(
-                      star <= customer.satisfactionRating
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300",
-                    )}
-                  />
-                );
-              })}
+              {[1, 2, 3, 4, 5].map((star) => (
+                <lucide_react_1.Star
+                  key={star}
+                  className={"h-3 w-3 ".concat(
+                    star <= customer.satisfactionRating
+                      ? "text-yellow-400 fill-current"
+                      : "text-gray-300",
+                  )}
+                />
+              ))}
               <span className="text-xs text-gray-500 ml-1">({customer.satisfactionRating}/5)</span>
             </div>
           )}
@@ -234,7 +209,7 @@ function CustomerManagement(_a) {
     );
   };
   // Render customer details
-  var renderCustomerDetails = function (customer) {
+  var renderCustomerDetails = (customer) => {
     var customerAppointments = getCustomerAppointments(customer.id);
     var leadScore = (0, utils_1.calculateLeadScore)(customer, customerAppointments);
     var lifecycle = (0, utils_1.determineCustomerLifecycle)(customer);
@@ -251,9 +226,7 @@ function CustomerManagement(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return handleScheduleFollowUp(customer, "appointment");
-              }}
+              onClick={() => handleScheduleFollowUp(customer, "appointment")}
             >
               <lucide_react_1.MessageSquare className="h-4 w-4 mr-2" />
               Schedule Follow-up
@@ -261,9 +234,7 @@ function CustomerManagement(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return handleScheduleFollowUp(customer, "satisfaction");
-              }}
+              onClick={() => handleScheduleFollowUp(customer, "satisfaction")}
             >
               <lucide_react_1.Star className="h-4 w-4 mr-2" />
               Request Feedback
@@ -369,13 +340,11 @@ function CustomerManagement(_a) {
                   <div>
                     <label_1.Label>Tags</label_1.Label>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {customer.tags.map(function (tag, index) {
-                        return (
-                          <badge_1.Badge key={index} variant="secondary">
-                            {tag}
-                          </badge_1.Badge>
-                        );
-                      })}
+                      {customer.tags.map((tag, index) => (
+                        <badge_1.Badge key={index} variant="secondary">
+                          {tag}
+                        </badge_1.Badge>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -444,35 +413,33 @@ function CustomerManagement(_a) {
                 <div className="space-y-2">
                   {customerAppointments.length === 0
                     ? <p className="text-gray-500 text-center py-4">No appointments found</p>
-                    : customerAppointments.slice(0, 5).map(function (appointment) {
-                        return (
-                          <div
-                            key={appointment.id}
-                            className="flex items-center justify-between p-3 border rounded"
-                          >
-                            <div>
-                              <div className="font-medium">{appointment.service}</div>
-                              <div className="text-sm text-gray-500">
-                                {new Date(appointment.date).toLocaleDateString()}
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="font-medium">${appointment.cost.toFixed(2)}</div>
-                              <badge_1.Badge
-                                variant={
-                                  appointment.status === "completed"
-                                    ? "default"
-                                    : appointment.status === "cancelled"
-                                      ? "destructive"
-                                      : "secondary"
-                                }
-                              >
-                                {appointment.status}
-                              </badge_1.Badge>
+                    : customerAppointments.slice(0, 5).map((appointment) => (
+                        <div
+                          key={appointment.id}
+                          className="flex items-center justify-between p-3 border rounded"
+                        >
+                          <div>
+                            <div className="font-medium">{appointment.service}</div>
+                            <div className="text-sm text-gray-500">
+                              {new Date(appointment.date).toLocaleDateString()}
                             </div>
                           </div>
-                        );
-                      })}
+                          <div className="text-right">
+                            <div className="font-medium">${appointment.cost.toFixed(2)}</div>
+                            <badge_1.Badge
+                              variant={
+                                appointment.status === "completed"
+                                  ? "default"
+                                  : appointment.status === "cancelled"
+                                    ? "destructive"
+                                    : "secondary"
+                              }
+                            >
+                              {appointment.status}
+                            </badge_1.Badge>
+                          </div>
+                        </div>
+                      ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -541,9 +508,7 @@ function CustomerManagement(_a) {
                 id="search"
                 placeholder="Search by name, email, or phone..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return setSearchTerm(e.target.value);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="w-full md:w-48">
@@ -584,9 +549,7 @@ function CustomerManagement(_a) {
         ? <div>
             <button_1.Button
               variant="outline"
-              onClick={function () {
-                return setSelectedCustomer(null);
-              }}
+              onClick={() => setSelectedCustomer(null)}
               className="mb-4"
             >
               ← Back to Customer List

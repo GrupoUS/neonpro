@@ -1,6 +1,6 @@
-import { describe, it, expect } from "@jest/globals";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+import { describe, expect, it } from "@jest/globals";
 
 describe("TASK-001 Foundation Setup Verification", () => {
   const rootDir = path.join(__dirname, "../../");

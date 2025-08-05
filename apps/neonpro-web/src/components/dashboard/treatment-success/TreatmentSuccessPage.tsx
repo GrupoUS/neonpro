@@ -1,5 +1,7 @@
 "use client";
 
+import type { Award, CheckCircle, Target, TrendingDown, TrendingUp, Users } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type {
   ComplianceReport,
   ComplianceStats,
@@ -33,8 +35,6 @@ import type {
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Textarea } from "@/components/ui/textarea";
-import type { Award, CheckCircle, Target, TrendingDown, TrendingUp, Users } from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface TreatmentSuccessPageProps {
   className?: string;

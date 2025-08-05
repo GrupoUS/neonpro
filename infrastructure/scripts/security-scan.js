@@ -4,8 +4,8 @@
  * Detecta API keys expostas antes de commits
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Patterns de API keys sensíveis
 const SENSITIVE_PATTERNS = [
@@ -58,7 +58,7 @@ function scanFile(filePath) {
     const content = fs.readFileSync(filePath, "utf8");
     const violations = [];
 
-    SENSITIVE_PATTERNS.forEach((pattern, index) => {
+    SENSITIVE_PATTERNS.forEach((pattern, _index) => {
       const matches = content.match(pattern);
       if (matches) {
         matches.forEach((match) => {
@@ -76,14 +76,14 @@ function scanFile(filePath) {
           violations.push({
             file: filePath,
             pattern: pattern.toString(),
-            match: match.substring(0, 10) + "...", // Ocultar a key real
+            match: `${match.substring(0, 10)}...`, // Ocultar a key real
           });
         });
       }
     });
 
     return violations;
-  } catch (error) {
+  } catch (_error) {
     return [];
   }
 }

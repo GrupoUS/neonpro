@@ -426,12 +426,13 @@ export class ExpenseBudgetEngine {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
           end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case "current_quarter":
+      case "current_quarter": {
         const quarterStart = Math.floor(now.getMonth() / 3) * 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
           end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
+      }
       case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),

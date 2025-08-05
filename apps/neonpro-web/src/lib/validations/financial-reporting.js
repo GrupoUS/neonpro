@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // Advanced Financial Reporting Validation Schemas
 // Epic 5, Story 5.1: Advanced Financial Reporting + Real-time Insights
@@ -43,7 +42,7 @@ var financial_reporting_1 = require("@/lib/types/financial-reporting");
 var uuidSchema = zod_1.z.string().uuid();
 var dateSchema = zod_1.z.string().datetime();
 var dateOnlySchema = zod_1.z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
-var positiveNumberSchema = zod_1.z.number().min(0);
+var _positiveNumberSchema = zod_1.z.number().min(0);
 var percentageSchema = zod_1.z.number().min(0).max(100);
 var currencySchema = zod_1.z.number().min(0);
 // Enum validation schemas
@@ -76,15 +75,10 @@ exports.financialReportSchema = zod_1.z
     created_at: dateSchema,
     updated_at: dateSchema,
   })
-  .refine(
-    function (data) {
-      return new Date(data.period_end) >= new Date(data.period_start);
-    },
-    {
-      message: "Period end must be after or equal to period start",
-      path: ["period_end"],
-    },
-  );
+  .refine((data) => new Date(data.period_end) >= new Date(data.period_start), {
+    message: "Period end must be after or equal to period start",
+    path: ["period_end"],
+  });
 // Create Financial Report schema
 exports.createFinancialReportSchema = zod_1.z
   .object({
@@ -97,15 +91,10 @@ exports.createFinancialReportSchema = zod_1.z
     file_format: reportFormatSchema.default("pdf"),
     clinic_id: uuidSchema,
   })
-  .refine(
-    function (data) {
-      return new Date(data.period_end) >= new Date(data.period_start);
-    },
-    {
-      message: "Period end must be after or equal to period start",
-      path: ["period_end"],
-    },
-  );
+  .refine((data) => new Date(data.period_end) >= new Date(data.period_start), {
+    message: "Period end must be after or equal to period start",
+    path: ["period_end"],
+  });
 // Financial KPI validation schema
 exports.financialKPISchema = zod_1.z
   .object({
@@ -129,17 +118,12 @@ exports.financialKPISchema = zod_1.z
     created_at: dateSchema,
     updated_at: dateSchema,
   })
+  .refine((data) => new Date(data.period_end) >= new Date(data.period_start), {
+    message: "Period end must be after or equal to period start",
+    path: ["period_end"],
+  })
   .refine(
-    function (data) {
-      return new Date(data.period_end) >= new Date(data.period_start);
-    },
-    {
-      message: "Period end must be after or equal to period start",
-      path: ["period_end"],
-    },
-  )
-  .refine(
-    function (data) {
+    (data) => {
       if (data.threshold_warning && data.threshold_critical) {
         return data.threshold_critical !== data.threshold_warning;
       }
@@ -346,17 +330,12 @@ exports.reportParametersSchema = zod_1.z
       })
       .optional(),
   })
+  .refine((data) => new Date(data.period_end) >= new Date(data.period_start), {
+    message: "Period end must be after or equal to period start",
+    path: ["period_end"],
+  })
   .refine(
-    function (data) {
-      return new Date(data.period_end) >= new Date(data.period_start);
-    },
-    {
-      message: "Period end must be after or equal to period start",
-      path: ["period_end"],
-    },
-  )
-  .refine(
-    function (data) {
+    (data) => {
       if (data.comparison_period_start && data.comparison_period_end) {
         return new Date(data.comparison_period_end) >= new Date(data.comparison_period_start);
       }
@@ -593,7 +572,7 @@ exports.kpiQuerySchema = zod_1.z.object({
   period_end: dateOnlySchema.optional(),
 });
 // Validation utility functions
-var validateReportPeriod = function (start, end) {
+var validateReportPeriod = (start, end) => {
   var startDate = new Date(start);
   var endDate = new Date(end);
   var diffDays = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
@@ -601,13 +580,10 @@ var validateReportPeriod = function (start, end) {
   return diffDays >= 0 && diffDays <= 730;
 };
 exports.validateReportPeriod = validateReportPeriod;
-var validateEmailList = function (emails) {
-  return emails.every(function (email) {
-    return zod_1.z.string().email().safeParse(email).success;
-  });
-};
+var validateEmailList = (emails) =>
+  emails.every((email) => zod_1.z.string().email().safeParse(email).success);
 exports.validateEmailList = validateEmailList;
-var validateKPIThresholds = function (warning, critical) {
+var validateKPIThresholds = (warning, critical) => {
   if (warning !== undefined && critical !== undefined) {
     return warning !== critical;
   }

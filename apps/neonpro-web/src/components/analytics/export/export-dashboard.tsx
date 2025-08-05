@@ -4,7 +4,36 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import type { addDays, format, subDays } from "date-fns";
+import type {
+  AlertCircle,
+  BarChart3,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  FileImage,
+  FileSpreadsheet,
+  FileText,
+  Filter,
+  Loader2,
+  Mail,
+  Settings,
+  Target,
+  Trash2,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -12,10 +41,12 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -23,51 +54,20 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type {
-  Download,
-  FileText,
-  FileSpreadsheet,
-  FileImage,
-  Calendar as CalendarIcon,
-  Settings,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Loader2,
-  Trash2,
-  Eye,
-  Mail,
-  Filter,
-  BarChart3,
-  TrendingUp,
-  Users,
-  DollarSign,
-  Target,
-  Zap,
-} from "lucide-react";
-import type { format, addDays, subDays } from "date-fns";
-import type { cn } from "@/lib/utils";
-import type { toast } from "sonner";
-import type {
+  CSVExportOptions,
+  ExcelExportOptions,
+  ExportConfig,
   ExportFormat,
-  ReportType,
   ExportRequest,
   ExportResponse,
-  ExportConfig,
   PDFExportOptions,
-  ExcelExportOptions,
-  CSVExportOptions,
+  ReportType,
 } from "@/lib/analytics/export/types";
+import type { cn } from "@/lib/utils";
 
 // ============================================================================
 // TYPES AND INTERFACES
@@ -499,7 +499,7 @@ export function ExportDashboard({
     if (!bytes) return "Unknown";
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
+    return Math.round((bytes / 1024 ** i) * 100) / 100 + " " + sizes[i];
   };
 
   const formatDuration = (ms?: number) => {

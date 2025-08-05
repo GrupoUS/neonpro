@@ -7,11 +7,11 @@
  */
 
 import type {
-  NotificationChannel,
-  NotificationDelivery,
-  NotificationContext,
   ChannelConfig,
   DeliveryStatus,
+  NotificationChannel,
+  NotificationContext,
+  NotificationDelivery,
   NotificationPriority,
 } from "../types";
 import type { ChannelProvider } from "./index";

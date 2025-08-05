@@ -5,24 +5,23 @@
 // analytics, and performance tracking functionality
 // ============================================================================
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -31,7 +30,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplierManagement = SupplierManagement;
 var react_1 = require("react");
@@ -51,7 +50,7 @@ var utils_1 = require("@/lib/utils");
 // ============================================================================
 // STATS CARD COMPONENT
 // ============================================================================
-var StatsCard = function (_a) {
+var StatsCard = (_a) => {
   var title = _a.title,
     value = _a.value,
     subtitle = _a.subtitle,
@@ -160,7 +159,7 @@ function SupplierManagement(_a) {
   var filteredSuppliers =
     (suppliers === null || suppliers === void 0
       ? void 0
-      : suppliers.filter(function (supplier) {
+      : suppliers.filter((supplier) => {
           var _a, _b, _c, _d;
           // Search filter
           if (filters.search) {
@@ -196,7 +195,7 @@ function SupplierManagement(_a) {
           }
           return true;
         })) || [];
-  var sortedSuppliers = __spreadArray([], filteredSuppliers, true).sort(function (a, b) {
+  var sortedSuppliers = __spreadArray([], filteredSuppliers, true).sort((a, b) => {
     var order = filters.sortOrder === "asc" ? 1 : -1;
     switch (filters.sortBy) {
       case "name":
@@ -212,234 +211,208 @@ function SupplierManagement(_a) {
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  var handleSearch = function (value) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), { search: value });
-    });
+  var handleSearch = (value) => {
+    setFilters((prev) => __assign(__assign({}, prev), { search: value }));
   };
-  var handleFilterChange = function (key, value) {
-    setFilters(function (prev) {
+  var handleFilterChange = (key, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[key] = value), _a));
     });
   };
-  var handleCreateSupplier = function () {
+  var handleCreateSupplier = () => {
     setSelectedSupplier(null);
     setShowCreateForm(true);
   };
-  var handleEditSupplier = function (supplier) {
+  var handleEditSupplier = (supplier) => {
     setSelectedSupplier(supplier);
     setShowEditForm(true);
   };
-  var handleViewSupplier = function (supplier) {
+  var handleViewSupplier = (supplier) => {
     setSelectedSupplier(supplier);
     setShowDetailView(true);
   };
-  var handleDeleteSupplier = function (supplier) {
+  var handleDeleteSupplier = (supplier) => {
     // The actual deletion is handled by the SupplierDetail component
     setSelectedSupplier(supplier);
     setShowDetailView(true);
   };
-  var handleSupplierSuccess = function () {
+  var handleSupplierSuccess = () => {
     setShowCreateForm(false);
     setShowEditForm(false);
     refetchSuppliers();
     sonner_1.toast.success("Operação realizada com sucesso!");
   };
-  var handleRefresh = function () {
+  var handleRefresh = () => {
     refetchSuppliers();
     sonner_1.toast.success("Dados atualizados!");
   };
-  var handleExport = function () {
+  var handleExport = () => {
     // Implementation for data export
     sonner_1.toast.info("Funcionalidade de exportação em desenvolvimento");
   };
-  var handleImport = function () {
+  var handleImport = () => {
     // Implementation for data import
     sonner_1.toast.info("Funcionalidade de importação em desenvolvimento");
   };
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  var renderStatsCards = function () {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Total de Fornecedores"
-          value={displayStats.totalSuppliers}
-          icon={<lucide_react_1.Building2 className="h-4 w-4" />}
-          subtitle="Todos os fornecedores cadastrados"
-          onClick={function () {
-            return handleFilterChange("status", "all");
-          }}
-        />
+  var renderStatsCards = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <StatsCard
+        title="Total de Fornecedores"
+        value={displayStats.totalSuppliers}
+        icon={<lucide_react_1.Building2 className="h-4 w-4" />}
+        subtitle="Todos os fornecedores cadastrados"
+        onClick={() => handleFilterChange("status", "all")}
+      />
 
-        <StatsCard
-          title="Fornecedores Ativos"
-          value={displayStats.activeSuppliers}
-          icon={<lucide_react_1.Users className="h-4 w-4" />}
-          subtitle={"".concat(
-            (0, utils_1.formatPercentage)(
-              displayStats.activeSuppliers / Math.max(displayStats.totalSuppliers, 1),
-            ),
-            " do total",
-          )}
-          color="success"
-          onClick={function () {
-            return handleFilterChange("status", supplier_1.SupplierStatus.ACTIVE);
-          }}
-        />
+      <StatsCard
+        title="Fornecedores Ativos"
+        value={displayStats.activeSuppliers}
+        icon={<lucide_react_1.Users className="h-4 w-4" />}
+        subtitle={"".concat(
+          (0, utils_1.formatPercentage)(
+            displayStats.activeSuppliers / Math.max(displayStats.totalSuppliers, 1),
+          ),
+          " do total",
+        )}
+        color="success"
+        onClick={() => handleFilterChange("status", supplier_1.SupplierStatus.ACTIVE)}
+      />
 
-        <StatsCard
-          title="Performance Média"
-          value={"".concat(displayStats.averagePerformance, "%")}
-          icon={<lucide_react_1.TrendingUp className="h-4 w-4" />}
-          subtitle="Baseado em todos os fornecedores"
-          color={
-            displayStats.averagePerformance >= 80
-              ? "success"
-              : displayStats.averagePerformance >= 60
-                ? "warning"
-                : "danger"
-          }
-          onClick={function () {
-            return handleFilterChange("sortBy", "performance_score");
-          }}
-        />
+      <StatsCard
+        title="Performance Média"
+        value={"".concat(displayStats.averagePerformance, "%")}
+        icon={<lucide_react_1.TrendingUp className="h-4 w-4" />}
+        subtitle="Baseado em todos os fornecedores"
+        color={
+          displayStats.averagePerformance >= 80
+            ? "success"
+            : displayStats.averagePerformance >= 60
+              ? "warning"
+              : "danger"
+        }
+        onClick={() => handleFilterChange("sortBy", "performance_score")}
+      />
 
-        <StatsCard
-          title="Alertas de Performance"
-          value={displayStats.performanceIssues}
-          icon={<lucide_react_1.AlertTriangle className="h-4 w-4" />}
-          subtitle="Fornecedores com problemas"
-          color={displayStats.performanceIssues > 0 ? "warning" : "success"}
-          onClick={function () {
-            // Filter to show suppliers with performance < 70%
-            sonner_1.toast.info("Filtro de performance aplicado");
-          }}
-        />
-      </div>
-    );
-  };
-  var renderFiltersAndActions = function () {
-    return (
-      <div className="flex flex-col lg:flex-row gap-4">
-        {/* Search */}
-        <div className="flex-1">
-          <div className="relative">
-            <lucide_react_1.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <input_1.Input
-              placeholder="Buscar fornecedores..."
-              value={filters.search}
-              onChange={function (e) {
-                return handleSearch(e.target.value);
-              }}
-              className="pl-10"
-            />
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="flex gap-2">
-          <select_1.Select
-            value={filters.status}
-            onValueChange={function (value) {
-              return handleFilterChange("status", value);
-            }}
-          >
-            <select_1.SelectTrigger className="w-40">
-              <select_1.SelectValue placeholder="Status" />
-            </select_1.SelectTrigger>
-            <select_1.SelectContent>
-              <select_1.SelectItem value="all">Todos os Status</select_1.SelectItem>
-              {Object.values(supplier_1.SupplierStatus).map(function (status) {
-                return (
-                  <select_1.SelectItem key={status} value={status}>
-                    {status.replace("_", " ")}
-                  </select_1.SelectItem>
-                );
-              })}
-            </select_1.SelectContent>
-          </select_1.Select>
-
-          <select_1.Select
-            value={filters.category}
-            onValueChange={function (value) {
-              return handleFilterChange("category", value);
-            }}
-          >
-            <select_1.SelectTrigger className="w-48">
-              <select_1.SelectValue placeholder="Categoria" />
-            </select_1.SelectTrigger>
-            <select_1.SelectContent>
-              <select_1.SelectItem value="all">Todas as Categorias</select_1.SelectItem>
-              {Object.values(supplier_1.SupplierCategory).map(function (category) {
-                return (
-                  <select_1.SelectItem key={category} value={category}>
-                    {category.replace("_", " ").toLowerCase()}
-                  </select_1.SelectItem>
-                );
-              })}
-            </select_1.SelectContent>
-          </select_1.Select>
-
-          <select_1.Select
-            value={filters.riskLevel}
-            onValueChange={function (value) {
-              return handleFilterChange("riskLevel", value);
-            }}
-          >
-            <select_1.SelectTrigger className="w-32">
-              <select_1.SelectValue placeholder="Risco" />
-            </select_1.SelectTrigger>
-            <select_1.SelectContent>
-              <select_1.SelectItem value="all">Todos</select_1.SelectItem>
-              {Object.values(supplier_1.RiskLevel).map(function (level) {
-                return (
-                  <select_1.SelectItem key={level} value={level}>
-                    {level}
-                  </select_1.SelectItem>
-                );
-              })}
-            </select_1.SelectContent>
-          </select_1.Select>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2">
-          <button_1.Button variant="outline" onClick={handleRefresh}>
-            <lucide_react_1.RefreshCw className="h-4 w-4 mr-2" />
-            Atualizar
-          </button_1.Button>
-
-          <dropdown_menu_1.DropdownMenu>
-            <dropdown_menu_1.DropdownMenuTrigger asChild>
-              <button_1.Button variant="outline">
-                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-              </button_1.Button>
-            </dropdown_menu_1.DropdownMenuTrigger>
-            <dropdown_menu_1.DropdownMenuContent align="end">
-              <dropdown_menu_1.DropdownMenuLabel>Ações</dropdown_menu_1.DropdownMenuLabel>
-              <dropdown_menu_1.DropdownMenuSeparator />
-              <dropdown_menu_1.DropdownMenuItem onClick={handleExport}>
-                <lucide_react_1.Download className="h-4 w-4 mr-2" />
-                Exportar Dados
-              </dropdown_menu_1.DropdownMenuItem>
-              <dropdown_menu_1.DropdownMenuItem onClick={handleImport}>
-                <lucide_react_1.Upload className="h-4 w-4 mr-2" />
-                Importar Dados
-              </dropdown_menu_1.DropdownMenuItem>
-            </dropdown_menu_1.DropdownMenuContent>
-          </dropdown_menu_1.DropdownMenu>
-
-          <button_1.Button onClick={handleCreateSupplier}>
-            <lucide_react_1.Plus className="h-4 w-4 mr-2" />
-            Novo Fornecedor
-          </button_1.Button>
+      <StatsCard
+        title="Alertas de Performance"
+        value={displayStats.performanceIssues}
+        icon={<lucide_react_1.AlertTriangle className="h-4 w-4" />}
+        subtitle="Fornecedores com problemas"
+        color={displayStats.performanceIssues > 0 ? "warning" : "success"}
+        onClick={() => {
+          // Filter to show suppliers with performance < 70%
+          sonner_1.toast.info("Filtro de performance aplicado");
+        }}
+      />
+    </div>
+  );
+  var renderFiltersAndActions = () => (
+    <div className="flex flex-col lg:flex-row gap-4">
+      {/* Search */}
+      <div className="flex-1">
+        <div className="relative">
+          <lucide_react_1.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <input_1.Input
+            placeholder="Buscar fornecedores..."
+            value={filters.search}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="pl-10"
+          />
         </div>
       </div>
-    );
-  };
+
+      {/* Filters */}
+      <div className="flex gap-2">
+        <select_1.Select
+          value={filters.status}
+          onValueChange={(value) => handleFilterChange("status", value)}
+        >
+          <select_1.SelectTrigger className="w-40">
+            <select_1.SelectValue placeholder="Status" />
+          </select_1.SelectTrigger>
+          <select_1.SelectContent>
+            <select_1.SelectItem value="all">Todos os Status</select_1.SelectItem>
+            {Object.values(supplier_1.SupplierStatus).map((status) => (
+              <select_1.SelectItem key={status} value={status}>
+                {status.replace("_", " ")}
+              </select_1.SelectItem>
+            ))}
+          </select_1.SelectContent>
+        </select_1.Select>
+
+        <select_1.Select
+          value={filters.category}
+          onValueChange={(value) => handleFilterChange("category", value)}
+        >
+          <select_1.SelectTrigger className="w-48">
+            <select_1.SelectValue placeholder="Categoria" />
+          </select_1.SelectTrigger>
+          <select_1.SelectContent>
+            <select_1.SelectItem value="all">Todas as Categorias</select_1.SelectItem>
+            {Object.values(supplier_1.SupplierCategory).map((category) => (
+              <select_1.SelectItem key={category} value={category}>
+                {category.replace("_", " ").toLowerCase()}
+              </select_1.SelectItem>
+            ))}
+          </select_1.SelectContent>
+        </select_1.Select>
+
+        <select_1.Select
+          value={filters.riskLevel}
+          onValueChange={(value) => handleFilterChange("riskLevel", value)}
+        >
+          <select_1.SelectTrigger className="w-32">
+            <select_1.SelectValue placeholder="Risco" />
+          </select_1.SelectTrigger>
+          <select_1.SelectContent>
+            <select_1.SelectItem value="all">Todos</select_1.SelectItem>
+            {Object.values(supplier_1.RiskLevel).map((level) => (
+              <select_1.SelectItem key={level} value={level}>
+                {level}
+              </select_1.SelectItem>
+            ))}
+          </select_1.SelectContent>
+        </select_1.Select>
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-2">
+        <button_1.Button variant="outline" onClick={handleRefresh}>
+          <lucide_react_1.RefreshCw className="h-4 w-4 mr-2" />
+          Atualizar
+        </button_1.Button>
+
+        <dropdown_menu_1.DropdownMenu>
+          <dropdown_menu_1.DropdownMenuTrigger asChild>
+            <button_1.Button variant="outline">
+              <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+            </button_1.Button>
+          </dropdown_menu_1.DropdownMenuTrigger>
+          <dropdown_menu_1.DropdownMenuContent align="end">
+            <dropdown_menu_1.DropdownMenuLabel>Ações</dropdown_menu_1.DropdownMenuLabel>
+            <dropdown_menu_1.DropdownMenuSeparator />
+            <dropdown_menu_1.DropdownMenuItem onClick={handleExport}>
+              <lucide_react_1.Download className="h-4 w-4 mr-2" />
+              Exportar Dados
+            </dropdown_menu_1.DropdownMenuItem>
+            <dropdown_menu_1.DropdownMenuItem onClick={handleImport}>
+              <lucide_react_1.Upload className="h-4 w-4 mr-2" />
+              Importar Dados
+            </dropdown_menu_1.DropdownMenuItem>
+          </dropdown_menu_1.DropdownMenuContent>
+        </dropdown_menu_1.DropdownMenu>
+
+        <button_1.Button onClick={handleCreateSupplier}>
+          <lucide_react_1.Plus className="h-4 w-4 mr-2" />
+          Novo Fornecedor
+        </button_1.Button>
+      </div>
+    </div>
+  );
   // ============================================================================
   // ERROR HANDLING
   // ============================================================================
@@ -485,9 +458,7 @@ function SupplierManagement(_a) {
           <span>Ordenar por:</span>
           <select_1.Select
             value={filters.sortBy}
-            onValueChange={function (value) {
-              return handleFilterChange("sortBy", value);
-            }}
+            onValueChange={(value) => handleFilterChange("sortBy", value)}
           >
             <select_1.SelectTrigger className="w-40">
               <select_1.SelectValue />
@@ -502,9 +473,9 @@ function SupplierManagement(_a) {
           <button_1.Button
             variant="outline"
             size="sm"
-            onClick={function () {
-              return handleFilterChange("sortOrder", filters.sortOrder === "asc" ? "desc" : "asc");
-            }}
+            onClick={() =>
+              handleFilterChange("sortOrder", filters.sortOrder === "asc" ? "desc" : "asc")
+            }
           >
             {filters.sortOrder === "asc" ? "↑" : "↓"}
           </button_1.Button>
@@ -550,7 +521,7 @@ function SupplierManagement(_a) {
           supplierId={selectedSupplier.id}
           clinicId={clinicId}
           onEdit={handleEditSupplier}
-          onDelete={function () {
+          onDelete={() => {
             setShowDetailView(false);
             refetchSuppliers();
           }}

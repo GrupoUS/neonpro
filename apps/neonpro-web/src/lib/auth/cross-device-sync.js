@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Cross-Device Session Synchronization
  * Story 1.4 - Task 6: Real-time synchronization between devices
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CrossDeviceSync = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -176,7 +173,7 @@ var DEFAULT_CONFIG = {
   heartbeatInterval: 60,
   timeoutThreshold: 300,
 };
-var CrossDeviceSync = /** @class */ (function () {
+var CrossDeviceSync = /** @class */ (() => {
   function CrossDeviceSync(supabaseUrl, supabaseKey, customConfig) {
     this.activeSessions = new Map();
     this.syncQueue = new Map();
@@ -619,7 +616,7 @@ var CrossDeviceSync = /** @class */ (function () {
             _a.sent();
             // Add to active sessions
             this.activeSessions.set(newSessionId, handoffSession);
-            if (!!preserveState) return [3 /*break*/, 3];
+            if (preserveState) return [3 /*break*/, 3];
             return [4 /*yield*/, this.terminateDeviceSession(fromSessionId)];
           case 2:
             _a.sent();
@@ -854,7 +851,7 @@ var CrossDeviceSync = /** @class */ (function () {
                 schema: "public",
                 table: "sync_events",
               },
-              function (payload) {
+              (payload) => {
                 _this.handleRealtimeSyncEvent(payload.new);
               },
             )
@@ -869,7 +866,7 @@ var CrossDeviceSync = /** @class */ (function () {
                 schema: "public",
                 table: "device_sessions",
               },
-              function (payload) {
+              (payload) => {
                 _this.handleRealtimeSessionChange(payload);
               },
             )
@@ -882,59 +879,61 @@ var CrossDeviceSync = /** @class */ (function () {
     });
   };
   CrossDeviceSync.prototype.startSyncInterval = function () {
-    var _this = this;
-    this.syncInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_12;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 3, , 4]);
-              return [4 /*yield*/, this.processPendingSyncEvents()];
-            case 1:
-              _a.sent();
-              return [4 /*yield*/, this.detectAndResolveConflicts()];
-            case 2:
-              _a.sent();
-              this.updateStatistics();
-              return [3 /*break*/, 4];
-            case 3:
-              error_12 = _a.sent();
-              console.error("Sync interval processing failed:", error_12);
-              return [3 /*break*/, 4];
-            case 4:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.syncInterval * 1000);
+    this.syncInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_12;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, this.processPendingSyncEvents()];
+              case 1:
+                _a.sent();
+                return [4 /*yield*/, this.detectAndResolveConflicts()];
+              case 2:
+                _a.sent();
+                this.updateStatistics();
+                return [3 /*break*/, 4];
+              case 3:
+                error_12 = _a.sent();
+                console.error("Sync interval processing failed:", error_12);
+                return [3 /*break*/, 4];
+              case 4:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.syncInterval * 1000,
+    );
   };
   CrossDeviceSync.prototype.startHeartbeatInterval = function () {
-    var _this = this;
-    this.heartbeatInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_13;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 3, , 4]);
-              return [4 /*yield*/, this.sendHeartbeat()];
-            case 1:
-              _a.sent();
-              return [4 /*yield*/, this.checkSessionTimeouts()];
-            case 2:
-              _a.sent();
-              return [3 /*break*/, 4];
-            case 3:
-              error_13 = _a.sent();
-              console.error("Heartbeat processing failed:", error_13);
-              return [3 /*break*/, 4];
-            case 4:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.heartbeatInterval * 1000);
+    this.heartbeatInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_13;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, this.sendHeartbeat()];
+              case 1:
+                _a.sent();
+                return [4 /*yield*/, this.checkSessionTimeouts()];
+              case 2:
+                _a.sent();
+                return [3 /*break*/, 4];
+              case 3:
+                error_13 = _a.sent();
+                console.error("Heartbeat processing failed:", error_13);
+                return [3 /*break*/, 4];
+              case 4:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.heartbeatInterval * 1000,
+    );
   };
   CrossDeviceSync.prototype.processPendingSyncEvents = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -1176,13 +1175,10 @@ var CrossDeviceSync = /** @class */ (function () {
           case 1:
             recentEvents = _a.sent();
             conflictingEvents = recentEvents.filter(
-              function (event) {
-                return (
-                  event.eventId !== syncEvent.eventId &&
-                  event.eventType === "data_changed" &&
-                  Math.abs(event.timestamp.getTime() - syncEvent.timestamp.getTime()) < 5000
-                );
-              }, // 5 seconds
+              (event) =>
+                event.eventId !== syncEvent.eventId &&
+                event.eventType === "data_changed" &&
+                Math.abs(event.timestamp.getTime() - syncEvent.timestamp.getTime()) < 5000, // 5 seconds
             );
             if (conflictingEvents.length > 0) {
               return [
@@ -1292,9 +1288,7 @@ var CrossDeviceSync = /** @class */ (function () {
   };
   CrossDeviceSync.prototype.detectAndResolveConflicts = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   CrossDeviceSync.prototype.sendHeartbeat = function () {
@@ -1374,7 +1368,7 @@ var CrossDeviceSync = /** @class */ (function () {
   };
   CrossDeviceSync.prototype.broadcastToUserDevices = function (userId, message) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would broadcast messages to all user devices via WebSocket
         // For now, it's a placeholder
         console.log("Broadcasting to user ".concat(userId, ":"), message);
@@ -1425,7 +1419,7 @@ var CrossDeviceSync = /** @class */ (function () {
       .concat(deviceInfo.userAgent);
     return "device_".concat(this.hashString(deviceString));
   };
-  CrossDeviceSync.prototype.hashString = function (str) {
+  CrossDeviceSync.prototype.hashString = (str) => {
     // Simple hash function (in production, use a proper hash function)
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
@@ -1531,14 +1525,10 @@ var CrossDeviceSync = /** @class */ (function () {
   CrossDeviceSync.prototype.updateStatistics = function () {
     this.syncStatistics.totalSessions = this.activeSessions.size;
     this.syncStatistics.activeSessions = Array.from(this.activeSessions.values()).filter(
-      function (s) {
-        return s.isActive;
-      },
+      (s) => s.isActive,
     ).length;
     this.syncStatistics.devicesOnline = Array.from(this.activeSessions.values()).filter(
-      function (s) {
-        return s.syncState.isOnline;
-      },
+      (s) => s.syncState.isOnline,
     ).length;
     this.syncStatistics.lastSyncAt = new Date();
     // Calculate sync health
@@ -1614,54 +1604,48 @@ var CrossDeviceSync = /** @class */ (function () {
     }
     this.updateStatistics();
   };
-  CrossDeviceSync.prototype.mapDatabaseToSession = function (data) {
-    return {
-      sessionId: data.session_id,
-      userId: data.user_id,
-      deviceId: data.device_id,
-      deviceInfo: data.device_info,
-      isActive: data.is_active,
-      isPrimary: data.is_primary,
-      lastActivity: new Date(data.last_activity),
-      createdAt: new Date(data.created_at),
-      expiresAt: new Date(data.expires_at),
-      syncState: data.sync_state,
-      preferences: data.preferences,
-      metadata: data.metadata || {},
-    };
-  };
-  CrossDeviceSync.prototype.mapDatabaseToSyncEvent = function (data) {
-    return {
-      eventId: data.event_id,
-      sessionId: data.session_id,
-      userId: data.user_id,
-      deviceId: data.device_id,
-      eventType: data.event_type,
-      timestamp: new Date(data.timestamp),
-      data: data.data,
-      version: data.version,
-      checksum: data.checksum,
-      isProcessed: data.is_processed,
-      processingErrors: data.processing_errors,
-    };
-  };
-  CrossDeviceSync.prototype.mapDatabaseToConflict = function (data) {
-    return {
-      conflictId: data.conflict_id,
-      sessionId: data.session_id,
-      userId: data.user_id,
-      conflictType: data.conflict_type,
-      description: data.description,
-      detectedAt: new Date(data.detected_at),
-      resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
-      resolution: data.resolution,
-      resolutionStrategy: data.resolution_strategy,
-      localData: data.local_data,
-      remoteData: data.remote_data,
-      resolvedData: data.resolved_data,
-      isResolved: data.is_resolved,
-    };
-  };
+  CrossDeviceSync.prototype.mapDatabaseToSession = (data) => ({
+    sessionId: data.session_id,
+    userId: data.user_id,
+    deviceId: data.device_id,
+    deviceInfo: data.device_info,
+    isActive: data.is_active,
+    isPrimary: data.is_primary,
+    lastActivity: new Date(data.last_activity),
+    createdAt: new Date(data.created_at),
+    expiresAt: new Date(data.expires_at),
+    syncState: data.sync_state,
+    preferences: data.preferences,
+    metadata: data.metadata || {},
+  });
+  CrossDeviceSync.prototype.mapDatabaseToSyncEvent = (data) => ({
+    eventId: data.event_id,
+    sessionId: data.session_id,
+    userId: data.user_id,
+    deviceId: data.device_id,
+    eventType: data.event_type,
+    timestamp: new Date(data.timestamp),
+    data: data.data,
+    version: data.version,
+    checksum: data.checksum,
+    isProcessed: data.is_processed,
+    processingErrors: data.processing_errors,
+  });
+  CrossDeviceSync.prototype.mapDatabaseToConflict = (data) => ({
+    conflictId: data.conflict_id,
+    sessionId: data.session_id,
+    userId: data.user_id,
+    conflictType: data.conflict_type,
+    description: data.description,
+    detectedAt: new Date(data.detected_at),
+    resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
+    resolution: data.resolution,
+    resolutionStrategy: data.resolution_strategy,
+    localData: data.local_data,
+    remoteData: data.remote_data,
+    resolvedData: data.resolved_data,
+    isResolved: data.is_resolved,
+  });
   return CrossDeviceSync;
 })();
 exports.CrossDeviceSync = CrossDeviceSync;

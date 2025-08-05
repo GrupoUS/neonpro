@@ -4,8 +4,8 @@
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
 import type { smsService } from "@/app/lib/services/sms-service";
-import type { createClient } from "@/lib/supabase/server";
 import type { SMSProvider } from "@/app/types/sms";
+import type { createClient } from "@/lib/supabase/server";
 
 // Schema for provider configuration
 const ProviderConfigSchema = z.object({

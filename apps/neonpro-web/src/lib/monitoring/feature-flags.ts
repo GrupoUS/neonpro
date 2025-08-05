@@ -6,9 +6,9 @@
  * and emergency rollback functionality for enhancement phases.
  */
 
+import type { useEffect, useState } from "react";
 import type { createClient } from "@/lib/supabase/client";
 import type { createClient as createServerClient } from "@/lib/supabase/server";
-import type { useEffect, useState } from "react";
 
 export interface FeatureFlag {
   id: string;

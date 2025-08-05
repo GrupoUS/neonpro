@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createconflictDetectionEngine =
   exports.ConflictDetectionEngine =
@@ -155,7 +152,7 @@ exports.detectConflicts = detectConflicts;
 var client_1 = require("@/lib/supabase/client");
 var logger_1 = require("@/lib/logger");
 var ConflictType;
-(function (ConflictType) {
+((ConflictType) => {
   ConflictType["STAFF_DOUBLE_BOOKING"] = "staff_double_booking";
   ConflictType["ROOM_OVERLAP"] = "room_overlap";
   ConflictType["EQUIPMENT_UNAVAILABLE"] = "equipment_unavailable";
@@ -169,7 +166,7 @@ var ConflictType;
  * Core Conflict Detection Engine
  * Detecta conflitos de agendamento em tempo real
  */
-var ConflictDetectionEngine = /** @class */ (function () {
+var ConflictDetectionEngine = /** @class */ (() => {
   function ConflictDetectionEngine(config) {
     if (config === void 0) {
       config = {};
@@ -421,9 +418,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
               type: ConflictType.STAFF_DOUBLE_BOOKING,
               severity: "high",
               description: "Staff member ".concat(staffName, " has conflicting appointments"),
-              affectedAppointments: conflictingAppointments.map(function (apt) {
-                return apt.id;
-              }),
+              affectedAppointments: conflictingAppointments.map((apt) => apt.id),
               affectedResources: [
                 {
                   id: staffId,
@@ -440,14 +435,12 @@ var ConflictDetectionEngine = /** @class */ (function () {
               type: "staff",
               name: staffName,
               conflictReason: "Double booking detected",
-              availability: conflictingAppointments.map(function (apt) {
-                return {
-                  start: new Date(apt.start_time),
-                  end: new Date(apt.end_time),
-                  available: false,
-                  reason: "Existing appointment",
-                };
-              }),
+              availability: conflictingAppointments.map((apt) => ({
+                start: new Date(apt.start_time),
+                end: new Date(apt.end_time),
+                available: false,
+                reason: "Existing appointment",
+              })),
             });
             _b.label = 4;
           case 4:
@@ -534,9 +527,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
               type: ConflictType.ROOM_OVERLAP,
               severity: "medium",
               description: "Room ".concat(roomName, " is already booked"),
-              affectedAppointments: conflictingAppointments.map(function (apt) {
-                return apt.id;
-              }),
+              affectedAppointments: conflictingAppointments.map((apt) => apt.id),
               affectedResources: [
                 {
                   id: roomId,
@@ -553,14 +544,12 @@ var ConflictDetectionEngine = /** @class */ (function () {
               type: "room",
               name: roomName,
               conflictReason: "Room overlap detected",
-              availability: conflictingAppointments.map(function (apt) {
-                return {
-                  start: new Date(apt.start_time),
-                  end: new Date(apt.end_time),
-                  available: false,
-                  reason: "Room occupied",
-                };
-              }),
+              availability: conflictingAppointments.map((apt) => ({
+                start: new Date(apt.start_time),
+                end: new Date(apt.end_time),
+                available: false,
+                reason: "Room occupied",
+              })),
             });
             _b.label = 4;
           case 4:
@@ -703,9 +692,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
               type: ConflictType.EQUIPMENT_UNAVAILABLE,
               severity: "medium",
               description: "Equipment ".concat(equipmentName, " is already in use"),
-              affectedAppointments: conflictingAppointments.map(function (apt) {
-                return apt.id;
-              }),
+              affectedAppointments: conflictingAppointments.map((apt) => apt.id),
               affectedResources: [
                 {
                   id: equipmentId,
@@ -722,14 +709,12 @@ var ConflictDetectionEngine = /** @class */ (function () {
               type: "equipment",
               name: equipmentName,
               conflictReason: "Equipment already in use",
-              availability: conflictingAppointments.map(function (apt) {
-                return {
-                  start: new Date(apt.start_time),
-                  end: new Date(apt.end_time),
-                  available: false,
-                  reason: "Equipment in use",
-                };
-              }),
+              availability: conflictingAppointments.map((apt) => ({
+                start: new Date(apt.start_time),
+                end: new Date(apt.end_time),
+                available: false,
+                reason: "Equipment in use",
+              })),
             });
             _b.label = 8;
           case 8:
@@ -793,9 +778,9 @@ var ConflictDetectionEngine = /** @class */ (function () {
             if (staffData && serviceData) {
               staffSpecialties_1 = staffData.specialties || [];
               requiredSpecialties = serviceData.required_specialties || [];
-              missingSpecialties = requiredSpecialties.filter(function (specialty) {
-                return !staffSpecialties_1.includes(specialty);
-              });
+              missingSpecialties = requiredSpecialties.filter(
+                (specialty) => !staffSpecialties_1.includes(specialty),
+              );
               if (missingSpecialties.length > 0) {
                 conflicts.push({
                   id: "skill_mismatch_"
@@ -931,7 +916,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
   /**
    * Calcula severidade geral dos conflitos
    */
-  ConflictDetectionEngine.prototype.calculateOverallSeverity = function (conflicts) {
+  ConflictDetectionEngine.prototype.calculateOverallSeverity = (conflicts) => {
     if (conflicts.length === 0) return "low";
     var severityScores = {
       low: 1,
@@ -941,16 +926,10 @@ var ConflictDetectionEngine = /** @class */ (function () {
     };
     var maxSeverity = Math.max.apply(
       Math,
-      conflicts.map(function (c) {
-        return severityScores[c.severity];
-      }),
+      conflicts.map((c) => severityScores[c.severity]),
     );
-    var criticalCount = conflicts.filter(function (c) {
-      return c.severity === "critical";
-    }).length;
-    var highCount = conflicts.filter(function (c) {
-      return c.severity === "high";
-    }).length;
+    var criticalCount = conflicts.filter((c) => c.severity === "critical").length;
+    var highCount = conflicts.filter((c) => c.severity === "high").length;
     if (criticalCount > 0 || highCount >= 3) return "critical";
     if (maxSeverity >= 3) return "high";
     if (maxSeverity >= 2) return "medium";
@@ -959,13 +938,9 @@ var ConflictDetectionEngine = /** @class */ (function () {
   /**
    * Gera ações sugeridas baseadas nos conflitos
    */
-  ConflictDetectionEngine.prototype.generateSuggestedActions = function (conflicts) {
+  ConflictDetectionEngine.prototype.generateSuggestedActions = (conflicts) => {
     var actions = [];
-    var conflictTypes = new Set(
-      conflicts.map(function (c) {
-        return c.type;
-      }),
-    );
+    var conflictTypes = new Set(conflicts.map((c) => c.type));
     if (conflictTypes.has(ConflictType.STAFF_DOUBLE_BOOKING)) {
       actions.push("Reassign staff member to available time slot");
       actions.push("Find alternative qualified staff member");
@@ -1066,15 +1041,13 @@ var ConflictDetectionEngine = /** @class */ (function () {
 })();
 exports.ConflictDetectionEngine = ConflictDetectionEngine;
 // Instância singleton para uso global
-var createconflictDetectionEngine = function () {
-  return new ConflictDetectionEngine();
-};
+var createconflictDetectionEngine = () => new ConflictDetectionEngine();
 exports.createconflictDetectionEngine = createconflictDetectionEngine;
 // Função utilitária para detecção rápida
 function detectConflicts(appointmentData, clinicId, config) {
   return __awaiter(this, void 0, void 0, function () {
     var engine;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       engine = config ? new ConflictDetectionEngine(config) : conflictDetectionEngine;
       return [2 /*return*/, engine.detectConflictsForNewAppointment(appointmentData, clinicId)];
     });

@@ -1,5 +1,8 @@
 "use client";
 
+import type { AlertTriangle, RefreshCw } from "lucide-react";
+import type React from "react";
+import { Component, type ReactNode } from "react";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -8,8 +11,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { AlertTriangle, RefreshCw } from "lucide-react";
-import React, { Component, ReactNode } from "react";
 
 interface ErrorBoundaryState {
   hasError: boolean;

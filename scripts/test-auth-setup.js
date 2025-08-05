@@ -5,8 +5,8 @@
  * Verifica se todas as rotas e arquivos necessários estão criados
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 console.log("🧪 Testando configuração de autenticação NeonPro");
 console.log("=".repeat(50));
@@ -38,7 +38,7 @@ requiredFiles.forEach((file) => {
   }
 });
 
-console.log("\n" + "=".repeat(50));
+console.log(`\n${"=".repeat(50)}`);
 
 if (allFilesExist) {
   console.log("\n✅ Todos os arquivos foram criados com sucesso!");

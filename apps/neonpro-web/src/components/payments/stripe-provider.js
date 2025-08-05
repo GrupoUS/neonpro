@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useElements = exports.useStripe = void 0;
 exports.default = StripeProvider;
@@ -16,13 +15,9 @@ function StripeProvider(_a) {
 var react_stripe_js_2 = require("@stripe/react-stripe-js");
 Object.defineProperty(exports, "useStripe", {
   enumerable: true,
-  get: function () {
-    return react_stripe_js_2.useStripe;
-  },
+  get: () => react_stripe_js_2.useStripe,
 });
 Object.defineProperty(exports, "useElements", {
   enumerable: true,
-  get: function () {
-    return react_stripe_js_2.useElements;
-  },
+  get: () => react_stripe_js_2.useElements,
 });

@@ -5,12 +5,12 @@
  * Handles individual credential operations (delete, update)
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { webAuthnService } from "@/lib/auth/webauthn-service";
 
 export async function DELETE(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: Promise<{ credentialId: string }> },
 ) {
   try {

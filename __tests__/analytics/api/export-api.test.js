@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
@@ -144,33 +141,27 @@ var mockCreateClient = server_2.createClient;
 globals_1.jest.mock("fs/promises");
 globals_1.jest.mock("path");
 // Mock jsPDF and xlsx
-globals_1.jest.mock("jspdf", function () {
-  return {
-    __esModule: true,
-    default: globals_1.jest.fn().mockImplementation(function () {
-      return {
-        text: globals_1.jest.fn(),
-        addPage: globals_1.jest.fn(),
-        save: globals_1.jest.fn(),
-        output: globals_1.jest.fn().mockReturnValue("mock-pdf-data"),
-      };
-    }),
-  };
-});
-globals_1.jest.mock("xlsx", function () {
-  return {
-    utils: {
-      json_to_sheet: globals_1.jest.fn().mockReturnValue({}),
-      book_new: globals_1.jest.fn().mockReturnValue({}),
-      book_append_sheet: globals_1.jest.fn(),
-      sheet_to_csv: globals_1.jest.fn().mockReturnValue("mock,csv,data"),
-    },
-    write: globals_1.jest.fn().mockReturnValue("mock-xlsx-data"),
-  };
-});
-(0, globals_1.describe)("Export API Routes", function () {
+globals_1.jest.mock("jspdf", () => ({
+  __esModule: true,
+  default: globals_1.jest.fn().mockImplementation(() => ({
+    text: globals_1.jest.fn(),
+    addPage: globals_1.jest.fn(),
+    save: globals_1.jest.fn(),
+    output: globals_1.jest.fn().mockReturnValue("mock-pdf-data"),
+  })),
+}));
+globals_1.jest.mock("xlsx", () => ({
+  utils: {
+    json_to_sheet: globals_1.jest.fn().mockReturnValue({}),
+    book_new: globals_1.jest.fn().mockReturnValue({}),
+    book_append_sheet: globals_1.jest.fn(),
+    sheet_to_csv: globals_1.jest.fn().mockReturnValue("mock,csv,data"),
+  },
+  write: globals_1.jest.fn().mockReturnValue("mock-xlsx-data"),
+}));
+(0, globals_1.describe)("Export API Routes", () => {
   var mockSupabase;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     // Setup mock Supabase client
     mockSupabase = {
       auth: {
@@ -181,14 +172,14 @@ globals_1.jest.mock("xlsx", function () {
     };
     mockCreateClient.mockResolvedValue(mockSupabase);
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("GET /api/export", function () {
-    (0, globals_1.test)("should export subscription data as CSV", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("GET /api/export", () => {
+    (0, globals_1.test)("should export subscription data as CSV", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, mockSubscriptions, mockFrom, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -241,12 +232,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should export analytics data as PDF", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should export analytics data as PDF", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, mockAnalytics, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -289,12 +280,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should export trial data as Excel", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should export trial data as Excel", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, mockTrials, mockFrom, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -346,12 +337,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should return 401 for unauthenticated requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should return 401 for unauthenticated requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Arrange
@@ -376,12 +367,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should return 403 for non-admin users", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should return 403 for non-admin users", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -410,12 +401,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should validate query parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should validate query parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -446,12 +437,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle date range filters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle date range filters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, mockFrom, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -487,12 +478,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, mockFrom, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -529,14 +520,14 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("POST /api/export", function () {
-    (0, globals_1.test)("should schedule bulk export job", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("POST /api/export", () => {
+    (0, globals_1.test)("should schedule bulk export job", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, exportRequest, mockFrom, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -587,12 +578,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should validate bulk export request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should validate bulk export request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, invalidRequest, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -629,14 +620,14 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("performance and limits", function () {
-    (0, globals_1.test)("should respect export size limits", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("performance and limits", () => {
+    (0, globals_1.test)("should respect export size limits", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, largeDataset, mockFrom, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -646,13 +637,11 @@ globals_1.jest.mock("xlsx", function () {
               };
               largeDataset = Array(100000)
                 .fill(null)
-                .map(function (_, i) {
-                  return {
-                    id: "sub_".concat(i),
-                    user_id: "user_".concat(i),
-                    status: "active",
-                  };
-                });
+                .map((_, i) => ({
+                  id: "sub_".concat(i),
+                  user_id: "user_".concat(i),
+                  status: "active",
+                }));
               mockSupabase.auth.getUser.mockResolvedValue({
                 data: { user: mockUser },
                 error: null,
@@ -682,12 +671,12 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle concurrent export requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle concurrent export requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, mockFrom, requests, responses;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -709,35 +698,32 @@ globals_1.jest.mock("xlsx", function () {
               mockSupabase.from.mockReturnValue(mockFrom);
               requests = Array(5)
                 .fill(null)
-                .map(function () {
-                  return new server_1.NextRequest(
-                    "http://localhost:3000/api/export?type=subscriptions&format=csv",
-                    { method: "GET" },
-                  );
-                });
+                .map(
+                  () =>
+                    new server_1.NextRequest(
+                      "http://localhost:3000/api/export?type=subscriptions&format=csv",
+                      { method: "GET" },
+                    ),
+                );
               return [
                 4 /*yield*/,
-                Promise.all(
-                  requests.map(function (request) {
-                    return (0, route_1.GET)(request);
-                  }),
-                ),
+                Promise.all(requests.map((request) => (0, route_1.GET)(request))),
               ];
             case 1:
               responses = _a.sent();
               // Assert
-              responses.forEach(function (response) {
+              responses.forEach((response) => {
                 (0, globals_1.expect)([200, 429]).toContain(response.status);
               });
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should compress large exports", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should compress large exports", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockUser, moderateDataset, mockFrom, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockUser = {
@@ -747,13 +733,11 @@ globals_1.jest.mock("xlsx", function () {
               };
               moderateDataset = Array(5000)
                 .fill(null)
-                .map(function (_, i) {
-                  return {
-                    id: "sub_".concat(i),
-                    user_id: "user_".concat(i),
-                    status: "active",
-                  };
-                });
+                .map((_, i) => ({
+                  id: "sub_".concat(i),
+                  user_id: "user_".concat(i),
+                  status: "active",
+                }));
               mockSupabase.auth.getUser.mockResolvedValue({
                 data: { user: mockUser },
                 error: null,
@@ -779,7 +763,7 @@ globals_1.jest.mock("xlsx", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfessionalSelection = ProfessionalSelection;
 var client_1 = require("@/app/utils/supabase/client");
@@ -145,7 +142,6 @@ var loading_spinner_1 = require("@/components/ui/loading-spinner");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function ProfessionalSelection(_a) {
-  var _this = this;
   var serviceId = _a.serviceId,
     selectedProfessional = _a.selectedProfessional,
     onProfessionalSelect = _a.onProfessionalSelect,
@@ -162,18 +158,15 @@ function ProfessionalSelection(_a) {
   var _f = (0, react_1.useState)(""),
     error = _f[0],
     setError = _f[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (serviceId) {
-        fetchProfessionals();
-      }
-    },
-    [serviceId],
-  );
-  var fetchProfessionals = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (serviceId) {
+      fetchProfessionals();
+    }
+  }, [serviceId]);
+  var fetchProfessionals = () =>
+    __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, fetchError, err_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -202,18 +195,14 @@ function ProfessionalSelection(_a) {
         }
       });
     });
-  };
-  var getInitials = function (name) {
-    return name
+  var getInitials = (name) =>
+    name
       .split(" ")
-      .map(function (n) {
-        return n[0];
-      })
+      .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
-  var renderStars = function (rating) {
+  var renderStars = (rating) => {
     if (!rating) return null;
     var stars = [];
     var fullStars = Math.floor(rating);
@@ -272,13 +261,11 @@ function ProfessionalSelection(_a) {
               ? "ring-2 ring-blue-500 bg-blue-50"
               : "hover:border-blue-300",
           )}
-          onClick={function () {
-            return onProfessionalSelect(null);
-          }}
+          onClick={() => onProfessionalSelect(null)}
           role="button"
           tabIndex={0}
           aria-pressed={selectedProfessional === null}
-          onKeyDown={function (e) {
+          onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               onProfessionalSelect(null);
@@ -308,108 +295,104 @@ function ProfessionalSelection(_a) {
 
       {/* Professional Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {professionals.map(function (professional) {
-          return (
-            <card_1.Card
-              key={professional.id}
-              className={"cursor-pointer transition-all hover:shadow-md "
-                .concat(
-                  (selectedProfessional === null || selectedProfessional === void 0
-                    ? void 0
-                    : selectedProfessional.id) === professional.id
-                    ? "ring-2 ring-blue-500 bg-blue-50"
-                    : "hover:border-blue-300",
-                  " ",
-                )
-                .concat(!professional.is_available ? "opacity-60" : "")}
-              onClick={function () {
-                if (professional.is_available) {
-                  onProfessionalSelect(professional);
-                }
-              }}
-              role="button"
-              tabIndex={professional.is_available ? 0 : -1}
-              aria-pressed={
+        {professionals.map((professional) => (
+          <card_1.Card
+            key={professional.id}
+            className={"cursor-pointer transition-all hover:shadow-md "
+              .concat(
                 (selectedProfessional === null || selectedProfessional === void 0
                   ? void 0
                   : selectedProfessional.id) === professional.id
+                  ? "ring-2 ring-blue-500 bg-blue-50"
+                  : "hover:border-blue-300",
+                " ",
+              )
+              .concat(!professional.is_available ? "opacity-60" : "")}
+            onClick={() => {
+              if (professional.is_available) {
+                onProfessionalSelect(professional);
               }
-              aria-disabled={!professional.is_available}
-              onKeyDown={function (e) {
-                if ((e.key === "Enter" || e.key === " ") && professional.is_available) {
-                  e.preventDefault();
-                  onProfessionalSelect(professional);
-                }
-              }}
-            >
-              <card_1.CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="relative">
-                    <avatar_1.Avatar className="w-16 h-16">
-                      <avatar_1.AvatarImage
-                        src={professional.avatar_url || undefined}
-                        alt={"Foto de ".concat(professional.name)}
-                      />
-                      <avatar_1.AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-lg">
-                        {getInitials(professional.name)}
-                      </avatar_1.AvatarFallback>
-                    </avatar_1.Avatar>
-                    {!professional.is_available && (
-                      <div className="absolute inset-0 bg-gray-500 bg-opacity-50 rounded-full flex items-center justify-center">
-                        <badge_1.Badge variant="secondary" className="text-xs px-1">
-                          Indisponível
-                        </badge_1.Badge>
-                      </div>
+            }}
+            role="button"
+            tabIndex={professional.is_available ? 0 : -1}
+            aria-pressed={
+              (selectedProfessional === null || selectedProfessional === void 0
+                ? void 0
+                : selectedProfessional.id) === professional.id
+            }
+            aria-disabled={!professional.is_available}
+            onKeyDown={(e) => {
+              if ((e.key === "Enter" || e.key === " ") && professional.is_available) {
+                e.preventDefault();
+                onProfessionalSelect(professional);
+              }
+            }}
+          >
+            <card_1.CardContent className="p-6">
+              <div className="flex items-start space-x-4">
+                <div className="relative">
+                  <avatar_1.Avatar className="w-16 h-16">
+                    <avatar_1.AvatarImage
+                      src={professional.avatar_url || undefined}
+                      alt={"Foto de ".concat(professional.name)}
+                    />
+                    <avatar_1.AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-600 text-white text-lg">
+                      {getInitials(professional.name)}
+                    </avatar_1.AvatarFallback>
+                  </avatar_1.Avatar>
+                  {!professional.is_available && (
+                    <div className="absolute inset-0 bg-gray-500 bg-opacity-50 rounded-full flex items-center justify-center">
+                      <badge_1.Badge variant="secondary" className="text-xs px-1">
+                        Indisponível
+                      </badge_1.Badge>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">{professional.name}</h3>
+                    {(selectedProfessional === null || selectedProfessional === void 0
+                      ? void 0
+                      : selectedProfessional.id) === professional.id && (
+                      <badge_1.Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                        Selecionado
+                      </badge_1.Badge>
                     )}
                   </div>
 
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-start justify-between">
-                      <h3 className="text-lg font-semibold text-gray-900">{professional.name}</h3>
-                      {(selectedProfessional === null || selectedProfessional === void 0
-                        ? void 0
-                        : selectedProfessional.id) === professional.id && (
-                        <badge_1.Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                          Selecionado
+                  {professional.specialties.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {professional.specialties.slice(0, 3).map((specialty) => (
+                        <badge_1.Badge key={specialty} variant="outline" className="text-xs">
+                          {specialty}
+                        </badge_1.Badge>
+                      ))}
+                      {professional.specialties.length > 3 && (
+                        <badge_1.Badge variant="outline" className="text-xs">
+                          +{professional.specialties.length - 3}
                         </badge_1.Badge>
                       )}
                     </div>
+                  )}
 
-                    {professional.specialties.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {professional.specialties.slice(0, 3).map(function (specialty) {
-                          return (
-                            <badge_1.Badge key={specialty} variant="outline" className="text-xs">
-                              {specialty}
-                            </badge_1.Badge>
-                          );
-                        })}
-                        {professional.specialties.length > 3 && (
-                          <badge_1.Badge variant="outline" className="text-xs">
-                            +{professional.specialties.length - 3}
-                          </badge_1.Badge>
-                        )}
-                      </div>
-                    )}
+                  {professional.rating && renderStars(professional.rating)}
 
-                    {professional.rating && renderStars(professional.rating)}
+                  {professional.location && (
+                    <div className="flex items-center text-sm text-gray-600">
+                      <lucide_react_1.MapPin className="h-4 w-4 mr-1" />
+                      <span>{professional.location}</span>
+                    </div>
+                  )}
 
-                    {professional.location && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <lucide_react_1.MapPin className="h-4 w-4 mr-1" />
-                        <span>{professional.location}</span>
-                      </div>
-                    )}
-
-                    {professional.bio && (
-                      <p className="text-gray-600 text-sm line-clamp-2">{professional.bio}</p>
-                    )}
-                  </div>
+                  {professional.bio && (
+                    <p className="text-gray-600 text-sm line-clamp-2">{professional.bio}</p>
+                  )}
                 </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
 
       {professionals.length === 0 && (

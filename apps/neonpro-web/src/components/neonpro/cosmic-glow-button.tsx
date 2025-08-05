@@ -2,10 +2,11 @@
  * NEONPROV1 Design System - CosmicGlowButton Component
  * Advanced button with cosmic glow animations and reduced motion support
  */
-import React from "react";
-import type { cn } from "@/lib/utils";
-import type { Button, ButtonProps } from "@/components/ui/button";
+
 import type { Loader2 } from "lucide-react";
+import React from "react";
+import type { Button, ButtonProps } from "@/components/ui/button";
+import type { cn } from "@/lib/utils";
 
 interface CosmicGlowButtonProps extends Omit<ButtonProps, "variant"> {
   variant?: "primary" | "secondary" | "success" | "warning" | "danger" | "ghost" | "outline";

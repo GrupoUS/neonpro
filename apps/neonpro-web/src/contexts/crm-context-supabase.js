@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CRMProvider = CRMProvider;
 exports.useCRM = useCRM;
@@ -166,7 +163,7 @@ var client_1 = require("@/app/utils/supabase/client");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 // Reducer
-var crmReducer = function (state, action) {
+var crmReducer = (state, action) => {
   var _a, _b, _c;
   switch (action.type) {
     case "SET_LOADING":
@@ -191,15 +188,13 @@ var crmReducer = function (state, action) {
       });
     case "UPDATE_CUSTOMER":
       return __assign(__assign({}, state), {
-        customers: state.customers.map(function (customer) {
-          return customer.id === action.payload.id ? action.payload : customer;
-        }),
+        customers: state.customers.map((customer) =>
+          customer.id === action.payload.id ? action.payload : customer,
+        ),
       });
     case "DELETE_CUSTOMER":
       return __assign(__assign({}, state), {
-        customers: state.customers.filter(function (customer) {
-          return customer.id !== action.payload;
-        }),
+        customers: state.customers.filter((customer) => customer.id !== action.payload),
       });
     case "SET_SEGMENTS":
       return __assign(__assign({}, state), { segments: action.payload });
@@ -209,15 +204,13 @@ var crmReducer = function (state, action) {
       });
     case "UPDATE_SEGMENT":
       return __assign(__assign({}, state), {
-        segments: state.segments.map(function (segment) {
-          return segment.id === action.payload.id ? action.payload : segment;
-        }),
+        segments: state.segments.map((segment) =>
+          segment.id === action.payload.id ? action.payload : segment,
+        ),
       });
     case "DELETE_SEGMENT":
       return __assign(__assign({}, state), {
-        segments: state.segments.filter(function (segment) {
-          return segment.id !== action.payload;
-        }),
+        segments: state.segments.filter((segment) => segment.id !== action.payload),
       });
     case "SET_CAMPAIGNS":
       return __assign(__assign({}, state), { campaigns: action.payload });
@@ -227,15 +220,13 @@ var crmReducer = function (state, action) {
       });
     case "UPDATE_CAMPAIGN":
       return __assign(__assign({}, state), {
-        campaigns: state.campaigns.map(function (campaign) {
-          return campaign.id === action.payload.id ? action.payload : campaign;
-        }),
+        campaigns: state.campaigns.map((campaign) =>
+          campaign.id === action.payload.id ? action.payload : campaign,
+        ),
       });
     case "DELETE_CAMPAIGN":
       return __assign(__assign({}, state), {
-        campaigns: state.campaigns.filter(function (campaign) {
-          return campaign.id !== action.payload;
-        }),
+        campaigns: state.campaigns.filter((campaign) => campaign.id !== action.payload),
       });
     case "SET_FILTER":
       return __assign(__assign({}, state), {
@@ -269,17 +260,16 @@ var initialState = {
 var CRMContext = (0, react_1.createContext)(undefined);
 // Provider component
 function CRMProvider(_a) {
-  var _this = this;
   var children = _a.children;
   var _b = (0, react_1.useReducer)(crmReducer, initialState),
     state = _b[0],
     dispatch = _b[1];
   var supabase = (0, client_1.createClient)();
   // Customer functions
-  var loadCustomers = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadCustomers = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             dispatch({
@@ -327,11 +317,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var createCustomer = function (customerData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createCustomer = (customerData) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -355,11 +344,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var updateCustomer = function (customer) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateCustomer = (customer) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -383,11 +371,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var deleteCustomer = function (customerId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteCustomer = (customerId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -408,12 +395,11 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
   // Segment functions
-  var loadSegments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadSegments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_5;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             dispatch({
@@ -459,11 +445,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var createSegment = function (segmentData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createSegment = (segmentData) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_6;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -487,11 +472,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var updateSegment = function (segment) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateSegment = (segment) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_7;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -520,11 +504,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var deleteSegment = function (segmentId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteSegment = (segmentId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -545,12 +528,11 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
   // Campaign functions
-  var loadCampaigns = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadCampaigns = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_9;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             dispatch({
@@ -596,11 +578,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var createCampaign = function (campaignData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createCampaign = (campaignData) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_10;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -624,11 +605,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var updateCampaign = function (campaign) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateCampaign = (campaign) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_11;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -657,11 +637,10 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
-  var deleteCampaign = function (campaignId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteCampaign = (campaignId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_12;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -685,12 +664,11 @@ function CRMProvider(_a) {
         }
       });
     });
-  };
   // Filter functions
-  var setFilter = function (key, value) {
+  var setFilter = (key, value) => {
     dispatch({ type: "SET_FILTER", payload: { key: key, value: value } });
   };
-  var clearFilters = function () {
+  var clearFilters = () => {
     dispatch({
       type: "SET_FILTER",
       payload: { key: "customer_search", value: "" },
@@ -705,7 +683,7 @@ function CRMProvider(_a) {
     });
   };
   // Filtered customers (computed property)
-  var filteredCustomers = state.customers.filter(function (customer) {
+  var filteredCustomers = state.customers.filter((customer) => {
     var _a, _b, _c, _d, _e, _f;
     // Search filter
     if (state.filters.customer_search) {
@@ -732,7 +710,7 @@ function CRMProvider(_a) {
     return true;
   });
   // Load initial data
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadCustomers();
     loadSegments();
     loadCampaigns();

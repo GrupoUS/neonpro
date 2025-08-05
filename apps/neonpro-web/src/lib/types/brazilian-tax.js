@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.nfeDocumentSchema =
   exports.nfeGenerationRequestSchema =
@@ -56,9 +55,7 @@ exports.taxConfigurationSchema = zod_1.z.object({
   stateTaxId: zod_1.z.string().optional(),
   federalTaxId: zod_1.z.string().optional(),
   active: zod_1.z.boolean().default(true),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  updatedAt: zod_1.z.date().default(() => new Date()),
 });
 exports.nfeGenerationRequestSchema = zod_1.z.object({
   clinicId: zod_1.z.string().uuid(),
@@ -109,10 +106,6 @@ exports.nfeDocumentSchema = zod_1.z.object({
   pdfUrl: zod_1.z.string().optional(),
   verificationCode: zod_1.z.string().optional(),
   errors: zod_1.z.array(zod_1.z.string()).optional(),
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
+  updatedAt: zod_1.z.date().default(() => new Date()),
 });

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = TreatmentSuccessPage;
 var badge_1 = require("@/components/ui/badge");
@@ -161,7 +158,6 @@ var textarea_1 = require("@/components/ui/textarea");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function TreatmentSuccessPage(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, react_1.useState)("overview"),
     activeTab = _b[0],
@@ -236,13 +232,13 @@ function TreatmentSuccessPage(_a) {
     }),
     benchmarkForm = _s[0],
     setBenchmarkForm = _s[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadDashboardData();
   }, []);
-  var loadDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -278,11 +274,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadSuccessStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadSuccessStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -304,11 +299,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadProviderStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadProviderStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -330,11 +324,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadTreatmentTypeStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTreatmentTypeStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -356,11 +349,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadComplianceStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadComplianceStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -382,11 +374,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadTreatmentOutcomes = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTreatmentOutcomes = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -408,11 +399,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadSuccessMetrics = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadSuccessMetrics = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -434,11 +424,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadProviderPerformance = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadProviderPerformance = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -460,11 +449,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadProtocolOptimizations = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadProtocolOptimizations = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_9;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -486,11 +474,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadQualityBenchmarks = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadQualityBenchmarks = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_10;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -512,11 +499,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var loadComplianceReports = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadComplianceReports = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_11;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -538,11 +524,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var handleCreateOutcome = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateOutcome = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, err_12;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -585,11 +570,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var handleCreateOptimization = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateOptimization = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, err_13;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -626,11 +610,10 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var handleCreateBenchmark = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateBenchmark = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, err_14;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -667,13 +650,8 @@ function TreatmentSuccessPage(_a) {
         }
       });
     });
-  };
-  var formatPercentage = function (value) {
-    return "".concat((value * 100).toFixed(1), "%");
-  };
-  var formatScore = function (value) {
-    return value.toFixed(2);
-  };
+  var formatPercentage = (value) => "".concat((value * 100).toFixed(1), "%");
+  var formatScore = (value) => value.toFixed(2);
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -813,38 +791,36 @@ function TreatmentSuccessPage(_a) {
                 </card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-4">
-                {treatmentTypeStats.map(function (stat, index) {
-                  return (
-                    <div key={index} className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-sm font-medium">{stat.treatment_type}</span>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm">{formatPercentage(stat.success_rate)}</span>
-                          <badge_1.Badge
-                            variant={
-                              stat.benchmark_status === "above"
-                                ? "default"
-                                : stat.benchmark_status === "at"
-                                  ? "secondary"
-                                  : "destructive"
-                            }
-                          >
-                            {stat.benchmark_status === "above"
-                              ? "Acima"
+                {treatmentTypeStats.map((stat, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium">{stat.treatment_type}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm">{formatPercentage(stat.success_rate)}</span>
+                        <badge_1.Badge
+                          variant={
+                            stat.benchmark_status === "above"
+                              ? "default"
                               : stat.benchmark_status === "at"
-                                ? "No padrão"
-                                : "Abaixo"}
-                          </badge_1.Badge>
-                        </div>
-                      </div>
-                      <progress_1.Progress value={stat.success_rate * 100} className="h-2" />
-                      <div className="text-xs text-gray-600">
-                        {stat.total_treatments} tratamentos • Satisfação:{" "}
-                        {formatScore(stat.satisfaction_score)}
+                                ? "secondary"
+                                : "destructive"
+                          }
+                        >
+                          {stat.benchmark_status === "above"
+                            ? "Acima"
+                            : stat.benchmark_status === "at"
+                              ? "No padrão"
+                              : "Abaixo"}
+                        </badge_1.Badge>
                       </div>
                     </div>
-                  );
-                })}
+                    <progress_1.Progress value={stat.success_rate * 100} className="h-2" />
+                    <div className="text-xs text-gray-600">
+                      {stat.total_treatments} tratamentos • Satisfação:{" "}
+                      {formatScore(stat.satisfaction_score)}
+                    </div>
+                  </div>
+                ))}
               </card_1.CardContent>
             </card_1.Card>
 
@@ -857,34 +833,32 @@ function TreatmentSuccessPage(_a) {
                 </card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-4">
-                {protocolOptimizations.slice(0, 5).map(function (optimization) {
-                  return (
-                    <div key={optimization.id} className="border-l-4 border-blue-500 pl-4">
-                      <h4 className="font-medium">{optimization.treatment_type}</h4>
-                      <p className="text-sm text-gray-600">{optimization.suggested_improvements}</p>
-                      <div className="flex items-center justify-between mt-2">
-                        <badge_1.Badge
-                          variant={
-                            optimization.implementation_priority === "high"
-                              ? "destructive"
-                              : optimization.implementation_priority === "medium"
-                                ? "default"
-                                : "secondary"
-                          }
-                        >
-                          {optimization.implementation_priority === "high"
-                            ? "Alta"
+                {protocolOptimizations.slice(0, 5).map((optimization) => (
+                  <div key={optimization.id} className="border-l-4 border-blue-500 pl-4">
+                    <h4 className="font-medium">{optimization.treatment_type}</h4>
+                    <p className="text-sm text-gray-600">{optimization.suggested_improvements}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <badge_1.Badge
+                        variant={
+                          optimization.implementation_priority === "high"
+                            ? "destructive"
                             : optimization.implementation_priority === "medium"
-                              ? "Média"
-                              : "Baixa"}
-                        </badge_1.Badge>
-                        <span className="text-xs text-gray-500">
-                          +{formatPercentage(optimization.success_rate_improvement)} sucesso
-                        </span>
-                      </div>
+                              ? "default"
+                              : "secondary"
+                        }
+                      >
+                        {optimization.implementation_priority === "high"
+                          ? "Alta"
+                          : optimization.implementation_priority === "medium"
+                            ? "Média"
+                            : "Baixa"}
+                      </badge_1.Badge>
+                      <span className="text-xs text-gray-500">
+                        +{formatPercentage(optimization.success_rate_improvement)} sucesso
+                      </span>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </card_1.CardContent>
             </card_1.Card>
           </div>
@@ -907,11 +881,11 @@ function TreatmentSuccessPage(_a) {
                     <input_1.Input
                       id="patient_id"
                       value={outcomeForm.patient_id}
-                      onChange={function (e) {
-                        return setOutcomeForm(
+                      onChange={(e) =>
+                        setOutcomeForm(
                           __assign(__assign({}, outcomeForm), { patient_id: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -919,11 +893,11 @@ function TreatmentSuccessPage(_a) {
                     <input_1.Input
                       id="treatment_type"
                       value={outcomeForm.treatment_type}
-                      onChange={function (e) {
-                        return setOutcomeForm(
+                      onChange={(e) =>
+                        setOutcomeForm(
                           __assign(__assign({}, outcomeForm), { treatment_type: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -931,11 +905,11 @@ function TreatmentSuccessPage(_a) {
                     <input_1.Input
                       id="provider_id"
                       value={outcomeForm.provider_id}
-                      onChange={function (e) {
-                        return setOutcomeForm(
+                      onChange={(e) =>
+                        setOutcomeForm(
                           __assign(__assign({}, outcomeForm), { provider_id: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -944,11 +918,11 @@ function TreatmentSuccessPage(_a) {
                       id="treatment_date"
                       type="date"
                       value={outcomeForm.treatment_date}
-                      onChange={function (e) {
-                        return setOutcomeForm(
+                      onChange={(e) =>
+                        setOutcomeForm(
                           __assign(__assign({}, outcomeForm), { treatment_date: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -960,13 +934,13 @@ function TreatmentSuccessPage(_a) {
                       max="1"
                       step="0.1"
                       value={outcomeForm.success_score}
-                      onChange={function (e) {
-                        return setOutcomeForm(
+                      onChange={(e) =>
+                        setOutcomeForm(
                           __assign(__assign({}, outcomeForm), {
                             success_score: parseFloat(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -979,13 +953,13 @@ function TreatmentSuccessPage(_a) {
                       min="0"
                       max="10"
                       value={outcomeForm.patient_satisfaction_score}
-                      onChange={function (e) {
-                        return setOutcomeForm(
+                      onChange={(e) =>
+                        setOutcomeForm(
                           __assign(__assign({}, outcomeForm), {
                             patient_satisfaction_score: parseFloat(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -994,11 +968,11 @@ function TreatmentSuccessPage(_a) {
                   <textarea_1.Textarea
                     id="complications"
                     value={outcomeForm.complications}
-                    onChange={function (e) {
-                      return setOutcomeForm(
+                    onChange={(e) =>
+                      setOutcomeForm(
                         __assign(__assign({}, outcomeForm), { complications: e.target.value }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
                 <div>
@@ -1006,11 +980,11 @@ function TreatmentSuccessPage(_a) {
                   <textarea_1.Textarea
                     id="follow_up_notes"
                     value={outcomeForm.follow_up_notes}
-                    onChange={function (e) {
-                      return setOutcomeForm(
+                    onChange={(e) =>
+                      setOutcomeForm(
                         __assign(__assign({}, outcomeForm), { follow_up_notes: e.target.value }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
                 <button_1.Button onClick={handleCreateOutcome} className="w-full">
@@ -1029,45 +1003,43 @@ function TreatmentSuccessPage(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {treatmentOutcomes.map(function (outcome) {
-                    return (
-                      <div key={outcome.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">{outcome.treatment_type}</h4>
-                            <p className="text-sm text-gray-600">
-                              Paciente: {outcome.patient_id} • Profissional: {outcome.provider_id}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Data: {new Date(outcome.treatment_date).toLocaleDateString("pt-BR")}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-green-600">
-                              {formatPercentage(outcome.success_score || 0)}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Satisfação: {outcome.patient_satisfaction_score}/10
-                            </div>
-                            <badge_1.Badge
-                              variant={outcome.status === "completed" ? "default" : "secondary"}
-                            >
-                              {outcome.status === "completed"
-                                ? "Concluído"
-                                : outcome.status === "in_progress"
-                                  ? "Em andamento"
-                                  : "Acompanhamento"}
-                            </badge_1.Badge>
-                          </div>
+                  {treatmentOutcomes.map((outcome) => (
+                    <div key={outcome.id} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium">{outcome.treatment_type}</h4>
+                          <p className="text-sm text-gray-600">
+                            Paciente: {outcome.patient_id} • Profissional: {outcome.provider_id}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Data: {new Date(outcome.treatment_date).toLocaleDateString("pt-BR")}
+                          </p>
                         </div>
-                        {outcome.complications && (
-                          <div className="mt-2 p-2 bg-red-50 rounded text-sm text-red-700">
-                            <strong>Complicações:</strong> {outcome.complications}
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-green-600">
+                            {formatPercentage(outcome.success_score || 0)}
                           </div>
-                        )}
+                          <div className="text-sm text-gray-600">
+                            Satisfação: {outcome.patient_satisfaction_score}/10
+                          </div>
+                          <badge_1.Badge
+                            variant={outcome.status === "completed" ? "default" : "secondary"}
+                          >
+                            {outcome.status === "completed"
+                              ? "Concluído"
+                              : outcome.status === "in_progress"
+                                ? "Em andamento"
+                                : "Acompanhamento"}
+                          </badge_1.Badge>
+                        </div>
                       </div>
-                    );
-                  })}
+                      {outcome.complications && (
+                        <div className="mt-2 p-2 bg-red-50 rounded text-sm text-red-700">
+                          <strong>Complicações:</strong> {outcome.complications}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -1084,36 +1056,34 @@ function TreatmentSuccessPage(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {successMetrics.map(function (metric) {
-                  return (
-                    <div key={metric.id} className="border rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-medium">{metric.treatment_type}</h4>
-                          <p className="text-sm text-gray-600">
-                            Período: {new Date(metric.period_start).toLocaleDateString("pt-BR")} -{" "}
-                            {new Date(metric.period_end).toLocaleDateString("pt-BR")}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {metric.total_treatments} tratamentos • {metric.successful_treatments}{" "}
-                            sucessos
-                          </p>
+                {successMetrics.map((metric) => (
+                  <div key={metric.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-medium">{metric.treatment_type}</h4>
+                        <p className="text-sm text-gray-600">
+                          Período: {new Date(metric.period_start).toLocaleDateString("pt-BR")} -{" "}
+                          {new Date(metric.period_end).toLocaleDateString("pt-BR")}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {metric.total_treatments} tratamentos • {metric.successful_treatments}{" "}
+                          sucessos
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-green-600">
+                          {formatPercentage(metric.success_rate)}
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-green-600">
-                            {formatPercentage(metric.success_rate)}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            Satisfação: {formatScore(metric.average_satisfaction || 0)}
-                          </div>
-                          <div className="text-sm text-red-600">
-                            Complicações: {formatPercentage(metric.complication_rate || 0)}
-                          </div>
+                        <div className="text-sm text-gray-600">
+                          Satisfação: {formatScore(metric.average_satisfaction || 0)}
+                        </div>
+                        <div className="text-sm text-red-600">
+                          Complicações: {formatPercentage(metric.complication_rate || 0)}
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -1129,33 +1099,30 @@ function TreatmentSuccessPage(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {providerPerformance.map(function (performance) {
-                  return (
-                    <div key={performance.id} className="border rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-medium">Profissional: {performance.provider_id}</h4>
-                          <p className="text-sm text-gray-600">
-                            Período:{" "}
-                            {new Date(performance.period_start).toLocaleDateString("pt-BR")} -{" "}
-                            {new Date(performance.period_end).toLocaleDateString("pt-BR")}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Avaliação: {performance.evaluation_period}
-                          </p>
+                {providerPerformance.map((performance) => (
+                  <div key={performance.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-medium">Profissional: {performance.provider_id}</h4>
+                        <p className="text-sm text-gray-600">
+                          Período: {new Date(performance.period_start).toLocaleDateString("pt-BR")}{" "}
+                          - {new Date(performance.period_end).toLocaleDateString("pt-BR")}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Avaliação: {performance.evaluation_period}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-blue-600">
+                          {formatPercentage(performance.overall_success_rate)}
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-blue-600">
-                            {formatPercentage(performance.overall_success_rate)}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            Score: {formatScore(performance.performance_score || 0)}
-                          </div>
+                        <div className="text-sm text-gray-600">
+                          Score: {formatScore(performance.performance_score || 0)}
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -1178,26 +1145,26 @@ function TreatmentSuccessPage(_a) {
                     <input_1.Input
                       id="opt_treatment_type"
                       value={optimizationForm.treatment_type}
-                      onChange={function (e) {
-                        return setOptimizationForm(
+                      onChange={(e) =>
+                        setOptimizationForm(
                           __assign(__assign({}, optimizationForm), {
                             treatment_type: e.target.value,
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
                     <label_1.Label htmlFor="implementation_priority">Prioridade</label_1.Label>
                     <select_1.Select
                       value={optimizationForm.implementation_priority}
-                      onValueChange={function (value) {
-                        return setOptimizationForm(
+                      onValueChange={(value) =>
+                        setOptimizationForm(
                           __assign(__assign({}, optimizationForm), {
                             implementation_priority: value,
                           }),
-                        );
-                      }}
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -1215,13 +1182,13 @@ function TreatmentSuccessPage(_a) {
                   <textarea_1.Textarea
                     id="current_protocol"
                     value={optimizationForm.current_protocol}
-                    onChange={function (e) {
-                      return setOptimizationForm(
+                    onChange={(e) =>
+                      setOptimizationForm(
                         __assign(__assign({}, optimizationForm), {
                           current_protocol: e.target.value,
                         }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
                 <div>
@@ -1231,13 +1198,13 @@ function TreatmentSuccessPage(_a) {
                   <textarea_1.Textarea
                     id="suggested_improvements"
                     value={optimizationForm.suggested_improvements}
-                    onChange={function (e) {
-                      return setOptimizationForm(
+                    onChange={(e) =>
+                      setOptimizationForm(
                         __assign(__assign({}, optimizationForm), {
                           suggested_improvements: e.target.value,
                         }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
                 <div>
@@ -1245,11 +1212,11 @@ function TreatmentSuccessPage(_a) {
                   <textarea_1.Textarea
                     id="rationale"
                     value={optimizationForm.rationale}
-                    onChange={function (e) {
-                      return setOptimizationForm(
+                    onChange={(e) =>
+                      setOptimizationForm(
                         __assign(__assign({}, optimizationForm), { rationale: e.target.value }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
                 <div>
@@ -1263,13 +1230,13 @@ function TreatmentSuccessPage(_a) {
                     max="1"
                     step="0.01"
                     value={optimizationForm.success_rate_improvement}
-                    onChange={function (e) {
-                      return setOptimizationForm(
+                    onChange={(e) =>
+                      setOptimizationForm(
                         __assign(__assign({}, optimizationForm), {
                           success_rate_improvement: parseFloat(e.target.value),
                         }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
                 <button_1.Button onClick={handleCreateOptimization} className="w-full">
@@ -1288,62 +1255,60 @@ function TreatmentSuccessPage(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {protocolOptimizations.map(function (optimization) {
-                    return (
-                      <div key={optimization.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">{optimization.treatment_type}</h4>
-                            <p className="text-sm text-gray-600">
-                              {optimization.suggested_improvements}
+                  {protocolOptimizations.map((optimization) => (
+                    <div key={optimization.id} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium">{optimization.treatment_type}</h4>
+                          <p className="text-sm text-gray-600">
+                            {optimization.suggested_improvements}
+                          </p>
+                          {optimization.rationale && (
+                            <p className="text-sm text-gray-500 mt-1">
+                              <strong>Justificativa:</strong> {optimization.rationale}
                             </p>
-                            {optimization.rationale && (
-                              <p className="text-sm text-gray-500 mt-1">
-                                <strong>Justificativa:</strong> {optimization.rationale}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <badge_1.Badge
-                              variant={
-                                optimization.implementation_priority === "high"
-                                  ? "destructive"
-                                  : optimization.implementation_priority === "medium"
-                                    ? "default"
-                                    : "secondary"
-                              }
-                            >
-                              {optimization.implementation_priority === "high"
-                                ? "Alta"
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <badge_1.Badge
+                            variant={
+                              optimization.implementation_priority === "high"
+                                ? "destructive"
                                 : optimization.implementation_priority === "medium"
-                                  ? "Média"
-                                  : "Baixa"}
-                            </badge_1.Badge>
-                            <div className="text-sm text-green-600 mt-1">
-                              +{formatPercentage(optimization.success_rate_improvement)}
-                            </div>
-                            <badge_1.Badge
-                              variant={
-                                optimization.approval_status === "approved"
                                   ? "default"
-                                  : optimization.approval_status === "rejected"
-                                    ? "destructive"
-                                    : "secondary"
-                              }
-                            >
-                              {optimization.approval_status === "pending"
-                                ? "Pendente"
-                                : optimization.approval_status === "approved"
-                                  ? "Aprovado"
-                                  : optimization.approval_status === "rejected"
-                                    ? "Rejeitado"
-                                    : "Implementado"}
-                            </badge_1.Badge>
+                                  : "secondary"
+                            }
+                          >
+                            {optimization.implementation_priority === "high"
+                              ? "Alta"
+                              : optimization.implementation_priority === "medium"
+                                ? "Média"
+                                : "Baixa"}
+                          </badge_1.Badge>
+                          <div className="text-sm text-green-600 mt-1">
+                            +{formatPercentage(optimization.success_rate_improvement)}
                           </div>
+                          <badge_1.Badge
+                            variant={
+                              optimization.approval_status === "approved"
+                                ? "default"
+                                : optimization.approval_status === "rejected"
+                                  ? "destructive"
+                                  : "secondary"
+                            }
+                          >
+                            {optimization.approval_status === "pending"
+                              ? "Pendente"
+                              : optimization.approval_status === "approved"
+                                ? "Aprovado"
+                                : optimization.approval_status === "rejected"
+                                  ? "Rejeitado"
+                                  : "Implementado"}
+                          </badge_1.Badge>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -1367,11 +1332,11 @@ function TreatmentSuccessPage(_a) {
                     <input_1.Input
                       id="bench_treatment_type"
                       value={benchmarkForm.treatment_type}
-                      onChange={function (e) {
-                        return setBenchmarkForm(
+                      onChange={(e) =>
+                        setBenchmarkForm(
                           __assign(__assign({}, benchmarkForm), { treatment_type: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -1385,13 +1350,13 @@ function TreatmentSuccessPage(_a) {
                       max="1"
                       step="0.01"
                       value={benchmarkForm.target_success_rate}
-                      onChange={function (e) {
-                        return setBenchmarkForm(
+                      onChange={(e) =>
+                        setBenchmarkForm(
                           __assign(__assign({}, benchmarkForm), {
                             target_success_rate: parseFloat(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -1404,13 +1369,13 @@ function TreatmentSuccessPage(_a) {
                       min="0"
                       max="10"
                       value={benchmarkForm.minimum_satisfaction}
-                      onChange={function (e) {
-                        return setBenchmarkForm(
+                      onChange={(e) =>
+                        setBenchmarkForm(
                           __assign(__assign({}, benchmarkForm), {
                             minimum_satisfaction: parseFloat(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -1424,13 +1389,13 @@ function TreatmentSuccessPage(_a) {
                       max="1"
                       step="0.01"
                       value={benchmarkForm.maximum_complication_rate}
-                      onChange={function (e) {
-                        return setBenchmarkForm(
+                      onChange={(e) =>
+                        setBenchmarkForm(
                           __assign(__assign({}, benchmarkForm), {
                             maximum_complication_rate: parseFloat(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -1444,13 +1409,13 @@ function TreatmentSuccessPage(_a) {
                       max="1"
                       step="0.01"
                       value={benchmarkForm.industry_standard}
-                      onChange={function (e) {
-                        return setBenchmarkForm(
+                      onChange={(e) =>
+                        setBenchmarkForm(
                           __assign(__assign({}, benchmarkForm), {
                             industry_standard: parseFloat(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -1460,13 +1425,13 @@ function TreatmentSuccessPage(_a) {
                     <input_1.Input
                       id="certification_requirement"
                       value={benchmarkForm.certification_requirement}
-                      onChange={function (e) {
-                        return setBenchmarkForm(
+                      onChange={(e) =>
+                        setBenchmarkForm(
                           __assign(__assign({}, benchmarkForm), {
                             certification_requirement: e.target.value,
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -1486,39 +1451,37 @@ function TreatmentSuccessPage(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {qualityBenchmarks.map(function (benchmark) {
-                    return (
-                      <div key={benchmark.id} className="border rounded-lg p-4">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium">{benchmark.treatment_type}</h4>
-                            <div className="text-sm text-gray-600 space-y-1">
-                              <p>
-                                Taxa de sucesso alvo:{" "}
-                                {formatPercentage(benchmark.target_success_rate)}
-                              </p>
-                              <p>Satisfação mínima: {benchmark.minimum_satisfaction}/10</p>
-                              <p>
-                                Taxa máx. complicações:{" "}
-                                {formatPercentage(benchmark.maximum_complication_rate)}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-blue-600">
-                              {formatPercentage(benchmark.industry_standard)}
-                            </div>
-                            <div className="text-xs text-gray-500">Padrão da indústria</div>
-                            {benchmark.certification_requirement && (
-                              <badge_1.Badge variant="outline" className="mt-1">
-                                {benchmark.certification_requirement}
-                              </badge_1.Badge>
-                            )}
+                  {qualityBenchmarks.map((benchmark) => (
+                    <div key={benchmark.id} className="border rounded-lg p-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium">{benchmark.treatment_type}</h4>
+                          <div className="text-sm text-gray-600 space-y-1">
+                            <p>
+                              Taxa de sucesso alvo:{" "}
+                              {formatPercentage(benchmark.target_success_rate)}
+                            </p>
+                            <p>Satisfação mínima: {benchmark.minimum_satisfaction}/10</p>
+                            <p>
+                              Taxa máx. complicações:{" "}
+                              {formatPercentage(benchmark.maximum_complication_rate)}
+                            </p>
                           </div>
                         </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-blue-600">
+                            {formatPercentage(benchmark.industry_standard)}
+                          </div>
+                          <div className="text-xs text-gray-500">Padrão da indústria</div>
+                          {benchmark.certification_requirement && (
+                            <badge_1.Badge variant="outline" className="mt-1">
+                              {benchmark.certification_requirement}
+                            </badge_1.Badge>
+                          )}
+                        </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -1535,45 +1498,43 @@ function TreatmentSuccessPage(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {complianceReports.map(function (report) {
-                  return (
-                    <div key={report.id} className="border rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-medium">{report.report_type}</h4>
-                          <p className="text-sm text-gray-600">
-                            Período:{" "}
-                            {new Date(report.reporting_period_start).toLocaleDateString("pt-BR")} -{" "}
-                            {new Date(report.reporting_period_end).toLocaleDateString("pt-BR")}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Criado em: {new Date(report.created_at).toLocaleDateString("pt-BR")}
-                          </p>
+                {complianceReports.map((report) => (
+                  <div key={report.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-medium">{report.report_type}</h4>
+                        <p className="text-sm text-gray-600">
+                          Período:{" "}
+                          {new Date(report.reporting_period_start).toLocaleDateString("pt-BR")} -{" "}
+                          {new Date(report.reporting_period_end).toLocaleDateString("pt-BR")}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Criado em: {new Date(report.created_at).toLocaleDateString("pt-BR")}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-orange-600">
+                          {formatPercentage(report.compliance_score || 0)}
                         </div>
-                        <div className="text-right">
-                          <div className="text-lg font-bold text-orange-600">
-                            {formatPercentage(report.compliance_score || 0)}
-                          </div>
-                          <badge_1.Badge
-                            variant={
-                              report.status === "finalized"
-                                ? "default"
-                                : report.status === "review"
-                                  ? "secondary"
-                                  : "outline"
-                            }
-                          >
-                            {report.status === "draft"
-                              ? "Rascunho"
+                        <badge_1.Badge
+                          variant={
+                            report.status === "finalized"
+                              ? "default"
                               : report.status === "review"
-                                ? "Em revisão"
-                                : "Finalizado"}
-                          </badge_1.Badge>
-                        </div>
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
+                          {report.status === "draft"
+                            ? "Rascunho"
+                            : report.status === "review"
+                              ? "Em revisão"
+                              : "Finalizado"}
+                        </badge_1.Badge>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

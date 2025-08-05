@@ -8,7 +8,6 @@
  * @version 1.0.0
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionStatusCard = SubscriptionStatusCard;
 var utils_1 = require("@/lib/utils");
@@ -133,7 +132,7 @@ function SubscriptionStatusCard(_a) {
   var config = statusConfig[status] || statusConfig.cancelled;
   var StatusIcon = config.icon;
   // Calculate trial progress if applicable
-  var getTrialProgress = function () {
+  var getTrialProgress = () => {
     if (status !== "trialing" || !gracePeriodEnd) return null;
     var now = new Date();
     var end = new Date(gracePeriodEnd);
@@ -228,17 +227,15 @@ function SubscriptionStatusCard(_a) {
             <div className="pt-4">
               <h4 className="text-sm font-medium mb-3">Funcionalidades Incluídas</h4>
               <div className="grid grid-cols-2 gap-2">
-                {features.slice(0, 6).map(function (feature, index) {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 text-sm text-muted-foreground"
-                    >
-                      <lucide_react_1.CheckCircle2 className="h-3 w-3 text-green-600" />
-                      {feature}
-                    </div>
-                  );
-                })}
+                {features.slice(0, 6).map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 text-sm text-muted-foreground"
+                  >
+                    <lucide_react_1.CheckCircle2 className="h-3 w-3 text-green-600" />
+                    {feature}
+                  </div>
+                ))}
               </div>
               {features.length > 6 && (
                 <p className="text-xs text-muted-foreground mt-2">

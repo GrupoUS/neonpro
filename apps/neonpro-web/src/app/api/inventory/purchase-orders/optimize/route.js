@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 // Bulk Order Optimization API Endpoint
@@ -179,7 +176,7 @@ function POST(request) {
       seasonalRecommendations,
       _b,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 10, , 11]);
@@ -229,13 +226,11 @@ function POST(request) {
               ),
             ];
           }
-          enhancedRecommendations = optimizationResults.recommendations.map(function (rec) {
+          enhancedRecommendations = optimizationResults.recommendations.map((rec) => {
             var itemData =
               itemsData_1 === null || itemsData_1 === void 0
                 ? void 0
-                : itemsData_1.find(function (item) {
-                    return item.id === rec.itemId;
-                  });
+                : itemsData_1.find((item) => item.id === rec.itemId);
             return __assign(__assign({}, rec), {
               item_details: itemData
                 ? {
@@ -330,7 +325,7 @@ function POST(request) {
 function analyzeBulkOpportunities(supabase, itemIds, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, supplierItems, error, bulkOpportunities, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -350,7 +345,7 @@ function analyzeBulkOpportunities(supabase, itemIds, clinicId) {
           bulkOpportunities =
             (supplierItems === null || supplierItems === void 0
               ? void 0
-              : supplierItems.map(function (item) {
+              : supplierItems.map((item) => {
                   var _a;
                   var potentialSavings =
                     item.unit_cost *
@@ -374,9 +369,7 @@ function analyzeBulkOpportunities(supabase, itemIds, clinicId) {
                 })) || [];
           return [
             2 /*return*/,
-            bulkOpportunities.sort(function (a, b) {
-              return b.potential_savings - a.potential_savings;
-            }),
+            bulkOpportunities.sort((a, b) => b.potential_savings - a.potential_savings),
           ];
         case 2:
           error_2 = _b.sent();
@@ -404,7 +397,7 @@ function generateSeasonalRecommendations(supabase, itemIds, clinicId) {
       monthlyData,
       error_3;
     var _d, _e;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 2, , 3]);
@@ -423,7 +416,7 @@ function generateSeasonalRecommendations(supabase, itemIds, clinicId) {
         case 1:
           (_a = _f.sent()), (consumptionData = _a.data), (error = _a.error);
           if (error || !consumptionData) return [2 /*return*/, []];
-          monthlyConsumption = consumptionData.reduce(function (acc, transaction) {
+          monthlyConsumption = consumptionData.reduce((acc, transaction) => {
             var month = new Date(transaction.created_at).getMonth();
             var itemId = transaction.item_id;
             if (!acc[itemId]) acc[itemId] = {};
@@ -432,15 +425,12 @@ function generateSeasonalRecommendations(supabase, itemIds, clinicId) {
             return acc;
           }, {});
           seasonalRecommendations = [];
-          _loop_1 = function (itemId, monthlyData) {
+          _loop_1 = (itemId, monthlyData) => {
             var months = Object.values(monthlyData);
-            var avgConsumption =
-              months.reduce(function (sum, val) {
-                return sum + val;
-              }, 0) / months.length;
+            var avgConsumption = months.reduce((sum, val) => sum + val, 0) / months.length;
             var maxConsumption = Math.max.apply(Math, months);
             var peakMonth =
-              (_d = Object.entries(monthlyData).find(function (_a) {
+              (_d = Object.entries(monthlyData).find((_a) => {
                 var value = _a[1];
                 return value === maxConsumption;
               })) === null || _d === void 0
@@ -449,9 +439,7 @@ function generateSeasonalRecommendations(supabase, itemIds, clinicId) {
             // If peak consumption is significantly higher than average
             if (maxConsumption > avgConsumption * 1.5) {
               var itemData =
-                (_e = consumptionData.find(function (t) {
-                  return t.item_id === itemId;
-                })) === null || _e === void 0
+                (_e = consumptionData.find((t) => t.item_id === itemId)) === null || _e === void 0
                   ? void 0
                   : _e.inventory_items;
               seasonalRecommendations.push({
@@ -479,9 +467,7 @@ function generateSeasonalRecommendations(supabase, itemIds, clinicId) {
           }
           return [
             2 /*return*/,
-            seasonalRecommendations.sort(function (a, b) {
-              return b.seasonality_factor - a.seasonality_factor;
-            }),
+            seasonalRecommendations.sort((a, b) => b.seasonality_factor - a.seasonality_factor),
           ];
         case 2:
           error_3 = _f.sent();

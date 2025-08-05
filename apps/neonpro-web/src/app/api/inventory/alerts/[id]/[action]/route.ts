@@ -1,9 +1,9 @@
 // API Routes for Alert Actions (Acknowledge, Resolve, Escalate)
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
-import { IntelligentThresholdService } from "@/app/lib/services/intelligent-threshold-service";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { IntelligentThresholdService } from "@/app/lib/services/intelligent-threshold-service";
 
 const thresholdService = new IntelligentThresholdService();
 
@@ -34,7 +34,7 @@ export async function POST(
     let message;
 
     switch (action) {
-      case "acknowledge":
+      case "acknowledge": {
         const acknowledgeData = acknowledgeSchema.parse(body);
         result = await thresholdService.acknowledgeAlert(
           id,
@@ -43,14 +43,16 @@ export async function POST(
         );
         message = "Alert acknowledged successfully";
         break;
+      }
 
-      case "resolve":
+      case "resolve": {
         const resolveData = resolveSchema.parse(body);
         result = await thresholdService.resolveAlert(id, resolveData.user_id, resolveData.notes);
         message = "Alert resolved successfully";
         break;
+      }
 
-      case "escalate":
+      case "escalate": {
         const escalateData = escalateSchema.parse(body);
         result = await thresholdService.escalateAlert(
           id,
@@ -59,6 +61,7 @@ export async function POST(
         );
         message = "Alert escalated successfully";
         break;
+      }
 
       default:
         return NextResponse.json(

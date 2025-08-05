@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,10 +128,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -143,7 +140,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.GET = GET;
@@ -153,7 +150,7 @@ var inventory_reports_service_1 = require("@/app/lib/services/inventory-reports-
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, session, body, validationResult, parameters, reportResult, csvData, error_1;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 5, , 6]);
@@ -252,7 +249,7 @@ function POST(request) {
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, session, searchParams, reportType, filters, parameters, reportResult, error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 4, , 5]);
@@ -432,9 +429,9 @@ function convertToCSV(data, reportType) {
       // Header row
       headers.join(","),
     ],
-    data.map(function (row) {
-      return headers
-        .map(function (header) {
+    data.map((row) =>
+      headers
+        .map((header) => {
           var value = row[header];
           // Handle values that might contain commas or quotes
           if (typeof value === "string" && (value.includes(",") || value.includes('"'))) {
@@ -442,8 +439,8 @@ function convertToCSV(data, reportType) {
           }
           return value !== null && value !== undefined ? value.toString() : "";
         })
-        .join(",");
-    }),
+        .join(","),
+    ),
     true,
   ).join("\n");
   return csvContent;

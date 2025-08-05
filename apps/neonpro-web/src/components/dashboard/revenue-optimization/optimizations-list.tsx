@@ -6,7 +6,19 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  MoreHorizontal,
+  Pause,
+  Target,
+  TrendingUp,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,19 +26,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Progress } from "@/components/ui/progress";
-import type {
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  Pause,
-  TrendingUp,
-  Calendar,
-  Target,
-  MoreHorizontal,
-} from "lucide-react";
 
 interface Optimization {
   id: string;

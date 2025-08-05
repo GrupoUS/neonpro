@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentForm = AppointmentForm;
 var button_1 = require("@/components/ui/button");
@@ -179,7 +176,6 @@ var appointmentFormSchema = zod_2.z.object({
   internal_notes: zod_2.z.string().optional(),
 });
 function AppointmentForm(_a) {
-  var _this = this;
   var patients = _a.patients,
     professionals = _a.professionals,
     serviceTypes = _a.serviceTypes,
@@ -219,7 +215,7 @@ function AppointmentForm(_a) {
     ),
   });
   // Generate time slots (15-minute intervals)
-  var generateTimeSlots = function () {
+  var generateTimeSlots = () => {
     var slots = [];
     for (var hour = 8; hour < 18; hour++) {
       for (var minute = 0; minute < 60; minute += 15) {
@@ -233,10 +229,10 @@ function AppointmentForm(_a) {
   };
   var timeSlots = generateTimeSlots();
   // Check for conflicts when professional, date, or time changes
-  var checkConflicts = function (professionalId, date, startTime, durationMinutes) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkConflicts = (professionalId, date, startTime, durationMinutes) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, hour, minute, startDateTime, endDateTime, response, result, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -279,12 +275,11 @@ function AppointmentForm(_a) {
         }
       });
     });
-  };
   // Load available slots for selected professional and date
-  var loadAvailableSlots = function (professionalId, date) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadAvailableSlots = (professionalId, date) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result_1, slots, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -303,12 +298,8 @@ function AppointmentForm(_a) {
             result_1 = _a.sent();
             if (result_1.success) {
               slots = result_1.data
-                .map(function (slot) {
-                  return (0, date_fns_1.format)(new Date(slot.slot_start), "HH:mm");
-                })
-                .filter(function (slot, index, arr) {
-                  return result_1.data[index].is_available;
-                });
+                .map((slot) => (0, date_fns_1.format)(new Date(slot.slot_start), "HH:mm"))
+                .filter((slot, index, arr) => result_1.data[index].is_available);
               setAvailableSlots(slots);
             }
             return [3 /*break*/, 4];
@@ -321,26 +312,22 @@ function AppointmentForm(_a) {
         }
       });
     });
-  };
   // Watch for changes that require conflict checking
   var watchedProfessional = form.watch("professional_id");
   var watchedDate = form.watch("appointment_date");
   var watchedTime = form.watch("start_time");
   var watchedDuration = form.watch("duration_minutes");
   // Effect to check conflicts and load slots
-  (0, react_1.useEffect)(
-    function () {
-      if (watchedProfessional && watchedDate) {
-        loadAvailableSlots(watchedProfessional, watchedDate);
-        if (watchedTime && watchedDuration) {
-          checkConflicts(watchedProfessional, watchedDate, watchedTime, watchedDuration);
-        }
+  (0, react_1.useEffect)(() => {
+    if (watchedProfessional && watchedDate) {
+      loadAvailableSlots(watchedProfessional, watchedDate);
+      if (watchedTime && watchedDuration) {
+        checkConflicts(watchedProfessional, watchedDate, watchedTime, watchedDuration);
       }
-    },
-    [watchedProfessional, watchedDate, watchedTime, watchedDuration],
-  );
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+    }
+  }, [watchedProfessional, watchedDate, watchedTime, watchedDuration]);
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var hasConflict,
         _a,
         hour,
@@ -351,7 +338,7 @@ function AppointmentForm(_a) {
         response,
         result,
         error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             setIsSubmitting(true);
@@ -427,7 +414,6 @@ function AppointmentForm(_a) {
         }
       });
     });
-  };
   return (
     <form_1.Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -442,7 +428,7 @@ function AppointmentForm(_a) {
             <form_1.FormField
               control={form.control}
               name="patient_id"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -454,20 +440,18 @@ function AppointmentForm(_a) {
                         </select_1.SelectTrigger>
                       </form_1.FormControl>
                       <select_1.SelectContent>
-                        {patients.map(function (patient) {
-                          return (
-                            <select_1.SelectItem key={patient.id} value={patient.id}>
-                              <div className="flex flex-col">
-                                <span className="font-medium">{patient.full_name}</span>
-                                {patient.phone && (
-                                  <span className="text-sm text-muted-foreground">
-                                    {patient.phone}
-                                  </span>
-                                )}
-                              </div>
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {patients.map((patient) => (
+                          <select_1.SelectItem key={patient.id} value={patient.id}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{patient.full_name}</span>
+                              {patient.phone && (
+                                <span className="text-sm text-muted-foreground">
+                                  {patient.phone}
+                                </span>
+                              )}
+                            </div>
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                     <form_1.FormMessage />
@@ -487,17 +471,15 @@ function AppointmentForm(_a) {
             <form_1.FormField
               control={form.control}
               name="service_type_id"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
                     <form_1.FormLabel>Tipo de Serviço</form_1.FormLabel>
                     <select_1.Select
-                      onValueChange={function (value) {
+                      onValueChange={(value) => {
                         field.onChange(value);
-                        var service = serviceTypes.find(function (s) {
-                          return s.id === value;
-                        });
+                        var service = serviceTypes.find((s) => s.id === value);
                         if (service) {
                           form.setValue("duration_minutes", service.duration_minutes);
                         }
@@ -510,18 +492,16 @@ function AppointmentForm(_a) {
                         </select_1.SelectTrigger>
                       </form_1.FormControl>
                       <select_1.SelectContent>
-                        {serviceTypes.map(function (service) {
-                          return (
-                            <select_1.SelectItem key={service.id} value={service.id}>
-                              <div className="flex justify-between items-center w-full">
-                                <span className="font-medium">{service.name}</span>
-                                <span className="text-sm text-muted-foreground ml-2">
-                                  {service.duration_minutes}min
-                                </span>
-                              </div>
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {serviceTypes.map((service) => (
+                          <select_1.SelectItem key={service.id} value={service.id}>
+                            <div className="flex justify-between items-center w-full">
+                              <span className="font-medium">{service.name}</span>
+                              <span className="text-sm text-muted-foreground ml-2">
+                                {service.duration_minutes}min
+                              </span>
+                            </div>
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                     <form_1.FormMessage />
@@ -533,7 +513,7 @@ function AppointmentForm(_a) {
             <form_1.FormField
               control={form.control}
               name="professional_id"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -545,20 +525,18 @@ function AppointmentForm(_a) {
                         </select_1.SelectTrigger>
                       </form_1.FormControl>
                       <select_1.SelectContent>
-                        {professionals.map(function (professional) {
-                          return (
-                            <select_1.SelectItem key={professional.id} value={professional.id}>
-                              <div className="flex flex-col">
-                                <span className="font-medium">{professional.full_name}</span>
-                                {professional.specialization && (
-                                  <span className="text-sm text-muted-foreground">
-                                    {professional.specialization}
-                                  </span>
-                                )}
-                              </div>
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {professionals.map((professional) => (
+                          <select_1.SelectItem key={professional.id} value={professional.id}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{professional.full_name}</span>
+                              {professional.specialization && (
+                                <span className="text-sm text-muted-foreground">
+                                  {professional.specialization}
+                                </span>
+                              )}
+                            </div>
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                     <form_1.FormMessage />
@@ -574,7 +552,7 @@ function AppointmentForm(_a) {
           <form_1.FormField
             control={form.control}
             name="appointment_date"
-            render={function (_a) {
+            render={(_a) => {
               var field = _a.field;
               return (
                 <form_1.FormItem className="flex flex-col">
@@ -601,9 +579,7 @@ function AppointmentForm(_a) {
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
-                        disabled={function (date) {
-                          return date < new Date() || date < new Date("1900-01-01");
-                        }}
+                        disabled={(date) => date < new Date() || date < new Date("1900-01-01")}
                         initialFocus
                       />
                     </popover_1.PopoverContent>
@@ -617,7 +593,7 @@ function AppointmentForm(_a) {
           <form_1.FormField
             control={form.control}
             name="start_time"
-            render={function (_a) {
+            render={(_a) => {
               var field = _a.field;
               return (
                 <form_1.FormItem>
@@ -629,7 +605,7 @@ function AppointmentForm(_a) {
                       </select_1.SelectTrigger>
                     </form_1.FormControl>
                     <select_1.SelectContent>
-                      {timeSlots.map(function (time) {
+                      {timeSlots.map((time) => {
                         var isAvailable = availableSlots.includes(time);
                         return (
                           <select_1.SelectItem
@@ -682,7 +658,7 @@ function AppointmentForm(_a) {
           <form_1.FormField
             control={form.control}
             name="notes"
-            render={function (_a) {
+            render={(_a) => {
               var field = _a.field;
               return (
                 <form_1.FormItem>
@@ -703,7 +679,7 @@ function AppointmentForm(_a) {
           <form_1.FormField
             control={form.control}
             name="internal_notes"
-            render={function (_a) {
+            render={(_a) => {
               var field = _a.field;
               return (
                 <form_1.FormItem>
@@ -728,9 +704,7 @@ function AppointmentForm(_a) {
           <button_1.Button
             type="button"
             variant="outline"
-            onClick={function () {
-              return router.back();
-            }}
+            onClick={() => router.back()}
             disabled={isSubmitting}
           >
             Cancelar

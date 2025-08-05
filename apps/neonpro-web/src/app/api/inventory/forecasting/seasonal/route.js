@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var demand_forecasting_service_1 = require("@/app/lib/services/demand-forecasting-service");
@@ -164,7 +161,7 @@ function POST(request) {
       demandDrivers,
       analysis,
       error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 4, , 5]);
@@ -221,32 +218,29 @@ function POST(request) {
           ];
         case 3:
           appointmentDemand = _b.sent();
-          totalConsumption = historicalData.reduce(function (sum, item) {
-            return sum + item.quantity;
-          }, 0);
+          totalConsumption = historicalData.reduce((sum, item) => sum + item.quantity, 0);
           averageDailyConsumption_1 = totalConsumption / analysisPeriod;
-          consumptionByType = historicalData.reduce(function (acc, item) {
+          consumptionByType = historicalData.reduce((acc, item) => {
             acc[item.type] = (acc[item.type] || 0) + item.quantity;
             return acc;
           }, {});
           dailyConsumption_1 = new Map();
-          historicalData.forEach(function (item) {
+          historicalData.forEach((item) => {
             var dateKey = item.date.toISOString().split("T")[0];
             dailyConsumption_1.set(dateKey, (dailyConsumption_1.get(dateKey) || 0) + item.quantity);
           });
           consumptionValues = Array.from(dailyConsumption_1.values());
           variance =
-            consumptionValues.reduce(function (sum, val) {
-              return sum + Math.pow(val - averageDailyConsumption_1, 2);
-            }, 0) / consumptionValues.length;
+            consumptionValues.reduce(
+              (sum, val) => sum + (val - averageDailyConsumption_1) ** 2,
+              0,
+            ) / consumptionValues.length;
           standardDeviation = Math.sqrt(variance);
           coefficientOfVariation =
             averageDailyConsumption_1 > 0 ? standardDeviation / averageDailyConsumption_1 : 0;
           demandDrivers = {
             appointmentBased: appointmentDemand.length > 0,
-            seasonalInfluenced: seasonalPatterns.some(function (p) {
-              return p.strength > 0.3;
-            }),
+            seasonalInfluenced: seasonalPatterns.some((p) => p.strength > 0.3),
             highVariability: coefficientOfVariation > 0.5,
             steadyDemand: coefficientOfVariation < 0.2,
           };
@@ -273,9 +267,10 @@ function POST(request) {
               appointmentBasedConsumption: appointmentDemand.length,
               averageConsumptionPerAppointment:
                 appointmentDemand.length > 0
-                  ? appointmentDemand.reduce(function (sum, apt) {
-                      return sum + (apt.actualConsumption || apt.expectedConsumption);
-                    }, 0) / appointmentDemand.length
+                  ? appointmentDemand.reduce(
+                      (sum, apt) => sum + (apt.actualConsumption || apt.expectedConsumption),
+                      0,
+                    ) / appointmentDemand.length
                   : 0,
             },
           };
@@ -305,7 +300,7 @@ function POST(request) {
 function generateSeasonalRecommendations(patterns, drivers, variability) {
   var recommendations = [];
   // Seasonal pattern recommendations
-  patterns.forEach(function (pattern) {
+  patterns.forEach((pattern) => {
     if (pattern.strength > 0.5) {
       recommendations.push(
         "Strong "

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Real-time Subscription Status Validation System
  *
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.subscriptionRealtimeManager = exports.SubscriptionRealtimeManager = void 0;
 exports.subscribeToUserUpdates = subscribeToUserUpdates;
@@ -162,7 +159,7 @@ exports.broadcastSubscriptionEvent = broadcastSubscriptionEvent;
 exports.getRealtimeMetrics = getRealtimeMetrics;
 exports.isRealtimeConnected = isRealtimeConnected;
 var client_1 = require("../app/utils/supabase/client");
-var SubscriptionRealtimeManager = /** @class */ (function () {
+var SubscriptionRealtimeManager = /** @class */ (() => {
   function SubscriptionRealtimeManager(config) {
     if (config === void 0) {
       config = {};
@@ -224,17 +221,13 @@ var SubscriptionRealtimeManager = /** @class */ (function () {
                 schema: "public",
                 table: "subscriptions",
               },
-              function (payload) {
-                return _this.handleSubscriptionChange(payload);
-              },
+              (payload) => _this.handleSubscriptionChange(payload),
             )
-            .on("broadcast", { event: "subscription_event" }, function (payload) {
-              return _this.handleBroadcastEvent(payload);
-            })
-            .on("presence", { event: "sync" }, function () {
-              return _this.handlePresenceSync();
-            })
-            .subscribe(function (status, err) {
+            .on("broadcast", { event: "subscription_event" }, (payload) =>
+              _this.handleBroadcastEvent(payload),
+            )
+            .on("presence", { event: "sync" }, () => _this.handlePresenceSync())
+            .subscribe((status, err) => {
               if (status === "SUBSCRIBED") {
                 _this.isConnected = true;
                 _this.reconnectAttempts = 0;
@@ -290,25 +283,24 @@ var SubscriptionRealtimeManager = /** @class */ (function () {
    * Subscribe to subscription status updates for a specific user
    */
   SubscriptionRealtimeManager.prototype.subscribe = function (userId, callback) {
-    var _this = this;
     if (!this.listeners.has(userId)) {
       this.listeners.set(userId, []);
     }
     this.listeners.get(userId).push(callback);
     this.log("Subscribed user ".concat(userId, " to real-time updates"));
     // Return unsubscribe function
-    return function () {
-      var userListeners = _this.listeners.get(userId);
+    return () => {
+      var userListeners = this.listeners.get(userId);
       if (userListeners) {
         var index = userListeners.indexOf(callback);
         if (index > -1) {
           userListeners.splice(index, 1);
           if (userListeners.length === 0) {
-            _this.listeners.delete(userId);
+            this.listeners.delete(userId);
           }
         }
       }
-      _this.log("Unsubscribed user ".concat(userId, " from real-time updates"));
+      this.log("Unsubscribed user ".concat(userId, " from real-time updates"));
     };
   };
   /**
@@ -538,14 +530,13 @@ var SubscriptionRealtimeManager = /** @class */ (function () {
    * Notify registered listeners of subscription updates
    */
   SubscriptionRealtimeManager.prototype.notifyListeners = function (update) {
-    var _this = this;
     var listeners = this.listeners.get(update.userId);
     if (listeners) {
-      listeners.forEach(function (callback) {
+      listeners.forEach((callback) => {
         try {
           callback(update);
         } catch (error) {
-          _this.log(
+          this.log(
             "Listener error for user "
               .concat(update.userId, ": ")
               .concat(error instanceof Error ? error.message : "Unknown error"),
@@ -569,7 +560,6 @@ var SubscriptionRealtimeManager = /** @class */ (function () {
    * Schedule reconnection attempt
    */
   SubscriptionRealtimeManager.prototype.scheduleReconnect = function () {
-    var _this = this;
     if (this.reconnectAttempts >= this.config.maxReconnectAttempts) {
       this.log(
         "Max reconnection attempts (".concat(this.config.maxReconnectAttempts, ") reached"),
@@ -579,35 +569,34 @@ var SubscriptionRealtimeManager = /** @class */ (function () {
     }
     this.reconnectAttempts++;
     this.metrics.reconnectAttempts++;
-    setTimeout(function () {
-      _this.log(
+    setTimeout(() => {
+      this.log(
         "Reconnection attempt "
-          .concat(_this.reconnectAttempts, "/")
-          .concat(_this.config.maxReconnectAttempts),
+          .concat(this.reconnectAttempts, "/")
+          .concat(this.config.maxReconnectAttempts),
       );
-      _this.connect();
+      this.connect();
     }, this.config.reconnectInterval * this.reconnectAttempts); // Exponential backoff
   };
   /**
    * Start heartbeat monitoring
    */
   SubscriptionRealtimeManager.prototype.startHeartbeat = function () {
-    var _this = this;
     this.lastHeartbeat = Date.now();
-    var heartbeatCheck = function () {
-      if (_this.isConnected) {
+    var heartbeatCheck = () => {
+      if (this.isConnected) {
         var now = Date.now();
-        _this.metrics.latency = now - _this.lastHeartbeat;
-        _this.lastHeartbeat = now;
+        this.metrics.latency = now - this.lastHeartbeat;
+        this.lastHeartbeat = now;
         // Send heartbeat
-        if (_this.channel) {
-          _this.channel.send({
+        if (this.channel) {
+          this.channel.send({
             type: "broadcast",
             event: "heartbeat",
             payload: { timestamp: now },
           });
         }
-        setTimeout(heartbeatCheck, _this.config.heartbeatInterval);
+        setTimeout(heartbeatCheck, this.config.heartbeatInterval);
       }
     };
     setTimeout(heartbeatCheck, this.config.heartbeatInterval);
@@ -650,16 +639,18 @@ exports.subscriptionRealtimeManager = new SubscriptionRealtimeManager({
 // Helper functions for common operations
 function subscribeToUserUpdates(userId, callback) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, exports.subscriptionRealtimeManager.subscribe(userId, callback)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      exports.subscriptionRealtimeManager.subscribe(userId, callback),
+    ]);
   });
 }
 function broadcastSubscriptionEvent(event) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, exports.subscriptionRealtimeManager.broadcast(event)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      exports.subscriptionRealtimeManager.broadcast(event),
+    ]);
   });
 }
 function getRealtimeMetrics() {

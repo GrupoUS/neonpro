@@ -4,18 +4,17 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryDashboard = InventoryDashboard;
 var alert_1 = require("@/components/ui/alert");
@@ -156,7 +153,6 @@ var link_1 = require("next/link");
 var react_1 = require("react");
 var barcode_scanner_1 = require("./barcode-scanner");
 function InventoryDashboard(_a) {
-  var _this = this;
   var _b = _a.className,
     className = _b === void 0 ? "" : _b;
   var _c = (0, react_1.useState)("items"),
@@ -191,10 +187,10 @@ function InventoryDashboard(_a) {
     connectionStatus = _g.connectionStatus,
     reconnect = _g.reconnect;
   // Handle barcode scan
-  var handleBarcodeScan = function (result) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBarcodeScan = (result) =>
+    __awaiter(this, void 0, void 0, function () {
       var scanResult;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             console.log("Barcode scanned:", result);
@@ -226,39 +222,33 @@ function InventoryDashboard(_a) {
         }
       });
     });
-  };
   // Calculate dashboard metrics
-  var metrics = react_1.default.useMemo(
-    function () {
-      var totalItems = state.items.length;
-      var lowStockItems = state.alerts.filter(function (alert) {
-        return alert.alert_type === "low_stock" || alert.alert_type === "out_of_stock";
-      }).length;
-      var totalValue = state.items.reduce(function (sum, item) {
-        return sum + item.unit_cost * item.current_stock;
-      }, 0);
-      var activeAlerts = state.alerts.filter(function (alert) {
-        return alert.status === "active";
-      }).length;
-      return {
-        totalItems: totalItems,
-        lowStockItems: lowStockItems,
-        totalValue: totalValue,
-        activeAlerts: activeAlerts,
-        stockPercentage: totalItems > 0 ? ((totalItems - lowStockItems) / totalItems) * 100 : 100,
-      };
-    },
-    [state.items, state.alerts],
-  );
+  var metrics = react_1.default.useMemo(() => {
+    var totalItems = state.items.length;
+    var lowStockItems = state.alerts.filter(
+      (alert) => alert.alert_type === "low_stock" || alert.alert_type === "out_of_stock",
+    ).length;
+    var totalValue = state.items.reduce(
+      (sum, item) => sum + item.unit_cost * item.current_stock,
+      0,
+    );
+    var activeAlerts = state.alerts.filter((alert) => alert.status === "active").length;
+    return {
+      totalItems: totalItems,
+      lowStockItems: lowStockItems,
+      totalValue: totalValue,
+      activeAlerts: activeAlerts,
+      stockPercentage: totalItems > 0 ? ((totalItems - lowStockItems) / totalItems) * 100 : 100,
+    };
+  }, [state.items, state.alerts]);
   // Format currency
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   // Get status color
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case inventory_1.InventoryStatus.ACTIVE:
         return "bg-green-500";
@@ -273,7 +263,7 @@ function InventoryDashboard(_a) {
     }
   };
   // Get connection status color
-  var getConnectionStatusColor = function (status) {
+  var getConnectionStatusColor = (status) => {
     switch (status) {
       case "connected":
         return "text-green-600";
@@ -338,12 +328,7 @@ function InventoryDashboard(_a) {
               </dialog_1.DialogHeader>
 
               <div className="space-y-4">
-                <select_1.Select
-                  value={scanMode}
-                  onValueChange={function (value) {
-                    return setScanMode(value);
-                  }}
-                >
+                <select_1.Select value={scanMode} onValueChange={(value) => setScanMode(value)}>
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Selecione o modo de escaneamento" />
                   </select_1.SelectTrigger>
@@ -448,16 +433,14 @@ function InventoryDashboard(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-2">
-              {state.alerts.slice(0, 5).map(function (alert) {
-                return (
-                  <alert_1.Alert key={alert.id} variant="destructive">
-                    <alert_1.AlertDescription className="flex items-center justify-between">
-                      <span>{alert.message}</span>
-                      <badge_1.Badge variant="outline">{alert.alert_type}</badge_1.Badge>
-                    </alert_1.AlertDescription>
-                  </alert_1.Alert>
-                );
-              })}
+              {state.alerts.slice(0, 5).map((alert) => (
+                <alert_1.Alert key={alert.id} variant="destructive">
+                  <alert_1.AlertDescription className="flex items-center justify-between">
+                    <span>{alert.message}</span>
+                    <badge_1.Badge variant="outline">{alert.alert_type}</badge_1.Badge>
+                  </alert_1.AlertDescription>
+                </alert_1.Alert>
+              ))}
               {state.alerts.length > 5 && (
                 <p className="text-sm text-gray-500 text-center">
                   E mais {state.alerts.length - 5} alertas...
@@ -490,9 +473,7 @@ function InventoryDashboard(_a) {
                   <input_1.Input
                     placeholder="Buscar itens..."
                     value={state.searchQuery || ""}
-                    onChange={function (e) {
-                      return setSearchQuery(e.target.value);
-                    }}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full"
                   />
                 </div>
@@ -506,13 +487,11 @@ function InventoryDashboard(_a) {
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="">Todos os locais</select_1.SelectItem>
-                    {state.locations.map(function (location) {
-                      return (
-                        <select_1.SelectItem key={location.id} value={location.id}>
-                          {location.name}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {state.locations.map((location) => (
+                      <select_1.SelectItem key={location.id} value={location.id}>
+                        {location.name}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
 
@@ -525,13 +504,11 @@ function InventoryDashboard(_a) {
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="">Todas as categorias</select_1.SelectItem>
-                    {state.categories.map(function (category) {
-                      return (
-                        <select_1.SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {state.categories.map((category) => (
+                      <select_1.SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
 
@@ -549,44 +526,40 @@ function InventoryDashboard(_a) {
                     Carregando itens...
                   </div>
                 : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {state.items.map(function (item) {
-                      return (
-                        <card_1.Card key={item.id} className="hover:shadow-md transition-shadow">
-                          <card_1.CardContent className="p-4">
-                            <div className="flex items-start justify-between mb-2">
-                              <h4 className="font-semibold truncate">{item.name}</h4>
-                              <div
-                                className={"w-3 h-3 rounded-full ".concat(
-                                  getStatusColor(item.status),
-                                )}
-                              />
+                    {state.items.map((item) => (
+                      <card_1.Card key={item.id} className="hover:shadow-md transition-shadow">
+                        <card_1.CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-semibold truncate">{item.name}</h4>
+                            <div
+                              className={"w-3 h-3 rounded-full ".concat(
+                                getStatusColor(item.status),
+                              )}
+                            />
+                          </div>
+
+                          <p className="text-sm text-gray-600 mb-2">{item.description}</p>
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span>
+                              Estoque: <strong>{item.current_stock}</strong>
+                            </span>
+                            <span>Min: {item.minimum_stock}</span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm mt-2">
+                            <span>{formatCurrency(item.unit_cost)}</span>
+                            <badge_1.Badge variant="outline">{item.unit_of_measure}</badge_1.Badge>
+                          </div>
+
+                          {item.barcode && (
+                            <div className="mt-2 text-xs text-gray-500 font-mono">
+                              {item.barcode}
                             </div>
-
-                            <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-
-                            <div className="flex items-center justify-between text-sm">
-                              <span>
-                                Estoque: <strong>{item.current_stock}</strong>
-                              </span>
-                              <span>Min: {item.minimum_stock}</span>
-                            </div>
-
-                            <div className="flex items-center justify-between text-sm mt-2">
-                              <span>{formatCurrency(item.unit_cost)}</span>
-                              <badge_1.Badge variant="outline">
-                                {item.unit_of_measure}
-                              </badge_1.Badge>
-                            </div>
-
-                            {item.barcode && (
-                              <div className="mt-2 text-xs text-gray-500 font-mono">
-                                {item.barcode}
-                              </div>
-                            )}
-                          </card_1.CardContent>
-                        </card_1.Card>
-                      );
-                    })}
+                          )}
+                        </card_1.CardContent>
+                      </card_1.Card>
+                    ))}
                   </div>}
             </card_1.CardContent>
           </card_1.Card>
@@ -611,20 +584,18 @@ function InventoryDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {state.locations.map(function (location) {
-                  return (
-                    <card_1.Card key={location.id}>
-                      <card_1.CardContent className="p-4">
-                        <h4 className="font-semibold">{location.name}</h4>
-                        <p className="text-sm text-gray-600">{location.description}</p>
-                        <div className="flex items-center gap-1 mt-2 text-sm text-gray-500">
-                          <lucide_react_1.MapPin className="h-3 w-3" />
-                          {location.location_type}
-                        </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                {state.locations.map((location) => (
+                  <card_1.Card key={location.id}>
+                    <card_1.CardContent className="p-4">
+                      <h4 className="font-semibold">{location.name}</h4>
+                      <p className="text-sm text-gray-600">{location.description}</p>
+                      <div className="flex items-center gap-1 mt-2 text-sm text-gray-500">
+                        <lucide_react_1.MapPin className="h-3 w-3" />
+                        {location.location_type}
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -637,20 +608,18 @@ function InventoryDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {state.categories.map(function (category) {
-                  return (
-                    <card_1.Card key={category.id}>
-                      <card_1.CardContent className="p-4">
-                        <h4 className="font-semibold">{category.name}</h4>
-                        <p className="text-sm text-gray-600">{category.description}</p>
-                        <div className="flex items-center gap-1 mt-2 text-sm text-gray-500">
-                          <lucide_react_1.Tags className="h-3 w-3" />
-                          Categoria
-                        </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                {state.categories.map((category) => (
+                  <card_1.Card key={category.id}>
+                    <card_1.CardContent className="p-4">
+                      <h4 className="font-semibold">{category.name}</h4>
+                      <p className="text-sm text-gray-600">{category.description}</p>
+                      <div className="flex items-center gap-1 mt-2 text-sm text-gray-500">
+                        <lucide_react_1.Tags className="h-3 w-3" />
+                        Categoria
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

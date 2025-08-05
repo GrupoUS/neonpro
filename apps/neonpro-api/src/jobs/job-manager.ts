@@ -133,9 +133,9 @@ export class HealthcareJobManager {
    */
   async initialize(): Promise<void> {
     // Create queues for different job categories
-    await this.createQueue("healthcare-high", { priority: 10 });
-    await this.createQueue("healthcare-normal", { priority: 5 });
-    await this.createQueue("healthcare-background", { priority: 1 });
+    await this.createQueue("healthcare-high");
+    await this.createQueue("healthcare-normal");
+    await this.createQueue("healthcare-background");
 
     // Start workers
     this.startWorkers();
@@ -180,8 +180,7 @@ export class HealthcareJobManager {
 
     healthcareLogger.log("info", `Job added: ${type}`, {
       tenantId,
-      jobId: job.id,
-      metadata: { jobType: type, queueName },
+      metadata: { jobType: type, queueName, jobId: job.id },
     });
 
     return job;
@@ -211,7 +210,7 @@ export class HealthcareJobManager {
   // Appointment reminders
   async scheduleAppointmentReminder(
     tenantId: string,
-    appointmentId: string,
+    _appointmentId: string,
     reminderData: AppointmentReminderJobData,
     scheduleTime: Date,
   ): Promise<Job> {
@@ -323,8 +322,7 @@ export class HealthcareJobManager {
     for (const job of failedJobs) {
       await job.retry();
       healthcareLogger.log("info", `Job retried: ${job.name}`, {
-        jobId: job.id,
-        metadata: { queueName, attempts: job.attemptsMade },
+        metadata: { queueName, attempts: job.attemptsMade, jobId: job.id },
       });
     }
   }
@@ -363,8 +361,8 @@ export class HealthcareJobManager {
     const queue = new Queue(name, {
       connection: this.redis,
       defaultJobOptions: {
-        removeOnComplete: 100,
-        removeOnFail: 50,
+        removeOnComplete: { count: 100 },
+        removeOnFail: { count: 50 },
         ...options,
       },
     });
@@ -378,8 +376,7 @@ export class HealthcareJobManager {
 
     queue.on("waiting", (job) => {
       healthcareLogger.log("debug", `Job waiting: ${job.name}`, {
-        jobId: job.id,
-        metadata: { queueName: name },
+        metadata: { queueName: name, jobId: job.id },
       });
     });
   }
@@ -390,8 +387,8 @@ export class HealthcareJobManager {
       concurrency: 5,
       maxStalledCount: 1,
       stalledInterval: 30000,
-      removeOnComplete: 100,
-      removeOnFail: 50,
+      removeOnComplete: { count: 100 },
+      removeOnFail: { count: 50 },
     };
 
     // Start workers for each queue
@@ -401,17 +398,15 @@ export class HealthcareJobManager {
       // Setup worker events
       worker.on("completed", (job) => {
         healthcareLogger.log("info", `Job completed: ${job.name}`, {
-          jobId: job.id,
           tenantId: job.data.tenantId,
-          metadata: { queueName, duration: Date.now() - job.timestamp },
+          metadata: { queueName, duration: Date.now() - job.timestamp, jobId: job.id },
         });
       });
 
       worker.on("failed", (job, err) => {
         healthcareLogger.logError(err, {
-          jobId: job?.id,
           tenantId: job?.data?.tenantId,
-          metadata: { queueName, jobName: job?.name, attempts: job?.attemptsMade },
+          metadata: { queueName, jobName: job?.name, attempts: job?.attemptsMade, jobId: job?.id },
         });
       });
 
@@ -432,9 +427,8 @@ export class HealthcareJobManager {
     }
 
     healthcareLogger.log("info", `Processing job: ${type}`, {
-      jobId: job.id,
       tenantId,
-      metadata: { jobType: type },
+      metadata: { jobType: type, jobId: job.id },
     });
 
     const startTime = Date.now();
@@ -444,9 +438,9 @@ export class HealthcareJobManager {
       const duration = Date.now() - startTime;
 
       healthcareLogger.logPerformance(`Job ${type}`, duration, {
-        jobId: job.id,
         tenantId,
         success: true,
+        metadata: { jobId: job.id },
       });
 
       return result;
@@ -454,9 +448,8 @@ export class HealthcareJobManager {
       const duration = Date.now() - startTime;
 
       healthcareLogger.logError(error as Error, {
-        jobId: job.id,
         tenantId,
-        metadata: { jobType: type, duration },
+        metadata: { jobType: type, duration, jobId: job.id },
       });
 
       throw error;
@@ -536,32 +529,32 @@ export class HealthcareJobManager {
   }
 
   // Job handler implementations (simplified)
-  private async handlePatientDataSync(data: PatientDataSyncJobData): Promise<void> {
+  private async handlePatientDataSync(_data: PatientDataSyncJobData): Promise<void> {
     // Implementation would sync patient data from external sources
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate work
   }
 
-  private async handlePatientBackup(data: any): Promise<void> {
+  private async handlePatientBackup(_data: any): Promise<void> {
     // Implementation would backup patient data
     await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate work
   }
 
-  private async handleAppointmentReminder(data: AppointmentReminderJobData): Promise<void> {
+  private async handleAppointmentReminder(_data: AppointmentReminderJobData): Promise<void> {
     // Implementation would send appointment reminders
     await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate work
   }
 
-  private async handleInvoiceGeneration(data: InvoiceGenerationJobData): Promise<void> {
+  private async handleInvoiceGeneration(_data: InvoiceGenerationJobData): Promise<void> {
     // Implementation would generate invoices
     await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate work
   }
 
-  private async handleLGPDDataDeletion(data: any): Promise<void> {
+  private async handleLGPDDataDeletion(_data: any): Promise<void> {
     // Implementation would handle LGPD-compliant data deletion
     await new Promise((resolve) => setTimeout(resolve, 3000)); // Simulate work
   }
 
-  private async handleDatabaseCleanup(data: any): Promise<void> {
+  private async handleDatabaseCleanup(_data: any): Promise<void> {
     // Implementation would clean up old database records
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate work
   }

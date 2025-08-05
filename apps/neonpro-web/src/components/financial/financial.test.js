@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TASK-003: Business Logic Enhancement
  * Unit Tests for Financial Components
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var globals_1 = require("@jest/globals");
@@ -147,70 +144,46 @@ var IntelligentScheduling_1 = require("@/components/financial/IntelligentSchedul
 var FinancialAnalytics_1 = require("@/components/financial/FinancialAnalytics");
 var financial_1 = require("@/components/financial");
 // Mock external dependencies
-globals_1.jest.mock("@/components/ui/use-toast", function () {
-  return {
-    useToast: function () {
-      return {
-        toast: globals_1.jest.fn(),
-      };
-    },
-  };
-});
+globals_1.jest.mock("@/components/ui/use-toast", () => ({
+  useToast: () => ({
+    toast: globals_1.jest.fn(),
+  }),
+}));
 // Mock recharts components
-globals_1.jest.mock("recharts", function () {
-  return {
-    LineChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="line-chart">{children}</div>;
-    },
-    Line: function () {
-      return <div data-testid="line" />;
-    },
-    XAxis: function () {
-      return <div data-testid="x-axis" />;
-    },
-    YAxis: function () {
-      return <div data-testid="y-axis" />;
-    },
-    CartesianGrid: function () {
-      return <div data-testid="grid" />;
-    },
-    Tooltip: function () {
-      return <div data-testid="tooltip" />;
-    },
-    ResponsiveContainer: function (_a) {
-      var children = _a.children;
-      return <div data-testid="responsive-container">{children}</div>;
-    },
-    BarChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="bar-chart">{children}</div>;
-    },
-    Bar: function () {
-      return <div data-testid="bar" />;
-    },
-    PieChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="pie-chart">{children}</div>;
-    },
-    Pie: function () {
-      return <div data-testid="pie" />;
-    },
-    Cell: function () {
-      return <div data-testid="cell" />;
-    },
-    Area: function () {
-      return <div data-testid="area" />;
-    },
-    AreaChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="area-chart">{children}</div>;
-    },
-  };
-});
-describe("Financial Components Test Suite", function () {
-  describe("IntelligentInvoicing Component", function () {
-    test("renders invoice generation interface", function () {
+globals_1.jest.mock("recharts", () => ({
+  LineChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="line-chart">{children}</div>;
+  },
+  Line: () => <div data-testid="line" />,
+  XAxis: () => <div data-testid="x-axis" />,
+  YAxis: () => <div data-testid="y-axis" />,
+  CartesianGrid: () => <div data-testid="grid" />,
+  Tooltip: () => <div data-testid="tooltip" />,
+  ResponsiveContainer: (_a) => {
+    var children = _a.children;
+    return <div data-testid="responsive-container">{children}</div>;
+  },
+  BarChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="bar-chart">{children}</div>;
+  },
+  Bar: () => <div data-testid="bar" />,
+  PieChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="pie-chart">{children}</div>;
+  },
+  Pie: () => <div data-testid="pie" />,
+  Cell: () => <div data-testid="cell" />,
+  Area: () => <div data-testid="area" />,
+  AreaChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="area-chart">{children}</div>;
+  },
+}));
+describe("Financial Components Test Suite", () => {
+  describe("IntelligentInvoicing Component", () => {
+    test("renders invoice generation interface", () => {
       (0, react_1.render)(<IntelligentInvoicing_1.IntelligentInvoicing />);
       expect(react_1.screen.getByText("Geração Inteligente de Faturas")).toBeInTheDocument();
       expect(
@@ -221,10 +194,10 @@ describe("Financial Components Test Suite", function () {
       expect(react_1.screen.getByPlaceholderText("Selecionar paciente")).toBeInTheDocument();
       expect(react_1.screen.getByPlaceholderText("Selecionar template")).toBeInTheDocument();
     });
-    test("AI template recommendation functionality", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    test("AI template recommendation functionality", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var recommendButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -236,7 +209,7 @@ describe("Financial Components Test Suite", function () {
               return [
                 4 /*yield*/,
                 (0, react_1.waitFor)(
-                  function () {
+                  () => {
                     expect(react_1.screen.getByText("Recomendar com AI")).toBeInTheDocument();
                   },
                   { timeout: 3000 },
@@ -247,9 +220,8 @@ describe("Financial Components Test Suite", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("invoice total calculation", function () {
+      }));
+    test("invoice total calculation", () => {
       var mockItems = [
         {
           id: "1",
@@ -278,10 +250,10 @@ describe("Financial Components Test Suite", function () {
       expect(totals.totalTax).toBe(25);
       expect(totals.total).toBe(710);
     });
-    test("validates required fields before invoice generation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    test("validates required fields before invoice generation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var generateButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           (0, react_1.render)(<IntelligentInvoicing_1.IntelligentInvoicing />);
           generateButton = react_1.screen.getByText("Gerar Fatura");
           react_1.fireEvent.click(generateButton);
@@ -289,12 +261,11 @@ describe("Financial Components Test Suite", function () {
           expect(generateButton).toBeDisabled();
           return [2 /*return*/];
         });
-      });
-    });
-    test("generates invoice with valid data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("generates invoice with valid data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockOnInvoiceGenerated, patientSelect, templateSelect, generateButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockOnInvoiceGenerated = globals_1.jest.fn();
@@ -307,7 +278,7 @@ describe("Financial Components Test Suite", function () {
               react_1.fireEvent.click(patientSelect);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var patientOption = react_1.screen.getByText("Maria Silva");
                   react_1.fireEvent.click(patientOption);
                 }),
@@ -318,7 +289,7 @@ describe("Financial Components Test Suite", function () {
               react_1.fireEvent.click(templateSelect);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var templateOption = react_1.screen.getByText("Consulta Dermatológica");
                   react_1.fireEvent.click(templateOption);
                 }),
@@ -331,7 +302,7 @@ describe("Financial Components Test Suite", function () {
               return [
                 4 /*yield*/,
                 (0, react_1.waitFor)(
-                  function () {
+                  () => {
                     expect(mockOnInvoiceGenerated).toHaveBeenCalled();
                   },
                   { timeout: 2000 },
@@ -342,11 +313,10 @@ describe("Financial Components Test Suite", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("IntelligentScheduling Component", function () {
-    test("renders scheduling interface", function () {
+  describe("IntelligentScheduling Component", () => {
+    test("renders scheduling interface", () => {
       (0, react_1.render)(<IntelligentScheduling_1.IntelligentScheduling />);
       expect(react_1.screen.getByText("Agendamento Inteligente")).toBeInTheDocument();
       expect(
@@ -355,10 +325,10 @@ describe("Financial Components Test Suite", function () {
       expect(react_1.screen.getByPlaceholderText("Selecionar paciente")).toBeInTheDocument();
       expect(react_1.screen.getByPlaceholderText("Selecionar profissional")).toBeInTheDocument();
     });
-    test("AI slot analysis functionality", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    test("AI slot analysis functionality", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var patientSelect, professionalSelect, serviceSelect, dateButton, analyzeButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<IntelligentScheduling_1.IntelligentScheduling />);
@@ -379,7 +349,7 @@ describe("Financial Components Test Suite", function () {
               return [
                 4 /*yield*/,
                 (0, react_1.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_1.screen.getByText("Analisar Horários Disponíveis"),
                     ).toBeInTheDocument();
@@ -392,20 +362,18 @@ describe("Financial Components Test Suite", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("conflict detection system", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("conflict detection system", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           (0, react_1.render)(<IntelligentScheduling_1.IntelligentScheduling />);
           // The component should handle conflict detection
           // This would be more meaningful with actual backend integration
           expect(react_1.screen.getByText("Agendamento Inteligente")).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    test("AI scoring algorithm", function () {
+      }));
+    test("AI scoring algorithm", () => {
       // Mock AI scoring calculation
       var mockSlot = {
         id: "slot_09_00",
@@ -435,8 +403,8 @@ describe("Financial Components Test Suite", function () {
       expect(mockProfessional.currentLoad).toBe(75);
     });
   });
-  describe("FinancialAnalytics Component", function () {
-    test("renders analytics dashboard", function () {
+  describe("FinancialAnalytics Component", () => {
+    test("renders analytics dashboard", () => {
       (0, react_1.render)(<FinancialAnalytics_1.FinancialAnalytics />);
       expect(react_1.screen.getByText("Análise Financeira")).toBeInTheDocument();
       expect(
@@ -444,7 +412,7 @@ describe("Financial Components Test Suite", function () {
       ).toBeInTheDocument();
       expect(react_1.screen.getByText("Últimos 30 dias")).toBeInTheDocument();
     });
-    test("period selection functionality", function () {
+    test("period selection functionality", () => {
       (0, react_1.render)(<FinancialAnalytics_1.FinancialAnalytics />);
       var periodSelect = react_1.screen.getByDisplayValue("Últimos 30 dias");
       react_1.fireEvent.click(periodSelect);
@@ -452,7 +420,7 @@ describe("Financial Components Test Suite", function () {
       expect(react_1.screen.getByText("Últimos 90 dias")).toBeInTheDocument();
       expect(react_1.screen.getByText("Último ano")).toBeInTheDocument();
     });
-    test("tab navigation", function () {
+    test("tab navigation", () => {
       (0, react_1.render)(<FinancialAnalytics_1.FinancialAnalytics />);
       expect(react_1.screen.getByText("Visão Geral")).toBeInTheDocument();
       expect(react_1.screen.getByText("Fluxo de Caixa")).toBeInTheDocument();
@@ -463,15 +431,15 @@ describe("Financial Components Test Suite", function () {
       react_1.fireEvent.click(react_1.screen.getByText("Insights AI"));
       expect(react_1.screen.getByText("Gerar Novos Insights AI")).toBeInTheDocument();
     });
-    test("renders charts correctly", function () {
+    test("renders charts correctly", () => {
       (0, react_1.render)(<FinancialAnalytics_1.FinancialAnalytics />);
       // Charts should be rendered via mocked recharts components
       expect(react_1.screen.getByTestId("responsive-container")).toBeInTheDocument();
     });
-    test("predictive insights generation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    test("predictive insights generation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var generateButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           (0, react_1.render)(<FinancialAnalytics_1.FinancialAnalytics />);
           react_1.fireEvent.click(react_1.screen.getByText("Insights AI"));
           generateButton = react_1.screen.getByText("Gerar Novos Insights AI");
@@ -480,21 +448,20 @@ describe("Financial Components Test Suite", function () {
           expect(generateButton).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
-  describe("Utility Functions", function () {
-    test("formatCurrency function", function () {
+  describe("Utility Functions", () => {
+    test("formatCurrency function", () => {
       expect((0, financial_1.formatCurrency)(1234.56)).toBe("R$ 1.234,56");
       expect((0, financial_1.formatCurrency)(0)).toBe("R$ 0,00");
       expect((0, financial_1.formatCurrency)(1000000)).toBe("R$ 1.000.000,00");
     });
-    test("formatPercentage function", function () {
+    test("formatPercentage function", () => {
       expect((0, financial_1.formatPercentage)(12.345)).toBe("12.3%");
       expect((0, financial_1.formatPercentage)(0)).toBe("0.0%");
       expect((0, financial_1.formatPercentage)(100)).toBe("100.0%");
     });
-    test("calculateTotals with complex scenarios", function () {
+    test("calculateTotals with complex scenarios", () => {
       var complexItems = [
         {
           id: "1",
@@ -524,22 +491,20 @@ describe("Financial Components Test Suite", function () {
       expect(totals.total).toBe(487);
     });
   });
-  describe("Error Handling", function () {
-    test("handles invalid data gracefully", function () {
+  describe("Error Handling", () => {
+    test("handles invalid data gracefully", () => {
       (0, react_1.render)(<IntelligentInvoicing_1.IntelligentInvoicing />);
       // Component should render without errors even with no props
       expect(react_1.screen.getByText("Geração Inteligente de Faturas")).toBeInTheDocument();
     });
-    test("handles network errors in AI recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    test("handles network errors in AI recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var recommendButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock fetch to reject
-              global.fetch = globals_1.jest.fn(function () {
-                return Promise.reject(new Error("Network error"));
-              });
+              global.fetch = globals_1.jest.fn(() => Promise.reject(new Error("Network error")));
               (0, react_1.render)(<IntelligentInvoicing_1.IntelligentInvoicing />);
               recommendButton = react_1.screen.getByText("Recomendar com AI");
               react_1.fireEvent.click(recommendButton);
@@ -548,7 +513,7 @@ describe("Financial Components Test Suite", function () {
               return [
                 4 /*yield*/,
                 (0, react_1.waitFor)(
-                  function () {
+                  () => {
                     expect(react_1.screen.getByText("Recomendar com AI")).toBeInTheDocument();
                   },
                   { timeout: 3000 },
@@ -559,11 +524,10 @@ describe("Financial Components Test Suite", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance Tests", function () {
-    test("components render within performance budget", function () {
+  describe("Performance Tests", () => {
+    test("components render within performance budget", () => {
       var startTime = performance.now();
       (0, react_1.render)(<FinancialAnalytics_1.FinancialAnalytics />);
       var endTime = performance.now();
@@ -571,15 +535,13 @@ describe("Financial Components Test Suite", function () {
       // Should render within 100ms
       expect(renderTime).toBeLessThan(100);
     });
-    test("handles large datasets efficiently", function () {
-      var largeMockData = Array.from({ length: 1000 }, function (_, i) {
-        return {
-          date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
-          income: Math.random() * 10000,
-          expenses: Math.random() * 5000,
-          profit: 0,
-        };
-      });
+    test("handles large datasets efficiently", () => {
+      var largeMockData = Array.from({ length: 1000 }, (_, i) => ({
+        date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
+        income: Math.random() * 10000,
+        expenses: Math.random() * 5000,
+        profit: 0,
+      }));
       // Component should handle large datasets without significant performance impact
       var startTime = performance.now();
       (0, react_1.render)(<FinancialAnalytics_1.FinancialAnalytics />);

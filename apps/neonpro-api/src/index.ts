@@ -98,11 +98,24 @@ async function start() {
       secret: process.env.JWT_SECRET || "your-secret-key",
     });
 
+    // Validate required environment variables
+    const requiredEnvVars = {
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+      SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY,
+    };
+
+    for (const [key, value] of Object.entries(requiredEnvVars)) {
+      if (!value) {
+        throw new Error(`Missing required environment variable: ${key}`);
+      }
+    }
+
     // Register custom plugins
     await server.register(supabasePlugin, {
-      url: process.env.SUPABASE_URL!,
-      anonKey: process.env.SUPABASE_ANON_KEY!,
-      serviceKey: process.env.SUPABASE_SERVICE_KEY!,
+      url: requiredEnvVars.SUPABASE_URL!,
+      anonKey: requiredEnvVars.SUPABASE_ANON_KEY!,
+      serviceKey: requiredEnvVars.SUPABASE_SERVICE_KEY!,
     });
 
     await server.register(authPlugin);
@@ -127,7 +140,7 @@ async function start() {
       request.log.error({
         error: error.message,
         stack: error.stack,
-        userId: (request.user as any)?.id,
+        userId: (request.user as { id?: string })?.id,
         tenantId: request.tenantId,
       });
 

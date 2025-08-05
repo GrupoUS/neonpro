@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var client_1 = require("@/lib/supabase/client");
 var patients_1 = require("../patients");
@@ -229,15 +226,15 @@ var mockFHIRPatient = {
   gender: "male",
   birthDate: "1990-01-15",
 };
-describe("Patient Supabase Functions", function () {
-  beforeEach(function () {
+describe("Patient Supabase Functions", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("createPatient", function () {
-    it("successfully creates a patient with valid data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("createPatient", () => {
+    it("successfully creates a patient with valid data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockInsertResult, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockInsertResult = {
@@ -259,12 +256,11 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockError, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockError = { message: "Duplicate CPF", code: "23505" };
@@ -285,12 +281,11 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("transforms data to FHIR-compliant format", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("transforms data to FHIR-compliant format", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockInsertResult, insertMock, insertedData, cpfIdentifier;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockInsertResult = {
@@ -313,19 +308,18 @@ describe("Patient Supabase Functions", function () {
               expect(insertedData.fhir_data.birthDate).toBe("1990-01-15");
               // Check identifiers
               expect(insertedData.fhir_data.identifier).toHaveLength(2); // CPF and RG
-              cpfIdentifier = insertedData.fhir_data.identifier.find(function (id) {
-                return id.system === "http://rnds.saude.gov.br/fhir/r4/NamingSystem/cpf";
-              });
+              cpfIdentifier = insertedData.fhir_data.identifier.find(
+                (id) => id.system === "http://rnds.saude.gov.br/fhir/r4/NamingSystem/cpf",
+              );
               expect(cpfIdentifier.value).toBe("12345678901");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("includes LGPD consent data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("includes LGPD consent data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockInsertResult, insertMock, insertedData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockInsertResult = {
@@ -350,14 +344,13 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getPatient", function () {
-    it("retrieves patient by ID successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getPatient", () => {
+    it("retrieves patient by ID successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockPatientRecord, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockPatientRecord = {
@@ -390,12 +383,11 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles patient not found", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles patient not found", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -416,14 +408,13 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("updatePatient", function () {
-    it("updates patient data successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("updatePatient", () => {
+    it("updates patient data successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updatedData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updatedData = __assign(__assign({}, mockPatientData), {
@@ -445,12 +436,11 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles update errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles update errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -471,14 +461,13 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("deletePatient", function () {
-    it("soft deletes patient successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("deletePatient", () => {
+    it("soft deletes patient successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -495,12 +484,11 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles deletion errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles deletion errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -520,15 +508,14 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("searchPatients", function () {
-    it("searches patients by name successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("searchPatients", () => {
+    it("searches patients by name successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockResults, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               mockResults = [
@@ -573,12 +560,11 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("filters by status correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("filters by status correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockCalls;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -605,22 +591,19 @@ describe("Patient Supabase Functions", function () {
             case 1:
               _a.sent();
               mockCalls = mockSupabase.from().eq.mock.calls;
-              expect(
-                mockCalls.some(function (call) {
-                  return call[0] === "status" && call[1] === "active";
-                }),
-              ).toBe(true);
+              expect(mockCalls.some((call) => call[0] === "status" && call[1] === "active")).toBe(
+                true,
+              );
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getPatientStats", function () {
-    it("retrieves patient statistics successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getPatientStats", () => {
+    it("retrieves patient statistics successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockStats, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockStats = {
@@ -644,12 +627,11 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles statistics retrieval errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles statistics retrieval errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.rpc.mockResolvedValue({
@@ -666,14 +648,13 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("FHIR Data Transformation", function () {
-    it("correctly transforms Brazilian address to FHIR format", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("FHIR Data Transformation", () => {
+    it("correctly transforms Brazilian address to FHIR format", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var insertMock, fhirData, address;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               insertMock = jest.fn().mockResolvedValue({
@@ -699,12 +680,11 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("correctly transforms emergency contact to FHIR RelatedPerson", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("correctly transforms emergency contact to FHIR RelatedPerson", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var insertMock, fhirData, contact;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               insertMock = jest.fn().mockResolvedValue({
@@ -726,7 +706,6 @@ describe("Patient Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

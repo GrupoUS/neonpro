@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Temporary demand forecasting types for build compatibility
  */
@@ -23,17 +22,11 @@ exports.DemandForecastSchema = {
   },
 };
 // Export do DemandForecastingEngine
-var DemandForecastingEngine = /** @class */ (function () {
+var DemandForecastingEngine = /** @class */ (() => {
   function DemandForecastingEngine() {}
-  DemandForecastingEngine.analyze = function () {
-    return {};
-  };
-  DemandForecastingEngine.predict = function () {
-    return {};
-  };
-  DemandForecastingEngine.calculate = function () {
-    return {};
-  };
+  DemandForecastingEngine.analyze = () => ({});
+  DemandForecastingEngine.predict = () => ({});
+  DemandForecastingEngine.calculate = () => ({});
   return DemandForecastingEngine;
 })();
 exports.DemandForecastingEngine = DemandForecastingEngine;

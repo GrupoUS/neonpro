@@ -1,4 +1,3 @@
-"use strict";
 /**
  * KPI Card Component
  *
@@ -73,7 +72,7 @@ var SIZE_VARIANTS = {
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
-var formatKPIValue = function (value, format) {
+var formatKPIValue = (value, format) => {
   switch (format) {
     case "currency":
       return new Intl.NumberFormat("pt-BR", {
@@ -92,7 +91,7 @@ var formatKPIValue = function (value, format) {
       return value.toString();
   }
 };
-var getTrendIcon = function (direction, iconSize) {
+var getTrendIcon = (direction, iconSize) => {
   var className = ""
     .concat(iconSize, " ")
     .concat(
@@ -111,7 +110,7 @@ var getTrendIcon = function (direction, iconSize) {
       return <lucide_react_1.Minus className={className} />;
   }
 };
-var getStatusIcon = function (status, iconSize) {
+var getStatusIcon = (status, iconSize) => {
   var variant = KPI_STATUS_VARIANTS[status];
   var className = "".concat(iconSize, " ").concat(variant.iconColor);
   switch (status) {
@@ -127,7 +126,7 @@ var getStatusIcon = function (status, iconSize) {
       return <lucide_react_1.Clock className={className} />;
   }
 };
-var getStatusLabel = function (status) {
+var getStatusLabel = (status) => {
   switch (status) {
     case "excellent":
       return "Excelente";
@@ -141,7 +140,7 @@ var getStatusLabel = function (status) {
       return "Desconhecido";
   }
 };
-var getTrendLabel = function (direction, changePercent) {
+var getTrendLabel = (direction, changePercent) => {
   var percent = changePercent ? " (".concat(Math.abs(changePercent).toFixed(1), "%)") : "";
   switch (direction) {
     case "up":
@@ -155,7 +154,7 @@ var getTrendLabel = function (direction, changePercent) {
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
-var KPICard = function (_a) {
+var KPICard = (_a) => {
   var kpi = _a.kpi,
     _b = _a.size,
     size = _b === void 0 ? "md" : _b,
@@ -177,208 +176,192 @@ var KPICard = function (_a) {
   var variant = KPI_STATUS_VARIANTS[kpi.status];
   var sizeVariant = SIZE_VARIANTS[size];
   var formattedValue = (0, react_1.useMemo)(
-    function () {
-      return formatKPIValue(kpi.currentValue, kpi.format);
-    },
+    () => formatKPIValue(kpi.currentValue, kpi.format),
     [kpi.currentValue, kpi.format],
   );
-  var formattedTarget = (0, react_1.useMemo)(
-    function () {
-      if (!kpi.target) return null;
-      return formatKPIValue(kpi.target, kpi.format);
-    },
-    [kpi.target, kpi.format],
-  );
-  var targetProgress = (0, react_1.useMemo)(
-    function () {
-      if (!kpi.target) return null;
-      return Math.min(100, Math.max(0, (kpi.currentValue / kpi.target) * 100));
-    },
-    [kpi.currentValue, kpi.target],
-  );
+  var formattedTarget = (0, react_1.useMemo)(() => {
+    if (!kpi.target) return null;
+    return formatKPIValue(kpi.target, kpi.format);
+  }, [kpi.target, kpi.format]);
+  var targetProgress = (0, react_1.useMemo)(() => {
+    if (!kpi.target) return null;
+    return Math.min(100, Math.max(0, (kpi.currentValue / kpi.target) * 100));
+  }, [kpi.currentValue, kpi.target]);
   var trendLabel = (0, react_1.useMemo)(
-    function () {
-      return getTrendLabel(kpi.trend.direction, kpi.trend.changePercent);
-    },
+    () => getTrendLabel(kpi.trend.direction, kpi.trend.changePercent),
     [kpi.trend],
   );
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  var handleCardClick = function () {
+  var handleCardClick = () => {
     onClick === null || onClick === void 0 ? void 0 : onClick(kpi);
   };
-  var handleDrillDown = function (e) {
+  var handleDrillDown = (e) => {
     e.stopPropagation();
     onDrillDown === null || onDrillDown === void 0 ? void 0 : onDrillDown(kpi);
   };
-  var handleAlert = function (e) {
+  var handleAlert = (e) => {
     e.stopPropagation();
     onAlert === null || onAlert === void 0 ? void 0 : onAlert(kpi);
   };
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  var renderHeader = function () {
-    return (
-      <card_1.CardHeader className={"".concat(sizeVariant.padding, " pb-2")}>
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
-            <card_1.CardTitle
-              className={"".concat(sizeVariant.titleClass, " font-medium text-gray-900 truncate")}
-            >
-              {kpi.name}
-            </card_1.CardTitle>
-            {kpi.description && size !== "sm" && (
-              <tooltip_1.TooltipProvider>
-                <tooltip_1.Tooltip>
-                  <tooltip_1.TooltipTrigger asChild>
-                    <lucide_react_1.Info className="h-3 w-3 text-gray-400 mt-1 cursor-help" />
-                  </tooltip_1.TooltipTrigger>
-                  <tooltip_1.TooltipContent>
-                    <p className="max-w-xs">{kpi.description}</p>
-                  </tooltip_1.TooltipContent>
-                </tooltip_1.Tooltip>
-              </tooltip_1.TooltipProvider>
-            )}
-          </div>
+  var renderHeader = () => (
+    <card_1.CardHeader className={"".concat(sizeVariant.padding, " pb-2")}>
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          <card_1.CardTitle
+            className={"".concat(sizeVariant.titleClass, " font-medium text-gray-900 truncate")}
+          >
+            {kpi.name}
+          </card_1.CardTitle>
+          {kpi.description && size !== "sm" && (
+            <tooltip_1.TooltipProvider>
+              <tooltip_1.Tooltip>
+                <tooltip_1.TooltipTrigger asChild>
+                  <lucide_react_1.Info className="h-3 w-3 text-gray-400 mt-1 cursor-help" />
+                </tooltip_1.TooltipTrigger>
+                <tooltip_1.TooltipContent>
+                  <p className="max-w-xs">{kpi.description}</p>
+                </tooltip_1.TooltipContent>
+              </tooltip_1.Tooltip>
+            </tooltip_1.TooltipProvider>
+          )}
+        </div>
 
-          <div className="flex items-center gap-2">
-            {getStatusIcon(kpi.status, sizeVariant.iconSize)}
+        <div className="flex items-center gap-2">
+          {getStatusIcon(kpi.status, sizeVariant.iconSize)}
 
-            {showActions && (
-              <dropdown_menu_1.DropdownMenu>
-                <dropdown_menu_1.DropdownMenuTrigger asChild>
-                  <button_1.Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <lucide_react_1.MoreVertical className="h-3 w-3" />
-                  </button_1.Button>
-                </dropdown_menu_1.DropdownMenuTrigger>
-                <dropdown_menu_1.DropdownMenuContent align="end">
-                  {onDrillDown && (
-                    <dropdown_menu_1.DropdownMenuItem onClick={handleDrillDown}>
-                      Ver Detalhes
-                    </dropdown_menu_1.DropdownMenuItem>
-                  )}
-                  {onAlert && kpi.status === "critical" && (
-                    <dropdown_menu_1.DropdownMenuItem onClick={handleAlert}>
-                      Criar Alerta
-                    </dropdown_menu_1.DropdownMenuItem>
-                  )}
-                  <dropdown_menu_1.DropdownMenuSeparator />
-                  <dropdown_menu_1.DropdownMenuItem>
-                    Exportar Dados
+          {showActions && (
+            <dropdown_menu_1.DropdownMenu>
+              <dropdown_menu_1.DropdownMenuTrigger asChild>
+                <button_1.Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <lucide_react_1.MoreVertical className="h-3 w-3" />
+                </button_1.Button>
+              </dropdown_menu_1.DropdownMenuTrigger>
+              <dropdown_menu_1.DropdownMenuContent align="end">
+                {onDrillDown && (
+                  <dropdown_menu_1.DropdownMenuItem onClick={handleDrillDown}>
+                    Ver Detalhes
                   </dropdown_menu_1.DropdownMenuItem>
-                </dropdown_menu_1.DropdownMenuContent>
-              </dropdown_menu_1.DropdownMenu>
-            )}
-          </div>
-        </div>
-      </card_1.CardHeader>
-    );
-  };
-  var renderContent = function () {
-    return (
-      <card_1.CardContent className={"".concat(sizeVariant.padding, " pt-0")}>
-        <div className="space-y-2">
-          {/* Main Value */}
-          <div className="flex items-baseline justify-between">
-            <span
-              className={"".concat(sizeVariant.valueClass, " font-bold ").concat(variant.textColor)}
-            >
-              {formattedValue}
-            </span>
-
-            {showTrend && kpi.trend && (
-              <div className="flex items-center gap-1">
-                {getTrendIcon(kpi.trend.direction, sizeVariant.iconSize)}
-                {kpi.trend.changePercent && size !== "sm" && (
-                  <span
-                    className={"text-xs ".concat(
-                      kpi.trend.direction === "up"
-                        ? "text-green-600"
-                        : kpi.trend.direction === "down"
-                          ? "text-red-600"
-                          : "text-gray-500",
-                    )}
-                  >
-                    {Math.abs(kpi.trend.changePercent).toFixed(1)}%
-                  </span>
                 )}
-              </div>
-            )}
-          </div>
-
-          {/* Status Badge */}
-          <div className="flex items-center justify-between">
-            <badge_1.Badge variant={variant.badgeVariant} className="text-xs">
-              {getStatusLabel(kpi.status)}
-            </badge_1.Badge>
-
-            {kpi.lastUpdated && size !== "sm" && (
-              <span className="text-xs text-gray-500">
-                {new Date(kpi.lastUpdated).toLocaleTimeString("pt-BR", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            )}
-          </div>
-
-          {/* Target Progress */}
-          {showTarget && kpi.target && targetProgress !== null && size !== "sm" && (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between text-xs text-gray-600">
-                <span>Meta: {formattedTarget}</span>
-                <span>{targetProgress.toFixed(0)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-1.5">
-                <div
-                  className={"h-1.5 rounded-full transition-all duration-300 ".concat(
-                    targetProgress >= 100
-                      ? "bg-green-500"
-                      : targetProgress >= 80
-                        ? "bg-blue-500"
-                        : targetProgress >= 60
-                          ? "bg-yellow-500"
-                          : "bg-red-500",
-                  )}
-                  style={{ width: "".concat(Math.min(100, targetProgress), "%") }}
-                />
-              </div>
-            </div>
+                {onAlert && kpi.status === "critical" && (
+                  <dropdown_menu_1.DropdownMenuItem onClick={handleAlert}>
+                    Criar Alerta
+                  </dropdown_menu_1.DropdownMenuItem>
+                )}
+                <dropdown_menu_1.DropdownMenuSeparator />
+                <dropdown_menu_1.DropdownMenuItem>Exportar Dados</dropdown_menu_1.DropdownMenuItem>
+              </dropdown_menu_1.DropdownMenuContent>
+            </dropdown_menu_1.DropdownMenu>
           )}
+        </div>
+      </div>
+    </card_1.CardHeader>
+  );
+  var renderContent = () => (
+    <card_1.CardContent className={"".concat(sizeVariant.padding, " pt-0")}>
+      <div className="space-y-2">
+        {/* Main Value */}
+        <div className="flex items-baseline justify-between">
+          <span
+            className={"".concat(sizeVariant.valueClass, " font-bold ").concat(variant.textColor)}
+          >
+            {formattedValue}
+          </span>
 
-          {/* Trend Information */}
-          {showTrend && kpi.trend && size === "lg" && (
-            <div className="pt-2 border-t border-gray-100">
-              <tooltip_1.TooltipProvider>
-                <tooltip_1.Tooltip>
-                  <tooltip_1.TooltipTrigger asChild>
-                    <div className="flex items-center gap-2 text-xs text-gray-600 cursor-help">
-                      {getTrendIcon(kpi.trend.direction, "h-3 w-3")}
-                      <span>{trendLabel}</span>
-                    </div>
-                  </tooltip_1.TooltipTrigger>
-                  <tooltip_1.TooltipContent>
-                    <div className="space-y-1">
-                      <p>Período: {kpi.trend.period}</p>
-                      {kpi.trend.previousValue && (
-                        <p>Valor anterior: {formatKPIValue(kpi.trend.previousValue, kpi.format)}</p>
-                      )}
-                    </div>
-                  </tooltip_1.TooltipContent>
-                </tooltip_1.Tooltip>
-              </tooltip_1.TooltipProvider>
+          {showTrend && kpi.trend && (
+            <div className="flex items-center gap-1">
+              {getTrendIcon(kpi.trend.direction, sizeVariant.iconSize)}
+              {kpi.trend.changePercent && size !== "sm" && (
+                <span
+                  className={"text-xs ".concat(
+                    kpi.trend.direction === "up"
+                      ? "text-green-600"
+                      : kpi.trend.direction === "down"
+                        ? "text-red-600"
+                        : "text-gray-500",
+                  )}
+                >
+                  {Math.abs(kpi.trend.changePercent).toFixed(1)}%
+                </span>
+              )}
             </div>
           )}
         </div>
-      </card_1.CardContent>
-    );
-  };
+
+        {/* Status Badge */}
+        <div className="flex items-center justify-between">
+          <badge_1.Badge variant={variant.badgeVariant} className="text-xs">
+            {getStatusLabel(kpi.status)}
+          </badge_1.Badge>
+
+          {kpi.lastUpdated && size !== "sm" && (
+            <span className="text-xs text-gray-500">
+              {new Date(kpi.lastUpdated).toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          )}
+        </div>
+
+        {/* Target Progress */}
+        {showTarget && kpi.target && targetProgress !== null && size !== "sm" && (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between text-xs text-gray-600">
+              <span>Meta: {formattedTarget}</span>
+              <span>{targetProgress.toFixed(0)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5">
+              <div
+                className={"h-1.5 rounded-full transition-all duration-300 ".concat(
+                  targetProgress >= 100
+                    ? "bg-green-500"
+                    : targetProgress >= 80
+                      ? "bg-blue-500"
+                      : targetProgress >= 60
+                        ? "bg-yellow-500"
+                        : "bg-red-500",
+                )}
+                style={{ width: "".concat(Math.min(100, targetProgress), "%") }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Trend Information */}
+        {showTrend && kpi.trend && size === "lg" && (
+          <div className="pt-2 border-t border-gray-100">
+            <tooltip_1.TooltipProvider>
+              <tooltip_1.Tooltip>
+                <tooltip_1.TooltipTrigger asChild>
+                  <div className="flex items-center gap-2 text-xs text-gray-600 cursor-help">
+                    {getTrendIcon(kpi.trend.direction, "h-3 w-3")}
+                    <span>{trendLabel}</span>
+                  </div>
+                </tooltip_1.TooltipTrigger>
+                <tooltip_1.TooltipContent>
+                  <div className="space-y-1">
+                    <p>Período: {kpi.trend.period}</p>
+                    {kpi.trend.previousValue && (
+                      <p>Valor anterior: {formatKPIValue(kpi.trend.previousValue, kpi.format)}</p>
+                    )}
+                  </div>
+                </tooltip_1.TooltipContent>
+              </tooltip_1.Tooltip>
+            </tooltip_1.TooltipProvider>
+          </div>
+        )}
+      </div>
+    </card_1.CardContent>
+  );
   // ============================================================================
   // MAIN RENDER
   // ============================================================================
@@ -390,12 +373,8 @@ var KPICard = function (_a) {
         .concat(variant.borderColor, "\n        ")
         .concat(isHovered ? "shadow-md scale-105" : "shadow-sm", "\n        ")
         .concat(onClick ? "hover:shadow-lg" : "", "\n      ")}
-      onMouseEnter={function () {
-        return setIsHovered(true);
-      }}
-      onMouseLeave={function () {
-        return setIsHovered(false);
-      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
     >
       {renderHeader()}

@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Eye,
+  MapPin,
+  Monitor,
+  Shield,
+  Smartphone,
+  X,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { useSessionSecurity } from "@/hooks/use-session";
-import type {
-  Shield,
-  AlertTriangle,
-  Clock,
-  MapPin,
-  Smartphone,
-  Monitor,
-  X,
-  CheckCircle,
-  Eye,
-} from "lucide-react";
 import type { SecurityEvent, SecuritySeverity, SuspiciousActivity } from "@/types/session";
 
 interface SecurityAlertsProps {

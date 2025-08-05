@@ -1,3 +1,4 @@
+import type { CalendarIcon, ExternalLinkIcon } from "lucide-react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -7,7 +8,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { CalendarIcon, ExternalLinkIcon } from "lucide-react";
 
 // Interface para um Agendamento na Agenda Preditiva
 interface Appointment {

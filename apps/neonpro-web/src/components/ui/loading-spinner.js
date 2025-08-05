@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoadingSpinner = LoadingSpinner;
 var lucide_react_1 = require("lucide-react");

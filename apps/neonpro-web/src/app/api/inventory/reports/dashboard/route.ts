@@ -1,6 +1,6 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { createinventoryReportsService } from "@/app/lib/services/inventory-reports-service";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {

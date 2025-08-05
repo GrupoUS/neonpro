@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // Financial Analytics Core - KPI Engine
 // Epic 5, Story 5.1: Advanced Financial Reporting + Real-time Insights
@@ -7,15 +6,15 @@
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,13 +134,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialAnalyticsCore = void 0;
 var client_1 = require("@/lib/supabase/client");
 var financial_reporting_1 = require("@/lib/types/financial-reporting");
 var reporting_engine_1 = require("./reporting-engine");
-var FinancialAnalyticsCore = /** @class */ (function () {
+var FinancialAnalyticsCore = /** @class */ (() => {
   function FinancialAnalyticsCore() {
     this.supabase = (0, client_1.createClient)();
     this.reportingEngine = new reporting_engine_1.FinancialReportingEngine();
@@ -525,13 +522,11 @@ var FinancialAnalyticsCore = /** @class */ (function () {
             return [4 /*yield*/, this.getRevenueTrendData(clinicId)];
           case 2:
             (_c.revenue_trends = _d.sent()),
-              (_c.expense_breakdown = expenseAnalytics.expense_by_category.map(function (cat) {
-                return {
-                  category: cat.category_name,
-                  value: cat.amount,
-                  percentage: cat.percentage,
-                };
-              }));
+              (_c.expense_breakdown = expenseAnalytics.expense_by_category.map((cat) => ({
+                category: cat.category_name,
+                value: cat.amount,
+                percentage: cat.percentage,
+              })));
             return [4 /*yield*/, this.getCashFlowTimelineData(clinicId)];
           case 3:
             _c.cash_flow_timeline = _d.sent();
@@ -598,9 +593,7 @@ var FinancialAnalyticsCore = /** @class */ (function () {
             completedAppointments =
               (appointmentData === null || appointmentData === void 0
                 ? void 0
-                : appointmentData.filter(function (apt) {
-                    return apt.status === "completed";
-                  }).length) || 0;
+                : appointmentData.filter((apt) => apt.status === "completed").length) || 0;
             utilizationRate =
               totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
             return [
@@ -625,7 +618,7 @@ var FinancialAnalyticsCore = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement growth rate calculation with historical data comparison
         return [2 /*return*/, 0];
       });
@@ -636,7 +629,7 @@ var FinancialAnalyticsCore = /** @class */ (function () {
    */
   FinancialAnalyticsCore.prototype.calculatePatientRetentionRate = function (clinicId, parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement patient retention calculation
         return [2 /*return*/, 0];
       });
@@ -645,19 +638,17 @@ var FinancialAnalyticsCore = /** @class */ (function () {
   /**
    * Calculate KPI changes between periods
    */
-  FinancialAnalyticsCore.prototype.calculateKPIChanges = function (current, previous) {
-    return {
-      revenue_change: 0, // TODO: Implement revenue comparison
-      expense_change: 0, // TODO: Implement expense comparison
-      profit_change: 0, // TODO: Implement profit comparison
-      cash_flow_change:
-        current.cash_flow_kpis.free_cash_flow - previous.cash_flow_kpis.free_cash_flow,
-    };
-  };
+  FinancialAnalyticsCore.prototype.calculateKPIChanges = (current, previous) => ({
+    revenue_change: 0, // TODO: Implement revenue comparison
+    expense_change: 0, // TODO: Implement expense comparison
+    profit_change: 0, // TODO: Implement profit comparison
+    cash_flow_change:
+      current.cash_flow_kpis.free_cash_flow - previous.cash_flow_kpis.free_cash_flow,
+  });
   /**
    * Generate financial alerts based on KPIs and performance
    */
-  FinancialAnalyticsCore.prototype.generateFinancialAlerts = function (kpis, performance) {
+  FinancialAnalyticsCore.prototype.generateFinancialAlerts = (kpis, performance) => {
     var alerts = [];
     // Cash flow alerts
     if (kpis.cash_flow_kpis.free_cash_flow < 0) {
@@ -691,7 +682,7 @@ var FinancialAnalyticsCore = /** @class */ (function () {
   /**
    * Generate actionable recommendations based on financial analysis
    */
-  FinancialAnalyticsCore.prototype.generateRecommendations = function (kpis, performance) {
+  FinancialAnalyticsCore.prototype.generateRecommendations = (kpis, performance) => {
     var recommendations = [];
     // Revenue optimization recommendations
     if (performance.revenue_metrics.revenue_growth_rate < 10) {
@@ -731,7 +722,7 @@ var FinancialAnalyticsCore = /** @class */ (function () {
    */
   FinancialAnalyticsCore.prototype.getHistoricalPerformance = function (clinicId, parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement historical performance analysis
         return [2 /*return*/, {}];
       });
@@ -742,7 +733,7 @@ var FinancialAnalyticsCore = /** @class */ (function () {
    */
   FinancialAnalyticsCore.prototype.getRevenueTrendData = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement revenue trend data for dashboard charts
         return [2 /*return*/, []];
       });
@@ -753,7 +744,7 @@ var FinancialAnalyticsCore = /** @class */ (function () {
    */
   FinancialAnalyticsCore.prototype.getCashFlowTimelineData = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement cash flow timeline data for dashboard charts
         return [2 /*return*/, []];
       });
@@ -764,7 +755,7 @@ var FinancialAnalyticsCore = /** @class */ (function () {
    */
   FinancialAnalyticsCore.prototype.getProfitabilityAnalysisData = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement profitability analysis data for dashboard charts
         return [2 /*return*/, []];
       });

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BackupStrategyManager =
   exports.FileSystemBackupStrategy =
@@ -141,7 +138,7 @@ var supabase_js_1 = require("@supabase/supabase-js");
 var audit_logger_1 = require("../../audit/audit-logger");
 var encryption_service_1 = require("../../security/encryption-service");
 var lgpd_manager_1 = require("../../lgpd/lgpd-manager");
-var DatabaseBackupStrategy = /** @class */ (function () {
+var DatabaseBackupStrategy = /** @class */ (() => {
   function DatabaseBackupStrategy() {
     this.name = "database";
     this.supabase = (0, supabase_js_1.createClient)(
@@ -603,7 +600,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   DatabaseBackupStrategy.prototype.generateDatabaseChecksum = function (jobId) {
     return __awaiter(this, void 0, void 0, function () {
       var timestamp, random;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         timestamp = Date.now();
         random = Math.random().toString(36).substr(2, 9);
         return [2 /*return*/, "db_".concat(timestamp, "_").concat(random)];
@@ -644,7 +641,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
       });
     });
   };
-  DatabaseBackupStrategy.prototype.generateStorageLocation = function (context) {
+  DatabaseBackupStrategy.prototype.generateStorageLocation = (context) => {
     var date = new Date().toISOString().split("T")[0];
     return "database/".concat(date, "/").concat(context.job_id);
   };
@@ -681,7 +678,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.saveToStorage = function (location, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar salvamento real no storage
         console.log("Salvando backup em: ".concat(location));
         return [2 /*return*/];
@@ -690,7 +687,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.getBackupSize = function (jobId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar cálculo real do tamanho
         return [2 /*return*/, 1024 * 1024 * 50]; // 50MB simulado
       });
@@ -698,7 +695,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.getBackupData = function (jobId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar leitura real dos dados
         return [2 /*return*/, "backup_data_".concat(jobId)];
       });
@@ -706,7 +703,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.saveEncryptedBackup = function (jobId, encryptedData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar salvamento dos dados criptografados
         console.log("Backup criptografado salvo: ".concat(jobId));
         return [2 /*return*/];
@@ -715,7 +712,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.checkBackupExists = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de existência
         return [2 /*return*/, true]; // Simulado
       });
@@ -723,7 +720,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.verifyBackupChecksum = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de checksum
         return [2 /*return*/, true]; // Simulado
       });
@@ -731,7 +728,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.verifyBackupStructure = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de estrutura
         return [2 /*return*/, true]; // Simulado
       });
@@ -739,7 +736,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.estimateDatabaseSize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar estimativa baseada em contagem de registros
         return [2 /*return*/, 1024 * 1024 * 100]; // 100MB simulado
       });
@@ -747,7 +744,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.decryptBackup = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar descriptografia
         return [2 /*return*/, location]; // Simulado
       });
@@ -755,7 +752,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.decompressBackup = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar descompressão
         return [2 /*return*/, location]; // Simulado
       });
@@ -763,7 +760,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.restoreDatabaseSchema = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar restauração do esquema
         console.log("Restaurando esquema de: ".concat(location));
         return [2 /*return*/];
@@ -772,7 +769,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.getBackupTables = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar listagem de tabelas no backup
         return [2 /*return*/, ["users", "audit_logs"]]; // Simulado
       });
@@ -780,7 +777,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.restoreTable = function (tableName, location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar restauração de tabela
         console.log("Restaurando tabela ".concat(tableName, " de: ").concat(location));
         return [2 /*return*/];
@@ -789,7 +786,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   };
   DatabaseBackupStrategy.prototype.verifyRestoreIntegrity = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de integridade pós-restauração
         console.log("Verificando integridade da restauração");
         return [2 /*return*/];
@@ -799,7 +796,7 @@ var DatabaseBackupStrategy = /** @class */ (function () {
   return DatabaseBackupStrategy;
 })();
 exports.DatabaseBackupStrategy = DatabaseBackupStrategy;
-var FileSystemBackupStrategy = /** @class */ (function () {
+var FileSystemBackupStrategy = /** @class */ (() => {
   function FileSystemBackupStrategy() {
     this.name = "filesystem";
     this.auditLogger = new audit_logger_1.AuditLogger();
@@ -1035,7 +1032,7 @@ var FileSystemBackupStrategy = /** @class */ (function () {
   };
   FileSystemBackupStrategy.prototype.getSize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar cálculo do tamanho dos diretórios
         return [2 /*return*/, 1024 * 1024 * 500]; // 500MB simulado
       });
@@ -1043,27 +1040,26 @@ var FileSystemBackupStrategy = /** @class */ (function () {
   };
   FileSystemBackupStrategy.prototype.getLastModified = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar busca pela última modificação
         return [2 /*return*/, new Date()];
       });
     });
   };
   // Métodos privados
-  FileSystemBackupStrategy.prototype.getBackupPaths = function (context) {
+  FileSystemBackupStrategy.prototype.getBackupPaths = (context) => {
     // Definir caminhos baseado na configuração
     var paths = ["/app/uploads", "/app/logs", "/app/config", "/app/public/assets"];
-    return paths.filter(function (path) {
-      return (
+    return paths.filter(
+      (path) =>
         context.strategy.data_sources.includes("files") ||
         context.strategy.data_sources.includes("logs") ||
-        context.strategy.data_sources.includes("configurations")
-      );
-    });
+        context.strategy.data_sources.includes("configurations"),
+    );
   };
   FileSystemBackupStrategy.prototype.backupPath = function (path, context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup de diretório específico
         return [
           2 /*return*/,
@@ -1078,12 +1074,10 @@ var FileSystemBackupStrategy = /** @class */ (function () {
   };
   FileSystemBackupStrategy.prototype.generateFileSystemChecksum = function (jobId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          "fs_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9)),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        "fs_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9)),
+      ]);
     });
   };
   FileSystemBackupStrategy.prototype.compressFileSystemBackup = function (jobId) {
@@ -1102,48 +1096,48 @@ var FileSystemBackupStrategy = /** @class */ (function () {
   };
   FileSystemBackupStrategy.prototype.encryptFileSystemBackup = function (jobId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar criptografia
         console.log("Criptografando backup filesystem: ".concat(jobId));
         return [2 /*return*/];
       });
     });
   };
-  FileSystemBackupStrategy.prototype.generateFileSystemStorageLocation = function (context) {
+  FileSystemBackupStrategy.prototype.generateFileSystemStorageLocation = (context) => {
     var date = new Date().toISOString().split("T")[0];
     return "filesystem/".concat(date, "/").concat(context.job_id);
   };
   FileSystemBackupStrategy.prototype.getFileSystemBackupSize = function (jobId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, 1024 * 1024 * 200]; // 200MB simulado
       });
     });
   };
   FileSystemBackupStrategy.prototype.checkFileSystemBackupExists = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simulado
       });
     });
   };
   FileSystemBackupStrategy.prototype.verifyFileSystemChecksum = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simulado
       });
     });
   };
   FileSystemBackupStrategy.prototype.prepareBackupForRestore = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, location]; // Simulado
       });
     });
   };
   FileSystemBackupStrategy.prototype.restoreFiles = function (backupLocation, targetLocation) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log(
           "Restaurando arquivos de ".concat(backupLocation, " para ").concat(targetLocation),
         );
@@ -1153,7 +1147,7 @@ var FileSystemBackupStrategy = /** @class */ (function () {
   };
   FileSystemBackupStrategy.prototype.verifyFileSystemRestore = function (targetLocation) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Verificando restaura\u00E7\u00E3o em: ".concat(targetLocation));
         return [2 /*return*/];
       });
@@ -1162,7 +1156,7 @@ var FileSystemBackupStrategy = /** @class */ (function () {
   return FileSystemBackupStrategy;
 })();
 exports.FileSystemBackupStrategy = FileSystemBackupStrategy;
-var BackupStrategyManager = /** @class */ (function () {
+var BackupStrategyManager = /** @class */ (() => {
   function BackupStrategyManager() {
     this.strategies = new Map();
     this.auditLogger = new audit_logger_1.AuditLogger();
@@ -1309,11 +1303,11 @@ var BackupStrategyManager = /** @class */ (function () {
       });
     });
   };
-  BackupStrategyManager.prototype.isValidCronExpression = function (cron) {
+  BackupStrategyManager.prototype.isValidCronExpression = (cron) => {
     // Implementar validação de cron expression
     return cron.split(" ").length === 5;
   };
-  BackupStrategyManager.prototype.isValidValidationRule = function (rule) {
+  BackupStrategyManager.prototype.isValidValidationRule = (rule) => {
     var validTypes = ["size_limit", "file_count", "duration_limit", "checksum", "custom"];
     var validActions = ["warn", "fail", "retry"];
     return validTypes.includes(rule.type) && validActions.includes(rule.action);

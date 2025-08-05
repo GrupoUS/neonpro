@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentManagementPanel = ConsentManagementPanel;
 var react_1 = require("react");
@@ -165,7 +162,6 @@ var checkbox_1 = require("@/components/ui/checkbox");
 var lucide_react_1 = require("lucide-react");
 var useLGPD_1 = require("@/hooks/useLGPD");
 function ConsentManagementPanel(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, useLGPD_1.useConsentManagement)(),
     consents = _b.consents,
@@ -206,7 +202,7 @@ function ConsentManagementPanel(_a) {
   var filteredConsents =
     (consents === null || consents === void 0
       ? void 0
-      : consents.filter(function (consent) {
+      : consents.filter((consent) => {
           var _a, _b;
           var matchesSearch =
             ((_a = consent.user_email) === null || _a === void 0
@@ -219,7 +215,7 @@ function ConsentManagementPanel(_a) {
           var matchesPurpose = purposeFilter === "all" || consent.purpose_id === purposeFilter;
           return matchesSearch && matchesStatus && matchesPurpose;
         })) || [];
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "active":
         return (
@@ -246,10 +242,10 @@ function ConsentManagementPanel(_a) {
         return <badge_1.Badge variant="secondary">{status}</badge_1.Badge>;
     }
   };
-  var handleCreatePurpose = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreatePurpose = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -268,11 +264,10 @@ function ConsentManagementPanel(_a) {
         }
       });
     });
-  };
-  var handleUpdatePurpose = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleUpdatePurpose = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!editingPurpose) return [2 /*return*/];
@@ -293,11 +288,10 @@ function ConsentManagementPanel(_a) {
         }
       });
     });
-  };
-  var handleWithdrawConsent = function (consentId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleWithdrawConsent = (consentId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -314,7 +308,6 @@ function ConsentManagementPanel(_a) {
         }
       });
     });
-  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -377,9 +370,7 @@ function ConsentManagementPanel(_a) {
                       id="search"
                       placeholder="Email ou finalidade..."
                       value={searchTerm}
-                      onChange={function (e) {
-                        return setSearchTerm(e.target.value);
-                      }}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-8"
                     />
                   </div>
@@ -410,13 +401,11 @@ function ConsentManagementPanel(_a) {
                       <select_1.SelectItem value="all">Todas</select_1.SelectItem>
                       {purposes === null || purposes === void 0
                         ? void 0
-                        : purposes.map(function (purpose) {
-                            return (
-                              <select_1.SelectItem key={purpose.id} value={purpose.id}>
-                                {purpose.name}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                        : purposes.map((purpose) => (
+                            <select_1.SelectItem key={purpose.id} value={purpose.id}>
+                              {purpose.name}
+                            </select_1.SelectItem>
+                          ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -424,7 +413,7 @@ function ConsentManagementPanel(_a) {
                 <div className="flex items-end">
                   <button_1.Button
                     variant="outline"
-                    onClick={function () {
+                    onClick={() => {
                       setSearchTerm("");
                       setStatusFilter("all");
                       setPurposeFilter("all");
@@ -457,69 +446,65 @@ function ConsentManagementPanel(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {filteredConsents.map(function (consent) {
-                    return (
-                      <table_1.TableRow key={consent.id}>
-                        <table_1.TableCell>
-                          <div>
-                            <div className="font-medium">{consent.user_email}</div>
-                            <div className="text-sm text-muted-foreground">
-                              IP: {consent.ip_address}
+                  {filteredConsents.map((consent) => (
+                    <table_1.TableRow key={consent.id}>
+                      <table_1.TableCell>
+                        <div>
+                          <div className="font-medium">{consent.user_email}</div>
+                          <div className="text-sm text-muted-foreground">
+                            IP: {consent.ip_address}
+                          </div>
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div>
+                          <div className="font-medium">{consent.purpose_name}</div>
+                          {consent.purpose_required && (
+                            <badge_1.Badge variant="outline" className="text-xs">
+                              Obrigatório
+                            </badge_1.Badge>
+                          )}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>{getStatusBadge(consent.status)}</table_1.TableCell>
+                      <table_1.TableCell>
+                        {new Date(consent.granted_at).toLocaleDateString("pt-BR")}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {consent.expires_at
+                          ? <div
+                              className={"".concat(
+                                new Date(consent.expires_at) < new Date()
+                                  ? "text-red-600"
+                                  : new Date(consent.expires_at) <
+                                      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                                    ? "text-yellow-600"
+                                    : "text-green-600",
+                              )}
+                            >
+                              {new Date(consent.expires_at).toLocaleDateString("pt-BR")}
                             </div>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div>
-                            <div className="font-medium">{consent.purpose_name}</div>
-                            {consent.purpose_required && (
-                              <badge_1.Badge variant="outline" className="text-xs">
-                                Obrigatório
-                              </badge_1.Badge>
-                            )}
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>{getStatusBadge(consent.status)}</table_1.TableCell>
-                        <table_1.TableCell>
-                          {new Date(consent.granted_at).toLocaleDateString("pt-BR")}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {consent.expires_at
-                            ? <div
-                                className={"".concat(
-                                  new Date(consent.expires_at) < new Date()
-                                    ? "text-red-600"
-                                    : new Date(consent.expires_at) <
-                                        new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                                      ? "text-yellow-600"
-                                      : "text-green-600",
-                                )}
-                              >
-                                {new Date(consent.expires_at).toLocaleDateString("pt-BR")}
-                              </div>
-                            : <span className="text-muted-foreground">Sem expiração</span>}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge variant="outline">v{consent.version}</badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex gap-2">
-                            {consent.status === "active" && (
-                              <button_1.Button
-                                size="sm"
-                                variant="outline"
-                                onClick={function () {
-                                  return handleWithdrawConsent(consent.id);
-                                }}
-                              >
-                                <lucide_react_1.XCircle className="h-3 w-3 mr-1" />
-                                Retirar
-                              </button_1.Button>
-                            )}
-                          </div>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                          : <span className="text-muted-foreground">Sem expiração</span>}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge variant="outline">v{consent.version}</badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex gap-2">
+                          {consent.status === "active" && (
+                            <button_1.Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleWithdrawConsent(consent.id)}
+                            >
+                              <lucide_react_1.XCircle className="h-3 w-3 mr-1" />
+                              Retirar
+                            </button_1.Button>
+                          )}
+                        </div>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
 
@@ -556,11 +541,9 @@ function ConsentManagementPanel(_a) {
                     <input_1.Input
                       id="name"
                       value={newPurpose.name}
-                      onChange={function (e) {
-                        return setNewPurpose(
-                          __assign(__assign({}, newPurpose), { name: e.target.value }),
-                        );
-                      }}
+                      onChange={(e) =>
+                        setNewPurpose(__assign(__assign({}, newPurpose), { name: e.target.value }))
+                      }
                       placeholder="Ex: Marketing por email"
                     />
                   </div>
@@ -569,11 +552,11 @@ function ConsentManagementPanel(_a) {
                     <textarea_1.Textarea
                       id="description"
                       value={newPurpose.description}
-                      onChange={function (e) {
-                        return setNewPurpose(
+                      onChange={(e) =>
+                        setNewPurpose(
                           __assign(__assign({}, newPurpose), { description: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                       placeholder="Descreva como os dados serão utilizados..."
                     />
                   </div>
@@ -583,35 +566,28 @@ function ConsentManagementPanel(_a) {
                       id="retention"
                       type="number"
                       value={newPurpose.retention_period}
-                      onChange={function (e) {
-                        return setNewPurpose(
+                      onChange={(e) =>
+                        setNewPurpose(
                           __assign(__assign({}, newPurpose), {
                             retention_period: parseInt(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div className="flex items-center space-x-2">
                     <checkbox_1.Checkbox
                       id="required"
                       checked={newPurpose.required}
-                      onCheckedChange={function (checked) {
-                        return setNewPurpose(
-                          __assign(__assign({}, newPurpose), { required: !!checked }),
-                        );
-                      }}
+                      onCheckedChange={(checked) =>
+                        setNewPurpose(__assign(__assign({}, newPurpose), { required: !!checked }))
+                      }
                     />
                     <label_1.Label htmlFor="required">Consentimento obrigatório</label_1.Label>
                   </div>
                 </div>
                 <dialog_1.DialogFooter>
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setIsCreatePurposeOpen(false);
-                    }}
-                  >
+                  <button_1.Button variant="outline" onClick={() => setIsCreatePurposeOpen(false)}>
                     Cancelar
                   </button_1.Button>
                   <button_1.Button onClick={handleCreatePurpose}>Criar Finalidade</button_1.Button>
@@ -624,75 +600,62 @@ function ConsentManagementPanel(_a) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {purposes === null || purposes === void 0
               ? void 0
-              : purposes.map(function (purpose) {
-                  return (
-                    <card_1.Card key={purpose.id}>
-                      <card_1.CardHeader>
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <card_1.CardTitle className="text-base">
-                              {purpose.name}
-                            </card_1.CardTitle>
-                            <card_1.CardDescription>{purpose.description}</card_1.CardDescription>
-                          </div>
-                          <div className="flex gap-2">
-                            <button_1.Button
-                              size="sm"
-                              variant="outline"
-                              onClick={function () {
-                                return setEditingPurpose(purpose);
-                              }}
-                            >
-                              <lucide_react_1.Edit className="h-3 w-3" />
-                            </button_1.Button>
-                            <button_1.Button
-                              size="sm"
-                              variant="outline"
-                              onClick={function () {
-                                return deletePurpose(purpose.id);
-                              }}
-                            >
-                              <lucide_react_1.Trash2 className="h-3 w-3" />
-                            </button_1.Button>
-                          </div>
+              : purposes.map((purpose) => (
+                  <card_1.Card key={purpose.id}>
+                    <card_1.CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <card_1.CardTitle className="text-base">{purpose.name}</card_1.CardTitle>
+                          <card_1.CardDescription>{purpose.description}</card_1.CardDescription>
                         </div>
-                      </card_1.CardHeader>
-                      <card_1.CardContent>
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span>Status:</span>
-                            <badge_1.Badge variant={purpose.active ? "default" : "secondary"}>
-                              {purpose.active ? "Ativo" : "Inativo"}
-                            </badge_1.Badge>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span>Obrigatório:</span>
-                            <badge_1.Badge variant={purpose.required ? "default" : "outline"}>
-                              {purpose.required ? "Sim" : "Não"}
-                            </badge_1.Badge>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span>Retenção:</span>
-                            <span>{purpose.retention_period} dias</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span>Versão:</span>
-                            <badge_1.Badge variant="outline">v{purpose.version}</badge_1.Badge>
-                          </div>
+                        <div className="flex gap-2">
+                          <button_1.Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingPurpose(purpose)}
+                          >
+                            <lucide_react_1.Edit className="h-3 w-3" />
+                          </button_1.Button>
+                          <button_1.Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => deletePurpose(purpose.id)}
+                          >
+                            <lucide_react_1.Trash2 className="h-3 w-3" />
+                          </button_1.Button>
                         </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                      </div>
+                    </card_1.CardHeader>
+                    <card_1.CardContent>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span>Status:</span>
+                          <badge_1.Badge variant={purpose.active ? "default" : "secondary"}>
+                            {purpose.active ? "Ativo" : "Inativo"}
+                          </badge_1.Badge>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Obrigatório:</span>
+                          <badge_1.Badge variant={purpose.required ? "default" : "outline"}>
+                            {purpose.required ? "Sim" : "Não"}
+                          </badge_1.Badge>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Retenção:</span>
+                          <span>{purpose.retention_period} dias</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span>Versão:</span>
+                          <badge_1.Badge variant="outline">v{purpose.version}</badge_1.Badge>
+                        </div>
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
           </div>
 
           {/* Dialog de edição */}
-          <dialog_1.Dialog
-            open={!!editingPurpose}
-            onOpenChange={function () {
-              return setEditingPurpose(null);
-            }}
-          >
+          <dialog_1.Dialog open={!!editingPurpose} onOpenChange={() => setEditingPurpose(null)}>
             <dialog_1.DialogContent>
               <dialog_1.DialogHeader>
                 <dialog_1.DialogTitle>Editar Finalidade</dialog_1.DialogTitle>
@@ -707,11 +670,11 @@ function ConsentManagementPanel(_a) {
                     <input_1.Input
                       id="edit-name"
                       value={editingPurpose.name}
-                      onChange={function (e) {
-                        return setEditingPurpose(
+                      onChange={(e) =>
+                        setEditingPurpose(
                           __assign(__assign({}, editingPurpose), { name: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -719,11 +682,11 @@ function ConsentManagementPanel(_a) {
                     <textarea_1.Textarea
                       id="edit-description"
                       value={editingPurpose.description}
-                      onChange={function (e) {
-                        return setEditingPurpose(
+                      onChange={(e) =>
+                        setEditingPurpose(
                           __assign(__assign({}, editingPurpose), { description: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div>
@@ -734,24 +697,24 @@ function ConsentManagementPanel(_a) {
                       id="edit-retention"
                       type="number"
                       value={editingPurpose.retention_period}
-                      onChange={function (e) {
-                        return setEditingPurpose(
+                      onChange={(e) =>
+                        setEditingPurpose(
                           __assign(__assign({}, editingPurpose), {
                             retention_period: parseInt(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div className="flex items-center space-x-2">
                     <checkbox_1.Checkbox
                       id="edit-required"
                       checked={editingPurpose.required}
-                      onCheckedChange={function (checked) {
-                        return setEditingPurpose(
+                      onCheckedChange={(checked) =>
+                        setEditingPurpose(
                           __assign(__assign({}, editingPurpose), { required: !!checked }),
-                        );
-                      }}
+                        )
+                      }
                     />
                     <label_1.Label htmlFor="edit-required">Consentimento obrigatório</label_1.Label>
                   </div>
@@ -759,23 +722,18 @@ function ConsentManagementPanel(_a) {
                     <checkbox_1.Checkbox
                       id="edit-active"
                       checked={editingPurpose.active}
-                      onCheckedChange={function (checked) {
-                        return setEditingPurpose(
+                      onCheckedChange={(checked) =>
+                        setEditingPurpose(
                           __assign(__assign({}, editingPurpose), { active: !!checked }),
-                        );
-                      }}
+                        )
+                      }
                     />
                     <label_1.Label htmlFor="edit-active">Finalidade ativa</label_1.Label>
                   </div>
                 </div>
               )}
               <dialog_1.DialogFooter>
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setEditingPurpose(null);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setEditingPurpose(null)}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={handleUpdatePurpose}>Salvar Alterações</button_1.Button>

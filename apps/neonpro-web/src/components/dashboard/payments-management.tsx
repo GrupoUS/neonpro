@@ -1,20 +1,22 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 import type {
-  Plus,
-  Search,
-  Eye,
-  Download,
+  Calendar,
+  CheckCircle,
+  Clock,
   CreditCard,
   DollarSign,
-  Calendar,
-  Clock,
-  CheckCircle,
+  Download,
+  Eye,
+  Plus,
+  Search,
 } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -30,6 +32,8 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
   Select,
   SelectContent,
@@ -37,6 +41,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
 import type {
   Table,
   TableBody,
@@ -45,15 +50,15 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Label } from "@/components/ui/label";
 import type { Textarea } from "@/components/ui/textarea";
-import type { Separator } from "@/components/ui/separator";
-import type { toast } from "sonner";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 import type { useBilling } from "@/hooks/use-billing";
-import type { Payment, PaymentFilters, CreatePaymentData } from "@/types/billing";
-import type { PAYMENT_METHODS, PAYMENT_STATUSES } from "@/types/billing";
+import type {
+  CreatePaymentData,
+  PAYMENT_METHODS,
+  PAYMENT_STATUSES,
+  Payment,
+  PaymentFilters,
+} from "@/types/billing";
 
 interface PaymentFormData {
   invoice_id: string;

@@ -5,6 +5,19 @@
 // Story 1.2: Business rules configuration
 // =============================================
 
+import type {
+  AlertCircle,
+  Clock,
+  Edit,
+  Plus,
+  Save,
+  Settings,
+  Trash2,
+  UserCheck,
+  Users,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { ServiceTypeRule, ServiceTypeRuleConfig } from "@/app/lib/types/conflict-prevention";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -29,19 +42,6 @@ import type {
 } from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
 import type { Textarea } from "@/components/ui/textarea";
-import type {
-  AlertCircle,
-  Clock,
-  Edit,
-  Plus,
-  Save,
-  Settings,
-  Trash2,
-  UserCheck,
-  Users,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 
 interface ServiceTypeRuleManagerProps {
   clinicId: string;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Sentry Configuration for Healthcare Error Tracking
  * LGPD-compliant error monitoring
@@ -19,7 +18,7 @@ function initSentry() {
     environment: process.env.NODE_ENV,
     tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
     // Healthcare-specific configuration
-    beforeSend: function (event) {
+    beforeSend: (event) => {
       var _a, _b;
       // Remove sensitive healthcare data from errors
       if ((_a = event.request) === null || _a === void 0 ? void 0 : _a.data) {
@@ -36,7 +35,7 @@ function initSentry() {
       return event;
     },
     // Filter out non-critical errors
-    beforeSendTransaction: function (event) {
+    beforeSendTransaction: (event) => {
       var _a;
       // Don't track health check endpoints
       if (
@@ -68,7 +67,7 @@ function addHealthcareContext(context) {
 }
 // LGPD-compliant error reporting
 function reportHealthcareError(error, context) {
-  Sentry.withScope(function (scope) {
+  Sentry.withScope((scope) => {
     if (context) {
       scope.setTag("healthcare_module", context.module);
       scope.setTag("healthcare_action", context.action);

@@ -1,8 +1,4 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { streamText, convertToCoreMessages } from "ai";
-import type { openai } from "@ai-sdk/openai";
-import type { anthropic } from "@ai-sdk/anthropic";
+import type { NextRequest } from "next/server";
 
 // Configuração dos modelos
 const MODELS = {

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Patient Portal Module
  *
@@ -29,49 +28,37 @@ exports.createDefaultPortalConfig = createDefaultPortalConfig;
 var patient_portal_1 = require("./patient-portal");
 Object.defineProperty(exports, "PatientPortal", {
   enumerable: true,
-  get: function () {
-    return patient_portal_1.PatientPortal;
-  },
+  get: () => patient_portal_1.PatientPortal,
 });
 // Authentication and session management
 var session_manager_1 = require("./auth/session-manager");
 Object.defineProperty(exports, "SessionManager", {
   enumerable: true,
-  get: function () {
-    return session_manager_1.SessionManager;
-  },
+  get: () => session_manager_1.SessionManager,
 });
 // Dashboard functionality
 var portal_dashboard_1 = require("./dashboard/portal-dashboard");
 Object.defineProperty(exports, "PortalDashboard", {
   enumerable: true,
-  get: function () {
-    return portal_dashboard_1.PortalDashboard;
-  },
+  get: () => portal_dashboard_1.PortalDashboard,
 });
 // Appointment management
 var appointment_manager_1 = require("./appointments/appointment-manager");
 Object.defineProperty(exports, "AppointmentManager", {
   enumerable: true,
-  get: function () {
-    return appointment_manager_1.AppointmentManager;
-  },
+  get: () => appointment_manager_1.AppointmentManager,
 });
 // Upload management
 var upload_manager_1 = require("./uploads/upload-manager");
 Object.defineProperty(exports, "UploadManager", {
   enumerable: true,
-  get: function () {
-    return upload_manager_1.UploadManager;
-  },
+  get: () => upload_manager_1.UploadManager,
 });
 // Communication system
 var communication_manager_1 = require("./communication/communication-manager");
 Object.defineProperty(exports, "CommunicationManager", {
   enumerable: true,
-  get: function () {
-    return communication_manager_1.CommunicationManager;
-  },
+  get: () => communication_manager_1.CommunicationManager,
 });
 /**
  * Default configuration factory

@@ -1,9 +1,8 @@
-"use strict";
 // Accessibility Testing Utilities for NeonPro
 // Tools for automated and manual accessibility testing
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -12,11 +11,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.accessibilityTester = exports.AccessibilityTester = void 0;
 var wcag_compliance_1 = require("./wcag-compliance");
-var AccessibilityTester = /** @class */ (function () {
+var AccessibilityTester = /** @class */ (() => {
   function AccessibilityTester() {
     this.results = [];
   }
@@ -28,7 +27,6 @@ var AccessibilityTester = /** @class */ (function () {
   };
   // Test color contrast ratios
   AccessibilityTester.prototype.testColorContrast = function (container) {
-    var _this = this;
     if (container === void 0) {
       container = document.body;
     }
@@ -37,14 +35,14 @@ var AccessibilityTester = /** @class */ (function () {
     var textElements = container.querySelectorAll(
       "p, span, div, h1, h2, h3, h4, h5, h6, button, a, label, input, textarea",
     );
-    textElements.forEach(function (element) {
+    textElements.forEach((element) => {
       var htmlElement = element;
       var computedStyles = window.getComputedStyle(htmlElement);
       var color = computedStyles.color;
       var backgroundColor = computedStyles.backgroundColor;
       // Convert colors to hex for contrast calculation
-      var foregroundHex = _this.rgbToHex(color);
-      var backgroundHex = _this.rgbToHex(backgroundColor);
+      var foregroundHex = this.rgbToHex(color);
+      var backgroundHex = this.rgbToHex(backgroundColor);
       if (foregroundHex && backgroundHex) {
         var contrast = wcag_compliance_1.ContrastChecker.calculateContrastRatio(
           foregroundHex,
@@ -78,7 +76,7 @@ var AccessibilityTester = /** @class */ (function () {
     return results;
   };
   // Test focus management
-  AccessibilityTester.prototype.testFocusManagement = function (container) {
+  AccessibilityTester.prototype.testFocusManagement = (container) => {
     if (container === void 0) {
       container = document.body;
     }
@@ -97,7 +95,7 @@ var AccessibilityTester = /** @class */ (function () {
     // Test tab order
     var previousTabIndex = -1;
     var hasValidTabOrder = true;
-    focusableElements.forEach(function (element, index) {
+    focusableElements.forEach((element, index) => {
       var tabIndex = element.tabIndex;
       if (tabIndex >= 0 && tabIndex < previousTabIndex) {
         hasValidTabOrder = false;
@@ -128,7 +126,7 @@ var AccessibilityTester = /** @class */ (function () {
     return results;
   };
   // Test ARIA labels and roles
-  AccessibilityTester.prototype.testAriaLabels = function (container) {
+  AccessibilityTester.prototype.testAriaLabels = (container) => {
     if (container === void 0) {
       container = document.body;
     }
@@ -136,7 +134,7 @@ var AccessibilityTester = /** @class */ (function () {
     // Test buttons without accessible names
     var buttons = container.querySelectorAll('button, [role="button"]');
     var buttonsWithoutNames = 0;
-    buttons.forEach(function (button) {
+    buttons.forEach((button) => {
       var _a;
       var htmlButton = button;
       var hasAccessibleName =
@@ -163,7 +161,7 @@ var AccessibilityTester = /** @class */ (function () {
     // Test form labels
     var inputs = container.querySelectorAll("input, select, textarea");
     var inputsWithoutLabels = 0;
-    inputs.forEach(function (input) {
+    inputs.forEach((input) => {
       var htmlInput = input;
       var id = htmlInput.id;
       var hasLabel =
@@ -190,7 +188,7 @@ var AccessibilityTester = /** @class */ (function () {
     // Test images without alt text
     var images = container.querySelectorAll("img");
     var imagesWithoutAlt = 0;
-    images.forEach(function (img) {
+    images.forEach((img) => {
       if (!img.getAttribute("alt") && !img.getAttribute("aria-hidden")) {
         imagesWithoutAlt++;
       }
@@ -210,7 +208,7 @@ var AccessibilityTester = /** @class */ (function () {
     return results;
   };
   // Test keyboard navigation
-  AccessibilityTester.prototype.testKeyboardNavigation = function (container) {
+  AccessibilityTester.prototype.testKeyboardNavigation = (container) => {
     if (container === void 0) {
       container = document.body;
     }
@@ -254,7 +252,7 @@ var AccessibilityTester = /** @class */ (function () {
     return results;
   };
   // Test semantic structure
-  AccessibilityTester.prototype.testSemanticStructure = function (container) {
+  AccessibilityTester.prototype.testSemanticStructure = (container) => {
     if (container === void 0) {
       container = document.body;
     }
@@ -318,9 +316,7 @@ var AccessibilityTester = /** @class */ (function () {
       semanticStructure,
       true,
     );
-    var passedTests = results.filter(function (r) {
-      return r.passed;
-    }).length;
+    var passedTests = results.filter((r) => r.passed).length;
     var totalTests = results.length;
     var score = totalTests > 0 ? Math.round((passedTests / totalTests) * 100) : 100;
     return {
@@ -339,22 +335,20 @@ var AccessibilityTester = /** @class */ (function () {
     };
   };
   // Manual testing checklist
-  AccessibilityTester.prototype.getManualTestingChecklist = function () {
-    return [
-      "✓ Navegar toda a aplicação usando apenas o teclado (Tab, Shift+Tab, Enter, Setas)",
-      "✓ Testar com leitor de tela (NVDA/JAWS no Windows, VoiceOver no Mac)",
-      "✓ Verificar zoom até 200% sem perda de funcionalidade",
-      "✓ Testar em modo de alto contraste",
-      "✓ Verificar se animações respeitam prefers-reduced-motion",
-      "✓ Testar formulários com validação de erros",
-      "✓ Verificar se todos os links têm propósito claro",
-      "✓ Testar em diferentes tamanhos de tela",
-      "✓ Verificar se o conteúdo é linear e lógico",
-      "✓ Testar com usuários reais que usam tecnologias assistivas",
-    ];
-  };
+  AccessibilityTester.prototype.getManualTestingChecklist = () => [
+    "✓ Navegar toda a aplicação usando apenas o teclado (Tab, Shift+Tab, Enter, Setas)",
+    "✓ Testar com leitor de tela (NVDA/JAWS no Windows, VoiceOver no Mac)",
+    "✓ Verificar zoom até 200% sem perda de funcionalidade",
+    "✓ Testar em modo de alto contraste",
+    "✓ Verificar se animações respeitam prefers-reduced-motion",
+    "✓ Testar formulários com validação de erros",
+    "✓ Verificar se todos os links têm propósito claro",
+    "✓ Testar em diferentes tamanhos de tela",
+    "✓ Verificar se o conteúdo é linear e lógico",
+    "✓ Testar com usuários reais que usam tecnologias assistivas",
+  ];
   // Screen reader testing simulation
-  AccessibilityTester.prototype.simulateScreenReader = function (element) {
+  AccessibilityTester.prototype.simulateScreenReader = (element) => {
     var _a, _b;
     var role = element.getAttribute("role") || element.tagName.toLowerCase();
     var label =
@@ -378,7 +372,7 @@ var AccessibilityTester = /** @class */ (function () {
     return announcement;
   };
   // Helper method to convert RGB to Hex
-  AccessibilityTester.prototype.rgbToHex = function (rgb) {
+  AccessibilityTester.prototype.rgbToHex = (rgb) => {
     var match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (match) {
       var r = parseInt(match[1]);
@@ -405,10 +399,8 @@ var AccessibilityTester = /** @class */ (function () {
     if (auditReport.failedTests > 0) {
       report += "## \u26A0\uFE0F Problemas Encontrados (".concat(auditReport.failedTests, ")\n\n");
       auditReport.results
-        .filter(function (r) {
-          return !r.passed;
-        })
-        .forEach(function (result) {
+        .filter((r) => !r.passed)
+        .forEach((result) => {
           report += "- **".concat(result.level, "**: ").concat(result.message, "\n");
           if (result.suggestion) {
             report += "  - *Sugest\u00E3o*: ".concat(result.suggestion, "\n");
@@ -418,14 +410,12 @@ var AccessibilityTester = /** @class */ (function () {
     }
     report += "## \u2705 Testes Bem-sucedidos (".concat(auditReport.passedTests, ")\n\n");
     auditReport.results
-      .filter(function (r) {
-        return r.passed;
-      })
-      .forEach(function (result) {
+      .filter((r) => r.passed)
+      .forEach((result) => {
         report += "- **".concat(result.level, "**: ").concat(result.message, "\n");
       });
     report += "\n## \uD83D\uDCCB Checklist de Testes Manuais\n\n";
-    this.getManualTestingChecklist().forEach(function (item) {
+    this.getManualTestingChecklist().forEach((item) => {
       report += "".concat(item, "\n");
     });
     return report;

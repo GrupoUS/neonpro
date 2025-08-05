@@ -4,8 +4,8 @@
 import type { NextRequest, NextResponse } from "next/server";
 import type { SecurityMonitor } from "../security-monitor";
 import type { SessionManager } from "../session-manager";
+import type { DeviceInfo, LocationInfo, SecurityEventType, SessionSecurityEvent } from "../types";
 import type { AuthUtils } from "../utils";
-import type { SessionSecurityEvent, SecurityEventType, LocationInfo, DeviceInfo } from "../types";
 
 // Security middleware configuration
 interface SecurityMiddlewareConfig {
@@ -44,12 +44,12 @@ const DEFAULT_SECURITY_CONFIG: SecurityMiddlewareConfig = {
 // Threat patterns
 const THREAT_PATTERNS = {
   sqlInjection: [
-    /('|(\-\-)|(;)|(\||\|)|(\*|\*))/i,
+    /('|(--)|(;)|(\||\|)|(\*|\*))/i,
     /(union|select|insert|delete|update|drop|create|alter|exec|execute)/i,
   ],
   xss: [/<script[^>]*>.*?<\/script>/gi, /javascript:/gi, /on\w+\s*=/gi],
-  pathTraversal: [/\.\.[\/\\]/g, /\.\.%2f/gi, /\.\.%5c/gi],
-  commandInjection: [/[;&|`$(){}\[\]]/g, /(cat|ls|pwd|whoami|id|uname)/gi],
+  pathTraversal: [/\.\.[/\\]/g, /\.\.%2f/gi, /\.\.%5c/gi],
+  commandInjection: [/[;&|`$(){}[\]]/g, /(cat|ls|pwd|whoami|id|uname)/gi],
 };
 
 // Request analysis cache

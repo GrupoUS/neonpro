@@ -3,37 +3,25 @@
  * NeonPro - Machine Learning para análise de horários ótimos de comunicação
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
-  TimingPattern,
-  OptimalTime,
-  TimingRecommendation,
-  PatientTimingProfile,
-  TimingAnalysisRequest,
-  TimingAnalysisResult,
   BehaviorPattern,
   MachineLearningModel,
-  TimingOptimizationConfig,
-  PredictiveModel,
-  EngagementWindow,
-  TimeZoneMapping,
-  DemographicPattern,
+  OptimalTime,
+  PerformanceMetrics,
   RealTimeFactors,
   SendTimeOptimization,
-  PerformanceMetrics,
-  TimingQueryFilter,
-  TimingQueryResult,
-  WeatherFactor,
-  HolidayFactor,
+  TimingAnalysisRequest,
+  TimingAnalysisResult,
+  TimingOptimizationConfig,
+  TimingPattern,
+  TimingRecommendation,
 } from "./types/timing";
 
 export class OptimalTimingEngine {
   private supabase: SupabaseClient;
-  private cache: Map<string, any> = new Map();
   private mlModels: Map<string, MachineLearningModel> = new Map();
   private config: TimingOptimizationConfig | null = null;
-  private realTimeFactors: Map<string, RealTimeFactors> = new Map();
 
   constructor() {
     this.supabase = createClient();
@@ -480,7 +468,7 @@ export class OptimalTimingEngine {
     communicationType: string,
     patientPatterns: TimingPattern[],
     globalPatterns: TimingPattern[],
-    segmentedPatterns: Record<string, TimingPattern[]>,
+    _segmentedPatterns: Record<string, TimingPattern[]>,
   ): Promise<OptimalTime> {
     // Usar modelo de gradient boosting se disponível
     const model = this.mlModels.get("timing-gb-v1");
@@ -515,7 +503,7 @@ export class OptimalTimingEngine {
   /**
    * Simular predição de ML (placeholder para integração real)
    */
-  private async simulateMLPrediction(features: any, model: MachineLearningModel): Promise<any[]> {
+  private async simulateMLPrediction(features: any, _model: MachineLearningModel): Promise<any[]> {
     // Em produção, aqui seria feita a chamada para o modelo treinado
     const predictions = [];
 
@@ -1000,17 +988,17 @@ export class OptimalTimingEngine {
 
   // Placeholder methods for completion
   private async generateGeneralRecommendations(
-    globalPatterns: TimingPattern[],
-    segmentedPatterns: Record<string, TimingPattern[]>,
-    request: TimingAnalysisRequest,
+    _globalPatterns: TimingPattern[],
+    _segmentedPatterns: Record<string, TimingPattern[]>,
+    _request: TimingAnalysisRequest,
   ): Promise<TimingRecommendation[]> {
     return [];
   }
 
   private async generateTimingInsights(
-    globalPatterns: TimingPattern[],
-    segmentedPatterns: Record<string, TimingPattern[]>,
-    data: any[],
+    _globalPatterns: TimingPattern[],
+    _segmentedPatterns: Record<string, TimingPattern[]>,
+    _data: any[],
   ): Promise<any[]> {
     return [];
   }
@@ -1024,7 +1012,7 @@ export class OptimalTimingEngine {
     };
   }
 
-  private async saveAnalysisResult(result: TimingAnalysisResult): Promise<void> {
+  private async saveAnalysisResult(_result: TimingAnalysisResult): Promise<void> {
     // Salvar no banco de dados
   }
 
@@ -1042,22 +1030,22 @@ export class OptimalTimingEngine {
   }
 
   private async generateAlternativeTimes(
-    optimalTime: OptimalTime,
-    patientPatterns: TimingPattern[],
-    globalPatterns: TimingPattern[],
+    _optimalTime: OptimalTime,
+    _patientPatterns: TimingPattern[],
+    _globalPatterns: TimingPattern[],
   ): Promise<OptimalTime[]> {
     return [];
   }
 
-  private determineAvoidTimes(patient: any, patterns: TimingPattern[]): any[] {
+  private determineAvoidTimes(_patient: any, _patterns: TimingPattern[]): any[] {
     return [];
   }
 
   private generateRecommendationReasoning(
-    optimalTime: OptimalTime,
-    patterns: TimingPattern[],
-    segments: string[],
-    globalPatterns: TimingPattern[],
+    _optimalTime: OptimalTime,
+    _patterns: TimingPattern[],
+    _segments: string[],
+    _globalPatterns: TimingPattern[],
   ): string[] {
     return ["Based on historical engagement patterns"];
   }
@@ -1067,7 +1055,7 @@ export class OptimalTimingEngine {
   }
 
   private generateStatisticalOptimalTime(
-    patient: any,
+    _patient: any,
     communicationType: string,
     patterns: TimingPattern[],
   ): OptimalTime {
@@ -1098,54 +1086,54 @@ export class OptimalTimingEngine {
     };
   }
 
-  private calculateDaysSinceLastCommunication(patientId: string): number {
+  private calculateDaysSinceLastCommunication(_patientId: string): number {
     // Implementar busca da última comunicação
     return 7; // placeholder
   }
 
-  private calculateEngagementWindow(patterns: TimingPattern[]): number {
+  private calculateEngagementWindow(_patterns: TimingPattern[]): number {
     // Calcular janela de engajamento em minutos
     return 120; // placeholder
   }
 
-  private async calculateAverageResponseLatency(patientId: string): Promise<number> {
+  private async calculateAverageResponseLatency(_patientId: string): Promise<number> {
     // Implementar cálculo de latência média de resposta
     return 30; // placeholder em minutos
   }
 
   private async getPatientRecommendation(
-    patientId: string,
-    communicationType: string,
+    _patientId: string,
+    _communicationType: string,
   ): Promise<TimingRecommendation | null> {
     // Buscar recomendação existente no cache ou banco
     return null;
   }
 
-  private async getRealTimeFactors(patientId: string): Promise<RealTimeFactors | null> {
+  private async getRealTimeFactors(_patientId: string): Promise<RealTimeFactors | null> {
     // Buscar fatores em tempo real
     return null;
   }
 
   private calculateExpectedImprovement(
-    originalTime: Date,
-    optimizedTime: Date,
-    recommendation: TimingRecommendation | null,
+    _originalTime: Date,
+    _optimizedTime: Date,
+    _recommendation: TimingRecommendation | null,
   ): number {
     // Calcular melhoria esperada em %
     return 0;
   }
 
   private generateOptimizationReason(
-    originalTime: Date,
-    optimizedTime: Date,
-    recommendation: TimingRecommendation | null,
+    _originalTime: Date,
+    _optimizedTime: Date,
+    _recommendation: TimingRecommendation | null,
   ): string {
     return "Optimized based on timing analysis";
   }
 
   private extractOptimizationFactors(
-    realTimeFactors: RealTimeFactors | null,
-    recommendation: TimingRecommendation | null,
+    _realTimeFactors: RealTimeFactors | null,
+    _recommendation: TimingRecommendation | null,
   ): string[] {
     return [];
   }

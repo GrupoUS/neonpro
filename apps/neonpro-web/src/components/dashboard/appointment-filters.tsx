@@ -1,6 +1,12 @@
 "use client";
 
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type { CalendarDays, Clock, Filter, RotateCcw, Search, Users, X } from "lucide-react";
 import type { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -8,9 +14,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
   Select,
   SelectContent,
@@ -18,15 +24,9 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
-import type { Filter, X, CalendarDays, Users, Clock, Search, RotateCcw } from "lucide-react";
-import type { format } from "date-fns";
-import type { pt } from "date-fns/locale";
+import type { Appointment, AppointmentFilters } from "@/hooks/use-appointments-manager";
 import type { cn } from "@/lib/utils";
-import type { AppointmentFilters, Appointment } from "@/hooks/use-appointments-manager";
 
 interface AppointmentFiltersProps {
   filters: AppointmentFilters;

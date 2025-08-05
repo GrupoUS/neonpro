@@ -4,32 +4,31 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,10 +148,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -163,7 +160,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useBarcode = useBarcode;
 var react_1 = require("react");
@@ -178,7 +175,6 @@ var DEFAULT_CONFIGURATION = {
   maxHistorySize: 100,
 };
 function useBarcode(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -219,71 +215,63 @@ function useBarcode(options) {
   var scanTimeoutRef = (0, react_1.useRef)(null);
   var isProcessingScan = (0, react_1.useRef)(false);
   // Audio feedback
-  var playBeep = (0, react_1.useCallback)(
-    function () {
-      if (!configuration.beepOnScan) return;
-      try {
-        var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        var oscillator = audioContext.createOscillator();
-        var gainNode = audioContext.createGain();
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        oscillator.frequency.value = 800; // Hz
-        gainNode.gain.value = 0.1;
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.2);
-      } catch (error) {
-        console.warn("Could not play beep sound:", error);
-      }
-    },
-    [configuration.beepOnScan],
-  );
+  var playBeep = (0, react_1.useCallback)(() => {
+    if (!configuration.beepOnScan) return;
+    try {
+      var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      var oscillator = audioContext.createOscillator();
+      var gainNode = audioContext.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      oscillator.frequency.value = 800; // Hz
+      gainNode.gain.value = 0.1;
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.2);
+    } catch (error) {
+      console.warn("Could not play beep sound:", error);
+    }
+  }, [configuration.beepOnScan]);
   // Vibration feedback
-  var triggerVibration = (0, react_1.useCallback)(
-    function () {
-      if (!configuration.vibrationOnScan || !navigator.vibrate) return;
-      try {
-        navigator.vibrate(200); // 200ms vibration
-      } catch (error) {
-        console.warn("Could not trigger vibration:", error);
-      }
-    },
-    [configuration.vibrationOnScan],
-  );
+  var triggerVibration = (0, react_1.useCallback)(() => {
+    if (!configuration.vibrationOnScan || !navigator.vibrate) return;
+    try {
+      navigator.vibrate(200); // 200ms vibration
+    } catch (error) {
+      console.warn("Could not trigger vibration:", error);
+    }
+  }, [configuration.vibrationOnScan]);
   // Get available cameras
-  var getAvailableCameras = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var devices, cameras_1, error_1;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, navigator.mediaDevices.enumerateDevices()];
-          case 1:
-            devices = _a.sent();
-            cameras_1 = devices.filter(function (device) {
-              return device.kind === "videoinput";
-            });
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { availableCameras: cameras_1 });
-            });
-            return [2 /*return*/, cameras_1];
-          case 2:
-            error_1 = _a.sent();
-            console.error("Error getting cameras:", error_1);
-            return [2 /*return*/, []];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var getAvailableCameras = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var devices, cameras_1, error_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, navigator.mediaDevices.enumerateDevices()];
+            case 1:
+              devices = _a.sent();
+              cameras_1 = devices.filter((device) => device.kind === "videoinput");
+              setState((prev) => __assign(__assign({}, prev), { availableCameras: cameras_1 }));
+              return [2 /*return*/, cameras_1];
+            case 2:
+              error_1 = _a.sent();
+              console.error("Error getting cameras:", error_1);
+              return [2 /*return*/, []];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Initialize scanner
   var initializeScanner = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var permission_1, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -291,15 +279,15 @@ function useBarcode(options) {
             case 1:
               permission_1 = _a.sent();
               if (permission_1.state === "denied") {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     error: {
                       type: "PERMISSION_DENIED",
                       message: "Camera permission denied",
                       timestamp: new Date().toISOString(),
                     },
-                  });
-                });
+                  }),
+                );
                 return [2 /*return*/, false];
               }
               // Get available cameras
@@ -307,40 +295,39 @@ function useBarcode(options) {
             case 2:
               // Get available cameras
               _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isInitialized: true,
                   hasPermission:
                     permission_1.state === "granted" || permission_1.state === "prompt",
                   error: null,
-                });
-              });
+                }),
+              );
               return [2 /*return*/, true];
             case 3:
               error_2 = _a.sent();
               console.error("Error initializing scanner:", error_2);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   error: {
                     type: "INITIALIZATION_ERROR",
                     message:
                       error_2 instanceof Error ? error_2.message : "Failed to initialize scanner",
                     timestamp: new Date().toISOString(),
                   },
-                });
-              });
+                }),
+              );
               return [2 /*return*/, false];
             case 4:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [getAvailableCameras],
   );
   // Process scan result
   var processScanResult = (0, react_1.useCallback)(
-    function (data, format) {
+    (data, format) => {
       if (format === void 0) {
         format = "unknown";
       }
@@ -352,7 +339,7 @@ function useBarcode(options) {
         timestamp: new Date().toISOString(),
         sessionId: crypto.randomUUID(),
       };
-      setState(function (prev) {
+      setState((prev) => {
         var newHistory = configuration.saveScanHistory
           ? __spreadArray(
               [scanResult],
@@ -374,7 +361,7 @@ function useBarcode(options) {
         onScanSuccess(scanResult);
       }
       // Reset processing flag after delay
-      setTimeout(function () {
+      setTimeout(() => {
         isProcessingScan.current = false;
       }, configuration.scanDelay);
     },
@@ -389,16 +376,14 @@ function useBarcode(options) {
   );
   // Handle scan error
   var handleScanError = (0, react_1.useCallback)(
-    function (error) {
+    (error) => {
       console.error("Scan error:", error);
       var scanError = {
         type: "SCAN_ERROR",
         message: error.message,
         timestamp: new Date().toISOString(),
       };
-      setState(function (prev) {
-        return __assign(__assign({}, prev), { error: scanError });
-      });
+      setState((prev) => __assign(__assign({}, prev), { error: scanError }));
       if (onScanError) {
         onScanError(scanError);
       }
@@ -407,14 +392,14 @@ function useBarcode(options) {
   );
   // Start scanning
   var startScanning = (0, react_1.useCallback)(
-    function (videoElement) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (videoElement) =>
+      __awaiter(this, void 0, void 0, function () {
         var initialized, video, cameras, selectedCamera_1, constraints, stream, error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
-              if (!!state.isInitialized) return [3 /*break*/, 2];
+              if (state.isInitialized) return [3 /*break*/, 2];
               return [4 /*yield*/, initializeScanner()];
             case 1:
               initialized = _a.sent();
@@ -423,44 +408,41 @@ function useBarcode(options) {
             case 2:
               video = videoElement || videoElementRef.current;
               if (!video) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     error: {
                       type: "NO_VIDEO_ELEMENT",
                       message: "No video element provided",
                       timestamp: new Date().toISOString(),
                     },
-                  });
-                });
+                  }),
+                );
                 return [2 /*return*/, false];
               }
               videoElementRef.current = video;
               return [4 /*yield*/, getAvailableCameras()];
             case 3:
               cameras = _a.sent();
-              selectedCamera_1 = cameras.find(function (camera) {
-                return camera.deviceId === preferredDeviceId;
-              });
+              selectedCamera_1 = cameras.find((camera) => camera.deviceId === preferredDeviceId);
               if (!selectedCamera_1 && cameras.length > 0) {
                 // Prefer back camera for mobile
                 selectedCamera_1 =
-                  cameras.find(function (camera) {
-                    return (
+                  cameras.find(
+                    (camera) =>
                       camera.label.toLowerCase().includes("back") ||
-                      camera.label.toLowerCase().includes("environment")
-                    );
-                  }) || cameras[0];
+                      camera.label.toLowerCase().includes("environment"),
+                  ) || cameras[0];
               }
               if (!selectedCamera_1) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     error: {
                       type: "NO_CAMERA_AVAILABLE",
                       message: "No camera available",
                       timestamp: new Date().toISOString(),
                     },
-                  });
-                });
+                  }),
+                );
                 return [2 /*return*/, false];
               }
               constraints = {
@@ -479,19 +461,19 @@ function useBarcode(options) {
               stream = _a.sent();
               streamRef.current = stream;
               video.srcObject = stream;
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   currentCamera: selectedCamera_1,
                   isScanning: true,
                   error: null,
-                });
-              });
+                }),
+              );
               return [2 /*return*/, true];
             case 5:
               error_3 = _a.sent();
               console.error("Error starting scanner:", error_3);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isScanning: false,
                   error: {
                     type: "START_ERROR",
@@ -499,15 +481,14 @@ function useBarcode(options) {
                       error_3 instanceof Error ? error_3.message : "Failed to start scanning",
                     timestamp: new Date().toISOString(),
                   },
-                });
-              });
+                }),
+              );
               return [2 /*return*/, false];
             case 6:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       state.isInitialized,
       initializeScanner,
@@ -518,12 +499,10 @@ function useBarcode(options) {
     ],
   );
   // Stop scanning
-  var stopScanning = (0, react_1.useCallback)(function () {
+  var stopScanning = (0, react_1.useCallback)(() => {
     try {
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach(function (track) {
-          return track.stop();
-        });
+        streamRef.current.getTracks().forEach((track) => track.stop());
         streamRef.current = null;
       }
       if (videoElementRef.current) {
@@ -533,32 +512,27 @@ function useBarcode(options) {
         clearTimeout(scanTimeoutRef.current);
         scanTimeoutRef.current = null;
       }
-      setState(function (prev) {
-        return __assign(__assign({}, prev), { isScanning: false });
-      });
+      setState((prev) => __assign(__assign({}, prev), { isScanning: false }));
     } catch (error) {
       console.error("Error stopping scanner:", error);
     }
   }, []);
   // Toggle scanning
-  var toggleScanning = (0, react_1.useCallback)(
-    function () {
-      if (state.isScanning) {
-        stopScanning();
-      } else {
-        startScanning();
-      }
-    },
-    [state.isScanning, startScanning, stopScanning],
-  );
+  var toggleScanning = (0, react_1.useCallback)(() => {
+    if (state.isScanning) {
+      stopScanning();
+    } else {
+      startScanning();
+    }
+  }, [state.isScanning, startScanning, stopScanning]);
   // Switch camera
   var switchCamera = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var currentIndex, nextIndex, nextCamera;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (state.availableCameras.length <= 1) return [2 /*return*/];
-          currentIndex = state.availableCameras.findIndex(function (camera) {
+          currentIndex = state.availableCameras.findIndex((camera) => {
             var _a;
             return (
               camera.deviceId ===
@@ -570,44 +544,33 @@ function useBarcode(options) {
           if (state.isScanning) {
             stopScanning();
             // Small delay before starting with new camera
-            setTimeout(function () {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { currentCamera: nextCamera });
-              });
+            setTimeout(() => {
+              setState((prev) => __assign(__assign({}, prev), { currentCamera: nextCamera }));
               startScanning();
             }, 100);
           } else {
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { currentCamera: nextCamera });
-            });
+            setState((prev) => __assign(__assign({}, prev), { currentCamera: nextCamera }));
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [state.availableCameras, state.currentCamera, state.isScanning, stopScanning, startScanning],
   );
   // Update configuration
-  var updateConfiguration = (0, react_1.useCallback)(function (config) {
-    setConfiguration(function (prev) {
-      return __assign(__assign({}, prev), config);
-    });
+  var updateConfiguration = (0, react_1.useCallback)((config) => {
+    setConfiguration((prev) => __assign(__assign({}, prev), config));
   }, []);
   // Clear history
-  var clearHistory = (0, react_1.useCallback)(function () {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { scanHistory: [] });
-    });
+  var clearHistory = (0, react_1.useCallback)(() => {
+    setState((prev) => __assign(__assign({}, prev), { scanHistory: [] }));
   }, []);
   // Clear error
-  var clearError = (0, react_1.useCallback)(function () {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { error: null });
-    });
+  var clearError = (0, react_1.useCallback)(() => {
+    setState((prev) => __assign(__assign({}, prev), { error: null }));
   }, []);
   // Manual input fallback
   var processManualInput = (0, react_1.useCallback)(
-    function (barcodeValue) {
+    (barcodeValue) => {
       if (barcodeValue.trim()) {
         processScanResult(barcodeValue.trim(), "unknown");
       }
@@ -615,15 +578,12 @@ function useBarcode(options) {
     [processScanResult],
   );
   // Initialize on mount
-  (0, react_1.useEffect)(
-    function () {
-      initializeScanner();
-      return function () {
-        stopScanning();
-      };
-    },
-    [initializeScanner, stopScanning],
-  );
+  (0, react_1.useEffect)(() => {
+    initializeScanner();
+    return () => {
+      stopScanning();
+    };
+  }, [initializeScanner, stopScanning]);
   return {
     isScanning: state.isScanning,
     isInitialized: state.isInitialized,

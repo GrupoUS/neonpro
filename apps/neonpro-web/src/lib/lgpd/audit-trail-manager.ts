@@ -6,10 +6,10 @@
  * with automated logging, monitoring, and reporting capabilities.
  */
 
-import type { createClient } from "@/lib/supabase/client";
-import type { Database } from "@/types/database";
 import type { SecurityAuditLogger } from "@/lib/auth/security-audit-logger";
 import type { logger } from "@/lib/logger";
+import type { createClient } from "@/lib/supabase/client";
+import type { Database } from "@/types/database";
 import type { LGPDDataType, LGPDPurpose } from "./consent-automation-manager";
 
 /**

@@ -5,7 +5,7 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
-import type { nlpEngine, type SupportedLanguage } from "./nlp-engine";
+import type { nlpEngine, SupportedLanguage } from "./nlp-engine";
 
 // Types
 export interface IndexableContent {

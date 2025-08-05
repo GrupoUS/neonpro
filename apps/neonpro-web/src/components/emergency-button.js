@@ -1,10 +1,9 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmergencyButton = EmergencyButton;
 var react_1 = require("react");
 function EmergencyButton() {
-  var handleEmergencyCall = function () {
+  var handleEmergencyCall = () => {
     window.open("tel:192", "_self");
   };
   return (

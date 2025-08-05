@@ -1,7 +1,7 @@
-import DuplicateManager from "@/components/patients/duplicate-manager";
-import { duplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import DuplicateManager from "@/components/patients/duplicate-manager";
+import { duplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
 
 // Mock do sistema de detecção de duplicatas
 jest.mock("@/lib/patients/duplicate-detection", () => ({

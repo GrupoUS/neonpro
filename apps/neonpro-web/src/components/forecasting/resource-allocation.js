@@ -12,32 +12,31 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,10 +156,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -171,7 +168,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResourceAllocation = ResourceAllocation;
 var react_1 = require("react");
@@ -211,7 +208,6 @@ var RESOURCE_TYPES = [
   },
 ];
 function ResourceAllocation(_a) {
-  var _this = this;
   var _b;
   var plan = _a.plan,
     _c = _a.detailed,
@@ -230,147 +226,105 @@ function ResourceAllocation(_a) {
     adjustments = _h[0],
     setAdjustments = _h[1];
   // Calculate allocation summary
-  var summary = (0, react_1.useMemo)(
-    function () {
-      var _a;
-      if (!((_a = plan.allocations) === null || _a === void 0 ? void 0 : _a.length)) {
-        return {
-          totalStaff: 0,
-          utilizedStaff: 0,
-          totalRooms: 0,
-          utilizedRooms: 0,
-          totalBudget: 0,
-          allocatedBudget: 0,
-          efficiency: 0,
-          recommendations: 0,
-        };
-      }
-      var staffAllocations = plan.allocations.filter(function (a) {
-        return a.resource_type === "staff";
-      });
-      var roomAllocations = plan.allocations.filter(function (a) {
-        return a.resource_type === "room";
-      });
-      var budgetAllocations = plan.allocations.filter(function (a) {
-        return a.resource_type === "budget";
-      });
-      var totalStaff = staffAllocations.reduce(function (sum, a) {
-        return sum + a.capacity;
-      }, 0);
-      var utilizedStaff = staffAllocations.reduce(function (sum, a) {
-        return sum + a.allocated_capacity;
-      }, 0);
-      var totalRooms = roomAllocations.reduce(function (sum, a) {
-        return sum + a.capacity;
-      }, 0);
-      var utilizedRooms = roomAllocations.reduce(function (sum, a) {
-        return sum + a.allocated_capacity;
-      }, 0);
-      var totalBudget = budgetAllocations.reduce(function (sum, a) {
-        return sum + a.capacity;
-      }, 0);
-      var allocatedBudget = budgetAllocations.reduce(function (sum, a) {
-        return sum + a.allocated_capacity;
-      }, 0);
-      var efficiency = totalStaff > 0 ? (utilizedStaff / totalStaff) * 100 : 0;
-      var recommendations = plan.allocations.filter(function (a) {
-        var _a;
-        return (
-          ((_a = a.optimization_suggestions) === null || _a === void 0 ? void 0 : _a.length) > 0
-        );
-      }).length;
+  var summary = (0, react_1.useMemo)(() => {
+    var _a;
+    if (!((_a = plan.allocations) === null || _a === void 0 ? void 0 : _a.length)) {
       return {
-        totalStaff: totalStaff,
-        utilizedStaff: utilizedStaff,
-        totalRooms: totalRooms,
-        utilizedRooms: utilizedRooms,
-        totalBudget: totalBudget,
-        allocatedBudget: allocatedBudget,
-        efficiency: efficiency,
-        recommendations: recommendations,
+        totalStaff: 0,
+        utilizedStaff: 0,
+        totalRooms: 0,
+        utilizedRooms: 0,
+        totalBudget: 0,
+        allocatedBudget: 0,
+        efficiency: 0,
+        recommendations: 0,
       };
-    },
-    [plan],
-  );
+    }
+    var staffAllocations = plan.allocations.filter((a) => a.resource_type === "staff");
+    var roomAllocations = plan.allocations.filter((a) => a.resource_type === "room");
+    var budgetAllocations = plan.allocations.filter((a) => a.resource_type === "budget");
+    var totalStaff = staffAllocations.reduce((sum, a) => sum + a.capacity, 0);
+    var utilizedStaff = staffAllocations.reduce((sum, a) => sum + a.allocated_capacity, 0);
+    var totalRooms = roomAllocations.reduce((sum, a) => sum + a.capacity, 0);
+    var utilizedRooms = roomAllocations.reduce((sum, a) => sum + a.allocated_capacity, 0);
+    var totalBudget = budgetAllocations.reduce((sum, a) => sum + a.capacity, 0);
+    var allocatedBudget = budgetAllocations.reduce((sum, a) => sum + a.allocated_capacity, 0);
+    var efficiency = totalStaff > 0 ? (utilizedStaff / totalStaff) * 100 : 0;
+    var recommendations = plan.allocations.filter((a) => {
+      var _a;
+      return ((_a = a.optimization_suggestions) === null || _a === void 0 ? void 0 : _a.length) > 0;
+    }).length;
+    return {
+      totalStaff: totalStaff,
+      utilizedStaff: utilizedStaff,
+      totalRooms: totalRooms,
+      utilizedRooms: utilizedRooms,
+      totalBudget: totalBudget,
+      allocatedBudget: allocatedBudget,
+      efficiency: efficiency,
+      recommendations: recommendations,
+    };
+  }, [plan]);
   // Process allocation data for charts
-  var chartData = (0, react_1.useMemo)(
-    function () {
-      var _a;
-      if (!((_a = plan.allocations) === null || _a === void 0 ? void 0 : _a.length))
-        return { utilization: [], timeline: [], distribution: [] };
-      // Utilization by resource type
-      var utilizationData = RESOURCE_TYPES.map(function (type) {
-        var allocations = plan.allocations.filter(function (a) {
-          return a.resource_type === type.id;
-        });
-        var total = allocations.reduce(function (sum, a) {
-          return sum + a.capacity;
-        }, 0);
-        var utilized = allocations.reduce(function (sum, a) {
-          return sum + a.allocated_capacity;
-        }, 0);
-        return {
-          name: type.label,
-          total: total,
-          utilized: utilized,
-          available: total - utilized,
-          utilization: total > 0 ? Math.round((utilized / total) * 100) : 0,
-        };
-      });
-      // Timeline data (mock weekly allocation)
-      var timelineData = Array.from({ length: 7 }, function (_, i) {
-        var date = (0, date_fns_1.addDays)((0, date_fns_1.startOfWeek)(new Date()), i);
-        return {
-          date: (0, date_fns_1.format)(date, "MMM dd"),
-          staff: Math.floor(summary.utilizedStaff * (0.8 + Math.random() * 0.4)),
-          rooms: Math.floor(summary.utilizedRooms * (0.7 + Math.random() * 0.5)),
-          efficiency: Math.floor(70 + Math.random() * 25),
-        };
-      });
-      // Distribution by department/service
-      var departments = __spreadArray(
-        [],
-        new Set(
-          plan.allocations.map(function (a) {
-            return a.resource_id.split("-")[0];
-          }),
-        ),
-        true,
-      );
-      var distributionData = departments.map(function (dept) {
-        var deptAllocations = plan.allocations.filter(function (a) {
-          return a.resource_id.startsWith(dept);
-        });
-        var allocated = deptAllocations.reduce(function (sum, a) {
-          return sum + a.allocated_capacity;
-        }, 0);
-        return {
-          name: dept.replace("_", " ").replace(/\b\w/g, function (l) {
-            return l.toUpperCase();
-          }),
-          value: allocated,
-          percentage: Math.round((allocated / summary.utilizedStaff) * 100) || 0,
-        };
-      });
+  var chartData = (0, react_1.useMemo)(() => {
+    var _a;
+    if (!((_a = plan.allocations) === null || _a === void 0 ? void 0 : _a.length))
+      return { utilization: [], timeline: [], distribution: [] };
+    // Utilization by resource type
+    var utilizationData = RESOURCE_TYPES.map((type) => {
+      var allocations = plan.allocations.filter((a) => a.resource_type === type.id);
+      var total = allocations.reduce((sum, a) => sum + a.capacity, 0);
+      var utilized = allocations.reduce((sum, a) => sum + a.allocated_capacity, 0);
       return {
-        utilization: utilizationData,
-        timeline: timelineData,
-        distribution: distributionData,
+        name: type.label,
+        total: total,
+        utilized: utilized,
+        available: total - utilized,
+        utilization: total > 0 ? Math.round((utilized / total) * 100) : 0,
       };
-    },
-    [plan, summary],
-  );
+    });
+    // Timeline data (mock weekly allocation)
+    var timelineData = Array.from({ length: 7 }, (_, i) => {
+      var date = (0, date_fns_1.addDays)((0, date_fns_1.startOfWeek)(new Date()), i);
+      return {
+        date: (0, date_fns_1.format)(date, "MMM dd"),
+        staff: Math.floor(summary.utilizedStaff * (0.8 + Math.random() * 0.4)),
+        rooms: Math.floor(summary.utilizedRooms * (0.7 + Math.random() * 0.5)),
+        efficiency: Math.floor(70 + Math.random() * 25),
+      };
+    });
+    // Distribution by department/service
+    var departments = __spreadArray(
+      [],
+      new Set(plan.allocations.map((a) => a.resource_id.split("-")[0])),
+      true,
+    );
+    var distributionData = departments.map((dept) => {
+      var deptAllocations = plan.allocations.filter((a) => a.resource_id.startsWith(dept));
+      var allocated = deptAllocations.reduce((sum, a) => sum + a.allocated_capacity, 0);
+      return {
+        name: dept.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+        value: allocated,
+        percentage: Math.round((allocated / summary.utilizedStaff) * 100) || 0,
+      };
+    });
+    return {
+      utilization: utilizationData,
+      timeline: timelineData,
+      distribution: distributionData,
+    };
+  }, [plan, summary]);
   // Handle allocation adjustments
-  var handleAdjustment = function (resourceId, value) {
-    setAdjustments(function (prev) {
+  var handleAdjustment = (resourceId, value) => {
+    setAdjustments((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[resourceId] = value), _a));
     });
   };
-  var applyAdjustments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var applyAdjustments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -400,9 +354,8 @@ function ResourceAllocation(_a) {
         }
       });
     });
-  };
   // Custom tooltip for charts
-  var CustomTooltip = function (_a) {
+  var CustomTooltip = (_a) => {
     var active = _a.active,
       payload = _a.payload,
       label = _a.label;
@@ -410,22 +363,20 @@ function ResourceAllocation(_a) {
     return (
       <div className="bg-white p-3 border rounded-lg shadow-lg">
         <p className="font-medium">{label}</p>
-        {payload.map(function (entry, index) {
-          return (
-            <div key={index} className="flex items-center justify-between space-x-4 mt-1">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
-                <span className="text-sm">{entry.dataKey}</span>
-              </div>
-              <span className="font-medium">{entry.value}</span>
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center justify-between space-x-4 mt-1">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
+              <span className="text-sm">{entry.dataKey}</span>
             </div>
-          );
-        })}
+            <span className="font-medium">{entry.value}</span>
+          </div>
+        ))}
       </div>
     );
   };
   // Render utilization status
-  var renderUtilizationStatus = function (percentage) {
+  var renderUtilizationStatus = (percentage) => {
     if (percentage >= 90)
       return <badge_1.Badge className="bg-red-100 text-red-800">Overutilized</badge_1.Badge>;
     if (percentage >= 80)
@@ -470,9 +421,7 @@ function ResourceAllocation(_a) {
               <button_1.Button
                 variant={editMode ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setEditMode(!editMode);
-                }}
+                onClick={() => setEditMode(!editMode)}
               >
                 <lucide_react_1.Settings className="h-4 w-4 mr-1" />
                 {editMode ? "Done" : "Edit"}
@@ -549,27 +498,25 @@ function ResourceAllocation(_a) {
         <div className="space-y-4">
           <h4 className="font-medium">Resource Utilization Overview</h4>
           <div className="space-y-3">
-            {chartData.utilization.map(function (resource, index) {
-              return (
-                <div key={resource.name} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{resource.name}</span>
-                    <div className="flex items-center space-x-2">
-                      {renderUtilizationStatus(resource.utilization)}
-                      <span className="text-sm text-muted-foreground">{resource.utilization}%</span>
-                    </div>
-                  </div>
-                  <div className="flex space-x-1">
-                    <progress_1.Progress value={resource.utilization} className="flex-1 h-2" />
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Utilized: {resource.utilized}</span>
-                    <span>Available: {resource.available}</span>
-                    <span>Total: {resource.total}</span>
+            {chartData.utilization.map((resource, index) => (
+              <div key={resource.name} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{resource.name}</span>
+                  <div className="flex items-center space-x-2">
+                    {renderUtilizationStatus(resource.utilization)}
+                    <span className="text-sm text-muted-foreground">{resource.utilization}%</span>
                   </div>
                 </div>
-              );
-            })}
+                <div className="flex space-x-1">
+                  <progress_1.Progress value={resource.utilization} className="flex-1 h-2" />
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Utilized: {resource.utilized}</span>
+                  <span>Available: {resource.available}</span>
+                  <span>Total: {resource.total}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -578,7 +525,7 @@ function ResourceAllocation(_a) {
         {/* Detailed Allocation Tabs */}
         <tabs_1.Tabs value={activeResourceType} onValueChange={setActiveResourceType}>
           <tabs_1.TabsList className="grid w-full grid-cols-4">
-            {RESOURCE_TYPES.map(function (type) {
+            {RESOURCE_TYPES.map((type) => {
               var Icon = type.icon;
               return (
                 <tabs_1.TabsTrigger
@@ -593,133 +540,125 @@ function ResourceAllocation(_a) {
             })}
           </tabs_1.TabsList>
 
-          {RESOURCE_TYPES.map(function (type) {
-            return (
-              <tabs_1.TabsContent key={type.id} value={type.id} className="space-y-4">
-                <div className="grid gap-6 md:grid-cols-2">
-                  {/* Allocation Details */}
-                  <card_1.Card>
-                    <card_1.CardHeader>
-                      <card_1.CardTitle className="text-lg">{type.label} Details</card_1.CardTitle>
-                    </card_1.CardHeader>
-                    <card_1.CardContent>
-                      <div className="space-y-4">
-                        {plan.allocations
-                          .filter(function (allocation) {
-                            return allocation.resource_type === type.id;
-                          })
-                          .slice(0, detailed ? undefined : 5)
-                          .map(function (allocation, index) {
-                            var _a, _b;
-                            return (
-                              <div
-                                key={allocation.resource_id}
-                                className="flex items-center justify-between p-3 border rounded-lg"
-                              >
-                                <div className="space-y-1">
-                                  <div className="font-medium">
-                                    {allocation.resource_id
-                                      .replace("_", " ")
-                                      .replace(/\b\w/g, function (l) {
-                                        return l.toUpperCase();
-                                      })}
-                                  </div>
-                                  <div className="text-sm text-muted-foreground">
-                                    Period:{" "}
-                                    {(0, date_fns_1.format)(
-                                      new Date(allocation.period_start),
-                                      "MMM dd",
-                                    )}{" "}
-                                    -{" "}
-                                    {(0, date_fns_1.format)(
-                                      new Date(allocation.period_end),
-                                      "MMM dd",
-                                    )}
-                                  </div>
-                                  {((_a = allocation.optimization_suggestions) === null ||
-                                  _a === void 0
-                                    ? void 0
-                                    : _a.length) > 0 && (
-                                    <div className="text-xs text-blue-600">
-                                      {allocation.optimization_suggestions.length} optimization
-                                      suggestions
-                                    </div>
+          {RESOURCE_TYPES.map((type) => (
+            <tabs_1.TabsContent key={type.id} value={type.id} className="space-y-4">
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Allocation Details */}
+                <card_1.Card>
+                  <card_1.CardHeader>
+                    <card_1.CardTitle className="text-lg">{type.label} Details</card_1.CardTitle>
+                  </card_1.CardHeader>
+                  <card_1.CardContent>
+                    <div className="space-y-4">
+                      {plan.allocations
+                        .filter((allocation) => allocation.resource_type === type.id)
+                        .slice(0, detailed ? undefined : 5)
+                        .map((allocation, index) => {
+                          var _a, _b;
+                          return (
+                            <div
+                              key={allocation.resource_id}
+                              className="flex items-center justify-between p-3 border rounded-lg"
+                            >
+                              <div className="space-y-1">
+                                <div className="font-medium">
+                                  {allocation.resource_id
+                                    .replace("_", " ")
+                                    .replace(/\b\w/g, (l) => l.toUpperCase())}
+                                </div>
+                                <div className="text-sm text-muted-foreground">
+                                  Period:{" "}
+                                  {(0, date_fns_1.format)(
+                                    new Date(allocation.period_start),
+                                    "MMM dd",
+                                  )}{" "}
+                                  -{" "}
+                                  {(0, date_fns_1.format)(
+                                    new Date(allocation.period_end),
+                                    "MMM dd",
                                   )}
                                 </div>
-                                <div className="text-right space-y-1">
-                                  {editMode
-                                    ? <input_1.Input
-                                        type="number"
-                                        value={
-                                          (_b = adjustments[allocation.resource_id]) !== null &&
-                                          _b !== void 0
-                                            ? _b
-                                            : allocation.allocated_capacity
-                                        }
-                                        onChange={function (e) {
-                                          return handleAdjustment(
-                                            allocation.resource_id,
-                                            parseInt(e.target.value) || 0,
-                                          );
-                                        }}
-                                        className="w-20 text-right"
-                                        min={0}
-                                        max={allocation.capacity}
-                                      />
-                                    : <div className="text-lg font-bold">
-                                        {allocation.allocated_capacity}/{allocation.capacity}
-                                      </div>}
-                                  <div className="text-xs text-muted-foreground">
-                                    {Math.round(
-                                      (allocation.allocated_capacity / allocation.capacity) * 100,
-                                    )}
-                                    % utilized
+                                {((_a = allocation.optimization_suggestions) === null ||
+                                _a === void 0
+                                  ? void 0
+                                  : _a.length) > 0 && (
+                                  <div className="text-xs text-blue-600">
+                                    {allocation.optimization_suggestions.length} optimization
+                                    suggestions
                                   </div>
+                                )}
+                              </div>
+                              <div className="text-right space-y-1">
+                                {editMode
+                                  ? <input_1.Input
+                                      type="number"
+                                      value={
+                                        (_b = adjustments[allocation.resource_id]) !== null &&
+                                        _b !== void 0
+                                          ? _b
+                                          : allocation.allocated_capacity
+                                      }
+                                      onChange={(e) =>
+                                        handleAdjustment(
+                                          allocation.resource_id,
+                                          parseInt(e.target.value) || 0,
+                                        )
+                                      }
+                                      className="w-20 text-right"
+                                      min={0}
+                                      max={allocation.capacity}
+                                    />
+                                  : <div className="text-lg font-bold">
+                                      {allocation.allocated_capacity}/{allocation.capacity}
+                                    </div>}
+                                <div className="text-xs text-muted-foreground">
+                                  {Math.round(
+                                    (allocation.allocated_capacity / allocation.capacity) * 100,
+                                  )}
+                                  % utilized
                                 </div>
                               </div>
-                            );
-                          })}
-                      </div>
-                    </card_1.CardContent>
-                  </card_1.Card>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </card_1.CardContent>
+                </card_1.Card>
 
-                  {/* Allocation Chart */}
-                  <card_1.Card>
-                    <card_1.CardHeader>
-                      <card_1.CardTitle className="text-lg">
-                        Weekly Allocation Trend
-                      </card_1.CardTitle>
-                    </card_1.CardHeader>
-                    <card_1.CardContent>
-                      <div className="h-[250px]">
-                        <recharts_1.ResponsiveContainer width="100%" height="100%">
-                          <recharts_1.LineChart data={chartData.timeline}>
-                            <recharts_1.CartesianGrid strokeDasharray="3 3" />
-                            <recharts_1.XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                            <recharts_1.YAxis tick={{ fontSize: 12 }} />
-                            <recharts_1.Tooltip content={<CustomTooltip />} />
-                            <recharts_1.Line
-                              type="monotone"
-                              dataKey={
-                                type.id === "staff"
-                                  ? "staff"
-                                  : type.id === "rooms"
-                                    ? "rooms"
-                                    : "efficiency"
-                              }
-                              stroke={type.color}
-                              strokeWidth={2}
-                              dot={{ fill: type.color, strokeWidth: 2, r: 4 }}
-                            />
-                          </recharts_1.LineChart>
-                        </recharts_1.ResponsiveContainer>
-                      </div>
-                    </card_1.CardContent>
-                  </card_1.Card>
-                </div>
-              </tabs_1.TabsContent>
-            );
-          })}
+                {/* Allocation Chart */}
+                <card_1.Card>
+                  <card_1.CardHeader>
+                    <card_1.CardTitle className="text-lg">Weekly Allocation Trend</card_1.CardTitle>
+                  </card_1.CardHeader>
+                  <card_1.CardContent>
+                    <div className="h-[250px]">
+                      <recharts_1.ResponsiveContainer width="100%" height="100%">
+                        <recharts_1.LineChart data={chartData.timeline}>
+                          <recharts_1.CartesianGrid strokeDasharray="3 3" />
+                          <recharts_1.XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                          <recharts_1.YAxis tick={{ fontSize: 12 }} />
+                          <recharts_1.Tooltip content={<CustomTooltip />} />
+                          <recharts_1.Line
+                            type="monotone"
+                            dataKey={
+                              type.id === "staff"
+                                ? "staff"
+                                : type.id === "rooms"
+                                  ? "rooms"
+                                  : "efficiency"
+                            }
+                            stroke={type.color}
+                            strokeWidth={2}
+                            dot={{ fill: type.color, strokeWidth: 2, r: 4 }}
+                          />
+                        </recharts_1.LineChart>
+                      </recharts_1.ResponsiveContainer>
+                    </div>
+                  </card_1.CardContent>
+                </card_1.Card>
+              </div>
+            </tabs_1.TabsContent>
+          ))}
         </tabs_1.Tabs>
 
         {/* Edit Mode Actions */}
@@ -730,13 +669,7 @@ function ResourceAllocation(_a) {
               adjustments pending
             </div>
             <div className="flex space-x-2">
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return setAdjustments({});
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => setAdjustments({})}>
                 Cancel
               </button_1.Button>
               <button_1.Button size="sm" onClick={applyAdjustments}>
@@ -747,7 +680,7 @@ function ResourceAllocation(_a) {
         )}
 
         {/* Optimization Recommendations */}
-        {plan.allocations.some(function (a) {
+        {plan.allocations.some((a) => {
           var _a;
           return (
             ((_a = a.optimization_suggestions) === null || _a === void 0 ? void 0 : _a.length) > 0
@@ -760,7 +693,7 @@ function ResourceAllocation(_a) {
             </h4>
             <div className="space-y-2">
               {plan.allocations
-                .filter(function (a) {
+                .filter((a) => {
                   var _a;
                   return (
                     ((_a = a.optimization_suggestions) === null || _a === void 0
@@ -769,7 +702,7 @@ function ResourceAllocation(_a) {
                   );
                 })
                 .slice(0, 3)
-                .map(function (allocation, index) {
+                .map((allocation, index) => {
                   var _a;
                   return (
                     <div key={index} className="flex items-start space-x-2 text-sm">

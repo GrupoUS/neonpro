@@ -6,16 +6,16 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { EventEmitter } from "events";
 import crypto from "crypto";
+import type { EventEmitter } from "events";
 import type {
-  SessionAuditLog,
-  UserSession,
-  SessionSecurityEvent,
+  DeviceRegistration,
   LGPDSessionData,
+  SessionAuditLog,
   SessionError,
   SessionLocation,
-  DeviceRegistration,
+  SessionSecurityEvent,
+  UserSession,
 } from "./types";
 
 interface AuditLogEntry {

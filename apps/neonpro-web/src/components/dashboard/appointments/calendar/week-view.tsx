@@ -1,20 +1,20 @@
 "use client";
 
-import React from "react";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { cn } from "@/lib/utils";
 import type {
-  format,
-  startOfWeek,
-  endOfWeek,
+  addDays,
   eachDayOfInterval,
+  endOfWeek,
+  format,
   isSameDay,
   isToday,
-  addDays,
+  startOfWeek,
 } from "date-fns";
 import type { ptBR } from "date-fns/locale";
-import type { AppointmentCard } from "./appointment-card";
+import React from "react";
 import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { cn } from "@/lib/utils";
+import type { AppointmentCard } from "./appointment-card";
 
 interface WeekViewProps {
   date: Date;

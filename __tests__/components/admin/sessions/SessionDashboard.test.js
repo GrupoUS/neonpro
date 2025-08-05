@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @fileoverview Unit tests for SessionDashboard component
  * @version 1.0.0
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,7 +37,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -67,8 +66,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -89,9 +86,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var vitest_1 = require("vitest");
 var react_1 = require("@testing-library/react");
@@ -162,103 +159,93 @@ var mockUseSession = useSession_1.useSession;
 var mockUseSecurityEvents = useSession_1.useSecurityEvents;
 var mockUseDeviceManagement = useSession_1.useDeviceManagement;
 // Mock UI components
-vitest_1.vi.mock("@/components/ui/card", function () {
-  return {
-    Card: function (_a) {
-      var children = _a.children,
-        className = _a.className;
-      return <div className={className}>{children}</div>;
-    },
-    CardContent: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-    CardDescription: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-    CardHeader: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-    CardTitle: function (_a) {
-      var children = _a.children;
-      return <h3>{children}</h3>;
-    },
-  };
-});
-vitest_1.vi.mock("@/components/ui/tabs", function () {
-  return {
-    Tabs: function (_a) {
-      var children = _a.children,
-        defaultValue = _a.defaultValue;
-      return (
-        <div data-testid="tabs" data-default-value={defaultValue}>
-          {children}
-        </div>
-      );
-    },
-    TabsContent: function (_a) {
-      var children = _a.children,
-        value = _a.value;
-      return <div data-testid={"tab-content-".concat(value)}>{children}</div>;
-    },
-    TabsList: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-    TabsTrigger: function (_a) {
-      var children = _a.children,
-        value = _a.value;
-      return <button data-testid={"tab-".concat(value)}>{children}</button>;
-    },
-  };
-});
-vitest_1.vi.mock("@/components/ui/alert", function () {
-  return {
-    Alert: function (_a) {
-      var children = _a.children,
-        variant = _a.variant;
-      return (
-        <div data-testid="alert" data-variant={variant}>
-          {children}
-        </div>
-      );
-    },
-    AlertDescription: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-  };
-});
-vitest_1.vi.mock("@/components/ui/badge", function () {
-  return {
-    Badge: function (_a) {
-      var children = _a.children,
-        variant = _a.variant;
-      return (
-        <span data-testid="badge" data-variant={variant}>
-          {children}
-        </span>
-      );
-    },
-  };
-});
-vitest_1.vi.mock("@/components/ui/button", function () {
-  return {
-    Button: function (_a) {
-      var children = _a.children,
-        onClick = _a.onClick,
-        variant = _a.variant,
-        size = _a.size;
-      return (
-        <button onClick={onClick} data-variant={variant} data-size={size}>
-          {children}
-        </button>
-      );
-    },
-  };
-});
+vitest_1.vi.mock("@/components/ui/card", () => ({
+  Card: (_a) => {
+    var children = _a.children,
+      className = _a.className;
+    return <div className={className}>{children}</div>;
+  },
+  CardContent: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+  CardDescription: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+  CardHeader: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+  CardTitle: (_a) => {
+    var children = _a.children;
+    return <h3>{children}</h3>;
+  },
+}));
+vitest_1.vi.mock("@/components/ui/tabs", () => ({
+  Tabs: (_a) => {
+    var children = _a.children,
+      defaultValue = _a.defaultValue;
+    return (
+      <div data-testid="tabs" data-default-value={defaultValue}>
+        {children}
+      </div>
+    );
+  },
+  TabsContent: (_a) => {
+    var children = _a.children,
+      value = _a.value;
+    return <div data-testid={"tab-content-".concat(value)}>{children}</div>;
+  },
+  TabsList: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+  TabsTrigger: (_a) => {
+    var children = _a.children,
+      value = _a.value;
+    return <button data-testid={"tab-".concat(value)}>{children}</button>;
+  },
+}));
+vitest_1.vi.mock("@/components/ui/alert", () => ({
+  Alert: (_a) => {
+    var children = _a.children,
+      variant = _a.variant;
+    return (
+      <div data-testid="alert" data-variant={variant}>
+        {children}
+      </div>
+    );
+  },
+  AlertDescription: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+}));
+vitest_1.vi.mock("@/components/ui/badge", () => ({
+  Badge: (_a) => {
+    var children = _a.children,
+      variant = _a.variant;
+    return (
+      <span data-testid="badge" data-variant={variant}>
+        {children}
+      </span>
+    );
+  },
+}));
+vitest_1.vi.mock("@/components/ui/button", () => ({
+  Button: (_a) => {
+    var children = _a.children,
+      onClick = _a.onClick,
+      variant = _a.variant,
+      size = _a.size;
+    return (
+      <button onClick={onClick} data-variant={variant} data-size={size}>
+        {children}
+      </button>
+    );
+  },
+}));
 // Mock data
 var mockSessionData = {
   id: "session-123",
@@ -303,11 +290,11 @@ var mockDevice = {
   createdAt: new Date(),
   updatedAt: new Date(),
 };
-(0, vitest_1.describe)("SessionDashboard", function () {
+(0, vitest_1.describe)("SessionDashboard", () => {
   var defaultProps = {
     userId: "user-123",
   };
-  (0, vitest_1.beforeEach)(function () {
+  (0, vitest_1.beforeEach)(() => {
     vitest_1.vi.clearAllMocks();
     // Mock useSession hook
     mockUseSession.mockReturnValue({
@@ -342,7 +329,7 @@ var mockDevice = {
       refreshDevices: vitest_1.vi.fn(),
     });
   });
-  (0, vitest_1.it)("should render dashboard with all sections", function () {
+  (0, vitest_1.it)("should render dashboard with all sections", () => {
     (0, react_1.render)(<SessionDashboard_1.SessionDashboard {...defaultProps} />);
     (0, vitest_1.expect)(
       react_1.screen.getByText("Session Management Dashboard"),
@@ -358,14 +345,14 @@ var mockDevice = {
     (0, vitest_1.expect)(react_1.screen.getByTestId("tab-security")).toBeInTheDocument();
     (0, vitest_1.expect)(react_1.screen.getByTestId("tab-devices")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("should display session statistics in overview", function () {
+  (0, vitest_1.it)("should display session statistics in overview", () => {
     (0, react_1.render)(<SessionDashboard_1.SessionDashboard {...defaultProps} />);
     (0, vitest_1.expect)(react_1.screen.getByText("Active Sessions")).toBeInTheDocument();
     (0, vitest_1.expect)(react_1.screen.getByText("1")).toBeInTheDocument();
     (0, vitest_1.expect)(react_1.screen.getByText("Security Events")).toBeInTheDocument();
     (0, vitest_1.expect)(react_1.screen.getByText("Trusted Devices")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("should show loading state", function () {
+  (0, vitest_1.it)("should show loading state", () => {
     mockUseSession.mockReturnValue({
       sessions: [],
       activeSessions: [],
@@ -380,7 +367,7 @@ var mockDevice = {
     (0, react_1.render)(<SessionDashboard_1.SessionDashboard {...defaultProps} />);
     (0, vitest_1.expect)(react_1.screen.getByText("Loading session data...")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("should show error state", function () {
+  (0, vitest_1.it)("should show error state", () => {
     mockUseSession.mockReturnValue({
       sessions: [],
       activeSessions: [],
@@ -396,7 +383,7 @@ var mockDevice = {
     (0, vitest_1.expect)(react_1.screen.getByTestId("alert")).toBeInTheDocument();
     (0, vitest_1.expect)(react_1.screen.getByText("Failed to load sessions")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("should display session details in sessions tab", function () {
+  (0, vitest_1.it)("should display session details in sessions tab", () => {
     (0, react_1.render)(<SessionDashboard_1.SessionDashboard {...defaultProps} />);
     // Switch to sessions tab
     react_1.fireEvent.click(react_1.screen.getByTestId("tab-sessions"));
@@ -404,7 +391,7 @@ var mockDevice = {
     (0, vitest_1.expect)(react_1.screen.getByText("192.168.1.1")).toBeInTheDocument();
     (0, vitest_1.expect)(react_1.screen.getByText("Active")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("should display security events in security tab", function () {
+  (0, vitest_1.it)("should display security events in security tab", () => {
     (0, react_1.render)(<SessionDashboard_1.SessionDashboard {...defaultProps} />);
     // Switch to security tab
     react_1.fireEvent.click(react_1.screen.getByTestId("tab-security"));
@@ -412,7 +399,7 @@ var mockDevice = {
     (0, vitest_1.expect)(react_1.screen.getByText("unusual_location")).toBeInTheDocument();
     (0, vitest_1.expect)(react_1.screen.getByText("Medium")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("should display devices in devices tab", function () {
+  (0, vitest_1.it)("should display devices in devices tab", () => {
     (0, react_1.render)(<SessionDashboard_1.SessionDashboard {...defaultProps} />);
     // Switch to devices tab
     react_1.fireEvent.click(react_1.screen.getByTestId("tab-devices"));
@@ -420,10 +407,10 @@ var mockDevice = {
     (0, vitest_1.expect)(react_1.screen.getByText("desktop")).toBeInTheDocument();
     (0, vitest_1.expect)(react_1.screen.getByText("Windows 10")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("should handle session termination", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.it)("should handle session termination", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockTerminateSession, terminateButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockTerminateSession = vitest_1.vi.fn().mockResolvedValue({ success: true });
@@ -445,7 +432,7 @@ var mockDevice = {
             react_1.fireEvent.click(terminateButton);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(mockTerminateSession).toHaveBeenCalledWith("session-123");
               }),
             ];
@@ -454,12 +441,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should handle security event resolution", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should handle security event resolution", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockResolveEvent, resolveButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockResolveEvent = vitest_1.vi.fn().mockResolvedValue({ success: true });
@@ -479,7 +466,7 @@ var mockDevice = {
             react_1.fireEvent.click(resolveButton);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(mockResolveEvent).toHaveBeenCalledWith(
                   "event-123",
                   vitest_1.expect.any(String),
@@ -492,12 +479,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should handle device trust level update", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should handle device trust level update", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockUpdateTrustLevel, trustButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockUpdateTrustLevel = vitest_1.vi.fn().mockResolvedValue({ success: true });
@@ -517,7 +504,7 @@ var mockDevice = {
             react_1.fireEvent.click(trustButton);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(mockUpdateTrustLevel).toHaveBeenCalledWith(
                   "device-123",
                   "trusted",
@@ -529,12 +516,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should refresh data when refresh button is clicked", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should refresh data when refresh button is clicked", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockRefreshSessions, mockRefreshEvents, mockRefreshDevices, refreshButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockRefreshSessions = vitest_1.vi.fn();
@@ -574,7 +561,7 @@ var mockDevice = {
             react_1.fireEvent.click(refreshButton);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(mockRefreshSessions).toHaveBeenCalled();
                 (0, vitest_1.expect)(mockRefreshEvents).toHaveBeenCalled();
                 (0, vitest_1.expect)(mockRefreshDevices).toHaveBeenCalled();
@@ -585,9 +572,9 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should show security alerts for unresolved events", function () {
+    }),
+  );
+  (0, vitest_1.it)("should show security alerts for unresolved events", () => {
     var highSeverityEvent = __assign(__assign({}, mockSecurityEvent), {
       id: "event-456",
       severity: "high",
@@ -608,7 +595,7 @@ var mockDevice = {
       react_1.screen.getByText(/high severity security events/i),
     ).toBeInTheDocument();
   });
-  (0, vitest_1.it)("should display correct session status badges", function () {
+  (0, vitest_1.it)("should display correct session status badges", () => {
     var expiredSession = __assign(__assign({}, mockSessionData), {
       id: "session-456",
       isActive: false,
@@ -629,18 +616,10 @@ var mockDevice = {
     react_1.fireEvent.click(react_1.screen.getByTestId("tab-sessions"));
     // Should show different status badges
     var badges = react_1.screen.getAllByTestId("badge");
-    (0, vitest_1.expect)(
-      badges.some(function (badge) {
-        return badge.textContent === "Active";
-      }),
-    ).toBe(true);
-    (0, vitest_1.expect)(
-      badges.some(function (badge) {
-        return badge.textContent === "Inactive";
-      }),
-    ).toBe(true);
+    (0, vitest_1.expect)(badges.some((badge) => badge.textContent === "Active")).toBe(true);
+    (0, vitest_1.expect)(badges.some((badge) => badge.textContent === "Inactive")).toBe(true);
   });
-  (0, vitest_1.it)("should handle empty states", function () {
+  (0, vitest_1.it)("should handle empty states", () => {
     mockUseSession.mockReturnValue({
       sessions: [],
       activeSessions: [],

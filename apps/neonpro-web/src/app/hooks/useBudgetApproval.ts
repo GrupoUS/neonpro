@@ -1,3 +1,4 @@
+import type { useEffect, useState } from "react";
 import type {
   BudgetForecast,
   BudgetOptimizationRecommendation,
@@ -5,7 +6,6 @@ import type {
   CreateApprovalRequest,
   InventoryBudget,
 } from "@/app/types/budget-approval";
-import type { useEffect, useState } from "react";
 
 interface UseBudgetApprovalReturn {
   // Budget Management

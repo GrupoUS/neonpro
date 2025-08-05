@@ -10,9 +10,9 @@
  * - Valida configuração Stripe
  */
 
-const { execSync } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+const { execSync } = require("node:child_process");
+const fs = require("node:fs");
+const _path = require("node:path");
 
 console.log("🚀 SETUP AUTOMÁTICO DO SISTEMA DE ASSINATURAS");
 console.log("=".repeat(60));
@@ -131,7 +131,7 @@ async function applyDatabaseMigration() {
 
   try {
     // Ler conteúdo da migration
-    const migrationSQL = fs.readFileSync(migrationPath, "utf8");
+    const _migrationSQL = fs.readFileSync(migrationPath, "utf8");
 
     const { createClient } = require("@supabase/supabase-js");
     const supabase = createClient(
@@ -200,11 +200,11 @@ async function runValidationTests() {
   console.log("   Executando teste do banco de dados...");
 
   try {
-    const dbTestScript = require("./test-database-schema.js");
+    const _dbTestScript = require("./test-database-schema.js");
     // Executar teste silenciosamente
     // await dbTestScript.main();
     console.log("   Teste do banco: OK");
-  } catch (error) {
+  } catch (_error) {
     console.log("   Teste do banco: Algumas verificações falharam");
     console.log(`   Execute: npm run test:db para mais detalhes`);
   }
@@ -301,7 +301,7 @@ async function main() {
   }
 
   // Relatório final
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("📊 RELATÓRIO FINAL DO SETUP");
   console.log("=".repeat(60));
   console.log(`✅ Etapas Concluídas: ${completedSteps}/${setupSteps}`);

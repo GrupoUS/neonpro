@@ -55,7 +55,7 @@ jest.mock("../../app/utils/supabase/server", () => ({
 
 describe("Patient Profile System Integration Tests", () => {
   let profileManager: ProfileManager;
-  let mockSupabaseClient: any;
+  let _mockSupabaseClient: any;
 
   const mockPatientData = {
     patient_id: "test-patient-001",
@@ -113,7 +113,7 @@ describe("Patient Profile System Integration Tests", () => {
 
   beforeEach(() => {
     // Create mock Supabase client
-    mockSupabaseClient = {
+    _mockSupabaseClient = {
       from: jest.fn(() => ({
         insert: jest.fn(() => ({
           select: jest.fn(() => ({

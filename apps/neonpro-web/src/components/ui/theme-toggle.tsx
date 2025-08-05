@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
 import type { Moon, Sun } from "lucide-react";
 import type { useTheme } from "next-themes";
+import * as React from "react";
 
 import type { Button } from "@/components/ui/button";
 import type {

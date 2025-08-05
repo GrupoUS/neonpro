@@ -1,3 +1,13 @@
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Settings,
+  Target,
+  TrendingUp,
+} from "lucide-react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -9,16 +19,6 @@ import type {
 } from "@/components/ui/card";
 import type { Progress } from "@/components/ui/progress";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Activity,
-  AlertTriangle,
-  BarChart3,
-  CheckCircle,
-  Clock,
-  Settings,
-  Target,
-  TrendingUp,
-} from "lucide-react";
 
 interface ProtocolOptimizationData {
   currentVersion: string;

@@ -1,5 +1,14 @@
 "use client";
 
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertCircle, CalendarIcon, CheckCircle2, Clock, User } from "lucide-react";
+import type { useRouter } from "next/navigation";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
+import type { z } from "zod";
 import type {
   BookingResponse,
   CreateAppointmentFormData,
@@ -28,15 +37,6 @@ import type {
 } from "@/components/ui/select";
 import type { Textarea } from "@/components/ui/textarea";
 import type { cn } from "@/lib/utils";
-import type { zodResolver } from "@hookform/resolvers/zod";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { AlertCircle, CalendarIcon, CheckCircle2, Clock, User } from "lucide-react";
-import type { useRouter } from "next/navigation";
-import type { useEffect, useState } from "react";
-import type { useForm } from "react-hook-form";
-import type { toast } from "sonner";
-import type { z } from "zod";
 
 // Form validation schema
 const appointmentFormSchema = z.object({

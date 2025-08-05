@@ -1,6 +1,6 @@
+import type { createClient } from "@supabase/supabase-js";
 import type { NextRequest, NextResponse } from "next/server";
 import type { IntegratedSessionSecurity } from "./integrated-session-security";
-import type { createClient } from "@supabase/supabase-js";
 
 /**
  * Session Security Middleware

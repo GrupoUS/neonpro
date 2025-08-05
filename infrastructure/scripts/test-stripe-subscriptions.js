@@ -11,9 +11,9 @@
  * - Fluxo completo de assinatura
  */
 
-const https = require("https");
-const http = require("http");
-const { execSync } = require("child_process");
+const https = require("node:https");
+const http = require("node:http");
+const { execSync } = require("node:child_process");
 
 // Configurações
 const BASE_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
@@ -58,7 +58,7 @@ function makeRequest(url, options = {}) {
               data: jsonData,
               headers: res.headers,
             });
-          } catch (e) {
+          } catch (_e) {
             resolve({ status: res.statusCode, data, headers: res.headers });
           }
         });
@@ -292,7 +292,7 @@ async function testUserInterface() {
 async function testPerformance() {
   const start = Date.now();
 
-  const response = await makeRequest(`${BASE_URL}/api/subscription/current`);
+  const _response = await makeRequest(`${BASE_URL}/api/subscription/current`);
 
   const duration = Date.now() - start;
 
@@ -349,7 +349,7 @@ async function main() {
   }
 
   // Relatório final
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("📊 RELATÓRIO FINAL");
   console.log("=".repeat(60));
   console.log(`✅ Testes Passaram: ${passedTests}/${totalTests}`);
@@ -373,7 +373,7 @@ async function main() {
     console.log("🚨 Sistema precisa de correções críticas");
   }
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log("📝 Próximos Passos Recomendados:");
 
   if (failedTestsList.some((t) => t.name.includes("Stripe"))) {

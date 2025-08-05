@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Integration Rate Limiter
  * Rate limiting implementation for third-party integrations
@@ -9,15 +8,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,13 +36,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,9 +64,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -139,22 +136,21 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemoryRateLimiter = exports.SupabaseRateLimiter = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 /**
  * Redis-like rate limiter implementation using Supabase
  */
-var SupabaseRateLimiter = /** @class */ (function () {
+var SupabaseRateLimiter = /** @class */ (() => {
   function SupabaseRateLimiter(supabaseUrl, supabaseKey) {
-    var _this = this;
     this.cache = new Map();
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
     // Cleanup expired entries every 5 minutes
     this.cleanupInterval = setInterval(
-      function () {
-        _this.cleanupExpiredEntries();
+      () => {
+        this.cleanupExpiredEntries();
       },
       5 * 60 * 1000,
     );
@@ -609,14 +605,13 @@ exports.SupabaseRateLimiter = SupabaseRateLimiter;
 /**
  * In-memory rate limiter for development/testing
  */
-var MemoryRateLimiter = /** @class */ (function () {
+var MemoryRateLimiter = /** @class */ (() => {
   function MemoryRateLimiter() {
-    var _this = this;
     this.counters = new Map();
     this.configs = new Map();
     // Cleanup expired entries every minute
-    this.cleanupInterval = setInterval(function () {
-      _this.cleanupExpiredEntries();
+    this.cleanupInterval = setInterval(() => {
+      this.cleanupExpiredEntries();
     }, 60 * 1000);
   }
   /**

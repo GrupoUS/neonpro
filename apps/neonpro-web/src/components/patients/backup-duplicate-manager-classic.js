@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DuplicateManagerClassic;
 var badge_1 = require("@/components/ui/badge");
@@ -141,7 +138,6 @@ var card_1 = require("@/components/ui/card");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function DuplicateManagerClassic(_a) {
-  var _this = this;
   var duplicates = _a.duplicates,
     onMerge = _a.onMerge,
     onDismiss = _a.onDismiss;
@@ -156,10 +152,10 @@ function DuplicateManagerClassic(_a) {
   var processing = processingState[0];
   var setProcessing = processingState[1];
   var handleMerge = react_1.default.useCallback(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var group, secondaryIds;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!selectedGroup || !selectedPrimary) return [2 /*return*/];
@@ -167,17 +163,11 @@ function DuplicateManagerClassic(_a) {
               _a.label = 1;
             case 1:
               _a.trys.push([1, , 4, 5]);
-              group = duplicates.find(function (g) {
-                return g.id === selectedGroup;
-              });
+              group = duplicates.find((g) => g.id === selectedGroup);
               if (!group) return [3 /*break*/, 3];
               secondaryIds = group.patients
-                .filter(function (p) {
-                  return p.id !== selectedPrimary;
-                })
-                .map(function (p) {
-                  return p.id;
-                });
+                .filter((p) => p.id !== selectedPrimary)
+                .map((p) => p.id);
               return [4 /*yield*/, onMerge(selectedGroup, selectedPrimary, secondaryIds)];
             case 2:
               _a.sent();
@@ -193,8 +183,7 @@ function DuplicateManagerClassic(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [selectedGroup, selectedPrimary, duplicates, onMerge],
   );
   if (duplicates.length === 0) {
@@ -218,84 +207,76 @@ function DuplicateManagerClassic(_a) {
         </h2>
       </div>
 
-      {duplicates.map(function (group) {
-        return (
-          <card_1.Card key={group.id} className="border-amber-200">
-            <card_1.CardHeader>
-              <div className="flex items-center justify-between">
-                <card_1.CardTitle className="text-base">Potential Duplicate Group</card_1.CardTitle>
-                <badge_1.Badge variant="secondary" className="bg-amber-100 text-amber-800">
-                  {Math.round(group.confidence * 100)}% confidence
-                </badge_1.Badge>
-              </div>
-            </card_1.CardHeader>
-            <card_1.CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {group.patients.map(function (patient) {
-                  return (
-                    <div
-                      key={patient.id}
-                      className={"p-4 border rounded-lg cursor-pointer transition-colors ".concat(
-                        selectedPrimary === patient.id
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 hover:border-gray-300",
-                      )}
-                      onClick={function () {
-                        return setSelectedPrimary(patient.id);
-                      }}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{patient.name}</h4>
-                        {group.suggestedPrimary === patient.id && (
-                          <badge_1.Badge variant="default" className="text-xs">
-                            Suggested Primary
-                          </badge_1.Badge>
-                        )}
-                      </div>
-                      <div className="space-y-1 text-sm text-gray-600">
-                        <p>Birth Date: {patient.birthDate}</p>
-                        {patient.email && <p>Email: {patient.email}</p>}
-                        {patient.phone && <p>Phone: {patient.phone}</p>}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="flex items-center justify-between pt-4 border-t">
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return onDismiss(group.id);
-                  }}
-                  disabled={processing}
-                >
-                  Not a duplicate
-                </button_1.Button>
-
-                <div className="flex items-center gap-2">
-                  {selectedPrimary && (
-                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <lucide_react_1.ArrowRight className="h-4 w-4" />
-                      <span>Merge into selected record</span>
-                    </div>
+      {duplicates.map((group) => (
+        <card_1.Card key={group.id} className="border-amber-200">
+          <card_1.CardHeader>
+            <div className="flex items-center justify-between">
+              <card_1.CardTitle className="text-base">Potential Duplicate Group</card_1.CardTitle>
+              <badge_1.Badge variant="secondary" className="bg-amber-100 text-amber-800">
+                {Math.round(group.confidence * 100)}% confidence
+              </badge_1.Badge>
+            </div>
+          </card_1.CardHeader>
+          <card_1.CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {group.patients.map((patient) => (
+                <div
+                  key={patient.id}
+                  className={"p-4 border rounded-lg cursor-pointer transition-colors ".concat(
+                    selectedPrimary === patient.id
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 hover:border-gray-300",
                   )}
-                  <button_1.Button
-                    onClick={function () {
-                      setSelectedGroup(group.id);
-                      handleMerge();
-                    }}
-                    disabled={!selectedPrimary || processing}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    {processing ? "Merging..." : "Merge Records"}
-                  </button_1.Button>
+                  onClick={() => setSelectedPrimary(patient.id)}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">{patient.name}</h4>
+                    {group.suggestedPrimary === patient.id && (
+                      <badge_1.Badge variant="default" className="text-xs">
+                        Suggested Primary
+                      </badge_1.Badge>
+                    )}
+                  </div>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <p>Birth Date: {patient.birthDate}</p>
+                    {patient.email && <p>Email: {patient.email}</p>}
+                    {patient.phone && <p>Phone: {patient.phone}</p>}
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t">
+              <button_1.Button
+                variant="outline"
+                onClick={() => onDismiss(group.id)}
+                disabled={processing}
+              >
+                Not a duplicate
+              </button_1.Button>
+
+              <div className="flex items-center gap-2">
+                {selectedPrimary && (
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <lucide_react_1.ArrowRight className="h-4 w-4" />
+                    <span>Merge into selected record</span>
+                  </div>
+                )}
+                <button_1.Button
+                  onClick={() => {
+                    setSelectedGroup(group.id);
+                    handleMerge();
+                  }}
+                  disabled={!selectedPrimary || processing}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {processing ? "Merging..." : "Merge Records"}
+                </button_1.Button>
               </div>
-            </card_1.CardContent>
-          </card_1.Card>
-        );
-      })}
+            </div>
+          </card_1.CardContent>
+        </card_1.Card>
+      ))}
     </div>
   );
 }

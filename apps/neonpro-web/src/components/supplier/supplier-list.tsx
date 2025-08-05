@@ -7,19 +7,37 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Badge } from "@/components/ui/badge";
-import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  AlertTriangle,
+  Building2,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  Eye,
+  Filter,
+  Mail,
+  MapPin,
+  Minus,
+  MoreVertical,
+  Phone,
+  Plus,
+  RefreshCw,
+  Search,
+  Star,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  Users,
+  XCircle,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +46,16 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { Input } from "@/components/ui/input";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Skeleton } from "@/components/ui/skeleton";
 import type {
   Table,
   TableBody,
@@ -36,36 +64,8 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Progress } from "@/components/ui/progress";
-import type { Skeleton } from "@/components/ui/skeleton";
-import type {
-  Search,
-  Filter,
-  Plus,
-  MoreVertical,
-  Eye,
-  Edit,
-  Trash2,
-  Star,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Users,
-  Building2,
-  Phone,
-  Mail,
-  MapPin,
-  RefreshCw,
-  Download,
-  Upload,
-} from "lucide-react";
-import type { Supplier, SupplierStatus, SupplierCategory, RiskLevel } from "@/lib/types/supplier";
-import type { useSuppliers, useSupplierSearch } from "@/lib/hooks/use-supplier";
+import type { useSupplierSearch, useSuppliers } from "@/lib/hooks/use-supplier";
+import type { RiskLevel, Supplier, SupplierCategory, SupplierStatus } from "@/lib/types/supplier";
 import type { cn } from "@/lib/utils";
 
 // ============================================================================

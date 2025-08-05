@@ -1,6 +1,6 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { SessionTimeoutManager } from "@/lib/security/session-timeout-manager";
 import type { requireAuth } from "@/lib/auth";
+import type { SessionTimeoutManager } from "@/lib/security/session-timeout-manager";
 
 /**
  * Session Activity API Route

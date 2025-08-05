@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentManagementDashboard = AppointmentManagementDashboard;
 var react_1 = require("react");
@@ -149,7 +146,6 @@ var appointment_calendar_view_1 = require("./appointment-calendar-view");
 var quick_actions_1 = require("./quick-actions");
 var modals_1 = require("./appointments/modals");
 function AppointmentManagementDashboard(_a) {
-  var _this = this;
   var userId = _a.userId,
     userRole = _a.userRole,
     professionalId = _a.professionalId,
@@ -165,7 +161,7 @@ function AppointmentManagementDashboard(_a) {
     refreshing = _e[0],
     setRefreshing = _e[1];
   // Initialize current date on client side only
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     setCurrentDate(new Date());
   }, []);
   // Modal states
@@ -210,10 +206,10 @@ function AppointmentManagementDashboard(_a) {
     { id: "2", name: "Dr. Carlos Santos" },
     { id: "3", name: "Dra. Maria Oliveira" },
   ];
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setRefreshing(true);
@@ -237,32 +233,31 @@ function AppointmentManagementDashboard(_a) {
         }
       });
     });
-  };
-  var handleEditAppointment = function (appointment) {
+  var handleEditAppointment = (appointment) => {
     setSelectedAppointment(appointment);
     setEditDialogOpen(true);
   };
-  var handleRescheduleAppointment = function (appointment) {
+  var handleRescheduleAppointment = (appointment) => {
     setSelectedAppointment(appointment);
     setRescheduleDialogOpen(true);
   };
-  var handleContactPatient = function (appointment) {
+  var handleContactPatient = (appointment) => {
     setSelectedAppointment(appointment);
     setContactDialogOpen(true);
   };
-  var handleCreateAppointment = function (date, time) {
+  var handleCreateAppointment = (date, time) => {
     setCreateDialogOpen(true);
   };
   // Handle appointment updates from modals
-  var handleAppointmentUpdate = function (updatedAppointment) {
+  var handleAppointmentUpdate = (updatedAppointment) => {
     // Refresh data to show updated appointment
     refreshData();
     setSelectedAppointment(null);
   };
-  var handleAppointmentReschedule = function (appointmentId, newStartTime, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAppointmentReschedule = (appointmentId, newStartTime, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -279,15 +274,14 @@ function AppointmentManagementDashboard(_a) {
         }
       });
     });
-  };
-  var handleCreateSuccess = function () {
+  var handleCreateSuccess = () => {
     // Refresh data to show new appointment
     refreshData();
   };
-  var handleBulkAction = function (action, appointmentIds, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBulkAction = (action, appointmentIds, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 10, , 11]);
@@ -304,50 +298,25 @@ function AppointmentManagementDashboard(_a) {
             }
             return [3 /*break*/, 9];
           case 1:
-            return [
-              4 /*yield*/,
-              Promise.all(
-                appointmentIds.map(function (id) {
-                  return confirmAppointment(id);
-                }),
-              ),
-            ];
+            return [4 /*yield*/, Promise.all(appointmentIds.map((id) => confirmAppointment(id)))];
           case 2:
             _b.sent();
             return [3 /*break*/, 9];
           case 3:
             return [
               4 /*yield*/,
-              Promise.all(
-                appointmentIds.map(function (id) {
-                  return cancelAppointment(id, reason);
-                }),
-              ),
+              Promise.all(appointmentIds.map((id) => cancelAppointment(id, reason))),
             ];
           case 4:
             _b.sent();
             return [3 /*break*/, 9];
           case 5:
-            return [
-              4 /*yield*/,
-              Promise.all(
-                appointmentIds.map(function (id) {
-                  return markCompleted(id);
-                }),
-              ),
-            ];
+            return [4 /*yield*/, Promise.all(appointmentIds.map((id) => markCompleted(id)))];
           case 6:
             _b.sent();
             return [3 /*break*/, 9];
           case 7:
-            return [
-              4 /*yield*/,
-              Promise.all(
-                appointmentIds.map(function (id) {
-                  return markNoShow(id);
-                }),
-              ),
-            ];
+            return [4 /*yield*/, Promise.all(appointmentIds.map((id) => markNoShow(id)))];
           case 8:
             _b.sent();
             return [3 /*break*/, 9];
@@ -361,8 +330,7 @@ function AppointmentManagementDashboard(_a) {
         }
       });
     });
-  };
-  var formatDateRange = function () {
+  var formatDateRange = () => {
     switch (filters.dateRange) {
       case "today":
         return "Hoje";
@@ -423,11 +391,7 @@ function AppointmentManagementDashboard(_a) {
             Atualizar
           </button_1.Button>
 
-          <button_1.Button
-            onClick={function () {
-              return handleCreateAppointment();
-            }}
-          >
+          <button_1.Button onClick={() => handleCreateAppointment()}>
             Novo Agendamento
           </button_1.Button>
         </div>
@@ -441,9 +405,7 @@ function AppointmentManagementDashboard(_a) {
         onRescheduleAppointment={handleRescheduleAppointment}
         onMarkCompleted={markCompleted}
         onMarkNoShow={markNoShow}
-        onCreateAppointment={function () {
-          return handleCreateAppointment();
-        }}
+        onCreateAppointment={() => handleCreateAppointment()}
         onBulkAction={handleBulkAction}
       />
 
@@ -456,12 +418,7 @@ function AppointmentManagementDashboard(_a) {
       />
 
       {/* Main Content */}
-      <tabs_1.Tabs
-        value={selectedView}
-        onValueChange={function (value) {
-          return setSelectedView(value);
-        }}
-      >
+      <tabs_1.Tabs value={selectedView} onValueChange={(value) => setSelectedView(value)}>
         <tabs_1.TabsList className="grid w-full grid-cols-2 lg:w-auto lg:grid-cols-2">
           <tabs_1.TabsTrigger value="list" className="flex items-center gap-2">
             <lucide_react_1.List className="h-4 w-4" />
@@ -478,9 +435,7 @@ function AppointmentManagementDashboard(_a) {
           <appointment_list_view_1.AppointmentListView
             appointments={appointments}
             onEdit={handleEditAppointment}
-            onCancel={function (id, reason) {
-              return cancelAppointment(id, reason);
-            }}
+            onCancel={(id, reason) => cancelAppointment(id, reason)}
             onConfirm={confirmAppointment}
             onReschedule={handleRescheduleAppointment}
             onMarkCompleted={markCompleted}
@@ -497,7 +452,7 @@ function AppointmentManagementDashboard(_a) {
             currentDate={currentDate}
             onDateChange={setCurrentDate}
             onAppointmentSelect={handleEditAppointment}
-            onDaySelect={function (date) {
+            onDaySelect={(date) => {
               // Focus on selected day
               setCurrentDate(date);
             }}

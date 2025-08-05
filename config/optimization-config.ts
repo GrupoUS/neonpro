@@ -424,7 +424,7 @@ class OptimizationConfigManager {
 // REACT HOOKS
 // =====================================================================================
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function useOptimizationConfig(initialConfig?: Partial<OptimizationConfig>) {
   const [manager] = useState(() => new OptimizationConfigManager(initialConfig));
@@ -550,7 +550,7 @@ export function getOptimalConfigForDevice(): Partial<OptimizationConfig> {
   if (typeof window === "undefined") return {};
 
   const memory = (navigator as any).deviceMemory || 4; // Default to 4GB
-  const cores = navigator.hardwareConcurrency || 4; // Default to 4 cores
+  const _cores = navigator.hardwareConcurrency || 4; // Default to 4 cores
   const connection = (navigator as any).connection;
 
   const config: Partial<OptimizationConfig> = {};

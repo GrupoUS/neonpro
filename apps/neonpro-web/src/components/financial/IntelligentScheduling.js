@@ -6,32 +6,31 @@
  * and automated time slot suggestions.
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntelligentScheduling = IntelligentScheduling;
 var react_1 = require("react");
@@ -170,7 +167,6 @@ var locale_1 = require("date-fns/locale");
 var use_toast_1 = require("@/components/ui/use-toast");
 var alert_1 = require("@/components/ui/alert");
 function IntelligentScheduling(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     serviceId = _a.serviceId,
     onAppointmentScheduled = _a.onAppointmentScheduled;
@@ -238,10 +234,10 @@ function IntelligentScheduling(_a) {
     },
   ];
   // AI-powered time slot analysis
-  var analyzeOptimalSlots = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var analyzeOptimalSlots = () =>
+    __awaiter(this, void 0, void 0, function () {
       var slots, scoredSlots, availableScored, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedDate || !selectedProfessional || !selectedService) return [2 /*return*/];
@@ -250,18 +246,13 @@ function IntelligentScheduling(_a) {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Simulate AI analysis
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simulate AI analysis
             _a.sent();
             slots = generateTimeSlots(selectedDate, selectedProfessional, selectedService);
-            scoredSlots = slots.map(function (slot) {
-              return __assign(__assign({}, slot), {
+            scoredSlots = slots.map((slot) =>
+              __assign(__assign({}, slot), {
                 aiScore: calculateAIScore(
                   slot,
                   selectedPatient,
@@ -269,15 +260,11 @@ function IntelligentScheduling(_a) {
                   selectedService,
                 ),
                 reasons: generateReasons(slot, selectedPatient, selectedProfessional),
-              });
-            });
+              }),
+            );
             availableScored = scoredSlots
-              .filter(function (slot) {
-                return slot.available;
-              })
-              .sort(function (a, b) {
-                return (b.aiScore || 0) - (a.aiScore || 0);
-              });
+              .filter((slot) => slot.available)
+              .sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0));
             setAvailableSlots(availableScored);
             setAiRecommendations(availableScored.slice(0, 3)); // Top 3 recommendations
             toast({
@@ -301,9 +288,8 @@ function IntelligentScheduling(_a) {
         }
       });
     });
-  };
   // Generate time slots for a given day
-  var generateTimeSlots = function (date, professional, service) {
+  var generateTimeSlots = (date, professional, service) => {
     var slots = [];
     var dayOfWeek = date.getDay();
     if (!professional.workingHours.days.includes(dayOfWeek)) {
@@ -343,7 +329,7 @@ function IntelligentScheduling(_a) {
     return slots;
   };
   // Calculate AI score for time slot optimization
-  var calculateAIScore = function (slot, patient, professional, service) {
+  var calculateAIScore = (slot, patient, professional, service) => {
     var score = 50; // Base score
     // Time preference scoring
     var hour = slot.start.getHours();
@@ -370,7 +356,7 @@ function IntelligentScheduling(_a) {
     return Math.max(0, Math.min(100, score));
   };
   // Generate reasons for AI recommendations
-  var generateReasons = function (slot, patient, professional) {
+  var generateReasons = (slot, patient, professional) => {
     var reasons = [];
     var hour = slot.start.getHours();
     if (hour >= 9 && hour <= 11) {
@@ -389,10 +375,10 @@ function IntelligentScheduling(_a) {
     return reasons;
   };
   // Detect and resolve scheduling conflicts
-  var detectConflicts = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var detectConflicts = () =>
+    __awaiter(this, void 0, void 0, function () {
       var detected, resourceConflicts, professionalConflicts, patientConflicts;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!selectedSlot || !selectedProfessional || !selectedService) return [2 /*return*/];
         detected = [];
         resourceConflicts = checkResourceConflicts(selectedSlot, selectedService);
@@ -408,8 +394,7 @@ function IntelligentScheduling(_a) {
         return [2 /*return*/, detected];
       });
     });
-  };
-  var checkResourceConflicts = function (slot, service) {
+  var checkResourceConflicts = (slot, service) => {
     // Mock implementation - in production, check against resource bookings
     var conflicts = [];
     if (service.requiredResources.includes("sala_procedimento") && Math.random() < 0.2) {
@@ -417,19 +402,19 @@ function IntelligentScheduling(_a) {
     }
     return conflicts;
   };
-  var checkProfessionalConflicts = function (slot, professional) {
+  var checkProfessionalConflicts = (slot, professional) => {
     // Mock implementation - in production, check against professional's schedule
     return [];
   };
-  var checkPatientConflicts = function (slot, patient) {
+  var checkPatientConflicts = (slot, patient) => {
     // Mock implementation - in production, check against patient's appointments
     return [];
   };
   // Schedule appointment with optimizations
-  var scheduleAppointment = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var scheduleAppointment = () =>
+    __awaiter(this, void 0, void 0, function () {
       var detectedConflicts, appointmentData, appointmentId, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedSlot || !selectedPatient || !selectedProfessional || !selectedService) {
@@ -463,12 +448,7 @@ function IntelligentScheduling(_a) {
               aiScore: selectedSlot.aiScore,
               scheduledAt: new Date().toISOString(),
             };
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 3:
             _a.sent();
             appointmentId = "APP-".concat(Date.now());
@@ -493,7 +473,6 @@ function IntelligentScheduling(_a) {
         }
       });
     });
-  };
   return (
     <div className="space-y-6">
       <card_1.Card>
@@ -512,7 +491,7 @@ function IntelligentScheduling(_a) {
             <div className="space-y-2">
               <label_1.Label>Paciente</label_1.Label>
               <select_1.Select
-                onValueChange={function (value) {
+                onValueChange={(value) => {
                   var patient = {
                     id: value,
                     name: "Maria Silva",
@@ -538,10 +517,8 @@ function IntelligentScheduling(_a) {
             <div className="space-y-2">
               <label_1.Label>Profissional</label_1.Label>
               <select_1.Select
-                onValueChange={function (value) {
-                  var professional = professionals.find(function (p) {
-                    return p.id === value;
-                  });
+                onValueChange={(value) => {
+                  var professional = professionals.find((p) => p.id === value);
                   setSelectedProfessional(professional || null);
                 }}
               >
@@ -549,20 +526,18 @@ function IntelligentScheduling(_a) {
                   <select_1.SelectValue placeholder="Selecionar profissional" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {professionals.map(function (prof) {
-                    return (
-                      <select_1.SelectItem key={prof.id} value={prof.id}>
-                        <div className="flex items-center gap-2">
-                          {prof.name}
-                          <badge_1.Badge
-                            variant={prof.currentLoad > 80 ? "destructive" : "secondary"}
-                          >
-                            {prof.currentLoad}%
-                          </badge_1.Badge>
-                        </div>
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {professionals.map((prof) => (
+                    <select_1.SelectItem key={prof.id} value={prof.id}>
+                      <div className="flex items-center gap-2">
+                        {prof.name}
+                        <badge_1.Badge
+                          variant={prof.currentLoad > 80 ? "destructive" : "secondary"}
+                        >
+                          {prof.currentLoad}%
+                        </badge_1.Badge>
+                      </div>
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -570,10 +545,8 @@ function IntelligentScheduling(_a) {
             <div className="space-y-2">
               <label_1.Label>Serviço</label_1.Label>
               <select_1.Select
-                onValueChange={function (value) {
-                  var service = services.find(function (s) {
-                    return s.id === value;
-                  });
+                onValueChange={(value) => {
+                  var service = services.find((s) => s.id === value);
                   setSelectedService(service || null);
                 }}
               >
@@ -581,13 +554,11 @@ function IntelligentScheduling(_a) {
                   <select_1.SelectValue placeholder="Selecionar serviço" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {services.map(function (service) {
-                    return (
-                      <select_1.SelectItem key={service.id} value={service.id}>
-                        {service.name} ({service.duration}min)
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {services.map((service) => (
+                    <select_1.SelectItem key={service.id} value={service.id}>
+                      {service.name} ({service.duration}min)
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -610,9 +581,7 @@ function IntelligentScheduling(_a) {
                   mode="single"
                   selected={selectedDate}
                   onSelect={setSelectedDate}
-                  disabled={function (date) {
-                    return date < new Date();
-                  }}
+                  disabled={(date) => date < new Date()}
                   initialFocus
                 />
               </popover_1.PopoverContent>
@@ -637,7 +606,7 @@ function IntelligentScheduling(_a) {
                 Recomendações AI
               </label_1.Label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {aiRecommendations.map(function (slot) {
+                {aiRecommendations.map((slot) => {
                   var _a;
                   return (
                     <card_1.Card
@@ -649,9 +618,7 @@ function IntelligentScheduling(_a) {
                           ? "ring-2 ring-blue-500"
                           : "",
                       )}
-                      onClick={function () {
-                        return setSelectedSlot(slot);
-                      }}
+                      onClick={() => setSelectedSlot(slot)}
                     >
                       <card_1.CardContent className="p-4">
                         <div className="flex items-center justify-between mb-2">
@@ -667,13 +634,11 @@ function IntelligentScheduling(_a) {
                         <div className="space-y-1">
                           {(_a = slot.reasons) === null || _a === void 0
                             ? void 0
-                            : _a.map(function (reason, index) {
-                                return (
-                                  <p key={index} className="text-xs text-gray-600">
-                                    • {reason}
-                                  </p>
-                                );
-                              })}
+                            : _a.map((reason, index) => (
+                                <p key={index} className="text-xs text-gray-600">
+                                  • {reason}
+                                </p>
+                              ))}
                         </div>
                       </card_1.CardContent>
                     </card_1.Card>
@@ -688,34 +653,30 @@ function IntelligentScheduling(_a) {
             <div className="space-y-4">
               <label_1.Label>Todos os Horários Disponíveis</label_1.Label>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                {availableSlots.map(function (slot) {
-                  return (
-                    <button_1.Button
-                      key={slot.id}
-                      variant={
-                        (selectedSlot === null || selectedSlot === void 0
-                          ? void 0
-                          : selectedSlot.id) === slot.id
-                          ? "default"
-                          : "outline"
-                      }
-                      size="sm"
-                      onClick={function () {
-                        return setSelectedSlot(slot);
-                      }}
-                      className="h-auto p-2 flex flex-col items-center"
-                    >
-                      <span className="text-sm font-medium">
-                        {(0, date_fns_1.format)(slot.start, "HH:mm")}
-                      </span>
-                      {slot.aiScore && (
-                        <badge_1.Badge variant="secondary" className="text-xs mt-1">
-                          {slot.aiScore}%
-                        </badge_1.Badge>
-                      )}
-                    </button_1.Button>
-                  );
-                })}
+                {availableSlots.map((slot) => (
+                  <button_1.Button
+                    key={slot.id}
+                    variant={
+                      (selectedSlot === null || selectedSlot === void 0
+                        ? void 0
+                        : selectedSlot.id) === slot.id
+                        ? "default"
+                        : "outline"
+                    }
+                    size="sm"
+                    onClick={() => setSelectedSlot(slot)}
+                    className="h-auto p-2 flex flex-col items-center"
+                  >
+                    <span className="text-sm font-medium">
+                      {(0, date_fns_1.format)(slot.start, "HH:mm")}
+                    </span>
+                    {slot.aiScore && (
+                      <badge_1.Badge variant="secondary" className="text-xs mt-1">
+                        {slot.aiScore}%
+                      </badge_1.Badge>
+                    )}
+                  </button_1.Button>
+                ))}
               </div>
             </div>
           )}
@@ -727,9 +688,9 @@ function IntelligentScheduling(_a) {
               <alert_1.AlertTitle>Conflitos Detectados</alert_1.AlertTitle>
               <alert_1.AlertDescription>
                 <ul className="list-disc list-inside space-y-1 mt-2">
-                  {conflicts.map(function (conflict, index) {
-                    return <li key={index}>{conflict}</li>;
-                  })}
+                  {conflicts.map((conflict, index) => (
+                    <li key={index}>{conflict}</li>
+                  ))}
                 </ul>
               </alert_1.AlertDescription>
             </alert_1.Alert>

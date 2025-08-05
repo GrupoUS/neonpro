@@ -6,32 +6,31 @@
  * monitoring, and controlling user devices and sessions.
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,10 +150,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -165,7 +162,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DeviceManagement;
 var react_1 = require("react");
@@ -186,15 +183,14 @@ var locale_1 = require("date-fns/locale");
 // DEVICE DETAILS MODAL
 // ============================================================================
 function DeviceDetailsModal(_a) {
-  var _this = this;
   var device = _a.device,
     isOpen = _a.isOpen,
     onClose = _a.onClose,
     onAction = _a.onAction;
   if (!device) return null;
-  var handleAction = function (action) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleAction = (action) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, onAction(device.id, action)];
@@ -205,7 +201,6 @@ function DeviceDetailsModal(_a) {
         }
       });
     });
-  };
   return (
     <dialog_1.Dialog open={isOpen} onOpenChange={onClose}>
       <dialog_1.DialogContent className="max-w-2xl">
@@ -316,62 +311,32 @@ function DeviceDetailsModal(_a) {
         <dialog_1.DialogFooter className="flex justify-between">
           <div className="flex space-x-2">
             {device.status === session_1.DeviceStatus.ACTIVE && (
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return handleAction("block");
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => handleAction("block")}>
                 <lucide_react_1.Ban className="h-4 w-4 mr-2" />
                 Bloquear
               </button_1.Button>
             )}
             {device.status === session_1.DeviceStatus.BLOCKED && (
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return handleAction("unblock");
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => handleAction("unblock")}>
                 <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
                 Desbloquear
               </button_1.Button>
             )}
             {device.trust_level !== session_1.DeviceTrustLevel.TRUSTED && (
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return handleAction("trust");
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => handleAction("trust")}>
                 <lucide_react_1.ShieldCheck className="h-4 w-4 mr-2" />
                 Confiar
               </button_1.Button>
             )}
             {device.trust_level === session_1.DeviceTrustLevel.TRUSTED && (
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return handleAction("untrust");
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => handleAction("untrust")}>
                 <lucide_react_1.ShieldX className="h-4 w-4 mr-2" />
                 Remover Confiança
               </button_1.Button>
             )}
           </div>
           <div className="flex space-x-2">
-            <button_1.Button
-              variant="destructive"
-              size="sm"
-              onClick={function () {
-                return handleAction("delete");
-              }}
-            >
+            <button_1.Button variant="destructive" size="sm" onClick={() => handleAction("delete")}>
               <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
               Excluir
             </button_1.Button>
@@ -468,7 +433,6 @@ function getTrustLevelBadge(trustLevel) {
 // MAIN COMPONENT
 // ============================================================================
 function DeviceManagement(_a) {
-  var _this = this;
   var devices = _a.devices,
     onDeviceAction = _a.onDeviceAction;
   var _b = (0, useSession_1.useDeviceManagement)(),
@@ -495,88 +459,69 @@ function DeviceManagement(_a) {
   // ============================================================================
   // FILTERING AND SORTING
   // ============================================================================
-  var filteredDevices = (0, react_1.useMemo)(
-    function () {
-      var filtered = __spreadArray([], devices, true);
-      // Search filter
-      if (filters.search) {
-        var searchLower_1 = filters.search.toLowerCase();
-        filtered = filtered.filter(function (device) {
-          return (
-            (device.device_name && device.device_name.toLowerCase().includes(searchLower_1)) ||
-            device.device_type.toLowerCase().includes(searchLower_1) ||
-            device.ip_address.toLowerCase().includes(searchLower_1) ||
-            (device.os && device.os.toLowerCase().includes(searchLower_1)) ||
-            (device.browser && device.browser.toLowerCase().includes(searchLower_1))
-          );
-        });
-      }
-      // Status filter
-      if (filters.status !== "all") {
-        filtered = filtered.filter(function (device) {
-          return device.status === filters.status;
-        });
-      }
-      // Trust level filter
-      if (filters.trustLevel !== "all") {
-        filtered = filtered.filter(function (device) {
-          return device.trust_level === filters.trustLevel;
-        });
-      }
-      // Device type filter
-      if (filters.deviceType !== "all") {
-        filtered = filtered.filter(function (device) {
-          return device.device_type === filters.deviceType;
-        });
-      }
-      // Last seen filter
-      if (filters.lastSeen !== "all") {
-        var now = new Date();
-        var cutoff_1 = new Date();
-        switch (filters.lastSeen) {
-          case "1h":
-            cutoff_1.setHours(now.getHours() - 1);
-            break;
-          case "24h":
-            cutoff_1.setHours(now.getHours() - 24);
-            break;
-          case "7d":
-            cutoff_1.setDate(now.getDate() - 7);
-            break;
-          case "30d":
-            cutoff_1.setDate(now.getDate() - 30);
-            break;
-        }
-        filtered = filtered.filter(function (device) {
-          return new Date(device.last_seen) >= cutoff_1;
-        });
-      }
-      // Sort by last seen (most recent first)
-      return filtered.sort(function (a, b) {
-        return new Date(b.last_seen).getTime() - new Date(a.last_seen).getTime();
-      });
-    },
-    [devices, filters],
-  );
-  // Get unique device types for filter
-  var deviceTypes = (0, react_1.useMemo)(
-    function () {
-      var types = new Set(
-        devices.map(function (device) {
-          return device.device_type;
-        }),
+  var filteredDevices = (0, react_1.useMemo)(() => {
+    var filtered = __spreadArray([], devices, true);
+    // Search filter
+    if (filters.search) {
+      var searchLower_1 = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (device) =>
+          (device.device_name && device.device_name.toLowerCase().includes(searchLower_1)) ||
+          device.device_type.toLowerCase().includes(searchLower_1) ||
+          device.ip_address.toLowerCase().includes(searchLower_1) ||
+          (device.os && device.os.toLowerCase().includes(searchLower_1)) ||
+          (device.browser && device.browser.toLowerCase().includes(searchLower_1)),
       );
-      return Array.from(types);
-    },
-    [devices],
-  );
+    }
+    // Status filter
+    if (filters.status !== "all") {
+      filtered = filtered.filter((device) => device.status === filters.status);
+    }
+    // Trust level filter
+    if (filters.trustLevel !== "all") {
+      filtered = filtered.filter((device) => device.trust_level === filters.trustLevel);
+    }
+    // Device type filter
+    if (filters.deviceType !== "all") {
+      filtered = filtered.filter((device) => device.device_type === filters.deviceType);
+    }
+    // Last seen filter
+    if (filters.lastSeen !== "all") {
+      var now = new Date();
+      var cutoff_1 = new Date();
+      switch (filters.lastSeen) {
+        case "1h":
+          cutoff_1.setHours(now.getHours() - 1);
+          break;
+        case "24h":
+          cutoff_1.setHours(now.getHours() - 24);
+          break;
+        case "7d":
+          cutoff_1.setDate(now.getDate() - 7);
+          break;
+        case "30d":
+          cutoff_1.setDate(now.getDate() - 30);
+          break;
+      }
+      filtered = filtered.filter((device) => new Date(device.last_seen) >= cutoff_1);
+    }
+    // Sort by last seen (most recent first)
+    return filtered.sort(
+      (a, b) => new Date(b.last_seen).getTime() - new Date(a.last_seen).getTime(),
+    );
+  }, [devices, filters]);
+  // Get unique device types for filter
+  var deviceTypes = (0, react_1.useMemo)(() => {
+    var types = new Set(devices.map((device) => device.device_type));
+    return Array.from(types);
+  }, [devices]);
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  var handleDeviceAction = function (deviceId, action) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDeviceAction = (deviceId, action) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -596,11 +541,10 @@ function DeviceManagement(_a) {
         }
       });
     });
-  };
-  var handleBulkAction = function (action) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBulkAction = (action) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -621,15 +565,14 @@ function DeviceManagement(_a) {
         }
       });
     });
-  };
-  var handleViewDetails = function (device) {
+  var handleViewDetails = (device) => {
     setSelectedDevice(device);
     setIsDetailsModalOpen(true);
   };
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -646,7 +589,6 @@ function DeviceManagement(_a) {
         }
       });
     });
-  };
   // ============================================================================
   // RENDER
   // ============================================================================
@@ -667,9 +609,7 @@ function DeviceManagement(_a) {
                   <button_1.Button
                     variant="outline"
                     size="sm"
-                    onClick={function () {
-                      return handleBulkAction("block");
-                    }}
+                    onClick={() => handleBulkAction("block")}
                   >
                     <lucide_react_1.Ban className="h-4 w-4 mr-2" />
                     Bloquear Selecionados ({selectedDevices.length})
@@ -677,9 +617,7 @@ function DeviceManagement(_a) {
                   <button_1.Button
                     variant="outline"
                     size="sm"
-                    onClick={function () {
-                      return handleBulkAction("trust");
-                    }}
+                    onClick={() => handleBulkAction("trust")}
                   >
                     <lucide_react_1.ShieldCheck className="h-4 w-4 mr-2" />
                     Confiar Selecionados
@@ -702,11 +640,9 @@ function DeviceManagement(_a) {
                 <input_1.Input
                   placeholder="Buscar dispositivos..."
                   value={filters.search}
-                  onChange={function (e) {
-                    return setFilters(function (prev) {
-                      return __assign(__assign({}, prev), { search: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setFilters((prev) => __assign(__assign({}, prev), { search: e.target.value }))
+                  }
                   className="pl-8"
                 />
               </div>
@@ -714,80 +650,66 @@ function DeviceManagement(_a) {
 
             <select_1.Select
               value={filters.status}
-              onValueChange={function (value) {
-                return setFilters(function (prev) {
-                  return __assign(__assign({}, prev), { status: value });
-                });
-              }}
+              onValueChange={(value) =>
+                setFilters((prev) => __assign(__assign({}, prev), { status: value }))
+              }
             >
               <select_1.SelectTrigger className="w-[140px]">
                 <select_1.SelectValue placeholder="Status" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">Todos</select_1.SelectItem>
-                {Object.values(session_1.DeviceStatus).map(function (status) {
-                  return (
-                    <select_1.SelectItem key={status} value={status}>
-                      {status}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {Object.values(session_1.DeviceStatus).map((status) => (
+                  <select_1.SelectItem key={status} value={status}>
+                    {status}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
 
             <select_1.Select
               value={filters.trustLevel}
-              onValueChange={function (value) {
-                return setFilters(function (prev) {
-                  return __assign(__assign({}, prev), { trustLevel: value });
-                });
-              }}
+              onValueChange={(value) =>
+                setFilters((prev) => __assign(__assign({}, prev), { trustLevel: value }))
+              }
             >
               <select_1.SelectTrigger className="w-[140px]">
                 <select_1.SelectValue placeholder="Confiança" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">Todos</select_1.SelectItem>
-                {Object.values(session_1.DeviceTrustLevel).map(function (level) {
-                  return (
-                    <select_1.SelectItem key={level} value={level}>
-                      {level}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {Object.values(session_1.DeviceTrustLevel).map((level) => (
+                  <select_1.SelectItem key={level} value={level}>
+                    {level}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
 
             <select_1.Select
               value={filters.deviceType}
-              onValueChange={function (value) {
-                return setFilters(function (prev) {
-                  return __assign(__assign({}, prev), { deviceType: value });
-                });
-              }}
+              onValueChange={(value) =>
+                setFilters((prev) => __assign(__assign({}, prev), { deviceType: value }))
+              }
             >
               <select_1.SelectTrigger className="w-[140px]">
                 <select_1.SelectValue placeholder="Tipo" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">Todos</select_1.SelectItem>
-                {deviceTypes.map(function (type) {
-                  return (
-                    <select_1.SelectItem key={type} value={type}>
-                      {type}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {deviceTypes.map((type) => (
+                  <select_1.SelectItem key={type} value={type}>
+                    {type}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
 
             <select_1.Select
               value={filters.lastSeen}
-              onValueChange={function (value) {
-                return setFilters(function (prev) {
-                  return __assign(__assign({}, prev), { lastSeen: value });
-                });
-              }}
+              onValueChange={(value) =>
+                setFilters((prev) => __assign(__assign({}, prev), { lastSeen: value }))
+              }
             >
               <select_1.SelectTrigger className="w-[120px]">
                 <select_1.SelectValue placeholder="Atividade" />
@@ -814,13 +736,9 @@ function DeviceManagement(_a) {
                         selectedDevices.length === filteredDevices.length &&
                         filteredDevices.length > 0
                       }
-                      onChange={function (e) {
+                      onChange={(e) => {
                         if (e.target.checked) {
-                          setSelectedDevices(
-                            filteredDevices.map(function (device) {
-                              return device.id;
-                            }),
-                          );
+                          setSelectedDevices(filteredDevices.map((device) => device.id));
                         } else {
                           setSelectedDevices([]);
                         }
@@ -845,137 +763,117 @@ function DeviceManagement(_a) {
                         Nenhum dispositivo encontrado
                       </table_1.TableCell>
                     </table_1.TableRow>
-                  : filteredDevices.map(function (device) {
-                      return (
-                        <table_1.TableRow key={device.id}>
-                          <table_1.TableCell>
-                            <input
-                              type="checkbox"
-                              checked={selectedDevices.includes(device.id)}
-                              onChange={function (e) {
-                                if (e.target.checked) {
-                                  setSelectedDevices(function (prev) {
-                                    return __spreadArray(
-                                      __spreadArray([], prev, true),
-                                      [device.id],
-                                      false,
-                                    );
-                                  });
-                                } else {
-                                  setSelectedDevices(function (prev) {
-                                    return prev.filter(function (id) {
-                                      return id !== device.id;
-                                    });
-                                  });
-                                }
-                              }}
-                            />
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-3">
-                              {getDeviceIcon(device.device_type)}
-                              <div>
-                                <div className="font-medium">
-                                  {device.device_name || device.device_type}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                  {device.os} • {device.browser}
-                                </div>
+                  : filteredDevices.map((device) => (
+                      <table_1.TableRow key={device.id}>
+                        <table_1.TableCell>
+                          <input
+                            type="checkbox"
+                            checked={selectedDevices.includes(device.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedDevices((prev) =>
+                                  __spreadArray(__spreadArray([], prev, true), [device.id], false),
+                                );
+                              } else {
+                                setSelectedDevices((prev) => prev.filter((id) => id !== device.id));
+                              }
+                            }}
+                          />
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-3">
+                            {getDeviceIcon(device.device_type)}
+                            <div>
+                              <div className="font-medium">
+                                {device.device_name || device.device_type}
+                              </div>
+                              <div className="text-sm text-muted-foreground">
+                                {device.os} • {device.browser}
                               </div>
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>{getStatusBadge(device.status)}</table_1.TableCell>
-                          <table_1.TableCell>
-                            {getTrustLevelBadge(device.trust_level)}
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-1">
-                              <lucide_react_1.MapPin className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-sm">
-                                {device.location
-                                  ? ""
-                                      .concat(device.location.city, ", ")
-                                      .concat(device.location.country)
-                                  : "Não disponível"}
-                              </span>
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-1">
-                              <lucide_react_1.Clock className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-sm">
-                                {(0, date_fns_1.format)(new Date(device.last_seen), "dd/MM HH:mm", {
-                                  locale: locale_1.ptBR,
-                                })}
-                              </span>
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <dropdown_menu_1.DropdownMenu>
-                              <dropdown_menu_1.DropdownMenuTrigger asChild>
-                                <button_1.Button variant="ghost" className="h-8 w-8 p-0">
-                                  <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-                                </button_1.Button>
-                              </dropdown_menu_1.DropdownMenuTrigger>
-                              <dropdown_menu_1.DropdownMenuContent align="end">
-                                <dropdown_menu_1.DropdownMenuLabel>
-                                  Ações
-                                </dropdown_menu_1.DropdownMenuLabel>
-                                <dropdown_menu_1.DropdownMenuSeparator />
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>{getStatusBadge(device.status)}</table_1.TableCell>
+                        <table_1.TableCell>
+                          {getTrustLevelBadge(device.trust_level)}
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-1">
+                            <lucide_react_1.MapPin className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-sm">
+                              {device.location
+                                ? ""
+                                    .concat(device.location.city, ", ")
+                                    .concat(device.location.country)
+                                : "Não disponível"}
+                            </span>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-1">
+                            <lucide_react_1.Clock className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-sm">
+                              {(0, date_fns_1.format)(new Date(device.last_seen), "dd/MM HH:mm", {
+                                locale: locale_1.ptBR,
+                              })}
+                            </span>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <dropdown_menu_1.DropdownMenu>
+                            <dropdown_menu_1.DropdownMenuTrigger asChild>
+                              <button_1.Button variant="ghost" className="h-8 w-8 p-0">
+                                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+                              </button_1.Button>
+                            </dropdown_menu_1.DropdownMenuTrigger>
+                            <dropdown_menu_1.DropdownMenuContent align="end">
+                              <dropdown_menu_1.DropdownMenuLabel>
+                                Ações
+                              </dropdown_menu_1.DropdownMenuLabel>
+                              <dropdown_menu_1.DropdownMenuSeparator />
+                              <dropdown_menu_1.DropdownMenuItem
+                                onClick={() => handleViewDetails(device)}
+                              >
+                                <lucide_react_1.Eye className="h-4 w-4 mr-2" />
+                                Ver Detalhes
+                              </dropdown_menu_1.DropdownMenuItem>
+                              {device.status === session_1.DeviceStatus.ACTIVE && (
                                 <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleViewDetails(device);
-                                  }}
+                                  onClick={() => handleDeviceAction(device.id, "block")}
                                 >
-                                  <lucide_react_1.Eye className="h-4 w-4 mr-2" />
-                                  Ver Detalhes
+                                  <lucide_react_1.Ban className="h-4 w-4 mr-2" />
+                                  Bloquear
                                 </dropdown_menu_1.DropdownMenuItem>
-                                {device.status === session_1.DeviceStatus.ACTIVE && (
-                                  <dropdown_menu_1.DropdownMenuItem
-                                    onClick={function () {
-                                      return handleDeviceAction(device.id, "block");
-                                    }}
-                                  >
-                                    <lucide_react_1.Ban className="h-4 w-4 mr-2" />
-                                    Bloquear
-                                  </dropdown_menu_1.DropdownMenuItem>
-                                )}
-                                {device.status === session_1.DeviceStatus.BLOCKED && (
-                                  <dropdown_menu_1.DropdownMenuItem
-                                    onClick={function () {
-                                      return handleDeviceAction(device.id, "unblock");
-                                    }}
-                                  >
-                                    <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
-                                    Desbloquear
-                                  </dropdown_menu_1.DropdownMenuItem>
-                                )}
-                                {device.trust_level !== session_1.DeviceTrustLevel.TRUSTED && (
-                                  <dropdown_menu_1.DropdownMenuItem
-                                    onClick={function () {
-                                      return handleDeviceAction(device.id, "trust");
-                                    }}
-                                  >
-                                    <lucide_react_1.ShieldCheck className="h-4 w-4 mr-2" />
-                                    Confiar
-                                  </dropdown_menu_1.DropdownMenuItem>
-                                )}
-                                <dropdown_menu_1.DropdownMenuSeparator />
+                              )}
+                              {device.status === session_1.DeviceStatus.BLOCKED && (
                                 <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleDeviceAction(device.id, "delete");
-                                  }}
-                                  className="text-red-600"
+                                  onClick={() => handleDeviceAction(device.id, "unblock")}
                                 >
-                                  <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
-                                  Excluir
+                                  <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
+                                  Desbloquear
                                 </dropdown_menu_1.DropdownMenuItem>
-                              </dropdown_menu_1.DropdownMenuContent>
-                            </dropdown_menu_1.DropdownMenu>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                              )}
+                              {device.trust_level !== session_1.DeviceTrustLevel.TRUSTED && (
+                                <dropdown_menu_1.DropdownMenuItem
+                                  onClick={() => handleDeviceAction(device.id, "trust")}
+                                >
+                                  <lucide_react_1.ShieldCheck className="h-4 w-4 mr-2" />
+                                  Confiar
+                                </dropdown_menu_1.DropdownMenuItem>
+                              )}
+                              <dropdown_menu_1.DropdownMenuSeparator />
+                              <dropdown_menu_1.DropdownMenuItem
+                                onClick={() => handleDeviceAction(device.id, "delete")}
+                                className="text-red-600"
+                              >
+                                <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
+                                Excluir
+                              </dropdown_menu_1.DropdownMenuItem>
+                            </dropdown_menu_1.DropdownMenuContent>
+                          </dropdown_menu_1.DropdownMenu>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
               </table_1.TableBody>
             </table_1.Table>
           </div>
@@ -987,27 +885,19 @@ function DeviceManagement(_a) {
             </span>
             <div className="flex items-center space-x-4">
               <span>
-                {
-                  filteredDevices.filter(function (d) {
-                    return d.status === session_1.DeviceStatus.ACTIVE;
-                  }).length
-                }{" "}
+                {filteredDevices.filter((d) => d.status === session_1.DeviceStatus.ACTIVE).length}{" "}
                 ativos
               </span>
               <span>
                 {
-                  filteredDevices.filter(function (d) {
-                    return d.trust_level === session_1.DeviceTrustLevel.TRUSTED;
-                  }).length
+                  filteredDevices.filter(
+                    (d) => d.trust_level === session_1.DeviceTrustLevel.TRUSTED,
+                  ).length
                 }{" "}
                 confiáveis
               </span>
               <span>
-                {
-                  filteredDevices.filter(function (d) {
-                    return d.status === session_1.DeviceStatus.BLOCKED;
-                  }).length
-                }{" "}
+                {filteredDevices.filter((d) => d.status === session_1.DeviceStatus.BLOCKED).length}{" "}
                 bloqueados
               </span>
             </div>
@@ -1019,7 +909,7 @@ function DeviceManagement(_a) {
       <DeviceDetailsModal
         device={selectedDevice}
         isOpen={isDetailsModalOpen}
-        onClose={function () {
+        onClose={() => {
           setIsDetailsModalOpen(false);
           setSelectedDevice(null);
         }}

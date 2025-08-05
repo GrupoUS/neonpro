@@ -6,13 +6,13 @@
  * @author APEX Master Developer
  */
 
-import type { NextRequest, NextResponse } from "next/server";
 import type { createClient } from "@supabase/supabase-js";
-import type {
-  PhotoRecognitionManager,
-  defaultPhotoRecognitionConfig,
-} from "../../../../../lib/patients/photo-recognition/photo-recognition-manager";
+import type { NextRequest, NextResponse } from "next/server";
 import type { AuditLogger } from "../../../../../lib/audit/audit-logger";
+import type {
+  defaultPhotoRecognitionConfig,
+  PhotoRecognitionManager,
+} from "../../../../../lib/patients/photo-recognition/photo-recognition-manager";
 import type { LGPDManager } from "../../../../../lib/security/lgpd-manager";
 
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);

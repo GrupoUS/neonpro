@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RiskAssessmentSchema = exports.ValidationSchema = exports.AlertSchema = void 0;
 var zod_1 = require("zod");
@@ -15,9 +14,7 @@ exports.AlertSchema = zod_1.z.object({
   acknowledgedBy: zod_1.z.string().uuid().optional(),
   acknowledgedAt: zod_1.z.date().optional(),
   metadata: zod_1.z.record(zod_1.z.any()).optional(),
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
   expiresAt: zod_1.z.date().optional(),
 });
 exports.ValidationSchema = zod_1.z.object({
@@ -43,9 +40,7 @@ exports.ValidationSchema = zod_1.z.object({
   priority: zod_1.z.number().min(1).max(10),
   clinicId: zod_1.z.string().uuid(),
   createdBy: zod_1.z.string().uuid(),
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
 });
 exports.RiskAssessmentSchema = zod_1.z.object({
   patientId: zod_1.z.string().uuid(),
@@ -63,7 +58,5 @@ exports.RiskAssessmentSchema = zod_1.z.object({
   recommendations: zod_1.z.array(zod_1.z.string()),
   validUntil: zod_1.z.date(),
   assessedBy: zod_1.z.string().uuid(),
-  assessedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  assessedAt: zod_1.z.date().default(() => new Date()),
 });

@@ -1,4 +1,3 @@
-"use strict";
 // Marketing Campaigns Automation Service
 // Epic 7.2: Automated Marketing Campaigns + Personalization
 // Author: VoidBeast Agent
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,11 +145,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MarketingCampaignService = void 0;
 var server_1 = require("@/app/utils/supabase/server");
-var MarketingCampaignService = /** @class */ (function () {
+var MarketingCampaignService = /** @class */ (() => {
   // Supabase client created per method for proper request context
   function MarketingCampaignService() {}
   // Campaign Management
@@ -210,7 +207,7 @@ var MarketingCampaignService = /** @class */ (function () {
       if (filters === void 0) {
         filters = {};
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -431,9 +428,7 @@ var MarketingCampaignService = /** @class */ (function () {
             _c = {
               campaign_id: campaignId,
               execution_type: executionType,
-              target_patient_ids: targetPatients.map(function (p) {
-                return p.id;
-              }),
+              target_patient_ids: targetPatients.map((p) => p.id),
               delivery_channel: channel,
             };
             return [4 /*yield*/, this.personalizeContent(campaign, targetPatients, channel)];
@@ -567,9 +562,7 @@ var MarketingCampaignService = /** @class */ (function () {
             executionData = {
               campaign_id: abTest.campaign_id,
               execution_type: "test",
-              target_patient_ids: patients.map(function (p) {
-                return p.id;
-              }),
+              target_patient_ids: patients.map((p) => p.id),
               content_variation_id: variationId,
               delivery_channel: abTest.marketing_campaigns.delivery_channels[0], // Use first channel for test
               personalized_content: abTest.variations[variationId],
@@ -801,27 +794,13 @@ var MarketingCampaignService = /** @class */ (function () {
           case 1:
             (_a = _d.sent()), (metrics = _a.data), (metricsError = _a.error);
             if (metricsError) throw metricsError;
-            totalRecipients = metrics.reduce(function (sum, m) {
-              return sum + m.total_sent;
-            }, 0);
-            totalDelivered = metrics.reduce(function (sum, m) {
-              return sum + m.total_delivered;
-            }, 0);
-            totalOpened = metrics.reduce(function (sum, m) {
-              return sum + m.total_opened;
-            }, 0);
-            totalClicked = metrics.reduce(function (sum, m) {
-              return sum + m.total_clicked;
-            }, 0);
-            totalConverted = metrics.reduce(function (sum, m) {
-              return sum + m.total_converted;
-            }, 0);
-            totalUnsubscribed = metrics.reduce(function (sum, m) {
-              return sum + m.total_unsubscribed;
-            }, 0);
-            totalRevenue = metrics.reduce(function (sum, m) {
-              return sum + (m.revenue_generated || 0);
-            }, 0);
+            totalRecipients = metrics.reduce((sum, m) => sum + m.total_sent, 0);
+            totalDelivered = metrics.reduce((sum, m) => sum + m.total_delivered, 0);
+            totalOpened = metrics.reduce((sum, m) => sum + m.total_opened, 0);
+            totalClicked = metrics.reduce((sum, m) => sum + m.total_clicked, 0);
+            totalConverted = metrics.reduce((sum, m) => sum + m.total_converted, 0);
+            totalUnsubscribed = metrics.reduce((sum, m) => sum + m.total_unsubscribed, 0);
+            totalRevenue = metrics.reduce((sum, m) => sum + (m.revenue_generated || 0), 0);
             return [
               4 /*yield*/,
               this.supabase
@@ -887,7 +866,7 @@ var MarketingCampaignService = /** @class */ (function () {
             // Apply segmentation logic here
             return [
               2 /*return*/,
-              patients.filter(function (patient) {
+              patients.filter((patient) => {
                 // Implement segmentation filtering based on segments criteria
                 return true; // Simplified - would have actual segmentation logic
               }),
@@ -898,7 +877,7 @@ var MarketingCampaignService = /** @class */ (function () {
   };
   MarketingCampaignService.prototype.personalizeContent = function (campaign, patients, channel) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // AI-powered content personalization would be implemented here
         // For now, return basic personalized content
         return [
@@ -915,10 +894,10 @@ var MarketingCampaignService = /** @class */ (function () {
       });
     });
   };
-  MarketingCampaignService.prototype.splitPatientsForABTest = function (patients, trafficSplit) {
+  MarketingCampaignService.prototype.splitPatientsForABTest = (patients, trafficSplit) => {
     var groups = {};
     var variations = Object.keys(trafficSplit);
-    patients.forEach(function (patient, index) {
+    patients.forEach((patient, index) => {
       var variationIndex = index % variations.length;
       var variation = variations[variationIndex];
       if (!groups[variation]) {
@@ -928,9 +907,9 @@ var MarketingCampaignService = /** @class */ (function () {
     });
     return groups;
   };
-  MarketingCampaignService.prototype.aggregateChannelPerformance = function (metrics) {
+  MarketingCampaignService.prototype.aggregateChannelPerformance = (metrics) => {
     var channelData = {};
-    metrics.forEach(function (metric) {
+    metrics.forEach((metric) => {
       if (!channelData[metric.channel]) {
         channelData[metric.channel] = {
           total_sent: 0,
@@ -950,7 +929,7 @@ var MarketingCampaignService = /** @class */ (function () {
   };
   MarketingCampaignService.prototype.calculatePersonalizationImpact = function (campaignId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate the impact of personalization on campaign performance
         return [
           2 /*return*/,
@@ -965,7 +944,7 @@ var MarketingCampaignService = /** @class */ (function () {
   };
   MarketingCampaignService.prototype.getComplianceStatus = function (campaignId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Check LGPD compliance status
         return [
           2 /*return*/,

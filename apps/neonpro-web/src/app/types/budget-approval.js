@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // NeonPro Budget & Approval Workflow Types
 // Epic 6: Story 6.2 - Task 5: Budget & Approval Workflow

@@ -7,22 +7,22 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
-import type {
-  BackupMetrics,
-  BackupAlert,
-  AlertType,
-  AlertSeverity,
-  BackupConfig,
-  BackupRecord,
-  BackupStatus,
-  MonitoringConfig,
-  PerformanceMetrics,
-  HealthCheck,
-  ApiResponse,
-  NotificationChannel,
-} from "./types";
 import type { auditLogger } from "../auth/audit/audit-logger";
 import type { notificationManager } from "../notifications";
+import type {
+  AlertSeverity,
+  AlertType,
+  ApiResponse,
+  BackupAlert,
+  BackupConfig,
+  BackupMetrics,
+  BackupRecord,
+  BackupStatus,
+  HealthCheck,
+  MonitoringConfig,
+  NotificationChannel,
+  PerformanceMetrics,
+} from "./types";
 
 /**
  * Interface para métricas em tempo real

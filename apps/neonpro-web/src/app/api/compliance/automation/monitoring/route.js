@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("next/server");
@@ -168,10 +165,10 @@ function GET(request) {
       complianceScore,
       error_1;
     var _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 10, , 11]);
+          _c.trys.push([0, 10, undefined, 11]);
           return [4 /*yield*/, (0, server_2.createClient)()];
         case 1:
           supabase = _c.sent();
@@ -250,21 +247,15 @@ function GET(request) {
               active:
                 (consentMetrics === null || consentMetrics === void 0
                   ? void 0
-                  : consentMetrics.filter(function (c) {
-                      return c.status === "granted";
-                    }).length) || 0,
+                  : consentMetrics.filter((c) => c.status === "granted").length) || 0,
               revoked:
                 (consentMetrics === null || consentMetrics === void 0
                   ? void 0
-                  : consentMetrics.filter(function (c) {
-                      return c.status === "revoked";
-                    }).length) || 0,
+                  : consentMetrics.filter((c) => c.status === "revoked").length) || 0,
               expired:
                 (consentMetrics === null || consentMetrics === void 0
                   ? void 0
-                  : consentMetrics.filter(function (c) {
-                      return c.status === "expired";
-                    }).length) || 0,
+                  : consentMetrics.filter((c) => c.status === "expired").length) || 0,
             },
             audit: {
               total:
@@ -273,14 +264,14 @@ function GET(request) {
               byType:
                 (auditMetrics === null || auditMetrics === void 0
                   ? void 0
-                  : auditMetrics.reduce(function (acc, event) {
+                  : auditMetrics.reduce((acc, event) => {
                       acc[event.event_type] = (acc[event.event_type] || 0) + 1;
                       return acc;
                     }, {})) || {},
               bySeverity:
                 (auditMetrics === null || auditMetrics === void 0
                   ? void 0
-                  : auditMetrics.reduce(function (acc, event) {
+                  : auditMetrics.reduce((acc, event) => {
                       acc[event.severity] = (acc[event.severity] || 0) + 1;
                       return acc;
                     }, {})) || {},
@@ -293,14 +284,14 @@ function GET(request) {
               byType:
                 (requestMetrics === null || requestMetrics === void 0
                   ? void 0
-                  : requestMetrics.reduce(function (acc, req) {
+                  : requestMetrics.reduce((acc, req) => {
                       acc[req.request_type] = (acc[req.request_type] || 0) + 1;
                       return acc;
                     }, {})) || {},
               byStatus:
                 (requestMetrics === null || requestMetrics === void 0
                   ? void 0
-                  : requestMetrics.reduce(function (acc, req) {
+                  : requestMetrics.reduce((acc, req) => {
                       acc[req.status] = (acc[req.status] || 0) + 1;
                       return acc;
                     }, {})) || {},
@@ -326,19 +317,15 @@ function GET(request) {
             active:
               (alerts === null || alerts === void 0
                 ? void 0
-                : alerts.filter(function (a) {
-                    return a.status === "active";
-                  }).length) || 0,
+                : alerts.filter((a) => a.status === "active").length) || 0,
             resolved:
               (alerts === null || alerts === void 0
                 ? void 0
-                : alerts.filter(function (a) {
-                    return a.status === "resolved";
-                  }).length) || 0,
+                : alerts.filter((a) => a.status === "resolved").length) || 0,
             bySeverity:
               (alerts === null || alerts === void 0
                 ? void 0
-                : alerts.reduce(function (acc, alert) {
+                : alerts.reduce((acc, alert) => {
                     acc[alert.severity] = (acc[alert.severity] || 0) + 1;
                     return acc;
                   }, {})) || {},
@@ -397,10 +384,10 @@ function calculateComplianceScore(supabase, clinicId) {
       encryptionScore,
       finalScore,
       error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
-          _a.trys.push([0, 5, , 6]);
+          _a.trys.push([0, 5, undefined, 6]);
           now = new Date();
           last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
           return [
@@ -412,9 +399,7 @@ function calculateComplianceScore(supabase, clinicId) {
           activeConsents =
             (consents === null || consents === void 0
               ? void 0
-              : consents.filter(function (c) {
-                  return c.status === "granted";
-                }).length) || 0;
+              : consents.filter((c) => c.status === "granted").length) || 0;
           totalConsents =
             (consents === null || consents === void 0 ? void 0 : consents.length) || 1;
           consentScore = (activeConsents / totalConsents) * 30;
@@ -431,9 +416,7 @@ function calculateComplianceScore(supabase, clinicId) {
           uniqueEventTypes = new Set(
             (auditEvents === null || auditEvents === void 0
               ? void 0
-              : auditEvents.map(function (e) {
-                  return e.event_type;
-                })) || [],
+              : auditEvents.map((e) => e.event_type)) || [],
           ).size;
           auditScore = Math.min((uniqueEventTypes / 6) * 25, 25);
           return [
@@ -464,9 +447,7 @@ function calculateComplianceScore(supabase, clinicId) {
           processedRequests =
             (requests === null || requests === void 0
               ? void 0
-              : requests.filter(function (r) {
-                  return r.status === "completed";
-                }).length) || 0;
+              : requests.filter((r) => r.status === "completed").length) || 0;
           totalRequests =
             (requests === null || requests === void 0 ? void 0 : requests.length) || 1;
           requestScore = (processedRequests / totalRequests) * 20;

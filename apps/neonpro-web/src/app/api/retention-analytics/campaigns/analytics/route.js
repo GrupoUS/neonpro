@@ -1,4 +1,3 @@
-"use strict";
 // RETENTION CAMPAIGN ANALYTICS API ENDPOINT
 // Epic 7.4: Patient Retention Analytics + Predictions - Task 5
 // API endpoint for analyzing retention campaign effectiveness and A/B testing
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -218,7 +215,7 @@ function GET(request) {
       clinicAverages,
       error_1;
     var _c, _d;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 3, , 4]);
@@ -284,17 +281,16 @@ function GET(request) {
           if (campaignError) {
             throw new Error("Failed to fetch campaigns: ".concat(campaignError.message));
           }
-          campaignAnalytics = campaigns.map(function (campaign) {
+          campaignAnalytics = campaigns.map((campaign) => {
             var _a;
             var metrics = campaign.campaign_metrics[0] || {};
             var executions = campaign.executions || [];
             var totalExecutions = executions.length;
-            var successfulExecutions = executions.filter(function (e) {
-              return e.status === "executed";
-            }).length;
-            var totalPatientsTargeted = executions.reduce(function (sum, e) {
-              return sum + (e.patients_targeted || 0);
-            }, 0);
+            var successfulExecutions = executions.filter((e) => e.status === "executed").length;
+            var totalPatientsTargeted = executions.reduce(
+              (sum, e) => sum + (e.patients_targeted || 0),
+              0,
+            );
             var performance = {
               deliveryRate: metrics.sent > 0 ? (metrics.delivered / metrics.sent) * 100 : 0,
               openRate: metrics.delivered > 0 ? (metrics.opened / metrics.delivered) * 100 : 0,
@@ -330,9 +326,7 @@ function GET(request) {
                 executions.length > 0
                   ? Math.max.apply(
                       Math,
-                      executions.map(function (e) {
-                        return new Date(e.executed_at).getTime();
-                      }),
+                      executions.map((e) => new Date(e.executed_at).getTime()),
                     )
                   : null,
             };
@@ -340,7 +334,7 @@ function GET(request) {
           groupedAnalytics = campaignAnalytics;
           if (groupBy_1) {
             grouped_1 = {};
-            campaignAnalytics.forEach(function (analytics) {
+            campaignAnalytics.forEach((analytics) => {
               var _a;
               var key;
               switch (groupBy_1) {
@@ -391,20 +385,19 @@ function GET(request) {
               grouped_1[key].aggregated.totalExecutions += analytics.totalExecutions;
               grouped_1[key].aggregated.totalPatientsTargeted += analytics.totalPatientsTargeted;
               // Aggregate metrics
-              Object.keys(analytics.metrics).forEach(function (metric) {
+              Object.keys(analytics.metrics).forEach((metric) => {
                 grouped_1[key].aggregated.aggregatedMetrics[metric] += analytics.metrics[metric];
               });
             });
             // Calculate average performance for each group
-            Object.keys(grouped_1).forEach(function (key) {
+            Object.keys(grouped_1).forEach((key) => {
               var group = grouped_1[key];
               var campaignCount = group.campaigns.length;
               if (campaignCount > 0) {
-                Object.keys(group.aggregated.averagePerformance).forEach(function (metric) {
+                Object.keys(group.aggregated.averagePerformance).forEach((metric) => {
                   group.aggregated.averagePerformance[metric] =
-                    group.campaigns.reduce(function (sum, c) {
-                      return sum + c.performance[metric];
-                    }, 0) / campaignCount;
+                    group.campaigns.reduce((sum, c) => sum + c.performance[metric], 0) /
+                    campaignCount;
                 });
               }
             });
@@ -427,29 +420,23 @@ function GET(request) {
             };
             clinicAverages = {
               deliveryRate:
-                campaignAnalytics.reduce(function (sum, c) {
-                  return sum + c.performance.deliveryRate;
-                }, 0) / campaignAnalytics.length,
+                campaignAnalytics.reduce((sum, c) => sum + c.performance.deliveryRate, 0) /
+                campaignAnalytics.length,
               openRate:
-                campaignAnalytics.reduce(function (sum, c) {
-                  return sum + c.performance.openRate;
-                }, 0) / campaignAnalytics.length,
+                campaignAnalytics.reduce((sum, c) => sum + c.performance.openRate, 0) /
+                campaignAnalytics.length,
               clickRate:
-                campaignAnalytics.reduce(function (sum, c) {
-                  return sum + c.performance.clickRate;
-                }, 0) / campaignAnalytics.length,
+                campaignAnalytics.reduce((sum, c) => sum + c.performance.clickRate, 0) /
+                campaignAnalytics.length,
               conversionRate:
-                campaignAnalytics.reduce(function (sum, c) {
-                  return sum + c.performance.conversionRate;
-                }, 0) / campaignAnalytics.length,
+                campaignAnalytics.reduce((sum, c) => sum + c.performance.conversionRate, 0) /
+                campaignAnalytics.length,
               roi:
-                campaignAnalytics.reduce(function (sum, c) {
-                  return sum + c.performance.roi;
-                }, 0) / campaignAnalytics.length,
+                campaignAnalytics.reduce((sum, c) => sum + c.performance.roi, 0) /
+                campaignAnalytics.length,
               engagementScore:
-                campaignAnalytics.reduce(function (sum, c) {
-                  return sum + c.performance.engagementScore;
-                }, 0) / campaignAnalytics.length,
+                campaignAnalytics.reduce((sum, c) => sum + c.performance.engagementScore, 0) /
+                campaignAnalytics.length,
             };
             comparisonData = {
               industryBenchmarks: industryBenchmarks,
@@ -476,33 +463,27 @@ function GET(request) {
                 analytics: groupedAnalytics,
                 summary: {
                   totalCampaigns: campaigns.length,
-                  totalExecutions: campaignAnalytics.reduce(function (sum, c) {
-                    return sum + c.totalExecutions;
-                  }, 0),
-                  totalPatientsTargeted: campaignAnalytics.reduce(function (sum, c) {
-                    return sum + c.totalPatientsTargeted;
-                  }, 0),
+                  totalExecutions: campaignAnalytics.reduce((sum, c) => sum + c.totalExecutions, 0),
+                  totalPatientsTargeted: campaignAnalytics.reduce(
+                    (sum, c) => sum + c.totalPatientsTargeted,
+                    0,
+                  ),
                   averagePerformance: {
                     deliveryRate:
-                      campaignAnalytics.reduce(function (sum, c) {
-                        return sum + c.performance.deliveryRate;
-                      }, 0) / campaignAnalytics.length,
+                      campaignAnalytics.reduce((sum, c) => sum + c.performance.deliveryRate, 0) /
+                      campaignAnalytics.length,
                     openRate:
-                      campaignAnalytics.reduce(function (sum, c) {
-                        return sum + c.performance.openRate;
-                      }, 0) / campaignAnalytics.length,
+                      campaignAnalytics.reduce((sum, c) => sum + c.performance.openRate, 0) /
+                      campaignAnalytics.length,
                     clickRate:
-                      campaignAnalytics.reduce(function (sum, c) {
-                        return sum + c.performance.clickRate;
-                      }, 0) / campaignAnalytics.length,
+                      campaignAnalytics.reduce((sum, c) => sum + c.performance.clickRate, 0) /
+                      campaignAnalytics.length,
                     conversionRate:
-                      campaignAnalytics.reduce(function (sum, c) {
-                        return sum + c.performance.conversionRate;
-                      }, 0) / campaignAnalytics.length,
+                      campaignAnalytics.reduce((sum, c) => sum + c.performance.conversionRate, 0) /
+                      campaignAnalytics.length,
                     roi:
-                      campaignAnalytics.reduce(function (sum, c) {
-                        return sum + c.performance.roi;
-                      }, 0) / campaignAnalytics.length,
+                      campaignAnalytics.reduce((sum, c) => sum + c.performance.roi, 0) /
+                      campaignAnalytics.length,
                   },
                 },
                 comparison: comparisonData,
@@ -563,7 +544,7 @@ function POST(request) {
       winner,
       improvement,
       error_2;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 4, , 5]);

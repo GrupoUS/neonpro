@@ -1,20 +1,20 @@
 "use client";
 
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Card, CardContent } from "@/components/ui/card";
 import type {
+  ArrowRight,
+  BarChart3,
+  Calendar,
+  CheckCircle,
   Heart,
+  Play,
   Shield,
   Sparkles,
-  Users,
-  Calendar,
-  BarChart3,
-  CheckCircle,
   Star,
-  ArrowRight,
-  Play,
+  Users,
 } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
 
 interface HeroSectionProps {
   onLoginClick: () => void;

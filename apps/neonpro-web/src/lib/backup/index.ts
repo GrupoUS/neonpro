@@ -1,10 +1,10 @@
+import type { AuditLogger } from "../auth/audit/audit-logger";
+import type { LGPDManager } from "../lgpd/lgpd-manager";
+import type { EncryptionService } from "../security/encryption-service";
 import type { BackupManager } from "./core/backup-manager";
 import type { RecoveryManager } from "./recovery/recovery-manager";
 import type { StorageManager } from "./storage/storage-providers";
 import type { BackupStrategyManager } from "./strategies/backup-strategies";
-import type { AuditLogger } from "../auth/audit/audit-logger";
-import type { EncryptionService } from "../security/encryption-service";
-import type { LGPDManager } from "../lgpd/lgpd-manager";
 
 // Re-export all types and interfaces
 export * from "./core/backup-manager";

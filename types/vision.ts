@@ -225,7 +225,7 @@ export interface AnalysisOptions {
   enable_annotations?: boolean;
   quality_threshold?: number;
   processing_priority?: "low" | "normal" | "high";
-  custom_parameters?: Record<string, any>;
+  custom_parameters?: Record<string, unknown>;
 }
 
 // Analysis Result Interface (for API responses)
@@ -330,14 +330,14 @@ export interface AnalysisConfiguration {
 export interface AnalysisError {
   code: string;
   message: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   timestamp: string;
 }
 
 export interface AnalysisValidationError extends AnalysisError {
   field: string;
-  expected: any;
-  received: any;
+  expected: unknown;
+  received: unknown;
 }
 
 export interface AnalysisProcessingError extends AnalysisError {

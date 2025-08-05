@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentManager = ConsentManager;
 var react_1 = require("react");
@@ -152,7 +149,6 @@ var schemas_1 = require("@/lib/healthcare/schemas");
 var utils_1 = require("@/lib/utils");
 var sonner_1 = require("sonner");
 function ConsentManager(_a) {
-  var _this = this;
   var _b = _a.patientCpf,
     patientCpf = _b === void 0 ? "" : _b,
     _c = _a.patientName,
@@ -183,10 +179,10 @@ function ConsentManager(_a) {
         "Para revogar este consentimento, entre em contato conosco através do email lgpd@neonpro.com.br",
     },
   });
-  var handleSubmitForm = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmitForm = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -209,11 +205,10 @@ function ConsentManager(_a) {
         }
       });
     });
-  };
-  var handleRevokeConsent = function (consentId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRevokeConsent = (consentId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -235,8 +230,7 @@ function ConsentManager(_a) {
         }
       });
     });
-  };
-  var getConsentTypeLabel = function (type) {
+  var getConsentTypeLabel = (type) => {
     var labels = {
       data_processing: "Tratamento de Dados",
       marketing: "Comunicações de Marketing",
@@ -247,7 +241,7 @@ function ConsentManager(_a) {
     };
     return labels[type] || type;
   };
-  var getStatusBadge = function (status, consentGiven) {
+  var getStatusBadge = (status, consentGiven) => {
     if (!consentGiven) {
       return <badge_1.Badge variant="destructive">Negado</badge_1.Badge>;
     }
@@ -294,7 +288,7 @@ function ConsentManager(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="patient_cpf"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -303,7 +297,7 @@ function ConsentManager(_a) {
                           <input_1.Input
                             placeholder="000.000.000-00"
                             {...field}
-                            onChange={function (e) {
+                            onChange={(e) => {
                               var formatted = (0, utils_1.formatCpf)(e.target.value);
                               field.onChange(formatted);
                             }}
@@ -319,7 +313,7 @@ function ConsentManager(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="consent_type"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -360,7 +354,7 @@ function ConsentManager(_a) {
               <form_1.FormField
                 control={form.control}
                 name="purpose_description"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -385,7 +379,7 @@ function ConsentManager(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="legal_basis"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -423,7 +417,7 @@ function ConsentManager(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="data_retention_period"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -447,7 +441,7 @@ function ConsentManager(_a) {
               <form_1.FormField
                 control={form.control}
                 name="consent_given"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="lgpd-consent">
@@ -527,73 +521,63 @@ function ConsentManager(_a) {
 
           <card_1.CardContent>
             <div className="space-y-4">
-              {existingConsents.map(function (consent) {
-                return (
-                  <div
-                    key={consent.id}
-                    className="border rounded-lg p-4 hover:bg-muted/30 transition-colors"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-3">
-                          <h4 className="font-medium">
-                            {getConsentTypeLabel(consent.consent_type)}
-                          </h4>
-                          {getStatusBadge(consent.status, consent.consent_given)}
-                        </div>
+              {existingConsents.map((consent) => (
+                <div
+                  key={consent.id}
+                  className="border rounded-lg p-4 hover:bg-muted/30 transition-colors"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <h4 className="font-medium">{getConsentTypeLabel(consent.consent_type)}</h4>
+                        {getStatusBadge(consent.status, consent.consent_given)}
+                      </div>
 
-                        <p className="text-sm text-muted-foreground">
-                          {consent.purpose_description}
+                      <p className="text-sm text-muted-foreground">{consent.purpose_description}</p>
+
+                      <div className="text-xs text-muted-foreground">
+                        <p>Base Legal: {consent.legal_basis}</p>
+                        <p>Retenção: {consent.data_retention_period}</p>
+                        <p>
+                          Registrado em:{" "}
+                          {(0, date_fns_1.format)(consent.created_at, "dd/MM/yyyy HH:mm", {
+                            locale: locale_1.ptBR,
+                          })}
                         </p>
-
-                        <div className="text-xs text-muted-foreground">
-                          <p>Base Legal: {consent.legal_basis}</p>
-                          <p>Retenção: {consent.data_retention_period}</p>
+                        {consent.updated_at !== consent.created_at && (
                           <p>
-                            Registrado em:{" "}
-                            {(0, date_fns_1.format)(consent.created_at, "dd/MM/yyyy HH:mm", {
+                            Atualizado em:{" "}
+                            {(0, date_fns_1.format)(consent.updated_at, "dd/MM/yyyy HH:mm", {
                               locale: locale_1.ptBR,
                             })}
                           </p>
-                          {consent.updated_at !== consent.created_at && (
-                            <p>
-                              Atualizado em:{" "}
-                              {(0, date_fns_1.format)(consent.updated_at, "dd/MM/yyyy HH:mm", {
-                                locale: locale_1.ptBR,
-                              })}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <button_1.Button
-                          variant="outline"
-                          size="sm"
-                          onClick={function () {
-                            return setSelectedConsent(consent);
-                          }}
-                        >
-                          <lucide_react_1.Eye className="w-4 h-4" />
-                        </button_1.Button>
-
-                        {consent.status === "active" && consent.consent_given && (
-                          <button_1.Button
-                            variant="outline"
-                            size="sm"
-                            onClick={function () {
-                              return handleRevokeConsent(consent.id);
-                            }}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <lucide_react_1.X className="w-4 h-4" />
-                          </button_1.Button>
                         )}
                       </div>
                     </div>
+
+                    <div className="flex items-center gap-2">
+                      <button_1.Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedConsent(consent)}
+                      >
+                        <lucide_react_1.Eye className="w-4 h-4" />
+                      </button_1.Button>
+
+                      {consent.status === "active" && consent.consent_given && (
+                        <button_1.Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRevokeConsent(consent.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <lucide_react_1.X className="w-4 h-4" />
+                        </button_1.Button>
+                      )}
+                    </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -608,13 +592,7 @@ function ConsentManager(_a) {
                 Informações completas do registro de consentimento
               </card_1.CardDescription>
             </div>
-            <button_1.Button
-              variant="outline"
-              size="sm"
-              onClick={function () {
-                return setSelectedConsent(null);
-              }}
-            >
+            <button_1.Button variant="outline" size="sm" onClick={() => setSelectedConsent(null)}>
               <lucide_react_1.X className="w-4 h-4" />
             </button_1.Button>
           </card_1.CardHeader>
@@ -671,7 +649,7 @@ function ConsentManager(_a) {
                 <button_1.Button
                   variant="destructive"
                   size="sm"
-                  onClick={function () {
+                  onClick={() => {
                     handleRevokeConsent(selectedConsent.id);
                     setSelectedConsent(null);
                   }}

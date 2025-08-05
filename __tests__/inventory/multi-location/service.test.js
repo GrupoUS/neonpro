@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,64 +142,40 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var multi_location_inventory_service_1 = require("@/lib/services/multi-location-inventory-service");
 // Mock Supabase client
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              order: globals_1.jest.fn(function () {
-                return Promise.resolve({ data: [], error: null });
-              }),
-            };
-          }),
-          order: globals_1.jest.fn(function () {
-            return Promise.resolve({ data: [], error: null });
-          }),
-        };
-      }),
-      insert: globals_1.jest.fn(function () {
-        return Promise.resolve({ data: [], error: null });
-      }),
-      update: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return Promise.resolve({ data: [], error: null });
-          }),
-        };
-      }),
-      delete: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return Promise.resolve({ data: [], error: null });
-          }),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        order: globals_1.jest.fn(() => Promise.resolve({ data: [], error: null })),
+      })),
+      order: globals_1.jest.fn(() => Promise.resolve({ data: [], error: null })),
+    })),
+    insert: globals_1.jest.fn(() => Promise.resolve({ data: [], error: null })),
+    update: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => Promise.resolve({ data: [], error: null })),
+    })),
+    delete: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => Promise.resolve({ data: [], error: null })),
+    })),
+  })),
 };
-globals_1.jest.mock("@/app/utils/supabase/client", function () {
-  return {
-    createClient: function () {
-      return mockSupabase;
-    },
-  };
-});
-(0, globals_1.describe)("Multi-Location Inventory Service", function () {
-  (0, globals_1.beforeEach)(function () {
+globals_1.jest.mock("@/app/utils/supabase/client", () => ({
+  createClient: () => mockSupabase,
+}));
+(0, globals_1.describe)("Multi-Location Inventory Service", () => {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("getInventoryStock", function () {
-    (0, globals_1.it)("should fetch inventory stock without filters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("getInventoryStock", () => {
+    (0, globals_1.it)("should fetch inventory stock without filters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockData = [
@@ -228,12 +201,12 @@ globals_1.jest.mock("@/app/utils/supabase/client", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should apply clinic_id filter when provided", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should apply clinic_id filter when provided", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var filters;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               filters = { clinic_id: "clinic-1" };
@@ -252,11 +225,11 @@ globals_1.jest.mock("@/app/utils/supabase/client", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle service errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should handle service errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase
@@ -277,14 +250,14 @@ globals_1.jest.mock("@/app/utils/supabase/client", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("createStockTransfer", function () {
-    (0, globals_1.it)("should create a new stock transfer", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("createStockTransfer", () => {
+    (0, globals_1.it)("should create a new stock transfer", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var transferData, mockResponse, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               transferData = {
@@ -316,14 +289,14 @@ globals_1.jest.mock("@/app/utils/supabase/client", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("getLocationStockSummary", function () {
-    (0, globals_1.it)("should fetch location stock summary", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("getLocationStockSummary", () => {
+    (0, globals_1.it)("should fetch location stock summary", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSummary, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSummary = [
@@ -350,14 +323,14 @@ globals_1.jest.mock("@/app/utils/supabase/client", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("getLowStockAlerts", function () {
-    (0, globals_1.it)("should fetch low stock alerts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("getLowStockAlerts", () => {
+    (0, globals_1.it)("should fetch low stock alerts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAlerts, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAlerts = [
@@ -382,14 +355,14 @@ globals_1.jest.mock("@/app/utils/supabase/client", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("updateStock", function () {
-    (0, globals_1.it)("should update stock quantity", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("updateStock", () => {
+    (0, globals_1.it)("should update stock quantity", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updateData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updateData = {
@@ -419,7 +392,7 @@ globals_1.jest.mock("@/app/utils/supabase/client", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

@@ -9,31 +9,27 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type {
-  Calendar,
-  Clock,
-  User,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  Plus,
-  Search,
-  Filter,
-  MoreHorizontal,
-  Edit,
-  Trash,
-} from "lucide-react";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
-
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Edit,
+  FileText,
+  Filter,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Trash,
+  User,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -41,21 +37,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   Dialog,
   DialogContent,
@@ -81,23 +62,40 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import type { useToast } from "@/hooks/use-toast";
-
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
-  Procedure,
-  ProcedureStatus,
-  ProcedureSearchFilters,
-  CreateProcedureData,
-  createProcedureSchema,
-} from "@/lib/types/treatment";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Textarea } from "@/components/ui/textarea";
+import type { useToast } from "@/hooks/use-toast";
+import type { searchPatients } from "@/lib/supabase/patients";
+import type {
+  createProcedure,
+  deleteProcedure,
+  searchProcedures,
+  updateProcedure,
+} from "@/lib/supabase/treatments";
 import type { Patient } from "@/lib/types/fhir";
 import type {
-  searchProcedures,
-  createProcedure,
-  updateProcedure,
-  deleteProcedure,
-} from "@/lib/supabase/treatments";
-import type { searchPatients } from "@/lib/supabase/patients";
+  CreateProcedureData,
+  createProcedureSchema,
+  Procedure,
+  ProcedureSearchFilters,
+  ProcedureStatus,
+} from "@/lib/types/treatment";
 
 interface ProcedureManagementProps {
   treatmentPlanId?: string;

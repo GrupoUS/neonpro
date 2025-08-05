@@ -1,4 +1,4 @@
-import { AnalyticsData, CohortData, ExportData } from "@/types/analytics";
+import type { AnalyticsData, CohortData, ExportData } from "@/types/analytics";
 
 // Mock Analytics Data
 export const mockAnalyticsData: AnalyticsData = {

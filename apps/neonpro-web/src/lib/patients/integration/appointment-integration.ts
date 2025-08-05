@@ -4,10 +4,10 @@
  * Part of Story 3.1 - Task 6: System Integration & Search
  */
 
-import type { Patient } from "@/types/patient";
-import type { Appointment } from "@/types/appointment";
-import type { supabase } from "@/lib/supabase/client";
 import type { logger } from "@/lib/logger";
+import type { supabase } from "@/lib/supabase/client";
+import type { Appointment } from "@/types/appointment";
+import type { Patient } from "@/types/patient";
 
 export interface PatientAppointmentHistory {
   patient_id: string;
@@ -55,8 +55,9 @@ export class PatientAppointmentIntegration {
       const noShows = appointments?.filter((apt) => apt.status === "no_show") || [];
 
       // Calculate preferred times and services
-      const timePreferences = this.calculateTimePreferences(completed);
-      const servicePreferences = this.calculateServicePreferences(completed);
+      const timePreferences = PatientAppointmentIntegration.calculateTimePreferences(completed);
+      const servicePreferences =
+        PatientAppointmentIntegration.calculateServicePreferences(completed);
 
       // Calculate average rating
       const ratingsSum = completed
@@ -99,7 +100,7 @@ export class PatientAppointmentIntegration {
    */
   static async generateAppointmentInsights(patientId: string): Promise<AppointmentInsights> {
     try {
-      const history = await this.getPatientAppointmentHistory(patientId);
+      const history = await PatientAppointmentIntegration.getPatientAppointmentHistory(patientId);
 
       const attendanceRate =
         history.total_appointments > 0
@@ -107,19 +108,23 @@ export class PatientAppointmentIntegration {
           : 0;
 
       // Calculate punctuality score based on check-in times
-      const punctualityScore = await this.calculatePunctualityScore(patientId);
+      const punctualityScore =
+        await PatientAppointmentIntegration.calculatePunctualityScore(patientId);
 
       // Calculate satisfaction score from ratings
       const satisfactionScore = history.average_rating * 20; // Convert to percentage
 
       // Calculate loyalty index
-      const loyaltyIndex = this.calculateLoyaltyIndex(history);
+      const loyaltyIndex = PatientAppointmentIntegration.calculateLoyaltyIndex(history);
 
       // Identify risk factors
-      const riskFactors = this.identifyRiskFactors(history, attendanceRate);
+      const riskFactors = PatientAppointmentIntegration.identifyRiskFactors(
+        history,
+        attendanceRate,
+      );
 
       // Generate recommendations
-      const recommendations = this.generateRecommendations(
+      const recommendations = PatientAppointmentIntegration.generateRecommendations(
         history,
         attendanceRate,
         satisfactionScore,
@@ -148,7 +153,7 @@ export class PatientAppointmentIntegration {
   ): Promise<Appointment> {
     try {
       // Get patient preferences to suggest optimal appointment
-      const history = await this.getPatientAppointmentHistory(patientId);
+      const history = await PatientAppointmentIntegration.getPatientAppointmentHistory(patientId);
 
       // Apply patient preferences if not specified
       const optimizedAppointment = {
@@ -191,7 +196,7 @@ export class PatientAppointmentIntegration {
 
     appointments.forEach((apt) => {
       const hour = new Date(apt.appointment_date).getHours();
-      const timeSlot = this.getTimeSlot(hour);
+      const timeSlot = PatientAppointmentIntegration.getTimeSlot(hour);
       timeSlots[timeSlot] = (timeSlots[timeSlot] || 0) + 1;
     });
 
@@ -255,7 +260,7 @@ export class PatientAppointmentIntegration {
       attendanceRate:
         (history.completed_appointments / Math.max(history.total_appointments, 1)) * 40,
       averageRating: (history.average_rating / 5) * 20,
-      consistency: this.calculateConsistency(history) * 10,
+      consistency: PatientAppointmentIntegration.calculateConsistency(history) * 10,
     };
 
     return Math.round(Object.values(factors).reduce((sum, factor) => sum + factor, 0));
@@ -279,7 +284,7 @@ export class PatientAppointmentIntegration {
     // Calculate consistency (lower variance = higher consistency)
     const avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
     const variance =
-      intervals.reduce((sum, interval) => sum + Math.pow(interval - avgInterval, 2), 0) /
+      intervals.reduce((sum, interval) => sum + (interval - avgInterval) ** 2, 0) /
       intervals.length;
 
     return Math.max(0, 1 - variance / (avgInterval * avgInterval));

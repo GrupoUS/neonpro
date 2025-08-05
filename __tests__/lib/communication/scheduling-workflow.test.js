@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var scheduling_workflow_1 = require("@/lib/communication/scheduling-workflow");
@@ -155,49 +152,33 @@ globals_1.jest.mock("@/lib/communication/communication-service");
 globals_1.jest.mock("@/lib/communication/no-show-predictor");
 globals_1.jest.mock("@/lib/communication/scheduling-templates");
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-              order: globals_1.jest.fn(),
-              limit: globals_1.jest.fn(),
-            };
-          }),
-          insert: globals_1.jest.fn(),
-          update: globals_1.jest.fn(function () {
-            return {
-              eq: globals_1.jest.fn(),
-            };
-          }),
-          neq: globals_1.jest.fn(function () {
-            return {
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(function () {
-                    return {
-                      single: globals_1.jest.fn(),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+        order: globals_1.jest.fn(),
+        limit: globals_1.jest.fn(),
+      })),
+      insert: globals_1.jest.fn(),
+      update: globals_1.jest.fn(() => ({
+        eq: globals_1.jest.fn(),
+      })),
+      neq: globals_1.jest.fn(() => ({
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(() => ({
+            single: globals_1.jest.fn(),
+          })),
+        })),
+      })),
+    })),
+  })),
 };
-var mockCreateClient = globals_1.jest.fn(function () {
-  return mockSupabase;
-});
-(0, globals_1.beforeEach)(function () {
+var mockCreateClient = globals_1.jest.fn(() => mockSupabase);
+(0, globals_1.beforeEach)(() => {
   globals_1.jest.clearAllMocks();
   require("@/app/utils/supabase/server").createClient = mockCreateClient;
 });
-(0, globals_1.describe)("SchedulingCommunicationWorkflow", function () {
+(0, globals_1.describe)("SchedulingCommunicationWorkflow", () => {
   var workflow;
   var mockAppointment = {
     id: "appointment-123",
@@ -225,12 +206,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
       phone: "+5511888888888",
     },
   };
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     workflow = new scheduling_workflow_1.SchedulingCommunicationWorkflow();
   });
-  (0, globals_1.describe)("initializeWorkflows", function () {
-    (0, globals_1.it)("should create reminder workflows based on configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("initializeWorkflows", () => {
+    (0, globals_1.it)("should create reminder workflows based on configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockPredictor,
           mockPredictorModule,
           config,
@@ -238,11 +219,11 @@ var mockCreateClient = globals_1.jest.fn(function () {
           reminderWorkflows,
           reminder24h,
           confirmationWorkflow;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock appointment data
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -281,9 +262,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 }),
               };
               mockPredictorModule = require("@/lib/communication/no-show-predictor");
-              mockPredictorModule.NoShowPredictor = globals_1.jest.fn(function () {
-                return mockPredictor;
-              });
+              mockPredictorModule.NoShowPredictor = globals_1.jest.fn(() => mockPredictor);
               config = {
                 reminderSettings: {
                   enabled24h: true,
@@ -303,13 +282,9 @@ var mockCreateClient = globals_1.jest.fn(function () {
             case 1:
               workflows = _a.sent();
               (0, globals_1.expect)(workflows).toHaveLength(3); // 2 reminders + 1 confirmation
-              reminderWorkflows = workflows.filter(function (w) {
-                return w.workflowType === "reminder";
-              });
+              reminderWorkflows = workflows.filter((w) => w.workflowType === "reminder");
               (0, globals_1.expect)(reminderWorkflows).toHaveLength(2);
-              reminder24h = reminderWorkflows.find(function (w) {
-                return w.metadata.timing === "24h";
-              });
+              reminder24h = reminderWorkflows.find((w) => w.metadata.timing === "24h");
               (0, globals_1.expect)(reminder24h).toBeDefined();
               (0, globals_1.expect)(
                 reminder24h === null || reminder24h === void 0 ? void 0 : reminder24h.steps,
@@ -317,9 +292,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
               (0, globals_1.expect)(
                 reminder24h === null || reminder24h === void 0 ? void 0 : reminder24h.scheduledAt,
               ).toBeInstanceOf(Date);
-              confirmationWorkflow = workflows.find(function (w) {
-                return w.workflowType === "confirmation";
-              });
+              confirmationWorkflow = workflows.find((w) => w.workflowType === "confirmation");
               (0, globals_1.expect)(confirmationWorkflow).toBeDefined();
               (0, globals_1.expect)(
                 confirmationWorkflow === null || confirmationWorkflow === void 0
@@ -334,100 +307,95 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)(
-      "should create no-show prevention workflow for high-risk appointments",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var mockPredictor, config, workflows, noShowWorkflow;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                // Mock appointment data
-                mockSupabase.from.mockImplementation(function (table) {
-                  if (table === "appointments") {
-                    return {
-                      select: globals_1.jest.fn().mockReturnValue({
-                        eq: globals_1.jest.fn().mockReturnValue({
-                          single: globals_1.jest.fn().mockResolvedValue({
-                            data: mockAppointment,
-                            error: null,
-                          }),
-                        }),
-                      }),
-                    };
-                  } else if (table === "clinic_workflow_configs") {
-                    return {
-                      select: globals_1.jest.fn().mockReturnValue({
-                        eq: globals_1.jest.fn().mockReturnValue({
-                          single: globals_1.jest.fn().mockResolvedValue({
-                            data: null,
-                            error: null,
-                          }),
-                        }),
-                      }),
-                    };
-                  } else if (table === "communication_workflows") {
-                    return {
-                      insert: globals_1.jest.fn().mockResolvedValue({
-                        data: null,
-                        error: null,
-                      }),
-                    };
-                  }
-                });
-                mockPredictor = {
-                  predict: globals_1.jest.fn().mockResolvedValue({
-                    probability: 0.8, // High risk
-                    factors: ["multiple_no_shows", "late_booking"],
-                    riskLevel: "high",
-                    interventionRecommended: true,
-                  }),
-                };
-                // Replace the noShowPredictor instance in the workflow
-                workflow.noShowPredictor = mockPredictor;
-                config = {
-                  noShowPrevention: {
-                    enabled: true,
-                    probabilityThreshold: 0.7,
-                    interventionTiming: "4h",
-                    specialHandling: true,
-                  },
-                };
-                return [4 /*yield*/, workflow.initializeWorkflows("appointment-123", config)];
-              case 1:
-                workflows = _a.sent();
-                noShowWorkflow = workflows.find(function (w) {
-                  return w.workflowType === "no_show_prevention";
-                });
-                (0, globals_1.expect)(noShowWorkflow).toBeDefined();
-                (0, globals_1.expect)(
-                  noShowWorkflow === null || noShowWorkflow === void 0
-                    ? void 0
-                    : noShowWorkflow.steps,
-                ).toHaveLength(3); // send + wait + escalate
-                (0, globals_1.expect)(
-                  noShowWorkflow === null || noShowWorkflow === void 0
-                    ? void 0
-                    : noShowWorkflow.metadata.noShowPrediction.probability,
-                ).toBe(0.8);
-                return [2 /*return*/];
-            }
-          });
-        });
-      },
+      }),
     );
-    (0, globals_1.it)("should skip workflows for past appointments", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should create no-show prevention workflow for high-risk appointments", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var mockPredictor, config, workflows, noShowWorkflow;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              // Mock appointment data
+              mockSupabase.from.mockImplementation((table) => {
+                if (table === "appointments") {
+                  return {
+                    select: globals_1.jest.fn().mockReturnValue({
+                      eq: globals_1.jest.fn().mockReturnValue({
+                        single: globals_1.jest.fn().mockResolvedValue({
+                          data: mockAppointment,
+                          error: null,
+                        }),
+                      }),
+                    }),
+                  };
+                } else if (table === "clinic_workflow_configs") {
+                  return {
+                    select: globals_1.jest.fn().mockReturnValue({
+                      eq: globals_1.jest.fn().mockReturnValue({
+                        single: globals_1.jest.fn().mockResolvedValue({
+                          data: null,
+                          error: null,
+                        }),
+                      }),
+                    }),
+                  };
+                } else if (table === "communication_workflows") {
+                  return {
+                    insert: globals_1.jest.fn().mockResolvedValue({
+                      data: null,
+                      error: null,
+                    }),
+                  };
+                }
+              });
+              mockPredictor = {
+                predict: globals_1.jest.fn().mockResolvedValue({
+                  probability: 0.8, // High risk
+                  factors: ["multiple_no_shows", "late_booking"],
+                  riskLevel: "high",
+                  interventionRecommended: true,
+                }),
+              };
+              // Replace the noShowPredictor instance in the workflow
+              workflow.noShowPredictor = mockPredictor;
+              config = {
+                noShowPrevention: {
+                  enabled: true,
+                  probabilityThreshold: 0.7,
+                  interventionTiming: "4h",
+                  specialHandling: true,
+                },
+              };
+              return [4 /*yield*/, workflow.initializeWorkflows("appointment-123", config)];
+            case 1:
+              workflows = _a.sent();
+              noShowWorkflow = workflows.find((w) => w.workflowType === "no_show_prevention");
+              (0, globals_1.expect)(noShowWorkflow).toBeDefined();
+              (0, globals_1.expect)(
+                noShowWorkflow === null || noShowWorkflow === void 0
+                  ? void 0
+                  : noShowWorkflow.steps,
+              ).toHaveLength(3); // send + wait + escalate
+              (0, globals_1.expect)(
+                noShowWorkflow === null || noShowWorkflow === void 0
+                  ? void 0
+                  : noShowWorkflow.metadata.noShowPrediction.probability,
+              ).toBe(0.8);
+              return [2 /*return*/];
+          }
+        });
+      }),
+    );
+    (0, globals_1.it)("should skip workflows for past appointments", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var pastAppointment, config, workflows;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               pastAppointment = __assign(__assign({}, mockAppointment), {
                 date: "2023-01-15T10:00:00Z", // Past date
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -468,15 +436,15 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return empty array when workflows disabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return empty array when workflows disabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var workflows;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -508,12 +476,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("executeWorkflow", function () {
-    (0, globals_1.it)("should execute workflow steps in sequence", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("executeWorkflow", () => {
+    (0, globals_1.it)("should execute workflow steps in sequence", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWorkflow,
           mockCommunicationService,
           mockCommModule,
@@ -521,7 +489,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
           mockTemplateEngine,
           mockTemplateModule,
           results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockWorkflow = {
@@ -569,7 +537,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 },
               };
               // Mock workflow retrieval and update
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "communication_workflows") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -636,9 +604,9 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 }),
               };
               mockCommModule = require("@/lib/communication/communication-service");
-              mockCommModule.CommunicationService = globals_1.jest.fn(function () {
-                return mockCommunicationService;
-              });
+              mockCommModule.CommunicationService = globals_1.jest.fn(
+                () => mockCommunicationService,
+              );
               // Apply mock directly to workflow instance
               workflow.communicationService = mockCommunicationService;
               mockTemplate = {
@@ -680,11 +648,11 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle workflow not found", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should handle workflow not found", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -708,7 +676,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

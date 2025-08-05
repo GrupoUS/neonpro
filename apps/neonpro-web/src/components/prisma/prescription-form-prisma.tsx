@@ -1,30 +1,45 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { 
-  Pill, User, Stethoscope, AlertTriangle, 
-  Shield, Save, X, FileText, Clock
+import {
+  AlertTriangle,
+  Clock,
+  FileText,
+  Pill,
+  Save,
+  Shield,
+  Stethoscope,
+  User,
+  X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Select, SelectContent, SelectItem, 
-  SelectTrigger, SelectValue 
-} from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { toast } from "@/components/ui/use-toast";
-import { 
-  Form, FormControl, FormDescription, FormField, 
-  FormItem, FormLabel, FormMessage 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
 
 // Validation schema for prescription
 const prescriptionSchema = z.object({
@@ -58,7 +73,7 @@ const prescriptionSchemaWithConditionals = prescriptionSchema.refine(
   {
     message: "Código ANVISA e registro CFM são obrigatórios para substâncias controladas",
     path: ["controlled_substance"],
-  }
+  },
 );
 
 type PrescriptionData = z.infer<typeof prescriptionSchema>;
@@ -86,16 +101,7 @@ const COMMON_MEDICATIONS = [
 ];
 
 // Common dosage patterns
-const COMMON_DOSAGES = [
-  "500mg",
-  "250mg",
-  "100mg",
-  "50mg",
-  "25mg",
-  "20mg",
-  "10mg",
-  "5mg",
-];
+const COMMON_DOSAGES = ["500mg", "250mg", "100mg", "50mg", "25mg", "20mg", "10mg", "5mg"];
 
 // Frequency options
 const FREQUENCY_OPTIONS = [
@@ -114,7 +120,7 @@ export default function PrescriptionFormPrisma({
   patientId,
   appointmentId,
   onSuccess,
-  onCancel
+  onCancel,
 }: PrescriptionFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -150,7 +156,7 @@ export default function PrescriptionFormPrisma({
     const loadData = async () => {
       try {
         // Load patients
-        const patientsResponse = await fetch('/api/prisma/patients?limit=100');
+        const patientsResponse = await fetch("/api/prisma/patients?limit=100");
         if (patientsResponse.ok) {
           const patientsData = await patientsResponse.json();
           setPatients(patientsData.patients || []);
@@ -159,27 +165,27 @@ export default function PrescriptionFormPrisma({
         // In a real implementation, you'd have a prescribers endpoint
         // For now, we'll simulate some prescribers (doctors only)
         setPrescribers([
-          { 
-            id: "prescriber-1", 
-            full_name: "Dr. João Silva", 
+          {
+            id: "prescriber-1",
+            full_name: "Dr. João Silva",
             professional_title: "Cardiologista",
-            medical_license: "CRM-SP 123456"
+            medical_license: "CRM-SP 123456",
           },
-          { 
-            id: "prescriber-2", 
-            full_name: "Dra. Maria Santos", 
+          {
+            id: "prescriber-2",
+            full_name: "Dra. Maria Santos",
             professional_title: "Pediatra",
-            medical_license: "CRM-SP 789012"
+            medical_license: "CRM-SP 789012",
           },
-          { 
-            id: "prescriber-3", 
-            full_name: "Dr. Carlos Lima", 
+          {
+            id: "prescriber-3",
+            full_name: "Dr. Carlos Lima",
             professional_title: "Clínico Geral",
-            medical_license: "CRM-SP 345678"
+            medical_license: "CRM-SP 345678",
           },
         ]);
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error("Error loading data:", error);
       }
     };
 
@@ -204,10 +210,10 @@ export default function PrescriptionFormPrisma({
         cfm_registration: data.cfm_registration || undefined,
       };
 
-      const response = await fetch('/api/prisma/prescriptions', {
-        method: 'POST',
+      const response = await fetch("/api/prisma/prescriptions", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(prescriptionData),
       });
@@ -228,9 +234,8 @@ export default function PrescriptionFormPrisma({
       } else {
         router.push(`/receitas/${result.prescription.id}`);
       }
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
       setSubmitError(errorMessage);
       toast({
         title: "Erro ao criar receita",
@@ -252,8 +257,8 @@ export default function PrescriptionFormPrisma({
 
   // Watch controlled substance checkbox
   const watchControlledSubstance = form.watch("controlled_substance");
-  const selectedPatient = patients.find(p => p.id === form.watch("patient_id"));
-  const selectedPrescriber = prescribers.find(p => p.id === form.watch("prescriber_id"));
+  const selectedPatient = patients.find((p) => p.id === form.watch("patient_id"));
+  const selectedPrescriber = prescribers.find((p) => p.id === form.watch("prescriber_id"));
 
   // Auto-fill CFM registration when prescriber changes
   useEffect(() => {
@@ -268,14 +273,15 @@ export default function PrescriptionFormPrisma({
         <CardTitle className="flex items-center gap-2">
           <Pill className="h-6 w-6 text-green-600" />
           Nova Receita Médica (Prisma)
-          <Badge variant="outline" className="ml-2">ANVISA Compliant</Badge>
+          <Badge variant="outline" className="ml-2">
+            ANVISA Compliant
+          </Badge>
         </CardTitle>
       </CardHeader>
 
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            
             {/* Error Alert */}
             {submitError && (
               <Alert variant="destructive">
@@ -290,7 +296,7 @@ export default function PrescriptionFormPrisma({
                 <User className="h-5 w-5" />
                 Paciente e Prescritor
               </h3>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Patient Selection */}
                 <FormField
@@ -373,10 +379,7 @@ export default function PrescriptionFormPrisma({
                       <FormLabel>Nome do Medicamento *</FormLabel>
                       <FormControl>
                         <div className="space-y-2">
-                          <Input 
-                            placeholder="Digite o nome do medicamento"
-                            {...field} 
-                          />
+                          <Input placeholder="Digite o nome do medicamento" {...field} />
                           <div className="flex flex-wrap gap-1">
                             {COMMON_MEDICATIONS.map((med) => (
                               <Button
@@ -407,10 +410,7 @@ export default function PrescriptionFormPrisma({
                       <FormLabel>Dosagem *</FormLabel>
                       <FormControl>
                         <div className="space-y-2">
-                          <Input 
-                            placeholder="Ex: 500mg, 5ml, 1 comprimido"
-                            {...field} 
-                          />
+                          <Input placeholder="Ex: 500mg, 5ml, 1 comprimido" {...field} />
                           <div className="flex flex-wrap gap-1">
                             {COMMON_DOSAGES.map((dosage) => (
                               <Button
@@ -468,10 +468,7 @@ export default function PrescriptionFormPrisma({
                     <FormItem>
                       <FormLabel>Duração *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Ex: 7 dias, 2 semanas"
-                          {...field} 
-                        />
+                        <Input placeholder="Ex: 7 dias, 2 semanas" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -486,10 +483,7 @@ export default function PrescriptionFormPrisma({
                     <FormItem>
                       <FormLabel>Quantidade *</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Ex: 30 comprimidos, 1 frasco"
-                          {...field} 
-                        />
+                        <Input placeholder="Ex: 30 comprimidos, 1 frasco" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -514,10 +508,10 @@ export default function PrescriptionFormPrisma({
                     <FormItem>
                       <FormLabel>Instruções de Uso</FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Textarea
                           placeholder="Como o medicamento deve ser tomado..."
                           rows={3}
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -533,10 +527,10 @@ export default function PrescriptionFormPrisma({
                     <FormItem>
                       <FormLabel>Avisos e Precauções</FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Textarea
                           placeholder="Avisos importantes sobre o medicamento..."
                           rows={3}
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -553,10 +547,10 @@ export default function PrescriptionFormPrisma({
                   <FormItem>
                     <FormLabel>Contraindicações</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Situações em que o medicamento não deve ser usado..."
                         rows={2}
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -578,15 +572,10 @@ export default function PrescriptionFormPrisma({
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                     <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel className="font-medium">
-                        Substância Controlada (ANVISA)
-                      </FormLabel>
+                      <FormLabel className="font-medium">Substância Controlada (ANVISA)</FormLabel>
                       <FormDescription>
                         Marque se o medicamento é uma substância controlada pela ANVISA
                       </FormDescription>
@@ -604,14 +593,9 @@ export default function PrescriptionFormPrisma({
                       <FormItem>
                         <FormLabel>Código ANVISA *</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Código ANVISA do medicamento"
-                            {...field} 
-                          />
+                          <Input placeholder="Código ANVISA do medicamento" {...field} />
                         </FormControl>
-                        <FormDescription>
-                          Obrigatório para substâncias controladas
-                        </FormDescription>
+                        <FormDescription>Obrigatório para substâncias controladas</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -624,11 +608,7 @@ export default function PrescriptionFormPrisma({
                       <FormItem>
                         <FormLabel>Registro CFM *</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="CRM do médico prescritor"
-                            {...field} 
-                            disabled
-                          />
+                          <Input placeholder="CRM do médico prescritor" {...field} disabled />
                         </FormControl>
                         <FormDescription>
                           Preenchido automaticamente baseado no prescritor
@@ -644,9 +624,9 @@ export default function PrescriptionFormPrisma({
                 <Alert>
                   <Shield className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Atenção:</strong> Esta receita será automaticamente registrada 
-                    no sistema de controle da ANVISA conforme RDC 357/2020 para rastreabilidade 
-                    de substâncias controladas.
+                    <strong>Atenção:</strong> Esta receita será automaticamente registrada no
+                    sistema de controle da ANVISA conforme RDC 357/2020 para rastreabilidade de
+                    substâncias controladas.
                   </AlertDescription>
                 </Alert>
               )}
@@ -667,14 +647,9 @@ export default function PrescriptionFormPrisma({
                     <FormItem>
                       <FormLabel>Data de Início</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="date"
-                          {...field} 
-                        />
+                        <Input type="date" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Data para iniciar o tratamento
-                      </FormDescription>
+                      <FormDescription>Data para iniciar o tratamento</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -687,14 +662,9 @@ export default function PrescriptionFormPrisma({
                     <FormItem>
                       <FormLabel>Data de Término</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="date"
-                          {...field} 
-                        />
+                        <Input type="date" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Data prevista para o fim do tratamento
-                      </FormDescription>
+                      <FormDescription>Data prevista para o fim do tratamento</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -704,15 +674,11 @@ export default function PrescriptionFormPrisma({
 
             {/* Actions */}
             <div className="flex gap-4 pt-6 border-t">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="flex-1 gap-2"
-              >
+              <Button type="submit" disabled={isSubmitting} className="flex-1 gap-2">
                 <Save className="h-4 w-4" />
                 {isSubmitting ? "Criando Receita..." : "Criar Receita"}
               </Button>
-              
+
               <Button
                 type="button"
                 variant="outline"

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Cohort Analysis Engine for NeonPro
  *
@@ -14,15 +13,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -42,13 +41,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,9 +69,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -144,10 +141,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -156,7 +153,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cohortUtils = exports.CohortAnalyzer = void 0;
 exports.createCohortAnalyzer = createCohortAnalyzer;
@@ -172,7 +169,7 @@ var cohortConfigSchema = zod_1.z.object({
   includeRevenue: zod_1.z.boolean().default(true),
   includeChurn: zod_1.z.boolean().default(true),
 });
-var CohortAnalyzer = /** @class */ (function () {
+var CohortAnalyzer = /** @class */ (() => {
   function CohortAnalyzer() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -384,7 +381,7 @@ var CohortAnalyzer = /** @class */ (function () {
     });
   };
   // Private helper methods
-  CohortAnalyzer.prototype.generateCohortRanges = function (startDate, endDate, granularity) {
+  CohortAnalyzer.prototype.generateCohortRanges = (startDate, endDate, granularity) => {
     var ranges = [];
     var start = new Date(startDate);
     var end = new Date(endDate);
@@ -406,7 +403,7 @@ var CohortAnalyzer = /** @class */ (function () {
     }
     return ranges;
   };
-  CohortAnalyzer.prototype.formatCohortName = function (dateStr, granularity) {
+  CohortAnalyzer.prototype.formatCohortName = (dateStr, granularity) => {
     var date = new Date(dateStr);
     if (granularity === "daily") {
       return date.toLocaleDateString("en-US", {
@@ -428,7 +425,7 @@ var CohortAnalyzer = /** @class */ (function () {
       });
     }
   };
-  CohortAnalyzer.prototype.calculatePeriodDate = function (startDate, period, granularity) {
+  CohortAnalyzer.prototype.calculatePeriodDate = (startDate, period, granularity) => {
     var date = new Date(startDate);
     if (granularity === "daily") {
       date.setDate(date.getDate() + period);
@@ -439,38 +436,29 @@ var CohortAnalyzer = /** @class */ (function () {
     }
     return date.toISOString().split("T")[0];
   };
-  CohortAnalyzer.prototype.calculateCumulativeRevenue = function (revenueData) {
-    return revenueData.reduce(function (sum, period) {
-      return sum + (period.revenue || 0);
-    }, 0);
-  };
+  CohortAnalyzer.prototype.calculateCumulativeRevenue = (revenueData) =>
+    revenueData.reduce((sum, period) => sum + (period.revenue || 0), 0);
   CohortAnalyzer.prototype.calculateLifetimeValue = function (revenueData, userCount) {
     var totalRevenue = this.calculateCumulativeRevenue(revenueData);
     return userCount > 0 ? Math.round((totalRevenue / userCount) * 100) / 100 : 0;
   };
-  CohortAnalyzer.prototype.groupMetricsByPeriod = function (metrics) {
-    return metrics.reduce(function (groups, metric) {
+  CohortAnalyzer.prototype.groupMetricsByPeriod = (metrics) =>
+    metrics.reduce((groups, metric) => {
       if (!groups[metric.period]) {
         groups[metric.period] = [];
       }
       groups[metric.period].push(metric);
       return groups;
     }, {});
-  };
-  CohortAnalyzer.prototype.calculateRetentionTrends = function (periodGroups) {
+  CohortAnalyzer.prototype.calculateRetentionTrends = (periodGroups) => {
     var trends = [];
     for (var _i = 0, _a = Object.entries(periodGroups); _i < _a.length; _i++) {
       var _b = _a[_i],
         period = _b[0],
         metrics = _b[1];
-      var avgRetention =
-        metrics.reduce(function (sum, m) {
-          return sum + m.retentionRate;
-        }, 0) / metrics.length;
+      var avgRetention = metrics.reduce((sum, m) => sum + m.retentionRate, 0) / metrics.length;
       var avgRevenue =
-        metrics.reduce(function (sum, m) {
-          return sum + m.averageRevenuePerUser;
-        }, 0) / metrics.length;
+        metrics.reduce((sum, m) => sum + m.averageRevenuePerUser, 0) / metrics.length;
       trends.push({
         period: parseInt(period),
         averageRetention: Math.round(avgRetention * 100) / 100,
@@ -478,12 +466,10 @@ var CohortAnalyzer = /** @class */ (function () {
         cohortCount: metrics.length,
       });
     }
-    return trends.sort(function (a, b) {
-      return a.period - b.period;
-    });
+    return trends.sort((a, b) => a.period - b.period);
   };
   CohortAnalyzer.prototype.compareCohortPerformance = function (metrics) {
-    var cohortGroups = metrics.reduce(function (groups, metric) {
+    var cohortGroups = metrics.reduce((groups, metric) => {
       if (!groups[metric.cohortId]) {
         groups[metric.cohortId] = [];
       }
@@ -496,12 +482,8 @@ var CohortAnalyzer = /** @class */ (function () {
         cohortId = _b[0],
         cohortMetrics = _b[1];
       var avgRetention =
-        cohortMetrics.reduce(function (sum, m) {
-          return sum + m.retentionRate;
-        }, 0) / cohortMetrics.length;
-      var totalRevenue = cohortMetrics.reduce(function (sum, m) {
-        return sum + m.revenue;
-      }, 0);
+        cohortMetrics.reduce((sum, m) => sum + m.retentionRate, 0) / cohortMetrics.length;
+      var totalRevenue = cohortMetrics.reduce((sum, m) => sum + m.revenue, 0);
       var lifetimeValue = cohortMetrics.length > 0 ? totalRevenue / cohortMetrics[0].totalUsers : 0;
       comparison.push({
         cohortId: cohortId,
@@ -511,14 +493,12 @@ var CohortAnalyzer = /** @class */ (function () {
         performanceScore: this.calculatePerformanceScore(avgRetention, lifetimeValue),
       });
     }
-    return comparison.sort(function (a, b) {
-      return b.performanceScore - a.performanceScore;
-    });
+    return comparison.sort((a, b) => b.performanceScore - a.performanceScore);
   };
-  CohortAnalyzer.prototype.analyzeSeasonality = function (metrics) {
+  CohortAnalyzer.prototype.analyzeSeasonality = (metrics) => {
     // Basic seasonality analysis - can be enhanced with more sophisticated algorithms
     var monthlyPerformance = {};
-    metrics.forEach(function (metric) {
+    metrics.forEach((metric) => {
       // This would need cohort creation month data
       // Simplified implementation for demonstration
       var month = new Date().getMonth(); // Placeholder
@@ -531,26 +511,20 @@ var CohortAnalyzer = /** @class */ (function () {
     });
     return monthlyPerformance;
   };
-  CohortAnalyzer.prototype.performSignificanceTests = function (periodGroups) {
+  CohortAnalyzer.prototype.performSignificanceTests = (periodGroups) => {
     // Simplified statistical significance testing
     // In production, would use proper statistical tests
     var tests = [];
     var periods = Object.keys(periodGroups)
       .map(Number)
-      .sort(function (a, b) {
-        return a - b;
-      });
+      .sort((a, b) => a - b);
     for (var i = 0; i < periods.length - 1; i++) {
       var currentPeriod = periodGroups[periods[i]];
       var nextPeriod = periodGroups[periods[i + 1]];
       var currentAvgRetention =
-        currentPeriod.reduce(function (sum, m) {
-          return sum + m.retentionRate;
-        }, 0) / currentPeriod.length;
+        currentPeriod.reduce((sum, m) => sum + m.retentionRate, 0) / currentPeriod.length;
       var nextAvgRetention =
-        nextPeriod.reduce(function (sum, m) {
-          return sum + m.retentionRate;
-        }, 0) / nextPeriod.length;
+        nextPeriod.reduce((sum, m) => sum + m.retentionRate, 0) / nextPeriod.length;
       var retentionChange = nextAvgRetention - currentAvgRetention;
       var isSignificant = Math.abs(retentionChange) > 5; // 5% threshold
       tests.push({
@@ -568,9 +542,7 @@ var CohortAnalyzer = /** @class */ (function () {
     var insights = [];
     // Analyze retention trends
     var retentionTrend = this.calculateTrendDirection(
-      metrics.map(function (m) {
-        return { period: m.period, value: m.retentionRate };
-      }),
+      metrics.map((m) => ({ period: m.period, value: m.retentionRate })),
     );
     if (retentionTrend.direction === "increasing") {
       insights.push({
@@ -595,9 +567,7 @@ var CohortAnalyzer = /** @class */ (function () {
     }
     // Analyze revenue trends
     var revenueTrend = this.calculateTrendDirection(
-      metrics.map(function (m) {
-        return { period: m.period, value: m.averageRevenuePerUser };
-      }),
+      metrics.map((m) => ({ period: m.period, value: m.averageRevenuePerUser })),
     );
     if (revenueTrend.direction === "increasing") {
       insights.push({
@@ -612,15 +582,13 @@ var CohortAnalyzer = /** @class */ (function () {
     }
     return insights;
   };
-  CohortAnalyzer.prototype.calculatePerformanceScore = function (retention, lifetimeValue) {
+  CohortAnalyzer.prototype.calculatePerformanceScore = (retention, lifetimeValue) => {
     // Weighted performance score (retention: 60%, LTV: 40%)
     return Math.round((retention * 0.6 + (lifetimeValue / 100) * 0.4) * 100) / 100;
   };
-  CohortAnalyzer.prototype.calculateTrendDirection = function (data) {
+  CohortAnalyzer.prototype.calculateTrendDirection = (data) => {
     if (data.length < 2) return { direction: "stable", rate: 0, confidence: 0 };
-    var sortedData = data.sort(function (a, b) {
-      return a.period - b.period;
-    });
+    var sortedData = data.sort((a, b) => a.period - b.period);
     var firstValue = sortedData[0].value;
     var lastValue = sortedData[sortedData.length - 1].value;
     var changeRate = firstValue > 0 ? ((lastValue - firstValue) / firstValue) * 100 : 0;
@@ -643,34 +611,16 @@ exports.cohortUtils = {
   /**
    * Format cohort data for visualization components
    */
-  formatForHeatmap: function (metrics) {
+  formatForHeatmap: (metrics) => {
     var heatmapData = [];
-    var cohorts = __spreadArray(
-      [],
-      new Set(
-        metrics.map(function (m) {
-          return m.cohortId;
-        }),
-      ),
-      true,
+    var cohorts = __spreadArray([], new Set(metrics.map((m) => m.cohortId)), true);
+    var periods = __spreadArray([], new Set(metrics.map((m) => m.period)), true).sort(
+      (a, b) => a - b,
     );
-    var periods = __spreadArray(
-      [],
-      new Set(
-        metrics.map(function (m) {
-          return m.period;
-        }),
-      ),
-      true,
-    ).sort(function (a, b) {
-      return a - b;
-    });
-    var _loop_1 = function (cohort) {
+    var _loop_1 = (cohort) => {
       var cohortData = { cohort: cohort };
-      var _loop_2 = function (period) {
-        var metric = metrics.find(function (m) {
-          return m.cohortId === cohort && m.period === period;
-        });
+      var _loop_2 = (period) => {
+        var metric = metrics.find((m) => m.cohortId === cohort && m.period === period);
         cohortData["period_".concat(period)] = metric ? metric.retentionRate : 0;
       };
       for (var _a = 0, periods_1 = periods; _a < periods_1.length; _a++) {
@@ -688,22 +638,12 @@ exports.cohortUtils = {
   /**
    * Calculate cohort size distribution
    */
-  calculateCohortSizes: function (cohorts) {
-    var sizes = cohorts.map(function (c) {
-      return c.userCount;
-    });
+  calculateCohortSizes: (cohorts) => {
+    var sizes = cohorts.map((c) => c.userCount);
     return {
-      total: sizes.reduce(function (sum, size) {
-        return sum + size;
-      }, 0),
-      average: Math.round(
-        sizes.reduce(function (sum, size) {
-          return sum + size;
-        }, 0) / sizes.length,
-      ),
-      median: sizes.sort(function (a, b) {
-        return a - b;
-      })[Math.floor(sizes.length / 2)],
+      total: sizes.reduce((sum, size) => sum + size, 0),
+      average: Math.round(sizes.reduce((sum, size) => sum + size, 0) / sizes.length),
+      median: sizes.sort((a, b) => a - b)[Math.floor(sizes.length / 2)],
       largest: Math.max.apply(Math, sizes),
       smallest: Math.min.apply(Math, sizes),
     };
@@ -711,28 +651,14 @@ exports.cohortUtils = {
   /**
    * Generate cohort comparison data
    */
-  generateComparisonData: function (metrics) {
+  generateComparisonData: (metrics) => {
     var comparison = [];
-    var cohorts = __spreadArray(
-      [],
-      new Set(
-        metrics.map(function (m) {
-          return m.cohortId;
-        }),
-      ),
-      true,
-    );
-    var _loop_3 = function (cohort) {
-      var cohortMetrics = metrics.filter(function (m) {
-        return m.cohortId === cohort;
-      });
+    var cohorts = __spreadArray([], new Set(metrics.map((m) => m.cohortId)), true);
+    var _loop_3 = (cohort) => {
+      var cohortMetrics = metrics.filter((m) => m.cohortId === cohort);
       var avgRetention =
-        cohortMetrics.reduce(function (sum, m) {
-          return sum + m.retentionRate;
-        }, 0) / cohortMetrics.length;
-      var totalRevenue = cohortMetrics.reduce(function (sum, m) {
-        return sum + m.revenue;
-      }, 0);
+        cohortMetrics.reduce((sum, m) => sum + m.retentionRate, 0) / cohortMetrics.length;
+      var totalRevenue = cohortMetrics.reduce((sum, m) => sum + m.revenue, 0);
       comparison.push({
         cohort: cohort,
         averageRetention: Math.round(avgRetention * 100) / 100,
@@ -744,8 +670,6 @@ exports.cohortUtils = {
       var cohort = cohorts_4[_i];
       _loop_3(cohort);
     }
-    return comparison.sort(function (a, b) {
-      return b.averageRetention - a.averageRetention;
-    });
+    return comparison.sort((a, b) => b.averageRetention - a.averageRetention);
   },
 };

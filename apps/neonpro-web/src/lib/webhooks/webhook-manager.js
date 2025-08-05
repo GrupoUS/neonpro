@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Webhook Manager
  * Story 7.3: Webhook & Event System Implementation
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,7 +44,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,8 +73,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -96,9 +93,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -157,12 +154,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var crypto_1 = require("crypto");
-var WebhookManager = /** @class */ (function () {
+var crypto_1 = require("node:crypto");
+var WebhookManager = /** @class */ (() => {
   function WebhookManager(config) {
     this.webhookEndpoints = new Map();
     this.deliveryQueue = [];
@@ -180,7 +177,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             console.log("Initializing Webhook Manager...");
             // Load existing webhook endpoints
             return [
@@ -214,7 +211,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 5, , 6]);
+            _a.trys.push([0, 5, undefined, 6]);
             webhook = __assign(
               { id: this.generateWebhookId(), createdAt: new Date(), updatedAt: new Date() },
               webhookData,
@@ -285,7 +282,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3, , 4]);
+            _a.trys.push([0, 3, undefined, 4]);
             existingWebhook = this.webhookEndpoints.get(webhookId);
             if (!existingWebhook) {
               throw new Error("Webhook ".concat(webhookId, " not found"));
@@ -349,7 +346,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             console.log("Deleting webhook: ".concat(webhookId));
             return [
               4 /*yield*/,
@@ -384,19 +381,18 @@ var WebhookManager = /** @class */ (function () {
    * Get all webhook endpoints for a clinic
    */
   WebhookManager.prototype.getWebhooksByClinic = function (clinicId) {
-    return Array.from(this.webhookEndpoints.values()).filter(function (webhook) {
-      return webhook.clinicId === clinicId;
-    });
+    return Array.from(this.webhookEndpoints.values()).filter(
+      (webhook) => webhook.clinicId === clinicId,
+    );
   };
   /**
    * Get active webhooks for specific event types
    */
   WebhookManager.prototype.getActiveWebhooksForEvent = function (eventType, clinicId) {
-    return Array.from(this.webhookEndpoints.values()).filter(function (webhook) {
-      return (
-        webhook.isActive && webhook.clinicId === clinicId && webhook.eventTypes.includes(eventType)
-      );
-    });
+    return Array.from(this.webhookEndpoints.values()).filter(
+      (webhook) =>
+        webhook.isActive && webhook.clinicId === clinicId && webhook.eventTypes.includes(eventType),
+    );
   };
   /**
    * Deliver event to webhooks
@@ -415,7 +411,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
-            _c.trys.push([0, 5, , 6]);
+            _c.trys.push([0, 5, undefined, 6]);
             console.log("Delivering event ".concat(event.id, " (").concat(event.type, ")"));
             clinicId = (_a = event.metadata) === null || _a === void 0 ? void 0 : _a.clinicId;
             if (!clinicId) {
@@ -502,7 +498,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             startTime = Date.now();
             testPayload = {
               type: "webhook.test",
@@ -570,7 +566,7 @@ var WebhookManager = /** @class */ (function () {
   /**
    * Get delivery history for a webhook
    */
-  WebhookManager.prototype.getDeliveryHistory = function (webhookId_1) {
+  WebhookManager.prototype.getDeliveryHistory = function (_webhookId_1) {
     return __awaiter(this, arguments, void 0, function (webhookId, limit) {
       var deliveries, error_7;
       if (limit === void 0) {
@@ -579,7 +575,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase
@@ -610,7 +606,7 @@ var WebhookManager = /** @class */ (function () {
   /**
    * Get delivery statistics for a webhook
    */
-  WebhookManager.prototype.getDeliveryStats = function (webhookId_1) {
+  WebhookManager.prototype.getDeliveryStats = function (_webhookId_1) {
     return __awaiter(this, arguments, void 0, function (webhookId, days) {
       var startDate,
         deliveries,
@@ -627,7 +623,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
             return [
               4 /*yield*/,
@@ -652,24 +648,14 @@ var WebhookManager = /** @class */ (function () {
               ];
             }
             totalDeliveries = deliveries.length;
-            successfulDeliveries = deliveries.filter(function (d) {
-              return d.status === "delivered";
-            }).length;
-            failedDeliveries = deliveries.filter(function (d) {
-              return d.status === "failed";
-            }).length;
+            successfulDeliveries = deliveries.filter((d) => d.status === "delivered").length;
+            failedDeliveries = deliveries.filter((d) => d.status === "failed").length;
             responseTimes = deliveries
-              .filter(function (d) {
-                return d.response_time_ms;
-              })
-              .map(function (d) {
-                return d.response_time_ms;
-              });
+              .filter((d) => d.response_time_ms)
+              .map((d) => d.response_time_ms);
             averageResponseTime =
               responseTimes.length > 0
-                ? responseTimes.reduce(function (sum, time) {
-                    return sum + time;
-                  }, 0) / responseTimes.length
+                ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
                 : 0;
             successRate = totalDeliveries > 0 ? (successfulDeliveries / totalDeliveries) * 100 : 0;
             return [
@@ -710,7 +696,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 4, , 5]);
+            _a.trys.push([0, 4, undefined, 5]);
             console.log("Stopping Webhook Manager...");
             // Stop delivery processing
             if (this.processingInterval) {
@@ -720,12 +706,7 @@ var WebhookManager = /** @class */ (function () {
             _a.label = 1;
           case 1:
             if (!(this.activeDeliveries.size > 0)) return [3 /*break*/, 3];
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 100);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 100))];
           case 2:
             _a.sent();
             return [3 /*break*/, 1];
@@ -743,16 +724,14 @@ var WebhookManager = /** @class */ (function () {
     });
   };
   // Private Methods
-  WebhookManager.prototype.generateWebhookId = function () {
-    return "wh_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  WebhookManager.prototype.generateDeliveryId = function () {
-    return "del_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  WebhookManager.prototype.generateWebhookId = () =>
+    "wh_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  WebhookManager.prototype.generateDeliveryId = () =>
+    "del_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   WebhookManager.prototype.validateWebhook = function (webhook) {
     return __awaiter(this, void 0, void 0, function () {
       var errors;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errors = [];
         // Validate URL
         try {
@@ -798,7 +777,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase.from("webhook_endpoints").select("*").eq("is_active", true),
@@ -806,7 +785,7 @@ var WebhookManager = /** @class */ (function () {
           case 1:
             webhooks = _a.sent().data;
             if (webhooks) {
-              webhooks.forEach(function (webhook) {
+              webhooks.forEach((webhook) => {
                 _this.webhookEndpoints.set(webhook.id, _this.convertDbRecordToWebhook(webhook));
               });
               console.log("\u2705 Loaded ".concat(webhooks.length, " webhook endpoints"));
@@ -823,18 +802,17 @@ var WebhookManager = /** @class */ (function () {
     });
   };
   WebhookManager.prototype.eventMatchesWebhookFilters = function (event, webhook) {
-    var _this = this;
     if (!webhook.filters || webhook.filters.length === 0) {
       return true;
     }
     // Apply webhook-specific filters
     // This is a simplified implementation - could be expanded
-    return webhook.filters.every(function (filter) {
-      var fieldValue = _this.getEventFieldValue(event, filter.field);
-      return _this.evaluateFilterCondition(fieldValue, filter.operator, filter.value);
+    return webhook.filters.every((filter) => {
+      var fieldValue = this.getEventFieldValue(event, filter.field);
+      return this.evaluateFilterCondition(fieldValue, filter.operator, filter.value);
     });
   };
-  WebhookManager.prototype.getEventFieldValue = function (event, field) {
+  WebhookManager.prototype.getEventFieldValue = (event, field) => {
     var parts = field.split(".");
     var value = event;
     for (var _i = 0, parts_1 = parts; _i < parts_1.length; _i++) {
@@ -844,11 +822,7 @@ var WebhookManager = /** @class */ (function () {
     }
     return value;
   };
-  WebhookManager.prototype.evaluateFilterCondition = function (
-    fieldValue,
-    operator,
-    expectedValue,
-  ) {
+  WebhookManager.prototype.evaluateFilterCondition = (fieldValue, operator, expectedValue) => {
     switch (operator) {
       case "equals":
         return fieldValue === expectedValue;
@@ -890,19 +864,17 @@ var WebhookManager = /** @class */ (function () {
     rateLimiter.requests++;
     return true;
   };
-  WebhookManager.prototype.preparePayload = function (event, webhook) {
-    return {
-      id: event.id,
-      type: event.type,
-      timestamp: event.timestamp.toISOString(),
-      data: event.data,
-      metadata: event.metadata,
-      webhook: {
-        id: webhook.id,
-        name: webhook.name,
-      },
-    };
-  };
+  WebhookManager.prototype.preparePayload = (event, webhook) => ({
+    id: event.id,
+    type: event.type,
+    timestamp: event.timestamp.toISOString(),
+    data: event.data,
+    metadata: event.metadata,
+    webhook: {
+      id: webhook.id,
+      name: webhook.name,
+    },
+  });
   WebhookManager.prototype.prepareHeaders = function (event, webhook) {
     var headers = __assign(
       {
@@ -923,16 +895,15 @@ var WebhookManager = /** @class */ (function () {
     }
     return headers;
   };
-  WebhookManager.prototype.generateSignature = function (payload, secret) {
-    return crypto_1.default.createHmac("sha256", secret).update(payload).digest("hex");
-  };
+  WebhookManager.prototype.generateSignature = (payload, secret) =>
+    crypto_1.default.createHmac("sha256", secret).update(payload).digest("hex");
   WebhookManager.prototype.storeDeliveryRecord = function (delivery) {
     return __awaiter(this, void 0, void 0, function () {
       var error, error_11;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase.from("event_deliveries").insert({
@@ -966,11 +937,8 @@ var WebhookManager = /** @class */ (function () {
     });
   };
   WebhookManager.prototype.startDeliveryProcessing = function () {
-    var _this = this;
     this.processingInterval = setInterval(
-      function () {
-        return _this.processDeliveryQueue();
-      },
+      () => this.processDeliveryQueue(),
       1000, // Process every second
     );
   };
@@ -989,22 +957,17 @@ var WebhookManager = /** @class */ (function () {
               return [2 /*return*/];
             }
             readyDeliveries = this.deliveryQueue
-              .filter(function (delivery) {
-                return (
+              .filter(
+                (delivery) =>
                   delivery.status === "pending" &&
                   delivery.scheduledAt <= new Date() &&
-                  !_this.activeDeliveries.has(delivery.id)
-                );
-              })
+                  !_this.activeDeliveries.has(delivery.id),
+              )
               .slice(0, availableSlots);
             // Process deliveries
             return [
               4 /*yield*/,
-              Promise.all(
-                readyDeliveries.map(function (delivery) {
-                  return _this.processDelivery(delivery);
-                }),
-              ),
+              Promise.all(readyDeliveries.map((delivery) => _this.processDelivery(delivery))),
             ];
           case 1:
             // Process deliveries
@@ -1058,12 +1021,7 @@ var WebhookManager = /** @class */ (function () {
             _b = {
               message: "HTTP ".concat(response.status, ": ").concat(response.statusText),
             };
-            return [
-              4 /*yield*/,
-              response.text().catch(function () {
-                return "No response body";
-              }),
-            ];
+            return [4 /*yield*/, response.text().catch(() => "No response body")];
           case 4:
             _a.error = ((_b.details = _c.sent()), _b);
             return [4 /*yield*/, this.handleDeliveryFailure(delivery)];
@@ -1118,12 +1076,11 @@ var WebhookManager = /** @class */ (function () {
           if (retryStrategy) {
             switch (retryStrategy.strategy) {
               case "exponential":
-                delayMs = retryStrategy.delayMs * Math.pow(2, delivery.attempts - 1);
+                delayMs = retryStrategy.delayMs * 2 ** (delivery.attempts - 1);
                 break;
               case "linear":
                 delayMs = retryStrategy.delayMs * delivery.attempts;
                 break;
-              case "fixed":
               default:
                 delayMs = retryStrategy.delayMs;
                 break;
@@ -1143,9 +1100,7 @@ var WebhookManager = /** @class */ (function () {
     });
   };
   WebhookManager.prototype.removeFromQueue = function (deliveryId) {
-    var index = this.deliveryQueue.findIndex(function (d) {
-      return d.id === deliveryId;
-    });
+    var index = this.deliveryQueue.findIndex((d) => d.id === deliveryId);
     if (index !== -1) {
       this.deliveryQueue.splice(index, 1);
     }
@@ -1157,7 +1112,7 @@ var WebhookManager = /** @class */ (function () {
       return __generator(this, function (_d) {
         switch (_d.label) {
           case 0:
-            _d.trys.push([0, 2, , 3]);
+            _d.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase
@@ -1198,46 +1153,42 @@ var WebhookManager = /** @class */ (function () {
       });
     });
   };
-  WebhookManager.prototype.convertDbRecordToWebhook = function (record) {
-    return {
-      id: record.id,
-      name: record.name,
-      url: record.url,
-      clinicId: record.clinic_id,
-      eventTypes: record.event_types,
-      isActive: record.is_active,
-      secret: record.secret,
-      headers: record.headers || {},
-      timeoutMs: record.timeout_ms,
-      retryStrategy: record.retry_strategy,
-      rateLimit: record.rate_limit,
-      filters: record.filters || [],
-      testOnRegistration: record.test_on_registration,
-      createdAt: new Date(record.created_at),
-      updatedAt: new Date(record.updated_at),
-    };
-  };
-  WebhookManager.prototype.convertDbRecordToDelivery = function (record) {
-    return {
-      id: record.id,
-      eventId: record.event_id,
-      webhookId: record.webhook_id,
-      url: record.url,
-      payload: record.payload,
-      headers: record.headers,
-      status: record.status,
-      attempts: record.attempts,
-      maxAttempts: record.max_attempts,
-      scheduledAt: new Date(record.scheduled_at),
-      lastAttemptAt: record.last_attempt_at ? new Date(record.last_attempt_at) : undefined,
-      deliveredAt: record.delivered_at ? new Date(record.delivered_at) : undefined,
-      failedAt: record.failed_at ? new Date(record.failed_at) : undefined,
-      httpStatus: record.http_status,
-      responseTimeMs: record.response_time_ms,
-      error: record.error,
-      createdAt: new Date(record.created_at),
-    };
-  };
+  WebhookManager.prototype.convertDbRecordToWebhook = (record) => ({
+    id: record.id,
+    name: record.name,
+    url: record.url,
+    clinicId: record.clinic_id,
+    eventTypes: record.event_types,
+    isActive: record.is_active,
+    secret: record.secret,
+    headers: record.headers || {},
+    timeoutMs: record.timeout_ms,
+    retryStrategy: record.retry_strategy,
+    rateLimit: record.rate_limit,
+    filters: record.filters || [],
+    testOnRegistration: record.test_on_registration,
+    createdAt: new Date(record.created_at),
+    updatedAt: new Date(record.updated_at),
+  });
+  WebhookManager.prototype.convertDbRecordToDelivery = (record) => ({
+    id: record.id,
+    eventId: record.event_id,
+    webhookId: record.webhook_id,
+    url: record.url,
+    payload: record.payload,
+    headers: record.headers,
+    status: record.status,
+    attempts: record.attempts,
+    maxAttempts: record.max_attempts,
+    scheduledAt: new Date(record.scheduled_at),
+    lastAttemptAt: record.last_attempt_at ? new Date(record.last_attempt_at) : undefined,
+    deliveredAt: record.delivered_at ? new Date(record.delivered_at) : undefined,
+    failedAt: record.failed_at ? new Date(record.failed_at) : undefined,
+    httpStatus: record.http_status,
+    responseTimeMs: record.response_time_ms,
+    error: record.error,
+    createdAt: new Date(record.created_at),
+  });
   return WebhookManager;
 })();
 exports.WebhookManager = WebhookManager;

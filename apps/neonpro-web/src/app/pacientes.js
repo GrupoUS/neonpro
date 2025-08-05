@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Pacientes;
 var react_1 = require("react");
@@ -96,7 +95,7 @@ var planConfig = {
   Standard: { color: "accent", gradient: "accent" },
   Premium: { color: "warning", gradient: "warning" },
 };
-var PatientCard = function (_a) {
+var PatientCard = (_a) => {
   var patient = _a.patient,
     index = _a.index;
   var statusInfo = statusConfig[patient.status];
@@ -212,7 +211,7 @@ var PatientCard = function (_a) {
     </framer_motion_1.motion.div>
   );
 };
-var StatCard = function (_a) {
+var StatCard = (_a) => {
   var Icon = _a.icon,
     title = _a.title,
     value = _a.value,
@@ -250,7 +249,7 @@ function Pacientes() {
   var _c = (0, react_1.useState)("todos"),
     filterPlan = _c[0],
     setFilterPlan = _c[1];
-  var filteredPatients = pacientesData.patients.filter(function (patient) {
+  var filteredPatients = pacientesData.patients.filter((patient) => {
     var matchesSearch =
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -313,9 +312,7 @@ function Pacientes() {
                   type="text"
                   placeholder="Buscar por nome, email ou telefone..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
                 />
               </div>
@@ -327,9 +324,7 @@ function Pacientes() {
               <lucide_react_1.Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <select
                 value={filterStatus}
-                onChange={function (e) {
-                  return setFilterStatus(e.target.value);
-                }}
+                onChange={(e) => setFilterStatus(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
               >
                 <option value="todos">Todos os Status</option>
@@ -344,9 +339,7 @@ function Pacientes() {
               <lucide_react_1.FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <select
                 value={filterPlan}
-                onChange={function (e) {
-                  return setFilterPlan(e.target.value);
-                }}
+                onChange={(e) => setFilterPlan(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
               >
                 <option value="todos">Todos os Planos</option>
@@ -369,9 +362,9 @@ function Pacientes() {
         {/* Lista de pacientes */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <framer_motion_1.AnimatePresence>
-            {filteredPatients.map(function (patient, index) {
-              return <PatientCard key={patient.id} patient={patient} index={index} />;
-            })}
+            {filteredPatients.map((patient, index) => (
+              <PatientCard key={patient.id} patient={patient} index={index} />
+            ))}
           </framer_motion_1.AnimatePresence>
         </div>
 

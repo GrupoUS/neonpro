@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,14 +155,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useConsentManagement = useConsentManagement;
 var react_1 = require("react");
 var LGPDComplianceManager_1 = require("@/lib/lgpd/LGPDComplianceManager");
 var use_toast_1 = require("@/hooks/use-toast");
 function useConsentManagement() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     consents = _a[0],
     setConsents = _a[1];
@@ -204,10 +200,10 @@ function useConsentManagement() {
   var toast = (0, use_toast_1.useToast)().toast;
   var complianceManager = new LGPDComplianceManager_1.LGPDComplianceManager();
   var loadConsents = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, err_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -240,15 +236,14 @@ function useConsentManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [filters, currentPage, complianceManager, toast],
   );
   var loadPurposes = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var mockPurposes, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           try {
             setError(null);
             mockPurposes = [
@@ -301,15 +296,14 @@ function useConsentManagement() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [complianceManager, toast],
   );
   var createPurpose = (0, react_1.useCallback)(
-    function (purpose) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (purpose) =>
+      __awaiter(this, void 0, void 0, function () {
         var newPurpose_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           setIsCreating(true);
           try {
             setError(null);
@@ -318,9 +312,9 @@ function useConsentManagement() {
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             });
-            setPurposes(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [newPurpose_1], false);
-            });
+            setPurposes((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [newPurpose_1], false),
+            );
             toast({
               title: "Finalidade criada",
               description: 'Finalidade "'.concat(purpose.name, '" foi criada com sucesso.'),
@@ -338,27 +332,26 @@ function useConsentManagement() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [toast],
   );
   var updatePurpose = (0, react_1.useCallback)(
-    function (id, updates) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (id, updates) =>
+      __awaiter(this, void 0, void 0, function () {
         var errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           setIsUpdating(true);
           try {
             setError(null);
-            setPurposes(function (prev) {
-              return prev.map(function (purpose) {
-                return purpose.id === id
+            setPurposes((prev) =>
+              prev.map((purpose) =>
+                purpose.id === id
                   ? __assign(__assign(__assign({}, purpose), updates), {
                       updated_at: new Date().toISOString(),
                     })
-                  : purpose;
-              });
-            });
+                  : purpose,
+              ),
+            );
             toast({
               title: "Finalidade atualizada",
               description: "Finalidade foi atualizada com sucesso.",
@@ -376,29 +369,22 @@ function useConsentManagement() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [toast],
   );
   var deletePurpose = (0, react_1.useCallback)(
-    function (id) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (id) =>
+      __awaiter(this, void 0, void 0, function () {
         var purpose, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           setIsDeleting(true);
           try {
             setError(null);
-            purpose = purposes.find(function (p) {
-              return p.id === id;
-            });
+            purpose = purposes.find((p) => p.id === id);
             if (purpose === null || purpose === void 0 ? void 0 : purpose.required) {
               throw new Error("Não é possível excluir finalidades obrigatórias");
             }
-            setPurposes(function (prev) {
-              return prev.filter(function (purpose) {
-                return purpose.id !== id;
-              });
-            });
+            setPurposes((prev) => prev.filter((purpose) => purpose.id !== id));
             toast({
               title: "Finalidade excluída",
               description: "Finalidade foi excluída com sucesso.",
@@ -416,15 +402,14 @@ function useConsentManagement() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [purposes, toast],
   );
   var withdrawConsent = (0, react_1.useCallback)(
-    function (consentId, reason) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (consentId, reason) =>
+      __awaiter(this, void 0, void 0, function () {
         var err_2, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -433,16 +418,16 @@ function useConsentManagement() {
             case 1:
               _a.sent();
               // Update local state
-              setConsents(function (prev) {
-                return prev.map(function (consent) {
-                  return consent.id === consentId
+              setConsents((prev) =>
+                prev.map((consent) =>
+                  consent.id === consentId
                     ? __assign(__assign({}, consent), {
                         status: "withdrawn",
                         updated_at: new Date().toISOString(),
                       })
-                    : consent;
-                });
-              });
+                    : consent,
+                ),
+              );
               toast({
                 title: "Consentimento retirado",
                 description: "Consentimento foi retirado com sucesso.",
@@ -463,15 +448,14 @@ function useConsentManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [complianceManager, toast],
   );
   var exportConsents = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var csvHeaders, csvRows, csvContent, blob, link, url, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           try {
             setError(null);
             csvHeaders = [
@@ -483,25 +467,17 @@ function useConsentManagement() {
               "Data de Expiração",
               "Última Atualização",
             ];
-            csvRows = consents.map(function (consent) {
-              return [
-                consent.id,
-                consent.user_id,
-                consent.purpose_id,
-                consent.status,
-                consent.granted_at || "",
-                consent.expires_at || "",
-                consent.updated_at,
-              ];
-            });
+            csvRows = consents.map((consent) => [
+              consent.id,
+              consent.user_id,
+              consent.purpose_id,
+              consent.status,
+              consent.granted_at || "",
+              consent.expires_at || "",
+              consent.updated_at,
+            ]);
             csvContent = __spreadArray([csvHeaders], csvRows, true)
-              .map(function (row) {
-                return row
-                  .map(function (cell) {
-                    return '"'.concat(cell, '"');
-                  })
-                  .join(",");
-              })
+              .map((row) => row.map((cell) => '"'.concat(cell, '"')).join(","))
               .join("\n");
             blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             link = document.createElement("a");
@@ -530,35 +506,30 @@ function useConsentManagement() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [consents, toast],
   );
-  var goToPage = (0, react_1.useCallback)(function (page) {
+  var goToPage = (0, react_1.useCallback)((page) => {
     setCurrentPage(page);
   }, []);
   // Load data on mount and when filters change
-  (0, react_1.useEffect)(
-    function () {
-      var loadData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                setIsLoading(true);
-                return [4 /*yield*/, Promise.all([loadConsents(), loadPurposes()])];
-              case 1:
-                _a.sent();
-                setIsLoading(false);
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var loadData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setIsLoading(true);
+              return [4 /*yield*/, Promise.all([loadConsents(), loadPurposes()])];
+            case 1:
+              _a.sent();
+              setIsLoading(false);
+              return [2 /*return*/];
+          }
         });
-      };
-      loadData();
-    },
-    [loadConsents, loadPurposes],
-  );
+      });
+    loadData();
+  }, [loadConsents, loadPurposes]);
   return {
     // Data
     consents: consents,

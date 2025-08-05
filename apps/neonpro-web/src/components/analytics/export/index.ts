@@ -2,21 +2,19 @@
 // Created: 2025-01-22
 // Main export file for analytics export components
 
-export { ExportDashboard } from "./export-dashboard";
-export { default as ExportDashboard } from "./export-dashboard";
-
 // Re-export types for convenience
 export type {
-  ExportFormat,
-  ExportStatus,
-  ReportType,
-  ExportConfig,
-  ExportableData,
-  PDFExportOptions,
-  ExcelExportOptions,
   CSVExportOptions,
+  ExcelExportOptions,
+  ExportableData,
+  ExportConfig,
+  ExportFormat,
+  ExportMetrics,
   ExportRequest,
   ExportResponse,
+  ExportStatus,
+  PDFExportOptions,
+  ReportType,
   ScheduledExport,
-  ExportMetrics,
 } from "@/lib/analytics/export/types";
+export { default as ExportDashboard, ExportDashboard } from "./export-dashboard";

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = OptimizedPatientList;
 var react_1 = require("react");
@@ -147,10 +144,6 @@ var lucide_react_1 = require("lucide-react");
 var ITEMS_PER_PAGE = 20;
 var SEARCH_DEBOUNCE_MS = 500;
 function OptimizedPatientList(_a) {
-  // =====================================================================================
-  // STATE MANAGEMENT
-  // =====================================================================================
-  var _this = this;
   var onPatientSelect = _a.onPatientSelect,
     _b = _a.searchTerm,
     searchTerm = _b === void 0 ? "" : _b,
@@ -180,49 +173,36 @@ function OptimizedPatientList(_a) {
   // =====================================================================================
   // MEMOIZED VALUES
   // =====================================================================================
-  var totalPages = (0, react_1.useMemo)(
-    function () {
-      return Math.ceil(totalCount / ITEMS_PER_PAGE);
-    },
-    [totalCount],
-  );
-  var paginationInfo = (0, react_1.useMemo)(
-    function () {
-      var start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
-      var end = Math.min(currentPage * ITEMS_PER_PAGE, totalCount);
-      return { start: start, end: end, total: totalCount };
-    },
-    [currentPage, totalCount],
-  );
+  var totalPages = (0, react_1.useMemo)(() => Math.ceil(totalCount / ITEMS_PER_PAGE), [totalCount]);
+  var paginationInfo = (0, react_1.useMemo)(() => {
+    var start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+    var end = Math.min(currentPage * ITEMS_PER_PAGE, totalCount);
+    return { start: start, end: end, total: totalCount };
+  }, [currentPage, totalCount]);
   // =====================================================================================
   // OPTIMIZED SEARCH WITH DEBOUNCING
   // =====================================================================================
-  (0, react_1.useEffect)(
-    function () {
-      if (localSearchTerm.length === 0 || localSearchTerm.length >= 2) {
-        var timer_1 = setTimeout(function () {
-          if (mounted) {
-            onSearchChange === null || onSearchChange === void 0
-              ? void 0
-              : onSearchChange(localSearchTerm);
-            setCurrentPage(1); // Reset to first page on search
-          }
-        }, SEARCH_DEBOUNCE_MS);
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [localSearchTerm, onSearchChange, mounted],
-  );
+  (0, react_1.useEffect)(() => {
+    if (localSearchTerm.length === 0 || localSearchTerm.length >= 2) {
+      var timer_1 = setTimeout(() => {
+        if (mounted) {
+          onSearchChange === null || onSearchChange === void 0
+            ? void 0
+            : onSearchChange(localSearchTerm);
+          setCurrentPage(1); // Reset to first page on search
+        }
+      }, SEARCH_DEBOUNCE_MS);
+      return () => clearTimeout(timer_1);
+    }
+  }, [localSearchTerm, onSearchChange, mounted]);
   // =====================================================================================
   // OPTIMIZED DATA FETCHING
   // =====================================================================================
   var fetchPatients = (0, react_1.useCallback)(
-    function (page, search) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (page, search) =>
+      __awaiter(this, void 0, void 0, function () {
         var from, to, query, _a, data, fetchError, count, err_1;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!mounted) return [2 /*return*/];
@@ -274,46 +254,40 @@ function OptimizedPatientList(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, mounted],
   );
   // =====================================================================================
   // EFFECTS
   // =====================================================================================
-  (0, react_1.useEffect)(
-    function () {
-      fetchPatients(currentPage, searchTerm);
-    },
-    [currentPage, searchTerm, fetchPatients],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchPatients(currentPage, searchTerm);
+  }, [currentPage, searchTerm, fetchPatients]);
   // Cleanup effect
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       setMounted(false);
-    };
-  }, []);
+    },
+    [],
+  );
   // =====================================================================================
   // EVENT HANDLERS
   // =====================================================================================
-  var handleSearchChange = (0, react_1.useCallback)(function (value) {
+  var handleSearchChange = (0, react_1.useCallback)((value) => {
     setLocalSearchTerm(value);
   }, []);
   var handlePageChange = (0, react_1.useCallback)(
-    function (page) {
+    (page) => {
       if (page >= 1 && page <= totalPages) {
         setCurrentPage(page);
       }
     },
     [totalPages],
   );
-  var handleRefresh = (0, react_1.useCallback)(
-    function () {
-      fetchPatients(currentPage, searchTerm);
-    },
-    [fetchPatients, currentPage, searchTerm],
-  );
-  var getStatusBadgeColor = (0, react_1.useCallback)(function (status) {
+  var handleRefresh = (0, react_1.useCallback)(() => {
+    fetchPatients(currentPage, searchTerm);
+  }, [fetchPatients, currentPage, searchTerm]);
+  var getStatusBadgeColor = (0, react_1.useCallback)((status) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -325,9 +299,10 @@ function OptimizedPatientList(_a) {
         return "bg-gray-100 text-gray-800";
     }
   }, []);
-  var formatDate = (0, react_1.useCallback)(function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  }, []);
+  var formatDate = (0, react_1.useCallback)(
+    (dateString) => new Date(dateString).toLocaleDateString("pt-BR"),
+    [],
+  );
   // =====================================================================================
   // RENDER
   // =====================================================================================
@@ -362,9 +337,7 @@ function OptimizedPatientList(_a) {
           <input_1.Input
             placeholder="Buscar pacientes (mín. 2 caracteres)..."
             value={localSearchTerm}
-            onChange={function (e) {
-              return handleSearchChange(e.target.value);
-            }}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -393,65 +366,63 @@ function OptimizedPatientList(_a) {
               </table_1.TableRow>
             </table_1.TableHeader>
             <table_1.TableBody>
-              {patients.map(function (patient) {
-                return (
-                  <table_1.TableRow key={patient.id}>
-                    <table_1.TableCell>
-                      <div className="flex items-center space-x-3">
-                        <avatar_1.Avatar className="h-8 w-8">
-                          <avatar_1.AvatarImage src={patient.avatar_url} />
-                          <avatar_1.AvatarFallback>
-                            <lucide_react_1.User className="h-4 w-4" />
-                          </avatar_1.AvatarFallback>
-                        </avatar_1.Avatar>
-                        <div>
-                          <p className="font-medium">{patient.name}</p>
-                          <p className="text-sm text-gray-500">
-                            {patient.birth_date && formatDate(patient.birth_date)}
-                          </p>
+              {patients.map((patient) => (
+                <table_1.TableRow key={patient.id}>
+                  <table_1.TableCell>
+                    <div className="flex items-center space-x-3">
+                      <avatar_1.Avatar className="h-8 w-8">
+                        <avatar_1.AvatarImage src={patient.avatar_url} />
+                        <avatar_1.AvatarFallback>
+                          <lucide_react_1.User className="h-4 w-4" />
+                        </avatar_1.AvatarFallback>
+                      </avatar_1.Avatar>
+                      <div>
+                        <p className="font-medium">{patient.name}</p>
+                        <p className="text-sm text-gray-500">
+                          {patient.birth_date && formatDate(patient.birth_date)}
+                        </p>
+                      </div>
+                    </div>
+                  </table_1.TableCell>
+                  <table_1.TableCell>
+                    <div className="space-y-1">
+                      {patient.email && (
+                        <div className="flex items-center text-sm">
+                          <lucide_react_1.Mail className="h-3 w-3 mr-1" />
+                          {patient.email}
                         </div>
-                      </div>
-                    </table_1.TableCell>
-                    <table_1.TableCell>
-                      <div className="space-y-1">
-                        {patient.email && (
-                          <div className="flex items-center text-sm">
-                            <lucide_react_1.Mail className="h-3 w-3 mr-1" />
-                            {patient.email}
-                          </div>
-                        )}
-                        {patient.phone && (
-                          <div className="flex items-center text-sm">
-                            <lucide_react_1.Phone className="h-3 w-3 mr-1" />
-                            {patient.phone}
-                          </div>
-                        )}
-                      </div>
-                    </table_1.TableCell>
-                    <table_1.TableCell>
-                      <badge_1.Badge className={getStatusBadgeColor(patient.status)}>
-                        {patient.status}
-                      </badge_1.Badge>
-                    </table_1.TableCell>
-                    <table_1.TableCell>
-                      {patient.last_visit ? formatDate(patient.last_visit) : "Nunca"}
-                    </table_1.TableCell>
-                    <table_1.TableCell>
-                      <button_1.Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={function () {
-                          return onPatientSelect === null || onPatientSelect === void 0
-                            ? void 0
-                            : onPatientSelect(patient);
-                        }}
-                      >
-                        <lucide_react_1.Eye className="h-4 w-4" />
-                      </button_1.Button>
-                    </table_1.TableCell>
-                  </table_1.TableRow>
-                );
-              })}
+                      )}
+                      {patient.phone && (
+                        <div className="flex items-center text-sm">
+                          <lucide_react_1.Phone className="h-3 w-3 mr-1" />
+                          {patient.phone}
+                        </div>
+                      )}
+                    </div>
+                  </table_1.TableCell>
+                  <table_1.TableCell>
+                    <badge_1.Badge className={getStatusBadgeColor(patient.status)}>
+                      {patient.status}
+                    </badge_1.Badge>
+                  </table_1.TableCell>
+                  <table_1.TableCell>
+                    {patient.last_visit ? formatDate(patient.last_visit) : "Nunca"}
+                  </table_1.TableCell>
+                  <table_1.TableCell>
+                    <button_1.Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() =>
+                        onPatientSelect === null || onPatientSelect === void 0
+                          ? void 0
+                          : onPatientSelect(patient)
+                      }
+                    >
+                      <lucide_react_1.Eye className="h-4 w-4" />
+                    </button_1.Button>
+                  </table_1.TableCell>
+                </table_1.TableRow>
+              ))}
             </table_1.TableBody>
           </table_1.Table>
         </div>
@@ -462,9 +433,7 @@ function OptimizedPatientList(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return handlePageChange(currentPage - 1);
-              }}
+              onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
             >
               <lucide_react_1.ChevronLeft className="h-4 w-4 mr-1" />
@@ -478,9 +447,7 @@ function OptimizedPatientList(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return handlePageChange(currentPage + 1);
-              }}
+              onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
             >
               Próxima

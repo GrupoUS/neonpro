@@ -1,7 +1,8 @@
 // PUT/DELETE /api/treatment-prediction/models/[id] - Update/Delete specific model
+
+import { type NextRequest, NextResponse } from "next/server";
 import { TreatmentPredictionService } from "@/app/lib/services/treatment-prediction";
 import { createServerClient } from "@/app/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
 
 interface RouteParams {
   params: { id: string };

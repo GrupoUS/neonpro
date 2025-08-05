@@ -1,9 +1,9 @@
 import type { createClient } from "@supabase/supabase-js";
 import type { AuditLogger } from "../../auth/audit/audit-logger";
 import type {
+  NotificationChannelEnum,
   NotificationTemplate,
   NotificationTypeEnum,
-  NotificationChannelEnum,
 } from "../core/notification-manager";
 
 export interface TemplateVariable {

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KPIDashboard = void 0;
 // Financial KPI Dashboard Component
@@ -162,13 +159,13 @@ var input_1 = require("@/components/ui/input");
 var select_1 = require("@/components/ui/select");
 var dialog_1 = require("@/components/ui/dialog");
 var lucide_react_1 = require("lucide-react");
-var KPICard = function (_a) {
+var KPICard = (_a) => {
   var kpi = _a.kpi,
     isEditing = _a.isEditing,
     onDrillDown = _a.onDrillDown,
     onEdit = _a.onEdit,
     onRemove = _a.onRemove;
-  var formatValue = function (value, category) {
+  var formatValue = (value, category) => {
     if (category === "revenue" || category === "profitability") {
       if (kpi.kpi_name.includes("Margin") || kpi.kpi_name.includes("Rate")) {
         return "".concat(value.toFixed(1), "%");
@@ -183,7 +180,7 @@ var KPICard = function (_a) {
     }
     return value.toLocaleString("pt-BR");
   };
-  var getTrendIcon = function (direction) {
+  var getTrendIcon = (direction) => {
     switch (direction) {
       case "increasing":
         return <lucide_react_1.TrendingUp className="h-4 w-4 text-green-500" />;
@@ -193,7 +190,7 @@ var KPICard = function (_a) {
         return <div className="h-4 w-4" />;
     }
   };
-  var getTrendColor = function (direction) {
+  var getTrendColor = (direction) => {
     switch (direction) {
       case "increasing":
         return "text-green-500";
@@ -203,7 +200,7 @@ var KPICard = function (_a) {
         return "text-gray-500";
     }
   };
-  var getVarianceDisplay = function (variance) {
+  var getVarianceDisplay = (variance) => {
     if (variance === undefined || variance === null) return null;
     var sign = variance >= 0 ? "+" : "";
     return "".concat(sign).concat(variance.toFixed(1), "%");
@@ -260,9 +257,7 @@ var KPICard = function (_a) {
             <button_1.Button
               size="sm"
               variant="outline"
-              onClick={function () {
-                return onDrillDown(kpi.id, "time");
-              }}
+              onClick={() => onDrillDown(kpi.id, "time")}
               className="text-xs"
             >
               <lucide_react_1.BarChart3 className="h-3 w-3 mr-1" />
@@ -271,9 +266,7 @@ var KPICard = function (_a) {
             <button_1.Button
               size="sm"
               variant="outline"
-              onClick={function () {
-                return onDrillDown(kpi.id, "service_type");
-              }}
+              onClick={() => onDrillDown(kpi.id, "service_type")}
               className="text-xs"
             >
               <lucide_react_1.PieChart className="h-3 w-3 mr-1" />
@@ -289,11 +282,11 @@ var KPICard = function (_a) {
     </card_1.Card>
   );
 };
-var AlertsPanel = function (_a) {
+var AlertsPanel = (_a) => {
   var alerts = _a.alerts,
     onAcknowledge = _a.onAcknowledge,
     onViewDetails = _a.onViewDetails;
-  var getAlertIcon = function (type) {
+  var getAlertIcon = (type) => {
     switch (type) {
       case "critical":
         return <lucide_react_1.AlertTriangle className="h-4 w-4 text-red-500" />;
@@ -303,7 +296,7 @@ var AlertsPanel = function (_a) {
         return <lucide_react_1.AlertTriangle className="h-4 w-4 text-blue-500" />;
     }
   };
-  var getAlertColor = function (type) {
+  var getAlertColor = (type) => {
     switch (type) {
       case "critical":
         return "border-red-200 bg-red-50";
@@ -337,48 +330,38 @@ var AlertsPanel = function (_a) {
         </card_1.CardTitle>
       </card_1.CardHeader>
       <card_1.CardContent className="space-y-2">
-        {alerts.slice(0, 5).map(function (alert) {
-          return (
-            <div
-              key={alert.id}
-              className={"p-3 rounded-lg border ".concat(getAlertColor(alert.alert_type))}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  {getAlertIcon(alert.alert_type)}
-                  <div>
-                    <div className="text-sm font-medium">{alert.alert_message}</div>
-                    <div className="text-xs text-gray-500">
-                      {new Date(alert.created_at).toLocaleString("pt-BR")}
-                    </div>
+        {alerts.slice(0, 5).map((alert) => (
+          <div
+            key={alert.id}
+            className={"p-3 rounded-lg border ".concat(getAlertColor(alert.alert_type))}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2">
+                {getAlertIcon(alert.alert_type)}
+                <div>
+                  <div className="text-sm font-medium">{alert.alert_message}</div>
+                  <div className="text-xs text-gray-500">
+                    {new Date(alert.created_at).toLocaleString("pt-BR")}
                   </div>
                 </div>
-                <div className="flex gap-1">
+              </div>
+              <div className="flex gap-1">
+                <button_1.Button size="sm" variant="ghost" onClick={() => onViewDetails(alert)}>
+                  <lucide_react_1.Eye className="h-3 w-3" />
+                </button_1.Button>
+                {!alert.is_acknowledged && (
                   <button_1.Button
                     size="sm"
-                    variant="ghost"
-                    onClick={function () {
-                      return onViewDetails(alert);
-                    }}
+                    variant="outline"
+                    onClick={() => onAcknowledge(alert.id)}
                   >
-                    <lucide_react_1.Eye className="h-3 w-3" />
+                    Acknowledge
                   </button_1.Button>
-                  {!alert.is_acknowledged && (
-                    <button_1.Button
-                      size="sm"
-                      variant="outline"
-                      onClick={function () {
-                        return onAcknowledge(alert.id);
-                      }}
-                    >
-                      Acknowledge
-                    </button_1.Button>
-                  )}
-                </div>
+                )}
               </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
         {alerts.length > 5 && (
           <button_1.Button variant="ghost" size="sm" className="w-full">
             View {alerts.length - 5} more alerts
@@ -388,7 +371,7 @@ var AlertsPanel = function (_a) {
     </card_1.Card>
   );
 };
-var DrillDownModal = function (_a) {
+var DrillDownModal = (_a) => {
   var kpi = _a.kpi,
     dimension = _a.dimension,
     results = _a.results,
@@ -396,7 +379,7 @@ var DrillDownModal = function (_a) {
     onClose = _a.onClose,
     onDrillDeeper = _a.onDrillDeeper;
   if (!kpi) return null;
-  var formatValue = function (value) {
+  var formatValue = (value) => {
     if (kpi.kpi_category === "revenue" || kpi.kpi_category === "profitability") {
       if (kpi.kpi_name.includes("Margin") || kpi.kpi_name.includes("Rate")) {
         return "".concat(value.toFixed(1), "%");
@@ -429,60 +412,54 @@ var DrillDownModal = function (_a) {
                 No data available for this breakdown
               </div>
             : <div className="space-y-2">
-                {results.map(function (result, index) {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
-                      <div className="flex-1">
-                        <div className="font-medium">{result.dimension_value}</div>
-                        <div className="text-sm text-gray-500">
-                          {result.percentage_of_total.toFixed(1)}% of total
-                          {result.transaction_count && (
-                            <span className="ml-2">({result.transaction_count} transactions)</span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="text-right">
-                        <div className="font-bold">{formatValue(result.value)}</div>
-                        {result.variance_from_previous !== undefined && (
-                          <div
-                            className={"text-sm ".concat(
-                              result.variance_from_previous >= 0
-                                ? "text-green-600"
-                                : "text-red-600",
-                            )}
-                          >
-                            {result.variance_from_previous >= 0 ? "+" : ""}
-                            {result.variance_from_previous.toFixed(1)}%
-                          </div>
+                {results.map((result, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex-1">
+                      <div className="font-medium">{result.dimension_value}</div>
+                      <div className="text-sm text-gray-500">
+                        {result.percentage_of_total.toFixed(1)}% of total
+                        {result.transaction_count && (
+                          <span className="ml-2">({result.transaction_count} transactions)</span>
                         )}
                       </div>
+                    </div>
 
-                      {onDrillDeeper && (
-                        <button_1.Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={function () {
-                            return onDrillDeeper("service_type", result.dimension_value);
-                          }}
-                          className="ml-2"
+                    <div className="text-right">
+                      <div className="font-bold">{formatValue(result.value)}</div>
+                      {result.variance_from_previous !== undefined && (
+                        <div
+                          className={"text-sm ".concat(
+                            result.variance_from_previous >= 0 ? "text-green-600" : "text-red-600",
+                          )}
                         >
-                          <lucide_react_1.BarChart3 className="h-3 w-3" />
-                        </button_1.Button>
+                          {result.variance_from_previous >= 0 ? "+" : ""}
+                          {result.variance_from_previous.toFixed(1)}%
+                        </div>
                       )}
                     </div>
-                  );
-                })}
+
+                    {onDrillDeeper && (
+                      <button_1.Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => onDrillDeeper("service_type", result.dimension_value)}
+                        className="ml-2"
+                      >
+                        <lucide_react_1.BarChart3 className="h-3 w-3" />
+                      </button_1.Button>
+                    )}
+                  </div>
+                ))}
               </div>}
         </div>
       </dialog_1.DialogContent>
     </dialog_1.Dialog>
   );
 };
-var KPIDashboard = function (_a) {
+var KPIDashboard = (_a) => {
   var _b, _c, _d;
   var userId = _a.userId,
     dashboardId = _a.dashboardId,
@@ -527,30 +504,22 @@ var KPIDashboard = function (_a) {
     filters = _r[0],
     setFilters = _r[1];
   // Load initial data
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-    },
-    [dashboardId],
-  );
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+  }, [dashboardId]);
   // Auto-refresh
-  (0, react_1.useEffect)(
-    function () {
-      if (refreshInterval <= 0) return;
-      var interval = setInterval(function () {
-        loadKPIData();
-        loadAlerts();
-      }, refreshInterval);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [refreshInterval, filters],
-  );
-  var loadDashboardData = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (refreshInterval <= 0) return;
+    var interval = setInterval(() => {
+      loadKPIData();
+      loadAlerts();
+    }, refreshInterval);
+    return () => clearInterval(interval);
+  }, [refreshInterval, filters]);
+  var loadDashboardData = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -580,11 +549,10 @@ var KPIDashboard = function (_a) {
         }
       });
     });
-  };
-  var loadKPIData = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadKPIData = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -618,11 +586,10 @@ var KPIDashboard = function (_a) {
         }
       });
     });
-  };
-  var loadAlerts = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadAlerts = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -645,11 +612,10 @@ var KPIDashboard = function (_a) {
         }
       });
     });
-  };
-  var loadDashboard = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadDashboard = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!dashboardId) return [2 /*return*/];
@@ -676,16 +642,13 @@ var KPIDashboard = function (_a) {
         }
       });
     });
-  };
-  var handleDrillDown = function (kpiId, dimension) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleDrillDown = (kpiId, dimension) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var kpi, response, data, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            kpi = kpis.find(function (k) {
-              return k.id === kpiId;
-            });
+            kpi = kpis.find((k) => k.id === kpiId);
             if (!kpi) return [2 /*return*/];
             _a.label = 1;
           case 1:
@@ -725,11 +688,10 @@ var KPIDashboard = function (_a) {
         }
       });
     });
-  };
-  var handleAcknowledgeAlert = function (alertId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleAcknowledgeAlert = (alertId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -742,11 +704,7 @@ var KPIDashboard = function (_a) {
           case 1:
             response = _a.sent();
             if (response.ok) {
-              setAlerts(
-                alerts.filter(function (alert) {
-                  return alert.id !== alertId;
-                }),
-              );
+              setAlerts(alerts.filter((alert) => alert.id !== alertId));
             }
             return [3 /*break*/, 3];
           case 2:
@@ -758,21 +716,19 @@ var KPIDashboard = function (_a) {
         }
       });
     });
-  };
-  var handleFilterChange = function (newFilters) {
+  var handleFilterChange = (newFilters) => {
     setFilters(__assign(__assign({}, filters), newFilters));
   };
   var groupedKpis = (0, react_1.useMemo)(
-    function () {
-      return kpis.reduce(function (groups, kpi) {
+    () =>
+      kpis.reduce((groups, kpi) => {
         var category = kpi.kpi_category;
         if (!groups[category]) {
           groups[category] = [];
         }
         groups[category].push(kpi);
         return groups;
-      }, {});
-    },
+      }, {}),
     [kpis],
   );
   if (loading) {
@@ -799,9 +755,7 @@ var KPIDashboard = function (_a) {
           {isEditable && (
             <button_1.Button
               variant={isEditing ? "default" : "outline"}
-              onClick={function () {
-                return setIsEditing(!isEditing);
-              }}
+              onClick={() => setIsEditing(!isEditing)}
             >
               {isEditing ? "Done" : "Edit"}
             </button_1.Button>
@@ -822,7 +776,7 @@ var KPIDashboard = function (_a) {
                 ((_b = filters.time_period) === null || _b === void 0 ? void 0 : _b.preset) ||
                 "custom"
               }
-              onValueChange={function (value) {
+              onValueChange={(value) => {
                 if (value !== "custom") {
                   var now = new Date();
                   var startDate = void 0;
@@ -878,14 +832,14 @@ var KPIDashboard = function (_a) {
                 ((_c = filters.time_period) === null || _c === void 0 ? void 0 : _c.start_date) ||
                 ""
               }
-              onChange={function (e) {
-                return handleFilterChange({
+              onChange={(e) =>
+                handleFilterChange({
                   time_period: __assign(__assign({}, filters.time_period), {
                     start_date: e.target.value,
                     preset: "custom",
                   }),
-                });
-              }}
+                })
+              }
               className="w-40"
             />
 
@@ -894,14 +848,14 @@ var KPIDashboard = function (_a) {
               value={
                 ((_d = filters.time_period) === null || _d === void 0 ? void 0 : _d.end_date) || ""
               }
-              onChange={function (e) {
-                return handleFilterChange({
+              onChange={(e) =>
+                handleFilterChange({
                   time_period: __assign(__assign({}, filters.time_period), {
                     end_date: e.target.value,
                     preset: "custom",
                   }),
-                });
-              }}
+                })
+              }
               className="w-40"
             />
           </div>
@@ -923,35 +877,31 @@ var KPIDashboard = function (_a) {
 
             <tabs_1.TabsContent value="overview" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {kpis.slice(0, 6).map(function (kpi) {
-                  return (
-                    <KPICard
-                      key={kpi.id}
-                      kpi={kpi}
-                      isEditing={isEditing}
-                      onDrillDown={handleDrillDown}
-                    />
-                  );
-                })}
+                {kpis.slice(0, 6).map((kpi) => (
+                  <KPICard
+                    key={kpi.id}
+                    kpi={kpi}
+                    isEditing={isEditing}
+                    onDrillDown={handleDrillDown}
+                  />
+                ))}
               </div>
             </tabs_1.TabsContent>
 
-            {Object.entries(groupedKpis).map(function (_a) {
+            {Object.entries(groupedKpis).map((_a) => {
               var category = _a[0],
                 categoryKpis = _a[1];
               return (
                 <tabs_1.TabsContent key={category} value={category} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {categoryKpis.map(function (kpi) {
-                      return (
-                        <KPICard
-                          key={kpi.id}
-                          kpi={kpi}
-                          isEditing={isEditing}
-                          onDrillDown={handleDrillDown}
-                        />
-                      );
-                    })}
+                    {categoryKpis.map((kpi) => (
+                      <KPICard
+                        key={kpi.id}
+                        kpi={kpi}
+                        isEditing={isEditing}
+                        onDrillDown={handleDrillDown}
+                      />
+                    ))}
                   </div>
                 </tabs_1.TabsContent>
               );
@@ -964,9 +914,7 @@ var KPIDashboard = function (_a) {
           <AlertsPanel
             alerts={alerts}
             onAcknowledge={handleAcknowledgeAlert}
-            onViewDetails={function (alert) {
-              return console.log("View alert details:", alert);
-            }}
+            onViewDetails={(alert) => console.log("View alert details:", alert)}
           />
         </div>
       </div>
@@ -977,10 +925,8 @@ var KPIDashboard = function (_a) {
         dimension={drillDownDimension}
         results={drillDownResults}
         isOpen={showDrillDown}
-        onClose={function () {
-          return setShowDrillDown(false);
-        }}
-        onDrillDeeper={function (dimension, value) {
+        onClose={() => setShowDrillDown(false)}
+        onDrillDeeper={(dimension, value) => {
           console.log("Drill deeper:", dimension, value);
         }}
       />

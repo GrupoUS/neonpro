@@ -1,11 +1,34 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  FileText,
+  Filter,
+  Package,
+  PieChart,
+  Save,
+  Settings,
+  Share,
+  TrendingUp,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import { toast } from "react-hot-toast";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DatePickerWithRange } from "@/components/ui/date-range-picker";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -13,31 +36,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { DatePickerWithRange } from "@/components/ui/date-range-picker";
-import {
-  FileText,
-  Download,
-  Calendar,
-  Filter,
-  BarChart3,
-  PieChart,
-  TrendingUp,
-  Package,
-  DollarSign,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-  Settings,
-  Eye,
-  Save,
-  Share,
-} from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { useReports } from "@/hooks/inventory/use-reports";
-import { toast } from "react-hot-toast";
-import type { DateRange } from "react-day-picker";
 
 interface ReportSection {
   id: string;

@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,29 +142,25 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var session_1 = require("@/lib/auth/session");
 var client_1 = require("@/app/utils/supabase/client");
 // Mock Supabase client
-jest.mock("@/app/utils/supabase/client", function () {
-  return {
-    createClient: jest.fn(),
-  };
-});
+jest.mock("@/app/utils/supabase/client", () => ({
+  createClient: jest.fn(),
+}));
 // Mock logger to prevent console spam
-jest.mock("@/lib/logger", function () {
-  return {
-    logger: {
-      info: jest.fn(),
-      error: jest.fn(),
-      debug: jest.fn(),
-      warn: jest.fn(),
-    },
-  };
-});
+jest.mock("@/lib/logger", () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    debug: jest.fn(),
+    warn: jest.fn(),
+  },
+}));
 // Create a comprehensive mock that handles the Supabase query chain properly
-var createMockQuery = function () {
+var createMockQuery = () => {
   var mockQuery = jest.fn();
   // All methods return the same mock object to enable chaining
   var chainMethods = [
@@ -184,7 +177,7 @@ var createMockQuery = function () {
     "order",
     "limit",
   ];
-  chainMethods.forEach(function (method) {
+  chainMethods.forEach((method) => {
     mockQuery[method] = jest.fn().mockReturnValue(mockQuery);
   });
   // Terminal methods that return results
@@ -200,7 +193,7 @@ var mockSupabase = {
   },
 };
 client_1.createClient.mockReturnValue(mockSupabase);
-describe("SessionManager", function () {
+describe("SessionManager", () => {
   var sessionManager;
   var mockQuery;
   var mockCreateSessionRequest = {
@@ -230,7 +223,7 @@ describe("SessionManager", function () {
     device_fingerprint: "fingerprint-123",
     security_score: 80,
   };
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     sessionManager = new session_1.SessionManager();
     // Create fresh mock query for each test
@@ -240,11 +233,11 @@ describe("SessionManager", function () {
     mockQuery.single.mockResolvedValue({ data: mockUserSession, error: null });
     mockQuery.maybeSingle.mockResolvedValue({ data: null, error: null });
   });
-  describe("createSession", function () {
-    it("should create a new session successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("createSession", () => {
+    it("should create a new session successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
@@ -257,12 +250,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle session creation database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle session creation database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockQuery.single.mockResolvedValue({
@@ -271,7 +263,7 @@ describe("SessionManager", function () {
               });
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
             case 2:
               _a.sent();
@@ -285,11 +277,10 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate and register device during session creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should validate and register device during session creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
@@ -300,12 +291,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate security score during session creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate security score during session creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
@@ -316,14 +306,13 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("updateSession", function () {
-    it("should update session successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("updateSession", () => {
+    it("should update session successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var sessionId, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               sessionId = "session-123";
@@ -339,12 +328,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle update database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle update database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockQuery.single.mockResolvedValue({
@@ -353,7 +341,7 @@ describe("SessionManager", function () {
               });
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [
                 4 /*yield*/,
                 sessionManager.updateSession("session-123", mockUpdateSessionRequest),
@@ -370,12 +358,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should extend session expiry when activity is updated", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should extend session expiry when activity is updated", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updatesWithActivity, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updatesWithActivity = { last_activity: new Date().toISOString() };
@@ -390,19 +377,18 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("terminateSession", function () {
-    beforeEach(function () {
+  describe("terminateSession", () => {
+    beforeEach(() => {
       // Mock for session lookup
       mockQuery.single.mockResolvedValueOnce({ data: { user_id: "user-123" }, error: null });
       // Mock for session update
       mockQuery.single.mockResolvedValueOnce({ data: { id: "session-123" }, error: null });
     });
-    it("should terminate session successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    it("should terminate session successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -415,11 +401,10 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should terminate session with custom reason", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should terminate session with custom reason", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -434,12 +419,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle termination database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle termination database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockQuery.single.mockResolvedValue({
@@ -448,7 +432,7 @@ describe("SessionManager", function () {
               });
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, sessionManager.terminateSession("session-123")];
             case 2:
               _a.sent();
@@ -462,11 +446,10 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should log session termination action", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should log session termination action", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.terminateSession("session-123", "user_logout")];
@@ -477,20 +460,19 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Session Validation", function () {
-    it("should validate session creation requirements", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Session Validation", () => {
+    it("should validate session creation requirements", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidRequest, error_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidRequest = __assign(__assign({}, mockCreateSessionRequest), { user_id: "" });
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, sessionManager.createSession(invalidRequest)];
             case 2:
               _a.sent();
@@ -504,12 +486,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should enforce security policies during session creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should enforce security policies during session creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
@@ -522,12 +503,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should monitor session security during creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should monitor session security during creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
@@ -542,13 +522,12 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Device Management", function () {
-    it("should handle device registration during session creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Device Management", () => {
+    it("should handle device registration during session creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
@@ -559,12 +538,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should update device last seen during session creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should update device last seen during session creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockDevice;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockDevice = {
@@ -582,14 +560,13 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Security Monitoring", function () {
-    it("should calculate risk score based on session characteristics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Security Monitoring", () => {
+    it("should calculate risk score based on session characteristics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
@@ -602,11 +579,10 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should detect and log security events when monitoring enabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should detect and log security events when monitoring enabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Security events are created when security monitoring is enabled and suspicious activity detected
@@ -623,12 +599,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should enforce concurrent session limits", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should enforce concurrent session limits", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var activeSessions, mockSelectQuery;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               activeSessions = [
@@ -647,22 +622,21 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling", function () {
-    it("should handle Supabase connection errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling", () => {
+    it("should handle Supabase connection errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var error_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockSupabase.from.mockImplementation(function () {
+              mockSupabase.from.mockImplementation(() => {
                 throw new Error("Database connection failed");
               });
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
             case 2:
               _a.sent();
@@ -677,12 +651,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle malformed request data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle malformed request data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var malformedRequest, error_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               malformedRequest = {
@@ -692,7 +665,7 @@ describe("SessionManager", function () {
               };
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, sessionManager.createSession(malformedRequest)];
             case 2:
               _a.sent();
@@ -706,14 +679,13 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Integration Tests", function () {
-    it("should complete full session lifecycle", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Integration Tests", () => {
+    it("should complete full session lifecycle", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var session, updatedSession;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, sessionManager.createSession(mockCreateSessionRequest)];
@@ -738,12 +710,11 @@ describe("SessionManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle concurrent operations gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle concurrent operations gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var promises, results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               promises = [
@@ -761,13 +732,10 @@ describe("SessionManager", function () {
             case 1:
               results = _a.sent();
               expect(results).toHaveLength(3);
-              results.forEach(function (result) {
-                return expect(result).toBeDefined();
-              });
+              results.forEach((result) => expect(result).toBeDefined());
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

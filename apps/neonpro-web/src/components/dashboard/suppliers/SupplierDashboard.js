@@ -3,7 +3,6 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplierDashboard = SupplierDashboard;
 var useSupplierManagement_1 = require("@/app/hooks/useSupplierManagement");
@@ -39,20 +38,17 @@ function SupplierDashboard(_a) {
   var _t = (0, react_1.useState)("overview"),
     selectedTab = _t[0],
     setSelectedTab = _t[1];
-  (0, react_1.useEffect)(
-    function () {
-      // Initial data load
-      loadSuppliers();
-      loadContractAlerts();
-      loadQualityIssuesSummary();
-      // Load analytics for last 30 days
-      var endDate = new Date();
-      var startDate = new Date();
-      startDate.setDate(startDate.getDate() - 30);
-      loadAnalytics(startDate.toISOString().split("T")[0], endDate.toISOString().split("T")[0]);
-    },
-    [loadSuppliers, loadContractAlerts, loadQualityIssuesSummary, loadAnalytics],
-  );
+  (0, react_1.useEffect)(() => {
+    // Initial data load
+    loadSuppliers();
+    loadContractAlerts();
+    loadQualityIssuesSummary();
+    // Load analytics for last 30 days
+    var endDate = new Date();
+    var startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30);
+    loadAnalytics(startDate.toISOString().split("T")[0], endDate.toISOString().split("T")[0]);
+  }, [loadSuppliers, loadContractAlerts, loadQualityIssuesSummary, loadAnalytics]);
   // Render loading state
   if (isLoading && !dashboardData) {
     return (
@@ -83,7 +79,7 @@ function SupplierDashboard(_a) {
       </card_1.Card>
     );
   }
-  var getSupplierTypeIcon = function (type) {
+  var getSupplierTypeIcon = (type) => {
     switch (type) {
       case "medical_supplies":
         return <lucide_react_1.Package className="h-4 w-4" />;
@@ -103,7 +99,7 @@ function SupplierDashboard(_a) {
         return <lucide_react_1.Building2 className="h-4 w-4" />;
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "active":
         return (
@@ -127,7 +123,7 @@ function SupplierDashboard(_a) {
         return <badge_1.Badge variant="secondary">{status}</badge_1.Badge>;
     }
   };
-  var getPerformanceColor = function (score) {
+  var getPerformanceColor = (score) => {
     if (score >= 85) return "text-green-600";
     if (score >= 70) return "text-yellow-600";
     return "text-red-600";
@@ -225,9 +221,7 @@ function SupplierDashboard(_a) {
             <div className="text-2xl font-bold">
               {(qualityIssuesSummary === null || qualityIssuesSummary === void 0
                 ? void 0
-                : qualityIssuesSummary.reduce(function (acc, item) {
-                    return acc + item.openIssues;
-                  }, 0)) || 0}
+                : qualityIssuesSummary.reduce((acc, item) => acc + item.openIssues, 0)) || 0}
             </div>
             <p className="text-xs text-muted-foreground">Em aberto</p>
           </card_1.CardContent>
@@ -262,7 +256,7 @@ function SupplierDashboard(_a) {
                       ? void 0
                       : dashboardData.topSuppliers) === null || _c === void 0
                     ? void 0
-                    : _c.slice(0, 5).map(function (supplier) {
+                    : _c.slice(0, 5).map((supplier) => {
                         var _a, _b;
                         return (
                           <div key={supplier.id} className="flex items-center justify-between">
@@ -310,26 +304,24 @@ function SupplierDashboard(_a) {
                 <div className="space-y-4">
                   {contractAlerts === null || contractAlerts === void 0
                     ? void 0
-                    : contractAlerts.slice(0, 5).map(function (alert) {
-                        return (
-                          <div key={alert.contractId} className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <lucide_react_1.Calendar className="h-4 w-4 text-muted-foreground" />
-                              <div>
-                                <div className="font-medium">{alert.supplierName}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  Vence em {alert.daysUntilExpiry} dias
-                                </div>
+                    : contractAlerts.slice(0, 5).map((alert) => (
+                        <div key={alert.contractId} className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <lucide_react_1.Calendar className="h-4 w-4 text-muted-foreground" />
+                            <div>
+                              <div className="font-medium">{alert.supplierName}</div>
+                              <div className="text-sm text-muted-foreground">
+                                Vence em {alert.daysUntilExpiry} dias
                               </div>
                             </div>
-                            <badge_1.Badge
-                              variant={alert.daysUntilExpiry <= 30 ? "destructive" : "outline"}
-                            >
-                              {alert.alertType === "renewal" ? "Renovação" : "Atenção"}
-                            </badge_1.Badge>
                           </div>
-                        );
-                      })}
+                          <badge_1.Badge
+                            variant={alert.daysUntilExpiry <= 30 ? "destructive" : "outline"}
+                          >
+                            {alert.alertType === "renewal" ? "Renovação" : "Atenção"}
+                          </badge_1.Badge>
+                        </div>
+                      ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -348,22 +340,20 @@ function SupplierDashboard(_a) {
                     ? void 0
                     : dashboardData.performanceByType) === null || _d === void 0
                   ? void 0
-                  : _d.map(function (category) {
-                      return (
-                        <div key={category.type} className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="flex items-center gap-2">
-                              {getSupplierTypeIcon(category.type)}
-                              {category.type.replace("_", " ").toUpperCase()}
-                            </span>
-                            <span className={getPerformanceColor(category.averageScore)}>
-                              {category.averageScore.toFixed(1)}%
-                            </span>
-                          </div>
-                          <progress_1.Progress value={category.averageScore} className="h-2" />
+                  : _d.map((category) => (
+                      <div key={category.type} className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="flex items-center gap-2">
+                            {getSupplierTypeIcon(category.type)}
+                            {category.type.replace("_", " ").toUpperCase()}
+                          </span>
+                          <span className={getPerformanceColor(category.averageScore)}>
+                            {category.averageScore.toFixed(1)}%
+                          </span>
                         </div>
-                      );
-                    })}
+                        <progress_1.Progress value={category.averageScore} className="h-2" />
+                      </div>
+                    ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -391,7 +381,7 @@ function SupplierDashboard(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {suppliers.slice(0, 10).map(function (supplier) {
+                  {suppliers.slice(0, 10).map((supplier) => {
                     var _a;
                     return (
                       <table_1.TableRow key={supplier.id}>
@@ -452,7 +442,7 @@ function SupplierDashboard(_a) {
               <div className="space-y-4">
                 {contractAlerts === null || contractAlerts === void 0
                   ? void 0
-                  : contractAlerts.map(function (alert) {
+                  : contractAlerts.map((alert) => {
                       var _a;
                       return (
                         <div key={alert.contractId} className="border rounded-lg p-4">
@@ -507,45 +497,43 @@ function SupplierDashboard(_a) {
               <div className="space-y-4">
                 {qualityIssuesSummary === null || qualityIssuesSummary === void 0
                   ? void 0
-                  : qualityIssuesSummary.map(function (summary) {
-                      return (
-                        <div key={summary.supplierId} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start">
-                            <div className="space-y-1">
-                              <h4 className="font-semibold">{summary.supplierName}</h4>
-                              <div className="flex gap-4 text-sm">
-                                <span className="text-red-600">{summary.openIssues} em aberto</span>
-                                <span className="text-green-600">
-                                  {summary.resolvedIssues} resolvidos
-                                </span>
-                                <span className="text-muted-foreground">
-                                  {summary.totalIssues} total
-                                </span>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div
-                                className={"font-semibold ".concat(
-                                  getPerformanceColor(summary.averageResolutionTime),
-                                )}
-                              >
-                                {summary.averageResolutionTime.toFixed(1)} dias
-                              </div>
-                              <p className="text-xs text-muted-foreground">
-                                Tempo médio de resolução
-                              </p>
+                  : qualityIssuesSummary.map((summary) => (
+                      <div key={summary.supplierId} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <h4 className="font-semibold">{summary.supplierName}</h4>
+                            <div className="flex gap-4 text-sm">
+                              <span className="text-red-600">{summary.openIssues} em aberto</span>
+                              <span className="text-green-600">
+                                {summary.resolvedIssues} resolvidos
+                              </span>
+                              <span className="text-muted-foreground">
+                                {summary.totalIssues} total
+                              </span>
                             </div>
                           </div>
-                          {summary.openIssues > 0 && (
-                            <div className="mt-3">
-                              <button_1.Button size="sm" variant="outline">
-                                Ver Issues
-                              </button_1.Button>
+                          <div className="text-right">
+                            <div
+                              className={"font-semibold ".concat(
+                                getPerformanceColor(summary.averageResolutionTime),
+                              )}
+                            >
+                              {summary.averageResolutionTime.toFixed(1)} dias
                             </div>
-                          )}
+                            <p className="text-xs text-muted-foreground">
+                              Tempo médio de resolução
+                            </p>
+                          </div>
                         </div>
-                      );
-                    })}
+                        {summary.openIssues > 0 && (
+                          <div className="mt-3">
+                            <button_1.Button size="sm" variant="outline">
+                              Ver Issues
+                            </button_1.Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

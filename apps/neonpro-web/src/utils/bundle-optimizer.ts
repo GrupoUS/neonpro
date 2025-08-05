@@ -1,7 +1,5 @@
 "use client";
 
-import type { useEffect, useCallback, useRef, useState } from "react";
-
 // =====================================================================================
 // BUNDLE OPTIMIZATION SYSTEM
 // Advanced bundle splitting, code splitting, and performance optimization
@@ -123,7 +121,7 @@ export class BundleOptimizer {
 
   private updateMetrics() {
     const jsResources = this.resourceTimings.filter((r) => r.name.includes(".js"));
-    const cssResources = this.resourceTimings.filter((r) => r.name.includes(".css"));
+    const _cssResources = this.resourceTimings.filter((r) => r.name.includes(".css"));
 
     // Calculate total size (estimated from transfer size)
     const totalTransferSize = this.resourceTimings.reduce((sum, resource) => {
@@ -345,7 +343,7 @@ export class BundleOptimizer {
     const k = 1024;
     const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
   }
 
   private generateRecommendations(): string[] {

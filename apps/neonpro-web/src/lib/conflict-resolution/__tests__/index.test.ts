@@ -1,14 +1,14 @@
+import type { createClient } from "@supabase/supabase-js";
 import type { IntelligentConflictResolutionSystem } from "../index";
 import type {
-  ConflictType,
-  ConflictSeverity,
-  ResolutionStrategy,
-  OptimizationType,
-  ConflictResolutionConfig,
-  SystemMetrics,
   AutomationRule,
+  ConflictResolutionConfig,
+  ConflictSeverity,
+  ConflictType,
+  OptimizationType,
+  ResolutionStrategy,
+  SystemMetrics,
 } from "../types";
-import type { createClient } from "@supabase/supabase-js";
 
 // Mock Supabase
 jest.mock("@supabase/supabase-js");

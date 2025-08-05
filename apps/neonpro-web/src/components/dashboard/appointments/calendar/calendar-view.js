@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalendarView = CalendarView;
 var react_1 = require("react");
@@ -142,7 +139,6 @@ var day_view_1 = require("./day-view");
 var week_view_1 = require("./week-view");
 var month_view_1 = require("./month-view");
 function CalendarView(_a) {
-  var _this = this;
   var appointments = _a.appointments,
     onRefresh = _a.onRefresh,
     onAppointmentClick = _a.onAppointmentClick,
@@ -162,144 +158,128 @@ function CalendarView(_a) {
     isLoading = _d[0],
     setIsLoading = _d[1];
   // Initialize current date on client side only
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     setCurrentDate(new Date());
   }, []);
   // Handle real-time updates via Supabase
-  (0, react_1.useEffect)(
-    function () {
-      // This will be implemented when we add real-time functionality
-      // For now, we can refresh appointments periodically or on window focus
-      var handleFocus = function () {
-        if (onRefresh) {
-          onRefresh();
-        }
-      };
-      window.addEventListener("focus", handleFocus);
-      return function () {
-        return window.removeEventListener("focus", handleFocus);
-      };
-    },
-    [onRefresh],
-  );
+  (0, react_1.useEffect)(() => {
+    // This will be implemented when we add real-time functionality
+    // For now, we can refresh appointments periodically or on window focus
+    var handleFocus = () => {
+      if (onRefresh) {
+        onRefresh();
+      }
+    };
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [onRefresh]);
   // Handle keyboard shortcuts
-  (0, react_1.useEffect)(
-    function () {
-      var handleKeyPress = function (event) {
-        // Only handle if no input elements are focused
-        var activeElement = document.activeElement;
-        if (
-          (activeElement === null || activeElement === void 0 ? void 0 : activeElement.tagName) ===
-            "INPUT" ||
-          (activeElement === null || activeElement === void 0 ? void 0 : activeElement.tagName) ===
-            "TEXTAREA" ||
-          (activeElement === null || activeElement === void 0 ? void 0 : activeElement.tagName) ===
-            "SELECT"
-        ) {
-          return;
-        }
-        switch (event.key) {
-          case "ArrowLeft":
-            handlePreviousNavigation();
-            break;
-          case "ArrowRight":
-            handleNextNavigation();
-            break;
-          case "t":
-            setCurrentDate(new Date());
-            break;
-          case "1":
-            setView("day");
-            break;
-          case "2":
-            setView("week");
-            break;
-          case "3":
-            setView("month");
-            break;
-          case "n":
-            if (onCreateAppointment) {
-              onCreateAppointment(currentDate || undefined);
-            }
-            break;
-          case "r":
-            if (onRefresh) {
-              onRefresh();
-              sonner_1.toast.success("Calendário atualizado");
-            }
-            break;
-        }
-      };
-      document.addEventListener("keydown", handleKeyPress);
-      return function () {
-        return document.removeEventListener("keydown", handleKeyPress);
-      };
-    },
-    [currentDate, onCreateAppointment, onRefresh],
-  );
+  (0, react_1.useEffect)(() => {
+    var handleKeyPress = (event) => {
+      // Only handle if no input elements are focused
+      var activeElement = document.activeElement;
+      if (
+        (activeElement === null || activeElement === void 0 ? void 0 : activeElement.tagName) ===
+          "INPUT" ||
+        (activeElement === null || activeElement === void 0 ? void 0 : activeElement.tagName) ===
+          "TEXTAREA" ||
+        (activeElement === null || activeElement === void 0 ? void 0 : activeElement.tagName) ===
+          "SELECT"
+      ) {
+        return;
+      }
+      switch (event.key) {
+        case "ArrowLeft":
+          handlePreviousNavigation();
+          break;
+        case "ArrowRight":
+          handleNextNavigation();
+          break;
+        case "t":
+          setCurrentDate(new Date());
+          break;
+        case "1":
+          setView("day");
+          break;
+        case "2":
+          setView("week");
+          break;
+        case "3":
+          setView("month");
+          break;
+        case "n":
+          if (onCreateAppointment) {
+            onCreateAppointment(currentDate || undefined);
+          }
+          break;
+        case "r":
+          if (onRefresh) {
+            onRefresh();
+            sonner_1.toast.success("Calendário atualizado");
+          }
+          break;
+      }
+    };
+    document.addEventListener("keydown", handleKeyPress);
+    return () => document.removeEventListener("keydown", handleKeyPress);
+  }, [currentDate, onCreateAppointment, onRefresh]);
   // Navigation handlers
-  var handlePreviousNavigation = (0, react_1.useCallback)(
-    function () {
-      if (!currentDate) return;
-      var today = new Date();
-      switch (view) {
-        case "day":
-          setCurrentDate(function (prev) {
-            return prev ? new Date(prev.getTime() - 24 * 60 * 60 * 1000) : new Date();
-          });
-          break;
-        case "week":
-          setCurrentDate(function (prev) {
-            return prev ? new Date(prev.getTime() - 7 * 24 * 60 * 60 * 1000) : new Date();
-          });
-          break;
-        case "month":
-          setCurrentDate(function (prev) {
-            if (!prev) return new Date();
-            var newDate = new Date(prev);
-            newDate.setMonth(prev.getMonth() - 1);
-            return newDate;
-          });
-          break;
-      }
-    },
-    [view, currentDate],
-  );
-  var handleNextNavigation = (0, react_1.useCallback)(
-    function () {
-      if (!currentDate) return;
-      switch (view) {
-        case "day":
-          setCurrentDate(function (prev) {
-            return prev ? new Date(prev.getTime() + 24 * 60 * 60 * 1000) : new Date();
-          });
-          break;
-        case "week":
-          setCurrentDate(function (prev) {
-            return prev ? new Date(prev.getTime() + 7 * 24 * 60 * 60 * 1000) : new Date();
-          });
-          break;
-        case "month":
-          setCurrentDate(function (prev) {
-            if (!prev) return new Date();
-            var newDate = new Date(prev);
-            newDate.setMonth(prev.getMonth() + 1);
-            return newDate;
-          });
-          break;
-      }
-    },
-    [view, currentDate],
-  );
-  var handleToday = (0, react_1.useCallback)(function () {
+  var handlePreviousNavigation = (0, react_1.useCallback)(() => {
+    if (!currentDate) return;
+    var today = new Date();
+    switch (view) {
+      case "day":
+        setCurrentDate((prev) =>
+          prev ? new Date(prev.getTime() - 24 * 60 * 60 * 1000) : new Date(),
+        );
+        break;
+      case "week":
+        setCurrentDate((prev) =>
+          prev ? new Date(prev.getTime() - 7 * 24 * 60 * 60 * 1000) : new Date(),
+        );
+        break;
+      case "month":
+        setCurrentDate((prev) => {
+          if (!prev) return new Date();
+          var newDate = new Date(prev);
+          newDate.setMonth(prev.getMonth() - 1);
+          return newDate;
+        });
+        break;
+    }
+  }, [view, currentDate]);
+  var handleNextNavigation = (0, react_1.useCallback)(() => {
+    if (!currentDate) return;
+    switch (view) {
+      case "day":
+        setCurrentDate((prev) =>
+          prev ? new Date(prev.getTime() + 24 * 60 * 60 * 1000) : new Date(),
+        );
+        break;
+      case "week":
+        setCurrentDate((prev) =>
+          prev ? new Date(prev.getTime() + 7 * 24 * 60 * 60 * 1000) : new Date(),
+        );
+        break;
+      case "month":
+        setCurrentDate((prev) => {
+          if (!prev) return new Date();
+          var newDate = new Date(prev);
+          newDate.setMonth(prev.getMonth() + 1);
+          return newDate;
+        });
+        break;
+    }
+  }, [view, currentDate]);
+  var handleToday = (0, react_1.useCallback)(() => {
     setCurrentDate(new Date());
   }, []);
   // Appointment action handlers with optimistic updates
   var handleAppointmentEdit = (0, react_1.useCallback)(
-    function (appointment) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (appointment) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!onAppointmentEdit) return [3 /*break*/, 5];
@@ -327,15 +307,14 @@ function CalendarView(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [onAppointmentEdit, onRefresh],
   );
   var handleAppointmentCancel = (0, react_1.useCallback)(
-    function (appointment) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (appointment) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!onAppointmentCancel) return [3 /*break*/, 5];
@@ -364,15 +343,14 @@ function CalendarView(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [onAppointmentCancel, onRefresh],
   );
   var handleAppointmentComplete = (0, react_1.useCallback)(
-    function (appointment) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (appointment) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!onAppointmentComplete) return [3 /*break*/, 5];
@@ -401,13 +379,12 @@ function CalendarView(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [onAppointmentComplete, onRefresh],
   );
   // Handle time slot clicks
   var handleTimeSlotClick = (0, react_1.useCallback)(
-    function (time) {
+    (time) => {
       if (onCreateAppointment) {
         onCreateAppointment(currentDate || undefined, time);
       }
@@ -415,20 +392,20 @@ function CalendarView(_a) {
     [currentDate, onCreateAppointment],
   );
   var handleWeekTimeSlotClick = (0, react_1.useCallback)(
-    function (date, time) {
+    (date, time) => {
       if (onCreateAppointment) {
         onCreateAppointment(date, time);
       }
     },
     [onCreateAppointment],
   );
-  var handleDayClick = (0, react_1.useCallback)(function (date) {
+  var handleDayClick = (0, react_1.useCallback)((date) => {
     // Switch to day view when clicking on a day in month view
     setCurrentDate(date);
     setView("day");
   }, []);
   // Render current view
-  var renderCurrentView = function () {
+  var renderCurrentView = () => {
     var commonProps = {
       appointments: appointments,
       onAppointmentClick: onAppointmentClick,

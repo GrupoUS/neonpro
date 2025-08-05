@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpirationAlerts = ExpirationAlerts;
 var react_1 = require("react");
@@ -158,7 +155,6 @@ var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 var skeleton_1 = require("@/components/ui/skeleton");
 function ExpirationAlerts(_a) {
-  var _this = this;
   var onViewDocument = _a.onViewDocument,
     onEditDocument = _a.onEditDocument,
     _b = _a.compact,
@@ -177,13 +173,13 @@ function ExpirationAlerts(_a) {
   var _g = (0, react_1.useState)(false),
     showAcknowledged = _g[0],
     setShowAcknowledged = _g[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     fetchAlerts();
   }, []);
-  var fetchAlerts = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchAlerts = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -214,11 +210,10 @@ function ExpirationAlerts(_a) {
         }
       });
     });
-  };
-  var acknowledgeAlert = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var acknowledgeAlert = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -234,13 +229,13 @@ function ExpirationAlerts(_a) {
               throw new Error("Failed to acknowledge alert");
             }
             // Update local state
-            setAlerts(function (prev) {
-              return prev.map(function (alert) {
-                return alert.id === alertId
+            setAlerts((prev) =>
+              prev.map((alert) =>
+                alert.id === alertId
                   ? __assign(__assign({}, alert), { acknowledged: true })
-                  : alert;
-              });
-            });
+                  : alert,
+              ),
+            );
             sonner_1.toast.success("Alerta reconhecido");
             return [3 /*break*/, 3];
           case 2:
@@ -253,8 +248,7 @@ function ExpirationAlerts(_a) {
         }
       });
     });
-  };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "bg-red-100 text-red-800 border-red-200";
@@ -268,7 +262,7 @@ function ExpirationAlerts(_a) {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getSeverityIcon = function (severity) {
+  var getSeverityIcon = (severity) => {
     switch (severity) {
       case "critical":
       case "high":
@@ -281,7 +275,7 @@ function ExpirationAlerts(_a) {
         return <lucide_react_1.FileText className="h-4 w-4" />;
     }
   };
-  var getAlertTypeLabel = function (type) {
+  var getAlertTypeLabel = (type) => {
     switch (type) {
       case "expiring":
         return "Expirando";
@@ -295,11 +289,7 @@ function ExpirationAlerts(_a) {
         return type;
     }
   };
-  var filteredAlerts = showAcknowledged
-    ? alerts
-    : alerts.filter(function (alert) {
-        return !alert.acknowledged;
-      });
+  var filteredAlerts = showAcknowledged ? alerts : alerts.filter((alert) => !alert.acknowledged);
   if (loading) {
     return (
       <card_1.Card>
@@ -310,17 +300,15 @@ function ExpirationAlerts(_a) {
           </card_1.CardTitle>
         </card_1.CardHeader>
         <card_1.CardContent className="space-y-3">
-          {[1, 2, 3].map(function (i) {
-            return (
-              <div key={i} className="flex items-center space-x-3">
-                <skeleton_1.Skeleton className="h-10 w-10 rounded" />
-                <div className="flex-1 space-y-2">
-                  <skeleton_1.Skeleton className="h-4 w-3/4" />
-                  <skeleton_1.Skeleton className="h-3 w-1/2" />
-                </div>
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center space-x-3">
+              <skeleton_1.Skeleton className="h-10 w-10 rounded" />
+              <div className="flex-1 space-y-2">
+                <skeleton_1.Skeleton className="h-4 w-3/4" />
+                <skeleton_1.Skeleton className="h-3 w-1/2" />
               </div>
-            );
-          })}
+            </div>
+          ))}
         </card_1.CardContent>
       </card_1.Card>
     );
@@ -375,9 +363,7 @@ function ExpirationAlerts(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setShowAcknowledged(!showAcknowledged);
-                }}
+                onClick={() => setShowAcknowledged(!showAcknowledged)}
               >
                 {showAcknowledged ? "Ocultar reconhecidos" : "Mostrar reconhecidos"}
               </button_1.Button>
@@ -390,7 +376,7 @@ function ExpirationAlerts(_a) {
       </card_1.CardHeader>
 
       <card_1.CardContent className="space-y-3">
-        {filteredAlerts.map(function (alert) {
+        {filteredAlerts.map((alert) => {
           var _a, _b, _c;
           return (
             <card_1.Card
@@ -447,9 +433,7 @@ function ExpirationAlerts(_a) {
                       <button_1.Button
                         variant="ghost"
                         size="sm"
-                        onClick={function () {
-                          return onViewDocument(alert.document_id);
-                        }}
+                        onClick={() => onViewDocument(alert.document_id)}
                         title="Visualizar documento"
                       >
                         <lucide_react_1.Eye className="h-4 w-4" />
@@ -460,9 +444,7 @@ function ExpirationAlerts(_a) {
                       <button_1.Button
                         variant="ghost"
                         size="sm"
-                        onClick={function () {
-                          return onEditDocument(alert.document_id);
-                        }}
+                        onClick={() => onEditDocument(alert.document_id)}
                         title="Editar documento"
                       >
                         <lucide_react_1.Edit className="h-4 w-4" />
@@ -473,9 +455,7 @@ function ExpirationAlerts(_a) {
                       <button_1.Button
                         variant="ghost"
                         size="sm"
-                        onClick={function () {
-                          return acknowledgeAlert(alert.id);
-                        }}
+                        onClick={() => acknowledgeAlert(alert.id)}
                         title="Reconhecer alerta"
                       >
                         <lucide_react_1.X className="h-4 w-4" />

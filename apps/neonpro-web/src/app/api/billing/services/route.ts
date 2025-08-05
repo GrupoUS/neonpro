@@ -1,7 +1,3 @@
-import type { createClient } from "@/lib/supabase/server";
-import type { NextResponse } from "next/server";
-import type { z } from "zod";
-
 // Validation schemas
 const CreateServiceSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
@@ -14,7 +10,7 @@ const CreateServiceSchema = z.object({
   requires_appointment: z.boolean().optional().default(true),
 });
 
-const UpdateServiceSchema = CreateServiceSchema.partial();
+const _UpdateServiceSchema = CreateServiceSchema.partial();
 
 export async function GET(request: Request) {
   try {

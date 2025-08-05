@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Clock, Star, AlertTriangle, Calendar, Shield, TrendingUp, Heart } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { toast } from "sonner";
 import type { formatDistanceToNow } from "date-fns";
 import type { ptBR } from "date-fns/locale";
+import type { AlertTriangle, Calendar, Clock, Heart, Shield, Star, TrendingUp } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface QuickAccessPatient {
   id: string;

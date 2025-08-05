@@ -179,7 +179,7 @@ export class DataSubjectRightsManager {
     console.log("Data subject request submitted:", validated);
 
     // Send confirmation email
-    await this.sendConfirmationEmail(validated);
+    await DataSubjectRightsManager.sendConfirmationEmail(validated);
 
     return validated;
   }
@@ -207,10 +207,10 @@ export class DataSubjectRightsManager {
     }>;
   }> {
     // TODO: Retrieve comprehensive data for the subject
-    const personalData = await this.getPersonalData(requestId);
-    const processingActivities = await this.getProcessingActivities(requestId);
-    const consentStatus = await this.getConsentStatus(requestId);
-    const auditTrail = await this.getAuditTrail(requestId);
+    const personalData = await DataSubjectRightsManager.getPersonalData(requestId);
+    const processingActivities = await DataSubjectRightsManager.getProcessingActivities(requestId);
+    const consentStatus = await DataSubjectRightsManager.getConsentStatus(requestId);
+    const auditTrail = await DataSubjectRightsManager.getAuditTrail(requestId);
 
     // Generate data access report
     const report = {
@@ -221,7 +221,11 @@ export class DataSubjectRightsManager {
     };
 
     // Update request status
-    await this.updateRequestStatus(requestId, RequestStatus.COMPLETED, processorId);
+    await DataSubjectRightsManager.updateRequestStatus(
+      requestId,
+      RequestStatus.COMPLETED,
+      processorId,
+    );
 
     // Log completion
     await AuditLogger.log({
@@ -258,11 +262,13 @@ export class DataSubjectRightsManager {
       legalBasis: string;
     }>;
   }> {
-    const request = await this.getRequest(requestId);
+    const request = await DataSubjectRightsManager.getRequest(requestId);
     if (!request) throw new Error("Request not found");
 
     // Determine what can be erased vs what must be retained
-    const erasureAnalysis = await this.analyzeErasureRequest(request.dataSubjectId);
+    const erasureAnalysis = await DataSubjectRightsManager.analyzeErasureRequest(
+      request.dataSubjectId,
+    );
 
     let itemsErased = 0;
     let itemsRetained = 0;
@@ -271,7 +277,7 @@ export class DataSubjectRightsManager {
     // Process erasure for items that can be deleted
     for (const item of erasureAnalysis.canErase) {
       try {
-        await this.eraseDataItem(item.id, item.type);
+        await DataSubjectRightsManager.eraseDataItem(item.id, item.type);
         itemsErased++;
       } catch (error) {
         console.error("Failed to erase item:", item, error);
@@ -291,7 +297,7 @@ export class DataSubjectRightsManager {
     const success = itemsErased > 0 || erasureAnalysis.canErase.length === 0;
 
     // Update request status
-    await this.updateRequestStatus(
+    await DataSubjectRightsManager.updateRequestStatus(
       requestId,
       success ? RequestStatus.COMPLETED : RequestStatus.PARTIALLY_COMPLETED,
       processorId,
@@ -340,19 +346,29 @@ export class DataSubjectRightsManager {
     fileSize: number;
     recordsIncluded: number;
   }> {
-    const request = await this.getRequest(requestId);
+    const request = await DataSubjectRightsManager.getRequest(requestId);
     if (!request) throw new Error("Request not found");
 
     // Extract portable data (machine-readable format)
-    const portableData = await this.extractPortableData(request.dataSubjectId, format);
+    const portableData = await DataSubjectRightsManager.extractPortableData(
+      request.dataSubjectId,
+      format,
+    );
 
     // Generate secure download link (expires in 7 days)
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
 
-    const downloadUrl = await this.generateSecureDownloadLink(portableData, expiresAt);
+    const downloadUrl = await DataSubjectRightsManager.generateSecureDownloadLink(
+      portableData,
+      expiresAt,
+    );
 
-    await this.updateRequestStatus(requestId, RequestStatus.COMPLETED, processorId);
+    await DataSubjectRightsManager.updateRequestStatus(
+      requestId,
+      RequestStatus.COMPLETED,
+      processorId,
+    );
 
     // Log portability completion
     await AuditLogger.log({

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Accessibility Testing Suite
  * Healthcare WCAG 2.1 AA compliance testing with assistive technology support
@@ -15,15 +14,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScreenReaderSimulator = exports.HealthcareFormTester = exports.healthcareAxeConfig = void 0;
 var playwright_1 = require("@axe-core/playwright");
@@ -176,7 +173,7 @@ var healthcareAxeConfig = {
 };
 exports.healthcareAxeConfig = healthcareAxeConfig;
 // Screen reader simulation helpers
-var ScreenReaderSimulator = /** @class */ (function () {
+var ScreenReaderSimulator = /** @class */ (() => {
   function ScreenReaderSimulator(page) {
     this.page = page;
   }
@@ -355,7 +352,7 @@ var ScreenReaderSimulator = /** @class */ (function () {
 })();
 exports.ScreenReaderSimulator = ScreenReaderSimulator;
 // Healthcare form testing utilities
-var HealthcareFormTester = /** @class */ (function () {
+var HealthcareFormTester = /** @class */ (() => {
   function HealthcareFormTester(page) {
     this.page = page;
   }
@@ -509,13 +506,13 @@ var HealthcareFormTester = /** @class */ (function () {
 })();
 exports.HealthcareFormTester = HealthcareFormTester;
 // Main test suite
-test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", function () {
+test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", () => {
   var screenReader;
   var formTester;
-  test_1.test.beforeEach(function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.beforeEach((_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             screenReader = new ScreenReaderSimulator(page);
@@ -531,14 +528,14 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test_1.test.describe("Patients Portal Accessibility", function () {
-    (0, test_1.test)("should pass WCAG 2.1 AA compliance for patients page", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  test_1.test.describe("Patients Portal Accessibility", () => {
+    (0, test_1.test)("should pass WCAG 2.1 AA compliance for patients page", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var accessibilityScanResults;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -556,13 +553,13 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should support keyboard navigation in patients table", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should support keyboard navigation in patients table", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var skipLink, searchField, patientsTable;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -607,13 +604,13 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should work with NVDA screen reader", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should work with NVDA screen reader", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var firstPatientRow;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -642,13 +639,13 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should work with JAWS screen reader", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should work with JAWS screen reader", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var headings, i, _c, heading;
         var page = _b.page;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -677,13 +674,13 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should work with VoiceOver", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should work with VoiceOver", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var landmarks, _c;
         var page = _b.page;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -700,14 +697,14 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Healthcare Forms Accessibility", function () {
-    (0, test_1.test)("should support Brazilian healthcare form patterns", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Healthcare Forms Accessibility", () => {
+    (0, test_1.test)("should support Brazilian healthcare form patterns", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients/new")];
@@ -739,13 +736,13 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should handle healthcare form errors accessibly", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should handle healthcare form errors accessibly", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var submitButton;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients/new")];
@@ -766,15 +763,15 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Color Contrast and Visual Accessibility", function () {
-    (0, test_1.test)("should meet WCAG AA color contrast ratios", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Color Contrast and Visual Accessibility", () => {
+    (0, test_1.test)("should meet WCAG AA color contrast ratios", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var axeResults;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -790,13 +787,13 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should support high contrast mode", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should support high contrast mode", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var buttons, i, _c, _d, _e, _f, button;
         var page = _b.page;
-        return __generator(this, function (_g) {
+        return __generator(this, (_g) => {
           switch (_g.label) {
             case 0:
               // Test Windows high contrast mode
@@ -832,15 +829,15 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Portuguese Localization Accessibility", function () {
-    (0, test_1.test)("should provide proper Portuguese language declarations", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Portuguese Localization Accessibility", () => {
+    (0, test_1.test)("should provide proper Portuguese language declarations", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var html, portugueseTerms, _i, portugueseTerms_1, term, element;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -871,13 +868,13 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should format Brazilian data correctly for screen readers", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should format Brazilian data correctly for screen readers", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var cpfElements, phoneElements;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -904,15 +901,15 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Healthcare-Specific Accessibility Patterns", function () {
-    (0, test_1.test)("should announce patient status changes appropriately", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Healthcare-Specific Accessibility Patterns", () => {
+    (0, test_1.test)("should announce patient status changes appropriately", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var statusBadges, i, _c, badge;
         var page = _b.page;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -938,13 +935,13 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should provide appropriate healthcare data context", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should provide appropriate healthcare data context", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var tableHeaders, i, _c, header, table;
         var page = _b.page;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [4 /*yield*/, page.goto("/dashboard/patients")];
@@ -979,7 +976,7 @@ test_1.test.describe("Healthcare Accessibility Compliance - WCAG 2.1 AA", functi
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

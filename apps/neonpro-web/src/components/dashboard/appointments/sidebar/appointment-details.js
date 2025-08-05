@@ -2,7 +2,6 @@
 // Read-only appointment details component
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentDetails;
 var react_1 = require("react");
@@ -30,12 +29,11 @@ function AppointmentDetails(_a) {
   var _b = (0, react_1.useState)(""),
     deleteReason = _b[0],
     setDeleteReason = _b[1];
-  var formatDateTime = function (dateString) {
-    return (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
+  var formatDateTime = (dateString) =>
+    (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
       locale: locale_1.ptBR,
     });
-  };
-  var formatDuration = function (minutes) {
+  var formatDuration = (minutes) => {
     var hours = Math.floor(minutes / 60);
     var mins = minutes % 60;
     if (hours > 0) {
@@ -43,14 +41,14 @@ function AppointmentDetails(_a) {
     }
     return "".concat(mins, "min");
   };
-  var formatPrice = function (price) {
+  var formatPrice = (price) => {
     if (!price) return "Não definido";
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(price);
   };
-  var handleDelete = function () {
+  var handleDelete = () => {
     if (onDelete) {
       onDelete(deleteReason || "Cancelado pelo usuário");
     }
@@ -229,9 +227,7 @@ function AppointmentDetails(_a) {
                       id="delete-reason"
                       placeholder="Informe o motivo do cancelamento..."
                       value={deleteReason}
-                      onChange={function (e) {
-                        return setDeleteReason(e.target.value);
-                      }}
+                      onChange={(e) => setDeleteReason(e.target.value)}
                       className="mt-1"
                     />
                   </div>

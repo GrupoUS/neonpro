@@ -5,10 +5,10 @@
 
 import type { createClient } from "@supabase/supabase-js";
 import type {
+  DashboardFilters,
   DrillDownRequest,
   DrillDownResult,
   FinancialKPI,
-  DashboardFilters,
 } from "@/lib/types/kpi-types";
 
 export interface DrillDownContext {

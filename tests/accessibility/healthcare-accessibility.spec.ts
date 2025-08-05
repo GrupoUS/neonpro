@@ -14,7 +14,7 @@
  */
 
 import { AxeBuilder } from "@axe-core/playwright";
-import { expect, Page, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 import { configureAxe, injectAxe } from "axe-playwright";
 
 // Healthcare-specific accessibility configuration

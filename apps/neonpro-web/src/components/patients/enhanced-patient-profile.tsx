@@ -1,12 +1,38 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  Archive,
+  Bell,
+  Calendar,
+  Camera,
+  Clock,
+  Download,
+  Edit,
+  Eye,
+  FileText,
+  Heart,
+  Mail,
+  MapPin,
+  Minus,
+  MoreHorizontal,
+  Phone,
+  Settings,
+  Share,
+  Shield,
+  Stethoscope,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  User,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { createClient } from "@/app/utils/supabase/client";
-import type { PhotoUploadSystem } from "./photo-upload-system";
-import type { Button } from "@/components/ui/button";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,7 +40,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Dialog,
   DialogContent,
@@ -31,34 +56,9 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type {
-  User,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  Stethoscope,
-  Heart,
-  Activity,
-  FileText,
-  Camera,
-  Shield,
-  AlertTriangle,
-  Edit,
-  MoreHorizontal,
-  Clock,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Upload,
-  Download,
-  Eye,
-  Settings,
-  Share,
-  Bell,
-  Archive,
-} from "lucide-react";
-import type { toast } from "sonner";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { PhotoUploadSystem } from "./photo-upload-system";
 
 interface Patient {
   id: string;

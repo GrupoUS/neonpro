@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Backup Monitoring Service
  * Story 1.8: Sistema de Backup e Recovery
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MonitoringService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -162,7 +159,7 @@ var notifications_1 = require("../notifications");
 /**
  * Serviço de monitoramento de backups
  */
-var MonitoringService = /** @class */ (function () {
+var MonitoringService = /** @class */ (() => {
   function MonitoringService(backupManager) {
     this.alertHistory = new Map();
     this.performanceHistory = [];
@@ -208,10 +205,9 @@ var MonitoringService = /** @class */ (function () {
    * Iniciar monitoramento
    */
   MonitoringService.prototype.startMonitoring = function () {
-    var _this = this;
     if (this.config.enabled) {
-      this.monitoringInterval = setInterval(function () {
-        _this.performHealthCheck();
+      this.monitoringInterval = setInterval(() => {
+        this.performHealthCheck();
       }, this.config.checkInterval);
       console.log("Monitoramento de backup iniciado");
     }
@@ -278,32 +274,19 @@ var MonitoringService = /** @class */ (function () {
             if (error) throw error;
             records = backups || [];
             totalBackups = records.length;
-            successfulBackups = records.filter(function (b) {
-              return b.status === types_1.BackupStatus.COMPLETED;
-            }).length;
-            failedBackups = records.filter(function (b) {
-              return b.status === types_1.BackupStatus.FAILED;
-            }).length;
-            totalSize = records.reduce(function (sum, b) {
-              return sum + (b.size || 0);
-            }, 0);
+            successfulBackups = records.filter(
+              (b) => b.status === types_1.BackupStatus.COMPLETED,
+            ).length;
+            failedBackups = records.filter((b) => b.status === types_1.BackupStatus.FAILED).length;
+            totalSize = records.reduce((sum, b) => sum + (b.size || 0), 0);
             totalDuration = records
-              .filter(function (b) {
-                return b.duration;
-              })
-              .reduce(function (sum, b) {
-                return sum + b.duration;
-              }, 0);
+              .filter((b) => b.duration)
+              .reduce((sum, b) => sum + b.duration, 0);
             successRate = totalBackups > 0 ? (successfulBackups / totalBackups) * 100 : 100;
             averageSize = totalBackups > 0 ? totalSize / totalBackups : 0;
             averageDuration =
-              records.filter(function (b) {
-                return b.duration;
-              }).length > 0
-                ? totalDuration /
-                  records.filter(function (b) {
-                    return b.duration;
-                  }).length
+              records.filter((b) => b.duration).length > 0
+                ? totalDuration / records.filter((b) => b.duration).length
                 : 0;
             lastBackup = records.length > 0 ? new Date(records[0].startTime) : null;
             return [
@@ -337,9 +320,8 @@ var MonitoringService = /** @class */ (function () {
             previousSuccessful =
               (previousBackups === null || previousBackups === void 0
                 ? void 0
-                : previousBackups.filter(function (b) {
-                    return b.status === types_1.BackupStatus.COMPLETED;
-                  }).length) || 0;
+                : previousBackups.filter((b) => b.status === types_1.BackupStatus.COMPLETED)
+                    .length) || 0;
             previousSuccessRate =
               previousTotal > 0 ? (previousSuccessful / previousTotal) * 100 : 100;
             trends = {
@@ -476,9 +458,7 @@ var MonitoringService = /** @class */ (function () {
             totalStorage =
               (storageData === null || storageData === void 0
                 ? void 0
-                : storageData.reduce(function (sum, b) {
-                    return sum + (b.size || 0);
-                  }, 0)) || 0;
+                : storageData.reduce((sum, b) => sum + (b.size || 0), 0)) || 0;
             return [
               4 /*yield*/,
               this.supabase
@@ -495,9 +475,8 @@ var MonitoringService = /** @class */ (function () {
             recentSuccessful =
               (recentBackups === null || recentBackups === void 0
                 ? void 0
-                : recentBackups.filter(function (b) {
-                    return b.status === types_1.BackupStatus.COMPLETED;
-                  }).length) || 0;
+                : recentBackups.filter((b) => b.status === types_1.BackupStatus.COMPLETED)
+                    .length) || 0;
             successRate = recentTotal > 0 ? (recentSuccessful / recentTotal) * 100 : 100;
             return [
               4 /*yield*/,
@@ -514,9 +493,7 @@ var MonitoringService = /** @class */ (function () {
               (completedBackups === null || completedBackups === void 0
                 ? void 0
                 : completedBackups.length) > 0
-                ? completedBackups.reduce(function (sum, b) {
-                    return sum + b.duration;
-                  }, 0) / completedBackups.length
+                ? completedBackups.reduce((sum, b) => sum + b.duration, 0) / completedBackups.length
                 : 0;
             // Atualizar métricas
             this.realTimeMetrics = {
@@ -919,7 +896,7 @@ var MonitoringService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var notification, error_9;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -1013,9 +990,7 @@ var MonitoringService = /** @class */ (function () {
       hours = 24;
     }
     var cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    return this.performanceHistory.filter(function (m) {
-      return m.timestamp >= cutoff;
-    });
+    return this.performanceHistory.filter((m) => m.timestamp >= cutoff);
   };
   /**
    * Obter alertas ativos
@@ -1165,7 +1140,7 @@ var MonitoringService = /** @class */ (function () {
       });
     });
   };
-  MonitoringService.prototype.handleError = function (message, error) {
+  MonitoringService.prototype.handleError = (message, error) => {
     console.error(message, error);
     return {
       success: false,

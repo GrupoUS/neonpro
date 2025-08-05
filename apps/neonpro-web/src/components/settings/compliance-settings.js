@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ComplianceSettings;
 var react_1 = require("react");
@@ -239,7 +236,6 @@ var complianceSettingsSchema = z.object({
   notificationEmails: z.array(z.string().email()),
 });
 function ComplianceSettings() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -303,129 +299,116 @@ function ComplianceSettings() {
     appendAuditLog = _g.append,
     removeAuditLog = _g.remove;
   // Calculate compliance scores
-  (0, react_1.useEffect)(
-    function () {
-      var calculateScores = function () {
-        var lgpdData = form.watch("lgpdCompliance");
-        var anvisaData = form.watch("anvisaCompliance");
-        var cfmData = form.watch("cfmCompliance");
-        var scores = [
-          {
-            category: "LGPD",
-            score: Object.values(lgpdData).filter(function (v) {
-              return v === true;
-            }).length,
-            maxScore: 5,
-            items: [
-              {
-                name: "Avaliação de Impacto",
-                compliant: lgpdData.privacyImpactAssessment,
-                required: true,
-              },
-              {
-                name: "Gestão de Consentimento",
-                compliant: lgpdData.consentManagement,
-                required: true,
-              },
-              {
-                name: "Política de Retenção",
-                compliant: lgpdData.dataRetentionPolicy,
-                required: true,
-              },
-              {
-                name: "Processo de Vazamento",
-                compliant: lgpdData.breachNotificationProcess,
-                required: true,
-              },
-              {
-                name: "Acordos com Terceiros",
-                compliant: lgpdData.thirdPartyAgreements,
-                required: false,
-              },
-            ],
-          },
-          {
-            category: "ANVISA",
-            score: Object.values(anvisaData).filter(function (v) {
-              return v === true;
-            }).length,
-            maxScore: 3,
-            items: [
-              {
-                name: "Registro de Dispositivos",
-                compliant: anvisaData.medicalDeviceRegistry,
-                required: true,
-              },
-              {
-                name: "Notificação de Eventos",
-                compliant: anvisaData.adverseEventReporting,
-                required: true,
-              },
-              {
-                name: "Sistema de Qualidade",
-                compliant: anvisaData.qualityManagementSystem,
-                required: true,
-              },
-            ],
-          },
-          {
-            category: "CFM",
-            score: Object.values(cfmData).filter(function (v) {
-              return v === true;
-            }).length,
-            maxScore: 5,
-            items: [
-              { name: "Ética Profissional", compliant: cfmData.professionalEthics, required: true },
-              { name: "Telemedicina", compliant: cfmData.telemedicineCompliance, required: false },
-              {
-                name: "Segurança Prontuários",
-                compliant: cfmData.medicalRecordsSecurity,
-                required: true,
-              },
-              { name: "Privacidade Paciente", compliant: cfmData.patientPrivacy, required: true },
-              {
-                name: "Consentimento Informado",
-                compliant: cfmData.informedConsent,
-                required: true,
-              },
-            ],
-          },
-        ];
-        setComplianceScores(scores);
-      };
-      calculateScores();
-    },
-    [form.watch()],
-  );
+  (0, react_1.useEffect)(() => {
+    var calculateScores = () => {
+      var lgpdData = form.watch("lgpdCompliance");
+      var anvisaData = form.watch("anvisaCompliance");
+      var cfmData = form.watch("cfmCompliance");
+      var scores = [
+        {
+          category: "LGPD",
+          score: Object.values(lgpdData).filter((v) => v === true).length,
+          maxScore: 5,
+          items: [
+            {
+              name: "Avaliação de Impacto",
+              compliant: lgpdData.privacyImpactAssessment,
+              required: true,
+            },
+            {
+              name: "Gestão de Consentimento",
+              compliant: lgpdData.consentManagement,
+              required: true,
+            },
+            {
+              name: "Política de Retenção",
+              compliant: lgpdData.dataRetentionPolicy,
+              required: true,
+            },
+            {
+              name: "Processo de Vazamento",
+              compliant: lgpdData.breachNotificationProcess,
+              required: true,
+            },
+            {
+              name: "Acordos com Terceiros",
+              compliant: lgpdData.thirdPartyAgreements,
+              required: false,
+            },
+          ],
+        },
+        {
+          category: "ANVISA",
+          score: Object.values(anvisaData).filter((v) => v === true).length,
+          maxScore: 3,
+          items: [
+            {
+              name: "Registro de Dispositivos",
+              compliant: anvisaData.medicalDeviceRegistry,
+              required: true,
+            },
+            {
+              name: "Notificação de Eventos",
+              compliant: anvisaData.adverseEventReporting,
+              required: true,
+            },
+            {
+              name: "Sistema de Qualidade",
+              compliant: anvisaData.qualityManagementSystem,
+              required: true,
+            },
+          ],
+        },
+        {
+          category: "CFM",
+          score: Object.values(cfmData).filter((v) => v === true).length,
+          maxScore: 5,
+          items: [
+            { name: "Ética Profissional", compliant: cfmData.professionalEthics, required: true },
+            { name: "Telemedicina", compliant: cfmData.telemedicineCompliance, required: false },
+            {
+              name: "Segurança Prontuários",
+              compliant: cfmData.medicalRecordsSecurity,
+              required: true,
+            },
+            { name: "Privacidade Paciente", compliant: cfmData.patientPrivacy, required: true },
+            {
+              name: "Consentimento Informado",
+              compliant: cfmData.informedConsent,
+              required: true,
+            },
+          ],
+        },
+      ];
+      setComplianceScores(scores);
+    };
+    calculateScores();
+  }, [form.watch()]);
   // Load existing settings
-  (0, react_1.useEffect)(
-    function () {
-      var loadComplianceSettings = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            setIsLoading(true);
-            try {
-              // TODO: Replace with actual API call
-              // const response = await fetch("/api/settings/compliance");
-              // const data = await response.json();
-              // form.reset(data);
-            } catch (error) {
-              console.error("Erro ao carregar configurações:", error);
-              sonner_1.toast.error("Erro ao carregar configurações de conformidade");
-            } finally {
-              setIsLoading(false);
-            }
-            return [2 /*return*/];
-          });
+  (0, react_1.useEffect)(() => {
+    var loadComplianceSettings = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setIsLoading(true);
+          try {
+            // TODO: Replace with actual API call
+            // const response = await fetch("/api/settings/compliance");
+            // const data = await response.json();
+            // form.reset(data);
+          } catch (error) {
+            console.error("Erro ao carregar configurações:", error);
+            sonner_1.toast.error("Erro ao carregar configurações de conformidade");
+          } finally {
+            setIsLoading(false);
+          }
+          return [2 /*return*/];
         });
-      };
-      loadComplianceSettings();
-    },
-    [form],
-  );
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      });
+    loadComplianceSettings();
+  }, [form]);
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsSaving(true);
         try {
           // TODO: Replace with actual API call
@@ -445,8 +428,7 @@ function ComplianceSettings() {
         return [2 /*return*/];
       });
     });
-  };
-  var getExpiryStatus = function (expiryDate) {
+  var getExpiryStatus = (expiryDate) => {
     var expiry = new Date(expiryDate);
     var today = new Date();
     var diffDays = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 3600 * 24));
@@ -456,13 +438,9 @@ function ComplianceSettings() {
       return { status: "expiring", label: "Vencendo", color: "bg-yellow-100 text-yellow-800" };
     return { status: "valid", label: "Válida", color: "bg-green-100 text-green-800" };
   };
-  var getCompliancePercentage = function () {
-    var totalScore = complianceScores.reduce(function (sum, score) {
-      return sum + score.score;
-    }, 0);
-    var totalMaxScore = complianceScores.reduce(function (sum, score) {
-      return sum + score.maxScore;
-    }, 0);
+  var getCompliancePercentage = () => {
+    var totalScore = complianceScores.reduce((sum, score) => sum + score.score, 0);
+    var totalMaxScore = complianceScores.reduce((sum, score) => sum + score.maxScore, 0);
     return totalMaxScore > 0 ? Math.round((totalScore / totalMaxScore) * 100) : 0;
   };
   if (isLoading) {
@@ -509,37 +487,33 @@ function ComplianceSettings() {
             <progress_1.Progress value={getCompliancePercentage()} className="h-3" />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-              {complianceScores.map(function (score) {
-                return (
-                  <div key={score.category} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">{score.category}</h4>
-                      <badge_1.Badge variant="outline">
-                        {score.score}/{score.maxScore}
-                      </badge_1.Badge>
-                    </div>
-                    <progress_1.Progress
-                      value={(score.score / score.maxScore) * 100}
-                      className="h-2 mb-3"
-                    />
-                    <div className="space-y-1">
-                      {score.items.map(function (item, index) {
-                        return (
-                          <div key={index} className="flex items-center gap-2 text-sm">
-                            {item.compliant
-                              ? <lucide_react_1.CheckCircle2 className="h-3 w-3 text-green-600" />
-                              : <lucide_react_1.XCircle className="h-3 w-3 text-red-600" />}
-                            <span className={item.required ? "font-medium" : ""}>
-                              {item.name}
-                              {item.required && <span className="text-red-500 ml-1">*</span>}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
+              {complianceScores.map((score) => (
+                <div key={score.category} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">{score.category}</h4>
+                    <badge_1.Badge variant="outline">
+                      {score.score}/{score.maxScore}
+                    </badge_1.Badge>
                   </div>
-                );
-              })}
+                  <progress_1.Progress
+                    value={(score.score / score.maxScore) * 100}
+                    className="h-2 mb-3"
+                  />
+                  <div className="space-y-1">
+                    {score.items.map((item, index) => (
+                      <div key={index} className="flex items-center gap-2 text-sm">
+                        {item.compliant
+                          ? <lucide_react_1.CheckCircle2 className="h-3 w-3 text-green-600" />
+                          : <lucide_react_1.XCircle className="h-3 w-3 text-red-600" />}
+                        <span className={item.required ? "font-medium" : ""}>
+                          {item.name}
+                          {item.required && <span className="text-red-500 ml-1">*</span>}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </card_1.CardContent>
@@ -568,8 +542,8 @@ function ComplianceSettings() {
                     </div>
                     <button_1.Button
                       type="button"
-                      onClick={function () {
-                        return appendLicense({
+                      onClick={() =>
+                        appendLicense({
                           type: "",
                           number: "",
                           authority: "",
@@ -579,8 +553,8 @@ function ComplianceSettings() {
                           notes: "",
                           documentUrl: "",
                           reminderDays: 30,
-                        });
-                      }}
+                        })
+                      }
                     >
                       <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                       Adicionar Licença
@@ -599,240 +573,229 @@ function ComplianceSettings() {
                         </p>
                       </div>
                     : <div className="space-y-6">
-                        {licenseFields.map(function (field, index) {
-                          return (
-                            <card_1.Card key={field.id} className="p-4">
-                              <div className="flex items-center justify-between mb-4">
-                                <h4 className="font-medium">Licença #{index + 1}</h4>
-                                <button_1.Button
-                                  type="button"
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={function () {
-                                    return removeLicense(index);
-                                  }}
-                                  className="text-red-600 hover:text-red-800"
-                                >
-                                  <lucide_react_1.Trash2 className="h-4 w-4" />
-                                </button_1.Button>
-                              </div>
+                        {licenseFields.map((field, index) => (
+                          <card_1.Card key={field.id} className="p-4">
+                            <div className="flex items-center justify-between mb-4">
+                              <h4 className="font-medium">Licença #{index + 1}</h4>
+                              <button_1.Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removeLicense(index)}
+                                className="text-red-600 hover:text-red-800"
+                              >
+                                <lucide_react_1.Trash2 className="h-4 w-4" />
+                              </button_1.Button>
+                            </div>
 
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <form_1.FormField
-                                  control={form.control}
-                                  name={"licenses.".concat(index, ".type")}
-                                  render={function (_a) {
-                                    var field = _a.field;
-                                    return (
-                                      <form_1.FormItem>
-                                        <form_1.FormLabel>Tipo de Licença</form_1.FormLabel>
-                                        <select_1.Select
-                                          onValueChange={field.onChange}
-                                          defaultValue={field.value}
-                                        >
-                                          <form_1.FormControl>
-                                            <select_1.SelectTrigger>
-                                              <select_1.SelectValue placeholder="Selecione o tipo" />
-                                            </select_1.SelectTrigger>
-                                          </form_1.FormControl>
-                                          <select_1.SelectContent>
-                                            {licenseTypes.map(function (type) {
-                                              return (
-                                                <select_1.SelectItem
-                                                  key={type.value}
-                                                  value={type.value}
-                                                >
-                                                  {type.label}
-                                                </select_1.SelectItem>
-                                              );
-                                            })}
-                                          </select_1.SelectContent>
-                                        </select_1.Select>
-                                        <form_1.FormMessage />
-                                      </form_1.FormItem>
-                                    );
-                                  }}
-                                />
-
-                                <form_1.FormField
-                                  control={form.control}
-                                  name={"licenses.".concat(index, ".number")}
-                                  render={function (_a) {
-                                    var field = _a.field;
-                                    return (
-                                      <form_1.FormItem>
-                                        <form_1.FormLabel>Número da Licença</form_1.FormLabel>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <form_1.FormField
+                                control={form.control}
+                                name={"licenses.".concat(index, ".type")}
+                                render={(_a) => {
+                                  var field = _a.field;
+                                  return (
+                                    <form_1.FormItem>
+                                      <form_1.FormLabel>Tipo de Licença</form_1.FormLabel>
+                                      <select_1.Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                      >
                                         <form_1.FormControl>
-                                          <input_1.Input placeholder="ABC123456" {...field} />
+                                          <select_1.SelectTrigger>
+                                            <select_1.SelectValue placeholder="Selecione o tipo" />
+                                          </select_1.SelectTrigger>
                                         </form_1.FormControl>
-                                        <form_1.FormMessage />
-                                      </form_1.FormItem>
-                                    );
-                                  }}
-                                />
-
-                                <form_1.FormField
-                                  control={form.control}
-                                  name={"licenses.".concat(index, ".authority")}
-                                  render={function (_a) {
-                                    var field = _a.field;
-                                    return (
-                                      <form_1.FormItem>
-                                        <form_1.FormLabel>Órgão Emissor</form_1.FormLabel>
-                                        <form_1.FormControl>
-                                          <input_1.Input
-                                            placeholder="ANVISA, CRM, etc."
-                                            {...field}
-                                          />
-                                        </form_1.FormControl>
-                                        <form_1.FormMessage />
-                                      </form_1.FormItem>
-                                    );
-                                  }}
-                                />
-
-                                <form_1.FormField
-                                  control={form.control}
-                                  name={"licenses.".concat(index, ".status")}
-                                  render={function (_a) {
-                                    var field = _a.field;
-                                    return (
-                                      <form_1.FormItem>
-                                        <form_1.FormLabel>Status</form_1.FormLabel>
-                                        <select_1.Select
-                                          onValueChange={field.onChange}
-                                          defaultValue={field.value}
-                                        >
-                                          <form_1.FormControl>
-                                            <select_1.SelectTrigger>
-                                              <select_1.SelectValue />
-                                            </select_1.SelectTrigger>
-                                          </form_1.FormControl>
-                                          <select_1.SelectContent>
-                                            <select_1.SelectItem value="active">
-                                              Ativa
-                                            </select_1.SelectItem>
-                                            <select_1.SelectItem value="expired">
-                                              Vencida
-                                            </select_1.SelectItem>
-                                            <select_1.SelectItem value="pending">
-                                              Pendente
-                                            </select_1.SelectItem>
-                                            <select_1.SelectItem value="suspended">
-                                              Suspensa
-                                            </select_1.SelectItem>
-                                          </select_1.SelectContent>
-                                        </select_1.Select>
-                                        <form_1.FormMessage />
-                                      </form_1.FormItem>
-                                    );
-                                  }}
-                                />
-
-                                <form_1.FormField
-                                  control={form.control}
-                                  name={"licenses.".concat(index, ".issueDate")}
-                                  render={function (_a) {
-                                    var field = _a.field;
-                                    return (
-                                      <form_1.FormItem>
-                                        <form_1.FormLabel>Data de Emissão</form_1.FormLabel>
-                                        <form_1.FormControl>
-                                          <input_1.Input type="date" {...field} />
-                                        </form_1.FormControl>
-                                        <form_1.FormMessage />
-                                      </form_1.FormItem>
-                                    );
-                                  }}
-                                />
-
-                                <form_1.FormField
-                                  control={form.control}
-                                  name={"licenses.".concat(index, ".expiryDate")}
-                                  render={function (_a) {
-                                    var field = _a.field;
-                                    return (
-                                      <form_1.FormItem>
-                                        <form_1.FormLabel>Data de Vencimento</form_1.FormLabel>
-                                        <form_1.FormControl>
-                                          <input_1.Input type="date" {...field} />
-                                        </form_1.FormControl>
-                                        {field.value && (
-                                          <div className="mt-1">
-                                            <badge_1.Badge
-                                              className={getExpiryStatus(field.value).color}
+                                        <select_1.SelectContent>
+                                          {licenseTypes.map((type) => (
+                                            <select_1.SelectItem
+                                              key={type.value}
+                                              value={type.value}
                                             >
-                                              {getExpiryStatus(field.value).label}
-                                            </badge_1.Badge>
-                                          </div>
-                                        )}
-                                        <form_1.FormMessage />
-                                      </form_1.FormItem>
-                                    );
-                                  }}
-                                />
-                              </div>
+                                              {type.label}
+                                            </select_1.SelectItem>
+                                          ))}
+                                        </select_1.SelectContent>
+                                      </select_1.Select>
+                                      <form_1.FormMessage />
+                                    </form_1.FormItem>
+                                  );
+                                }}
+                              />
 
-                              <div className="mt-4 space-y-4">
-                                <form_1.FormField
-                                  control={form.control}
-                                  name={"licenses.".concat(index, ".documentUrl")}
-                                  render={function (_a) {
-                                    var field = _a.field;
-                                    return (
-                                      <form_1.FormItem>
-                                        <form_1.FormLabel>URL do Documento</form_1.FormLabel>
+                              <form_1.FormField
+                                control={form.control}
+                                name={"licenses.".concat(index, ".number")}
+                                render={(_a) => {
+                                  var field = _a.field;
+                                  return (
+                                    <form_1.FormItem>
+                                      <form_1.FormLabel>Número da Licença</form_1.FormLabel>
+                                      <form_1.FormControl>
+                                        <input_1.Input placeholder="ABC123456" {...field} />
+                                      </form_1.FormControl>
+                                      <form_1.FormMessage />
+                                    </form_1.FormItem>
+                                  );
+                                }}
+                              />
+
+                              <form_1.FormField
+                                control={form.control}
+                                name={"licenses.".concat(index, ".authority")}
+                                render={(_a) => {
+                                  var field = _a.field;
+                                  return (
+                                    <form_1.FormItem>
+                                      <form_1.FormLabel>Órgão Emissor</form_1.FormLabel>
+                                      <form_1.FormControl>
+                                        <input_1.Input placeholder="ANVISA, CRM, etc." {...field} />
+                                      </form_1.FormControl>
+                                      <form_1.FormMessage />
+                                    </form_1.FormItem>
+                                  );
+                                }}
+                              />
+
+                              <form_1.FormField
+                                control={form.control}
+                                name={"licenses.".concat(index, ".status")}
+                                render={(_a) => {
+                                  var field = _a.field;
+                                  return (
+                                    <form_1.FormItem>
+                                      <form_1.FormLabel>Status</form_1.FormLabel>
+                                      <select_1.Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                      >
                                         <form_1.FormControl>
-                                          <input_1.Input
-                                            placeholder="https://..."
-                                            {...field}
-                                            className="pr-10"
-                                          />
+                                          <select_1.SelectTrigger>
+                                            <select_1.SelectValue />
+                                          </select_1.SelectTrigger>
                                         </form_1.FormControl>
-                                        {field.value && (
-                                          <button_1.Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={function () {
-                                              return window.open(field.value, "_blank");
-                                            }}
-                                            className="absolute right-2 top-8"
+                                        <select_1.SelectContent>
+                                          <select_1.SelectItem value="active">
+                                            Ativa
+                                          </select_1.SelectItem>
+                                          <select_1.SelectItem value="expired">
+                                            Vencida
+                                          </select_1.SelectItem>
+                                          <select_1.SelectItem value="pending">
+                                            Pendente
+                                          </select_1.SelectItem>
+                                          <select_1.SelectItem value="suspended">
+                                            Suspensa
+                                          </select_1.SelectItem>
+                                        </select_1.SelectContent>
+                                      </select_1.Select>
+                                      <form_1.FormMessage />
+                                    </form_1.FormItem>
+                                  );
+                                }}
+                              />
+
+                              <form_1.FormField
+                                control={form.control}
+                                name={"licenses.".concat(index, ".issueDate")}
+                                render={(_a) => {
+                                  var field = _a.field;
+                                  return (
+                                    <form_1.FormItem>
+                                      <form_1.FormLabel>Data de Emissão</form_1.FormLabel>
+                                      <form_1.FormControl>
+                                        <input_1.Input type="date" {...field} />
+                                      </form_1.FormControl>
+                                      <form_1.FormMessage />
+                                    </form_1.FormItem>
+                                  );
+                                }}
+                              />
+
+                              <form_1.FormField
+                                control={form.control}
+                                name={"licenses.".concat(index, ".expiryDate")}
+                                render={(_a) => {
+                                  var field = _a.field;
+                                  return (
+                                    <form_1.FormItem>
+                                      <form_1.FormLabel>Data de Vencimento</form_1.FormLabel>
+                                      <form_1.FormControl>
+                                        <input_1.Input type="date" {...field} />
+                                      </form_1.FormControl>
+                                      {field.value && (
+                                        <div className="mt-1">
+                                          <badge_1.Badge
+                                            className={getExpiryStatus(field.value).color}
                                           >
-                                            <lucide_react_1.ExternalLink className="h-4 w-4" />
-                                          </button_1.Button>
-                                        )}
-                                        <form_1.FormMessage />
-                                      </form_1.FormItem>
-                                    );
-                                  }}
-                                />
+                                            {getExpiryStatus(field.value).label}
+                                          </badge_1.Badge>
+                                        </div>
+                                      )}
+                                      <form_1.FormMessage />
+                                    </form_1.FormItem>
+                                  );
+                                }}
+                              />
+                            </div>
 
-                                <form_1.FormField
-                                  control={form.control}
-                                  name={"licenses.".concat(index, ".notes")}
-                                  render={function (_a) {
-                                    var field = _a.field;
-                                    return (
-                                      <form_1.FormItem>
-                                        <form_1.FormLabel>Observações</form_1.FormLabel>
-                                        <form_1.FormControl>
-                                          <textarea_1.Textarea
-                                            placeholder="Observações sobre a licença..."
-                                            className="resize-none"
-                                            rows={2}
-                                            {...field}
-                                          />
-                                        </form_1.FormControl>
-                                        <form_1.FormMessage />
-                                      </form_1.FormItem>
-                                    );
-                                  }}
-                                />
-                              </div>
-                            </card_1.Card>
-                          );
-                        })}
+                            <div className="mt-4 space-y-4">
+                              <form_1.FormField
+                                control={form.control}
+                                name={"licenses.".concat(index, ".documentUrl")}
+                                render={(_a) => {
+                                  var field = _a.field;
+                                  return (
+                                    <form_1.FormItem>
+                                      <form_1.FormLabel>URL do Documento</form_1.FormLabel>
+                                      <form_1.FormControl>
+                                        <input_1.Input
+                                          placeholder="https://..."
+                                          {...field}
+                                          className="pr-10"
+                                        />
+                                      </form_1.FormControl>
+                                      {field.value && (
+                                        <button_1.Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => window.open(field.value, "_blank")}
+                                          className="absolute right-2 top-8"
+                                        >
+                                          <lucide_react_1.ExternalLink className="h-4 w-4" />
+                                        </button_1.Button>
+                                      )}
+                                      <form_1.FormMessage />
+                                    </form_1.FormItem>
+                                  );
+                                }}
+                              />
+
+                              <form_1.FormField
+                                control={form.control}
+                                name={"licenses.".concat(index, ".notes")}
+                                render={(_a) => {
+                                  var field = _a.field;
+                                  return (
+                                    <form_1.FormItem>
+                                      <form_1.FormLabel>Observações</form_1.FormLabel>
+                                      <form_1.FormControl>
+                                        <textarea_1.Textarea
+                                          placeholder="Observações sobre a licença..."
+                                          className="resize-none"
+                                          rows={2}
+                                          {...field}
+                                        />
+                                      </form_1.FormControl>
+                                      <form_1.FormMessage />
+                                    </form_1.FormItem>
+                                  );
+                                }}
+                              />
+                            </div>
+                          </card_1.Card>
+                        ))}
                       </div>}
                 </card_1.CardContent>
               </card_1.Card>
@@ -860,7 +823,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="lgpdCompliance.dataProtectionOfficer"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -880,7 +843,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="lgpdCompliance.dpoEmail"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -908,7 +871,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="lgpdCompliance.privacyImpactAssessment"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -935,7 +898,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="lgpdCompliance.consentManagement"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -962,7 +925,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="lgpdCompliance.dataRetentionPolicy"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -989,7 +952,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="lgpdCompliance.breachNotificationProcess"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1016,7 +979,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="lgpdCompliance.thirdPartyAgreements"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1065,7 +1028,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="anvisaCompliance.technicalResponsible"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -1085,7 +1048,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="anvisaCompliance.technicalResponsibleCrm"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -1109,7 +1072,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="anvisaCompliance.medicalDeviceRegistry"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1136,7 +1099,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="anvisaCompliance.adverseEventReporting"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1163,7 +1126,7 @@ function ComplianceSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="anvisaCompliance.qualityManagementSystem"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1212,7 +1175,7 @@ function ComplianceSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="cfmCompliance.professionalEthics"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1239,7 +1202,7 @@ function ComplianceSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="cfmCompliance.telemedicineCompliance"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1265,7 +1228,7 @@ function ComplianceSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="cfmCompliance.medicalRecordsSecurity"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1292,7 +1255,7 @@ function ComplianceSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="cfmCompliance.patientPrivacy"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1319,7 +1282,7 @@ function ComplianceSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="cfmCompliance.informedConsent"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">

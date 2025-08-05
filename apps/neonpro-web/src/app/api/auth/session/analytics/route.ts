@@ -3,9 +3,8 @@
  * Provides session metrics and analytics data
  */
 
-import type { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import type { SessionManager } from "@/lib/auth/session/SessionManager";
-import type { createClient } from "@/lib/supabase/server";
 
 // Initialize session manager
 let sessionManager: SessionManager | null = null;
@@ -162,7 +161,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,13 +142,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AISchedulingOptimizer = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var supabaseUrl = process.env.SUPABASE_URL || "";
 var supabaseKey = process.env.SUPABASE_ANON_KEY || "";
-var AISchedulingOptimizer = /** @class */ (function () {
+var AISchedulingOptimizer = /** @class */ (() => {
   function AISchedulingOptimizer() {
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
   }
@@ -230,25 +227,23 @@ var AISchedulingOptimizer = /** @class */ (function () {
       });
     });
   };
-  AISchedulingOptimizer.prototype.getDefaultPreferences = function () {
-    return {
-      time_preferences: {
-        preferred_days: [1, 2, 3, 4, 5], // Monday to Friday
-        preferred_hours: [9, 10, 11, 14, 15, 16],
-        avoid_early_morning: true,
-        avoid_late_evening: true,
-      },
-      staff_preferences: {
-        preferred_staff_ids: [],
-        avoid_staff_ids: [],
-      },
-      treatment_preferences: {},
-    };
-  };
+  AISchedulingOptimizer.prototype.getDefaultPreferences = () => ({
+    time_preferences: {
+      preferred_days: [1, 2, 3, 4, 5], // Monday to Friday
+      preferred_hours: [9, 10, 11, 14, 15, 16],
+      avoid_early_morning: true,
+      avoid_late_evening: true,
+    },
+    staff_preferences: {
+      preferred_staff_ids: [],
+      avoid_staff_ids: [],
+    },
+    treatment_preferences: {},
+  });
   AISchedulingOptimizer.prototype.getAvailableSlots = function (dateRange, durationMinutes) {
     return __awaiter(this, void 0, void 0, function () {
       var slots, startDate, endDate, d, hour, slotTime;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         slots = [];
         startDate = new Date(dateRange.start);
         endDate = new Date(dateRange.end);
@@ -321,15 +316,13 @@ var AISchedulingOptimizer = /** @class */ (function () {
           case 5:
             return [
               2 /*return*/,
-              scoredSlots.sort(function (a, b) {
-                return b.confidence_score - a.confidence_score;
-              }),
+              scoredSlots.sort((a, b) => b.confidence_score - a.confidence_score),
             ];
         }
       });
     });
   };
-  AISchedulingOptimizer.prototype.calculatePatientPreferenceScore = function (slotDate, prefs) {
+  AISchedulingOptimizer.prototype.calculatePatientPreferenceScore = (slotDate, prefs) => {
     var score = 0.5; // Base score
     var dayOfWeek = slotDate.getDay();
     var hourOfDay = slotDate.getHours();
@@ -381,7 +374,7 @@ var AISchedulingOptimizer = /** @class */ (function () {
       });
     });
   };
-  AISchedulingOptimizer.prototype.calculateRevenueScore = function (slotDate, treatmentType) {
+  AISchedulingOptimizer.prototype.calculateRevenueScore = (slotDate, treatmentType) => {
     // Simplified revenue scoring - would use complex pricing models
     var hourOfDay = slotDate.getHours();
     // Premium hours (mid-morning, early afternoon)
@@ -397,7 +390,7 @@ var AISchedulingOptimizer = /** @class */ (function () {
   };
   AISchedulingOptimizer.prototype.calculateUtilizationScore = function (slotDate) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified utilization calculation
         // In practice would check actual appointment density
         return [2 /*return*/, 0.75];
@@ -407,9 +400,9 @@ var AISchedulingOptimizer = /** @class */ (function () {
   AISchedulingOptimizer.prototype.optimizeSlotSelection = function (scoredSlots, request) {
     return __awaiter(this, void 0, void 0, function () {
       var optimizedSlots, _loop_1, _i, _a, slot;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         optimizedSlots = [];
-        _loop_1 = function (slot) {
+        _loop_1 = (slot) => {
           var optimizedSlot = {
             slot_time: slot.slot_time,
             staff_id: slot.staff_id,
@@ -419,17 +412,13 @@ var AISchedulingOptimizer = /** @class */ (function () {
           };
           // Generate alternatives for each slot
           var alternatives = scoredSlots
-            .filter(function (s) {
-              return s.slot_time !== slot.slot_time;
-            })
+            .filter((s) => s.slot_time !== slot.slot_time)
             .slice(0, 3)
-            .map(function (alt) {
-              return {
-                slot_time: alt.slot_time,
-                staff_id: alt.staff_id,
-                confidence_score: alt.confidence_score,
-              };
-            });
+            .map((alt) => ({
+              slot_time: alt.slot_time,
+              staff_id: alt.staff_id,
+              confidence_score: alt.confidence_score,
+            }));
           optimizedSlot.alternative_slots = alternatives;
           optimizedSlots.push(optimizedSlot);
         };
@@ -455,12 +444,10 @@ var AISchedulingOptimizer = /** @class */ (function () {
               patient_id: request.patient_id,
               suggested_slot:
                 (_a = suggestions[0]) === null || _a === void 0 ? void 0 : _a.slot_time,
-              alternative_slots: suggestions.slice(1).map(function (s) {
-                return {
-                  slot_time: s.slot_time,
-                  confidence_score: s.confidence_score,
-                };
-              }),
+              alternative_slots: suggestions.slice(1).map((s) => ({
+                slot_time: s.slot_time,
+                confidence_score: s.confidence_score,
+              })),
               optimization_factors:
                 ((_b = suggestions[0]) === null || _b === void 0
                   ? void 0
@@ -528,7 +515,7 @@ var AISchedulingOptimizer = /** @class */ (function () {
       });
     });
   };
-  AISchedulingOptimizer.prototype.mergePreferenceData = function (currentPrefs, outcome) {
+  AISchedulingOptimizer.prototype.mergePreferenceData = (currentPrefs, outcome) => {
     // Simplified preference learning - would use more sophisticated ML
     var satisfaction = outcome.satisfaction_score || 3;
     if (satisfaction >= 4) {
@@ -547,7 +534,7 @@ var AISchedulingOptimizer = /** @class */ (function () {
       });
     }
   };
-  AISchedulingOptimizer.prototype.createNewPreferences = function (patientId, outcome) {
+  AISchedulingOptimizer.prototype.createNewPreferences = (patientId, outcome) => {
     var appointmentDate = new Date(outcome.appointment_time);
     return {
       patient_id: patientId,
@@ -600,7 +587,7 @@ var AISchedulingOptimizer = /** @class */ (function () {
       });
     });
   };
-  AISchedulingOptimizer.prototype.aggregateAnalytics = function (data) {
+  AISchedulingOptimizer.prototype.aggregateAnalytics = (data) => {
     var metrics = {
       total_appointments_optimized: data.length,
       average_ai_influence: 0,
@@ -610,29 +597,21 @@ var AISchedulingOptimizer = /** @class */ (function () {
     };
     if (data.length > 0) {
       metrics.average_ai_influence =
-        data.reduce(function (sum, item) {
-          return sum + (item.ai_influence_score || 0);
-        }, 0) / data.length;
-      var utilizationData = data.filter(function (item) {
-        return item.metric_type === "utilization";
-      });
+        data.reduce((sum, item) => sum + (item.ai_influence_score || 0), 0) / data.length;
+      var utilizationData = data.filter((item) => item.metric_type === "utilization");
       if (utilizationData.length > 0) {
         metrics.utilization_improvement =
-          utilizationData.reduce(function (sum, item) {
-            return sum + item.value;
-          }, 0) / utilizationData.length;
+          utilizationData.reduce((sum, item) => sum + item.value, 0) / utilizationData.length;
       }
     }
     return metrics;
   };
-  AISchedulingOptimizer.prototype.calculateAIImpact = function (data) {
-    return {
-      efficiency_gain: "15%", // Would calculate from actual data
-      revenue_increase: "12%",
-      patient_satisfaction_increase: "8%",
-      staff_workload_optimization: "20%",
-    };
-  };
+  AISchedulingOptimizer.prototype.calculateAIImpact = (data) => ({
+    efficiency_gain: "15%", // Would calculate from actual data
+    revenue_increase: "12%",
+    patient_satisfaction_increase: "8%",
+    staff_workload_optimization: "20%",
+  });
   AISchedulingOptimizer.prototype.getPatientPreferenceData = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_5;
@@ -726,14 +705,12 @@ var AISchedulingOptimizer = /** @class */ (function () {
       });
     });
   };
-  AISchedulingOptimizer.prototype.generateRecommendations = function (data) {
-    return [
-      "Consider increasing AI influence during peak hours",
-      "Staff efficiency patterns suggest morning slots are optimal",
-      "Patient preference learning is improving - continue current approach",
-      "Revenue optimization can be enhanced with dynamic pricing",
-    ];
-  };
+  AISchedulingOptimizer.prototype.generateRecommendations = (data) => [
+    "Consider increasing AI influence during peak hours",
+    "Staff efficiency patterns suggest morning slots are optimal",
+    "Patient preference learning is improving - continue current approach",
+    "Revenue optimization can be enhanced with dynamic pricing",
+  ];
   return AISchedulingOptimizer;
 })();
 exports.AISchedulingOptimizer = AISchedulingOptimizer;

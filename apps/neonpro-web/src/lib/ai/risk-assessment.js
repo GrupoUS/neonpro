@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI-powered Risk Assessment Engine
  * Provides comprehensive patient health risk analysis with machine learning models
@@ -12,15 +11,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -40,13 +39,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,9 +67,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -142,14 +139,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIRiskAssessmentEngine = void 0;
 /**
  * AI Risk Assessment Engine
  * Core system for patient health risk analysis and prediction
  */
-var AIRiskAssessmentEngine = /** @class */ (function () {
+var AIRiskAssessmentEngine = /** @class */ (() => {
   function AIRiskAssessmentEngine() {
     this.models = new Map();
     this.riskWeights = new Map();
@@ -284,9 +281,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
       });
     }
     // Chronic conditions
-    var chronicConditions = medicalHistory.filter(function (record) {
-      return record.condition_type === "chronic";
-    });
+    var chronicConditions = medicalHistory.filter((record) => record.condition_type === "chronic");
     if (chronicConditions.length > 0) {
       factors.push({
         id: "chronic_conditions",
@@ -311,9 +306,9 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
       });
     }
     // Previous complications
-    var complications = medicalHistory.filter(function (record) {
-      return record.complications && record.complications.length > 0;
-    });
+    var complications = medicalHistory.filter(
+      (record) => record.complications && record.complications.length > 0,
+    );
     if (complications.length > 0) {
       factors.push({
         id: "previous_complications",
@@ -390,9 +385,9 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
     var factors = [];
     // Appointment adherence
     var totalAppointments = appointmentHistory.length;
-    var missedAppointments = appointmentHistory.filter(function (apt) {
-      return apt.status === "no_show" || apt.status === "cancelled_late";
-    }).length;
+    var missedAppointments = appointmentHistory.filter(
+      (apt) => apt.status === "no_show" || apt.status === "cancelled_late",
+    ).length;
     if (totalAppointments > 0) {
       var adherenceRate = (totalAppointments - missedAppointments) / totalAppointments;
       if (adherenceRate < 0.8) {
@@ -408,9 +403,9 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
       }
     }
     // Treatment compliance
-    var incompletetreatments = treatmentHistory.filter(function (treatment) {
-      return treatment.status === "incomplete" || treatment.status === "abandoned";
-    }).length;
+    var incompletetreatments = treatmentHistory.filter(
+      (treatment) => treatment.status === "incomplete" || treatment.status === "abandoned",
+    ).length;
     if (incompletetreatments > 0 && treatmentHistory.length > 0) {
       var completionRate =
         (treatmentHistory.length - incompletetreatments) / treatmentHistory.length;
@@ -450,9 +445,9 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
   AIRiskAssessmentEngine.prototype.analyzeTreatmentRiskFactors = function (treatmentHistory) {
     var factors = [];
     // Multiple concurrent treatments
-    var activeTreatments = treatmentHistory.filter(function (treatment) {
-      return treatment.status === "active" || treatment.status === "in_progress";
-    });
+    var activeTreatments = treatmentHistory.filter(
+      (treatment) => treatment.status === "active" || treatment.status === "in_progress",
+    );
     if (activeTreatments.length > 2) {
       factors.push({
         id: "multiple_treatments",
@@ -468,14 +463,13 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
       });
     }
     // Recent adverse reactions
-    var recentReactions = treatmentHistory.filter(function (treatment) {
-      return (
+    var recentReactions = treatmentHistory.filter(
+      (treatment) =>
         treatment.adverse_reactions &&
         treatment.adverse_reactions.length > 0 &&
         new Date(treatment.end_date || treatment.start_date) >
-          new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)
-      );
-    });
+          new Date(Date.now() - 365 * 24 * 60 * 60 * 1000),
+    );
     if (recentReactions.length > 0) {
       factors.push({
         id: "recent_adverse_reactions",
@@ -492,7 +486,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Calculate overall risk score from individual risk factors
    */
-  AIRiskAssessmentEngine.prototype.calculateOverallRiskScore = function (riskFactors) {
+  AIRiskAssessmentEngine.prototype.calculateOverallRiskScore = (riskFactors) => {
     if (riskFactors.length === 0) return 10; // Low baseline risk
     var weightedScore = 0;
     var totalWeight = 0;
@@ -520,7 +514,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Determine risk level based on overall score
    */
-  AIRiskAssessmentEngine.prototype.determineRiskLevel = function (score) {
+  AIRiskAssessmentEngine.prototype.determineRiskLevel = (score) => {
     if (score >= 75) return "critical";
     if (score >= 50) return "high";
     if (score >= 25) return "moderate";
@@ -599,20 +593,14 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
       var alerts, criticalFactors, allergyAlert, drugInteractions, age;
       return __generator(this, function (_a) {
         alerts = [];
-        criticalFactors = riskFactors.filter(function (factor) {
-          return factor.severity === "critical";
-        });
+        criticalFactors = riskFactors.filter((factor) => factor.severity === "critical");
         if (criticalFactors.length > 0) {
           alerts.push({
             id: "critical_risk_factors",
             type: "complication_risk",
             severity: "critical",
             message: "Critical risk factors identified: ".concat(
-              criticalFactors
-                .map(function (f) {
-                  return f.name;
-                })
-                .join(", "),
+              criticalFactors.map((f) => f.name).join(", "),
             ),
             affected_treatments: ["all"],
             action_required: "Mandatory specialist consultation before proceeding",
@@ -648,16 +636,16 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Generate personalized recommendations based on risk assessment
    */
-  AIRiskAssessmentEngine.prototype.generateRecommendations = function (
+  AIRiskAssessmentEngine.prototype.generateRecommendations = (
     riskFactors,
     predictions,
     safetyAlerts,
-  ) {
+  ) => {
     var recommendations = [];
     // Risk mitigation recommendations
-    var highRiskFactors = riskFactors.filter(function (factor) {
-      return factor.severity === "high" || factor.severity === "critical";
-    });
+    var highRiskFactors = riskFactors.filter(
+      (factor) => factor.severity === "high" || factor.severity === "critical",
+    );
     if (highRiskFactors.length > 0) {
       recommendations.push(
         "Consider pre-treatment optimization period to address high-risk factors",
@@ -665,43 +653,29 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
       recommendations.push("Implement enhanced monitoring protocol during and after treatment");
     }
     // Lifestyle modification recommendations
-    var lifestyleFactors = riskFactors.filter(function (factor) {
-      return factor.category === "lifestyle";
-    });
+    var lifestyleFactors = riskFactors.filter((factor) => factor.category === "lifestyle");
     if (lifestyleFactors.length > 0) {
       recommendations.push("Provide lifestyle modification counseling before treatment");
-      if (
-        lifestyleFactors.some(function (f) {
-          return f.id === "smoking";
-        })
-      ) {
+      if (lifestyleFactors.some((f) => f.id === "smoking")) {
         recommendations.push(
           "Strongly recommend smoking cessation at least 2 weeks before treatment",
         );
       }
     }
     // Behavioral intervention recommendations
-    var behavioralFactors = riskFactors.filter(function (factor) {
-      return factor.category === "behavioral";
-    });
+    var behavioralFactors = riskFactors.filter((factor) => factor.category === "behavioral");
     if (behavioralFactors.length > 0) {
       recommendations.push("Implement patient engagement strategies to improve compliance");
       recommendations.push("Consider motivational interviewing techniques");
     }
     // Prediction-based recommendations
-    var highRiskPredictions = predictions.filter(function (pred) {
-      return pred.probability > 0.5;
-    });
+    var highRiskPredictions = predictions.filter((pred) => pred.probability > 0.5);
     if (highRiskPredictions.length > 0) {
       recommendations.push("Implement preventive measures for predicted complications");
       recommendations.push("Schedule more frequent follow-up appointments");
     }
     // Safety alert recommendations
-    if (
-      safetyAlerts.some(function (alert) {
-        return alert.severity === "critical";
-      })
-    ) {
+    if (safetyAlerts.some((alert) => alert.severity === "critical")) {
       recommendations.push("Mandatory specialist consultation required before proceeding");
     }
     return recommendations;
@@ -715,9 +689,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
     var dataCompleteness = this.assessDataCompleteness(patient);
     confidenceScore += dataCompleteness * 0.3;
     // Increase confidence based on evidence quality
-    var strongEvidenceFactors = riskFactors.filter(function (f) {
-      return f.evidence_level === "strong";
-    }).length;
+    var strongEvidenceFactors = riskFactors.filter((f) => f.evidence_level === "strong").length;
     var totalFactors = riskFactors.length;
     if (totalFactors > 0) {
       confidenceScore += (strongEvidenceFactors / totalFactors) * 0.2;
@@ -727,7 +699,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Calculate next assessment date based on risk level
    */
-  AIRiskAssessmentEngine.prototype.calculateNextAssessmentDate = function (riskLevel, patient) {
+  AIRiskAssessmentEngine.prototype.calculateNextAssessmentDate = (riskLevel, patient) => {
     var now = new Date();
     var daysToAdd =
       {
@@ -739,7 +711,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
     return new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
   };
   // Helper methods
-  AIRiskAssessmentEngine.prototype.calculateAge = function (birthDate) {
+  AIRiskAssessmentEngine.prototype.calculateAge = (birthDate) => {
     var birth = new Date(birthDate);
     var today = new Date();
     var age = today.getFullYear() - birth.getFullYear();
@@ -749,10 +721,10 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
     }
     return age;
   };
-  AIRiskAssessmentEngine.prototype.calculateInfectionRisk = function (patient, riskFactors) {
+  AIRiskAssessmentEngine.prototype.calculateInfectionRisk = (patient, riskFactors) => {
     var risk = 0.1; // Base risk
     // Increase risk based on relevant factors
-    riskFactors.forEach(function (factor) {
+    riskFactors.forEach((factor) => {
       if (factor.id === "smoking") risk += 0.3;
       if (factor.id === "chronic_conditions") risk += 0.2;
       if (factor.id === "previous_complications") risk += 0.25;
@@ -760,12 +732,9 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
     });
     return Math.min(risk, 0.9);
   };
-  AIRiskAssessmentEngine.prototype.calculateHealingComplicationRisk = function (
-    patient,
-    riskFactors,
-  ) {
+  AIRiskAssessmentEngine.prototype.calculateHealingComplicationRisk = (patient, riskFactors) => {
     var risk = 0.05; // Base risk
-    riskFactors.forEach(function (factor) {
+    riskFactors.forEach((factor) => {
       if (factor.id === "age_risk") risk += 0.2;
       if (factor.id === "smoking") risk += 0.35;
       if (factor.id === "chronic_conditions") risk += 0.25;
@@ -773,22 +742,22 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
     });
     return Math.min(risk, 0.8);
   };
-  AIRiskAssessmentEngine.prototype.calculateSatisfactionRisk = function (patient, riskFactors) {
+  AIRiskAssessmentEngine.prototype.calculateSatisfactionRisk = (patient, riskFactors) => {
     var satisfaction = 0.8; // Base satisfaction
-    riskFactors.forEach(function (factor) {
+    riskFactors.forEach((factor) => {
       if (factor.id === "poor_communication") satisfaction -= 0.2;
       if (factor.id === "poor_adherence") satisfaction -= 0.15;
       if (factor.id === "poor_compliance") satisfaction -= 0.15;
     });
     return Math.max(satisfaction, 0.2);
   };
-  AIRiskAssessmentEngine.prototype.checkAllergyContraindications = function (allergies) {
+  AIRiskAssessmentEngine.prototype.checkAllergyContraindications = (allergies) => {
     var commonTreatmentAllergens = ["lidocaine", "latex", "iodine", "antibiotics"];
-    var relevantAllergies = allergies.filter(function (allergy) {
-      return commonTreatmentAllergens.some(function (allergen) {
-        return allergy.toLowerCase().includes(allergen.toLowerCase());
-      });
-    });
+    var relevantAllergies = allergies.filter((allergy) =>
+      commonTreatmentAllergens.some((allergen) =>
+        allergy.toLowerCase().includes(allergen.toLowerCase()),
+      ),
+    );
     if (relevantAllergies.length > 0) {
       return {
         id: "allergy_contraindication",
@@ -801,15 +770,13 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
     }
     return null;
   };
-  AIRiskAssessmentEngine.prototype.checkDrugInteractions = function (medications) {
+  AIRiskAssessmentEngine.prototype.checkDrugInteractions = (medications) => {
     var alerts = [];
     // Check for blood thinners
     var bloodThinners = ["warfarin", "aspirin", "clopidogrel", "rivaroxaban"];
-    var hasBloodThinners = medications.some(function (med) {
-      return bloodThinners.some(function (bt) {
-        return med.toLowerCase().includes(bt.toLowerCase());
-      });
-    });
+    var hasBloodThinners = medications.some((med) =>
+      bloodThinners.some((bt) => med.toLowerCase().includes(bt.toLowerCase())),
+    );
     if (hasBloodThinners) {
       alerts.push({
         id: "blood_thinner_interaction",
@@ -822,7 +789,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
     }
     return alerts;
   };
-  AIRiskAssessmentEngine.prototype.assessDataCompleteness = function (patient) {
+  AIRiskAssessmentEngine.prototype.assessDataCompleteness = (patient) => {
     var completeness = 0;
     var fields = [
       patient.medical_history,
@@ -831,7 +798,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
       patient.lifestyle_factors,
       patient.biometrics,
     ];
-    fields.forEach(function (field) {
+    fields.forEach((field) => {
       if (field && (Array.isArray(field) ? field.length > 0 : Object.keys(field).length > 0)) {
         completeness += 0.2;
       }
@@ -840,7 +807,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
   };
   AIRiskAssessmentEngine.prototype.storeAssessment = function (assessment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Store assessment in database for continuous learning
         // This would integrate with the database layer
         console.log("Storing risk assessment for patient:", assessment.patient_id);
@@ -865,7 +832,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
   };
   AIRiskAssessmentEngine.prototype.loadModels = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Load pre-trained ML models for risk assessment
         // This would load actual ML models in production
         console.log("Loading AI risk assessment models...");
@@ -878,7 +845,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
    */
   AIRiskAssessmentEngine.prototype.updateModelWeights = function (outcomeData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement continuous learning from clinic outcomes
         console.log("Updating model weights with new outcome data");
         return [2 /*return*/];
@@ -890,7 +857,7 @@ var AIRiskAssessmentEngine = /** @class */ (function () {
    */
   AIRiskAssessmentEngine.prototype.validateModelPerformance = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Return current model performance metrics
         return [
           2 /*return*/,

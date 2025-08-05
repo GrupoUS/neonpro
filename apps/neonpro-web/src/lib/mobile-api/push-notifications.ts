@@ -5,19 +5,19 @@
 
 import type { createClient } from "@supabase/supabase-js";
 import type {
+  DevicePreferences,
+  DeviceRegistration,
+  NotificationAnalytics,
+  NotificationBatch,
+  NotificationCategory,
+  NotificationMetrics,
+  NotificationPriority,
+  NotificationSchedule,
+  NotificationStatus,
+  NotificationTemplate,
   PushNotificationConfig,
   PushNotificationPayload,
-  DeviceRegistration,
-  NotificationTemplate,
-  NotificationAnalytics,
-  NotificationStatus,
-  NotificationPriority,
-  NotificationCategory,
   PushNotificationResult,
-  NotificationBatch,
-  NotificationSchedule,
-  DevicePreferences,
-  NotificationMetrics,
 } from "./types";
 
 /**

@@ -7,13 +7,13 @@ import type { AnalyticsRepository } from "./repository";
 import type {
   AnalyticsQuery,
   AnalyticsResponse,
-  RevenueAnalytics,
   ConversionAnalytics,
   ForecastData,
-  TrialConversionPrediction,
   MetricCategory,
   MetricPeriod,
   RealTimeMetric,
+  RevenueAnalytics,
+  TrialConversionPrediction,
 } from "./types";
 
 export class AnalyticsService {

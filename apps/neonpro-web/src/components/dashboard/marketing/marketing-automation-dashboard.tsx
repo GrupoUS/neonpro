@@ -1,6 +1,28 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Edit,
+  MoreVertical,
+  Pause,
+  Play,
+  Plus,
+  Send,
+  Settings,
+  Target,
+  Trash2,
+  Users,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,13 +30,23 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Badge } from "@/components/ui/badge";
-import type { Switch } from "@/components/ui/switch";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
   Select,
   SelectContent,
@@ -22,15 +54,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import type { Switch } from "@/components/ui/switch";
 import type {
   Table,
   TableBody,
@@ -39,31 +63,7 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type {
-  Calendar,
-  Clock,
-  Play,
-  Pause,
-  Edit,
-  Trash2,
-  Plus,
-  Send,
-  Target,
-  Users,
-  BarChart3,
-  Settings,
-  MoreVertical,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-} from "lucide-react";
-import type { toast } from "sonner";
+import type { Textarea } from "@/components/ui/textarea";
 
 /**
  * Marketing Automation Dashboard Component - Research-Backed Implementation

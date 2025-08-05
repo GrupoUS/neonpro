@@ -1,8 +1,8 @@
 /**
  * Inline function test - define the function right in the test
  */
-describe("Inline Function Test", function () {
-  var validateAppointmentSlotInline = function (datetime, durationMinutes) {
+describe("Inline Function Test", () => {
+  var validateAppointmentSlotInline = (datetime, durationMinutes) => {
     try {
       // Check if datetime is in the future
       var appointmentDate = new Date(datetime);
@@ -22,7 +22,7 @@ describe("Inline Function Test", function () {
       return false;
     }
   };
-  it("should validate with inline function", function () {
+  it("should validate with inline function", () => {
     var futureDate = new Date("2026-12-31T14:00:00.000Z").toISOString();
     var result = validateAppointmentSlotInline(futureDate, 60);
     expect(result).toBe(true);

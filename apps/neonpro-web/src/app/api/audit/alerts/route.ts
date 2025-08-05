@@ -12,12 +12,11 @@
  * @version 1.0.0
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/client";
-import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { AuditSeverity, logAuditEvent, AuditEventType } from "@/lib/audit/audit-system";
+import { AuditEventType, AuditSeverity, logAuditEvent } from "@/lib/audit/audit-system";
 import { rateLimit } from "@/lib/security/rate-limiting";
+import { createClient } from "@/lib/supabase/client";
 
 // Rate limiting: 100 requests per minute
 const limiter = rateLimit({

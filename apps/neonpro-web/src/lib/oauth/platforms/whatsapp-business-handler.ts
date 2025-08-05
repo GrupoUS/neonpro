@@ -1,5 +1,5 @@
 import type { BaseOAuthHandler } from "../base-oauth-handler";
-import type { OAuthPlatform, OAuthTokens, OAuthConfig, OAuthUserInfo, OAuthError } from "../types";
+import type { OAuthConfig, OAuthError, OAuthPlatform, OAuthTokens, OAuthUserInfo } from "../types";
 
 export class WhatsAppBusinessOAuthHandler extends BaseOAuthHandler {
   protected platform: OAuthPlatform = "whatsapp_business";

@@ -7,7 +7,28 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  DollarSign,
+  Download,
+  Filter,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -15,12 +36,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Progress } from "@/components/ui/progress";
-import type { Separator } from "@/components/ui/separator";
 import type {
   Select,
   SelectContent,
@@ -28,32 +44,16 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { FinancialAnalyticsCore } from "@/lib/financial/analytics-core";
 import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  PieChart,
-  BarChart3,
-  Users,
-  Calendar,
-  AlertTriangle,
-  CheckCircle,
-  RefreshCw,
-  Download,
-  Filter,
-  Settings,
-  Target,
-  Activity,
-} from "lucide-react";
-import type { toast } from "sonner";
-import type {
+  DASHBOARD_REFRESH_INTERVALS,
   FinancialDashboardData,
   KPICalculation,
   PerformanceMetrics,
   ReportParameters,
-  DASHBOARD_REFRESH_INTERVALS,
 } from "@/lib/types/financial-reporting";
-import type { FinancialAnalyticsCore } from "@/lib/financial/analytics-core";
 
 interface FinancialReportingDashboardProps {
   clinicId: string;

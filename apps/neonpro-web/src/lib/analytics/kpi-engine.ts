@@ -5,14 +5,14 @@
 
 import type { createClient } from "@supabase/supabase-js";
 import type {
-  FinancialKPI,
-  KPICalculationRequest,
-  KPICalculationResult,
-  KPIThreshold,
-  KPIAlert,
-  KPIHistory,
   DrillDownRequest,
   DrillDownResult,
+  FinancialKPI,
+  KPIAlert,
+  KPICalculationRequest,
+  KPICalculationResult,
+  KPIHistory,
+  KPIThreshold,
 } from "@/lib/types/kpi-types";
 
 export class KPIEngine {

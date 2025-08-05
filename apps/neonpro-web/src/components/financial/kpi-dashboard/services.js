@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PerformanceService = exports.SupabaseKPIService = exports.FinancialKPIService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -156,7 +153,7 @@ var supabase = (0, supabase_js_1.createClient)(
   process.env.SUPABASE_ANON_KEY,
 );
 // Cache implementation
-var CacheManager = /** @class */ (function () {
+var CacheManager = /** @class */ (() => {
   function CacheManager() {
     this.cache = new Map();
   }
@@ -189,7 +186,7 @@ var CacheManager = /** @class */ (function () {
 })();
 var cache = new CacheManager();
 // API Client with retry logic
-var APIClient = /** @class */ (function () {
+var APIClient = /** @class */ (() => {
   function APIClient() {}
   APIClient.prototype.request = function (endpoint_1) {
     return __awaiter(this, arguments, void 0, function (endpoint, options, retries) {
@@ -205,9 +202,7 @@ var APIClient = /** @class */ (function () {
           case 0:
             url = "".concat(config_1.API_CONFIG.baseUrl).concat(endpoint);
             controller = new AbortController();
-            timeoutId = setTimeout(function () {
-              return controller.abort();
-            }, config_1.API_CONFIG.timeout);
+            timeoutId = setTimeout(() => controller.abort(), config_1.API_CONFIG.timeout);
             _a.label = 1;
           case 1:
             _a.trys.push([1, 4, , 7]);
@@ -244,12 +239,7 @@ var APIClient = /** @class */ (function () {
             clearTimeout(timeoutId);
             if (!(retries > 0 && error_1 instanceof Error && error_1.name !== "AbortError"))
               return [3 /*break*/, 6];
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 5:
             _a.sent();
             return [2 /*return*/, this.request(endpoint, options, retries - 1)];
@@ -275,7 +265,7 @@ var APIClient = /** @class */ (function () {
       return __generator(this, function (_a) {
         url = new URL("".concat(config_1.API_CONFIG.baseUrl).concat(endpoint));
         if (params) {
-          Object.entries(params).forEach(function (_a) {
+          Object.entries(params).forEach((_a) => {
             var key = _a[0],
               value = _a[1];
             if (value !== undefined && value !== null) {
@@ -329,7 +319,7 @@ var APIClient = /** @class */ (function () {
 })();
 var apiClient = new APIClient();
 // Financial KPI Service
-var FinancialKPIService = /** @class */ (function () {
+var FinancialKPIService = /** @class */ (() => {
   function FinancialKPIService() {}
   // Fetch KPI data with caching
   FinancialKPIService.getKPIData = function (filters_1) {
@@ -412,32 +402,29 @@ var FinancialKPIService = /** @class */ (function () {
   // Export data
   FinancialKPIService.exportData = function (options) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, apiClient.post(config_1.API_ENDPOINTS.EXPORT, options)];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        apiClient.post(config_1.API_ENDPOINTS.EXPORT, options),
+      ]);
     });
   };
   // Share report
   FinancialKPIService.shareReport = function (options) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, apiClient.post(config_1.API_ENDPOINTS.SHARE, options)];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        apiClient.post(config_1.API_ENDPOINTS.SHARE, options),
+      ]);
     });
   };
   // Mock data generators
   FinancialKPIService.getMockKPIData = function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var mockData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 500))];
           case 1:
             _a.sent(); // Simulate API delay
             mockData = [
@@ -514,7 +501,7 @@ var FinancialKPIService = /** @class */ (function () {
   FinancialKPIService.getMockAlerts = function () {
     return __awaiter(this, void 0, void 0, function () {
       var mockAlerts;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         mockAlerts = [
           {
             id: "alert-1",
@@ -554,7 +541,7 @@ var FinancialKPIService = /** @class */ (function () {
   FinancialKPIService.getMockBenchmarks = function (kpiIds) {
     return __awaiter(this, void 0, void 0, function () {
       var mockBenchmarks;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         mockBenchmarks = [
           {
             id: "benchmark-1",
@@ -584,9 +571,7 @@ var FinancialKPIService = /** @class */ (function () {
         return [
           2 /*return*/,
           {
-            data: mockBenchmarks.filter(function (b) {
-              return kpiIds.includes(b.kpiId);
-            }),
+            data: mockBenchmarks.filter((b) => kpiIds.includes(b.kpiId)),
             success: true,
             error: null,
             timestamp: new Date().toISOString(),
@@ -598,18 +583,16 @@ var FinancialKPIService = /** @class */ (function () {
   FinancialKPIService.getMockForecasts = function (kpiIds, horizon) {
     return __awaiter(this, void 0, void 0, function () {
       var mockForecasts;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         mockForecasts = [
           {
             id: "forecast-1",
             kpiId: "total-revenue",
-            predictions: Array.from({ length: horizon }, function (_, i) {
-              return {
-                date: new Date(Date.now() + (i + 1) * 24 * 60 * 60 * 1000),
-                value: 125000 + Math.random() * 20000 - 10000,
-                confidence: 0.85 - i * 0.01,
-              };
-            }),
+            predictions: Array.from({ length: horizon }, (_, i) => ({
+              date: new Date(Date.now() + (i + 1) * 24 * 60 * 60 * 1000),
+              value: 125000 + Math.random() * 20000 - 10000,
+              confidence: 0.85 - i * 0.01,
+            })),
             model: "ARIMA",
             accuracy: 0.92,
             lastTrained: new Date(),
@@ -619,9 +602,7 @@ var FinancialKPIService = /** @class */ (function () {
         return [
           2 /*return*/,
           {
-            data: mockForecasts.filter(function (f) {
-              return kpiIds.includes(f.kpiId);
-            }),
+            data: mockForecasts.filter((f) => kpiIds.includes(f.kpiId)),
             success: true,
             error: null,
             timestamp: new Date().toISOString(),
@@ -634,11 +615,10 @@ var FinancialKPIService = /** @class */ (function () {
 })();
 exports.FinancialKPIService = FinancialKPIService;
 // Supabase Service for real-time data
-var SupabaseKPIService = /** @class */ (function () {
+var SupabaseKPIService = /** @class */ (() => {
   function SupabaseKPIService() {}
   // Real-time KPI subscription
   SupabaseKPIService.subscribeToKPIUpdates = function (callback, filters) {
-    var _this = this;
     return supabase
       .channel("kpi-updates")
       .on(
@@ -648,9 +628,9 @@ var SupabaseKPIService = /** @class */ (function () {
           schema: "public",
           table: "financial_kpis",
         },
-        function (payload) {
+        (payload) => {
           // Process real-time updates
-          _this.processKPIUpdate(payload, callback, filters);
+          this.processKPIUpdate(payload, callback, filters);
         },
       )
       .subscribe();
@@ -659,7 +639,7 @@ var SupabaseKPIService = /** @class */ (function () {
   SupabaseKPIService.processKPIUpdate = function (payload, callback, filters) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -714,18 +694,12 @@ var SupabaseKPIService = /** @class */ (function () {
     });
   };
   // Process raw financial data
-  SupabaseKPIService.processFinancialData = function (rawData) {
+  SupabaseKPIService.processFinancialData = (rawData) => {
     var totalRevenue = rawData
-      .filter(function (item) {
-        return item.status === "completed";
-      })
-      .reduce(function (sum, item) {
-        return sum + (item.total_amount || 0);
-      }, 0);
+      .filter((item) => item.status === "completed")
+      .reduce((sum, item) => sum + (item.total_amount || 0), 0);
     var totalAppointments = rawData.length;
-    var completedAppointments = rawData.filter(function (item) {
-      return item.status === "completed";
-    }).length;
+    var completedAppointments = rawData.filter((item) => item.status === "completed").length;
     var averageTicket = completedAppointments > 0 ? totalRevenue / completedAppointments : 0;
     return {
       totalRevenue: totalRevenue,
@@ -743,7 +717,7 @@ var SupabaseKPIService = /** @class */ (function () {
   SupabaseKPIService.getServiceMetrics = function (dateRange) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, data, error, serviceGroups, error_4;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -764,7 +738,7 @@ var SupabaseKPIService = /** @class */ (function () {
             serviceGroups =
               (data === null || data === void 0
                 ? void 0
-                : data.reduce(function (acc, item) {
+                : data.reduce((acc, item) => {
                     var _a;
                     var serviceId = (_a = item.service) === null || _a === void 0 ? void 0 : _a.id;
                     if (!serviceId) return acc;
@@ -797,7 +771,7 @@ var SupabaseKPIService = /** @class */ (function () {
   SupabaseKPIService.getProviderMetrics = function (dateRange) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, data, error, providerGroups, error_5;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -818,7 +792,7 @@ var SupabaseKPIService = /** @class */ (function () {
             providerGroups =
               (data === null || data === void 0
                 ? void 0
-                : data.reduce(function (acc, item) {
+                : data.reduce((acc, item) => {
                     var _a;
                     var providerId =
                       (_a = item.provider) === null || _a === void 0 ? void 0 : _a.id;
@@ -838,7 +812,7 @@ var SupabaseKPIService = /** @class */ (function () {
                     return acc;
                   }, {})) || {};
             // Calculate averages
-            Object.values(providerGroups).forEach(function (provider) {
+            Object.values(providerGroups).forEach((provider) => {
               provider.averageTicket =
                 provider.appointments > 0 ? provider.revenue / provider.appointments : 0;
               // Note: utilizationRate would need additional schedule data
@@ -859,14 +833,13 @@ var SupabaseKPIService = /** @class */ (function () {
 })();
 exports.SupabaseKPIService = SupabaseKPIService;
 // Performance monitoring
-var PerformanceService = /** @class */ (function () {
+var PerformanceService = /** @class */ (() => {
   function PerformanceService() {}
   PerformanceService.startTimer = function (operation) {
-    var _this = this;
     var startTime = performance.now();
-    return function () {
+    return () => {
       var duration = performance.now() - startTime;
-      _this.recordMetric(operation, duration);
+      this.recordMetric(operation, duration);
       return duration;
     };
   };

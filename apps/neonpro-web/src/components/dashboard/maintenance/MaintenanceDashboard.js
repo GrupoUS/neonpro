@@ -3,18 +3,17 @@
 // Epic 6 - Story 6.4: Comprehensive equipment maintenance management with scheduling and alerts
 // =====================================================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,10 +133,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -148,7 +145,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var badge_1 = require("@/components/ui/badge");
 var button_1 = require("@/components/ui/button");
@@ -159,25 +156,23 @@ var tabs_1 = require("@/components/ui/tabs");
 var use_toast_1 = require("@/components/ui/use-toast");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
-var SummaryCards = function (_a) {
+var SummaryCards = (_a) => {
   var summary = _a.summary;
   if (!summary) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {__spreadArray([], Array(4), true).map(function (_, i) {
-          return (
-            <card_1.Card key={i} className="animate-pulse">
-              <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="h-4 bg-gray-300 rounded w-20"></div>
-                <div className="h-4 w-4 bg-gray-300 rounded"></div>
-              </card_1.CardHeader>
-              <card_1.CardContent>
-                <div className="h-6 bg-gray-300 rounded w-12 mb-1"></div>
-                <div className="h-3 bg-gray-300 rounded w-24"></div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+        {__spreadArray([], Array(4), true).map((_, i) => (
+          <card_1.Card key={i} className="animate-pulse">
+            <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div className="h-4 bg-gray-300 rounded w-20"></div>
+              <div className="h-4 w-4 bg-gray-300 rounded"></div>
+            </card_1.CardHeader>
+            <card_1.CardContent>
+              <div className="h-6 bg-gray-300 rounded w-12 mb-1"></div>
+              <div className="h-3 bg-gray-300 rounded w-24"></div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
     );
   }
@@ -237,7 +232,7 @@ var SummaryCards = function (_a) {
     </div>
   );
 };
-var EquipmentList = function (_a) {
+var EquipmentList = (_a) => {
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)([]),
     equipment = _b[0],
@@ -257,10 +252,10 @@ var EquipmentList = function (_a) {
   var _g = (0, react_1.useState)(0),
     total = _g[0],
     setTotal = _g[1];
-  var fetchEquipment = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var fetchEquipment = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var queryParams, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -299,14 +294,10 @@ var EquipmentList = function (_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      fetchEquipment();
-    },
-    [clinicId, page, searchTerm, statusFilter],
-  );
-  var getStatusBadge = function (status) {
+  (0, react_1.useEffect)(() => {
+    fetchEquipment();
+  }, [clinicId, page, searchTerm, statusFilter]);
+  var getStatusBadge = (status) => {
     var statusMap = {
       active: { label: "Ativo", className: "bg-green-100 text-green-800" },
       maintenance: {
@@ -325,7 +316,7 @@ var EquipmentList = function (_a) {
     var config = statusMap[status];
     return <badge_1.Badge className={config.className}>{config.label}</badge_1.Badge>;
   };
-  var getCriticalityBadge = function (level) {
+  var getCriticalityBadge = (level) => {
     var criticalityMap = {
       critical: { label: "Crítico", className: "bg-red-100 text-red-800" },
       high: { label: "Alto", className: "bg-orange-100 text-orange-800" },
@@ -344,9 +335,7 @@ var EquipmentList = function (_a) {
           <input_1.Input
             placeholder="Buscar equipamentos..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-8"
           />
         </div>
@@ -371,22 +360,20 @@ var EquipmentList = function (_a) {
       {/* Equipment Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {loading
-          ? __spreadArray([], Array(6), true).map(function (_, i) {
-              return (
-                <card_1.Card key={i} className="animate-pulse">
-                  <card_1.CardHeader>
-                    <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-2">
-                      <div className="h-3 bg-gray-300 rounded"></div>
-                      <div className="h-3 bg-gray-300 rounded w-2/3"></div>
-                    </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })
+          ? __spreadArray([], Array(6), true).map((_, i) => (
+              <card_1.Card key={i} className="animate-pulse">
+                <card_1.CardHeader>
+                  <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-2">
+                    <div className="h-3 bg-gray-300 rounded"></div>
+                    <div className="h-3 bg-gray-300 rounded w-2/3"></div>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))
           : equipment.length === 0
             ? <div className="col-span-full text-center py-8">
                 <lucide_react_1.Settings className="mx-auto h-12 w-12 text-gray-400" />
@@ -399,45 +386,43 @@ var EquipmentList = function (_a) {
                     : "Comece adicionando um novo equipamento."}
                 </p>
               </div>
-            : equipment.map(function (item) {
-                return (
-                  <card_1.Card key={item.id} className="hover:shadow-md transition-shadow">
-                    <card_1.CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-1">
-                          <card_1.CardTitle className="text-base">{item.name}</card_1.CardTitle>
-                          <card_1.CardDescription className="text-sm">
-                            {item.model} • {item.serial_number}
-                          </card_1.CardDescription>
-                        </div>
-                        {getStatusBadge(item.status)}
+            : equipment.map((item) => (
+                <card_1.Card key={item.id} className="hover:shadow-md transition-shadow">
+                  <card_1.CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1">
+                        <card_1.CardTitle className="text-base">{item.name}</card_1.CardTitle>
+                        <card_1.CardDescription className="text-sm">
+                          {item.model} • {item.serial_number}
+                        </card_1.CardDescription>
                       </div>
-                    </card_1.CardHeader>
-                    <card_1.CardContent className="pt-0">
-                      <div className="space-y-2">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <lucide_react_1.Activity className="mr-2 h-4 w-4" />
-                          {item.department} • {item.location}
-                        </div>
-                        <div className="flex items-center justify-between">
-                          {getCriticalityBadge(item.criticality_level)}
-                          <div className="flex space-x-1">
-                            <button_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.Calendar className="h-4 w-4" />
-                            </button_1.Button>
-                            <button_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.Wrench className="h-4 w-4" />
-                            </button_1.Button>
-                            <button_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.Settings className="h-4 w-4" />
-                            </button_1.Button>
-                          </div>
+                      {getStatusBadge(item.status)}
+                    </div>
+                  </card_1.CardHeader>
+                  <card_1.CardContent className="pt-0">
+                    <div className="space-y-2">
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <lucide_react_1.Activity className="mr-2 h-4 w-4" />
+                        {item.department} • {item.location}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        {getCriticalityBadge(item.criticality_level)}
+                        <div className="flex space-x-1">
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.Calendar className="h-4 w-4" />
+                          </button_1.Button>
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.Wrench className="h-4 w-4" />
+                          </button_1.Button>
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.Settings className="h-4 w-4" />
+                          </button_1.Button>
                         </div>
                       </div>
-                    </card_1.CardContent>
-                  </card_1.Card>
-                );
-              })}
+                    </div>
+                  </card_1.CardContent>
+                </card_1.Card>
+              ))}
       </div>
 
       {/* Pagination */}
@@ -450,11 +435,7 @@ var EquipmentList = function (_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setPage(function (p) {
-                  return Math.max(1, p - 1);
-                });
-              }}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
               Anterior
@@ -462,11 +443,7 @@ var EquipmentList = function (_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setPage(function (p) {
-                  return p + 1;
-                });
-              }}
+              onClick={() => setPage((p) => p + 1)}
               disabled={page * 20 >= total}
             >
               Próxima
@@ -477,7 +454,7 @@ var EquipmentList = function (_a) {
     </div>
   );
 };
-var AlertsList = function (_a) {
+var AlertsList = (_a) => {
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)([]),
     alerts = _b[0],
@@ -485,10 +462,10 @@ var AlertsList = function (_a) {
   var _c = (0, react_1.useState)(true),
     loading = _c[0],
     setLoading = _c[1];
-  var fetchAlerts = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var fetchAlerts = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -522,14 +499,10 @@ var AlertsList = function (_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      fetchAlerts();
-    },
-    [clinicId],
-  );
-  var getSeverityIcon = function (severity) {
+  (0, react_1.useEffect)(() => {
+    fetchAlerts();
+  }, [clinicId]);
+  var getSeverityIcon = (severity) => {
     switch (severity) {
       case "critical":
         return <lucide_react_1.XCircle className="h-4 w-4 text-red-600" />;
@@ -543,7 +516,7 @@ var AlertsList = function (_a) {
         return <lucide_react_1.Bell className="h-4 w-4 text-gray-600" />;
     }
   };
-  var getSeverityBadge = function (severity) {
+  var getSeverityBadge = (severity) => {
     var severityMap = {
       critical: { label: "Crítico", className: "bg-red-100 text-red-800" },
       high: { label: "Alto", className: "bg-orange-100 text-orange-800" },
@@ -554,10 +527,10 @@ var AlertsList = function (_a) {
     var config = severityMap[severity] || severityMap.info;
     return <badge_1.Badge className={config.className}>{config.label}</badge_1.Badge>;
   };
-  var handleAcknowledge = function (alertId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleAcknowledge = (alertId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -595,26 +568,23 @@ var AlertsList = function (_a) {
         }
       });
     });
-  };
   return (
     <div className="space-y-4">
       {loading
-        ? __spreadArray([], Array(3), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="animate-pulse">
-                <card_1.CardContent className="p-4">
-                  <div className="flex items-center space-x-4">
-                    <div className="h-4 w-4 bg-gray-300 rounded"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-                    </div>
-                    <div className="h-6 bg-gray-300 rounded w-16"></div>
+        ? __spreadArray([], Array(3), true).map((_, i) => (
+            <card_1.Card key={i} className="animate-pulse">
+              <card_1.CardContent className="p-4">
+                <div className="flex items-center space-x-4">
+                  <div className="h-4 w-4 bg-gray-300 rounded"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                    <div className="h-3 bg-gray-300 rounded w-1/2"></div>
                   </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })
+                  <div className="h-6 bg-gray-300 rounded w-16"></div>
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))
         : alerts.length === 0
           ? <card_1.Card>
               <card_1.CardContent className="p-8 text-center">
@@ -625,45 +595,41 @@ var AlertsList = function (_a) {
                 </p>
               </card_1.CardContent>
             </card_1.Card>
-          : alerts.map(function (alert) {
-              return (
-                <card_1.Card key={alert.id} className="border-l-4 border-l-red-500">
-                  <card_1.CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3">
-                        {getSeverityIcon(alert.severity)}
-                        <div className="flex-1">
-                          <h4 className="text-sm font-medium text-gray-900">{alert.title}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{alert.message}</p>
-                          <div className="flex items-center mt-2 text-xs text-gray-500">
-                            <lucide_react_1.Calendar className="mr-1 h-3 w-3" />
-                            {new Date(alert.created_at).toLocaleDateString("pt-BR")}
-                          </div>
+          : alerts.map((alert) => (
+              <card_1.Card key={alert.id} className="border-l-4 border-l-red-500">
+                <card_1.CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3">
+                      {getSeverityIcon(alert.severity)}
+                      <div className="flex-1">
+                        <h4 className="text-sm font-medium text-gray-900">{alert.title}</h4>
+                        <p className="text-sm text-gray-600 mt-1">{alert.message}</p>
+                        <div className="flex items-center mt-2 text-xs text-gray-500">
+                          <lucide_react_1.Calendar className="mr-1 h-3 w-3" />
+                          {new Date(alert.created_at).toLocaleDateString("pt-BR")}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        {getSeverityBadge(alert.severity)}
-                        {!alert.is_acknowledged && (
-                          <button_1.Button
-                            variant="outline"
-                            size="sm"
-                            onClick={function () {
-                              return handleAcknowledge(alert.id);
-                            }}
-                          >
-                            Reconhecer
-                          </button_1.Button>
-                        )}
-                      </div>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    <div className="flex items-center space-x-2">
+                      {getSeverityBadge(alert.severity)}
+                      {!alert.is_acknowledged && (
+                        <button_1.Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleAcknowledge(alert.id)}
+                        >
+                          Reconhecer
+                        </button_1.Button>
+                      )}
+                    </div>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
     </div>
   );
 };
-var MaintenanceDashboard = function (_a) {
+var MaintenanceDashboard = (_a) => {
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)(null),
     summary = _b[0],
@@ -671,10 +637,10 @@ var MaintenanceDashboard = function (_a) {
   var _c = (0, react_1.useState)(true),
     loading = _c[0],
     setLoading = _c[1];
-  var fetchSummary = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var fetchSummary = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -705,13 +671,9 @@ var MaintenanceDashboard = function (_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      fetchSummary();
-    },
-    [clinicId],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchSummary();
+  }, [clinicId]);
   return (
     <div className="space-y-6">
       {/* Header */}

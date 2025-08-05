@@ -6,7 +6,64 @@
  * Implements Story 7.1 reporting requirements.
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import type {
+  AlertCircle,
+  BarChart3,
+  Calendar,
+  CalendarDays,
+  CheckCircle,
+  Clock,
+  Copy,
+  Download,
+  Edit,
+  Eye,
+  FileText,
+  Filter,
+  Mail,
+  Pause,
+  Play,
+  Plus,
+  RefreshCw,
+  Save,
+  Search,
+  Send,
+  Settings,
+  Trash2,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type {
+  Alert,
+  AlertDescription,
+  Badge,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Input,
+  Label,
+  Progress,
+  ScrollArea,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Separator,
+  Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Textarea,
+} from "@/components/ui";
 import type {
   Card,
   CardContent,
@@ -15,35 +72,6 @@ import type {
   CardTitle,
 } from "@/components/ui/card";
 import type {
-  Button,
-  Badge,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Input,
-  Label,
-  Textarea,
-  Switch,
-  Progress,
-  Alert,
-  AlertDescription,
-  Separator,
-  ScrollArea,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui";
-import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -51,46 +79,18 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type {
-  Calendar,
-  CalendarDays,
-  Download,
-  FileText,
-  Mail,
-  Settings,
-  Clock,
-  Users,
-  BarChart3,
-  TrendingUp,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Play,
-  Pause,
-  Edit,
-  Trash2,
-  Copy,
-  Eye,
-  Filter,
-  Search,
-  Plus,
-  RefreshCw,
-  Save,
-  Send,
-} from "lucide-react";
-
-import type {
-  KPIMetric,
-  DateRangeFilter,
-  DashboardAlert,
-  ExecutiveSummary,
-  ReportTemplate,
-  ReportSchedule,
-  ReportFormat,
-  ReportStatus,
-  KPICategory,
-} from "@/lib/dashboard/types";
 import type { executiveDashboardEngine } from "@/lib/dashboard/executive-dashboard-engine";
+import type {
+  DashboardAlert,
+  DateRangeFilter,
+  ExecutiveSummary,
+  KPICategory,
+  KPIMetric,
+  ReportFormat,
+  ReportSchedule,
+  ReportStatus,
+  ReportTemplate,
+} from "@/lib/dashboard/types";
 import type { formatters } from "@/lib/dashboard/utils";
 
 // ============================================================================
@@ -625,7 +625,7 @@ export const ExecutiveReportGenerator: React.FC<ExecutiveReportGeneratorProps> =
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   const getStatusIcon = (status: ReportStatus) => {

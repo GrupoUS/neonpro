@@ -6,10 +6,10 @@
  * Provides a clean interface for importing financial features throughout the app.
  */
 
+export { FinancialAnalytics } from "./FinancialAnalytics.tsx";
 // Core Financial Components
 export { IntelligentInvoicing } from "./IntelligentInvoicing.tsx";
 export { IntelligentScheduling } from "./IntelligentScheduling.tsx";
-export { FinancialAnalytics } from "./FinancialAnalytics.tsx";
 
 // Type Definitions
 export interface FinancialModuleConfig {

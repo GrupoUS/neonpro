@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ConsentFormBuilder;
 var react_1 = require("react");
@@ -185,7 +182,6 @@ var FIELD_TYPES = [
   { value: "file", label: "File Upload", icon: lucide_react_1.Upload },
 ];
 function ConsentFormBuilder(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     templateId = _a.templateId,
     onSave = _a.onSave;
@@ -216,18 +212,15 @@ function ConsentFormBuilder(_a) {
     setLoading = _f[1];
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      if (templateId) {
-        loadTemplate();
-      }
-    },
-    [templateId],
-  );
-  var loadTemplate = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (templateId) {
+      loadTemplate();
+    }
+  }, [templateId]);
+  var loadTemplate = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!templateId) return [2 /*return*/];
@@ -264,8 +257,7 @@ function ConsentFormBuilder(_a) {
         }
       });
     });
-  };
-  var addField = function (type) {
+  var addField = (type) => {
     var newField = __assign(
       {
         id: Math.random().toString(36).substr(2, 9),
@@ -276,47 +268,43 @@ function ConsentFormBuilder(_a) {
       },
       type === "select" || type === "radio" ? { options: ["Option 1", "Option 2"] } : {},
     );
-    setTemplate(function (prev) {
-      return __assign(__assign({}, prev), {
+    setTemplate((prev) =>
+      __assign(__assign({}, prev), {
         fields: __spreadArray(__spreadArray([], prev.fields, true), [newField], false),
-      });
-    });
+      }),
+    );
   };
-  var updateField = function (fieldId, updates) {
-    setTemplate(function (prev) {
-      return __assign(__assign({}, prev), {
-        fields: prev.fields.map(function (field) {
-          return field.id === fieldId ? __assign(__assign({}, field), updates) : field;
-        }),
-      });
-    });
+  var updateField = (fieldId, updates) => {
+    setTemplate((prev) =>
+      __assign(__assign({}, prev), {
+        fields: prev.fields.map((field) =>
+          field.id === fieldId ? __assign(__assign({}, field), updates) : field,
+        ),
+      }),
+    );
   };
-  var removeField = function (fieldId) {
-    setTemplate(function (prev) {
-      return __assign(__assign({}, prev), {
-        fields: prev.fields.filter(function (field) {
-          return field.id !== fieldId;
-        }),
-      });
-    });
+  var removeField = (fieldId) => {
+    setTemplate((prev) =>
+      __assign(__assign({}, prev), {
+        fields: prev.fields.filter((field) => field.id !== fieldId),
+      }),
+    );
   };
-  var reorderFields = function (dragIndex, hoverIndex) {
+  var reorderFields = (dragIndex, hoverIndex) => {
     var draggedField = template.fields[dragIndex];
     var newFields = __spreadArray([], template.fields, true);
     newFields.splice(dragIndex, 1);
     newFields.splice(hoverIndex, 0, draggedField);
-    setTemplate(function (prev) {
-      return __assign(__assign({}, prev), {
-        fields: newFields.map(function (field, index) {
-          return __assign(__assign({}, field), { order: index });
-        }),
-      });
-    });
+    setTemplate((prev) =>
+      __assign(__assign({}, prev), {
+        fields: newFields.map((field, index) => __assign(__assign({}, field), { order: index })),
+      }),
+    );
   };
-  var saveTemplate = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveTemplate = () =>
+    __awaiter(this, void 0, void 0, function () {
       var templateData, result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!template.title.trim()) {
@@ -393,26 +381,23 @@ function ConsentFormBuilder(_a) {
         }
       });
     });
-  };
-  var duplicateTemplate = function () {
-    setTemplate(function (prev) {
-      return __assign(__assign({}, prev), {
+  var duplicateTemplate = () => {
+    setTemplate((prev) =>
+      __assign(__assign({}, prev), {
         id: undefined,
         title: "".concat(prev.title, " (Copy)"),
         version: "1.0",
         is_active: false,
-      });
-    });
+      }),
+    );
   };
-  var renderField = function (field, isPreview) {
+  var renderField = (field, isPreview) => {
     var _a, _b, _c, _d;
     if (isPreview === void 0) {
       isPreview = false;
     }
     var FieldIcon =
-      ((_a = FIELD_TYPES.find(function (type) {
-        return type.value === field.type;
-      })) === null || _a === void 0
+      ((_a = FIELD_TYPES.find((type) => type.value === field.type)) === null || _a === void 0
         ? void 0
         : _a.icon) || lucide_react_1.Type;
     if (isPreview) {
@@ -435,13 +420,11 @@ function ConsentFormBuilder(_a) {
               <select_1.SelectContent>
                 {(_b = field.options) === null || _b === void 0
                   ? void 0
-                  : _b.map(function (option, index) {
-                      return (
-                        <select_1.SelectItem key={index} value={option}>
-                          {option}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                  : _b.map((option, index) => (
+                      <select_1.SelectItem key={index} value={option}>
+                        {option}
+                      </select_1.SelectItem>
+                    ))}
               </select_1.SelectContent>
             </select_1.Select>
           )}
@@ -455,14 +438,12 @@ function ConsentFormBuilder(_a) {
             <div className="space-y-2">
               {(_c = field.options) === null || _c === void 0
                 ? void 0
-                : _c.map(function (option, index) {
-                    return (
-                      <div key={index} className="flex items-center space-x-2">
-                        <input type="radio" name={field.id} disabled />
-                        <label_1.Label>{option}</label_1.Label>
-                      </div>
-                    );
-                  })}
+                : _c.map((option, index) => (
+                    <div key={index} className="flex items-center space-x-2">
+                      <input type="radio" name={field.id} disabled />
+                      <label_1.Label>{option}</label_1.Label>
+                    </div>
+                  ))}
             </div>
           )}
           {field.type === "date" && <input_1.Input type="date" disabled />}
@@ -492,9 +473,7 @@ function ConsentFormBuilder(_a) {
               <button_1.Button
                 variant="ghost"
                 size="sm"
-                onClick={function () {
-                  return removeField(field.id);
-                }}
+                onClick={() => removeField(field.id)}
                 className="ml-auto text-red-600 hover:text-red-700"
               >
                 <lucide_react_1.Trash2 className="h-4 w-4" />
@@ -507,9 +486,7 @@ function ConsentFormBuilder(_a) {
                 <input_1.Input
                   id={"label-".concat(field.id)}
                   value={field.label}
-                  onChange={function (e) {
-                    return updateField(field.id, { label: e.target.value });
-                  }}
+                  onChange={(e) => updateField(field.id, { label: e.target.value })}
                 />
               </div>
               <div>
@@ -517,9 +494,7 @@ function ConsentFormBuilder(_a) {
                 <input_1.Input
                   id={"placeholder-".concat(field.id)}
                   value={field.placeholder || ""}
-                  onChange={function (e) {
-                    return updateField(field.id, { placeholder: e.target.value });
-                  }}
+                  onChange={(e) => updateField(field.id, { placeholder: e.target.value })}
                 />
               </div>
             </div>
@@ -530,40 +505,36 @@ function ConsentFormBuilder(_a) {
                 <div className="space-y-2">
                   {(_d = field.options) === null || _d === void 0
                     ? void 0
-                    : _d.map(function (option, index) {
-                        return (
-                          <div key={index} className="flex items-center gap-2">
-                            <input_1.Input
-                              value={option}
-                              onChange={function (e) {
-                                var newOptions = __spreadArray([], field.options || [], true);
-                                newOptions[index] = e.target.value;
-                                updateField(field.id, { options: newOptions });
-                              }}
-                            />
-                            <button_1.Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={function () {
-                                var _a;
-                                var newOptions =
-                                  (_a = field.options) === null || _a === void 0
-                                    ? void 0
-                                    : _a.filter(function (_, i) {
-                                        return i !== index;
-                                      });
-                                updateField(field.id, { options: newOptions });
-                              }}
-                            >
-                              <lucide_react_1.Trash2 className="h-4 w-4" />
-                            </button_1.Button>
-                          </div>
-                        );
-                      })}
+                    : _d.map((option, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input_1.Input
+                            value={option}
+                            onChange={(e) => {
+                              var newOptions = __spreadArray([], field.options || [], true);
+                              newOptions[index] = e.target.value;
+                              updateField(field.id, { options: newOptions });
+                            }}
+                          />
+                          <button_1.Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              var _a;
+                              var newOptions =
+                                (_a = field.options) === null || _a === void 0
+                                  ? void 0
+                                  : _a.filter((_, i) => i !== index);
+                              updateField(field.id, { options: newOptions });
+                            }}
+                          >
+                            <lucide_react_1.Trash2 className="h-4 w-4" />
+                          </button_1.Button>
+                        </div>
+                      ))}
                   <button_1.Button
                     variant="outline"
                     size="sm"
-                    onClick={function () {
+                    onClick={() => {
                       var _a;
                       var newOptions = __spreadArray(
                         __spreadArray([], field.options || [], true),
@@ -590,9 +561,7 @@ function ConsentFormBuilder(_a) {
               <switch_1.Switch
                 id={"required-".concat(field.id)}
                 checked={field.required}
-                onCheckedChange={function (checked) {
-                  return updateField(field.id, { required: checked });
-                }}
+                onCheckedChange={(checked) => updateField(field.id, { required: checked })}
               />
               <label_1.Label htmlFor={"required-".concat(field.id)}>Required field</label_1.Label>
             </div>
@@ -625,19 +594,11 @@ function ConsentFormBuilder(_a) {
                 <card_1.CardTitle>{template.title}</card_1.CardTitle>
                 <card_1.CardDescription>{template.description}</card_1.CardDescription>
               </div>
-              <button_1.Button
-                onClick={function () {
-                  return setPreviewMode(false);
-                }}
-              >
-                Exit Preview
-              </button_1.Button>
+              <button_1.Button onClick={() => setPreviewMode(false)}>Exit Preview</button_1.Button>
             </div>
           </card_1.CardHeader>
           <card_1.CardContent className="space-y-6">
-            {template.fields.map(function (field) {
-              return renderField(field, true);
-            })}
+            {template.fields.map((field) => renderField(field, true))}
 
             {template.legal_text && (
               <div className="border-t pt-6">
@@ -678,11 +639,9 @@ function ConsentFormBuilder(_a) {
               <input_1.Input
                 id="title"
                 value={template.title}
-                onChange={function (e) {
-                  return setTemplate(function (prev) {
-                    return __assign(__assign({}, prev), { title: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setTemplate((prev) => __assign(__assign({}, prev), { title: e.target.value }))
+                }
                 placeholder="Enter form title"
               />
             </div>
@@ -691,11 +650,9 @@ function ConsentFormBuilder(_a) {
               <input_1.Input
                 id="version"
                 value={template.version}
-                onChange={function (e) {
-                  return setTemplate(function (prev) {
-                    return __assign(__assign({}, prev), { version: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setTemplate((prev) => __assign(__assign({}, prev), { version: e.target.value }))
+                }
                 placeholder="1.0"
               />
             </div>
@@ -706,11 +663,9 @@ function ConsentFormBuilder(_a) {
             <textarea_1.Textarea
               id="description"
               value={template.description}
-              onChange={function (e) {
-                return setTemplate(function (prev) {
-                  return __assign(__assign({}, prev), { description: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setTemplate((prev) => __assign(__assign({}, prev), { description: e.target.value }))
+              }
               placeholder="Describe the purpose of this form"
               rows={3}
             />
@@ -721,11 +676,9 @@ function ConsentFormBuilder(_a) {
               <label_1.Label htmlFor="form-type">Form Type</label_1.Label>
               <select_1.Select
                 value={template.form_type}
-                onValueChange={function (value) {
-                  return setTemplate(function (prev) {
-                    return __assign(__assign({}, prev), { form_type: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setTemplate((prev) => __assign(__assign({}, prev), { form_type: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Select form type" />
@@ -743,11 +696,9 @@ function ConsentFormBuilder(_a) {
               <switch_1.Switch
                 id="is-active"
                 checked={template.is_active}
-                onCheckedChange={function (checked) {
-                  return setTemplate(function (prev) {
-                    return __assign(__assign({}, prev), { is_active: checked });
-                  });
-                }}
+                onCheckedChange={(checked) =>
+                  setTemplate((prev) => __assign(__assign({}, prev), { is_active: checked }))
+                }
               />
               <label_1.Label htmlFor="is-active">Active template</label_1.Label>
             </div>
@@ -763,15 +714,13 @@ function ConsentFormBuilder(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="grid gap-2 md:grid-cols-4 lg:grid-cols-8">
-            {FIELD_TYPES.map(function (fieldType) {
+            {FIELD_TYPES.map((fieldType) => {
               var Icon = fieldType.icon;
               return (
                 <button_1.Button
                   key={fieldType.value}
                   variant="outline"
-                  onClick={function () {
-                    return addField(fieldType.value);
-                  }}
+                  onClick={() => addField(fieldType.value)}
                   className="h-auto p-3 flex flex-col items-center gap-2"
                 >
                   <Icon className="h-5 w-5" />
@@ -789,12 +738,7 @@ function ConsentFormBuilder(_a) {
           <div className="flex items-center justify-between">
             <card_1.CardTitle>Form Fields ({template.fields.length})</card_1.CardTitle>
             <div className="flex gap-2">
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setPreviewMode(true);
-                }}
-              >
+              <button_1.Button variant="outline" onClick={() => setPreviewMode(true)}>
                 <lucide_react_1.Eye className="h-4 w-4 mr-2" />
                 Preview
               </button_1.Button>
@@ -815,12 +759,8 @@ function ConsentFormBuilder(_a) {
               </alert_1.Alert>
             : <div className="space-y-4">
                 {template.fields
-                  .sort(function (a, b) {
-                    return a.order - b.order;
-                  })
-                  .map(function (field) {
-                    return renderField(field);
-                  })}
+                  .sort((a, b) => a.order - b.order)
+                  .map((field) => renderField(field))}
               </div>}
         </card_1.CardContent>
       </card_1.Card>
@@ -837,11 +777,9 @@ function ConsentFormBuilder(_a) {
             <textarea_1.Textarea
               id="legal-text"
               value={template.legal_text}
-              onChange={function (e) {
-                return setTemplate(function (prev) {
-                  return __assign(__assign({}, prev), { legal_text: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setTemplate((prev) => __assign(__assign({}, prev), { legal_text: e.target.value }))
+              }
               placeholder="Enter legal disclaimers, terms, and conditions..."
               rows={6}
             />
@@ -851,11 +789,9 @@ function ConsentFormBuilder(_a) {
             <textarea_1.Textarea
               id="footer-text"
               value={template.footer_text}
-              onChange={function (e) {
-                return setTemplate(function (prev) {
-                  return __assign(__assign({}, prev), { footer_text: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setTemplate((prev) => __assign(__assign({}, prev), { footer_text: e.target.value }))
+              }
               placeholder="Footer information, contact details, etc."
               rows={3}
             />
@@ -869,12 +805,7 @@ function ConsentFormBuilder(_a) {
           <lucide_react_1.Save className="h-4 w-4 mr-2" />
           {saving ? "Saving..." : "Save Template"}
         </button_1.Button>
-        <button_1.Button
-          variant="outline"
-          onClick={function () {
-            return setPreviewMode(true);
-          }}
-        >
+        <button_1.Button variant="outline" onClick={() => setPreviewMode(true)}>
           <lucide_react_1.Eye className="h-4 w-4 mr-2" />
           Preview Form
         </button_1.Button>

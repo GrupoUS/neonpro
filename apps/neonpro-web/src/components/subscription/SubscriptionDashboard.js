@@ -4,18 +4,17 @@
  * Story: EPIC-001.1 - Subscription Middleware & Management System
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,10 +134,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -149,7 +146,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SubscriptionDashboard;
 var react_1 = require("react");
@@ -161,7 +158,6 @@ var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 function SubscriptionDashboard(_a) {
-  var _this = this;
   var _b, _c, _d;
   var onUpgrade = _a.onUpgrade,
     onManageBilling = _a.onManageBilling,
@@ -175,13 +171,13 @@ function SubscriptionDashboard(_a) {
   var _g = (0, react_1.useState)(null),
     error = _g[0],
     setError = _g[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     fetchSubscriptionData();
   }, []);
-  var fetchSubscriptionData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchSubscriptionData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -211,8 +207,7 @@ function SubscriptionDashboard(_a) {
         }
       });
     });
-  };
-  var getPlanIcon = function (planName) {
+  var getPlanIcon = (planName) => {
     switch (planName) {
       case "basic":
         return <lucide_react_1.Star className="h-5 w-5 text-blue-500" />;
@@ -224,7 +219,7 @@ function SubscriptionDashboard(_a) {
         return <lucide_react_1.Star className="h-5 w-5 text-gray-500" />;
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var statusConfig = {
       trial: { variant: "secondary", label: "Período de Teste" },
       active: { variant: "default", label: "Ativo" },
@@ -239,16 +234,14 @@ function SubscriptionDashboard(_a) {
     return (
       <div className="space-y-6">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {__spreadArray([], Array(4), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardHeader className="animate-pulse">
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                  <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                </card_1.CardHeader>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(4), true).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardHeader className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+              </card_1.CardHeader>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -376,7 +369,7 @@ function SubscriptionDashboard(_a) {
           </card_1.CardDescription>
         </card_1.CardHeader>
         <card_1.CardContent className="space-y-4">
-          {Object.entries(subscription.usage_stats).map(function (_a) {
+          {Object.entries(subscription.usage_stats).map((_a) => {
             var key = _a[0],
               usage = _a[1];
             var isUnlimited = usage.limit === "Unlimited" || usage.limit === -1;
@@ -422,7 +415,7 @@ function SubscriptionDashboard(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="grid gap-3 md:grid-cols-2">
-            {Object.entries(subscription.plan.features).map(function (_a) {
+            {Object.entries(subscription.plan.features).map((_a) => {
               var feature = _a[0],
                 enabled = _a[1];
               var featureLabels = {

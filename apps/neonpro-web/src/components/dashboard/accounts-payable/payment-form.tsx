@@ -1,5 +1,18 @@
 "use client";
 
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  CalendarIcon,
+  CreditCard,
+  DollarSign,
+  FileText,
+  Loader2,
+  Receipt,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Calendar } from "@/components/ui/calendar";
@@ -25,19 +38,6 @@ import type {
 } from "@/components/ui/select";
 import type { Textarea } from "@/components/ui/textarea";
 import type { cn } from "@/lib/utils";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type {
-  AlertCircle,
-  CalendarIcon,
-  CreditCard,
-  DollarSign,
-  FileText,
-  Loader2,
-  Receipt,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 
 export interface Payment {
   id: string;

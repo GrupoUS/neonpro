@@ -1,23 +1,23 @@
 // components/landing/footer.tsx
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
 import type {
-  Shield,
-  Mail,
-  Phone,
-  MapPin,
-  ExternalLink,
-  FileText,
-  Lock,
   Award,
-  MessageSquare,
+  ExternalLink,
   Facebook,
+  FileText,
   Instagram,
   Linkedin,
+  Lock,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Phone,
+  Shield,
   Youtube,
 } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Separator } from "@/components/ui/separator";
 
 export function Footer() {
   const complianceLinks = [

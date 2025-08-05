@@ -205,8 +205,8 @@ export class AnalyticsNotificationService {
       }
 
       // Replace variables in title and message
-      const title = this.replaceVariables(template.title, variables);
-      const message = this.replaceVariables(template.message, variables);
+      const title = AnalyticsNotificationService.replaceVariables(template.title, variables);
+      const message = AnalyticsNotificationService.replaceVariables(template.message, variables);
 
       const notificationData: AnalyticsNotificationData = {
         type,
@@ -222,7 +222,7 @@ export class AnalyticsNotificationService {
         clinicId: overrides.clinicId,
       };
 
-      return await this.processNotification(notificationData);
+      return await AnalyticsNotificationService.processNotification(notificationData);
     } catch (error) {
       console.error("Error sending analytics notification:", error);
       return null;
@@ -234,7 +234,7 @@ export class AnalyticsNotificationService {
    */
   static async sendCustomNotification(data: AnalyticsNotificationData): Promise<string | null> {
     try {
-      return await this.processNotification(data);
+      return await AnalyticsNotificationService.processNotification(data);
     } catch (error) {
       console.error("Error sending custom analytics notification:", error);
       return null;
@@ -247,7 +247,7 @@ export class AnalyticsNotificationService {
   private static async processNotification(
     data: AnalyticsNotificationData,
   ): Promise<string | null> {
-    const notificationId = await this.saveToDatabase(data);
+    const notificationId = await AnalyticsNotificationService.saveToDatabase(data);
 
     if (!notificationId) {
       return null;
@@ -257,11 +257,11 @@ export class AnalyticsNotificationService {
     const promises = data.channels.map((channel) => {
       switch (channel) {
         case "websocket":
-          return this.sendWebSocketNotification(data);
+          return AnalyticsNotificationService.sendWebSocketNotification(data);
         case "email":
-          return this.sendEmailNotification(data);
+          return AnalyticsNotificationService.sendEmailNotification(data);
         case "push":
-          return this.sendPushNotification(data);
+          return AnalyticsNotificationService.sendPushNotification(data);
         default:
           return Promise.resolve();
       }
@@ -558,7 +558,7 @@ export class AnalyticsNotificationService {
         return; // No notification needed
       }
 
-      await this.sendNotification(
+      await AnalyticsNotificationService.sendNotification(
         notificationType,
         userId,
         {
@@ -609,7 +609,7 @@ export class AnalyticsNotificationService {
           };
           break;
 
-        case "conversion":
+        case "conversion": {
           notificationType = "conversion_alert";
           const trend = milestone.previousValue
             ? milestone.value > milestone.previousValue
@@ -625,8 +625,9 @@ export class AnalyticsNotificationService {
                 : "Excelente performance!",
           };
           break;
+        }
 
-        case "churn":
+        case "churn": {
           notificationType = "churn_alert";
           const churnTrend = milestone.previousValue
             ? milestone.value > milestone.previousValue
@@ -642,12 +643,15 @@ export class AnalyticsNotificationService {
                 : "Continue monitorando.",
           };
           break;
+        }
 
         default:
           return;
       }
 
-      await this.sendNotification(notificationType, userId, variables, { clinicId });
+      await AnalyticsNotificationService.sendNotification(notificationType, userId, variables, {
+        clinicId,
+      });
     } catch (error) {
       console.error("Error sending analytics milestone notification:", error);
     }

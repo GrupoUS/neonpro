@@ -1,11 +1,10 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 require("@testing-library/jest-dom");
 var error_boundary_1 = require("@/components/ui/error-boundary");
 // Mock component that throws an error
-var ThrowError = function (_a) {
+var ThrowError = (_a) => {
   var _b = _a.shouldThrow,
     shouldThrow = _b === void 0 ? true : _b;
   if (shouldThrow) {
@@ -15,14 +14,14 @@ var ThrowError = function (_a) {
 };
 // Mock console.error to avoid noise in tests
 var originalConsoleError = console.error;
-beforeAll(function () {
+beforeAll(() => {
   console.error = jest.fn();
 });
-afterAll(function () {
+afterAll(() => {
   console.error = originalConsoleError;
 });
-describe("ErrorBoundary", function () {
-  it("renders children when there is no error", function () {
+describe("ErrorBoundary", () => {
+  it("renders children when there is no error", () => {
     (0, react_2.render)(
       <error_boundary_1.ErrorBoundary>
         <ThrowError shouldThrow={false} />
@@ -30,7 +29,7 @@ describe("ErrorBoundary", function () {
     );
     expect(react_2.screen.getByText("No error")).toBeInTheDocument();
   });
-  it("renders error UI when child component throws", function () {
+  it("renders error UI when child component throws", () => {
     (0, react_2.render)(
       <error_boundary_1.ErrorBoundary>
         <ThrowError />
@@ -41,7 +40,7 @@ describe("ErrorBoundary", function () {
       react_2.screen.getByText("Ocorreu um erro inesperado. Nossa equipe foi notificada."),
     ).toBeInTheDocument();
   });
-  it("shows retry button and resets error state when clicked", function () {
+  it("shows retry button and resets error state when clicked", () => {
     (0, react_2.render)(
       <error_boundary_1.ErrorBoundary>
         <ThrowError />
@@ -53,7 +52,7 @@ describe("ErrorBoundary", function () {
     // After retry, component should re-render and error should be gone
     // Note: In real usage, the component would need to fix the error condition
   });
-  it("shows technical details when showDetails is true", function () {
+  it("shows technical details when showDetails is true", () => {
     (0, react_2.render)(
       <error_boundary_1.ErrorBoundary showDetails={true}>
         <ThrowError />
@@ -61,7 +60,7 @@ describe("ErrorBoundary", function () {
     );
     expect(react_2.screen.getByText("Detalhes técnicos")).toBeInTheDocument();
   });
-  it("calls onError callback when error occurs", function () {
+  it("calls onError callback when error occurs", () => {
     var onErrorMock = jest.fn();
     (0, react_2.render)(
       <error_boundary_1.ErrorBoundary onError={onErrorMock}>
@@ -75,7 +74,7 @@ describe("ErrorBoundary", function () {
       }),
     );
   });
-  it("renders custom fallback when provided", function () {
+  it("renders custom fallback when provided", () => {
     var customFallback = <div>Custom error message</div>;
     (0, react_2.render)(
       <error_boundary_1.ErrorBoundary fallback={customFallback}>
@@ -85,8 +84,8 @@ describe("ErrorBoundary", function () {
     expect(react_2.screen.getByText("Custom error message")).toBeInTheDocument();
   });
 });
-describe("CriticalErrorBoundary", function () {
-  it("renders critical error UI with reload button", function () {
+describe("CriticalErrorBoundary", () => {
+  it("renders critical error UI with reload button", () => {
     // Mock window.location.reload
     var mockReload = jest.fn();
     Object.defineProperty(window, "location", {
@@ -105,22 +104,20 @@ describe("CriticalErrorBoundary", function () {
     expect(mockReload).toHaveBeenCalled();
   });
 });
-describe("withErrorBoundary HOC", function () {
-  it("wraps component with error boundary", function () {
-    var TestComponent = function () {
-      return <div>Test Component</div>;
-    };
+describe("withErrorBoundary HOC", () => {
+  it("wraps component with error boundary", () => {
+    var TestComponent = () => <div>Test Component</div>;
     var WrappedComponent = (0, error_boundary_1.withErrorBoundary)(TestComponent);
     (0, react_2.render)(<WrappedComponent />);
     expect(react_2.screen.getByText("Test Component")).toBeInTheDocument();
   });
-  it("catches errors in wrapped component", function () {
+  it("catches errors in wrapped component", () => {
     var ErrorComponent = (0, error_boundary_1.withErrorBoundary)(ThrowError);
     (0, react_2.render)(<ErrorComponent />);
     expect(react_2.screen.getByText("Oops! Algo deu errado")).toBeInTheDocument();
   });
-  it("passes props to wrapped component", function () {
-    var TestComponent = function (_a) {
+  it("passes props to wrapped component", () => {
+    var TestComponent = (_a) => {
       var message = _a.message;
       return <div>{message}</div>;
     };
@@ -128,18 +125,16 @@ describe("withErrorBoundary HOC", function () {
     (0, react_2.render)(<WrappedComponent message="Hello World" />);
     expect(react_2.screen.getByText("Hello World")).toBeInTheDocument();
   });
-  it("sets correct display name", function () {
-    var TestComponent = function () {
-      return <div>Test</div>;
-    };
+  it("sets correct display name", () => {
+    var TestComponent = () => <div>Test</div>;
     TestComponent.displayName = "TestComponent";
     var WrappedComponent = (0, error_boundary_1.withErrorBoundary)(TestComponent);
     expect(WrappedComponent.displayName).toBe("withErrorBoundary(TestComponent)");
   });
 });
-describe("Error Boundary Edge Cases", function () {
-  it("handles multiple error types correctly", function () {
-    var AsyncErrorComponent = function () {
+describe("Error Boundary Edge Cases", () => {
+  it("handles multiple error types correctly", () => {
+    var AsyncErrorComponent = () => {
       throw new TypeError("Type error occurred");
     };
     (0, react_2.render)(
@@ -153,7 +148,7 @@ describe("Error Boundary Edge Cases", function () {
     react_2.fireEvent.click(detailsButton);
     expect(react_2.screen.getByText("Type error occurred")).toBeInTheDocument();
   });
-  it("maintains error state across re-renders", function () {
+  it("maintains error state across re-renders", () => {
     var rerender = (0, react_2.render)(
       <error_boundary_1.ErrorBoundary>
         <ThrowError />

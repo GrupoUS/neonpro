@@ -1,4 +1,3 @@
-"use strict";
 // Security Middleware
 // Story 1.4: Session Management & Security Implementation
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createSecurityMiddleware = createSecurityMiddleware;
 exports.getMonitoringStats = getMonitoringStats;
@@ -174,12 +171,12 @@ var DEFAULT_SECURITY_CONFIG = {
 // Threat patterns
 var THREAT_PATTERNS = {
   sqlInjection: [
-    /('|(\-\-)|(;)|(\||\|)|(\*|\*))/i,
+    /('|(--)|(;)|(\||\|)|(\*|\*))/i,
     /(union|select|insert|delete|update|drop|create|alter|exec|execute)/i,
   ],
   xss: [/<script[^>]*>.*?<\/script>/gi, /javascript:/gi, /on\w+\s*=/gi],
-  pathTraversal: [/\.\.[\/\\]/g, /\.\.%2f/gi, /\.\.%5c/gi],
-  commandInjection: [/[;&|`$(){}\[\]]/g, /(cat|ls|pwd|whoami|id|uname)/gi],
+  pathTraversal: [/\.\.[/\\]/g, /\.\.%2f/gi, /\.\.%5c/gi],
+  commandInjection: [/[;&|`$(){}[\]]/g, /(cat|ls|pwd|whoami|id|uname)/gi],
 };
 // Request analysis cache
 var requestAnalysisCache = new Map();
@@ -212,7 +209,7 @@ function createSecurityMiddleware(config) {
         response,
         error_1;
       var _b, _c;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         switch (_d.label) {
           case 0:
             _d.trys.push([0, 18, , 20]);
@@ -340,7 +337,7 @@ function createSecurityMiddleware(config) {
             _d.label = 11;
           case 11:
             rateLimitCheck = checkAdvancedRateLimit(clientIP, finalConfig.rateLimits);
-            if (!!rateLimitCheck.allowed) return [3 /*break*/, 13];
+            if (rateLimitCheck.allowed) return [3 /*break*/, 13];
             return [
               4 /*yield*/,
               logSecurityEvent(
@@ -430,7 +427,7 @@ function createSecurityMiddleware(config) {
                   },
                 },
                 securityMonitor,
-              ).catch(function () {}),
+              ).catch(() => {}),
             ];
           case 19:
             _d.sent();
@@ -482,7 +479,7 @@ function analyzeThreatPatterns(request) {
       suspiciousHeaders_1,
       header,
       value;
-    return __generator(this, function (_o) {
+    return __generator(this, (_o) => {
       switch (_o.label) {
         case 0:
           threats = [];
@@ -587,7 +584,7 @@ function detectAnomalies(request, clientIP) {
       now,
       hour,
       referer;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       anomalies = [];
       confidence = 0;
       activeRequests = monitoringData.activeRequests.get(clientIP) || 0;
@@ -601,9 +598,7 @@ function detectAnomalies(request, clientIP) {
         confidence += 20;
       }
       commonHeaders = ["accept", "accept-language", "accept-encoding"];
-      missingHeaders = commonHeaders.filter(function (header) {
-        return !request.headers.get(header);
-      });
+      missingHeaders = commonHeaders.filter((header) => !request.headers.get(header));
       if (missingHeaders.length > 1) {
         anomalies.push("missing_common_headers");
         confidence += 15;
@@ -655,7 +650,7 @@ function checkAdvancedRateLimit(clientIP, limits) {
 function validateSessionSecurity(request, sessionManager, securityMonitor) {
   return __awaiter(this, void 0, void 0, function () {
     var sessionToken, session, clientIP, userAgent, error_3;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           sessionToken = extractSessionToken(request);
@@ -758,7 +753,7 @@ function trackActiveRequest(clientIP) {
   var current = monitoringData.activeRequests.get(clientIP) || 0;
   monitoringData.activeRequests.set(clientIP, current + 1);
   // Clean up after 1 minute
-  setTimeout(function () {
+  setTimeout(() => {
     var updated = monitoringData.activeRequests.get(clientIP) || 0;
     if (updated > 0) {
       monitoringData.activeRequests.set(clientIP, updated - 1);
@@ -811,7 +806,7 @@ function extractSessionToken(request) {
 function getRequestPayload(request) {
   return __awaiter(this, void 0, void 0, function () {
     var contentType, json, formData, error_4;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 7, , 8]);
@@ -829,7 +824,7 @@ function getRequestPayload(request) {
           return [
             2 /*return*/,
             Array.from(formData.entries())
-              .map(function (_a) {
+              .map((_a) => {
                 var key = _a[0],
                   value = _a[1];
                 return "".concat(key, "=").concat(value);
@@ -858,7 +853,7 @@ function getRequestPayload(request) {
 function logSecurityEvent(event, securityMonitor) {
   return __awaiter(this, void 0, void 0, function () {
     var error_5;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -889,17 +884,16 @@ function logSecurityEvent(event, securityMonitor) {
  */
 function getMonitoringStats() {
   return {
-    activeRequests: Array.from(monitoringData.activeRequests.values()).reduce(function (
-      sum,
-      count,
-    ) {
-      return sum + count;
-    }, 0),
+    activeRequests: Array.from(monitoringData.activeRequests.values()).reduce(
+      (sum, count) => sum + count,
+      0,
+    ),
     suspiciousIPs: monitoringData.suspiciousIPs.size,
     blockedIPs: monitoringData.blockedIPs.size,
-    totalAlerts: Array.from(monitoringData.alertCounts.values()).reduce(function (sum, count) {
-      return sum + count;
-    }, 0),
+    totalAlerts: Array.from(monitoringData.alertCounts.values()).reduce(
+      (sum, count) => sum + count,
+      0,
+    ),
   };
 }
 /**

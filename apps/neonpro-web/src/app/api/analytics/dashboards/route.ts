@@ -3,11 +3,11 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from "next/server";
-import { DashboardBuilder } from "@/lib/analytics/dashboard-builder";
-import { dashboardLayoutSchema, dashboardWidgetSchema } from "@/lib/validations/kpi-validations";
-import { createClient } from "@/lib/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { DashboardBuilder } from "@/lib/analytics/dashboard-builder";
+import { createClient } from "@/lib/supabase/server";
+import { dashboardLayoutSchema, dashboardWidgetSchema } from "@/lib/validations/kpi-validations";
 
 const createDashboardSchema = z.object({
   dashboard_name: z.string().min(1).max(255),

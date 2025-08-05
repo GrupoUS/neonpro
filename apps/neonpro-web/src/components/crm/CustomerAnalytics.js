@@ -4,7 +4,6 @@
  * Created: January 24, 2025
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomerAnalytics = CustomerAnalytics;
 var react_1 = require("react");
@@ -22,125 +21,101 @@ function CustomerAnalytics(_a) {
     _d = _a.className,
     className = _d === void 0 ? "" : _d;
   // Calculate comprehensive analytics
-  var analytics = (0, react_1.useMemo)(
-    function () {
-      var totalCustomers = customers.length;
-      if (totalCustomers === 0) {
-        return {
-          overview: {
-            totalCustomers: 0,
-            activeCustomers: 0,
-            newCustomers: 0,
-            atRiskCustomers: 0,
-            churnedCustomers: 0,
-            averageLifetimeValue: 0,
-            totalRevenue: 0,
-            averageSatisfaction: 0,
-            retentionRate: 0,
-          },
-          lifecycle: {
-            new: 0,
-            active: 0,
-            atRisk: 0,
-            churned: 0,
-          },
-          segments: [],
-          topCustomers: [],
-          retention: {
-            totalCustomers: 0,
-            activeCustomers: 0,
-            churnedCustomers: 0,
-            retentionRate: 0,
-            averageLifetimeValue: 0,
-            riskCustomers: [],
-          },
-        };
-      }
-      // Overview metrics
-      var activeCustomers = customers.filter(function (c) {
-        return c.status === "active";
-      }).length;
-      var newCustomers = customers.filter(function (c) {
-        var registrationDate = new Date(c.registrationDate);
-        var thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        return registrationDate >= thirtyDaysAgo;
-      }).length;
-      var customerLifecycles = customers.map(function (c) {
-        return {
-          customer: c,
-          lifecycle: (0, utils_1.determineCustomerLifecycle)(c),
-          churnRisk: (0, utils_1.predictChurnRisk)(c),
-        };
-      });
-      var atRiskCustomers = customerLifecycles.filter(function (cl) {
-        return cl.lifecycle === "at-risk";
-      }).length;
-      var churnedCustomers = customerLifecycles.filter(function (cl) {
-        return cl.lifecycle === "churned";
-      }).length;
-      var totalRevenue = customers.reduce(function (sum, c) {
-        return sum + c.totalSpent;
-      }, 0);
-      var averageLifetimeValue = totalRevenue / totalCustomers;
-      var customersWithSatisfaction = customers.filter(function (c) {
-        return c.satisfactionRating;
-      });
-      var averageSatisfaction =
-        customersWithSatisfaction.length > 0
-          ? customersWithSatisfaction.reduce(function (sum, c) {
-              return sum + (c.satisfactionRating || 0);
-            }, 0) / customersWithSatisfaction.length
-          : 0;
-      // Lifecycle distribution
-      var lifecycleDistribution = {
-        new: customerLifecycles.filter(function (cl) {
-          return cl.lifecycle === "new";
-        }).length,
-        active: customerLifecycles.filter(function (cl) {
-          return cl.lifecycle === "active";
-        }).length,
-        atRisk: customerLifecycles.filter(function (cl) {
-          return cl.lifecycle === "at-risk";
-        }).length,
-        churned: customerLifecycles.filter(function (cl) {
-          return cl.lifecycle === "churned";
-        }).length,
-      };
-      // Customer segmentation
-      var segmentCriteria = {
-        minTotalSpent: 1000, // High value customers
-        minAppointments: 5, // Frequent customers
-        daysSinceLastVisit: 90, // At-risk customers
-        satisfactionThreshold: 4, // Satisfied customers
-      };
-      var segments = (0, utils_1.segmentCustomers)(customers, segmentCriteria);
-      // Top customers by value
-      var topCustomers = (0, utils_1.rankCustomersByValue)(customers).slice(0, 10);
-      // Retention analysis
-      var retention = (0, utils_1.calculateRetentionRate)(customers, 12); // 12 months
+  var analytics = (0, react_1.useMemo)(() => {
+    var totalCustomers = customers.length;
+    if (totalCustomers === 0) {
       return {
         overview: {
-          totalCustomers: totalCustomers,
-          activeCustomers: activeCustomers,
-          newCustomers: newCustomers,
-          atRiskCustomers: atRiskCustomers,
-          churnedCustomers: churnedCustomers,
-          averageLifetimeValue: averageLifetimeValue,
-          totalRevenue: totalRevenue,
-          averageSatisfaction: averageSatisfaction,
-          retentionRate: retention.retentionRate,
+          totalCustomers: 0,
+          activeCustomers: 0,
+          newCustomers: 0,
+          atRiskCustomers: 0,
+          churnedCustomers: 0,
+          averageLifetimeValue: 0,
+          totalRevenue: 0,
+          averageSatisfaction: 0,
+          retentionRate: 0,
         },
-        lifecycle: lifecycleDistribution,
-        segments: segments,
-        topCustomers: topCustomers,
-        retention: retention,
+        lifecycle: {
+          new: 0,
+          active: 0,
+          atRisk: 0,
+          churned: 0,
+        },
+        segments: [],
+        topCustomers: [],
+        retention: {
+          totalCustomers: 0,
+          activeCustomers: 0,
+          churnedCustomers: 0,
+          retentionRate: 0,
+          averageLifetimeValue: 0,
+          riskCustomers: [],
+        },
       };
-    },
-    [customers, appointments],
-  );
+    }
+    // Overview metrics
+    var activeCustomers = customers.filter((c) => c.status === "active").length;
+    var newCustomers = customers.filter((c) => {
+      var registrationDate = new Date(c.registrationDate);
+      var thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return registrationDate >= thirtyDaysAgo;
+    }).length;
+    var customerLifecycles = customers.map((c) => ({
+      customer: c,
+      lifecycle: (0, utils_1.determineCustomerLifecycle)(c),
+      churnRisk: (0, utils_1.predictChurnRisk)(c),
+    }));
+    var atRiskCustomers = customerLifecycles.filter((cl) => cl.lifecycle === "at-risk").length;
+    var churnedCustomers = customerLifecycles.filter((cl) => cl.lifecycle === "churned").length;
+    var totalRevenue = customers.reduce((sum, c) => sum + c.totalSpent, 0);
+    var averageLifetimeValue = totalRevenue / totalCustomers;
+    var customersWithSatisfaction = customers.filter((c) => c.satisfactionRating);
+    var averageSatisfaction =
+      customersWithSatisfaction.length > 0
+        ? customersWithSatisfaction.reduce((sum, c) => sum + (c.satisfactionRating || 0), 0) /
+          customersWithSatisfaction.length
+        : 0;
+    // Lifecycle distribution
+    var lifecycleDistribution = {
+      new: customerLifecycles.filter((cl) => cl.lifecycle === "new").length,
+      active: customerLifecycles.filter((cl) => cl.lifecycle === "active").length,
+      atRisk: customerLifecycles.filter((cl) => cl.lifecycle === "at-risk").length,
+      churned: customerLifecycles.filter((cl) => cl.lifecycle === "churned").length,
+    };
+    // Customer segmentation
+    var segmentCriteria = {
+      minTotalSpent: 1000, // High value customers
+      minAppointments: 5, // Frequent customers
+      daysSinceLastVisit: 90, // At-risk customers
+      satisfactionThreshold: 4, // Satisfied customers
+    };
+    var segments = (0, utils_1.segmentCustomers)(customers, segmentCriteria);
+    // Top customers by value
+    var topCustomers = (0, utils_1.rankCustomersByValue)(customers).slice(0, 10);
+    // Retention analysis
+    var retention = (0, utils_1.calculateRetentionRate)(customers, 12); // 12 months
+    return {
+      overview: {
+        totalCustomers: totalCustomers,
+        activeCustomers: activeCustomers,
+        newCustomers: newCustomers,
+        atRiskCustomers: atRiskCustomers,
+        churnedCustomers: churnedCustomers,
+        averageLifetimeValue: averageLifetimeValue,
+        totalRevenue: totalRevenue,
+        averageSatisfaction: averageSatisfaction,
+        retentionRate: retention.retentionRate,
+      },
+      lifecycle: lifecycleDistribution,
+      segments: segments,
+      topCustomers: topCustomers,
+      retention: retention,
+    };
+  }, [customers, appointments]);
   // Calculate monthly trends (mock data for demonstration)
-  var monthlyTrends = (0, react_1.useMemo)(function () {
+  var monthlyTrends = (0, react_1.useMemo)(() => {
     // In a real application, this would calculate actual monthly trends
     // For demo purposes, we'll generate sample trend data
     var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
@@ -152,20 +127,17 @@ function CustomerAnalytics(_a) {
     };
   }, []);
   // Format currency
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("en-US", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
-  };
   // Format percentage
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(1), "%");
-  };
+  var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
   // Get trend indicator
-  var getTrendIndicator = function (current, previous) {
+  var getTrendIndicator = (current, previous) => {
     if (current > previous) {
       return { icon: lucide_react_1.TrendingUp, color: "text-green-600", direction: "up" };
     } else if (current < previous) {
@@ -222,18 +194,16 @@ function CustomerAnalytics(_a) {
               {analytics.overview.averageSatisfaction.toFixed(1)}/5
             </div>
             <div className="flex items-center mt-1">
-              {[1, 2, 3, 4, 5].map(function (star) {
-                return (
-                  <lucide_react_1.Heart
-                    key={star}
-                    className={"h-3 w-3 ".concat(
-                      star <= Math.round(analytics.overview.averageSatisfaction)
-                        ? "text-red-400 fill-current"
-                        : "text-gray-300",
-                    )}
-                  />
-                );
-              })}
+              {[1, 2, 3, 4, 5].map((star) => (
+                <lucide_react_1.Heart
+                  key={star}
+                  className={"h-3 w-3 ".concat(
+                    star <= Math.round(analytics.overview.averageSatisfaction)
+                      ? "text-red-400 fill-current"
+                      : "text-gray-300",
+                  )}
+                />
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -367,34 +337,32 @@ function CustomerAnalytics(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {analytics.topCustomers.slice(0, 5).map(function (customer, index) {
-                    return (
-                      <div
-                        key={customer.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <badge_1.Badge variant="outline">{index + 1}</badge_1.Badge>
-                          <div>
-                            <div className="font-medium text-sm">{customer.name}</div>
-                            <div className="text-xs text-gray-500">
-                              {customer.appointmentCount} visits
-                            </div>
+                  {analytics.topCustomers.slice(0, 5).map((customer, index) => (
+                    <div
+                      key={customer.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <badge_1.Badge variant="outline">{index + 1}</badge_1.Badge>
+                        <div>
+                          <div className="font-medium text-sm">{customer.name}</div>
+                          <div className="text-xs text-gray-500">
+                            {customer.appointmentCount} visits
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-sm">
-                            {formatCurrency(customer.totalSpent)}
-                          </div>
-                          {customer.satisfactionRating && (
-                            <div className="text-xs text-gray-500">
-                              {customer.satisfactionRating}/5 ⭐
-                            </div>
-                          )}
                         </div>
                       </div>
-                    );
-                  })}
+                      <div className="text-right">
+                        <div className="font-bold text-sm">
+                          {formatCurrency(customer.totalSpent)}
+                        </div>
+                        {customer.satisfactionRating && (
+                          <div className="text-xs text-gray-500">
+                            {customer.satisfactionRating}/5 ⭐
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -521,45 +489,41 @@ function CustomerAnalytics(_a) {
 
         <tabs_1.TabsContent value="segments" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {analytics.segments.map(function (segment, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader>
-                    <card_1.CardTitle>{segment.name}</card_1.CardTitle>
-                    <card_1.CardDescription>{segment.criteria}</card_1.CardDescription>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="text-3xl font-bold mb-2">{segment.size}</div>
-                    <div className="text-sm text-gray-600 mb-4">
-                      {((segment.size / analytics.overview.totalCustomers) * 100).toFixed(1)}% of
-                      total customers
+            {analytics.segments.map((segment, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader>
+                  <card_1.CardTitle>{segment.name}</card_1.CardTitle>
+                  <card_1.CardDescription>{segment.criteria}</card_1.CardDescription>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="text-3xl font-bold mb-2">{segment.size}</div>
+                  <div className="text-sm text-gray-600 mb-4">
+                    {((segment.size / analytics.overview.totalCustomers) * 100).toFixed(1)}% of
+                    total customers
+                  </div>
+                  <progress_1.Progress
+                    value={(segment.size / analytics.overview.totalCustomers) * 100}
+                    className="h-2"
+                  />
+
+                  {segment.customers.slice(0, 3).map((customer) => (
+                    <div
+                      key={customer.id}
+                      className="flex items-center justify-between mt-3 p-2 bg-gray-50 rounded text-sm"
+                    >
+                      <span>{customer.name}</span>
+                      <span className="font-medium">{formatCurrency(customer.totalSpent)}</span>
                     </div>
-                    <progress_1.Progress
-                      value={(segment.size / analytics.overview.totalCustomers) * 100}
-                      className="h-2"
-                    />
+                  ))}
 
-                    {segment.customers.slice(0, 3).map(function (customer) {
-                      return (
-                        <div
-                          key={customer.id}
-                          className="flex items-center justify-between mt-3 p-2 bg-gray-50 rounded text-sm"
-                        >
-                          <span>{customer.name}</span>
-                          <span className="font-medium">{formatCurrency(customer.totalSpent)}</span>
-                        </div>
-                      );
-                    })}
-
-                    {segment.customers.length > 3 && (
-                      <div className="text-xs text-gray-500 mt-2 text-center">
-                        +{segment.customers.length - 3} more customers
-                      </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  {segment.customers.length > 3 && (
+                    <div className="text-xs text-gray-500 mt-2 text-center">
+                      +{segment.customers.length - 3} more customers
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
 
           {analytics.segments.length === 0 && (
@@ -674,23 +638,21 @@ function CustomerAnalytics(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-2">
-                  {analytics.retention.riskCustomers.slice(0, 5).map(function (customer) {
-                    return (
-                      <div
-                        key={customer.id}
-                        className="flex items-center justify-between p-3 bg-orange-50 rounded"
-                      >
-                        <div>
-                          <div className="font-medium">{customer.name}</div>
-                          <div className="text-sm text-gray-600">{customer.email}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold">{formatCurrency(customer.totalSpent)}</div>
-                          <badge_1.Badge variant="destructive">High Risk</badge_1.Badge>
-                        </div>
+                  {analytics.retention.riskCustomers.slice(0, 5).map((customer) => (
+                    <div
+                      key={customer.id}
+                      className="flex items-center justify-between p-3 bg-orange-50 rounded"
+                    >
+                      <div>
+                        <div className="font-medium">{customer.name}</div>
+                        <div className="text-sm text-gray-600">{customer.email}</div>
                       </div>
-                    );
-                  })}
+                      <div className="text-right">
+                        <div className="font-bold">{formatCurrency(customer.totalSpent)}</div>
+                        <badge_1.Badge variant="destructive">High Risk</badge_1.Badge>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>

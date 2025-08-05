@@ -1,6 +1,6 @@
+import type { NextRequest, NextResponse } from "next/server";
 import type { createWidgetSchema, updateWidgetSchema } from "@/app/lib/validations/dashboard";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {

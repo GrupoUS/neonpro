@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/app/utils/supabase/server";
 import { PatientProfileUpdateSchema } from "@/lib/validations/patient-profile";
-import { z } from "zod";
 
 // GET - Retrieve patient profile
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {

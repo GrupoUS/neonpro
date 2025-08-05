@@ -1,10 +1,11 @@
 // Purchase Orders API Endpoints
 // GET /api/inventory/purchase-orders - List purchase orders
 // POST /api/inventory/purchase-orders - Create new purchase order
-import type { purchaseOrderService } from "@/app/lib/services/purchase-order-service";
-import type { createClient } from "@/lib/supabase/server";
+
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
+import type { purchaseOrderService } from "@/app/lib/services/purchase-order-service";
+import type { createClient } from "@/lib/supabase/server";
 
 // Validation schemas
 const createPurchaseOrderSchema = z.object({

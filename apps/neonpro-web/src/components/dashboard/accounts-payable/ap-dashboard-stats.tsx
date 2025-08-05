@@ -1,10 +1,10 @@
 "use client";
 
+import type { AlertCircle, Building, CreditCard, Loader2, Receipt } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AccountsPayableService } from "@/lib/services/accounts-payable";
 import type { VendorService } from "@/lib/services/vendors";
-import type { AlertCircle, Building, CreditCard, Loader2, Receipt } from "lucide-react";
-import type { useEffect, useState } from "react";
 
 export function APDashboardStats() {
   const [stats, setStats] = useState({

@@ -5,8 +5,11 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { useSession, useSessionTimeout } from "@/hooks/auth";
+import type { AlertTriangle, Clock, LogOut, RefreshCw, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Dialog,
   DialogContent,
@@ -15,11 +18,8 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Button } from "@/components/ui/button";
 import type { Progress } from "@/components/ui/progress";
-import type { Badge } from "@/components/ui/badge";
-import type { AlertTriangle, Clock, RefreshCw, LogOut, X } from "lucide-react";
+import type { useSession, useSessionTimeout } from "@/hooks/auth";
 import type { cn } from "@/lib/utils";
 
 // =====================================================

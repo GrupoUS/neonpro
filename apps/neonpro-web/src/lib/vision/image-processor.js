@@ -1,4 +1,3 @@
-"use strict";
 /**
  * High-Performance Image Processor for Medical Analysis
  * Optimized for <30s processing time with parallel processing and GPU acceleration
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,7 +37,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -67,8 +66,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -89,9 +86,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.highPerformanceProcessor = exports.HighPerformanceImageProcessor = void 0;
 var tf = require("@tensorflow/tfjs");
@@ -158,7 +155,7 @@ var tf = require("@tensorflow/tfjs");
  * High-Performance Image Processor
  * Implements advanced optimization techniques for medical image processing
  */
-var HighPerformanceImageProcessor = /** @class */ (function () {
+var HighPerformanceImageProcessor = /** @class */ (() => {
   function HighPerformanceImageProcessor(config) {
     if (config === void 0) {
       config = {};
@@ -187,7 +184,7 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
    * Process image with maximum performance optimization
    * Target: <30s processing time
    */
-  HighPerformanceImageProcessor.prototype.processImage = function (imageInput_1) {
+  HighPerformanceImageProcessor.prototype.processImage = function (_imageInput_1) {
     return __awaiter(this, arguments, void 0, function (imageInput, options) {
       var startTime,
         cacheKey,
@@ -215,7 +212,7 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
             cacheKey = this.generateCacheKey(imageInput, options);
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 8, , 9]);
+            _a.trys.push([1, 8, undefined, 9]);
             // Check cache first
             if (this.config.enableCaching) {
               cached = this.getFromCache(cacheKey);
@@ -334,9 +331,7 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
             // Combine results using weighted average
             currentImage = this.combineEnhancements(results);
             // Cleanup intermediate results
-            results.forEach(function (tensor) {
-              return tensor.dispose();
-            });
+            results.forEach((tensor) => tensor.dispose());
             return [3 /*break*/, 6];
           case 4:
             if (!(enhancementTasks.length === 1)) return [3 /*break*/, 6];
@@ -364,7 +359,7 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
             }
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 3, , 4]);
+            _a.trys.push([1, 3, undefined, 4]);
             return [
               4 /*yield*/,
               this.gpuAccelerator.processImage(image, {
@@ -414,7 +409,7 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
   // Optimized processing methods
   HighPerformanceImageProcessor.prototype.optimizedResize = function (image, targetSize) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Use bilinear interpolation for speed vs quality balance
         return [
           2 /*return*/,
@@ -423,9 +418,9 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
       });
     });
   };
-  HighPerformanceImageProcessor.prototype.fastContrastEnhancement = function (image) {
+  HighPerformanceImageProcessor.prototype.fastContrastEnhancement = (image) => {
     // Optimized contrast enhancement using GPU operations
-    var enhanced = tf.tidy(function () {
+    var enhanced = tf.tidy(() => {
       var mean = tf.mean(image);
       var centered = tf.sub(image, mean);
       var scaled = tf.mul(centered, 1.2);
@@ -433,8 +428,8 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
     });
     return tf.clipByValue(enhanced, 0, 1);
   };
-  HighPerformanceImageProcessor.prototype.acceleratedColorNormalization = function (image) {
-    return tf.tidy(function () {
+  HighPerformanceImageProcessor.prototype.acceleratedColorNormalization = (image) =>
+    tf.tidy(() => {
       var _a = tf.moments(image, [0, 1]),
         mean = _a.mean,
         variance = _a.variance;
@@ -446,20 +441,17 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
       var range = tf.sub(max, min);
       return tf.div(tf.sub(normalized, min), range);
     });
-  };
-  HighPerformanceImageProcessor.prototype.efficientNoiseReduction = function (image) {
+  HighPerformanceImageProcessor.prototype.efficientNoiseReduction = (image) => {
     // Fast noise reduction using average pooling
     return tf.avgPool(image, 3, 1, "same");
   };
-  HighPerformanceImageProcessor.prototype.combineEnhancements = function (enhancements) {
+  HighPerformanceImageProcessor.prototype.combineEnhancements = (enhancements) => {
     if (enhancements.length === 1) return enhancements[0];
     // Weighted average of enhancements
-    var weights = enhancements.map(function () {
-      return 1 / enhancements.length;
-    });
-    return tf.tidy(function () {
+    var weights = enhancements.map(() => 1 / enhancements.length);
+    return tf.tidy(() => {
       var combined = tf.zerosLike(enhancements[0]);
-      enhancements.forEach(function (enhancement, index) {
+      enhancements.forEach((enhancement, index) => {
         var weighted = tf.mul(enhancement, weights[index]);
         combined = tf.add(combined, weighted);
       });
@@ -476,9 +468,9 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
     }
     return result;
   };
-  HighPerformanceImageProcessor.prototype.cpuEdgeDetection = function (image) {
+  HighPerformanceImageProcessor.prototype.cpuEdgeDetection = (image) => {
     // Sobel edge detection optimized for CPU
-    return tf.tidy(function () {
+    return tf.tidy(() => {
       var gray = tf.mean(image, 2, true);
       var sobelX = tf.conv2d(
         gray.expandDims(0),
@@ -510,12 +502,12 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
       return magnitude.squeeze([0, 3]).expandDims(2);
     });
   };
-  HighPerformanceImageProcessor.prototype.efficientSmoothing = function (image) {
+  HighPerformanceImageProcessor.prototype.efficientSmoothing = (image) => {
     // Gaussian blur approximation using separable filters
     return tf.avgPool(image, 3, 1, "same");
   };
-  HighPerformanceImageProcessor.prototype.fastEdgeSharpening = function (image) {
-    return tf.tidy(function () {
+  HighPerformanceImageProcessor.prototype.fastEdgeSharpening = (image) =>
+    tf.tidy(() => {
       var kernel = tf.tensor4d(
         [
           [0, -1, 0],
@@ -525,19 +517,18 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
         [3, 3, 1, 1],
       );
       var channels = tf.split(image, 3, 2);
-      var sharpened = channels.map(function (channel) {
-        return tf.conv2d(channel.expandDims(0), kernel, 1, "same").squeeze([0]);
-      });
+      var sharpened = channels.map((channel) =>
+        tf.conv2d(channel.expandDims(0), kernel, 1, "same").squeeze([0]),
+      );
       return tf.concat(sharpened, 2);
     });
-  };
   // Cache management
   HighPerformanceImageProcessor.prototype.generateCacheKey = function (input, options) {
     var inputHash = typeof input === "string" ? input : this.hashImageData(input);
     var optionsHash = JSON.stringify(options);
     return "".concat(inputHash, "_").concat(btoa(optionsHash));
   };
-  HighPerformanceImageProcessor.prototype.hashImageData = function (imageData) {
+  HighPerformanceImageProcessor.prototype.hashImageData = (_imageData) => {
     // Simple hash for image data
     return "img_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   };
@@ -567,14 +558,12 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
       size: tensorSize,
     });
   };
-  HighPerformanceImageProcessor.prototype.shouldCache = function (tensor, processingTime) {
+  HighPerformanceImageProcessor.prototype.shouldCache = (_tensor, processingTime) => {
     // Cache if processing took significant time
     return processingTime > 5000; // 5 seconds
   };
   HighPerformanceImageProcessor.prototype.getCacheSize = function () {
-    return Array.from(this.cache.values()).reduce(function (total, entry) {
-      return total + entry.size;
-    }, 0);
+    return Array.from(this.cache.values()).reduce((total, entry) => total + entry.size, 0);
   };
   HighPerformanceImageProcessor.prototype.evictLeastUsed = function () {
     var leastUsed = null;
@@ -624,7 +613,7 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
       parallelTasks: this.config.maxParallelTasks,
     };
   };
-  HighPerformanceImageProcessor.prototype.getMemoryUsage = function () {
+  HighPerformanceImageProcessor.prototype.getMemoryUsage = () => {
     return tf.memory().numBytes / (1024 * 1024); // MB
   };
   HighPerformanceImageProcessor.prototype.getAppliedOptimizations = function () {
@@ -704,17 +693,14 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
       });
     });
   };
-  HighPerformanceImageProcessor.prototype.loadImageFromUrl = function (url) {
-    return new Promise(function (resolve, reject) {
+  HighPerformanceImageProcessor.prototype.loadImageFromUrl = (url) =>
+    new Promise((resolve, reject) => {
       var img = new Image();
       img.crossOrigin = "anonymous";
-      img.onload = function () {
-        return resolve(img);
-      };
+      img.onload = () => resolve(img);
       img.onerror = reject;
       img.src = url;
     });
-  };
   /**
    * Get performance statistics
    */
@@ -732,14 +718,10 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
    */
   HighPerformanceImageProcessor.prototype.dispose = function () {
     // Dispose cache tensors
-    this.cache.forEach(function (entry) {
-      return entry.tensor.dispose();
-    });
+    this.cache.forEach((entry) => entry.tensor.dispose());
     this.cache.clear();
     // Terminate workers
-    this.workerPool.forEach(function (worker) {
-      return worker.terminate();
-    });
+    this.workerPool.forEach((worker) => worker.terminate());
     this.workerPool = [];
     // Cleanup GPU resources
     this.gpuAccelerator.dispose();
@@ -748,7 +730,7 @@ var HighPerformanceImageProcessor = /** @class */ (function () {
 })();
 exports.HighPerformanceImageProcessor = HighPerformanceImageProcessor;
 // Supporting classes
-var PerformanceMonitor = /** @class */ (function () {
+var PerformanceMonitor = /** @class */ (() => {
   function PerformanceMonitor() {
     this.metrics = new Map();
     this.cacheHits = 0;
@@ -775,18 +757,14 @@ var PerformanceMonitor = /** @class */ (function () {
   };
   PerformanceMonitor.prototype.getAverageTime = function () {
     var allTimes = Array.from(this.metrics.values()).flat();
-    return allTimes.length > 0
-      ? allTimes.reduce(function (a, b) {
-          return a + b;
-        }, 0) / allTimes.length
-      : 0;
+    return allTimes.length > 0 ? allTimes.reduce((a, b) => a + b, 0) / allTimes.length : 0;
   };
   PerformanceMonitor.prototype.getCacheHitRate = function () {
     return this.totalRequests > 0 ? this.cacheHits / this.totalRequests : 0;
   };
   return PerformanceMonitor;
 })();
-var GPUAccelerator = /** @class */ (function () {
+var GPUAccelerator = /** @class */ (() => {
   function GPUAccelerator(enabled) {
     this.enabled = enabled;
     this.isGPUAvailable = false;
@@ -801,7 +779,7 @@ var GPUAccelerator = /** @class */ (function () {
             if (!this.enabled) return [2 /*return*/];
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 3, , 4]);
+            _a.trys.push([1, 3, undefined, 4]);
             // Check for WebGL support
             return [4 /*yield*/, tf.ready()];
           case 2:
@@ -840,7 +818,7 @@ var GPUAccelerator = /** @class */ (function () {
         // GPU-optimized processing
         return [
           2 /*return*/,
-          tf.tidy(function () {
+          tf.tidy(() => {
             var result = image;
             if (options.edgeDetection) {
               result = _this.gpuEdgeDetection(result);
@@ -857,15 +835,15 @@ var GPUAccelerator = /** @class */ (function () {
       });
     });
   };
-  GPUAccelerator.prototype.gpuEdgeDetection = function (image) {
+  GPUAccelerator.prototype.gpuEdgeDetection = (image) => {
     // GPU-optimized edge detection
     return tf.image.sobel(image.mean(2, true).expandDims(0)).squeeze([0, 3]).expandDims(2);
   };
-  GPUAccelerator.prototype.gpuFeatureExtraction = function (image) {
+  GPUAccelerator.prototype.gpuFeatureExtraction = (image) => {
     // GPU-optimized feature extraction
     return tf.avgPool(image, 2, 2, "same");
   };
-  GPUAccelerator.prototype.gpuTextureAnalysis = function (image) {
+  GPUAccelerator.prototype.gpuTextureAnalysis = (image) => {
     // GPU-optimized texture analysis
     return tf.maxPool(image, 3, 1, "same");
   };
@@ -877,18 +855,18 @@ var GPUAccelerator = /** @class */ (function () {
   };
   return GPUAccelerator;
 })();
-var MemoryManager = /** @class */ (function () {
+var MemoryManager = /** @class */ (() => {
   function MemoryManager(memoryLimit) {
     this.memoryLimit = memoryLimit;
   }
-  MemoryManager.prototype.cleanup = function (tensors) {
-    tensors.forEach(function (tensor) {
+  MemoryManager.prototype.cleanup = (tensors) => {
+    tensors.forEach((tensor) => {
       if (tensor && !tensor.isDisposed) {
         tensor.dispose();
       }
     });
   };
-  MemoryManager.prototype.getCurrentUsage = function () {
+  MemoryManager.prototype.getCurrentUsage = () => {
     return tf.memory().numBytes / (1024 * 1024); // MB
   };
   MemoryManager.prototype.isMemoryAvailable = function (requiredMB) {

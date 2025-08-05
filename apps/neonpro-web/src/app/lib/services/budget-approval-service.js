@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,16 +142,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BudgetApprovalService = void 0;
 var server_1 = require("@/lib/supabase/server");
-var BudgetApprovalService = /** @class */ (function () {
+var BudgetApprovalService = /** @class */ (() => {
   function BudgetApprovalService() {}
   BudgetApprovalService.prototype.getSupabaseClient = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -205,7 +202,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.getBudget = function (budgetId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -228,7 +225,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.updateBudget = function (budgetId, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -254,7 +251,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.listBudgets = function (clinicId, filters) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase
@@ -286,7 +283,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.approveBudget = function (budgetId, approverId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -385,13 +382,13 @@ var BudgetApprovalService = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            allocationsData = allocations.map(function (allocation) {
-              return __assign(__assign({}, allocation), {
+            allocationsData = allocations.map((allocation) =>
+              __assign(__assign({}, allocation), {
                 budget_id: budgetId,
                 available_amount: allocation.allocated_amount,
                 percentage_of_total: 0, // Will be calculated after insert
-              });
-            });
+              }),
+            );
             return [
               4 /*yield*/,
               supabase.from("budget_allocations").insert(allocationsData).select(),
@@ -400,9 +397,10 @@ var BudgetApprovalService = /** @class */ (function () {
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
             if (error)
               throw new Error("Failed to create budget allocations: ".concat(error.message));
-            totalAllocated = allocations.reduce(function (sum, allocation) {
-              return sum + allocation.allocated_amount;
-            }, 0);
+            totalAllocated = allocations.reduce(
+              (sum, allocation) => sum + allocation.allocated_amount,
+              0,
+            );
             return [4 /*yield*/, this.updateBudgetAllocatedAmount(budgetId, totalAllocated)];
           case 2:
             _b.sent();
@@ -414,7 +412,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.getBudgetAllocations = function (budgetId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -439,7 +437,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.updateBudgetAllocation = function (allocationId, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -469,7 +467,7 @@ var BudgetApprovalService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -494,7 +492,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.createCostCenter = function (costCenter, clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -519,7 +517,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.listCostCenters = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -548,7 +546,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.createApprovalRequest = function (request) {
     return __awaiter(this, void 0, void 0, function () {
       var approvals, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             approvals = [
@@ -574,7 +572,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.processApproval = function (request) {
     return __awaiter(this, void 0, void 0, function () {
       var updates, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             updates = {
@@ -611,7 +609,7 @@ var BudgetApprovalService = /** @class */ (function () {
         pendingCount,
         isEligible,
         escalationRequired;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -633,29 +631,21 @@ var BudgetApprovalService = /** @class */ (function () {
             approvedCount =
               (approvals === null || approvals === void 0
                 ? void 0
-                : approvals.filter(function (a) {
-                    return a.status === "approved";
-                  }).length) || 0;
+                : approvals.filter((a) => a.status === "approved").length) || 0;
             rejectedCount =
               (approvals === null || approvals === void 0
                 ? void 0
-                : approvals.filter(function (a) {
-                    return a.status === "rejected";
-                  }).length) || 0;
+                : approvals.filter((a) => a.status === "rejected").length) || 0;
             pendingCount =
               (approvals === null || approvals === void 0
                 ? void 0
-                : approvals.filter(function (a) {
-                    return a.status === "pending";
-                  }).length) || 0;
+                : approvals.filter((a) => a.status === "pending").length) || 0;
             isEligible =
               rejectedCount === 0 && pendingCount === 0 && approvedCount >= totalApprovals;
             escalationRequired =
               (approvals === null || approvals === void 0
                 ? void 0
-                : approvals.some(function (a) {
-                    return a.status === "escalated";
-                  })) || false;
+                : approvals.some((a) => a.status === "escalated")) || false;
             return [
               2 /*return*/,
               {
@@ -680,7 +670,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.getApplicableWorkflowRules = function (amount, category) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -701,7 +691,7 @@ var BudgetApprovalService = /** @class */ (function () {
             // Filter rules based on trigger conditions
             return [
               2 /*return*/,
-              (data || []).filter(function (rule) {
+              (data || []).filter((rule) => {
                 var conditions = rule.trigger_conditions;
                 // Check amount range
                 if (conditions.min_amount && amount < conditions.min_amount) return false;
@@ -719,7 +709,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.createWorkflowRule = function (request, clinicId, userId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -763,18 +753,16 @@ var BudgetApprovalService = /** @class */ (function () {
               (budget.allocated_amount || 0) > 0
                 ? ((budget.spent_amount || 0) / (budget.allocated_amount || 0)) * 100
                 : 0;
-            categories = allocations.map(function (allocation) {
-              return {
-                category: allocation.category,
-                allocated: allocation.allocated_amount,
-                spent: allocation.spent_amount || 0,
-                available: allocation.allocated_amount - (allocation.spent_amount || 0),
-                utilization:
-                  allocation.allocated_amount > 0
-                    ? ((allocation.spent_amount || 0) / allocation.allocated_amount) * 100
-                    : 0,
-              };
-            });
+            categories = allocations.map((allocation) => ({
+              category: allocation.category,
+              allocated: allocation.allocated_amount,
+              spent: allocation.spent_amount || 0,
+              available: allocation.allocated_amount - (allocation.spent_amount || 0),
+              utilization:
+                allocation.allocated_amount > 0
+                  ? ((allocation.spent_amount || 0) / allocation.allocated_amount) * 100
+                  : 0,
+            }));
             return [
               2 /*return*/,
               {
@@ -800,7 +788,7 @@ var BudgetApprovalService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would require more complex queries in a real implementation
         // For now, returning a mock structure
         return [
@@ -929,7 +917,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.createBudgetNotification = function (notification) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -951,7 +939,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.getBudgetNotifications = function (budgetId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -977,7 +965,7 @@ var BudgetApprovalService = /** @class */ (function () {
   BudgetApprovalService.prototype.acknowledgeNotification = function (notificationId, userId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];

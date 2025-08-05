@@ -1,6 +1,24 @@
 "use client";
 
-import type { useState, useMemo } from "react";
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  FileText,
+  MapPin,
+  Plus,
+  Search,
+  Settings,
+  Shield,
+  User,
+  Wrench,
+} from "lucide-react";
+import type { useMemo, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,10 +26,17 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { Input } from "@/components/ui/input";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -27,33 +52,8 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import type {
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Settings,
-  FileText,
-  Calendar,
-  User,
-  MapPin,
-  Wrench,
-  Search,
-  Plus,
-  Download,
-} from "lucide-react";
-import type { ANVISADevice, MaintenanceStatus, ANVISADeviceClass } from "@/types/inventory";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { ANVISADevice, ANVISADeviceClass, MaintenanceStatus } from "@/types/inventory";
 
 // Mock data for ANVISA devices
 const mockANVISADevices: ANVISADevice[] = [

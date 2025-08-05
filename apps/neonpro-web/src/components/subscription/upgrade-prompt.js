@@ -8,18 +8,17 @@
  * @version 1.0.0
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,13 +38,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -67,9 +66,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -141,7 +138,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpgradePrompt = UpgradePrompt;
 var utils_1 = require("@/lib/utils");
@@ -257,7 +254,6 @@ var urgencyConfig = {
   },
 };
 function UpgradePrompt(_a) {
-  var _this = this;
   var isOpen = _a.isOpen,
     onClose = _a.onClose,
     reason = _a.reason,
@@ -278,10 +274,10 @@ function UpgradePrompt(_a) {
   var config = upgradeReasons[reason];
   var urgency = urgencyConfig[config.urgency];
   var Icon = config.icon;
-  var handleUpgrade = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleUpgrade = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!onUpgrade) return [2 /*return*/];
@@ -306,11 +302,10 @@ function UpgradePrompt(_a) {
         }
       });
     });
-  };
-  var handleExtendTrial = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleExtendTrial = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!onExtendTrial) return [2 /*return*/];
@@ -335,7 +330,6 @@ function UpgradePrompt(_a) {
         }
       });
     });
-  };
   var usagePercentage = usageMetrics
     ? Math.round((usageMetrics.current / usageMetrics.limit) * 100)
     : 0;
@@ -404,14 +398,12 @@ function UpgradePrompt(_a) {
               What you'll get with {suggestedPlan}
             </h4>
             <ul className="space-y-2">
-              {config.features.map(function (feature, index) {
-                return (
-                  <li key={index} className="flex items-center text-sm">
-                    <div className="h-1.5 w-1.5 bg-primary rounded-full mr-3" />
-                    {feature}
-                  </li>
-                );
-              })}
+              {config.features.map((feature, index) => (
+                <li key={index} className="flex items-center text-sm">
+                  <div className="h-1.5 w-1.5 bg-primary rounded-full mr-3" />
+                  {feature}
+                </li>
+              ))}
             </ul>
           </div>
         </div>

@@ -12,32 +12,31 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,7 +156,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ForecastAlerts = ForecastAlerts;
 var react_1 = require("react");
@@ -217,7 +214,6 @@ var ALERT_TYPE_CONFIG = {
   },
 };
 function ForecastAlerts(_a) {
-  var _this = this;
   var alerts = _a.alerts,
     onAcknowledge = _a.onAcknowledge,
     _b = _a.className,
@@ -237,41 +233,32 @@ function ForecastAlerts(_a) {
     showDetails = _e[0],
     setShowDetails = _e[1];
   // Calculate alert statistics
-  var stats = (0, react_1.useMemo)(
-    function () {
-      var total = alerts.length;
-      var active = alerts.filter(function (a) {
-        return !a.acknowledged;
-      }).length;
-      var critical = alerts.filter(function (a) {
-        return a.severity === "critical";
-      }).length;
-      var acknowledged = alerts.filter(function (a) {
-        return a.acknowledged;
-      }).length;
-      var byType = alerts.reduce(function (acc, alert) {
-        acc[alert.alert_type] = (acc[alert.alert_type] || 0) + 1;
-        return acc;
-      }, {});
-      var bySeverity = alerts.reduce(function (acc, alert) {
-        acc[alert.severity] = (acc[alert.severity] || 0) + 1;
-        return acc;
-      }, {});
-      return {
-        total: total,
-        active: active,
-        critical: critical,
-        acknowledged: acknowledged,
-        byType: byType,
-        bySeverity: bySeverity,
-      };
-    },
-    [alerts],
-  );
+  var stats = (0, react_1.useMemo)(() => {
+    var total = alerts.length;
+    var active = alerts.filter((a) => !a.acknowledged).length;
+    var critical = alerts.filter((a) => a.severity === "critical").length;
+    var acknowledged = alerts.filter((a) => a.acknowledged).length;
+    var byType = alerts.reduce((acc, alert) => {
+      acc[alert.alert_type] = (acc[alert.alert_type] || 0) + 1;
+      return acc;
+    }, {});
+    var bySeverity = alerts.reduce((acc, alert) => {
+      acc[alert.severity] = (acc[alert.severity] || 0) + 1;
+      return acc;
+    }, {});
+    return {
+      total: total,
+      active: active,
+      critical: critical,
+      acknowledged: acknowledged,
+      byType: byType,
+      bySeverity: bySeverity,
+    };
+  }, [alerts]);
   // Filter alerts based on current filters
   var filteredAlerts = (0, react_1.useMemo)(
-    function () {
-      return alerts.filter(function (alert) {
+    () =>
+      alerts.filter((alert) => {
         // Severity filter
         if (filters.severity !== "all" && alert.severity !== filters.severity) return false;
         // Status filter
@@ -286,48 +273,44 @@ function ForecastAlerts(_a) {
         if (filters.search && !alert.message.toLowerCase().includes(filters.search.toLowerCase()))
           return false;
         return true;
-      });
-    },
+      }),
     [alerts, filters],
   );
   // Group alerts by date
-  var groupedAlerts = (0, react_1.useMemo)(
-    function () {
-      var groups = {};
-      filteredAlerts.forEach(function (alert) {
-        var alertDate = new Date(alert.created_at);
-        var groupKey;
-        if ((0, date_fns_1.isToday)(alertDate)) {
-          groupKey = "Today";
-        } else if ((0, date_fns_1.isYesterday)(alertDate)) {
-          groupKey = "Yesterday";
-        } else {
-          groupKey = (0, date_fns_1.format)(alertDate, "MMMM dd, yyyy");
-        }
-        if (!groups[groupKey]) groups[groupKey] = [];
-        groups[groupKey].push(alert);
-      });
-      // Sort each group by creation time (newest first)
-      Object.keys(groups).forEach(function (key) {
-        groups[key].sort(function (a, b) {
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        });
-      });
-      return groups;
-    },
-    [filteredAlerts],
-  );
+  var groupedAlerts = (0, react_1.useMemo)(() => {
+    var groups = {};
+    filteredAlerts.forEach((alert) => {
+      var alertDate = new Date(alert.created_at);
+      var groupKey;
+      if ((0, date_fns_1.isToday)(alertDate)) {
+        groupKey = "Today";
+      } else if ((0, date_fns_1.isYesterday)(alertDate)) {
+        groupKey = "Yesterday";
+      } else {
+        groupKey = (0, date_fns_1.format)(alertDate, "MMMM dd, yyyy");
+      }
+      if (!groups[groupKey]) groups[groupKey] = [];
+      groups[groupKey].push(alert);
+    });
+    // Sort each group by creation time (newest first)
+    Object.keys(groups).forEach((key) => {
+      groups[key].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
+    });
+    return groups;
+  }, [filteredAlerts]);
   // Handle bulk acknowledgment
-  var handleBulkAcknowledge = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBulkAcknowledge = () =>
+    __awaiter(this, void 0, void 0, function () {
       var acknowledgePromises, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
-            acknowledgePromises = Array.from(selectedAlerts).map(function (alertId) {
-              return onAcknowledge(alertId);
-            });
+            acknowledgePromises = Array.from(selectedAlerts).map((alertId) =>
+              onAcknowledge(alertId),
+            );
             return [4 /*yield*/, Promise.all(acknowledgePromises)];
           case 1:
             _a.sent();
@@ -344,9 +327,8 @@ function ForecastAlerts(_a) {
         }
       });
     });
-  };
   // Handle individual alert selection
-  var toggleAlertSelection = function (alertId) {
+  var toggleAlertSelection = (alertId) => {
     var newSelection = new Set(selectedAlerts);
     if (newSelection.has(alertId)) {
       newSelection.delete(alertId);
@@ -356,12 +338,12 @@ function ForecastAlerts(_a) {
     setSelectedAlerts(newSelection);
   };
   // Format alert time
-  var formatAlertTime = function (dateString) {
+  var formatAlertTime = (dateString) => {
     var date = new Date(dateString);
     return (0, date_fns_1.formatDistanceToNow)(date, { addSuffix: true });
   };
   // Render alert severity badge
-  var renderSeverityBadge = function (severity) {
+  var renderSeverityBadge = (severity) => {
     var config = ALERT_SEVERITY_CONFIG[severity];
     var Icon = config.icon;
     return (
@@ -372,7 +354,7 @@ function ForecastAlerts(_a) {
     );
   };
   // Render alert type badge
-  var renderTypeBadge = function (type) {
+  var renderTypeBadge = (type) => {
     var config = ALERT_TYPE_CONFIG[type];
     var Icon = config.icon;
     return (
@@ -383,7 +365,7 @@ function ForecastAlerts(_a) {
     );
   };
   // Render alert card
-  var renderAlertCard = function (alert) {
+  var renderAlertCard = (alert) => {
     var severityConfig = ALERT_SEVERITY_CONFIG[alert.severity];
     var isSelected = selectedAlerts.has(alert.id);
     var isExpanded = showDetails === alert.id;
@@ -398,9 +380,7 @@ function ForecastAlerts(_a) {
         <div className="flex items-start space-x-3">
           <checkbox_1.Checkbox
             checked={isSelected}
-            onCheckedChange={function () {
-              return toggleAlertSelection(alert.id);
-            }}
+            onCheckedChange={() => toggleAlertSelection(alert.id)}
             className="mt-1"
           />
 
@@ -440,9 +420,7 @@ function ForecastAlerts(_a) {
                   <button_1.Button
                     size="sm"
                     variant="outline"
-                    onClick={function () {
-                      return onAcknowledge(alert.id);
-                    }}
+                    onClick={() => onAcknowledge(alert.id)}
                   >
                     Acknowledge
                   </button_1.Button>
@@ -451,9 +429,7 @@ function ForecastAlerts(_a) {
                 <button_1.Button
                   size="sm"
                   variant="ghost"
-                  onClick={function () {
-                    return setShowDetails(isExpanded ? null : alert.id);
-                  }}
+                  onClick={() => setShowDetails(isExpanded ? null : alert.id)}
                 >
                   <lucide_react_1.MoreHorizontal className="w-4 h-4" />
                 </button_1.Button>
@@ -475,14 +451,12 @@ function ForecastAlerts(_a) {
                   <div>
                     <h5 className="text-sm font-medium mb-2">Recommended Actions:</h5>
                     <ul className="text-sm space-y-1">
-                      {alert.recommended_actions.map(function (action, index) {
-                        return (
-                          <li key={index} className="flex items-start space-x-2">
-                            <span className="w-1 h-1 bg-current rounded-full mt-2 flex-shrink-0" />
-                            <span>{action}</span>
-                          </li>
-                        );
-                      })}
+                      {alert.recommended_actions.map((action, index) => (
+                        <li key={index} className="flex items-start space-x-2">
+                          <span className="w-1 h-1 bg-current rounded-full mt-2 flex-shrink-0" />
+                          <span>{action}</span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 )}
@@ -580,11 +554,9 @@ function ForecastAlerts(_a) {
                   <input_1.Input
                     placeholder="Search alerts..."
                     value={filters.search}
-                    onChange={function (e) {
-                      return setFilters(function (prev) {
-                        return __assign(__assign({}, prev), { search: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setFilters((prev) => __assign(__assign({}, prev), { search: e.target.value }))
+                    }
                     className="pl-8"
                   />
                 </div>
@@ -594,11 +566,9 @@ function ForecastAlerts(_a) {
                 <label className="text-sm font-medium">Severity</label>
                 <select_1.Select
                   value={filters.severity}
-                  onValueChange={function (value) {
-                    return setFilters(function (prev) {
-                      return __assign(__assign({}, prev), { severity: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setFilters((prev) => __assign(__assign({}, prev), { severity: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
@@ -617,11 +587,9 @@ function ForecastAlerts(_a) {
                 <label className="text-sm font-medium">Status</label>
                 <select_1.Select
                   value={filters.status}
-                  onValueChange={function (value) {
-                    return setFilters(function (prev) {
-                      return __assign(__assign({}, prev), { status: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setFilters((prev) => __assign(__assign({}, prev), { status: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
@@ -638,11 +606,9 @@ function ForecastAlerts(_a) {
                 <label className="text-sm font-medium">Type</label>
                 <select_1.Select
                   value={filters.type}
-                  onValueChange={function (value) {
-                    return setFilters(function (prev) {
-                      return __assign(__assign({}, prev), { type: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setFilters((prev) => __assign(__assign({}, prev), { type: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
@@ -666,9 +632,9 @@ function ForecastAlerts(_a) {
                 <button_1.Button
                   variant="outline"
                   className="w-full"
-                  onClick={function () {
-                    return setFilters({ severity: "all", status: "all", type: "all", search: "" });
-                  }}
+                  onClick={() =>
+                    setFilters({ severity: "all", status: "all", type: "all", search: "" })
+                  }
                 >
                   Clear Filters
                 </button_1.Button>
@@ -684,7 +650,7 @@ function ForecastAlerts(_a) {
                 <lucide_react_1.BellOff className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                 <p className="text-muted-foreground">No alerts match your current filters</p>
               </div>
-            : Object.entries(groupedAlerts).map(function (_a) {
+            : Object.entries(groupedAlerts).map((_a) => {
                 var dateGroup = _a[0],
                   groupAlerts = _a[1];
                 return (

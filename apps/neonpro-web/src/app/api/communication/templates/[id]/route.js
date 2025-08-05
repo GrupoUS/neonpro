@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.PUT = PUT;
@@ -179,14 +176,14 @@ var UpdateTemplateSchema = zod_1.z.object({
  * GET /api/communication/templates/[id]
  * Get a specific template by ID
  */
-function GET(request_1, _a) {
-  return __awaiter(this, arguments, void 0, function (request, _b) {
+function GET(_request_1, _a) {
+  return __awaiter(this, arguments, void 0, function (_request, _b) {
     var supabase, session, templateId, profile, communicationService, template, error_1;
     var params = _b.params;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 4, , 5]);
+          _c.trys.push([0, 4, undefined, 5]);
           supabase = (0, auth_helpers_nextjs_1.createRouteHandlerClient)({
             cookies: headers_1.cookies,
           });
@@ -273,7 +270,7 @@ function GET(request_1, _a) {
  * PUT /api/communication/templates/[id]
  * Update a specific template
  */
-function PUT(request_1, _a) {
+function PUT(_request_1, _a) {
   return __awaiter(this, arguments, void 0, function (request, _b) {
     var supabase,
       session,
@@ -287,10 +284,10 @@ function PUT(request_1, _a) {
       updatedTemplate,
       error_2;
     var params = _b.params;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 8, , 9]);
+          _c.trys.push([0, 8, undefined, 9]);
           supabase = (0, auth_helpers_nextjs_1.createRouteHandlerClient)({
             cookies: headers_1.cookies,
           });
@@ -423,8 +420,8 @@ function PUT(request_1, _a) {
  * DELETE /api/communication/templates/[id]
  * Delete a specific template
  */
-function DELETE(request_1, _a) {
-  return __awaiter(this, arguments, void 0, function (request, _b) {
+function DELETE(_request_1, _a) {
+  return __awaiter(this, arguments, void 0, function (_request, _b) {
     var supabase,
       session,
       templateId,
@@ -434,10 +431,10 @@ function DELETE(request_1, _a) {
       templatesInUse,
       error_3;
     var params = _b.params;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 6, , 7]);
+          _c.trys.push([0, 6, undefined, 7]);
           supabase = (0, auth_helpers_nextjs_1.createRouteHandlerClient)({
             cookies: headers_1.cookies,
           });
@@ -544,7 +541,7 @@ function DELETE(request_1, _a) {
  * POST /api/communication/templates/[id]/duplicate
  * Duplicate a template
  */
-function POST(request_1, _a) {
+function POST(_request_1, _a) {
   return __awaiter(this, arguments, void 0, function (request, _b) {
     var supabase,
       session,
@@ -558,10 +555,10 @@ function POST(request_1, _a) {
       duplicatedTemplate,
       error_4;
     var params = _b.params;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 7, , 8]);
+          _c.trys.push([0, 7, undefined, 8]);
           supabase = (0, auth_helpers_nextjs_1.createRouteHandlerClient)({
             cookies: headers_1.cookies,
           });

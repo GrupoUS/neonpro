@@ -1,12 +1,12 @@
+import { v4 as uuidv4 } from "uuid";
 import type {
   Env,
-  SystemAlert,
-  NotificationEvent,
   NotificationChannel,
+  NotificationEvent,
   NotificationPriority,
   RealtimeEvent,
+  SystemAlert,
 } from "./types";
-import { v4 as uuidv4 } from "uuid";
 
 export class NotificationManager {
   private env: Env;
@@ -163,7 +163,6 @@ export class NotificationManager {
         return ["in_app", "push", "sms"];
       case "medium":
         return ["in_app", "push"];
-      case "low":
       default:
         return ["in_app"];
     }
@@ -194,7 +193,6 @@ export class NotificationManager {
         return "high";
       case "medium":
         return "normal";
-      case "low":
       default:
         return "low";
     }
@@ -504,20 +502,23 @@ export class NotificationManager {
 
     try {
       switch (monitorType) {
-        case "vital-signs":
+        case "vital-signs": {
           const vitalSigns = await this.getRecentVitalSigns(tenantId, userId);
           events.push(...vitalSigns);
           break;
+        }
 
-        case "system-alerts":
+        case "system-alerts": {
           const alerts = await this.getRecentAlerts(tenantId);
           events.push(...alerts);
           break;
+        }
 
-        case "appointments":
+        case "appointments": {
           const appointments = await this.getUpcomingAppointments(tenantId, userId);
           events.push(...appointments);
           break;
+        }
       }
     } catch (error) {
       console.error("Error getting realtime events:", error);
@@ -526,19 +527,19 @@ export class NotificationManager {
     return events;
   }
 
-  private async getRecentVitalSigns(tenantId: string, userId: string): Promise<RealtimeEvent[]> {
+  private async getRecentVitalSigns(_tenantId: string, _userId: string): Promise<RealtimeEvent[]> {
     // Implementation would get recent vital signs data
     return [];
   }
 
-  private async getRecentAlerts(tenantId: string): Promise<RealtimeEvent[]> {
+  private async getRecentAlerts(_tenantId: string): Promise<RealtimeEvent[]> {
     // Implementation would get recent alerts
     return [];
   }
 
   private async getUpcomingAppointments(
-    tenantId: string,
-    userId: string,
+    _tenantId: string,
+    _userId: string,
   ): Promise<RealtimeEvent[]> {
     // Implementation would get upcoming appointments
     return [];
@@ -618,7 +619,7 @@ export class NotificationManager {
       const remainingLength = maxLength - message.length - 5;
       const truncatedMessage =
         notification.message.length > remainingLength
-          ? notification.message.substring(0, remainingLength) + "..."
+          ? `${notification.message.substring(0, remainingLength)}...`
           : notification.message;
       message += `\n${truncatedMessage}`;
     }
@@ -649,7 +650,6 @@ export class NotificationManager {
         return "critical_alerts";
       case "normal":
         return "general_alerts";
-      case "low":
       default:
         return "info_alerts";
     }

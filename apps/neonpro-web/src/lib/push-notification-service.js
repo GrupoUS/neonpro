@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateVapidKeys = generateVapidKeys;
 var web_push_1 = require("web-push");
@@ -147,7 +144,7 @@ if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
 } else {
   console.warn("VAPID keys not configured for push notifications");
 }
-var PushNotificationService = /** @class */ (function () {
+var PushNotificationService = /** @class */ (() => {
   function PushNotificationService() {
     this.supabase = null;
   }
@@ -165,12 +162,7 @@ var PushNotificationService = /** @class */ (function () {
             _a.label = 1;
           case 1:
             _a.trys.push([1, 3, , 5]);
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("next/headers");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("next/headers"))];
           case 2:
             cookies = _a.sent().cookies;
             this.supabase = (0, auth_helpers_nextjs_1.createServerComponentClient)({
@@ -180,12 +172,7 @@ var PushNotificationService = /** @class */ (function () {
           case 3:
             error_1 = _a.sent();
             console.error("Error importing next/headers:", error_1);
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("@supabase/supabase-js");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("@supabase/supabase-js"))];
           case 4:
             createClient = _a.sent().createClient;
             this.supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
@@ -193,12 +180,7 @@ var PushNotificationService = /** @class */ (function () {
           case 5:
             return [3 /*break*/, 8];
           case 6:
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("@supabase/supabase-js");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("@supabase/supabase-js"))];
           case 7:
             createClient = _a.sent().createClient;
             this.supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
@@ -323,15 +305,13 @@ var PushNotificationService = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              data.map(function (sub) {
-                return {
-                  endpoint: sub.endpoint,
-                  keys: {
-                    p256dh: sub.p256dh_key,
-                    auth: sub.auth_key,
-                  },
-                };
-              }),
+              data.map((sub) => ({
+                endpoint: sub.endpoint,
+                keys: {
+                  p256dh: sub.p256dh_key,
+                  auth: sub.auth_key,
+                },
+              })),
             ];
           case 3:
             error_4 = _b.sent();
@@ -364,9 +344,9 @@ var PushNotificationService = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.allSettled(
-                subscriptions_1.map(function (subscription) {
-                  return web_push_1.default.sendNotification(subscription, JSON.stringify(payload));
-                }),
+                subscriptions_1.map((subscription) =>
+                  web_push_1.default.sendNotification(subscription, JSON.stringify(payload)),
+                ),
               ),
             ];
           case 2:
@@ -374,7 +354,7 @@ var PushNotificationService = /** @class */ (function () {
             sent_1 = 0;
             failed_1 = 0;
             errors_1 = [];
-            results.forEach(function (result, index) {
+            results.forEach((result, index) => {
               var _a, _b;
               if (result.status === "fulfilled") {
                 sent_1++;
@@ -425,25 +405,20 @@ var PushNotificationService = /** @class */ (function () {
   PushNotificationService.prototype.sendToUsers = function (userIds, payload) {
     return __awaiter(this, void 0, void 0, function () {
       var results, totalSent_1, totalFailed_1, processedResults_1, error_6;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             return [
               4 /*yield*/,
-              Promise.allSettled(
-                userIds.map(function (userId) {
-                  return _this.sendToUser(userId, payload);
-                }),
-              ),
+              Promise.allSettled(userIds.map((userId) => this.sendToUser(userId, payload))),
             ];
           case 1:
             results = _a.sent();
             totalSent_1 = 0;
             totalFailed_1 = 0;
             processedResults_1 = [];
-            results.forEach(function (result, index) {
+            results.forEach((result, index) => {
               var _a;
               var userId = userIds[index];
               if (result.status === "fulfilled") {
@@ -490,14 +465,12 @@ var PushNotificationService = /** @class */ (function () {
                 success: false,
                 totalSent: 0,
                 totalFailed: userIds.length,
-                results: userIds.map(function (userId) {
-                  return {
-                    userId: userId,
-                    sent: 0,
-                    failed: 1,
-                    errors: [error_6 instanceof Error ? error_6.message : "Unknown error"],
-                  };
-                }),
+                results: userIds.map((userId) => ({
+                  userId: userId,
+                  sent: 0,
+                  failed: 1,
+                  errors: [error_6 instanceof Error ? error_6.message : "Unknown error"],
+                })),
               },
             ];
           case 3:
@@ -645,15 +618,13 @@ var PushNotificationService = /** @class */ (function () {
     });
   };
   // Get VAPID public key for client-side subscription
-  PushNotificationService.prototype.getVapidPublicKey = function () {
-    return process.env.VAPID_PUBLIC_KEY || null;
-  };
+  PushNotificationService.prototype.getVapidPublicKey = () => process.env.VAPID_PUBLIC_KEY || null;
   // Validate push subscription
   PushNotificationService.prototype.validateSubscription = function (subscription) {
     return __awaiter(this, void 0, void 0, function () {
       var testPayload, error_7;
       var _a, _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 2, , 3]);

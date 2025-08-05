@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Analytics Engine Base - NeonPro Analytics System
  *
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -140,7 +137,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyticsEngine = exports.AnalyticsEngine = void 0;
 exports.createTimeRange = createTimeRange;
@@ -150,14 +147,14 @@ var react_1 = require("react");
  * Base Analytics Engine
  * Core calculation engine for all analytics operations
  */
-var AnalyticsEngine = /** @class */ (function () {
+var AnalyticsEngine = /** @class */ (() => {
   function AnalyticsEngine() {
     this.supabase = (0, server_1.createClient)();
   }
   /**
    * Calculate percentage change between two values
    */
-  AnalyticsEngine.prototype.calculateChange = function (current, previous) {
+  AnalyticsEngine.prototype.calculateChange = (current, previous) => {
     var change = current - previous;
     var changePercent = previous === 0 ? 0 : (change / previous) * 100;
     var trend = "stable";
@@ -168,16 +165,14 @@ var AnalyticsEngine = /** @class */ (function () {
   /**
    * Format time range for SQL queries
    */
-  AnalyticsEngine.prototype.formatTimeRange = function (timeRange) {
-    return {
-      startDate: timeRange.start.toISOString(),
-      endDate: timeRange.end.toISOString(),
-    };
-  };
+  AnalyticsEngine.prototype.formatTimeRange = (timeRange) => ({
+    startDate: timeRange.start.toISOString(),
+    endDate: timeRange.end.toISOString(),
+  });
   /**
    * Get previous period for comparison
    */
-  AnalyticsEngine.prototype.getPreviousPeriod = function (timeRange) {
+  AnalyticsEngine.prototype.getPreviousPeriod = (timeRange) => {
     var duration = timeRange.end.getTime() - timeRange.start.getTime();
     return {
       start: new Date(timeRange.start.getTime() - duration),
@@ -257,7 +252,7 @@ var AnalyticsEngine = /** @class */ (function () {
               currentPeriod = this.formatTimeRange(timeRange);
               previousPeriod = this.formatTimeRange(this.getPreviousPeriod(timeRange));
               filterConditions = Object.entries(filters)
-                .map(function (_a) {
+                .map((_a) => {
                   var key = _a[0],
                     value = _a[1];
                   return "".concat(key, " = '").concat(value, "'");
@@ -329,7 +324,7 @@ var AnalyticsEngine = /** @class */ (function () {
             (startDate = _a.startDate),
             (endDate = _a.endDate);
           filterConditions = Object.entries(filters)
-            .map(function (_a) {
+            .map((_a) => {
               var key = _a[0],
                 value = _a[1];
               return "".concat(key, " = '").concat(value, "'");
@@ -370,9 +365,7 @@ exports.AnalyticsEngine = AnalyticsEngine;
 /**
  * Cached analytics engine instance
  */
-exports.analyticsEngine = (0, react_1.cache)(function () {
-  return new AnalyticsEngine();
-});
+exports.analyticsEngine = (0, react_1.cache)(() => new AnalyticsEngine());
 /**
  * Helper function to create standard time ranges
  */
@@ -410,7 +403,7 @@ function createTimeRange(period, customStart, customEnd) {
         end: now,
         period: "month",
       };
-    case "custom":
+    case "custom": {
       if (!customStart || !customEnd) {
         throw new Error("Custom period requires start and end dates");
       }
@@ -423,6 +416,7 @@ function createTimeRange(period, customStart, customEnd) {
         end: customEnd,
         period: periodType,
       };
+    }
     default:
       throw new Error("Unsupported period: ".concat(period));
   }

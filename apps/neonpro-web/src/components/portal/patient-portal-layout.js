@@ -2,7 +2,6 @@
 // Story 1.3, Task 2: Main layout component for patient portal with responsive design
 // Created: Mobile-first, accessible layout for healthcare patient portal
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientPortalLayout = PatientPortalLayout;
 var React = require("react");

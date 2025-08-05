@@ -1,6 +1,5 @@
 // components/landing/footer.tsx
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Footer = Footer;
 var badge_1 = require("@/components/ui/badge");
@@ -108,20 +107,18 @@ function Footer() {
 
             {/* Social Links */}
             <div className="flex space-x-4">
-              {socialLinks.map(function (social, index) {
-                return (
-                  <a
-                    key={index}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
-                    aria-label={social.label}
-                  >
-                    <social.icon className="h-5 w-5 text-slate-300" />
-                  </a>
-                );
-              })}
+              {socialLinks.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
+                  aria-label={social.label}
+                >
+                  <social.icon className="h-5 w-5 text-slate-300" />
+                </a>
+              ))}
             </div>
           </div>
 
@@ -129,18 +126,16 @@ function Footer() {
           <div className="space-y-6">
             <h3 className="text-lg font-semibold">Links Rápidos</h3>
             <ul className="space-y-3">
-              {quickLinks.map(function (link, index) {
-                return (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-slate-300 hover:text-white transition-colors text-sm"
-                    >
-                      {link.title}
-                    </a>
-                  </li>
-                );
-              })}
+              {quickLinks.map((link, index) => (
+                <li key={index}>
+                  <a
+                    href={link.href}
+                    className="text-slate-300 hover:text-white transition-colors text-sm"
+                  >
+                    {link.title}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -148,18 +143,16 @@ function Footer() {
           <div className="space-y-6">
             <h3 className="text-lg font-semibold">Soluções</h3>
             <ul className="space-y-3">
-              {solutions.map(function (solution, index) {
-                return (
-                  <li key={index}>
-                    <a
-                      href={solution.href}
-                      className="text-slate-300 hover:text-white transition-colors text-sm"
-                    >
-                      {solution.title}
-                    </a>
-                  </li>
-                );
-              })}
+              {solutions.map((solution, index) => (
+                <li key={index}>
+                  <a
+                    href={solution.href}
+                    className="text-slate-300 hover:text-white transition-colors text-sm"
+                  >
+                    {solution.title}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -167,26 +160,24 @@ function Footer() {
           <div className="space-y-6">
             <h3 className="text-lg font-semibold">Compliance & Legal</h3>
             <div className="space-y-4">
-              {complianceLinks.map(function (link, index) {
-                return (
-                  <a
-                    key={index}
-                    href={link.href}
-                    className="flex items-start space-x-3 p-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-700 group-hover:bg-slate-600 flex-shrink-0">
-                      <link.icon className="h-4 w-4 text-slate-300" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium text-white group-hover:text-sky-300">
-                        {link.title}
-                      </h4>
-                      <p className="text-xs text-slate-400">{link.description}</p>
-                    </div>
-                    <lucide_react_1.ExternalLink className="h-3 w-3 text-slate-500 group-hover:text-slate-300 flex-shrink-0 mt-1" />
-                  </a>
-                );
-              })}
+              {complianceLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.href}
+                  className="flex items-start space-x-3 p-3 bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors group"
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-700 group-hover:bg-slate-600 flex-shrink-0">
+                    <link.icon className="h-4 w-4 text-slate-300" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-white group-hover:text-sky-300">
+                      {link.title}
+                    </h4>
+                    <p className="text-xs text-slate-400">{link.description}</p>
+                  </div>
+                  <lucide_react_1.ExternalLink className="h-3 w-3 text-slate-500 group-hover:text-slate-300 flex-shrink-0 mt-1" />
+                </a>
+              ))}
             </div>
 
             {/* Compliance Badges */}

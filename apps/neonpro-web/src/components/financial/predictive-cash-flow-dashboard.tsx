@@ -23,7 +23,35 @@
 
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  Download,
+  Plus,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import type { useCallback, useEffect, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -31,9 +59,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -41,46 +69,18 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  Target,
-  Calendar,
-  BarChart3,
-  Download,
-  Settings,
-  Plus,
-  RefreshCw,
-} from "lucide-react";
-import type {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  ComposedChart,
-  Bar,
-} from "recharts";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { toast } from "@/hooks/use-toast";
-import type { formatCurrency } from "@/lib/utils";
 import type {
   CashFlowPrediction,
   ForecastingScenario,
-  PredictionModel,
-  PredictionPeriodType,
   ModelType,
   PredictionAccuracy,
+  PredictionModel,
+  PredictionPeriodType,
 } from "@/lib/types/predictive-cash-flow";
+import type { formatCurrency } from "@/lib/utils";
 
 interface PredictiveCashFlowDashboardProps {
   clinicId: string;

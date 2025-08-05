@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartCard = ChartCard;
 var card_1 = require("@/components/ui/card");

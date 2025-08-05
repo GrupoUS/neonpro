@@ -5,25 +5,14 @@
 
 import { TreatmentSuccessService } from "@/app/lib/services/treatment-success";
 import {
-  createTreatmentOutcomeSchema,
-  updateTreatmentOutcomeSchema,
-  createSuccessMetricsSchema,
-  createProviderPerformanceSchema,
   createProtocolOptimizationSchema,
   createQualityBenchmarkSchema,
-  createSuccessPredictionSchema,
-  createComplianceReportSchema,
+  createSuccessMetricsSchema,
+  createTreatmentOutcomeSchema,
   treatmentSuccessQuerySchema,
+  updateTreatmentOutcomeSchema,
 } from "@/app/lib/validations/treatment-success";
-import {
-  TreatmentOutcome,
-  SuccessMetrics,
-  ProviderPerformance,
-  ProtocolOptimization,
-  QualityBenchmark,
-  SuccessPrediction,
-  ComplianceReport,
-} from "@/app/types/treatment-success";
+import type { SuccessMetrics, TreatmentOutcome } from "@/app/types/treatment-success";
 
 // Mock Supabase client
 const mockSupabaseClient = {

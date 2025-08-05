@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Vision Analysis Performance Monitoring API
  * GET /api/vision/performance
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = exports.GET = void 0;
 var server_1 = require("next/server");
@@ -166,8 +163,8 @@ var performanceQuerySchema = zod_1.z.object({
   includeDetails: zod_1.z.boolean().default(false),
 });
 // GET - Performance metrics
-exports.GET = (0, monitoring_1.withErrorMonitoring)(function (request) {
-  return __awaiter(void 0, void 0, void 0, function () {
+exports.GET = (0, monitoring_1.withErrorMonitoring)((request) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var supabase,
       _a,
       user,
@@ -194,7 +191,7 @@ exports.GET = (0, monitoring_1.withErrorMonitoring)(function (request) {
       treatmentBreakdown_1,
       treatmentStats,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           return [4 /*yield*/, (0, server_2.createClient)()];
@@ -246,40 +243,34 @@ exports.GET = (0, monitoring_1.withErrorMonitoring)(function (request) {
           totalAnalyses = performanceData.length;
           avgAccuracy =
             totalAnalyses > 0
-              ? performanceData.reduce(function (sum, item) {
-                  return sum + item.accuracy_score;
-                }, 0) / totalAnalyses
+              ? performanceData.reduce((sum, item) => sum + item.accuracy_score, 0) / totalAnalyses
               : 0;
           avgProcessingTime =
             totalAnalyses > 0
-              ? performanceData.reduce(function (sum, item) {
-                  return sum + item.processing_time_ms;
-                }, 0) / totalAnalyses
+              ? performanceData.reduce((sum, item) => sum + item.processing_time_ms, 0) /
+                totalAnalyses
               : 0;
           avgConfidence =
             totalAnalyses > 0
-              ? performanceData.reduce(function (sum, item) {
-                  return sum + item.confidence_score;
-                }, 0) / totalAnalyses
+              ? performanceData.reduce((sum, item) => sum + item.confidence_score, 0) /
+                totalAnalyses
               : 0;
           accuracyTarget_1 = 0.95;
           timeTarget_1 = 30000;
           accuracyCompliance =
             totalAnalyses > 0
-              ? performanceData.filter(function (item) {
-                  return item.accuracy_score >= accuracyTarget_1;
-                }).length / totalAnalyses
+              ? performanceData.filter((item) => item.accuracy_score >= accuracyTarget_1).length /
+                totalAnalyses
               : 0;
           timeCompliance =
             totalAnalyses > 0
-              ? performanceData.filter(function (item) {
-                  return item.processing_time_ms <= timeTarget_1;
-                }).length / totalAnalyses
+              ? performanceData.filter((item) => item.processing_time_ms <= timeTarget_1).length /
+                totalAnalyses
               : 0;
           timeSeriesData = [];
           if (validatedParams_1.includeDetails) {
             groupedData_1 = new Map();
-            performanceData.forEach(function (item) {
+            performanceData.forEach((item) => {
               var date = new Date(item.created_at);
               var groupKey;
               switch (validatedParams_1.groupBy) {
@@ -296,13 +287,14 @@ exports.GET = (0, monitoring_1.withErrorMonitoring)(function (request) {
                     .concat(String(date.getMonth() + 1).padStart(2, "0"), "-")
                     .concat(String(date.getDate()).padStart(2, "0"));
                   break;
-                case "week":
+                case "week": {
                   var weekStart = new Date(date);
                   weekStart.setDate(date.getDate() - date.getDay());
                   groupKey = ""
                     .concat(weekStart.getFullYear(), "-W")
                     .concat(Math.ceil(weekStart.getDate() / 7));
                   break;
+                }
                 default:
                   groupKey = date.toISOString().split("T")[0];
               }
@@ -326,23 +318,19 @@ exports.GET = (0, monitoring_1.withErrorMonitoring)(function (request) {
               if (item.processing_time_ms <= timeTarget_1) group.timeCompliant++;
             });
             timeSeriesData = Array.from(groupedData_1.values())
-              .map(function (group) {
-                return {
-                  timestamp: group.timestamp,
-                  count: group.count,
-                  avgAccuracy: group.count > 0 ? group.totalAccuracy / group.count : 0,
-                  avgProcessingTime: group.count > 0 ? group.totalProcessingTime / group.count : 0,
-                  avgConfidence: group.count > 0 ? group.totalConfidence / group.count : 0,
-                  accuracyCompliance: group.count > 0 ? group.accuracyCompliant / group.count : 0,
-                  timeCompliance: group.count > 0 ? group.timeCompliant / group.count : 0,
-                };
-              })
-              .sort(function (a, b) {
-                return a.timestamp.localeCompare(b.timestamp);
-              });
+              .map((group) => ({
+                timestamp: group.timestamp,
+                count: group.count,
+                avgAccuracy: group.count > 0 ? group.totalAccuracy / group.count : 0,
+                avgProcessingTime: group.count > 0 ? group.totalProcessingTime / group.count : 0,
+                avgConfidence: group.count > 0 ? group.totalConfidence / group.count : 0,
+                accuracyCompliance: group.count > 0 ? group.accuracyCompliant / group.count : 0,
+                timeCompliance: group.count > 0 ? group.timeCompliant / group.count : 0,
+              }))
+              .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
           }
           treatmentBreakdown_1 = new Map();
-          performanceData.forEach(function (item) {
+          performanceData.forEach((item) => {
             var treatmentType = item.image_analysis.treatment_type;
             if (!treatmentBreakdown_1.has(treatmentType)) {
               treatmentBreakdown_1.set(treatmentType, {
@@ -360,7 +348,7 @@ exports.GET = (0, monitoring_1.withErrorMonitoring)(function (request) {
             if (item.accuracy_score >= accuracyTarget_1) breakdown.accuracyCompliant++;
             if (item.processing_time_ms <= timeTarget_1) breakdown.timeCompliant++;
           });
-          treatmentStats = Array.from(treatmentBreakdown_1.entries()).map(function (_a) {
+          treatmentStats = Array.from(treatmentBreakdown_1.entries()).map((_a) => {
             var type = _a[0],
               stats = _a[1];
             return {
@@ -428,11 +416,11 @@ exports.GET = (0, monitoring_1.withErrorMonitoring)(function (request) {
           return [2 /*return*/];
       }
     });
-  });
-});
+  }),
+);
 // POST - Record performance metric
-exports.POST = (0, monitoring_1.withErrorMonitoring)(function (request) {
-  return __awaiter(void 0, void 0, void 0, function () {
+exports.POST = (0, monitoring_1.withErrorMonitoring)((request) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var supabase,
       _a,
       user,
@@ -448,7 +436,7 @@ exports.POST = (0, monitoring_1.withErrorMonitoring)(function (request) {
       data,
       error,
       error_2;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           return [4 /*yield*/, (0, server_2.createClient)()];
@@ -535,5 +523,5 @@ exports.POST = (0, monitoring_1.withErrorMonitoring)(function (request) {
           return [2 /*return*/];
       }
     });
-  });
-});
+  }),
+);

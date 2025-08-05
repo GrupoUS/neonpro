@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceWorkerRegistration = ServiceWorkerRegistration;
 exports.useIsInstalled = useIsInstalled;
@@ -140,14 +137,13 @@ exports.useServiceWorker = useServiceWorker;
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function ServiceWorkerRegistration() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isSupported = _a[0],
     setIsSupported = _a[1];
   var _b = (0, react_1.useState)(false),
     isRegistered = _b[0],
     setIsRegistered = _b[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       setIsSupported(true);
       registerSW();
@@ -155,10 +151,10 @@ function ServiceWorkerRegistration() {
       console.warn("Service Workers not supported in this browser");
     }
   }, []);
-  var registerSW = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var registerSW = () =>
+    __awaiter(this, void 0, void 0, function () {
       var registration_1, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -173,10 +169,10 @@ function ServiceWorkerRegistration() {
             setIsRegistered(true);
             console.log("Service Worker registered successfully:", registration_1);
             // Handle service worker updates
-            registration_1.addEventListener("updatefound", function () {
+            registration_1.addEventListener("updatefound", () => {
               var newWorker = registration_1.installing;
               if (newWorker) {
-                newWorker.addEventListener("statechange", function () {
+                newWorker.addEventListener("statechange", () => {
                   if (newWorker.state === "installed") {
                     if (navigator.serviceWorker.controller) {
                       // New service worker available, prompt user to refresh
@@ -185,9 +181,7 @@ function ServiceWorkerRegistration() {
                         duration: 10000,
                         action: {
                           label: "Recarregar",
-                          onClick: function () {
-                            return window.location.reload();
-                          },
+                          onClick: () => window.location.reload(),
                         },
                       });
                     } else {
@@ -199,13 +193,13 @@ function ServiceWorkerRegistration() {
               }
             });
             // Handle service worker controller change
-            navigator.serviceWorker.addEventListener("controllerchange", function () {
+            navigator.serviceWorker.addEventListener("controllerchange", () => {
               console.log("Service Worker controller changed");
               // Optionally reload the page to ensure consistency
               // window.location.reload()
             });
             // Listen for messages from service worker
-            navigator.serviceWorker.addEventListener("message", function (event) {
+            navigator.serviceWorker.addEventListener("message", (event) => {
               console.log("Message from Service Worker:", event.data);
               var _a = event.data,
                 type = _a.type,
@@ -242,11 +236,10 @@ function ServiceWorkerRegistration() {
         }
       });
     });
-  };
-  var updateServiceWorker = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateServiceWorker = () =>
+    __awaiter(this, void 0, void 0, function () {
       var registration, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -271,11 +264,10 @@ function ServiceWorkerRegistration() {
         }
       });
     });
-  };
-  var unregisterServiceWorker = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var unregisterServiceWorker = () =>
+    __awaiter(this, void 0, void 0, function () {
       var registration, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -301,12 +293,11 @@ function ServiceWorkerRegistration() {
         }
       });
     });
-  };
   // Skip waiting for new service worker
-  var skipWaiting = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var skipWaiting = () =>
+    __awaiter(this, void 0, void 0, function () {
       var registration, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -327,12 +318,11 @@ function ServiceWorkerRegistration() {
         }
       });
     });
-  };
   // Check for service worker updates manually
-  var checkForUpdates = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkForUpdates = () =>
+    __awaiter(this, void 0, void 0, function () {
       var registration, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -368,7 +358,6 @@ function ServiceWorkerRegistration() {
         }
       });
     });
-  };
   // This component doesn't render anything visible
   // It just handles service worker registration and updates
   return null;
@@ -378,8 +367,8 @@ function useIsInstalled() {
   var _a = (0, react_1.useState)(false),
     isInstalled = _a[0],
     setIsInstalled = _a[1];
-  (0, react_1.useEffect)(function () {
-    var checkInstalled = function () {
+  (0, react_1.useEffect)(() => {
+    var checkInstalled = () => {
       // Check various indicators that suggest the app is installed as PWA
       var isStandalone = window.matchMedia("(display-mode: standalone)").matches;
       var isInApp = window.navigator.standalone === true;
@@ -390,15 +379,12 @@ function useIsInstalled() {
     // Listen for display mode changes
     var mediaQuery = window.matchMedia("(display-mode: standalone)");
     mediaQuery.addListener(checkInstalled);
-    return function () {
-      return mediaQuery.removeListener(checkInstalled);
-    };
+    return () => mediaQuery.removeListener(checkInstalled);
   }, []);
   return isInstalled;
 }
 // Hook to check if service worker is supported and registered
 function useServiceWorker() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isSupported = _a[0],
     setIsSupported = _a[1];
@@ -408,11 +394,11 @@ function useServiceWorker() {
   var _c = (0, react_1.useState)(null),
     registration = _c[0],
     setRegistration = _c[1];
-  (0, react_1.useEffect)(function () {
-    var checkSupport = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var checkSupport = () =>
+      __awaiter(this, void 0, void 0, function () {
         var reg, error_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!(typeof window !== "undefined" && "serviceWorker" in navigator))
@@ -438,16 +424,15 @@ function useServiceWorker() {
           }
         });
       });
-    };
     checkSupport();
   }, []);
   return {
     isSupported: isSupported,
     isRegistered: isRegistered,
     registration: registration,
-    updateServiceWorker: function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    updateServiceWorker: () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!registration) return [3 /*break*/, 2];
@@ -459,11 +444,10 @@ function useServiceWorker() {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    unregisterServiceWorker: function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    unregisterServiceWorker: () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!registration) return [3 /*break*/, 2];
@@ -477,7 +461,6 @@ function useServiceWorker() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
   };
 }

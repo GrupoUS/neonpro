@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -66,7 +65,7 @@ function PatientActions(_a) {
   var _k = (0, react_1.useState)(""),
     messageTemplate = _k[0],
     setMessageTemplate = _k[1];
-  var handleExport = function () {
+  var handleExport = () => {
     // LGPD compliance validation
     if (exportFields.medical || exportFields.lgpd_sensitive) {
       if (!anonymizeData) {
@@ -92,12 +91,10 @@ function PatientActions(_a) {
     logLGPDAudit("data_export", {
       patients_count: selectedCount,
       anonymized: anonymizeData,
-      fields_exported: Object.keys(exportFields).filter(function (key) {
-        return exportFields[key];
-      }),
+      fields_exported: Object.keys(exportFields).filter((key) => exportFields[key]),
     });
   };
-  var handleSendMessage = function () {
+  var handleSendMessage = () => {
     if (!messageContent.trim()) {
       sonner_1.toast.error("Digite o conteúdo da mensagem");
       return;
@@ -112,7 +109,7 @@ function PatientActions(_a) {
     setShowMessageDialog(false);
     setMessageContent("");
   };
-  var handleArchive = function () {
+  var handleArchive = () => {
     // Simulate archive with LGPD compliance
     logLGPDAudit("patients_archived", {
       patients_count: selectedCount,
@@ -121,7 +118,7 @@ function PatientActions(_a) {
     onBulkAction("archive");
     setShowArchiveDialog(false);
   };
-  var logLGPDAudit = function (action, details) {
+  var logLGPDAudit = (action, details) => {
     var auditLog = {
       timestamp: new Date().toISOString(),
       action: action,
@@ -141,7 +138,7 @@ function PatientActions(_a) {
       "Esperamos que você esteja bem! Lembre-se de manter seus cuidados de saúde em dia.",
     custom: "",
   };
-  var populateTemplate = function (template) {
+  var populateTemplate = (template) => {
     var content = messageTemplates[template];
     setMessageContent(content);
   };
@@ -215,11 +212,11 @@ function PatientActions(_a) {
                       <checkbox_1.Checkbox
                         id="personal"
                         checked={exportFields.personal}
-                        onCheckedChange={function (checked) {
-                          return setExportFields(
+                        onCheckedChange={(checked) =>
+                          setExportFields(
                             __assign(__assign({}, exportFields), { personal: !!checked }),
-                          );
-                        }}
+                          )
+                        }
                       />
                       <label_1.Label htmlFor="personal" className="text-sm">
                         Dados pessoais básicos (nome, idade, gênero)
@@ -229,11 +226,11 @@ function PatientActions(_a) {
                       <checkbox_1.Checkbox
                         id="contact"
                         checked={exportFields.contact}
-                        onCheckedChange={function (checked) {
-                          return setExportFields(
+                        onCheckedChange={(checked) =>
+                          setExportFields(
                             __assign(__assign({}, exportFields), { contact: !!checked }),
-                          );
-                        }}
+                          )
+                        }
                       />
                       <label_1.Label htmlFor="contact" className="text-sm">
                         Informações de contato (telefone, email)
@@ -243,11 +240,11 @@ function PatientActions(_a) {
                       <checkbox_1.Checkbox
                         id="medical"
                         checked={exportFields.medical}
-                        onCheckedChange={function (checked) {
-                          return setExportFields(
+                        onCheckedChange={(checked) =>
+                          setExportFields(
                             __assign(__assign({}, exportFields), { medical: !!checked }),
-                          );
-                        }}
+                          )
+                        }
                       />
                       <label_1.Label htmlFor="medical" className="text-sm text-orange-600">
                         Dados médicos (condições, alergias) - Sensível
@@ -257,11 +254,11 @@ function PatientActions(_a) {
                       <checkbox_1.Checkbox
                         id="lgpd_sensitive"
                         checked={exportFields.lgpd_sensitive}
-                        onCheckedChange={function (checked) {
-                          return setExportFields(
+                        onCheckedChange={(checked) =>
+                          setExportFields(
                             __assign(__assign({}, exportFields), { lgpd_sensitive: !!checked }),
-                          );
-                        }}
+                          )
+                        }
                       />
                       <label_1.Label htmlFor="lgpd_sensitive" className="text-sm text-red-600">
                         Dados altamente sensíveis (CPF, endereço) - LGPD Crítico
@@ -276,9 +273,7 @@ function PatientActions(_a) {
                     <checkbox_1.Checkbox
                       id="anonymize"
                       checked={anonymizeData}
-                      onCheckedChange={function (checked) {
-                        return setAnonymizeData(!!checked);
-                      }}
+                      onCheckedChange={(checked) => setAnonymizeData(!!checked)}
                     />
                     <label_1.Label htmlFor="anonymize" className="text-sm font-medium">
                       Anonimizar dados sensíveis (Recomendado)
@@ -311,12 +306,7 @@ function PatientActions(_a) {
               </div>
 
               <dialog_1.DialogFooter>
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setShowExportDialog(false);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setShowExportDialog(false)}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={handleExport}>
@@ -380,7 +370,7 @@ function PatientActions(_a) {
                   <label_1.Label>Template de mensagem</label_1.Label>
                   <select_1.Select
                     value={messageTemplate}
-                    onValueChange={function (value) {
+                    onValueChange={(value) => {
                       setMessageTemplate(value);
                       populateTemplate(value);
                     }}
@@ -411,9 +401,7 @@ function PatientActions(_a) {
                   <textarea_1.Textarea
                     placeholder="Digite sua mensagem aqui..."
                     value={messageContent}
-                    onChange={function (e) {
-                      return setMessageContent(e.target.value);
-                    }}
+                    onChange={(e) => setMessageContent(e.target.value)}
                     rows={4}
                   />
                   <div className="text-xs text-muted-foreground">
@@ -433,12 +421,7 @@ function PatientActions(_a) {
               </div>
 
               <dialog_1.DialogFooter>
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setShowMessageDialog(false);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setShowMessageDialog(false)}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={handleSendMessage} disabled={!messageContent.trim()}>
@@ -481,12 +464,7 @@ function PatientActions(_a) {
               </alert_1.Alert>
 
               <dialog_1.DialogFooter>
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setShowArchiveDialog(false);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setShowArchiveDialog(false)}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button variant="destructive" onClick={handleArchive}>
@@ -501,9 +479,7 @@ function PatientActions(_a) {
           <button_1.Button
             variant="outline"
             size="sm"
-            onClick={function () {
-              return onBulkAction("schedule_bulk");
-            }}
+            onClick={() => onBulkAction("schedule_bulk")}
             className="flex items-center"
           >
             <lucide_react_1.Calendar className="h-4 w-4 mr-1" />

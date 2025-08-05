@@ -11,22 +11,22 @@
 "use client";
 
 import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Shield,
+  TrendingUp,
+} from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  BarChart3,
-  Brain,
-  Shield,
-  TrendingUp,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-} from "lucide-react";
 
 // Types for props
 interface BasePanelProps {

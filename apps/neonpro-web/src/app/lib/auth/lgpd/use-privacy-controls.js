@@ -1,4 +1,3 @@
-"use strict";
 /**
  * React Hook for LGPD Privacy Management
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,10 +148,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -163,7 +160,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usePrivacyControls = usePrivacyControls;
 exports.useConsentManagement = useConsentManagement;
@@ -171,7 +168,6 @@ exports.useDataSubjectRequests = useDataSubjectRequests;
 var react_1 = require("react");
 var lgpd_compliance_manager_1 = require("./lgpd-compliance-manager");
 function usePrivacyControls(userId) {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     settings = _a[0],
     setSettings = _a[1];
@@ -183,10 +179,10 @@ function usePrivacyControls(userId) {
     setError = _c[1];
   // Load privacy settings
   var loadSettings = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var privacySettings, err_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId) return [2 /*return*/];
@@ -215,17 +211,16 @@ function usePrivacyControls(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   // Update consent
   var updateConsent = (0, react_1.useCallback)(
-    function (type, granted) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (type, granted) =>
+      __awaiter(this, void 0, void 0, function () {
         var updatedSettings, err_2;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!userId || !settings) return [2 /*return*/];
@@ -258,16 +253,15 @@ function usePrivacyControls(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, settings],
   );
   // Update communication preferences
   var updateCommunicationPreferences = (0, react_1.useCallback)(
-    function (preferences) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (preferences) =>
+      __awaiter(this, void 0, void 0, function () {
         var updatedSettings, err_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !settings) return [2 /*return*/];
@@ -300,16 +294,15 @@ function usePrivacyControls(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, settings],
   );
   // Request data export
   var requestDataExport = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var err_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId) return [2 /*return*/];
@@ -340,16 +333,15 @@ function usePrivacyControls(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   // Request data deletion
   var requestDataDeletion = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var confirmed, err_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId) return [2 /*return*/];
@@ -384,16 +376,15 @@ function usePrivacyControls(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   // Request data access
   var requestDataAccess = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var err_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId) return [2 /*return*/];
@@ -422,19 +413,19 @@ function usePrivacyControls(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   // Get data inventory
-  var getDataInventory = (0, react_1.useCallback)(function () {
-    return lgpd_compliance_manager_1.lgpdComplianceManager.getDataRetentionSchedule();
-  }, []);
+  var getDataInventory = (0, react_1.useCallback)(
+    () => lgpd_compliance_manager_1.lgpdComplianceManager.getDataRetentionSchedule(),
+    [],
+  );
   // Refresh settings
   var refresh = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, loadSettings()];
@@ -443,17 +434,13 @@ function usePrivacyControls(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadSettings],
   );
   // Load settings on mount
-  (0, react_1.useEffect)(
-    function () {
-      loadSettings();
-    },
-    [loadSettings],
-  );
+  (0, react_1.useEffect)(() => {
+    loadSettings();
+  }, [loadSettings]);
   return {
     settings: settings,
     isLoading: isLoading,
@@ -469,7 +456,6 @@ function usePrivacyControls(userId) {
 }
 // Hook for consent management
 function useConsentManagement(userId) {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     consents = _a[0],
     setConsents = _a[1];
@@ -477,18 +463,16 @@ function useConsentManagement(userId) {
     isLoading = _b[0],
     setIsLoading = _b[1];
   var loadConsents = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var stored, allConsents, userConsents;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (!userId) return [2 /*return*/];
           try {
             setIsLoading(true);
             stored = localStorage.getItem("lgpd_consents");
             allConsents = stored ? JSON.parse(stored) : [];
-            userConsents = allConsents.filter(function (c) {
-              return c.userId === userId;
-            });
+            userConsents = allConsents.filter((c) => c.userId === userId);
             setConsents(userConsents);
           } catch (err) {
             console.error("Error loading consents:", err);
@@ -497,15 +481,14 @@ function useConsentManagement(userId) {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [userId],
   );
   var grantConsent = (0, react_1.useCallback)(
-    function (type, purpose) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (type, purpose) =>
+      __awaiter(this, void 0, void 0, function () {
         var consent_1, err_7;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId) return [2 /*return*/];
@@ -523,9 +506,9 @@ function useConsentManagement(userId) {
               ];
             case 2:
               consent_1 = _a.sent();
-              setConsents(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [consent_1], false);
-              });
+              setConsents((prev) =>
+                __spreadArray(__spreadArray([], prev, true), [consent_1], false),
+              );
               return [3 /*break*/, 4];
             case 3:
               err_7 = _a.sent();
@@ -535,15 +518,14 @@ function useConsentManagement(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   var withdrawConsent = (0, react_1.useCallback)(
-    function (type, purpose) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (type, purpose) =>
+      __awaiter(this, void 0, void 0, function () {
         var consent_2, err_8;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId) return [2 /*return*/];
@@ -561,9 +543,9 @@ function useConsentManagement(userId) {
               ];
             case 2:
               consent_2 = _a.sent();
-              setConsents(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [consent_2], false);
-              });
+              setConsents((prev) =>
+                __spreadArray(__spreadArray([], prev, true), [consent_2], false),
+              );
               return [3 /*break*/, 4];
             case 3:
               err_8 = _a.sent();
@@ -573,16 +555,12 @@ function useConsentManagement(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
-  (0, react_1.useEffect)(
-    function () {
-      loadConsents();
-    },
-    [loadConsents],
-  );
+  (0, react_1.useEffect)(() => {
+    loadConsents();
+  }, [loadConsents]);
   return {
     consents: consents,
     isLoading: isLoading,
@@ -593,7 +571,6 @@ function useConsentManagement(userId) {
 }
 // Hook for data subject requests
 function useDataSubjectRequests(userId) {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     requests = _a[0],
     setRequests = _a[1];
@@ -601,18 +578,16 @@ function useDataSubjectRequests(userId) {
     isLoading = _b[0],
     setIsLoading = _b[1];
   var loadRequests = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var stored, allRequests, userRequests;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (!userId) return [2 /*return*/];
           try {
             setIsLoading(true);
             stored = localStorage.getItem("lgpd_requests");
             allRequests = stored ? JSON.parse(stored) : [];
-            userRequests = allRequests.filter(function (r) {
-              return r.userId === userId;
-            });
+            userRequests = allRequests.filter((r) => r.userId === userId);
             setRequests(userRequests);
           } catch (err) {
             console.error("Error loading data subject requests:", err);
@@ -621,15 +596,14 @@ function useDataSubjectRequests(userId) {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [userId],
   );
   var submitRequest = (0, react_1.useCallback)(
-    function (type, description) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (type, description) =>
+      __awaiter(this, void 0, void 0, function () {
         var request_1, err_9;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId) return [2 /*return*/];
@@ -646,9 +620,9 @@ function useDataSubjectRequests(userId) {
               ];
             case 2:
               request_1 = _a.sent();
-              setRequests(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [request_1], false);
-              });
+              setRequests((prev) =>
+                __spreadArray(__spreadArray([], prev, true), [request_1], false),
+              );
               return [2 /*return*/, request_1];
             case 3:
               err_9 = _a.sent();
@@ -658,16 +632,12 @@ function useDataSubjectRequests(userId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
-  (0, react_1.useEffect)(
-    function () {
-      loadRequests();
-    },
-    [loadRequests],
-  );
+  (0, react_1.useEffect)(() => {
+    loadRequests();
+  }, [loadRequests]);
   return {
     requests: requests,
     isLoading: isLoading,

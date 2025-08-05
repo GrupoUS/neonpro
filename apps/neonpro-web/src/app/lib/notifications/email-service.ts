@@ -3,20 +3,19 @@
  * HIPAA-compliant email notifications using React Email templates
  */
 
-import type { Resend } from "resend";
 import type { render } from "@react-email/render";
-import type { NOTIFICATION_CONFIG } from "./config";
+import type { Resend } from "resend";
 import type { z } from "zod";
-
+import type { NOTIFICATION_CONFIG } from "./config";
+import type { AppointmentCancellationEmail } from "./templates/appointment-cancellation";
+import type { AppointmentConfirmationEmail } from "./templates/appointment-confirmation";
 // Import email templates
 import type { AppointmentReminderEmail } from "./templates/appointment-reminder";
-import type { AppointmentConfirmationEmail } from "./templates/appointment-confirmation";
-import type { AppointmentCancellationEmail } from "./templates/appointment-cancellation";
+import type { BillingReminderEmail } from "./templates/billing-reminder";
+import type { EmergencyAlertEmail } from "./templates/emergency-alert";
+import type { FollowUpReminderEmail } from "./templates/follow-up-reminder";
 import type { RescheduleRequestEmail } from "./templates/reschedule-request";
 import type { TreatmentReminderEmail } from "./templates/treatment-reminder";
-import type { FollowUpReminderEmail } from "./templates/follow-up-reminder";
-import type { EmergencyAlertEmail } from "./templates/emergency-alert";
-import type { BillingReminderEmail } from "./templates/billing-reminder";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 

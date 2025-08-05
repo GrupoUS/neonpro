@@ -17,7 +17,24 @@
  * @compliance LGPD/ANVISA/CFM
  */
 
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  Calendar,
+  Clock,
+  Eye,
+  Heart,
+  Shield,
+  Smartphone,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import type { Suspense } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -25,25 +42,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
-import type { Button } from "@/components/ui/button";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Activity,
-  Brain,
-  Heart,
-  TrendingUp,
-  Users,
-  Calendar,
-  Shield,
-  Eye,
-  Smartphone,
-  BarChart3,
-  Clock,
-  AlertTriangle,
-} from "lucide-react";
 
 // Healthcare AI Models Performance Data (NeonPro's 6 ML Models)
 interface AIModelMetrics {

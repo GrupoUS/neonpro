@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 // Mock Supabase client
 var mockSupabaseClient = {
@@ -150,25 +147,21 @@ var mockSupabaseClient = {
   error: null,
 };
 // Mock AuditLogger
-var mockAuditLogger = {
+var _mockAuditLogger = {
   logConflictDetection: jest.fn(),
   logSchedulingAction: jest.fn(),
   logSystemEvent: jest.fn(),
 };
 // Mock createClient to return our mock
-jest.mock("@supabase/supabase-js", function () {
-  return {
-    createClient: jest.fn(function () {
-      return mockSupabaseClient;
-    }),
-  };
-});
+jest.mock("@supabase/supabase-js", () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
 // Import services after mocking
 var conflict_resolution_1 = require("../../lib/scheduling/conflict-resolution");
-describe("Conflict Resolution System Integration Tests", function () {
+describe("Conflict Resolution System Integration Tests", () => {
   var conflictService;
   var waitlistService;
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     conflictService = new conflict_resolution_1.ConflictDetectionService();
     waitlistService = new conflict_resolution_1.WaitlistService();
@@ -178,12 +171,12 @@ describe("Conflict Resolution System Integration Tests", function () {
       error: null,
     });
   });
-  describe("ConflictDetectionService", function () {
-    describe("detectConflicts", function () {
-      test("should detect appointment conflicts successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("ConflictDetectionService", () => {
+    describe("detectConflicts", () => {
+      test("should detect appointment conflicts successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var appointmentData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 appointmentData = {
@@ -208,12 +201,11 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      test("should return no conflicts when none exist", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      test("should return no conflicts when none exist", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var appointmentData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 appointmentData = {
@@ -237,12 +229,11 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      test("should handle database errors gracefully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      test("should handle database errors gracefully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var appointmentData, mockError;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 appointmentData = {
@@ -264,14 +255,13 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("analyzeConflictSeverity", function () {
-      test("should correctly analyze conflict severity", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("analyzeConflictSeverity", () => {
+      test("should correctly analyze conflict severity", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var conflictData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 conflictData = {
@@ -290,14 +280,13 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("suggestResolutions", function () {
-      test("should suggest appropriate resolutions", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("suggestResolutions", () => {
+      test("should suggest appropriate resolutions", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var conflictContext, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 conflictContext = {
@@ -314,16 +303,15 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("WaitlistService", function () {
-    describe("addToWaitlist", function () {
-      test("should add patient to waitlist successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("WaitlistService", () => {
+    describe("addToWaitlist", () => {
+      test("should add patient to waitlist successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var waitlistData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 waitlistData = {
@@ -348,12 +336,11 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      test("should handle duplicate waitlist entries", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      test("should handle duplicate waitlist entries", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var waitlistData, mockError;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 waitlistData = {
@@ -375,14 +362,13 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("processWaitlist", function () {
-      test("should process waitlist successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("processWaitlist", () => {
+      test("should process waitlist successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var criteria, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 criteria = {
@@ -406,14 +392,13 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("getWaitlistPosition", function () {
-      test("should return correct waitlist position", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("getWaitlistPosition", () => {
+      test("should return correct waitlist position", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var patientId, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 patientId = "pat-123";
@@ -442,12 +427,11 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      test("should handle patient not on waitlist", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      test("should handle patient not on waitlist", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var patientId, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 patientId = "pat-999";
@@ -472,15 +456,14 @@ describe("Conflict Resolution System Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Integration Scenarios", function () {
-    test("should handle conflict detection and waitlist integration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Integration Scenarios", () => {
+    test("should handle conflict detection and waitlist integration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var appointmentData, conflicts, waitlistResult;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               appointmentData = {
@@ -519,7 +502,6 @@ describe("Conflict Resolution System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

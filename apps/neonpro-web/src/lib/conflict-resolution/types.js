@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Types and interfaces for the Intelligent Conflict Resolution System
  * Handles scheduling conflicts, resource optimization, and automated resolution
@@ -6,7 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResolutionStrategy = exports.ConflictSeverity = exports.ConflictType = void 0;
 var ConflictType;
-(function (ConflictType) {
+((ConflictType) => {
   ConflictType["TIME_OVERLAP"] = "time_overlap";
   ConflictType["STAFF_UNAVAILABLE"] = "staff_unavailable";
   ConflictType["ROOM_OCCUPIED"] = "room_occupied";
@@ -16,7 +15,7 @@ var ConflictType;
   ConflictType["CAPACITY_EXCEEDED"] = "capacity_exceeded";
 })(ConflictType || (exports.ConflictType = ConflictType = {}));
 var ConflictSeverity;
-(function (ConflictSeverity) {
+((ConflictSeverity) => {
   ConflictSeverity["LOW"] = "low";
   ConflictSeverity["MEDIUM"] = "medium";
   ConflictSeverity["HIGH"] = "high";
@@ -24,7 +23,7 @@ var ConflictSeverity;
 })(ConflictSeverity || (exports.ConflictSeverity = ConflictSeverity = {}));
 // Resolution Strategy Types
 var ResolutionStrategy;
-(function (ResolutionStrategy) {
+((ResolutionStrategy) => {
   ResolutionStrategy["RESCHEDULE_LATER"] = "reschedule_later";
   ResolutionStrategy["RESCHEDULE_EARLIER"] = "reschedule_earlier";
   ResolutionStrategy["CHANGE_STAFF"] = "change_staff";

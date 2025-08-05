@@ -20,19 +20,19 @@
 
 import type { createClient } from "@/lib/supabase/server";
 import type {
-  AnalyticsMetrics,
-  CommunicationEvent,
-  ChannelPerformance,
-  ROICalculation,
-  TrendAnalysis,
-  BenchmarkData,
   AlertConfig,
   AnalyticsFilter,
-  EngagementMetrics,
+  AnalyticsMetrics,
   AttributionModel,
-  TimeSeriesData,
-  SegmentAnalysis,
+  BenchmarkData,
+  ChannelPerformance,
+  CommunicationEvent,
   DateRange,
+  EngagementMetrics,
+  ROICalculation,
+  SegmentAnalysis,
+  TimeSeriesData,
+  TrendAnalysis,
 } from "./types/analytics";
 
 export class CommunicationAnalyticsEngine {
@@ -1177,15 +1177,18 @@ export class CommunicationAnalyticsEngine {
       };
 
       switch (metric) {
-        case "delivery_rate":
+        case "delivery_rate": {
           const engagement = await this.getEngagementMetrics(filter);
           return engagement.deliveryRate;
-        case "open_rate":
+        }
+        case "open_rate": {
           const openMetrics = await this.getEngagementMetrics(filter);
           return openMetrics.openRate;
-        case "response_rate":
+        }
+        case "response_rate": {
           const responseMetrics = await this.getEngagementMetrics(filter);
           return responseMetrics.responseRate;
+        }
         default:
           return 0;
       }

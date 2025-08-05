@@ -2,10 +2,8 @@
 // NeonPro - Epic 6 Story 6.2 Task 1: Patient Communication Center
 // API endpoint for sending messages through the communication system
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/utils/supabase/server";
-import type { communicationService } from "@/lib/services/communication-service";
-import type { SendMessageRequest, MessageSchema } from "@/lib/types/communication";
+import type { NextRequest } from "next/server";
+import type { SendMessageRequest } from "@/lib/types/communication";
 
 export async function POST(request: NextRequest) {
   try {

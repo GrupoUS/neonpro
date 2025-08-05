@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,14 +155,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useBreachManagement = useBreachManagement;
 var react_1 = require("react");
 var LGPDComplianceManager_1 = require("@/lib/lgpd/LGPDComplianceManager");
 var use_toast_1 = require("@/hooks/use-toast");
 function useBreachManagement() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     incidents = _a[0],
     setIncidents = _a[1];
@@ -206,10 +202,10 @@ function useBreachManagement() {
   var toast = (0, use_toast_1.useToast)().toast;
   var complianceManager = new LGPDComplianceManager_1.LGPDComplianceManager();
   var loadIncidents = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, now, thisMonthStart_1, active, critical, thisMonth, err_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -228,15 +224,11 @@ function useBreachManagement() {
               setTotalCount(response.total);
               now = new Date();
               thisMonthStart_1 = new Date(now.getFullYear(), now.getMonth(), 1);
-              active = response.data.filter(function (i) {
-                return i.status === "active";
-              }).length;
-              critical = response.data.filter(function (i) {
-                return i.severity === "critical";
-              }).length;
-              thisMonth = response.data.filter(function (i) {
-                return new Date(i.created_at) >= thisMonthStart_1;
-              }).length;
+              active = response.data.filter((i) => i.status === "active").length;
+              critical = response.data.filter((i) => i.severity === "critical").length;
+              thisMonth = response.data.filter(
+                (i) => new Date(i.created_at) >= thisMonthStart_1,
+              ).length;
               setStatistics({
                 total: response.total,
                 active: active,
@@ -258,15 +250,14 @@ function useBreachManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [filters, currentPage, complianceManager, toast],
   );
   var reportIncident = (0, react_1.useCallback)(
-    function (incident) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (incident) =>
+      __awaiter(this, void 0, void 0, function () {
         var newIncident_1, err_2, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsReporting(true);
@@ -278,21 +269,17 @@ function useBreachManagement() {
             case 2:
               newIncident_1 = _a.sent();
               // Update local state
-              setIncidents(function (prev) {
-                return __spreadArray([newIncident_1], prev, true);
-              });
-              setTotalCount(function (prev) {
-                return prev + 1;
-              });
+              setIncidents((prev) => __spreadArray([newIncident_1], prev, true));
+              setTotalCount((prev) => prev + 1);
               // Update statistics
-              setStatistics(function (prev) {
-                return __assign(__assign({}, prev), {
+              setStatistics((prev) =>
+                __assign(__assign({}, prev), {
                   total: prev.total + 1,
                   active: incident.status === "active" ? prev.active + 1 : prev.active,
                   critical: incident.severity === "critical" ? prev.critical + 1 : prev.critical,
                   thisMonth: prev.thisMonth + 1,
-                });
-              });
+                }),
+              );
               toast({
                 title: "Incidente reportado",
                 description: 'Incidente "'.concat(incident.title, '" foi reportado com sucesso.'),
@@ -324,15 +311,14 @@ function useBreachManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [complianceManager, toast],
   );
   var updateIncidentStatus = (0, react_1.useCallback)(
-    function (incidentId, status, notes) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (incidentId, status, notes) =>
+      __awaiter(this, void 0, void 0, function () {
         var updateData_1, err_3, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsUpdating(true);
@@ -354,18 +340,16 @@ function useBreachManagement() {
             case 2:
               _a.sent();
               // Update local state
-              setIncidents(function (prev) {
-                return prev.map(function (incident) {
-                  return incident.id === incidentId
+              setIncidents((prev) =>
+                prev.map((incident) =>
+                  incident.id === incidentId
                     ? __assign(__assign({}, incident), updateData_1)
-                    : incident;
-                });
-              });
+                    : incident,
+                ),
+              );
               // Update statistics
-              setStatistics(function (prev) {
-                var incident = incidents.find(function (i) {
-                  return i.id === incidentId;
-                });
+              setStatistics((prev) => {
+                var incident = incidents.find((i) => i.id === incidentId);
                 if (!incident) return prev;
                 var newStats = __assign({}, prev);
                 // Update active count
@@ -398,15 +382,14 @@ function useBreachManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [complianceManager, incidents, toast],
   );
   var exportIncidents = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var csvHeaders, csvRows, csvContent, blob, link, url, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           try {
             setError(null);
             csvHeaders = [
@@ -423,7 +406,7 @@ function useBreachManagement() {
               "Descrição",
               "Ações Tomadas",
             ];
-            csvRows = incidents.map(function (incident) {
+            csvRows = incidents.map((incident) => {
               var _a, _b, _c;
               return [
                 incident.id,
@@ -447,13 +430,7 @@ function useBreachManagement() {
               ];
             });
             csvContent = __spreadArray([csvHeaders], csvRows, true)
-              .map(function (row) {
-                return row
-                  .map(function (cell) {
-                    return '"'.concat(cell, '"');
-                  })
-                  .join(",");
-              })
+              .map((row) => row.map((cell) => '"'.concat(cell, '"')).join(","))
               .join("\n");
             blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             link = document.createElement("a");
@@ -482,52 +459,42 @@ function useBreachManagement() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [incidents, toast],
   );
-  var goToPage = (0, react_1.useCallback)(function (page) {
+  var goToPage = (0, react_1.useCallback)((page) => {
     setCurrentPage(page);
   }, []);
   // Load data on mount and when filters change
-  (0, react_1.useEffect)(
-    function () {
-      var loadData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                setIsLoading(true);
-                return [4 /*yield*/, loadIncidents()];
-              case 1:
-                _a.sent();
-                setIsLoading(false);
-                return [2 /*return*/];
-            }
-          });
-        });
-      };
-      loadData();
-    },
-    [loadIncidents],
-  );
-  // Auto-refresh for critical incidents
-  (0, react_1.useEffect)(
-    function () {
-      var interval = setInterval(
-        function () {
-          if (statistics.critical > 0) {
-            loadIncidents();
+  (0, react_1.useEffect)(() => {
+    var loadData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setIsLoading(true);
+              return [4 /*yield*/, loadIncidents()];
+            case 1:
+              _a.sent();
+              setIsLoading(false);
+              return [2 /*return*/];
           }
-        },
-        2 * 60 * 1000,
-      ); // 2 minutes for critical incidents
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [loadIncidents, statistics.critical],
-  );
+        });
+      });
+    loadData();
+  }, [loadIncidents]);
+  // Auto-refresh for critical incidents
+  (0, react_1.useEffect)(() => {
+    var interval = setInterval(
+      () => {
+        if (statistics.critical > 0) {
+          loadIncidents();
+        }
+      },
+      2 * 60 * 1000,
+    ); // 2 minutes for critical incidents
+    return () => clearInterval(interval);
+  }, [loadIncidents, statistics.critical]);
   return {
     // Data
     incidents: incidents,

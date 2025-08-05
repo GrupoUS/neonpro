@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientList;
 var react_1 = require("react");
@@ -29,17 +28,13 @@ function PatientList(_a) {
   var endIndex = startIndex + itemsPerPage;
   var currentPatients = patients.slice(startIndex, endIndex);
   // Utility functions
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  };
-  var formatCPF = function (cpf) {
+  var formatDate = (dateString) => new Date(dateString).toLocaleDateString("pt-BR");
+  var formatCPF = (cpf) => {
     if (!cpf) return "N/A";
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   };
-  var formatPhone = function (phone) {
-    return phone.replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3");
-  };
-  var calculateAge = function (birthDate) {
+  var formatPhone = (phone) => phone.replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3");
+  var calculateAge = (birthDate) => {
     var today = new Date();
     var birth = new Date(birthDate);
     var age = today.getFullYear() - birth.getFullYear();
@@ -49,7 +44,7 @@ function PatientList(_a) {
     }
     return age;
   };
-  var getRiskLevelBadge = function (riskLevel) {
+  var getRiskLevelBadge = (riskLevel) => {
     switch (riskLevel) {
       case "low":
         return (
@@ -75,7 +70,7 @@ function PatientList(_a) {
         return <badge_1.Badge variant="outline">N/A</badge_1.Badge>;
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "active":
         return (
@@ -105,7 +100,7 @@ function PatientList(_a) {
         return <badge_1.Badge variant="outline">{status}</badge_1.Badge>;
     }
   };
-  var handlePatientAction = function (action, patientId) {
+  var handlePatientAction = (action, patientId) => {
     console.log("Action: ".concat(action, " for patient: ").concat(patientId));
     // Implement specific actions here
   };
@@ -113,19 +108,17 @@ function PatientList(_a) {
   if (loading) {
     return (
       <div className="space-y-4">
-        {Array.from({ length: 5 }).map(function (_, index) {
-          return (
-            <div key={index} className="flex items-center space-x-4 p-4 border rounded-lg">
-              <skeleton_1.Skeleton className="h-10 w-10 rounded-full" />
-              <div className="space-y-2 flex-1">
-                <skeleton_1.Skeleton className="h-4 w-[200px]" />
-                <skeleton_1.Skeleton className="h-4 w-[150px]" />
-              </div>
-              <skeleton_1.Skeleton className="h-8 w-20" />
-              <skeleton_1.Skeleton className="h-8 w-8" />
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div key={index} className="flex items-center space-x-4 p-4 border rounded-lg">
+            <skeleton_1.Skeleton className="h-10 w-10 rounded-full" />
+            <div className="space-y-2 flex-1">
+              <skeleton_1.Skeleton className="h-4 w-[200px]" />
+              <skeleton_1.Skeleton className="h-4 w-[150px]" />
             </div>
-          );
-        })}
+            <skeleton_1.Skeleton className="h-8 w-20" />
+            <skeleton_1.Skeleton className="h-8 w-8" />
+          </div>
+        ))}
       </div>
     );
   }
@@ -153,9 +146,7 @@ function PatientList(_a) {
           <div className="flex items-center space-x-2">
             <checkbox_1.Checkbox
               checked={selectedPatients.size === patients.length && patients.length > 0}
-              onCheckedChange={function (checked) {
-                return onSelectAll(!!checked);
-              }}
+              onCheckedChange={(checked) => onSelectAll(!!checked)}
             />
             <span className="text-sm text-muted-foreground">
               Selecionar todos ({patients.length})
@@ -168,19 +159,15 @@ function PatientList(_a) {
 
         {/* Patient Cards Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {currentPatients.map(function (patient) {
-            return (
-              <patient_card_1.default
-                key={patient.id}
-                patient={patient}
-                selected={selectedPatients.has(patient.id)}
-                onSelect={function () {
-                  return onPatientSelect(patient.id);
-                }}
-                onAction={handlePatientAction}
-              />
-            );
-          })}
+          {currentPatients.map((patient) => (
+            <patient_card_1.default
+              key={patient.id}
+              patient={patient}
+              selected={selectedPatients.has(patient.id)}
+              onSelect={() => onPatientSelect(patient.id)}
+              onAction={handlePatientAction}
+            />
+          ))}
         </div>
 
         {/* Pagination */}
@@ -194,25 +181,21 @@ function PatientList(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setCurrentPage(Math.max(1, currentPage - 1));
-                }}
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
               >
                 <lucide_react_1.ChevronLeft className="h-4 w-4" />
                 Anterior
               </button_1.Button>
               <div className="flex items-center space-x-1">
-                {Array.from({ length: Math.min(5, totalPages) }, function (_, i) {
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   var page = i + 1;
                   return (
                     <button_1.Button
                       key={page}
                       variant={currentPage === page ? "default" : "outline"}
                       size="sm"
-                      onClick={function () {
-                        return setCurrentPage(page);
-                      }}
+                      onClick={() => setCurrentPage(page)}
                     >
                       {page}
                     </button_1.Button>
@@ -222,9 +205,7 @@ function PatientList(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setCurrentPage(Math.min(totalPages, currentPage + 1));
-                }}
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
               >
                 Próximo
@@ -247,9 +228,7 @@ function PatientList(_a) {
               <table_1.TableHead className="w-12">
                 <checkbox_1.Checkbox
                   checked={selectedPatients.size === patients.length && patients.length > 0}
-                  onCheckedChange={function (checked) {
-                    return onSelectAll(!!checked);
-                  }}
+                  onCheckedChange={(checked) => onSelectAll(!!checked)}
                 />
               </table_1.TableHead>
               <table_1.TableHead>Paciente</table_1.TableHead>
@@ -263,7 +242,7 @@ function PatientList(_a) {
             </table_1.TableRow>
           </table_1.TableHeader>
           <table_1.TableBody>
-            {currentPatients.map(function (patient) {
+            {currentPatients.map((patient) => {
               var _a, _b, _c, _d, _e;
               return (
                 <table_1.TableRow
@@ -273,9 +252,7 @@ function PatientList(_a) {
                   <table_1.TableCell>
                     <checkbox_1.Checkbox
                       checked={selectedPatients.has(patient.id)}
-                      onCheckedChange={function () {
-                        return onPatientSelect(patient.id);
-                      }}
+                      onCheckedChange={() => onPatientSelect(patient.id)}
                     />
                   </table_1.TableCell>
 
@@ -289,9 +266,7 @@ function PatientList(_a) {
                         <avatar_1.AvatarFallback>
                           {patient.raw_user_meta_data.full_name
                             .split(" ")
-                            .map(function (name) {
-                              return name[0];
-                            })
+                            .map((name) => name[0])
                             .join("")
                             .toUpperCase()}
                         </avatar_1.AvatarFallback>
@@ -390,34 +365,26 @@ function PatientList(_a) {
                         <dropdown_menu_1.DropdownMenuLabel>Ações</dropdown_menu_1.DropdownMenuLabel>
                         <dropdown_menu_1.DropdownMenuSeparator />
                         <dropdown_menu_1.DropdownMenuItem
-                          onClick={function () {
-                            return handlePatientAction("view", patient.id);
-                          }}
+                          onClick={() => handlePatientAction("view", patient.id)}
                         >
                           <lucide_react_1.Eye className="mr-2 h-4 w-4" />
                           Ver Detalhes
                         </dropdown_menu_1.DropdownMenuItem>
                         <dropdown_menu_1.DropdownMenuItem
-                          onClick={function () {
-                            return handlePatientAction("schedule", patient.id);
-                          }}
+                          onClick={() => handlePatientAction("schedule", patient.id)}
                         >
                           <lucide_react_1.Calendar className="mr-2 h-4 w-4" />
                           Agendar Consulta
                         </dropdown_menu_1.DropdownMenuItem>
                         <dropdown_menu_1.DropdownMenuItem
-                          onClick={function () {
-                            return handlePatientAction("edit", patient.id);
-                          }}
+                          onClick={() => handlePatientAction("edit", patient.id)}
                         >
                           <lucide_react_1.Edit className="mr-2 h-4 w-4" />
                           Editar
                         </dropdown_menu_1.DropdownMenuItem>
                         <dropdown_menu_1.DropdownMenuSeparator />
                         <dropdown_menu_1.DropdownMenuItem
-                          onClick={function () {
-                            return handlePatientAction("archive", patient.id);
-                          }}
+                          onClick={() => handlePatientAction("archive", patient.id)}
                           className="text-red-600"
                         >
                           <lucide_react_1.Archive className="mr-2 h-4 w-4" />
@@ -444,25 +411,21 @@ function PatientList(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setCurrentPage(Math.max(1, currentPage - 1));
-              }}
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
             >
               <lucide_react_1.ChevronLeft className="h-4 w-4" />
               Anterior
             </button_1.Button>
             <div className="flex items-center space-x-1">
-              {Array.from({ length: Math.min(5, totalPages) }, function (_, i) {
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 var page = i + 1;
                 return (
                   <button_1.Button
                     key={page}
                     variant={currentPage === page ? "default" : "outline"}
                     size="sm"
-                    onClick={function () {
-                      return setCurrentPage(page);
-                    }}
+                    onClick={() => setCurrentPage(page)}
                   >
                     {page}
                   </button_1.Button>
@@ -472,9 +435,7 @@ function PatientList(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setCurrentPage(Math.min(totalPages, currentPage + 1));
-              }}
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
             >
               Próximo

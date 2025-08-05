@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI Duration Prediction Engine - Core ML Service
  * Story 2.1: AI Duration Prediction Engine
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelPerformanceService =
   exports.AIABTestingService =
@@ -149,7 +146,7 @@ var audit_logger_1 = require("@/lib/auth/audit/audit-logger");
 // ===============================================
 // AI Duration Prediction Service
 // ===============================================
-var AIDurationPredictionService = /** @class */ (function () {
+var AIDurationPredictionService = /** @class */ (() => {
   function AIDurationPredictionService() {
     this.BASELINE_DURATIONS = {
       consultation: 30,
@@ -501,7 +498,7 @@ var AIDurationPredictionService = /** @class */ (function () {
       });
     });
   };
-  AIDurationPredictionService.prototype.calculateComplexityMultiplier = function (features) {
+  AIDurationPredictionService.prototype.calculateComplexityMultiplier = (features) => {
     var multiplier = 1.0;
     // Age factor
     if (features.patientAge) {
@@ -525,7 +522,7 @@ var AIDurationPredictionService = /** @class */ (function () {
     else if (features.patientMobilityLevel === "wheelchair") multiplier *= 1.2;
     return multiplier;
   };
-  AIDurationPredictionService.prototype.calculateTemporalFactor = function (features) {
+  AIDurationPredictionService.prototype.calculateTemporalFactor = (features) => {
     var factor = 1.0;
     // Time of day impact
     if (features.timeOfDay === "morning")
@@ -537,12 +534,10 @@ var AIDurationPredictionService = /** @class */ (function () {
     else if (features.dayOfWeek === 5) factor *= 1.02; // Friday wind-down
     return factor;
   };
-  AIDurationPredictionService.prototype.calculateConfidenceScore = function (features, threshold) {
+  AIDurationPredictionService.prototype.calculateConfidenceScore = (features, threshold) => {
     var confidence = 0.8; // Base confidence
     // More complete features = higher confidence
-    var featureCount = Object.values(features).filter(function (v) {
-      return v !== undefined && v !== null;
-    }).length;
+    var featureCount = Object.values(features).filter((v) => v !== undefined && v !== null).length;
     confidence += (featureCount - 4) * 0.02; // Boost for each additional feature
     // Historical data availability
     if (features.historicalDuration) confidence += 0.1;
@@ -581,7 +576,7 @@ exports.AIDurationPredictionService = AIDurationPredictionService;
 // ===============================================
 // A/B Testing Service
 // ===============================================
-var AIABTestingService = /** @class */ (function () {
+var AIABTestingService = /** @class */ (() => {
   function AIABTestingService() {
     this.supabase = (0, client_1.createClient)();
     this.auditLogger = new audit_logger_1.AuditLogger();
@@ -685,12 +680,8 @@ var AIABTestingService = /** @class */ (function () {
           case 1:
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
             if (error) throw error;
-            controlGroup = data.filter(function (d) {
-              return d.test_group === "control";
-            }).length;
-            treatmentGroup = data.filter(function (d) {
-              return d.test_group === "treatment";
-            }).length;
+            controlGroup = data.filter((d) => d.test_group === "control").length;
+            treatmentGroup = data.filter((d) => d.test_group === "treatment").length;
             totalParticipants = data.length;
             return [
               2 /*return*/,
@@ -723,7 +714,7 @@ var AIABTestingService = /** @class */ (function () {
   /**
    * Simple hash function for consistent user assignment
    */
-  AIABTestingService.prototype.hashUserId = function (userId) {
+  AIABTestingService.prototype.hashUserId = (userId) => {
     var hash = 0;
     for (var i = 0; i < userId.length; i++) {
       var char = userId.charCodeAt(i);
@@ -738,7 +729,7 @@ exports.AIABTestingService = AIABTestingService;
 // ===============================================
 // Model Performance Service
 // ===============================================
-var ModelPerformanceService = /** @class */ (function () {
+var ModelPerformanceService = /** @class */ (() => {
   function ModelPerformanceService() {
     this.supabase = (0, client_1.createClient)();
     this.auditLogger = new audit_logger_1.AuditLogger();

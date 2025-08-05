@@ -1,6 +1,11 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { Archive, Calendar, Edit, Eye, FileText, Plus, Shield, Users } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { ConsentService } from "@/app/services/consent.service";
+import type { ConsentForm } from "@/app/types/compliance";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,11 +13,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { ConsentForm } from "@/app/types/compliance";
-import type { ConsentService } from "@/app/services/consent.service";
-import type { Plus, Edit, Eye, Archive, FileText, Calendar, Users, Shield } from "lucide-react";
 import type { useToast } from "@/hooks/use-toast";
 
 interface ConsentFormsManagerProps {

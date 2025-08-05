@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Forecast Models Management System
  * Epic 11 - Story 11.1: Supporting module for model training and management
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,14 +156,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.forecastModelManager = exports.ForecastModelManager = void 0;
 var supabase_1 = require("@/lib/supabase");
 /**
  * Model Training and Management Class
  */
-var ForecastModelManager = /** @class */ (function () {
+var ForecastModelManager = /** @class */ (() => {
   function ForecastModelManager() {
     this.trainingJobs = new Map();
     this.ACCURACY_THRESHOLD = 0.8;
@@ -483,7 +480,7 @@ var ForecastModelManager = /** @class */ (function () {
       if (days === void 0) {
         days = 30;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -671,10 +668,8 @@ var ForecastModelManager = /** @class */ (function () {
           case 2:
             activeModels = _c.sent();
             requiredModelTypes = ["linear_regression", "arima", "ensemble"];
-            _loop_1 = function (modelType) {
-              var hasModel = activeModels.some(function (m) {
-                return m.model_type === modelType;
-              });
+            _loop_1 = (modelType) => {
+              var hasModel = activeModels.some((m) => m.model_type === modelType);
               if (!hasModel) {
                 recommendations.push({
                   model_type: modelType,
@@ -757,12 +752,7 @@ var ForecastModelManager = /** @class */ (function () {
           case 3:
             _a.sent();
             // Simulate processing time
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 100);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 100))];
           case 4:
             // Simulate processing time
             _a.sent();
@@ -809,7 +799,7 @@ var ForecastModelManager = /** @class */ (function () {
   ForecastModelManager.prototype.createTrainedModel = function (job) {
     return __awaiter(this, void 0, void 0, function () {
       var model;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             model = {
@@ -868,7 +858,7 @@ var ForecastModelManager = /** @class */ (function () {
             this.trainingJobs.clear();
             jobs === null || jobs === void 0
               ? void 0
-              : jobs.forEach(function (job) {
+              : jobs.forEach((job) => {
                   _this.trainingJobs.set(job.id, job);
                 });
             return [3 /*break*/, 3];
@@ -887,7 +877,7 @@ var ForecastModelManager = /** @class */ (function () {
    */
   ForecastModelManager.prototype.checkModelPerformance = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would check recent performance and trigger retraining
         console.log("Checking model performance for clinic ".concat(clinicId));
         return [2 /*return*/];
@@ -899,7 +889,7 @@ var ForecastModelManager = /** @class */ (function () {
    */
   ForecastModelManager.prototype.schedulePeriodicRetraining = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would set up periodic retraining schedule
         console.log("Scheduling periodic retraining for clinic ".concat(clinicId));
         return [2 /*return*/];
@@ -912,7 +902,7 @@ var ForecastModelManager = /** @class */ (function () {
   ForecastModelManager.prototype.storeTrainingJob = function (job) {
     return __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase_1.supabase.from("model_training_jobs").insert(job)];
@@ -958,7 +948,7 @@ var ForecastModelManager = /** @class */ (function () {
   ForecastModelManager.prototype.loadModel = function (modelId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, model, error, error_14;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -985,7 +975,7 @@ var ForecastModelManager = /** @class */ (function () {
    */
   ForecastModelManager.prototype.evaluateModelPerformance = function (model, startDate, endDate) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified evaluation - in production would use actual ML evaluation
         return [
           2 /*return*/,
@@ -1018,9 +1008,7 @@ var ForecastModelManager = /** @class */ (function () {
    */
   ForecastModelManager.prototype.storeComparisonResult = function (result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ForecastModelManager.prototype.deactivateCurrentModels = function (
@@ -1029,19 +1017,15 @@ var ForecastModelManager = /** @class */ (function () {
     serviceType,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ForecastModelManager.prototype.logModelDeployment = function (modelId, clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  ForecastModelManager.prototype.getHyperparameterSpace = function (modelType) {
+  ForecastModelManager.prototype.getHyperparameterSpace = (modelType) => {
     // Implementation would return hyperparameter space
     return {
       model_type: modelType,
@@ -1050,13 +1034,13 @@ var ForecastModelManager = /** @class */ (function () {
   };
   ForecastModelManager.prototype.loadOptimizationData = function (clinicId, serviceId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would load data for optimization
         return [2 /*return*/, []];
       });
     });
   };
-  ForecastModelManager.prototype.generateRandomConfig = function (modelType, hyperparamSpace) {
+  ForecastModelManager.prototype.generateRandomConfig = (modelType, hyperparamSpace) => {
     // Implementation would generate random configuration
     return {
       model_type: modelType,
@@ -1085,7 +1069,7 @@ var ForecastModelManager = /** @class */ (function () {
   };
   ForecastModelManager.prototype.evaluateConfigurationCV = function (config, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would evaluate configuration with cross-validation
         return [2 /*return*/, 0.85 + Math.random() * 0.1];
       });
@@ -1098,14 +1082,12 @@ var ForecastModelManager = /** @class */ (function () {
     score,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ForecastModelManager.prototype.calculateDriftScore = function (model) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would calculate actual drift score
         return [2 /*return*/, Math.random() * 0.15];
       });
@@ -1113,15 +1095,13 @@ var ForecastModelManager = /** @class */ (function () {
   };
   ForecastModelManager.prototype.scheduleModelRetraining = function (model) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ForecastModelManager.prototype.getActiveModels = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, models, error, error_15;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -1149,7 +1129,7 @@ var ForecastModelManager = /** @class */ (function () {
   };
   ForecastModelManager.prototype.evaluateTrainedModel = function (model, job) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would evaluate the trained model
         return [
           2 /*return*/,

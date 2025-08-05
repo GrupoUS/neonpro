@@ -1,5 +1,21 @@
 "use client";
 
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  Calculator,
+  CheckCircle,
+  CreditCard,
+  DollarSign,
+  Download,
+  FileText,
+  Loader2,
+  Receipt,
+  Search,
+} from "lucide-react";
+import type { useMemo, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,22 +48,6 @@ import type {
   TableRow,
 } from "@/components/ui/table";
 import type { cn } from "@/lib/utils";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type {
-  AlertCircle,
-  Calculator,
-  CheckCircle,
-  CreditCard,
-  DollarSign,
-  Download,
-  FileText,
-  Loader2,
-  Receipt,
-  Search,
-} from "lucide-react";
-import type { useMemo, useState } from "react";
-import type { toast } from "sonner";
 
 export interface BulkPayableItem {
   id: string;
@@ -185,14 +185,16 @@ export default function BulkPaymentProcessor({
       case "overdue":
         items = items.filter((item) => item.status === "overdue");
         break;
-      case "due_today":
+      case "due_today": {
         const today = new Date().toDateString();
         items = items.filter((item) => new Date(item.due_date).toDateString() === today);
         break;
-      case "due_week":
+      }
+      case "due_week": {
         const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         items = items.filter((item) => new Date(item.due_date) <= weekFromNow);
         break;
+      }
       case "high_priority":
         items = items.filter((item) => item.priority === "high");
         break;

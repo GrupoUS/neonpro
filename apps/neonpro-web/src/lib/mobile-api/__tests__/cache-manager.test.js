@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Cache Manager Tests
  * Comprehensive test suite for mobile cache functionality
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var cache_manager_1 = require("../cache-manager");
@@ -175,10 +172,10 @@ Object.defineProperty(global, "localStorage", {
   value: mockLocalStorage,
   writable: true,
 });
-(0, globals_1.describe)("CacheManager", function () {
+(0, globals_1.describe)("CacheManager", () => {
   var cacheManager;
   var mockConfig;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     mockConfig = {
       enabled: true,
       strategy: "lru",
@@ -207,9 +204,9 @@ Object.defineProperty(global, "localStorage", {
     cacheManager = new cache_manager_1.CacheManager(mockConfig);
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.afterEach)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, globals_1.afterEach)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, cacheManager.shutdown()];
@@ -218,12 +215,12 @@ Object.defineProperty(global, "localStorage", {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.describe)("Initialization", function () {
-    (0, globals_1.it)("should initialize successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.describe)("Initialization", () => {
+    (0, globals_1.it)("should initialize successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -235,12 +232,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle initialization with disabled cache", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle initialization with disabled cache", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var disabledConfig, disabledCacheManager;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               disabledConfig = __assign(__assign({}, mockConfig), { enabled: false });
@@ -254,11 +251,11 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should initialize storage layers", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should initialize storage layers", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -269,13 +266,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Basic Cache Operations", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Basic Cache Operations", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -284,12 +281,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should set and get cache entries", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should set and get cache entries", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value, ttl, retrieved;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               key = "test-key";
@@ -305,12 +302,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return null for non-existent keys", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return null for non-existent keys", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.get("non-existent-key")];
@@ -320,12 +317,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should delete cache entries", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should delete cache entries", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               key = "delete-test";
@@ -343,12 +340,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check if key exists", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check if key exists", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value, _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               key = "exists-test";
@@ -367,12 +364,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should clear all cache entries", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should clear all cache entries", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, cacheManager.set("key1", { data: "value1" })];
@@ -395,13 +392,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("TTL (Time To Live)", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("TTL (Time To Live)", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -410,12 +407,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should respect TTL and expire entries", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should respect TTL and expire entries", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value, shortTtl, _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               key = "ttl-test";
@@ -431,12 +428,7 @@ Object.defineProperty(global, "localStorage", {
               // Should exist immediately
               _a.apply(void 0, [_c.sent()]).toEqual(value);
               // Wait for expiration
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 150);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 150))];
             case 3:
               // Wait for expiration
               _c.sent();
@@ -449,12 +441,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should use default TTL when not specified", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should use default TTL when not specified", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value, stats;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               key = "default-ttl-test";
@@ -467,12 +459,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should update TTL for existing entries", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should update TTL for existing entries", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value, _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               key = "update-ttl-test";
@@ -492,13 +484,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Cache Strategies", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Cache Strategies", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -507,12 +499,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should implement LRU eviction strategy", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should implement LRU eviction strategy", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var smallConfig, lruCache, largeValue, _a, _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               smallConfig = __assign(__assign({}, mockConfig), {
@@ -551,12 +543,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should implement FIFO eviction strategy", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should implement FIFO eviction strategy", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var fifoConfig, fifoCache, largeValue, _a, _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               fifoConfig = __assign(__assign({}, mockConfig), { strategy: "fifo", maxSize: 1024 });
@@ -592,12 +584,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should implement LFU eviction strategy", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should implement LFU eviction strategy", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var lfuConfig, lfuCache, largeValue, _a, _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               lfuConfig = __assign(__assign({}, mockConfig), { strategy: "lfu", maxSize: 1024 });
@@ -641,13 +633,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Compression", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Compression", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -656,12 +648,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should compress large values when enabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should compress large values when enabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, largeValue, retrieved, stats;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               key = "compression-test";
@@ -681,12 +673,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle different compression algorithms", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle different compression algorithms", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var brotliConfig, brotliCache, key, value, retrieved;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               brotliConfig = __assign(__assign({}, mockConfig), {
@@ -715,12 +707,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should skip compression for small values", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should skip compression for small values", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, smallValue, retrieved;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               key = "small-value-test";
@@ -735,13 +727,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Encryption", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Encryption", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -750,12 +742,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should encrypt sensitive data when enabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should encrypt sensitive data when enabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, sensitiveValue, retrieved;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               key = "encryption-test";
@@ -774,12 +766,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle encryption errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle encryption errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidConfig, invalidCache;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidConfig = __assign(__assign({}, mockConfig), {
@@ -799,13 +791,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Pattern Operations", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Pattern Operations", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -814,12 +806,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should get keys matching pattern", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should get keys matching pattern", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var userKeys;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.set("user:1:profile", { name: "User 1" })];
@@ -844,12 +836,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should invalidate keys matching pattern", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should invalidate keys matching pattern", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [4 /*yield*/, cacheManager.set("cache:api:users", { data: "users" })];
@@ -879,12 +871,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should get multiple values by pattern", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should get multiple values by pattern", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var sessions;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.set("session:user1", { id: 1, name: "User 1" })];
@@ -905,13 +897,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Batch Operations", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Batch Operations", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -920,12 +912,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should set multiple values in batch", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should set multiple values in batch", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var entries, _i, _a, _b, key, value, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               entries = {
@@ -953,12 +945,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should get multiple values in batch", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should get multiple values in batch", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var keys, results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.set("multi:1", { data: "value1" })];
@@ -981,12 +973,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should delete multiple values in batch", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should delete multiple values in batch", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var keys, _a, _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [4 /*yield*/, cacheManager.set("delete:1", { data: "value1" })];
@@ -1017,13 +1009,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Storage Layers", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Storage Layers", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -1032,12 +1024,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should use memory storage for fast access", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should use memory storage for fast access", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value, retrieved;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               key = "memory-test";
@@ -1052,12 +1044,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should persist to IndexedDB for durability", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should persist to IndexedDB for durability", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value, newCacheManager, retrieved;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               key = "persistent-test";
@@ -1079,12 +1071,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should fallback to localStorage when IndexedDB fails", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should fallback to localStorage when IndexedDB fails", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var fallbackCache, key, value, retrieved;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock IndexedDB failure
@@ -1109,13 +1101,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Statistics and Monitoring", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Statistics and Monitoring", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -1124,12 +1116,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should track cache statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should track cache statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var stats;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.set("stats:1", { data: "value1" })];
@@ -1152,12 +1144,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should track memory usage", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should track memory usage", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var largeValue, stats;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               largeValue = { data: "x".repeat(1000) };
@@ -1173,12 +1165,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should reset statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should reset statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var stats;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.set("reset:1", { data: "value1" })];
@@ -1194,13 +1186,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Health Check", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Health Check", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -1209,12 +1201,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return healthy status when functioning properly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return healthy status when functioning properly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var health;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.healthCheck()];
@@ -1226,16 +1218,16 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should detect storage issues", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should detect storage issues", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var health;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock storage failure
-              mockLocalStorage.setItem.mockImplementationOnce(function () {
+              mockLocalStorage.setItem.mockImplementationOnce(() => {
                 throw new Error("Storage quota exceeded");
               });
               return [4 /*yield*/, cacheManager.healthCheck()];
@@ -1246,13 +1238,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Cleanup and Maintenance", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Cleanup and Maintenance", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -1261,12 +1253,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should clean up expired entries", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should clean up expired entries", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var shortTtl, _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               shortTtl = 100;
@@ -1277,12 +1269,7 @@ Object.defineProperty(global, "localStorage", {
             case 2:
               _c.sent();
               // Wait for expiration
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 150);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 150))];
             case 3:
               // Wait for expiration
               _c.sent();
@@ -1300,12 +1287,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should optimize storage periodically", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should optimize storage periodically", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var i, statsBefore, statsAfter;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               i = 0;
@@ -1333,13 +1320,13 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cacheManager.initialize()];
@@ -1348,16 +1335,16 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle storage quota exceeded", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle storage quota exceeded", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var key, value;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock storage quota error
-              mockLocalStorage.setItem.mockImplementationOnce(function () {
+              mockLocalStorage.setItem.mockImplementationOnce(() => {
                 throw new Error("QuotaExceededError");
               });
               key = "quota-test";
@@ -1373,12 +1360,12 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle corrupted cache data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle corrupted cache data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock corrupted data
@@ -1390,11 +1377,11 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle network errors during sync", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should handle network errors during sync", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // This would test sync functionality if implemented
@@ -1410,7 +1397,7 @@ Object.defineProperty(global, "localStorage", {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

@@ -2,7 +2,6 @@
 // Story 1.3, Task 2: Patient portal layout and navigation with mobile-first design
 // Created: Healthcare-optimized navigation for patient portal
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientNavigation = PatientNavigation;
 var React = require("react");
@@ -57,48 +56,42 @@ function PatientNavigation(_a) {
   var _b = React.useState(false),
     isOpen = _b[0],
     setIsOpen = _b[1];
-  var NavContent = function () {
-    return (
-      <nav className="flex flex-col space-y-2">
-        {navigationItems.map(function (item) {
-          var isActive = pathname === item.href || pathname.startsWith("".concat(item.href, "/"));
-          var Icon = item.icon;
-          return (
-            <link_1.default
-              key={item.href}
-              href={item.href}
-              onClick={function () {
-                return setIsOpen(false);
-              }}
-              className={(0, utils_1.cn)(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
-                "hover:bg-accent hover:text-accent-foreground",
-                "focus:bg-accent focus:text-accent-foreground focus:outline-none",
-                "active:bg-accent/80",
-                isActive
-                  ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                  : "text-muted-foreground",
-              )}
-              aria-current={isActive ? "page" : undefined}
-            >
-              <Icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
-              <div className="flex-1 min-w-0">
-                <div className="font-medium truncate">{item.title}</div>
-                <div className="text-xs opacity-70 truncate hidden sm:block">
-                  {item.description}
-                </div>
-              </div>
-              {item.badge && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-                  {item.badge}
-                </span>
-              )}
-            </link_1.default>
-          );
-        })}
-      </nav>
-    );
-  };
+  var NavContent = () => (
+    <nav className="flex flex-col space-y-2">
+      {navigationItems.map((item) => {
+        var isActive = pathname === item.href || pathname.startsWith("".concat(item.href, "/"));
+        var Icon = item.icon;
+        return (
+          <link_1.default
+            key={item.href}
+            href={item.href}
+            onClick={() => setIsOpen(false)}
+            className={(0, utils_1.cn)(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+              "hover:bg-accent hover:text-accent-foreground",
+              "focus:bg-accent focus:text-accent-foreground focus:outline-none",
+              "active:bg-accent/80",
+              isActive
+                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                : "text-muted-foreground",
+            )}
+            aria-current={isActive ? "page" : undefined}
+          >
+            <Icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+            <div className="flex-1 min-w-0">
+              <div className="font-medium truncate">{item.title}</div>
+              <div className="text-xs opacity-70 truncate hidden sm:block">{item.description}</div>
+            </div>
+            {item.badge && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                {item.badge}
+              </span>
+            )}
+          </link_1.default>
+        );
+      })}
+    </nav>
+  );
   return (
     <>
       {/* Mobile Navigation Trigger */}
@@ -144,9 +137,7 @@ function PatientNavigation(_a) {
                 <button_1.Button
                   variant="ghost"
                   size="icon"
-                  onClick={function () {
-                    return setIsOpen(false);
-                  }}
+                  onClick={() => setIsOpen(false)}
                   aria-label="Fechar menu"
                 >
                   <lucide_react_1.X className="h-5 w-5" />
@@ -163,7 +154,7 @@ function PatientNavigation(_a) {
                 <button_1.Button
                   variant="ghost"
                   className="w-full justify-start text-muted-foreground hover:text-foreground"
-                  onClick={function () {
+                  onClick={() => {
                     // Handle logout
                     window.location.href = "/portal/login";
                   }}
@@ -213,7 +204,7 @@ function PatientNavigation(_a) {
             <button_1.Button
               variant="ghost"
               className="w-full justify-start text-muted-foreground hover:text-foreground"
-              onClick={function () {
+              onClick={() => {
                 // Handle logout
                 window.location.href = "/portal/login";
               }}

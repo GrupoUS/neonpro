@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Notification API Tests
  *
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -28,7 +27,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,8 +56,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -79,9 +76,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -140,14 +137,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var route_1 = require("@/app/api/notifications/send/route");
 var route_2 = require("@/app/api/notifications/status/route");
 var route_3 = require("@/app/api/notifications/analytics/route");
 // Mock NextRequest for testing
-var MockNextRequest = /** @class */ (function () {
+var MockNextRequest = /** @class */ (() => {
   function MockNextRequest(url, init) {
     this.url = url;
     this.method = (init === null || init === void 0 ? void 0 : init.method) || "GET";
@@ -183,120 +180,106 @@ var NextRequest = MockNextRequest;
 // MOCKS
 // ================================================================================
 // Mock Supabase
-globals_1.jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return {
-        auth: {
-          getSession: globals_1.jest.fn().mockResolvedValue({
-            data: { session: { user: { id: "test-user-id" } } },
-            error: null,
-          }),
-          getUser: globals_1.jest.fn().mockResolvedValue({
-            data: { user: { id: "test-user-id", email: "test@test.com" } },
-            error: null,
-          }),
+globals_1.jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: globals_1.jest.fn(() => ({
+    auth: {
+      getSession: globals_1.jest.fn().mockResolvedValue({
+        data: { session: { user: { id: "test-user-id" } } },
+        error: null,
+      }),
+      getUser: globals_1.jest.fn().mockResolvedValue({
+        data: { user: { id: "test-user-id", email: "test@test.com" } },
+        error: null,
+      }),
+    },
+    from: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn().mockReturnThis(),
+      eq: globals_1.jest.fn().mockReturnThis(),
+      single: globals_1.jest.fn().mockResolvedValue({
+        data: {
+          id: "test-user-id",
+          clinic_id: "test-clinic-id",
+          role: "admin",
+          permissions: ["send_notifications", "view_analytics"],
         },
-        from: globals_1.jest.fn(function () {
-          return {
-            select: globals_1.jest.fn().mockReturnThis(),
-            eq: globals_1.jest.fn().mockReturnThis(),
-            single: globals_1.jest.fn().mockResolvedValue({
-              data: {
-                id: "test-user-id",
-                clinic_id: "test-clinic-id",
-                role: "admin",
-                permissions: ["send_notifications", "view_analytics"],
-              },
-            }),
-            order: globals_1.jest.fn().mockReturnThis(),
-            range: globals_1.jest.fn().mockResolvedValue({
-              data: [],
-              error: null,
-              count: 0,
-            }),
-          };
-        }),
-      };
-    }),
-  };
-});
+      }),
+      order: globals_1.jest.fn().mockReturnThis(),
+      range: globals_1.jest.fn().mockResolvedValue({
+        data: [],
+        error: null,
+        count: 0,
+      }),
+    })),
+  })),
+}));
 // Mock Notification Manager
-globals_1.jest.mock("@/lib/notifications/core/notification-manager", function () {
-  return {
-    notificationManager: {
-      sendNotification: globals_1.jest.fn().mockResolvedValue({
-        id: "test-notification-id",
-        status: "sent",
-      }),
-    },
-  };
-});
+globals_1.jest.mock("@/lib/notifications/core/notification-manager", () => ({
+  notificationManager: {
+    sendNotification: globals_1.jest.fn().mockResolvedValue({
+      id: "test-notification-id",
+      status: "sent",
+    }),
+  },
+}));
 // Mock ML Engine
-globals_1.jest.mock("@/lib/notifications/ml/optimization-engine", function () {
-  return {
-    notificationMLEngine: {
-      optimizeForUser: globals_1.jest.fn().mockResolvedValue({
-        optimizations: {
-          channel: { recommended: "email", confidence: 0.9 },
-          timing: { recommended: new Date(), confidence: 0.8 },
-          content: { personalizedContent: "Optimized content", confidence: 0.85 },
-        },
-        modelVersions: { channel: "1.0", timing: "1.1", content: "1.2" },
-      }),
-    },
-  };
-});
+globals_1.jest.mock("@/lib/notifications/ml/optimization-engine", () => ({
+  notificationMLEngine: {
+    optimizeForUser: globals_1.jest.fn().mockResolvedValue({
+      optimizations: {
+        channel: { recommended: "email", confidence: 0.9 },
+        timing: { recommended: new Date(), confidence: 0.8 },
+        content: { personalizedContent: "Optimized content", confidence: 0.85 },
+      },
+      modelVersions: { channel: "1.0", timing: "1.1", content: "1.2" },
+    }),
+  },
+}));
 // Mock Compliance Engine
-globals_1.jest.mock("@/lib/notifications/compliance/compliance-engine", function () {
-  return {
-    notificationComplianceEngine: {
-      validateLGPDCompliance: globals_1.jest.fn().mockResolvedValue({
-        violations: [],
-        recommendations: [],
-      }),
-      validateMedicalCompliance: globals_1.jest.fn().mockResolvedValue({
-        violations: [],
-        recommendations: [],
-      }),
-    },
-  };
-});
+globals_1.jest.mock("@/lib/notifications/compliance/compliance-engine", () => ({
+  notificationComplianceEngine: {
+    validateLGPDCompliance: globals_1.jest.fn().mockResolvedValue({
+      violations: [],
+      recommendations: [],
+    }),
+    validateMedicalCompliance: globals_1.jest.fn().mockResolvedValue({
+      violations: [],
+      recommendations: [],
+    }),
+  },
+}));
 // Mock Analytics
-globals_1.jest.mock("@/lib/notifications/analytics/notification-analytics", function () {
-  return {
-    notificationAnalytics: {
-      getOverviewMetrics: globals_1.jest.fn().mockResolvedValue({
-        total: 100,
-        sent: 95,
-        delivered: 90,
-        failed: 5,
-        pending: 5,
-        deliveryRate: 94.7,
-        engagementRate: 78.5,
-      }),
-      getPerformanceMetrics: globals_1.jest.fn().mockResolvedValue({
-        averageDeliveryTime: 120,
-        successRate: 94.7,
-        channelPerformance: {},
-      }),
-      getEngagementMetrics: globals_1.jest.fn().mockResolvedValue({
-        openRate: 45.2,
-        clickRate: 12.8,
-        unsubscribeRate: 0.5,
-      }),
-      getChannelAnalytics: globals_1.jest.fn().mockResolvedValue({
-        email: { sent: 50, delivered: 48, rate: 96 },
-        sms: { sent: 30, delivered: 29, rate: 96.7 },
-      }),
-      getTrendAnalysis: globals_1.jest.fn().mockResolvedValue({
-        daily: [],
-        weekly: [],
-        trends: {},
-      }),
-    },
-  };
-});
+globals_1.jest.mock("@/lib/notifications/analytics/notification-analytics", () => ({
+  notificationAnalytics: {
+    getOverviewMetrics: globals_1.jest.fn().mockResolvedValue({
+      total: 100,
+      sent: 95,
+      delivered: 90,
+      failed: 5,
+      pending: 5,
+      deliveryRate: 94.7,
+      engagementRate: 78.5,
+    }),
+    getPerformanceMetrics: globals_1.jest.fn().mockResolvedValue({
+      averageDeliveryTime: 120,
+      successRate: 94.7,
+      channelPerformance: {},
+    }),
+    getEngagementMetrics: globals_1.jest.fn().mockResolvedValue({
+      openRate: 45.2,
+      clickRate: 12.8,
+      unsubscribeRate: 0.5,
+    }),
+    getChannelAnalytics: globals_1.jest.fn().mockResolvedValue({
+      email: { sent: 50, delivered: 48, rate: 96 },
+      sms: { sent: 30, delivered: 29, rate: 96.7 },
+    }),
+    getTrendAnalysis: globals_1.jest.fn().mockResolvedValue({
+      daily: [],
+      weekly: [],
+      trends: {},
+    }),
+  },
+}));
 // ================================================================================
 // TEST UTILITIES
 // ================================================================================
@@ -313,15 +296,15 @@ function createMockRequest(method, body, searchParams) {
 // ================================================================================
 // SEND ENDPOINT TESTS
 // ================================================================================
-describe("/api/notifications/send", function () {
-  beforeEach(function () {
+describe("/api/notifications/send", () => {
+  beforeEach(() => {
     globals_1.jest.clearAllMocks();
   });
-  describe("POST - Single Notification", function () {
-    it("should send notification successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("POST - Single Notification", () => {
+    it("should send notification successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var validPayload, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               validPayload = {
@@ -348,12 +331,11 @@ describe("/api/notifications/send", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidPayload, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidPayload = {
@@ -373,12 +355,11 @@ describe("/api/notifications/send", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should enforce clinic authorization", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should enforce clinic authorization", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var unauthorizedPayload, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               unauthorizedPayload = {
@@ -401,12 +382,11 @@ describe("/api/notifications/send", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle compliance violations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle compliance violations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var notificationComplianceEngine, payload, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               notificationComplianceEngine =
@@ -435,14 +415,13 @@ describe("/api/notifications/send", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("PUT - Bulk Notifications", function () {
-    it("should process bulk notifications successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("PUT - Bulk Notifications", () => {
+    it("should process bulk notifications successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var bulkPayload, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               bulkPayload = {
@@ -484,12 +463,11 @@ describe("/api/notifications/send", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle bulk validation errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle bulk validation errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidBulkPayload, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidBulkPayload = {
@@ -508,14 +486,13 @@ describe("/api/notifications/send", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("GET - Configuration Info", function () {
-    it("should return configuration information", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET - Configuration Info", () => {
+    it("should return configuration information", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = createMockRequest("GET");
@@ -532,21 +509,20 @@ describe("/api/notifications/send", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });
 // ================================================================================
 // STATUS ENDPOINT TESTS
 // ================================================================================
-describe("/api/notifications/status", function () {
-  beforeEach(function () {
+describe("/api/notifications/status", () => {
+  beforeEach(() => {
     globals_1.jest.clearAllMocks();
   });
-  it("should return notification status list", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should return notification status list", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = createMockRequest("GET", null, { limit: "10", offset: "0" });
@@ -562,12 +538,11 @@ describe("/api/notifications/status", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should validate query parameters", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should validate query parameters", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = createMockRequest("GET", null, { limit: "2000" });
@@ -582,12 +557,11 @@ describe("/api/notifications/status", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should filter by notification ID", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should filter by notification ID", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var testId, request, response, mockSupabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             testId = "test-notification-id";
@@ -601,20 +575,19 @@ describe("/api/notifications/status", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });
 // ================================================================================
 // ANALYTICS ENDPOINT TESTS
 // ================================================================================
-describe("/api/notifications/analytics", function () {
-  beforeEach(function () {
+describe("/api/notifications/analytics", () => {
+  beforeEach(() => {
     globals_1.jest.clearAllMocks();
   });
-  it("should return overview analytics", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should return overview analytics", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = createMockRequest("GET", null, {
@@ -634,12 +607,11 @@ describe("/api/notifications/analytics", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should return performance analytics", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should return performance analytics", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = createMockRequest("GET", null, {
@@ -657,12 +629,11 @@ describe("/api/notifications/analytics", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should return engagement analytics", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should return engagement analytics", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = createMockRequest("GET", null, {
@@ -681,12 +652,11 @@ describe("/api/notifications/analytics", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should validate metric parameter", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should validate metric parameter", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = createMockRequest("GET", null, {
@@ -703,12 +673,11 @@ describe("/api/notifications/analytics", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle date range parameters", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle date range parameters", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var dateFrom, dateTo, request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             dateFrom = "2024-01-01T00:00:00Z";
@@ -730,15 +699,14 @@ describe("/api/notifications/analytics", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });
 // ================================================================================
 // INTEGRATION TESTS
 // ================================================================================
-describe("Integration Tests", function () {
-  it("should handle complete notification workflow", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+describe("Integration Tests", () => {
+  it("should handle complete notification workflow", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var sendPayload,
         sendRequest,
         sendResponse,
@@ -747,7 +715,7 @@ describe("Integration Tests", function () {
         statusResponse,
         analyticsRequest,
         analyticsResponse;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             sendPayload = {
@@ -785,32 +753,29 @@ describe("Integration Tests", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });
 // ================================================================================
 // PERFORMANCE TESTS
 // ================================================================================
-describe("Performance Tests", function () {
-  it("should handle bulk notifications within time limit", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+describe("Performance Tests", () => {
+  it("should handle bulk notifications within time limit", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var startTime, bulkPayload, request, response, endTime, duration;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             startTime = Date.now();
             bulkPayload = {
               clinicId: "test-clinic-id",
-              notifications: Array.from({ length: 100 }, function (_, i) {
-                return {
-                  userId: "user-".concat(i),
-                  clinicId: "test-clinic-id",
-                  type: "promotional",
-                  title: "Bulk Test ".concat(i),
-                  content: "Content ".concat(i),
-                  channels: ["email"],
-                };
-              }),
+              notifications: Array.from({ length: 100 }, (_, i) => ({
+                userId: "user-".concat(i),
+                clinicId: "test-clinic-id",
+                type: "promotional",
+                title: "Bulk Test ".concat(i),
+                content: "Content ".concat(i),
+                channels: ["email"],
+              })),
             };
             request = createMockRequest("PUT", bulkPayload);
             return [4 /*yield*/, (0, route_1.PUT)(request)];
@@ -823,12 +788,11 @@ describe("Performance Tests", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle analytics queries efficiently", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle analytics queries efficiently", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var startTime, request, response, endTime, duration;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             startTime = Date.now();
@@ -846,17 +810,16 @@ describe("Performance Tests", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });
 // ================================================================================
 // ERROR HANDLING TESTS
 // ================================================================================
-describe("Error Handling", function () {
-  it("should handle database connection errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+describe("Error Handling", () => {
+  it("should handle database connection errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockSupabase, request, response;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSupabase = require("@/app/utils/supabase/server").createClient();
@@ -878,12 +841,11 @@ describe("Error Handling", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle ML engine failures gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle ML engine failures gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var notificationMLEngine, request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             notificationMLEngine =
@@ -912,12 +874,11 @@ describe("Error Handling", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle compliance engine failures", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle compliance engine failures", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var notificationComplianceEngine, request, response;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             notificationComplianceEngine =
@@ -941,6 +902,5 @@ describe("Error Handling", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

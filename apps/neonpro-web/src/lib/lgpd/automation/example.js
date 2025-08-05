@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Automation System - Exemplo Prático de Implementação
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lgpdApiExamples = exports.LGPDUsageExamples = exports.LGPDAutomationService = void 0;
 exports.getLGPDService = getLGPDService;
@@ -167,7 +164,7 @@ var ENVIRONMENT = process.env.NODE_ENV || "development";
 /**
  * Classe principal para gerenciar a automação LGPD na aplicação
  */
-var LGPDAutomationService = /** @class */ (function () {
+var LGPDAutomationService = /** @class */ (() => {
   function LGPDAutomationService() {
     this.isInitialized = false;
     // Inicializar cliente Supabase
@@ -256,7 +253,7 @@ var LGPDAutomationService = /** @class */ (function () {
   /**
    * Obter configuração baseada no ambiente
    */
-  LGPDAutomationService.prototype.getEnvironmentConfig = function () {
+  LGPDAutomationService.prototype.getEnvironmentConfig = () => {
     var baseConfig = (0, index_1.getLGPDAutomationConfig)(ENVIRONMENT);
     // Personalizar configuração se necessário
     if (ENVIRONMENT === "production") {
@@ -278,9 +275,8 @@ var LGPDAutomationService = /** @class */ (function () {
    * Configurar callbacks de monitoramento
    */
   LGPDAutomationService.prototype.setupMonitoringCallbacks = function () {
-    var _this = this;
     // Callback para alertas
-    this.orchestrator.onAlert(function (alert) {
+    this.orchestrator.onAlert((alert) => {
       console.log(
         "\uD83D\uDEA8 Alerta ".concat(alert.alert_type.toUpperCase(), ": ").concat(alert.title),
       );
@@ -288,20 +284,16 @@ var LGPDAutomationService = /** @class */ (function () {
       console.log("\uD83D\uDCDD Mensagem: ".concat(alert.message));
       // Enviar para sistema de monitoramento externo se necessário
       if (alert.alert_type === "critical") {
-        _this.sendCriticalAlert(alert);
+        this.sendCriticalAlert(alert);
       }
     });
     // Callback para mudanças de status
-    this.orchestrator.onStatusChange(function (statuses) {
-      var errorModules = statuses.filter(function (s) {
-        return s.status === "error";
-      });
+    this.orchestrator.onStatusChange((statuses) => {
+      var errorModules = statuses.filter((s) => s.status === "error");
       if (errorModules.length > 0) {
         console.warn(
           "⚠️ Módulos com erro:",
-          errorModules.map(function (m) {
-            return m.module;
-          }),
+          errorModules.map((m) => m.module),
         );
       }
     });
@@ -311,7 +303,7 @@ var LGPDAutomationService = /** @class */ (function () {
    */
   LGPDAutomationService.prototype.sendCriticalAlert = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar integração com sistema de monitoramento
         // (ex: Slack, Discord, email, etc.)
         console.log("🚨 ALERTA CRÍTICO - Enviando notificação...", alert);
@@ -381,7 +373,7 @@ function getLGPDService() {
 /**
  * Exemplos de uso dos módulos de automação
  */
-var LGPDUsageExamples = /** @class */ (function () {
+var LGPDUsageExamples = /** @class */ (() => {
   function LGPDUsageExamples() {
     this.service = getLGPDService();
   }
@@ -643,8 +635,7 @@ exports.LGPDUsageExamples = LGPDUsageExamples;
 function initializeLGPDInNextJS() {
   return __awaiter(this, void 0, void 0, function () {
     var service, error_9;
-    var _this = this;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           service = getLGPDService();
@@ -659,9 +650,9 @@ function initializeLGPDInNextJS() {
         case 2:
           _a.sent();
           // Configurar shutdown graceful
-          process.on("SIGTERM", function () {
-            return __awaiter(_this, void 0, void 0, function () {
-              return __generator(this, function (_a) {
+          process.on("SIGTERM", () =>
+            __awaiter(this, void 0, void 0, function () {
+              return __generator(this, (_a) => {
                 switch (_a.label) {
                   case 0:
                     console.log("📡 Recebido SIGTERM, parando sistema LGPD...");
@@ -672,11 +663,11 @@ function initializeLGPDInNextJS() {
                     return [2 /*return*/];
                 }
               });
-            });
-          });
-          process.on("SIGINT", function () {
-            return __awaiter(_this, void 0, void 0, function () {
-              return __generator(this, function (_a) {
+            }),
+          );
+          process.on("SIGINT", () =>
+            __awaiter(this, void 0, void 0, function () {
+              return __generator(this, (_a) => {
                 switch (_a.label) {
                   case 0:
                     console.log("📡 Recebido SIGINT, parando sistema LGPD...");
@@ -687,8 +678,8 @@ function initializeLGPDInNextJS() {
                     return [2 /*return*/];
                 }
               });
-            });
-          });
+            }),
+          );
           return [2 /*return*/, service];
         case 3:
           error_9 = _a.sent();
@@ -708,7 +699,7 @@ exports.lgpdApiExamples = {
   collectConsent: function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, userId, purpose, ipAddress, userAgent, examples, consent, error_10;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -740,7 +731,7 @@ exports.lgpdApiExamples = {
   handleDataRequest: function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, userId, email, requestType, examples, result, error_11;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 6, , 7]);
@@ -780,7 +771,7 @@ exports.lgpdApiExamples = {
   getDashboard: function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
       var service, dashboard, error_12;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -804,7 +795,7 @@ exports.lgpdApiExamples = {
   getMetrics: function (req, res) {
     return __awaiter(this, void 0, void 0, function () {
       var service, metrics, error_13;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -829,12 +820,11 @@ exports.lgpdApiExamples = {
  * Exemplo de middleware para verificação de consentimento
  */
 function lgpdConsentMiddleware(requiredPurpose) {
-  var _this = this;
-  return function (req, res, next) {
-    return __awaiter(_this, void 0, void 0, function () {
+  return (req, res, next) =>
+    __awaiter(this, void 0, void 0, function () {
       var userId, service, modules, consents, error_14;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -881,7 +871,6 @@ function lgpdConsentMiddleware(requiredPurpose) {
         }
       });
     });
-  };
 }
 // Exportar instância singleton
 exports.default = getLGPDService;

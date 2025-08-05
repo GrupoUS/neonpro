@@ -8,10 +8,10 @@
  * @created 2025-07-22
  */
 
-import React from "react";
-import { render, RenderOptions } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { SubscriptionStatus, SubscriptionTier, UserProfile } from "@/types/subscription";
+import { type RenderOptions, render } from "@testing-library/react";
+import type React from "react";
+import type { SubscriptionStatus, UserProfile } from "@/types/subscription";
 
 // ============================================================================
 // Mock Data Factories

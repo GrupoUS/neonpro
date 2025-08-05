@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Statistical Insights Hook for NeonPro
  *
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,7 +166,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useStatisticalInsights = useStatisticalInsights;
 exports.useABTestAnalysis = useABTestAnalysis;
@@ -182,7 +179,6 @@ var client_1 = require("@/lib/supabase/client");
  * Main statistical insights hook
  */
 function useStatisticalInsights(initialConfig) {
-  var _this = this;
   var _a;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
@@ -194,24 +190,22 @@ function useStatisticalInsights(initialConfig) {
     setError = _c[1];
   // Query key for caching
   var queryKey = (0, react_1.useMemo)(
-    function () {
-      return [
-        "statistical-insights",
-        config.metrics,
-        config.timeRange,
-        config.analysisType,
-        config.confidenceLevel,
-      ];
-    },
+    () => [
+      "statistical-insights",
+      config.metrics,
+      config.timeRange,
+      config.analysisType,
+      config.confidenceLevel,
+    ],
     [config],
   );
   // Main insights query
   var _d = (0, react_query_1.useQuery)({
       queryKey: queryKey,
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var response, data, err_1;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 _a.trys.push([0, 3, , 4]);
@@ -252,8 +246,7 @@ function useStatisticalInsights(initialConfig) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       staleTime: 15 * 60 * 1000, // 15 minutes
       cacheTime: 60 * 60 * 1000, // 1 hour
       retry: 2,
@@ -264,10 +257,10 @@ function useStatisticalInsights(initialConfig) {
     refreshInsights = _d.refetch;
   // Run comprehensive analysis mutation
   var runAnalysisMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (analysisConfig) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (analysisConfig) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -284,24 +277,23 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
+      }),
+    onSuccess: (data) => {
       queryClient.setQueryData(queryKey, data);
       setError(null);
     },
-    onError: function (err) {
+    onError: (err) => {
       setError(err instanceof Error ? err.message : "Analysis failed");
     },
   });
   // Anomaly detection mutation
   var anomalyDetectionMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response;
         var metric = _b.metric,
           threshold = _b.threshold;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -323,12 +315,11 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
+      }),
+    onSuccess: (data) => {
       // Update anomalies in current data
-      queryClient.setQueryData(queryKey, function (old) {
-        return __assign(__assign({}, old), {
+      queryClient.setQueryData(queryKey, (old) =>
+        __assign(__assign({}, old), {
           anomalies: __spreadArray(
             __spreadArray(
               [],
@@ -338,20 +329,20 @@ function useStatisticalInsights(initialConfig) {
             data.anomalies,
             true,
           ),
-        });
-      });
+        }),
+      );
       setError(null);
     },
-    onError: function (err) {
+    onError: (err) => {
       setError(err instanceof Error ? err.message : "Anomaly detection failed");
     },
   });
   // Correlation analysis mutation
   var correlationAnalysisMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (metrics) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (metrics) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (metrics.length < 2) {
@@ -375,33 +366,32 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
-      queryClient.setQueryData(queryKey, function (old) {
-        return __assign(__assign({}, old), {
+      }),
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKey, (old) =>
+        __assign(__assign({}, old), {
           correlations: data.correlations,
           insights: __spreadArray(
             __spreadArray([], (old === null || old === void 0 ? void 0 : old.insights) || [], true),
             data.insights,
             true,
           ),
-        });
-      });
+        }),
+      );
       setError(null);
     },
-    onError: function (err) {
+    onError: (err) => {
       setError(err instanceof Error ? err.message : "Correlation analysis failed");
     },
   });
   // Prediction generation mutation
   var predictionMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response;
         var metric = _b.metric,
           timeframe = _b.timeframe;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -423,11 +413,10 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
-      queryClient.setQueryData(queryKey, function (old) {
-        return __assign(__assign({}, old), {
+      }),
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKey, (old) =>
+        __assign(__assign({}, old), {
           predictions: __spreadArray(
             __spreadArray(
               [],
@@ -446,20 +435,20 @@ function useStatisticalInsights(initialConfig) {
             data.recommendations,
             true,
           ),
-        });
-      });
+        }),
+      );
       setError(null);
     },
-    onError: function (err) {
+    onError: (err) => {
       setError(err instanceof Error ? err.message : "Prediction generation failed");
     },
   });
   // Export analysis mutation
   var exportAnalysisMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (format) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (format) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, blob, url, a;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!insightsData) throw new Error("No analysis data to export");
@@ -494,17 +483,16 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    onError: function (err) {
+      }),
+    onError: (err) => {
       setError(err instanceof Error ? err.message : "Export failed");
     },
   });
   // Actions
   var runAnalysis = (0, react_1.useCallback)(
-    function (analysisConfig) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (analysisConfig) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setConfig(analysisConfig);
@@ -514,14 +502,13 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [runAnalysisMutation],
   );
   var detectAnomalies = (0, react_1.useCallback)(
-    function (metric, threshold) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (metric, threshold) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -533,14 +520,13 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [anomalyDetectionMutation],
   );
   var analyzeCorrelations = (0, react_1.useCallback)(
-    function (metrics) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (metrics) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, correlationAnalysisMutation.mutateAsync(metrics)];
@@ -549,14 +535,13 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [correlationAnalysisMutation],
   );
   var generatePredictions = (0, react_1.useCallback)(
-    function (metric, timeframe) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (metric, timeframe) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -568,14 +553,13 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [predictionMutation],
   );
   var exportAnalysis = (0, react_1.useCallback)(
-    function (format) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (format) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, exportAnalysisMutation.mutateAsync(format)];
@@ -584,8 +568,7 @@ function useStatisticalInsights(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [exportAnalysisMutation],
   );
   return {
@@ -624,13 +607,12 @@ function useStatisticalInsights(initialConfig) {
  * Hook for A/B test significance analysis
  */
 function useABTestAnalysis(testId) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["ab-test-analysis", testId],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -647,8 +629,7 @@ function useABTestAnalysis(testId) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!testId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -657,13 +638,12 @@ function useABTestAnalysis(testId) {
  * Hook for metric benchmarking
  */
 function useMetricBenchmarking(metrics) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["metric-benchmarking", metrics],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -684,8 +664,7 @@ function useMetricBenchmarking(metrics) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: metrics.length > 0,
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
   });
@@ -694,36 +673,32 @@ function useMetricBenchmarking(metrics) {
  * Utility hook for statistical formatting
  */
 function useStatisticalFormatters() {
-  return (0, react_1.useMemo)(function () {
-    return {
-      formatCorrelation: function (correlation) {
-        return correlation >= 0 ? "+".concat(correlation.toFixed(3)) : correlation.toFixed(3);
-      },
-      getCorrelationStrength: function (correlation) {
+  return (0, react_1.useMemo)(
+    () => ({
+      formatCorrelation: (correlation) =>
+        correlation >= 0 ? "+".concat(correlation.toFixed(3)) : correlation.toFixed(3),
+      getCorrelationStrength: (correlation) => {
         var abs = Math.abs(correlation);
         if (abs >= 0.7) return "Strong";
         if (abs >= 0.4) return "Moderate";
         return "Weak";
       },
-      getCorrelationColor: function (correlation) {
+      getCorrelationColor: (correlation) => {
         var abs = Math.abs(correlation);
         if (abs >= 0.7) return "text-green-600";
         if (abs >= 0.4) return "text-yellow-600";
         return "text-red-600";
       },
-      formatSignificance: function (pValue) {
+      formatSignificance: (pValue) => {
         if (pValue < 0.001) return "p < 0.001 (***)";
         if (pValue < 0.01) return "p = ".concat(pValue.toFixed(3), " (**)");
         if (pValue < 0.05) return "p = ".concat(pValue.toFixed(3), " (*)");
         return "p = ".concat(pValue.toFixed(3), " (ns)");
       },
-      formatConfidence: function (confidence) {
-        return "".concat(Math.round(confidence), "%");
-      },
-      formatDeviation: function (deviation) {
-        return "".concat(deviation >= 0 ? "+" : "").concat(deviation.toFixed(2), "\u03C3");
-      },
-      getAnomalySeverityColor: function (severity) {
+      formatConfidence: (confidence) => "".concat(Math.round(confidence), "%"),
+      formatDeviation: (deviation) =>
+        "".concat(deviation >= 0 ? "+" : "").concat(deviation.toFixed(2), "\u03C3"),
+      getAnomalySeverityColor: (severity) => {
         switch (severity) {
           case "high":
             return "text-red-600";
@@ -735,7 +710,7 @@ function useStatisticalFormatters() {
             return "text-gray-600";
         }
       },
-      getAnomalySeverityBadge: function (severity) {
+      getAnomalySeverityBadge: (severity) => {
         switch (severity) {
           case "high":
             return "destructive";
@@ -745,6 +720,7 @@ function useStatisticalFormatters() {
             return "default";
         }
       },
-    };
-  }, []);
+    }),
+    [],
+  );
 }

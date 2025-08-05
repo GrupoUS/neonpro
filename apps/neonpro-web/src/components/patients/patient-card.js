@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientCard;
 var react_1 = require("react");
@@ -18,17 +17,13 @@ function PatientCard(_a) {
     onSelect = _a.onSelect,
     onAction = _a.onAction;
   // Utility functions
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  };
-  var formatCPF = function (cpf) {
+  var formatDate = (dateString) => new Date(dateString).toLocaleDateString("pt-BR");
+  var formatCPF = (cpf) => {
     if (!cpf) return "N/A";
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   };
-  var formatPhone = function (phone) {
-    return phone.replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3");
-  };
-  var calculateAge = function (birthDate) {
+  var formatPhone = (phone) => phone.replace(/(\d{2})(\d{4,5})(\d{4})/, "($1) $2-$3");
+  var calculateAge = (birthDate) => {
     var today = new Date();
     var birth = new Date(birthDate);
     var age = today.getFullYear() - birth.getFullYear();
@@ -38,7 +33,7 @@ function PatientCard(_a) {
     }
     return age;
   };
-  var getRiskLevelColor = function (riskLevel) {
+  var getRiskLevelColor = (riskLevel) => {
     switch (riskLevel) {
       case "low":
         return "text-green-600";
@@ -52,7 +47,7 @@ function PatientCard(_a) {
         return "text-gray-500";
     }
   };
-  var getRiskLevelBadge = function (riskLevel) {
+  var getRiskLevelBadge = (riskLevel) => {
     switch (riskLevel) {
       case "low":
         return (
@@ -78,7 +73,7 @@ function PatientCard(_a) {
         return <badge_1.Badge variant="outline">N/A</badge_1.Badge>;
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "active":
         return (
@@ -108,7 +103,7 @@ function PatientCard(_a) {
         return <badge_1.Badge variant="outline">{status}</badge_1.Badge>;
     }
   };
-  var getProfileCompletenessColor = function (score) {
+  var getProfileCompletenessColor = (score) => {
     if (score >= 0.8) return "text-green-600";
     if (score >= 0.6) return "text-yellow-600";
     return "text-red-600";
@@ -131,9 +126,7 @@ function PatientCard(_a) {
               <avatar_1.AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
                 {patient.raw_user_meta_data.full_name
                   .split(" ")
-                  .map(function (name) {
-                    return name[0];
-                  })
+                  .map((name) => name[0])
                   .join("")
                   .toUpperCase()}
               </avatar_1.AvatarFallback>
@@ -162,35 +155,21 @@ function PatientCard(_a) {
             <dropdown_menu_1.DropdownMenuContent align="end">
               <dropdown_menu_1.DropdownMenuLabel>Ações</dropdown_menu_1.DropdownMenuLabel>
               <dropdown_menu_1.DropdownMenuSeparator />
-              <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return onAction("view", patient.id);
-                }}
-              >
+              <dropdown_menu_1.DropdownMenuItem onClick={() => onAction("view", patient.id)}>
                 <lucide_react_1.Eye className="mr-2 h-4 w-4" />
                 Ver Detalhes
               </dropdown_menu_1.DropdownMenuItem>
-              <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return onAction("schedule", patient.id);
-                }}
-              >
+              <dropdown_menu_1.DropdownMenuItem onClick={() => onAction("schedule", patient.id)}>
                 <lucide_react_1.Calendar className="mr-2 h-4 w-4" />
                 Agendar Consulta
               </dropdown_menu_1.DropdownMenuItem>
-              <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return onAction("edit", patient.id);
-                }}
-              >
+              <dropdown_menu_1.DropdownMenuItem onClick={() => onAction("edit", patient.id)}>
                 <lucide_react_1.Edit className="mr-2 h-4 w-4" />
                 Editar
               </dropdown_menu_1.DropdownMenuItem>
               <dropdown_menu_1.DropdownMenuSeparator />
               <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return onAction("archive", patient.id);
-                }}
+                onClick={() => onAction("archive", patient.id)}
                 className="text-red-600"
               >
                 <lucide_react_1.Archive className="mr-2 h-4 w-4" />
@@ -245,24 +224,20 @@ function PatientCard(_a) {
             <h4 className="text-xs font-medium text-gray-700">Alertas Médicos</h4>
             {(_g = patient.patient_profiles_extended.chronic_conditions) === null || _g === void 0
               ? void 0
-              : _g.map(function (condition, index) {
-                  return (
-                    <div key={index} className="flex items-center text-xs text-red-600">
-                      <lucide_react_1.Heart className="h-3 w-3 mr-1" />
-                      {condition}
-                    </div>
-                  );
-                })}
+              : _g.map((condition, index) => (
+                  <div key={index} className="flex items-center text-xs text-red-600">
+                    <lucide_react_1.Heart className="h-3 w-3 mr-1" />
+                    {condition}
+                  </div>
+                ))}
             {(_h = patient.patient_profiles_extended.allergies) === null || _h === void 0
               ? void 0
-              : _h.map(function (allergy, index) {
-                  return (
-                    <div key={index} className="flex items-center text-xs text-orange-600">
-                      <lucide_react_1.AlertTriangle className="h-3 w-3 mr-1" />
-                      {allergy}
-                    </div>
-                  );
-                })}
+              : _h.map((allergy, index) => (
+                  <div key={index} className="flex items-center text-xs text-orange-600">
+                    <lucide_react_1.AlertTriangle className="h-3 w-3 mr-1" />
+                    {allergy}
+                  </div>
+                ))}
           </div>
         )}
 
@@ -312,9 +287,7 @@ function PatientCard(_a) {
             size="sm"
             variant="outline"
             className="flex-1 text-xs h-8"
-            onClick={function () {
-              return onAction("view", patient.id);
-            }}
+            onClick={() => onAction("view", patient.id)}
           >
             <lucide_react_1.Eye className="h-3 w-3 mr-1" />
             Ver
@@ -323,9 +296,7 @@ function PatientCard(_a) {
             size="sm"
             variant="outline"
             className="flex-1 text-xs h-8"
-            onClick={function () {
-              return onAction("schedule", patient.id);
-            }}
+            onClick={() => onAction("schedule", patient.id)}
           >
             <lucide_react_1.Calendar className="h-3 w-3 mr-1" />
             Agendar
@@ -334,9 +305,7 @@ function PatientCard(_a) {
             size="sm"
             variant="outline"
             className="flex-1 text-xs h-8"
-            onClick={function () {
-              return onAction("edit", patient.id);
-            }}
+            onClick={() => onAction("edit", patient.id)}
           >
             <lucide_react_1.Edit className="h-3 w-3 mr-1" />
             Editar

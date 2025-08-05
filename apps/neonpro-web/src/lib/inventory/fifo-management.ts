@@ -5,7 +5,7 @@
 
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { Database } from "@/types/database";
-import type { StockOutputManager, BatchStock, FIFOResult } from "./stock-output-management";
+import type { BatchStock, FIFOResult, StockOutputManager } from "./stock-output-management";
 
 export interface FIFOAnalysis {
   produto_id: string;

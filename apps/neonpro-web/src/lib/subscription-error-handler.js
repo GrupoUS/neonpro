@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Centralized Subscription Error Handler
  *
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,7 +155,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.subscriptionErrorHandler = exports.SubscriptionErrorHandler = void 0;
 exports.withErrorHandling = withErrorHandling;
@@ -177,7 +174,7 @@ var defaultConfig = {
   userNotificationThreshold: subscription_errors_1.ErrorSeverity.MEDIUM,
   gracefulDegradationEnabled: true,
 };
-var SubscriptionErrorHandler = /** @class */ (function () {
+var SubscriptionErrorHandler = /** @class */ (() => {
   function SubscriptionErrorHandler(config) {
     this.errorHistory = [];
     this.maxHistorySize = 100;
@@ -253,7 +250,7 @@ var SubscriptionErrorHandler = /** @class */ (function () {
   /**
    * Classify generic errors into subscription-specific errors
    */
-  SubscriptionErrorHandler.prototype.classifyError = function (error, context) {
+  SubscriptionErrorHandler.prototype.classifyError = (error, context) => {
     var message = error.message.toLowerCase();
     // Authentication errors
     if (message.includes("auth") || message.includes("unauthorized") || message.includes("token")) {
@@ -310,17 +307,13 @@ var SubscriptionErrorHandler = /** @class */ (function () {
    * Initialize recovery strategy implementations
    */
   SubscriptionErrorHandler.prototype.initializeRecoveryStrategies = function () {
-    var _this = this;
     var strategies = new Map();
     // Retry strategy
     strategies.set(subscription_errors_1.RecoveryStrategy.RETRY, {
-      canHandle: function (error) {
-        return (
-          error.retryable && error.category !== subscription_errors_1.ErrorCategory.AUTHENTICATION
-        );
-      },
-      execute: function (operation, error, context, attempt) {
-        return __awaiter(_this, void 0, void 0, function () {
+      canHandle: (error) =>
+        error.retryable && error.category !== subscription_errors_1.ErrorCategory.AUTHENTICATION,
+      execute: (operation, error, context, attempt) =>
+        __awaiter(this, void 0, void 0, function () {
           var delay;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -332,21 +325,17 @@ var SubscriptionErrorHandler = /** @class */ (function () {
                 return [2 /*return*/, operation()];
             }
           });
-        });
-      },
+        }),
       maxAttempts: this.config.maxRetryAttempts,
       delayMs: this.config.retryDelayMs,
     });
     // Fallback strategy
     strategies.set(subscription_errors_1.RecoveryStrategy.FALLBACK, {
-      canHandle: function (error) {
-        return (
-          error.category === subscription_errors_1.ErrorCategory.CACHE ||
-          error.category === subscription_errors_1.ErrorCategory.EXTERNAL_SERVICE
-        );
-      },
-      execute: function (operation, error, context, attempt) {
-        return __awaiter(_this, void 0, void 0, function () {
+      canHandle: (error) =>
+        error.category === subscription_errors_1.ErrorCategory.CACHE ||
+        error.category === subscription_errors_1.ErrorCategory.EXTERNAL_SERVICE,
+      execute: (operation, error, context, attempt) =>
+        __awaiter(this, void 0, void 0, function () {
           var cachedResult;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -369,24 +358,20 @@ var SubscriptionErrorHandler = /** @class */ (function () {
                 throw error; // Re-throw if no fallback available
             }
           });
-        });
-      },
+        }),
       maxAttempts: 1,
       delayMs: 0,
     });
     // Graceful degradation strategy
     strategies.set(subscription_errors_1.RecoveryStrategy.GRACEFUL_DEGRADE, {
-      canHandle: function (error) {
-        return _this.config.gracefulDegradationEnabled;
-      },
-      execute: function (operation, error, context, attempt) {
-        return __awaiter(_this, void 0, void 0, function () {
+      canHandle: (error) => this.config.gracefulDegradationEnabled,
+      execute: (operation, error, context, attempt) =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             // Return a degraded version of the service
             return [2 /*return*/, this.getDegradedService(context)];
           });
-        });
-      },
+        }),
       maxAttempts: 1,
       delayMs: 0,
     });
@@ -575,7 +560,7 @@ var SubscriptionErrorHandler = /** @class */ (function () {
   SubscriptionErrorHandler.prototype.tryFallbackCache = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var cacheKey, cachedData, cacheError_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -605,7 +590,7 @@ var SubscriptionErrorHandler = /** @class */ (function () {
    */
   SubscriptionErrorHandler.prototype.getDegradedService = function (context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Return a basic valid response with limited features
         return [
           2 /*return*/,
@@ -634,22 +619,19 @@ var SubscriptionErrorHandler = /** @class */ (function () {
       return this.config.retryDelayMs;
     }
     // Exponential backoff with jitter
-    var baseDelay = this.config.retryDelayMs * Math.pow(2, attempt - 1);
+    var baseDelay = this.config.retryDelayMs * 2 ** (attempt - 1);
     var jitter = Math.random() * 0.1 * baseDelay;
     return Math.min(baseDelay + jitter, 30000); // Max 30 seconds
   };
   /**
    * Sleep utility
    */
-  SubscriptionErrorHandler.prototype.sleep = function (ms) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, ms);
-    });
-  };
+  SubscriptionErrorHandler.prototype.sleep = (ms) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   /**
    * Determine which circuit breaker to use
    */
-  SubscriptionErrorHandler.prototype.getCircuitBreakerName = function (error) {
+  SubscriptionErrorHandler.prototype.getCircuitBreakerName = (error) => {
     switch (error.category) {
       case subscription_errors_1.ErrorCategory.DATABASE:
         return "database";
@@ -664,14 +646,11 @@ var SubscriptionErrorHandler = /** @class */ (function () {
   /**
    * Check if circuit breaker should be used
    */
-  SubscriptionErrorHandler.prototype.shouldUseCircuitBreaker = function (error) {
-    return (
-      error.severity === subscription_errors_1.ErrorSeverity.HIGH ||
-      error.severity === subscription_errors_1.ErrorSeverity.CRITICAL ||
-      error.category === subscription_errors_1.ErrorCategory.DATABASE ||
-      error.category === subscription_errors_1.ErrorCategory.EXTERNAL_SERVICE
-    );
-  };
+  SubscriptionErrorHandler.prototype.shouldUseCircuitBreaker = (error) =>
+    error.severity === subscription_errors_1.ErrorSeverity.HIGH ||
+    error.severity === subscription_errors_1.ErrorSeverity.CRITICAL ||
+    error.category === subscription_errors_1.ErrorCategory.DATABASE ||
+    error.category === subscription_errors_1.ErrorCategory.EXTERNAL_SERVICE;
   /**
    * Get user-friendly error message
    */
@@ -719,7 +698,7 @@ var SubscriptionErrorHandler = /** @class */ (function () {
   /**
    * Send alert for critical errors
    */
-  SubscriptionErrorHandler.prototype.sendAlert = function (message) {
+  SubscriptionErrorHandler.prototype.sendAlert = (message) => {
     // Implement your alerting mechanism here
     console.error("ALERT: ".concat(message));
     // Could integrate with external alerting services
@@ -744,14 +723,14 @@ var SubscriptionErrorHandler = /** @class */ (function () {
       recentErrors: this.errorHistory.slice(-10),
     };
     // Initialize counters
-    Object.values(subscription_errors_1.ErrorSeverity).forEach(function (severity) {
+    Object.values(subscription_errors_1.ErrorSeverity).forEach((severity) => {
       stats.bySeverity[severity] = 0;
     });
-    Object.values(subscription_errors_1.ErrorCategory).forEach(function (category) {
+    Object.values(subscription_errors_1.ErrorCategory).forEach((category) => {
       stats.byCategory[category] = 0;
     });
     // Count errors
-    this.errorHistory.forEach(function (error) {
+    this.errorHistory.forEach((error) => {
       stats.bySeverity[error.severity]++;
       stats.byCategory[error.category]++;
     });
@@ -778,7 +757,7 @@ exports.subscriptionErrorHandler = new SubscriptionErrorHandler();
 function withErrorHandling(operation, context) {
   return __awaiter(this, void 0, void 0, function () {
     var result, error_1;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);

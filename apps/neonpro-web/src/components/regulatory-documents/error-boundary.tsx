@@ -1,7 +1,7 @@
-import React from "react";
 import type { AlertTriangle, RefreshCw } from "lucide-react";
-import type { Button } from "@/components/ui/button";
+import React from "react";
 import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
 
 interface ErrorBoundaryProps {
   error: string | null;

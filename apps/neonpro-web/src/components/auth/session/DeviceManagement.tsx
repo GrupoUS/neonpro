@@ -5,11 +5,27 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { useDeviceManagement } from "@/hooks/auth";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Laptop,
+  MapPin,
+  Monitor,
+  Plus,
+  Shield,
+  ShieldAlert,
+  ShieldCheck,
+  Smartphone,
+  Tablet,
+  Trash2,
+  Wifi,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -18,24 +34,8 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Smartphone,
-  Monitor,
-  Tablet,
-  Laptop,
-  Shield,
-  ShieldCheck,
-  ShieldAlert,
-  Trash2,
-  Plus,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  MapPin,
-  Wifi,
-} from "lucide-react";
+import type { useDeviceManagement } from "@/hooks/auth";
 import type { cn } from "@/lib/utils";
 
 // =====================================================

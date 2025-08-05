@@ -1,4 +1,3 @@
-"use strict";
 // Stock Alerts API Integration Tests
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests covering API endpoints with database operations
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,7 +35,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,8 +64,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -87,9 +84,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -148,20 +145,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 // Mock Next.js request/response for testing
-var mockRequest = function (method, url, body) {
-  return {
-    method: method,
-    url: url,
-    json: function () {
-      return Promise.resolve(body);
-    },
-    headers: new Headers(),
-  };
-};
+var mockRequest = (method, url, body) => ({
+  method: method,
+  url: url,
+  json: () => Promise.resolve(body),
+  headers: new Headers(),
+});
 var mockSession = {
   user: {
     id: "test-user-id-123",
@@ -186,13 +179,9 @@ var mockSupabaseClient = {
   range: jest.fn().mockReturnThis(),
 };
 // Mock the Supabase import
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return Promise.resolve(mockSupabaseClient);
-    }),
-  };
-});
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => Promise.resolve(mockSupabaseClient)),
+}));
 // Import the API handlers after mocking
 var route_1 = require("@/app/api/stock/alerts/route");
 var route_2 = require("@/app/api/stock/alerts/acknowledge/route");
@@ -246,15 +235,15 @@ var mockAlertConfig = {
 // =====================================================
 // SETUP AND TEARDOWN
 // =====================================================
-(0, globals_1.beforeAll)(function () {
+(0, globals_1.beforeAll)(() => {
   // Setup test environment
   process.env.NODE_ENV = "test";
 });
-(0, globals_1.afterAll)(function () {
+(0, globals_1.afterAll)(() => {
   // Cleanup
   jest.clearAllMocks();
 });
-(0, globals_1.beforeEach)(function () {
+(0, globals_1.beforeEach)(() => {
   // Reset mocks before each test
   jest.clearAllMocks();
   // Setup default successful responses
@@ -263,15 +252,15 @@ var mockAlertConfig = {
     error: null,
   });
 });
-(0, globals_1.afterEach)(function () {
+(0, globals_1.afterEach)(() => {
   // Clean up after each test
   jest.resetAllMocks();
 });
 // =====================================================
 // GET /api/stock/alerts TESTS
 // =====================================================
-(0, globals_1.describe)("GET /api/stock/alerts", function () {
-  (0, globals_1.beforeEach)(function () {
+(0, globals_1.describe)("GET /api/stock/alerts", () => {
+  (0, globals_1.beforeEach)(() => {
     // Mock the chain of Supabase query methods
     mockSupabaseClient.from.mockReturnValue({
       select: jest.fn().mockReturnValue({
@@ -287,10 +276,10 @@ var mockAlertConfig = {
       }),
     });
   });
-  (0, globals_1.it)("should return alerts with proper pagination", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("should return alerts with proper pagination", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("GET", "/api/stock/alerts?limit=10&offset=0");
@@ -309,12 +298,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should filter alerts by status", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should filter alerts by status", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("GET", "/api/stock/alerts?status=active");
@@ -331,12 +320,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should filter alerts by severity", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should filter alerts by severity", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("GET", "/api/stock/alerts?severity=critical");
@@ -356,12 +345,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle authentication errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle authentication errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock authentication failure
@@ -382,12 +371,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle database errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle database errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock database error
@@ -416,12 +405,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should validate query parameters", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should validate query parameters", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("GET", "/api/stock/alerts?limit=invalid");
@@ -437,12 +426,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should apply proper sorting", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should apply proper sorting", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("GET", "/api/stock/alerts?sortBy=severity_level&sortOrder=asc");
@@ -456,13 +445,13 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // POST /api/stock/alerts TESTS
 // =====================================================
-(0, globals_1.describe)("POST /api/stock/alerts", function () {
+(0, globals_1.describe)("POST /api/stock/alerts", () => {
   var validCreateRequest = {
     productId: testProductId,
     alertType: "low_stock",
@@ -471,7 +460,7 @@ var mockAlertConfig = {
     severityLevel: "medium",
     notificationChannels: ["in_app", "email"],
   };
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     // Mock successful alert config creation
     mockSupabaseClient.from.mockReturnValue({
       insert: jest.fn().mockReturnValue({
@@ -484,10 +473,10 @@ var mockAlertConfig = {
       }),
     });
   });
-  (0, globals_1.it)("should create alert configuration successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("should create alert configuration successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("POST", "/api/stock/alerts", validCreateRequest);
@@ -504,12 +493,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should validate required fields", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should validate required fields", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var invalidRequest, request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             invalidRequest = __assign(__assign({}, validCreateRequest), {
@@ -528,12 +517,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should reject negative threshold values", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should reject negative threshold values", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var invalidRequest, request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             invalidRequest = __assign(__assign({}, validCreateRequest), { thresholdValue: -5 });
@@ -549,12 +538,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should require either productId or categoryId", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should require either productId or categoryId", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var invalidRequest, request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             invalidRequest = __assign(__assign({}, validCreateRequest), {
@@ -573,12 +562,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle duplicate configuration errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle duplicate configuration errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock duplicate constraint error
@@ -607,18 +596,18 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // POST /api/stock/alerts/acknowledge TESTS
 // =====================================================
-(0, globals_1.describe)("POST /api/stock/alerts/acknowledge", function () {
+(0, globals_1.describe)("POST /api/stock/alerts/acknowledge", () => {
   var validAcknowledgeRequest = {
     alertId: testAlertId,
     note: "Acknowledged by manager",
   };
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     // Mock successful alert retrieval and update
     mockSupabaseClient.from.mockReturnValue({
       select: jest.fn().mockReturnValue({
@@ -641,10 +630,10 @@ var mockAlertConfig = {
       }),
     });
   });
-  (0, globals_1.it)("should acknowledge alert successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("should acknowledge alert successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("POST", "/api/stock/alerts/acknowledge", validAcknowledgeRequest);
@@ -660,12 +649,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should validate alert ID format", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should validate alert ID format", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var invalidRequest, request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             invalidRequest = __assign(__assign({}, validAcknowledgeRequest), {
@@ -684,12 +673,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle non-existent alert", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle non-existent alert", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock alert not found
@@ -715,12 +704,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should reject acknowledging already acknowledged alert", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should reject acknowledging already acknowledged alert", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var acknowledgedAlert, request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             acknowledgedAlert = __assign(__assign({}, mockAlert), { status: "acknowledged" });
@@ -746,19 +735,19 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // POST /api/stock/alerts/resolve TESTS
 // =====================================================
-(0, globals_1.describe)("POST /api/stock/alerts/resolve", function () {
+(0, globals_1.describe)("POST /api/stock/alerts/resolve", () => {
   var validResolveRequest = {
     alertId: testAlertId,
     resolution: "Stock replenished from emergency supply",
     actionsTaken: ["emergency_purchase"],
   };
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     // Mock successful alert retrieval and resolution
     mockSupabaseClient.from.mockReturnValue({
       select: jest.fn().mockReturnValue({
@@ -781,10 +770,10 @@ var mockAlertConfig = {
       }),
     });
   });
-  (0, globals_1.it)("should resolve alert successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("should resolve alert successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("POST", "/api/stock/alerts/resolve", validResolveRequest);
@@ -800,12 +789,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should require resolution description", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should require resolution description", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var invalidRequest, request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             invalidRequest = __assign(__assign({}, validResolveRequest), { resolution: "" });
@@ -821,12 +810,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle already resolved alert", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle already resolved alert", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var resolvedAlert, request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             resolvedAlert = __assign(__assign({}, mockAlert), { status: "resolved" });
@@ -852,12 +841,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should validate resolution text length", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should validate resolution text length", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var invalidRequest, request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             invalidRequest = __assign(__assign({}, validResolveRequest), {
@@ -875,25 +864,23 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // EDGE CASES AND ERROR HANDLING TESTS
 // =====================================================
-(0, globals_1.describe)("Edge Cases and Error Handling", function () {
-  (0, globals_1.it)("should handle malformed JSON in request body", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("Edge Cases and Error Handling", () => {
+  (0, globals_1.it)("should handle malformed JSON in request body", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = {
               method: "POST",
               url: "/api/stock/alerts",
-              json: function () {
-                return Promise.reject(new Error("Invalid JSON"));
-              },
+              json: () => Promise.reject(new Error("Invalid JSON")),
               headers: new Headers(),
             };
             return [4 /*yield*/, (0, route_1.POST)(request)];
@@ -907,12 +894,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle network timeouts gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle network timeouts gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response, responseData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock timeout error
@@ -938,12 +925,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle concurrent acknowledgment attempts", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle concurrent acknowledgment attempts", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("POST", "/api/stock/alerts/acknowledge", {
@@ -958,24 +945,22 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // PERFORMANCE TESTS
 // =====================================================
-(0, globals_1.describe)("Performance Tests", function () {
-  (0, globals_1.it)("should handle large result sets efficiently", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("Performance Tests", () => {
+  (0, globals_1.it)("should handle large result sets efficiently", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var largeDataset, startTime, request, response, endTime;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             largeDataset = Array(1000)
               .fill(mockAlert)
-              .map(function (alert, index) {
-                return __assign(__assign({}, alert), { id: "alert-".concat(index) });
-              });
+              .map((alert, index) => __assign(__assign({}, alert), { id: "alert-".concat(index) }));
             mockSupabaseClient.from.mockReturnValue({
               select: jest.fn().mockReturnValue({
                 eq: jest.fn().mockReturnValue({
@@ -1000,12 +985,12 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should respect rate limiting (conceptual test)", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should respect rate limiting (conceptual test)", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = mockRequest("GET", "/api/stock/alerts");
@@ -1016,6 +1001,6 @@ var mockAlertConfig = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

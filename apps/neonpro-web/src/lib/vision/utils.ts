@@ -6,24 +6,16 @@
  * VOIDBEAST V4.0 APEX ENHANCED - Quality ≥9.5/10
  */
 
-import type { VISION_CONFIG, QUALITY_THRESHOLDS, validateVoidBeastCompliance } from "./config";
 import type {
-  ImageData,
-  ImageMetadata,
-  ProcessingMetrics,
-  QualityMetrics,
   AnalysisResult,
-  TreatmentType,
-  AnalysisStatus,
-  ErrorCode,
-  ValidationResult,
-  ValidationError,
-  ValidationWarning,
   Coordinates,
-  RegionOfInterest,
-  AnnotationData,
+  ErrorCode,
+  ImageMetadata,
   MeasurementType,
-  ObjectiveMeasurement,
+  RegionOfInterest,
+  ValidationError,
+  ValidationResult,
+  ValidationWarning,
 } from "./types";
 
 /**
@@ -99,7 +91,7 @@ export class ImageUtils {
           const metadata: ImageMetadata = {
             // Basic metadata that can be extracted in browser
             colorProfile: "sRGB", // Default assumption
-            quality: this.estimateImageQuality(ctx, img.width, img.height),
+            quality: ImageUtils.estimateImageQuality(ctx, img.width, img.height),
           };
 
           resolve(metadata);
@@ -177,7 +169,7 @@ export class ImageUtils {
 
       img.onload = () => {
         // Calculate thumbnail dimensions
-        const { width, height } = this.calculateThumbnailDimensions(
+        const { width, height } = ImageUtils.calculateThumbnailDimensions(
           img.width,
           img.height,
           maxWidth,
@@ -259,7 +251,9 @@ export class AnalysisUtils {
    * Calculate overall improvement score from change metrics
    */
   static calculateOverallImprovement(changeMetrics: Record<string, number>): number {
-    const values = Object.values(changeMetrics).filter((v) => typeof v === "number" && !isNaN(v));
+    const values = Object.values(changeMetrics).filter(
+      (v) => typeof v === "number" && !Number.isNaN(v),
+    );
 
     if (values.length === 0) return 0;
 
@@ -377,7 +371,7 @@ export class AnalysisUtils {
         warnings.push({
           field: "processingMetrics.processingTimeMs",
           code: "SLOW_PROCESSING",
-          message: `Processamento lento: ${this.formatProcessingTime(processingTime)}`,
+          message: `Processamento lento: ${AnalysisUtils.formatProcessingTime(processingTime)}`,
           value: processingTime,
         });
       }
@@ -428,7 +422,7 @@ export class MeasurementUtils {
     let perimeter = 0;
     for (let i = 0; i < points.length; i++) {
       const j = (i + 1) % points.length;
-      perimeter += this.calculateDistance(points[i], points[j]);
+      perimeter += MeasurementUtils.calculateDistance(points[i], points[j]);
     }
     return perimeter;
   }
@@ -555,7 +549,7 @@ export class AnnotationUtils {
    */
   static isPointInRegion(point: Coordinates, region: RegionOfInterest): boolean {
     switch (region.type) {
-      case "rectangle":
+      case "rectangle": {
         const rect = region.coordinates[0];
         return (
           point.x >= rect.x &&
@@ -563,15 +557,17 @@ export class AnnotationUtils {
           point.y >= rect.y &&
           point.y <= rect.y + (rect.height || 0)
         );
+      }
 
-      case "circle":
+      case "circle": {
         const center = region.coordinates[0];
         const radius = center.radius || 0;
         const distance = MeasurementUtils.calculateDistance(point, center);
         return distance <= radius;
+      }
 
       case "polygon":
-        return this.isPointInPolygon(point, region.coordinates);
+        return AnnotationUtils.isPointInPolygon(point, region.coordinates);
 
       default:
         return false;
@@ -784,7 +780,7 @@ export class DateUtils {
     if (diffHours < 24) return `${diffHours} hora${diffHours > 1 ? "s" : ""} atrás`;
     if (diffDays < 30) return `${diffDays} dia${diffDays > 1 ? "s" : ""} atrás`;
 
-    return this.formatDate(d);
+    return DateUtils.formatDate(d);
   }
 
   /**

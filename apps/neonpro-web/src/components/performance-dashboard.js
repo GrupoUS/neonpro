@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PerformanceDashboard = PerformanceDashboard;
 var react_1 = require("react");
@@ -24,14 +23,14 @@ function PerformanceDashboard() {
   var _b = (0, react_1.useState)("overview"),
     selectedTab = _b[0],
     setSelectedTab = _b[1];
-  var handleToggleMonitoring = function () {
+  var handleToggleMonitoring = () => {
     if (isMonitoring) {
       stopMonitoring();
     } else {
       startMonitoring();
     }
   };
-  var getGradeColor = function (grade) {
+  var getGradeColor = (grade) => {
     switch (grade) {
       case "A":
         return "text-green-600 bg-green-100";
@@ -47,7 +46,7 @@ function PerformanceDashboard() {
         return "text-gray-600 bg-gray-100";
     }
   };
-  var getScoreColor = function (score) {
+  var getScoreColor = (score) => {
     if (score >= 90) return "text-green-600";
     if (score >= 80) return "text-blue-600";
     if (score >= 70) return "text-yellow-600";
@@ -149,37 +148,35 @@ function PerformanceDashboard() {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {report.alerts.map(function (alert) {
-                return (
-                  <div
-                    key={alert.id}
-                    className={(0, utils_1.cn)(
-                      "p-3 rounded-lg border",
-                      alert.type === "critical"
-                        ? "border-red-200 bg-red-50"
-                        : "border-yellow-200 bg-yellow-50",
-                    )}
-                  >
-                    <div className="flex items-start gap-3">
-                      <lucide_react_1.AlertTriangle
-                        className={(0, utils_1.cn)(
-                          "h-5 w-5 mt-0.5",
-                          alert.type === "critical" ? "text-red-500" : "text-yellow-500",
-                        )}
-                      />
-                      <div className="flex-1">
-                        <div className="font-medium">{alert.message}</div>
-                        <div className="text-sm text-muted-foreground mt-1">{alert.suggestion}</div>
-                      </div>
-                      <badge_1.Badge
-                        variant={alert.type === "critical" ? "destructive" : "secondary"}
-                      >
-                        {alert.type}
-                      </badge_1.Badge>
+              {report.alerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className={(0, utils_1.cn)(
+                    "p-3 rounded-lg border",
+                    alert.type === "critical"
+                      ? "border-red-200 bg-red-50"
+                      : "border-yellow-200 bg-yellow-50",
+                  )}
+                >
+                  <div className="flex items-start gap-3">
+                    <lucide_react_1.AlertTriangle
+                      className={(0, utils_1.cn)(
+                        "h-5 w-5 mt-0.5",
+                        alert.type === "critical" ? "text-red-500" : "text-yellow-500",
+                      )}
+                    />
+                    <div className="flex-1">
+                      <div className="font-medium">{alert.message}</div>
+                      <div className="text-sm text-muted-foreground mt-1">{alert.suggestion}</div>
                     </div>
+                    <badge_1.Badge
+                      variant={alert.type === "critical" ? "destructive" : "secondary"}
+                    >
+                      {alert.type}
+                    </badge_1.Badge>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -246,46 +243,44 @@ function PerformanceDashboard() {
         <tabs_1.TabsContent value="components" className="space-y-4">
           {report && report.components.length > 0
             ? <div className="grid gap-4">
-                {report.components.map(function (component) {
-                  return (
-                    <card_1.Card key={component.componentName}>
-                      <card_1.CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-medium">{component.componentName}</h3>
-                            <div className="text-sm text-muted-foreground">
-                              Renders: {component.renderCount} | Avg:{" "}
-                              {component.averageRenderTime.toFixed(2)}ms
-                            </div>
-                          </div>
-
-                          <div className="text-right">
-                            <div
-                              className={(0, utils_1.cn)(
-                                "text-lg font-semibold",
-                                component.averageRenderTime > 16
-                                  ? component.averageRenderTime > 50
-                                    ? "text-red-600"
-                                    : "text-yellow-600"
-                                  : "text-green-600",
-                              )}
-                            >
-                              {component.averageRenderTime.toFixed(2)}ms
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Last: {new Date(component.lastRender).toLocaleTimeString()}
-                            </div>
+                {report.components.map((component) => (
+                  <card_1.Card key={component.componentName}>
+                    <card_1.CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-medium">{component.componentName}</h3>
+                          <div className="text-sm text-muted-foreground">
+                            Renders: {component.renderCount} | Avg:{" "}
+                            {component.averageRenderTime.toFixed(2)}ms
                           </div>
                         </div>
 
-                        <progress_1.Progress
-                          value={Math.min(100, (component.averageRenderTime / 50) * 100)}
-                          className="mt-2 h-2"
-                        />
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                        <div className="text-right">
+                          <div
+                            className={(0, utils_1.cn)(
+                              "text-lg font-semibold",
+                              component.averageRenderTime > 16
+                                ? component.averageRenderTime > 50
+                                  ? "text-red-600"
+                                  : "text-yellow-600"
+                                : "text-green-600",
+                            )}
+                          >
+                            {component.averageRenderTime.toFixed(2)}ms
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Last: {new Date(component.lastRender).toLocaleTimeString()}
+                          </div>
+                        </div>
+                      </div>
+
+                      <progress_1.Progress
+                        value={Math.min(100, (component.averageRenderTime / 50) * 100)}
+                        className="mt-2 h-2"
+                      />
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             : <card_1.Card>
                 <card_1.CardContent className="p-8 text-center">
@@ -301,42 +296,40 @@ function PerformanceDashboard() {
         <tabs_1.TabsContent value="metrics" className="space-y-4">
           {report && report.metrics.length > 0
             ? <div className="space-y-4">
-                {report.metrics.slice(0, 20).map(function (metric, index) {
-                  return (
-                    <card_1.Card key={"".concat(metric.name, "-").concat(index)}>
-                      <card_1.CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h3 className="font-medium">{metric.name}</h3>
-                            <div className="text-sm text-muted-foreground">
-                              {new Date(metric.timestamp).toLocaleString()}
-                            </div>
-                          </div>
-
-                          <div className="text-right">
-                            <div
-                              className={(0, utils_1.cn)(
-                                "text-lg font-semibold",
-                                metric.threshold && metric.value > metric.threshold
-                                  ? "text-red-600"
-                                  : "text-green-600",
-                              )}
-                            >
-                              {metric.value.toFixed(2)}
-                              {metric.unit}
-                            </div>
-                            {metric.threshold && (
-                              <div className="text-xs text-muted-foreground">
-                                Threshold: {metric.threshold}
-                                {metric.unit}
-                              </div>
-                            )}
+                {report.metrics.slice(0, 20).map((metric, index) => (
+                  <card_1.Card key={"".concat(metric.name, "-").concat(index)}>
+                    <card_1.CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-medium">{metric.name}</h3>
+                          <div className="text-sm text-muted-foreground">
+                            {new Date(metric.timestamp).toLocaleString()}
                           </div>
                         </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+
+                        <div className="text-right">
+                          <div
+                            className={(0, utils_1.cn)(
+                              "text-lg font-semibold",
+                              metric.threshold && metric.value > metric.threshold
+                                ? "text-red-600"
+                                : "text-green-600",
+                            )}
+                          >
+                            {metric.value.toFixed(2)}
+                            {metric.unit}
+                          </div>
+                          {metric.threshold && (
+                            <div className="text-xs text-muted-foreground">
+                              Threshold: {metric.threshold}
+                              {metric.unit}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             : <card_1.Card>
                 <card_1.CardContent className="p-8 text-center">
@@ -352,20 +345,18 @@ function PerformanceDashboard() {
         <tabs_1.TabsContent value="recommendations" className="space-y-4">
           {report && report.recommendations.length > 0
             ? <div className="space-y-4">
-                {report.recommendations.map(function (recommendation, index) {
-                  return (
-                    <card_1.Card key={index}>
-                      <card_1.CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <lucide_react_1.CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
-                          <div>
-                            <p className="font-medium">{recommendation}</p>
-                          </div>
+                {report.recommendations.map((recommendation, index) => (
+                  <card_1.Card key={index}>
+                    <card_1.CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <lucide_react_1.CheckCircle className="h-5 w-5 text-green-500 mt-0.5" />
+                        <div>
+                          <p className="font-medium">{recommendation}</p>
                         </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             : <card_1.Card>
                 <card_1.CardContent className="p-8 text-center">
@@ -389,7 +380,7 @@ function MetricCard(_a) {
     threshold = _a.threshold,
     _b = _a.reverse,
     reverse = _b === void 0 ? false : _b;
-  var getStatusColor = function () {
+  var getStatusColor = () => {
     if (value === null || threshold === undefined) return "text-gray-600";
     if (reverse) {
       return value >= threshold ? "text-green-600" : "text-red-600";
@@ -397,7 +388,7 @@ function MetricCard(_a) {
       return value <= threshold ? "text-green-600" : "text-red-600";
     }
   };
-  var getProgressValue = function () {
+  var getProgressValue = () => {
     if (value === null || threshold === undefined) return 0;
     if (reverse) {
       return Math.min(100, (value / threshold) * 100);
@@ -439,9 +430,7 @@ function MetricCard(_a) {
 // =====================================================================================
 function getLatestMetric(metrics, name) {
   if (!metrics) return null;
-  var filtered = metrics.filter(function (m) {
-    return m.name === name;
-  });
+  var filtered = metrics.filter((m) => m.name === name);
   if (filtered.length === 0) return null;
   return filtered[filtered.length - 1].value;
 }

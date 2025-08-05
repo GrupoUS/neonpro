@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { DashboardLayoutEngine } from "@/lib/dashboard/executive/dashboard-layout-engine";
 
@@ -34,7 +34,7 @@ interface RouteParams {
 }
 
 // GET /api/dashboard/executive/layouts/[id]
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
 
@@ -126,7 +126,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/dashboard/executive/layouts/[id]
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createRouteHandlerClient({ cookies });
 

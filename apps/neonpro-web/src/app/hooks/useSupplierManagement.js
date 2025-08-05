@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // SUPPLIER MANAGEMENT HOOK
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -161,12 +158,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSupplierManagement = useSupplierManagement;
 var react_1 = require("react");
 function useSupplierManagement(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     _b = _a.autoRefresh,
     autoRefresh = _b === void 0 ? false : _b,
@@ -231,10 +227,10 @@ function useSupplierManagement(_a) {
     pagination = _v[0],
     setPagination = _v[1];
   // Helper function for API calls
-  var handleApiCall = function (apiCall, onSuccess, loadingState) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleApiCall = (apiCall, onSuccess, loadingState) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, err_1, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -267,39 +263,37 @@ function useSupplierManagement(_a) {
         }
       });
     });
-  };
   // =====================================================================================
   // SUPPLIER MANAGEMENT
   // =====================================================================================
   var loadSuppliers = (0, react_1.useCallback)(
-    function (filters_1) {
+    (filters_1) => {
       var args_1 = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         args_1[_i - 1] = arguments[_i];
       }
       return __awaiter(
-        _this,
+        this,
         __spreadArray([filters_1], args_1, true),
         void 0,
         function (filters, page, limit) {
-          var _this = this;
           if (page === void 0) {
             page = 1;
           }
           if (limit === void 0) {
             limit = 50;
           }
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
                   4 /*yield*/,
                   handleApiCall(
-                    function () {
-                      return __awaiter(_this, void 0, void 0, function () {
+                    () =>
+                      __awaiter(this, void 0, void 0, function () {
                         var queryParams, response, data;
                         var _a, _b;
-                        return __generator(this, function (_c) {
+                        return __generator(this, (_c) => {
                           switch (_c.label) {
                             case 0:
                               queryParams = new URLSearchParams({
@@ -362,9 +356,8 @@ function useSupplierManagement(_a) {
                               return [2 /*return*/, data];
                           }
                         });
-                      });
-                    },
-                    function (data) {
+                      }),
+                    (data) => {
                       setSuppliers(data.suppliers);
                       setPagination({
                         page: data.page,
@@ -386,19 +379,18 @@ function useSupplierManagement(_a) {
     [clinicId],
   );
   var loadSupplierDetails = (0, react_1.useCallback)(
-    function (supplierId) {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
+    (supplierId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 handleApiCall(
-                  function () {
-                    return __awaiter(_this, void 0, void 0, function () {
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
                       var response;
-                      return __generator(this, function (_a) {
+                      return __generator(this, (_a) => {
                         switch (_a.label) {
                           case 0:
                             return [
@@ -417,11 +409,8 @@ function useSupplierManagement(_a) {
                             return [2 /*return*/, response.json()];
                         }
                       });
-                    });
-                  },
-                  function (data) {
-                    return setSupplierDetails(data);
-                  },
+                    }),
+                  (data) => setSupplierDetails(data),
                   "loading",
                 ),
               ];
@@ -430,24 +419,22 @@ function useSupplierManagement(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
   var createSupplier = (0, react_1.useCallback)(
-    function (supplierData) {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
+    (supplierData) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 handleApiCall(
-                  function () {
-                    return __awaiter(_this, void 0, void 0, function () {
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
                       var response, errorData;
-                      return __generator(this, function (_a) {
+                      return __generator(this, (_a) => {
                         switch (_a.label) {
                           case 0:
                             return [
@@ -462,7 +449,7 @@ function useSupplierManagement(_a) {
                             ];
                           case 1:
                             response = _a.sent();
-                            if (!!response.ok) return [3 /*break*/, 3];
+                            if (response.ok) return [3 /*break*/, 3];
                             return [4 /*yield*/, response.json()];
                           case 2:
                             errorData = _a.sent();
@@ -471,12 +458,9 @@ function useSupplierManagement(_a) {
                             return [2 /*return*/, response.json()];
                         }
                       });
-                    });
-                  },
-                  function (newSupplier) {
-                    setSuppliers(function (prev) {
-                      return __spreadArray([newSupplier], prev, true);
-                    });
+                    }),
+                  (newSupplier) => {
+                    setSuppliers((prev) => __spreadArray([newSupplier], prev, true));
                   },
                   "creating",
                 ),
@@ -485,24 +469,22 @@ function useSupplierManagement(_a) {
               return [2 /*return*/, _a.sent()];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
   var updateSupplier = (0, react_1.useCallback)(
-    function (supplierId, updates) {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
+    (supplierId, updates) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 handleApiCall(
-                  function () {
-                    return __awaiter(_this, void 0, void 0, function () {
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
                       var response, errorData;
-                      return __generator(this, function (_a) {
+                      return __generator(this, (_a) => {
                         switch (_a.label) {
                           case 0:
                             return [
@@ -520,7 +502,7 @@ function useSupplierManagement(_a) {
                             ];
                           case 1:
                             response = _a.sent();
-                            if (!!response.ok) return [3 /*break*/, 3];
+                            if (response.ok) return [3 /*break*/, 3];
                             return [4 /*yield*/, response.json()];
                           case 2:
                             errorData = _a.sent();
@@ -529,14 +511,13 @@ function useSupplierManagement(_a) {
                             return [2 /*return*/, response.json()];
                         }
                       });
-                    });
-                  },
-                  function (updatedSupplier) {
-                    setSuppliers(function (prev) {
-                      return prev.map(function (supplier) {
-                        return supplier.id === supplierId ? updatedSupplier : supplier;
-                      });
-                    });
+                    }),
+                  (updatedSupplier) => {
+                    setSuppliers((prev) =>
+                      prev.map((supplier) =>
+                        supplier.id === supplierId ? updatedSupplier : supplier,
+                      ),
+                    );
                     if (
                       (supplierDetails === null || supplierDetails === void 0
                         ? void 0
@@ -552,25 +533,23 @@ function useSupplierManagement(_a) {
               return [2 /*return*/, _a.sent()];
           }
         });
-      });
-    },
+      }),
     [clinicId, supplierDetails],
   );
   var deleteSupplier = (0, react_1.useCallback)(
-    function (supplierId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (supplierId) =>
+      __awaiter(this, void 0, void 0, function () {
         var result;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 handleApiCall(
-                  function () {
-                    return __awaiter(_this, void 0, void 0, function () {
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
                       var response, errorData;
-                      return __generator(this, function (_a) {
+                      return __generator(this, (_a) => {
                         switch (_a.label) {
                           case 0:
                             return [
@@ -586,7 +565,7 @@ function useSupplierManagement(_a) {
                             ];
                           case 1:
                             response = _a.sent();
-                            if (!!response.ok) return [3 /*break*/, 3];
+                            if (response.ok) return [3 /*break*/, 3];
                             return [4 /*yield*/, response.json()];
                           case 2:
                             errorData = _a.sent();
@@ -595,14 +574,9 @@ function useSupplierManagement(_a) {
                             return [2 /*return*/, true];
                         }
                       });
-                    });
-                  },
-                  function () {
-                    setSuppliers(function (prev) {
-                      return prev.filter(function (supplier) {
-                        return supplier.id !== supplierId;
-                      });
-                    });
+                    }),
+                  () => {
+                    setSuppliers((prev) => prev.filter((supplier) => supplier.id !== supplierId));
                     if (
                       (supplierDetails === null || supplierDetails === void 0
                         ? void 0
@@ -619,207 +593,44 @@ function useSupplierManagement(_a) {
               return [2 /*return*/, result !== null];
           }
         });
-      });
-    },
+      }),
     [clinicId, supplierDetails],
   );
   // =====================================================================================
   // CONTRACT MANAGEMENT
   // =====================================================================================
-  var loadContracts = (0, react_1.useCallback)(function (supplierId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, data;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/contracts?supplier_id=".concat(supplierId)),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!response.ok) {
-                            throw new Error("Erro ao carregar contratos");
-                          }
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          data = _a.sent();
-                          return [2 /*return*/, data.contracts];
-                      }
-                    });
-                  });
-                },
-                function (contractsData) {
-                  return setContracts(contractsData);
-                },
-                "loading",
-              ),
-            ];
-          case 1:
-            _a.sent();
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var createContract = (0, react_1.useCallback)(function (contractData) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/contracts", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(contractData),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao criar contrato");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                function (newContract) {
-                  setContracts(function (prev) {
-                    return __spreadArray([newContract], prev, true);
-                  });
-                },
-                "creating",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
-  var updateContract = (0, react_1.useCallback)(function (contractId, updates) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/contracts/".concat(contractId), {
-                              method: "PUT",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(updates),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao atualizar contrato");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                function (updatedContract) {
-                  setContracts(function (prev) {
-                    return prev.map(function (contract) {
-                      return contract.id === contractId ? updatedContract : contract;
-                    });
-                  });
-                },
-                "updating",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
-  var loadContractAlerts = (0, react_1.useCallback)(
-    function () {
-      var args_1 = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args_1[_i] = arguments[_i];
-      }
-      return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (daysAhead) {
-        var _this = this;
-        if (daysAhead === void 0) {
-          daysAhead = 90;
-        }
-        return __generator(this, function (_a) {
+  var loadContracts = (0, react_1.useCallback)(
+    (supplierId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 handleApiCall(
-                  function () {
-                    return __awaiter(_this, void 0, void 0, function () {
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
                       var response, data;
-                      return __generator(this, function (_a) {
+                      return __generator(this, (_a) => {
                         switch (_a.label) {
                           case 0:
                             return [
                               4 /*yield*/,
-                              fetch(
-                                "/api/suppliers/contracts?clinic_id="
-                                  .concat(clinicId, "&action=renewal-alerts&days_ahead=")
-                                  .concat(daysAhead),
-                              ),
+                              fetch("/api/suppliers/contracts?supplier_id=".concat(supplierId)),
                             ];
                           case 1:
                             response = _a.sent();
                             if (!response.ok) {
-                              throw new Error("Erro ao carregar alertas de contrato");
+                              throw new Error("Erro ao carregar contratos");
                             }
                             return [4 /*yield*/, response.json()];
                           case 2:
                             data = _a.sent();
-                            return [2 /*return*/, data.alerts];
+                            return [2 /*return*/, data.contracts];
                         }
                       });
-                    });
-                  },
-                  function (alertsData) {
-                    return setContractAlerts(alertsData);
-                  },
+                    }),
+                  (contractsData) => setContracts(contractsData),
                   "loading",
                 ),
               ];
@@ -828,275 +639,415 @@ function useSupplierManagement(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    [clinicId],
+      }),
+    [],
   );
-  // =====================================================================================
-  // CONTACT MANAGEMENT
-  // =====================================================================================
-  var loadContacts = (0, react_1.useCallback)(function (supplierId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, data;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/contacts?supplier_id=".concat(supplierId)),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!response.ok) {
-                            throw new Error("Erro ao carregar contatos");
-                          }
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          data = _a.sent();
-                          return [2 /*return*/, data.contacts];
-                      }
-                    });
-                  });
-                },
-                function (contactsData) {
-                  return setContacts(contactsData);
-                },
-                "loading",
-              ),
-            ];
-          case 1:
-            _a.sent();
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var createContact = (0, react_1.useCallback)(function (contactData) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/contacts", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(contactData),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao criar contato");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                function (newContact) {
-                  setContacts(function (prev) {
-                    return __spreadArray([newContact], prev, true);
-                  });
-                },
-                "creating",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
-  var updateContact = (0, react_1.useCallback)(function (contactId, updates) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/contacts/".concat(contactId), {
-                              method: "PUT",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(updates),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao atualizar contato");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                function (updatedContact) {
-                  setContacts(function (prev) {
-                    return prev.map(function (contact) {
-                      return contact.id === contactId ? updatedContact : contact;
-                    });
-                  });
-                },
-                "updating",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
-  // =====================================================================================
-  // EVALUATION MANAGEMENT
-  // =====================================================================================
-  var loadEvaluations = (0, react_1.useCallback)(function (supplierId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, data;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/evaluations?supplier_id=".concat(supplierId)),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!response.ok) {
-                            throw new Error("Erro ao carregar avaliações");
-                          }
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          data = _a.sent();
-                          return [2 /*return*/, data.evaluations];
-                      }
-                    });
-                  });
-                },
-                function (evaluationsData) {
-                  return setEvaluations(evaluationsData);
-                },
-                "loading",
-              ),
-            ];
-          case 1:
-            _a.sent();
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var createEvaluation = (0, react_1.useCallback)(function (evaluationData) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/evaluations", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(evaluationData),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao criar avaliação");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                function (newEvaluation) {
-                  setEvaluations(function (prev) {
-                    return __spreadArray([newEvaluation], prev, true);
-                  });
-                },
-                "creating",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
-  // =====================================================================================
-  // QUALITY ISSUE MANAGEMENT
-  // =====================================================================================
-  var loadQualityIssuesSummary = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
+  var createContract = (0, react_1.useCallback)(
+    (contractData) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 handleApiCall(
-                  function () {
-                    return __awaiter(_this, void 0, void 0, function () {
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/contracts", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(contractData),
+                              }),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao criar contrato");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  (newContract) => {
+                    setContracts((prev) => __spreadArray([newContract], prev, true));
+                  },
+                  "creating",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
+  var updateContract = (0, react_1.useCallback)(
+    (contractId, updates) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/contracts/".concat(contractId), {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(updates),
+                              }),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao atualizar contrato");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  (updatedContract) => {
+                    setContracts((prev) =>
+                      prev.map((contract) =>
+                        contract.id === contractId ? updatedContract : contract,
+                      ),
+                    );
+                  },
+                  "updating",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
+  var loadContractAlerts = (0, react_1.useCallback)(() => {
+    var args_1 = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args_1[_i] = arguments[_i];
+    }
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (daysAhead) {
+      if (daysAhead === void 0) {
+        daysAhead = 90;
+      }
+      return __generator(this, (_a) => {
+        switch (_a.label) {
+          case 0:
+            return [
+              4 /*yield*/,
+              handleApiCall(
+                () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    var response, data;
+                    return __generator(this, (_a) => {
+                      switch (_a.label) {
+                        case 0:
+                          return [
+                            4 /*yield*/,
+                            fetch(
+                              "/api/suppliers/contracts?clinic_id="
+                                .concat(clinicId, "&action=renewal-alerts&days_ahead=")
+                                .concat(daysAhead),
+                            ),
+                          ];
+                        case 1:
+                          response = _a.sent();
+                          if (!response.ok) {
+                            throw new Error("Erro ao carregar alertas de contrato");
+                          }
+                          return [4 /*yield*/, response.json()];
+                        case 2:
+                          data = _a.sent();
+                          return [2 /*return*/, data.alerts];
+                      }
+                    });
+                  }),
+                (alertsData) => setContractAlerts(alertsData),
+                "loading",
+              ),
+            ];
+          case 1:
+            _a.sent();
+            return [2 /*return*/];
+        }
+      });
+    });
+  }, [clinicId]);
+  // =====================================================================================
+  // CONTACT MANAGEMENT
+  // =====================================================================================
+  var loadContacts = (0, react_1.useCallback)(
+    (supplierId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
                       var response, data;
-                      return __generator(this, function (_a) {
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/contacts?supplier_id=".concat(supplierId)),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (!response.ok) {
+                              throw new Error("Erro ao carregar contatos");
+                            }
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            data = _a.sent();
+                            return [2 /*return*/, data.contacts];
+                        }
+                      });
+                    }),
+                  (contactsData) => setContacts(contactsData),
+                  "loading",
+                ),
+              ];
+            case 1:
+              _a.sent();
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var createContact = (0, react_1.useCallback)(
+    (contactData) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/contacts", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(contactData),
+                              }),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao criar contato");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  (newContact) => {
+                    setContacts((prev) => __spreadArray([newContact], prev, true));
+                  },
+                  "creating",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
+  var updateContact = (0, react_1.useCallback)(
+    (contactId, updates) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/contacts/".concat(contactId), {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(updates),
+                              }),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao atualizar contato");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  (updatedContact) => {
+                    setContacts((prev) =>
+                      prev.map((contact) => (contact.id === contactId ? updatedContact : contact)),
+                    );
+                  },
+                  "updating",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
+  // =====================================================================================
+  // EVALUATION MANAGEMENT
+  // =====================================================================================
+  var loadEvaluations = (0, react_1.useCallback)(
+    (supplierId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, data;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/evaluations?supplier_id=".concat(supplierId)),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (!response.ok) {
+                              throw new Error("Erro ao carregar avaliações");
+                            }
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            data = _a.sent();
+                            return [2 /*return*/, data.evaluations];
+                        }
+                      });
+                    }),
+                  (evaluationsData) => setEvaluations(evaluationsData),
+                  "loading",
+                ),
+              ];
+            case 1:
+              _a.sent();
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var createEvaluation = (0, react_1.useCallback)(
+    (evaluationData) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/evaluations", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(evaluationData),
+                              }),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao criar avaliação");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  (newEvaluation) => {
+                    setEvaluations((prev) => __spreadArray([newEvaluation], prev, true));
+                  },
+                  "creating",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
+  // =====================================================================================
+  // QUALITY ISSUE MANAGEMENT
+  // =====================================================================================
+  var loadQualityIssuesSummary = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, data;
+                      return __generator(this, (_a) => {
                         switch (_a.label) {
                           case 0:
                             return [
@@ -1114,11 +1065,8 @@ function useSupplierManagement(_a) {
                             return [2 /*return*/, data.summary];
                         }
                       });
-                    });
-                  },
-                  function (summaryData) {
-                    return setQualityIssuesSummary(summaryData);
-                  },
+                    }),
+                  (summaryData) => setQualityIssuesSummary(summaryData),
                   "loading",
                 ),
               ];
@@ -1127,227 +1075,219 @@ function useSupplierManagement(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
-  var createQualityIssue = (0, react_1.useCallback)(function (issueData) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/quality-issues", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(issueData),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao criar issue");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                function (newIssue) {
-                  setQualityIssues(function (prev) {
-                    return __spreadArray([newIssue], prev, true);
-                  });
-                },
-                "creating",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
-  var updateQualityIssue = (0, react_1.useCallback)(function (issueId, updates) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/quality-issues/".concat(issueId), {
-                              method: "PUT",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(updates),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao atualizar issue");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                function (updatedIssue) {
-                  setQualityIssues(function (prev) {
-                    return prev.map(function (issue) {
-                      return issue.id === issueId ? updatedIssue : issue;
-                    });
-                  });
-                },
-                "updating",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
-  // =====================================================================================
-  // COMMUNICATION MANAGEMENT
-  // =====================================================================================
-  var loadCommunications = (0, react_1.useCallback)(function (supplierId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, data;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/communications?supplier_id=".concat(supplierId)),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!response.ok) {
-                            throw new Error("Erro ao carregar comunicações");
-                          }
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          data = _a.sent();
-                          return [2 /*return*/, data.communications];
-                      }
-                    });
-                  });
-                },
-                function (communicationsData) {
-                  return setCommunications(communicationsData);
-                },
-                "loading",
-              ),
-            ];
-          case 1:
-            _a.sent();
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var createCommunication = (0, react_1.useCallback)(function (communicationData) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/communications", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify(communicationData),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao criar comunicação");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                function (newCommunication) {
-                  setCommunications(function (prev) {
-                    return __spreadArray([newCommunication], prev, true);
-                  });
-                },
-                "creating",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
-  // =====================================================================================
-  // DASHBOARD AND ANALYTICS
-  // =====================================================================================
-  var loadDashboardData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
+  var createQualityIssue = (0, react_1.useCallback)(
+    (issueData) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 handleApiCall(
-                  function () {
-                    return __awaiter(_this, void 0, void 0, function () {
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/quality-issues", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(issueData),
+                              }),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao criar issue");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  (newIssue) => {
+                    setQualityIssues((prev) => __spreadArray([newIssue], prev, true));
+                  },
+                  "creating",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
+  var updateQualityIssue = (0, react_1.useCallback)(
+    (issueId, updates) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/quality-issues/".concat(issueId), {
+                                method: "PUT",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(updates),
+                              }),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao atualizar issue");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  (updatedIssue) => {
+                    setQualityIssues((prev) =>
+                      prev.map((issue) => (issue.id === issueId ? updatedIssue : issue)),
+                    );
+                  },
+                  "updating",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
+  // =====================================================================================
+  // COMMUNICATION MANAGEMENT
+  // =====================================================================================
+  var loadCommunications = (0, react_1.useCallback)(
+    (supplierId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, data;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch(
+                                "/api/suppliers/communications?supplier_id=".concat(supplierId),
+                              ),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (!response.ok) {
+                              throw new Error("Erro ao carregar comunicações");
+                            }
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            data = _a.sent();
+                            return [2 /*return*/, data.communications];
+                        }
+                      });
+                    }),
+                  (communicationsData) => setCommunications(communicationsData),
+                  "loading",
+                ),
+              ];
+            case 1:
+              _a.sent();
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var createCommunication = (0, react_1.useCallback)(
+    (communicationData) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/communications", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(communicationData),
+                              }),
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao criar comunicação");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  (newCommunication) => {
+                    setCommunications((prev) => __spreadArray([newCommunication], prev, true));
+                  },
+                  "creating",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
+  // =====================================================================================
+  // DASHBOARD AND ANALYTICS
+  // =====================================================================================
+  var loadDashboardData = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
                       var response;
-                      return __generator(this, function (_a) {
+                      return __generator(this, (_a) => {
                         switch (_a.label) {
                           case 0:
                             return [
@@ -1362,11 +1302,8 @@ function useSupplierManagement(_a) {
                             return [2 /*return*/, response.json()];
                         }
                       });
-                    });
-                  },
-                  function (data) {
-                    return setDashboardData(data);
-                  },
+                    }),
+                  (data) => setDashboardData(data),
                   "loading",
                 ),
               ];
@@ -1375,24 +1312,22 @@ function useSupplierManagement(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
   var loadAnalytics = (0, react_1.useCallback)(
-    function (periodStart, periodEnd) {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _this = this;
-        return __generator(this, function (_a) {
+    (periodStart, periodEnd) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 handleApiCall(
-                  function () {
-                    return __awaiter(_this, void 0, void 0, function () {
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
                       var response;
-                      return __generator(this, function (_a) {
+                      return __generator(this, (_a) => {
                         switch (_a.label) {
                           case 0:
                             return [
@@ -1412,11 +1347,8 @@ function useSupplierManagement(_a) {
                             return [2 /*return*/, response.json()];
                         }
                       });
-                    });
-                  },
-                  function (data) {
-                    return setAnalytics(data);
-                  },
+                    }),
+                  (data) => setAnalytics(data),
                   "loading",
                 ),
               ];
@@ -1425,71 +1357,70 @@ function useSupplierManagement(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
-  var compareSuppliers = (0, react_1.useCallback)(function (supplierIds) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [
-              4 /*yield*/,
-              handleApiCall(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var response, errorData;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          return [
-                            4 /*yield*/,
-                            fetch("/api/suppliers/analytics", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                supplier_ids: supplierIds,
-                                comparison_criteria: [
-                                  "delivery_performance",
-                                  "quality_rating",
-                                  "cost_effectiveness",
-                                  "response_time",
-                                ],
+  var compareSuppliers = (0, react_1.useCallback)(
+    (supplierIds) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [
+                4 /*yield*/,
+                handleApiCall(
+                  () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      var response, errorData;
+                      return __generator(this, (_a) => {
+                        switch (_a.label) {
+                          case 0:
+                            return [
+                              4 /*yield*/,
+                              fetch("/api/suppliers/analytics", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  supplier_ids: supplierIds,
+                                  comparison_criteria: [
+                                    "delivery_performance",
+                                    "quality_rating",
+                                    "cost_effectiveness",
+                                    "response_time",
+                                  ],
+                                }),
                               }),
-                            }),
-                          ];
-                        case 1:
-                          response = _a.sent();
-                          if (!!response.ok) return [3 /*break*/, 3];
-                          return [4 /*yield*/, response.json()];
-                        case 2:
-                          errorData = _a.sent();
-                          throw new Error(errorData.error || "Erro ao comparar fornecedores");
-                        case 3:
-                          return [2 /*return*/, response.json()];
-                      }
-                    });
-                  });
-                },
-                undefined,
-                "loading",
-              ),
-            ];
-          case 1:
-            return [2 /*return*/, _a.sent()];
-        }
-      });
-    });
-  }, []);
+                            ];
+                          case 1:
+                            response = _a.sent();
+                            if (response.ok) return [3 /*break*/, 3];
+                            return [4 /*yield*/, response.json()];
+                          case 2:
+                            errorData = _a.sent();
+                            throw new Error(errorData.error || "Erro ao comparar fornecedores");
+                          case 3:
+                            return [2 /*return*/, response.json()];
+                        }
+                      });
+                    }),
+                  undefined,
+                  "loading",
+                ),
+              ];
+            case 1:
+              return [2 /*return*/, _a.sent()];
+          }
+        });
+      }),
+    [],
+  );
   // =====================================================================================
   // UTILITY FUNCTIONS
   // =====================================================================================
   var refreshData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -1506,14 +1437,13 @@ function useSupplierManagement(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadSuppliers, loadDashboardData, loadContractAlerts, loadQualityIssuesSummary],
   );
-  var clearError = (0, react_1.useCallback)(function () {
+  var clearError = (0, react_1.useCallback)(() => {
     setError(null);
   }, []);
-  var resetState = (0, react_1.useCallback)(function () {
+  var resetState = (0, react_1.useCallback)(() => {
     setSuppliers([]);
     setSupplierDetails(null);
     setContracts([]);
@@ -1529,24 +1459,16 @@ function useSupplierManagement(_a) {
     setPagination({ page: 1, limit: 50, total: 0 });
   }, []);
   // Auto-refresh effect
-  (0, react_1.useEffect)(
-    function () {
-      if (autoRefresh) {
-        var interval_1 = setInterval(refreshData, refreshInterval);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [autoRefresh, refreshInterval, refreshData],
-  );
+  (0, react_1.useEffect)(() => {
+    if (autoRefresh) {
+      var interval_1 = setInterval(refreshData, refreshInterval);
+      return () => clearInterval(interval_1);
+    }
+  }, [autoRefresh, refreshInterval, refreshData]);
   // Initial load
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-    },
-    [loadDashboardData],
-  );
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+  }, [loadDashboardData]);
   return {
     // State
     suppliers: suppliers,

@@ -5,30 +5,30 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { useSecurityMonitoring } from "@/hooks/auth";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Separator } from "@/components/ui/separator";
 import type {
+  Activity,
+  AlertTriangle,
+  Clock,
+  Eye,
+  MapPin,
+  Minus,
+  RefreshCw,
   Shield,
   ShieldAlert,
   ShieldCheck,
-  AlertTriangle,
-  Activity,
-  Eye,
-  Clock,
-  MapPin,
   Smartphone,
-  RefreshCw,
-  TrendingUp,
   TrendingDown,
-  Minus,
+  TrendingUp,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { useSecurityMonitoring } from "@/hooks/auth";
 import type { cn } from "@/lib/utils";
 
 // =====================================================

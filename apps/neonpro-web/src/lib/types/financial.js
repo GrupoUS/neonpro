@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Financial Management Types
  * Created: January 27, 2025
@@ -7,22 +6,22 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+        (Array.isArray({ __proto__: [] }) &&
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        throw new TypeError(`Class extends value ${String(b)} is not a constructor or null`);
       extendStatics(d, b);
       function __() {
         this.constructor = d;
@@ -37,7 +36,7 @@ exports.NFSeError =
   exports.FinancialError =
     void 0;
 // Error Types
-var FinancialError = /** @class */ (function (_super) {
+var FinancialError = /** @class */ ((_super) => {
   __extends(FinancialError, _super);
   function FinancialError(message, code, details) {
     var _this = _super.call(this, message) || this;
@@ -49,7 +48,7 @@ var FinancialError = /** @class */ (function (_super) {
   return FinancialError;
 })(Error);
 exports.FinancialError = FinancialError;
-var ShadowValidationError = /** @class */ (function (_super) {
+var ShadowValidationError = /** @class */ ((_super) => {
   __extends(ShadowValidationError, _super);
   function ShadowValidationError(message, variance, tolerance, details) {
     var _this = _super.call(this, message, "SHADOW_VALIDATION_FAILED", details) || this;
@@ -61,7 +60,7 @@ var ShadowValidationError = /** @class */ (function (_super) {
   return ShadowValidationError;
 })(FinancialError);
 exports.ShadowValidationError = ShadowValidationError;
-var PaymentProcessingError = /** @class */ (function (_super) {
+var PaymentProcessingError = /** @class */ ((_super) => {
   __extends(PaymentProcessingError, _super);
   function PaymentProcessingError(message, payment_id, processor_error, details) {
     var _this = _super.call(this, message, "PAYMENT_PROCESSING_FAILED", details) || this;
@@ -73,7 +72,7 @@ var PaymentProcessingError = /** @class */ (function (_super) {
   return PaymentProcessingError;
 })(FinancialError);
 exports.PaymentProcessingError = PaymentProcessingError;
-var NFSeError = /** @class */ (function (_super) {
+var NFSeError = /** @class */ ((_super) => {
   __extends(NFSeError, _super);
   function NFSeError(message, invoice_id, nfse_error_code, details) {
     var _this = _super.call(this, message, "NFSE_GENERATION_FAILED", details) || this;

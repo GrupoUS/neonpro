@@ -2,8 +2,7 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests covering API endpoints with database operations
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from "@jest/globals";
-import { createClient } from "@supabase/supabase-js";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "@jest/globals";
 
 // Mock Next.js request/response for testing
 const mockRequest = (method: string, url: string, body?: any) =>
@@ -44,10 +43,10 @@ jest.mock("@/app/utils/supabase/server", () => ({
   createClient: jest.fn(() => Promise.resolve(mockSupabaseClient)),
 }));
 
-// Import the API handlers after mocking
-import { GET, POST } from "@/app/api/stock/alerts/route";
 import { POST as acknowledgePost } from "@/app/api/stock/alerts/acknowledge/route";
 import { POST as resolvePost } from "@/app/api/stock/alerts/resolve/route";
+// Import the API handlers after mocking
+import { GET, POST } from "@/app/api/stock/alerts/route";
 
 // =====================================================
 // TEST DATA FIXTURES
@@ -679,5 +678,3 @@ describe("Performance Tests", () => {
     // In production, rate limiting would be handled by middleware
   });
 });
-
-export {};

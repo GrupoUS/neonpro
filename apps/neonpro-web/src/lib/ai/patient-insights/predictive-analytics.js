@@ -1,4 +1,3 @@
-"use strict";
 // AI-Powered Predictive Analytics Engine
 // Story 3.2: Task 3 - Predictive Analytics Engine
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,11 +144,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createpredictiveAnalyticsEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var createpredictiveAnalyticsEngine = /** @class */ (function () {
+var createpredictiveAnalyticsEngine = /** @class */ (() => {
   function createpredictiveAnalyticsEngine() {
     this.supabase = (0, client_1.createClient)();
     this.models = new Map();
@@ -655,18 +652,16 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.calculateCompositePrediction = function (predictions) {
-    return {
-      successProbability: Math.max(0, Math.min(1, predictions.successProbability)),
-      complicationRisk: Math.max(0, Math.min(1, predictions.complicationRisk)),
-      expectedRecoveryDays: Math.max(1, Math.round(predictions.recoveryTime)),
-      expectedSatisfaction: Math.max(1, Math.min(10, predictions.satisfactionScore)),
-      confidenceInterval: {
-        lower: predictions.successProbability * 0.85,
-        upper: Math.min(1, predictions.successProbability * 1.15),
-      },
-    };
-  };
+  createpredictiveAnalyticsEngine.prototype.calculateCompositePrediction = (predictions) => ({
+    successProbability: Math.max(0, Math.min(1, predictions.successProbability)),
+    complicationRisk: Math.max(0, Math.min(1, predictions.complicationRisk)),
+    expectedRecoveryDays: Math.max(1, Math.round(predictions.recoveryTime)),
+    expectedSatisfaction: Math.max(1, Math.min(10, predictions.satisfactionScore)),
+    confidenceInterval: {
+      lower: predictions.successProbability * 0.85,
+      upper: Math.min(1, predictions.successProbability * 1.15),
+    },
+  });
   createpredictiveAnalyticsEngine.prototype.analyzeUncertainty = function (
     predictions,
     historicalData,
@@ -683,7 +678,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
     };
   };
   // Utility methods
-  createpredictiveAnalyticsEngine.prototype.calculateAge = function (birthDate) {
+  createpredictiveAnalyticsEngine.prototype.calculateAge = (birthDate) => {
     var today = new Date();
     var birth = new Date(birthDate);
     var age = today.getFullYear() - birth.getFullYear();
@@ -693,26 +688,20 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
     }
     return age;
   };
-  createpredictiveAnalyticsEngine.prototype.calculateBMI = function (patientData) {
+  createpredictiveAnalyticsEngine.prototype.calculateBMI = (patientData) => {
     if (!patientData.weight || !patientData.height) return 25; // Default BMI
     var heightM = patientData.height / 100;
     return patientData.weight / (heightM * heightM);
   };
-  createpredictiveAnalyticsEngine.prototype.calculatePreviousSuccessRate = function (treatments) {
+  createpredictiveAnalyticsEngine.prototype.calculatePreviousSuccessRate = (treatments) => {
     if (!treatments || treatments.length === 0) return 0.75; // Default rate
-    var successful = treatments.filter(function (t) {
-      return t.outcome === "successful";
-    }).length;
+    var successful = treatments.filter((t) => t.outcome === "successful").length;
     return successful / treatments.length;
   };
-  createpredictiveAnalyticsEngine.prototype.calculateAverageSatisfaction = function (
-    satisfactionScores,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.calculateAverageSatisfaction = (satisfactionScores) => {
     if (!satisfactionScores || satisfactionScores.length === 0) return 7.5; // Default
     var average =
-      satisfactionScores.reduce(function (sum, score) {
-        return sum + score.score;
-      }, 0) / satisfactionScores.length;
+      satisfactionScores.reduce((sum, score) => sum + score.score, 0) / satisfactionScores.length;
     return average;
   };
   // Initialize prediction models
@@ -740,54 +729,48 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       }),
     );
   };
-  createpredictiveAnalyticsEngine.prototype.getCurrentModelVersions = function () {
-    return {
-      successModel: "1.2.0",
-      complicationModel: "1.1.0",
-      recoveryModel: "1.0.0",
-      satisfactionModel: "1.0.0",
-    };
-  };
+  createpredictiveAnalyticsEngine.prototype.getCurrentModelVersions = () => ({
+    successModel: "1.2.0",
+    complicationModel: "1.1.0",
+    recoveryModel: "1.0.0",
+    satisfactionModel: "1.0.0",
+  });
   // Additional helper methods (simplified implementations)
-  createpredictiveAnalyticsEngine.prototype.assessBleedingRisk = function (patientData) {
+  createpredictiveAnalyticsEngine.prototype.assessBleedingRisk = (patientData) => {
     // Implementation would analyze medications, medical history, etc.
     return 0.1; // Mock value
   };
-  createpredictiveAnalyticsEngine.prototype.assessInfectionRisk = function (patientData) {
+  createpredictiveAnalyticsEngine.prototype.assessInfectionRisk = (patientData) => {
     return 0.05; // Mock value
   };
-  createpredictiveAnalyticsEngine.prototype.assessHealingCapacity = function (patientData) {
+  createpredictiveAnalyticsEngine.prototype.assessHealingCapacity = (patientData) => {
     return 0.8; // Mock value
   };
-  createpredictiveAnalyticsEngine.prototype.assessImmuneStatus = function (patientData) {
+  createpredictiveAnalyticsEngine.prototype.assessImmuneStatus = (patientData) => {
     return 0.9; // Mock value
   };
-  createpredictiveAnalyticsEngine.prototype.assessCardiovascularRisk = function (patientData) {
+  createpredictiveAnalyticsEngine.prototype.assessCardiovascularRisk = (patientData) => {
     return 0.2; // Mock value
   };
-  createpredictiveAnalyticsEngine.prototype.analyzeHealingHistory = function (patientData) {
+  createpredictiveAnalyticsEngine.prototype.analyzeHealingHistory = (patientData) => {
     return "normal"; // Mock value
   };
-  createpredictiveAnalyticsEngine.prototype.analyzeComplianceHistory = function (patientData) {
+  createpredictiveAnalyticsEngine.prototype.analyzeComplianceHistory = (patientData) => {
     return 0.85; // Mock value
   };
-  createpredictiveAnalyticsEngine.prototype.analyzeSatisfactionPattern = function (
-    satisfactionScores,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.analyzeSatisfactionPattern = (satisfactionScores) => {
     return "stable"; // Mock value
   };
-  createpredictiveAnalyticsEngine.prototype.calculateModelVariance = function (predictions) {
+  createpredictiveAnalyticsEngine.prototype.calculateModelVariance = (predictions) => {
     return 0.1; // Mock variance
   };
-  createpredictiveAnalyticsEngine.prototype.calculateHistoricalVariance = function (
-    historicalData,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.calculateHistoricalVariance = (historicalData) => {
     return 0.15; // Mock variance
   };
-  createpredictiveAnalyticsEngine.prototype.identifyUncertaintyFactors = function (
+  createpredictiveAnalyticsEngine.prototype.identifyUncertaintyFactors = (
     modelVariance,
     historicalVariance,
-  ) {
+  ) => {
     return ["Limited historical data", "Patient complexity"]; // Mock factors
   };
   // Additional prediction methods (simplified for brevity)
@@ -796,31 +779,27 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
     treatmentData,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Mock implementation
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.calculateOverallComplicationRisk = function (
-    complications,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.calculateOverallComplicationRisk = (complications) => {
     return 0.1; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generatePreventionStrategies = function (
+  createpredictiveAnalyticsEngine.prototype.generatePreventionStrategies = (
     complications,
     patientData,
-  ) {
+  ) => {
     return ["Standard precautions"]; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.identifyPrimaryRiskFactors = function (features) {
+  createpredictiveAnalyticsEngine.prototype.identifyPrimaryRiskFactors = (features) => {
     return ["Age", "Medical history"]; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generatePrecautionRecommendations = function (
-    complications,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.generatePrecautionRecommendations = (complications) => {
     return ["Standard monitoring"]; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generateMonitoringSchedule = function (risk) {
+  createpredictiveAnalyticsEngine.prototype.generateMonitoringSchedule = (risk) => {
     return ["Day 1", "Day 7", "Day 14"]; // Mock implementation
   };
   createpredictiveAnalyticsEngine.prototype.predictRecoveryPhases = function (
@@ -828,7 +807,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
     treatmentData,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [
           2 /*return*/,
           {
@@ -841,28 +820,28 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.calculateRecoveryMilestones = function (
+  createpredictiveAnalyticsEngine.prototype.calculateRecoveryMilestones = (
     phases,
     treatmentData,
-  ) {
+  ) => {
     return []; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.predictTrajectoryVariations = function (
+  createpredictiveAnalyticsEngine.prototype.predictTrajectoryVariations = (
     features,
     patientData,
-  ) {
+  ) => {
     return []; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generateRecoveryOptimization = function (features) {
+  createpredictiveAnalyticsEngine.prototype.generateRecoveryOptimization = (features) => {
     return ["Follow post-care instructions"]; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generateFollowUpSchedule = function (phases) {
+  createpredictiveAnalyticsEngine.prototype.generateFollowUpSchedule = (phases) => {
     return ["1 week", "2 weeks"]; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.identifyRecoveryRedFlags = function (
+  createpredictiveAnalyticsEngine.prototype.identifyRecoveryRedFlags = (
     treatmentData,
     riskAssessment,
-  ) {
+  ) => {
     return ["Severe pain", "Signs of infection"]; // Mock implementation
   };
   createpredictiveAnalyticsEngine.prototype.predictSatisfactionDimensions = function (
@@ -870,7 +849,7 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
     treatmentData,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [
           2 /*return*/,
           {
@@ -885,56 +864,45 @@ var createpredictiveAnalyticsEngine = /** @class */ (function () {
       });
     });
   };
-  createpredictiveAnalyticsEngine.prototype.calculateOverallSatisfaction = function (dimensions) {
-    return (
-      Object.values(dimensions).reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / Object.keys(dimensions).length
-    );
-  };
-  createpredictiveAnalyticsEngine.prototype.identifySatisfactionRisks = function (
-    features,
-    patientData,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.calculateOverallSatisfaction = (dimensions) =>
+    Object.values(dimensions).reduce((sum, score) => sum + score, 0) /
+    Object.keys(dimensions).length;
+  createpredictiveAnalyticsEngine.prototype.identifySatisfactionRisks = (features, patientData) => {
     return []; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generateSatisfactionOptimization = function (
+  createpredictiveAnalyticsEngine.prototype.generateSatisfactionOptimization = (
     dimensions,
     risks,
-  ) {
+  ) => {
     return ["Clear communication", "Manage expectations"]; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generateCommunicationRecommendations = function (
-    features,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.generateCommunicationRecommendations = (features) => {
     return ["Regular updates", "Clear instructions"]; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generateExpectationManagement = function (
+  createpredictiveAnalyticsEngine.prototype.generateExpectationManagement = (
     dimensions,
     treatmentData,
-  ) {
+  ) => {
     return ["Set realistic expectations", "Explain process"]; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.calculateBaselineComparison = function (
+  createpredictiveAnalyticsEngine.prototype.calculateBaselineComparison = (
     prediction,
     historicalData,
-  ) {
+  ) => {
     return {
       betterThanAverage: prediction.successProbability > 0.8,
       percentilRank: 75,
       comparison: "Above average success probability",
     }; // Mock implementation
   };
-  createpredictiveAnalyticsEngine.prototype.generateMonitoringRecommendations = function (
-    prediction,
-  ) {
+  createpredictiveAnalyticsEngine.prototype.generateMonitoringRecommendations = (prediction) => {
     return ["Standard monitoring protocol"]; // Mock implementation
   };
   return createpredictiveAnalyticsEngine;
 })();
 exports.createpredictiveAnalyticsEngine = createpredictiveAnalyticsEngine;
 // Mock prediction model class
-var MockPredictionModel = /** @class */ (function () {
+var MockPredictionModel = /** @class */ (() => {
   function MockPredictionModel(type, baseline) {
     this.type = type;
     this.baseline = baseline;

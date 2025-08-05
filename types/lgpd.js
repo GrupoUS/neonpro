@@ -1,4 +1,3 @@
-"use strict";
 // LGPD Types and Interfaces
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LGPD_STATUS_COLORS = exports.LGPD_SEVERITY_COLORS = exports.LGPD_CONSTANTS = void 0;

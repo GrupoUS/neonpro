@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdvancedAnalyticsDashboard = AdvancedAnalyticsDashboard;
 var react_1 = require("react");
@@ -149,7 +146,6 @@ var use_reports_1 = require("@/hooks/inventory/use-reports");
 var custom_report_builder_1 = require("./custom-report-builder");
 var COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7c7c", "#8dd1e1", "#d084d0"];
 function AdvancedAnalyticsDashboard() {
-  var _this = this;
   var _a = (0, react_1.useState)(),
     dateRange = _a[0],
     setDateRange = _a[1];
@@ -171,79 +167,77 @@ function AdvancedAnalyticsDashboard() {
     isGenerating = _f.isGenerating;
   // Mock data - in production, this would come from useReports hook
   var analyticsData = (0, react_1.useMemo)(
-    function () {
-      return {
-        stockTurnoverData: [
-          { product: "Produto A", turnoverRate: 12.5, daysInStock: 29, value: 85000 },
-          { product: "Produto B", turnoverRate: 8.2, daysInStock: 44, value: 62000 },
-          { product: "Produto C", turnoverRate: 15.8, daysInStock: 23, value: 78000 },
-          { product: "Produto D", turnoverRate: 6.1, daysInStock: 60, value: 45000 },
-          { product: "Produto E", turnoverRate: 11.3, daysInStock: 32, value: 69000 },
-        ],
-        categoryPerformance: [
-          { category: "Medicamentos", value: 45, volume: 2800, margin: 32, fill: "#8884d8" },
-          { category: "Materiais", value: 28, volume: 1900, margin: 28, fill: "#82ca9d" },
-          { category: "Equipamentos", value: 15, volume: 680, margin: 45, fill: "#ffc658" },
-          { category: "Consumíveis", value: 12, volume: 1200, margin: 18, fill: "#ff7c7c" },
-        ],
-        movementTrends: [
-          { date: "01/01", stockIn: 850, stockOut: 720, netMovement: 130 },
-          { date: "02/01", stockIn: 920, stockOut: 890, netMovement: 30 },
-          { date: "03/01", stockIn: 780, stockOut: 950, netMovement: -170 },
-          { date: "04/01", stockIn: 1100, stockOut: 820, netMovement: 280 },
-          { date: "05/01", stockIn: 890, stockOut: 1050, netMovement: -160 },
-          { date: "06/01", stockIn: 1200, stockOut: 980, netMovement: 220 },
-          { date: "07/01", stockIn: 950, stockOut: 1100, netMovement: -150 },
-        ],
-        abcAnalysis: [
-          { category: "A", products: 15, revenue: 75, percentage: 75, fill: "#ff4444" },
-          { category: "B", products: 35, revenue: 20, percentage: 20, fill: "#ffaa44" },
-          { category: "C", products: 50, revenue: 5, percentage: 5, fill: "#44ff44" },
-        ],
-        seasonalTrends: [
-          { month: "Jan", demand: 85, supply: 90, shortage: 5 },
-          { month: "Fev", demand: 92, supply: 88, shortage: 12 },
-          { month: "Mar", demand: 78, supply: 95, shortage: 2 },
-          { month: "Abr", demand: 105, supply: 82, shortage: 18 },
-          { month: "Mai", demand: 98, supply: 105, shortage: 0 },
-          { month: "Jun", demand: 112, supply: 98, shortage: 14 },
-        ],
-        supplierPerformance: [
-          {
-            supplier: "Fornecedor A",
-            deliveryTime: 85,
-            qualityScore: 92,
-            costEfficiency: 78,
-            reliability: 90,
-          },
-          {
-            supplier: "Fornecedor B",
-            deliveryTime: 72,
-            qualityScore: 88,
-            costEfficiency: 85,
-            reliability: 85,
-          },
-          {
-            supplier: "Fornecedor C",
-            deliveryTime: 95,
-            qualityScore: 78,
-            costEfficiency: 92,
-            reliability: 80,
-          },
-          {
-            supplier: "Fornecedor D",
-            deliveryTime: 68,
-            qualityScore: 95,
-            costEfficiency: 80,
-            reliability: 95,
-          },
-        ],
-      };
-    },
+    () => ({
+      stockTurnoverData: [
+        { product: "Produto A", turnoverRate: 12.5, daysInStock: 29, value: 85000 },
+        { product: "Produto B", turnoverRate: 8.2, daysInStock: 44, value: 62000 },
+        { product: "Produto C", turnoverRate: 15.8, daysInStock: 23, value: 78000 },
+        { product: "Produto D", turnoverRate: 6.1, daysInStock: 60, value: 45000 },
+        { product: "Produto E", turnoverRate: 11.3, daysInStock: 32, value: 69000 },
+      ],
+      categoryPerformance: [
+        { category: "Medicamentos", value: 45, volume: 2800, margin: 32, fill: "#8884d8" },
+        { category: "Materiais", value: 28, volume: 1900, margin: 28, fill: "#82ca9d" },
+        { category: "Equipamentos", value: 15, volume: 680, margin: 45, fill: "#ffc658" },
+        { category: "Consumíveis", value: 12, volume: 1200, margin: 18, fill: "#ff7c7c" },
+      ],
+      movementTrends: [
+        { date: "01/01", stockIn: 850, stockOut: 720, netMovement: 130 },
+        { date: "02/01", stockIn: 920, stockOut: 890, netMovement: 30 },
+        { date: "03/01", stockIn: 780, stockOut: 950, netMovement: -170 },
+        { date: "04/01", stockIn: 1100, stockOut: 820, netMovement: 280 },
+        { date: "05/01", stockIn: 890, stockOut: 1050, netMovement: -160 },
+        { date: "06/01", stockIn: 1200, stockOut: 980, netMovement: 220 },
+        { date: "07/01", stockIn: 950, stockOut: 1100, netMovement: -150 },
+      ],
+      abcAnalysis: [
+        { category: "A", products: 15, revenue: 75, percentage: 75, fill: "#ff4444" },
+        { category: "B", products: 35, revenue: 20, percentage: 20, fill: "#ffaa44" },
+        { category: "C", products: 50, revenue: 5, percentage: 5, fill: "#44ff44" },
+      ],
+      seasonalTrends: [
+        { month: "Jan", demand: 85, supply: 90, shortage: 5 },
+        { month: "Fev", demand: 92, supply: 88, shortage: 12 },
+        { month: "Mar", demand: 78, supply: 95, shortage: 2 },
+        { month: "Abr", demand: 105, supply: 82, shortage: 18 },
+        { month: "Mai", demand: 98, supply: 105, shortage: 0 },
+        { month: "Jun", demand: 112, supply: 98, shortage: 14 },
+      ],
+      supplierPerformance: [
+        {
+          supplier: "Fornecedor A",
+          deliveryTime: 85,
+          qualityScore: 92,
+          costEfficiency: 78,
+          reliability: 90,
+        },
+        {
+          supplier: "Fornecedor B",
+          deliveryTime: 72,
+          qualityScore: 88,
+          costEfficiency: 85,
+          reliability: 85,
+        },
+        {
+          supplier: "Fornecedor C",
+          deliveryTime: 95,
+          qualityScore: 78,
+          costEfficiency: 92,
+          reliability: 80,
+        },
+        {
+          supplier: "Fornecedor D",
+          deliveryTime: 68,
+          qualityScore: 95,
+          costEfficiency: 80,
+          reliability: 95,
+        },
+      ],
+    }),
     [refreshKey],
   );
-  var kpis = (0, react_1.useMemo)(function () {
-    return [
+  var kpis = (0, react_1.useMemo)(
+    () => [
       {
         id: "turnover",
         title: "Giro de Estoque",
@@ -298,17 +292,16 @@ function AdvancedAnalyticsDashboard() {
         icon: lucide_react_1.Clock,
         description: "Tempo médio de reposição",
       },
-    ];
-  }, []);
-  var handleRefreshData = function () {
-    setRefreshKey(function (prev) {
-      return prev + 1;
-    });
+    ],
+    [],
+  );
+  var handleRefreshData = () => {
+    setRefreshKey((prev) => prev + 1);
   };
-  var handleExportReport = function (type) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleExportReport = (type) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -335,7 +328,6 @@ function AdvancedAnalyticsDashboard() {
         }
       });
     });
-  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -390,24 +382,12 @@ function AdvancedAnalyticsDashboard() {
             Atualizar
           </button_1.Button>
 
-          <button_1.Button
-            variant="outline"
-            size="sm"
-            onClick={function () {
-              return handleExportReport("pdf");
-            }}
-          >
+          <button_1.Button variant="outline" size="sm" onClick={() => handleExportReport("pdf")}>
             <lucide_react_1.Download className="h-4 w-4 mr-2" />
             Exportar PDF
           </button_1.Button>
 
-          <button_1.Button
-            variant="outline"
-            size="sm"
-            onClick={function () {
-              return handleExportReport("excel");
-            }}
-          >
+          <button_1.Button variant="outline" size="sm" onClick={() => handleExportReport("excel")}>
             <lucide_react_1.Download className="h-4 w-4 mr-2" />
             Exportar Excel
           </button_1.Button>
@@ -416,7 +396,7 @@ function AdvancedAnalyticsDashboard() {
 
       {/* KPIs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        {kpis.map(function (kpi) {
+        {kpis.map((kpi) => {
           var Icon = kpi.icon;
           return (
             <card_1.Card key={kpi.id} className="relative overflow-hidden">
@@ -486,20 +466,18 @@ function AdvancedAnalyticsDashboard() {
                     />
                     <recharts_1.YAxis />
                     <recharts_1.Tooltip
-                      formatter={function (value, name) {
-                        return [
-                          ""
-                            .concat(value)
-                            .concat(
-                              name === "turnoverRate" ? "x" : name === "daysInStock" ? " dias" : "",
-                            ),
-                          name === "turnoverRate"
-                            ? "Giro"
-                            : name === "daysInStock"
-                              ? "Dias em Estoque"
-                              : "Valor",
-                        ];
-                      }}
+                      formatter={(value, name) => [
+                        ""
+                          .concat(value)
+                          .concat(
+                            name === "turnoverRate" ? "x" : name === "daysInStock" ? " dias" : "",
+                          ),
+                        name === "turnoverRate"
+                          ? "Giro"
+                          : name === "daysInStock"
+                            ? "Dias em Estoque"
+                            : "Valor",
+                      ]}
                     />
                     <recharts_1.Legend />
                     <recharts_1.Bar dataKey="turnoverRate" fill="#8884d8" name="Taxa de Giro" />
@@ -528,9 +506,7 @@ function AdvancedAnalyticsDashboard() {
                     />
                     <recharts_1.YAxis />
                     <recharts_1.Tooltip
-                      formatter={function (value) {
-                        return ["".concat(value, " dias"), "Dias em Estoque"];
-                      }}
+                      formatter={(value) => ["".concat(value, " dias"), "Dias em Estoque"]}
                     />
                     <recharts_1.Legend />
                     <recharts_1.Line
@@ -564,7 +540,7 @@ function AdvancedAnalyticsDashboard() {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={function (_a) {
+                      label={(_a) => {
                         var category = _a.category,
                           value = _a.value;
                         return "".concat(category, ": ").concat(value, "%");
@@ -573,14 +549,12 @@ function AdvancedAnalyticsDashboard() {
                       fill="#8884d8"
                       dataKey="value"
                     >
-                      {analyticsData.categoryPerformance.map(function (entry, index) {
-                        return <recharts_1.Cell key={"cell-".concat(index)} fill={entry.fill} />;
-                      })}
+                      {analyticsData.categoryPerformance.map((entry, index) => (
+                        <recharts_1.Cell key={"cell-".concat(index)} fill={entry.fill} />
+                      ))}
                     </recharts_1.Pie>
                     <recharts_1.Tooltip
-                      formatter={function (value) {
-                        return ["".concat(value, "%"), "Participação"];
-                      }}
+                      formatter={(value) => ["".concat(value, "%"), "Participação"]}
                     />
                   </recharts_1.PieChart>
                 </recharts_1.ResponsiveContainer>
@@ -695,34 +669,32 @@ function AdvancedAnalyticsDashboard() {
                 </card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-4">
-                {analyticsData.abcAnalysis.map(function (item) {
-                  return (
-                    <div key={item.category} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <badge_1.Badge
-                          variant={
-                            item.category === "A"
-                              ? "destructive"
-                              : item.category === "B"
-                                ? "default"
-                                : "secondary"
-                          }
-                          className="w-8 h-8 rounded-full flex items-center justify-center"
-                        >
-                          {item.category}
-                        </badge_1.Badge>
-                        <div>
-                          <p className="text-sm font-medium">Categoria {item.category}</p>
-                          <p className="text-xs text-muted-foreground">{item.products} produtos</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium">{item.revenue}%</p>
-                        <p className="text-xs text-muted-foreground">da receita</p>
+                {analyticsData.abcAnalysis.map((item) => (
+                  <div key={item.category} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <badge_1.Badge
+                        variant={
+                          item.category === "A"
+                            ? "destructive"
+                            : item.category === "B"
+                              ? "default"
+                              : "secondary"
+                        }
+                        className="w-8 h-8 rounded-full flex items-center justify-center"
+                      >
+                        {item.category}
+                      </badge_1.Badge>
+                      <div>
+                        <p className="text-sm font-medium">Categoria {item.category}</p>
+                        <p className="text-xs text-muted-foreground">{item.products} produtos</p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <p className="text-sm font-medium">{item.revenue}%</p>
+                      <p className="text-xs text-muted-foreground">da receita</p>
+                    </div>
+                  </div>
+                ))}
               </card_1.CardContent>
             </card_1.Card>
           </div>

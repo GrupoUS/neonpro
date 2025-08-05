@@ -1,37 +1,37 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { format, parseISO, isToday, isTomorrow, addDays } from "date-fns";
+import { addDays, format, isToday, isTomorrow, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
   Activity,
+  AlertCircle,
+  Bell,
   Calendar,
   CalendarCheck,
+  Clock,
+  Download,
   FileText,
   Heart,
+  MapPin,
   MessageCircle,
+  Phone,
   Plus,
   Shield,
   Sparkles,
+  Star,
   TrendingUp,
   User,
-  Clock,
-  MapPin,
-  Phone,
-  Download,
-  Star,
-  Bell,
-  AlertCircle,
 } from "lucide-react";
-
+import Link from "next/link";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { usePatientAuth } from "@/lib/auth/patient-auth";
 import { usePatientData } from "@/lib/hooks/use-patient-data";
 

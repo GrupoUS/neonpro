@@ -1,8 +1,8 @@
 /**
  * Date diagnostic test
  */
-describe("Date Diagnostic", function () {
-  it("should diagnose date behavior in Jest", function () {
+describe("Date Diagnostic", () => {
+  it("should diagnose date behavior in Jest", () => {
     var futureDate = "2026-12-31T14:00:00.000Z";
     var appointmentDate = new Date(futureDate);
     var now = new Date();

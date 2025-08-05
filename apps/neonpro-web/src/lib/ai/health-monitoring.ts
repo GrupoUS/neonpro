@@ -11,11 +11,11 @@
  * - Integration with wearable devices and health data
  */
 
+import type { HealthMetric, VitalSigns } from "@/types/health";
 import type { Patient } from "@/types/patient";
-import type { TreatmentHistory, Treatment } from "@/types/treatment";
-import type { VitalSigns, HealthMetric } from "@/types/health";
-import type { RiskAssessment } from "./risk-assessment";
+import type { Treatment, TreatmentHistory } from "@/types/treatment";
 import type { BehaviorAnalysis } from "./behavior-analysis";
+import type { RiskAssessment } from "./risk-assessment";
 
 // Health Monitoring Types
 export interface HealthTrendAnalysis {
@@ -755,10 +755,10 @@ export class AIHealthMonitoringEngine {
 
     // Calculate R-squared
     const yMean = sumY / n;
-    const ssTotal = y.reduce((sum, val) => sum + Math.pow(val - yMean, 2), 0);
+    const ssTotal = y.reduce((sum, val) => sum + (val - yMean) ** 2, 0);
     const ssResidual = y.reduce((sum, val, i) => {
       const predicted = slope * x[i] + intercept;
-      return sum + Math.pow(val - predicted, 2);
+      return sum + (val - predicted) ** 2;
     }, 0);
     const rSquared = 1 - ssResidual / ssTotal;
 

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Vision Performance API Tests
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_mocks_http_1 = require("node-mocks-http");
 var route_1 = require("@/app/api/vision/performance/route");
@@ -163,21 +160,19 @@ var mockSupabase = {
   auth: {
     getUser: jest.fn(),
   },
-  from: jest.fn(function () {
-    return {
-      select: jest.fn(),
-      insert: jest.fn(),
-      eq: jest.fn(),
-      gte: jest.fn(),
-      lte: jest.fn(),
-      order: jest.fn(),
-    };
-  }),
+  from: jest.fn(() => ({
+    select: jest.fn(),
+    insert: jest.fn(),
+    eq: jest.fn(),
+    gte: jest.fn(),
+    lte: jest.fn(),
+    order: jest.fn(),
+  })),
   rpc: jest.fn(),
 };
 server_1.createClient.mockReturnValue(mockSupabase);
-describe("/api/vision/performance", function () {
-  beforeEach(function () {
+describe("/api/vision/performance", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Default successful auth
     mockSupabase.auth.getUser.mockResolvedValue({
@@ -185,11 +180,11 @@ describe("/api/vision/performance", function () {
       error: null,
     });
   });
-  describe("GET /api/vision/performance", function () {
-    it("should retrieve aggregated performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var mockMetrics, _a, req, res, response, data;
-        return __generator(this, function (_b) {
+  describe("GET /api/vision/performance", () => {
+    it("should retrieve aggregated performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var mockMetrics, _a, req, _res, response, data;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockMetrics = {
@@ -209,7 +204,7 @@ describe("/api/vision/performance", function () {
                 },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.GET(req)];
             case 1:
               response = _b.sent();
@@ -231,12 +226,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle time series data request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var mockTimeSeriesData, _a, req, res, response, data;
-        return __generator(this, function (_b) {
+      }));
+    it("should handle time series data request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var mockTimeSeriesData, _a, req, _res, response, data;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockTimeSeriesData = [
@@ -263,7 +257,7 @@ describe("/api/vision/performance", function () {
                 },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.GET(req)];
             case 1:
               response = _b.sent();
@@ -276,12 +270,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate time range parameter", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var _a, req, res, response;
-        return __generator(this, function (_b) {
+      }));
+    it("should validate time range parameter", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _a, req, _res, response;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -291,7 +284,7 @@ describe("/api/vision/performance", function () {
                 },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.GET(req)];
             case 1:
               response = _b.sent();
@@ -299,12 +292,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle authentication errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var _a, req, res, response;
-        return __generator(this, function (_b) {
+      }));
+    it("should handle authentication errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _a, req, _res, response;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -316,7 +308,7 @@ describe("/api/vision/performance", function () {
                 query: { timeRange: "7d" },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.GET(req)];
             case 1:
               response = _b.sent();
@@ -324,12 +316,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var _a, req, res, response;
-        return __generator(this, function (_b) {
+      }));
+    it("should handle database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _a, req, _res, response;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase.rpc.mockResolvedValue({
@@ -341,7 +332,7 @@ describe("/api/vision/performance", function () {
                 query: { timeRange: "7d" },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.GET(req)];
             case 1:
               response = _b.sent();
@@ -349,12 +340,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should apply default parameters when not provided", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var _a, req, res;
-        return __generator(this, function (_b) {
+      }));
+    it("should apply default parameters when not provided", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _a, req, _res;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase.rpc.mockResolvedValue({ data: [], error: null });
@@ -363,7 +353,7 @@ describe("/api/vision/performance", function () {
                 query: {}, // No parameters
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.GET(req)];
             case 1:
               _b.sent();
@@ -377,14 +367,13 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("POST /api/vision/performance", function () {
-    it("should record performance metrics successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var performanceData, _a, req, res, response, data;
-        return __generator(this, function (_b) {
+  describe("POST /api/vision/performance", () => {
+    it("should record performance metrics successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var performanceData, _a, req, _res, response, data;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               performanceData = {
@@ -409,7 +398,7 @@ describe("/api/vision/performance", function () {
                 body: performanceData,
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.POST(req)];
             case 1:
               response = _b.sent();
@@ -433,12 +422,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var _a, req, res, response;
-        return __generator(this, function (_b) {
+      }));
+    it("should validate required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _a, req, _res, response;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -449,7 +437,7 @@ describe("/api/vision/performance", function () {
                 },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.POST(req)];
             case 1:
               response = _b.sent();
@@ -457,12 +445,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate numeric ranges", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var _a, req, res, response;
-        return __generator(this, function (_b) {
+      }));
+    it("should validate numeric ranges", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _a, req, _res, response;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -475,7 +462,7 @@ describe("/api/vision/performance", function () {
                 },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.POST(req)];
             case 1:
               response = _b.sent();
@@ -483,12 +470,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database insertion errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var _a, req, res, response;
-        return __generator(this, function (_b) {
+      }));
+    it("should handle database insertion errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _a, req, _res, response;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase.from().insert.mockResolvedValue({
@@ -505,7 +491,7 @@ describe("/api/vision/performance", function () {
                 },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.POST(req)];
             case 1:
               response = _b.sent();
@@ -513,12 +499,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should include performance thresholds in response", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var performanceData, _a, req, res, response, data;
-        return __generator(this, function (_b) {
+      }));
+    it("should include performance thresholds in response", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var performanceData, _a, req, _res, response, data;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               performanceData = {
@@ -536,7 +521,7 @@ describe("/api/vision/performance", function () {
                 body: performanceData,
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.POST(req)];
             case 1:
               response = _b.sent();
@@ -548,12 +533,11 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle optional metadata", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var performanceData, _a, req, res, response;
-        return __generator(this, function (_b) {
+      }));
+    it("should handle optional metadata", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var performanceData, _a, req, _res, response;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               performanceData = {
@@ -577,7 +561,7 @@ describe("/api/vision/performance", function () {
                 body: performanceData,
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.POST(req)];
             case 1:
               response = _b.sent();
@@ -590,14 +574,13 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance Thresholds", function () {
-    it("should correctly identify when targets are met", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var testCases, _i, testCases_1, testCase, _a, req, res, response, data;
-        return __generator(this, function (_b) {
+  describe("Performance Thresholds", () => {
+    it("should correctly identify when targets are met", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var testCases, _i, testCases_1, testCase, _a, req, _res, response, data;
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               testCases = [
@@ -639,7 +622,7 @@ describe("/api/vision/performance", function () {
                 },
               })),
                 (req = _a.req),
-                (res = _a.res);
+                (_res = _a.res);
               return [4 /*yield*/, route_1.default.POST(req)];
             case 2:
               response = _b.sent();
@@ -656,7 +639,6 @@ describe("/api/vision/performance", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

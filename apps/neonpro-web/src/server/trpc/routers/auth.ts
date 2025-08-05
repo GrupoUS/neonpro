@@ -1,7 +1,6 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter } from "../trpc";
-import type { publicProcedureWithAudit, protectedProcedure } from "../middleware";
-import { TRPCError } from "@trpc/server";
 
 // Healthcare user profile schema
 const HealthcareUserSchema = z.object({

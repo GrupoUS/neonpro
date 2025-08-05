@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Timing Optimization Types
  * NeonPro - Types para otimização de timing de comunicações

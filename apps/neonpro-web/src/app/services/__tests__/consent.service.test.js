@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,20 +128,18 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var consent_service_1 = require("../consent.service");
 var client_1 = require("@/lib/supabase/client");
 // Mock do createClient - usando definição simples
-jest.mock("@/lib/supabase/client", function () {
-  return {
-    createClient: jest.fn(),
-  };
-});
-describe("ConsentService", function () {
+jest.mock("@/lib/supabase/client", () => ({
+  createClient: jest.fn(),
+}));
+describe("ConsentService", () => {
   var consentService;
   var mockSupabase;
-  beforeEach(function () {
+  beforeEach(() => {
     // Configurar mock do supabase com métodos chainable
     mockSupabase = {
       from: jest.fn().mockReturnThis(),
@@ -158,14 +153,14 @@ describe("ConsentService", function () {
     client_1.createClient.mockReturnValue(mockSupabase);
     consentService = new consent_service_1.ConsentService();
   });
-  afterEach(function () {
+  afterEach(() => {
     jest.clearAllMocks();
   });
-  describe("createConsentForm", function () {
-    it("should create a consent form successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("createConsentForm", () => {
+    it("should create a consent form successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockResult, chainMock, mockFormData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockResult = {
@@ -194,12 +189,11 @@ describe("ConsentService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should throw error when creation fails", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should throw error when creation fails", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockError, chainMock, mockFormData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockError = { message: "Database error" };
@@ -230,14 +224,13 @@ describe("ConsentService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getConsentForms", function () {
-    it("should fetch consent forms for a clinic", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getConsentForms", () => {
+    it("should fetch consent forms for a clinic", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockResult, chainMock, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockResult = {
@@ -268,14 +261,13 @@ describe("ConsentService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("recordPatientConsent", function () {
-    it("should record patient consent successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("recordPatientConsent", () => {
+    it("should record patient consent successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockResult, chainMock, mockConsentData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockResult = {
@@ -304,14 +296,13 @@ describe("ConsentService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("grantPatientConsent", function () {
-    it("should grant patient consent successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("grantPatientConsent", () => {
+    it("should grant patient consent successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockResult, chainMock, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockResult = {
@@ -335,14 +326,13 @@ describe("ConsentService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("revokePatientConsent", function () {
-    it("should revoke patient consent successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("revokePatientConsent", () => {
+    it("should revoke patient consent successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockResult, chainMock, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockResult = {
@@ -368,7 +358,6 @@ describe("ConsentService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

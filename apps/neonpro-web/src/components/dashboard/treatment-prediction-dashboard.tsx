@@ -1,6 +1,19 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  Brain,
+  Clock,
+  DollarSign,
+  Heart,
+  Target,
+  TrendingUp,
+  User,
+  Zap,
+} from "lucide-react";
 import type { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,10 +21,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -20,18 +32,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Progress } from "@/components/ui/progress";
-import type {
-  Brain,
-  Zap,
-  Target,
-  TrendingUp,
-  User,
-  Clock,
-  DollarSign,
-  Heart,
-  AlertTriangle,
-} from "lucide-react";
 
 interface PredictionResult {
   treatment: string;

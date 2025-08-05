@@ -13,7 +13,31 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type { eachDayOfInterval, endOfDay, format, parseISO, startOfDay } from "date-fns";
+import type {
+  BarChart3,
+  Download,
+  Maximize2,
+  RefreshCw,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -21,8 +45,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type {
   Select,
   SelectContent,
@@ -30,28 +52,6 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
-  ReferenceLine,
-} from "recharts";
-import type {
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  Maximize2,
-  Download,
-  RefreshCw,
-} from "lucide-react";
-import type { format, parseISO, eachDayOfInterval, startOfDay, endOfDay } from "date-fns";
 
 import type { DemandForecast } from "@/lib/forecasting";
 

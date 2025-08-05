@@ -1,27 +1,29 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
 import type {
   Activity,
-  Users,
-  Calendar,
-  TrendingUp,
-  Heart,
-  Stethoscope,
-  UserCheck,
-  Clock,
-  Plus,
-  Bell,
-  Search,
-  Menu,
-  X,
-  ChevronRight,
   BarChart3,
-  Settings,
+  Bell,
+  Calendar,
+  ChevronRight,
+  Clock,
+  Heart,
   LogOut,
-  Star,
+  Menu,
   MessageCircle,
+  Plus,
+  Search,
+  Settings,
+  Star,
+  Stethoscope,
+  TrendingUp,
+  UserCheck,
+  Users,
+  X,
 } from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -30,7 +32,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { cn } from "@/lib/utils";
 
 // NeonGradientCard Component

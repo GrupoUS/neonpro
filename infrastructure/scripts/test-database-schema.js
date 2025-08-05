@@ -189,11 +189,11 @@ async function testDataIntegrity() {
 // 10. Teste de Simulação de Operações CRUD
 async function testCRUDOperations() {
   // Este teste só roda se tivermos um usuário de teste
-  const testUserId = "test-user-" + Date.now();
+  const testUserId = `test-user-${Date.now()}`;
 
   try {
     // Simular criação de assinatura (apenas validar SQL)
-    const insertQuery = supabase.from("user_subscriptions").insert({
+    const _insertQuery = supabase.from("user_subscriptions").insert({
       user_id: testUserId,
       plan_id: "starter",
       stripe_subscription_id: "sub_test_123",
@@ -252,7 +252,7 @@ async function main() {
   }
 
   // Relatório final
-  console.log("\n" + "=".repeat(50));
+  console.log(`\n${"=".repeat(50)}`);
   console.log("📊 RELATÓRIO DO BANCO DE DADOS");
   console.log("=".repeat(50));
   console.log(`✅ Testes Passaram: ${passedTests}/${totalTests}`);

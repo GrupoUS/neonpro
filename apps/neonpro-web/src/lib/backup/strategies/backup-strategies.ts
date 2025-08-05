@@ -1,7 +1,7 @@
 import type { createClient } from "@supabase/supabase-js";
 import type { AuditLogger } from "../../audit/audit-logger";
-import type { EncryptionService } from "../../security/encryption-service";
 import type { LGPDManager } from "../../lgpd/lgpd-manager";
+import type { EncryptionService } from "../../security/encryption-service";
 
 export interface BackupStrategy {
   name: string;

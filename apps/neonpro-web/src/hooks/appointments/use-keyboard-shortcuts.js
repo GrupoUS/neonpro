@@ -2,7 +2,6 @@
 // Global keyboard shortcuts hook for appointments
 // Story 1.1 Task 8 - Accessibility and Keyboard Navigation
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useKeyboardShortcuts = useKeyboardShortcuts;
 var navigation_1 = require("next/navigation");
@@ -27,68 +26,51 @@ function useKeyboardShortcuts(_a) {
       key: "n",
       ctrlKey: true,
       description: "Criar novo agendamento",
-      action: (0, react_1.useCallback)(
-        function () {
-          if (onNewAppointment) {
-            onNewAppointment();
-          } else {
-            router.push("/dashboard/appointments/new");
-          }
-        },
-        [onNewAppointment, router],
-      ),
+      action: (0, react_1.useCallback)(() => {
+        if (onNewAppointment) {
+          onNewAppointment();
+        } else {
+          router.push("/dashboard/appointments/new");
+        }
+      }, [onNewAppointment, router]),
     },
     {
       key: "f",
       description: "Alternar filtros",
-      action: (0, react_1.useCallback)(
-        function () {
-          onToggleFilters === null || onToggleFilters === void 0 ? void 0 : onToggleFilters();
-        },
-        [onToggleFilters],
-      ),
+      action: (0, react_1.useCallback)(() => {
+        onToggleFilters === null || onToggleFilters === void 0 ? void 0 : onToggleFilters();
+      }, [onToggleFilters]),
     },
     {
       key: "r",
       description: "Atualizar agendamentos",
-      action: (0, react_1.useCallback)(
-        function () {
-          onRefresh === null || onRefresh === void 0 ? void 0 : onRefresh();
-        },
-        [onRefresh],
-      ),
+      action: (0, react_1.useCallback)(() => {
+        onRefresh === null || onRefresh === void 0 ? void 0 : onRefresh();
+      }, [onRefresh]),
     },
     {
       key: "Escape",
       description: "Fechar diálogos e modais",
-      action: (0, react_1.useCallback)(
-        function () {
-          onCloseDialog === null || onCloseDialog === void 0 ? void 0 : onCloseDialog();
-        },
-        [onCloseDialog],
-      ),
+      action: (0, react_1.useCallback)(() => {
+        onCloseDialog === null || onCloseDialog === void 0 ? void 0 : onCloseDialog();
+      }, [onCloseDialog]),
     },
     {
       key: "?",
       shiftKey: true,
       description: "Mostrar atalhos de teclado",
-      action: (0, react_1.useCallback)(
-        function () {
-          if (onShowHelp) {
-            onShowHelp();
-          } else {
-            setShowHelp(function (prev) {
-              return !prev;
-            });
-          }
-        },
-        [onShowHelp],
-      ),
+      action: (0, react_1.useCallback)(() => {
+        if (onShowHelp) {
+          onShowHelp();
+        } else {
+          setShowHelp((prev) => !prev);
+        }
+      }, [onShowHelp]),
     },
   ];
   // Handle keydown events
   var handleKeyDown = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       // Don't handle shortcuts when typing in input fields
       var target = event.target;
       if (
@@ -99,14 +81,13 @@ function useKeyboardShortcuts(_a) {
       ) {
         return;
       }
-      var matchingShortcut = shortcuts.find(function (shortcut) {
-        return (
+      var matchingShortcut = shortcuts.find(
+        (shortcut) =>
           shortcut.key.toLowerCase() === event.key.toLowerCase() &&
           !!shortcut.ctrlKey === event.ctrlKey &&
           !!shortcut.altKey === event.altKey &&
-          !!shortcut.shiftKey === event.shiftKey
-        );
-      });
+          !!shortcut.shiftKey === event.shiftKey,
+      );
       if (matchingShortcut) {
         event.preventDefault();
         event.stopPropagation();
@@ -116,19 +97,16 @@ function useKeyboardShortcuts(_a) {
     [isEnabled, shortcuts],
   );
   // Set up event listeners
-  (0, react_1.useEffect)(
-    function () {
-      if (typeof window !== "undefined") {
-        window.addEventListener("keydown", handleKeyDown);
-        return function () {
-          window.removeEventListener("keydown", handleKeyDown);
-        };
-      }
-    },
-    [handleKeyDown],
-  );
+  (0, react_1.useEffect)(() => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [handleKeyDown]);
   // Format shortcut key for display
-  var formatShortcut = function (shortcut) {
+  var formatShortcut = (shortcut) => {
     var parts = [];
     if (shortcut.ctrlKey) parts.push("Ctrl");
     if (shortcut.altKey) parts.push("Alt");

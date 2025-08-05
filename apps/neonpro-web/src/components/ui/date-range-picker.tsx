@@ -1,15 +1,14 @@
 "use client";
 
-import * as React from "react";
-import type { CalendarIcon } from "lucide-react";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
+import type { CalendarIcon } from "lucide-react";
+import * as React from "react";
 import type { DateRange } from "react-day-picker";
-
-import type { cn } from "@/lib/utils";
 import type { Button } from "@/components/ui/button";
 import type { Calendar } from "@/components/ui/calendar";
 import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { cn } from "@/lib/utils";
 
 interface DatePickerWithRangeProps {
   className?: string;

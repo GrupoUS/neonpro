@@ -1,8 +1,8 @@
 import type { createClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 import type { AuditLogger } from "../../audit/audit-logger";
 import type { EncryptionService } from "../../security/encryption-service";
 import type { LGPDManager } from "../../security/lgpd-manager";
-import crypto from "crypto";
 
 // Types and Interfaces
 export interface PortalAuthConfig {

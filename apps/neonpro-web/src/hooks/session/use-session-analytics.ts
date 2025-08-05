@@ -1,8 +1,8 @@
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { SessionAnalytics, UserSession, UserDevice, SecurityEvent } from "@/types/session";
+import type { useCallback, useEffect, useState } from "react";
+import type { SecurityEvent, SessionAnalytics, UserDevice, UserSession } from "@/types/session";
 
 interface AnalyticsTimeframe {
   label: string;

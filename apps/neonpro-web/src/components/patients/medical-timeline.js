@@ -3,32 +3,31 @@
  * Visual timeline display of patient medical history
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MedicalTimeline = MedicalTimeline;
 var badge_1 = require("@/components/ui/badge");
@@ -165,7 +162,6 @@ var utils_1 = require("@/lib/utils");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function MedicalTimeline(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     className = _a.className;
   var _b = (0, react_1.useState)([]),
@@ -189,18 +185,15 @@ function MedicalTimeline(_a) {
   var _h = (0, react_1.useState)(null),
     selectedEvent = _h[0],
     setSelectedEvent = _h[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadTimeline();
-      loadMilestones();
-    },
-    [patientId, filter],
-  );
-  var loadTimeline = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadTimeline();
+    loadMilestones();
+  }, [patientId, filter]);
+  var loadTimeline = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_1;
       var _a, _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 3, 4, 5]);
@@ -261,11 +254,10 @@ function MedicalTimeline(_a) {
         }
       });
     });
-  };
-  var loadMilestones = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadMilestones = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -291,17 +283,14 @@ function MedicalTimeline(_a) {
         }
       });
     });
-  };
-  var toggleEventExpansion = function (eventId) {
+  var toggleEventExpansion = (eventId) => {
     setEvents(
-      events.map(function (event) {
-        return event.id === eventId
-          ? __assign(__assign({}, event), { expanded: !event.expanded })
-          : event;
-      }),
+      events.map((event) =>
+        event.id === eventId ? __assign(__assign({}, event), { expanded: !event.expanded }) : event,
+      ),
     );
   };
-  var getEventIcon = function (eventType) {
+  var getEventIcon = (eventType) => {
     switch (eventType) {
       case "appointment":
         return <lucide_react_1.Calendar className="h-4 w-4" />;
@@ -323,7 +312,7 @@ function MedicalTimeline(_a) {
         return <lucide_react_1.Clock className="h-4 w-4" />;
     }
   };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "bg-red-500";
@@ -337,7 +326,7 @@ function MedicalTimeline(_a) {
         return "bg-gray-500";
     }
   };
-  var getCategoryColor = function (category) {
+  var getCategoryColor = (category) => {
     switch (category) {
       case "medical":
         return "bg-blue-100 text-blue-800";
@@ -353,16 +342,15 @@ function MedicalTimeline(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var formatDate = function (date) {
-    return new Intl.DateTimeFormat("pt-BR", {
+  var formatDate = (date) =>
+    new Intl.DateTimeFormat("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     }).format(new Date(date));
-  };
-  var formatRelativeDate = function (date) {
+  var formatRelativeDate = (date) => {
     var now = new Date();
     var diff = now.getTime() - new Date(date).getTime();
     var days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -373,7 +361,7 @@ function MedicalTimeline(_a) {
     if (days < 365) return "".concat(Math.floor(days / 30), " meses atr\u00E1s");
     return "".concat(Math.floor(days / 365), " anos atr\u00E1s");
   };
-  var renderTimelineEvent = function (event, index) {
+  var renderTimelineEvent = (event, index) => {
     var isLast = index === events.length - 1;
     return (
       <div key={event.id} className="relative">
@@ -398,9 +386,7 @@ function MedicalTimeline(_a) {
                 "cursor-pointer transition-all hover:shadow-md",
                 event.expanded && "shadow-lg",
               )}
-              onClick={function () {
-                return toggleEventExpansion(event.id);
-              }}
+              onClick={() => toggleEventExpansion(event.id)}
             >
               <card_1.CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -449,37 +435,33 @@ function MedicalTimeline(_a) {
                     <div>
                       <h4 className="text-sm font-medium mb-2">Fotos Antes/Depois</h4>
                       <div className="grid grid-cols-2 gap-4">
-                        {event.beforeAfterPhotos.map(function (photo) {
-                          return (
-                            <div key={photo.id} className="space-y-2">
-                              <div className="grid grid-cols-2 gap-2">
-                                {photo.beforePhoto && (
-                                  <div className="space-y-1">
-                                    <p className="text-xs text-gray-500">Antes</p>
-                                    <img
-                                      src={photo.beforePhoto.thumbnailUrl}
-                                      alt="Antes"
-                                      className="w-full h-24 object-cover rounded"
-                                    />
-                                  </div>
-                                )}
-                                {photo.afterPhoto && (
-                                  <div className="space-y-1">
-                                    <p className="text-xs text-gray-500">Depois</p>
-                                    <img
-                                      src={photo.afterPhoto.thumbnailUrl}
-                                      alt="Depois"
-                                      className="w-full h-24 object-cover rounded"
-                                    />
-                                  </div>
-                                )}
-                              </div>
-                              {photo.notes && (
-                                <p className="text-xs text-gray-600">{photo.notes}</p>
+                        {event.beforeAfterPhotos.map((photo) => (
+                          <div key={photo.id} className="space-y-2">
+                            <div className="grid grid-cols-2 gap-2">
+                              {photo.beforePhoto && (
+                                <div className="space-y-1">
+                                  <p className="text-xs text-gray-500">Antes</p>
+                                  <img
+                                    src={photo.beforePhoto.thumbnailUrl}
+                                    alt="Antes"
+                                    className="w-full h-24 object-cover rounded"
+                                  />
+                                </div>
+                              )}
+                              {photo.afterPhoto && (
+                                <div className="space-y-1">
+                                  <p className="text-xs text-gray-500">Depois</p>
+                                  <img
+                                    src={photo.afterPhoto.thumbnailUrl}
+                                    alt="Depois"
+                                    className="w-full h-24 object-cover rounded"
+                                  />
+                                </div>
                               )}
                             </div>
-                          );
-                        })}
+                            {photo.notes && <p className="text-xs text-gray-600">{photo.notes}</p>}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -522,19 +504,15 @@ function MedicalTimeline(_a) {
                     <div>
                       <h4 className="text-sm font-medium mb-2">Observações</h4>
                       <div className="space-y-2">
-                        {event.notes.map(function (note) {
-                          return (
-                            <div key={note.id} className="border-l-2 border-gray-200 pl-3">
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs text-gray-500">{note.author}</span>
-                                <span className="text-xs text-gray-400">
-                                  {formatDate(note.date)}
-                                </span>
-                              </div>
-                              <p className="text-sm mt-1">{note.note}</p>
+                        {event.notes.map((note) => (
+                          <div key={note.id} className="border-l-2 border-gray-200 pl-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-500">{note.author}</span>
+                              <span className="text-xs text-gray-400">{formatDate(note.date)}</span>
                             </div>
-                          );
-                        })}
+                            <p className="text-sm mt-1">{note.note}</p>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -544,20 +522,15 @@ function MedicalTimeline(_a) {
                     <div>
                       <h4 className="text-sm font-medium mb-2">Anexos</h4>
                       <div className="space-y-1">
-                        {event.attachments.map(function (attachment) {
-                          return (
-                            <div
-                              key={attachment.id}
-                              className="flex items-center space-x-2 text-sm"
-                            >
-                              <lucide_react_1.FileText className="h-4 w-4 text-gray-400" />
-                              <span>{attachment.name}</span>
-                              <badge_1.Badge variant="outline" className="text-xs">
-                                {attachment.type}
-                              </badge_1.Badge>
-                            </div>
-                          );
-                        })}
+                        {event.attachments.map((attachment) => (
+                          <div key={attachment.id} className="flex items-center space-x-2 text-sm">
+                            <lucide_react_1.FileText className="h-4 w-4 text-gray-400" />
+                            <span>{attachment.name}</span>
+                            <badge_1.Badge variant="outline" className="text-xs">
+                              {attachment.type}
+                            </badge_1.Badge>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -569,72 +542,64 @@ function MedicalTimeline(_a) {
       </div>
     );
   };
-  var renderMilestones = function () {
-    return (
-      <div className="space-y-6">
-        {milestones.map(function (tracking) {
-          return (
-            <card_1.Card key={tracking.id}>
-              <card_1.CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <card_1.CardTitle>{tracking.treatmentPlan}</card_1.CardTitle>
-                    <card_1.CardDescription>
-                      Progresso geral: {tracking.overallProgress}%
-                    </card_1.CardDescription>
+  var renderMilestones = () => (
+    <div className="space-y-6">
+      {milestones.map((tracking) => (
+        <card_1.Card key={tracking.id}>
+          <card_1.CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <card_1.CardTitle>{tracking.treatmentPlan}</card_1.CardTitle>
+                <card_1.CardDescription>
+                  Progresso geral: {tracking.overallProgress}%
+                </card_1.CardDescription>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">
+                  Conclusão estimada: {formatDate(tracking.estimatedCompletion)}
+                </p>
+              </div>
+            </div>
+            <progress_1.Progress value={tracking.overallProgress} className="w-full" />
+          </card_1.CardHeader>
+          <card_1.CardContent>
+            <div className="space-y-4">
+              {tracking.milestones.map((milestone) => (
+                <div key={milestone.id} className="flex items-start space-x-4">
+                  <div className="flex-shrink-0">
+                    {milestone.status === "completed"
+                      ? <lucide_react_1.CheckCircle className="h-5 w-5 text-green-500" />
+                      : milestone.status === "in_progress"
+                        ? <lucide_react_1.Timer className="h-5 w-5 text-blue-500" />
+                        : <lucide_react_1.Clock className="h-5 w-5 text-gray-400" />}
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">
-                      Conclusão estimada: {formatDate(tracking.estimatedCompletion)}
-                    </p>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">{milestone.title}</h4>
+                      <badge_1.Badge
+                        variant={milestone.status === "completed" ? "default" : "outline"}
+                        className="text-xs"
+                      >
+                        {milestone.status}
+                      </badge_1.Badge>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-xs text-gray-500">
+                        Meta: {formatDate(milestone.targetDate)}
+                      </span>
+                      <span className="text-xs text-gray-500">{milestone.progress}% completo</span>
+                    </div>
+                    <progress_1.Progress value={milestone.progress} className="w-full mt-1" />
                   </div>
                 </div>
-                <progress_1.Progress value={tracking.overallProgress} className="w-full" />
-              </card_1.CardHeader>
-              <card_1.CardContent>
-                <div className="space-y-4">
-                  {tracking.milestones.map(function (milestone) {
-                    return (
-                      <div key={milestone.id} className="flex items-start space-x-4">
-                        <div className="flex-shrink-0">
-                          {milestone.status === "completed"
-                            ? <lucide_react_1.CheckCircle className="h-5 w-5 text-green-500" />
-                            : milestone.status === "in_progress"
-                              ? <lucide_react_1.Timer className="h-5 w-5 text-blue-500" />
-                              : <lucide_react_1.Clock className="h-5 w-5 text-gray-400" />}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-medium">{milestone.title}</h4>
-                            <badge_1.Badge
-                              variant={milestone.status === "completed" ? "default" : "outline"}
-                              className="text-xs"
-                            >
-                              {milestone.status}
-                            </badge_1.Badge>
-                          </div>
-                          <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
-                          <div className="flex items-center justify-between mt-2">
-                            <span className="text-xs text-gray-500">
-                              Meta: {formatDate(milestone.targetDate)}
-                            </span>
-                            <span className="text-xs text-gray-500">
-                              {milestone.progress}% completo
-                            </span>
-                          </div>
-                          <progress_1.Progress value={milestone.progress} className="w-full mt-1" />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
-      </div>
-    );
-  };
+              ))}
+            </div>
+          </card_1.CardContent>
+        </card_1.Card>
+      ))}
+    </div>
+  );
   return (
     <div className={(0, utils_1.cn)("space-y-6", className)}>
       {/* Header */}
@@ -646,13 +611,7 @@ function MedicalTimeline(_a) {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <button_1.Button
-            variant="outline"
-            size="sm"
-            onClick={function () {
-              return setShowFilters(!showFilters);
-            }}
-          >
+          <button_1.Button variant="outline" size="sm" onClick={() => setShowFilters(!showFilters)}>
             <lucide_react_1.Filter className="h-4 w-4 mr-2" />
             Filtros
           </button_1.Button>
@@ -765,9 +724,7 @@ function MedicalTimeline(_a) {
                   </card_1.CardContent>
                 </card_1.Card>
               : <div className="space-y-0">
-                  {events.map(function (event, index) {
-                    return renderTimelineEvent(event, index);
-                  })}
+                  {events.map((event, index) => renderTimelineEvent(event, index))}
                 </div>}
         </tabs_1.TabsContent>
 

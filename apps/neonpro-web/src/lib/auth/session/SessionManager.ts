@@ -10,16 +10,16 @@
  */
 
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { generateSessionToken, validateUUID, removeUndefined } from "./utils";
 import type {
-  SessionConfig,
-  SessionData,
-  SessionCreateRequest,
-  SessionValidationResult,
-  SessionActivityUpdate,
-  SessionMetrics,
   AuthenticationResponse,
+  SessionActivityUpdate,
+  SessionConfig,
+  SessionCreateRequest,
+  SessionData,
+  SessionMetrics,
+  SessionValidationResult,
 } from "./types";
+import type { generateSessionToken, removeUndefined, validateUUID } from "./utils";
 
 /**
  * Session Manager Class

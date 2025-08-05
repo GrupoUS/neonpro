@@ -1,23 +1,44 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type {
+  Activity,
+  BarChart3,
+  Calendar,
+  Download,
+  Filter,
+  LineChart as LineChartIcon,
+  Maximize2,
+  Minimize2,
+  MoreVertical,
+  PieChart as PieChartIcon,
+  RefreshCw,
+  Settings,
+  Share,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  Brush,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { Badge } from "@/components/ui/badge";
-import type { Skeleton } from "@/components/ui/skeleton";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,43 +46,22 @@ import type {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Legend,
-  ReferenceLine,
-  Brush,
-} from "recharts";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Skeleton } from "@/components/ui/skeleton";
 import type {
-  MoreVertical,
-  RefreshCw,
-  Download,
-  Share,
-  Settings,
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  LineChart as LineChartIcon,
-  PieChart as PieChartIcon,
-  Activity,
-  Calendar,
-  Filter,
-  Maximize2,
-  Minimize2,
-} from "lucide-react";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Types
-import type { DashboardWidget, ChartData, ChartType } from "@/lib/dashboard/types";
+import type { ChartData, ChartType, DashboardWidget } from "@/lib/dashboard/types";
 
 interface ChartWidgetProps {
   widget: DashboardWidget;
@@ -219,7 +219,7 @@ export function ChartWidget({ widget, isEditing, onUpdate }: ChartWidgetProps) {
     if (!data.length) return [];
 
     switch (config.type) {
-      case "pie":
+      case "pie": {
         // Aggregate data for pie chart
         const pieData = data.reduce(
           (acc, item) => {
@@ -235,6 +235,7 @@ export function ChartWidget({ widget, isEditing, onUpdate }: ChartWidgetProps) {
           [] as { name: string; value: number }[],
         );
         return pieData;
+      }
 
       default:
         return data.map((item) => ({

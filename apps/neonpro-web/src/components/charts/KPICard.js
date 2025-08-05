@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KPICard = KPICard;
 var card_1 = require("@/components/ui/card");
@@ -17,7 +16,7 @@ function KPICard(_a) {
     icon = _a.icon,
     className = _a.className;
   var displayValue = formattedValue || value;
-  var getTrendIcon = function () {
+  var getTrendIcon = () => {
     switch (trend) {
       case "up":
         return <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600" />;
@@ -27,7 +26,7 @@ function KPICard(_a) {
         return <lucide_react_1.Minus className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getTrendColor = function () {
+  var getTrendColor = () => {
     switch (trend) {
       case "up":
         return "text-green-600";

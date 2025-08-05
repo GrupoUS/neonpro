@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,43 +128,39 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("next/server");
 var route_1 = require("../../../app/api/scheduling/reminders/route");
 // Mock the workflow module
-jest.mock("../../../lib/communication/scheduling-workflow", function () {
-  return {
-    SchedulingCommunicationWorkflow: {
-      initializeWorkflows: jest.fn().mockResolvedValue([
-        {
-          id: "workflow-1",
-          appointmentId: "550e8400-e29b-41d4-a716-446655440000",
-          type: "24h_reminder",
-          scheduledAt: new Date(),
-          status: "scheduled",
-        },
-      ]),
-      executeWorkflow: jest.fn().mockResolvedValue({
-        success: true,
-        step: "complete",
-      }),
-    },
-  };
-});
+jest.mock("../../../lib/communication/scheduling-workflow", () => ({
+  SchedulingCommunicationWorkflow: {
+    initializeWorkflows: jest.fn().mockResolvedValue([
+      {
+        id: "workflow-1",
+        appointmentId: "550e8400-e29b-41d4-a716-446655440000",
+        type: "24h_reminder",
+        scheduledAt: new Date(),
+        status: "scheduled",
+      },
+    ]),
+    executeWorkflow: jest.fn().mockResolvedValue({
+      success: true,
+      step: "complete",
+    }),
+  },
+}));
 // Mock communication service
-jest.mock("../../../lib/communication/communication-service", function () {
-  return {
-    CommunicationService: {
-      sendReminder: jest.fn().mockResolvedValue({
-        success: true,
-        provider: "whatsapp",
-        messageId: "msg-123",
-      }),
-    },
-  };
-});
-describe("Reminders API - Simple Test", function () {
+jest.mock("../../../lib/communication/communication-service", () => ({
+  CommunicationService: {
+    sendReminder: jest.fn().mockResolvedValue({
+      success: true,
+      provider: "whatsapp",
+      messageId: "msg-123",
+    }),
+  },
+}));
+describe("Reminders API - Simple Test", () => {
   var mockUser = {
     id: "350e8400-e29b-41d4-a716-446655440000",
     email: "test@example.com",
@@ -180,7 +173,7 @@ describe("Reminders API - Simple Test", function () {
     time: "10:00",
     service: "Limpeza facial",
   };
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Mock successful authentication
     var mockSupabase = require("@supabase/supabase-js").createClient();
@@ -199,10 +192,10 @@ describe("Reminders API - Simple Test", function () {
     };
     mockSupabase.from.mockReturnValue(mockQueryBuilder);
   });
-  it("should schedule reminders successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should schedule reminders successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = new server_1.NextRequest("http://localhost:3000/api/scheduling/reminders", {
@@ -227,12 +220,11 @@ describe("Reminders API - Simple Test", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should fetch reminders successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should fetch reminders successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var request, response;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             request = new server_1.NextRequest(
@@ -251,6 +243,5 @@ describe("Reminders API - Simple Test", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

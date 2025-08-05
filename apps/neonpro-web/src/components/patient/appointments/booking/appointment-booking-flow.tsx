@@ -1,22 +1,22 @@
 "use client";
 
+import type { ArrowLeft, ArrowRight, CheckCircle2, Clock, Wifi, WifiOff } from "lucide-react";
+import type { useRouter } from "next/navigation";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { createClient } from "@/app/utils/supabase/client";
+import type { RealTimeAvailability } from "@/components/patient/RealTimeAvailability";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Progress } from "@/components/ui/progress";
-import type { ArrowLeft, ArrowRight, CheckCircle2, Clock, Wifi, WifiOff } from "lucide-react";
-import type { useRouter } from "next/navigation";
-import type { useState, useEffect } from "react";
-import type { toast } from "sonner";
+import type { TimeSlot as RTTimeSlot } from "@/hooks/useRealTimeAvailability";
 import type { AppointmentNotesForm } from "./appointment-notes-form";
 import type { BookingConfirmation } from "./booking-confirmation";
 import type { ProfessionalSelection } from "./professional-selection";
 import type { ServiceSelection } from "./service-selection";
 import type { TimeSlotDisplay } from "./time-slot-display";
-import type { RealTimeAvailability } from "@/components/patient/RealTimeAvailability";
-import type { TimeSlot as RTTimeSlot } from "@/hooks/useRealTimeAvailability";
 
 /**
  * Enhanced booking flow with real-time availability

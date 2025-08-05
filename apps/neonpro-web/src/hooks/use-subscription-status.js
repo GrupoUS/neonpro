@@ -8,32 +8,31 @@
  * @version 1.0.0
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -155,10 +152,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -167,7 +164,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSubscriptionStatus = useSubscriptionStatus;
 exports.useSubscriptionStatusSimple = useSubscriptionStatusSimple;
@@ -182,7 +179,6 @@ var subscription_realtime_1 = require("../lib/subscription-realtime");
  * @returns Subscription state, actions, and utilities
  */
 function useSubscriptionStatus(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -217,16 +213,13 @@ function useSubscriptionStatus(options) {
   var unsubscribeRef = (0, react_1.useRef)(null);
   var optionsRef = (0, react_1.useRef)(options);
   // Update options ref when options change
-  (0, react_1.useEffect)(
-    function () {
-      optionsRef.current = options;
-    },
-    [options],
-  );
+  (0, react_1.useEffect)(() => {
+    optionsRef.current = options;
+  }, [options]);
   /**
    * Handle subscription status updates
    */
-  var handleSubscriptionUpdate = (0, react_1.useCallback)(function (update) {
+  var handleSubscriptionUpdate = (0, react_1.useCallback)((update) => {
     var status = update.status,
       previousStatus = update.previousStatus,
       _a = update.metadata,
@@ -237,12 +230,10 @@ function useSubscriptionStatus(options) {
       console.log("[useSubscriptionStatus] Received update:", update);
     }
     // Add event to history (keep last 50 events)
-    setEvents(function (prev) {
-      return __spreadArray([update], prev.slice(0, 49), true);
-    });
+    setEvents((prev) => __spreadArray([update], prev.slice(0, 49), true));
     // Update state
-    setState(function (prevState) {
-      return __assign(__assign({}, prevState), {
+    setState((prevState) =>
+      __assign(__assign({}, prevState), {
         status: status,
         tier: metadata.tier || prevState.tier,
         features: metadata.features || prevState.features,
@@ -251,8 +242,8 @@ function useSubscriptionStatus(options) {
         lastUpdate: timestamp,
         isLoading: false,
         error: null,
-      });
-    });
+      }),
+    );
     // Trigger status change callback
     if (optionsRef.current.onStatusChange && previousStatus !== status) {
       optionsRef.current.onStatusChange(status, previousStatus);
@@ -272,11 +263,11 @@ function useSubscriptionStatus(options) {
         }
         break;
       case "payment_failed":
-        setState(function (prev) {
-          return __assign(__assign({}, prev), {
+        setState((prev) =>
+          __assign(__assign({}, prev), {
             error: "Payment failed. Please update your payment method.",
-          });
-        });
+          }),
+        );
         if (optionsRef.current.onError) {
           optionsRef.current.onError("Payment failed. Please update your payment method.");
         }
@@ -287,29 +278,27 @@ function useSubscriptionStatus(options) {
    * Connect to real-time updates
    */
   var connect = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var unsubscribe, errorMessage_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (!(user === null || user === void 0 ? void 0 : user.id) || unsubscribeRef.current) {
             return [2 /*return*/];
           }
-          setState(function (prev) {
-            return __assign(__assign({}, prev), { isLoading: true });
-          });
+          setState((prev) => __assign(__assign({}, prev), { isLoading: true }));
           try {
             unsubscribe = subscription_realtime_1.subscriptionRealtimeManager.subscribe(
               user.id,
               handleSubscriptionUpdate,
             );
             unsubscribeRef.current = unsubscribe;
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
                 isConnected: true,
                 isLoading: false,
                 error: null,
-              });
-            });
+              }),
+            );
             if (optionsRef.current.onConnect) {
               optionsRef.current.onConnect();
             }
@@ -318,58 +307,57 @@ function useSubscriptionStatus(options) {
             }
           } catch (error) {
             errorMessage_1 = error instanceof Error ? error.message : "Failed to connect";
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: false, error: errorMessage_1 });
-            });
+            setState((prev) =>
+              __assign(__assign({}, prev), { isLoading: false, error: errorMessage_1 }),
+            );
             if (optionsRef.current.onError) {
               optionsRef.current.onError(errorMessage_1);
             }
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [user === null || user === void 0 ? void 0 : user.id, handleSubscriptionUpdate],
   );
   /**
    * Disconnect from real-time updates
    */
-  var disconnect = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        if (unsubscribeRef.current) {
-          unsubscribeRef.current();
-          unsubscribeRef.current = null;
-        }
-        setState(function (prev) {
-          return __assign(__assign({}, prev), { isConnected: false, isLoading: false });
+  var disconnect = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          if (unsubscribeRef.current) {
+            unsubscribeRef.current();
+            unsubscribeRef.current = null;
+          }
+          setState((prev) =>
+            __assign(__assign({}, prev), { isConnected: false, isLoading: false }),
+          );
+          if (optionsRef.current.onDisconnect) {
+            optionsRef.current.onDisconnect();
+          }
+          if (optionsRef.current.enableLogging) {
+            console.log("[useSubscriptionStatus] Disconnected");
+          }
+          return [2 /*return*/];
         });
-        if (optionsRef.current.onDisconnect) {
-          optionsRef.current.onDisconnect();
-        }
-        if (optionsRef.current.enableLogging) {
-          console.log("[useSubscriptionStatus] Disconnected");
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
+      }),
+    [],
+  );
   /**
    * Refresh subscription status
    */
   var refresh = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var error_1, errorMessage_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!(user === null || user === void 0 ? void 0 : user.id)) {
                 return [2 /*return*/];
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true }));
               _a.label = 1;
             case 1:
               _a.trys.push([1, 3, , 4]);
@@ -379,38 +367,33 @@ function useSubscriptionStatus(options) {
               ];
             case 2:
               _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: false });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: false }));
               return [3 /*break*/, 4];
             case 3:
               error_1 = _a.sent();
               errorMessage_2 = error_1 instanceof Error ? error_1.message : "Failed to refresh";
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: false, error: errorMessage_2 });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { isLoading: false, error: errorMessage_2 }),
+              );
               return [3 /*break*/, 4];
             case 4:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user === null || user === void 0 ? void 0 : user.id],
   );
   /**
    * Clear current error
    */
-  var clearError = (0, react_1.useCallback)(function () {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { error: null });
-    });
+  var clearError = (0, react_1.useCallback)(() => {
+    setState((prev) => __assign(__assign({}, prev), { error: null }));
   }, []);
   /**
    * Check if user can access a specific feature
    */
   var canAccessFeature = (0, react_1.useCallback)(
-    function (feature) {
+    (feature) => {
       if (!state.features.length) {
         return false;
       }
@@ -419,40 +402,36 @@ function useSubscriptionStatus(options) {
     [state.features],
   );
   // Update metrics periodically
-  (0, react_1.useEffect)(function () {
-    var updateMetrics = function () {
+  (0, react_1.useEffect)(() => {
+    var updateMetrics = () => {
       setMetrics(subscription_realtime_1.subscriptionRealtimeManager.getMetrics());
     };
     updateMetrics();
     var interval = setInterval(updateMetrics, 5000); // Update every 5 seconds
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
   // Auto-connect on mount if enabled
-  (0, react_1.useEffect)(
-    function () {
-      if (options.autoConnect !== false && (user === null || user === void 0 ? void 0 : user.id)) {
-        connect();
-      }
-      return function () {
-        disconnect();
-      };
-    },
-    [user === null || user === void 0 ? void 0 : user.id, connect, disconnect, options.autoConnect],
-  );
+  (0, react_1.useEffect)(() => {
+    if (options.autoConnect !== false && (user === null || user === void 0 ? void 0 : user.id)) {
+      connect();
+    }
+    return () => {
+      disconnect();
+    };
+  }, [
+    user === null || user === void 0 ? void 0 : user.id,
+    connect,
+    disconnect,
+    options.autoConnect,
+  ]);
   // Update connection status based on realtime manager
-  (0, react_1.useEffect)(function () {
-    var checkConnection = function () {
+  (0, react_1.useEffect)(() => {
+    var checkConnection = () => {
       var isConnected = subscription_realtime_1.subscriptionRealtimeManager.isConnectedToRealtime();
-      setState(function (prev) {
-        return __assign(__assign({}, prev), { isConnected: isConnected });
-      });
+      setState((prev) => __assign(__assign({}, prev), { isConnected: isConnected }));
     };
     var interval = setInterval(checkConnection, 1000); // Check every second
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
   // Computed values
   var isExpired = state.status === "expired" || state.status === "cancelled";
@@ -476,7 +455,6 @@ function useSubscriptionStatus(options) {
  * Simplified hook for just subscription status (no real-time updates)
  */
 function useSubscriptionStatusSimple() {
-  var _this = this;
   var user = (0, auth_context_1.useAuth)().user;
   var _a = (0, react_1.useState)(null),
     status = _a[0],
@@ -484,30 +462,26 @@ function useSubscriptionStatusSimple() {
   var _b = (0, react_1.useState)(false),
     isLoading = _b[0],
     setIsLoading = _b[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (!(user === null || user === void 0 ? void 0 : user.id)) return;
-      var fetchStatus = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            setIsLoading(true);
-            try {
-              // This would typically call your subscription service
-              // For now, we'll use a placeholder
-              setStatus("active");
-            } catch (error) {
-              console.error("Failed to fetch subscription status:", error);
-            } finally {
-              setIsLoading(false);
-            }
-            return [2 /*return*/];
-          });
+  (0, react_1.useEffect)(() => {
+    if (!(user === null || user === void 0 ? void 0 : user.id)) return;
+    var fetchStatus = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setIsLoading(true);
+          try {
+            // This would typically call your subscription service
+            // For now, we'll use a placeholder
+            setStatus("active");
+          } catch (error) {
+            console.error("Failed to fetch subscription status:", error);
+          } finally {
+            setIsLoading(false);
+          }
+          return [2 /*return*/];
         });
-      };
-      fetchStatus();
-    },
-    [user === null || user === void 0 ? void 0 : user.id],
-  );
+      });
+    fetchStatus();
+  }, [user === null || user === void 0 ? void 0 : user.id]);
   return {
     status: status,
     isLoading: isLoading,

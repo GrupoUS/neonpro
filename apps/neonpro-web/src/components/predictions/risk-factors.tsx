@@ -5,51 +5,52 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
-import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  ScatterChart,
-  Scatter,
-  LineChart,
-  Line,
-  Cell,
-} from "recharts";
-import type {
-  TrendingUp,
-  TrendingDown,
+  Activity,
   AlertTriangle,
-  Users,
+  Briefcase,
   Calendar,
   Clock,
-  MapPin,
-  Phone,
-  MessageSquare,
-  Heart,
-  Briefcase,
-  Home,
-  Star,
-  Activity,
-  Target,
-  Zap,
   Eye,
+  Heart,
+  Home,
+  MapPin,
+  MessageSquare,
+  Phone,
+  Star,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
 } from "lucide-react";
+import type React from "react";
+import { useMemo, useState } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   NoShowPrediction,
   PatientRiskProfile,
@@ -57,9 +58,9 @@ import type {
   RiskFactorCategory,
 } from "@/lib/analytics/no-show-prediction";
 import type {
-  getRiskTrendIcon,
-  getRiskLevelColor,
   formatRiskScore,
+  getRiskLevelColor,
+  getRiskTrendIcon,
 } from "@/lib/analytics/risk-scoring";
 
 interface RiskFactorsProps {

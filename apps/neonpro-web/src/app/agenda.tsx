@@ -1,24 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  Calendar,
-  Clock,
-  User,
-  Phone,
-  MapPin,
-  Plus,
-  Filter,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle,
-  XCircle,
   AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Filter,
+  MapPin,
+  Phone,
+  Plus,
+  Search,
+  User,
+  XCircle,
 } from "lucide-react";
-import { NeonGradientCard } from "@/components/ui/NeonGradientCard";
+import { useState } from "react";
 import { CosmicGlowButton } from "@/components/ui/CosmicGlowButton";
+import { NeonGradientCard } from "@/components/ui/NeonGradientCard";
 import { formatDate, formatTime } from "@/lib/utils";
 
 // Dados mock para a agenda
@@ -202,8 +200,8 @@ const AppointmentCard = ({ appointment, index }: { appointment: any; index: numb
 };
 
 export default function Agenda() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState("list");
+  const [selectedDate, _setSelectedDate] = useState(new Date());
+  const [_viewMode, _setViewMode] = useState("list");
   const [filterStatus, setFilterStatus] = useState("todos");
   const [searchTerm, setSearchTerm] = useState("");
 

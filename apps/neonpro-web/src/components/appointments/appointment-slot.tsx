@@ -1,21 +1,21 @@
 "use client";
 
-import React from "react";
-import type { Badge } from "@/components/ui/badge";
 import type {
-  Clock,
-  User,
-  Phone,
-  MessageCircle,
   AlertCircle,
   CheckCircle,
-  XCircle,
+  Clock,
+  MessageCircle,
   Pause,
+  Phone,
   Play,
+  User,
+  XCircle,
 } from "lucide-react";
-import type { cn } from "@/lib/utils";
-import type { AppointmentEvent } from "@/app/appointments/page";
 import moment from "moment";
+import React from "react";
+import type { AppointmentEvent } from "@/app/appointments/page";
+import type { Badge } from "@/components/ui/badge";
+import type { cn } from "@/lib/utils";
 import "moment/locale/pt-br";
 
 moment.locale("pt-br");

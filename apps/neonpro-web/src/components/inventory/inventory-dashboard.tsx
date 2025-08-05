@@ -6,6 +6,19 @@
 
 "use client";
 
+import type {
+  AlertTriangle,
+  BarChart3,
+  MapPin,
+  Package,
+  Plus,
+  RefreshCw,
+  Scan,
+  Tags,
+  TrendingUp,
+} from "lucide-react";
+import Link from "next/link";
+import React, { useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -28,21 +41,12 @@ import type {
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useInventory } from "@/hooks/inventory/use-inventory";
-import type { BarcodeResult, ConnectionStatus, InventoryItem } from "@/lib/types/inventory";
-import type { InventoryStatus } from "@/lib/types/inventory";
 import type {
-  AlertTriangle,
-  BarChart3,
-  MapPin,
-  Package,
-  Plus,
-  RefreshCw,
-  Scan,
-  Tags,
-  TrendingUp,
-} from "lucide-react";
-import Link from "next/link";
-import React, { useState } from "react";
+  BarcodeResult,
+  ConnectionStatus,
+  InventoryItem,
+  InventoryStatus,
+} from "@/lib/types/inventory";
 import type { BarcodeScanner } from "./barcode-scanner";
 
 interface InventoryDashboardProps {

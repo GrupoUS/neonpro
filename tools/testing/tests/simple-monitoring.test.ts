@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 describe("TASK-001 Foundation Setup Verification", () => {
   const rootDir = path.join(__dirname, "../../");

@@ -4,11 +4,22 @@
 
 "use client";
 
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Calendar,
+  Clock,
+  DollarSign,
+  FileText,
+  Mail,
+  MapPin,
+  Phone,
+  Trash2,
+  User,
+  UserCheck,
+} from "lucide-react";
 import type { useState } from "react";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
+import type { AppointmentWithDetails } from "@/app/lib/types/appointments";
 import type {
   AlertDialog,
   AlertDialogAction,
@@ -20,23 +31,12 @@ import type {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import type { Textarea } from "@/components/ui/textarea";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Label } from "@/components/ui/label";
-import type {
-  Calendar,
-  Clock,
-  User,
-  UserCheck,
-  FileText,
-  Phone,
-  Mail,
-  Trash2,
-  MapPin,
-  DollarSign,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { AppointmentWithDetails } from "@/app/lib/types/appointments";
+import type { Separator } from "@/components/ui/separator";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Status configuration with colors and labels
 const statusConfig = {

@@ -1,16 +1,16 @@
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { SessionUtils, SessionStorage } from "@/lib/auth/utils/session-utils";
+import type { useCallback, useEffect, useState } from "react";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
+import type { SessionStorage, SessionUtils } from "@/lib/auth/utils/session-utils";
 import type {
-  UserSession,
-  UserDevice,
   SecurityEvent,
   SessionAnalytics,
   SessionPolicy,
   SuspiciousActivity,
+  UserDevice,
+  UserSession,
 } from "@/types/session";
 
 interface SessionManagementState {

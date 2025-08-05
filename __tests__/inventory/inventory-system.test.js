@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Inventory System Tests - Simplified Version
  * Basic test suite for inventory hooks functionality
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,7 +37,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -67,8 +66,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -89,9 +86,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var inventory_1 = require("@/lib/types/inventory");
 // Mock all dependencies upfront
@@ -158,24 +155,18 @@ jest.mock("@/lib/supabase/client");
 jest.mock("react-hot-toast");
 // Mock React hooks manually for this test file
 var mockSetState = jest.fn();
-var mockUseState = jest.fn(function (initial) {
-  return [initial, mockSetState];
-});
+var mockUseState = jest.fn((initial) => [initial, mockSetState]);
 var mockUseEffect = jest.fn();
-var mockUseCallback = jest.fn(function (fn) {
-  return fn;
-});
-var mockUseRef = jest.fn(function () {
-  return { current: null };
-});
-jest.mock("react", function () {
-  return __assign(__assign({}, jest.requireActual("react")), {
+var mockUseCallback = jest.fn((fn) => fn);
+var mockUseRef = jest.fn(() => ({ current: null }));
+jest.mock("react", () =>
+  __assign(__assign({}, jest.requireActual("react")), {
     useState: mockUseState,
     useEffect: mockUseEffect,
     useCallback: mockUseCallback,
     useRef: mockUseRef,
-  });
-});
+  }),
+);
 // Global browser API mocks
 var mockNavigator = {
   mediaDevices: {
@@ -192,13 +183,11 @@ Object.defineProperty(global, "navigator", {
   writable: true,
 });
 // Mock MediaStream
-global.MediaStream = jest.fn().mockImplementation(function () {
-  return {
-    getTracks: jest.fn().mockReturnValue([]),
-    getVideoTracks: jest.fn().mockReturnValue([]),
-    getAudioTracks: jest.fn().mockReturnValue([]),
-  };
-});
+global.MediaStream = jest.fn().mockImplementation(() => ({
+  getTracks: jest.fn().mockReturnValue([]),
+  getVideoTracks: jest.fn().mockReturnValue([]),
+  getAudioTracks: jest.fn().mockReturnValue([]),
+}));
 // Mock HTMLVideoElement
 Object.defineProperty(HTMLVideoElement.prototype, "srcObject", {
   set: jest.fn(),
@@ -208,27 +197,21 @@ Object.defineProperty(HTMLVideoElement.prototype, "play", {
   value: jest.fn().mockResolvedValue(undefined),
 });
 // Mock AudioContext
-global.AudioContext = jest.fn().mockImplementation(function () {
-  return {
-    createOscillator: jest.fn(function () {
-      return {
-        connect: jest.fn(),
-        start: jest.fn(),
-        stop: jest.fn(),
-        frequency: { value: 800 },
-      };
-    }),
-    createGain: jest.fn(function () {
-      return {
-        connect: jest.fn(),
-        gain: { value: 0.1 },
-      };
-    }),
-    destination: {},
-  };
-});
-describe("Inventory Management System", function () {
-  beforeEach(function () {
+global.AudioContext = jest.fn().mockImplementation(() => ({
+  createOscillator: jest.fn(() => ({
+    connect: jest.fn(),
+    start: jest.fn(),
+    stop: jest.fn(),
+    frequency: { value: 800 },
+  })),
+  createGain: jest.fn(() => ({
+    connect: jest.fn(),
+    gain: { value: 0.1 },
+  })),
+  destination: {},
+}));
+describe("Inventory Management System", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     mockUseState.mockReturnValue([
       {
@@ -247,18 +230,16 @@ describe("Inventory Management System", function () {
       mockSetState,
     ]);
   });
-  describe("useInventory hook - Basic functionality", function () {
-    it("should be importable and have expected structure", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("useInventory hook - Basic functionality", () => {
+    it("should be importable and have expected structure", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var useInventory;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/hooks/inventory/use-inventory");
-                }),
+                Promise.resolve().then(() => require("@/hooks/inventory/use-inventory")),
               ];
             case 1:
               useInventory = _a.sent().useInventory;
@@ -267,19 +248,16 @@ describe("Inventory Management System", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should initialize useState with correct default state structure", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should initialize useState with correct default state structure", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var useInventory;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/hooks/inventory/use-inventory");
-                }),
+                Promise.resolve().then(() => require("@/hooks/inventory/use-inventory")),
               ];
             case 1:
               useInventory = _a.sent().useInventory;
@@ -303,19 +281,16 @@ describe("Inventory Management System", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle options parameter correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle options parameter correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var useInventory;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/hooks/inventory/use-inventory");
-                }),
+                Promise.resolve().then(() => require("@/hooks/inventory/use-inventory")),
               ];
             case 1:
               useInventory = _a.sent().useInventory;
@@ -330,11 +305,10 @@ describe("Inventory Management System", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("useBarcode hook - Basic functionality", function () {
-    beforeEach(function () {
+  describe("useBarcode hook - Basic functionality", () => {
+    beforeEach(() => {
       mockUseState.mockReturnValue([
         {
           isScanning: false,
@@ -349,17 +323,15 @@ describe("Inventory Management System", function () {
         mockSetState,
       ]);
     });
-    it("should be importable and have expected structure", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should be importable and have expected structure", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var useBarcode;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/hooks/inventory/use-barcode");
-                }),
+                Promise.resolve().then(() => require("@/hooks/inventory/use-barcode")),
               ];
             case 1:
               useBarcode = _a.sent().useBarcode;
@@ -368,19 +340,16 @@ describe("Inventory Management System", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should initialize useState with correct scanner state", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should initialize useState with correct scanner state", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var useBarcode;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/hooks/inventory/use-barcode");
-                }),
+                Promise.resolve().then(() => require("@/hooks/inventory/use-barcode")),
               ];
             case 1:
               useBarcode = _a.sent().useBarcode;
@@ -402,19 +371,16 @@ describe("Inventory Management System", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle barcode options parameter", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle barcode options parameter", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var useBarcode, onScan, onError;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/hooks/inventory/use-barcode");
-                }),
+                Promise.resolve().then(() => require("@/hooks/inventory/use-barcode")),
               ];
             case 1:
               useBarcode = _a.sent().useBarcode;
@@ -433,11 +399,10 @@ describe("Inventory Management System", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Type system validation", function () {
-    it("should have all required enum values", function () {
+  describe("Type system validation", () => {
+    it("should have all required enum values", () => {
       // Test ConnectionStatus enum
       expect(inventory_1.ConnectionStatus.CONNECTED).toBeDefined();
       expect(inventory_1.ConnectionStatus.DISCONNECTED).toBeDefined();
@@ -457,31 +422,27 @@ describe("Inventory Management System", function () {
       expect(inventory_1.SessionType.SHIPPING).toBeDefined();
     });
   });
-  describe("Integration capabilities", function () {
-    it("should support both hooks working together", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Integration capabilities", () => {
+    it("should support both hooks working together", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var useInventory, useBarcode;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/hooks/inventory/use-inventory");
-                }),
+                Promise.resolve().then(() => require("@/hooks/inventory/use-inventory")),
               ];
             case 1:
               useInventory = _a.sent().useInventory;
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/hooks/inventory/use-barcode");
-                }),
+                Promise.resolve().then(() => require("@/hooks/inventory/use-barcode")),
               ];
             case 2:
               useBarcode = _a.sent().useBarcode;
               // Both hooks should be callable
-              expect(function () {
+              expect(() => {
                 useInventory();
                 useBarcode();
               }).not.toThrow();
@@ -492,7 +453,6 @@ describe("Inventory Management System", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

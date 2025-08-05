@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Treatment Integration System
  * Integrates patient profiles with treatment and medical history
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,12 +147,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientTreatmentIntegration = void 0;
 var client_1 = require("@/lib/supabase/client");
 var logger_1 = require("@/lib/logger");
-var PatientTreatmentIntegration = /** @class */ (function () {
+var PatientTreatmentIntegration = /** @class */ (() => {
   function PatientTreatmentIntegration() {}
   /**
    * Get comprehensive treatment history for a patient
@@ -163,7 +160,7 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   PatientTreatmentIntegration.getPatientTreatmentHistory = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, treatments, error, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -184,7 +181,7 @@ var PatientTreatmentIntegration = /** @class */ (function () {
               2 /*return*/,
               (treatments === null || treatments === void 0
                 ? void 0
-                : treatments.map(function (treatment) {
+                : treatments.map((treatment) => {
                     var _a, _b;
                     return {
                       id: treatment.id,
@@ -249,43 +246,17 @@ var PatientTreatmentIntegration = /** @class */ (function () {
             return [4 /*yield*/, this.getPatientTreatmentHistory(patientId)];
           case 1:
             treatments = _b.sent();
-            activeTreatments = treatments.filter(function (t) {
-              return t.status === "active";
-            });
-            completedTreatments = treatments.filter(function (t) {
-              return t.status === "completed";
-            });
+            activeTreatments = treatments.filter((t) => t.status === "active");
+            completedTreatments = treatments.filter((t) => t.status === "completed");
             avgSatisfaction = this.calculateAverage(
-              treatments
-                .filter(function (t) {
-                  return t.satisfaction_score;
-                })
-                .map(function (t) {
-                  return t.satisfaction_score;
-                }),
+              treatments.filter((t) => t.satisfaction_score).map((t) => t.satisfaction_score),
             );
             avgOutcome = this.calculateAverage(
-              treatments
-                .filter(function (t) {
-                  return t.outcome_rating;
-                })
-                .map(function (t) {
-                  return t.outcome_rating;
-                }),
+              treatments.filter((t) => t.outcome_rating).map((t) => t.outcome_rating),
             );
-            totalInvestment = treatments.reduce(function (sum, t) {
-              return sum + t.cost_total;
-            }, 0);
-            providerCounts = this.countOccurrences(
-              treatments.map(function (t) {
-                return t.provider_name;
-              }),
-            );
-            serviceCounts = this.countOccurrences(
-              treatments.map(function (t) {
-                return t.service_name;
-              }),
-            );
+            totalInvestment = treatments.reduce((sum, t) => sum + t.cost_total, 0);
+            providerCounts = this.countOccurrences(treatments.map((t) => t.provider_name));
+            serviceCounts = this.countOccurrences(treatments.map((t) => t.service_name));
             adherenceScore = this.calculateAdherenceScore(treatments);
             riskFactors = this.identifyRiskFactors(treatments);
             recommendations = this.generateRecommendations(treatments, riskFactors);
@@ -323,7 +294,7 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   PatientTreatmentIntegration.getPatientMedicalRecords = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, records, error, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -355,7 +326,7 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   PatientTreatmentIntegration.linkPatientToTreatment = function (patientId, treatmentData) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, treatment, error, error_4;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -395,7 +366,7 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   PatientTreatmentIntegration.updateTreatmentProgress = function (treatmentId, progressData) {
     return __awaiter(this, void 0, void 0, function () {
       var error, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -426,29 +397,24 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   /**
    * Calculate average from array of numbers
    */
-  PatientTreatmentIntegration.calculateAverage = function (numbers) {
+  PatientTreatmentIntegration.calculateAverage = (numbers) => {
     if (numbers.length === 0) return 0;
-    return (
-      numbers.reduce(function (sum, num) {
-        return sum + num;
-      }, 0) / numbers.length
-    );
+    return numbers.reduce((sum, num) => sum + num, 0) / numbers.length;
   };
   /**
    * Count occurrences of items in array
    */
-  PatientTreatmentIntegration.countOccurrences = function (items) {
-    return items.reduce(function (counts, item) {
+  PatientTreatmentIntegration.countOccurrences = (items) =>
+    items.reduce((counts, item) => {
       counts[item] = (counts[item] || 0) + 1;
       return counts;
     }, {});
-  };
   /**
    * Calculate treatment adherence score
    */
   PatientTreatmentIntegration.calculateAdherenceScore = function (treatments) {
     if (treatments.length === 0) return 0;
-    var adherenceScores = treatments.map(function (treatment) {
+    var adherenceScores = treatments.map((treatment) => {
       if (treatment.total_sessions === 0) return 1;
       return treatment.completed_sessions / treatment.total_sessions;
     });
@@ -457,21 +423,15 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   /**
    * Calculate treatment frequency patterns
    */
-  PatientTreatmentIntegration.calculateTreatmentFrequency = function (treatments) {
+  PatientTreatmentIntegration.calculateTreatmentFrequency = (treatments) => {
     var now = new Date();
     var oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     var oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     var threeMonthsAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
     return {
-      weekly: treatments.filter(function (t) {
-        return new Date(t.start_date) >= oneWeekAgo;
-      }).length,
-      monthly: treatments.filter(function (t) {
-        return new Date(t.start_date) >= oneMonthAgo;
-      }).length,
-      quarterly: treatments.filter(function (t) {
-        return new Date(t.start_date) >= threeMonthsAgo;
-      }).length,
+      weekly: treatments.filter((t) => new Date(t.start_date) >= oneWeekAgo).length,
+      monthly: treatments.filter((t) => new Date(t.start_date) >= oneMonthAgo).length,
+      quarterly: treatments.filter((t) => new Date(t.start_date) >= threeMonthsAgo).length,
     };
   };
   /**
@@ -485,38 +445,26 @@ var PatientTreatmentIntegration = /** @class */ (function () {
       riskFactors.push("Low treatment adherence");
     }
     // Multiple cancelled treatments
-    var cancelledCount = treatments.filter(function (t) {
-      return t.status === "cancelled";
-    }).length;
+    var cancelledCount = treatments.filter((t) => t.status === "cancelled").length;
     if (cancelledCount > 2) {
       riskFactors.push("High treatment cancellation rate");
     }
     // Low satisfaction scores
     var satisfactionScores = treatments
-      .filter(function (t) {
-        return t.satisfaction_score;
-      })
-      .map(function (t) {
-        return t.satisfaction_score;
-      });
+      .filter((t) => t.satisfaction_score)
+      .map((t) => t.satisfaction_score);
     var avgSatisfaction = this.calculateAverage(satisfactionScores);
     if (avgSatisfaction < 3) {
       riskFactors.push("Low treatment satisfaction");
     }
     // Side effects reported
-    var hasSideEffects = treatments.some(function (t) {
-      return t.side_effects && t.side_effects.length > 0;
-    });
+    var hasSideEffects = treatments.some((t) => t.side_effects && t.side_effects.length > 0);
     if (hasSideEffects) {
       riskFactors.push("Reported side effects");
     }
     // High cost burden
-    var totalCost = treatments.reduce(function (sum, t) {
-      return sum + t.cost_total;
-    }, 0);
-    var totalPaid = treatments.reduce(function (sum, t) {
-      return sum + t.cost_paid;
-    }, 0);
+    var totalCost = treatments.reduce((sum, t) => sum + t.cost_total, 0);
+    var totalPaid = treatments.reduce((sum, t) => sum + t.cost_paid, 0);
     if (totalCost > 0 && totalPaid / totalCost < 0.5) {
       riskFactors.push("High unpaid treatment costs");
     }
@@ -525,7 +473,7 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   /**
    * Generate personalized recommendations
    */
-  PatientTreatmentIntegration.generateRecommendations = function (treatments, riskFactors) {
+  PatientTreatmentIntegration.generateRecommendations = (treatments, riskFactors) => {
     var recommendations = [];
     // Adherence recommendations
     if (riskFactors.includes("Low treatment adherence")) {
@@ -552,9 +500,7 @@ var PatientTreatmentIntegration = /** @class */ (function () {
       recommendations.push("Evaluate alternative treatment methods");
     }
     // General recommendations
-    var completedTreatments = treatments.filter(function (t) {
-      return t.status === "completed";
-    });
+    var completedTreatments = treatments.filter((t) => t.status === "completed");
     if (completedTreatments.length > 0) {
       recommendations.push("Schedule preventive care appointments");
       recommendations.push("Consider maintenance treatments");
@@ -590,18 +536,16 @@ var PatientTreatmentIntegration = /** @class */ (function () {
             patient = _b.sent().data;
             if (!patient) return [2 /*return*/, []];
             recommendations_1 = [];
-            successfulTreatments = treatments.filter(function (t) {
-              return t.status === "completed" && (t.satisfaction_score || 0) >= 4;
-            });
+            successfulTreatments = treatments.filter(
+              (t) => t.status === "completed" && (t.satisfaction_score || 0) >= 4,
+            );
             if (successfulTreatments.length > 0) {
               preferredServices = this.countOccurrences(
-                successfulTreatments.map(function (t) {
-                  return t.service_name;
-                }),
+                successfulTreatments.map((t) => t.service_name),
               );
               Object.keys(preferredServices)
                 .slice(0, 2)
-                .forEach(function (service) {
+                .forEach((service) => {
                   recommendations_1.push("Follow-up ".concat(service, " treatment"));
                 });
             }
@@ -632,7 +576,7 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   /**
    * Calculate age from date of birth
    */
-  PatientTreatmentIntegration.calculateAge = function (dateOfBirth) {
+  PatientTreatmentIntegration.calculateAge = (dateOfBirth) => {
     var today = new Date();
     var birthDate = new Date(dateOfBirth);
     var age = today.getFullYear() - birthDate.getFullYear();
@@ -693,14 +637,14 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   /**
    * Get monthly treatment trend
    */
-  PatientTreatmentIntegration.getMonthlyTreatmentTrend = function (treatments) {
+  PatientTreatmentIntegration.getMonthlyTreatmentTrend = (treatments) => {
     var monthlyData = {};
-    treatments.forEach(function (treatment) {
+    treatments.forEach((treatment) => {
       var month = new Date(treatment.start_date).toISOString().slice(0, 7);
       monthlyData[month] = (monthlyData[month] || 0) + 1;
     });
     return Object.entries(monthlyData)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[0];
         var b = _b[0];
         return a.localeCompare(b);
@@ -710,29 +654,23 @@ var PatientTreatmentIntegration = /** @class */ (function () {
   /**
    * Get satisfaction trend
    */
-  PatientTreatmentIntegration.getSatisfactionTrend = function (treatments) {
+  PatientTreatmentIntegration.getSatisfactionTrend = (treatments) => {
     return treatments
-      .filter(function (t) {
-        return t.satisfaction_score;
-      })
-      .map(function (t) {
-        return {
-          date: t.start_date,
-          score: t.satisfaction_score,
-          treatment: t.service_name,
-        };
-      })
-      .sort(function (a, b) {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      })
+      .filter((t) => t.satisfaction_score)
+      .map((t) => ({
+        date: t.start_date,
+        score: t.satisfaction_score,
+        treatment: t.service_name,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .slice(-10); // Last 10 treatments with scores
   };
   /**
    * Get cost trend
    */
-  PatientTreatmentIntegration.getCostTrend = function (treatments) {
+  PatientTreatmentIntegration.getCostTrend = (treatments) => {
     var monthlyData = {};
-    treatments.forEach(function (treatment) {
+    treatments.forEach((treatment) => {
       var month = new Date(treatment.start_date).toISOString().slice(0, 7);
       if (!monthlyData[month]) {
         monthlyData[month] = { total: 0, paid: 0 };
@@ -741,13 +679,13 @@ var PatientTreatmentIntegration = /** @class */ (function () {
       monthlyData[month].paid += treatment.cost_paid;
     });
     return Object.entries(monthlyData)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[0];
         var b = _b[0];
         return a.localeCompare(b);
       })
       .slice(-12) // Last 12 months
-      .map(function (_a) {
+      .map((_a) => {
         var month = _a[0],
           data = _a[1];
         return {

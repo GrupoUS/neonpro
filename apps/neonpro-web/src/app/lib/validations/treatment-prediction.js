@@ -1,4 +1,3 @@
-"use strict";
 // Treatment Success Prediction Validation Schemas
 // Comprehensive validation for AI/ML-powered treatment prediction system
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -52,14 +51,9 @@ exports.ConfidenceIntervalSchema = zod_1.z
       .default(0.95)
       .describe("Confidence level (e.g., 0.95 for 95%)"),
   })
-  .refine(
-    function (data) {
-      return data.lower <= data.upper;
-    },
-    {
-      message: "Lower bound must be less than or equal to upper bound",
-    },
-  );
+  .refine((data) => data.lower <= data.upper, {
+    message: "Lower bound must be less than or equal to upper bound",
+  });
 exports.ModelPerformanceMetricsSchema = zod_1.z.object({
   precision: zod_1.z.number().min(0).max(1),
   recall: zod_1.z.number().min(0).max(1),
@@ -78,14 +72,9 @@ exports.CostRangeSchema = zod_1.z
     currency: zod_1.z.string().min(1),
     average: zod_1.z.number().min(0).optional(),
   })
-  .refine(
-    function (data) {
-      return data.min <= data.max;
-    },
-    {
-      message: "Minimum cost must be less than or equal to maximum cost",
-    },
-  );
+  .refine((data) => data.min <= data.max, {
+    message: "Minimum cost must be less than or equal to maximum cost",
+  });
 exports.SideEffectsSchema = zod_1.z.object({
   common: zod_1.z.array(zod_1.z.string()).optional(),
   uncommon: zod_1.z.array(zod_1.z.string()).optional(),
@@ -218,14 +207,9 @@ exports.PredictionModelSchema = zod_1.z.object({
     .number()
     .min(0)
     .max(1)
-    .refine(
-      function (val) {
-        return val >= 0.85;
-      },
-      {
-        message: "Model accuracy must be ≥85% (0.85)",
-      },
-    ),
+    .refine((val) => val >= 0.85, {
+      message: "Model accuracy must be ≥85% (0.85)",
+    }),
   confidence_threshold: zod_1.z.number().min(0).max(1).default(0.85),
   status: zod_1.z.enum(["training", "active", "deprecated"]).default("training"),
   training_data_size: zod_1.z.number().int().min(0).default(0),
@@ -387,7 +371,7 @@ exports.PredictionFiltersSchema = zod_1.z
     accuracy_validated: zod_1.z.boolean().optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.prediction_score_min && data.prediction_score_max) {
         return data.prediction_score_min <= data.prediction_score_max;
       }

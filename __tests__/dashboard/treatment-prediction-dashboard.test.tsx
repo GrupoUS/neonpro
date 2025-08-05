@@ -11,8 +11,7 @@
  * - Medical-grade validation
  */
 
-import React from "react";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import TreatmentPredictionDashboard from "@/components/dashboard/treatment-prediction-dashboard";
@@ -28,7 +27,7 @@ jest.mock("@/app/lib/services/treatment-prediction", () => ({
 }));
 
 // Mock prediction results that meet ≥85% accuracy requirement
-const mockHighAccuracyPredictions = [
+const _mockHighAccuracyPredictions = [
   {
     treatment: "Laser CO2 Fracionado",
     confidence: 92, // >85% accuracy requirement
@@ -59,7 +58,7 @@ const mockHighAccuracyPredictions = [
   },
 ];
 
-const mockMediumAccuracyPredictions = [
+const _mockMediumAccuracyPredictions = [
   {
     treatment: "Peeling Químico Profundo",
     confidence: 73, // Below 85% threshold - should trigger warnings

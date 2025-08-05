@@ -1,12 +1,12 @@
 // Story 11.2: No-Show Prediction API Routes
 // Main predictions endpoint with CRUD operations
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { noShowPredictionEngine } from "@/app/lib/services/no-show-prediction";
 import {
   CreatePredictionInputSchema,
-  UpdatePredictionInputSchema,
   GetPredictionsQuerySchema,
+  UpdatePredictionInputSchema,
 } from "@/app/lib/validations/no-show-prediction";
 import { createClient } from "@/app/utils/supabase/server";
 

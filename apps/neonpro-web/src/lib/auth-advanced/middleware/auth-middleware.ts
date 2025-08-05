@@ -2,18 +2,18 @@
 // Story 1.4: Session Management & Security Implementation
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { SessionManager } from "../session-manager";
-import type { SecurityMonitor } from "../security-monitor";
-import type { DeviceManager } from "../device-manager";
-import type { AuthUtils } from "../utils";
 import type { DEFAULT_SESSION_CONFIG, SESSION_POLICIES } from "../config";
+import type { DeviceManager } from "../device-manager";
+import type { SecurityMonitor } from "../security-monitor";
+import type { SessionManager } from "../session-manager";
 import type {
-  UserSession,
-  SessionSecurityEvent,
   DeviceInfo,
   LocationInfo,
+  SessionSecurityEvent,
   UserRole,
+  UserSession,
 } from "../types";
+import type { AuthUtils } from "../utils";
 
 // Middleware configuration
 interface AuthMiddlewareConfig {

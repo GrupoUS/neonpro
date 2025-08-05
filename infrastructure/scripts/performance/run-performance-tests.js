@@ -76,7 +76,7 @@ const mockRealTimeSync = async () => {
 };
 
 // Main test runner
-async function runPerformanceTests() {
+async function _runPerformanceTests() {
   console.log("🚀 Starting Performance Test Suite");
   console.log("===================================\n");
 

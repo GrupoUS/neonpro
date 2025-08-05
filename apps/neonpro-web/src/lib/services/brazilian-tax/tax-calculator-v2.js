@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Brazilian Tax Calculator Service - Simplified Version
  * Comprehensive tax calculation engine for healthcare/aesthetic clinics
@@ -9,13 +8,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -86,7 +85,7 @@ var PIS_COFINS_RATES = {
 /**
  * Main Tax Calculator Service
  */
-var BrazilianTaxCalculatorService = /** @class */ (function () {
+var BrazilianTaxCalculatorService = /** @class */ (() => {
   function BrazilianTaxCalculatorService() {}
   /**
    * Calculate all taxes for a given service transaction
@@ -141,7 +140,7 @@ var BrazilianTaxCalculatorService = /** @class */ (function () {
   /**
    * Calculate ICMS (generally not applicable for healthcare services)
    */
-  BrazilianTaxCalculatorService.calculateICMS = function (request, config) {
+  BrazilianTaxCalculatorService.calculateICMS = (request, config) => {
     // Healthcare services typically exempt from ICMS
     return {
       base_calculo: 0,
@@ -254,7 +253,7 @@ var BrazilianTaxCalculatorService = /** @class */ (function () {
   /**
    * Determine Simples Nacional annexo based on service type
    */
-  BrazilianTaxCalculatorService.determineSimplexAnexo = function (serviceType) {
+  BrazilianTaxCalculatorService.determineSimplexAnexo = (serviceType) => {
     // Healthcare professional services typically fall under Anexo V
     var anexoVServices = [
       "medical_consultation",
@@ -269,7 +268,7 @@ var BrazilianTaxCalculatorService = /** @class */ (function () {
   /**
    * Get Simples Nacional rate based on annexo and annual revenue
    */
-  BrazilianTaxCalculatorService.getSimplesNacionalRate = function (anexo, annualRevenue) {
+  BrazilianTaxCalculatorService.getSimplesNacionalRate = (anexo, annualRevenue) => {
     var brackets = SIMPLES_NACIONAL_RATES[anexo];
     if (!brackets) {
       return 0.06; // Default rate if annexo not found
@@ -286,7 +285,7 @@ var BrazilianTaxCalculatorService = /** @class */ (function () {
   /**
    * Calculate due date based on tax regime
    */
-  BrazilianTaxCalculatorService.calculateDueDate = function (regime) {
+  BrazilianTaxCalculatorService.calculateDueDate = (regime) => {
     var now = new Date();
     var nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
     switch (regime) {
@@ -304,7 +303,7 @@ var BrazilianTaxCalculatorService = /** @class */ (function () {
   /**
    * Generate calculation notes
    */
-  BrazilianTaxCalculatorService.generateCalculationNotes = function (regime, request) {
+  BrazilianTaxCalculatorService.generateCalculationNotes = (regime, request) => {
     var notes = [
       "C\u00E1lculo autom\u00E1tico para regime ".concat(regime),
       "Tipo de servi\u00E7o: ".concat(request.tipo_servico),
@@ -318,7 +317,7 @@ var BrazilianTaxCalculatorService = /** @class */ (function () {
   /**
    * Generate unique calculation ID
    */
-  BrazilianTaxCalculatorService.generateCalculationId = function () {
+  BrazilianTaxCalculatorService.generateCalculationId = () => {
     var timestamp = Date.now();
     var random = Math.random().toString(36).substring(2, 8);
     return "calc_".concat(timestamp, "_").concat(random);
@@ -326,22 +325,21 @@ var BrazilianTaxCalculatorService = /** @class */ (function () {
   /**
    * Round value to specified precision
    */
-  BrazilianTaxCalculatorService.roundValue = function (value, precision) {
-    var factor = Math.pow(10, precision);
+  BrazilianTaxCalculatorService.roundValue = (value, precision) => {
+    var factor = 10 ** precision;
     return Math.round(value * factor) / factor;
   };
   /**
    * Batch calculate taxes for multiple services
    */
   BrazilianTaxCalculatorService.batchCalculateTaxes = function (requests, config) {
-    var _this = this;
     if (config === void 0) {
       config = {};
     }
     var results = new Map();
-    requests.forEach(function (request, index) {
+    requests.forEach((request, index) => {
       var key = "".concat(request.clinic_id, "_").concat(index);
-      var result = _this.calculateTaxes(request, config);
+      var result = this.calculateTaxes(request, config);
       results.set(key, result);
     });
     return results;

@@ -707,23 +707,26 @@ export class DataRetentionAutomation {
 
       // Execute retention based on deletion method
       switch (policy.deletion_method) {
-        case "hard_delete":
+        case "hard_delete": {
           const deleteResult = await this.performHardDelete(policy);
           recordsDeleted = deleteResult.deleted_count;
           recordsProcessed = deleteResult.processed_count;
           break;
+        }
 
-        case "soft_delete":
+        case "soft_delete": {
           const softDeleteResult = await this.performSoftDelete(policy);
           recordsDeleted = softDeleteResult.deleted_count;
           recordsProcessed = softDeleteResult.processed_count;
           break;
+        }
 
-        case "anonymize":
+        case "anonymize": {
           const anonymizeResult = await this.performAnonymization(policy);
           recordsAnonymized = anonymizeResult.anonymized_count;
           recordsProcessed = anonymizeResult.processed_count;
           break;
+        }
 
         case "archive":
           if (!this.config.backup_before_deletion) {

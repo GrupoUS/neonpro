@@ -1,4 +1,3 @@
-"use strict";
 // Data Cleanup System
 // Automated cleanup of expired sessions, tokens, and sensitive data
 // LGPD compliance and data retention management
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,10 +145,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -160,12 +157,12 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataCleanupManager = void 0;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
-var DataCleanupManager = /** @class */ (function () {
+var DataCleanupManager = /** @class */ (() => {
   function DataCleanupManager() {
     this.tasks = new Map();
     this.scheduledTasks = new Map();
@@ -720,7 +717,7 @@ var DataCleanupManager = /** @class */ (function () {
   DataCleanupManager.prototype.validateTask = function (task) {
     return __awaiter(this, void 0, void 0, function () {
       var errors;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errors = [];
         // Validate basic fields
         if (!task.name) errors.push("Task name is required");
@@ -799,30 +796,32 @@ var DataCleanupManager = /** @class */ (function () {
           switch (task.schedule.type) {
             case "interval":
               if (task.schedule.interval) {
-                timer = setInterval(function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    var error_2;
-                    return __generator(this, function (_a) {
-                      switch (_a.label) {
-                        case 0:
-                          _a.trys.push([0, 2, , 3]);
-                          return [4 /*yield*/, this.executeTask(taskId)];
-                        case 1:
-                          _a.sent();
-                          return [3 /*break*/, 3];
-                        case 2:
-                          error_2 = _a.sent();
-                          console.error(
-                            "Error executing scheduled task ".concat(taskId, ":"),
-                            error_2,
-                          );
-                          return [3 /*break*/, 3];
-                        case 3:
-                          return [2 /*return*/];
-                      }
-                    });
-                  });
-                }, task.schedule.interval);
+                timer = setInterval(
+                  () =>
+                    __awaiter(_this, void 0, void 0, function () {
+                      var error_2;
+                      return __generator(this, function (_a) {
+                        switch (_a.label) {
+                          case 0:
+                            _a.trys.push([0, 2, , 3]);
+                            return [4 /*yield*/, this.executeTask(taskId)];
+                          case 1:
+                            _a.sent();
+                            return [3 /*break*/, 3];
+                          case 2:
+                            error_2 = _a.sent();
+                            console.error(
+                              "Error executing scheduled task ".concat(taskId, ":"),
+                              error_2,
+                            );
+                            return [3 /*break*/, 3];
+                          case 3:
+                            return [2 /*return*/];
+                        }
+                      });
+                    }),
+                  task.schedule.interval,
+                );
                 this.scheduledTasks.set(taskId, timer);
               }
               break;
@@ -1100,10 +1099,7 @@ var DataCleanupManager = /** @class */ (function () {
             _b++;
             return [3 /*break*/, 9];
           case 12:
-            (_d = 0),
-              (_e = task.actions.sort(function (a, b) {
-                return a.order - b.order;
-              }));
+            (_d = 0), (_e = task.actions.sort((a, b) => a.order - b.order));
             _g.label = 13;
           case 13:
             if (!(_d < _e.length)) return [3 /*break*/, 16];
@@ -1271,7 +1267,7 @@ var DataCleanupManager = /** @class */ (function () {
    */
   DataCleanupManager.prototype.getTargetItems = function (target, task) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would implement the actual data retrieval logic
         // For now, return mock data
         console.log(
@@ -1286,7 +1282,7 @@ var DataCleanupManager = /** @class */ (function () {
    */
   DataCleanupManager.prototype.processBatch = function (batch, target, task, options) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would implement the actual batch processing logic
         console.log("Processing batch of ".concat(batch.length, " items"));
         return [2 /*return*/, { itemsProcessed: batch.length, sizeProcessed: batch.length * 1024 }];
@@ -1389,7 +1385,7 @@ var DataCleanupManager = /** @class */ (function () {
   DataCleanupManager.prototype.evaluateCondition = function (condition, task) {
     return __awaiter(this, void 0, void 0, function () {
       var startTime, conditionResult;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         startTime = Date.now();
         conditionResult = {
           condition: condition,
@@ -1417,24 +1413,22 @@ var DataCleanupManager = /** @class */ (function () {
    */
   DataCleanupManager.prototype.processCompliance = function (task, result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            frameworkResults: [],
-            dataSubjectRights: [],
-            auditTrail: [],
-            notifications: [],
-            approvals: [],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          frameworkResults: [],
+          dataSubjectRights: [],
+          auditTrail: [],
+          notifications: [],
+          approvals: [],
+        },
+      ]);
     });
   };
   /**
    * Calculate performance metrics
    */
-  DataCleanupManager.prototype.calculatePerformanceMetrics = function (result) {
+  DataCleanupManager.prototype.calculatePerformanceMetrics = (result) => {
     var durationSeconds = result.duration / 1000;
     return {
       itemsPerSecond: durationSeconds > 0 ? result.summary.itemsProcessed / durationSeconds : 0,
@@ -1448,7 +1442,7 @@ var DataCleanupManager = /** @class */ (function () {
   /**
    * Update task statistics
    */
-  DataCleanupManager.prototype.updateTaskStatistics = function (task, result) {
+  DataCleanupManager.prototype.updateTaskStatistics = (task, result) => {
     var _a;
     task.statistics.totalRuns++;
     if (result.status === "success") {
@@ -1481,7 +1475,7 @@ var DataCleanupManager = /** @class */ (function () {
   /**
    * Calculate next run time
    */
-  DataCleanupManager.prototype.calculateNextRun = function (task) {
+  DataCleanupManager.prototype.calculateNextRun = (task) => {
     var now = Date.now();
     switch (task.schedule.type) {
       case "interval":
@@ -1498,7 +1492,7 @@ var DataCleanupManager = /** @class */ (function () {
    */
   DataCleanupManager.prototype.startContinuousTask = function (taskId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for continuous background tasks
         console.log("Starting continuous task ".concat(taskId));
         return [2 /*return*/];
@@ -1510,7 +1504,7 @@ var DataCleanupManager = /** @class */ (function () {
    */
   DataCleanupManager.prototype.checkApproval = function (task) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would implement the actual approval checking logic
         return [2 /*return*/, true];
       });
@@ -1595,7 +1589,7 @@ var DataCleanupManager = /** @class */ (function () {
   DataCleanupManager.prototype.emit = function (event, data) {
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (callback) {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1680,11 +1674,11 @@ var DataCleanupManager = /** @class */ (function () {
             return [4 /*yield*/, this.notificationService.healthCheck()];
           case 3:
             checks = ((_a.notificationService = _b.sent()), _a);
-            allHealthy = Object.values(checks).every(function (check) {
-              return typeof check === "boolean" || typeof check === "number"
+            allHealthy = Object.values(checks).every((check) =>
+              typeof check === "boolean" || typeof check === "number"
                 ? true
-                : check.status === "healthy";
-            });
+                : check.status === "healthy",
+            );
             return [
               2 /*return*/,
               {
@@ -1713,18 +1707,16 @@ exports.DataCleanupManager = DataCleanupManager;
 /**
  * Helper classes (simplified implementations)
  */
-var AuditLogger = /** @class */ (function () {
+var AuditLogger = /** @class */ (() => {
   function AuditLogger() {}
   AuditLogger.prototype.initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AuditLogger.prototype.logEvent = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Audit log:", event.action);
         return [2 /*return*/];
       });
@@ -1732,57 +1724,45 @@ var AuditLogger = /** @class */ (function () {
   };
   AuditLogger.prototype.healthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { status: "healthy" }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { status: "healthy" }]);
     });
   };
   AuditLogger.prototype.shutdown = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return AuditLogger;
 })();
-var ComplianceEngine = /** @class */ (function () {
+var ComplianceEngine = /** @class */ (() => {
   function ComplianceEngine() {}
   ComplianceEngine.prototype.initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ComplianceEngine.prototype.healthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { status: "healthy" }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { status: "healthy" }]);
     });
   };
   ComplianceEngine.prototype.shutdown = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return ComplianceEngine;
 })();
-var NotificationService = /** @class */ (function () {
+var NotificationService = /** @class */ (() => {
   function NotificationService() {}
   NotificationService.prototype.initialize = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   NotificationService.prototype.sendNotification = function (notification) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Notification sent:", notification.type);
         return [2 /*return*/];
       });
@@ -1790,16 +1770,12 @@ var NotificationService = /** @class */ (function () {
   };
   NotificationService.prototype.healthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { status: "healthy" }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { status: "healthy" }]);
     });
   };
   NotificationService.prototype.shutdown = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return NotificationService;

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,10 +128,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -143,12 +140,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useBudgetApproval = useBudgetApproval;
 var react_1 = require("react");
 function useBudgetApproval() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     budgets = _a[0],
     setBudgets = _a[1];
@@ -173,13 +169,13 @@ function useBudgetApproval() {
   var _h = (0, react_1.useState)(null),
     validationResult = _h[0],
     setValidationResult = _h[1];
-  var pendingApprovals = approvals.filter(function (approval) {
-    return approval.status === "pending" || !("status" in approval);
-  });
-  var fetchBudgets = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var pendingApprovals = approvals.filter(
+    (approval) => approval.status === "pending" || !("status" in approval),
+  );
+  var fetchBudgets = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setBudgetLoading(true);
@@ -209,11 +205,10 @@ function useBudgetApproval() {
         }
       });
     });
-  };
-  var fetchApprovals = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchApprovals = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setApprovalLoading(true);
@@ -243,11 +238,10 @@ function useBudgetApproval() {
         }
       });
     });
-  };
-  var createBudget = function (budgetData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createBudget = (budgetData) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -277,11 +271,10 @@ function useBudgetApproval() {
         }
       });
     });
-  };
-  var updateBudget = function (budgetId, updates) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateBudget = (budgetId, updates) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -311,11 +304,10 @@ function useBudgetApproval() {
         }
       });
     });
-  };
-  var deleteBudget = function (budgetId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteBudget = (budgetId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -343,11 +335,10 @@ function useBudgetApproval() {
         }
       });
     });
-  };
-  var createApproval = function (approvalData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createApproval = (approvalData) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -377,11 +368,10 @@ function useBudgetApproval() {
         }
       });
     });
-  };
-  var processApproval = function (approvalId, action, comments) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var processApproval = (approvalId, action, comments) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -411,11 +401,10 @@ function useBudgetApproval() {
         }
       });
     });
-  };
-  var generateOptimizationRecommendations = function (budgetIds) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generateOptimizationRecommendations = (budgetIds) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -446,14 +435,13 @@ function useBudgetApproval() {
         }
       });
     });
-  };
-  var generateForecast = function (budgetId_1) {
+  var generateForecast = (budgetId_1) => {
     var args_1 = [];
     for (var _i = 1; _i < arguments.length; _i++) {
       args_1[_i - 1] = arguments[_i];
     }
     return __awaiter(
-      _this,
+      this,
       __spreadArray([budgetId_1], args_1, true),
       void 0,
       function (budgetId, periods) {
@@ -461,7 +449,7 @@ function useBudgetApproval() {
         if (periods === void 0) {
           periods = 12;
         }
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -494,9 +482,9 @@ function useBudgetApproval() {
       },
     );
   };
-  var validateBudget = function (budgetId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var validateBudget = (budgetId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // This would need a separate validation endpoint
           // For now, we'll simulate the validation
@@ -513,8 +501,7 @@ function useBudgetApproval() {
         return [2 /*return*/];
       });
     });
-  };
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     fetchBudgets();
     fetchApprovals();
   }, []);

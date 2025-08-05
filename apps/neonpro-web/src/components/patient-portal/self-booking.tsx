@@ -1,32 +1,31 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { format, addDays, isSameDay, parseISO } from "date-fns";
+import { addDays, format, isSameDay, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
-  Calendar as CalendarIcon,
-  Clock,
-  MapPin,
-  User,
-  CheckCircle,
   AlertCircle,
-  Loader2,
   ArrowLeft,
   ArrowRight,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
   Heart,
+  Loader2,
+  MapPin,
   Sparkles,
+  User,
 } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar } from "@/components/ui/calendar";
-import { Badge } from "@/components/ui/badge";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
 
 interface Service {
   id: string;

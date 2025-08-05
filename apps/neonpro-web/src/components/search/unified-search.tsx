@@ -1,6 +1,8 @@
 // components/search/unified-search.tsx
 "use client";
 
+import type { Bookmark, Clock, Search, X } from "lucide-react";
+import type { useCallback, useEffect, useState } from "react";
 import type { searchClient } from "@/lib/search/search-client";
 import type {
   SearchQuery,
@@ -8,8 +10,6 @@ import type {
   SearchResult,
   SearchType,
 } from "@/lib/search/unified-search";
-import type { Bookmark, Clock, Search, X } from "lucide-react";
-import type { useCallback, useEffect, useState } from "react";
 
 interface UnifiedSearchProps {
   onResultSelect?: (result: SearchResult) => void;

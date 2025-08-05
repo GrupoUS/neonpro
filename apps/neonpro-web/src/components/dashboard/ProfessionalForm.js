@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ProfessionalForm;
 var react_1 = require("react");
@@ -214,7 +211,6 @@ var serviceTypeOptions = [
   { value: "administrative", label: "Administrativo" },
 ];
 function ProfessionalForm(_a) {
-  var _this = this;
   var professionalId = _a.professionalId,
     _b = _a.mode,
     mode = _b === void 0 ? "create" : _b;
@@ -298,19 +294,16 @@ function ProfessionalForm(_a) {
       requires_certification: false,
     },
   });
-  (0, react_1.useEffect)(
-    function () {
-      loadSpecialties();
-      if (mode === "edit" && professionalId) {
-        loadProfessional();
-      }
-    },
-    [mode, professionalId],
-  );
-  var loadSpecialties = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadSpecialties();
+    if (mode === "edit" && professionalId) {
+      loadProfessional();
+    }
+  }, [mode, professionalId]);
+  var loadSpecialties = () =>
+    __awaiter(this, void 0, void 0, function () {
       var data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -329,11 +322,10 @@ function ProfessionalForm(_a) {
         }
       });
     });
-  };
-  var loadProfessional = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadProfessional = () =>
+    __awaiter(this, void 0, void 0, function () {
       var data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!professionalId) return [2 /*return*/];
@@ -379,11 +371,10 @@ function ProfessionalForm(_a) {
         }
       });
     });
-  };
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var newProfessional, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -418,11 +409,10 @@ function ProfessionalForm(_a) {
         }
       });
     });
-  };
-  var handleAddCredential = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAddCredential = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var credentialData, newCredential_1, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!professionalId && mode === "edit") {
@@ -437,9 +427,9 @@ function ProfessionalForm(_a) {
             return [4 /*yield*/, (0, professionals_1.createCredential)(credentialData)];
           case 2:
             newCredential_1 = _a.sent();
-            setCredentials(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [newCredential_1], false);
-            });
+            setCredentials((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [newCredential_1], false),
+            );
             credentialForm.reset();
             setShowCredentialDialog(false);
             sonner_1.toast.success("Credencial adicionada com sucesso!");
@@ -457,11 +447,10 @@ function ProfessionalForm(_a) {
         }
       });
     });
-  };
-  var handleAddService = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAddService = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var serviceData, newService_1, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!professionalId && mode === "edit") {
@@ -476,9 +465,9 @@ function ProfessionalForm(_a) {
             return [4 /*yield*/, (0, professionals_1.createService)(serviceData)];
           case 2:
             newService_1 = _a.sent();
-            setServices(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [newService_1], false);
-            });
+            setServices((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [newService_1], false),
+            );
             serviceForm.reset();
             setShowServiceDialog(false);
             sonner_1.toast.success("Serviço adicionado com sucesso!");
@@ -496,8 +485,7 @@ function ProfessionalForm(_a) {
         }
       });
     });
-  };
-  var handlePhotoUpload = function (event) {
+  var handlePhotoUpload = (event) => {
     var _a;
     var file = (_a = event.target.files) === null || _a === void 0 ? void 0 : _a[0];
     if (file) {
@@ -505,14 +493,12 @@ function ProfessionalForm(_a) {
       sonner_1.toast.success("Foto selecionada com sucesso!");
     }
   };
-  var handleSpecialtyToggle = function (specialtyId) {
-    setSelectedSpecialties(function (prev) {
-      return prev.includes(specialtyId)
-        ? prev.filter(function (id) {
-            return id !== specialtyId;
-          })
-        : __spreadArray(__spreadArray([], prev, true), [specialtyId], false);
-    });
+  var handleSpecialtyToggle = (specialtyId) => {
+    setSelectedSpecialties((prev) =>
+      prev.includes(specialtyId)
+        ? prev.filter((id) => id !== specialtyId)
+        : __spreadArray(__spreadArray([], prev, true), [specialtyId], false),
+    );
   };
   return (
     <div className="flex-1 space-y-6">
@@ -529,12 +515,7 @@ function ProfessionalForm(_a) {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button_1.Button
-            variant="outline"
-            onClick={function () {
-              return router.back();
-            }}
-          >
+          <button_1.Button variant="outline" onClick={() => router.back()}>
             <lucide_react_1.X className="mr-2 h-4 w-4" />
             Cancelar
           </button_1.Button>
@@ -604,7 +585,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="given_name"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -621,7 +602,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="family_name"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -638,7 +619,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="email"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -659,7 +640,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="phone_number"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -676,7 +657,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="birth_date"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -701,7 +682,7 @@ function ProfessionalForm(_a) {
                       <form_1.FormField
                         control={form.control}
                         name="address.line"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -718,7 +699,7 @@ function ProfessionalForm(_a) {
                       <form_1.FormField
                         control={form.control}
                         name="address.city"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -735,7 +716,7 @@ function ProfessionalForm(_a) {
                       <form_1.FormField
                         control={form.control}
                         name="address.state"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -752,7 +733,7 @@ function ProfessionalForm(_a) {
                       <form_1.FormField
                         control={form.control}
                         name="address.postal_code"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -771,7 +752,7 @@ function ProfessionalForm(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="bio"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -812,7 +793,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="license_number"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -829,7 +810,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="qualification"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -849,7 +830,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="employment_status"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -864,13 +845,11 @@ function ProfessionalForm(_a) {
                                 </select_1.SelectTrigger>
                               </form_1.FormControl>
                               <select_1.SelectContent>
-                                {employmentStatusOptions.map(function (option) {
-                                  return (
-                                    <select_1.SelectItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </select_1.SelectItem>
-                                  );
-                                })}
+                                {employmentStatusOptions.map((option) => (
+                                  <select_1.SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </select_1.SelectItem>
+                                ))}
                               </select_1.SelectContent>
                             </select_1.Select>
                             <form_1.FormMessage />
@@ -882,7 +861,7 @@ function ProfessionalForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="status"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -897,13 +876,11 @@ function ProfessionalForm(_a) {
                                 </select_1.SelectTrigger>
                               </form_1.FormControl>
                               <select_1.SelectContent>
-                                {professionalStatusOptions.map(function (option) {
-                                  return (
-                                    <select_1.SelectItem key={option.value} value={option.value}>
-                                      {option.label}
-                                    </select_1.SelectItem>
-                                  );
-                                })}
+                                {professionalStatusOptions.map((option) => (
+                                  <select_1.SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </select_1.SelectItem>
+                                ))}
                               </select_1.SelectContent>
                             </select_1.Select>
                             <form_1.FormMessage />
@@ -930,30 +907,24 @@ function ProfessionalForm(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {specialties.map(function (specialty) {
-                      return (
-                        <div
-                          key={specialty.id}
-                          className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent cursor-pointer"
-                          onClick={function () {
-                            return handleSpecialtyToggle(specialty.id);
-                          }}
-                        >
-                          <checkbox_1.Checkbox
-                            checked={selectedSpecialties.includes(specialty.id)}
-                            onChange={function () {
-                              return handleSpecialtyToggle(specialty.id);
-                            }}
-                          />
-                          <div className="flex-1">
-                            <div className="font-medium">{specialty.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {specialty.description}
-                            </div>
+                    {specialties.map((specialty) => (
+                      <div
+                        key={specialty.id}
+                        className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-accent cursor-pointer"
+                        onClick={() => handleSpecialtyToggle(specialty.id)}
+                      >
+                        <checkbox_1.Checkbox
+                          checked={selectedSpecialties.includes(specialty.id)}
+                          onChange={() => handleSpecialtyToggle(specialty.id)}
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium">{specialty.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {specialty.description}
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -998,7 +969,7 @@ function ProfessionalForm(_a) {
                             <form_1.FormField
                               control={credentialForm.control}
                               name="credential_type"
-                              render={function (_a) {
+                              render={(_a) => {
                                 var field = _a.field;
                                 return (
                                   <form_1.FormItem>
@@ -1013,16 +984,14 @@ function ProfessionalForm(_a) {
                                         </select_1.SelectTrigger>
                                       </form_1.FormControl>
                                       <select_1.SelectContent>
-                                        {credentialTypeOptions.map(function (option) {
-                                          return (
-                                            <select_1.SelectItem
-                                              key={option.value}
-                                              value={option.value}
-                                            >
-                                              {option.label}
-                                            </select_1.SelectItem>
-                                          );
-                                        })}
+                                        {credentialTypeOptions.map((option) => (
+                                          <select_1.SelectItem
+                                            key={option.value}
+                                            value={option.value}
+                                          >
+                                            {option.label}
+                                          </select_1.SelectItem>
+                                        ))}
                                       </select_1.SelectContent>
                                     </select_1.Select>
                                     <form_1.FormMessage />
@@ -1034,7 +1003,7 @@ function ProfessionalForm(_a) {
                             <form_1.FormField
                               control={credentialForm.control}
                               name="credential_number"
-                              render={function (_a) {
+                              render={(_a) => {
                                 var field = _a.field;
                                 return (
                                   <form_1.FormItem>
@@ -1054,7 +1023,7 @@ function ProfessionalForm(_a) {
                             <form_1.FormField
                               control={credentialForm.control}
                               name="issuing_authority"
-                              render={function (_a) {
+                              render={(_a) => {
                                 var field = _a.field;
                                 return (
                                   <form_1.FormItem>
@@ -1075,7 +1044,7 @@ function ProfessionalForm(_a) {
                               <form_1.FormField
                                 control={credentialForm.control}
                                 name="issue_date"
-                                render={function (_a) {
+                                render={(_a) => {
                                   var field = _a.field;
                                   return (
                                     <form_1.FormItem>
@@ -1092,7 +1061,7 @@ function ProfessionalForm(_a) {
                               <form_1.FormField
                                 control={credentialForm.control}
                                 name="expiry_date"
-                                render={function (_a) {
+                                render={(_a) => {
                                   var field = _a.field;
                                   return (
                                     <form_1.FormItem>
@@ -1110,7 +1079,7 @@ function ProfessionalForm(_a) {
                             <form_1.FormField
                               control={credentialForm.control}
                               name="description"
-                              render={function (_a) {
+                              render={(_a) => {
                                 var field = _a.field;
                                 return (
                                   <form_1.FormItem>
@@ -1131,9 +1100,7 @@ function ProfessionalForm(_a) {
                         <dialog_1.DialogFooter>
                           <button_1.Button
                             variant="outline"
-                            onClick={function () {
-                              return setShowCredentialDialog(false);
-                            }}
+                            onClick={() => setShowCredentialDialog(false)}
                           >
                             Cancelar
                           </button_1.Button>
@@ -1155,41 +1122,39 @@ function ProfessionalForm(_a) {
                         <p className="text-muted-foreground">Nenhuma credencial cadastrada</p>
                       </div>
                     : <div className="space-y-4">
-                        {credentials.map(function (credential) {
-                          return (
-                            <div
-                              key={credential.id}
-                              className="flex items-center justify-between p-4 border rounded-lg"
-                            >
-                              <div>
-                                <div className="font-medium">{credential.credential_type}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  {credential.credential_number} - {credential.issuing_authority}
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                  Válida até:{" "}
-                                  {credential.expiry_date
-                                    ? new Date(credential.expiry_date).toLocaleDateString("pt-BR")
-                                    : "Sem expiração"}
-                                </div>
+                        {credentials.map((credential) => (
+                          <div
+                            key={credential.id}
+                            className="flex items-center justify-between p-4 border rounded-lg"
+                          >
+                            <div>
+                              <div className="font-medium">{credential.credential_type}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {credential.credential_number} - {credential.issuing_authority}
                               </div>
-                              <div className="flex items-center gap-2">
-                                <badge_1.Badge
-                                  variant={
-                                    credential.verification_status === "verified"
-                                      ? "default"
-                                      : "outline"
-                                  }
-                                >
-                                  {credential.verification_status}
-                                </badge_1.Badge>
-                                <button_1.Button variant="ghost" size="sm">
-                                  <lucide_react_1.Trash2 className="h-4 w-4" />
-                                </button_1.Button>
+                              <div className="text-sm text-muted-foreground">
+                                Válida até:{" "}
+                                {credential.expiry_date
+                                  ? new Date(credential.expiry_date).toLocaleDateString("pt-BR")
+                                  : "Sem expiração"}
                               </div>
                             </div>
-                          );
-                        })}
+                            <div className="flex items-center gap-2">
+                              <badge_1.Badge
+                                variant={
+                                  credential.verification_status === "verified"
+                                    ? "default"
+                                    : "outline"
+                                }
+                              >
+                                {credential.verification_status}
+                              </badge_1.Badge>
+                              <button_1.Button variant="ghost" size="sm">
+                                <lucide_react_1.Trash2 className="h-4 w-4" />
+                              </button_1.Button>
+                            </div>
+                          </div>
+                        ))}
                       </div>}
                 </card_1.CardContent>
               </card_1.Card>
@@ -1231,7 +1196,7 @@ function ProfessionalForm(_a) {
                             <form_1.FormField
                               control={serviceForm.control}
                               name="service_name"
-                              render={function (_a) {
+                              render={(_a) => {
                                 var field = _a.field;
                                 return (
                                   <form_1.FormItem>
@@ -1248,7 +1213,7 @@ function ProfessionalForm(_a) {
                             <form_1.FormField
                               control={serviceForm.control}
                               name="service_type"
-                              render={function (_a) {
+                              render={(_a) => {
                                 var field = _a.field;
                                 return (
                                   <form_1.FormItem>
@@ -1263,16 +1228,14 @@ function ProfessionalForm(_a) {
                                         </select_1.SelectTrigger>
                                       </form_1.FormControl>
                                       <select_1.SelectContent>
-                                        {serviceTypeOptions.map(function (option) {
-                                          return (
-                                            <select_1.SelectItem
-                                              key={option.value}
-                                              value={option.value}
-                                            >
-                                              {option.label}
-                                            </select_1.SelectItem>
-                                          );
-                                        })}
+                                        {serviceTypeOptions.map((option) => (
+                                          <select_1.SelectItem
+                                            key={option.value}
+                                            value={option.value}
+                                          >
+                                            {option.label}
+                                          </select_1.SelectItem>
+                                        ))}
                                       </select_1.SelectContent>
                                     </select_1.Select>
                                     <form_1.FormMessage />
@@ -1284,7 +1247,7 @@ function ProfessionalForm(_a) {
                             <form_1.FormField
                               control={serviceForm.control}
                               name="description"
-                              render={function (_a) {
+                              render={(_a) => {
                                 var field = _a.field;
                                 return (
                                   <form_1.FormItem>
@@ -1305,7 +1268,7 @@ function ProfessionalForm(_a) {
                               <form_1.FormField
                                 control={serviceForm.control}
                                 name="duration_minutes"
-                                render={function (_a) {
+                                render={(_a) => {
                                   var field = _a.field;
                                   return (
                                     <form_1.FormItem>
@@ -1315,9 +1278,7 @@ function ProfessionalForm(_a) {
                                           type="number"
                                           placeholder="60"
                                           {...field}
-                                          onChange={function (e) {
-                                            return field.onChange(parseInt(e.target.value));
-                                          }}
+                                          onChange={(e) => field.onChange(parseInt(e.target.value))}
                                         />
                                       </form_1.FormControl>
                                       <form_1.FormMessage />
@@ -1329,7 +1290,7 @@ function ProfessionalForm(_a) {
                               <form_1.FormField
                                 control={serviceForm.control}
                                 name="base_price"
-                                render={function (_a) {
+                                render={(_a) => {
                                   var field = _a.field;
                                   return (
                                     <form_1.FormItem>
@@ -1340,9 +1301,9 @@ function ProfessionalForm(_a) {
                                           step="0.01"
                                           placeholder="0.00"
                                           {...field}
-                                          onChange={function (e) {
-                                            return field.onChange(parseFloat(e.target.value));
-                                          }}
+                                          onChange={(e) =>
+                                            field.onChange(parseFloat(e.target.value))
+                                          }
                                         />
                                       </form_1.FormControl>
                                       <form_1.FormMessage />
@@ -1355,7 +1316,7 @@ function ProfessionalForm(_a) {
                             <form_1.FormField
                               control={serviceForm.control}
                               name="requires_certification"
-                              render={function (_a) {
+                              render={(_a) => {
                                 var field = _a.field;
                                 return (
                                   <form_1.FormItem className="flex flex-row items-start space-x-3 space-y-0">
@@ -1382,9 +1343,7 @@ function ProfessionalForm(_a) {
                         <dialog_1.DialogFooter>
                           <button_1.Button
                             variant="outline"
-                            onClick={function () {
-                              return setShowServiceDialog(false);
-                            }}
+                            onClick={() => setShowServiceDialog(false)}
                           >
                             Cancelar
                           </button_1.Button>
@@ -1406,7 +1365,7 @@ function ProfessionalForm(_a) {
                         <p className="text-muted-foreground">Nenhum serviço cadastrado</p>
                       </div>
                     : <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {services.map(function (service) {
+                        {services.map((service) => {
                           var _a;
                           return (
                             <div key={service.id} className="p-4 border rounded-lg">

@@ -7,14 +7,9 @@
  * @compliance LGPD Art. 37, 38, 39 (Relatórios e Documentação)
  */
 
-import type { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 import type { z } from "zod";
-import type { createClient } from "@supabase/supabase-js";
-import type { validateCSRF } from "@/lib/security/csrf";
-import type { rateLimit } from "@/lib/security/rate-limit";
-import type { requireAuth } from "@/lib/auth/middleware";
-import type { hasPermission } from "@/lib/rbac/permissions";
-import type { LGPDAuditTrail, AuditEventType } from "@/lib/compliance/audit-trail";
+import type { LGPDAuditTrail } from "@/lib/compliance/audit-trail";
 import type { LGPDCore } from "@/lib/compliance/lgpd-core";
 
 // ============================================================================
@@ -183,8 +178,8 @@ async function generateAuditReport(
 }
 
 async function generateConsentReport(
-  lgpdCore: LGPDCore,
-  clinicId: string,
+  _lgpdCore: LGPDCore,
+  _clinicId: string,
   period: { start: Date; end: Date },
 ) {
   // This would integrate with the consent management system
@@ -206,8 +201,8 @@ async function generateConsentReport(
 }
 
 async function generateDataSubjectReport(
-  lgpdCore: LGPDCore,
-  clinicId: string,
+  _lgpdCore: LGPDCore,
+  _clinicId: string,
   period: { start: Date; end: Date },
 ) {
   // This would integrate with data subject rights system
@@ -280,7 +275,7 @@ async function formatReport(reportData: any, format: string) {
         contentType: "application/json",
       };
 
-    case "csv":
+    case "csv": {
       // Convert to CSV format
       const csvData = convertToCSV(reportData);
       return {
@@ -288,6 +283,7 @@ async function formatReport(reportData: any, format: string) {
         contentType: "text/csv",
         filename: `compliance-report-${Date.now()}.csv`,
       };
+    }
 
     case "pdf":
       // Generate PDF (would use a PDF library)

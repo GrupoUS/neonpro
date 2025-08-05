@@ -2,8 +2,8 @@
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Comprehensive bank reconciliation service for automated transaction matching
 
-import type { createClient } from "@/lib/supabase/client";
 import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/client";
 
 // Validation schemas
 const BankStatementSchema = z.object({

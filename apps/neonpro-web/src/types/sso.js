@@ -1,11 +1,10 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DEFAULT_SSO_PROVIDERS = exports.SSOErrorCode = void 0;
 var SSOErrorCode;
-(function (SSOErrorCode) {
-  SSOErrorCode["INVALID_PROVIDER"] = "INVALID_PROVIDER";
-  SSOErrorCode["AUTH_FAILED"] = "AUTH_FAILED";
-  SSOErrorCode["TOKEN_EXPIRED"] = "TOKEN_EXPIRED";
+((SSOErrorCode) => {
+  SSOErrorCode.INVALID_PROVIDER = "INVALID_PROVIDER";
+  SSOErrorCode.AUTH_FAILED = "AUTH_FAILED";
+  SSOErrorCode.TOKEN_EXPIRED = "TOKEN_EXPIRED";
 })(SSOErrorCode || (exports.SSOErrorCode = SSOErrorCode = {}));
 // Default SSO providers configuration
 exports.DEFAULT_SSO_PROVIDERS = [

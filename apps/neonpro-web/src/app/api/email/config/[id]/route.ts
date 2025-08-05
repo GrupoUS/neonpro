@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
-import { EmailProviderConfigSchema } from "@/app/types/email";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { EmailProviderConfigSchema } from "@/app/types/email";
+import { createClient } from "@/app/utils/supabase/server";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

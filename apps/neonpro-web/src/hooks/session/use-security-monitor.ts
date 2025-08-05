@@ -1,9 +1,9 @@
 "use client";
 
-import type { useState, useEffect, useCallback, useRef } from "react";
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { useCallback, useEffect, useRef, useState } from "react";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
+import type { SessionUtils } from "@/lib/auth/utils/session-utils";
 import type { SecurityEvent, SuspiciousActivity, UserDevice } from "@/types/session";
 
 interface SecurityMonitorState {

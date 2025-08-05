@@ -1,9 +1,25 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  AlertCircle,
+  Building2,
+  CheckCircle2,
+  FileCheck,
+  Globe,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import * as z from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -21,24 +37,8 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Building2,
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  FileCheck,
-  Save,
-  AlertCircle,
-  CheckCircle2,
-  Loader2,
-} from "lucide-react";
-import type { toast } from "sonner";
+import type { Textarea } from "@/components/ui/textarea";
 
 // CNPJ validation function
 const validateCNPJ = (cnpj: string): boolean => {

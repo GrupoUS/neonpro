@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionGuard = SubscriptionGuard;
 exports.PremiumFeatureGuard = PremiumFeatureGuard;
@@ -185,14 +184,8 @@ function useSubscriptionAccess() {
     isTrialUser: isTrialing,
     isLoading: isLoading,
     // Helper functions
-    renderIfPremium: function (content) {
-      return hasAccess ? content : null;
-    },
-    renderIfActive: function (content) {
-      return isActive ? content : null;
-    },
-    renderIfTrial: function (content) {
-      return isTrialing ? content : null;
-    },
+    renderIfPremium: (content) => (hasAccess ? content : null),
+    renderIfActive: (content) => (isActive ? content : null),
+    renderIfTrial: (content) => (isTrialing ? content : null),
   };
 }

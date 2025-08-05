@@ -7,11 +7,11 @@
  * PUT /api/subscription/current - Update subscription settings
  */
 
+import type { cookies } from "next/headers";
 import type { NextRequest, NextResponse } from "next/server";
 import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { Database } from "@/types/database";
 import type { getSubscriptionContext } from "@/middleware/subscription/subscriptionUtils";
+import type { Database } from "@/types/database";
 
 export async function GET(request: NextRequest) {
   try {
@@ -162,7 +162,7 @@ async function calculateUsageStats(supabase: any, subscription: any) {
       let currentUsage = 0;
 
       switch (limitKey) {
-        case "max_patients":
+        case "max_patients": {
           const { count: patientCount } = await supabase
             .from("patients")
             .select("*", { count: "exact", head: true })
@@ -170,8 +170,9 @@ async function calculateUsageStats(supabase: any, subscription: any) {
             .eq("is_active", true);
           currentUsage = patientCount || 0;
           break;
+        }
 
-        case "max_appointments_per_month":
+        case "max_appointments_per_month": {
           const startOfMonth = new Date();
           startOfMonth.setDate(1);
           startOfMonth.setHours(0, 0, 0, 0);
@@ -183,8 +184,9 @@ async function calculateUsageStats(supabase: any, subscription: any) {
             .gte("appointment_date", startOfMonth.toISOString());
           currentUsage = appointmentCount || 0;
           break;
+        }
 
-        case "max_users":
+        case "max_users": {
           const { count: userCount } = await supabase
             .from("user_clinics")
             .select("*", { count: "exact", head: true })
@@ -192,6 +194,7 @@ async function calculateUsageStats(supabase: any, subscription: any) {
             .eq("is_active", true);
           currentUsage = userCount || 0;
           break;
+        }
       }
 
       const limit = limits[limitKey];

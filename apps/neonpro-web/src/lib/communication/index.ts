@@ -7,53 +7,44 @@
  * waitlist management, and detailed analytics.
  */
 
-// Core types
-export * from "./types";
-
-// Main communication service
-export { CommunicationService } from "./communication-service";
-
-// Communication providers
-export { SMSProvider } from "./providers/sms-provider";
-export { EmailProvider } from "./providers/email-provider";
-export { WhatsAppProvider } from "./providers/whatsapp-provider";
-
-// Template engine
-export { TemplateEngine } from "./template-engine";
-
-// No-show prediction
-export { NoShowPredictor } from "./no-show-predictor";
-
-// Waitlist management
-export { WaitlistManager } from "./waitlist-manager";
-
-// Analytics and insights
-export { CommunicationAnalytics } from "./analytics";
-
-// Re-export specific types for convenience
 export type {
-  CommunicationChannel,
-  MessageType,
-  CommunicationLog,
-  MessageTemplate,
-  PatientCommPreferences,
-  NoShowPrediction,
-  WaitlistEntry,
-  CommunicationCampaign,
-  CommunicationAnalytics as CommunicationAnalyticsType,
-  TemplateVariables,
-  ProviderConfig,
-  CommunicationJob,
-} from "./types";
-
-export type {
-  CommunicationMetrics,
-  ChannelPerformance,
   CampaignAnalytics,
+  ChannelPerformance,
+  CommunicationMetrics,
   PatientEngagementScore,
 } from "./analytics";
-
+// Analytics and insights
+export { CommunicationAnalytics } from "./analytics";
+// Main communication service
+export { CommunicationService } from "./communication-service";
+// No-show prediction
+export { NoShowPredictor } from "./no-show-predictor";
+export { EmailProvider } from "./providers/email-provider";
+// Communication providers
+export { SMSProvider } from "./providers/sms-provider";
+export { WhatsAppProvider } from "./providers/whatsapp-provider";
+// Template engine
+export { TemplateEngine } from "./template-engine";
+// Re-export specific types for convenience
+export type {
+  CommunicationAnalytics as CommunicationAnalyticsType,
+  CommunicationCampaign,
+  CommunicationChannel,
+  CommunicationJob,
+  CommunicationLog,
+  MessageTemplate,
+  MessageType,
+  NoShowPrediction,
+  PatientCommPreferences,
+  ProviderConfig,
+  TemplateVariables,
+  WaitlistEntry,
+} from "./types";
+// Core types
+export * from "./types";
 export type { WaitlistNotificationResult } from "./waitlist-manager";
+// Waitlist management
+export { WaitlistManager } from "./waitlist-manager";
 
 /**
  * Main communication system factory

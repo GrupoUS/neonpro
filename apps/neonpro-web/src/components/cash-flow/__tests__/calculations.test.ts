@@ -2,15 +2,15 @@
 // Testing utility functions for cash flow management
 
 import type {
-  formatCurrency,
-  parseCurrency,
-  validateAmount,
   calculateNewBalance,
+  formatCurrency,
   generateReferenceNumber,
-  getTransactionTypeColor,
-  getPaymentMethodIcon,
   getCategoryDisplayName,
   getDateRange,
+  getPaymentMethodIcon,
+  getTransactionTypeColor,
+  parseCurrency,
+  validateAmount,
 } from "../utils/calculations";
 
 describe("Cash Flow Utilities", () => {

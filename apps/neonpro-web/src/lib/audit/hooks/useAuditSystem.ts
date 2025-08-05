@@ -16,20 +16,20 @@
  * @version 1.0.0
  */
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
+import type { useCallback, useEffect, useMemo, useState } from "react";
+import type { useToast } from "@/hooks/useToast";
 import type { useUser } from "@/hooks/useUser";
+import type { createClient } from "@/lib/supabase/client";
 import type {
   AuditEvent,
   AuditEventType,
-  AuditSeverity,
   AuditQueryFilters,
   AuditReport,
+  AuditSeverity,
   AuditStatistics,
   auditSystem,
   logAuditEvent,
 } from "../audit-system";
-import type { createClient } from "@/lib/supabase/client";
-import type { useToast } from "@/hooks/useToast";
 
 // =====================================================
 // TYPES E INTERFACES

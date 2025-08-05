@@ -706,7 +706,7 @@ export class EmergencyTermination {
           throw new Error("Target session not found");
         }
         break;
-      case "user_sessions":
+      case "user_sessions": {
         // Validate user exists
         const { data: userData, error: userError } = await this.supabase
           .from("users")
@@ -718,6 +718,7 @@ export class EmergencyTermination {
           throw new Error("Target user not found");
         }
         break;
+      }
       case "all_sessions":
         // No validation needed
         break;

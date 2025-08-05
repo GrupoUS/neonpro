@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Comprehensive OAuth Error Handler
  * Handles all OAuth-related errors with proper user feedback and recovery mechanisms
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,18 +146,18 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.oauthErrorHandler = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var SessionManager_1 = require("./session/SessionManager");
 var performance_tracker_1 = require("./performance-tracker");
-var OAuthErrorHandler = /** @class */ (function () {
+var OAuthErrorHandler = /** @class */ (() => {
   function OAuthErrorHandler() {
     this.retryAttempts = new Map();
     this.errorCounts = new Map();
   }
-  OAuthErrorHandler.getInstance = function () {
+  OAuthErrorHandler.getInstance = () => {
     if (!OAuthErrorHandler.instance) {
       OAuthErrorHandler.instance = new OAuthErrorHandler();
     }
@@ -323,7 +320,7 @@ var OAuthErrorHandler = /** @class */ (function () {
   /**
    * Handle Supabase Auth errors
    */
-  OAuthErrorHandler.prototype.classifySupabaseAuthError = function (error, context) {
+  OAuthErrorHandler.prototype.classifySupabaseAuthError = (error, context) => {
     switch (error.message) {
       case "Invalid login credentials":
         return {
@@ -386,7 +383,7 @@ var OAuthErrorHandler = /** @class */ (function () {
   /**
    * Check if error is network-related
    */
-  OAuthErrorHandler.prototype.isNetworkError = function (error) {
+  OAuthErrorHandler.prototype.isNetworkError = (error) => {
     var _a, _b;
     var networkErrorCodes = [
       "NETWORK_ERROR",
@@ -415,7 +412,7 @@ var OAuthErrorHandler = /** @class */ (function () {
   /**
    * Check if error is session-related
    */
-  OAuthErrorHandler.prototype.isSessionError = function (code, message) {
+  OAuthErrorHandler.prototype.isSessionError = (code, message) => {
     var sessionErrorPatterns = [
       "session",
       "token",
@@ -426,101 +423,91 @@ var OAuthErrorHandler = /** @class */ (function () {
     ];
     var lowerMessage = message.toLowerCase();
     var lowerCode = code.toLowerCase();
-    return sessionErrorPatterns.some(function (pattern) {
-      return lowerMessage.includes(pattern) || lowerCode.includes(pattern);
-    });
+    return sessionErrorPatterns.some(
+      (pattern) => lowerMessage.includes(pattern) || lowerCode.includes(pattern),
+    );
   };
   /**
    * Get network error details
    */
-  OAuthErrorHandler.prototype.getNetworkErrorDetails = function (error, context) {
-    return {
-      code: "network_error",
-      message: error.message || "Network connectivity error",
-      userMessage: "Problema de conexão. Verifique sua internet e tente novamente.",
-      severity: "medium",
-      recoveryAction: {
-        type: "retry",
-        message: "Tentar novamente",
-        retryDelay: 3000,
-        maxRetries: 3,
-      },
-      shouldLog: true,
-      shouldNotifyUser: true,
-    };
-  };
+  OAuthErrorHandler.prototype.getNetworkErrorDetails = (error, context) => ({
+    code: "network_error",
+    message: error.message || "Network connectivity error",
+    userMessage: "Problema de conexão. Verifique sua internet e tente novamente.",
+    severity: "medium",
+    recoveryAction: {
+      type: "retry",
+      message: "Tentar novamente",
+      retryDelay: 3000,
+      maxRetries: 3,
+    },
+    shouldLog: true,
+    shouldNotifyUser: true,
+  });
   /**
    * Get session error details
    */
-  OAuthErrorHandler.prototype.getSessionErrorDetails = function (code, message, context) {
-    return {
-      code: "session_error",
-      message: "Session error: ".concat(message),
-      userMessage: "Sessão expirada. Faça login novamente.",
-      severity: "medium",
-      recoveryAction: {
-        type: "redirect",
-        message: "Fazer login novamente",
-      },
-      shouldLog: true,
-      shouldNotifyUser: true,
-    };
-  };
+  OAuthErrorHandler.prototype.getSessionErrorDetails = (code, message, context) => ({
+    code: "session_error",
+    message: "Session error: ".concat(message),
+    userMessage: "Sessão expirada. Faça login novamente.",
+    severity: "medium",
+    recoveryAction: {
+      type: "redirect",
+      message: "Fazer login novamente",
+    },
+    shouldLog: true,
+    shouldNotifyUser: true,
+  });
   /**
    * Get generic Google error details
    */
-  OAuthErrorHandler.prototype.getGenericGoogleErrorDetails = function (code, message, context) {
-    return {
-      code: "google_".concat(code),
-      message: "Google OAuth error: ".concat(message),
-      userMessage: "Erro na autenticação com Google. Tente novamente.",
-      severity: "medium",
-      recoveryAction: {
-        type: "retry",
-        message: "Tentar novamente",
-        retryDelay: 2000,
-        maxRetries: 2,
-      },
-      shouldLog: true,
-      shouldNotifyUser: true,
-    };
-  };
+  OAuthErrorHandler.prototype.getGenericGoogleErrorDetails = (code, message, context) => ({
+    code: "google_".concat(code),
+    message: "Google OAuth error: ".concat(message),
+    userMessage: "Erro na autenticação com Google. Tente novamente.",
+    severity: "medium",
+    recoveryAction: {
+      type: "retry",
+      message: "Tentar novamente",
+      retryDelay: 2000,
+      maxRetries: 2,
+    },
+    shouldLog: true,
+    shouldNotifyUser: true,
+  });
   /**
    * Get generic error details
    */
-  OAuthErrorHandler.prototype.getGenericErrorDetails = function (code, message, context) {
-    return {
-      code: code || "unknown_error",
-      message: message || "Unknown authentication error",
-      userMessage: "Erro de autenticação. Tente novamente.",
-      severity: "medium",
-      recoveryAction: {
-        type: "retry",
-        message: "Tentar novamente",
-        retryDelay: 2000,
-        maxRetries: 2,
-      },
-      shouldLog: true,
-      shouldNotifyUser: true,
-    };
-  };
+  OAuthErrorHandler.prototype.getGenericErrorDetails = (code, message, context) => ({
+    code: code || "unknown_error",
+    message: message || "Unknown authentication error",
+    userMessage: "Erro de autenticação. Tente novamente.",
+    severity: "medium",
+    recoveryAction: {
+      type: "retry",
+      message: "Tentar novamente",
+      retryDelay: 2000,
+      maxRetries: 2,
+    },
+    shouldLog: true,
+    shouldNotifyUser: true,
+  });
   /**
    * Get fallback error details when error handler fails
    */
-  OAuthErrorHandler.prototype.getFallbackErrorDetails = function () {
-    return {
-      code: "error_handler_failure",
-      message: "Error handler failed",
-      userMessage: "Erro interno. Entre em contato com o suporte.",
-      severity: "critical",
-      recoveryAction: {
-        type: "contact_support",
-        message: "Entrar em contato com suporte",
-      },
-      shouldLog: true,
-      shouldNotifyUser: true,
-    };
-  };
+  OAuthErrorHandler.prototype.getFallbackErrorDetails = () => ({
+    code: "error_handler_failure",
+    message: "Error handler failed",
+    userMessage: "Erro interno. Entre em contato com o suporte.",
+    severity: "critical",
+    recoveryAction: {
+      type: "contact_support",
+      message: "Entrar em contato com suporte",
+    },
+    shouldLog: true,
+    shouldNotifyUser: true,
+  });
   /**
    * Execute recovery action based on error type
    */
@@ -593,7 +580,7 @@ var OAuthErrorHandler = /** @class */ (function () {
             // Increment retry count
             this.retryAttempts.set(retryKey, currentRetries + 1);
             delay = errorDetails.recoveryAction.retryDelay || 2000;
-            setTimeout(function () {
+            setTimeout(() => {
               // Emit retry event for UI to handle
               if (typeof window !== "undefined") {
                 window.dispatchEvent(
@@ -617,7 +604,7 @@ var OAuthErrorHandler = /** @class */ (function () {
    */
   OAuthErrorHandler.prototype.handleRedirectAction = function (errorDetails, context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!context.sessionId) return [3 /*break*/, 2];
@@ -764,7 +751,7 @@ var OAuthErrorHandler = /** @class */ (function () {
    */
   OAuthErrorHandler.prototype.logToSecurityAudit = function (logEntry) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would integrate with existing security audit framework
         console.error("OAuth Error:", logEntry);
         return [2 /*return*/];

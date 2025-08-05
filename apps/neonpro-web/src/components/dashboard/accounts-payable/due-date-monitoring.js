@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DueDateMonitoring = DueDateMonitoring;
 var badge_1 = require("@/components/ui/badge");
@@ -229,7 +226,6 @@ var mockPaymentReminders = [
   },
 ];
 function DueDateMonitoring(_a) {
-  var _this = this;
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)([]),
     reminders = _b[0],
@@ -249,27 +245,21 @@ function DueDateMonitoring(_a) {
   var _g = (0, react_1.useState)(""),
     searchTerm = _g[0],
     setSearchTerm = _g[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadReminders();
-    },
-    [clinicId],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      applyFilters();
-    },
-    [reminders, filterType, filterPriority, searchTerm],
-  );
-  var loadReminders = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    loadReminders();
+  }, [clinicId]);
+  (0, react_1.useEffect)(() => {
+    applyFilters();
+  }, [reminders, filterType, filterPriority, searchTerm]);
+  var loadReminders = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           setLoading(true);
           // TODO: Implementar chamada real para o serviço
           // const data = await notificationService.getDuePayments(clinicId, 30)
           // Usando dados mock por enquanto
-          setTimeout(function () {
+          setTimeout(() => {
             setReminders(mockPaymentReminders);
             setLoading(false);
           }, 500);
@@ -280,35 +270,29 @@ function DueDateMonitoring(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var applyFilters = function () {
+  var applyFilters = () => {
     var filtered = reminders;
     // Filtro por tipo de alerta
     if (filterType !== "all") {
-      filtered = filtered.filter(function (reminder) {
-        return reminder.alert_type === filterType;
-      });
+      filtered = filtered.filter((reminder) => reminder.alert_type === filterType);
     }
     // Filtro por prioridade
     if (filterPriority !== "all") {
-      filtered = filtered.filter(function (reminder) {
-        return reminder.priority === filterPriority;
-      });
+      filtered = filtered.filter((reminder) => reminder.priority === filterPriority);
     }
     // Filtro por termo de busca
     if (searchTerm) {
       var term_1 = searchTerm.toLowerCase();
-      filtered = filtered.filter(function (reminder) {
-        return (
+      filtered = filtered.filter(
+        (reminder) =>
           reminder.vendor.name.toLowerCase().includes(term_1) ||
           reminder.description.toLowerCase().includes(term_1) ||
-          reminder.vendor.document.includes(term_1)
-        );
-      });
+          reminder.vendor.document.includes(term_1),
+      );
     }
     setFilteredReminders(filtered);
   };
-  var getPriorityBadgeColor = function (priority) {
+  var getPriorityBadgeColor = (priority) => {
     switch (priority) {
       case "urgent":
         return "destructive";
@@ -322,7 +306,7 @@ function DueDateMonitoring(_a) {
         return "outline";
     }
   };
-  var getAlertTypeBadgeColor = function (alertType) {
+  var getAlertTypeBadgeColor = (alertType) => {
     switch (alertType) {
       case "overdue":
         return "destructive";
@@ -334,7 +318,7 @@ function DueDateMonitoring(_a) {
         return "outline";
     }
   };
-  var getAlertTypeLabel = function (alertType) {
+  var getAlertTypeLabel = (alertType) => {
     switch (alertType) {
       case "overdue":
         return "Em atraso";
@@ -346,7 +330,7 @@ function DueDateMonitoring(_a) {
         return "Desconhecido";
     }
   };
-  var formatDateDisplay = function (dateString) {
+  var formatDateDisplay = (dateString) => {
     var date = new Date(dateString);
     if ((0, date_fns_1.isToday)(date)) {
       return "Hoje";
@@ -358,13 +342,12 @@ function DueDateMonitoring(_a) {
       return (0, date_fns_1.format)(date, "dd/MM/yyyy", { locale: locale_1.ptBR });
     }
   };
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
-  var getDaysDisplay = function (reminder) {
+  var getDaysDisplay = (reminder) => {
     if (reminder.days_overdue > 0) {
       return "".concat(reminder.days_overdue, " dias em atraso");
     } else if (reminder.days_until_due === 0) {
@@ -378,47 +361,33 @@ function DueDateMonitoring(_a) {
   // Estatísticas resumidas
   var stats = {
     total: reminders.length,
-    overdue: reminders.filter(function (r) {
-      return r.alert_type === "overdue";
-    }).length,
-    dueToday: reminders.filter(function (r) {
-      return r.alert_type === "due_today";
-    }).length,
-    dueSoon: reminders.filter(function (r) {
-      return r.alert_type === "due_soon";
-    }).length,
-    totalAmount: reminders.reduce(function (sum, r) {
-      return sum + r.amount;
-    }, 0),
+    overdue: reminders.filter((r) => r.alert_type === "overdue").length,
+    dueToday: reminders.filter((r) => r.alert_type === "due_today").length,
+    dueSoon: reminders.filter((r) => r.alert_type === "due_soon").length,
+    totalAmount: reminders.reduce((sum, r) => sum + r.amount, 0),
     urgentAmount: reminders
-      .filter(function (r) {
-        return r.priority === "urgent";
-      })
-      .reduce(function (sum, r) {
-        return sum + r.amount;
-      }, 0),
+      .filter((r) => r.priority === "urgent")
+      .reduce((sum, r) => sum + r.amount, 0),
   };
   if (loading) {
     return (
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-3">
-          {[1, 2, 3].map(function (i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardHeader className="animate-pulse">
-                  <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                  <div className="h-8 bg-gray-300 rounded w-1/2"></div>
-                </card_1.CardHeader>
-              </card_1.Card>
-            );
-          })}
+          {[1, 2, 3].map((i) => (
+            <card_1.Card key={i}>
+              <card_1.CardHeader className="animate-pulse">
+                <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                <div className="h-8 bg-gray-300 rounded w-1/2"></div>
+              </card_1.CardHeader>
+            </card_1.Card>
+          ))}
         </div>
         <card_1.Card>
           <card_1.CardContent className="animate-pulse p-6">
             <div className="space-y-3">
-              {[1, 2, 3, 4, 5].map(function (i) {
-                return <div key={i} className="h-4 bg-gray-300 rounded"></div>;
-              })}
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="h-4 bg-gray-300 rounded"></div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -487,9 +456,7 @@ function DueDateMonitoring(_a) {
                   placeholder="Buscar por fornecedor, descrição ou documento..."
                   className="pl-8"
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
             </div>
@@ -549,72 +516,70 @@ function DueDateMonitoring(_a) {
                         </div>
                       </table_1.TableCell>
                     </table_1.TableRow>
-                  : filteredReminders.map(function (reminder) {
-                      return (
-                        <table_1.TableRow key={reminder.id}>
-                          <table_1.TableCell>
-                            <div>
-                              <div className="font-medium">{reminder.vendor.name}</div>
-                              <div className="text-sm text-muted-foreground">
-                                {reminder.vendor.document}
-                              </div>
+                  : filteredReminders.map((reminder) => (
+                      <table_1.TableRow key={reminder.id}>
+                        <table_1.TableCell>
+                          <div>
+                            <div className="font-medium">{reminder.vendor.name}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {reminder.vendor.document}
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="max-w-[200px] truncate">{reminder.description}</div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="font-medium">{formatCurrency(reminder.amount)}</div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="text-sm">{formatDateDisplay(reminder.due_date)}</div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge variant="outline">
-                              {reminder.status === "pending"
-                                ? "Pendente"
-                                : reminder.status === "approved"
-                                  ? "Aprovado"
-                                  : "Pago"}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="max-w-[200px] truncate">{reminder.description}</div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="font-medium">{formatCurrency(reminder.amount)}</div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">{formatDateDisplay(reminder.due_date)}</div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge variant="outline">
+                            {reminder.status === "pending"
+                              ? "Pendente"
+                              : reminder.status === "approved"
+                                ? "Aprovado"
+                                : "Pago"}
+                          </badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge variant={getPriorityBadgeColor(reminder.priority)}>
+                            {reminder.priority === "urgent"
+                              ? "Urgente"
+                              : reminder.priority === "high"
+                                ? "Alta"
+                                : reminder.priority === "medium"
+                                  ? "Média"
+                                  : "Baixa"}
+                          </badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="space-y-1">
+                            <badge_1.Badge variant={getAlertTypeBadgeColor(reminder.alert_type)}>
+                              {getAlertTypeLabel(reminder.alert_type)}
                             </badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge variant={getPriorityBadgeColor(reminder.priority)}>
-                              {reminder.priority === "urgent"
-                                ? "Urgente"
-                                : reminder.priority === "high"
-                                  ? "Alta"
-                                  : reminder.priority === "medium"
-                                    ? "Média"
-                                    : "Baixa"}
-                            </badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="space-y-1">
-                              <badge_1.Badge variant={getAlertTypeBadgeColor(reminder.alert_type)}>
-                                {getAlertTypeLabel(reminder.alert_type)}
-                              </badge_1.Badge>
-                              <div className="text-xs text-muted-foreground">
-                                {getDaysDisplay(reminder)}
-                              </div>
+                            <div className="text-xs text-muted-foreground">
+                              {getDaysDisplay(reminder)}
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex gap-2">
-                              <button_1.Button size="sm" variant="outline">
-                                <lucide_react_1.Eye className="h-4 w-4" />
-                              </button_1.Button>
-                              <button_1.Button size="sm" variant="outline">
-                                <lucide_react_1.Mail className="h-4 w-4" />
-                              </button_1.Button>
-                              <button_1.Button size="sm" variant="outline">
-                                <lucide_react_1.Zap className="h-4 w-4" />
-                              </button_1.Button>
-                            </div>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex gap-2">
+                            <button_1.Button size="sm" variant="outline">
+                              <lucide_react_1.Eye className="h-4 w-4" />
+                            </button_1.Button>
+                            <button_1.Button size="sm" variant="outline">
+                              <lucide_react_1.Mail className="h-4 w-4" />
+                            </button_1.Button>
+                            <button_1.Button size="sm" variant="outline">
+                              <lucide_react_1.Zap className="h-4 w-4" />
+                            </button_1.Button>
+                          </div>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
               </table_1.TableBody>
             </table_1.Table>
           </div>

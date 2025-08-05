@@ -6,6 +6,24 @@
 "use client";
 
 import type {
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Filter,
+  Plus,
+  Search,
+  Settings,
+  TrendingUp,
+  Wrench,
+  XCircle,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type {
   AlertSeverity,
   Equipment,
   EquipmentStatus,
@@ -30,23 +48,6 @@ import type {
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { toast } from "@/components/ui/use-toast";
-import type {
-  Activity,
-  AlertCircle,
-  AlertTriangle,
-  Bell,
-  Calendar,
-  CheckCircle,
-  Clock,
-  Filter,
-  Plus,
-  Search,
-  Settings,
-  TrendingUp,
-  Wrench,
-  XCircle,
-} from "lucide-react";
-import React, { useEffect, useState } from "react";
 
 // =====================================================================================
 // DASHBOARD SUMMARY METRICS COMPONENT

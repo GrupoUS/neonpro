@@ -2,14 +2,14 @@
 // Epic 7.2: Automated Marketing Campaigns + Personalization
 // Author: VoidBeast Agent
 
+import { type NextRequest, NextResponse } from "next/server";
 import { MarketingCampaignService } from "@/app/lib/services/marketing-campaign-service";
 import { UpdateCampaignSchema } from "@/app/lib/validations/campaigns";
 import { createClient } from "@/app/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
 
 const campaignService = new MarketingCampaignService();
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Authentication check
     const supabase = await createClient();
@@ -78,7 +78,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Authentication check
     const supabase = await createClient();

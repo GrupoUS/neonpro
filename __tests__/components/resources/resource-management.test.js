@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================
 // Resource Management Tests
 // Story 2.4: Smart Resource Management - Test Suite
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,7 +36,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,8 +65,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -88,9 +85,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var react_1 = require("@testing-library/react");
@@ -190,7 +187,7 @@ var mockResources = [
     updated_at: "2024-01-01T00:00:00Z",
   },
 ];
-var mockAllocations = [
+var _mockAllocations = [
   {
     id: "allocation-1",
     resource_id: "resource-1",
@@ -218,18 +215,16 @@ var mockOptimizationMetrics = {
 // =====================================================
 var mockFetch = globals_1.jest.fn();
 global.fetch = mockFetch;
-globals_1.jest.mock("sonner", function () {
-  return {
-    toast: {
-      success: globals_1.jest.fn(),
-      error: globals_1.jest.fn(),
-    },
-  };
-});
+globals_1.jest.mock("sonner", () => ({
+  toast: {
+    success: globals_1.jest.fn(),
+    error: globals_1.jest.fn(),
+  },
+}));
 // =====================================================
 // Test Utilities
 // =====================================================
-var renderWithProps = function (component, props) {
+var renderWithProps = (component, props) => {
   if (props === void 0) {
     props = {};
   }
@@ -239,19 +234,17 @@ var renderWithProps = function (component, props) {
 // =====================================================
 // Resource Management Component Tests
 // =====================================================
-(0, globals_1.describe)("ResourceManagement Component", function () {
-  (0, globals_1.beforeEach)(function () {
+(0, globals_1.describe)("ResourceManagement Component", () => {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
     mockFetch.mockResolvedValue({
       ok: true,
-      json: function () {
-        return Promise.resolve({ success: true, data: mockResources });
-      },
+      json: () => Promise.resolve({ success: true, data: mockResources }),
     });
   });
-  (0, globals_1.it)("renders resource management dashboard", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, globals_1.it)("renders resource management dashboard", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             renderWithProps(<resource_management_1.default clinicId="clinic-1" userRole="admin" />);
@@ -265,7 +258,7 @@ var renderWithProps = function (component, props) {
             ).toBeInTheDocument();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Treatment Room A"),
                 ).toBeInTheDocument();
@@ -279,11 +272,11 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("displays resource filters", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("displays resource filters", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         renderWithProps(<resource_management_1.default clinicId="clinic-1" userRole="admin" />);
         (0, globals_1.expect)(react_1.screen.getByText("Filters")).toBeInTheDocument();
         (0, globals_1.expect)(react_1.screen.getByText("Resource Type")).toBeInTheDocument();
@@ -291,17 +284,17 @@ var renderWithProps = function (component, props) {
         (0, globals_1.expect)(react_1.screen.getByText("Category")).toBeInTheDocument();
         return [2 /*return*/];
       });
-    });
-  });
-  (0, globals_1.it)("shows resource cards with correct information", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("shows resource cards with correct information", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             renderWithProps(<resource_management_1.default clinicId="clinic-1" userRole="admin" />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Treatment Room A"),
                 ).toBeInTheDocument();
@@ -318,17 +311,17 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("displays resource status badges", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("displays resource status badges", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             renderWithProps(<resource_management_1.default clinicId="clinic-1" userRole="admin" />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(react_1.screen.getByText("available")).toBeInTheDocument();
                 (0, globals_1.expect)(react_1.screen.getByText("maintenance")).toBeInTheDocument();
               }),
@@ -338,19 +331,19 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("updates resource status when button clicked", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("updates resource status when button clicked", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, setMaintenanceButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
             renderWithProps(<resource_management_1.default clinicId="clinic-1" userRole="admin" />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Treatment Room A"),
                 ).toBeInTheDocument();
@@ -361,9 +354,7 @@ var renderWithProps = function (component, props) {
             // Mock status update response
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({ success: true });
-              },
+              json: () => Promise.resolve({ success: true }),
             });
             setMaintenanceButton = react_1.screen.getByText("Set Maintenance");
             return [4 /*yield*/, user.click(setMaintenanceButton)];
@@ -371,7 +362,7 @@ var renderWithProps = function (component, props) {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(mockFetch).toHaveBeenCalledWith(
                   "/api/resources",
                   globals_1.expect.objectContaining({
@@ -390,11 +381,11 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("hides admin buttons for patient users", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("hides admin buttons for patient users", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             renderWithProps(
@@ -402,7 +393,7 @@ var renderWithProps = function (component, props) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Treatment Room A"),
                 ).toBeInTheDocument();
@@ -419,23 +410,21 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("handles API errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("handles API errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockFetch.mockResolvedValueOnce({
               ok: false,
-              json: function () {
-                return Promise.resolve({ success: false, error: "Failed to fetch" });
-              },
+              json: () => Promise.resolve({ success: false, error: "Failed to fetch" }),
             });
             renderWithProps(<resource_management_1.default clinicId="clinic-1" userRole="admin" />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(sonner_1.toast.error).toHaveBeenCalledWith(
                   "Failed to fetch resources",
                 );
@@ -446,29 +435,27 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // Resource Allocation Form Tests
 // =====================================================
-(0, globals_1.describe)("ResourceAllocationForm Component", function () {
+(0, globals_1.describe)("ResourceAllocationForm Component", () => {
   var defaultProps = {
     open: true,
     onOpenChange: globals_1.jest.fn(),
     clinicId: "clinic-1",
     onSuccess: globals_1.jest.fn(),
   };
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
     mockFetch.mockResolvedValue({
       ok: true,
-      json: function () {
-        return Promise.resolve({ success: true, data: mockResources });
-      },
+      json: () => Promise.resolve({ success: true, data: mockResources }),
     });
   });
-  (0, globals_1.it)("renders allocation form when open", function () {
+  (0, globals_1.it)("renders allocation form when open", () => {
     (0, react_1.render)(<resource_allocation_form_1.default {...defaultProps} />);
     (0, globals_1.expect)(
       react_1.screen.getByText("Create Resource Allocation"),
@@ -477,15 +464,15 @@ var renderWithProps = function (component, props) {
       react_1.screen.getByText("Allocate a resource for an appointment or maintenance period"),
     ).toBeInTheDocument();
   });
-  (0, globals_1.it)("fetches available resources on open", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, globals_1.it)("fetches available resources on open", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(<resource_allocation_form_1.default {...defaultProps} />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(mockFetch).toHaveBeenCalledWith(
                   globals_1.expect.stringContaining(
                     "/api/resources?clinic_id=clinic-1&status=available",
@@ -498,17 +485,17 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("displays resource selection dropdown", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("displays resource selection dropdown", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(<resource_allocation_form_1.default {...defaultProps} />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(react_1.screen.getByText("Resource *")).toBeInTheDocument();
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Select a resource"),
@@ -520,17 +507,17 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("shows time selection inputs", function () {
+    }),
+  );
+  (0, globals_1.it)("shows time selection inputs", () => {
     (0, react_1.render)(<resource_allocation_form_1.default {...defaultProps} />);
     (0, globals_1.expect)(react_1.screen.getByLabelText("Start Time *")).toBeInTheDocument();
     (0, globals_1.expect)(react_1.screen.getByLabelText("End Time *")).toBeInTheDocument();
   });
-  (0, globals_1.it)("validates required fields before submission", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("validates required fields before submission", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, createButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
@@ -545,12 +532,12 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("creates allocation successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("creates allocation successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, onSuccess, onOpenChange, resourceSelect, startTimeInput, endTimeInput, createButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
@@ -559,21 +546,15 @@ var renderWithProps = function (component, props) {
             // Mock successful creation
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({ success: true, data: mockResources });
-              },
+              json: () => Promise.resolve({ success: true, data: mockResources }),
             });
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({ success: true, data: { conflicts: [] } });
-              },
+              json: () => Promise.resolve({ success: true, data: { conflicts: [] } }),
             });
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({ success: true });
-              },
+              json: () => Promise.resolve({ success: true }),
             });
             (0, react_1.render)(
               <resource_allocation_form_1.default
@@ -584,7 +565,7 @@ var renderWithProps = function (component, props) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Select a resource"),
                 ).toBeInTheDocument();
@@ -598,9 +579,9 @@ var renderWithProps = function (component, props) {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 var resourceOption = react_1.screen.getByText(/Treatment Room A/);
-                yield user.click(resourceOption);
+                await user.click(resourceOption);
               }),
             ];
           case 3:
@@ -616,7 +597,7 @@ var renderWithProps = function (component, props) {
             // Wait for conflict check to complete
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.queryByText("Checking for conflicts..."),
                 ).not.toBeInTheDocument();
@@ -631,7 +612,7 @@ var renderWithProps = function (component, props) {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(mockFetch).toHaveBeenCalledWith(
                   "/api/resources/allocations",
                   globals_1.expect.objectContaining({
@@ -652,39 +633,33 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // Resource Optimization Component Tests
 // =====================================================
-(0, globals_1.describe)("ResourceOptimization Component", function () {
-  (0, globals_1.beforeEach)(function () {
+(0, globals_1.describe)("ResourceOptimization Component", () => {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
     // Mock optimization data responses
     mockFetch
       .mockResolvedValueOnce({
         ok: true,
-        json: function () {
-          return Promise.resolve({ success: true, data: mockOptimizationMetrics });
-        },
+        json: () => Promise.resolve({ success: true, data: mockOptimizationMetrics }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: function () {
-          return Promise.resolve({ success: true, data: [] });
-        },
+        json: () => Promise.resolve({ success: true, data: [] }),
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: function () {
-          return Promise.resolve({ success: true, data: [] });
-        },
+        json: () => Promise.resolve({ success: true, data: [] }),
       });
   });
-  (0, globals_1.it)("renders optimization dashboard", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, globals_1.it)("renders optimization dashboard", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         renderWithProps(<resource_optimization_1.default clinicId="clinic-1" userRole="admin" />);
         (0, globals_1.expect)(
           react_1.screen.getByText("Resource Optimization"),
@@ -696,11 +671,11 @@ var renderWithProps = function (component, props) {
         ).toBeInTheDocument();
         return [2 /*return*/];
       });
-    });
-  });
-  (0, globals_1.it)("displays metrics overview cards", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("displays metrics overview cards", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             renderWithProps(
@@ -708,7 +683,7 @@ var renderWithProps = function (component, props) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Utilization Rate"),
                 ).toBeInTheDocument();
@@ -728,11 +703,11 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("shows correct metric values", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("shows correct metric values", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             renderWithProps(
@@ -740,7 +715,7 @@ var renderWithProps = function (component, props) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(react_1.screen.getByText("85%")).toBeInTheDocument(); // Utilization rate
                 (0, globals_1.expect)(react_1.screen.getByText("92%")).toBeInTheDocument(); // Efficiency score
                 (0, globals_1.expect)(react_1.screen.getByText("78%")).toBeInTheDocument(); // Cost effectiveness
@@ -752,30 +727,30 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("displays period selector", function () {
+    }),
+  );
+  (0, globals_1.it)("displays period selector", () => {
     renderWithProps(<resource_optimization_1.default clinicId="clinic-1" userRole="admin" />);
     (0, globals_1.expect)(react_1.screen.getByDisplayValue("Last 7 days")).toBeInTheDocument();
   });
-  (0, globals_1.it)("shows run optimization button for non-patient users", function () {
+  (0, globals_1.it)("shows run optimization button for non-patient users", () => {
     renderWithProps(<resource_optimization_1.default clinicId="clinic-1" userRole="admin" />);
     (0, globals_1.expect)(react_1.screen.getByText("Run Optimization")).toBeInTheDocument();
   });
-  (0, globals_1.it)("hides run optimization button for patient users", function () {
+  (0, globals_1.it)("hides run optimization button for patient users", () => {
     renderWithProps(<resource_optimization_1.default clinicId="clinic-1" userRole="patient" />);
     (0, globals_1.expect)(react_1.screen.queryByText("Run Optimization")).not.toBeInTheDocument();
   });
-  (0, globals_1.it)("has tabs for different views", function () {
+  (0, globals_1.it)("has tabs for different views", () => {
     renderWithProps(<resource_optimization_1.default clinicId="clinic-1" userRole="admin" />);
     (0, globals_1.expect)(react_1.screen.getByText("Utilization Analysis")).toBeInTheDocument();
     (0, globals_1.expect)(react_1.screen.getByText("Trends")).toBeInTheDocument();
     (0, globals_1.expect)(react_1.screen.getByText("Suggestions")).toBeInTheDocument();
   });
-  (0, globals_1.it)("runs optimization when button clicked", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("runs optimization when button clicked", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, optimizeButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
@@ -785,13 +760,11 @@ var renderWithProps = function (component, props) {
             // Mock optimization response
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({ success: true });
-              },
+              json: () => Promise.resolve({ success: true }),
             });
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Run Optimization"),
                 ).toBeInTheDocument();
@@ -805,7 +778,7 @@ var renderWithProps = function (component, props) {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(mockFetch).toHaveBeenCalledWith(
                   "/api/resources/optimize",
                   globals_1.expect.objectContaining({
@@ -824,11 +797,11 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("handles API errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("handles API errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockFetch.mockReset();
@@ -838,7 +811,7 @@ var renderWithProps = function (component, props) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(sonner_1.toast.error).toHaveBeenCalledWith(
                   "Error loading optimization data",
                 );
@@ -849,31 +822,29 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // Integration Tests
 // =====================================================
-(0, globals_1.describe)("Resource Management Integration", function () {
-  (0, globals_1.it)("integrates resource management components correctly", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var user;
-      return __generator(this, function (_a) {
+(0, globals_1.describe)("Resource Management Integration", () => {
+  (0, globals_1.it)("integrates resource management components correctly", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var _user;
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            user = user_event_1.default.setup();
+            _user = user_event_1.default.setup();
             // Mock all required API responses
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({ success: true, data: mockResources });
-              },
+              json: () => Promise.resolve({ success: true, data: mockResources }),
             });
             renderWithProps(<resource_management_1.default clinicId="clinic-1" userRole="admin" />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Resource Management"),
                 ).toBeInTheDocument();
@@ -891,25 +862,23 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("maintains state consistency across components", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("maintains state consistency across components", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var user, setMaintenanceButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             user = user_event_1.default.setup();
             mockFetch.mockResolvedValue({
               ok: true,
-              json: function () {
-                return Promise.resolve({ success: true, data: mockResources });
-              },
+              json: () => Promise.resolve({ success: true, data: mockResources }),
             });
             renderWithProps(<resource_management_1.default clinicId="clinic-1" userRole="admin" />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Treatment Room A"),
                 ).toBeInTheDocument();
@@ -920,9 +889,7 @@ var renderWithProps = function (component, props) {
             // Status updates should trigger re-fetch
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({ success: true });
-              },
+              json: () => Promise.resolve({ success: true }),
             });
             setMaintenanceButton = react_1.screen.getByText("Set Maintenance");
             return [4 /*yield*/, user.click(setMaintenanceButton)];
@@ -930,7 +897,7 @@ var renderWithProps = function (component, props) {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(mockFetch).toHaveBeenCalledWith(
                   "/api/resources",
                   globals_1.expect.objectContaining({ method: "PUT" }),
@@ -942,6 +909,6 @@ var renderWithProps = function (component, props) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

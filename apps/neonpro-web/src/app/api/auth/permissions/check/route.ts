@@ -6,15 +6,8 @@
  * Integrates with RBAC permission system
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { authenticateRequest } from "@/lib/middleware/auth";
-import type {
-  hasPermission,
-  hasAnyPermission,
-  hasAllPermissions,
-} from "@/lib/auth/rbac/permissions";
+import type { NextRequest } from "next/server";
 import type { Permission, PermissionContext } from "@/types/rbac";
-import type { z } from "zod";
 
 /**
  * Request validation schemas
@@ -74,7 +67,7 @@ export async function POST(request: NextRequest) {
     let requestBody;
     try {
       requestBody = await request.json();
-    } catch (error) {
+    } catch (_error) {
       return NextResponse.json(
         {
           error: "Invalid JSON in request body",
@@ -288,7 +281,7 @@ function getRoleCapabilities(role: string) {
 /**
  * OPTIONS handler for CORS preflight requests
  */
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

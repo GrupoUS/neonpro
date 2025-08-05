@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PersonalizationAnalytics;
 var react_1 = require("react");
@@ -200,7 +199,7 @@ function PersonalizationAnalytics() {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {segmentPerformance.map(function (segment) {
+                  {segmentPerformance.map((segment) => {
                     var clickRate = ((segment.clicks / segment.recommendations) * 100).toFixed(1);
                     return (
                       <div key={segment.segment} className="space-y-2">
@@ -222,7 +221,7 @@ function PersonalizationAnalytics() {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {segmentPerformance.map(function (segment) {
+                  {segmentPerformance.map((segment) => {
                     var roi = (segment.revenue / (segment.recommendations * 10)).toFixed(1); // Assumindo custo de R$10 por recomendação
                     return (
                       <div key={segment.segment} className="flex justify-between items-center">
@@ -266,40 +265,38 @@ function PersonalizationAnalytics() {
           </card_1.Card>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {segmentPerformance.map(function (segment) {
-              return (
-                <card_1.Card key={segment.segment}>
-                  <card_1.CardHeader className="pb-3">
-                    <card_1.CardTitle className="text-base">{segment.segment}</card_1.CardTitle>
-                  </card_1.CardHeader>
-                  <card_1.CardContent className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Recomendações:</span>
-                      <span className="font-medium">{segment.recommendations}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Taxa de Cliques:</span>
-                      <span className="font-medium">
-                        {((segment.clicks / segment.recommendations) * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Taxa de Conversão:</span>
-                      <span className="font-medium">
-                        {((segment.conversions / segment.clicks) * 100).toFixed(1)}%
-                      </span>
-                    </div>
-                    <separator_1.Separator />
-                    <div className="flex justify-between text-sm font-bold">
-                      <span>Receita:</span>
-                      <span className="text-green-600">
-                        R$ {(segment.revenue / 1000).toFixed(0)}k
-                      </span>
-                    </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+            {segmentPerformance.map((segment) => (
+              <card_1.Card key={segment.segment}>
+                <card_1.CardHeader className="pb-3">
+                  <card_1.CardTitle className="text-base">{segment.segment}</card_1.CardTitle>
+                </card_1.CardHeader>
+                <card_1.CardContent className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Recomendações:</span>
+                    <span className="font-medium">{segment.recommendations}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Taxa de Cliques:</span>
+                    <span className="font-medium">
+                      {((segment.clicks / segment.recommendations) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span>Taxa de Conversão:</span>
+                    <span className="font-medium">
+                      {((segment.conversions / segment.clicks) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                  <separator_1.Separator />
+                  <div className="flex justify-between text-sm font-bold">
+                    <span>Receita:</span>
+                    <span className="text-green-600">
+                      R$ {(segment.revenue / 1000).toFixed(0)}k
+                    </span>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -322,15 +319,15 @@ function PersonalizationAnalytics() {
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
-                      label={function (_a) {
+                      label={(_a) => {
                         var name = _a.name,
                           value = _a.value;
                         return "".concat(name, ": ").concat(value, "%");
                       }}
                     >
-                      {treatmentRecommendations.map(function (entry, index) {
-                        return <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />;
-                      })}
+                      {treatmentRecommendations.map((entry, index) => (
+                        <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />
+                      ))}
                     </recharts_1.Pie>
                     <recharts_1.Tooltip />
                   </recharts_1.PieChart>
@@ -347,22 +344,20 @@ function PersonalizationAnalytics() {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {treatmentRecommendations.map(function (treatment, index) {
-                    return (
-                      <div key={treatment.name} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
-                            {index + 1}
-                          </div>
-                          <span className="font-medium">{treatment.name}</span>
+                  {treatmentRecommendations.map((treatment, index) => (
+                    <div key={treatment.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">
+                          {index + 1}
                         </div>
-                        <div className="text-right">
-                          <div className="font-bold">{treatment.value}%</div>
-                          <div className="text-xs text-muted-foreground">das recomendações</div>
-                        </div>
+                        <span className="font-medium">{treatment.name}</span>
                       </div>
-                    );
-                  })}
+                      <div className="text-right">
+                        <div className="font-bold">{treatment.value}%</div>
+                        <div className="text-xs text-muted-foreground">das recomendações</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>

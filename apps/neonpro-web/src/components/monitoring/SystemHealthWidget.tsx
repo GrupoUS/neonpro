@@ -8,7 +8,21 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Database,
+  RefreshCw,
+  Server,
+  Wifi,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -16,21 +30,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
-import type { Button } from "@/components/ui/button";
-import type {
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-  RefreshCw,
-  Activity,
-  Database,
-  Zap,
-  Server,
-  Wifi,
-} from "lucide-react";
-import type { toast } from "sonner";
 
 interface SystemHealthData {
   overall_status: "healthy" | "degraded" | "unhealthy";

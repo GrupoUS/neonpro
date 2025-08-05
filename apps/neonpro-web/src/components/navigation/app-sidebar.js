@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppSidebar = AppSidebar;
 var lucide_react_1 = require("lucide-react");
@@ -387,7 +385,7 @@ function AppSidebar(_a) {
           <sidebar_1.SidebarGroupLabel>Aplicação</sidebar_1.SidebarGroupLabel>
           <sidebar_1.SidebarGroupContent>
             <sidebar_1.SidebarMenu>
-              {navigationData.navMain.map(function (item) {
+              {navigationData.navMain.map((item) => {
                 var _a;
                 return (
                   <sidebar_1.SidebarMenuItem key={item.title}>
@@ -403,20 +401,18 @@ function AppSidebar(_a) {
                     </sidebar_1.SidebarMenuButton>
                     {((_a = item.items) === null || _a === void 0 ? void 0 : _a.length)
                       ? <sidebar_1.SidebarMenuSub>
-                          {item.items.map(function (subItem) {
-                            return (
-                              <sidebar_1.SidebarMenuSubItem key={subItem.title}>
-                                <sidebar_1.SidebarMenuSubButton
-                                  asChild
-                                  isActive={pathname === subItem.url}
-                                >
-                                  <link_1.default href={subItem.url}>
-                                    <span>{subItem.title}</span>
-                                  </link_1.default>
-                                </sidebar_1.SidebarMenuSubButton>
-                              </sidebar_1.SidebarMenuSubItem>
-                            );
-                          })}
+                          {item.items.map((subItem) => (
+                            <sidebar_1.SidebarMenuSubItem key={subItem.title}>
+                              <sidebar_1.SidebarMenuSubButton
+                                asChild
+                                isActive={pathname === subItem.url}
+                              >
+                                <link_1.default href={subItem.url}>
+                                  <span>{subItem.title}</span>
+                                </link_1.default>
+                              </sidebar_1.SidebarMenuSubButton>
+                            </sidebar_1.SidebarMenuSubItem>
+                          ))}
                         </sidebar_1.SidebarMenuSub>
                       : null}
                   </sidebar_1.SidebarMenuItem>
@@ -431,22 +427,20 @@ function AppSidebar(_a) {
           <sidebar_1.SidebarGroupLabel>Ferramentas</sidebar_1.SidebarGroupLabel>
           <sidebar_1.SidebarGroupContent>
             <sidebar_1.SidebarMenu>
-              {navigationData.navSecondary.map(function (item) {
-                return (
-                  <sidebar_1.SidebarMenuItem key={item.title}>
-                    <sidebar_1.SidebarMenuButton
-                      asChild
-                      isActive={pathname === item.url}
-                      tooltip={item.title}
-                    >
-                      <link_1.default href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </link_1.default>
-                    </sidebar_1.SidebarMenuButton>
-                  </sidebar_1.SidebarMenuItem>
-                );
-              })}
+              {navigationData.navSecondary.map((item) => (
+                <sidebar_1.SidebarMenuItem key={item.title}>
+                  <sidebar_1.SidebarMenuButton
+                    asChild
+                    isActive={pathname === item.url}
+                    tooltip={item.title}
+                  >
+                    <link_1.default href={item.url}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </link_1.default>
+                  </sidebar_1.SidebarMenuButton>
+                </sidebar_1.SidebarMenuItem>
+              ))}
             </sidebar_1.SidebarMenu>
           </sidebar_1.SidebarGroupContent>
         </sidebar_1.SidebarGroup>

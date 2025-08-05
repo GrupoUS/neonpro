@@ -10,34 +10,32 @@
  * - Error boundaries
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TranslationProvider = TranslationProvider;
 exports.useTranslation = useTranslation;
@@ -85,33 +83,26 @@ function TranslationProvider(_a) {
     error = _f[0],
     setError = _f[1];
   // Create translator function
-  var translator = dictionary
-    ? (0, i18n_1.createTranslator)(dictionary)
-    : function (key) {
-        return key;
-      };
+  var translator = dictionary ? (0, i18n_1.createTranslator)(dictionary) : (key) => key;
   // Load dictionary when locale changes
-  (0, react_1.useEffect)(
-    function () {
-      if (initialDictionary && locale === initialLocale) {
-        return; // Use initial dictionary
-      }
-      setIsLoading(true);
-      setError(null);
-      (0, i18n_1.getDictionary)(locale)
-        .then(function (dict) {
-          setDictionary(dict);
-          setIsLoading(false);
-        })
-        .catch(function (err) {
-          setError(err.message);
-          setIsLoading(false);
-        });
-    },
-    [locale, initialDictionary, initialLocale],
-  );
+  (0, react_1.useEffect)(() => {
+    if (initialDictionary && locale === initialLocale) {
+      return; // Use initial dictionary
+    }
+    setIsLoading(true);
+    setError(null);
+    (0, i18n_1.getDictionary)(locale)
+      .then((dict) => {
+        setDictionary(dict);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setIsLoading(false);
+      });
+  }, [locale, initialDictionary, initialLocale]);
   // Save locale preference to localStorage
-  var handleSetLocale = function (newLocale) {
+  var handleSetLocale = (newLocale) => {
     setLocale(newLocale);
     try {
       localStorage.setItem("neonpro-locale", newLocale);
@@ -121,20 +112,17 @@ function TranslationProvider(_a) {
     }
   };
   // Load saved locale preference on mount
-  (0, react_1.useEffect)(
-    function () {
-      try {
-        var savedLocale = localStorage.getItem("neonpro-locale");
-        if (savedLocale && savedLocale !== initialLocale) {
-          setLocale(savedLocale);
-        }
-      } catch (e) {
-        // Handle localStorage errors silently
-        console.warn("Failed to load locale preference:", e);
+  (0, react_1.useEffect)(() => {
+    try {
+      var savedLocale = localStorage.getItem("neonpro-locale");
+      if (savedLocale && savedLocale !== initialLocale) {
+        setLocale(savedLocale);
       }
-    },
-    [initialLocale],
-  );
+    } catch (e) {
+      // Handle localStorage errors silently
+      console.warn("Failed to load locale preference:", e);
+    }
+  }, [initialLocale]);
   var value = {
     locale: locale,
     dictionary: dictionary,
@@ -206,9 +194,7 @@ function useTranslationNamespace(namespace) {
   var _a = useTranslation(),
     t = _a.t,
     rest = __rest(_a, ["t"]);
-  var namespacedT = function (key, params) {
-    return t("".concat(namespace, ".").concat(key), params);
-  };
+  var namespacedT = (key, params) => t("".concat(namespace, ".").concat(key), params);
   return __assign(__assign({}, rest), { t: namespacedT, nt: namespacedT });
 }
 /**
@@ -254,39 +240,17 @@ function useAccessibilityTranslations() {
 function useFormTranslations() {
   var t = useTranslation().t;
   return {
-    required: function (field) {
-      return t("errors.requiredField", { field: field });
-    },
-    invalid: function (field) {
-      return t("errors.invalidFormat", { field: field });
-    },
-    email: function () {
-      return t("errors.invalidEmail");
-    },
-    phone: function () {
-      return t("errors.invalidPhone");
-    },
-    cpf: function () {
-      return t("errors.invalidCpf");
-    },
-    date: function () {
-      return t("errors.invalidDate");
-    },
-    dateInPast: function () {
-      return t("errors.dateInPast");
-    },
-    dateInFuture: function () {
-      return t("errors.dateInFuture");
-    },
-    minLength: function (field, min) {
-      return t("errors.minLength", { field: field, min: min });
-    },
-    maxLength: function (field, max) {
-      return t("errors.maxLength", { field: field, max: max });
-    },
-    confirmation: function (field) {
-      return t("errors.confirmation", { field: field });
-    },
+    required: (field) => t("errors.requiredField", { field: field }),
+    invalid: (field) => t("errors.invalidFormat", { field: field }),
+    email: () => t("errors.invalidEmail"),
+    phone: () => t("errors.invalidPhone"),
+    cpf: () => t("errors.invalidCpf"),
+    date: () => t("errors.invalidDate"),
+    dateInPast: () => t("errors.dateInPast"),
+    dateInFuture: () => t("errors.dateInFuture"),
+    minLength: (field, min) => t("errors.minLength", { field: field, min: min }),
+    maxLength: (field, max) => t("errors.maxLength", { field: field, max: max }),
+    confirmation: (field) => t("errors.confirmation", { field: field }),
   };
 }
 /**
@@ -296,44 +260,20 @@ function useFormTranslations() {
 function useA11yTranslations() {
   var t = useTranslation().t;
   return {
-    skipToContent: function () {
-      return t("accessibility.skipToContent");
-    },
-    skipToNavigation: function () {
-      return t("accessibility.skipToNavigation");
-    },
-    loading: function (item) {
-      return item ? t("common.loading") + " " + item : t("common.loading");
-    },
-    saving: function (item) {
-      return item ? t("common.saving") + " " + item : t("common.saving");
-    },
-    buttonPressed: function (button, pressed) {
-      return pressed
-        ? "".concat(button, " pressionado")
-        : "".concat(button, " n\u00E3o pressionado");
-    },
-    expandedState: function (item, expanded) {
-      return expanded ? "".concat(item, " expandido") : "".concat(item, " recolhido");
-    },
-    menuItemOf: function (current, total) {
-      return "Item ".concat(current, " de ").concat(total);
-    },
-    pageOf: function (current, total) {
-      return "P\u00E1gina ".concat(current, " de ").concat(total);
-    },
-    required: function () {
-      return t("common.required");
-    },
-    optional: function () {
-      return t("common.optional");
-    },
-    error: function (field) {
-      return "Erro em ".concat(field);
-    },
-    success: function (action) {
-      return "".concat(action, " realizado com sucesso");
-    },
+    skipToContent: () => t("accessibility.skipToContent"),
+    skipToNavigation: () => t("accessibility.skipToNavigation"),
+    loading: (item) => (item ? t("common.loading") + " " + item : t("common.loading")),
+    saving: (item) => (item ? t("common.saving") + " " + item : t("common.saving")),
+    buttonPressed: (button, pressed) =>
+      pressed ? "".concat(button, " pressionado") : "".concat(button, " n\u00E3o pressionado"),
+    expandedState: (item, expanded) =>
+      expanded ? "".concat(item, " expandido") : "".concat(item, " recolhido"),
+    menuItemOf: (current, total) => "Item ".concat(current, " de ").concat(total),
+    pageOf: (current, total) => "P\u00E1gina ".concat(current, " de ").concat(total),
+    required: () => t("common.required"),
+    optional: () => t("common.optional"),
+    error: (field) => "Erro em ".concat(field),
+    success: (action) => "".concat(action, " realizado com sucesso"),
   };
 }
 /**
@@ -344,29 +284,26 @@ function useDateTimeTranslations() {
     t = _a.t,
     locale = _a.locale;
   return {
-    formatDate: function (date) {
-      return new Intl.DateTimeFormat(locale, {
+    formatDate: (date) =>
+      new Intl.DateTimeFormat(locale, {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
-      }).format(date);
-    },
-    formatTime: function (date) {
-      return new Intl.DateTimeFormat(locale, {
+      }).format(date),
+    formatTime: (date) =>
+      new Intl.DateTimeFormat(locale, {
         hour: "2-digit",
         minute: "2-digit",
-      }).format(date);
-    },
-    formatDateTime: function (date) {
-      return new Intl.DateTimeFormat(locale, {
+      }).format(date),
+    formatDateTime: (date) =>
+      new Intl.DateTimeFormat(locale, {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      }).format(date);
-    },
-    formatRelativeTime: function (date) {
+      }).format(date),
+    formatRelativeTime: (date) => {
       var rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
       var now = new Date();
       var diffInMs = date.getTime() - now.getTime();
@@ -404,7 +341,7 @@ function useDateTimeTranslations() {
 function useNumberTranslations() {
   var locale = useTranslation().locale;
   return {
-    formatCurrency: function (amount, currency) {
+    formatCurrency: (amount, currency) => {
       if (currency === void 0) {
         currency = "BRL";
       }
@@ -413,10 +350,8 @@ function useNumberTranslations() {
         currency: currency,
       }).format(amount);
     },
-    formatNumber: function (num, options) {
-      return new Intl.NumberFormat(locale, options).format(num);
-    },
-    formatPercent: function (num, decimals) {
+    formatNumber: (num, options) => new Intl.NumberFormat(locale, options).format(num),
+    formatPercent: (num, decimals) => {
       if (decimals === void 0) {
         decimals = 0;
       }

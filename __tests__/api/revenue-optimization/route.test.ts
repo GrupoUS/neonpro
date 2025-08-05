@@ -1,7 +1,7 @@
 // 🧪 **Revenue Optimization API Route Tests**
 // Comprehensive test suite for revenue optimization endpoints
 
-import { describe, test, expect, jest, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { NextRequest } from "next/server";
 
 // Mock Supabase FIRST
@@ -30,7 +30,7 @@ jest.mock("@/lib/financial/revenue-optimization-engine", () => ({
 }));
 
 // Import AFTER mocks are defined
-import { GET, POST, PUT, DELETE } from "@/app/api/revenue-optimization/route";
+import { DELETE, GET, POST, PUT } from "@/app/api/revenue-optimization/route";
 import { createClient } from "@/app/utils/supabase/server";
 
 describe("Revenue Optimization API", () => {
@@ -700,7 +700,7 @@ describe("Revenue Optimization API", () => {
 
       const requests = Array.from(
         { length: 5 },
-        (_, i) =>
+        (_, _i) =>
           new NextRequest(
             `http://localhost:3000/api/revenue-optimization?clinicId=${validClinicId}`,
           ),

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -158,7 +155,7 @@ var input_1 = require("@/components/ui/input");
 var label_1 = require("@/components/ui/label");
 var use_session_1 = require("@/hooks/use-session");
 var lucide_react_1 = require("lucide-react");
-var DeviceManager = function (_a) {
+var DeviceManager = (_a) => {
   var userId = _a.userId,
     _b = _a.className,
     className = _b === void 0 ? "" : _b;
@@ -187,7 +184,7 @@ var DeviceManager = function (_a) {
     }),
     newDevice = _g[0],
     setNewDevice = _g[1];
-  var getDeviceIcon = function (deviceType) {
+  var getDeviceIcon = (deviceType) => {
     switch (deviceType) {
       case "MOBILE":
         return <lucide_react_1.Smartphone className="h-5 w-5" />;
@@ -198,7 +195,7 @@ var DeviceManager = function (_a) {
         return <lucide_react_1.Monitor className="h-5 w-5" />;
     }
   };
-  var getDeviceTypeColor = function (deviceType) {
+  var getDeviceTypeColor = (deviceType) => {
     switch (deviceType) {
       case "MOBILE":
         return "bg-blue-100 text-blue-800";
@@ -210,7 +207,7 @@ var DeviceManager = function (_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var formatLastSeen = function (timestamp) {
+  var formatLastSeen = (timestamp) => {
     var now = new Date();
     var lastSeen = new Date(timestamp);
     var diffMs = now.getTime() - lastSeen.getTime();
@@ -222,10 +219,10 @@ var DeviceManager = function (_a) {
     if (diffHours < 24) return "".concat(diffHours, " hours ago");
     return "".concat(diffDays, " days ago");
   };
-  var handleTrustToggle = function (device) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleTrustToggle = (device) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 6, , 7]);
@@ -253,11 +250,10 @@ var DeviceManager = function (_a) {
         }
       });
     });
-  };
-  var handleRemoveDevice = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleRemoveDevice = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedDevice) return [2 /*return*/];
@@ -282,11 +278,10 @@ var DeviceManager = function (_a) {
         }
       });
     });
-  };
-  var handleAddDevice = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleAddDevice = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -319,7 +314,6 @@ var DeviceManager = function (_a) {
         }
       });
     });
-  };
   if (loading) {
     return (
       <card_1.Card className={className}>
@@ -331,9 +325,9 @@ var DeviceManager = function (_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="animate-pulse space-y-4">
-            {[1, 2, 3].map(function (i) {
-              return <div key={i} className="h-20 bg-muted rounded" />;
-            })}
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-20 bg-muted rounded" />
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>
@@ -370,13 +364,7 @@ var DeviceManager = function (_a) {
               </badge_1.Badge>
             </card_1.CardTitle>
             <div className="flex gap-2">
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return setShowAddDialog(true);
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => setShowAddDialog(true)}>
                 <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                 Add Device
               </button_1.Button>
@@ -394,91 +382,84 @@ var DeviceManager = function (_a) {
                 <p className="text-sm">Add a device to get started.</p>
               </div>
             : <div className="space-y-4">
-                {devices.map(function (device) {
-                  return (
-                    <div
-                      key={device.id}
-                      className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                    >
-                      <div className="flex-shrink-0">{getDeviceIcon(device.device_type)}</div>
+                {devices.map((device) => (
+                  <div
+                    key={device.id}
+                    className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex-shrink-0">{getDeviceIcon(device.device_type)}</div>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-medium truncate">{device.device_name}</h3>
-                          <badge_1.Badge
-                            className={getDeviceTypeColor(device.device_type)}
-                            variant="secondary"
-                          >
-                            {device.device_type}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-medium truncate">{device.device_name}</h3>
+                        <badge_1.Badge
+                          className={getDeviceTypeColor(device.device_type)}
+                          variant="secondary"
+                        >
+                          {device.device_type}
+                        </badge_1.Badge>
+                        {device.trusted && (
+                          <badge_1.Badge variant="default" className="bg-green-100 text-green-800">
+                            <lucide_react_1.ShieldCheck className="h-3 w-3 mr-1" />
+                            Trusted
                           </badge_1.Badge>
-                          {device.trusted && (
-                            <badge_1.Badge
-                              variant="default"
-                              className="bg-green-100 text-green-800"
-                            >
-                              <lucide_react_1.ShieldCheck className="h-3 w-3 mr-1" />
-                              Trusted
-                            </badge_1.Badge>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <lucide_react_1.Clock className="h-3 w-3" />
-                            {formatLastSeen(device.last_seen)}
-                          </div>
-
-                          {device.ip_address && (
-                            <div className="flex items-center gap-1">
-                              <lucide_react_1.MapPin className="h-3 w-3" />
-                              {device.ip_address}
-                            </div>
-                          )}
-
-                          <div className="flex items-center gap-1">
-                            <span
-                              className={"h-2 w-2 rounded-full ".concat(
-                                device.is_active ? "bg-green-500" : "bg-gray-400",
-                              )}
-                            />
-                            {device.is_active ? "Active" : "Inactive"}
-                          </div>
-                        </div>
+                        )}
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <button_1.Button
-                          variant={device.trusted ? "default" : "outline"}
-                          size="sm"
-                          onClick={function () {
-                            return handleTrustToggle(device);
-                          }}
-                        >
-                          {device.trusted
-                            ? <>
-                                <lucide_react_1.ShieldCheck className="h-4 w-4 mr-2" />
-                                Trusted
-                              </>
-                            : <>
-                                <lucide_react_1.Shield className="h-4 w-4 mr-2" />
-                                Trust
-                              </>}
-                        </button_1.Button>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <lucide_react_1.Clock className="h-3 w-3" />
+                          {formatLastSeen(device.last_seen)}
+                        </div>
 
-                        <button_1.Button
-                          variant="outline"
-                          size="sm"
-                          onClick={function () {
-                            setSelectedDevice(device);
-                            setShowRemoveDialog(true);
-                          }}
-                        >
-                          <lucide_react_1.Trash2 className="h-4 w-4" />
-                        </button_1.Button>
+                        {device.ip_address && (
+                          <div className="flex items-center gap-1">
+                            <lucide_react_1.MapPin className="h-3 w-3" />
+                            {device.ip_address}
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-1">
+                          <span
+                            className={"h-2 w-2 rounded-full ".concat(
+                              device.is_active ? "bg-green-500" : "bg-gray-400",
+                            )}
+                          />
+                          {device.is_active ? "Active" : "Inactive"}
+                        </div>
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div className="flex items-center gap-2">
+                      <button_1.Button
+                        variant={device.trusted ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleTrustToggle(device)}
+                      >
+                        {device.trusted
+                          ? <>
+                              <lucide_react_1.ShieldCheck className="h-4 w-4 mr-2" />
+                              Trusted
+                            </>
+                          : <>
+                              <lucide_react_1.Shield className="h-4 w-4 mr-2" />
+                              Trust
+                            </>}
+                      </button_1.Button>
+
+                      <button_1.Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedDevice(device);
+                          setShowRemoveDialog(true);
+                        }}
+                      >
+                        <lucide_react_1.Trash2 className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+                  </div>
+                ))}
               </div>}
         </card_1.CardContent>
       </card_1.Card>
@@ -499,11 +480,9 @@ var DeviceManager = function (_a) {
               <input_1.Input
                 id="device-name"
                 value={newDevice.name}
-                onChange={function (e) {
-                  return setNewDevice(function (prev) {
-                    return __assign(__assign({}, prev), { name: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setNewDevice((prev) => __assign(__assign({}, prev), { name: e.target.value }))
+                }
                 placeholder="My Laptop"
               />
             </div>
@@ -513,11 +492,9 @@ var DeviceManager = function (_a) {
               <select
                 id="device-type"
                 value={newDevice.type}
-                onChange={function (e) {
-                  return setNewDevice(function (prev) {
-                    return __assign(__assign({}, prev), { type: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setNewDevice((prev) => __assign(__assign({}, prev), { type: e.target.value }))
+                }
                 className="w-full p-2 border rounded-md"
               >
                 <option value="DESKTOP">Desktop</option>
@@ -531,23 +508,18 @@ var DeviceManager = function (_a) {
                 type="checkbox"
                 id="trusted"
                 checked={newDevice.trusted}
-                onChange={function (e) {
-                  return setNewDevice(function (prev) {
-                    return __assign(__assign({}, prev), { trusted: e.target.checked });
-                  });
-                }}
+                onChange={(e) =>
+                  setNewDevice((prev) =>
+                    __assign(__assign({}, prev), { trusted: e.target.checked }),
+                  )
+                }
               />
               <label_1.Label htmlFor="trusted">Mark as trusted device</label_1.Label>
             </div>
           </div>
 
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowAddDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowAddDialog(false)}>
               Cancel
             </button_1.Button>
             <button_1.Button onClick={handleAddDevice} disabled={!newDevice.name.trim()}>
@@ -583,12 +555,7 @@ var DeviceManager = function (_a) {
           )}
 
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowRemoveDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowRemoveDialog(false)}>
               Cancel
             </button_1.Button>
             <button_1.Button variant="destructive" onClick={handleRemoveDevice}>

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Intelligent Session Timeout System
  * Story 1.4 - Task 1: Implements configurable session timeout per user role
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.intelligentSessionTimeout = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -189,7 +186,7 @@ var DEFAULT_TIMEOUT_CONFIGS = {
     gracePeriodMinutes: 1,
   },
 };
-var IntelligentSessionTimeout = /** @class */ (function () {
+var IntelligentSessionTimeout = /** @class */ (() => {
   function IntelligentSessionTimeout() {
     this.supabase = (0, client_1.createClient)();
     this.timeoutConfigs = new Map();
@@ -200,7 +197,7 @@ var IntelligentSessionTimeout = /** @class */ (function () {
     this.initializeDefaultConfigs();
     this.setupGlobalActivityListeners();
   }
-  IntelligentSessionTimeout.getInstance = function () {
+  IntelligentSessionTimeout.getInstance = () => {
     if (!IntelligentSessionTimeout.instance) {
       IntelligentSessionTimeout.instance = new IntelligentSessionTimeout();
     }
@@ -538,13 +535,9 @@ var IntelligentSessionTimeout = /** @class */ (function () {
               return [2 /*return*/, null];
             }
             totalDuration = Date.now() - new Date(session.created_at).getTime();
-            extensionCount = events.filter(function (e) {
-              return e.event_type === "session_extended";
-            }).length;
-            warningCount = events.filter(function (e) {
-              return e.event_type === "timeout_warning";
-            }).length;
-            activityPattern = activities.reduce(function (acc, activity) {
+            extensionCount = events.filter((e) => e.event_type === "session_extended").length;
+            warningCount = events.filter((e) => e.event_type === "timeout_warning").length;
+            activityPattern = activities.reduce((acc, activity) => {
               acc[activity.activity_type] = (acc[activity.activity_type] || 0) + 1;
               return acc;
             }, {});
@@ -575,11 +568,10 @@ var IntelligentSessionTimeout = /** @class */ (function () {
   };
   // Private helper methods
   IntelligentSessionTimeout.prototype.initializeDefaultConfigs = function () {
-    var _this = this;
-    Object.entries(DEFAULT_TIMEOUT_CONFIGS).forEach(function (_a) {
+    Object.entries(DEFAULT_TIMEOUT_CONFIGS).forEach((_a) => {
       var role = _a[0],
         config = _a[1];
-      _this.timeoutConfigs.set(role, config);
+      this.timeoutConfigs.set(role, config);
     });
   };
   IntelligentSessionTimeout.prototype.getTimeoutConfig = function (userRole, customConfig) {
@@ -587,10 +579,9 @@ var IntelligentSessionTimeout = /** @class */ (function () {
     return __assign(__assign({}, defaultConfig), customConfig);
   };
   IntelligentSessionTimeout.prototype.startTimeoutTimer = function (sessionId, timeoutMinutes) {
-    var _this = this;
     var timer = setTimeout(
-      function () {
-        _this.expireSession(sessionId, true);
+      () => {
+        this.expireSession(sessionId, true);
       },
       timeoutMinutes * 60 * 1000,
     );
@@ -601,15 +592,14 @@ var IntelligentSessionTimeout = /** @class */ (function () {
     config,
     customTimeoutMinutes,
   ) {
-    var _this = this;
     var timeoutMinutes = customTimeoutMinutes || config.defaultTimeoutMinutes;
     var timers = [];
-    config.warningThresholds.forEach(function (warningMinutes) {
+    config.warningThresholds.forEach((warningMinutes) => {
       if (warningMinutes < timeoutMinutes) {
         var delay = (timeoutMinutes - warningMinutes) * 60 * 1000;
-        var timer = setTimeout(function () {
+        var timer = setTimeout(() => {
           var warningType = warningMinutes === 1 ? "final" : warningMinutes <= 5 ? "1min" : "5min";
-          _this.showTimeoutWarning(sessionId, warningType);
+          this.showTimeoutWarning(sessionId, warningType);
         }, delay);
         timers.push(timer);
       }
@@ -617,9 +607,8 @@ var IntelligentSessionTimeout = /** @class */ (function () {
     this.warningTimers.set(sessionId, timers);
   };
   IntelligentSessionTimeout.prototype.setupActivityTracking = function (sessionId, userId) {
-    var _this = this;
-    var activityHandler = function () {
-      _this.recordActivity(sessionId, "mouse");
+    var activityHandler = () => {
+      this.recordActivity(sessionId, "mouse");
     };
     // Store reference for cleanup
     this.activityListeners.set(sessionId, activityHandler);
@@ -632,19 +621,18 @@ var IntelligentSessionTimeout = /** @class */ (function () {
     }
   };
   IntelligentSessionTimeout.prototype.setupGlobalActivityListeners = function () {
-    var _this = this;
     // Global activity tracking setup
     if (typeof window !== "undefined") {
       // Page visibility change
-      document.addEventListener("visibilitychange", function () {
+      document.addEventListener("visibilitychange", () => {
         if (!document.hidden) {
           // User returned to page - record activity for all active sessions
-          _this.recordGlobalActivity("page_focus");
+          this.recordGlobalActivity("page_focus");
         }
       });
       // Before unload - preserve data
-      window.addEventListener("beforeunload", function () {
-        _this.preserveAllSessionData();
+      window.addEventListener("beforeunload", () => {
+        this.preserveAllSessionData();
       });
     }
   };
@@ -658,9 +646,7 @@ var IntelligentSessionTimeout = /** @class */ (function () {
     // Clear warning timers
     var warningTimers = this.warningTimers.get(sessionId);
     if (warningTimers) {
-      warningTimers.forEach(function (timer) {
-        return clearTimeout(timer);
-      });
+      warningTimers.forEach((timer) => clearTimeout(timer));
       this.warningTimers.delete(sessionId);
     }
   };
@@ -674,13 +660,13 @@ var IntelligentSessionTimeout = /** @class */ (function () {
       this.activityListeners.delete(sessionId);
     }
   };
-  IntelligentSessionTimeout.prototype.shouldExtendSession = function (session, now, config) {
+  IntelligentSessionTimeout.prototype.shouldExtendSession = (session, now, config) => {
     var lastActivity = new Date(session.last_activity);
     var timeSinceActivity = now.getTime() - lastActivity.getTime();
     var activityThreshold = 5 * 60 * 1000; // 5 minutes
     return timeSinceActivity > activityThreshold;
   };
-  IntelligentSessionTimeout.prototype.canExtendSession = function (session, config) {
+  IntelligentSessionTimeout.prototype.canExtendSession = (session, config) => {
     var sessionDuration = Date.now() - new Date(session.created_at).getTime();
     var maxDuration = config.maxTimeoutMinutes * 60 * 1000;
     return sessionDuration < maxDuration;
@@ -717,9 +703,9 @@ var IntelligentSessionTimeout = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            promises = Array.from(this.preservationData.keys()).map(function (sessionId) {
-              return _this.preserveSessionData(sessionId);
-            });
+            promises = Array.from(this.preservationData.keys()).map((sessionId) =>
+              _this.preserveSessionData(sessionId),
+            );
             return [4 /*yield*/, Promise.all(promises)];
           case 1:
             _a.sent();
@@ -736,12 +722,12 @@ var IntelligentSessionTimeout = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             activeSessions = Array.from(this.activeTimers.keys());
-            promises = activeSessions.map(function (sessionId) {
-              return _this.recordActivity(sessionId, "page_navigation", {
+            promises = activeSessions.map((sessionId) =>
+              _this.recordActivity(sessionId, "page_navigation", {
                 global: true,
                 type: activityType,
-              });
-            });
+              }),
+            );
             return [4 /*yield*/, Promise.all(promises)];
           case 1:
             _a.sent();
@@ -898,7 +884,7 @@ var IntelligentSessionTimeout = /** @class */ (function () {
     });
   };
   // Event emission methods (for UI integration)
-  IntelligentSessionTimeout.prototype.emitWarningEvent = function (warning) {
+  IntelligentSessionTimeout.prototype.emitWarningEvent = (warning) => {
     if (typeof window !== "undefined") {
       window.dispatchEvent(
         new CustomEvent("session-timeout-warning", {
@@ -907,10 +893,7 @@ var IntelligentSessionTimeout = /** @class */ (function () {
       );
     }
   };
-  IntelligentSessionTimeout.prototype.emitSessionExpiredEvent = function (
-    sessionId,
-    dataPreserved,
-  ) {
+  IntelligentSessionTimeout.prototype.emitSessionExpiredEvent = (sessionId, dataPreserved) => {
     if (typeof window !== "undefined") {
       window.dispatchEvent(
         new CustomEvent("session-expired", {
@@ -936,19 +919,12 @@ var IntelligentSessionTimeout = /** @class */ (function () {
    * Cleanup all session data and timers
    */
   IntelligentSessionTimeout.prototype.cleanup = function () {
-    var _this = this;
     // Clear all timers
-    this.activeTimers.forEach(function (timer) {
-      return clearTimeout(timer);
-    });
-    this.warningTimers.forEach(function (timers) {
-      return timers.forEach(function (timer) {
-        return clearTimeout(timer);
-      });
-    });
+    this.activeTimers.forEach((timer) => clearTimeout(timer));
+    this.warningTimers.forEach((timers) => timers.forEach((timer) => clearTimeout(timer)));
     // Remove all activity listeners
-    this.activityListeners.forEach(function (handler, sessionId) {
-      _this.removeActivityListeners(sessionId);
+    this.activityListeners.forEach((handler, sessionId) => {
+      this.removeActivityListeners(sessionId);
     });
     // Clear maps
     this.activeTimers.clear();

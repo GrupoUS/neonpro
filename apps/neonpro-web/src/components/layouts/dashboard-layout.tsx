@@ -1,27 +1,27 @@
 "use client";
 
-import type { ReactNode } from "react";
 import type { User } from "@supabase/supabase-js";
+import type { Bell, Home, LogOut, Menu, Settings } from "lucide-react";
+import type { useRouter } from "next/navigation";
+import type { ReactNode } from "react";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type {
   Breadcrumb,
   BreadcrumbItem,
-  BreadcrumbList,
   BreadcrumbLink,
-  BreadcrumbSeparator,
+  BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import type { Button } from "@/components/ui/button";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Bell, Settings, LogOut, Menu, Home } from "lucide-react";
-import type { useRouter } from "next/navigation";
-import type { createClient } from "@/app/utils/supabase/client";
 
 interface BreadcrumbItem {
   title: string;

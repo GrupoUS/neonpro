@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DashboardPage;
 var react_1 = require("react");
@@ -145,7 +142,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var loading_spinner_1 = require("@/components/ui/loading-spinner");
 var lucide_react_1 = require("lucide-react");
 function DashboardPage() {
-  var _this = this;
   var _a = (0, react_1.useState)(true),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -165,21 +161,16 @@ function DashboardPage() {
   var _d = (0, react_1.useState)([]),
     revenueData = _d[0],
     setRevenueData = _d[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Simulate data loading
-    var loadDashboardData = function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    var loadDashboardData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsLoading(true);
               // Simulate API calls
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 1500);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
             case 1:
               // Simulate API calls
               _a.sent();
@@ -237,10 +228,9 @@ function DashboardPage() {
           }
         });
       });
-    };
     loadDashboardData();
   }, []);
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "confirmed":
         return "bg-green-100 text-green-800 border-green-200";
@@ -254,7 +244,7 @@ function DashboardPage() {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getStatusText = function (status) {
+  var getStatusText = (status) => {
     switch (status) {
       case "confirmed":
         return "Confirmado";
@@ -377,45 +367,41 @@ function DashboardPage() {
                   <lucide_react_1.Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>Nenhuma consulta agendada para hoje</p>
                 </div>
-              : todayAppointments.map(function (appointment) {
-                  return (
-                    <div
-                      key={appointment.id}
-                      className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <avatar_1.Avatar>
-                          <avatar_1.AvatarImage src={appointment.avatar} />
-                          <avatar_1.AvatarFallback>
-                            {appointment.patientName
-                              .split(" ")
-                              .map(function (n) {
-                                return n[0];
-                              })
-                              .join("")}
-                          </avatar_1.AvatarFallback>
-                        </avatar_1.Avatar>
-                        <div>
-                          <p className="font-medium">{appointment.patientName}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {appointment.time} • {appointment.type}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <badge_1.Badge
-                          variant="outline"
-                          className={getStatusColor(appointment.status)}
-                        >
-                          {getStatusText(appointment.status)}
-                        </badge_1.Badge>
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Eye className="w-4 h-4" />
-                        </button_1.Button>
+              : todayAppointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <avatar_1.Avatar>
+                        <avatar_1.AvatarImage src={appointment.avatar} />
+                        <avatar_1.AvatarFallback>
+                          {appointment.patientName
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </avatar_1.AvatarFallback>
+                      </avatar_1.Avatar>
+                      <div>
+                        <p className="font-medium">{appointment.patientName}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {appointment.time} • {appointment.type}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center space-x-2">
+                      <badge_1.Badge
+                        variant="outline"
+                        className={getStatusColor(appointment.status)}
+                      >
+                        {getStatusText(appointment.status)}
+                      </badge_1.Badge>
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Eye className="w-4 h-4" />
+                      </button_1.Button>
+                    </div>
+                  </div>
+                ))}
           </card_1.CardContent>
         </card_1.Card>{" "}
         {/* Quick Actions & Analytics */}

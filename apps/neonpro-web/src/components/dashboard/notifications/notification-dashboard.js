@@ -9,18 +9,17 @@
  * @compliance WCAG 2.1 AA, LGPD
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -40,13 +39,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,9 +67,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -142,7 +139,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationDashboard = NotificationDashboard;
 var react_1 = require("react");
@@ -160,7 +157,6 @@ var notification_settings_1 = require("./notification-settings");
 // COMPONENT
 // ================================================================================
 function NotificationDashboard() {
-  var _this = this;
   var _a = (0, react_1.useState)("overview"),
     activeTab = _a[0],
     setActiveTab = _a[1];
@@ -177,16 +173,16 @@ function NotificationDashboard() {
   // ================================================================================
   // EFFECTS
   // ================================================================================
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadDashboardData();
   }, []);
   // ================================================================================
   // DATA LOADING
   // ================================================================================
-  var loadDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, statsResponse, historyResponse, statsData, historyData, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 6, 7, 8]);
@@ -232,13 +228,10 @@ function NotificationDashboard() {
         }
       });
     });
-  };
   // ================================================================================
   // RENDER HELPERS
   // ================================================================================
-  var renderOverviewCards = function () {
-    return <div className />;
-  };
+  var renderOverviewCards = () => <div className />;
   "grid gap-4 md:grid-cols-2 lg:grid-cols-4\">
         < card_1.Card >
         <card_1.CardHeader className/>
@@ -257,13 +250,11 @@ function NotificationDashboard() {
   "text-xs text-muted-foreground\">
         + 12 % em
   relação
-  ao;
-  período;
-  anterior;
+  ao
+  período
+  anterior
   p >
-    ;
   card_1.CardContent >
-    ;
   card_1.Card >
   (
     <card_1.Card>
@@ -273,7 +264,7 @@ function NotificationDashboard() {
       \"text-sm font-medium\">Taxa de Entrega
     </card_1.CardTitle>
   ),
-    (<icons_1.Icons.CheckCircle className />);
+    (<icons_1.Icons.CheckCircle className />)
   "h-4 w-4 text-muted-foreground\" />;
     card_1.CardHeader >
         (<card_1.CardContent>
@@ -283,13 +274,11 @@ function NotificationDashboard() {
   "text-xs text-muted-foreground\">
         + 2.1 % em
   relação
-  ao;
-  período;
-  anterior;
+  ao
+  período
+  anterior
   p >
-    ;
   card_1.CardContent >
-    ;
   card_1.Card >
   (
     <card_1.Card>
@@ -299,7 +288,7 @@ function NotificationDashboard() {
       \"text-sm font-medium\">Engajamento
     </card_1.CardTitle>
   ),
-    (<icons_1.Icons.Users className />);
+    (<icons_1.Icons.Users className />)
   "h-4 w-4 text-muted-foreground\" />;
     card_1.CardHeader >
         (<card_1.CardContent>
@@ -309,13 +298,11 @@ function NotificationDashboard() {
   "text-xs text-muted-foreground\">
         + 5.4 % em
   relação
-  ao;
-  período;
-  anterior;
+  ao
+  período
+  anterior
   p >
-    ;
   card_1.CardContent >
-    ;
   card_1.Card >
   (
     <card_1.Card>
@@ -325,7 +312,7 @@ function NotificationDashboard() {
       \"text-sm font-medium\">Pendentes
     </card_1.CardTitle>
   ),
-    (<icons_1.Icons.Clock className />);
+    (<icons_1.Icons.Clock className />)
   "h-4 w-4 text-muted-foreground\" />;
     card_1.CardHeader >
         (<card_1.CardContent>
@@ -333,73 +320,64 @@ function NotificationDashboard() {
             ,
                 <p className/>)
   "text-xs text-muted-foreground\">;
-  {
-    (stats === null || stats === void 0 ? void 0 : stats.failed) || 0;
-  }
-  falharam;
+    (stats === null || stats === void 0 ? void 0 : stats.failed) || 0
+  falharam
   p >
-    ;
   card_1.CardContent >
-    ;
   card_1.Card >
-    ;
   div >
     ;
-  var renderRecentNotifications = function () {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle>Notificações Recentes</card_1.CardTitle>
-          <card_1.CardDescription>Últimas 5 notificações enviadas</card_1.CardDescription>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          <div className />
-          \"space-y-4\">
-          {recentNotifications.map(function (notification) {
-            return <div key={notification.id} className />;
-          })}
-          \"flex items-center justify-between space-x-4\" >
-          <div className />
-          \"flex-1 space-y-1\">
-          <p className />
-          \"text-sm font-medium leading-none\">
-          {notification.title}
-        </p>
+  var renderRecentNotifications = () => (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle>Notificações Recentes</card_1.CardTitle>
+        <card_1.CardDescription>Últimas 5 notificações enviadas</card_1.CardDescription>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        <div className />
+        \"space-y-4\">
+        {recentNotifications.map((notification) => (
+          <div key={notification.id} className />
+        ))}
+        \"flex items-center justify-between space-x-4\" >
+        <div className />
+        \"flex-1 space-y-1\">
         <p className />
-        \"text-sm text-muted-foreground\">
-        {notification.type} • {notification.recipientCount} destinatários
+        \"text-sm font-medium leading-none\">
+        {notification.title}
       </p>
-    );
-  };
+      <p className />
+      \"text-sm text-muted-foreground\">
+      {notification.type} • {notification.recipientCount} destinatários
+    </p>
+  );
   div > <div className />;
   "flex items-center space-x-2\">
         < div
   className =
   "flex space-x-1\">;
-  {
-    notification.channels.map(function (channel) { return (<badge_1.Badge key={channel} variant/>); }, "outline\" className=\"text-xs\">, { channel: channel }, badge_1.Badge >
-        );
-  }
+    notification.channels.map((channel) => (<badge_1.Badge key=
+    channel
+  variant/>
+  ), "outline\" className=\"text-xs\">, { channel: channel }, badge_1.Badge >
+        )
   div >
   (
     <badge_1.Badge
-      variant={
-        notification.status === "delivered"
-          ? "default"
-          : notification.status === "sent"
-            ? "secondary"
-            : notification.status === "pending"
-              ? "outline"
-              : "destructive"
-      }
-    >
-      {notification.status}
-    </badge_1.Badge>
-  );
+      variant=
+    notification.status === "delivered"
+      ? "default"
+      : notification.status === "sent"
+        ? "secondary"
+        : notification.status === "pending"
+          ? "outline"
+          : "destructive"
+  >
+    notification.status
+  </badge_1.Badge>
+  )
   div >
-    ;
   div >
-    ;
 }
 div >
 ;
@@ -407,30 +385,26 @@ card_1.CardContent >
 ;
 card_1.Card >
 ;
-var renderQuickActions = function () {
-  return (
-    (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle>Ações Rápidas</card_1.CardTitle>
-          <card_1.CardDescription>
-            Ações comuns para gerenciamento de notificações
-          </card_1.CardDescription>
-        </card_1.CardHeader>
-        <card_1.CardContent className />
-        \"space-y-4\">
-        <button_1.Button className />
-        \"w-full justify-start\" variant=\"outline\" onClick={function () {
-          return setActiveTab("send");
-        }}
-        >
-        <icons_1.Icons.Send className />
-        \"mr-2 h-4 w-4\" /> Enviar Notificação
-      </button_1.Button>
-    ),
-    (<button_1.Button className />)
-  );
-};
+var renderQuickActions = () => (
+  (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle>Ações Rápidas</card_1.CardTitle>
+        <card_1.CardDescription>
+          Ações comuns para gerenciamento de notificações
+        </card_1.CardDescription>
+      </card_1.CardHeader>
+      <card_1.CardContent className />
+      \"space-y-4\">
+      <button_1.Button className />
+      \"w-full justify-start\" variant=\"outline\" onClick={() => setActiveTab("send")}
+      >
+      <icons_1.Icons.Send className />
+      \"mr-2 h-4 w-4\" /> Enviar Notificação
+    </button_1.Button>
+  ),
+  (<button_1.Button className />)
+);
 "w-full justify-start\" ;
 variant =
 "outline\";
@@ -444,7 +418,7 @@ setActiveTab("analytics");
 "mr-2 h-4 w-4\" />;
 Ver
 Analytics
-button_1.Button > <button_1.Button className />;
+button_1.Button > <button_1.Button className />
 "w-full justify-start\" ;
 variant =
 "outline\";
@@ -459,9 +433,7 @@ setActiveTab("settings");
 Configurações
 button_1.Button >
 card_1.CardContent >
-;
 card_1.Card >
-;
 // ================================================================================
 // MAIN RENDER
 // ================================================================================
@@ -488,13 +460,16 @@ className =
 "text-muted-foreground\">;
 Gerencie
 e
-monitore;
-todas;
-da;
-clínica;
+monitore
+todas
+da
+clínica
 p >
-;
-div > <button_1.Button onClick={loadDashboardData} variant />;
+div > <button_1.Button onClick=
+{
+  loadDashboardData;
+}
+variant />;
 "outline\" size=\"sm\">
     < icons_1.Icons.RefreshCw
 className =
@@ -502,9 +477,10 @@ className =
 Atualizar
 button_1.Button >
 div >
-  {
-    /* Main Content */
-  } <
+{
+  /* Main Content */
+}
+<
   tabs_1.Tabs;
 value = { activeTab: activeTab };
 onValueChange = { setActiveTab: setActiveTab };

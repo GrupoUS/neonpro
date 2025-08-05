@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI-Powered Automatic Scheduling Core
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,11 +150,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AISchedulingCore = void 0;
 var client_1 = require("@/lib/supabase/client");
-var AISchedulingCore = /** @class */ (function () {
+var AISchedulingCore = /** @class */ (() => {
   function AISchedulingCore(config) {
     if (config === void 0) {
       config = {};
@@ -218,23 +215,21 @@ var AISchedulingCore = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                availableSlots.map(function (slot) {
-                  return _this.calculateOptimizationScore(
+                availableSlots.map((slot) =>
+                  _this.calculateOptimizationScore(
                     slot,
                     criteria,
                     patientPreferences_1,
                     staffEfficiencyData_1,
-                  );
-                }),
+                  ),
+                ),
               ),
               // 5. Sort by optimization score and return top recommendations
             ];
           case 4:
             scoredSlots = _a.sent();
             recommendations = scoredSlots
-              .sort(function (a, b) {
-                return b.optimizationScore - a.optimizationScore;
-              })
+              .sort((a, b) => b.optimizationScore - a.optimizationScore)
               .slice(0, 5); // Top 5 recommendations
             // 6. Log recommendation for learning
             return [4 /*yield*/, this.logRecommendation(criteria, recommendations)];
@@ -524,16 +519,14 @@ var AISchedulingCore = /** @class */ (function () {
             existingAppointments = _a.sent().data;
             availableSlots = [];
             currentDate = new Date();
-            _loop_1 = function (day) {
+            _loop_1 = (day) => {
               var checkDate = new Date(currentDate);
               checkDate.setDate(currentDate.getDate() + day);
               var dayOfWeek = checkDate.getDay();
               var dayHours =
                 clinicHours === null || clinicHours === void 0
                   ? void 0
-                  : clinicHours.find(function (h) {
-                      return h.day_of_week === dayOfWeek;
-                    });
+                  : clinicHours.find((h) => h.day_of_week === dayOfWeek);
               if (dayHours && dayHours.is_open) {
                 var slots = this_1.generateDaySlots(
                   checkDate,
@@ -562,12 +555,12 @@ var AISchedulingCore = /** @class */ (function () {
   /**
    * Generate time slots for a specific day
    */
-  AISchedulingCore.prototype.generateDaySlots = function (
+  AISchedulingCore.prototype.generateDaySlots = (
     date,
     dayHours,
     durationMinutes,
     existingAppointments,
-  ) {
+  ) => {
     var slots = [];
     var slotInterval = 30; // 30-minute intervals
     var startTime = new Date(date);
@@ -581,11 +574,11 @@ var AISchedulingCore = /** @class */ (function () {
       endMinute = _b[1];
     endTime.setHours(endHour, endMinute, 0, 0);
     var currentSlot = new Date(startTime);
-    var _loop_2 = function () {
+    var _loop_2 = () => {
       var slotEnd = new Date(currentSlot);
       slotEnd.setMinutes(currentSlot.getMinutes() + durationMinutes);
       // Check if slot conflicts with existing appointments
-      var hasConflict = existingAppointments.some(function (apt) {
+      var hasConflict = existingAppointments.some((apt) => {
         var aptStart = new Date(apt.start_time);
         var aptEnd = new Date(apt.end_time);
         return (
@@ -611,13 +604,13 @@ var AISchedulingCore = /** @class */ (function () {
     return slots;
   };
   // Helper methods for scoring calculations
-  AISchedulingCore.prototype.calculateStaffEfficiencyScore = function (slot, pattern) {
+  AISchedulingCore.prototype.calculateStaffEfficiencyScore = (slot, pattern) => {
     // Implementation for staff efficiency scoring
     var hourScore = pattern.efficiencyScore;
     var fatigueAdjustment = 1 - pattern.fatigueLevel * 0.2;
     return Math.max(0, Math.min(1, hourScore * fatigueAdjustment));
   };
-  AISchedulingCore.prototype.calculatePatientPreferenceScore = function (slot, preferences) {
+  AISchedulingCore.prototype.calculatePatientPreferenceScore = (slot, preferences) => {
     var score = 0;
     // Day preference score
     if (preferences.preferredDaysOfWeek.includes(slot.dayOfWeek)) {
@@ -640,7 +633,7 @@ var AISchedulingCore = /** @class */ (function () {
   };
   AISchedulingCore.prototype.calculateRevenueScore = function (slot, criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for revenue optimization scoring
         // Consider peak hours, treatment pricing, package deals, etc.
         return [2 /*return*/, 0.7]; // Placeholder
@@ -649,7 +642,7 @@ var AISchedulingCore = /** @class */ (function () {
   };
   AISchedulingCore.prototype.calculateSequencingScore = function (slot, criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for treatment sequencing optimization
         return [2 /*return*/, 0.8]; // Placeholder
       });
@@ -657,17 +650,13 @@ var AISchedulingCore = /** @class */ (function () {
   };
   AISchedulingCore.prototype.calculateWorkloadBalanceScore = function (slot, staffId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for workload balance scoring
         return [2 /*return*/, 0.6]; // Placeholder
       });
     });
   };
-  AISchedulingCore.prototype.calculateConfidence = function (
-    scores,
-    patientPreferences,
-    staffPattern,
-  ) {
+  AISchedulingCore.prototype.calculateConfidence = (scores, patientPreferences, staffPattern) => {
     // Calculate confidence based on data quality and score consistency
     var confidence = 0.5; // Base confidence
     // Increase confidence if we have good patient data
@@ -684,53 +673,42 @@ var AISchedulingCore = /** @class */ (function () {
   };
   AISchedulingCore.prototype.estimateSlotRevenue = function (slot, criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for revenue estimation
         return [2 /*return*/, 150]; // Placeholder
       });
     });
   };
-  AISchedulingCore.prototype.predictPatientSatisfaction = function (slot, preferences, scores) {
+  AISchedulingCore.prototype.predictPatientSatisfaction = (slot, preferences, scores) => {
     // Implementation for satisfaction prediction
     return scores.patientPreference * 0.6 + scores.staffEfficiency * 0.4;
   };
   // Additional helper methods
   AISchedulingCore.prototype.findOptimalStaff = function (slot, treatmentId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation to find the best staff member for the slot
         return [2 /*return*/, "staff-id-placeholder"];
       });
     });
   };
-  AISchedulingCore.prototype.analyzeDayPreferences = function (appointments) {
+  AISchedulingCore.prototype.analyzeDayPreferences = (appointments) => {
     // Analyze which days of the week the patient prefers
     var dayCount = new Array(7).fill(0);
-    appointments.forEach(function (apt) {
+    appointments.forEach((apt) => {
       var day = new Date(apt.start_time).getDay();
       dayCount[day]++;
     });
     var maxCount = Math.max.apply(Math, dayCount);
     return dayCount
-      .map(function (count, day) {
-        return { day: day, count: count };
-      })
-      .filter(function (item) {
-        return item.count >= maxCount * 0.3;
-      })
-      .map(function (item) {
-        return item.day;
-      });
+      .map((count, day) => ({ day: day, count: count }))
+      .filter((item) => item.count >= maxCount * 0.3)
+      .map((item) => item.day);
   };
-  AISchedulingCore.prototype.analyzeTimePreferences = function (appointments) {
+  AISchedulingCore.prototype.analyzeTimePreferences = (appointments) => {
     // Analyze preferred time ranges
-    var hours = appointments.map(function (apt) {
-      return new Date(apt.start_time).getHours();
-    });
-    var avgHour =
-      hours.reduce(function (sum, hour) {
-        return sum + hour;
-      }, 0) / hours.length;
+    var hours = appointments.map((apt) => new Date(apt.start_time).getHours());
+    var avgHour = hours.reduce((sum, hour) => sum + hour, 0) / hours.length;
     return [
       {
         start: "".concat(
@@ -748,63 +726,49 @@ var AISchedulingCore = /** @class */ (function () {
       },
     ];
   };
-  AISchedulingCore.prototype.analyzeBookingLeadTime = function (appointments) {
+  AISchedulingCore.prototype.analyzeBookingLeadTime = (appointments) => {
     // Analyze how far in advance the patient typically books
     var leadTimes = appointments
-      .filter(function (apt) {
-        return apt.created_at && apt.start_time;
-      })
-      .map(function (apt) {
+      .filter((apt) => apt.created_at && apt.start_time)
+      .map((apt) => {
         var created = new Date(apt.created_at);
         var scheduled = new Date(apt.start_time);
         return (scheduled.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
       });
     return leadTimes.length > 0
-      ? leadTimes.reduce(function (sum, days) {
-          return sum + days;
-        }, 0) / leadTimes.length
+      ? leadTimes.reduce((sum, days) => sum + days, 0) / leadTimes.length
       : 7; // Default to 7 days
   };
-  AISchedulingCore.prototype.analyzeCancellationPattern = function (appointments) {
+  AISchedulingCore.prototype.analyzeCancellationPattern = (appointments) => {
     // Analyze cancellation rate
-    var cancelled = appointments.filter(function (apt) {
-      return apt.status === "cancelled";
-    }).length;
+    var cancelled = appointments.filter((apt) => apt.status === "cancelled").length;
     return appointments.length > 0 ? cancelled / appointments.length : 0;
   };
-  AISchedulingCore.prototype.calculateAverageSatisfaction = function (appointments) {
+  AISchedulingCore.prototype.calculateAverageSatisfaction = (appointments) => {
     // Calculate average satisfaction from feedback
     var feedbackScores = appointments
-      .filter(function (apt) {
+      .filter((apt) => {
         var _a;
         return ((_a = apt.appointment_feedback) === null || _a === void 0 ? void 0 : _a.length) > 0;
       })
-      .map(function (apt) {
-        return apt.appointment_feedback[0].satisfaction_score;
-      })
-      .filter(function (score) {
-        return score !== null;
-      });
+      .map((apt) => apt.appointment_feedback[0].satisfaction_score)
+      .filter((score) => score !== null);
     return feedbackScores.length > 0
-      ? feedbackScores.reduce(function (sum, score) {
-          return sum + score;
-        }, 0) / feedbackScores.length
+      ? feedbackScores.reduce((sum, score) => sum + score, 0) / feedbackScores.length
       : 4.0; // Default satisfaction
   };
-  AISchedulingCore.prototype.getDefaultPatientPreferences = function (patientId) {
-    return {
-      patientId: patientId,
-      preferredDaysOfWeek: [1, 2, 3, 4, 5], // Weekdays
-      preferredTimeRanges: [{ start: "09:00", end: "17:00" }],
-      bookingLeadTime: 7,
-      cancellationPattern: 0.1,
-      satisfactionScore: 4.0,
-      lastLearningUpdate: new Date(),
-    };
-  };
+  AISchedulingCore.prototype.getDefaultPatientPreferences = (patientId) => ({
+    patientId: patientId,
+    preferredDaysOfWeek: [1, 2, 3, 4, 5], // Weekdays
+    preferredTimeRanges: [{ start: "09:00", end: "17:00" }],
+    bookingLeadTime: 7,
+    cancellationPattern: 0.1,
+    satisfactionScore: 4.0,
+    lastLearningUpdate: new Date(),
+  });
   AISchedulingCore.prototype.loadStaffEfficiencyPatterns = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation to load staff efficiency patterns
         return [2 /*return*/, new Map()];
       });

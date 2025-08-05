@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useConsentBanner = useConsentBanner;
 var react_1 = require("react");
@@ -155,7 +152,6 @@ var use_toast_1 = require("@/hooks/use-toast");
 var CONSENT_STORAGE_KEY = "lgpd_consent_preferences";
 var BANNER_SHOWN_KEY = "lgpd_banner_shown";
 function useConsentBanner() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     purposes = _a[0],
     setPurposes = _a[1];
@@ -183,7 +179,7 @@ function useConsentBanner() {
   var toast = (0, use_toast_1.useToast)().toast;
   var complianceManager = new LGPDComplianceManager_1.LGPDComplianceManager();
   // Load stored preferences from localStorage
-  var loadStoredPreferences = (0, react_1.useCallback)(function () {
+  var loadStoredPreferences = (0, react_1.useCallback)(() => {
     try {
       var stored = localStorage.getItem(CONSENT_STORAGE_KEY);
       if (stored) {
@@ -197,7 +193,7 @@ function useConsentBanner() {
     return {};
   }, []);
   // Save preferences to localStorage
-  var saveToStorage = (0, react_1.useCallback)(function (prefs) {
+  var saveToStorage = (0, react_1.useCallback)((prefs) => {
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(prefs));
       localStorage.setItem(BANNER_SHOWN_KEY, "true");
@@ -206,7 +202,7 @@ function useConsentBanner() {
     }
   }, []);
   // Check if banner should be shown
-  var shouldShowBanner = (0, react_1.useCallback)(function () {
+  var shouldShowBanner = (0, react_1.useCallback)(() => {
     try {
       var bannerShown = localStorage.getItem(BANNER_SHOWN_KEY);
       var hasStoredPreferences = localStorage.getItem(CONSENT_STORAGE_KEY);
@@ -217,10 +213,10 @@ function useConsentBanner() {
   }, []);
   // Load consent purposes
   var loadPurposes = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, storedPrefs, newPrefs_1, err_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -231,7 +227,7 @@ function useConsentBanner() {
               setPurposes(response.data);
               storedPrefs = loadStoredPreferences();
               newPrefs_1 = __assign({}, storedPrefs);
-              response.data.forEach(function (purpose) {
+              response.data.forEach((purpose) => {
                 if (!(purpose.id in newPrefs_1)) {
                   // Default to false for optional purposes, true for essential
                   newPrefs_1[purpose.id] = purpose.required || false;
@@ -256,16 +252,15 @@ function useConsentBanner() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [complianceManager, loadStoredPreferences, shouldShowBanner],
   );
   // Load consent history
   var loadConsentHistory = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, err_2, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -295,38 +290,37 @@ function useConsentBanner() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [complianceManager],
   );
   // Accept all consents
   var acceptAll = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var allAccepted_1, err_3, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
               setIsSaving(true);
               setError(null);
               allAccepted_1 = {};
-              purposes.forEach(function (purpose) {
+              purposes.forEach((purpose) => {
                 allAccepted_1[purpose.id] = true;
               });
               // Save to backend
               return [
                 4 /*yield*/,
                 Promise.all(
-                  purposes.map(function (purpose) {
-                    return complianceManager.recordConsent({
+                  purposes.map((purpose) =>
+                    complianceManager.recordConsent({
                       purpose_id: purpose.id,
                       granted: true,
                       user_id: "anonymous", // Will be replaced with actual user ID when available
                       ip_address: "", // Will be filled by backend
                       user_agent: navigator.userAgent,
-                    });
-                  }),
+                    }),
+                  ),
                 ),
               ];
             case 1:
@@ -358,38 +352,37 @@ function useConsentBanner() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [purposes, complianceManager, saveToStorage, toast],
   );
   // Reject all optional consents
   var rejectAll = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var onlyRequired_1, err_4, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
               setIsSaving(true);
               setError(null);
               onlyRequired_1 = {};
-              purposes.forEach(function (purpose) {
+              purposes.forEach((purpose) => {
                 onlyRequired_1[purpose.id] = purpose.required || false;
               });
               // Save to backend
               return [
                 4 /*yield*/,
                 Promise.all(
-                  purposes.map(function (purpose) {
-                    return complianceManager.recordConsent({
+                  purposes.map((purpose) =>
+                    complianceManager.recordConsent({
                       purpose_id: purpose.id,
                       granted: purpose.required || false,
                       user_id: "anonymous", // Will be replaced with actual user ID when available
                       ip_address: "", // Will be filled by backend
                       user_agent: navigator.userAgent,
-                    });
-                  }),
+                    }),
+                  ),
                 ),
               ];
             case 1:
@@ -421,23 +414,22 @@ function useConsentBanner() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [purposes, complianceManager, saveToStorage, toast],
   );
   // Save custom preferences
   var savePreferences = (0, react_1.useCallback)(
-    function (newPreferences) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (newPreferences) =>
+      __awaiter(this, void 0, void 0, function () {
         var validatedPreferences_1, err_5, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
               setIsSaving(true);
               setError(null);
               validatedPreferences_1 = __assign({}, newPreferences);
-              purposes.forEach(function (purpose) {
+              purposes.forEach((purpose) => {
                 if (purpose.required) {
                   validatedPreferences_1[purpose.id] = true;
                 }
@@ -446,7 +438,7 @@ function useConsentBanner() {
               return [
                 4 /*yield*/,
                 Promise.all(
-                  Object.entries(validatedPreferences_1).map(function (_a) {
+                  Object.entries(validatedPreferences_1).map((_a) => {
                     var purposeId = _a[0],
                       granted = _a[1];
                     return complianceManager.recordConsent({
@@ -488,16 +480,13 @@ function useConsentBanner() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [purposes, complianceManager, saveToStorage, toast],
   );
   // Update single preference
   var updatePreference = (0, react_1.useCallback)(
-    function (purposeId, granted) {
-      var purpose = purposes.find(function (p) {
-        return p.id === purposeId;
-      });
+    (purposeId, granted) => {
+      var purpose = purposes.find((p) => p.id === purposeId);
       if ((purpose === null || purpose === void 0 ? void 0 : purpose.required) && !granted) {
         toast({
           title: "Consentimento obrigatório",
@@ -506,7 +495,7 @@ function useConsentBanner() {
         });
         return;
       }
-      setPreferences(function (prev) {
+      setPreferences((prev) => {
         var _a;
         return __assign(__assign({}, prev), ((_a = {}), (_a[purposeId] = granted), _a));
       });
@@ -514,47 +503,33 @@ function useConsentBanner() {
     [purposes, toast],
   );
   // Banner control functions
-  var showBannerDialog = (0, react_1.useCallback)(function () {
-    return setShowBanner(true);
-  }, []);
-  var hideBanner = (0, react_1.useCallback)(function () {
-    return setShowBanner(false);
-  }, []);
-  var showPreferencesDialog = (0, react_1.useCallback)(function () {
-    return setShowPreferences(true);
-  }, []);
-  var hidePreferences = (0, react_1.useCallback)(function () {
-    return setShowPreferences(false);
-  }, []);
+  var showBannerDialog = (0, react_1.useCallback)(() => setShowBanner(true), []);
+  var hideBanner = (0, react_1.useCallback)(() => setShowBanner(false), []);
+  var showPreferencesDialog = (0, react_1.useCallback)(() => setShowPreferences(true), []);
+  var hidePreferences = (0, react_1.useCallback)(() => setShowPreferences(false), []);
   // Check if user has consent for a specific purpose
   var hasConsent = (0, react_1.useCallback)(
-    function (purposeId) {
-      return preferences[purposeId] === true;
-    },
+    (purposeId) => preferences[purposeId] === true,
     [preferences],
   );
   // Load data on mount
-  (0, react_1.useEffect)(
-    function () {
-      var loadData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                setIsLoading(true);
-                return [4 /*yield*/, Promise.all([loadPurposes(), loadConsentHistory()])];
-              case 1:
-                _a.sent();
-                setIsLoading(false);
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var loadData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setIsLoading(true);
+              return [4 /*yield*/, Promise.all([loadPurposes(), loadConsentHistory()])];
+            case 1:
+              _a.sent();
+              setIsLoading(false);
+              return [2 /*return*/];
+          }
         });
-      };
-      loadData();
-    },
-    [loadPurposes, loadConsentHistory],
-  );
+      });
+    loadData();
+  }, [loadPurposes, loadConsentHistory]);
   return {
     // Data
     purposes: purposes,

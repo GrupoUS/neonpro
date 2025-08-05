@@ -2,91 +2,89 @@
 // Story 1.4: Session Management & Security Implementation
 // Main entry point for the authentication system
 
-// Core modules
-export * from "./core";
+// API routes
+export * from "./api";
 export {
-  SessionManager,
-  SecurityMonitor,
-  DeviceManager,
-  type SessionConfig,
-  type SecurityConfig,
-  type DeviceConfig,
-  type Session,
-  type SecurityEvent,
-  type SecurityAlert,
-  type Device,
-  type SessionMetrics,
-  type SecurityMetrics,
-  type DeviceAnalytics,
-} from "./core";
+  API_ROUTE_PATTERNS,
+  type APIError,
+  type APIResponse,
+  type APIRouteHandler,
+  addSecurityHeaders,
+  createAuthAPIRoutes,
+  createDeviceRoutes,
+  createErrorResponse,
+  createSecurityRoutes,
+  createSessionRoutes,
+  createSuccessResponse,
+  ERROR_MESSAGES,
+  extractClientIP as apiExtractClientIP,
+  extractSessionToken as apiExtractSessionToken,
+  HTTP_METHODS,
+  parseQueryParams,
+  type QueryParams,
+  STATUS_CODES,
+  SUCCESS_MESSAGES,
+  validateRequestBody,
+} from "./api";
 
 // React components
 export * from "./components";
 export {
-  SessionStatus,
-  SecurityAlerts,
   DeviceManager as DeviceManagerComponent,
-  SessionMetrics as SessionMetricsComponent,
-  type SessionStatusProps,
-  type SecurityAlertsProps,
   type DeviceManagerProps,
+  SecurityAlerts,
+  type SecurityAlertsProps,
+  SessionMetrics as SessionMetricsComponent,
   type SessionMetricsProps,
+  SessionStatus,
+  type SessionStatusProps,
 } from "./components";
-
+// Core modules
+export * from "./core";
+export {
+  type Device,
+  type DeviceAnalytics,
+  type DeviceConfig,
+  DeviceManager,
+  type SecurityAlert,
+  type SecurityConfig,
+  type SecurityEvent,
+  type SecurityMetrics,
+  SecurityMonitor,
+  type Session,
+  type SessionConfig,
+  SessionManager,
+  type SessionMetrics,
+} from "./core";
 // Middlewares
 export * from "./middleware";
 export {
+  type AuthMiddlewareConfig,
+  type CombinedMiddlewareConfig,
   createAuthMiddleware,
-  createSecurityMiddleware,
   createCombinedMiddleware,
-  extractClientIP,
-  extractSessionToken,
-  isAPIRoute,
-  isStaticRoute,
-  isPublicRoute,
-  HIGH_SECURITY_CONFIG,
+  createSecurityMiddleware,
   DEFAULT_CONFIG,
   DEVELOPMENT_CONFIG,
-  type AuthMiddlewareConfig,
-  type SecurityMiddlewareConfig,
-  type CombinedMiddlewareConfig,
+  extractClientIP,
+  extractSessionToken,
+  HIGH_SECURITY_CONFIG,
+  isAPIRoute,
+  isPublicRoute,
+  isStaticRoute,
   type MiddlewareContext,
   type RouteType,
+  type SecurityMiddlewareConfig,
 } from "./middleware";
-
-// API routes
-export * from "./api";
-export {
-  createSessionRoutes,
-  createSecurityRoutes,
-  createDeviceRoutes,
-  createAuthAPIRoutes,
-  extractClientIP as apiExtractClientIP,
-  extractSessionToken as apiExtractSessionToken,
-  createErrorResponse,
-  createSuccessResponse,
-  validateRequestBody,
-  parseQueryParams,
-  addSecurityHeaders,
-  API_ROUTE_PATTERNS,
-  HTTP_METHODS,
-  STATUS_CODES,
-  ERROR_MESSAGES,
-  SUCCESS_MESSAGES,
-  type APIRouteHandler,
-  type APIResponse,
-  type APIError,
-  type QueryParams,
-} from "./api";
 
 // Test utilities (for development and testing)
 export {
-  TestUtils,
-  PerformanceTestUtils,
   IntegrationTestUtils,
-  TEST_CONFIG,
-  setupTestEnvironment,
+  PerformanceTestUtils,
   runTestSuite,
+  setupTestEnvironment,
+  TEST_CONFIG,
+  TestUtils,
 } from "./tests";
 
 // System configuration and utilities

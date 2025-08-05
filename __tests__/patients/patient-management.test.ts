@@ -10,8 +10,7 @@
  * - Complete traceability for all changes
  */
 
-import { ProfileManager } from "../../lib/patients/profile-manager";
-import { PatientProfileExtended } from "../../lib/patients/profile-manager";
+import { type PatientProfileExtended, ProfileManager } from "../../lib/patients/profile-manager";
 
 // Mock the entire Supabase module to avoid ES module issues
 jest.mock("@supabase/auth-helpers-nextjs", () => ({

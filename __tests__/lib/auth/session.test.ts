@@ -1,5 +1,5 @@
-import { SessionManager } from "@/lib/auth/session";
 import { createClient } from "@/app/utils/supabase/client";
+import { SessionManager } from "@/lib/auth/session";
 import type { CreateSessionRequest, UpdateSessionRequest } from "@/types/session";
 
 // Mock Supabase client

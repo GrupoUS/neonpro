@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createsubscriptionService = exports.SubscriptionService = void 0;
 var server_1 = require("@/lib/supabase/server");
@@ -153,7 +150,7 @@ var stripe_1 = require("@/lib/stripe");
 /**
  * Subscription Service for managing recurring payments
  */
-var SubscriptionService = /** @class */ (function () {
+var SubscriptionService = /** @class */ (() => {
   function SubscriptionService() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -626,30 +623,23 @@ var SubscriptionService = /** @class */ (function () {
   /**
    * Format subscription status for API response
    */
-  SubscriptionService.prototype.formatSubscriptionStatus = function (
-    subscription,
-    stripeSubscription,
-  ) {
-    return {
-      id: subscription.id,
-      status: stripeSubscription.status,
-      currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
-      currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
-      nextBillingDate: new Date(stripeSubscription.current_period_end * 1000),
-      amount: subscription.amount,
-      currency: subscription.currency,
-      paymentMethod: {
-        type: "card", // This would need to be determined from the actual payment method
-        last4: "****", // This would come from the payment method details
-        brand: "visa", // This would come from the payment method details
-      },
-    };
-  };
+  SubscriptionService.prototype.formatSubscriptionStatus = (subscription, stripeSubscription) => ({
+    id: subscription.id,
+    status: stripeSubscription.status,
+    currentPeriodStart: new Date(stripeSubscription.current_period_start * 1000),
+    currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+    nextBillingDate: new Date(stripeSubscription.current_period_end * 1000),
+    amount: subscription.amount,
+    currency: subscription.currency,
+    paymentMethod: {
+      type: "card", // This would need to be determined from the actual payment method
+      last4: "****", // This would come from the payment method details
+      brand: "visa", // This would come from the payment method details
+    },
+  });
   return SubscriptionService;
 })();
 exports.SubscriptionService = SubscriptionService;
 // Export singleton instance
-var createsubscriptionService = function () {
-  return new SubscriptionService();
-};
+var createsubscriptionService = () => new SubscriptionService();
 exports.createsubscriptionService = createsubscriptionService;

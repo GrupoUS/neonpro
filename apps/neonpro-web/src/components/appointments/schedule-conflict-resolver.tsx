@@ -1,6 +1,21 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type {
+  AlertTriangle,
+  ArrowRight,
+  Calendar,
+  CheckCircle,
+  Clock,
+  RotateCcw,
+  User,
+  XCircle,
+} from "lucide-react";
+import moment from "moment";
+import React, { useMemo, useState } from "react";
+import type { AppointmentEvent, Professional } from "@/app/appointments/page";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -9,23 +24,8 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  AlertTriangle,
-  Clock,
-  User,
-  Calendar,
-  ArrowRight,
-  CheckCircle,
-  XCircle,
-  RotateCcw,
-} from "lucide-react";
-import type { AppointmentEvent, Professional } from "@/app/appointments/page";
 import type { cn } from "@/lib/utils";
-import moment from "moment";
 import "moment/locale/pt-br";
 
 moment.locale("pt-br");

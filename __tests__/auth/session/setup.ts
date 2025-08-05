@@ -9,8 +9,8 @@
  * @created 2024
  */
 
+import { TextDecoder, TextEncoder } from "node:util";
 import { jest } from "@jest/globals";
-import { TextEncoder, TextDecoder } from "util";
 import "whatwg-fetch";
 
 // Global test setup
@@ -24,7 +24,7 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
 
 // Mock crypto for Node.js environment
 if (typeof globalThis.crypto === "undefined") {
-  const { webcrypto } = require("crypto");
+  const { webcrypto } = require("node:crypto");
   globalThis.crypto = webcrypto as any;
 }
 

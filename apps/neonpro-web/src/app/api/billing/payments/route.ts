@@ -1,7 +1,3 @@
-import type { createClient } from "@/lib/supabase/server";
-import type { NextResponse } from "next/server";
-import type { z } from "zod";
-
 // Validation schemas
 const CreatePaymentSchema = z.object({
   invoice_id: z.string().uuid("ID da fatura inválido"),
@@ -14,7 +10,7 @@ const CreatePaymentSchema = z.object({
   gateway: z.string().optional(),
 });
 
-const UpdatePaymentSchema = z.object({
+const _UpdatePaymentSchema = z.object({
   status: z.enum(["pending", "processing", "completed", "failed", "cancelled"]).optional(),
   notes: z.string().optional(),
   processed_at: z.string().optional(),

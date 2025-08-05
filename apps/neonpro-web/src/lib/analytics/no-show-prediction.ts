@@ -395,7 +395,7 @@ export class NoShowPredictionEngine {
     const scores = [baseRiskScore, logisticScore, treeScore, neuralScore];
     const meanScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
     const variance =
-      scores.reduce((sum, score) => sum + Math.pow(score - meanScore, 2), 0) / scores.length;
+      scores.reduce((sum, score) => sum + (score - meanScore) ** 2, 0) / scores.length;
     const confidence = Math.max(0.5, 1 - variance / 1000); // Higher variance = lower confidence
 
     return {

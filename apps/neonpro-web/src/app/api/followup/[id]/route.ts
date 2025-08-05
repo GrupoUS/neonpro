@@ -2,10 +2,10 @@
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { treatmentFollowupService } from "@/app/lib/services/treatment-followup-service";
 import { updateFollowupStatusSchema } from "@/app/lib/validations/followup";
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

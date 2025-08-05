@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,23 +129,22 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,7 +153,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ProfessionalSelection;
 var react_1 = require("react");
@@ -172,7 +168,6 @@ var lucide_react_1 = require("lucide-react");
 var use_translation_1 = require("@/app/lib/i18n/use-translation");
 var client_1 = require("@/app/utils/supabase/client");
 function ProfessionalSelection(_a) {
-  var _this = this;
   var serviceId = _a.serviceId,
     selectedProfessional = _a.selectedProfessional,
     onProfessionalSelect = _a.onProfessionalSelect,
@@ -194,13 +189,13 @@ function ProfessionalSelection(_a) {
     isMobile = _f[0],
     setIsMobile = _f[1];
   // Check if device is mobile
-  (0, react_1.useEffect)(function () {
-    var checkMobile = function () {
+  (0, react_1.useEffect)(() => {
+    var checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
-    return function () {
+    return () => {
       window.removeEventListener("resize", checkMobile);
     };
   }, []);
@@ -214,172 +209,150 @@ function ProfessionalSelection(_a) {
     physiotherapist: t("professionals.specialties.physiotherapist"),
   };
   // Load professionals based on service
-  (0, react_1.useEffect)(
-    function () {
-      var loadProfessionals = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var supabase, _a, data, error, mockProfessionals, cleanedData, error_1;
-          return __generator(this, function (_b) {
-            switch (_b.label) {
-              case 0:
-                if (!serviceId) return [2 /*return*/];
-                _b.label = 1;
-              case 1:
-                _b.trys.push([1, 3, 4, 5]);
-                setIsLoadingProfessionals(true);
-                supabase = (0, client_1.createClient)();
-                return [
-                  4 /*yield*/,
-                  supabase
-                    .from("professionals")
-                    .select(
-                      "\n            *,\n            professional_services!inner(\n              service_id,\n              is_primary_service\n            )\n          ",
-                    )
-                    .eq("is_active", true)
-                    .eq("accepts_new_patients", true)
-                    .eq("professional_services.service_id", serviceId)
-                    .order("name", { ascending: true }),
+  (0, react_1.useEffect)(() => {
+    var loadProfessionals = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var supabase, _a, data, error, mockProfessionals, cleanedData, error_1;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              if (!serviceId) return [2 /*return*/];
+              _b.label = 1;
+            case 1:
+              _b.trys.push([1, 3, 4, 5]);
+              setIsLoadingProfessionals(true);
+              supabase = (0, client_1.createClient)();
+              return [
+                4 /*yield*/,
+                supabase
+                  .from("professionals")
+                  .select(
+                    "\n            *,\n            professional_services!inner(\n              service_id,\n              is_primary_service\n            )\n          ",
+                  )
+                  .eq("is_active", true)
+                  .eq("accepts_new_patients", true)
+                  .eq("professional_services.service_id", serviceId)
+                  .order("name", { ascending: true }),
+              ];
+            case 2:
+              (_a = _b.sent()), (data = _a.data), (error = _a.error);
+              if (error) {
+                console.error("Error loading professionals:", error);
+                mockProfessionals = [
+                  {
+                    id: "1",
+                    user_id: "user-1",
+                    name: "Dra. Maria Silva",
+                    specialty: "dermatologist",
+                    license_number: "CRM-12345",
+                    bio: "Especialista em dermatologia estética com mais de 15 anos de experiência. Formada pela USP com especialização em procedimentos minimamente invasivos.",
+                    photo_url: "/avatars/maria-silva.jpg",
+                    years_experience: 15,
+                    is_active: true,
+                    accepts_new_patients: true,
+                    working_hours: {
+                      monday: { start: "08:00", end: "18:00" },
+                      tuesday: { start: "08:00", end: "18:00" },
+                      wednesday: { start: "08:00", end: "16:00" },
+                      thursday: { start: "08:00", end: "18:00" },
+                      friday: { start: "08:00", end: "16:00" },
+                    },
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                  },
+                  {
+                    id: "2",
+                    user_id: "user-2",
+                    name: "Ana Santos",
+                    specialty: "aesthetician",
+                    license_number: "COREN-54321",
+                    bio: "Esteticista certificada especializada em tratamentos faciais e corporais. Atualização constante em novas técnicas e tecnologias.",
+                    photo_url: "/avatars/ana-santos.jpg",
+                    years_experience: 8,
+                    is_active: true,
+                    accepts_new_patients: true,
+                    working_hours: {
+                      tuesday: { start: "09:00", end: "17:00" },
+                      wednesday: { start: "09:00", end: "17:00" },
+                      thursday: { start: "09:00", end: "17:00" },
+                      friday: { start: "09:00", end: "17:00" },
+                      saturday: { start: "08:00", end: "14:00" },
+                    },
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                  },
+                  {
+                    id: "3",
+                    user_id: "user-3",
+                    name: "Dr. João Oliveira",
+                    specialty: "plastic_surgeon",
+                    license_number: "CRM-67890",
+                    bio: "Cirurgião plástico membro da SBCP com foco em harmonização facial e procedimentos estéticos minimamente invasivos.",
+                    photo_url: "/avatars/joao-oliveira.jpg",
+                    years_experience: 12,
+                    is_active: true,
+                    accepts_new_patients: true,
+                    working_hours: {
+                      monday: { start: "14:00", end: "20:00" },
+                      tuesday: { start: "14:00", end: "20:00" },
+                      wednesday: { start: "08:00", end: "12:00" },
+                      thursday: { start: "14:00", end: "20:00" },
+                      friday: { start: "08:00", end: "12:00" },
+                    },
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                  },
                 ];
-              case 2:
-                (_a = _b.sent()), (data = _a.data), (error = _a.error);
-                if (error) {
-                  console.error("Error loading professionals:", error);
-                  mockProfessionals = [
-                    {
-                      id: "1",
-                      user_id: "user-1",
-                      name: "Dra. Maria Silva",
-                      specialty: "dermatologist",
-                      license_number: "CRM-12345",
-                      bio: "Especialista em dermatologia estética com mais de 15 anos de experiência. Formada pela USP com especialização em procedimentos minimamente invasivos.",
-                      photo_url: "/avatars/maria-silva.jpg",
-                      years_experience: 15,
-                      is_active: true,
-                      accepts_new_patients: true,
-                      working_hours: {
-                        monday: { start: "08:00", end: "18:00" },
-                        tuesday: { start: "08:00", end: "18:00" },
-                        wednesday: { start: "08:00", end: "16:00" },
-                        thursday: { start: "08:00", end: "18:00" },
-                        friday: { start: "08:00", end: "16:00" },
-                      },
-                      created_at: new Date().toISOString(),
-                      updated_at: new Date().toISOString(),
-                    },
-                    {
-                      id: "2",
-                      user_id: "user-2",
-                      name: "Ana Santos",
-                      specialty: "aesthetician",
-                      license_number: "COREN-54321",
-                      bio: "Esteticista certificada especializada em tratamentos faciais e corporais. Atualização constante em novas técnicas e tecnologias.",
-                      photo_url: "/avatars/ana-santos.jpg",
-                      years_experience: 8,
-                      is_active: true,
-                      accepts_new_patients: true,
-                      working_hours: {
-                        tuesday: { start: "09:00", end: "17:00" },
-                        wednesday: { start: "09:00", end: "17:00" },
-                        thursday: { start: "09:00", end: "17:00" },
-                        friday: { start: "09:00", end: "17:00" },
-                        saturday: { start: "08:00", end: "14:00" },
-                      },
-                      created_at: new Date().toISOString(),
-                      updated_at: new Date().toISOString(),
-                    },
-                    {
-                      id: "3",
-                      user_id: "user-3",
-                      name: "Dr. João Oliveira",
-                      specialty: "plastic_surgeon",
-                      license_number: "CRM-67890",
-                      bio: "Cirurgião plástico membro da SBCP com foco em harmonização facial e procedimentos estéticos minimamente invasivos.",
-                      photo_url: "/avatars/joao-oliveira.jpg",
-                      years_experience: 12,
-                      is_active: true,
-                      accepts_new_patients: true,
-                      working_hours: {
-                        monday: { start: "14:00", end: "20:00" },
-                        tuesday: { start: "14:00", end: "20:00" },
-                        wednesday: { start: "08:00", end: "12:00" },
-                        thursday: { start: "14:00", end: "20:00" },
-                        friday: { start: "08:00", end: "12:00" },
-                      },
-                      created_at: new Date().toISOString(),
-                      updated_at: new Date().toISOString(),
-                    },
-                  ];
-                  setProfessionals(mockProfessionals);
-                } else {
-                  cleanedData = (data || []).map(function (_a) {
-                    var professional_services = _a.professional_services,
-                      professional = __rest(_a, ["professional_services"]);
-                    return professional;
-                  });
-                  setProfessionals(cleanedData);
-                }
-                return [3 /*break*/, 5];
-              case 3:
-                error_1 = _b.sent();
-                console.error("Error loading professionals:", error_1);
-                // Set empty array on error
-                setProfessionals([]);
-                return [3 /*break*/, 5];
-              case 4:
-                setIsLoadingProfessionals(false);
-                return [7 /*endfinally*/];
-              case 5:
-                return [2 /*return*/];
-            }
-          });
+                setProfessionals(mockProfessionals);
+              } else {
+                cleanedData = (data || []).map((_a) => {
+                  var professional_services = _a.professional_services,
+                    professional = __rest(_a, ["professional_services"]);
+                  return professional;
+                });
+                setProfessionals(cleanedData);
+              }
+              return [3 /*break*/, 5];
+            case 3:
+              error_1 = _b.sent();
+              console.error("Error loading professionals:", error_1);
+              // Set empty array on error
+              setProfessionals([]);
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoadingProfessionals(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      loadProfessionals();
-    },
-    [serviceId],
-  );
+      });
+    loadProfessionals();
+  }, [serviceId]);
   // Filter professionals by specialty and availability
-  var filteredProfessionals = (0, react_1.useMemo)(
-    function () {
-      var filtered = professionals;
-      // Filter by specialty
-      if (selectedSpecialty !== "all") {
-        filtered = filtered.filter(function (prof) {
-          return prof.specialty === selectedSpecialty;
-        });
-      }
-      // Keep all professionals for now - availability is shown in the status
-      // This allows users to see unavailable professionals but with clear status
-      return filtered;
-    },
-    [professionals, selectedSpecialty],
-  );
+  var filteredProfessionals = (0, react_1.useMemo)(() => {
+    var filtered = professionals;
+    // Filter by specialty
+    if (selectedSpecialty !== "all") {
+      filtered = filtered.filter((prof) => prof.specialty === selectedSpecialty);
+    }
+    // Keep all professionals for now - availability is shown in the status
+    // This allows users to see unavailable professionals but with clear status
+    return filtered;
+  }, [professionals, selectedSpecialty]);
   // Get unique specialties for filter
-  var availableSpecialties = (0, react_1.useMemo)(
-    function () {
-      var specialties = __spreadArray(
-        [],
-        new Set(
-          professionals.map(function (p) {
-            return p.specialty;
-          }),
-        ),
-        true,
-      );
-      return __spreadArray(
-        [{ id: "all", name: t("common.all") }],
-        specialties.map(function (specialty) {
-          return {
-            id: specialty,
-            name: specialtyNames[specialty],
-          };
-        }),
-        true,
-      );
-    },
-    [professionals, specialtyNames, t],
-  );
-  var handleProfessionalSelect = function (professional) {
+  var availableSpecialties = (0, react_1.useMemo)(() => {
+    var specialties = __spreadArray([], new Set(professionals.map((p) => p.specialty)), true);
+    return __spreadArray(
+      [{ id: "all", name: t("common.all") }],
+      specialties.map((specialty) => ({
+        id: specialty,
+        name: specialtyNames[specialty],
+      })),
+      true,
+    );
+  }, [professionals, specialtyNames, t]);
+  var handleProfessionalSelect = (professional) => {
     if (isLoading) return;
     // Check availability before selection
     var availability = getAvailabilityStatus(professional);
@@ -395,7 +368,7 @@ function ProfessionalSelection(_a) {
       onProfessionalSelect(professional);
     }
   };
-  var handleModalProfessionalSelect = function (professional) {
+  var handleModalProfessionalSelect = (professional) => {
     // Check availability before selection
     var availability = getAvailabilityStatus(professional);
     if (!availability.available) {
@@ -406,17 +379,14 @@ function ProfessionalSelection(_a) {
     setSelectedProfessionalForModal(null);
     onProfessionalSelect(professional);
   };
-  var getInitials = function (name) {
-    return name
+  var getInitials = (name) =>
+    name
       .split(" ")
-      .map(function (part) {
-        return part.charAt(0);
-      })
+      .map((part) => part.charAt(0))
       .join("")
       .toUpperCase()
       .substring(0, 2);
-  };
-  var formatWorkingHours = function (workingHours) {
+  var formatWorkingHours = (workingHours) => {
     if (!workingHours) return t("professionals.working_hours.not_available");
     var days = Object.keys(workingHours);
     if (days.length === 0) return t("professionals.working_hours.not_available");
@@ -424,7 +394,7 @@ function ProfessionalSelection(_a) {
     return t("professionals.working_hours.available", { count: days.length });
   };
   // Check if professional is available on current day (basic availability logic)
-  var isProfessionalAvailable = function (professional) {
+  var isProfessionalAvailable = (professional) => {
     if (!professional.working_hours) return false;
     var today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
     var dayNames = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -432,7 +402,7 @@ function ProfessionalSelection(_a) {
     return !!professional.working_hours[todayName];
   };
   // Get availability status for display
-  var getAvailabilityStatus = function (professional) {
+  var getAvailabilityStatus = (professional) => {
     if (!professional.accepts_new_patients) {
       return {
         available: false,
@@ -459,15 +429,15 @@ function ProfessionalSelection(_a) {
         <div className="space-y-4">
           <skeleton_1.Skeleton className="h-6 w-48" />
           <div className="flex gap-2 flex-wrap">
-            {[1, 2, 3].map(function (i) {
-              return <skeleton_1.Skeleton key={i} className="h-9 w-32" />;
-            })}
+            {[1, 2, 3].map((i) => (
+              <skeleton_1.Skeleton key={i} className="h-9 w-32" />
+            ))}
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[1, 2, 3, 4].map(function (i) {
-            return <skeleton_1.Skeleton key={i} className="h-64 w-full" />;
-          })}
+          {[1, 2, 3, 4].map((i) => (
+            <skeleton_1.Skeleton key={i} className="h-64 w-full" />
+          ))}
         </div>
       </div>
     );
@@ -484,16 +454,14 @@ function ProfessionalSelection(_a) {
       {/* Specialty Filters */}
       {availableSpecialties.length > 2 && (
         <div className="flex gap-2 flex-wrap justify-center">
-          {availableSpecialties.map(function (specialty) {
+          {availableSpecialties.map((specialty) => {
             var isSelected = selectedSpecialty === specialty.id;
             return (
               <button_1.Button
                 key={specialty.id}
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setSelectedSpecialty(specialty.id);
-                }}
+                onClick={() => setSelectedSpecialty(specialty.id)}
                 className="flex items-center gap-2"
               >
                 <lucide_react_1.Award className="h-4 w-4" />
@@ -517,7 +485,7 @@ function ProfessionalSelection(_a) {
       </div>{" "}
       {/* Professionals Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredProfessionals.map(function (professional, index) {
+        {filteredProfessionals.map((professional, index) => {
           var isSelected =
             (selectedProfessional === null || selectedProfessional === void 0
               ? void 0
@@ -533,9 +501,7 @@ function ProfessionalSelection(_a) {
                 className={"cursor-pointer transition-all duration-200 hover:shadow-lg "
                   .concat(isSelected ? "ring-2 ring-primary shadow-lg" : "hover:shadow-md", " ")
                   .concat(isLoading ? "pointer-events-none opacity-50" : "")}
-                onClick={function () {
-                  return handleProfessionalSelect(professional);
-                }}
+                onClick={() => handleProfessionalSelect(professional)}
               >
                 <card_1.CardHeader className="pb-4">
                   <div className="flex items-start gap-4">
@@ -589,20 +555,18 @@ function ProfessionalSelection(_a) {
                   {/* Rating placeholder - could be enhanced with real ratings */}
                   <div className="flex items-center gap-2">
                     <div className="flex items-center">
-                      {[1, 2, 3, 4, 5].map(function (star) {
-                        return (
-                          <lucide_react_1.Star
-                            key={star}
-                            className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                          />
-                        );
-                      })}
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <lucide_react_1.Star
+                          key={star}
+                          className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                        />
+                      ))}
                     </div>
                     <span className="text-sm text-muted-foreground">5.0 (24 avaliações)</span>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {(function () {
+                    {(() => {
                       var availability = getAvailabilityStatus(professional);
                       return (
                         <div className={"flex items-center gap-1 ".concat(availability.color)}>
@@ -614,14 +578,14 @@ function ProfessionalSelection(_a) {
                   </div>
 
                   <div className="flex gap-2">
-                    {(function () {
+                    {(() => {
                       var availability = getAvailabilityStatus(professional);
                       return (
                         <button_1.Button
                           className="flex-1"
                           variant={isSelected ? "default" : "outline"}
                           disabled={isLoading || !availability.available}
-                          onClick={function (e) {
+                          onClick={(e) => {
                             e.stopPropagation();
                             if (!isMobile || !professional.bio) {
                               handleProfessionalSelect(professional);
@@ -640,7 +604,7 @@ function ProfessionalSelection(_a) {
                       <button_1.Button
                         variant="outline"
                         size="icon"
-                        onClick={function (e) {
+                        onClick={(e) => {
                           e.stopPropagation();
                           setSelectedProfessionalForModal(professional);
                         }}
@@ -667,12 +631,7 @@ function ProfessionalSelection(_a) {
               {t("professionals.no_results.description")}
             </p>
           </div>
-          <button_1.Button
-            variant="outline"
-            onClick={function () {
-              return setSelectedSpecialty("all");
-            }}
-          >
+          <button_1.Button variant="outline" onClick={() => setSelectedSpecialty("all")}>
             {t("professionals.show_all")}
           </button_1.Button>
         </div>
@@ -680,9 +639,7 @@ function ProfessionalSelection(_a) {
       {/* Professional Details Modal for Mobile */}
       <dialog_1.Dialog
         open={!!selectedProfessionalForModal}
-        onOpenChange={function (open) {
-          return !open && setSelectedProfessionalForModal(null);
-        }}
+        onOpenChange={(open) => !open && setSelectedProfessionalForModal(null)}
       >
         <dialog_1.DialogContent className="max-w-md mx-4">
           {selectedProfessionalForModal && (
@@ -740,20 +697,18 @@ function ProfessionalSelection(_a) {
                 {/* Rating display */}
                 <div className="flex items-center gap-2">
                   <div className="flex items-center">
-                    {[1, 2, 3, 4, 5].map(function (star) {
-                      return (
-                        <lucide_react_1.Star
-                          key={star}
-                          className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                        />
-                      );
-                    })}
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <lucide_react_1.Star
+                        key={star}
+                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
                   </div>
                   <span className="text-sm text-muted-foreground">5.0 (24 avaliações)</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {(function () {
+                  {(() => {
                     var availability = getAvailabilityStatus(selectedProfessionalForModal);
                     return (
                       <div className={"flex items-center gap-1 ".concat(availability.color)}>
@@ -766,14 +721,12 @@ function ProfessionalSelection(_a) {
 
                 <button_1.Button
                   className="w-full"
-                  onClick={function () {
-                    return handleModalProfessionalSelect(selectedProfessionalForModal);
-                  }}
+                  onClick={() => handleModalProfessionalSelect(selectedProfessionalForModal)}
                   disabled={
                     isLoading || !getAvailabilityStatus(selectedProfessionalForModal).available
                   }
                 >
-                  {(function () {
+                  {(() => {
                     var availability = getAvailabilityStatus(selectedProfessionalForModal);
                     if (
                       (selectedProfessional === null || selectedProfessional === void 0

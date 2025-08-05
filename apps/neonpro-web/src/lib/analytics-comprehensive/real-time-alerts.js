@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🚨 NeonPro Real-Time Alert System
  *
@@ -33,26 +32,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -72,13 +71,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -100,9 +99,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -174,7 +171,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RealTimeAlertSystem = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -186,7 +183,7 @@ var logger_1 = require("@/lib/utils/logger");
  * Real-Time Alert System
  * Sistema principal para processamento e entrega de alertas em tempo real
  */
-var RealTimeAlertSystem = /** @class */ (function () {
+var RealTimeAlertSystem = /** @class */ (() => {
   function RealTimeAlertSystem() {
     this.supabase = (0, client_1.createClient)();
     this.alertRuleCache = new Map();
@@ -372,7 +369,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
             return [4 /*yield*/, this.checkAlertCorrelation(alertInstance)];
           case 6:
             correlatedAlert = _m.sent();
-            if (!!correlatedAlert) return [3 /*break*/, 8];
+            if (correlatedAlert) return [3 /*break*/, 8];
             // New unique alert
             return [4 /*yield*/, this.processNewAlert(alertInstance)];
           case 7:
@@ -797,8 +794,8 @@ var RealTimeAlertSystem = /** @class */ (function () {
             this.activeAlertsCache.set(alertId, alert_4);
             // Schedule auto-reactivation
             setTimeout(
-              function () {
-                return __awaiter(_this, void 0, void 0, function () {
+              () =>
+                __awaiter(_this, void 0, void 0, function () {
                   return __generator(this, function (_a) {
                     switch (_a.label) {
                       case 0:
@@ -808,8 +805,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
                         return [2 /*return*/];
                     }
                   });
-                });
-              },
+                }),
               suppressionDurationMinutes * 60 * 1000,
             );
             logger_1.logger.info("Alert suppressed", {
@@ -984,11 +980,10 @@ var RealTimeAlertSystem = /** @class */ (function () {
   RealTimeAlertSystem.prototype.initializeDeliveryChannels = function () {
     return __awaiter(this, void 0, void 0, function () {
       var channels;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         channels = ["email", "sms", "push", "in_app", "webhook", "dashboard"];
-        channels.forEach(function (channel) {
-          _this.deliveryQueue.set(channel, []);
+        channels.forEach((channel) => {
+          this.deliveryQueue.set(channel, []);
         });
         return [2 /*return*/];
       });
@@ -1008,7 +1003,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
           case 1:
             rules = _a.sent().data;
             if (rules) {
-              rules.forEach(function (rule) {
+              rules.forEach((rule) => {
                 _this.alertRuleCache.set(rule.id, rule);
               });
             }
@@ -1018,51 +1013,53 @@ var RealTimeAlertSystem = /** @class */ (function () {
     });
   };
   RealTimeAlertSystem.prototype.startProcessingLoop = function () {
-    var _this = this;
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!(this.processingQueue.length > 0)) return [3 /*break*/, 2];
-              return [4 /*yield*/, this.processBatchedData()];
-            case 1:
-              _a.sent();
-              _a.label = 2;
-            case 2:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 5000); // Process every 5 seconds
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                if (!(this.processingQueue.length > 0)) return [3 /*break*/, 2];
+                return [4 /*yield*/, this.processBatchedData()];
+              case 1:
+                _a.sent();
+                _a.label = 2;
+              case 2:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      5000,
+    ); // Process every 5 seconds
   };
   RealTimeAlertSystem.prototype.startDeliveryLoop = function () {
-    var _this = this;
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _i, _a, _b, channel, queue;
-        return __generator(this, function (_c) {
-          switch (_c.label) {
-            case 0:
-              (_i = 0), (_a = this.deliveryQueue);
-              _c.label = 1;
-            case 1:
-              if (!(_i < _a.length)) return [3 /*break*/, 4];
-              (_b = _a[_i]), (channel = _b[0]), (queue = _b[1]);
-              if (!(queue.length > 0)) return [3 /*break*/, 3];
-              return [4 /*yield*/, this.processDeliveryQueue(channel)];
-            case 2:
-              _c.sent();
-              _c.label = 3;
-            case 3:
-              _i++;
-              return [3 /*break*/, 1];
-            case 4:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 1000); // Check delivery queues every second
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var _i, _a, _b, channel, queue;
+          return __generator(this, function (_c) {
+            switch (_c.label) {
+              case 0:
+                (_i = 0), (_a = this.deliveryQueue);
+                _c.label = 1;
+              case 1:
+                if (!(_i < _a.length)) return [3 /*break*/, 4];
+                (_b = _a[_i]), (channel = _b[0]), (queue = _b[1]);
+                if (!(queue.length > 0)) return [3 /*break*/, 3];
+                return [4 /*yield*/, this.processDeliveryQueue(channel)];
+              case 2:
+                _c.sent();
+                _c.label = 3;
+              case 3:
+                _i++;
+                return [3 /*break*/, 1];
+              case 4:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      1000,
+    ); // Check delivery queues every second
   };
   RealTimeAlertSystem.prototype.setupRealtimeSubscriptions = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -1078,7 +1075,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
               schema: "public",
               table: "alert_instances",
             },
-            function (payload) {
+            (payload) => {
               _this.handleRealtimeAlertUpdate(payload);
             },
           )
@@ -1113,23 +1110,22 @@ var RealTimeAlertSystem = /** @class */ (function () {
       });
     });
   };
-  RealTimeAlertSystem.prototype.isRuleApplicable = function (rule, dataType, data) {
+  RealTimeAlertSystem.prototype.isRuleApplicable = (rule, dataType, data) => {
     // Check if rule applies to this data type and entity
     return true; // Simplified implementation
   };
   RealTimeAlertSystem.prototype.evaluateAlertRule = function (rule, data, context) {
     return __awaiter(this, void 0, void 0, function () {
       var conditionResults;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
               4 /*yield*/,
               Promise.all(
-                rule.trigger_conditions.map(function (condition) {
-                  return _this.evaluateCondition(condition, data, context);
-                }),
+                rule.trigger_conditions.map((condition) =>
+                  this.evaluateCondition(condition, data, context),
+                ),
               ),
               // Apply logical operator
             ];
@@ -1137,19 +1133,9 @@ var RealTimeAlertSystem = /** @class */ (function () {
             conditionResults = _a.sent();
             // Apply logical operator
             if (rule.logical_operator === "AND") {
-              return [
-                2 /*return*/,
-                conditionResults.every(function (result) {
-                  return result;
-                }),
-              ];
+              return [2 /*return*/, conditionResults.every((result) => result)];
             } else {
-              return [
-                2 /*return*/,
-                conditionResults.some(function (result) {
-                  return result;
-                }),
-              ];
+              return [2 /*return*/, conditionResults.some((result) => result)];
             }
             return [2 /*return*/];
         }
@@ -1180,11 +1166,11 @@ var RealTimeAlertSystem = /** @class */ (function () {
       });
     });
   };
-  RealTimeAlertSystem.prototype.extractMetricValue = function (metric, data) {
+  RealTimeAlertSystem.prototype.extractMetricValue = (metric, data) => {
     // Extract metric value from data using dot notation
-    return metric.split(".").reduce(function (obj, key) {
-      return obj === null || obj === void 0 ? void 0 : obj[key];
-    }, data);
+    return metric
+      .split(".")
+      .reduce((obj, key) => (obj === null || obj === void 0 ? void 0 : obj[key]), data);
   };
   RealTimeAlertSystem.prototype.createAlertInstance = function (rule, triggerData, context) {
     return __awaiter(this, void 0, void 0, function () {
@@ -1234,15 +1220,11 @@ var RealTimeAlertSystem = /** @class */ (function () {
       });
     });
   };
-  RealTimeAlertSystem.prototype.generateAlertTitle = function (rule, triggerData) {
-    return "".concat(rule.name, " - ").concat(rule.alert_type);
-  };
-  RealTimeAlertSystem.prototype.generateAlertDescription = function (rule, triggerData) {
-    return ""
-      .concat(rule.description, " - Triggered by ")
-      .concat(triggerData.metric || "system event");
-  };
-  RealTimeAlertSystem.prototype.generateAlertFingerprint = function (rule, triggerData) {
+  RealTimeAlertSystem.prototype.generateAlertTitle = (rule, triggerData) =>
+    "".concat(rule.name, " - ").concat(rule.alert_type);
+  RealTimeAlertSystem.prototype.generateAlertDescription = (rule, triggerData) =>
+    "".concat(rule.description, " - Triggered by ").concat(triggerData.metric || "system event");
+  RealTimeAlertSystem.prototype.generateAlertFingerprint = (rule, triggerData) => {
     var fingerprint = ""
       .concat(rule.id, "_")
       .concat(rule.alert_type, "_")
@@ -1490,7 +1472,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
   // Delivery channel implementations
   RealTimeAlertSystem.prototype.deliverEmailAlert = function (alert, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Email delivery implementation
         return [2 /*return*/, { success: true, delivery_id: "email_".concat(Date.now()) }];
       });
@@ -1498,7 +1480,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
   };
   RealTimeAlertSystem.prototype.deliverSMSAlert = function (alert, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // SMS delivery implementation
         return [2 /*return*/, { success: true, delivery_id: "sms_".concat(Date.now()) }];
       });
@@ -1506,7 +1488,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
   };
   RealTimeAlertSystem.prototype.deliverPushAlert = function (alert, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Push notification implementation
         return [2 /*return*/, { success: true, delivery_id: "push_".concat(Date.now()) }];
       });
@@ -1514,7 +1496,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
   };
   RealTimeAlertSystem.prototype.deliverInAppAlert = function (alert, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In-app notification implementation
         return [2 /*return*/, { success: true, delivery_id: "inapp_".concat(Date.now()) }];
       });
@@ -1522,7 +1504,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
   };
   RealTimeAlertSystem.prototype.deliverWebhookAlert = function (alert, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Webhook delivery implementation
         return [2 /*return*/, { success: true, delivery_id: "webhook_".concat(Date.now()) }];
       });
@@ -1530,13 +1512,13 @@ var RealTimeAlertSystem = /** @class */ (function () {
   };
   RealTimeAlertSystem.prototype.deliverDashboardAlert = function (alert, config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Dashboard notification implementation
         return [2 /*return*/, { success: true, delivery_id: "dashboard_".concat(Date.now()) }];
       });
     });
   };
-  RealTimeAlertSystem.prototype.validateAlertRule = function (rule) {
+  RealTimeAlertSystem.prototype.validateAlertRule = (rule) => {
     if (!rule.name || rule.name.trim().length === 0) {
       return { isValid: false, error: "Rule name is required" };
     }
@@ -1564,31 +1546,29 @@ var RealTimeAlertSystem = /** @class */ (function () {
     return health;
   };
   // Additional helper methods for analytics, notifications, etc.
-  RealTimeAlertSystem.prototype.calculateAlertsByType = function (alerts) {
+  RealTimeAlertSystem.prototype.calculateAlertsByType = (alerts) => {
     var counts = {};
-    alerts.forEach(function (alert) {
+    alerts.forEach((alert) => {
       counts[alert.alert_type] = (counts[alert.alert_type] || 0) + 1;
     });
     return counts;
   };
-  RealTimeAlertSystem.prototype.calculateAlertsBySeverity = function (alerts) {
+  RealTimeAlertSystem.prototype.calculateAlertsBySeverity = (alerts) => {
     var counts = {};
-    alerts.forEach(function (alert) {
+    alerts.forEach((alert) => {
       counts[alert.severity] = (counts[alert.severity] || 0) + 1;
     });
     return counts;
   };
-  RealTimeAlertSystem.prototype.calculateAlertsByStatus = function (alerts) {
+  RealTimeAlertSystem.prototype.calculateAlertsByStatus = (alerts) => {
     var counts = {};
-    alerts.forEach(function (alert) {
+    alerts.forEach((alert) => {
       counts[alert.status] = (counts[alert.status] || 0) + 1;
     });
     return counts;
   };
-  RealTimeAlertSystem.prototype.calculateResolutionMetrics = function (alerts) {
-    var resolvedAlerts = alerts.filter(function (alert) {
-      return alert.status === "resolved";
-    });
+  RealTimeAlertSystem.prototype.calculateResolutionMetrics = (alerts) => {
+    var resolvedAlerts = alerts.filter((alert) => alert.status === "resolved");
     if (resolvedAlerts.length === 0) {
       return {
         average_resolution_time_minutes: 0,
@@ -1599,27 +1579,21 @@ var RealTimeAlertSystem = /** @class */ (function () {
       };
     }
     var resolutionTimes = resolvedAlerts
-      .filter(function (alert) {
+      .filter((alert) => {
         var _a;
         return (_a = alert.resolution_data) === null || _a === void 0 ? void 0 : _a.resolved_at;
       })
-      .map(function (alert) {
+      .map((alert) => {
         var resolvedAt = new Date(alert.resolution_data.resolved_at).getTime();
         var triggeredAt = new Date(alert.triggered_at).getTime();
         return (resolvedAt - triggeredAt) / (1000 * 60); // minutes
       });
     var averageResolutionTime =
-      resolutionTimes.reduce(function (sum, time) {
-        return sum + time;
-      }, 0) / resolutionTimes.length;
-    var sortedTimes = resolutionTimes.sort(function (a, b) {
-      return a - b;
-    });
+      resolutionTimes.reduce((sum, time) => sum + time, 0) / resolutionTimes.length;
+    var sortedTimes = resolutionTimes.sort((a, b) => a - b);
     var medianResolutionTime = sortedTimes[Math.floor(sortedTimes.length / 2)];
     var resolutionRate = (resolvedAlerts.length / alerts.length) * 100;
-    var escalatedAlerts = alerts.filter(function (alert) {
-      return alert.escalation_history.length > 0;
-    });
+    var escalatedAlerts = alerts.filter((alert) => alert.escalation_history.length > 0);
     var escalationRate = (escalatedAlerts.length / alerts.length) * 100;
     return {
       average_resolution_time_minutes: Math.round(averageResolutionTime),
@@ -1632,20 +1606,16 @@ var RealTimeAlertSystem = /** @class */ (function () {
   RealTimeAlertSystem.prototype.calculateDeliveryMetrics = function (alerts) {
     return __awaiter(this, void 0, void 0, function () {
       var allDeliveries, deliveryMetrics, channelStats, _i, channelStats_1, _a, channel, stats;
-      return __generator(this, function (_b) {
-        allDeliveries = alerts.flatMap(function (alert) {
-          return alert.delivery_history;
-        });
+      return __generator(this, (_b) => {
+        allDeliveries = alerts.flatMap((alert) => alert.delivery_history);
         deliveryMetrics = {
           total_deliveries: allDeliveries.length,
           delivery_success_rate: {},
           average_delivery_time_seconds: {},
-          failed_deliveries: allDeliveries.filter(function (d) {
-            return d.delivery_status === "failed";
-          }).length,
+          failed_deliveries: allDeliveries.filter((d) => d.delivery_status === "failed").length,
         };
         channelStats = new Map();
-        allDeliveries.forEach(function (delivery) {
+        allDeliveries.forEach((delivery) => {
           if (!channelStats.has(delivery.channel)) {
             channelStats.set(delivery.channel, { total: 0, successful: 0, totalTime: 0 });
           }
@@ -1666,34 +1636,28 @@ var RealTimeAlertSystem = /** @class */ (function () {
       });
     });
   };
-  RealTimeAlertSystem.prototype.calculateTrendingAnalysis = function (alerts) {
-    return {
-      alert_volume_trend: "stable",
-      severity_trend: "stable",
-      response_time_trend: "stable",
-      top_alerting_entities: [],
-    };
-  };
-  RealTimeAlertSystem.prototype.calculateEffectivenessMetrics = function (alerts) {
-    return {
-      actionable_alerts_percentage: 85,
-      preventive_actions_taken: alerts.filter(function (a) {
-        var _a, _b;
-        return (_b =
-          (_a = a.resolution_data) === null || _a === void 0 ? void 0 : _a.prevention_measures) ===
-          null || _b === void 0
-          ? void 0
-          : _b.length;
-      }).length,
-      business_impact_prevented: {
-        revenue_saved: Math.random() * 10000,
-        incidents_prevented: alerts.filter(function (a) {
-          return a.status === "resolved";
-        }).length,
-        patient_satisfaction_maintained: Math.random() * 100,
-      },
-    };
-  };
+  RealTimeAlertSystem.prototype.calculateTrendingAnalysis = (alerts) => ({
+    alert_volume_trend: "stable",
+    severity_trend: "stable",
+    response_time_trend: "stable",
+    top_alerting_entities: [],
+  });
+  RealTimeAlertSystem.prototype.calculateEffectivenessMetrics = (alerts) => ({
+    actionable_alerts_percentage: 85,
+    preventive_actions_taken: alerts.filter((a) => {
+      var _a, _b;
+      return (_b =
+        (_a = a.resolution_data) === null || _a === void 0 ? void 0 : _a.prevention_measures) ===
+        null || _b === void 0
+        ? void 0
+        : _b.length;
+    }).length,
+    business_impact_prevented: {
+      revenue_saved: Math.random() * 10000,
+      incidents_prevented: alerts.filter((a) => a.status === "resolved").length,
+      patient_satisfaction_maintained: Math.random() * 100,
+    },
+  });
   // Real-time notification methods
   RealTimeAlertSystem.prototype.notifyRealtimeSubscribers = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
@@ -1721,7 +1685,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
     notes,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Notify stakeholders of acknowledgment
         logger_1.logger.info("Alert acknowledgment notification sent", { alert_id: alert.id });
         return [2 /*return*/];
@@ -1730,7 +1694,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
   };
   RealTimeAlertSystem.prototype.notifyAlertResolution = function (alert, resolvedBy, action) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Notify stakeholders of resolution
         logger_1.logger.info("Alert resolution notification sent", { alert_id: alert.id });
         return [2 /*return*/];
@@ -1739,7 +1703,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
   };
   RealTimeAlertSystem.prototype.sendEscalatedNotifications = function (alert, escalationRule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Send escalated notifications to higher level
         logger_1.logger.info("Escalated notifications sent", { alert_id: alert.id });
         return [2 /*return*/];
@@ -1748,7 +1712,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
   };
   RealTimeAlertSystem.prototype.createFollowUpTasks = function (alert, preventionMeasures) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Create follow-up tasks for prevention measures
         logger_1.logger.info("Follow-up tasks created", {
           alert_id: alert.id,
@@ -1786,7 +1750,7 @@ var RealTimeAlertSystem = /** @class */ (function () {
       });
     });
   };
-  RealTimeAlertSystem.prototype.handleRealtimeAlertUpdate = function (payload) {
+  RealTimeAlertSystem.prototype.handleRealtimeAlertUpdate = (payload) => {
     // Handle real-time updates from database
     logger_1.logger.debug("Real-time alert update received", { payload_type: payload.eventType });
   };

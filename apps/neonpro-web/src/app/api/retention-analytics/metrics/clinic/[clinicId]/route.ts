@@ -4,10 +4,10 @@
 // API endpoints for clinic-wide retention metrics and analytics
 // =====================================================================================
 
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
-import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
+import { createClient } from "@/app/utils/supabase/server";
 
 // =====================================================================================
 // VALIDATION SCHEMAS

@@ -1,34 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
-  Shield,
-  Check,
-  X,
-  Download,
-  Eye,
   AlertTriangle,
+  Bell,
+  Camera,
+  Check,
+  Database,
+  Download,
+  Edit,
+  Eye,
   FileText,
+  History,
   Mail,
   MessageSquare,
   Phone,
-  Bell,
-  Camera,
-  Database,
-  Users,
+  Shield,
   Trash2,
-  Edit,
-  History,
+  Users,
+  X,
 } from "lucide-react";
-
+import type React from "react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +36,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { usePatientAuth } from "@/lib/hooks/use-patient-auth";
 
 interface ConsentItem {
@@ -486,13 +486,13 @@ export function ConsentPreferences() {
 
           <div className="flex gap-3">
             <Button variant="outline" asChild>
-              <a href="/privacy-policy" target="_blank">
+              <a href="/privacy-policy" target="_blank" rel="noopener">
                 <FileText className="w-4 h-4 mr-2" />
                 Ler Política Completa
               </a>
             </Button>
             <Button variant="outline" asChild>
-              <a href="/privacy-policy.pdf" target="_blank">
+              <a href="/privacy-policy.pdf" target="_blank" rel="noopener">
                 <Download className="w-4 h-4 mr-2" />
                 Download PDF
               </a>

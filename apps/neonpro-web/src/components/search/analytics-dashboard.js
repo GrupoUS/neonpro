@@ -4,18 +4,17 @@
  * Comprehensive analytics and performance monitoring dashboard
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,10 +134,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -149,7 +146,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsDashboard = AnalyticsDashboard;
 exports.AnalyticsWidget = AnalyticsWidget;
@@ -177,7 +174,6 @@ var CHART_COLORS = {
 };
 var PIE_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#06b6d4"];
 function AnalyticsDashboard(_a) {
-  var _this = this;
   var userId = _a.userId,
     className = _a.className,
     _b = _a.autoRefresh,
@@ -220,10 +216,10 @@ function AnalyticsDashboard(_a) {
     setRealTimeMetrics = _o[1];
   // Load analytics data
   var loadAnalytics = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var options, _a, metricsData, alertsData, optimizationsData, reportData, err_1;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, 3, 4]);
@@ -271,39 +267,33 @@ function AnalyticsDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [selectedTimeRange, selectedSearchType, userId],
   );
   // Initial load and auto-refresh
-  (0, react_1.useEffect)(
-    function () {
-      loadAnalytics();
-      var interval;
-      if (autoRefresh) {
-        interval = setInterval(loadAnalytics, refreshInterval);
+  (0, react_1.useEffect)(() => {
+    loadAnalytics();
+    var interval;
+    if (autoRefresh) {
+      interval = setInterval(loadAnalytics, refreshInterval);
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
       }
-      return function () {
-        if (interval) {
-          clearInterval(interval);
-        }
-      };
-    },
-    [loadAnalytics, autoRefresh, refreshInterval],
-  );
+    };
+  }, [loadAnalytics, autoRefresh, refreshInterval]);
   // Subscribe to real-time alerts
-  (0, react_1.useEffect)(function () {
-    var unsubscribe = search_analytics_1.searchAnalytics.onPerformanceAlert(function (alert) {
-      setAlerts(function (prev) {
-        return __spreadArray([alert], prev, true);
-      });
+  (0, react_1.useEffect)(() => {
+    var unsubscribe = search_analytics_1.searchAnalytics.onPerformanceAlert((alert) => {
+      setAlerts((prev) => __spreadArray([alert], prev, true));
       // Show notification (could integrate with toast system)
       console.log("New performance alert:", alert);
     });
     return unsubscribe;
   }, []);
   // Format numbers
-  var formatNumber = function (num, decimals) {
+  var formatNumber = (num, decimals) => {
     if (decimals === void 0) {
       decimals = 0;
     }
@@ -313,16 +303,14 @@ function AnalyticsDashboard(_a) {
     }).format(num);
   };
   // Format duration
-  var formatDuration = function (ms) {
+  var formatDuration = (ms) => {
     if (ms < 1000) return "".concat(Math.round(ms), "ms");
     return "".concat((ms / 1000).toFixed(1), "s");
   };
   // Format percentage
-  var formatPercentage = function (value) {
-    return "".concat(Math.round(value * 100), "%");
-  };
+  var formatPercentage = (value) => "".concat(Math.round(value * 100), "%");
   // Get trend indicator
-  var getTrendIndicator = function (current, previous) {
+  var getTrendIndicator = (current, previous) => {
     if (current > previous) {
       return <lucide_react_1.TrendingUp className="h-4 w-4 text-green-500" />;
     } else if (current < previous) {
@@ -331,7 +319,7 @@ function AnalyticsDashboard(_a) {
     return null;
   };
   // Get alert severity color
-  var getAlertSeverityColor = function (severity) {
+  var getAlertSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "text-red-600 bg-red-50";
@@ -410,19 +398,12 @@ function AnalyticsDashboard(_a) {
       </div>
 
       {/* Critical Alerts */}
-      {alerts.filter(function (a) {
-        return a.severity === "critical";
-      }).length > 0 && (
+      {alerts.filter((a) => a.severity === "critical").length > 0 && (
         <alert_1.Alert variant="destructive">
           <lucide_react_1.AlertTriangle className="h-4 w-4" />
           <alert_1.AlertDescription>
             <strong>
-              {
-                alerts.filter(function (a) {
-                  return a.severity === "critical";
-                }).length
-              }{" "}
-              alertas críticos
+              {alerts.filter((a) => a.severity === "critical").length} alertas críticos
             </strong>{" "}
             detectados. Ação imediata necessária.
           </alert_1.AlertDescription>
@@ -537,9 +518,7 @@ function AnalyticsDashboard(_a) {
                     <recharts_1.XAxis dataKey="date" />
                     <recharts_1.YAxis />
                     <recharts_1.Tooltip
-                      formatter={function (value) {
-                        return [formatDuration(value), "Tempo de Resposta"];
-                      }}
+                      formatter={(value) => [formatDuration(value), "Tempo de Resposta"]}
                     />
                     <recharts_1.Area
                       type="monotone"
@@ -572,7 +551,7 @@ function AnalyticsDashboard(_a) {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={function (_a) {
+                      label={(_a) => {
                         var type = _a.type,
                           count = _a.count;
                         return "".concat(type, ": ").concat(count);
@@ -584,14 +563,12 @@ function AnalyticsDashboard(_a) {
                       {(
                         (metrics === null || metrics === void 0 ? void 0 : metrics.searchTypes) ||
                         []
-                      ).map(function (entry, index) {
-                        return (
-                          <recharts_1.Cell
-                            key={"cell-".concat(index)}
-                            fill={PIE_COLORS[index % PIE_COLORS.length]}
-                          />
-                        );
-                      })}
+                      ).map((entry, index) => (
+                        <recharts_1.Cell
+                          key={"cell-".concat(index)}
+                          fill={PIE_COLORS[index % PIE_COLORS.length]}
+                        />
+                      ))}
                     </recharts_1.Pie>
                     <recharts_1.Tooltip />
                   </recharts_1.PieChart>
@@ -612,23 +589,21 @@ function AnalyticsDashboard(_a) {
               <div className="space-y-3">
                 {((metrics === null || metrics === void 0 ? void 0 : metrics.popularQueries) || [])
                   .slice(0, 10)
-                  .map(function (query, index) {
-                    return (
-                      <div key={index} className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="font-medium truncate">{query.query}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {query.count} buscas • {formatDuration(query.avgResponseTime)} médio
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <badge_1.Badge variant="outline">
-                            {formatPercentage(query.successRate)}
-                          </badge_1.Badge>
+                  .map((query, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="font-medium truncate">{query.query}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {query.count} buscas • {formatDuration(query.avgResponseTime)} médio
                         </div>
                       </div>
-                    );
-                  })}
+                      <div className="flex items-center gap-2">
+                        <badge_1.Badge variant="outline">
+                          {formatPercentage(query.successRate)}
+                        </badge_1.Badge>
+                      </div>
+                    </div>
+                  ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -740,9 +715,7 @@ function AnalyticsDashboard(_a) {
                     <recharts_1.XAxis dataKey="date" />
                     <recharts_1.YAxis domain={[0, 1]} tickFormatter={formatPercentage} />
                     <recharts_1.Tooltip
-                      formatter={function (value) {
-                        return [formatPercentage(value), "Taxa de Sucesso"];
-                      }}
+                      formatter={(value) => [formatPercentage(value), "Taxa de Sucesso"]}
                     />
                     <recharts_1.Line
                       type="monotone"
@@ -842,35 +815,33 @@ function AnalyticsDashboard(_a) {
                         <lucide_react_1.CheckCircle className="h-12 w-12 mx-auto mb-2 text-green-500" />
                         <p>Nenhum alerta ativo</p>
                       </div>
-                    : alerts.map(function (alert) {
-                        return (
-                          <div
-                            key={alert.id}
-                            className={(0, utils_1.cn)(
-                              "p-3 rounded-lg border",
-                              getAlertSeverityColor(alert.severity),
-                            )}
-                          >
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <badge_1.Badge variant="outline" className="text-xs">
-                                    {alert.severity.toUpperCase()}
-                                  </badge_1.Badge>
-                                  <span className="text-xs text-muted-foreground">
-                                    {new Date(alert.timestamp).toLocaleString("pt-BR")}
-                                  </span>
-                                </div>
-                                <p className="text-sm font-medium">{alert.message}</p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Limite: {alert.threshold} | Atual: {alert.currentValue}
-                                </p>
+                    : alerts.map((alert) => (
+                        <div
+                          key={alert.id}
+                          className={(0, utils_1.cn)(
+                            "p-3 rounded-lg border",
+                            getAlertSeverityColor(alert.severity),
+                          )}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <badge_1.Badge variant="outline" className="text-xs">
+                                  {alert.severity.toUpperCase()}
+                                </badge_1.Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(alert.timestamp).toLocaleString("pt-BR")}
+                                </span>
                               </div>
-                              <lucide_react_1.AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                              <p className="text-sm font-medium">{alert.message}</p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Limite: {alert.threshold} | Atual: {alert.currentValue}
+                              </p>
                             </div>
+                            <lucide_react_1.AlertTriangle className="h-4 w-4 flex-shrink-0" />
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                 </div>
               </scroll_area_1.ScrollArea>
             </card_1.CardContent>
@@ -893,52 +864,46 @@ function AnalyticsDashboard(_a) {
                       <lucide_react_1.Lightbulb className="h-12 w-12 mx-auto mb-2" />
                       <p>Nenhuma otimização sugerida no momento</p>
                     </div>
-                  : optimizations.map(function (optimization, index) {
-                      return (
-                        <div key={index} className="p-4 border rounded-lg">
-                          <div className="flex items-start justify-between mb-2">
-                            <div>
-                              <h4 className="font-medium">
-                                {optimization.optimization.description}
-                              </h4>
-                              <p className="text-sm text-muted-foreground">
-                                Padrão: {optimization.queryPattern}
-                              </p>
-                            </div>
-                            <badge_1.Badge variant="outline">
-                              {formatPercentage(optimization.impact.potentialSpeedup)} melhoria
-                            </badge_1.Badge>
+                  : optimizations.map((optimization, index) => (
+                      <div key={index} className="p-4 border rounded-lg">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h4 className="font-medium">{optimization.optimization.description}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Padrão: {optimization.queryPattern}
+                            </p>
                           </div>
-
-                          <div className="grid grid-cols-3 gap-4 text-sm">
-                            <div>
-                              <span className="text-muted-foreground">Consultas Afetadas:</span>
-                              <div className="font-medium">
-                                {optimization.impact.affectedQueries}
-                              </div>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Confiança:</span>
-                              <div className="font-medium">
-                                {formatPercentage(optimization.impact.confidenceScore)}
-                              </div>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Tipo:</span>
-                              <div className="font-medium capitalize">
-                                {optimization.optimization.type.replace("_", " ")}
-                              </div>
-                            </div>
-                          </div>
-
-                          {optimization.optimization.implementation && (
-                            <div className="mt-3 p-2 bg-muted rounded text-xs font-mono">
-                              {optimization.optimization.implementation}
-                            </div>
-                          )}
+                          <badge_1.Badge variant="outline">
+                            {formatPercentage(optimization.impact.potentialSpeedup)} melhoria
+                          </badge_1.Badge>
                         </div>
-                      );
-                    })}
+
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Consultas Afetadas:</span>
+                            <div className="font-medium">{optimization.impact.affectedQueries}</div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Confiança:</span>
+                            <div className="font-medium">
+                              {formatPercentage(optimization.impact.confidenceScore)}
+                            </div>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Tipo:</span>
+                            <div className="font-medium capitalize">
+                              {optimization.optimization.type.replace("_", " ")}
+                            </div>
+                          </div>
+                        </div>
+
+                        {optimization.optimization.implementation && (
+                          <div className="mt-3 p-2 bg-muted rounded text-xs font-mono">
+                            {optimization.optimization.implementation}
+                          </div>
+                        )}
+                      </div>
+                    ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -949,7 +914,6 @@ function AnalyticsDashboard(_a) {
 }
 // Compact analytics widget for integration
 function AnalyticsWidget(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, react_1.useState)(null),
     metrics = _b[0],
@@ -957,11 +921,11 @@ function AnalyticsWidget(_a) {
   var _c = (0, react_1.useState)(true),
     loading = _c[0],
     setLoading = _c[1];
-  (0, react_1.useEffect)(function () {
-    var loadMetrics = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var loadMetrics = () =>
+      __awaiter(this, void 0, void 0, function () {
         var data, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
@@ -990,7 +954,6 @@ function AnalyticsWidget(_a) {
           }
         });
       });
-    };
     loadMetrics();
   }, []);
   if (loading) {

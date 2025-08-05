@@ -7,21 +7,20 @@
  * and FHIR-compliant patient records display.
  */
 
-import type { useState, useEffect, useCallback } from "react";
 import type {
+  Calendar,
+  Download,
+  FileText,
+  Filter,
   Plus,
   Search,
-  Filter,
-  Download,
-  Users,
   UserPlus,
-  Calendar,
-  FileText,
+  Users,
 } from "lucide-react";
+import type { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
-
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
 import type {
   Card,
   CardContent,
@@ -29,8 +28,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Dialog,
   DialogContent,
@@ -38,15 +35,16 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-import type { PatientRegistrationForm } from "./PatientRegistrationForm";
-import type { PatientSearch } from "./PatientSearch";
-import type { PatientTable } from "./PatientTable";
-import type { PatientStatsCards } from "./PatientStatsCards";
+import type { Input } from "@/components/ui/input";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useAuth } from "@/contexts/auth-context";
 import type { searchPatients } from "@/lib/supabase/patients";
-import type { PatientSearchParams } from "@/lib/validations/patient";
 import type { PatientDB } from "@/lib/types/fhir";
+import type { PatientSearchParams } from "@/lib/validations/patient";
+import type { PatientRegistrationForm } from "./PatientRegistrationForm";
+import type { PatientSearch } from "./PatientSearch";
+import type { PatientStatsCards } from "./PatientStatsCards";
+import type { PatientTable } from "./PatientTable";
 
 export function PatientManagementDashboard() {
   const { user } = useAuth();

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrivacyPreferences = PrivacyPreferences;
 var react_1 = require("react");
@@ -161,7 +158,6 @@ var separator_1 = require("@/components/ui/separator");
 var lucide_react_1 = require("lucide-react");
 var useLGPD_1 = require("@/hooks/useLGPD");
 function PrivacyPreferences(_a) {
-  var _this = this;
   var userId = _a.userId,
     _b = _a.showHeader,
     showHeader = _b === void 0 ? true : _b,
@@ -186,44 +182,37 @@ function PrivacyPreferences(_a) {
   var _g = (0, react_1.useState)(null),
     saveMessage = _g[0],
     setSaveMessage = _g[1];
-  (0, react_1.useEffect)(
-    function () {
-      // Inicializar preferências com consentimentos existentes
-      var initialPreferences = {};
-      purposes === null || purposes === void 0
-        ? void 0
-        : purposes.forEach(function (purpose) {
-            var existingConsent =
-              userConsents === null || userConsents === void 0
-                ? void 0
-                : userConsents.find(function (c) {
-                    return c.purpose_id === purpose.id;
-                  });
-            initialPreferences[purpose.id] =
-              (existingConsent === null || existingConsent === void 0
-                ? void 0
-                : existingConsent.status) === "given";
-          });
-      setPreferences(initialPreferences);
-      setHasChanges(false);
-    },
-    [purposes, userConsents],
-  );
-  var handlePreferenceChange = function (purposeId, enabled) {
-    setPreferences(function (prev) {
+  (0, react_1.useEffect)(() => {
+    // Inicializar preferências com consentimentos existentes
+    var initialPreferences = {};
+    purposes === null || purposes === void 0
+      ? void 0
+      : purposes.forEach((purpose) => {
+          var existingConsent =
+            userConsents === null || userConsents === void 0
+              ? void 0
+              : userConsents.find((c) => c.purpose_id === purpose.id);
+          initialPreferences[purpose.id] =
+            (existingConsent === null || existingConsent === void 0
+              ? void 0
+              : existingConsent.status) === "given";
+        });
+    setPreferences(initialPreferences);
+    setHasChanges(false);
+  }, [purposes, userConsents]);
+  var handlePreferenceChange = (purposeId, enabled) => {
+    setPreferences((prev) => {
       var _a;
       var newPreferences = __assign(__assign({}, prev), ((_a = {}), (_a[purposeId] = enabled), _a));
       // Verificar se há mudanças
       var hasChanges =
         (purposes === null || purposes === void 0
           ? void 0
-          : purposes.some(function (purpose) {
+          : purposes.some((purpose) => {
               var existingConsent =
                 userConsents === null || userConsents === void 0
                   ? void 0
-                  : userConsents.find(function (c) {
-                      return c.purpose_id === purpose.id;
-                    });
+                  : userConsents.find((c) => c.purpose_id === purpose.id);
               var currentStatus =
                 (existingConsent === null || existingConsent === void 0
                   ? void 0
@@ -234,10 +223,10 @@ function PrivacyPreferences(_a) {
       return newPreferences;
     });
   };
-  var handleSavePreferences = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSavePreferences = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _loop_1, _i, _a, _b, purposeId, enabled, error_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             setIsSaving(true);
@@ -247,15 +236,13 @@ function PrivacyPreferences(_a) {
             _c.trys.push([1, 7, 8, 9]);
             _loop_1 = function (purposeId, enabled) {
               var existingConsent, currentStatus;
-              return __generator(this, function (_d) {
+              return __generator(this, (_d) => {
                 switch (_d.label) {
                   case 0:
                     existingConsent =
                       userConsents === null || userConsents === void 0
                         ? void 0
-                        : userConsents.find(function (c) {
-                            return c.purpose_id === purposeId;
-                          });
+                        : userConsents.find((c) => c.purpose_id === purposeId);
                     currentStatus =
                       (existingConsent === null || existingConsent === void 0
                         ? void 0
@@ -302,27 +289,22 @@ function PrivacyPreferences(_a) {
             return [3 /*break*/, 9];
           case 8:
             setIsSaving(false);
-            setTimeout(function () {
-              return setSaveMessage(null);
-            }, 3000);
+            setTimeout(() => setSaveMessage(null), 3000);
             return [7 /*endfinally*/];
           case 9:
             return [2 /*return*/];
         }
       });
     });
-  };
-  var handleResetPreferences = function () {
+  var handleResetPreferences = () => {
     var resetPreferences = {};
     purposes === null || purposes === void 0
       ? void 0
-      : purposes.forEach(function (purpose) {
+      : purposes.forEach((purpose) => {
           var existingConsent =
             userConsents === null || userConsents === void 0
               ? void 0
-              : userConsents.find(function (c) {
-                  return c.purpose_id === purpose.id;
-                });
+              : userConsents.find((c) => c.purpose_id === purpose.id);
           resetPreferences[purpose.id] =
             (existingConsent === null || existingConsent === void 0
               ? void 0
@@ -331,7 +313,7 @@ function PrivacyPreferences(_a) {
     setPreferences(resetPreferences);
     setHasChanges(false);
   };
-  var getPurposeIcon = function (category) {
+  var getPurposeIcon = (category) => {
     switch (category) {
       case "essential":
         return <lucide_react_1.Shield className="h-5 w-5" />;
@@ -347,7 +329,7 @@ function PrivacyPreferences(_a) {
         return <lucide_react_1.Cookie className="h-5 w-5" />;
     }
   };
-  var getPurposeColor = function (category) {
+  var getPurposeColor = (category) => {
     switch (category) {
       case "essential":
         return "bg-green-100 text-green-800 border-green-200";
@@ -363,27 +345,18 @@ function PrivacyPreferences(_a) {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getConsentHistory = function (purposeId) {
-    return (
-      (userConsents === null || userConsents === void 0
-        ? void 0
-        : userConsents.filter(function (c) {
-            return c.purpose_id === purposeId;
-          })) || []
-    );
-  };
+  var getConsentHistory = (purposeId) =>
+    (userConsents === null || userConsents === void 0
+      ? void 0
+      : userConsents.filter((c) => c.purpose_id === purposeId)) || [];
   var essentialPurposes =
     (purposes === null || purposes === void 0
       ? void 0
-      : purposes.filter(function (p) {
-          return p.category === "essential";
-        })) || [];
+      : purposes.filter((p) => p.category === "essential")) || [];
   var optionalPurposes =
     (purposes === null || purposes === void 0
       ? void 0
-      : purposes.filter(function (p) {
-          return p.category !== "essential";
-        })) || [];
+      : purposes.filter((p) => p.category !== "essential")) || [];
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -450,33 +423,31 @@ function PrivacyPreferences(_a) {
                 </card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-4">
-                {essentialPurposes.map(function (purpose) {
-                  return (
-                    <div
-                      key={purpose.id}
-                      className="flex items-start justify-between p-4 border rounded-lg bg-green-50"
-                    >
-                      <div className="flex items-start gap-3 flex-1">
-                        {getPurposeIcon(purpose.category)}
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium">{purpose.name}</h4>
-                            <badge_1.Badge className="bg-green-100 text-green-800 border-green-200">
-                              Sempre Ativo
-                            </badge_1.Badge>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-2">{purpose.description}</p>
-                          {purpose.legal_basis && (
-                            <p className="text-xs text-gray-500">
-                              <strong>Base Legal:</strong> {purpose.legal_basis}
-                            </p>
-                          )}
+                {essentialPurposes.map((purpose) => (
+                  <div
+                    key={purpose.id}
+                    className="flex items-start justify-between p-4 border rounded-lg bg-green-50"
+                  >
+                    <div className="flex items-start gap-3 flex-1">
+                      {getPurposeIcon(purpose.category)}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium">{purpose.name}</h4>
+                          <badge_1.Badge className="bg-green-100 text-green-800 border-green-200">
+                            Sempre Ativo
+                          </badge_1.Badge>
                         </div>
+                        <p className="text-sm text-gray-600 mb-2">{purpose.description}</p>
+                        {purpose.legal_basis && (
+                          <p className="text-xs text-gray-500">
+                            <strong>Base Legal:</strong> {purpose.legal_basis}
+                          </p>
+                        )}
                       </div>
-                      <switch_1.Switch checked={true} disabled className="mt-1" />
                     </div>
-                  );
-                })}
+                    <switch_1.Switch checked={true} disabled className="mt-1" />
+                  </div>
+                ))}
               </card_1.CardContent>
             </card_1.Card>
           )}
@@ -494,60 +465,56 @@ function PrivacyPreferences(_a) {
                 </card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-4">
-                {optionalPurposes.map(function (purpose) {
-                  return (
-                    <div
-                      key={purpose.id}
-                      className={"p-4 border rounded-lg transition-colors ".concat(
-                        preferences[purpose.id] ? "bg-blue-50 border-blue-200" : "bg-gray-50",
-                      )}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-3 flex-1">
-                          {getPurposeIcon(purpose.category)}
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-medium">{purpose.name}</h4>
-                              <badge_1.Badge
-                                variant="outline"
-                                className={getPurposeColor(purpose.category)}
-                              >
-                                {purpose.category}
-                              </badge_1.Badge>
-                            </div>
-                            <p className="text-sm text-gray-600 mb-2">{purpose.description}</p>
+                {optionalPurposes.map((purpose) => (
+                  <div
+                    key={purpose.id}
+                    className={"p-4 border rounded-lg transition-colors ".concat(
+                      preferences[purpose.id] ? "bg-blue-50 border-blue-200" : "bg-gray-50",
+                    )}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        {getPurposeIcon(purpose.category)}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="font-medium">{purpose.name}</h4>
+                            <badge_1.Badge
+                              variant="outline"
+                              className={getPurposeColor(purpose.category)}
+                            >
+                              {purpose.category}
+                            </badge_1.Badge>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-2">{purpose.description}</p>
 
-                            <div className="space-y-1 text-xs text-gray-500">
-                              {purpose.legal_basis && (
-                                <p>
-                                  <strong>Base Legal:</strong> {purpose.legal_basis}
-                                </p>
-                              )}
-                              {purpose.data_retention_days && (
-                                <p>
-                                  <strong>Retenção:</strong> {purpose.data_retention_days} dias
-                                </p>
-                              )}
-                            </div>
+                          <div className="space-y-1 text-xs text-gray-500">
+                            {purpose.legal_basis && (
+                              <p>
+                                <strong>Base Legal:</strong> {purpose.legal_basis}
+                              </p>
+                            )}
+                            {purpose.data_retention_days && (
+                              <p>
+                                <strong>Retenção:</strong> {purpose.data_retention_days} dias
+                              </p>
+                            )}
                           </div>
                         </div>
+                      </div>
 
-                        <div className="flex items-center gap-2">
-                          <label_1.Label htmlFor={"switch-".concat(purpose.id)} className="text-sm">
-                            {preferences[purpose.id] ? "Ativo" : "Inativo"}
-                          </label_1.Label>
-                          <switch_1.Switch
-                            id={"switch-".concat(purpose.id)}
-                            checked={preferences[purpose.id] || false}
-                            onCheckedChange={function (checked) {
-                              return handlePreferenceChange(purpose.id, checked);
-                            }}
-                          />
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <label_1.Label htmlFor={"switch-".concat(purpose.id)} className="text-sm">
+                          {preferences[purpose.id] ? "Ativo" : "Inativo"}
+                        </label_1.Label>
+                        <switch_1.Switch
+                          id={"switch-".concat(purpose.id)}
+                          checked={preferences[purpose.id] || false}
+                          onCheckedChange={(checked) => handlePreferenceChange(purpose.id, checked)}
+                        />
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </card_1.CardContent>
             </card_1.Card>
           )}
@@ -591,11 +558,9 @@ function PrivacyPreferences(_a) {
               <div className="space-y-4">
                 {purposes === null || purposes === void 0
                   ? void 0
-                  : purposes.map(function (purpose) {
+                  : purposes.map((purpose) => {
                       var history = getConsentHistory(purpose.id);
-                      var currentConsent = history.find(function (c) {
-                        return c.status === "given";
-                      });
+                      var currentConsent = history.find((c) => c.status === "given");
                       return (
                         <div key={purpose.id} className="border rounded-lg p-4">
                           <div className="flex items-center justify-between mb-3">
@@ -613,28 +578,26 @@ function PrivacyPreferences(_a) {
 
                           {history.length > 0
                             ? <div className="space-y-2">
-                                {history.slice(0, 3).map(function (consent, index) {
-                                  return (
-                                    <div
-                                      key={consent.id}
-                                      className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded"
-                                    >
-                                      <div className="flex items-center gap-2">
+                                {history.slice(0, 3).map((consent, index) => (
+                                  <div
+                                    key={consent.id}
+                                    className="flex items-center justify-between text-sm bg-gray-50 p-2 rounded"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      {consent.status === "given"
+                                        ? <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
+                                        : <lucide_react_1.XCircle className="h-4 w-4 text-red-600" />}
+                                      <span>
                                         {consent.status === "given"
-                                          ? <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
-                                          : <lucide_react_1.XCircle className="h-4 w-4 text-red-600" />}
-                                        <span>
-                                          {consent.status === "given"
-                                            ? "Consentimento dado"
-                                            : "Consentimento retirado"}
-                                        </span>
-                                      </div>
-                                      <span className="text-gray-500">
-                                        {new Date(consent.created_at).toLocaleDateString("pt-BR")}
+                                          ? "Consentimento dado"
+                                          : "Consentimento retirado"}
                                       </span>
                                     </div>
-                                  );
-                                })}
+                                    <span className="text-gray-500">
+                                      {new Date(consent.created_at).toLocaleDateString("pt-BR")}
+                                    </span>
+                                  </div>
+                                ))}
                                 {history.length > 3 && (
                                   <p className="text-xs text-gray-500 text-center">
                                     +{history.length - 3} registros anteriores

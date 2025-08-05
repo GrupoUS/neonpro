@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Comprehensive Data Search System
  * Story 3.4: Smart Search + NLP Integration - Task 2
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,10 +147,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -162,7 +159,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.comprehensiveSearch = exports.ComprehensiveSearch = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -172,7 +169,7 @@ var nlp_engine_1 = require("./nlp-engine");
  * Comprehensive Data Search System
  * Provides unified search across all clinic data
  */
-var ComprehensiveSearch = /** @class */ (function () {
+var ComprehensiveSearch = /** @class */ (() => {
   function ComprehensiveSearch(supabaseUrl, supabaseKey) {
     this.searchableTypes = new Map();
     if (supabaseUrl && supabaseKey) {
@@ -343,8 +340,8 @@ var ComprehensiveSearch = /** @class */ (function () {
           case 2:
             nlpResult_1 = _k.sent();
             typesToSearch_1 = dataTypes || Array.from(this.searchableTypes.keys());
-            searchPromises = typesToSearch_1.map(function (type) {
-              return _this.searchDataType(type, {
+            searchPromises = typesToSearch_1.map((type) =>
+              _this.searchDataType(type, {
                 query: query_1,
                 nlpResult: nlpResult_1,
                 dateRange: dateRange_1,
@@ -353,8 +350,8 @@ var ComprehensiveSearch = /** @class */ (function () {
                 fuzzySearch: fuzzySearch_1,
                 exactMatch: exactMatch_1,
                 limit: Math.ceil(limit_1 / typesToSearch_1.length),
-              });
-            });
+              }),
+            );
             return [4 /*yield*/, Promise.all(searchPromises)];
           case 3:
             searchResults = _k.sent();
@@ -449,9 +446,7 @@ var ComprehensiveSearch = /** @class */ (function () {
             // Transform results
             return [
               2 /*return*/,
-              (data || []).map(function (item) {
-                return _this.transformResult(item, config, options.nlpResult);
-              }),
+              (data || []).map((item) => _this.transformResult(item, config, options.nlpResult)),
             ];
           case 3:
             error_2 = _b.sent();
@@ -466,12 +461,12 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Build SELECT clause with joins
    */
-  ComprehensiveSearch.prototype.buildSelectClause = function (config) {
-    var selectFields = config.displayFields.map(function (field) {
-      return field.includes(" as ") ? field : "".concat(config.table, ".").concat(field);
-    });
+  ComprehensiveSearch.prototype.buildSelectClause = (config) => {
+    var selectFields = config.displayFields.map((field) =>
+      field.includes(" as ") ? field : "".concat(config.table, ".").concat(field),
+    );
     if (config.joinTables) {
-      config.joinTables.forEach(function (join) {
+      config.joinTables.forEach((join) => {
         selectFields = selectFields.concat(join.fields);
       });
     }
@@ -480,17 +475,17 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Build search conditions
    */
-  ComprehensiveSearch.prototype.buildSearchConditions = function (
+  ComprehensiveSearch.prototype.buildSearchConditions = (
     config,
     query,
     nlpResult,
     fuzzySearch,
     exactMatch,
-  ) {
+  ) => {
     var conditions = [];
     var searchTerms = exactMatch ? [query] : __spreadArray([query], nlpResult.tokens, true);
-    config.searchFields.forEach(function (field) {
-      searchTerms.forEach(function (term) {
+    config.searchFields.forEach((field) => {
+      searchTerms.forEach((term) => {
         if (exactMatch) {
           conditions.push("".concat(field, '.eq."').concat(term, '"'));
         } else if (fuzzySearch) {
@@ -501,8 +496,8 @@ var ComprehensiveSearch = /** @class */ (function () {
       });
     });
     // Add entity-based searches
-    nlpResult.entities.forEach(function (entity) {
-      config.searchFields.forEach(function (field) {
+    nlpResult.entities.forEach((entity) => {
+      config.searchFields.forEach((field) => {
         conditions.push("".concat(field, '.ilike."%').concat(entity.value, '%"'));
       });
     });
@@ -511,17 +506,17 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Apply filters to query
    */
-  ComprehensiveSearch.prototype.applyFilters = function (query, config, filters, includeArchived) {
+  ComprehensiveSearch.prototype.applyFilters = (query, config, filters, includeArchived) => {
     // Apply default filters
     if (config.filters) {
-      Object.entries(config.filters).forEach(function (_a) {
+      Object.entries(config.filters).forEach((_a) => {
         var key = _a[0],
           value = _a[1];
         query = query.eq(key, value);
       });
     }
     // Apply custom filters
-    Object.entries(filters).forEach(function (_a) {
+    Object.entries(filters).forEach((_a) => {
       var key = _a[0],
         value = _a[1];
       if (Array.isArray(value)) {
@@ -539,7 +534,7 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Apply date range filter
    */
-  ComprehensiveSearch.prototype.applyDateRange = function (query, dateRange) {
+  ComprehensiveSearch.prototype.applyDateRange = (query, dateRange) => {
     var dateField = dateRange.field || "created_at";
     if (dateRange.start) {
       query = query.gte(dateField, dateRange.start);
@@ -579,22 +574,20 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Calculate relevance score for result
    */
-  ComprehensiveSearch.prototype.calculateRelevanceScore = function (item, config, nlpResult) {
+  ComprehensiveSearch.prototype.calculateRelevanceScore = (item, config, nlpResult) => {
     var score = config.weight;
     // Boost score based on NLP confidence
     score *= 0.5 + nlpResult.confidence * 0.5;
     // Boost for exact matches
     var searchText = config.searchFields
-      .map(function (field) {
-        return item[field] || "";
-      })
+      .map((field) => item[field] || "")
       .join(" ")
       .toLowerCase();
     if (searchText.includes(nlpResult.normalized.toLowerCase())) {
       score *= 1.5;
     }
     // Boost for entity matches
-    nlpResult.entities.forEach(function (entity) {
+    nlpResult.entities.forEach((entity) => {
       if (searchText.includes(entity.value.toLowerCase())) {
         score *= 1.2;
       }
@@ -661,12 +654,12 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Find matched fields in result
    */
-  ComprehensiveSearch.prototype.findMatchedFields = function (item, config, nlpResult) {
+  ComprehensiveSearch.prototype.findMatchedFields = (item, config, nlpResult) => {
     var matchedFields = [];
     var searchTerms = __spreadArray([nlpResult.normalized], nlpResult.tokens, true);
-    config.searchFields.forEach(function (field) {
+    config.searchFields.forEach((field) => {
       var fieldValue = (item[field] || "").toLowerCase();
-      searchTerms.forEach(function (term) {
+      searchTerms.forEach((term) => {
         if (fieldValue.includes(term.toLowerCase())) {
           matchedFields.push(field);
         }
@@ -677,16 +670,14 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Generate highlighted text
    */
-  ComprehensiveSearch.prototype.generateHighlightedText = function (item, config, nlpResult) {
+  ComprehensiveSearch.prototype.generateHighlightedText = (item, config, nlpResult) => {
     var searchTerms = __spreadArray([nlpResult.normalized], nlpResult.tokens, true);
     var text = config.searchFields
-      .map(function (field) {
-        return item[field] || "";
-      })
+      .map((field) => item[field] || "")
       .join(" ")
       .substring(0, 200);
     // Highlight search terms
-    searchTerms.forEach(function (term) {
+    searchTerms.forEach((term) => {
       var regex = new RegExp("(".concat(term, ")"), "gi");
       text = text.replace(regex, "<mark>$1</mark>");
     });
@@ -695,7 +686,7 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Generate URL for result
    */
-  ComprehensiveSearch.prototype.generateResultUrl = function (type, id) {
+  ComprehensiveSearch.prototype.generateResultUrl = (type, id) => {
     var baseUrls = {
       patient: "/patients",
       appointment: "/appointments",
@@ -711,18 +702,18 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Format file size
    */
-  ComprehensiveSearch.prototype.formatFileSize = function (bytes) {
+  ComprehensiveSearch.prototype.formatFileSize = (bytes) => {
     if (!bytes) return "0 B";
     var k = 1024;
     var sizes = ["B", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
   /**
    * Rank search results
    */
-  ComprehensiveSearch.prototype.rankResults = function (results, nlpResult, sortBy, sortOrder) {
-    return results.sort(function (a, b) {
+  ComprehensiveSearch.prototype.rankResults = (results, nlpResult, sortBy, sortOrder) =>
+    results.sort((a, b) => {
       var comparison = 0;
       switch (sortBy) {
         case "relevance":
@@ -737,13 +728,12 @@ var ComprehensiveSearch = /** @class */ (function () {
       }
       return sortOrder === "desc" ? comparison : -comparison;
     });
-  };
   /**
    * Enhance results with related data
    */
   ComprehensiveSearch.prototype.enhanceWithRelatedData = function (results) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement related data enhancement
         // This could include:
         // - Related patients for appointments
@@ -757,10 +747,10 @@ var ComprehensiveSearch = /** @class */ (function () {
   /**
    * Calculate search statistics
    */
-  ComprehensiveSearch.prototype.calculateSearchStats = function (results, nlpResult) {
+  ComprehensiveSearch.prototype.calculateSearchStats = (results, nlpResult) => {
     var byType = {};
     var totalRelevance = 0;
-    results.forEach(function (result) {
+    results.forEach((result) => {
       byType[result.type] = (byType[result.type] || 0) + 1;
       totalRelevance += result.relevanceScore;
     });
@@ -775,7 +765,7 @@ var ComprehensiveSearch = /** @class */ (function () {
    */
   ComprehensiveSearch.prototype.getSuggestions = function (query, nlpResult, language) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Use the search indexer for suggestions
         return [2 /*return*/, search_indexer_1.searchIndexer.getSuggestions(query, language, 5)];
       });
@@ -812,11 +802,7 @@ var ComprehensiveSearch = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              (data === null || data === void 0
-                ? void 0
-                : data.map(function (item) {
-                    return item.query;
-                  })) || [],
+              (data === null || data === void 0 ? void 0 : data.map((item) => item.query)) || [],
             ];
           case 2:
             error_3 = _b.sent();
@@ -838,7 +824,7 @@ var ComprehensiveSearch = /** @class */ (function () {
     metadata,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -863,7 +849,7 @@ var ComprehensiveSearch = /** @class */ (function () {
    */
   ComprehensiveSearch.prototype.removeFromIndex = function (type, contentId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, search_indexer_1.searchIndexer.removeFromIndex(type, contentId)];

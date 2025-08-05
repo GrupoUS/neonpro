@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HEALTHCARE_DATA_CATEGORIES =
@@ -163,7 +160,7 @@ var zod_1 = require("zod");
  */
 // Types of consent required for healthcare operations
 var ConsentType;
-(function (ConsentType) {
+((ConsentType) => {
   ConsentType["DATA_PROCESSING"] = "data_processing";
   ConsentType["SENSITIVE_DATA"] = "sensitive_data";
   ConsentType["MARKETING"] = "marketing";
@@ -175,7 +172,7 @@ var ConsentType;
 })(ConsentType || (exports.ConsentType = ConsentType = {}));
 // Consent status enum
 var ConsentStatus;
-(function (ConsentStatus) {
+((ConsentStatus) => {
   ConsentStatus["GRANTED"] = "granted";
   ConsentStatus["DENIED"] = "denied";
   ConsentStatus["REVOKED"] = "revoked";
@@ -183,7 +180,7 @@ var ConsentStatus;
 })(ConsentStatus || (exports.ConsentStatus = ConsentStatus = {}));
 // Legal basis for data processing under LGPD
 var LegalBasis;
-(function (LegalBasis) {
+((LegalBasis) => {
   LegalBasis["CONSENT"] = "consent";
   LegalBasis["CONTRACT"] = "contract";
   LegalBasis["LEGAL_OBLIGATION"] = "legal_obligation";
@@ -223,14 +220,10 @@ exports.consentRecordSchema = zod_1.z.object({
       }),
     )
     .optional(),
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
+  updatedAt: zod_1.z.date().default(() => new Date()),
 });
-var ConsentManager = /** @class */ (function () {
+var ConsentManager = /** @class */ (() => {
   function ConsentManager() {}
   /**
    * Collect consent from data subject
@@ -239,7 +232,7 @@ var ConsentManager = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var now, expiresAt, consentRecord, validated;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         now = new Date();
         expiresAt = params.expiresInDays
           ? new Date(now.getTime() + params.expiresInDays * 24 * 60 * 60 * 1000)
@@ -262,14 +255,12 @@ var ConsentManager = /** @class */ (function () {
           thirdParties:
             (_a = params.thirdParties) === null || _a === void 0
               ? void 0
-              : _a.map(function (tp) {
-                  return {
-                    name: tp.name,
-                    purpose: tp.purpose,
-                    country: tp.country || "Brasil",
-                    adequacyDecision: tp.adequacyDecision || false,
-                  };
-                }),
+              : _a.map((tp) => ({
+                  name: tp.name,
+                  purpose: tp.purpose,
+                  country: tp.country || "Brasil",
+                  adequacyDecision: tp.adequacyDecision || false,
+                })),
           createdAt: now,
           updatedAt: now,
         };
@@ -361,7 +352,7 @@ var ConsentManager = /** @class */ (function () {
    */
   ConsentManager.getConsentHistory = function (userId, consentType) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Query database for all consent records
         // Placeholder implementation
         return [2 /*return*/, []];
@@ -385,18 +376,16 @@ var ConsentManager = /** @class */ (function () {
               {
                 userId: userId,
                 generatedAt: new Date(),
-                consents: consents.map(function (c) {
-                  return {
-                    type: c.consentType,
-                    status: c.status,
-                    grantedAt: c.grantedAt,
-                    revokedAt: c.revokedAt,
-                    expiresAt: c.expiresAt,
-                    purpose: c.purpose,
-                    dataCategories: c.dataCategories,
-                    legalBasis: c.legalBasis,
-                  };
-                }),
+                consents: consents.map((c) => ({
+                  type: c.consentType,
+                  status: c.status,
+                  grantedAt: c.grantedAt,
+                  revokedAt: c.revokedAt,
+                  expiresAt: c.expiresAt,
+                  purpose: c.purpose,
+                  dataCategories: c.dataCategories,
+                  legalBasis: c.legalBasis,
+                })),
                 dataProcessingActivities: [
                   "Agendamento de consultas",
                   "Histórico médico",
@@ -404,19 +393,15 @@ var ConsentManager = /** @class */ (function () {
                   "Análise de qualidade do serviço",
                 ],
                 thirdPartySharing: consents
-                  .filter(function (c) {
-                    return c.thirdParties && c.thirdParties.length > 0;
-                  })
-                  .flatMap(function (c) {
-                    return c.thirdParties.map(function (tp) {
-                      return {
-                        partner: tp.name,
-                        purpose: tp.purpose,
-                        dataShared: c.dataCategories,
-                        consentStatus: c.status,
-                      };
-                    });
-                  }),
+                  .filter((c) => c.thirdParties && c.thirdParties.length > 0)
+                  .flatMap((c) =>
+                    c.thirdParties.map((tp) => ({
+                      partner: tp.name,
+                      purpose: tp.purpose,
+                      dataShared: c.dataCategories,
+                      consentStatus: c.status,
+                    })),
+                  ),
               },
             ];
         }
@@ -431,7 +416,7 @@ var ConsentManager = /** @class */ (function () {
       if (daysBeforeExpiry === void 0) {
         daysBeforeExpiry = 30;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Query database for consents expiring soon
         // Placeholder implementation
         return [2 /*return*/, []];
@@ -441,7 +426,7 @@ var ConsentManager = /** @class */ (function () {
   // Private helper methods
   ConsentManager.getLatestConsent = function (userId, consentType) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Query database for latest consent record
         // Placeholder implementation
         return [2 /*return*/, null];
@@ -450,7 +435,7 @@ var ConsentManager = /** @class */ (function () {
   };
   ConsentManager.expireConsent = function (consentId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Update consent status to expired in database
         console.log("Consent expired:", consentId);
         return [2 /*return*/];
@@ -459,7 +444,7 @@ var ConsentManager = /** @class */ (function () {
   };
   ConsentManager.logConsentEvent = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Log to audit trail
         console.log("Consent event logged:", params);
         return [2 /*return*/];

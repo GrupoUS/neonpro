@@ -4,18 +4,17 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BarcodeScanner = BarcodeScanner;
 var alert_1 = require("@/components/ui/alert");
@@ -149,7 +146,6 @@ var use_barcode_1 = require("@/hooks/inventory/use-barcode");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function BarcodeScanner(_a) {
-  var _this = this;
   var onScan = _a.onScan,
     onError = _a.onError,
     _b = _a.continuous,
@@ -214,25 +210,19 @@ function BarcodeScanner(_a) {
     clearError = _t.clearError,
     processManualInput = _t.processManualInput;
   // Initialize scanner configuration
-  (0, react_1.useEffect)(
-    function () {
-      updateConfiguration({
-        preferredCameraFacing: preferredCameraFacing,
-      });
-    },
-    [preferredCameraFacing, updateConfiguration],
-  );
+  (0, react_1.useEffect)(() => {
+    updateConfiguration({
+      preferredCameraFacing: preferredCameraFacing,
+    });
+  }, [preferredCameraFacing, updateConfiguration]);
   // Auto-start scanner
-  (0, react_1.useEffect)(
-    function () {
-      if (autoStart && isInitialized && hasPermission && videoRef.current) {
-        startScanning(videoRef.current);
-      }
-    },
-    [autoStart, isInitialized, hasPermission, startScanning],
-  );
+  (0, react_1.useEffect)(() => {
+    if (autoStart && isInitialized && hasPermission && videoRef.current) {
+      startScanning(videoRef.current);
+    }
+  }, [autoStart, isInitialized, hasPermission, startScanning]);
   // Handle manual input submission
-  var handleManualSubmit = function () {
+  var handleManualSubmit = () => {
     if (manualInput.trim()) {
       processManualInput(manualInput.trim());
       setManualInput("");
@@ -240,11 +230,11 @@ function BarcodeScanner(_a) {
     }
   };
   // Handle flashlight toggle
-  var toggleFlashlight = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var toggleFlashlight = () =>
+    __awaiter(this, void 0, void 0, function () {
       var stream, track, error_1;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (
@@ -279,17 +269,14 @@ function BarcodeScanner(_a) {
         }
       });
     });
-  };
   // Start scanning with video element
-  var handleStartScanning = function () {
+  var handleStartScanning = () => {
     if (videoRef.current) {
       startScanning(videoRef.current);
     }
   };
   // Format timestamp for display
-  var formatTimestamp = function (timestamp) {
-    return new Date(timestamp).toLocaleTimeString();
-  };
+  var formatTimestamp = (timestamp) => new Date(timestamp).toLocaleTimeString();
   return (
     <div className={"barcode-scanner ".concat(className)} style={style}>
       <card_1.Card className="w-full max-w-2xl mx-auto">
@@ -404,9 +391,7 @@ function BarcodeScanner(_a) {
 
               {showManualInput && (
                 <button_1.Button
-                  onClick={function () {
-                    return setShowManualEntry(!showManualEntry);
-                  }}
+                  onClick={() => setShowManualEntry(!showManualEntry)}
                   variant="outline"
                 >
                   <lucide_react_1.Keyboard className="h-4 w-4 mr-2" />
@@ -429,13 +414,9 @@ function BarcodeScanner(_a) {
                 <div className="flex gap-2">
                   <input_1.Input
                     value={manualInput}
-                    onChange={function (e) {
-                      return setManualInput(e.target.value);
-                    }}
+                    onChange={(e) => setManualInput(e.target.value)}
                     placeholder="Enter barcode manually..."
-                    onKeyPress={function (e) {
-                      return e.key === "Enter" && handleManualSubmit();
-                    }}
+                    onKeyPress={(e) => e.key === "Enter" && handleManualSubmit()}
                     className="flex-1"
                   />
                   <button_1.Button onClick={handleManualSubmit} disabled={!manualInput.trim()}>
@@ -456,24 +437,22 @@ function BarcodeScanner(_a) {
               </card_1.CardHeader>
               <card_1.CardContent className="pt-0">
                 <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {scanHistory.slice(0, 10).map(function (scan, index) {
-                    return (
-                      <div
-                        key={"".concat(scan.timestamp, "-").concat(index)}
-                        className="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-sm"
-                      >
-                        <div className="flex items-center gap-2">
-                          <badge_1.Badge variant="outline" className="text-xs">
-                            {scan.format}
-                          </badge_1.Badge>
-                          <span className="font-mono truncate max-w-48">{scan.data}</span>
-                        </div>
-                        <span className="text-gray-500 text-xs">
-                          {formatTimestamp(scan.timestamp)}
-                        </span>
+                  {scanHistory.slice(0, 10).map((scan, index) => (
+                    <div
+                      key={"".concat(scan.timestamp, "-").concat(index)}
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-sm"
+                    >
+                      <div className="flex items-center gap-2">
+                        <badge_1.Badge variant="outline" className="text-xs">
+                          {scan.format}
+                        </badge_1.Badge>
+                        <span className="font-mono truncate max-w-48">{scan.data}</span>
                       </div>
-                    );
-                  })}
+                      <span className="text-gray-500 text-xs">
+                        {formatTimestamp(scan.timestamp)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>

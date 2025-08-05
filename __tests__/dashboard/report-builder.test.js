@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Report Builder Component Tests (Simplified)
  * Story 8.2: Custom Report Builder (Drag-Drop Interface)
@@ -10,7 +9,7 @@
  * - Report management features
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 var react_query_1 = require("@tanstack/react-query");
 require("@testing-library/jest-dom");
@@ -19,41 +18,29 @@ var report_builder_main_1 = require("@/components/dashboard/report-builder-main"
 global.fetch = jest.fn();
 var mockFetch = global.fetch;
 // Mock Next.js router
-jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: jest.fn(),
-        back: jest.fn(),
-        forward: jest.fn(),
-        refresh: jest.fn(),
-      };
-    },
-    useSearchParams: function () {
-      return new URLSearchParams();
-    },
-    usePathname: function () {
-      return "/dashboard/report-builder";
-    },
-  };
-});
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+  }),
+  useSearchParams: () => new URLSearchParams(),
+  usePathname: () => "/dashboard/report-builder",
+}));
 // Mock auth context
-jest.mock("@/contexts/auth-context", function () {
-  return {
-    useAuth: function () {
-      return {
-        user: {
-          id: "test-user-id",
-          email: "test@example.com",
-        },
-        loading: false,
-      };
+jest.mock("@/contexts/auth-context", () => ({
+  useAuth: () => ({
+    user: {
+      id: "test-user-id",
+      email: "test@example.com",
     },
-  };
-});
-describe("ReportBuilderMain Component", function () {
+    loading: false,
+  }),
+}));
+describe("ReportBuilderMain Component", () => {
   var queryClient;
-  beforeEach(function () {
+  beforeEach(() => {
     // Mock window.open to avoid "Not implemented" error in JSDOM
     window.open = jest.fn();
     queryClient = new react_query_1.QueryClient({
@@ -64,33 +51,32 @@ describe("ReportBuilderMain Component", function () {
     });
     mockFetch.mockClear();
   });
-  afterEach(function () {
+  afterEach(() => {
     // Clean up query cache
     if (queryClient && typeof queryClient.getQueryCache === "function") {
       queryClient.getQueryCache().clear();
     }
   });
-  var renderWithProviders = function (component) {
-    return (0, react_2.render)(
+  var renderWithProviders = (component) =>
+    (0, react_2.render)(
       <react_query_1.QueryClientProvider client={queryClient}>
         {component}
       </react_query_1.QueryClientProvider>,
     );
-  };
-  describe("Component Rendering", function () {
-    it("renders report builder interface correctly", function () {
+  describe("Component Rendering", () => {
+    it("renders report builder interface correctly", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Check for main interface elements
       expect(react_2.screen.getByText(/report builder/i)).toBeInTheDocument();
       expect(react_2.screen.getByRole("button", { name: /novo relatório/i })).toBeInTheDocument();
     });
-    it("displays main navigation tabs", function () {
+    it("displays main navigation tabs", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Check for main tabs
       expect(react_2.screen.getByRole("tab", { name: /meus relatórios/i })).toBeInTheDocument();
       expect(react_2.screen.getByRole("tab", { name: /templates/i })).toBeInTheDocument();
     });
-    it("shows search and filter controls", function () {
+    it("shows search and filter controls", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Check for search input
       expect(react_2.screen.getByPlaceholderText(/buscar relatórios/i)).toBeInTheDocument();
@@ -99,33 +85,33 @@ describe("ReportBuilderMain Component", function () {
       expect(comboboxes.length).toBeGreaterThanOrEqual(2);
     });
   });
-  describe("Report Management Interface", function () {
-    it("displays recent reports section", function () {
+  describe("Report Management Interface", () => {
+    it("displays recent reports section", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Check for recent reports section
       expect(react_2.screen.getByText(/meus relatórios/i)).toBeInTheDocument();
     });
-    it("shows create new report button", function () {
+    it("shows create new report button", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var createButton = react_2.screen.getByRole("button", { name: /novo relatório/i });
       expect(createButton).toBeInTheDocument();
       expect(createButton).toBeEnabled();
     });
-    it("displays report cards with metadata", function () {
+    it("displays report cards with metadata", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Look for report card elements
       var reportElements = react_2.screen.getAllByText(/relatório financeiro/i);
       expect(reportElements.length).toBeGreaterThan(0);
     });
-    it("shows action buttons for reports", function () {
+    it("shows action buttons for reports", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Check for action buttons (Edit, View, Share, etc.)
       var actionButtons = react_2.screen.getAllByRole("button");
       expect(actionButtons.length).toBeGreaterThan(2); // More than just create button
     });
   });
-  describe("Template Library Interface", function () {
-    it("switches to templates tab", function () {
+  describe("Template Library Interface", () => {
+    it("switches to templates tab", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var templatesTab = react_2.screen.getByRole("tab", { name: /templates/i });
       react_2.fireEvent.click(templatesTab);
@@ -133,14 +119,14 @@ describe("ReportBuilderMain Component", function () {
       expect(templatesTab).toBeInTheDocument();
       expect(templatesTab).toHaveAttribute("aria-selected", "false"); // May start false but clickable
     });
-    it("displays template categories", function () {
+    it("displays template categories", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var templatesTab = react_2.screen.getByRole("tab", { name: /templates/i });
       react_2.fireEvent.click(templatesTab);
       // Check for template categories
       expect(react_2.screen.getByText(/relatório financeiro/i)).toBeInTheDocument();
     });
-    it("shows template cards with ratings", function () {
+    it("shows template cards with ratings", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var templatesTab = react_2.screen.getByRole("tab", { name: /templates/i });
       react_2.fireEvent.click(templatesTab);
@@ -149,14 +135,14 @@ describe("ReportBuilderMain Component", function () {
       expect(templateElements.length).toBeGreaterThanOrEqual(0);
     });
   });
-  describe("Interactive Elements", function () {
-    it("handles search input changes", function () {
+  describe("Interactive Elements", () => {
+    it("handles search input changes", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var searchInput = react_2.screen.getByPlaceholderText(/buscar relatórios/i);
       react_2.fireEvent.change(searchInput, { target: { value: "financial" } });
       expect(searchInput).toHaveValue("financial");
     });
-    it("handles filter selection changes", function () {
+    it("handles filter selection changes", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var comboboxes = react_2.screen.getAllByRole("combobox");
       expect(comboboxes.length).toBeGreaterThan(0);
@@ -165,7 +151,7 @@ describe("ReportBuilderMain Component", function () {
       // Filter dropdown should be interactive
       expect(comboboxes[0]).toBeInTheDocument();
     });
-    it("handles create new report button click", function () {
+    it("handles create new report button click", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var createButton = react_2.screen.getByRole("button", { name: /novo relatório/i });
       react_2.fireEvent.click(createButton);
@@ -173,26 +159,24 @@ describe("ReportBuilderMain Component", function () {
       expect(createButton).toBeInTheDocument();
     });
   });
-  describe("Responsive Design", function () {
-    it("renders without errors on different screen sizes", function () {
+  describe("Responsive Design", () => {
+    it("renders without errors on different screen sizes", () => {
       // Mock window.matchMedia for responsive testing
       Object.defineProperty(window, "matchMedia", {
         writable: true,
-        value: jest.fn().mockImplementation(function (query) {
-          return {
-            matches: query.includes("768"), // Simulate tablet size
-            media: query,
-            onchange: null,
-            addListener: jest.fn(),
-            removeListener: jest.fn(),
-          };
-        }),
+        value: jest.fn().mockImplementation((query) => ({
+          matches: query.includes("768"), // Simulate tablet size
+          media: query,
+          onchange: null,
+          addListener: jest.fn(),
+          removeListener: jest.fn(),
+        })),
       });
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Component should render without errors
       expect(react_2.screen.getByText(/report builder/i)).toBeInTheDocument();
     });
-    it("maintains functionality across viewport sizes", function () {
+    it("maintains functionality across viewport sizes", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Check that main functionality is preserved
       expect(react_2.screen.getByRole("button", { name: /novo relatório/i })).toBeInTheDocument();
@@ -200,30 +184,30 @@ describe("ReportBuilderMain Component", function () {
       expect(react_2.screen.getByRole("tab", { name: /templates/i })).toBeInTheDocument();
     });
   });
-  describe("Accessibility Features", function () {
-    it("provides proper ARIA labels and roles", function () {
+  describe("Accessibility Features", () => {
+    it("provides proper ARIA labels and roles", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Check for proper roles
       expect(react_2.screen.getByRole("tablist")).toBeInTheDocument();
       expect(react_2.screen.getAllByRole("tab")).toHaveLength(3);
       expect(react_2.screen.getAllByRole("button").length).toBeGreaterThanOrEqual(1); // At least create button
     });
-    it("supports keyboard navigation", function () {
+    it("supports keyboard navigation", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var createButton = react_2.screen.getByRole("button", { name: /novo relatório/i });
       // Button should be focusable
       createButton.focus();
       expect(createButton).toHaveFocus();
     });
-    it("has proper semantic structure", function () {
+    it("has proper semantic structure", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Check for semantic elements
       expect(react_2.screen.getByRole("tablist")).toBeInTheDocument();
       expect(react_2.screen.getByText(/report builder/i)).toBeInTheDocument();
     });
   });
-  describe("Performance Requirements", function () {
-    it("renders within acceptable time frame", function () {
+  describe("Performance Requirements", () => {
+    it("renders within acceptable time frame", () => {
       var startTime = Date.now();
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var endTime = Date.now();
@@ -231,7 +215,7 @@ describe("ReportBuilderMain Component", function () {
       // Should render quickly (under 100ms for component mounting)
       expect(renderTime).toBeLessThan(100);
     });
-    it("handles multiple rapid interactions", function () {
+    it("handles multiple rapid interactions", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var createButton = react_2.screen.getByRole("button", { name: /novo relatório/i });
       var templatesTab = react_2.screen.getByRole("tab", { name: /templates/i });
@@ -243,21 +227,21 @@ describe("ReportBuilderMain Component", function () {
       expect(react_2.screen.getByText(/report builder/i)).toBeInTheDocument();
     });
   });
-  describe("Content Validation", function () {
-    it("displays expected content sections", function () {
+  describe("Content Validation", () => {
+    it("displays expected content sections", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Verify key content sections are present
       expect(react_2.screen.getByText(/report builder/i)).toBeInTheDocument();
       expect(react_2.screen.getByText(/meus relatórios/i)).toBeInTheDocument();
     });
-    it("shows proper call-to-action elements", function () {
+    it("shows proper call-to-action elements", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Primary CTA should be prominent
       var createButton = react_2.screen.getByRole("button", { name: /novo relatório/i });
       expect(createButton).toBeInTheDocument();
       expect(createButton).toBeVisible();
     });
-    it("displays navigation elements correctly", function () {
+    it("displays navigation elements correctly", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Navigation tabs should be present and functional
       var reportsTab = react_2.screen.getByRole("tab", { name: /meus relatórios/i });
@@ -266,13 +250,13 @@ describe("ReportBuilderMain Component", function () {
       expect(templatesTab).toBeInTheDocument();
     });
   });
-  describe("Error Handling", function () {
-    it("renders gracefully with missing data", function () {
+  describe("Error Handling", () => {
+    it("renders gracefully with missing data", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Component should render even if no data is loaded
       expect(react_2.screen.getByText(/report builder/i)).toBeInTheDocument();
     });
-    it("maintains stability during state changes", function () {
+    it("maintains stability during state changes", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var templatesTab = react_2.screen.getByRole("tab", { name: /templates/i });
       // Multiple state changes should not break component
@@ -284,19 +268,19 @@ describe("ReportBuilderMain Component", function () {
       expect(react_2.screen.getByText(/report builder/i)).toBeInTheDocument();
     });
   });
-  describe("Story 8.2 Acceptance Criteria Validation", function () {
-    it("AC1: Displays drag-and-drop interface elements", function () {
+  describe("Story 8.2 Acceptance Criteria Validation", () => {
+    it("AC1: Displays drag-and-drop interface elements", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Interface should support report creation
       expect(react_2.screen.getByRole("button", { name: /novo relatório/i })).toBeInTheDocument();
     });
-    it("AC2: Shows multiple data source and visualization options", function () {
+    it("AC2: Shows multiple data source and visualization options", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Templates tab should show different visualization types
       react_2.fireEvent.click(react_2.screen.getByRole("tab", { name: /templates/i }));
       expect(react_2.screen.getByText(/relatório financeiro/i)).toBeInTheDocument();
     });
-    it("AC3: Displays template library with pre-built reports", function () {
+    it("AC3: Displays template library with pre-built reports", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       var templatesTab = react_2.screen.getByRole("tab", { name: /templates/i });
       react_2.fireEvent.click(templatesTab);
@@ -304,25 +288,25 @@ describe("ReportBuilderMain Component", function () {
       expect(templatesTab).toBeInTheDocument();
       expect(react_2.screen.getByText(/relatório financeiro/i)).toBeInTheDocument();
     });
-    it("AC6: Shows sharing and collaboration features", function () {
+    it("AC6: Shows sharing and collaboration features", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Look for sharing-related UI elements
       var shareButtons = react_2.screen.queryAllByText(/share/i);
       expect(shareButtons.length).toBeGreaterThanOrEqual(0);
     });
-    it("AC8: Provides export capabilities interface", function () {
+    it("AC8: Provides export capabilities interface", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Look for export/download related elements
       var exportElements = react_2.screen.queryAllByText(/export|download/i);
       expect(exportElements.length).toBeGreaterThanOrEqual(0);
     });
-    it("AC9: Interface supports user adoption tracking", function () {
+    it("AC9: Interface supports user adoption tracking", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Component should render analytics-friendly structure
       expect(react_2.screen.getByText(/report builder/i)).toBeInTheDocument();
       expect(react_2.screen.getByRole("button", { name: /novo relatório/i })).toBeInTheDocument();
     });
-    it("AC10: Integrates with NeonPro data sources", function () {
+    it("AC10: Integrates with NeonPro data sources", () => {
       renderWithProviders(<report_builder_main_1.ReportBuilderMain />);
       // Interface should support clinic data integration
       expect(react_2.screen.getByText(/relatório financeiro/i)).toBeInTheDocument();

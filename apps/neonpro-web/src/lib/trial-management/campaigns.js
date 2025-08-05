@@ -1,4 +1,3 @@
-"use strict";
 // Campaign Management System - STORY-SUB-002 Task 3
 // AI-powered trial conversion campaigns with A/B testing
 // Created: 2025-01-22
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,7 +35,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,8 +64,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -87,9 +84,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -148,11 +145,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CampaignManager = void 0;
 var server_1 = require("@/lib/supabase/server");
-var CampaignManager = /** @class */ (function () {
+var CampaignManager = /** @class */ (() => {
   function CampaignManager() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -323,9 +320,7 @@ var CampaignManager = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (trial) {
-                    return _this.mapDatabaseToTrial(trial);
-                  })) || [],
+                : data.map((trial) => _this.mapDatabaseToTrial(trial))) || [],
             ];
         }
       });
@@ -407,7 +402,7 @@ var CampaignManager = /** @class */ (function () {
       });
     });
   };
-  CampaignManager.prototype.hashUserId = function (userId) {
+  CampaignManager.prototype.hashUserId = (userId) => {
     // Simple hash function for consistent variant assignment
     var hash = 0;
     for (var i = 0; i < userId.length; i++) {
@@ -568,20 +563,13 @@ var CampaignManager = /** @class */ (function () {
             used = new Set(
               (usedFeatures === null || usedFeatures === void 0
                 ? void 0
-                : usedFeatures.map(function (e) {
+                : usedFeatures.map((e) => {
                     var _a;
                     return (_a = e.event_data) === null || _a === void 0 ? void 0 : _a.featureId;
                   })) || [],
             );
             allFeatures = ["dashboard", "reports", "integrations", "automation", "analytics"];
-            return [
-              2 /*return*/,
-              allFeatures
-                .filter(function (f) {
-                  return !used.has(f);
-                })
-                .slice(0, 3),
-            ];
+            return [2 /*return*/, allFeatures.filter((f) => !used.has(f)).slice(0, 3)];
         }
       });
     });
@@ -589,7 +577,7 @@ var CampaignManager = /** @class */ (function () {
   // Mock delivery methods (in production, integrate with actual services)
   CampaignManager.prototype.sendEmail = function (userId, content) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Sending email to user ".concat(userId, ":"), content);
         return [2 /*return*/];
       });
@@ -597,7 +585,7 @@ var CampaignManager = /** @class */ (function () {
   };
   CampaignManager.prototype.showInAppMessage = function (userId, content) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Showing in-app message to user ".concat(userId, ":"), content);
         return [2 /*return*/];
       });
@@ -605,7 +593,7 @@ var CampaignManager = /** @class */ (function () {
   };
   CampaignManager.prototype.sendPushNotification = function (userId, content) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Sending push notification to user ".concat(userId, ":"), content);
         return [2 /*return*/];
       });
@@ -673,63 +661,55 @@ var CampaignManager = /** @class */ (function () {
   // ========================================================================
   // UTILITY METHODS
   // ========================================================================
-  CampaignManager.prototype.getDefaultTarget = function () {
-    return {
-      segments: ["casual_user", "explorer"],
-      trialStages: ["active", "at_risk"],
-      conversionProbabilityRange: [0.2, 0.8],
-      engagementLevelRange: ["medium", "low"],
-      customFilters: {},
-      estimatedAudience: 0,
-    };
-  };
-  CampaignManager.prototype.getDefaultContent = function () {
-    return {
-      title: "Don't Miss Out on Your Trial",
-      message:
-        "Hi {{user_name}}, you have {{days_remaining}} days left in your trial. Don't miss out on these amazing features: {{top_features}}",
-      cta: {
-        text: "Upgrade Now",
-        action: "upgrade",
-        style: "primary",
+  CampaignManager.prototype.getDefaultTarget = () => ({
+    segments: ["casual_user", "explorer"],
+    trialStages: ["active", "at_risk"],
+    conversionProbabilityRange: [0.2, 0.8],
+    engagementLevelRange: ["medium", "low"],
+    customFilters: {},
+    estimatedAudience: 0,
+  });
+  CampaignManager.prototype.getDefaultContent = () => ({
+    title: "Don't Miss Out on Your Trial",
+    message:
+      "Hi {{user_name}}, you have {{days_remaining}} days left in your trial. Don't miss out on these amazing features: {{top_features}}",
+    cta: {
+      text: "Upgrade Now",
+      action: "upgrade",
+      style: "primary",
+    },
+    personalization: {
+      useUserName: true,
+      useDaysRemaining: true,
+      useTopFeatures: true,
+      useCompanyName: false,
+      customTokens: {},
+    },
+    assets: [],
+  });
+  CampaignManager.prototype.getDefaultSchedule = () => ({
+    type: "immediate",
+    timezone: "UTC",
+    deliveryWindows: [
+      {
+        start: "09:00",
+        end: "17:00",
+        days: [1, 2, 3, 4, 5], // weekdays
       },
-      personalization: {
-        useUserName: true,
-        useDaysRemaining: true,
-        useTopFeatures: true,
-        useCompanyName: false,
-        customTokens: {},
-      },
-      assets: [],
-    };
-  };
-  CampaignManager.prototype.getDefaultSchedule = function () {
-    return {
-      type: "immediate",
-      timezone: "UTC",
-      deliveryWindows: [
-        {
-          start: "09:00",
-          end: "17:00",
-          days: [1, 2, 3, 4, 5], // weekdays
-        },
-      ],
-    };
-  };
-  CampaignManager.prototype.initializeMetrics = function () {
-    return {
-      sent: 0,
-      delivered: 0,
-      opened: 0,
-      clicked: 0,
-      converted: 0,
-      unsubscribed: 0,
-      bounced: 0,
-      revenue: 0,
-      conversionRate: 0,
-      roi: 0,
-    };
-  };
+    ],
+  });
+  CampaignManager.prototype.initializeMetrics = () => ({
+    sent: 0,
+    delivered: 0,
+    opened: 0,
+    clicked: 0,
+    converted: 0,
+    unsubscribed: 0,
+    bounced: 0,
+    revenue: 0,
+    conversionRate: 0,
+    roi: 0,
+  });
   CampaignManager.prototype.mapDatabaseToCampaign = function (data) {
     return {
       id: data.id,
@@ -744,24 +724,22 @@ var CampaignManager = /** @class */ (function () {
       abTest: data.ab_test_config,
     };
   };
-  CampaignManager.prototype.mapDatabaseToTrial = function (data) {
-    return {
-      id: data.id,
-      userId: data.user_id,
-      status: data.trial_status,
-      startDate: new Date(data.start_date),
-      endDate: new Date(data.end_date),
-      daysRemaining: Math.max(
-        0,
-        Math.ceil((new Date(data.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
-      ),
-      conversionProbability: data.conversion_probability || 0.1,
-      engagementScore: data.engagement_score || 0,
-      userSegment: data.user_segment || "casual_user",
-      currentStrategy: data.current_strategy || "engagement_boost",
-      metadata: data.metadata || {},
-    };
-  };
+  CampaignManager.prototype.mapDatabaseToTrial = (data) => ({
+    id: data.id,
+    userId: data.user_id,
+    status: data.trial_status,
+    startDate: new Date(data.start_date),
+    endDate: new Date(data.end_date),
+    daysRemaining: Math.max(
+      0,
+      Math.ceil((new Date(data.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+    ),
+    conversionProbability: data.conversion_probability || 0.1,
+    engagementScore: data.engagement_score || 0,
+    userSegment: data.user_segment || "casual_user",
+    currentStrategy: data.current_strategy || "engagement_boost",
+    metadata: data.metadata || {},
+  });
   return CampaignManager;
 })();
 exports.CampaignManager = CampaignManager;

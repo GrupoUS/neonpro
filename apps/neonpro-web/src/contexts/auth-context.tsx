@@ -1,13 +1,12 @@
 "use client";
 
 import type React from "react";
-
-import type { createClient } from "@/app/utils/supabase/client";
 import type { createContext, useContext, useEffect, useState } from "react";
-import type { sessionManager } from "@/lib/auth/session/SessionManager";
+import type { createClient } from "@/app/utils/supabase/client";
 import type { oauthErrorHandler } from "@/lib/auth/oauth-error-handler";
-import type { securityAuditLogger } from "@/lib/auth/security-audit-logger";
 import type { permissionValidator } from "@/lib/auth/permission-validator";
+import type { securityAuditLogger } from "@/lib/auth/security-audit-logger";
+import type { sessionManager } from "@/lib/auth/session/SessionManager";
 
 // Supabase Auth types for strict TypeScript compliance
 interface User {

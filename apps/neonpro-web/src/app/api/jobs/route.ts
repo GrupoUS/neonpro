@@ -1,6 +1,6 @@
 import type { NextRequest, NextResponse } from "next/server";
+import type { JobScheduler, processBackgroundJobs } from "@/lib/jobs/background-processor";
 import type { createClient } from "@/lib/supabase/server";
-import type { processBackgroundJobs, JobScheduler } from "@/lib/jobs/background-processor";
 
 /**
  * Background Jobs API Endpoint - Research-Backed Implementation
@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient();
 
     switch (action) {
-      case "status":
+      case "status": {
         // Get job queue status
         const { data: queueStats } = await supabase
           .from("background_jobs")
@@ -93,8 +93,9 @@ export async function GET(request: NextRequest) {
           recentActivity: processingLogs,
           timestamp: new Date().toISOString(),
         });
+      }
 
-      case "health":
+      case "health": {
         // Get system health metrics
         const { data: failedJobs } = await supabase
           .from("background_jobs")
@@ -115,6 +116,7 @@ export async function GET(request: NextRequest) {
           },
           timestamp: new Date().toISOString(),
         });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action parameter" }, { status: 400 });
@@ -140,7 +142,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     switch (action) {
-      case "process":
+      case "process": {
         // Manual job processing trigger
         console.log("Starting manual job processing...");
         const stats = await processBackgroundJobs();
@@ -160,8 +162,9 @@ export async function POST(request: NextRequest) {
           stats: processStats,
           message: `Processed ${stats.processed} jobs with ${stats.errors} errors`,
         });
+      }
 
-      case "schedule_token_refresh":
+      case "schedule_token_refresh": {
         // Schedule token refresh jobs
         const scheduler = new JobScheduler();
         await scheduler.scheduleTokenRefreshJobs();
@@ -180,8 +183,9 @@ export async function POST(request: NextRequest) {
           message: "Token refresh jobs scheduled",
           duration: refreshStats.duration,
         });
+      }
 
-      case "schedule_daily_sync":
+      case "schedule_daily_sync": {
         // Schedule daily synchronization jobs
         const syncScheduler = new JobScheduler();
         await syncScheduler.scheduleDailySyncJobs();
@@ -200,8 +204,9 @@ export async function POST(request: NextRequest) {
           message: "Daily sync jobs scheduled",
           duration: syncStats.duration,
         });
+      }
 
-      case "cleanup":
+      case "cleanup": {
         // Cleanup old completed jobs
         const cutoffDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 days ago
 
@@ -230,8 +235,9 @@ export async function POST(request: NextRequest) {
           message: `Cleaned up ${cleanupStats.processed} old jobs`,
           duration: cleanupStats.duration,
         });
+      }
 
-      case "retry_failed":
+      case "retry_failed": {
         // Retry failed jobs
         const { maxAge = 24 } = params; // Hours
         const retryDate = new Date(Date.now() - maxAge * 60 * 60 * 1000).toISOString();
@@ -266,6 +272,7 @@ export async function POST(request: NextRequest) {
           message: `Retried ${retryStats.processed} failed jobs`,
           duration: retryStats.duration,
         });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -294,7 +301,7 @@ export async function PUT(request: NextRequest) {
     }
 
     switch (action) {
-      case "cancel":
+      case "cancel": {
         // Cancel a specific job
         const { error: cancelError } = await supabase
           .from("background_jobs")
@@ -313,8 +320,9 @@ export async function PUT(request: NextRequest) {
           success: true,
           message: `Job ${jobId} cancelled`,
         });
+      }
 
-      case "retry":
+      case "retry": {
         // Retry a specific failed job
         const { error: retryError } = await supabase
           .from("background_jobs")
@@ -335,6 +343,7 @@ export async function PUT(request: NextRequest) {
           success: true,
           message: `Job ${jobId} scheduled for retry`,
         });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });

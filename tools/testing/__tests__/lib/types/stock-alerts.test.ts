@@ -2,28 +2,22 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Unit tests for Zod schemas and validation functions
 
-import { describe, it, expect } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import {
-  stockAlertConfigSchema,
-  createStockAlertConfigSchema,
-  updateStockAlertConfigSchema,
-  stockAlertSchema,
   acknowledgeAlertSchema,
-  resolveAlertSchema,
-  customStockReportSchema,
-  stockPerformanceMetricsSchema,
-  stockDashboardDataSchema,
   alertsQuerySchema,
-  validateStockAlertConfig,
-  validateCreateStockAlertConfig,
+  createStockAlertConfigSchema,
+  customStockReportSchema,
+  resolveAlertSchema,
+  stockAlertConfigSchema,
+  stockAlertSchema,
+  stockDashboardDataSchema,
+  stockPerformanceMetricsSchema,
+  updateStockAlertConfigSchema,
   validateAcknowledgeAlert,
+  validateCreateStockAlertConfig,
   validateResolveAlert,
-  AlertType,
-  SeverityLevel,
-  AlertStatus,
-  ThresholdUnit,
-  NotificationChannel,
-  StockAlertValidationError,
+  validateStockAlertConfig,
 } from "@/app/lib/types/stock-alerts";
 
 // =====================================================
@@ -273,7 +267,7 @@ describe("Stock Alert Schema Validation", () => {
     it("should trim and validate note length", () => {
       const longNote = {
         ...validAcknowledgeAlert,
-        note: " " + "a".repeat(501) + " ",
+        note: ` ${"a".repeat(501)} `,
       };
       const result = acknowledgeAlertSchema.safeParse(longNote);
       expect(result.success).toBe(false);
@@ -664,7 +658,7 @@ describe("Edge Cases and Security", () => {
   });
 
   it("should sanitize string inputs", () => {
-    const configWithWhitespace = {
+    const _configWithWhitespace = {
       ...validCreateAlertConfig,
       // Note: reportName trimming is tested in custom reports
     };
@@ -725,5 +719,3 @@ describe("Performance and Scalability", () => {
     expect(endTime - startTime).toBeLessThan(100); // Should complete within 100ms
   });
 });
-
-export {};

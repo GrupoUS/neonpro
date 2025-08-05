@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,37 +142,31 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var professionals_1 = require("@/lib/supabase/professionals");
 var server_1 = require("@/app/utils/supabase/server");
 // Mock Supabase client
 var mockSupabaseClient = {
-  from: jest.fn(function () {
-    return {
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      neq: jest.fn().mockReturnThis(),
-      in: jest.fn().mockReturnThis(),
-      gte: jest.fn().mockReturnThis(),
-      lte: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      then: jest.fn(),
-    };
-  }),
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    neq: jest.fn().mockReturnThis(),
+    in: jest.fn().mockReturnThis(),
+    gte: jest.fn().mockReturnThis(),
+    lte: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
+    limit: jest.fn().mockReturnThis(),
+    single: jest.fn(),
+    then: jest.fn(),
+  })),
 };
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return mockSupabaseClient;
-    }),
-  };
-});
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
 // Mock data
 var mockProfessional = {
   id: "1",
@@ -236,16 +227,16 @@ var mockPerformanceMetric = {
   created_at: "2024-02-01T00:00:00Z",
   updated_at: "2024-02-01T00:00:00Z",
 };
-describe("Professional Supabase Functions", function () {
-  beforeEach(function () {
+describe("Professional Supabase Functions", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("Professional Management", function () {
-    describe("createProfessional", function () {
-      it("should create a new professional successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("Professional Management", () => {
+    describe("createProfessional", () => {
+      it("should create a new professional successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockInsertResponse, professionalData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockInsertResponse = { data: [mockProfessional], error: null };
@@ -266,12 +257,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when creation fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when creation fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockInsertResponse, professionalData;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Database error");
@@ -293,12 +283,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should validate required fields", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should validate required fields", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var incompleteProfessionalData;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 incompleteProfessionalData = {
@@ -316,14 +305,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("updateProfessional", function () {
-      it("should update professional successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("updateProfessional", () => {
+      it("should update professional successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockUpdateResponse, updateData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockUpdateResponse = { data: [mockProfessional], error: null };
@@ -345,12 +333,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when update fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when update fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockUpdateResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Update failed");
@@ -371,12 +358,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when professional not found", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when professional not found", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockUpdateResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockUpdateResponse = { data: null, error: null };
@@ -396,14 +382,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("deleteProfessional", function () {
-      it("should delete professional successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("deleteProfessional", () => {
+      it("should delete professional successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockDeleteResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockDeleteResponse = { data: null, error: null };
@@ -416,12 +401,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when deletion fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when deletion fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockDeleteResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Deletion failed");
@@ -438,14 +422,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("getProfessionals", function () {
-      it("should fetch all professionals successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("getProfessionals", () => {
+      it("should fetch all professionals successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSelectResponse, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSelectResponse = { data: [mockProfessional], error: null };
@@ -459,12 +442,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should filter professionals by status", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should filter professionals by status", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSelectResponse, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSelectResponse = { data: [mockProfessional], error: null };
@@ -480,12 +462,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when fetch fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when fetch fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockSelectResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Fetch failed");
@@ -500,14 +481,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("getProfessionalById", function () {
-      it("should fetch professional by ID successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("getProfessionalById", () => {
+      it("should fetch professional by ID successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSelectResponse, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSelectResponse = { data: mockProfessional, error: null };
@@ -525,12 +505,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should return null when professional not found", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should return null when professional not found", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSelectResponse, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSelectResponse = { data: null, error: null };
@@ -546,12 +525,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when fetch fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when fetch fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockSelectResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Fetch failed");
@@ -572,16 +550,15 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Credentials Management", function () {
-    describe("getProfessionalCredentials", function () {
-      it("should fetch credentials for professional", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("Credentials Management", () => {
+    describe("getProfessionalCredentials", () => {
+      it("should fetch credentials for professional", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSelectResponse, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSelectResponse = { data: [mockCredential], error: null };
@@ -598,12 +575,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when fetch fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when fetch fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockSelectResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Fetch failed");
@@ -620,14 +596,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("createProfessionalCredential", function () {
-      it("should create credential successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("createProfessionalCredential", () => {
+      it("should create credential successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockInsertResponse, credentialData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockInsertResponse = { data: [mockCredential], error: null };
@@ -649,12 +624,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when creation fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when creation fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockInsertResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Creation failed");
@@ -671,14 +645,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("updateProfessionalCredential", function () {
-      it("should update credential successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("updateProfessionalCredential", () => {
+      it("should update credential successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockUpdateResponse, updateData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockUpdateResponse = { data: [mockCredential], error: null };
@@ -701,12 +674,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when update fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when update fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockUpdateResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Update failed");
@@ -727,14 +699,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("deleteProfessionalCredential", function () {
-      it("should delete credential successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("deleteProfessionalCredential", () => {
+      it("should delete credential successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockDeleteResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockDeleteResponse = { data: null, error: null };
@@ -747,12 +718,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when deletion fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when deletion fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockDeleteResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Deletion failed");
@@ -769,14 +739,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("verifyCredential", function () {
-      it("should verify credential successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("verifyCredential", () => {
+      it("should verify credential successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockUpdateResponse, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockUpdateResponse = {
@@ -802,12 +771,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when verification fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when verification fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockUpdateResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Verification failed");
@@ -828,16 +796,15 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Services Management", function () {
-    describe("getProfessionalServices", function () {
-      it("should fetch services for professional", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("Services Management", () => {
+    describe("getProfessionalServices", () => {
+      it("should fetch services for professional", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSelectResponse, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSelectResponse = { data: [mockService], error: null };
@@ -854,12 +821,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when fetch fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when fetch fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockSelectResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Fetch failed");
@@ -876,14 +842,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("createProfessionalService", function () {
-      it("should create service successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("createProfessionalService", () => {
+      it("should create service successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockInsertResponse, serviceData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockInsertResponse = { data: [mockService], error: null };
@@ -903,12 +868,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when creation fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when creation fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockInsertResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Creation failed");
@@ -925,14 +889,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("updateProfessionalService", function () {
-      it("should update service successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("updateProfessionalService", () => {
+      it("should update service successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockUpdateResponse, updateData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockUpdateResponse = { data: [mockService], error: null };
@@ -955,12 +918,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when update fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when update fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockUpdateResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Update failed");
@@ -981,14 +943,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("deleteProfessionalService", function () {
-      it("should delete service successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("deleteProfessionalService", () => {
+      it("should delete service successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockDeleteResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockDeleteResponse = { data: null, error: null };
@@ -1004,12 +965,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when deletion fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when deletion fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockDeleteResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Deletion failed");
@@ -1026,16 +986,15 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Performance Metrics", function () {
-    describe("getProfessionalPerformanceMetrics", function () {
-      it("should fetch performance metrics for professional", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance Metrics", () => {
+    describe("getProfessionalPerformanceMetrics", () => {
+      it("should fetch performance metrics for professional", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSelectResponse, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSelectResponse = { data: [mockPerformanceMetric], error: null };
@@ -1052,12 +1011,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should filter metrics by date range", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should filter metrics by date range", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockSelectResponse, options, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSelectResponse = { data: [mockPerformanceMetric], error: null };
@@ -1090,12 +1048,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when fetch fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when fetch fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockSelectResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Fetch failed");
@@ -1112,14 +1069,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("addPerformanceMetric", function () {
-      it("should add performance metric successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("addPerformanceMetric", () => {
+      it("should add performance metric successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockInsertResponse, metricData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockInsertResponse = { data: [mockPerformanceMetric], error: null };
@@ -1140,12 +1096,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when creation fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when creation fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockInsertResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Creation failed");
@@ -1162,14 +1117,13 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("updatePerformanceMetric", function () {
-      it("should update performance metric successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    describe("updatePerformanceMetric", () => {
+      it("should update performance metric successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockUpdateResponse, updateData, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockUpdateResponse = { data: [mockPerformanceMetric], error: null };
@@ -1192,12 +1146,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("should throw error when update fails", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should throw error when update fails", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockError, mockUpdateResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockError = new Error("Update failed");
@@ -1218,12 +1171,11 @@ describe("Professional Supabase Functions", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Data Validation", function () {
-    it("should validate professional data structure", function () {
+  describe("Data Validation", () => {
+    it("should validate professional data structure", () => {
       expect(mockProfessional).toHaveProperty("id");
       expect(mockProfessional).toHaveProperty("given_name");
       expect(mockProfessional).toHaveProperty("family_name");
@@ -1232,7 +1184,7 @@ describe("Professional Supabase Functions", function () {
       expect(mockProfessional).toHaveProperty("qualification");
       expect(mockProfessional).toHaveProperty("status");
     });
-    it("should validate credential data structure", function () {
+    it("should validate credential data structure", () => {
       expect(mockCredential).toHaveProperty("id");
       expect(mockCredential).toHaveProperty("professional_id");
       expect(mockCredential).toHaveProperty("credential_type");
@@ -1240,7 +1192,7 @@ describe("Professional Supabase Functions", function () {
       expect(mockCredential).toHaveProperty("issuing_authority");
       expect(mockCredential).toHaveProperty("verification_status");
     });
-    it("should validate service data structure", function () {
+    it("should validate service data structure", () => {
       expect(mockService).toHaveProperty("id");
       expect(mockService).toHaveProperty("professional_id");
       expect(mockService).toHaveProperty("service_name");
@@ -1248,7 +1200,7 @@ describe("Professional Supabase Functions", function () {
       expect(mockService).toHaveProperty("duration_minutes");
       expect(mockService).toHaveProperty("base_price");
     });
-    it("should validate performance metric data structure", function () {
+    it("should validate performance metric data structure", () => {
       expect(mockPerformanceMetric).toHaveProperty("id");
       expect(mockPerformanceMetric).toHaveProperty("professional_id");
       expect(mockPerformanceMetric).toHaveProperty("metric_type");
@@ -1256,15 +1208,15 @@ describe("Professional Supabase Functions", function () {
       expect(mockPerformanceMetric).toHaveProperty("measurement_period");
     });
   });
-  describe("Error Handling", function () {
-    it("should handle database connection errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling", () => {
+    it("should handle database connection errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockError;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockError = new Error("Connection failed");
-              server_1.createClient.mockImplementation(function () {
+              server_1.createClient.mockImplementation(() => {
                 throw mockError;
               });
               return [
@@ -1278,12 +1230,11 @@ describe("Professional Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle malformed data gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle malformed data gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var malformedData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               malformedData = {
@@ -1300,12 +1251,11 @@ describe("Professional Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle concurrent update conflicts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle concurrent update conflicts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockError, mockUpdateResponse;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockError = new Error("Conflict: Resource was modified");
@@ -1322,22 +1272,21 @@ describe("Professional Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance", function () {
-    it("should handle large datasets efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance", () => {
+    it("should handle large datasets efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var largeProfessionalSet, mockSelectResponse, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              largeProfessionalSet = Array.from({ length: 1000 }, function (_, i) {
-                return __assign(__assign({}, mockProfessional), {
+              largeProfessionalSet = Array.from({ length: 1000 }, (_, i) =>
+                __assign(__assign({}, mockProfessional), {
                   id: "".concat(i + 1),
                   email: "professional".concat(i + 1, "@email.com"),
-                });
-              });
+                }),
+              );
               mockSelectResponse = { data: largeProfessionalSet, error: null };
               mockSupabaseClient.from().select().order.mockResolvedValue(mockSelectResponse);
               return [4 /*yield*/, (0, professionals_1.getProfessionals)()];
@@ -1348,12 +1297,11 @@ describe("Professional Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should implement pagination for large result sets", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should implement pagination for large result sets", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSelectResponse, options;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSelectResponse = { data: [mockProfessional], error: null };
@@ -1373,12 +1321,11 @@ describe("Professional Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should optimize queries with selective field retrieval", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should optimize queries with selective field retrieval", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSelectResponse, options;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSelectResponse = { data: [mockProfessional], error: null };
@@ -1395,7 +1342,6 @@ describe("Professional Supabase Functions", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

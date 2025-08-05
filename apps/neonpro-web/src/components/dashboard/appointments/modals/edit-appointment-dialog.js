@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EditAppointmentDialog = EditAppointmentDialog;
 var react_1 = require("react");
@@ -169,7 +166,6 @@ var appointmentEditSchema = zod_2.z.object({
   change_reason: zod_2.z.string().min(1, "Motivo da alteração é obrigatório"),
 });
 function EditAppointmentDialog(_a) {
-  var _this = this;
   var appointment = _a.appointment,
     open = _a.open,
     onOpenChange = _a.onOpenChange,
@@ -206,100 +202,90 @@ function EditAppointmentDialog(_a) {
     },
   });
   // Reset form when appointment changes
-  (0, react_1.useEffect)(
-    function () {
-      if (appointment && open) {
-        form.reset({
-          patient_id: appointment.patient_id,
-          professional_id: appointment.professional_id,
-          service_type_id: appointment.service_type_id,
-          start_time: (0, date_fns_1.format)(
-            new Date(appointment.start_time),
-            "yyyy-MM-dd'T'HH:mm",
-          ),
-          status: appointment.status,
-          notes: appointment.notes || "",
-          internal_notes: appointment.internal_notes || "",
-          change_reason: "",
-        });
-      }
-    },
-    [appointment, open, form],
-  );
+  (0, react_1.useEffect)(() => {
+    if (appointment && open) {
+      form.reset({
+        patient_id: appointment.patient_id,
+        professional_id: appointment.professional_id,
+        service_type_id: appointment.service_type_id,
+        start_time: (0, date_fns_1.format)(new Date(appointment.start_time), "yyyy-MM-dd'T'HH:mm"),
+        status: appointment.status,
+        notes: appointment.notes || "",
+        internal_notes: appointment.internal_notes || "",
+        change_reason: "",
+      });
+    }
+  }, [appointment, open, form]);
   // Load reference data
-  (0, react_1.useEffect)(
-    function () {
-      if (!open) return;
-      var loadReferenceData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var _a,
-            patientsRes,
-            professionalsRes,
-            servicesRes,
-            patientsData,
-            professionalsData,
-            servicesData,
-            error_1;
-          return __generator(this, function (_b) {
-            switch (_b.label) {
-              case 0:
-                _b.trys.push([0, 8, , 9]);
-                return [
-                  4 /*yield*/,
-                  Promise.all([
-                    fetch("/api/patients"),
-                    fetch("/api/professionals"),
-                    fetch("/api/service-types"),
-                  ]),
-                ];
-              case 1:
-                (_a = _b.sent()),
-                  (patientsRes = _a[0]),
-                  (professionalsRes = _a[1]),
-                  (servicesRes = _a[2]);
-                if (!patientsRes.ok) return [3 /*break*/, 3];
-                return [4 /*yield*/, patientsRes.json()];
-              case 2:
-                patientsData = _b.sent();
-                setPatients(patientsData.data || []);
-                _b.label = 3;
-              case 3:
-                if (!professionalsRes.ok) return [3 /*break*/, 5];
-                return [4 /*yield*/, professionalsRes.json()];
-              case 4:
-                professionalsData = _b.sent();
-                setProfessionals(professionalsData.data || []);
-                _b.label = 5;
-              case 5:
-                if (!servicesRes.ok) return [3 /*break*/, 7];
-                return [4 /*yield*/, servicesRes.json()];
-              case 6:
-                servicesData = _b.sent();
-                setServices(servicesData.data || []);
-                _b.label = 7;
-              case 7:
-                return [3 /*break*/, 9];
-              case 8:
-                error_1 = _b.sent();
-                console.error("Error loading reference data:", error_1);
-                sonner_1.toast.error("Erro ao carregar dados de referência");
-                return [3 /*break*/, 9];
-              case 9:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    if (!open) return;
+    var loadReferenceData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var _a,
+          patientsRes,
+          professionalsRes,
+          servicesRes,
+          patientsData,
+          professionalsData,
+          servicesData,
+          error_1;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              _b.trys.push([0, 8, , 9]);
+              return [
+                4 /*yield*/,
+                Promise.all([
+                  fetch("/api/patients"),
+                  fetch("/api/professionals"),
+                  fetch("/api/service-types"),
+                ]),
+              ];
+            case 1:
+              (_a = _b.sent()),
+                (patientsRes = _a[0]),
+                (professionalsRes = _a[1]),
+                (servicesRes = _a[2]);
+              if (!patientsRes.ok) return [3 /*break*/, 3];
+              return [4 /*yield*/, patientsRes.json()];
+            case 2:
+              patientsData = _b.sent();
+              setPatients(patientsData.data || []);
+              _b.label = 3;
+            case 3:
+              if (!professionalsRes.ok) return [3 /*break*/, 5];
+              return [4 /*yield*/, professionalsRes.json()];
+            case 4:
+              professionalsData = _b.sent();
+              setProfessionals(professionalsData.data || []);
+              _b.label = 5;
+            case 5:
+              if (!servicesRes.ok) return [3 /*break*/, 7];
+              return [4 /*yield*/, servicesRes.json()];
+            case 6:
+              servicesData = _b.sent();
+              setServices(servicesData.data || []);
+              _b.label = 7;
+            case 7:
+              return [3 /*break*/, 9];
+            case 8:
+              error_1 = _b.sent();
+              console.error("Error loading reference data:", error_1);
+              sonner_1.toast.error("Erro ao carregar dados de referência");
+              return [3 /*break*/, 9];
+            case 9:
+              return [2 /*return*/];
+          }
         });
-      };
-      loadReferenceData();
-    },
-    [open],
-  );
+      });
+    loadReferenceData();
+  }, [open]);
   // Check for conflicts when time or professional changes
-  var checkConflicts = function (professionalId, startTime, serviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkConflicts = (professionalId, startTime, serviceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var selectedService, endTime, response, data, conflicts, error_2;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!professionalId || !startTime || !serviceId || !appointment) return [2 /*return*/];
@@ -308,9 +294,7 @@ function EditAppointmentDialog(_a) {
             _b.trys.push([1, 4, 5, 6]);
             setCheckingConflict(true);
             setConflictError("");
-            selectedService = services.find(function (s) {
-              return s.id === serviceId;
-            });
+            selectedService = services.find((s) => s.id === serviceId);
             if (!selectedService) return [2 /*return*/];
             endTime = new Date(
               new Date(startTime).getTime() + selectedService.duration_minutes * 60000,
@@ -338,14 +322,14 @@ function EditAppointmentDialog(_a) {
               ((_a = data.conflicting_appointments) === null || _a === void 0 ? void 0 : _a.length)
             ) {
               conflicts = data.conflicting_appointments
-                .map(function (c) {
-                  return "".concat(c.patient_name, " (").concat(
+                .map((c) =>
+                  "".concat(c.patient_name, " (").concat(
                     (0, date_fns_1.format)(new Date(c.start_time), "HH:mm", {
                       locale: locale_1.ptBR,
                     }),
                     ")",
-                  );
-                })
+                  ),
+                )
                 .join(", ");
               setConflictError("Conflito detectado com: ".concat(conflicts));
             }
@@ -362,31 +346,25 @@ function EditAppointmentDialog(_a) {
         }
       });
     });
-  };
   // Watch form changes for conflict checking
   var watchedValues = form.watch(["professional_id", "start_time", "service_type_id"]);
-  (0, react_1.useEffect)(
-    function () {
-      var professionalId = watchedValues[0],
-        startTime = watchedValues[1],
-        serviceId = watchedValues[2];
-      if (professionalId && startTime && serviceId && services.length > 0) {
-        var timer_1 = setTimeout(function () {
-          checkConflicts(professionalId, startTime, serviceId);
-        }, 500);
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [watchedValues, services, appointment],
-  );
+  (0, react_1.useEffect)(() => {
+    var professionalId = watchedValues[0],
+      startTime = watchedValues[1],
+      serviceId = watchedValues[2];
+    if (professionalId && startTime && serviceId && services.length > 0) {
+      var timer_1 = setTimeout(() => {
+        checkConflicts(professionalId, startTime, serviceId);
+      }, 500);
+      return () => clearTimeout(timer_1);
+    }
+  }, [watchedValues, services, appointment]);
   // Handle form submission
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var selectedService, startTime, endTime, updateData, response, result, conflicts, error_3;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (conflictError) {
@@ -398,9 +376,7 @@ function EditAppointmentDialog(_a) {
           case 1:
             _b.trys.push([1, 4, 5, 6]);
             setIsUpdating(true);
-            selectedService = services.find(function (s) {
-              return s.id === data.service_type_id;
-            });
+            selectedService = services.find((s) => s.id === data.service_type_id);
             if (!selectedService) {
               sonner_1.toast.error("Serviço não encontrado");
               return [2 /*return*/];
@@ -434,14 +410,14 @@ function EditAppointmentDialog(_a) {
             if (!response.ok) {
               if ((_a = result.conflicts) === null || _a === void 0 ? void 0 : _a.length) {
                 conflicts = result.conflicts
-                  .map(function (c) {
-                    return "".concat(c.patient_name, " (").concat(
+                  .map((c) =>
+                    "".concat(c.patient_name, " (").concat(
                       (0, date_fns_1.format)(new Date(c.start_time), "HH:mm", {
                         locale: locale_1.ptBR,
                       }),
                       ")",
-                    );
-                  })
+                    ),
+                  )
                   .join(", ");
                 setConflictError("Conflito detectado: ".concat(conflicts));
                 return [2 /*return*/];
@@ -467,7 +443,6 @@ function EditAppointmentDialog(_a) {
         }
       });
     });
-  };
   var statusOptions = [
     { value: "scheduled", label: "Agendado" },
     { value: "confirmed", label: "Confirmado" },
@@ -503,7 +478,7 @@ function EditAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="patient_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -515,13 +490,11 @@ function EditAppointmentDialog(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {patients.map(function (patient) {
-                            return (
-                              <select_1.SelectItem key={patient.id} value={patient.id}>
-                                {patient.full_name}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {patients.map((patient) => (
+                            <select_1.SelectItem key={patient.id} value={patient.id}>
+                              {patient.full_name}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -534,7 +507,7 @@ function EditAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="professional_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -546,13 +519,11 @@ function EditAppointmentDialog(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {professionals.map(function (professional) {
-                            return (
-                              <select_1.SelectItem key={professional.id} value={professional.id}>
-                                {professional.full_name}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {professionals.map((professional) => (
+                            <select_1.SelectItem key={professional.id} value={professional.id}>
+                              {professional.full_name}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -565,7 +536,7 @@ function EditAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="service_type_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -577,14 +548,12 @@ function EditAppointmentDialog(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {services.map(function (service) {
-                            return (
-                              <select_1.SelectItem key={service.id} value={service.id}>
-                                {service.name} ({Math.floor(service.duration_minutes / 60)}h
-                                {service.duration_minutes % 60}min)
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {services.map((service) => (
+                            <select_1.SelectItem key={service.id} value={service.id}>
+                              {service.name} ({Math.floor(service.duration_minutes / 60)}h
+                              {service.duration_minutes % 60}min)
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -597,7 +566,7 @@ function EditAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="status"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -609,13 +578,11 @@ function EditAppointmentDialog(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {statusOptions.map(function (status) {
-                            return (
-                              <select_1.SelectItem key={status.value} value={status.value}>
-                                {status.label}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {statusOptions.map((status) => (
+                            <select_1.SelectItem key={status.value} value={status.value}>
+                              {status.label}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -629,7 +596,7 @@ function EditAppointmentDialog(_a) {
             <form_1.FormField
               control={form.control}
               name="start_time"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -651,7 +618,7 @@ function EditAppointmentDialog(_a) {
             <form_1.FormField
               control={form.control}
               name="change_reason"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -673,7 +640,7 @@ function EditAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="notes"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -693,7 +660,7 @@ function EditAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="internal_notes"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -715,9 +682,7 @@ function EditAppointmentDialog(_a) {
               <button_1.Button
                 type="button"
                 variant="outline"
-                onClick={function () {
-                  return onOpenChange(false);
-                }}
+                onClick={() => onOpenChange(false)}
                 disabled={isUpdating}
               >
                 Cancelar

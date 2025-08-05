@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuditTrailPanel = AuditTrailPanel;
 var react_1 = require("react");
@@ -57,7 +56,7 @@ function AuditTrailPanel(_a) {
   var filteredEvents =
     (events === null || events === void 0
       ? void 0
-      : events.filter(function (event) {
+      : events.filter((event) => {
           var _a, _b, _c, _d;
           var matchesSearch =
             ((_a = event.action) === null || _a === void 0
@@ -95,7 +94,7 @@ function AuditTrailPanel(_a) {
           }
           return matchesSearch && matchesAction && matchesEntity && matchesUser && matchesDate;
         })) || [];
-  var getActionBadge = function (action) {
+  var getActionBadge = (action) => {
     switch (action) {
       case "create":
         return (
@@ -185,7 +184,7 @@ function AuditTrailPanel(_a) {
         );
     }
   };
-  var getEntityIcon = function (entityType) {
+  var getEntityIcon = (entityType) => {
     switch (entityType) {
       case "user":
         return <lucide_react_1.User className="h-4 w-4" />;
@@ -203,7 +202,7 @@ function AuditTrailPanel(_a) {
         return <lucide_react_1.Activity className="h-4 w-4" />;
     }
   };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "low":
         return "text-green-600";
@@ -223,7 +222,7 @@ function AuditTrailPanel(_a) {
     today:
       (events === null || events === void 0
         ? void 0
-        : events.filter(function (e) {
+        : events.filter((e) => {
             var eventDate = new Date(e.timestamp);
             var today = new Date();
             return eventDate.toDateString() === today.toDateString();
@@ -231,7 +230,7 @@ function AuditTrailPanel(_a) {
     thisWeek:
       (events === null || events === void 0
         ? void 0
-        : events.filter(function (e) {
+        : events.filter((e) => {
             var eventDate = new Date(e.timestamp);
             var weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             return eventDate >= weekAgo;
@@ -240,11 +239,7 @@ function AuditTrailPanel(_a) {
       new Set(
         events === null || events === void 0
           ? void 0
-          : events
-              .map(function (e) {
-                return e.user_id;
-              })
-              .filter(Boolean),
+          : events.map((e) => e.user_id).filter(Boolean),
       ).size || 0,
   };
   // Obter listas únicas para filtros
@@ -252,13 +247,7 @@ function AuditTrailPanel(_a) {
     __spreadArray(
       [],
       new Set(
-        events === null || events === void 0
-          ? void 0
-          : events
-              .map(function (e) {
-                return e.action;
-              })
-              .filter(Boolean),
+        events === null || events === void 0 ? void 0 : events.map((e) => e.action).filter(Boolean),
       ),
       true,
     ) || [];
@@ -268,11 +257,7 @@ function AuditTrailPanel(_a) {
       new Set(
         events === null || events === void 0
           ? void 0
-          : events
-              .map(function (e) {
-                return e.entity_type;
-              })
-              .filter(Boolean),
+          : events.map((e) => e.entity_type).filter(Boolean),
       ),
       true,
     ) || [];
@@ -282,11 +267,7 @@ function AuditTrailPanel(_a) {
       new Set(
         events === null || events === void 0
           ? void 0
-          : events
-              .map(function (e) {
-                return e.user_id;
-              })
-              .filter(Boolean),
+          : events.map((e) => e.user_id).filter(Boolean),
       ),
       true,
     ) || [];
@@ -403,9 +384,7 @@ function AuditTrailPanel(_a) {
                       id="search"
                       placeholder="Ação, entidade, usuário..."
                       value={searchTerm}
-                      onChange={function (e) {
-                        return setSearchTerm(e.target.value);
-                      }}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-8"
                     />
                   </div>
@@ -419,13 +398,11 @@ function AuditTrailPanel(_a) {
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
                       <select_1.SelectItem value="all">Todas</select_1.SelectItem>
-                      {uniqueActions.map(function (action) {
-                        return (
-                          <select_1.SelectItem key={action} value={action}>
-                            {action}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {uniqueActions.map((action) => (
+                        <select_1.SelectItem key={action} value={action}>
+                          {action}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -438,13 +415,11 @@ function AuditTrailPanel(_a) {
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
                       <select_1.SelectItem value="all">Todas</select_1.SelectItem>
-                      {uniqueEntities.map(function (entity) {
-                        return (
-                          <select_1.SelectItem key={entity} value={entity}>
-                            {entity}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {uniqueEntities.map((entity) => (
+                        <select_1.SelectItem key={entity} value={entity}>
+                          {entity}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -457,13 +432,11 @@ function AuditTrailPanel(_a) {
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
                       <select_1.SelectItem value="all">Todos</select_1.SelectItem>
-                      {uniqueUsers.map(function (user) {
-                        return (
-                          <select_1.SelectItem key={user} value={user}>
-                            {user}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {uniqueUsers.map((user) => (
+                        <select_1.SelectItem key={user} value={user}>
+                          {user}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -487,7 +460,7 @@ function AuditTrailPanel(_a) {
                 <div className="flex items-end">
                   <button_1.Button
                     variant="outline"
-                    onClick={function () {
+                    onClick={() => {
                       setSearchTerm("");
                       setActionFilter("all");
                       setEntityFilter("all");
@@ -522,117 +495,113 @@ function AuditTrailPanel(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {filteredEvents.map(function (event) {
-                    return (
-                      <table_1.TableRow key={event.id}>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-2">
-                            <lucide_react_1.Clock className="h-4 w-4 text-muted-foreground" />
-                            <div>
-                              <div className="text-sm font-medium">
-                                {new Date(event.timestamp).toLocaleDateString("pt-BR")}
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                {new Date(event.timestamp).toLocaleTimeString("pt-BR")}
-                              </div>
+                  {filteredEvents.map((event) => (
+                    <table_1.TableRow key={event.id}>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-2">
+                          <lucide_react_1.Clock className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <div className="text-sm font-medium">
+                              {new Date(event.timestamp).toLocaleDateString("pt-BR")}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {new Date(event.timestamp).toLocaleTimeString("pt-BR")}
                             </div>
                           </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>{getActionBadge(event.action)}</table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-2">
-                            {getEntityIcon(event.entity_type)}
-                            <span className="text-sm">{event.entity_type}</span>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center gap-2">
-                            <lucide_react_1.User className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm">{event.user_id || "Sistema"}</span>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="max-w-xs">
-                            <p className="text-sm truncate" title={event.details}>
-                              {event.details}
-                            </p>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <span className="text-xs text-muted-foreground font-mono">
-                            {event.ip_address || "-"}
-                          </span>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <dialog_1.Dialog>
-                            <dialog_1.DialogTrigger asChild>
-                              <button_1.Button size="sm" variant="outline">
-                                <lucide_react_1.Eye className="h-3 w-3 mr-1" />
-                                Ver
-                              </button_1.Button>
-                            </dialog_1.DialogTrigger>
-                            <dialog_1.DialogContent className="max-w-2xl">
-                              <dialog_1.DialogHeader>
-                                <dialog_1.DialogTitle className="flex items-center gap-2">
-                                  {getActionBadge(event.action)}
-                                  Detalhes do Evento
-                                </dialog_1.DialogTitle>
-                                <dialog_1.DialogDescription>
-                                  {new Date(event.timestamp).toLocaleString("pt-BR")}
-                                </dialog_1.DialogDescription>
-                              </dialog_1.DialogHeader>
-                              <div className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <label_1.Label>Ação</label_1.Label>
-                                    <p className="text-sm font-medium">{event.action}</p>
-                                  </div>
-                                  <div>
-                                    <label_1.Label>Tipo de Entidade</label_1.Label>
-                                    <p className="text-sm">{event.entity_type}</p>
-                                  </div>
-                                  <div>
-                                    <label_1.Label>ID da Entidade</label_1.Label>
-                                    <p className="text-sm font-mono">{event.entity_id || "-"}</p>
-                                  </div>
-                                  <div>
-                                    <label_1.Label>Usuário</label_1.Label>
-                                    <p className="text-sm">{event.user_id || "Sistema"}</p>
-                                  </div>
-                                  <div>
-                                    <label_1.Label>Endereço IP</label_1.Label>
-                                    <p className="text-sm font-mono">{event.ip_address || "-"}</p>
-                                  </div>
-                                  <div>
-                                    <label_1.Label>User Agent</label_1.Label>
-                                    <p className="text-sm truncate" title={event.user_agent}>
-                                      {event.user_agent || "-"}
-                                    </p>
-                                  </div>
-                                </div>
-
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>{getActionBadge(event.action)}</table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-2">
+                          {getEntityIcon(event.entity_type)}
+                          <span className="text-sm">{event.entity_type}</span>
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center gap-2">
+                          <lucide_react_1.User className="h-4 w-4 text-muted-foreground" />
+                          <span className="text-sm">{event.user_id || "Sistema"}</span>
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="max-w-xs">
+                          <p className="text-sm truncate" title={event.details}>
+                            {event.details}
+                          </p>
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <span className="text-xs text-muted-foreground font-mono">
+                          {event.ip_address || "-"}
+                        </span>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <dialog_1.Dialog>
+                          <dialog_1.DialogTrigger asChild>
+                            <button_1.Button size="sm" variant="outline">
+                              <lucide_react_1.Eye className="h-3 w-3 mr-1" />
+                              Ver
+                            </button_1.Button>
+                          </dialog_1.DialogTrigger>
+                          <dialog_1.DialogContent className="max-w-2xl">
+                            <dialog_1.DialogHeader>
+                              <dialog_1.DialogTitle className="flex items-center gap-2">
+                                {getActionBadge(event.action)}
+                                Detalhes do Evento
+                              </dialog_1.DialogTitle>
+                              <dialog_1.DialogDescription>
+                                {new Date(event.timestamp).toLocaleString("pt-BR")}
+                              </dialog_1.DialogDescription>
+                            </dialog_1.DialogHeader>
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                  <label_1.Label>Detalhes</label_1.Label>
-                                  <p className="text-sm bg-muted p-3 rounded mt-1">
-                                    {event.details}
+                                  <label_1.Label>Ação</label_1.Label>
+                                  <p className="text-sm font-medium">{event.action}</p>
+                                </div>
+                                <div>
+                                  <label_1.Label>Tipo de Entidade</label_1.Label>
+                                  <p className="text-sm">{event.entity_type}</p>
+                                </div>
+                                <div>
+                                  <label_1.Label>ID da Entidade</label_1.Label>
+                                  <p className="text-sm font-mono">{event.entity_id || "-"}</p>
+                                </div>
+                                <div>
+                                  <label_1.Label>Usuário</label_1.Label>
+                                  <p className="text-sm">{event.user_id || "Sistema"}</p>
+                                </div>
+                                <div>
+                                  <label_1.Label>Endereço IP</label_1.Label>
+                                  <p className="text-sm font-mono">{event.ip_address || "-"}</p>
+                                </div>
+                                <div>
+                                  <label_1.Label>User Agent</label_1.Label>
+                                  <p className="text-sm truncate" title={event.user_agent}>
+                                    {event.user_agent || "-"}
                                   </p>
                                 </div>
-
-                                {event.metadata && (
-                                  <div>
-                                    <label_1.Label>Metadados</label_1.Label>
-                                    <pre className="text-xs bg-muted p-3 rounded mt-1 overflow-auto max-h-40">
-                                      {JSON.stringify(event.metadata, null, 2)}
-                                    </pre>
-                                  </div>
-                                )}
                               </div>
-                            </dialog_1.DialogContent>
-                          </dialog_1.Dialog>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+
+                              <div>
+                                <label_1.Label>Detalhes</label_1.Label>
+                                <p className="text-sm bg-muted p-3 rounded mt-1">{event.details}</p>
+                              </div>
+
+                              {event.metadata && (
+                                <div>
+                                  <label_1.Label>Metadados</label_1.Label>
+                                  <pre className="text-xs bg-muted p-3 rounded mt-1 overflow-auto max-h-40">
+                                    {JSON.stringify(event.metadata, null, 2)}
+                                  </pre>
+                                </div>
+                              )}
+                            </div>
+                          </dialog_1.DialogContent>
+                        </dialog_1.Dialog>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
 
@@ -657,18 +626,18 @@ function AuditTrailPanel(_a) {
                   {Object.entries(
                     (events === null || events === void 0
                       ? void 0
-                      : events.reduce(function (acc, event) {
+                      : events.reduce((acc, event) => {
                           acc[event.action] = (acc[event.action] || 0) + 1;
                           return acc;
                         }, {})) || {},
                   )
-                    .sort(function (_a, _b) {
+                    .sort((_a, _b) => {
                       var a = _a[1];
                       var b = _b[1];
                       return b - a;
                     })
                     .slice(0, 5)
-                    .map(function (_a) {
+                    .map((_a) => {
                       var action = _a[0],
                         count = _a[1];
                       return (
@@ -692,18 +661,18 @@ function AuditTrailPanel(_a) {
                   {Object.entries(
                     (events === null || events === void 0
                       ? void 0
-                      : events.reduce(function (acc, event) {
+                      : events.reduce((acc, event) => {
                           acc[event.entity_type] = (acc[event.entity_type] || 0) + 1;
                           return acc;
                         }, {})) || {},
                   )
-                    .sort(function (_a, _b) {
+                    .sort((_a, _b) => {
                       var a = _a[1];
                       var b = _b[1];
                       return b - a;
                     })
                     .slice(0, 5)
-                    .map(function (_a) {
+                    .map((_a) => {
                       var entity = _a[0],
                         count = _a[1];
                       return (
@@ -730,19 +699,19 @@ function AuditTrailPanel(_a) {
                   {Object.entries(
                     (events === null || events === void 0
                       ? void 0
-                      : events.reduce(function (acc, event) {
+                      : events.reduce((acc, event) => {
                           var user = event.user_id || "Sistema";
                           acc[user] = (acc[user] || 0) + 1;
                           return acc;
                         }, {})) || {},
                   )
-                    .sort(function (_a, _b) {
+                    .sort((_a, _b) => {
                       var a = _a[1];
                       var b = _b[1];
                       return b - a;
                     })
                     .slice(0, 5)
-                    .map(function (_a) {
+                    .map((_a) => {
                       var user = _a[0],
                         count = _a[1];
                       return (
@@ -771,7 +740,7 @@ function AuditTrailPanel(_a) {
                     <badge_1.Badge variant="outline">
                       {(events === null || events === void 0
                         ? void 0
-                        : events.filter(function (e) {
+                        : events.filter((e) => {
                             var eventDate = new Date(e.timestamp);
                             var dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
                             return eventDate >= dayAgo;
@@ -783,7 +752,7 @@ function AuditTrailPanel(_a) {
                     <badge_1.Badge variant="outline">
                       {(events === null || events === void 0
                         ? void 0
-                        : events.filter(function (e) {
+                        : events.filter((e) => {
                             var eventDate = new Date(e.timestamp);
                             var weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
                             return eventDate >= weekAgo;
@@ -795,7 +764,7 @@ function AuditTrailPanel(_a) {
                     <badge_1.Badge variant="outline">
                       {(events === null || events === void 0
                         ? void 0
-                        : events.filter(function (e) {
+                        : events.filter((e) => {
                             var eventDate = new Date(e.timestamp);
                             var monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
                             return eventDate >= monthAgo;

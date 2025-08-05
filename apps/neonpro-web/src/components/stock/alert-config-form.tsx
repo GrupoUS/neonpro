@@ -4,24 +4,28 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import { AlertTriangle, Bell, Mail, MessageSquare, Save, Smartphone, X } from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+  ALERT_TYPE_LABELS,
+  AlertType,
+  type CreateStockAlertConfigRequest,
+  NOTIFICATION_CHANNEL_LABELS,
+  type NotificationChannel,
+  SEVERITY_LABELS,
+  SeverityLevel,
+  StockAlertConfigSchema,
+  StockAlertError,
+  THRESHOLD_UNIT_LABELS,
+  ThresholdUnit,
+} from "@/app/lib/types/stock";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -31,20 +35,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AlertTriangle, Save, X, Bell, Mail, MessageSquare, Smartphone } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  StockAlertConfigSchema,
-  CreateStockAlertConfigRequest,
-  AlertType,
-  SeverityLevel,
-  ThresholdUnit,
-  NotificationChannel,
-  StockAlertError,
-  ALERT_TYPE_LABELS,
-  SEVERITY_LABELS,
-  THRESHOLD_UNIT_LABELS,
-  NOTIFICATION_CHANNEL_LABELS,
-} from "@/app/lib/types/stock";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
 // =====================================================
 // TYPES AND INTERFACES

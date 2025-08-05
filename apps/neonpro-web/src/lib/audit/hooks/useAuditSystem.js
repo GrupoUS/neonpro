@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Audit System React Hooks
  *
@@ -21,26 +20,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -60,13 +59,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -88,9 +87,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -162,10 +159,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -174,7 +171,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useAuditLogs = useAuditLogs;
 exports.useSecurityAlerts = useSecurityAlerts;
@@ -194,7 +191,6 @@ var useToast_1 = require("@/hooks/useToast");
  * Hook para consulta e gestão de logs de auditoria
  */
 function useAuditLogs(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -221,10 +217,10 @@ function useAuditLogs(options) {
     setTotalCount = _h[1];
   var toast = (0, useToast_1.useToast)().toast;
   var fetchLogs = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var events, err_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
@@ -253,15 +249,14 @@ function useAuditLogs(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [filters, toast],
   );
   var exportLogs = (0, react_1.useCallback)(
-    function (format) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (format) =>
+      __awaiter(this, void 0, void 0, function () {
         var events, dataStr, dataBlob, url, link, headers, csvContent, dataBlob, url, link, err_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -291,16 +286,16 @@ function useAuditLogs(options) {
                 ];
                 csvContent = __spreadArray(
                   [headers.join(",")],
-                  events.map(function (event) {
-                    return [
+                  events.map((event) =>
+                    [
                       event.timestamp.toISOString(),
                       event.event_type,
                       event.severity,
                       event.user_id || "",
                       '"'.concat(event.description.replace(/"/g, '""'), '"'),
                       event.ip_address || "",
-                    ].join(",");
-                  }),
+                    ].join(","),
+                  ),
                   true,
                 ).join("\n");
                 dataBlob = new Blob([csvContent], { type: "text/csv" });
@@ -331,29 +326,20 @@ function useAuditLogs(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [filters, toast],
   );
   // Auto refresh
-  (0, react_1.useEffect)(
-    function () {
-      if (autoRefresh) {
-        var interval_1 = setInterval(fetchLogs, refreshInterval);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [autoRefresh, refreshInterval, fetchLogs],
-  );
+  (0, react_1.useEffect)(() => {
+    if (autoRefresh) {
+      var interval_1 = setInterval(fetchLogs, refreshInterval);
+      return () => clearInterval(interval_1);
+    }
+  }, [autoRefresh, refreshInterval, fetchLogs]);
   // Initial load
-  (0, react_1.useEffect)(
-    function () {
-      fetchLogs();
-    },
-    [fetchLogs],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchLogs();
+  }, [fetchLogs]);
   return {
     logs: logs,
     loading: loading,
@@ -372,7 +358,6 @@ function useAuditLogs(options) {
  * Hook para monitoramento de alertas de segurança
  */
 function useSecurityAlerts() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     alerts = _a[0],
     setAlerts = _a[1];
@@ -388,10 +373,10 @@ function useSecurityAlerts() {
   var supabase = yield (0, client_1.createClient)();
   var toast = (0, useToast_1.useToast)().toast;
   var fetchAlerts = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, fetchError, formattedAlerts, err_3, errorMessage;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, 3, 4]);
@@ -411,18 +396,14 @@ function useSecurityAlerts() {
               formattedAlerts =
                 (data === null || data === void 0
                   ? void 0
-                  : data.map(function (alert) {
-                      return __assign(__assign({}, alert), {
+                  : data.map((alert) =>
+                      __assign(__assign({}, alert), {
                         created_at: new Date(alert.created_at),
                         resolved_at: alert.resolved_at ? new Date(alert.resolved_at) : undefined,
-                      });
-                    })) || [];
+                      }),
+                    )) || [];
               setAlerts(formattedAlerts);
-              setUnreadCount(
-                formattedAlerts.filter(function (alert) {
-                  return alert.status === "open";
-                }).length,
-              );
+              setUnreadCount(formattedAlerts.filter((alert) => alert.status === "open").length);
               return [3 /*break*/, 4];
             case 2:
               err_3 = _b.sent();
@@ -441,15 +422,14 @@ function useSecurityAlerts() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, toast],
   );
   var markAsRead = (0, react_1.useCallback)(
-    function (alertId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (alertId) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_1, err_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -479,15 +459,14 @@ function useSecurityAlerts() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchAlerts, toast],
   );
   var updateStatus = (0, react_1.useCallback)(
-    function (alertId, status) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (alertId, status) =>
+      __awaiter(this, void 0, void 0, function () {
         var updateData, error_2, err_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -522,15 +501,14 @@ function useSecurityAlerts() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchAlerts, toast],
   );
   var assignAlert = (0, react_1.useCallback)(
-    function (alertId, userId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (alertId, userId) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_3, err_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -561,34 +539,30 @@ function useSecurityAlerts() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchAlerts, toast],
   );
-  (0, react_1.useEffect)(
-    function () {
-      fetchAlerts();
-      // Configura real-time subscription
-      var subscription = supabase
-        .channel("security_alerts")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "security_alerts",
-          },
-          function () {
-            fetchAlerts();
-          },
-        )
-        .subscribe();
-      return function () {
-        subscription.unsubscribe();
-      };
-    },
-    [fetchAlerts, supabase],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchAlerts();
+    // Configura real-time subscription
+    var subscription = supabase
+      .channel("security_alerts")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "security_alerts",
+        },
+        () => {
+          fetchAlerts();
+        },
+      )
+      .subscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [fetchAlerts, supabase]);
   return {
     alerts: alerts,
     loading: loading,
@@ -607,7 +581,6 @@ function useSecurityAlerts() {
  * Hook para geração e gestão de relatórios de auditoria
  */
 function useAuditReports() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     reports = _a[0],
     setReports = _a[1];
@@ -621,10 +594,10 @@ function useAuditReports() {
   var supabase = yield (0, client_1.createClient)();
   var toast = (0, useToast_1.useToast)().toast;
   var fetchReports = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, fetchError, formattedReports, err_7, errorMessage;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, 3, 4]);
@@ -643,12 +616,12 @@ function useAuditReports() {
               formattedReports =
                 (data === null || data === void 0
                   ? void 0
-                  : data.map(function (report) {
-                      return __assign(__assign({}, report), {
+                  : data.map((report) =>
+                      __assign(__assign({}, report), {
                         generated_at: new Date(report.generated_at),
                         events: [], // Events são carregados sob demanda
-                      });
-                    })) || [];
+                      }),
+                    )) || [];
               setReports(formattedReports);
               return [3 /*break*/, 4];
             case 2:
@@ -668,15 +641,14 @@ function useAuditReports() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, toast],
   );
   var generateReport = (0, react_1.useCallback)(
-    function (title, description, filters) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (title, description, filters) =>
+      __awaiter(this, void 0, void 0, function () {
         var report, err_8;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!user) {
@@ -720,15 +692,14 @@ function useAuditReports() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user, audit_system_1.auditSystem, fetchReports, toast],
   );
   var deleteReport = (0, react_1.useCallback)(
-    function (reportId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (reportId) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_4, err_9;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -756,14 +727,13 @@ function useAuditReports() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchReports, toast],
   );
   var exportReport = (0, react_1.useCallback)(
-    function (reportId, format) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (reportId, format) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           try {
             // TODO: Implementar exportação de relatórios
             toast({
@@ -779,16 +749,12 @@ function useAuditReports() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [toast],
   );
-  (0, react_1.useEffect)(
-    function () {
-      fetchReports();
-    },
-    [fetchReports],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchReports();
+  }, [fetchReports]);
   return {
     reports: reports,
     loading: loading,
@@ -806,7 +772,6 @@ function useAuditReports() {
  * Hook para estatísticas de auditoria
  */
 function useAuditStatistics() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     statistics = _a[0],
     setStatistics = _a[1];
@@ -818,10 +783,10 @@ function useAuditStatistics() {
     setError = _c[1];
   var toast = (0, useToast_1.useToast)().toast;
   var generateStats = (0, react_1.useCallback)(
-    function (filters) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
         var stats, err_10, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
@@ -850,15 +815,14 @@ function useAuditStatistics() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [audit_system_1.auditSystem, toast],
   );
   var refresh = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var defaultFilters;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               defaultFilters = {
@@ -871,16 +835,12 @@ function useAuditStatistics() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [generateStats],
   );
-  (0, react_1.useEffect)(
-    function () {
-      refresh();
-    },
-    [refresh],
-  );
+  (0, react_1.useEffect)(() => {
+    refresh();
+  }, [refresh]);
   return {
     statistics: statistics,
     loading: loading,
@@ -896,15 +856,14 @@ function useAuditStatistics() {
  * Hook para logging de eventos de auditoria
  */
 function useAuditLogger() {
-  var _this = this;
   var user = (0, useUser_1.useUser)().user;
   var toast = (0, useToast_1.useToast)().toast;
   var logEvent = (0, react_1.useCallback)(
-    function (event) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (event) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, _b, _c, err_11;
         var _d;
-        return __generator(this, function (_e) {
+        return __generator(this, (_e) => {
           switch (_e.label) {
             case 0:
               _e.trys.push([0, 4, , 5]);
@@ -944,14 +903,13 @@ function useAuditLogger() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user],
   );
   var logUserAction = (0, react_1.useCallback)(
-    function (action, resourceType, resourceId, metadata) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (action, resourceType, resourceId, metadata) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -970,25 +928,24 @@ function useAuditLogger() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [logEvent],
   );
   var logSecurityEvent = (0, react_1.useCallback)(
-    function (eventType_1, description_1) {
+    (eventType_1, description_1) => {
       var args_1 = [];
       for (var _i = 2; _i < arguments.length; _i++) {
         args_1[_i - 2] = arguments[_i];
       }
       return __awaiter(
-        _this,
+        this,
         __spreadArray([eventType_1, description_1], args_1, true),
         void 0,
         function (eventType, description, severity) {
           if (severity === void 0) {
             severity = audit_system_1.AuditSeverity.MEDIUM;
           }
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -1024,7 +981,7 @@ function useAuditLogger() {
 function getClientIP() {
   return __awaiter(this, void 0, void 0, function () {
     var response, data, _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);

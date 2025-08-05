@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Resource Allocation Optimization System
  * Epic 11 - Story 11.1: Advanced resource optimization based on demand forecasts
@@ -15,15 +14,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,14 +142,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resourceAllocationOptimizer = exports.ResourceAllocationOptimizer = void 0;
 var supabase_1 = require("@/lib/supabase");
 /**
  * Resource Allocation Optimization Engine
  */
-var ResourceAllocationOptimizer = /** @class */ (function () {
+var ResourceAllocationOptimizer = /** @class */ (() => {
   function ResourceAllocationOptimizer() {
     this.UTILIZATION_TARGET = 0.85; // 85% target utilization
     this.COST_VARIANCE_THRESHOLD = 0.1; // 10% cost variance threshold
@@ -699,70 +696,67 @@ var ResourceAllocationOptimizer = /** @class */ (function () {
   /**
    * Calculate total cost across all resources
    */
-  ResourceAllocationOptimizer.prototype.calculateTotalCost = function (
+  ResourceAllocationOptimizer.prototype.calculateTotalCost = (
     staffAllocations,
     equipmentAllocations,
     roomAllocations,
     inventoryAllocations,
-  ) {
-    var staffCost = staffAllocations.reduce(function (sum, allocation) {
-      return sum + allocation.total_cost;
-    }, 0);
-    var equipmentCost = equipmentAllocations.reduce(function (sum, allocation) {
-      return sum + allocation.total_operational_cost;
-    }, 0);
-    var inventoryCost = inventoryAllocations.reduce(function (sum, allocation) {
-      return sum + allocation.predicted_consumption * allocation.cost_per_unit;
-    }, 0);
+  ) => {
+    var staffCost = staffAllocations.reduce((sum, allocation) => sum + allocation.total_cost, 0);
+    var equipmentCost = equipmentAllocations.reduce(
+      (sum, allocation) => sum + allocation.total_operational_cost,
+      0,
+    );
+    var inventoryCost = inventoryAllocations.reduce(
+      (sum, allocation) => sum + allocation.predicted_consumption * allocation.cost_per_unit,
+      0,
+    );
     return staffCost + equipmentCost + inventoryCost;
   };
   /**
    * Calculate expected revenue
    */
-  ResourceAllocationOptimizer.prototype.calculateExpectedRevenue = function (
+  ResourceAllocationOptimizer.prototype.calculateExpectedRevenue = (
     forecasts,
     roomAllocations,
     staffAllocations,
-  ) {
-    var roomRevenue = roomAllocations.reduce(function (sum, allocation) {
-      return sum + allocation.total_revenue_potential;
-    }, 0);
+  ) => {
+    var roomRevenue = roomAllocations.reduce(
+      (sum, allocation) => sum + allocation.total_revenue_potential,
+      0,
+    );
     // Simplified calculation - in production would be more sophisticated
-    var serviceRevenue = forecasts.reduce(function (sum, forecast) {
-      return sum + forecast.predicted_demand * 150;
-    }, 0); // $150 average per service
+    var serviceRevenue = forecasts.reduce(
+      (sum, forecast) => sum + forecast.predicted_demand * 150,
+      0,
+    ); // $150 average per service
     return roomRevenue + serviceRevenue;
   };
   /**
    * Calculate overall efficiency score
    */
-  ResourceAllocationOptimizer.prototype.calculateEfficiencyScore = function (
+  ResourceAllocationOptimizer.prototype.calculateEfficiencyScore = (
     staffAllocations,
     equipmentAllocations,
     roomAllocations,
-  ) {
+  ) => {
     var avgStaffEfficiency =
-      staffAllocations.reduce(function (sum, allocation) {
-        return sum + allocation.efficiency_score;
-      }, 0) / staffAllocations.length;
+      staffAllocations.reduce((sum, allocation) => sum + allocation.efficiency_score, 0) /
+      staffAllocations.length;
     var avgEquipmentEfficiency =
-      equipmentAllocations.reduce(function (sum, allocation) {
-        return sum + allocation.efficiency_rating;
-      }, 0) / equipmentAllocations.length;
+      equipmentAllocations.reduce((sum, allocation) => sum + allocation.efficiency_rating, 0) /
+      equipmentAllocations.length;
     var avgRoomUtilization =
-      roomAllocations.reduce(function (sum, allocation) {
-        return sum + allocation.utilization_rate;
-      }, 0) / roomAllocations.length;
+      roomAllocations.reduce((sum, allocation) => sum + allocation.utilization_rate, 0) /
+      roomAllocations.length;
     return (avgStaffEfficiency + avgEquipmentEfficiency + avgRoomUtilization) / 3;
   };
   /**
    * Helper methods for calculations (simplified implementations)
    */
-  ResourceAllocationOptimizer.prototype.calculateDemandByRole = function (forecasts) {
+  ResourceAllocationOptimizer.prototype.calculateDemandByRole = (forecasts) => {
     // Simplified implementation
-    var totalDemand = forecasts.reduce(function (sum, forecast) {
-      return sum + forecast.predicted_demand;
-    }, 0);
+    var totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
     return {
       doctor: totalDemand * 0.3,
       nurse: totalDemand * 0.4,
@@ -770,11 +764,7 @@ var ResourceAllocationOptimizer = /** @class */ (function () {
       admin: totalDemand * 0.1,
     };
   };
-  ResourceAllocationOptimizer.prototype.calculateRequiredStaffHours = function (
-    staff,
-    demand,
-    period,
-  ) {
+  ResourceAllocationOptimizer.prototype.calculateRequiredStaffHours = (staff, demand, period) => {
     // Simplified calculation
     var hoursPerService = staff.role === "doctor" ? 1 : 0.5;
     return demand * hoursPerService;
@@ -791,7 +781,7 @@ var ResourceAllocationOptimizer = /** @class */ (function () {
     }
     return efficiency;
   };
-  ResourceAllocationOptimizer.prototype.parseAvailabilitySchedule = function (schedule) {
+  ResourceAllocationOptimizer.prototype.parseAvailabilitySchedule = (schedule) => {
     // Simplified implementation - would parse actual schedule format
     return [
       {
@@ -803,104 +793,91 @@ var ResourceAllocationOptimizer = /** @class */ (function () {
       },
     ];
   };
-  ResourceAllocationOptimizer.prototype.optimizeStaffAssignments = function (
-    allocations,
-    forecasts,
-  ) {
+  ResourceAllocationOptimizer.prototype.optimizeStaffAssignments = (allocations, forecasts) => {
     // Simplified optimization - in production would use advanced algorithms
     return allocations;
   };
-  ResourceAllocationOptimizer.prototype.calculateEquipmentDemand = function (forecasts) {
+  ResourceAllocationOptimizer.prototype.calculateEquipmentDemand = (forecasts) => {
     // Simplified implementation
-    var totalDemand = forecasts.reduce(function (sum, forecast) {
-      return sum + forecast.predicted_demand;
-    }, 0);
+    var totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
     return {
       diagnostic: totalDemand * 0.6,
       treatment: totalDemand * 0.8,
       monitoring: totalDemand * 0.4,
     };
   };
-  ResourceAllocationOptimizer.prototype.calculateEquipmentHours = function (
-    equipment,
-    demand,
-    period,
-  ) {
+  ResourceAllocationOptimizer.prototype.calculateEquipmentHours = (equipment, demand, period) => {
     // Simplified calculation
     var hoursPerUse = equipment.type === "diagnostic" ? 0.5 : 1.0;
     return demand * hoursPerUse;
   };
-  ResourceAllocationOptimizer.prototype.calculateEquipmentEfficiency = function (
+  ResourceAllocationOptimizer.prototype.calculateEquipmentEfficiency = (
     equipment,
     utilizationRate,
-  ) {
+  ) => {
     // Equipment efficiency is optimal around 80% utilization
     var optimalUtilization = 0.8;
     var deviation = Math.abs(utilizationRate - optimalUtilization);
     return Math.max(0.5, 1 - deviation);
   };
-  ResourceAllocationOptimizer.prototype.parseMaintenanceSchedule = function (schedule) {
+  ResourceAllocationOptimizer.prototype.parseMaintenanceSchedule = (schedule) => {
     // Simplified implementation
     return [];
   };
-  ResourceAllocationOptimizer.prototype.calculateRoomDemand = function (forecasts) {
-    var totalDemand = forecasts.reduce(function (sum, forecast) {
-      return sum + forecast.predicted_demand;
-    }, 0);
+  ResourceAllocationOptimizer.prototype.calculateRoomDemand = (forecasts) => {
+    var totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
     return {
       consultation: totalDemand * 0.8,
       procedure: totalDemand * 0.3,
       diagnostic: totalDemand * 0.5,
     };
   };
-  ResourceAllocationOptimizer.prototype.calculateRoomBookings = function (room, demand, period) {
+  ResourceAllocationOptimizer.prototype.calculateRoomBookings = (room, demand, period) => {
     // Simplified calculation
     return Math.ceil(demand * 0.8);
   };
   ResourceAllocationOptimizer.prototype.getExistingRoomBookings = function (roomId, period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified implementation
         return [2 /*return*/, 10];
       });
     });
   };
-  ResourceAllocationOptimizer.prototype.calculateInventoryConsumption = function (forecasts) {
-    var totalDemand = forecasts.reduce(function (sum, forecast) {
-      return sum + forecast.predicted_demand;
-    }, 0);
+  ResourceAllocationOptimizer.prototype.calculateInventoryConsumption = (forecasts) => {
+    var totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
     return {
       medical_supplies: totalDemand * 2,
       medications: totalDemand * 1.5,
       consumables: totalDemand * 3,
     };
   };
-  ResourceAllocationOptimizer.prototype.calculateItemConsumption = function (
+  ResourceAllocationOptimizer.prototype.calculateItemConsumption = (
     item,
     categoryConsumption,
     period,
-  ) {
+  ) => {
     // Simplified calculation
     return Math.ceil(categoryConsumption * 0.1);
   };
-  ResourceAllocationOptimizer.prototype.calculateSafetyStock = function (item, consumption) {
+  ResourceAllocationOptimizer.prototype.calculateSafetyStock = (item, consumption) => {
     // Safety stock = lead time demand + buffer
     var leadTimeDemand = (consumption / 30) * item.supplier_lead_time_days;
     var buffer = leadTimeDemand * 0.2; // 20% buffer
     return Math.ceil(leadTimeDemand + buffer);
   };
-  ResourceAllocationOptimizer.prototype.calculateStockoutRisk = function (
+  ResourceAllocationOptimizer.prototype.calculateStockoutRisk = (
     item,
     consumption,
     safetyStock,
-  ) {
+  ) => {
     var daysOfStock = item.current_stock / (consumption / 30);
     var leadTime = item.supplier_lead_time_days;
     if (daysOfStock < leadTime) return 0.8;
     if (daysOfStock < leadTime + 7) return 0.4;
     return 0.1;
   };
-  ResourceAllocationOptimizer.prototype.calculateExpirationRisk = function (item, consumption) {
+  ResourceAllocationOptimizer.prototype.calculateExpirationRisk = (item, consumption) => {
     if (!item.expiration_days) return 0;
     var daysToConsume = item.current_stock / (consumption / 30);
     var daysToExpiry = item.expiration_days;
@@ -911,28 +888,22 @@ var ResourceAllocationOptimizer = /** @class */ (function () {
    */
   ResourceAllocationOptimizer.prototype.loadResourceInventory = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ResourceAllocationOptimizer.prototype.loadOptimizationParameters = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ResourceAllocationOptimizer.prototype.validateResourceData = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ResourceAllocationOptimizer.prototype.loadConstraints = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would load constraints from database
         return [2 /*return*/, []];
       });
@@ -940,15 +911,13 @@ var ResourceAllocationOptimizer = /** @class */ (function () {
   };
   ResourceAllocationOptimizer.prototype.validateAllocationPlan = function (plan) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ResourceAllocationOptimizer.prototype.storeAllocationPlan = function (plan) {
     return __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase_1.supabase.from("allocation_plans").insert(plan)];
@@ -965,9 +934,7 @@ var ResourceAllocationOptimizer = /** @class */ (function () {
   };
   ResourceAllocationOptimizer.prototype.checkAllocationAlerts = function (plan) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return ResourceAllocationOptimizer;

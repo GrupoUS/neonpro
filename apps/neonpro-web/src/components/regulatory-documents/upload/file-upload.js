@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileUpload = FileUpload;
 var react_1 = require("react");
@@ -158,7 +155,6 @@ var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 function FileUpload(_a) {
-  var _this = this;
   var onUploadComplete = _a.onUploadComplete,
     onUploadError = _a.onUploadError,
     _b = _a.accept,
@@ -184,8 +180,8 @@ function FileUpload(_a) {
     isUploading = _g[0],
     setIsUploading = _g[1];
   var onDrop = (0, react_1.useCallback)(
-    function (acceptedFiles) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (acceptedFiles) =>
+      __awaiter(this, void 0, void 0, function () {
         var file,
           error,
           uploadingFile,
@@ -195,7 +191,7 @@ function FileUpload(_a) {
           result_1,
           error_1,
           errorMessage_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (acceptedFiles.length === 0) return [2 /*return*/];
@@ -230,7 +226,7 @@ function FileUpload(_a) {
               ];
             case 2:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 4];
+              if (response.ok) return [3 /*break*/, 4];
               return [4 /*yield*/, response.text()];
             case 3:
               error = _a.sent();
@@ -244,22 +240,22 @@ function FileUpload(_a) {
             case 5:
               result_1 = _a.sent();
               // Update file state to completed
-              setUploadingFiles(function (prev) {
-                return prev.map(function (f) {
-                  return f.file === file
+              setUploadingFiles((prev) =>
+                prev.map((f) =>
+                  f.file === file
                     ? __assign(__assign({}, f), {
                         progress: 100,
                         completed: true,
                         url: result_1.url,
                       })
-                    : f;
-                });
-              });
+                    : f,
+                ),
+              );
               // Call success callback
               onUploadComplete(result_1.url, file.name, file.size);
               sonner_1.toast.success("Arquivo enviado com sucesso!");
               // Clear files after a delay
-              setTimeout(function () {
+              setTimeout(() => {
                 setUploadingFiles([]);
               }, 2000);
               return [3 /*break*/, 8];
@@ -267,11 +263,11 @@ function FileUpload(_a) {
               error_1 = _a.sent();
               console.error("Upload error:", error_1);
               errorMessage_1 = error_1 instanceof Error ? error_1.message : "Erro no upload";
-              setUploadingFiles(function (prev) {
-                return prev.map(function (f) {
-                  return f.file === file ? __assign(__assign({}, f), { error: errorMessage_1 }) : f;
-                });
-              });
+              setUploadingFiles((prev) =>
+                prev.map((f) =>
+                  f.file === file ? __assign(__assign({}, f), { error: errorMessage_1 }) : f,
+                ),
+              );
               sonner_1.toast.error(errorMessage_1);
               onUploadError === null || onUploadError === void 0
                 ? void 0
@@ -284,8 +280,7 @@ function FileUpload(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [maxSize, onUploadComplete, onUploadError],
   );
   var _h = (0, react_dropzone_1.useDropzone)({
@@ -300,12 +295,8 @@ function FileUpload(_a) {
     getInputProps = _h.getInputProps,
     isDragActive = _h.isDragActive,
     fileRejections = _h.fileRejections;
-  var removeFile = function (fileToRemove) {
-    setUploadingFiles(function (prev) {
-      return prev.filter(function (f) {
-        return f.file !== fileToRemove;
-      });
-    });
+  var removeFile = (fileToRemove) => {
+    setUploadingFiles((prev) => prev.filter((f) => f.file !== fileToRemove));
   };
   return (
     <div className="space-y-4">
@@ -342,17 +333,12 @@ function FileUpload(_a) {
           <lucide_react_1.AlertCircle className="h-4 w-4" />
           <alert_1.AlertDescription>
             <ul className="list-disc list-inside">
-              {fileRejections.map(function (_a) {
+              {fileRejections.map((_a) => {
                 var file = _a.file,
                   errors = _a.errors;
                 return (
                   <li key={file.name}>
-                    {file.name}:{" "}
-                    {errors
-                      .map(function (e) {
-                        return e.message;
-                      })
-                      .join(", ")}
+                    {file.name}: {errors.map((e) => e.message).join(", ")}
                   </li>
                 );
               })}
@@ -364,55 +350,51 @@ function FileUpload(_a) {
       {/* Uploading Files */}
       {uploadingFiles.length > 0 && (
         <div className="space-y-2">
-          {uploadingFiles.map(function (uploadingFile, index) {
-            return (
-              <card_1.Card key={index}>
-                <card_1.CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3 flex-1">
-                      <lucide_react_1.File className="h-5 w-5 text-muted-foreground" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{uploadingFile.file.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {(uploadingFile.file.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      {uploadingFile.completed
-                        ? <lucide_react_1.Check className="h-5 w-5 text-green-500" />
-                        : uploadingFile.error
-                          ? <lucide_react_1.AlertCircle className="h-5 w-5 text-red-500" />
-                          : <button_1.Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={function () {
-                                return removeFile(uploadingFile.file);
-                              }}
-                              disabled={isUploading}
-                            >
-                              <lucide_react_1.X className="h-4 w-4" />
-                            </button_1.Button>}
+          {uploadingFiles.map((uploadingFile, index) => (
+            <card_1.Card key={index}>
+              <card_1.CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3 flex-1">
+                    <lucide_react_1.File className="h-5 w-5 text-muted-foreground" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{uploadingFile.file.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(uploadingFile.file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
                     </div>
                   </div>
 
-                  {!uploadingFile.completed && !uploadingFile.error && (
-                    <div className="mt-2">
-                      <progress_1.Progress value={uploadingFile.progress} className="h-2" />
-                    </div>
-                  )}
+                  <div className="flex items-center space-x-2">
+                    {uploadingFile.completed
+                      ? <lucide_react_1.Check className="h-5 w-5 text-green-500" />
+                      : uploadingFile.error
+                        ? <lucide_react_1.AlertCircle className="h-5 w-5 text-red-500" />
+                        : <button_1.Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFile(uploadingFile.file)}
+                            disabled={isUploading}
+                          >
+                            <lucide_react_1.X className="h-4 w-4" />
+                          </button_1.Button>}
+                  </div>
+                </div>
 
-                  {uploadingFile.error && (
-                    <alert_1.Alert variant="destructive" className="mt-2">
-                      <lucide_react_1.AlertCircle className="h-4 w-4" />
-                      <alert_1.AlertDescription>{uploadingFile.error}</alert_1.AlertDescription>
-                    </alert_1.Alert>
-                  )}
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+                {!uploadingFile.completed && !uploadingFile.error && (
+                  <div className="mt-2">
+                    <progress_1.Progress value={uploadingFile.progress} className="h-2" />
+                  </div>
+                )}
+
+                {uploadingFile.error && (
+                  <alert_1.Alert variant="destructive" className="mt-2">
+                    <lucide_react_1.AlertCircle className="h-4 w-4" />
+                    <alert_1.AlertDescription>{uploadingFile.error}</alert_1.AlertDescription>
+                  </alert_1.Alert>
+                )}
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       )}
     </div>

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - API Gateway Documentation System
  * Automatic OpenAPI documentation generation and management
@@ -9,15 +8,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,13 +36,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,9 +64,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -139,7 +136,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentationRouteBuilder =
   exports.DocumentationMiddleware =
@@ -149,7 +146,7 @@ exports.DocumentationRouteBuilder =
  * OpenAPI Documentation Generator
  * Generates comprehensive API documentation from route definitions
  */
-var OpenApiDocumentationGenerator = /** @class */ (function () {
+var OpenApiDocumentationGenerator = /** @class */ (() => {
   function OpenApiDocumentationGenerator(config) {
     this.customSchemas = new Map();
     this.customExamples = new Map();
@@ -355,9 +352,8 @@ var OpenApiDocumentationGenerator = /** @class */ (function () {
   /**
    * Generate API description
    */
-  OpenApiDocumentationGenerator.prototype.generateApiDescription = function () {
-    return "\n# NeonPro Healthcare Management API\n\nA comprehensive API for managing healthcare operations including:\n\n- **Patient Management**: Complete patient lifecycle management\n- **Appointment Scheduling**: Advanced scheduling with availability management\n- **Doctor Management**: Doctor profiles, specialties, and availability\n- **Clinic Operations**: Multi-clinic support with location-based services\n- **Payment Processing**: Integrated payment processing with Stripe\n- **Communication**: WhatsApp integration for patient communication\n- **Calendar Integration**: Google Calendar synchronization\n- **Analytics & Reporting**: Comprehensive analytics and reporting\n\n## Authentication\n\nThis API uses API Key authentication. Include your API key in the `X-API-Key` header:\n\n```\nX-API-Key: your-api-key-here\n```\n\n## Rate Limiting\n\nAPI requests are rate limited to ensure fair usage:\n\n- **Free tier**: 100 requests per hour\n- **Pro tier**: 1,000 requests per hour\n- **Enterprise tier**: 10,000 requests per hour\n\n## Error Handling\n\nThe API uses standard HTTP status codes and returns detailed error information:\n\n- **400**: Bad Request - Invalid request parameters\n- **401**: Unauthorized - Invalid or missing API key\n- **403**: Forbidden - Insufficient permissions\n- **404**: Not Found - Resource not found\n- **429**: Too Many Requests - Rate limit exceeded\n- **500**: Internal Server Error - Server error\n\n## Pagination\n\nList endpoints support pagination using `page` and `limit` parameters:\n\n- `page`: Page number (default: 1)\n- `limit`: Items per page (default: 20, max: 100)\n\n## Webhooks\n\nThe API supports webhooks for real-time notifications. Configure webhook endpoints in your dashboard.\n    ".trim();
-  };
+  OpenApiDocumentationGenerator.prototype.generateApiDescription = () =>
+    "\n# NeonPro Healthcare Management API\n\nA comprehensive API for managing healthcare operations including:\n\n- **Patient Management**: Complete patient lifecycle management\n- **Appointment Scheduling**: Advanced scheduling with availability management\n- **Doctor Management**: Doctor profiles, specialties, and availability\n- **Clinic Operations**: Multi-clinic support with location-based services\n- **Payment Processing**: Integrated payment processing with Stripe\n- **Communication**: WhatsApp integration for patient communication\n- **Calendar Integration**: Google Calendar synchronization\n- **Analytics & Reporting**: Comprehensive analytics and reporting\n\n## Authentication\n\nThis API uses API Key authentication. Include your API key in the `X-API-Key` header:\n\n```\nX-API-Key: your-api-key-here\n```\n\n## Rate Limiting\n\nAPI requests are rate limited to ensure fair usage:\n\n- **Free tier**: 100 requests per hour\n- **Pro tier**: 1,000 requests per hour\n- **Enterprise tier**: 10,000 requests per hour\n\n## Error Handling\n\nThe API uses standard HTTP status codes and returns detailed error information:\n\n- **400**: Bad Request - Invalid request parameters\n- **401**: Unauthorized - Invalid or missing API key\n- **403**: Forbidden - Insufficient permissions\n- **404**: Not Found - Resource not found\n- **429**: Too Many Requests - Rate limit exceeded\n- **500**: Internal Server Error - Server error\n\n## Pagination\n\nList endpoints support pagination using `page` and `limit` parameters:\n\n- `page`: Page number (default: 1)\n- `limit`: Items per page (default: 20, max: 100)\n\n## Webhooks\n\nThe API supports webhooks for real-time notifications. Configure webhook endpoints in your dashboard.\n    ".trim();
   /**
    * Generate servers configuration
    */
@@ -402,9 +398,8 @@ var OpenApiDocumentationGenerator = /** @class */ (function () {
   /**
    * Convert path parameters to OpenAPI format
    */
-  OpenApiDocumentationGenerator.prototype.convertPathToOpenApi = function (path) {
-    return path.replace(/:([^/]+)/g, "{$1}");
-  };
+  OpenApiDocumentationGenerator.prototype.convertPathToOpenApi = (path) =>
+    path.replace(/:([^/]+)/g, "{$1}");
   /**
    * Generate path operation for a route
    */
@@ -433,34 +428,27 @@ var OpenApiDocumentationGenerator = /** @class */ (function () {
    */
   OpenApiDocumentationGenerator.prototype.generateOperationId = function (route) {
     var method = route.method.toLowerCase();
-    var pathParts = route.path.split("/").filter(function (part) {
-      return part && !part.startsWith(":");
-    });
+    var pathParts = route.path.split("/").filter((part) => part && !part.startsWith(":"));
     var resource = pathParts[pathParts.length - 1] || "root";
     return "".concat(method).concat(this.capitalize(resource));
   };
   /**
    * Generate parameters
    */
-  OpenApiDocumentationGenerator.prototype.generateParameters = function (parameters) {
-    return parameters.map(function (param) {
-      return {
-        name: param.name,
-        in: param.in,
-        description: param.description,
-        required: param.required,
-        schema: param.schema,
-        example: param.example,
-      };
-    });
-  };
+  OpenApiDocumentationGenerator.prototype.generateParameters = (parameters) =>
+    parameters.map((param) => ({
+      name: param.name,
+      in: param.in,
+      description: param.description,
+      required: param.required,
+      schema: param.schema,
+      example: param.example,
+    }));
   /**
    * Generate request body
    */
-  OpenApiDocumentationGenerator.prototype.generateRequestBody = function (route) {
-    var requestBodyParam = route.documentation.parameters.find(function (p) {
-      return p.in === "body";
-    });
+  OpenApiDocumentationGenerator.prototype.generateRequestBody = (route) => {
+    var requestBodyParam = route.documentation.parameters.find((p) => p.in === "body");
     if (!requestBodyParam) {
       return {
         required: true,
@@ -488,7 +476,7 @@ var OpenApiDocumentationGenerator = /** @class */ (function () {
   /**
    * Generate responses
    */
-  OpenApiDocumentationGenerator.prototype.generateResponses = function (responses) {
+  OpenApiDocumentationGenerator.prototype.generateResponses = (responses) => {
     var formattedResponses = {};
     for (var _i = 0, responses_1 = responses; _i < responses_1.length; _i++) {
       var response = responses_1[_i];
@@ -659,7 +647,7 @@ var OpenApiDocumentationGenerator = /** @class */ (function () {
         }
       }
     }
-    return Array.from(tagMap.entries()).map(function (_a) {
+    return Array.from(tagMap.entries()).map((_a) => {
       var name = _a[0],
         description = _a[1];
       return {
@@ -692,13 +680,11 @@ var OpenApiDocumentationGenerator = /** @class */ (function () {
   /**
    * Generate security schemes
    */
-  OpenApiDocumentationGenerator.prototype.generateSecurity = function () {
-    return [{ ApiKeyAuth: [] }];
-  };
+  OpenApiDocumentationGenerator.prototype.generateSecurity = () => [{ ApiKeyAuth: [] }];
   /**
    * Format examples
    */
-  OpenApiDocumentationGenerator.prototype.formatExamples = function (examples) {
+  OpenApiDocumentationGenerator.prototype.formatExamples = (examples) => {
     var formatted = {};
     for (var _i = 0, examples_1 = examples; _i < examples_1.length; _i++) {
       var example = examples_1[_i];
@@ -725,9 +711,8 @@ var OpenApiDocumentationGenerator = /** @class */ (function () {
   /**
    * Capitalize string
    */
-  OpenApiDocumentationGenerator.prototype.capitalize = function (str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
+  OpenApiDocumentationGenerator.prototype.capitalize = (str) =>
+    str.charAt(0).toUpperCase() + str.slice(1);
   return OpenApiDocumentationGenerator;
 })();
 exports.OpenApiDocumentationGenerator = OpenApiDocumentationGenerator;
@@ -735,7 +720,7 @@ exports.OpenApiDocumentationGenerator = OpenApiDocumentationGenerator;
  * Documentation Middleware
  * Automatically generates documentation for routes
  */
-var DocumentationMiddleware = /** @class */ (function () {
+var DocumentationMiddleware = /** @class */ (() => {
   function DocumentationMiddleware(config) {
     this.routes = [];
     this.generator = new OpenApiDocumentationGenerator(config);
@@ -834,7 +819,7 @@ exports.DocumentationMiddleware = DocumentationMiddleware;
  * Documentation Route Builder
  * Helper for building route documentation
  */
-var DocumentationRouteBuilder = /** @class */ (function () {
+var DocumentationRouteBuilder = /** @class */ (() => {
   function DocumentationRouteBuilder() {
     this.route = {
       documentation: {

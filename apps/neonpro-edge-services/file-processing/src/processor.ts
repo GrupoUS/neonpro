@@ -1,4 +1,4 @@
-import { DurableObject } from "@cloudflare/workers-types";
+import type { DurableObject } from "@cloudflare/workers-types";
 
 export interface FileProcessorState {
   fileId: string;
@@ -71,7 +71,7 @@ export class FileProcessor implements DurableObject {
       return new Response(JSON.stringify(processorState), {
         headers: { "Content-Type": "application/json" },
       });
-    } catch (error) {
+    } catch (_error) {
       return new Response(JSON.stringify({ error: "Failed to start processing" }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -86,7 +86,7 @@ export class FileProcessor implements DurableObject {
     requiresAIAnalysis: boolean,
   ): Promise<void> {
     try {
-      let state = (await this.state.storage.get("state")) as FileProcessorState;
+      const state = (await this.state.storage.get("state")) as FileProcessorState;
 
       // Step 1: Virus scan (10% progress)
       const virusResults = await this.performVirusScan(fileId);
@@ -215,7 +215,7 @@ export class FileProcessor implements DurableObject {
   }
 
   private async performAIAnalysis(
-    text: string,
+    _text: string,
     documentType: string,
   ): Promise<{
     confidence: number;

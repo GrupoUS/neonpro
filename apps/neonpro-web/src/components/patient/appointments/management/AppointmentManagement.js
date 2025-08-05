@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentManagement = AppointmentManagement;
 var alert_1 = require("@/components/ui/alert");
@@ -160,7 +157,6 @@ var AppointmentStatusTracker_1 = require("./AppointmentStatusTracker");
 var RescheduleRequest_1 = require("./RescheduleRequest");
 var UpcomingAppointments_1 = require("./UpcomingAppointments");
 function AppointmentManagement(_a) {
-  var _this = this;
   var onAppointmentAction = _a.onAppointmentAction;
   var _b = (0, usePatientAppointments_1.usePatientAppointments)(),
     upcomingAppointments = _b.upcomingAppointments,
@@ -189,7 +185,7 @@ function AppointmentManagement(_a) {
   var noShowPattern = getNoShowPattern();
   var cancellationStats = getCancellationStats();
   // Handle appointment actions with analytics tracking
-  var handleAppointmentAction = function (action, appointmentId) {
+  var handleAppointmentAction = (action, appointmentId) => {
     setSelectedAppointmentId(appointmentId);
     switch (action) {
       case "cancel":
@@ -207,10 +203,10 @@ function AppointmentManagement(_a) {
       : onAppointmentAction(action, appointmentId);
   };
   // Handle cancellation completion
-  var handleCancellationComplete = function (appointmentId, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCancellationComplete = (appointmentId, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var success;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, cancelAppointment(appointmentId, reason)];
@@ -228,12 +224,11 @@ function AppointmentManagement(_a) {
         }
       });
     });
-  };
   // Handle reschedule request completion
-  var handleRescheduleComplete = function (appointmentId, newDate, newTime, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRescheduleComplete = (appointmentId, newDate, newTime, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var success;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, requestReschedule(appointmentId, newDate, newTime, reason)];
@@ -251,31 +246,28 @@ function AppointmentManagement(_a) {
         }
       });
     });
-  };
   // Loading state
   if (loading) {
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {__spreadArray([], Array(3), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="animate-pulse">
-                <card_1.CardHeader className="pb-2">
-                  <div className="h-4 bg-muted rounded w-3/4" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="h-8 bg-muted rounded w-1/2" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(3), true).map((_, i) => (
+            <card_1.Card key={i} className="animate-pulse">
+              <card_1.CardHeader className="pb-2">
+                <div className="h-4 bg-muted rounded w-3/4" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="h-8 bg-muted rounded w-1/2" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
         <card_1.Card className="animate-pulse">
           <card_1.CardContent className="pt-6">
             <div className="space-y-3">
-              {__spreadArray([], Array(3), true).map(function (_, i) {
-                return <div key={i} className="h-16 bg-muted rounded" />;
-              })}
+              {__spreadArray([], Array(3), true).map((_, i) => (
+                <div key={i} className="h-16 bg-muted rounded" />
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -316,12 +308,7 @@ function AppointmentManagement(_a) {
           <card_1.CardContent>
             <div className="text-2xl font-bold">{upcomingAppointments.length}</div>
             <p className="text-xs text-muted-foreground">
-              {
-                upcomingAppointments.filter(function (apt) {
-                  return apt.can_cancel;
-                }).length
-              }{" "}
-              podem ser cancelados
+              {upcomingAppointments.filter((apt) => apt.can_cancel).length} podem ser cancelados
             </p>
           </card_1.CardContent>
         </card_1.Card>
@@ -431,15 +418,9 @@ function AppointmentManagement(_a) {
             <card_1.CardContent>
               <UpcomingAppointments_1.UpcomingAppointments
                 appointments={upcomingAppointments}
-                onCancel={function (id) {
-                  return handleAppointmentAction("cancel", id);
-                }}
-                onReschedule={function (id) {
-                  return handleAppointmentAction("reschedule", id);
-                }}
-                onView={function (id) {
-                  return handleAppointmentAction("view", id);
-                }}
+                onCancel={(id) => handleAppointmentAction("cancel", id)}
+                onReschedule={(id) => handleAppointmentAction("reschedule", id)}
+                onView={(id) => handleAppointmentAction("view", id)}
                 cancellationPolicies={cancellationPolicies}
               />
             </card_1.CardContent>
@@ -458,9 +439,7 @@ function AppointmentManagement(_a) {
             <card_1.CardContent>
               <AppointmentHistory_1.AppointmentHistory
                 appointments={pastAppointments}
-                onView={function (id) {
-                  return handleAppointmentAction("view", id);
-                }}
+                onView={(id) => handleAppointmentAction("view", id)}
               />
             </card_1.CardContent>
           </card_1.Card>
@@ -482,9 +461,7 @@ function AppointmentManagement(_a) {
       {selectedAppointmentId && showCancellationDialog && (
         <AppointmentCancellation_1.AppointmentCancellation
           appointmentId={selectedAppointmentId}
-          appointment={upcomingAppointments.find(function (apt) {
-            return apt.id === selectedAppointmentId;
-          })}
+          appointment={upcomingAppointments.find((apt) => apt.id === selectedAppointmentId)}
           open={showCancellationDialog}
           onOpenChange={setShowCancellationDialog}
           onConfirm={handleCancellationComplete}
@@ -495,9 +472,7 @@ function AppointmentManagement(_a) {
       {selectedAppointmentId && showRescheduleDialog && (
         <RescheduleRequest_1.RescheduleRequest
           appointmentId={selectedAppointmentId}
-          appointment={upcomingAppointments.find(function (apt) {
-            return apt.id === selectedAppointmentId;
-          })}
+          appointment={upcomingAppointments.find((apt) => apt.id === selectedAppointmentId)}
           open={showRescheduleDialog}
           onOpenChange={setShowRescheduleDialog}
           onConfirm={handleRescheduleComplete}

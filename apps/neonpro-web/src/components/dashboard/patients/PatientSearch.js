@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientSearch = PatientSearch;
 var react_1 = require("react");
@@ -159,7 +156,6 @@ var PatientTable_1 = require("./PatientTable");
 var patients_1 = require("@/lib/supabase/patients");
 var lodash_1 = require("lodash");
 function PatientSearch() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     patients = _a[0],
     setPatients = _a[1];
@@ -183,55 +179,60 @@ function PatientSearch() {
     filters = _e[0],
     setFilters = _e[1];
   // Debounced search function
-  var debouncedSearch = (0, react_1.useMemo)(function () {
-    return (0, lodash_1.debounce)(function (searchFilters) {
-      return __awaiter(_this, void 0, void 0, function () {
-        var result, error_1;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              setLoading(true);
-              _a.label = 1;
-            case 1:
-              _a.trys.push([1, 3, 4, 5]);
-              return [
-                4 /*yield*/,
-                (0, patients_1.searchPatients)({
-                  query: searchFilters.query,
-                  status: searchFilters.status === "all" ? undefined : searchFilters.status,
-                  gender: searchFilters.gender === "all" ? undefined : searchFilters.gender,
-                  ageRange: searchFilters.ageRange === "all" ? undefined : searchFilters.ageRange,
-                  page: searchFilters.page,
-                  limit: searchFilters.limit,
-                }),
-              ];
-            case 2:
-              result = _a.sent();
-              if (result.success && result.data) {
-                setPatients(result.data.patients);
-                setTotalCount(result.data.total);
+  var debouncedSearch = (0, react_1.useMemo)(
+    () =>
+      (0, lodash_1.debounce)(
+        (searchFilters) =>
+          __awaiter(this, void 0, void 0, function () {
+            var result, error_1;
+            return __generator(this, (_a) => {
+              switch (_a.label) {
+                case 0:
+                  setLoading(true);
+                  _a.label = 1;
+                case 1:
+                  _a.trys.push([1, 3, 4, 5]);
+                  return [
+                    4 /*yield*/,
+                    (0, patients_1.searchPatients)({
+                      query: searchFilters.query,
+                      status: searchFilters.status === "all" ? undefined : searchFilters.status,
+                      gender: searchFilters.gender === "all" ? undefined : searchFilters.gender,
+                      ageRange:
+                        searchFilters.ageRange === "all" ? undefined : searchFilters.ageRange,
+                      page: searchFilters.page,
+                      limit: searchFilters.limit,
+                    }),
+                  ];
+                case 2:
+                  result = _a.sent();
+                  if (result.success && result.data) {
+                    setPatients(result.data.patients);
+                    setTotalCount(result.data.total);
+                  }
+                  return [3 /*break*/, 5];
+                case 3:
+                  error_1 = _a.sent();
+                  console.error("Error searching patients:", error_1);
+                  return [3 /*break*/, 5];
+                case 4:
+                  setLoading(false);
+                  return [7 /*endfinally*/];
+                case 5:
+                  return [2 /*return*/];
               }
-              return [3 /*break*/, 5];
-            case 3:
-              error_1 = _a.sent();
-              console.error("Error searching patients:", error_1);
-              return [3 /*break*/, 5];
-            case 4:
-              setLoading(false);
-              return [7 /*endfinally*/];
-            case 5:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 300);
-  }, []);
+            });
+          }),
+        300,
+      ),
+    [],
+  );
   // Load patient statistics
-  (0, react_1.useEffect)(function () {
-    var loadStats = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var loadStats = () =>
+      __awaiter(this, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, (0, patients_1.getPatientStats)()];
@@ -244,21 +245,17 @@ function PatientSearch() {
           }
         });
       });
-    };
     loadStats();
   }, []);
   // Trigger search when filters change
-  (0, react_1.useEffect)(
-    function () {
-      debouncedSearch(filters);
-      return function () {
-        debouncedSearch.cancel();
-      };
-    },
-    [filters, debouncedSearch],
-  );
-  var handleFilterChange = function (key, value) {
-    setFilters(function (prev) {
+  (0, react_1.useEffect)(() => {
+    debouncedSearch(filters);
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [filters, debouncedSearch]);
+  var handleFilterChange = (key, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(
         __assign({}, prev),
@@ -272,10 +269,10 @@ function PatientSearch() {
       );
     });
   };
-  var handlePageChange = function (page) {
+  var handlePageChange = (page) => {
     handleFilterChange("page", page);
   };
-  var calculateAge = function (birthDate) {
+  var calculateAge = (birthDate) => {
     var today = new Date();
     var birth = new Date(birthDate);
     var age = today.getFullYear() - birth.getFullYear();
@@ -285,13 +282,9 @@ function PatientSearch() {
     }
     return age;
   };
-  var formatPhoneNumber = function (telecom) {
+  var formatPhoneNumber = (telecom) => {
     var phone =
-      telecom === null || telecom === void 0
-        ? void 0
-        : telecom.find(function (t) {
-            return t.system === "phone";
-          });
+      telecom === null || telecom === void 0 ? void 0 : telecom.find((t) => t.system === "phone");
     if (!phone) return "N/A";
     var digits = phone.value.replace(/\D/g, "");
     if (digits.length === 11) {
@@ -302,7 +295,7 @@ function PatientSearch() {
     }
     return phone.value;
   };
-  var getGenderLabel = function (gender) {
+  var getGenderLabel = (gender) => {
     var labels = {
       male: "Masculino",
       female: "Feminino",
@@ -311,7 +304,7 @@ function PatientSearch() {
     };
     return labels[gender] || "Não informado";
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     if (status === "active") {
       return (
         <badge_1.Badge variant="default" className="bg-green-100 text-green-800">
@@ -322,7 +315,7 @@ function PatientSearch() {
     return <badge_1.Badge variant="secondary">Inativo</badge_1.Badge>;
   };
   // Prepare table data
-  var tableData = patients.map(function (patient) {
+  var tableData = patients.map((patient) => {
     var _a;
     return {
       id: patient.id,
@@ -411,9 +404,7 @@ function PatientSearch() {
             <input_1.Input
               placeholder="Buscar por nome, CPF, telefone ou prontuário..."
               value={filters.query}
-              onChange={function (e) {
-                return handleFilterChange("query", e.target.value);
-              }}
+              onChange={(e) => handleFilterChange("query", e.target.value)}
               className="pl-10"
             />
           </div>
@@ -424,9 +415,7 @@ function PatientSearch() {
               <label className="text-sm font-medium">Status</label>
               <select_1.Select
                 value={filters.status}
-                onValueChange={function (value) {
-                  return handleFilterChange("status", value);
-                }}
+                onValueChange={(value) => handleFilterChange("status", value)}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
@@ -443,9 +432,7 @@ function PatientSearch() {
               <label className="text-sm font-medium">Gênero</label>
               <select_1.Select
                 value={filters.gender}
-                onValueChange={function (value) {
-                  return handleFilterChange("gender", value);
-                }}
+                onValueChange={(value) => handleFilterChange("gender", value)}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
@@ -463,9 +450,7 @@ function PatientSearch() {
               <label className="text-sm font-medium">Faixa Etária</label>
               <select_1.Select
                 value={filters.ageRange}
-                onValueChange={function (value) {
-                  return handleFilterChange("ageRange", value);
-                }}
+                onValueChange={(value) => handleFilterChange("ageRange", value)}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
@@ -489,16 +474,16 @@ function PatientSearch() {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setFilters({
+              onClick={() =>
+                setFilters({
                   query: "",
                   status: "all",
                   gender: "all",
                   ageRange: "all",
                   page: 1,
                   limit: 20,
-                });
-              }}
+                })
+              }
             >
               <lucide_react_1.Filter className="h-4 w-4 mr-2" />
               Limpar Filtros

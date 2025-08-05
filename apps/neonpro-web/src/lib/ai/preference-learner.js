@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,10 +128,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -143,13 +140,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientPreferenceLearner = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var supabaseUrl = process.env.SUPABASE_URL || "";
 var supabaseKey = process.env.SUPABASE_ANON_KEY || "";
-var PatientPreferenceLearner = /** @class */ (function () {
+var PatientPreferenceLearner = /** @class */ (() => {
   function PatientPreferenceLearner() {
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
   }
@@ -242,14 +239,14 @@ var PatientPreferenceLearner = /** @class */ (function () {
       });
     });
   };
-  PatientPreferenceLearner.prototype.analyzeTimePatterns = function (appointments) {
+  PatientPreferenceLearner.prototype.analyzeTimePatterns = (appointments) => {
     var dayOfWeekCounts = new Array(7).fill(0);
     var hourOfDayCounts = new Array(24).fill(0);
     var satisfactionByDay = new Array(7).fill(0);
     var satisfactionByHour = new Array(24).fill(0);
     var dayCounters = new Array(7).fill(0);
     var hourCounters = new Array(24).fill(0);
-    appointments.forEach(function (apt) {
+    appointments.forEach((apt) => {
       var date = new Date(apt.appointment_time);
       var dayOfWeek = date.getDay();
       var hourOfDay = date.getHours();
@@ -263,57 +260,45 @@ var PatientPreferenceLearner = /** @class */ (function () {
       }
     });
     // Calculate average satisfaction by time periods
-    var avgSatisfactionByDay = satisfactionByDay.map(function (sum, i) {
-      return dayCounters[i] > 0 ? sum / dayCounters[i] : 0;
-    });
-    var avgSatisfactionByHour = satisfactionByHour.map(function (sum, i) {
-      return hourCounters[i] > 0 ? sum / hourCounters[i] : 0;
-    });
+    var avgSatisfactionByDay = satisfactionByDay.map((sum, i) =>
+      dayCounters[i] > 0 ? sum / dayCounters[i] : 0,
+    );
+    var avgSatisfactionByHour = satisfactionByHour.map((sum, i) =>
+      hourCounters[i] > 0 ? sum / hourCounters[i] : 0,
+    );
     // Identify preferred time patterns
     var preferredDays = dayOfWeekCounts
-      .map(function (count, index) {
-        return { day: index, count: count, satisfaction: avgSatisfactionByDay[index] };
-      })
-      .filter(function (item) {
-        return item.count > 0;
-      })
-      .sort(function (a, b) {
-        return b.count * b.satisfaction - a.count * a.satisfaction;
-      })
+      .map((count, index) => ({
+        day: index,
+        count: count,
+        satisfaction: avgSatisfactionByDay[index],
+      }))
+      .filter((item) => item.count > 0)
+      .sort((a, b) => b.count * b.satisfaction - a.count * a.satisfaction)
       .slice(0, 3)
-      .map(function (item) {
-        return item.day;
-      });
+      .map((item) => item.day);
     var preferredHours = hourOfDayCounts
-      .map(function (count, index) {
-        return { hour: index, count: count, satisfaction: avgSatisfactionByHour[index] };
-      })
-      .filter(function (item) {
-        return item.count > 0;
-      })
-      .sort(function (a, b) {
-        return b.count * b.satisfaction - a.count * a.satisfaction;
-      })
+      .map((count, index) => ({
+        hour: index,
+        count: count,
+        satisfaction: avgSatisfactionByHour[index],
+      }))
+      .filter((item) => item.count > 0)
+      .sort((a, b) => b.count * b.satisfaction - a.count * a.satisfaction)
       .slice(0, 4)
-      .map(function (item) {
-        return item.hour;
-      });
+      .map((item) => item.hour);
     return {
       preferred_days: preferredDays,
       preferred_hours: preferredHours,
-      avoid_early_morning: avgSatisfactionByHour.slice(6, 9).every(function (score) {
-        return score < 3.5;
-      }),
-      avoid_late_evening: avgSatisfactionByHour.slice(18, 21).every(function (score) {
-        return score < 3.5;
-      }),
+      avoid_early_morning: avgSatisfactionByHour.slice(6, 9).every((score) => score < 3.5),
+      avoid_late_evening: avgSatisfactionByHour.slice(18, 21).every((score) => score < 3.5),
       weekend_preference: preferredDays.includes(0) || preferredDays.includes(6),
       confidence: Math.min(1.0, appointments.length / 10), // Higher confidence with more data
     };
   };
-  PatientPreferenceLearner.prototype.analyzeStaffPatterns = function (appointments) {
+  PatientPreferenceLearner.prototype.analyzeStaffPatterns = (appointments) => {
     var staffPerformance = new Map();
-    appointments.forEach(function (apt) {
+    appointments.forEach((apt) => {
       if (!staffPerformance.has(apt.staff_id)) {
         staffPerformance.set(apt.staff_id, {
           appointment_count: 0,
@@ -339,7 +324,7 @@ var PatientPreferenceLearner = /** @class */ (function () {
       }
     });
     // Calculate staff scores
-    var staffScores = Array.from(staffPerformance.entries()).map(function (_a) {
+    var staffScores = Array.from(staffPerformance.entries()).map((_a) => {
       var staffId = _a[0],
         data = _a[1];
       var avgSatisfaction = data.total_satisfaction / data.appointment_count || 0;
@@ -355,38 +340,26 @@ var PatientPreferenceLearner = /** @class */ (function () {
       };
     });
     var preferredStaff = staffScores
-      .filter(function (item) {
-        return item.appointment_count >= 2;
-      })
-      .sort(function (a, b) {
-        return b.score - a.score;
-      })
+      .filter((item) => item.appointment_count >= 2)
+      .sort((a, b) => b.score - a.score)
       .slice(0, 3)
-      .map(function (item) {
-        return item.staff_id;
-      });
+      .map((item) => item.staff_id);
     var avoidStaff = staffScores
-      .filter(function (item) {
-        return item.appointment_count >= 2 && item.avg_satisfaction < 3.0;
-      })
-      .map(function (item) {
-        return item.staff_id;
-      });
+      .filter((item) => item.appointment_count >= 2 && item.avg_satisfaction < 3.0)
+      .map((item) => item.staff_id);
     return {
       preferred_staff_ids: preferredStaff,
       avoid_staff_ids: avoidStaff,
       staff_loyalty_score: preferredStaff.length > 0 ? 0.8 : 0.3,
       confidence: Math.min(
         1.0,
-        staffScores.reduce(function (sum, item) {
-          return sum + item.appointment_count;
-        }, 0) / 15,
+        staffScores.reduce((sum, item) => sum + item.appointment_count, 0) / 15,
       ),
     };
   };
-  PatientPreferenceLearner.prototype.analyzeTreatmentPatterns = function (appointments) {
+  PatientPreferenceLearner.prototype.analyzeTreatmentPatterns = (appointments) => {
     var treatmentData = new Map();
-    appointments.forEach(function (apt) {
+    appointments.forEach((apt) => {
       if (!treatmentData.has(apt.treatment_type)) {
         treatmentData.set(apt.treatment_type, {
           count: 0,
@@ -406,7 +379,7 @@ var PatientPreferenceLearner = /** @class */ (function () {
       }
     });
     // Analyze patterns
-    var treatmentAnalysis = Array.from(treatmentData.entries()).map(function (_a) {
+    var treatmentAnalysis = Array.from(treatmentData.entries()).map((_a) => {
       var type = _a[0],
         data = _a[1];
       return {
@@ -418,16 +391,10 @@ var PatientPreferenceLearner = /** @class */ (function () {
       };
     });
     var preferredTreatments = treatmentAnalysis
-      .filter(function (item) {
-        return item.avg_satisfaction >= 4.0;
-      })
-      .sort(function (a, b) {
-        return b.frequency - a.frequency;
-      })
-      .map(function (item) {
-        return item.treatment_type;
-      });
-    var optimalDurations = treatmentAnalysis.reduce(function (acc, item) {
+      .filter((item) => item.avg_satisfaction >= 4.0)
+      .sort((a, b) => b.frequency - a.frequency)
+      .map((item) => item.treatment_type);
+    var optimalDurations = treatmentAnalysis.reduce((acc, item) => {
       acc[item.treatment_type] = Math.round(item.avg_duration);
       return acc;
     }, {});
@@ -438,46 +405,32 @@ var PatientPreferenceLearner = /** @class */ (function () {
       confidence: Math.min(1.0, appointments.length / 20),
     };
   };
-  PatientPreferenceLearner.prototype.analyzeSatisfactionPatterns = function (appointments) {
+  PatientPreferenceLearner.prototype.analyzeSatisfactionPatterns = (appointments) => {
     var satisfactionData = appointments
-      .filter(function (apt) {
-        return apt.satisfaction_score;
-      })
-      .map(function (apt) {
-        return {
-          satisfaction: apt.satisfaction_score,
-          day_of_week: new Date(apt.appointment_time).getDay(),
-          hour_of_day: new Date(apt.appointment_time).getHours(),
-          wait_time: apt.wait_time_minutes || 0,
-          staff_id: apt.staff_id,
-          treatment_type: apt.treatment_type,
-        };
-      });
+      .filter((apt) => apt.satisfaction_score)
+      .map((apt) => ({
+        satisfaction: apt.satisfaction_score,
+        day_of_week: new Date(apt.appointment_time).getDay(),
+        hour_of_day: new Date(apt.appointment_time).getHours(),
+        wait_time: apt.wait_time_minutes || 0,
+        staff_id: apt.staff_id,
+        treatment_type: apt.treatment_type,
+      }));
     if (satisfactionData.length === 0) {
       return { overall_satisfaction: 0, patterns: [], confidence: 0 };
     }
     var overallSatisfaction =
-      satisfactionData.reduce(function (sum, item) {
-        return sum + item.satisfaction;
-      }, 0) / satisfactionData.length;
+      satisfactionData.reduce((sum, item) => sum + item.satisfaction, 0) / satisfactionData.length;
     // Identify satisfaction patterns
     var patterns = [];
     // Time-based satisfaction patterns
-    var morningApts = satisfactionData.filter(function (item) {
-      return item.hour_of_day < 12;
-    });
-    var afternoonApts = satisfactionData.filter(function (item) {
-      return item.hour_of_day >= 12;
-    });
+    var morningApts = satisfactionData.filter((item) => item.hour_of_day < 12);
+    var afternoonApts = satisfactionData.filter((item) => item.hour_of_day >= 12);
     if (morningApts.length > 0 && afternoonApts.length > 0) {
       var morningAvg =
-        morningApts.reduce(function (sum, item) {
-          return sum + item.satisfaction;
-        }, 0) / morningApts.length;
+        morningApts.reduce((sum, item) => sum + item.satisfaction, 0) / morningApts.length;
       var afternoonAvg =
-        afternoonApts.reduce(function (sum, item) {
-          return sum + item.satisfaction;
-        }, 0) / afternoonApts.length;
+        afternoonApts.reduce((sum, item) => sum + item.satisfaction, 0) / afternoonApts.length;
       if (Math.abs(morningAvg - afternoonAvg) > 0.5) {
         patterns.push({
           type: "time_preference",
@@ -490,21 +443,13 @@ var PatientPreferenceLearner = /** @class */ (function () {
       }
     }
     // Wait time sensitivity
-    var lowWaitApts = satisfactionData.filter(function (item) {
-      return item.wait_time < 15;
-    });
-    var highWaitApts = satisfactionData.filter(function (item) {
-      return item.wait_time >= 15;
-    });
+    var lowWaitApts = satisfactionData.filter((item) => item.wait_time < 15);
+    var highWaitApts = satisfactionData.filter((item) => item.wait_time >= 15);
     if (lowWaitApts.length > 0 && highWaitApts.length > 0) {
       var lowWaitAvg =
-        lowWaitApts.reduce(function (sum, item) {
-          return sum + item.satisfaction;
-        }, 0) / lowWaitApts.length;
+        lowWaitApts.reduce((sum, item) => sum + item.satisfaction, 0) / lowWaitApts.length;
       var highWaitAvg =
-        highWaitApts.reduce(function (sum, item) {
-          return sum + item.satisfaction;
-        }, 0) / highWaitApts.length;
+        highWaitApts.reduce((sum, item) => sum + item.satisfaction, 0) / highWaitApts.length;
       if (lowWaitAvg - highWaitAvg > 0.5) {
         patterns.push({
           type: "wait_sensitivity",
@@ -519,13 +464,13 @@ var PatientPreferenceLearner = /** @class */ (function () {
       confidence: Math.min(1.0, satisfactionData.length / 10),
     };
   };
-  PatientPreferenceLearner.prototype.generateUpdatedPreferences = function (
+  PatientPreferenceLearner.prototype.generateUpdatedPreferences = (
     patientId,
     timePatterns,
     staffPatterns,
     treatmentPatterns,
     satisfactionPatterns,
-  ) {
+  ) => {
     var combinedConfidence =
       timePatterns.confidence * 0.3 +
       staffPatterns.confidence * 0.3 +
@@ -551,9 +496,7 @@ var PatientPreferenceLearner = /** @class */ (function () {
         treatment_variety_score: treatmentPatterns.treatment_variety_score,
       },
       communication_preferences: {
-        wait_sensitivity: satisfactionPatterns.patterns.some(function (p) {
-          return p.type === "wait_sensitivity";
-        }),
+        wait_sensitivity: satisfactionPatterns.patterns.some((p) => p.type === "wait_sensitivity"),
         satisfaction_threshold: satisfactionPatterns.overall_satisfaction,
       },
       confidence_score: combinedConfidence,
@@ -561,12 +504,10 @@ var PatientPreferenceLearner = /** @class */ (function () {
       last_updated: new Date().toISOString(),
     };
   };
-  PatientPreferenceLearner.prototype.calculateConfidenceImprovement = function (appointments) {
+  PatientPreferenceLearner.prototype.calculateConfidenceImprovement = (appointments) => {
     // Base improvement on data quantity and quality
     var dataQuality =
-      appointments.filter(function (apt) {
-        return apt.satisfaction_score;
-      }).length / appointments.length;
+      appointments.filter((apt) => apt.satisfaction_score).length / appointments.length;
     var dataQuantity = Math.min(1.0, appointments.length / 20);
     return (dataQuality * 0.6 + dataQuantity * 0.4) * 0.3; // Max 30% improvement
   };
@@ -596,19 +537,15 @@ var PatientPreferenceLearner = /** @class */ (function () {
     }
     return patterns;
   };
-  PatientPreferenceLearner.prototype.checkDayConsistency = function (appointments) {
-    var days = appointments.map(function (apt) {
-      return new Date(apt.appointment_time).getDay();
-    });
+  PatientPreferenceLearner.prototype.checkDayConsistency = (appointments) => {
+    var days = appointments.map((apt) => new Date(apt.appointment_time).getDay());
     var uniqueDays = new Set(days);
     // High consistency if patient books same days repeatedly
     var consistency = 1 - uniqueDays.size / 7;
     return { confidence: Math.max(0, consistency) };
   };
-  PatientPreferenceLearner.prototype.checkTimeConsistency = function (appointments) {
-    var hours = appointments.map(function (apt) {
-      return new Date(apt.appointment_time).getHours();
-    });
+  PatientPreferenceLearner.prototype.checkTimeConsistency = (appointments) => {
+    var hours = appointments.map((apt) => new Date(apt.appointment_time).getHours());
     var hourRange = Math.max.apply(Math, hours) - Math.min.apply(Math, hours);
     // High consistency if appointments are in similar time ranges
     var consistency = Math.max(0, 1 - hourRange / 12);
@@ -634,11 +571,7 @@ var PatientPreferenceLearner = /** @class */ (function () {
     if (staffPatterns.confidence > 0.6 && staffPatterns.preferred_staff_ids.length > 0) {
       recommendations.push("Prioritize booking with preferred staff members when possible");
     }
-    if (
-      satisfactionPatterns.patterns.some(function (p) {
-        return p.type === "wait_sensitivity";
-      })
-    ) {
+    if (satisfactionPatterns.patterns.some((p) => p.type === "wait_sensitivity")) {
       recommendations.push("Minimize wait times - patient is highly sensitive to delays");
     }
     if (satisfactionPatterns.overall_satisfaction < 3.5) {
@@ -646,11 +579,9 @@ var PatientPreferenceLearner = /** @class */ (function () {
     }
     return recommendations;
   };
-  PatientPreferenceLearner.prototype.formatHourRanges = function (hours) {
+  PatientPreferenceLearner.prototype.formatHourRanges = (hours) => {
     if (hours.length === 0) return "";
-    var sortedHours = __spreadArray([], hours, true).sort(function (a, b) {
-      return a - b;
-    });
+    var sortedHours = __spreadArray([], hours, true).sort((a, b) => a - b);
     var ranges = [];
     var start = sortedHours[0];
     var end = sortedHours[0];
@@ -845,24 +776,20 @@ var PatientPreferenceLearner = /** @class */ (function () {
       });
     });
   };
-  PatientPreferenceLearner.prototype.analyzeTimePreferences = function (appointments) {
+  PatientPreferenceLearner.prototype.analyzeTimePreferences = (appointments) => {
     var timeSlots = {};
-    appointments.forEach(function (apt) {
+    appointments.forEach((apt) => {
       var hour = new Date(apt.appointment_time).getHours();
       timeSlots[hour] = (timeSlots[hour] || 0) + 1;
     });
     return timeSlots;
   };
-  PatientPreferenceLearner.prototype.analyzeBookingFrequency = function (appointments) {
-    return {
-      total_appointments: appointments.length,
-      average_per_month: appointments.length / 12, // Simplified calculation
-    };
-  };
-  PatientPreferenceLearner.prototype.analyzeCancellationPatterns = function (appointments) {
-    var cancelled = appointments.filter(function (apt) {
-      return apt.status === "cancelled";
-    });
+  PatientPreferenceLearner.prototype.analyzeBookingFrequency = (appointments) => ({
+    total_appointments: appointments.length,
+    average_per_month: appointments.length / 12, // Simplified calculation
+  });
+  PatientPreferenceLearner.prototype.analyzeCancellationPatterns = (appointments) => {
+    var cancelled = appointments.filter((apt) => apt.status === "cancelled");
     return {
       cancellation_rate: cancelled.length / appointments.length,
       common_reasons: ["scheduling conflict", "illness", "other"],

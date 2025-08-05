@@ -1,18 +1,17 @@
 // Device Manager Component
 // Story 1.4: Session Management & Security Implementation
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeviceManager = DeviceManager;
 var react_1 = require("react");
@@ -142,7 +139,6 @@ var context_1 = require("../context");
 var utils_1 = require("../utils");
 var lucide_react_1 = require("lucide-react");
 function DeviceManager(_a) {
-  var _this = this;
   var _b = _a.className,
     className = _b === void 0 ? "" : _b,
     _c = _a.showCurrentDevice,
@@ -166,7 +162,7 @@ function DeviceManager(_a) {
     showDetails = _j[0],
     setShowDetails = _j[1];
   // Get device icon based on type
-  var getDeviceIcon = function (device) {
+  var getDeviceIcon = (device) => {
     var deviceType = utils_1.AuthUtils.Device.detectDeviceType(device.user_agent);
     var iconClass = "w-5 h-5";
     switch (deviceType) {
@@ -179,28 +175,28 @@ function DeviceManager(_a) {
     }
   };
   // Get device status color
-  var getDeviceStatusColor = function (device) {
+  var getDeviceStatusColor = (device) => {
     if (device.is_blocked) return "text-red-500";
     if (device.is_trusted) return "text-green-500";
     return "text-yellow-500";
   };
   // Get device status text
-  var getDeviceStatusText = function (device) {
+  var getDeviceStatusText = (device) => {
     if (device.is_blocked) return "Blocked";
     if (device.is_trusted) return "Trusted";
     return "Untrusted";
   };
   // Get device status icon
-  var getDeviceStatusIcon = function (device) {
+  var getDeviceStatusIcon = (device) => {
     if (device.is_blocked) return <lucide_react_1.ShieldX className="w-4 h-4 text-red-500" />;
     if (device.is_trusted) return <lucide_react_1.ShieldCheck className="w-4 h-4 text-green-500" />;
     return <lucide_react_1.Shield className="w-4 h-4 text-yellow-500" />;
   };
   // Handle trust device
-  var handleTrustDevice = function (deviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleTrustDevice = (deviceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setActionLoading(deviceId);
@@ -223,12 +219,11 @@ function DeviceManager(_a) {
         }
       });
     });
-  };
   // Handle block device
-  var handleBlockDevice = function (deviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBlockDevice = (deviceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setActionLoading(deviceId);
@@ -251,9 +246,8 @@ function DeviceManager(_a) {
         }
       });
     });
-  };
   // Toggle device details
-  var toggleDetails = function (deviceId) {
+  var toggleDetails = (deviceId) => {
     var newShowDetails = new Set(showDetails);
     if (newShowDetails.has(deviceId)) {
       newShowDetails.delete(deviceId);
@@ -263,8 +257,8 @@ function DeviceManager(_a) {
     setShowDetails(newShowDetails);
   };
   // Format device name
-  var formatDeviceName = function (device) {
-    return utils_1.AuthUtils.Format.formatDeviceName({
+  var formatDeviceName = (device) =>
+    utils_1.AuthUtils.Format.formatDeviceName({
       userAgent: device.user_agent,
       platform: device.platform,
       screenWidth: device.screen_width,
@@ -272,9 +266,8 @@ function DeviceManager(_a) {
       timezone: device.timezone,
       language: device.language,
     });
-  };
   // Get trust score color
-  var getTrustScoreColor = function (score) {
+  var getTrustScoreColor = (score) => {
     if (score >= 80) return "text-green-600";
     if (score >= 60) return "text-yellow-600";
     if (score >= 40) return "text-orange-600";
@@ -301,34 +294,31 @@ function DeviceManager(_a) {
 
         {/* Other Devices */}
         {registeredDevices
-          .filter(function (device) {
-            return (
+          .filter(
+            (device) =>
               device.id !==
-              (currentDevice === null || currentDevice === void 0 ? void 0 : currentDevice.id)
-            );
-          })
+              (currentDevice === null || currentDevice === void 0 ? void 0 : currentDevice.id),
+          )
           .slice(0, 3)
-          .map(function (device) {
-            return (
-              <div
-                key={device.id}
-                className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
-              >
-                <div className="flex items-center space-x-3">
-                  {getDeviceIcon(device)}
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 truncate max-w-32">
-                      {formatDeviceName(device).split(" on ")[0]}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {utils_1.AuthUtils.Format.formatRelativeTime(new Date(device.last_seen))}
-                    </p>
-                  </div>
+          .map((device) => (
+            <div
+              key={device.id}
+              className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
+            >
+              <div className="flex items-center space-x-3">
+                {getDeviceIcon(device)}
+                <div>
+                  <p className="text-sm font-medium text-gray-900 truncate max-w-32">
+                    {formatDeviceName(device).split(" on ")[0]}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {utils_1.AuthUtils.Format.formatRelativeTime(new Date(device.last_seen))}
+                  </p>
                 </div>
-                {getDeviceStatusIcon(device)}
               </div>
-            );
-          })}
+              {getDeviceStatusIcon(device)}
+            </div>
+          ))}
 
         {registeredDevices.length > 4 && (
           <p className="text-xs text-gray-500 text-center">
@@ -400,13 +390,12 @@ function DeviceManager(_a) {
       {/* Registered Devices */}
       <div className="divide-y">
         {registeredDevices
-          .filter(function (device) {
-            return (
+          .filter(
+            (device) =>
               device.id !==
-              (currentDevice === null || currentDevice === void 0 ? void 0 : currentDevice.id)
-            );
-          })
-          .map(function (device) {
+              (currentDevice === null || currentDevice === void 0 ? void 0 : currentDevice.id),
+          )
+          .map((device) => {
             var isSelected = selectedDevice === device.id;
             var isLoading = actionLoading === device.id;
             var showDeviceDetails = showDetails.has(device.id);
@@ -456,9 +445,7 @@ function DeviceManager(_a) {
                         <div className="flex items-center space-x-2">
                           {!device.is_trusted && !device.is_blocked && (
                             <button
-                              onClick={function () {
-                                return handleTrustDevice(device.id);
-                              }}
+                              onClick={() => handleTrustDevice(device.id)}
                               disabled={isLoading}
                               className="inline-flex items-center px-2 py-1 border border-green-300 text-xs font-medium rounded text-green-700 bg-green-50 hover:bg-green-100 disabled:opacity-50"
                             >
@@ -469,9 +456,7 @@ function DeviceManager(_a) {
 
                           {!device.is_blocked && (
                             <button
-                              onClick={function () {
-                                return handleBlockDevice(device.id);
-                              }}
+                              onClick={() => handleBlockDevice(device.id)}
                               disabled={isLoading}
                               className="inline-flex items-center px-2 py-1 border border-red-300 text-xs font-medium rounded text-red-700 bg-red-50 hover:bg-red-100 disabled:opacity-50"
                             >
@@ -481,9 +466,7 @@ function DeviceManager(_a) {
                           )}
 
                           <button
-                            onClick={function () {
-                              return toggleDetails(device.id);
-                            }}
+                            onClick={() => toggleDetails(device.id)}
                             className="inline-flex items-center px-2 py-1 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
                           >
                             <lucide_react_1.Eye className="w-3 h-3 mr-1" />

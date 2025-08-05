@@ -3,7 +3,10 @@
 
 "use client";
 
+import type { ArrowUpDown, Filter, MoreHorizontal, Search } from "lucide-react";
 import type { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,7 +14,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type {
   Select,
@@ -20,20 +22,18 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { MoreHorizontal, Search, Filter, ArrowUpDown } from "lucide-react";
 import type { useCashFlow } from "../hooks/use-cash-flow";
 import type { useCashRegisters } from "../hooks/use-cash-registers";
+import type { CashFlowEntry, CashFlowFilters } from "../types";
 import type {
   formatCurrency,
   formatDateTime,
-  getTransactionTypeDisplayName,
   getCategoryDisplayName,
   getPaymentMethodDisplayName,
   getPaymentMethodIcon,
   getTransactionTypeColor,
+  getTransactionTypeDisplayName,
 } from "../utils/calculations";
-import type { CashFlowFilters, CashFlowEntry } from "../types";
 
 interface TransactionsListProps {
   clinicId: string;

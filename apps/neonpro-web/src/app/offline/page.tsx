@@ -4,6 +4,7 @@
 
 "use client";
 
+import type { CheckCircle, Loader2, Wifi, WifiOff } from "lucide-react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -13,7 +14,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { CheckCircle, Loader2, Wifi, WifiOff } from "lucide-react";
 
 export default function OfflinePage() {
   return (

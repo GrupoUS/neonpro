@@ -2,32 +2,31 @@
 // Epic 7.2: Automated Marketing Campaigns + Personalization
 // Author: VoidBeast Agent
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ABTestManager;
 var badge_1 = require("@/components/ui/badge");
@@ -165,7 +162,6 @@ var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function ABTestManager(_a) {
-  var _this = this;
   var campaignId = _a.campaignId,
     onTestCreated = _a.onTestCreated;
   var _b = (0, react_1.useState)([]),
@@ -194,10 +190,10 @@ function ABTestManager(_a) {
     }),
     formData = _f[0],
     setFormData = _f[1];
-  var loadABTests = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadABTests = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockTests;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           setIsLoading(true);
           mockTests = [
@@ -238,17 +234,13 @@ function ABTestManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      loadABTests();
-    },
-    [campaignId],
-  );
-  var handleCreateTest = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadABTests();
+  }, [campaignId]);
+  var handleCreateTest = () =>
+    __awaiter(this, void 0, void 0, function () {
       var testData, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -258,7 +250,7 @@ function ABTestManager(_a) {
               test_name: formData.test_name,
               hypothesis: formData.hypothesis,
               variations: formData.variations,
-              traffic_split: Object.keys(formData.variations).reduce(function (acc, key) {
+              traffic_split: Object.keys(formData.variations).reduce((acc, key) => {
                 acc[key] = formData.variations[key].percentage / 100;
                 return acc;
               }, {}),
@@ -318,22 +310,17 @@ function ABTestManager(_a) {
         }
       });
     });
-  };
-  var updateVariationPercentage = function (variationKey, percentage) {
+  var updateVariationPercentage = (variationKey, percentage) => {
     var variations = __assign({}, formData.variations);
     var variationKeys = Object.keys(variations);
-    var otherKey = variationKeys.find(function (key) {
-      return key !== variationKey;
-    });
+    var otherKey = variationKeys.find((key) => key !== variationKey);
     if (otherKey) {
       variations[variationKey].percentage = percentage;
       variations[otherKey].percentage = 100 - percentage;
-      setFormData(function (prev) {
-        return __assign(__assign({}, prev), { variations: variations });
-      });
+      setFormData((prev) => __assign(__assign({}, prev), { variations: variations }));
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var statusConfig = {
       draft: { color: "bg-gray-500", text: "Rascunho" },
       running: { color: "bg-blue-500", text: "Executando" },
@@ -348,7 +335,7 @@ function ABTestManager(_a) {
       </badge_1.Badge>
     );
   };
-  var getSuccessMetricLabel = function (metric) {
+  var getSuccessMetricLabel = (metric) => {
     var labels = {
       open_rate: "Taxa de Abertura",
       click_rate: "Taxa de Clique",
@@ -388,11 +375,9 @@ function ABTestManager(_a) {
               <input_1.Input
                 id="test_name"
                 value={formData.test_name}
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), { test_name: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setFormData((prev) => __assign(__assign({}, prev), { test_name: e.target.value }))
+                }
                 placeholder="Ex: Teste de Assunto do Email"
               />
             </div>
@@ -401,11 +386,9 @@ function ABTestManager(_a) {
               <label_1.Label htmlFor="success_metric">Métrica de Sucesso</label_1.Label>
               <select_1.Select
                 value={formData.success_metric}
-                onValueChange={function (value) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), { success_metric: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFormData((prev) => __assign(__assign({}, prev), { success_metric: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Selecione a métrica" />
@@ -427,11 +410,9 @@ function ABTestManager(_a) {
             <textarea_1.Textarea
               id="hypothesis"
               value={formData.hypothesis}
-              onChange={function (e) {
-                return setFormData(function (prev) {
-                  return __assign(__assign({}, prev), { hypothesis: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setFormData((prev) => __assign(__assign({}, prev), { hypothesis: e.target.value }))
+              }
               placeholder="Ex: Assuntos mais personalizados aumentam a taxa de abertura em 15%"
               rows={2}
             />
@@ -441,7 +422,7 @@ function ABTestManager(_a) {
           <div className="space-y-4">
             <label_1.Label>Configuração das Variações</label_1.Label>
 
-            {Object.entries(formData.variations).map(function (_a, index) {
+            {Object.entries(formData.variations).map((_a, index) => {
               var key = _a[0],
                 variation = _a[1];
               return (
@@ -456,9 +437,9 @@ function ABTestManager(_a) {
                           min="10"
                           max="90"
                           value={variation.percentage}
-                          onChange={function (e) {
-                            return updateVariationPercentage(key, parseInt(e.target.value) || 0);
-                          }}
+                          onChange={(e) =>
+                            updateVariationPercentage(key, parseInt(e.target.value) || 0)
+                          }
                           className="w-20"
                         />
                         <span className="text-sm">%</span>
@@ -467,12 +448,12 @@ function ABTestManager(_a) {
 
                     <textarea_1.Textarea
                       value={variation.content}
-                      onChange={function (e) {
+                      onChange={(e) => {
                         var variations = __assign({}, formData.variations);
                         variations[key].content = e.target.value;
-                        setFormData(function (prev) {
-                          return __assign(__assign({}, prev), { variations: variations });
-                        });
+                        setFormData((prev) =>
+                          __assign(__assign({}, prev), { variations: variations }),
+                        );
                       }}
                       placeholder="Conteúdo da variação..."
                       rows={2}
@@ -488,11 +469,11 @@ function ABTestManager(_a) {
               <label_1.Label htmlFor="confidence_level">Nível de Confiança (%)</label_1.Label>
               <select_1.Select
                 value={formData.confidence_level.toString()}
-                onValueChange={function (value) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), { confidence_level: parseInt(value) });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), { confidence_level: parseInt(value) }),
+                  )
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
@@ -513,13 +494,13 @@ function ABTestManager(_a) {
                 min="3"
                 max="30"
                 value={formData.duration_days}
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), {
+                onChange={(e) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), {
                       duration_days: parseInt(e.target.value) || 14,
-                    });
-                  });
-                }}
+                    }),
+                  )
+                }
               />
             </div>
           </div>
@@ -541,151 +522,149 @@ function ABTestManager(_a) {
           Testes Ativos ({tests.length})
         </h3>
 
-        {tests.map(function (test) {
-          return (
-            <card_1.Card key={test.id}>
-              <card_1.CardHeader>
-                <div className="flex items-center justify-between">
+        {tests.map((test) => (
+          <card_1.Card key={test.id}>
+            <card_1.CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <card_1.CardTitle className="text-lg">{test.test_name}</card_1.CardTitle>
+                  <card_1.CardDescription>{test.hypothesis}</card_1.CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {getStatusBadge(test.status)}
+                  {test.status === "running" && test.statistical_significance && (
+                    <badge_1.Badge variant="outline">
+                      {Math.round(test.statistical_significance * 100)}% confiança
+                    </badge_1.Badge>
+                  )}
+                </div>
+              </div>
+            </card_1.CardHeader>
+            <card_1.CardContent>
+              <div className="space-y-4">
+                {/* Test Configuration */}
+                <div className="grid grid-cols-3 gap-4 text-sm">
                   <div>
-                    <card_1.CardTitle className="text-lg">{test.test_name}</card_1.CardTitle>
-                    <card_1.CardDescription>{test.hypothesis}</card_1.CardDescription>
+                    <span className="font-medium">Métrica: </span>
+                    {getSuccessMetricLabel(test.success_metric)}
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {getStatusBadge(test.status)}
-                    {test.status === "running" && test.statistical_significance && (
-                      <badge_1.Badge variant="outline">
-                        {Math.round(test.statistical_significance * 100)}% confiança
-                      </badge_1.Badge>
-                    )}
+                  <div>
+                    <span className="font-medium">Duração: </span>
+                    {test.duration_days} dias
+                  </div>
+                  <div>
+                    <span className="font-medium">Confiança: </span>
+                    {test.confidence_level}%
                   </div>
                 </div>
-              </card_1.CardHeader>
-              <card_1.CardContent>
-                <div className="space-y-4">
-                  {/* Test Configuration */}
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div>
-                      <span className="font-medium">Métrica: </span>
-                      {getSuccessMetricLabel(test.success_metric)}
-                    </div>
-                    <div>
-                      <span className="font-medium">Duração: </span>
-                      {test.duration_days} dias
-                    </div>
-                    <div>
-                      <span className="font-medium">Confiança: </span>
-                      {test.confidence_level}%
-                    </div>
-                  </div>
 
-                  <separator_1.Separator />
+                <separator_1.Separator />
 
-                  {/* Variations Performance */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium">Performance das Variações</h4>
+                {/* Variations Performance */}
+                <div className="space-y-3">
+                  <h4 className="font-medium">Performance das Variações</h4>
 
-                    {Object.entries(test.variations).map(function (_a) {
-                      var key = _a[0],
-                        variation = _a[1];
-                      return (
-                        <div key={key} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">{variation.name}</span>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm">
-                                {Math.round(test.traffic_split[key] * 100)}% tráfego
-                              </span>
-                              {test.winner_variation === key && (
-                                <badge_1.Badge className="bg-yellow-500 text-white">
-                                  <lucide_react_1.Trophy className="h-3 w-3 mr-1" />
-                                  Vencedor
-                                </badge_1.Badge>
-                              )}
-                            </div>
+                  {Object.entries(test.variations).map((_a) => {
+                    var key = _a[0],
+                      variation = _a[1];
+                    return (
+                      <div key={key} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{variation.name}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm">
+                              {Math.round(test.traffic_split[key] * 100)}% tráfego
+                            </span>
+                            {test.winner_variation === key && (
+                              <badge_1.Badge className="bg-yellow-500 text-white">
+                                <lucide_react_1.Trophy className="h-3 w-3 mr-1" />
+                                Vencedor
+                              </badge_1.Badge>
+                            )}
                           </div>
+                        </div>
 
-                          {/* Mock performance data - in real app would come from API */}
-                          <div className="bg-gray-50 p-3 rounded-lg">
-                            <div className="grid grid-cols-4 gap-4 text-sm">
-                              <div>
-                                <div className="font-medium">1,250</div>
-                                <div className="text-muted-foreground">Envios</div>
-                              </div>
-                              <div>
-                                <div className="font-medium">387</div>
-                                <div className="text-muted-foreground">Aberturas</div>
-                              </div>
-                              <div>
-                                <div className="font-medium">31.0%</div>
-                                <div className="text-muted-foreground">Taxa</div>
-                              </div>
-                              <div>
-                                <div className="font-medium text-green-600">+5.2%</div>
-                                <div className="text-muted-foreground">vs. Controle</div>
-                              </div>
+                        {/* Mock performance data - in real app would come from API */}
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <div className="grid grid-cols-4 gap-4 text-sm">
+                            <div>
+                              <div className="font-medium">1,250</div>
+                              <div className="text-muted-foreground">Envios</div>
+                            </div>
+                            <div>
+                              <div className="font-medium">387</div>
+                              <div className="text-muted-foreground">Aberturas</div>
+                            </div>
+                            <div>
+                              <div className="font-medium">31.0%</div>
+                              <div className="text-muted-foreground">Taxa</div>
+                            </div>
+                            <div>
+                              <div className="font-medium text-green-600">+5.2%</div>
+                              <div className="text-muted-foreground">vs. Controle</div>
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Statistical Significance */}
-                  {test.status === "running" && test.statistical_significance && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Significância Estatística</span>
-                        <span className="font-medium">
-                          {Math.round(test.statistical_significance * 100)}%
-                        </span>
                       </div>
-                      <progress_1.Progress value={test.statistical_significance * 100} />
+                    );
+                  })}
+                </div>
 
-                      {test.statistical_significance >= 0.95
-                        ? <p className="text-sm text-green-600">
-                            ✓ Resultado estatisticamente significativo! Pode declarar vencedor.
-                          </p>
-                        : <p className="text-sm text-yellow-600">
-                            ⏳ Aguardando mais dados para significância estatística...
-                          </p>}
+                {/* Statistical Significance */}
+                {test.status === "running" && test.statistical_significance && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Significância Estatística</span>
+                      <span className="font-medium">
+                        {Math.round(test.statistical_significance * 100)}%
+                      </span>
                     </div>
+                    <progress_1.Progress value={test.statistical_significance * 100} />
+
+                    {test.statistical_significance >= 0.95
+                      ? <p className="text-sm text-green-600">
+                          ✓ Resultado estatisticamente significativo! Pode declarar vencedor.
+                        </p>
+                      : <p className="text-sm text-yellow-600">
+                          ⏳ Aguardando mais dados para significância estatística...
+                        </p>}
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-2 pt-2">
+                  <button_1.Button variant="outline" size="sm">
+                    <lucide_react_1.BarChart3 className="h-4 w-4 mr-2" />
+                    Ver Detalhes
+                  </button_1.Button>
+
+                  {test.status === "running" && (
+                    <>
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Pause className="h-4 w-4 mr-2" />
+                        Pausar
+                      </button_1.Button>
+
+                      {test.statistical_significance && test.statistical_significance >= 0.95 && (
+                        <button_1.Button size="sm">
+                          <lucide_react_1.Trophy className="h-4 w-4 mr-2" />
+                          Declarar Vencedor
+                        </button_1.Button>
+                      )}
+                    </>
                   )}
 
-                  {/* Action Buttons */}
-                  <div className="flex items-center space-x-2 pt-2">
-                    <button_1.Button variant="outline" size="sm">
-                      <lucide_react_1.BarChart3 className="h-4 w-4 mr-2" />
-                      Ver Detalhes
+                  {test.status === "draft" && (
+                    <button_1.Button size="sm">
+                      <lucide_react_1.Play className="h-4 w-4 mr-2" />
+                      Iniciar Teste
                     </button_1.Button>
-
-                    {test.status === "running" && (
-                      <>
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Pause className="h-4 w-4 mr-2" />
-                          Pausar
-                        </button_1.Button>
-
-                        {test.statistical_significance && test.statistical_significance >= 0.95 && (
-                          <button_1.Button size="sm">
-                            <lucide_react_1.Trophy className="h-4 w-4 mr-2" />
-                            Declarar Vencedor
-                          </button_1.Button>
-                        )}
-                      </>
-                    )}
-
-                    {test.status === "draft" && (
-                      <button_1.Button size="sm">
-                        <lucide_react_1.Play className="h-4 w-4 mr-2" />
-                        Iniciar Teste
-                      </button_1.Button>
-                    )}
-                  </div>
+                  )}
                 </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
 
         {tests.length === 0 && (
           <card_1.Card>

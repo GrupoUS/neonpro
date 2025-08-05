@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Tests for Treatment Success API Endpoints
  * Tests all API routes for Story 8.4 - Treatment Success Rate Tracking & Optimization
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,7 +36,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,8 +65,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -88,9 +85,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -149,65 +146,31 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("next/server");
 var node_mocks_http_1 = require("node-mocks-http");
 // Mock Supabase client
 var mockSupabaseClient = {
-  from: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  select: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  insert: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  update: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  delete: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  eq: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  gte: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  lte: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  not: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  is: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  range: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  order: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  single: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  upsert: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  limit: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
+  from: jest.fn(() => mockSupabaseClient),
+  select: jest.fn(() => mockSupabaseClient),
+  insert: jest.fn(() => mockSupabaseClient),
+  update: jest.fn(() => mockSupabaseClient),
+  delete: jest.fn(() => mockSupabaseClient),
+  eq: jest.fn(() => mockSupabaseClient),
+  gte: jest.fn(() => mockSupabaseClient),
+  lte: jest.fn(() => mockSupabaseClient),
+  not: jest.fn(() => mockSupabaseClient),
+  is: jest.fn(() => mockSupabaseClient),
+  range: jest.fn(() => mockSupabaseClient),
+  order: jest.fn(() => mockSupabaseClient),
+  single: jest.fn(() => mockSupabaseClient),
+  upsert: jest.fn(() => mockSupabaseClient),
+  limit: jest.fn(() => mockSupabaseClient),
 };
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return Promise.resolve(mockSupabaseClient);
-    }),
-  };
-});
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => Promise.resolve(mockSupabaseClient)),
+}));
 // Mock data
 var mockTreatmentOutcome = {
   id: "550e8400-e29b-41d4-a716-446655440001",
@@ -292,7 +255,7 @@ var mockProtocolOptimization = {
   created_at: "2025-01-26T10:00:00Z",
   updated_at: "2025-01-26T10:00:00Z",
 };
-var mockQualityBenchmark = {
+var _mockQualityBenchmark = {
   id: "550e8400-e29b-41d4-a716-446655440007",
   treatment_type: "Botox",
   benchmark_type: "industry_standard",
@@ -307,7 +270,7 @@ var mockQualityBenchmark = {
   created_at: "2025-01-01T00:00:00Z",
   updated_at: "2025-01-26T10:00:00Z",
 };
-var mockComplianceReport = {
+var _mockComplianceReport = {
   id: "550e8400-e29b-41d4-a716-446655440008",
   report_type: "Monthly Quality Report",
   reporting_period: "January 2025",
@@ -335,15 +298,15 @@ var mockComplianceReport = {
   created_at: "2025-01-31T23:59:59Z",
   updated_at: "2025-01-31T23:59:59Z",
 };
-describe("Treatment Success API Endpoints", function () {
-  beforeEach(function () {
+describe("Treatment Success API Endpoints", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("GET /api/treatment-success/outcomes", function () {
-    it("should return treatment outcomes with pagination", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET /api/treatment-success/outcomes", () => {
+    it("should return treatment outcomes with pagination", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -361,9 +324,7 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/outcomes/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-success/outcomes/route")),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -390,12 +351,11 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle filters correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle filters correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, req, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.eq.mockReturnValue(mockSupabaseClient);
@@ -416,9 +376,7 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/outcomes/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-success/outcomes/route")),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -440,12 +398,11 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -463,9 +420,7 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/outcomes/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-success/outcomes/route")),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -486,14 +441,13 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("POST /api/treatment-success/outcomes", function () {
-    it("should create a new treatment outcome", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("POST /api/treatment-success/outcomes", () => {
+    it("should create a new treatment outcome", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.insert.mockReturnValue(
@@ -510,9 +464,7 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/outcomes/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-success/outcomes/route")),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -548,19 +500,16 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate request body", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate request body", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/outcomes/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-success/outcomes/route")),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -591,14 +540,13 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("GET /api/treatment-success/performance", function () {
-    it("should return provider performance data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET /api/treatment-success/performance", () => {
+    it("should return provider performance data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -616,9 +564,9 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/performance/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-success/performance/route"),
+                ),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -639,14 +587,13 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("GET /api/treatment-success/optimization", function () {
-    it("should return protocol optimizations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET /api/treatment-success/optimization", () => {
+    it("should return protocol optimizations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -664,9 +611,9 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/optimization/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-success/optimization/route"),
+                ),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -687,12 +634,11 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle optimization filters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle optimization filters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, req, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.eq.mockReturnValue(mockSupabaseClient);
@@ -712,9 +658,9 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/optimization/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-success/optimization/route"),
+                ),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -732,14 +678,13 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("POST /api/treatment-success/optimization", function () {
-    it("should create a new protocol optimization", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("POST /api/treatment-success/optimization", () => {
+    it("should create a new protocol optimization", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.insert.mockReturnValue(
@@ -756,9 +701,9 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/optimization/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-success/optimization/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -792,14 +737,13 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Statistics Endpoints", function () {
-    it("should return comprehensive treatment success statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Statistics Endpoints", () => {
+    it("should return comprehensive treatment success statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockStatsData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           // Mock multiple database calls for statistics
           mockSupabaseClient.select.mockReturnValue(
             __assign(__assign({}, mockSupabaseClient), {
@@ -851,21 +795,18 @@ describe("Treatment Success API Endpoints", function () {
           expect(mockStatsData.complianceStats.overall_compliance).toBe(0.95);
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling and Edge Cases", function () {
-    it("should handle malformed JSON in POST requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling and Edge Cases", () => {
+    it("should handle malformed JSON in POST requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/outcomes/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-success/outcomes/route")),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -888,22 +829,19 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database connection failures", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle database connection failures", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, req, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockSupabaseClient.select.mockImplementation(function () {
+              mockSupabaseClient.select.mockImplementation(() => {
                 throw new Error("Database connection failed");
               });
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/outcomes/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-success/outcomes/route")),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -924,12 +862,11 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle invalid query parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle invalid query parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, req, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -947,9 +884,7 @@ describe("Treatment Success API Endpoints", function () {
               );
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-success/outcomes/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-success/outcomes/route")),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -966,7 +901,6 @@ describe("Treatment Success API Endpoints", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

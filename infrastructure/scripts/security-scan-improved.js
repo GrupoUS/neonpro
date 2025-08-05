@@ -4,8 +4,8 @@
  * Detecta API keys expostas com redução de falsos positivos
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 // Patterns de API keys REALMENTE sensíveis
 const SENSITIVE_PATTERNS = [
@@ -75,7 +75,7 @@ function isIgnored(filePath) {
   }
 
   // Checar se o arquivo está na lista de arquivos ignorados
-  const fileName = path.basename(filePath);
+  const _fileName = path.basename(filePath);
   return IGNORE_FILES.some((ignore) => filePath.includes(ignore));
 }
 
@@ -90,14 +90,14 @@ function scanFile(filePath) {
         violations.push({
           file: filePath,
           pattern: name,
-          match: match[0].substring(0, 20) + "...",
+          match: `${match[0].substring(0, 20)}...`,
           line: content.substring(0, match.index).split("\n").length,
         });
       }
     });
 
     return violations;
-  } catch (error) {
+  } catch (_error) {
     console.warn(`⚠️  Não foi possível ler: ${filePath}`);
     return [];
   }
@@ -122,7 +122,7 @@ function scanDirectory(dirPath) {
         violations.push(...scanFile(fullPath));
       }
     }
-  } catch (error) {
+  } catch (_error) {
     console.warn(`⚠️  Não foi possível ler diretório: ${dirPath}`);
   }
 

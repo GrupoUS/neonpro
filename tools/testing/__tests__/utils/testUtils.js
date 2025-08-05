@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Subscription Context Test Utilities
  * Provides testing utilities for subscription context and state management
@@ -13,55 +12,51 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userEvent =
   exports.createMockResponse =
@@ -73,7 +68,7 @@ exports.userEvent =
   exports.createMockSubscription =
   exports.createMockUserProfile =
     void 0;
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 var react_query_1 = require("@tanstack/react-query");
 // ============================================================================
@@ -82,7 +77,7 @@ var react_query_1 = require("@tanstack/react-query");
 /**
  * Factory for creating mock user profiles
  */
-var createMockUserProfile = function (overrides) {
+var createMockUserProfile = (overrides) => {
   if (overrides === void 0) {
     overrides = {};
   }
@@ -102,7 +97,7 @@ exports.createMockUserProfile = createMockUserProfile;
 /**
  * Factory for creating mock subscription statuses
  */
-var createMockSubscription = function (overrides) {
+var createMockSubscription = (overrides) => {
   if (overrides === void 0) {
     overrides = {};
   }
@@ -141,8 +136,8 @@ exports.createMockSubscription = createMockSubscription;
 /**
  * Creates a mock QueryClient with disabled retries for testing
  */
-var createTestQueryClient = function () {
-  return new react_query_1.QueryClient({
+var createTestQueryClient = () =>
+  new react_query_1.QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
@@ -153,9 +148,8 @@ var createTestQueryClient = function () {
       },
     },
   });
-};
 exports.createTestQueryClient = createTestQueryClient;
-var AllTheProviders = function (_a) {
+var AllTheProviders = (_a) => {
   var children = _a.children,
     _b = _a.queryClient,
     queryClient = _b === void 0 ? (0, exports.createTestQueryClient)() : _b;
@@ -166,13 +160,13 @@ var AllTheProviders = function (_a) {
   );
 }; // ============================================================================
 exports.AllTheProviders = AllTheProviders;
-var renderWithProviders = function (ui, options) {
+var renderWithProviders = (ui, options) => {
   if (options === void 0) {
     options = {};
   }
   var queryClient = options.queryClient,
     renderOptions = __rest(options, ["queryClient"]);
-  var Wrapper = function (_a) {
+  var Wrapper = (_a) => {
     var children = _a.children;
     return <exports.AllTheProviders queryClient={queryClient}>{children}</exports.AllTheProviders>;
   };
@@ -185,7 +179,7 @@ exports.renderWithProviders = renderWithProviders;
 /**
  * Creates a mock implementation for subscription hooks
  */
-var createMockSubscriptionHook = function (subscription) {
+var createMockSubscriptionHook = (subscription) => {
   if (subscription === void 0) {
     subscription = {};
   }
@@ -201,28 +195,20 @@ exports.createMockSubscriptionHook = createMockSubscriptionHook;
 /**
  * Waits for specified time in milliseconds (for async testing)
  */
-var waitFor = function (ms) {
-  return new Promise(function (resolve) {
-    return setTimeout(resolve, ms);
-  });
-};
+var waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 exports.waitFor = waitFor;
 /**
  * Creates mock server responses for fetch requests
  */
-var createMockResponse = function (data, status) {
+var createMockResponse = (data, status) => {
   if (status === void 0) {
     status = 200;
   }
   return {
     ok: status >= 200 && status < 300,
     status: status,
-    json: function () {
-      return Promise.resolve(data);
-    },
-    text: function () {
-      return Promise.resolve(JSON.stringify(data));
-    },
+    json: () => Promise.resolve(data),
+    text: () => Promise.resolve(JSON.stringify(data)),
   };
 };
 exports.createMockResponse = createMockResponse;
@@ -231,7 +217,5 @@ __exportStar(require("@testing-library/react"), exports);
 var user_event_1 = require("@testing-library/user-event");
 Object.defineProperty(exports, "userEvent", {
   enumerable: true,
-  get: function () {
-    return user_event_1.default;
-  },
+  get: () => user_event_1.default,
 });

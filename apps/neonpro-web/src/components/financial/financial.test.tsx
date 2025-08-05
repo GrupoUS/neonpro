@@ -6,12 +6,12 @@
  * including invoicing, scheduling, and analytics components.
  */
 
-import type { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import type { jest } from "@jest/globals";
+import type { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type { calculateTotals, formatCurrency, formatPercentage } from "@/components/financial";
+import type { FinancialAnalytics } from "@/components/financial/FinancialAnalytics";
 import type { IntelligentInvoicing } from "@/components/financial/IntelligentInvoicing";
 import type { IntelligentScheduling } from "@/components/financial/IntelligentScheduling";
-import type { FinancialAnalytics } from "@/components/financial/FinancialAnalytics";
-import type { formatCurrency, formatPercentage, calculateTotals } from "@/components/financial";
 
 // Mock external dependencies
 jest.mock("@/components/ui/use-toast", () => ({

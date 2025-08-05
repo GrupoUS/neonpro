@@ -5,12 +5,13 @@
  * This component provides declarative permission-based access control for React components
  */
 
-import React, { ReactNode, useEffect, useState } from "react";
-import type { UserRole, Permission } from "@/types/rbac";
-import type { usePermissions, useRole } from "@/hooks/usePermissions";
+import type { Lock, Shield, ShieldAlert } from "lucide-react";
+import type React from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Skeleton } from "@/components/ui/skeleton";
-import type { Shield, ShieldAlert, Lock } from "lucide-react";
+import type { usePermissions, useRole } from "@/hooks/usePermissions";
+import type { Permission, UserRole } from "@/types/rbac";
 
 /**
  * Permission Guard Props

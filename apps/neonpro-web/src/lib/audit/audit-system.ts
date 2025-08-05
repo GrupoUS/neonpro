@@ -16,9 +16,9 @@
  * @version 1.0.0
  */
 
+import crypto from "crypto";
 import { createClient } from "@/lib/supabase/client";
 import { Database } from "@/types/database";
-import crypto from "crypto";
 
 // Tipos de eventos de auditoria
 export enum AuditEventType {

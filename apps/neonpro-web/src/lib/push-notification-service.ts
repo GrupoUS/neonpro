@@ -1,5 +1,6 @@
-import webpush from "web-push";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import webpush from "web-push";
+
 // FIXED: Removed direct import of 'next/headers' to avoid client-side errors
 
 // Configure web-push with VAPID keys

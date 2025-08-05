@@ -1,20 +1,11 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TabsContent = exports.TabsTrigger = exports.TabsList = exports.Tabs = void 0;
 // Placeholder for tabs component
-var Tabs = function () {
-  return null;
-};
+var Tabs = () => null;
 exports.Tabs = Tabs;
-var TabsList = function () {
-  return null;
-};
+var TabsList = () => null;
 exports.TabsList = TabsList;
-var TabsTrigger = function () {
-  return null;
-};
+var TabsTrigger = () => null;
 exports.TabsTrigger = TabsTrigger;
-var TabsContent = function () {
-  return null;
-};
+var TabsContent = () => null;
 exports.TabsContent = TabsContent;

@@ -1,9 +1,9 @@
 "use client";
 
-import type { useState, useCallback, useMemo } from "react";
-import type { format, startOfDay, endOfDay, isAfter, isBefore, addMinutes } from "date-fns";
+import type { addMinutes, endOfDay, format, isAfter, isBefore, startOfDay } from "date-fns";
 import type { pt } from "date-fns/locale";
-import type { useRealtimeAvailability, TimeSlot } from "@/hooks/use-realtime-availability";
+import type { useCallback, useMemo, useState } from "react";
+import type { TimeSlot, useRealtimeAvailability } from "@/hooks/use-realtime-availability";
 
 export interface AvailabilityFilters {
   professionalId?: string;

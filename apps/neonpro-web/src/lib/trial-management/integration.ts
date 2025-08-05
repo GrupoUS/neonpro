@@ -3,8 +3,7 @@
 // Created: 2025-01-22
 
 import type { AnalyticsService } from "../analytics";
-import type { TrialManager } from "./index";
-import type { Trial, ConversionPrediction, UserJourney, CampaignMetrics } from "./types";
+import type { Trial, UserJourney } from "./types";
 
 export class TrialAnalyticsIntegration {
   private analytics: AnalyticsService;
@@ -120,7 +119,7 @@ export class TrialAnalyticsIntegration {
   async getTrialOptimizationInsights(trialId: string) {
     const prediction = await this.trialManager.predictConversion(trialId);
     const journey = await this.trialManager.getUserJourney(trialId);
-    const analyticsData = await this.analytics.getUserAnalytics(journey.userId);
+    const _analyticsData = await this.analytics.getUserAnalytics(journey.userId);
 
     return {
       conversionProbability: prediction.probability,
@@ -165,7 +164,7 @@ export class TrialAnalyticsIntegration {
     return Math.floor((Date.now() - trial.startDate.getTime()) / (1000 * 60 * 60 * 24));
   }
 
-  private async updateCampaignMetrics(campaignId: string, trial: Trial, action: string) {
+  private async updateCampaignMetrics(_campaignId: string, _trial: Trial, _action: string) {
     // Implementation would update campaign performance metrics
     // This would integrate with the campaigns system
   }
@@ -181,7 +180,7 @@ export class TrialAnalyticsIntegration {
     };
   }
 
-  private async compareWithBenchmarks(trialId: string) {
+  private async compareWithBenchmarks(_trialId: string) {
     // Implementation would compare trial performance with industry benchmarks
     return {
       conversionRateVsBenchmark: 0.15, // 15% above benchmark
@@ -235,12 +234,12 @@ export class TrialAnalyticsIntegration {
     return (current - previous) / previous;
   }
 
-  private async calculateAverageEngagement(since: Date): Promise<number> {
+  private async calculateAverageEngagement(_since: Date): Promise<number> {
     // Implementation would calculate average engagement score
     return 0.75; // Placeholder
   }
 
-  private async calculateEngagementTrend(since: Date): Promise<number> {
+  private async calculateEngagementTrend(_since: Date): Promise<number> {
     // Implementation would calculate engagement trend
     return 0.05; // Placeholder - 5% increase
   }

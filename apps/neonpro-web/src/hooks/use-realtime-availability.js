@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,14 +155,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useRealtimeAvailability = useRealtimeAvailability;
 var react_1 = require("react");
 var client_1 = require("@/lib/supabase/client");
 var use_toast_1 = require("@/hooks/use-toast");
 function useRealtimeAvailability(_a) {
-  var _this = this;
   var _b = _a === void 0 ? {} : _a,
     professionalId = _b.professionalId,
     serviceId = _b.serviceId,
@@ -186,10 +182,10 @@ function useRealtimeAvailability(_a) {
   var toast = (0, use_toast_1.useToast)().toast;
   var channelRef = (0, react_1.useRef)(null);
   // Função para buscar slots iniciais
-  var fetchInitialSlots = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchInitialSlots = () =>
+    __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error_1, err_1, errorMessage;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -239,83 +235,75 @@ function useRealtimeAvailability(_a) {
         }
       });
     });
-  };
   // Setup de subscription em tempo real
-  (0, react_1.useEffect)(
-    function () {
-      // Buscar dados iniciais
-      fetchInitialSlots();
-      // Setup do canal realtime
-      var channel = supabase
-        .channel("availability_updates")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "time_slots",
-          },
-          function (payload) {
-            console.log("Realtime update:", payload);
-            switch (payload.eventType) {
-              case "INSERT":
-                handleSlotInsert(payload.new);
-                break;
-              case "UPDATE":
-                handleSlotUpdate(payload.new, payload.old);
-                break;
-              case "DELETE":
-                handleSlotDelete(payload.old);
-                break;
-            }
-          },
-        )
-        .subscribe(function (status) {
-          console.log("Realtime status:", status);
-          setIsConnected(status === "SUBSCRIBED");
-          if (status === "SUBSCRIBED") {
-            toast({
-              title: "Conectado",
-              description: "Atualizações em tempo real ativadas",
-              duration: 2000,
-            });
-          } else if (status === "CLOSED") {
-            setIsConnected(false);
-            toast({
-              title: "Desconectado",
-              description: "Atualizações em tempo real desativadas",
-              variant: "destructive",
-              duration: 3000,
-            });
+  (0, react_1.useEffect)(() => {
+    // Buscar dados iniciais
+    fetchInitialSlots();
+    // Setup do canal realtime
+    var channel = supabase
+      .channel("availability_updates")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "time_slots",
+        },
+        (payload) => {
+          console.log("Realtime update:", payload);
+          switch (payload.eventType) {
+            case "INSERT":
+              handleSlotInsert(payload.new);
+              break;
+            case "UPDATE":
+              handleSlotUpdate(payload.new, payload.old);
+              break;
+            case "DELETE":
+              handleSlotDelete(payload.old);
+              break;
           }
-        });
-      channelRef.current = channel;
-      // Cleanup
-      return function () {
-        if (channelRef.current) {
-          supabase.removeChannel(channelRef.current);
-          channelRef.current = null;
+        },
+      )
+      .subscribe((status) => {
+        console.log("Realtime status:", status);
+        setIsConnected(status === "SUBSCRIBED");
+        if (status === "SUBSCRIBED") {
+          toast({
+            title: "Conectado",
+            description: "Atualizações em tempo real ativadas",
+            duration: 2000,
+          });
+        } else if (status === "CLOSED") {
+          setIsConnected(false);
+          toast({
+            title: "Desconectado",
+            description: "Atualizações em tempo real desativadas",
+            variant: "destructive",
+            duration: 3000,
+          });
         }
-      };
-    },
-    [professionalId, serviceId, date],
-  );
-  // Handlers para eventos realtime
-  var handleSlotInsert = function (newSlot) {
-    setTimeSlots(function (prev) {
-      // Verificar se já existe
-      var exists = prev.find(function (slot) {
-        return slot.id === newSlot.id;
       });
+    channelRef.current = channel;
+    // Cleanup
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
+    };
+  }, [professionalId, serviceId, date]);
+  // Handlers para eventos realtime
+  var handleSlotInsert = (newSlot) => {
+    setTimeSlots((prev) => {
+      // Verificar se já existe
+      var exists = prev.find((slot) => slot.id === newSlot.id);
       if (exists) return prev;
       // Adicionar e reordenar
-      var updated = __spreadArray(__spreadArray([], prev, true), [newSlot], false).sort(
-        function (a, b) {
-          var dateComparison = a.date.localeCompare(b.date);
-          if (dateComparison !== 0) return dateComparison;
-          return a.start_time.localeCompare(b.start_time);
-        },
-      );
+      var updated = __spreadArray(__spreadArray([], prev, true), [newSlot], false).sort((a, b) => {
+        var dateComparison = a.date.localeCompare(b.date);
+        if (dateComparison !== 0) return dateComparison;
+        return a.start_time.localeCompare(b.start_time);
+      });
       toast({
         title: "Novo horário disponível",
         description: "".concat(newSlot.date, " \u00E0s ").concat(newSlot.start_time),
@@ -324,12 +312,8 @@ function useRealtimeAvailability(_a) {
       return updated;
     });
   };
-  var handleSlotUpdate = function (updatedSlot, oldSlot) {
-    setTimeSlots(function (prev) {
-      return prev.map(function (slot) {
-        return slot.id === updatedSlot.id ? updatedSlot : slot;
-      });
-    });
+  var handleSlotUpdate = (updatedSlot, oldSlot) => {
+    setTimeSlots((prev) => prev.map((slot) => (slot.id === updatedSlot.id ? updatedSlot : slot)));
     // Notificar sobre mudanças importantes
     if (oldSlot.is_available !== updatedSlot.is_available) {
       toast({
@@ -339,12 +323,8 @@ function useRealtimeAvailability(_a) {
       });
     }
   };
-  var handleSlotDelete = function (deletedSlot) {
-    setTimeSlots(function (prev) {
-      return prev.filter(function (slot) {
-        return slot.id !== deletedSlot.id;
-      });
-    });
+  var handleSlotDelete = (deletedSlot) => {
+    setTimeSlots((prev) => prev.filter((slot) => slot.id !== deletedSlot.id));
     toast({
       title: "Horário removido",
       description: "".concat(deletedSlot.date, " \u00E0s ").concat(deletedSlot.start_time),
@@ -352,21 +332,19 @@ function useRealtimeAvailability(_a) {
     });
   };
   // Função para tentar reservar slot (com otimistic update)
-  var bookSlot = function (slotId, patientId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var bookSlot = (slotId, patientId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2, err_2, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             // Otimistic update
-            setTimeSlots(function (prev) {
-              return prev.map(function (slot) {
-                return slot.id === slotId
-                  ? __assign(__assign({}, slot), { is_available: false })
-                  : slot;
-              });
-            });
+            setTimeSlots((prev) =>
+              prev.map((slot) =>
+                slot.id === slotId ? __assign(__assign({}, slot), { is_available: false }) : slot,
+              ),
+            );
             return [
               4 /*yield*/,
               supabase.from("appointments").insert([
@@ -381,13 +359,11 @@ function useRealtimeAvailability(_a) {
             error_2 = _a.sent().error;
             if (error_2) {
               // Reverter otimistic update em caso de erro
-              setTimeSlots(function (prev) {
-                return prev.map(function (slot) {
-                  return slot.id === slotId
-                    ? __assign(__assign({}, slot), { is_available: true })
-                    : slot;
-                });
-              });
+              setTimeSlots((prev) =>
+                prev.map((slot) =>
+                  slot.id === slotId ? __assign(__assign({}, slot), { is_available: true }) : slot,
+                ),
+              );
               throw new Error("Erro ao reservar: ".concat(error_2.message));
             }
             toast({
@@ -410,7 +386,6 @@ function useRealtimeAvailability(_a) {
         }
       });
     });
-  };
   return {
     timeSlots: timeSlots,
     isConnected: isConnected,

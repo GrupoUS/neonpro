@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Zod Validation Schemas for FHIR Patient Data
  *
@@ -352,14 +351,9 @@ exports.PatientRegistrationSchema = zod_1.z.object({
   current_medications: zod_1.z.string().optional(),
   medical_conditions: zod_1.z.string().optional(),
   // LGPD Consent (required)
-  lgpd_consent_general: zod_1.z.boolean().refine(
-    function (val) {
-      return val === true;
-    },
-    {
-      message: "General consent for data processing is required",
-    },
-  ),
+  lgpd_consent_general: zod_1.z.boolean().refine((val) => val === true, {
+    message: "General consent for data processing is required",
+  }),
   lgpd_consent_marketing: zod_1.z.boolean().default(false),
   lgpd_consent_research: zod_1.z.boolean().default(false),
   lgpd_consent_third_party: zod_1.z.boolean().default(false),

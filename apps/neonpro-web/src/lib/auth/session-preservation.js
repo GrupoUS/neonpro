@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Preservation System
  * Story 1.4 - Task 7: Preserve session data during interruptions
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionPreservation = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -188,7 +185,7 @@ var DEFAULT_CONFIG = {
     maxAge: 7, // 7 days
   },
 };
-var SessionPreservation = /** @class */ (function () {
+var SessionPreservation = /** @class */ (() => {
   function SessionPreservation(supabaseUrl, supabaseKey, customConfig) {
     this.activeBackups = new Map();
     this.isBackupInProgress = false;
@@ -491,7 +488,7 @@ var SessionPreservation = /** @class */ (function () {
             _i++;
             return [3 /*break*/, 2];
           case 7:
-            if (!!recoveryResult) return [3 /*break*/, 9];
+            if (recoveryResult) return [3 /*break*/, 9];
             return [4 /*yield*/, this.recoverFromAlternativeSources(sessionId)];
           case 8:
             recoveryResult = _c.sent();
@@ -644,9 +641,7 @@ var SessionPreservation = /** @class */ (function () {
             // Remove from active backups
             for (_i = 0, _a = this.activeBackups; _i < _a.length; _i++) {
               (_b = _a[_i]), (sessionId = _b[0]), (backups = _b[1]);
-              filteredBackups = backups.filter(function (b) {
-                return b.backupId !== backupId;
-              });
+              filteredBackups = backups.filter((b) => b.backupId !== backupId);
               if (filteredBackups.length !== backups.length) {
                 this.activeBackups.set(sessionId, filteredBackups);
                 break;
@@ -782,40 +777,41 @@ var SessionPreservation = /** @class */ (function () {
     });
   };
   SessionPreservation.prototype.startBackupInterval = function () {
-    var _this = this;
-    this.backupInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_11;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 3, , 4]);
-              if (!(this.currentSessionState && !this.isBackupInProgress)) return [3 /*break*/, 2];
-              return [
-                4 /*yield*/,
-                this.createBackup(this.currentSessionState.sessionId, "automatic", "interval"),
-              ];
-            case 1:
-              _a.sent();
-              _a.label = 2;
-            case 2:
-              return [3 /*break*/, 4];
-            case 3:
-              error_11 = _a.sent();
-              console.error("Backup interval processing failed:", error_11);
-              return [3 /*break*/, 4];
-            case 4:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.autoBackupInterval * 1000);
+    this.backupInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_11;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 3, , 4]);
+                if (!(this.currentSessionState && !this.isBackupInProgress))
+                  return [3 /*break*/, 2];
+                return [
+                  4 /*yield*/,
+                  this.createBackup(this.currentSessionState.sessionId, "automatic", "interval"),
+                ];
+              case 1:
+                _a.sent();
+                _a.label = 2;
+              case 2:
+                return [3 /*break*/, 4];
+              case 3:
+                error_11 = _a.sent();
+                console.error("Backup interval processing failed:", error_11);
+                return [3 /*break*/, 4];
+              case 4:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.autoBackupInterval * 1000,
+    );
   };
   SessionPreservation.prototype.startCleanupInterval = function () {
-    var _this = this;
     this.cleanupInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_12;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -833,17 +829,15 @@ var SessionPreservation = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.cleanupSchedule.frequency * 60 * 60 * 1000,
     ); // Convert hours to milliseconds
   };
   SessionPreservation.prototype.setupEventListeners = function () {
-    var _this = this;
     // Listen for page unload events
     if (typeof window !== "undefined") {
-      window.addEventListener("beforeunload", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      window.addEventListener("beforeunload", () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -859,11 +853,11 @@ var SessionPreservation = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
       // Listen for network status changes
-      window.addEventListener("offline", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      window.addEventListener("offline", () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -879,8 +873,8 @@ var SessionPreservation = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     }
   };
   SessionPreservation.prototype.getOrCreateSessionState = function (sessionId) {
@@ -949,7 +943,7 @@ var SessionPreservation = /** @class */ (function () {
       });
     });
   };
-  SessionPreservation.prototype.shouldTriggerBackup = function (stateUpdates) {
+  SessionPreservation.prototype.shouldTriggerBackup = (stateUpdates) => {
     // Check if updates contain high-priority data
     var highPriorityFields = ["formData", "unsavedChanges"];
     for (
@@ -964,7 +958,7 @@ var SessionPreservation = /** @class */ (function () {
     }
     return false;
   };
-  SessionPreservation.prototype.determineRecoveryPriority = function (sessionState) {
+  SessionPreservation.prototype.determineRecoveryPriority = (sessionState) => {
     // Determine priority based on data content
     var hasFormData = Object.keys(sessionState.applicationState.formData || {}).length > 0;
     var hasUnsavedChanges =
@@ -981,7 +975,7 @@ var SessionPreservation = /** @class */ (function () {
   };
   SessionPreservation.prototype.compressData = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simple compression simulation (in production, use proper compression)
         return [2 /*return*/, Buffer.from(data).toString("base64")];
       });
@@ -989,7 +983,7 @@ var SessionPreservation = /** @class */ (function () {
   };
   SessionPreservation.prototype.encryptData = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simple encryption simulation (in production, use proper encryption)
         return [2 /*return*/, Buffer.from(data).toString("base64")];
       });
@@ -1061,9 +1055,9 @@ var SessionPreservation = /** @class */ (function () {
       });
     });
   };
-  SessionPreservation.prototype.sortBackupsByPriority = function (backups) {
+  SessionPreservation.prototype.sortBackupsByPriority = (backups) => {
     var priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-    return backups.sort(function (a, b) {
+    return backups.sort((a, b) => {
       // First sort by priority
       var priorityDiff = priorityOrder[b.recoveryPriority] - priorityOrder[a.recoveryPriority];
       if (priorityDiff !== 0) {
@@ -1165,7 +1159,7 @@ var SessionPreservation = /** @class */ (function () {
   SessionPreservation.prototype.recoverFromAlternativeSources = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
       var recoveredData, localData, parsedData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recoveredData = {
           formData: {},
           unsavedChanges: {},
@@ -1208,7 +1202,7 @@ var SessionPreservation = /** @class */ (function () {
   };
   SessionPreservation.prototype.decryptData = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simple decryption simulation (in production, use proper decryption)
         return [2 /*return*/, Buffer.from(data, "base64").toString()];
       });
@@ -1216,7 +1210,7 @@ var SessionPreservation = /** @class */ (function () {
   };
   SessionPreservation.prototype.decompressData = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simple decompression simulation (in production, use proper decompression)
         return [2 /*return*/, Buffer.from(data, "base64").toString()];
       });
@@ -1258,7 +1252,7 @@ var SessionPreservation = /** @class */ (function () {
       });
     });
   };
-  SessionPreservation.prototype.calculateChecksum = function (data) {
+  SessionPreservation.prototype.calculateChecksum = (data) => {
     // Simple checksum calculation (in production, use a proper hash function)
     var dataString = JSON.stringify(data);
     var hash = 0;
@@ -1269,44 +1263,40 @@ var SessionPreservation = /** @class */ (function () {
     }
     return Math.abs(hash).toString(36);
   };
-  SessionPreservation.prototype.mapDatabaseToBackup = function (data) {
-    return {
-      backupId: data.backup_id,
-      sessionId: data.session_id,
-      userId: data.user_id,
-      backupType: data.backup_type,
-      backupTrigger: data.backup_trigger,
-      sessionState: null, // Will be loaded separately when needed
+  SessionPreservation.prototype.mapDatabaseToBackup = (data) => ({
+    backupId: data.backup_id,
+    sessionId: data.session_id,
+    userId: data.user_id,
+    backupType: data.backup_type,
+    backupTrigger: data.backup_trigger,
+    sessionState: null, // Will be loaded separately when needed
+    createdAt: new Date(data.created_at),
+    expiresAt: new Date(data.expires_at),
+    isCompressed: data.is_compressed,
+    isEncrypted: data.is_encrypted,
+    size: data.size,
+    checksum: data.checksum,
+    recoveryPriority: data.recovery_priority,
+    metadata: data.metadata || {},
+  });
+  SessionPreservation.prototype.mapDatabaseToSessionState = (data) => ({
+    sessionId: data.session_id,
+    userId: data.user_id,
+    userRole: data.user_role,
+    deviceId: data.device_id,
+    applicationState: data.application_state,
+    authenticationState: data.authentication_state,
+    securityContext: data.security_context,
+    metadata: {
       createdAt: new Date(data.created_at),
-      expiresAt: new Date(data.expires_at),
-      isCompressed: data.is_compressed,
-      isEncrypted: data.is_encrypted,
-      size: data.size,
+      lastUpdatedAt: new Date(data.last_updated_at),
+      version: data.version,
       checksum: data.checksum,
-      recoveryPriority: data.recovery_priority,
-      metadata: data.metadata || {},
-    };
-  };
-  SessionPreservation.prototype.mapDatabaseToSessionState = function (data) {
-    return {
-      sessionId: data.session_id,
-      userId: data.user_id,
-      userRole: data.user_role,
-      deviceId: data.device_id,
-      applicationState: data.application_state,
-      authenticationState: data.authentication_state,
-      securityContext: data.security_context,
-      metadata: {
-        createdAt: new Date(data.created_at),
-        lastUpdatedAt: new Date(data.last_updated_at),
-        version: data.version,
-        checksum: data.checksum,
-        compressionEnabled: data.compression_enabled,
-        encryptionEnabled: data.encryption_enabled,
-        backupCount: data.backup_count,
-      },
-    };
-  };
+      compressionEnabled: data.compression_enabled,
+      encryptionEnabled: data.encryption_enabled,
+      backupCount: data.backup_count,
+    },
+  });
   return SessionPreservation;
 })();
 exports.SessionPreservation = SessionPreservation;

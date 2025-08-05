@@ -3,7 +3,7 @@ import { useState } from "react";
 
 // Componente de teste simples
 function SimpleComponent() {
-  const [count, setCount] = useState(0);
+  const [count, _setCount] = useState(0);
   return <div>Count: {count}</div>;
 }
 

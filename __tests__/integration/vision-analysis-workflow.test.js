@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Vision Analysis Workflow Integration Tests
  *
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("@/app/utils/supabase/server");
 var analysis_engine_1 = require("@/lib/vision/analysis-engine");
@@ -146,40 +143,33 @@ jest.mock("@/app/utils/supabase/server");
 jest.mock("@/lib/vision/analysis-engine");
 jest.mock("sonner");
 // Mock Next.js router
-jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: jest.fn(),
-        back: jest.fn(),
-        forward: jest.fn(),
-        refresh: jest.fn(),
-        replace: jest.fn(),
-        pathname: "/dashboard/vision-analysis",
-        query: {},
-        asPath: "/dashboard/vision-analysis",
-      };
-    },
-    useSearchParams: function () {
-      return new URLSearchParams();
-    },
-  };
-});
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+    replace: jest.fn(),
+    pathname: "/dashboard/vision-analysis",
+    query: {},
+    asPath: "/dashboard/vision-analysis",
+  }),
+  useSearchParams: () => new URLSearchParams(),
+}));
 // Mock global fetch
 global.fetch = jest.fn();
 // Mock file reading
-global.FileReader = /** @class */ (function () {
+global.FileReader = /** @class */ (() => {
   function class_1() {
     this.result = null;
     this.onload = null;
     this.onerror = null;
   }
-  class_1.prototype.readAsDataURL = function (file) {
-    var _this = this;
-    setTimeout(function () {
-      _this.result = "data:image/jpeg;base64,mock-base64-data";
-      if (_this.onload) {
-        _this.onload({ target: _this });
+  class_1.prototype.readAsDataURL = function (_file) {
+    setTimeout(() => {
+      this.result = "data:image/jpeg;base64,mock-base64-data";
+      if (this.onload) {
+        this.onload({ target: this });
       }
     }, 100);
   };
@@ -227,21 +217,19 @@ var mockSupabase = {
       error: null,
     }),
   },
-  from: jest.fn(function () {
-    return {
-      insert: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      range: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({
-        data: mockAnalysisResult,
-        error: null,
-      }),
-    };
-  }),
+  from: jest.fn(() => ({
+    insert: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
+    range: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({
+      data: mockAnalysisResult,
+      error: null,
+    }),
+  })),
   rpc: jest.fn().mockResolvedValue({
     data: [mockAnalysisResult],
     error: null,
@@ -256,37 +244,32 @@ var mockVisionEngine = {
 };
 // Apply mocks
 server_1.createClient.mockReturnValue(mockSupabase);
-analysis_engine_1.VisionAnalysisEngine.mockImplementation(function () {
-  return mockVisionEngine;
-});
-describe("Vision Analysis Workflow Integration", function () {
-  beforeEach(function () {
+analysis_engine_1.VisionAnalysisEngine.mockImplementation(() => mockVisionEngine);
+describe("Vision Analysis Workflow Integration", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     global.fetch.mockResolvedValue({
       ok: true,
-      json: function () {
-        return Promise.resolve(mockAnalysisResult);
-      },
+      json: () => Promise.resolve(mockAnalysisResult),
       status: 200,
       statusText: "OK",
     });
   });
-  it("should complete full analysis workflow successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should complete full analysis workflow successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock API response
             global.fetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({
+              json: () =>
+                Promise.resolve({
                   success: true,
                   data: mockAnalysisResult,
                   message: "Analysis completed successfully",
-                });
-              },
+                }),
             });
             return [
               4 /*yield*/,
@@ -329,24 +312,22 @@ describe("Vision Analysis Workflow Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle export workflow", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle export workflow", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock export API response
             global.fetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({
+              json: () =>
+                Promise.resolve({
                   success: true,
                   exportUrl: "/exports/analysis-123.pdf",
                   message: "Export generated successfully",
-                });
-              },
+                }),
             });
             return [
               4 /*yield*/,
@@ -372,25 +353,23 @@ describe("Vision Analysis Workflow Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle share workflow", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle share workflow", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock share API response
             global.fetch.mockResolvedValueOnce({
               ok: true,
-              json: function () {
-                return Promise.resolve({
+              json: () =>
+                Promise.resolve({
                   success: true,
                   shareUrl: "https://example.com/share/analysis-123",
                   expiresAt: "2024-01-22T10:30:00Z",
                   message: "Analysis shared successfully",
-                });
-              },
+                }),
             });
             return [
               4 /*yield*/,
@@ -417,25 +396,23 @@ describe("Vision Analysis Workflow Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle analysis errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle analysis errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock error response
             global.fetch.mockResolvedValueOnce({
               ok: false,
               status: 500,
-              json: function () {
-                return Promise.resolve({
+              json: () =>
+                Promise.resolve({
                   success: false,
                   error: "ANALYSIS_FAILED",
                   message: "Vision analysis engine failed to process images",
-                });
-              },
+                }),
             });
             return [
               4 /*yield*/,
@@ -465,25 +442,23 @@ describe("Vision Analysis Workflow Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle authentication errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle authentication errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock auth error response
             global.fetch.mockResolvedValueOnce({
               ok: false,
               status: 401,
-              json: function () {
-                return Promise.resolve({
+              json: () =>
+                Promise.resolve({
                   success: false,
                   error: "UNAUTHORIZED",
                   message: "Authentication required",
-                });
-              },
+                }),
             });
             return [
               4 /*yield*/,
@@ -513,26 +488,24 @@ describe("Vision Analysis Workflow Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle performance threshold violations", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle performance threshold violations", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock performance threshold violation
             global.fetch.mockResolvedValueOnce({
               ok: false,
               status: 408,
-              json: function () {
-                return Promise.resolve({
+              json: () =>
+                Promise.resolve({
                   success: false,
                   error: "ANALYSIS_TIMEOUT",
                   message: "Analysis exceeded maximum processing time of 30 seconds",
                   processingTime: 32000,
-                });
-              },
+                }),
             });
             return [
               4 /*yield*/,
@@ -563,25 +536,23 @@ describe("Vision Analysis Workflow Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle database connection errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle database connection errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock database error response
             global.fetch.mockResolvedValueOnce({
               ok: false,
               status: 503,
-              json: function () {
-                return Promise.resolve({
+              json: () =>
+                Promise.resolve({
                   success: false,
                   error: "DATABASE_ERROR",
                   message: "Unable to connect to database",
-                });
-              },
+                }),
             });
             return [
               4 /*yield*/,
@@ -611,25 +582,23 @@ describe("Vision Analysis Workflow Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle vision engine initialization errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle vision engine initialization errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Mock vision engine initialization error
             global.fetch.mockResolvedValueOnce({
               ok: false,
               status: 503,
-              json: function () {
-                return Promise.resolve({
+              json: () =>
+                Promise.resolve({
                   success: false,
                   error: "ENGINE_INITIALIZATION_FAILED",
                   message: "Vision analysis engine failed to initialize",
-                });
-              },
+                }),
             });
             return [
               4 /*yield*/,
@@ -659,6 +628,5 @@ describe("Vision Analysis Workflow Integration", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

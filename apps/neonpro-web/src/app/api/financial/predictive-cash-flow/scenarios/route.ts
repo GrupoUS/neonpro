@@ -12,12 +12,12 @@
  * =====================================================================================
  */
 
-import type { NextRequest, NextResponse } from "next/server";
 import type { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import type { cookies } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
-import type { createForecastingScenarioSchema } from "@/lib/validations/predictive-cash-flow";
 import type { Database } from "@/lib/database.types";
+import type { createForecastingScenarioSchema } from "@/lib/validations/predictive-cash-flow";
 
 const getScenariosSchema = z.object({
   clinicId: z.string().uuid(),

@@ -1,9 +1,28 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  ArrowUpDown,
+  Calendar,
+  Download,
+  Edit,
+  Eye,
+  FileImage,
+  Filter,
+  Grid3X3,
+  List,
+  MapPin,
+  MoreVertical,
+  Search,
+  Stethoscope,
+  Trash2,
+  ZoomIn,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type {
@@ -15,31 +34,12 @@ import type {
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  Download,
-  Trash2,
-  ZoomIn,
-  Search,
-  Filter,
-  FileImage,
-  Calendar,
-  MapPin,
-  Stethoscope,
-  Eye,
-  Grid3X3,
-  List,
-  ArrowUpDown,
-  MoreVertical,
-  Edit,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { cn } from "@/lib/utils";
-import type {
-  getPatientPhotos,
   deletePatientPhoto,
   downloadPatientPhoto,
+  getPatientPhotos,
+  PhotoMetadata,
 } from "@/lib/supabase-storage";
-import type { PhotoMetadata } from "@/lib/supabase-storage";
+import type { cn } from "@/lib/utils";
 
 interface PatientPhoto {
   id: string;
@@ -237,7 +237,7 @@ export function PhotoGallery({
     const k = 1024;
     const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   const getCategoryColor = (category: string) => {

@@ -9,8 +9,8 @@
  * @compliance ANVISA, CFM, LGPD
  */
 
-import type { useState, useEffect, useRef, useCallback } from "react";
-import type { BarcodeData, BarcodeScanResult, BarcodeFormat } from "@/types/inventory";
+import type { useCallback, useEffect, useRef, useState } from "react";
+import type { BarcodeData, BarcodeFormat, BarcodeScanResult } from "@/types/inventory";
 
 interface BarcodeScannerConfig {
   enableCamera: boolean;
@@ -350,7 +350,7 @@ export function useBarcodeScanner(
    */
   const detectBarcodeFormat = (rawData: string): BarcodeFormat => {
     if (/^\d{13}$/.test(rawData)) return "EAN13";
-    if (/^[\w\s\-\.\$\/\+\%]+$/.test(rawData)) return "CODE128";
+    if (/^[\w\s\-.$/+%]+$/.test(rawData)) return "CODE128";
     if (rawData.includes("{") || rawData.includes("http")) return "QR_CODE";
     return "CODE128"; // Default
   };

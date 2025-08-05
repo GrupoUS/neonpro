@@ -3,7 +3,7 @@
  * Comprehensive test suite for mobile API functionality
  */
 
-import type { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import type { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { MobileApiSystem } from "../mobile-api-system";
 import type { MobileApiConfig, MobileApiRequest, NetworkCondition } from "../types";
 

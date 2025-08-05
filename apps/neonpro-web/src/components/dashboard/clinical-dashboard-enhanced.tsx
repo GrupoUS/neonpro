@@ -12,7 +12,23 @@
 
 "use client";
 
-import type { useState, useEffect, useMemo } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  Brain,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  DollarSign,
+  Phone,
+  Stethoscope,
+  Target,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import type { useEffect, useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -20,26 +36,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Progress } from "@/components/ui/progress";
-import type {
-  Calendar,
-  Users,
-  TrendingUp,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Activity,
-  Stethoscope,
-  Brain,
-  Target,
-  DollarSign,
-  Phone,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useAccessibility } from "@/contexts/accessibility-context";
+import type { cn } from "@/lib/utils";
 
 interface ClinicalMetrics {
   todayAppointments: number;

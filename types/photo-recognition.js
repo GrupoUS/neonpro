@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Photo Recognition System Types
  * TypeScript definitions for the patient photo recognition and management system
@@ -7,22 +6,22 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+        (Array.isArray({ __proto__: [] }) &&
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        throw new TypeError(`Class extends value ${String(b)} is not a constructor or null`);
       extendStatics(d, b);
       function __() {
         this.constructor = d;
@@ -35,13 +34,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -51,7 +50,7 @@ exports.VerificationError =
   exports.PhotoRecognitionError =
     void 0;
 // Error Types
-var PhotoRecognitionError = /** @class */ (function (_super) {
+var PhotoRecognitionError = /** @class */ ((_super) => {
   __extends(PhotoRecognitionError, _super);
   function PhotoRecognitionError(message, code, details) {
     var _this = _super.call(this, message) || this;
@@ -63,7 +62,7 @@ var PhotoRecognitionError = /** @class */ (function (_super) {
   return PhotoRecognitionError;
 })(Error);
 exports.PhotoRecognitionError = PhotoRecognitionError;
-var PrivacyViolationError = /** @class */ (function (_super) {
+var PrivacyViolationError = /** @class */ ((_super) => {
   __extends(PrivacyViolationError, _super);
   function PrivacyViolationError(message, details) {
     var _this = _super.call(this, message, "PRIVACY_VIOLATION", details) || this;
@@ -73,7 +72,7 @@ var PrivacyViolationError = /** @class */ (function (_super) {
   return PrivacyViolationError;
 })(PhotoRecognitionError);
 exports.PrivacyViolationError = PrivacyViolationError;
-var QualityError = /** @class */ (function (_super) {
+var QualityError = /** @class */ ((_super) => {
   __extends(QualityError, _super);
   function QualityError(message, issues, details) {
     var _this =
@@ -84,7 +83,7 @@ var QualityError = /** @class */ (function (_super) {
   return QualityError;
 })(PhotoRecognitionError);
 exports.QualityError = QualityError;
-var VerificationError = /** @class */ (function (_super) {
+var VerificationError = /** @class */ ((_super) => {
   __extends(VerificationError, _super);
   function VerificationError(message, details) {
     var _this = _super.call(this, message, "VERIFICATION_ERROR", details) || this;

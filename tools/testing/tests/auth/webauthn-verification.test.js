@@ -1,4 +1,3 @@
-"use strict";
 /**
  * WebAuthn API Integration Tests
  * TASK-002: Authentication & Security Enhancement
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,28 +134,28 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
-(0, globals_1.describe)("WebAuthn Implementation Verification", function () {
-  (0, globals_1.it)("should have WebAuthn service utilities", function () {
+(0, globals_1.describe)("WebAuthn Implementation Verification", () => {
+  (0, globals_1.it)("should have WebAuthn service utilities", () => {
     // Test that all required modules exist and can be imported
-    (0, globals_1.expect)(function () {
+    (0, globals_1.expect)(() => {
       require("../../lib/auth/webauthn-service");
     }).not.toThrow();
-    (0, globals_1.expect)(function () {
+    (0, globals_1.expect)(() => {
       require("../../lib/auth/webauthn-client");
     }).not.toThrow();
-    (0, globals_1.expect)(function () {
+    (0, globals_1.expect)(() => {
       require("../../lib/auth/performance-tracker");
     }).not.toThrow();
   });
-  (0, globals_1.it)("should have WebAuthn API endpoints", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("should have WebAuthn API endpoints", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var fs, path, apiPaths, _i, apiPaths_1, apiPath, fullPath;
-      return __generator(this, function (_a) {
-        fs = require("fs");
-        path = require("path");
+      return __generator(this, (_a) => {
+        fs = require("node:fs");
+        path = require("node:path");
         apiPaths = [
           "app/api/auth/webauthn/register/options/route.ts",
           "app/api/auth/webauthn/register/verify/route.ts",
@@ -174,24 +171,24 @@ var globals_1 = require("@jest/globals");
         }
         return [2 /*return*/];
       });
-    });
-  });
-  (0, globals_1.it)("should have WebAuthn React component", function () {
-    var fs = require("fs");
-    var path = require("path");
+    }),
+  );
+  (0, globals_1.it)("should have WebAuthn React component", () => {
+    var fs = require("node:fs");
+    var path = require("node:path");
     var componentPath = path.join(process.cwd(), "components/auth/webauthn-manager.tsx");
     (0, globals_1.expect)(fs.existsSync(componentPath)).toBe(true);
   });
-  (0, globals_1.it)("should have WebAuthn dependencies installed", function () {
+  (0, globals_1.it)("should have WebAuthn dependencies installed", () => {
     // Test that WebAuthn dependencies are available
-    (0, globals_1.expect)(function () {
+    (0, globals_1.expect)(() => {
       require("@simplewebauthn/server");
     }).not.toThrow();
-    (0, globals_1.expect)(function () {
+    (0, globals_1.expect)(() => {
       require("@simplewebauthn/browser");
     }).not.toThrow();
   });
-  (0, globals_1.it)("should have performance tracking integration", function () {
+  (0, globals_1.it)("should have performance tracking integration", () => {
     var authPerformanceTracker =
       require("../../lib/auth/performance-tracker").authPerformanceTracker;
     // Test that performance tracker is properly initialized
@@ -203,14 +200,14 @@ var globals_1 = require("@jest/globals");
     (0, globals_1.expect)(thresholds.session_validation).toBe(100);
     (0, globals_1.expect)(thresholds.mfa_verification).toBe(500);
   });
-  (0, globals_1.it)("should have proper WebAuthn configuration", function () {
+  (0, globals_1.it)("should have proper WebAuthn configuration", () => {
     // Test environment variables and configuration
     var webAuthnService = require("../../lib/auth/webauthn-service").webAuthnService;
     (0, globals_1.expect)(webAuthnService).toBeDefined();
   });
 });
-(0, globals_1.describe)("TASK-002 Authentication Performance Requirements", function () {
-  (0, globals_1.it)("should meet performance targets", function () {
+(0, globals_1.describe)("TASK-002 Authentication Performance Requirements", () => {
+  (0, globals_1.it)("should meet performance targets", () => {
     var authPerformanceTracker =
       require("../../lib/auth/performance-tracker").authPerformanceTracker;
     var thresholds = authPerformanceTracker.getPerformanceThresholds();
@@ -221,20 +218,20 @@ var globals_1 = require("@jest/globals");
     (0, globals_1.expect)(thresholds.token_refresh).toBeLessThanOrEqual(250);
     (0, globals_1.expect)(thresholds.mfa_verification).toBeLessThanOrEqual(500);
   });
-  (0, globals_1.it)("should integrate with TASK-001 monitoring infrastructure", function () {
+  (0, globals_1.it)("should integrate with TASK-001 monitoring infrastructure", () => {
     // Verify integration with monitoring infrastructure from TASK-001
-    (0, globals_1.expect)(function () {
+    (0, globals_1.expect)(() => {
       require("../../lib/monitoring/performance");
     }).not.toThrow();
-    (0, globals_1.expect)(function () {
+    (0, globals_1.expect)(() => {
       require("../../lib/monitoring/analytics");
     }).not.toThrow();
   });
 });
-(0, globals_1.describe)("WebAuthn Security Features", function () {
-  (0, globals_1.it)("should have comprehensive security audit preparation", function () {
-    var fs = require("fs");
-    var path = require("path");
+(0, globals_1.describe)("WebAuthn Security Features", () => {
+  (0, globals_1.it)("should have comprehensive security audit preparation", () => {
+    var fs = require("node:fs");
+    var path = require("node:path");
     // Check that security audit schema is prepared
     var migrationPath = path.join(
       process.cwd(),
@@ -248,9 +245,9 @@ var globals_1 = require("@jest/globals");
     (0, globals_1.expect)(migrationContent).toContain("trusted_devices");
     (0, globals_1.expect)(migrationContent).toContain("mfa_backup_codes");
   });
-  (0, globals_1.it)("should have proper database schema for WebAuthn", function () {
-    var fs = require("fs");
-    var path = require("path");
+  (0, globals_1.it)("should have proper database schema for WebAuthn", () => {
+    var fs = require("node:fs");
+    var path = require("node:path");
     var migrationPath = path.join(
       process.cwd(),
       "supabase/migrations/20250124_webauthn_schema.sql",

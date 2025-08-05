@@ -3,11 +3,7 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from "next/server";
-import type { KPIEngine } from "@/lib/analytics/kpi-engine";
-import type { kpiCalculationSchema } from "@/lib/validations/kpi-validations";
-import type { createClient } from "@/lib/supabase/server";
-import type { z } from "zod";
+import { type NextRequest, NextResponse } from "next/server";
 
 interface KPICalculationRequest {
   kpi_ids?: string[];

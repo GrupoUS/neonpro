@@ -4,7 +4,6 @@
 // Enhanced with research-based UI patterns and performance metrics
 // =============================================
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AlternativeSlotsDisplay;
 var react_1 = require("react");
@@ -39,32 +38,25 @@ function AlternativeSlotsDisplay(_a) {
     searchMetadata = alternativeSlots.searchMetadata,
     performanceMetrics = alternativeSlots.performanceMetrics;
   // Performance-optimized suggestion processing with useMemo
-  var processedSuggestions = (0, react_1.useMemo)(
-    function () {
-      var processed = suggestions;
-      // Apply real-time filtering if enabled
-      if (enableRealtimeFiltering) {
-        processed = (0, use_alternative_slots_1.filterSuggestionsWithDayjs)(processed, {
-          onlyWorkingHours: true,
-          excludeDays: [0], // Exclude Sundays
-        });
-      }
-      // Sort by score and booking probability
-      processed = processed
-        .sort(function (a, b) {
-          var scoreA = showBookingProbability
-            ? (a.booking_success_probability || 0) * 100
-            : a.score;
-          var scoreB = showBookingProbability
-            ? (b.booking_success_probability || 0) * 100
-            : b.score;
-          return scoreB - scoreA;
-        })
-        .slice(0, maxDisplaySlots);
-      return processed;
-    },
-    [suggestions, enableRealtimeFiltering, showBookingProbability, maxDisplaySlots],
-  );
+  var processedSuggestions = (0, react_1.useMemo)(() => {
+    var processed = suggestions;
+    // Apply real-time filtering if enabled
+    if (enableRealtimeFiltering) {
+      processed = (0, use_alternative_slots_1.filterSuggestionsWithDayjs)(processed, {
+        onlyWorkingHours: true,
+        excludeDays: [0], // Exclude Sundays
+      });
+    }
+    // Sort by score and booking probability
+    processed = processed
+      .sort((a, b) => {
+        var scoreA = showBookingProbability ? (a.booking_success_probability || 0) * 100 : a.score;
+        var scoreB = showBookingProbability ? (b.booking_success_probability || 0) * 100 : b.score;
+        return scoreB - scoreA;
+      })
+      .slice(0, maxDisplaySlots);
+    return processed;
+  }, [suggestions, enableRealtimeFiltering, showBookingProbability, maxDisplaySlots]);
   // Loading state
   if (isLoading) {
     return (
@@ -127,7 +119,7 @@ function AlternativeSlotsDisplay(_a) {
           )}
         </div>
 
-        {Object.entries(groupedSuggestions).map(function (_a) {
+        {Object.entries(groupedSuggestions).map((_a) => {
           var date = _a[0],
             daySlots = _a[1];
           var dayName = new Intl.DateTimeFormat("pt-BR", {
@@ -141,21 +133,19 @@ function AlternativeSlotsDisplay(_a) {
                 <card_1.CardTitle className="text-base capitalize">{dayName}</card_1.CardTitle>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-2">
-                {daySlots.map(function (slot, index) {
-                  return (
-                    <SlotCard
-                      key={index}
-                      slot={slot}
-                      onSelect={onSelectSlot}
-                      isSelected={
-                        (selectedSuggestion === null || selectedSuggestion === void 0
-                          ? void 0
-                          : selectedSuggestion.start_time) === slot.start_time
-                      }
-                      compact={compact}
-                    />
-                  );
-                })}
+                {daySlots.map((slot, index) => (
+                  <SlotCard
+                    key={index}
+                    slot={slot}
+                    onSelect={onSelectSlot}
+                    isSelected={
+                      (selectedSuggestion === null || selectedSuggestion === void 0
+                        ? void 0
+                        : selectedSuggestion.start_time) === slot.start_time
+                    }
+                    compact={compact}
+                  />
+                ))}
               </card_1.CardContent>
             </card_1.Card>
           );
@@ -188,23 +178,21 @@ function AlternativeSlotsDisplay(_a) {
         </div>
       </card_1.CardHeader>
       <card_1.CardContent className="space-y-3">
-        {displaySuggestions.map(function (slot, index) {
-          return (
-            <SlotCard
-              key={index}
-              slot={slot}
-              onSelect={onSelectSlot}
-              isSelected={
-                (selectedSuggestion === null || selectedSuggestion === void 0
-                  ? void 0
-                  : selectedSuggestion.start_time) === slot.start_time
-              }
-              compact={compact}
-              showRanking={!compact}
-              ranking={index + 1}
-            />
-          );
-        })}
+        {displaySuggestions.map((slot, index) => (
+          <SlotCard
+            key={index}
+            slot={slot}
+            onSelect={onSelectSlot}
+            isSelected={
+              (selectedSuggestion === null || selectedSuggestion === void 0
+                ? void 0
+                : selectedSuggestion.start_time) === slot.start_time
+            }
+            compact={compact}
+            showRanking={!compact}
+            ranking={index + 1}
+          />
+        ))}
 
         {suggestions.length > maxDisplaySlots && (
           <div className="text-center pt-2 border-t">
@@ -232,7 +220,7 @@ function SlotCard(_a) {
     ranking = _a.ranking;
   var quality = (0, use_alternative_slots_1.getSuggestionQuality)(slot);
   var qualityColor = (0, use_alternative_slots_1.getSuggestionQualityColor)(quality);
-  var handleSelect = function () {
+  var handleSelect = () => {
     onSelect === null || onSelect === void 0 ? void 0 : onSelect(slot);
   };
   if (compact) {
@@ -307,13 +295,11 @@ function SlotCard(_a) {
 
           {slot.reasons.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              {slot.reasons.slice(0, 2).map(function (reason, idx) {
-                return (
-                  <badge_1.Badge key={idx} variant="outline" className="text-xs">
-                    {reason}
-                  </badge_1.Badge>
-                );
-              })}
+              {slot.reasons.slice(0, 2).map((reason, idx) => (
+                <badge_1.Badge key={idx} variant="outline" className="text-xs">
+                  {reason}
+                </badge_1.Badge>
+              ))}
               {slot.reasons.length > 2 && (
                 <badge_1.Badge variant="outline" className="text-xs">
                   +{slot.reasons.length - 2}

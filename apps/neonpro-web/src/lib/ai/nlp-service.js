@@ -1,18 +1,17 @@
-"use strict";
 // 🧠 NLP Service Configuration - Smart Search + NLP Integration
 // NeonPro - Serviço de Processamento de Linguagem Natural
 // Quality Standard: ≥9.5/10 (BMad Enhanced)
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,12 +131,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DEFAULT_NLP_CONFIG = exports.DEFAULT_MEDICAL_TERMS = exports.NLPServiceManager = void 0;
 var openai_1 = require("openai");
 var search_types_1 = require("@neonpro/types/search-types");
-var NLPServiceManager = /** @class */ (function () {
+var NLPServiceManager = /** @class */ (() => {
   function NLPServiceManager(config) {
     this.cache = new Map();
     this.config = config;
@@ -345,9 +342,7 @@ var NLPServiceManager = /** @class */ (function () {
             // Cache the result
             if (this.config.cacheEnabled) {
               this.cache.set(cacheKey_1, result);
-              setTimeout(function () {
-                return _this.cache.delete(cacheKey_1);
-              }, this.config.cacheTTL * 1000);
+              setTimeout(() => _this.cache.delete(cacheKey_1), this.config.cacheTTL * 1000);
             }
             // Log processing time for optimization
             if (this.config.debugMode) {
@@ -368,15 +363,14 @@ var NLPServiceManager = /** @class */ (function () {
       });
     });
   };
-  NLPServiceManager.prototype.normalizeQuery = function (query) {
-    return query
+  NLPServiceManager.prototype.normalizeQuery = (query) =>
+    query
       .trim()
       .toLowerCase()
       .replace(/[^\w\sáàâãéèêíïóôõöúçñ]/g, " ") // Keep Portuguese characters
       .replace(/\s+/g, " ")
       .trim();
-  };
-  NLPServiceManager.prototype.detectLanguage = function (query) {
+  NLPServiceManager.prototype.detectLanguage = (query) => {
     var portugueseWords = [
       "paciente",
       "agendamento",
@@ -401,12 +395,8 @@ var NLPServiceManager = /** @class */ (function () {
       "how",
       "why",
     ];
-    var portugueseCount = portugueseWords.filter(function (word) {
-      return query.includes(word);
-    }).length;
-    var englishCount = englishWords.filter(function (word) {
-      return query.includes(word);
-    }).length;
+    var portugueseCount = portugueseWords.filter((word) => query.includes(word)).length;
+    var englishCount = englishWords.filter((word) => query.includes(word)).length;
     return portugueseCount > englishCount ? "pt" : "en";
   };
   NLPServiceManager.prototype.extractMedicalTerms = function (query) {
@@ -545,17 +535,11 @@ var NLPServiceManager = /** @class */ (function () {
         return [
           2 /*return*/,
           entities
-            .filter(function (entity, index, self) {
-              return (
-                index ===
-                self.findIndex(function (e) {
-                  return e.type === entity.type && e.value === entity.value;
-                })
-              );
-            })
-            .sort(function (a, b) {
-              return b.confidence - a.confidence;
-            })
+            .filter(
+              (entity, index, self) =>
+                index === self.findIndex((e) => e.type === entity.type && e.value === entity.value),
+            )
+            .sort((a, b) => b.confidence - a.confidence)
             .slice(0, 10),
         ]; // Limit to top 10 entities
       });
@@ -593,17 +577,16 @@ var NLPServiceManager = /** @class */ (function () {
     return Math.min(confidence, 1.0);
   };
   NLPServiceManager.prototype.generateSearchFilters = function (query, intent, entities) {
-    var _this = this;
     var filters = [];
     // Add entity-based filters
-    entities.forEach(function (entity) {
+    entities.forEach((entity) => {
       if (entity.confidence > 0.6) {
         filters.push({
-          field: _this.getFieldForEntityType(entity.type),
+          field: this.getFieldForEntityType(entity.type),
           operator: "contains",
           value: entity.value,
           label: "".concat(entity.type, ": ").concat(entity.value),
-          category: _this.getCategoryForEntityType(entity.type),
+          category: this.getCategoryForEntityType(entity.type),
           required: false,
           suggested: true,
           confidence: entity.confidence,
@@ -637,7 +620,7 @@ var NLPServiceManager = /** @class */ (function () {
     }
     return filters;
   };
-  NLPServiceManager.prototype.extractTemporalFilters = function (query) {
+  NLPServiceManager.prototype.extractTemporalFilters = (query) => {
     var temporalPatterns = [
       { pattern: /hoje|today/i, days: 0 },
       { pattern: /ontem|yesterday/i, days: -1 },
@@ -688,7 +671,7 @@ var NLPServiceManager = /** @class */ (function () {
     }
     return undefined;
   };
-  NLPServiceManager.prototype.calculateConfidenceScore = function (intent, entities, medicalTerms) {
+  NLPServiceManager.prototype.calculateConfidenceScore = (intent, entities, medicalTerms) => {
     var confidence = 0.3; // Base confidence
     // Boost for specific intent (not general_search)
     if (intent !== "general_search") {
@@ -697,9 +680,7 @@ var NLPServiceManager = /** @class */ (function () {
     // Boost for extracted entities
     if (entities.length > 0) {
       var avgEntityConfidence =
-        entities.reduce(function (sum, e) {
-          return sum + e.confidence;
-        }, 0) / entities.length;
+        entities.reduce((sum, e) => sum + e.confidence, 0) / entities.length;
       confidence += avgEntityConfidence * 0.3;
     }
     // Boost for medical terms
@@ -708,7 +689,7 @@ var NLPServiceManager = /** @class */ (function () {
     }
     return Math.min(confidence, 1.0);
   };
-  NLPServiceManager.prototype.getFieldForEntityType = function (entityType) {
+  NLPServiceManager.prototype.getFieldForEntityType = (entityType) => {
     var fieldMap = {
       patient: "patient_name",
       appointment: "appointment_id",
@@ -723,7 +704,7 @@ var NLPServiceManager = /** @class */ (function () {
     };
     return fieldMap[entityType] || "content";
   };
-  NLPServiceManager.prototype.getCategoryForEntityType = function (entityType) {
+  NLPServiceManager.prototype.getCategoryForEntityType = (entityType) => {
     var categoryMap = {
       patient: "personal",
       appointment: "medical",
@@ -739,10 +720,7 @@ var NLPServiceManager = /** @class */ (function () {
     return categoryMap[entityType] || "public";
   };
   NLPServiceManager.prototype.updateMedicalTerms = function (newTerms) {
-    var _this = this;
-    newTerms.forEach(function (term) {
-      return _this.medicalTerms.add(term.toLowerCase());
-    });
+    newTerms.forEach((term) => this.medicalTerms.add(term.toLowerCase()));
   };
   NLPServiceManager.prototype.getStatistics = function () {
     return {

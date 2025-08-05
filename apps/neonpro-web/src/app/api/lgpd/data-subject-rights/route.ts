@@ -1,8 +1,8 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { cookies } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
 import type { LGPDComplianceManager } from "@/lib/lgpd/compliance-manager";
+import type { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/types/database";
 
 // Validation schemas

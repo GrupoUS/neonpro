@@ -1,26 +1,26 @@
+import type { SESClient, SendBulkEmailCommand, SendEmailCommand } from "@aws-sdk/client-ses";
 import nodemailer from "nodemailer";
-import type { SESClient, SendEmailCommand, SendBulkEmailCommand } from "@aws-sdk/client-ses";
 import type {
-  EmailProvider,
-  EmailMessage,
-  EmailServiceResponse,
   BulkEmailResponse,
-  EmailStatus,
-  EmailTemplate,
-  EmailSettings,
   EmailAnalytics,
-  EmailProviderConfig,
-  SMTPConfig,
-  SESConfig,
-  SendGridConfig,
-  MailgunConfig,
-  ResendConfig,
-  PostmarkConfig,
-  EmailServiceInterface,
-  EmailValidationResult,
-  EmailPreview,
   EmailDeliveryReport,
   EmailEvent,
+  EmailMessage,
+  EmailPreview,
+  EmailProvider,
+  EmailProviderConfig,
+  EmailServiceInterface,
+  EmailServiceResponse,
+  EmailSettings,
+  EmailStatus,
+  EmailTemplate,
+  EmailValidationResult,
+  MailgunConfig,
+  PostmarkConfig,
+  ResendConfig,
+  SESConfig,
+  SendGridConfig,
+  SMTPConfig,
 } from "@/app/types/email";
 
 // =======================================

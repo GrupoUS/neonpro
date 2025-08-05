@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Enhanced Subscription Middleware v2 - Performance Optimized
  *
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,7 +46,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,8 +75,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -98,9 +95,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -159,7 +156,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.enhancedSubscriptionMiddleware = enhancedSubscriptionMiddleware;
 exports.getMiddlewarePerformanceStats = getMiddlewarePerformanceStats;
@@ -191,7 +188,7 @@ var defaultConfig = {
   },
 };
 // Route patterns cache for performance
-var routePatternsCache = new Map();
+var _routePatternsCache = new Map();
 var routeMatchCache = new Map();
 // Circuit breaker state
 var circuitBreakerState = "closed";
@@ -204,7 +201,7 @@ var requestMetrics = [];
 /**
  * Enhanced subscription middleware with performance optimizations
  */
-function enhancedSubscriptionMiddleware(req_1) {
+function enhancedSubscriptionMiddleware(_req_1) {
   return __awaiter(this, arguments, void 0, function (req, config) {
     var mergedConfig,
       startTime,
@@ -213,11 +210,11 @@ function enhancedSubscriptionMiddleware(req_1) {
       timerId,
       _a,
       user,
-      sessionValidationResult,
+      _sessionValidationResult,
       routeProtection,
       subscriptionResult,
       hasAccess,
-      duration,
+      _duration,
       response,
       error_1,
       duration;
@@ -225,7 +222,7 @@ function enhancedSubscriptionMiddleware(req_1) {
     if (config === void 0) {
       config = {};
     }
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           mergedConfig = __assign(__assign({}, defaultConfig), config);
@@ -237,7 +234,7 @@ function enhancedSubscriptionMiddleware(req_1) {
           );
           _c.label = 1;
         case 1:
-          _c.trys.push([1, 6, , 7]);
+          _c.trys.push([1, 6, undefined, 7]);
           // Fast path for public routes
           if (isPublicRoute(pathname)) {
             return [2 /*return*/, server_1.NextResponse.next()];
@@ -254,7 +251,7 @@ function enhancedSubscriptionMiddleware(req_1) {
         case 2:
           (_a = _c.sent()),
             (user = _a.user),
-            (sessionValidationResult = _a.sessionValidationResult);
+            (_sessionValidationResult = _a.sessionValidationResult);
           if (!user) {
             return [2 /*return*/, redirectToLogin(req)];
           }
@@ -349,9 +346,7 @@ function isPublicRoute(pathname) {
     "/robots.txt",
     "/sitemap.xml",
   ];
-  return publicRoutes.some(function (route) {
-    return pathname.startsWith(route);
-  });
+  return publicRoutes.some((route) => pathname.startsWith(route));
 }
 /**
  * Get cached user session with optimization
@@ -359,7 +354,7 @@ function isPublicRoute(pathname) {
 function getCachedUserSession(req, config) {
   return __awaiter(this, void 0, void 0, function () {
     var cacheKey, cached, supabase, _a, user, error, sessionData, cacheData;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           cacheKey = "session_".concat(req.headers.get("authorization") || "anonymous");
@@ -370,7 +365,7 @@ function getCachedUserSession(req, config) {
           ];
         case 1:
           cached = _b.sent();
-          if (cached && cached.sessionData) {
+          if (cached?.sessionData) {
             return [2 /*return*/, cached.sessionData];
           }
           _b.label = 2;
@@ -380,10 +375,8 @@ function getCachedUserSession(req, config) {
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
             {
               cookies: {
-                getAll: function () {
-                  return req.cookies.getAll();
-                },
-                setAll: function () {
+                getAll: () => req.cookies.getAll(),
+                setAll: () => {
                   // No-op for middleware
                 },
               },
@@ -433,7 +426,7 @@ function getRouteProtection(pathname, config) {
       route,
       entries,
       toDelete;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       cacheKey = "route_protection_".concat(pathname);
       if (config.routeOptimization.enableRegexCaching) {
         cached = routeMatchCache.get(cacheKey);
@@ -495,7 +488,7 @@ function getRouteProtection(pathname, config) {
         if (routeMatchCache.size > config.routeOptimization.maxCacheSize) {
           entries = Array.from(routeMatchCache.entries());
           toDelete = entries.slice(0, Math.floor(entries.length * 0.2));
-          toDelete.forEach(function (_a) {
+          toDelete.forEach((_a) => {
             var key = _a[0];
             return routeMatchCache.delete(key);
           });
@@ -511,11 +504,11 @@ function getRouteProtection(pathname, config) {
  */
 function getOptimizedSubscriptionStatus(userId, pathname, config) {
   return __awaiter(this, void 0, void 0, function () {
-    var cacheKey, pendingRequest, requestPromise, result;
-    return __generator(this, function (_a) {
+    var _cacheKey, pendingRequest, requestPromise, result;
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
-          cacheKey = "subscription_".concat(userId);
+          _cacheKey = "subscription_".concat(userId);
           pendingRequest = pendingRequests.get(userId);
           if (pendingRequest) {
             return [2 /*return*/, pendingRequest];
@@ -536,7 +529,7 @@ function getOptimizedSubscriptionStatus(userId, pathname, config) {
           pendingRequests.set(userId, requestPromise);
           _a.label = 1;
         case 1:
-          _a.trys.push([1, , 3, 4]);
+          _a.trys.push([1, undefined, 3, 4]);
           return [4 /*yield*/, requestPromise];
         case 2:
           result = _a.sent();
@@ -555,21 +548,20 @@ function getOptimizedSubscriptionStatus(userId, pathname, config) {
  */
 function getBatchedSubscriptionStatus(userId, config) {
   return __awaiter(this, void 0, void 0, function () {
-    var _this = this;
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        new Promise(function (resolve, reject) {
-          var batchKey = "subscription_batch";
-          var batch = requestBatches.get(batchKey);
-          if (!batch) {
-            batch = [];
-            requestBatches.set(batchKey, batch);
-            // Schedule batch execution
-            setTimeout(function () {
-              return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      new Promise((resolve, reject) => {
+        var batchKey = "subscription_batch";
+        var batch = requestBatches.get(batchKey);
+        if (!batch) {
+          batch = [];
+          requestBatches.set(batchKey, batch);
+          // Schedule batch execution
+          setTimeout(
+            () =>
+              __awaiter(this, void 0, void 0, function () {
                 var currentBatch, userIds, results_1, error_2;
-                return __generator(this, function (_a) {
+                return __generator(this, (_a) => {
                   switch (_a.label) {
                     case 0:
                       currentBatch = requestBatches.get(batchKey);
@@ -577,10 +569,8 @@ function getBatchedSubscriptionStatus(userId, config) {
                       requestBatches.delete(batchKey);
                       _a.label = 1;
                     case 1:
-                      _a.trys.push([1, 3, , 4]);
-                      userIds = currentBatch.map(function (item) {
-                        return item.userId;
-                      });
+                      _a.trys.push([1, 3, undefined, 4]);
+                      userIds = currentBatch.map((item) => item.userId);
                       return [
                         4 /*yield*/,
                         subscription_query_optimizer_1.subscriptionQueryOptimizer.getBatchSubscriptionStatus(
@@ -595,7 +585,7 @@ function getBatchedSubscriptionStatus(userId, config) {
                     case 2:
                       results_1 = _a.sent();
                       // Resolve all pending requests
-                      currentBatch.forEach(function (_a) {
+                      currentBatch.forEach((_a) => {
                         var batchUserId = _a.userId,
                           batchResolve = _a.resolve;
                         var result = results_1.get(batchUserId);
@@ -619,7 +609,7 @@ function getBatchedSubscriptionStatus(userId, config) {
                     case 3:
                       error_2 = _a.sent();
                       // Reject all pending requests
-                      currentBatch.forEach(function (_a) {
+                      currentBatch.forEach((_a) => {
                         var batchReject = _a.reject;
                         batchReject(error_2);
                       });
@@ -628,13 +618,13 @@ function getBatchedSubscriptionStatus(userId, config) {
                       return [2 /*return*/];
                   }
                 });
-              });
-            }, config.batchTimeout);
-          }
-          batch.push({ userId: userId, resolve: resolve, reject: reject });
-        }),
-      ];
-    });
+              }),
+            config.batchTimeout,
+          );
+        }
+        batch.push({ userId: userId, resolve: resolve, reject: reject });
+      }),
+    ]);
   });
 }
 /**
@@ -669,11 +659,11 @@ function getRequestPriority(pathname) {
 /**
  * Validate route access based on subscription and requirements
  */
-function validateRouteAccess(subscriptionResult, routeProtection, user, config) {
+function validateRouteAccess(subscriptionResult, routeProtection, _user, _config) {
   return __awaiter(this, void 0, void 0, function () {
     var userTier, requiredTier, tierHierarchy, userTierIndex, requiredTierIndex;
     var _a, _b, _c;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       // Basic access check
       if (!subscriptionResult.hasAccess) {
         return [2 /*return*/, false];
@@ -711,7 +701,7 @@ function validateRouteAccess(subscriptionResult, routeProtection, user, config) 
 /**
  * Handle circuit breaker failures
  */
-function handleCircuitBreakerFailure(error, config) {
+function handleCircuitBreakerFailure(_error, config) {
   if (!config.circuitBreaker.enabled) return;
   circuitBreakerFailures++;
   lastFailureTime = Date.now();
@@ -827,19 +817,13 @@ function addSubscriptionHeaders(response, subscriptionResult, user) {
 function getMiddlewarePerformanceStats() {
   var totalRequests = requestMetrics.length;
   var averageResponseTime =
-    requestMetrics.reduce(function (sum, m) {
-      return sum + m.duration;
-    }, 0) / totalRequests || 0;
-  var cacheHits = requestMetrics.filter(function (m) {
-    return m.cacheHit;
-  }).length;
+    requestMetrics.reduce((sum, m) => sum + m.duration, 0) / totalRequests || 0;
+  var cacheHits = requestMetrics.filter((m) => m.cacheHit).length;
   var cacheHitRate = totalRequests > 0 ? cacheHits / totalRequests : 0;
-  var slowRequestCount = requestMetrics.filter(function (m) {
-    return m.duration > 500;
-  }).length;
+  var slowRequestCount = requestMetrics.filter((m) => m.duration > 500).length;
   // Calculate top slow paths
   var pathStats = new Map();
-  requestMetrics.forEach(function (metric) {
+  requestMetrics.forEach((metric) => {
     var existing = pathStats.get(metric.path) || { totalTime: 0, count: 0 };
     pathStats.set(metric.path, {
       totalTime: existing.totalTime + metric.duration,
@@ -847,7 +831,7 @@ function getMiddlewarePerformanceStats() {
     });
   });
   var topSlowPaths = Array.from(pathStats.entries())
-    .map(function (_a) {
+    .map((_a) => {
       var path = _a[0],
         stats = _a[1];
       return {
@@ -856,9 +840,7 @@ function getMiddlewarePerformanceStats() {
         count: stats.count,
       };
     })
-    .sort(function (a, b) {
-      return b.averageTime - a.averageTime;
-    })
+    .sort((a, b) => b.averageTime - a.averageTime)
     .slice(0, 10);
   return {
     totalRequests: totalRequests,

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usePatientAuth = void 0;
 exports.PatientAuthProvider = PatientAuthProvider;
@@ -141,7 +138,6 @@ var client_1 = require("@/lib/supabase/client");
 var sonner_1 = require("sonner");
 var PatientAuthContext = (0, react_1.createContext)(undefined);
 function PatientAuthProvider(_a) {
-  var _this = this;
   var children = _a.children;
   var _b = (0, react_1.useState)(null),
     user = _b[0],
@@ -156,11 +152,11 @@ function PatientAuthProvider(_a) {
     supabase = _e[0],
     setSupabase = _e[1];
   // Initialize Supabase client
-  (0, react_1.useEffect)(function () {
-    var initSupabase = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var initSupabase = () =>
+      __awaiter(this, void 0, void 0, function () {
         var client;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, (0, client_1.createClient)()];
@@ -171,86 +167,79 @@ function PatientAuthProvider(_a) {
           }
         });
       });
-    };
     initSupabase();
   }, []);
-  (0, react_1.useEffect)(
-    function () {
-      var getUser = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var _a, user_1, error, error_1;
-          return __generator(this, function (_b) {
-            switch (_b.label) {
-              case 0:
-                if (!supabase) return [2 /*return*/];
-                _b.label = 1;
-              case 1:
-                _b.trys.push([1, 5, 6, 7]);
-                return [4 /*yield*/, supabase.auth.getUser()];
-              case 2:
-                (_a = _b.sent()), (user_1 = _a.data.user), (error = _a.error);
-                if (error) throw error;
-                setUser(user_1);
-                if (!user_1) return [3 /*break*/, 4];
-                return [4 /*yield*/, fetchPatientData(user_1.id)];
-              case 3:
-                _b.sent();
-                _b.label = 4;
-              case 4:
-                return [3 /*break*/, 7];
-              case 5:
-                error_1 = _b.sent();
-                console.error("Error fetching user:", error_1);
-                sonner_1.toast.error("Erro ao carregar dados do usuário");
-                return [3 /*break*/, 7];
-              case 6:
-                setIsLoading(false);
-                return [7 /*endfinally*/];
-              case 7:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var getUser = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var _a, user_1, error, error_1;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              if (!supabase) return [2 /*return*/];
+              _b.label = 1;
+            case 1:
+              _b.trys.push([1, 5, 6, 7]);
+              return [4 /*yield*/, supabase.auth.getUser()];
+            case 2:
+              (_a = _b.sent()), (user_1 = _a.data.user), (error = _a.error);
+              if (error) throw error;
+              setUser(user_1);
+              if (!user_1) return [3 /*break*/, 4];
+              return [4 /*yield*/, fetchPatientData(user_1.id)];
+            case 3:
+              _b.sent();
+              _b.label = 4;
+            case 4:
+              return [3 /*break*/, 7];
+            case 5:
+              error_1 = _b.sent();
+              console.error("Error fetching user:", error_1);
+              sonner_1.toast.error("Erro ao carregar dados do usuário");
+              return [3 /*break*/, 7];
+            case 6:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 7:
+              return [2 /*return*/];
+          }
         });
-      };
-      getUser();
-      var subscription = supabase.auth.onAuthStateChange(function (event, session) {
-        return __awaiter(_this, void 0, void 0, function () {
-          var _a;
-          return __generator(this, function (_b) {
-            switch (_b.label) {
-              case 0:
-                setUser(
-                  (_a = session === null || session === void 0 ? void 0 : session.user) !== null &&
-                    _a !== void 0
-                    ? _a
-                    : null,
-                );
-                if (!(session === null || session === void 0 ? void 0 : session.user))
-                  return [3 /*break*/, 2];
-                return [4 /*yield*/, fetchPatientData(session.user.id)];
-              case 1:
-                _b.sent();
-                return [3 /*break*/, 3];
-              case 2:
-                setPatient(null);
-                _b.label = 3;
-              case 3:
-                setIsLoading(false);
-                return [2 /*return*/];
-            }
-          });
+      });
+    getUser();
+    var subscription = supabase.auth.onAuthStateChange((event, session) =>
+      __awaiter(this, void 0, void 0, function () {
+        var _a;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              setUser(
+                (_a = session === null || session === void 0 ? void 0 : session.user) !== null &&
+                  _a !== void 0
+                  ? _a
+                  : null,
+              );
+              if (!(session === null || session === void 0 ? void 0 : session.user))
+                return [3 /*break*/, 2];
+              return [4 /*yield*/, fetchPatientData(session.user.id)];
+            case 1:
+              _b.sent();
+              return [3 /*break*/, 3];
+            case 2:
+              setPatient(null);
+              _b.label = 3;
+            case 3:
+              setIsLoading(false);
+              return [2 /*return*/];
+          }
         });
-      }).data.subscription;
-      return function () {
-        return subscription.unsubscribe();
-      };
-    },
-    [supabase.auth],
-  );
-  var fetchPatientData = function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
+      }),
+    ).data.subscription;
+    return () => subscription.unsubscribe();
+  }, [supabase.auth]);
+  var fetchPatientData = (userId) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -274,11 +263,10 @@ function PatientAuthProvider(_a) {
         }
       });
     });
-  };
-  var signIn = function (email, password) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var signIn = (email, password) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -308,11 +296,10 @@ function PatientAuthProvider(_a) {
         }
       });
     });
-  };
-  var signOut = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var signOut = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -338,11 +325,10 @@ function PatientAuthProvider(_a) {
         }
       });
     });
-  };
-  var updatePatient = function (updates) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updatePatient = (updates) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_5;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!user || !patient) return [2 /*return*/];
@@ -374,10 +360,9 @@ function PatientAuthProvider(_a) {
         }
       });
     });
-  };
-  var refreshPatient = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var refreshPatient = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!user) return [3 /*break*/, 2];
@@ -390,7 +375,6 @@ function PatientAuthProvider(_a) {
         }
       });
     });
-  };
   var contextValue = {
     user: user,
     patient: patient,
@@ -406,7 +390,7 @@ function PatientAuthProvider(_a) {
     children,
   );
 }
-var usePatientAuth = function () {
+var usePatientAuth = () => {
   var context = (0, react_1.useContext)(PatientAuthContext);
   if (context === undefined) {
     throw new Error("usePatientAuth must be used within a PatientAuthProvider");

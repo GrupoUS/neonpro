@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - API Gateway Monitoring System
  * Comprehensive monitoring, metrics and health checking system
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,10 +150,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -165,7 +162,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiGatewayPerformanceMonitor =
   exports.MonitoringMiddleware =
@@ -176,9 +173,8 @@ exports.ApiGatewayPerformanceMonitor =
  * Metrics Collector
  * Collects and aggregates API Gateway metrics
  */
-var ApiGatewayMetricsCollector = /** @class */ (function () {
+var ApiGatewayMetricsCollector = /** @class */ (() => {
   function ApiGatewayMetricsCollector(logger) {
-    var _this = this;
     this.metrics = new Map();
     this.counters = new Map();
     this.histograms = new Map();
@@ -189,9 +185,7 @@ var ApiGatewayMetricsCollector = /** @class */ (function () {
     // Initialize default metrics
     this.initializeDefaultMetrics();
     // Collect system metrics every 30 seconds
-    setInterval(function () {
-      return _this.collectSystemMetrics();
-    }, 30000);
+    setInterval(() => this.collectSystemMetrics(), 30000);
   }
   /**
    * Record request metrics
@@ -321,13 +315,9 @@ var ApiGatewayMetricsCollector = /** @class */ (function () {
         key = _h[0],
         values = _h[1];
       if (values.length > 0) {
-        var sorted = __spreadArray([], values, true).sort(function (a, b) {
-          return a - b;
-        });
+        var sorted = __spreadArray([], values, true).sort((a, b) => a - b);
         metrics["".concat(key, "_count")] = values.length;
-        metrics["".concat(key, "_sum")] = values.reduce(function (a, b) {
-          return a + b;
-        }, 0);
+        metrics["".concat(key, "_sum")] = values.reduce((a, b) => a + b, 0);
         metrics["".concat(key, "_avg")] = metrics["".concat(key, "_sum")] / values.length;
         metrics["".concat(key, "_min")] = sorted[0];
         metrics["".concat(key, "_max")] = sorted[sorted.length - 1];
@@ -430,19 +420,18 @@ var ApiGatewayMetricsCollector = /** @class */ (function () {
   /**
    * Convert labels to string
    */
-  ApiGatewayMetricsCollector.prototype.labelsToString = function (labels) {
-    return Object.entries(labels)
-      .map(function (_a) {
+  ApiGatewayMetricsCollector.prototype.labelsToString = (labels) =>
+    Object.entries(labels)
+      .map((_a) => {
         var key = _a[0],
           value = _a[1];
         return "".concat(key, '="').concat(value, '"');
       })
       .join(",");
-  };
   /**
    * Calculate percentile
    */
-  ApiGatewayMetricsCollector.prototype.percentile = function (sortedArray, p) {
+  ApiGatewayMetricsCollector.prototype.percentile = (sortedArray, p) => {
     var index = (sortedArray.length - 1) * p;
     var lower = Math.floor(index);
     var upper = Math.ceil(index);
@@ -494,7 +483,7 @@ exports.ApiGatewayMetricsCollector = ApiGatewayMetricsCollector;
  * Health Check Manager
  * Manages health checks for API Gateway components
  */
-var ApiGatewayHealthCheckManager = /** @class */ (function () {
+var ApiGatewayHealthCheckManager = /** @class */ (() => {
   function ApiGatewayHealthCheckManager(checkInterval, logger) {
     if (checkInterval === void 0) {
       checkInterval = 30000;
@@ -564,11 +553,9 @@ var ApiGatewayHealthCheckManager = /** @class */ (function () {
               4 /*yield*/,
               Promise.race([
                 check(),
-                new Promise(function (_, reject) {
-                  return setTimeout(function () {
-                    return reject(new Error("Health check timeout"));
-                  }, 5000);
-                }),
+                new Promise((_, reject) =>
+                  setTimeout(() => reject(new Error("Health check timeout")), 5000),
+                ),
               ]),
             ];
           case 3:
@@ -643,35 +630,36 @@ var ApiGatewayHealthCheckManager = /** @class */ (function () {
    * Start periodic health checks
    */
   ApiGatewayHealthCheckManager.prototype.startPeriodicChecks = function () {
-    var _this = this;
     var _a;
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-    this.intervalId = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_2;
-        var _a;
-        return __generator(this, function (_b) {
-          switch (_b.label) {
-            case 0:
-              _b.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.runChecks()];
-            case 1:
-              _b.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_2 = _b.sent();
-              (_a = this.logger) === null || _a === void 0
-                ? void 0
-                : _a.error("Periodic health check error", error_2);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.checkInterval);
+    this.intervalId = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_2;
+          var _a;
+          return __generator(this, function (_b) {
+            switch (_b.label) {
+              case 0:
+                _b.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.runChecks()];
+              case 1:
+                _b.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_2 = _b.sent();
+                (_a = this.logger) === null || _a === void 0
+                  ? void 0
+                  : _a.error("Periodic health check error", error_2);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.checkInterval,
+    );
     (_a = this.logger) === null || _a === void 0
       ? void 0
       : _a.info("Periodic health checks started", { interval: this.checkInterval });
@@ -693,12 +681,11 @@ var ApiGatewayHealthCheckManager = /** @class */ (function () {
    * Register default health checks
    */
   ApiGatewayHealthCheckManager.prototype.registerDefaultChecks = function () {
-    var _this = this;
     // Memory usage check
-    this.registerCheck("memory", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    this.registerCheck("memory", () =>
+      __awaiter(this, void 0, void 0, function () {
         var memory, heapUsedMB, heapTotalMB, heapUsagePercent, status;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (typeof process === "undefined" || !process.memoryUsage) {
             return [
               2 /*return*/,
@@ -723,35 +710,33 @@ var ApiGatewayHealthCheckManager = /** @class */ (function () {
             },
           ];
         });
-      });
-    });
+      }),
+    );
     // Event loop lag check
-    this.registerCheck("event_loop", function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          return [
-            2 /*return*/,
-            new Promise(function (resolve) {
-              var start = Date.now();
-              setImmediate(function () {
-                var lag = Date.now() - start;
-                var status = lag > 100 ? "unhealthy" : "healthy";
-                resolve({
-                  status: status,
-                  details: {
-                    lagMs: lag,
-                    threshold: 100,
-                  },
-                });
+    this.registerCheck("event_loop", () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [
+          2 /*return*/,
+          new Promise((resolve) => {
+            var start = Date.now();
+            setImmediate(() => {
+              var lag = Date.now() - start;
+              var status = lag > 100 ? "unhealthy" : "healthy";
+              resolve({
+                status: status,
+                details: {
+                  lagMs: lag,
+                  threshold: 100,
+                },
               });
-            }),
-          ];
-        });
-      });
-    });
+            });
+          }),
+        ]);
+      }),
+    );
     // Uptime check
-    this.registerCheck("uptime", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    this.registerCheck("uptime", () =>
+      __awaiter(this, void 0, void 0, function () {
         var uptimeSeconds;
         var _a;
         return __generator(this, function (_b) {
@@ -773,8 +758,8 @@ var ApiGatewayHealthCheckManager = /** @class */ (function () {
             },
           ];
         });
-      });
-    });
+      }),
+    );
   };
   return ApiGatewayHealthCheckManager;
 })();
@@ -783,20 +768,19 @@ exports.ApiGatewayHealthCheckManager = ApiGatewayHealthCheckManager;
  * Monitoring Middleware
  * Middleware for collecting request/response metrics
  */
-var MonitoringMiddleware = /** @class */ (function () {
+var MonitoringMiddleware = /** @class */ (() => {
   function MonitoringMiddleware() {}
   MonitoringMiddleware.create = function (config) {
-    var _this = this;
     return {
       name: "monitoring",
       order: 1, // Run early to capture all requests
       enabled: true,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var startTime, responseContext, error_3;
           var _a;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 startTime = Date.now();
@@ -836,8 +820,7 @@ var MonitoringMiddleware = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     };
   };
   return MonitoringMiddleware;
@@ -847,7 +830,7 @@ exports.MonitoringMiddleware = MonitoringMiddleware;
  * Performance Monitor
  * Monitors API Gateway performance and alerts on issues
  */
-var ApiGatewayPerformanceMonitor = /** @class */ (function () {
+var ApiGatewayPerformanceMonitor = /** @class */ (() => {
   function ApiGatewayPerformanceMonitor(metrics, healthCheck, monitorInterval, logger) {
     if (monitorInterval === void 0) {
       monitorInterval = 60000;
@@ -876,13 +859,12 @@ var ApiGatewayPerformanceMonitor = /** @class */ (function () {
    * Start performance monitoring
    */
   ApiGatewayPerformanceMonitor.prototype.startMonitoring = function () {
-    var _this = this;
     var _a;
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-    this.intervalId = setInterval(function () {
-      _this.checkPerformance();
+    this.intervalId = setInterval(() => {
+      this.checkPerformance();
     }, this.monitorInterval);
     (_a = this.logger) === null || _a === void 0
       ? void 0
@@ -941,25 +923,24 @@ var ApiGatewayPerformanceMonitor = /** @class */ (function () {
    * Register default performance alerts
    */
   ApiGatewayPerformanceMonitor.prototype.registerDefaultAlerts = function () {
-    var _this = this;
     // High response time alert
-    this.registerAlert("request_duration_ms_p95", 1000, function (value) {
+    this.registerAlert("request_duration_ms_p95", 1000, (value) => {
       var _a;
-      (_a = _this.logger) === null || _a === void 0
+      (_a = this.logger) === null || _a === void 0
         ? void 0
         : _a.warn("High response time detected", { p95ResponseTime: value });
     });
     // High error rate alert
-    this.registerAlert("errors_total", 100, function (value) {
+    this.registerAlert("errors_total", 100, (value) => {
       var _a;
-      (_a = _this.logger) === null || _a === void 0
+      (_a = this.logger) === null || _a === void 0
         ? void 0
         : _a.warn("High error rate detected", { totalErrors: value });
     });
     // Memory usage alert
-    this.registerAlert("process_memory_heap_used_bytes", 500 * 1024 * 1024, function (value) {
+    this.registerAlert("process_memory_heap_used_bytes", 500 * 1024 * 1024, (value) => {
       var _a;
-      (_a = _this.logger) === null || _a === void 0
+      (_a = this.logger) === null || _a === void 0
         ? void 0
         : _a.warn("High memory usage detected", { heapUsedMB: Math.round(value / 1024 / 1024) });
     });

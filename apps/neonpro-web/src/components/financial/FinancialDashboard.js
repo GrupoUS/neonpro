@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialDashboard = FinancialDashboard;
 var react_1 = require("react");
@@ -178,7 +175,6 @@ var FinancialReports_1 = require("./FinancialReports");
 var FinancialInsights_1 = require("./FinancialInsights");
 var FinancialSettings_1 = require("./FinancialSettings");
 function FinancialDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     supabaseUrl = _a.supabaseUrl,
     supabaseKey = _a.supabaseKey,
@@ -217,10 +213,10 @@ function FinancialDashboard(_a) {
     setRefreshInterval = _m[1]; // 5 minutes
   // Initialize Financial System
   var initializeSystem = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var config, system, err_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, 5, 6]);
@@ -257,16 +253,15 @@ function FinancialDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId, supabaseUrl, supabaseKey],
   );
   // Load Dashboard Data
   var loadDashboardData = (0, react_1.useCallback)(
-    function (system) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (system) =>
+      __awaiter(this, void 0, void 0, function () {
         var activeSystem, overview, err_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -286,16 +281,15 @@ function FinancialDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [financialSystem, timeframe],
   );
   // Check System Health
   var checkSystemHealth = (0, react_1.useCallback)(
-    function (system) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (system) =>
+      __awaiter(this, void 0, void 0, function () {
         var activeSystem, health, err_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -314,16 +308,15 @@ function FinancialDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [financialSystem],
   );
   // Refresh Data
   var refreshData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var err_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!financialSystem || refreshing) return [2 /*return*/];
@@ -346,43 +339,31 @@ function FinancialDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [financialSystem, refreshing, loadDashboardData, checkSystemHealth],
   );
   // Auto Refresh Effect
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoRefresh || !financialSystem) return;
-      var interval = setInterval(refreshData, refreshInterval);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [autoRefresh, refreshInterval, refreshData, financialSystem],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!autoRefresh || !financialSystem) return;
+    var interval = setInterval(refreshData, refreshInterval);
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, refreshData, financialSystem]);
   // Initialize on mount
-  (0, react_1.useEffect)(
-    function () {
-      initializeSystem();
-      // Cleanup on unmount
-      return function () {
-        if (financialSystem) {
-          financialSystem.shutdown();
-        }
-      };
-    },
-    [initializeSystem],
-  );
-  // Timeframe change effect
-  (0, react_1.useEffect)(
-    function () {
-      if (financialSystem && !loading) {
-        loadDashboardData();
+  (0, react_1.useEffect)(() => {
+    initializeSystem();
+    // Cleanup on unmount
+    return () => {
+      if (financialSystem) {
+        financialSystem.shutdown();
       }
-    },
-    [timeframe, financialSystem, loading, loadDashboardData],
-  );
+    };
+  }, [initializeSystem]);
+  // Timeframe change effect
+  (0, react_1.useEffect)(() => {
+    if (financialSystem && !loading) {
+      loadDashboardData();
+    }
+  }, [timeframe, financialSystem, loading, loadDashboardData]);
   // Render Loading State
   if (loading) {
     return (
@@ -396,19 +377,17 @@ function FinancialDashboard(_a) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {__spreadArray([], Array(4), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardHeader className="pb-2">
-                  <skeleton_1.Skeleton className="h-4 w-24" />
-                  <skeleton_1.Skeleton className="h-8 w-16" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <skeleton_1.Skeleton className="h-4 w-20" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(4), true).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardHeader className="pb-2">
+                <skeleton_1.Skeleton className="h-4 w-24" />
+                <skeleton_1.Skeleton className="h-8 w-16" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <skeleton_1.Skeleton className="h-4 w-20" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -452,7 +431,7 @@ function FinancialDashboard(_a) {
     );
   }
   // Get status color for system health
-  var getHealthColor = function (status) {
+  var getHealthColor = (status) => {
     switch (status) {
       case "healthy":
         return "text-green-600";
@@ -465,7 +444,7 @@ function FinancialDashboard(_a) {
     }
   };
   // Get status icon for system health
-  var getHealthIcon = function (status) {
+  var getHealthIcon = (status) => {
     switch (status) {
       case "healthy":
         return <lucide_react_1.CheckCircle className="h-4 w-4" />;
@@ -524,12 +503,7 @@ function FinancialDashboard(_a) {
           {/* Timeframe Selector */}
           <div className="flex items-center gap-2">
             <label className="text-sm font-medium">Timeframe:</label>
-            <select_1.Select
-              value={timeframe}
-              onValueChange={function (value) {
-                return setTimeframe(value);
-              }}
-            >
+            <select_1.Select value={timeframe} onValueChange={(value) => setTimeframe(value)}>
               <select_1.SelectTrigger className="w-32">
                 <select_1.SelectValue />
               </select_1.SelectTrigger>
@@ -546,9 +520,7 @@ function FinancialDashboard(_a) {
           {/* Auto Refresh Toggle */}
           <div className="flex items-center gap-2">
             <button_1.Button
-              onClick={function () {
-                return setAutoRefresh(!autoRefresh);
-              }}
+              onClick={() => setAutoRefresh(!autoRefresh)}
               variant={autoRefresh ? "default" : "outline"}
               size="sm"
             >
@@ -632,34 +604,32 @@ function FinancialDashboard(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="space-y-3">
-                    {dashboardData.insights.slice(0, 3).map(function (insight, index) {
-                      return (
-                        <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
-                          <div
-                            className={"p-1 rounded-full ".concat(
-                              insight.type === "positive"
-                                ? "bg-green-100 text-green-600"
-                                : insight.type === "warning"
-                                  ? "bg-yellow-100 text-yellow-600"
-                                  : "bg-red-100 text-red-600",
-                            )}
-                          >
-                            {insight.type === "positive"
-                              ? <lucide_react_1.TrendingUp className="h-4 w-4" />
+                    {dashboardData.insights.slice(0, 3).map((insight, index) => (
+                      <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
+                        <div
+                          className={"p-1 rounded-full ".concat(
+                            insight.type === "positive"
+                              ? "bg-green-100 text-green-600"
                               : insight.type === "warning"
-                                ? <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                                : <lucide_react_1.TrendingDown className="h-4 w-4" />}
-                          </div>
-                          <div className="flex-1">
-                            <h4 className="font-medium">{insight.title}</h4>
-                            <p className="text-sm text-muted-foreground">{insight.description}</p>
-                            {insight.recommendation && (
-                              <p className="text-xs text-blue-600 mt-1">{insight.recommendation}</p>
-                            )}
-                          </div>
+                                ? "bg-yellow-100 text-yellow-600"
+                                : "bg-red-100 text-red-600",
+                          )}
+                        >
+                          {insight.type === "positive"
+                            ? <lucide_react_1.TrendingUp className="h-4 w-4" />
+                            : insight.type === "warning"
+                              ? <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                              : <lucide_react_1.TrendingDown className="h-4 w-4" />}
                         </div>
-                      );
-                    })}
+                        <div className="flex-1">
+                          <h4 className="font-medium">{insight.title}</h4>
+                          <p className="text-sm text-muted-foreground">{insight.description}</p>
+                          {insight.recommendation && (
+                            <p className="text-xs text-blue-600 mt-1">{insight.recommendation}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -690,7 +660,7 @@ function FinancialDashboard(_a) {
                       <progress_1.Progress value={systemHealth.overall_score} className="h-2" />
 
                       <div className="space-y-2">
-                        {Object.entries(systemHealth.modules).map(function (_a) {
+                        {Object.entries(systemHealth.modules).map((_a) => {
                           var module = _a[0],
                             status = _a[1];
                           return (

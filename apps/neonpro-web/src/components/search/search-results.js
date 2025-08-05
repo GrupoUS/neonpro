@@ -1,17 +1,16 @@
 // components/search/search-results.tsx
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,10 +130,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -145,13 +142,12 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SearchResults;
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function SearchResults(_a) {
-  var _this = this;
   var results = _a.results,
     totalCount = _a.totalCount,
     query = _a.query,
@@ -170,7 +166,7 @@ function SearchResults(_a) {
   var _f = (0, react_1.useState)("all"),
     filterByType = _f[0],
     setFilterByType = _f[1];
-  var getTypeIcon = function (type) {
+  var getTypeIcon = (type) => {
     var iconMap = {
       patients: lucide_react_1.User,
       appointments: lucide_react_1.Calendar,
@@ -186,7 +182,7 @@ function SearchResults(_a) {
     var IconComponent = iconMap[type] || lucide_react_1.FileText;
     return <IconComponent className="h-4 w-4" />;
   };
-  var getTypeColor = function (type) {
+  var getTypeColor = (type) => {
     var colorMap = {
       patients: "bg-blue-100 text-blue-800",
       appointments: "bg-green-100 text-green-800",
@@ -201,10 +197,10 @@ function SearchResults(_a) {
     };
     return colorMap[type] || "bg-gray-100 text-gray-800";
   };
-  var filteredResults = results.filter(function (result) {
-    return filterByType === "all" || result.type === filterByType;
-  });
-  var sortedResults = __spreadArray([], filteredResults, true).sort(function (a, b) {
+  var filteredResults = results.filter(
+    (result) => filterByType === "all" || result.type === filterByType,
+  );
+  var sortedResults = __spreadArray([], filteredResults, true).sort((a, b) => {
     var _a, _b;
     switch (sortBy) {
       case "relevance":
@@ -223,26 +219,22 @@ function SearchResults(_a) {
         return 0;
     }
   });
-  var typeGroups = results.reduce(function (groups, result) {
+  var typeGroups = results.reduce((groups, result) => {
     groups[result.type] = (groups[result.type] || 0) + 1;
     return groups;
   }, {});
-  var exportResults = function () {
+  var exportResults = () => {
     var csvContent = __spreadArray(
       [["Tipo", "Título", "Descrição", "Relevância"]],
-      sortedResults.map(function (result) {
-        return [
-          result.type,
-          result.title,
-          result.description,
-          (result.relevanceScore * 100).toFixed(1) + "%",
-        ];
-      }),
+      sortedResults.map((result) => [
+        result.type,
+        result.title,
+        result.description,
+        (result.relevanceScore * 100).toFixed(1) + "%",
+      ]),
       true,
     )
-      .map(function (row) {
-        return row.join(",");
-      })
+      .map((row) => row.join(","))
       .join("\n");
     var blob = new Blob([csvContent], { type: "text/csv" });
     var url = URL.createObjectURL(blob);
@@ -252,10 +244,10 @@ function SearchResults(_a) {
     a.click();
     URL.revokeObjectURL(url);
   };
-  var shareResults = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var shareResults = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!navigator.share) return [3 /*break*/, 5];
@@ -288,7 +280,6 @@ function SearchResults(_a) {
         }
       });
     });
-  };
   return (
     <div className="space-y-6">
       {/* Header com estatísticas */}
@@ -320,7 +311,7 @@ function SearchResults(_a) {
 
         {/* Distribuição por tipo */}
         <div className="flex flex-wrap gap-2">
-          {Object.entries(typeGroups).map(function (_a) {
+          {Object.entries(typeGroups).map((_a) => {
             var type = _a[0],
               count = _a[1];
             return (
@@ -342,9 +333,7 @@ function SearchResults(_a) {
             {/* Filtro por tipo */}
             <select
               value={filterByType}
-              onChange={function (e) {
-                return setFilterByType(e.target.value);
-              }}
+              onChange={(e) => setFilterByType(e.target.value)}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="all">Todos os tipos</option>
@@ -358,9 +347,7 @@ function SearchResults(_a) {
             {/* Ordenação */}
             <select
               value={sortBy}
-              onChange={function (e) {
-                return setSortBy(e.target.value);
-              }}
+              onChange={(e) => setSortBy(e.target.value)}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm"
             >
               <option value="relevance">Relevância</option>
@@ -372,9 +359,7 @@ function SearchResults(_a) {
           {/* Modo de visualização */}
           <div className="flex border border-gray-300 rounded-lg">
             <button
-              onClick={function () {
-                return setViewMode("list");
-              }}
+              onClick={() => setViewMode("list")}
               className={"p-2 ".concat(
                 viewMode === "list" ? "bg-blue-50 text-blue-600" : "text-gray-600",
               )}
@@ -382,9 +367,7 @@ function SearchResults(_a) {
               <lucide_react_1.List className="h-4 w-4" />
             </button>
             <button
-              onClick={function () {
-                return setViewMode("grid");
-              }}
+              onClick={() => setViewMode("grid")}
               className={"p-2 ".concat(
                 viewMode === "grid" ? "bg-blue-50 text-blue-600" : "text-gray-600",
               )}
@@ -404,123 +387,113 @@ function SearchResults(_a) {
           : <>
               {viewMode === "list"
                 ? <div className="divide-y divide-gray-100">
-                    {sortedResults.map(function (result) {
-                      return (
-                        <div
-                          key={result.id}
-                          onClick={function () {
-                            return onResultClick(result);
-                          }}
-                          className="p-6 hover:bg-gray-50 cursor-pointer transition-colors"
-                        >
-                          <div className="flex items-start gap-4">
-                            <div className={"p-2 rounded-lg ".concat(getTypeColor(result.type))}>
-                              {getTypeIcon(result.type)}
+                    {sortedResults.map((result) => (
+                      <div
+                        key={result.id}
+                        onClick={() => onResultClick(result)}
+                        className="p-6 hover:bg-gray-50 cursor-pointer transition-colors"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className={"p-2 rounded-lg ".concat(getTypeColor(result.type))}>
+                            {getTypeIcon(result.type)}
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="font-semibold text-gray-900 truncate">
+                                {result.title}
+                              </h3>
+                              <span
+                                className={"px-2 py-1 rounded-full text-xs font-medium ".concat(
+                                  getTypeColor(result.type),
+                                )}
+                              >
+                                {result.type}
+                              </span>
                             </div>
 
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-3 mb-2">
-                                <h3 className="font-semibold text-gray-900 truncate">
-                                  {result.title}
-                                </h3>
-                                <span
-                                  className={"px-2 py-1 rounded-full text-xs font-medium ".concat(
-                                    getTypeColor(result.type),
-                                  )}
-                                >
-                                  {result.type}
+                            <p className="text-gray-600 mb-3">{result.description}</p>
+
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <div className="flex-1 bg-gray-200 rounded-full h-2 w-24">
+                                  <div
+                                    className="bg-blue-500 h-2 rounded-full"
+                                    style={{
+                                      width: "".concat(result.relevanceScore * 100, "%"),
+                                    }}
+                                  />
+                                </div>
+                                <span className="text-sm text-gray-500">
+                                  {(result.relevanceScore * 100).toFixed(0)}% relevante
                                 </span>
                               </div>
 
-                              <p className="text-gray-600 mb-3">{result.description}</p>
-
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                  <div className="flex-1 bg-gray-200 rounded-full h-2 w-24">
-                                    <div
-                                      className="bg-blue-500 h-2 rounded-full"
-                                      style={{
-                                        width: "".concat(result.relevanceScore * 100, "%"),
+                              {result.actions && (
+                                <div className="flex gap-2">
+                                  {result.actions.slice(0, 2).map((action) => (
+                                    <button
+                                      key={action.id}
+                                      className="text-sm text-blue-600 hover:text-blue-800"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (action.url) {
+                                          window.open(action.url, "_blank");
+                                        }
                                       }}
-                                    />
-                                  </div>
-                                  <span className="text-sm text-gray-500">
-                                    {(result.relevanceScore * 100).toFixed(0)}% relevante
-                                  </span>
+                                    >
+                                      {action.label}
+                                    </button>
+                                  ))}
                                 </div>
-
-                                {result.actions && (
-                                  <div className="flex gap-2">
-                                    {result.actions.slice(0, 2).map(function (action) {
-                                      return (
-                                        <button
-                                          key={action.id}
-                                          className="text-sm text-blue-600 hover:text-blue-800"
-                                          onClick={function (e) {
-                                            e.stopPropagation();
-                                            if (action.url) {
-                                              window.open(action.url, "_blank");
-                                            }
-                                          }}
-                                        >
-                                          {action.label}
-                                        </button>
-                                      );
-                                    })}
-                                  </div>
-                                )}
-                              </div>
+                              )}
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 : <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {sortedResults.map(function (result) {
-                      return (
-                        <div
-                          key={result.id}
-                          onClick={function () {
-                            return onResultClick(result);
-                          }}
-                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md cursor-pointer transition-all"
-                        >
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className={"p-2 rounded-lg ".concat(getTypeColor(result.type))}>
-                              {getTypeIcon(result.type)}
-                            </div>
-                            <span
-                              className={"px-2 py-1 rounded-full text-xs font-medium ".concat(
-                                getTypeColor(result.type),
-                              )}
-                            >
-                              {result.type}
-                            </span>
+                    {sortedResults.map((result) => (
+                      <div
+                        key={result.id}
+                        onClick={() => onResultClick(result)}
+                        className="border border-gray-200 rounded-lg p-4 hover:shadow-md cursor-pointer transition-all"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className={"p-2 rounded-lg ".concat(getTypeColor(result.type))}>
+                            {getTypeIcon(result.type)}
                           </div>
-
-                          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-                            {result.title}
-                          </h3>
-
-                          <p className="text-gray-600 text-sm mb-3 line-clamp-3">
-                            {result.description}
-                          </p>
-
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 bg-gray-200 rounded-full h-1">
-                              <div
-                                className="bg-blue-500 h-1 rounded-full"
-                                style={{ width: "".concat(result.relevanceScore * 100, "%") }}
-                              />
-                            </div>
-                            <span className="text-xs text-gray-500">
-                              {(result.relevanceScore * 100).toFixed(0)}%
-                            </span>
-                          </div>
+                          <span
+                            className={"px-2 py-1 rounded-full text-xs font-medium ".concat(
+                              getTypeColor(result.type),
+                            )}
+                          >
+                            {result.type}
+                          </span>
                         </div>
-                      );
-                    })}
+
+                        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                          {result.title}
+                        </h3>
+
+                        <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+                          {result.description}
+                        </p>
+
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-1">
+                            <div
+                              className="bg-blue-500 h-1 rounded-full"
+                              style={{ width: "".concat(result.relevanceScore * 100, "%") }}
+                            />
+                          </div>
+                          <span className="text-xs text-gray-500">
+                            {(result.relevanceScore * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>}
 
               {/* Botão carregar mais */}

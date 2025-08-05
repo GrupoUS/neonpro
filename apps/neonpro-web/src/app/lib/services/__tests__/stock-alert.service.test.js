@@ -1,4 +1,3 @@
-"use strict";
 // Stock Alert Service Unit Tests
 // TDD Implementation following QA Best Practices
 // Test Strategy: Unit → Integration → E2E
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var stock_alert_service_1 = require("../stock-alert.service");
 var stock_1 = require("@/app/lib/types/stock");
@@ -157,51 +154,29 @@ var stock_1 = require("@/app/lib/types/stock");
 // ============================================================================
 // Mock Supabase client
 var mockSupabaseClient = {
-  from: jest.fn(function () {
-    return {
-      insert: jest.fn(function () {
-        return {
-          select: jest.fn(function () {
-            return {
-              single: jest.fn(),
-            };
-          }),
-        };
-      }),
-      update: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              eq: jest.fn(function () {
-                return {
-                  select: jest.fn(function () {
-                    return {
-                      single: jest.fn(),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      select: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              eq: jest.fn(function () {
-                return {
-                  is: jest.fn(function () {
-                    return {};
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-    };
-  }),
+  from: jest.fn(() => ({
+    insert: jest.fn(() => ({
+      select: jest.fn(() => ({
+        single: jest.fn(),
+      })),
+    })),
+    update: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          select: jest.fn(() => ({
+            single: jest.fn(),
+          })),
+        })),
+      })),
+    })),
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          is: jest.fn(() => ({})),
+        })),
+      })),
+    })),
+  })),
 };
 // Mock data
 var mockClinicId = "123e4567-e89b-12d3-a456-426614174000";
@@ -244,10 +219,10 @@ var mockDbAlertConfig = {
 // ============================================================================
 // TEST SUITE: StockAlertService
 // ============================================================================
-describe("StockAlertService", function () {
+describe("StockAlertService", () => {
   var stockAlertService;
   var mockSupabase;
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     mockSupabase = mockSupabaseClient;
     stockAlertService = new stock_alert_service_1.StockAlertService(mockSupabase, mockClinicId);
@@ -255,7 +230,7 @@ describe("StockAlertService", function () {
   // ==========================================================================
   // TEST GROUP: Alert Configuration Management
   // ==========================================================================
-  describe("createAlertConfig", function () {
+  describe("createAlertConfig", () => {
     var validRequest = {
       productId: mockProductId,
       alertType: "low_stock",
@@ -264,10 +239,10 @@ describe("StockAlertService", function () {
       severityLevel: "medium",
       notificationChannels: ["in_app", "email"],
     };
-    it("should create alert configuration successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should create alert configuration successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSelect, mockSingle, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSelect = jest.fn().mockResolvedValue({ data: [], error: null });
@@ -275,31 +250,19 @@ describe("StockAlertService", function () {
                 data: mockDbAlertConfig,
                 error: null,
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "stock_alert_configs") {
                   return {
-                    select: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              return {
-                                eq: function () {
-                                  return mockSelect;
-                                },
-                              };
-                            },
-                          };
-                        },
-                      };
-                    },
-                    insert: function () {
-                      return {
-                        select: function () {
-                          return { single: mockSingle };
-                        },
-                      };
-                    },
+                    select: () => ({
+                      eq: () => ({
+                        eq: () => ({
+                          eq: () => mockSelect,
+                        }),
+                      }),
+                    }),
+                    insert: () => ({
+                      select: () => ({ single: mockSingle }),
+                    }),
                   };
                 }
                 if (table === "stock_events") {
@@ -323,12 +286,11 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should throw validation error for invalid request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should throw validation error for invalid request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidRequest = __assign(__assign({}, validRequest), { thresholdValue: -5 });
@@ -345,12 +307,11 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should throw error for duplicate configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should throw error for duplicate configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSelect;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSelect = jest.fn().mockResolvedValue({
@@ -358,21 +319,13 @@ describe("StockAlertService", function () {
                 error: null,
               });
               mockSupabase.from.mockReturnValue({
-                select: function () {
-                  return {
-                    eq: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              return mockSelect;
-                            },
-                          };
-                        },
-                      };
-                    },
-                  };
-                },
+                select: () => ({
+                  eq: () => ({
+                    eq: () => ({
+                      eq: () => mockSelect,
+                    }),
+                  }),
+                }),
               });
               // Act & Assert
               return [
@@ -393,12 +346,11 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should throw error when database insert fails", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should throw error when database insert fails", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSelect, mockSingle;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSelect = jest.fn().mockResolvedValue({ data: [], error: null });
@@ -406,31 +358,19 @@ describe("StockAlertService", function () {
                 data: null,
                 error: { message: "Database error" },
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "stock_alert_configs") {
                   return {
-                    select: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              return {
-                                eq: function () {
-                                  return mockSelect;
-                                },
-                              };
-                            },
-                          };
-                        },
-                      };
-                    },
-                    insert: function () {
-                      return {
-                        select: function () {
-                          return { single: mockSingle };
-                        },
-                      };
-                    },
+                    select: () => ({
+                      eq: () => ({
+                        eq: () => ({
+                          eq: () => mockSelect,
+                        }),
+                      }),
+                    }),
+                    insert: () => ({
+                      select: () => ({ single: mockSingle }),
+                    }),
                   };
                 }
                 return {};
@@ -453,16 +393,15 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("updateAlertConfig", function () {
+  describe("updateAlertConfig", () => {
     var configId = mockAlertConfig.id;
     var updates = { thresholdValue: 15, severityLevel: "high" };
-    it("should update alert configuration successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should update alert configuration successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updatedConfig, mockSingle, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updatedConfig = __assign(__assign({}, mockDbAlertConfig), updates);
@@ -470,24 +409,16 @@ describe("StockAlertService", function () {
                 data: updatedConfig,
                 error: null,
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "stock_alert_configs") {
                   return {
-                    update: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              return {
-                                select: function () {
-                                  return { single: mockSingle };
-                                },
-                              };
-                            },
-                          };
-                        },
-                      };
-                    },
+                    update: () => ({
+                      eq: () => ({
+                        eq: () => ({
+                          select: () => ({ single: mockSingle }),
+                        }),
+                      }),
+                    }),
                   };
                 }
                 if (table === "stock_events") {
@@ -513,12 +444,11 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should throw error when update fails", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should throw error when update fails", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSingle;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSingle = jest.fn().mockResolvedValue({
@@ -526,21 +456,13 @@ describe("StockAlertService", function () {
                 error: { message: "Update failed" },
               });
               mockSupabase.from.mockReturnValue({
-                update: function () {
-                  return {
-                    eq: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            select: function () {
-                              return { single: mockSingle };
-                            },
-                          };
-                        },
-                      };
-                    },
-                  };
-                },
+                update: () => ({
+                  eq: () => ({
+                    eq: () => ({
+                      select: () => ({ single: mockSingle }),
+                    }),
+                  }),
+                }),
               });
               // Act & Assert
               return [
@@ -560,28 +482,23 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("deleteAlertConfig", function () {
+  describe("deleteAlertConfig", () => {
     var configId = mockAlertConfig.id;
-    it("should soft delete alert configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should soft delete alert configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockEq;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockEq = jest.fn().mockResolvedValue({ error: null });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "stock_alert_configs") {
                   return {
-                    update: function () {
-                      return {
-                        eq: function () {
-                          return { eq: mockEq };
-                        },
-                      };
-                    },
+                    update: () => ({
+                      eq: () => ({ eq: mockEq }),
+                    }),
                   };
                 }
                 if (table === "stock_events") {
@@ -603,110 +520,75 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
   // ==========================================================================
   // TEST GROUP: Alert Evaluation Logic
   // ==========================================================================
-  describe("evaluateAndGenerateAlerts", function () {
-    it("should evaluate all active configurations and generate appropriate alerts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("evaluateAndGenerateAlerts", () => {
+    it("should evaluate all active configurations and generate appropriate alerts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockConfigs, mockProducts, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockConfigs = [mockDbAlertConfig];
               mockProducts = [mockProduct];
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "stock_alert_configs") {
                   return {
-                    select: function () {
-                      return {
-                        eq: function () {
-                          return { eq: mockConfigs };
-                        },
-                      };
-                    },
+                    select: () => ({
+                      eq: () => ({ eq: mockConfigs }),
+                    }),
                   };
                 }
                 if (table === "products") {
                   return {
-                    select: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            is: function () {
-                              return mockProducts;
-                            },
-                          };
-                        },
-                      };
-                    },
+                    select: () => ({
+                      eq: () => ({
+                        is: () => mockProducts,
+                      }),
+                    }),
                   };
                 }
                 if (table === "stock_alerts_history") {
                   return {
-                    select: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              return {
-                                eq: function () {
-                                  return {
-                                    eq: function () {
-                                      return {
-                                        order: function () {
-                                          return {
-                                            limit: function () {
-                                              return {
-                                                maybeSingle: jest
-                                                  .fn()
-                                                  .mockResolvedValue({ data: null, error: null }),
-                                              };
-                                            },
-                                          };
-                                        },
-                                      };
-                                    },
-                                  };
-                                },
-                              };
-                            },
-                          };
-                        },
-                      };
-                    },
-                    insert: function () {
-                      return {
-                        select: function () {
-                          return {
-                            single: jest.fn().mockResolvedValue({
-                              data: __assign({ id: "new-alert-id" }, mockDbAlertConfig),
-                              error: null,
+                    select: () => ({
+                      eq: () => ({
+                        eq: () => ({
+                          eq: () => ({
+                            eq: () => ({
+                              order: () => ({
+                                limit: () => ({
+                                  maybeSingle: jest
+                                    .fn()
+                                    .mockResolvedValue({ data: null, error: null }),
+                                }),
+                              }),
                             }),
-                          };
-                        },
-                      };
-                    },
+                          }),
+                        }),
+                      }),
+                    }),
+                    insert: () => ({
+                      select: () => ({
+                        single: jest.fn().mockResolvedValue({
+                          data: __assign({ id: "new-alert-id" }, mockDbAlertConfig),
+                          error: null,
+                        }),
+                      }),
+                    }),
                   };
                 }
                 if (table === "stock_movements") {
                   return {
-                    select: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              return {
-                                gte: jest.fn().mockResolvedValue({ data: [], error: null }),
-                              };
-                            },
-                          };
-                        },
-                      };
-                    },
+                    select: () => ({
+                      eq: () => ({
+                        eq: () => ({
+                          gte: jest.fn().mockResolvedValue({ data: [], error: null }),
+                        }),
+                      }),
+                    }),
                   };
                 }
                 if (table === "stock_events") {
@@ -733,29 +615,24 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle errors gracefully and continue with other configurations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle errors gracefully and continue with other configurations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Arrange
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "stock_alert_configs") {
                   return {
-                    select: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              throw new Error("Database error");
-                            },
-                          };
+                    select: () => ({
+                      eq: () => ({
+                        eq: () => {
+                          throw new Error("Database error");
                         },
-                      };
-                    },
+                      }),
+                    }),
                   };
                 }
                 return {};
@@ -772,21 +649,20 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
   // ==========================================================================
   // TEST GROUP: Alert Management (Acknowledge/Resolve)
   // ==========================================================================
-  describe("acknowledgeAlert", function () {
+  describe("acknowledgeAlert", () => {
     var request = {
       alertId: "alert-123",
       note: "Acknowledged by admin",
     };
-    it("should acknowledge alert successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should acknowledge alert successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var acknowledgedAlert, mockSingle, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               acknowledgedAlert = __assign(__assign({}, mockDbAlertConfig), {
@@ -799,24 +675,16 @@ describe("StockAlertService", function () {
                 data: acknowledgedAlert,
                 error: null,
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "stock_alerts_history") {
                   return {
-                    update: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              return {
-                                select: function () {
-                                  return { single: mockSingle };
-                                },
-                              };
-                            },
-                          };
-                        },
-                      };
-                    },
+                    update: () => ({
+                      eq: () => ({
+                        eq: () => ({
+                          select: () => ({ single: mockSingle }),
+                        }),
+                      }),
+                    }),
                   };
                 }
                 if (table === "stock_events") {
@@ -837,19 +705,18 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("resolveAlert", function () {
+  describe("resolveAlert", () => {
     var request = {
       alertId: "alert-123",
       resolutionNote: "Stock replenished",
       resolutionAction: "purchase_order_created",
     };
-    it("should resolve alert successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should resolve alert successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var resolvedAlert, mockSingle, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               resolvedAlert = __assign(__assign({}, mockDbAlertConfig), {
@@ -861,24 +728,16 @@ describe("StockAlertService", function () {
                 data: resolvedAlert,
                 error: null,
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "stock_alerts_history") {
                   return {
-                    update: function () {
-                      return {
-                        eq: function () {
-                          return {
-                            eq: function () {
-                              return {
-                                select: function () {
-                                  return { single: mockSingle };
-                                },
-                              };
-                            },
-                          };
-                        },
-                      };
-                    },
+                    update: () => ({
+                      eq: () => ({
+                        eq: () => ({
+                          select: () => ({ single: mockSingle }),
+                        }),
+                      }),
+                    }),
                   };
                 }
                 if (table === "stock_events") {
@@ -899,28 +758,26 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
   // ==========================================================================
   // TEST GROUP: Alert Type Specific Logic
   // ==========================================================================
-  describe("Alert Type Evaluation", function () {
-    describe("Low Stock Alerts", function () {
-      it("should generate alert when stock is below quantity threshold", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+  describe("Alert Type Evaluation", () => {
+    describe("Low Stock Alerts", () => {
+      it("should generate alert when stock is below quantity threshold", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             // This test would be implemented in integration tests
             // as it requires the private method evaluateLowStockAlert
             expect(true).toBe(true); // Placeholder
             return [2 /*return*/];
           });
-        });
-      });
-      it("should calculate days coverage correctly", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }));
+      it("should calculate days coverage correctly", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var mockConsumptionData;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             mockConsumptionData = [
               { quantity: -2, created_at: "2024-01-01" },
               { quantity: -3, created_at: "2024-01-02" },
@@ -931,51 +788,47 @@ describe("StockAlertService", function () {
             expect(true).toBe(true); // Placeholder
             return [2 /*return*/];
           });
-        });
-      });
+        }));
     });
-    describe("Expiring Product Alerts", function () {
-      it("should generate alert for products expiring within threshold", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+    describe("Expiring Product Alerts", () => {
+      it("should generate alert for products expiring within threshold", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             // Test expiring products logic
             expect(true).toBe(true); // Placeholder
             return [2 /*return*/];
           });
-        });
-      });
+        }));
     });
-    describe("Expired Product Alerts", function () {
-      it("should generate alert for expired products", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+    describe("Expired Product Alerts", () => {
+      it("should generate alert for expired products", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             // Test expired products logic
             expect(true).toBe(true); // Placeholder
             return [2 /*return*/];
           });
-        });
-      });
+        }));
     });
-    describe("Overstock Alerts", function () {
-      it("should generate alert when stock exceeds maximum threshold", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+    describe("Overstock Alerts", () => {
+      it("should generate alert when stock exceeds maximum threshold", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             // Test overstock logic
             expect(true).toBe(true); // Placeholder
             return [2 /*return*/];
           });
-        });
-      });
+        }));
     });
   });
   // ==========================================================================
   // TEST GROUP: Error Handling
   // ==========================================================================
-  describe("Error Handling", function () {
-    it("should throw StockAlertError with proper error code and context", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling", () => {
+    it("should throw StockAlertError with proper error code and context", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidRequest = {
@@ -998,15 +851,14 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database connection errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle database connection errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Arrange
-              mockSupabase.from.mockImplementation(function () {
+              mockSupabase.from.mockImplementation(() => {
                 throw new Error("Database connection failed");
               });
               // Act & Assert
@@ -1031,88 +883,80 @@ describe("StockAlertService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
   // ==========================================================================
   // TEST GROUP: Integration Points
   // ==========================================================================
-  describe("Integration Points", function () {
-    it("should log events for audit trail", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Integration Points", () => {
+    it("should log events for audit trail", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           // This would test the logStockEvent method
           // Implementation in integration tests
           expect(true).toBe(true); // Placeholder
           return [2 /*return*/];
         });
-      });
-    });
-    it("should trigger notifications for generated alerts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should trigger notifications for generated alerts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           // This would test notification system integration
           // Implementation in integration tests
           expect(true).toBe(true); // Placeholder
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
 });
 // ============================================================================
 // PERFORMANCE TESTS (QA Recommendation: Performance testing)
 // ============================================================================
-describe("StockAlertService Performance Tests", function () {
-  it("should handle 1000+ products evaluation within 5 seconds", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+describe("StockAlertService Performance Tests", () => {
+  it("should handle 1000+ products evaluation within 5 seconds", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Performance test implementation
         // This would be in a separate performance test suite
         expect(true).toBe(true); // Placeholder
         return [2 /*return*/];
       });
-    });
-  });
-  it("should not cause memory leaks with large datasets", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("should not cause memory leaks with large datasets", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Memory usage test
         expect(true).toBe(true); // Placeholder
         return [2 /*return*/];
       });
-    });
-  });
+    }));
 });
 // ============================================================================
 // EDGE CASE TESTS (QA Recommendation: Edge case coverage)
 // ============================================================================
-describe("StockAlertService Edge Cases", function () {
-  it("should handle products without consumption history", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+describe("StockAlertService Edge Cases", () => {
+  it("should handle products without consumption history", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Edge case: new products
         expect(true).toBe(true); // Placeholder
         return [2 /*return*/];
       });
-    });
-  });
-  it("should handle products without expiration dates", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("should handle products without expiration dates", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Edge case: non-perishable products
         expect(true).toBe(true); // Placeholder
         return [2 /*return*/];
       });
-    });
-  });
-  it("should handle timezone differences correctly", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("should handle timezone differences correctly", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Edge case: multi-timezone clinics
         expect(true).toBe(true); // Placeholder
         return [2 /*return*/];
       });
-    });
-  });
+    }));
 });

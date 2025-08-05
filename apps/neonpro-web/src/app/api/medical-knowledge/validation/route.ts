@@ -1,9 +1,9 @@
 // Evidence Validation API Endpoints
 // Story 9.5: API endpoints for evidence validation and recommendation analysis
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { MedicalKnowledgeBaseService } from "@/app/lib/services/medical-knowledge-base";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 const service = new MedicalKnowledgeBaseService();
 
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get("action");
 
     switch (action) {
-      case "validation-history":
+      case "validation-history": {
         // Get validation history for a recommendation
         const recommendationId = searchParams.get("recommendation_id");
         if (!recommendationId) {
@@ -45,8 +45,9 @@ export async function GET(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: validations });
+      }
 
-      case "pending-validations":
+      case "pending-validations": {
         // Get all pending validations that require human review
         const { data: pending, error: pendingError } = await supabase
           .from("validation_results")
@@ -59,8 +60,9 @@ export async function GET(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: pending });
+      }
 
-      case "validation-stats":
+      case "validation-stats": {
         // Get validation statistics
         const { data: stats, error: statsError } = await supabase
           .from("validation_results")
@@ -84,8 +86,9 @@ export async function GET(request: NextRequest) {
         };
 
         return NextResponse.json({ success: true, data: statistics });
+      }
 
-      case "evidence-sources":
+      case "evidence-sources": {
         // Get available evidence sources for validation
         const evidenceQuery = searchParams.get("query") || "";
         const limit = parseInt(searchParams.get("limit") || "50");
@@ -101,6 +104,7 @@ export async function GET(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: evidence });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action parameter" }, { status: 400 });
@@ -132,12 +136,13 @@ export async function POST(request: NextRequest) {
     const { action, data } = body;
 
     switch (action) {
-      case "validate-recommendation":
+      case "validate-recommendation": {
         // Validate a medical recommendation using evidence
         const validationResult = await service.validateRecommendation(data);
         return NextResponse.json({ success: true, data: validationResult });
+      }
 
-      case "batch-validate":
+      case "batch-validate": {
         // Validate multiple recommendations at once
         const { recommendations } = data;
         if (!Array.isArray(recommendations)) {
@@ -154,8 +159,9 @@ export async function POST(request: NextRequest) {
         );
 
         return NextResponse.json({ success: true, data: batchResults });
+      }
 
-      case "manual-validation":
+      case "manual-validation": {
         // Manual validation by human reviewer
         const { validation_id, reviewer_decision, reviewer_notes, confidence_score } = data;
 
@@ -186,8 +192,9 @@ export async function POST(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: updatedValidation });
+      }
 
-      case "evidence-feedback":
+      case "evidence-feedback": {
         // Submit feedback on evidence quality or relevance
         const { evidence_id, feedback_type, feedback_rating, feedback_notes } = data;
 
@@ -216,8 +223,9 @@ export async function POST(request: NextRequest) {
           message: "Feedback recorded successfully",
           data: feedbackData,
         });
+      }
 
-      case "create-evidence-synthesis":
+      case "create-evidence-synthesis": {
         // Create a synthesis of multiple evidence sources
         const { evidence_ids, synthesis_title, synthesis_summary, confidence_assessment } = data;
 
@@ -243,6 +251,7 @@ export async function POST(request: NextRequest) {
 
         const synthesis = await service.createMedicalKnowledge(synthesisData);
         return NextResponse.json({ success: true, data: synthesis }, { status: 201 });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -278,7 +287,7 @@ export async function PUT(request: NextRequest) {
     }
 
     switch (action) {
-      case "update-validation-status":
+      case "update-validation-status": {
         // Update validation status and notes
         const { status, notes, confidence_score } = data;
 
@@ -299,8 +308,9 @@ export async function PUT(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: updated });
+      }
 
-      case "approve-validation":
+      case "approve-validation": {
         // Approve a validation result
         const { data: approved, error: approveError } = await supabase
           .from("validation_results")
@@ -318,8 +328,9 @@ export async function PUT(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: approved });
+      }
 
-      case "reject-validation":
+      case "reject-validation": {
         // Reject a validation result
         const { rejection_reason } = data;
 
@@ -340,6 +351,7 @@ export async function PUT(request: NextRequest) {
         }
 
         return NextResponse.json({ success: true, data: rejected });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });

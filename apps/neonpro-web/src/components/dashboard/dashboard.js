@@ -3,7 +3,6 @@
 // Based on research: SaaS dashboard best practices + shadcn/ui patterns
 // Created: 2025-01-22
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Dashboard = Dashboard;
 var react_1 = require("react");

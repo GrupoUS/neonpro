@@ -1,8 +1,8 @@
-import React from "react";
-import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
+import { renderHook, waitFor } from "@testing-library/react";
+import React from "react";
 import { mockAnalyticsData, mockErrorResponse } from "@/../../__tests__/utils/mockData";
+import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
 
 // Mock Supabase client
 jest.mock("@/utils/supabase/client", () => ({

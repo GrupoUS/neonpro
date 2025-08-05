@@ -1,11 +1,11 @@
 // Story 10.2: Progress Tracking through Computer Vision - Predictions API
 // API endpoint for managing progress predictions
 
+import type { cookies } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import type { progressTrackingService } from "@/app/lib/services/progress-tracking";
 import type { createProgressPredictionRequestSchema } from "@/app/lib/validations/progress-tracking";
-import type { cookies } from "next/headers";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {

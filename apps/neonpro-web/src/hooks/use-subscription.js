@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSubscription = useSubscription;
 exports.SubscriptionProvider = SubscriptionProvider;
@@ -148,11 +145,11 @@ function useSubscription() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     function fetchSubscription() {
       return __awaiter(this, void 0, void 0, function () {
         var response, data, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, 6, 7]);
@@ -190,32 +187,32 @@ function useSubscription() {
     }
     fetchSubscription();
   }, []);
-  var hasFeature = function (feature) {
+  var hasFeature = (feature) => {
     if (!subscription || !subscription.features) return false;
     return subscription.features.includes(feature);
   };
-  var canAddPatients = function (currentPatientCount) {
+  var canAddPatients = (currentPatientCount) => {
     if (!subscription || !subscription.max_patients) return true; // Unlimited
     return currentPatientCount < subscription.max_patients;
   };
-  var canAddClinics = function (currentClinicsCount) {
+  var canAddClinics = (currentClinicsCount) => {
     if (!subscription || !subscription.max_clinics) return true; // Unlimited
     return currentClinicsCount < subscription.max_clinics;
   };
-  var isActive = function () {
+  var isActive = () => {
     if (!subscription) return false;
     var now = new Date();
     var periodEnd = new Date(subscription.current_period_end);
     return subscription.status === "active" && periodEnd > now;
   };
-  var daysUntilRenewal = function () {
+  var daysUntilRenewal = () => {
     if (!subscription) return 0;
     var renewalDate = new Date(subscription.current_period_end);
     var today = new Date();
     var diffTime = renewalDate.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
-  var isExpiringSoon = function (days) {
+  var isExpiringSoon = (days) => {
     if (days === void 0) {
       days = 7;
     }
@@ -235,7 +232,6 @@ function useSubscription() {
 }
 var SubscriptionContext = (0, react_1.createContext)(undefined);
 function SubscriptionProvider(_a) {
-  var _this = this;
   var children = _a.children,
     user = _a.user;
   var _b = (0, react_1.useState)(null),
@@ -247,10 +243,10 @@ function SubscriptionProvider(_a) {
   var _d = (0, react_1.useState)(null),
     error = _d[0],
     setError = _d[1];
-  var refreshSubscription = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var refreshSubscription = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!user) {
@@ -294,13 +290,9 @@ function SubscriptionProvider(_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      refreshSubscription();
-    },
-    [user === null || user === void 0 ? void 0 : user.id],
-  );
+  (0, react_1.useEffect)(() => {
+    refreshSubscription();
+  }, [user === null || user === void 0 ? void 0 : user.id]);
   return (
     <SubscriptionContext.Provider
       value={{

@@ -4,8 +4,8 @@
  */
 
 import type { createClient } from "@/lib/supabase/client";
-import type { securityAuditLogger } from "./security-audit-logger";
 import type { performanceTracker } from "./performance-tracker";
+import type { securityAuditLogger } from "./security-audit-logger";
 
 export interface Permission {
   id: string;
@@ -646,12 +646,13 @@ class PermissionValidator {
     const userIP = context.ipAddress;
 
     switch (condition.operator) {
-      case "in":
+      case "in": {
         const allowedIPs = Array.isArray(condition.value) ? condition.value : [condition.value];
         return {
           passed: allowedIPs.includes(userIP),
           reason: !allowedIPs.includes(userIP) ? `IP ${userIP} not in allowed list` : undefined,
         };
+      }
       default:
         return { passed: true };
     }

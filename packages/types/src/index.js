@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Types Package
  * Shared TypeScript types for healthcare platform

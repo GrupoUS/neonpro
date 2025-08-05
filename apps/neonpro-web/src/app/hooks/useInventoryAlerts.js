@@ -4,32 +4,31 @@
 // Created: 2025-01-26
 // =====================================================================================
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,10 +148,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -163,7 +160,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.alertUtils = exports.AlertType = exports.AlertSeverity = void 0;
 exports.useInventoryAlerts = useInventoryAlerts;
@@ -173,7 +170,6 @@ var sonner_1 = require("sonner");
 // CUSTOM HOOK
 // =====================================================================================
 function useInventoryAlerts() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     alerts = _a[0],
     setAlerts = _a[1];
@@ -189,26 +185,24 @@ function useInventoryAlerts() {
   // =====================================================================================
   // COMPUTED VALUES
   // =====================================================================================
-  var unreadCount = alerts.filter(function (alert) {
-    return !alert.is_read;
-  }).length;
-  var criticalCount = alerts.filter(function (alert) {
-    return alert.severity === "critical" || alert.severity === "high";
-  }).length;
+  var unreadCount = alerts.filter((alert) => !alert.is_read).length;
+  var criticalCount = alerts.filter(
+    (alert) => alert.severity === "critical" || alert.severity === "high",
+  ).length;
   // =====================================================================================
   // LOAD ALERTS
   // =====================================================================================
-  var loadAlerts = (0, react_1.useCallback)(function () {
+  var loadAlerts = (0, react_1.useCallback)(() => {
     var args_1 = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args_1[_i] = arguments[_i];
     }
-    return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (filters) {
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (filters) {
       var searchParams, response, data, err_1;
       if (filters === void 0) {
         filters = {};
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -251,178 +245,176 @@ function useInventoryAlerts() {
   // =====================================================================================
   // MARK ALERT AS READ
   // =====================================================================================
-  var markAsRead = (0, react_1.useCallback)(function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, err_2;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/alerts/".concat(alertId), {
-                method: "PATCH",
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to mark alert as read");
-            }
-            setAlerts(function (prev) {
-              return prev.map(function (alert) {
-                return alert.id === alertId
-                  ? __assign(__assign({}, alert), { is_read: true })
-                  : alert;
-              });
-            });
-            sonner_1.toast.success("Alert marked as read");
-            return [3 /*break*/, 3];
-          case 2:
-            err_2 = _a.sent();
-            console.error("Error marking alert as read:", err_2);
-            sonner_1.toast.error("Failed to mark alert as read");
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var markAsRead = (0, react_1.useCallback)(
+    (alertId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, err_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/alerts/".concat(alertId), {
+                  method: "PATCH",
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to mark alert as read");
+              }
+              setAlerts((prev) =>
+                prev.map((alert) =>
+                  alert.id === alertId ? __assign(__assign({}, alert), { is_read: true }) : alert,
+                ),
+              );
+              sonner_1.toast.success("Alert marked as read");
+              return [3 /*break*/, 3];
+            case 2:
+              err_2 = _a.sent();
+              console.error("Error marking alert as read:", err_2);
+              sonner_1.toast.error("Failed to mark alert as read");
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // =====================================================================================
   // DISMISS ALERT
   // =====================================================================================
-  var dismissAlert = (0, react_1.useCallback)(function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, err_3;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/alerts/".concat(alertId), {
-                method: "DELETE",
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to dismiss alert");
-            }
-            setAlerts(function (prev) {
-              return prev.filter(function (alert) {
-                return alert.id !== alertId;
-              });
-            });
-            sonner_1.toast.success("Alert dismissed");
-            return [3 /*break*/, 3];
-          case 2:
-            err_3 = _a.sent();
-            console.error("Error dismissing alert:", err_3);
-            sonner_1.toast.error("Failed to dismiss alert");
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var dismissAlert = (0, react_1.useCallback)(
+    (alertId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, err_3;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/alerts/".concat(alertId), {
+                  method: "DELETE",
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to dismiss alert");
+              }
+              setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
+              sonner_1.toast.success("Alert dismissed");
+              return [3 /*break*/, 3];
+            case 2:
+              err_3 = _a.sent();
+              console.error("Error dismissing alert:", err_3);
+              sonner_1.toast.error("Failed to dismiss alert");
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // =====================================================================================
   // MARK ALL AS READ
   // =====================================================================================
-  var markAllAsRead = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, err_4;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/alerts/mark-all-read", {
-                method: "PATCH",
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to mark all alerts as read");
-            }
-            setAlerts(function (prev) {
-              return prev.map(function (alert) {
-                return __assign(__assign({}, alert), { is_read: true });
-              });
-            });
-            sonner_1.toast.success("All alerts marked as read");
-            return [3 /*break*/, 3];
-          case 2:
-            err_4 = _a.sent();
-            console.error("Error marking all alerts as read:", err_4);
-            sonner_1.toast.error("Failed to mark all alerts as read");
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var markAllAsRead = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, err_4;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/alerts/mark-all-read", {
+                  method: "PATCH",
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to mark all alerts as read");
+              }
+              setAlerts((prev) =>
+                prev.map((alert) => __assign(__assign({}, alert), { is_read: true })),
+              );
+              sonner_1.toast.success("All alerts marked as read");
+              return [3 /*break*/, 3];
+            case 2:
+              err_4 = _a.sent();
+              console.error("Error marking all alerts as read:", err_4);
+              sonner_1.toast.error("Failed to mark all alerts as read");
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // =====================================================================================
   // CREATE ALERT
   // =====================================================================================
-  var createAlert = (0, react_1.useCallback)(function (alertData) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, newAlert_1, err_5;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, , 4]);
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/alerts", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(alertData),
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to create alert");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            newAlert_1 = _a.sent();
-            setAlerts(function (prev) {
-              return __spreadArray([newAlert_1], prev, true);
-            });
-            // Show notification based on severity
-            if (newAlert_1.severity === "critical" || newAlert_1.severity === "high") {
-              sonner_1.toast.error("Critical Alert: ".concat(newAlert_1.title));
-            } else {
-              sonner_1.toast.warning("New Alert: ".concat(newAlert_1.title));
-            }
-            return [3 /*break*/, 4];
-          case 3:
-            err_5 = _a.sent();
-            console.error("Error creating alert:", err_5);
-            sonner_1.toast.error("Failed to create alert");
-            return [3 /*break*/, 4];
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var createAlert = (0, react_1.useCallback)(
+    (alertData) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, newAlert_1, err_5;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, , 4]);
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/alerts", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(alertData),
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to create alert");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              newAlert_1 = _a.sent();
+              setAlerts((prev) => __spreadArray([newAlert_1], prev, true));
+              // Show notification based on severity
+              if (newAlert_1.severity === "critical" || newAlert_1.severity === "high") {
+                sonner_1.toast.error("Critical Alert: ".concat(newAlert_1.title));
+              } else {
+                sonner_1.toast.warning("New Alert: ".concat(newAlert_1.title));
+              }
+              return [3 /*break*/, 4];
+            case 3:
+              err_5 = _a.sent();
+              console.error("Error creating alert:", err_5);
+              sonner_1.toast.error("Failed to create alert");
+              return [3 /*break*/, 4];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // =====================================================================================
   // REFRESH ALERTS
   // =====================================================================================
   var refreshAlerts = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, loadAlerts()];
@@ -431,44 +423,36 @@ function useInventoryAlerts() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadAlerts],
   );
   // =====================================================================================
   // INITIAL LOAD
   // =====================================================================================
-  (0, react_1.useEffect)(
-    function () {
-      loadAlerts();
-    },
-    [loadAlerts],
-  );
+  (0, react_1.useEffect)(() => {
+    loadAlerts();
+  }, [loadAlerts]);
   // =====================================================================================
   // AUTO REFRESH (EVERY 30 SECONDS)
   // =====================================================================================
-  (0, react_1.useEffect)(
-    function () {
-      var interval = setInterval(function () {
-        loadAlerts();
-      }, 30000); // Refresh every 30 seconds
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [loadAlerts],
-  );
+  (0, react_1.useEffect)(() => {
+    var interval = setInterval(() => {
+      loadAlerts();
+    }, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, [loadAlerts]);
   // =====================================================================================
   // RETURN HOOK INTERFACE
   // =====================================================================================
   // =====================================================================================
   // CLEANUP EFFECT
   // =====================================================================================
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       setMounted(false);
-    };
-  }, []);
+    },
+    [],
+  );
   return {
     alerts: alerts,
     loading: loading,
@@ -503,7 +487,7 @@ exports.AlertType = {
 // ALERT UTILITIES
 // =====================================================================================
 exports.alertUtils = {
-  getSeverityColor: function (severity) {
+  getSeverityColor: (severity) => {
     switch (severity) {
       case "critical":
         return "text-red-600";
@@ -517,7 +501,7 @@ exports.alertUtils = {
         return "text-gray-600";
     }
   },
-  getSeverityBadgeColor: function (severity) {
+  getSeverityBadgeColor: (severity) => {
     switch (severity) {
       case "critical":
         return "bg-red-100 text-red-800";
@@ -531,7 +515,7 @@ exports.alertUtils = {
         return "bg-gray-100 text-gray-800";
     }
   },
-  getTypeLabel: function (type) {
+  getTypeLabel: (type) => {
     switch (type) {
       case "low_stock":
         return "Low Stock";
@@ -547,7 +531,5 @@ exports.alertUtils = {
         return "Unknown";
     }
   },
-  shouldShowNotification: function (alert) {
-    return alert.severity === "critical" || alert.severity === "high";
-  },
+  shouldShowNotification: (alert) => alert.severity === "critical" || alert.severity === "high",
 };

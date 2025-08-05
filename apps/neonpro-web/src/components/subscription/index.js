@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionNotificationProvider =
   exports.SubscriptionAlert =
@@ -14,71 +13,51 @@ exports.SubscriptionNotificationProvider =
 var status_card_1 = require("./status-card");
 Object.defineProperty(exports, "SubscriptionStatusCard", {
   enumerable: true,
-  get: function () {
-    return status_card_1.default;
-  },
+  get: () => status_card_1.default,
 });
 var compact_widget_1 = require("./compact-widget");
 Object.defineProperty(exports, "CompactSubscriptionWidget", {
   enumerable: true,
-  get: function () {
-    return compact_widget_1.default;
-  },
+  get: () => compact_widget_1.default,
 });
 var dashboard_widget_1 = require("./dashboard-widget");
 Object.defineProperty(exports, "SubscriptionDashboardWidget", {
   enumerable: true,
-  get: function () {
-    return dashboard_widget_1.default;
-  },
+  get: () => dashboard_widget_1.default,
 });
 var detailed_widget_1 = require("./detailed-widget");
 Object.defineProperty(exports, "DetailedSubscriptionWidget", {
   enumerable: true,
-  get: function () {
-    return detailed_widget_1.default;
-  },
+  get: () => detailed_widget_1.default,
 });
 var feature_gate_1 = require("./feature-gate");
 Object.defineProperty(exports, "FeatureGate", {
   enumerable: true,
-  get: function () {
-    return feature_gate_1.default;
-  },
+  get: () => feature_gate_1.default,
 });
 var pro_feature_gate_1 = require("./pro-feature-gate");
 Object.defineProperty(exports, "ProFeatureGate", {
   enumerable: true,
-  get: function () {
-    return pro_feature_gate_1.default;
-  },
+  get: () => pro_feature_gate_1.default,
 });
 var enterprise_feature_gate_1 = require("./enterprise-feature-gate");
 Object.defineProperty(exports, "EnterpriseFeatureGate", {
   enumerable: true,
-  get: function () {
-    return enterprise_feature_gate_1.default;
-  },
+  get: () => enterprise_feature_gate_1.default,
 });
 var usage_limit_gate_1 = require("./usage-limit-gate");
 Object.defineProperty(exports, "UsageLimitGate", {
   enumerable: true,
-  get: function () {
-    return usage_limit_gate_1.default;
-  },
+  get: () => usage_limit_gate_1.default,
 });
 var subscription_alert_1 = require("./subscription-alert");
 Object.defineProperty(exports, "SubscriptionAlert", {
   enumerable: true,
-  get: function () {
-    return subscription_alert_1.default;
-  },
+  get: () => subscription_alert_1.default,
 });
 var notification_provider_1 = require("./notification-provider");
 Object.defineProperty(exports, "SubscriptionNotificationProvider", {
   enumerable: true,
-  get: function () {
-    return notification_provider_1.default;
-  },
+  get: () => notification_provider_1.default,
 });
 // Create placeholder components

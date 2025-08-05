@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Demand Forecasting Service
  * Service for inventory demand prediction and forecasting
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,17 +132,17 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.demandForecastingService = exports.DemandForecastingService = void 0;
-var DemandForecastingService = /** @class */ (function () {
+var DemandForecastingService = /** @class */ (() => {
   function DemandForecastingService() {}
   DemandForecastingService.generateForecast = function (itemId_1) {
     return __awaiter(this, arguments, void 0, function (itemId, periodDays) {
       if (periodDays === void 0) {
         periodDays = 30;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar previsão de demanda
         return [
           2 /*return*/,
@@ -163,7 +160,7 @@ var DemandForecastingService = /** @class */ (function () {
   };
   DemandForecastingService.analyzeTrends = function (itemId, historicalData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar análise de tendências
         return [
           2 /*return*/,
@@ -179,7 +176,7 @@ var DemandForecastingService = /** @class */ (function () {
   };
   DemandForecastingService.optimizeInventoryLevels = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar otimização de níveis de estoque
         return [
           2 /*return*/,

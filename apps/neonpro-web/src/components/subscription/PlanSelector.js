@@ -4,18 +4,17 @@
  * Story: EPIC-001.1 - Subscription Middleware & Management System
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,10 +134,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -149,7 +146,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PlanSelector;
 var react_1 = require("react");
@@ -160,7 +157,6 @@ var switch_1 = require("@/components/ui/switch");
 var label_1 = require("@/components/ui/label");
 var lucide_react_1 = require("lucide-react");
 function PlanSelector(_a) {
-  var _this = this;
   var currentPlanId = _a.currentPlanId,
     onSelectPlan = _a.onSelectPlan,
     _b = _a.isUpgrade,
@@ -176,13 +172,13 @@ function PlanSelector(_a) {
   var _f = (0, react_1.useState)(true),
     fetchLoading = _f[0],
     setFetchLoading = _f[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     fetchPlans();
   }, []);
-  var fetchPlans = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchPlans = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -208,8 +204,7 @@ function PlanSelector(_a) {
         }
       });
     });
-  };
-  var getPlanIcon = function (planName) {
+  var getPlanIcon = (planName) => {
     switch (planName) {
       case "basic":
         return <lucide_react_1.Star className="h-6 w-6 text-blue-500" />;
@@ -221,7 +216,7 @@ function PlanSelector(_a) {
         return <lucide_react_1.Star className="h-6 w-6 text-gray-500" />;
     }
   };
-  var getPlanPrice = function (plan) {
+  var getPlanPrice = (plan) => {
     switch (billingCycle) {
       case "monthly":
         return { price: plan.price_monthly, formatted: plan.formatted_prices.monthly };
@@ -231,7 +226,7 @@ function PlanSelector(_a) {
         return { price: plan.price_yearly, formatted: plan.formatted_prices.yearly };
     }
   };
-  var getSavings = function (plan) {
+  var getSavings = (plan) => {
     switch (billingCycle) {
       case "quarterly":
         return plan.savings.quarterly;
@@ -241,7 +236,7 @@ function PlanSelector(_a) {
         return 0;
     }
   };
-  var getFeaturesList = function (plan) {
+  var getFeaturesList = (plan) => {
     var featureLabels = {
       appointment_management: {
         label: "Gestão de Consultas",
@@ -299,12 +294,12 @@ function PlanSelector(_a) {
       },
     };
     return Object.entries(plan.features)
-      .filter(function (_a) {
+      .filter((_a) => {
         var _ = _a[0],
           enabled = _a[1];
         return enabled;
       })
-      .map(function (_a) {
+      .map((_a) => {
         var feature = _a[0],
           _ = _a[1];
         return (
@@ -316,7 +311,7 @@ function PlanSelector(_a) {
       })
       .slice(0, 8); // Show top 8 features
   };
-  var getLimitsText = function (plan) {
+  var getLimitsText = (plan) => {
     var limits = plan.limits;
     var limitTexts = [];
     if (limits.max_patients !== undefined) {
@@ -338,24 +333,22 @@ function PlanSelector(_a) {
     return (
       <div className="space-y-6">
         <div className="grid gap-6 md:grid-cols-3">
-          {__spreadArray([], Array(3), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="animate-pulse">
-                <card_1.CardHeader>
-                  <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-                  <div className="space-y-2">
-                    {__spreadArray([], Array(6), true).map(function (_, j) {
-                      return <div key={j} className="h-4 bg-gray-200 rounded"></div>;
-                    })}
-                  </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(3), true).map((_, i) => (
+            <card_1.Card key={i} className="animate-pulse">
+              <card_1.CardHeader>
+                <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+                <div className="space-y-2">
+                  {__spreadArray([], Array(6), true).map((_, j) => (
+                    <div key={j} className="h-4 bg-gray-200 rounded"></div>
+                  ))}
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -373,9 +366,7 @@ function PlanSelector(_a) {
         <switch_1.Switch
           id="billing-toggle"
           checked={billingCycle !== "monthly"}
-          onCheckedChange={function (checked) {
-            return setBillingCycle(checked ? "yearly" : "monthly");
-          }}
+          onCheckedChange={(checked) => setBillingCycle(checked ? "yearly" : "monthly")}
         />
         <label_1.Label
           htmlFor="billing-yearly"
@@ -392,7 +383,7 @@ function PlanSelector(_a) {
 
       {/* Plans Grid */}
       <div className="grid gap-6 md:grid-cols-3">
-        {plans.map(function (plan) {
+        {plans.map((plan) => {
           var planPrice = getPlanPrice(plan);
           var savings = getSavings(plan);
           var features = getFeaturesList(plan);
@@ -443,14 +434,12 @@ function PlanSelector(_a) {
 
                 {/* Features */}
                 <div className="space-y-2">
-                  {features.map(function (feature, index) {
-                    return (
-                      <div key={index} className="flex items-center space-x-2 text-sm">
-                        <lucide_react_1.Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                        <span>{feature.label}</span>
-                      </div>
-                    );
-                  })}
+                  {features.map((feature, index) => (
+                    <div key={index} className="flex items-center space-x-2 text-sm">
+                      <lucide_react_1.Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      <span>{feature.label}</span>
+                    </div>
+                  ))}
                 </div>
 
                 {/* Action Button */}
@@ -462,9 +451,7 @@ function PlanSelector(_a) {
                     : <button_1.Button
                         className="w-full"
                         variant={plan.is_featured ? "default" : "outline"}
-                        onClick={function () {
-                          return onSelectPlan(plan.id, billingCycle);
-                        }}
+                        onClick={() => onSelectPlan(plan.id, billingCycle)}
                         disabled={loading}
                       >
                         {isUpgrade ? "Fazer Upgrade" : "Selecionar Plano"}

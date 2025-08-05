@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CollapsibleContent = exports.CollapsibleTrigger = exports.Collapsible = void 0;
 var CollapsiblePrimitive = require("@radix-ui/react-collapsible");

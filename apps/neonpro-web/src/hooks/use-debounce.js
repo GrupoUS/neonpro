@@ -1,4 +1,3 @@
-"use strict";
 /**
  * useDebounce Hook
  * Story 3.4: Smart Search + NLP Integration
@@ -17,19 +16,16 @@ function useDebounce(value, delay) {
   var _a = (0, react_1.useState)(value),
     debouncedValue = _a[0],
     setDebouncedValue = _a[1];
-  (0, react_1.useEffect)(
-    function () {
-      // Set up a timer to update the debounced value after the delay
-      var handler = setTimeout(function () {
-        setDebouncedValue(value);
-      }, delay);
-      // Clean up the timer if the value changes before the delay
-      return function () {
-        clearTimeout(handler);
-      };
-    },
-    [value, delay],
-  );
+  (0, react_1.useEffect)(() => {
+    // Set up a timer to update the debounced value after the delay
+    var handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    // Clean up the timer if the value changes before the delay
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
   return debouncedValue;
 }
 exports.default = useDebounce;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Healthcare Compliance Framework
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Medical Device Standards)
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createhealthcareComplianceManager =
   exports.ComplianceValidationSchema =
@@ -164,7 +161,7 @@ var zod_1 = require("zod");
 var logger_1 = require("@/lib/utils/logger");
 var client_1 = require("@/lib/supabase/client");
 // Main Compliance Manager Class
-var HealthcareComplianceManager = /** @class */ (function () {
+var HealthcareComplianceManager = /** @class */ (() => {
   function HealthcareComplianceManager() {
     this.supabase = (0, client_1.createClient)();
     this.complianceCache = new Map();
@@ -338,15 +335,13 @@ var HealthcareComplianceManager = /** @class */ (function () {
             _i++;
             return [3 /*break*/, 2];
           case 5:
-            nonCompliantRequirements = validationResults.filter(function (r) {
-              return r.status === "non_compliant";
-            });
+            nonCompliantRequirements = validationResults.filter(
+              (r) => r.status === "non_compliant",
+            );
             overallStatus =
               nonCompliantRequirements.length === 0
                 ? "compliant"
-                : nonCompliantRequirements.some(function (r) {
-                      return r.criticality === "mandatory";
-                    })
+                : nonCompliantRequirements.some((r) => r.criticality === "mandatory")
                   ? "non_compliant"
                   : "pending_validation";
             _a = {
@@ -373,7 +368,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
   HealthcareComplianceManager.prototype.getStandardRequirements = function (standard) {
     return __awaiter(this, void 0, void 0, function () {
       var requirementsMap;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         requirementsMap = {
           FDA: [
             {
@@ -629,9 +624,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
               compliance = this.complianceCache.get(comp);
               if (!compliance) continue;
               filteredStandards = standards
-                ? compliance.regulatoryStandards.filter(function (s) {
-                    return standards.includes(s.standard);
-                  })
+                ? compliance.regulatoryStandards.filter((s) => standards.includes(s.standard))
                 : compliance.regulatoryStandards;
               reportData.push({
                 componentId: comp,
@@ -672,48 +665,27 @@ var HealthcareComplianceManager = /** @class */ (function () {
     });
   };
   // Helper methods
-  HealthcareComplianceManager.prototype.isValidationCurrent = function (compliance) {
+  HealthcareComplianceManager.prototype.isValidationCurrent = (compliance) => {
     var validationAge = Date.now() - new Date(compliance.lastAssessment).getTime();
     var maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
     return validationAge < maxAge;
   };
-  HealthcareComplianceManager.prototype.calculateOverallCompliance = function (standards) {
+  HealthcareComplianceManager.prototype.calculateOverallCompliance = (standards) => {
     if (standards.length === 0) return "pending_validation";
-    var nonCompliant = standards.filter(function (s) {
-      return s.status === "non_compliant";
-    });
+    var nonCompliant = standards.filter((s) => s.status === "non_compliant");
     if (nonCompliant.length > 0) return "non_compliant";
-    var pending = standards.filter(function (s) {
-      return s.status === "pending_validation";
-    });
+    var pending = standards.filter((s) => s.status === "pending_validation");
     if (pending.length > 0) return "pending_validation";
     return "compliant";
   };
-  HealthcareComplianceManager.prototype.calculateRiskClassification = function (standards) {
-    var issues = standards.flatMap(function (s) {
-      return s.nonComplianceIssues;
-    });
-    if (
-      issues.some(function (i) {
-        return i.severity === "critical";
-      })
-    )
-      return "critical";
-    if (
-      issues.some(function (i) {
-        return i.severity === "high";
-      })
-    )
-      return "high";
-    if (
-      issues.some(function (i) {
-        return i.severity === "medium";
-      })
-    )
-      return "medium";
+  HealthcareComplianceManager.prototype.calculateRiskClassification = (standards) => {
+    var issues = standards.flatMap((s) => s.nonComplianceIssues);
+    if (issues.some((i) => i.severity === "critical")) return "critical";
+    if (issues.some((i) => i.severity === "high")) return "high";
+    if (issues.some((i) => i.severity === "medium")) return "medium";
     return "low";
   };
-  HealthcareComplianceManager.prototype.getStandardExpirationDate = function (standard) {
+  HealthcareComplianceManager.prototype.getStandardExpirationDate = (standard) => {
     // Standards that typically have expiration dates
     var expirationMap = {
       CE: 5 * 365 * 24 * 60 * 60 * 1000, // 5 years
@@ -723,16 +695,21 @@ var HealthcareComplianceManager = /** @class */ (function () {
     var expirationPeriod = expirationMap[standard];
     return expirationPeriod ? new Date(Date.now() + expirationPeriod).toISOString() : undefined;
   };
-  HealthcareComplianceManager.prototype.getAllStandards = function () {
-    return ["FDA", "CE", "ANVISA", "ISO_14971", "ISO_13485", "IEC_62304"];
-  };
+  HealthcareComplianceManager.prototype.getAllStandards = () => [
+    "FDA",
+    "CE",
+    "ANVISA",
+    "ISO_14971",
+    "ISO_13485",
+    "IEC_62304",
+  ];
   // Validation method implementations (simplified for this implementation)
   HealthcareComplianceManager.prototype.validateDocumentation = function (
     componentId,
     requirement,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would check for required documentation
         return [2 /*return*/, "compliant"];
       });
@@ -740,7 +717,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
   };
   HealthcareComplianceManager.prototype.performAudit = function (componentId, requirement) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would perform an audit
         return [2 /*return*/, "compliant"];
       });
@@ -748,7 +725,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
   };
   HealthcareComplianceManager.prototype.assessConformity = function (componentId, requirement) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would assess conformity
         return [2 /*return*/, "compliant"];
       });
@@ -756,7 +733,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
   };
   HealthcareComplianceManager.prototype.auditSystem = function (componentId, requirement) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would audit the system
         return [2 /*return*/, "compliant"];
       });
@@ -764,7 +741,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
   };
   HealthcareComplianceManager.prototype.collectEvidence = function (componentId, standard) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would collect evidence
         return [2 /*return*/, []];
       });
@@ -775,7 +752,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
     requirement,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would collect requirement-specific evidence
         return [2 /*return*/, []];
       });
@@ -784,9 +761,9 @@ var HealthcareComplianceManager = /** @class */ (function () {
   HealthcareComplianceManager.prototype.identifyNonComplianceIssues = function (requirements) {
     return __awaiter(this, void 0, void 0, function () {
       var issues;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         issues = [];
-        requirements.forEach(function (req) {
+        requirements.forEach((req) => {
           if (req.status === "non_compliant") {
             issues.push({
               id: "issue_".concat(req.id, "_").concat(Date.now()),
@@ -817,7 +794,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
           case 1:
             complianceRecords = _a.sent().data;
             if (complianceRecords) {
-              complianceRecords.forEach(function (record) {
+              complianceRecords.forEach((record) => {
                 _this.complianceCache.set(record.device_component, record);
               });
             }
@@ -828,7 +805,7 @@ var HealthcareComplianceManager = /** @class */ (function () {
   };
   HealthcareComplianceManager.prototype.validateRegulatoryRequirements = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Validate that all required regulatory frameworks are in place
         logger_1.logger.info("Validating regulatory requirements framework...");
         return [2 /*return*/];
@@ -836,18 +813,17 @@ var HealthcareComplianceManager = /** @class */ (function () {
     });
   };
   HealthcareComplianceManager.prototype.startComplianceMonitoring = function () {
-    var _this = this;
     // Start background compliance monitoring
     setInterval(
-      function () {
-        _this.performPeriodicCompliance();
+      () => {
+        this.performPeriodicCompliance();
       },
       24 * 60 * 60 * 1000,
     ); // Daily monitoring
   };
   HealthcareComplianceManager.prototype.performPeriodicCompliance = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.info("Performing periodic compliance check...");
         return [2 /*return*/];
       });
@@ -897,36 +873,34 @@ var HealthcareComplianceManager = /** @class */ (function () {
       });
     });
   };
-  HealthcareComplianceManager.prototype.generateSummary = function (reportData) {
+  HealthcareComplianceManager.prototype.generateSummary = (reportData) => {
     var totalComponents = reportData.length;
-    var compliantComponents = reportData.filter(function (d) {
-      return d.compliance.overallComplianceStatus === "compliant";
-    }).length;
-    var nonCompliantComponents = reportData.filter(function (d) {
-      return d.compliance.overallComplianceStatus === "non_compliant";
-    }).length;
+    var compliantComponents = reportData.filter(
+      (d) => d.compliance.overallComplianceStatus === "compliant",
+    ).length;
+    var nonCompliantComponents = reportData.filter(
+      (d) => d.compliance.overallComplianceStatus === "non_compliant",
+    ).length;
     return {
       totalComponents: totalComponents,
       compliantComponents: compliantComponents,
       nonCompliantComponents: nonCompliantComponents,
       complianceRate: totalComponents > 0 ? (compliantComponents / totalComponents) * 100 : 0,
-      criticalIssues: reportData.flatMap(function (d) {
-        return d.compliance.regulatoryStandards.flatMap(function (s) {
-          return s.nonComplianceIssues.filter(function (i) {
-            return i.severity === "critical";
-          });
-        });
-      }).length,
+      criticalIssues: reportData.flatMap((d) =>
+        d.compliance.regulatoryStandards.flatMap((s) =>
+          s.nonComplianceIssues.filter((i) => i.severity === "critical"),
+        ),
+      ).length,
     };
   };
   HealthcareComplianceManager.prototype.generateRecommendations = function (reportData) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations, nonCompliantComponents;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
-        nonCompliantComponents = reportData.filter(function (d) {
-          return d.compliance.overallComplianceStatus !== "compliant";
-        });
+        nonCompliantComponents = reportData.filter(
+          (d) => d.compliance.overallComplianceStatus !== "compliant",
+        );
         if (nonCompliantComponents.length > 0) {
           recommendations.push(
             "Address non-compliant components immediately to ensure regulatory approval",
@@ -943,16 +917,14 @@ var HealthcareComplianceManager = /** @class */ (function () {
   HealthcareComplianceManager.prototype.generateNextActions = function (reportData) {
     return __awaiter(this, void 0, void 0, function () {
       var actions, urgentIssues;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         actions = [];
-        urgentIssues = reportData.flatMap(function (d) {
-          return d.compliance.regulatoryStandards.flatMap(function (s) {
-            return s.nonComplianceIssues.filter(function (i) {
-              return i.severity === "critical" || i.severity === "high";
-            });
-          });
-        });
-        urgentIssues.forEach(function (issue) {
+        urgentIssues = reportData.flatMap((d) =>
+          d.compliance.regulatoryStandards.flatMap((s) =>
+            s.nonComplianceIssues.filter((i) => i.severity === "critical" || i.severity === "high"),
+          ),
+        );
+        urgentIssues.forEach((issue) => {
           actions.push("Resolve ".concat(issue.description, " by ").concat(issue.dueDate));
         });
         return [2 /*return*/, actions];
@@ -995,7 +967,5 @@ exports.ComplianceValidationSchema = zod_1.z.object({
     .min(1, "At least one standard is required"),
 });
 // Export singleton instance
-var createhealthcareComplianceManager = function () {
-  return new HealthcareComplianceManager();
-};
+var createhealthcareComplianceManager = () => new HealthcareComplianceManager();
 exports.createhealthcareComplianceManager = createhealthcareComplianceManager;

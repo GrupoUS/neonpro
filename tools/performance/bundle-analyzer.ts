@@ -5,8 +5,8 @@
  * Based on 2025 performance best practices
  */
 
-import { promises as fs } from "fs";
-import path from "path";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 
 // Bundle size thresholds (in bytes)
 export const BUNDLE_THRESHOLDS = {
@@ -109,7 +109,7 @@ function analyzeModules(modules: any[], analysis: BundleAnalysis) {
       moduleMap.set(moduleName, []);
     }
 
-    moduleMap.get(moduleName)!.push({
+    moduleMap.get(moduleName)?.push({
       chunk: module.chunks?.[0] || "unknown",
       size: moduleSize,
     });
@@ -223,7 +223,7 @@ export function formatBytes(bytes: number): string {
   const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 }
 
 // Generate bundle report
@@ -284,7 +284,7 @@ export async function runBundleAnalysis(statsPath?: string) {
     console.log("🔍 Analyzing bundle...");
     const analysis = await analyzeBundleStats(finalStatsPath);
 
-    console.log("\n" + generateBundleReport(analysis));
+    console.log(`\n${generateBundleReport(analysis)}`);
 
     // Write report to file
     const reportPath = path.join(process.cwd(), "bundle-analysis-report.md");

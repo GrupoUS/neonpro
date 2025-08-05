@@ -5,7 +5,26 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Filter,
+  Mail,
+  MessageSquare,
+  Phone,
+  Search,
+  Target,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,28 +32,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Progress } from "@/components/ui/progress";
-import type {
-  Search,
-  Filter,
-  Users,
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  TrendingUp,
-  Mail,
-  Phone,
-  MessageSquare,
-  Zap,
-  Target,
-  Calendar,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { cn } from "@/lib/utils";
 
 // Types from our trial management system

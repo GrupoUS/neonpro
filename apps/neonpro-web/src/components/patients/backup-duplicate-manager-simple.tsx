@@ -1,11 +1,11 @@
 "use client";
 
+import type { CheckCircle, Eye, Users, X } from "lucide-react";
+import React from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { CheckCircle, Eye, Users, X } from "lucide-react";
-import React from "react";
 
 interface DuplicateManagerProps {
   onMergeComplete?: (result: any) => void;

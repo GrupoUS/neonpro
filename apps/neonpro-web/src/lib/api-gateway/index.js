@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - API Gateway Module
  * Complete API Gateway system with documentation, monitoring, and middleware
@@ -10,30 +9,27 @@
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiGatewayBuilder =
   exports.ApiGatewayFactory =
@@ -63,9 +59,7 @@ exports.ApiGatewayBuilder =
 var gateway_1 = require("./gateway");
 Object.defineProperty(exports, "NeonProApiGateway", {
   enumerable: true,
-  get: function () {
-    return gateway_1.NeonProApiGateway;
-  },
+  get: () => gateway_1.NeonProApiGateway,
 });
 // Types and Interfaces
 __exportStar(require("./types"), exports);
@@ -73,140 +67,100 @@ __exportStar(require("./types"), exports);
 var documentation_1 = require("./documentation");
 Object.defineProperty(exports, "OpenApiDocumentationGenerator", {
   enumerable: true,
-  get: function () {
-    return documentation_1.OpenApiDocumentationGenerator;
-  },
+  get: () => documentation_1.OpenApiDocumentationGenerator,
 });
 Object.defineProperty(exports, "DocumentationMiddleware", {
   enumerable: true,
-  get: function () {
-    return documentation_1.DocumentationMiddleware;
-  },
+  get: () => documentation_1.DocumentationMiddleware,
 });
 Object.defineProperty(exports, "DocumentationRouteBuilder", {
   enumerable: true,
-  get: function () {
-    return documentation_1.DocumentationRouteBuilder;
-  },
+  get: () => documentation_1.DocumentationRouteBuilder,
 });
 // Middleware System
 var middleware_1 = require("./middleware");
 Object.defineProperty(exports, "MiddlewareManager", {
   enumerable: true,
-  get: function () {
-    return middleware_1.MiddlewareManager;
-  },
+  get: () => middleware_1.MiddlewareManager,
 });
 Object.defineProperty(exports, "CorsMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.CorsMiddleware;
-  },
+  get: () => middleware_1.CorsMiddleware,
 });
 Object.defineProperty(exports, "RequestLoggingMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.RequestLoggingMiddleware;
-  },
+  get: () => middleware_1.RequestLoggingMiddleware,
 });
 Object.defineProperty(exports, "RateLimitingMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.RateLimitingMiddleware;
-  },
+  get: () => middleware_1.RateLimitingMiddleware,
 });
 Object.defineProperty(exports, "AuthenticationMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.AuthenticationMiddleware;
-  },
+  get: () => middleware_1.AuthenticationMiddleware,
 });
 Object.defineProperty(exports, "AuthorizationMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.AuthorizationMiddleware;
-  },
+  get: () => middleware_1.AuthorizationMiddleware,
 });
 Object.defineProperty(exports, "RequestValidationMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.RequestValidationMiddleware;
-  },
+  get: () => middleware_1.RequestValidationMiddleware,
 });
 Object.defineProperty(exports, "ResponseTransformationMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.ResponseTransformationMiddleware;
-  },
+  get: () => middleware_1.ResponseTransformationMiddleware,
 });
 // Cache System
 var cache_1 = require("./cache");
 Object.defineProperty(exports, "MemoryApiGatewayCache", {
   enumerable: true,
-  get: function () {
-    return cache_1.MemoryApiGatewayCache;
-  },
+  get: () => cache_1.MemoryApiGatewayCache,
 });
 Object.defineProperty(exports, "RedisApiGatewayCache", {
   enumerable: true,
-  get: function () {
-    return cache_1.RedisApiGatewayCache;
-  },
+  get: () => cache_1.RedisApiGatewayCache,
 });
 Object.defineProperty(exports, "SupabaseApiGatewayCache", {
   enumerable: true,
-  get: function () {
-    return cache_1.SupabaseApiGatewayCache;
-  },
+  get: () => cache_1.SupabaseApiGatewayCache,
 });
 Object.defineProperty(exports, "ApiGatewayCacheFactory", {
   enumerable: true,
-  get: function () {
-    return cache_1.ApiGatewayCacheFactory;
-  },
+  get: () => cache_1.ApiGatewayCacheFactory,
 });
 Object.defineProperty(exports, "CacheMiddleware", {
   enumerable: true,
-  get: function () {
-    return cache_1.CacheMiddleware;
-  },
+  get: () => cache_1.CacheMiddleware,
 });
 // Monitoring System
 var monitoring_1 = require("./monitoring");
 Object.defineProperty(exports, "ApiGatewayMetricsCollector", {
   enumerable: true,
-  get: function () {
-    return monitoring_1.ApiGatewayMetricsCollector;
-  },
+  get: () => monitoring_1.ApiGatewayMetricsCollector,
 });
 Object.defineProperty(exports, "ApiGatewayHealthCheckManager", {
   enumerable: true,
-  get: function () {
-    return monitoring_1.ApiGatewayHealthCheckManager;
-  },
+  get: () => monitoring_1.ApiGatewayHealthCheckManager,
 });
 Object.defineProperty(exports, "MonitoringMiddleware", {
   enumerable: true,
-  get: function () {
-    return monitoring_1.MonitoringMiddleware;
-  },
+  get: () => monitoring_1.MonitoringMiddleware,
 });
 Object.defineProperty(exports, "ApiGatewayPerformanceMonitor", {
   enumerable: true,
-  get: function () {
-    return monitoring_1.ApiGatewayPerformanceMonitor;
-  },
+  get: () => monitoring_1.ApiGatewayPerformanceMonitor,
 });
 /**
  * API Gateway Factory
  * Factory class for creating and configuring API Gateway instances
  */
-var ApiGatewayFactory = /** @class */ (function () {
+var ApiGatewayFactory = /** @class */ (() => {
   function ApiGatewayFactory() {}
   /**
    * Create a basic API Gateway instance
    */
-  ApiGatewayFactory.createBasic = function (config) {
+  ApiGatewayFactory.createBasic = (config) => {
     var _a, _b;
     if (config === void 0) {
       config = {};
@@ -246,7 +200,7 @@ var ApiGatewayFactory = /** @class */ (function () {
   /**
    * Create a production-ready API Gateway instance
    */
-  ApiGatewayFactory.createProduction = function (config) {
+  ApiGatewayFactory.createProduction = (config) => {
     var _a, _b, _c, _d, _e;
     var gateway = new NeonProApiGateway(
       {
@@ -347,7 +301,7 @@ var ApiGatewayFactory = /** @class */ (function () {
   /**
    * Create a development API Gateway instance
    */
-  ApiGatewayFactory.createDevelopment = function (config) {
+  ApiGatewayFactory.createDevelopment = (config) => {
     if (config === void 0) {
       config = {};
     }
@@ -407,7 +361,7 @@ var ApiGatewayFactory = /** @class */ (function () {
   /**
    * Create a testing API Gateway instance
    */
-  ApiGatewayFactory.createTesting = function (config) {
+  ApiGatewayFactory.createTesting = (config) => {
     if (config === void 0) {
       config = {};
     }
@@ -454,7 +408,7 @@ exports.ApiGatewayFactory = ApiGatewayFactory;
  * API Gateway Builder
  * Fluent builder for creating customized API Gateway instances
  */
-var ApiGatewayBuilder = /** @class */ (function () {
+var ApiGatewayBuilder = /** @class */ (() => {
   function ApiGatewayBuilder() {
     this.config = {
       port: 3000,

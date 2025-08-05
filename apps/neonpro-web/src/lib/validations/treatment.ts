@@ -8,13 +8,6 @@
  */
 
 import type { z } from "zod";
-import type {
-  TreatmentPlanStatus,
-  TreatmentPlanIntent,
-  ProcedureStatus,
-  ClinicalNoteStatus,
-  ConfidentialityLevel,
-} from "@/lib/types/treatment";
 
 // ===============================================
 // BASE VALIDATION SCHEMAS

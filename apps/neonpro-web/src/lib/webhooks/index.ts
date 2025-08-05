@@ -12,16 +12,16 @@
  */
 
 import EventSystem from "./event-system";
-import WebhookManager from "./webhook-manager";
 import type {
   BaseEvent,
-  WebhookEndpoint,
-  EventDelivery,
   EventAnalytics,
-  WebhookSystemConfig,
-  EventType,
+  EventDelivery,
   EventPriority,
+  EventType,
+  WebhookEndpoint,
+  WebhookSystemConfig,
 } from "./types";
+import WebhookManager from "./webhook-manager";
 
 interface WebhookEventSystemConfig {
   supabase: {
@@ -567,7 +567,7 @@ export class WebhookEventSystem {
         queueDepth: 0, // Would get from event system
         processingRate: 0, // Would calculate from metrics
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         status: "unhealthy",
         queueDepth: 0,
@@ -591,7 +591,7 @@ export class WebhookEventSystem {
         failureRate: 0, // Would calculate from recent deliveries
         averageResponseTime: this.systemMetrics.averageDeliveryTime,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         status: "unhealthy",
         activeWebhooks: 0,

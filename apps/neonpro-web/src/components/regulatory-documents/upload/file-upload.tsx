@@ -1,13 +1,13 @@
 "use client";
 
-import type { useState, useCallback } from "react";
+import type { AlertCircle, Check, File, Upload, X } from "lucide-react";
+import type { useCallback, useState } from "react";
 import type { useDropzone } from "react-dropzone";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent } from "@/components/ui/card";
 import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Upload, File, X, AlertCircle, Check } from "lucide-react";
-import type { toast } from "sonner";
 
 interface FileUploadProps {
   onUploadComplete: (fileUrl: string, fileName: string, fileSize: number) => void;

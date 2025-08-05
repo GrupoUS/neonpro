@@ -5,22 +5,11 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 
-import type { z } from "zod";
-import type {
-  REPORT_TYPES,
-  REPORT_FORMATS,
-  REPORT_STATUS,
-  KPI_UNIT_TYPES,
-  PERIOD_TYPES,
-  ALERT_STATUS,
-  FREQUENCY_TYPES,
-} from "@/lib/types/financial-reporting";
-
 // Base validation schemas
 const uuidSchema = z.string().uuid();
 const dateSchema = z.string().datetime();
 const dateOnlySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
-const positiveNumberSchema = z.number().min(0);
+const _positiveNumberSchema = z.number().min(0);
 const percentageSchema = z.number().min(0).max(100);
 const currencySchema = z.number().min(0);
 

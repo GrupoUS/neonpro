@@ -1,6 +1,19 @@
 "use client";
 
-import type { useState, useMemo } from "react";
+import type {
+  BarChart3,
+  Calculator,
+  DollarSign,
+  Download,
+  FileText,
+  PieChart,
+  Receipt,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import type { useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,9 +21,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -26,18 +37,7 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Progress } from "@/components/ui/progress";
-import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Receipt,
-  PieChart,
-  BarChart3,
-  Calculator,
-  FileText,
-  Download,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ProductCostAnalysis {
   productId: string;

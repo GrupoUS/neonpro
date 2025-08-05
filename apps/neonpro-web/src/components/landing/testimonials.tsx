@@ -1,10 +1,10 @@
 // components/landing/testimonials.tsx
 "use client";
 
-import type { Card, CardContent } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
+import type { Clock, Heart, Quote, Star, TrendingUp, Users } from "lucide-react";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Star, Quote, TrendingUp, Users, Clock, Heart } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Card, CardContent } from "@/components/ui/card";
 
 export function Testimonials() {
   const testimonials = [

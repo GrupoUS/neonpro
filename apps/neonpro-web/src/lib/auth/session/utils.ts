@@ -5,24 +5,24 @@
  * incluindo validação, formatação, criptografia e manipulação de dados.
  */
 
-import type { createHash, randomBytes, createCipheriv, createDecipheriv } from "crypto";
+import type { createCipheriv, createDecipheriv, createHash, randomBytes } from "crypto";
 import type { UAParser } from "ua-parser-js";
 import type {
-  UserSession,
-  UserDevice,
-  DeviceInfo,
-  SessionMetadata,
-  DeviceMetadata,
-  SecurityEvent,
   ActivityType,
-  SeverityLevel,
-  RiskLevel,
-  DeviceType,
-  UUID,
-  Timestamp,
-  IPAddress,
-  UserAgent,
   DeviceFingerprint,
+  DeviceInfo,
+  DeviceMetadata,
+  DeviceType,
+  IPAddress,
+  RiskLevel,
+  SecurityEvent,
+  SessionMetadata,
+  SeverityLevel,
+  Timestamp,
+  UserAgent,
+  UserDevice,
+  UserSession,
+  UUID,
 } from "./types";
 
 // ============================================================================
@@ -42,7 +42,7 @@ const DEVICE_FINGERPRINT_LENGTH = 32;
  * Gera um UUID v4
  */
 export function generateUUID(): UUID {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
     const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -179,7 +179,7 @@ export function validatePasswordStrength(password: string): {
   }
 
   // Caracteres especiais
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
     score += 1;
   } else {
     feedback.push("Inclua pelo menos um caractere especial");
@@ -244,7 +244,7 @@ export function formatBytes(bytes: number): string {
   if (bytes === 0) return "0 Bytes";
 
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
+  return Math.round((bytes / 1024 ** i) * 100) / 100 + " " + sizes[i];
 }
 
 /**

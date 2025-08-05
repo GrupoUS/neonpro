@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockMovement = StockMovement;
 var react_1 = require("react");
@@ -208,8 +207,8 @@ function StockMovement() {
     isNewMovementOpen = _e[0],
     setIsNewMovementOpen = _e[1];
   var filteredMovements = (0, react_1.useMemo)(
-    function () {
-      return mockMovements.filter(function (movement) {
+    () =>
+      mockMovements.filter((movement) => {
         var _a, _b;
         var matchesSearch =
           movement.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -228,39 +227,30 @@ function StockMovement() {
           matchesDate = movementDate >= dateRange.from && movementDate <= dateRange.to;
         }
         return matchesSearch && matchesType && matchesStatus && matchesDate;
-      });
-    },
+      }),
     [searchTerm, selectedType, selectedStatus, dateRange],
   );
-  var movementSummary = (0, react_1.useMemo)(function () {
+  var movementSummary = (0, react_1.useMemo)(() => {
     var today = new Date();
     var thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     return {
       total: mockMovements.length,
-      thisMonth: mockMovements.filter(function (m) {
-        return new Date(m.timestamp) >= thisMonth;
-      }).length,
-      pending: mockMovements.filter(function (m) {
-        return m.status === "pending";
-      }).length,
-      anvisaCompliant: mockMovements.filter(function (m) {
-        return m.anvisaCompliance.validated;
-      }).length,
+      thisMonth: mockMovements.filter((m) => new Date(m.timestamp) >= thisMonth).length,
+      pending: mockMovements.filter((m) => m.status === "pending").length,
+      anvisaCompliant: mockMovements.filter((m) => m.anvisaCompliance.validated).length,
     };
   }, []);
-  var formatBrazilianDateTime = function (dateString) {
-    return (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
+  var formatBrazilianDateTime = (dateString) =>
+    (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
       locale: locale_1.ptBR,
     });
-  };
-  var formatCurrency = function (value) {
-    return value.toLocaleString("pt-BR", {
+  var formatCurrency = (value) =>
+    value.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
       minimumFractionDigits: 2,
     });
-  };
-  var exportMovements = function () {
+  var exportMovements = () => {
     // In a real implementation, this would generate a CSV/PDF export
     console.log("Exporting movements for audit:", filteredMovements);
   };
@@ -325,9 +315,7 @@ function StockMovement() {
           <input_1.Input
             placeholder="Buscar por produto, lote, usuário ou referência..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -373,9 +361,7 @@ function StockMovement() {
               mode="range"
               defaultMonth={dateRange === null || dateRange === void 0 ? void 0 : dateRange.from}
               selected={{ from: dateRange.from, to: dateRange.to }}
-              onSelect={function (range) {
-                return setDateRange(range || {});
-              }}
+              onSelect={(range) => setDateRange(range || {})}
               numberOfMonths={2}
             />
           </popover_1.PopoverContent>
@@ -446,7 +432,7 @@ function StockMovement() {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredMovements.map(function (movement) {
+                {filteredMovements.map((movement) => {
                   var typeConfig = movementTypeConfig[movement.type];
                   var TypeIcon = typeConfig.icon;
                   return (
@@ -602,7 +588,7 @@ function StockMovement() {
             </card_1.CardDescription>
           </card_1.CardHeader>
           <card_1.CardContent>
-            {(function () {
+            {(() => {
               var lastMovement = filteredMovements[0];
               var typeConfig = movementTypeConfig[lastMovement.type];
               return (

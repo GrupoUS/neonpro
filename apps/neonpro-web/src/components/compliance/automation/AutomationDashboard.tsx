@@ -1,6 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Database,
+  Eye,
+  FileText,
+  Pause,
+  Play,
+  RefreshCw,
+  Settings,
+  Shield,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,28 +27,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import type { Progress } from "@/components/ui/progress";
 import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Progress } from "@/components/ui/progress";
-import type {
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Settings,
-  Shield,
-  TrendingUp,
-  Users,
-  FileText,
-  Database,
-  Eye,
-  Play,
-  Pause,
-  RefreshCw,
-} from "lucide-react";
 import type { useToast } from "@/components/ui/use-toast";
 
 interface AutomationMetrics {

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DuplicateManager;
 var alert_1 = require("@/components/ui/alert");
@@ -16,9 +15,9 @@ function DuplicateManager(_a) {
   var loadingState = react_1.default.useState(true);
   var loading = loadingState[0];
   var setLoading = loadingState[1];
-  react_1.default.useEffect(function () {
+  react_1.default.useEffect(() => {
     // Simulate loading duplicates
-    setTimeout(function () {
+    setTimeout(() => {
       setDuplicates([]);
       setLoading(false);
     }, 1000);
@@ -68,32 +67,30 @@ function DuplicateManager(_a) {
       </card_1.CardHeader>
       <card_1.CardContent>
         <div className="space-y-4">
-          {duplicates.map(function (duplicate, index) {
-            return (
-              <div key={index} className="border rounded-lg p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h4 className="font-medium">Duplicata {index + 1}</h4>
-                    <badge_1.Badge variant="secondary">Confiança: 95%</badge_1.Badge>
-                  </div>
-                  <div className="flex gap-2">
-                    <button_1.Button size="sm" variant="outline">
-                      <lucide_react_1.Eye className="h-4 w-4 mr-1" />
-                      Comparar
-                    </button_1.Button>
-                    <button_1.Button size="sm" variant="outline">
-                      <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
-                      Confirmar
-                    </button_1.Button>
-                    <button_1.Button size="sm" variant="outline">
-                      <lucide_react_1.X className="h-4 w-4 mr-1" />
-                      Rejeitar
-                    </button_1.Button>
-                  </div>
+          {duplicates.map((duplicate, index) => (
+            <div key={index} className="border rounded-lg p-4">
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <h4 className="font-medium">Duplicata {index + 1}</h4>
+                  <badge_1.Badge variant="secondary">Confiança: 95%</badge_1.Badge>
+                </div>
+                <div className="flex gap-2">
+                  <button_1.Button size="sm" variant="outline">
+                    <lucide_react_1.Eye className="h-4 w-4 mr-1" />
+                    Comparar
+                  </button_1.Button>
+                  <button_1.Button size="sm" variant="outline">
+                    <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
+                    Confirmar
+                  </button_1.Button>
+                  <button_1.Button size="sm" variant="outline">
+                    <lucide_react_1.X className="h-4 w-4 mr-1" />
+                    Rejeitar
+                  </button_1.Button>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </card_1.CardContent>
     </card_1.Card>

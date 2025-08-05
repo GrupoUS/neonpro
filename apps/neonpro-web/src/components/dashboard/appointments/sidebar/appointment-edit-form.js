@@ -2,18 +2,17 @@
 // Appointment edit form for sidebar
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentEditForm;
 var react_1 = require("react");
@@ -173,7 +170,6 @@ var appointmentEditSchema = zod_2.z.object({
   change_reason: zod_2.z.string().min(1, "Motivo da alteração é obrigatório"),
 });
 function AppointmentEditForm(_a) {
-  var _this = this;
   var appointment = _a.appointment,
     onUpdate = _a.onUpdate,
     onCancel = _a.onCancel,
@@ -208,9 +204,9 @@ function AppointmentEditForm(_a) {
     },
   });
   // Load reference data
-  (0, react_1.useEffect)(function () {
-    var loadReferenceData = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var loadReferenceData = () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a,
           patientsRes,
           professionalsRes,
@@ -219,7 +215,7 @@ function AppointmentEditForm(_a) {
           professionalsData,
           servicesData,
           error_1;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 8, , 9]);
@@ -268,14 +264,13 @@ function AppointmentEditForm(_a) {
           }
         });
       });
-    };
     loadReferenceData();
   }, []); // Check for conflicts when time or professional changes
-  var checkConflicts = function (professionalId, startTime, serviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkConflicts = (professionalId, startTime, serviceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var selectedService, endTime, response, data, conflicts, error_2;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!professionalId || !startTime || !serviceId) return [2 /*return*/];
@@ -284,9 +279,7 @@ function AppointmentEditForm(_a) {
             _b.trys.push([1, 4, 5, 6]);
             setCheckingConflict(true);
             setConflictError("");
-            selectedService = services.find(function (s) {
-              return s.id === serviceId;
-            });
+            selectedService = services.find((s) => s.id === serviceId);
             if (!selectedService) return [2 /*return*/];
             endTime = new Date(
               new Date(startTime).getTime() + selectedService.duration_minutes * 60000,
@@ -314,14 +307,14 @@ function AppointmentEditForm(_a) {
               ((_a = data.conflicting_appointments) === null || _a === void 0 ? void 0 : _a.length)
             ) {
               conflicts = data.conflicting_appointments
-                .map(function (c) {
-                  return "".concat(c.patient_name, " (").concat(
+                .map((c) =>
+                  "".concat(c.patient_name, " (").concat(
                     (0, date_fns_1.format)(new Date(c.start_time), "HH:mm", {
                       locale: locale_1.ptBR,
                     }),
                     ")",
-                  );
-                })
+                  ),
+                )
                 .join(", ");
               setConflictError("Conflito detectado com: ".concat(conflicts));
             }
@@ -338,31 +331,25 @@ function AppointmentEditForm(_a) {
         }
       });
     });
-  };
   // Watch form changes for conflict checking
   var watchedValues = form.watch(["professional_id", "start_time", "service_type_id"]);
-  (0, react_1.useEffect)(
-    function () {
-      var professionalId = watchedValues[0],
-        startTime = watchedValues[1],
-        serviceId = watchedValues[2];
-      if (professionalId && startTime && serviceId) {
-        // Debounce conflict check
-        var timer_1 = setTimeout(function () {
-          checkConflicts(professionalId, startTime, serviceId);
-        }, 500);
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [watchedValues],
-  ); // Handle form submission
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var professionalId = watchedValues[0],
+      startTime = watchedValues[1],
+      serviceId = watchedValues[2];
+    if (professionalId && startTime && serviceId) {
+      // Debounce conflict check
+      var timer_1 = setTimeout(() => {
+        checkConflicts(professionalId, startTime, serviceId);
+      }, 500);
+      return () => clearTimeout(timer_1);
+    }
+  }, [watchedValues]); // Handle form submission
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var selectedService, startTime, endTime, updateData, response, result, conflicts, error_3;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (conflictError) {
@@ -372,9 +359,7 @@ function AppointmentEditForm(_a) {
             _b.label = 1;
           case 1:
             _b.trys.push([1, 4, , 5]);
-            selectedService = services.find(function (s) {
-              return s.id === data.service_type_id;
-            });
+            selectedService = services.find((s) => s.id === data.service_type_id);
             if (!selectedService) {
               sonner_1.toast.error("Serviço não encontrado");
               return [2 /*return*/];
@@ -408,14 +393,14 @@ function AppointmentEditForm(_a) {
             if (!response.ok || !result.success) {
               if ((_a = result.conflicts) === null || _a === void 0 ? void 0 : _a.length) {
                 conflicts = result.conflicts
-                  .map(function (c) {
-                    return "".concat(c.patient_name, " (").concat(
+                  .map((c) =>
+                    "".concat(c.patient_name, " (").concat(
                       (0, date_fns_1.format)(new Date(c.start_time), "HH:mm", {
                         locale: locale_1.ptBR,
                       }),
                       ")",
-                    );
-                  })
+                    ),
+                  )
                   .join(", ");
                 setConflictError("Conflito detectado: ".concat(conflicts));
                 return [2 /*return*/];
@@ -436,7 +421,6 @@ function AppointmentEditForm(_a) {
         }
       });
     });
-  };
   var statusOptions = [
     { value: "scheduled", label: "Agendado" },
     { value: "confirmed", label: "Confirmado" },
@@ -467,7 +451,7 @@ function AppointmentEditForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="patient_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -479,13 +463,11 @@ function AppointmentEditForm(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {patients.map(function (patient) {
-                            return (
-                              <select_1.SelectItem key={patient.id} value={patient.id}>
-                                {patient.full_name}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {patients.map((patient) => (
+                            <select_1.SelectItem key={patient.id} value={patient.id}>
+                              {patient.full_name}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -497,7 +479,7 @@ function AppointmentEditForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="professional_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -509,13 +491,11 @@ function AppointmentEditForm(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {professionals.map(function (professional) {
-                            return (
-                              <select_1.SelectItem key={professional.id} value={professional.id}>
-                                {professional.full_name}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {professionals.map((professional) => (
+                            <select_1.SelectItem key={professional.id} value={professional.id}>
+                              {professional.full_name}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -527,7 +507,7 @@ function AppointmentEditForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="service_type_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -539,14 +519,12 @@ function AppointmentEditForm(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {services.map(function (service) {
-                            return (
-                              <select_1.SelectItem key={service.id} value={service.id}>
-                                {service.name} ({Math.floor(service.duration_minutes / 60)}h
-                                {service.duration_minutes % 60}min)
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {services.map((service) => (
+                            <select_1.SelectItem key={service.id} value={service.id}>
+                              {service.name} ({Math.floor(service.duration_minutes / 60)}h
+                              {service.duration_minutes % 60}min)
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -558,7 +536,7 @@ function AppointmentEditForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="start_time"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -579,7 +557,7 @@ function AppointmentEditForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="status"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -591,13 +569,11 @@ function AppointmentEditForm(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {statusOptions.map(function (status) {
-                            return (
-                              <select_1.SelectItem key={status.value} value={status.value}>
-                                {status.label}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {statusOptions.map((status) => (
+                            <select_1.SelectItem key={status.value} value={status.value}>
+                              {status.label}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -609,7 +585,7 @@ function AppointmentEditForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="change_reason"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -630,7 +606,7 @@ function AppointmentEditForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="notes"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -649,7 +625,7 @@ function AppointmentEditForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="internal_notes"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TemplateManager = TemplateManager;
 var react_1 = require("react");
@@ -204,7 +201,6 @@ var AVAILABLE_VARIABLES = [
   "{{emergency_contact}}",
 ];
 function TemplateManager(_a) {
-  var _this = this;
   var templates = _a.templates,
     onTemplateUpdate = _a.onTemplateUpdate,
     onTemplateDelete = _a.onTemplateDelete,
@@ -235,7 +231,7 @@ function TemplateManager(_a) {
   var toast = (0, use_toast_1.useToast)().toast;
   var supabase = (0, client_1.createClient)();
   // Abrir editor de template
-  var openEditor = function (template) {
+  var openEditor = (template) => {
     if (template) {
       setSelectedTemplate(template);
       setFormData({
@@ -262,7 +258,7 @@ function TemplateManager(_a) {
     setIsEditing(true);
   };
   // Fechar editor
-  var closeEditor = function () {
+  var closeEditor = () => {
     setIsEditing(false);
     setSelectedTemplate(null);
     setFormData({
@@ -276,10 +272,10 @@ function TemplateManager(_a) {
     });
   };
   // Salvar template
-  var saveTemplate = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveTemplate = () =>
+    __awaiter(this, void 0, void 0, function () {
       var variableMatches, extractedVariables, templateData, response, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -348,12 +344,11 @@ function TemplateManager(_a) {
         }
       });
     });
-  };
   // Deletar template
-  var deleteTemplate = function (templateId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteTemplate = (templateId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -389,9 +384,8 @@ function TemplateManager(_a) {
         }
       });
     });
-  };
   // Duplicar template
-  var duplicateTemplate = function (template) {
+  var duplicateTemplate = (template) => {
     openEditor(
       __assign(__assign({}, template), {
         id: "",
@@ -402,7 +396,7 @@ function TemplateManager(_a) {
     );
   };
   // Renderizar preview do template
-  var renderPreview = function (template) {
+  var renderPreview = (template) => {
     var sampleData = {
       "{{patient_name}}": "João Silva",
       "{{appointment_date}}": "15/03/2024",
@@ -416,7 +410,7 @@ function TemplateManager(_a) {
       "{{emergency_contact}}": "(11) 99999-9999",
     };
     var previewContent = template.content;
-    Object.entries(sampleData).forEach(function (_a) {
+    Object.entries(sampleData).forEach((_a) => {
       var variable = _a[0],
         value = _a[1];
       previewContent = previewContent.replace(new RegExp(variable, "g"), value);
@@ -424,18 +418,16 @@ function TemplateManager(_a) {
     return previewContent;
   };
   // Inserir variável no conteúdo
-  var insertVariable = function (variable) {
+  var insertVariable = (variable) => {
     var textarea = document.getElementById("template-content");
     if (textarea) {
       var start_1 = textarea.selectionStart;
       var end = textarea.selectionEnd;
       var newContent_1 =
         formData.content.substring(0, start_1) + variable + formData.content.substring(end);
-      setFormData(function (prev) {
-        return __assign(__assign({}, prev), { content: newContent_1 });
-      });
+      setFormData((prev) => __assign(__assign({}, prev), { content: newContent_1 }));
       // Refocar e posicionar cursor
-      setTimeout(function () {
+      setTimeout(() => {
         textarea.focus();
         textarea.setSelectionRange(start_1 + variable.length, start_1 + variable.length);
       }, 0);
@@ -451,11 +443,7 @@ function TemplateManager(_a) {
             Gerencie templates para emails, SMS e notificações push
           </p>
         </div>
-        <button_1.Button
-          onClick={function () {
-            return openEditor();
-          }}
-        >
+        <button_1.Button onClick={() => openEditor()}>
           <lucide_react_1.Plus className="w-4 h-4 mr-2" />
           Novo Template
         </button_1.Button>
@@ -463,7 +451,7 @@ function TemplateManager(_a) {
 
       {/* Lista de templates */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {templates.map(function (template) {
+        {templates.map((template) => {
           var _a, _b;
           return (
             <card_1.Card key={template.id} className="relative">
@@ -472,15 +460,13 @@ function TemplateManager(_a) {
                   <div>
                     <card_1.CardTitle className="text-lg">{template.name}</card_1.CardTitle>
                     <div className="flex items-center gap-2 mt-1">
-                      {(_a = TEMPLATE_TYPES.find(function (t) {
-                        return t.value === template.type;
-                      })) === null || _a === void 0
+                      {(_a = TEMPLATE_TYPES.find((t) => t.value === template.type)) === null ||
+                      _a === void 0
                         ? void 0
                         : _a.icon}
                       <badge_1.Badge variant="outline">
-                        {(_b = TEMPLATE_TYPES.find(function (t) {
-                          return t.value === template.type;
-                        })) === null || _b === void 0
+                        {(_b = TEMPLATE_TYPES.find((t) => t.value === template.type)) === null ||
+                        _b === void 0
                           ? void 0
                           : _b.label}
                       </badge_1.Badge>
@@ -519,9 +505,7 @@ function TemplateManager(_a) {
                       <button_1.Button
                         variant="ghost"
                         size="sm"
-                        onClick={function () {
-                          return setPreviewTemplate(template);
-                        }}
+                        onClick={() => setPreviewTemplate(template)}
                       >
                         <lucide_react_1.Eye className="w-3 h-3" />
                       </button_1.Button>
@@ -550,22 +534,14 @@ function TemplateManager(_a) {
                     </dialog_1.DialogContent>
                   </dialog_1.Dialog>
 
-                  <button_1.Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={function () {
-                      return openEditor(template);
-                    }}
-                  >
+                  <button_1.Button variant="ghost" size="sm" onClick={() => openEditor(template)}>
                     <lucide_react_1.Edit className="w-3 h-3" />
                   </button_1.Button>
 
                   <button_1.Button
                     variant="ghost"
                     size="sm"
-                    onClick={function () {
-                      return duplicateTemplate(template);
-                    }}
+                    onClick={() => duplicateTemplate(template)}
                   >
                     <lucide_react_1.Copy className="w-3 h-3" />
                   </button_1.Button>
@@ -573,9 +549,7 @@ function TemplateManager(_a) {
                   <button_1.Button
                     variant="ghost"
                     size="sm"
-                    onClick={function () {
-                      return deleteTemplate(template.id);
-                    }}
+                    onClick={() => deleteTemplate(template.id)}
                     disabled={loading}
                   >
                     <lucide_react_1.Trash2 className="w-3 h-3" />
@@ -604,11 +578,9 @@ function TemplateManager(_a) {
                 <input_1.Input
                   id="template-name"
                   value={formData.name}
-                  onChange={function (e) {
-                    return setFormData(function (prev) {
-                      return __assign(__assign({}, prev), { name: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setFormData((prev) => __assign(__assign({}, prev), { name: e.target.value }))
+                  }
                   placeholder="Ex: Lembrete de Consulta"
                 />
               </div>
@@ -618,26 +590,22 @@ function TemplateManager(_a) {
                   <label_1.Label htmlFor="template-type">Tipo</label_1.Label>
                   <select_1.Select
                     value={formData.type}
-                    onValueChange={function (value) {
-                      return setFormData(function (prev) {
-                        return __assign(__assign({}, prev), { type: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setFormData((prev) => __assign(__assign({}, prev), { type: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {TEMPLATE_TYPES.map(function (type) {
-                        return (
-                          <select_1.SelectItem key={type.value} value={type.value}>
-                            <div className="flex items-center gap-2">
-                              {type.icon}
-                              {type.label}
-                            </div>
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {TEMPLATE_TYPES.map((type) => (
+                        <select_1.SelectItem key={type.value} value={type.value}>
+                          <div className="flex items-center gap-2">
+                            {type.icon}
+                            {type.label}
+                          </div>
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -646,23 +614,19 @@ function TemplateManager(_a) {
                   <label_1.Label htmlFor="template-category">Categoria</label_1.Label>
                   <select_1.Select
                     value={formData.category}
-                    onValueChange={function (value) {
-                      return setFormData(function (prev) {
-                        return __assign(__assign({}, prev), { category: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setFormData((prev) => __assign(__assign({}, prev), { category: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {TEMPLATE_CATEGORIES.map(function (category) {
-                        return (
-                          <select_1.SelectItem key={category} value={category}>
-                            {category.replace("_", " ")}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {TEMPLATE_CATEGORIES.map((category) => (
+                        <select_1.SelectItem key={category} value={category}>
+                          {category.replace("_", " ")}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -674,11 +638,11 @@ function TemplateManager(_a) {
                   <input_1.Input
                     id="template-subject"
                     value={formData.subject}
-                    onChange={function (e) {
-                      return setFormData(function (prev) {
-                        return __assign(__assign({}, prev), { subject: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setFormData((prev) =>
+                        __assign(__assign({}, prev), { subject: e.target.value }),
+                      )
+                    }
                     placeholder="Ex: Lembrete: Consulta agendada para {{appointment_date}}"
                   />
                 </div>
@@ -689,11 +653,9 @@ function TemplateManager(_a) {
                 <textarea_1.Textarea
                   id="template-content"
                   value={formData.content}
-                  onChange={function (e) {
-                    return setFormData(function (prev) {
-                      return __assign(__assign({}, prev), { content: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setFormData((prev) => __assign(__assign({}, prev), { content: e.target.value }))
+                  }
                   placeholder="Digite o conteúdo do template..."
                   rows={8}
                 />
@@ -702,21 +664,17 @@ function TemplateManager(_a) {
               <div>
                 <label_1.Label>Variáveis Disponíveis</label_1.Label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  {AVAILABLE_VARIABLES.map(function (variable) {
-                    return (
-                      <button_1.Button
-                        key={variable}
-                        variant="outline"
-                        size="sm"
-                        onClick={function () {
-                          return insertVariable(variable);
-                        }}
-                        type="button"
-                      >
-                        {variable}
-                      </button_1.Button>
-                    );
-                  })}
+                  {AVAILABLE_VARIABLES.map((variable) => (
+                    <button_1.Button
+                      key={variable}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => insertVariable(variable)}
+                      type="button"
+                    >
+                      {variable}
+                    </button_1.Button>
+                  ))}
                 </div>
               </div>
             </div>

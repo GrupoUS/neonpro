@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Barcode Scanner Hook for NeonPro Inventory Management
  *
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -155,10 +152,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -167,7 +164,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useBarcodeScanner = useBarcodeScanner;
 var react_1 = require("react");
@@ -189,7 +186,6 @@ var react_1 = require("react");
  * @returns Scanner state and control functions
  */
 function useBarcodeScanner(config, callbacks) {
-  var _this = this;
   if (config === void 0) {
     config = {};
   }
@@ -220,36 +216,29 @@ function useBarcodeScanner(config, callbacks) {
   var keyboardBufferRef = (0, react_1.useRef)("");
   var keyboardTimeoutRef = (0, react_1.useRef)();
   // Initialize scanner on mount
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     initializeScanner();
-    return function () {
-      return cleanup();
-    };
+    return () => cleanup();
   }, []);
   // Keyboard input handler
-  (0, react_1.useEffect)(
-    function () {
-      if (!defaultConfig.enableKeyboard) return;
-      var handleKeyDown = function (event) {
-        if (state.isScanning && !event.ctrlKey && !event.altKey && !event.metaKey) {
-          handleKeyboardInput(event);
-        }
-      };
-      document.addEventListener("keydown", handleKeyDown);
-      return function () {
-        return document.removeEventListener("keydown", handleKeyDown);
-      };
-    },
-    [state.isScanning, defaultConfig.enableKeyboard],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!defaultConfig.enableKeyboard) return;
+    var handleKeyDown = (event) => {
+      if (state.isScanning && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        handleKeyboardInput(event);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [state.isScanning, defaultConfig.enableKeyboard]);
   /**
    * Initialize the barcode scanner
    */
   var initializeScanner = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var permissionStatus_1, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -257,9 +246,9 @@ function useBarcodeScanner(config, callbacks) {
               return [4 /*yield*/, checkCameraPermission()];
             case 1:
               permissionStatus_1 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { cameraPermission: permissionStatus_1 });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { cameraPermission: permissionStatus_1 }),
+              );
               _a.label = 2;
             case 2:
               // Initialize barcode scanning worker
@@ -273,36 +262,35 @@ function useBarcodeScanner(config, callbacks) {
                   console.warn("Barcode scanner worker not available:", error);
                 }
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isInitialized: true, error: null });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { isInitialized: true, error: null }),
+              );
               return [3 /*break*/, 4];
             case 3:
               error_1 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   error: "Scanner initialization failed: ".concat(
                     error_1 instanceof Error ? error_1.message : "Unknown error",
                   ),
                   isInitialized: false,
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 4];
             case 4:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [defaultConfig.enableCamera],
   );
   /**
    * Check camera permission status
    */
-  var checkCameraPermission = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkCameraPermission = () =>
+    __awaiter(this, void 0, void 0, function () {
       var permission, _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -321,16 +309,15 @@ function useBarcodeScanner(config, callbacks) {
         }
       });
     });
-  };
   /**
    * Start camera scanning
    */
   var startCameraScanning = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var stream, error_2, errorMessage_1;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!defaultConfig.enableCamera || !videoRef.current) return [2 /*return*/];
@@ -351,13 +338,13 @@ function useBarcodeScanner(config, callbacks) {
               stream = _b.sent();
               streamRef.current = stream;
               videoRef.current.srcObject = stream;
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isScanning: true,
                   error: null,
                   cameraPermission: "granted",
-                });
-              });
+                }),
+              );
               // Start the scanning process
               if (scannerWorkerRef.current) {
                 scannerWorkerRef.current.postMessage({ command: "start", stream: stream });
@@ -366,12 +353,12 @@ function useBarcodeScanner(config, callbacks) {
             case 3:
               error_2 = _b.sent();
               errorMessage_1 = error_2 instanceof Error ? error_2.message : "Camera access failed";
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   error: errorMessage_1,
                   cameraPermission: "denied",
-                });
-              });
+                }),
+              );
               (_a = callbacks === null || callbacks === void 0 ? void 0 : callbacks.onScanError) ===
                 null || _a === void 0
                 ? void 0
@@ -381,18 +368,15 @@ function useBarcodeScanner(config, callbacks) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [defaultConfig.enableCamera, callbacks],
   );
   /**
    * Stop camera scanning
    */
-  var stopCameraScanning = (0, react_1.useCallback)(function () {
+  var stopCameraScanning = (0, react_1.useCallback)(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(function (track) {
-        return track.stop();
-      });
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
     if (videoRef.current) {
@@ -401,14 +385,12 @@ function useBarcodeScanner(config, callbacks) {
     if (scannerWorkerRef.current) {
       scannerWorkerRef.current.postMessage({ command: "stop" });
     }
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { isScanning: false });
-    });
+    setState((prev) => __assign(__assign({}, prev), { isScanning: false }));
   }, []);
   /**
    * Handle keyboard input for barcode scanning
    */
-  var handleKeyboardInput = (0, react_1.useCallback)(function (event) {
+  var handleKeyboardInput = (0, react_1.useCallback)((event) => {
     var key = event.key;
     // Clear timeout on new input
     if (keyboardTimeoutRef.current) {
@@ -425,7 +407,7 @@ function useBarcodeScanner(config, callbacks) {
       // Accumulate barcode characters
       keyboardBufferRef.current += key;
       // Set timeout to auto-process if no Enter key
-      keyboardTimeoutRef.current = setTimeout(function () {
+      keyboardTimeoutRef.current = setTimeout(() => {
         var barcode = keyboardBufferRef.current.trim();
         if (barcode.length >= 8) {
           // Minimum barcode length
@@ -439,13 +421,13 @@ function useBarcodeScanner(config, callbacks) {
    * Process barcode input from any source
    */
   var processBarcodeInput = (0, react_1.useCallback)(
-    function (rawData_1) {
+    (rawData_1) => {
       var args_1 = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         args_1[_i - 1] = arguments[_i];
       }
       return __awaiter(
-        _this,
+        this,
         __spreadArray([rawData_1], args_1, true),
         void 0,
         function (rawData, source) {
@@ -454,7 +436,7 @@ function useBarcodeScanner(config, callbacks) {
           if (source === void 0) {
             source = "keyboard";
           }
-          return __generator(this, function (_c) {
+          return __generator(this, (_c) => {
             switch (_c.label) {
               case 0:
                 _c.trys.push([0, 3, , 4]);
@@ -484,16 +466,16 @@ function useBarcodeScanner(config, callbacks) {
                 _c.label = 2;
               case 2:
                 // Update state
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     lastScanResult: scanResult_1,
                     scanHistory: __spreadArray(
                       __spreadArray([], prev.scanHistory.slice(-49), true),
                       [scanResult_1],
                       false,
                     ),
-                  });
-                });
+                  }),
+                );
                 // Provide feedback
                 if (scanResult_1.success) {
                   playSuccessSound();
@@ -514,9 +496,7 @@ function useBarcodeScanner(config, callbacks) {
                 error_3 = _c.sent();
                 errorMessage_2 =
                   error_3 instanceof Error ? error_3.message : "Scan processing failed";
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), { error: errorMessage_2 });
-                });
+                setState((prev) => __assign(__assign({}, prev), { error: errorMessage_2 }));
                 (_b =
                   callbacks === null || callbacks === void 0 ? void 0 : callbacks.onScanError) ===
                   null || _b === void 0
@@ -535,7 +515,7 @@ function useBarcodeScanner(config, callbacks) {
   /**
    * Parse barcode data into structured format
    */
-  var parseBarcodeData = function (rawData) {
+  var parseBarcodeData = (rawData) => {
     // This is a simplified parser - in a real implementation, you'd handle multiple formats
     // Try to parse as product barcode with batch info
     var productMatch = rawData.match(/^(\w+)(?:-(\w+))?(?:-(\d{6}))?/);
@@ -566,20 +546,20 @@ function useBarcodeScanner(config, callbacks) {
   /**
    * Detect barcode format from raw data
    */
-  var detectBarcodeFormat = function (rawData) {
+  var detectBarcodeFormat = (rawData) => {
     if (/^\d{13}$/.test(rawData)) return "EAN13";
-    if (/^[\w\s\-\.\$\/\+\%]+$/.test(rawData)) return "CODE128";
+    if (/^[\w\s\-.$/+%]+$/.test(rawData)) return "CODE128";
     if (rawData.includes("{") || rawData.includes("http")) return "QR_CODE";
     return "CODE128"; // Default
   };
   /**
    * Validate barcode data against inventory database
    */
-  var validateBarcodeData = function (scanResult) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var validateBarcodeData = (scanResult) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, validation, error_4;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!defaultConfig.validationEndpoint || !scanResult.parsedData) return [2 /*return*/];
@@ -633,12 +613,11 @@ function useBarcodeScanner(config, callbacks) {
         }
       });
     });
-  };
   /**
    * Handle messages from barcode scanner worker
    */
   var handleWorkerMessage = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       var _a;
       var _b = event.data,
         type = _b.type,
@@ -648,9 +627,7 @@ function useBarcodeScanner(config, callbacks) {
           processBarcodeInput(data.code, "camera");
           break;
         case "error":
-          setState(function (prev) {
-            return __assign(__assign({}, prev), { error: data.message });
-          });
+          setState((prev) => __assign(__assign({}, prev), { error: data.message }));
           (_a = callbacks === null || callbacks === void 0 ? void 0 : callbacks.onScanError) ===
             null || _a === void 0
             ? void 0
@@ -663,12 +640,12 @@ function useBarcodeScanner(config, callbacks) {
   /**
    * Play success sound
    */
-  var playSuccessSound = function () {
+  var playSuccessSound = () => {
     if (!defaultConfig.soundEnabled) return;
     try {
       var audio = new Audio("/sounds/barcode-scan-success.mp3");
       audio.volume = 0.3;
-      audio.play().catch(function () {
+      audio.play().catch(() => {
         // Audio play failed - likely due to browser restrictions
       });
     } catch (_a) {
@@ -678,7 +655,7 @@ function useBarcodeScanner(config, callbacks) {
   /**
    * Trigger haptic feedback on mobile devices
    */
-  var triggerHapticFeedback = function () {
+  var triggerHapticFeedback = () => {
     if (!defaultConfig.vibrationEnabled) return;
     try {
       if ("vibrate" in navigator) {
@@ -691,14 +668,14 @@ function useBarcodeScanner(config, callbacks) {
   /**
    * Get device ID for audit trail
    */
-  var getDeviceId = function () {
+  var getDeviceId = () => {
     // In a real implementation, this would generate or retrieve a persistent device ID
     return localStorage.getItem("neonpro-device-id") || "unknown-device";
   };
   /**
    * Get current user ID
    */
-  var getCurrentUserId = function () {
+  var getCurrentUserId = () => {
     // In a real implementation, this would get the current authenticated user
     return localStorage.getItem("neonpro-user-id") || "anonymous";
   };
@@ -706,7 +683,7 @@ function useBarcodeScanner(config, callbacks) {
    * Manual barcode input for testing or manual entry
    */
   var manualScan = (0, react_1.useCallback)(
-    function (barcode) {
+    (barcode) => {
       processBarcodeInput(barcode, "keyboard");
     },
     [processBarcodeInput],
@@ -714,27 +691,22 @@ function useBarcodeScanner(config, callbacks) {
   /**
    * Clear scan history
    */
-  var clearHistory = (0, react_1.useCallback)(function () {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { scanHistory: [], lastScanResult: null });
-    });
+  var clearHistory = (0, react_1.useCallback)(() => {
+    setState((prev) => __assign(__assign({}, prev), { scanHistory: [], lastScanResult: null }));
   }, []);
   /**
    * Cleanup function
    */
-  var cleanup = (0, react_1.useCallback)(
-    function () {
-      stopCameraScanning();
-      if (scannerWorkerRef.current) {
-        scannerWorkerRef.current.terminate();
-        scannerWorkerRef.current = null;
-      }
-      if (keyboardTimeoutRef.current) {
-        clearTimeout(keyboardTimeoutRef.current);
-      }
-    },
-    [stopCameraScanning],
-  );
+  var cleanup = (0, react_1.useCallback)(() => {
+    stopCameraScanning();
+    if (scannerWorkerRef.current) {
+      scannerWorkerRef.current.terminate();
+      scannerWorkerRef.current = null;
+    }
+    if (keyboardTimeoutRef.current) {
+      clearTimeout(keyboardTimeoutRef.current);
+    }
+  }, [stopCameraScanning]);
   return __assign(__assign({}, state), {
     // Configuration
     config: defaultConfig,

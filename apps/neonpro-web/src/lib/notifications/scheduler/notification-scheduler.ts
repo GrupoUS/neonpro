@@ -18,8 +18,8 @@
 
 import type { z } from "zod";
 import type { createClient } from "@/lib/supabase/server";
-import type { NotificationChannel, NotificationType, NotificationTemplate } from "../types";
 import type { notificationManager } from "../core/notification-manager";
+import type { NotificationChannel, NotificationTemplate, NotificationType } from "../types";
 
 // ================================================================================
 // SCHEMAS & TYPES
@@ -487,7 +487,7 @@ export class NotificationScheduler {
           // Reagendar se ainda tem tentativas
           const maxRetries = notification.notification_schedules.options?.maxRetriesPerChannel || 3;
           if (notification.attempt < maxRetries) {
-            const retryDelay = Math.pow(2, notification.attempt) * 5; // Exponential backoff
+            const retryDelay = 2 ** notification.attempt * 5; // Exponential backoff
             const retryTime = new Date(Date.now() + retryDelay * 60 * 1000);
 
             await this.supabase
@@ -831,31 +831,34 @@ export class NotificationScheduler {
   private async resolveAudience(audienceConfig: any, clinicId: string): Promise<string[]> {
     try {
       switch (audienceConfig.type) {
-        case "all":
+        case "all": {
           const { data: allUsers } = await this.supabase
             .from("profiles")
             .select("id")
             .eq("clinic_id", clinicId);
           return allUsers?.map((u) => u.id) || [];
+        }
 
         case "users":
           return audienceConfig.userIds || [];
 
-        case "patients":
+        case "patients": {
           const { data: patients } = await this.supabase
             .from("profiles")
             .select("id")
             .eq("clinic_id", clinicId)
             .eq("role", "patient");
           return patients?.map((p) => p.id) || [];
+        }
 
-        case "staff":
+        case "staff": {
           const { data: staff } = await this.supabase
             .from("profiles")
             .select("id")
             .eq("clinic_id", clinicId)
             .in("role", ["staff", "manager", "owner"]);
           return staff?.map((s) => s.id) || [];
+        }
 
         case "custom":
           // Implementar filtros customizados baseados em audienceConfig.filters

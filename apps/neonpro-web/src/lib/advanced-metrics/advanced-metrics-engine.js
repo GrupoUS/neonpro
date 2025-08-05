@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Advanced Metrics Engine
  * NeonPro - Sistema avançado de métricas e análise de comunicação
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,11 +132,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createadvancedMetricsEngine = exports.AdvancedMetricsEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var AdvancedMetricsEngine = /** @class */ (function () {
+var AdvancedMetricsEngine = /** @class */ (() => {
   function AdvancedMetricsEngine() {
     this.config = null;
     this.cache = new Map();
@@ -213,93 +210,91 @@ var AdvancedMetricsEngine = /** @class */ (function () {
       });
     });
   };
-  AdvancedMetricsEngine.prototype.getDefaultConfig = function () {
-    return {
-      clinicId: "",
-      enabledMetrics: [
-        "engagement_advanced",
-        "satisfaction_detailed",
-        "conversion_funnel",
-        "communication_effectiveness",
-        "channel_performance",
-        "quality_index",
-        "compliance_score",
-        "roi_advanced",
+  AdvancedMetricsEngine.prototype.getDefaultConfig = () => ({
+    clinicId: "",
+    enabledMetrics: [
+      "engagement_advanced",
+      "satisfaction_detailed",
+      "conversion_funnel",
+      "communication_effectiveness",
+      "channel_performance",
+      "quality_index",
+      "compliance_score",
+      "roi_advanced",
+    ],
+    aggregationSettings: {
+      defaultGranularity: "day",
+      aggregationMethods: {
+        engagement_advanced: "weighted_average",
+        satisfaction_detailed: "average",
+        conversion_funnel: "sum",
+        churn_prediction: "weighted_average",
+        lifetime_value: "average",
+        communication_effectiveness: "weighted_average",
+        channel_performance: "weighted_average",
+        content_performance: "weighted_average",
+        timing_effectiveness: "weighted_average",
+        cost_efficiency: "weighted_average",
+        compliance_score: "average",
+        quality_index: "weighted_average",
+        roi_advanced: "weighted_average",
+        custom: "average",
+      },
+      customAggregations: [],
+    },
+    alertingConfig: {
+      enabled: true,
+      channels: ["email", "dashboard"],
+      thresholds: [
+        {
+          metric: "engagement_advanced",
+          operator: "less_than",
+          value: 30,
+          severity: "warning",
+        },
+        {
+          metric: "satisfaction_detailed",
+          operator: "less_than",
+          value: 6,
+          severity: "error",
+        },
+        {
+          metric: "compliance_score",
+          operator: "less_than",
+          value: 95,
+          severity: "critical",
+        },
       ],
-      aggregationSettings: {
-        defaultGranularity: "day",
-        aggregationMethods: {
-          engagement_advanced: "weighted_average",
-          satisfaction_detailed: "average",
-          conversion_funnel: "sum",
-          churn_prediction: "weighted_average",
-          lifetime_value: "average",
-          communication_effectiveness: "weighted_average",
-          channel_performance: "weighted_average",
-          content_performance: "weighted_average",
-          timing_effectiveness: "weighted_average",
-          cost_efficiency: "weighted_average",
-          compliance_score: "average",
-          quality_index: "weighted_average",
-          roi_advanced: "weighted_average",
-          custom: "average",
-        },
-        customAggregations: [],
-      },
-      alertingConfig: {
-        enabled: true,
-        channels: ["email", "dashboard"],
-        thresholds: [
-          {
-            metric: "engagement_advanced",
-            operator: "less_than",
-            value: 30,
-            severity: "warning",
-          },
-          {
-            metric: "satisfaction_detailed",
-            operator: "less_than",
-            value: 6,
-            severity: "error",
-          },
-          {
-            metric: "compliance_score",
-            operator: "less_than",
-            value: 95,
-            severity: "critical",
-          },
+      frequency: "real_time",
+      escalation: {
+        levels: [
+          { threshold: 1, delay: 0, channels: ["dashboard"] },
+          { threshold: 3, delay: 300, channels: ["email"] },
+          { threshold: 5, delay: 900, channels: ["sms"] },
         ],
-        frequency: "real_time",
-        escalation: {
-          levels: [
-            { threshold: 1, delay: 0, channels: ["dashboard"] },
-            { threshold: 3, delay: 300, channels: ["email"] },
-            { threshold: 5, delay: 900, channels: ["sms"] },
-          ],
-        },
       },
-      dataRetention: {
-        rawData: 365,
-        aggregatedData: 1095,
-        archivedData: 2555,
-        complianceData: 2555,
-        autoCleanup: true,
-      },
-      calculationSettings: {
-        precision: 2,
-        roundingMode: "round",
-        confidenceInterval: 95,
-        significanceLevel: 0.05,
-        outlierHandling: "cap",
-      },
-      exportSettings: {
-        formats: ["csv", "xlsx", "pdf"],
-        scheduling: [],
-        destinations: [],
-        templates: [],
-      },
-    };
-  };
+    },
+    dataRetention: {
+      rawData: 365,
+      aggregatedData: 1095,
+      archivedData: 2555,
+      complianceData: 2555,
+      autoCleanup: true,
+    },
+    calculationSettings: {
+      precision: 2,
+      roundingMode: "round",
+      confidenceInterval: 95,
+      significanceLevel: 0.05,
+      outlierHandling: "cap",
+    },
+    exportSettings: {
+      formats: ["csv", "xlsx", "pdf"],
+      scheduling: [],
+      destinations: [],
+      templates: [],
+    },
+  });
   AdvancedMetricsEngine.prototype.initializeMetricDefinitions = function () {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
@@ -959,7 +954,7 @@ var AdvancedMetricsEngine = /** @class */ (function () {
             benchmarkInsights = _b.sent();
             insights.push.apply(insights, benchmarkInsights);
             // Ordenar por impacto e urgência
-            insights.sort(function (a, b) {
+            insights.sort((a, b) => {
               if (a.urgency !== b.urgency) {
                 var urgencyOrder = { critical: 4, high: 3, medium: 2, low: 1 };
                 return urgencyOrder[b.urgency] - urgencyOrder[a.urgency];
@@ -976,7 +971,7 @@ var AdvancedMetricsEngine = /** @class */ (function () {
    * HELPER METHODS
    * ====================================================================
    */
-  AdvancedMetricsEngine.prototype.validateRequest = function (request) {
+  AdvancedMetricsEngine.prototype.validateRequest = (request) => {
     if (!request.clinicId) {
       throw new Error("Clinic ID is required");
     }
@@ -1000,11 +995,10 @@ var AdvancedMetricsEngine = /** @class */ (function () {
     };
     return "metrics_".concat(this.hashObject(keyData));
   };
-  AdvancedMetricsEngine.prototype.hashObject = function (obj) {
-    return btoa(JSON.stringify(obj))
+  AdvancedMetricsEngine.prototype.hashObject = (obj) =>
+    btoa(JSON.stringify(obj))
       .replace(/[^a-zA-Z0-9]/g, "")
       .substring(0, 16);
-  };
   AdvancedMetricsEngine.prototype.createEmptyMetric = function (type, unit) {
     return {
       type: type,
@@ -1037,7 +1031,7 @@ var AdvancedMetricsEngine = /** @class */ (function () {
       calculatedAt: new Date(),
     };
   };
-  AdvancedMetricsEngine.prototype.getMetricDisplayName = function (type) {
+  AdvancedMetricsEngine.prototype.getMetricDisplayName = (type) => {
     var names = {
       engagement_advanced: "Engagement Avançado",
       satisfaction_detailed: "Satisfação Detalhada",
@@ -1056,14 +1050,14 @@ var AdvancedMetricsEngine = /** @class */ (function () {
     };
     return names[type] || type;
   };
-  AdvancedMetricsEngine.prototype.createMetricContext = function (
+  AdvancedMetricsEngine.prototype.createMetricContext = (
     sampleSize,
     timeRange,
     filters,
     methodology,
     assumptions,
     limitations,
-  ) {
+  ) => {
     if (assumptions === void 0) {
       assumptions = [];
     }
@@ -1080,59 +1074,51 @@ var AdvancedMetricsEngine = /** @class */ (function () {
     };
   };
   // Placeholder methods para implementação completa
-  AdvancedMetricsEngine.prototype.calculateOpenRate = function (communications) {
+  AdvancedMetricsEngine.prototype.calculateOpenRate = (communications) => {
     var totalSent = communications.length;
-    var opened = communications.filter(function (c) {
+    var opened = communications.filter((c) => {
       var _a;
       return (_a = c.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "opened";
-          });
+        : _a.some((e) => e.event_type === "opened");
     }).length;
     return totalSent > 0 ? (opened / totalSent) * 100 : 0;
   };
-  AdvancedMetricsEngine.prototype.calculateClickRate = function (communications) {
+  AdvancedMetricsEngine.prototype.calculateClickRate = (communications) => {
     var totalSent = communications.length;
-    var clicked = communications.filter(function (c) {
+    var clicked = communications.filter((c) => {
       var _a;
       return (_a = c.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "clicked";
-          });
+        : _a.some((e) => e.event_type === "clicked");
     }).length;
     return totalSent > 0 ? (clicked / totalSent) * 100 : 0;
   };
-  AdvancedMetricsEngine.prototype.calculateResponseRate = function (communications) {
+  AdvancedMetricsEngine.prototype.calculateResponseRate = (communications) => {
     var totalSent = communications.length;
-    var responded = communications.filter(function (c) {
+    var responded = communications.filter((c) => {
       var _a;
       return (_a = c.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "responded";
-          });
+        : _a.some((e) => e.event_type === "responded");
     }).length;
     return totalSent > 0 ? (responded / totalSent) * 100 : 0;
   };
-  AdvancedMetricsEngine.prototype.calculateCompletionRate = function (communications) {
+  AdvancedMetricsEngine.prototype.calculateCompletionRate = (communications) => {
     var totalSent = communications.length;
-    var completed = communications.filter(function (c) {
+    var completed = communications.filter((c) => {
       var _a;
       return (_a = c.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "completed";
-          });
+        : _a.some((e) => e.event_type === "completed");
     }).length;
     return totalSent > 0 ? (completed / totalSent) * 100 : 0;
   };
-  AdvancedMetricsEngine.prototype.calculateAverageTimeSpent = function (communications) {
+  AdvancedMetricsEngine.prototype.calculateAverageTimeSpent = (communications) => {
     // Implementar cálculo de tempo médio gasto
     return 0;
   };
-  AdvancedMetricsEngine.prototype.calculateWeightedEngagementScore = function (components) {
+  AdvancedMetricsEngine.prototype.calculateWeightedEngagementScore = (components) => {
     var weights = {
       openRate: 0.2,
       clickRate: 0.25,
@@ -1140,7 +1126,7 @@ var AdvancedMetricsEngine = /** @class */ (function () {
       completionRate: 0.15,
       timeSpent: 0.1,
     };
-    return Object.entries(weights).reduce(function (total, _a) {
+    return Object.entries(weights).reduce((total, _a) => {
       var key = _a[0],
         weight = _a[1];
       return total + (components[key] || 0) * weight;
@@ -1152,7 +1138,7 @@ var AdvancedMetricsEngine = /** @class */ (function () {
     request,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar cálculo de tendência
         return [
           2 /*return*/,
@@ -1179,118 +1165,64 @@ var AdvancedMetricsEngine = /** @class */ (function () {
       issues: [],
     };
   };
-  AdvancedMetricsEngine.prototype.assessAccuracy = function (data) {
+  AdvancedMetricsEngine.prototype.assessAccuracy = (data) => {
     // Implementar avaliação de acurácia
     return 85;
   };
-  AdvancedMetricsEngine.prototype.assessConsistency = function (data) {
+  AdvancedMetricsEngine.prototype.assessConsistency = (data) => {
     // Implementar avaliação de consistência
     return 90;
   };
-  AdvancedMetricsEngine.prototype.assessTimeliness = function (data) {
+  AdvancedMetricsEngine.prototype.assessTimeliness = (data) => {
     // Implementar avaliação de pontualidade
     return 95;
   };
-  AdvancedMetricsEngine.prototype.calculateConfidence = function (dataQuality, sampleSize) {
+  AdvancedMetricsEngine.prototype.calculateConfidence = (dataQuality, sampleSize) => {
     var qualityFactor = dataQuality.overall / 100;
     var sizeFactor = Math.min(1, sampleSize / 1000);
     return Math.round(qualityFactor * sizeFactor * 100) / 100;
   };
   // Métodos placeholder para métricas específicas
-  AdvancedMetricsEngine.prototype.calculateOverallSatisfaction = function (surveys) {
-    return 7.5;
-  };
-  AdvancedMetricsEngine.prototype.calculateNPSScore = function (surveys) {
-    return 45;
-  };
-  AdvancedMetricsEngine.prototype.calculateCSATScore = function (surveys) {
-    return 8.2;
-  };
-  AdvancedMetricsEngine.prototype.calculateCESScore = function (surveys) {
-    return 6.8;
-  };
-  AdvancedMetricsEngine.prototype.calculateCompositeSatisfactionScore = function (scores) {
-    return 7.8;
-  };
-  AdvancedMetricsEngine.prototype.analyzeFunnelSteps = function (funnelData) {
-    return {};
-  };
-  AdvancedMetricsEngine.prototype.calculateOverallConversionRate = function (analysis) {
-    return 15.5;
-  };
-  AdvancedMetricsEngine.prototype.calculateDataQualityIndex = function (data) {
-    return 92;
-  };
-  AdvancedMetricsEngine.prototype.calculateCommunicationQualityIndex = function (data) {
-    return 88;
-  };
-  AdvancedMetricsEngine.prototype.calculateExperienceQualityIndex = function (data) {
-    return 85;
-  };
-  AdvancedMetricsEngine.prototype.calculateOperationalQualityIndex = function (data) {
-    return 90;
-  };
-  AdvancedMetricsEngine.prototype.calculateCompositeQualityIndex = function (scores) {
-    return 88.75;
-  };
-  AdvancedMetricsEngine.prototype.calculateLGPDCompliance = function (data) {
-    return 96;
-  };
-  AdvancedMetricsEngine.prototype.calculateANVISACompliance = function (data) {
-    return 94;
-  };
-  AdvancedMetricsEngine.prototype.calculateCFMCompliance = function (data) {
-    return 98;
-  };
-  AdvancedMetricsEngine.prototype.calculateISO27001Compliance = function (data) {
-    return 92;
-  };
-  AdvancedMetricsEngine.prototype.calculateCompositeComplianceScore = function (scores) {
-    return 95;
-  };
+  AdvancedMetricsEngine.prototype.calculateOverallSatisfaction = (surveys) => 7.5;
+  AdvancedMetricsEngine.prototype.calculateNPSScore = (surveys) => 45;
+  AdvancedMetricsEngine.prototype.calculateCSATScore = (surveys) => 8.2;
+  AdvancedMetricsEngine.prototype.calculateCESScore = (surveys) => 6.8;
+  AdvancedMetricsEngine.prototype.calculateCompositeSatisfactionScore = (scores) => 7.8;
+  AdvancedMetricsEngine.prototype.analyzeFunnelSteps = (funnelData) => ({});
+  AdvancedMetricsEngine.prototype.calculateOverallConversionRate = (analysis) => 15.5;
+  AdvancedMetricsEngine.prototype.calculateDataQualityIndex = (data) => 92;
+  AdvancedMetricsEngine.prototype.calculateCommunicationQualityIndex = (data) => 88;
+  AdvancedMetricsEngine.prototype.calculateExperienceQualityIndex = (data) => 85;
+  AdvancedMetricsEngine.prototype.calculateOperationalQualityIndex = (data) => 90;
+  AdvancedMetricsEngine.prototype.calculateCompositeQualityIndex = (scores) => 88.75;
+  AdvancedMetricsEngine.prototype.calculateLGPDCompliance = (data) => 96;
+  AdvancedMetricsEngine.prototype.calculateANVISACompliance = (data) => 94;
+  AdvancedMetricsEngine.prototype.calculateCFMCompliance = (data) => 98;
+  AdvancedMetricsEngine.prototype.calculateISO27001Compliance = (data) => 92;
+  AdvancedMetricsEngine.prototype.calculateCompositeComplianceScore = (scores) => 95;
   AdvancedMetricsEngine.prototype.getHistoricalMetricData = function (type, clinicId, period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  AdvancedMetricsEngine.prototype.calculateTrendData = function (historicalData) {
-    return {
-      direction: "stable",
-      magnitude: 0,
-      velocity: 0,
-      acceleration: 0,
-      confidence: 0.8,
-      significance: "low",
-    };
-  };
-  AdvancedMetricsEngine.prototype.detectSeasonality = function (data) {
-    return {};
-  };
-  AdvancedMetricsEngine.prototype.detectAnomalies = function (data, trend) {
-    return [];
-  };
-  AdvancedMetricsEngine.prototype.generateForecasts = function (data, trend) {
-    return [];
-  };
-  AdvancedMetricsEngine.prototype.generateTrendInsights = function (trend, seasonality, anomalies) {
-    return [];
-  };
-  AdvancedMetricsEngine.prototype.generateMetricSpecificInsights = function (metric) {
-    return [];
-  };
-  AdvancedMetricsEngine.prototype.generateTrendSpecificInsights = function (trend) {
-    return [];
-  };
-  AdvancedMetricsEngine.prototype.generateCorrelationInsights = function (metrics) {
-    return [];
-  };
+  AdvancedMetricsEngine.prototype.calculateTrendData = (historicalData) => ({
+    direction: "stable",
+    magnitude: 0,
+    velocity: 0,
+    acceleration: 0,
+    confidence: 0.8,
+    significance: "low",
+  });
+  AdvancedMetricsEngine.prototype.detectSeasonality = (data) => ({});
+  AdvancedMetricsEngine.prototype.detectAnomalies = (data, trend) => [];
+  AdvancedMetricsEngine.prototype.generateForecasts = (data, trend) => [];
+  AdvancedMetricsEngine.prototype.generateTrendInsights = (trend, seasonality, anomalies) => [];
+  AdvancedMetricsEngine.prototype.generateMetricSpecificInsights = (metric) => [];
+  AdvancedMetricsEngine.prototype.generateTrendSpecificInsights = (trend) => [];
+  AdvancedMetricsEngine.prototype.generateCorrelationInsights = (metrics) => [];
   AdvancedMetricsEngine.prototype.generateBenchmarkInsights = function (metrics, request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   AdvancedMetricsEngine.prototype.calculateMetricBreakdown = function (
@@ -1299,23 +1231,17 @@ var AdvancedMetricsEngine = /** @class */ (function () {
     request,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   AdvancedMetricsEngine.prototype.calculateBenchmarks = function (metrics, request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   AdvancedMetricsEngine.prototype.checkAlerts = function (metrics, request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   AdvancedMetricsEngine.prototype.generateRecommendations = function (
@@ -1325,9 +1251,7 @@ var AdvancedMetricsEngine = /** @class */ (function () {
     request,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   AdvancedMetricsEngine.prototype.generateResultMetadata = function (request, metrics) {
@@ -1346,23 +1270,18 @@ var AdvancedMetricsEngine = /** @class */ (function () {
   };
   AdvancedMetricsEngine.prototype.saveConfiguration = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AdvancedMetricsEngine.prototype.saveMetricsResult = function (result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AdvancedMetricsEngine.prototype.startPeriodicCalculations = function () {
-    var _this = this;
     // Implementar cálculos periódicos
-    setInterval(function () {
-      _this.performMaintenanceTasks();
+    setInterval(() => {
+      this.performMaintenanceTasks();
     }, 3600000); // Cada hora
   };
   AdvancedMetricsEngine.prototype.performMaintenanceTasks = function () {
@@ -1402,26 +1321,19 @@ var AdvancedMetricsEngine = /** @class */ (function () {
   };
   AdvancedMetricsEngine.prototype.processAlerts = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AdvancedMetricsEngine.prototype.updateBenchmarks = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  AdvancedMetricsEngine.prototype.generateId = function () {
-    return "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
-  };
+  AdvancedMetricsEngine.prototype.generateId = () =>
+    "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
   return AdvancedMetricsEngine;
 })();
 exports.AdvancedMetricsEngine = AdvancedMetricsEngine;
 // Export singleton instance
-var createadvancedMetricsEngine = function () {
-  return new AdvancedMetricsEngine();
-};
+var createadvancedMetricsEngine = () => new AdvancedMetricsEngine();
 exports.createadvancedMetricsEngine = createadvancedMetricsEngine;

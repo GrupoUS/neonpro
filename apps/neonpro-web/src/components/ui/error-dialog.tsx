@@ -1,17 +1,23 @@
 // Progressive Disclosure Error Dialog Component
 "use client";
 
-import React, { useState } from "react";
 import type {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
+  AlertTriangle,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  Info,
+  RotateCcw,
+  Shield,
+  XCircle,
+} from "lucide-react";
+import React, { useState } from "react";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Collapsible,
@@ -19,19 +25,13 @@ import type {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type {
-  AlertTriangle,
-  Info,
-  CheckCircle,
-  XCircle,
-  ChevronDown,
-  ChevronRight,
-  RotateCcw,
-  ExternalLink,
-  Eye,
-  EyeOff,
-  Shield,
-  Clock,
-} from "lucide-react";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { AppError } from "@/hooks/use-error-handling";
 
 interface ErrorDialogProps {

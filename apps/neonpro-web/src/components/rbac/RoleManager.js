@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Role Manager Component for RBAC Administration
  * Story 1.2: Role-Based Access Control Implementation
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoleManager = void 0;
 var react_1 = require("react");
@@ -173,7 +170,7 @@ var PermissionGuard_1 = require("./PermissionGuard");
 /**
  * Role Manager Component
  */
-var RoleManager = function () {
+var RoleManager = () => {
   var _a = (0, usePermissions_1.usePermissions)(),
     hasPermission = _a.hasPermission,
     currentUserRole = _a.role;
@@ -205,10 +202,10 @@ var RoleManager = function () {
   /**
    * Load users from the system
    */
-  var loadUsers = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadUsers = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockUsers;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         setIsLoading(true);
         setError(null);
         try {
@@ -250,13 +247,12 @@ var RoleManager = function () {
         return [2 /*return*/];
       });
     });
-  };
   /**
    * Handle role assignment
    */
-  var handleRoleAssignment = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleRoleAssignment = () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         if (!selectedUser || !roleForm.newRole || !roleForm.reason.trim()) {
           setError("Please fill in all required fields");
           return [2 /*return*/];
@@ -272,13 +268,13 @@ var RoleManager = function () {
             reason: roleForm.reason,
           });
           // Update local state
-          setUsers(function (prev) {
-            return prev.map(function (user) {
-              return user.id === selectedUser.id
+          setUsers((prev) =>
+            prev.map((user) =>
+              user.id === selectedUser.id
                 ? __assign(__assign({}, user), { role: roleForm.newRole })
-                : user;
-            });
-          });
+                : user,
+            ),
+          );
           setSuccess("Role updated successfully for ".concat(selectedUser.name));
           setShowRoleDialog(false);
           setSelectedUser(null);
@@ -291,11 +287,10 @@ var RoleManager = function () {
         return [2 /*return*/];
       });
     });
-  };
   /**
    * Open role assignment dialog
    */
-  var openRoleDialog = function (user) {
+  var openRoleDialog = (user) => {
     setSelectedUser(user);
     setRoleForm({
       userId: user.id,
@@ -307,7 +302,7 @@ var RoleManager = function () {
   /**
    * Get role badge variant
    */
-  var getRoleBadgeVariant = function (role) {
+  var getRoleBadgeVariant = (role) => {
     switch (role) {
       case "owner":
         return "default";
@@ -324,7 +319,7 @@ var RoleManager = function () {
   /**
    * Check if current user can modify target user's role
    */
-  var canModifyRole = function (targetUser) {
+  var canModifyRole = (targetUser) => {
     if (currentUserRole === "owner") return true;
     if (currentUserRole === "manager" && targetUser.role !== "owner") return true;
     return false;
@@ -332,25 +327,18 @@ var RoleManager = function () {
   /**
    * Load users on component mount
    */
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadUsers();
   }, []);
   /**
    * Clear messages after delay
    */
-  (0, react_1.useEffect)(
-    function () {
-      if (success) {
-        var timer_1 = setTimeout(function () {
-          return setSuccess(null);
-        }, 5000);
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [success],
-  );
+  (0, react_1.useEffect)(() => {
+    if (success) {
+      var timer_1 = setTimeout(() => setSuccess(null), 5000);
+      return () => clearTimeout(timer_1);
+    }
+  }, [success]);
   return (
     <PermissionGuard_1.PermissionGuard requiredPermissions={["users.manage"]}>
       <div className="space-y-6">
@@ -412,38 +400,32 @@ var RoleManager = function () {
                     </table_1.TableRow>
                   </table_1.TableHeader>
                   <table_1.TableBody>
-                    {users.map(function (user) {
-                      return (
-                        <table_1.TableRow key={user.id}>
-                          <table_1.TableCell className="font-medium">{user.name}</table_1.TableCell>
-                          <table_1.TableCell>{user.email}</table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge variant={getRoleBadgeVariant(user.role)}>
-                              {user.role.toUpperCase()}
-                            </badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            {user.lastLogin
-                              ? new Date(user.lastLogin).toLocaleDateString()
-                              : "Never"}
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            {canModifyRole(user) && (
-                              <button_1.Button
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  return openRoleDialog(user);
-                                }}
-                              >
-                                <lucide_react_1.Edit className="mr-2 h-3 w-3" />
-                                Edit Role
-                              </button_1.Button>
-                            )}
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                    {users.map((user) => (
+                      <table_1.TableRow key={user.id}>
+                        <table_1.TableCell className="font-medium">{user.name}</table_1.TableCell>
+                        <table_1.TableCell>{user.email}</table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge variant={getRoleBadgeVariant(user.role)}>
+                            {user.role.toUpperCase()}
+                          </badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          {user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : "Never"}
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          {canModifyRole(user) && (
+                            <button_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openRoleDialog(user)}
+                            >
+                              <lucide_react_1.Edit className="mr-2 h-3 w-3" />
+                              Edit Role
+                            </button_1.Button>
+                          )}
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
                   </table_1.TableBody>
                 </table_1.Table>
               </card_1.CardContent>
@@ -453,7 +435,7 @@ var RoleManager = function () {
           {/* Permissions Tab */}
           <tabs_1.TabsContent value="permissions" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
-              {Object.entries(rbac_1.DEFAULT_ROLES).map(function (_a) {
+              {Object.entries(rbac_1.DEFAULT_ROLES).map((_a) => {
                 var roleName = _a[0],
                   roleData = _a[1];
                 return (
@@ -473,14 +455,12 @@ var RoleManager = function () {
                       <div className="space-y-2">
                         <label_1.Label className="text-sm font-medium">Permissions:</label_1.Label>
                         <div className="grid gap-1">
-                          {roleData.permissions.map(function (permission) {
-                            return (
-                              <div key={permission} className="flex items-center space-x-2">
-                                <checkbox_1.Checkbox checked disabled />
-                                <span className="text-sm">{permission}</span>
-                              </div>
-                            );
-                          })}
+                          {roleData.permissions.map((permission) => (
+                            <div key={permission} className="flex items-center space-x-2">
+                              <checkbox_1.Checkbox checked disabled />
+                              <span className="text-sm">{permission}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </card_1.CardContent>
@@ -521,30 +501,26 @@ var RoleManager = function () {
                 <label_1.Label htmlFor="new-role">New Role</label_1.Label>
                 <select_1.Select
                   value={roleForm.newRole}
-                  onValueChange={function (value) {
-                    return setRoleForm(function (prev) {
-                      return __assign(__assign({}, prev), { newRole: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setRoleForm((prev) => __assign(__assign({}, prev), { newRole: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Select new role" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     {Object.keys(rbac_1.DEFAULT_ROLES)
-                      .filter(function (role) {
+                      .filter((role) => {
                         // Filter roles based on current user's permissions
                         if (currentUserRole === "owner") return true;
                         if (currentUserRole === "manager") return role !== "owner";
                         return false;
                       })
-                      .map(function (role) {
-                        return (
-                          <select_1.SelectItem key={role} value={role}>
-                            {role.toUpperCase()}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      .map((role) => (
+                        <select_1.SelectItem key={role} value={role}>
+                          {role.toUpperCase()}
+                        </select_1.SelectItem>
+                      ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -555,22 +531,15 @@ var RoleManager = function () {
                   id="reason"
                   placeholder="Enter reason for role change..."
                   value={roleForm.reason}
-                  onChange={function (e) {
-                    return setRoleForm(function (prev) {
-                      return __assign(__assign({}, prev), { reason: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setRoleForm((prev) => __assign(__assign({}, prev), { reason: e.target.value }))
+                  }
                 />
               </div>
             </div>
 
             <dialog_1.DialogFooter>
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setShowRoleDialog(false);
-                }}
-              >
+              <button_1.Button variant="outline" onClick={() => setShowRoleDialog(false)}>
                 <lucide_react_1.X className="mr-2 h-4 w-4" />
                 Cancel
               </button_1.Button>

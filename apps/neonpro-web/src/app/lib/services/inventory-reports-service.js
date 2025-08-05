@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,11 +142,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createinventoryReportsService = void 0;
 var client_1 = require("@/lib/supabase/client");
-var InventoryReportsService = /** @class */ (function () {
+var InventoryReportsService = /** @class */ (() => {
   function InventoryReportsService() {}
   // Supabase client created per method for proper request context
   // =============================================================================
@@ -199,7 +196,7 @@ var InventoryReportsService = /** @class */ (function () {
             reportData =
               (movements === null || movements === void 0
                 ? void 0
-                : movements.map(function (movement) {
+                : movements.map((movement) => {
                     var _a;
                     return {
                       movement_id: movement.id,
@@ -239,7 +236,7 @@ var InventoryReportsService = /** @class */ (function () {
       });
     });
   };
-  InventoryReportsService.prototype.calculateStockMovementSummary = function (data) {
+  InventoryReportsService.prototype.calculateStockMovementSummary = (data) => {
     var summary = {
       total_movements: data.length,
       total_in: 0,
@@ -252,7 +249,7 @@ var InventoryReportsService = /** @class */ (function () {
       by_category: {},
       by_location: {},
     };
-    data.forEach(function (movement) {
+    data.forEach((movement) => {
       var isInbound = ["in", "return", "adjustment"].includes(movement.movement_type);
       if (isInbound) {
         summary.total_in += movement.quantity;
@@ -328,7 +325,7 @@ var InventoryReportsService = /** @class */ (function () {
             reportData =
               (stockData === null || stockData === void 0
                 ? void 0
-                : stockData.map(function (stock) {
+                : stockData.map((stock) => {
                     var _a;
                     var daysSinceMovement = stock.last_updated
                       ? Math.floor(
@@ -381,7 +378,7 @@ var InventoryReportsService = /** @class */ (function () {
       });
     });
   };
-  InventoryReportsService.prototype.calculateStockValuationSummary = function (data) {
+  InventoryReportsService.prototype.calculateStockValuationSummary = (data) => {
     var summary = {
       total_items: data.length,
       total_quantity: 0,
@@ -393,7 +390,7 @@ var InventoryReportsService = /** @class */ (function () {
     };
     var totalCostSum = 0;
     var itemsWithCost = 0;
-    data.forEach(function (item) {
+    data.forEach((item) => {
       summary.total_quantity += item.current_quantity;
       summary.total_value += item.total_value;
       if (item.unit_cost > 0) {
@@ -425,13 +422,13 @@ var InventoryReportsService = /** @class */ (function () {
     });
     summary.average_unit_cost = itemsWithCost > 0 ? totalCostSum / itemsWithCost : 0;
     // Calculate percentages
-    Object.values(summary.by_category).forEach(function (cat) {
+    Object.values(summary.by_category).forEach((cat) => {
       cat.percentage = summary.total_value > 0 ? (cat.value / summary.total_value) * 100 : 0;
     });
-    Object.values(summary.by_location).forEach(function (loc) {
+    Object.values(summary.by_location).forEach((loc) => {
       loc.percentage = summary.total_value > 0 ? (loc.value / summary.total_value) * 100 : 0;
     });
-    Object.values(summary.by_status).forEach(function (status) {
+    Object.values(summary.by_status).forEach((status) => {
       status.percentage = summary.total_value > 0 ? (status.value / summary.total_value) * 100 : 0;
     });
     return summary;
@@ -475,7 +472,7 @@ var InventoryReportsService = /** @class */ (function () {
             reportData =
               (expiringData === null || expiringData === void 0
                 ? void 0
-                : expiringData.map(function (item) {
+                : expiringData.map((item) => {
                     var _a;
                     var expiryDate = new Date(item.expiry_date);
                     var today = new Date();
@@ -516,7 +513,7 @@ var InventoryReportsService = /** @class */ (function () {
                     };
                   })) || [];
             // Sort by urgency and days to expiry
-            reportData.sort(function (a, b) {
+            reportData.sort((a, b) => {
               var urgencyOrder = { immediate: 0, urgent: 1, warning: 2, watch: 3 };
               var urgencyDiff = urgencyOrder[a.urgency_level] - urgencyOrder[b.urgency_level];
               if (urgencyDiff !== 0) return urgencyDiff;
@@ -540,7 +537,7 @@ var InventoryReportsService = /** @class */ (function () {
       });
     });
   };
-  InventoryReportsService.prototype.calculateExpiringItemsSummary = function (data) {
+  InventoryReportsService.prototype.calculateExpiringItemsSummary = (data) => {
     var summary = {
       total_expiring_items: data.length,
       total_expiring_value: 0,
@@ -551,7 +548,7 @@ var InventoryReportsService = /** @class */ (function () {
       upcoming_expirations_60_days: 0,
       upcoming_expirations_90_days: 0,
     };
-    data.forEach(function (item) {
+    data.forEach((item) => {
       summary.total_expiring_value += item.total_value;
       // Count by time periods
       if (item.days_to_expiry <= 30) summary.upcoming_expirations_30_days++;
@@ -624,7 +621,7 @@ var InventoryReportsService = /** @class */ (function () {
             reportData =
               (transfers === null || transfers === void 0
                 ? void 0
-                : transfers.map(function (transfer) {
+                : transfers.map((transfer) => {
                     var _a, _b;
                     return {
                       transfer_id: transfer.id,
@@ -667,7 +664,7 @@ var InventoryReportsService = /** @class */ (function () {
       });
     });
   };
-  InventoryReportsService.prototype.calculateTransferSummary = function (data) {
+  InventoryReportsService.prototype.calculateTransferSummary = (data) => {
     var summary = {
       total_transfers: data.length,
       completed_transfers: 0,
@@ -680,7 +677,7 @@ var InventoryReportsService = /** @class */ (function () {
       most_transferred_items: [],
     };
     var itemCounts = {};
-    data.forEach(function (transfer) {
+    data.forEach((transfer) => {
       summary.total_value_transferred += transfer.total_value;
       if (transfer.status === "completed") {
         summary.completed_transfers++;
@@ -717,9 +714,7 @@ var InventoryReportsService = /** @class */ (function () {
       summary.total_transfers > 0 ? summary.total_value_transferred / summary.total_transfers : 0;
     // Get most transferred items
     summary.most_transferred_items = Object.values(itemCounts)
-      .sort(function (a, b) {
-        return b.count - a.count;
-      })
+      .sort((a, b) => b.count - a.count)
       .slice(0, 10);
     return summary;
   };
@@ -809,7 +804,7 @@ var InventoryReportsService = /** @class */ (function () {
         transferRequests,
         utilizationRate,
         performanceScore;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -854,55 +849,52 @@ var InventoryReportsService = /** @class */ (function () {
             totalValue =
               (stockData === null || stockData === void 0
                 ? void 0
-                : stockData.reduce(function (sum, item) {
-                    return sum + item.current_quantity * (item.cost_per_unit || 0);
-                  }, 0)) || 0;
+                : stockData.reduce(
+                    (sum, item) => sum + item.current_quantity * (item.cost_per_unit || 0),
+                    0,
+                  )) || 0;
             totalMovements =
               (movements === null || movements === void 0 ? void 0 : movements.length) || 0;
             movementsIn =
               (movements === null || movements === void 0
                 ? void 0
-                : movements.filter(function (m) {
-                    return (
+                : movements.filter(
+                    (m) =>
                       ["in", "return", "adjustment"].includes(m.transaction_type) &&
-                      m.quantity_change > 0
-                    );
-                  }).length) || 0;
+                      m.quantity_change > 0,
+                  ).length) || 0;
             movementsOut =
               (movements === null || movements === void 0
                 ? void 0
-                : movements.filter(function (m) {
-                    return (
+                : movements.filter(
+                    (m) =>
                       ["out", "transfer", "waste"].includes(m.transaction_type) &&
-                      m.quantity_change < 0
-                    );
-                  }).length) || 0;
+                      m.quantity_change < 0,
+                  ).length) || 0;
             valueIn =
               (movements === null || movements === void 0
                 ? void 0
                 : movements
-                    .filter(function (m) {
-                      return m.quantity_change > 0;
-                    })
-                    .reduce(function (sum, m) {
-                      return sum + Math.abs(m.quantity_change) * (m.unit_cost || 0);
-                    }, 0)) || 0;
+                    .filter((m) => m.quantity_change > 0)
+                    .reduce(
+                      (sum, m) => sum + Math.abs(m.quantity_change) * (m.unit_cost || 0),
+                      0,
+                    )) || 0;
             valueOut =
               (movements === null || movements === void 0
                 ? void 0
                 : movements
-                    .filter(function (m) {
-                      return m.quantity_change < 0;
-                    })
-                    .reduce(function (sum, m) {
-                      return sum + Math.abs(m.quantity_change) * (m.unit_cost || 0);
-                    }, 0)) || 0;
+                    .filter((m) => m.quantity_change < 0)
+                    .reduce(
+                      (sum, m) => sum + Math.abs(m.quantity_change) * (m.unit_cost || 0),
+                      0,
+                    )) || 0;
             lowStockItems =
               (stockData === null || stockData === void 0
                 ? void 0
-                : stockData.filter(function (item) {
-                    return item.current_quantity <= (item.inventory_items.minimum_quantity || 0);
-                  }).length) || 0;
+                : stockData.filter(
+                    (item) => item.current_quantity <= (item.inventory_items.minimum_quantity || 0),
+                  ).length) || 0;
             turnoverRate = totalValue > 0 ? (valueOut / totalValue) * 100 : 0;
             stockAccuracy =
               totalItems > 0 ? ((totalItems - lowStockItems) / totalItems) * 100 : 100;
@@ -941,7 +933,7 @@ var InventoryReportsService = /** @class */ (function () {
       });
     });
   };
-  InventoryReportsService.prototype.calculateLocationPerformanceSummary = function (data) {
+  InventoryReportsService.prototype.calculateLocationPerformanceSummary = (data) => {
     if (data.length === 0) {
       return {
         total_locations: 0,
@@ -954,33 +946,22 @@ var InventoryReportsService = /** @class */ (function () {
         locations_needing_attention: 0,
       };
     }
-    var bestLocation = data.reduce(function (best, location) {
-      return location.performance_score > best.performance_score ? location : best;
-    });
-    var worstLocation = data.reduce(function (worst, location) {
-      return location.performance_score < worst.performance_score ? location : worst;
-    });
+    var bestLocation = data.reduce((best, location) =>
+      location.performance_score > best.performance_score ? location : best,
+    );
+    var worstLocation = data.reduce((worst, location) =>
+      location.performance_score < worst.performance_score ? location : worst,
+    );
     return {
       total_locations: data.length,
       average_performance_score:
-        data.reduce(function (sum, loc) {
-          return sum + loc.performance_score;
-        }, 0) / data.length,
+        data.reduce((sum, loc) => sum + loc.performance_score, 0) / data.length,
       best_performing_location: bestLocation.clinic_name,
       worst_performing_location: worstLocation.clinic_name,
-      total_system_value: data.reduce(function (sum, loc) {
-        return sum + loc.total_value;
-      }, 0),
-      total_system_movements: data.reduce(function (sum, loc) {
-        return sum + loc.total_movements;
-      }, 0),
-      average_turnover_rate:
-        data.reduce(function (sum, loc) {
-          return sum + loc.turnover_rate;
-        }, 0) / data.length,
-      locations_needing_attention: data.filter(function (loc) {
-        return loc.performance_score < 70;
-      }).length,
+      total_system_value: data.reduce((sum, loc) => sum + loc.total_value, 0),
+      total_system_movements: data.reduce((sum, loc) => sum + loc.total_movements, 0),
+      average_turnover_rate: data.reduce((sum, loc) => sum + loc.turnover_rate, 0) / data.length,
+      locations_needing_attention: data.filter((loc) => loc.performance_score < 70).length,
     };
   };
   // =============================================================================
@@ -1022,9 +1003,9 @@ var InventoryReportsService = /** @class */ (function () {
             return [4 /*yield*/, this.generateStockValuationReport(parameters.filters)];
           case 7:
             result = _b.sent();
-            result.data = result.data.filter(function (item) {
-              return item.stock_status === "low" || item.stock_status === "critical";
-            });
+            result.data = result.data.filter(
+              (item) => item.stock_status === "low" || item.stock_status === "critical",
+            );
             return [2 /*return*/, result];
           case 8:
             throw new Error("Unsupported report type: ".concat(parameters.type));
@@ -1038,7 +1019,7 @@ var InventoryReportsService = /** @class */ (function () {
   InventoryReportsService.prototype.saveReportDefinition = function (definition) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1070,7 +1051,7 @@ var InventoryReportsService = /** @class */ (function () {
   InventoryReportsService.prototype.getReportDefinitions = function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase
@@ -1098,7 +1079,7 @@ var InventoryReportsService = /** @class */ (function () {
   };
   InventoryReportsService.prototype.getDashboardStats = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would typically query report execution history
         // For now, return mock data
         return [
@@ -1118,7 +1099,5 @@ var InventoryReportsService = /** @class */ (function () {
   };
   return InventoryReportsService;
 })();
-var createinventoryReportsService = function () {
-  return new InventoryReportsService();
-};
+var createinventoryReportsService = () => new InventoryReportsService();
 exports.createinventoryReportsService = createinventoryReportsService;

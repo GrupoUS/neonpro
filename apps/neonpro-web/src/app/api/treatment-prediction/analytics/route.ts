@@ -1,7 +1,8 @@
 // GET /api/treatment-prediction/analytics - Prediction analytics and reporting
+
+import type { NextRequest, NextResponse } from "next/server";
 import type { TreatmentPredictionService } from "@/app/lib/services/treatment-prediction";
 import type { createServerClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 // GET /api/treatment-prediction/analytics - Get prediction analytics
 export async function GET(request: NextRequest) {

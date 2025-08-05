@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.GET = GET;
@@ -185,7 +182,7 @@ function POST(request) {
       logError,
       error_1;
     var _b, _c, _d, _e;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 15, , 16]);
@@ -239,12 +236,10 @@ function POST(request) {
                 server_1.NextResponse.json(
                   {
                     error: "Validation failed",
-                    details: validationError.errors.map(function (err) {
-                      return {
-                        field: err.path.join("."),
-                        message: err.message,
-                      };
-                    }),
+                    details: validationError.errors.map((err) => ({
+                      field: err.path.join("."),
+                      message: err.message,
+                    })),
                   },
                   { status: 400 },
                 ),
@@ -355,18 +350,16 @@ function POST(request) {
           return [
             4 /*yield*/,
             emailService.initializeProviders(
-              providerConfigs.map(function (config) {
-                return {
-                  provider: config.provider,
-                  name: config.name,
-                  settings: config.settings,
-                  isActive: config.is_active,
-                  priority: config.priority,
-                  dailyLimit: config.daily_limit,
-                  monthlyLimit: config.monthly_limit,
-                  rateLimit: config.rate_limit,
-                };
-              }),
+              providerConfigs.map((config) => ({
+                provider: config.provider,
+                name: config.name,
+                settings: config.settings,
+                isActive: config.is_active,
+                priority: config.priority,
+                dailyLimit: config.daily_limit,
+                monthlyLimit: config.monthly_limit,
+                rateLimit: config.rate_limit,
+              })),
             ),
           ];
         case 9:
@@ -394,7 +387,7 @@ function POST(request) {
           return [4 /*yield*/, emailService.sendBulkEmail(messages_1, undefined, batchSize_1)];
         case 11:
           result = _f.sent();
-          emailLogs = result.results.map(function (emailResult, index) {
+          emailLogs = result.results.map((emailResult, index) => {
             var _a, _b, _c, _d;
             return {
               id: crypto.randomUUID(),
@@ -500,7 +493,7 @@ function GET(request) {
       emailLogs,
       events,
       error_2;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           _d.trys.push([0, 9, , 10]);
@@ -530,7 +523,7 @@ function GET(request) {
           }
           url = new URL(request.url);
           campaignId = url.searchParams.get("campaignId");
-          if (!!campaignId) return [3 /*break*/, 5];
+          if (campaignId) return [3 /*break*/, 5];
           return [
             4 /*yield*/,
             supabase
@@ -587,9 +580,7 @@ function GET(request) {
                 "message_id",
                 (emailLogs === null || emailLogs === void 0
                   ? void 0
-                  : emailLogs.map(function (log) {
-                      return log.message_id;
-                    })) || [],
+                  : emailLogs.map((log) => log.message_id)) || [],
               )
               .eq("clinic_id", profile.clinic_id),
           ];
@@ -605,39 +596,27 @@ function GET(request) {
                 sent:
                   (emailLogs === null || emailLogs === void 0
                     ? void 0
-                    : emailLogs.filter(function (log) {
-                        return log.status === "sent";
-                      }).length) || 0,
+                    : emailLogs.filter((log) => log.status === "sent").length) || 0,
                 failed:
                   (emailLogs === null || emailLogs === void 0
                     ? void 0
-                    : emailLogs.filter(function (log) {
-                        return log.status === "failed";
-                      }).length) || 0,
+                    : emailLogs.filter((log) => log.status === "failed").length) || 0,
                 delivered:
                   (events === null || events === void 0
                     ? void 0
-                    : events.filter(function (event) {
-                        return event.event === "delivered";
-                      }).length) || 0,
+                    : events.filter((event) => event.event === "delivered").length) || 0,
                 opened:
                   (events === null || events === void 0
                     ? void 0
-                    : events.filter(function (event) {
-                        return event.event === "opened";
-                      }).length) || 0,
+                    : events.filter((event) => event.event === "opened").length) || 0,
                 clicked:
                   (events === null || events === void 0
                     ? void 0
-                    : events.filter(function (event) {
-                        return event.event === "clicked";
-                      }).length) || 0,
+                    : events.filter((event) => event.event === "clicked").length) || 0,
                 bounced:
                   (events === null || events === void 0
                     ? void 0
-                    : events.filter(function (event) {
-                        return event.event === "bounced";
-                      }).length) || 0,
+                    : events.filter((event) => event.event === "bounced").length) || 0,
               },
             }),
           ];

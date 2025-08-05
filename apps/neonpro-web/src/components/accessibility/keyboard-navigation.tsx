@@ -13,23 +13,24 @@
 
 "use client";
 
-import type { useTranslation } from "@/hooks/use-translation";
-import type {
-  FocusManager,
-  KEYBOARD_KEYS,
-  KeyboardNavigation,
-  announceToScreenReader,
-} from "@/lib/accessibility/accessibility-utils";
-import type { cn } from "@/lib/utils";
-import React, {
-  ReactNode,
+import type React from "react";
+import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
+import type { useTranslation } from "@/hooks/use-translation";
+import type {
+  announceToScreenReader,
+  FocusManager,
+  KEYBOARD_KEYS,
+  KeyboardNavigation,
+} from "@/lib/accessibility/accessibility-utils";
+import type { cn } from "@/lib/utils";
 
 interface KeyboardNavigationContextType {
   focusTrapStack: HTMLElement[];

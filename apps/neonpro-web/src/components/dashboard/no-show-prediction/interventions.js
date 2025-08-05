@@ -1,18 +1,17 @@
 // Story 11.2: No-Show Prediction Interventions Component
 // Manage and track intervention strategies
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = NoShowPredictionInterventions;
 var react_1 = require("react");
@@ -148,7 +145,6 @@ var dialog_1 = require("@/components/ui/dialog");
 var label_1 = require("@/components/ui/label");
 var textarea_1 = require("@/components/ui/textarea");
 function NoShowPredictionInterventions() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     interventions = _a[0],
     setInterventions = _a[1];
@@ -162,16 +158,13 @@ function NoShowPredictionInterventions() {
     showCreateDialog = _d[0],
     setShowCreateDialog = _d[1];
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      fetchInterventions();
-    },
-    [filter],
-  );
-  var fetchInterventions = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    fetchInterventions();
+  }, [filter]);
+  var fetchInterventions = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -208,8 +201,7 @@ function NoShowPredictionInterventions() {
         }
       });
     });
-  };
-  var getStatusBadgeVariant = function (status) {
+  var getStatusBadgeVariant = (status) => {
     switch (status) {
       case "completed":
         return "default";
@@ -221,7 +213,7 @@ function NoShowPredictionInterventions() {
         return "outline";
     }
   };
-  var getOutcomeBadgeVariant = function (outcome) {
+  var getOutcomeBadgeVariant = (outcome) => {
     switch (outcome) {
       case "successful":
         return "default";
@@ -284,12 +276,7 @@ function NoShowPredictionInterventions() {
                 />
               </div>
               <div className="flex justify-end space-x-2">
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setShowCreateDialog(false);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                   Cancel
                 </button_1.Button>
                 <button_1.Button>Create Intervention</button_1.Button>
@@ -333,45 +320,43 @@ function NoShowPredictionInterventions() {
         <card_1.CardContent>
           {loading
             ? <div className="space-y-4">
-                {Array.from({ length: 5 }).map(function (_, i) {
-                  return <div key={i} className="h-16 bg-muted animate-pulse rounded" />;
-                })}
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-16 bg-muted animate-pulse rounded" />
+                ))}
               </div>
             : <div className="space-y-4">
-                {interventions.map(function (intervention) {
-                  return (
-                    <div
-                      key={intervention.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="w-2 h-2 rounded-full bg-blue-500" />
-                        <div>
-                          <p className="font-medium">{intervention.patient.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {intervention.intervention_type.replace("_", " ")} •
-                            {new Date(intervention.scheduled_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <badge_1.Badge variant={getStatusBadgeVariant(intervention.status)}>
-                          {intervention.status}
-                        </badge_1.Badge>
-                        {intervention.outcome && (
-                          <badge_1.Badge variant={getOutcomeBadgeVariant(intervention.outcome)}>
-                            {intervention.outcome.replace("_", " ")}
-                          </badge_1.Badge>
-                        )}
-                        {intervention.effectiveness_score && (
-                          <span className="text-sm font-medium">
-                            {(intervention.effectiveness_score * 100).toFixed(0)}% effective
-                          </span>
-                        )}
+                {interventions.map((intervention) => (
+                  <div
+                    key={intervention.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="w-2 h-2 rounded-full bg-blue-500" />
+                      <div>
+                        <p className="font-medium">{intervention.patient.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {intervention.intervention_type.replace("_", " ")} •
+                          {new Date(intervention.scheduled_at).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center space-x-2">
+                      <badge_1.Badge variant={getStatusBadgeVariant(intervention.status)}>
+                        {intervention.status}
+                      </badge_1.Badge>
+                      {intervention.outcome && (
+                        <badge_1.Badge variant={getOutcomeBadgeVariant(intervention.outcome)}>
+                          {intervention.outcome.replace("_", " ")}
+                        </badge_1.Badge>
+                      )}
+                      {intervention.effectiveness_score && (
+                        <span className="text-sm font-medium">
+                          {(intervention.effectiveness_score * 100).toFixed(0)}% effective
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
 
                 {interventions.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">

@@ -15,14 +15,14 @@
  */
 
 import type {
-  securityAuditLogger,
-  SecurityMetrics,
   AuditEventType,
+  SecurityMetrics,
+  securityAuditLogger,
 } from "../../auth/audit/security-audit-logger";
 import type {
-  lgpdComplianceManager,
   ConsentType,
   LGPDRights,
+  lgpdComplianceManager,
 } from "../../auth/lgpd/lgpd-compliance-manager";
 
 // Compliance scoring categories

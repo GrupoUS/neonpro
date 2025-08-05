@@ -8,7 +8,41 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type {
+  addDays,
+  eachDayOfInterval,
+  endOfWeek,
+  format,
+  isSameDay,
+  startOfWeek,
+} from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  CalendarDays,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  Coffee,
+  Edit,
+  Moon,
+  Plus,
+  Save,
+  Settings,
+  Sun,
+  Trash2,
+  User,
+  UserCheck,
+  X,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -16,22 +50,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Switch } from "@/components/ui/switch";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Separator } from "@/components/ui/separator";
 import type {
   Dialog,
   DialogContent,
@@ -41,35 +59,18 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
-  Clock,
-  User,
-  Calendar as CalendarIcon,
-  Plus,
-  Edit,
-  Trash2,
-  Save,
-  X,
-  AlertTriangle,
-  CheckCircle,
-  Coffee,
-  Settings,
-  CalendarDays,
-  UserCheck,
-  Moon,
-  Sun,
-} from "lucide-react";
-import type {
-  format,
-  startOfWeek,
-  endOfWeek,
-  eachDayOfInterval,
-  addDays,
-  isSameDay,
-} from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Types
 interface Professional {

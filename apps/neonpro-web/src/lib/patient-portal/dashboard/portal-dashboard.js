@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,11 +142,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PortalDashboard = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var PortalDashboard = /** @class */ (function () {
+var PortalDashboard = /** @class */ (() => {
   function PortalDashboard(
     supabaseUrl,
     supabaseKey,
@@ -370,15 +367,11 @@ var PortalDashboard = /** @class */ (function () {
             upcoming =
               (upcomingData === null || upcomingData === void 0
                 ? void 0
-                : upcomingData.map(function (apt) {
-                    return _this.transformAppointment(apt);
-                  })) || [];
+                : upcomingData.map((apt) => _this.transformAppointment(apt))) || [];
             recent =
               (recentData === null || recentData === void 0
                 ? void 0
-                : recentData.map(function (apt) {
-                    return _this.transformAppointment(apt);
-                  })) || [];
+                : recentData.map((apt) => _this.transformAppointment(apt))) || [];
             return [2 /*return*/, { upcoming: upcoming, recent: recent }];
         }
       });
@@ -387,7 +380,7 @@ var PortalDashboard = /** @class */ (function () {
   /**
    * Transform appointment data to AppointmentSummary
    */
-  PortalDashboard.prototype.transformAppointment = function (apt) {
+  PortalDashboard.prototype.transformAppointment = (apt) => {
     var _a, _b;
     var appointmentDate = new Date(
       "".concat(apt.appointment_date, "T").concat(apt.appointment_time),
@@ -435,20 +428,18 @@ var PortalDashboard = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (progress) {
-                    return {
-                      id: progress.id,
-                      treatmentName: progress.treatment_name,
-                      progressPercentage: progress.progress_percentage,
-                      currentSession: progress.current_session,
-                      totalSessions: progress.total_sessions,
-                      nextSessionDate: progress.next_session_date
-                        ? new Date(progress.next_session_date)
-                        : undefined,
-                      lastUpdate: new Date(progress.last_update),
-                      status: progress.status,
-                    };
-                  })) || [],
+                : data.map((progress) => ({
+                    id: progress.id,
+                    treatmentName: progress.treatment_name,
+                    progressPercentage: progress.progress_percentage,
+                    currentSession: progress.current_session,
+                    totalSessions: progress.total_sessions,
+                    nextSessionDate: progress.next_session_date
+                      ? new Date(progress.next_session_date)
+                      : undefined,
+                    lastUpdate: new Date(progress.last_update),
+                    status: progress.status,
+                  }))) || [],
             ];
         }
       });
@@ -481,17 +472,15 @@ var PortalDashboard = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (upload) {
-                    return {
-                      id: upload.id,
-                      filename: upload.filename,
-                      category: upload.category,
-                      uploadDate: new Date(upload.upload_date),
-                      isProcessed: upload.is_processed,
-                      isVerified: upload.is_verified,
-                      fileSize: upload.file_size,
-                    };
-                  })) || [],
+                : data.map((upload) => ({
+                    id: upload.id,
+                    filename: upload.filename,
+                    category: upload.category,
+                    uploadDate: new Date(upload.upload_date),
+                    isProcessed: upload.is_processed,
+                    isVerified: upload.is_verified,
+                    fileSize: upload.file_size,
+                  }))) || [],
             ];
         }
       });
@@ -517,7 +506,7 @@ var PortalDashboard = /** @class */ (function () {
             ];
           case 1:
             evaluations = _a.sent().data;
-            evaluations === null || evaluations === void 0 ? void 0 : evaluations.forEach(function (eval) {
+            evaluations === null || evaluations === void 0 ? void 0 : evaluations.forEach((eval) => {
                             tasks.push({
                                 id: "eval_".concat(eval.id),
                                 title: "Avalia\u00E7\u00E3o: ".concat(eval.evaluation_type),
@@ -559,18 +548,16 @@ var PortalDashboard = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (notification) {
-                    return {
-                      id: notification.id,
-                      title: notification.title,
-                      message: notification.message,
-                      type: notification.type,
-                      isRead: notification.is_read,
-                      createdAt: new Date(notification.created_at),
-                      actionUrl: notification.action_url,
-                      actionText: notification.action_text,
-                    };
-                  })) || [],
+                : data.map((notification) => ({
+                    id: notification.id,
+                    title: notification.title,
+                    message: notification.message,
+                    type: notification.type,
+                    isRead: notification.is_read,
+                    createdAt: new Date(notification.created_at),
+                    actionUrl: notification.action_url,
+                    actionText: notification.action_text,
+                  }))) || [],
             ];
         }
       });
@@ -635,9 +622,7 @@ var PortalDashboard = /** @class */ (function () {
             ratings = _a.sent().data;
             averageRating =
               (ratings === null || ratings === void 0 ? void 0 : ratings.length) > 0
-                ? ratings.reduce(function (sum, r) {
-                    return sum + r.rating;
-                  }, 0) / ratings.length
+                ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
                 : 0;
             return [
               4 /*yield*/,
@@ -757,14 +742,9 @@ var PortalDashboard = /** @class */ (function () {
    * Clear cache for specific patient or all cache
    */
   PortalDashboard.prototype.clearCache = function (patientId) {
-    var _this = this;
     if (patientId) {
-      var keysToDelete = Array.from(this.cache.keys()).filter(function (key) {
-        return key.includes(patientId);
-      });
-      keysToDelete.forEach(function (key) {
-        return _this.cache.delete(key);
-      });
+      var keysToDelete = Array.from(this.cache.keys()).filter((key) => key.includes(patientId));
+      keysToDelete.forEach((key) => this.cache.delete(key));
     } else {
       this.cache.clear();
     }

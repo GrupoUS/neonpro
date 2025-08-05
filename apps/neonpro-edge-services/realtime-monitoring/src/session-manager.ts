@@ -1,19 +1,18 @@
-import { DurableObject } from "@cloudflare/workers-types";
+import type { DurableObject } from "@cloudflare/workers-types";
+import { v4 as uuidv4 } from "uuid";
 import type {
   Env,
   MonitoringSession,
+  MonitorType,
   WebSocketMessage,
   WSSubscription,
-  MonitorType,
 } from "./types";
-import { v4 as uuidv4 } from "uuid";
 
 export class MonitoringSessionManager implements DurableObject {
   private state: DurableObjectState;
   private env: Env;
   private connections: Map<string, WebSocket> = new Map();
   private subscriptions: Map<string, WSSubscription[]> = new Map();
-  private heartbeatInterval?: number;
 
   constructor(state: DurableObjectState, env: Env) {
     this.state = state;
@@ -108,7 +107,7 @@ export class MonitoringSessionManager implements DurableObject {
         status: 101,
         webSocket: client,
       });
-    } catch (error) {
+    } catch (_error) {
       return new Response("Failed to establish connection", { status: 500 });
     }
   }
@@ -202,7 +201,7 @@ export class MonitoringSessionManager implements DurableObject {
   private async handleUnsubscribe(
     connectionId: string,
     subscription: { type: MonitorType },
-    context: { tenantId: string; userId: string },
+    _context: { tenantId: string; userId: string },
   ): Promise<void> {
     const currentSubscriptions = this.subscriptions.get(connectionId) || [];
     const updatedSubscriptions = currentSubscriptions.filter((s) => s.type !== subscription.type);
@@ -228,7 +227,7 @@ export class MonitoringSessionManager implements DurableObject {
 
   private async handleHeartbeat(
     connectionId: string,
-    context: { tenantId: string; userId: string },
+    _context: { tenantId: string; userId: string },
   ): Promise<void> {
     // Update last activity
     const sessionKey = `session:${connectionId}`;
@@ -289,22 +288,24 @@ export class MonitoringSessionManager implements DurableObject {
           }
           break;
 
-        case "system-alerts":
+        case "system-alerts": {
           // Get active alerts
           const alerts = await this.getActiveAlerts(context.tenantId, subscription.filters);
           initialData = { type: "system-alerts", data: alerts };
           break;
+        }
 
-        case "appointments":
+        case "appointments": {
           // Get today's appointments
           const appointments = await this.getTodaysAppointments(context.tenantId);
           initialData = { type: "appointments", data: appointments };
           break;
+        }
       }
 
       if (initialData) {
         const message: WebSocketMessage = {
-          type: (subscription.type.replace("-", "_") + "_update") as any,
+          type: `${subscription.type.replace("-", "_")}_update` as any,
           data: initialData,
           timestamp: new Date().toISOString(),
           messageId: uuidv4(),
@@ -354,7 +355,7 @@ export class MonitoringSessionManager implements DurableObject {
     return vitalSigns;
   }
 
-  private async getActiveAlerts(tenantId: string, filters?: any): Promise<any[]> {
+  private async getActiveAlerts(tenantId: string, _filters?: any): Promise<any[]> {
     // Get from cache first
     const cacheKey = `alerts:${tenantId}:active`;
     const cached = await this.env.ALERT_STORAGE.get(cacheKey);
@@ -439,7 +440,7 @@ export class MonitoringSessionManager implements DurableObject {
           headers: { "Content-Type": "application/json" },
         },
       );
-    } catch (error) {
+    } catch (_error) {
       return new Response("Broadcast failed", { status: 500 });
     }
   }

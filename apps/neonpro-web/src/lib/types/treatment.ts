@@ -12,8 +12,8 @@ import type {
   FHIRCodeableConcept,
   FHIRMeta,
   FHIRNarrative,
-  FHIRReference,
   FHIRPeriod,
+  FHIRReference,
 } from "./fhir";
 
 // ===============================================

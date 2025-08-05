@@ -11,11 +11,11 @@
  * Based on research from Bull, Redis patterns, and serverless job processing
  */
 
-import type { createClient } from "@/lib/supabase/server";
-import type { InstagramOAuthHandler } from "@/lib/oauth/platforms/instagram-handler";
 import type { FacebookOAuthHandler } from "@/lib/oauth/platforms/facebook-handler";
-import type { WhatsAppOAuthHandler } from "@/lib/oauth/platforms/whatsapp-handler";
 import type { HubSpotOAuthHandler } from "@/lib/oauth/platforms/hubspot-handler";
+import type { InstagramOAuthHandler } from "@/lib/oauth/platforms/instagram-handler";
+import type { WhatsAppOAuthHandler } from "@/lib/oauth/platforms/whatsapp-handler";
+import type { createClient } from "@/lib/supabase/server";
 
 interface JobContext {
   jobId: string;
@@ -168,7 +168,7 @@ export class JobQueueManager {
             .eq("id", job.id);
         } else {
           // Schedule retry with exponential backoff
-          const retryDelay = Math.pow(2, newRetryCount) * 60 * 1000; // Exponential backoff in minutes
+          const retryDelay = 2 ** newRetryCount * 60 * 1000; // Exponential backoff in minutes
           const scheduledAt = new Date(Date.now() + retryDelay).toISOString();
 
           await this.supabase

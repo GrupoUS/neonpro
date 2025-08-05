@@ -1,31 +1,30 @@
 // Comprehensive Error Handling System with LGPD Compliance
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,10 +144,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -159,7 +156,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useErrorHandling = useErrorHandling;
 var react_1 = require("react");
@@ -331,7 +328,6 @@ var ERROR_TEMPLATES = {
   },
 };
 function useErrorHandling() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     errors = _a[0],
     setErrors = _a[1];
@@ -341,7 +337,7 @@ function useErrorHandling() {
   var toast = (0, use_toast_1.useToast)().toast;
   var supabase = yield (0, client_1.createClient)();
   // Generate unique session ID for error tracking
-  var sessionId = (0, react_1.useCallback)(function () {
+  var sessionId = (0, react_1.useCallback)(() => {
     if (typeof window !== "undefined") {
       var id = sessionStorage.getItem("session_id");
       if (!id) {
@@ -354,27 +350,20 @@ function useErrorHandling() {
   }, []);
   // Create comprehensive error context following LGPD principles
   var createErrorContext = (0, react_1.useCallback)(
-    function (component, action, metadata) {
-      return {
-        component: component,
-        action: action,
-        sessionId: sessionId(),
-        timestamp: new Date().toISOString(),
-        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "server",
-        metadata: metadata
-          ? __assign(__assign({}, metadata), { sensitive_data_removed: true })
-          : undefined,
-      };
-    },
+    (component, action, metadata) => ({
+      component: component,
+      action: action,
+      sessionId: sessionId(),
+      timestamp: new Date().toISOString(),
+      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "server",
+      metadata: metadata
+        ? __assign(__assign({}, metadata), { sensitive_data_removed: true })
+        : undefined,
+    }),
     [sessionId],
   );
   // Create standardized error following privacy-by-design principles
-  var createError = (0, react_1.useCallback)(function (
-    errorCode,
-    context,
-    customMessage,
-    customDetails,
-  ) {
+  var createError = (0, react_1.useCallback)((errorCode, context, customMessage, customDetails) => {
     var template = ERROR_TEMPLATES[errorCode] || ERROR_TEMPLATES["SYSTEM_MAINTENANCE"];
     var error = __assign(
       {
@@ -398,11 +387,11 @@ function useErrorHandling() {
   }, []);
   // Log error with LGPD compliance (no sensitive data)
   var logError = (0, react_1.useCallback)(
-    function (error, originalError) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (error, originalError) =>
+      __awaiter(this, void 0, void 0, function () {
         var user, logEntry, logError_1;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, , 4]);
@@ -453,16 +442,15 @@ function useErrorHandling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   // Handle error with progressive disclosure and user-friendly messaging
   var handleError = (0, react_1.useCallback)(
-    function (errorCode, component, action, originalError, metadata) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (errorCode, component, action, originalError, metadata) =>
+      __awaiter(this, void 0, void 0, function () {
         var context, appError_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsLoading(true);
@@ -477,9 +465,9 @@ function useErrorHandling() {
               // Log for debugging and compliance
               _a.sent();
               // Add to current session errors
-              setErrors(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [appError_1], false);
-              });
+              setErrors((prev) =>
+                __spreadArray(__spreadArray([], prev, true), [appError_1], false),
+              );
               // Show user-friendly toast notification
               toast({
                 variant:
@@ -491,13 +479,9 @@ function useErrorHandling() {
                 action: appError_1.canRetry
                   ? {
                       label: "Tentar Novamente",
-                      onClick: function () {
+                      onClick: () => {
                         // Remove this error from the list when retrying
-                        setErrors(function (prev) {
-                          return prev.filter(function (e) {
-                            return e.id !== appError_1.id;
-                          });
-                        });
+                        setErrors((prev) => prev.filter((e) => e.id !== appError_1.id));
                       },
                     }
                   : undefined,
@@ -510,16 +494,15 @@ function useErrorHandling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [createErrorContext, createError, logError, toast],
   );
   // Handle different types of API errors with privacy protection
   var handleApiError = (0, react_1.useCallback)(
-    function (error, component, action, metadata) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (error, component, action, metadata) =>
+      __awaiter(this, void 0, void 0, function () {
         var errorCode;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           errorCode = "SYSTEM_MAINTENANCE";
           // Map API errors to user-friendly codes without exposing technical details
           if ((error === null || error === void 0 ? void 0 : error.status) === 401) {
@@ -541,38 +524,25 @@ function useErrorHandling() {
           }
           return [2 /*return*/, handleError(errorCode, component, action, error, metadata)];
         });
-      });
-    },
+      }),
     [handleError],
   );
   // Clear specific error
-  var clearError = (0, react_1.useCallback)(function (errorId) {
-    setErrors(function (prev) {
-      return prev.filter(function (error) {
-        return error.id !== errorId;
-      });
-    });
+  var clearError = (0, react_1.useCallback)((errorId) => {
+    setErrors((prev) => prev.filter((error) => error.id !== errorId));
   }, []);
   // Clear all errors
-  var clearAllErrors = (0, react_1.useCallback)(function () {
+  var clearAllErrors = (0, react_1.useCallback)(() => {
     setErrors([]);
   }, []);
   // Get errors by category for progressive disclosure
   var getErrorsByCategory = (0, react_1.useCallback)(
-    function (category) {
-      return errors.filter(function (error) {
-        return error.category === category;
-      });
-    },
+    (category) => errors.filter((error) => error.category === category),
     [errors],
   );
   // Check if there are critical errors requiring immediate attention
   var hasCriticalErrors = (0, react_1.useCallback)(
-    function () {
-      return errors.some(function (error) {
-        return error.severity === "critical";
-      });
-    },
+    () => errors.some((error) => error.severity === "critical"),
     [errors],
   );
   return {

@@ -1,19 +1,19 @@
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { toast } from "react-hot-toast";
 import type { MultiLocationInventoryService } from "@/app/lib/services/multi-location-inventory-service";
 import type {
-  InventoryItem,
   CreateInventoryItem,
-  UpdateInventoryItem,
-  InventoryStock,
-  UpdateInventoryStock,
-  StockTransfer,
   CreateStockTransfer,
-  UpdateStockTransfer,
   InventoryFilters,
-  StockTransferFilters,
+  InventoryItem,
+  InventoryStock,
   StockTransactionFilters,
+  StockTransfer,
+  StockTransferFilters,
+  UpdateInventoryItem,
+  UpdateInventoryStock,
+  UpdateStockTransfer,
 } from "@/app/lib/types/inventory";
-import type { toast } from "react-hot-toast";
 
 const inventoryService = new MultiLocationInventoryService();
 

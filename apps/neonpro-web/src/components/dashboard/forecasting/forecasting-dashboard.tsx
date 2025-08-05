@@ -7,8 +7,44 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { addDays, format, parseISO } from "date-fns";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -16,49 +52,13 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Skeleton } from "@/components/ui/skeleton";
 import type { Progress } from "@/components/ui/progress";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  Users,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Target,
-  BarChart3,
-  Settings,
-  RefreshCw,
-  Download,
-} from "lucide-react";
-import type {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
-import type { format, parseISO, addDays } from "date-fns";
-import type { toast } from "sonner";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import type {
-  DemandForecast,
   DemandAlert,
+  DemandForecast,
   FORECASTING_CONSTANTS,
 } from "@/types/demand-forecasting";
 

@@ -1,7 +1,7 @@
 import { jest } from "@jest/globals";
 import { BackupManager } from "@/lib/backup/backup-manager";
-import { SchedulerService } from "@/lib/backup/scheduler";
 import { MonitoringService } from "@/lib/backup/monitoring";
+import { SchedulerService } from "@/lib/backup/scheduler";
 
 // Mock do Supabase
 jest.mock("@/app/utils/supabase/client", () => ({
@@ -100,8 +100,8 @@ describe("BackupManager", () => {
   describe("recovery", () => {
     it.skip("should restore a backup successfully", async () => {
       // TODO: Implementar método restoreBackup no BackupManager
-      const backupId = "test-backup-1";
-      const options = {
+      const _backupId = "test-backup-1";
+      const _options = {
         target_location: "/tmp/restore",
         overwrite_existing: true,
         verify_integrity: true,
@@ -115,8 +115,8 @@ describe("BackupManager", () => {
 
     it.skip("should validate backup integrity before restore", async () => {
       // TODO: Implementar método restoreBackup no BackupManager
-      const backupId = "test-backup-corrupted";
-      const options = {
+      const _backupId = "test-backup-corrupted";
+      const _options = {
         target_location: "/tmp/restore",
         verify_integrity: true,
       };

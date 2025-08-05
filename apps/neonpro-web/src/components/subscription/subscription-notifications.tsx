@@ -10,11 +10,11 @@
 
 "use client";
 
-import type { cn } from "@/lib/utils";
 import type { formatDistanceToNow } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type { AlertTriangle, Bell, CheckCircle2, Info, X } from "lucide-react";
 import type { useEffect, useState } from "react";
+import type { cn } from "@/lib/utils";
 import type { useSubscriptionStatus } from "../../hooks/use-subscription-status";
 import type { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import type { Button } from "../ui/button";

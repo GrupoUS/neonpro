@@ -1,5 +1,6 @@
 "use client";
 
+import type { useState } from "react";
 import type { ExportModal } from "@/components/dashboard/analytics/export-modal";
 import type { KPICard } from "@/components/dashboard/analytics/kpi-card";
 import type { Button } from "@/components/ui/button";
@@ -11,7 +12,6 @@ import type {
   CardTitle,
 } from "@/components/ui/card";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { useState } from "react";
 
 // Mock data baseado nas pesquisas de KPIs para clínicas
 const kpiData = {

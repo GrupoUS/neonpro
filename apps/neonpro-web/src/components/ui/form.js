@@ -1,32 +1,30 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FormField = exports.Form = exports.useFormField = void 0;
 exports.FormItem = FormItem;
@@ -42,7 +40,7 @@ var label_1 = require("@/components/ui/label");
 var Form = react_hook_form_1.FormProvider;
 exports.Form = Form;
 var FormFieldContext = React.createContext({});
-var FormField = function (_a) {
+var FormField = (_a) => {
   var props = __rest(_a, []);
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
@@ -51,7 +49,7 @@ var FormField = function (_a) {
   );
 };
 exports.FormField = FormField;
-var useFormField = function () {
+var useFormField = () => {
   var fieldContext = React.useContext(FormFieldContext);
   var itemContext = React.useContext(FormItemContext);
   var getFieldState = (0, react_hook_form_1.useFormContext)().getFieldState;

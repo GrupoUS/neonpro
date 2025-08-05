@@ -1282,9 +1282,9 @@ class PredictiveInsightsEngine {
     const yMean = sumY / n;
     const ssRes = values.reduce((sum, yi, i) => {
       const predicted = slope * i + intercept;
-      return sum + Math.pow(yi - predicted, 2);
+      return sum + (yi - predicted) ** 2;
     }, 0);
-    const ssTot = values.reduce((sum, yi) => sum + Math.pow(yi - yMean, 2), 0);
+    const ssTot = values.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0);
     const rSquared = 1 - ssRes / ssTot;
 
     return {

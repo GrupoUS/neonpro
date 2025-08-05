@@ -12,7 +12,7 @@
  */
 
 import type { Patient } from "@/types/patient";
-import type { TreatmentHistory, MedicalRecord, Treatment } from "@/types/treatment";
+import type { MedicalRecord, Treatment, TreatmentHistory } from "@/types/treatment";
 import type { RiskAssessment } from "./risk-assessment";
 import type { TreatmentRecommendation } from "./treatment-recommendations";
 

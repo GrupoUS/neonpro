@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResourceOptimizer = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -153,7 +150,7 @@ var types_1 = require("./types");
 /**
  * Resource Optimizer for intelligent resource allocation and workload balancing
  */
-var ResourceOptimizer = /** @class */ (function () {
+var ResourceOptimizer = /** @class */ (() => {
   function ResourceOptimizer(supabaseUrl, supabaseKey, config, constraints) {
     this.optimizationCache = new Map();
     this.metricsCache = new Map();
@@ -528,21 +525,13 @@ var ResourceOptimizer = /** @class */ (function () {
         switch (_b.label) {
           case 0:
             recommendations = [];
-            overloadedStaff = workloadAnalysis.filter(function (w) {
-              return w.isOverloaded;
-            });
-            underutilizedStaff = workloadAnalysis.filter(function (w) {
-              return w.isUnderutilized;
-            });
-            _loop_1 = function (overloaded) {
+            overloadedStaff = workloadAnalysis.filter((w) => w.isOverloaded);
+            underutilizedStaff = workloadAnalysis.filter((w) => w.isUnderutilized);
+            _loop_1 = (overloaded) => {
               // Recommend redistributing appointments
               var redistributionTargets = underutilizedStaff
-                .filter(function (u) {
-                  return u.staffId !== overloaded.staffId;
-                })
-                .sort(function (a, b) {
-                  return a.currentUtilization - b.currentUtilization;
-                })
+                .filter((u) => u.staffId !== overloaded.staffId)
+                .sort((a, b) => a.currentUtilization - b.currentUtilization)
                 .slice(0, 3);
               if (redistributionTargets.length > 0) {
                 recommendations.push({
@@ -550,9 +539,7 @@ var ResourceOptimizer = /** @class */ (function () {
                   type: "staff_redistribution",
                   resourceType: "staff",
                   sourceId: overloaded.staffId,
-                  targetIds: redistributionTargets.map(function (t) {
-                    return t.staffId;
-                  }),
+                  targetIds: redistributionTargets.map((t) => t.staffId),
                   action: "redistribute_appointments",
                   priority: this_1.calculatePriority(overloaded.currentUtilization, strategy),
                   expectedImpact: {
@@ -574,13 +561,11 @@ var ResourceOptimizer = /** @class */ (function () {
                   metadata: {
                     currentUtilization: overloaded.currentUtilization,
                     targetUtilization: overloaded.targetUtilization,
-                    redistributionTargets: redistributionTargets.map(function (t) {
-                      return {
-                        id: t.staffId,
-                        name: t.staffName,
-                        currentUtilization: t.currentUtilization,
-                      };
-                    }),
+                    redistributionTargets: redistributionTargets.map((t) => ({
+                      id: t.staffId,
+                      name: t.staffName,
+                      currentUtilization: t.currentUtilization,
+                    })),
                   },
                 });
               }
@@ -825,12 +810,8 @@ var ResourceOptimizer = /** @class */ (function () {
             return [4 /*yield*/, this.analyzeAppointmentPatterns()];
           case 1:
             patterns = _a.sent();
-            peakPeriods = patterns.filter(function (p) {
-              return p.demandLevel > 0.8;
-            });
-            lowPeriods = patterns.filter(function (p) {
-              return p.demandLevel < 0.3;
-            });
+            peakPeriods = patterns.filter((p) => p.demandLevel > 0.8);
+            lowPeriods = patterns.filter((p) => p.demandLevel < 0.3);
             // Recommend schedule adjustments
             if (peakPeriods.length > 0 && lowPeriods.length > 0) {
               recommendations.push({
@@ -850,12 +831,8 @@ var ResourceOptimizer = /** @class */ (function () {
                 confidence: 0.75,
                 description: "Redistribute appointments from peak periods to low-demand periods",
                 metadata: {
-                  peakPeriods: peakPeriods.map(function (p) {
-                    return p.timeRange;
-                  }),
-                  lowPeriods: lowPeriods.map(function (p) {
-                    return p.timeRange;
-                  }),
+                  peakPeriods: peakPeriods.map((p) => p.timeRange),
+                  lowPeriods: lowPeriods.map((p) => p.timeRange),
                   redistributionOpportunities: this.calculateRedistributionOpportunities(
                     peakPeriods,
                     lowPeriods,
@@ -898,8 +875,8 @@ var ResourceOptimizer = /** @class */ (function () {
   /**
    * Prioritize recommendations based on strategy
    */
-  ResourceOptimizer.prototype.prioritizeRecommendations = function (recommendations, strategy) {
-    return recommendations.sort(function (a, b) {
+  ResourceOptimizer.prototype.prioritizeRecommendations = (recommendations, strategy) =>
+    recommendations.sort((a, b) => {
       var scoreA = a.priority;
       var scoreB = b.priority;
       // Adjust scores based on strategy
@@ -926,7 +903,6 @@ var ResourceOptimizer = /** @class */ (function () {
       scoreB *= b.confidence;
       return scoreB - scoreA;
     });
-  };
   /**
    * Calculate expected improvements from recommendations
    */
@@ -977,34 +953,26 @@ var ResourceOptimizer = /** @class */ (function () {
   /**
    * Calculate optimization confidence
    */
-  ResourceOptimizer.prototype.calculateOptimizationConfidence = function (recommendations) {
+  ResourceOptimizer.prototype.calculateOptimizationConfidence = (recommendations) => {
     if (recommendations.length === 0) return 0;
     var avgConfidence =
-      recommendations.reduce(function (sum, rec) {
-        return sum + rec.confidence;
-      }, 0) / recommendations.length;
+      recommendations.reduce((sum, rec) => sum + rec.confidence, 0) / recommendations.length;
     var complexityPenalty = Math.min(0.2, recommendations.length * 0.02);
     return Math.max(0.1, avgConfidence - complexityPenalty);
   };
   /**
    * Calculate implementation time
    */
-  ResourceOptimizer.prototype.calculateImplementationTime = function (recommendations) {
-    return recommendations.reduce(function (total, rec) {
-      return total + rec.estimatedTime;
-    }, 0);
-  };
+  ResourceOptimizer.prototype.calculateImplementationTime = (recommendations) =>
+    recommendations.reduce((total, rec) => total + rec.estimatedTime, 0);
   // Utility methods
-  ResourceOptimizer.prototype.generateOptimizationId = function () {
-    return "opt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  ResourceOptimizer.prototype.generateBalancingId = function () {
-    return "bal_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  ResourceOptimizer.prototype.generateAllocationId = function () {
-    return "alloc_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  ResourceOptimizer.prototype.calculatePriority = function (value, strategy) {
+  ResourceOptimizer.prototype.generateOptimizationId = () =>
+    "opt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  ResourceOptimizer.prototype.generateBalancingId = () =>
+    "bal_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  ResourceOptimizer.prototype.generateAllocationId = () =>
+    "alloc_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  ResourceOptimizer.prototype.calculatePriority = (value, strategy) => {
     var priority = value;
     switch (strategy) {
       case types_1.OptimizationStrategy.EFFICIENCY_FOCUSED:
@@ -1108,9 +1076,10 @@ var ResourceOptimizer = /** @class */ (function () {
     endDate,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { average: 0.75, min: 0.4, max: 0.95, distribution: {} }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { average: 0.75, min: 0.4, max: 0.95, distribution: {} },
+      ]);
     });
   };
   ResourceOptimizer.prototype.calculateRoomUtilization = function (
@@ -1119,9 +1088,10 @@ var ResourceOptimizer = /** @class */ (function () {
     endDate,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { average: 0.68, min: 0.3, max: 0.9, distribution: {} }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { average: 0.68, min: 0.3, max: 0.9, distribution: {} },
+      ]);
     });
   };
   ResourceOptimizer.prototype.calculateEquipmentUtilization = function (
@@ -1130,23 +1100,26 @@ var ResourceOptimizer = /** @class */ (function () {
     endDate,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { average: 0.72, min: 0.2, max: 0.95, distribution: {} }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { average: 0.72, min: 0.2, max: 0.95, distribution: {} },
+      ]);
     });
   };
   ResourceOptimizer.prototype.calculateEfficiencyMetrics = function (appointments) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { overall: 0.8, timeUtilization: 0.85, resourceUtilization: 0.75 }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { overall: 0.8, timeUtilization: 0.85, resourceUtilization: 0.75 },
+      ]);
     });
   };
   ResourceOptimizer.prototype.calculatePatientSatisfactionMetrics = function (appointments) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { overall: 0.88, waitTime: 0.82, serviceQuality: 0.92 }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { overall: 0.88, waitTime: 0.82, serviceQuality: 0.92 },
+      ]);
     });
   };
   ResourceOptimizer.prototype.getStaffAppointments = function (staffId, startDate, endDate) {
@@ -1172,149 +1145,135 @@ var ResourceOptimizer = /** @class */ (function () {
       });
     });
   };
-  ResourceOptimizer.prototype.calculateTotalWorkHours = function (appointments) {
-    return appointments.reduce(function (total, apt) {
+  ResourceOptimizer.prototype.calculateTotalWorkHours = (appointments) =>
+    appointments.reduce((total, apt) => {
       var start = new Date(apt.start_time);
       var end = new Date(apt.end_time);
       return total + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
     }, 0);
-  };
-  ResourceOptimizer.prototype.calculateAvailableHours = function (staff, startDate, endDate) {
+  ResourceOptimizer.prototype.calculateAvailableHours = (staff, startDate, endDate) => {
     // Simplified calculation - would need to account for working hours, days off, etc.
     var days = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
     return days * 8; // Assuming 8 hours per day
   };
   ResourceOptimizer.prototype.calculateStaffEfficiency = function (staffId, appointments) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, 0.85]; // Simplified implementation
       });
     });
   };
   ResourceOptimizer.prototype.getStaffSatisfactionScore = function (staffId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, 0.8]; // Simplified implementation
       });
     });
   };
-  ResourceOptimizer.prototype.identifyWorkloadImbalances = function (workloads, targetUtilization) {
-    return workloads.filter(function (w) {
-      return (
+  ResourceOptimizer.prototype.identifyWorkloadImbalances = (workloads, targetUtilization) =>
+    workloads.filter(
+      (w) =>
         w.currentUtilization > targetUtilization + 0.1 ||
-        w.currentUtilization < targetUtilization - 0.2
-      );
-    });
-  };
+        w.currentUtilization < targetUtilization - 0.2,
+    );
   ResourceOptimizer.prototype.generateBalancingActions = function (imbalances, startDate, endDate) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
-  ResourceOptimizer.prototype.calculateExpectedBalance = function (workloads, actions) {
+  ResourceOptimizer.prototype.calculateExpectedBalance = (workloads, actions) => {
     return workloads; // Simplified implementation
   };
-  ResourceOptimizer.prototype.calculateBalancingConfidence = function (actions) {
+  ResourceOptimizer.prototype.calculateBalancingConfidence = (actions) => {
     return 0.8; // Simplified implementation
   };
-  ResourceOptimizer.prototype.calculateBalancingTime = function (actions) {
+  ResourceOptimizer.prototype.calculateBalancingTime = (actions) => {
     return actions.length * 15; // Simplified implementation
   };
   ResourceOptimizer.prototype.getRoomUtilizationRate = function (roomId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, 0.7]; // Simplified implementation
       });
     });
   };
   ResourceOptimizer.prototype.getEquipmentUtilizationRate = function (equipmentId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, 0.65]; // Simplified implementation
       });
     });
   };
   ResourceOptimizer.prototype.getEquipmentMaintenanceSchedule = function (equipmentId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          { hasConflicts: false, conflicts: [], alternativeSlots: [], conflictSeverity: 0 },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { hasConflicts: false, conflicts: [], alternativeSlots: [], conflictSeverity: 0 },
+      ]);
     });
   };
   ResourceOptimizer.prototype.identifyHighDemandPeriods = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ResourceOptimizer.prototype.analyzeAppointmentPatterns = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ResourceOptimizer.prototype.analyzeBufferTimes = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            hasOptimizationOpportunity: false,
-            optimizationPotential: 0,
-            currentAverageBuffer: 15,
-            recommendedBuffer: 10,
-            potentialTimeGain: 30,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          hasOptimizationOpportunity: false,
+          optimizationPotential: 0,
+          currentAverageBuffer: 15,
+          recommendedBuffer: 10,
+          potentialTimeGain: 30,
+        },
+      ]);
     });
   };
-  ResourceOptimizer.prototype.calculateRedistributionOpportunities = function (
-    peakPeriods,
-    lowPeriods,
-  ) {
+  ResourceOptimizer.prototype.calculateRedistributionOpportunities = (peakPeriods, lowPeriods) => {
     return {}; // Simplified implementation
   };
   ResourceOptimizer.prototype.getOptimizationById = function (id) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, null]; // Would fetch from database
       });
     });
   };
   ResourceOptimizer.prototype.validateOptimization = function (optimization) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { isValid: true, errors: [] }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { isValid: true, errors: [] }]);
     });
   };
   ResourceOptimizer.prototype.applyRecommendations = function (recommendations) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, {}]; // Simplified implementation
       });
     });
   };
   ResourceOptimizer.prototype.measureActualImpact = function (optimization, appliedChanges) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, optimization.expectedImprovements]; // Simplified implementation
       });
     });
   };
   ResourceOptimizer.prototype.updateOptimizationStatus = function (id, status) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ResourceOptimizer.prototype.clearRelatedCaches = function (optimization) {

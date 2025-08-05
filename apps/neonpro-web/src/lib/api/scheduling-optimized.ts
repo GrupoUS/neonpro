@@ -186,15 +186,17 @@ class BatchRequestManager {
 
     for (const [type, requests] of Object.entries(groupedRequests)) {
       switch (type) {
-        case "conflict-check":
+        case "conflict-check": {
           const conflictResults = await this.batchConflictCheck(supabase, requests);
           results.push(...conflictResults);
           break;
+        }
 
-        case "resolution-validation":
+        case "resolution-validation": {
           const validationResults = await this.batchResolutionValidation(supabase, requests);
           results.push(...validationResults);
           break;
+        }
 
         default:
           results.push(...requests.map(() => null));

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Compliance Framework - Data Subject Rights API
  * API para direitos do titular dos dados (LGPD Art. 18)
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -41,7 +40,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,8 +69,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -92,9 +89,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -208,7 +205,7 @@ function getClientInfo(request) {
 function validateUserAccess(supabase, userId, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var userClinic;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [
@@ -227,10 +224,10 @@ function validateUserAccess(supabase, userId, clinicId) {
     });
   });
 }
-function validateDataOwnership(supabase, userId, dataField) {
+function validateDataOwnership(_supabase, _userId, dataField) {
   return __awaiter(this, void 0, void 0, function () {
     var allowedFields;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       allowedFields = [
         "full_name",
         "email",
@@ -274,10 +271,10 @@ function GET(request) {
       error,
       count,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 8, , 9]);
+          _c.trys.push([0, 8, undefined, 9]);
           return [
             4 /*yield*/,
             (0, rate_limit_1.withRateLimit)(request, {
@@ -442,10 +439,10 @@ function POST(request) {
       exportData,
       portableData,
       error_2;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 20, , 21]);
+          _c.trys.push([0, 20, undefined, 21]);
           return [
             4 /*yield*/,
             (0, rate_limit_1.withRateLimit)(request, {
@@ -664,7 +661,7 @@ function PUT(request) {
       hasAccess,
       _i,
       corrections_1,
-      correction,
+      _correction,
       isValid,
       lgpdCore,
       clientInfo,
@@ -675,10 +672,10 @@ function PUT(request) {
       result,
       error_3,
       error_4;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 18, , 19]);
+          _c.trys.push([0, 18, undefined, 19]);
           return [
             4 /*yield*/,
             (0, rate_limit_1.withRateLimit)(request, {
@@ -767,7 +764,7 @@ function PUT(request) {
           correction = corrections_2[_b];
           _c.label = 12;
         case 12:
-          _c.trys.push([12, 14, , 15]);
+          _c.trys.push([12, 14, undefined, 15]);
           return [
             4 /*yield*/,
             lgpdCore.correctUserData({
@@ -809,12 +806,10 @@ function PUT(request) {
               userId: user.id,
               clinicId: clinicId,
               details: {
-                corrections: corrections.map(function (c) {
-                  return {
-                    field: c.field,
-                    justification: c.justification,
-                  };
-                }),
+                corrections: corrections.map((c) => ({
+                  field: c.field,
+                  justification: c.justification,
+                })),
                 results: results,
               },
               ipAddress: clientInfo.ipAddress,

@@ -1,18 +1,17 @@
-"use strict";
 // Database Optimization Utilities
 // Story 11.4: Alertas e Relatórios de Estoque
 // Database query optimization and performance monitoring
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DB_CONFIG =
   exports.queryMonitor =
@@ -164,7 +161,7 @@ var DB_CONFIG = {
   enableQueryLogging: process.env.NODE_ENV === "development",
 };
 exports.DB_CONFIG = DB_CONFIG;
-var QueryPerformanceMonitor = /** @class */ (function () {
+var QueryPerformanceMonitor = /** @class */ (() => {
   function QueryPerformanceMonitor() {
     this.metrics = [];
     this.maxMetrics = 1000;
@@ -195,22 +192,16 @@ var QueryPerformanceMonitor = /** @class */ (function () {
   };
   QueryPerformanceMonitor.prototype.getSlowQueries = function (threshold) {
     var limit = threshold || DB_CONFIG.slowQueryThreshold;
-    return this.metrics.filter(function (m) {
-      return m.duration > limit;
-    });
+    return this.metrics.filter((m) => m.duration > limit);
   };
   QueryPerformanceMonitor.prototype.getAverageQueryTime = function () {
     if (this.metrics.length === 0) return 0;
-    var total = this.metrics.reduce(function (sum, m) {
-      return sum + m.duration;
-    }, 0);
+    var total = this.metrics.reduce((sum, m) => sum + m.duration, 0);
     return total / this.metrics.length;
   };
   QueryPerformanceMonitor.prototype.getCacheHitRate = function () {
     if (this.metrics.length === 0) return 0;
-    var cached = this.metrics.filter(function (m) {
-      return m.cached;
-    }).length;
+    var cached = this.metrics.filter((m) => m.cached).length;
     return cached / this.metrics.length;
   };
   return QueryPerformanceMonitor;
@@ -220,7 +211,7 @@ exports.queryMonitor = queryMonitor;
 // =====================================================
 // OPTIMIZED QUERY BUILDER
 // =====================================================
-var OptimizedQueryBuilder = /** @class */ (function () {
+var OptimizedQueryBuilder = /** @class */ (() => {
   function OptimizedQueryBuilder(supabase, tableName) {
     this.supabase = supabase;
     this.tableName = tableName;
@@ -407,7 +398,7 @@ exports.OptimizedQueryBuilder = OptimizedQueryBuilder;
 // =====================================================
 // OPTIMIZED STOCK ALERT QUERIES
 // =====================================================
-var StockAlertQueries = /** @class */ (function () {
+var StockAlertQueries = /** @class */ (() => {
   function StockAlertQueries(supabaseClient) {
     this.supabase =
       supabaseClient ||
@@ -813,7 +804,7 @@ exports.StockAlertQueries = StockAlertQueries;
 // =====================================================
 // DATABASE HEALTH MONITORING
 // =====================================================
-var DatabaseHealthMonitor = /** @class */ (function () {
+var DatabaseHealthMonitor = /** @class */ (() => {
   function DatabaseHealthMonitor() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,

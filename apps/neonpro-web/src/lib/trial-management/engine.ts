@@ -3,23 +3,19 @@
 // Created: 2025-01-22
 
 import type { createClient } from "@/lib/supabase/server";
-import type { Analytics } from "../analytics";
 import type {
+  ConversionFactor,
+  ConversionPrediction,
+  ConversionRecommendation,
+  ConversionStrategy,
+  JourneyEvent,
   Trial,
   TrialStage,
-  ConversionPrediction,
   UserJourney,
-  JourneyEvent,
-  ConversionStrategy,
-  UserSegment,
-  EngagementLevel,
-  ConversionFactor,
-  ConversionRecommendation,
 } from "./types";
 
 export class TrialManagementEngine {
   private supabase: ReturnType<typeof createClient>;
-  private analytics: typeof Analytics;
 
   constructor() {
     this.supabase = createClient();
@@ -385,7 +381,7 @@ export class TrialManagementEngine {
   private calculateFactorConsistency(factors: ConversionFactor[]): number {
     const positiveFactors = factors.filter((f) => f.impact === "positive").length;
     const negativeFactors = factors.filter((f) => f.impact === "negative").length;
-    const neutralFactors = factors.filter((f) => f.impact === "neutral").length;
+    const _neutralFactors = factors.filter((f) => f.impact === "neutral").length;
 
     // Higher consistency when factors point in same direction
     if (positiveFactors >= negativeFactors * 2) return 1.0;
@@ -595,7 +591,7 @@ export class TrialManagementEngine {
   // UTILITY METHODS
   // ========================================================================
 
-  private async initializeUserJourney(trialId: string, userId: string): Promise<void> {
+  private async initializeUserJourney(trialId: string, _userId: string): Promise<void> {
     // Create initial signup event
     await this.trackEvent(
       trialId,
@@ -684,7 +680,7 @@ export class TrialManagementEngine {
     return milestones;
   }
 
-  private calculateProgressScore(events: JourneyEvent[], milestones: any[]): number {
+  private calculateProgressScore(_events: JourneyEvent[], milestones: any[]): number {
     const completedMilestones = milestones.filter((m) => m.completed);
     const totalImportance = milestones.reduce((sum, m) => sum + m.importance, 0);
     const completedImportance = completedMilestones.reduce((sum, m) => sum + m.importance, 0);

@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ForecastingCharts = ForecastingCharts;
 /**
@@ -45,7 +44,7 @@ var progress_1 = require("@/components/ui/progress");
 var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 // Utility functions
-var formatValue = function (value, metric) {
+var formatValue = (value, metric) => {
   if (metric === "revenue" || metric === "mrr" || metric === "arr") {
     return "$".concat(value.toLocaleString());
   }
@@ -54,7 +53,7 @@ var formatValue = function (value, metric) {
   }
   return value.toLocaleString();
 };
-var getMetricLabel = function (metric) {
+var getMetricLabel = (metric) => {
   var labels = {
     subscriptions: "Subscriptions",
     revenue: "Revenue",
@@ -64,7 +63,7 @@ var getMetricLabel = function (metric) {
   };
   return labels[metric] || metric;
 };
-var getMetricIcon = function (metric) {
+var getMetricIcon = (metric) => {
   switch (metric) {
     case "revenue":
     case "mrr":
@@ -95,13 +94,7 @@ function ForecastingCharts(_a) {
   var _f = (0, react_1.useState)("forecast"),
     selectedView = _f[0],
     setSelectedView = _f[1];
-  var _g = (0, react_1.useState)(
-      new Set(
-        scenarios.map(function (s) {
-          return s.name;
-        }),
-      ),
-    ),
+  var _g = (0, react_1.useState)(new Set(scenarios.map((s) => s.name))),
     enabledScenarios = _g[0],
     setEnabledScenarios = _g[1];
   var _h = (0, react_1.useState)(true),
@@ -111,59 +104,47 @@ function ForecastingCharts(_a) {
     zoomDomain = _j[0],
     setZoomDomain = _j[1];
   // Combine historical and forecast data
-  var combinedData = (0, react_1.useMemo)(
-    function () {
-      var historical = historicalData.map(function (d) {
-        return __assign(__assign({}, d), { type: "historical" });
-      });
-      var forecast = forecastData.map(function (d) {
-        return {
-          date: d.date,
-          value: d.predicted,
-          predicted: d.predicted,
-          lower_bound: d.lower_bound,
-          upper_bound: d.upper_bound,
-          confidence: d.confidence,
-          type: "forecast",
-        };
-      });
-      return __spreadArray(__spreadArray([], historical, true), forecast, true);
-    },
-    [historicalData, forecastData],
-  );
+  var combinedData = (0, react_1.useMemo)(() => {
+    var historical = historicalData.map((d) => __assign(__assign({}, d), { type: "historical" }));
+    var forecast = forecastData.map((d) => ({
+      date: d.date,
+      value: d.predicted,
+      predicted: d.predicted,
+      lower_bound: d.lower_bound,
+      upper_bound: d.upper_bound,
+      confidence: d.confidence,
+      type: "forecast",
+    }));
+    return __spreadArray(__spreadArray([], historical, true), forecast, true);
+  }, [historicalData, forecastData]);
   // Calculate forecast insights
-  var forecastInsights = (0, react_1.useMemo)(
-    function () {
-      if (forecastData.length === 0) return null;
-      var firstForecast = forecastData[0];
-      var lastForecast = forecastData[forecastData.length - 1];
-      var lastHistorical = historicalData[historicalData.length - 1];
-      var growth = lastHistorical
-        ? ((lastForecast.predicted - lastHistorical.value) / lastHistorical.value) * 100
-        : 0;
-      var averageConfidence =
-        forecastData.reduce(function (sum, f) {
-          return sum + f.confidence;
-        }, 0) / forecastData.length;
-      var volatility =
-        forecastData.reduce(function (sum, f) {
-          var range = f.upper_bound - f.lower_bound;
-          var midpoint = (f.upper_bound + f.lower_bound) / 2;
-          return sum + range / midpoint;
-        }, 0) / forecastData.length;
-      return {
-        growth: Math.round(growth * 100) / 100,
-        averageConfidence: Math.round(averageConfidence * 100) / 100,
-        volatility: Math.round(volatility * 100) / 100,
-        trend: growth > 5 ? "positive" : growth < -5 ? "negative" : "stable",
-        forecastPeriods: forecastData.length,
-      };
-    },
-    [forecastData, historicalData],
-  );
+  var forecastInsights = (0, react_1.useMemo)(() => {
+    if (forecastData.length === 0) return null;
+    var firstForecast = forecastData[0];
+    var lastForecast = forecastData[forecastData.length - 1];
+    var lastHistorical = historicalData[historicalData.length - 1];
+    var growth = lastHistorical
+      ? ((lastForecast.predicted - lastHistorical.value) / lastHistorical.value) * 100
+      : 0;
+    var averageConfidence =
+      forecastData.reduce((sum, f) => sum + f.confidence, 0) / forecastData.length;
+    var volatility =
+      forecastData.reduce((sum, f) => {
+        var range = f.upper_bound - f.lower_bound;
+        var midpoint = (f.upper_bound + f.lower_bound) / 2;
+        return sum + range / midpoint;
+      }, 0) / forecastData.length;
+    return {
+      growth: Math.round(growth * 100) / 100,
+      averageConfidence: Math.round(averageConfidence * 100) / 100,
+      volatility: Math.round(volatility * 100) / 100,
+      trend: growth > 5 ? "positive" : growth < -5 ? "negative" : "stable",
+      forecastPeriods: forecastData.length,
+    };
+  }, [forecastData, historicalData]);
   // Handle scenario toggle
   var handleScenarioToggle = (0, react_1.useCallback)(
-    function (scenarioName) {
+    (scenarioName) => {
       var newEnabled = new Set(enabledScenarios);
       if (newEnabled.has(scenarioName)) {
         newEnabled.delete(scenarioName);
@@ -178,7 +159,7 @@ function ForecastingCharts(_a) {
     [enabledScenarios, onScenarioToggle],
   );
   // Custom tooltip for forecast chart
-  var ForecastTooltip = function (_a) {
+  var ForecastTooltip = (_a) => {
     var active = _a.active,
       payload = _a.payload,
       label = _a.label;
@@ -251,9 +232,7 @@ function ForecastingCharts(_a) {
             <button_1.Button
               variant={showConfidenceInterval ? "default" : "outline"}
               size="sm"
-              onClick={function () {
-                return setShowConfidenceInterval(!showConfidenceInterval);
-              }}
+              onClick={() => setShowConfidenceInterval(!showConfidenceInterval)}
             >
               Confidence Bands
             </button_1.Button>
@@ -261,12 +240,7 @@ function ForecastingCharts(_a) {
         </div>
       </card_1.CardHeader>
       <card_1.CardContent>
-        <tabs_1.Tabs
-          value={selectedView}
-          onValueChange={function (value) {
-            return setSelectedView(value);
-          }}
-        >
+        <tabs_1.Tabs value={selectedView} onValueChange={(value) => setSelectedView(value)}>
           <tabs_1.TabsList className="grid w-full grid-cols-3">
             <tabs_1.TabsTrigger value="forecast">Forecast</tabs_1.TabsTrigger>
             <tabs_1.TabsTrigger value="scenarios">Scenarios</tabs_1.TabsTrigger>
@@ -335,18 +309,14 @@ function ForecastingCharts(_a) {
                     <recharts_1.CartesianGrid strokeDasharray="3 3" />
                     <recharts_1.XAxis
                       dataKey="date"
-                      tickFormatter={function (date) {
-                        return new Date(date).toLocaleDateString("en-US", {
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
-                        });
-                      }}
+                        })
+                      }
                     />
-                    <recharts_1.YAxis
-                      tickFormatter={function (value) {
-                        return formatValue(value, metric);
-                      }}
-                    />
+                    <recharts_1.YAxis tickFormatter={(value) => formatValue(value, metric)} />
                     <recharts_1.Tooltip content={<ForecastTooltip />} />
                     <recharts_1.Legend />
 
@@ -378,11 +348,11 @@ function ForecastingCharts(_a) {
                       dataKey="value"
                       stroke="#3b82f6"
                       strokeWidth={2}
-                      dot={function (props) {
-                        return props.payload.type === "historical"
+                      dot={(props) =>
+                        props.payload.type === "historical"
                           ? __assign(__assign({}, props), { fill: "#3b82f6", r: 3 })
-                          : false;
-                      }}
+                          : false
+                      }
                       connectNulls={false}
                       name="Actual"
                     />
@@ -394,11 +364,11 @@ function ForecastingCharts(_a) {
                       stroke="#22c55e"
                       strokeWidth={2}
                       strokeDasharray="5 5"
-                      dot={function (props) {
-                        return props.payload.type === "forecast"
+                      dot={(props) =>
+                        props.payload.type === "forecast"
                           ? __assign(__assign({}, props), { fill: "#22c55e", r: 3 })
-                          : false;
-                      }}
+                          : false
+                      }
                       connectNulls={false}
                       name="Predicted"
                     />
@@ -418,7 +388,7 @@ function ForecastingCharts(_a) {
                     <recharts_1.Brush
                       dataKey="date"
                       height={30}
-                      onChange={function (domain) {
+                      onChange={(domain) => {
                         var _a, _b;
                         if (
                           domain &&
@@ -486,25 +456,21 @@ function ForecastingCharts(_a) {
             <div className="space-y-6">
               {/* Scenario Controls */}
               <div className="flex flex-wrap gap-2">
-                {scenarios.map(function (scenario) {
-                  return (
-                    <button_1.Button
-                      key={scenario.name}
-                      variant={enabledScenarios.has(scenario.name) ? "default" : "outline"}
-                      size="sm"
-                      onClick={function () {
-                        return handleScenarioToggle(scenario.name);
-                      }}
-                      className="flex items-center gap-2"
-                    >
-                      <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: scenario.color }}
-                      />
-                      {scenario.name}
-                    </button_1.Button>
-                  );
-                })}
+                {scenarios.map((scenario) => (
+                  <button_1.Button
+                    key={scenario.name}
+                    variant={enabledScenarios.has(scenario.name) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleScenarioToggle(scenario.name)}
+                    className="flex items-center gap-2"
+                  >
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: scenario.color }}
+                    />
+                    {scenario.name}
+                  </button_1.Button>
+                ))}
               </div>
 
               {/* Scenario Comparison Chart */}
@@ -514,25 +480,17 @@ function ForecastingCharts(_a) {
                     <recharts_1.CartesianGrid strokeDasharray="3 3" />
                     <recharts_1.XAxis
                       dataKey="date"
-                      tickFormatter={function (date) {
-                        return new Date(date).toLocaleDateString("en-US", {
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("en-US", {
                           month: "short",
                           day: "numeric",
-                        });
-                      }}
+                        })
+                      }
                     />
-                    <recharts_1.YAxis
-                      tickFormatter={function (value) {
-                        return formatValue(value, metric);
-                      }}
-                    />
+                    <recharts_1.YAxis tickFormatter={(value) => formatValue(value, metric)} />
                     <recharts_1.Tooltip
-                      formatter={function (value) {
-                        return [formatValue(value, metric), "Predicted"];
-                      }}
-                      labelFormatter={function (date) {
-                        return new Date(date).toLocaleDateString();
-                      }}
+                      formatter={(value) => [formatValue(value, metric), "Predicted"]}
+                      labelFormatter={(date) => new Date(date).toLocaleDateString()}
                     />
                     <recharts_1.Legend />
 
@@ -548,30 +506,26 @@ function ForecastingCharts(_a) {
 
                     {/* Scenario Lines */}
                     {scenarios
-                      .filter(function (scenario) {
-                        return enabledScenarios.has(scenario.name);
-                      })
-                      .map(function (scenario) {
-                        return (
-                          <recharts_1.Line
-                            key={scenario.name}
-                            data={scenario.data}
-                            type="monotone"
-                            dataKey="predicted"
-                            stroke={scenario.color}
-                            strokeWidth={2}
-                            strokeDasharray="5 5"
-                            name={scenario.name}
-                          />
-                        );
-                      })}
+                      .filter((scenario) => enabledScenarios.has(scenario.name))
+                      .map((scenario) => (
+                        <recharts_1.Line
+                          key={scenario.name}
+                          data={scenario.data}
+                          type="monotone"
+                          dataKey="predicted"
+                          stroke={scenario.color}
+                          strokeWidth={2}
+                          strokeDasharray="5 5"
+                          name={scenario.name}
+                        />
+                      ))}
                   </recharts_1.LineChart>
                 </recharts_1.ResponsiveContainer>
               </div>
 
               {/* Scenario Summary Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {scenarios.map(function (scenario) {
+                {scenarios.map((scenario) => {
                   var lastForecast = scenario.data[scenario.data.length - 1];
                   var firstForecast = scenario.data[0];
                   var growth = firstForecast
@@ -688,28 +642,20 @@ function ForecastingCharts(_a) {
                         <recharts_1.CartesianGrid strokeDasharray="3 3" />
                         <recharts_1.XAxis
                           dataKey="date"
-                          tickFormatter={function (date) {
-                            return new Date(date).toLocaleDateString("en-US", {
+                          tickFormatter={(date) =>
+                            new Date(date).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
-                            });
-                          }}
+                            })
+                          }
                         />
-                        <recharts_1.YAxis
-                          tickFormatter={function (value) {
-                            return formatValue(value, metric);
-                          }}
-                        />
+                        <recharts_1.YAxis tickFormatter={(value) => formatValue(value, metric)} />
                         <recharts_1.Tooltip
-                          formatter={function (value, name) {
-                            return [
-                              formatValue(value, metric),
-                              name === "actual" ? "Actual" : "Predicted",
-                            ];
-                          }}
-                          labelFormatter={function (date) {
-                            return new Date(date).toLocaleDateString();
-                          }}
+                          formatter={(value, name) => [
+                            formatValue(value, metric),
+                            name === "actual" ? "Actual" : "Predicted",
+                          ]}
+                          labelFormatter={(date) => new Date(date).toLocaleDateString()}
                         />
                         <recharts_1.Legend />
 
@@ -732,9 +678,7 @@ function ForecastingCharts(_a) {
 
                         {/* Error Bars */}
                         <recharts_1.Bar
-                          dataKey={function (entry) {
-                            return Math.abs(entry.actual - entry.predicted);
-                          }}
+                          dataKey={(entry) => Math.abs(entry.actual - entry.predicted)}
                           fill="rgba(239, 68, 68, 0.3)"
                           name="Prediction Error"
                         />

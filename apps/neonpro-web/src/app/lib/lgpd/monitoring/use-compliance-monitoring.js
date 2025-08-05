@@ -1,4 +1,3 @@
-"use strict";
 /**
  * React Hook for Real-Time LGPD Compliance Monitoring
  *
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useComplianceMonitoring = useComplianceMonitoring;
 exports.useComplianceMetrics = useComplianceMetrics;
@@ -147,7 +144,6 @@ exports.useComplianceRecommendations = useComplianceRecommendations;
 var react_1 = require("react");
 var compliance_monitoring_1 = require("./compliance-monitoring");
 function useComplianceMonitoring() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     status = _a[0],
     setStatus = _a[1];
@@ -159,16 +155,16 @@ function useComplianceMonitoring() {
     setError = _c[1];
   var statusUpdateRef = (0, react_1.useRef)();
   // Status update handler
-  var handleStatusUpdate = (0, react_1.useCallback)(function (newStatus) {
+  var handleStatusUpdate = (0, react_1.useCallback)((newStatus) => {
     setStatus(newStatus);
     setIsLoading(false);
   }, []);
   // Start monitoring
   var startMonitoring = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var initialStatus, err_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -205,12 +201,11 @@ function useComplianceMonitoring() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [handleStatusUpdate],
   );
   // Stop monitoring
-  var stopMonitoring = (0, react_1.useCallback)(function () {
+  var stopMonitoring = (0, react_1.useCallback)(() => {
     compliance_monitoring_1.realTimeComplianceMonitor.stopMonitoring();
     if (statusUpdateRef.current) {
       compliance_monitoring_1.realTimeComplianceMonitor.removeStatusListener(
@@ -220,157 +215,168 @@ function useComplianceMonitoring() {
     }
   }, []);
   // Refresh status
-  var refresh = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var currentStatus, err_2;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            setIsLoading(true);
-            setError(undefined);
-            return [
-              4 /*yield*/,
-              compliance_monitoring_1.realTimeComplianceMonitor.getCurrentStatus(),
-            ];
-          case 1:
-            currentStatus = _a.sent();
-            setStatus(currentStatus);
-            setIsLoading(false);
-            return [3 /*break*/, 3];
-          case 2:
-            err_2 = _a.sent();
-            console.error("Error refreshing compliance status:", err_2);
-            setError("Falha ao atualizar status de conformidade");
-            setIsLoading(false);
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var refresh = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var currentStatus, err_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              setIsLoading(true);
+              setError(undefined);
+              return [
+                4 /*yield*/,
+                compliance_monitoring_1.realTimeComplianceMonitor.getCurrentStatus(),
+              ];
+            case 1:
+              currentStatus = _a.sent();
+              setStatus(currentStatus);
+              setIsLoading(false);
+              return [3 /*break*/, 3];
+            case 2:
+              err_2 = _a.sent();
+              console.error("Error refreshing compliance status:", err_2);
+              setError("Falha ao atualizar status de conformidade");
+              setIsLoading(false);
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Report violation
-  var reportViolation = (0, react_1.useCallback)(function (violation) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var err_3;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              compliance_monitoring_1.realTimeComplianceMonitor.reportViolation(violation),
-            ];
-          case 1:
-            _a.sent();
-            return [3 /*break*/, 3];
-          case 2:
-            err_3 = _a.sent();
-            console.error("Error reporting violation:", err_3);
-            setError("Falha ao reportar violação");
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var reportViolation = (0, react_1.useCallback)(
+    (violation) =>
+      __awaiter(this, void 0, void 0, function () {
+        var err_3;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                compliance_monitoring_1.realTimeComplianceMonitor.reportViolation(violation),
+              ];
+            case 1:
+              _a.sent();
+              return [3 /*break*/, 3];
+            case 2:
+              err_3 = _a.sent();
+              console.error("Error reporting violation:", err_3);
+              setError("Falha ao reportar violação");
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Resolve violation
-  var resolveViolation = (0, react_1.useCallback)(function (violationId, resolution, responsible) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var err_4;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              compliance_monitoring_1.realTimeComplianceMonitor.resolveViolation(
-                violationId,
-                resolution,
-                responsible,
-              ),
-            ];
-          case 1:
-            _a.sent();
-            return [3 /*break*/, 3];
-          case 2:
-            err_4 = _a.sent();
-            console.error("Error resolving violation:", err_4);
-            setError("Falha ao resolver violação");
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var resolveViolation = (0, react_1.useCallback)(
+    (violationId, resolution, responsible) =>
+      __awaiter(this, void 0, void 0, function () {
+        var err_4;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                compliance_monitoring_1.realTimeComplianceMonitor.resolveViolation(
+                  violationId,
+                  resolution,
+                  responsible,
+                ),
+              ];
+            case 1:
+              _a.sent();
+              return [3 /*break*/, 3];
+            case 2:
+              err_4 = _a.sent();
+              console.error("Error resolving violation:", err_4);
+              setError("Falha ao resolver violação");
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Acknowledge alert
-  var acknowledgeAlert = (0, react_1.useCallback)(function (alertId, acknowledgedBy) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var err_5;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              compliance_monitoring_1.realTimeComplianceMonitor.acknowledgeAlert(
-                alertId,
-                acknowledgedBy,
-              ),
-            ];
-          case 1:
-            _a.sent();
-            return [3 /*break*/, 3];
-          case 2:
-            err_5 = _a.sent();
-            console.error("Error acknowledging alert:", err_5);
-            setError("Falha ao confirmar alerta");
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var acknowledgeAlert = (0, react_1.useCallback)(
+    (alertId, acknowledgedBy) =>
+      __awaiter(this, void 0, void 0, function () {
+        var err_5;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                compliance_monitoring_1.realTimeComplianceMonitor.acknowledgeAlert(
+                  alertId,
+                  acknowledgedBy,
+                ),
+              ];
+            case 1:
+              _a.sent();
+              return [3 /*break*/, 3];
+            case 2:
+              err_5 = _a.sent();
+              console.error("Error acknowledging alert:", err_5);
+              setError("Falha ao confirmar alerta");
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Trigger manual assessment
-  var triggerAssessment = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var err_6;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              compliance_monitoring_1.realTimeComplianceMonitor.triggerAssessment(),
-            ];
-          case 1:
-            _a.sent();
-            return [3 /*break*/, 3];
-          case 2:
-            err_6 = _a.sent();
-            console.error("Error triggering assessment:", err_6);
-            setError("Falha ao executar avaliação");
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var triggerAssessment = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var err_6;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                compliance_monitoring_1.realTimeComplianceMonitor.triggerAssessment(),
+              ];
+            case 1:
+              _a.sent();
+              return [3 /*break*/, 3];
+            case 2:
+              err_6 = _a.sent();
+              console.error("Error triggering assessment:", err_6);
+              setError("Falha ao executar avaliação");
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Cleanup on unmount
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       if (statusUpdateRef.current) {
         compliance_monitoring_1.realTimeComplianceMonitor.removeStatusListener(
           statusUpdateRef.current,
         );
       }
-    };
-  }, []);
+    },
+    [],
+  );
   return {
     status: status,
     isLoading: isLoading,
@@ -391,7 +397,7 @@ function useComplianceMetrics() {
     status = _a.status,
     isLoading = _a.isLoading;
   var metrics = (status === null || status === void 0 ? void 0 : status.metrics) || null;
-  var getComplianceLevelColor = (0, react_1.useCallback)(function (level) {
+  var getComplianceLevelColor = (0, react_1.useCallback)((level) => {
     switch (level) {
       case compliance_monitoring_1.ComplianceLevel.EXCELLENT:
         return "text-green-600";
@@ -407,7 +413,7 @@ function useComplianceMetrics() {
         return "text-gray-600";
     }
   }, []);
-  var getComplianceLevelText = (0, react_1.useCallback)(function (level) {
+  var getComplianceLevelText = (0, react_1.useCallback)((level) => {
     switch (level) {
       case compliance_monitoring_1.ComplianceLevel.EXCELLENT:
         return "Excelente";
@@ -439,32 +445,24 @@ function useComplianceViolations() {
     resolveViolation = _a.resolveViolation;
   var violations = (status === null || status === void 0 ? void 0 : status.violations) || [];
   var getViolationsByType = (0, react_1.useCallback)(
-    function (type) {
+    (type) => {
       if (!type) return violations;
-      return violations.filter(function (v) {
-        return v.type === type;
-      });
+      return violations.filter((v) => v.type === type);
     },
     [violations],
   );
   var getViolationsByCategory = (0, react_1.useCallback)(
-    function (category) {
+    (category) => {
       if (!category) return violations;
-      return violations.filter(function (v) {
-        return v.category === category;
-      });
+      return violations.filter((v) => v.category === category);
     },
     [violations],
   );
   var getCriticalViolations = (0, react_1.useCallback)(
-    function () {
-      return violations.filter(function (v) {
-        return v.severity === "critical";
-      });
-    },
+    () => violations.filter((v) => v.severity === "critical"),
     [violations],
   );
-  var getViolationTypeText = (0, react_1.useCallback)(function (type) {
+  var getViolationTypeText = (0, react_1.useCallback)((type) => {
     switch (type) {
       case compliance_monitoring_1.ViolationType.CONSENT_VIOLATION:
         return "Violação de Consentimento";
@@ -484,7 +482,7 @@ function useComplianceViolations() {
         return "Violação Desconhecida";
     }
   }, []);
-  var getSeverityColor = (0, react_1.useCallback)(function (severity) {
+  var getSeverityColor = (0, react_1.useCallback)((severity) => {
     switch (severity) {
       case "critical":
         return "text-red-600 bg-red-50";
@@ -518,31 +516,21 @@ function useComplianceAlerts() {
     acknowledgeAlert = _a.acknowledgeAlert;
   var alerts = (status === null || status === void 0 ? void 0 : status.alerts) || [];
   var getUnacknowledgedAlerts = (0, react_1.useCallback)(
-    function () {
-      return alerts.filter(function (a) {
-        return !a.acknowledged;
-      });
-    },
+    () => alerts.filter((a) => !a.acknowledged),
     [alerts],
   );
   var getCriticalAlerts = (0, react_1.useCallback)(
-    function () {
-      return alerts.filter(function (a) {
-        return a.severity === "critical";
-      });
-    },
+    () => alerts.filter((a) => a.severity === "critical"),
     [alerts],
   );
   var getAlertsByCategory = (0, react_1.useCallback)(
-    function (category) {
+    (category) => {
       if (!category) return alerts;
-      return alerts.filter(function (a) {
-        return a.category === category;
-      });
+      return alerts.filter((a) => a.category === category);
     },
     [alerts],
   );
-  var getAlertSeverityColor = (0, react_1.useCallback)(function (severity) {
+  var getAlertSeverityColor = (0, react_1.useCallback)((severity) => {
     switch (severity) {
       case "critical":
         return "text-red-600 bg-red-50";
@@ -574,32 +562,24 @@ function useComplianceRecommendations() {
   var recommendations =
     (status === null || status === void 0 ? void 0 : status.recommendations) || [];
   var getRecommendationsByPriority = (0, react_1.useCallback)(
-    function (priority) {
+    (priority) => {
       if (!priority) return recommendations;
-      return recommendations.filter(function (r) {
-        return r.priority === priority;
-      });
+      return recommendations.filter((r) => r.priority === priority);
     },
     [recommendations],
   );
   var getCriticalRecommendations = (0, react_1.useCallback)(
-    function () {
-      return recommendations.filter(function (r) {
-        return r.priority === "critical";
-      });
-    },
+    () => recommendations.filter((r) => r.priority === "critical"),
     [recommendations],
   );
   var getRecommendationsByCategory = (0, react_1.useCallback)(
-    function (category) {
+    (category) => {
       if (!category) return recommendations;
-      return recommendations.filter(function (r) {
-        return r.category === category;
-      });
+      return recommendations.filter((r) => r.category === category);
     },
     [recommendations],
   );
-  var getPriorityColor = (0, react_1.useCallback)(function (priority) {
+  var getPriorityColor = (0, react_1.useCallback)((priority) => {
     switch (priority) {
       case "critical":
         return "text-red-600 bg-red-50";

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SelfBooking = SelfBooking;
 var react_1 = require("react");
@@ -168,7 +165,6 @@ var bookingSteps = [
   { step: 4, title: "Confirmação", description: "Revise e confirme" },
 ];
 function SelfBooking() {
-  var _this = this;
   var _a = (0, react_1.useState)(1),
     currentStep = _a[0],
     setCurrentStep = _a[1];
@@ -260,71 +256,68 @@ function SelfBooking() {
     },
   ];
   // Generate available time slots (sample data)
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedDate && selectedProfessional && selectedService) {
-        setIsLoading(true);
-        // Simulate API call
-        setTimeout(function () {
-          var slots = [
-            {
-              time: "09:00",
-              available: true,
-              professional_id: selectedProfessional.id,
-              service_id: selectedService.id,
-            },
-            {
-              time: "10:30",
-              available: false,
-              professional_id: selectedProfessional.id,
-              service_id: selectedService.id,
-            },
-            {
-              time: "14:00",
-              available: true,
-              professional_id: selectedProfessional.id,
-              service_id: selectedService.id,
-            },
-            {
-              time: "15:30",
-              available: true,
-              professional_id: selectedProfessional.id,
-              service_id: selectedService.id,
-            },
-            {
-              time: "17:00",
-              available: false,
-              professional_id: selectedProfessional.id,
-              service_id: selectedService.id,
-            },
-          ];
-          setAvailableSlots(slots);
-          setIsLoading(false);
-        }, 1000);
-      }
-    },
-    [selectedDate, selectedProfessional, selectedService],
-  );
-  var handleServiceSelect = function (service) {
+  (0, react_1.useEffect)(() => {
+    if (selectedDate && selectedProfessional && selectedService) {
+      setIsLoading(true);
+      // Simulate API call
+      setTimeout(() => {
+        var slots = [
+          {
+            time: "09:00",
+            available: true,
+            professional_id: selectedProfessional.id,
+            service_id: selectedService.id,
+          },
+          {
+            time: "10:30",
+            available: false,
+            professional_id: selectedProfessional.id,
+            service_id: selectedService.id,
+          },
+          {
+            time: "14:00",
+            available: true,
+            professional_id: selectedProfessional.id,
+            service_id: selectedService.id,
+          },
+          {
+            time: "15:30",
+            available: true,
+            professional_id: selectedProfessional.id,
+            service_id: selectedService.id,
+          },
+          {
+            time: "17:00",
+            available: false,
+            professional_id: selectedProfessional.id,
+            service_id: selectedService.id,
+          },
+        ];
+        setAvailableSlots(slots);
+        setIsLoading(false);
+      }, 1000);
+    }
+  }, [selectedDate, selectedProfessional, selectedService]);
+  var handleServiceSelect = (service) => {
     setSelectedService(service);
     setCurrentStep(2);
   };
-  var handleProfessionalSelect = function (professional) {
+  var handleProfessionalSelect = (professional) => {
     setSelectedProfessional(professional);
     setCurrentStep(3);
   };
-  var handleDateSelect = function (date) {
+  var handleDateSelect = (date) => {
     setSelectedDate(date);
     setSelectedTime("");
   };
-  var handleTimeSelect = function (time) {
+  var handleTimeSelect = (time) => {
     setSelectedTime(time);
     setCurrentStep(4);
   };
-  var handleBookingConfirm = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBookingConfirm = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedService || !selectedProfessional || !selectedDate || !selectedTime) {
@@ -336,12 +329,7 @@ function SelfBooking() {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simulate API call
             _a.sent();
@@ -376,13 +364,12 @@ function SelfBooking() {
         }
       });
     });
-  };
-  var canSelectDates = function (date) {
+  var canSelectDates = (date) => {
     var today = new Date();
     var maxDate = (0, date_fns_1.addDays)(today, 60); // 60 days ahead
     return date >= today && date <= maxDate;
   };
-  var getCategoryBadge = function (category) {
+  var getCategoryBadge = (category) => {
     var badges = {
       consultation: { label: "Consulta", color: "bg-blue-100 text-blue-800" },
       procedure: { label: "Procedimento", color: "bg-purple-100 text-purple-800" },
@@ -406,38 +393,36 @@ function SelfBooking() {
       <card_1.Card className="medical-card">
         <card_1.CardContent className="p-6">
           <div className="flex items-center justify-between">
-            {bookingSteps.map(function (step, index) {
-              return (
-                <div key={step.step} className="flex items-center">
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={"w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ".concat(
-                        currentStep >= step.step
-                          ? "bg-primary text-white"
-                          : "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {currentStep > step.step
-                        ? <lucide_react_1.CheckCircle className="w-5 h-5" />
-                        : step.step}
-                    </div>
-                    <div className="mt-2 text-center">
-                      <p className="text-sm font-medium">{step.title}</p>
-                      <p className="text-xs text-muted-foreground hidden md:block">
-                        {step.description}
-                      </p>
-                    </div>
+            {bookingSteps.map((step, index) => (
+              <div key={step.step} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={"w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-colors ".concat(
+                      currentStep >= step.step
+                        ? "bg-primary text-white"
+                        : "bg-muted text-muted-foreground",
+                    )}
+                  >
+                    {currentStep > step.step
+                      ? <lucide_react_1.CheckCircle className="w-5 h-5" />
+                      : step.step}
                   </div>
-                  {index < bookingSteps.length - 1 && (
-                    <div
-                      className={"flex-1 h-px mx-4 transition-colors ".concat(
-                        currentStep > step.step ? "bg-primary" : "bg-muted",
-                      )}
-                    />
-                  )}
+                  <div className="mt-2 text-center">
+                    <p className="text-sm font-medium">{step.title}</p>
+                    <p className="text-xs text-muted-foreground hidden md:block">
+                      {step.description}
+                    </p>
+                  </div>
                 </div>
-              );
-            })}
+                {index < bookingSteps.length - 1 && (
+                  <div
+                    className={"flex-1 h-px mx-4 transition-colors ".concat(
+                      currentStep > step.step ? "bg-primary" : "bg-muted",
+                    )}
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>
@@ -447,15 +432,13 @@ function SelfBooking() {
         <div>
           <h2 className="text-xl font-semibold mb-6">Escolha o Serviço</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {services.map(function (service) {
+            {services.map((service) => {
               var badge = getCategoryBadge(service.category);
               return (
                 <card_1.Card
                   key={service.id}
                   className="cursor-pointer hover:shadow-md transition-shadow medical-card"
-                  onClick={function () {
-                    return handleServiceSelect(service);
-                  }}
+                  onClick={() => handleServiceSelect(service)}
                 >
                   <card_1.CardContent className="p-6">
                     <div className="flex items-start gap-4">
@@ -499,13 +482,7 @@ function SelfBooking() {
       {currentStep === 2 && selectedService && (
         <div>
           <div className="flex items-center gap-2 mb-6">
-            <button_1.Button
-              variant="ghost"
-              size="sm"
-              onClick={function () {
-                return setCurrentStep(1);
-              }}
-            >
+            <button_1.Button variant="ghost" size="sm" onClick={() => setCurrentStep(1)}>
               <lucide_react_1.ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </button_1.Button>
@@ -518,62 +495,52 @@ function SelfBooking() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {professionals
-              .filter(function (prof) {
-                return prof.available_services.includes(selectedService.id);
-              })
-              .map(function (professional) {
-                return (
-                  <card_1.Card
-                    key={professional.id}
-                    className="cursor-pointer hover:shadow-md transition-shadow medical-card"
-                    onClick={function () {
-                      return handleProfessionalSelect(professional);
-                    }}
-                  >
-                    <card_1.CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <avatar_1.Avatar className="h-16 w-16">
-                          <avatar_1.AvatarImage src={professional.avatar_url} />
-                          <avatar_1.AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                            {professional.name
-                              .split(" ")
-                              .map(function (n) {
-                                return n[0];
-                              })
-                              .join("")}
-                          </avatar_1.AvatarFallback>
-                        </avatar_1.Avatar>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg">{professional.name}</h3>
-                          <p className="text-sm text-muted-foreground mb-2">
-                            {professional.specialty}
-                          </p>
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="flex items-center">
-                              {__spreadArray([], Array(5), true).map(function (_, i) {
-                                return (
-                                  <lucide_react_1.Heart
-                                    key={i}
-                                    className={"w-4 h-4 ".concat(
-                                      i < Math.floor(professional.rating)
-                                        ? "fill-yellow-400 text-yellow-400"
-                                        : "text-gray-300",
-                                    )}
-                                  />
-                                );
-                              })}
-                            </div>
-                            <span className="text-sm font-semibold">{professional.rating}</span>
-                            <span className="text-sm text-muted-foreground">
-                              ({professional.reviews_count} avaliações)
-                            </span>
+              .filter((prof) => prof.available_services.includes(selectedService.id))
+              .map((professional) => (
+                <card_1.Card
+                  key={professional.id}
+                  className="cursor-pointer hover:shadow-md transition-shadow medical-card"
+                  onClick={() => handleProfessionalSelect(professional)}
+                >
+                  <card_1.CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <avatar_1.Avatar className="h-16 w-16">
+                        <avatar_1.AvatarImage src={professional.avatar_url} />
+                        <avatar_1.AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                          {professional.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </avatar_1.AvatarFallback>
+                      </avatar_1.Avatar>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg">{professional.name}</h3>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {professional.specialty}
+                        </p>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center">
+                            {__spreadArray([], Array(5), true).map((_, i) => (
+                              <lucide_react_1.Heart
+                                key={i}
+                                className={"w-4 h-4 ".concat(
+                                  i < Math.floor(professional.rating)
+                                    ? "fill-yellow-400 text-yellow-400"
+                                    : "text-gray-300",
+                                )}
+                              />
+                            ))}
                           </div>
+                          <span className="text-sm font-semibold">{professional.rating}</span>
+                          <span className="text-sm text-muted-foreground">
+                            ({professional.reviews_count} avaliações)
+                          </span>
                         </div>
                       </div>
-                    </card_1.CardContent>
-                  </card_1.Card>
-                );
-              })}
+                    </div>
+                  </card_1.CardContent>
+                </card_1.Card>
+              ))}
           </div>
         </div>
       )}
@@ -582,13 +549,7 @@ function SelfBooking() {
       {currentStep === 3 && selectedService && selectedProfessional && (
         <div>
           <div className="flex items-center gap-2 mb-6">
-            <button_1.Button
-              variant="ghost"
-              size="sm"
-              onClick={function () {
-                return setCurrentStep(2);
-              }}
-            >
+            <button_1.Button variant="ghost" size="sm" onClick={() => setCurrentStep(2)}>
               <lucide_react_1.ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </button_1.Button>
@@ -610,9 +571,7 @@ function SelfBooking() {
                   mode="single"
                   selected={selectedDate}
                   onSelect={handleDateSelect}
-                  disabled={function (date) {
-                    return !canSelectDates(date);
-                  }}
+                  disabled={(date) => !canSelectDates(date)}
                   locale={locale_1.ptBR}
                   className="rounded-md border"
                 />
@@ -643,21 +602,17 @@ function SelfBooking() {
                         <p className="text-muted-foreground">Carregando horários...</p>
                       </div>
                     : <div className="grid grid-cols-2 gap-3">
-                        {availableSlots.map(function (slot) {
-                          return (
-                            <button_1.Button
-                              key={slot.time}
-                              variant={selectedTime === slot.time ? "default" : "outline"}
-                              disabled={!slot.available}
-                              onClick={function () {
-                                return handleTimeSelect(slot.time);
-                              }}
-                              className="h-12"
-                            >
-                              {slot.time}
-                            </button_1.Button>
-                          );
-                        })}
+                        {availableSlots.map((slot) => (
+                          <button_1.Button
+                            key={slot.time}
+                            variant={selectedTime === slot.time ? "default" : "outline"}
+                            disabled={!slot.available}
+                            onClick={() => handleTimeSelect(slot.time)}
+                            className="h-12"
+                          >
+                            {slot.time}
+                          </button_1.Button>
+                        ))}
                       </div>}
               </card_1.CardContent>
             </card_1.Card>
@@ -673,13 +628,7 @@ function SelfBooking() {
         selectedTime && (
           <div>
             <div className="flex items-center gap-2 mb-6">
-              <button_1.Button
-                variant="ghost"
-                size="sm"
-                onClick={function () {
-                  return setCurrentStep(3);
-                }}
-              >
+              <button_1.Button variant="ghost" size="sm" onClick={() => setCurrentStep(3)}>
                 <lucide_react_1.ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar
               </button_1.Button>
@@ -769,9 +718,7 @@ function SelfBooking() {
                       id="notes"
                       placeholder="Descreva sintomas, dúvidas ou informações relevantes..."
                       value={notes}
-                      onChange={function (e) {
-                        return setNotes(e.target.value);
-                      }}
+                      onChange={(e) => setNotes(e.target.value)}
                       className="mt-2"
                       rows={4}
                     />

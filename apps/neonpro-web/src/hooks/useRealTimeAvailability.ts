@@ -1,8 +1,8 @@
 "use client";
 
-import type { useState, useEffect, useRef, useCallback } from "react";
-import type { createClient } from "@/lib/supabase/client";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { useCallback, useEffect, useRef, useState } from "react";
+import type { createClient } from "@/lib/supabase/client";
 
 /**
  * Real-time availability hook for NeonPro appointment booking
@@ -161,7 +161,7 @@ export function useRealTimeAvailability({
             }
             break;
 
-          case "UPDATE":
+          case "UPDATE": {
             // Slot availability changed
             const slotIndex = updatedSlots.findIndex((s) => s.id === newRecord.id);
 
@@ -181,6 +181,7 @@ export function useRealTimeAvailability({
               updatedSlots.push(newRecord);
             }
             break;
+          }
 
           case "DELETE":
             // Slot was deleted

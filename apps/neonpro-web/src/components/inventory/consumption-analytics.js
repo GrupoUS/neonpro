@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsumptionAnalytics = ConsumptionAnalytics;
 /**
@@ -165,7 +162,6 @@ var table_1 = require("@/components/ui/table");
 var inventory_1 = require("@/lib/inventory");
 var use_toast_1 = require("@/hooks/use-toast");
 function ConsumptionAnalytics(_a) {
-  var _this = this;
   var onRefresh = _a.onRefresh,
     className = _a.className;
   var _b = (0, react_1.useState)(null),
@@ -193,14 +189,11 @@ function ConsumptionAnalytics(_a) {
     setFilters = _g[1];
   var toast = (0, use_toast_1.useToast)().toast;
   var consumptionAnalyzer = new inventory_1.ConsumptionAnalyzer();
-  (0, react_1.useEffect)(
-    function () {
-      loadAnalyticsData();
-    },
-    [filters],
-  );
-  var loadAnalyticsData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadAnalyticsData();
+  }, [filters]);
+  var loadAnalyticsData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var startDate,
         endDate,
         _a,
@@ -211,7 +204,7 @@ function ConsumptionAnalytics(_a) {
         forecastError,
         error_1,
         errorMessage;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 3, 4, 5]);
@@ -262,11 +255,10 @@ function ConsumptionAnalytics(_a) {
         }
       });
     });
-  };
-  var generateOptimizationRecommendations = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generateOptimizationRecommendations = () =>
+    __awaiter(this, void 0, void 0, function () {
       var startDate, endDate, _a, recommendationsData, error, error_2, errorMessage;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -315,14 +307,13 @@ function ConsumptionAnalytics(_a) {
         }
       });
     });
-  };
-  var handleFilterChange = function (field, value) {
-    setFilters(function (prev) {
+  var handleFilterChange = (field, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
   };
-  var getComplexityColor = function (complexity) {
+  var getComplexityColor = (complexity) => {
     var colors = {
       baixa: "bg-green-100 text-green-800",
       media: "bg-yellow-100 text-yellow-800",
@@ -330,7 +321,7 @@ function ConsumptionAnalytics(_a) {
     };
     return colors[complexity] || "bg-gray-100 text-gray-800";
   };
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "crescente":
         return <icons_1.Icons.TrendingUp className="h-4 w-4 text-green-500" />;
@@ -340,15 +331,12 @@ function ConsumptionAnalytics(_a) {
         return <icons_1.Icons.Minus className="h-4 w-4 text-gray-500" />;
     }
   };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(1), "%");
-  };
+  var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
   if (isLoading) {
     return (
       <div className={"space-y-6 ".concat(className)}>
@@ -360,15 +348,13 @@ function ConsumptionAnalytics(_a) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {[1, 2].map(function (i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardContent className="p-6">
-                  <div className="h-48 bg-gray-200 rounded animate-pulse" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {[1, 2].map((i) => (
+            <card_1.Card key={i}>
+              <card_1.CardContent className="p-6">
+                <div className="h-48 bg-gray-200 rounded animate-pulse" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -414,9 +400,7 @@ function ConsumptionAnalytics(_a) {
               <label_1.Label>Centro de Custo</label_1.Label>
               <select_1.Select
                 value={filters.centroCustoId}
-                onValueChange={function (value) {
-                  return handleFilterChange("centroCustoId", value);
-                }}
+                onValueChange={(value) => handleFilterChange("centroCustoId", value)}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Selecione" />
@@ -435,9 +419,7 @@ function ConsumptionAnalytics(_a) {
               <input_1.Input
                 type="date"
                 value={filters.dataInicio}
-                onChange={function (e) {
-                  return handleFilterChange("dataInicio", e.target.value);
-                }}
+                onChange={(e) => handleFilterChange("dataInicio", e.target.value)}
               />
             </div>
 
@@ -446,9 +428,7 @@ function ConsumptionAnalytics(_a) {
               <input_1.Input
                 type="date"
                 value={filters.dataFim}
-                onChange={function (e) {
-                  return handleFilterChange("dataFim", e.target.value);
-                }}
+                onChange={(e) => handleFilterChange("dataFim", e.target.value)}
               />
             </div>
 
@@ -456,9 +436,7 @@ function ConsumptionAnalytics(_a) {
               <label_1.Label>Período</label_1.Label>
               <select_1.Select
                 value={filters.periodo}
-                onValueChange={function (value) {
-                  return handleFilterChange("periodo", value);
-                }}
+                onValueChange={(value) => handleFilterChange("periodo", value)}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
@@ -571,36 +549,32 @@ function ConsumptionAnalytics(_a) {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {analytics.produtos_mais_consumidos.slice(0, 10).map(function (product) {
-                  return (
-                    <table_1.TableRow key={product.produto_id}>
-                      <table_1.TableCell className="font-medium">
-                        {product.nome_produto}
-                      </table_1.TableCell>
-                      <table_1.TableCell>{product.categoria}</table_1.TableCell>
-                      <table_1.TableCell>{product.quantidade_consumida}</table_1.TableCell>
-                      <table_1.TableCell>
-                        {formatCurrency(product.valor_consumido)}
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <badge_1.Badge variant="outline">
-                          {formatPercentage(product.percentual_consumo_total)}
-                        </badge_1.Badge>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <div className="flex items-center gap-2">
-                          {getTrendIcon(product.tendencia_mensal)}
-                          <span className="text-sm">
-                            {formatPercentage(product.variacao_percentual)}
-                          </span>
-                        </div>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        {formatCurrency(product.custo_medio_unitario)}
-                      </table_1.TableCell>
-                    </table_1.TableRow>
-                  );
-                })}
+                {analytics.produtos_mais_consumidos.slice(0, 10).map((product) => (
+                  <table_1.TableRow key={product.produto_id}>
+                    <table_1.TableCell className="font-medium">
+                      {product.nome_produto}
+                    </table_1.TableCell>
+                    <table_1.TableCell>{product.categoria}</table_1.TableCell>
+                    <table_1.TableCell>{product.quantidade_consumida}</table_1.TableCell>
+                    <table_1.TableCell>{formatCurrency(product.valor_consumido)}</table_1.TableCell>
+                    <table_1.TableCell>
+                      <badge_1.Badge variant="outline">
+                        {formatPercentage(product.percentual_consumo_total)}
+                      </badge_1.Badge>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      <div className="flex items-center gap-2">
+                        {getTrendIcon(product.tendencia_mensal)}
+                        <span className="text-sm">
+                          {formatPercentage(product.variacao_percentual)}
+                        </span>
+                      </div>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      {formatCurrency(product.custo_medio_unitario)}
+                    </table_1.TableCell>
+                  </table_1.TableRow>
+                ))}
               </table_1.TableBody>
             </table_1.Table>
           </card_1.CardContent>
@@ -619,39 +593,37 @@ function ConsumptionAnalytics(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {analytics.tendencias.map(function (trend, index) {
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 border rounded-lg"
-                  >
-                    <div>
-                      <h4 className="font-medium">{trend.periodo}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {formatCurrency(trend.valor_consumido)} • {trend.quantidade_consumida}{" "}
-                        unidades
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-2 mb-1">
-                        {trend.variacao_valor >= 0
-                          ? <icons_1.Icons.TrendingUp className="h-4 w-4 text-green-500" />
-                          : <icons_1.Icons.TrendingDown className="h-4 w-4 text-red-500" />}
-                        <span
-                          className={"text-sm font-medium ".concat(
-                            trend.variacao_valor >= 0 ? "text-green-600" : "text-red-600",
-                          )}
-                        >
-                          {formatPercentage(Math.abs(trend.variacao_valor))}
-                        </span>
-                      </div>
-                      <badge_1.Badge variant="secondary">
-                        Score: {trend.eficiencia_score}
-                      </badge_1.Badge>
-                    </div>
+              {analytics.tendencias.map((trend, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
+                  <div>
+                    <h4 className="font-medium">{trend.periodo}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {formatCurrency(trend.valor_consumido)} • {trend.quantidade_consumida}{" "}
+                      unidades
+                    </p>
                   </div>
-                );
-              })}
+                  <div className="text-right">
+                    <div className="flex items-center gap-2 mb-1">
+                      {trend.variacao_valor >= 0
+                        ? <icons_1.Icons.TrendingUp className="h-4 w-4 text-green-500" />
+                        : <icons_1.Icons.TrendingDown className="h-4 w-4 text-red-500" />}
+                      <span
+                        className={"text-sm font-medium ".concat(
+                          trend.variacao_valor >= 0 ? "text-green-600" : "text-red-600",
+                        )}
+                      >
+                        {formatPercentage(Math.abs(trend.variacao_valor))}
+                      </span>
+                    </div>
+                    <badge_1.Badge variant="secondary">
+                      Score: {trend.eficiencia_score}
+                    </badge_1.Badge>
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -671,41 +643,39 @@ function ConsumptionAnalytics(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {opportunities.map(function (opportunity, index) {
-                return (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1">
-                        <h4 className="font-medium mb-1">{opportunity.descricao}</h4>
-                        <div className="flex items-center gap-2 mb-2">
-                          <badge_1.Badge className={getComplexityColor(opportunity.complexidade)}>
-                            {opportunity.complexidade} complexidade
-                          </badge_1.Badge>
-                          <badge_1.Badge variant="outline">
-                            {opportunity.prazo_implementacao} dias
-                          </badge_1.Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          Impacto: {opportunity.impacto_operacional}
-                        </p>
+              {opportunities.map((opportunity, index) => (
+                <div key={index} className="border rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h4 className="font-medium mb-1">{opportunity.descricao}</h4>
+                      <div className="flex items-center gap-2 mb-2">
+                        <badge_1.Badge className={getComplexityColor(opportunity.complexidade)}>
+                          {opportunity.complexidade} complexidade
+                        </badge_1.Badge>
+                        <badge_1.Badge variant="outline">
+                          {opportunity.prazo_implementacao} dias
+                        </badge_1.Badge>
                       </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-green-600">
-                          {formatCurrency(opportunity.economia_estimada)}
-                        </div>
-                        <p className="text-sm text-muted-foreground">Economia estimada</p>
-                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Impacto: {opportunity.impacto_operacional}
+                      </p>
                     </div>
-
-                    <div className="flex justify-end">
-                      <button_1.Button size="sm" variant="outline">
-                        <icons_1.Icons.ArrowRight className="w-4 h-4 mr-1" />
-                        Implementar
-                      </button_1.Button>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-green-600">
+                        {formatCurrency(opportunity.economia_estimada)}
+                      </div>
+                      <p className="text-sm text-muted-foreground">Economia estimada</p>
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="flex justify-end">
+                    <button_1.Button size="sm" variant="outline">
+                      <icons_1.Icons.ArrowRight className="w-4 h-4 mr-1" />
+                      Implementar
+                    </button_1.Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -736,38 +706,32 @@ function ConsumptionAnalytics(_a) {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {forecasts.slice(0, 5).map(function (forecast) {
-                  return (
-                    <table_1.TableRow key={forecast.produto_id}>
-                      <table_1.TableCell className="font-medium">
-                        {forecast.nome_produto}
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        {forecast.previsao_quantidade.toFixed(0)}
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        {formatCurrency(forecast.previsao_valor)}
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <badge_1.Badge
-                          variant={forecast.confianca_previsao >= 75 ? "default" : "secondary"}
-                        >
-                          {forecast.confianca_previsao}%
-                        </badge_1.Badge>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        {forecast.recomendacao_compra.quantidade_recomendada.toFixed(0)} unidades
-                        <br />
-                        <span className="text-sm text-muted-foreground">
-                          em {forecast.recomendacao_compra.prazo_compra_ideal} dias
-                        </span>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        {formatCurrency(forecast.recomendacao_compra.economia_esperada)}
-                      </table_1.TableCell>
-                    </table_1.TableRow>
-                  );
-                })}
+                {forecasts.slice(0, 5).map((forecast) => (
+                  <table_1.TableRow key={forecast.produto_id}>
+                    <table_1.TableCell className="font-medium">
+                      {forecast.nome_produto}
+                    </table_1.TableCell>
+                    <table_1.TableCell>{forecast.previsao_quantidade.toFixed(0)}</table_1.TableCell>
+                    <table_1.TableCell>{formatCurrency(forecast.previsao_valor)}</table_1.TableCell>
+                    <table_1.TableCell>
+                      <badge_1.Badge
+                        variant={forecast.confianca_previsao >= 75 ? "default" : "secondary"}
+                      >
+                        {forecast.confianca_previsao}%
+                      </badge_1.Badge>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      {forecast.recomendacao_compra.quantidade_recomendada.toFixed(0)} unidades
+                      <br />
+                      <span className="text-sm text-muted-foreground">
+                        em {forecast.recomendacao_compra.prazo_compra_ideal} dias
+                      </span>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      {formatCurrency(forecast.recomendacao_compra.economia_esperada)}
+                    </table_1.TableCell>
+                  </table_1.TableRow>
+                ))}
               </table_1.TableBody>
             </table_1.Table>
           </card_1.CardContent>
@@ -788,32 +752,30 @@ function ConsumptionAnalytics(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {analytics.alertas.map(function (alert) {
-                return (
-                  <div
-                    key={alert.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <icons_1.Icons.AlertCircle className="h-5 w-5 text-orange-500" />
-                      <div>
-                        <p className="font-medium">{alert.descricao}</p>
-                        <p className="text-sm text-muted-foreground">{alert.acao_recomendada}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <badge_1.Badge
-                        variant={alert.gravidade === "alta" ? "destructive" : "secondary"}
-                      >
-                        {alert.gravidade}
-                      </badge_1.Badge>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {formatCurrency(alert.valor_impacto)}
-                      </p>
+              {analytics.alertas.map((alert) => (
+                <div
+                  key={alert.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <icons_1.Icons.AlertCircle className="h-5 w-5 text-orange-500" />
+                    <div>
+                      <p className="font-medium">{alert.descricao}</p>
+                      <p className="text-sm text-muted-foreground">{alert.acao_recomendada}</p>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="text-right">
+                    <badge_1.Badge
+                      variant={alert.gravidade === "alta" ? "destructive" : "secondary"}
+                    >
+                      {alert.gravidade}
+                    </badge_1.Badge>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {formatCurrency(alert.valor_impacto)}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>

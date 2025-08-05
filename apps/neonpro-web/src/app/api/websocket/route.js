@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.broadcastToChannel = broadcastToChannel;
@@ -157,7 +154,7 @@ var clients = new Map();
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var upgrade;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         upgrade = request.headers.get("upgrade");
         if (upgrade !== "websocket") {
@@ -199,13 +196,11 @@ function GET(request) {
  * Setup WebSocket event handlers
  */
 function setupWebSocketHandlers() {
-  var _this = this;
   if (!wss) return;
-  wss.on("connection", function (ws, request) {
-    return __awaiter(_this, void 0, void 0, function () {
+  wss.on("connection", (ws, request) =>
+    __awaiter(this, void 0, void 0, function () {
       var query, token, userId, clientId, pingInterval;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             console.log("New WebSocket connection established");
@@ -237,10 +232,10 @@ function setupWebSocketHandlers() {
               }),
             );
             // Handle incoming messages
-            ws.on("message", function (data) {
-              return __awaiter(_this, void 0, void 0, function () {
+            ws.on("message", (data) =>
+              __awaiter(this, void 0, void 0, function () {
                 var message, error_1;
-                return __generator(this, function (_a) {
+                return __generator(this, (_a) => {
                   switch (_a.label) {
                     case 0:
                       _a.trys.push([0, 2, , 3]);
@@ -263,33 +258,33 @@ function setupWebSocketHandlers() {
                       return [2 /*return*/];
                   }
                 });
-              });
-            });
+              }),
+            );
             // Handle connection close
-            ws.on("close", function () {
+            ws.on("close", () => {
               console.log("WebSocket connection closed for client ".concat(clientId));
               clients.delete(clientId);
             });
             // Handle errors
-            ws.on("error", function (error) {
+            ws.on("error", (error) => {
               console.error("WebSocket error for client ".concat(clientId, ":"), error);
               clients.delete(clientId);
             });
-            pingInterval = setInterval(function () {
+            pingInterval = setInterval(() => {
               if (ws.readyState === ws.OPEN) {
                 ws.ping();
               } else {
                 clearInterval(pingInterval);
               }
             }, 30000); // Ping every 30 seconds
-            ws.on("pong", function () {
+            ws.on("pong", () => {
               // Connection is alive
             });
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 }
 /**
  * Handle WebSocket messages
@@ -297,7 +292,7 @@ function setupWebSocketHandlers() {
 function handleWebSocketMessage(clientId, message) {
   return __awaiter(this, void 0, void 0, function () {
     var client, ws, userId, subscriptions, _a, canSubscribe;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           client = clients.get(clientId);
@@ -378,7 +373,7 @@ function handleWebSocketMessage(clientId, message) {
 function verifyWebSocketAuth(token) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, user, error, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -405,31 +400,28 @@ function verifyWebSocketAuth(token) {
 function verifyChannelAccess(userId, channel) {
   return __awaiter(this, void 0, void 0, function () {
     var channelRules, rule;
-    var _this = this;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           channelRules = {
-            analytics: function (uid) {
-              return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
+            analytics: (uid) =>
+              __awaiter(this, void 0, void 0, function () {
+                return __generator(this, (_a) => {
                   // Users can access their own analytics
                   return [2 /*return*/, true];
                 });
-              });
-            },
-            trials: function (uid) {
-              return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
+              }),
+            trials: (uid) =>
+              __awaiter(this, void 0, void 0, function () {
+                return __generator(this, (_a) => {
                   // Users can access their trial updates
                   return [2 /*return*/, true];
                 });
-              });
-            },
-            admin: function (uid) {
-              return __awaiter(_this, void 0, void 0, function () {
+              }),
+            admin: (uid) =>
+              __awaiter(this, void 0, void 0, function () {
                 var user;
-                return __generator(this, function (_a) {
+                return __generator(this, (_a) => {
                   switch (_a.label) {
                     case 0:
                       return [
@@ -444,16 +436,14 @@ function verifyChannelAccess(userId, channel) {
                       ];
                   }
                 });
-              });
-            },
-            global: function (uid) {
-              return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
+              }),
+            global: (uid) =>
+              __awaiter(this, void 0, void 0, function () {
+                return __generator(this, (_a) => {
                   // Global announcements - all authenticated users
                   return [2 /*return*/, true];
                 });
-              });
-            },
+              }),
           };
           rule = channelRules[channel];
           if (!rule) {
@@ -476,7 +466,7 @@ function generateClientId() {
  * Broadcast message to specific channel
  */
 function broadcastToChannel(channel, message) {
-  clients.forEach(function (client, clientId) {
+  clients.forEach((client, clientId) => {
     if (client.subscriptions.has(channel) && client.ws.readyState === client.ws.OPEN) {
       client.ws.send(
         JSON.stringify({
@@ -493,7 +483,7 @@ function broadcastToChannel(channel, message) {
  * Broadcast message to specific user
  */
 function broadcastToUser(userId, message) {
-  clients.forEach(function (client, clientId) {
+  clients.forEach((client, clientId) => {
     if (client.userId === userId && client.ws.readyState === client.ws.OPEN) {
       client.ws.send(
         JSON.stringify({
@@ -516,7 +506,7 @@ function getConnectedClientsCount() {
  */
 function getChannelSubscribers(channel) {
   var count = 0;
-  clients.forEach(function (client) {
+  clients.forEach((client) => {
     if (client.subscriptions.has(channel)) {
       count++;
     }

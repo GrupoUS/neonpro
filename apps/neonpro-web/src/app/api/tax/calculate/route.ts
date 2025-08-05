@@ -2,8 +2,8 @@
 // Story 5.5: Calculate Brazilian taxes for services
 
 import type { NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { brazilianTaxEngine } from "@/lib/services/tax/tax-engine";
+import type { createClient } from "@/lib/supabase/server";
 import type { taxCalculationRequestSchema } from "@/lib/validations/brazilian-tax";
 
 export async function POST(request: Request) {

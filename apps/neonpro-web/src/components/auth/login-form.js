@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginForm = LoginForm;
 var react_1 = require("react");
@@ -152,7 +149,6 @@ var loginSchema = zod_2.z.object({
   password: zod_2.z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
 });
 function LoginForm(_a) {
-  var _this = this;
   var type = _a.type,
     onSwitchToRegister = _a.onSwitchToRegister,
     onClose = _a.onClose;
@@ -171,11 +167,11 @@ function LoginForm(_a) {
       password: "",
     },
   });
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, authData, error, userRole, error_1;
       var _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             setIsLoading(true);
@@ -226,7 +222,6 @@ function LoginForm(_a) {
         }
       });
     });
-  };
   return (
     <card_1.Card className="w-full max-w-md mx-auto bg-white shadow-xl border-0">
       <card_1.CardHeader className="space-y-4 pb-6">
@@ -263,7 +258,7 @@ function LoginForm(_a) {
             <form_1.FormField
               control={form.control}
               name="email"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -291,7 +286,7 @@ function LoginForm(_a) {
             <form_1.FormField
               control={form.control}
               name="password"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -312,9 +307,7 @@ function LoginForm(_a) {
                           type="button"
                           variant="ghost"
                           size="icon"
-                          onClick={function () {
-                            return setShowPassword(!showPassword);
-                          }}
+                          onClick={() => setShowPassword(!showPassword)}
                           className="absolute right-1 top-1 h-10 w-10 text-slate-400 hover:text-slate-600"
                           disabled={isLoading}
                         >

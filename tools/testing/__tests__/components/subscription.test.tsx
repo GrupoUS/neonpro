@@ -8,14 +8,10 @@
  * @created 2025-07-22
  */
 
-import { describe, it, expect, jest, beforeEach } from "@jest/globals";
-import { screen, fireEvent, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {
-  renderWithProviders,
-  createMockSubscription,
-  createMockUserProfile,
-} from "../utils/testUtils";
+import { renderWithProviders } from "../utils/testUtils";
 
 // Mock subscription components (to be imported when they exist)
 const MockSubscriptionStatusCard = ({ variant = "default" }: { variant?: string }) => (

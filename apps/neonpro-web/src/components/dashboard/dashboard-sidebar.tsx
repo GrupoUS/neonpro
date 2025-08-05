@@ -1,8 +1,5 @@
 "use client";
 
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Button } from "@/components/ui/button";
-import type { cn } from "@/lib/utils";
 import type {
   Activity,
   BarChart3,
@@ -23,6 +20,9 @@ import type {
 } from "lucide-react";
 import Link from "next/link";
 import type { usePathname } from "next/navigation";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Button } from "@/components/ui/button";
+import type { cn } from "@/lib/utils";
 
 interface DashboardSidebarProps {
   open: boolean;

@@ -1,6 +1,35 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import type { endOfMonth, endOfYear, format, startOfMonth, startOfYear, subDays } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  EyeOff,
+  Filter,
+  Info,
+  Maximize2,
+  Minimize2,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,9 +37,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -18,39 +48,9 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
 import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Progress } from "@/components/ui/progress";
 import type { Switch } from "@/components/ui/switch";
-import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  PieChart,
-  BarChart3,
-  Calendar,
-  Filter,
-  Download,
-  RefreshCw,
-  AlertTriangle,
-  CheckCircle,
-  Info,
-  Settings,
-  Maximize2,
-  Minimize2,
-  Eye,
-  EyeOff,
-  Target,
-  Activity,
-  Users,
-  Clock,
-  Zap,
-} from "lucide-react";
-import type { format, subDays, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Types for Financial KPI Dashboard
 interface FinancialKPI {

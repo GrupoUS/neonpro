@@ -9,7 +9,22 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  Eye,
+  Info,
+  Shield,
+  Trash2,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -17,12 +32,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Switch } from "@/components/ui/switch";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Dialog,
   DialogContent,
@@ -31,20 +40,11 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type {
-  Shield,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Info,
-  Download,
-  Trash2,
-  Edit,
-  Eye,
-  AlertTriangle,
-} from "lucide-react";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
 import type { useLGPD } from "@/hooks/useLGPD";
-import type { ConsentType, ConsentStatus, LegalBasis, ConsentRecord } from "@/types/lgpd";
+import type { ConsentRecord, ConsentStatus, ConsentType, LegalBasis } from "@/types/lgpd";
 
 // ============================================================================
 // TYPES

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * WebAuthn Client Utilities for TASK-002: Multi-Factor Authentication Enhancement
  *
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -140,11 +137,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWebAuthnErrorMessage = exports.useWebAuthnCapabilities = exports.webAuthnClient = void 0;
 var browser_1 = require("@simplewebauthn/browser");
-var WebAuthnClient = /** @class */ (function () {
+var WebAuthnClient = /** @class */ (() => {
   function WebAuthnClient() {}
   /**
    * Check browser WebAuthn capabilities
@@ -152,7 +149,7 @@ var WebAuthnClient = /** @class */ (function () {
   WebAuthnClient.prototype.checkCapabilities = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supported, platformAuthenticatorAvailable, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             supported = (0, browser_1.browserSupportsWebAuthn)();
@@ -224,7 +221,7 @@ var WebAuthnClient = /** @class */ (function () {
             ];
           case 2:
             optionsResponse = _a.sent();
-            if (!!optionsResponse.ok) return [3 /*break*/, 4];
+            if (optionsResponse.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, optionsResponse.text()];
           case 3:
             error = _a.sent();
@@ -257,7 +254,7 @@ var WebAuthnClient = /** @class */ (function () {
             ];
           case 7:
             verificationResponse = _a.sent();
-            if (!!verificationResponse.ok) return [3 /*break*/, 9];
+            if (verificationResponse.ok) return [3 /*break*/, 9];
             return [4 /*yield*/, verificationResponse.text()];
           case 8:
             error = _a.sent();
@@ -349,7 +346,7 @@ var WebAuthnClient = /** @class */ (function () {
             ];
           case 2:
             optionsResponse = _a.sent();
-            if (!!optionsResponse.ok) return [3 /*break*/, 4];
+            if (optionsResponse.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, optionsResponse.text()];
           case 3:
             error = _a.sent();
@@ -382,7 +379,7 @@ var WebAuthnClient = /** @class */ (function () {
             ];
           case 7:
             verificationResponse = _a.sent();
-            if (!!verificationResponse.ok) return [3 /*break*/, 9];
+            if (verificationResponse.ok) return [3 /*break*/, 9];
             return [4 /*yield*/, verificationResponse.text()];
           case 8:
             error = _a.sent();
@@ -502,7 +499,7 @@ var WebAuthnClient = /** @class */ (function () {
   WebAuthnClient.prototype.testWebAuthnSupport = function () {
     return __awaiter(this, void 0, void 0, function () {
       var errors, browserSupport, platformAuthenticator, error_4, conditionalMediation, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             errors = [];
@@ -555,9 +552,9 @@ var WebAuthnClient = /** @class */ (function () {
 // Export singleton instance
 exports.webAuthnClient = new WebAuthnClient();
 // Helper function for React components
-var useWebAuthnCapabilities = function () {
-  return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+var useWebAuthnCapabilities = () =>
+  __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, exports.webAuthnClient.checkCapabilities()];
@@ -566,10 +563,9 @@ var useWebAuthnCapabilities = function () {
       }
     });
   });
-};
 exports.useWebAuthnCapabilities = useWebAuthnCapabilities;
 // Helper function to get user-friendly error messages
-var getWebAuthnErrorMessage = function (error) {
+var getWebAuthnErrorMessage = (error) => {
   var errorMap = {
     NotAllowedError: "Authentication was cancelled or timed out. Please try again.",
     SecurityError: "Security error occurred. Make sure you are on a secure connection (HTTPS).",

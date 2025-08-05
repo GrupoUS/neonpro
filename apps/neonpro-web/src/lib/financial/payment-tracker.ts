@@ -12,8 +12,8 @@
  * - Automated dunning and collection workflows
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/database.types";
+import type { createClient } from "@/lib/supabase/client";
 
 // Payment Status and Types
 type PaymentStatus =

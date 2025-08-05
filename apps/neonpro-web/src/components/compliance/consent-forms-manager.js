@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentFormsManager = ConsentFormsManager;
 var react_1 = require("react");
@@ -143,7 +140,6 @@ var consent_service_1 = require("@/app/services/consent.service");
 var lucide_react_1 = require("lucide-react");
 var use_toast_1 = require("@/hooks/use-toast");
 function ConsentFormsManager(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userRole = _a.userRole;
   var _b = (0, react_1.useState)([]),
@@ -157,16 +153,13 @@ function ConsentFormsManager(_a) {
     setSelectedForm = _d[1];
   var toast = (0, use_toast_1.useToast)().toast;
   var consentService = new consent_service_1.ConsentService();
-  (0, react_1.useEffect)(
-    function () {
-      loadConsentForms();
-    },
-    [clinicId],
-  );
-  var loadConsentForms = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadConsentForms();
+  }, [clinicId]);
+  var loadConsentForms = () =>
+    __awaiter(this, void 0, void 0, function () {
       var forms, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -193,11 +186,10 @@ function ConsentFormsManager(_a) {
         }
       });
     });
-  };
-  var handleArchiveForm = function (formId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleArchiveForm = (formId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -224,8 +216,7 @@ function ConsentFormsManager(_a) {
         }
       });
     });
-  };
-  var getConsentTypeLabel = function (type) {
+  var getConsentTypeLabel = (type) => {
     var labels = {
       data_processing: "Processamento de Dados",
       medical_treatment: "Tratamento Médico",
@@ -238,7 +229,7 @@ function ConsentFormsManager(_a) {
     };
     return labels[type] || type;
   };
-  var getLegalBasisLabel = function (basis) {
+  var getLegalBasisLabel = (basis) => {
     var labels = {
       consent: "Consentimento",
       legitimate_interest: "Interesse Legítimo",
@@ -295,11 +286,7 @@ function ConsentFormsManager(_a) {
               <div>
                 <p className="text-sm font-medium">Ativos</p>
                 <p className="text-2xl font-bold">
-                  {
-                    consentForms.filter(function (f) {
-                      return f.is_active;
-                    }).length
-                  }
+                  {consentForms.filter((f) => f.is_active).length}
                 </p>
               </div>
             </div>
@@ -313,11 +300,7 @@ function ConsentFormsManager(_a) {
               <div>
                 <p className="text-sm font-medium">Com Auto-Expiração</p>
                 <p className="text-2xl font-bold">
-                  {
-                    consentForms.filter(function (f) {
-                      return f.auto_expire;
-                    }).length
-                  }
+                  {consentForms.filter((f) => f.auto_expire).length}
                 </p>
               </div>
             </div>
@@ -331,13 +314,7 @@ function ConsentFormsManager(_a) {
               <div>
                 <p className="text-sm font-medium">Tipos de Consentimento</p>
                 <p className="text-2xl font-bold">
-                  {
-                    new Set(
-                      consentForms.map(function (f) {
-                        return f.consent_type;
-                      }),
-                    ).size
-                  }
+                  {new Set(consentForms.map((f) => f.consent_type)).size}
                 </p>
               </div>
             </div>
@@ -363,95 +340,91 @@ function ConsentFormsManager(_a) {
                 )}
               </card_1.CardContent>
             </card_1.Card>
-          : consentForms.map(function (form) {
-              return (
-                <card_1.Card key={form.id} className="hover:shadow-md transition-shadow">
-                  <card_1.CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <card_1.CardTitle className="text-lg">{form.form_name}</card_1.CardTitle>
-                        <card_1.CardDescription className="mt-1">
-                          {form.consent_type}
-                        </card_1.CardDescription>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <badge_1.Badge
-                          variant={form.is_active ? "default" : "secondary"}
-                          className={form.is_active ? "bg-green-100 text-green-800" : ""}
-                        >
-                          {form.is_active ? "Ativo" : "Inativo"}
-                        </badge_1.Badge>
-                        <badge_1.Badge variant="outline">
-                          {getConsentTypeLabel(form.consent_type)}
-                        </badge_1.Badge>
-                      </div>
+          : consentForms.map((form) => (
+              <card_1.Card key={form.id} className="hover:shadow-md transition-shadow">
+                <card_1.CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <card_1.CardTitle className="text-lg">{form.form_name}</card_1.CardTitle>
+                      <card_1.CardDescription className="mt-1">
+                        {form.consent_type}
+                      </card_1.CardDescription>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent className="pt-0">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <p className="font-medium text-muted-foreground">Base Legal</p>
-                        <p>{getLegalBasisLabel(form.legal_basis)}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium text-muted-foreground">Versão</p>
-                        <p>{form.form_version}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium text-muted-foreground">Auto-Expiração</p>
-                        <p>{form.auto_expire ? "Sim" : "Não"}</p>
-                      </div>
-                      <div>
-                        <p className="font-medium text-muted-foreground">Criado em</p>
-                        <p>{new Date(form.created_at).toLocaleDateString("pt-BR")}</p>
-                      </div>
+                    <div className="flex items-center space-x-2">
+                      <badge_1.Badge
+                        variant={form.is_active ? "default" : "secondary"}
+                        className={form.is_active ? "bg-green-100 text-green-800" : ""}
+                      >
+                        {form.is_active ? "Ativo" : "Inativo"}
+                      </badge_1.Badge>
+                      <badge_1.Badge variant="outline">
+                        {getConsentTypeLabel(form.consent_type)}
+                      </badge_1.Badge>
                     </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent className="pt-0">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-muted-foreground">Base Legal</p>
+                      <p>{getLegalBasisLabel(form.legal_basis)}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-muted-foreground">Versão</p>
+                      <p>{form.form_version}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-muted-foreground">Auto-Expiração</p>
+                      <p>{form.auto_expire ? "Sim" : "Não"}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-muted-foreground">Criado em</p>
+                      <p>{new Date(form.created_at).toLocaleDateString("pt-BR")}</p>
+                    </div>
+                  </div>
 
-                    {form.auto_expire && form.retention_period_days && (
-                      <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <p className="text-sm text-amber-800">
-                          <lucide_react_1.Calendar className="w-4 h-4 inline mr-1" />
-                          Expira automaticamente em {form.retention_period_days} dias após
-                          consentimento
-                        </p>
-                      </div>
-                    )}
+                  {form.auto_expire && form.retention_period_days && (
+                    <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-sm text-amber-800">
+                        <lucide_react_1.Calendar className="w-4 h-4 inline mr-1" />
+                        Expira automaticamente em {form.retention_period_days} dias após
+                        consentimento
+                      </p>
+                    </div>
+                  )}
 
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t">
-                      <div className="text-sm text-muted-foreground">
-                        Última atualização: {new Date(form.updated_at).toLocaleDateString("pt-BR")}
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Eye className="w-4 h-4 mr-1" />
-                          Visualizar
-                        </button_1.Button>
-                        {userRole === "admin" && (
-                          <>
-                            <button_1.Button variant="outline" size="sm">
-                              <lucide_react_1.Edit className="w-4 h-4 mr-1" />
-                              Editar
+                  <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                    <div className="text-sm text-muted-foreground">
+                      Última atualização: {new Date(form.updated_at).toLocaleDateString("pt-BR")}
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Eye className="w-4 h-4 mr-1" />
+                        Visualizar
+                      </button_1.Button>
+                      {userRole === "admin" && (
+                        <>
+                          <button_1.Button variant="outline" size="sm">
+                            <lucide_react_1.Edit className="w-4 h-4 mr-1" />
+                            Editar
+                          </button_1.Button>
+                          {form.is_active && (
+                            <button_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleArchiveForm(form.id)}
+                            >
+                              <lucide_react_1.Archive className="w-4 h-4 mr-1" />
+                              Arquivar
                             </button_1.Button>
-                            {form.is_active && (
-                              <button_1.Button
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  return handleArchiveForm(form.id);
-                                }}
-                              >
-                                <lucide_react_1.Archive className="w-4 h-4 mr-1" />
-                                Arquivar
-                              </button_1.Button>
-                            )}
-                          </>
-                        )}
-                      </div>
+                          )}
+                        </>
+                      )}
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
       </div>
     </div>
   );

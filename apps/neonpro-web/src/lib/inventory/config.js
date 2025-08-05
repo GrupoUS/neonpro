@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 11.3: Centralized Inventory Module Configuration
  * Configuration and utilities for the Stock Output and Consumption Control System
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.inventoryIntegrationManager =
   exports.inventoryDashboardProvider =
@@ -163,7 +160,7 @@ var types_1 = require("./types");
 /**
  * Inventory Configuration Manager
  */
-var InventoryConfigManager = /** @class */ (function () {
+var InventoryConfigManager = /** @class */ (() => {
   function InventoryConfigManager() {
     this.supabase = createClient(ComponentClient());
     this.config = types_1.DEFAULT_INVENTORY_CONFIG;
@@ -271,7 +268,7 @@ exports.InventoryConfigManager = InventoryConfigManager;
 /**
  * Inventory Dashboard Data Provider
  */
-var InventoryDashboardProvider = /** @class */ (function () {
+var InventoryDashboardProvider = /** @class */ (() => {
   function InventoryDashboardProvider() {
     this.supabase = createClient(ComponentClient());
   }
@@ -352,22 +349,19 @@ var InventoryDashboardProvider = /** @class */ (function () {
               ];
             }
             totalProducts = stockData.length;
-            lowStockProducts = stockData.filter(function (p) {
-              return p.estoque_atual <= p.estoque_minimo;
-            }).length;
-            outOfStockProducts = stockData.filter(function (p) {
-              return p.estoque_atual === 0;
-            }).length;
-            totalValue = stockData.reduce(function (sum, p) {
-              return sum + p.estoque_atual * (p.preco_custo || 0);
-            }, 0);
+            lowStockProducts = stockData.filter((p) => p.estoque_atual <= p.estoque_minimo).length;
+            outOfStockProducts = stockData.filter((p) => p.estoque_atual === 0).length;
+            totalValue = stockData.reduce(
+              (sum, p) => sum + p.estoque_atual * (p.preco_custo || 0),
+              0,
+            );
             thirtyDaysFromNow = new Date();
             thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-            expiringSoonProducts = stockData.filter(function (product) {
+            expiringSoonProducts = stockData.filter((product) => {
               var _a;
               return (_a = product.lotes_estoque) === null || _a === void 0
                 ? void 0
-                : _a.some(function (lote) {
+                : _a.some((lote) => {
                     var expiryDate = new Date(lote.data_validade);
                     return expiryDate <= thirtyDaysFromNow && lote.status === "disponivel";
                   });
@@ -413,9 +407,7 @@ var InventoryDashboardProvider = /** @class */ (function () {
             valueConsumedToday =
               (outputsToday === null || outputsToday === void 0
                 ? void 0
-                : outputsToday.reduce(function (sum, output) {
-                    return sum + output.valor_total;
-                  }, 0)) || 0;
+                : outputsToday.reduce((sum, output) => sum + output.valor_total, 0)) || 0;
             return [
               4 /*yield*/,
               this.supabase
@@ -526,9 +518,7 @@ var InventoryDashboardProvider = /** @class */ (function () {
             monthlyValue =
               (monthlyConsumption === null || monthlyConsumption === void 0
                 ? void 0
-                : monthlyConsumption.reduce(function (sum, c) {
-                    return sum + c.valor_total;
-                  }, 0)) || 0;
+                : monthlyConsumption.reduce((sum, c) => sum + c.valor_total, 0)) || 0;
             return [
               4 /*yield*/,
               this.supabase
@@ -559,7 +549,7 @@ var InventoryDashboardProvider = /** @class */ (function () {
   InventoryDashboardProvider.prototype.getInventoryMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
       var metrics;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           metrics = {
             turnover_ratio: 12.5,
@@ -586,7 +576,7 @@ exports.InventoryDashboardProvider = InventoryDashboardProvider;
 /**
  * Inventory System Integration Manager
  */
-var InventoryIntegrationManager = /** @class */ (function () {
+var InventoryIntegrationManager = /** @class */ (() => {
   function InventoryIntegrationManager() {
     this.supabase = createClient(ComponentClient());
   }
@@ -614,7 +604,7 @@ var InventoryIntegrationManager = /** @class */ (function () {
             integrations =
               (integrationData === null || integrationData === void 0
                 ? void 0
-                : integrationData.reduce(function (acc, integration) {
+                : integrationData.reduce((acc, integration) => {
                     acc[integration.sistema_externo] = __assign(
                       { enabled: integration.ativo },
                       integration.configuracao,
@@ -707,12 +697,7 @@ var InventoryIntegrationManager = /** @class */ (function () {
             _a.trys.push([0, 3, , 5]);
             startTime = Date.now();
             // Simulate integration test
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 1:
             // Simulate integration test
             _a.sent();
@@ -774,21 +759,20 @@ exports.InventoryIntegrationManager = InventoryIntegrationManager;
 /**
  * Inventory Utilities
  */
-var InventoryUtils = /** @class */ (function () {
+var InventoryUtils = /** @class */ (() => {
   function InventoryUtils() {}
   /**
    * Format currency value
    */
-  InventoryUtils.formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  InventoryUtils.formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   /**
    * Format percentage
    */
-  InventoryUtils.formatPercentage = function (value, decimals) {
+  InventoryUtils.formatPercentage = (value, decimals) => {
     if (decimals === void 0) {
       decimals = 1;
     }
@@ -797,14 +781,14 @@ var InventoryUtils = /** @class */ (function () {
   /**
    * Calculate percentage change
    */
-  InventoryUtils.calculatePercentageChange = function (current, previous) {
+  InventoryUtils.calculatePercentageChange = (current, previous) => {
     if (previous === 0) return current > 0 ? 100 : 0;
     return ((current - previous) / previous) * 100;
   };
   /**
    * Get status color
    */
-  InventoryUtils.getStatusColor = function (status) {
+  InventoryUtils.getStatusColor = (status) => {
     var colorMap = {
       disponivel: "green",
       baixo: "yellow",
@@ -820,7 +804,7 @@ var InventoryUtils = /** @class */ (function () {
   /**
    * Generate batch number
    */
-  InventoryUtils.generateBatchNumber = function () {
+  InventoryUtils.generateBatchNumber = () => {
     var today = new Date();
     var dateStr = today.toISOString().slice(0, 10).replace(/-/g, "");
     var timeStr = today.toTimeString().slice(0, 8).replace(/:/g, "");
@@ -830,7 +814,7 @@ var InventoryUtils = /** @class */ (function () {
   /**
    * Validate inventory data
    */
-  InventoryUtils.validateInventoryData = function (data) {
+  InventoryUtils.validateInventoryData = (data) => {
     var errors = [];
     if (!data.produto_id) {
       errors.push("ID do produto é obrigatório");

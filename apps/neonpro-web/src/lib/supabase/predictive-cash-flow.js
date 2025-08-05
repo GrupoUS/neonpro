@@ -1,4 +1,3 @@
-"use strict";
 /**
  * =====================================================================================
  * PREDICTIVE CASH FLOW SUPABASE FUNCTIONS
@@ -25,26 +24,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -64,13 +63,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -92,9 +91,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -166,10 +163,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -178,7 +175,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPredictionModel = getPredictionModel;
 exports.deletePredictionModel = deletePredictionModel;
@@ -203,7 +200,7 @@ exports.generateCashFlowForecast = generateCashFlowForecast;
 function createPredictionModel(supabase, input) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, err_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -250,7 +247,7 @@ function createPredictionModel(supabase, input) {
 function updatePredictionModel(supabase, id, input) {
   return __awaiter(this, void 0, void 0, function () {
     var updateData, _a, data, error, err_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -288,7 +285,7 @@ function getPredictionModels(supabase_1) {
     if (pagination === void 0) {
       pagination = {};
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -341,7 +338,7 @@ function getPredictionModels(supabase_1) {
 function getPredictionModel(supabase, id) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, err_4;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -372,7 +369,7 @@ function getPredictionModel(supabase, id) {
 function deletePredictionModel(supabase, id) {
   return __awaiter(this, void 0, void 0, function () {
     var error, err_5;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -403,7 +400,7 @@ function deletePredictionModel(supabase, id) {
 function createCashFlowPrediction(supabase, input) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, err_6;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -459,7 +456,7 @@ function createCashFlowPrediction(supabase, input) {
 function updateCashFlowPrediction(supabase, id, input) {
   return __awaiter(this, void 0, void 0, function () {
     var updateData, _a, data, error, err_7;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -504,7 +501,7 @@ function getCashFlowPredictions(supabase_1) {
     if (pagination === void 0) {
       pagination = {};
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -577,7 +574,7 @@ function getCashFlowPredictions(supabase_1) {
 function createForecastingScenario(supabase, input) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, err_9;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 4, , 5]);
@@ -638,7 +635,7 @@ function createForecastingScenario(supabase, input) {
 function updateForecastingScenario(supabase, id, input) {
   return __awaiter(this, void 0, void 0, function () {
     var scenario, updateData, _a, data, error, err_10;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 5, , 6]);
@@ -702,7 +699,7 @@ function getForecastingScenarios(supabase_1) {
     if (pagination === void 0) {
       pagination = {};
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -766,7 +763,7 @@ function getForecastingScenarios(supabase_1) {
 function createPredictionAccuracy(supabase, input) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, err_12;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);
@@ -838,7 +835,7 @@ function createPredictionAccuracy(supabase, input) {
 function createPredictionAlert(supabase, input) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, err_13;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -888,7 +885,7 @@ function createPredictionAlert(supabase, input) {
 function updatePredictionAlert(supabase, id, input) {
   return __awaiter(this, void 0, void 0, function () {
     var updateData, _a, data, error, err_14;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -931,7 +928,7 @@ function getPredictionAlerts(supabase_1) {
     if (pagination === void 0) {
       pagination = {};
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -996,7 +993,7 @@ function getPredictionAlerts(supabase_1) {
 function getModelAccuracySummary(supabase, modelId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, err_16;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -1050,7 +1047,7 @@ function generateCashFlowForecast(supabase_1, clinicId_1, periodType_1) {
       if (periodsAhead === void 0) {
         periodsAhead = 12;
       }
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 3, , 4]);
@@ -1085,36 +1082,24 @@ function generateCashFlowForecast(supabase_1, clinicId_1, periodType_1) {
             if (!predictions || predictions.length === 0) {
               return [2 /*return*/, { data: null, error: "No predictions available for forecast" }];
             }
-            totalInflow = predictions.reduce(function (sum, p) {
-              return sum + p.predicted_inflow_amount;
-            }, 0);
-            totalOutflow = predictions.reduce(function (sum, p) {
-              return sum + p.predicted_outflow_amount;
-            }, 0);
-            totalNet = predictions.reduce(function (sum, p) {
-              return sum + p.predicted_net_amount;
-            }, 0);
+            totalInflow = predictions.reduce((sum, p) => sum + p.predicted_inflow_amount, 0);
+            totalOutflow = predictions.reduce((sum, p) => sum + p.predicted_outflow_amount, 0);
+            totalNet = predictions.reduce((sum, p) => sum + p.predicted_net_amount, 0);
             avgConfidence =
-              predictions.reduce(function (sum, p) {
-                return sum + p.confidence_score;
-              }, 0) / predictions.length;
+              predictions.reduce((sum, p) => sum + p.confidence_score, 0) / predictions.length;
             firstHalf = predictions.slice(0, Math.floor(predictions.length / 2));
             secondHalf = predictions.slice(Math.floor(predictions.length / 2));
             firstAvg =
-              firstHalf.reduce(function (sum, p) {
-                return sum + p.predicted_net_amount;
-              }, 0) / firstHalf.length;
+              firstHalf.reduce((sum, p) => sum + p.predicted_net_amount, 0) / firstHalf.length;
             secondAvg =
-              secondHalf.reduce(function (sum, p) {
-                return sum + p.predicted_net_amount;
-              }, 0) / secondHalf.length;
+              secondHalf.reduce((sum, p) => sum + p.predicted_net_amount, 0) / secondHalf.length;
             trendDirection = "stable";
             trendDiff = (secondAvg - firstAvg) / Math.abs(firstAvg);
             if (trendDiff > 0.05) trendDirection = "up";
             else if (trendDiff < -0.05) trendDirection = "down";
-            sortedByNet = __spreadArray([], predictions, true).sort(function (a, b) {
-              return b.predicted_net_amount - a.predicted_net_amount;
-            });
+            sortedByNet = __spreadArray([], predictions, true).sort(
+              (a, b) => b.predicted_net_amount - a.predicted_net_amount,
+            );
             peakPeriod =
               ((_a = sortedByNet[0]) === null || _a === void 0 ? void 0 : _a.start_date) || "";
             lowestPeriod =
@@ -1122,25 +1107,19 @@ function generateCashFlowForecast(supabase_1, clinicId_1, periodType_1) {
                 ? void 0
                 : _b.start_date) || "";
             potentialShortfalls = predictions
-              .filter(function (p) {
-                return p.predicted_net_amount < 0;
-              })
-              .map(function (p) {
-                return p.start_date;
-              });
+              .filter((p) => p.predicted_net_amount < 0)
+              .map((p) => p.start_date);
             forecast = {
-              periods: predictions.map(function (p) {
-                return {
-                  period: p.start_date,
-                  period_type: p.period_type,
-                  predicted_inflow: p.predicted_inflow_amount,
-                  predicted_outflow: p.predicted_outflow_amount,
-                  predicted_net: p.predicted_net_amount,
-                  confidence_score: p.confidence_score,
-                  confidence_lower: p.confidence_interval_lower,
-                  confidence_upper: p.confidence_interval_upper,
-                };
-              }),
+              periods: predictions.map((p) => ({
+                period: p.start_date,
+                period_type: p.period_type,
+                predicted_inflow: p.predicted_inflow_amount,
+                predicted_outflow: p.predicted_outflow_amount,
+                predicted_net: p.predicted_net_amount,
+                confidence_score: p.confidence_score,
+                confidence_lower: p.confidence_interval_lower,
+                confidence_upper: p.confidence_interval_upper,
+              })),
               summary: {
                 total_predicted_inflow: totalInflow,
                 total_predicted_outflow: totalOutflow,
@@ -1174,9 +1153,7 @@ function generateCashFlowForecast(supabase_1, clinicId_1, periodType_1) {
 function generateRecommendedActions(predictions, trend) {
   var actions = [];
   // Check for negative cash flow periods
-  var negativePeriodsCount = predictions.filter(function (p) {
-    return p.predicted_net_amount < 0;
-  }).length;
+  var negativePeriodsCount = predictions.filter((p) => p.predicted_net_amount < 0).length;
   if (negativePeriodsCount > 0) {
     actions.push(
       "Review and optimize expenses for ".concat(
@@ -1196,9 +1173,7 @@ function generateRecommendedActions(predictions, trend) {
     actions.push("Consider investing excess cash in growth initiatives");
   }
   // Confidence-based recommendations
-  var lowConfidencePeriods = predictions.filter(function (p) {
-    return p.confidence_score < 70;
-  }).length;
+  var lowConfidencePeriods = predictions.filter((p) => p.confidence_score < 70).length;
   if (lowConfidencePeriods > 0) {
     actions.push(
       "Improve data quality and model accuracy for ".concat(

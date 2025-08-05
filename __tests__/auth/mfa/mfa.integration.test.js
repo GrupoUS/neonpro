@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Multi-Factor Authentication Integration Tests
  *
@@ -21,15 +20,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -166,7 +163,7 @@ var mockUserAgent = "Mozilla/5.0 (Test Browser)";
 var mockIpAddress = "192.168.1.100";
 var mockDeviceFingerprint = "test-device-fingerprint";
 // Test utilities
-var TestDatabaseManager = /** @class */ (function () {
+var TestDatabaseManager = /** @class */ (() => {
   function TestDatabaseManager() {
     this.supabase = (0, supabase_js_1.createClient)(TEST_SUPABASE_URL, TEST_SUPABASE_KEY);
   }
@@ -288,22 +285,22 @@ var TestDatabaseManager = /** @class */ (function () {
   };
   return TestDatabaseManager;
 })();
-(0, globals_1.describe)("MFA Integration Tests", function () {
+(0, globals_1.describe)("MFA Integration Tests", () => {
   var mfaService;
   var dbManager;
-  (0, globals_1.beforeAll)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, globals_1.beforeAll)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Initialize test environment
         mfaService = new mfa_1.MFAService(TEST_SUPABASE_URL, TEST_SUPABASE_KEY);
         dbManager = new TestDatabaseManager();
         return [2 /*return*/];
       });
-    });
-  });
-  (0, globals_1.beforeEach)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.beforeEach)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Clean up before each test
@@ -317,11 +314,11 @@ var TestDatabaseManager = /** @class */ (function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.afterEach)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.afterEach)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Clean up after each test
@@ -332,14 +329,14 @@ var TestDatabaseManager = /** @class */ (function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.describe)("MFA Setup Flow", function () {
-    (0, globals_1.describe)("TOTP Setup", function () {
-      (0, globals_1.it)("should successfully setup TOTP with valid parameters", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.describe)("MFA Setup Flow", () => {
+    (0, globals_1.describe)("TOTP Setup", () => {
+      (0, globals_1.it)("should successfully setup TOTP with valid parameters", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var setupRequest, result, mfaSettings, auditLogs;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 setupRequest = {
@@ -358,11 +355,9 @@ var TestDatabaseManager = /** @class */ (function () {
                 (0, globals_1.expect)(result.qrCodeUri).toContain("otpauth://totp/");
                 (0, globals_1.expect)(result.qrCodeUri).toContain("NeonPro");
                 (0, globals_1.expect)(result.backupCodes).toHaveLength(8);
-                (0, globals_1.expect)(
-                  result.backupCodes.every(function (code) {
-                    return code.length === 10;
-                  }),
-                ).toBe(true);
+                (0, globals_1.expect)(result.backupCodes.every((code) => code.length === 10)).toBe(
+                  true,
+                );
                 (0, globals_1.expect)(result.recoveryToken).toHaveLength(64); // 32 bytes hex
                 return [4 /*yield*/, dbManager.getMFASettings(mockUserId)];
               case 2:
@@ -381,12 +376,12 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should validate LGPD consent requirement", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should validate LGPD consent requirement", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var setupRequest, mfaSettings;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 setupRequest = {
@@ -413,12 +408,12 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should prevent duplicate MFA setup", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should prevent duplicate MFA setup", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var setupRequest;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 setupRequest = {
@@ -444,14 +439,14 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)("SMS Setup", function () {
-      (0, globals_1.it)("should successfully setup SMS with valid phone number", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.describe)("SMS Setup", () => {
+      (0, globals_1.it)("should successfully setup SMS with valid phone number", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var setupRequest, result, mfaSettings;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 setupRequest = {
@@ -477,12 +472,12 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should validate phone number requirement for SMS", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should validate phone number requirement for SMS", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var setupRequest;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 setupRequest = {
@@ -506,17 +501,17 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
   });
-  (0, globals_1.describe)("MFA Verification Flow", function () {
+  (0, globals_1.describe)("MFA Verification Flow", () => {
     var totpSecret;
     var backupCodes;
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
         var setupRequest, setupResult;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setupRequest = {
@@ -534,13 +529,13 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.describe)("TOTP Verification", function () {
-      (0, globals_1.it)("should successfully verify valid TOTP token", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.describe)("TOTP Verification", () => {
+      (0, globals_1.it)("should successfully verify valid TOTP token", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var totp, validToken, result, auditLogs, verifyLog;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 totp = new OTPAuth.TOTP({
@@ -567,20 +562,18 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [4 /*yield*/, dbManager.getAuditLogs(mockUserId)];
               case 2:
                 auditLogs = _a.sent();
-                verifyLog = auditLogs.find(function (log) {
-                  return log.action === "verify";
-                });
+                verifyLog = auditLogs.find((log) => log.action === "verify");
                 (0, globals_1.expect)(verifyLog).toBeDefined();
                 (0, globals_1.expect)(verifyLog.result).toBe("success");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should reject invalid TOTP token", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should reject invalid TOTP token", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var invalidToken, result, auditLogs, verifyLog;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidToken = "123456";
@@ -599,19 +592,17 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [4 /*yield*/, dbManager.getAuditLogs(mockUserId)];
               case 2:
                 auditLogs = _a.sent();
-                verifyLog = auditLogs.find(function (log) {
-                  return log.action === "verify";
-                });
+                verifyLog = auditLogs.find((log) => log.action === "verify");
                 (0, globals_1.expect)(verifyLog.result).toBe("failure");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should handle TOTP token window tolerance", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should handle TOTP token window tolerance", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var totp, previousToken, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 totp = new OTPAuth.TOTP({
@@ -635,14 +626,14 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)("Backup Code Verification", function () {
-      (0, globals_1.it)("should successfully verify valid backup code", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.describe)("Backup Code Verification", () => {
+      (0, globals_1.it)("should successfully verify valid backup code", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var validBackupCode, result, mfaSettings;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 validBackupCode = backupCodes[0];
@@ -666,12 +657,12 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should reject reused backup code", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should reject reused backup code", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var backupCode, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 backupCode = backupCodes[0];
@@ -698,12 +689,12 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should reject invalid backup code", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should reject invalid backup code", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var invalidBackupCode, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidBackupCode = "INVALIDCODE";
@@ -721,15 +712,15 @@ var TestDatabaseManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
   });
-  (0, globals_1.describe)("Rate Limiting and Security", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Rate Limiting and Security", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
         var setupRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setupRequest = {
@@ -745,12 +736,12 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should enforce rate limiting after failed attempts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should enforce rate limiting after failed attempts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidToken, i, result, auditLogs, lockedLog;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidToken = "123456";
@@ -788,19 +779,17 @@ var TestDatabaseManager = /** @class */ (function () {
               return [4 /*yield*/, dbManager.getAuditLogs(mockUserId)];
             case 6:
               auditLogs = _a.sent();
-              lockedLog = auditLogs.find(function (log) {
-                return log.result === "locked";
-              });
+              lockedLog = auditLogs.find((log) => log.result === "locked");
               (0, globals_1.expect)(lockedLog).toBeDefined();
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should reset rate limiting after successful verification", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should reset rate limiting after successful verification", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidToken, i, mfaSettings, totp, validToken, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidToken = "123456";
@@ -846,14 +835,14 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Emergency Bypass", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Emergency Bypass", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
         var setupRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setupRequest = {
@@ -869,12 +858,12 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should allow emergency bypass with valid reason", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should allow emergency bypass with valid reason", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, auditLogs, bypassLog;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -900,21 +889,19 @@ var TestDatabaseManager = /** @class */ (function () {
               return [4 /*yield*/, dbManager.getAuditLogs(mockUserId)];
             case 2:
               auditLogs = _a.sent();
-              bypassLog = auditLogs.find(function (log) {
-                return log.action === "bypass";
-              });
+              bypassLog = auditLogs.find((log) => log.action === "bypass");
               (0, globals_1.expect)(bypassLog).toBeDefined();
               (0, globals_1.expect)(bypassLog.emergency_bypass).toBe(true);
               (0, globals_1.expect)(bypassLog.metadata).toHaveProperty("reason");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should enforce daily emergency bypass limit", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should enforce daily emergency bypass limit", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var i;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               i = 0;
@@ -955,14 +942,14 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Device Trust Management", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Device Trust Management", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
         var setupRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setupRequest = {
@@ -978,12 +965,12 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should register trusted device after successful verification", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should register trusted device after successful verification", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mfaSettings, totp, validToken, trustedDevices;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, dbManager.getMFASettings(mockUserId)];
@@ -1023,14 +1010,14 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Healthcare Compliance", function () {
-    (0, globals_1.it)("should create comprehensive audit logs for compliance", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Healthcare Compliance", () => {
+    (0, globals_1.it)("should create comprehensive audit logs for compliance", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var setupRequest, setupResult, totp, validToken, auditLogs;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setupRequest = {
@@ -1064,7 +1051,7 @@ var TestDatabaseManager = /** @class */ (function () {
               // Should have setup and verify logs
               (0, globals_1.expect)(auditLogs.length).toBeGreaterThanOrEqual(2);
               // Check required compliance fields
-              auditLogs.forEach(function (log) {
+              auditLogs.forEach((log) => {
                 (0, globals_1.expect)(log.user_id).toBe(mockUserId);
                 (0, globals_1.expect)(log.ip_address).toBe(mockIpAddress);
                 (0, globals_1.expect)(log.user_agent).toBe(mockUserAgent);
@@ -1078,24 +1065,24 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle LGPD consent validation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should handle LGPD consent validation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           // This is already tested in setup validation
           // but included here for compliance documentation
           (0, globals_1.expect)(true).toBe(true);
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.it)("should handle database connection errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.it)("should handle database connection errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidService;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidService = new mfa_1.MFAService("invalid-url", "invalid-key");
@@ -1118,11 +1105,11 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate input parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should validate input parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Test empty user ID
@@ -1160,14 +1147,14 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Backup Code Management", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Backup Code Management", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
         var setupRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setupRequest = {
@@ -1183,12 +1170,12 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should generate new backup codes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate new backup codes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var newBackupCodes, mfaSettings, auditLogs, recoverLog;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -1202,16 +1189,10 @@ var TestDatabaseManager = /** @class */ (function () {
               newBackupCodes = _a.sent();
               // Assert
               (0, globals_1.expect)(newBackupCodes).toHaveLength(8);
-              (0, globals_1.expect)(
-                newBackupCodes.every(function (code) {
-                  return code.length === 10;
-                }),
-              ).toBe(true);
-              (0, globals_1.expect)(
-                newBackupCodes.every(function (code) {
-                  return /^[A-F0-9]+$/.test(code);
-                }),
-              ).toBe(true);
+              (0, globals_1.expect)(newBackupCodes.every((code) => code.length === 10)).toBe(true);
+              (0, globals_1.expect)(newBackupCodes.every((code) => /^[A-F0-9]+$/.test(code))).toBe(
+                true,
+              );
               return [4 /*yield*/, dbManager.getMFASettings(mockUserId)];
             case 2:
               mfaSettings = _a.sent();
@@ -1219,21 +1200,19 @@ var TestDatabaseManager = /** @class */ (function () {
               return [4 /*yield*/, dbManager.getAuditLogs(mockUserId)];
             case 3:
               auditLogs = _a.sent();
-              recoverLog = auditLogs.find(function (log) {
-                return log.action === "recover";
-              });
+              recoverLog = auditLogs.find((log) => log.action === "recover");
               (0, globals_1.expect)(recoverLog).toBeDefined();
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Statistics and Monitoring", function () {
-    (0, globals_1.it)("should provide accurate MFA statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Statistics and Monitoring", () => {
+    (0, globals_1.it)("should provide accurate MFA statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var setupRequest, stats;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setupRequest = {
@@ -1263,7 +1242,7 @@ var TestDatabaseManager = /** @class */ (function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

@@ -7,7 +7,7 @@
  * Validates Web Vitals collection, API endpoints, and monitoring integration
  */
 
-const { performance } = require("perf_hooks");
+const { performance } = require("node:perf_hooks");
 
 // Colors for console output
 const colors = {
@@ -196,7 +196,7 @@ function simulateWebVitals() {
 }
 
 async function runPerformanceTests() {
-  log("\n" + "=".repeat(60), colors.bold);
+  log(`\n${"=".repeat(60)}`, colors.bold);
   log("🚀 NeonPro Performance Integration Test Suite", colors.bold);
   log("=".repeat(60), colors.bold);
 
@@ -221,7 +221,7 @@ async function runPerformanceTests() {
   }
 
   // Summary
-  log("\n" + "=".repeat(60), colors.bold);
+  log(`\n${"=".repeat(60)}`, colors.bold);
   log("📈 Test Results Summary", colors.bold);
   log("=".repeat(60), colors.bold);
 
@@ -248,7 +248,7 @@ async function runPerformanceTests() {
     );
   }
 
-  log("\n" + "=".repeat(60), colors.bold);
+  log(`\n${"=".repeat(60)}`, colors.bold);
 }
 
 // Run tests if this file is executed directly

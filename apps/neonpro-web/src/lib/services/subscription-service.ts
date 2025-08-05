@@ -1,7 +1,7 @@
-import type { createClient } from "@/lib/supabase/server";
+import type Stripe from "stripe";
+import type { NEONPRO_PLANS, PlanId } from "@/lib/constants/plans";
 import type { stripe } from "@/lib/stripe";
-import Stripe from "stripe";
-import type { NEONPRO_PLANS, type PlanId } from "@/lib/constants/plans";
+import type { createClient } from "@/lib/supabase/server";
 
 // Subscription service class
 export class SubscriptionService {

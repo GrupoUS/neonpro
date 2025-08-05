@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServiceTypeRuleManager = ServiceTypeRuleManager;
 var badge_1 = require("@/components/ui/badge");
@@ -174,7 +171,6 @@ var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function ServiceTypeRuleManager(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     onRulesChange = _a.onRulesChange;
   // State management
@@ -213,16 +209,13 @@ function ServiceTypeRuleManager(_a) {
     formData = _h[0],
     setFormData = _h[1];
   // Load data on mount
-  (0, react_1.useEffect)(
-    function () {
-      Promise.all([loadRules(), loadServices(), loadProfessionals()]);
-    },
-    [clinicId],
-  );
-  var loadRules = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    Promise.all([loadRules(), loadServices(), loadProfessionals()]);
+  }, [clinicId]);
+  var loadRules = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -252,11 +245,10 @@ function ServiceTypeRuleManager(_a) {
         }
       });
     });
-  };
-  var loadServices = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadServices = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -267,11 +259,7 @@ function ServiceTypeRuleManager(_a) {
             return [4 /*yield*/, response.json()];
           case 2:
             data = _a.sent();
-            setServices(
-              data.map(function (s) {
-                return { id: s.id, name: s.name };
-              }),
-            );
+            setServices(data.map((s) => ({ id: s.id, name: s.name })));
             _a.label = 3;
           case 3:
             return [3 /*break*/, 5];
@@ -284,11 +272,10 @@ function ServiceTypeRuleManager(_a) {
         }
       });
     });
-  };
-  var loadProfessionals = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadProfessionals = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -299,11 +286,7 @@ function ServiceTypeRuleManager(_a) {
             return [4 /*yield*/, response.json()];
           case 2:
             data = _a.sent();
-            setProfessionals(
-              data.map(function (p) {
-                return { id: p.id, name: p.name };
-              }),
-            );
+            setProfessionals(data.map((p) => ({ id: p.id, name: p.name })));
             _a.label = 3;
           case 3:
             return [3 /*break*/, 5];
@@ -316,8 +299,7 @@ function ServiceTypeRuleManager(_a) {
         }
       });
     });
-  };
-  var openDialog = function (rule) {
+  var openDialog = (rule) => {
     if (rule) {
       setEditingRule(rule);
       setFormData({
@@ -353,14 +335,14 @@ function ServiceTypeRuleManager(_a) {
     }
     setIsDialogOpen(true);
   };
-  var closeDialog = function () {
+  var closeDialog = () => {
     setIsDialogOpen(false);
     setEditingRule(null);
   };
-  var saveRule = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveRule = () =>
+    __awaiter(this, void 0, void 0, function () {
       var method, url, response, savedRule_1, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -405,16 +387,12 @@ function ServiceTypeRuleManager(_a) {
           case 2:
             savedRule_1 = _a.sent();
             if (editingRule) {
-              setRules(function (prev) {
-                return prev.map(function (r) {
-                  return r.id === editingRule.id ? savedRule_1 : r;
-                });
-              });
+              setRules((prev) => prev.map((r) => (r.id === editingRule.id ? savedRule_1 : r)));
               sonner_1.toast.success("Regra atualizada com sucesso!");
             } else {
-              setRules(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [savedRule_1], false);
-              });
+              setRules((prev) =>
+                __spreadArray(__spreadArray([], prev, true), [savedRule_1], false),
+              );
               sonner_1.toast.success("Regra adicionada com sucesso!");
             }
             closeDialog();
@@ -429,11 +407,10 @@ function ServiceTypeRuleManager(_a) {
         }
       });
     });
-  };
-  var deleteRule = function (ruleId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteRule = (ruleId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -448,11 +425,7 @@ function ServiceTypeRuleManager(_a) {
             if (!response.ok) {
               throw new Error("Failed to delete rule");
             }
-            setRules(function (prev) {
-              return prev.filter(function (r) {
-                return r.id !== ruleId;
-              });
-            });
+            setRules((prev) => prev.filter((r) => r.id !== ruleId));
             sonner_1.toast.success("Regra removida com sucesso!");
             return [3 /*break*/, 3];
           case 2:
@@ -465,11 +438,10 @@ function ServiceTypeRuleManager(_a) {
         }
       });
     });
-  };
-  var toggleRuleStatus = function (ruleId, isActive) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var toggleRuleStatus = (ruleId, isActive) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -488,11 +460,11 @@ function ServiceTypeRuleManager(_a) {
             if (!response.ok) {
               throw new Error("Failed to update rule status");
             }
-            setRules(function (prev) {
-              return prev.map(function (r) {
-                return r.id === ruleId ? __assign(__assign({}, r), { is_active: isActive }) : r;
-              });
-            });
+            setRules((prev) =>
+              prev.map((r) =>
+                r.id === ruleId ? __assign(__assign({}, r), { is_active: isActive }) : r,
+              ),
+            );
             sonner_1.toast.success(
               "Regra ".concat(isActive ? "ativada" : "desativada", " com sucesso!"),
             );
@@ -507,33 +479,27 @@ function ServiceTypeRuleManager(_a) {
         }
       });
     });
-  };
-  var getServiceName = function (serviceId) {
-    var service = services.find(function (s) {
-      return s.id === serviceId;
-    });
+  var getServiceName = (serviceId) => {
+    var service = services.find((s) => s.id === serviceId);
     return (
       (service === null || service === void 0 ? void 0 : service.name) || "Serviço não encontrado"
     );
   };
-  var getProfessionalNames = function (professionalIds) {
-    return professionalIds.map(function (id) {
-      var professional = professionals.find(function (p) {
-        return p.id === id;
-      });
+  var getProfessionalNames = (professionalIds) =>
+    professionalIds.map((id) => {
+      var professional = professionals.find((p) => p.id === id);
       return (
         (professional === null || professional === void 0 ? void 0 : professional.name) ||
         "Profissional não encontrado"
       );
     });
-  };
-  var formatDuration = function (minutes) {
+  var formatDuration = (minutes) => {
     if (minutes < 60) return "".concat(minutes, "min");
     var hours = Math.floor(minutes / 60);
     var mins = minutes % 60;
     return mins > 0 ? "".concat(hours, "h").concat(mins, "min") : "".concat(hours, "h");
   };
-  var formatAdvanceTime = function (rule) {
+  var formatAdvanceTime = (rule) => {
     if (!rule.allow_same_day && rule.minimum_advance_hours === 0) {
       return "Não permite agendamento no mesmo dia";
     }
@@ -568,11 +534,7 @@ function ServiceTypeRuleManager(_a) {
           </card_1.CardTitle>
           <dialog_1.Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <dialog_1.DialogTrigger asChild>
-              <button_1.Button
-                onClick={function () {
-                  return openDialog();
-                }}
-              >
+              <button_1.Button onClick={() => openDialog()}>
                 <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                 Nova Regra
               </button_1.Button>
@@ -593,23 +555,21 @@ function ServiceTypeRuleManager(_a) {
                   <label_1.Label>Tipo de Serviço *</label_1.Label>
                   <select_1.Select
                     value={formData.service_type_id}
-                    onValueChange={function (value) {
-                      return setFormData(function (prev) {
-                        return __assign(__assign({}, prev), { service_type_id: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setFormData((prev) =>
+                        __assign(__assign({}, prev), { service_type_id: value }),
+                      )
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Selecione um serviço" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {services.map(function (service) {
-                        return (
-                          <select_1.SelectItem key={service.id} value={service.id}>
-                            {service.name}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {services.map((service) => (
+                        <select_1.SelectItem key={service.id} value={service.id}>
+                          {service.name}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -628,13 +588,13 @@ function ServiceTypeRuleManager(_a) {
                         min="15"
                         step="15"
                         value={formData.minimum_duration}
-                        onChange={function (e) {
-                          return setFormData(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setFormData((prev) =>
+                            __assign(__assign({}, prev), {
                               minimum_duration: parseInt(e.target.value) || 30,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                     <div>
@@ -644,13 +604,13 @@ function ServiceTypeRuleManager(_a) {
                         min="15"
                         step="15"
                         value={formData.maximum_duration}
-                        onChange={function (e) {
-                          return setFormData(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setFormData((prev) =>
+                            __assign(__assign({}, prev), {
                               maximum_duration: parseInt(e.target.value) || 180,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -663,13 +623,13 @@ function ServiceTypeRuleManager(_a) {
                         min="0"
                         step="5"
                         value={formData.buffer_before}
-                        onChange={function (e) {
-                          return setFormData(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setFormData((prev) =>
+                            __assign(__assign({}, prev), {
                               buffer_before: parseInt(e.target.value) || 0,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                     <div>
@@ -679,13 +639,13 @@ function ServiceTypeRuleManager(_a) {
                         min="0"
                         step="5"
                         value={formData.buffer_after}
-                        onChange={function (e) {
-                          return setFormData(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setFormData((prev) =>
+                            __assign(__assign({}, prev), {
                               buffer_after: parseInt(e.target.value) || 0,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -703,15 +663,15 @@ function ServiceTypeRuleManager(_a) {
                       type="number"
                       min="1"
                       value={formData.max_daily_bookings || ""}
-                      onChange={function (e) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onChange={(e) =>
+                        setFormData((prev) =>
+                          __assign(__assign({}, prev), {
                             max_daily_bookings: e.target.value
                               ? parseInt(e.target.value)
                               : undefined,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                       placeholder="Deixe vazio para sem limite"
                     />
                   </div>
@@ -727,14 +687,14 @@ function ServiceTypeRuleManager(_a) {
                   <div className="flex items-center space-x-2">
                     <switch_1.Switch
                       checked={formData.requires_specific_professional}
-                      onCheckedChange={function (checked) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onCheckedChange={(checked) =>
+                        setFormData((prev) =>
+                          __assign(__assign({}, prev), {
                             requires_specific_professional: checked,
                             allowed_professional_ids: checked ? prev.allowed_professional_ids : [],
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                     <label_1.Label>Requer profissional específico</label_1.Label>
                   </div>
@@ -744,17 +704,17 @@ function ServiceTypeRuleManager(_a) {
                       <label_1.Label>Profissionais autorizados</label_1.Label>
                       <select_1.Select
                         value=""
-                        onValueChange={function (professionalId) {
+                        onValueChange={(professionalId) => {
                           if (!formData.allowed_professional_ids.includes(professionalId)) {
-                            setFormData(function (prev) {
-                              return __assign(__assign({}, prev), {
+                            setFormData((prev) =>
+                              __assign(__assign({}, prev), {
                                 allowed_professional_ids: __spreadArray(
                                   __spreadArray([], prev.allowed_professional_ids, true),
                                   [professionalId],
                                   false,
                                 ),
-                              });
-                            });
+                              }),
+                            );
                           }
                         }}
                       >
@@ -763,44 +723,38 @@ function ServiceTypeRuleManager(_a) {
                         </select_1.SelectTrigger>
                         <select_1.SelectContent>
                           {professionals
-                            .filter(function (p) {
-                              return !formData.allowed_professional_ids.includes(p.id);
-                            })
-                            .map(function (professional) {
-                              return (
-                                <select_1.SelectItem key={professional.id} value={professional.id}>
-                                  {professional.name}
-                                </select_1.SelectItem>
-                              );
-                            })}
+                            .filter((p) => !formData.allowed_professional_ids.includes(p.id))
+                            .map((professional) => (
+                              <select_1.SelectItem key={professional.id} value={professional.id}>
+                                {professional.name}
+                              </select_1.SelectItem>
+                            ))}
                         </select_1.SelectContent>
                       </select_1.Select>
 
                       {formData.allowed_professional_ids.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {getProfessionalNames(formData.allowed_professional_ids).map(
-                            function (name, index) {
-                              return (
-                                <badge_1.Badge
-                                  key={index}
-                                  variant="secondary"
-                                  className="cursor-pointer"
-                                  onClick={function () {
-                                    var professionalId = formData.allowed_professional_ids[index];
-                                    setFormData(function (prev) {
-                                      return __assign(__assign({}, prev), {
-                                        allowed_professional_ids:
-                                          prev.allowed_professional_ids.filter(function (id) {
-                                            return id !== professionalId;
-                                          }),
-                                      });
-                                    });
-                                  }}
-                                >
-                                  {name} ×
-                                </badge_1.Badge>
-                              );
-                            },
+                            (name, index) => (
+                              <badge_1.Badge
+                                key={index}
+                                variant="secondary"
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  var professionalId = formData.allowed_professional_ids[index];
+                                  setFormData((prev) =>
+                                    __assign(__assign({}, prev), {
+                                      allowed_professional_ids:
+                                        prev.allowed_professional_ids.filter(
+                                          (id) => id !== professionalId,
+                                        ),
+                                    }),
+                                  );
+                                }}
+                              >
+                                {name} ×
+                              </badge_1.Badge>
+                            ),
                           )}
                         </div>
                       )}
@@ -815,14 +769,14 @@ function ServiceTypeRuleManager(_a) {
                   <div className="flex items-center space-x-2">
                     <switch_1.Switch
                       checked={formData.allow_same_day}
-                      onCheckedChange={function (checked) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onCheckedChange={(checked) =>
+                        setFormData((prev) =>
+                          __assign(__assign({}, prev), {
                             allow_same_day: checked,
                             minimum_advance_hours: checked ? prev.minimum_advance_hours : 24,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                     />
                     <label_1.Label>Permite agendamento no mesmo dia</label_1.Label>
                   </div>
@@ -834,13 +788,13 @@ function ServiceTypeRuleManager(_a) {
                         type="number"
                         min="0"
                         value={formData.minimum_advance_hours}
-                        onChange={function (e) {
-                          return setFormData(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setFormData((prev) =>
+                            __assign(__assign({}, prev), {
                               minimum_advance_hours: parseInt(e.target.value) || 0,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                         disabled={!formData.allow_same_day && formData.minimum_advance_hours < 24}
                       />
                     </div>
@@ -850,13 +804,13 @@ function ServiceTypeRuleManager(_a) {
                         type="number"
                         min="1"
                         value={formData.maximum_advance_days}
-                        onChange={function (e) {
-                          return setFormData(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setFormData((prev) =>
+                            __assign(__assign({}, prev), {
                               maximum_advance_days: parseInt(e.target.value) || 90,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -867,11 +821,11 @@ function ServiceTypeRuleManager(_a) {
                   <label_1.Label>Descrição/Observações</label_1.Label>
                   <textarea_1.Textarea
                     value={formData.description}
-                    onChange={function (e) {
-                      return setFormData(function (prev) {
-                        return __assign(__assign({}, prev), { description: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setFormData((prev) =>
+                        __assign(__assign({}, prev), { description: e.target.value }),
+                      )
+                    }
                     placeholder="Detalhes adicionais sobre esta regra..."
                     rows={2}
                   />
@@ -901,7 +855,7 @@ function ServiceTypeRuleManager(_a) {
                   Clique em "Nova Regra" para criar restrições específicas por tipo de serviço
                 </p>
               </div>
-            : rules.map(function (rule) {
+            : rules.map((rule) => {
                 var serviceName = getServiceName(rule.service_type_id);
                 var professionalNames = getProfessionalNames(rule.allowed_professional_ids || []);
                 return (
@@ -963,25 +917,19 @@ function ServiceTypeRuleManager(_a) {
                         <div className="flex items-center gap-1">
                           <switch_1.Switch
                             checked={rule.is_active}
-                            onCheckedChange={function (checked) {
-                              return toggleRuleStatus(rule.id, checked);
-                            }}
+                            onCheckedChange={(checked) => toggleRuleStatus(rule.id, checked)}
                           />
                           <button_1.Button
                             variant="ghost"
                             size="sm"
-                            onClick={function () {
-                              return openDialog(rule);
-                            }}
+                            onClick={() => openDialog(rule)}
                           >
                             <lucide_react_1.Edit className="h-3 w-3" />
                           </button_1.Button>
                           <button_1.Button
                             variant="ghost"
                             size="sm"
-                            onClick={function () {
-                              return deleteRule(rule.id);
-                            }}
+                            onClick={() => deleteRule(rule.id)}
                             className="text-red-600 hover:text-red-700"
                           >
                             <lucide_react_1.Trash2 className="h-3 w-3" />

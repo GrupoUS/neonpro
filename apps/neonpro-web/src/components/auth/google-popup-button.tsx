@@ -1,10 +1,10 @@
 "use client";
 
-import type { Button } from "@/components/ui/button";
-import type { useAuth } from "@/contexts/auth-context";
 import type { AlertCircle, CheckCircle, Chrome } from "lucide-react";
 import type { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { Button } from "@/components/ui/button";
+import type { useAuth } from "@/contexts/auth-context";
 
 interface SignInWithGooglePopupButtonProps {
   text?: string;

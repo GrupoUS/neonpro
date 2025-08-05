@@ -5,11 +5,10 @@
  * computer vision analysis results and metrics.
  */
 
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AnalysisResults } from "@/components/vision/AnalysisResults";
-import { VisionAnalysisResult } from "@/types/vision";
+import type { VisionAnalysisResult } from "@/types/vision";
 
 // Mock the toast notifications
 jest.mock("sonner", () => ({

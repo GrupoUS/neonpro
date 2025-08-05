@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RealTimeAvailability = RealTimeAvailability;
 var react_1 = require("react");
@@ -43,17 +42,14 @@ function RealTimeAvailability(_a) {
     selectSlot = _b.selectSlot,
     isSlotBookable = _b.isSlotBookable;
   // Atualizar filtros quando props mudarem
-  (0, react_1.useEffect)(
-    function () {
-      updateFilters({
-        professionalId: professionalId,
-        serviceId: serviceId,
-        date: selectedDate,
-      });
-    },
-    [professionalId, serviceId, selectedDate, updateFilters],
-  );
-  var handleSlotClick = function (slot) {
+  (0, react_1.useEffect)(() => {
+    updateFilters({
+      professionalId: professionalId,
+      serviceId: serviceId,
+      date: selectedDate,
+    });
+  }, [professionalId, serviceId, selectedDate, updateFilters]);
+  var handleSlotClick = (slot) => {
     selectSlot(slot);
     onSlotSelect === null || onSlotSelect === void 0 ? void 0 : onSlotSelect(slot);
   };
@@ -73,15 +69,13 @@ function RealTimeAvailability(_a) {
           </div>
         </card_1.CardHeader>
         <card_1.CardContent className="space-y-4">
-          {__spreadArray([], Array(6), true).map(function (_, i) {
-            return (
-              <div key={i} className="flex gap-2">
-                {__spreadArray([], Array(4), true).map(function (_, j) {
-                  return <skeleton_1.Skeleton key={j} className="h-12 w-20" />;
-                })}
-              </div>
-            );
-          })}
+          {__spreadArray([], Array(6), true).map((_, i) => (
+            <div key={i} className="flex gap-2">
+              {__spreadArray([], Array(4), true).map((_, j) => (
+                <skeleton_1.Skeleton key={j} className="h-12 w-20" />
+              ))}
+            </div>
+          ))}
         </card_1.CardContent>
       </card_1.Card>
     );
@@ -143,7 +137,7 @@ function RealTimeAvailability(_a) {
               </p>
             </div>
           : <div className="space-y-6">
-              {Object.entries(groupedSlots).map(function (_a) {
+              {Object.entries(groupedSlots).map((_a) => {
                 var date = _a[0],
                   slots = _a[1];
                 return (
@@ -156,17 +150,12 @@ function RealTimeAvailability(_a) {
                         })}
                       </h3>
                       <badge_1.Badge variant="outline" className="ml-auto text-xs">
-                        {
-                          slots.filter(function (slot) {
-                            return slot.is_available;
-                          }).length
-                        }{" "}
-                        disponíveis
+                        {slots.filter((slot) => slot.is_available).length} disponíveis
                       </badge_1.Badge>
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                      {slots.map(function (slot) {
+                      {slots.map((slot) => {
                         var isSelected =
                           (selectedSlot === null || selectedSlot === void 0
                             ? void 0
@@ -186,9 +175,7 @@ function RealTimeAvailability(_a) {
                               isSelected && "ring-2 ring-primary ring-offset-1",
                             )}
                             disabled={!slot.is_available || !isBookable}
-                            onClick={function () {
-                              return isBookable && handleSlotClick(slot);
-                            }}
+                            onClick={() => isBookable && handleSlotClick(slot)}
                           >
                             <span className="font-medium">
                               {(0, date_fns_1.format)(

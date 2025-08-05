@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Notification System - Channels
  * Story 1.7: Sistema de Notificações
@@ -9,41 +8,38 @@
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -63,13 +59,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -91,9 +87,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -165,7 +159,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationChannelManager = void 0;
 var types_1 = require("../types");
@@ -175,7 +169,7 @@ var types_1 = require("../types");
 /**
  * Gerenciador de canais de notificação
  */
-var NotificationChannelManager = /** @class */ (function () {
+var NotificationChannelManager = /** @class */ (() => {
   function NotificationChannelManager() {
     this.providers = new Map();
     this.isInitialized = false;
@@ -238,36 +232,16 @@ var NotificationChannelManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("./email-provider");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("./email-provider"))];
           case 1:
             EmailProvider = _a.sent().EmailProvider;
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("./sms-provider");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("./sms-provider"))];
           case 2:
             SMSProvider = _a.sent().SMSProvider;
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("./push-provider");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("./push-provider"))];
           case 3:
             PushProvider = _a.sent().PushProvider;
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("./in-app-provider");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("./in-app-provider"))];
           case 4:
             InAppProvider = _a.sent().InAppProvider;
             this.registerProvider(new EmailProvider());
@@ -298,10 +272,9 @@ var NotificationChannelManager = /** @class */ (function () {
    * Lista canais disponíveis
    */
   NotificationChannelManager.prototype.getAvailableChannels = function () {
-    var _this = this;
-    return Array.from(this.providers.keys()).filter(function (channel) {
+    return Array.from(this.providers.keys()).filter((channel) => {
       var _a;
-      var provider = _this.providers.get(channel);
+      var provider = this.providers.get(channel);
       return (_a = provider === null || provider === void 0 ? void 0 : provider.isEnabled) !==
         null && _a !== void 0
         ? _a
@@ -479,15 +452,14 @@ var NotificationChannelManager = /** @class */ (function () {
   /**
    * Gera ID único para entrega
    */
-  NotificationChannelManager.prototype.generateDeliveryId = function () {
-    return "delivery_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  NotificationChannelManager.prototype.generateDeliveryId = () =>
+    "delivery_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Obtém configuração do canal
    */
   NotificationChannelManager.prototype.getChannelConfig = function (channel) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Em uma implementação real, isso viria do banco de dados
         // Por enquanto, retornamos configurações padrão baseadas em variáveis de ambiente
         switch (channel) {

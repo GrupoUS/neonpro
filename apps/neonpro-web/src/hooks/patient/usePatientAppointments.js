@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,14 +155,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usePatientAppointments = usePatientAppointments;
 var client_1 = require("@/lib/supabase/client");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function usePatientAppointments() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     upcomingAppointments = _a[0],
     setUpcomingAppointments = _a[1];
@@ -187,8 +183,8 @@ function usePatientAppointments() {
    * Implements best practices from Tavily research on appointment management
    */
   var loadAppointments = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a,
           user,
           authError,
@@ -204,7 +200,7 @@ function usePatientAppointments() {
           policies,
           err_1;
         var _c, _d, _e, _f;
-        return __generator(this, function (_g) {
+        return __generator(this, (_g) => {
           switch (_g.label) {
             case 0:
               _g.trys.push([0, 4, 5, 6]);
@@ -233,7 +229,7 @@ function usePatientAppointments() {
             case 2:
               (_b = _g.sent()), (appointments = _b.data), (appointmentsError = _b.error);
               if (appointmentsError) throw appointmentsError;
-              processedAppointments = (appointments || []).map(function (apt) {
+              processedAppointments = (appointments || []).map((apt) => {
                 var _a, _b, _c;
                 var appointmentDateTime = new Date(
                   "".concat(apt.appointment_date, "T").concat(apt.appointment_time),
@@ -271,11 +267,11 @@ function usePatientAppointments() {
                   can_reschedule: hoursUntil >= 48 && apt.status === "confirmed",
                 };
               });
-              upcoming = processedAppointments.filter(function (apt) {
+              upcoming = processedAppointments.filter((apt) => {
                 var aptDate = "".concat(apt.appointment_date, "T").concat(apt.appointment_time);
                 return aptDate > now_1.toISOString() && apt.status !== "cancelled";
               });
-              past = processedAppointments.filter(function (apt) {
+              past = processedAppointments.filter((apt) => {
                 var aptDate = "".concat(apt.appointment_date, "T").concat(apt.appointment_time);
                 return aptDate <= now_1.toISOString() || apt.status === "cancelled";
               });
@@ -329,8 +325,7 @@ function usePatientAppointments() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   /**
@@ -338,8 +333,8 @@ function usePatientAppointments() {
    * Implements 24-48h rule from Exa research on cancellation policies
    */
   var cancelAppointment = (0, react_1.useCallback)(
-    function (appointmentId, reason) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (appointmentId, reason) =>
+      __awaiter(this, void 0, void 0, function () {
         var appointment,
           hoursRemaining,
           requiredHours,
@@ -347,13 +342,11 @@ function usePatientAppointments() {
           error_1,
           cancelledAppointment_1,
           err_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
-              appointment = upcomingAppointments.find(function (apt) {
-                return apt.id === appointmentId;
-              });
+              appointment = upcomingAppointments.find((apt) => apt.id === appointmentId);
               if (!appointment) {
                 sonner_1.toast.error("Agendamento não encontrado");
                 return [2 /*return*/, false];
@@ -392,19 +385,13 @@ function usePatientAppointments() {
                 return [2 /*return*/, false];
               }
               // Update local state
-              setUpcomingAppointments(function (prev) {
-                return prev.filter(function (apt) {
-                  return apt.id !== appointmentId;
-                });
-              });
+              setUpcomingAppointments((prev) => prev.filter((apt) => apt.id !== appointmentId));
               cancelledAppointment_1 = __assign(__assign({}, appointment), {
                 status: "cancelled",
                 cancellation_reason: reason,
                 cancellation_date: new Date().toISOString(),
               });
-              setPastAppointments(function (prev) {
-                return __spreadArray([cancelledAppointment_1], prev, true);
-              });
+              setPastAppointments((prev) => __spreadArray([cancelledAppointment_1], prev, true));
               sonner_1.toast.success("Agendamento cancelado com sucesso");
               return [2 /*return*/, true];
             case 2:
@@ -416,8 +403,7 @@ function usePatientAppointments() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [upcomingAppointments, cancellationPolicies, supabase],
   );
   /**
@@ -425,16 +411,14 @@ function usePatientAppointments() {
    * Based on Exa research: 48h minimum for rescheduling requests
    */
   var requestReschedule = (0, react_1.useCallback)(
-    function (appointmentId, newDate, newTime, reason) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (appointmentId, newDate, newTime, reason) =>
+      __awaiter(this, void 0, void 0, function () {
         var appointment, error_2, err_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
-              appointment = upcomingAppointments.find(function (apt) {
-                return apt.id === appointmentId;
-              });
+              appointment = upcomingAppointments.find((apt) => apt.id === appointmentId);
               if (!appointment) {
                 sonner_1.toast.error("Agendamento não encontrado");
                 return [2 /*return*/, false];
@@ -475,69 +459,55 @@ function usePatientAppointments() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [upcomingAppointments, supabase],
   );
   /**
    * Get no-show pattern analysis
    * Based on Tavily research: 27% average no-show rate
    */
-  var getNoShowPattern = (0, react_1.useCallback)(
-    function () {
-      var totalAppointments = pastAppointments.length;
-      var noShows = pastAppointments.filter(function (apt) {
-        return apt.status === "no_show";
-      });
-      var noShowRate = totalAppointments > 0 ? (noShows.length / totalAppointments) * 100 : 0;
-      // Common reasons from Exa research
-      var commonReasons = [
-        "work_conflict",
-        "illness",
-        "transportation",
-        "forgot",
-        "family_emergency",
-      ];
-      return {
-        rate: Math.round(noShowRate * 10) / 10,
-        commonReasons: commonReasons,
-      };
-    },
-    [pastAppointments],
-  );
+  var getNoShowPattern = (0, react_1.useCallback)(() => {
+    var totalAppointments = pastAppointments.length;
+    var noShows = pastAppointments.filter((apt) => apt.status === "no_show");
+    var noShowRate = totalAppointments > 0 ? (noShows.length / totalAppointments) * 100 : 0;
+    // Common reasons from Exa research
+    var commonReasons = [
+      "work_conflict",
+      "illness",
+      "transportation",
+      "forgot",
+      "family_emergency",
+    ];
+    return {
+      rate: Math.round(noShowRate * 10) / 10,
+      commonReasons: commonReasons,
+    };
+  }, [pastAppointments]);
   /**
    * Get cancellation statistics
    * Based on Tavily research: 35% work, 32% illness, 28% transport
    */
-  var getCancellationStats = (0, react_1.useCallback)(
-    function () {
-      var cancelled = pastAppointments.filter(function (apt) {
-        return apt.status === "cancelled";
-      });
-      var totalPast = pastAppointments.length;
-      var cancellationRate = totalPast > 0 ? (cancelled.length / totalPast) * 100 : 0;
-      // Reason breakdown based on research findings
-      var reasonBreakdown = {
-        work_conflict: 35,
-        illness: 32,
-        transportation: 28,
-        family_emergency: 15,
-        other: 10,
-      };
-      return {
-        rate: Math.round(cancellationRate * 10) / 10,
-        reasonBreakdown: reasonBreakdown,
-      };
-    },
-    [pastAppointments],
-  );
+  var getCancellationStats = (0, react_1.useCallback)(() => {
+    var cancelled = pastAppointments.filter((apt) => apt.status === "cancelled");
+    var totalPast = pastAppointments.length;
+    var cancellationRate = totalPast > 0 ? (cancelled.length / totalPast) * 100 : 0;
+    // Reason breakdown based on research findings
+    var reasonBreakdown = {
+      work_conflict: 35,
+      illness: 32,
+      transportation: 28,
+      family_emergency: 15,
+      other: 10,
+    };
+    return {
+      rate: Math.round(cancellationRate * 10) / 10,
+      reasonBreakdown: reasonBreakdown,
+    };
+  }, [pastAppointments]);
   // Initialize on mount
-  (0, react_1.useEffect)(
-    function () {
-      loadAppointments();
-    },
-    [loadAppointments],
-  );
+  (0, react_1.useEffect)(() => {
+    loadAppointments();
+  }, [loadAppointments]);
   return {
     upcomingAppointments: upcomingAppointments,
     pastAppointments: pastAppointments,

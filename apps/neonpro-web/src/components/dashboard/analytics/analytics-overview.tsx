@@ -5,22 +5,22 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Activity,
+  AlertTriangle,
+  Clock,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  UserPlus,
+  Users,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { cn } from "@/lib/utils";
-import type {
-  Users,
-  UserPlus,
-  Target,
-  Clock,
-  Zap,
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  Activity,
-} from "lucide-react";
 
 interface DashboardMetrics {
   totalTrials: number;

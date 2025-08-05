@@ -3,17 +3,17 @@
 // Service for processing installment payments and automation
 
 import type { createClient } from "@supabase/supabase-js";
-import Stripe from "stripe";
 import type {
   addDays,
-  addWeeks,
   addMonths,
   addQuarters,
-  isBefore,
-  isAfter,
+  addWeeks,
   format,
+  isAfter,
+  isBefore,
 } from "date-fns";
 import type { ptBR } from "date-fns/locale";
+import Stripe from "stripe";
 
 // Types
 interface InstallmentProcessorConfig {

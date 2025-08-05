@@ -3,8 +3,8 @@
  * Handles JWT token verification and user role validation
  */
 
-import type { NextRequest } from "next/server";
 import type { jwtVerify } from "jose";
+import type { NextRequest } from "next/server";
 import type { createClient } from "@/lib/supabase/client";
 
 export interface AuthUser {

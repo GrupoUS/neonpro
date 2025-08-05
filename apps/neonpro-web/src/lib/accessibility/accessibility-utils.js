@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Accessibility Utilities
  * WCAG 2.1 AA compliant utility functions for healthcare accessibility
@@ -16,13 +15,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -99,7 +98,7 @@ function announceToScreenReader(message, priority) {
   }
   // Clear and set new message
   liveRegion.textContent = "";
-  setTimeout(function () {
+  setTimeout(() => {
     liveRegion.textContent = message;
   }, 100);
 }
@@ -107,13 +106,13 @@ function announceToScreenReader(message, priority) {
  * Focus Management Utilities
  * Essential for healthcare forms and modal dialogs
  */
-var FocusManager = /** @class */ (function () {
+var FocusManager = /** @class */ (() => {
   function FocusManager() {}
   /**
    * Trap focus within a container element
    * Critical for modal dialogs and form wizards
    */
-  FocusManager.trapFocus = function (containerRef) {
+  FocusManager.trapFocus = (containerRef) => {
     if (!containerRef.current) return;
     var container = containerRef.current;
     var focusableElements = container.querySelectorAll(
@@ -121,7 +120,7 @@ var FocusManager = /** @class */ (function () {
     );
     var firstElement = focusableElements[0];
     var lastElement = focusableElements[focusableElements.length - 1];
-    var handleKeyDown = function (e) {
+    var handleKeyDown = (e) => {
       if (e.key === exports.KEYBOARD_KEYS.TAB) {
         if (e.shiftKey) {
           // Shift + Tab
@@ -142,7 +141,7 @@ var FocusManager = /** @class */ (function () {
     // Focus first element
     firstElement === null || firstElement === void 0 ? void 0 : firstElement.focus();
     // Return cleanup function
-    return function () {
+    return () => {
       container.removeEventListener("keydown", handleKeyDown);
     };
   };
@@ -150,18 +149,17 @@ var FocusManager = /** @class */ (function () {
    * Save current focus and return restore function
    */
   FocusManager.saveFocus = function () {
-    var _this = this;
     var activeElement = document.activeElement;
     this.focusStack.push(activeElement);
-    return function () {
-      var elementToFocus = _this.focusStack.pop();
+    return () => {
+      var elementToFocus = this.focusStack.pop();
       elementToFocus === null || elementToFocus === void 0 ? void 0 : elementToFocus.focus();
     };
   };
   /**
    * Set focus with announcement for screen readers
    */
-  FocusManager.setFocusWithAnnouncement = function (element, announcement) {
+  FocusManager.setFocusWithAnnouncement = (element, announcement) => {
     element.focus();
     if (announcement) {
       announceToScreenReader(announcement, "assertive");
@@ -179,7 +177,7 @@ exports.AriaAttributes = {
   /**
    * Generate form field ARIA attributes
    */
-  formField: function (fieldId, labelId, descriptionId, errorId, required) {
+  formField: (fieldId, labelId, descriptionId, errorId, required) => {
     if (required === void 0) {
       required = false;
     }
@@ -201,7 +199,7 @@ exports.AriaAttributes = {
   /**
    * Generate button ARIA attributes
    */
-  button: function (expanded, controls, pressed, label) {
+  button: (expanded, controls, pressed, label) => {
     var attributes = {};
     if (expanded !== undefined) {
       attributes["aria-expanded"] = expanded;
@@ -220,16 +218,15 @@ exports.AriaAttributes = {
   /**
    * Generate modal/dialog ARIA attributes
    */
-  modal: function (titleId, descriptionId) {
-    return __assign(
+  modal: (titleId, descriptionId) =>
+    __assign(
       { role: "dialog", "aria-modal": true, "aria-labelledby": titleId },
       descriptionId && { "aria-describedby": descriptionId },
-    );
-  },
+    ),
   /**
    * Generate status/live region attributes
    */
-  status: function (priority, atomic) {
+  status: (priority, atomic) => {
     if (priority === void 0) {
       priority = "polite";
     }
@@ -251,7 +248,7 @@ exports.KeyboardNavigation = {
   /**
    * Handle arrow key navigation in lists/menus
    */
-  handleArrowNavigation: function (event, items, currentIndex, onIndexChange, circular) {
+  handleArrowNavigation: (event, items, currentIndex, onIndexChange, circular) => {
     var _a;
     if (circular === void 0) {
       circular = true;
@@ -287,7 +284,7 @@ exports.KeyboardNavigation = {
   /**
    * Handle Enter/Space activation
    */
-  handleActivation: function (event, callback) {
+  handleActivation: (event, callback) => {
     if (event.key === exports.KEYBOARD_KEYS.ENTER || event.key === exports.KEYBOARD_KEYS.SPACE) {
       event.preventDefault();
       callback();
@@ -302,14 +299,14 @@ exports.ColorContrast = {
   /**
    * Calculate relative luminance of a color
    */
-  getRelativeLuminance: function (hex) {
+  getRelativeLuminance: (hex) => {
     var rgb = parseInt(hex.slice(1), 16);
     var r = (rgb >> 16) & 0xff;
     var g = (rgb >> 8) & 0xff;
     var b = (rgb >> 0) & 0xff;
-    var _a = [r, g, b].map(function (c) {
+    var _a = [r, g, b].map((c) => {
         c = c / 255;
-        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
       }),
       rs = _a[0],
       gs = _a[1],
@@ -319,7 +316,7 @@ exports.ColorContrast = {
   /**
    * Calculate contrast ratio between two colors
    */
-  getContrastRatio: function (color1, color2) {
+  getContrastRatio: (color1, color2) => {
     var lum1 = exports.ColorContrast.getRelativeLuminance(color1);
     var lum2 = exports.ColorContrast.getRelativeLuminance(color2);
     var lighter = Math.max(lum1, lum2);
@@ -329,7 +326,7 @@ exports.ColorContrast = {
   /**
    * Check if color combination meets WCAG standards
    */
-  meetsWCAG: function (foreground, background, level) {
+  meetsWCAG: (foreground, background, level) => {
     if (level === void 0) {
       level = "NORMAL_TEXT";
     }
@@ -344,7 +341,7 @@ exports.HealthcareA11y = {
   /**
    * Announce appointment status changes
    */
-  announceAppointmentStatus: function (patientName, appointmentTime, status) {
+  announceAppointmentStatus: (patientName, appointmentTime, status) => {
     var message = "Compromiso de "
       .concat(patientName, " \u00E0s ")
       .concat(appointmentTime, " atualizado para ")
@@ -354,7 +351,7 @@ exports.HealthcareA11y = {
   /**
    * Announce form validation errors for healthcare forms
    */
-  announceFormErrors: function (errors) {
+  announceFormErrors: (errors) => {
     var errorCount = Object.keys(errors).length;
     var message =
       errorCount === 1
@@ -365,18 +362,17 @@ exports.HealthcareA11y = {
   /**
    * Generate ARIA label for medical appointment
    */
-  appointmentAriaLabel: function (patientName, service, date, time, status) {
-    return "Consulta de "
+  appointmentAriaLabel: (patientName, service, date, time, status) =>
+    "Consulta de "
       .concat(patientName, ", ")
       .concat(service, ", ")
       .concat(date, " \u00E0s ")
       .concat(time, ", status ")
-      .concat(status);
-  },
+      .concat(status),
   /**
    * Generate accessible date/time picker labels
    */
-  dateTimePickerLabels: function (selectedDate, selectedTime) {
+  dateTimePickerLabels: (selectedDate, selectedTime) => {
     var dateLabel = selectedDate
       ? "Data selecionada: ".concat(selectedDate.toLocaleDateString("pt-BR"))
       : "Selecione uma data";
@@ -394,14 +390,14 @@ exports.FormA11y = {
   /**
    * Enhance form with accessibility attributes
    */
-  enhanceForm: function (formElement) {
+  enhanceForm: (formElement) => {
     // Add form role if not present
     if (!formElement.getAttribute("role")) {
       formElement.setAttribute("role", "form");
     }
     // Find and enhance form fields
     var fields = formElement.querySelectorAll("input, select, textarea");
-    fields.forEach(function (field) {
+    fields.forEach((field) => {
       var _a;
       var htmlField = field;
       // Add required aria-required attribute
@@ -433,7 +429,7 @@ exports.FormA11y = {
   /**
    * Create accessible error summary
    */
-  createErrorSummary: function (errors) {
+  createErrorSummary: (errors) => {
     var summary = document.createElement("div");
     summary.className = "error-summary";
     summary.setAttribute("role", "alert");
@@ -444,14 +440,14 @@ exports.FormA11y = {
     title.textContent = "Erro no formulário";
     summary.appendChild(title);
     var list = document.createElement("ul");
-    Object.entries(errors).forEach(function (_a) {
+    Object.entries(errors).forEach((_a) => {
       var field = _a[0],
         message = _a[1];
       var item = document.createElement("li");
       var link = document.createElement("a");
       link.href = "#".concat(field);
       link.textContent = message;
-      link.onclick = function (e) {
+      link.onclick = (e) => {
         e.preventDefault();
         var targetField = document.getElementById(field);
         targetField === null || targetField === void 0 ? void 0 : targetField.focus();
@@ -471,13 +467,13 @@ exports.SkipLinks = {
   /**
    * Create skip navigation links
    */
-  createSkipLinks: function (links) {
+  createSkipLinks: (links) => {
     var container = document.createElement("div");
     container.className =
       "skip-links sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50";
     container.setAttribute("role", "navigation");
     container.setAttribute("aria-label", "Links de navegação rápida");
-    links.forEach(function (_a) {
+    links.forEach((_a) => {
       var href = _a.href,
         text = _a.text;
       var link = document.createElement("a");

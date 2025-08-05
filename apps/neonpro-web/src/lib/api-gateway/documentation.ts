@@ -9,11 +9,11 @@
 
 import type {
   ApiDocumentation,
-  ApiRoute,
-  ApiParameter,
-  ApiResponse,
   ApiExample,
   ApiGatewayConfig,
+  ApiParameter,
+  ApiResponse,
+  ApiRoute,
 } from "./types";
 
 /**

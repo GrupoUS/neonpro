@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Intelligent Conflict Detection Engine
  * Advanced system for detecting scheduling conflicts, resource conflicts, and optimization opportunities
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,12 +146,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConflictDetectionEngine = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var types_1 = require("./types");
-var ConflictDetectionEngine = /** @class */ (function () {
+var ConflictDetectionEngine = /** @class */ (() => {
   function ConflictDetectionEngine(supabaseUrl, supabaseKey, config) {
     if (config === void 0) {
       config = {};
@@ -301,9 +298,9 @@ var ConflictDetectionEngine = /** @class */ (function () {
         overlapMinutes;
       return __generator(this, function (_a) {
         conflicts = [];
-        sortedAppointments = appointments.sort(function (a, b) {
-          return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
-        });
+        sortedAppointments = appointments.sort(
+          (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
+        );
         for (i = 0; i < sortedAppointments.length - 1; i++) {
           current = sortedAppointments[i];
           next = sortedAppointments[i + 1];
@@ -366,13 +363,9 @@ var ConflictDetectionEngine = /** @class */ (function () {
         switch (_b.label) {
           case 0:
             conflicts = [];
-            staffMap = new Map(
-              staff.map(function (s) {
-                return [s.id, s];
-              }),
-            );
+            staffMap = new Map(staff.map((s) => [s.id, s]));
             staffAppointments = new Map();
-            appointments.forEach(function (apt) {
+            appointments.forEach((apt) => {
               if (apt.staff_id) {
                 if (!staffAppointments.has(apt.staff_id)) {
                   staffAppointments.set(apt.staff_id, []);
@@ -387,9 +380,9 @@ var ConflictDetectionEngine = /** @class */ (function () {
             (_a = staffAppointments_1[_i]), (staffId = _a[0]), (staffApts = _a[1]);
             staffMember = staffMap.get(staffId);
             if (!staffMember) return [3 /*break*/, 3];
-            sortedApts = staffApts.sort(function (a, b) {
-              return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
-            });
+            sortedApts = staffApts.sort(
+              (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
+            );
             // Check for double booking
             for (i = 0; i < sortedApts.length - 1; i++) {
               current = sortedApts[i];
@@ -428,25 +421,19 @@ var ConflictDetectionEngine = /** @class */ (function () {
                 description: "Staff member "
                   .concat(staffMember.name, " overloaded (")
                   .concat(Math.round(workloadMetrics.currentLoad * 100), "%)"),
-                affectedAppointments: staffApts.map(function (apt) {
-                  return apt.id;
-                }),
+                affectedAppointments: staffApts.map((apt) => apt.id),
                 affectedResources: { staff: [staffId] },
                 conflictTime: {
                   start: new Date(
                     Math.min.apply(
                       Math,
-                      staffApts.map(function (apt) {
-                        return new Date(apt.start_time).getTime();
-                      }),
+                      staffApts.map((apt) => new Date(apt.start_time).getTime()),
                     ),
                   ),
                   end: new Date(
                     Math.max.apply(
                       Math,
-                      staffApts.map(function (apt) {
-                        return new Date(apt.end_time).getTime();
-                      }),
+                      staffApts.map((apt) => new Date(apt.end_time).getTime()),
                     ),
                   ),
                 },
@@ -491,13 +478,9 @@ var ConflictDetectionEngine = /** @class */ (function () {
         group;
       return __generator(this, function (_c) {
         conflicts = [];
-        roomMap = new Map(
-          rooms.map(function (r) {
-            return [r.id, r];
-          }),
-        );
+        roomMap = new Map(rooms.map((r) => [r.id, r]));
         roomAppointments = new Map();
-        appointments.forEach(function (apt) {
+        appointments.forEach((apt) => {
           if (apt.room_id) {
             if (!roomAppointments.has(apt.room_id)) {
               roomAppointments.set(apt.room_id, []);
@@ -510,9 +493,9 @@ var ConflictDetectionEngine = /** @class */ (function () {
           (_a = roomAppointments_1[_i]), (roomId = _a[0]), (roomApts = _a[1]);
           room = roomMap.get(roomId);
           if (!room) continue;
-          sortedApts = roomApts.sort(function (a, b) {
-            return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
-          });
+          sortedApts = roomApts.sort(
+            (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime(),
+          );
           // Check for overlapping appointments
           for (i = 0; i < sortedApts.length - 1; i++) {
             current = sortedApts[i];
@@ -554,25 +537,19 @@ var ConflictDetectionEngine = /** @class */ (function () {
                   .concat(room.name, " capacity exceeded (")
                   .concat(group.length, "/")
                   .concat(maxCapacity, ")"),
-                affectedAppointments: group.map(function (apt) {
-                  return apt.id;
-                }),
+                affectedAppointments: group.map((apt) => apt.id),
                 affectedResources: { rooms: [roomId] },
                 conflictTime: {
                   start: new Date(
                     Math.min.apply(
                       Math,
-                      group.map(function (apt) {
-                        return new Date(apt.start_time).getTime();
-                      }),
+                      group.map((apt) => new Date(apt.start_time).getTime()),
                     ),
                   ),
                   end: new Date(
                     Math.max.apply(
                       Math,
-                      group.map(function (apt) {
-                        return new Date(apt.end_time).getTime();
-                      }),
+                      group.map((apt) => new Date(apt.end_time).getTime()),
                     ),
                   ),
                 },
@@ -628,26 +605,13 @@ var ConflictDetectionEngine = /** @class */ (function () {
         switch (_d.label) {
           case 0:
             conflicts = [];
-            equipmentMap = new Map(
-              equipment.map(function (e) {
-                return [e.id, e];
-              }),
-            );
-            return [
-              4 /*yield*/,
-              this.getEquipmentAssignments(
-                appointments.map(function (apt) {
-                  return apt.id;
-                }),
-              ),
-            ];
+            equipmentMap = new Map(equipment.map((e) => [e.id, e]));
+            return [4 /*yield*/, this.getEquipmentAssignments(appointments.map((apt) => apt.id))];
           case 1:
             equipmentAssignments = _d.sent();
             equipmentAppointments = new Map();
-            _loop_1 = function (assignment) {
-              var appointment = appointments.find(function (apt) {
-                return apt.id === assignment.appointment_id;
-              });
+            _loop_1 = (assignment) => {
+              var appointment = appointments.find((apt) => apt.id === assignment.appointment_id);
               if (!appointment) return "continue";
               if (!equipmentAppointments.has(assignment.equipment_id)) {
                 equipmentAppointments.set(assignment.equipment_id, []);
@@ -671,12 +635,11 @@ var ConflictDetectionEngine = /** @class */ (function () {
             (_b = equipmentAppointments_1[_a]), (equipmentId = _b[0]), (assignments = _b[1]);
             equipmentItem = equipmentMap.get(equipmentId);
             if (!equipmentItem) return [3 /*break*/, 4];
-            sortedAssignments = assignments.sort(function (a, b) {
-              return (
+            sortedAssignments = assignments.sort(
+              (a, b) =>
                 new Date(a.appointment.start_time).getTime() -
-                new Date(b.appointment.start_time).getTime()
-              );
-            });
+                new Date(b.appointment.start_time).getTime(),
+            );
             // Check for overlapping usage
             for (i = 0; i < sortedAssignments.length - 1; i++) {
               current = sortedAssignments[i];
@@ -715,8 +678,8 @@ var ConflictDetectionEngine = /** @class */ (function () {
             return [4 /*yield*/, this.getEquipmentMaintenance(equipmentId)];
           case 3:
             maintenanceSchedule = _d.sent();
-            _loop_2 = function (maintenance) {
-              var conflictingAssignments = assignments.filter(function (_a) {
+            _loop_2 = (maintenance) => {
+              var conflictingAssignments = assignments.filter((_a) => {
                 var appointment = _a.appointment;
                 var aptStart = new Date(appointment.start_time);
                 var aptEnd = new Date(appointment.end_time);
@@ -733,7 +696,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
                     equipmentItem.name,
                     " scheduled for maintenance",
                   ),
-                  affectedAppointments: conflictingAssignments.map(function (_a) {
+                  affectedAppointments: conflictingAssignments.map((_a) => {
                     var appointment = _a.appointment;
                     return appointment.id;
                   }),
@@ -746,7 +709,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
                   metadata: {
                     equipment: equipmentItem,
                     maintenance: maintenance,
-                    conflictingAppointments: conflictingAssignments.map(function (_a) {
+                    conflictingAppointments: conflictingAssignments.map((_a) => {
                       var appointment = _a.appointment;
                       return appointment;
                     }),
@@ -858,7 +821,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
             if (!staff) {
               throw new Error("Staff member not found: ".concat(staffId));
             }
-            totalWorkMinutes = appointments.reduce(function (total, apt) {
+            totalWorkMinutes = appointments.reduce((total, apt) => {
               var duration = new Date(apt.end_time).getTime() - new Date(apt.start_time).getTime();
               return total + duration / (1000 * 60);
             }, 0);
@@ -898,13 +861,13 @@ var ConflictDetectionEngine = /** @class */ (function () {
   /**
    * Helper methods
    */
-  ConflictDetectionEngine.prototype.calculateOverlapSeverity = function (overlapMinutes) {
+  ConflictDetectionEngine.prototype.calculateOverlapSeverity = (overlapMinutes) => {
     if (overlapMinutes > 60) return types_1.ConflictSeverity.CRITICAL;
     if (overlapMinutes > 30) return types_1.ConflictSeverity.HIGH;
     if (overlapMinutes > 15) return types_1.ConflictSeverity.MEDIUM;
     return types_1.ConflictSeverity.LOW;
   };
-  ConflictDetectionEngine.prototype.findSimultaneousAppointments = function (appointments) {
+  ConflictDetectionEngine.prototype.findSimultaneousAppointments = (appointments) => {
     var groups = [];
     var processed = new Set();
     for (var _i = 0, appointments_1 = appointments; _i < appointments_1.length; _i++) {
@@ -931,8 +894,8 @@ var ConflictDetectionEngine = /** @class */ (function () {
     }
     return groups;
   };
-  ConflictDetectionEngine.prototype.filterConflicts = function (conflicts, params) {
-    return conflicts.filter(function (conflict) {
+  ConflictDetectionEngine.prototype.filterConflicts = (conflicts, params) =>
+    conflicts.filter((conflict) => {
       // Filter by type
       if (params.includeTypes && !params.includeTypes.includes(conflict.type)) {
         return false;
@@ -948,30 +911,26 @@ var ConflictDetectionEngine = /** @class */ (function () {
           rooms_1 = _a.rooms,
           equipment_1 = _a.equipment;
         if (staff_1 && conflict.affectedResources.staff) {
-          var hasMatchingStaff = conflict.affectedResources.staff.some(function (id) {
-            return staff_1.includes(id);
-          });
+          var hasMatchingStaff = conflict.affectedResources.staff.some((id) =>
+            staff_1.includes(id),
+          );
           if (!hasMatchingStaff) return false;
         }
         if (rooms_1 && conflict.affectedResources.rooms) {
-          var hasMatchingRoom = conflict.affectedResources.rooms.some(function (id) {
-            return rooms_1.includes(id);
-          });
+          var hasMatchingRoom = conflict.affectedResources.rooms.some((id) => rooms_1.includes(id));
           if (!hasMatchingRoom) return false;
         }
         if (equipment_1 && conflict.affectedResources.equipment) {
-          var hasMatchingEquipment = conflict.affectedResources.equipment.some(function (id) {
-            return equipment_1.includes(id);
-          });
+          var hasMatchingEquipment = conflict.affectedResources.equipment.some((id) =>
+            equipment_1.includes(id),
+          );
           if (!hasMatchingEquipment) return false;
         }
       }
       return true;
     });
-  };
-  ConflictDetectionEngine.prototype.generateCacheKey = function (prefix, params) {
-    return "".concat(prefix, "_").concat(JSON.stringify(params));
-  };
+  ConflictDetectionEngine.prototype.generateCacheKey = (prefix, params) =>
+    "".concat(prefix, "_").concat(JSON.stringify(params));
   /**
    * Database query methods
    */
@@ -1112,23 +1071,21 @@ var ConflictDetectionEngine = /** @class */ (function () {
     equipment,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for resource utilization analysis
         return [2 /*return*/, []];
       });
     });
   };
-  ConflictDetectionEngine.prototype.calculateDaysInPeriod = function (appointments) {
+  ConflictDetectionEngine.prototype.calculateDaysInPeriod = (appointments) => {
     if (appointments.length === 0) return 1;
-    var dates = appointments.map(function (apt) {
-      return new Date(apt.start_time).toDateString();
-    });
+    var dates = appointments.map((apt) => new Date(apt.start_time).toDateString());
     var uniqueDates = new Set(dates);
     return uniqueDates.size;
   };
   ConflictDetectionEngine.prototype.calculateStaffEfficiency = function (staffId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for efficiency calculation
         return [2 /*return*/, 0.8];
       });
@@ -1136,7 +1093,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
   };
   ConflictDetectionEngine.prototype.getStaffSatisfactionScore = function (staffId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for satisfaction score
         return [2 /*return*/, 0.7];
       });
@@ -1144,7 +1101,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
   };
   ConflictDetectionEngine.prototype.getStaffAvailability = function (staffId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for availability windows
         return [2 /*return*/, []];
       });
@@ -1152,7 +1109,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
   };
   ConflictDetectionEngine.prototype.getStaffPreferences = function (staffId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for staff preferences
         return [
           2 /*return*/,

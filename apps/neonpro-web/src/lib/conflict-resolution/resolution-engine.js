@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Intelligent Conflict Resolution Engine
  * Advanced system for generating and applying automated conflict resolutions
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,12 +146,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConflictResolutionEngine = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var types_1 = require("./types");
-var ConflictResolutionEngine = /** @class */ (function () {
+var ConflictResolutionEngine = /** @class */ (() => {
   function ConflictResolutionEngine(
     supabaseUrl,
     supabaseKey,
@@ -512,7 +509,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
                 room,
                 proposedChanges,
                 impact;
-              return __generator(this, function (_f) {
+              return __generator(this, (_f) => {
                 switch (_f.label) {
                   case 0:
                     if (!(appointment.staff_id && resources.staff)) return [3 /*break*/, 5];
@@ -560,9 +557,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
                       pros: this_1.generatePros(types_1.ResolutionStrategy.CHANGE_STAFF, impact),
                       cons: this_1.generateCons(types_1.ResolutionStrategy.CHANGE_STAFF, impact),
                       metadata: {
-                        originalStaff: resources.staff.find(function (s) {
-                          return s.id === appointment.staff_id;
-                        }),
+                        originalStaff: resources.staff.find((s) => s.id === appointment.staff_id),
                         newStaff: staff,
                         appointment: appointment,
                       },
@@ -617,9 +612,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
                       pros: this_1.generatePros(types_1.ResolutionStrategy.CHANGE_ROOM, impact),
                       cons: this_1.generateCons(types_1.ResolutionStrategy.CHANGE_ROOM, impact),
                       metadata: {
-                        originalRoom: resources.rooms.find(function (r) {
-                          return r.id === appointment.room_id;
-                        }),
+                        originalRoom: resources.rooms.find((r) => r.id === appointment.room_id),
                         newRoom: room,
                         appointment: appointment,
                       },
@@ -804,10 +797,9 @@ var ConflictResolutionEngine = /** @class */ (function () {
    * Rank resolutions by overall score
    */
   ConflictResolutionEngine.prototype.rankResolutions = function (resolutions) {
-    var _this = this;
-    return resolutions.sort(function (a, b) {
-      var scoreA = _this.calculateOverallScore(a.impact) * a.confidence * a.feasibility;
-      var scoreB = _this.calculateOverallScore(b.impact) * b.confidence * b.feasibility;
+    return resolutions.sort((a, b) => {
+      var scoreA = this.calculateOverallScore(a.impact) * a.confidence * a.feasibility;
+      var scoreB = this.calculateOverallScore(b.impact) * b.confidence * b.feasibility;
       return scoreB - scoreA;
     });
   };
@@ -1363,14 +1355,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
             return [3 /*break*/, 1];
           case 4:
             // Sort by score and return top options
-            return [
-              2 /*return*/,
-              slots
-                .sort(function (a, b) {
-                  return b.score - a.score;
-                })
-                .slice(0, 5),
-            ];
+            return [2 /*return*/, slots.sort((a, b) => b.score - a.score).slice(0, 5)];
         }
       });
     });
@@ -1461,17 +1446,17 @@ var ConflictResolutionEngine = /** @class */ (function () {
     var endTime = end.getHours() * 60 + end.getMinutes();
     return startTime >= businessStart && endTime <= businessEnd;
   };
-  ConflictResolutionEngine.prototype.parseTime = function (timeStr) {
+  ConflictResolutionEngine.prototype.parseTime = (timeStr) => {
     var _a = timeStr.split(":").map(Number),
       hours = _a[0],
       minutes = _a[1];
     return hours * 60 + minutes;
   };
-  ConflictResolutionEngine.prototype.calculateSlotScore = function (
+  ConflictResolutionEngine.prototype.calculateSlotScore = (
     slotStart,
     originalStart,
     appointment,
-  ) {
+  ) => {
     var score = 1.0;
     // Prefer slots closer to original time
     var timeDiff = Math.abs(slotStart.getTime() - originalStart.getTime()) / (1000 * 60 * 60);
@@ -1488,7 +1473,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
     }
     return Math.max(0, score);
   };
-  ConflictResolutionEngine.prototype.calculateConfidence = function (slot, appointment, resources) {
+  ConflictResolutionEngine.prototype.calculateConfidence = (slot, appointment, resources) => {
     // Base confidence
     var confidence = 0.8;
     // Adjust based on slot score
@@ -1499,7 +1484,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
     }
     return Math.min(1.0, confidence);
   };
-  ConflictResolutionEngine.prototype.calculateEstimatedTime = function (changes) {
+  ConflictResolutionEngine.prototype.calculateEstimatedTime = (changes) => {
     var time = 0;
     if (changes.appointments) time += changes.appointments.length * 2;
     if (changes.staffAssignments) time += changes.staffAssignments.length * 3;
@@ -1507,14 +1492,14 @@ var ConflictResolutionEngine = /** @class */ (function () {
     if (changes.equipmentAssignments) time += changes.equipmentAssignments.length * 2;
     return Math.max(5, time);
   };
-  ConflictResolutionEngine.prototype.calculateCost = function (changes) {
+  ConflictResolutionEngine.prototype.calculateCost = (changes) => {
     var cost = 0.1; // Base cost
     if (changes.appointments) cost += changes.appointments.length * 0.1;
     if (changes.staffAssignments) cost += changes.staffAssignments.length * 0.2;
     if (changes.roomAssignments) cost += changes.roomAssignments.length * 0.15;
     return Math.min(1.0, cost);
   };
-  ConflictResolutionEngine.prototype.calculateFeasibility = function (changes, resources) {
+  ConflictResolutionEngine.prototype.calculateFeasibility = (changes, resources) => {
     // Base feasibility
     var feasibility = 0.9;
     // Reduce based on complexity
@@ -1522,7 +1507,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
     feasibility -= complexity * 0.1;
     return Math.max(0.1, feasibility);
   };
-  ConflictResolutionEngine.prototype.generatePros = function (strategy, impact) {
+  ConflictResolutionEngine.prototype.generatePros = (strategy, impact) => {
     var pros = [];
     if (impact.patientSatisfaction > 0) pros.push("Improves patient satisfaction");
     if (impact.staffWorkload > 0) pros.push("Balances staff workload");
@@ -1542,7 +1527,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
     }
     return pros;
   };
-  ConflictResolutionEngine.prototype.generateCons = function (strategy, impact) {
+  ConflictResolutionEngine.prototype.generateCons = (strategy, impact) => {
     var cons = [];
     if (impact.patientSatisfaction < 0) cons.push("May reduce patient satisfaction");
     if (impact.staffWorkload < 0) cons.push("May increase staff workload");
@@ -1561,30 +1546,26 @@ var ConflictResolutionEngine = /** @class */ (function () {
     }
     return cons;
   };
-  ConflictResolutionEngine.prototype.createEmptyImpact = function () {
-    return {
-      patientSatisfaction: 0,
-      staffWorkload: 0,
-      resourceUtilization: 0,
-      operationalEfficiency: 0,
-      financialImpact: 0,
-      overallScore: 0,
-    };
-  };
-  ConflictResolutionEngine.prototype.createNeutralImpact = function () {
-    return {
-      patientSatisfaction: 0,
-      staffWorkload: 0,
-      resourceUtilization: 0,
-      operationalEfficiency: 0.1,
-      financialImpact: 0,
-      overallScore: 0.1,
-    };
-  };
+  ConflictResolutionEngine.prototype.createEmptyImpact = () => ({
+    patientSatisfaction: 0,
+    staffWorkload: 0,
+    resourceUtilization: 0,
+    operationalEfficiency: 0,
+    financialImpact: 0,
+    overallScore: 0,
+  });
+  ConflictResolutionEngine.prototype.createNeutralImpact = () => ({
+    patientSatisfaction: 0,
+    staffWorkload: 0,
+    resourceUtilization: 0,
+    operationalEfficiency: 0.1,
+    financialImpact: 0,
+    overallScore: 0.1,
+  });
   // Placeholder methods for database operations
   ConflictResolutionEngine.prototype.getConflictById = function (conflictId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch from conflicts table
         return [2 /*return*/, null];
       });
@@ -1592,7 +1573,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
   };
   ConflictResolutionEngine.prototype.getResolutionById = function (resolutionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch from resolutions table
         return [2 /*return*/, null];
       });
@@ -1714,80 +1695,80 @@ var ConflictResolutionEngine = /** @class */ (function () {
     resources,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.isStaffAvailable = function (staffId, start, end) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.isRoomAvailable = function (roomId, start, end) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.isStaffQualified = function (staff, appointment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.isRoomSuitable = function (room, appointment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.getStaffCurrentWorkload = function (staffId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, 0.5]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.getRoomUtilization = function (roomId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, 0.6]; // Simplified implementation
       });
     });
   };
-  ConflictResolutionEngine.prototype.calculateFinancialImpact = function (changes) {
+  ConflictResolutionEngine.prototype.calculateFinancialImpact = (changes) => {
     return 0; // Simplified implementation
   };
   ConflictResolutionEngine.prototype.validateFeasibility = function (resolution) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, resolution.feasibility]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.validateBusinessConstraints = function (resolution) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.generateNotifications = function (resolution, result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.calculateActualImpact = function (resolution, result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, resolution.impact]; // Simplified implementation
       });
     });
@@ -1798,9 +1779,7 @@ var ConflictResolutionEngine = /** @class */ (function () {
     impact,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ConflictResolutionEngine.prototype.clearRelatedCaches = function (resolution) {
@@ -1808,54 +1787,48 @@ var ConflictResolutionEngine = /** @class */ (function () {
   };
   ConflictResolutionEngine.prototype.generateSplitOptions = function (appointment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.generateMergeOptions = function (appointments) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.generateExtendHoursOption = function (conflict, appointments) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, null]; // Simplified implementation
       });
     });
   };
   ConflictResolutionEngine.prototype.generateDelegateOptions = function (appointments, resources) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
-  ConflictResolutionEngine.prototype.calculateStaffChangeConfidence = function (
-    staff,
-    appointment,
-  ) {
+  ConflictResolutionEngine.prototype.calculateStaffChangeConfidence = (staff, appointment) => {
     return 0.8; // Simplified implementation
   };
-  ConflictResolutionEngine.prototype.calculateStaffChangeCost = function (staff, appointment) {
+  ConflictResolutionEngine.prototype.calculateStaffChangeCost = (staff, appointment) => {
     return 0.2; // Simplified implementation
   };
-  ConflictResolutionEngine.prototype.calculateStaffChangeFeasibility = function (
-    staff,
-    appointment,
-  ) {
+  ConflictResolutionEngine.prototype.calculateStaffChangeFeasibility = (staff, appointment) => {
     return 0.9; // Simplified implementation
   };
-  ConflictResolutionEngine.prototype.calculateRoomChangeConfidence = function (room, appointment) {
+  ConflictResolutionEngine.prototype.calculateRoomChangeConfidence = (room, appointment) => {
     return 0.8; // Simplified implementation
   };
-  ConflictResolutionEngine.prototype.calculateRoomChangeCost = function (room, appointment) {
+  ConflictResolutionEngine.prototype.calculateRoomChangeCost = (room, appointment) => {
     return 0.15; // Simplified implementation
   };
-  ConflictResolutionEngine.prototype.calculateRoomChangeFeasibility = function (room, appointment) {
+  ConflictResolutionEngine.prototype.calculateRoomChangeFeasibility = (room, appointment) => {
     return 0.9; // Simplified implementation
   };
   /**

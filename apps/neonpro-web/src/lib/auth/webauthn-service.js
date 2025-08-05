@@ -1,4 +1,3 @@
-"use strict";
 /**
  * WebAuthn Service for TASK-002: Multi-Factor Authentication Enhancement
  *
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -140,7 +137,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createwebAuthnService = exports.webAuthnService = void 0;
 exports.createWebAuthnService = createWebAuthnService;
@@ -148,7 +145,7 @@ var server_1 = require("@simplewebauthn/server");
 var server_2 = require("../../app/utils/supabase/server");
 var performance_tracker_1 = require("./performance-tracker");
 var analytics_1 = require("@/lib/monitoring/analytics");
-var WebAuthnService = /** @class */ (function () {
+var WebAuthnService = /** @class */ (() => {
   function WebAuthnService() {
     this.rpName = "NeonPro";
     this.rpID = process.env.NEXT_PUBLIC_WEBAUTHN_RP_ID || "localhost";
@@ -179,12 +176,10 @@ var WebAuthnService = /** @class */ (function () {
             excludeCredentials =
               (existingCredentials === null || existingCredentials === void 0
                 ? void 0
-                : existingCredentials.map(function (cred) {
-                    return {
-                      id: cred.credential_id,
-                      type: "public-key",
-                    };
-                  })) || [];
+                : existingCredentials.map((cred) => ({
+                    id: cred.credential_id,
+                    type: "public-key",
+                  }))) || [];
             return [
               4 /*yield*/,
               (0, server_1.generateRegistrationOptions)({
@@ -236,117 +231,113 @@ var WebAuthnService = /** @class */ (function () {
    */
   WebAuthnService.prototype.verifyRegistrationResponse = function (userId, response, deviceName) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          (0, performance_tracker_1.trackMFAVerification)(
-            function () {
-              return __awaiter(_this, void 0, void 0, function () {
-                var supabase,
-                  challenge,
-                  verification,
-                  _a,
-                  credentialID,
-                  credentialPublicKey,
-                  counter,
-                  credentialDeviceType,
-                  credentialBackedUp,
-                  error;
-                return __generator(this, function (_b) {
-                  switch (_b.label) {
-                    case 0:
-                      return [4 /*yield*/, (0, server_2.createClient)()];
-                    case 1:
-                      supabase = _b.sent();
-                      return [4 /*yield*/, this.getChallenge(userId, "registration")];
-                    case 2:
-                      challenge = _b.sent();
-                      if (!challenge) {
-                        throw new Error("No registration challenge found");
-                      }
-                      return [
-                        4 /*yield*/,
-                        (0, server_1.verifyRegistrationResponse)({
-                          response: response,
-                          expectedChallenge: challenge,
-                          expectedOrigin: this.origin,
-                          expectedRPID: this.rpID,
-                          requireUserVerification: true,
-                        }),
-                      ];
-                    case 3:
-                      verification = _b.sent();
-                      if (!(!verification.verified || !verification.registrationInfo))
-                        return [3 /*break*/, 5];
-                      return [
-                        4 /*yield*/,
-                        (0, analytics_1.logAnalyticsEvent)("webauthn_registration_failed", {
-                          userId: userId,
-                          error: "Verification failed",
-                          timestamp: new Date().toISOString(),
-                        }),
-                      ];
-                    case 4:
-                      _b.sent();
-                      throw new Error("WebAuthn registration verification failed");
-                    case 5:
-                      (_a = verification.registrationInfo),
-                        (credentialID = _a.credentialID),
-                        (credentialPublicKey = _a.credentialPublicKey),
-                        (counter = _a.counter),
-                        (credentialDeviceType = _a.credentialDeviceType),
-                        (credentialBackedUp = _a.credentialBackedUp);
-                      return [
-                        4 /*yield*/,
-                        supabase.from("webauthn_credentials").insert({
-                          user_id: userId,
-                          credential_id: credentialID,
-                          public_key: credentialPublicKey,
-                          counter: counter,
-                          device_type: credentialDeviceType,
-                          device_name: deviceName,
-                          backup_eligible: credentialBackedUp,
-                          backup_state: credentialBackedUp,
-                          transports: response.response.transports || [],
-                        }),
-                      ];
-                    case 6:
-                      error = _b.sent().error;
-                      if (error) {
-                        throw new Error(
-                          "Failed to store WebAuthn credential: ".concat(error.message),
-                        );
-                      }
-                      // Clean up challenge
-                      return [4 /*yield*/, this.removeChallenge(userId, "registration")];
-                    case 7:
-                      // Clean up challenge
-                      _b.sent();
-                      return [
-                        4 /*yield*/,
-                        (0, analytics_1.logAnalyticsEvent)("webauthn_registration_success", {
-                          userId: userId,
-                          deviceName: deviceName,
-                          deviceType: credentialDeviceType,
-                          timestamp: new Date().toISOString(),
-                        }),
-                      ];
-                    case 8:
-                      _b.sent();
-                      return [2 /*return*/, verification];
-                  }
-                });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        (0, performance_tracker_1.trackMFAVerification)(
+          () =>
+            __awaiter(this, void 0, void 0, function () {
+              var supabase,
+                challenge,
+                verification,
+                _a,
+                credentialID,
+                credentialPublicKey,
+                counter,
+                credentialDeviceType,
+                credentialBackedUp,
+                error;
+              return __generator(this, function (_b) {
+                switch (_b.label) {
+                  case 0:
+                    return [4 /*yield*/, (0, server_2.createClient)()];
+                  case 1:
+                    supabase = _b.sent();
+                    return [4 /*yield*/, this.getChallenge(userId, "registration")];
+                  case 2:
+                    challenge = _b.sent();
+                    if (!challenge) {
+                      throw new Error("No registration challenge found");
+                    }
+                    return [
+                      4 /*yield*/,
+                      (0, server_1.verifyRegistrationResponse)({
+                        response: response,
+                        expectedChallenge: challenge,
+                        expectedOrigin: this.origin,
+                        expectedRPID: this.rpID,
+                        requireUserVerification: true,
+                      }),
+                    ];
+                  case 3:
+                    verification = _b.sent();
+                    if (!(!verification.verified || !verification.registrationInfo))
+                      return [3 /*break*/, 5];
+                    return [
+                      4 /*yield*/,
+                      (0, analytics_1.logAnalyticsEvent)("webauthn_registration_failed", {
+                        userId: userId,
+                        error: "Verification failed",
+                        timestamp: new Date().toISOString(),
+                      }),
+                    ];
+                  case 4:
+                    _b.sent();
+                    throw new Error("WebAuthn registration verification failed");
+                  case 5:
+                    (_a = verification.registrationInfo),
+                      (credentialID = _a.credentialID),
+                      (credentialPublicKey = _a.credentialPublicKey),
+                      (counter = _a.counter),
+                      (credentialDeviceType = _a.credentialDeviceType),
+                      (credentialBackedUp = _a.credentialBackedUp);
+                    return [
+                      4 /*yield*/,
+                      supabase.from("webauthn_credentials").insert({
+                        user_id: userId,
+                        credential_id: credentialID,
+                        public_key: credentialPublicKey,
+                        counter: counter,
+                        device_type: credentialDeviceType,
+                        device_name: deviceName,
+                        backup_eligible: credentialBackedUp,
+                        backup_state: credentialBackedUp,
+                        transports: response.response.transports || [],
+                      }),
+                    ];
+                  case 6:
+                    error = _b.sent().error;
+                    if (error) {
+                      throw new Error(
+                        "Failed to store WebAuthn credential: ".concat(error.message),
+                      );
+                    }
+                    // Clean up challenge
+                    return [4 /*yield*/, this.removeChallenge(userId, "registration")];
+                  case 7:
+                    // Clean up challenge
+                    _b.sent();
+                    return [
+                      4 /*yield*/,
+                      (0, analytics_1.logAnalyticsEvent)("webauthn_registration_success", {
+                        userId: userId,
+                        deviceName: deviceName,
+                        deviceType: credentialDeviceType,
+                        timestamp: new Date().toISOString(),
+                      }),
+                    ];
+                  case 8:
+                    _b.sent();
+                    return [2 /*return*/, verification];
+                }
               });
-            },
-            {
-              userId: userId,
-              method: "webauthn",
-              additionalData: { deviceName: deviceName, operation: "registration" },
-            },
-          ),
-        ];
-      });
+            }),
+          {
+            userId: userId,
+            method: "webauthn",
+            additionalData: { deviceName: deviceName, operation: "registration" },
+          },
+        ),
+      ]);
     });
   };
   /**
@@ -378,13 +369,11 @@ var WebAuthnService = /** @class */ (function () {
             allowCredentials =
               credentials === null || credentials === void 0
                 ? void 0
-                : credentials.map(function (cred) {
-                    return {
-                      id: cred.credential_id,
-                      type: "public-key",
-                      transports: cred.transports,
-                    };
-                  });
+                : credentials.map((cred) => ({
+                    id: cred.credential_id,
+                    type: "public-key",
+                    transports: cred.transports,
+                  }));
             _a.label = 3;
           case 3:
             return [
@@ -427,125 +416,121 @@ var WebAuthnService = /** @class */ (function () {
    */
   WebAuthnService.prototype.verifyAuthenticationResponse = function (response, userId) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          (0, performance_tracker_1.trackMFAVerification)(
-            function () {
-              return __awaiter(_this, void 0, void 0, function () {
-                var supabase, credential, challengeKey, challenge, verification;
-                return __generator(this, function (_a) {
-                  switch (_a.label) {
-                    case 0:
-                      return [4 /*yield*/, (0, server_2.createClient)()];
-                    case 1:
-                      supabase = _a.sent();
-                      return [
-                        4 /*yield*/,
-                        supabase
-                          .from("webauthn_credentials")
-                          .select("*")
-                          .eq("credential_id", response.id)
-                          .eq("is_active", true)
-                          .single(),
-                      ];
-                    case 2:
-                      credential = _a.sent().data;
-                      if (!credential) {
-                        throw new Error("WebAuthn credential not found");
-                      }
-                      challengeKey = userId || credential.user_id;
-                      return [4 /*yield*/, this.getChallenge(challengeKey, "authentication")];
-                    case 3:
-                      challenge = _a.sent();
-                      if (!challenge) {
-                        throw new Error("No authentication challenge found");
-                      }
-                      return [
-                        4 /*yield*/,
-                        (0, server_1.verifyAuthenticationResponse)({
-                          response: response,
-                          expectedChallenge: challenge,
-                          expectedOrigin: this.origin,
-                          expectedRPID: this.rpID,
-                          authenticator: {
-                            credentialID: credential.credential_id,
-                            credentialPublicKey: new Uint8Array(credential.public_key),
-                            counter: credential.counter,
-                            transports: credential.transports,
-                          },
-                          requireUserVerification: true,
-                        }),
-                      ];
-                    case 4:
-                      verification = _a.sent();
-                      if (!!verification.verified) return [3 /*break*/, 6];
-                      return [
-                        4 /*yield*/,
-                        (0, analytics_1.logAnalyticsEvent)("webauthn_authentication_failed", {
-                          userId: credential.user_id,
-                          credentialId: credential.credential_id,
-                          timestamp: new Date().toISOString(),
-                        }),
-                      ];
-                    case 5:
-                      _a.sent();
-                      throw new Error("WebAuthn authentication verification failed");
-                    case 6:
-                      // Update credential counter and last used
-                      return [
-                        4 /*yield*/,
-                        supabase
-                          .from("webauthn_credentials")
-                          .update({
-                            counter: verification.authenticationInfo.newCounter,
-                            last_used_at: new Date().toISOString(),
-                          })
-                          .eq("id", credential.id),
-                      ];
-                    case 7:
-                      // Update credential counter and last used
-                      _a.sent();
-                      // Clean up challenge
-                      return [4 /*yield*/, this.removeChallenge(challengeKey, "authentication")];
-                    case 8:
-                      // Clean up challenge
-                      _a.sent();
-                      return [
-                        4 /*yield*/,
-                        (0, analytics_1.logAnalyticsEvent)("webauthn_authentication_success", {
-                          userId: credential.user_id,
-                          credentialId: credential.credential_id,
-                          deviceType: credential.device_type,
-                          timestamp: new Date().toISOString(),
-                        }),
-                      ];
-                    case 9:
-                      _a.sent();
-                      return [
-                        2 /*return*/,
-                        {
-                          verified: verification.verified,
-                          userId: credential.user_id,
-                          credentialId: credential.credential_id,
-                          authenticationInfo: verification.authenticationInfo,
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        (0, performance_tracker_1.trackMFAVerification)(
+          () =>
+            __awaiter(this, void 0, void 0, function () {
+              var supabase, credential, challengeKey, challenge, verification;
+              return __generator(this, function (_a) {
+                switch (_a.label) {
+                  case 0:
+                    return [4 /*yield*/, (0, server_2.createClient)()];
+                  case 1:
+                    supabase = _a.sent();
+                    return [
+                      4 /*yield*/,
+                      supabase
+                        .from("webauthn_credentials")
+                        .select("*")
+                        .eq("credential_id", response.id)
+                        .eq("is_active", true)
+                        .single(),
+                    ];
+                  case 2:
+                    credential = _a.sent().data;
+                    if (!credential) {
+                      throw new Error("WebAuthn credential not found");
+                    }
+                    challengeKey = userId || credential.user_id;
+                    return [4 /*yield*/, this.getChallenge(challengeKey, "authentication")];
+                  case 3:
+                    challenge = _a.sent();
+                    if (!challenge) {
+                      throw new Error("No authentication challenge found");
+                    }
+                    return [
+                      4 /*yield*/,
+                      (0, server_1.verifyAuthenticationResponse)({
+                        response: response,
+                        expectedChallenge: challenge,
+                        expectedOrigin: this.origin,
+                        expectedRPID: this.rpID,
+                        authenticator: {
+                          credentialID: credential.credential_id,
+                          credentialPublicKey: new Uint8Array(credential.public_key),
+                          counter: credential.counter,
+                          transports: credential.transports,
                         },
-                      ];
-                  }
-                });
+                        requireUserVerification: true,
+                      }),
+                    ];
+                  case 4:
+                    verification = _a.sent();
+                    if (verification.verified) return [3 /*break*/, 6];
+                    return [
+                      4 /*yield*/,
+                      (0, analytics_1.logAnalyticsEvent)("webauthn_authentication_failed", {
+                        userId: credential.user_id,
+                        credentialId: credential.credential_id,
+                        timestamp: new Date().toISOString(),
+                      }),
+                    ];
+                  case 5:
+                    _a.sent();
+                    throw new Error("WebAuthn authentication verification failed");
+                  case 6:
+                    // Update credential counter and last used
+                    return [
+                      4 /*yield*/,
+                      supabase
+                        .from("webauthn_credentials")
+                        .update({
+                          counter: verification.authenticationInfo.newCounter,
+                          last_used_at: new Date().toISOString(),
+                        })
+                        .eq("id", credential.id),
+                    ];
+                  case 7:
+                    // Update credential counter and last used
+                    _a.sent();
+                    // Clean up challenge
+                    return [4 /*yield*/, this.removeChallenge(challengeKey, "authentication")];
+                  case 8:
+                    // Clean up challenge
+                    _a.sent();
+                    return [
+                      4 /*yield*/,
+                      (0, analytics_1.logAnalyticsEvent)("webauthn_authentication_success", {
+                        userId: credential.user_id,
+                        credentialId: credential.credential_id,
+                        deviceType: credential.device_type,
+                        timestamp: new Date().toISOString(),
+                      }),
+                    ];
+                  case 9:
+                    _a.sent();
+                    return [
+                      2 /*return*/,
+                      {
+                        verified: verification.verified,
+                        userId: credential.user_id,
+                        credentialId: credential.credential_id,
+                        authenticationInfo: verification.authenticationInfo,
+                      },
+                    ];
+                }
               });
-            },
-            {
-              userId:
-                userId ||
-                (credential === null || credential === void 0 ? void 0 : credential.user_id),
-              method: "webauthn",
-              additionalData: { operation: "authentication" },
-            },
-          ),
-        ];
-      });
+            }),
+          {
+            userId:
+              userId ||
+              (credential === null || credential === void 0 ? void 0 : credential.user_id),
+            method: "webauthn",
+            additionalData: { operation: "authentication" },
+          },
+        ),
+      ]);
     });
   };
   /**
@@ -554,7 +539,7 @@ var WebAuthnService = /** @class */ (function () {
   WebAuthnService.prototype.getUserCredentials = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, credentials, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_2.createClient)()];
@@ -585,7 +570,7 @@ var WebAuthnService = /** @class */ (function () {
   WebAuthnService.prototype.removeCredential = function (userId, credentialId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_2.createClient)()];
@@ -624,7 +609,7 @@ var WebAuthnService = /** @class */ (function () {
    */
   WebAuthnService.prototype.storeChallenge = function (userId, challenge, type) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // For now, using simple in-memory storage
         // In production, use Redis or secure session storage
         if (typeof globalThis !== "undefined") {
@@ -646,7 +631,7 @@ var WebAuthnService = /** @class */ (function () {
   WebAuthnService.prototype.getChallenge = function (userId, type) {
     return __awaiter(this, void 0, void 0, function () {
       var data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (typeof globalThis !== "undefined" && globalThis.webauthnChallenges) {
           data = globalThis.webauthnChallenges.get("".concat(userId, ":").concat(type));
           if (data && Date.now() - data.timestamp < 300000) {
@@ -663,7 +648,7 @@ var WebAuthnService = /** @class */ (function () {
    */
   WebAuthnService.prototype.removeChallenge = function (userId, type) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (typeof globalThis !== "undefined" && globalThis.webauthnChallenges) {
           globalThis.webauthnChallenges.delete("".concat(userId, ":").concat(type));
         }

@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlertDialogCancel =
   exports.AlertDialogAction =
@@ -36,7 +34,7 @@ var AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 exports.AlertDialogTrigger = AlertDialogTrigger;
 var AlertDialogPortal = AlertDialogPrimitive.Portal;
 exports.AlertDialogPortal = AlertDialogPortal;
-var AlertDialogOverlay = React.forwardRef(function (_a, ref) {
+var AlertDialogOverlay = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -52,7 +50,7 @@ var AlertDialogOverlay = React.forwardRef(function (_a, ref) {
 });
 exports.AlertDialogOverlay = AlertDialogOverlay;
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
-var AlertDialogContent = React.forwardRef(function (_a, ref) {
+var AlertDialogContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -71,7 +69,7 @@ var AlertDialogContent = React.forwardRef(function (_a, ref) {
 });
 exports.AlertDialogContent = AlertDialogContent;
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
-var AlertDialogHeader = function (_a) {
+var AlertDialogHeader = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -83,7 +81,7 @@ var AlertDialogHeader = function (_a) {
 };
 exports.AlertDialogHeader = AlertDialogHeader;
 AlertDialogHeader.displayName = "AlertDialogHeader";
-var AlertDialogFooter = function (_a) {
+var AlertDialogFooter = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -98,7 +96,7 @@ var AlertDialogFooter = function (_a) {
 };
 exports.AlertDialogFooter = AlertDialogFooter;
 AlertDialogFooter.displayName = "AlertDialogFooter";
-var AlertDialogTitle = React.forwardRef(function (_a, ref) {
+var AlertDialogTitle = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -111,7 +109,7 @@ var AlertDialogTitle = React.forwardRef(function (_a, ref) {
 });
 exports.AlertDialogTitle = AlertDialogTitle;
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName;
-var AlertDialogDescription = React.forwardRef(function (_a, ref) {
+var AlertDialogDescription = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -124,7 +122,7 @@ var AlertDialogDescription = React.forwardRef(function (_a, ref) {
 });
 exports.AlertDialogDescription = AlertDialogDescription;
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName;
-var AlertDialogAction = React.forwardRef(function (_a, ref) {
+var AlertDialogAction = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -137,7 +135,7 @@ var AlertDialogAction = React.forwardRef(function (_a, ref) {
 });
 exports.AlertDialogAction = AlertDialogAction;
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
-var AlertDialogCancel = React.forwardRef(function (_a, ref) {
+var AlertDialogCancel = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

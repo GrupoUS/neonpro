@@ -13,16 +13,12 @@
 
 "use client";
 
-import type { useState, useEffect, useCallback, useRef } from "react";
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type {
-  HealthcareRBACEngine,
-  type PermissionCheckResult,
-  type UserRoleContext,
-} from "@/lib/auth/rbac";
-import type { HealthcareRole, type MedicalSpecialty } from "@/lib/auth/permissions";
+import type { useCallback, useEffect, useRef, useState } from "react";
 import type { useSession } from "@/hooks/use-session";
 import type { useToast } from "@/hooks/use-toast";
+import type { HealthcareRole, MedicalSpecialty } from "@/lib/auth/permissions";
+import type { HealthcareRBACEngine, PermissionCheckResult, UserRoleContext } from "@/lib/auth/rbac";
 
 // ============================================================================
 // TYPE DEFINITIONS

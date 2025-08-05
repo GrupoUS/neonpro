@@ -12,18 +12,17 @@
  * - Actionable recommendations
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,7 +154,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialDashboard = FinancialDashboard;
 var react_1 = require("react");
@@ -174,7 +171,7 @@ var financial_dashboard_engine_1 = require("@/lib/financial/financial-dashboard-
 var formatters_1 = require("@/lib/utils/formatters");
 var utils_1 = require("@/lib/utils");
 // Chart components (simplified for now)
-var LineChartComponent = function (_a) {
+var LineChartComponent = (_a) => {
   var data = _a.data,
     className = _a.className;
   return (
@@ -189,7 +186,7 @@ var LineChartComponent = function (_a) {
     </div>
   );
 };
-var BarChartComponent = function (_a) {
+var BarChartComponent = (_a) => {
   var data = _a.data,
     className = _a.className;
   return (
@@ -204,7 +201,7 @@ var BarChartComponent = function (_a) {
     </div>
   );
 };
-var PieChartComponent = function (_a) {
+var PieChartComponent = (_a) => {
   var data = _a.data,
     className = _a.className;
   return (
@@ -220,7 +217,6 @@ var PieChartComponent = function (_a) {
   );
 };
 function FinancialDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     _b = _a.refreshInterval,
     refreshInterval = _b === void 0 ? 300 : _b, // 5 minutes default
@@ -245,10 +241,10 @@ function FinancialDashboard(_a) {
     setSelectedTimeframe = _h[1];
   var dashboardEngine = new financial_dashboard_engine_1.FinancialDashboardEngine();
   var fetchDashboardData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var data, err_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
@@ -293,29 +289,20 @@ function FinancialDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId, refreshInterval],
   );
   // Initial load
-  (0, react_1.useEffect)(
-    function () {
-      fetchDashboardData();
-    },
-    [fetchDashboardData],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
   // Auto-refresh
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoRefresh) return;
-      var interval = setInterval(fetchDashboardData, refreshInterval * 1000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [autoRefresh, refreshInterval, fetchDashboardData],
-  );
-  var getTrendIcon = function (trend) {
+  (0, react_1.useEffect)(() => {
+    if (!autoRefresh) return;
+    var interval = setInterval(fetchDashboardData, refreshInterval * 1000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, fetchDashboardData]);
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return <lucide_react_1.ArrowUp className="h-4 w-4 text-green-500" />;
@@ -325,7 +312,7 @@ function FinancialDashboard(_a) {
         return <lucide_react_1.Minus className="h-4 w-4 text-yellow-500" />;
     }
   };
-  var getAlertIcon = function (severity) {
+  var getAlertIcon = (severity) => {
     switch (severity) {
       case "critical":
         return <lucide_react_1.XCircle className="h-4 w-4 text-red-500" />;
@@ -339,7 +326,7 @@ function FinancialDashboard(_a) {
         return <lucide_react_1.Bell className="h-4 w-4 text-blue-500" />;
     }
   };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "critical":
         return "destructive";
@@ -363,20 +350,18 @@ function FinancialDashboard(_a) {
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {__spreadArray([], Array(4), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="animate-pulse">
-                <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <div className="h-4 bg-muted rounded w-24"></div>
-                  <div className="h-4 w-4 bg-muted rounded"></div>
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="h-8 bg-muted rounded w-32 mb-2"></div>
-                  <div className="h-3 bg-muted rounded w-20"></div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(4), true).map((_, i) => (
+            <card_1.Card key={i} className="animate-pulse">
+              <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="h-4 bg-muted rounded w-24"></div>
+                <div className="h-4 w-4 bg-muted rounded"></div>
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="h-8 bg-muted rounded w-32 mb-2"></div>
+                <div className="h-3 bg-muted rounded w-20"></div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -413,13 +398,7 @@ function FinancialDashboard(_a) {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <button_1.Button
-            variant="outline"
-            size="sm"
-            onClick={function () {
-              return setAutoRefresh(!autoRefresh);
-            }}
-          >
+          <button_1.Button variant="outline" size="sm" onClick={() => setAutoRefresh(!autoRefresh)}>
             <lucide_react_1.RefreshCw
               className={(0, utils_1.cn)("mr-2 h-4 w-4", autoRefresh && "animate-spin")}
             />
@@ -441,19 +420,13 @@ function FinancialDashboard(_a) {
       </div>
 
       {/* Critical Alerts */}
-      {dashboardData.alerts.filter(function (alert) {
-        return alert.severity === "critical";
-      }).length > 0 && (
+      {dashboardData.alerts.filter((alert) => alert.severity === "critical").length > 0 && (
         <alert_1.Alert variant="destructive">
           <lucide_react_1.AlertTriangle className="h-4 w-4" />
           <alert_1.AlertTitle>Alertas Críticos</alert_1.AlertTitle>
           <alert_1.AlertDescription>
-            {
-              dashboardData.alerts.filter(function (alert) {
-                return alert.severity === "critical";
-              }).length
-            }{" "}
-            alertas críticos requerem atenção imediata.
+            {dashboardData.alerts.filter((alert) => alert.severity === "critical").length} alertas
+            críticos requerem atenção imediata.
           </alert_1.AlertDescription>
         </alert_1.Alert>
       )}
@@ -696,50 +669,48 @@ function FinancialDashboard(_a) {
 
         <tabs_1.TabsContent value="forecasts" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            {dashboardData.forecasts.map(function (forecast, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader>
-                    <card_1.CardTitle className="capitalize">
-                      Previsão de {forecast.type.replace("_", " ")}
-                    </card_1.CardTitle>
-                    <card_1.CardDescription>
-                      Próximos {forecast.period} - Confiança:{" "}
-                      {(0, formatters_1.formatPercentage)(forecast.confidence)}
-                    </card_1.CardDescription>
-                  </card_1.CardHeader>
-                  <card_1.CardContent className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Valor Atual</span>
-                      <span className="font-medium">
-                        {(0, formatters_1.formatCurrency)(forecast.current_value)}
+            {dashboardData.forecasts.map((forecast, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader>
+                  <card_1.CardTitle className="capitalize">
+                    Previsão de {forecast.type.replace("_", " ")}
+                  </card_1.CardTitle>
+                  <card_1.CardDescription>
+                    Próximos {forecast.period} - Confiança:{" "}
+                    {(0, formatters_1.formatPercentage)(forecast.confidence)}
+                  </card_1.CardDescription>
+                </card_1.CardHeader>
+                <card_1.CardContent className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Valor Atual</span>
+                    <span className="font-medium">
+                      {(0, formatters_1.formatCurrency)(forecast.current_value)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Valor Previsto</span>
+                    <span className="font-medium">
+                      {(0, formatters_1.formatCurrency)(forecast.predicted_value)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm">Variação</span>
+                    <div className="flex items-center">
+                      {getTrendIcon(forecast.trend)}
+                      <span
+                        className={(0, utils_1.cn)(
+                          "ml-1 font-medium",
+                          forecast.change_percentage > 0 ? "text-green-600" : "text-red-600",
+                        )}
+                      >
+                        {forecast.change_percentage > 0 ? "+" : ""}
+                        {(0, formatters_1.formatPercentage)(forecast.change_percentage / 100)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Valor Previsto</span>
-                      <span className="font-medium">
-                        {(0, formatters_1.formatCurrency)(forecast.predicted_value)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Variação</span>
-                      <div className="flex items-center">
-                        {getTrendIcon(forecast.trend)}
-                        <span
-                          className={(0, utils_1.cn)(
-                            "ml-1 font-medium",
-                            forecast.change_percentage > 0 ? "text-green-600" : "text-red-600",
-                          )}
-                        >
-                          {forecast.change_percentage > 0 ? "+" : ""}
-                          {(0, formatters_1.formatPercentage)(forecast.change_percentage / 100)}
-                        </span>
-                      </div>
-                    </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -758,28 +729,26 @@ function FinancialDashboard(_a) {
                       </div>
                     </card_1.CardContent>
                   </card_1.Card>
-                : dashboardData.alerts.map(function (alert, index) {
-                    return (
-                      <alert_1.Alert
-                        key={index}
-                        variant={alert.severity === "critical" ? "destructive" : "default"}
-                      >
-                        {getAlertIcon(alert.severity)}
-                        <alert_1.AlertTitle className="flex items-center justify-between">
-                          <span>{alert.title}</span>
-                          <badge_1.Badge variant={getPriorityColor(alert.severity)}>
-                            {alert.severity}
-                          </badge_1.Badge>
-                        </alert_1.AlertTitle>
-                        <alert_1.AlertDescription>
-                          <p className="mb-2">{alert.description}</p>
-                          <div className="text-xs text-muted-foreground">
-                            {new Date(alert.created_at).toLocaleString("pt-BR")}
-                          </div>
-                        </alert_1.AlertDescription>
-                      </alert_1.Alert>
-                    );
-                  })}
+                : dashboardData.alerts.map((alert, index) => (
+                    <alert_1.Alert
+                      key={index}
+                      variant={alert.severity === "critical" ? "destructive" : "default"}
+                    >
+                      {getAlertIcon(alert.severity)}
+                      <alert_1.AlertTitle className="flex items-center justify-between">
+                        <span>{alert.title}</span>
+                        <badge_1.Badge variant={getPriorityColor(alert.severity)}>
+                          {alert.severity}
+                        </badge_1.Badge>
+                      </alert_1.AlertTitle>
+                      <alert_1.AlertDescription>
+                        <p className="mb-2">{alert.description}</p>
+                        <div className="text-xs text-muted-foreground">
+                          {new Date(alert.created_at).toLocaleString("pt-BR")}
+                        </div>
+                      </alert_1.AlertDescription>
+                    </alert_1.Alert>
+                  ))}
             </div>
           </scroll_area_1.ScrollArea>
         </tabs_1.TabsContent>
@@ -787,70 +756,66 @@ function FinancialDashboard(_a) {
         <tabs_1.TabsContent value="recommendations" className="space-y-4">
           <scroll_area_1.ScrollArea className="h-96">
             <div className="space-y-4">
-              {dashboardData.recommendations.map(function (recommendation, index) {
-                return (
-                  <card_1.Card key={index}>
-                    <card_1.CardHeader>
-                      <div className="flex items-center justify-between">
-                        <card_1.CardTitle className="text-base">
-                          {recommendation.title}
-                        </card_1.CardTitle>
-                        <badge_1.Badge variant={getPriorityColor(recommendation.priority)}>
-                          {recommendation.priority}
-                        </badge_1.Badge>
-                      </div>
-                      <card_1.CardDescription>{recommendation.description}</card_1.CardDescription>
-                    </card_1.CardHeader>
-                    <card_1.CardContent className="space-y-4">
-                      <div className="grid gap-2 md:grid-cols-3">
-                        <div>
-                          <span className="text-xs text-muted-foreground">Impacto Financeiro</span>
-                          <p className="font-medium">
-                            {(0, formatters_1.formatCurrency)(
-                              recommendation.expected_impact.financial_impact,
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-xs text-muted-foreground">Prazo</span>
-                          <p className="font-medium">{recommendation.expected_impact.timeframe}</p>
-                        </div>
-                        <div>
-                          <span className="text-xs text-muted-foreground">Confiança</span>
-                          <p className="font-medium">
-                            {(0, formatters_1.formatPercentage)(
-                              recommendation.expected_impact.confidence,
-                            )}
-                          </p>
-                        </div>
-                      </div>
-
+              {dashboardData.recommendations.map((recommendation, index) => (
+                <card_1.Card key={index}>
+                  <card_1.CardHeader>
+                    <div className="flex items-center justify-between">
+                      <card_1.CardTitle className="text-base">
+                        {recommendation.title}
+                      </card_1.CardTitle>
+                      <badge_1.Badge variant={getPriorityColor(recommendation.priority)}>
+                        {recommendation.priority}
+                      </badge_1.Badge>
+                    </div>
+                    <card_1.CardDescription>{recommendation.description}</card_1.CardDescription>
+                  </card_1.CardHeader>
+                  <card_1.CardContent className="space-y-4">
+                    <div className="grid gap-2 md:grid-cols-3">
                       <div>
-                        <span className="text-xs text-muted-foreground">Próximos Passos</span>
-                        <ul className="mt-1 text-sm space-y-1">
-                          {recommendation.action_steps.slice(0, 3).map(function (step, stepIndex) {
-                            return (
-                              <li key={stepIndex} className="flex items-start">
-                                <span className="mr-2">•</span>
-                                <span>{step}</span>
-                              </li>
-                            );
-                          })}
-                        </ul>
+                        <span className="text-xs text-muted-foreground">Impacto Financeiro</span>
+                        <p className="font-medium">
+                          {(0, formatters_1.formatCurrency)(
+                            recommendation.expected_impact.financial_impact,
+                          )}
+                        </p>
                       </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Prazo</span>
+                        <p className="font-medium">{recommendation.expected_impact.timeframe}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-muted-foreground">Confiança</span>
+                        <p className="font-medium">
+                          {(0, formatters_1.formatPercentage)(
+                            recommendation.expected_impact.confidence,
+                          )}
+                        </p>
+                      </div>
+                    </div>
 
-                      <div className="flex justify-between items-center pt-2">
-                        <span className="text-xs text-muted-foreground">
-                          Prazo: {new Date(recommendation.deadline).toLocaleDateString("pt-BR")}
-                        </span>
-                        <button_1.Button size="sm" variant="outline">
-                          Ver Detalhes
-                        </button_1.Button>
-                      </div>
-                    </card_1.CardContent>
-                  </card_1.Card>
-                );
-              })}
+                    <div>
+                      <span className="text-xs text-muted-foreground">Próximos Passos</span>
+                      <ul className="mt-1 text-sm space-y-1">
+                        {recommendation.action_steps.slice(0, 3).map((step, stepIndex) => (
+                          <li key={stepIndex} className="flex items-start">
+                            <span className="mr-2">•</span>
+                            <span>{step}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-2">
+                      <span className="text-xs text-muted-foreground">
+                        Prazo: {new Date(recommendation.deadline).toLocaleDateString("pt-BR")}
+                      </span>
+                      <button_1.Button size="sm" variant="outline">
+                        Ver Detalhes
+                      </button_1.Button>
+                    </div>
+                  </card_1.CardContent>
+                </card_1.Card>
+              ))}
             </div>
           </scroll_area_1.ScrollArea>
         </tabs_1.TabsContent>

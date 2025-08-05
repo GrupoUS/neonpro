@@ -1,19 +1,18 @@
-"use strict";
 /**
  * NeonPro - SMS Service for Twilio Integration
  * HIPAA-compliant SMS notifications for healthcare appointments
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,13 +132,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SMSService = void 0;
 var twilio_1 = require("twilio");
 var config_1 = require("./config");
 var client = new twilio_1.Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-var SMSService = /** @class */ (function () {
+var SMSService = /** @class */ (() => {
   function SMSService() {
     this.config = config_1.NOTIFICATION_CONFIG.sms;
   }
@@ -219,7 +216,7 @@ var SMSService = /** @class */ (function () {
   /**
    * Validate and format phone number for Twilio
    */
-  SMSService.prototype.validatePhoneNumber = function (phone) {
+  SMSService.prototype.validatePhoneNumber = (phone) => {
     try {
       // Remove all non-digit characters
       var cleaned = phone.replace(/\D/g, "");
@@ -246,12 +243,12 @@ var SMSService = /** @class */ (function () {
   }; /**
    * Generate SMS content based on notification type and template data
    */
-  SMSService.prototype.generateSMSContent = function (type, baseContent, templateData) {
+  SMSService.prototype.generateSMSContent = (type, baseContent, templateData) => {
     try {
       // SMS templates optimized for healthcare (160-320 characters)
       var templates = {
-        appointment_reminder: function (data) {
-          return "\uD83C\uDFE5 "
+        appointment_reminder: (data) =>
+          "\uD83C\uDFE5 "
             .concat(
               (data === null || data === void 0 ? void 0 : data.clinicName) || "NeonPro",
               ": Lembrete de consulta para ",
@@ -265,10 +262,9 @@ var SMSService = /** @class */ (function () {
             .concat(
               data === null || data === void 0 ? void 0 : data.clinicPhone,
               ". STOP para cancelar msgs.",
-            );
-        },
-        appointment_confirmation: function (data) {
-          return "\u2705 "
+            ),
+        appointment_confirmation: (data) =>
+          "\u2705 "
             .concat(
               (data === null || data === void 0 ? void 0 : data.clinicName) || "NeonPro",
               ": Consulta confirmada para ",
@@ -279,10 +275,9 @@ var SMSService = /** @class */ (function () {
             .concat(
               data === null || data === void 0 ? void 0 : data.clinicAddress,
               ". Chegue 15min antes.",
-            );
-        },
-        appointment_cancellation: function (data) {
-          return "\u274C "
+            ),
+        appointment_cancellation: (data) =>
+          "\u274C "
             .concat(
               (data === null || data === void 0 ? void 0 : data.clinicName) || "NeonPro",
               ": Consulta cancelada para ",
@@ -293,10 +288,9 @@ var SMSService = /** @class */ (function () {
               data === null || data === void 0 ? void 0 : data.appointmentTime,
               ". Para reagendar: ",
             )
-            .concat(data === null || data === void 0 ? void 0 : data.clinicPhone, ".");
-        },
-        reschedule_request: function (data) {
-          return "\uD83D\uDCC5 "
+            .concat(data === null || data === void 0 ? void 0 : data.clinicPhone, "."),
+        reschedule_request: (data) =>
+          "\uD83D\uDCC5 "
             .concat(
               (data === null || data === void 0 ? void 0 : data.clinicName) || "NeonPro",
               ": Solicita\u00E7\u00E3o de reagendamento para ",
@@ -306,10 +300,9 @@ var SMSService = /** @class */ (function () {
               ". Nova data dispon\u00EDvel: ",
             )
             .concat(data === null || data === void 0 ? void 0 : data.newDate, ". Confirme: ")
-            .concat(data === null || data === void 0 ? void 0 : data.confirmationLink);
-        },
-        treatment_reminder: function (data) {
-          return "\uD83D\uDC8A "
+            .concat(data === null || data === void 0 ? void 0 : data.confirmationLink),
+        treatment_reminder: (data) =>
+          "\uD83D\uDC8A "
             .concat(
               (data === null || data === void 0 ? void 0 : data.clinicName) || "NeonPro",
               ": Lembrete de tratamento para ",
@@ -319,10 +312,9 @@ var SMSService = /** @class */ (function () {
               data === null || data === void 0 ? void 0 : data.treatmentName,
               " - Pr\u00F3xima sess\u00E3o: ",
             )
-            .concat(data === null || data === void 0 ? void 0 : data.nextAppointment, ".");
-        },
-        follow_up_reminder: function (data) {
-          return "\uD83D\uDC68\u200D\u2695\uFE0F "
+            .concat(data === null || data === void 0 ? void 0 : data.nextAppointment, "."),
+        follow_up_reminder: (data) =>
+          "\uD83D\uDC68\u200D\u2695\uFE0F "
             .concat(
               (data === null || data === void 0 ? void 0 : data.clinicName) || "NeonPro",
               ": Acompanhamento p\u00F3s-tratamento para ",
@@ -331,28 +323,25 @@ var SMSService = /** @class */ (function () {
               data === null || data === void 0 ? void 0 : data.patientName,
               ". Agende consulta de retorno: ",
             )
-            .concat(data === null || data === void 0 ? void 0 : data.clinicPhone, ".");
-        },
-        emergency_alert: function (data) {
-          return "\uD83D\uDEA8 "
+            .concat(data === null || data === void 0 ? void 0 : data.clinicPhone, "."),
+        emergency_alert: (data) =>
+          "\uD83D\uDEA8 "
             .concat(
               (data === null || data === void 0 ? void 0 : data.clinicName) || "NeonPro",
               " - URGENTE: ",
             )
             .concat(data === null || data === void 0 ? void 0 : data.message, ". Contato: ")
             .concat(data === null || data === void 0 ? void 0 : data.contactInfo, ". ")
-            .concat(data === null || data === void 0 ? void 0 : data.patientName);
-        },
-        billing_reminder: function (data) {
-          return "\uD83D\uDCB3 "
+            .concat(data === null || data === void 0 ? void 0 : data.patientName),
+        billing_reminder: (data) =>
+          "\uD83D\uDCB3 "
             .concat(
               (data === null || data === void 0 ? void 0 : data.clinicName) || "NeonPro",
               ": Cobran\u00E7a de R$ ",
             )
             .concat(data === null || data === void 0 ? void 0 : data.amountDue, " vence em ")
             .concat(data === null || data === void 0 ? void 0 : data.dueDate, ". Pague online: ")
-            .concat(data === null || data === void 0 ? void 0 : data.paymentLink);
-        },
+            .concat(data === null || data === void 0 ? void 0 : data.paymentLink),
       };
       var template = templates[type];
       if (template && templateData) {
@@ -375,7 +364,7 @@ var SMSService = /** @class */ (function () {
   SMSService.prototype.getDeliveryStatus = function (messageId) {
     return __awaiter(this, void 0, void 0, function () {
       var message, statusMap, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -418,7 +407,7 @@ var SMSService = /** @class */ (function () {
   /**
    * Validate SMS template data for specific notification type
    */
-  SMSService.prototype.validateSMSTemplate = function (type, data) {
+  SMSService.prototype.validateSMSTemplate = (type, data) => {
     try {
       var requiredFields = {
         appointment_reminder: ["patientName", "appointmentDate", "appointmentTime", "clinicPhone"],
@@ -442,9 +431,7 @@ var SMSService = /** @class */ (function () {
       };
       var required = requiredFields[type];
       if (!required) return true; // No validation for unknown types
-      return required.every(function (field) {
-        return data && data[field];
-      });
+      return required.every((field) => data && data[field]);
     } catch (error) {
       console.error("SMS template validation error:", error);
       return false;
@@ -456,8 +443,7 @@ var SMSService = /** @class */ (function () {
   SMSService.prototype.sendBulk = function (payloads) {
     return __awaiter(this, void 0, void 0, function () {
       var results, batchSize, i, batch, batchPromises, batchResults, error_3;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             results = [];
@@ -467,9 +453,7 @@ var SMSService = /** @class */ (function () {
           case 1:
             if (!(i < payloads.length)) return [3 /*break*/, 8];
             batch = payloads.slice(i, i + batchSize);
-            batchPromises = batch.map(function (payload) {
-              return _this.send(payload);
-            });
+            batchPromises = batch.map((payload) => this.send(payload));
             _a.label = 2;
           case 2:
             _a.trys.push([2, 6, , 7]);
@@ -478,12 +462,7 @@ var SMSService = /** @class */ (function () {
             batchResults = _a.sent();
             results.push.apply(results, batchResults);
             if (!(i + batchSize < payloads.length)) return [3 /*break*/, 5];
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 4:
             _a.sent(); // 1 second delay
             _a.label = 5;
@@ -493,7 +472,7 @@ var SMSService = /** @class */ (function () {
             error_3 = _a.sent();
             console.error("Bulk SMS batch error:", error_3);
             // Add failed results for this batch
-            batch.forEach(function () {
+            batch.forEach(() => {
               results.push({
                 success: false,
                 channel: "sms",

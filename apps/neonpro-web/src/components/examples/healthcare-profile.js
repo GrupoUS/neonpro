@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthcareProfile = HealthcareProfile;
 var hooks_1 = require("@/lib/trpc/hooks");

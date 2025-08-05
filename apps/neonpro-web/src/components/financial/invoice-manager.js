@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InvoiceManager = InvoiceManager;
 /**
@@ -172,7 +169,6 @@ var lucide_react_1 = require("lucide-react");
 // Services
 var financial_1 = require("@/lib/supabase/financial");
 function InvoiceManager(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     _b = _a.defaultView,
     defaultView = _b === void 0 ? "list" : _b,
@@ -207,25 +203,19 @@ function InvoiceManager(_a) {
     formData = _j[0],
     setFormData = _j[1];
   // Load Data
-  (0, react_1.useEffect)(
-    function () {
-      loadInvoices();
-      loadSummary();
-    },
-    [clinicId],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedInvoiceId && activeTab === "edit") {
-        loadInvoiceDetails(selectedInvoiceId);
-      }
-    },
-    [selectedInvoiceId, activeTab],
-  );
-  var loadInvoices = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadInvoices();
+    loadSummary();
+  }, [clinicId]);
+  (0, react_1.useEffect)(() => {
+    if (selectedInvoiceId && activeTab === "edit") {
+      loadInvoiceDetails(selectedInvoiceId);
+    }
+  }, [selectedInvoiceId, activeTab]);
+  var loadInvoices = () =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -250,11 +240,10 @@ function InvoiceManager(_a) {
         }
       });
     });
-  };
-  var loadSummary = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadSummary = () =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -272,11 +261,10 @@ function InvoiceManager(_a) {
         }
       });
     });
-  };
-  var loadInvoiceDetails = function (invoiceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadInvoiceDetails = (invoiceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -305,12 +293,11 @@ function InvoiceManager(_a) {
         }
       });
     });
-  };
   // Handlers
-  var handleCreateInvoice = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateInvoice = () =>
+    __awaiter(this, void 0, void 0, function () {
       var invoiceData, result, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -343,11 +330,10 @@ function InvoiceManager(_a) {
         }
       });
     });
-  };
-  var handleUpdateInvoice = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleUpdateInvoice = () =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedInvoice) return [2 /*return*/];
@@ -382,10 +368,9 @@ function InvoiceManager(_a) {
         }
       });
     });
-  };
-  var handleDownloadPDF = function (invoiceId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDownloadPDF = (invoiceId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // Mock PDF download - replace with actual implementation
           sonner_1.toast.success("Funcionalidade de PDF será implementada em breve");
@@ -396,10 +381,9 @@ function InvoiceManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleSendEmail = function (invoiceId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleSendEmail = (invoiceId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // Mock email sending - replace with actual implementation
           sonner_1.toast.success("Funcionalidade de email será implementada em breve");
@@ -410,9 +394,8 @@ function InvoiceManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
   // Filter invoices by search term
-  var filteredInvoices = invoices.filter(function (invoice) {
+  var filteredInvoices = invoices.filter((invoice) => {
     var _a, _b;
     return (
       ((_b = (_a = invoice.patient) === null || _a === void 0 ? void 0 : _a.name) === null ||
@@ -424,7 +407,7 @@ function InvoiceManager(_a) {
     );
   });
   // Status badge color mapping
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "paid":
         return "bg-green-500";
@@ -440,7 +423,7 @@ function InvoiceManager(_a) {
         return "bg-yellow-500"; // draft
     }
   };
-  var getStatusText = function (status) {
+  var getStatusText = (status) => {
     switch (status) {
       case "paid":
         return "Pago";
@@ -516,12 +499,7 @@ function InvoiceManager(_a) {
           </card_1.CardDescription>
         </card_1.CardHeader>
         <card_1.CardContent>
-          <tabs_1.Tabs
-            value={activeTab}
-            onValueChange={function (value) {
-              return setActiveTab(value);
-            }}
-          >
+          <tabs_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
             <tabs_1.TabsList className="grid w-full grid-cols-3">
               <tabs_1.TabsTrigger value="list">Lista de Faturas</tabs_1.TabsTrigger>
               <tabs_1.TabsTrigger value="create">Criar Fatura</tabs_1.TabsTrigger>
@@ -538,17 +516,11 @@ function InvoiceManager(_a) {
                   <input_1.Input
                     placeholder="Buscar faturas..."
                     value={searchTerm}
-                    onChange={function (e) {
-                      return setSearchTerm(e.target.value);
-                    }}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-8"
                   />
                 </div>
-                <button_1.Button
-                  onClick={function () {
-                    return setActiveTab("create");
-                  }}
-                >
+                <button_1.Button onClick={() => setActiveTab("create")}>
                   <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                   Nova Fatura
                 </button_1.Button>
@@ -561,7 +533,7 @@ function InvoiceManager(_a) {
                     ? <div className="text-center py-8 text-muted-foreground">
                         Nenhuma fatura encontrada
                       </div>
-                    : filteredInvoices.map(function (invoice) {
+                    : filteredInvoices.map((invoice) => {
                         var _a;
                         return (
                           <card_1.Card key={invoice.id} className="p-4">
@@ -592,9 +564,7 @@ function InvoiceManager(_a) {
                                 <button_1.Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={function () {
-                                    return handleDownloadPDF(invoice.id);
-                                  }}
+                                  onClick={() => handleDownloadPDF(invoice.id)}
                                 >
                                   <lucide_react_1.Download className="h-4 w-4" />
                                 </button_1.Button>
@@ -603,9 +573,7 @@ function InvoiceManager(_a) {
                                   <button_1.Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={function () {
-                                      return handleSendEmail(invoice.id);
-                                    }}
+                                    onClick={() => handleSendEmail(invoice.id)}
                                   >
                                     <lucide_react_1.Send className="h-4 w-4" />
                                   </button_1.Button>
@@ -614,7 +582,7 @@ function InvoiceManager(_a) {
                                 <button_1.Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={function () {
+                                  onClick={() => {
                                     setSelectedInvoice(invoice);
                                     setActiveTab("edit");
                                   }}
@@ -638,11 +606,9 @@ function InvoiceManager(_a) {
                     id="patient"
                     placeholder="ID do paciente"
                     value={formData.patient_id || ""}
-                    onChange={function (e) {
-                      return setFormData(
-                        __assign(__assign({}, formData), { patient_id: e.target.value }),
-                      );
-                    }}
+                    onChange={(e) =>
+                      setFormData(__assign(__assign({}, formData), { patient_id: e.target.value }))
+                    }
                   />
                 </div>
 
@@ -652,11 +618,9 @@ function InvoiceManager(_a) {
                     id="description"
                     placeholder="Descrição dos serviços..."
                     value={formData.description || ""}
-                    onChange={function (e) {
-                      return setFormData(
-                        __assign(__assign({}, formData), { description: e.target.value }),
-                      );
-                    }}
+                    onChange={(e) =>
+                      setFormData(__assign(__assign({}, formData), { description: e.target.value }))
+                    }
                   />
                 </div>
 
@@ -666,11 +630,9 @@ function InvoiceManager(_a) {
                     id="due_date"
                     type="date"
                     value={formData.due_date || ""}
-                    onChange={function (e) {
-                      return setFormData(
-                        __assign(__assign({}, formData), { due_date: e.target.value }),
-                      );
-                    }}
+                    onChange={(e) =>
+                      setFormData(__assign(__assign({}, formData), { due_date: e.target.value }))
+                    }
                   />
                 </div>
               </div>
@@ -678,12 +640,7 @@ function InvoiceManager(_a) {
               <separator_1.Separator />
 
               <div className="flex justify-end space-x-2">
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setActiveTab("list");
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setActiveTab("list")}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={handleCreateInvoice} disabled={loading}>
@@ -706,11 +663,11 @@ function InvoiceManager(_a) {
                     <textarea_1.Textarea
                       id="edit_description"
                       value={formData.description || ""}
-                      onChange={function (e) {
-                        return setFormData(
+                      onChange={(e) =>
+                        setFormData(
                           __assign(__assign({}, formData), { description: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
 
@@ -720,11 +677,9 @@ function InvoiceManager(_a) {
                       id="edit_due_date"
                       type="date"
                       value={formData.due_date || ""}
-                      onChange={function (e) {
-                        return setFormData(
-                          __assign(__assign({}, formData), { due_date: e.target.value }),
-                        );
-                      }}
+                      onChange={(e) =>
+                        setFormData(__assign(__assign({}, formData), { due_date: e.target.value }))
+                      }
                     />
                   </div>
                 </div>
@@ -733,12 +688,7 @@ function InvoiceManager(_a) {
               <separator_1.Separator />
 
               <div className="flex justify-end space-x-2">
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setActiveTab("list");
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setActiveTab("list")}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={handleUpdateInvoice} disabled={loading}>

@@ -1,6 +1,5 @@
-import type { NextRequest } from "next/server";
-import type { NextResponse } from "next/server";
 import type { LRUCache } from "lru-cache";
+import type { NextRequest, NextResponse } from "next/server";
 import type { performanceMonitor } from "@/lib/monitoring/performance-monitor";
 
 /**
@@ -63,7 +62,7 @@ export class IntelligentRateLimit {
       blockDurationMs?: number;
     },
   ): { allowed: boolean; remaining: number; resetTime: number; reason?: string } {
-    const key = this.getKey(ip, route);
+    const key = IntelligentRateLimit.getKey(ip, route);
     const now = Date.now();
 
     let entry = rateLimitCache.get(key);
@@ -159,13 +158,13 @@ export class ThreatDetection {
     const reasons: string[] = [];
 
     // Check for known bot patterns
-    if (this.isBotUserAgent(userAgent)) {
+    if (ThreatDetection.isBotUserAgent(userAgent)) {
       riskScore += 3;
       reasons.push("Bot user agent detected");
     }
 
     // Check for scanning behavior
-    if (this.isScanningPattern(route)) {
+    if (ThreatDetection.isScanningPattern(route)) {
       riskScore += 4;
       reasons.push("Route scanning detected");
     }
@@ -216,7 +215,7 @@ export class ThreatDetection {
       /\.(php|asp|jsp|cgi)$/i,
       /\/admin|\/wp-admin|\/phpmyadmin/i,
       /\.env|\.git|backup|config\./i,
-      /\/api\/[^\/]+\/[^\/]+\/[^\/]+/, // Deep API exploration
+      /\/api\/[^/]+\/[^/]+\/[^/]+/, // Deep API exploration
     ];
 
     return scanningPatterns.some((pattern) => pattern.test(route));

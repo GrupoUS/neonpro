@@ -1,19 +1,19 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 import {
-  formatCurrency,
-  formatPercentage,
-  calculateGrowthRate,
+  aggregateMetricsByPeriod,
+  calculateARR,
   calculateChurnRate,
+  calculateGrowthRate,
   calculateLTV,
   calculateMRR,
-  calculateARR,
-  aggregateMetricsByPeriod,
-  generateDateRange,
-  validateDateRange,
-  parseAnalyticsFilters,
   exportToCSV,
-  exportToPDF,
   exportToExcel,
+  exportToPDF,
+  formatCurrency,
+  formatPercentage,
+  generateDateRange,
+  parseAnalyticsFilters,
+  validateDateRange,
 } from "@/lib/analytics/utils";
 
 // Mock date-fns

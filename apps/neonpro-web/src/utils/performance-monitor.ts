@@ -1,7 +1,5 @@
 "use client";
 
-import type { useEffect, useRef, useCallback, useState } from "react";
-
 // =====================================================================================
 // PERFORMANCE MONITORING SYSTEM
 // Real-time performance tracking and optimization suggestions
@@ -257,7 +255,7 @@ class PerformanceMonitor {
     this.alerts = []; // Clear previous alerts
 
     // Check all metrics against thresholds
-    this.metrics.forEach((categoryMetrics, category) => {
+    this.metrics.forEach((categoryMetrics, _category) => {
       categoryMetrics.forEach((metric) => {
         if (metric.threshold && metric.value > metric.threshold) {
           this.addAlert({
@@ -284,7 +282,7 @@ class PerformanceMonitor {
     });
   }
 
-  private getSuggestion(metricName: string, value: number, threshold: number): string {
+  private getSuggestion(metricName: string, _value: number, _threshold: number): string {
     const suggestions: Record<string, string> = {
       "heap-used":
         "Consider implementing memory cleanup, removing unused variables, or using WeakMap/WeakSet",

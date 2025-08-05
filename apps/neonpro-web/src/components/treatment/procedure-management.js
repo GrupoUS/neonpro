@@ -7,32 +7,31 @@
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcedureManagement = ProcedureManagement;
 var react_1 = require("react");
@@ -205,7 +202,6 @@ var commonProcedures = [
   "Mesoterapia facial",
 ];
 function ProcedureManagement(_a) {
-  var _this = this;
   var _b;
   var treatmentPlanId = _a.treatmentPlanId,
     patientId = _a.patientId,
@@ -262,20 +258,17 @@ function ProcedureManagement(_a) {
     },
   });
   // Load data on component mount
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadData();
     loadPatients();
   }, []);
   // Reload procedures when filters change
-  (0, react_1.useEffect)(
-    function () {
-      loadProcedures();
-    },
-    [filters, currentPage, searchText],
-  );
-  var loadData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    loadProcedures();
+  }, [filters, currentPage, searchText]);
+  var loadData = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, loadProcedures()];
@@ -285,11 +278,10 @@ function ProcedureManagement(_a) {
         }
       });
     });
-  };
-  var loadProcedures = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadProcedures = () =>
+    __awaiter(this, void 0, void 0, function () {
       var searchFilters, response, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -323,11 +315,10 @@ function ProcedureManagement(_a) {
         }
       });
     });
-  };
-  var loadPatients = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPatients = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -345,19 +336,18 @@ function ProcedureManagement(_a) {
         }
       });
     });
-  };
-  var handleSearch = function (value) {
+  var handleSearch = (value) => {
     setSearchText(value);
     setCurrentPage(1);
   };
-  var handleFilterChange = function (key, value) {
-    setFilters(function (prev) {
+  var handleFilterChange = (key, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[key] = value), _a));
     });
     setCurrentPage(1);
   };
-  var openCreateDialog = function () {
+  var openCreateDialog = () => {
     setEditingProcedure(null);
     form.reset({
       treatment_plan_id: treatmentPlanId || "",
@@ -375,7 +365,7 @@ function ProcedureManagement(_a) {
     });
     setIsDialogOpen(true);
   };
-  var openEditDialog = function (procedure) {
+  var openEditDialog = (procedure) => {
     setEditingProcedure(procedure);
     form.reset({
       treatment_plan_id: procedure.treatment_plan_id,
@@ -393,10 +383,10 @@ function ProcedureManagement(_a) {
     });
     setIsDialogOpen(true);
   };
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -436,11 +426,10 @@ function ProcedureManagement(_a) {
         }
       });
     });
-  };
-  var handleDeleteProcedure = function (procedure) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDeleteProcedure = (procedure) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -467,21 +456,15 @@ function ProcedureManagement(_a) {
         }
       });
     });
-  };
-  var selectCommonProcedure = function (procedureName) {
+  var selectCommonProcedure = (procedureName) => {
     form.setValue("display", procedureName);
     form.setValue("code", procedureName.toLowerCase().replace(/\s+/g, "-"));
   };
-  var formatDateTime = function (dateString) {
-    return (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
+  var formatDateTime = (dateString) =>
+    (0, date_fns_1.format)(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
       locale: locale_1.ptBR,
     });
-  };
-  var getStatusOption = function (status) {
-    return statusOptions.find(function (option) {
-      return option.value === status;
-    });
-  };
+  var getStatusOption = (status) => statusOptions.find((option) => option.value === status);
   var totalPages = Math.ceil(totalCount / perPage);
   return (
     <div className="space-y-6">
@@ -506,9 +489,7 @@ function ProcedureManagement(_a) {
           <input_1.Input
             placeholder="Buscar procedimentos..."
             value={searchText}
-            onChange={function (e) {
-              return handleSearch(e.target.value);
-            }}
+            onChange={(e) => handleSearch(e.target.value)}
             className="pl-9"
           />
         </div>
@@ -517,16 +498,16 @@ function ProcedureManagement(_a) {
           {!patientId && (
             <select_1.Select
               value={filters.patient_id || "all"}
-              onValueChange={function (value) {
-                return handleFilterChange("patient_id", value === "all" ? undefined : value);
-              }}
+              onValueChange={(value) =>
+                handleFilterChange("patient_id", value === "all" ? undefined : value)
+              }
             >
               <select_1.SelectTrigger className="w-[200px]">
                 <select_1.SelectValue placeholder="Todos os pacientes" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">Todos os pacientes</select_1.SelectItem>
-                {patients.map(function (patient) {
+                {patients.map((patient) => {
                   var _a;
                   return (
                     <select_1.SelectItem key={patient.id} value={patient.id}>
@@ -541,22 +522,20 @@ function ProcedureManagement(_a) {
 
           <select_1.Select
             value={((_b = filters.status) === null || _b === void 0 ? void 0 : _b[0]) || "all"}
-            onValueChange={function (value) {
-              return handleFilterChange("status", value === "all" ? undefined : [value]);
-            }}
+            onValueChange={(value) =>
+              handleFilterChange("status", value === "all" ? undefined : [value])
+            }
           >
             <select_1.SelectTrigger className="w-[150px]">
               <select_1.SelectValue placeholder="Todos os status" />
             </select_1.SelectTrigger>
             <select_1.SelectContent>
               <select_1.SelectItem value="all">Todos os status</select_1.SelectItem>
-              {statusOptions.map(function (option) {
-                return (
-                  <select_1.SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </select_1.SelectItem>
-                );
-              })}
+              {statusOptions.map((option) => (
+                <select_1.SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </select_1.SelectItem>
+              ))}
             </select_1.SelectContent>
           </select_1.Select>
         </div>
@@ -596,18 +575,18 @@ function ProcedureManagement(_a) {
                     </table_1.TableRow>
                   </table_1.TableHeader>
                   <table_1.TableBody>
-                    {procedures.map(function (procedure) {
+                    {procedures.map((procedure) => {
                       var _a, _b, _c;
                       var statusOption = getStatusOption(procedure.status);
                       return (
                         <table_1.TableRow
                           key={procedure.id}
                           className="cursor-pointer hover:bg-muted/50"
-                          onClick={function () {
-                            return onSelectProcedure === null || onSelectProcedure === void 0
+                          onClick={() =>
+                            onSelectProcedure === null || onSelectProcedure === void 0
                               ? void 0
-                              : onSelectProcedure(procedure);
-                          }}
+                              : onSelectProcedure(procedure)
+                          }
                         >
                           <table_1.TableCell>
                             <div className="font-medium">{procedure.display}</div>
@@ -659,7 +638,7 @@ function ProcedureManagement(_a) {
                                 </dropdown_menu_1.DropdownMenuLabel>
                                 <dropdown_menu_1.DropdownMenuSeparator />
                                 <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function (e) {
+                                  onClick={(e) => {
                                     e.stopPropagation();
                                     onSelectProcedure === null || onSelectProcedure === void 0
                                       ? void 0
@@ -670,7 +649,7 @@ function ProcedureManagement(_a) {
                                   Ver detalhes
                                 </dropdown_menu_1.DropdownMenuItem>
                                 <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function (e) {
+                                  onClick={(e) => {
                                     e.stopPropagation();
                                     openEditDialog(procedure);
                                   }}
@@ -681,7 +660,7 @@ function ProcedureManagement(_a) {
                                 <dropdown_menu_1.DropdownMenuSeparator />
                                 <dropdown_menu_1.DropdownMenuItem
                                   className="text-red-600"
-                                  onClick={function (e) {
+                                  onClick={(e) => {
                                     e.stopPropagation();
                                     handleDeleteProcedure(procedure);
                                   }}
@@ -709,11 +688,7 @@ function ProcedureManagement(_a) {
                 <button_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return setCurrentPage(function (prev) {
-                      return Math.max(1, prev - 1);
-                    });
-                  }}
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
                 >
                   Anterior
@@ -724,11 +699,7 @@ function ProcedureManagement(_a) {
                 <button_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return setCurrentPage(function (prev) {
-                      return Math.min(totalPages, prev + 1);
-                    });
-                  }}
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
                 >
                   Próxima
@@ -756,21 +727,17 @@ function ProcedureManagement(_a) {
               <div className="space-y-3">
                 <label_1.Label>Procedimentos Comuns</label_1.Label>
                 <div className="flex flex-wrap gap-2">
-                  {commonProcedures.map(function (procedure) {
-                    return (
-                      <badge_1.Badge
-                        key={procedure}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                        onClick={function () {
-                          return selectCommonProcedure(procedure);
-                        }}
-                      >
-                        <lucide_react_1.Plus className="mr-1 h-3 w-3" />
-                        {procedure}
-                      </badge_1.Badge>
-                    );
-                  })}
+                  {commonProcedures.map((procedure) => (
+                    <badge_1.Badge
+                      key={procedure}
+                      variant="outline"
+                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => selectCommonProcedure(procedure)}
+                    >
+                      <lucide_react_1.Plus className="mr-1 h-3 w-3" />
+                      {procedure}
+                    </badge_1.Badge>
+                  ))}
                 </div>
               </div>
 
@@ -779,7 +746,7 @@ function ProcedureManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="display"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -796,7 +763,7 @@ function ProcedureManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="code"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -820,7 +787,7 @@ function ProcedureManagement(_a) {
                   <form_1.FormField
                     control={form.control}
                     name="patient_id"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -835,7 +802,7 @@ function ProcedureManagement(_a) {
                               </select_1.SelectTrigger>
                             </form_1.FormControl>
                             <select_1.SelectContent>
-                              {patients.map(function (patient) {
+                              {patients.map((patient) => {
                                 var _a;
                                 return (
                                   <select_1.SelectItem key={patient.id} value={patient.id}>
@@ -858,7 +825,7 @@ function ProcedureManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="status"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -870,13 +837,11 @@ function ProcedureManagement(_a) {
                             </select_1.SelectTrigger>
                           </form_1.FormControl>
                           <select_1.SelectContent>
-                            {statusOptions.map(function (option) {
-                              return (
-                                <select_1.SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </select_1.SelectItem>
-                              );
-                            })}
+                            {statusOptions.map((option) => (
+                              <select_1.SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </select_1.SelectItem>
+                            ))}
                           </select_1.SelectContent>
                         </select_1.Select>
                         <form_1.FormMessage />
@@ -891,7 +856,7 @@ function ProcedureManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="performed_date_time"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -911,7 +876,7 @@ function ProcedureManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="location"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -934,7 +899,7 @@ function ProcedureManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="reason_display"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -951,7 +916,7 @@ function ProcedureManagement(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="outcome"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -973,7 +938,7 @@ function ProcedureManagement(_a) {
               <form_1.FormField
                 control={form.control}
                 name="notes"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -999,9 +964,7 @@ function ProcedureManagement(_a) {
                 <button_1.Button
                   type="button"
                   variant="outline"
-                  onClick={function () {
-                    return setIsDialogOpen(false);
-                  }}
+                  onClick={() => setIsDialogOpen(false)}
                 >
                   Cancelar
                 </button_1.Button>

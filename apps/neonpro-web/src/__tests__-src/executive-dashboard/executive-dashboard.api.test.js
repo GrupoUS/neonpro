@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Executive Dashboard API Integration Tests
  * Story 7.1: Executive Dashboard Implementation
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("next/server");
 var route_1 = require("../../../app/api/executive-dashboard/kpis/route");
@@ -175,8 +172,8 @@ var mockAuth = {
   getUser: jest.fn(),
   getSession: jest.fn(),
 };
-describe("Executive Dashboard API Routes", function () {
-  beforeEach(function () {
+describe("Executive Dashboard API Routes", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Mock successful authentication
     mockAuth.getUser.mockResolvedValue({
@@ -191,16 +188,14 @@ describe("Executive Dashboard API Routes", function () {
       auth: mockAuth,
     });
     require("../../../lib/services/executive-dashboard").ExecutiveDashboardService.mockImplementation(
-      function () {
-        return mockExecutiveDashboardService;
-      },
+      () => mockExecutiveDashboardService,
     );
   });
-  describe("/api/executive-dashboard/kpis", function () {
-    it("should return KPIs for valid request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("/api/executive-dashboard/kpis", () => {
+    it("should return KPIs for valid request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockKPIs, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockKPIs = [
@@ -236,12 +231,11 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should return 400 for missing parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should return 400 for missing parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -259,12 +253,11 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should return 401 for unauthorized request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should return 401 for unauthorized request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAuth.getUser.mockResolvedValue({
@@ -286,14 +279,13 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("/api/executive-dashboard/alerts", function () {
-    it("should return alerts for valid request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("/api/executive-dashboard/alerts", () => {
+    it("should return alerts for valid request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAlerts, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAlerts = [
@@ -324,14 +316,13 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("/api/executive-dashboard/widgets", function () {
-    it("should get widget configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("/api/executive-dashboard/widgets", () => {
+    it("should get widget configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWidgets, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockWidgets = [
@@ -362,12 +353,11 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should save widget configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should save widget configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var widgetData, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               widgetData = {
@@ -406,14 +396,13 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("/api/executive-dashboard/reports", function () {
-    it("should get reports list", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("/api/executive-dashboard/reports", () => {
+    it("should get reports list", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockReports, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockReports = [
@@ -444,12 +433,11 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should generate new report", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should generate new report", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var reportData, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               reportData = {
@@ -486,14 +474,13 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("/api/executive-dashboard/comparison", function () {
-    it("should return performance comparison", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("/api/executive-dashboard/comparison", () => {
+    it("should return performance comparison", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockComparison, request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockComparison = {
@@ -523,12 +510,11 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should return 400 for missing comparison parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should return 400 for missing comparison parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -546,7 +532,6 @@ describe("Executive Dashboard API Routes", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

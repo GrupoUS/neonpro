@@ -3,12 +3,12 @@
 
 import type { createClient } from "@/lib/supabase/client";
 import type {
+  CashFlowAnalytics,
   CashFlowEntry,
+  CashFlowFilters,
   CashRegister,
   PaymentReconciliation,
   ReconciliationDiscrepancy,
-  CashFlowFilters,
-  CashFlowAnalytics,
 } from "../types";
 
 export class CashFlowService {

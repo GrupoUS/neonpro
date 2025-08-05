@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegulatoryDocumentForm = RegulatoryDocumentForm;
 var react_1 = require("react");
@@ -178,7 +175,6 @@ var documentFormSchema = zod_2.z.object({
   associated_equipment_id: zod_2.z.string().optional(),
 });
 function RegulatoryDocumentForm(_a) {
-  var _this = this;
   var document = _a.document,
     onSubmit = _a.onSubmit,
     onCancel = _a.onCancel,
@@ -224,24 +220,19 @@ function RegulatoryDocumentForm(_a) {
   var selectedAuthority = form.watch("authority");
   var selectedCategory = form.watch("document_category");
   // Update authority when category changes
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedCategory && categories.length > 0) {
-        var category = categories.find(function (cat) {
-          return cat.name === selectedCategory;
-        });
-        if (category && category.authority_name !== selectedAuthority) {
-          form.setValue("authority", category.authority_name);
-        }
+  (0, react_1.useEffect)(() => {
+    if (selectedCategory && categories.length > 0) {
+      var category = categories.find((cat) => cat.name === selectedCategory);
+      if (category && category.authority_name !== selectedAuthority) {
+        form.setValue("authority", category.authority_name);
       }
-    },
-    [selectedCategory, categories, selectedAuthority, form],
-  );
-  var handleFileUpload = function (event) {
-    return __awaiter(_this, void 0, void 0, function () {
+    }
+  }, [selectedCategory, categories, selectedAuthority, form]);
+  var handleFileUpload = (event) =>
+    __awaiter(this, void 0, void 0, function () {
       var file, allowedTypes, formData, response, result, error_1;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             file = (_a = event.target.files) === null || _a === void 0 ? void 0 : _a[0];
@@ -307,11 +298,10 @@ function RegulatoryDocumentForm(_a) {
         }
       });
     });
-  };
-  var removeUploadedFile = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var removeUploadedFile = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!uploadedFile) return [2 /*return*/];
@@ -344,12 +334,11 @@ function RegulatoryDocumentForm(_a) {
         }
       });
     });
-  };
-  var handleSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var submitData;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             submitData = __assign(__assign({}, data), {
@@ -376,13 +365,12 @@ function RegulatoryDocumentForm(_a) {
         }
       });
     });
-  };
-  var formatFileSize = function (bytes) {
+  var formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     var k = 1024;
     var sizes = ["Bytes", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
   return (
     <card_1.Card className="w-full max-w-4xl mx-auto">
@@ -404,7 +392,7 @@ function RegulatoryDocumentForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="document_type"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -425,7 +413,7 @@ function RegulatoryDocumentForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="document_category"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -437,7 +425,7 @@ function RegulatoryDocumentForm(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {Object.entries(groupedCategories).map(function (_a) {
+                          {Object.entries(groupedCategories).map((_a) => {
                             var authority = _a[0],
                               cats = _a[1];
                             return (
@@ -445,13 +433,11 @@ function RegulatoryDocumentForm(_a) {
                                 <div className="px-2 py-1.5 text-sm font-semibold text-muted-foreground">
                                   {authority}
                                 </div>
-                                {cats.map(function (category) {
-                                  return (
-                                    <select_1.SelectItem key={category.id} value={category.name}>
-                                      {category.name}
-                                    </select_1.SelectItem>
-                                  );
-                                })}
+                                {cats.map((category) => (
+                                  <select_1.SelectItem key={category.id} value={category.name}>
+                                    {category.name}
+                                  </select_1.SelectItem>
+                                ))}
                               </div>
                             );
                           })}
@@ -469,7 +455,7 @@ function RegulatoryDocumentForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="authority"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -481,16 +467,14 @@ function RegulatoryDocumentForm(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {authorities.map(function (authority) {
-                            return (
-                              <select_1.SelectItem
-                                key={authority.authority_code}
-                                value={authority.authority_name}
-                              >
-                                {authority.authority_name}
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {authorities.map((authority) => (
+                            <select_1.SelectItem
+                              key={authority.authority_code}
+                              value={authority.authority_name}
+                            >
+                              {authority.authority_name}
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -503,7 +487,7 @@ function RegulatoryDocumentForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="document_number"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -523,7 +507,7 @@ function RegulatoryDocumentForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="issue_date"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-col">
@@ -552,9 +536,7 @@ function RegulatoryDocumentForm(_a) {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={function (date) {
-                              return date > new Date() || date < new Date("1900-01-01");
-                            }}
+                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                             initialFocus
                           />
                         </popover_1.PopoverContent>
@@ -569,7 +551,7 @@ function RegulatoryDocumentForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="expiration_date"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-col">
@@ -598,9 +580,7 @@ function RegulatoryDocumentForm(_a) {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={function (date) {
-                              return date < new Date();
-                            }}
+                            disabled={(date) => date < new Date()}
                             initialFocus
                           />
                         </popover_1.PopoverContent>
@@ -615,7 +595,7 @@ function RegulatoryDocumentForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="status"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>

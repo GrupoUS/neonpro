@@ -5,10 +5,6 @@
  * Tests for the frontend React components of the executive dashboard
  */
 
-import type { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import type { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { ExecutiveDashboard } from "@/components/dashboard/executive-dashboard";
-
 // Mock the API fetch functions
 const mockFetch = jest.fn();
 global.fetch = mockFetch;

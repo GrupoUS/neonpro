@@ -9,7 +9,33 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { endOfDay, format, startOfDay, subDays } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  Eye,
+  FileText,
+  Filter,
+  Lock,
+  RefreshCw,
+  Shield,
+  TrendingUp,
+  UserCheck,
+  Users,
+  XCircle,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -17,36 +43,11 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Progress } from "@/components/ui/progress";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Eye,
-  Download,
-  Users,
-  FileText,
-  Clock,
-  TrendingUp,
-  BarChart3,
-  Activity,
-  Lock,
-  UserCheck,
-  Database,
-  Calendar,
-  Filter,
-  RefreshCw,
-} from "lucide-react";
-import type { format, subDays, startOfDay, endOfDay } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { useLGPD } from "@/lib/compliance/useLGPD";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { AuditEventType, AuditSeverity, AuditStatus } from "@/lib/compliance/audit-trail";
+import type { useLGPD } from "@/lib/compliance/useLGPD";
 
 // ============================================================================
 // TYPES & INTERFACES

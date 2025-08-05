@@ -1,17 +1,15 @@
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SkipLink = SkipLink;
 exports.AccessibleButton = AccessibleButton;
@@ -66,7 +64,7 @@ function AccessibleButton(_a) {
     ]);
   var announceToScreenReader = (0, accessibility_context_1.useAccessibility)()
     .announceToScreenReader;
-  var handleClick = function (e) {
+  var handleClick = (e) => {
     if (loading || disabled) return;
     if (onClick) {
       onClick(e);
@@ -206,13 +204,11 @@ function AccessibleSelect(_a) {
         <option value="" disabled>
           {placeholder}
         </option>
-        {options.map(function (option) {
-          return (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          );
-        })}
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </select>
 
       {error && (
@@ -249,14 +245,11 @@ function FocusTrap(_a) {
     className = _a.className;
   var containerRef = react_1.default.useRef(null);
   var trapFocus = (0, accessibility_context_1.useAccessibility)().trapFocus;
-  react_1.default.useEffect(
-    function () {
-      if (!active || !containerRef.current) return;
-      var cleanup = trapFocus(containerRef.current);
-      return cleanup;
-    },
-    [active, trapFocus],
-  );
+  react_1.default.useEffect(() => {
+    if (!active || !containerRef.current) return;
+    var cleanup = trapFocus(containerRef.current);
+    return cleanup;
+  }, [active, trapFocus]);
   return (
     <div ref={containerRef} className={className}>
       {children}
@@ -274,30 +267,25 @@ function AccessibleDialog(_a) {
     .announceToScreenReader;
   var titleId = "dialog-title-".concat(Math.random().toString(36).substr(2, 9));
   var descriptionId = description ? "dialog-description-".concat(titleId) : undefined;
-  react_1.default.useEffect(
-    function () {
-      if (open) {
-        announceToScreenReader("Di\u00E1logo aberto: ".concat(title), "assertive");
-        // Prevent body scroll
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "unset";
-      }
-      return function () {
-        document.body.style.overflow = "unset";
-      };
-    },
-    [open, title, announceToScreenReader],
-  );
+  react_1.default.useEffect(() => {
+    if (open) {
+      announceToScreenReader("Di\u00E1logo aberto: ".concat(title), "assertive");
+      // Prevent body scroll
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [open, title, announceToScreenReader]);
   if (!open) return null;
   return (
     <div className="dialog-overlay" onClick={onClose}>
       <FocusTrap>
         <div
           className={(0, utils_1.cn)("dialog-content", className)}
-          onClick={function (e) {
-            return e.stopPropagation();
-          }}
+          onClick={(e) => e.stopPropagation()}
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}

@@ -3,7 +3,7 @@
  * Chaos engineering and stress testing for subscription middleware
  */
 
-import type { LoadTester, LoadTestConfig } from "./load-tester";
+import type { LoadTestConfig, LoadTester } from "./load-tester";
 import type { performanceMonitor } from "./monitor";
 
 export interface StressTestScenario {

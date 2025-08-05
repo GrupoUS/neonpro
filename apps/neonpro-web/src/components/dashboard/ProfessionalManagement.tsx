@@ -1,7 +1,28 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  Award,
+  Calendar,
+  Certificate,
+  CheckCircle,
+  Clock,
+  Edit,
+  Eye,
+  Filter,
+  MoreVertical,
+  Plus,
+  Search,
+  Stethoscope,
+  Trash2,
+  TrendingUp,
+  UserPlus,
+} from "lucide-react";
 import type { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -9,25 +30,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   Dialog,
   DialogContent,
@@ -45,40 +47,38 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { toast } from "sonner";
+import type { Input } from "@/components/ui/input";
 import type {
-  Search,
-  Plus,
-  Filter,
-  MoreVertical,
-  Edit,
-  Trash2,
-  Eye,
-  UserPlus,
-  Certificate,
-  Award,
-  Stethoscope,
-  Calendar,
-  TrendingUp,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type {
-  Professional,
-  ProfessionalCredential,
-  ProfessionalSpecialty,
-  ProfessionalService,
-} from "@/lib/types/professional";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  getProfessionals,
   createProfessional,
-  updateProfessional,
   deleteProfessional,
   getProfessionalCredentials,
   getProfessionalServices,
+  getProfessionals,
+  updateProfessional,
   verifyCredential,
 } from "@/lib/supabase/professionals";
+import type {
+  Professional,
+  ProfessionalCredential,
+  ProfessionalService,
+  ProfessionalSpecialty,
+} from "@/lib/types/professional";
 
 interface ProfessionalManagementProps {
   initialProfessionals?: Professional[];

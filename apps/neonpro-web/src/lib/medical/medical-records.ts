@@ -11,10 +11,10 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
-import type { z } from "zod";
 import crypto from "crypto";
-import type { LGPDManager } from "../auth/lgpd/lgpd-manager";
+import type { z } from "zod";
 import type { AuditLogger } from "../audit/audit-logger";
+import type { LGPDManager } from "../auth/lgpd/lgpd-manager";
 
 // ============================================================================
 // TYPES & INTERFACES

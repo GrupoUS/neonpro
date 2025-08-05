@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Sign In Page
  * Healthcare-focused authentication with LGPD compliance

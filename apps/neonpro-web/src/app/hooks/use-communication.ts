@@ -1,18 +1,18 @@
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { useCallback, useState } from "react";
 import type { toast } from "react-hot-toast";
 import type {
-  Message,
-  MessageThread,
-  MessageTemplate,
   CommunicationStats,
-  SendMessageRequest,
   CreateTemplateRequest,
-  UpdateTemplateRequest,
+  Message,
   MessageFilters,
-  ThreadFilters,
-  TemplateFilters,
+  MessageTemplate,
+  MessageThread,
   PaginatedResponse,
+  SendMessageRequest,
+  TemplateFilters,
+  ThreadFilters,
+  UpdateTemplateRequest,
 } from "@/app/lib/types/communication";
 
 // Query keys for React Query

@@ -1,18 +1,17 @@
-"use strict";
 // Trial Management System - Main Export - STORY-SUB-002 Task 3
 // AI-powered trial management with conversion optimization
 // Created: 2025-01-22
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -22,7 +21,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -51,8 +50,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -73,9 +70,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrialManager =
   exports.CampaignManager =
@@ -149,103 +146,93 @@ exports.TrialManager =
 var types_1 = require("./types");
 Object.defineProperty(exports, "TrialStageSchema", {
   enumerable: true,
-  get: function () {
-    return types_1.TrialStageSchema;
-  },
+  get: () => types_1.TrialStageSchema,
 });
 Object.defineProperty(exports, "ConversionStrategySchema", {
   enumerable: true,
-  get: function () {
-    return types_1.ConversionStrategySchema;
-  },
+  get: () => types_1.ConversionStrategySchema,
 });
 Object.defineProperty(exports, "UserSegmentSchema", {
   enumerable: true,
-  get: function () {
-    return types_1.UserSegmentSchema;
-  },
+  get: () => types_1.UserSegmentSchema,
 });
 Object.defineProperty(exports, "EngagementLevelSchema", {
   enumerable: true,
-  get: function () {
-    return types_1.EngagementLevelSchema;
-  },
+  get: () => types_1.EngagementLevelSchema,
 });
 Object.defineProperty(exports, "TrialSchema", {
   enumerable: true,
-  get: function () {
-    return types_1.TrialSchema;
-  },
+  get: () => types_1.TrialSchema,
 });
 // Core System Components
 var engine_1 = require("./engine");
 Object.defineProperty(exports, "TrialManagementEngine", {
   enumerable: true,
-  get: function () {
-    return engine_1.TrialManagementEngine;
-  },
+  get: () => engine_1.TrialManagementEngine,
 });
 var campaigns_1 = require("./campaigns");
 Object.defineProperty(exports, "CampaignManager", {
   enumerable: true,
-  get: function () {
-    return campaigns_1.CampaignManager;
-  },
+  get: () => campaigns_1.CampaignManager,
 });
 // Main Trial Management Class
-var TrialManager = /** @class */ (function () {
+var TrialManager = /** @class */ (() => {
   function TrialManager() {}
   // Quick access methods for common operations
-  TrialManager.createTrial = function (userId_1) {
+  TrialManager.createTrial = function (_userId_1) {
     return __awaiter(this, arguments, void 0, function (userId, source) {
       if (source === void 0) {
         source = "website";
       }
-      return __generator(this, function (_a) {
-        return [2 /*return*/, TrialManager.engine.createTrial(userId, source)];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        TrialManager.engine.createTrial(userId, source),
+      ]);
     });
   };
   TrialManager.getUserTrial = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, TrialManager.engine.getUserActiveTrial(userId)];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        TrialManager.engine.getUserActiveTrial(userId),
+      ]);
     });
   };
   TrialManager.predictConversion = function (trialId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, TrialManager.engine.predictConversion(trialId)];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        TrialManager.engine.predictConversion(trialId),
+      ]);
     });
   };
   TrialManager.trackActivity = function (trialId, eventType, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, TrialManager.engine.trackEvent(trialId, eventType, data)];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        TrialManager.engine.trackEvent(trialId, eventType, data),
+      ]);
     });
   };
   TrialManager.getUserJourney = function (trialId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, TrialManager.engine.getUserJourney(trialId)];
-      });
+      return __generator(this, (_a) => [2 /*return*/, TrialManager.engine.getUserJourney(trialId)]);
     });
   };
   TrialManager.createCampaign = function (campaignData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, TrialManager.campaigns.createCampaign(campaignData)];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        TrialManager.campaigns.createCampaign(campaignData),
+      ]);
     });
   };
   TrialManager.launchCampaign = function (campaignId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, TrialManager.campaigns.launchCampaign(campaignId)];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        TrialManager.campaigns.launchCampaign(campaignId),
+      ]);
     });
   };
   TrialManager.engine = new TrialManagementEngine();

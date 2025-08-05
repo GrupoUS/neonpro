@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentManager = ConsentManager;
 var react_1 = require("react");
@@ -205,7 +202,6 @@ var CONSENT_TYPES = [
   },
 ];
 function ConsentManager(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     consents = _a.consents,
     onConsentUpdate = _a.onConsentUpdate,
@@ -219,18 +215,14 @@ function ConsentManager(_a) {
   var toast = (0, use_toast_1.useToast)().toast;
   var supabase = (0, client_1.createClient)();
   // Obter status de consentimento para um tipo específico
-  var getConsentStatus = function (consentType) {
-    return consents.find(function (c) {
-      return c.consent_type === consentType;
-    });
-  };
+  var getConsentStatus = (consentType) => consents.find((c) => c.consent_type === consentType);
   // Atualizar consentimento
-  var updateConsent = function (consentType, consented, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateConsent = (consentType, consented, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var existingConsent, now, consentData, response, _a, _b, error_1;
       var _c, _d;
       var _e;
-      return __generator(this, function (_f) {
+      return __generator(this, (_f) => {
         switch (_f.label) {
           case 0:
             setLoading(true);
@@ -318,9 +310,7 @@ function ConsentManager(_a) {
               title: consented ? "Consentimento concedido" : "Consentimento revogado",
               description: ""
                 .concat(
-                  (_e = CONSENT_TYPES.find(function (t) {
-                    return t.key === consentType;
-                  })) === null || _e === void 0
+                  (_e = CONSENT_TYPES.find((t) => t.key === consentType)) === null || _e === void 0
                     ? void 0
                     : _e.label,
                   " ",
@@ -345,12 +335,11 @@ function ConsentManager(_a) {
         }
       });
     });
-  };
   // Obter IP do cliente (simulado - em produção usar serviço real)
-  var getClientIP = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var getClientIP = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -369,9 +358,8 @@ function ConsentManager(_a) {
         }
       });
     });
-  };
   // Renderizar item de consentimento
-  var renderConsentItem = function (consentType) {
+  var renderConsentItem = (consentType) => {
     var consent = getConsentStatus(consentType.key);
     var isConsented =
       (consent === null || consent === void 0 ? void 0 : consent.consented) || false;
@@ -416,9 +404,7 @@ function ConsentManager(_a) {
             {isConsented
               ? <dialog_1.Dialog
                   open={showRevokeDialog === consentType.key}
-                  onOpenChange={function (open) {
-                    return setShowRevokeDialog(open ? consentType.key : null);
-                  }}
+                  onOpenChange={(open) => setShowRevokeDialog(open ? consentType.key : null)}
                 >
                   <dialog_1.DialogTrigger asChild>
                     <button_1.Button variant="outline" size="sm" disabled={loading}>
@@ -445,19 +431,12 @@ function ConsentManager(_a) {
                       </dialog_1.DialogDescription>
                     </dialog_1.DialogHeader>
                     <dialog_1.DialogFooter>
-                      <button_1.Button
-                        variant="outline"
-                        onClick={function () {
-                          return setShowRevokeDialog(null);
-                        }}
-                      >
+                      <button_1.Button variant="outline" onClick={() => setShowRevokeDialog(null)}>
                         Cancelar
                       </button_1.Button>
                       <button_1.Button
                         variant="destructive"
-                        onClick={function () {
-                          return updateConsent(consentType.key, false);
-                        }}
+                        onClick={() => updateConsent(consentType.key, false)}
                         disabled={loading}
                       >
                         Confirmar Revogação
@@ -467,9 +446,7 @@ function ConsentManager(_a) {
                 </dialog_1.Dialog>
               : <button_1.Button
                   size="sm"
-                  onClick={function () {
-                    return updateConsent(consentType.key, true);
-                  }}
+                  onClick={() => updateConsent(consentType.key, true)}
                   disabled={loading}
                 >
                   <lucide_react_1.Check className="w-3 h-3 mr-1" />
@@ -482,7 +459,7 @@ function ConsentManager(_a) {
     );
   };
   // Agrupar consentimentos por categoria
-  var groupedConsents = CONSENT_TYPES.reduce(function (acc, consentType) {
+  var groupedConsents = CONSENT_TYPES.reduce((acc, consentType) => {
     if (!acc[consentType.category]) {
       acc[consentType.category] = [];
     }
@@ -511,7 +488,7 @@ function ConsentManager(_a) {
       </card_1.CardHeader>
 
       <card_1.CardContent className="space-y-6">
-        {Object.entries(groupedConsents).map(function (_a) {
+        {Object.entries(groupedConsents).map((_a) => {
           var category = _a[0],
             types = _a[1];
           return (

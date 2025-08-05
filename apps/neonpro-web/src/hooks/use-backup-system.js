@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useBackupSystem = void 0;
 var react_1 = require("react");
@@ -372,7 +369,7 @@ var mockAlerts = [
     updated_at: new Date(Date.now() - 1000 * 60 * 60 * 2),
   },
 ];
-var useBackupSystem = function () {
+var useBackupSystem = () => {
   // State
   var _a = (0, react_1.useState)({
       isInitialized: false,
@@ -400,69 +397,67 @@ var useBackupSystem = function () {
     setBackupSystem = _b[1];
   var supabase = yield (0, client_1.createClient)();
   // Initialize the backup system
-  var initializeSystem = (0, react_1.useCallback)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var system, error_1;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: true, error: null });
-            });
-            system = new backup_1.BackupSystem();
-            return [4 /*yield*/, system.initialize()];
-          case 1:
-            _a.sent();
-            setBackupSystem(system);
-            // Load initial data
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                isInitialized: true,
-                isLoading: false,
-                configs: mockConfigs,
-                activeConfigs: mockConfigs.filter(function (c) {
-                  return c.enabled;
+  var initializeSystem = (0, react_1.useCallback)(
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var system, error_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
+              system = new backup_1.BackupSystem();
+              return [4 /*yield*/, system.initialize()];
+            case 1:
+              _a.sent();
+              setBackupSystem(system);
+              // Load initial data
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  isInitialized: true,
+                  isLoading: false,
+                  configs: mockConfigs,
+                  activeConfigs: mockConfigs.filter((c) => c.enabled),
+                  backups: mockBackups,
+                  recentBackups: mockBackups.slice(0, 10),
+                  recoveries: mockRecoveries,
+                  activeRecoveries: mockRecoveries.filter((r) => r.status === "RUNNING"),
+                  metrics: mockMetrics,
+                  alerts: mockAlerts,
+                  systemHealth: {
+                    overall: "healthy",
+                    storage: "warning", // Based on storage alert
+                    scheduler: "healthy",
+                    lastCheck: new Date(),
+                  },
                 }),
-                backups: mockBackups,
-                recentBackups: mockBackups.slice(0, 10),
-                recoveries: mockRecoveries,
-                activeRecoveries: mockRecoveries.filter(function (r) {
-                  return r.status === "RUNNING";
+              );
+              return [3 /*break*/, 3];
+            case 2:
+              error_1 = _a.sent();
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  isLoading: false,
+                  error:
+                    error_1 instanceof Error
+                      ? error_1.message
+                      : "Failed to initialize backup system",
                 }),
-                metrics: mockMetrics,
-                alerts: mockAlerts,
-                systemHealth: {
-                  overall: "healthy",
-                  storage: "warning", // Based on storage alert
-                  scheduler: "healthy",
-                  lastCheck: new Date(),
-                },
-              });
-            });
-            return [3 /*break*/, 3];
-          case 2:
-            error_1 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                isLoading: false,
-                error:
-                  error_1 instanceof Error ? error_1.message : "Failed to initialize backup system",
-              });
-            });
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+              );
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Shutdown the backup system
   var shutdownSystem = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -473,175 +468,158 @@ var useBackupSystem = function () {
               setBackupSystem(null);
               _a.label = 2;
             case 2:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isInitialized: false });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isInitialized: false }));
               return [3 /*break*/, 4];
             case 3:
               error_2 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   error:
                     error_2 instanceof Error ? error_2.message : "Failed to shutdown backup system",
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 4];
             case 4:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [backupSystem],
   );
   // Refresh all data
-  var refreshData = (0, react_1.useCallback)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var error_3;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: true });
-            });
-            // In a real implementation, this would fetch from the database
-            // For now, we'll simulate a refresh with updated mock data
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
-          case 1:
-            // In a real implementation, this would fetch from the database
-            // For now, we'll simulate a refresh with updated mock data
-            _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                isLoading: false,
-                configs: mockConfigs,
-                activeConfigs: mockConfigs.filter(function (c) {
-                  return c.enabled;
+  var refreshData = (0, react_1.useCallback)(
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var error_3;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true }));
+              // In a real implementation, this would fetch from the database
+              // For now, we'll simulate a refresh with updated mock data
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
+            case 1:
+              // In a real implementation, this would fetch from the database
+              // For now, we'll simulate a refresh with updated mock data
+              _a.sent();
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  isLoading: false,
+                  configs: mockConfigs,
+                  activeConfigs: mockConfigs.filter((c) => c.enabled),
+                  backups: mockBackups,
+                  recentBackups: mockBackups.slice(0, 10),
+                  recoveries: mockRecoveries,
+                  activeRecoveries: mockRecoveries.filter((r) => r.status === "RUNNING"),
+                  metrics: mockMetrics,
+                  alerts: mockAlerts,
+                  systemHealth: __assign(__assign({}, prev.systemHealth), {
+                    lastCheck: new Date(),
+                  }),
                 }),
-                backups: mockBackups,
-                recentBackups: mockBackups.slice(0, 10),
-                recoveries: mockRecoveries,
-                activeRecoveries: mockRecoveries.filter(function (r) {
-                  return r.status === "RUNNING";
+              );
+              return [3 /*break*/, 3];
+            case 2:
+              error_3 = _a.sent();
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  isLoading: false,
+                  error: error_3 instanceof Error ? error_3.message : "Failed to refresh data",
                 }),
-                metrics: mockMetrics,
-                alerts: mockAlerts,
-                systemHealth: __assign(__assign({}, prev.systemHealth), { lastCheck: new Date() }),
-              });
-            });
-            return [3 /*break*/, 3];
-          case 2:
-            error_3 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                isLoading: false,
-                error: error_3 instanceof Error ? error_3.message : "Failed to refresh data",
-              });
-            });
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+              );
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Configuration management
-  var createConfig = (0, react_1.useCallback)(function (configData) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var newConfig_1;
-      return __generator(this, function (_a) {
-        try {
-          newConfig_1 = __assign(__assign({}, configData), {
-            id: Math.random().toString(36).substr(2, 9),
-            created_at: new Date(),
-            updated_at: new Date(),
-          });
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              configs: __spreadArray(__spreadArray([], prev.configs, true), [newConfig_1], false),
-              activeConfigs: newConfig_1.enabled
-                ? __spreadArray(__spreadArray([], prev.activeConfigs, true), [newConfig_1], false)
-                : prev.activeConfigs,
+  var createConfig = (0, react_1.useCallback)(
+    (configData) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var newConfig_1;
+        return __generator(this, (_a) => {
+          try {
+            newConfig_1 = __assign(__assign({}, configData), {
+              id: Math.random().toString(36).substr(2, 9),
+              created_at: new Date(),
+              updated_at: new Date(),
             });
-          });
-          return [2 /*return*/, newConfig_1];
-        } catch (error) {
-          throw new Error(error instanceof Error ? error.message : "Failed to create config");
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                configs: __spreadArray(__spreadArray([], prev.configs, true), [newConfig_1], false),
+                activeConfigs: newConfig_1.enabled
+                  ? __spreadArray(__spreadArray([], prev.activeConfigs, true), [newConfig_1], false)
+                  : prev.activeConfigs,
+              }),
+            );
+            return [2 /*return*/, newConfig_1];
+          } catch (error) {
+            throw new Error(error instanceof Error ? error.message : "Failed to create config");
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
   var updateConfig = (0, react_1.useCallback)(
-    function (id, updates) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (id, updates) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updatedConfig_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           try {
             updatedConfig_1 = __assign(
               __assign(
                 __assign(
                   {},
-                  state.configs.find(function (c) {
-                    return c.id === id;
-                  }),
+                  state.configs.find((c) => c.id === id),
                 ),
                 updates,
               ),
               { updated_at: new Date() },
             );
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                configs: prev.configs.map(function (c) {
-                  return c.id === id ? updatedConfig_1 : c;
-                }),
-                activeConfigs: prev.activeConfigs.map(function (c) {
-                  return c.id === id ? updatedConfig_1 : c;
-                }),
-              });
-            });
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                configs: prev.configs.map((c) => (c.id === id ? updatedConfig_1 : c)),
+                activeConfigs: prev.activeConfigs.map((c) => (c.id === id ? updatedConfig_1 : c)),
+              }),
+            );
             return [2 /*return*/, updatedConfig_1];
           } catch (error) {
             throw new Error(error instanceof Error ? error.message : "Failed to update config");
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [state.configs],
   );
-  var deleteConfig = (0, react_1.useCallback)(function (id) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        try {
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              configs: prev.configs.filter(function (c) {
-                return c.id !== id;
+  var deleteConfig = (0, react_1.useCallback)(
+    (id) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          try {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                configs: prev.configs.filter((c) => c.id !== id),
+                activeConfigs: prev.activeConfigs.filter((c) => c.id !== id),
               }),
-              activeConfigs: prev.activeConfigs.filter(function (c) {
-                return c.id !== id;
-              }),
-            });
-          });
-        } catch (error) {
-          throw new Error(error instanceof Error ? error.message : "Failed to delete config");
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
+            );
+          } catch (error) {
+            throw new Error(error instanceof Error ? error.message : "Failed to delete config");
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
   var toggleConfig = (0, react_1.useCallback)(
-    function (id, enabled) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (id, enabled) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var error_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -658,16 +636,15 @@ var useBackupSystem = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [updateConfig],
   );
   // Backup operations
   var runManualBackup = (0, react_1.useCallback)(
-    function (configId) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (configId) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var newBackup_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           try {
             if (!backupSystem) {
               throw new Error("Backup system not initialized");
@@ -685,27 +662,26 @@ var useBackupSystem = function () {
               created_at: new Date(),
               updated_at: new Date(),
             };
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
                 backups: __spreadArray([newBackup_1], prev.backups, true),
                 recentBackups: __spreadArray([newBackup_1], prev.recentBackups.slice(0, 9), true),
-              });
-            });
+              }),
+            );
             return [2 /*return*/, newBackup_1];
           } catch (error) {
             throw new Error(error instanceof Error ? error.message : "Failed to run manual backup");
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [backupSystem],
   );
   var runQuickBackup = (0, react_1.useCallback)(
-    function (type, source) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (type, source) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var quickConfig, error_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -748,193 +724,187 @@ var useBackupSystem = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [backupSystem, runManualBackup],
   );
-  var cancelBackup = (0, react_1.useCallback)(function (backupId) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        try {
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              backups: prev.backups.map(function (b) {
-                return b.id === backupId
-                  ? __assign(__assign({}, b), { status: "CANCELLED", completed_at: new Date() })
-                  : b;
+  var cancelBackup = (0, react_1.useCallback)(
+    (backupId) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          try {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                backups: prev.backups.map((b) =>
+                  b.id === backupId
+                    ? __assign(__assign({}, b), { status: "CANCELLED", completed_at: new Date() })
+                    : b,
+                ),
               }),
-            });
-          });
-        } catch (error) {
-          throw new Error(error instanceof Error ? error.message : "Failed to cancel backup");
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  // Recovery operations
-  var createRecovery = (0, react_1.useCallback)(function (requestData) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var newRecovery_1;
-      return __generator(this, function (_a) {
-        try {
-          newRecovery_1 = __assign(__assign({}, requestData), {
-            id: Math.random().toString(36).substr(2, 9),
-            status: "PENDING",
-            progress_percentage: 0,
-            created_at: new Date(),
-            updated_at: new Date(),
-          });
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              recoveries: __spreadArray([newRecovery_1], prev.recoveries, true),
-              activeRecoveries: __spreadArray([newRecovery_1], prev.activeRecoveries, true),
-            });
-          });
-          return [2 /*return*/, newRecovery_1];
-        } catch (error) {
-          throw new Error(
-            error instanceof Error ? error.message : "Failed to create recovery request",
-          );
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  var cancelRecovery = (0, react_1.useCallback)(function (recoveryId) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        try {
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              recoveries: prev.recoveries.map(function (r) {
-                return r.id === recoveryId
-                  ? __assign(__assign({}, r), { status: "CANCELLED", completed_at: new Date() })
-                  : r;
-              }),
-              activeRecoveries: prev.activeRecoveries.filter(function (r) {
-                return r.id !== recoveryId;
-              }),
-            });
-          });
-        } catch (error) {
-          throw new Error(error instanceof Error ? error.message : "Failed to cancel recovery");
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  // Monitoring
-  var acknowledgeAlert = (0, react_1.useCallback)(function (alertId) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        try {
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              alerts: prev.alerts.map(function (a) {
-                return a.id === alertId
-                  ? __assign(__assign({}, a), { acknowledged: true, updated_at: new Date() })
-                  : a;
-              }),
-            });
-          });
-        } catch (error) {
-          throw new Error(error instanceof Error ? error.message : "Failed to acknowledge alert");
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  var dismissAlert = (0, react_1.useCallback)(function (alertId) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        try {
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              alerts: prev.alerts.filter(function (a) {
-                return a.id !== alertId;
-              }),
-            });
-          });
-        } catch (error) {
-          throw new Error(error instanceof Error ? error.message : "Failed to dismiss alert");
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  // Testing
-  var testStorageConnection = (0, react_1.useCallback)(function (provider, config) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var error_6;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            // Simulate connection test
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
-          case 1:
-            // Simulate connection test
-            _a.sent();
-            return [2 /*return*/, Math.random() > 0.2]; // 80% success rate for demo
-          case 2:
-            error_6 = _a.sent();
-            return [2 /*return*/, false];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var validateBackup = (0, react_1.useCallback)(function (backupId) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var error_7;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            // Simulate backup validation
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 3000);
-              }),
-            ];
-          case 1:
-            // Simulate backup validation
-            _a.sent();
-            return [2 /*return*/, Math.random() > 0.1]; // 90% success rate for demo
-          case 2:
-            error_7 = _a.sent();
-            return [2 /*return*/, false];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  // Auto-refresh data every 30 seconds when initialized
-  (0, react_1.useEffect)(
-    function () {
-      if (!state.isInitialized) return;
-      var interval = setInterval(function () {
-        refreshData();
-      }, 30000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [state.isInitialized, refreshData],
+            );
+          } catch (error) {
+            throw new Error(error instanceof Error ? error.message : "Failed to cancel backup");
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
   );
+  // Recovery operations
+  var createRecovery = (0, react_1.useCallback)(
+    (requestData) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var newRecovery_1;
+        return __generator(this, (_a) => {
+          try {
+            newRecovery_1 = __assign(__assign({}, requestData), {
+              id: Math.random().toString(36).substr(2, 9),
+              status: "PENDING",
+              progress_percentage: 0,
+              created_at: new Date(),
+              updated_at: new Date(),
+            });
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                recoveries: __spreadArray([newRecovery_1], prev.recoveries, true),
+                activeRecoveries: __spreadArray([newRecovery_1], prev.activeRecoveries, true),
+              }),
+            );
+            return [2 /*return*/, newRecovery_1];
+          } catch (error) {
+            throw new Error(
+              error instanceof Error ? error.message : "Failed to create recovery request",
+            );
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
+  var cancelRecovery = (0, react_1.useCallback)(
+    (recoveryId) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          try {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                recoveries: prev.recoveries.map((r) =>
+                  r.id === recoveryId
+                    ? __assign(__assign({}, r), { status: "CANCELLED", completed_at: new Date() })
+                    : r,
+                ),
+                activeRecoveries: prev.activeRecoveries.filter((r) => r.id !== recoveryId),
+              }),
+            );
+          } catch (error) {
+            throw new Error(error instanceof Error ? error.message : "Failed to cancel recovery");
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
+  // Monitoring
+  var acknowledgeAlert = (0, react_1.useCallback)(
+    (alertId) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          try {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                alerts: prev.alerts.map((a) =>
+                  a.id === alertId
+                    ? __assign(__assign({}, a), { acknowledged: true, updated_at: new Date() })
+                    : a,
+                ),
+              }),
+            );
+          } catch (error) {
+            throw new Error(error instanceof Error ? error.message : "Failed to acknowledge alert");
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
+  var dismissAlert = (0, react_1.useCallback)(
+    (alertId) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          try {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                alerts: prev.alerts.filter((a) => a.id !== alertId),
+              }),
+            );
+          } catch (error) {
+            throw new Error(error instanceof Error ? error.message : "Failed to dismiss alert");
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
+  // Testing
+  var testStorageConnection = (0, react_1.useCallback)(
+    (provider, config) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var error_6;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              // Simulate connection test
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
+            case 1:
+              // Simulate connection test
+              _a.sent();
+              return [2 /*return*/, Math.random() > 0.2]; // 80% success rate for demo
+            case 2:
+              error_6 = _a.sent();
+              return [2 /*return*/, false];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var validateBackup = (0, react_1.useCallback)(
+    (backupId) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var error_7;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              // Simulate backup validation
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 3000))];
+            case 1:
+              // Simulate backup validation
+              _a.sent();
+              return [2 /*return*/, Math.random() > 0.1]; // 90% success rate for demo
+            case 2:
+              error_7 = _a.sent();
+              return [2 /*return*/, false];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  // Auto-refresh data every 30 seconds when initialized
+  (0, react_1.useEffect)(() => {
+    if (!state.isInitialized) return;
+    var interval = setInterval(() => {
+      refreshData();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [state.isInitialized, refreshData]);
   // Initialize on mount
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     initializeSystem();
-    return function () {
+    return () => {
       shutdownSystem();
     };
   }, []);

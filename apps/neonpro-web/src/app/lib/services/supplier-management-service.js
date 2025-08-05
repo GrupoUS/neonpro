@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // SUPPLIER MANAGEMENT SERVICE
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,11 +146,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplierManagementService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var SupplierManagementService = /** @class */ (function () {
+var SupplierManagementService = /** @class */ (() => {
   function SupplierManagementService(supabaseUrl, supabaseKey) {
     this.supabase = (0, supabase_js_1.createClient)(
       supabaseUrl || process.env.SUPABASE_URL,
@@ -162,9 +159,7 @@ var SupplierManagementService = /** @class */ (function () {
   }
   SupplierManagementService.prototype.getSupabaseClient = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, supabase];
-      });
+      return __generator(this, (_a) => [2 /*return*/, supabase]);
     });
   };
   // =====================================================================================
@@ -173,7 +168,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.createSupplier = function (clinicId, supplierData) {
     return __awaiter(this, void 0, void 0, function () {
       var supplierCode, supabase, existingCode, supplierToCreate, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             supplierCode = supplierData.supplier_code;
@@ -220,7 +215,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.getSupplier = function (clinicId, supplierId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -248,7 +243,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.updateSupplier = function (clinicId, supplierId, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var updateData, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             updateData = __assign(__assign({}, updates), { updated_at: new Date().toISOString() });
@@ -275,7 +270,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.deleteSupplier = function (clinicId, supplierId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, contracts, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -318,7 +313,7 @@ var SupplierManagementService = /** @class */ (function () {
       if (limit === void 0) {
         limit = 50;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase
@@ -383,7 +378,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.createContract = function (contractData) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, existingContract, contractToCreate, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -434,7 +429,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.getContract = function (contractId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -461,7 +456,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.updateContract = function (contractId, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var updateData, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             updateData = __assign(__assign({}, updates), { updated_at: new Date().toISOString() });
@@ -487,7 +482,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.getSupplierContracts = function (supplierId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -517,7 +512,7 @@ var SupplierManagementService = /** @class */ (function () {
       if (daysAhead === void 0) {
         daysAhead = 90;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             alertDate = new Date();
@@ -552,7 +547,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.createContact = function (contactData) {
     return __awaiter(this, void 0, void 0, function () {
       var contactToCreate, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             contactToCreate = __assign(__assign({}, contactData), {
@@ -580,7 +575,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.getSupplierContacts = function (supplierId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -609,7 +604,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.updateContact = function (contactId, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var updateData, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             updateData = __assign(__assign({}, updates), { updated_at: new Date().toISOString() });
@@ -764,7 +759,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.getSupplierEvaluations = function (supplierId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -794,7 +789,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.createQualityIssue = function (issueData) {
     return __awaiter(this, void 0, void 0, function () {
       var issueToCreate, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             issueToCreate = __assign(__assign({}, issueData), {
@@ -824,7 +819,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.updateQualityIssue = function (issueId, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var updateData, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             updateData = __assign(__assign({}, updates), { updated_at: new Date().toISOString() });
@@ -850,7 +845,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.getQualityIssuesSummary = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -880,7 +875,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.createCommunication = function (communicationData) {
     return __awaiter(this, void 0, void 0, function () {
       var communicationToCreate, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             communicationToCreate = __assign(__assign({}, communicationData), {
@@ -912,7 +907,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.getSupplierCommunications = function (supplierId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -976,34 +971,26 @@ var SupplierManagementService = /** @class */ (function () {
             activeSuppliers =
               (suppliers === null || suppliers === void 0
                 ? void 0
-                : suppliers.filter(function (s) {
-                    return s.status === "active";
-                  }).length) || 0;
+                : suppliers.filter((s) => s.status === "active").length) || 0;
             preferredSuppliers =
               (suppliers === null || suppliers === void 0
                 ? void 0
-                : suppliers.filter(function (s) {
-                    return s.is_preferred;
-                  }).length) || 0;
+                : suppliers.filter((s) => s.is_preferred).length) || 0;
             criticalSuppliers =
               (suppliers === null || suppliers === void 0
                 ? void 0
-                : suppliers.filter(function (s) {
-                    return s.is_critical;
-                  }).length) || 0;
+                : suppliers.filter((s) => s.is_critical).length) || 0;
             avgPerformanceScore = (
               suppliers === null || suppliers === void 0
                 ? void 0
                 : suppliers.length
             )
-              ? suppliers.reduce(function (sum, s) {
-                  return sum + (s.performance_score || 0);
-                }, 0) / suppliers.length
+              ? suppliers.reduce((sum, s) => sum + (s.performance_score || 0), 0) / suppliers.length
               : 0;
             suppliersByType =
               (suppliers === null || suppliers === void 0
                 ? void 0
-                : suppliers.reduce(function (acc, supplier) {
+                : suppliers.reduce((acc, supplier) => {
                     acc[supplier.supplier_type] = (acc[supplier.supplier_type] || 0) + 1;
                     return acc;
                   }, {})) || {};
@@ -1060,7 +1047,7 @@ var SupplierManagementService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would require complex queries joining with orders, invoices, etc.
         // For now, return basic structure
         return [
@@ -1088,7 +1075,7 @@ var SupplierManagementService = /** @class */ (function () {
   SupplierManagementService.prototype.compareSuppliers = function (supplierIds) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, suppliers, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -1125,7 +1112,7 @@ var SupplierManagementService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would query actual orders/deliveries data
         return [
           2 /*return*/,
@@ -1146,7 +1133,7 @@ var SupplierManagementService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, qualityIssues;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, supabase_js_1.createClient)()];
@@ -1174,9 +1161,8 @@ var SupplierManagementService = /** @class */ (function () {
                 returnedItems:
                   (qualityIssues === null || qualityIssues === void 0
                     ? void 0
-                    : qualityIssues.filter(function (i) {
-                        return i.issue_type === "defective_product";
-                      }).length) || 0,
+                    : qualityIssues.filter((i) => i.issue_type === "defective_product").length) ||
+                  0,
               },
             ];
         }
@@ -1189,7 +1175,7 @@ var SupplierManagementService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would query actual financial data
         return [
           2 /*return*/,
@@ -1204,17 +1190,17 @@ var SupplierManagementService = /** @class */ (function () {
       });
     });
   };
-  SupplierManagementService.prototype.calculateDeliveryScore = function (data) {
+  SupplierManagementService.prototype.calculateDeliveryScore = (data) => {
     if (data.totalOrders === 0) return 10;
     var onTimePercentage = (data.onTimeDeliveries / data.totalOrders) * 100;
     return Math.min(10, Math.max(0, onTimePercentage / 10));
   };
-  SupplierManagementService.prototype.calculateQualityScore = function (data) {
+  SupplierManagementService.prototype.calculateQualityScore = (data) => {
     if (data.totalItems === 0) return 10;
     var defectivePercentage = (data.defectiveItems / data.totalItems) * 100;
     return Math.min(10, Math.max(0, 10 - defectivePercentage));
   };
-  SupplierManagementService.prototype.calculatePerformanceGrade = function (score) {
+  SupplierManagementService.prototype.calculatePerformanceGrade = (score) => {
     if (score >= 9.5) return "A+";
     if (score >= 9.0) return "A";
     if (score >= 8.5) return "B+";

@@ -1,9 +1,9 @@
 // Session Synchronization System
 // Real-time session state synchronization across multiple devices
 
-import type { UserSession, UserDevice, SessionSync } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
 import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { SessionSync, UserDevice, UserSession } from "@/types/session";
 
 export interface SyncEvent {
   id: string;
@@ -778,7 +778,7 @@ export class SessionSyncManager {
     }
 
     this.reconnectAttempts++;
-    const delay = Math.pow(2, this.reconnectAttempts) * 1000; // Exponential backoff
+    const delay = 2 ** this.reconnectAttempts * 1000; // Exponential backoff
 
     setTimeout(() => {
       console.log(`Attempting reconnection ${this.reconnectAttempts}/${this.maxReconnectAttempts}`);

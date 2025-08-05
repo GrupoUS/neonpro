@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TokenEncryptionService = void 0;
 var crypto_1 = require("crypto");
@@ -12,9 +11,9 @@ var IV_LENGTH = 16; // For GCM, this is always 16 bytes
 var SALT_LENGTH = 64; // 64 bytes salt for key derivation
 var TAG_LENGTH = 16; // GCM authentication tag length
 var KEY_LENGTH = 32; // 256 bits key
-var TokenEncryptionService = /** @class */ (function () {
+var TokenEncryptionService = /** @class */ (() => {
   function TokenEncryptionService() {}
-  TokenEncryptionService.getEncryptionKey = function () {
+  TokenEncryptionService.getEncryptionKey = () => {
     var key = process.env.OAUTH_ENCRYPTION_KEY;
     if (!key) {
       throw new Error("OAUTH_ENCRYPTION_KEY environment variable is required");
@@ -24,9 +23,8 @@ var TokenEncryptionService = /** @class */ (function () {
     }
     return key;
   };
-  TokenEncryptionService.deriveKey = function (masterKey, salt) {
-    return crypto_1.default.pbkdf2Sync(masterKey, salt, 100000, KEY_LENGTH, "sha512");
-  };
+  TokenEncryptionService.deriveKey = (masterKey, salt) =>
+    crypto_1.default.pbkdf2Sync(masterKey, salt, 100000, KEY_LENGTH, "sha512");
   /**
    * Encrypts sensitive token data using AES-256-GCM
    */
@@ -82,7 +80,7 @@ var TokenEncryptionService = /** @class */ (function () {
   /**
    * Securely compares two strings to prevent timing attacks
    */
-  TokenEncryptionService.secureCompare = function (a, b) {
+  TokenEncryptionService.secureCompare = (a, b) => {
     if (a.length !== b.length) {
       return false;
     }
@@ -95,27 +93,21 @@ var TokenEncryptionService = /** @class */ (function () {
   /**
    * Generates a cryptographically secure random state parameter
    */
-  TokenEncryptionService.generateSecureState = function () {
-    return crypto_1.default.randomBytes(32).toString("hex");
-  };
+  TokenEncryptionService.generateSecureState = () =>
+    crypto_1.default.randomBytes(32).toString("hex");
   /**
    * Generates a secure nonce for CSRF protection
    */
-  TokenEncryptionService.generateNonce = function () {
-    return crypto_1.default.randomBytes(16).toString("hex");
-  };
+  TokenEncryptionService.generateNonce = () => crypto_1.default.randomBytes(16).toString("hex");
   /**
    * Validates encryption data format
    */
-  TokenEncryptionService.validateEncryptionData = function (data) {
-    return (
-      typeof data === "object" &&
-      typeof data.encrypted === "string" &&
-      typeof data.iv === "string" &&
-      typeof data.salt === "string" &&
-      typeof data.tag === "string"
-    );
-  };
+  TokenEncryptionService.validateEncryptionData = (data) =>
+    typeof data === "object" &&
+    typeof data.encrypted === "string" &&
+    typeof data.iv === "string" &&
+    typeof data.salt === "string" &&
+    typeof data.tag === "string";
   return TokenEncryptionService;
 })();
 exports.TokenEncryptionService = TokenEncryptionService;

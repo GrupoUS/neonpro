@@ -3,8 +3,8 @@
  * Healthcare-compliant batch processing with ≥50% API call reduction
  */
 
-import type { NextRequest, NextResponse } from "next/server";
 import type { createServerClient } from "@supabase/ssr";
+import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
 
 // Validation schemas

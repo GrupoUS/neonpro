@@ -3,7 +3,9 @@
 // SSO Login Component
 // Story 1.3: SSO Integration - Frontend Login Interface
 
-import React, { useState, useEffect } from "react";
+import type { AlertCircle, ExternalLink, Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -12,11 +14,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Loader2, AlertCircle, ExternalLink } from "lucide-react";
 import type { useSSO } from "@/hooks/use-sso";
-import type { SSOProvider } from "@/types/sso";
 import type { cn } from "@/lib/utils";
+import type { SSOProvider } from "@/types/sso";
 
 interface SSOLoginProps {
   redirectTo?: string;

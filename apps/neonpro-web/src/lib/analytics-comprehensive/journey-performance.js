@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 📊 NeonPro Journey Performance Analytics
  *
@@ -33,26 +32,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -72,13 +71,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -100,9 +99,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -174,7 +171,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PerformanceUtils =
   exports.JourneyPerformanceAnalytics =
@@ -303,15 +300,13 @@ exports.INDUSTRY_BENCHMARKS = {
  *
  * Sistema principal de análise de performance da jornada do paciente
  */
-var JourneyPerformanceAnalytics = /** @class */ (function () {
+var JourneyPerformanceAnalytics = /** @class */ (() => {
   function JourneyPerformanceAnalytics(config) {
     this.supabase = (0, client_1.createClient)();
     this.kpis = new Map();
     this.config = __assign(
       {
-        enabledKPIs: exports.DEFAULT_KPIS.map(function (kpi) {
-          return kpi.id;
-        }),
+        enabledKPIs: exports.DEFAULT_KPIS.map((kpi) => kpi.id),
         customKPIs: [],
         defaultPeriod: "monthly",
         autoAnalysis: true,
@@ -337,16 +332,15 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
    * Initialize KPIs - Inicializa KPIs
    */
   JourneyPerformanceAnalytics.prototype.initializeKPIs = function () {
-    var _this = this;
     // Load default KPIs
-    exports.DEFAULT_KPIS.forEach(function (kpi) {
-      if (_this.config.enabledKPIs.includes(kpi.id)) {
-        _this.kpis.set(kpi.id, kpi);
+    exports.DEFAULT_KPIS.forEach((kpi) => {
+      if (this.config.enabledKPIs.includes(kpi.id)) {
+        this.kpis.set(kpi.id, kpi);
       }
     });
     // Load custom KPIs
-    this.config.customKPIs.forEach(function (kpi) {
-      _this.kpis.set(kpi.id, kpi);
+    this.config.customKPIs.forEach((kpi) => {
+      this.kpis.set(kpi.id, kpi);
     });
     logger_1.logger.info("JourneyPerformanceAnalytics: KPIs initialized", {
       total: this.kpis.size,
@@ -578,15 +572,11 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
             completedJourneys =
               (journeys === null || journeys === void 0
                 ? void 0
-                : journeys.filter(function (j) {
-                    return j.status === "completed";
-                  }).length) || 0;
+                : journeys.filter((j) => j.status === "completed").length) || 0;
             droppedJourneys =
               (journeys === null || journeys === void 0
                 ? void 0
-                : journeys.filter(function (j) {
-                    return j.status === "dropped";
-                  }).length) || 0;
+                : journeys.filter((j) => j.status === "dropped").length) || 0;
             conversionRate = totalJourneys > 0 ? (completedJourneys / totalJourneys) * 100 : 0;
             completionRate = totalJourneys > 0 ? (completedJourneys / totalJourneys) * 100 : 0;
             dropoffRate = totalJourneys > 0 ? (droppedJourneys / totalJourneys) * 100 : 0;
@@ -594,30 +584,26 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
               (journeys === null || journeys === void 0
                 ? void 0
                 : journeys
-                    .filter(function (j) {
-                      return j.completed_at;
-                    })
-                    .map(function (j) {
+                    .filter((j) => j.completed_at)
+                    .map((j) => {
                       var start = new Date(j.started_at);
                       var end = new Date(j.completed_at);
                       return (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24); // days
                     })) || [];
             averageJourneyTime =
               journeyTimes.length > 0
-                ? journeyTimes.reduce(function (sum, time) {
-                    return sum + time;
-                  }, 0) / journeyTimes.length
+                ? journeyTimes.reduce((sum, time) => sum + time, 0) / journeyTimes.length
                 : 0;
             stageConversions_1 = {};
             stageDurations_1 = {};
             stageDropoffs_1 = {};
             journeys === null || journeys === void 0
               ? void 0
-              : journeys.forEach(function (journey) {
+              : journeys.forEach((journey) => {
                   var _a;
                   (_a = journey.stages) === null || _a === void 0
                     ? void 0
-                    : _a.forEach(function (stage) {
+                    : _a.forEach((stage) => {
                         var stageName = stage.stage_name;
                         // Conversions
                         if (!stageConversions_1[stageName]) stageConversions_1[stageName] = 0;
@@ -793,9 +779,7 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
             processAnalysis = _a.sent();
             bottlenecks.push.apply(bottlenecks, processAnalysis);
             // Sort by priority
-            bottlenecks.sort(function (a, b) {
-              return b.priority - a.priority;
-            });
+            bottlenecks.sort((a, b) => b.priority - a.priority);
             return [2 /*return*/, bottlenecks];
           case 5:
             error_4 = _a.sent();
@@ -825,13 +809,13 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
         opportunities = [];
         try {
           // Opportunities from bottlenecks
-          bottlenecks.forEach(function (bottleneck) {
+          bottlenecks.forEach((bottleneck) => {
             if (bottleneck.severity === "high" || bottleneck.severity === "critical") {
               opportunities.push(_this.createBottleneckOpportunity(bottleneck));
             }
           });
           // Opportunities from underperforming KPIs
-          kpis.forEach(function (kpi) {
+          kpis.forEach((kpi) => {
             if (kpi.status === "warning" || kpi.status === "critical") {
               opportunities.push(_this.createKPIOpportunity(kpi));
             }
@@ -839,7 +823,7 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
           metricOpportunities = this.analyzeMetricOpportunities(metrics);
           opportunities.push.apply(opportunities, metricOpportunities);
           // Sort by ROI and priority
-          opportunities.sort(function (a, b) {
+          opportunities.sort((a, b) => {
             var aScore = a.estimatedROI * a.priority;
             var bScore = b.estimatedROI * b.priority;
             return bScore - aScore;
@@ -991,10 +975,8 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
           predictions = {};
           uncertaintyBounds = {};
           keyMetrics = ["conversionRate", "averageJourneyTime", "satisfactionScore"];
-          _loop_1 = function (metric) {
-            var trend = trends.find(function (t) {
-              return t.metric === metric;
-            });
+          _loop_1 = (metric) => {
+            var trend = trends.find((t) => t.metric === metric);
             var currentValue = metrics[metric];
             if (trend && currentValue) {
               var forecast = this_1.generateMetricForecast(currentValue, trend, horizon);
@@ -1084,7 +1066,7 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
   /**
    * Get Default Start Date - Obtém data inicial padrão
    */
-  JourneyPerformanceAnalytics.prototype.getDefaultStartDate = function (period) {
+  JourneyPerformanceAnalytics.prototype.getDefaultStartDate = (period) => {
     var now = new Date();
     var startDate = new Date(now);
     switch (period) {
@@ -1111,10 +1093,10 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
   /**
    * Calculate Efficiency Score - Calcula score de eficiência
    */
-  JourneyPerformanceAnalytics.prototype.calculateEfficiencyScore = function (
+  JourneyPerformanceAnalytics.prototype.calculateEfficiencyScore = (
     conversionRate,
     averageJourneyTime,
-  ) {
+  ) => {
     // Normalize metrics (0-100 scale)
     var normalizedConversion = Math.min(conversionRate, 100);
     var normalizedTime = Math.max(0, 100 - (averageJourneyTime / 30) * 100); // 30 days as benchmark
@@ -1124,7 +1106,7 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
   /**
    * Extract Metric Value - Extrai valor da métrica
    */
-  JourneyPerformanceAnalytics.prototype.extractMetricValue = function (metrics, kpiId) {
+  JourneyPerformanceAnalytics.prototype.extractMetricValue = (metrics, kpiId) => {
     var metricMap = {
       conversion_rate: "conversionRate",
       average_journey_time: "averageJourneyTime",
@@ -1139,7 +1121,7 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
   /**
    * Determine KPI Status - Determina status do KPI
    */
-  JourneyPerformanceAnalytics.prototype.determineKPIStatus = function (value, kpi) {
+  JourneyPerformanceAnalytics.prototype.determineKPIStatus = (value, kpi) => {
     if (value >= kpi.target) return "excellent";
     if (value >= kpi.warningThreshold) return "good";
     if (value >= kpi.criticalThreshold) return "warning";
@@ -1148,12 +1130,7 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
   /**
    * Generate KPI Insights - Gera insights do KPI
    */
-  JourneyPerformanceAnalytics.prototype.generateKPIInsights = function (
-    kpi,
-    value,
-    change,
-    status,
-  ) {
+  JourneyPerformanceAnalytics.prototype.generateKPIInsights = (kpi, value, change, status) => {
     var insights = [];
     // Status insights
     if (status === "excellent") {
@@ -1189,10 +1166,7 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
   /**
    * Calculate Analysis Confidence - Calcula confiança da análise
    */
-  JourneyPerformanceAnalytics.prototype.calculateAnalysisConfidence = function (
-    dataQuality,
-    metrics,
-  ) {
+  JourneyPerformanceAnalytics.prototype.calculateAnalysisConfidence = (dataQuality, metrics) => {
     // Base confidence from data quality
     var confidence = dataQuality.overall;
     // Adjust based on data volume (more data = higher confidence)
@@ -1254,33 +1228,29 @@ var JourneyPerformanceAnalytics = /** @class */ (function () {
   /**
    * Get Default Industry Position - Posição padrão na indústria
    */
-  JourneyPerformanceAnalytics.prototype.getDefaultIndustryPosition = function () {
-    return {
-      overallRanking: 50,
-      categoryRankings: {},
-      strengths: [],
-      weaknesses: [],
-      competitiveAdvantage: [],
-      improvementAreas: [],
-      marketPosition: "follower",
-    };
-  };
+  JourneyPerformanceAnalytics.prototype.getDefaultIndustryPosition = () => ({
+    overallRanking: 50,
+    categoryRankings: {},
+    strengths: [],
+    weaknesses: [],
+    competitiveAdvantage: [],
+    improvementAreas: [],
+    marketPosition: "follower",
+  });
   /**
    * Get Default Forecast - Previsão padrão
    */
-  JourneyPerformanceAnalytics.prototype.getDefaultForecast = function () {
-    return {
-      horizon: 30,
-      confidence: 50,
-      method: "linear_regression",
-      predictions: {},
-      scenarios: [],
-      uncertaintyBounds: {},
-      assumptions: [],
-      limitations: [],
-      recommendations: [],
-    };
-  };
+  JourneyPerformanceAnalytics.prototype.getDefaultForecast = () => ({
+    horizon: 30,
+    confidence: 50,
+    method: "linear_regression",
+    predictions: {},
+    scenarios: [],
+    uncertaintyBounds: {},
+    assumptions: [],
+    limitations: [],
+    recommendations: [],
+  });
   return JourneyPerformanceAnalytics;
 })();
 exports.JourneyPerformanceAnalytics = JourneyPerformanceAnalytics;
@@ -1301,7 +1271,7 @@ exports.PerformanceUtils = {
   /**
    * Format Performance Metric
    */
-  formatMetric: function (value, unit) {
+  formatMetric: (value, unit) => {
     switch (unit) {
       case "%":
         return "".concat(value.toFixed(1), "%");
@@ -1318,7 +1288,7 @@ exports.PerformanceUtils = {
   /**
    * Get KPI Status Color
    */
-  getKPIStatusColor: function (status) {
+  getKPIStatusColor: (status) => {
     var colors = {
       excellent: "#10B981", // green
       good: "#3B82F6", // blue
@@ -1331,7 +1301,7 @@ exports.PerformanceUtils = {
   /**
    * Calculate Improvement Priority
    */
-  calculatePriority: function (impact, effort) {
+  calculatePriority: (impact, effort) => {
     // Priority = Impact / Effort (with some normalization)
     return Math.min(10, Math.max(1, (impact / effort) * 5));
   },

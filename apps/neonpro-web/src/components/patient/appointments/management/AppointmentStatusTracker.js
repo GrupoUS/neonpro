@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentStatusTracker = AppointmentStatusTracker;
 var badge_1 = require("@/components/ui/badge");
@@ -17,7 +16,7 @@ function AppointmentStatusTracker(_a) {
   var attendanceRate = Math.max(0, 100 - noShowPattern.rate);
   var reliabilityScore = Math.max(0, 100 - cancellationStats.rate - noShowPattern.rate);
   // Health score calculation (based on Tavily research benchmarks)
-  var getHealthScore = function () {
+  var getHealthScore = () => {
     var score = 100;
     // Penalty for high no-show rate (industry avg: 27%)
     if (noShowPattern.rate > 27) {
@@ -35,7 +34,7 @@ function AppointmentStatusTracker(_a) {
   };
   var healthScore = getHealthScore();
   // Get performance badges
-  var getPerformanceBadges = function () {
+  var getPerformanceBadges = () => {
     var badges = [];
     if (attendanceRate >= 95) {
       badges.push({
@@ -63,7 +62,7 @@ function AppointmentStatusTracker(_a) {
   };
   var performanceBadges = getPerformanceBadges();
   // Improvement recommendations based on Exa research
-  var getRecommendations = function () {
+  var getRecommendations = () => {
     var recommendations = [];
     if (noShowPattern.rate > 27) {
       recommendations.push({
@@ -98,12 +97,12 @@ function AppointmentStatusTracker(_a) {
     return recommendations;
   };
   var recommendations = getRecommendations();
-  var getScoreColor = function (score) {
+  var getScoreColor = (score) => {
     if (score >= 85) return "text-green-600";
     if (score >= 70) return "text-yellow-600";
     return "text-red-600";
   };
-  var getScoreDescription = function (score) {
+  var getScoreDescription = (score) => {
     if (score >= 90) return "Excelente";
     if (score >= 80) return "Muito Bom";
     if (score >= 70) return "Bom";
@@ -193,13 +192,11 @@ function AppointmentStatusTracker(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="flex flex-wrap gap-2">
-              {performanceBadges.map(function (badge, index) {
-                return (
-                  <badge_1.Badge key={index} variant={badge.variant} className={badge.className}>
-                    {badge.label}
-                  </badge_1.Badge>
-                );
-              })}
+              {performanceBadges.map((badge, index) => (
+                <badge_1.Badge key={index} variant={badge.variant} className={badge.className}>
+                  {badge.label}
+                </badge_1.Badge>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -220,7 +217,7 @@ function AppointmentStatusTracker(_a) {
               </card_1.CardDescription>
             </card_1.CardHeader>
             <card_1.CardContent className="space-y-4">
-              {Object.entries(cancellationStats.reasonBreakdown).map(function (_a) {
+              {Object.entries(cancellationStats.reasonBreakdown).map((_a) => {
                 var reason = _a[0],
                   percentage = _a[1];
                 return (
@@ -291,7 +288,7 @@ function AppointmentStatusTracker(_a) {
             </card_1.CardDescription>
           </card_1.CardHeader>
           <card_1.CardContent className="space-y-4">
-            {recommendations.map(function (rec, index) {
+            {recommendations.map((rec, index) => {
               var Icon = rec.icon;
               var colorClass =
                 rec.type === "warning"

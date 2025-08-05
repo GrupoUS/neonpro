@@ -6,6 +6,8 @@
 
 "use client";
 
+import type { BarChart3, DollarSign, Target, TrendingDown, TrendingUp, Users } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
 import type {
   Card,
   CardContent,
@@ -13,9 +15,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
-import type { TrendingUp, TrendingDown, DollarSign, Target, Users, BarChart3 } from "lucide-react";
 
 interface RevenueMetricsCardProps {
   metrics: {

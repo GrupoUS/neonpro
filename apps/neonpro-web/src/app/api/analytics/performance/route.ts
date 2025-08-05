@@ -5,9 +5,7 @@
  * Based on 2025 performance monitoring best practices
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { CacheHeaders } from "@/performance/caching";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Performance metric interface
 interface PerformanceMetric {
@@ -274,7 +272,7 @@ function calculateAggregatedStats(metrics: any[]) {
       p99: values[Math.floor(count * 0.99)],
     };
 
-    delete statsByMetric[metricName].values; // Remove raw values to reduce response size
+    statsByMetric[metricName].values = undefined; // Remove raw values to reduce response size
   }
 
   return statsByMetric;

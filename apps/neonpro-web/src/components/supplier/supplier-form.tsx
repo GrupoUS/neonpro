@@ -7,25 +7,41 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { useForm, useFieldArray, Controller } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Switch } from "@/components/ui/switch";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
-import type { Progress } from "@/components/ui/progress";
 import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  AlertCircle,
+  Building2,
+  Check,
+  Download,
+  FileText,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Save,
+  Shield,
+  Trash2,
+  TrendingUp,
+  Upload,
+  User,
+  X,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Controller, useFieldArray, useForm } from "react-hook-form";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type {
   Form,
   FormControl,
@@ -35,49 +51,33 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
+import type { useSuppliers } from "@/lib/hooks/use-supplier";
 import type {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import type { toast } from "sonner";
-import type {
-  Building2,
-  User,
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  Shield,
-  TrendingUp,
-  FileText,
-  Plus,
-  Trash2,
-  Save,
-  X,
-  Check,
-  AlertCircle,
-  Upload,
-  Download,
-} from "lucide-react";
-
-import type {
-  Supplier,
-  SupplierStatus,
-  SupplierCategory,
-  PaymentTerms,
-  RiskLevel,
-  ContactInfo,
   Address,
   Certification,
+  ContactInfo,
+  PaymentTerms,
+  RiskLevel,
+  Supplier,
+  SupplierCategory,
   SupplierFormData,
   SupplierSchemas,
+  SupplierStatus,
 } from "@/lib/types/supplier";
-import type { useSuppliers } from "@/lib/hooks/use-supplier";
 import type { cn } from "@/lib/utils";
 
 // ============================================================================

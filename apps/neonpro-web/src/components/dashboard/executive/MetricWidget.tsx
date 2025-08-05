@@ -1,9 +1,34 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Download,
+  LineChart,
+  Minus,
+  MoreVertical,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Share,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { Skeleton } from "@/components/ui/skeleton";
 import type {
   Tooltip,
@@ -11,38 +36,13 @@ import type {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  MoreVertical,
-  RefreshCw,
-  Download,
-  Share,
-  Settings,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Target,
-  Activity,
-  BarChart3,
-  LineChart,
-  PieChart,
-} from "lucide-react";
 
 // Types
 import type {
   DashboardWidget,
   MetricData,
-  TrendDirection,
   MetricStatus,
+  TrendDirection,
 } from "@/lib/dashboard/types";
 
 interface MetricWidgetProps {
@@ -242,10 +242,11 @@ export function MetricWidget({ widget, isEditing, onUpdate }: MetricWidgetProps)
         }).format(value);
       case "percentage":
         return `${value.toFixed(1)}%`;
-      case "duration":
+      case "duration": {
         const hours = Math.floor(value / 60);
         const minutes = value % 60;
         return `${hours}h ${minutes}m`;
+      }
       default:
         return new Intl.NumberFormat("pt-BR").format(value);
     }

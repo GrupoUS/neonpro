@@ -93,7 +93,7 @@ const mockTimelineEvents = [
 // Mock implementation
 const mockGetPatientTimeline = jest
   .fn()
-  .mockImplementation(async (patientId: string, filter?: any) => {
+  .mockImplementation(async (_patientId: string, filter?: any) => {
     let events = [...mockTimelineEvents];
 
     if (filter?.eventTypes?.length) {
@@ -114,7 +114,7 @@ const mockGetPatientTimeline = jest
 
 const mockAddTimelineEvent = jest.fn().mockImplementation(async (event: any) => {
   return {
-    id: "mock_" + Date.now(),
+    id: `mock_${Date.now()}`,
     ...event,
   };
 });

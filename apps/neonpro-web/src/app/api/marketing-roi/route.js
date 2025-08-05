@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Marketing ROI Analysis Main API Routes
  * Entry point for marketing ROI management
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("next/server");
@@ -145,25 +142,23 @@ var server_1 = require("next/server");
  */
 function GET() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        server_1.NextResponse.json({
-          service: "Marketing ROI Analysis API",
-          version: "1.0.0",
-          status: "active",
-          endpoints: {
-            campaigns: "/api/marketing-roi/campaigns",
-            treatmentProfitability: "/api/marketing-roi/treatment-profitability",
-            cacLtvAnalysis: "/api/marketing-roi/cac-ltv-analysis",
-            alerts: "/api/marketing-roi/alerts",
-            optimizationRecommendations: "/api/marketing-roi/optimization-recommendations",
-            dashboardMetrics: "/api/marketing-roi/dashboard-metrics",
-            forecasts: "/api/marketing-roi/forecasts",
-            insights: "/api/marketing-roi/insights",
-          },
-        }),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      server_1.NextResponse.json({
+        service: "Marketing ROI Analysis API",
+        version: "1.0.0",
+        status: "active",
+        endpoints: {
+          campaigns: "/api/marketing-roi/campaigns",
+          treatmentProfitability: "/api/marketing-roi/treatment-profitability",
+          cacLtvAnalysis: "/api/marketing-roi/cac-ltv-analysis",
+          alerts: "/api/marketing-roi/alerts",
+          optimizationRecommendations: "/api/marketing-roi/optimization-recommendations",
+          dashboardMetrics: "/api/marketing-roi/dashboard-metrics",
+          forecasts: "/api/marketing-roi/forecasts",
+          insights: "/api/marketing-roi/insights",
+        },
+      }),
+    ]);
   });
 }

@@ -7,10 +7,10 @@
  */
 
 import type {
-  NotificationTemplate,
-  NotificationContext,
-  NotificationType,
   NotificationChannel,
+  NotificationContext,
+  NotificationTemplate,
+  NotificationType,
   TemplateVariables,
 } from "./types";
 
@@ -25,9 +25,7 @@ interface RenderedContent {
   variables: Record<string, any>;
 }
 
-interface TemplateFunction {
-  (context: NotificationContext): string;
-}
+type TemplateFunction = (context: NotificationContext) => string;
 
 // ============================================================================
 // TEMPLATE ENGINE CLASS

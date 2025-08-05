@@ -1,15 +1,15 @@
 // Authentication Utilities
 // Story 1.4: Session Management & Security Implementation
 
+import type { SESSION_POLICIES } from "./config";
 import type {
-  UserSession,
-  SessionSecurityEvent,
   DeviceInfo,
   LocationInfo,
-  SessionPolicy,
   SecurityEventType,
+  SessionPolicy,
+  SessionSecurityEvent,
+  UserSession,
 } from "./types";
-import type { SESSION_POLICIES } from "./config";
 
 // Session Validation Utilities
 export const SessionValidation = {

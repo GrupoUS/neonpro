@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,7 +33,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,8 +62,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -85,9 +82,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usePerformanceMonitor = usePerformanceMonitor;
 exports.useComponentPerformance = useComponentPerformance;
@@ -169,7 +166,7 @@ var react_1 = require("react");
 // =====================================================================================
 // PERFORMANCE MONITOR CLASS
 // =====================================================================================
-var PerformanceMonitor = /** @class */ (function () {
+var PerformanceMonitor = /** @class */ (() => {
   function PerformanceMonitor() {
     this.metrics = new Map();
     this.alerts = [];
@@ -179,16 +176,15 @@ var PerformanceMonitor = /** @class */ (function () {
     this.initializeObservers();
   }
   PerformanceMonitor.prototype.initializeObservers = function () {
-    var _this = this;
     if (typeof window === "undefined") return;
     try {
       // Memory usage observer
       if ("PerformanceObserver" in window) {
-        this.memoryObserver = new PerformanceObserver(function (list) {
+        this.memoryObserver = new PerformanceObserver((list) => {
           for (var _i = 0, _a = list.getEntries(); _i < _a.length; _i++) {
             var entry = _a[_i];
             if (entry.entryType === "measure") {
-              _this.addMetric("custom-measure", {
+              this.addMetric("custom-measure", {
                 name: entry.name,
                 value: entry.duration,
                 timestamp: Date.now(),
@@ -199,12 +195,12 @@ var PerformanceMonitor = /** @class */ (function () {
         });
         this.memoryObserver.observe({ entryTypes: ["measure"] });
         // Navigation timing observer
-        this.navigationObserver = new PerformanceObserver(function (list) {
+        this.navigationObserver = new PerformanceObserver((list) => {
           for (var _i = 0, _a = list.getEntries(); _i < _a.length; _i++) {
             var entry = _a[_i];
             if (entry.entryType === "navigation") {
               var navEntry = entry;
-              _this.addMetric("navigation", {
+              this.addMetric("navigation", {
                 name: "page-load-time",
                 value: navEntry.loadEventEnd - navEntry.navigationStart,
                 timestamp: Date.now(),
@@ -221,13 +217,12 @@ var PerformanceMonitor = /** @class */ (function () {
     }
   };
   PerformanceMonitor.prototype.startMonitoring = function () {
-    var _this = this;
     if (this.isMonitoring) return;
     this.isMonitoring = true;
-    this.monitoringInterval = setInterval(function () {
-      _this.collectMetrics();
-      _this.analyzePerformance();
-      _this.notifyObservers();
+    this.monitoringInterval = setInterval(() => {
+      this.collectMetrics();
+      this.analyzePerformance();
+      this.notifyObservers();
     }, 5000); // Check every 5 seconds
     console.log("🚀 Performance monitoring started");
   };
@@ -284,14 +279,13 @@ var PerformanceMonitor = /** @class */ (function () {
     });
   };
   PerformanceMonitor.prototype.measureFPS = function () {
-    var _this = this;
     var frames = 0;
     var lastTime = performance.now();
-    var measureFrame = function (currentTime) {
+    var measureFrame = (currentTime) => {
       frames++;
       if (currentTime - lastTime >= 1000) {
         var fps = Math.round((frames * 1000) / (currentTime - lastTime));
-        _this.addMetric("rendering", {
+        this.addMetric("rendering", {
           name: "fps",
           value: fps,
           timestamp: Date.now(),
@@ -305,11 +299,11 @@ var PerformanceMonitor = /** @class */ (function () {
     };
     requestAnimationFrame(measureFrame);
   };
-  PerformanceMonitor.prototype.estimateEventListeners = function () {
+  PerformanceMonitor.prototype.estimateEventListeners = () => {
     // This is an approximation - actual count is hard to get
     var elements = document.querySelectorAll("*");
     var count = 0;
-    elements.forEach(function (el) {
+    elements.forEach((el) => {
       // Check for common event attributes
       var attributes = el.attributes;
       for (var i = 0; i < attributes.length; i++) {
@@ -350,13 +344,12 @@ var PerformanceMonitor = /** @class */ (function () {
     }
   };
   PerformanceMonitor.prototype.analyzePerformance = function () {
-    var _this = this;
     this.alerts = []; // Clear previous alerts
     // Check all metrics against thresholds
-    this.metrics.forEach(function (categoryMetrics, category) {
-      categoryMetrics.forEach(function (metric) {
+    this.metrics.forEach((categoryMetrics, _category) => {
+      categoryMetrics.forEach((metric) => {
         if (metric.threshold && metric.value > metric.threshold) {
-          _this.addAlert({
+          this.addAlert({
             type: metric.value > metric.threshold * 1.5 ? "critical" : "warning",
             metric: metric.name,
             message: ""
@@ -365,16 +358,16 @@ var PerformanceMonitor = /** @class */ (function () {
               .concat(metric.unit || "", " (threshold: ")
               .concat(metric.threshold)
               .concat(metric.unit || "", ")"),
-            suggestion: _this.getSuggestion(metric.name, metric.value, metric.threshold),
+            suggestion: this.getSuggestion(metric.name, metric.value, metric.threshold),
           });
         }
       });
     });
     // Check component performance
-    this.components.forEach(function (comp) {
+    this.components.forEach((comp) => {
       if (comp.averageRenderTime > 16) {
         // 60fps = 16ms per frame
-        _this.addAlert({
+        this.addAlert({
           type: comp.averageRenderTime > 50 ? "critical" : "warning",
           metric: "component-render-time",
           message: "Component "
@@ -385,7 +378,7 @@ var PerformanceMonitor = /** @class */ (function () {
       }
     });
   };
-  PerformanceMonitor.prototype.getSuggestion = function (metricName, value, threshold) {
+  PerformanceMonitor.prototype.getSuggestion = (metricName, _value, _threshold) => {
     var suggestions = {
       "heap-used":
         "Consider implementing memory cleanup, removing unused variables, or using WeakMap/WeakSet",
@@ -420,18 +413,18 @@ var PerformanceMonitor = /** @class */ (function () {
   PerformanceMonitor.prototype.calculateOverallScore = function () {
     var score = 100;
     // Deduct points for alerts
-    this.alerts.forEach(function (alert) {
+    this.alerts.forEach((alert) => {
       score -= alert.type === "critical" ? 15 : 5;
     });
     // Deduct points for slow components
-    this.components.forEach(function (comp) {
+    this.components.forEach((comp) => {
       if (comp.averageRenderTime > 16) {
         score -= Math.min(10, comp.averageRenderTime / 5);
       }
     });
     return Math.max(0, Math.min(100, score));
   };
-  PerformanceMonitor.prototype.getGrade = function (score) {
+  PerformanceMonitor.prototype.getGrade = (score) => {
     if (score >= 90) return "A";
     if (score >= 80) return "B";
     if (score >= 70) return "C";
@@ -440,56 +433,39 @@ var PerformanceMonitor = /** @class */ (function () {
   };
   PerformanceMonitor.prototype.getAllMetrics = function () {
     var allMetrics = [];
-    this.metrics.forEach(function (categoryMetrics) {
+    this.metrics.forEach((categoryMetrics) => {
       allMetrics.push.apply(allMetrics, categoryMetrics.slice(-10)); // Last 10 of each category
     });
-    return allMetrics.sort(function (a, b) {
-      return b.timestamp - a.timestamp;
-    });
+    return allMetrics.sort((a, b) => b.timestamp - a.timestamp);
   };
   PerformanceMonitor.prototype.getRecommendations = function () {
     var recommendations = [];
-    if (
-      this.alerts.some(function (a) {
-        return a.metric === "heap-used";
-      })
-    ) {
+    if (this.alerts.some((a) => a.metric === "heap-used")) {
       recommendations.push("Implement memory management best practices");
     }
-    if (
-      this.alerts.some(function (a) {
-        return a.metric === "fps";
-      })
-    ) {
+    if (this.alerts.some((a) => a.metric === "fps")) {
       recommendations.push("Optimize rendering performance and animations");
     }
     if (this.components.size > 20) {
       recommendations.push("Consider component lazy loading and code splitting");
     }
-    if (
-      this.alerts.some(function (a) {
-        return a.metric === "node-count";
-      })
-    ) {
+    if (this.alerts.some((a) => a.metric === "node-count")) {
       recommendations.push("Implement virtual scrolling for large lists");
     }
     return recommendations;
   };
   PerformanceMonitor.prototype.subscribe = function (callback) {
-    var _this = this;
     this.observers.push(callback);
-    return function () {
-      var index = _this.observers.indexOf(callback);
+    return () => {
+      var index = this.observers.indexOf(callback);
       if (index > -1) {
-        _this.observers.splice(index, 1);
+        this.observers.splice(index, 1);
       }
     };
   };
   PerformanceMonitor.prototype.notifyObservers = function () {
     var report = this.getReport();
-    this.observers.forEach(function (callback) {
-      return callback(report);
-    });
+    this.observers.forEach((callback) => callback(report));
   };
   return PerformanceMonitor;
 })();
@@ -507,21 +483,19 @@ function usePerformanceMonitor() {
   var _b = (0, react_1.useState)(false),
     isMonitoring = _b[0],
     setIsMonitoring = _b[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     var unsubscribe = performanceMonitor.subscribe(setReport);
     return unsubscribe;
   }, []);
-  var startMonitoring = (0, react_1.useCallback)(function () {
+  var startMonitoring = (0, react_1.useCallback)(() => {
     performanceMonitor.startMonitoring();
     setIsMonitoring(true);
   }, []);
-  var stopMonitoring = (0, react_1.useCallback)(function () {
+  var stopMonitoring = (0, react_1.useCallback)(() => {
     performanceMonitor.stopMonitoring();
     setIsMonitoring(false);
   }, []);
-  var getReport = (0, react_1.useCallback)(function () {
-    return performanceMonitor.getReport();
-  }, []);
+  var getReport = (0, react_1.useCallback)(() => performanceMonitor.getReport(), []);
   return {
     report: report,
     isMonitoring: isMonitoring,
@@ -533,22 +507,19 @@ function usePerformanceMonitor() {
 function useComponentPerformance(componentName) {
   var renderStartRef = (0, react_1.useRef)();
   var renderCountRef = (0, react_1.useRef)(0);
-  var startRender = (0, react_1.useCallback)(function () {
+  var startRender = (0, react_1.useCallback)(() => {
     renderStartRef.current = performance.now();
   }, []);
-  var endRender = (0, react_1.useCallback)(
-    function () {
-      if (renderStartRef.current) {
-        var renderTime = performance.now() - renderStartRef.current;
-        renderCountRef.current++;
-        performanceMonitor.trackComponent(componentName, renderTime);
-      }
-    },
-    [componentName],
-  );
-  (0, react_1.useEffect)(function () {
+  var endRender = (0, react_1.useCallback)(() => {
+    if (renderStartRef.current) {
+      var renderTime = performance.now() - renderStartRef.current;
+      renderCountRef.current++;
+      performanceMonitor.trackComponent(componentName, renderTime);
+    }
+  }, [componentName]);
+  (0, react_1.useEffect)(() => {
     startRender();
-    return function () {
+    return () => {
       endRender();
     };
   });
@@ -559,12 +530,11 @@ function useComponentPerformance(componentName) {
   };
 }
 function usePerformanceMetric(name, category) {
-  var _this = this;
   if (category === void 0) {
     category = "custom";
   }
   var addMetric = (0, react_1.useCallback)(
-    function (value, threshold, unit) {
+    (value, threshold, unit) => {
       performanceMonitor.addMetric(category, {
         name: name,
         value: value,
@@ -576,16 +546,16 @@ function usePerformanceMetric(name, category) {
     [name, category],
   );
   var measureAsync = (0, react_1.useCallback)(
-    function (fn) {
-      return __awaiter(_this, void 0, void 0, function () {
-        var start, result, duration, error_1, duration;
-        return __generator(this, function (_a) {
+    (fn) =>
+      __awaiter(this, void 0, void 0, function () {
+        var start, result, _duration, error_1, duration;
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               start = performance.now();
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, fn()];
             case 2:
               result = _a.sent();
@@ -601,12 +571,11 @@ function usePerformanceMetric(name, category) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [addMetric],
   );
   var measureSync = (0, react_1.useCallback)(
-    function (fn) {
+    (fn) => {
       var start = performance.now();
       try {
         var result = fn();
@@ -644,14 +613,14 @@ function measurePerformance(name, fn) {
 }
 function measureAsyncPerformance(name, fn) {
   return __awaiter(this, void 0, void 0, function () {
-    var start, result, duration, error_2, duration;
-    return __generator(this, function (_a) {
+    var start, result, _duration, error_2, duration;
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           start = performance.now();
           _a.label = 1;
         case 1:
-          _a.trys.push([1, 3, , 4]);
+          _a.trys.push([1, 3, undefined, 4]);
           return [4 /*yield*/, fn()];
         case 2:
           result = _a.sent();

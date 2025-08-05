@@ -1,19 +1,18 @@
-"use strict";
 // =====================================================
 // NeonPro Intelligent Allocation Engine
 // Story 2.4: Smart Resource Management - Task 2
 // =====================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,14 +132,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AllocationEngine = void 0;
 var resource_manager_1 = require("./resource-manager");
 // =====================================================
 // Intelligent Allocation Engine
 // =====================================================
-var AllocationEngine = /** @class */ (function () {
+var AllocationEngine = /** @class */ (() => {
   function AllocationEngine() {
     this.resourceManager = new resource_manager_1.ResourceManager();
   }
@@ -243,12 +240,7 @@ var AllocationEngine = /** @class */ (function () {
             return [3 /*break*/, 1];
           case 5:
             // Sort by score (highest first)
-            return [
-              2 /*return*/,
-              suggestions.sort(function (a, b) {
-                return b.score - a.score;
-              }),
-            ];
+            return [2 /*return*/, suggestions.sort((a, b) => b.score - a.score)];
         }
       });
     });
@@ -293,18 +285,14 @@ var AllocationEngine = /** @class */ (function () {
               // Skills matching (for staff)
               if (req.skills && resource.type === "staff") {
                 resourceSkills_1 = resource.skills || [];
-                matchedSkills = req.skills.filter(function (skill) {
-                  return resourceSkills_1.includes(skill);
-                });
+                matchedSkills = req.skills.filter((skill) => resourceSkills_1.includes(skill));
                 skillScore = (matchedSkills.length / req.skills.length) * 20;
                 score += skillScore;
               }
               // Equipment requirements (for rooms)
               if (req.equipment && resource.type === "room") {
                 resourceEquipment_1 = resource.equipment_ids || [];
-                matchedEquipment = req.equipment.filter(function (eq) {
-                  return resourceEquipment_1.includes(eq);
-                });
+                matchedEquipment = req.equipment.filter((eq) => resourceEquipment_1.includes(eq));
                 equipmentScore = (matchedEquipment.length / req.equipment.length) * 15;
                 score += equipmentScore;
               }
@@ -371,7 +359,7 @@ var AllocationEngine = /** @class */ (function () {
       });
     });
   };
-  AllocationEngine.prototype.calculateConfidence = function (resource, criteria) {
+  AllocationEngine.prototype.calculateConfidence = (resource, criteria) => {
     var confidence = 100;
     // Reduce confidence based on missing information
     if (!resource.specifications) confidence -= 5;
@@ -388,7 +376,7 @@ var AllocationEngine = /** @class */ (function () {
     }
     return Math.max(60, Math.min(100, confidence));
   };
-  AllocationEngine.prototype.generateReasoning = function (resource, criteria, score) {
+  AllocationEngine.prototype.generateReasoning = (resource, criteria, score) => {
     var _a;
     var reasoning = [];
     if (score >= 90) {
@@ -419,7 +407,7 @@ var AllocationEngine = /** @class */ (function () {
     }
     return reasoning;
   };
-  AllocationEngine.prototype.calculateEstimatedCost = function (resource, criteria) {
+  AllocationEngine.prototype.calculateEstimatedCost = (resource, criteria) => {
     var startTime = new Date(criteria.startTime);
     var endTime = new Date(criteria.endTime);
     var hours = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
@@ -607,7 +595,7 @@ var AllocationEngine = /** @class */ (function () {
   AllocationEngine.prototype.calculateOptimizationMetrics = function (clinicId, suggestions) {
     return __awaiter(this, void 0, void 0, function () {
       var totalScore, totalCost, totalUtilization, _i, suggestions_1, suggestion, count;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           totalScore = 0;
           totalCost = 0;
@@ -664,7 +652,7 @@ var AllocationEngine = /** @class */ (function () {
           case 1:
             allocations = _a.sent();
             totalMinutes = 8 * 60;
-            allocatedMinutes = allocations.reduce(function (sum, allocation) {
+            allocatedMinutes = allocations.reduce((sum, allocation) => {
               var start = new Date(allocation.start_time);
               var end = new Date(allocation.end_time);
               return sum + (end.getTime() - start.getTime()) / (1000 * 60);
@@ -768,7 +756,7 @@ var AllocationEngine = /** @class */ (function () {
   AllocationEngine.prototype.isHoliday = function (date) {
     return __awaiter(this, void 0, void 0, function () {
       var dayOfWeek;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         dayOfWeek = date.getDay();
         return [2 /*return*/, dayOfWeek === 0 || dayOfWeek === 6]; // Weekend
       });

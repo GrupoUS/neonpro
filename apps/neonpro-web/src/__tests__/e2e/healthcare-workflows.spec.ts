@@ -3,8 +3,6 @@
  * Tests using synthetic data for LGPD compliance
  */
 
-import type { test, expect } from "@playwright/test";
-
 // Synthetic test data (LGPD compliant)
 const TEST_PATIENT = {
   name: "João Silva Test",

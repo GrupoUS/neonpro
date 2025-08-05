@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -166,7 +163,7 @@ var select_1 = require("@/components/ui/select");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var backup_1 = require("@/lib/backup");
-var BackupDashboard = function () {
+var BackupDashboard = () => {
   // State
   var _a = (0, react_1.useState)([]),
     configs = _a[0],
@@ -192,21 +189,17 @@ var BackupDashboard = function () {
   var _h = (0, react_1.useState)(false),
     showRecoveryDialog = _h[0],
     setShowRecoveryDialog = _h[1];
-  var backupSystem = (0, react_1.useState)(function () {
-    return new backup_1.BackupSystem();
-  })[0];
+  var backupSystem = (0, react_1.useState)(() => new backup_1.BackupSystem())[0];
   // Load data
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadDashboardData();
     var interval = setInterval(loadDashboardData, 30000); // Refresh every 30s
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
-  var loadDashboardData = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadDashboardData = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a, configsData, recordsData, metricsData, alertsData, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -243,10 +236,9 @@ var BackupDashboard = function () {
         }
       });
     });
-  };
-  var loadBackupConfigs = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var loadBackupConfigs = () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Mock data - replace with actual API call
         return [
           2 /*return*/,
@@ -281,10 +273,9 @@ var BackupDashboard = function () {
         ];
       });
     });
-  };
-  var loadBackupRecords = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var loadBackupRecords = () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Mock data - replace with actual API call
         return [
           2 /*return*/,
@@ -315,10 +306,9 @@ var BackupDashboard = function () {
         ];
       });
     });
-  };
-  var loadSystemMetrics = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var loadSystemMetrics = () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Mock data - replace with actual API call
         return [
           2 /*return*/,
@@ -335,10 +325,9 @@ var BackupDashboard = function () {
         ];
       });
     });
-  };
-  var loadAlerts = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var loadAlerts = () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Mock data - replace with actual API call
         return [
           2 /*return*/,
@@ -355,12 +344,11 @@ var BackupDashboard = function () {
         ];
       });
     });
-  };
   // Actions
-  var runBackup = function (configId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var runBackup = (configId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -380,22 +368,21 @@ var BackupDashboard = function () {
         }
       });
     });
-  };
-  var toggleConfig = function (configId, enabled) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var toggleConfig = (configId, enabled) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             // Update config enabled status
-            setConfigs(function (prev) {
-              return prev.map(function (config) {
-                return config.id === configId
+            setConfigs((prev) =>
+              prev.map((config) =>
+                config.id === configId
                   ? __assign(__assign({}, config), { enabled: enabled })
-                  : config;
-              });
-            });
+                  : config,
+              ),
+            );
             return [4 /*yield*/, loadDashboardData()];
           case 1:
             _a.sent();
@@ -409,27 +396,23 @@ var BackupDashboard = function () {
         }
       });
     });
-  };
-  var acknowledgeAlert = function (alertId) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var acknowledgeAlert = (alertId) =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
-          setAlerts(function (prev) {
-            return prev.map(function (alert) {
-              return alert.id === alertId
-                ? __assign(__assign({}, alert), { acknowledged: true })
-                : alert;
-            });
-          });
+          setAlerts((prev) =>
+            prev.map((alert) =>
+              alert.id === alertId ? __assign(__assign({}, alert), { acknowledged: true }) : alert,
+            ),
+          );
         } catch (error) {
           console.error("Error acknowledging alert:", error);
         }
         return [2 /*return*/];
       });
     });
-  };
   // Utility functions
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "COMPLETED":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -443,7 +426,7 @@ var BackupDashboard = function () {
         return <lucide_react_1.Clock className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var variants = {
       COMPLETED: "default",
       RUNNING: "secondary",
@@ -452,7 +435,7 @@ var BackupDashboard = function () {
     };
     return <badge_1.Badge variant={variants[status] || "outline"}>{status}</badge_1.Badge>;
   };
-  var getHealthColor = function (health) {
+  var getHealthColor = (health) => {
     switch (health) {
       case "HEALTHY":
         return "text-green-500";
@@ -483,20 +466,11 @@ var BackupDashboard = function () {
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <button_1.Button
-            onClick={function () {
-              return setShowRecoveryDialog(true);
-            }}
-            variant="outline"
-          >
+          <button_1.Button onClick={() => setShowRecoveryDialog(true)} variant="outline">
             <lucide_react_1.Download className="h-4 w-4 mr-2" />
             Recovery
           </button_1.Button>
-          <button_1.Button
-            onClick={function () {
-              return setShowCreateDialog(true);
-            }}
-          >
+          <button_1.Button onClick={() => setShowCreateDialog(true)}>
             <lucide_react_1.Plus className="h-4 w-4 mr-2" />
             New Backup
           </button_1.Button>
@@ -504,37 +478,29 @@ var BackupDashboard = function () {
       </div>
 
       {/* Alerts */}
-      {alerts.filter(function (alert) {
-        return !alert.acknowledged;
-      }).length > 0 && (
+      {alerts.filter((alert) => !alert.acknowledged).length > 0 && (
         <div className="space-y-2">
           {alerts
-            .filter(function (alert) {
-              return !alert.acknowledged;
-            })
-            .map(function (alert) {
-              return (
-                <alert_1.Alert
-                  key={alert.id}
-                  className={alert.severity === "CRITICAL" ? "border-red-500" : ""}
-                >
-                  <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                  <alert_1.AlertTitle>Backup Alert - {alert.severity}</alert_1.AlertTitle>
-                  <alert_1.AlertDescription className="flex items-center justify-between">
-                    <span>{alert.message}</span>
-                    <button_1.Button
-                      size="sm"
-                      variant="outline"
-                      onClick={function () {
-                        return acknowledgeAlert(alert.id);
-                      }}
-                    >
-                      Acknowledge
-                    </button_1.Button>
-                  </alert_1.AlertDescription>
-                </alert_1.Alert>
-              );
-            })}
+            .filter((alert) => !alert.acknowledged)
+            .map((alert) => (
+              <alert_1.Alert
+                key={alert.id}
+                className={alert.severity === "CRITICAL" ? "border-red-500" : ""}
+              >
+                <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                <alert_1.AlertTitle>Backup Alert - {alert.severity}</alert_1.AlertTitle>
+                <alert_1.AlertDescription className="flex items-center justify-between">
+                  <span>{alert.message}</span>
+                  <button_1.Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => acknowledgeAlert(alert.id)}
+                  >
+                    Acknowledge
+                  </button_1.Button>
+                </alert_1.AlertDescription>
+              </alert_1.Alert>
+            ))}
         </div>
       )}
 
@@ -631,63 +597,61 @@ var BackupDashboard = function () {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {records.slice(0, 5).map(function (record) {
-                    return (
-                      <table_1.TableRow key={record.id}>
-                        <table_1.TableCell className="font-medium">
-                          {record.config_name}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge variant="outline">{record.type}</badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center space-x-2">
-                            {getStatusIcon(record.status)}
-                            {getStatusBadge(record.status)}
-                          </div>
-                          {record.status === "RUNNING" && record.progress && (
-                            <progress_1.Progress value={record.progress} className="w-20 mt-1" />
-                          )}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {(0, utils_1.formatDate)(record.start_time)}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {record.duration ? (0, utils_1.formatDuration)(record.duration) : "-"}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {record.size ? (0, utils_1.formatBytes)(record.size) : "-"}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <dropdown_menu_1.DropdownMenu>
-                            <dropdown_menu_1.DropdownMenuTrigger asChild>
-                              <button_1.Button variant="ghost" className="h-8 w-8 p-0">
-                                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-                              </button_1.Button>
-                            </dropdown_menu_1.DropdownMenuTrigger>
-                            <dropdown_menu_1.DropdownMenuContent align="end">
-                              <dropdown_menu_1.DropdownMenuLabel>
-                                Actions
-                              </dropdown_menu_1.DropdownMenuLabel>
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.FileText className="h-4 w-4 mr-2" />
-                                View Details
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.Download className="h-4 w-4 mr-2" />
-                                Download
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuSeparator />
-                              <dropdown_menu_1.DropdownMenuItem className="text-red-600">
-                                <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </dropdown_menu_1.DropdownMenuItem>
-                            </dropdown_menu_1.DropdownMenuContent>
-                          </dropdown_menu_1.DropdownMenu>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                  {records.slice(0, 5).map((record) => (
+                    <table_1.TableRow key={record.id}>
+                      <table_1.TableCell className="font-medium">
+                        {record.config_name}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge variant="outline">{record.type}</badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(record.status)}
+                          {getStatusBadge(record.status)}
+                        </div>
+                        {record.status === "RUNNING" && record.progress && (
+                          <progress_1.Progress value={record.progress} className="w-20 mt-1" />
+                        )}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {(0, utils_1.formatDate)(record.start_time)}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {record.duration ? (0, utils_1.formatDuration)(record.duration) : "-"}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {record.size ? (0, utils_1.formatBytes)(record.size) : "-"}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <dropdown_menu_1.DropdownMenu>
+                          <dropdown_menu_1.DropdownMenuTrigger asChild>
+                            <button_1.Button variant="ghost" className="h-8 w-8 p-0">
+                              <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+                            </button_1.Button>
+                          </dropdown_menu_1.DropdownMenuTrigger>
+                          <dropdown_menu_1.DropdownMenuContent align="end">
+                            <dropdown_menu_1.DropdownMenuLabel>
+                              Actions
+                            </dropdown_menu_1.DropdownMenuLabel>
+                            <dropdown_menu_1.DropdownMenuItem>
+                              <lucide_react_1.FileText className="h-4 w-4 mr-2" />
+                              View Details
+                            </dropdown_menu_1.DropdownMenuItem>
+                            <dropdown_menu_1.DropdownMenuItem>
+                              <lucide_react_1.Download className="h-4 w-4 mr-2" />
+                              Download
+                            </dropdown_menu_1.DropdownMenuItem>
+                            <dropdown_menu_1.DropdownMenuSeparator />
+                            <dropdown_menu_1.DropdownMenuItem className="text-red-600">
+                              <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </dropdown_menu_1.DropdownMenuItem>
+                          </dropdown_menu_1.DropdownMenuContent>
+                        </dropdown_menu_1.DropdownMenu>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
             </card_1.CardContent>
@@ -717,87 +681,79 @@ var BackupDashboard = function () {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {configs.map(function (config) {
-                    return (
-                      <table_1.TableRow key={config.id}>
-                        <table_1.TableCell>
-                          <div>
-                            <div className="font-medium">{config.name}</div>
-                            {config.description && (
-                              <div className="text-sm text-muted-foreground">
-                                {config.description}
-                              </div>
-                            )}
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge variant="outline">{config.type}</badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell>{config.schedule_frequency}</table_1.TableCell>
-                        <table_1.TableCell>
-                          {config.last_backup
-                            ? (0, utils_1.formatDate)(config.last_backup)
-                            : "Never"}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {config.next_backup ? (0, utils_1.formatDate)(config.next_backup) : "-"}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center space-x-2">
-                            <switch_1.Switch
-                              checked={config.enabled}
-                              onCheckedChange={function (enabled) {
-                                return toggleConfig(config.id, enabled);
-                              }}
-                            />
-                            <badge_1.Badge
-                              variant={config.status === "ACTIVE" ? "default" : "secondary"}
-                            >
-                              {config.status}
-                            </badge_1.Badge>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center space-x-2">
-                            <button_1.Button
-                              size="sm"
-                              variant="outline"
-                              onClick={function () {
-                                return runBackup(config.id);
-                              }}
-                            >
-                              <lucide_react_1.Play className="h-4 w-4" />
-                            </button_1.Button>
-                            <dropdown_menu_1.DropdownMenu>
-                              <dropdown_menu_1.DropdownMenuTrigger asChild>
-                                <button_1.Button variant="ghost" className="h-8 w-8 p-0">
-                                  <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-                                </button_1.Button>
-                              </dropdown_menu_1.DropdownMenuTrigger>
-                              <dropdown_menu_1.DropdownMenuContent align="end">
-                                <dropdown_menu_1.DropdownMenuLabel>
-                                  Actions
-                                </dropdown_menu_1.DropdownMenuLabel>
-                                <dropdown_menu_1.DropdownMenuItem>
-                                  <lucide_react_1.Settings className="h-4 w-4 mr-2" />
-                                  Edit Configuration
-                                </dropdown_menu_1.DropdownMenuItem>
-                                <dropdown_menu_1.DropdownMenuItem>
-                                  <lucide_react_1.FileText className="h-4 w-4 mr-2" />
-                                  View History
-                                </dropdown_menu_1.DropdownMenuItem>
-                                <dropdown_menu_1.DropdownMenuSeparator />
-                                <dropdown_menu_1.DropdownMenuItem className="text-red-600">
-                                  <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
-                                  Delete
-                                </dropdown_menu_1.DropdownMenuItem>
-                              </dropdown_menu_1.DropdownMenuContent>
-                            </dropdown_menu_1.DropdownMenu>
-                          </div>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                  {configs.map((config) => (
+                    <table_1.TableRow key={config.id}>
+                      <table_1.TableCell>
+                        <div>
+                          <div className="font-medium">{config.name}</div>
+                          {config.description && (
+                            <div className="text-sm text-muted-foreground">
+                              {config.description}
+                            </div>
+                          )}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge variant="outline">{config.type}</badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell>{config.schedule_frequency}</table_1.TableCell>
+                      <table_1.TableCell>
+                        {config.last_backup ? (0, utils_1.formatDate)(config.last_backup) : "Never"}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {config.next_backup ? (0, utils_1.formatDate)(config.next_backup) : "-"}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center space-x-2">
+                          <switch_1.Switch
+                            checked={config.enabled}
+                            onCheckedChange={(enabled) => toggleConfig(config.id, enabled)}
+                          />
+                          <badge_1.Badge
+                            variant={config.status === "ACTIVE" ? "default" : "secondary"}
+                          >
+                            {config.status}
+                          </badge_1.Badge>
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center space-x-2">
+                          <button_1.Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => runBackup(config.id)}
+                          >
+                            <lucide_react_1.Play className="h-4 w-4" />
+                          </button_1.Button>
+                          <dropdown_menu_1.DropdownMenu>
+                            <dropdown_menu_1.DropdownMenuTrigger asChild>
+                              <button_1.Button variant="ghost" className="h-8 w-8 p-0">
+                                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+                              </button_1.Button>
+                            </dropdown_menu_1.DropdownMenuTrigger>
+                            <dropdown_menu_1.DropdownMenuContent align="end">
+                              <dropdown_menu_1.DropdownMenuLabel>
+                                Actions
+                              </dropdown_menu_1.DropdownMenuLabel>
+                              <dropdown_menu_1.DropdownMenuItem>
+                                <lucide_react_1.Settings className="h-4 w-4 mr-2" />
+                                Edit Configuration
+                              </dropdown_menu_1.DropdownMenuItem>
+                              <dropdown_menu_1.DropdownMenuItem>
+                                <lucide_react_1.FileText className="h-4 w-4 mr-2" />
+                                View History
+                              </dropdown_menu_1.DropdownMenuItem>
+                              <dropdown_menu_1.DropdownMenuSeparator />
+                              <dropdown_menu_1.DropdownMenuItem className="text-red-600">
+                                <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </dropdown_menu_1.DropdownMenuItem>
+                            </dropdown_menu_1.DropdownMenuContent>
+                          </dropdown_menu_1.DropdownMenu>
+                        </div>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
             </card_1.CardContent>
@@ -829,75 +785,73 @@ var BackupDashboard = function () {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {records.map(function (record) {
-                    return (
-                      <table_1.TableRow key={record.id}>
-                        <table_1.TableCell className="font-medium">
-                          {record.config_name}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge variant="outline">{record.type}</badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center space-x-2">
-                            {getStatusIcon(record.status)}
-                            {getStatusBadge(record.status)}
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {(0, utils_1.formatDate)(record.start_time)}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {record.end_time ? (0, utils_1.formatDate)(record.end_time) : "-"}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {record.duration ? (0, utils_1.formatDuration)(record.duration) : "-"}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {record.size ? (0, utils_1.formatBytes)(record.size) : "-"}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {record.size && record.compressed_size
-                            ? "".concat(
-                                ((1 - record.compressed_size / record.size) * 100).toFixed(1),
-                                "%",
-                              )
-                            : "-"}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <dropdown_menu_1.DropdownMenu>
-                            <dropdown_menu_1.DropdownMenuTrigger asChild>
-                              <button_1.Button variant="ghost" className="h-8 w-8 p-0">
-                                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-                              </button_1.Button>
-                            </dropdown_menu_1.DropdownMenuTrigger>
-                            <dropdown_menu_1.DropdownMenuContent align="end">
-                              <dropdown_menu_1.DropdownMenuLabel>
-                                Actions
-                              </dropdown_menu_1.DropdownMenuLabel>
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.FileText className="h-4 w-4 mr-2" />
-                                View Details
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.Download className="h-4 w-4 mr-2" />
-                                Download
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.Upload className="h-4 w-4 mr-2" />
-                                Restore
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuSeparator />
-                              <dropdown_menu_1.DropdownMenuItem className="text-red-600">
-                                <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </dropdown_menu_1.DropdownMenuItem>
-                            </dropdown_menu_1.DropdownMenuContent>
-                          </dropdown_menu_1.DropdownMenu>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                  {records.map((record) => (
+                    <table_1.TableRow key={record.id}>
+                      <table_1.TableCell className="font-medium">
+                        {record.config_name}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge variant="outline">{record.type}</badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(record.status)}
+                          {getStatusBadge(record.status)}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {(0, utils_1.formatDate)(record.start_time)}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {record.end_time ? (0, utils_1.formatDate)(record.end_time) : "-"}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {record.duration ? (0, utils_1.formatDuration)(record.duration) : "-"}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {record.size ? (0, utils_1.formatBytes)(record.size) : "-"}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {record.size && record.compressed_size
+                          ? "".concat(
+                              ((1 - record.compressed_size / record.size) * 100).toFixed(1),
+                              "%",
+                            )
+                          : "-"}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <dropdown_menu_1.DropdownMenu>
+                          <dropdown_menu_1.DropdownMenuTrigger asChild>
+                            <button_1.Button variant="ghost" className="h-8 w-8 p-0">
+                              <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+                            </button_1.Button>
+                          </dropdown_menu_1.DropdownMenuTrigger>
+                          <dropdown_menu_1.DropdownMenuContent align="end">
+                            <dropdown_menu_1.DropdownMenuLabel>
+                              Actions
+                            </dropdown_menu_1.DropdownMenuLabel>
+                            <dropdown_menu_1.DropdownMenuItem>
+                              <lucide_react_1.FileText className="h-4 w-4 mr-2" />
+                              View Details
+                            </dropdown_menu_1.DropdownMenuItem>
+                            <dropdown_menu_1.DropdownMenuItem>
+                              <lucide_react_1.Download className="h-4 w-4 mr-2" />
+                              Download
+                            </dropdown_menu_1.DropdownMenuItem>
+                            <dropdown_menu_1.DropdownMenuItem>
+                              <lucide_react_1.Upload className="h-4 w-4 mr-2" />
+                              Restore
+                            </dropdown_menu_1.DropdownMenuItem>
+                            <dropdown_menu_1.DropdownMenuSeparator />
+                            <dropdown_menu_1.DropdownMenuItem className="text-red-600">
+                              <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </dropdown_menu_1.DropdownMenuItem>
+                          </dropdown_menu_1.DropdownMenuContent>
+                        </dropdown_menu_1.DropdownMenu>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
             </card_1.CardContent>
@@ -1055,16 +1009,12 @@ var BackupDashboard = function () {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   {records
-                    .filter(function (record) {
-                      return record.status === "COMPLETED";
-                    })
-                    .map(function (record) {
-                      return (
-                        <select_1.SelectItem key={record.id} value={record.id}>
-                          {record.config_name} - {(0, utils_1.formatDate)(record.start_time)}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    .filter((record) => record.status === "COMPLETED")
+                    .map((record) => (
+                      <select_1.SelectItem key={record.id} value={record.id}>
+                        {record.config_name} - {(0, utils_1.formatDate)(record.start_time)}
+                      </select_1.SelectItem>
+                    ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>

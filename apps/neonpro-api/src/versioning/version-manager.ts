@@ -150,8 +150,10 @@ export class HealthcareVersionManager {
 
     for (const [key, count] of this.deprecationWarnings) {
       const [version, endpoint] = key.split("-", 2);
-      if (!stats[version]) stats[version] = {};
-      stats[version][endpoint] = count;
+      if (version && endpoint) {
+        if (!stats[version]) stats[version] = {};
+        stats[version][endpoint] = count;
+      }
     }
 
     return stats;

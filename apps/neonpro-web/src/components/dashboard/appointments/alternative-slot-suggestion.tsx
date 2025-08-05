@@ -5,11 +5,6 @@
 // Story 1.2: Intelligent slot recommendation
 // =============================================
 
-import type { AlternativeSlot } from "@/app/lib/types/conflict-prevention";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Separator } from "@/components/ui/separator";
 import type { format, isSameDay, parseISO } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
@@ -24,6 +19,11 @@ import type {
 } from "lucide-react";
 import type { useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { AlternativeSlot } from "@/app/lib/types/conflict-prevention";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Separator } from "@/components/ui/separator";
 
 interface AlternativeSlotSuggestionProps {
   clinicId: string;

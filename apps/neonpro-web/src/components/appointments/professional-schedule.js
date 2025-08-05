@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfessionalSchedule = ProfessionalSchedule;
 var react_1 = require("react");
@@ -83,81 +82,62 @@ function ProfessionalSchedule(_a) {
     }),
     newAbsence = _f[0],
     setNewAbsence = _f[1];
-  var selectedProfessional = professionals.find(function (p) {
-    return p.id === selectedProfessionalId;
-  });
+  var selectedProfessional = professionals.find((p) => p.id === selectedProfessionalId);
   // Initialize working days when professional changes
-  react_1.default.useEffect(
-    function () {
-      if (selectedProfessional) {
-        var initialDays = weekDays.map(function (day) {
-          return __assign(__assign({}, day), {
-            enabled: selectedProfessional.workingHours.days.includes(day.day),
-            startTime: selectedProfessional.workingHours.start,
-            endTime: selectedProfessional.workingHours.end,
-            lunchStart: "12:00",
-            lunchEnd: "13:00",
-          });
-        });
-        setWorkingDays(initialDays);
-        // Mock absence data - in production, this would come from API
-        setAbsences([
-          {
-            id: "1",
-            startDate: (0, moment_1.default)().add(7, "days").format("YYYY-MM-DD"),
-            endDate: (0, moment_1.default)().add(10, "days").format("YYYY-MM-DD"),
-            reason: "Férias programadas",
-            type: "vacation",
-          },
-        ]);
-      }
-    },
-    [selectedProfessional],
-  );
+  react_1.default.useEffect(() => {
+    if (selectedProfessional) {
+      var initialDays = weekDays.map((day) =>
+        __assign(__assign({}, day), {
+          enabled: selectedProfessional.workingHours.days.includes(day.day),
+          startTime: selectedProfessional.workingHours.start,
+          endTime: selectedProfessional.workingHours.end,
+          lunchStart: "12:00",
+          lunchEnd: "13:00",
+        }),
+      );
+      setWorkingDays(initialDays);
+      // Mock absence data - in production, this would come from API
+      setAbsences([
+        {
+          id: "1",
+          startDate: (0, moment_1.default)().add(7, "days").format("YYYY-MM-DD"),
+          endDate: (0, moment_1.default)().add(10, "days").format("YYYY-MM-DD"),
+          reason: "Férias programadas",
+          type: "vacation",
+        },
+      ]);
+    }
+  }, [selectedProfessional]);
   // Update working day
-  var updateWorkingDay = function (dayIndex, updates) {
-    setWorkingDays(function (prev) {
-      return prev.map(function (day, index) {
-        return index === dayIndex ? __assign(__assign({}, day), updates) : day;
-      });
-    });
+  var updateWorkingDay = (dayIndex, updates) => {
+    setWorkingDays((prev) =>
+      prev.map((day, index) => (index === dayIndex ? __assign(__assign({}, day), updates) : day)),
+    );
   };
   // Toggle professional availability
-  var toggleAvailability = function (professionalId) {
+  var toggleAvailability = (professionalId) => {
     onProfessionalsUpdate(
-      professionals.map(function (p) {
-        return p.id === professionalId
-          ? __assign(__assign({}, p), { availability: !p.availability })
-          : p;
-      }),
+      professionals.map((p) =>
+        p.id === professionalId ? __assign(__assign({}, p), { availability: !p.availability }) : p,
+      ),
     );
   };
   // Save schedule changes
-  var saveSchedule = function () {
+  var saveSchedule = () => {
     var _a, _b;
     if (!selectedProfessional) return;
-    var enabledDays = workingDays
-      .filter(function (day) {
-        return day.enabled;
-      })
-      .map(function (day) {
-        return day.day;
-      });
+    var enabledDays = workingDays.filter((day) => day.enabled).map((day) => day.day);
     var startTime =
-      ((_a = workingDays.find(function (day) {
-        return day.enabled;
-      })) === null || _a === void 0
+      ((_a = workingDays.find((day) => day.enabled)) === null || _a === void 0
         ? void 0
         : _a.startTime) || "08:00";
     var endTime =
-      ((_b = workingDays.find(function (day) {
-        return day.enabled;
-      })) === null || _b === void 0
+      ((_b = workingDays.find((day) => day.enabled)) === null || _b === void 0
         ? void 0
         : _b.endTime) || "18:00";
     onProfessionalsUpdate(
-      professionals.map(function (p) {
-        return p.id === selectedProfessionalId
+      professionals.map((p) =>
+        p.id === selectedProfessionalId
           ? __assign(__assign({}, p), {
               workingHours: {
                 start: startTime,
@@ -165,12 +145,12 @@ function ProfessionalSchedule(_a) {
                 days: enabledDays,
               },
             })
-          : p;
-      }),
+          : p,
+      ),
     );
   };
   // Add new absence
-  var addAbsence = function () {
+  var addAbsence = () => {
     if (!newAbsence.reason || !newAbsence.startDate || !newAbsence.endDate) return;
     var absence = {
       id: Date.now().toString(),
@@ -179,9 +159,7 @@ function ProfessionalSchedule(_a) {
       reason: newAbsence.reason,
       type: newAbsence.type,
     };
-    setAbsences(function (prev) {
-      return __spreadArray(__spreadArray([], prev, true), [absence], false);
-    });
+    setAbsences((prev) => __spreadArray(__spreadArray([], prev, true), [absence], false));
     setNewAbsence({
       startDate: (0, moment_1.default)().format("YYYY-MM-DD"),
       endDate: (0, moment_1.default)().add(1, "day").format("YYYY-MM-DD"),
@@ -190,12 +168,8 @@ function ProfessionalSchedule(_a) {
     });
   };
   // Remove absence
-  var removeAbsence = function (absenceId) {
-    setAbsences(function (prev) {
-      return prev.filter(function (a) {
-        return a.id !== absenceId;
-      });
-    });
+  var removeAbsence = (absenceId) => {
+    setAbsences((prev) => prev.filter((a) => a.id !== absenceId));
   };
   if (!isOpen) return null;
   return (
@@ -214,52 +188,46 @@ function ProfessionalSchedule(_a) {
         <div className="space-y-6">
           {/* Professional Selector */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {professionals.map(function (professional) {
-              return (
-                <card_1.Card
-                  key={professional.id}
-                  className={(0, utils_1.cn)(
-                    "cursor-pointer transition-colors",
-                    selectedProfessionalId === professional.id
-                      ? "ring-2 ring-primary"
-                      : "hover:bg-muted/50",
-                  )}
-                  onClick={function () {
-                    return setSelectedProfessionalId(professional.id);
-                  }}
-                >
-                  <card_1.CardContent className="p-4">
-                    <div className="flex items-center space-x-2">
-                      <div
-                        className="w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: professional.color }}
-                      />
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm truncate">{professional.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {professional.specialization}
-                        </p>
-                      </div>
+            {professionals.map((professional) => (
+              <card_1.Card
+                key={professional.id}
+                className={(0, utils_1.cn)(
+                  "cursor-pointer transition-colors",
+                  selectedProfessionalId === professional.id
+                    ? "ring-2 ring-primary"
+                    : "hover:bg-muted/50",
+                )}
+                onClick={() => setSelectedProfessionalId(professional.id)}
+              >
+                <card_1.CardContent className="p-4">
+                  <div className="flex items-center space-x-2">
+                    <div
+                      className="w-3 h-3 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: professional.color }}
+                    />
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm truncate">{professional.name}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {professional.specialization}
+                      </p>
                     </div>
-                    <div className="mt-2 flex items-center justify-between">
-                      <badge_1.Badge
-                        variant={professional.availability ? "default" : "secondary"}
-                        className="text-xs"
-                      >
-                        {professional.availability ? "Ativo" : "Inativo"}
-                      </badge_1.Badge>
-                      <switch_1.Switch
-                        checked={professional.availability}
-                        onCheckedChange={function () {
-                          return toggleAvailability(professional.id);
-                        }}
-                        size="sm"
-                      />
-                    </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <badge_1.Badge
+                      variant={professional.availability ? "default" : "secondary"}
+                      className="text-xs"
+                    >
+                      {professional.availability ? "Ativo" : "Inativo"}
+                    </badge_1.Badge>
+                    <switch_1.Switch
+                      checked={professional.availability}
+                      onCheckedChange={() => toggleAvailability(professional.id)}
+                      size="sm"
+                    />
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
 
           {selectedProfessional && (
@@ -289,54 +257,50 @@ function ProfessionalSchedule(_a) {
                     </card_1.CardTitle>
                   </card_1.CardHeader>
                   <card_1.CardContent className="space-y-4">
-                    {workingDays.map(function (day, index) {
-                      return (
-                        <div
-                          key={day.day}
-                          className="flex items-center space-x-4 p-3 rounded-lg border"
-                        >
-                          <switch_1.Switch
-                            checked={day.enabled}
-                            onCheckedChange={function (checked) {
-                              return updateWorkingDay(index, { enabled: checked });
-                            }}
-                          />
+                    {workingDays.map((day, index) => (
+                      <div
+                        key={day.day}
+                        className="flex items-center space-x-4 p-3 rounded-lg border"
+                      >
+                        <switch_1.Switch
+                          checked={day.enabled}
+                          onCheckedChange={(checked) =>
+                            updateWorkingDay(index, { enabled: checked })
+                          }
+                        />
 
-                          <div className="flex-1 min-w-0">
-                            <label_1.Label
-                              className={(0, utils_1.cn)(
-                                "font-medium",
-                                !day.enabled && "text-muted-foreground",
-                              )}
-                            >
-                              {day.dayName}
-                            </label_1.Label>
-                          </div>
-
-                          {day.enabled && (
-                            <div className="flex items-center space-x-2">
-                              <input_1.Input
-                                type="time"
-                                value={day.startTime}
-                                onChange={function (e) {
-                                  return updateWorkingDay(index, { startTime: e.target.value });
-                                }}
-                                className="w-24"
-                              />
-                              <span className="text-muted-foreground">às</span>
-                              <input_1.Input
-                                type="time"
-                                value={day.endTime}
-                                onChange={function (e) {
-                                  return updateWorkingDay(index, { endTime: e.target.value });
-                                }}
-                                className="w-24"
-                              />
-                            </div>
-                          )}
+                        <div className="flex-1 min-w-0">
+                          <label_1.Label
+                            className={(0, utils_1.cn)(
+                              "font-medium",
+                              !day.enabled && "text-muted-foreground",
+                            )}
+                          >
+                            {day.dayName}
+                          </label_1.Label>
                         </div>
-                      );
-                    })}
+
+                        {day.enabled && (
+                          <div className="flex items-center space-x-2">
+                            <input_1.Input
+                              type="time"
+                              value={day.startTime}
+                              onChange={(e) =>
+                                updateWorkingDay(index, { startTime: e.target.value })
+                              }
+                              className="w-24"
+                            />
+                            <span className="text-muted-foreground">às</span>
+                            <input_1.Input
+                              type="time"
+                              value={day.endTime}
+                              onChange={(e) => updateWorkingDay(index, { endTime: e.target.value })}
+                              className="w-24"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </card_1.CardContent>
                 </card_1.Card>
               </tabs_1.TabsContent>
@@ -349,47 +313,41 @@ function ProfessionalSchedule(_a) {
                   </card_1.CardHeader>
                   <card_1.CardContent className="space-y-4">
                     {workingDays
-                      .filter(function (day) {
-                        return day.enabled;
-                      })
-                      .map(function (day, index) {
-                        return (
-                          <div key={day.day} className="space-y-3">
-                            <label_1.Label className="font-medium">{day.dayName}</label_1.Label>
-                            <div className="grid grid-cols-2 gap-4 pl-4">
-                              <div className="space-y-2">
-                                <label_1.Label className="text-sm text-muted-foreground">
-                                  Início do Almoço
-                                </label_1.Label>
-                                <input_1.Input
-                                  type="time"
-                                  value={day.lunchStart || "12:00"}
-                                  onChange={function (e) {
-                                    return updateWorkingDay(index, { lunchStart: e.target.value });
-                                  }}
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <label_1.Label className="text-sm text-muted-foreground">
-                                  Fim do Almoço
-                                </label_1.Label>
-                                <input_1.Input
-                                  type="time"
-                                  value={day.lunchEnd || "13:00"}
-                                  onChange={function (e) {
-                                    return updateWorkingDay(index, { lunchEnd: e.target.value });
-                                  }}
-                                />
-                              </div>
+                      .filter((day) => day.enabled)
+                      .map((day, index) => (
+                        <div key={day.day} className="space-y-3">
+                          <label_1.Label className="font-medium">{day.dayName}</label_1.Label>
+                          <div className="grid grid-cols-2 gap-4 pl-4">
+                            <div className="space-y-2">
+                              <label_1.Label className="text-sm text-muted-foreground">
+                                Início do Almoço
+                              </label_1.Label>
+                              <input_1.Input
+                                type="time"
+                                value={day.lunchStart || "12:00"}
+                                onChange={(e) =>
+                                  updateWorkingDay(index, { lunchStart: e.target.value })
+                                }
+                              />
                             </div>
-                            {index <
-                              workingDays.filter(function (d) {
-                                return d.enabled;
-                              }).length -
-                                1 && <separator_1.Separator />}
+                            <div className="space-y-2">
+                              <label_1.Label className="text-sm text-muted-foreground">
+                                Fim do Almoço
+                              </label_1.Label>
+                              <input_1.Input
+                                type="time"
+                                value={day.lunchEnd || "13:00"}
+                                onChange={(e) =>
+                                  updateWorkingDay(index, { lunchEnd: e.target.value })
+                                }
+                              />
+                            </div>
                           </div>
-                        );
-                      })}
+                          {index < workingDays.filter((d) => d.enabled).length - 1 && (
+                            <separator_1.Separator />
+                          )}
+                        </div>
+                      ))}
                   </card_1.CardContent>
                 </card_1.Card>
               </tabs_1.TabsContent>
@@ -411,11 +369,11 @@ function ProfessionalSchedule(_a) {
                         <input_1.Input
                           type="date"
                           value={newAbsence.startDate}
-                          onChange={function (e) {
-                            return setNewAbsence(function (prev) {
-                              return __assign(__assign({}, prev), { startDate: e.target.value });
-                            });
-                          }}
+                          onChange={(e) =>
+                            setNewAbsence((prev) =>
+                              __assign(__assign({}, prev), { startDate: e.target.value }),
+                            )
+                          }
                           min={(0, moment_1.default)().format("YYYY-MM-DD")}
                         />
                       </div>
@@ -424,11 +382,11 @@ function ProfessionalSchedule(_a) {
                         <input_1.Input
                           type="date"
                           value={newAbsence.endDate}
-                          onChange={function (e) {
-                            return setNewAbsence(function (prev) {
-                              return __assign(__assign({}, prev), { endDate: e.target.value });
-                            });
-                          }}
+                          onChange={(e) =>
+                            setNewAbsence((prev) =>
+                              __assign(__assign({}, prev), { endDate: e.target.value }),
+                            )
+                          }
                           min={newAbsence.startDate}
                         />
                       </div>
@@ -437,19 +395,17 @@ function ProfessionalSchedule(_a) {
                         <select
                           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                           value={newAbsence.type}
-                          onChange={function (e) {
-                            return setNewAbsence(function (prev) {
-                              return __assign(__assign({}, prev), { type: e.target.value });
-                            });
-                          }}
+                          onChange={(e) =>
+                            setNewAbsence((prev) =>
+                              __assign(__assign({}, prev), { type: e.target.value }),
+                            )
+                          }
                         >
-                          {absenceTypes.map(function (type) {
-                            return (
-                              <option key={type.value} value={type.value}>
-                                {type.label}
-                              </option>
-                            );
-                          })}
+                          {absenceTypes.map((type) => (
+                            <option key={type.value} value={type.value}>
+                              {type.label}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="space-y-2">
@@ -457,11 +413,11 @@ function ProfessionalSchedule(_a) {
                         <input_1.Input
                           placeholder="Descreva o motivo"
                           value={newAbsence.reason}
-                          onChange={function (e) {
-                            return setNewAbsence(function (prev) {
-                              return __assign(__assign({}, prev), { reason: e.target.value });
-                            });
-                          }}
+                          onChange={(e) =>
+                            setNewAbsence((prev) =>
+                              __assign(__assign({}, prev), { reason: e.target.value }),
+                            )
+                          }
                         />
                       </div>
                     </div>
@@ -484,10 +440,8 @@ function ProfessionalSchedule(_a) {
                           <p>Nenhuma ausência programada</p>
                         </div>
                       : <div className="space-y-3">
-                          {absences.map(function (absence) {
-                            var typeConfig = absenceTypes.find(function (t) {
-                              return t.value === absence.type;
-                            });
+                          {absences.map((absence) => {
+                            var typeConfig = absenceTypes.find((t) => t.value === absence.type);
                             var duration =
                               (0, moment_1.default)(absence.endDate).diff(
                                 (0, moment_1.default)(absence.startDate),
@@ -533,9 +487,7 @@ function ProfessionalSchedule(_a) {
                                 <button_1.Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={function () {
-                                    return removeAbsence(absence.id);
-                                  }}
+                                  onClick={() => removeAbsence(absence.id)}
                                   className="text-destructive hover:text-destructive"
                                 >
                                   <lucide_react_1.Trash2 className="h-4 w-4" />
@@ -556,7 +508,7 @@ function ProfessionalSchedule(_a) {
             Cancelar
           </button_1.Button>
           <button_1.Button
-            onClick={function () {
+            onClick={() => {
               saveSchedule();
               onClose();
             }}

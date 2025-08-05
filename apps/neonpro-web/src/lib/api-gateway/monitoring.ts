@@ -8,10 +8,10 @@
  */
 
 import type {
-  ApiGatewayMetrics,
+  ApiGatewayEvent,
   ApiGatewayHealthCheck,
   ApiGatewayLogger,
-  ApiGatewayEvent,
+  ApiGatewayMetrics,
   ApiGatewayRequestContext,
   ApiGatewayResponseContext,
 } from "./types";

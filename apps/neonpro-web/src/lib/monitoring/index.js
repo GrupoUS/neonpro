@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TASK-001: Foundation Setup & Baseline
  * Monitoring Module Index
@@ -40,163 +39,113 @@ exports.getMonitoringSystemHealth = getMonitoringSystemHealth;
 var performance_1 = require("./performance");
 Object.defineProperty(exports, "getPerformanceMetrics", {
   enumerable: true,
-  get: function () {
-    return performance_1.getPerformanceMetrics;
-  },
+  get: () => performance_1.getPerformanceMetrics,
 });
 Object.defineProperty(exports, "measureApiCall", {
   enumerable: true,
-  get: function () {
-    return performance_1.measureApiCall;
-  },
+  get: () => performance_1.measureApiCall,
 });
 Object.defineProperty(exports, "measurePageLoad", {
   enumerable: true,
-  get: function () {
-    return performance_1.measurePageLoad;
-  },
+  get: () => performance_1.measurePageLoad,
 });
 Object.defineProperty(exports, "measureRender", {
   enumerable: true,
-  get: function () {
-    return performance_1.measureRender;
-  },
+  get: () => performance_1.measureRender,
 });
 Object.defineProperty(exports, "performanceMonitor", {
   enumerable: true,
-  get: function () {
-    return performance_1.performanceMonitor;
-  },
+  get: () => performance_1.performanceMonitor,
 });
 // User analytics and tracking
 var analytics_1 = require("./analytics");
 Object.defineProperty(exports, "trackFeatureUsage", {
   enumerable: true,
-  get: function () {
-    return analytics_1.trackFeatureUsage;
-  },
+  get: () => analytics_1.trackFeatureUsage,
 });
 Object.defineProperty(exports, "trackPageView", {
   enumerable: true,
-  get: function () {
-    return analytics_1.trackPageView;
-  },
+  get: () => analytics_1.trackPageView,
 });
 Object.defineProperty(exports, "trackUserAction", {
   enumerable: true,
-  get: function () {
-    return analytics_1.trackUserAction;
-  },
+  get: () => analytics_1.trackUserAction,
 });
 Object.defineProperty(exports, "userAnalytics", {
   enumerable: true,
-  get: function () {
-    return analytics_1.userAnalytics;
-  },
+  get: () => analytics_1.userAnalytics,
 });
 // Feature flags management
 var feature_flags_1 = require("./feature-flags");
 Object.defineProperty(exports, "featureFlags", {
   enumerable: true,
-  get: function () {
-    return feature_flags_1.featureFlags;
-  },
+  get: () => feature_flags_1.featureFlags,
 });
 Object.defineProperty(exports, "getAllFeatures", {
   enumerable: true,
-  get: function () {
-    return feature_flags_1.getAllFeatures;
-  },
+  get: () => feature_flags_1.getAllFeatures,
 });
 Object.defineProperty(exports, "getFeatureValue", {
   enumerable: true,
-  get: function () {
-    return feature_flags_1.getFeatureValue;
-  },
+  get: () => feature_flags_1.getFeatureValue,
 });
 Object.defineProperty(exports, "isFeatureEnabled", {
   enumerable: true,
-  get: function () {
-    return feature_flags_1.isFeatureEnabled;
-  },
+  get: () => feature_flags_1.isFeatureEnabled,
 });
 // Error tracking and monitoring
 var error_tracking_1 = require("./error-tracking");
 Object.defineProperty(exports, "errorTracker", {
   enumerable: true,
-  get: function () {
-    return error_tracking_1.errorTracker;
-  },
+  get: () => error_tracking_1.errorTracker,
 });
 Object.defineProperty(exports, "trackError", {
   enumerable: true,
-  get: function () {
-    return error_tracking_1.trackError;
-  },
+  get: () => error_tracking_1.trackError,
 });
 Object.defineProperty(exports, "useErrorTracking", {
   enumerable: true,
-  get: function () {
-    return error_tracking_1.useErrorTracking;
-  },
+  get: () => error_tracking_1.useErrorTracking,
 });
 // Baseline metrics and comparison
 var baseline_1 = require("./baseline");
 Object.defineProperty(exports, "baselineManager", {
   enumerable: true,
-  get: function () {
-    return baseline_1.baselineManager;
-  },
+  get: () => baseline_1.baselineManager,
 });
 Object.defineProperty(exports, "compareToBaseline", {
   enumerable: true,
-  get: function () {
-    return baseline_1.compareToBaseline;
-  },
+  get: () => baseline_1.compareToBaseline,
 });
 Object.defineProperty(exports, "establishBaseline", {
   enumerable: true,
-  get: function () {
-    return baseline_1.establishBaseline;
-  },
+  get: () => baseline_1.establishBaseline,
 });
 Object.defineProperty(exports, "generateBaselineReport", {
   enumerable: true,
-  get: function () {
-    return baseline_1.generateBaselineReport;
-  },
+  get: () => baseline_1.generateBaselineReport,
 });
 // Emergency response system
 var emergency_response_1 = require("./emergency-response");
 Object.defineProperty(exports, "addEmergencyRule", {
   enumerable: true,
-  get: function () {
-    return emergency_response_1.addEmergencyRule;
-  },
+  get: () => emergency_response_1.addEmergencyRule,
 });
 Object.defineProperty(exports, "emergencyResponse", {
   enumerable: true,
-  get: function () {
-    return emergency_response_1.emergencyResponse;
-  },
+  get: () => emergency_response_1.emergencyResponse,
 });
 Object.defineProperty(exports, "getEmergencyStatus", {
   enumerable: true,
-  get: function () {
-    return emergency_response_1.getEmergencyStatus;
-  },
+  get: () => emergency_response_1.getEmergencyStatus,
 });
 Object.defineProperty(exports, "resolveEmergencyAlert", {
   enumerable: true,
-  get: function () {
-    return emergency_response_1.resolveEmergencyAlert;
-  },
+  get: () => emergency_response_1.resolveEmergencyAlert,
 });
 Object.defineProperty(exports, "takeEmergencySnapshot", {
   enumerable: true,
-  get: function () {
-    return emergency_response_1.takeEmergencySnapshot;
-  },
+  get: () => emergency_response_1.takeEmergencySnapshot,
 });
 // Initialize monitoring system
 function initializeMonitoringSystem() {

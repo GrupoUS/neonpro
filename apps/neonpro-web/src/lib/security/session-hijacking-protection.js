@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Session Hijacking Protection for NeonPro
  * Detects and prevents session hijacking attempts
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionHijackingProtection = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -143,7 +140,7 @@ var crypto_1 = require("crypto");
 /**
  * Session Hijacking Protection Manager
  */
-var SessionHijackingProtection = /** @class */ (function () {
+var SessionHijackingProtection = /** @class */ (() => {
   function SessionHijackingProtection() {}
   /**
    * Generate session fingerprint from request
@@ -160,7 +157,7 @@ var SessionHijackingProtection = /** @class */ (function () {
   /**
    * Create fingerprint hash for comparison
    */
-  SessionHijackingProtection.createFingerprintHash = function (fingerprint) {
+  SessionHijackingProtection.createFingerprintHash = (fingerprint) => {
     var data = ""
       .concat(fingerprint.userAgent, ":")
       .concat(fingerprint.acceptLanguage, ":")
@@ -393,25 +390,15 @@ var SessionHijackingProtection = /** @class */ (function () {
               sessionsToTerminate = [];
               if (!hasExcess) return [3 /*break*/, 4];
               sessionsToKeep_1 = sessions
-                .filter(function (s) {
-                  return s.session_id === currentSessionId;
-                })
+                .filter((s) => s.session_id === currentSessionId)
                 .concat(
                   sessions
-                    .filter(function (s) {
-                      return s.session_id !== currentSessionId;
-                    })
+                    .filter((s) => s.session_id !== currentSessionId)
                     .slice(0, maxConcurrentSessions - 1),
                 );
               sessionsToTerminate = sessions
-                .filter(function (s) {
-                  return !sessionsToKeep_1.some(function (keep) {
-                    return keep.session_id === s.session_id;
-                  });
-                })
-                .map(function (s) {
-                  return s.session_id;
-                });
+                .filter((s) => !sessionsToKeep_1.some((keep) => keep.session_id === s.session_id))
+                .map((s) => s.session_id);
               // Log concurrent session event
               return [
                 4 /*yield*/,
@@ -516,7 +503,7 @@ var SessionHijackingProtection = /** @class */ (function () {
   SessionHijackingProtection.logSecurityEvent = function (event) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -551,7 +538,7 @@ var SessionHijackingProtection = /** @class */ (function () {
   /**
    * Get client IP address
    */
-  SessionHijackingProtection.getClientIP = function (request) {
+  SessionHijackingProtection.getClientIP = (request) => {
     var forwarded = request.headers.get("x-forwarded-for");
     var realIP = request.headers.get("x-real-ip");
     var cfConnectingIP = request.headers.get("cf-connecting-ip");
@@ -565,7 +552,7 @@ var SessionHijackingProtection = /** @class */ (function () {
    */
   SessionHijackingProtection.invalidateSession = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This should integrate with your session management system
         // For Supabase, you might use the admin API or custom function
         console.log("Invalidating session: ".concat(sessionId));

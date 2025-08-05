@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DemandForecastingEngine = DemandForecastingEngine;
 var useDemandForecasting_1 = require("@/app/hooks/useDemandForecasting");
@@ -159,7 +156,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function DemandForecastingEngine(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     inventoryItems = _a.inventoryItems;
   var _b = (0, useDemandForecasting_1.useDemandForecasting)(),
@@ -195,15 +191,12 @@ function DemandForecastingEngine(_a) {
   var _g = (0, react_1.useState)(365),
     analysisPeriod = _g[0],
     setAnalysisPeriod = _g[1];
-  (0, react_1.useEffect)(
-    function () {
-      getCapabilities(clinicId);
-    },
-    [clinicId, getCapabilities],
-  );
-  var handleSingleForecast = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    getCapabilities(clinicId);
+  }, [clinicId, getCapabilities]);
+  var handleSingleForecast = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedItem) return [2 /*return*/];
@@ -222,19 +215,19 @@ function DemandForecastingEngine(_a) {
         }
       });
     });
-  };
-  var handleBulkForecast = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleBulkForecast = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (bulkItems.length === 0) return [2 /*return*/];
             return [
               4 /*yield*/,
               generateBulkForecast({
-                items: bulkItems.map(function (itemId) {
-                  return { itemId: itemId, forecastPeriod: forecastPeriod };
-                }),
+                items: bulkItems.map((itemId) => ({
+                  itemId: itemId,
+                  forecastPeriod: forecastPeriod,
+                })),
                 clinicId: clinicId,
                 confidenceLevel: confidenceLevel,
               }),
@@ -245,10 +238,9 @@ function DemandForecastingEngine(_a) {
         }
       });
     });
-  };
-  var handleSeasonalAnalysis = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleSeasonalAnalysis = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedItem) return [2 /*return*/];
@@ -259,17 +251,16 @@ function DemandForecastingEngine(_a) {
         }
       });
     });
-  };
-  var handleAccuracyAnalysis = function () {
+  var handleAccuracyAnalysis = () => {
     var args_1 = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args_1[_i] = arguments[_i];
     }
-    return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (period) {
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (period) {
       if (period === void 0) {
         period = "30d";
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, getAccuracyAnalysis(clinicId, undefined, period)];
@@ -280,7 +271,7 @@ function DemandForecastingEngine(_a) {
       });
     });
   };
-  var getModelIcon = function (model) {
+  var getModelIcon = (model) => {
     switch (model) {
       case "exponential_smoothing":
         return <lucide_react_1.TrendingUp className="h-4 w-4" />;
@@ -294,7 +285,7 @@ function DemandForecastingEngine(_a) {
         return <lucide_react_1.Brain className="h-4 w-4" />;
     }
   };
-  var getModelName = function (model) {
+  var getModelName = (model) => {
     switch (model) {
       case "exponential_smoothing":
         return "Exponential Smoothing";
@@ -308,12 +299,12 @@ function DemandForecastingEngine(_a) {
         return "Unknown Model";
     }
   };
-  var getConfidenceColor = function (score) {
+  var getConfidenceColor = (score) => {
     if (score >= 0.8) return "bg-green-500";
     if (score >= 0.6) return "bg-yellow-500";
     return "bg-red-500";
   };
-  var formatPeriod = function (days) {
+  var formatPeriod = (days) => {
     if (days === 1) return "1 day";
     if (days === 7) return "1 week";
     if (days === 30) return "1 month";
@@ -363,13 +354,11 @@ function DemandForecastingEngine(_a) {
                       <select_1.SelectValue placeholder="Choose an item to forecast" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {inventoryItems.map(function (item) {
-                        return (
-                          <select_1.SelectItem key={item.id} value={item.id}>
-                            {item.name} ({item.category})
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {inventoryItems.map((item) => (
+                        <select_1.SelectItem key={item.id} value={item.id}>
+                          {item.name} ({item.category})
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -378,9 +367,7 @@ function DemandForecastingEngine(_a) {
                   <label_1.Label htmlFor="forecast-period">Forecast Period (days)</label_1.Label>
                   <select_1.Select
                     value={forecastPeriod.toString()}
-                    onValueChange={function (value) {
-                      return setForecastPeriod(Number(value));
-                    }}
+                    onValueChange={(value) => setForecastPeriod(Number(value))}
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -399,9 +386,7 @@ function DemandForecastingEngine(_a) {
                   <label_1.Label htmlFor="confidence-level">Confidence Level</label_1.Label>
                   <select_1.Select
                     value={confidenceLevel.toString()}
-                    onValueChange={function (value) {
-                      return setConfidenceLevel(Number(value));
-                    }}
+                    onValueChange={(value) => setConfidenceLevel(Number(value))}
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -548,14 +533,12 @@ function DemandForecastingEngine(_a) {
                     <h4 className="font-semibold mb-3">Recommendations</h4>
                     <div className="space-y-2">
                       {getForecastRecommendations(forecast, seasonalAnalysis || undefined).map(
-                        function (rec, index) {
-                          return (
-                            <alert_1.Alert key={index}>
-                              <lucide_react_1.CheckCircle className="h-4 w-4" />
-                              <alert_1.AlertDescription>{rec}</alert_1.AlertDescription>
-                            </alert_1.Alert>
-                          );
-                        },
+                        (rec, index) => (
+                          <alert_1.Alert key={index}>
+                            <lucide_react_1.CheckCircle className="h-4 w-4" />
+                            <alert_1.AlertDescription>{rec}</alert_1.AlertDescription>
+                          </alert_1.Alert>
+                        ),
                       )}
                     </div>
                   </div>
@@ -579,37 +562,27 @@ function DemandForecastingEngine(_a) {
                 <div className="space-y-2">
                   <label_1.Label>Select Items (hold Ctrl for multiple)</label_1.Label>
                   <div className="max-h-40 overflow-y-auto border rounded p-2 space-y-1">
-                    {inventoryItems.map(function (item) {
-                      return (
-                        <div key={item.id} className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id={"bulk-".concat(item.id)}
-                            checked={bulkItems.includes(item.id)}
-                            onChange={function (e) {
-                              if (e.target.checked) {
-                                setBulkItems(
-                                  __spreadArray(
-                                    __spreadArray([], bulkItems, true),
-                                    [item.id],
-                                    false,
-                                  ),
-                                );
-                              } else {
-                                setBulkItems(
-                                  bulkItems.filter(function (id) {
-                                    return id !== item.id;
-                                  }),
-                                );
-                              }
-                            }}
-                          />
-                          <label htmlFor={"bulk-".concat(item.id)} className="text-sm">
-                            {item.name} ({item.category})
-                          </label>
-                        </div>
-                      );
-                    })}
+                    {inventoryItems.map((item) => (
+                      <div key={item.id} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id={"bulk-".concat(item.id)}
+                          checked={bulkItems.includes(item.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setBulkItems(
+                                __spreadArray(__spreadArray([], bulkItems, true), [item.id], false),
+                              );
+                            } else {
+                              setBulkItems(bulkItems.filter((id) => id !== item.id));
+                            }
+                          }}
+                        />
+                        <label htmlFor={"bulk-".concat(item.id)} className="text-sm">
+                          {item.name} ({item.category})
+                        </label>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -618,9 +591,7 @@ function DemandForecastingEngine(_a) {
                     <label_1.Label htmlFor="bulk-period">Forecast Period</label_1.Label>
                     <select_1.Select
                       value={forecastPeriod.toString()}
-                      onValueChange={function (value) {
-                        return setForecastPeriod(Number(value));
-                      }}
+                      onValueChange={(value) => setForecastPeriod(Number(value))}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -639,9 +610,7 @@ function DemandForecastingEngine(_a) {
                     <label_1.Label htmlFor="bulk-confidence">Confidence Level</label_1.Label>
                     <select_1.Select
                       value={confidenceLevel.toString()}
-                      onValueChange={function (value) {
-                        return setConfidenceLevel(Number(value));
-                      }}
+                      onValueChange={(value) => setConfidenceLevel(Number(value))}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -685,55 +654,53 @@ function DemandForecastingEngine(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {bulkForecasts.map(function (forecast) {
-                    return (
-                      <div key={forecast.itemId} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">{forecast.itemName}</h4>
-                          <div className="flex items-center gap-2">
-                            {getModelIcon(forecast.modelUsed)}
-                            <badge_1.Badge variant="outline">
-                              {getModelName(forecast.modelUsed)}
-                            </badge_1.Badge>
+                  {bulkForecasts.map((forecast) => (
+                    <div key={forecast.itemId} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{forecast.itemName}</h4>
+                        <div className="flex items-center gap-2">
+                          {getModelIcon(forecast.modelUsed)}
+                          <badge_1.Badge variant="outline">
+                            {getModelName(forecast.modelUsed)}
+                          </badge_1.Badge>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Predicted Demand:</span>
+                          <div className="font-semibold text-blue-600">
+                            {forecast.predictedDemand}
                           </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <span className="text-muted-foreground">Predicted Demand:</span>
-                            <div className="font-semibold text-blue-600">
-                              {forecast.predictedDemand}
-                            </div>
+                        <div>
+                          <span className="text-muted-foreground">Confidence Range:</span>
+                          <div className="font-semibold">
+                            {forecast.confidenceInterval.lower} -{" "}
+                            {forecast.confidenceInterval.upper}
                           </div>
-                          <div>
-                            <span className="text-muted-foreground">Confidence Range:</span>
-                            <div className="font-semibold">
-                              {forecast.confidenceInterval.lower} -{" "}
-                              {forecast.confidenceInterval.upper}
-                            </div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Model Accuracy:</span>
+                          <div className="font-semibold">
+                            {Math.round((1 - forecast.accuracy.mape) * 100)}%
                           </div>
-                          <div>
-                            <span className="text-muted-foreground">Model Accuracy:</span>
-                            <div className="font-semibold">
-                              {Math.round((1 - forecast.accuracy.mape) * 100)}%
-                            </div>
-                          </div>
-                          <div>
-                            <span className="text-muted-foreground">Confidence Score:</span>
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={"w-2 h-2 rounded-full ".concat(
-                                  getConfidenceColor(calculateConfidenceScore(forecast)),
-                                )}
-                              />
-                              <span className="font-semibold">
-                                {Math.round(calculateConfidenceScore(forecast) * 100)}%
-                              </span>
-                            </div>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Confidence Score:</span>
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={"w-2 h-2 rounded-full ".concat(
+                                getConfidenceColor(calculateConfidenceScore(forecast)),
+                              )}
+                            />
+                            <span className="font-semibold">
+                              {Math.round(calculateConfidenceScore(forecast) * 100)}%
+                            </span>
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -758,13 +725,11 @@ function DemandForecastingEngine(_a) {
                       <select_1.SelectValue placeholder="Choose an item to analyze" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {inventoryItems.map(function (item) {
-                        return (
-                          <select_1.SelectItem key={item.id} value={item.id}>
-                            {item.name} ({item.category})
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {inventoryItems.map((item) => (
+                        <select_1.SelectItem key={item.id} value={item.id}>
+                          {item.name} ({item.category})
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -773,9 +738,7 @@ function DemandForecastingEngine(_a) {
                   <label_1.Label htmlFor="analysis-period">Analysis Period</label_1.Label>
                   <select_1.Select
                     value={analysisPeriod.toString()}
-                    onValueChange={function (value) {
-                      return setAnalysisPeriod(Number(value));
-                    }}
+                    onValueChange={(value) => setAnalysisPeriod(Number(value))}
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -851,36 +814,34 @@ function DemandForecastingEngine(_a) {
                   <div>
                     <h4 className="font-semibold mb-3">Detected Patterns</h4>
                     <div className="space-y-3">
-                      {seasonalAnalysis.seasonalPatterns.map(function (pattern, index) {
-                        return (
-                          <div key={index} className="border rounded-lg p-4">
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-semibold capitalize">
-                                {pattern.pattern} Pattern
-                              </span>
-                              <badge_1.Badge
-                                variant={
-                                  pattern.strength > 0.7
-                                    ? "default"
-                                    : pattern.strength > 0.4
-                                      ? "secondary"
-                                      : "outline"
-                                }
-                              >
-                                {Math.round(pattern.strength * 100)}% strength
-                              </badge_1.Badge>
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {pattern.peaks.length > 0 && (
-                                <div>Peak periods: {pattern.peaks.join(", ")}</div>
-                              )}
-                              {pattern.valleys.length > 0 && (
-                                <div>Low periods: {pattern.valleys.join(", ")}</div>
-                              )}
-                            </div>
+                      {seasonalAnalysis.seasonalPatterns.map((pattern, index) => (
+                        <div key={index} className="border rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold capitalize">
+                              {pattern.pattern} Pattern
+                            </span>
+                            <badge_1.Badge
+                              variant={
+                                pattern.strength > 0.7
+                                  ? "default"
+                                  : pattern.strength > 0.4
+                                    ? "secondary"
+                                    : "outline"
+                              }
+                            >
+                              {Math.round(pattern.strength * 100)}% strength
+                            </badge_1.Badge>
                           </div>
-                        );
-                      })}
+                          <div className="text-sm text-muted-foreground">
+                            {pattern.peaks.length > 0 && (
+                              <div>Peak periods: {pattern.peaks.join(", ")}</div>
+                            )}
+                            {pattern.valleys.length > 0 && (
+                              <div>Low periods: {pattern.valleys.join(", ")}</div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -937,14 +898,12 @@ function DemandForecastingEngine(_a) {
                   <div>
                     <h4 className="font-semibold mb-3">Analysis Recommendations</h4>
                     <div className="space-y-2">
-                      {seasonalAnalysis.recommendations.map(function (rec, index) {
-                        return (
-                          <alert_1.Alert key={index}>
-                            <lucide_react_1.CheckCircle className="h-4 w-4" />
-                            <alert_1.AlertDescription>{rec}</alert_1.AlertDescription>
-                          </alert_1.Alert>
-                        );
-                      })}
+                      {seasonalAnalysis.recommendations.map((rec, index) => (
+                        <alert_1.Alert key={index}>
+                          <lucide_react_1.CheckCircle className="h-4 w-4" />
+                          <alert_1.AlertDescription>{rec}</alert_1.AlertDescription>
+                        </alert_1.Alert>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -964,36 +923,16 @@ function DemandForecastingEngine(_a) {
             </card_1.CardHeader>
             <card_1.CardContent className="space-y-4">
               <div className="flex gap-2">
-                <button_1.Button
-                  onClick={function () {
-                    return handleAccuracyAnalysis("7d");
-                  }}
-                  disabled={isLoading}
-                >
+                <button_1.Button onClick={() => handleAccuracyAnalysis("7d")} disabled={isLoading}>
                   Last 7 Days
                 </button_1.Button>
-                <button_1.Button
-                  onClick={function () {
-                    return handleAccuracyAnalysis("30d");
-                  }}
-                  disabled={isLoading}
-                >
+                <button_1.Button onClick={() => handleAccuracyAnalysis("30d")} disabled={isLoading}>
                   Last 30 Days
                 </button_1.Button>
-                <button_1.Button
-                  onClick={function () {
-                    return handleAccuracyAnalysis("90d");
-                  }}
-                  disabled={isLoading}
-                >
+                <button_1.Button onClick={() => handleAccuracyAnalysis("90d")} disabled={isLoading}>
                   Last 90 Days
                 </button_1.Button>
-                <button_1.Button
-                  onClick={function () {
-                    return handleAccuracyAnalysis("1y");
-                  }}
-                  disabled={isLoading}
-                >
+                <button_1.Button onClick={() => handleAccuracyAnalysis("1y")} disabled={isLoading}>
                   Last Year
                 </button_1.Button>
               </div>
@@ -1045,7 +984,7 @@ function DemandForecastingEngine(_a) {
                 <div>
                   <h4 className="font-semibold mb-3">Model Performance</h4>
                   <div className="space-y-3">
-                    {Object.entries(accuracyAnalysis.byModel).map(function (_a) {
+                    {Object.entries(accuracyAnalysis.byModel).map((_a) => {
                       var model = _a[0],
                         data = _a[1];
                       return (
@@ -1108,14 +1047,12 @@ function DemandForecastingEngine(_a) {
                   <div>
                     <h4 className="font-semibold mb-3">Improvement Recommendations</h4>
                     <div className="space-y-2">
-                      {accuracyAnalysis.recommendations.map(function (rec, index) {
-                        return (
-                          <alert_1.Alert key={index}>
-                            <lucide_react_1.CheckCircle className="h-4 w-4" />
-                            <alert_1.AlertDescription>{rec}</alert_1.AlertDescription>
-                          </alert_1.Alert>
-                        );
-                      })}
+                      {accuracyAnalysis.recommendations.map((rec, index) => (
+                        <alert_1.Alert key={index}>
+                          <lucide_react_1.CheckCircle className="h-4 w-4" />
+                          <alert_1.AlertDescription>{rec}</alert_1.AlertDescription>
+                        </alert_1.Alert>
+                      ))}
                     </div>
                   </div>
                 )}

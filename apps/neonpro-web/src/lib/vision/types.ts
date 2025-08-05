@@ -6,7 +6,7 @@
  * VOIDBEAST V4.0 APEX ENHANCED - Quality ≥9.5/10
  */
 
-import type { TREATMENT_TYPES, ANALYSIS_STATUS, ERROR_CODES } from "./config";
+import type { ANALYSIS_STATUS, ERROR_CODES, TREATMENT_TYPES } from "./config";
 
 // Base Types
 export type TreatmentType = (typeof TREATMENT_TYPES)[keyof typeof TREATMENT_TYPES];

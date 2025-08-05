@@ -1,14 +1,14 @@
 "use client";
 
+import type { addDays, endOfDay, format, isToday, isTomorrow, startOfDay } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertCircle, Calendar, Clock } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { createClient } from "@/app/utils/supabase/client";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { LoadingSpinner } from "@/components/ui/loading-spinner";
-import type { addDays, endOfDay, format, isToday, isTomorrow, startOfDay } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { AlertCircle, Calendar, Clock } from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface TimeSlot {
   datetime: string;

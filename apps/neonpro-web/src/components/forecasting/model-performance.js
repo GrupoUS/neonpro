@@ -12,7 +12,6 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelPerformance = ModelPerformance;
 var react_1 = require("react");
@@ -50,142 +49,113 @@ function ModelPerformance(_a) {
     activeMetric = _d[0],
     setActiveMetric = _d[1];
   // Calculate performance summary
-  var summary = (0, react_1.useMemo)(
-    function () {
-      if (!metrics.length) {
-        return {
-          bestModel: "none",
-          avgAccuracy: 0,
-          avgStability: 0,
-          totalModels: 0,
-          healthyModels: 0,
-          driftingModels: 0,
-          performanceTrend: "stable",
-        };
-      }
-      var accuracies = metrics.map(function (m) {
-        return m.test_metrics.accuracy_percentage;
-      });
-      var stabilities = metrics.map(function (m) {
-        return m.stability_score;
-      });
-      var driftScores = metrics.map(function (m) {
-        return m.drift_score;
-      });
-      var avgAccuracy =
-        accuracies.reduce(function (sum, acc) {
-          return sum + acc;
-        }, 0) / accuracies.length;
-      var avgStability =
-        stabilities.reduce(function (sum, stab) {
-          return sum + stab;
-        }, 0) / stabilities.length;
-      var bestModel = metrics.reduce(function (best, current) {
-        return current.test_metrics.accuracy_percentage > best.test_metrics.accuracy_percentage
-          ? current
-          : best;
-      }).model_id;
-      var healthyModels = metrics.filter(function (m) {
-        return (
-          m.test_metrics.accuracy_percentage >= METRIC_THRESHOLDS.accuracy.good &&
-          m.stability_score >= METRIC_THRESHOLDS.stability.good &&
-          m.drift_score <= METRIC_THRESHOLDS.drift.medium
-        );
-      }).length;
-      var driftingModels = metrics.filter(function (m) {
-        return m.drift_score > METRIC_THRESHOLDS.drift.medium;
-      }).length;
-      // Simple trend calculation (would use historical data in production)
-      var performanceTrend =
-        avgAccuracy >= 85 ? "improving" : avgAccuracy >= 75 ? "stable" : "declining";
+  var summary = (0, react_1.useMemo)(() => {
+    if (!metrics.length) {
       return {
-        bestModel: bestModel,
-        avgAccuracy: avgAccuracy,
-        avgStability: avgStability,
-        totalModels: metrics.length,
-        healthyModels: healthyModels,
-        driftingModels: driftingModels,
-        performanceTrend: performanceTrend,
+        bestModel: "none",
+        avgAccuracy: 0,
+        avgStability: 0,
+        totalModels: 0,
+        healthyModels: 0,
+        driftingModels: 0,
+        performanceTrend: "stable",
       };
-    },
-    [metrics],
-  );
+    }
+    var accuracies = metrics.map((m) => m.test_metrics.accuracy_percentage);
+    var stabilities = metrics.map((m) => m.stability_score);
+    var driftScores = metrics.map((m) => m.drift_score);
+    var avgAccuracy = accuracies.reduce((sum, acc) => sum + acc, 0) / accuracies.length;
+    var avgStability = stabilities.reduce((sum, stab) => sum + stab, 0) / stabilities.length;
+    var bestModel = metrics.reduce((best, current) =>
+      current.test_metrics.accuracy_percentage > best.test_metrics.accuracy_percentage
+        ? current
+        : best,
+    ).model_id;
+    var healthyModels = metrics.filter(
+      (m) =>
+        m.test_metrics.accuracy_percentage >= METRIC_THRESHOLDS.accuracy.good &&
+        m.stability_score >= METRIC_THRESHOLDS.stability.good &&
+        m.drift_score <= METRIC_THRESHOLDS.drift.medium,
+    ).length;
+    var driftingModels = metrics.filter(
+      (m) => m.drift_score > METRIC_THRESHOLDS.drift.medium,
+    ).length;
+    // Simple trend calculation (would use historical data in production)
+    var performanceTrend =
+      avgAccuracy >= 85 ? "improving" : avgAccuracy >= 75 ? "stable" : "declining";
+    return {
+      bestModel: bestModel,
+      avgAccuracy: avgAccuracy,
+      avgStability: avgStability,
+      totalModels: metrics.length,
+      healthyModels: healthyModels,
+      driftingModels: driftingModels,
+      performanceTrend: performanceTrend,
+    };
+  }, [metrics]);
   // Process data for charts
-  var chartData = (0, react_1.useMemo)(
-    function () {
-      if (!metrics.length) return { comparison: [], trends: [], features: [], performance: [] };
-      // Model comparison data
-      var comparison = metrics.map(function (m) {
-        return {
-          model: m.model_id.split("-")[0].toUpperCase(),
-          fullModel: m.model_id,
-          accuracy: m.test_metrics.accuracy_percentage,
-          stability: m.stability_score * 100,
-          mape: m.test_metrics.mape,
-          r2Score: m.test_metrics.r2_score * 100,
-          drift: m.drift_score * 100,
-          trainingTime: m.training_time_seconds,
-          inferenceTime: m.inference_time_ms,
-          modelSize: m.model_size_mb,
-        };
-      });
-      // Performance trends (mock historical data)
-      var trends = Array.from({ length: 30 }, function (_, i) {
-        var date = (0, date_fns_1.subDays)(new Date(), 29 - i);
-        var baseAccuracy = summary.avgAccuracy;
-        var variation = (Math.random() - 0.5) * 10;
-        return {
-          date: (0, date_fns_1.format)(date, "MMM dd"),
-          dateObj: date,
-          accuracy: Math.max(60, Math.min(100, baseAccuracy + variation)),
-          stability:
-            Math.max(0.5, Math.min(1, summary.avgStability + (Math.random() - 0.5) * 0.2)) * 100,
-          drift: Math.max(0, Math.min(0.5, Math.random() * 0.1)) * 100,
-        };
-      });
-      // Feature importance (using data from best model)
-      var bestModelMetrics = metrics.find(function (m) {
-        return m.model_id === summary.bestModel;
-      });
-      var features = bestModelMetrics
-        ? Object.entries(bestModelMetrics.feature_importance)
-            .map(function (_a) {
-              var name = _a[0],
-                importance = _a[1];
-              return {
-                feature: name.replace("_", " ").replace(/\b\w/g, function (l) {
-                  return l.toUpperCase();
-                }),
-                importance: importance * 100,
-                fullName: name,
-              };
-            })
-            .sort(function (a, b) {
-              return b.importance - a.importance;
-            })
-        : [];
-      // Performance metrics radar chart
-      var performance = comparison.map(function (m) {
-        return {
-          model: m.model,
-          accuracy: m.accuracy,
-          stability: m.stability,
-          speed: Math.max(0, 100 - (m.inferenceTime / 50) * 100), // Normalized speed score
-          efficiency: Math.max(0, 100 - (m.modelSize / 10) * 100), // Normalized efficiency score
-          reliability: Math.max(0, 100 - m.drift), // Inverse of drift as reliability
-        };
-      });
+  var chartData = (0, react_1.useMemo)(() => {
+    if (!metrics.length) return { comparison: [], trends: [], features: [], performance: [] };
+    // Model comparison data
+    var comparison = metrics.map((m) => ({
+      model: m.model_id.split("-")[0].toUpperCase(),
+      fullModel: m.model_id,
+      accuracy: m.test_metrics.accuracy_percentage,
+      stability: m.stability_score * 100,
+      mape: m.test_metrics.mape,
+      r2Score: m.test_metrics.r2_score * 100,
+      drift: m.drift_score * 100,
+      trainingTime: m.training_time_seconds,
+      inferenceTime: m.inference_time_ms,
+      modelSize: m.model_size_mb,
+    }));
+    // Performance trends (mock historical data)
+    var trends = Array.from({ length: 30 }, (_, i) => {
+      var date = (0, date_fns_1.subDays)(new Date(), 29 - i);
+      var baseAccuracy = summary.avgAccuracy;
+      var variation = (Math.random() - 0.5) * 10;
       return {
-        comparison: comparison,
-        trends: trends,
-        features: features,
-        performance: performance,
+        date: (0, date_fns_1.format)(date, "MMM dd"),
+        dateObj: date,
+        accuracy: Math.max(60, Math.min(100, baseAccuracy + variation)),
+        stability:
+          Math.max(0.5, Math.min(1, summary.avgStability + (Math.random() - 0.5) * 0.2)) * 100,
+        drift: Math.max(0, Math.min(0.5, Math.random() * 0.1)) * 100,
       };
-    },
-    [metrics, summary],
-  );
+    });
+    // Feature importance (using data from best model)
+    var bestModelMetrics = metrics.find((m) => m.model_id === summary.bestModel);
+    var features = bestModelMetrics
+      ? Object.entries(bestModelMetrics.feature_importance)
+          .map((_a) => {
+            var name = _a[0],
+              importance = _a[1];
+            return {
+              feature: name.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+              importance: importance * 100,
+              fullName: name,
+            };
+          })
+          .sort((a, b) => b.importance - a.importance)
+      : [];
+    // Performance metrics radar chart
+    var performance = comparison.map((m) => ({
+      model: m.model,
+      accuracy: m.accuracy,
+      stability: m.stability,
+      speed: Math.max(0, 100 - (m.inferenceTime / 50) * 100), // Normalized speed score
+      efficiency: Math.max(0, 100 - (m.modelSize / 10) * 100), // Normalized efficiency score
+      reliability: Math.max(0, 100 - m.drift), // Inverse of drift as reliability
+    }));
+    return {
+      comparison: comparison,
+      trends: trends,
+      features: features,
+      performance: performance,
+    };
+  }, [metrics, summary]);
   // Custom tooltip for charts
-  var CustomTooltip = function (_a) {
+  var CustomTooltip = (_a) => {
     var active = _a.active,
       payload = _a.payload,
       label = _a.label;
@@ -193,25 +163,23 @@ function ModelPerformance(_a) {
     return (
       <div className="bg-white p-3 border rounded-lg shadow-lg">
         <p className="font-medium">{label}</p>
-        {payload.map(function (entry, index) {
-          return (
-            <div key={index} className="flex items-center justify-between space-x-4 mt-1">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
-                <span className="text-sm">{entry.dataKey}</span>
-              </div>
-              <span className="font-medium">
-                {typeof entry.value === "number" ? entry.value.toFixed(1) : entry.value}
-                {entry.dataKey === "accuracy" || entry.dataKey === "stability" ? "%" : ""}
-              </span>
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center justify-between space-x-4 mt-1">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
+              <span className="text-sm">{entry.dataKey}</span>
             </div>
-          );
-        })}
+            <span className="font-medium">
+              {typeof entry.value === "number" ? entry.value.toFixed(1) : entry.value}
+              {entry.dataKey === "accuracy" || entry.dataKey === "stability" ? "%" : ""}
+            </span>
+          </div>
+        ))}
       </div>
     );
   };
   // Render performance status badge
-  var renderPerformanceStatus = function (value, type) {
+  var renderPerformanceStatus = (value, type) => {
     if (type === "drift") {
       if (value <= METRIC_THRESHOLDS.drift.low * 100)
         return <badge_1.Badge className="bg-green-100 text-green-800">Low Drift</badge_1.Badge>;
@@ -335,24 +303,17 @@ function ModelPerformance(_a) {
             </select_1.SelectTrigger>
             <select_1.SelectContent>
               <select_1.SelectItem value="all">All Models</select_1.SelectItem>
-              {metrics.map(function (metric) {
-                return (
-                  <select_1.SelectItem key={metric.model_id} value={metric.model_id}>
-                    {metric.model_id}
-                  </select_1.SelectItem>
-                );
-              })}
+              {metrics.map((metric) => (
+                <select_1.SelectItem key={metric.model_id} value={metric.model_id}>
+                  {metric.model_id}
+                </select_1.SelectItem>
+              ))}
             </select_1.SelectContent>
           </select_1.Select>
         </div>
 
         {/* Performance Tabs */}
-        <tabs_1.Tabs
-          value={activeMetric}
-          onValueChange={function (value) {
-            return setActiveMetric(value);
-          }}
-        >
+        <tabs_1.Tabs value={activeMetric} onValueChange={(value) => setActiveMetric(value)}>
           <tabs_1.TabsList className="grid w-full grid-cols-3">
             <tabs_1.TabsTrigger value="accuracy">Accuracy Metrics</tabs_1.TabsTrigger>
             <tabs_1.TabsTrigger value="stability">Stability & Drift</tabs_1.TabsTrigger>
@@ -393,55 +354,51 @@ function ModelPerformance(_a) {
                 <div className="space-y-4">
                   {(selectedModel === "all"
                     ? metrics
-                    : metrics.filter(function (m) {
-                        return m.model_id === selectedModel;
-                      })
-                  ).map(function (metric) {
-                    return (
-                      <div key={metric.model_id} className="p-4 border rounded-lg">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-medium">{metric.model_id}</h4>
-                          {renderPerformanceStatus(
-                            metric.test_metrics.accuracy_percentage,
-                            "accuracy",
-                          )}
+                    : metrics.filter((m) => m.model_id === selectedModel)
+                  ).map((metric) => (
+                    <div key={metric.model_id} className="p-4 border rounded-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-medium">{metric.model_id}</h4>
+                        {renderPerformanceStatus(
+                          metric.test_metrics.accuracy_percentage,
+                          "accuracy",
+                        )}
+                      </div>
+
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <div>
+                          <div className="text-sm font-medium">Test Accuracy</div>
+                          <div className="text-2xl font-bold">
+                            {metric.test_metrics.accuracy_percentage.toFixed(1)}%
+                          </div>
+                          <progress_1.Progress
+                            value={metric.test_metrics.accuracy_percentage}
+                            className="mt-1"
+                          />
                         </div>
 
-                        <div className="grid gap-4 md:grid-cols-3">
-                          <div>
-                            <div className="text-sm font-medium">Test Accuracy</div>
-                            <div className="text-2xl font-bold">
-                              {metric.test_metrics.accuracy_percentage.toFixed(1)}%
-                            </div>
-                            <progress_1.Progress
-                              value={metric.test_metrics.accuracy_percentage}
-                              className="mt-1"
-                            />
+                        <div>
+                          <div className="text-sm font-medium">MAPE</div>
+                          <div className="text-xl font-bold">
+                            {metric.test_metrics.mape.toFixed(2)}%
                           </div>
-
-                          <div>
-                            <div className="text-sm font-medium">MAPE</div>
-                            <div className="text-xl font-bold">
-                              {metric.test_metrics.mape.toFixed(2)}%
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Mean Absolute Percentage Error
-                            </div>
+                          <div className="text-xs text-muted-foreground">
+                            Mean Absolute Percentage Error
                           </div>
+                        </div>
 
-                          <div>
-                            <div className="text-sm font-medium">R² Score</div>
-                            <div className="text-xl font-bold">
-                              {metric.test_metrics.r2_score.toFixed(3)}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              Coefficient of Determination
-                            </div>
+                        <div>
+                          <div className="text-sm font-medium">R² Score</div>
+                          <div className="text-xl font-bold">
+                            {metric.test_metrics.r2_score.toFixed(3)}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Coefficient of Determination
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -498,19 +455,17 @@ function ModelPerformance(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="space-y-4">
-                    {metrics.map(function (metric) {
-                      return (
-                        <div key={metric.model_id} className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{metric.model_id}</span>
-                          <div className="flex items-center space-x-2">
-                            {renderPerformanceStatus(metric.stability_score, "stability")}
-                            <span className="text-sm">
-                              {(metric.stability_score * 100).toFixed(1)}%
-                            </span>
-                          </div>
+                    {metrics.map((metric) => (
+                      <div key={metric.model_id} className="flex items-center justify-between">
+                        <span className="text-sm font-medium">{metric.model_id}</span>
+                        <div className="flex items-center space-x-2">
+                          {renderPerformanceStatus(metric.stability_score, "stability")}
+                          <span className="text-sm">
+                            {(metric.stability_score * 100).toFixed(1)}%
+                          </span>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -521,19 +476,15 @@ function ModelPerformance(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="space-y-4">
-                    {metrics.map(function (metric) {
-                      return (
-                        <div key={metric.model_id} className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{metric.model_id}</span>
-                          <div className="flex items-center space-x-2">
-                            {renderPerformanceStatus(metric.drift_score * 100, "drift")}
-                            <span className="text-sm">
-                              {(metric.drift_score * 100).toFixed(2)}%
-                            </span>
-                          </div>
+                    {metrics.map((metric) => (
+                      <div key={metric.model_id} className="flex items-center justify-between">
+                        <span className="text-sm font-medium">{metric.model_id}</span>
+                        <div className="flex items-center space-x-2">
+                          {renderPerformanceStatus(metric.drift_score * 100, "drift")}
+                          <span className="text-sm">{(metric.drift_score * 100).toFixed(2)}%</span>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -580,30 +531,28 @@ function ModelPerformance(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="space-y-4">
-                    {metrics.map(function (metric) {
-                      return (
-                        <div key={metric.model_id} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium">{metric.model_id}</span>
-                            <badge_1.Badge variant="outline">
-                              {metric.model_size_mb.toFixed(1)}MB
-                            </badge_1.Badge>
+                    {metrics.map((metric) => (
+                      <div key={metric.model_id} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{metric.model_id}</span>
+                          <badge_1.Badge variant="outline">
+                            {metric.model_size_mb.toFixed(1)}MB
+                          </badge_1.Badge>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Training Time:</span>
+                            <span className="ml-2 font-medium">
+                              {Math.round(metric.training_time_seconds / 60)}min
+                            </span>
                           </div>
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                              <span className="text-muted-foreground">Training Time:</span>
-                              <span className="ml-2 font-medium">
-                                {Math.round(metric.training_time_seconds / 60)}min
-                              </span>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Inference:</span>
-                              <span className="ml-2 font-medium">{metric.inference_time_ms}ms</span>
-                            </div>
+                          <div>
+                            <span className="text-muted-foreground">Inference:</span>
+                            <span className="ml-2 font-medium">{metric.inference_time_ms}ms</span>
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>

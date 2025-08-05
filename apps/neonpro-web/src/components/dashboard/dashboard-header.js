@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardHeader = DashboardHeader;
 var lucide_react_1 = require("lucide-react");

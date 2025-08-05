@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("@/lib/supabase/server");
@@ -151,10 +148,10 @@ function GET(request) {
       searchInfo,
       response,
       error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
-          _b.trys.push([0, 4, , 5]);
+          _b.trys.push([0, 4, undefined, 5]);
           searchParams = new URL(request.url).searchParams;
           params = {
             professional_id: searchParams.get("professional_id") || "",
@@ -247,7 +244,7 @@ function GET(request) {
 function getProfessionalSchedule(supabase, professionalId, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -273,7 +270,7 @@ function getProfessionalSchedule(supabase, professionalId, clinicId) {
 function getServiceRules(supabase, serviceTypeId, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -300,7 +297,7 @@ function getServiceRules(supabase, serviceTypeId, clinicId) {
 function getExistingAppointments(supabase, professionalId, clinicId, searchWindowDays, excludeId) {
   return __awaiter(this, void 0, void 0, function () {
     var startDate, endDate, query, _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           startDate = new Date();
@@ -340,20 +337,18 @@ function generateSlotSuggestions(params, schedule, serviceRules, existingAppoint
       dayOfWeek,
       daySchedule,
       daySlots;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       suggestions = [];
       preferredDate = (0, date_fns_1.parseISO)(params.preferred_start_time);
       preferredTime = (0, date_fns_1.format)(preferredDate, "HH:mm");
       scheduleMap = new Map();
-      schedule.forEach(function (s) {
+      schedule.forEach((s) => {
         scheduleMap.set(s.day_of_week, s);
       });
-      appointments = existingAppointments.map(function (apt) {
-        return {
-          start: (0, date_fns_1.parseISO)(apt.start_time),
-          end: (0, date_fns_1.parseISO)(apt.end_time),
-        };
-      });
+      appointments = existingAppointments.map((apt) => ({
+        start: (0, date_fns_1.parseISO)(apt.start_time),
+        end: (0, date_fns_1.parseISO)(apt.end_time),
+      }));
       // Search through each day in the window
       for (dayOffset = 0; dayOffset < params.search_window_days; dayOffset++) {
         searchDate = (0, date_fns_1.addDays)(preferredDate, dayOffset);
@@ -372,12 +367,7 @@ function generateSlotSuggestions(params, schedule, serviceRules, existingAppoint
         suggestions.push.apply(suggestions, daySlots);
       }
       // Sort by score (best first)
-      return [
-        2 /*return*/,
-        suggestions.sort(function (a, b) {
-          return (b.score || 0) - (a.score || 0);
-        }),
-      ];
+      return [2 /*return*/, suggestions.sort((a, b) => (b.score || 0) - (a.score || 0))];
     });
   });
 }
@@ -411,9 +401,7 @@ function generateDaySuggestions(
       bufferBefore,
       bufferAfter,
     );
-    var hasErrors = conflicts.some(function (c) {
-      return c.severity === "error";
-    });
+    var hasErrors = conflicts.some((c) => c.severity === "error");
     if (!hasErrors) {
       var score = calculateSlotScore(slotStart, preferredTime, dayOffset, conflicts.length);
       slots.push({
@@ -476,9 +464,9 @@ function checkSlotConflicts(slotStart, slotEnd, appointments, schedule, bufferBe
   var hourStart = new Date(slotStart);
   hourStart.setMinutes(0, 0, 0);
   var hourEnd = (0, date_fns_1.addMinutes)(hourStart, 60);
-  var appointmentsInHour = appointments.filter(function (apt) {
-    return apt.start >= hourStart && apt.start < hourEnd;
-  }).length;
+  var appointmentsInHour = appointments.filter(
+    (apt) => apt.start >= hourStart && apt.start < hourEnd,
+  ).length;
   if (appointmentsInHour >= (schedule.max_appointments_per_hour || 4)) {
     conflicts.push({
       type: "capacity_exceeded",

@@ -1,6 +1,11 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { AlertTriangle, Calendar, CheckCircle, Clock, Search, XCircle } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { ConsentService } from "@/app/services/consent.service";
+import type { PatientConsent } from "@/app/types/compliance";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,12 +13,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Input } from "@/components/ui/input";
-import type { PatientConsent } from "@/app/types/compliance";
-import type { ConsentService } from "@/app/services/consent.service";
-import type { Search, Calendar, CheckCircle, XCircle, Clock, AlertTriangle } from "lucide-react";
 import type { useToast } from "@/hooks/use-toast";
 
 interface PatientConsentManagerProps {

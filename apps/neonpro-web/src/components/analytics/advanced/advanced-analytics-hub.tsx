@@ -12,7 +12,28 @@
  * Provides unified interface for comprehensive business intelligence.
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  Calendar,
+  CheckCircle,
+  DollarSign,
+  Download,
+  LineChart,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -20,9 +41,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -30,32 +49,12 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Progress } from "@/components/ui/progress";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  BarChart3,
-  TrendingUp,
-  Brain,
-  Target,
-  Activity,
-  Calendar,
-  Users,
-  DollarSign,
-  AlertTriangle,
-  CheckCircle,
-  RefreshCw,
-  Download,
-  Settings,
-  Zap,
-  LineChart,
-  PieChart,
-} from "lucide-react";
-
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { AdvancedMetricsDashboard } from "./advanced-metrics-dashboard";
 // Import advanced analytics components
 import type { CohortHeatmap } from "./cohort-heatmap";
 import type { ForecastingCharts } from "./forecasting-charts";
-import type { AdvancedMetricsDashboard } from "./advanced-metrics-dashboard";
 import type { StatisticalInsights } from "./statistical-insights";
 
 // Types

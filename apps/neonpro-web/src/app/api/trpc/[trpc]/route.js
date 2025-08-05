@@ -1,4 +1,3 @@
-"use strict";
 /**
  * tRPC API Route Handler for Next.js App Router
  * Healthcare-compliant API endpoint
@@ -8,15 +7,15 @@ exports.POST = exports.GET = void 0;
 var fetch_1 = require("@trpc/server/adapters/fetch");
 var root_1 = require("@/server/root");
 var trpc_1 = require("@/server/trpc");
-var handler = function (req) {
-  return (0, fetch_1.fetchRequestHandler)({
+var handler = (req) =>
+  (0, fetch_1.fetchRequestHandler)({
     endpoint: "/api/trpc",
     req: req,
     router: root_1.appRouter,
     createContext: trpc_1.createTRPCContext,
     onError:
       process.env.NODE_ENV === "development"
-        ? function (_a) {
+        ? (_a) => {
             var path = _a.path,
               error = _a.error;
             console.error(
@@ -27,6 +26,5 @@ var handler = function (req) {
           }
         : undefined,
   });
-};
 exports.GET = handler;
 exports.POST = handler;

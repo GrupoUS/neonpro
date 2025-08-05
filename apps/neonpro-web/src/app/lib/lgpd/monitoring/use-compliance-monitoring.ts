@@ -5,17 +5,17 @@
  * for healthcare compliance dashboards and monitoring interfaces.
  */
 
-import type { useState, useEffect, useCallback, useRef } from "react";
+import type { useCallback, useEffect, useRef, useState } from "react";
 import type {
-  realTimeComplianceMonitor,
-  RealTimeComplianceStatus,
-  ComplianceMetrics,
-  ComplianceViolation,
   ComplianceAlert,
-  ComplianceRecommendation,
-  ComplianceLevel,
-  ViolationType,
   ComplianceCategory,
+  ComplianceLevel,
+  ComplianceMetrics,
+  ComplianceRecommendation,
+  ComplianceViolation,
+  RealTimeComplianceStatus,
+  realTimeComplianceMonitor,
+  ViolationType,
 } from "./compliance-monitoring";
 
 export interface UseComplianceMonitoringResult {

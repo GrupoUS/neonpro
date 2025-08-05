@@ -3,11 +3,11 @@
  * Story 5.3: Automated Communication for Scheduling
  */
 
+import type { z } from "zod";
 import type { createClient } from "@/lib/supabase/server";
 import type { CommunicationService } from "./communication-service";
 import type { NoShowPredictor } from "./no-show-predictor";
-import type { schedulingTemplateEngine, SchedulingTemplate } from "./scheduling-templates";
-import type { z } from "zod";
+import type { SchedulingTemplate, schedulingTemplateEngine } from "./scheduling-templates";
 
 export interface WorkflowConfig {
   clinicId: string;

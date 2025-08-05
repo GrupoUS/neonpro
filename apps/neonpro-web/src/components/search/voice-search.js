@@ -4,18 +4,17 @@
  * Voice search interface with speech recognition and visual feedback
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,10 +134,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -149,7 +146,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VoiceSearch = VoiceSearch;
 exports.VoiceSearchButton = VoiceSearchButton;
@@ -165,7 +162,6 @@ var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var voice_search_1 = require("@/lib/search/voice-search");
 function VoiceSearch(_a) {
-  var _this = this;
   var onSearchResults = _a.onSearchResults,
     onTranscriptChange = _a.onTranscriptChange,
     onError = _a.onError,
@@ -223,135 +219,124 @@ function VoiceSearch(_a) {
   var audioLevelRef = (0, react_1.useRef)(0);
   var animationFrameRef = (0, react_1.useRef)(0);
   // Initialize voice search
-  (0, react_1.useEffect)(
-    function () {
-      setIsSupported(voice_search_1.voiceSearch.isSupported());
-      setCommands(voice_search_1.voiceSearch.getCommands());
-      // Check microphone permission
-      checkMicrophonePermission();
-      // Setup event listeners
-      var handleStart = function () {
-        setIsListening(true);
-        setErrors([]);
-      };
-      var handleEnd = function () {
-        setIsListening(false);
+  (0, react_1.useEffect)(() => {
+    setIsSupported(voice_search_1.voiceSearch.isSupported());
+    setCommands(voice_search_1.voiceSearch.getCommands());
+    // Check microphone permission
+    checkMicrophonePermission();
+    // Setup event listeners
+    var handleStart = () => {
+      setIsListening(true);
+      setErrors([]);
+    };
+    var handleEnd = () => {
+      setIsListening(false);
+      setInterimTranscript("");
+      setAudioLevel(0);
+    };
+    var handleRecognition = (result) => {
+      if (result.isFinal) {
+        setCurrentTranscript(result.transcript);
         setInterimTranscript("");
-        setAudioLevel(0);
-      };
-      var handleRecognition = function (result) {
-        if (result.isFinal) {
-          setCurrentTranscript(result.transcript);
-          setInterimTranscript("");
-          setConfidence(result.confidence);
-          if (onTranscriptChange) {
-            onTranscriptChange(result.transcript);
-          }
-        } else {
-          setInterimTranscript(result.transcript);
+        setConfidence(result.confidence);
+        if (onTranscriptChange) {
+          onTranscriptChange(result.transcript);
         }
-      };
-      var handleQueryProcessed = function (query) {
-        setQueries(function (prev) {
-          return __spreadArray(__spreadArray([], prev, true), [query], false);
-        });
-        setIsProcessing(false);
-        if (query.searchResults && onSearchResults) {
-          onSearchResults(query.searchResults);
-        }
-      };
-      var handleQueryError = function (_a) {
-        var query = _a.query,
-          error = _a.error;
-        setQueries(function (prev) {
-          return __spreadArray(__spreadArray([], prev, true), [query], false);
-        });
-        setIsProcessing(false);
-        var voiceError = {
-          type: "processing",
-          message: error,
-          timestamp: Date.now(),
-        };
-        setErrors(function (prev) {
-          return __spreadArray(__spreadArray([], prev, true), [voiceError], false);
-        });
-        if (onError) {
-          onError(voiceError);
-        }
-      };
-      var handleError = function (error) {
-        setErrors(function (prev) {
-          return __spreadArray(__spreadArray([], prev, true), [error], false);
-        });
-        setIsListening(false);
-        setIsProcessing(false);
-        if (onError) {
-          onError(error);
-        }
-      };
-      var handleSessionStart = function (newSession) {
-        setSession(newSession);
-        setQueries([]);
-        setErrors([]);
-      };
-      var handleSessionEnd = function (endedSession) {
-        setSession(null);
-      };
-      var handleSearchResults = function (_a) {
-        var results = _a.results;
-        setIsProcessing(false);
-        if (onSearchResults) {
-          onSearchResults(results);
-        }
-      };
-      var handleHelpCommand = function (_a) {
-        var commands = _a.commands;
-        setShowHelp(true);
-      };
-      // Register event listeners
-      voice_search_1.voiceSearch.on("start", handleStart);
-      voice_search_1.voiceSearch.on("end", handleEnd);
-      voice_search_1.voiceSearch.on("recognition", handleRecognition);
-      voice_search_1.voiceSearch.on("queryProcessed", handleQueryProcessed);
-      voice_search_1.voiceSearch.on("queryError", handleQueryError);
-      voice_search_1.voiceSearch.on("error", handleError);
-      voice_search_1.voiceSearch.on("sessionStart", handleSessionStart);
-      voice_search_1.voiceSearch.on("sessionEnd", handleSessionEnd);
-      voice_search_1.voiceSearch.on("searchResults", handleSearchResults);
-      voice_search_1.voiceSearch.on("helpCommand", handleHelpCommand);
-      // Auto-start if requested
-      if (autoStart && isSupported) {
-        startVoiceSearch();
+      } else {
+        setInterimTranscript(result.transcript);
       }
-      return function () {
-        // Cleanup event listeners
-        voice_search_1.voiceSearch.off("start", handleStart);
-        voice_search_1.voiceSearch.off("end", handleEnd);
-        voice_search_1.voiceSearch.off("recognition", handleRecognition);
-        voice_search_1.voiceSearch.off("queryProcessed", handleQueryProcessed);
-        voice_search_1.voiceSearch.off("queryError", handleQueryError);
-        voice_search_1.voiceSearch.off("error", handleError);
-        voice_search_1.voiceSearch.off("sessionStart", handleSessionStart);
-        voice_search_1.voiceSearch.off("sessionEnd", handleSessionEnd);
-        voice_search_1.voiceSearch.off("searchResults", handleSearchResults);
-        voice_search_1.voiceSearch.off("helpCommand", handleHelpCommand);
-        // Stop listening
-        if (isListening) {
-          stopVoiceSearch();
-        }
-        // Cancel animation frame
-        if (animationFrameRef.current) {
-          cancelAnimationFrame(animationFrameRef.current);
-        }
+    };
+    var handleQueryProcessed = (query) => {
+      setQueries((prev) => __spreadArray(__spreadArray([], prev, true), [query], false));
+      setIsProcessing(false);
+      if (query.searchResults && onSearchResults) {
+        onSearchResults(query.searchResults);
+      }
+    };
+    var handleQueryError = (_a) => {
+      var query = _a.query,
+        error = _a.error;
+      setQueries((prev) => __spreadArray(__spreadArray([], prev, true), [query], false));
+      setIsProcessing(false);
+      var voiceError = {
+        type: "processing",
+        message: error,
+        timestamp: Date.now(),
       };
-    },
-    [autoStart, isSupported, onSearchResults, onTranscriptChange, onError],
-  );
+      setErrors((prev) => __spreadArray(__spreadArray([], prev, true), [voiceError], false));
+      if (onError) {
+        onError(voiceError);
+      }
+    };
+    var handleError = (error) => {
+      setErrors((prev) => __spreadArray(__spreadArray([], prev, true), [error], false));
+      setIsListening(false);
+      setIsProcessing(false);
+      if (onError) {
+        onError(error);
+      }
+    };
+    var handleSessionStart = (newSession) => {
+      setSession(newSession);
+      setQueries([]);
+      setErrors([]);
+    };
+    var handleSessionEnd = (endedSession) => {
+      setSession(null);
+    };
+    var handleSearchResults = (_a) => {
+      var results = _a.results;
+      setIsProcessing(false);
+      if (onSearchResults) {
+        onSearchResults(results);
+      }
+    };
+    var handleHelpCommand = (_a) => {
+      var commands = _a.commands;
+      setShowHelp(true);
+    };
+    // Register event listeners
+    voice_search_1.voiceSearch.on("start", handleStart);
+    voice_search_1.voiceSearch.on("end", handleEnd);
+    voice_search_1.voiceSearch.on("recognition", handleRecognition);
+    voice_search_1.voiceSearch.on("queryProcessed", handleQueryProcessed);
+    voice_search_1.voiceSearch.on("queryError", handleQueryError);
+    voice_search_1.voiceSearch.on("error", handleError);
+    voice_search_1.voiceSearch.on("sessionStart", handleSessionStart);
+    voice_search_1.voiceSearch.on("sessionEnd", handleSessionEnd);
+    voice_search_1.voiceSearch.on("searchResults", handleSearchResults);
+    voice_search_1.voiceSearch.on("helpCommand", handleHelpCommand);
+    // Auto-start if requested
+    if (autoStart && isSupported) {
+      startVoiceSearch();
+    }
+    return () => {
+      // Cleanup event listeners
+      voice_search_1.voiceSearch.off("start", handleStart);
+      voice_search_1.voiceSearch.off("end", handleEnd);
+      voice_search_1.voiceSearch.off("recognition", handleRecognition);
+      voice_search_1.voiceSearch.off("queryProcessed", handleQueryProcessed);
+      voice_search_1.voiceSearch.off("queryError", handleQueryError);
+      voice_search_1.voiceSearch.off("error", handleError);
+      voice_search_1.voiceSearch.off("sessionStart", handleSessionStart);
+      voice_search_1.voiceSearch.off("sessionEnd", handleSessionEnd);
+      voice_search_1.voiceSearch.off("searchResults", handleSearchResults);
+      voice_search_1.voiceSearch.off("helpCommand", handleHelpCommand);
+      // Stop listening
+      if (isListening) {
+        stopVoiceSearch();
+      }
+      // Cancel animation frame
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [autoStart, isSupported, onSearchResults, onTranscriptChange, onError]);
   // Check microphone permission
-  var checkMicrophonePermission = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkMicrophonePermission = () =>
+    __awaiter(this, void 0, void 0, function () {
       var stream, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -359,9 +344,7 @@ function VoiceSearch(_a) {
           case 1:
             stream = _a.sent();
             setPermissionGranted(true);
-            stream.getTracks().forEach(function (track) {
-              return track.stop();
-            });
+            stream.getTracks().forEach((track) => track.stop());
             return [3 /*break*/, 3];
           case 2:
             error_1 = _a.sent();
@@ -372,12 +355,11 @@ function VoiceSearch(_a) {
         }
       });
     });
-  };
   // Start voice search
-  var startVoiceSearch = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var startVoiceSearch = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3, error_4, error_2, voiceError_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!isSupported) {
@@ -386,12 +368,10 @@ function VoiceSearch(_a) {
                 message: "Reconhecimento de voz não suportado neste navegador",
                 timestamp: Date.now(),
               };
-              setErrors(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [error_3], false);
-              });
+              setErrors((prev) => __spreadArray(__spreadArray([], prev, true), [error_3], false));
               return [2 /*return*/];
             }
-            if (!!permissionGranted) return [3 /*break*/, 2];
+            if (permissionGranted) return [3 /*break*/, 2];
             return [4 /*yield*/, checkMicrophonePermission()];
           case 1:
             _a.sent();
@@ -401,15 +381,13 @@ function VoiceSearch(_a) {
                 message: "Permissão de microfone negada",
                 timestamp: Date.now(),
               };
-              setErrors(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [error_4], false);
-              });
+              setErrors((prev) => __spreadArray(__spreadArray([], prev, true), [error_4], false));
               return [2 /*return*/];
             }
             _a.label = 2;
           case 2:
             _a.trys.push([2, 6, , 7]);
-            if (!!session) return [3 /*break*/, 4];
+            if (session) return [3 /*break*/, 4];
             return [4 /*yield*/, voice_search_1.voiceSearch.startSession(userId)];
           case 3:
             _a.sent();
@@ -432,25 +410,24 @@ function VoiceSearch(_a) {
                   : "Falha ao iniciar reconhecimento de voz",
               timestamp: Date.now(),
             };
-            setErrors(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [voiceError_1], false);
-            });
+            setErrors((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [voiceError_1], false),
+            );
             return [3 /*break*/, 7];
           case 7:
             return [2 /*return*/];
         }
       });
     });
-  };
   // Stop voice search
-  var stopVoiceSearch = function () {
+  var stopVoiceSearch = () => {
     voice_search_1.voiceSearch.stopListening();
     setIsProcessing(false);
   };
   // End session
-  var endSession = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var endSession = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, voice_search_1.voiceSearch.endSession()];
@@ -460,29 +437,28 @@ function VoiceSearch(_a) {
         }
       });
     });
-  };
   // Get status color
-  var getStatusColor = function () {
+  var getStatusColor = () => {
     if (errors.length > 0) return "text-red-500";
     if (isListening) return "text-green-500";
     if (isProcessing) return "text-blue-500";
     return "text-gray-500";
   };
   // Get status text
-  var getStatusText = function () {
+  var getStatusText = () => {
     if (errors.length > 0) return "Erro";
     if (isListening) return "Escutando...";
     if (isProcessing) return "Processando...";
     return "Pronto";
   };
   // Get confidence color
-  var getConfidenceColor = function (conf) {
+  var getConfidenceColor = (conf) => {
     if (conf >= 0.8) return "text-green-600";
     if (conf >= 0.6) return "text-yellow-600";
     return "text-red-600";
   };
   // Format duration
-  var formatDuration = function (ms) {
+  var formatDuration = (ms) => {
     var seconds = Math.floor(ms / 1000);
     var minutes = Math.floor(seconds / 60);
     return "".concat(minutes, ":").concat((seconds % 60).toString().padStart(2, "0"));
@@ -555,13 +531,7 @@ function VoiceSearch(_a) {
               </button_1.Button>
             )}
 
-            <button_1.Button
-              variant="ghost"
-              size="sm"
-              onClick={function () {
-                return setShowHelp(!showHelp);
-              }}
-            >
+            <button_1.Button variant="ghost" size="sm" onClick={() => setShowHelp(!showHelp)}>
               <lucide_react_1.HelpCircle className="h-4 w-4 mr-2" />
               Comandos
             </button_1.Button>
@@ -653,12 +623,12 @@ function VoiceSearch(_a) {
             <scroll_area_1.ScrollArea className="h-64">
               <div className="space-y-4">
                 {Object.entries(
-                  commands.reduce(function (groups, cmd) {
+                  commands.reduce((groups, cmd) => {
                     if (!groups[cmd.category]) groups[cmd.category] = [];
                     groups[cmd.category].push(cmd);
                     return groups;
                   }, {}),
-                ).map(function (_a) {
+                ).map((_a) => {
                   var category = _a[0],
                     categoryCommands = _a[1];
                   return (
@@ -676,16 +646,14 @@ function VoiceSearch(_a) {
                       </h4>
 
                       <div className="space-y-2">
-                        {categoryCommands.map(function (command) {
-                          return (
-                            <div key={command.id} className="p-2 bg-muted/50 rounded">
-                              <div className="font-medium text-sm">{command.description}</div>
-                              <div className="text-xs text-muted-foreground mt-1">
-                                Exemplos: {command.examples.join(", ")}
-                              </div>
+                        {categoryCommands.map((command) => (
+                          <div key={command.id} className="p-2 bg-muted/50 rounded">
+                            <div className="font-medium text-sm">{command.description}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Exemplos: {command.examples.join(", ")}
                             </div>
-                          );
-                        })}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   );
@@ -714,13 +682,7 @@ function VoiceSearch(_a) {
               </div>
 
               <div className="text-center">
-                <div className="text-2xl font-bold">
-                  {
-                    queries.filter(function (q) {
-                      return q.success;
-                    }).length
-                  }
-                </div>
+                <div className="text-2xl font-bold">{queries.filter((q) => q.success).length}</div>
                 <div className="text-sm text-muted-foreground">Sucessos</div>
               </div>
 
@@ -737,11 +699,7 @@ function VoiceSearch(_a) {
                 <div className="text-2xl font-bold">
                   {queries.length > 0
                     ? Math.round(
-                        (queries.reduce(function (sum, q) {
-                          return sum + q.confidence;
-                        }, 0) /
-                          queries.length) *
-                          100,
+                        (queries.reduce((sum, q) => sum + q.confidence, 0) / queries.length) * 100,
                       )
                     : 0}
                   %
@@ -760,24 +718,22 @@ function VoiceSearch(_a) {
                     {queries
                       .slice(-5)
                       .reverse()
-                      .map(function (query) {
-                        return (
-                          <div key={query.id} className="flex items-center justify-between text-sm">
-                            <span className="truncate flex-1">{query.transcript}</span>
-                            <div className="flex items-center gap-2 ml-2">
-                              <badge_1.Badge
-                                variant="outline"
-                                className={getConfidenceColor(query.confidence)}
-                              >
-                                {Math.round(query.confidence * 100)}%
-                              </badge_1.Badge>
-                              {query.success
-                                ? <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
-                                : <lucide_react_1.XCircle className="h-3 w-3 text-red-500" />}
-                            </div>
+                      .map((query) => (
+                        <div key={query.id} className="flex items-center justify-between text-sm">
+                          <span className="truncate flex-1">{query.transcript}</span>
+                          <div className="flex items-center gap-2 ml-2">
+                            <badge_1.Badge
+                              variant="outline"
+                              className={getConfidenceColor(query.confidence)}
+                            >
+                              {Math.round(query.confidence * 100)}%
+                            </badge_1.Badge>
+                            {query.success
+                              ? <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
+                              : <lucide_react_1.XCircle className="h-3 w-3 text-red-500" />}
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                   </div>
                 </scroll_area_1.ScrollArea>
               </div>
@@ -790,7 +746,6 @@ function VoiceSearch(_a) {
 }
 // Compact voice search button for integration into other components
 function VoiceSearchButton(_a) {
-  var _this = this;
   var onTranscript = _a.onTranscript,
     onResults = _a.onResults,
     className = _a.className,
@@ -800,10 +755,10 @@ function VoiceSearchButton(_a) {
     isListening = _c[0],
     setIsListening = _c[1];
   var isSupported = (0, react_1.useState)(voice_search_1.voiceSearch.isSupported())[0];
-  var handleClick = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleClick = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!isSupported) return [2 /*return*/];
@@ -812,7 +767,7 @@ function VoiceSearchButton(_a) {
             return [3 /*break*/, 6];
           case 1:
             _a.trys.push([1, 5, , 6]);
-            if (!!voice_search_1.voiceSearch.getCurrentSession()) return [3 /*break*/, 3];
+            if (voice_search_1.voiceSearch.getCurrentSession()) return [3 /*break*/, 3];
             return [4 /*yield*/, voice_search_1.voiceSearch.startSession()];
           case 2:
             _a.sent();
@@ -831,39 +786,31 @@ function VoiceSearchButton(_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      var handleStart = function () {
-        return setIsListening(true);
-      };
-      var handleEnd = function () {
-        return setIsListening(false);
-      };
-      var handleRecognition = function (result) {
-        if (result.isFinal && onTranscript) {
-          onTranscript(result.transcript);
-        }
-      };
-      var handleSearchResults = function (_a) {
-        var results = _a.results;
-        if (onResults) {
-          onResults(results);
-        }
-      };
-      voice_search_1.voiceSearch.on("start", handleStart);
-      voice_search_1.voiceSearch.on("end", handleEnd);
-      voice_search_1.voiceSearch.on("recognition", handleRecognition);
-      voice_search_1.voiceSearch.on("searchResults", handleSearchResults);
-      return function () {
-        voice_search_1.voiceSearch.off("start", handleStart);
-        voice_search_1.voiceSearch.off("end", handleEnd);
-        voice_search_1.voiceSearch.off("recognition", handleRecognition);
-        voice_search_1.voiceSearch.off("searchResults", handleSearchResults);
-      };
-    },
-    [onTranscript, onResults],
-  );
+  (0, react_1.useEffect)(() => {
+    var handleStart = () => setIsListening(true);
+    var handleEnd = () => setIsListening(false);
+    var handleRecognition = (result) => {
+      if (result.isFinal && onTranscript) {
+        onTranscript(result.transcript);
+      }
+    };
+    var handleSearchResults = (_a) => {
+      var results = _a.results;
+      if (onResults) {
+        onResults(results);
+      }
+    };
+    voice_search_1.voiceSearch.on("start", handleStart);
+    voice_search_1.voiceSearch.on("end", handleEnd);
+    voice_search_1.voiceSearch.on("recognition", handleRecognition);
+    voice_search_1.voiceSearch.on("searchResults", handleSearchResults);
+    return () => {
+      voice_search_1.voiceSearch.off("start", handleStart);
+      voice_search_1.voiceSearch.off("end", handleEnd);
+      voice_search_1.voiceSearch.off("recognition", handleRecognition);
+      voice_search_1.voiceSearch.off("searchResults", handleSearchResults);
+    };
+  }, [onTranscript, onResults]);
   if (!isSupported) {
     return null;
   }

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentNotes;
 var react_1 = require("react");
@@ -46,9 +45,7 @@ function AppointmentNotes(_a) {
               id="notes"
               placeholder={t("booking.notes.example")}
               value={notes}
-              onChange={function (e) {
-                return onNotesChange(e.target.value);
-              }}
+              onChange={(e) => onNotesChange(e.target.value)}
               maxLength={maxLength}
               className="min-h-32"
             />

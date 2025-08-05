@@ -6,7 +6,31 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import type {
+  AlertCircle,
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  Eye,
+  Filter,
+  Lightbulb,
+  Plus,
+  RefreshCw,
+  Search,
+  Target,
+  Trash2,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,19 +38,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   Dialog,
   DialogContent,
@@ -35,39 +46,28 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type { Progress } from "@/components/ui/progress";
-import type { Separator } from "@/components/ui/separator";
 import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
-  Users,
-  Plus,
-  Search,
-  Filter,
-  TrendingUp,
-  BarChart3,
-  Target,
-  Brain,
-  Lightbulb,
-  Edit,
-  Trash2,
-  RefreshCw,
-  Download,
-  Eye,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Zap,
-} from "lucide-react";
-import type { toast } from "sonner";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useDebounce } from "@/hooks/use-debounce";
 import type {
+  PatientSegment,
+  PatientSegmentMember,
   patientSegmentation,
-  type PatientSegment,
-  type SegmentCriteria,
-  type PatientSegmentMember,
-  type SegmentationAnalytics,
-  type SupportedLanguage,
+  SegmentationAnalytics,
+  SegmentCriteria,
+  SupportedLanguage,
 } from "@/lib/search/patient-segmentation";
 
 interface PatientSegmentationProps {

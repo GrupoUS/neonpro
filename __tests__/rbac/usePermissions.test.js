@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Unit Tests for usePermissions React Hook
  * Story 1.2: Role-Based Access Control Implementation
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var react_1 = require("@testing-library/react");
@@ -152,17 +149,13 @@ var mockUser = {
   exp: Date.now() + 3600000,
 };
 // Mock the useAuth hook
-globals_1.jest.mock("@/hooks/useAuth", function () {
-  return {
-    useAuth: function () {
-      return {
-        user: mockUser,
-        isLoading: false,
-        isAuthenticated: true,
-      };
-    },
-  };
-});
+globals_1.jest.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({
+    user: mockUser,
+    isLoading: false,
+    isAuthenticated: true,
+  }),
+}));
 // Mock fetch for API calls
 global.fetch = globals_1.jest.fn();
 var mockFetch = global.fetch;
@@ -170,67 +163,57 @@ var mockFetch = global.fetch;
  * Mock successful API response
  */
 function mockSuccessfulPermissionCheck(granted, reason) {
-  var _this = this;
   mockFetch.mockResolvedValueOnce({
     ok: true,
-    json: function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          return [
-            2 /*return*/,
-            {
-              granted: granted,
-              reason: reason || (granted ? "Permission granted" : "Permission denied"),
-              roleUsed: mockUser.role,
-            },
-          ];
-        });
-      });
-    },
+    json: () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [
+          2 /*return*/,
+          {
+            granted: granted,
+            reason: reason || (granted ? "Permission granted" : "Permission denied"),
+            roleUsed: mockUser.role,
+          },
+        ]);
+      }),
   });
 }
 /**
  * Mock failed API response
  */
 function mockFailedPermissionCheck() {
-  var _this = this;
   mockFetch.mockResolvedValueOnce({
     ok: false,
     status: 500,
-    json: function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          return [2 /*return*/, { error: "Internal server error" }];
-        });
-      });
-    },
+    json: () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [2 /*return*/, { error: "Internal server error" }]);
+      }),
   });
 }
-(0, globals_1.describe)("usePermissions Hook", function () {
-  (0, globals_1.beforeEach)(function () {
+(0, globals_1.describe)("usePermissions Hook", () => {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
     // Clear localStorage cache
     localStorage.clear();
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("Basic permission checking", function () {
-    (0, globals_1.it)("should check if user has a specific permission", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Basic permission checking", () => {
+    (0, globals_1.it)("should check if user has a specific permission", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasPermission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -239,8 +222,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -257,23 +240,21 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return false when user lacks permission", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return false when user lacks permission", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasPermission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(false);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("billing.manage")];
@@ -282,8 +263,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -291,23 +272,21 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle API errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle API errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasPermission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFailedPermissionCheck();
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -316,8 +295,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -325,23 +304,21 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check permission with resource ID", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check permission with resource ID", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -353,8 +330,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -370,24 +347,22 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check permission with context", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check permission with context", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, context;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               context = { clinicId: "clinic-2" };
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -399,8 +374,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -416,27 +391,25 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Multiple permission checking", function () {
-    (0, globals_1.it)("should check if user has any of multiple permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Multiple permission checking", () => {
+    (0, globals_1.it)("should check if user has any of multiple permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasAnyPermission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock multiple API calls
               mockSuccessfulPermissionCheck(false); // First permission denied
               mockSuccessfulPermissionCheck(true); // Second permission granted
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -448,8 +421,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -458,24 +431,22 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return false when user has none of the permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return false when user has none of the permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasAnyPermission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(false);
               mockSuccessfulPermissionCheck(false);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -487,8 +458,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -496,24 +467,22 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check if user has all required permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check if user has all required permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasAllPermissions;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -528,8 +497,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -537,96 +506,81 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)(
-      "should return false when user is missing any required permission",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var result, hasAllPermissions;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                mockSuccessfulPermissionCheck(true); // First permission granted
-                mockSuccessfulPermissionCheck(false); // Second permission denied
-                result = (0, react_1.renderHook)(function () {
-                  return (0, usePermissions_1.usePermissions)();
-                }).result;
-                return [
-                  4 /*yield*/,
-                  (0, react_1.act)(function () {
-                    return __awaiter(void 0, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        switch (_a.label) {
-                          case 0:
-                            return [
-                              4 /*yield*/,
-                              result.current.hasAllPermissions(["patients.read", "billing.manage"]),
-                            ];
-                          case 1:
-                            hasAllPermissions = _a.sent();
-                            return [2 /*return*/];
-                        }
-                      });
+      }),
+    );
+    (0, globals_1.it)("should return false when user is missing any required permission", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var result, hasAllPermissions;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              mockSuccessfulPermissionCheck(true); // First permission granted
+              mockSuccessfulPermissionCheck(false); // Second permission denied
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
+              return [
+                4 /*yield*/,
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
+                      switch (_a.label) {
+                        case 0:
+                          return [
+                            4 /*yield*/,
+                            result.current.hasAllPermissions(["patients.read", "billing.manage"]),
+                          ];
+                        case 1:
+                          hasAllPermissions = _a.sent();
+                          return [2 /*return*/];
+                      }
                     });
                   }),
-                ];
-              case 1:
-                _a.sent();
-                (0, globals_1.expect)(hasAllPermissions).toBe(false);
-                return [2 /*return*/];
-            }
-          });
+                ),
+              ];
+            case 1:
+              _a.sent();
+              (0, globals_1.expect)(hasAllPermissions).toBe(false);
+              return [2 /*return*/];
+          }
         });
-      },
+      }),
     );
   });
-  (0, globals_1.describe)("Role checking", function () {
-    (0, globals_1.it)("should check if user has specific role", function () {
-      var result = (0, react_1.renderHook)(function () {
-        return (0, usePermissions_1.usePermissions)();
-      }).result;
+  (0, globals_1.describe)("Role checking", () => {
+    (0, globals_1.it)("should check if user has specific role", () => {
+      var result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
       var hasRole = result.current.hasRole("manager");
       (0, globals_1.expect)(hasRole).toBe(true);
     });
-    (0, globals_1.it)("should return false for different role", function () {
-      var result = (0, react_1.renderHook)(function () {
-        return (0, usePermissions_1.usePermissions)();
-      }).result;
+    (0, globals_1.it)("should return false for different role", () => {
+      var result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
       var hasRole = result.current.hasRole("owner");
       (0, globals_1.expect)(hasRole).toBe(false);
     });
-    (0, globals_1.it)("should check if user has minimum role level", function () {
-      var result = (0, react_1.renderHook)(function () {
-        return (0, usePermissions_1.usePermissions)();
-      }).result;
+    (0, globals_1.it)("should check if user has minimum role level", () => {
+      var result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
       var hasMinimumRole = result.current.hasMinimumRole("staff");
       (0, globals_1.expect)(hasMinimumRole).toBe(true); // manager >= staff
     });
-    (0, globals_1.it)("should return false when user role is below minimum", function () {
-      var result = (0, react_1.renderHook)(function () {
-        return (0, usePermissions_1.usePermissions)();
-      }).result;
+    (0, globals_1.it)("should return false when user role is below minimum", () => {
+      var result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
       var hasMinimumRole = result.current.hasMinimumRole("owner");
       (0, globals_1.expect)(hasMinimumRole).toBe(false); // manager < owner
     });
   });
-  (0, globals_1.describe)("Feature access checking", function () {
-    (0, globals_1.it)("should check if user can access a feature", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Feature access checking", () => {
+    (0, globals_1.it)("should check if user can access a feature", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, canAccess;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.canAccess("patient-management")];
@@ -635,8 +589,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -644,23 +598,21 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check if user can manage a resource", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check if user can manage a resource", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, canManage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.canManage("patients", "patient-123")];
@@ -669,8 +621,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -678,23 +630,21 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check if user can view a resource", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check if user can view a resource", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, canView;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.canView("billing")];
@@ -703,8 +653,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -712,26 +662,24 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Caching", function () {
-    (0, globals_1.it)("should cache permission results", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Caching", () => {
+    (0, globals_1.it)("should cache permission results", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               // First call
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -740,8 +688,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               // First call
@@ -749,9 +697,9 @@ function mockFailedPermissionCheck() {
               // Second call (should use cache)
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -760,8 +708,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 2:
               // Second call (should use cache)
@@ -771,25 +719,23 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should clear cache when requested", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should clear cache when requested", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               // First call
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -798,22 +744,22 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               // First call
               _a.sent();
               // Clear cache
-              (0, react_1.act)(function () {
+              (0, react_1.act)(() => {
                 result.current.clearCache();
               });
               // Second call (should make new API call)
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -822,8 +768,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 2:
               // Second call (should make new API call)
@@ -832,23 +778,21 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should use localStorage for persistent caching", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should use localStorage for persistent caching", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, cacheKey, cachedResult, parsed;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -857,8 +801,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -872,12 +816,12 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should respect cache expiration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should respect cache expiration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var cacheKey, expiredCache, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               cacheKey = "perm_cache_".concat(mockUser.id, "_patients.read_undefined_undefined");
@@ -888,14 +832,12 @@ function mockFailedPermissionCheck() {
               };
               localStorage.setItem(cacheKey, JSON.stringify(expiredCache));
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -904,8 +846,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -914,38 +856,39 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Loading states", function () {
-    (0, globals_1.it)("should track loading state during permission checks", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Loading states", () => {
+    (0, globals_1.it)("should track loading state during permission checks", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock a delayed response
-              mockFetch.mockImplementationOnce(function () {
-                return new Promise(function (resolve) {
-                  return setTimeout(function () {
-                    return resolve({
-                      ok: true,
-                      json: function () {
-                        return __awaiter(void 0, void 0, void 0, function () {
-                          return __generator(this, function (_a) {
-                            return [2 /*return*/, { granted: true, roleUsed: "manager" }];
-                          });
-                        });
-                      },
-                    });
-                  }, 100);
-                });
-              });
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              mockFetch.mockImplementationOnce(
+                () =>
+                  new Promise((resolve) =>
+                    setTimeout(
+                      () =>
+                        resolve({
+                          ok: true,
+                          json: () =>
+                            __awaiter(void 0, void 0, void 0, function () {
+                              return __generator(this, (_a) => [
+                                2 /*return*/,
+                                { granted: true, roleUsed: "manager" },
+                              ]);
+                            }),
+                        }),
+                      100,
+                    ),
+                  ),
+              );
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               (0, globals_1.expect)(result.current.isLoading).toBe(false);
-              (0, react_1.act)(function () {
+              (0, react_1.act)(() => {
                 result.current.hasPermission("patients.read");
               });
               // Should be loading immediately after call
@@ -953,7 +896,7 @@ function mockFailedPermissionCheck() {
               // Wait for completion
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.isLoading).toBe(false);
                 }),
               ];
@@ -963,25 +906,23 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error handling", function () {
-    (0, globals_1.it)("should handle network errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error handling", () => {
+    (0, globals_1.it)("should handle network errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasPermission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockRejectedValueOnce(new Error("Network error"));
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -990,8 +931,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -1000,24 +941,22 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should clear errors on successful requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should clear errors on successful requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // First request fails
               mockFetch.mockRejectedValueOnce(new Error("Network error"));
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -1026,8 +965,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -1036,9 +975,9 @@ function mockFailedPermissionCheck() {
               mockSuccessfulPermissionCheck(true);
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("appointments.read")];
@@ -1047,8 +986,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 2:
               _a.sent();
@@ -1056,19 +995,17 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Edge cases", function () {
-    (0, globals_1.it)("should handle empty permission arrays", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Edge cases", () => {
+    (0, globals_1.it)("should handle empty permission arrays", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasAny, hasAll;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [4 /*yield*/, result.current.hasAnyPermission([])];
             case 1:
               hasAny = _a.sent();
@@ -1080,44 +1017,36 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle undefined user gracefully", function () {
+      }),
+    );
+    (0, globals_1.it)("should handle undefined user gracefully", () => {
       // Mock useAuth to return no user
-      globals_1.jest.doMock("@/hooks/useAuth", function () {
-        return {
-          useAuth: function () {
-            return {
-              user: null,
-              isLoading: false,
-              isAuthenticated: false,
-            };
-          },
-        };
-      });
-      var result = (0, react_1.renderHook)(function () {
-        return (0, usePermissions_1.usePermissions)();
-      }).result;
+      globals_1.jest.doMock("@/hooks/useAuth", () => ({
+        useAuth: () => ({
+          user: null,
+          isLoading: false,
+          isAuthenticated: false,
+        }),
+      }));
+      var result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
       (0, globals_1.expect)(result.current.hasRole("manager")).toBe(false);
       (0, globals_1.expect)(result.current.hasMinimumRole("staff")).toBe(false);
     });
-    (0, globals_1.it)("should handle malformed cache data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should handle malformed cache data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var cacheKey, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               cacheKey = "perm_cache_".concat(mockUser.id, "_patients.read_undefined_undefined");
               localStorage.setItem(cacheKey, "invalid-json");
               mockSuccessfulPermissionCheck(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, usePermissions_1.usePermissions)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, usePermissions_1.usePermissions)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.hasPermission("patients.read")];
@@ -1126,8 +1055,8 @@ function mockFailedPermissionCheck() {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -1136,7 +1065,7 @@ function mockFailedPermissionCheck() {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

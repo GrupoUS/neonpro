@@ -3,8 +3,7 @@
  * Tests core functionality of the inventory reporting system
  */
 
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 
 // Mock hooks
 jest.mock("../../../app/hooks/use-inventory-reports", () => ({
@@ -284,8 +283,8 @@ describe("Inventory Reports System - Core Functionality", () => {
       // We can't import them in test environment due to Next.js dependencies
       // but we can verify they're properly structured for the application
 
-      const fs = require("fs");
-      const path = require("path");
+      const fs = require("node:fs");
+      const path = require("node:path");
 
       const apiBasePath = path.join(process.cwd(), "app/api/inventory/reports");
 
@@ -331,7 +330,7 @@ describe("Inventory Reports System - Core Functionality", () => {
 
   describe("Data Flow Integration", () => {
     it("integrates hooks with service layer", () => {
-      const service = require("../../../app/lib/services/inventory-reports-service");
+      const _service = require("../../../app/lib/services/inventory-reports-service");
       const hooks = require("../../../app/hooks/use-inventory-reports");
 
       // Test that hooks can work with service data structure
@@ -403,7 +402,7 @@ describe("Inventory Reports Full System Integration", () => {
     };
 
     // Verify all modules exist
-    Object.entries(modules).forEach(([name, module]) => {
+    Object.entries(modules).forEach(([_name, module]) => {
       expect(module).toBeDefined();
     });
 
@@ -436,8 +435,8 @@ describe("Inventory Reports Full System Integration", () => {
     });
 
     // Verify API route files exist
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
     const apiBasePath = path.join(process.cwd(), "app/api/inventory/reports");
 
     expect(fs.existsSync(path.join(apiBasePath, "generate/route.ts"))).toBe(true);

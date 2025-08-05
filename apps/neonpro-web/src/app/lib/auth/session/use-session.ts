@@ -5,10 +5,10 @@
  * Integrates with SessionManager for secure token storage and activity tracking.
  */
 
-import type { useEffect, useState, useCallback } from "react";
 import type { useRouter } from "next/navigation";
-import type { sessionManager, SessionData } from "./SessionManager";
+import type { useCallback, useEffect, useState } from "react";
 import type { createClient } from "@/lib/supabase/client";
+import type { SessionData, sessionManager } from "./SessionManager";
 
 interface UseSessionReturn {
   session: SessionData | null;
@@ -29,7 +29,7 @@ export function useSession(): UseSessionReturn {
   const [shouldRefreshToken, setShouldRefreshToken] = useState(false);
 
   const router = useRouter();
-  const supabase = await createClient();
+  const supabase = createClient();
 
   /**
    * Initialize session management

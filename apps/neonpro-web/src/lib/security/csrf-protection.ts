@@ -3,8 +3,8 @@
  * Provides Cross-Site Request Forgery protection for forms and API endpoints
  */
 
-import type { NextRequest, NextResponse } from "next/server";
 import type { createHash, randomBytes } from "crypto";
+import type { NextRequest, NextResponse } from "next/server";
 import type { createClient } from "@/lib/supabase/client";
 
 export interface CSRFTokenData {
@@ -35,14 +35,14 @@ export class CSRFProtection {
    * Generate a new CSRF token
    */
   static generateToken(sessionId: string, userAgent: string, ipAddress: string): CSRFTokenData {
-    const token = randomBytes(this.TOKEN_LENGTH).toString("hex");
+    const token = randomBytes(CSRFProtection.TOKEN_LENGTH).toString("hex");
     const now = Date.now();
 
     return {
       token,
       sessionId,
       createdAt: now,
-      expiresAt: now + this.TOKEN_EXPIRY,
+      expiresAt: now + CSRFProtection.TOKEN_EXPIRY,
       userAgent,
       ipAddress,
     };
@@ -63,7 +63,7 @@ export class CSRFProtection {
   static async storeToken(tokenData: CSRFTokenData): Promise<boolean> {
     try {
       const supabase = await createClient();
-      const tokenHash = this.createTokenHash(tokenData);
+      const tokenHash = CSRFProtection.createTokenHash(tokenData);
 
       const { error } = await supabase.from("csrf_tokens").insert({
         token_hash: tokenHash,
@@ -104,7 +104,7 @@ export class CSRFProtection {
         ipAddress,
       };
 
-      const tokenHash = this.createTokenHash(tokenData);
+      const tokenHash = CSRFProtection.createTokenHash(tokenData);
       const supabase = await createClient();
 
       const { data, error } = await supabase
@@ -122,7 +122,7 @@ export class CSRFProtection {
       const expiresAt = new Date(data.expires_at).getTime();
       if (Date.now() > expiresAt) {
         // Clean up expired token
-        await this.cleanupExpiredTokens();
+        await CSRFProtection.cleanupExpiredTokens();
         return { valid: false, error: "CSRF token expired" };
       }
 
@@ -184,7 +184,8 @@ export class CSRFProtection {
 
     // Extract CSRF token from header or body
     const csrfToken =
-      request.headers.get(this.HEADER_NAME) || request.cookies.get(this.COOKIE_NAME)?.value;
+      request.headers.get(CSRFProtection.HEADER_NAME) ||
+      request.cookies.get(CSRFProtection.COOKIE_NAME)?.value;
 
     if (!csrfToken) {
       return new NextResponse(JSON.stringify({ error: "CSRF token required" }), {
@@ -205,10 +206,15 @@ export class CSRFProtection {
     }
 
     const userAgent = request.headers.get("user-agent") || "";
-    const ipAddress = this.getClientIP(request);
+    const ipAddress = CSRFProtection.getClientIP(request);
 
     // Validate CSRF token
-    const validation = await this.validateToken(csrfToken, sessionId, userAgent, ipAddress);
+    const validation = await CSRFProtection.validateToken(
+      csrfToken,
+      sessionId,
+      userAgent,
+      ipAddress,
+    );
 
     if (!validation.valid) {
       return new NextResponse(JSON.stringify({ error: validation.error || "Invalid CSRF token" }), {
@@ -235,10 +241,10 @@ export class CSRFProtection {
       }
 
       const userAgent = request.headers.get("user-agent") || "";
-      const ipAddress = this.getClientIP(request);
+      const ipAddress = CSRFProtection.getClientIP(request);
 
-      const tokenData = this.generateToken(sessionId, userAgent, ipAddress);
-      const stored = await this.storeToken(tokenData);
+      const tokenData = CSRFProtection.generateToken(sessionId, userAgent, ipAddress);
+      const stored = await CSRFProtection.storeToken(tokenData);
 
       if (!stored) {
         return null;

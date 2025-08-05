@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuickActions = QuickActions;
 var react_1 = require("react");
@@ -159,7 +156,6 @@ var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 var utils_1 = require("@/lib/utils");
 function BulkActionModal(_a) {
-  var _this = this;
   var isOpen = _a.isOpen,
     onClose = _a.onClose,
     appointments = _a.appointments,
@@ -176,16 +172,12 @@ function BulkActionModal(_a) {
   var _e = (0, react_1.useState)(false),
     loading = _e[0],
     setLoading = _e[1];
-  var pendingAppointments = appointments.filter(function (apt) {
-    return apt.status === "pending";
-  });
-  var confirmedAppointments = appointments.filter(function (apt) {
-    return apt.status === "confirmed";
-  });
-  var handleConfirm = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var pendingAppointments = appointments.filter((apt) => apt.status === "pending");
+  var confirmedAppointments = appointments.filter((apt) => apt.status === "confirmed");
+  var handleConfirm = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (selectedAppointments.length === 0) {
@@ -217,7 +209,6 @@ function BulkActionModal(_a) {
         }
       });
     });
-  };
   return (
     <dialog_1.Dialog open={isOpen} onOpenChange={onClose}>
       <dialog_1.DialogContent className="sm:max-w-md">
@@ -253,42 +244,34 @@ function BulkActionModal(_a) {
                 {(selectedAction === "confirm"
                   ? pendingAppointments
                   : selectedAction === "cancel"
-                    ? appointments.filter(function (apt) {
-                        return !["cancelled", "completed"].includes(apt.status);
-                      })
+                    ? appointments.filter((apt) => !["cancelled", "completed"].includes(apt.status))
                     : selectedAction === "complete"
                       ? confirmedAppointments
                       : confirmedAppointments
-                ).map(function (apt) {
-                  return (
-                    <label key={apt.id} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedAppointments.includes(apt.id)}
-                        onChange={function (e) {
-                          if (e.target.checked) {
-                            setSelectedAppointments(function (prev) {
-                              return __spreadArray(__spreadArray([], prev, true), [apt.id], false);
-                            });
-                          } else {
-                            setSelectedAppointments(function (prev) {
-                              return prev.filter(function (id) {
-                                return id !== apt.id;
-                              });
-                            });
-                          }
-                        }}
-                      />
-                      <span className="text-sm">
-                        {apt.patient.full_name} - {new Date(apt.date_time).toLocaleDateString()}{" "}
-                        {new Date(apt.date_time).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </label>
-                  );
-                })}
+                ).map((apt) => (
+                  <label key={apt.id} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedAppointments.includes(apt.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedAppointments((prev) =>
+                            __spreadArray(__spreadArray([], prev, true), [apt.id], false),
+                          );
+                        } else {
+                          setSelectedAppointments((prev) => prev.filter((id) => id !== apt.id));
+                        }
+                      }}
+                    />
+                    <span className="text-sm">
+                      {apt.patient.full_name} - {new Date(apt.date_time).toLocaleDateString()}{" "}
+                      {new Date(apt.date_time).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
           )}
@@ -303,9 +286,7 @@ function BulkActionModal(_a) {
                   selectedAction === "cancel" ? "Motivo do cancelamento..." : "Observações..."
                 }
                 value={reason}
-                onChange={function (e) {
-                  return setReason(e.target.value);
-                }}
+                onChange={(e) => setReason(e.target.value)}
               />
             </div>
           )}
@@ -327,7 +308,6 @@ function BulkActionModal(_a) {
   );
 }
 function CancelModal(_a) {
-  var _this = this;
   var isOpen = _a.isOpen,
     onClose = _a.onClose,
     appointment = _a.appointment,
@@ -338,10 +318,10 @@ function CancelModal(_a) {
   var _c = (0, react_1.useState)(false),
     loading = _c[0],
     setLoading = _c[1];
-  var handleConfirm = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleConfirm = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -365,7 +345,6 @@ function CancelModal(_a) {
         }
       });
     });
-  };
   return (
     <dialog_1.Dialog open={isOpen} onOpenChange={onClose}>
       <dialog_1.DialogContent className="sm:max-w-md">
@@ -384,9 +363,7 @@ function CancelModal(_a) {
             <textarea_1.Textarea
               placeholder="Motivo do cancelamento..."
               value={reason}
-              onChange={function (e) {
-                return setReason(e.target.value);
-              }}
+              onChange={(e) => setReason(e.target.value)}
             />
           </div>
         </div>
@@ -404,7 +381,6 @@ function CancelModal(_a) {
   );
 }
 function QuickActions(_a) {
-  var _this = this;
   var appointments = _a.appointments,
     onConfirmAppointment = _a.onConfirmAppointment,
     onCancelAppointment = _a.onCancelAppointment,
@@ -426,36 +402,24 @@ function QuickActions(_a) {
   // Statistics
   var stats = {
     total: appointments.length,
-    pending: appointments.filter(function (apt) {
-      return apt.status === "pending";
-    }).length,
-    confirmed: appointments.filter(function (apt) {
-      return apt.status === "confirmed";
-    }).length,
-    cancelled: appointments.filter(function (apt) {
-      return apt.status === "cancelled";
-    }).length,
-    completed: appointments.filter(function (apt) {
-      return apt.status === "completed";
-    }).length,
-    noShow: appointments.filter(function (apt) {
-      return apt.status === "no_show";
-    }).length,
+    pending: appointments.filter((apt) => apt.status === "pending").length,
+    confirmed: appointments.filter((apt) => apt.status === "confirmed").length,
+    cancelled: appointments.filter((apt) => apt.status === "cancelled").length,
+    completed: appointments.filter((apt) => apt.status === "completed").length,
+    noShow: appointments.filter((apt) => apt.status === "no_show").length,
   };
-  var pendingAppointments = appointments.filter(function (apt) {
-    return apt.status === "pending";
-  });
-  var upcomingAppointments = appointments.filter(function (apt) {
+  var pendingAppointments = appointments.filter((apt) => apt.status === "pending");
+  var upcomingAppointments = appointments.filter((apt) => {
     var appointmentDate = new Date(apt.date_time);
     var now = new Date();
     var todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
     return apt.status === "confirmed" && appointmentDate <= todayEnd && appointmentDate >= now;
   });
-  var handleQuickAction = function (action, appointment) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleQuickAction = (action, appointment) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 12, , 13]);
@@ -531,11 +495,10 @@ function QuickActions(_a) {
         }
       });
     });
-  };
-  var handleCancelAppointment = function (reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCancelAppointment = (reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedAppointment) return [2 /*return*/];
@@ -561,7 +524,6 @@ function QuickActions(_a) {
         }
       });
     });
-  };
   return (
     <>
       <div className={(0, utils_1.cn)("grid gap-4", className)}>
@@ -672,37 +634,33 @@ function QuickActions(_a) {
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-2">
                 <div className="space-y-1 max-h-32 overflow-y-auto">
-                  {pendingAppointments.slice(0, 3).map(function (apt) {
-                    return (
-                      <div
-                        key={apt.id}
-                        className="flex items-center justify-between text-sm p-2 bg-muted rounded"
-                      >
-                        <span>{apt.patient.full_name}</span>
-                        <div className="flex gap-1">
-                          <button_1.Button
-                            size="sm"
-                            variant="outline"
-                            onClick={function () {
-                              return handleQuickAction("confirm", apt);
-                            }}
-                          >
-                            <lucide_react_1.UserCheck className="h-3 w-3" />
-                          </button_1.Button>
-                          <button_1.Button
-                            size="sm"
-                            variant="outline"
-                            onClick={function () {
-                              setSelectedAppointment(apt);
-                              setCancelModalOpen(true);
-                            }}
-                          >
-                            <lucide_react_1.XCircle className="h-3 w-3" />
-                          </button_1.Button>
-                        </div>
+                  {pendingAppointments.slice(0, 3).map((apt) => (
+                    <div
+                      key={apt.id}
+                      className="flex items-center justify-between text-sm p-2 bg-muted rounded"
+                    >
+                      <span>{apt.patient.full_name}</span>
+                      <div className="flex gap-1">
+                        <button_1.Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleQuickAction("confirm", apt)}
+                        >
+                          <lucide_react_1.UserCheck className="h-3 w-3" />
+                        </button_1.Button>
+                        <button_1.Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedAppointment(apt);
+                            setCancelModalOpen(true);
+                          }}
+                        >
+                          <lucide_react_1.XCircle className="h-3 w-3" />
+                        </button_1.Button>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
                 {pendingAppointments.length > 3 && (
                   <p className="text-xs text-muted-foreground text-center">
@@ -726,44 +684,38 @@ function QuickActions(_a) {
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-2">
                 <div className="space-y-1 max-h-32 overflow-y-auto">
-                  {upcomingAppointments.slice(0, 3).map(function (apt) {
-                    return (
-                      <div
-                        key={apt.id}
-                        className="flex items-center justify-between text-sm p-2 bg-muted rounded"
-                      >
-                        <div>
-                          <span className="font-medium">{apt.patient.full_name}</span>
-                          <span className="text-muted-foreground ml-2">
-                            {new Date(apt.date_time).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex gap-1">
-                          <button_1.Button
-                            size="sm"
-                            variant="outline"
-                            onClick={function () {
-                              return handleQuickAction("complete", apt);
-                            }}
-                          >
-                            <lucide_react_1.CheckCircle className="h-3 w-3" />
-                          </button_1.Button>
-                          <button_1.Button
-                            size="sm"
-                            variant="outline"
-                            onClick={function () {
-                              return handleQuickAction("no_show", apt);
-                            }}
-                          >
-                            <lucide_react_1.AlertTriangle className="h-3 w-3" />
-                          </button_1.Button>
-                        </div>
+                  {upcomingAppointments.slice(0, 3).map((apt) => (
+                    <div
+                      key={apt.id}
+                      className="flex items-center justify-between text-sm p-2 bg-muted rounded"
+                    >
+                      <div>
+                        <span className="font-medium">{apt.patient.full_name}</span>
+                        <span className="text-muted-foreground ml-2">
+                          {new Date(apt.date_time).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
                       </div>
-                    );
-                  })}
+                      <div className="flex gap-1">
+                        <button_1.Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleQuickAction("complete", apt)}
+                        >
+                          <lucide_react_1.CheckCircle className="h-3 w-3" />
+                        </button_1.Button>
+                        <button_1.Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleQuickAction("no_show", apt)}
+                        >
+                          <lucide_react_1.AlertTriangle className="h-3 w-3" />
+                        </button_1.Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -784,9 +736,7 @@ function QuickActions(_a) {
               <button_1.Button
                 variant="outline"
                 className="w-full"
-                onClick={function () {
-                  return setBulkModalOpen(true);
-                }}
+                onClick={() => setBulkModalOpen(true)}
                 disabled={appointments.length === 0}
               >
                 Gerenciar em Lote
@@ -798,25 +748,20 @@ function QuickActions(_a) {
 
       <BulkActionModal
         isOpen={bulkModalOpen}
-        onClose={function () {
-          return setBulkModalOpen(false);
-        }}
+        onClose={() => setBulkModalOpen(false)}
         appointments={appointments}
         onConfirm={
           onBulkAction ||
-          function () {
-            return __awaiter(_this, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                return [2 /*return*/];
-              });
-            });
-          }
+          (() =>
+            __awaiter(this, void 0, void 0, function () {
+              return __generator(this, (_a) => [2 /*return*/]);
+            }))
         }
       />
 
       <CancelModal
         isOpen={cancelModalOpen}
-        onClose={function () {
+        onClose={() => {
           setCancelModalOpen(false);
           setSelectedAppointment(null);
         }}

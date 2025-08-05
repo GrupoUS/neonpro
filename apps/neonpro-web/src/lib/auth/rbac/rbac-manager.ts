@@ -6,16 +6,16 @@
  * wrapping the functional permissions API in a class-based interface.
  */
 
+import type { AuthUser } from "@/lib/middleware/auth";
+import type { createClient } from "@/lib/supabase/client";
 import type {
-  UserRole,
   Permission,
   PermissionCheck,
   PermissionResult,
   RoleDefinition,
+  UserRole,
   UserRoleAssignment,
 } from "@/types/rbac";
-import type { createClient } from "@/lib/supabase/client";
-import type { AuthUser } from "@/lib/middleware/auth";
 
 export class RBACPermissionManager {
   private supabase: any;

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentFilters = AppointmentFilters;
 var react_1 = require("react");
@@ -105,21 +104,17 @@ function AppointmentFilters(_a) {
 
                 <select_1.Select
                   value={filters.dateRange}
-                  onValueChange={function (value) {
-                    return onFiltersChange({ dateRange: value });
-                  }}
+                  onValueChange={(value) => onFiltersChange({ dateRange: value })}
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Selecione o período" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {dateRangeOptions.map(function (option) {
-                      return (
-                        <select_1.SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {dateRangeOptions.map((option) => (
+                      <select_1.SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
 
@@ -149,7 +144,7 @@ function AppointmentFilters(_a) {
                           <calendar_1.Calendar
                             mode="single"
                             selected={filters.startDate}
-                            onSelect={function (date) {
+                            onSelect={(date) => {
                               onFiltersChange({ startDate: date });
                               setStartDateOpen(false);
                             }}
@@ -182,13 +177,13 @@ function AppointmentFilters(_a) {
                           <calendar_1.Calendar
                             mode="single"
                             selected={filters.endDate}
-                            onSelect={function (date) {
+                            onSelect={(date) => {
                               onFiltersChange({ endDate: date });
                               setEndDateOpen(false);
                             }}
-                            disabled={function (date) {
-                              return filters.startDate ? date < filters.startDate : false;
-                            }}
+                            disabled={(date) =>
+                              filters.startDate ? date < filters.startDate : false
+                            }
                             locale={locale_1.pt}
                           />
                         </popover_1.PopoverContent>
@@ -210,22 +205,20 @@ function AppointmentFilters(_a) {
 
                   <select_1.Select
                     value={filters.professionalId || ""}
-                    onValueChange={function (value) {
-                      return onFiltersChange({ professionalId: value || undefined });
-                    }}
+                    onValueChange={(value) =>
+                      onFiltersChange({ professionalId: value || undefined })
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Todos os profissionais" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
                       <select_1.SelectItem value="">Todos os profissionais</select_1.SelectItem>
-                      {professionals.map(function (prof) {
-                        return (
-                          <select_1.SelectItem key={prof.id} value={prof.id}>
-                            {prof.name}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {professionals.map((prof) => (
+                        <select_1.SelectItem key={prof.id} value={prof.id}>
+                          {prof.name}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -240,22 +233,18 @@ function AppointmentFilters(_a) {
 
                 <select_1.Select
                   value={filters.status || ""}
-                  onValueChange={function (value) {
-                    return onFiltersChange({ status: value || undefined });
-                  }}
+                  onValueChange={(value) => onFiltersChange({ status: value || undefined })}
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Todos os status" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="">Todos os status</select_1.SelectItem>
-                    {statusOptions.map(function (option) {
-                      return (
-                        <select_1.SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {statusOptions.map((option) => (
+                      <select_1.SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -274,18 +263,14 @@ function AppointmentFilters(_a) {
                   <input_1.Input
                     placeholder="Nome do paciente..."
                     value={filters.patientName || ""}
-                    onChange={function (e) {
-                      return onFiltersChange({ patientName: e.target.value || undefined });
-                    }}
+                    onChange={(e) => onFiltersChange({ patientName: e.target.value || undefined })}
                     className="pl-10"
                   />
                   {filters.patientName && (
                     <button_1.Button
                       variant="ghost"
                       size="sm"
-                      onClick={function () {
-                        return onFiltersChange({ patientName: undefined });
-                      }}
+                      onClick={() => onFiltersChange({ patientName: undefined })}
                       className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
                     >
                       <lucide_react_1.X className="h-3 w-3" />
@@ -304,16 +289,13 @@ function AppointmentFilters(_a) {
           {filters.professionalId && (
             <badge_1.Badge variant="secondary" className="gap-1">
               Profissional:{" "}
-              {((_b = professionals.find(function (p) {
-                return p.id === filters.professionalId;
-              })) === null || _b === void 0
+              {((_b = professionals.find((p) => p.id === filters.professionalId)) === null ||
+              _b === void 0
                 ? void 0
                 : _b.name) || "Selecionado"}
               <lucide_react_1.X
                 className="h-3 w-3 cursor-pointer"
-                onClick={function () {
-                  return onFiltersChange({ professionalId: undefined });
-                }}
+                onClick={() => onFiltersChange({ professionalId: undefined })}
               />
             </badge_1.Badge>
           )}
@@ -321,16 +303,13 @@ function AppointmentFilters(_a) {
           {filters.status && (
             <badge_1.Badge variant="secondary" className="gap-1">
               Status:{" "}
-              {(_c = statusOptions.find(function (s) {
-                return s.value === filters.status;
-              })) === null || _c === void 0
+              {(_c = statusOptions.find((s) => s.value === filters.status)) === null ||
+              _c === void 0
                 ? void 0
                 : _c.label}
               <lucide_react_1.X
                 className="h-3 w-3 cursor-pointer"
-                onClick={function () {
-                  return onFiltersChange({ status: undefined });
-                }}
+                onClick={() => onFiltersChange({ status: undefined })}
               />
             </badge_1.Badge>
           )}
@@ -340,9 +319,7 @@ function AppointmentFilters(_a) {
               Paciente: {filters.patientName}
               <lucide_react_1.X
                 className="h-3 w-3 cursor-pointer"
-                onClick={function () {
-                  return onFiltersChange({ patientName: undefined });
-                }}
+                onClick={() => onFiltersChange({ patientName: undefined })}
               />
             </badge_1.Badge>
           )}
@@ -357,13 +334,13 @@ function AppointmentFilters(_a) {
                 (0, date_fns_1.format)(filters.endDate, "dd/MM", { locale: locale_1.pt })}
               <lucide_react_1.X
                 className="h-3 w-3 cursor-pointer"
-                onClick={function () {
-                  return onFiltersChange({
+                onClick={() =>
+                  onFiltersChange({
                     startDate: undefined,
                     endDate: undefined,
                     dateRange: "week",
-                  });
-                }}
+                  })
+                }
               />
             </badge_1.Badge>
           )}

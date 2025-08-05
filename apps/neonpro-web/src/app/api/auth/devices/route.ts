@@ -3,11 +3,7 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import type { cookies } from "next/headers";
-import type { UnifiedSessionSystem } from "@/lib/auth/session";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 // =====================================================
 // VALIDATION SCHEMAS

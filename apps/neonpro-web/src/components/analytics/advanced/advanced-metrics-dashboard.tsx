@@ -8,27 +8,53 @@
  * visualizations and drill-down capabilities.
  */
 
-import React, { useState, useMemo, useCallback } from "react";
 import type {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  AreaChart,
+  Activity,
+  AlertTriangle,
+  ArrowUpDown,
+  Award,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Filter,
+  PieChart as PieChartIcon,
+  RefreshCw,
+  Shield,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useMemo, useState } from "react";
+import type {
   Area,
-  BarChart,
+  AreaChart,
   Bar,
-  PieChart,
-  Pie,
+  BarChart,
+  CartesianGrid,
   Cell,
   ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  RadialBar,
+  RadialBarChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  RadialBarChart,
-  RadialBar,
 } from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -36,8 +62,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -46,30 +71,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  DollarSign,
-  Users,
-  TrendingUp,
-  TrendingDown,
-  Target,
-  Activity,
-  Calendar,
-  Award,
-  BarChart3,
-  PieChart as PieChartIcon,
-  Zap,
-  Clock,
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  ArrowUpDown,
-  Filter,
-  Download,
-  RefreshCw,
-} from "lucide-react";
 
 // Types for dashboard data
 interface MetricValue {

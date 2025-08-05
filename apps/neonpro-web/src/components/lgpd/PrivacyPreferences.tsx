@@ -1,6 +1,30 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Cookie,
+  Download,
+  Eye,
+  FileText,
+  Globe,
+  Info,
+  Lock,
+  Mail,
+  RefreshCw,
+  Save,
+  Settings,
+  Shield,
+  Trash2,
+  Users,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,34 +32,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Switch } from "@/components/ui/switch";
 import type { Label } from "@/components/ui/label";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Shield,
-  Cookie,
-  Eye,
-  Settings,
-  Save,
-  RefreshCw,
-  Download,
-  Trash2,
-  Info,
-  CheckCircle,
-  XCircle,
-  Clock,
-  FileText,
-  Lock,
-  Users,
-  BarChart3,
-  Mail,
-  Globe,
-  AlertTriangle,
-} from "lucide-react";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useConsentBanner } from "@/hooks/useLGPD";
 import type { ConsentPurpose, ConsentRecord } from "@/types/lgpd";
 

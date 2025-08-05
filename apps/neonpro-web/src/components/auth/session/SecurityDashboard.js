@@ -3,18 +3,17 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityDashboard = SecurityDashboard;
 var react_1 = require("react");
@@ -154,7 +151,6 @@ var utils_1 = require("@/lib/utils");
 // MAIN COMPONENT
 // =====================================================
 function SecurityDashboard(_a) {
-  var _this = this;
   var className = _a.className,
     _b = _a.showDetailedEvents,
     showDetailedEvents = _b === void 0 ? true : _b,
@@ -184,41 +180,30 @@ function SecurityDashboard(_a) {
     criticalEvents:
       (securityEvents === null || securityEvents === void 0
         ? void 0
-        : securityEvents.filter(function (e) {
-            return e.severity === "critical";
-          }).length) || 0,
+        : securityEvents.filter((e) => e.severity === "critical").length) || 0,
     resolvedEvents:
       (securityEvents === null || securityEvents === void 0
         ? void 0
-        : securityEvents.filter(function (e) {
-            return e.resolved;
-          }).length) || 0,
+        : securityEvents.filter((e) => e.resolved).length) || 0,
     activeThreats:
       (securityEvents === null || securityEvents === void 0
         ? void 0
-        : securityEvents.filter(function (e) {
-            return !e.resolved && e.severity === "high";
-          }).length) || 0,
+        : securityEvents.filter((e) => !e.resolved && e.severity === "high").length) || 0,
     securityScore: securityScore || 85,
     riskTrend: "stable",
   })[0];
   // Auto-refresh logic
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoRefresh) return;
-      var interval = setInterval(function () {
-        refreshSecurityData();
-      }, refreshInterval * 1000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [autoRefresh, refreshInterval, refreshSecurityData],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!autoRefresh) return;
+    var interval = setInterval(() => {
+      refreshSecurityData();
+    }, refreshInterval * 1000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, refreshSecurityData]);
   // Manual refresh
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsRefreshing(true);
@@ -237,9 +222,8 @@ function SecurityDashboard(_a) {
         }
       });
     });
-  };
   // Get security status color
-  var getSecurityColor = function (status) {
+  var getSecurityColor = (status) => {
     switch (status) {
       case "secure":
         return "text-green-600";
@@ -254,7 +238,7 @@ function SecurityDashboard(_a) {
     }
   };
   // Get security badge variant
-  var getSecurityBadgeVariant = function (status) {
+  var getSecurityBadgeVariant = (status) => {
     switch (status) {
       case "secure":
         return "default";
@@ -269,7 +253,7 @@ function SecurityDashboard(_a) {
     }
   };
   // Get severity color
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "low":
         return "text-blue-600";
@@ -284,7 +268,7 @@ function SecurityDashboard(_a) {
     }
   };
   // Get severity badge variant
-  var getSeverityBadgeVariant = function (severity) {
+  var getSeverityBadgeVariant = (severity) => {
     switch (severity) {
       case "low":
         return "outline";
@@ -299,7 +283,7 @@ function SecurityDashboard(_a) {
     }
   };
   // Get trend icon
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return lucide_react_1.TrendingUp;
@@ -310,7 +294,7 @@ function SecurityDashboard(_a) {
     }
   };
   // Get trend color
-  var getTrendColor = function (trend) {
+  var getTrendColor = (trend) => {
     switch (trend) {
       case "up":
         return "text-red-600";
@@ -463,42 +447,40 @@ function SecurityDashboard(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {securityEvents.slice(0, 3).map(function (event) {
-                    return (
-                      <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg border">
-                        <lucide_react_1.AlertTriangle
-                          className={(0, utils_1.cn)(
-                            "h-4 w-4 mt-0.5",
-                            getSeverityColor(event.severity),
-                          )}
-                        />
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium">{event.type}</span>
-                            <badge_1.Badge
-                              variant={getSeverityBadgeVariant(event.severity)}
-                              className="text-xs"
-                            >
-                              {event.severity.toUpperCase()}
-                            </badge_1.Badge>
+                  {securityEvents.slice(0, 3).map((event) => (
+                    <div key={event.id} className="flex items-start gap-3 p-3 rounded-lg border">
+                      <lucide_react_1.AlertTriangle
+                        className={(0, utils_1.cn)(
+                          "h-4 w-4 mt-0.5",
+                          getSeverityColor(event.severity),
+                        )}
+                      />
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{event.type}</span>
+                          <badge_1.Badge
+                            variant={getSeverityBadgeVariant(event.severity)}
+                            className="text-xs"
+                          >
+                            {event.severity.toUpperCase()}
+                          </badge_1.Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{event.description}</p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <lucide_react_1.Clock className="h-3 w-3" />
+                            <span>{new Date(event.timestamp).toLocaleString()}</span>
                           </div>
-                          <p className="text-sm text-muted-foreground">{event.description}</p>
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          {event.location && (
                             <div className="flex items-center gap-1">
-                              <lucide_react_1.Clock className="h-3 w-3" />
-                              <span>{new Date(event.timestamp).toLocaleString()}</span>
+                              <lucide_react_1.MapPin className="h-3 w-3" />
+                              <span>{event.location}</span>
                             </div>
-                            {event.location && (
-                              <div className="flex items-center gap-1">
-                                <lucide_react_1.MapPin className="h-3 w-3" />
-                                <span>{event.location}</span>
-                              </div>
-                            )}
-                          </div>
+                          )}
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -522,61 +504,59 @@ function SecurityDashboard(_a) {
             <card_1.CardContent>
               {securityEvents && securityEvents.length > 0
                 ? <div className="space-y-3">
-                    {securityEvents.slice(0, maxEvents).map(function (event) {
-                      return (
-                        <div
-                          key={event.id}
-                          className={(0, utils_1.cn)(
-                            "p-4 rounded-lg border transition-colors",
-                            event.resolved ? "bg-muted/30" : "bg-card",
-                          )}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start gap-3">
-                              <lucide_react_1.AlertTriangle
-                                className={(0, utils_1.cn)(
-                                  "h-4 w-4 mt-0.5",
-                                  getSeverityColor(event.severity),
-                                )}
-                              />
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium">{event.type}</span>
-                                  {event.resolved && (
-                                    <badge_1.Badge variant="outline" className="text-xs">
-                                      Resolved
-                                    </badge_1.Badge>
-                                  )}
-                                </div>
-                                <p className="text-sm text-muted-foreground">{event.description}</p>
-                                {showDetailedEvents && (
-                                  <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
-                                    <div className="flex items-center gap-1">
-                                      <lucide_react_1.Clock className="h-3 w-3" />
-                                      <span>{new Date(event.timestamp).toLocaleString()}</span>
-                                    </div>
-                                    {event.ipAddress && <span>IP: {event.ipAddress}</span>}
-                                    {event.location && (
-                                      <div className="flex items-center gap-1">
-                                        <lucide_react_1.MapPin className="h-3 w-3" />
-                                        <span>{event.location}</span>
-                                      </div>
-                                    )}
-                                    {event.deviceInfo && <span>Device: {event.deviceInfo}</span>}
-                                  </div>
+                    {securityEvents.slice(0, maxEvents).map((event) => (
+                      <div
+                        key={event.id}
+                        className={(0, utils_1.cn)(
+                          "p-4 rounded-lg border transition-colors",
+                          event.resolved ? "bg-muted/30" : "bg-card",
+                        )}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start gap-3">
+                            <lucide_react_1.AlertTriangle
+                              className={(0, utils_1.cn)(
+                                "h-4 w-4 mt-0.5",
+                                getSeverityColor(event.severity),
+                              )}
+                            />
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium">{event.type}</span>
+                                {event.resolved && (
+                                  <badge_1.Badge variant="outline" className="text-xs">
+                                    Resolved
+                                  </badge_1.Badge>
                                 )}
                               </div>
+                              <p className="text-sm text-muted-foreground">{event.description}</p>
+                              {showDetailedEvents && (
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground mt-2">
+                                  <div className="flex items-center gap-1">
+                                    <lucide_react_1.Clock className="h-3 w-3" />
+                                    <span>{new Date(event.timestamp).toLocaleString()}</span>
+                                  </div>
+                                  {event.ipAddress && <span>IP: {event.ipAddress}</span>}
+                                  {event.location && (
+                                    <div className="flex items-center gap-1">
+                                      <lucide_react_1.MapPin className="h-3 w-3" />
+                                      <span>{event.location}</span>
+                                    </div>
+                                  )}
+                                  {event.deviceInfo && <span>Device: {event.deviceInfo}</span>}
+                                </div>
+                              )}
                             </div>
-                            <badge_1.Badge
-                              variant={getSeverityBadgeVariant(event.severity)}
-                              className="text-xs"
-                            >
-                              {event.severity.toUpperCase()}
-                            </badge_1.Badge>
                           </div>
+                          <badge_1.Badge
+                            variant={getSeverityBadgeVariant(event.severity)}
+                            className="text-xs"
+                          >
+                            {event.severity.toUpperCase()}
+                          </badge_1.Badge>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 : <div className="text-center py-8 text-muted-foreground">
                     <lucide_react_1.Eye className="h-12 w-12 mx-auto mb-4 opacity-50" />

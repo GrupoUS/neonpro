@@ -1,11 +1,10 @@
-"use strict";
 /**
  * Database Optimizer - VIBECODE V1.0 Query Performance
  * Advanced database optimization for subscription queries
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DatabaseOptimizer = void 0;
-var DatabaseOptimizer = /** @class */ (function () {
+var DatabaseOptimizer = /** @class */ (() => {
   function DatabaseOptimizer(slowQueryThreshold) {
     if (slowQueryThreshold === void 0) {
       slowQueryThreshold = 100;
@@ -47,13 +46,10 @@ var DatabaseOptimizer = /** @class */ (function () {
    * Get optimized query suggestions
    */
   DatabaseOptimizer.prototype.getOptimizationSuggestions = function () {
-    var _this = this;
     var suggestions = [];
     // Find slow queries
-    var slowQueries = this.queryMetrics.filter(function (m) {
-      return m.executionTime > _this.slowQueryThreshold;
-    });
-    slowQueries.forEach(function (query) {
+    var slowQueries = this.queryMetrics.filter((m) => m.executionTime > this.slowQueryThreshold);
+    slowQueries.forEach((query) => {
       if (query.query.includes("SELECT") && !query.query.includes("WHERE")) {
         suggestions.push({
           type: "query_rewrite",
@@ -79,19 +75,12 @@ var DatabaseOptimizer = /** @class */ (function () {
    * Generate performance report
    */
   DatabaseOptimizer.prototype.generateReport = function () {
-    var _this = this;
-    var slowQueries = this.queryMetrics.filter(function (m) {
-      return m.executionTime > _this.slowQueryThreshold;
-    });
+    var slowQueries = this.queryMetrics.filter((m) => m.executionTime > this.slowQueryThreshold);
     var totalQueries = this.queryMetrics.length;
-    var cachedQueries = this.queryMetrics.filter(function (m) {
-      return m.cached;
-    }).length;
+    var cachedQueries = this.queryMetrics.filter((m) => m.cached).length;
     var averageResponseTime =
       totalQueries > 0
-        ? this.queryMetrics.reduce(function (sum, m) {
-            return sum + m.executionTime;
-          }, 0) / totalQueries
+        ? this.queryMetrics.reduce((sum, m) => sum + m.executionTime, 0) / totalQueries
         : 0;
     var cacheHitRate = totalQueries > 0 ? (cachedQueries / totalQueries) * 100 : 0;
     return {
@@ -116,27 +105,23 @@ var DatabaseOptimizer = /** @class */ (function () {
    */
   DatabaseOptimizer.prototype.calculateIndexUtilization = function () {
     // Simplified calculation - in real implementation would analyze query plans
-    var indexedQueries = this.queryMetrics.filter(function (m) {
-      return m.query.includes("WHERE") || m.query.includes("ORDER BY");
-    }).length;
+    var indexedQueries = this.queryMetrics.filter(
+      (m) => m.query.includes("WHERE") || m.query.includes("ORDER BY"),
+    ).length;
     return this.queryMetrics.length > 0 ? (indexedQueries / this.queryMetrics.length) * 100 : 0;
   };
   /**
    * Calculate overall performance score
    */
   DatabaseOptimizer.prototype.calculatePerformanceScore = function () {
-    var _this = this;
     var slowQueryRatio =
       this.queryMetrics.length > 0
-        ? this.queryMetrics.filter(function (m) {
-            return m.executionTime > _this.slowQueryThreshold;
-          }).length / this.queryMetrics.length
+        ? this.queryMetrics.filter((m) => m.executionTime > this.slowQueryThreshold).length /
+          this.queryMetrics.length
         : 0;
     var cacheHitRate =
       this.queryMetrics.length > 0
-        ? this.queryMetrics.filter(function (m) {
-            return m.cached;
-          }).length / this.queryMetrics.length
+        ? this.queryMetrics.filter((m) => m.cached).length / this.queryMetrics.length
         : 0;
     // Score based on slow query ratio and cache hit rate
     var score = Math.max(0, 100 - slowQueryRatio * 50 + cacheHitRate * 20);

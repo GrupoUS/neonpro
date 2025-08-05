@@ -5,9 +5,9 @@
  */
 
 import type { createClient } from "@/lib/supabase/client";
+import type { comprehensiveSearch } from "./comprehensive-search";
 import type { nlpEngine } from "./nlp-engine";
 import type { searchIndexer } from "./search-indexer";
-import type { comprehensiveSearch } from "./comprehensive-search";
 
 // Types
 export interface SearchSuggestion {

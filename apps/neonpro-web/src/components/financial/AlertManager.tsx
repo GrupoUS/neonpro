@@ -5,7 +5,19 @@
 
 "use client";
 
+import type {
+  AlertTriangle,
+  Bell,
+  BellOff,
+  CheckCircle,
+  Clock,
+  Filter,
+  Plus,
+  Settings,
+} from "lucide-react";
 import React, { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,19 +25,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Switch } from "@/components/ui/switch";
 import type {
   Dialog,
   DialogContent,
@@ -34,26 +33,27 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Bell,
-  BellOff,
-  Settings,
-  Plus,
-  Filter,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  useFinancialAlerts,
+  useAlertChannelConfig,
   useAlertResolution,
   useAlertRuleCreation,
-  useAlertStatistics,
-  useRealTimeAlerts,
-  useAlertChannelConfig,
   useAlertRuleTemplates,
+  useAlertStatistics,
+  useFinancialAlerts,
+  useRealTimeAlerts,
 } from "@/lib/financial/hooks/use-alert-system";
-import type { AlertSeverity, AlertType, AlertChannel } from "@/lib/financial/types/cash-flow";
+import type { AlertChannel, AlertSeverity, AlertType } from "@/lib/financial/types/cash-flow";
 
 interface AlertManagerProps {
   userId: string;

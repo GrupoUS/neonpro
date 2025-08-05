@@ -3,9 +3,9 @@
  * GET /api/analytics/dashboard - Retrieve dashboard analytics data
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/middleware/auth";
+import { type NextRequest, NextResponse } from "next/server";
 import { analyticsService } from "@/lib/analytics";
+import { requireAuth } from "@/lib/middleware/auth";
 
 /**
  * Get dashboard analytics data

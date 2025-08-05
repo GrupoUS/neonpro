@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ThemeToggle = ThemeToggle;
 exports.SimpleThemeToggle = SimpleThemeToggle;
@@ -20,25 +19,13 @@ function ThemeToggle() {
         </button_1.Button>
       </dropdown_menu_1.DropdownMenuTrigger>
       <dropdown_menu_1.DropdownMenuContent align="end">
-        <dropdown_menu_1.DropdownMenuItem
-          onClick={function () {
-            return setTheme("light");
-          }}
-        >
+        <dropdown_menu_1.DropdownMenuItem onClick={() => setTheme("light")}>
           Claro
         </dropdown_menu_1.DropdownMenuItem>
-        <dropdown_menu_1.DropdownMenuItem
-          onClick={function () {
-            return setTheme("dark");
-          }}
-        >
+        <dropdown_menu_1.DropdownMenuItem onClick={() => setTheme("dark")}>
           Escuro
         </dropdown_menu_1.DropdownMenuItem>
-        <dropdown_menu_1.DropdownMenuItem
-          onClick={function () {
-            return setTheme("system");
-          }}
-        >
+        <dropdown_menu_1.DropdownMenuItem onClick={() => setTheme("system")}>
           Sistema
         </dropdown_menu_1.DropdownMenuItem>
       </dropdown_menu_1.DropdownMenuContent>
@@ -53,7 +40,7 @@ function SimpleThemeToggle() {
   var _b = React.useState(false),
     mounted = _b[0],
     setMounted = _b[1];
-  React.useEffect(function () {
+  React.useEffect(() => {
     setMounted(true);
   }, []);
   if (!mounted) {
@@ -63,9 +50,7 @@ function SimpleThemeToggle() {
     <button_1.Button
       variant="outline"
       size="icon"
-      onClick={function () {
-        return setTheme(theme === "light" ? "dark" : "light");
-      }}
+      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
       className="relative"
     >
       <lucide_react_1.Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

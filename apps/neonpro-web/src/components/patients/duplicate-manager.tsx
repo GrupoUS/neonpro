@@ -1,5 +1,7 @@
 "use client";
 
+import type { AlertTriangle, BarChart3, CheckCircle, Eye, GitMerge, Users } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -20,8 +22,6 @@ import type {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import type { DuplicateMatch, duplicateDetectionSystem } from "@/lib/patients/duplicate-detection";
-import type { AlertTriangle, BarChart3, CheckCircle, Eye, GitMerge, Users } from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface DuplicateManagerProps {
   onMergeComplete?: (result: any) => void;

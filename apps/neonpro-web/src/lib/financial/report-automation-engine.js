@@ -1,4 +1,3 @@
-"use strict";
 // Report Automation & Export Engine
 // Epic 5, Story 5.1, Task 6: Report Automation & Export
 // Created: 2025-01-27
@@ -6,15 +5,15 @@
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,11 +133,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportAutomationEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var ReportAutomationEngine = /** @class */ (function () {
+var ReportAutomationEngine = /** @class */ (() => {
   function ReportAutomationEngine() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -205,23 +202,19 @@ var ReportAutomationEngine = /** @class */ (function () {
             if (error) throw new Error("Failed to fetch report schedules: ".concat(error.message));
             return [
               2 /*return*/,
-              schedules.map(function (schedule) {
-                return {
-                  scheduleId: schedule.id,
-                  reportType: schedule.report_type,
-                  reportName: schedule.report_name,
-                  frequency: schedule.frequency,
-                  recipients: schedule.recipients,
-                  parameters: schedule.parameters,
-                  nextRunDate: new Date(schedule.next_run_date),
-                  lastRunDate: schedule.last_run_date
-                    ? new Date(schedule.last_run_date)
-                    : undefined,
-                  isActive: schedule.is_active,
-                  createdBy: schedule.created_by,
-                  format: schedule.format,
-                };
-              }),
+              schedules.map((schedule) => ({
+                scheduleId: schedule.id,
+                reportType: schedule.report_type,
+                reportName: schedule.report_name,
+                frequency: schedule.frequency,
+                recipients: schedule.recipients,
+                parameters: schedule.parameters,
+                nextRunDate: new Date(schedule.next_run_date),
+                lastRunDate: schedule.last_run_date ? new Date(schedule.last_run_date) : undefined,
+                isActive: schedule.is_active,
+                createdBy: schedule.created_by,
+                format: schedule.format,
+              })),
             ];
         }
       });
@@ -390,20 +383,18 @@ var ReportAutomationEngine = /** @class */ (function () {
             if (error) throw new Error("Failed to fetch report templates: ".concat(error.message));
             return [
               2 /*return*/,
-              templates.map(function (template) {
-                return {
-                  templateId: template.id,
-                  templateName: template.template_name,
-                  reportType: template.report_type,
-                  description: template.description,
-                  parameters: template.parameters,
-                  layout: template.layout,
-                  styling: template.styling,
-                  isDefault: template.is_default,
-                  createdBy: template.created_by,
-                  createdAt: new Date(template.created_at),
-                };
-              }),
+              templates.map((template) => ({
+                templateId: template.id,
+                templateName: template.template_name,
+                reportType: template.report_type,
+                description: template.description,
+                parameters: template.parameters,
+                layout: template.layout,
+                styling: template.styling,
+                isDefault: template.is_default,
+                createdBy: template.created_by,
+                createdAt: new Date(template.created_at),
+              })),
             ];
         }
       });
@@ -774,23 +765,21 @@ var ReportAutomationEngine = /** @class */ (function () {
             if (error) throw new Error("Failed to fetch archived reports: ".concat(error.message));
             return [
               2 /*return*/,
-              archives.map(function (archive) {
-                return {
-                  archiveId: archive.id,
-                  reportType: archive.report_type,
-                  reportName: archive.report_name,
-                  generatedDate: new Date(archive.generated_date),
-                  filePath: archive.file_path,
-                  fileSize: archive.file_size,
-                  parameters: archive.parameters,
-                  generatedBy: archive.generated_by,
-                  retentionPeriod: archive.retention_period,
-                  downloadCount: archive.download_count,
-                  lastAccessedAt: archive.last_accessed_at
-                    ? new Date(archive.last_accessed_at)
-                    : undefined,
-                };
-              }),
+              archives.map((archive) => ({
+                archiveId: archive.id,
+                reportType: archive.report_type,
+                reportName: archive.report_name,
+                generatedDate: new Date(archive.generated_date),
+                filePath: archive.file_path,
+                fileSize: archive.file_size,
+                parameters: archive.parameters,
+                generatedBy: archive.generated_by,
+                retentionPeriod: archive.retention_period,
+                downloadCount: archive.download_count,
+                lastAccessedAt: archive.last_accessed_at
+                  ? new Date(archive.last_accessed_at)
+                  : undefined,
+              })),
             ];
         }
       });
@@ -850,7 +839,7 @@ var ReportAutomationEngine = /** @class */ (function () {
   /**
    * Calculate next run date based on frequency
    */
-  ReportAutomationEngine.prototype.calculateNextRunDate = function (currentDate, frequency) {
+  ReportAutomationEngine.prototype.calculateNextRunDate = (currentDate, frequency) => {
     var nextDate = new Date(currentDate);
     switch (frequency) {
       case "daily":

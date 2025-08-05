@@ -1,25 +1,25 @@
-import type { createClient } from "@/lib/supabase/client";
 import type {
-  ReportType,
-  ReportParameters,
+  ExpiringItemsReportData,
+  ExpiringItemsSummary,
+  LocationPerformanceData,
+  LocationPerformanceSummary,
+  MovementType,
+  ReportDashboardStats,
+  ReportDefinition,
+  ReportExecution,
   ReportFilters,
+  ReportParameters,
   ReportResult,
+  ReportTemplate,
+  ReportType,
   StockMovementReportData,
   StockMovementSummary,
   StockValuationReportData,
   StockValuationSummary,
-  ExpiringItemsReportData,
-  ExpiringItemsSummary,
   TransferReportData,
   TransferReportSummary,
-  LocationPerformanceData,
-  LocationPerformanceSummary,
-  ReportDefinition,
-  ReportExecution,
-  ReportTemplate,
-  ReportDashboardStats,
-  MovementType,
 } from "@/app/lib/types/inventory-reports";
+import type { createClient } from "@/lib/supabase/client";
 
 class InventoryReportsService {
   // Supabase client created per method for proper request context
@@ -856,13 +856,14 @@ class InventoryReportsService {
         return this.generateTransferReport(parameters.filters);
       case "location_performance":
         return this.generateLocationPerformanceReport(parameters.filters);
-      case "low_stock":
+      case "low_stock": {
         // Low stock is a subset of stock valuation
         const result = await this.generateStockValuationReport(parameters.filters);
         result.data = result.data.filter(
           (item) => item.stock_status === "low" || item.stock_status === "critical",
         );
         return result;
+      }
       default:
         throw new Error(`Unsupported report type: ${parameters.type}`);
     }

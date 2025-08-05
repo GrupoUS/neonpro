@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthcareTheme = void 0;
 // Healthcare theme configuration

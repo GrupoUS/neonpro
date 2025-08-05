@@ -1,17 +1,5 @@
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Progress } from "@/components/ui/progress";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { VendorService } from "@/lib/services/vendors";
 import type {
   AlertTriangle,
   CheckCircle,
@@ -25,6 +13,18 @@ import type {
 } from "lucide-react";
 import type { useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { VendorService } from "@/lib/services/vendors";
 
 interface VendorPerformance {
   vendor_id: string;

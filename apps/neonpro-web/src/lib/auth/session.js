@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Management Service
  * Story 1.4: Session Management & Security
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UnifiedSessionSystem =
   exports.createsessionManager =
@@ -167,27 +164,21 @@ var session_1 = require("@/types/session");
 var session_2 = require("@/types/session");
 Object.defineProperty(exports, "SessionAction", {
   enumerable: true,
-  get: function () {
-    return session_2.SessionAction;
-  },
+  get: () => session_2.SessionAction,
 });
 Object.defineProperty(exports, "DeviceType", {
   enumerable: true,
-  get: function () {
-    return session_2.DeviceType;
-  },
+  get: () => session_2.DeviceType,
 });
 Object.defineProperty(exports, "SecurityLevel", {
   enumerable: true,
-  get: function () {
-    return session_2.SecurityLevel;
-  },
+  get: () => session_2.SecurityLevel,
 });
 var logger_1 = require("@/lib/logger");
 // ============================================================================
 // SESSION MANAGEMENT CLASS
 // ============================================================================
-var SessionManager = /** @class */ (function () {
+var SessionManager = /** @class */ (() => {
   function SessionManager() {
     this.supabase = (0, client_1.createClient)();
     this.config = {
@@ -585,7 +576,7 @@ var SessionManager = /** @class */ (function () {
             return [4 /*yield*/, this.getDeviceRegistration(userId, deviceFingerprint)];
           case 1:
             device = _a.sent();
-            if (!!device) return [3 /*break*/, 3];
+            if (device) return [3 /*break*/, 3];
             return [4 /*yield*/, this.registerDevice(userId, deviceFingerprint)];
           case 2:
             // Register new device
@@ -750,9 +741,9 @@ var SessionManager = /** @class */ (function () {
           case 2:
             activeSessions = _a.sent();
             if (!(activeSessions.length >= policy.max_concurrent_sessions)) return [3 /*break*/, 4];
-            oldestSession = activeSessions.sort(function (a, b) {
-              return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-            })[0];
+            oldestSession = activeSessions.sort(
+              (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+            )[0];
             return [
               4 /*yield*/,
               this.terminateSession(oldestSession.id, "concurrent_limit_exceeded"),
@@ -953,9 +944,7 @@ var SessionManager = /** @class */ (function () {
             if (!recentSessions || recentSessions.length === 0) {
               return [2 /*return*/, false]; // No history to compare
             }
-            recentIPs = recentSessions.map(function (s) {
-              return s.ip_address;
-            });
+            recentIPs = recentSessions.map((s) => s.ip_address);
             return [2 /*return*/, !recentIPs.includes(ipAddress)];
           case 2:
             error_15 = _a.sent();
@@ -1142,14 +1131,12 @@ exports.SessionManager = SessionManager;
 // ============================================================================
 // SINGLETON INSTANCE
 // ============================================================================
-var createsessionManager = function () {
-  return new SessionManager();
-};
+var createsessionManager = () => new SessionManager();
 exports.createsessionManager = createsessionManager;
 // ============================================================================
 // UNIFIED SESSION SYSTEM (LEGACY COMPATIBILITY)
 // ============================================================================
-var UnifiedSessionSystem = /** @class */ (function () {
+var UnifiedSessionSystem = /** @class */ (() => {
   function UnifiedSessionSystem() {
     this.sessionManager = sessionManager;
   }

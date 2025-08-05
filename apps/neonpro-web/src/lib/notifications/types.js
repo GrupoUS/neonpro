@@ -1,4 +1,3 @@
-"use strict";
 // Notification Types
 // Generated for NeonPro - FASE 4
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -9,7 +8,7 @@ exports.DeliveryStatus =
   exports.NotificationType =
     void 0;
 var NotificationType;
-(function (NotificationType) {
+((NotificationType) => {
   NotificationType["ALERT"] = "alert";
   NotificationType["REMINDER"] = "reminder";
   NotificationType["SYSTEM"] = "system";
@@ -19,7 +18,7 @@ var NotificationType;
   NotificationType["SECURITY"] = "security";
 })(NotificationType || (exports.NotificationType = NotificationType = {}));
 var NotificationChannel;
-(function (NotificationChannel) {
+((NotificationChannel) => {
   NotificationChannel["EMAIL"] = "email";
   NotificationChannel["SMS"] = "sms";
   NotificationChannel["PUSH"] = "push";
@@ -28,14 +27,14 @@ var NotificationChannel;
   NotificationChannel["PHONE"] = "phone";
 })(NotificationChannel || (exports.NotificationChannel = NotificationChannel = {}));
 var NotificationPriority;
-(function (NotificationPriority) {
+((NotificationPriority) => {
   NotificationPriority["LOW"] = "low";
   NotificationPriority["MEDIUM"] = "medium";
   NotificationPriority["HIGH"] = "high";
   NotificationPriority["URGENT"] = "urgent";
 })(NotificationPriority || (exports.NotificationPriority = NotificationPriority = {}));
 var NotificationStatus;
-(function (NotificationStatus) {
+((NotificationStatus) => {
   NotificationStatus["PENDING"] = "pending";
   NotificationStatus["SENT"] = "sent";
   NotificationStatus["DELIVERED"] = "delivered";
@@ -43,7 +42,7 @@ var NotificationStatus;
   NotificationStatus["READ"] = "read";
 })(NotificationStatus || (exports.NotificationStatus = NotificationStatus = {}));
 var DeliveryStatus;
-(function (DeliveryStatus) {
+((DeliveryStatus) => {
   DeliveryStatus["PENDING"] = "pending";
   DeliveryStatus["SENT"] = "sent";
   DeliveryStatus["DELIVERED"] = "delivered";

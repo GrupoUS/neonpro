@@ -4,21 +4,21 @@
  * Suite completa de testes para validar o funcionamento do sistema de automação LGPD
  */
 
-import type { describe, test, expect, beforeAll, afterAll, beforeEach, jest } from "@jest/globals";
+import type { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import type { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import type { LGPDComplianceManager } from "../LGPDComplianceManager";
 import type {
-  LGPDAutomationOrchestrator,
-  ConsentAutomationManager,
-  DataSubjectRightsAutomation,
-  RealTimeComplianceMonitor,
-  DataRetentionAutomation,
-  BreachDetectionAutomation,
-  DataMinimizationAutomation,
-  ThirdPartyComplianceAutomation,
   AuditReportingAutomation,
+  BreachDetectionAutomation,
+  ConsentAutomationManager,
+  DataMinimizationAutomation,
+  DataRetentionAutomation,
+  DataSubjectRightsAutomation,
   getLGPDAutomationConfig,
+  LGPDAutomationOrchestrator,
+  RealTimeComplianceMonitor,
+  ThirdPartyComplianceAutomation,
 } from "./index";
 
 // Mock do Supabase para testes

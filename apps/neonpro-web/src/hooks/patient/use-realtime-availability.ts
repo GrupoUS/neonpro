@@ -1,8 +1,8 @@
 "use client";
 
-import type { createClient } from "@/lib/supabase/client";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import type { useCallback, useEffect, useState } from "react";
+import type { createClient } from "@/lib/supabase/client";
 
 interface AvailabilitySlot {
   datetime: string;

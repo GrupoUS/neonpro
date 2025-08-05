@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Subscription Circuit Breaker System
  *
@@ -14,20 +13,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -42,26 +41,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -81,13 +80,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -109,9 +108,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -183,7 +180,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.circuitBreakerRegistry =
   exports.SubscriptionExternalAPICircuitBreaker =
@@ -195,7 +192,7 @@ exports.circuitBreakerRegistry =
 var subscription_errors_1 = require("../types/subscription-errors");
 // Circuit breaker states
 var CircuitBreakerState;
-(function (CircuitBreakerState) {
+((CircuitBreakerState) => {
   CircuitBreakerState["CLOSED"] = "closed";
   CircuitBreakerState["OPEN"] = "open";
   CircuitBreakerState["HALF_OPEN"] = "half_open"; // Testing if service has recovered
@@ -218,7 +215,7 @@ var defaultConfig = {
     alertOnOpen: true,
   },
 };
-var SubscriptionCircuitBreaker = /** @class */ (function () {
+var SubscriptionCircuitBreaker = /** @class */ (() => {
   function SubscriptionCircuitBreaker(serviceName, config) {
     this.state = CircuitBreakerState.CLOSED;
     this.failureCount = 0;
@@ -476,56 +473,57 @@ var SubscriptionCircuitBreaker = /** @class */ (function () {
    * Start health check timer
    */
   SubscriptionCircuitBreaker.prototype.startHealthCheck = function () {
-    var _this = this;
-    this.healthCheckTimer = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_2;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!(this.state === CircuitBreakerState.OPEN)) return [3 /*break*/, 4];
-              _a.label = 1;
-            case 1:
-              _a.trys.push([1, 3, , 4]);
-              // Perform a lightweight health check
-              return [
-                4 /*yield*/,
-                this.performHealthCheck(),
+    this.healthCheckTimer = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_2;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                if (!(this.state === CircuitBreakerState.OPEN)) return [3 /*break*/, 4];
+                _a.label = 1;
+              case 1:
+                _a.trys.push([1, 3, , 4]);
+                // Perform a lightweight health check
+                return [
+                  4 /*yield*/,
+                  this.performHealthCheck(),
+                  // If health check passes and timeout has elapsed, try half-open
+                ];
+              case 2:
+                // Perform a lightweight health check
+                _a.sent();
                 // If health check passes and timeout has elapsed, try half-open
-              ];
-            case 2:
-              // Perform a lightweight health check
-              _a.sent();
-              // If health check passes and timeout has elapsed, try half-open
-              if (this.shouldAttemptReset()) {
-                this.state = CircuitBreakerState.HALF_OPEN;
-                this.stateChangedAt = new Date();
-                this.logStateChange(
-                  CircuitBreakerState.HALF_OPEN,
-                  "Health check passed, attempting reset",
-                );
-              }
-              return [3 /*break*/, 4];
-            case 3:
-              error_2 = _a.sent();
-              // Health check failed, stay in open state
-              if (this.config.monitoring.logFailures) {
-                console.warn("Health check failed for ".concat(this.serviceName, ":"), error_2);
-              }
-              return [3 /*break*/, 4];
-            case 4:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.healthCheck.interval);
+                if (this.shouldAttemptReset()) {
+                  this.state = CircuitBreakerState.HALF_OPEN;
+                  this.stateChangedAt = new Date();
+                  this.logStateChange(
+                    CircuitBreakerState.HALF_OPEN,
+                    "Health check passed, attempting reset",
+                  );
+                }
+                return [3 /*break*/, 4];
+              case 3:
+                error_2 = _a.sent();
+                // Health check failed, stay in open state
+                if (this.config.monitoring.logFailures) {
+                  console.warn("Health check failed for ".concat(this.serviceName, ":"), error_2);
+                }
+                return [3 /*break*/, 4];
+              case 4:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.healthCheck.interval,
+    );
   };
   /**
    * Perform health check (override this method for custom health checks)
    */
   SubscriptionCircuitBreaker.prototype.performHealthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Default implementation - just a promise that resolves
         // Override this method in subclasses for specific health checks
         return [2 /*return*/, Promise.resolve()];
@@ -548,7 +546,7 @@ var SubscriptionCircuitBreaker = /** @class */ (function () {
   /**
    * Send alert (override this method for custom alerting)
    */
-  SubscriptionCircuitBreaker.prototype.sendAlert = function (message) {
+  SubscriptionCircuitBreaker.prototype.sendAlert = (message) => {
     // Default implementation - just log
     console.error("ALERT: ".concat(message));
   };
@@ -565,7 +563,7 @@ var SubscriptionCircuitBreaker = /** @class */ (function () {
 })();
 exports.SubscriptionCircuitBreaker = SubscriptionCircuitBreaker;
 // Specialized circuit breakers for different services
-var SubscriptionDatabaseCircuitBreaker = /** @class */ (function (_super) {
+var SubscriptionDatabaseCircuitBreaker = /** @class */ ((_super) => {
   __extends(SubscriptionDatabaseCircuitBreaker, _super);
   function SubscriptionDatabaseCircuitBreaker(config) {
     return (
@@ -586,15 +584,11 @@ var SubscriptionDatabaseCircuitBreaker = /** @class */ (function (_super) {
           2 /*return*/,
           Promise.race([
             // Simulate database health check
-            new Promise(function (resolve) {
-              setTimeout(function () {
-                return resolve();
-              }, 100);
+            new Promise((resolve) => {
+              setTimeout(() => resolve(), 100);
             }),
-            new Promise(function (_, reject) {
-              setTimeout(function () {
-                return reject(new Error("Health check timeout"));
-              }, timeout);
+            new Promise((_, reject) => {
+              setTimeout(() => reject(new Error("Health check timeout")), timeout);
             }),
           ]),
         ];
@@ -604,7 +598,7 @@ var SubscriptionDatabaseCircuitBreaker = /** @class */ (function (_super) {
   return SubscriptionDatabaseCircuitBreaker;
 })(SubscriptionCircuitBreaker);
 exports.SubscriptionDatabaseCircuitBreaker = SubscriptionDatabaseCircuitBreaker;
-var SubscriptionCacheCircuitBreaker = /** @class */ (function (_super) {
+var SubscriptionCacheCircuitBreaker = /** @class */ ((_super) => {
   __extends(SubscriptionCacheCircuitBreaker, _super);
   function SubscriptionCacheCircuitBreaker(config) {
     return (
@@ -625,15 +619,11 @@ var SubscriptionCacheCircuitBreaker = /** @class */ (function (_super) {
           2 /*return*/,
           Promise.race([
             // Simulate cache health check
-            new Promise(function (resolve) {
-              setTimeout(function () {
-                return resolve();
-              }, 50);
+            new Promise((resolve) => {
+              setTimeout(() => resolve(), 50);
             }),
-            new Promise(function (_, reject) {
-              setTimeout(function () {
-                return reject(new Error("Cache health check timeout"));
-              }, timeout);
+            new Promise((_, reject) => {
+              setTimeout(() => reject(new Error("Cache health check timeout")), timeout);
             }),
           ]),
         ];
@@ -643,7 +633,7 @@ var SubscriptionCacheCircuitBreaker = /** @class */ (function (_super) {
   return SubscriptionCacheCircuitBreaker;
 })(SubscriptionCircuitBreaker);
 exports.SubscriptionCacheCircuitBreaker = SubscriptionCacheCircuitBreaker;
-var SubscriptionExternalAPICircuitBreaker = /** @class */ (function (_super) {
+var SubscriptionExternalAPICircuitBreaker = /** @class */ ((_super) => {
   __extends(SubscriptionExternalAPICircuitBreaker, _super);
   function SubscriptionExternalAPICircuitBreaker(apiName, config) {
     return (
@@ -664,15 +654,11 @@ var SubscriptionExternalAPICircuitBreaker = /** @class */ (function (_super) {
           2 /*return*/,
           Promise.race([
             // Simulate API health check
-            new Promise(function (resolve) {
-              setTimeout(function () {
-                return resolve();
-              }, 200);
+            new Promise((resolve) => {
+              setTimeout(() => resolve(), 200);
             }),
-            new Promise(function (_, reject) {
-              setTimeout(function () {
-                return reject(new Error("API health check timeout"));
-              }, timeout);
+            new Promise((_, reject) => {
+              setTimeout(() => reject(new Error("API health check timeout")), timeout);
             }),
           ]),
         ];
@@ -683,7 +669,7 @@ var SubscriptionExternalAPICircuitBreaker = /** @class */ (function (_super) {
 })(SubscriptionCircuitBreaker);
 exports.SubscriptionExternalAPICircuitBreaker = SubscriptionExternalAPICircuitBreaker;
 // Global circuit breaker registry
-var CircuitBreakerRegistry = /** @class */ (function () {
+var CircuitBreakerRegistry = /** @class */ (() => {
   function CircuitBreakerRegistry() {
     this.breakers = new Map();
   }

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,172 +128,134 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var react_1 = require("@testing-library/react");
 var react_query_1 = require("@tanstack/react-query");
 var analytics_dashboard_1 = require("@/components/dashboard/analytics-dashboard");
 // Mock the recharts library
-globals_1.jest.mock("recharts", function () {
-  return {
-    ResponsiveContainer: function (_a) {
-      var children = _a.children;
-      return <div data-testid="responsive-container">{children}</div>;
-    },
-    LineChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="line-chart">{children}</div>;
-    },
-    BarChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="bar-chart">{children}</div>;
-    },
-    PieChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="pie-chart">{children}</div>;
-    },
-    Line: function () {
-      return <div data-testid="line" />;
-    },
-    Bar: function () {
-      return <div data-testid="bar" />;
-    },
-    Cell: function () {
-      return <div data-testid="cell" />;
-    },
-    XAxis: function () {
-      return <div data-testid="x-axis" />;
-    },
-    YAxis: function () {
-      return <div data-testid="y-axis" />;
-    },
-    CartesianGrid: function () {
-      return <div data-testid="cartesian-grid" />;
-    },
-    Tooltip: function () {
-      return <div data-testid="tooltip" />;
-    },
-    Legend: function () {
-      return <div data-testid="legend" />;
-    },
-    Pie: function () {
-      return <div data-testid="pie" />;
-    },
-  };
-});
+globals_1.jest.mock("recharts", () => ({
+  ResponsiveContainer: (_a) => {
+    var children = _a.children;
+    return <div data-testid="responsive-container">{children}</div>;
+  },
+  LineChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="line-chart">{children}</div>;
+  },
+  BarChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="bar-chart">{children}</div>;
+  },
+  PieChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="pie-chart">{children}</div>;
+  },
+  Line: () => <div data-testid="line" />,
+  Bar: () => <div data-testid="bar" />,
+  Cell: () => <div data-testid="cell" />,
+  XAxis: () => <div data-testid="x-axis" />,
+  YAxis: () => <div data-testid="y-axis" />,
+  CartesianGrid: () => <div data-testid="cartesian-grid" />,
+  Tooltip: () => <div data-testid="tooltip" />,
+  Legend: () => <div data-testid="legend" />,
+  Pie: () => <div data-testid="pie" />,
+}));
 // Mock date-fns
-globals_1.jest.mock("date-fns", function () {
-  return {
-    format: globals_1.jest.fn(function (date, formatStr) {
-      if (formatStr === "MMM yyyy") return "Jan 2024";
-      if (formatStr === "dd/MM/yyyy") return "01/01/2024";
-      return "2024-01-01";
-    }),
-    subMonths: globals_1.jest.fn(function () {
-      return new Date("2023-12-01");
-    }),
-    startOfMonth: globals_1.jest.fn(function () {
-      return new Date("2024-01-01");
-    }),
-    endOfMonth: globals_1.jest.fn(function () {
-      return new Date("2024-01-31");
-    }),
-    parseISO: globals_1.jest.fn(function (dateStr) {
-      return new Date(dateStr);
-    }),
-  };
-});
+globals_1.jest.mock("date-fns", () => ({
+  format: globals_1.jest.fn((_date, formatStr) => {
+    if (formatStr === "MMM yyyy") return "Jan 2024";
+    if (formatStr === "dd/MM/yyyy") return "01/01/2024";
+    return "2024-01-01";
+  }),
+  subMonths: globals_1.jest.fn(() => new Date("2023-12-01")),
+  startOfMonth: globals_1.jest.fn(() => new Date("2024-01-01")),
+  endOfMonth: globals_1.jest.fn(() => new Date("2024-01-31")),
+  parseISO: globals_1.jest.fn((dateStr) => new Date(dateStr)),
+}));
 // Mock analytics service
-globals_1.jest.mock("@/lib/analytics/service", function () {
-  return {
-    analyticsService: {
-      getDashboardMetrics: globals_1.jest.fn(),
-      getSubscriptionTrends: globals_1.jest.fn(),
-      getTrialMetrics: globals_1.jest.fn(),
-      getRevenueAnalytics: globals_1.jest.fn(),
-    },
-  };
-});
+globals_1.jest.mock("@/lib/analytics/service", () => ({
+  analyticsService: {
+    getDashboardMetrics: globals_1.jest.fn(),
+    getSubscriptionTrends: globals_1.jest.fn(),
+    getTrialMetrics: globals_1.jest.fn(),
+    getRevenueAnalytics: globals_1.jest.fn(),
+  },
+}));
 // Mock UI components
-globals_1.jest.mock("@/components/ui/card", function () {
-  return {
-    Card: function (_a) {
-      var children = _a.children,
-        className = _a.className;
-      return (
-        <div data-testid="card" className={className}>
-          {children}
-        </div>
-      );
-    },
-    CardHeader: function (_a) {
-      var children = _a.children;
-      return <div data-testid="card-header">{children}</div>;
-    },
-    CardTitle: function (_a) {
-      var children = _a.children;
-      return <h3 data-testid="card-title">{children}</h3>;
-    },
-    CardContent: function (_a) {
-      var children = _a.children;
-      return <div data-testid="card-content">{children}</div>;
-    },
-  };
-});
-globals_1.jest.mock("@/components/ui/button", function () {
-  return {
-    Button: function (_a) {
-      var children = _a.children,
-        onClick = _a.onClick,
-        variant = _a.variant,
-        size = _a.size;
-      return (
-        <button data-testid="button" onClick={onClick} data-variant={variant} data-size={size}>
-          {children}
-        </button>
-      );
-    },
-  };
-});
-globals_1.jest.mock("@/components/ui/select", function () {
-  return {
-    Select: function (_a) {
-      var children = _a.children,
-        onValueChange = _a.onValueChange;
-      return (
-        <div data-testid="select" data-onchange={onValueChange}>
-          {children}
-        </div>
-      );
-    },
-    SelectContent: function (_a) {
-      var children = _a.children;
-      return <div data-testid="select-content">{children}</div>;
-    },
-    SelectItem: function (_a) {
-      var children = _a.children,
-        value = _a.value;
-      return (
-        <div data-testid="select-item" data-value={value}>
-          {children}
-        </div>
-      );
-    },
-    SelectTrigger: function (_a) {
-      var children = _a.children;
-      return <div data-testid="select-trigger">{children}</div>;
-    },
-    SelectValue: function (_a) {
-      var placeholder = _a.placeholder;
-      return <div data-testid="select-value">{placeholder}</div>;
-    },
-  };
-});
+globals_1.jest.mock("@/components/ui/card", () => ({
+  Card: (_a) => {
+    var children = _a.children,
+      className = _a.className;
+    return (
+      <div data-testid="card" className={className}>
+        {children}
+      </div>
+    );
+  },
+  CardHeader: (_a) => {
+    var children = _a.children;
+    return <div data-testid="card-header">{children}</div>;
+  },
+  CardTitle: (_a) => {
+    var children = _a.children;
+    return <h3 data-testid="card-title">{children}</h3>;
+  },
+  CardContent: (_a) => {
+    var children = _a.children;
+    return <div data-testid="card-content">{children}</div>;
+  },
+}));
+globals_1.jest.mock("@/components/ui/button", () => ({
+  Button: (_a) => {
+    var children = _a.children,
+      onClick = _a.onClick,
+      variant = _a.variant,
+      size = _a.size;
+    return (
+      <button data-testid="button" onClick={onClick} data-variant={variant} data-size={size}>
+        {children}
+      </button>
+    );
+  },
+}));
+globals_1.jest.mock("@/components/ui/select", () => ({
+  Select: (_a) => {
+    var children = _a.children,
+      onValueChange = _a.onValueChange;
+    return (
+      <div data-testid="select" data-onchange={onValueChange}>
+        {children}
+      </div>
+    );
+  },
+  SelectContent: (_a) => {
+    var children = _a.children;
+    return <div data-testid="select-content">{children}</div>;
+  },
+  SelectItem: (_a) => {
+    var children = _a.children,
+      value = _a.value;
+    return (
+      <div data-testid="select-item" data-value={value}>
+        {children}
+      </div>
+    );
+  },
+  SelectTrigger: (_a) => {
+    var children = _a.children;
+    return <div data-testid="select-trigger">{children}</div>;
+  },
+  SelectValue: (_a) => {
+    var placeholder = _a.placeholder;
+    return <div data-testid="select-value">{placeholder}</div>;
+  },
+}));
 var analyticsService = require("@/lib/analytics/service").analyticsService;
-(0, globals_1.describe)("AnalyticsDashboard Component", function () {
+(0, globals_1.describe)("AnalyticsDashboard Component", () => {
   var queryClient;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     queryClient = new react_query_1.QueryClient({
       defaultOptions: {
         queries: {
@@ -307,21 +266,20 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
     // Reset all mocks
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     queryClient.clear();
   });
-  var renderWithQueryClient = function (component) {
-    return (0, react_1.render)(
+  var renderWithQueryClient = (component) =>
+    (0, react_1.render)(
       <react_query_1.QueryClientProvider client={queryClient}>
         {component}
       </react_query_1.QueryClientProvider>,
     );
-  };
-  (0, globals_1.describe)("rendering and layout", function () {
-    (0, globals_1.test)("should render dashboard with all metric cards", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("rendering and layout", () => {
+    (0, globals_1.test)("should render dashboard with all metric cards", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -349,7 +307,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Analytics Dashboard"),
                   ).toBeInTheDocument();
@@ -365,14 +323,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should display loading state initially", function () {
+      }),
+    );
+    (0, globals_1.test)("should display loading state initially", () => {
       // Arrange
       analyticsService.getDashboardMetrics.mockImplementation(
-        function () {
-          return new Promise(function () {});
-        }, // Never resolves
+        () => new Promise(() => {}), // Never resolves
       );
       // Act
       renderWithQueryClient(<analytics_dashboard_1.default />);
@@ -380,9 +336,9 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
       (0, globals_1.expect)(react_1.screen.getByText("Loading...")).toBeInTheDocument();
       (0, globals_1.expect)(react_1.screen.getByTestId("loading-spinner")).toBeInTheDocument();
     });
-    (0, globals_1.test)("should display error state when data fetch fails", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (0, globals_1.test)("should display error state when data fetch fails", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Arrange
@@ -394,7 +350,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Error loading analytics data"),
                   ).toBeInTheDocument();
@@ -410,12 +366,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should render charts when data is available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should render charts when data is available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -441,7 +397,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByTestId("line-chart"),
                   ).toBeInTheDocument();
@@ -459,14 +415,14 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("user interactions", function () {
-    (0, globals_1.test)("should update date range when period selector changes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("user interactions", () => {
+    (0, globals_1.test)("should update date range when period selector changes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics, periodSelector, lastMonthOption;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -480,7 +436,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               renderWithQueryClient(<analytics_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByTestId("select")).toBeInTheDocument();
                 }),
               ];
@@ -493,7 +449,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(analyticsService.getDashboardMetrics).toHaveBeenCalledWith({
                     period: "last_month",
                     startDate: globals_1.expect.any(Date),
@@ -507,12 +463,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should refresh data when refresh button is clicked", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should refresh data when refresh button is clicked", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics, refreshButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -526,7 +482,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               renderWithQueryClient(<analytics_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Refresh")).toBeInTheDocument();
                 }),
               ];
@@ -539,7 +495,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(analyticsService.getDashboardMetrics).toHaveBeenCalledTimes(
                     1,
                   );
@@ -551,12 +507,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should retry data fetch when retry button is clicked", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should retry data fetch when retry button is clicked", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var retryButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Arrange
@@ -572,7 +528,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               renderWithQueryClient(<analytics_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Retry")).toBeInTheDocument();
                 }),
               ];
@@ -583,7 +539,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("150")).toBeInTheDocument();
                   (0, globals_1.expect)(analyticsService.getDashboardMetrics).toHaveBeenCalledTimes(
                     2,
@@ -596,12 +552,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should toggle chart view when view selector changes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should toggle chart view when view selector changes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics, chartTypeButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -618,7 +574,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               renderWithQueryClient(<analytics_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByTestId("line-chart"),
                   ).toBeInTheDocument();
@@ -631,7 +587,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByTestId("bar-chart"),
                   ).toBeInTheDocument();
@@ -643,14 +599,14 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("data formatting and display", function () {
-    (0, globals_1.test)("should format currency values correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("data formatting and display", () => {
+    (0, globals_1.test)("should format currency values correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -670,7 +626,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("$15,000")).toBeInTheDocument(); // MRR
                   (0, globals_1.expect)(react_1.screen.getByText("$180,000")).toBeInTheDocument(); // ARR
                   (0, globals_1.expect)(react_1.screen.getByText("$2,500,000")).toBeInTheDocument(); // Total revenue
@@ -682,12 +638,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should format percentage values correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should format percentage values correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -706,7 +662,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("5.34%")).toBeInTheDocument(); // Churn rate
                   (0, globals_1.expect)(react_1.screen.getByText("12.56%")).toBeInTheDocument(); // Growth rate
                   (0, globals_1.expect)(react_1.screen.getByText("24.89%")).toBeInTheDocument(); // Conversion rate
@@ -718,12 +674,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should display trend indicators", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should display trend indicators", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -739,7 +695,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByTestId("trend-up")).toBeInTheDocument();
                   (0, globals_1.expect)(
                     react_1.screen.getByTestId("trend-down"),
@@ -754,14 +710,14 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("responsive behavior", function () {
-    (0, globals_1.test)("should adapt to mobile viewport", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("responsive behavior", () => {
+    (0, globals_1.test)("should adapt to mobile viewport", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Arrange
@@ -783,7 +739,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var dashboard = react_1.screen.getByTestId("analytics-dashboard");
                   (0, globals_1.expect)(dashboard).toHaveClass("mobile-layout");
                 }),
@@ -794,12 +750,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should show/hide detailed metrics based on screen size", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should show/hide detailed metrics based on screen size", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Arrange
@@ -825,7 +781,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   // Detailed metrics should be hidden on smaller screens
                   (0, globals_1.expect)(
                     react_1.screen.queryByText("Average Subscription Value"),
@@ -841,14 +797,14 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("accessibility", function () {
-    (0, globals_1.test)("should have proper ARIA labels and roles", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("accessibility", () => {
+    (0, globals_1.test)("should have proper ARIA labels and roles", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -864,7 +820,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByRole("main", { name: "Analytics Dashboard" }),
                   ).toBeInTheDocument();
@@ -885,12 +841,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should support keyboard navigation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should support keyboard navigation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics, refreshButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -904,7 +860,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               renderWithQueryClient(<analytics_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Refresh")).toBeInTheDocument();
                 }),
               ];
@@ -919,12 +875,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should announce data updates to screen readers", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should announce data updates to screen readers", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics, refreshButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -938,7 +894,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               renderWithQueryClient(<analytics_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Refresh")).toBeInTheDocument();
                 }),
               ];
@@ -949,7 +905,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Analytics data updated"),
                   ).toBeInTheDocument();
@@ -962,14 +918,14 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("performance optimization", function () {
-    (0, globals_1.test)("should memoize expensive calculations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("performance optimization", () => {
+    (0, globals_1.test)("should memoize expensive calculations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -980,18 +936,16 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
                 },
                 rawData: Array(1000)
                   .fill(null)
-                  .map(function (_, i) {
-                    return {
-                      id: i,
-                      value: Math.random() * 1000,
-                    };
-                  }),
+                  .map((_, i) => ({
+                    id: i,
+                    value: Math.random() * 1000,
+                  })),
               };
               analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
               renderWithQueryClient(<analytics_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("150")).toBeInTheDocument();
                 }),
               ];
@@ -1006,12 +960,12 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should implement virtual scrolling for large datasets", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should implement virtual scrolling for large datasets", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -1022,13 +976,11 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
                 },
                 detailsList: Array(10000)
                   .fill(null)
-                  .map(function (_, i) {
-                    return {
-                      id: i,
-                      name: "Subscription ".concat(i),
-                      value: Math.random() * 1000,
-                    };
-                  }),
+                  .map((_, i) => ({
+                    id: i,
+                    name: "Subscription ".concat(i),
+                    value: Math.random() * 1000,
+                  })),
               };
               analyticsService.getDashboardMetrics.mockResolvedValue(mockMetrics);
               // Act
@@ -1036,7 +988,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               // Assert
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByTestId("virtual-list"),
                   ).toBeInTheDocument();
@@ -1052,7 +1004,7 @@ var analyticsService = require("@/lib/analytics/service").analyticsService;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

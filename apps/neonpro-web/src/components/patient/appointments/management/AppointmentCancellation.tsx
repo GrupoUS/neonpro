@@ -1,5 +1,9 @@
 "use client";
 
+import type { format, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertTriangle, Calendar, Clock, DollarSign } from "lucide-react";
+import type { useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -17,10 +21,6 @@ import type {
   CancellationPolicies,
   PatientAppointment,
 } from "@/hooks/patient/usePatientAppointments";
-import type { format, parseISO } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { AlertTriangle, Calendar, Clock, DollarSign } from "lucide-react";
-import type { useState } from "react";
 
 /**
  * Appointment Cancellation Dialog for NeonPro

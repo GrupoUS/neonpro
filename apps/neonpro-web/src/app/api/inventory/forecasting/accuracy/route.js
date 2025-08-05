@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -187,7 +184,7 @@ function GET(request) {
       byCategory,
       trends,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 3, , 4]);
@@ -283,7 +280,7 @@ function GET(request) {
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var body, supabase, _a, data, error, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 4, , 5]);
@@ -347,50 +344,21 @@ function calculateAccuracyStatistics(data) {
       totalForecasts: 0,
     };
   }
-  var accuracies = data
-    .map(function (d) {
-      return d.accuracy_percentage;
-    })
-    .filter(function (a) {
-      return a !== null;
-    });
-  var mapes = data
-    .map(function (d) {
-      return d.mape;
-    })
-    .filter(function (m) {
-      return m !== null;
-    });
-  var rmses = data
-    .map(function (d) {
-      return d.rmse;
-    })
-    .filter(function (r) {
-      return r !== null;
-    });
-  var confidenceHits = data.filter(function (d) {
-    return d.within_confidence_interval === true;
-  }).length;
+  var accuracies = data.map((d) => d.accuracy_percentage).filter((a) => a !== null);
+  var mapes = data.map((d) => d.mape).filter((m) => m !== null);
+  var rmses = data.map((d) => d.rmse).filter((r) => r !== null);
+  var confidenceHits = data.filter((d) => d.within_confidence_interval === true).length;
   return {
-    averageAccuracy:
-      accuracies.reduce(function (sum, acc) {
-        return sum + acc;
-      }, 0) / accuracies.length,
-    averageMAPE:
-      mapes.reduce(function (sum, mape) {
-        return sum + mape;
-      }, 0) / mapes.length,
-    averageRMSE:
-      rmses.reduce(function (sum, rmse) {
-        return sum + rmse;
-      }, 0) / rmses.length,
+    averageAccuracy: accuracies.reduce((sum, acc) => sum + acc, 0) / accuracies.length,
+    averageMAPE: mapes.reduce((sum, mape) => sum + mape, 0) / mapes.length,
+    averageRMSE: rmses.reduce((sum, rmse) => sum + rmse, 0) / rmses.length,
     confidenceIntervalHitRate: confidenceHits / data.length,
     totalForecasts: data.length,
   };
 }
 function groupAccuracyByModel(data) {
   var byModel = {};
-  data.forEach(function (item) {
+  data.forEach((item) => {
     var model = item.model_used;
     if (!byModel[model]) {
       byModel[model] = [];
@@ -398,7 +366,7 @@ function groupAccuracyByModel(data) {
     byModel[model].push(item);
   });
   // Calculate statistics for each model
-  Object.keys(byModel).forEach(function (model) {
+  Object.keys(byModel).forEach((model) => {
     var modelData = byModel[model];
     byModel[model] = {
       forecasts: modelData,
@@ -410,7 +378,7 @@ function groupAccuracyByModel(data) {
 }
 function groupAccuracyByCategory(data) {
   var byCategory = {};
-  data.forEach(function (item) {
+  data.forEach((item) => {
     var _a;
     var category =
       ((_a = item.inventory_items) === null || _a === void 0 ? void 0 : _a.category) || "Unknown";
@@ -420,16 +388,12 @@ function groupAccuracyByCategory(data) {
     byCategory[category].push(item);
   });
   // Calculate statistics for each category
-  Object.keys(byCategory).forEach(function (category) {
+  Object.keys(byCategory).forEach((category) => {
     var categoryData = byCategory[category];
     byCategory[category] = {
       forecasts: categoryData,
       statistics: calculateAccuracyStatistics(categoryData),
-      itemCount: new Set(
-        categoryData.map(function (d) {
-          return d.item_id;
-        }),
-      ).size,
+      itemCount: new Set(categoryData.map((d) => d.item_id)).size,
     };
   });
   return byCategory;
@@ -437,7 +401,7 @@ function groupAccuracyByCategory(data) {
 function calculateAccuracyTrends(data, period) {
   // Group by week for trend analysis
   var weeklyData = new Map();
-  data.forEach(function (item) {
+  data.forEach((item) => {
     var date = new Date(item.forecast_date);
     var weekStart = new Date(date);
     weekStart.setDate(date.getDate() - date.getDay()); // Start of week
@@ -449,25 +413,19 @@ function calculateAccuracyTrends(data, period) {
   });
   // Calculate weekly averages
   var weeklyStats = Array.from(weeklyData.entries())
-    .map(function (_a) {
+    .map((_a) => {
       var week = _a[0],
         items = _a[1];
       return __assign({ week: week }, calculateAccuracyStatistics(items));
     })
-    .sort(function (a, b) {
-      return a.week.localeCompare(b.week);
-    });
+    .sort((a, b) => a.week.localeCompare(b.week));
   // Calculate trend direction
   var recentWeeks = weeklyStats.slice(-4); // Last 4 weeks
   var earlyWeeks = weeklyStats.slice(0, 4); // First 4 weeks
   var recentAvgAccuracy =
-    recentWeeks.reduce(function (sum, w) {
-      return sum + w.averageAccuracy;
-    }, 0) / recentWeeks.length;
+    recentWeeks.reduce((sum, w) => sum + w.averageAccuracy, 0) / recentWeeks.length;
   var earlyAvgAccuracy =
-    earlyWeeks.reduce(function (sum, w) {
-      return sum + w.averageAccuracy;
-    }, 0) / earlyWeeks.length;
+    earlyWeeks.reduce((sum, w) => sum + w.averageAccuracy, 0) / earlyWeeks.length;
   return {
     weeklyStats: weeklyStats,
     trend: {
@@ -492,7 +450,7 @@ function generateAccuracyRecommendations(overallStats, byModel, trends) {
   }
   // Model performance recommendations
   var modelPerformance = Object.entries(byModel)
-    .map(function (_a) {
+    .map((_a) => {
       var model = _a[0],
         data = _a[1];
       return {
@@ -501,9 +459,7 @@ function generateAccuracyRecommendations(overallStats, byModel, trends) {
         usage: data.usage,
       };
     })
-    .sort(function (a, b) {
-      return b.accuracy - a.accuracy;
-    });
+    .sort((a, b) => b.accuracy - a.accuracy);
   if (modelPerformance.length > 1) {
     var bestModel = modelPerformance[0];
     var worstModel = modelPerformance[modelPerformance.length - 1];

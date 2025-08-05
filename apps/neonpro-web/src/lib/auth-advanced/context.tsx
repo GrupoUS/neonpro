@@ -5,25 +5,25 @@
 
 import React, {
   createContext,
-  useContext,
-  useReducer,
-  useEffect,
+  type ReactNode,
   useCallback,
-  ReactNode,
+  useContext,
+  useEffect,
+  useReducer,
 } from "react";
+import type { DEFAULT_SESSION_CONFIG } from "./config";
+import type { DeviceManager } from "./device-manager";
+import type { SecurityMonitor } from "./security-monitor";
+import type { SessionManager } from "./session-manager";
 import type {
-  UserSession,
-  SessionSecurityEvent,
   DeviceRegistration,
-  SessionState,
   SessionConfig,
   SessionMetrics,
+  SessionSecurityEvent,
+  SessionState,
   SessionWebSocketEvent,
+  UserSession,
 } from "./types";
-import type { DEFAULT_SESSION_CONFIG } from "./config";
-import type { SessionManager } from "./session-manager";
-import type { SecurityMonitor } from "./security-monitor";
-import type { DeviceManager } from "./device-manager";
 import type { AuthUtils } from "./utils";
 
 // Session Context State

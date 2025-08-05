@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Authentication Types for NeonPro Healthcare Platform
  *
@@ -10,22 +9,22 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+        (Array.isArray({ __proto__: [] }) &&
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        throw new TypeError(`Class extends value ${String(b)} is not a constructor or null`);
       extendStatics(d, b);
       function __() {
         this.constructor = d;
@@ -38,13 +37,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -54,7 +53,7 @@ exports.MFARateLimitError =
   exports.MFAError =
     void 0;
 // Error Types
-var MFAError = /** @class */ (function (_super) {
+var MFAError = /** @class */ ((_super) => {
   __extends(MFAError, _super);
   function MFAError(message, code, statusCode, metadata) {
     if (statusCode === void 0) {
@@ -70,7 +69,7 @@ var MFAError = /** @class */ (function (_super) {
   return MFAError;
 })(Error);
 exports.MFAError = MFAError;
-var MFASetupError = /** @class */ (function (_super) {
+var MFASetupError = /** @class */ ((_super) => {
   __extends(MFASetupError, _super);
   function MFASetupError(message, metadata) {
     var _this = _super.call(this, message, "MFA_SETUP_ERROR", 400, metadata) || this;
@@ -80,7 +79,7 @@ var MFASetupError = /** @class */ (function (_super) {
   return MFASetupError;
 })(MFAError);
 exports.MFASetupError = MFASetupError;
-var MFAVerificationError = /** @class */ (function (_super) {
+var MFAVerificationError = /** @class */ ((_super) => {
   __extends(MFAVerificationError, _super);
   function MFAVerificationError(message, metadata) {
     var _this = _super.call(this, message, "MFA_VERIFICATION_ERROR", 401, metadata) || this;
@@ -90,7 +89,7 @@ var MFAVerificationError = /** @class */ (function (_super) {
   return MFAVerificationError;
 })(MFAError);
 exports.MFAVerificationError = MFAVerificationError;
-var MFARateLimitError = /** @class */ (function (_super) {
+var MFARateLimitError = /** @class */ ((_super) => {
   __extends(MFARateLimitError, _super);
   function MFARateLimitError(message, lockedUntil, metadata) {
     var _this =

@@ -1,16 +1,15 @@
-"use strict";
 // Performance tracker utilities and monitoring
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.trackAPIPerformance =
   exports.trackAuthPerformance =
@@ -143,19 +140,18 @@ exports.trackAPIPerformance =
   exports.PerformanceTracker =
     void 0;
 exports.trackOperation = trackOperation;
-var PerformanceTracker = /** @class */ (function () {
+var PerformanceTracker = /** @class */ (() => {
   function PerformanceTracker() {}
-  PerformanceTracker.getInstance = function () {
+  PerformanceTracker.getInstance = () => {
     if (!PerformanceTracker.instance) {
       PerformanceTracker.instance = new PerformanceTracker();
     }
     return PerformanceTracker.instance;
   };
   PerformanceTracker.prototype.track = function (operation, metadata) {
-    var _this = this;
     var startTime = Date.now();
     return {
-      end: function (success) {
+      end: (success) => {
         if (success === void 0) {
           success = true;
         }
@@ -167,11 +163,11 @@ var PerformanceTracker = /** @class */ (function () {
           success: success,
           metadata: metadata,
         };
-        _this.logMetrics(metrics);
+        this.logMetrics(metrics);
       },
     };
   };
-  PerformanceTracker.prototype.logMetrics = function (metrics) {
+  PerformanceTracker.prototype.logMetrics = (metrics) => {
     console.log("[PERFORMANCE]", metrics);
     // Em produção, enviar para sistema de monitoramento
     if (process.env.NODE_ENV === "production") {
@@ -184,19 +180,19 @@ exports.PerformanceTracker = PerformanceTracker;
 // Instância global
 exports.performanceTracker = PerformanceTracker.getInstance();
 // Funções utilitárias específicas
-var trackMFAVerification = function (data) {
+var trackMFAVerification = (data) => {
   console.log("[MFA PERFORMANCE]", data);
 };
 exports.trackMFAVerification = trackMFAVerification;
-var trackPerformance = function (metric, value) {
+var trackPerformance = (metric, value) => {
   console.log("[PERFORMANCE]", metric, value);
 };
 exports.trackPerformance = trackPerformance;
-var trackLoginPerformance = function (data) {
+var trackLoginPerformance = (data) => {
   console.log("[LOGIN PERFORMANCE]", data);
 };
 exports.trackLoginPerformance = trackLoginPerformance;
-var trackAuthPerformance = function (operation, duration, success) {
+var trackAuthPerformance = (operation, duration, success) => {
   if (success === void 0) {
     success = true;
   }
@@ -209,7 +205,7 @@ var trackAuthPerformance = function (operation, duration, success) {
   console.log("[AUTH PERFORMANCE]", metrics);
 };
 exports.trackAuthPerformance = trackAuthPerformance;
-var trackAPIPerformance = function (endpoint, method, duration, statusCode) {
+var trackAPIPerformance = (endpoint, method, duration, statusCode) => {
   var metrics = {
     duration: duration,
     timestamp: Date.now(),
@@ -222,7 +218,7 @@ var trackAPIPerformance = function (endpoint, method, duration, statusCode) {
 exports.trackAPIPerformance = trackAPIPerformance;
 // Decorator para tracking automático
 function trackOperation(operationName) {
-  return function (target, propertyKey, descriptor) {
+  return (target, propertyKey, descriptor) => {
     var originalMethod = descriptor.value;
     descriptor.value = function () {
       var args = [];

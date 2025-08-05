@@ -7,10 +7,10 @@
  */
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { visionAnalysisEngine } from "@/lib/vision/analysis-engine";
 import type { z } from "zod";
 import type { withErrorMonitoring } from "@/lib/monitoring";
+import type { createClient } from "@/lib/supabase/server";
+import type { visionAnalysisEngine } from "@/lib/vision/analysis-engine";
 
 // Request validation schema
 const analysisRequestSchema = z.object({

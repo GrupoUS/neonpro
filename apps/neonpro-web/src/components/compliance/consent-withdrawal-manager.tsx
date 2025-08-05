@@ -1,6 +1,19 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  FileText,
+  User,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { PatientConsent } from "@/app/types/compliance";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -10,18 +23,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import type {
   Dialog,
   DialogContent,
@@ -31,6 +32,7 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Label } from "@/components/ui/label";
 import type {
   Select,
   SelectContent,
@@ -39,16 +41,14 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type {
-  Calendar,
-  Clock,
-  User,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
-import type { PatientConsent } from "@/app/types/compliance";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useToast } from "@/hooks/use-toast";
 
 interface ConsentWithdrawalManagerProps {

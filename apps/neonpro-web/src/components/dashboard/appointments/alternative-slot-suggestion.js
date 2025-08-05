@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlternativeSlotSuggestion = AlternativeSlotSuggestion;
 var badge_1 = require("@/components/ui/badge");
@@ -145,7 +142,6 @@ var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function AlternativeSlotSuggestion(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     professionalId = _a.professionalId,
     serviceTypeId = _a.serviceTypeId,
@@ -176,18 +172,15 @@ function AlternativeSlotSuggestion(_a) {
       (0, date_fns_1.parseISO)(originalStartTime).getTime()) /
       (1000 * 60),
   );
-  (0, react_1.useEffect)(
-    function () {
-      if (professionalId && serviceTypeId && originalStartTime) {
-        searchAlternativeSlots();
-      }
-    },
-    [professionalId, serviceTypeId, originalStartTime, originalEndTime],
-  );
-  var searchAlternativeSlots = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (professionalId && serviceTypeId && originalStartTime) {
+      searchAlternativeSlots();
+    }
+  }, [professionalId, serviceTypeId, originalStartTime, originalEndTime]);
+  var searchAlternativeSlots = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, queryString, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
@@ -230,12 +223,11 @@ function AlternativeSlotSuggestion(_a) {
         }
       });
     });
-  };
-  var handleSlotSelect = function (slot) {
+  var handleSlotSelect = (slot) => {
     setSelectedSlot(slot.start_time);
     onSlotSelected(slot);
   };
-  var formatSlotTime = function (slot) {
+  var formatSlotTime = (slot) => {
     var startDate = (0, date_fns_1.parseISO)(slot.start_time);
     var endDate = (0, date_fns_1.parseISO)(slot.end_time);
     return ""
@@ -246,27 +238,25 @@ function AlternativeSlotSuggestion(_a) {
       .concat((0, date_fns_1.format)(startDate, "HH:mm", { locale: locale_1.ptBR }), "-")
       .concat((0, date_fns_1.format)(endDate, "HH:mm", { locale: locale_1.ptBR }));
   };
-  var getSlotScore = function (slot) {
-    return slot.score || 0;
-  };
-  var getSlotScoreColor = function (score) {
+  var getSlotScore = (slot) => slot.score || 0;
+  var getSlotScoreColor = (score) => {
     if (score >= 90) return "text-green-600 bg-green-50";
     if (score >= 70) return "text-yellow-600 bg-yellow-50";
     return "text-red-600 bg-red-50";
   };
-  var getSlotScoreLabel = function (score) {
+  var getSlotScoreLabel = (score) => {
     if (score >= 90) return "Excelente";
     if (score >= 70) return "Boa";
     return "Aceitável";
   };
-  var getDaysFromOriginal = function (slotTime) {
+  var getDaysFromOriginal = (slotTime) => {
     var original = (0, date_fns_1.parseISO)(originalStartTime);
     var slot = (0, date_fns_1.parseISO)(slotTime);
     return Math.ceil((slot.getTime() - original.getTime()) / (1000 * 60 * 60 * 24));
   };
-  var groupSlotsByDate = function (slots) {
+  var groupSlotsByDate = (slots) => {
     var groups = {};
-    slots.forEach(function (slot) {
+    slots.forEach((slot) => {
       var date = (0, date_fns_1.format)((0, date_fns_1.parseISO)(slot.start_time), "yyyy-MM-dd");
       if (!groups[date]) {
         groups[date] = [];
@@ -339,7 +329,7 @@ function AlternativeSlotSuggestion(_a) {
             )}
 
             {/* Grouped Slots */}
-            {Object.entries(groupedSlots).map(function (_a) {
+            {Object.entries(groupedSlots).map((_a) => {
               var date = _a[0],
                 slots = _a[1];
               var dateObj = (0, date_fns_1.parseISO)(date);
@@ -366,7 +356,7 @@ function AlternativeSlotSuggestion(_a) {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {slots.map(function (slot, index) {
+                    {slots.map((slot, index) => {
                       var score = getSlotScore(slot);
                       var isSelected = selectedSlot === slot.start_time;
                       return (
@@ -375,9 +365,7 @@ function AlternativeSlotSuggestion(_a) {
                           className={"cursor-pointer transition-all hover:shadow-md ".concat(
                             isSelected ? "ring-2 ring-blue-500 bg-blue-50" : "hover:bg-gray-50",
                           )}
-                          onClick={function () {
-                            return handleSlotSelect(slot);
-                          }}
+                          onClick={() => handleSlotSelect(slot)}
                         >
                           <card_1.CardContent className="p-4">
                             <div className="flex items-start justify-between mb-2">
@@ -411,20 +399,18 @@ function AlternativeSlotSuggestion(_a) {
 
                             {slot.conflicts && slot.conflicts.length > 0 && (
                               <div className="space-y-1">
-                                {slot.conflicts.map(function (conflict, cIndex) {
-                                  return (
-                                    <div
-                                      key={cIndex}
-                                      className={"text-xs p-2 rounded ".concat(
-                                        conflict.severity === "warning"
-                                          ? "bg-amber-50 text-amber-700"
-                                          : "bg-red-50 text-red-700",
-                                      )}
-                                    >
-                                      {conflict.message}
-                                    </div>
-                                  );
-                                })}
+                                {slot.conflicts.map((conflict, cIndex) => (
+                                  <div
+                                    key={cIndex}
+                                    className={"text-xs p-2 rounded ".concat(
+                                      conflict.severity === "warning"
+                                        ? "bg-amber-50 text-amber-700"
+                                        : "bg-red-50 text-red-700",
+                                    )}
+                                  >
+                                    {conflict.message}
+                                  </div>
+                                ))}
                               </div>
                             )}
 
@@ -453,9 +439,7 @@ function AlternativeSlotSuggestion(_a) {
             {/* Action Buttons */}
             <div className="flex items-center gap-3">
               <button_1.Button
-                onClick={function () {
-                  return searchAlternativeSlots();
-                }}
+                onClick={() => searchAlternativeSlots()}
                 variant="outline"
                 size="sm"
                 className="flex items-center gap-2"

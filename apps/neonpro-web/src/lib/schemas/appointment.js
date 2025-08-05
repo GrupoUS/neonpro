@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appointmentNotificationSchema =
   exports.appointmentReportSchema =
@@ -74,12 +73,8 @@ exports.appointmentSchema = zod_1.z.object({
   paymentStatus: zod_1.z.enum(["pending", "partial", "paid", "refunded"]).default("pending"),
   paymentAmount: zod_1.z.number().min(0).optional(),
   // Metadados
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
+  updatedAt: zod_1.z.date().default(() => new Date()),
   createdBy: zod_1.z.string().uuid(),
   updatedBy: zod_1.z.string().uuid().optional(),
   // Informações de cancelamento/reagendamento
@@ -91,9 +86,7 @@ exports.appointmentSchema = zod_1.z.object({
 // Schema para atualização de agendamento
 exports.updateAppointmentSchema = exports.appointmentSchema.partial().extend({
   id: zod_1.z.string().uuid(),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  updatedAt: zod_1.z.date().default(() => new Date()),
   updatedBy: zod_1.z.string().uuid(),
 });
 // Schema para filtros de agendamento

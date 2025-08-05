@@ -1,6 +1,69 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { format } from "date-fns";
+import type {
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  BellOff,
+  Bookmark,
+  BookmarkCheck,
+  Calendar,
+  Calendar as CalendarIcon,
+  Camera,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  Clock as ClockIcon,
+  Download,
+  Edit,
+  ExternalLink,
+  Eye,
+  FileText,
+  Filter,
+  Flag,
+  Heart,
+  History,
+  Info,
+  LineChart,
+  Lock,
+  Mail,
+  MapPin,
+  MessageSquare,
+  MoreHorizontal,
+  Phone,
+  Phone as PhoneIcon,
+  PieChart,
+  Pill,
+  Plus,
+  Print,
+  RefreshCw,
+  Save,
+  Search,
+  Settings,
+  Share2,
+  Shield,
+  Star,
+  Stethoscope,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Unlock,
+  User,
+  UserCheck,
+  UserX,
+  Video,
+  X,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,12 +71,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Dialog,
   DialogContent,
@@ -22,6 +79,9 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -29,75 +89,15 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Progress } from "@/components/ui/progress";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Separator } from "@/components/ui/separator";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { cn } from "@/lib/utils";
-import type { format } from "date-fns";
-import type {
-  User,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  Clock,
-  Heart,
-  Activity,
-  FileText,
-  Camera,
-  Stethoscope,
-  Pill,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Info,
-  Star,
-  Target,
-  TrendingUp,
-  TrendingDown,
-  Edit,
-  Save,
-  X,
-  Plus,
-  Eye,
-  Download,
-  Print,
-  Share2,
-  Settings,
-  Shield,
-  Lock,
-  Unlock,
-  UserCheck,
-  UserX,
-  AlertCircle,
-  Bell,
-  BellOff,
-  Bookmark,
-  BookmarkCheck,
-  Flag,
-  MessageSquare,
-  Phone as PhoneIcon,
-  Video,
-  Calendar as CalendarIcon,
-  Clock as ClockIcon,
-  History,
-  BarChart3,
-  PieChart,
-  LineChart,
-  Filter,
-  Search,
-  RefreshCw,
-  MoreHorizontal,
-  ChevronRight,
-  ChevronDown,
-  ExternalLink,
-} from "lucide-react";
 
 // Import our custom components
 import MedicalHistoryManager from "./medical-history/medical-history-manager";
-import TreatmentPlanManager from "./treatment-plans/treatment-plan-manager";
 import ProgressTrackingManager from "./progress-tracking/progress-tracking-manager";
+import TreatmentPlanManager from "./treatment-plans/treatment-plan-manager";
 
 // Types based on FHIR R4 and existing schemas
 interface PatientProfile {

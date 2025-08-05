@@ -4,7 +4,34 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  ExternalLink,
+  Eye,
+  FileText,
+  Globe,
+  Info,
+  Lock,
+  Settings,
+  Share2,
+  Shield,
+  User,
+  Users,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -12,36 +39,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Shield,
-  Eye,
-  Share2,
-  FileText,
-  Calendar,
-  Users,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Download,
-  Settings,
-  Info,
-  ExternalLink,
-  Lock,
-  Globe,
-  User,
-  Database,
-  Activity,
-  BarChart3,
-} from "lucide-react";
-import type { toast } from "sonner";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ProcessingActivity {
   purpose: string;

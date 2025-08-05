@@ -1,9 +1,9 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { multiLocationInventoryService } from "@/lib/services/multi-location-inventory-service";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MultiLocationStockOverview } from "@/components/inventory/multi-location/multi-location-stock-overview";
+import { multiLocationInventoryService } from "@/lib/services/multi-location-inventory-service";
 
 // Mock the service
 jest.mock("@/lib/services/multi-location-inventory-service");

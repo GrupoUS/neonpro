@@ -6,7 +6,23 @@
 
 "use client";
 
-import type { useState, useMemo } from "react";
+import type {
+  AlertTriangle,
+  Calendar,
+  Clock,
+  DollarSign,
+  Heart,
+  Mail,
+  MessageSquare,
+  Phone,
+  Star,
+  TrendingUp,
+  User,
+} from "lucide-react";
+import type { useMemo, useState } from "react";
+import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,10 +30,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -26,32 +41,17 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import type { Progress } from "@/components/ui/progress";
 import type {
-  User,
-  Phone,
-  Mail,
-  Calendar,
-  DollarSign,
-  TrendingUp,
-  AlertTriangle,
-  Heart,
-  MessageSquare,
-  Clock,
-  Star,
-} from "lucide-react";
-import type {
-  Customer,
   Appointment,
-  LeadScore,
+  Customer,
+  calculateCustomerLifetimeValue,
+  calculateDaysSinceLastVisit,
   calculateLeadScore,
   determineCustomerLifecycle,
-  calculateDaysSinceLastVisit,
-  predictChurnRisk,
-  calculateCustomerLifetimeValue,
   determineNextFollowUpDate,
   generateFollowUpMessage,
+  LeadScore,
+  predictChurnRisk,
 } from "./utils";
 
 interface CustomerManagementProps {

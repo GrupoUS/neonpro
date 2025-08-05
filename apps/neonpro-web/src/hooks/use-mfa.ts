@@ -17,20 +17,20 @@
  * @author NeonPro Development Team
  */
 
-import type { useState, useEffect, useCallback, useRef } from "react";
 import type { createClient } from "@supabase/supabase-js";
+import type { useCallback, useEffect, useRef, useState } from "react";
 import type { getMFAService } from "@/lib/auth/mfa";
 import type {
-  MFAUserSettings,
+  MFAError,
+  MFAEvent,
+  MFAEventType,
   MFASetupRequest,
   MFASetupResult,
+  MFAUserSettings,
   MFAVerificationRequest,
   MFAVerificationResult,
   UseMFAOptions,
   UseMFAReturn,
-  MFAError,
-  MFAEvent,
-  MFAEventType,
 } from "@/types/auth";
 
 // Hook options with defaults

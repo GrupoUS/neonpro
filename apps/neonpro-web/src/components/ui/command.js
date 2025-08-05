@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandSeparator =
   exports.CommandShortcut =
@@ -29,7 +27,7 @@ var cmdk_1 = require("cmdk");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var dialog_1 = require("@/components/ui/dialog");
-var Command = React.forwardRef(function (_a, ref) {
+var Command = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -45,7 +43,7 @@ var Command = React.forwardRef(function (_a, ref) {
 });
 exports.Command = Command;
 Command.displayName = cmdk_1.Command.displayName;
-var CommandDialog = function (_a) {
+var CommandDialog = (_a) => {
   var children = _a.children,
     props = __rest(_a, ["children"]);
   return (
@@ -59,7 +57,7 @@ var CommandDialog = function (_a) {
   );
 };
 exports.CommandDialog = CommandDialog;
-var CommandInput = React.forwardRef(function (_a, ref) {
+var CommandInput = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -78,7 +76,7 @@ var CommandInput = React.forwardRef(function (_a, ref) {
 });
 exports.CommandInput = CommandInput;
 CommandInput.displayName = cmdk_1.Command.Input.displayName;
-var CommandList = React.forwardRef(function (_a, ref) {
+var CommandList = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -91,12 +89,12 @@ var CommandList = React.forwardRef(function (_a, ref) {
 });
 exports.CommandList = CommandList;
 CommandList.displayName = cmdk_1.Command.List.displayName;
-var CommandEmpty = React.forwardRef(function (props, ref) {
-  return <cmdk_1.Command.Empty ref={ref} className="py-6 text-center text-sm" {...props} />;
-});
+var CommandEmpty = React.forwardRef((props, ref) => (
+  <cmdk_1.Command.Empty ref={ref} className="py-6 text-center text-sm" {...props} />
+));
 exports.CommandEmpty = CommandEmpty;
 CommandEmpty.displayName = cmdk_1.Command.Empty.displayName;
-var CommandGroup = React.forwardRef(function (_a, ref) {
+var CommandGroup = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -112,7 +110,7 @@ var CommandGroup = React.forwardRef(function (_a, ref) {
 });
 exports.CommandGroup = CommandGroup;
 CommandGroup.displayName = cmdk_1.Command.Group.displayName;
-var CommandSeparator = React.forwardRef(function (_a, ref) {
+var CommandSeparator = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -125,7 +123,7 @@ var CommandSeparator = React.forwardRef(function (_a, ref) {
 });
 exports.CommandSeparator = CommandSeparator;
 CommandSeparator.displayName = cmdk_1.Command.Separator.displayName;
-var CommandItem = React.forwardRef(function (_a, ref) {
+var CommandItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -141,7 +139,7 @@ var CommandItem = React.forwardRef(function (_a, ref) {
 });
 exports.CommandItem = CommandItem;
 CommandItem.displayName = cmdk_1.Command.Item.displayName;
-var CommandShortcut = function (_a) {
+var CommandShortcut = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

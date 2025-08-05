@@ -3,12 +3,12 @@
  * Test coverage for demand forecasting endpoints with ≥80% accuracy requirement
  */
 
-import { GET } from "@/src/app/api/forecasting/route";
-import {
-  GET as getAllocationsGET,
-  POST as allocationsPOST,
-} from "@/src/app/api/forecasting/resource-allocation/route";
 import { NextRequest } from "next/server";
+import {
+  POST as allocationsPOST,
+  GET as getAllocationsGET,
+} from "@/src/app/api/forecasting/resource-allocation/route";
+import { GET } from "@/src/app/api/forecasting/route";
 
 // Mock NextResponse for Jest compatibility with Next.js 15
 jest.mock("next/server", () => ({

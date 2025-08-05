@@ -1,7 +1,7 @@
+import type { headers } from "next/headers";
 import type { NextRequest, NextResponse } from "next/server";
 import type { pixIntegration } from "@/lib/payments/gateways/pix-integration";
 import type { createClient } from "@/lib/supabase/server";
-import type { headers } from "next/headers";
 
 /**
  * POST /api/payments/pix/webhook

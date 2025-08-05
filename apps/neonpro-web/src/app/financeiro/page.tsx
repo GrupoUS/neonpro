@@ -1,6 +1,28 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  ArrowDownRight,
+  ArrowUpRight,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  DollarSign,
+  Download,
+  FileText,
+  Filter,
+  PieChart,
+  Receipt,
+  Search,
+  TrendingDown,
+  TrendingUp,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,10 +30,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { LoadingSpinner } from "@/components/ui/loading-spinner";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -19,7 +41,6 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Table,
   TableBody,
@@ -28,28 +49,7 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Progress } from "@/components/ui/progress";
-import type { LoadingSpinner } from "@/components/ui/loading-spinner";
-import type {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  CreditCard,
-  Receipt,
-  FileText,
-  Download,
-  Filter,
-  Search,
-  PieChart,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface FinancialStats {
   totalRevenue: number;

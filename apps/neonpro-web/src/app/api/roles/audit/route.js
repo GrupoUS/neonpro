@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,15 +142,15 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = exports.GET = void 0;
 var server_1 = require("next/server");
 var server_2 = require("@/lib/supabase/server");
 var role_validation_1 = require("@/lib/middleware/role-validation");
 exports.GET = (0, role_validation_1.withRoleValidation)(
-  function (request, validation) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (request, validation) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var supabase,
         searchParams,
         page,
@@ -173,7 +170,7 @@ exports.GET = (0, role_validation_1.withRoleValidation)(
         statsError,
         stats,
         error_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 4, , 5]);
@@ -235,7 +232,7 @@ exports.GET = (0, role_validation_1.withRoleValidation)(
             stats =
               (actionStats === null || actionStats === void 0
                 ? void 0
-                : actionStats.reduce(function (acc, log) {
+                : actionStats.reduce((acc, log) => {
                     acc[log.action_type] = (acc[log.action_type] || 0) + 1;
                     return acc;
                   }, {})) || {};
@@ -277,16 +274,15 @@ exports.GET = (0, role_validation_1.withRoleValidation)(
             return [2 /*return*/];
         }
       });
-    });
-  },
+    }),
   {
     requiredRole: ["admin"],
     requiredPermission: ["view_analytics", "manage_system"],
   },
 );
 exports.POST = (0, role_validation_1.withRoleValidation)(
-  function (request, validation) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (request, validation) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var supabase,
         body,
         action_type,
@@ -302,7 +298,7 @@ exports.POST = (0, role_validation_1.withRoleValidation)(
         createdLog,
         logError,
         error_2;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 4, , 5]);
@@ -385,8 +381,7 @@ exports.POST = (0, role_validation_1.withRoleValidation)(
             return [2 /*return*/];
         }
       });
-    });
-  },
+    }),
   {
     requiredRole: ["admin"],
   },

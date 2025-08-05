@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationProvider = NotificationProvider;
 exports.NotificationBell = NotificationBell;
@@ -54,26 +53,22 @@ function NotificationProvider(_a) {
   var timeoutsRef = (0, react_1.useRef)(new Map());
   var audioRef = (0, react_1.useRef)(null);
   // Initialize audio for notifications
-  (0, react_1.useEffect)(
-    function () {
-      if (enableSound && typeof window !== "undefined") {
-        audioRef.current = new Audio("/notification-sound.mp3");
-        audioRef.current.volume = 0.3;
-      }
-    },
-    [enableSound],
-  );
+  (0, react_1.useEffect)(() => {
+    if (enableSound && typeof window !== "undefined") {
+      audioRef.current = new Audio("/notification-sound.mp3");
+      audioRef.current.volume = 0.3;
+    }
+  }, [enableSound]);
   // Cleanup timeouts on unmount
-  (0, react_1.useEffect)(function () {
-    return function () {
-      timeoutsRef.current.forEach(function (timeout) {
-        return clearTimeout(timeout);
-      });
+  (0, react_1.useEffect)(
+    () => () => {
+      timeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
       timeoutsRef.current.clear();
-    };
-  }, []);
+    },
+    [],
+  );
   var playNotificationSound = (0, react_1.useCallback)(
-    function (type) {
+    (type) => {
       if (!enableSound || !audioRef.current) return;
       try {
         // Different sounds for different types could be implemented here
@@ -86,7 +81,7 @@ function NotificationProvider(_a) {
     [enableSound],
   );
   var addNotification = (0, react_1.useCallback)(
-    function (notification) {
+    (notification) => {
       var _a, _b;
       var id = "notification-"
         .concat(Date.now(), "-")
@@ -98,12 +93,12 @@ function NotificationProvider(_a) {
         timestamp: timestamp,
         dismissible: (_b = notification.dismissible) !== null && _b !== void 0 ? _b : true,
       });
-      setNotifications(function (prev) {
+      setNotifications((prev) => {
         var updated = __spreadArray([newNotification], prev, true);
         // Limit the number of notifications
         if (updated.length > maxNotifications) {
           var removed = updated.slice(maxNotifications);
-          removed.forEach(function (notif) {
+          removed.forEach((notif) => {
             var timeout = timeoutsRef.current.get(notif.id);
             if (timeout) {
               clearTimeout(timeout);
@@ -118,7 +113,7 @@ function NotificationProvider(_a) {
       playNotificationSound(notification.type);
       // Auto-dismiss if duration is set
       if (duration > 0) {
-        var timeout = setTimeout(function () {
+        var timeout = setTimeout(() => {
           removeNotification(id);
         }, duration);
         timeoutsRef.current.set(id, timeout);
@@ -127,45 +122,31 @@ function NotificationProvider(_a) {
     },
     [defaultDuration, maxNotifications, playNotificationSound],
   );
-  var removeNotification = (0, react_1.useCallback)(function (id) {
-    setNotifications(function (prev) {
-      return prev.filter(function (notif) {
-        return notif.id !== id;
-      });
-    });
+  var removeNotification = (0, react_1.useCallback)((id) => {
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
     var timeout = timeoutsRef.current.get(id);
     if (timeout) {
       clearTimeout(timeout);
       timeoutsRef.current.delete(id);
     }
   }, []);
-  var clearAllNotifications = (0, react_1.useCallback)(function () {
+  var clearAllNotifications = (0, react_1.useCallback)(() => {
     setNotifications([]);
-    timeoutsRef.current.forEach(function (timeout) {
-      return clearTimeout(timeout);
-    });
+    timeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
     timeoutsRef.current.clear();
   }, []);
-  var markAsRead = (0, react_1.useCallback)(function (id) {
-    setNotifications(function (prev) {
-      return prev.map(function (notif) {
-        return notif.id === id ? __assign(__assign({}, notif), { read: true }) : notif;
-      });
-    });
+  var markAsRead = (0, react_1.useCallback)((id) => {
+    setNotifications((prev) =>
+      prev.map((notif) =>
+        notif.id === id ? __assign(__assign({}, notif), { read: true }) : notif,
+      ),
+    );
   }, []);
-  var markAllAsRead = (0, react_1.useCallback)(function () {
-    setNotifications(function (prev) {
-      return prev.map(function (notif) {
-        return __assign(__assign({}, notif), { read: true });
-      });
-    });
+  var markAllAsRead = (0, react_1.useCallback)(() => {
+    setNotifications((prev) => prev.map((notif) => __assign(__assign({}, notif), { read: true })));
   }, []);
   var getUnreadCount = (0, react_1.useCallback)(
-    function () {
-      return notifications.filter(function (notif) {
-        return !notif.read;
-      }).length;
-    },
+    () => notifications.filter((notif) => !notif.read).length,
     [notifications],
   );
   var contextValue = {
@@ -203,9 +184,9 @@ function NotificationContainer(_a) {
         positionClasses[position],
       )}
     >
-      {notifications.map(function (notification, index) {
-        return <NotificationItem key={notification.id} notification={notification} index={index} />;
-      })}
+      {notifications.map((notification, index) => (
+        <NotificationItem key={notification.id} notification={notification} index={index} />
+      ))}
     </div>
   );
 }
@@ -222,32 +203,22 @@ function NotificationItem(_a) {
     isExiting = _d[0],
     setIsExiting = _d[1];
   // Animation entrance
-  (0, react_1.useEffect)(function () {
-    var timer = setTimeout(function () {
-      return setIsVisible(true);
-    }, 50);
-    return function () {
-      return clearTimeout(timer);
-    };
+  (0, react_1.useEffect)(() => {
+    var timer = setTimeout(() => setIsVisible(true), 50);
+    return () => clearTimeout(timer);
   }, []);
-  var handleDismiss = (0, react_1.useCallback)(
-    function () {
-      setIsExiting(true);
-      setTimeout(function () {
-        removeNotification(notification.id);
-      }, 200);
-    },
-    [notification.id, removeNotification],
-  );
-  var handleClick = (0, react_1.useCallback)(
-    function () {
-      if (!notification.read) {
-        markAsRead(notification.id);
-      }
-    },
-    [notification.id, notification.read, markAsRead],
-  );
-  var getIcon = function () {
+  var handleDismiss = (0, react_1.useCallback)(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      removeNotification(notification.id);
+    }, 200);
+  }, [notification.id, removeNotification]);
+  var handleClick = (0, react_1.useCallback)(() => {
+    if (!notification.read) {
+      markAsRead(notification.id);
+    }
+  }, [notification.id, notification.read, markAsRead]);
+  var getIcon = () => {
     switch (notification.type) {
       case "success":
         return <lucide_react_1.CheckCircle className="h-5 w-5 text-green-500" />;
@@ -260,7 +231,7 @@ function NotificationItem(_a) {
         return <lucide_react_1.Info className="h-5 w-5 text-blue-500" />;
     }
   };
-  var getColorClasses = function () {
+  var getColorClasses = () => {
     switch (notification.type) {
       case "success":
         return "border-green-200 bg-green-50";
@@ -312,7 +283,7 @@ function NotificationItem(_a) {
                 <button_1.Button
                   size="sm"
                   variant="outline"
-                  onClick={function (e) {
+                  onClick={(e) => {
                     e.stopPropagation();
                     notification.action.onClick();
                   }}
@@ -328,7 +299,7 @@ function NotificationItem(_a) {
               size="sm"
               variant="ghost"
               className="h-6 w-6 p-0 hover:bg-gray-200"
-              onClick={function (e) {
+              onClick={(e) => {
                 e.stopPropagation();
                 handleDismiss();
               }}
@@ -357,7 +328,7 @@ function NotificationBell(_a) {
     isOpen = _d[0],
     setIsOpen = _d[1];
   var unreadCount = getUnreadCount();
-  var handleToggle = function () {
+  var handleToggle = () => {
     setIsOpen(!isOpen);
     if (!isOpen && unreadCount > 0) {
       markAllAsRead();
@@ -391,40 +362,38 @@ function NotificationBell(_a) {
           {notifications.length === 0
             ? <div className="p-4 text-center text-gray-500">Nenhuma notificação</div>
             : <div className="max-h-64 overflow-y-auto">
-                {notifications.slice(0, 10).map(function (notification) {
-                  return (
-                    <div
-                      key={notification.id}
-                      className="p-3 border-b last:border-b-0 hover:bg-gray-50"
-                    >
-                      <div className="flex items-start gap-2">
-                        <div className="flex-shrink-0 mt-1">
-                          {notification.type === "success" && (
-                            <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />
-                          )}
-                          {notification.type === "error" && (
-                            <lucide_react_1.AlertCircle className="h-4 w-4 text-red-500" />
-                          )}
-                          {notification.type === "warning" && (
-                            <lucide_react_1.AlertTriangle className="h-4 w-4 text-yellow-500" />
-                          )}
-                          {notification.type === "info" && (
-                            <lucide_react_1.Info className="h-4 w-4 text-blue-500" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900">{notification.title}</p>
-                          {notification.message && (
-                            <p className="text-xs text-gray-600 mt-1">{notification.message}</p>
-                          )}
-                          <p className="text-xs text-gray-400 mt-1">
-                            {new Date(notification.timestamp).toLocaleString()}
-                          </p>
-                        </div>
+                {notifications.slice(0, 10).map((notification) => (
+                  <div
+                    key={notification.id}
+                    className="p-3 border-b last:border-b-0 hover:bg-gray-50"
+                  >
+                    <div className="flex items-start gap-2">
+                      <div className="flex-shrink-0 mt-1">
+                        {notification.type === "success" && (
+                          <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />
+                        )}
+                        {notification.type === "error" && (
+                          <lucide_react_1.AlertCircle className="h-4 w-4 text-red-500" />
+                        )}
+                        {notification.type === "warning" && (
+                          <lucide_react_1.AlertTriangle className="h-4 w-4 text-yellow-500" />
+                        )}
+                        {notification.type === "info" && (
+                          <lucide_react_1.Info className="h-4 w-4 text-blue-500" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900">{notification.title}</p>
+                        {notification.message && (
+                          <p className="text-xs text-gray-600 mt-1">{notification.message}</p>
+                        )}
+                        <p className="text-xs text-gray-400 mt-1">
+                          {new Date(notification.timestamp).toLocaleString()}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>}
         </div>
       )}
@@ -445,33 +414,25 @@ function useNotifications() {
 function useNotificationHelpers() {
   var addNotification = useNotifications().addNotification;
   var showSuccess = (0, react_1.useCallback)(
-    function (title, message, options) {
-      return addNotification(
-        __assign({ type: "success", title: title, message: message }, options),
-      );
-    },
+    (title, message, options) =>
+      addNotification(__assign({ type: "success", title: title, message: message }, options)),
     [addNotification],
   );
   var showError = (0, react_1.useCallback)(
-    function (title, message, options) {
-      return addNotification(
+    (title, message, options) =>
+      addNotification(
         __assign({ type: "error", title: title, message: message, duration: 0 }, options),
-      );
-    },
+      ),
     [addNotification],
   );
   var showWarning = (0, react_1.useCallback)(
-    function (title, message, options) {
-      return addNotification(
-        __assign({ type: "warning", title: title, message: message }, options),
-      );
-    },
+    (title, message, options) =>
+      addNotification(__assign({ type: "warning", title: title, message: message }, options)),
     [addNotification],
   );
   var showInfo = (0, react_1.useCallback)(
-    function (title, message, options) {
-      return addNotification(__assign({ type: "info", title: title, message: message }, options));
-    },
+    (title, message, options) =>
+      addNotification(__assign({ type: "info", title: title, message: message }, options)),
     [addNotification],
   );
   return {

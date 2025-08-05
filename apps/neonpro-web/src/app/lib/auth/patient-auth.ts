@@ -2,8 +2,8 @@
 // Story 1.3, Task 1: Patient Authentication System with LGPD Compliance
 // Created: Healthcare-grade authentication utilities for patient portal
 
-import type { createServerClient } from "@/lib/supabase/server";
 import type { createClient } from "@/lib/supabase/client";
+import type { createServerClient } from "@/lib/supabase/server";
 
 export interface PatientProfile {
   id: string;

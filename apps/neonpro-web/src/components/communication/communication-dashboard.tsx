@@ -1,35 +1,36 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import type {
-  MessageSquare,
-  Users,
-  Send,
-  Clock,
-  CheckCircle,
   AlertCircle,
-  TrendingUp,
-  Mail,
-  Smartphone,
   Bell,
+  CheckCircle,
+  Clock,
+  Mail,
+  MessageSquare,
+  Send,
+  Smartphone,
+  TrendingUp,
+  Users,
 } from "lucide-react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type React from "react";
+import { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Progress } from "@/components/ui/progress";
-import type { StaffChat } from "./staff-chat";
-import type { ConsentManager } from "./consent-manager";
-import type { TemplateManager } from "./template-manager";
-import type {
-  CommunicationConversation,
-  CommunicationTemplate,
-  CommunicationConsent,
-  CommunicationNotification,
-} from "@/types/communication";
-import type { createClient } from "@/lib/supabase/client";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useToast } from "@/hooks/use-toast";
+import type { createClient } from "@/lib/supabase/client";
 import type { cn } from "@/lib/utils";
+import type {
+  CommunicationConsent,
+  CommunicationConversation,
+  CommunicationNotification,
+  CommunicationTemplate,
+} from "@/types/communication";
+import type { ConsentManager } from "./consent-manager";
+import type { StaffChat } from "./staff-chat";
+import type { TemplateManager } from "./template-manager";
 
 export interface CommunicationDashboardProps {
   userId: string;

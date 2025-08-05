@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,11 +128,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createfinancialReportsService = exports.FinancialReportsService = void 0;
 var client_1 = require("@/lib/supabase/client");
-var FinancialReportsService = /** @class */ (function () {
+var FinancialReportsService = /** @class */ (() => {
   function FinancialReportsService() {
     // Usar createClient de forma assíncrona quando necessário
   }
@@ -145,7 +142,7 @@ var FinancialReportsService = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            if (!!this.supabase) return [3 /*break*/, 2];
+            if (this.supabase) return [3 /*break*/, 2];
             _a = this;
             return [4 /*yield*/, (0, client_1.createClient)()];
           case 1:
@@ -207,12 +204,7 @@ var FinancialReportsService = /** @class */ (function () {
                 oldest_invoice_date: "2025-05-20",
               },
             ];
-            return [
-              2 /*return*/,
-              mockAgingData.sort(function (a, b) {
-                return b.total_amount - a.total_amount;
-              }),
-            ];
+            return [2 /*return*/, mockAgingData.sort((a, b) => b.total_amount - a.total_amount)];
           case 2:
             error_1 = _a.sent();
             console.error("Error generating aging report:", error_1);
@@ -282,12 +274,7 @@ var FinancialReportsService = /** @class */ (function () {
                 risk_score: 7,
               },
             ];
-            return [
-              2 /*return*/,
-              mockPerformanceData.sort(function (a, b) {
-                return a.risk_score - b.risk_score;
-              }),
-            ];
+            return [2 /*return*/, mockPerformanceData.sort((a, b) => a.risk_score - b.risk_score)];
           case 2:
             error_2 = _a.sent();
             console.error("Error generating vendor performance report:", error_2);
@@ -369,9 +356,7 @@ var FinancialReportsService = /** @class */ (function () {
             ];
             return [
               2 /*return*/,
-              mockCategoryData.sort(function (a, b) {
-                return b.current_month - a.current_month;
-              }),
+              mockCategoryData.sort((a, b) => b.current_month - a.current_month),
             ];
           case 2:
             error_3 = _a.sent();
@@ -560,23 +545,22 @@ var FinancialReportsService = /** @class */ (function () {
     });
   };
   // Utilitários para formatação
-  FinancialReportsService.prototype.formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  FinancialReportsService.prototype.formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
-  FinancialReportsService.prototype.formatPercentage = function (value, decimals) {
+  FinancialReportsService.prototype.formatPercentage = (value, decimals) => {
     if (decimals === void 0) {
       decimals = 1;
     }
     return "".concat(value.toFixed(decimals), "%");
   };
-  FinancialReportsService.prototype.calculateGrowthRate = function (current, previous) {
+  FinancialReportsService.prototype.calculateGrowthRate = (current, previous) => {
     if (previous === 0) return 0;
     return ((current - previous) / previous) * 100;
   };
-  FinancialReportsService.prototype.getTrendIcon = function (trend) {
+  FinancialReportsService.prototype.getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return "↗️";
@@ -588,12 +572,12 @@ var FinancialReportsService = /** @class */ (function () {
         return "➡️";
     }
   };
-  FinancialReportsService.prototype.getRiskColor = function (riskScore) {
+  FinancialReportsService.prototype.getRiskColor = (riskScore) => {
     if (riskScore <= 3) return "secondary";
     if (riskScore <= 6) return "default";
     return "destructive";
   };
-  FinancialReportsService.prototype.getBudgetHealthColor = function (utilizationPercentage) {
+  FinancialReportsService.prototype.getBudgetHealthColor = (utilizationPercentage) => {
     if (utilizationPercentage <= 80) return "secondary";
     if (utilizationPercentage <= 95) return "default";
     return "destructive";
@@ -601,7 +585,5 @@ var FinancialReportsService = /** @class */ (function () {
   return FinancialReportsService;
 })();
 exports.FinancialReportsService = FinancialReportsService;
-var createfinancialReportsService = function () {
-  return new FinancialReportsService();
-};
+var createfinancialReportsService = () => new FinancialReportsService();
 exports.createfinancialReportsService = createfinancialReportsService;

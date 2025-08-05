@@ -8,9 +8,9 @@
 
 import type { createClient } from "@/lib/supabase/server";
 import type {
+  DemandFactor,
   DemandForecast,
   ForecastModel,
-  DemandFactor,
   ForecastValidation,
 } from "@/types/demand-forecasting";
 
@@ -583,7 +583,7 @@ export class DemandForecastingEngine {
     if (data.length === 0) return 0;
 
     const mean = this.calculateBaselineDemand(data);
-    const squaredDiffs = data.map((d) => Math.pow(d.appointment_count - mean, 2));
+    const squaredDiffs = data.map((d) => (d.appointment_count - mean) ** 2);
     return squaredDiffs.reduce((a, b) => a + b, 0) / data.length;
   }
 
@@ -696,18 +696,20 @@ export class DemandForecastingEngine {
         case "daily":
           key = date.toISOString().split("T")[0];
           break;
-        case "weekly":
+        case "weekly": {
           const weekStart = new Date(date);
           weekStart.setDate(date.getDate() - date.getDay());
           key = weekStart.toISOString().split("T")[0];
           break;
+        }
         case "monthly":
           key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
           break;
-        case "quarterly":
+        case "quarterly": {
           const quarter = Math.floor(date.getMonth() / 3) + 1;
           key = `${date.getFullYear()}-Q${quarter}`;
           break;
+        }
         default:
           key = date.toISOString().split("T")[0];
       }
@@ -1425,8 +1427,7 @@ export function detectSeasonalPatterns(weeklyPatterns: any) {
     const demands = weeklyPatterns.map((w: any) => w.demand || w.actual || 0);
     const mean = demands.reduce((a: number, b: number) => a + b, 0) / demands.length;
     const variance =
-      demands.reduce((acc: number, val: number) => acc + Math.pow(val - mean, 2), 0) /
-      demands.length;
+      demands.reduce((acc: number, val: number) => acc + (val - mean) ** 2, 0) / demands.length;
     seasonalityStrength = Math.sqrt(variance) / mean;
 
     // Determine trend direction

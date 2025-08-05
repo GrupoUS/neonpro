@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComplianceAssessmentPanel = ComplianceAssessmentPanel;
 var react_1 = require("react");
@@ -165,7 +162,6 @@ var textarea_1 = require("@/components/ui/textarea");
 var lucide_react_1 = require("lucide-react");
 var useLGPD_1 = require("@/hooks/useLGPD");
 function ComplianceAssessmentPanel(_a) {
-  var _this = this;
   var _b;
   var className = _a.className;
   var _c = (0, useLGPD_1.useComplianceAssessment)(),
@@ -205,7 +201,7 @@ function ComplianceAssessmentPanel(_a) {
   var filteredAssessments =
     (assessments === null || assessments === void 0
       ? void 0
-      : assessments.filter(function (assessment) {
+      : assessments.filter((assessment) => {
           var _a, _b;
           var matchesSearch =
             ((_a = assessment.name) === null || _a === void 0
@@ -218,7 +214,7 @@ function ComplianceAssessmentPanel(_a) {
           var matchesType = typeFilter === "all" || assessment.type === typeFilter;
           return matchesSearch && matchesStatus && matchesType;
         })) || [];
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "pending":
         return (
@@ -252,7 +248,7 @@ function ComplianceAssessmentPanel(_a) {
         return <badge_1.Badge variant="secondary">{status}</badge_1.Badge>;
     }
   };
-  var getScoreBadge = function (score) {
+  var getScoreBadge = (score) => {
     if (score >= 90)
       return (
         <badge_1.Badge variant="default" className="bg-green-600">
@@ -273,16 +269,16 @@ function ComplianceAssessmentPanel(_a) {
       );
     return <badge_1.Badge variant="destructive">Crítico</badge_1.Badge>;
   };
-  var getScoreColor = function (score) {
+  var getScoreColor = (score) => {
     if (score >= 90) return "text-green-600";
     if (score >= 70) return "text-yellow-600";
     if (score >= 50) return "text-orange-600";
     return "text-red-600";
   };
-  var handleCreateAssessment = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateAssessment = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -301,11 +297,10 @@ function ComplianceAssessmentPanel(_a) {
         }
       });
     });
-  };
-  var handleRunAutomatedAssessment = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRunAutomatedAssessment = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsRunningAutomated(true);
@@ -328,36 +323,25 @@ function ComplianceAssessmentPanel(_a) {
         }
       });
     });
-  };
   // Calcular estatísticas
   var stats = {
     total: (assessments === null || assessments === void 0 ? void 0 : assessments.length) || 0,
     completed:
       (assessments === null || assessments === void 0
         ? void 0
-        : assessments.filter(function (a) {
-            return a.status === "completed";
-          }).length) || 0,
+        : assessments.filter((a) => a.status === "completed").length) || 0,
     pending:
       (assessments === null || assessments === void 0
         ? void 0
-        : assessments.filter(function (a) {
-            return a.status === "pending";
-          }).length) || 0,
+        : assessments.filter((a) => a.status === "pending").length) || 0,
     averageScore: (assessments === null || assessments === void 0 ? void 0 : assessments.length)
-      ? Math.round(
-          assessments.reduce(function (sum, a) {
-            return sum + (a.score || 0);
-          }, 0) / assessments.length,
-        )
+      ? Math.round(assessments.reduce((sum, a) => sum + (a.score || 0), 0) / assessments.length)
       : 0,
   };
   var latestAssessment =
     assessments === null || assessments === void 0
       ? void 0
-      : assessments.find(function (a) {
-          return a.status === "completed";
-        });
+      : assessments.find((a) => a.status === "completed");
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -516,13 +500,11 @@ function ComplianceAssessmentPanel(_a) {
                 <div className="space-y-2">
                   {((_b = latestAssessment.recommendations) === null || _b === void 0
                     ? void 0
-                    : _b.slice(0, 3).map(function (rec, index) {
-                        return (
-                          <div key={index} className="text-sm bg-muted p-2 rounded">
-                            {rec}
-                          </div>
-                        );
-                      })) || (
+                    : _b.slice(0, 3).map((rec, index) => (
+                        <div key={index} className="text-sm bg-muted p-2 rounded">
+                          {rec}
+                        </div>
+                      ))) || (
                     <div className="text-sm text-muted-foreground">
                       Nenhuma recomendação específica
                     </div>
@@ -556,9 +538,7 @@ function ComplianceAssessmentPanel(_a) {
                       id="search"
                       placeholder="Nome ou descrição..."
                       value={searchTerm}
-                      onChange={function (e) {
-                        return setSearchTerm(e.target.value);
-                      }}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-8"
                     />
                   </div>
@@ -597,7 +577,7 @@ function ComplianceAssessmentPanel(_a) {
                 <div className="flex items-end">
                   <button_1.Button
                     variant="outline"
-                    onClick={function () {
+                    onClick={() => {
                       setSearchTerm("");
                       setStatusFilter("all");
                       setTypeFilter("all");
@@ -632,152 +612,143 @@ function ComplianceAssessmentPanel(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {filteredAssessments.map(function (assessment) {
-                    return (
-                      <table_1.TableRow key={assessment.id}>
-                        <table_1.TableCell>
-                          <div>
-                            <div className="font-medium">{assessment.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {assessment.description}
-                            </div>
+                  {filteredAssessments.map((assessment) => (
+                    <table_1.TableRow key={assessment.id}>
+                      <table_1.TableCell>
+                        <div>
+                          <div className="font-medium">{assessment.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {assessment.description}
                           </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge
-                            variant={assessment.type === "automated" ? "default" : "outline"}
-                          >
-                            {assessment.type === "automated" ? "Automatizada" : "Manual"}
-                          </badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell>{getStatusBadge(assessment.status)}</table_1.TableCell>
-                        <table_1.TableCell>
-                          {assessment.score !== null
-                            ? <div className="flex items-center gap-2">
-                                <span
-                                  className={"font-semibold ".concat(
-                                    getScoreColor(assessment.score),
-                                  )}
-                                >
-                                  {assessment.score}%
-                                </span>
-                                {getScoreBadge(assessment.score)}
-                              </div>
-                            : <span className="text-muted-foreground">-</span>}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {new Date(assessment.created_at).toLocaleDateString("pt-BR")}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {assessment.completed_at
-                            ? new Date(assessment.completed_at).toLocaleDateString("pt-BR")
-                            : <span className="text-muted-foreground">-</span>}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <dialog_1.Dialog>
-                            <dialog_1.DialogTrigger asChild>
-                              <button_1.Button size="sm" variant="outline">
-                                <lucide_react_1.Eye className="h-3 w-3 mr-1" />
-                                Ver Detalhes
-                              </button_1.Button>
-                            </dialog_1.DialogTrigger>
-                            <dialog_1.DialogContent className="max-w-4xl">
-                              <dialog_1.DialogHeader>
-                                <dialog_1.DialogTitle>{assessment.name}</dialog_1.DialogTitle>
-                                <dialog_1.DialogDescription>
-                                  {assessment.description}
-                                </dialog_1.DialogDescription>
-                              </dialog_1.DialogHeader>
-                              <div className="space-y-6">
-                                {/* Informações gerais */}
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <label_1.Label>Tipo</label_1.Label>
-                                    <p className="text-sm">
-                                      {assessment.type === "automated" ? "Automatizada" : "Manual"}
-                                    </p>
-                                  </div>
-                                  <div>
-                                    <label_1.Label>Status</label_1.Label>
-                                    <div className="mt-1">{getStatusBadge(assessment.status)}</div>
-                                  </div>
-                                  <div>
-                                    <label_1.Label>Criada em</label_1.Label>
-                                    <p className="text-sm">
-                                      {new Date(assessment.created_at).toLocaleString("pt-BR")}
-                                    </p>
-                                  </div>
-                                  {assessment.completed_at && (
-                                    <div>
-                                      <label_1.Label>Concluída em</label_1.Label>
-                                      <p className="text-sm">
-                                        {new Date(assessment.completed_at).toLocaleString("pt-BR")}
-                                      </p>
-                                    </div>
-                                  )}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge
+                          variant={assessment.type === "automated" ? "default" : "outline"}
+                        >
+                          {assessment.type === "automated" ? "Automatizada" : "Manual"}
+                        </badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell>{getStatusBadge(assessment.status)}</table_1.TableCell>
+                      <table_1.TableCell>
+                        {assessment.score !== null
+                          ? <div className="flex items-center gap-2">
+                              <span
+                                className={"font-semibold ".concat(getScoreColor(assessment.score))}
+                              >
+                                {assessment.score}%
+                              </span>
+                              {getScoreBadge(assessment.score)}
+                            </div>
+                          : <span className="text-muted-foreground">-</span>}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {new Date(assessment.created_at).toLocaleDateString("pt-BR")}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {assessment.completed_at
+                          ? new Date(assessment.completed_at).toLocaleDateString("pt-BR")
+                          : <span className="text-muted-foreground">-</span>}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <dialog_1.Dialog>
+                          <dialog_1.DialogTrigger asChild>
+                            <button_1.Button size="sm" variant="outline">
+                              <lucide_react_1.Eye className="h-3 w-3 mr-1" />
+                              Ver Detalhes
+                            </button_1.Button>
+                          </dialog_1.DialogTrigger>
+                          <dialog_1.DialogContent className="max-w-4xl">
+                            <dialog_1.DialogHeader>
+                              <dialog_1.DialogTitle>{assessment.name}</dialog_1.DialogTitle>
+                              <dialog_1.DialogDescription>
+                                {assessment.description}
+                              </dialog_1.DialogDescription>
+                            </dialog_1.DialogHeader>
+                            <div className="space-y-6">
+                              {/* Informações gerais */}
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label_1.Label>Tipo</label_1.Label>
+                                  <p className="text-sm">
+                                    {assessment.type === "automated" ? "Automatizada" : "Manual"}
+                                  </p>
                                 </div>
-
-                                {/* Pontuação */}
-                                {assessment.score !== null && (
+                                <div>
+                                  <label_1.Label>Status</label_1.Label>
+                                  <div className="mt-1">{getStatusBadge(assessment.status)}</div>
+                                </div>
+                                <div>
+                                  <label_1.Label>Criada em</label_1.Label>
+                                  <p className="text-sm">
+                                    {new Date(assessment.created_at).toLocaleString("pt-BR")}
+                                  </p>
+                                </div>
+                                {assessment.completed_at && (
                                   <div>
-                                    <label_1.Label>Pontuação de Conformidade</label_1.Label>
-                                    <div className="mt-2">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <span
-                                          className={"text-2xl font-bold ".concat(
-                                            getScoreColor(assessment.score),
-                                          )}
-                                        >
-                                          {assessment.score}%
-                                        </span>
-                                        {getScoreBadge(assessment.score)}
-                                      </div>
-                                      <progress_1.Progress
-                                        value={assessment.score}
-                                        className="mb-2"
-                                      />
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Recomendações */}
-                                {assessment.recommendations &&
-                                  assessment.recommendations.length > 0 && (
-                                    <div>
-                                      <label_1.Label>Recomendações</label_1.Label>
-                                      <div className="mt-2 space-y-2">
-                                        {assessment.recommendations.map(function (rec, index) {
-                                          return (
-                                            <div
-                                              key={index}
-                                              className="text-sm bg-muted p-3 rounded"
-                                            >
-                                              {rec}
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-                                    </div>
-                                  )}
-
-                                {/* Resultados detalhados */}
-                                {assessment.results && (
-                                  <div>
-                                    <label_1.Label>Resultados Detalhados</label_1.Label>
-                                    <div className="mt-2">
-                                      <pre className="text-sm bg-muted p-3 rounded overflow-auto max-h-40">
-                                        {JSON.stringify(assessment.results, null, 2)}
-                                      </pre>
-                                    </div>
+                                    <label_1.Label>Concluída em</label_1.Label>
+                                    <p className="text-sm">
+                                      {new Date(assessment.completed_at).toLocaleString("pt-BR")}
+                                    </p>
                                   </div>
                                 )}
                               </div>
-                            </dialog_1.DialogContent>
-                          </dialog_1.Dialog>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+
+                              {/* Pontuação */}
+                              {assessment.score !== null && (
+                                <div>
+                                  <label_1.Label>Pontuação de Conformidade</label_1.Label>
+                                  <div className="mt-2">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <span
+                                        className={"text-2xl font-bold ".concat(
+                                          getScoreColor(assessment.score),
+                                        )}
+                                      >
+                                        {assessment.score}%
+                                      </span>
+                                      {getScoreBadge(assessment.score)}
+                                    </div>
+                                    <progress_1.Progress
+                                      value={assessment.score}
+                                      className="mb-2"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Recomendações */}
+                              {assessment.recommendations &&
+                                assessment.recommendations.length > 0 && (
+                                  <div>
+                                    <label_1.Label>Recomendações</label_1.Label>
+                                    <div className="mt-2 space-y-2">
+                                      {assessment.recommendations.map((rec, index) => (
+                                        <div key={index} className="text-sm bg-muted p-3 rounded">
+                                          {rec}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                              {/* Resultados detalhados */}
+                              {assessment.results && (
+                                <div>
+                                  <label_1.Label>Resultados Detalhados</label_1.Label>
+                                  <div className="mt-2">
+                                    <pre className="text-sm bg-muted p-3 rounded overflow-auto max-h-40">
+                                      {JSON.stringify(assessment.results, null, 2)}
+                                    </pre>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </dialog_1.DialogContent>
+                        </dialog_1.Dialog>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
 
@@ -804,11 +775,11 @@ function ComplianceAssessmentPanel(_a) {
                 <input_1.Input
                   id="name"
                   value={newAssessment.name}
-                  onChange={function (e) {
-                    return setNewAssessment(
+                  onChange={(e) =>
+                    setNewAssessment(
                       __assign(__assign({}, newAssessment), { name: e.target.value }),
-                    );
-                  }}
+                    )
+                  }
                   placeholder="Ex: Avaliação Trimestral Q1 2024"
                 />
               </div>
@@ -818,11 +789,11 @@ function ComplianceAssessmentPanel(_a) {
                 <textarea_1.Textarea
                   id="description"
                   value={newAssessment.description}
-                  onChange={function (e) {
-                    return setNewAssessment(
+                  onChange={(e) =>
+                    setNewAssessment(
                       __assign(__assign({}, newAssessment), { description: e.target.value }),
-                    );
-                  }}
+                    )
+                  }
                   placeholder="Descreva o objetivo e escopo desta avaliação..."
                   rows={3}
                 />
@@ -832,9 +803,9 @@ function ComplianceAssessmentPanel(_a) {
                 <label_1.Label htmlFor="type">Tipo de Avaliação</label_1.Label>
                 <select_1.Select
                   value={newAssessment.type}
-                  onValueChange={function (value) {
-                    return setNewAssessment(__assign(__assign({}, newAssessment), { type: value }));
-                  }}
+                  onValueChange={(value) =>
+                    setNewAssessment(__assign(__assign({}, newAssessment), { type: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Selecione o tipo" />
@@ -858,9 +829,7 @@ function ComplianceAssessmentPanel(_a) {
                 </button_1.Button>
                 <button_1.Button
                   variant="outline"
-                  onClick={function () {
-                    return setNewAssessment({ name: "", description: "", type: "manual" });
-                  }}
+                  onClick={() => setNewAssessment({ name: "", description: "", type: "manual" })}
                 >
                   Limpar
                 </button_1.Button>

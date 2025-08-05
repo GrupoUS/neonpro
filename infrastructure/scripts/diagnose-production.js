@@ -5,8 +5,8 @@
  * Verifica configurações, variáveis de ambiente e rotas
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const _path = require("node:path");
 
 console.log("🔍 DIAGNÓSTICO DE PRODUÇÃO - NEONPRO");
 console.log("=".repeat(50));
@@ -22,7 +22,7 @@ const requiredFiles = [
   "vercel.json",
 ];
 
-let missingFiles = [];
+const missingFiles = [];
 requiredFiles.forEach((file) => {
   if (fs.existsSync(file)) {
     console.log(`✅ ${file}`);

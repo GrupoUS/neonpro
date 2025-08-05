@@ -156,7 +156,7 @@ class MockNextResponse {
     return new MockNextResponse(null, { status, headers: { location: url } });
   }
 
-  static rewrite(url: string) {
+  static rewrite(_url: string) {
     return new MockNextResponse(null, { status: 200 });
   }
 
@@ -700,6 +700,3 @@ jest.mock("react", () => ({
   useLayoutEffect: jest.fn(),
   useDebugValue: jest.fn(),
 }));
-
-// Export for use in tests
-export {};

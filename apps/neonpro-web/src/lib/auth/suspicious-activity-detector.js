@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Suspicious Activity Detector
  * Story 1.4 - Task 4: Detection and monitoring of suspicious activities
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,7 +166,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SuspiciousActivityDetector = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -307,7 +304,7 @@ var DEFAULT_DETECTION_RULES = [
     applicableRoles: ["owner", "manager", "staff", "patient"],
   },
 ];
-var SuspiciousActivityDetector = /** @class */ (function () {
+var SuspiciousActivityDetector = /** @class */ (() => {
   function SuspiciousActivityDetector(supabaseUrl, supabaseKey, customRules) {
     this.userBaselines = new Map();
     this.activityBuffer = new Map();
@@ -401,16 +398,13 @@ var SuspiciousActivityDetector = /** @class */ (function () {
               return [2 /*return*/, alerts];
             }
             baseline = this.userBaselines.get(userId);
-            if (!!baseline) return [3 /*break*/, 2];
+            if (baseline) return [3 /*break*/, 2];
             return [4 /*yield*/, this.establishUserBaseline(userId)];
           case 1:
             baseline = _c.sent();
             _c.label = 2;
           case 2:
-            (_i = 0),
-              (_a = this.detectionRules.filter(function (r) {
-                return r.isEnabled;
-              }));
+            (_i = 0), (_a = this.detectionRules.filter((r) => r.isEnabled));
             _c.label = 3;
           case 3:
             if (!(_i < _a.length)) return [3 /*break*/, 6];
@@ -522,7 +516,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
           case 0:
             _b.trys.push([0, 5, , 6]);
             existingBaseline = this.userBaselines.get(userId);
-            if (!!existingBaseline) return [3 /*break*/, 2];
+            if (existingBaseline) return [3 /*break*/, 2];
             return [4 /*yield*/, this.establishUserBaseline(userId)];
           case 1:
             _b.sent();
@@ -685,9 +679,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
    * Add or update detection rule
    */
   SuspiciousActivityDetector.prototype.addDetectionRule = function (rule) {
-    var existingIndex = this.detectionRules.findIndex(function (r) {
-      return r.ruleId === rule.ruleId;
-    });
+    var existingIndex = this.detectionRules.findIndex((r) => r.ruleId === rule.ruleId);
     if (existingIndex >= 0) {
       this.detectionRules[existingIndex] = rule;
     } else {
@@ -698,9 +690,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
    * Remove detection rule
    */
   SuspiciousActivityDetector.prototype.removeDetectionRule = function (ruleId) {
-    this.detectionRules = this.detectionRules.filter(function (r) {
-      return r.ruleId !== ruleId;
-    });
+    this.detectionRules = this.detectionRules.filter((r) => r.ruleId !== ruleId);
   };
   /**
    * Get detection statistics
@@ -779,13 +769,13 @@ var SuspiciousActivityDetector = /** @class */ (function () {
               }
             }
             topUsers = Object.entries(userAlertCounts)
-              .sort(function (_a, _b) {
+              .sort((_a, _b) => {
                 var a = _a[1];
                 var b = _b[1];
                 return b - a;
               })
               .slice(0, 10)
-              .map(function (_a) {
+              .map((_a) => {
                 var userId = _a[0],
                   alertCount = _a[1];
                 return { userId: userId, alertCount: alertCount };
@@ -828,9 +818,8 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     this.userBaselines.clear();
   };
   // Private methods
-  SuspiciousActivityDetector.prototype.isCriticalActivity = function (activityType) {
-    return ["login", "permission_change", "user_creation", "bulk_operation"].includes(activityType);
-  };
+  SuspiciousActivityDetector.prototype.isCriticalActivity = (activityType) =>
+    ["login", "permission_change", "user_creation", "bulk_operation"].includes(activityType);
   SuspiciousActivityDetector.prototype.applyDetectionRule = function (
     rule,
     userId,
@@ -850,18 +839,12 @@ var SuspiciousActivityDetector = /** @class */ (function () {
         timeWindow =
           ((_a = rule.conditions[0]) === null || _a === void 0 ? void 0 : _a.timeWindow) || 60;
         windowStart = new Date(Date.now() - timeWindow * 60 * 1000);
-        windowActivities = activities.filter(function (a) {
-          return a.timestamp >= windowStart;
-        });
-        conditionResults = rule.conditions.map(function (condition) {
-          return _this.evaluateCondition(condition, windowActivities, baseline);
-        });
+        windowActivities = activities.filter((a) => a.timestamp >= windowStart);
+        conditionResults = rule.conditions.map((condition) =>
+          _this.evaluateCondition(condition, windowActivities, baseline),
+        );
         // All conditions must be met
-        if (
-          conditionResults.every(function (result) {
-            return result.met;
-          })
-        ) {
+        if (conditionResults.every((result) => result.met)) {
           alert_3 = {
             alertId: "alert_"
               .concat(Date.now(), "_")
@@ -903,19 +886,15 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     var value;
     switch (condition.field) {
       case "api_calls":
-        value = activities.filter(function (a) {
-          return a.activityType === "api_call";
-        }).length;
+        value = activities.filter((a) => a.activityType === "api_call").length;
         break;
       case "failed_logins":
-        value = activities.filter(function (a) {
-          return a.activityType === "login" && a.metadata.statusCode >= 400;
-        }).length;
+        value = activities.filter(
+          (a) => a.activityType === "login" && a.metadata.statusCode >= 400,
+        ).length;
         break;
       case "data_volume":
-        value = activities.reduce(function (sum, a) {
-          return sum + (a.metadata.dataVolume || 0);
-        }, 0);
+        value = activities.reduce((sum, a) => sum + (a.metadata.dataVolume || 0), 0);
         break;
       case "distance_km":
         value = this.calculateMaxDistance(activities);
@@ -929,7 +908,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     var met = this.compareValues(value, condition.operator, condition.threshold);
     return { met: met, value: value, threshold: condition.threshold };
   };
-  SuspiciousActivityDetector.prototype.compareValues = function (value, operator, threshold) {
+  SuspiciousActivityDetector.prototype.compareValues = (value, operator, threshold) => {
     switch (operator) {
       case "gt":
         return value > threshold;
@@ -974,63 +953,39 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
-  SuspiciousActivityDetector.prototype.toRadians = function (degrees) {
-    return degrees * (Math.PI / 180);
-  };
-  SuspiciousActivityDetector.prototype.calculateMouseMovementVariance = function (activities) {
-    var movements = activities
-      .map(function (a) {
-        return a.metadata.mouseMovements || 0;
-      })
-      .filter(function (m) {
-        return m > 0;
-      });
+  SuspiciousActivityDetector.prototype.toRadians = (degrees) => degrees * (Math.PI / 180);
+  SuspiciousActivityDetector.prototype.calculateMouseMovementVariance = (activities) => {
+    var movements = activities.map((a) => a.metadata.mouseMovements || 0).filter((m) => m > 0);
     if (movements.length === 0) return 0;
-    var mean =
-      movements.reduce(function (sum, m) {
-        return sum + m;
-      }, 0) / movements.length;
-    var variance =
-      movements.reduce(function (sum, m) {
-        return sum + Math.pow(m - mean, 2);
-      }, 0) / movements.length;
+    var mean = movements.reduce((sum, m) => sum + m, 0) / movements.length;
+    var variance = movements.reduce((sum, m) => sum + (m - mean) ** 2, 0) / movements.length;
     return Math.sqrt(variance);
   };
-  SuspiciousActivityDetector.prototype.calculateBaselinePatterns = function (activities) {
+  SuspiciousActivityDetector.prototype.calculateBaselinePatterns = (activities) => {
     // This is a simplified implementation
     // In production, you'd use more sophisticated statistical analysis
     var loginTimes = activities
-      .filter(function (a) {
-        return a.activity_type === "login";
-      })
-      .map(function (a) {
-        return new Date(a.timestamp).getHours();
-      });
+      .filter((a) => a.activity_type === "login")
+      .map((a) => new Date(a.timestamp).getHours());
     var sessionDurations = activities
-      .filter(function (a) {
-        return a.activity_type === "logout";
-      })
-      .map(function (a) {
+      .filter((a) => a.activity_type === "logout")
+      .map((a) => {
         var _a;
         return ((_a = a.metadata) === null || _a === void 0 ? void 0 : _a.sessionDuration) || 0;
       })
-      .filter(function (d) {
-        return d > 0;
-      });
+      .filter((d) => d > 0);
     return {
       typicalLoginTimes: __spreadArray([], new Set(loginTimes), true),
       typicalDaysOfWeek: [1, 2, 3, 4, 5], // Weekdays
       averageSessionDuration:
         sessionDurations.length > 0
-          ? sessionDurations.reduce(function (sum, d) {
-              return sum + d;
-            }, 0) / sessionDurations.length
+          ? sessionDurations.reduce((sum, d) => sum + d, 0) / sessionDurations.length
           : 30,
       typicalLocations: __spreadArray(
         [],
         new Set(
           activities
-            .map(function (a) {
+            .map((a) => {
               var _a;
               return (_a = a.location) === null || _a === void 0 ? void 0 : _a.country;
             })
@@ -1040,13 +995,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
       ),
       commonDevices: __spreadArray(
         [],
-        new Set(
-          activities
-            .map(function (a) {
-              return a.device_id;
-            })
-            .filter(Boolean),
-        ),
+        new Set(activities.map((a) => a.device_id).filter(Boolean)),
         true,
       ),
       averageApiCallsPerHour: 10,
@@ -1064,10 +1013,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
       },
     };
   };
-  SuspiciousActivityDetector.prototype.calculateAnomalyThresholds = function (
-    userRole,
-    activities,
-  ) {
+  SuspiciousActivityDetector.prototype.calculateAnomalyThresholds = (userRole, activities) => {
     // Role-based thresholds
     var baseThresholds = {
       owner: {
@@ -1105,7 +1051,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     };
     return baseThresholds[userRole];
   };
-  SuspiciousActivityDetector.prototype.mergePatterns = function (existing, recent, weight) {
+  SuspiciousActivityDetector.prototype.mergePatterns = (existing, recent, weight) => {
     // Weighted merge of patterns (simplified)
     return __assign(__assign({}, existing), {
       averageSessionDuration:
@@ -1116,7 +1062,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
         existing.typicalDataVolume * weight + recent.typicalDataVolume * (1 - weight),
     });
   };
-  SuspiciousActivityDetector.prototype.calculateAlertRiskScore = function (rule, conditionResults) {
+  SuspiciousActivityDetector.prototype.calculateAlertRiskScore = (rule, conditionResults) => {
     var baseSeverityScore = {
       low: 0.25,
       medium: 0.5,
@@ -1125,7 +1071,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     }[rule.severity];
     // Calculate deviation from thresholds
     var deviationScore =
-      conditionResults.reduce(function (sum, result) {
+      conditionResults.reduce((sum, result) => {
         if (typeof result.value === "number" && typeof result.threshold === "number") {
           var deviation = Math.abs(result.value - result.threshold) / result.threshold;
           return sum + Math.min(deviation, 1);
@@ -1134,14 +1080,9 @@ var SuspiciousActivityDetector = /** @class */ (function () {
       }, 0) / conditionResults.length;
     return Math.min(baseSeverityScore + deviationScore * 0.3, 1.0);
   };
-  SuspiciousActivityDetector.prototype.generateAlertDescription = function (
-    rule,
-    conditionResults,
-  ) {
+  SuspiciousActivityDetector.prototype.generateAlertDescription = (rule, conditionResults) => {
     var values = conditionResults
-      .map(function (r) {
-        return "".concat(r.value, " (threshold: ").concat(r.threshold, ")");
-      })
+      .map((r) => "".concat(r.value, " (threshold: ").concat(r.threshold, ")"))
       .join(", ");
     return "".concat(rule.description, ". Detected values: ").concat(values);
   };
@@ -1195,20 +1136,19 @@ var SuspiciousActivityDetector = /** @class */ (function () {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 5, , 6]);
-            rule = this.detectionRules.find(function (r) {
-              return r.alertType === alert.alertType;
-            });
+            rule = this.detectionRules.find((r) => r.alertType === alert.alertType);
             if (!rule || !rule.actions.length) {
               return [2 /*return*/];
             }
             _loop_1 = function (action) {
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
                     if (!(action.delay > 0)) return [3 /*break*/, 1];
-                    setTimeout(function () {
-                      return _this.executeAction(alert, action.action);
-                    }, action.delay * 1000);
+                    setTimeout(
+                      () => _this.executeAction(alert, action.action),
+                      action.delay * 1000,
+                    );
                     return [3 /*break*/, 3];
                   case 1:
                     return [4 /*yield*/, this_1.executeAction(alert, action.action)];
@@ -1371,73 +1311,71 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   };
   SuspiciousActivityDetector.prototype.getUserRole = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would fetch the user's role from your user management system
         // For now, return a default role
         return [2 /*return*/, "staff"];
       });
     });
   };
-  SuspiciousActivityDetector.prototype.mapDatabaseToAlert = function (data) {
-    return {
-      alertId: data.alert_id,
-      userId: data.user_id,
-      sessionId: data.session_id,
-      deviceId: data.device_id,
-      alertType: data.alert_type,
-      severity: data.severity,
-      riskScore: data.risk_score,
-      description: data.description,
-      detectedAt: new Date(data.detected_at),
-      patterns: data.patterns || [],
-      evidence: data.evidence || {},
-      isResolved: data.is_resolved,
-      resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
-      resolvedBy: data.resolved_by,
-      resolution: data.resolution,
-      falsePositive: data.false_positive,
-      automatedResponse: data.automated_response,
-    };
-  };
+  SuspiciousActivityDetector.prototype.mapDatabaseToAlert = (data) => ({
+    alertId: data.alert_id,
+    userId: data.user_id,
+    sessionId: data.session_id,
+    deviceId: data.device_id,
+    alertType: data.alert_type,
+    severity: data.severity,
+    riskScore: data.risk_score,
+    description: data.description,
+    detectedAt: new Date(data.detected_at),
+    patterns: data.patterns || [],
+    evidence: data.evidence || {},
+    isResolved: data.is_resolved,
+    resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
+    resolvedBy: data.resolved_by,
+    resolution: data.resolution,
+    falsePositive: data.false_positive,
+    automatedResponse: data.automated_response,
+  });
   SuspiciousActivityDetector.prototype.startProcessingInterval = function () {
-    var _this = this;
-    this.processingInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var _i, _a, userId, error_13;
-        return __generator(this, function (_b) {
-          switch (_b.label) {
-            case 0:
-              _b.trys.push([0, 5, , 6]);
-              (_i = 0), (_a = this.activityBuffer.keys());
-              _b.label = 1;
-            case 1:
-              if (!(_i < _a.length)) return [3 /*break*/, 4];
-              userId = _a[_i];
-              return [4 /*yield*/, this.analyzeUserActivity(userId)];
-            case 2:
-              _b.sent();
-              _b.label = 3;
-            case 3:
-              _i++;
-              return [3 /*break*/, 1];
-            case 4:
-              return [3 /*break*/, 6];
-            case 5:
-              error_13 = _b.sent();
-              console.error("Activity processing failed:", error_13);
-              return [3 /*break*/, 6];
-            case 6:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 60 * 1000); // Every minute
+    this.processingInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var _i, _a, userId, error_13;
+          return __generator(this, function (_b) {
+            switch (_b.label) {
+              case 0:
+                _b.trys.push([0, 5, , 6]);
+                (_i = 0), (_a = this.activityBuffer.keys());
+                _b.label = 1;
+              case 1:
+                if (!(_i < _a.length)) return [3 /*break*/, 4];
+                userId = _a[_i];
+                return [4 /*yield*/, this.analyzeUserActivity(userId)];
+              case 2:
+                _b.sent();
+                _b.label = 3;
+              case 3:
+                _i++;
+                return [3 /*break*/, 1];
+              case 4:
+                return [3 /*break*/, 6];
+              case 5:
+                error_13 = _b.sent();
+                console.error("Activity processing failed:", error_13);
+                return [3 /*break*/, 6];
+              case 6:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      60 * 1000,
+    ); // Every minute
   };
   SuspiciousActivityDetector.prototype.startBaselineUpdateInterval = function () {
-    var _this = this;
     this.baselineUpdateInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var _i, _a, userId, error_14;
           return __generator(this, function (_b) {
             switch (_b.label) {
@@ -1465,8 +1403,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       24 * 60 * 60 * 1000,
     ); // Daily
   };

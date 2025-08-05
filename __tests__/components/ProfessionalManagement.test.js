@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var globals_1 = require("@jest/globals");
@@ -153,35 +150,27 @@ var sonner_1 = require("sonner");
 var ProfessionalManagement_1 = require("@/components/dashboard/ProfessionalManagement");
 var professionals_1 = require("@/lib/supabase/professionals");
 // Mock the dependencies
-globals_1.jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: globals_1.jest.fn(),
-        back: globals_1.jest.fn(),
-      };
-    },
-  };
-});
-globals_1.jest.mock("sonner", function () {
-  return {
-    toast: {
-      success: globals_1.jest.fn(),
-      error: globals_1.jest.fn(),
-    },
-  };
-});
-globals_1.jest.mock("@/lib/supabase/professionals", function () {
-  return {
-    getProfessionals: globals_1.jest.fn(),
-    createProfessional: globals_1.jest.fn(),
-    updateProfessional: globals_1.jest.fn(),
-    deleteProfessional: globals_1.jest.fn(),
-    getProfessionalCredentials: globals_1.jest.fn(),
-    getProfessionalServices: globals_1.jest.fn(),
-    verifyCredential: globals_1.jest.fn(),
-  };
-});
+globals_1.jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: globals_1.jest.fn(),
+    back: globals_1.jest.fn(),
+  }),
+}));
+globals_1.jest.mock("sonner", () => ({
+  toast: {
+    success: globals_1.jest.fn(),
+    error: globals_1.jest.fn(),
+  },
+}));
+globals_1.jest.mock("@/lib/supabase/professionals", () => ({
+  getProfessionals: globals_1.jest.fn(),
+  createProfessional: globals_1.jest.fn(),
+  updateProfessional: globals_1.jest.fn(),
+  deleteProfessional: globals_1.jest.fn(),
+  getProfessionalCredentials: globals_1.jest.fn(),
+  getProfessionalServices: globals_1.jest.fn(),
+  verifyCredential: globals_1.jest.fn(),
+}));
 // Mock data
 var mockProfessionals = [
   {
@@ -258,17 +247,17 @@ var mockServices = [
     updated_at: "2024-01-01T00:00:00Z",
   },
 ];
-describe("ProfessionalManagement", function () {
-  beforeEach(function () {
+describe("ProfessionalManagement", () => {
+  beforeEach(() => {
     globals_1.jest.clearAllMocks();
     professionals_1.getProfessionals.mockResolvedValue(mockProfessionals);
     professionals_1.getProfessionalCredentials.mockResolvedValue(mockCredentials);
     professionals_1.getProfessionalServices.mockResolvedValue(mockServices);
   });
-  describe("Component Rendering", function () {
-    it("should render professional management header", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Component Rendering", () => {
+    it("should render professional management header", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           (0, react_1.render)(<ProfessionalManagement_1.default />);
           expect(react_1.screen.getByText("Gestão de Profissionais")).toBeInTheDocument();
           expect(
@@ -276,17 +265,16 @@ describe("ProfessionalManagement", function () {
           ).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    it("should render stats cards", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should render stats cards", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Total de Profissionais")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Profissionais Ativos")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Pendente Verificação")).toBeInTheDocument();
@@ -298,22 +286,21 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should render search and filter controls", function () {
+      }));
+    it("should render search and filter controls", () => {
       (0, react_1.render)(<ProfessionalManagement_1.default />);
       expect(react_1.screen.getByPlaceholderText("Buscar profissionais...")).toBeInTheDocument();
       expect(react_1.screen.getByRole("combobox", { name: /status/i })).toBeInTheDocument();
     });
-    it("should render professionals table", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    it("should render professionals table", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Dr. Carlos Oliveira")).toBeInTheDocument();
                   expect(react_1.screen.getByText("ana.silva@email.com")).toBeInTheDocument();
@@ -325,19 +312,18 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Data Loading", function () {
-    it("should load professionals on mount", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Data Loading", () => {
+    it("should load professionals on mount", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionals).toHaveBeenCalledTimes(1);
                 }),
               ];
@@ -346,18 +332,17 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle loading error", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle loading error", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.getProfessionals.mockRejectedValue(new Error("Failed to load"));
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(sonner_1.toast.error).toHaveBeenCalledWith(
                     "Erro ao carregar profissionais",
                   );
@@ -368,17 +353,16 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display correct stats after loading", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should display correct stats after loading", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   // Should calculate stats based on mock data
                   expect(react_1.screen.getByText("2")).toBeInTheDocument(); // Total professionals
                 }),
@@ -388,20 +372,19 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Search and Filtering", function () {
-    it("should filter professionals by search term", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Search and Filtering", () => {
+    it("should filter professionals by search term", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var searchInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Dr. Carlos Oliveira")).toBeInTheDocument();
                 }),
@@ -412,7 +395,7 @@ describe("ProfessionalManagement", function () {
               react_1.fireEvent.change(searchInput, { target: { value: "Ana" } });
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                   expect(react_1.screen.queryByText("Dr. Carlos Oliveira")).not.toBeInTheDocument();
                 }),
@@ -422,17 +405,16 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should filter professionals by status", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should filter professionals by status", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Dr. Carlos Oliveira")).toBeInTheDocument();
                 }),
@@ -447,12 +429,11 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should clear search results when search term is empty", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should clear search results when search term is empty", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var searchInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
@@ -461,7 +442,7 @@ describe("ProfessionalManagement", function () {
               react_1.fireEvent.change(searchInput, { target: { value: "" } });
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Dr. Carlos Oliveira")).toBeInTheDocument();
                 }),
@@ -471,20 +452,19 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Professional Actions", function () {
-    it("should open details dialog when view details is clicked", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Professional Actions", () => {
+    it("should open details dialog when view details is clicked", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var moreButtons, viewDetailsButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                 }),
                 // Click on the dropdown menu
@@ -497,7 +477,7 @@ describe("ProfessionalManagement", function () {
               react_1.fireEvent.click(viewDetailsButton);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionalCredentials).toHaveBeenCalledWith("1");
                   expect(professionals_1.getProfessionalServices).toHaveBeenCalledWith("1");
                 }),
@@ -507,18 +487,17 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle delete professional", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle delete professional", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.deleteProfessional.mockResolvedValue(undefined);
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                 }),
                 // This would require more complex interaction to test delete functionality
@@ -532,11 +511,10 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle credential verification", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle credential verification", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           professionals_1.verifyCredential.mockResolvedValue(undefined);
           (0, react_1.render)(<ProfessionalManagement_1.default />);
           // This would require opening the details dialog and clicking verify
@@ -544,19 +522,18 @@ describe("ProfessionalManagement", function () {
           expect(professionals_1.verifyCredential).toBeDefined();
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
-  describe("Status Badges", function () {
-    it("should display correct status badges", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Status Badges", () => {
+    it("should display correct status badges", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Ativo")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Pendente")).toBeInTheDocument();
                 }),
@@ -566,17 +543,16 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should apply correct badge variants for different statuses", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should apply correct badge variants for different statuses", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var activeBadge = react_1.screen.getByText("Ativo");
                   var pendingBadge = react_1.screen.getByText("Pendente");
                   expect(activeBadge).toHaveClass("bg-primary");
@@ -588,20 +564,19 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling", function () {
-    it("should handle professional loading errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Error Handling", () => {
+    it("should handle professional loading errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.getProfessionals.mockRejectedValue(new Error("Network error"));
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(sonner_1.toast.error).toHaveBeenCalledWith(
                     "Erro ao carregar profissionais",
                   );
@@ -612,12 +587,11 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle credential loading errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle credential loading errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var moreButtons, viewDetailsButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.getProfessionalCredentials.mockRejectedValue(
@@ -626,7 +600,7 @@ describe("ProfessionalManagement", function () {
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                 }),
                 // Simulate clicking view details
@@ -639,7 +613,7 @@ describe("ProfessionalManagement", function () {
               react_1.fireEvent.click(viewDetailsButton);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(sonner_1.toast.error).toHaveBeenCalledWith(
                     "Erro ao carregar detalhes do profissional",
                   );
@@ -650,11 +624,10 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle delete errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle delete errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           professionals_1.deleteProfessional.mockRejectedValue(new Error("Delete error"));
           (0, react_1.render)(<ProfessionalManagement_1.default />);
           // This would require simulating the delete flow
@@ -662,20 +635,19 @@ describe("ProfessionalManagement", function () {
           expect(professionals_1.deleteProfessional).toBeDefined();
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
-  describe("Professional Details Dialog", function () {
-    it("should display professional information in details dialog", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Professional Details Dialog", () => {
+    it("should display professional information in details dialog", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var moreButtons, viewDetailsButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                 }),
                 // Open details dialog
@@ -688,7 +660,7 @@ describe("ProfessionalManagement", function () {
               react_1.fireEvent.click(viewDetailsButton);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Detalhes do Profissional")).toBeInTheDocument();
                 }),
               ];
@@ -697,18 +669,17 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display credentials in details dialog", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should display credentials in details dialog", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var moreButtons, viewDetailsButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                 }),
                 // Open details dialog
@@ -721,7 +692,7 @@ describe("ProfessionalManagement", function () {
               react_1.fireEvent.click(viewDetailsButton);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionalCredentials).toHaveBeenCalledWith("1");
                   expect(professionals_1.getProfessionalServices).toHaveBeenCalledWith("1");
                 }),
@@ -731,17 +702,16 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should close details dialog when close button is clicked", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should close details dialog when close button is clicked", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                 }),
                 // This would require more complex dialog testing
@@ -757,35 +727,30 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Navigation", function () {
-    it("should navigate to new professional form", function () {
+  describe("Navigation", () => {
+    it("should navigate to new professional form", () => {
       var mockPush = globals_1.jest.fn();
-      globals_1.jest.doMock("next/navigation", function () {
-        return {
-          useRouter: function () {
-            return { push: mockPush, back: globals_1.jest.fn() };
-          },
-        };
-      });
+      globals_1.jest.doMock("next/navigation", () => ({
+        useRouter: () => ({ push: mockPush, back: globals_1.jest.fn() }),
+      }));
       (0, react_1.render)(<ProfessionalManagement_1.default />);
       var addButton = react_1.screen.getByText("Cadastrar Profissional");
       react_1.fireEvent.click(addButton);
       // Note: This test would need to be adjusted based on actual router implementation
       expect(addButton).toBeInTheDocument();
     });
-    it("should navigate to edit professional form", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should navigate to edit professional form", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var moreButtons;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                 }),
                 // This would require opening the dropdown and clicking edit
@@ -798,17 +763,16 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Accessibility", function () {
-    it("should have proper ARIA labels", function () {
+  describe("Accessibility", () => {
+    it("should have proper ARIA labels", () => {
       (0, react_1.render)(<ProfessionalManagement_1.default />);
       expect(react_1.screen.getByRole("table")).toBeInTheDocument();
       expect(react_1.screen.getByRole("searchbox")).toBeInTheDocument();
       expect(react_1.screen.getAllByRole("button")).toHaveLength(5); // Add button + more buttons
     });
-    it("should support keyboard navigation", function () {
+    it("should support keyboard navigation", () => {
       (0, react_1.render)(<ProfessionalManagement_1.default />);
       var searchInput = react_1.screen.getByPlaceholderText("Buscar profissionais...");
       expect(searchInput).toBeInTheDocument();
@@ -816,17 +780,17 @@ describe("ProfessionalManagement", function () {
       expect(document.activeElement).toBe(searchInput);
     });
   });
-  describe("Data Validation", function () {
-    it("should handle empty professional data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Data Validation", () => {
+    it("should handle empty professional data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.getProfessionals.mockResolvedValue([]);
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByText("Nenhum profissional encontrado"),
                   ).toBeInTheDocument();
@@ -837,12 +801,11 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle professionals without optional fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle professionals without optional fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var incompleteProfile;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               incompleteProfile = __assign(__assign({}, mockProfessionals[0]), {
@@ -854,7 +817,7 @@ describe("ProfessionalManagement", function () {
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dr. Ana Silva")).toBeInTheDocument();
                 }),
               ];
@@ -863,17 +826,16 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate professional data structure", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should validate professional data structure", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionals).toHaveBeenCalled();
                 }),
                 // Ensure mock data has required fields
@@ -889,25 +851,24 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance", function () {
-    it("should not re-render unnecessarily", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance", () => {
+    it("should not re-render unnecessarily", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var renderSpy, TestComponent;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderSpy = globals_1.jest.fn();
-              TestComponent = function () {
+              TestComponent = () => {
                 renderSpy();
                 return <ProfessionalManagement_1.default />;
               };
               (0, react_1.render)(<TestComponent />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(renderSpy).toHaveBeenCalledTimes(1);
                 }),
               ];
@@ -916,26 +877,25 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle large datasets efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle large datasets efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var largeProfessionalSet;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              largeProfessionalSet = Array.from({ length: 100 }, function (_, i) {
-                return __assign(__assign({}, mockProfessionals[0]), {
+              largeProfessionalSet = Array.from({ length: 100 }, (_, i) =>
+                __assign(__assign({}, mockProfessionals[0]), {
                   id: "".concat(i + 1),
                   given_name: "Professional ".concat(i + 1),
                   email: "professional".concat(i + 1, "@email.com"),
-                });
-              });
+                }),
+              );
               professionals_1.getProfessionals.mockResolvedValue(largeProfessionalSet);
               (0, react_1.render)(<ProfessionalManagement_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Professional 1")).toBeInTheDocument();
                 }),
               ];
@@ -944,7 +904,6 @@ describe("ProfessionalManagement", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

@@ -1,6 +1,6 @@
-import { describe, test, expect, beforeEach, jest } from "@jest/globals";
-import { sessionManager } from "@/lib/auth/session-manager";
+import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { securityAuditFramework } from "@/lib/auth/security-audit-framework";
+import { sessionManager } from "@/lib/auth/session-manager";
 
 // Mock Supabase client
 jest.mock("@/app/utils/supabase/server", () => ({

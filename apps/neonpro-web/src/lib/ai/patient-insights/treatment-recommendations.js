@@ -1,17 +1,16 @@
-"use strict";
 // AI-Powered Treatment Recommendation System
 // Story 3.2: Task 2 - Treatment Recommendation System
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,10 +130,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -145,11 +142,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreatmentRecommendationEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var TreatmentRecommendationEngine = /** @class */ (function () {
+var TreatmentRecommendationEngine = /** @class */ (() => {
   function TreatmentRecommendationEngine() {
     this.supabase = (0, client_1.createClient)();
     this.evidenceDatabase = new Map();
@@ -375,31 +372,26 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
     baseRate *= riskFactor;
     // Adjust for previous treatment outcomes
     if (((_a = patientData.treatments) === null || _a === void 0 ? void 0 : _a.length) > 0) {
-      var successfulTreatments = patientData.treatments.filter(function (t) {
-        return t.outcome === "successful";
-      }).length;
+      var successfulTreatments = patientData.treatments.filter(
+        (t) => t.outcome === "successful",
+      ).length;
       var successRate = successfulTreatments / patientData.treatments.length;
       baseRate = (baseRate + successRate) / 2; // Average with historical success
     }
     // Adjust for specific risk factors
-    var medicalRisks = riskAssessment.riskFactors.filter(function (rf) {
-      return rf.category === "medical";
-    });
-    var riskReduction = medicalRisks.reduce(function (reduction, risk) {
+    var medicalRisks = riskAssessment.riskFactors.filter((rf) => rf.category === "medical");
+    var riskReduction = medicalRisks.reduce((reduction, risk) => {
       return reduction + risk.weight * 0.1; // Max 10% reduction per risk factor
     }, 0);
     baseRate *= 1 - Math.min(0.4, riskReduction); // Max 40% total reduction
     return Math.max(0.1, Math.min(0.95, baseRate));
   };
-  TreatmentRecommendationEngine.prototype.assessTreatmentRisk = function (
-    treatment,
-    riskAssessment,
-  ) {
+  TreatmentRecommendationEngine.prototype.assessTreatmentRisk = (treatment, riskAssessment) => {
     var riskScore = treatment.base_risk_score || 1; // 1-4 scale
     // Increase risk based on patient risk factors
-    var highRiskFactors = riskAssessment.riskFactors.filter(function (rf) {
-      return rf.severity === "high" || rf.severity === "critical";
-    });
+    var highRiskFactors = riskAssessment.riskFactors.filter(
+      (rf) => rf.severity === "high" || rf.severity === "critical",
+    );
     riskScore += highRiskFactors.length * 0.5;
     // Treatment-specific risk adjustments
     if (treatment.invasiveness === "high") riskScore += 1;
@@ -409,20 +401,18 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
     if (riskScore <= 2.5) return "medium";
     return "high";
   };
-  TreatmentRecommendationEngine.prototype.checkContraindications = function (
+  TreatmentRecommendationEngine.prototype.checkContraindications = (
     treatment,
     patientData,
     riskAssessment,
-  ) {
+  ) => {
     var _a, _b, _c;
     var contraindications = [];
     // Medical condition contraindications
     var medicalConditions =
       ((_a = patientData.medical_history) === null || _a === void 0
         ? void 0
-        : _a.map(function (mh) {
-            return mh.condition_type;
-          })) || [];
+        : _a.map((mh) => mh.condition_type)) || [];
     if (treatment.contraindicated_conditions) {
       for (var _i = 0, _d = treatment.contraindicated_conditions; _i < _d.length; _i++) {
         var condition = _d[_i];
@@ -435,16 +425,10 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
     var medications =
       ((_b = patientData.medications) === null || _b === void 0
         ? void 0
-        : _b.map(function (m) {
-            return m.medication_name.toLowerCase();
-          })) || [];
+        : _b.map((m) => m.medication_name.toLowerCase())) || [];
     if (treatment.contraindicated_medications) {
-      var _loop_1 = function (medication) {
-        if (
-          medications.some(function (m) {
-            return m.includes(medication.toLowerCase());
-          })
-        ) {
+      var _loop_1 = (medication) => {
+        if (medications.some((m) => m.includes(medication.toLowerCase()))) {
           contraindications.push("Contraindicated with ".concat(medication));
         }
       };
@@ -457,9 +441,7 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
     var allergens =
       ((_c = patientData.allergies) === null || _c === void 0
         ? void 0
-        : _c.map(function (a) {
-            return a.allergen.toLowerCase();
-          })) || [];
+        : _c.map((a) => a.allergen.toLowerCase())) || [];
     if (treatment.potential_allergens) {
       for (var _g = 0, _h = treatment.potential_allergens; _g < _h.length; _g++) {
         var allergen = _h[_g];
@@ -469,9 +451,7 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
       }
     }
     // Critical risk factor contraindications
-    var criticalRisks = riskAssessment.riskFactors.filter(function (rf) {
-      return rf.severity === "critical";
-    });
+    var criticalRisks = riskAssessment.riskFactors.filter((rf) => rf.severity === "critical");
     if (criticalRisks.length > 0 && treatment.invasiveness === "high") {
       contraindications.push("Critical risk factors present for invasive procedure");
     }
@@ -500,9 +480,9 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
     var complicatingConditions =
       ((_a = patientData.medical_history) === null || _a === void 0
         ? void 0
-        : _a.filter(function (mh) {
-            return ["diabetes", "heart_disease", "kidney_disease"].includes(mh.condition_type);
-          })) || [];
+        : _a.filter((mh) =>
+            ["diabetes", "heart_disease", "kidney_disease"].includes(mh.condition_type),
+          )) || [];
     baseCost *= 1 + complicatingConditions.length * 0.1;
     return Math.round(baseCost);
   };
@@ -544,9 +524,7 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
     var medicalConditions =
       ((_a = patientData.medical_history) === null || _a === void 0
         ? void 0
-        : _a.map(function (mh) {
-            return mh.condition_type;
-          })) || [];
+        : _a.map((mh) => mh.condition_type)) || [];
     if (medicalConditions.includes("diabetes")) {
       prerequisites.push("Blood glucose optimization");
     }
@@ -560,22 +538,13 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
     var medications =
       ((_b = patientData.medications) === null || _b === void 0
         ? void 0
-        : _b.map(function (m) {
-            return m.medication_name.toLowerCase();
-          })) || [];
-    if (
-      medications.some(function (m) {
-        return m.includes("warfarin") || m.includes("anticoagulant");
-      })
-    ) {
+        : _b.map((m) => m.medication_name.toLowerCase())) || [];
+    if (medications.some((m) => m.includes("warfarin") || m.includes("anticoagulant"))) {
       prerequisites.push("Anticoagulation management");
     }
     return __spreadArray([], new Set(prerequisites), true); // Remove duplicates
   };
-  TreatmentRecommendationEngine.prototype.getExpectedOutcome = function (
-    treatment,
-    successProbability,
-  ) {
+  TreatmentRecommendationEngine.prototype.getExpectedOutcome = (treatment, successProbability) => {
     var baseOutcome = treatment.expected_outcome || "Improvement in treated area";
     if (successProbability > 0.8) {
       return "Excellent ".concat(baseOutcome.toLowerCase());
@@ -585,12 +554,12 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
       return "Moderate ".concat(baseOutcome.toLowerCase());
     }
   };
-  TreatmentRecommendationEngine.prototype.generateRecommendationReasoning = function (
+  TreatmentRecommendationEngine.prototype.generateRecommendationReasoning = (
     treatment,
     successProbability,
     riskLevel,
     evidenceLevel,
-  ) {
+  ) => {
     var reasons = [];
     // Success probability reasoning
     if (successProbability > 0.8) {
@@ -618,8 +587,8 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
     }
     return reasons.join(". ") + ".";
   };
-  TreatmentRecommendationEngine.prototype.rankRecommendations = function (recommendations) {
-    return recommendations.sort(function (a, b) {
+  TreatmentRecommendationEngine.prototype.rankRecommendations = (recommendations) =>
+    recommendations.sort((a, b) => {
       // Primary sort by category (primary > alternative > contraindicated)
       var categoryWeight = { primary: 3, alternative: 2, contraindicated: 1 };
       var categoryDiff = categoryWeight[b.category] - categoryWeight[a.category];
@@ -635,17 +604,14 @@ var TreatmentRecommendationEngine = /** @class */ (function () {
       var evidenceWeight = { very_strong: 4, strong: 3, moderate: 2, weak: 1 };
       return evidenceWeight[b.evidenceLevel] - evidenceWeight[a.evidenceLevel];
     });
-  };
-  TreatmentRecommendationEngine.prototype.filterContraindications = function (
+  TreatmentRecommendationEngine.prototype.filterContraindications = (
     recommendations,
     riskAssessment,
-  ) {
+  ) => {
     // Filter out contraindicated treatments unless specifically requested
-    return recommendations.filter(function (rec) {
-      return rec.category !== "contraindicated";
-    });
+    return recommendations.filter((rec) => rec.category !== "contraindicated");
   };
-  TreatmentRecommendationEngine.prototype.calculateAge = function (birthDate) {
+  TreatmentRecommendationEngine.prototype.calculateAge = (birthDate) => {
     var today = new Date();
     var birth = new Date(birthDate);
     var age = today.getFullYear() - birth.getFullYear();

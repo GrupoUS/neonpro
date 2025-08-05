@@ -4,19 +4,19 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
-import type {
-  ConflictDetails,
-  ResolutionOption,
-  ResolutionStrategy,
-  ResolutionResult,
-  ResolutionImpact,
-  ProposedChanges,
-  OptimizationConfig,
-  OptimizationConstraints,
-  RecommendedAction,
-} from "./types";
 import type { Database } from "@/types/supabase";
 import type { ConflictDetectionEngine } from "./conflict-detector";
+import type {
+  ConflictDetails,
+  OptimizationConfig,
+  OptimizationConstraints,
+  ProposedChanges,
+  RecommendedAction,
+  ResolutionImpact,
+  ResolutionOption,
+  ResolutionResult,
+  ResolutionStrategy,
+} from "./types";
 
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
 type Staff = Database["public"]["Tables"]["staff"]["Row"];

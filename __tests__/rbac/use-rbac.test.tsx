@@ -1,12 +1,12 @@
 // useRBAC Hook Tests
 // Story 1.2: Role-Based Permissions Enhancement
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "@jest/globals";
-import { renderHook, act, waitFor } from "@testing-library/react";
-import { useRBAC, usePermissionCheck, useRoleGuard, usePermissionGuard } from "@/hooks/use-rbac";
-import { RBACPermissionManager } from "@/lib/auth/rbac/permissions";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { usePermissionCheck, usePermissionGuard, useRBAC, useRoleGuard } from "@/hooks/use-rbac";
 import { useUser } from "@/hooks/use-user";
-import { UserRole, Permission } from "@/types/rbac";
+import { RBACPermissionManager } from "@/lib/auth/rbac/permissions";
+import type { Permission, UserRole } from "@/types/rbac";
 
 // Mock dependencies
 jest.mock("@/lib/auth/rbac/permissions", () => ({
@@ -395,7 +395,7 @@ describe("useRoleGuard Hook", () => {
       useRBAC: () => mockUseRBAC,
     }));
 
-    const TestComponent = () => {
+    const _TestComponent = () => {
       const { shouldRender } = useRoleGuard("owner", mockClinicId);
       return shouldRender ? <div>Protected Content</div> : null;
     };

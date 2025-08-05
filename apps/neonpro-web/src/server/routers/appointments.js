@@ -1,4 +1,3 @@
-"use strict";
 /**
  * tRPC Appointments Router
  * Healthcare appointment management with conflict detection
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,7 +36,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,8 +65,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -88,9 +85,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appointmentsRouter = void 0;
 var zod_1 = require("zod");
@@ -180,12 +177,12 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
           .default("scheduled"),
       }),
     )
-    .query(function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+    .query((_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var supabase, query, _c, data, error, count;
         var ctx = _b.ctx,
           input = _b.input;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               supabase = ctx.supabase;
@@ -231,15 +228,15 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
               ];
           }
         });
-      });
-    }),
+      }),
+    ),
   // Create appointment with conflict detection
-  create: trpc_1.protectedProcedure.input(appointmentSchema).mutation(function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+  create: trpc_1.protectedProcedure.input(appointmentSchema).mutation((_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var supabase, user, appointmentEnd, conflicts, _c, data, error;
       var ctx = _b.ctx,
         input = _b.input;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         switch (_d.label) {
           case 0:
             (supabase = ctx.supabase), (user = ctx.user);
@@ -288,8 +285,8 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
             return [2 /*return*/, data];
         }
       });
-    });
-  }),
+    }),
+  ),
   // Update appointment status
   updateStatus: trpc_1.protectedProcedure
     .input(
@@ -299,12 +296,12 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
         notes: zod_1.z.string().optional(),
       }),
     )
-    .mutation(function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+    .mutation((_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var supabase, user, _c, data, error;
         var ctx = _b.ctx,
           input = _b.input;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               (supabase = ctx.supabase), (user = ctx.user);
@@ -333,8 +330,8 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
               return [2 /*return*/, data];
           }
         });
-      });
-    }),
+      }),
+    ),
   // Get available slots for doctor
   getAvailableSlots: trpc_1.protectedProcedure
     .input(
@@ -344,8 +341,8 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
         duration_minutes: zod_1.z.number().min(15).max(480).default(30),
       }),
     )
-    .query(function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+    .query((_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var supabase,
           startOfDay,
           endOfDay,
@@ -359,7 +356,7 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
           minute;
         var ctx = _b.ctx,
           input = _b.input;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               supabase = ctx.supabase;
@@ -387,14 +384,14 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
               workingHours = { start: 8, end: 18 };
               slots = [];
               for (hour = workingHours.start; hour < workingHours.end; hour++) {
-                _loop_1 = function (minute) {
+                _loop_1 = (minute) => {
                   var slotTime = new Date(input.date);
                   slotTime.setHours(hour, minute, 0, 0);
                   // Check if slot conflicts with existing appointments
                   var hasConflict =
                     appointments === null || appointments === void 0
                       ? void 0
-                      : appointments.some(function (apt) {
+                      : appointments.some((apt) => {
                           var aptStart = new Date(apt.appointment_date);
                           var aptEnd = new Date(aptStart.getTime() + apt.duration_minutes * 60000);
                           var slotEnd = new Date(
@@ -422,6 +419,6 @@ exports.appointmentsRouter = (0, trpc_1.createTRPCRouter)({
               return [2 /*return*/, { slots: slots }];
           }
         });
-      });
-    }),
+      }),
+    ),
 });

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Compliance and Rules Engine for AI Scheduling
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,11 +154,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComplianceRulesEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var ComplianceRulesEngine = /** @class */ (function () {
+var ComplianceRulesEngine = /** @class */ (() => {
   function ComplianceRulesEngine() {
     this.supabase = (0, client_1.createClient)();
     this.rules = new Map();
@@ -242,9 +239,8 @@ var ComplianceRulesEngine = /** @class */ (function () {
             );
             result = {
               isCompliant:
-                violations.filter(function (v) {
-                  return v.severity === "critical" || v.severity === "error";
-                }).length === 0,
+                violations.filter((v) => v.severity === "critical" || v.severity === "error")
+                  .length === 0,
               violations: violations,
               warnings: warnings,
               requiredApprovals: requiredApprovals,
@@ -308,9 +304,7 @@ var ComplianceRulesEngine = /** @class */ (function () {
                       expectedValue: action.parameters.expectedValue,
                       regulation: rule.regulation,
                       canBeOverridden: rule.exceptions.length > 0,
-                      overrideRequirements: rule.exceptions.map(function (e) {
-                        return e.description;
-                      }),
+                      overrideRequirements: rule.exceptions.map((e) => e.description),
                     });
                     break;
                   case "warn":
@@ -415,11 +409,13 @@ var ComplianceRulesEngine = /** @class */ (function () {
   /**
    * Get nested value from object using dot notation
    */
-  ComplianceRulesEngine.prototype.getNestedValue = function (obj, path) {
-    return path.split(".").reduce(function (current, key) {
-      return current === null || current === void 0 ? void 0 : current[key];
-    }, obj);
-  };
+  ComplianceRulesEngine.prototype.getNestedValue = (obj, path) =>
+    path
+      .split(".")
+      .reduce(
+        (current, key) => (current === null || current === void 0 ? void 0 : current[key]),
+        obj,
+      );
   /**
    * Build validation context with all necessary data
    */
@@ -519,7 +515,7 @@ var ComplianceRulesEngine = /** @class */ (function () {
   /**
    * Calculate age from birth date
    */
-  ComplianceRulesEngine.prototype.calculateAge = function (birthDate) {
+  ComplianceRulesEngine.prototype.calculateAge = (birthDate) => {
     var today = new Date();
     var birth = new Date(birthDate);
     var age = today.getFullYear() - birth.getFullYear();
@@ -532,14 +528,14 @@ var ComplianceRulesEngine = /** @class */ (function () {
   /**
    * Calculate compliance score
    */
-  ComplianceRulesEngine.prototype.calculateComplianceScore = function (
+  ComplianceRulesEngine.prototype.calculateComplianceScore = (
     violations,
     warnings,
     requiredApprovals,
-  ) {
+  ) => {
     var score = 100;
     // Deduct points for violations
-    violations.forEach(function (violation) {
+    violations.forEach((violation) => {
       switch (violation.severity) {
         case "critical":
           score -= 25;
@@ -556,7 +552,7 @@ var ComplianceRulesEngine = /** @class */ (function () {
       }
     });
     // Deduct points for warnings
-    warnings.forEach(function (warning) {
+    warnings.forEach((warning) => {
       switch (warning.impact) {
         case "high":
           score -= 10;
@@ -570,7 +566,7 @@ var ComplianceRulesEngine = /** @class */ (function () {
       }
     });
     // Deduct points for required approvals
-    requiredApprovals.forEach(function (approval) {
+    requiredApprovals.forEach((approval) => {
       switch (approval.urgency) {
         case "urgent":
           score -= 15;
@@ -651,7 +647,7 @@ var ComplianceRulesEngine = /** @class */ (function () {
           case 1:
             rules = _a.sent().data;
             if (rules) {
-              rules.forEach(function (rule) {
+              rules.forEach((rule) => {
                 _this.rules.set(rule.id, {
                   id: rule.id,
                   name: rule.name,
@@ -696,8 +692,7 @@ var ComplianceRulesEngine = /** @class */ (function () {
   ComplianceRulesEngine.prototype.createDefaultRules = function () {
     return __awaiter(this, void 0, void 0, function () {
       var defaultRules;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         defaultRules = [
           {
             id: "minor-patient-guardian-consent",
@@ -845,9 +840,9 @@ var ComplianceRulesEngine = /** @class */ (function () {
           },
         ];
         // Add default rules to the rules map
-        defaultRules.forEach(function (rule) {
+        defaultRules.forEach((rule) => {
           if (rule.id) {
-            _this.rules.set(
+            this.rules.set(
               rule.id,
               __assign(__assign({}, rule), {
                 createdAt: new Date(),
@@ -864,13 +859,12 @@ var ComplianceRulesEngine = /** @class */ (function () {
   /**
    * Generate cache key for validation result
    */
-  ComplianceRulesEngine.prototype.generateCacheKey = function (recommendation, criteria) {
-    return ""
+  ComplianceRulesEngine.prototype.generateCacheKey = (recommendation, criteria) =>
+    ""
       .concat(criteria.patientId, "-")
       .concat(criteria.treatmentId, "-")
       .concat(recommendation.staffId, "-")
       .concat(recommendation.timeSlot.startTime.getTime());
-  };
   /**
    * Log compliance validation for audit purposes
    */

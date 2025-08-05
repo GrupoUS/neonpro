@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MedicalDataValidator =
   exports.validationResultSchema =
@@ -152,19 +149,19 @@ var lgpd_1 = require("@/lib/lgpd");
  */
 // Validation severity levels
 var ValidationSeverity;
-(function (ValidationSeverity) {
-  ValidationSeverity["ERROR"] = "error";
-  ValidationSeverity["WARNING"] = "warning";
-  ValidationSeverity["INFO"] = "info"; // Informational only
+((ValidationSeverity) => {
+  ValidationSeverity.ERROR = "error";
+  ValidationSeverity.WARNING = "warning";
+  ValidationSeverity.INFO = "info"; // Informational only
 })(ValidationSeverity || (exports.ValidationSeverity = ValidationSeverity = {}));
 // Validation categories
 var ValidationCategory;
-(function (ValidationCategory) {
-  ValidationCategory["CLINICAL"] = "clinical";
-  ValidationCategory["BUSINESS"] = "business";
-  ValidationCategory["SECURITY"] = "security";
-  ValidationCategory["COMPLIANCE"] = "compliance";
-  ValidationCategory["DATA_QUALITY"] = "data_quality";
+((ValidationCategory) => {
+  ValidationCategory.CLINICAL = "clinical";
+  ValidationCategory.BUSINESS = "business";
+  ValidationCategory.SECURITY = "security";
+  ValidationCategory.COMPLIANCE = "compliance";
+  ValidationCategory.DATA_QUALITY = "data_quality";
 })(ValidationCategory || (exports.ValidationCategory = ValidationCategory = {}));
 // Validation result schema
 exports.validationResultSchema = zod_1.z.object({
@@ -186,9 +183,7 @@ exports.validationResultSchema = zod_1.z.object({
     .default([]),
   // Validation metadata
   validatorVersion: zod_1.z.string().default("1.0"),
-  timestamp: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  timestamp: zod_1.z.date().default(() => new Date()),
   context: zod_1.z.record(zod_1.z.any()).optional(),
   // Clinical flags
   clinicalAlerts: zod_1.z
@@ -236,7 +231,7 @@ exports.validationResultSchema = zod_1.z.object({
       timeliness: 100,
     }),
 });
-var MedicalDataValidator = /** @class */ (function () {
+var MedicalDataValidator = /** @class */ (() => {
   function MedicalDataValidator() {}
   /**
    * Comprehensive patient data validation
@@ -265,7 +260,7 @@ var MedicalDataValidator = /** @class */ (function () {
             };
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 7, , 8]);
+            _a.trys.push([1, 7, undefined, 8]);
             schemaValidation = (0, schemas_1.validateData)(schemas_1.patientSchema, patientData);
             if (!schemaValidation.success) {
               this.addSchemaErrors(validationResult, schemaValidation.errors || []);
@@ -386,7 +381,7 @@ var MedicalDataValidator = /** @class */ (function () {
             };
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 7, , 8]);
+            _a.trys.push([1, 7, undefined, 8]);
             schemaValidation = (0, schemas_1.validateData)(
               schemas_1.appointmentSchema,
               appointmentData,
@@ -463,7 +458,7 @@ var MedicalDataValidator = /** @class */ (function () {
             };
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 8, , 9]);
+            _a.trys.push([1, 8, undefined, 9]);
             schemaValidation = (0, schemas_1.validateData)(
               schemas_1.treatmentSchema,
               treatmentData,
@@ -528,7 +523,7 @@ var MedicalDataValidator = /** @class */ (function () {
   /**
    * Real-time validation during data entry
    */
-  MedicalDataValidator.validateField = function (fieldName, value, schema, context) {
+  MedicalDataValidator.validateField = function (fieldName, value, schema, _context) {
     return __awaiter(this, void 0, void 0, function () {
       var result, schemaResult;
       return __generator(this, function (_a) {
@@ -542,9 +537,7 @@ var MedicalDataValidator = /** @class */ (function () {
           schemaResult = schema.safeParse(value);
           if (!schemaResult.success) {
             result.valid = false;
-            result.errors = schemaResult.error.errors.map(function (e) {
-              return e.message;
-            });
+            result.errors = schemaResult.error.errors.map((e) => e.message);
           }
           // Field-specific validations
           switch (fieldName) {
@@ -575,7 +568,7 @@ var MedicalDataValidator = /** @class */ (function () {
               }
               break;
           }
-        } catch (error) {
+        } catch (_error) {
           result.valid = false;
           result.errors.push("Erro interno de validação");
         }
@@ -653,7 +646,7 @@ var MedicalDataValidator = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var requiredForTreatment, _i, requiredForTreatment_1, field;
       var _a, _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         requiredForTreatment = ["personalData", "medicalInfo", "consent"];
         for (
           _i = 0, requiredForTreatment_1 = requiredForTreatment;
@@ -721,7 +714,7 @@ var MedicalDataValidator = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var daysSinceCreation;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         // LGPD compliance checks
         if (!((_a = patientData.consent) === null || _a === void 0 ? void 0 : _a.dataProcessing)) {
           result.errors.push({
@@ -754,14 +747,11 @@ var MedicalDataValidator = /** @class */ (function () {
     });
   };
   MedicalDataValidator.assessDataQuality = function (data, result) {
-    var _this = this;
     var _a, _b;
     var quality = result.dataQuality;
     // Completeness assessment
     var requiredFields = ["personalData.name", "personalData.email", "personalData.phone"];
-    var completedFields = requiredFields.filter(function (field) {
-      return _this.hasField(data, field);
-    });
+    var completedFields = requiredFields.filter((field) => this.hasField(data, field));
     quality.completeness = (completedFields.length / requiredFields.length) * 100;
     // Accuracy assessment (basic checks)
     var accuracyScore = 100;
@@ -788,7 +778,7 @@ var MedicalDataValidator = /** @class */ (function () {
   MedicalDataValidator.validateAppointmentRules = function (appointmentData, result) {
     return __awaiter(this, void 0, void 0, function () {
       var scheduledTime, hours;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         scheduledTime = new Date(appointmentData.scheduledDate);
         hours = scheduledTime.getHours();
         if (hours < 8 || hours > 18) {
@@ -827,31 +817,25 @@ var MedicalDataValidator = /** @class */ (function () {
       });
     });
   };
-  MedicalDataValidator.validateSchedulingConflicts = function (appointmentData, result) {
+  MedicalDataValidator.validateSchedulingConflicts = function (_appointmentData, _result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  MedicalDataValidator.validatePatientAvailability = function (appointmentData, result) {
+  MedicalDataValidator.validatePatientAvailability = function (_appointmentData, _result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  MedicalDataValidator.validateProfessionalAvailability = function (appointmentData, result) {
+  MedicalDataValidator.validateProfessionalAvailability = function (_appointmentData, _result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  MedicalDataValidator.validateDrugInteractions = function (treatmentData, patientData, result) {
+  MedicalDataValidator.validateDrugInteractions = function (_treatmentData, patientData, result) {
     return __awaiter(this, void 0, void 0, function () {
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         // TODO: Check for drug interactions with existing medications
         if (
           ((_a = patientData.medicalInfo) === null || _a === void 0 ? void 0 : _a.medications) &&
@@ -871,10 +855,10 @@ var MedicalDataValidator = /** @class */ (function () {
       });
     });
   };
-  MedicalDataValidator.validateAllergies = function (treatmentData, patientData, result) {
+  MedicalDataValidator.validateAllergies = function (_treatmentData, patientData, result) {
     return __awaiter(this, void 0, void 0, function () {
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         if (
           ((_a = patientData.medicalInfo) === null || _a === void 0 ? void 0 : _a.allergies) &&
           patientData.medicalInfo.allergies.length > 0
@@ -890,9 +874,9 @@ var MedicalDataValidator = /** @class */ (function () {
       });
     });
   };
-  MedicalDataValidator.validateContraindications = function (treatmentData, patientData, result) {
+  MedicalDataValidator.validateContraindications = function (treatmentData, _patientData, result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Check treatment contraindications
         if (treatmentData.contraindications && treatmentData.contraindications.length > 0) {
           result.clinicalAlerts.push({
@@ -909,7 +893,7 @@ var MedicalDataValidator = /** @class */ (function () {
       });
     });
   };
-  MedicalDataValidator.validateDosage = function (treatmentData, patientData, result) {
+  MedicalDataValidator.validateDosage = function (_treatmentData, patientData, result) {
     return __awaiter(this, void 0, void 0, function () {
       var age;
       return __generator(this, function (_a) {
@@ -947,22 +931,18 @@ var MedicalDataValidator = /** @class */ (function () {
       });
     });
   };
-  MedicalDataValidator.validateMedicalConditions = function (treatmentData, patientData, result) {
+  MedicalDataValidator.validateMedicalConditions = function (_treatmentData, patientData, result) {
     return __awaiter(this, void 0, void 0, function () {
       var highRiskConditions, patientConditions_1, hasHighRiskCondition;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         // Check if patient's medical conditions affect treatment
         if ((_a = patientData.medicalInfo) === null || _a === void 0 ? void 0 : _a.medicalHistory) {
           highRiskConditions = ["diabetes", "hipertensão", "cardiopatia", "hepatopatia"];
-          patientConditions_1 = patientData.medicalInfo.medicalHistory.map(function (c) {
-            return c.toLowerCase();
-          });
-          hasHighRiskCondition = highRiskConditions.some(function (condition) {
-            return patientConditions_1.some(function (pc) {
-              return pc.includes(condition);
-            });
-          });
+          patientConditions_1 = patientData.medicalInfo.medicalHistory.map((c) => c.toLowerCase());
+          hasHighRiskCondition = highRiskConditions.some((condition) =>
+            patientConditions_1.some((pc) => pc.includes(condition)),
+          );
           if (hasHighRiskCondition) {
             result.clinicalAlerts.push({
               type: "contraindication",
@@ -980,7 +960,7 @@ var MedicalDataValidator = /** @class */ (function () {
     });
   };
   // Utility methods
-  MedicalDataValidator.addSchemaErrors = function (result, errors) {
+  MedicalDataValidator.addSchemaErrors = (result, errors) => {
     for (var _i = 0, errors_1 = errors; _i < errors_1.length; _i++) {
       var error = errors_1[_i];
       result.errors.push({
@@ -994,7 +974,7 @@ var MedicalDataValidator = /** @class */ (function () {
     }
     result.valid = false;
   };
-  MedicalDataValidator.addSystemError = function (result, message) {
+  MedicalDataValidator.addSystemError = (result, message) => {
     result.errors.push({
       field: "system",
       code: "SYSTEM_ERROR",
@@ -1005,7 +985,7 @@ var MedicalDataValidator = /** @class */ (function () {
     });
     result.valid = false;
   };
-  MedicalDataValidator.calculateValidationScore = function (result) {
+  MedicalDataValidator.calculateValidationScore = (result) => {
     var score = 100;
     // Subtract points for each error/warning
     for (var _i = 0, _a = result.errors; _i < _a.length; _i++) {
@@ -1051,7 +1031,7 @@ var MedicalDataValidator = /** @class */ (function () {
     score = score * 0.7 + avgQuality * 0.3;
     result.score = Math.max(0, Math.round(score));
   };
-  MedicalDataValidator.calculateAge = function (birthDate) {
+  MedicalDataValidator.calculateAge = (birthDate) => {
     var birth = new Date(birthDate);
     var today = new Date();
     var age = today.getFullYear() - birth.getFullYear();
@@ -1061,7 +1041,7 @@ var MedicalDataValidator = /** @class */ (function () {
     }
     return age;
   };
-  MedicalDataValidator.validateCPF = function (cpf) {
+  MedicalDataValidator.validateCPF = (cpf) => {
     // Remove dots and dashes
     var numbers = cpf.replace(/[.-]/g, "");
     if (numbers.length !== 11) return false;
@@ -1083,11 +1063,11 @@ var MedicalDataValidator = /** @class */ (function () {
     if (remainder !== parseInt(numbers[10])) return false;
     return true;
   };
-  MedicalDataValidator.isValidMedicalCondition = function (condition) {
+  MedicalDataValidator.isValidMedicalCondition = (condition) => {
     // Basic validation - in production would check against medical databases
     return condition.length >= 3 && /^[a-zA-ZÀ-ÿ\s]+$/.test(condition);
   };
-  MedicalDataValidator.hasField = function (obj, fieldPath) {
+  MedicalDataValidator.hasField = (obj, fieldPath) => {
     var fields = fieldPath.split(".");
     var current = obj;
     for (var _i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
@@ -1099,16 +1079,16 @@ var MedicalDataValidator = /** @class */ (function () {
     }
     return current !== null && current !== undefined && current !== "";
   };
-  MedicalDataValidator.isEncrypted = function (obj, field) {
+  MedicalDataValidator.isEncrypted = (obj, field) => {
     // Check if field is encrypted (placeholder implementation)
     var value = obj[field];
     return value && typeof value === "object" && "data" in value && "algorithm" in value;
   };
-  MedicalDataValidator.isValidEmail = function (email) {
+  MedicalDataValidator.isValidEmail = (email) => {
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  MedicalDataValidator.isValidPhone = function (phone) {
+  MedicalDataValidator.isValidPhone = (phone) => {
     var phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$|^\d{10,11}$/;
     return phoneRegex.test(phone);
   };

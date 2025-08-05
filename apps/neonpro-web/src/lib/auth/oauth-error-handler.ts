@@ -4,8 +4,8 @@
  */
 
 import type { AuthError } from "@supabase/supabase-js";
-import type { sessionManager } from "./session/SessionManager";
 import type { performanceTracker } from "./performance-tracker";
+import type { sessionManager } from "./session/SessionManager";
 
 export interface OAuthErrorContext {
   provider: "google" | "email";

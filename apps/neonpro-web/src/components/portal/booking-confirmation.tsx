@@ -1,22 +1,22 @@
 "use client";
 
-import React from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
 import type {
-  Check,
   Calendar,
+  Check,
   Clock,
-  User,
-  Sparkles,
   DollarSign,
   FileText,
   Loader2,
+  Sparkles,
+  User,
 } from "lucide-react";
+import React from "react";
 import type { useTranslation } from "@/app/lib/i18n/use-translation";
-import type { Service, Professional, AvailableTimeSlot } from "@/app/types/appointments";
+import type { AvailableTimeSlot, Professional, Service } from "@/app/types/appointments";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Separator } from "@/components/ui/separator";
 
 interface BookingConfirmationProps {
   service?: Service;

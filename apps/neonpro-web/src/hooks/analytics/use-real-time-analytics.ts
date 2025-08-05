@@ -11,8 +11,8 @@
  * Integrates with Supabase real-time subscriptions and analytics API.
  */
 
-import type { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import type { useQuery, useQueryClient } from "@tanstack/react-query";
+import type { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { createClient } from "@/lib/supabase/client";
 
 // Types for real-time analytics

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, ReactNode, useContext, useReducer } from "react";
+import type React from "react";
+import { createContext, type ReactNode, useContext, useReducer } from "react";
 
 // Types
 export interface Customer {

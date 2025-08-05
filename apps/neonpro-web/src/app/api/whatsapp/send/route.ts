@@ -3,8 +3,8 @@
 
 import type { NextRequest, NextResponse } from "next/server";
 import type { createwhatsAppService } from "@/app/lib/services/whatsapp-service";
-import type { createClient } from "@/lib/supabase/server";
 import type { WhatsAppMessageType } from "@/app/types/whatsapp";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {

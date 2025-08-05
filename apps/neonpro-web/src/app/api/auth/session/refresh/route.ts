@@ -3,11 +3,8 @@
  * Refreshes an existing session and extends its expiry time
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { cookies } from "next/headers";
+import type { NextRequest } from "next/server";
 import type { SessionManager } from "@/lib/auth/session/SessionManager";
-import type { createClient } from "@/lib/supabase/server";
-import type { SecurityEventType, SecuritySeverity } from "@/types/session";
 
 // Initialize session manager
 let sessionManager: SessionManager | null = null;
@@ -92,7 +89,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

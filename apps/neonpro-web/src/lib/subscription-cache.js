@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Subscription Caching Strategies
  *
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,13 +151,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cacheManager = exports.globalSubscriptionCache = exports.SubscriptionCache = void 0;
 /**
  * Intelligent subscription cache with LRU eviction and automatic cleanup
  */
-var SubscriptionCache = /** @class */ (function () {
+var SubscriptionCache = /** @class */ (() => {
   function SubscriptionCache(config) {
     this.cache = new Map();
     this.hitCount = 0;
@@ -278,7 +275,6 @@ var SubscriptionCache = /** @class */ (function () {
    * Delete specific cache entry or entries matching pattern
    */
   SubscriptionCache.prototype.delete = function (pattern) {
-    var _this = this;
     var startTime = Date.now();
     var deletedCount = 0;
     if (this.cache.has(pattern)) {
@@ -289,25 +285,25 @@ var SubscriptionCache = /** @class */ (function () {
       // Pattern matching
       var regex_1 = new RegExp(pattern.replace(/\*/g, ".*"));
       var keysToDelete_1 = [];
-      this.cache.forEach(function (_, key) {
+      this.cache.forEach((_, key) => {
         if (regex_1.test(key)) {
           keysToDelete_1.push(key);
         }
       });
-      keysToDelete_1.forEach(function (key) {
-        _this.cache.delete(key);
+      keysToDelete_1.forEach((key) => {
+        this.cache.delete(key);
         deletedCount++;
       });
     } else {
       // Prefix matching
       var keysToDelete_2 = [];
-      this.cache.forEach(function (_, key) {
+      this.cache.forEach((_, key) => {
         if (key.startsWith(pattern)) {
           keysToDelete_2.push(key);
         }
       });
-      keysToDelete_2.forEach(function (key) {
-        _this.cache.delete(key);
+      keysToDelete_2.forEach((key) => {
+        this.cache.delete(key);
         deletedCount++;
       });
     }
@@ -342,22 +338,14 @@ var SubscriptionCache = /** @class */ (function () {
   SubscriptionCache.prototype.getStats = function () {
     var now = Date.now();
     var entries = [];
-    this.cache.forEach(function (entry) {
-      return entries.push(entry);
-    });
-    var validEntries = entries.filter(function (entry) {
-      return entry.expires > now;
-    });
+    this.cache.forEach((entry) => entries.push(entry));
+    var validEntries = entries.filter((entry) => entry.expires > now);
     var totalHits = this.hitCount + this.missCount;
     var hitRate = totalHits > 0 ? (this.hitCount / totalHits) * 100 : 0;
-    var accessCounts = validEntries.map(function (entry) {
-      return entry.accessCount;
-    });
+    var accessCounts = validEntries.map((entry) => entry.accessCount);
     var averageAccessCount =
       accessCounts.length > 0
-        ? accessCounts.reduce(function (sum, count) {
-            return sum + count;
-          }, 0) / accessCounts.length
+        ? accessCounts.reduce((sum, count) => sum + count, 0) / accessCounts.length
         : 0;
     // Estimate memory usage (rough calculation)
     var memoryUsage = this.cache.size * 2000; // Rough estimate: 2KB per entry
@@ -372,18 +360,14 @@ var SubscriptionCache = /** @class */ (function () {
         entries.length > 0
           ? Math.min.apply(
               Math,
-              entries.map(function (e) {
-                return e.created;
-              }),
+              entries.map((e) => e.created),
             )
           : null,
       newestEntry:
         entries.length > 0
           ? Math.max.apply(
               Math,
-              entries.map(function (e) {
-                return e.created;
-              }),
+              entries.map((e) => e.created),
             )
           : null,
       averageAccessCount: Math.round(averageAccessCount * 100) / 100,
@@ -403,20 +387,19 @@ var SubscriptionCache = /** @class */ (function () {
    * Optimize cache by removing expired and least useful entries
    */
   SubscriptionCache.prototype.optimize = function () {
-    var _this = this;
     var startTime = Date.now();
     var initialSize = this.cache.size;
     var now = Date.now();
     // Remove expired entries
     var expiredRemoved = 0;
     var entriesToDelete = [];
-    this.cache.forEach(function (entry, key) {
+    this.cache.forEach((entry, key) => {
       if (entry.expires <= now) {
         entriesToDelete.push(key);
       }
     });
-    entriesToDelete.forEach(function (key) {
-      _this.cache.delete(key);
+    entriesToDelete.forEach((key) => {
+      this.cache.delete(key);
       expiredRemoved++;
     });
     // If still over max size, remove least useful entries
@@ -443,7 +426,7 @@ var SubscriptionCache = /** @class */ (function () {
   /**
    * Calculate priority for cache entry (higher = more important to keep)
    */
-  SubscriptionCache.prototype.calculatePriority = function (entry) {
+  SubscriptionCache.prototype.calculatePriority = (entry) => {
     var now = Date.now();
     var age = now - entry.created;
     var timeSinceAccess = now - entry.lastAccessed;
@@ -485,7 +468,7 @@ var SubscriptionCache = /** @class */ (function () {
     if (this.cache.size === 0) return false;
     var leastUsefulKey = null;
     var lowestPriority = Infinity;
-    this.cache.forEach(function (entry, key) {
+    this.cache.forEach((entry, key) => {
       if (entry.priority < lowestPriority) {
         lowestPriority = entry.priority;
         leastUsefulKey = key;
@@ -511,12 +494,11 @@ var SubscriptionCache = /** @class */ (function () {
    * Start automatic cleanup timer
    */
   SubscriptionCache.prototype.startCleanupTimer = function () {
-    var _this = this;
     if (this.cleanupTimer) {
       clearInterval(this.cleanupTimer);
     }
-    this.cleanupTimer = setInterval(function () {
-      _this.optimize();
+    this.cleanupTimer = setInterval(() => {
+      this.optimize();
     }, this.config.cleanupInterval);
   };
   /**
@@ -548,7 +530,7 @@ exports.cacheManager = {
   warmUp: function (userId, validationResult) {
     return __awaiter(this, void 0, void 0, function () {
       var key;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         key = "subscription:".concat(userId);
         exports.globalSubscriptionCache.set(key, validationResult);
         return [2 /*return*/];
@@ -558,9 +540,8 @@ exports.cacheManager = {
   /**
    * Invalidate cache for user when subscription changes
    */
-  invalidateUser: function (userId) {
-    return exports.globalSubscriptionCache.delete("subscription:".concat(userId));
-  },
+  invalidateUser: (userId) =>
+    exports.globalSubscriptionCache.delete("subscription:".concat(userId)),
   /**
    * Invalidate cache for multiple users
    */
@@ -575,13 +556,11 @@ exports.cacheManager = {
   /**
    * Invalidate all trial subscriptions (useful when trial policies change)
    */
-  invalidateTrials: function () {
-    return exports.globalSubscriptionCache.delete("subscription:*trial*");
-  },
+  invalidateTrials: () => exports.globalSubscriptionCache.delete("subscription:*trial*"),
   /**
    * Get cache health status
    */
-  getHealth: function () {
+  getHealth: () => {
     var stats = exports.globalSubscriptionCache.getStats();
     var recommendations = [];
     var healthy = true;

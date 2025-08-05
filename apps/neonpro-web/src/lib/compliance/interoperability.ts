@@ -9,8 +9,8 @@
  */
 
 import type { z } from "zod";
-import type { logger } from "@/lib/utils/logger";
 import type { createClient } from "@/lib/supabase/client";
+import type { logger } from "@/lib/utils/logger";
 
 // Interoperability Types
 export type InteroperabilityStandard =

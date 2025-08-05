@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SystemIntegration = SystemIntegration;
 var react_1 = require("react");
@@ -157,7 +154,6 @@ var advanced_search_1 = require("./advanced-search");
 var quick_access_1 = require("./quick-access");
 var sonner_1 = require("sonner");
 function SystemIntegration(_a) {
-  var _this = this;
   var onPatientSelect = _a.onPatientSelect,
     _b = _a.userRole,
     userRole = _b === void 0 ? "staff" : _b;
@@ -183,10 +179,10 @@ function SystemIntegration(_a) {
     segmentDescription = _j[0],
     setSegmentDescription = _j[1];
   // Load system statistics
-  var loadSystemStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadSystemStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockStats;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         setIsLoadingStats(true);
         try {
           mockStats = {
@@ -213,12 +209,11 @@ function SystemIntegration(_a) {
         return [2 /*return*/];
       });
     });
-  };
   // Create patient segment
-  var createPatientSegment = function (patients) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createPatientSegment = (patients) =>
+    __awaiter(this, void 0, void 0, function () {
       var criteria, response, result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!segmentName.trim() || !segmentDescription.trim()) {
@@ -229,41 +224,23 @@ function SystemIntegration(_a) {
           case 1:
             _a.trys.push([1, 4, , 5]);
             criteria = {
-              patientIds: patients.map(function (p) {
-                return p.id;
-              }),
+              patientIds: patients.map((p) => p.id),
               filters: {
                 // Extract common characteristics
-                riskLevels: __spreadArray(
-                  [],
-                  new Set(
-                    patients.map(function (p) {
-                      return p.riskLevel;
-                    }),
-                  ),
-                  true,
-                ),
+                riskLevels: __spreadArray([], new Set(patients.map((p) => p.riskLevel)), true),
                 treatmentTypes: __spreadArray(
                   [],
-                  new Set(
-                    patients.map(function (p) {
-                      return p.treatmentType;
-                    }),
-                  ),
+                  new Set(patients.map((p) => p.treatmentType)),
                   true,
                 ),
                 ageRange: {
                   min: Math.min.apply(
                     Math,
-                    patients.map(function (p) {
-                      return p.age;
-                    }),
+                    patients.map((p) => p.age),
                   ),
                   max: Math.max.apply(
                     Math,
-                    patients.map(function (p) {
-                      return p.age;
-                    }),
+                    patients.map((p) => p.age),
                   ),
                 },
               },
@@ -311,19 +288,16 @@ function SystemIntegration(_a) {
         }
       });
     });
-  };
   // Handle patient selection for segment creation
-  var handleCreateSegment = function (patients) {
+  var handleCreateSegment = (patients) => {
     setSelectedPatients(patients);
     setShowSegmentDialog(true);
   };
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadSystemStats();
   }, []);
-  var formatNumber = function (num) {
-    return new Intl.NumberFormat("pt-BR").format(num);
-  };
-  var getPerformanceColor = function (value, threshold) {
+  var formatNumber = (num) => new Intl.NumberFormat("pt-BR").format(num);
+  var getPerformanceColor = (value, threshold) => {
     if (value >= threshold.good) return "text-green-600";
     if (value >= threshold.warning) return "text-yellow-600";
     return "text-red-600";
@@ -518,9 +492,7 @@ function SystemIntegration(_a) {
                   className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md"
                   placeholder="Ex: Pacientes Alto Risco Cardíaco"
                   value={segmentName}
-                  onChange={function (e) {
-                    return setSegmentName(e.target.value);
-                  }}
+                  onChange={(e) => setSegmentName(e.target.value)}
                 />
               </div>
 
@@ -531,9 +503,7 @@ function SystemIntegration(_a) {
                   placeholder="Descreva os critérios e objetivo deste segmento..."
                   rows={3}
                   value={segmentDescription}
-                  onChange={function (e) {
-                    return setSegmentDescription(e.target.value);
-                  }}
+                  onChange={(e) => setSegmentDescription(e.target.value)}
                 />
               </div>
 
@@ -544,7 +514,7 @@ function SystemIntegration(_a) {
               <div className="flex space-x-2">
                 <button_1.Button
                   variant="outline"
-                  onClick={function () {
+                  onClick={() => {
                     setShowSegmentDialog(false);
                     setSegmentName("");
                     setSegmentDescription("");
@@ -554,9 +524,7 @@ function SystemIntegration(_a) {
                   Cancelar
                 </button_1.Button>
                 <button_1.Button
-                  onClick={function () {
-                    return createPatientSegment(selectedPatients);
-                  }}
+                  onClick={() => createPatientSegment(selectedPatients)}
                   className="flex-1"
                   disabled={!segmentName.trim() || !segmentDescription.trim()}
                 >

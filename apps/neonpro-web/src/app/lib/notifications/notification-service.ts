@@ -3,19 +3,19 @@
  * Manages email, SMS, and in-app notifications with HIPAA compliance
  */
 
+import type { z } from "zod";
 import type { supabase } from "@/lib/supabase/client";
+import type { AuditService } from "./audit-service";
 import type {
   NOTIFICATION_CONFIG,
-  type NotificationType,
-  type NotificationChannel,
-  type NotificationPriority,
-  type NotificationPreferences,
+  NotificationChannel,
+  NotificationPreferences,
+  NotificationPriority,
+  NotificationType,
 } from "./config";
 import type { EmailService } from "./email-service";
-import type { SMSService } from "./sms-service";
 import type { SchedulingService } from "./scheduling-service";
-import type { AuditService } from "./audit-service";
-import type { z } from "zod";
+import type { SMSService } from "./sms-service";
 
 // Notification payload schema
 const NotificationPayloadSchema = z.object({

@@ -10,14 +10,14 @@
  * - Multi-tenant isolation support
  */
 
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   ConnectionMetrics,
   getConnectionPoolManager,
   HealthcheckResult,
 } from "@/lib/supabase/connection-pool-manager";
 import type { Database } from "@/types/database";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // Healthcare operation types for optimal routing
 type HealthcareOperationType = "critical" | "standard" | "analytics" | "administrative";

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = BookingConfirmation;
 var react_1 = require("react");
@@ -17,20 +16,18 @@ function BookingConfirmation(_a) {
     onConfirm = _a.onConfirm,
     isLoading = _a.isLoading;
   var t = (0, use_translation_1.useTranslation)().t;
-  var formatDate = function (dateTime) {
-    return new Date(dateTime).toLocaleDateString("pt-BR", {
+  var formatDate = (dateTime) =>
+    new Date(dateTime).toLocaleDateString("pt-BR", {
       weekday: "long",
       day: "2-digit",
       month: "long",
       year: "numeric",
     });
-  };
-  var formatTime = function (dateTime) {
-    return new Date(dateTime).toLocaleTimeString("pt-BR", {
+  var formatTime = (dateTime) =>
+    new Date(dateTime).toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">

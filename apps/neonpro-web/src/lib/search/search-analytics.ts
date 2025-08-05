@@ -4,8 +4,8 @@
  * Performance monitoring and analytics for search operations
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/database.types";
+import type { createClient } from "@/lib/supabase/client";
 
 // Types
 export interface SearchMetrics {

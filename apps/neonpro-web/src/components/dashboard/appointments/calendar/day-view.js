@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DayView = DayView;
 var react_1 = require("react");
@@ -18,11 +17,11 @@ function DayView(_a) {
     onTimeSlotClick = _a.onTimeSlotClick,
     className = _a.className;
   // Filter appointments for the specific date
-  var dayAppointments = appointments.filter(function (appointment) {
-    return (0, date_fns_1.isSameDay)(new Date(appointment.start_time), date);
-  });
+  var dayAppointments = appointments.filter((appointment) =>
+    (0, date_fns_1.isSameDay)(new Date(appointment.start_time), date),
+  );
   // Generate time slots from 8 AM to 6 PM
-  var generateTimeSlots = function () {
+  var generateTimeSlots = () => {
     var slots = [];
     var startHour = 8;
     var endHour = 18;
@@ -38,8 +37,8 @@ function DayView(_a) {
   };
   var timeSlots = generateTimeSlots();
   // Function to get appointments for a specific time slot
-  var getAppointmentsForSlot = function (slotTime) {
-    return dayAppointments.filter(function (appointment) {
+  var getAppointmentsForSlot = (slotTime) =>
+    dayAppointments.filter((appointment) => {
       var appointmentStart = new Date(appointment.start_time);
       var appointmentEnd = new Date(appointment.end_time);
       var slotEnd = new Date(slotTime.getTime() + 15 * 60 * 1000); // 15 minutes later
@@ -48,16 +47,15 @@ function DayView(_a) {
         (appointmentStart <= slotTime && appointmentEnd > slotTime)
       );
     });
-  };
   // Function to calculate appointment height based on duration
-  var getAppointmentHeight = function (appointment) {
+  var getAppointmentHeight = (appointment) => {
     var start = new Date(appointment.start_time);
     var end = new Date(appointment.end_time);
     var duration = (end.getTime() - start.getTime()) / (1000 * 60); // minutes
     var slotHeight = 48; // 48px per 15-minute slot
     return Math.max((duration / 15) * slotHeight, slotHeight);
   };
-  var handleTimeSlotClick = function (slotTime) {
+  var handleTimeSlotClick = (slotTime) => {
     if (onTimeSlotClick) {
       onTimeSlotClick((0, date_fns_1.format)(slotTime, "HH:mm"));
     }
@@ -79,7 +77,7 @@ function DayView(_a) {
         <div className="relative">
           {/* Time slots grid */}
           <div className="grid grid-cols-1 gap-px bg-border">
-            {timeSlots.map(function (slotTime, index) {
+            {timeSlots.map((slotTime, index) => {
               var slotAppointments = getAppointmentsForSlot(slotTime);
               var isHourMark = slotTime.getMinutes() === 0;
               return (
@@ -91,9 +89,7 @@ function DayView(_a) {
                     "hover:bg-muted/50 cursor-pointer transition-colors",
                   )}
                   style={{ minHeight: "48px" }}
-                  onClick={function () {
-                    return handleTimeSlotClick(slotTime);
-                  }}
+                  onClick={() => handleTimeSlotClick(slotTime)}
                 >
                   {/* Time label */}
                   <div className="absolute -left-12 top-0 w-10 text-xs text-muted-foreground text-right pr-2">
@@ -102,49 +98,46 @@ function DayView(_a) {
 
                   {/* Appointments in this slot */}
                   <div className="pl-2 pr-2 pt-1">
-                    {slotAppointments.map(function (appointment, appointmentIndex) {
-                      return (
-                        <div
-                          key={"".concat(appointment.id, "-").concat(appointmentIndex)}
-                          className="mb-1"
-                          style={{
-                            height: "".concat(getAppointmentHeight(appointment), "px"),
-                            minHeight: "40px",
-                          }}
-                        >
-                          <appointment_card_1.AppointmentCard
-                            appointment={appointment}
-                            variant="compact"
-                            showTime={true}
-                            showPatient={true}
-                            showProfessional={false}
-                            showActions={true}
-                            onClick={function () {
-                              return onAppointmentClick === null || onAppointmentClick === void 0
-                                ? void 0
-                                : onAppointmentClick(appointment);
-                            }}
-                            onEdit={function () {
-                              return onAppointmentEdit === null || onAppointmentEdit === void 0
-                                ? void 0
-                                : onAppointmentEdit(appointment);
-                            }}
-                            onCancel={function () {
-                              return onAppointmentCancel === null || onAppointmentCancel === void 0
-                                ? void 0
-                                : onAppointmentCancel(appointment);
-                            }}
-                            onComplete={function () {
-                              return onAppointmentComplete === null ||
-                                onAppointmentComplete === void 0
-                                ? void 0
-                                : onAppointmentComplete(appointment);
-                            }}
-                            className="h-full"
-                          />
-                        </div>
-                      );
-                    })}
+                    {slotAppointments.map((appointment, appointmentIndex) => (
+                      <div
+                        key={"".concat(appointment.id, "-").concat(appointmentIndex)}
+                        className="mb-1"
+                        style={{
+                          height: "".concat(getAppointmentHeight(appointment), "px"),
+                          minHeight: "40px",
+                        }}
+                      >
+                        <appointment_card_1.AppointmentCard
+                          appointment={appointment}
+                          variant="compact"
+                          showTime={true}
+                          showPatient={true}
+                          showProfessional={false}
+                          showActions={true}
+                          onClick={() =>
+                            onAppointmentClick === null || onAppointmentClick === void 0
+                              ? void 0
+                              : onAppointmentClick(appointment)
+                          }
+                          onEdit={() =>
+                            onAppointmentEdit === null || onAppointmentEdit === void 0
+                              ? void 0
+                              : onAppointmentEdit(appointment)
+                          }
+                          onCancel={() =>
+                            onAppointmentCancel === null || onAppointmentCancel === void 0
+                              ? void 0
+                              : onAppointmentCancel(appointment)
+                          }
+                          onComplete={() =>
+                            onAppointmentComplete === null || onAppointmentComplete === void 0
+                              ? void 0
+                              : onAppointmentComplete(appointment)
+                          }
+                          className="h-full"
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
               );
@@ -179,15 +172,13 @@ function CurrentTimeIndicator(_a) {
   var _b = react_1.default.useState(null),
     currentTime = _b[0],
     setCurrentTime = _b[1];
-  react_1.default.useEffect(function () {
+  react_1.default.useEffect(() => {
     // Set initial time only on client side to avoid hydration mismatch
     setCurrentTime(new Date());
-    var interval = setInterval(function () {
+    var interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000); // Update every minute
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
   // Don't render anything during SSR or before client hydration
   if (!currentTime) {

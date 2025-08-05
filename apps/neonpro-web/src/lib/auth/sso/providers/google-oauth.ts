@@ -1,8 +1,8 @@
 // Google OAuth Provider Implementation
 // Story 1.3: SSO Integration - Google OAuth 2.0
 
-import type { SSOProvider, SSOUserInfo, SSOTokenResponse } from "@/types/sso";
 import type { logger } from "@/lib/logger";
+import type { SSOProvider, SSOTokenResponse, SSOUserInfo } from "@/types/sso";
 
 export interface GoogleOAuthConfig {
   clientId: string;

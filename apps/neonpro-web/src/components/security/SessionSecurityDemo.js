@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SessionSecurityDemo;
 var react_1 = require("react");
@@ -148,10 +145,9 @@ var lucide_react_1 = require("lucide-react");
  * Demonstrates the session security features implemented in Story 1.5
  */
 function SessionSecurityDemo() {
-  var _this = this;
-  var sessionId = (0, react_1.useState)(function () {
-    return "session_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  })[0];
+  var sessionId = (0, react_1.useState)(() =>
+    "session_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9)),
+  )[0];
   var _a = (0, react_1.useState)(0),
     activityCount = _a[0],
     setActivityCount = _a[1];
@@ -175,9 +171,9 @@ function SessionSecurityDemo() {
     extendTimeout = _d.extendTimeout,
     timeoutError = _d.error;
   // Simulate user activity
-  var simulateActivity = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var simulateActivity = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -190,22 +186,19 @@ function SessionSecurityDemo() {
             ];
           case 1:
             _a.sent();
-            setActivityCount(function (prev) {
-              return prev + 1;
-            });
+            setActivityCount((prev) => prev + 1);
             return [2 /*return*/];
         }
       });
     });
-  };
   // Format time remaining
-  var formatTimeRemaining = function (seconds) {
+  var formatTimeRemaining = (seconds) => {
     var minutes = Math.floor(seconds / 60);
     var remainingSeconds = seconds % 60;
     return "".concat(minutes, ":").concat(remainingSeconds.toString().padStart(2, "0"));
   };
   // Get warning color based on level
-  var getWarningColor = function (level) {
+  var getWarningColor = (level) => {
     switch (level) {
       case "critical":
         return "destructive";
@@ -351,18 +344,14 @@ function SessionSecurityDemo() {
 
             <div className="flex gap-2">
               <button_1.Button
-                onClick={function () {
-                  return extendTimeout(30);
-                }}
+                onClick={() => extendTimeout(30)}
                 disabled={isExpired}
                 variant="outline"
               >
                 Estender 30min
               </button_1.Button>
               <button_1.Button
-                onClick={function () {
-                  return extendSession(60);
-                }}
+                onClick={() => extendSession(60)}
                 disabled={isExpired}
                 variant="outline"
               >

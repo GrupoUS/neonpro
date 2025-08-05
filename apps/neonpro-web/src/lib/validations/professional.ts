@@ -2,18 +2,6 @@
 // FHIR-compliant validation with LGPD compliance and modern healthcare standards
 
 import type { z } from "zod";
-import type {
-  EmploymentStatus,
-  ProfessionalStatus,
-  CredentialType,
-  VerificationStatus,
-  MetricType,
-  WorkflowStatus,
-  AlertSeverity,
-  AlertType,
-  ServiceType,
-  SpecialtyCategory,
-} from "./professional";
 
 // ============================================
 // COMMON VALIDATION PATTERNS

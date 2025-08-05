@@ -1,4 +1,3 @@
-"use strict";
 // NeonPro - Individual Subscription Plan API Routes
 // Story 6.1 - Task 2: Recurring Payment System
 // Individual plan management endpoints
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.PUT = PUT;
@@ -172,7 +169,7 @@ function GET(request_1, _a) {
   return __awaiter(this, arguments, void 0, function (request, _b) {
     var supabase, _c, user, authError, planId, _d, plan, error, subscriptionStats, stats, error_1;
     var params = _b.params;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 4, , 5]);
@@ -226,21 +223,15 @@ function GET(request_1, _a) {
             active_subscriptions:
               (subscriptionStats === null || subscriptionStats === void 0
                 ? void 0
-                : subscriptionStats.filter(function (s) {
-                    return s.status === "active";
-                  }).length) || 0,
+                : subscriptionStats.filter((s) => s.status === "active").length) || 0,
             trialing_subscriptions:
               (subscriptionStats === null || subscriptionStats === void 0
                 ? void 0
-                : subscriptionStats.filter(function (s) {
-                    return s.status === "trialing";
-                  }).length) || 0,
+                : subscriptionStats.filter((s) => s.status === "trialing").length) || 0,
             canceled_subscriptions:
               (subscriptionStats === null || subscriptionStats === void 0
                 ? void 0
-                : subscriptionStats.filter(function (s) {
-                    return s.status === "canceled";
-                  }).length) || 0,
+                : subscriptionStats.filter((s) => s.status === "canceled").length) || 0,
           };
           return [
             2 /*return*/,
@@ -282,7 +273,7 @@ function PUT(request_1, _a) {
       updatedPlan,
       error_2;
     var params = _b.params;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 8, , 9]);
@@ -415,7 +406,7 @@ function DELETE(request_1, _a) {
       deactivatedPlan,
       error_3;
     var params = _b.params;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 6, , 7]);

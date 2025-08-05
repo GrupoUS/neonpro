@@ -1,6 +1,6 @@
+import type { BrainIcon, ChevronRightIcon, MessageCircleIcon, TrendingUpIcon } from "lucide-react";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { BrainIcon, MessageCircleIcon, TrendingUpIcon, ChevronRightIcon } from "lucide-react";
 
 // Interface para uma Oportunidade
 interface Opportunity {

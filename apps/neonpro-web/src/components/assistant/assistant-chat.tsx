@@ -1,16 +1,16 @@
 "use client";
 
-import type { useState, useRef, useEffect } from "react";
 import type { useChat } from "ai/react";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Bot, Loader2, MessageSquare, Plus, Send, Settings, Trash2, User } from "lucide-react";
+import type { useEffect, useRef, useState } from "react";
+import type { toast } from "sonner";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type { Separator } from "@/components/ui/separator";
-import type { Send, Bot, User, Loader2, Settings, MessageSquare, Trash2, Plus } from "lucide-react";
-import type { toast } from "sonner";
 
 interface AssistantChatProps {
   conversationId?: string;

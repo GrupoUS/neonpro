@@ -5,15 +5,15 @@
  * Comprehensive test suite for permission validation and authorization
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import {
-  hasPermission,
-  hasAnyPermission,
-  hasAllPermissions,
   clearAllPermissionCache,
+  hasAllPermissions,
+  hasAnyPermission,
+  hasPermission,
 } from "@/lib/auth/rbac/permissions";
-import { UserRole, Permission } from "@/types/rbac";
-import { AuthUser } from "@/lib/middleware/auth";
+import type { AuthUser } from "@/lib/middleware/auth";
+import type { Permission, UserRole } from "@/types/rbac";
 
 // Mock Supabase client
 jest.mock("@/app/utils/supabase/client", () => ({

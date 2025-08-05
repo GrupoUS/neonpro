@@ -1,22 +1,31 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
-import type { Responsive, WidthProvider, Layout } from "react-grid-layout";
-import type { Card } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type {
+  Copy,
+  Download,
+  Eye,
+  EyeOff,
+  Grid3X3,
+  Lock,
+  Maximize2,
+  Minimize2,
+  Monitor,
+  Move,
+  Plus,
+  RotateCcw,
+  Save,
+  Settings,
+  Smartphone,
+  Tablet,
+  Trash2,
+  Unlock,
+  Upload,
+} from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import type { Layout, Responsive, WidthProvider } from "react-grid-layout";
 import type { Badge } from "@/components/ui/badge";
-import type {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import type { Button } from "@/components/ui/button";
+import type { Card } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -24,6 +33,12 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type {
@@ -33,45 +48,29 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Textarea } from "@/components/ui/textarea";
 import type { Switch } from "@/components/ui/switch";
+import type { Textarea } from "@/components/ui/textarea";
 import type {
-  Plus,
-  Settings,
-  Trash2,
-  Copy,
-  Move,
-  Maximize2,
-  Minimize2,
-  RotateCcw,
-  Save,
-  Download,
-  Upload,
-  Eye,
-  EyeOff,
-  Lock,
-  Unlock,
-  Grid3X3,
-  Smartphone,
-  Tablet,
-  Monitor,
-} from "lucide-react";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // Types
 import type {
   DashboardLayout,
   DashboardWidget,
-  WidgetType,
-  LayoutBreakpoint,
   GridPosition,
+  LayoutBreakpoint,
   WidgetConfig,
+  WidgetType,
 } from "@/lib/dashboard/types";
-
+import type { AlertsWidget } from "./AlertsWidget";
+import type { ChartWidget } from "./ChartWidget";
 // Widget Components
 import type { KPIWidget } from "./KPIWidget";
-import type { ChartWidget } from "./ChartWidget";
 import type { MetricWidget } from "./MetricWidget";
-import type { AlertsWidget } from "./AlertsWidget";
 import type { TableWidget } from "./TableWidget";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);

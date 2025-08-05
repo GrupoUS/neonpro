@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockOutputManagement = StockOutputManagement;
 /**
@@ -180,7 +177,6 @@ var table_1 = require("@/components/ui/table");
 var inventory_1 = require("@/lib/inventory");
 var use_toast_1 = require("@/hooks/use-toast");
 function StockOutputManagement(_a) {
-  var _this = this;
   var onRefresh = _a.onRefresh,
     className = _a.className;
   var _b = (0, react_1.useState)([]),
@@ -209,13 +205,13 @@ function StockOutputManagement(_a) {
     setNewOutputData = _g[1];
   var toast = (0, use_toast_1.useToast)().toast;
   var stockOutputManager = new inventory_1.StockOutputManager();
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadStockOutputs();
   }, []);
-  var loadStockOutputs = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadStockOutputs = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, outputs, outputsError, _b, requests, requestsError, error_1, errorMessage;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 3, 4, 5]);
@@ -264,11 +260,10 @@ function StockOutputManagement(_a) {
         }
       });
     });
-  };
-  var handleCreateStockOutput = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateStockOutput = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, output, error, error_2, errorMessage;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -292,13 +287,11 @@ function StockOutputManagement(_a) {
                 solicitante: newOutputData.solicitante,
                 motivo: newOutputData.motivo,
                 urgente: newOutputData.urgente,
-                items: newOutputData.items.map(function (item) {
-                  return {
-                    produto_id: item.produto_id,
-                    quantidade_solicitada: item.quantidade_solicitada,
-                    observacoes: item.observacoes,
-                  };
-                }),
+                items: newOutputData.items.map((item) => ({
+                  produto_id: item.produto_id,
+                  quantidade_solicitada: item.quantidade_solicitada,
+                  observacoes: item.observacoes,
+                })),
               }),
             ];
           case 1:
@@ -342,11 +335,10 @@ function StockOutputManagement(_a) {
         }
       });
     });
-  };
-  var handleApproveRequest = function (requestId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleApproveRequest = (requestId) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, success, error, error_3, errorMessage;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -377,10 +369,9 @@ function StockOutputManagement(_a) {
         }
       });
     });
-  };
-  var addItemToOutput = function () {
-    setNewOutputData(function (prev) {
-      return __assign(__assign({}, prev), {
+  var addItemToOutput = () => {
+    setNewOutputData((prev) =>
+      __assign(__assign({}, prev), {
         items: __spreadArray(
           __spreadArray([], prev.items, true),
           [
@@ -393,31 +384,29 @@ function StockOutputManagement(_a) {
           ],
           false,
         ),
-      });
-    });
+      }),
+    );
   };
-  var removeItemFromOutput = function (index) {
-    setNewOutputData(function (prev) {
-      return __assign(__assign({}, prev), {
-        items: prev.items.filter(function (_, i) {
-          return i !== index;
-        }),
-      });
-    });
+  var removeItemFromOutput = (index) => {
+    setNewOutputData((prev) =>
+      __assign(__assign({}, prev), {
+        items: prev.items.filter((_, i) => i !== index),
+      }),
+    );
   };
-  var updateOutputItem = function (index, field, value) {
-    setNewOutputData(function (prev) {
-      return __assign(__assign({}, prev), {
-        items: prev.items.map(function (item, i) {
+  var updateOutputItem = (index, field, value) => {
+    setNewOutputData((prev) =>
+      __assign(__assign({}, prev), {
+        items: prev.items.map((item, i) => {
           var _a;
           return i === index
             ? __assign(__assign({}, item), ((_a = {}), (_a[field] = value), _a))
             : item;
         }),
-      });
-    });
+      }),
+    );
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     var colors = {
       rascunho: "bg-gray-100 text-gray-800",
       pendente: "bg-yellow-100 text-yellow-800",
@@ -428,12 +417,11 @@ function StockOutputManagement(_a) {
     };
     return colors[status] || "bg-gray-100 text-gray-800";
   };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   if (isLoading) {
     return (
       <div className={"space-y-6 ".concat(className)}>
@@ -445,15 +433,13 @@ function StockOutputManagement(_a) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {[1, 2].map(function (i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardContent className="p-6">
-                  <div className="h-48 bg-gray-200 rounded animate-pulse" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {[1, 2].map((i) => (
+            <card_1.Card key={i}>
+              <card_1.CardContent className="p-6">
+                <div className="h-48 bg-gray-200 rounded animate-pulse" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -488,11 +474,11 @@ function StockOutputManagement(_a) {
                   <label_1.Label htmlFor="centro_custo">Centro de Custo</label_1.Label>
                   <select_1.Select
                     value={newOutputData.centro_custo_id}
-                    onValueChange={function (value) {
-                      return setNewOutputData(function (prev) {
-                        return __assign(__assign({}, prev), { centro_custo_id: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setNewOutputData((prev) =>
+                        __assign(__assign({}, prev), { centro_custo_id: value }),
+                      )
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Selecione o centro de custo" />
@@ -511,11 +497,11 @@ function StockOutputManagement(_a) {
                   <input_1.Input
                     id="solicitante"
                     value={newOutputData.solicitante}
-                    onChange={function (e) {
-                      return setNewOutputData(function (prev) {
-                        return __assign(__assign({}, prev), { solicitante: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setNewOutputData((prev) =>
+                        __assign(__assign({}, prev), { solicitante: e.target.value }),
+                      )
+                    }
                     placeholder="Nome do solicitante"
                   />
                 </div>
@@ -526,11 +512,11 @@ function StockOutputManagement(_a) {
                 <textarea_1.Textarea
                   id="motivo"
                   value={newOutputData.motivo}
-                  onChange={function (e) {
-                    return setNewOutputData(function (prev) {
-                      return __assign(__assign({}, prev), { motivo: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setNewOutputData((prev) =>
+                      __assign(__assign({}, prev), { motivo: e.target.value }),
+                    )
+                  }
                   placeholder="Descreva o motivo da saída"
                   rows={3}
                 />
@@ -541,11 +527,11 @@ function StockOutputManagement(_a) {
                   type="checkbox"
                   id="urgente"
                   checked={newOutputData.urgente}
-                  onChange={function (e) {
-                    return setNewOutputData(function (prev) {
-                      return __assign(__assign({}, prev), { urgente: e.target.checked });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setNewOutputData((prev) =>
+                      __assign(__assign({}, prev), { urgente: e.target.checked }),
+                    )
+                  }
                   className="rounded border-gray-300"
                 />
                 <label_1.Label htmlFor="urgente">Solicitação urgente</label_1.Label>
@@ -574,85 +560,81 @@ function StockOutputManagement(_a) {
                       </alert_1.AlertDescription>
                     </alert_1.Alert>
                   : <div className="space-y-3">
-                      {newOutputData.items.map(function (item, index) {
-                        return (
-                          <div key={index} className="p-4 border rounded-lg space-y-3">
-                            <div className="flex items-center justify-between">
-                              <h4 className="font-medium">Item {index + 1}</h4>
-                              <button_1.Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return removeItemFromOutput(index);
+                      {newOutputData.items.map((item, index) => (
+                        <div key={index} className="p-4 border rounded-lg space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium">Item {index + 1}</h4>
+                            <button_1.Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeItemFromOutput(index)}
+                            >
+                              <icons_1.Icons.Trash2 className="w-4 h-4" />
+                            </button_1.Button>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div className="space-y-2">
+                              <label_1.Label>Produto</label_1.Label>
+                              <select_1.Select
+                                value={item.produto_id}
+                                onValueChange={(value) => {
+                                  updateOutputItem(index, "produto_id", value);
+                                  // In real implementation, would fetch product name
+                                  updateOutputItem(index, "nome_produto", "Nome do Produto");
                                 }}
                               >
-                                <icons_1.Icons.Trash2 className="w-4 h-4" />
-                              </button_1.Button>
+                                <select_1.SelectTrigger>
+                                  <select_1.SelectValue placeholder="Selecione o produto" />
+                                </select_1.SelectTrigger>
+                                <select_1.SelectContent>
+                                  <select_1.SelectItem value="prod001">
+                                    Luvas de Procedimento
+                                  </select_1.SelectItem>
+                                  <select_1.SelectItem value="prod002">
+                                    Máscaras Cirúrgicas
+                                  </select_1.SelectItem>
+                                  <select_1.SelectItem value="prod003">
+                                    Soro Fisiológico
+                                  </select_1.SelectItem>
+                                  <select_1.SelectItem value="prod004">
+                                    Gaze Estéril
+                                  </select_1.SelectItem>
+                                </select_1.SelectContent>
+                              </select_1.Select>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                              <div className="space-y-2">
-                                <label_1.Label>Produto</label_1.Label>
-                                <select_1.Select
-                                  value={item.produto_id}
-                                  onValueChange={function (value) {
-                                    updateOutputItem(index, "produto_id", value);
-                                    // In real implementation, would fetch product name
-                                    updateOutputItem(index, "nome_produto", "Nome do Produto");
-                                  }}
-                                >
-                                  <select_1.SelectTrigger>
-                                    <select_1.SelectValue placeholder="Selecione o produto" />
-                                  </select_1.SelectTrigger>
-                                  <select_1.SelectContent>
-                                    <select_1.SelectItem value="prod001">
-                                      Luvas de Procedimento
-                                    </select_1.SelectItem>
-                                    <select_1.SelectItem value="prod002">
-                                      Máscaras Cirúrgicas
-                                    </select_1.SelectItem>
-                                    <select_1.SelectItem value="prod003">
-                                      Soro Fisiológico
-                                    </select_1.SelectItem>
-                                    <select_1.SelectItem value="prod004">
-                                      Gaze Estéril
-                                    </select_1.SelectItem>
-                                  </select_1.SelectContent>
-                                </select_1.Select>
-                              </div>
+                            <div className="space-y-2">
+                              <label_1.Label>Quantidade</label_1.Label>
+                              <input_1.Input
+                                type="number"
+                                value={item.quantidade_solicitada}
+                                onChange={(e) =>
+                                  updateOutputItem(
+                                    index,
+                                    "quantidade_solicitada",
+                                    parseInt(e.target.value) || 0,
+                                  )
+                                }
+                                placeholder="0"
+                                min="1"
+                              />
+                            </div>
 
-                              <div className="space-y-2">
-                                <label_1.Label>Quantidade</label_1.Label>
-                                <input_1.Input
-                                  type="number"
-                                  value={item.quantidade_solicitada}
-                                  onChange={function (e) {
-                                    return updateOutputItem(
-                                      index,
-                                      "quantidade_solicitada",
-                                      parseInt(e.target.value) || 0,
-                                    );
-                                  }}
-                                  placeholder="0"
-                                  min="1"
-                                />
-                              </div>
-
-                              <div className="space-y-2">
-                                <label_1.Label>Observações</label_1.Label>
-                                <input_1.Input
-                                  value={item.observacoes || ""}
-                                  onChange={function (e) {
-                                    return updateOutputItem(index, "observacoes", e.target.value);
-                                  }}
-                                  placeholder="Observações opcionais"
-                                />
-                              </div>
+                            <div className="space-y-2">
+                              <label_1.Label>Observações</label_1.Label>
+                              <input_1.Input
+                                value={item.observacoes || ""}
+                                onChange={(e) =>
+                                  updateOutputItem(index, "observacoes", e.target.value)
+                                }
+                                placeholder="Observações opcionais"
+                              />
                             </div>
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                     </div>}
               </div>
 
@@ -660,9 +642,7 @@ function StockOutputManagement(_a) {
               <div className="flex justify-end space-x-2 pt-4">
                 <button_1.Button
                   variant="outline"
-                  onClick={function () {
-                    return setShowCreateDialog(false);
-                  }}
+                  onClick={() => setShowCreateDialog(false)}
                   disabled={isCreating}
                 >
                   Cancelar
@@ -695,7 +675,7 @@ function StockOutputManagement(_a) {
           <card_1.CardContent>
             <div className="text-2xl font-bold">
               {
-                stockOutputs.filter(function (output) {
+                stockOutputs.filter((output) => {
                   var today = new Date().toDateString();
                   return new Date(output.data_saida).toDateString() === today;
                 }).length
@@ -727,7 +707,7 @@ function StockOutputManagement(_a) {
             <div className="text-2xl font-bold text-blue-600">
               {formatCurrency(
                 stockOutputs
-                  .filter(function (output) {
+                  .filter((output) => {
                     var outputDate = new Date(output.data_saida);
                     var currentMonth = new Date().getMonth();
                     var currentYear = new Date().getFullYear();
@@ -736,9 +716,7 @@ function StockOutputManagement(_a) {
                       outputDate.getFullYear() === currentYear
                     );
                   })
-                  .reduce(function (sum, output) {
-                    return sum + (output.valor_total || 0);
-                  }, 0),
+                  .reduce((sum, output) => sum + (output.valor_total || 0), 0),
               )}
             </div>
             <p className="text-sm text-muted-foreground">Consumido este mês</p>
@@ -769,44 +747,37 @@ function StockOutputManagement(_a) {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {pendingRequests.map(function (request) {
-                  return (
-                    <table_1.TableRow key={request.id}>
-                      <table_1.TableCell className="font-medium">
-                        {request.solicitante}
-                      </table_1.TableCell>
-                      <table_1.TableCell>{request.centro_custo_id}</table_1.TableCell>
-                      <table_1.TableCell className="max-w-xs truncate">
-                        {request.motivo}
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        {new Date(request.data_solicitacao).toLocaleDateString("pt-BR")}
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <badge_1.Badge className={getStatusColor(request.status)}>
-                          {request.status}
-                        </badge_1.Badge>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <div className="flex gap-2">
-                          <button_1.Button
-                            size="sm"
-                            onClick={function () {
-                              return handleApproveRequest(request.id);
-                            }}
-                          >
-                            <icons_1.Icons.Check className="w-4 h-4 mr-1" />
-                            Aprovar
-                          </button_1.Button>
-                          <button_1.Button size="sm" variant="outline">
-                            <icons_1.Icons.Eye className="w-4 h-4 mr-1" />
-                            Ver
-                          </button_1.Button>
-                        </div>
-                      </table_1.TableCell>
-                    </table_1.TableRow>
-                  );
-                })}
+                {pendingRequests.map((request) => (
+                  <table_1.TableRow key={request.id}>
+                    <table_1.TableCell className="font-medium">
+                      {request.solicitante}
+                    </table_1.TableCell>
+                    <table_1.TableCell>{request.centro_custo_id}</table_1.TableCell>
+                    <table_1.TableCell className="max-w-xs truncate">
+                      {request.motivo}
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      {new Date(request.data_solicitacao).toLocaleDateString("pt-BR")}
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      <badge_1.Badge className={getStatusColor(request.status)}>
+                        {request.status}
+                      </badge_1.Badge>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      <div className="flex gap-2">
+                        <button_1.Button size="sm" onClick={() => handleApproveRequest(request.id)}>
+                          <icons_1.Icons.Check className="w-4 h-4 mr-1" />
+                          Aprovar
+                        </button_1.Button>
+                        <button_1.Button size="sm" variant="outline">
+                          <icons_1.Icons.Eye className="w-4 h-4 mr-1" />
+                          Ver
+                        </button_1.Button>
+                      </div>
+                    </table_1.TableCell>
+                  </table_1.TableRow>
+                ))}
               </table_1.TableBody>
             </table_1.Table>
           </card_1.CardContent>
@@ -837,34 +808,32 @@ function StockOutputManagement(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {stockOutputs.slice(0, 10).map(function (output) {
-                    return (
-                      <table_1.TableRow key={output.id}>
-                        <table_1.TableCell className="font-medium">
-                          {output.numero_saida}
-                        </table_1.TableCell>
-                        <table_1.TableCell>{output.solicitante}</table_1.TableCell>
-                        <table_1.TableCell>{output.centro_custo_id}</table_1.TableCell>
-                        <table_1.TableCell>
-                          {new Date(output.data_saida).toLocaleDateString("pt-BR")}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {formatCurrency(output.valor_total || 0)}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge className={getStatusColor(output.status)}>
-                            {output.status}
-                          </badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <button_1.Button size="sm" variant="outline">
-                            <icons_1.Icons.Eye className="w-4 h-4 mr-1" />
-                            Ver
-                          </button_1.Button>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                  {stockOutputs.slice(0, 10).map((output) => (
+                    <table_1.TableRow key={output.id}>
+                      <table_1.TableCell className="font-medium">
+                        {output.numero_saida}
+                      </table_1.TableCell>
+                      <table_1.TableCell>{output.solicitante}</table_1.TableCell>
+                      <table_1.TableCell>{output.centro_custo_id}</table_1.TableCell>
+                      <table_1.TableCell>
+                        {new Date(output.data_saida).toLocaleDateString("pt-BR")}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {formatCurrency(output.valor_total || 0)}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge className={getStatusColor(output.status)}>
+                          {output.status}
+                        </badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <button_1.Button size="sm" variant="outline">
+                          <icons_1.Icons.Eye className="w-4 h-4 mr-1" />
+                          Ver
+                        </button_1.Button>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
             : <div className="text-center py-8">

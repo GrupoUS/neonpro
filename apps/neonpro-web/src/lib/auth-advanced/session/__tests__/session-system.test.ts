@@ -3,22 +3,22 @@
 // NeonPro - Session Management & Security
 // ============================================================================
 
-import type { describe, it, expect, beforeEach, afterEach, vi, Mock } from "vitest";
-import type { SessionSystem } from "../index";
-import type { SessionManager } from "../session-manager";
-import type { SecurityMonitor } from "../security-monitor";
-import type { DeviceManager } from "../device-manager";
+import type { afterEach, beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import type { AuditLogger } from "../audit-logger";
+import type { DeviceManager } from "../device-manager";
+import type { SessionSystem } from "../index";
+import type { SecurityMonitor } from "../security-monitor";
+import type { SessionManager } from "../session-manager";
 import type {
-  UserSession,
   DeviceRegistration,
-  SessionSecurityEvent,
   SessionConfig,
+  SessionSecurityEvent,
+  UserSession,
 } from "../types";
 import type {
-  generateSessionToken,
-  generateDeviceId,
   calculateSecurityScore,
+  generateDeviceId,
+  generateSessionToken,
   isSessionExpired,
   needsRenewal,
 } from "../utils";

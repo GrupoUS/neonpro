@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI-powered Predictive Analytics Engine
  * Provides comprehensive treatment outcome prediction and complication risk assessment
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -143,14 +140,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIPredictiveAnalyticsEngine = void 0;
 /**
  * AI Predictive Analytics Engine
  * Core system for treatment outcome prediction and risk modeling
  */
-var AIPredictiveAnalyticsEngine = /** @class */ (function () {
+var AIPredictiveAnalyticsEngine = /** @class */ (() => {
   function AIPredictiveAnalyticsEngine() {
     this.predictionModels = new Map();
     this.historicalData = new Map();
@@ -357,12 +354,7 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
             });
           }
         }
-        return [
-          2 /*return*/,
-          complications.sort(function (a, b) {
-            return b.probability - a.probability;
-          }),
-        ];
+        return [2 /*return*/, complications.sort((a, b) => b.probability - a.probability)];
       });
     });
   };
@@ -502,9 +494,7 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
       chronic_conditions:
         ((_a = patient.medical_history) === null || _a === void 0
           ? void 0
-          : _a.filter(function (h) {
-              return h.condition_type === "chronic";
-            }).length) || 0,
+          : _a.filter((h) => h.condition_type === "chronic").length) || 0,
       // Lifestyle factors
       smoking_status:
         ((_b = patient.lifestyle_factors) === null || _b === void 0 ? void 0 : _b.smoking) ||
@@ -563,7 +553,7 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
     });
   };
   // Additional utility methods
-  AIPredictiveAnalyticsEngine.prototype.calculateAge = function (birthDate) {
+  AIPredictiveAnalyticsEngine.prototype.calculateAge = (birthDate) => {
     var birth = new Date(birthDate);
     var today = new Date();
     var age = today.getFullYear() - birth.getFullYear();
@@ -573,7 +563,7 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
     }
     return age;
   };
-  AIPredictiveAnalyticsEngine.prototype.getBaselineSatisfaction = function (treatmentType) {
+  AIPredictiveAnalyticsEngine.prototype.getBaselineSatisfaction = (treatmentType) => {
     var baselines = {
       aesthetic: 8.2,
       wellness: 7.8,
@@ -582,7 +572,7 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
     };
     return baselines[treatmentType] || 7.5;
   };
-  AIPredictiveAnalyticsEngine.prototype.getBaselineRecoveryTimeline = function (treatmentType) {
+  AIPredictiveAnalyticsEngine.prototype.getBaselineRecoveryTimeline = (treatmentType) => {
     var timelines = {
       botox: {
         immediate_recovery: "0-2 hours",
@@ -646,87 +636,84 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
       factor *= 0.9;
     return factor;
   };
-  AIPredictiveAnalyticsEngine.prototype.adjustTimeframe = function (timeframe, adjustmentFactor) {
+  AIPredictiveAnalyticsEngine.prototype.adjustTimeframe = (timeframe, adjustmentFactor) => {
     // Simple timeframe adjustment logic
     if (adjustmentFactor > 1.2) {
-      return timeframe.replace(/\d+/g, function (match) {
-        return Math.ceil(parseInt(match) * adjustmentFactor).toString();
-      });
+      return timeframe.replace(/\d+/g, (match) =>
+        Math.ceil(parseInt(match) * adjustmentFactor).toString(),
+      );
     }
     return timeframe;
   };
   // Mock implementations for demonstration
-  AIPredictiveAnalyticsEngine.prototype.initializePredictionModels = function () {
+  AIPredictiveAnalyticsEngine.prototype.initializePredictionModels = () => {
     console.log("Initializing prediction models...");
   };
-  AIPredictiveAnalyticsEngine.prototype.loadHistoricalData = function () {
+  AIPredictiveAnalyticsEngine.prototype.loadHistoricalData = () => {
     console.log("Loading historical outcome data...");
   };
-  AIPredictiveAnalyticsEngine.prototype.buildPatientResponseModels = function () {
+  AIPredictiveAnalyticsEngine.prototype.buildPatientResponseModels = () => {
     console.log("Building patient response models...");
   };
   // Additional helper methods would be implemented here...
-  AIPredictiveAnalyticsEngine.prototype.analyzeHealingRate = function (patient, history) {
+  AIPredictiveAnalyticsEngine.prototype.analyzeHealingRate = (patient, history) => {
     // Analyze healing patterns from history
     return "average";
   };
-  AIPredictiveAnalyticsEngine.prototype.analyzePainTolerance = function (patient, history) {
+  AIPredictiveAnalyticsEngine.prototype.analyzePainTolerance = (patient, history) => {
     // Analyze pain tolerance from history
     return "moderate";
   };
-  AIPredictiveAnalyticsEngine.prototype.analyzeComplianceTendency = function (history) {
+  AIPredictiveAnalyticsEngine.prototype.analyzeComplianceTendency = (history) => {
     // Analyze compliance patterns
     return "average";
   };
-  AIPredictiveAnalyticsEngine.prototype.analyzeSatisfactionTendency = function (history) {
+  AIPredictiveAnalyticsEngine.prototype.analyzeSatisfactionTendency = (history) => {
     // Analyze satisfaction patterns
     return "moderate";
   };
-  AIPredictiveAnalyticsEngine.prototype.analyzeComplicationSusceptibility = function (
+  AIPredictiveAnalyticsEngine.prototype.analyzeComplicationSusceptibility = (
     patient,
     history,
     riskAssessment,
-  ) {
+  ) => {
     // Analyze complication susceptibility
     return riskAssessment.risk_level === "high" || riskAssessment.risk_level === "critical"
       ? "high"
       : "moderate";
   };
-  AIPredictiveAnalyticsEngine.prototype.extractHistoricalPatterns = function (history) {
+  AIPredictiveAnalyticsEngine.prototype.extractHistoricalPatterns = (history) => {
     // Extract patterns from treatment history
     return [];
   };
-  AIPredictiveAnalyticsEngine.prototype.identifyPredictiveIndicators = function (
+  AIPredictiveAnalyticsEngine.prototype.identifyPredictiveIndicators = (
     patient,
     riskAssessment,
-  ) {
+  ) => {
     // Identify predictive indicators
     return [];
   };
-  AIPredictiveAnalyticsEngine.prototype.extractPersonalizationFactors = function (patient) {
+  AIPredictiveAnalyticsEngine.prototype.extractPersonalizationFactors = (patient) => {
     // Extract personalization factors
     return [];
   };
-  AIPredictiveAnalyticsEngine.prototype.assessTreatmentComplexity = function (treatment) {
+  AIPredictiveAnalyticsEngine.prototype.assessTreatmentComplexity = (treatment) => {
     // Assess treatment complexity (0-1 scale)
     return 0.5;
   };
-  AIPredictiveAnalyticsEngine.prototype.calculateAverageSatisfaction = function (patterns) {
+  AIPredictiveAnalyticsEngine.prototype.calculateAverageSatisfaction = (patterns) => {
     // Calculate average satisfaction from patterns
     return 8.0;
   };
-  AIPredictiveAnalyticsEngine.prototype.calculateComplicationRate = function (patterns) {
+  AIPredictiveAnalyticsEngine.prototype.calculateComplicationRate = (patterns) => {
     // Calculate complication rate from patterns
     return 0.05;
   };
-  AIPredictiveAnalyticsEngine.prototype.predictSuccessProbability = function (features, treatment) {
+  AIPredictiveAnalyticsEngine.prototype.predictSuccessProbability = (features, treatment) => {
     // Predict success probability using ML model
     return 0.85;
   };
-  AIPredictiveAnalyticsEngine.prototype.predictSatisfactionScore = function (
-    features,
-    responseModel,
-  ) {
+  AIPredictiveAnalyticsEngine.prototype.predictSatisfactionScore = (features, responseModel) => {
     // Predict satisfaction score
     return 8.2;
   };
@@ -737,15 +724,15 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
     // Predict recovery timeline from features
     return this.getBaselineRecoveryTimeline(treatment.type);
   };
-  AIPredictiveAnalyticsEngine.prototype.predictComplications = function (features, treatment) {
+  AIPredictiveAnalyticsEngine.prototype.predictComplications = (features, treatment) => {
     // Predict potential complications
     return [];
   };
-  AIPredictiveAnalyticsEngine.prototype.generateExpectedResults = function (
+  AIPredictiveAnalyticsEngine.prototype.generateExpectedResults = (
     features,
     treatment,
     successProbability,
-  ) {
+  ) => {
     // Generate expected results
     return [
       {
@@ -757,7 +744,7 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
       },
     ];
   };
-  AIPredictiveAnalyticsEngine.prototype.generateLongTermPrognosis = function (features, treatment) {
+  AIPredictiveAnalyticsEngine.prototype.generateLongTermPrognosis = (features, treatment) => {
     // Generate long-term prognosis
     return {
       durability_months: 12,
@@ -766,21 +753,18 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
       aging_considerations: ["Natural aging process"],
     };
   };
-  AIPredictiveAnalyticsEngine.prototype.identifyContributingFactors = function (features, outcome) {
+  AIPredictiveAnalyticsEngine.prototype.identifyContributingFactors = (features, outcome) => {
     // Identify factors contributing to prediction
     return [];
   };
-  AIPredictiveAnalyticsEngine.prototype.generateAlternativeScenarios = function (
-    features,
-    outcome,
-  ) {
+  AIPredictiveAnalyticsEngine.prototype.generateAlternativeScenarios = (features, outcome) => {
     // Generate alternative scenarios
     return [];
   };
-  AIPredictiveAnalyticsEngine.prototype.generateMonitoringRecommendations = function (
+  AIPredictiveAnalyticsEngine.prototype.generateMonitoringRecommendations = (
     outcome,
     riskAssessment,
-  ) {
+  ) => {
     // Generate monitoring recommendations
     var recommendations = ["Regular follow-up appointments"];
     if (riskAssessment.risk_level === "high" || riskAssessment.risk_level === "critical") {
@@ -789,62 +773,54 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
     }
     return recommendations;
   };
-  AIPredictiveAnalyticsEngine.prototype.calculatePredictionConfidence = function (
+  AIPredictiveAnalyticsEngine.prototype.calculatePredictionConfidence = (
     features,
     responseModel,
     treatment,
-  ) {
+  ) => {
     // Calculate prediction confidence
     return 0.85;
   };
-  AIPredictiveAnalyticsEngine.prototype.getTreatmentSpecificComplications = function (
-    treatmentType,
-  ) {
+  AIPredictiveAnalyticsEngine.prototype.getTreatmentSpecificComplications = (treatmentType) => {
     // Get treatment-specific complications
     return [];
   };
-  AIPredictiveAnalyticsEngine.prototype.calculateComplicationProbability = function (
+  AIPredictiveAnalyticsEngine.prototype.calculateComplicationProbability = (
     complication,
     patient,
     riskAssessment,
-  ) {
+  ) => {
     // Calculate complication probability
     return 0.05;
   };
-  AIPredictiveAnalyticsEngine.prototype.assessComplicationSeverity = function (
-    complication,
-    patient,
-  ) {
+  AIPredictiveAnalyticsEngine.prototype.assessComplicationSeverity = (complication, patient) => {
     // Assess complication severity
     return "mild";
   };
-  AIPredictiveAnalyticsEngine.prototype.calculateOptimalTreatmentSpacing = function (
+  AIPredictiveAnalyticsEngine.prototype.calculateOptimalTreatmentSpacing = (
     treatments,
     responseModel,
-  ) {
+  ) => {
     // Calculate optimal spacing between treatments
     return {};
   };
-  AIPredictiveAnalyticsEngine.prototype.optimizeTreatmentSequence = function (
+  AIPredictiveAnalyticsEngine.prototype.optimizeTreatmentSequence = (
     treatments,
     patient,
     responseModel,
-  ) {
+  ) => {
     // Optimize treatment sequence
     return {};
   };
-  AIPredictiveAnalyticsEngine.prototype.calculateTotalTimeline = function (spacing, sequence) {
+  AIPredictiveAnalyticsEngine.prototype.calculateTotalTimeline = (spacing, sequence) => {
     // Calculate total treatment timeline
     return "3-6 months";
   };
-  AIPredictiveAnalyticsEngine.prototype.generateTimelineRationale = function (
-    responseModel,
-    treatments,
-  ) {
+  AIPredictiveAnalyticsEngine.prototype.generateTimelineRationale = (responseModel, treatments) => {
     // Generate rationale for timeline optimization
     return "Timeline optimized based on patient response profile and treatment requirements";
   };
-  AIPredictiveAnalyticsEngine.prototype.getBaseTreatmentDurability = function (treatmentType) {
+  AIPredictiveAnalyticsEngine.prototype.getBaseTreatmentDurability = (treatmentType) => {
     // Get base treatment durability in months
     var durabilities = {
       botox: 4,
@@ -867,21 +843,15 @@ var AIPredictiveAnalyticsEngine = /** @class */ (function () {
     else if (riskAssessment.risk_level === "high") factor *= 0.9;
     return factor;
   };
-  AIPredictiveAnalyticsEngine.prototype.getMaintenanceRequirements = function (
-    treatmentType,
-    patient,
-  ) {
+  AIPredictiveAnalyticsEngine.prototype.getMaintenanceRequirements = (treatmentType, patient) => {
     // Get maintenance requirements
     return ["Regular follow-up appointments", "Proper skincare routine"];
   };
-  AIPredictiveAnalyticsEngine.prototype.getFutureTreatmentOptions = function (
-    treatmentType,
-    patient,
-  ) {
+  AIPredictiveAnalyticsEngine.prototype.getFutureTreatmentOptions = (treatmentType, patient) => {
     // Get future treatment options
     return ["Touch-up treatments", "Complementary procedures"];
   };
-  AIPredictiveAnalyticsEngine.prototype.getAgingConsiderations = function (treatmentType, patient) {
+  AIPredictiveAnalyticsEngine.prototype.getAgingConsiderations = (treatmentType, patient) => {
     // Get aging considerations
     return ["Natural aging process will continue", "Results may change over time"];
   };

@@ -1,11 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { AuditLogger } from "../../auth/audit/audit-logger";
-import { LGPDAutomation } from "../../compliance/lgpd-automation";
 import { EncryptionService } from "../../compliance/encryption";
+import { LGPDAutomation } from "../../compliance/lgpd-automation";
 import { TemplateEngine } from "../templates/template-engine";
 import { ChannelProvider } from "./channel-providers";
-import { NotificationScheduler } from "./notification-scheduler";
 import { NotificationAnalytics } from "./notification-analytics";
+import { NotificationScheduler } from "./notification-scheduler";
 
 export interface NotificationConfig {
   id: string;
@@ -582,7 +582,7 @@ export class NotificationManager {
 
   private async scheduleRetry(config: NotificationConfig): Promise<void> {
     // Implementar lógica de retry com backoff exponencial
-    const retryDelay = Math.min(1000 * Math.pow(2, config.metadata?.retry_count || 0), 300000);
+    const retryDelay = Math.min(1000 * 2 ** (config.metadata?.retry_count || 0), 300000);
     const retryAt = new Date(Date.now() + retryDelay);
 
     await this.scheduleNotification(

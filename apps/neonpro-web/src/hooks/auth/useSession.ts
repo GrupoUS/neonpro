@@ -3,11 +3,11 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import type { useState, useEffect, useCallback, useRef } from "react";
-import type { useSupabase } from "@/hooks/useSupabase";
-import type { UnifiedSessionSystem, SessionData, SessionValidation } from "@/lib/auth/session";
 import type { useRouter } from "next/navigation";
+import type { useCallback, useEffect, useRef, useState } from "react";
 import type { toast } from "sonner";
+import type { useSupabase } from "@/hooks/useSupabase";
+import type { SessionData, SessionValidation, UnifiedSessionSystem } from "@/lib/auth/session";
 
 // =====================================================
 // TYPES & INTERFACES

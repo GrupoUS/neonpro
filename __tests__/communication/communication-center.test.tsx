@@ -1,16 +1,16 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import type React from "react";
 import { CommunicationDashboard } from "@/app/components/communication/CommunicationDashboard";
 import { CommunicationInbox } from "@/app/components/communication/CommunicationInbox";
 import { MessageComposer } from "@/app/components/communication/MessageComposer";
 import { TemplateManager } from "@/app/components/communication/TemplateManager";
 import type {
-  MessageThread,
   Message,
-  MessageTemplate,
   MessageStatistics,
+  MessageTemplate,
+  MessageThread,
 } from "@/app/lib/types/communication";
 
 // Mock the communication hooks
@@ -405,7 +405,7 @@ describe("Communication Center", () => {
     });
 
     it("handles template selection", async () => {
-      const user = userEvent.setup();
+      const _user = userEvent.setup();
       const mockTemplate = mockTemplates[0];
 
       render(<MessageComposer selectedTemplate={mockTemplate} />, { wrapper: createWrapper() });

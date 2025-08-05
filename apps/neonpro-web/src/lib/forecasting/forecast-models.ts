@@ -15,9 +15,9 @@
 
 import type { supabase } from "@/lib/supabase";
 import type {
+  DemandForecast,
   ForecastModel,
   ForecastValidationMetrics,
-  DemandForecast,
 } from "./demand-forecasting";
 
 export interface ModelTrainingConfig {

@@ -1,7 +1,7 @@
 import type { createClient } from "@supabase/supabase-js";
 import type { AuditLogger } from "../../audit/audit-logger";
-import type { EncryptionService } from "../../security/encryption-service";
 import type { LGPDManager } from "../../lgpd/lgpd-manager";
+import type { EncryptionService } from "../../security/encryption-service";
 
 export interface BackupConfig {
   enabled: boolean;
@@ -764,17 +764,19 @@ export class BackupManager {
 
     for (const dataSource of job.data_sources) {
       switch (dataSource) {
-        case "database":
+        case "database": {
           const dbBackup = await this.backupDatabase();
           totalSize += dbBackup.size;
           filesCount += dbBackup.files;
           break;
+        }
 
-        case "files":
+        case "files": {
           const filesBackup = await this.backupFiles();
           totalSize += filesBackup.size;
           filesCount += filesBackup.files;
           break;
+        }
 
         // Outros data sources...
       }

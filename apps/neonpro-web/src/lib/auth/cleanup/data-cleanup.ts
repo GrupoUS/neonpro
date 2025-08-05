@@ -2,9 +2,9 @@
 // Automated cleanup of expired sessions, tokens, and sensitive data
 // LGPD compliance and data retention management
 
-import type { UserSession, SecurityEvent } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
 import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { SecurityEvent, UserSession } from "@/types/session";
 
 export interface CleanupTask {
   id: string;

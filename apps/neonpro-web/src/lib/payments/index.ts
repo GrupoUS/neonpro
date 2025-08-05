@@ -3,48 +3,39 @@
  * Centraliza exports de todos os módulos de pagamento
  */
 
-// Core Payment Services
-export { PaymentProcessor } from "./payment-processor";
-export { StripeProvider } from "./stripe";
-
+// Types (assumed to exist)
+export type {
+  DelinquencyPolicy,
+  GatewayProvider,
+  InstallmentPlan,
+  PaymentConfig,
+  PaymentMethod,
+  PaymentStatus,
+  ReceiptData,
+  RecurringPaymentConfig,
+  TransactionResult,
+} from "../types/payments";
+// Card Management
+export { CardManager } from "./card";
+// Delinquency
+export { DelinquencyManager } from "./delinquency";
+// Email
+export { PaymentEmailService } from "./email";
 // Gateway Services
 export { PaymentGatewayManager } from "./gateways";
-export { StripeGateway } from "./gateways/stripe-gateway";
 export { PagarMeGateway } from "./gateways/pagarme-gateway";
-
-// Recurring Payments
-export { RecurringPaymentManager } from "./recurring";
-
+export { StripeGateway } from "./gateways/stripe-gateway";
 // Installments
 export { InstallmentManager } from "./installments";
-
+// Core Payment Services
+export { PaymentProcessor } from "./payment-processor";
+// PDF Generation
+export { PDFGenerator } from "./pdf";
 // Receipts
 export { ReceiptManager } from "./receipts";
 
-// Delinquency
-export { DelinquencyManager } from "./delinquency";
-
-// Email
-export { PaymentEmailService } from "./email";
-
-// Card Management
-export { CardManager } from "./card";
-
 // Reconciliation
 export { ReconciliationManager } from "./reconciliation";
-
-// PDF Generation
-export { PDFGenerator } from "./pdf";
-
-// Types (assumed to exist)
-export type {
-  PaymentMethod,
-  PaymentStatus,
-  TransactionResult,
-  PaymentConfig,
-  GatewayProvider,
-  RecurringPaymentConfig,
-  InstallmentPlan,
-  ReceiptData,
-  DelinquencyPolicy,
-} from "../types/payments";
+// Recurring Payments
+export { RecurringPaymentManager } from "./recurring";
+export { StripeProvider } from "./stripe";

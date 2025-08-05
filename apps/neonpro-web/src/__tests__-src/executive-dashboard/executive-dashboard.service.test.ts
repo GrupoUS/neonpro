@@ -5,7 +5,6 @@
  * Tests for the backend service layer of the executive dashboard
  */
 
-import type { createMockSupabaseClient } from "../../utils/test-helpers";
 import type { ExecutiveDashboardService } from "../../lib/services/executive-dashboard";
 
 // Mock the Supabase client

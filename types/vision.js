@@ -1,4 +1,3 @@
-"use strict";
 // Vision Analysis Types
 // Epic 10.1: Automated Before/After Analysis
 // Target: ≥95% accuracy, <30s processing time

@@ -1,13 +1,13 @@
 // Hook para gerenciar dados KPI com cache e refresh automático
 // Integra com o KPI Engine para dados reais do Supabase
 
+import type { useCallback, useEffect, useState } from "react";
 import type {
   DrillDownRequest,
   DrillDownResult,
   KPICalculationRequest,
   KPICalculationResult,
 } from "@/lib/types/kpi-types";
-import type { useCallback, useEffect, useState } from "react";
 
 export interface UseKPIDataOptions {
   dateRange: string;

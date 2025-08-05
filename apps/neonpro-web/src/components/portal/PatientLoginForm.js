@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientLoginForm;
 // ===============================================
@@ -161,7 +158,7 @@ var loginSchema = zod_2.z
     remember_me: zod_2.z.boolean().default(false),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.login_type === "email" && !data.email) {
         return false;
       }
@@ -178,7 +175,6 @@ var loginSchema = zod_2.z
     },
   );
 function PatientLoginForm(_a) {
-  var _this = this;
   var initialClinicCode = _a.initialClinicCode,
     redirectUrl = _a.redirectUrl;
   var router = (0, navigation_1.useRouter)();
@@ -205,7 +201,7 @@ function PatientLoginForm(_a) {
     setValue = _e.setValue,
     errors = _e.formState.errors;
   var loginType = watch("login_type");
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Initialize PWA features
     (0, pwa_config_1.registerPortalServiceWorker)();
     (0, pwa_config_1.enableOfflineSupport)();
@@ -213,19 +209,19 @@ function PatientLoginForm(_a) {
     // Check if PWA features should be shown
     setShowPWAFeatures(true);
     // Listen for install events
-    var handleInstallEvent = function () {
+    var handleInstallEvent = () => {
       showInstallDialog();
     };
     window.addEventListener("install-portal", handleInstallEvent);
-    return function () {
+    return () => {
       window.removeEventListener("install-portal", handleInstallEvent);
     };
   }, []);
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, redirectTo, error_1;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             setIsLoading(true);
@@ -262,8 +258,7 @@ function PatientLoginForm(_a) {
         }
       });
     });
-  };
-  var formatPhone = function (value) {
+  var formatPhone = (value) => {
     // Simple phone formatting for Brazilian numbers
     var numbers = value.replace(/\D/g, "");
     if (numbers.length <= 11) {
@@ -271,7 +266,7 @@ function PatientLoginForm(_a) {
     }
     return value;
   };
-  var formatDocument = function (value) {
+  var formatDocument = (value) => {
     // Simple CPF formatting
     var numbers = value.replace(/\D/g, "");
     if (numbers.length <= 11) {
@@ -292,7 +287,7 @@ function PatientLoginForm(_a) {
           placeholder="Ex: CLINIC123"
           className="text-center font-mono uppercase"
           {...register("clinic_code")}
-          onChange={function (e) {
+          onChange={(e) => {
             setValue("clinic_code", e.target.value.toUpperCase());
           }}
         />
@@ -304,12 +299,7 @@ function PatientLoginForm(_a) {
         <label_1.Label className="text-sm font-medium text-gray-700">
           Como deseja entrar?
         </label_1.Label>
-        <select_1.Select
-          value={loginType}
-          onValueChange={function (value) {
-            return setValue("login_type", value);
-          }}
-        >
+        <select_1.Select value={loginType} onValueChange={(value) => setValue("login_type", value)}>
           <select_1.SelectTrigger>
             <select_1.SelectValue />
           </select_1.SelectTrigger>
@@ -348,7 +338,7 @@ function PatientLoginForm(_a) {
               type="tel"
               placeholder="(11) 99999-9999"
               {...register("phone")}
-              onChange={function (e) {
+              onChange={(e) => {
                 var formatted = formatPhone(e.target.value);
                 setValue("phone", formatted);
               }}
@@ -367,7 +357,7 @@ function PatientLoginForm(_a) {
               type="text"
               placeholder="000.000.000-00"
               {...register("document_number")}
-              onChange={function (e) {
+              onChange={(e) => {
                 var formatted = formatDocument(e.target.value);
                 setValue("document_number", formatted);
               }}
@@ -384,9 +374,7 @@ function PatientLoginForm(_a) {
         <switch_1.Switch
           id="remember_me"
           {...register("remember_me")}
-          onCheckedChange={function (checked) {
-            return setValue("remember_me", checked);
-          }}
+          onCheckedChange={(checked) => setValue("remember_me", checked)}
         />
         <label_1.Label htmlFor="remember_me" className="text-sm text-gray-700">
           Manter conectado por 7 dias

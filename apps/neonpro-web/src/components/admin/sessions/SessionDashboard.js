@@ -6,7 +6,6 @@
  * and device tracking with real-time updates.
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SessionDashboard;
 var react_1 = require("react");
@@ -88,9 +87,7 @@ function SessionDashboard() {
           <button_1.Button
             variant="destructive"
             size="sm"
-            onClick={function () {
-              return terminateSession("user_logout");
-            }}
+            onClick={() => terminateSession("user_logout")}
           >
             <lucide_react_1.LogOut className="h-4 w-4 mr-2" />
             Encerrar Sessão
@@ -141,9 +138,7 @@ function SessionDashboard() {
             <CurrentSessionCard
               session={session}
               showSensitiveData={showSensitiveData}
-              onToggleSensitiveData={function () {
-                return setShowSensitiveData(!showSensitiveData);
-              }}
+              onToggleSensitiveData={() => setShowSensitiveData(!showSensitiveData)}
             />
             <RecentSecurityEventsCard
               events={securityEvents.slice(0, 5)}
@@ -211,12 +206,12 @@ function SessionStatusCard(_a) {
 }
 function SecurityScoreCard(_a) {
   var score = _a.score;
-  var getScoreColor = function (score) {
+  var getScoreColor = (score) => {
     if (score >= 80) return "text-green-600";
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
-  var getScoreIcon = function (score) {
+  var getScoreIcon = (score) => {
     if (score >= 80) return <lucide_react_1.Shield className="h-4 w-4 text-green-600" />;
     if (score >= 60) return <lucide_react_1.AlertTriangle className="h-4 w-4 text-yellow-600" />;
     return <lucide_react_1.XCircle className="h-4 w-4 text-red-600" />;
@@ -238,12 +233,8 @@ function SecurityScoreCard(_a) {
 }
 function ActiveDevicesCard(_a) {
   var devices = _a.devices;
-  var activeDevices = devices.filter(function (d) {
-    return !d.blocked;
-  });
-  var trustedDevices = activeDevices.filter(function (d) {
-    return d.trusted;
-  });
+  var activeDevices = devices.filter((d) => !d.blocked);
+  var trustedDevices = activeDevices.filter((d) => d.trusted);
   return (
     <card_1.Card>
       <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -259,12 +250,8 @@ function ActiveDevicesCard(_a) {
 }
 function SecurityEventsCard(_a) {
   var events = _a.events;
-  var unresolvedEvents = events.filter(function (e) {
-    return !e.resolved;
-  });
-  var criticalEvents = unresolvedEvents.filter(function (e) {
-    return e.severity === "critical";
-  });
+  var unresolvedEvents = events.filter((e) => !e.resolved);
+  var criticalEvents = unresolvedEvents.filter((e) => e.severity === "critical");
   return (
     <card_1.Card>
       <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -285,7 +272,7 @@ function CurrentSessionCard(_a) {
   var session = _a.session,
     showSensitiveData = _a.showSensitiveData,
     onToggleSensitiveData = _a.onToggleSensitiveData;
-  var maskData = function (data) {
+  var maskData = (data) => {
     if (showSensitiveData) return data;
     return data.replace(/./g, "•");
   };
@@ -348,7 +335,7 @@ function CurrentSessionCard(_a) {
 function RecentSecurityEventsCard(_a) {
   var events = _a.events,
     onReportActivity = _a.onReportActivity;
-  var getSeverityBadge = function (severity) {
+  var getSeverityBadge = (severity) => {
     var variants = {
       low: "secondary",
       medium: "default",
@@ -361,7 +348,7 @@ function RecentSecurityEventsCard(_a) {
       </badge_1.Badge>
     );
   };
-  var getEventTypeLabel = function (eventType) {
+  var getEventTypeLabel = (eventType) => {
     var _a;
     var labels =
       ((_a = {}),
@@ -384,12 +371,12 @@ function RecentSecurityEventsCard(_a) {
           <button_1.Button
             variant="outline"
             size="sm"
-            onClick={function () {
-              return onReportActivity(session_1.SecurityEventType.SUSPICIOUS_USER_AGENT, {
+            onClick={() =>
+              onReportActivity(session_1.SecurityEventType.SUSPICIOUS_USER_AGENT, {
                 manual_report: true,
                 description: "Atividade suspeita reportada pelo usuário",
-              });
-            }}
+              })
+            }
           >
             <lucide_react_1.AlertTriangle className="h-4 w-4 mr-2" />
             Reportar
@@ -402,32 +389,30 @@ function RecentSecurityEventsCard(_a) {
               Nenhum evento de segurança recente
             </p>
           : <div className="space-y-3">
-              {events.map(function (event) {
-                return (
-                  <div
-                    key={event.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <span className="font-medium">{getEventTypeLabel(event.event_type)}</span>
-                        {getSeverityBadge(event.severity)}
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {(0, date_fns_1.formatDistanceToNow)(new Date(event.timestamp), {
-                          addSuffix: true,
-                          locale: locale_1.ptBR,
-                        })}
-                      </p>
-                    </div>
+              {events.map((event) => (
+                <div
+                  key={event.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
+                  <div className="flex-1">
                     <div className="flex items-center space-x-2">
-                      {event.resolved
-                        ? <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
-                        : <lucide_react_1.XCircle className="h-4 w-4 text-red-600" />}
+                      <span className="font-medium">{getEventTypeLabel(event.event_type)}</span>
+                      {getSeverityBadge(event.severity)}
                     </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {(0, date_fns_1.formatDistanceToNow)(new Date(event.timestamp), {
+                        addSuffix: true,
+                        locale: locale_1.ptBR,
+                      })}
+                    </p>
                   </div>
-                );
-              })}
+                  <div className="flex items-center space-x-2">
+                    {event.resolved
+                      ? <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
+                      : <lucide_react_1.XCircle className="h-4 w-4 text-red-600" />}
+                  </div>
+                </div>
+              ))}
             </div>}
       </card_1.CardContent>
     </card_1.Card>

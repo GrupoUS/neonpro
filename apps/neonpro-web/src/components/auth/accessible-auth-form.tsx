@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { AlertTriangle, Eye, EyeOff, Loader2, ShieldCheck } from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
 import type {
   Card,
   CardContent,
@@ -11,10 +14,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Loader2, Eye, EyeOff, ShieldCheck, AlertTriangle } from "lucide-react";
-import type { createClient } from "@/app/utils/supabase/client";
-import type { toast } from "sonner";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 
 interface AccessibleFormProps {
   onSuccess?: () => void;

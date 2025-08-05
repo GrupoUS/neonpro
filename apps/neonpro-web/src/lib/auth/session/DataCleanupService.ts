@@ -10,14 +10,14 @@
  */
 
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { removeUndefined } from "./utils";
 import type {
+  AuthenticationResponse,
   CleanupConfig,
   CleanupResult,
-  CleanupTask,
   CleanupSchedule,
-  AuthenticationResponse,
+  CleanupTask,
 } from "./types";
+import type { removeUndefined } from "./utils";
 
 /**
  * Data Cleanup Service Class

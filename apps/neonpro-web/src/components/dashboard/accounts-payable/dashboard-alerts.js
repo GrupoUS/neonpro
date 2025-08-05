@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardAlerts = DashboardAlerts;
 var badge_1 = require("@/components/ui/badge");
@@ -219,7 +216,6 @@ var mockDashboardAlerts = [
   },
 ];
 function DashboardAlerts(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     _b = _a.limit,
     limit = _b === void 0 ? 5 : _b,
@@ -231,25 +227,20 @@ function DashboardAlerts(_a) {
   var _e = (0, react_1.useState)(true),
     loading = _e[0],
     setLoading = _e[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadAlerts();
-    },
-    [clinicId],
-  );
-  var loadAlerts = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    loadAlerts();
+  }, [clinicId]);
+  var loadAlerts = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           setLoading(true);
           // TODO: Implementar chamada real para o serviço
           // const data = await notificationService.getDashboardAlerts(clinicId, limit)
           // Usando dados mock por enquanto
-          setTimeout(function () {
+          setTimeout(() => {
             var limitedAlerts = mockDashboardAlerts
-              .filter(function (alert) {
-                return !alert.is_dismissed;
-              })
+              .filter((alert) => !alert.is_dismissed)
               .slice(0, limit);
             setAlerts(limitedAlerts);
             setLoading(false);
@@ -261,46 +252,37 @@ function DashboardAlerts(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var markAsRead = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var markAsRead = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // TODO: Implementar chamada real
           // await notificationService.markAlertAsRead(alertId)
-          setAlerts(function (prev) {
-            return prev.map(function (alert) {
-              return alert.id === alertId
-                ? __assign(__assign({}, alert), { is_read: true })
-                : alert;
-            });
-          });
+          setAlerts((prev) =>
+            prev.map((alert) =>
+              alert.id === alertId ? __assign(__assign({}, alert), { is_read: true }) : alert,
+            ),
+          );
         } catch (error) {
           console.error("Error marking alert as read:", error);
         }
         return [2 /*return*/];
       });
     });
-  };
-  var dismissAlert = function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var dismissAlert = (alertId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // TODO: Implementar chamada real
           // await notificationService.dismissAlert(alertId)
-          setAlerts(function (prev) {
-            return prev.filter(function (alert) {
-              return alert.id !== alertId;
-            });
-          });
+          setAlerts((prev) => prev.filter((alert) => alert.id !== alertId));
         } catch (error) {
           console.error("Error dismissing alert:", error);
         }
         return [2 /*return*/];
       });
     });
-  };
-  var getPriorityIcon = function (priority) {
+  var getPriorityIcon = (priority) => {
     switch (priority) {
       case "urgent":
         return <lucide_react_1.Zap className="h-4 w-4 text-red-500" />;
@@ -312,7 +294,7 @@ function DashboardAlerts(_a) {
         return <lucide_react_1.Clock className="h-4 w-4 text-blue-500" />;
     }
   };
-  var getPriorityBadgeColor = function (priority) {
+  var getPriorityBadgeColor = (priority) => {
     switch (priority) {
       case "urgent":
         return "destructive";
@@ -324,7 +306,7 @@ function DashboardAlerts(_a) {
         return "outline";
     }
   };
-  var getAlertTypeBadgeColor = function (alertType) {
+  var getAlertTypeBadgeColor = (alertType) => {
     switch (alertType) {
       case "overdue":
         return "destructive";
@@ -340,7 +322,7 @@ function DashboardAlerts(_a) {
         return "outline";
     }
   };
-  var getAlertTypeLabel = function (alertType) {
+  var getAlertTypeLabel = (alertType) => {
     switch (alertType) {
       case "overdue":
         return "Em Atraso";
@@ -356,7 +338,7 @@ function DashboardAlerts(_a) {
         return "Info";
     }
   };
-  var formatTimeAgo = function (dateString) {
+  var formatTimeAgo = (dateString) => {
     var date = new Date(dateString);
     var now = new Date();
     var diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
@@ -369,9 +351,7 @@ function DashboardAlerts(_a) {
       return "".concat(Math.floor(diffInMinutes / 1440), "d atr\u00E1s");
     }
   };
-  var unreadCount = alerts.filter(function (alert) {
-    return !alert.is_read;
-  }).length;
+  var unreadCount = alerts.filter((alert) => !alert.is_read).length;
   if (loading) {
     return (
       <card_1.Card>
@@ -384,19 +364,17 @@ function DashboardAlerts(_a) {
           </card_1.CardHeader>
         )}
         <card_1.CardContent className="space-y-3">
-          {[1, 2, 3].map(function (i) {
-            return (
-              <div key={i} className="animate-pulse">
-                <div className="flex items-center gap-3">
-                  <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-300 rounded w-1/2"></div>
-                  </div>
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="flex items-center gap-3">
+                <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-300 rounded w-1/2"></div>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </card_1.CardContent>
       </card_1.Card>
     );
@@ -451,104 +429,94 @@ function DashboardAlerts(_a) {
         </card_1.CardHeader>
       )}
       <card_1.CardContent className="space-y-3">
-        {alerts.map(function (alert) {
-          return (
-            <div
-              key={alert.id}
-              className={"flex items-start gap-3 p-3 rounded-lg border ".concat(
-                alert.is_read ? "bg-muted/20 border-muted" : "bg-background border-border",
-                " hover:bg-muted/30 transition-colors",
-              )}
-            >
-              <div className="mt-0.5">{getPriorityIcon(alert.priority)}</div>
+        {alerts.map((alert) => (
+          <div
+            key={alert.id}
+            className={"flex items-start gap-3 p-3 rounded-lg border ".concat(
+              alert.is_read ? "bg-muted/20 border-muted" : "bg-background border-border",
+              " hover:bg-muted/30 transition-colors",
+            )}
+          >
+            <div className="mt-0.5">{getPriorityIcon(alert.priority)}</div>
 
-              <div className="flex-1 min-w-0 space-y-1">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <h4
-                      className={"text-sm font-medium leading-none ".concat(
-                        alert.is_read ? "text-muted-foreground" : "text-foreground",
-                      )}
-                    >
-                      {alert.title}
-                    </h4>
-                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                      {alert.message}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    <badge_1.Badge
-                      variant={getAlertTypeBadgeColor(alert.alert_type)}
-                      className="text-xs"
-                    >
-                      {getAlertTypeLabel(alert.alert_type)}
-                    </badge_1.Badge>
-                    <badge_1.Badge
-                      variant={getPriorityBadgeColor(alert.priority)}
-                      className="text-xs"
-                    >
-                      {alert.priority === "urgent"
-                        ? "Urgente"
-                        : alert.priority === "high"
-                          ? "Alta"
-                          : alert.priority === "medium"
-                            ? "Média"
-                            : "Baixa"}
-                    </badge_1.Badge>
-                  </div>
+            <div className="flex-1 min-w-0 space-y-1">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <h4
+                    className={"text-sm font-medium leading-none ".concat(
+                      alert.is_read ? "text-muted-foreground" : "text-foreground",
+                    )}
+                  >
+                    {alert.title}
+                  </h4>
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{alert.message}</p>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">
-                    {formatTimeAgo(alert.created_at)}
-                  </span>
+                <div className="flex items-center gap-1">
+                  <badge_1.Badge
+                    variant={getAlertTypeBadgeColor(alert.alert_type)}
+                    className="text-xs"
+                  >
+                    {getAlertTypeLabel(alert.alert_type)}
+                  </badge_1.Badge>
+                  <badge_1.Badge
+                    variant={getPriorityBadgeColor(alert.priority)}
+                    className="text-xs"
+                  >
+                    {alert.priority === "urgent"
+                      ? "Urgente"
+                      : alert.priority === "high"
+                        ? "Alta"
+                        : alert.priority === "medium"
+                          ? "Média"
+                          : "Baixa"}
+                  </badge_1.Badge>
+                </div>
+              </div>
 
-                  <div className="flex items-center gap-1">
-                    {alert.action_url && (
-                      <link_1.default href={alert.action_url}>
-                        <button_1.Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 px-2"
-                          onClick={function () {
-                            return !alert.is_read && markAsRead(alert.id);
-                          }}
-                        >
-                          <lucide_react_1.Eye className="h-3 w-3" />
-                        </button_1.Button>
-                      </link_1.default>
-                    )}
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">
+                  {formatTimeAgo(alert.created_at)}
+                </span>
 
-                    {!alert.is_read && (
+                <div className="flex items-center gap-1">
+                  {alert.action_url && (
+                    <link_1.default href={alert.action_url}>
                       <button_1.Button
                         size="sm"
                         variant="ghost"
                         className="h-6 px-2"
-                        onClick={function () {
-                          return markAsRead(alert.id);
-                        }}
+                        onClick={() => !alert.is_read && markAsRead(alert.id)}
                       >
-                        <lucide_react_1.Check className="h-3 w-3" />
+                        <lucide_react_1.Eye className="h-3 w-3" />
                       </button_1.Button>
-                    )}
+                    </link_1.default>
+                  )}
 
+                  {!alert.is_read && (
                     <button_1.Button
                       size="sm"
                       variant="ghost"
                       className="h-6 px-2"
-                      onClick={function () {
-                        return dismissAlert(alert.id);
-                      }}
+                      onClick={() => markAsRead(alert.id)}
                     >
-                      <lucide_react_1.X className="h-3 w-3" />
+                      <lucide_react_1.Check className="h-3 w-3" />
                     </button_1.Button>
-                  </div>
+                  )}
+
+                  <button_1.Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 px-2"
+                    onClick={() => dismissAlert(alert.id)}
+                  >
+                    <lucide_react_1.X className="h-3 w-3" />
+                  </button_1.Button>
                 </div>
               </div>
             </div>
-          );
-        })}
+          </div>
+        ))}
 
         {alerts.length === limit && (
           <div className="text-center pt-2">

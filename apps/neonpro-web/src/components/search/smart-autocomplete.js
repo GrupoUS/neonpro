@@ -4,18 +4,17 @@
  * Intelligent autocomplete with learning capabilities and contextual suggestions
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,20 +134,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SmartAutocomplete = SmartAutocomplete;
 exports.EnhancedSmartAutocomplete = EnhancedSmartAutocomplete;
@@ -166,7 +162,6 @@ var utils_1 = require("@/lib/utils");
 var use_debounce_1 = require("@/hooks/use-debounce");
 var search_suggestions_1 = require("@/lib/search/search-suggestions");
 function SmartAutocomplete(_a) {
-  var _this = this;
   var value = _a.value,
     onValueChange = _a.onValueChange,
     onSuggestionSelect = _a.onSuggestionSelect,
@@ -207,23 +202,20 @@ function SmartAutocomplete(_a) {
   // Debounced value for API calls
   var debouncedValue = (0, use_debounce_1.useDebounce)(value, 300);
   // Load suggestions when debounced value changes
-  (0, react_1.useEffect)(
-    function () {
-      if (debouncedValue.length >= 2) {
-        loadSuggestions(debouncedValue);
-      } else {
-        setSuggestions([]);
-        setOpen(false);
-      }
-    },
-    [debouncedValue],
-  );
+  (0, react_1.useEffect)(() => {
+    if (debouncedValue.length >= 2) {
+      loadSuggestions(debouncedValue);
+    } else {
+      setSuggestions([]);
+      setOpen(false);
+    }
+  }, [debouncedValue]);
   // Load suggestions from API
   var loadSuggestions = (0, react_1.useCallback)(
-    function (query) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (query) =>
+      __awaiter(this, void 0, void 0, function () {
         var options, results, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!query.trim()) return [2 /*return*/];
@@ -262,22 +254,21 @@ function SmartAutocomplete(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [maxSuggestions, context],
   );
   // Handle input change
-  var handleInputChange = function (newValue) {
+  var handleInputChange = (newValue) => {
     onValueChange(newValue);
     if (newValue.length >= 2 && !interactionStartTime) {
       setInteractionStartTime(Date.now());
     }
   };
   // Handle suggestion selection
-  var handleSuggestionSelect = function (suggestion) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSuggestionSelect = (suggestion) =>
+    __awaiter(this, void 0, void 0, function () {
       var timeToSelect, learningData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             timeToSelect = interactionStartTime ? Date.now() - interactionStartTime : 0;
@@ -314,23 +305,18 @@ function SmartAutocomplete(_a) {
         }
       });
     });
-  };
   // Handle keyboard navigation
-  var handleKeyDown = function (e) {
+  var handleKeyDown = (e) => {
     var _a;
     if (!open || suggestions.length === 0) return;
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setSelectedIndex(function (prev) {
-          return prev < suggestions.length - 1 ? prev + 1 : 0;
-        });
+        setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
         break;
       case "ArrowUp":
         e.preventDefault();
-        setSelectedIndex(function (prev) {
-          return prev > 0 ? prev - 1 : suggestions.length - 1;
-        });
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
         break;
       case "Enter":
         e.preventDefault();
@@ -352,21 +338,21 @@ function SmartAutocomplete(_a) {
     }
   };
   // Handle input focus
-  var handleFocus = function () {
+  var handleFocus = () => {
     if (value.length >= 2 && suggestions.length > 0) {
       setOpen(true);
     }
   };
   // Handle input blur
-  var handleBlur = function () {
+  var handleBlur = () => {
     // Delay closing to allow for suggestion clicks
-    setTimeout(function () {
+    setTimeout(() => {
       setOpen(false);
       setSelectedIndex(-1);
     }, 200);
   };
   // Get suggestion icon
-  var getSuggestionIcon = function (suggestion) {
+  var getSuggestionIcon = (suggestion) => {
     if (!showIcons) return null;
     var iconMap = {
       query_completion: <lucide_react_1.Sparkles className="h-4 w-4 text-blue-500" />,
@@ -381,7 +367,7 @@ function SmartAutocomplete(_a) {
     return iconMap[suggestion.type] || <lucide_react_1.Search className="h-4 w-4 text-gray-400" />;
   };
   // Get suggestion category label
-  var getCategoryLabel = function (category) {
+  var getCategoryLabel = (category) => {
     var labelMap = {
       completion: "Completar",
       history: "Histórico",
@@ -395,7 +381,7 @@ function SmartAutocomplete(_a) {
     return labelMap[category] || category;
   };
   // Group suggestions by category
-  var groupedSuggestions = suggestions.reduce(function (groups, suggestion) {
+  var groupedSuggestions = suggestions.reduce((groups, suggestion) => {
     var category = suggestion.category;
     if (!groups[category]) {
       groups[category] = [];
@@ -404,7 +390,7 @@ function SmartAutocomplete(_a) {
     return groups;
   }, {});
   // Get confidence color
-  var getConfidenceColor = function (confidence) {
+  var getConfidenceColor = (confidence) => {
     if (confidence >= 0.8) return "text-green-600";
     if (confidence >= 0.6) return "text-yellow-600";
     return "text-gray-500";
@@ -419,9 +405,7 @@ function SmartAutocomplete(_a) {
               ref={inputRef}
               type="text"
               value={value}
-              onChange={function (e) {
-                return handleInputChange(e.target.value);
-              }}
+              onChange={(e) => handleInputChange(e.target.value)}
               onKeyDown={handleKeyDown}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -468,7 +452,7 @@ function SmartAutocomplete(_a) {
                 : <scroll_area_1.ScrollArea className="max-h-80">
                     {showCategories
                       ? // Grouped by category
-                        Object.entries(groupedSuggestions).map(function (_a, categoryIndex) {
+                        Object.entries(groupedSuggestions).map((_a, categoryIndex) => {
                           var category = _a[0],
                             categorySuggestions = _a[1];
                           return (
@@ -476,19 +460,17 @@ function SmartAutocomplete(_a) {
                               {categoryIndex > 0 && <separator_1.Separator className="my-1" />}
 
                               <command_1.CommandGroup heading={getCategoryLabel(category)}>
-                                {categorySuggestions.map(function (suggestion, index) {
+                                {categorySuggestions.map((suggestion, index) => {
                                   var _a;
-                                  var globalIndex = suggestions.findIndex(function (s) {
-                                    return s.id === suggestion.id;
-                                  });
+                                  var globalIndex = suggestions.findIndex(
+                                    (s) => s.id === suggestion.id,
+                                  );
                                   var isSelected = selectedIndex === globalIndex;
                                   return (
                                     <command_1.CommandItem
                                       key={suggestion.id}
                                       value={suggestion.text}
-                                      onSelect={function () {
-                                        return handleSuggestionSelect(suggestion);
-                                      }}
+                                      onSelect={() => handleSuggestionSelect(suggestion)}
                                       className={(0, utils_1.cn)(
                                         "flex items-center justify-between px-3 py-2 cursor-pointer",
                                         "hover:bg-accent hover:text-accent-foreground",
@@ -543,16 +525,14 @@ function SmartAutocomplete(_a) {
                         })
                       : // Flat list
                         <command_1.CommandGroup>
-                          {suggestions.map(function (suggestion, index) {
+                          {suggestions.map((suggestion, index) => {
                             var _a;
                             var isSelected = selectedIndex === index;
                             return (
                               <command_1.CommandItem
                                 key={suggestion.id}
                                 value={suggestion.text}
-                                onSelect={function () {
-                                  return handleSuggestionSelect(suggestion);
-                                }}
+                                onSelect={() => handleSuggestionSelect(suggestion)}
                                 className={(0, utils_1.cn)(
                                   "flex items-center justify-between px-3 py-2 cursor-pointer",
                                   "hover:bg-accent hover:text-accent-foreground",
@@ -660,13 +640,7 @@ function EnhancedSmartAutocomplete(_a) {
       {/* Advanced options */}
       {showAdvanced && (
         <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
-          <button_1.Button
-            variant="outline"
-            size="sm"
-            onClick={function () {
-              return setShowAdvanced(false);
-            }}
-          >
+          <button_1.Button variant="outline" size="sm" onClick={() => setShowAdvanced(false)}>
             Ocultar Filtros
           </button_1.Button>
 
@@ -682,9 +656,7 @@ function EnhancedSmartAutocomplete(_a) {
         <button_1.Button
           variant="ghost"
           size="sm"
-          onClick={function () {
-            return setShowAdvanced(true);
-          }}
+          onClick={() => setShowAdvanced(true)}
           className="text-xs text-muted-foreground"
         >
           <lucide_react_1.Filter className="h-3 w-3 mr-1" />

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardSidebar = DashboardSidebar;
 var avatar_1 = require("@/components/ui/avatar");
@@ -138,7 +137,7 @@ function DashboardSidebar(_a) {
     onOpenChange = _a.onOpenChange,
     user = _a.user;
   var pathname = (0, navigation_1.usePathname)();
-  var NavItem = function (_a) {
+  var NavItem = (_a) => {
     var item = _a.item;
     var isActive = pathname === item.href;
     var Icon = item.icon;
@@ -149,9 +148,7 @@ function DashboardSidebar(_a) {
           "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent",
           isActive ? "bg-accent text-accent-foreground" : "text-muted-foreground",
         )}
-        onClick={function () {
-          return onOpenChange(false);
-        }}
+        onClick={() => onOpenChange(false)}
       >
         <Icon className="h-4 w-4" />
         <span>{item.title}</span>
@@ -184,13 +181,11 @@ function DashboardSidebar(_a) {
                   PRINCIPAL
                 </div>
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
-                  {navigationItems.map(function (item) {
-                    return (
-                      <li key={item.title}>
-                        <NavItem item={item} />
-                      </li>
-                    );
-                  })}
+                  {navigationItems.map((item) => (
+                    <li key={item.title}>
+                      <NavItem item={item} />
+                    </li>
+                  ))}
                 </ul>
               </li>
 
@@ -199,13 +194,11 @@ function DashboardSidebar(_a) {
                   FERRAMENTAS
                 </div>
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
-                  {secondaryItems.map(function (item) {
-                    return (
-                      <li key={item.title}>
-                        <NavItem item={item} />
-                      </li>
-                    );
-                  })}
+                  {secondaryItems.map((item) => (
+                    <li key={item.title}>
+                      <NavItem item={item} />
+                    </li>
+                  ))}
                 </ul>
               </li>
             </ul>
@@ -286,13 +279,11 @@ function DashboardSidebar(_a) {
                   PRINCIPAL
                 </div>
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
-                  {navigationItems.map(function (item) {
-                    return (
-                      <li key={item.title}>
-                        <NavItem item={item} />
-                      </li>
-                    );
-                  })}
+                  {navigationItems.map((item) => (
+                    <li key={item.title}>
+                      <NavItem item={item} />
+                    </li>
+                  ))}
                 </ul>
               </li>
 
@@ -301,13 +292,11 @@ function DashboardSidebar(_a) {
                   FERRAMENTAS
                 </div>
                 <ul role="list" className="-mx-2 mt-2 space-y-1">
-                  {secondaryItems.map(function (item) {
-                    return (
-                      <li key={item.title}>
-                        <NavItem item={item} />
-                      </li>
-                    );
-                  })}
+                  {secondaryItems.map((item) => (
+                    <li key={item.title}>
+                      <NavItem item={item} />
+                    </li>
+                  ))}
                 </ul>
               </li>
             </ul>

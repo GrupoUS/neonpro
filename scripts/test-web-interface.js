@@ -1,8 +1,8 @@
 // Script para testar a interface web do Accounts Payable
 // Usage: node scripts/test-web-interface.js
 
-const https = require("https");
-const http = require("http");
+const _https = require("node:https");
+const http = require("node:http");
 
 const baseUrl = "http://127.0.0.1:8080";
 
@@ -25,8 +25,8 @@ async function testRoute(path) {
     const url = `${baseUrl}${path}`;
 
     const req = http.get(url, (res) => {
-      let statusCode = res.statusCode;
-      let statusMessage = res.statusMessage;
+      const statusCode = res.statusCode;
+      const statusMessage = res.statusMessage;
 
       // Verificar se a resposta é válida
       if (statusCode === 200) {

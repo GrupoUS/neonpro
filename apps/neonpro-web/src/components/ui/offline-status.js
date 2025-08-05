@@ -2,7 +2,6 @@
 // VIBECODE V1.0 - Healthcare PWA Excellence Standards
 // Purpose: Visual indicators for network status and sync queue
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OfflineStatus = OfflineStatus;
 exports.SyncQueueDetails = SyncQueueDetails;
@@ -33,22 +32,15 @@ function OfflineStatus(_a) {
     lastStatus = _f[0],
     setLastStatus = _f[1];
   // Show toast when status changes
-  (0, react_1.useEffect)(
-    function () {
-      if (lastStatus !== isOnline) {
-        setShowToast(true);
-        setLastStatus(isOnline);
-        // Auto hide toast after 5 seconds
-        var timer_1 = setTimeout(function () {
-          return setShowToast(false);
-        }, 5000);
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [isOnline, lastStatus],
-  );
+  (0, react_1.useEffect)(() => {
+    if (lastStatus !== isOnline) {
+      setShowToast(true);
+      setLastStatus(isOnline);
+      // Auto hide toast after 5 seconds
+      var timer_1 = setTimeout(() => setShowToast(false), 5000);
+      return () => clearTimeout(timer_1);
+    }
+  }, [isOnline, lastStatus]);
   // Minimal variant - small icon only
   if (variant === "minimal") {
     return (
@@ -142,9 +134,7 @@ function OfflineStatus(_a) {
               <button_1.Button
                 size="sm"
                 variant="outline"
-                onClick={function () {
-                  return processSyncQueue();
-                }}
+                onClick={() => processSyncQueue()}
                 className="text-xs"
               >
                 Sincronizar agora
@@ -154,9 +144,7 @@ function OfflineStatus(_a) {
             <button_1.Button
               size="sm"
               variant="ghost"
-              onClick={function () {
-                return clearSyncQueue();
-              }}
+              onClick={() => clearSyncQueue()}
               className="text-xs text-muted-foreground hover:text-destructive"
             >
               <lucide_react_1.X className="w-3 h-3" />
@@ -194,9 +182,7 @@ function OfflineStatus(_a) {
               <button_1.Button
                 size="sm"
                 variant="ghost"
-                onClick={function () {
-                  return setShowToast(false);
-                }}
+                onClick={() => setShowToast(false)}
                 className="h-6 w-6 p-0"
               >
                 <lucide_react_1.X className="w-3 h-3" />
@@ -244,9 +230,7 @@ function SyncQueueDetails(_a) {
           <button_1.Button
             size="sm"
             variant="outline"
-            onClick={function () {
-              return processSyncQueue();
-            }}
+            onClick={() => processSyncQueue()}
             disabled={isSyncing}
           >
             {isSyncing
@@ -260,9 +244,7 @@ function SyncQueueDetails(_a) {
           <button_1.Button
             size="sm"
             variant="destructive"
-            onClick={function () {
-              return clearSyncQueue();
-            }}
+            onClick={() => clearSyncQueue()}
             disabled={isSyncing}
           >
             Limpar
@@ -270,27 +252,23 @@ function SyncQueueDetails(_a) {
         </div>
       </div>
 
-      {syncQueue.map(function (item, index) {
-        return (
-          <div key={item.id} className="flex items-center gap-3 p-2 border rounded-lg">
-            <badge_1.Badge variant="outline" className="text-xs">
-              {item.method}
-            </badge_1.Badge>
+      {syncQueue.map((item, index) => (
+        <div key={item.id} className="flex items-center gap-3 p-2 border rounded-lg">
+          <badge_1.Badge variant="outline" className="text-xs">
+            {item.method}
+          </badge_1.Badge>
 
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{item.url}</p>
-              <p className="text-xs text-muted-foreground">
-                {new Date(item.timestamp).toLocaleString("pt-BR")}
-                {item.retryCount > 0 && " \u2022 ".concat(item.retryCount, " tentativas")}
-              </p>
-            </div>
-
-            {item.retryCount > 0 && (
-              <lucide_react_1.AlertCircle className="w-4 h-4 text-amber-500" />
-            )}
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium truncate">{item.url}</p>
+            <p className="text-xs text-muted-foreground">
+              {new Date(item.timestamp).toLocaleString("pt-BR")}
+              {item.retryCount > 0 && " \u2022 ".concat(item.retryCount, " tentativas")}
+            </p>
           </div>
-        );
-      })}
+
+          {item.retryCount > 0 && <lucide_react_1.AlertCircle className="w-4 h-4 text-amber-500" />}
+        </div>
+      ))}
     </div>
   );
 }

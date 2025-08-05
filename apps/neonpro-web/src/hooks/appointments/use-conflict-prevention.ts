@@ -5,13 +5,13 @@
 // Story 1.2: Real-time slot validation
 // =============================================
 
+import type { useCallback, useRef, useState } from "react";
 import type {
   AlternativeSlot,
   AppointmentConflict,
   SlotValidationRequest,
   SlotValidationResponse,
 } from "@/app/lib/types/conflict-prevention";
-import type { useCallback, useRef, useState } from "react";
 
 interface UseConflictPreventionProps {
   debounceMs?: number; // Debounce validation calls

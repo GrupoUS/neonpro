@@ -5,7 +5,6 @@
  */
 
 import * as tf from "@tensorflow/tfjs";
-import type { createWorker } from "tesseract.js";
 
 // Performance monitoring interfaces
 export interface ProcessingMetrics {
@@ -404,7 +403,7 @@ export class HighPerformanceImageProcessor {
     return `${inputHash}_${btoa(optionsHash)}`;
   }
 
-  private hashImageData(imageData: any): string {
+  private hashImageData(_imageData: any): string {
     // Simple hash for image data
     return `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
@@ -440,7 +439,7 @@ export class HighPerformanceImageProcessor {
     });
   }
 
-  private shouldCache(tensor: tf.Tensor3D, processingTime: number): boolean {
+  private shouldCache(_tensor: tf.Tensor3D, processingTime: number): boolean {
     // Cache if processing took significant time
     return processingTime > 5000; // 5 seconds
   }

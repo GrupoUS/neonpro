@@ -1,5 +1,8 @@
 "use client";
 
+import type { Download, FileText, Trash2, Upload } from "lucide-react";
+import type { useRef, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,9 +16,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { documentsService } from "@/lib/services/documents";
-import type { Download, FileText, Trash2, Upload } from "lucide-react";
-import type { useRef, useState } from "react";
-import type { toast } from "sonner";
 
 export interface DocumentUploadProps {
   entityType: "vendor" | "payable";
@@ -116,7 +116,7 @@ export default function DocumentUpload({
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   return (

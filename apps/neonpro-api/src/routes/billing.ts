@@ -1,12 +1,8 @@
 import type { FastifyInstance } from "fastify";
+import fp from "fastify-plugin";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
-import {
-  calculateBrazilianTaxes,
-  formatCurrency,
-  validateCNPJ,
-  validateCPF,
-} from "../utils/healthcare";
+import { calculateBrazilianTaxes, formatCurrency, validateCNPJ } from "../utils/healthcare";
 
 // Schemas para validação de cobrança brasileira
 const InvoiceSchema = z.object({
@@ -109,7 +105,7 @@ const PaymentPlanSchema = z.object({
   description: z.string().max(500).optional(),
 });
 
-export default async function billingRoutes(fastify: FastifyInstance) {
+async function billingRoutes(fastify: FastifyInstance) {
   // Criar fatura
   fastify.post(
     "/invoices",
@@ -130,7 +126,7 @@ export default async function billingRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       const data = request.body as z.infer<typeof InvoiceSchema>;
-      const { tenantId, userId } = request.user;
+      const { tenantId, userId } = request.user as { tenantId: string; userId: string };
 
       try {
         const invoiceId = uuidv4();
@@ -159,14 +155,9 @@ export default async function billingRoutes(fastify: FastifyInstance) {
         const discountedAmount = subtotal - totalDiscount;
 
         // Calcular impostos brasileiros
-        const taxInfo = calculateBrazilianTaxes(discountedAmount, {
-          includeISS: data.taxes.includeISS,
-          includeIR: data.taxes.includeIR,
-          municipality: data.taxes.municipality,
-          serviceType: "healthcare",
-        });
+        const taxInfo = calculateBrazilianTaxes(discountedAmount, "other");
 
-        const totalAmount = discountedAmount + taxInfo.totalTax;
+        const totalAmount = discountedAmount + taxInfo.taxes.total;
 
         // Verificar cobertura do plano de saúde
         let insuranceCoverage = 0;
@@ -188,7 +179,7 @@ export default async function billingRoutes(fastify: FastifyInstance) {
             services: data.services,
             subtotal,
             total_discount: totalDiscount,
-            tax_amount: taxInfo.totalTax,
+            tax_amount: taxInfo.taxes.total,
             tax_details: taxInfo,
             insurance_coverage: insuranceCoverage,
             total_amount: finalAmount,
@@ -236,7 +227,7 @@ export default async function billingRoutes(fastify: FastifyInstance) {
           success: true,
           invoiceId,
           totalAmount: finalAmount,
-          taxAmount: taxInfo.totalTax,
+          taxAmount: taxInfo.taxes.total,
           message: "Fatura criada com sucesso",
         });
       } catch (error) {
@@ -268,7 +259,7 @@ export default async function billingRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       const data = request.body as z.infer<typeof PaymentSchema>;
-      const { tenantId, userId } = request.user;
+      const { tenantId, userId } = request.user as { tenantId: string; userId: string };
 
       try {
         // Verificar se a fatura existe
@@ -416,7 +407,7 @@ export default async function billingRoutes(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       const data = request.body as z.infer<typeof PaymentPlanSchema>;
-      const { tenantId, userId } = request.user;
+      const { tenantId, userId } = request.user as { tenantId: string; userId: string };
 
       try {
         const paymentPlanId = uuidv4();
@@ -522,34 +513,33 @@ export default async function billingRoutes(fastify: FastifyInstance) {
       }
     },
   );
-}
 
-// Listar faturas com filtros
-fastify.get(
-  "/invoices",
-  {
-    preHandler: [fastify.authenticate, fastify.requireRole(["admin", "receptionist", "doctor"])],
-    schema: {
-      querystring: z.object({
-        page: z.coerce.number().min(1).default(1),
-        limit: z.coerce.number().min(1).max(100).default(20),
-        status: z.enum(["pending", "paid", "partially_paid", "overdue", "cancelled"]).optional(),
-        patientId: z.string().optional(),
-        paymentMethod: z.string().optional(),
-        startDate: z.string().datetime().optional(),
-        endDate: z.string().datetime().optional(),
-      }),
+  // Listar faturas com filtros
+  fastify.get(
+    "/invoices",
+    {
+      preHandler: [fastify.authenticate, fastify.requireRole(["admin", "receptionist", "doctor"])],
+      schema: {
+        querystring: z.object({
+          page: z.coerce.number().min(1).default(1),
+          limit: z.coerce.number().min(1).max(100).default(20),
+          status: z.enum(["pending", "paid", "partially_paid", "overdue", "cancelled"]).optional(),
+          patientId: z.string().optional(),
+          paymentMethod: z.string().optional(),
+          startDate: z.string().datetime().optional(),
+          endDate: z.string().datetime().optional(),
+        }),
+      },
     },
-  },
-  async (request, reply) => {
-    const { tenantId } = request.user;
-    const { page, limit, status, patientId, paymentMethod, startDate, endDate } =
-      request.query as any;
+    async (request, reply) => {
+      const { tenantId } = request.user as { tenantId: string };
+      const { page, limit, status, patientId, paymentMethod, startDate, endDate } =
+        request.query as any;
 
-    try {
-      let query = fastify.supabase
-        .from("invoices")
-        .select(`
+      try {
+        let query = fastify.supabase
+          .from("invoices")
+          .select(`
         *,
         patients:patient_id (
           id,
@@ -566,80 +556,84 @@ fastify.get(
           status
         )
       `)
-        .eq("tenant_id", tenantId)
-        .order("created_at", { ascending: false });
+          .eq("tenant_id", tenantId)
+          .order("created_at", { ascending: false });
 
-      // Aplicar filtros
-      if (status) query = query.eq("status", status);
-      if (patientId) query = query.eq("patient_id", patientId);
-      if (paymentMethod) query = query.eq("payment_method", paymentMethod);
-      if (startDate) query = query.gte("created_at", startDate);
-      if (endDate) query = query.lte("created_at", endDate);
+        // Aplicar filtros
+        if (status) query = query.eq("status", status);
+        if (patientId) query = query.eq("patient_id", patientId);
+        if (paymentMethod) query = query.eq("payment_method", paymentMethod);
+        if (startDate) query = query.gte("created_at", startDate);
+        if (endDate) query = query.lte("created_at", endDate);
 
-      // Paginação
-      const offset = (page - 1) * limit;
-      query = query.range(offset, offset + limit - 1);
+        // Paginação
+        const offset = (page - 1) * limit;
+        query = query.range(offset, offset + limit - 1);
 
-      const result = await query;
+        const result = await query;
 
-      if (result.error) {
-        throw new Error(`Erro ao buscar faturas: ${result.error.message}`);
+        if (result.error) {
+          throw new Error(`Erro ao buscar faturas: ${result.error.message}`);
+        }
+
+        // Contar total de registros
+        let countQuery = fastify.supabase
+          .from("invoices")
+          .select("id", { count: "exact", head: true })
+          .eq("tenant_id", tenantId);
+
+        if (status) countQuery = countQuery.eq("status", status);
+        if (patientId) countQuery = countQuery.eq("patient_id", patientId);
+        if (paymentMethod) countQuery = countQuery.eq("payment_method", paymentMethod);
+        if (startDate) countQuery = countQuery.gte("created_at", startDate);
+        if (endDate) countQuery = countQuery.lte("created_at", endDate);
+
+        const countResult = await countQuery;
+        const totalCount = countResult.count || 0;
+
+        reply.send({
+          success: true,
+          data: result.data,
+          pagination: {
+            page,
+            limit,
+            totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            hasNext: offset + limit < totalCount,
+            hasPrev: page > 1,
+          },
+        });
+      } catch (error) {
+        fastify.log.error("Erro ao listar faturas:", error);
+        reply.code(500).send({
+          error: "Erro interno do servidor",
+          message: "Não foi possível listar as faturas",
+        });
       }
+    },
+  );
 
-      // Contar total de registros
-      let countQuery = fastify.supabase
-        .from("invoices")
-        .select("id", { count: "exact", head: true })
-        .eq("tenant_id", tenantId);
+  // Obter fatura específica
+  fastify.get(
+    "/invoices/:invoiceId",
+    {
+      preHandler: [
+        fastify.authenticate,
+        fastify.requireRole(["admin", "receptionist", "doctor", "patient"]),
+      ],
+    },
+    async (request, reply) => {
+      const { tenantId, role, userId } = request.user as {
+        tenantId: string;
+        role: string;
+        userId: string;
+      };
+      const { invoiceId } = request.params as { invoiceId: string };
 
-      if (status) countQuery = countQuery.eq("status", status);
-      if (patientId) countQuery = countQuery.eq("patient_id", patientId);
-      if (paymentMethod) countQuery = countQuery.eq("payment_method", paymentMethod);
-      if (startDate) countQuery = countQuery.gte("created_at", startDate);
-      if (endDate) countQuery = countQuery.lte("created_at", endDate);
-
-      const countResult = await countQuery;
-      const totalCount = countResult.count || 0;
-
-      reply.send({
-        success: true,
-        data: result.data,
-        pagination: {
-          page,
-          limit,
-          totalCount,
-          totalPages: Math.ceil(totalCount / limit),
-          hasNext: offset + limit < totalCount,
-          hasPrev: page > 1,
-        },
-      });
-    } catch (error) {
-      fastify.log.error("Erro ao listar faturas:", error);
-      reply.code(500).send({
-        error: "Erro interno do servidor",
-        message: "Não foi possível listar as faturas",
-      });
-    }
-  },
-);
-
-// Obter fatura específica
-fastify.get(
-  "/invoices/:invoiceId",
-  {
-    preHandler: [
-      fastify.authenticate,
-      fastify.requireRole(["admin", "receptionist", "doctor", "patient"]),
-    ],
-  },
-  async (request, reply) => {
-    const { tenantId, role, userId } = request.user;
-    const { invoiceId } = request.params as { invoiceId: string };
-
-    try {
-      const query = fastify.supabase
-        .from("invoices")
-        .select(`
+      try {
+        const query = fastify.supabase
+          .from("invoices")
+          .select(`
         *,
         patients:patient_id (
           id,
@@ -670,188 +664,192 @@ fastify.get(
           notes
         )
       `)
-        .eq("id", invoiceId)
-        .eq("tenant_id", tenantId);
+          .eq("id", invoiceId)
+          .eq("tenant_id", tenantId);
 
-      const result = await query.single();
+        const result = await query.single();
 
-      if (result.error) {
-        return reply.code(404).send({
-          error: "Fatura não encontrada",
+        if (result.error) {
+          return reply.code(404).send({
+            error: "Fatura não encontrada",
+          });
+        }
+
+        // Pacientes só podem ver suas próprias faturas
+        if (role === "patient" && result.data.patients?.user_id !== userId) {
+          return reply.code(403).send({
+            error: "Acesso negado",
+          });
+        }
+
+        reply.send({
+          success: true,
+          data: result.data,
+        });
+      } catch (error) {
+        fastify.log.error("Erro ao obter fatura:", error);
+        reply.code(500).send({
+          error: "Erro interno do servidor",
+          message: "Não foi possível obter a fatura",
         });
       }
-
-      // Pacientes só podem ver suas próprias faturas
-      if (role === "patient" && result.data.patients?.user_id !== userId) {
-        return reply.code(403).send({
-          error: "Acesso negado",
-        });
-      }
-
-      reply.send({
-        success: true,
-        data: result.data,
-      });
-    } catch (error) {
-      fastify.log.error("Erro ao obter fatura:", error);
-      reply.code(500).send({
-        error: "Erro interno do servidor",
-        message: "Não foi possível obter a fatura",
-      });
-    }
-  },
-);
-
-// Gerar relatório financeiro
-fastify.get(
-  "/reports/financial",
-  {
-    preHandler: [fastify.authenticate, fastify.requireRole(["admin"])],
-    schema: {
-      querystring: z.object({
-        startDate: z.string().datetime(),
-        endDate: z.string().datetime(),
-        groupBy: z.enum(["day", "week", "month"]).default("month"),
-      }),
     },
-  },
-  async (request, reply) => {
-    const { tenantId } = request.user;
-    const { startDate, endDate, groupBy } = request.query as any;
+  );
 
-    try {
-      // Relatório de receitas
-      const revenueQuery = await fastify.supabase
-        .from("invoices")
-        .select("total_amount, paid_amount, created_at, status, payment_method")
-        .eq("tenant_id", tenantId)
-        .gte("created_at", startDate)
-        .lte("created_at", endDate);
-
-      if (revenueQuery.error) {
-        throw new Error(`Erro ao gerar relatório: ${revenueQuery.error.message}`);
-      }
-
-      const invoices = revenueQuery.data || [];
-
-      // Calcular métricas
-      const totalInvoiced = invoices.reduce((sum, inv) => sum + inv.total_amount, 0);
-      const totalPaid = invoices.reduce((sum, inv) => sum + (inv.paid_amount || 0), 0);
-      const totalPending = invoices
-        .filter((inv) => inv.status === "pending")
-        .reduce((sum, inv) => sum + inv.total_amount, 0);
-      const totalOverdue = invoices
-        .filter((inv) => inv.status === "overdue")
-        .reduce((sum, inv) => sum + inv.total_amount, 0);
-
-      // Agrupar por período
-      const groupedData = groupInvoicesByPeriod(invoices, groupBy);
-
-      // Relatório por método de pagamento
-      const paymentMethodStats = getPaymentMethodStats(invoices);
-
-      // Top serviços/tratamentos
-      const topServices = await getTopServices(fastify, tenantId, startDate, endDate);
-
-      reply.send({
-        success: true,
-        data: {
-          summary: {
-            totalInvoiced: formatCurrency(totalInvoiced),
-            totalPaid: formatCurrency(totalPaid),
-            totalPending: formatCurrency(totalPending),
-            totalOverdue: formatCurrency(totalOverdue),
-            collectionRate:
-              totalInvoiced > 0 ? ((totalPaid / totalInvoiced) * 100).toFixed(2) : "0.00",
-          },
-          timeline: groupedData,
-          paymentMethods: paymentMethodStats,
-          topServices,
-          period: {
-            startDate,
-            endDate,
-            groupBy,
-          },
-        },
-      });
-    } catch (error) {
-      fastify.log.error("Erro ao gerar relatório financeiro:", error);
-      reply.code(500).send({
-        error: "Erro interno do servidor",
-        message: "Não foi possível gerar o relatório financeiro",
-      });
-    }
-  },
-);
-
-// Processar PIX
-fastify.post(
-  "/pix/generate",
-  {
-    preHandler: [fastify.authenticate, fastify.requireRole(["admin", "receptionist"])],
-    schema: {
-      body: z.object({
-        invoiceId: z.string().min(1),
-        amount: z.number().min(0.01),
-        expirationMinutes: z.number().min(1).max(1440).default(60), // Máximo 24h
-      }),
+  // Gerar relatório financeiro
+  fastify.get(
+    "/reports/financial",
+    {
+      preHandler: [fastify.authenticate, fastify.requireRole(["admin"])],
+      schema: {
+        querystring: z.object({
+          startDate: z.string().datetime(),
+          endDate: z.string().datetime(),
+          groupBy: z.enum(["day", "week", "month"]).default("month"),
+        }),
+      },
     },
-  },
-  async (request, reply) => {
-    const { tenantId } = request.user;
-    const { invoiceId, amount, expirationMinutes } = request.body as any;
+    async (request, reply) => {
+      const { tenantId } = request.user as { tenantId: string };
+      const { startDate, endDate, groupBy } = request.query as any;
 
-    try {
-      // Verificar fatura
-      const invoice = await fastify.supabase
-        .from("invoices")
-        .select("*, patients:patient_id (full_name, cpf)")
-        .eq("id", invoiceId)
-        .eq("tenant_id", tenantId)
-        .single();
+      try {
+        // Relatório de receitas
+        const revenueQuery = await fastify.supabase
+          .from("invoices")
+          .select("total_amount, paid_amount, created_at, status, payment_method")
+          .eq("tenant_id", tenantId)
+          .gte("created_at", startDate)
+          .lte("created_at", endDate);
 
-      if (invoice.error || !invoice.data) {
-        return reply.code(404).send({
-          error: "Fatura não encontrada",
+        if (revenueQuery.error) {
+          throw new Error(`Erro ao gerar relatório: ${revenueQuery.error.message}`);
+        }
+
+        const invoices = revenueQuery.data || [];
+
+        // Calcular métricas
+        const totalInvoiced = invoices.reduce((sum: number, inv: any) => sum + inv.total_amount, 0);
+        const totalPaid = invoices.reduce(
+          (sum: number, inv: any) => sum + (inv.paid_amount || 0),
+          0,
+        );
+        const totalPending = invoices
+          .filter((inv: any) => inv.status === "pending")
+          .reduce((sum: number, inv: any) => sum + inv.total_amount, 0);
+        const totalOverdue = invoices
+          .filter((inv: any) => inv.status === "overdue")
+          .reduce((sum: number, inv: any) => sum + inv.total_amount, 0);
+
+        // Agrupar por período
+        const groupedData = groupInvoicesByPeriod(invoices, groupBy);
+
+        // Relatório por método de pagamento
+        const paymentMethodStats = getPaymentMethodStats(invoices);
+
+        // Top serviços/tratamentos
+        const topServices = await getTopServices(fastify, tenantId, startDate, endDate);
+
+        reply.send({
+          success: true,
+          data: {
+            summary: {
+              totalInvoiced: formatCurrency(totalInvoiced),
+              totalPaid: formatCurrency(totalPaid),
+              totalPending: formatCurrency(totalPending),
+              totalOverdue: formatCurrency(totalOverdue),
+              collectionRate:
+                totalInvoiced > 0 ? ((totalPaid / totalInvoiced) * 100).toFixed(2) : "0.00",
+            },
+            timeline: groupedData,
+            paymentMethods: paymentMethodStats,
+            topServices,
+            period: {
+              startDate,
+              endDate,
+              groupBy,
+            },
+          },
+        });
+      } catch (error) {
+        fastify.log.error("Erro ao gerar relatório financeiro:", error);
+        reply.code(500).send({
+          error: "Erro interno do servidor",
+          message: "Não foi possível gerar o relatório financeiro",
         });
       }
+    },
+  );
 
-      // Gerar PIX (simulação - em produção usar API do banco)
-      const pixKey = generatePixKey();
-      const qrCode = generatePixQRCode(amount, pixKey, invoice.data.patients.full_name);
-      const expirationTime = new Date();
-      expirationTime.setMinutes(expirationTime.getMinutes() + expirationMinutes);
+  // Processar PIX
+  fastify.post(
+    "/pix/generate",
+    {
+      preHandler: [fastify.authenticate, fastify.requireRole(["admin", "receptionist"])],
+      schema: {
+        body: z.object({
+          invoiceId: z.string().min(1),
+          amount: z.number().min(0.01),
+          expirationMinutes: z.number().min(1).max(1440).default(60), // Máximo 24h
+        }),
+      },
+    },
+    async (request, reply) => {
+      const { tenantId } = request.user as { tenantId: string };
+      const { invoiceId, amount, expirationMinutes } = request.body as any;
 
-      // Salvar informações do PIX
-      await fastify.supabase.from("pix_payments").insert({
-        id: uuidv4(),
-        tenant_id: tenantId,
-        invoice_id: invoiceId,
-        amount,
-        pix_key: pixKey,
-        qr_code: qrCode,
-        expires_at: expirationTime.toISOString(),
-        status: "pending",
-        created_at: new Date().toISOString(),
-      });
+      try {
+        // Verificar fatura
+        const invoice = await fastify.supabase
+          .from("invoices")
+          .select("*, patients:patient_id (full_name, cpf)")
+          .eq("id", invoiceId)
+          .eq("tenant_id", tenantId)
+          .single();
 
-      reply.send({
-        success: true,
-        pixKey,
-        qrCode,
-        amount: formatCurrency(amount),
-        expiresAt: expirationTime.toISOString(),
-        message: "PIX gerado com sucesso",
-      });
-    } catch (error) {
-      fastify.log.error("Erro ao gerar PIX:", error);
-      reply.code(500).send({
-        error: "Erro interno do servidor",
-        message: "Não foi possível gerar o PIX",
-      });
-    }
-  },
-);
+        if (invoice.error || !invoice.data) {
+          return reply.code(404).send({
+            error: "Fatura não encontrada",
+          });
+        }
+
+        // Gerar PIX (simulação - em produção usar API do banco)
+        const pixKey = generatePixKey();
+        const qrCode = generatePixQRCode(amount, pixKey, invoice.data.patients.full_name);
+        const expirationTime = new Date();
+        expirationTime.setMinutes(expirationTime.getMinutes() + expirationMinutes);
+
+        // Salvar informações do PIX
+        await fastify.supabase.from("pix_payments").insert({
+          id: uuidv4(),
+          tenant_id: tenantId,
+          invoice_id: invoiceId,
+          amount,
+          pix_key: pixKey,
+          qr_code: qrCode,
+          expires_at: expirationTime.toISOString(),
+          status: "pending",
+          created_at: new Date().toISOString(),
+        });
+
+        reply.send({
+          success: true,
+          pixKey,
+          qrCode,
+          amount: formatCurrency(amount),
+          expiresAt: expirationTime.toISOString(),
+          message: "PIX gerado com sucesso",
+        });
+      } catch (error) {
+        fastify.log.error("Erro ao gerar PIX:", error);
+        reply.code(500).send({
+          error: "Erro interno do servidor",
+          message: "Não foi possível gerar o PIX",
+        });
+      }
+    },
+  );
+}
 
 // Funções auxiliares
 async function createInstallments(
@@ -882,12 +880,12 @@ async function createInstallments(
   }
 }
 
-async function processCardPayment(paymentData: any, invoice: any): Promise<string> {
+async function processCardPayment(paymentData: any, _invoice: any): Promise<string> {
   // Simulação de processamento de cartão
   // Em produção, integrar com gateway de pagamento (Stone, PagSeguro, etc.)
 
   // Validar dados do cartão
-  if (!validateCPF(paymentData.cardInfo.holderDocument)) {
+  if (!validateCNPJ(paymentData.cardInfo.holderDocument)) {
     throw new Error("CPF do portador inválido");
   }
 
@@ -905,7 +903,7 @@ async function processCardPayment(paymentData: any, invoice: any): Promise<strin
   return transactionId;
 }
 
-async function processPixPayment(paymentData: any, invoice: any): Promise<string> {
+async function processPixPayment(paymentData: any, _invoice: any): Promise<string> {
   // Simulação de processamento PIX
   // Em produção, integrar com API do banco ou PSP
 
@@ -913,26 +911,30 @@ async function processPixPayment(paymentData: any, invoice: any): Promise<string
 
   console.log("Processando pagamento PIX:", {
     amount: paymentData.amount,
-    pixKey: paymentData.pixInfo?.pixKey,
+    pixKey: paymentData.pixInfo?.pixKey || "N/A",
   });
 
   return transactionId;
 }
 
-async function processBankTransfer(paymentData: any, invoice: any): Promise<string> {
+async function processBankTransfer(paymentData: any, _invoice: any): Promise<string> {
   // Simulação de transferência bancária
   const transactionId = `TED_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
   console.log("Processando transferência bancária:", {
     amount: paymentData.amount,
-    bankCode: paymentData.bankTransferInfo?.bankCode,
-    agency: paymentData.bankTransferInfo?.agency,
+    bankCode: paymentData.bankTransferInfo?.bankCode || "N/A",
+    agency: paymentData.bankTransferInfo?.agency || "N/A",
   });
 
   return transactionId;
 }
 
-async function notifyPaymentCompleted(fastify: FastifyInstance, invoice: any, payment: any) {
+async function notifyPaymentCompleted(
+  _fastify: FastifyInstance,
+  invoice: any,
+  payment: any,
+): Promise<void> {
   // Enviar notificação de pagamento concluído
   console.log("Enviando notificação de pagamento concluído:", {
     invoiceId: invoice.id,
@@ -953,15 +955,14 @@ function groupInvoicesByPeriod(invoices: any[], groupBy: string) {
 
     switch (groupBy) {
       case "day":
-        key = date.toISOString().split("T")[0];
+        key = date.toISOString().split("T")[0] || "";
         break;
       case "week": {
         const startOfWeek = new Date(date);
         startOfWeek.setDate(date.getDate() - date.getDay());
-        key = startOfWeek.toISOString().split("T")[0];
+        key = startOfWeek.toISOString().split("T")[0] || "";
         break;
       }
-      case "month":
       default:
         key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
         break;
@@ -1028,7 +1029,7 @@ async function getTopServices(
 
   const serviceStats: Record<string, any> = {};
 
-  result.data?.forEach((invoice) => {
+  result.data?.forEach((invoice: any) => {
     invoice.services?.forEach((service: any) => {
       const key = service.serviceName;
       if (!serviceStats[key]) {
@@ -1065,4 +1066,6 @@ function generatePixQRCode(amount: number, pixKey: string, payerName: string): s
   };
 
   return btoa(JSON.stringify(pixData));
-}
+} // End billingRoutes function
+
+export default fp(billingRoutes);

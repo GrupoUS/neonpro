@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createdashboardLayoutEngine =
   exports.DashboardLayoutEngine =
@@ -218,7 +215,7 @@ exports.DashboardLayoutSchema = zod_1.z.object({
   updatedAt: zod_1.z.string().datetime(),
 });
 // Dashboard Layout Engine Class
-var DashboardLayoutEngine = /** @class */ (function () {
+var DashboardLayoutEngine = /** @class */ (() => {
   function DashboardLayoutEngine() {
     this.supabase = (0, client_1.createClient)();
     this.cache = new Map();
@@ -294,12 +291,7 @@ var DashboardLayoutEngine = /** @class */ (function () {
               logger_1.logger.error("Error fetching clinic dashboards:", error);
               return [2 /*return*/, []];
             }
-            return [
-              2 /*return*/,
-              data.map(function (item) {
-                return _this.transformDatabaseToLayout(item);
-              }),
-            ];
+            return [2 /*return*/, data.map((item) => _this.transformDatabaseToLayout(item))];
           case 2:
             error_2 = _b.sent();
             logger_1.logger.error("Error in getClinicDashboards:", error_2);
@@ -357,23 +349,21 @@ var DashboardLayoutEngine = /** @class */ (function () {
               return [2 /*return*/, null];
             }
             if (!(layout.widgets.length > 0)) return [3 /*break*/, 4];
-            widgetInserts = layout.widgets.map(function (widget) {
-              return {
-                id: widget.id,
-                dashboard_id: dashboardId_1,
-                widget_type: widget.type,
-                title: widget.title,
-                config: __assign(__assign({}, widget.config), {
-                  permissions: widget.permissions,
-                  isVisible: widget.isVisible,
-                }),
-                position: widget.position,
-                data_source: widget.dataSource,
-                refresh_interval: widget.refreshInterval,
-                created_at: now_1,
-                updated_at: now_1,
-              };
-            });
+            widgetInserts = layout.widgets.map((widget) => ({
+              id: widget.id,
+              dashboard_id: dashboardId_1,
+              widget_type: widget.type,
+              title: widget.title,
+              config: __assign(__assign({}, widget.config), {
+                permissions: widget.permissions,
+                isVisible: widget.isVisible,
+              }),
+              position: widget.position,
+              data_source: widget.dataSource,
+              refresh_interval: widget.refreshInterval,
+              created_at: now_1,
+              updated_at: now_1,
+            }));
             return [4 /*yield*/, this.supabase.from("dashboard_widgets").insert(widgetInserts)];
           case 2:
             widgetsError = _b.sent().error;
@@ -450,23 +440,21 @@ var DashboardLayoutEngine = /** @class */ (function () {
             // Delete existing widgets
             _a.sent();
             if (!(updates.widgets.length > 0)) return [3 /*break*/, 4];
-            widgetInserts = updates.widgets.map(function (widget) {
-              return {
-                id: widget.id,
-                dashboard_id: dashboardId,
-                widget_type: widget.type,
-                title: widget.title,
-                config: __assign(__assign({}, widget.config), {
-                  permissions: widget.permissions,
-                  isVisible: widget.isVisible,
-                }),
-                position: widget.position,
-                data_source: widget.dataSource,
-                refresh_interval: widget.refreshInterval,
-                created_at: widget.createdAt,
-                updated_at: now_2,
-              };
-            });
+            widgetInserts = updates.widgets.map((widget) => ({
+              id: widget.id,
+              dashboard_id: dashboardId,
+              widget_type: widget.type,
+              title: widget.title,
+              config: __assign(__assign({}, widget.config), {
+                permissions: widget.permissions,
+                isVisible: widget.isVisible,
+              }),
+              position: widget.position,
+              data_source: widget.dataSource,
+              refresh_interval: widget.refreshInterval,
+              created_at: widget.createdAt,
+              updated_at: now_2,
+            }));
             return [4 /*yield*/, this.supabase.from("dashboard_widgets").insert(widgetInserts)];
           case 3:
             widgetsError = _a.sent().error;
@@ -571,7 +559,7 @@ var DashboardLayoutEngine = /** @class */ (function () {
   /**
    * Validate layout configuration
    */
-  DashboardLayoutEngine.prototype.validateLayout = function (layout) {
+  DashboardLayoutEngine.prototype.validateLayout = (layout) => {
     try {
       exports.DashboardLayoutSchema.parse(layout);
       return { isValid: true, errors: [] };
@@ -579,9 +567,9 @@ var DashboardLayoutEngine = /** @class */ (function () {
       if (error instanceof zod_1.z.ZodError) {
         return {
           isValid: false,
-          errors: error.errors.map(function (err) {
-            return "".concat(err.path.join("."), ": ").concat(err.message);
-          }),
+          errors: error.errors.map((err) =>
+            "".concat(err.path.join("."), ": ").concat(err.message),
+          ),
         };
       }
       return {
@@ -593,7 +581,7 @@ var DashboardLayoutEngine = /** @class */ (function () {
   /**
    * Generate default dashboard layout
    */
-  DashboardLayoutEngine.prototype.generateDefaultLayout = function (clinicId, createdBy, name) {
+  DashboardLayoutEngine.prototype.generateDefaultLayout = (clinicId, createdBy, name) => {
     if (name === void 0) {
       name = "Dashboard Executivo";
     }
@@ -738,47 +726,43 @@ var DashboardLayoutEngine = /** @class */ (function () {
     this.cache.delete(dashboardId);
     this.cacheExpiry.delete(dashboardId);
   };
-  DashboardLayoutEngine.prototype.transformDatabaseToLayout = function (data) {
-    return {
-      id: data.id,
-      clinicId: data.clinic_id,
-      name: data.name,
-      description: data.description,
-      layout: data.layout,
-      widgets: (data.widgets || []).map(function (widget) {
-        var _a, _b, _c;
-        return {
-          id: widget.id,
-          type: widget.widget_type,
-          title: widget.title,
-          dataSource: widget.data_source,
-          refreshInterval: widget.refresh_interval,
-          config: widget.config || {},
-          position: widget.position,
-          permissions:
-            ((_a = widget.config) === null || _a === void 0 ? void 0 : _a.permissions) || [],
-          isVisible:
-            (_c = (_b = widget.config) === null || _b === void 0 ? void 0 : _b.isVisible) !==
-              null && _c !== void 0
-              ? _c
-              : true,
-          createdAt: widget.created_at,
-          updatedAt: widget.updated_at,
-        };
-      }),
-      filters: data.filters || {},
-      isDefault: data.is_default,
-      isPublic: data.is_public,
-      createdBy: data.created_by,
-      createdAt: data.created_at,
-      updatedAt: data.updated_at,
-    };
-  };
+  DashboardLayoutEngine.prototype.transformDatabaseToLayout = (data) => ({
+    id: data.id,
+    clinicId: data.clinic_id,
+    name: data.name,
+    description: data.description,
+    layout: data.layout,
+    widgets: (data.widgets || []).map((widget) => {
+      var _a, _b, _c;
+      return {
+        id: widget.id,
+        type: widget.widget_type,
+        title: widget.title,
+        dataSource: widget.data_source,
+        refreshInterval: widget.refresh_interval,
+        config: widget.config || {},
+        position: widget.position,
+        permissions:
+          ((_a = widget.config) === null || _a === void 0 ? void 0 : _a.permissions) || [],
+        isVisible:
+          (_c = (_b = widget.config) === null || _b === void 0 ? void 0 : _b.isVisible) !== null &&
+          _c !== void 0
+            ? _c
+            : true,
+        createdAt: widget.created_at,
+        updatedAt: widget.updated_at,
+      };
+    }),
+    filters: data.filters || {},
+    isDefault: data.is_default,
+    isPublic: data.is_public,
+    createdBy: data.created_by,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  });
   return DashboardLayoutEngine;
 })();
 exports.DashboardLayoutEngine = DashboardLayoutEngine;
 // Export singleton instance
-var createdashboardLayoutEngine = function () {
-  return new DashboardLayoutEngine();
-};
+var createdashboardLayoutEngine = () => new DashboardLayoutEngine();
 exports.createdashboardLayoutEngine = createdashboardLayoutEngine;

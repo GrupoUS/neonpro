@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PaymentSettings;
 var react_1 = require("react");
@@ -202,7 +199,6 @@ var paymentSettingsSchema = z.object({
   }),
 });
 function PaymentSettings() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -264,31 +260,27 @@ function PaymentSettings() {
     },
   });
   // Load existing settings
-  (0, react_1.useEffect)(
-    function () {
-      var loadPaymentSettings = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            setIsLoading(true);
-            try {
-              // TODO: Replace with actual API call
-            } catch (error) {
-              console.error("Erro ao carregar configurações:", error);
-              sonner_1.toast.error("Erro ao carregar configurações de pagamento");
-            } finally {
-              setIsLoading(false);
-            }
-            return [2 /*return*/];
-          });
+  (0, react_1.useEffect)(() => {
+    var loadPaymentSettings = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setIsLoading(true);
+          try {
+            // TODO: Replace with actual API call
+          } catch (error) {
+            console.error("Erro ao carregar configurações:", error);
+            sonner_1.toast.error("Erro ao carregar configurações de pagamento");
+          } finally {
+            setIsLoading(false);
+          }
+          return [2 /*return*/];
         });
-      };
-      loadPaymentSettings();
-    },
-    [form],
-  );
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      });
+    loadPaymentSettings();
+  }, [form]);
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsSaving(true);
         try {
           setLastSaved(new Date());
@@ -302,7 +294,6 @@ function PaymentSettings() {
         return [2 /*return*/];
       });
     });
-  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -337,7 +328,7 @@ function PaymentSettings() {
               <form_1.FormField
                 control={form.control}
                 name="pix.enabled"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -360,7 +351,7 @@ function PaymentSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="pix.pixKey"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -377,7 +368,7 @@ function PaymentSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="pix.expirationMinutes"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -388,9 +379,7 @@ function PaymentSettings() {
                               min="5"
                               max="1440"
                               {...field}
-                              onChange={function (e) {
-                                return field.onChange(parseInt(e.target.value) || 30);
-                              }}
+                              onChange={(e) => field.onChange(parseInt(e.target.value) || 30)}
                             />
                           </form_1.FormControl>
                           <form_1.FormDescription>
@@ -418,7 +407,7 @@ function PaymentSettings() {
               <form_1.FormField
                 control={form.control}
                 name="cards.enabled"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -442,7 +431,7 @@ function PaymentSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="cards.acceptCredit"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
@@ -466,7 +455,7 @@ function PaymentSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="cards.acceptDebit"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
@@ -492,7 +481,7 @@ function PaymentSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="cards.installments.enabled"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 mb-4">
@@ -520,7 +509,7 @@ function PaymentSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="cards.installments.maxInstallments"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -531,9 +520,7 @@ function PaymentSettings() {
                                     min="1"
                                     max="12"
                                     {...field}
-                                    onChange={function (e) {
-                                      return field.onChange(parseInt(e.target.value) || 12);
-                                    }}
+                                    onChange={(e) => field.onChange(parseInt(e.target.value) || 12)}
                                   />
                                 </form_1.FormControl>
                                 <form_1.FormMessage />
@@ -545,7 +532,7 @@ function PaymentSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="cards.installments.minAmountPerInstallment"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -555,9 +542,9 @@ function PaymentSettings() {
                                     type="number"
                                     min="10"
                                     {...field}
-                                    onChange={function (e) {
-                                      return field.onChange(parseFloat(e.target.value) || 50);
-                                    }}
+                                    onChange={(e) =>
+                                      field.onChange(parseFloat(e.target.value) || 50)
+                                    }
                                   />
                                 </form_1.FormControl>
                                 <form_1.FormMessage />
@@ -569,7 +556,7 @@ function PaymentSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="cards.installments.interestRate"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -581,9 +568,9 @@ function PaymentSettings() {
                                     min="0"
                                     max="10"
                                     {...field}
-                                    onChange={function (e) {
-                                      return field.onChange(parseFloat(e.target.value) || 2.99);
-                                    }}
+                                    onChange={(e) =>
+                                      field.onChange(parseFloat(e.target.value) || 2.99)
+                                    }
                                   />
                                 </form_1.FormControl>
                                 <form_1.FormMessage />
@@ -611,7 +598,7 @@ function PaymentSettings() {
               <form_1.FormField
                 control={form.control}
                 name="bankTransfer.enabled"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -636,7 +623,7 @@ function PaymentSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="bankTransfer.bankName"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -653,7 +640,7 @@ function PaymentSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="bankTransfer.accountType"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -677,7 +664,7 @@ function PaymentSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="bankTransfer.agency"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -694,7 +681,7 @@ function PaymentSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="bankTransfer.account"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -721,7 +708,7 @@ function PaymentSettings() {
               <form_1.FormField
                 control={form.control}
                 name="cash.enabled"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -741,7 +728,7 @@ function PaymentSettings() {
                 <form_1.FormField
                   control={form.control}
                   name="cash.discountPercent"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem className="md:w-1/3">
@@ -753,9 +740,7 @@ function PaymentSettings() {
                             max="50"
                             step="0.5"
                             {...field}
-                            onChange={function (e) {
-                              return field.onChange(parseFloat(e.target.value) || 0);
-                            }}
+                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                           />
                         </form_1.FormControl>
                         <form_1.FormDescription>

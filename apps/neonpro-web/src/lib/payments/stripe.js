@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.STRIPE_CONFIG = exports.getStripe = exports.stripe = void 0;
 var stripe_1 = require("stripe");
@@ -10,7 +9,7 @@ exports.stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
 });
 // Client-side Stripe instance
 var stripePromise;
-var getStripe = function () {
+var getStripe = () => {
   if (!stripePromise) {
     stripePromise = (0, stripe_js_1.loadStripe)(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
   }

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Backup Scheduler
  * Story 1.8: Sistema de Backup e Recovery
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SchedulerService = void 0;
 var node_cron_1 = require("node-cron");
@@ -148,7 +145,7 @@ var audit_logger_1 = require("../auth/audit/audit-logger");
 /**
  * Serviço de agendamento de backups
  */
-var SchedulerService = /** @class */ (function () {
+var SchedulerService = /** @class */ (() => {
   function SchedulerService(backupManager) {
     this.scheduledTasks = new Map();
     this.isInitialized = false;
@@ -238,8 +235,8 @@ var SchedulerService = /** @class */ (function () {
             }
             task = node_cron_1.default.schedule(
               cronExpression,
-              function () {
-                return __awaiter(_this, void 0, void 0, function () {
+              () =>
+                __awaiter(_this, void 0, void 0, function () {
                   return __generator(this, function (_a) {
                     switch (_a.label) {
                       case 0:
@@ -249,8 +246,7 @@ var SchedulerService = /** @class */ (function () {
                         return [2 /*return*/];
                     }
                   });
-                });
-              },
+                }),
               {
                 scheduled: true,
                 timezone: config.schedule.timezone || "America/Sao_Paulo",
@@ -465,7 +461,7 @@ var SchedulerService = /** @class */ (function () {
             if (scheduledTask.retryCount < scheduledTask.maxRetries) {
               // Agendar retry em 5 minutos
               setTimeout(
-                function () {
+                () => {
                   _this.executeScheduledBackup(configId);
                 },
                 5 * 60 * 1000,
@@ -503,7 +499,7 @@ var SchedulerService = /** @class */ (function () {
   /**
    * Converter schedule para expressão cron
    */
-  SchedulerService.prototype.scheduleToCron = function (schedule) {
+  SchedulerService.prototype.scheduleToCron = (schedule) => {
     var frequency = schedule.frequency,
       time = schedule.time,
       dayOfWeek = schedule.dayOfWeek,
@@ -517,12 +513,14 @@ var SchedulerService = /** @class */ (function () {
         return "".concat(minute, " * * * *");
       case types_1.ScheduleFrequency.DAILY:
         return "".concat(minute, " ").concat(hour, " * * *");
-      case types_1.ScheduleFrequency.WEEKLY:
+      case types_1.ScheduleFrequency.WEEKLY: {
         var day = dayOfWeek || 0; // 0 = domingo
         return "".concat(minute, " ").concat(hour, " * * ").concat(day);
-      case types_1.ScheduleFrequency.MONTHLY:
+      }
+      case types_1.ScheduleFrequency.MONTHLY: {
         var monthDay = dayOfMonth || 1;
         return "".concat(minute, " ").concat(hour, " ").concat(monthDay, " * *");
+      }
       case types_1.ScheduleFrequency.CUSTOM:
         return schedule.cronExpression || "0 2 * * *"; // Default: 2:00 AM diário
       default:
@@ -532,7 +530,7 @@ var SchedulerService = /** @class */ (function () {
   /**
    * Obter próximo horário de execução
    */
-  SchedulerService.prototype.getNextRunTime = function (cronExpression, timezone) {
+  SchedulerService.prototype.getNextRunTime = (cronExpression, timezone) => {
     try {
       // Usar biblioteca cron-parser se disponível
       // const parser = require('cron-parser');
@@ -623,20 +621,18 @@ var SchedulerService = /** @class */ (function () {
       var tasks;
       return __generator(this, function (_a) {
         try {
-          tasks = Array.from(this.scheduledTasks.values()).map(function (task) {
-            return {
-              id: task.id,
-              configId: task.configId,
-              cronExpression: task.cronExpression,
-              nextRun: task.nextRun,
-              lastRun: task.lastRun,
-              status: task.status,
-              retryCount: task.retryCount,
-              maxRetries: task.maxRetries,
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            };
-          });
+          tasks = Array.from(this.scheduledTasks.values()).map((task) => ({
+            id: task.id,
+            configId: task.configId,
+            cronExpression: task.cronExpression,
+            nextRun: task.nextRun,
+            lastRun: task.lastRun,
+            status: task.status,
+            retryCount: task.retryCount,
+            maxRetries: task.maxRetries,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }));
           return [
             2 /*return*/,
             {
@@ -861,7 +857,7 @@ var SchedulerService = /** @class */ (function () {
   /**
    * Validar expressão cron
    */
-  SchedulerService.prototype.validateCronExpression = function (expression) {
+  SchedulerService.prototype.validateCronExpression = (expression) => {
     try {
       var isValid = node_cron_1.default.validate(expression);
       return {
@@ -889,34 +885,22 @@ var SchedulerService = /** @class */ (function () {
     var tasks = Array.from(this.scheduledTasks.values());
     var stats = {
       totalTasks: tasks.length,
-      activeTasks: tasks.filter(function (t) {
-        return t.status === types_1.TaskStatus.SCHEDULED;
-      }).length,
-      pausedTasks: tasks.filter(function (t) {
-        return t.status === types_1.TaskStatus.PAUSED;
-      }).length,
-      failedTasks: tasks.filter(function (t) {
-        return t.status === types_1.TaskStatus.FAILED;
-      }).length,
+      activeTasks: tasks.filter((t) => t.status === types_1.TaskStatus.SCHEDULED).length,
+      pausedTasks: tasks.filter((t) => t.status === types_1.TaskStatus.PAUSED).length,
+      failedTasks: tasks.filter((t) => t.status === types_1.TaskStatus.FAILED).length,
       nextExecution: undefined,
     };
     // Encontrar próxima execução
     var nextRuns = tasks
-      .filter(function (t) {
-        return t.status === types_1.TaskStatus.SCHEDULED;
-      })
-      .map(function (t) {
-        return t.nextRun;
-      })
-      .sort(function (a, b) {
-        return a.getTime() - b.getTime();
-      });
+      .filter((t) => t.status === types_1.TaskStatus.SCHEDULED)
+      .map((t) => t.nextRun)
+      .sort((a, b) => a.getTime() - b.getTime());
     if (nextRuns.length > 0) {
       stats.nextExecution = nextRuns[0];
     }
     return stats;
   };
-  SchedulerService.prototype.handleError = function (message, error) {
+  SchedulerService.prototype.handleError = (message, error) => {
     console.error(message, error);
     return {
       success: false,

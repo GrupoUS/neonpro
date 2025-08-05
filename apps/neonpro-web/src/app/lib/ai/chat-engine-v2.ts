@@ -1,9 +1,9 @@
 // NeonProAIChatEngine - Core AI Chat Processing Engine
 // Implementation of Story 4.1: Universal AI Chat Assistant
 
-import type { createClient } from "@/lib/supabase/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import OpenAI from "openai";
+import type { createClient } from "@/lib/supabase/server";
 import type {
   AIRequest,
   AIResponse,

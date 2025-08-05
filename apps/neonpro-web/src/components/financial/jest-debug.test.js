@@ -1,11 +1,10 @@
-"use strict";
 /**
  * Test to debug the validateAppointmentSlot function in Jest environment
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("./utils");
-describe("Debug validateAppointmentSlot Function", function () {
-  it("should debug the function behavior step by step", function () {
+describe("Debug validateAppointmentSlot Function", () => {
+  it("should debug the function behavior step by step", () => {
     var futureDate = new Date("2026-12-31T14:00:00.000Z").toISOString();
     var duration = 60;
     console.log("=== Jest Environment Debug ===");

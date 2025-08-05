@@ -14,7 +14,41 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type { addDays, endOfWeek, format, startOfWeek } from "date-fns";
+import type {
+  Activity,
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  MapPin,
+  Maximize2,
+  Monitor,
+  RefreshCw,
+  Settings,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -22,13 +56,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Separator } from "@/components/ui/separator";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -36,40 +66,10 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  Users,
-  Calendar,
-  Monitor,
-  DollarSign,
-  TrendingUp,
-  AlertTriangle,
-  CheckCircle,
-  Settings,
-  Maximize2,
-  Download,
-  RefreshCw,
-  Clock,
-  MapPin,
-  Activity,
-} from "lucide-react";
-import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-} from "recharts";
-import type { format, addDays, startOfWeek, endOfWeek } from "date-fns";
-import type { toast } from "sonner";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import type { AllocationPlan, ResourceAllocation as AllocationData } from "@/lib/forecasting";
+import type { ResourceAllocation as AllocationData, AllocationPlan } from "@/lib/forecasting";
 
 interface ResourceAllocationProps {
   plan: AllocationPlan;

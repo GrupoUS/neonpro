@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,14 +128,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StripeWebhookHandler = exports.SubscriptionService = void 0;
 var server_1 = require("@/lib/supabase/server");
 var stripe_1 = require("@/lib/stripe");
 var plans_1 = require("@/lib/constants/plans");
 // Subscription service class
-var SubscriptionService = /** @class */ (function () {
+var SubscriptionService = /** @class */ (() => {
   function SubscriptionService() {
     // Initialize Supabase client when needed
   }
@@ -148,7 +145,7 @@ var SubscriptionService = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            if (!!this.supabase) return [3 /*break*/, 2];
+            if (this.supabase) return [3 /*break*/, 2];
             _a = this;
             return [4 /*yield*/, (0, server_1.createClient)()];
           case 1:
@@ -170,7 +167,7 @@ var SubscriptionService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var plan, session, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             plan = plans_1.NEONPRO_PLANS[planId];
@@ -228,7 +225,7 @@ var SubscriptionService = /** @class */ (function () {
   SubscriptionService.prototype.createBillingPortalSession = function (customerId, returnUrl) {
     return __awaiter(this, void 0, void 0, function () {
       var session, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -257,7 +254,7 @@ var SubscriptionService = /** @class */ (function () {
   SubscriptionService.prototype.getActiveSubscription = function (customerId) {
     return __awaiter(this, void 0, void 0, function () {
       var subscriptions, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -286,7 +283,7 @@ var SubscriptionService = /** @class */ (function () {
   SubscriptionService.prototype.cancelSubscription = function (subscriptionId) {
     return __awaiter(this, void 0, void 0, function () {
       var subscription, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -313,7 +310,7 @@ var SubscriptionService = /** @class */ (function () {
   SubscriptionService.prototype.reactivateSubscription = function (subscriptionId) {
     return __awaiter(this, void 0, void 0, function () {
       var subscription, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -442,25 +439,20 @@ var SubscriptionService = /** @class */ (function () {
     });
   };
   // Get plan by ID
-  SubscriptionService.prototype.getPlan = function (planId) {
-    return plans_1.NEONPRO_PLANS[planId];
-  };
+  SubscriptionService.prototype.getPlan = (planId) => plans_1.NEONPRO_PLANS[planId];
   // Get all plans
-  SubscriptionService.prototype.getAllPlans = function () {
-    return Object.values(plans_1.NEONPRO_PLANS);
-  };
+  SubscriptionService.prototype.getAllPlans = () => Object.values(plans_1.NEONPRO_PLANS);
   // Format price for display
-  SubscriptionService.prototype.formatPrice = function (price) {
-    return new Intl.NumberFormat("pt-BR", {
+  SubscriptionService.prototype.formatPrice = (price) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(price / 100);
-  };
   return SubscriptionService;
 })();
 exports.SubscriptionService = SubscriptionService;
 // Webhook handler for Stripe events
-var StripeWebhookHandler = /** @class */ (function () {
+var StripeWebhookHandler = /** @class */ (() => {
   function StripeWebhookHandler() {
     this.subscriptionService = new SubscriptionService();
   }
@@ -643,7 +635,7 @@ var StripeWebhookHandler = /** @class */ (function () {
   };
   StripeWebhookHandler.prototype.handlePaymentSucceeded = function (invoice) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Payment succeeded for invoice ".concat(invoice.id));
         return [2 /*return*/];
       });
@@ -651,7 +643,7 @@ var StripeWebhookHandler = /** @class */ (function () {
   };
   StripeWebhookHandler.prototype.handlePaymentFailed = function (invoice) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Payment failed for invoice ".concat(invoice.id));
         return [2 /*return*/];
       });

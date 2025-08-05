@@ -1,5 +1,4 @@
 #!/usr/bin/env tsx
-"use strict";
 /**
  * RBAC Setup Script
  * Story 1.2: Role-Based Access Control Implementation
@@ -12,15 +11,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,7 +29,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -40,13 +39,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,8 +58,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -68,9 +67,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -81,9 +78,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -142,16 +139,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RBACSetup = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var fs_1 = require("fs");
-var path_1 = require("path");
+var fs_1 = require("node:fs");
+var path_1 = require("node:path");
 var dotenv_1 = require("dotenv");
 // Load environment variables
 (0, dotenv_1.config)({ path: ".env.local" });
-var RBACSetup = /** @class */ (function () {
+var RBACSetup = /** @class */ (() => {
   function RBACSetup() {
     var supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     var supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -174,18 +171,14 @@ var RBACSetup = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 7, , 8]);
+            _a.trys.push([0, 7, undefined, 8]);
             console.log("\uD83D\uDCC4 Executing migration: ".concat(filename));
             migrationPath = (0, path_1.join)(__dirname, "migrations", filename);
             sql = (0, fs_1.readFileSync)(migrationPath, "utf-8");
             statements = sql
               .split(";")
-              .map(function (stmt) {
-                return stmt.trim();
-              })
-              .filter(function (stmt) {
-                return stmt.length > 0 && !stmt.startsWith("--");
-              });
+              .map((stmt) => stmt.trim())
+              .filter((stmt) => stmt.length > 0 && !stmt.startsWith("--"));
             console.log("\uD83D\uDCCA Executing ".concat(statements.length, " SQL statements..."));
             i = 0;
             _a.label = 1;
@@ -195,7 +188,7 @@ var RBACSetup = /** @class */ (function () {
             if (!statement.trim()) return [3 /*break*/, 5];
             _a.label = 2;
           case 2:
-            _a.trys.push([2, 4, , 5]);
+            _a.trys.push([2, 4, undefined, 5]);
             return [
               4 /*yield*/,
               this.supabase.rpc("exec_sql", {
@@ -253,7 +246,7 @@ var RBACSetup = /** @class */ (function () {
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
-            _c.trys.push([0, 3, , 4]);
+            _c.trys.push([0, 3, undefined, 4]);
             console.log("🔍 Verifying RLS policies...");
             return [
               4 /*yield*/,
@@ -271,9 +264,7 @@ var RBACSetup = /** @class */ (function () {
             tablesWithRLS =
               (rlsStatus === null || rlsStatus === void 0
                 ? void 0
-                : rlsStatus.filter(function (table) {
-                    return table.rowsecurity;
-                  })) || [];
+                : rlsStatus.filter((table) => table.rowsecurity)) || [];
             console.log("\u2705 RLS enabled on ".concat(tablesWithRLS.length, " tables"));
             return [
               4 /*yield*/,
@@ -326,7 +317,7 @@ var RBACSetup = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             console.log("📋 Setting up audit log table...");
             createAuditTableSQL =
               "\n        CREATE TABLE IF NOT EXISTS permission_audit_log (\n          id uuid DEFAULT gen_random_uuid() PRIMARY KEY,\n          user_id uuid REFERENCES users(id) ON DELETE CASCADE,\n          action text NOT NULL,\n          resource_type text NOT NULL,\n          resource_id text,\n          permission_checked text NOT NULL,\n          granted boolean NOT NULL,\n          reason text,\n          metadata jsonb DEFAULT '{}',\n          ip_address inet,\n          user_agent text,\n          created_at timestamptz DEFAULT now()\n        );\n        \n        CREATE INDEX IF NOT EXISTS idx_audit_user_action ON permission_audit_log(user_id, action);\n        CREATE INDEX IF NOT EXISTS idx_audit_created_at ON permission_audit_log(created_at);\n        CREATE INDEX IF NOT EXISTS idx_audit_resource ON permission_audit_log(resource_type, resource_id);\n      ";
@@ -369,21 +360,21 @@ var RBACSetup = /** @class */ (function () {
    */
   RBACSetup.prototype.testRBACPermissions = function () {
     return __awaiter(this, void 0, void 0, function () {
-      var _a, roleTest, roleError, _b, minRoleTest, minRoleError, error_4;
+      var _a, _roleTest, roleError, _b, _minRoleTest, minRoleError, error_4;
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
-            _c.trys.push([0, 3, , 4]);
+            _c.trys.push([0, 3, undefined, 4]);
             console.log("🧪 Testing RBAC permissions...");
             return [4 /*yield*/, this.supabase.rpc("has_role", { required_role: "owner" })];
           case 1:
-            (_a = _c.sent()), (roleTest = _a.data), (roleError = _a.error);
+            (_a = _c.sent()), (_roleTest = _a.data), (roleError = _a.error);
             if (roleError) {
               console.warn("⚠️  Role function test warning:", roleError.message);
             }
             return [4 /*yield*/, this.supabase.rpc("has_minimum_role", { required_role: "staff" })];
           case 2:
-            (_b = _c.sent()), (minRoleTest = _b.data), (minRoleError = _b.error);
+            (_b = _c.sent()), (_minRoleTest = _b.data), (minRoleError = _b.error);
             if (minRoleError) {
               console.warn("⚠️  Minimum role function test warning:", minRoleError.message);
             }
@@ -456,14 +447,12 @@ var RBACSetup = /** @class */ (function () {
             testResult = _a.sent();
             results.push(testResult);
             // Summary
-            console.log("\n" + "=".repeat(50));
+            console.log(`\n${"=".repeat(50)}`);
             console.log("📊 RBAC Setup Summary:");
             console.log("=".repeat(50));
-            successCount = results.filter(function (r) {
-              return r.success;
-            }).length;
+            successCount = results.filter((r) => r.success).length;
             totalSteps = results.length;
-            results.forEach(function (result, index) {
+            results.forEach((result, index) => {
               var status = result.success ? "✅" : "❌";
               console.log(
                 ""
@@ -475,7 +464,7 @@ var RBACSetup = /** @class */ (function () {
                 console.log("   Details:", result.details);
               }
             });
-            console.log("\n" + "=".repeat(50));
+            console.log(`\n${"=".repeat(50)}`);
             if (successCount === totalSteps) {
               console.log("🎉 RBAC Setup completed successfully!");
               console.log("\n📋 Next steps:");
@@ -509,7 +498,7 @@ exports.RBACSetup = RBACSetup;
  */
 if (require.main === module) {
   var setup = new RBACSetup();
-  setup.setup().catch(function (error) {
+  setup.setup().catch((error) => {
     console.error("❌ Setup failed:", error);
     process.exit(1);
   });

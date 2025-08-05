@@ -5,7 +5,7 @@ import type { format } from "date-fns";
 import type { Eye, EyeOff, Lock, Shield } from "lucide-react";
 import type { useState } from "react";
 import type { useForm } from "react-hook-form";
-
+import type { toast } from "sonner";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -25,9 +25,8 @@ import type {
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
 import type { Textarea } from "@/components/ui/textarea";
-import type { patientSchema, type PatientFormData } from "@/lib/healthcare/schemas";
+import type { PatientFormData, patientSchema } from "@/lib/healthcare/schemas";
 import type { formatCpf, formatPhone } from "@/lib/utils";
-import type { toast } from "sonner";
 
 interface PatientRegistrationFormProps {
   onSubmit: (data: PatientFormData) => Promise<void>;

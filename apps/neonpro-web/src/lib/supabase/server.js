@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createServerClient = void 0;
 exports.createClient = createClient;
@@ -17,12 +16,10 @@ function createClient() {
   var cookieStore = (0, headers_1.cookies)();
   return (0, ssr_1.createServerClient)(supabaseUrl, supabaseAnonKey, {
     cookies: {
-      getAll: function () {
-        return cookieStore.getAll();
-      },
-      setAll: function (cookiesToSet) {
+      getAll: () => cookieStore.getAll(),
+      setAll: (cookiesToSet) => {
         try {
-          cookiesToSet.forEach(function (_a) {
+          cookiesToSet.forEach((_a) => {
             var name = _a.name,
               value = _a.value,
               options = _a.options;
@@ -41,7 +38,5 @@ function createClient() {
 var client_1 = require("./client");
 Object.defineProperty(exports, "createServerClient", {
   enumerable: true,
-  get: function () {
-    return client_1.createClient;
-  },
+  get: () => client_1.createClient,
 });

@@ -7,18 +7,17 @@
  * @compliance LGPD Art. 7º, 8º, 9º
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -140,7 +137,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentManager = ConsentManager;
 var react_1 = require("react");
@@ -217,7 +214,7 @@ var CONSENT_DEFINITIONS = [
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
-var getStatusIcon = function (status) {
+var getStatusIcon = (status) => {
   switch (status) {
     case lgpd_1.ConsentStatus.GRANTED:
       return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -233,7 +230,7 @@ var getStatusIcon = function (status) {
       return <lucide_react_1.Info className="h-4 w-4 text-gray-400" />;
   }
 };
-var getStatusColor = function (status) {
+var getStatusColor = (status) => {
   switch (status) {
     case lgpd_1.ConsentStatus.GRANTED:
       return "bg-green-100 text-green-800";
@@ -249,7 +246,7 @@ var getStatusColor = function (status) {
       return "bg-gray-100 text-gray-600";
   }
 };
-var getCategoryColor = function (category) {
+var getCategoryColor = (category) => {
   switch (category) {
     case "essential":
       return "bg-blue-100 text-blue-800";
@@ -267,7 +264,6 @@ var getCategoryColor = function (category) {
 // MAIN COMPONENT
 // ============================================================================
 function ConsentManager(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userId = _a.userId,
     _b = _a.className,
@@ -295,10 +291,10 @@ function ConsentManager(_a) {
   // ============================================================================
   // HANDLERS
   // ============================================================================
-  var handleConsentToggle = function (definition, granted) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleConsentToggle = (definition, granted) =>
+    __awaiter(this, void 0, void 0, function () {
       var existingConsent, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -332,15 +328,14 @@ function ConsentManager(_a) {
         }
       });
     });
-  };
-  var handleViewDetails = function (consent) {
+  var handleViewDetails = (consent) => {
     setSelectedConsent(consent);
     setIsDetailsOpen(true);
   };
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  var renderConsentItem = function (definition) {
+  var renderConsentItem = (definition) => {
     var existingConsent = getConsentByType(definition.type);
     var isGranted = hasValidConsent(definition.type);
     var isExpired =
@@ -395,9 +390,7 @@ function ConsentManager(_a) {
                 <button_1.Button
                   variant="ghost"
                   size="sm"
-                  onClick={function () {
-                    return handleViewDetails(existingConsent);
-                  }}
+                  onClick={() => handleViewDetails(existingConsent)}
                 >
                   <lucide_react_1.Eye className="h-4 w-4" />
                 </button_1.Button>
@@ -405,9 +398,7 @@ function ConsentManager(_a) {
 
               <switch_1.Switch
                 checked={isGranted && !isExpired}
-                onCheckedChange={function (checked) {
-                  return handleConsentToggle(definition, checked);
-                }}
+                onCheckedChange={(checked) => handleConsentToggle(definition, checked)}
                 disabled={loading || (definition.required && isGranted)}
               />
             </div>
@@ -416,11 +407,9 @@ function ConsentManager(_a) {
       </card_1.Card>
     );
   };
-  var renderConsentDetails = function () {
+  var renderConsentDetails = () => {
     if (!selectedConsent) return null;
-    var definition = CONSENT_DEFINITIONS.find(function (d) {
-      return d.type === selectedConsent.consentType;
-    });
+    var definition = CONSENT_DEFINITIONS.find((d) => d.type === selectedConsent.consentType);
     return (
       <dialog_1.Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <dialog_1.DialogContent className="max-w-2xl">
@@ -574,41 +563,25 @@ function ConsentManager(_a) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
               <div className="text-center p-2 bg-green-50 rounded">
                 <div className="font-medium text-green-700">
-                  {
-                    consents.filter(function (c) {
-                      return c.status === lgpd_1.ConsentStatus.GRANTED;
-                    }).length
-                  }
+                  {consents.filter((c) => c.status === lgpd_1.ConsentStatus.GRANTED).length}
                 </div>
                 <div className="text-green-600">Concedidos</div>
               </div>
               <div className="text-center p-2 bg-red-50 rounded">
                 <div className="font-medium text-red-700">
-                  {
-                    consents.filter(function (c) {
-                      return c.status === lgpd_1.ConsentStatus.WITHDRAWN;
-                    }).length
-                  }
+                  {consents.filter((c) => c.status === lgpd_1.ConsentStatus.WITHDRAWN).length}
                 </div>
                 <div className="text-red-600">Revogados</div>
               </div>
               <div className="text-center p-2 bg-gray-50 rounded">
                 <div className="font-medium text-gray-700">
-                  {
-                    consents.filter(function (c) {
-                      return c.status === lgpd_1.ConsentStatus.EXPIRED;
-                    }).length
-                  }
+                  {consents.filter((c) => c.status === lgpd_1.ConsentStatus.EXPIRED).length}
                 </div>
                 <div className="text-gray-600">Expirados</div>
               </div>
               <div className="text-center p-2 bg-yellow-50 rounded">
                 <div className="font-medium text-yellow-700">
-                  {
-                    consents.filter(function (c) {
-                      return c.status === lgpd_1.ConsentStatus.PENDING;
-                    }).length
-                  }
+                  {consents.filter((c) => c.status === lgpd_1.ConsentStatus.PENDING).length}
                 </div>
                 <div className="text-yellow-600">Pendentes</div>
               </div>

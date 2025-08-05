@@ -1,7 +1,8 @@
 // Test simplified version - focus on business logic
-import { SchedulingCommunicationWorkflow } from "../../lib/communication/scheduling-workflow";
-import { CommunicationService } from "../../lib/communication/communication-service";
+
 import { createClient } from "@supabase/supabase-js";
+import { CommunicationService } from "../../lib/communication/communication-service";
+import { SchedulingCommunicationWorkflow } from "../../lib/communication/scheduling-workflow";
 
 describe("Story 5.3 - Business Logic Tests", () => {
   const mockAppointment = {
@@ -50,7 +51,7 @@ describe("Story 5.3 - Business Logic Tests", () => {
       const workflow = new SchedulingCommunicationWorkflow();
 
       // Mock the Supabase client
-      const mockSupabase = createClient("test", "test");
+      const _mockSupabase = createClient("test", "test");
 
       // This tests that the workflow logic exists and can handle config
       const result = workflow.createReminderWorkflows(

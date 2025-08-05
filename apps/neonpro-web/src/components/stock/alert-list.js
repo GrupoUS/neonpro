@@ -2,18 +2,17 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Lista e gerenciamento de configurações de alertas
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -149,7 +146,7 @@ var stock_1 = require("@/app/lib/types/stock");
 // =====================================================
 // UTILITY FUNCTIONS
 // =====================================================
-var getSeverityColor = function (severity) {
+var getSeverityColor = (severity) => {
   switch (severity) {
     case "low":
       return "bg-blue-100 text-blue-800 border-blue-200";
@@ -163,7 +160,7 @@ var getSeverityColor = function (severity) {
       return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
-var getAlertTypeIcon = function (alertType) {
+var getAlertTypeIcon = (alertType) => {
   var iconProps = { className: "h-4 w-4" };
   switch (alertType) {
     case "low_stock":
@@ -181,7 +178,7 @@ var getAlertTypeIcon = function (alertType) {
 // =====================================================
 // MAIN COMPONENT
 // =====================================================
-var AlertList = function (_a) {
+var AlertList = (_a) => {
   var configs = _a.configs,
     alerts = _a.alerts,
     onCreateNew = _a.onCreateNew,
@@ -201,10 +198,10 @@ var AlertList = function (_a) {
   // =====================================================
   // ACTION HANDLERS
   // =====================================================
-  var handleToggleActive = function (configId, isActive) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleToggleActive = (configId, isActive) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -230,11 +227,10 @@ var AlertList = function (_a) {
         }
       });
     });
-  };
-  var handleDelete = function (configId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleDelete = (configId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!confirm("Tem certeza que deseja excluir esta configuração de alerta?")) {
@@ -265,11 +261,10 @@ var AlertList = function (_a) {
         }
       });
     });
-  };
-  var handleAcknowledge = function (alertId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleAcknowledge = (alertId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -295,16 +290,11 @@ var AlertList = function (_a) {
         }
       });
     });
-  };
   // =====================================================
   // COMPUTED VALUES
   // =====================================================
-  var activeAlerts = alerts.filter(function (alert) {
-    return !alert.acknowledgedAt;
-  });
-  var criticalAlerts = activeAlerts.filter(function (alert) {
-    return alert.severityLevel === "critical";
-  });
+  var activeAlerts = alerts.filter((alert) => !alert.acknowledgedAt);
+  var criticalAlerts = activeAlerts.filter((alert) => alert.severityLevel === "critical");
   // =====================================================
   // RENDER
   // =====================================================
@@ -361,12 +351,7 @@ var AlertList = function (_a) {
           <card_1.CardContent>
             <div className="text-2xl font-bold">{configs.length}</div>
             <p className="text-xs text-muted-foreground">
-              {
-                configs.filter(function (c) {
-                  return c.isActive;
-                }).length
-              }{" "}
-              ativas
+              {configs.filter((c) => c.isActive).length} ativas
             </p>
           </card_1.CardContent>
         </card_1.Card>
@@ -379,13 +364,7 @@ var AlertList = function (_a) {
           <card_1.CardContent>
             <div className="text-2xl font-bold">
               {alerts.length > 0
-                ? Math.round(
-                    (alerts.filter(function (a) {
-                      return a.acknowledgedAt;
-                    }).length /
-                      alerts.length) *
-                      100,
-                  )
+                ? Math.round((alerts.filter((a) => a.acknowledgedAt).length / alerts.length) * 100)
                 : 0}
               %
             </div>
@@ -406,39 +385,35 @@ var AlertList = function (_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {activeAlerts.map(function (alert) {
-                return (
-                  <div
-                    key={alert.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      {getAlertTypeIcon(alert.alertType)}
-                      <div>
-                        <p className="font-medium">{alert.message}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(alert.triggeredAt).toLocaleString("pt-BR")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <badge_1.Badge className={getSeverityColor(alert.severityLevel)}>
-                        {stock_1.SEVERITY_LABELS[alert.severityLevel]}
-                      </badge_1.Badge>
-                      <button_1.Button
-                        size="sm"
-                        variant="outline"
-                        onClick={function () {
-                          return handleAcknowledge(alert.id);
-                        }}
-                        disabled={actionLoading === alert.id}
-                      >
-                        Confirmar
-                      </button_1.Button>
+              {activeAlerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    {getAlertTypeIcon(alert.alertType)}
+                    <div>
+                      <p className="font-medium">{alert.message}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(alert.triggeredAt).toLocaleString("pt-BR")}
+                      </p>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="flex items-center gap-2">
+                    <badge_1.Badge className={getSeverityColor(alert.severityLevel)}>
+                      {stock_1.SEVERITY_LABELS[alert.severityLevel]}
+                    </badge_1.Badge>
+                    <button_1.Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleAcknowledge(alert.id)}
+                      disabled={actionLoading === alert.id}
+                    >
+                      Confirmar
+                    </button_1.Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -466,77 +441,67 @@ var AlertList = function (_a) {
                 </button_1.Button>
               </div>
             : <div className="space-y-4">
-                {configs.map(function (config) {
-                  return (
-                    <div
-                      key={config.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-4">
-                        {getAlertTypeIcon(config.alertType)}
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-medium">
-                              {stock_1.ALERT_TYPE_LABELS[config.alertType]}
-                            </h4>
-                            <badge_1.Badge className={getSeverityColor(config.severityLevel)}>
-                              {stock_1.SEVERITY_LABELS[config.severityLevel]}
-                            </badge_1.Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            Limite: {config.thresholdValue}{" "}
-                            {config.thresholdUnit === "quantity"
-                              ? "unidades"
-                              : config.thresholdUnit === "days"
-                                ? "dias"
-                                : "%"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Canais: {config.notificationChannels.join(", ")}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
+                {configs.map((config) => (
+                  <div
+                    key={config.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex items-center gap-4">
+                      {getAlertTypeIcon(config.alertType)}
+                      <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-sm">Ativo</span>
-                          <switch_1.Switch
-                            checked={config.isActive}
-                            onCheckedChange={function (checked) {
-                              return handleToggleActive(config.id, checked);
-                            }}
-                            disabled={actionLoading === config.id}
-                          />
+                          <h4 className="font-medium">
+                            {stock_1.ALERT_TYPE_LABELS[config.alertType]}
+                          </h4>
+                          <badge_1.Badge className={getSeverityColor(config.severityLevel)}>
+                            {stock_1.SEVERITY_LABELS[config.severityLevel]}
+                          </badge_1.Badge>
                         </div>
-                        <dropdown_menu_1.DropdownMenu>
-                          <dropdown_menu_1.DropdownMenuTrigger asChild>
-                            <button_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.MoreVertical className="h-4 w-4" />
-                            </button_1.Button>
-                          </dropdown_menu_1.DropdownMenuTrigger>
-                          <dropdown_menu_1.DropdownMenuContent align="end">
-                            <dropdown_menu_1.DropdownMenuItem
-                              onClick={function () {
-                                return onEdit(config);
-                              }}
-                            >
-                              <lucide_react_1.Edit className="h-4 w-4 mr-2" />
-                              Editar
-                            </dropdown_menu_1.DropdownMenuItem>
-                            <dropdown_menu_1.DropdownMenuItem
-                              onClick={function () {
-                                return handleDelete(config.id);
-                              }}
-                              className="text-red-600"
-                            >
-                              <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
-                              Excluir
-                            </dropdown_menu_1.DropdownMenuItem>
-                          </dropdown_menu_1.DropdownMenuContent>
-                        </dropdown_menu_1.DropdownMenu>
+                        <p className="text-sm text-muted-foreground">
+                          Limite: {config.thresholdValue}{" "}
+                          {config.thresholdUnit === "quantity"
+                            ? "unidades"
+                            : config.thresholdUnit === "days"
+                              ? "dias"
+                              : "%"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Canais: {config.notificationChannels.join(", ")}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm">Ativo</span>
+                        <switch_1.Switch
+                          checked={config.isActive}
+                          onCheckedChange={(checked) => handleToggleActive(config.id, checked)}
+                          disabled={actionLoading === config.id}
+                        />
+                      </div>
+                      <dropdown_menu_1.DropdownMenu>
+                        <dropdown_menu_1.DropdownMenuTrigger asChild>
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.MoreVertical className="h-4 w-4" />
+                          </button_1.Button>
+                        </dropdown_menu_1.DropdownMenuTrigger>
+                        <dropdown_menu_1.DropdownMenuContent align="end">
+                          <dropdown_menu_1.DropdownMenuItem onClick={() => onEdit(config)}>
+                            <lucide_react_1.Edit className="h-4 w-4 mr-2" />
+                            Editar
+                          </dropdown_menu_1.DropdownMenuItem>
+                          <dropdown_menu_1.DropdownMenuItem
+                            onClick={() => handleDelete(config.id)}
+                            className="text-red-600"
+                          >
+                            <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
+                            Excluir
+                          </dropdown_menu_1.DropdownMenuItem>
+                        </dropdown_menu_1.DropdownMenuContent>
+                      </dropdown_menu_1.DropdownMenu>
+                    </div>
+                  </div>
+                ))}
               </div>}
         </card_1.CardContent>
       </card_1.Card>

@@ -1,4 +1,3 @@
-"use strict";
 // Types for NeonPro Billing and Payment System
 // Task 7: Sistema de Faturamento e Pagamentos
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContactPatientDialog = ContactPatientDialog;
 var react_1 = require("react");
@@ -159,7 +156,6 @@ var contactSchema = zod_2.z.object({
   send_appointment_details: zod_2.z.boolean().default(true),
 });
 function ContactPatientDialog(_a) {
-  var _this = this;
   var _b;
   var appointment = _a.appointment,
     open = _a.open,
@@ -197,7 +193,7 @@ function ContactPatientDialog(_a) {
     custom: "",
   };
   // Replace template variables with actual data
-  var replaceTemplateVariables = function (template) {
+  var replaceTemplateVariables = (template) => {
     var _a, _b, _c;
     if (!appointment) return template;
     var replacements = {
@@ -217,7 +213,7 @@ function ContactPatientDialog(_a) {
         "Profissional",
     };
     var result = template;
-    Object.entries(replacements).forEach(function (_a) {
+    Object.entries(replacements).forEach((_a) => {
       var key = _a[0],
         value = _a[1];
       result = result.replace(new RegExp(key, "g"), value);
@@ -225,7 +221,7 @@ function ContactPatientDialog(_a) {
     return result;
   };
   // Handle template selection
-  var handleTemplateChange = function (templateKey) {
+  var handleTemplateChange = (templateKey) => {
     var template = messageTemplates[templateKey];
     if (template) {
       var processedMessage = replaceTemplateVariables(template);
@@ -233,11 +229,11 @@ function ContactPatientDialog(_a) {
     }
   };
   // Handle contact method specific actions
-  var handleDirectContact = function (method) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDirectContact = (method) =>
+    __awaiter(this, void 0, void 0, function () {
       var patient, message, whatsappUrl, subject, body;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         if (!(appointment === null || appointment === void 0 ? void 0 : appointment.patient))
           return [2 /*return*/];
         patient = appointment.patient;
@@ -279,12 +275,11 @@ function ContactPatientDialog(_a) {
         return [2 /*return*/];
       });
     });
-  };
   // Copy contact info to clipboard
-  var copyToClipboard = function (text, type) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var copyToClipboard = (text, type) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -293,14 +288,10 @@ function ContactPatientDialog(_a) {
             _a.sent();
             if (type === "phone") {
               setCopiedPhone(true);
-              setTimeout(function () {
-                return setCopiedPhone(false);
-              }, 2000);
+              setTimeout(() => setCopiedPhone(false), 2000);
             } else {
               setCopiedEmail(true);
-              setTimeout(function () {
-                return setCopiedEmail(false);
-              }, 2000);
+              setTimeout(() => setCopiedEmail(false), 2000);
             }
             sonner_1.toast.success("Copiado para a área de transferência!");
             return [3 /*break*/, 3];
@@ -313,12 +304,11 @@ function ContactPatientDialog(_a) {
         }
       });
     });
-  };
   // Handle form submission (for scheduled/tracked contacts)
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var contactData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!appointment) return [2 /*return*/];
         try {
           setIsSending(true);
@@ -362,7 +352,6 @@ function ContactPatientDialog(_a) {
         return [2 /*return*/];
       });
     });
-  };
   if (!appointment) return null;
   var patient = appointment.patient;
   return (
@@ -403,9 +392,7 @@ function ContactPatientDialog(_a) {
                     <button_1.Button
                       size="sm"
                       variant="ghost"
-                      onClick={function () {
-                        return copyToClipboard(patient.phone, "phone");
-                      }}
+                      onClick={() => copyToClipboard(patient.phone, "phone")}
                     >
                       {copiedPhone
                         ? <lucide_react_1.Check className="h-3 w-3" />
@@ -414,9 +401,7 @@ function ContactPatientDialog(_a) {
                     <button_1.Button
                       size="sm"
                       variant="ghost"
-                      onClick={function () {
-                        return handleDirectContact("phone");
-                      }}
+                      onClick={() => handleDirectContact("phone")}
                     >
                       <lucide_react_1.ExternalLink className="h-3 w-3" />
                     </button_1.Button>
@@ -437,9 +422,7 @@ function ContactPatientDialog(_a) {
                     <button_1.Button
                       size="sm"
                       variant="ghost"
-                      onClick={function () {
-                        return copyToClipboard(patient.email, "email");
-                      }}
+                      onClick={() => copyToClipboard(patient.email, "email")}
                     >
                       {copiedEmail
                         ? <lucide_react_1.Check className="h-3 w-3" />
@@ -448,9 +431,7 @@ function ContactPatientDialog(_a) {
                     <button_1.Button
                       size="sm"
                       variant="ghost"
-                      onClick={function () {
-                        return handleDirectContact("email");
-                      }}
+                      onClick={() => handleDirectContact("email")}
                     >
                       <lucide_react_1.ExternalLink className="h-3 w-3" />
                     </button_1.Button>
@@ -496,7 +477,7 @@ function ContactPatientDialog(_a) {
             <form_1.FormField
               control={form.control}
               name="contact_method"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -550,7 +531,7 @@ function ContactPatientDialog(_a) {
             <form_1.FormField
               control={form.control}
               name="custom_message"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -572,9 +553,7 @@ function ContactPatientDialog(_a) {
               <button_1.Button
                 type="button"
                 variant="outline"
-                onClick={function () {
-                  return onOpenChange(false);
-                }}
+                onClick={() => onOpenChange(false)}
                 disabled={isSending}
               >
                 Cancelar

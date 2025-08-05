@@ -3,17 +3,17 @@
 
 import type { EventEmitter } from "events";
 import type {
+  getSecurityEventRiskScore,
+  LOCATION_RISK_FACTORS,
+  SUSPICIOUS_ACTIVITY_PATTERNS,
+} from "./config";
+import type {
+  DeviceInfo,
+  LocationInfo,
+  SecurityEventType,
   SessionSecurityEvent,
   UserSession,
-  SecurityEventType,
-  LocationInfo,
-  DeviceInfo,
 } from "./types";
-import type {
-  getSecurityEventRiskScore,
-  SUSPICIOUS_ACTIVITY_PATTERNS,
-  LOCATION_RISK_FACTORS,
-} from "./config";
 
 export interface SecurityAlert {
   id: string;

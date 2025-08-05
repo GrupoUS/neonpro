@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Digital Signature System
  * Story 2.2: Medical History & Records - Digital Signatures
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,7 +153,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.digitalSignatureManager =
   exports.DigitalSignatureManager =
@@ -172,7 +169,7 @@ var audit_logger_1 = require("../audit/audit-logger");
 var lgpd_manager_1 = require("../auth/lgpd/lgpd-manager");
 // Enums
 var SignerRole;
-(function (SignerRole) {
+((SignerRole) => {
   SignerRole["PATIENT"] = "patient";
   SignerRole["DOCTOR"] = "doctor";
   SignerRole["NURSE"] = "nurse";
@@ -182,7 +179,7 @@ var SignerRole;
   SignerRole["GUARDIAN"] = "guardian";
 })(SignerRole || (exports.SignerRole = SignerRole = {}));
 var SignatureType;
-(function (SignatureType) {
+((SignatureType) => {
   SignatureType["DIGITAL_CERTIFICATE"] = "digital_certificate";
   SignatureType["ELECTRONIC_SIGNATURE"] = "electronic_signature";
   SignatureType["BIOMETRIC_SIGNATURE"] = "biometric_signature";
@@ -191,19 +188,19 @@ var SignatureType;
   SignatureType["EMAIL_VERIFICATION"] = "email_verification";
 })(SignatureType || (exports.SignatureType = SignatureType = {}));
 var HashAlgorithm;
-(function (HashAlgorithm) {
+((HashAlgorithm) => {
   HashAlgorithm["SHA256"] = "sha256";
   HashAlgorithm["SHA384"] = "sha384";
   HashAlgorithm["SHA512"] = "sha512";
 })(HashAlgorithm || (exports.HashAlgorithm = HashAlgorithm = {}));
 var SignatureOrder;
-(function (SignatureOrder) {
+((SignatureOrder) => {
   SignatureOrder["PARALLEL"] = "parallel";
   SignatureOrder["SEQUENTIAL"] = "sequential";
   SignatureOrder["HIERARCHICAL"] = "hierarchical";
 })(SignatureOrder || (exports.SignatureOrder = SignatureOrder = {}));
 var RequestStatus;
-(function (RequestStatus) {
+((RequestStatus) => {
   RequestStatus["PENDING"] = "pending";
   RequestStatus["IN_PROGRESS"] = "in_progress";
   RequestStatus["COMPLETED"] = "completed";
@@ -213,7 +210,7 @@ var RequestStatus;
 // ============================================================================
 // DIGITAL SIGNATURE MANAGER
 // ============================================================================
-var DigitalSignatureManager = /** @class */ (function () {
+var DigitalSignatureManager = /** @class */ (() => {
   function DigitalSignatureManager() {
     this.SIGNATURE_VALIDITY_PERIOD = 10 * 365 * 24 * 60 * 60 * 1000; // 10 years
     this.supabase = (0, supabase_js_1.createClient)(
@@ -583,12 +580,12 @@ var DigitalSignatureManager = /** @class */ (function () {
             _b.trys.push([0, 4, , 5]);
             requestId = crypto_1.default.randomUUID();
             now = new Date().toISOString();
-            signersWithIds = requiredSigners.map(function (signer, index) {
-              return __assign(__assign({}, signer), {
+            signersWithIds = requiredSigners.map((signer, index) =>
+              __assign(__assign({}, signer), {
                 id: crypto_1.default.randomUUID(),
                 order_index: index,
-              });
-            });
+              }),
+            );
             request = {
               id: requestId,
               document_id: documentId,
@@ -716,7 +713,7 @@ var DigitalSignatureManager = /** @class */ (function () {
             }
             request = requestResult.data;
             now_1 = new Date().toISOString();
-            updatedSigners = request.required_signers.map(function (signer) {
+            updatedSigners = request.required_signers.map((signer) => {
               if (signer.user_id === signerId) {
                 if (action === "sign") {
                   return __assign(__assign({}, signer), {
@@ -733,15 +730,9 @@ var DigitalSignatureManager = /** @class */ (function () {
               return signer;
             });
             newStatus = request.status;
-            allRequired = updatedSigners.filter(function (s) {
-              return s.is_required;
-            });
-            signedRequired = allRequired.filter(function (s) {
-              return s.signed_at;
-            });
-            declinedRequired = allRequired.filter(function (s) {
-              return s.declined_at;
-            });
+            allRequired = updatedSigners.filter((s) => s.is_required);
+            signedRequired = allRequired.filter((s) => s.signed_at);
+            declinedRequired = allRequired.filter((s) => s.declined_at);
             if (declinedRequired.length > 0) {
               newStatus = RequestStatus.CANCELLED;
             } else if (signedRequired.length === allRequired.length) {
@@ -815,7 +806,7 @@ var DigitalSignatureManager = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var signature, certificate, thumbprint;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           signature = crypto_1.default
             .createSign("RSA-SHA256")
@@ -841,7 +832,7 @@ var DigitalSignatureManager = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var signatureData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           signatureData = "".concat(documentHash, ":").concat(signerId, ":").concat(timestamp);
           return [
@@ -861,7 +852,7 @@ var DigitalSignatureManager = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var biometricHash, signatureData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           biometricHash = crypto_1.default
             .createHash("sha256")
@@ -887,7 +878,7 @@ var DigitalSignatureManager = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var pinHash, signatureData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           pinHash = crypto_1.default.createHash("sha256").update(pin).digest("hex");
           signatureData = ""
@@ -911,7 +902,7 @@ var DigitalSignatureManager = /** @class */ (function () {
   // ========================================================================
   DigitalSignatureManager.prototype.verifyCertificateSignature = function (signature, options) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // In a real implementation, verify actual certificate
           // Check certificate chain, revocation status, etc.
@@ -1001,7 +992,7 @@ var DigitalSignatureManager = /** @class */ (function () {
   };
   DigitalSignatureManager.prototype.verifyPinSignature = function (signature) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // PIN verification requires the original PIN, which we don't store
           // In practice, this would involve re-prompting the user
@@ -1069,11 +1060,8 @@ var DigitalSignatureManager = /** @class */ (function () {
             if (error) throw error;
             totalSignatures = (data === null || data === void 0 ? void 0 : data.length) || 0;
             validSignatures =
-              (data === null || data === void 0
-                ? void 0
-                : data.filter(function (s) {
-                    return s.is_valid;
-                  }).length) || 0;
+              (data === null || data === void 0 ? void 0 : data.filter((s) => s.is_valid).length) ||
+              0;
             // Update document metadata
             return [
               4 /*yield*/,
@@ -1106,7 +1094,7 @@ var DigitalSignatureManager = /** @class */ (function () {
   DigitalSignatureManager.prototype.sendSignatureNotifications = function (request) {
     return __awaiter(this, void 0, void 0, function () {
       var _i, _a, signer;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         try {
           // In a real implementation, send email/SMS notifications
           // to required signers about the signature request
@@ -1223,10 +1211,8 @@ var DigitalSignatureManager = /** @class */ (function () {
           case 1:
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
             if (error) throw error;
-            pendingRequests = (data || []).filter(function (request) {
-              var userSigner = request.required_signers.find(function (s) {
-                return s.user_id === userId;
-              });
+            pendingRequests = (data || []).filter((request) => {
+              var userSigner = request.required_signers.find((s) => s.user_id === userId);
               return userSigner && !userSigner.signed_at && !userSigner.declined_at;
             });
             return [2 /*return*/, { success: true, data: pendingRequests }];
@@ -1326,16 +1312,14 @@ var DigitalSignatureManager = /** @class */ (function () {
               valid_signatures:
                 (data === null || data === void 0
                   ? void 0
-                  : data.filter(function (s) {
-                      return s.is_valid;
-                    }).length) || 0,
+                  : data.filter((s) => s.is_valid).length) || 0,
               by_type: {},
               by_role: {},
               by_month: {},
             };
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (signature) {
+              : data.forEach((signature) => {
                   // Count by type
                   stats_1.by_type[signature.signature_type] =
                     (stats_1.by_type[signature.signature_type] || 0) + 1;

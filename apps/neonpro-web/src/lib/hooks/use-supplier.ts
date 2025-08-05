@@ -5,29 +5,29 @@
 // and quality management in NeonPro clinic management system
 // ============================================================================
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 import type { toast } from "sonner";
-import type {
-  Supplier,
-  SupplierStatus,
-  SupplierCategory,
-  SupplierPerformance,
-  ProcurementRequest,
-  SupplierBid,
-  QualityIssue,
-  SupplierContract,
-  SupplierAnalytics,
-  SupplierCommunication,
-  PerformanceMetric,
-  RiskLevel,
-  ContractType,
-  PaymentTerms,
-  IssueStatus,
-  QualityIssueType,
-  SupplierFormData,
-} from "@/lib/types/supplier";
 import type { createClient } from "@/lib/supabase/client";
+import type {
+  ContractType,
+  IssueStatus,
+  PaymentTerms,
+  PerformanceMetric,
+  ProcurementRequest,
+  QualityIssue,
+  QualityIssueType,
+  RiskLevel,
+  Supplier,
+  SupplierAnalytics,
+  SupplierBid,
+  SupplierCategory,
+  SupplierCommunication,
+  SupplierContract,
+  SupplierFormData,
+  SupplierPerformance,
+  SupplierStatus,
+} from "@/lib/types/supplier";
 
 // ============================================================================
 // SUPPLIER MANAGEMENT HOOKS

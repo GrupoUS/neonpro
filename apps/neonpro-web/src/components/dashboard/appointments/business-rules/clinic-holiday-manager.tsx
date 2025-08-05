@@ -5,6 +5,20 @@
 // Story 1.2: Business rules configuration
 // =============================================
 
+import type { format, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  Calendar,
+  Clock,
+  Edit,
+  Plus,
+  RefreshCw,
+  Save,
+  Trash2,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { ClinicHoliday, HolidayConfig } from "@/app/lib/types/conflict-prevention";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -29,20 +43,6 @@ import type {
 } from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
 import type { Textarea } from "@/components/ui/textarea";
-import type { format, parseISO } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type {
-  AlertCircle,
-  Calendar,
-  Clock,
-  Edit,
-  Plus,
-  RefreshCw,
-  Save,
-  Trash2,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 
 interface ClinicHolidayManagerProps {
   clinicId: string;

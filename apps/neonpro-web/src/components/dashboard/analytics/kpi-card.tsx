@@ -1,7 +1,7 @@
 "use client";
 
-import type { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { ReactNode } from "react";
+import type { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 interface KPICardProps {
   title: string;

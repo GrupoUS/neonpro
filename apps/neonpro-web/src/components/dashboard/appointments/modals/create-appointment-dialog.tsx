@@ -1,9 +1,33 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type { addDays, addMinutes, format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Loader2,
+  Plus,
+  Save,
+  User,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import type { z } from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Dialog,
   DialogContent,
@@ -12,7 +36,6 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
 import type {
   Form,
   FormControl,
@@ -30,29 +53,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Textarea } from "@/components/ui/textarea";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type {
-  Plus,
-  Calendar,
-  Clock,
-  User,
-  AlertCircle,
-  CheckCircle,
-  Loader2,
-  Save,
-} from "lucide-react";
-import type { toast } from "sonner";
-import type { format, addDays, addMinutes } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 
 // Form validation schema
 const createAppointmentSchema = z.object({

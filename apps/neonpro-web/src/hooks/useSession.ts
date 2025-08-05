@@ -6,21 +6,21 @@
  * and device tracking with real-time updates.
  */
 
-import type { useState, useEffect, useCallback, useRef } from "react";
 import type { useRouter } from "next/navigation";
+import type { useCallback, useEffect, useRef, useState } from "react";
+import type { useToast } from "@/hooks/use-toast";
 import type { sessionManager } from "@/lib/auth/session";
+import type { logger } from "@/lib/logger";
 import type {
-  UserSession,
-  SessionSecurityEvent,
-  DeviceRegistration,
   CreateSessionRequest,
-  UpdateSessionRequest,
-  SessionAnalytics,
+  DeviceRegistration,
   SecurityEventType,
   SessionAction,
+  SessionAnalytics,
+  SessionSecurityEvent,
+  UpdateSessionRequest,
+  UserSession,
 } from "@/types/session";
-import type { useToast } from "@/hooks/use-toast";
-import type { logger } from "@/lib/logger";
 
 // ============================================================================
 // SESSION HOOK

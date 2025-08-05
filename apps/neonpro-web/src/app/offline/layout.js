@@ -1,4 +1,3 @@
-"use strict";
 // NeonPro - Offline Layout
 // VIBECODE V1.0 - Healthcare PWA Pattern
 Object.defineProperty(exports, "__esModule", { value: true });

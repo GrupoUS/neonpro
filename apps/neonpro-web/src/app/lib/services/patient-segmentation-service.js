@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,19 +154,19 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createpatientSegmentationService =
   exports.patientSegmentationService =
   exports.PatientSegmentationService =
     void 0;
 var server_1 = require("@/lib/supabase/server");
-var PatientSegmentationService = /** @class */ (function () {
+var PatientSegmentationService = /** @class */ (() => {
   function PatientSegmentationService() {}
   PatientSegmentationService.prototype.getSupabase = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -228,7 +225,7 @@ var PatientSegmentationService = /** @class */ (function () {
   PatientSegmentationService.prototype.getPatientSegments = function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             query = supabase
@@ -260,8 +257,7 @@ var PatientSegmentationService = /** @class */ (function () {
   PatientSegmentationService.prototype.analyzePatientsForSegmentation = function (segmentId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, patients, error, analyses;
-      var _this = this;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -281,8 +277,8 @@ var PatientSegmentationService = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                patients.map(function (patient) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                patients.map((patient) =>
+                  __awaiter(this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                       switch (_a.label) {
                         case 0:
@@ -291,8 +287,8 @@ var PatientSegmentationService = /** @class */ (function () {
                           return [2 /*return*/, _a.sent()];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 3:
@@ -305,23 +301,21 @@ var PatientSegmentationService = /** @class */ (function () {
   PatientSegmentationService.prototype.updateSegmentMemberships = function (updates) {
     return __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
               4 /*yield*/,
               supabase.from("segment_memberships").upsert(
-                updates.map(function (update) {
-                  return {
-                    patient_id: update.patient_id,
-                    segment_id: update.segment_id,
-                    membership_score: update.membership_score,
-                    join_date: update.join_date || new Date().toISOString(),
-                    last_updated: new Date().toISOString(),
-                    engagement_level: update.engagement_level,
-                    lifetime_value_prediction: update.lifetime_value_prediction,
-                  };
-                }),
+                updates.map((update) => ({
+                  patient_id: update.patient_id,
+                  segment_id: update.segment_id,
+                  membership_score: update.membership_score,
+                  join_date: update.join_date || new Date().toISOString(),
+                  last_updated: new Date().toISOString(),
+                  engagement_level: update.engagement_level,
+                  lifetime_value_prediction: update.lifetime_value_prediction,
+                })),
               ),
             ];
           case 1:
@@ -441,7 +435,7 @@ var PatientSegmentationService = /** @class */ (function () {
           case 2:
             (_a = _b.sent()), (performance = _a.data), (error = _a.error);
             if (error && error.code !== "PGRST116") throw error;
-            if (!!performance) return [3 /*break*/, 4];
+            if (performance) return [3 /*break*/, 4];
             return [4 /*yield*/, this.generateSegmentPerformance(segmentId)];
           case 3:
             // Generate performance metrics if not exists
@@ -473,13 +467,10 @@ var PatientSegmentationService = /** @class */ (function () {
               {
                 segment_id: segmentId,
                 total_members: memberships.length,
-                active_members: memberships.filter(function (m) {
-                  return m.engagement_level === "high";
-                }).length,
+                active_members: memberships.filter((m) => m.engagement_level === "high").length,
                 average_membership_score:
-                  memberships.reduce(function (sum, m) {
-                    return sum + m.membership_score;
-                  }, 0) / memberships.length || 0,
+                  memberships.reduce((sum, m) => sum + m.membership_score, 0) /
+                    memberships.length || 0,
                 avg_lifetime_value: this.calculateAverageLifetimeValue(memberships),
                 engagement_rate: performance.engagement_rate || 0,
                 conversion_rate: performance.conversion_rate || 0,
@@ -504,7 +495,7 @@ var PatientSegmentationService = /** @class */ (function () {
   PatientSegmentationService.prototype.getPatientConsentStatus = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, consent, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [
@@ -560,7 +551,7 @@ var PatientSegmentationService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var criteria;
       var _a, _b, _c;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         criteria = {
           demographic:
             ((_a = data.criteria) === null || _a === void 0 ? void 0 : _a.demographic) || {},
@@ -579,7 +570,7 @@ var PatientSegmentationService = /** @class */ (function () {
   };
   PatientSegmentationService.prototype.generateAIRecommendations = function (conditions) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // AI-powered recommendations for segment optimization
         return [
           2 /*return*/,
@@ -650,20 +641,16 @@ var PatientSegmentationService = /** @class */ (function () {
           case 1:
             analyses = _a.sent();
             memberships = analyses
-              .filter(function (analysis) {
-                return _this.matchesCriteria(analysis, criteria);
-              })
-              .map(function (analysis) {
-                return {
-                  patient_id: analysis.patient_id,
-                  segment_id: segmentId,
-                  membership_score: _this.calculateMembershipScore(analysis, criteria),
-                  join_date: new Date().toISOString(),
-                  last_updated: new Date().toISOString(),
-                  engagement_level: analysis.behavioral_profile.engagement_level,
-                  lifetime_value_prediction: analysis.predictive_scores.lifetime_value,
-                };
-              });
+              .filter((analysis) => _this.matchesCriteria(analysis, criteria))
+              .map((analysis) => ({
+                patient_id: analysis.patient_id,
+                segment_id: segmentId,
+                membership_score: _this.calculateMembershipScore(analysis, criteria),
+                join_date: new Date().toISOString(),
+                last_updated: new Date().toISOString(),
+                engagement_level: analysis.behavioral_profile.engagement_level,
+                lifetime_value_prediction: analysis.predictive_scores.lifetime_value,
+              }));
             if (!(memberships.length > 0)) return [3 /*break*/, 3];
             return [4 /*yield*/, supabase.from("segment_memberships").insert(memberships)];
           case 2:
@@ -688,9 +675,7 @@ var PatientSegmentationService = /** @class */ (function () {
             performance = {
               segment_id: segmentId,
               total_members: memberships.length,
-              active_members: memberships.filter(function (m) {
-                return m.engagement_level === "high";
-              }).length,
+              active_members: memberships.filter((m) => m.engagement_level === "high").length,
               engagement_rate: this.calculateEngagementRate(memberships),
               conversion_rate: this.calculateConversionRate(memberships),
               retention_rate: this.calculateRetentionRate(memberships),
@@ -713,7 +698,7 @@ var PatientSegmentationService = /** @class */ (function () {
     });
   };
   // Utility Methods
-  PatientSegmentationService.prototype.calculateAgeGroup = function (birthDate) {
+  PatientSegmentationService.prototype.calculateAgeGroup = (birthDate) => {
     var age = new Date().getFullYear() - new Date(birthDate).getFullYear();
     if (age < 25) return "18-24";
     if (age < 35) return "25-34";
@@ -722,94 +707,68 @@ var PatientSegmentationService = /** @class */ (function () {
     if (age < 65) return "55-64";
     return "65+";
   };
-  PatientSegmentationService.prototype.extractLocationSegment = function (address) {
+  PatientSegmentationService.prototype.extractLocationSegment = (address) => {
     // Extract location-based segment from address
     return (address === null || address === void 0 ? void 0 : address.city) || "unknown";
   };
-  PatientSegmentationService.prototype.calculateVisitFrequency = function (appointments) {
+  PatientSegmentationService.prototype.calculateVisitFrequency = (appointments) => {
     var monthlyVisits = appointments.length / 12; // Assuming 12-month period
     if (monthlyVisits >= 4) return "high";
     if (monthlyVisits >= 2) return "medium";
     return "low";
   };
-  PatientSegmentationService.prototype.analyzeTreatmentPreferences = function (treatmentHistory) {
-    return __spreadArray(
-      [],
-      new Set(
-        treatmentHistory.map(function (t) {
-          return t.treatment_type;
-        }),
-      ),
-      true,
+  PatientSegmentationService.prototype.analyzeTreatmentPreferences = (treatmentHistory) =>
+    __spreadArray([], new Set(treatmentHistory.map((t) => t.treatment_type)), true);
+  PatientSegmentationService.prototype.calculateEngagementLevel = (appointments) => {
+    var recentAppointments = appointments.filter(
+      (a) => new Date(a.appointment_date) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
     );
-  };
-  PatientSegmentationService.prototype.calculateEngagementLevel = function (appointments) {
-    var recentAppointments = appointments.filter(function (a) {
-      return new Date(a.appointment_date) > new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
-    });
     if (recentAppointments.length >= 3) return "high";
     if (recentAppointments.length >= 1) return "medium";
     return "low";
   };
-  PatientSegmentationService.prototype.analyzeSeasonalPatterns = function (appointments) {
+  PatientSegmentationService.prototype.analyzeSeasonalPatterns = (appointments) => {
     // Analyze seasonal appointment patterns
     var monthlyCount = new Array(12).fill(0);
-    appointments.forEach(function (apt) {
+    appointments.forEach((apt) => {
       var month = new Date(apt.appointment_date).getMonth();
       monthlyCount[month]++;
     });
     return {
       peak_months: monthlyCount
-        .map(function (count, index) {
-          return { month: index, count: count };
-        })
-        .filter(function (m) {
-          return m.count > 0;
-        })
-        .sort(function (a, b) {
-          return b.count - a.count;
-        })
+        .map((count, index) => ({ month: index, count: count }))
+        .filter((m) => m.count > 0)
+        .sort((a, b) => b.count - a.count)
         .slice(0, 3),
     };
   };
-  PatientSegmentationService.prototype.extractLifestyleIndicators = function (preferences) {
-    return (preferences === null || preferences === void 0 ? void 0 : preferences.interests) || [];
-  };
-  PatientSegmentationService.prototype.analyzeValueOrientation = function (treatmentHistory) {
+  PatientSegmentationService.prototype.extractLifestyleIndicators = (preferences) =>
+    (preferences === null || preferences === void 0 ? void 0 : preferences.interests) || [];
+  PatientSegmentationService.prototype.analyzeValueOrientation = (treatmentHistory) => {
     var avgSpend =
-      treatmentHistory.reduce(function (sum, t) {
-        return sum + (t.amount || 0);
-      }, 0) / treatmentHistory.length;
+      treatmentHistory.reduce((sum, t) => sum + (t.amount || 0), 0) / treatmentHistory.length;
     if (avgSpend > 1000) return "premium";
     if (avgSpend > 500) return "value";
     return "budget";
   };
-  PatientSegmentationService.prototype.analyzeCommPreferences = function (preferences) {
-    return (
-      (preferences === null || preferences === void 0
-        ? void 0
-        : preferences.communication_channels) || ["email"]
-    );
-  };
-  PatientSegmentationService.prototype.predictLifetimeValue = function (
-    appointments,
-    treatmentHistory,
-  ) {
+  PatientSegmentationService.prototype.analyzeCommPreferences = (preferences) =>
+    (preferences === null || preferences === void 0
+      ? void 0
+      : preferences.communication_channels) || ["email"];
+  PatientSegmentationService.prototype.predictLifetimeValue = (appointments, treatmentHistory) => {
     var avgSpendPerVisit =
-      treatmentHistory.reduce(function (sum, t) {
-        return sum + (t.amount || 0);
-      }, 0) / treatmentHistory.length;
+      treatmentHistory.reduce((sum, t) => sum + (t.amount || 0), 0) / treatmentHistory.length;
     var visitFrequency = appointments.length / 12; // Annual frequency
     return avgSpendPerVisit * visitFrequency * 3; // 3-year LTV
   };
-  PatientSegmentationService.prototype.calculateChurnProbability = function (appointments) {
+  PatientSegmentationService.prototype.calculateChurnProbability = (appointments) => {
     var lastAppointment = appointments[appointments.length - 1];
     if (!lastAppointment) return 0.9;
     var daysSinceLastVisit =
       (Date.now() - new Date(lastAppointment.appointment_date).getTime()) / (24 * 60 * 60 * 1000);
     return Math.min(daysSinceLastVisit / 180, 0.9); // Max 90% churn probability
   };
-  PatientSegmentationService.prototype.calculateTreatmentPropensity = function (treatmentHistory) {
+  PatientSegmentationService.prototype.calculateTreatmentPropensity = (treatmentHistory) => {
     return Math.min(treatmentHistory.length / 10, 1.0); // Normalized by 10 treatments
   };
   PatientSegmentationService.prototype.calculateEngagementScore = function (
@@ -821,18 +780,18 @@ var PatientSegmentationService = /** @class */ (function () {
     var preferencesScore = preferences ? 0.2 : 0;
     return (recencyScore + frequencyScore + preferencesScore) / 3;
   };
-  PatientSegmentationService.prototype.matchesCriteria = function (analysis, criteria) {
+  PatientSegmentationService.prototype.matchesCriteria = (analysis, criteria) => {
     // Implement criteria matching logic
     return true; // Simplified for now
   };
-  PatientSegmentationService.prototype.calculateMembershipScore = function (analysis, criteria) {
+  PatientSegmentationService.prototype.calculateMembershipScore = (analysis, criteria) => {
     // Calculate how well patient matches segment criteria
     return 0.75; // Simplified for now
   };
   PatientSegmentationService.prototype.getSegmentMemberships = function (segmentId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -852,7 +811,7 @@ var PatientSegmentationService = /** @class */ (function () {
   };
   PatientSegmentationService.prototype.getSegmentTrends = function (segmentId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get historical trends for segment
         return [
           2 /*return*/,
@@ -865,32 +824,25 @@ var PatientSegmentationService = /** @class */ (function () {
       });
     });
   };
-  PatientSegmentationService.prototype.calculateEngagementRate = function (memberships) {
-    var engaged = memberships.filter(function (m) {
-      return m.engagement_level === "high";
-    }).length;
+  PatientSegmentationService.prototype.calculateEngagementRate = (memberships) => {
+    var engaged = memberships.filter((m) => m.engagement_level === "high").length;
     return memberships.length > 0 ? engaged / memberships.length : 0;
   };
-  PatientSegmentationService.prototype.calculateConversionRate = function (memberships) {
+  PatientSegmentationService.prototype.calculateConversionRate = (memberships) => {
     // Calculate conversion rate based on treatments/purchases
     return 0.25; // Simplified for now
   };
-  PatientSegmentationService.prototype.calculateRetentionRate = function (memberships) {
+  PatientSegmentationService.prototype.calculateRetentionRate = (memberships) => {
     // Calculate retention rate
     return 0.85; // Simplified for now
   };
-  PatientSegmentationService.prototype.calculateAverageLifetimeValue = function (memberships) {
-    var total = memberships.reduce(function (sum, m) {
-      return sum + (m.lifetime_value_prediction || 0);
-    }, 0);
+  PatientSegmentationService.prototype.calculateAverageLifetimeValue = (memberships) => {
+    var total = memberships.reduce((sum, m) => sum + (m.lifetime_value_prediction || 0), 0);
     return memberships.length > 0 ? total / memberships.length : 0;
   };
-  PatientSegmentationService.prototype.calculateRevenueGenerated = function (memberships) {
-    return memberships.reduce(function (sum, m) {
-      return sum + (m.lifetime_value_prediction || 0);
-    }, 0);
-  };
-  PatientSegmentationService.prototype.calculateCostPerAcquisition = function (memberships) {
+  PatientSegmentationService.prototype.calculateRevenueGenerated = (memberships) =>
+    memberships.reduce((sum, m) => sum + (m.lifetime_value_prediction || 0), 0);
+  PatientSegmentationService.prototype.calculateCostPerAcquisition = (memberships) => {
     return 150; // Simplified for now
   };
   PatientSegmentationService.prototype.calculateROI = function (memberships) {
@@ -898,14 +850,14 @@ var PatientSegmentationService = /** @class */ (function () {
     var cost = this.calculateCostPerAcquisition(memberships) * memberships.length;
     return cost > 0 ? (revenue - cost) / cost : 0;
   };
-  PatientSegmentationService.prototype.calculateRecencyScore = function (appointments) {
+  PatientSegmentationService.prototype.calculateRecencyScore = (appointments) => {
     if (!appointments.length) return 0;
     var lastAppointment = appointments[appointments.length - 1];
     var daysSince =
       (Date.now() - new Date(lastAppointment.appointment_date).getTime()) / (24 * 60 * 60 * 1000);
     return Math.max(0, 1 - daysSince / 90); // Score decreases over 90 days
   };
-  PatientSegmentationService.prototype.calculateFrequencyScore = function (appointments) {
+  PatientSegmentationService.prototype.calculateFrequencyScore = (appointments) => {
     return Math.min(appointments.length / 12, 1.0); // Normalized by 12 appointments
   };
   PatientSegmentationService.prototype.updateRulePerformance = function (ruleId, segmentId) {
@@ -943,7 +895,7 @@ var PatientSegmentationService = /** @class */ (function () {
   PatientSegmentationService.prototype.removePatientFromAllSegments = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -962,7 +914,5 @@ var PatientSegmentationService = /** @class */ (function () {
 })();
 exports.PatientSegmentationService = PatientSegmentationService;
 exports.patientSegmentationService = new PatientSegmentationService();
-var createpatientSegmentationService = function () {
-  return new PatientSegmentationService();
-};
+var createpatientSegmentationService = () => new PatientSegmentationService();
 exports.createpatientSegmentationService = createpatientSegmentationService;

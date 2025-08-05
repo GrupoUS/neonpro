@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfileSyncManager = ProfileSyncManager;
 var badge_1 = require("@/components/ui/badge");
@@ -161,7 +158,6 @@ var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function ProfileSyncManager(_a) {
-  var _this = this;
   var _b = _a.className,
     className = _b === void 0 ? "" : _b;
   var _c = (0, use_profile_sync_1.useProfileSync)(),
@@ -203,16 +199,16 @@ function ProfileSyncManager(_a) {
     });
     setIsFormInitialized(true);
   }
-  var handleInputChange = function (field, value) {
-    setFormData(function (prev) {
+  var handleInputChange = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
   };
-  var handleUpdateProfile = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleUpdateProfile = () =>
+    __awaiter(this, void 0, void 0, function () {
       var success;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, updateProfile(formData)];
@@ -225,11 +221,10 @@ function ProfileSyncManager(_a) {
         }
       });
     });
-  };
-  var handleSyncWithGoogle = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSyncWithGoogle = () =>
+    __awaiter(this, void 0, void 0, function () {
       var success;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, syncWithGoogle()];
@@ -243,11 +238,10 @@ function ProfileSyncManager(_a) {
         }
       });
     });
-  };
-  var handleResolveConflict = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleResolveConflict = () =>
+    __awaiter(this, void 0, void 0, function () {
       var success;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, resolveConflict(formData)];
@@ -260,11 +254,10 @@ function ProfileSyncManager(_a) {
         }
       });
     });
-  };
-  var handleToggleGoogleSync = function (enabled) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleToggleGoogleSync = (enabled) =>
+    __awaiter(this, void 0, void 0, function () {
       var success;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, toggleGoogleSync(enabled)];
@@ -279,8 +272,7 @@ function ProfileSyncManager(_a) {
         }
       });
     });
-  };
-  var getSyncStatusIcon = function () {
+  var getSyncStatusIcon = () => {
     if (!syncStatus) return <lucide_react_1.Clock className="h-4 w-4 text-gray-400" />;
     switch (syncStatus.sync_status) {
       case "synced":
@@ -293,7 +285,7 @@ function ProfileSyncManager(_a) {
         return <lucide_react_1.Clock className="h-4 w-4 text-blue-500" />;
     }
   };
-  var getSyncStatusText = function () {
+  var getSyncStatusText = () => {
     if (!syncStatus) return "Verificando...";
     switch (syncStatus.sync_status) {
       case "synced":
@@ -308,7 +300,7 @@ function ProfileSyncManager(_a) {
         return "Status desconhecido";
     }
   };
-  var getSyncStatusColor = function () {
+  var getSyncStatusColor = () => {
     if (!syncStatus) return "secondary";
     switch (syncStatus.sync_status) {
       case "synced":
@@ -429,9 +421,7 @@ function ProfileSyncManager(_a) {
               <input_1.Input
                 id="full_name"
                 value={formData.full_name}
-                onChange={function (e) {
-                  return handleInputChange("full_name", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("full_name", e.target.value)}
                 placeholder="Nome completo"
                 disabled={isUpdating}
               />
@@ -455,9 +445,7 @@ function ProfileSyncManager(_a) {
               <input_1.Input
                 id="first_name"
                 value={formData.first_name}
-                onChange={function (e) {
-                  return handleInputChange("first_name", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("first_name", e.target.value)}
                 placeholder="Primeiro nome"
                 disabled={isUpdating}
               />
@@ -468,9 +456,7 @@ function ProfileSyncManager(_a) {
               <input_1.Input
                 id="last_name"
                 value={formData.last_name}
-                onChange={function (e) {
-                  return handleInputChange("last_name", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("last_name", e.target.value)}
                 placeholder="Sobrenome"
                 disabled={isUpdating}
               />
@@ -494,9 +480,7 @@ function ProfileSyncManager(_a) {
               <input_1.Input
                 id="professional_title"
                 value={formData.professional_title}
-                onChange={function (e) {
-                  return handleInputChange("professional_title", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("professional_title", e.target.value)}
                 placeholder="Ex: Médico Cardiologista"
                 disabled={isUpdating}
               />
@@ -507,9 +491,7 @@ function ProfileSyncManager(_a) {
               <input_1.Input
                 id="medical_license"
                 value={formData.medical_license}
-                onChange={function (e) {
-                  return handleInputChange("medical_license", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("medical_license", e.target.value)}
                 placeholder="Ex: CRM 12345"
                 disabled={isUpdating}
               />
@@ -520,9 +502,7 @@ function ProfileSyncManager(_a) {
               <input_1.Input
                 id="department"
                 value={formData.department}
-                onChange={function (e) {
-                  return handleInputChange("department", e.target.value);
-                }}
+                onChange={(e) => handleInputChange("department", e.target.value)}
                 placeholder="Ex: Cardiologia"
                 disabled={isUpdating}
               />
@@ -532,9 +512,7 @@ function ProfileSyncManager(_a) {
               <label_1.Label htmlFor="role">Função</label_1.Label>
               <select_1.Select
                 value={formData.role}
-                onValueChange={function (value) {
-                  return handleInputChange("role", value);
-                }}
+                onValueChange={(value) => handleInputChange("role", value)}
                 disabled={isUpdating}
               >
                 <select_1.SelectTrigger>
@@ -556,9 +534,7 @@ function ProfileSyncManager(_a) {
                 <input_1.Input
                   id="phone"
                   value={formData.phone}
-                  onChange={function (e) {
-                    return handleInputChange("phone", e.target.value);
-                  }}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
                   placeholder="(11) 99999-9999"
                   disabled={isUpdating}
                 />

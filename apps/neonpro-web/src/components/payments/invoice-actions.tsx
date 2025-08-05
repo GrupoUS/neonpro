@@ -1,27 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-import type { Button } from "@/components/ui/button";
 import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type {
-  MoreHorizontal,
-  Download,
-  Mail,
+  AlertTriangle,
+  CheckCircle,
   CreditCard,
+  Download,
   Eye,
   Loader2,
-  CheckCircle,
-  AlertTriangle,
+  Mail,
+  MoreHorizontal,
 } from "lucide-react";
+import React, { useState } from "react";
 import type { toast } from "sonner";
-import PaymentForm from "./payment-form";
-import StripeProvider from "./stripe-provider";
+import type { Button } from "@/components/ui/button";
 import type {
   Dialog,
   DialogContent,
@@ -29,6 +20,15 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import PaymentForm from "./payment-form";
+import StripeProvider from "./stripe-provider";
 
 interface Invoice {
   id: string;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Performance Optimization Suite - Main Export
  *
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EXPERT_RECOMMENDATIONS =
   exports.DEFAULT_PERFORMANCE_CONFIG =
@@ -183,309 +180,217 @@ exports.EXPERT_RECOMMENDATIONS =
 var web_vitals_1 = require("./web-vitals");
 Object.defineProperty(exports, "reportWebVitals", {
   enumerable: true,
-  get: function () {
-    return web_vitals_1.reportWebVitals;
-  },
+  get: () => web_vitals_1.reportWebVitals,
 });
 Object.defineProperty(exports, "sendToAnalytics", {
   enumerable: true,
-  get: function () {
-    return web_vitals_1.sendToAnalytics;
-  },
+  get: () => web_vitals_1.sendToAnalytics,
 });
 Object.defineProperty(exports, "getPerformanceGrade", {
   enumerable: true,
-  get: function () {
-    return web_vitals_1.getPerformanceGrade;
-  },
+  get: () => web_vitals_1.getPerformanceGrade,
 });
 Object.defineProperty(exports, "usePerformanceMonitoring", {
   enumerable: true,
-  get: function () {
-    return web_vitals_1.usePerformanceMonitoring;
-  },
+  get: () => web_vitals_1.usePerformanceMonitoring,
 });
 Object.defineProperty(exports, "PerformanceUtils", {
   enumerable: true,
-  get: function () {
-    return web_vitals_1.PerformanceUtils;
-  },
+  get: () => web_vitals_1.PerformanceUtils,
 });
 Object.defineProperty(exports, "PERFORMANCE_THRESHOLDS", {
   enumerable: true,
-  get: function () {
-    return web_vitals_1.PERFORMANCE_THRESHOLDS;
-  },
+  get: () => web_vitals_1.PERFORMANCE_THRESHOLDS,
 });
 // Bundle Analysis and Optimization
 var bundle_analyzer_1 = require("./bundle-analyzer");
 Object.defineProperty(exports, "analyzeBundleStats", {
   enumerable: true,
-  get: function () {
-    return bundle_analyzer_1.analyzeBundleStats;
-  },
+  get: () => bundle_analyzer_1.analyzeBundleStats,
 });
 Object.defineProperty(exports, "generateBundleReport", {
   enumerable: true,
-  get: function () {
-    return bundle_analyzer_1.generateBundleReport;
-  },
+  get: () => bundle_analyzer_1.generateBundleReport,
 });
 Object.defineProperty(exports, "runBundleAnalysis", {
   enumerable: true,
-  get: function () {
-    return bundle_analyzer_1.runBundleAnalysis;
-  },
+  get: () => bundle_analyzer_1.runBundleAnalysis,
 });
 Object.defineProperty(exports, "formatBytes", {
   enumerable: true,
-  get: function () {
-    return bundle_analyzer_1.formatBytes;
-  },
+  get: () => bundle_analyzer_1.formatBytes,
 });
 Object.defineProperty(exports, "BUNDLE_THRESHOLDS", {
   enumerable: true,
-  get: function () {
-    return bundle_analyzer_1.BUNDLE_THRESHOLDS;
-  },
+  get: () => bundle_analyzer_1.BUNDLE_THRESHOLDS,
 });
 // Caching Strategies
 var caching_1 = require("./caching");
 Object.defineProperty(exports, "CacheManager", {
   enumerable: true,
-  get: function () {
-    return caching_1.CacheManager;
-  },
+  get: () => caching_1.CacheManager,
 });
 Object.defineProperty(exports, "CacheKeyGenerator", {
   enumerable: true,
-  get: function () {
-    return caching_1.CacheKeyGenerator;
-  },
+  get: () => caching_1.CacheKeyGenerator,
 });
 Object.defineProperty(exports, "CacheHeaders", {
   enumerable: true,
-  get: function () {
-    return caching_1.CacheHeaders;
-  },
+  get: () => caching_1.CacheHeaders,
 });
 Object.defineProperty(exports, "CacheInvalidation", {
   enumerable: true,
-  get: function () {
-    return caching_1.CacheInvalidation;
-  },
+  get: () => caching_1.CacheInvalidation,
 });
 Object.defineProperty(exports, "CDNOptimization", {
   enumerable: true,
-  get: function () {
-    return caching_1.CDNOptimization;
-  },
+  get: () => caching_1.CDNOptimization,
 });
 Object.defineProperty(exports, "CachePerformanceMonitor", {
   enumerable: true,
-  get: function () {
-    return caching_1.CachePerformanceMonitor;
-  },
+  get: () => caching_1.CachePerformanceMonitor,
 });
 Object.defineProperty(exports, "withCache", {
   enumerable: true,
-  get: function () {
-    return caching_1.withCache;
-  },
+  get: () => caching_1.withCache,
 });
 Object.defineProperty(exports, "cacheManager", {
   enumerable: true,
-  get: function () {
-    return caching_1.cacheManager;
-  },
+  get: () => caching_1.cacheManager,
 });
 Object.defineProperty(exports, "CACHE_CONFIG", {
   enumerable: true,
-  get: function () {
-    return caching_1.CACHE_CONFIG;
-  },
+  get: () => caching_1.CACHE_CONFIG,
 });
 // React Performance Hooks
 var react_hooks_1 = require("./react-hooks");
 Object.defineProperty(exports, "useOptimizedCallback", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.useOptimizedCallback;
-  },
+  get: () => react_hooks_1.useOptimizedCallback,
 });
 Object.defineProperty(exports, "useOptimizedMemo", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.useOptimizedMemo;
-  },
+  get: () => react_hooks_1.useOptimizedMemo,
 });
 Object.defineProperty(exports, "useRenderPerformance", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.useRenderPerformance;
-  },
+  get: () => react_hooks_1.useRenderPerformance,
 });
 Object.defineProperty(exports, "useDebouncedState", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.useDebouncedState;
-  },
+  get: () => react_hooks_1.useDebouncedState,
 });
 Object.defineProperty(exports, "useVirtualScrolling", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.useVirtualScrolling;
-  },
+  get: () => react_hooks_1.useVirtualScrolling,
 });
 Object.defineProperty(exports, "useIntersectionObserver", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.useIntersectionObserver;
-  },
+  get: () => react_hooks_1.useIntersectionObserver,
 });
 Object.defineProperty(exports, "useMemoryMonitor", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.useMemoryMonitor;
-  },
+  get: () => react_hooks_1.useMemoryMonitor,
 });
 Object.defineProperty(exports, "useOptimizedChartData", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.useOptimizedChartData;
-  },
+  get: () => react_hooks_1.useOptimizedChartData,
 });
 Object.defineProperty(exports, "usePreloadResources", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.usePreloadResources;
-  },
+  get: () => react_hooks_1.usePreloadResources,
 });
 Object.defineProperty(exports, "usePerformanceProfiler", {
   enumerable: true,
-  get: function () {
-    return react_hooks_1.usePerformanceProfiler;
-  },
+  get: () => react_hooks_1.usePerformanceProfiler,
 });
 // Production Deployment
 var deployment_1 = require("./deployment");
 Object.defineProperty(exports, "PreBuildOptimizer", {
   enumerable: true,
-  get: function () {
-    return deployment_1.PreBuildOptimizer;
-  },
+  get: () => deployment_1.PreBuildOptimizer,
 });
 Object.defineProperty(exports, "BuildOptimizer", {
   enumerable: true,
-  get: function () {
-    return deployment_1.BuildOptimizer;
-  },
+  get: () => deployment_1.BuildOptimizer,
 });
 Object.defineProperty(exports, "ProductionHealthCheck", {
   enumerable: true,
-  get: function () {
-    return deployment_1.ProductionHealthCheck;
-  },
+  get: () => deployment_1.ProductionHealthCheck,
 });
 Object.defineProperty(exports, "DeploymentAutomation", {
   enumerable: true,
-  get: function () {
-    return deployment_1.DeploymentAutomation;
-  },
+  get: () => deployment_1.DeploymentAutomation,
 });
 Object.defineProperty(exports, "DEPLOYMENT_CONFIG", {
   enumerable: true,
-  get: function () {
-    return deployment_1.DEPLOYMENT_CONFIG;
-  },
+  get: () => deployment_1.DEPLOYMENT_CONFIG,
 });
 // Performance utility functions
 exports.PerformanceSuite = {
   // Initialize all performance monitoring
-  init: function () {
+  init: () => {
     if (typeof window !== "undefined") {
       // Start Web Vitals monitoring
       Promise.resolve()
-        .then(function () {
-          return require("./web-vitals");
-        })
-        .then(function (_a) {
+        .then(() => require("./web-vitals"))
+        .then((_a) => {
           var reportWebVitals = _a.reportWebVitals;
           reportWebVitals();
         });
       // Start resource timing monitoring
       Promise.resolve()
-        .then(function () {
-          return require("./web-vitals");
-        })
-        .then(function (_a) {
+        .then(() => require("./web-vitals"))
+        .then((_a) => {
           var PerformanceUtils = _a.PerformanceUtils;
           PerformanceUtils.observeResourceTiming();
         });
     }
   },
   // Production build optimization
-  build: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  build: () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var BuildOptimizer;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("./deployment");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("./deployment"))];
           case 1:
             BuildOptimizer = _a.sent().BuildOptimizer;
             return [2 /*return*/, BuildOptimizer.optimizedBuild()];
         }
       });
-    });
-  },
+    }),
   // Health checks for production
-  healthCheck: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  healthCheck: () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var ProductionHealthCheck;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("./deployment");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("./deployment"))];
           case 1:
             ProductionHealthCheck = _a.sent().ProductionHealthCheck;
             return [2 /*return*/, ProductionHealthCheck.runHealthChecks()];
         }
       });
-    });
-  },
+    }),
   // Bundle analysis
-  analyzeBundle: function (statsPath) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  analyzeBundle: (statsPath) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var runBundleAnalysis;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("./bundle-analyzer");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("./bundle-analyzer"))];
           case 1:
             runBundleAnalysis = _a.sent().runBundleAnalysis;
             return [2 /*return*/, runBundleAnalysis(statsPath)];
         }
       });
-    });
-  },
+    }),
   // Cache performance stats
-  getCacheStats: function () {
+  getCacheStats: () => {
     var _a = require("./caching"),
       cacheManager = _a.cacheManager,
       CachePerformanceMonitor = _a.CachePerformanceMonitor;

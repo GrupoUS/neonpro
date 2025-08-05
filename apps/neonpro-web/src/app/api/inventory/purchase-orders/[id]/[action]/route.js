@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 // Purchase Order Approval API Endpoint
@@ -179,7 +176,7 @@ function POST(request_1, _a) {
       logError,
       error_1;
     var params = _b.params;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 12, , 13]);
@@ -389,7 +386,7 @@ function checkApprovalPermissions(supabase, userId, amount, clinicId, approvalLe
   return __awaiter(this, void 0, void 0, function () {
     var _a, userProfile, error, clinicPermission, approvalThresholds, threshold, userRole, error_2;
     var _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 2, , 3]);
@@ -411,9 +408,7 @@ function checkApprovalPermissions(supabase, userId, amount, clinicId, approvalLe
           clinicPermission =
             (_b = userProfile.clinic_permissions) === null || _b === void 0
               ? void 0
-              : _b.find(function (cp) {
-                  return cp.clinic_id === clinicId;
-                });
+              : _b.find((cp) => cp.clinic_id === clinicId);
           if (!clinicPermission) {
             return [2 /*return*/, { allowed: false, reason: "No permissions for this clinic" }];
           }
@@ -469,7 +464,7 @@ function getRequiredApprovalLevel(amount) {
 function sendApprovalNotification(supabase, purchaseOrder, action) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, creator, error, notification, error_3;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);

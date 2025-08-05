@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Type Definitions for Communication Analytics System
  *

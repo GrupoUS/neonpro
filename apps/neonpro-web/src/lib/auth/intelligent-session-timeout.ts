@@ -5,8 +5,8 @@
  */
 
 import type { createClient } from "@/lib/supabase/client";
-import type { Database } from "@/types/database";
 import type { UserRole } from "@/types/auth";
+import type { Database } from "@/types/database";
 
 export interface SessionTimeoutConfig {
   role: UserRole;

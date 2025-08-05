@@ -6,16 +6,16 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { EventEmitter } from "events";
 import crypto from "crypto";
+import type { EventEmitter } from "events";
 import type {
-  DeviceRegistration,
   DeviceFingerprint,
-  DeviceType,
   DeviceMetadata,
+  DeviceRegistration,
+  DeviceType,
+  LGPDSessionData,
   SessionError,
   SessionLocation,
-  LGPDSessionData,
 } from "./types";
 
 interface DeviceRegistrationParams {

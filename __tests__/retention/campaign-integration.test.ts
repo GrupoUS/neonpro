@@ -4,15 +4,11 @@
 // =====================================================================================
 
 import { createMocks } from "node-mocks-http";
-import { GET, POST, PUT } from "@/app/api/retention-analytics/campaigns/route";
 import {
   GET as getById,
   PUT as updateById,
 } from "@/app/api/retention-analytics/campaigns/[id]/route";
-import {
-  GET as getAnalytics,
-  POST as getABResults,
-} from "@/app/api/retention-analytics/campaigns/analytics/route";
+import { GET, POST } from "@/app/api/retention-analytics/campaigns/route";
 
 // =====================================================================================
 // MOCKS

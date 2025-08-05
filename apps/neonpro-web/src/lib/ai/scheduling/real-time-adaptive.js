@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Real-Time Adaptive Scheduling System
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
@@ -12,15 +11,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -40,13 +39,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,9 +67,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -142,11 +139,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RealTimeAdaptiveScheduling = void 0;
 var client_1 = require("@/lib/supabase/client");
-var RealTimeAdaptiveScheduling = /** @class */ (function () {
+var RealTimeAdaptiveScheduling = /** @class */ (() => {
   function RealTimeAdaptiveScheduling(aiCore, optimizationEngine) {
     this.supabase = (0, client_1.createClient)();
     this.realtimeChannel = null;
@@ -180,9 +177,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
                 schema: "public",
                 table: "appointments",
               },
-              function (payload) {
-                return _this.handleAppointmentChange(payload);
-              },
+              (payload) => _this.handleAppointmentChange(payload),
             )
             .on(
               "postgres_changes",
@@ -191,9 +186,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
                 schema: "public",
                 table: "staff_availability",
               },
-              function (payload) {
-                return _this.handleStaffAvailabilityChange(payload);
-              },
+              (payload) => _this.handleStaffAvailabilityChange(payload),
             )
             .on(
               "postgres_changes",
@@ -202,9 +195,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
                 schema: "public",
                 table: "equipment_status",
               },
-              function (payload) {
-                return _this.handleEquipmentStatusChange(payload);
-              },
+              (payload) => _this.handleEquipmentStatusChange(payload),
             )
             .subscribe();
           // Start event processing loop
@@ -337,7 +328,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
             (eventType = payload.eventType), (newRecord = payload.new), (oldRecord = payload.old);
             if (!(eventType === "UPDATE" && oldRecord.is_available !== newRecord.is_available))
               return [3 /*break*/, 2];
-            if (!!newRecord.is_available) return [3 /*break*/, 2];
+            if (newRecord.is_available) return [3 /*break*/, 2];
             event_1 = {
               id: "staff-unavailable-".concat(Date.now()),
               type: "staff_unavailable",
@@ -437,9 +428,8 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
    * Start the event processing loop
    */
   RealTimeAdaptiveScheduling.prototype.startEventProcessing = function () {
-    var _this = this;
-    var processEvents = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    var processEvents = () =>
+      __awaiter(this, void 0, void 0, function () {
         var event_3;
         return __generator(this, function (_a) {
           switch (_a.label) {
@@ -453,12 +443,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
               _a.label = 2;
             case 2:
               // Wait 1 second before checking again
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 1000);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
             case 3:
               // Wait 1 second before checking again
               _a.sent();
@@ -468,8 +453,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
           }
         });
       });
-    };
-    processEvents().catch(function (error) {
+    processEvents().catch((error) => {
       console.error("Error in event processing loop:", error);
     });
   };
@@ -526,7 +510,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
   RealTimeAdaptiveScheduling.prototype.determineAdaptiveActions = function (event) {
     return __awaiter(this, void 0, void 0, function () {
       var actions;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         actions = [];
         switch (event.type) {
           case "appointment_cancelled":
@@ -593,12 +577,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
             });
             break;
         }
-        return [
-          2 /*return*/,
-          actions.sort(function (a, b) {
-            return a.priority - b.priority;
-          }),
-        ];
+        return [2 /*return*/, actions.sort((a, b) => a.priority - b.priority)];
       });
     });
   };
@@ -773,7 +752,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
    */
   RealTimeAdaptiveScheduling.prototype.executePatientNotification = function (parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for patient notification
         console.log("Executing patient notification with parameters:", parameters);
         // This would integrate with notification service
@@ -786,7 +765,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
    */
   RealTimeAdaptiveScheduling.prototype.executeResourceReallocation = function (parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for resource reallocation
         console.log("Executing resource reallocation with parameters:", parameters);
         return [2 /*return*/, { reallocated: true, alternativeResources: [] }];
@@ -798,7 +777,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
    */
   RealTimeAdaptiveScheduling.prototype.executeEmergencyProtocol = function (parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for emergency scheduling protocol
         console.log("Executing emergency protocol with parameters:", parameters);
         return [2 /*return*/, { emergencySlotCreated: true, timeSlot: new Date() }];
@@ -810,7 +789,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
    */
   RealTimeAdaptiveScheduling.prototype.executeStaffNotification = function (parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for staff notification
         console.log("Executing staff notification with parameters:", parameters);
         return [2 /*return*/, { notificationSent: true }];
@@ -822,7 +801,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
    */
   RealTimeAdaptiveScheduling.prototype.executeManagementAlert = function (parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for management alert
         console.log("Executing management alert with parameters:", parameters);
         return [2 /*return*/, { alertSent: true }];
@@ -878,9 +857,8 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
    * Start predictive analysis
    */
   RealTimeAdaptiveScheduling.prototype.startPredictiveAnalysis = function () {
-    var _this = this;
-    var runPredictiveAnalysis = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    var runPredictiveAnalysis = () =>
+      __awaiter(this, void 0, void 0, function () {
         var adjustments, _i, adjustments_1, adjustment, error_5;
         return __generator(this, function (_a) {
           switch (_a.label) {
@@ -916,12 +894,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
               return [3 /*break*/, 8];
             case 8:
               // Run every 5 minutes
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 5 * 60 * 1000);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 5 * 60 * 1000))];
             case 9:
               // Run every 5 minutes
               _a.sent();
@@ -931,8 +904,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
           }
         });
       });
-    };
-    runPredictiveAnalysis().catch(function (error) {
+    runPredictiveAnalysis().catch((error) => {
       console.error("Error in predictive analysis loop:", error);
     });
   };
@@ -941,7 +913,7 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
    */
   RealTimeAdaptiveScheduling.prototype.executePredictiveAdjustment = function (adjustment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log(
           "Executing predictive adjustment: "
             .concat(adjustment.type, " - ")
@@ -959,24 +931,22 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
     appointmentData,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            id: "".concat(type, "-").concat(appointmentData.id, "-").concat(Date.now()),
-            type: type,
-            timestamp: new Date(),
-            appointmentId: appointmentData.id,
-            patientId: appointmentData.patient_id,
-            staffId: appointmentData.staff_id,
-            severity: "medium",
-            description: "Appointment "
-              .concat(type.replace("_", " "), " for patient ")
-              .concat(appointmentData.patient_id),
-            metadata: appointmentData,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          id: "".concat(type, "-").concat(appointmentData.id, "-").concat(Date.now()),
+          type: type,
+          timestamp: new Date(),
+          appointmentId: appointmentData.id,
+          patientId: appointmentData.patient_id,
+          staffId: appointmentData.staff_id,
+          severity: "medium",
+          description: "Appointment "
+            .concat(type.replace("_", " "), " for patient ")
+            .concat(appointmentData.patient_id),
+          metadata: appointmentData,
+        },
+      ]);
     });
   };
   /**
@@ -1058,15 +1028,11 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
             autoResolutions =
               (actions === null || actions === void 0
                 ? void 0
-                : actions.filter(function (a) {
-                    return a.status === "completed";
-                  }).length) || 0;
+                : actions.filter((a) => a.status === "completed").length) || 0;
             manualInterventions =
               (actions === null || actions === void 0
                 ? void 0
-                : actions.filter(function (a) {
-                    return a.status === "failed";
-                  }).length) || 0;
+                : actions.filter((a) => a.status === "failed").length) || 0;
             return [
               2 /*return*/,
               {
@@ -1110,14 +1076,14 @@ var RealTimeAdaptiveScheduling = /** @class */ (function () {
 })();
 exports.RealTimeAdaptiveScheduling = RealTimeAdaptiveScheduling;
 // Helper classes
-var ConflictResolver = /** @class */ (function () {
+var ConflictResolver = /** @class */ (() => {
   function ConflictResolver(supabase, aiCore) {
     this.supabase = supabase;
     this.aiCore = aiCore;
   }
   ConflictResolver.prototype.detectConflicts = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for conflict detection
         return [2 /*return*/, []];
       });
@@ -1125,20 +1091,18 @@ var ConflictResolver = /** @class */ (function () {
   };
   ConflictResolver.prototype.autoResolveConflict = function (conflict) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return ConflictResolver;
 })();
-var PredictiveAnalyzer = /** @class */ (function () {
+var PredictiveAnalyzer = /** @class */ (() => {
   function PredictiveAnalyzer(supabase) {
     this.supabase = supabase;
   }
   PredictiveAnalyzer.prototype.generatePredictiveAdjustments = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for predictive analysis
         return [2 /*return*/, []];
       });

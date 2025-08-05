@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientConsentDashboard = PatientConsentDashboard;
 // 🎛️ Patient Consent Dashboard - Granular Consent Management Interface
@@ -149,7 +146,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var scroll_area_1 = require("@/components/ui/scroll-area");
 var lucide_react_1 = require("lucide-react");
 function PatientConsentDashboard(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     onConsentUpdate = _a.onConsentUpdate,
     onPrivacyRequest = _a.onPrivacyRequest;
@@ -166,16 +162,13 @@ function PatientConsentDashboard(_a) {
     activeTab = _e[0],
     setActiveTab = _e[1];
   // Load consent data on component mount
-  (0, react_1.useEffect)(
-    function () {
-      loadConsentData();
-    },
-    [patientId],
-  );
-  var loadConsentData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadConsentData();
+  }, [patientId]);
+  var loadConsentData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, serviceData, historyData, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             setIsLoading(true);
@@ -203,7 +196,6 @@ function PatientConsentDashboard(_a) {
         }
       });
     });
-  };
   // Calculate overall consent status
   var overallStatus = calculateOverallStatus(services);
   var consentCoverage = calculateConsentCoverage(services);
@@ -292,25 +284,19 @@ function PatientConsentDashboard(_a) {
               <card_1.CardContent>
                 <div className="space-y-2">
                   {services
-                    .filter(function (s) {
-                      return s.essential;
-                    })
-                    .map(function (service) {
-                      return (
-                        <div key={service.service} className="flex items-center justify-between">
-                          <span className="text-sm">{service.service}</span>
-                          <badge_1.Badge
-                            variant={
-                              service.consentStatus === "granted" ? "default" : "destructive"
-                            }
-                          >
-                            {service.consentStatus === "granted"
-                              ? <lucide_react_1.CheckCircle className="h-3 w-3" />
-                              : <lucide_react_1.Lock className="h-3 w-3" />}
-                          </badge_1.Badge>
-                        </div>
-                      );
-                    })}
+                    .filter((s) => s.essential)
+                    .map((service) => (
+                      <div key={service.service} className="flex items-center justify-between">
+                        <span className="text-sm">{service.service}</span>
+                        <badge_1.Badge
+                          variant={service.consentStatus === "granted" ? "default" : "destructive"}
+                        >
+                          {service.consentStatus === "granted"
+                            ? <lucide_react_1.CheckCircle className="h-3 w-3" />
+                            : <lucide_react_1.Lock className="h-3 w-3" />}
+                        </badge_1.Badge>
+                      </div>
+                    ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -324,22 +310,16 @@ function PatientConsentDashboard(_a) {
               <card_1.CardContent>
                 <div className="space-y-2">
                   {services
-                    .filter(function (s) {
-                      return !s.essential;
-                    })
-                    .map(function (service) {
-                      return (
-                        <div key={service.service} className="flex items-center justify-between">
-                          <span className="text-sm">{service.service}</span>
-                          <ConsentToggle
-                            service={service}
-                            onToggle={function (enabled) {
-                              return handleServiceToggle(service, enabled);
-                            }}
-                          />
-                        </div>
-                      );
-                    })}
+                    .filter((s) => !s.essential)
+                    .map((service) => (
+                      <div key={service.service} className="flex items-center justify-between">
+                        <span className="text-sm">{service.service}</span>
+                        <ConsentToggle
+                          service={service}
+                          onToggle={(enabled) => handleServiceToggle(service, enabled)}
+                        />
+                      </div>
+                    ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -353,17 +333,15 @@ function PatientConsentDashboard(_a) {
               <card_1.CardContent>
                 <scroll_area_1.ScrollArea className="h-32">
                   <div className="space-y-2">
-                    {consentHistory.slice(0, 5).map(function (activity, index) {
-                      return (
-                        <div key={index} className="flex items-center space-x-2 text-sm">
-                          <div className="h-2 w-2 rounded-full bg-blue-500" />
-                          <span className="flex-1">{activity.description}</span>
-                          <span className="text-muted-foreground text-xs">
-                            {formatDate(activity.timestamp)}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    {consentHistory.slice(0, 5).map((activity, index) => (
+                      <div key={index} className="flex items-center space-x-2 text-sm">
+                        <div className="h-2 w-2 rounded-full bg-blue-500" />
+                        <span className="flex-1">{activity.description}</span>
+                        <span className="text-muted-foreground text-xs">
+                          {formatDate(activity.timestamp)}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </scroll_area_1.ScrollArea>
               </card_1.CardContent>
@@ -374,20 +352,14 @@ function PatientConsentDashboard(_a) {
         {/* Services Tab */}
         <tabs_1.TabsContent value="services" className="space-y-4">
           <div className="space-y-4">
-            {services.map(function (service) {
-              return (
-                <ServiceConsentCard
-                  key={service.service}
-                  service={service}
-                  onToggle={function (enabled) {
-                    return handleServiceToggle(service, enabled);
-                  }}
-                  onViewDetails={function () {
-                    return handleViewServiceDetails(service);
-                  }}
-                />
-              );
-            })}
+            {services.map((service) => (
+              <ServiceConsentCard
+                key={service.service}
+                service={service}
+                onToggle={(enabled) => handleServiceToggle(service, enabled)}
+                onViewDetails={() => handleViewServiceDetails(service)}
+              />
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -406,9 +378,9 @@ function PatientConsentDashboard(_a) {
             <card_1.CardContent>
               <scroll_area_1.ScrollArea className="h-96">
                 <div className="space-y-4">
-                  {consentHistory.map(function (activity, index) {
-                    return <ConsentHistoryItem key={index} activity={activity} />;
-                  })}
+                  {consentHistory.map((activity, index) => (
+                    <ConsentHistoryItem key={index} activity={activity} />
+                  ))}
                 </div>
               </scroll_area_1.ScrollArea>
             </card_1.CardContent>
@@ -430,12 +402,7 @@ function PatientConsentDashboard(_a) {
                 </card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent>
-                <button_1.Button
-                  className="w-full"
-                  onClick={function () {
-                    return handlePrivacyRequest("access");
-                  }}
-                >
+                <button_1.Button className="w-full" onClick={() => handlePrivacyRequest("access")}>
                   <lucide_react_1.Download className="mr-2 h-4 w-4" />
                   Solicitar Cópia dos Dados
                 </button_1.Button>
@@ -457,9 +424,7 @@ function PatientConsentDashboard(_a) {
                 <button_1.Button
                   variant="outline"
                   className="w-full"
-                  onClick={function () {
-                    return handlePrivacyRequest("correction");
-                  }}
+                  onClick={() => handlePrivacyRequest("correction")}
                 >
                   <lucide_react_1.Edit className="mr-2 h-4 w-4" />
                   Solicitar Correção
@@ -482,9 +447,7 @@ function PatientConsentDashboard(_a) {
                 <button_1.Button
                   variant="outline"
                   className="w-full"
-                  onClick={function () {
-                    return handlePrivacyRequest("portability");
-                  }}
+                  onClick={() => handlePrivacyRequest("portability")}
                 >
                   <lucide_react_1.Download className="mr-2 h-4 w-4" />
                   Exportar Dados
@@ -507,9 +470,7 @@ function PatientConsentDashboard(_a) {
                 <button_1.Button
                   variant="destructive"
                   className="w-full"
-                  onClick={function () {
-                    return handlePrivacyRequest("deletion");
-                  }}
+                  onClick={() => handlePrivacyRequest("deletion")}
                 >
                   <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
                   Solicitar Exclusão
@@ -558,7 +519,7 @@ function ConsentToggle(_a) {
   var _b = (0, react_1.useState)(service.consentStatus === "granted"),
     enabled = _b[0],
     setEnabled = _b[1];
-  var handleToggle = function (newEnabled) {
+  var handleToggle = (newEnabled) => {
     setEnabled(newEnabled);
     onToggle(newEnabled);
   };
@@ -599,13 +560,11 @@ function ServiceConsentCard(_a) {
           <div>
             <p className="text-sm font-medium mb-2">Dados utilizados:</p>
             <div className="flex flex-wrap gap-1">
-              {service.requiredData.map(function (dataType) {
-                return (
-                  <badge_1.Badge key={dataType} variant="outline" className="text-xs">
-                    {dataType}
-                  </badge_1.Badge>
-                );
-              })}
+              {service.requiredData.map((dataType) => (
+                <badge_1.Badge key={dataType} variant="outline" className="text-xs">
+                  {dataType}
+                </badge_1.Badge>
+              ))}
             </div>
           </div>
 
@@ -623,7 +582,7 @@ function ServiceConsentCard(_a) {
 }
 function ConsentHistoryItem(_a) {
   var activity = _a.activity;
-  var getActivityIcon = function (type) {
+  var getActivityIcon = (type) => {
     switch (type) {
       case "granted":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -649,18 +608,14 @@ function ConsentHistoryItem(_a) {
 }
 // Helper Functions
 function calculateOverallStatus(services) {
-  var grantedCount = services.filter(function (s) {
-    return s.consentStatus === "granted";
-  }).length;
+  var grantedCount = services.filter((s) => s.consentStatus === "granted").length;
   var totalCount = services.length;
   if (grantedCount === totalCount) return "fully_consented";
   if (grantedCount > 0) return "partially_consented";
   return "missing_consent";
 }
 function calculateConsentCoverage(services) {
-  var grantedCount = services.filter(function (s) {
-    return s.consentStatus === "granted";
-  }).length;
+  var grantedCount = services.filter((s) => s.consentStatus === "granted").length;
   return Math.round((grantedCount / services.length) * 100);
 }
 function getStatusText(status) {
@@ -687,59 +642,55 @@ function formatDate(dateString) {
 // Mock API functions (would be replaced with real API calls)
 function fetchServiceDependencies(patientId) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        [
-          {
-            service: "Atendimento Médico",
-            purpose: "medical_care",
-            requiredData: ["personal", "medical", "sensitive"],
-            consentStatus: "granted",
-            impact: "Necessário para fornecimento de cuidados médicos e estéticos",
-            essential: true,
-          },
-          {
-            service: "Agendamento Online",
-            purpose: "appointment_scheduling",
-            requiredData: ["personal"],
-            consentStatus: "granted",
-            impact: "Permite agendamento online de consultas e procedimentos",
-            essential: false,
-          },
-          {
-            service: "Comunicação Promocional",
-            purpose: "marketing",
-            requiredData: ["personal", "behavioral"],
-            consentStatus: "missing",
-            impact: "Recebimento de ofertas personalizadas e promoções",
-            essential: false,
-          },
-        ],
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      [
+        {
+          service: "Atendimento Médico",
+          purpose: "medical_care",
+          requiredData: ["personal", "medical", "sensitive"],
+          consentStatus: "granted",
+          impact: "Necessário para fornecimento de cuidados médicos e estéticos",
+          essential: true,
+        },
+        {
+          service: "Agendamento Online",
+          purpose: "appointment_scheduling",
+          requiredData: ["personal"],
+          consentStatus: "granted",
+          impact: "Permite agendamento online de consultas e procedimentos",
+          essential: false,
+        },
+        {
+          service: "Comunicação Promocional",
+          purpose: "marketing",
+          requiredData: ["personal", "behavioral"],
+          consentStatus: "missing",
+          impact: "Recebimento de ofertas personalizadas e promoções",
+          essential: false,
+        },
+      ],
+    ]);
   });
 }
 function fetchConsentHistory(patientId) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        [
-          {
-            type: "granted",
-            description: "Consentimento concedido para atendimento médico",
-            timestamp: new Date().toISOString(),
-            details: "Consentimento inicial para tratamento estético",
-          },
-          {
-            type: "granted",
-            description: "Consentimento concedido para agendamento online",
-            timestamp: new Date(Date.now() - 86400000).toISOString(),
-            details: "Ativação do sistema de agendamento digital",
-          },
-        ],
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      [
+        {
+          type: "granted",
+          description: "Consentimento concedido para atendimento médico",
+          timestamp: new Date().toISOString(),
+          details: "Consentimento inicial para tratamento estético",
+        },
+        {
+          type: "granted",
+          description: "Consentimento concedido para agendamento online",
+          timestamp: new Date(Date.now() - 86400000).toISOString(),
+          details: "Ativação do sistema de agendamento digital",
+        },
+      ],
+    ]);
   });
 }

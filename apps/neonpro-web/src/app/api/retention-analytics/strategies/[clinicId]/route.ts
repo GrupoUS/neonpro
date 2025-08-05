@@ -4,16 +4,16 @@
 // API endpoints for retention strategy management and execution
 // =====================================================================================
 
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
 import {
-  CreateRetentionStrategy,
-  UpdateRetentionStrategy,
-  RetentionStrategyType,
+  type CreateRetentionStrategy,
   RetentionStrategyStatus,
+  RetentionStrategyType,
+  UpdateRetentionStrategy,
 } from "@/app/types/retention-analytics";
-import { z } from "zod";
+import { createClient } from "@/app/utils/supabase/server";
 
 // =====================================================================================
 // VALIDATION SCHEMAS

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,7 +33,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,8 +62,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -85,9 +82,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.globalBundleOptimizer = exports.BundleOptimizer = void 0;
 exports.useBundleOptimizer = useBundleOptimizer;
@@ -158,7 +155,7 @@ var react_1 = require("react");
 // =====================================================================================
 // BUNDLE OPTIMIZER CLASS
 // =====================================================================================
-var BundleOptimizer = /** @class */ (function () {
+var BundleOptimizer = /** @class */ (() => {
   function BundleOptimizer(config) {
     if (config === void 0) {
       config = {};
@@ -197,13 +194,12 @@ var BundleOptimizer = /** @class */ (function () {
     }
   };
   BundleOptimizer.prototype.setupPerformanceObserver = function () {
-    var _this = this;
     if ("PerformanceObserver" in window) {
-      var observer = new PerformanceObserver(function (list) {
+      var observer = new PerformanceObserver((list) => {
         var _a;
         var entries = list.getEntries();
-        (_a = _this.performanceEntries).push.apply(_a, entries);
-        _this.updateMetrics();
+        (_a = this.performanceEntries).push.apply(_a, entries);
+        this.updateMetrics();
       });
       observer.observe({ entryTypes: ["navigation", "resource", "measure"] });
     }
@@ -211,47 +207,42 @@ var BundleOptimizer = /** @class */ (function () {
   BundleOptimizer.prototype.analyzeExistingResources = function () {
     if (performance.getEntriesByType) {
       var resources = performance.getEntriesByType("resource");
-      this.resourceTimings = resources.filter(function (resource) {
-        return resource.name.includes(".js") || resource.name.includes(".css");
-      });
+      this.resourceTimings = resources.filter(
+        (resource) => resource.name.includes(".js") || resource.name.includes(".css"),
+      );
       this.updateMetrics();
     }
   };
   BundleOptimizer.prototype.setupResourceObserver = function () {
-    var _this = this;
     if ("PerformanceObserver" in window) {
-      var observer = new PerformanceObserver(function (list) {
+      var observer = new PerformanceObserver((list) => {
         var _a;
         var entries = list.getEntries();
-        var jsResources = entries.filter(function (entry) {
-          return entry.name.includes(".js") || entry.name.includes(".css");
-        });
-        (_a = _this.resourceTimings).push.apply(_a, jsResources);
-        _this.updateMetrics();
+        var jsResources = entries.filter(
+          (entry) => entry.name.includes(".js") || entry.name.includes(".css"),
+        );
+        (_a = this.resourceTimings).push.apply(_a, jsResources);
+        this.updateMetrics();
       });
       observer.observe({ entryTypes: ["resource"] });
     }
   };
   BundleOptimizer.prototype.updateMetrics = function () {
-    var jsResources = this.resourceTimings.filter(function (r) {
-      return r.name.includes(".js");
-    });
-    var cssResources = this.resourceTimings.filter(function (r) {
-      return r.name.includes(".css");
-    });
+    var jsResources = this.resourceTimings.filter((r) => r.name.includes(".js"));
+    var _cssResources = this.resourceTimings.filter((r) => r.name.includes(".css"));
     // Calculate total size (estimated from transfer size)
-    var totalTransferSize = this.resourceTimings.reduce(function (sum, resource) {
-      return sum + (resource.transferSize || 0);
-    }, 0);
+    var totalTransferSize = this.resourceTimings.reduce(
+      (sum, resource) => sum + (resource.transferSize || 0),
+      0,
+    );
     // Calculate load times
     var avgLoadTime =
-      this.resourceTimings.reduce(function (sum, resource) {
-        return sum + (resource.responseEnd - resource.requestStart);
-      }, 0) / this.resourceTimings.length || 0;
+      this.resourceTimings.reduce(
+        (sum, resource) => sum + (resource.responseEnd - resource.requestStart),
+        0,
+      ) / this.resourceTimings.length || 0;
     // Calculate cache hit rate
-    var cachedResources = this.resourceTimings.filter(function (r) {
-      return r.transferSize === 0;
-    });
+    var cachedResources = this.resourceTimings.filter((r) => r.transferSize === 0);
     var cacheHitRate =
       this.resourceTimings.length > 0 ? cachedResources.length / this.resourceTimings.length : 0;
     this.metrics = {
@@ -264,20 +255,18 @@ var BundleOptimizer = /** @class */ (function () {
     };
     this.notifyObservers();
   };
-  BundleOptimizer.prototype.calculateUnusedCode = function () {
+  BundleOptimizer.prototype.calculateUnusedCode = () => {
     // Estimate unused code based on coverage API if available
     if ("coverage" in window && window.coverage) {
       try {
         var coverage = window.coverage;
         var totalLines_1 = 0;
         var usedLines_1 = 0;
-        Object.values(coverage).forEach(function (file) {
+        Object.values(coverage).forEach((file) => {
           if (file.s) {
             // Statement coverage
             totalLines_1 += Object.keys(file.s).length;
-            usedLines_1 += Object.values(file.s).filter(function (count) {
-              return count > 0;
-            }).length;
+            usedLines_1 += Object.values(file.s).filter((count) => count > 0).length;
           }
         });
         return totalLines_1 > 0 ? ((totalLines_1 - usedLines_1) / totalLines_1) * 100 : 0;
@@ -289,10 +278,7 @@ var BundleOptimizer = /** @class */ (function () {
     return Math.random() * 30; // 0-30% estimated unused code
   };
   BundleOptimizer.prototype.notifyObservers = function () {
-    var _this = this;
-    this.observers.forEach(function (observer) {
-      return observer(_this.metrics);
-    });
+    this.observers.forEach((observer) => observer(this.metrics));
   };
   // =====================================================================================
   // PUBLIC API
@@ -304,11 +290,8 @@ var BundleOptimizer = /** @class */ (function () {
     return Array.from(this.chunks.values());
   };
   BundleOptimizer.prototype.subscribe = function (observer) {
-    var _this = this;
     this.observers.add(observer);
-    return function () {
-      return _this.observers.delete(observer);
-    };
+    return () => this.observers.delete(observer);
   };
   BundleOptimizer.prototype.optimizeBundle = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -387,13 +370,13 @@ var BundleOptimizer = /** @class */ (function () {
       var _this = this;
       return __generator(this, function (_a) {
         criticalResources = this.resourceTimings
-          .filter(function (resource) {
+          .filter((resource) => {
             var loadTime = resource.responseEnd - resource.requestStart;
             return loadTime > _this.config.preloadThreshold * _this.metrics.loadTime;
           })
           .slice(0, 3);
         // Create preload links
-        criticalResources.forEach(function (resource) {
+        criticalResources.forEach((resource) => {
           if (!document.querySelector('link[href="'.concat(resource.name, '"]'))) {
             var link = document.createElement("link");
             link.rel = "preload";
@@ -411,10 +394,10 @@ var BundleOptimizer = /** @class */ (function () {
       var largeChunks;
       var _this = this;
       return __generator(this, function (_a) {
-        largeChunks = Array.from(this.chunks.values()).filter(function (chunk) {
-          return chunk.size > _this.config.chunkSizeLimit;
-        });
-        largeChunks.forEach(function (chunk) {
+        largeChunks = Array.from(this.chunks.values()).filter(
+          (chunk) => chunk.size > _this.config.chunkSizeLimit,
+        );
+        largeChunks.forEach((chunk) => {
           // Mark for splitting
           chunk.isAsync = true;
           chunk.priority = "low";
@@ -423,16 +406,13 @@ var BundleOptimizer = /** @class */ (function () {
       });
     });
   };
-  BundleOptimizer.prototype.calculateImprovement = function (before, after) {
-    return {
-      sizeReduction: ((before.totalSize - after.totalSize) / before.totalSize) * 100,
-      loadTimeImprovement: ((before.loadTime - after.loadTime) / before.loadTime) * 100,
-      cacheImprovement: ((after.cacheHitRate - before.cacheHitRate) / before.cacheHitRate) * 100,
-      unusedCodeReduction: ((before.unusedCode - after.unusedCode) / before.unusedCode) * 100,
-    };
-  };
+  BundleOptimizer.prototype.calculateImprovement = (before, after) => ({
+    sizeReduction: ((before.totalSize - after.totalSize) / before.totalSize) * 100,
+    loadTimeImprovement: ((before.loadTime - after.loadTime) / before.loadTime) * 100,
+    cacheImprovement: ((after.cacheHitRate - before.cacheHitRate) / before.cacheHitRate) * 100,
+    unusedCodeReduction: ((before.unusedCode - after.unusedCode) / before.unusedCode) * 100,
+  });
   BundleOptimizer.prototype.generateReport = function () {
-    var _this = this;
     var chunks = this.getChunks();
     var metrics = this.getMetrics();
     return {
@@ -444,15 +424,13 @@ var BundleOptimizer = /** @class */ (function () {
         cacheHitRate: "".concat((metrics.cacheHitRate * 100).toFixed(1), "%"),
         unusedCode: "".concat(metrics.unusedCode.toFixed(1), "%"),
       },
-      chunks: chunks.map(function (chunk) {
-        return {
-          name: chunk.name,
-          size: _this.formatBytes(chunk.size),
-          loadTime: "".concat(chunk.loadTime.toFixed(0), "ms"),
-          priority: chunk.priority,
-          isAsync: chunk.isAsync,
-        };
-      }),
+      chunks: chunks.map((chunk) => ({
+        name: chunk.name,
+        size: this.formatBytes(chunk.size),
+        loadTime: "".concat(chunk.loadTime.toFixed(0), "ms"),
+        priority: chunk.priority,
+        isAsync: chunk.isAsync,
+      })),
       recommendations: this.generateRecommendations(),
       performance: {
         score: this.calculatePerformanceScore(),
@@ -460,12 +438,12 @@ var BundleOptimizer = /** @class */ (function () {
       },
     };
   };
-  BundleOptimizer.prototype.formatBytes = function (bytes) {
+  BundleOptimizer.prototype.formatBytes = (bytes) => {
     if (bytes === 0) return "0 B";
     var k = 1024;
     var sizes = ["B", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return "".concat(parseFloat((bytes / Math.pow(k, i)).toFixed(1)), " ").concat(sizes[i]);
+    return "".concat(parseFloat((bytes / k ** i).toFixed(1)), " ").concat(sizes[i]);
   };
   BundleOptimizer.prototype.generateRecommendations = function () {
     var recommendations = [];
@@ -518,10 +496,7 @@ exports.BundleOptimizer = BundleOptimizer;
 // REACT HOOKS
 // =====================================================================================
 function useBundleOptimizer(config) {
-  var _this = this;
-  var optimizer = (0, react_1.useState)(function () {
-    return new BundleOptimizer(config);
-  })[0];
+  var optimizer = (0, react_1.useState)(() => new BundleOptimizer(config))[0];
   var _a = (0, react_1.useState)(optimizer.getMetrics()),
     metrics = _a[0],
     setMetrics = _a[1];
@@ -531,24 +506,21 @@ function useBundleOptimizer(config) {
   var _c = (0, react_1.useState)(null),
     lastOptimization = _c[0],
     setLastOptimization = _c[1];
-  (0, react_1.useEffect)(
-    function () {
-      var unsubscribe = optimizer.subscribe(setMetrics);
-      return unsubscribe;
-    },
-    [optimizer],
-  );
+  (0, react_1.useEffect)(() => {
+    var unsubscribe = optimizer.subscribe(setMetrics);
+    return unsubscribe;
+  }, [optimizer]);
   var optimize = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsOptimizing(true);
               _a.label = 1;
             case 1:
-              _a.trys.push([1, , 3, 4]);
+              _a.trys.push([1, undefined, 3, 4]);
               return [4 /*yield*/, optimizer.optimizeBundle()];
             case 2:
               result = _a.sent();
@@ -561,16 +533,10 @@ function useBundleOptimizer(config) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [optimizer],
   );
-  var generateReport = (0, react_1.useCallback)(
-    function () {
-      return optimizer.generateReport();
-    },
-    [optimizer],
-  );
+  var generateReport = (0, react_1.useCallback)(() => optimizer.generateReport(), [optimizer]);
   return {
     metrics: metrics,
     isOptimizing: isOptimizing,
@@ -591,7 +557,7 @@ function useBundleMetrics() {
     }),
     metrics = _a[0],
     setMetrics = _a[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     var optimizer = new BundleOptimizer();
     var unsubscribe = optimizer.subscribe(setMetrics);
     return unsubscribe;
@@ -602,7 +568,7 @@ function useBundleMetrics() {
 // UTILITY FUNCTIONS
 // =====================================================================================
 function preloadCriticalResources(resources) {
-  resources.forEach(function (resource) {
+  resources.forEach((resource) => {
     if (!document.querySelector('link[href="'.concat(resource, '"]'))) {
       var link = document.createElement("link");
       link.rel = "preload";
@@ -614,13 +580,12 @@ function preloadCriticalResources(resources) {
   });
 }
 function createChunkPreloader(chunkMap) {
-  var _this = this;
   var preloadedChunks = new Set();
   return {
-    preload: function (chunkName) {
-      return __awaiter(_this, void 0, void 0, function () {
+    preload: (chunkName) =>
+      __awaiter(this, void 0, void 0, function () {
         var loader, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (preloadedChunks.has(chunkName)) return [2 /*return*/];
@@ -628,7 +593,7 @@ function createChunkPreloader(chunkMap) {
               if (!loader) return [3 /*break*/, 4];
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, loader()];
             case 2:
               _a.sent();
@@ -642,17 +607,16 @@ function createChunkPreloader(chunkMap) {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    preloadAll: function (chunkNames) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    preloadAll: (chunkNames) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
                 Promise.allSettled(
-                  chunkNames.map(function (name) {
+                  chunkNames.map((name) => {
                     var loader = chunkMap[name];
                     return loader ? loader() : Promise.resolve();
                   }),
@@ -660,17 +624,12 @@ function createChunkPreloader(chunkMap) {
               ];
             case 1:
               _a.sent();
-              chunkNames.forEach(function (name) {
-                return preloadedChunks.add(name);
-              });
+              chunkNames.forEach((name) => preloadedChunks.add(name));
               return [2 /*return*/];
           }
         });
-      });
-    },
-    isPreloaded: function (chunkName) {
-      return preloadedChunks.has(chunkName);
-    },
+      }),
+    isPreloaded: (chunkName) => preloadedChunks.has(chunkName),
   };
 }
 function measureBundleImpact(fn, label) {

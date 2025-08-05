@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -20,7 +19,7 @@ var button_1 = require("@/components/ui/button");
 var alert_1 = require("@/components/ui/alert");
 var use_session_1 = require("@/hooks/use-session");
 var lucide_react_1 = require("lucide-react");
-var SecurityAlerts = function (_a) {
+var SecurityAlerts = (_a) => {
   var userId = _a.userId,
     _b = _a.className,
     className = _b === void 0 ? "" : _b;
@@ -40,25 +39,25 @@ var SecurityAlerts = function (_a) {
   var activeAlerts = __spreadArray(
     __spreadArray(
       [],
-      securityEvents.filter(function (event) {
-        return (
+      securityEvents.filter(
+        (event) =>
           !dismissedAlerts.has(event.id) &&
           (showResolved || !event.resolved) &&
-          event.severity !== "LOW"
-        );
-      }),
+          event.severity !== "LOW",
+      ),
       true,
     ),
-    suspiciousActivities.filter(function (activity) {
-      return !dismissedAlerts.has(activity.id) && (showResolved || activity.status === "PENDING");
-    }),
+    suspiciousActivities.filter(
+      (activity) =>
+        !dismissedAlerts.has(activity.id) && (showResolved || activity.status === "PENDING"),
+    ),
     true,
-  ).sort(function (a, b) {
+  ).sort((a, b) => {
     var aTime = new Date("created_at" in a ? a.created_at : a.detected_at).getTime();
     var bTime = new Date("created_at" in b ? b.created_at : b.detected_at).getTime();
     return bTime - aTime;
   });
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "CRITICAL":
         return "destructive";
@@ -72,7 +71,7 @@ var SecurityAlerts = function (_a) {
         return "secondary";
     }
   };
-  var getSeverityIcon = function (severity) {
+  var getSeverityIcon = (severity) => {
     switch (severity) {
       case "CRITICAL":
       case "HIGH":
@@ -83,7 +82,7 @@ var SecurityAlerts = function (_a) {
         return <lucide_react_1.Eye className="h-4 w-4" />;
     }
   };
-  var getEventIcon = function (eventType) {
+  var getEventIcon = (eventType) => {
     switch (eventType) {
       case "DEVICE_REGISTERED":
       case "DEVICE_TRUSTED":
@@ -98,12 +97,12 @@ var SecurityAlerts = function (_a) {
         return <lucide_react_1.Monitor className="h-4 w-4" />;
     }
   };
-  var dismissAlert = function (alertId) {
-    setDismissedAlerts(function (prev) {
-      return new Set(__spreadArray(__spreadArray([], prev, true), [alertId], false));
-    });
+  var dismissAlert = (alertId) => {
+    setDismissedAlerts(
+      (prev) => new Set(__spreadArray(__spreadArray([], prev, true), [alertId], false)),
+    );
   };
-  var formatTimeAgo = function (timestamp) {
+  var formatTimeAgo = (timestamp) => {
     var now = new Date();
     var time = new Date(timestamp);
     var diffMs = now.getTime() - time.getTime();
@@ -126,9 +125,9 @@ var SecurityAlerts = function (_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="animate-pulse space-y-3">
-            {[1, 2, 3].map(function (i) {
-              return <div key={i} className="h-16 bg-muted rounded" />;
-            })}
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-16 bg-muted rounded" />
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>
@@ -171,9 +170,7 @@ var SecurityAlerts = function (_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setShowResolved(!showResolved);
-              }}
+              onClick={() => setShowResolved(!showResolved)}
             >
               {showResolved ? "Hide Resolved" : "Show Resolved"}
             </button_1.Button>
@@ -191,7 +188,7 @@ var SecurityAlerts = function (_a) {
               <p className="text-sm">No security alerts at this time.</p>
             </div>
           : <div className="space-y-3 max-h-96 overflow-y-auto">
-              {activeAlerts.map(function (alert) {
+              {activeAlerts.map((alert) => {
                 var isSecurityEvent = "event_type" in alert;
                 var severity = isSecurityEvent
                   ? alert.severity
@@ -248,9 +245,7 @@ var SecurityAlerts = function (_a) {
                     <button_1.Button
                       variant="ghost"
                       size="sm"
-                      onClick={function () {
-                        return dismissAlert(alert.id);
-                      }}
+                      onClick={() => dismissAlert(alert.id)}
                       className="flex-shrink-0"
                     >
                       <lucide_react_1.X className="h-4 w-4" />

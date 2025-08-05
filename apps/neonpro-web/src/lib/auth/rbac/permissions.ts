@@ -6,15 +6,15 @@
  * for the NeonPro application with multi-tenant support.
  */
 
+import type { AuthUser } from "@/lib/middleware/auth";
+import type { createClient } from "@/lib/supabase/client";
 import type {
-  UserRole,
+  DEFAULT_ROLES,
   Permission,
   PermissionCheck,
   PermissionResult,
-  DEFAULT_ROLES,
+  UserRole,
 } from "@/types/rbac";
-import type { AuthUser } from "@/lib/middleware/auth";
-import type { createClient } from "@/lib/supabase/client";
 
 // Export the class-based manager interface
 export { RBACPermissionManager } from "./rbac-manager";

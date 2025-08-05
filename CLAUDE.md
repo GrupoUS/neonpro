@@ -9,6 +9,7 @@
 - **Language:** TypeScript 5.4+ (Strict Mode)
 - **Build System:** Turborepo 2.5.5 Monorepo
 - **Backend:** Supabase (PostgreSQL + Auth + Storage)
+- **API Layer:** tRPC 11.4.4 with App Router support
 - **UI Framework:** React 18.3 + Tailwind CSS + shadcn/ui
 - **State Management:** Zustand + TanStack Query
 
@@ -89,6 +90,70 @@ import { usePatients } from '@/lib/hooks'
 // ❌ AVOID: Relative path climbing
 import { utils } from '../../../packages/utils'
 ```
+
+---
+
+## 🚀 tRPC API LAYER
+
+### **Configuration:**
+- **Version:** tRPC 11.4.4 with App Router support
+- **Transport:** HTTP with batch link optimization
+- **Transformer:** SuperJSON for enhanced serialization
+- **Client:** React Query integration for caching and state management
+
+### **Architecture:**
+```
+src/
+├── server/
+│   ├── trpc.ts                  # Base tRPC configuration
+│   └── routers/
+│       └── _app.ts              # Main router with procedures
+├── app/api/trpc/[trpc]/
+│   └── route.ts                 # App Router handler (fetchRequestHandler)
+└── utils/
+    ├── trpc.ts                  # Client hooks and types
+    └── trpc-provider.tsx        # Client-side provider component
+```
+
+### **Usage Examples:**
+```typescript
+// Server-side procedure definition
+export const appRouter = createTRPCRouter({
+  getPatients: publicProcedure
+    .input(z.object({ clinicId: z.string() }))
+    .query(async ({ input }) => {
+      return await db.patients.findMany({
+        where: { clinicId: input.clinicId }
+      });
+    }),
+});
+
+// Client-side usage
+function PatientsList() {
+  const { data: patients, isLoading } = trpc.getPatients.useQuery({
+    clinicId: 'clinic-123'
+  });
+  
+  if (isLoading) return <Loading />;
+  return <PatientCards patients={patients} />;
+}
+```
+
+### **Provider Integration:**
+The tRPC provider is integrated with the existing ClerkProvider in `layout.tsx`:
+```typescript
+<ClerkProvider>
+  <TRPCProvider>
+    <div className="min-h-screen">{children}</div>
+  </TRPCProvider>
+</ClerkProvider>
+```
+
+### **Testing tRPC:**
+Use the `TRPCTest` component (`@/components/trpc-test`) to validate the API:
+- `hello` - Basic greeting with input validation
+- `getSystemStatus` - System health and uptime
+- `healthCheck` - Environment and API status
 
 ---
 

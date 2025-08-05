@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ComplianceReportingDashboard;
 var react_1 = require("react");
@@ -148,7 +145,6 @@ var lucide_react_1 = require("lucide-react");
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 var use_toast_1 = require("@/hooks/use-toast");
 function ComplianceReportingDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)(null),
     analytics = _b[0],
@@ -167,14 +163,11 @@ function ComplianceReportingDashboard(_a) {
     setGeneratingReport = _f[1];
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      fetchAnalytics();
-    },
-    [clinicId, timeRange],
-  );
-  var fetchAnalytics = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    fetchAnalytics();
+  }, [clinicId, timeRange]);
+  var fetchAnalytics = () =>
+    __awaiter(this, void 0, void 0, function () {
       var cutoffDate,
         _a,
         consents,
@@ -192,7 +185,7 @@ function ComplianceReportingDashboard(_a) {
         now_1,
         criticalAlerts,
         error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -223,32 +216,24 @@ function ComplianceReportingDashboard(_a) {
             signedConsents =
               (consents === null || consents === void 0
                 ? void 0
-                : consents.filter(function (c) {
-                    return c.status === "signed";
-                  }).length) || 0;
+                : consents.filter((c) => c.status === "signed").length) || 0;
             pendingConsents =
               (consents === null || consents === void 0
                 ? void 0
-                : consents.filter(function (c) {
-                    return c.status === "pending";
-                  }).length) || 0;
+                : consents.filter((c) => c.status === "pending").length) || 0;
             revokedConsents =
               (consents === null || consents === void 0
                 ? void 0
-                : consents.filter(function (c) {
-                    return c.status === "revoked";
-                  }).length) || 0;
+                : consents.filter((c) => c.status === "revoked").length) || 0;
             expiredConsents =
               (consents === null || consents === void 0
                 ? void 0
-                : consents.filter(function (c) {
-                    return c.status === "expired";
-                  }).length) || 0;
+                : consents.filter((c) => c.status === "expired").length) || 0;
             complianceRate = totalConsents > 0 ? (signedConsents / totalConsents) * 100 : 0;
             consentsByType =
               (consents === null || consents === void 0
                 ? void 0
-                : consents.reduce(function (acc, consent) {
+                : consents.reduce((acc, consent) => {
                     var type = consent.consent_type || "unknown";
                     acc[type] = (acc[type] || 0) + 1;
                     return acc;
@@ -256,7 +241,7 @@ function ComplianceReportingDashboard(_a) {
             consentsByMonth =
               (consents === null || consents === void 0
                 ? void 0
-                : consents.reduce(function (acc, consent) {
+                : consents.reduce((acc, consent) => {
                     var month = new Date(consent.consent_date).toLocaleDateString("pt-BR", {
                       year: "numeric",
                       month: "short",
@@ -267,7 +252,7 @@ function ComplianceReportingDashboard(_a) {
             withdrawalReasons =
               (consents === null || consents === void 0
                 ? void 0
-                : consents.reduce(function (acc, consent) {
+                : consents.reduce((acc, consent) => {
                     if (consent.withdrawal_reason) {
                       acc[consent.withdrawal_reason] = (acc[consent.withdrawal_reason] || 0) + 1;
                     }
@@ -278,7 +263,7 @@ function ComplianceReportingDashboard(_a) {
             criticalAlerts =
               (consents === null || consents === void 0
                 ? void 0
-                : consents.filter(function (consent) {
+                : consents.filter((consent) => {
                     if (consent.status === "pending") {
                       var consentDate = new Date(consent.consent_date);
                       var daysDiff = (now_1.getTime() - consentDate.getTime()) / (1000 * 3600 * 24);
@@ -317,22 +302,16 @@ function ComplianceReportingDashboard(_a) {
         }
       });
     });
-  };
-  var generateReport = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generateReport = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
             setGeneratingReport(true);
             // Simulate report generation
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 1:
             // Simulate report generation
             _a.sent();
@@ -359,8 +338,7 @@ function ComplianceReportingDashboard(_a) {
         }
       });
     });
-  };
-  var getComplianceStatus = function (rate) {
+  var getComplianceStatus = (rate) => {
     if (rate >= 95)
       return { color: "text-green-600", label: "Excellent", icon: lucide_react_1.CheckCircle };
     if (rate >= 85)
@@ -594,7 +572,7 @@ function ComplianceReportingDashboard(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {Object.entries(analytics.consentsByType).map(function (_a) {
+              {Object.entries(analytics.consentsByType).map((_a) => {
                 var type = _a[0],
                   count = _a[1];
                 return (
@@ -669,12 +647,12 @@ function ComplianceReportingDashboard(_a) {
               </table_1.TableHeader>
               <table_1.TableBody>
                 {Object.entries(analytics.withdrawalReasons)
-                  .sort(function (_a, _b) {
+                  .sort((_a, _b) => {
                     var a = _a[1];
                     var b = _b[1];
                     return b - a;
                   })
-                  .map(function (_a) {
+                  .map((_a) => {
                     var reason = _a[0],
                       count = _a[1];
                     return (

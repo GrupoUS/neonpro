@@ -4,22 +4,22 @@
 
 import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
+import type { createClient } from "@/lib/supabase/server";
+import type { AnalyticsService } from "../service";
 import type {
+  CSVExportOptions,
+  DEFAULT_CSV_OPTIONS,
+  DEFAULT_EXCEL_OPTIONS,
+  DEFAULT_PDF_OPTIONS,
+  ExcelExportOptions,
+  ExportableData,
   ExportConfig,
+  ExportFormat,
   ExportRequest,
   ExportResponse,
-  ExportableData,
   PDFExportOptions,
-  ExcelExportOptions,
-  CSVExportOptions,
-  ExportFormat,
   ReportType,
-  DEFAULT_PDF_OPTIONS,
-  DEFAULT_EXCEL_OPTIONS,
-  DEFAULT_CSV_OPTIONS,
 } from "./types";
-import type { AnalyticsService } from "../service";
-import type { createClient } from "@/lib/supabase/server";
 
 // ============================================================================
 // EXPORT SERVICE CLASS
@@ -67,26 +67,29 @@ export class AnalyticsExportService {
       let mimeType: string;
 
       switch (request.config.format) {
-        case "pdf":
+        case "pdf": {
           const pdfOptions = request.pdfOptions || DEFAULT_PDF_OPTIONS;
           fileBuffer = await this.generatePDF(data, request.config, pdfOptions);
           fileName = `analytics-${request.config.reportType}-${Date.now()}.pdf`;
           mimeType = "application/pdf";
           break;
+        }
 
-        case "excel":
+        case "excel": {
           const excelOptions = request.excelOptions || DEFAULT_EXCEL_OPTIONS;
           fileBuffer = await this.generateExcel(data, request.config, excelOptions);
           fileName = `analytics-${request.config.reportType}-${Date.now()}.xlsx`;
           mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
           break;
+        }
 
-        case "csv":
+        case "csv": {
           const csvOptions = request.csvOptions || DEFAULT_CSV_OPTIONS;
           fileBuffer = await this.generateCSV(data, request.config, csvOptions);
           fileName = `analytics-${request.config.reportType}-${Date.now()}.csv`;
           mimeType = "text/csv";
           break;
+        }
 
         case "json":
           fileBuffer = Buffer.from(JSON.stringify(data, null, 2));
@@ -197,7 +200,7 @@ export class AnalyticsExportService {
           );
           break;
 
-        case "trial":
+        case "trial": {
           // Fetch trial predictions and metrics
           const trialMetrics = await this.analyticsService.getTrialMetrics(
             startDate,
@@ -206,6 +209,7 @@ export class AnalyticsExportService {
           );
           data.trials = trialMetrics;
           break;
+        }
 
         case "cohort":
           data.cohorts = await this.analyticsService.getCohortAnalysis(startDate, endDate, filters);

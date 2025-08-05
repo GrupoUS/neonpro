@@ -19,32 +19,31 @@
  * @author NeonPro Development Team
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -64,13 +63,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -92,9 +91,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -166,7 +163,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MFAVerify = MFAVerify;
 var react_1 = require("react");
@@ -189,7 +186,6 @@ var LOCKOUT_CHECK_INTERVAL = 1000; // 1 second
  * MFA Verification Component with comprehensive security features
  */
 function MFAVerify(_a) {
-  var _this = this;
   var userId = _a.userId,
     methods = _a.methods,
     onVerificationSuccess = _a.onVerificationSuccess,
@@ -233,20 +229,20 @@ function MFAVerify(_a) {
   /**
    * Handle method selection
    */
-  var handleMethodChange = (0, react_1.useCallback)(function (method) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), {
+  var handleMethodChange = (0, react_1.useCallback)((method) => {
+    setState((prev) =>
+      __assign(__assign({}, prev), {
         selectedMethod: method,
         token: "",
         showBackupCodeInput: method === "backup",
-      });
-    });
+      }),
+    );
   }, []);
   /**
    * Handle token input change with validation
    */
   var handleTokenChange = (0, react_1.useCallback)(
-    function (value) {
+    (value) => {
       // Format token based on method
       var formattedValue = value;
       if (state.selectedMethod === "backup") {
@@ -270,9 +266,7 @@ function MFAVerify(_a) {
         // TOTP/SMS: only digits, max 6 characters
         formattedValue = value.replace(/\D/g, "").slice(0, 6);
       }
-      setState(function (prev) {
-        return __assign(__assign({}, prev), { token: formattedValue });
-      });
+      setState((prev) => __assign(__assign({}, prev), { token: formattedValue }));
     },
     [state.selectedMethod],
   );
@@ -280,10 +274,10 @@ function MFAVerify(_a) {
    * Send SMS OTP
    */
   var handleSendSMS = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var err_1, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -291,15 +285,15 @@ function MFAVerify(_a) {
             case 1:
               _a.sent();
               // Start countdown
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   smsCountdown: SMS_RESEND_COOLDOWN,
                   canResendSMS: false,
-                });
-              });
+                }),
+              );
               // Start countdown timer
-              smsTimerRef.current = setInterval(function () {
-                setState(function (prev) {
+              smsTimerRef.current = setInterval(() => {
+                setState((prev) => {
                   if (prev.smsCountdown <= 1) {
                     return __assign(__assign({}, prev), { smsCountdown: 0, canResendSMS: true });
                   }
@@ -324,19 +318,18 @@ function MFAVerify(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [sendSMSOTP, t],
   );
   /**
    * Verify MFA token
    */
   var handleVerify = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var cleanToken, result_1, _a, _b, err_2, error_2;
         var _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               if (!state.token.trim()) {
@@ -347,9 +340,7 @@ function MFAVerify(_a) {
                 });
                 return [2 /*return*/];
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isVerifying: true });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isVerifying: true }));
               _d.label = 1;
             case 1:
               _d.trys.push([1, 7, 8, 9]);
@@ -378,12 +369,12 @@ function MFAVerify(_a) {
             case 6:
               result_1 = _d.sent();
               // Update remaining attempts
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   remainingAttempts: result_1.remainingAttempts,
                   lockedUntil: result_1.lockedUntil,
-                });
-              });
+                }),
+              );
               if (result_1.isValid) {
                 onVerificationSuccess(result_1);
                 (0, use_toast_1.toast)({
@@ -394,9 +385,9 @@ function MFAVerify(_a) {
                 });
               } else if (result_1.lockedUntil) {
                 // Handle account lockout
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), { lockedUntil: result_1.lockedUntil });
-                });
+                setState((prev) =>
+                  __assign(__assign({}, prev), { lockedUntil: result_1.lockedUntil }),
+                );
                 (0, use_toast_1.toast)({
                   title: t.errors.accountLocked,
                   description: t.errors.accountLockedDescription.replace(
@@ -428,16 +419,13 @@ function MFAVerify(_a) {
               });
               return [3 /*break*/, 9];
             case 8:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isVerifying: false });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isVerifying: false }));
               return [7 /*endfinally*/];
             case 9:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       state.token,
       state.selectedMethod,
@@ -454,11 +442,11 @@ function MFAVerify(_a) {
    * Handle emergency bypass request
    */
   var handleEmergencyBypass = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var result, _a, err_3, error_3;
         var _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               if (!state.emergencyReason.trim()) {
@@ -469,9 +457,7 @@ function MFAVerify(_a) {
                 });
                 return [2 /*return*/];
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isVerifying: true });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isVerifying: true }));
               _c.label = 1;
             case 1:
               _c.trys.push([1, 4, 5, 6]);
@@ -517,30 +503,24 @@ function MFAVerify(_a) {
               });
               return [3 /*break*/, 6];
             case 5:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isVerifying: false });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isVerifying: false }));
               return [7 /*endfinally*/];
             case 6:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state.emergencyReason, userId, verifyMFA, onVerificationSuccess, t],
   );
   /**
    * Check if token is valid format
    */
-  var isValidTokenFormat = (0, react_1.useCallback)(
-    function () {
-      if (state.selectedMethod === "backup") {
-        return state.token.replace(/-/g, "").length === 10;
-      }
-      return state.token.length === 6;
-    },
-    [state.token, state.selectedMethod],
-  );
+  var isValidTokenFormat = (0, react_1.useCallback)(() => {
+    if (state.selectedMethod === "backup") {
+      return state.token.replace(/-/g, "").length === 10;
+    }
+    return state.token.length === 6;
+  }, [state.token, state.selectedMethod]);
   /**
    * Check if account is currently locked
    */
@@ -552,46 +532,41 @@ function MFAVerify(_a) {
     ? Math.max(0, Math.ceil((state.lockedUntil.getTime() - Date.now()) / 1000))
     : 0;
   // Setup lockout timer
-  (0, react_1.useEffect)(
-    function () {
-      if (state.lockedUntil && new Date() < state.lockedUntil) {
-        lockoutTimerRef.current = setInterval(function () {
-          setState(function (prev) {
-            if (!prev.lockedUntil || new Date() >= prev.lockedUntil) {
-              return __assign(__assign({}, prev), { lockedUntil: undefined });
-            }
-            return prev;
-          });
-        }, LOCKOUT_CHECK_INTERVAL);
-        return function () {
-          if (lockoutTimerRef.current) {
-            clearInterval(lockoutTimerRef.current);
+  (0, react_1.useEffect)(() => {
+    if (state.lockedUntil && new Date() < state.lockedUntil) {
+      lockoutTimerRef.current = setInterval(() => {
+        setState((prev) => {
+          if (!prev.lockedUntil || new Date() >= prev.lockedUntil) {
+            return __assign(__assign({}, prev), { lockedUntil: undefined });
           }
-        };
-      }
-    },
-    [state.lockedUntil],
-  );
+          return prev;
+        });
+      }, LOCKOUT_CHECK_INTERVAL);
+      return () => {
+        if (lockoutTimerRef.current) {
+          clearInterval(lockoutTimerRef.current);
+        }
+      };
+    }
+  }, [state.lockedUntil]);
   // Cleanup timers on unmount
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       if (smsTimerRef.current) {
         clearInterval(smsTimerRef.current);
       }
       if (lockoutTimerRef.current) {
         clearInterval(lockoutTimerRef.current);
       }
-    };
-  }, []);
-  // Auto-send SMS if it's the only method available
-  (0, react_1.useEffect)(
-    function () {
-      if (methods.length === 1 && methods[0] === "sms" && state.canResendSMS) {
-        handleSendSMS();
-      }
     },
-    [methods, state.canResendSMS, handleSendSMS],
+    [],
   );
+  // Auto-send SMS if it's the only method available
+  (0, react_1.useEffect)(() => {
+    if (methods.length === 1 && methods[0] === "sms" && state.canResendSMS) {
+      handleSendSMS();
+    }
+  }, [methods, state.canResendSMS, handleSendSMS]);
   return (
     <div className={(0, utils_1.cn)("w-full max-w-md mx-auto", className)}>
       {/* Header */}
@@ -694,9 +669,7 @@ function MFAVerify(_a) {
                     pattern="[0-9]*"
                     placeholder="123456"
                     value={state.token}
-                    onChange={function (e) {
-                      return handleTokenChange(e.target.value);
-                    }}
+                    onChange={(e) => handleTokenChange(e.target.value)}
                     className="text-center text-2xl font-mono tracking-widest"
                     maxLength={6}
                     disabled={isAccountLocked || state.isVerifying}
@@ -739,9 +712,7 @@ function MFAVerify(_a) {
                     pattern="[0-9]*"
                     placeholder="123456"
                     value={state.token}
-                    onChange={function (e) {
-                      return handleTokenChange(e.target.value);
-                    }}
+                    onChange={(e) => handleTokenChange(e.target.value)}
                     className="text-center text-2xl font-mono tracking-widest"
                     maxLength={6}
                     disabled={isAccountLocked || state.isVerifying}
@@ -767,9 +738,7 @@ function MFAVerify(_a) {
                     type="text"
                     placeholder="XXXX-XXXX-XX"
                     value={state.token}
-                    onChange={function (e) {
-                      return handleTokenChange(e.target.value);
-                    }}
+                    onChange={(e) => handleTokenChange(e.target.value)}
                     className="text-center text-xl font-mono tracking-widest"
                     disabled={isAccountLocked || state.isVerifying}
                   />
@@ -784,11 +753,9 @@ function MFAVerify(_a) {
                 <checkbox_1.Checkbox
                   id="trustDevice"
                   checked={state.trustDevice}
-                  onCheckedChange={function (checked) {
-                    return setState(function (prev) {
-                      return __assign(__assign({}, prev), { trustDevice: !!checked });
-                    });
-                  }}
+                  onCheckedChange={(checked) =>
+                    setState((prev) => __assign(__assign({}, prev), { trustDevice: !!checked }))
+                  }
                 />
                 <div className="space-y-1">
                   <label_1.Label htmlFor="trustDevice" className="text-sm font-medium">
@@ -824,11 +791,11 @@ function MFAVerify(_a) {
                   ? <button_1.Button
                       variant="ghost"
                       size="sm"
-                      onClick={function () {
-                        return setState(function (prev) {
-                          return __assign(__assign({}, prev), { showEmergencyBypass: true });
-                        });
-                      }}
+                      onClick={() =>
+                        setState((prev) =>
+                          __assign(__assign({}, prev), { showEmergencyBypass: true }),
+                        )
+                      }
                       className="w-full text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
                       <lucide_react_1.Zap className="h-4 w-4 mr-2" />
@@ -849,13 +816,13 @@ function MFAVerify(_a) {
                           type="text"
                           placeholder={t.emergency.reasonPlaceholder}
                           value={state.emergencyReason}
-                          onChange={function (e) {
-                            return setState(function (prev) {
-                              return __assign(__assign({}, prev), {
+                          onChange={(e) =>
+                            setState((prev) =>
+                              __assign(__assign({}, prev), {
                                 emergencyReason: e.target.value,
-                              });
-                            });
-                          }}
+                              }),
+                            )
+                          }
                           maxLength={200}
                         />
                         <p className="text-xs text-gray-500">{t.emergency.reasonHelp}</p>
@@ -865,14 +832,14 @@ function MFAVerify(_a) {
                         <button_1.Button
                           variant="outline"
                           size="sm"
-                          onClick={function () {
-                            return setState(function (prev) {
-                              return __assign(__assign({}, prev), {
+                          onClick={() =>
+                            setState((prev) =>
+                              __assign(__assign({}, prev), {
                                 showEmergencyBypass: false,
                                 emergencyReason: "",
-                              });
-                            });
-                          }}
+                              }),
+                            )
+                          }
                           className="flex-1"
                         >
                           {t.buttons.cancel}
@@ -910,7 +877,7 @@ function MFAVerify(_a) {
  */
 function getUserIpAddress() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         return [2 /*return*/, "0.0.0.0"];
       } catch (_b) {
@@ -923,7 +890,7 @@ function getUserIpAddress() {
 function getDeviceFingerprint() {
   return __awaiter(this, void 0, void 0, function () {
     var fingerprint, encoder, data, hashBuffer, hashArray;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           fingerprint = {
@@ -939,14 +906,7 @@ function getDeviceFingerprint() {
         case 1:
           hashBuffer = _a.sent();
           hashArray = Array.from(new Uint8Array(hashBuffer));
-          return [
-            2 /*return*/,
-            hashArray
-              .map(function (b) {
-                return b.toString(16).padStart(2, "0");
-              })
-              .join(""),
-          ];
+          return [2 /*return*/, hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")];
       }
     });
   });

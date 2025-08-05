@@ -1,13 +1,13 @@
 // API Routes for Intelligent Threshold Management
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
+import type { NextRequest, NextResponse } from "next/server";
+import type { z } from "zod";
 import type { IntelligentThresholdService } from "@/app/lib/services/intelligent-threshold-service";
 import type {
   createReorderThresholdSchema,
   updateReorderThresholdSchema,
 } from "@/app/lib/validations/reorder-alerts";
-import type { NextRequest, NextResponse } from "next/server";
-import type { z } from "zod";
 
 const thresholdService = new IntelligentThresholdService();
 

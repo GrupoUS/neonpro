@@ -1,33 +1,36 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { addDays, differenceInDays, format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 import type {
-  Calendar,
-  FileText,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  Plus,
-  Edit,
-  Trash2,
-  Download,
-  Upload,
-  Search,
-  Filter,
-  Play,
-  Pause,
-  RotateCcw,
-  Target,
   Activity,
-  Users,
-  Clipboard,
-  Timer,
-  TrendingUp,
-  Award,
+  AlertCircle,
   AlertTriangle,
+  Award,
+  Calendar,
+  CheckCircle,
+  Clipboard,
+  Clock,
+  Download,
+  Edit,
+  FileText,
+  Filter,
+  Pause,
+  Play,
+  Plus,
+  RotateCcw,
+  Search,
+  Target,
+  Timer,
+  Trash2,
+  TrendingUp,
+  Upload,
+  Users,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
 import type {
   Card,
   CardContent,
@@ -35,8 +38,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Dialog,
   DialogContent,
@@ -45,8 +47,9 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -54,11 +57,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Progress } from "@/components/ui/progress";
-import type { toast } from "sonner";
-import type { format, addDays, differenceInDays } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Treatment Plan Types based on FHIR R4 and existing schema
 interface TreatmentPlan {

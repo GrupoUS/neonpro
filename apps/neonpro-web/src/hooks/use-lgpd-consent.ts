@@ -1,4 +1,4 @@
-import type { useState, useCallback } from "react";
+import type { useCallback, useState } from "react";
 import type { toast } from "sonner";
 
 interface LgpdConsentData {

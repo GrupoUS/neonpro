@@ -1,6 +1,6 @@
 import type { z } from "zod";
-import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/logger";
+import type { createClient } from "@/lib/supabase/client";
 
 // Types and Schemas
 export const KPIDefinitionSchema = z.object({

@@ -4,8 +4,8 @@
  */
 
 import type { Twilio } from "twilio";
-import type { NOTIFICATION_CONFIG } from "./config";
 import type { z } from "zod";
+import type { NOTIFICATION_CONFIG } from "./config";
 
 const client = new Twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 

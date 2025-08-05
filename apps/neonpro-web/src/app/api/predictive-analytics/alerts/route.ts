@@ -1,6 +1,6 @@
+import type { NextRequest, NextResponse } from "next/server";
 import type { PredictiveAnalyticsService } from "@/app/lib/services/predictive-analytics";
 import type { createAlertSchema } from "@/app/lib/validations/predictive-analytics";
-import type { NextRequest, NextResponse } from "next/server";
 
 const service = new PredictiveAnalyticsService();
 

@@ -1,11 +1,11 @@
 // Story 10.2: Progress Tracking through Computer Vision - Multi-Session Analysis API
 // API endpoint for creating and managing multi-session analyses
 
+import type { cookies } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import type { progressTrackingService } from "@/app/lib/services/progress-tracking";
 import type { createMultiSessionAnalysisRequestSchema } from "@/app/lib/validations/progress-tracking";
-import type { cookies } from "next/headers";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {

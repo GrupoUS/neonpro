@@ -9,11 +9,11 @@
  */
 
 import type {
-  ComplicationDetectionConfig,
-  ModelConfig,
-  EmergencyContact,
   AlertLevel,
   ComplicationCategory,
+  ComplicationDetectionConfig,
+  EmergencyContact,
+  ModelConfig,
   NotificationTarget,
 } from "./types";
 

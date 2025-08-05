@@ -1,18 +1,17 @@
-"use strict";
 // Analytics Export Service - STORY-SUB-002 Task 7
 // Created: 2025-01-22
 // High-performance export service with PDF, Excel, and CSV generation
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createanalyticsExportService = exports.AnalyticsExportService = void 0;
 var jspdf_1 = require("jspdf");
@@ -144,7 +141,7 @@ var server_1 = require("@/lib/supabase/server");
 // ============================================================================
 // EXPORT SERVICE CLASS
 // ============================================================================
-var AnalyticsExportService = /** @class */ (function () {
+var AnalyticsExportService = /** @class */ (() => {
   function AnalyticsExportService() {
     this.analyticsService = new service_1.AnalyticsService();
     this.supabase = (0, server_1.createClient)();
@@ -624,12 +621,7 @@ var AnalyticsExportService = /** @class */ (function () {
       });
     });
   };
-  AnalyticsExportService.prototype.addRevenueSectionToPDF = function (
-    doc,
-    revenue,
-    options,
-    startY,
-  ) {
+  AnalyticsExportService.prototype.addRevenueSectionToPDF = (doc, revenue, options, startY) => {
     var yPosition = startY;
     doc.setFontSize(14);
     doc.setTextColor(options.styling.primaryColor);
@@ -667,12 +659,12 @@ var AnalyticsExportService = /** @class */ (function () {
     }
     return yPosition;
   };
-  AnalyticsExportService.prototype.addConversionSectionToPDF = function (
+  AnalyticsExportService.prototype.addConversionSectionToPDF = (
     doc,
     conversion,
     options,
     startY,
-  ) {
+  ) => {
     var yPosition = startY;
     doc.setFontSize(14);
     doc.setTextColor(options.styling.primaryColor);
@@ -698,12 +690,7 @@ var AnalyticsExportService = /** @class */ (function () {
     }
     return yPosition;
   };
-  AnalyticsExportService.prototype.addCohortSectionToPDF = function (
-    doc,
-    cohorts,
-    options,
-    startY,
-  ) {
+  AnalyticsExportService.prototype.addCohortSectionToPDF = (doc, cohorts, options, startY) => {
     var yPosition = startY;
     doc.setFontSize(14);
     doc.setTextColor(options.styling.primaryColor);
@@ -711,7 +698,7 @@ var AnalyticsExportService = /** @class */ (function () {
     yPosition += 10;
     doc.setFontSize(10);
     doc.setTextColor("#333333");
-    cohorts.slice(0, 5).forEach(function (cohort, index) {
+    cohorts.slice(0, 5).forEach((cohort, index) => {
       doc.text(
         "Cohort "
           .concat(cohort.period, ": ")
@@ -724,7 +711,7 @@ var AnalyticsExportService = /** @class */ (function () {
     });
     return yPosition + 10;
   };
-  AnalyticsExportService.prototype.getXPosition = function (alignment, doc) {
+  AnalyticsExportService.prototype.getXPosition = (alignment, doc) => {
     var pageWidth = doc.internal.pageSize.width;
     var margins = 20; // Default margin
     switch (alignment) {
@@ -795,7 +782,7 @@ var AnalyticsExportService = /** @class */ (function () {
         // Apply formatting if enabled
         if (options.formatting.autoWidth) {
           // Auto-width columns (simplified implementation)
-          Object.keys(workbook.Sheets).forEach(function (sheetName) {
+          Object.keys(workbook.Sheets).forEach((sheetName) => {
             var sheet = workbook.Sheets[sheetName];
             var range = XLSX.utils.decode_range(sheet["!ref"] || "A1");
             var colWidths = [];
@@ -868,7 +855,7 @@ var AnalyticsExportService = /** @class */ (function () {
       });
     });
   };
-  AnalyticsExportService.prototype.generateRevenueCSV = function (revenue, options) {
+  AnalyticsExportService.prototype.generateRevenueCSV = (revenue, options) => {
     var csv = "";
     if (options.includeHeaders) {
       csv += ["Metric", "Total", "Average", "Growth", "Period"].join(options.delimiter) + "\n";
@@ -905,7 +892,7 @@ var AnalyticsExportService = /** @class */ (function () {
     }
     return csv;
   };
-  AnalyticsExportService.prototype.generateConversionCSV = function (conversion, options) {
+  AnalyticsExportService.prototype.generateConversionCSV = (conversion, options) => {
     var csv = "";
     if (options.includeHeaders) {
       csv += ["Metric", "Rate", "Total", "Growth"].join(options.delimiter) + "\n";
@@ -930,14 +917,14 @@ var AnalyticsExportService = /** @class */ (function () {
     }
     return csv;
   };
-  AnalyticsExportService.prototype.generateCohortCSV = function (cohorts, options) {
+  AnalyticsExportService.prototype.generateCohortCSV = (cohorts, options) => {
     var csv = "";
     if (options.includeHeaders) {
       csv +=
         ["Cohort ID", "Period", "Size", "Churn Rate", "Revenue Per User"].join(options.delimiter) +
         "\n";
     }
-    cohorts.forEach(function (cohort) {
+    cohorts.forEach((cohort) => {
       csv +=
         [
           cohort.cohortId,
@@ -965,22 +952,19 @@ var AnalyticsExportService = /** @class */ (function () {
     }
     return csv;
   };
-  AnalyticsExportService.prototype.generateGenericCSV = function (data, options) {
-    return JSON.stringify(data, null, 2);
-  };
+  AnalyticsExportService.prototype.generateGenericCSV = (data, options) =>
+    JSON.stringify(data, null, 2);
   // ========================================================================
   // UTILITY METHODS
   // ========================================================================
-  AnalyticsExportService.prototype.prepareSummaryData = function (data, config) {
-    return [
-      { Metric: "Report Type", Value: config.reportType },
-      { Metric: "Generated At", Value: data.metadata.generatedAt.toISOString() },
-      { Metric: "Total Records", Value: data.metadata.totalRecords },
-      { Metric: "Query Time (ms)", Value: data.metadata.queryExecutionTime },
-      { Metric: "Data Freshness", Value: data.metadata.dataFreshness.toISOString() },
-    ];
-  };
-  AnalyticsExportService.prototype.prepareRevenueData = function (revenue) {
+  AnalyticsExportService.prototype.prepareSummaryData = (data, config) => [
+    { Metric: "Report Type", Value: config.reportType },
+    { Metric: "Generated At", Value: data.metadata.generatedAt.toISOString() },
+    { Metric: "Total Records", Value: data.metadata.totalRecords },
+    { Metric: "Query Time (ms)", Value: data.metadata.queryExecutionTime },
+    { Metric: "Data Freshness", Value: data.metadata.dataFreshness.toISOString() },
+  ];
+  AnalyticsExportService.prototype.prepareRevenueData = (revenue) => {
     var data = [];
     if (revenue.mrr) {
       data.push({
@@ -1000,7 +984,7 @@ var AnalyticsExportService = /** @class */ (function () {
     }
     return data;
   };
-  AnalyticsExportService.prototype.prepareConversionData = function (conversion) {
+  AnalyticsExportService.prototype.prepareConversionData = (conversion) => {
     var data = [];
     if (conversion.trialToPayment) {
       data.push({
@@ -1011,19 +995,16 @@ var AnalyticsExportService = /** @class */ (function () {
     }
     return data;
   };
-  AnalyticsExportService.prototype.prepareCohortData = function (cohorts) {
-    return cohorts.map(function (cohort) {
-      return {
-        "Cohort ID": cohort.cohortId,
-        Period: cohort.period,
-        Size: cohort.size,
-        "Churn Rate": cohort.churnRate,
-        "Revenue Per User": cohort.revenuePerUser[0] || 0,
-      };
-    });
-  };
-  AnalyticsExportService.prototype.prepareForecastData = function (forecasts) {
-    return forecasts.map(function (forecast, index) {
+  AnalyticsExportService.prototype.prepareCohortData = (cohorts) =>
+    cohorts.map((cohort) => ({
+      "Cohort ID": cohort.cohortId,
+      Period: cohort.period,
+      Size: cohort.size,
+      "Churn Rate": cohort.churnRate,
+      "Revenue Per User": cohort.revenuePerUser[0] || 0,
+    }));
+  AnalyticsExportService.prototype.prepareForecastData = (forecasts) =>
+    forecasts.map((forecast, index) => {
       var _a, _b;
       return {
         Period: index + 1,
@@ -1032,8 +1013,7 @@ var AnalyticsExportService = /** @class */ (function () {
         Accuracy: forecast.accuracy || 0,
       };
     });
-  };
-  AnalyticsExportService.prototype.calculateTotalRecords = function (data) {
+  AnalyticsExportService.prototype.calculateTotalRecords = (data) => {
     var total = 0;
     if (data.cohorts) total += data.cohorts.length;
     if (data.forecasts) total += data.forecasts.length;
@@ -1098,7 +1078,7 @@ var AnalyticsExportService = /** @class */ (function () {
   };
   AnalyticsExportService.prototype.sendCompletionNotification = function (email, response) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would depend on your email service
         // This is a placeholder for the notification system
         console.log(
@@ -1140,7 +1120,5 @@ var AnalyticsExportService = /** @class */ (function () {
 })();
 exports.AnalyticsExportService = AnalyticsExportService;
 // Export singleton instance
-var createanalyticsExportService = function () {
-  return new AnalyticsExportService();
-};
+var createanalyticsExportService = () => new AnalyticsExportService();
 exports.createanalyticsExportService = createanalyticsExportService;

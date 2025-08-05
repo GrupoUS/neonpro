@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🎯 NeonPro Connection Pool Manager
  * Task 1.3 - CONNECTION POOLING OPTIMIZATION
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,7 +156,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getConnectionPoolManager = exports.NeonProConnectionPoolManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -199,7 +196,7 @@ var HEALTHCARE_POOL_CONFIGS = {
     healthCheckInterval: 30000, // 30 seconds
   },
 };
-var NeonProConnectionPoolManager = /** @class */ (function () {
+var NeonProConnectionPoolManager = /** @class */ (() => {
   function NeonProConnectionPoolManager(clinicSize) {
     if (clinicSize === void 0) {
       clinicSize = "medium";
@@ -213,7 +210,7 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
   /**
    * Singleton instance with clinic size optimization
    */
-  NeonProConnectionPoolManager.getInstance = function (clinicSize) {
+  NeonProConnectionPoolManager.getInstance = (clinicSize) => {
     if (!NeonProConnectionPoolManager.instance) {
       NeonProConnectionPoolManager.instance = new NeonProConnectionPoolManager(clinicSize);
     }
@@ -247,17 +244,12 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             poolKey = "server_".concat(clinicId);
-            if (!!this.pools.has(poolKey)) return [3 /*break*/, 7];
+            if (this.pools.has(poolKey)) return [3 /*break*/, 7];
             if (!(typeof window === "undefined")) return [3 /*break*/, 6];
             _a.label = 1;
           case 1:
             _a.trys.push([1, 4, , 5]);
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("next/headers");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("next/headers"))];
           case 2:
             cookies = _a.sent().cookies;
             return [4 /*yield*/, cookies()];
@@ -268,20 +260,20 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
               process.env.SUPABASE_ANON_KEY,
               {
                 cookies: {
-                  get: function (name) {
+                  get: (name) => {
                     var _a;
                     return (_a = cookieStore_1.get(name)) === null || _a === void 0
                       ? void 0
                       : _a.value;
                   },
-                  set: function (name, value, options) {
+                  set: (name, value, options) => {
                     try {
                       cookieStore_1.set(__assign({ name: name, value: value }, options));
                     } catch (error) {
                       console.warn("Cookie set error in server pooling:", error);
                     }
                   },
-                  remove: function (name, options) {
+                  remove: (name, options) => {
                     try {
                       cookieStore_1.set(__assign({ name: name, value: "" }, options));
                     } catch (error) {
@@ -363,7 +355,7 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
   /**
    * Build connection string with healthcare optimizations
    */
-  NeonProConnectionPoolManager.prototype.buildConnectionString = function (operationType) {
+  NeonProConnectionPoolManager.prototype.buildConnectionString = (operationType) => {
     var baseUrl = process.env.SUPABASE_URL;
     // Use transaction mode (6543) for critical operations, session mode (5432) for standard
     var port = operationType === "critical" ? "6543" : "5432";
@@ -402,9 +394,8 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
    * Start continuous health monitoring
    */
   NeonProConnectionPoolManager.prototype.startHealthMonitoring = function () {
-    var _this = this;
-    this.monitoringInterval = setInterval(function () {
-      _this.performHealthChecks();
+    this.monitoringInterval = setInterval(() => {
+      this.performHealthChecks();
     }, this.config.healthCheckInterval);
   };
   /**
@@ -512,7 +503,7 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
   /**
    * Verify LGPD compliance for patient data protection
    */
-  NeonProConnectionPoolManager.prototype.verifyLGPDCompliance = function (poolKey) {
+  NeonProConnectionPoolManager.prototype.verifyLGPDCompliance = (poolKey) => {
     // Check if connection has proper patient data encryption
     // Verify multi-tenant isolation
     // Validate audit trail capabilities
@@ -521,7 +512,7 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
   /**
    * Verify ANVISA compliance for medical device software
    */
-  NeonProConnectionPoolManager.prototype.verifyANVISACompliance = function (poolKey) {
+  NeonProConnectionPoolManager.prototype.verifyANVISACompliance = (poolKey) => {
     // Check medical device software standards
     // Verify clinical data integrity
     // Validate safety monitoring
@@ -530,7 +521,7 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
   /**
    * Verify CFM compliance for telemedicine
    */
-  NeonProConnectionPoolManager.prototype.verifyCFMCompliance = function (poolKey) {
+  NeonProConnectionPoolManager.prototype.verifyCFMCompliance = (poolKey) => {
     // Check telemedicine interface compliance
     // Verify professional access controls
     // Validate clinical workflow standards
@@ -633,16 +624,14 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
           case 0:
             _loop_1 = function (attempt) {
               var backoffTime_1, clinicId, operationType, newClient, error_3;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     _b.trys.push([0, 2, , 3]);
-                    backoffTime_1 = Math.pow(2, attempt) * 1000; // Exponential backoff
+                    backoffTime_1 = 2 ** attempt * 1000; // Exponential backoff
                     return [
                       4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, backoffTime_1);
-                      }),
+                      new Promise((resolve) => setTimeout(resolve, backoffTime_1)),
                       // Recreate the connection
                     ];
                   case 1:
@@ -733,7 +722,7 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
    */
   NeonProConnectionPoolManager.prototype.sendComplianceAlert = function (poolKey, healthCheck) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would integrate with alerting system
         // For now, log the alert
         console.error("🚨 HEALTHCARE COMPLIANCE ALERT", {
@@ -754,19 +743,14 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
    * Get comprehensive pool analytics for healthcare dashboard
    */
   NeonProConnectionPoolManager.prototype.getPoolAnalytics = function () {
-    var _this = this;
-    var pools = Array.from(this.pools.keys()).map(function (poolKey) {
-      return {
-        poolKey: poolKey,
-        health: _this.healthChecks.get(poolKey) || _this.getDefaultHealthCheck(),
-        metrics: _this.metrics.get(poolKey) || _this.getDefaultMetrics(),
-      };
-    });
-    var healthyPools = pools.filter(function (p) {
-      return p.health.status === "healthy";
-    }).length;
+    var pools = Array.from(this.pools.keys()).map((poolKey) => ({
+      poolKey: poolKey,
+      health: this.healthChecks.get(poolKey) || this.getDefaultHealthCheck(),
+      metrics: this.metrics.get(poolKey) || this.getDefaultMetrics(),
+    }));
+    var healthyPools = pools.filter((p) => p.health.status === "healthy").length;
     var complianceScore =
-      (pools.reduce(function (acc, p) {
+      (pools.reduce((acc, p) => {
         var compliant =
           p.health.compliance.lgpdCompliant &&
           p.health.compliance.anvisaCompliant &&
@@ -776,9 +760,7 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
         pools.length) *
       100;
     var avgResponseTime =
-      pools.reduce(function (acc, p) {
-        return acc + p.health.avgResponseTime;
-      }, 0) / pools.length;
+      pools.reduce((acc, p) => acc + p.health.avgResponseTime, 0) / pools.length;
     return {
       pools: pools,
       summary: {
@@ -789,31 +771,27 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
       },
     };
   };
-  NeonProConnectionPoolManager.prototype.getDefaultHealthCheck = function () {
-    return {
-      status: "unhealthy",
-      connectionCount: 0,
-      poolUtilization: 0,
-      avgResponseTime: -1,
-      lastHealthCheck: new Date(),
-      compliance: {
-        lgpdCompliant: false,
-        anvisaCompliant: false,
-        cfmCompliant: false,
-      },
-    };
-  };
-  NeonProConnectionPoolManager.prototype.getDefaultMetrics = function () {
-    return {
-      totalConnections: 0,
-      activeConnections: 0,
-      idleConnections: 0,
-      failedConnections: 0,
-      avgConnectionTime: 0,
-      peakUsage: 0,
-      clinicIsolationStatus: "violation",
-    };
-  };
+  NeonProConnectionPoolManager.prototype.getDefaultHealthCheck = () => ({
+    status: "unhealthy",
+    connectionCount: 0,
+    poolUtilization: 0,
+    avgResponseTime: -1,
+    lastHealthCheck: new Date(),
+    compliance: {
+      lgpdCompliant: false,
+      anvisaCompliant: false,
+      cfmCompliant: false,
+    },
+  });
+  NeonProConnectionPoolManager.prototype.getDefaultMetrics = () => ({
+    totalConnections: 0,
+    activeConnections: 0,
+    idleConnections: 0,
+    failedConnections: 0,
+    avgConnectionTime: 0,
+    peakUsage: 0,
+    clinicIsolationStatus: "violation",
+  });
   /**
    * Cleanup on shutdown
    */
@@ -835,7 +813,5 @@ var NeonProConnectionPoolManager = /** @class */ (function () {
 })();
 exports.NeonProConnectionPoolManager = NeonProConnectionPoolManager;
 // Export singleton factory
-var getConnectionPoolManager = function (clinicSize) {
-  return NeonProConnectionPoolManager.getInstance(clinicSize);
-};
+var getConnectionPoolManager = (clinicSize) => NeonProConnectionPoolManager.getInstance(clinicSize);
 exports.getConnectionPoolManager = getConnectionPoolManager;

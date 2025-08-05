@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Executive Dashboard Component Tests
  * Story 7.1: Executive Dashboard Implementation
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,20 +134,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var react_query_1 = require("@tanstack/react-query");
@@ -159,171 +155,145 @@ var executive_dashboard_1 = require("@/components/dashboard/executive-dashboard"
 var mockFetch = jest.fn();
 global.fetch = mockFetch;
 // Mock chart components
-jest.mock("recharts", function () {
-  return {
-    LineChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="line-chart">{children}</div>;
-    },
-    Line: function () {
-      return <div data-testid="line" />;
-    },
-    XAxis: function () {
-      return <div data-testid="x-axis" />;
-    },
-    YAxis: function () {
-      return <div data-testid="y-axis" />;
-    },
-    CartesianGrid: function () {
-      return <div data-testid="cartesian-grid" />;
-    },
-    Tooltip: function () {
-      return <div data-testid="tooltip" />;
-    },
-    Legend: function () {
-      return <div data-testid="legend" />;
-    },
-    BarChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="bar-chart">{children}</div>;
-    },
-    Bar: function () {
-      return <div data-testid="bar" />;
-    },
-    ResponsiveContainer: function (_a) {
-      var children = _a.children;
-      return <div data-testid="responsive-container">{children}</div>;
-    },
-  };
-});
+jest.mock("recharts", () => ({
+  LineChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="line-chart">{children}</div>;
+  },
+  Line: () => <div data-testid="line" />,
+  XAxis: () => <div data-testid="x-axis" />,
+  YAxis: () => <div data-testid="y-axis" />,
+  CartesianGrid: () => <div data-testid="cartesian-grid" />,
+  Tooltip: () => <div data-testid="tooltip" />,
+  Legend: () => <div data-testid="legend" />,
+  BarChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="bar-chart">{children}</div>;
+  },
+  Bar: () => <div data-testid="bar" />,
+  ResponsiveContainer: (_a) => {
+    var children = _a.children;
+    return <div data-testid="responsive-container">{children}</div>;
+  },
+}));
 // Mock shadcn/ui components
-jest.mock("@/components/ui/card", function () {
-  return {
-    Card: function (_a) {
-      var children = _a.children,
-        className = _a.className,
-        props = __rest(_a, ["children", "className"]);
-      return (
-        <div data-testid="card" className={className} {...props}>
-          {children}
-        </div>
-      );
-    },
-    CardContent: function (_a) {
-      var children = _a.children,
-        className = _a.className,
-        props = __rest(_a, ["children", "className"]);
-      return (
-        <div data-testid="card-content" className={className} {...props}>
-          {children}
-        </div>
-      );
-    },
-    CardDescription: function (_a) {
-      var children = _a.children,
-        className = _a.className,
-        props = __rest(_a, ["children", "className"]);
-      return (
-        <div data-testid="card-description" className={className} {...props}>
-          {children}
-        </div>
-      );
-    },
-    CardHeader: function (_a) {
-      var children = _a.children,
-        className = _a.className,
-        props = __rest(_a, ["children", "className"]);
-      return (
-        <div data-testid="card-header" className={className} {...props}>
-          {children}
-        </div>
-      );
-    },
-    CardTitle: function (_a) {
-      var children = _a.children,
-        className = _a.className,
-        props = __rest(_a, ["children", "className"]);
-      return (
-        <div data-testid="card-title" className={className} {...props}>
-          {children}
-        </div>
-      );
-    },
-  };
-});
-jest.mock("@/components/ui/button", function () {
-  return {
-    Button: function (_a) {
-      var children = _a.children,
-        onClick = _a.onClick,
-        props = __rest(_a, ["children", "onClick"]);
-      return (
-        <button data-testid="button" onClick={onClick} {...props}>
-          {children}
-        </button>
-      );
-    },
-  };
-});
-jest.mock("@/components/ui/select", function () {
-  return {
-    Select: function (_a) {
-      var children = _a.children;
-      return <div data-testid="select">{children}</div>;
-    },
-    SelectContent: function (_a) {
-      var children = _a.children;
-      return <div data-testid="select-content">{children}</div>;
-    },
-    SelectItem: function (_a) {
-      var children = _a.children,
-        value = _a.value;
-      return (
-        <div data-testid="select-item" data-value={value}>
-          {children}
-        </div>
-      );
-    },
-    SelectTrigger: function (_a) {
-      var children = _a.children;
-      return <div data-testid="select-trigger">{children}</div>;
-    },
-    SelectValue: function (_a) {
-      var placeholder = _a.placeholder;
-      return <div data-testid="select-value">{placeholder}</div>;
-    },
-  };
-});
-jest.mock("@/components/ui/alert", function () {
-  return {
-    Alert: function (_a) {
-      var children = _a.children;
-      return <div data-testid="alert">{children}</div>;
-    },
-    AlertDescription: function (_a) {
-      var children = _a.children;
-      return <div data-testid="alert-description">{children}</div>;
-    },
-    AlertTitle: function (_a) {
-      var children = _a.children;
-      return <div data-testid="alert-title">{children}</div>;
-    },
-  };
-});
-jest.mock("@/components/ui/badge", function () {
-  return {
-    Badge: function (_a) {
-      var children = _a.children,
-        variant = _a.variant;
-      return (
-        <span data-testid="badge" data-variant={variant}>
-          {children}
-        </span>
-      );
-    },
-  };
-});
-var TestWrapper = function (_a) {
+jest.mock("@/components/ui/card", () => ({
+  Card: (_a) => {
+    var children = _a.children,
+      className = _a.className,
+      props = __rest(_a, ["children", "className"]);
+    return (
+      <div data-testid="card" className={className} {...props}>
+        {children}
+      </div>
+    );
+  },
+  CardContent: (_a) => {
+    var children = _a.children,
+      className = _a.className,
+      props = __rest(_a, ["children", "className"]);
+    return (
+      <div data-testid="card-content" className={className} {...props}>
+        {children}
+      </div>
+    );
+  },
+  CardDescription: (_a) => {
+    var children = _a.children,
+      className = _a.className,
+      props = __rest(_a, ["children", "className"]);
+    return (
+      <div data-testid="card-description" className={className} {...props}>
+        {children}
+      </div>
+    );
+  },
+  CardHeader: (_a) => {
+    var children = _a.children,
+      className = _a.className,
+      props = __rest(_a, ["children", "className"]);
+    return (
+      <div data-testid="card-header" className={className} {...props}>
+        {children}
+      </div>
+    );
+  },
+  CardTitle: (_a) => {
+    var children = _a.children,
+      className = _a.className,
+      props = __rest(_a, ["children", "className"]);
+    return (
+      <div data-testid="card-title" className={className} {...props}>
+        {children}
+      </div>
+    );
+  },
+}));
+jest.mock("@/components/ui/button", () => ({
+  Button: (_a) => {
+    var children = _a.children,
+      onClick = _a.onClick,
+      props = __rest(_a, ["children", "onClick"]);
+    return (
+      <button data-testid="button" onClick={onClick} {...props}>
+        {children}
+      </button>
+    );
+  },
+}));
+jest.mock("@/components/ui/select", () => ({
+  Select: (_a) => {
+    var children = _a.children;
+    return <div data-testid="select">{children}</div>;
+  },
+  SelectContent: (_a) => {
+    var children = _a.children;
+    return <div data-testid="select-content">{children}</div>;
+  },
+  SelectItem: (_a) => {
+    var children = _a.children,
+      value = _a.value;
+    return (
+      <div data-testid="select-item" data-value={value}>
+        {children}
+      </div>
+    );
+  },
+  SelectTrigger: (_a) => {
+    var children = _a.children;
+    return <div data-testid="select-trigger">{children}</div>;
+  },
+  SelectValue: (_a) => {
+    var placeholder = _a.placeholder;
+    return <div data-testid="select-value">{placeholder}</div>;
+  },
+}));
+jest.mock("@/components/ui/alert", () => ({
+  Alert: (_a) => {
+    var children = _a.children;
+    return <div data-testid="alert">{children}</div>;
+  },
+  AlertDescription: (_a) => {
+    var children = _a.children;
+    return <div data-testid="alert-description">{children}</div>;
+  },
+  AlertTitle: (_a) => {
+    var children = _a.children;
+    return <div data-testid="alert-title">{children}</div>;
+  },
+}));
+jest.mock("@/components/ui/badge", () => ({
+  Badge: (_a) => {
+    var children = _a.children,
+      variant = _a.variant;
+    return (
+      <span data-testid="badge" data-variant={variant}>
+        {children}
+      </span>
+    );
+  },
+}));
+var TestWrapper = (_a) => {
   var children = _a.children;
   var queryClient = new react_query_1.QueryClient({
     defaultOptions: {
@@ -338,20 +308,20 @@ var TestWrapper = function (_a) {
     </react_query_1.QueryClientProvider>
   );
 };
-describe("ExecutiveDashboard Component", function () {
+describe("ExecutiveDashboard Component", () => {
   var mockProps = {
     clinicId: "clinic-1",
     userId: "user-1",
   };
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Mock successful API responses
-    mockFetch.mockImplementation(function (url) {
+    mockFetch.mockImplementation((url) => {
       if (url.includes("/api/executive-dashboard/kpis")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return Promise.resolve({
+          json: () =>
+            Promise.resolve({
               success: true,
               data: [
                 {
@@ -369,15 +339,14 @@ describe("ExecutiveDashboard Component", function () {
                   period_type: "monthly",
                 },
               ],
-            });
-          },
+            }),
         });
       }
       if (url.includes("/api/executive-dashboard/alerts")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return Promise.resolve({
+          json: () =>
+            Promise.resolve({
               success: true,
               data: [
                 {
@@ -389,15 +358,14 @@ describe("ExecutiveDashboard Component", function () {
                   is_active: true,
                 },
               ],
-            });
-          },
+            }),
         });
       }
       if (url.includes("/api/executive-dashboard/widgets")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return Promise.resolve({
+          json: () =>
+            Promise.resolve({
               success: true,
               data: [
                 {
@@ -410,15 +378,14 @@ describe("ExecutiveDashboard Component", function () {
                   configuration: { chart_type: "line" },
                 },
               ],
-            });
-          },
+            }),
         });
       }
       if (url.includes("/api/executive-dashboard/comparison")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return Promise.resolve({
+          json: () =>
+            Promise.resolve({
               success: true,
               data: {
                 total_revenue: {
@@ -428,19 +395,16 @@ describe("ExecutiveDashboard Component", function () {
                   changePercent: 8.28,
                 },
               },
-            });
-          },
+            }),
         });
       }
       return Promise.resolve({
         ok: true,
-        json: function () {
-          return Promise.resolve({ success: true, data: [] });
-        },
+        json: () => Promise.resolve({ success: true, data: [] }),
       });
     });
   });
-  it("should render dashboard with loading state initially", function () {
+  it("should render dashboard with loading state initially", () => {
     (0, react_1.render)(
       <TestWrapper>
         <executive_dashboard_1.ExecutiveDashboard {...mockProps} />
@@ -449,9 +413,9 @@ describe("ExecutiveDashboard Component", function () {
     expect(react_1.screen.getByText("Dashboard Executivo")).toBeInTheDocument();
     expect(react_1.screen.getByText("Carregando dados do dashboard...")).toBeInTheDocument();
   });
-  it("should render KPI cards after data loads", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  it("should render KPI cards after data loads", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -461,7 +425,7 @@ describe("ExecutiveDashboard Component", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Receita Total")).toBeInTheDocument();
                 expect(react_1.screen.getByText("R$ 85.000,00")).toBeInTheDocument();
                 expect(react_1.screen.getByText("Total de Consultas")).toBeInTheDocument();
@@ -473,11 +437,10 @@ describe("ExecutiveDashboard Component", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should render alerts section", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("should render alerts section", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -487,7 +450,7 @@ describe("ExecutiveDashboard Component", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Alertas Ativos")).toBeInTheDocument();
                 expect(react_1.screen.getByText("Queda na conversão")).toBeInTheDocument();
                 expect(
@@ -500,12 +463,11 @@ describe("ExecutiveDashboard Component", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle period selection change", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle period selection change", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var periodTrigger, weeklyOption;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -515,7 +477,7 @@ describe("ExecutiveDashboard Component", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 var periodSelect = react_1.screen.getByTestId("select");
                 expect(periodSelect).toBeInTheDocument();
               }),
@@ -532,7 +494,7 @@ describe("ExecutiveDashboard Component", function () {
             // Should trigger new API calls with updated period
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(mockFetch).toHaveBeenCalledWith(
                   expect.stringContaining("period_type=weekly"),
                   expect.any(Object),
@@ -545,11 +507,10 @@ describe("ExecutiveDashboard Component", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should render comparison data with trend indicators", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("should render comparison data with trend indicators", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -559,7 +520,7 @@ describe("ExecutiveDashboard Component", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 // Should show percentage change
                 expect(react_1.screen.getByText("+8.28%")).toBeInTheDocument();
               }),
@@ -569,12 +530,11 @@ describe("ExecutiveDashboard Component", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle chart type switching", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle chart type switching", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var chartToggle;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -584,7 +544,7 @@ describe("ExecutiveDashboard Component", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByTestId("line-chart")).toBeInTheDocument();
               }),
               // Test chart type toggle if implemented
@@ -596,7 +556,7 @@ describe("ExecutiveDashboard Component", function () {
             react_1.fireEvent.click(chartToggle);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByTestId("bar-chart")).toBeInTheDocument();
               }),
             ];
@@ -607,24 +567,22 @@ describe("ExecutiveDashboard Component", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle API errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  it("should handle API errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            mockFetch.mockImplementation(function () {
-              return Promise.resolve({
+            mockFetch.mockImplementation(() =>
+              Promise.resolve({
                 ok: false,
-                json: function () {
-                  return Promise.resolve({
+                json: () =>
+                  Promise.resolve({
                     success: false,
                     error: "API Error",
-                  });
-                },
-              });
-            });
+                  }),
+              }),
+            );
             (0, react_1.render)(
               <TestWrapper>
                 <executive_dashboard_1.ExecutiveDashboard {...mockProps} />
@@ -632,7 +590,7 @@ describe("ExecutiveDashboard Component", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Erro ao carregar dados")).toBeInTheDocument();
               }),
             ];
@@ -641,12 +599,11 @@ describe("ExecutiveDashboard Component", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should export report when button is clicked", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should export report when button is clicked", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var exportButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -656,7 +613,7 @@ describe("ExecutiveDashboard Component", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 var exportButton = react_1.screen.getByText("Exportar Relatório");
                 expect(exportButton).toBeInTheDocument();
               }),
@@ -667,7 +624,7 @@ describe("ExecutiveDashboard Component", function () {
             react_1.fireEvent.click(exportButton);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(mockFetch).toHaveBeenCalledWith(
                   expect.stringContaining("/api/executive-dashboard/reports"),
                   expect.objectContaining({
@@ -681,9 +638,8 @@ describe("ExecutiveDashboard Component", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should render responsive layout", function () {
+    }));
+  it("should render responsive layout", () => {
     (0, react_1.render)(
       <TestWrapper>
         <executive_dashboard_1.ExecutiveDashboard {...mockProps} />
@@ -694,9 +650,9 @@ describe("ExecutiveDashboard Component", function () {
     // Should have responsive grid classes
     expect(dashboard).toHaveClass("grid-cols-1", "md:grid-cols-2", "lg:grid-cols-3");
   });
-  it("should handle widget drag and drop configuration", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  it("should handle widget drag and drop configuration", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -706,7 +662,7 @@ describe("ExecutiveDashboard Component", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 var configButton = react_1.screen.queryByText("Configurar Layout");
                 if (configButton) {
                   react_1.fireEvent.click(configButton);
@@ -720,6 +676,5 @@ describe("ExecutiveDashboard Component", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

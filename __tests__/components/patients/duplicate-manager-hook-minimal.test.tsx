@@ -1,5 +1,5 @@
-import DuplicateManagerHookMinimal from "@/components/patients/duplicate-manager-hook-minimal";
 import { render, screen } from "@testing-library/react";
+import DuplicateManagerHookMinimal from "@/components/patients/duplicate-manager-hook-minimal";
 
 const mockDuplicates = [
   {

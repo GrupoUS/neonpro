@@ -1,5 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
-import type { AISchedulingOptimizer } from "../../../../../lib/ai/scheduling-optimizer";
+﻿import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,7 +21,7 @@ export async function POST(request: NextRequest) {
     const startDate = new Date(preferred_date_range.start);
     const endDate = new Date(preferred_date_range.end);
 
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       return NextResponse.json(
         { error: "Invalid date format in preferred_date_range" },
         { status: 400 },

@@ -1,4 +1,3 @@
-"use strict";
 // Story 11.2: No-Show Prediction System Types
 // ≥80% accuracy requirement with multi-factor analysis
 Object.defineProperty(exports, "__esModule", { value: true });

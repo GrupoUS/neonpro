@@ -1,6 +1,6 @@
-import { describe, it, expect, jest, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { NextRequest } from "next/server";
-import { POST, GET, PUT, DELETE } from "@/app/api/scheduling/confirmations/route";
+import { DELETE, GET, POST, PUT } from "@/app/api/scheduling/confirmations/route";
 
 // Mock dependencies
 jest.mock("@/app/utils/supabase/server");

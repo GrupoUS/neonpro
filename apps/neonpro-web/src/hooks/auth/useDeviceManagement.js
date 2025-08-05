@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================
 // useDeviceManagement Hook - Device Trust & Security
 // Story 1.4: Session Management & Security
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useDeviceManagement = useDeviceManagement;
 var react_1 = require("react");
@@ -160,7 +157,6 @@ var sonner_1 = require("sonner");
 // MAIN HOOK
 // =====================================================
 function useDeviceManagement(userId, options) {
-  var _this = this;
   var _a, _b;
   if (options === void 0) {
     options = {};
@@ -188,34 +184,27 @@ function useDeviceManagement(userId, options) {
   // =====================================================
   // INITIALIZATION
   // =====================================================
-  (0, react_1.useEffect)(
-    function () {
-      if (!supabase) return;
-      deviceManagerRef.current = new session_1.DeviceManager(supabase);
-      if (userId && validateOnMount) {
-        initializeDeviceManagement();
-      } else {
-        setState(function (prev) {
-          return __assign(__assign({}, prev), { isLoading: false });
-        });
-      }
-    },
-    [supabase, userId, validateOnMount],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!supabase) return;
+    deviceManagerRef.current = new session_1.DeviceManager(supabase);
+    if (userId && validateOnMount) {
+      initializeDeviceManagement();
+    } else {
+      setState((prev) => __assign(__assign({}, prev), { isLoading: false }));
+    }
+  }, [supabase, userId, validateOnMount]);
   var initializeDeviceManagement = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var currentDevice, validation, trustedDevices, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !deviceManagerRef.current) return [2 /*return*/];
               _a.label = 1;
             case 1:
               _a.trys.push([1, 7, , 8]);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
               return [
                 4 /*yield*/,
                 getCurrentDeviceInfo(),
@@ -257,9 +246,7 @@ function useDeviceManagement(userId, options) {
                   {
                     action: {
                       label: "Trust Device",
-                      onClick: function () {
-                        return trustCurrentDevice();
-                      },
+                      onClick: () => trustCurrentDevice(),
                     },
                     duration: 10000,
                   },
@@ -269,29 +256,28 @@ function useDeviceManagement(userId, options) {
             case 7:
               error_1 = _a.sent();
               console.error("Device management initialization error:", error_1);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isLoading: false,
                   error: error_1 instanceof Error ? error_1.message : "Initialization failed",
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 8];
             case 8:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, autoRegister, showNotifications],
   );
   // =====================================================
   // DEVICE ACTIONS
   // =====================================================
   var registerDevice = (0, react_1.useCallback)(
-    function (deviceName) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceName) =>
+      __awaiter(this, void 0, void 0, function () {
         var result_1, validation_1, error_2, errorMessage_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !deviceManagerRef.current || !state.currentDevice) {
@@ -300,9 +286,7 @@ function useDeviceManagement(userId, options) {
               _a.label = 1;
             case 1:
               _a.trys.push([1, 6, , 7]);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
               return [
                 4 /*yield*/,
                 deviceManagerRef.current.registerDevice(userId, state.currentDevice.fingerprint, {
@@ -325,23 +309,23 @@ function useDeviceManagement(userId, options) {
               ];
             case 3:
               validation_1 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isLoading: false,
                   deviceValidation: validation_1,
-                });
-              });
+                }),
+              );
               if (showNotifications) {
                 sonner_1.toast.success("Device registered successfully");
               }
               return [2 /*return*/, true];
             case 4:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isLoading: false,
                   error: result_1.error || "Device registration failed",
-                });
-              });
+                }),
+              );
               if (showNotifications) {
                 sonner_1.toast.error(result_1.error || "Device registration failed");
               }
@@ -352,9 +336,9 @@ function useDeviceManagement(userId, options) {
               error_2 = _a.sent();
               errorMessage_1 =
                 error_2 instanceof Error ? error_2.message : "Device registration failed";
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: false, error: errorMessage_1 });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { isLoading: false, error: errorMessage_1 }),
+              );
               if (showNotifications) {
                 sonner_1.toast.error(errorMessage_1);
               }
@@ -363,15 +347,14 @@ function useDeviceManagement(userId, options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, state.currentDevice, showNotifications],
   );
   var trustDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var result, error_3, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !deviceManagerRef.current) {
@@ -411,15 +394,14 @@ function useDeviceManagement(userId, options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, showNotifications],
   );
   var untrustDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var result, error_4, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !deviceManagerRef.current) {
@@ -460,15 +442,14 @@ function useDeviceManagement(userId, options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, showNotifications],
   );
   var removeDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var result, error_5, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !deviceManagerRef.current) {
@@ -508,15 +489,14 @@ function useDeviceManagement(userId, options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, showNotifications],
   );
   var refreshDevices = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var trustedDevices_1, error_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !deviceManagerRef.current) return [2 /*return*/];
@@ -526,9 +506,9 @@ function useDeviceManagement(userId, options) {
               return [4 /*yield*/, deviceManagerRef.current.getTrustedDevices(userId)];
             case 2:
               trustedDevices_1 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { trustedDevices: trustedDevices_1 });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { trustedDevices: trustedDevices_1 }),
+              );
               return [3 /*break*/, 4];
             case 3:
               error_6 = _a.sent();
@@ -538,15 +518,14 @@ function useDeviceManagement(userId, options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   var validateCurrentDevice = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var validation_2, error_7;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !deviceManagerRef.current || !state.currentDevice) {
@@ -565,9 +544,7 @@ function useDeviceManagement(userId, options) {
               ];
             case 2:
               validation_2 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { deviceValidation: validation_2 });
-              });
+              setState((prev) => __assign(__assign({}, prev), { deviceValidation: validation_2 }));
               return [2 /*return*/, validation_2];
             case 3:
               error_7 = _a.sent();
@@ -577,15 +554,14 @@ function useDeviceManagement(userId, options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, state.currentDevice],
   );
   var reportSuspiciousDevice = (0, react_1.useCallback)(
-    function (deviceId, reason) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId, reason) =>
+      __awaiter(this, void 0, void 0, function () {
         var result, error_8, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId || !deviceManagerRef.current) {
@@ -623,18 +599,17 @@ function useDeviceManagement(userId, options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId, showNotifications],
   );
   // =====================================================
   // HELPER FUNCTIONS
   // =====================================================
   var trustCurrentDevice = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!((_a = state.deviceValidation) === null || _a === void 0 ? void 0 : _a.deviceId))
@@ -647,8 +622,7 @@ function useDeviceManagement(userId, options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state.deviceValidation, trustDevice],
   );
   // =====================================================
@@ -660,10 +634,8 @@ function useDeviceManagement(userId, options) {
     ((_b = state.deviceValidation) === null || _b === void 0 ? void 0 : _b.riskLevel) || "medium";
   var deviceStats = {
     totalDevices: state.trustedDevices.length,
-    trustedDevices: state.trustedDevices.filter(function (d) {
-      return d.isTrusted;
-    }).length,
-    recentDevices: state.trustedDevices.filter(function (d) {
+    trustedDevices: state.trustedDevices.filter((d) => d.isTrusted).length,
+    recentDevices: state.trustedDevices.filter((d) => {
       var daysSinceLastUsed = (Date.now() - d.lastUsedAt.getTime()) / (1000 * 60 * 60 * 24);
       return daysSinceLastUsed <= 7;
     }).length,
@@ -671,47 +643,41 @@ function useDeviceManagement(userId, options) {
   // =====================================================
   // DEVICE CHANGE TRACKING
   // =====================================================
-  (0, react_1.useEffect)(
-    function () {
-      if (!trackDeviceChanges || !state.currentDevice) return;
-      var checkDeviceChanges = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var currentDevice;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                return [4 /*yield*/, getCurrentDeviceInfo()];
-              case 1:
-                currentDevice = _a.sent();
-                if (
-                  !(
-                    state.currentDevice &&
-                    currentDevice.fingerprint !== state.currentDevice.fingerprint
-                  )
+  (0, react_1.useEffect)(() => {
+    if (!trackDeviceChanges || !state.currentDevice) return;
+    var checkDeviceChanges = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var currentDevice;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              return [4 /*yield*/, getCurrentDeviceInfo()];
+            case 1:
+              currentDevice = _a.sent();
+              if (
+                !(
+                  state.currentDevice &&
+                  currentDevice.fingerprint !== state.currentDevice.fingerprint
                 )
-                  return [3 /*break*/, 3];
-                if (showNotifications) {
-                  sonner_1.toast.warning("Device fingerprint changed. Please re-authenticate.");
-                }
-                if (!userId) return [3 /*break*/, 3];
-                return [4 /*yield*/, validateCurrentDevice()];
-              case 2:
-                _a.sent();
-                _a.label = 3;
-              case 3:
-                return [2 /*return*/];
-            }
-          });
+              )
+                return [3 /*break*/, 3];
+              if (showNotifications) {
+                sonner_1.toast.warning("Device fingerprint changed. Please re-authenticate.");
+              }
+              if (!userId) return [3 /*break*/, 3];
+              return [4 /*yield*/, validateCurrentDevice()];
+            case 2:
+              _a.sent();
+              _a.label = 3;
+            case 3:
+              return [2 /*return*/];
+          }
         });
-      };
-      // Check device changes periodically
-      var interval = setInterval(checkDeviceChanges, 5 * 60 * 1000); // Every 5 minutes
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [trackDeviceChanges, state.currentDevice, showNotifications, userId, validateCurrentDevice],
-  );
+      });
+    // Check device changes periodically
+    var interval = setInterval(checkDeviceChanges, 5 * 60 * 1000); // Every 5 minutes
+    return () => clearInterval(interval);
+  }, [trackDeviceChanges, state.currentDevice, showNotifications, userId, validateCurrentDevice]);
   // =====================================================
   // RETURN HOOK INTERFACE
   // =====================================================
@@ -745,7 +711,7 @@ function useDeviceManagement(userId, options) {
 function getCurrentDeviceInfo() {
   return __awaiter(this, void 0, void 0, function () {
     var fingerprint, ipAddress, location;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, generateDeviceFingerprint()];
@@ -777,7 +743,7 @@ function generateDeviceFingerprint() {
   return __awaiter(this, void 0, void 0, function () {
     var canvas, ctx, fingerprint, hash, i, char;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       canvas = document.createElement("canvas");
       ctx = canvas.getContext("2d");
       if (ctx) {
@@ -812,7 +778,7 @@ function generateDeviceFingerprint() {
 function getClientIP() {
   return __awaiter(this, void 0, void 0, function () {
     var response, data, _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);
@@ -838,7 +804,7 @@ function getClientIP() {
 function getLocation() {
   return __awaiter(this, void 0, void 0, function () {
     var response, data, _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);

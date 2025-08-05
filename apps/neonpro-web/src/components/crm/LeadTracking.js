@@ -4,7 +4,6 @@
  * Created: January 24, 2025
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LeadTracking = LeadTracking;
 var react_1 = require("react");
@@ -40,11 +39,9 @@ function LeadTracking(_a) {
     setSortBy = _h[1];
   // Calculate lead scores for all customers
   var customerLeadScores = (0, react_1.useMemo)(
-    function () {
-      return customers.map(function (customer) {
-        var customerAppointments = appointments.filter(function (apt) {
-          return apt.customerId === customer.id;
-        });
+    () =>
+      customers.map((customer) => {
+        var customerAppointments = appointments.filter((apt) => apt.customerId === customer.id);
         var leadScore = (0, utils_1.calculateLeadScore)(customer, customerAppointments);
         var lifecycle = (0, utils_1.determineCustomerLifecycle)(customer);
         var churnRisk = (0, utils_1.predictChurnRisk)(customer);
@@ -57,90 +54,73 @@ function LeadTracking(_a) {
           lifetimeValue: lifetimeValue,
           appointments: customerAppointments,
         };
-      });
-    },
+      }),
     [customers, appointments],
   );
   // Filter and sort leads
-  var filteredLeads = (0, react_1.useMemo)(
-    function () {
-      var filtered = customerLeadScores.filter(function (lead) {
-        var matchesSearch =
-          lead.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          lead.customer.email.toLowerCase().includes(searchTerm.toLowerCase());
-        var matchesPriority =
-          selectedPriority === "all" || lead.leadScore.priority === selectedPriority;
-        var matchesLifecycle = selectedLifecycle === "all" || lead.lifecycle === selectedLifecycle;
-        return matchesSearch && matchesPriority && matchesLifecycle;
-      });
-      // Sort leads
-      switch (sortBy) {
-        case "score":
-          filtered.sort(function (a, b) {
-            return b.leadScore.score - a.leadScore.score;
-          });
-          break;
-        case "value":
-          filtered.sort(function (a, b) {
-            return b.lifetimeValue - a.lifetimeValue;
-          });
-          break;
-        case "risk":
-          filtered.sort(function (a, b) {
-            return b.churnRisk - a.churnRisk;
-          });
-          break;
-        case "name":
-          filtered.sort(function (a, b) {
-            return a.customer.name.localeCompare(b.customer.name);
-          });
-          break;
-        default:
-          break;
-      }
-      return filtered;
-    },
-    [customerLeadScores, searchTerm, selectedPriority, selectedLifecycle, sortBy],
-  );
+  var filteredLeads = (0, react_1.useMemo)(() => {
+    var filtered = customerLeadScores.filter((lead) => {
+      var matchesSearch =
+        lead.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.customer.email.toLowerCase().includes(searchTerm.toLowerCase());
+      var matchesPriority =
+        selectedPriority === "all" || lead.leadScore.priority === selectedPriority;
+      var matchesLifecycle = selectedLifecycle === "all" || lead.lifecycle === selectedLifecycle;
+      return matchesSearch && matchesPriority && matchesLifecycle;
+    });
+    // Sort leads
+    switch (sortBy) {
+      case "score":
+        filtered.sort((a, b) => b.leadScore.score - a.leadScore.score);
+        break;
+      case "value":
+        filtered.sort((a, b) => b.lifetimeValue - a.lifetimeValue);
+        break;
+      case "risk":
+        filtered.sort((a, b) => b.churnRisk - a.churnRisk);
+        break;
+      case "name":
+        filtered.sort((a, b) => a.customer.name.localeCompare(b.customer.name));
+        break;
+      default:
+        break;
+    }
+    return filtered;
+  }, [customerLeadScores, searchTerm, selectedPriority, selectedLifecycle, sortBy]);
   // Calculate pipeline analytics
-  var pipelineAnalytics = (0, react_1.useMemo)(
-    function () {
-      var totalLeads = customerLeadScores.length;
-      var highPriorityLeads = customerLeadScores.filter(function (lead) {
-        return lead.leadScore.priority === "high";
-      }).length;
-      var mediumPriorityLeads = customerLeadScores.filter(function (lead) {
-        return lead.leadScore.priority === "medium";
-      }).length;
-      var lowPriorityLeads = customerLeadScores.filter(function (lead) {
-        return lead.leadScore.priority === "low";
-      }).length;
-      var averageScore =
-        totalLeads > 0
-          ? customerLeadScores.reduce(function (sum, lead) {
-              return sum + lead.leadScore.score;
-            }, 0) / totalLeads
-          : 0;
-      var conversionOpportunities = customerLeadScores.filter(function (lead) {
-        return lead.leadScore.score >= 60 && lead.lifecycle === "new";
-      }).length;
-      var atRiskHighValue = customerLeadScores.filter(function (lead) {
-        return lead.churnRisk > 50 && lead.lifetimeValue > 500;
-      }).length;
-      return {
-        totalLeads: totalLeads,
-        highPriorityLeads: highPriorityLeads,
-        mediumPriorityLeads: mediumPriorityLeads,
-        lowPriorityLeads: lowPriorityLeads,
-        averageScore: averageScore,
-        conversionOpportunities: conversionOpportunities,
-        atRiskHighValue: atRiskHighValue,
-      };
-    },
-    [customerLeadScores],
-  );
+  var pipelineAnalytics = (0, react_1.useMemo)(() => {
+    var totalLeads = customerLeadScores.length;
+    var highPriorityLeads = customerLeadScores.filter(
+      (lead) => lead.leadScore.priority === "high",
+    ).length;
+    var mediumPriorityLeads = customerLeadScores.filter(
+      (lead) => lead.leadScore.priority === "medium",
+    ).length;
+    var lowPriorityLeads = customerLeadScores.filter(
+      (lead) => lead.leadScore.priority === "low",
+    ).length;
+    var averageScore =
+      totalLeads > 0
+        ? customerLeadScores.reduce((sum, lead) => sum + lead.leadScore.score, 0) / totalLeads
+        : 0;
+    var conversionOpportunities = customerLeadScores.filter(
+      (lead) => lead.leadScore.score >= 60 && lead.lifecycle === "new",
+    ).length;
+    var atRiskHighValue = customerLeadScores.filter(
+      (lead) => lead.churnRisk > 50 && lead.lifetimeValue > 500,
+    ).length;
+    return {
+      totalLeads: totalLeads,
+      highPriorityLeads: highPriorityLeads,
+      mediumPriorityLeads: mediumPriorityLeads,
+      lowPriorityLeads: lowPriorityLeads,
+      averageScore: averageScore,
+      conversionOpportunities: conversionOpportunities,
+      atRiskHighValue: atRiskHighValue,
+    };
+  }, [customerLeadScores]);
   // Get priority color
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
         return "bg-red-100 text-red-800 border-red-200";
@@ -153,7 +133,7 @@ function LeadTracking(_a) {
     }
   };
   // Get lifecycle color
-  var getLifecycleColor = function (lifecycle) {
+  var getLifecycleColor = (lifecycle) => {
     switch (lifecycle) {
       case "new":
         return "bg-blue-100 text-blue-800";
@@ -168,11 +148,11 @@ function LeadTracking(_a) {
     }
   };
   // Handle lead action
-  var handleLeadAction = function (customerId, action) {
+  var handleLeadAction = (customerId, action) => {
     onLeadAction === null || onLeadAction === void 0 ? void 0 : onLeadAction(customerId, action);
   };
   // Render lead card
-  var renderLeadCard = function (leadData) {
+  var renderLeadCard = (leadData) => {
     var customer = leadData.customer,
       leadScore = leadData.leadScore,
       lifecycle = leadData.lifecycle,
@@ -262,9 +242,7 @@ function LeadTracking(_a) {
             <button_1.Button
               size="sm"
               variant="default"
-              onClick={function () {
-                return handleLeadAction(customer.id, "contact");
-              }}
+              onClick={() => handleLeadAction(customer.id, "contact")}
               className="flex-1"
             >
               Contact
@@ -272,9 +250,7 @@ function LeadTracking(_a) {
             <button_1.Button
               size="sm"
               variant="outline"
-              onClick={function () {
-                return handleLeadAction(customer.id, "schedule");
-              }}
+              onClick={() => handleLeadAction(customer.id, "schedule")}
               className="flex-1"
             >
               Schedule
@@ -387,9 +363,7 @@ function LeadTracking(_a) {
                       id="lead-search"
                       placeholder="Search by name or email..."
                       value={searchTerm}
-                      onChange={function (e) {
-                        return setSearchTerm(e.target.value);
-                      }}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
                     />
                   </div>
@@ -517,31 +491,29 @@ function LeadTracking(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {filteredLeads.slice(0, 5).map(function (lead, index) {
-                    return (
-                      <div
-                        key={lead.customer.id}
-                        className="flex items-center justify-between p-2 rounded bg-gray-50"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <badge_1.Badge variant="outline">{index + 1}</badge_1.Badge>
-                          <div>
-                            <div className="font-medium text-sm">{lead.customer.name}</div>
-                            <div className="text-xs text-gray-500">{lead.customer.email}</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-bold text-sm">{lead.leadScore.score}</div>
-                          <badge_1.Badge
-                            className={getPriorityColor(lead.leadScore.priority)}
-                            variant="outline"
-                          >
-                            {lead.leadScore.priority}
-                          </badge_1.Badge>
+                  {filteredLeads.slice(0, 5).map((lead, index) => (
+                    <div
+                      key={lead.customer.id}
+                      className="flex items-center justify-between p-2 rounded bg-gray-50"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <badge_1.Badge variant="outline">{index + 1}</badge_1.Badge>
+                        <div>
+                          <div className="font-medium text-sm">{lead.customer.name}</div>
+                          <div className="text-xs text-gray-500">{lead.customer.email}</div>
                         </div>
                       </div>
-                    );
-                  })}
+                      <div className="text-right">
+                        <div className="font-bold text-sm">{lead.leadScore.score}</div>
+                        <badge_1.Badge
+                          className={getPriorityColor(lead.leadScore.priority)}
+                          variant="outline"
+                        >
+                          {lead.leadScore.priority}
+                        </badge_1.Badge>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -561,15 +533,11 @@ function LeadTracking(_a) {
             <card_1.CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredLeads
-                  .filter(function (lead) {
-                    return lead.leadScore.priority === "high";
-                  })
+                  .filter((lead) => lead.leadScore.priority === "high")
                   .slice(0, 6)
                   .map(renderLeadCard)}
               </div>
-              {filteredLeads.filter(function (lead) {
-                return lead.leadScore.priority === "high";
-              }).length === 0 && (
+              {filteredLeads.filter((lead) => lead.leadScore.priority === "high").length === 0 && (
                 <p className="text-center text-gray-500 py-4">
                   No high priority leads at this time
                 </p>
@@ -592,9 +560,7 @@ function LeadTracking(_a) {
               <card_1.CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {filteredLeads
-                    .filter(function (lead) {
-                      return lead.churnRisk > 50 && lead.lifetimeValue > 500;
-                    })
+                    .filter((lead) => lead.churnRisk > 50 && lead.lifetimeValue > 500)
                     .slice(0, 4)
                     .map(renderLeadCard)}
                 </div>

@@ -11,10 +11,10 @@
  * - Personalized engagement strategy recommendations
  */
 
-import type { Patient } from "@/types/patient";
 import type { Appointment } from "@/types/appointment";
-import type { TreatmentHistory, Treatment } from "@/types/treatment";
 import type { CommunicationLog } from "@/types/communication";
+import type { Patient } from "@/types/patient";
+import type { Treatment, TreatmentHistory } from "@/types/treatment";
 
 // Behavior Analysis Types
 export interface BehaviorAnalysis {

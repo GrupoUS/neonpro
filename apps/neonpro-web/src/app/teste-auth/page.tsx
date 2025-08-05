@@ -1,5 +1,5 @@
+import type { SignInButton, SignOutButton } from "@clerk/nextjs";
 import type { auth, currentUser } from "@clerk/nextjs/server";
-import type { SignOutButton, SignInButton } from "@clerk/nextjs";
 import type { redirect } from "next/navigation";
 
 export default async function TesteAuthPage() {

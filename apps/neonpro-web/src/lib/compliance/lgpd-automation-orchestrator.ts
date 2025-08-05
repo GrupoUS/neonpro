@@ -4,22 +4,22 @@
 
 import type { createClient } from "@supabase/supabase-js";
 import type {
-  LGPDAutoConsentService,
-  LGPDAutoDataSubjectRightsService,
-  LGPDAutoAuditService,
-  LGPDAutoReportingService,
-  LGPDAutoAnonymizationService,
-  AutomationConfig,
-  ComplianceHealthCheck,
-} from "./lgpd-automation";
-import type { LGPDComplianceService } from "./lgpd-core";
-import type {
-  LGPDAuditLog,
+  AnonymizationJob,
   AuditEventType,
   ComplianceReport,
   ComplianceReportType,
-  AnonymizationJob,
+  LGPDAuditLog,
 } from "@/types/lgpd";
+import type {
+  AutomationConfig,
+  ComplianceHealthCheck,
+  LGPDAutoAnonymizationService,
+  LGPDAutoAuditService,
+  LGPDAutoConsentService,
+  LGPDAutoDataSubjectRightsService,
+  LGPDAutoReportingService,
+} from "./lgpd-automation";
+import type { LGPDComplianceService } from "./lgpd-core";
 
 export interface AutomationSchedule {
   id: string;

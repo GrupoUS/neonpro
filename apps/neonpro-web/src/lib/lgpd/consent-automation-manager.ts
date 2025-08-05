@@ -6,10 +6,10 @@
  * throughout the authentication system with granular permission tracking.
  */
 
-import type { createClient } from "@/lib/supabase/client";
-import type { Database } from "@/types/database";
 import type { SecurityAuditLogger } from "@/lib/auth/security-audit-logger";
 import type { logger } from "@/lib/logger";
+import type { createClient } from "@/lib/supabase/client";
+import type { Database } from "@/types/database";
 
 /**
  * LGPD Data Types for consent management

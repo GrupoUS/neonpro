@@ -7,8 +7,7 @@
  * ============================================================================
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, jest } from "@jest/globals";
-import { createClient } from "@supabase/supabase-js";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, jest } from "@jest/globals";
 
 // Mock ConflictDetectionEngine with complete implementation
 jest.mock("@/lib/scheduling/conflict-detection-engine", () => ({
@@ -60,7 +59,7 @@ jest.mock("@/lib/scheduling/conflict-detection-engine", () => ({
             },
           },
           detectionLatencyMs: 85, // Higher latency under stress but still < 100
-          recommendations: mockConflicts.map((conflict, i) => ({
+          recommendations: mockConflicts.map((_conflict, i) => ({
             id: `stress-rec-${i + 1}`,
             recommendedStrategy: "mip_optimization",
             confidence: 0.88,
@@ -191,7 +190,7 @@ jest.mock("@/lib/scheduling/resolution-algorithms", () => ({
   ResolutionAlgorithmFactory: class MockResolutionAlgorithmFactory {
     createAlgorithm(strategy: string = "rule_based") {
       return {
-        execute: jest.fn().mockImplementation(async (conflict: any, context: any) => {
+        execute: jest.fn().mockImplementation(async (conflict: any, _context: any) => {
           // Single conflict object, not array
           const isStressTest = expect.getState().currentTestName?.includes("stress") || false;
 
@@ -308,15 +307,14 @@ jest.mock("@/lib/scheduling/resolution-algorithms", () => ({
 }));
 
 // Now import the modules (after mocking)
-import { ConflictDetectionEngine } from "@/lib/scheduling/conflict-detection-engine";
-import { ResolutionAlgorithmFactory } from "@/lib/scheduling/resolution-algorithms";
-import {
+import type { ConflictDetectionEngine } from "@/lib/scheduling/conflict-detection-engine";
+import type {
   ConflictDetectionConfig,
-  SchedulingConflict,
-  EnhancedAppointment,
   ConflictType,
-  StrategyType,
+  EnhancedAppointment,
+  SchedulingConflict,
 } from "@/lib/scheduling/conflict-types";
+import type { ResolutionAlgorithmFactory } from "@/lib/scheduling/resolution-algorithms";
 
 describe("Advanced Conflict Resolution System - Integration Tests", () => {
   let supabase: any;
@@ -647,14 +645,14 @@ describe("Advanced Conflict Resolution System - Integration Tests", () => {
 
       // Test conflict detection accuracy
       const testCases = await generateTestConflictScenarios();
-      let correctDetections = 0;
+      let _correctDetections = 0;
 
       for (const testCase of testCases) {
         await setupTestScenario(testCase);
         const response = await conflictEngine.detectConflicts();
 
         if (response.conflicts.length === testCase.expectedConflicts) {
-          correctDetections++;
+          _correctDetections++;
         }
       }
 
@@ -758,11 +756,11 @@ describe("Advanced Conflict Resolution System - Integration Tests", () => {
     await supabase.from("appointments").insert(conflictingAppointment);
   }
 
-  let isStressTestActive = false;
+  let _isStressTestActive = false;
 
   async function createStressTestData() {
     // Set global flag for stress test detection
-    isStressTestActive = true;
+    _isStressTestActive = true;
     (global as any).isStressTest = true;
 
     const stressAppointments = Array.from({ length: 20 }, (_, i) => ({

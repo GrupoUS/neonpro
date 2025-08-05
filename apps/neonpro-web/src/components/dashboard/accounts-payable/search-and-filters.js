@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SearchAndFilters;
 var badge_1 = require("@/components/ui/badge");
@@ -114,7 +113,7 @@ function SearchAndFilters(_a) {
   ];
   // Atualizar filtros e notificar componente pai
   var updateFilters = (0, react_1.useCallback)(
-    function (newFilters) {
+    (newFilters) => {
       var updatedFilters = __assign(__assign({}, filters), newFilters);
       setFilters(updatedFilters);
       onFiltersChange(updatedFilters);
@@ -123,13 +122,13 @@ function SearchAndFilters(_a) {
   );
   // Handler para busca de texto
   var handleSearchChange = (0, react_1.useCallback)(
-    function (query) {
+    (query) => {
       updateFilters({ searchQuery: query });
     },
     [updateFilters],
   );
   // Handler para filtros de data
-  var handleDateRangeChange = function () {
+  var handleDateRangeChange = () => {
     if (startDate && endDate) {
       updateFilters({
         date_range: { start: startDate, end: endDate },
@@ -139,7 +138,7 @@ function SearchAndFilters(_a) {
     }
   };
   // Handler para filtros de valor
-  var handleAmountRangeChange = function (min, max) {
+  var handleAmountRangeChange = (min, max) => {
     var minValue = min ? parseFloat(min) : undefined;
     var maxValue = max ? parseFloat(max) : undefined;
     if (minValue !== undefined || maxValue !== undefined) {
@@ -154,22 +153,20 @@ function SearchAndFilters(_a) {
     }
   };
   // Handler para tags
-  var handleTagAdd = function (tag) {
+  var handleTagAdd = (tag) => {
     var currentTags = filters.tags || [];
     if (!currentTags.includes(tag)) {
       updateFilters({ tags: __spreadArray(__spreadArray([], currentTags, true), [tag], false) });
     }
   };
-  var handleTagRemove = function (tag) {
+  var handleTagRemove = (tag) => {
     var currentTags = filters.tags || [];
     updateFilters({
-      tags: currentTags.filter(function (t) {
-        return t !== tag;
-      }),
+      tags: currentTags.filter((t) => t !== tag),
     });
   };
   // Limpar filtros
-  var clearFilters = function () {
+  var clearFilters = () => {
     var clearedFilters = {
       searchQuery: "",
       overdue_only: false,
@@ -183,7 +180,7 @@ function SearchAndFilters(_a) {
     onFiltersChange(clearedFilters);
   };
   // Salvar filtro atual
-  var saveCurrentFilter = function () {
+  var saveCurrentFilter = () => {
     if (!saveFilterName.trim()) return;
     var newFilter = {
       id: Date.now().toString(),
@@ -197,7 +194,7 @@ function SearchAndFilters(_a) {
     setShowSaveDialog(false);
   };
   // Carregar filtro salvo
-  var loadSavedFilter = function (savedFilter) {
+  var loadSavedFilter = (savedFilter) => {
     var _a, _b;
     setFilters(savedFilter.filters);
     setStartDate(
@@ -207,19 +204,16 @@ function SearchAndFilters(_a) {
     onFiltersChange(savedFilter.filters);
   };
   // Exportar resultados
-  var exportResults = function (format) {
+  var exportResults = (format) => {
     console.log("Exporting results as ".concat(format, "..."));
     // Implementar exportação
   };
   // Effect para atualizar data range
-  (0, react_1.useEffect)(
-    function () {
-      handleDateRangeChange();
-    },
-    [startDate, endDate],
-  );
+  (0, react_1.useEffect)(() => {
+    handleDateRangeChange();
+  }, [startDate, endDate]);
   // Contar filtros ativos
-  var activeFiltersCount = Object.entries(filters).filter(function (_a) {
+  var activeFiltersCount = Object.entries(filters).filter((_a) => {
     var key = _a[0],
       value = _a[1];
     if (key === "searchQuery") return value && value.trim().length > 0;
@@ -238,18 +232,14 @@ function SearchAndFilters(_a) {
               <input_1.Input
                 placeholder="Buscar por fornecedor, número da fatura, descrição..."
                 value={filters.searchQuery}
-                onChange={function (e) {
-                  return handleSearchChange(e.target.value);
-                }}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="pl-10"
               />
             </div>
 
             <button_1.Button
               variant="outline"
-              onClick={function () {
-                return setShowAdvancedFilters(!showAdvancedFilters);
-              }}
+              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
               className="flex items-center space-x-2"
             >
               <lucide_react_1.SlidersHorizontal className="h-4 w-4" />
@@ -272,27 +262,21 @@ function SearchAndFilters(_a) {
             <button_1.Button
               variant={filters.overdue_only ? "default" : "outline"}
               size="sm"
-              onClick={function () {
-                return updateFilters({ overdue_only: !filters.overdue_only });
-              }}
+              onClick={() => updateFilters({ overdue_only: !filters.overdue_only })}
             >
               Em Atraso
             </button_1.Button>
             <button_1.Button
               variant={filters.due_this_week ? "default" : "outline"}
               size="sm"
-              onClick={function () {
-                return updateFilters({ due_this_week: !filters.due_this_week });
-              }}
+              onClick={() => updateFilters({ due_this_week: !filters.due_this_week })}
             >
               Vence esta Semana
             </button_1.Button>
             <button_1.Button
               variant={filters.approved_only ? "default" : "outline"}
               size="sm"
-              onClick={function () {
-                return updateFilters({ approved_only: !filters.approved_only });
-              }}
+              onClick={() => updateFilters({ approved_only: !filters.approved_only })}
             >
               Aprovados
             </button_1.Button>
@@ -310,9 +294,7 @@ function SearchAndFilters(_a) {
                 <button_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return setShowSaveDialog(true);
-                  }}
+                  onClick={() => setShowSaveDialog(true)}
                 >
                   <lucide_react_1.BookmarkPlus className="h-4 w-4 mr-2" />
                   Salvar Filtros
@@ -331,22 +313,18 @@ function SearchAndFilters(_a) {
                 <label_1.Label>Fornecedor</label_1.Label>
                 <select_1.Select
                   value={filters.vendor_id || ""}
-                  onValueChange={function (value) {
-                    return updateFilters({ vendor_id: value || undefined });
-                  }}
+                  onValueChange={(value) => updateFilters({ vendor_id: value || undefined })}
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Todos os fornecedores" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="">Todos os fornecedores</select_1.SelectItem>
-                    {vendors.map(function (vendor) {
-                      return (
-                        <select_1.SelectItem key={vendor.value} value={vendor.value}>
-                          {vendor.label} {vendor.count && "(".concat(vendor.count, ")")}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {vendors.map((vendor) => (
+                      <select_1.SelectItem key={vendor.value} value={vendor.value}>
+                        {vendor.label} {vendor.count && "(".concat(vendor.count, ")")}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -356,22 +334,18 @@ function SearchAndFilters(_a) {
                 <label_1.Label>Categoria</label_1.Label>
                 <select_1.Select
                   value={filters.category_id || ""}
-                  onValueChange={function (value) {
-                    return updateFilters({ category_id: value || undefined });
-                  }}
+                  onValueChange={(value) => updateFilters({ category_id: value || undefined })}
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Todas as categorias" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="">Todas as categorias</select_1.SelectItem>
-                    {categories.map(function (category) {
-                      return (
-                        <select_1.SelectItem key={category.value} value={category.value}>
-                          {category.label} {category.count && "(".concat(category.count, ")")}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {categories.map((category) => (
+                      <select_1.SelectItem key={category.value} value={category.value}>
+                        {category.label} {category.count && "(".concat(category.count, ")")}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -381,22 +355,18 @@ function SearchAndFilters(_a) {
                 <label_1.Label>Status</label_1.Label>
                 <select_1.Select
                   value={filters.status || ""}
-                  onValueChange={function (value) {
-                    return updateFilters({ status: value || undefined });
-                  }}
+                  onValueChange={(value) => updateFilters({ status: value || undefined })}
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Todos os status" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="">Todos os status</select_1.SelectItem>
-                    {statusOptions.map(function (status) {
-                      return (
-                        <select_1.SelectItem key={status.value} value={status.value}>
-                          {status.label} {status.count && "(".concat(status.count, ")")}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {statusOptions.map((status) => (
+                      <select_1.SelectItem key={status.value} value={status.value}>
+                        {status.label} {status.count && "(".concat(status.count, ")")}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -406,22 +376,18 @@ function SearchAndFilters(_a) {
                 <label_1.Label>Método de Pagamento</label_1.Label>
                 <select_1.Select
                   value={filters.payment_method || ""}
-                  onValueChange={function (value) {
-                    return updateFilters({ payment_method: value || undefined });
-                  }}
+                  onValueChange={(value) => updateFilters({ payment_method: value || undefined })}
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Todos os métodos" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="">Todos os métodos</select_1.SelectItem>
-                    {paymentMethodOptions.map(function (method) {
-                      return (
-                        <select_1.SelectItem key={method.value} value={method.value}>
-                          {method.label}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {paymentMethodOptions.map((method) => (
+                      <select_1.SelectItem key={method.value} value={method.value}>
+                        {method.label}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -445,7 +411,7 @@ function SearchAndFilters(_a) {
                     <calendar_1.Calendar
                       mode="single"
                       selected={startDate}
-                      onSelect={function (date) {
+                      onSelect={(date) => {
                         setStartDate(date);
                         setShowStartCalendar(false);
                       }}
@@ -474,14 +440,12 @@ function SearchAndFilters(_a) {
                     <calendar_1.Calendar
                       mode="single"
                       selected={endDate}
-                      onSelect={function (date) {
+                      onSelect={(date) => {
                         setEndDate(date);
                         setShowEndCalendar(false);
                       }}
                       locale={locale_1.ptBR}
-                      disabled={function (date) {
-                        return startDate ? date < startDate : false;
-                      }}
+                      disabled={(date) => (startDate ? date < startDate : false)}
                     />
                   </popover_1.PopoverContent>
                 </popover_1.Popover>
@@ -495,7 +459,7 @@ function SearchAndFilters(_a) {
                 <input_1.Input
                   type="number"
                   placeholder="0,00"
-                  onChange={function (e) {
+                  onChange={(e) => {
                     var _a, _b;
                     return handleAmountRangeChange(
                       e.target.value,
@@ -513,7 +477,7 @@ function SearchAndFilters(_a) {
                 <input_1.Input
                   type="number"
                   placeholder="999999,99"
-                  onChange={function (e) {
+                  onChange={(e) => {
                     var _a, _b;
                     return handleAmountRangeChange(
                       ((_b =
@@ -532,28 +496,24 @@ function SearchAndFilters(_a) {
             <div className="space-y-2">
               <label_1.Label>Tags</label_1.Label>
               <div className="flex flex-wrap gap-2">
-                {(filters.tags || []).map(function (tag) {
-                  return (
-                    <badge_1.Badge
-                      key={tag}
-                      variant="secondary"
-                      className="flex items-center space-x-1"
+                {(filters.tags || []).map((tag) => (
+                  <badge_1.Badge
+                    key={tag}
+                    variant="secondary"
+                    className="flex items-center space-x-1"
+                  >
+                    <span>{tag}</span>
+                    <button
+                      onClick={() => handleTagRemove(tag)}
+                      className="text-muted-foreground hover:text-foreground"
                     >
-                      <span>{tag}</span>
-                      <button
-                        onClick={function () {
-                          return handleTagRemove(tag);
-                        }}
-                        className="text-muted-foreground hover:text-foreground"
-                      >
-                        <lucide_react_1.X className="h-3 w-3" />
-                      </button>
-                    </badge_1.Badge>
-                  );
-                })}
+                      <lucide_react_1.X className="h-3 w-3" />
+                    </button>
+                  </badge_1.Badge>
+                ))}
                 <input_1.Input
                   placeholder="Adicionar tag..."
-                  onKeyDown={function (e) {
+                  onKeyDown={(e) => {
                     if (e.key === "Enter" && e.currentTarget.value.trim()) {
                       handleTagAdd(e.currentTarget.value.trim());
                       e.currentTarget.value = "";
@@ -575,26 +535,22 @@ function SearchAndFilters(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="flex flex-wrap gap-2">
-              {savedFilters.map(function (savedFilter) {
-                return (
-                  <button_1.Button
-                    key={savedFilter.id}
-                    variant="outline"
-                    size="sm"
-                    onClick={function () {
-                      return loadSavedFilter(savedFilter);
-                    }}
-                    className="flex items-center space-x-2"
-                  >
-                    <span>{savedFilter.name}</span>
-                    {savedFilter.is_default && (
-                      <badge_1.Badge variant="secondary" className="text-xs">
-                        Padrão
-                      </badge_1.Badge>
-                    )}
-                  </button_1.Button>
-                );
-              })}
+              {savedFilters.map((savedFilter) => (
+                <button_1.Button
+                  key={savedFilter.id}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => loadSavedFilter(savedFilter)}
+                  className="flex items-center space-x-2"
+                >
+                  <span>{savedFilter.name}</span>
+                  {savedFilter.is_default && (
+                    <badge_1.Badge variant="secondary" className="text-xs">
+                      Padrão
+                    </badge_1.Badge>
+                  )}
+                </button_1.Button>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -608,33 +564,15 @@ function SearchAndFilters(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="flex items-center space-x-2">
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return exportResults("csv");
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => exportResults("csv")}>
                 <lucide_react_1.Download className="h-4 w-4 mr-2" />
                 Exportar CSV
               </button_1.Button>
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return exportResults("excel");
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => exportResults("excel")}>
                 <lucide_react_1.Download className="h-4 w-4 mr-2" />
                 Exportar Excel
               </button_1.Button>
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return exportResults("pdf");
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => exportResults("pdf")}>
                 <lucide_react_1.Download className="h-4 w-4 mr-2" />
                 Exportar PDF
               </button_1.Button>
@@ -654,19 +592,12 @@ function SearchAndFilters(_a) {
                 <input_1.Input
                   id="filter-name"
                   value={saveFilterName}
-                  onChange={function (e) {
-                    return setSaveFilterName(e.target.value);
-                  }}
+                  onChange={(e) => setSaveFilterName(e.target.value)}
                   placeholder="Ex: Faturas em atraso"
                 />
               </div>
               <div className="flex items-center justify-end space-x-2">
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setShowSaveDialog(false);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setShowSaveDialog(false)}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={saveCurrentFilter} disabled={!saveFilterName.trim()}>

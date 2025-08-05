@@ -1,7 +1,7 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import EmailService from "@/app/lib/services/email-service";
 import crypto from "crypto";
+import type { NextRequest, NextResponse } from "next/server";
+import EmailService from "@/app/lib/services/email-service";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -65,7 +65,7 @@ async function verifyWebhookSignature(
 ): Promise<boolean> {
   try {
     switch (provider) {
-      case "postmark":
+      case "postmark": {
         // Postmark uses HMAC-SHA256
         const postmarkSecret = process.env.POSTMARK_WEBHOOK_SECRET;
         if (!postmarkSecret) return false;
@@ -76,8 +76,9 @@ async function verifyWebhookSignature(
           .digest("hex");
 
         return signature === postmarkExpected;
+      }
 
-      case "sendgrid":
+      case "sendgrid": {
         // SendGrid uses ECDSA verification
         const sendgridPublicKey = process.env.SENDGRID_WEBHOOK_PUBLIC_KEY;
         if (!sendgridPublicKey) return false;
@@ -85,8 +86,9 @@ async function verifyWebhookSignature(
         // Implementar verificação ECDSA do SendGrid
         // Por simplicidade, retornando true por enquanto
         return true;
+      }
 
-      case "mailgun":
+      case "mailgun": {
         // Mailgun uses HMAC-SHA256
         const mailgunSecret = process.env.MAILGUN_WEBHOOK_SECRET;
         if (!mailgunSecret) return false;
@@ -103,6 +105,7 @@ async function verifyWebhookSignature(
           .digest("hex");
 
         return signature === mailgunExpected;
+      }
 
       default:
         return false;

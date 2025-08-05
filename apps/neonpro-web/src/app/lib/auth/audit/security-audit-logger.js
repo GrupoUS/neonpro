@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Security Audit Logging System
  *
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,10 +156,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -171,7 +168,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createsecurityAuditLogger =
   exports.RiskLevel =
@@ -184,7 +181,7 @@ exports.getSecurityReport = getSecurityReport;
 var client_1 = require("@/lib/supabase/client");
 // Audit event types
 var AuditEventType;
-(function (AuditEventType) {
+((AuditEventType) => {
   AuditEventType["LOGIN_ATTEMPT"] = "login_attempt";
   AuditEventType["LOGIN_SUCCESS"] = "login_success";
   AuditEventType["LOGIN_FAILURE"] = "login_failure";
@@ -204,14 +201,14 @@ var AuditEventType;
   AuditEventType["ROLE_CHANGE"] = "role_change";
 })(AuditEventType || (exports.AuditEventType = AuditEventType = {}));
 var AuditSeverity;
-(function (AuditSeverity) {
+((AuditSeverity) => {
   AuditSeverity["INFO"] = "info";
   AuditSeverity["WARNING"] = "warning";
   AuditSeverity["ERROR"] = "error";
   AuditSeverity["CRITICAL"] = "critical";
 })(AuditSeverity || (exports.AuditSeverity = AuditSeverity = {}));
 var RiskLevel;
-(function (RiskLevel) {
+((RiskLevel) => {
   RiskLevel["LOW"] = "low";
   RiskLevel["MEDIUM"] = "medium";
   RiskLevel["HIGH"] = "high";
@@ -245,7 +242,7 @@ var SUSPICIOUS_PATTERNS = {
     riskLevel: RiskLevel.MEDIUM,
   },
 };
-var SecurityAuditLogger = /** @class */ (function () {
+var SecurityAuditLogger = /** @class */ (() => {
   function SecurityAuditLogger() {
     this.supabase = (0, client_1.createClient)();
     this.eventQueue = [];
@@ -498,35 +495,17 @@ var SecurityAuditLogger = /** @class */ (function () {
       return __generator(this, function (_a) {
         try {
           cutoffTime_1 = Date.now() - hoursBack * 60 * 60 * 1000;
-          events = this.getStoredEvents().filter(function (event) {
-            return event.timestamp > cutoffTime_1;
-          });
+          events = this.getStoredEvents().filter((event) => event.timestamp > cutoffTime_1);
           metrics = {
             totalEvents: events.length,
-            successfulLogins: events.filter(function (e) {
-              return e.type === AuditEventType.LOGIN_SUCCESS;
-            }).length,
-            failedLogins: events.filter(function (e) {
-              return e.type === AuditEventType.LOGIN_FAILURE;
-            }).length,
-            suspiciousActivities: events.filter(function (e) {
-              return e.type === AuditEventType.SUSPICIOUS_ACTIVITY;
-            }).length,
-            accountLockouts: events.filter(function (e) {
-              return e.type === AuditEventType.ACCOUNT_LOCKOUT;
-            }).length,
-            uniqueUsers: new Set(
-              events
-                .map(function (e) {
-                  return e.userId;
-                })
-                .filter(Boolean),
-            ).size,
-            uniqueIPs: new Set(
-              events.map(function (e) {
-                return e.ipAddress;
-              }),
-            ).size,
+            successfulLogins: events.filter((e) => e.type === AuditEventType.LOGIN_SUCCESS).length,
+            failedLogins: events.filter((e) => e.type === AuditEventType.LOGIN_FAILURE).length,
+            suspiciousActivities: events.filter(
+              (e) => e.type === AuditEventType.SUSPICIOUS_ACTIVITY,
+            ).length,
+            accountLockouts: events.filter((e) => e.type === AuditEventType.ACCOUNT_LOCKOUT).length,
+            uniqueUsers: new Set(events.map((e) => e.userId).filter(Boolean)).size,
+            uniqueIPs: new Set(events.map((e) => e.ipAddress)).size,
             riskDistribution: this.calculateRiskDistribution(events),
             timeRangeHours: hoursBack,
           };
@@ -560,15 +539,14 @@ var SecurityAuditLogger = /** @class */ (function () {
             suspiciousPatterns = [];
             // Check for multiple failed logins
             if (event.type === AuditEventType.LOGIN_FAILURE) {
-              failedLogins = recentEvents.filter(function (e) {
-                return (
+              failedLogins = recentEvents.filter(
+                (e) =>
                   e.type === AuditEventType.LOGIN_FAILURE &&
                   e.email === event.email &&
                   e.timestamp >
                     Date.now() -
-                      SUSPICIOUS_PATTERNS.MULTIPLE_FAILED_LOGINS.timeWindowMinutes * 60 * 1000
-                );
-              });
+                      SUSPICIOUS_PATTERNS.MULTIPLE_FAILED_LOGINS.timeWindowMinutes * 60 * 1000,
+              );
               if (failedLogins.length >= SUSPICIOUS_PATTERNS.MULTIPLE_FAILED_LOGINS.threshold) {
                 suspiciousPatterns.push({
                   pattern: "MULTIPLE_FAILED_LOGINS",
@@ -581,25 +559,22 @@ var SecurityAuditLogger = /** @class */ (function () {
                   timeframe: {
                     start: Math.min.apply(
                       Math,
-                      failedLogins.map(function (e) {
-                        return e.timestamp;
-                      }),
+                      failedLogins.map((e) => e.timestamp),
                     ),
                     end: Date.now(),
                   },
                 });
               }
             }
-            rapidAttempts = recentEvents.filter(function (e) {
-              return (
+            rapidAttempts = recentEvents.filter(
+              (e) =>
                 (e.type === AuditEventType.LOGIN_ATTEMPT ||
                   e.type === AuditEventType.LOGIN_FAILURE) &&
                 e.ipAddress === event.ipAddress &&
                 e.timestamp >
                   Date.now() -
-                    SUSPICIOUS_PATTERNS.RAPID_LOGIN_ATTEMPTS.timeWindowMinutes * 60 * 1000
-              );
-            });
+                    SUSPICIOUS_PATTERNS.RAPID_LOGIN_ATTEMPTS.timeWindowMinutes * 60 * 1000,
+            );
             if (rapidAttempts.length >= SUSPICIOUS_PATTERNS.RAPID_LOGIN_ATTEMPTS.threshold) {
               suspiciousPatterns.push({
                 pattern: "RAPID_LOGIN_ATTEMPTS",
@@ -610,21 +585,13 @@ var SecurityAuditLogger = /** @class */ (function () {
                 occurrences: rapidAttempts.length,
                 affectedUsers: __spreadArray(
                   [],
-                  new Set(
-                    rapidAttempts
-                      .map(function (e) {
-                        return e.email;
-                      })
-                      .filter(Boolean),
-                  ),
+                  new Set(rapidAttempts.map((e) => e.email).filter(Boolean)),
                   true,
                 ),
                 timeframe: {
                   start: Math.min.apply(
                     Math,
-                    rapidAttempts.map(function (e) {
-                      return e.timestamp;
-                    }),
+                    rapidAttempts.map((e) => e.timestamp),
                   ),
                   end: Date.now(),
                 },
@@ -744,10 +711,9 @@ var SecurityAuditLogger = /** @class */ (function () {
       });
     });
   };
-  SecurityAuditLogger.prototype.generateEventId = function () {
-    return "audit_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  SecurityAuditLogger.prototype.determineSeverity = function (type, details) {
+  SecurityAuditLogger.prototype.generateEventId = () =>
+    "audit_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  SecurityAuditLogger.prototype.determineSeverity = (type, details) => {
     switch (type) {
       case AuditEventType.SUSPICIOUS_ACTIVITY:
       case AuditEventType.ACCOUNT_LOCKOUT:
@@ -762,7 +728,7 @@ var SecurityAuditLogger = /** @class */ (function () {
         return AuditSeverity.INFO;
     }
   };
-  SecurityAuditLogger.prototype.assessRiskLevel = function (type, details) {
+  SecurityAuditLogger.prototype.assessRiskLevel = (type, details) => {
     if (type === AuditEventType.SUSPICIOUS_ACTIVITY) {
       return details.riskLevel || RiskLevel.HIGH;
     }
@@ -774,7 +740,7 @@ var SecurityAuditLogger = /** @class */ (function () {
     }
     return RiskLevel.LOW;
   };
-  SecurityAuditLogger.prototype.determineOutcome = function (type, details) {
+  SecurityAuditLogger.prototype.determineOutcome = (type, details) => {
     if (type.includes("SUCCESS") || type === AuditEventType.LOGIN_SUCCESS) {
       return "success";
     }
@@ -785,7 +751,7 @@ var SecurityAuditLogger = /** @class */ (function () {
   };
   SecurityAuditLogger.prototype.getClientIP = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // In production, get real IP from server
           return [2 /*return*/, "client_ip"];
@@ -796,13 +762,11 @@ var SecurityAuditLogger = /** @class */ (function () {
       });
     });
   };
-  SecurityAuditLogger.prototype.getUserAgent = function () {
-    return navigator.userAgent.substring(0, 255);
-  };
+  SecurityAuditLogger.prototype.getUserAgent = () => navigator.userAgent.substring(0, 255);
   SecurityAuditLogger.prototype.generateDeviceFingerprint = function () {
     return __awaiter(this, void 0, void 0, function () {
       var canvas, ctx, fingerprint;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           canvas = document.createElement("canvas");
           ctx = canvas.getContext("2d");
@@ -825,7 +789,7 @@ var SecurityAuditLogger = /** @class */ (function () {
   };
   SecurityAuditLogger.prototype.getLocationInfo = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // In production, get location from IP geolocation service
           return [2 /*return*/, { country: "BR", city: "Unknown" }];
@@ -836,7 +800,7 @@ var SecurityAuditLogger = /** @class */ (function () {
       });
     });
   };
-  SecurityAuditLogger.prototype.getStoredEvents = function () {
+  SecurityAuditLogger.prototype.getStoredEvents = () => {
     try {
       var stored = localStorage.getItem("security_audit_events");
       return stored ? JSON.parse(stored) : [];
@@ -846,11 +810,9 @@ var SecurityAuditLogger = /** @class */ (function () {
   };
   SecurityAuditLogger.prototype.getRecentEvents = function (minutesBack) {
     var cutoff = Date.now() - minutesBack * 60 * 1000;
-    return this.getStoredEvents().filter(function (event) {
-      return event.timestamp > cutoff;
-    });
+    return this.getStoredEvents().filter((event) => event.timestamp > cutoff);
   };
-  SecurityAuditLogger.prototype.categorizeFailure = function (reason) {
+  SecurityAuditLogger.prototype.categorizeFailure = (reason) => {
     if (reason.includes("password")) return "invalid_credentials";
     if (reason.includes("oauth")) return "oauth_failure";
     if (reason.includes("blocked")) return "account_blocked";
@@ -859,16 +821,16 @@ var SecurityAuditLogger = /** @class */ (function () {
   };
   SecurityAuditLogger.prototype.calculateSessionDuration = function (sessionId) {
     var events = this.getStoredEvents();
-    var createdEvent = events.find(function (e) {
-      return e.sessionId === sessionId && e.type === AuditEventType.SESSION_CREATED;
-    });
+    var createdEvent = events.find(
+      (e) => e.sessionId === sessionId && e.type === AuditEventType.SESSION_CREATED,
+    );
     return createdEvent ? Date.now() - createdEvent.timestamp : 0;
   };
-  SecurityAuditLogger.prototype.getRequiredRole = function (resource, action) {
+  SecurityAuditLogger.prototype.getRequiredRole = (resource, action) => {
     // In production, get from permissions system
     return "admin";
   };
-  SecurityAuditLogger.prototype.calculateRiskDistribution = function (events) {
+  SecurityAuditLogger.prototype.calculateRiskDistribution = (events) => {
     var _a;
     var distribution =
       ((_a = {}),
@@ -877,12 +839,12 @@ var SecurityAuditLogger = /** @class */ (function () {
       (_a[RiskLevel.HIGH] = 0),
       (_a[RiskLevel.CRITICAL] = 0),
       _a);
-    events.forEach(function (event) {
+    events.forEach((event) => {
       distribution[event.riskLevel]++;
     });
     return distribution;
   };
-  SecurityAuditLogger.prototype.getEmptyMetrics = function (hoursBack) {
+  SecurityAuditLogger.prototype.getEmptyMetrics = (hoursBack) => {
     var _a;
     return {
       totalEvents: 0,
@@ -910,38 +872,30 @@ var SecurityAuditLogger = /** @class */ (function () {
         return [
           2 /*return*/,
           events
-            .filter(function (e) {
-              return e.type === AuditEventType.SUSPICIOUS_ACTIVITY;
-            })
-            .map(function (e) {
-              return {
-                pattern: e.details.pattern,
-                description: e.details.description,
-                riskLevel: e.details.riskLevel,
-                occurrences: e.details.occurrences,
-                affectedUsers: e.details.affectedUsers,
-                timeframe: {
-                  start: e.timestamp,
-                  end: e.timestamp,
-                },
-              };
-            }),
+            .filter((e) => e.type === AuditEventType.SUSPICIOUS_ACTIVITY)
+            .map((e) => ({
+              pattern: e.details.pattern,
+              description: e.details.description,
+              riskLevel: e.details.riskLevel,
+              occurrences: e.details.occurrences,
+              affectedUsers: e.details.affectedUsers,
+              timeframe: {
+                start: e.timestamp,
+                end: e.timestamp,
+              },
+            })),
         ];
       });
     });
   };
-  SecurityAuditLogger.prototype.generateRecommendations = function (metrics, patterns) {
+  SecurityAuditLogger.prototype.generateRecommendations = (metrics, patterns) => {
     var recommendations = [];
     if (metrics.failedLogins > metrics.successfulLogins * 0.1) {
       recommendations.push(
         "Alto número de logins falhados detectado. Considere implementar CAPTCHA.",
       );
     }
-    if (
-      patterns.some(function (p) {
-        return p.riskLevel === RiskLevel.HIGH;
-      })
-    ) {
+    if (patterns.some((p) => p.riskLevel === RiskLevel.HIGH)) {
       recommendations.push("Atividades suspeitas detectadas. Revise logs de segurança.");
     }
     if (metrics.uniqueIPs > metrics.uniqueUsers * 2) {
@@ -951,7 +905,7 @@ var SecurityAuditLogger = /** @class */ (function () {
   };
   SecurityAuditLogger.prototype.sendSecurityAlert = function (pattern) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.warn("ALERTA DE SEGURANÇA:", pattern);
         return [2 /*return*/];
       });
@@ -959,7 +913,7 @@ var SecurityAuditLogger = /** @class */ (function () {
   };
   SecurityAuditLogger.prototype.sendToMonitoringService = function (events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Send to monitoring service (Sentry, DataDog, etc.)
           console.log("Sending events to monitoring:", events.length);
@@ -973,29 +927,30 @@ var SecurityAuditLogger = /** @class */ (function () {
   return SecurityAuditLogger;
 })();
 // Export singleton instance
-var createsecurityAuditLogger = function () {
-  return new SecurityAuditLogger();
-};
+var createsecurityAuditLogger = () => new SecurityAuditLogger();
 exports.createsecurityAuditLogger = createsecurityAuditLogger;
 // Export convenience functions
 function logAuthEvent(type, details, userId, sessionId) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, securityAuditLogger.logEvent(type, details, userId, sessionId)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      securityAuditLogger.logEvent(type, details, userId, sessionId),
+    ]);
   });
 }
 function getSecurityMetrics(hoursBack) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, securityAuditLogger.getSecurityMetrics(hoursBack)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      securityAuditLogger.getSecurityMetrics(hoursBack),
+    ]);
   });
 }
 function getSecurityReport(hoursBack) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, securityAuditLogger.getSecurityReport(hoursBack)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      securityAuditLogger.getSecurityReport(hoursBack),
+    ]);
   });
 }

@@ -2,10 +2,10 @@
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests for stock alerts API endpoints
 
-import type { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import type { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { NextRequest } from "next/server";
-import type { GET, POST, PUT, DELETE } from "../route";
 import type { POST as AcknowledgePost } from "../acknowledge/route";
+import type { DELETE, GET, POST, PUT } from "../route";
 
 // =====================================================
 // TEST SETUP AND MOCKS

@@ -28,11 +28,11 @@
  * - Alert suppression and acknowledgment tracking
  */
 
-import type { type Database } from "@/lib/database.types";
+import type { Database } from "@/lib/database.types";
 import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/utils/logger";
-import type { type BehavioralEvent, type EngagementLevel } from "./behavioral-analyzer";
-import type { type TouchpointType } from "./touchpoint-analyzer";
+import type { BehavioralEvent, EngagementLevel } from "./behavioral-analyzer";
+import type { TouchpointType } from "./touchpoint-analyzer";
 
 // ============================================================================
 // TYPES & INTERFACES

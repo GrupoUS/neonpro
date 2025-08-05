@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Data Retention Manager
  * Story 1.5: LGPD Compliance Automation
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createdataRetentionManager = exports.DataRetentionManager = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -162,7 +159,7 @@ var audit_trail_manager_1 = require("./audit-trail-manager");
 /**
  * LGPD Data Retention Manager
  */
-var DataRetentionManager = /** @class */ (function () {
+var DataRetentionManager = /** @class */ (() => {
   function DataRetentionManager() {
     var _a;
     this.defaultRetentionPeriods =
@@ -281,7 +278,7 @@ var DataRetentionManager = /** @class */ (function () {
               return [4 /*yield*/, this.getRetentionPolicy(clinicId, dataType, purpose)];
             case 1:
               policy = _b.sent();
-              if (!!policy) return [3 /*break*/, 3];
+              if (policy) return [3 /*break*/, 3];
               return [4 /*yield*/, this.createDefaultRetentionPolicy(clinicId, dataType, purpose)];
             case 2:
               defaultPolicy = _b.sent();
@@ -665,57 +662,37 @@ var DataRetentionManager = /** @class */ (function () {
             }
             now = new Date();
             allRecords_1 = records || [];
-            activeRecords = allRecords_1.filter(function (r) {
-              return r.status === "active";
-            });
-            expiringSoonRecords = allRecords_1.filter(function (r) {
-              return r.status === "expiring_soon";
-            });
-            expiredRecords = allRecords_1.filter(function (r) {
-              return r.status === "expired";
-            });
-            deletedRecords = allRecords_1.filter(function (r) {
-              return r.status === "deleted";
-            });
-            anonymizedRecords = allRecords_1.filter(function (r) {
-              return r.status === "anonymized";
-            });
+            activeRecords = allRecords_1.filter((r) => r.status === "active");
+            expiringSoonRecords = allRecords_1.filter((r) => r.status === "expiring_soon");
+            expiredRecords = allRecords_1.filter((r) => r.status === "expired");
+            deletedRecords = allRecords_1.filter((r) => r.status === "deleted");
+            anonymizedRecords = allRecords_1.filter((r) => r.status === "anonymized");
             retentionByDataType_1 = {};
-            Object.values(consent_automation_manager_1.LGPDDataType).forEach(function (dataType) {
-              var typeRecords = allRecords_1.filter(function (r) {
-                return r.dataType === dataType;
-              });
+            Object.values(consent_automation_manager_1.LGPDDataType).forEach((dataType) => {
+              var typeRecords = allRecords_1.filter((r) => r.dataType === dataType);
               retentionByDataType_1[dataType] = {
                 total: typeRecords.length,
-                expiring: typeRecords.filter(function (r) {
-                  return r.status === "expiring_soon";
-                }).length,
-                expired: typeRecords.filter(function (r) {
-                  return r.status === "expired";
-                }).length,
+                expiring: typeRecords.filter((r) => r.status === "expiring_soon").length,
+                expired: typeRecords.filter((r) => r.status === "expired").length,
               };
             });
             thirtyDaysFromNow_1 = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
             upcomingExpirations = activeRecords
-              .filter(function (r) {
-                return new Date(r.retentionExpiresAt) <= thirtyDaysFromNow_1;
-              })
-              .sort(function (a, b) {
-                return (
+              .filter((r) => new Date(r.retentionExpiresAt) <= thirtyDaysFromNow_1)
+              .sort(
+                (a, b) =>
                   new Date(a.retentionExpiresAt).getTime() -
-                  new Date(b.retentionExpiresAt).getTime()
-                );
-              })
+                  new Date(b.retentionExpiresAt).getTime(),
+              )
               .slice(0, 20);
             totalManagedRecords = allRecords_1.length;
-            compliantRecords = allRecords_1.filter(function (r) {
-              return (
+            compliantRecords = allRecords_1.filter(
+              (r) =>
                 r.status === "active" ||
                 r.status === "expiring_soon" ||
                 r.status === "deleted" ||
-                r.status === "anonymized"
-              );
-            }).length;
+                r.status === "anonymized",
+            ).length;
             retentionCompliance =
               totalManagedRecords > 0 ? (compliantRecords / totalManagedRecords) * 100 : 100;
             return [
@@ -862,7 +839,7 @@ var DataRetentionManager = /** @class */ (function () {
    */
   DataRetentionManager.prototype.anonymizeData = function (record) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would implement actual data anonymization based on data type
           // For now, we'll log the requirement
@@ -887,7 +864,7 @@ var DataRetentionManager = /** @class */ (function () {
    */
   DataRetentionManager.prototype.deleteData = function (record) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would implement actual data deletion based on data type
           // For now, we'll log the requirement
@@ -917,7 +894,7 @@ var DataRetentionManager = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -965,7 +942,5 @@ var DataRetentionManager = /** @class */ (function () {
 })();
 exports.DataRetentionManager = DataRetentionManager;
 // Export singleton instance
-var createdataRetentionManager = function () {
-  return new DataRetentionManager();
-};
+var createdataRetentionManager = () => new DataRetentionManager();
 exports.createdataRetentionManager = createdataRetentionManager;

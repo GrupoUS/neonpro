@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionStatus =
   exports.SecuritySeverity =
@@ -15,60 +14,60 @@ exports.isHighRiskEvent = isHighRiskEvent;
 exports.shouldAuditEvent = shouldAuditEvent;
 // Session types for authentication and security
 var SessionAction;
-(function (SessionAction) {
-  SessionAction["LOGIN"] = "login";
-  SessionAction["LOGOUT"] = "logout";
-  SessionAction["REFRESH"] = "refresh";
-  SessionAction["EXTEND"] = "extend";
-  SessionAction["VALIDATE"] = "validate";
-  SessionAction["TERMINATE"] = "terminate";
+((SessionAction) => {
+  SessionAction.LOGIN = "login";
+  SessionAction.LOGOUT = "logout";
+  SessionAction.REFRESH = "refresh";
+  SessionAction.EXTEND = "extend";
+  SessionAction.VALIDATE = "validate";
+  SessionAction.TERMINATE = "terminate";
 })(SessionAction || (exports.SessionAction = SessionAction = {}));
 var DeviceType;
-(function (DeviceType) {
-  DeviceType["DESKTOP"] = "desktop";
-  DeviceType["MOBILE"] = "mobile";
-  DeviceType["TABLET"] = "tablet";
-  DeviceType["UNKNOWN"] = "unknown";
+((DeviceType) => {
+  DeviceType.DESKTOP = "desktop";
+  DeviceType.MOBILE = "mobile";
+  DeviceType.TABLET = "tablet";
+  DeviceType.UNKNOWN = "unknown";
 })(DeviceType || (exports.DeviceType = DeviceType = {}));
 var SecurityLevel;
-(function (SecurityLevel) {
-  SecurityLevel["LOW"] = "low";
-  SecurityLevel["MEDIUM"] = "medium";
-  SecurityLevel["HIGH"] = "high";
-  SecurityLevel["CRITICAL"] = "critical";
+((SecurityLevel) => {
+  SecurityLevel.LOW = "low";
+  SecurityLevel.MEDIUM = "medium";
+  SecurityLevel.HIGH = "high";
+  SecurityLevel.CRITICAL = "critical";
 })(SecurityLevel || (exports.SecurityLevel = SecurityLevel = {}));
 var SecurityEventType;
-(function (SecurityEventType) {
-  SecurityEventType["SUCCESSFUL_LOGIN"] = "successful_login";
-  SecurityEventType["FAILED_LOGIN"] = "failed_login";
-  SecurityEventType["PASSWORD_CHANGE"] = "password_change";
-  SecurityEventType["MFA_ENABLED"] = "mfa_enabled";
-  SecurityEventType["MFA_DISABLED"] = "mfa_disabled";
-  SecurityEventType["SUSPICIOUS_ACTIVITY"] = "suspicious_activity";
-  SecurityEventType["DEVICE_REGISTERED"] = "device_registered";
-  SecurityEventType["DEVICE_REMOVED"] = "device_removed";
-  SecurityEventType["SESSION_CREATED"] = "session_created";
-  SecurityEventType["SESSION_EXTENDED"] = "session_extended";
-  SecurityEventType["SESSION_TERMINATED"] = "session_terminated";
-  SecurityEventType["PRIVILEGE_ESCALATION"] = "privilege_escalation";
-  SecurityEventType["UNAUTHORIZED_ACCESS"] = "unauthorized_access";
-  SecurityEventType["DATA_ACCESS"] = "data_access";
-  SecurityEventType["ADMIN_ACTION"] = "admin_action";
+((SecurityEventType) => {
+  SecurityEventType.SUCCESSFUL_LOGIN = "successful_login";
+  SecurityEventType.FAILED_LOGIN = "failed_login";
+  SecurityEventType.PASSWORD_CHANGE = "password_change";
+  SecurityEventType.MFA_ENABLED = "mfa_enabled";
+  SecurityEventType.MFA_DISABLED = "mfa_disabled";
+  SecurityEventType.SUSPICIOUS_ACTIVITY = "suspicious_activity";
+  SecurityEventType.DEVICE_REGISTERED = "device_registered";
+  SecurityEventType.DEVICE_REMOVED = "device_removed";
+  SecurityEventType.SESSION_CREATED = "session_created";
+  SecurityEventType.SESSION_EXTENDED = "session_extended";
+  SecurityEventType.SESSION_TERMINATED = "session_terminated";
+  SecurityEventType.PRIVILEGE_ESCALATION = "privilege_escalation";
+  SecurityEventType.UNAUTHORIZED_ACCESS = "unauthorized_access";
+  SecurityEventType.DATA_ACCESS = "data_access";
+  SecurityEventType.ADMIN_ACTION = "admin_action";
 })(SecurityEventType || (exports.SecurityEventType = SecurityEventType = {}));
 var SecuritySeverity;
-(function (SecuritySeverity) {
-  SecuritySeverity["INFO"] = "info";
-  SecuritySeverity["LOW"] = "low";
-  SecuritySeverity["MEDIUM"] = "medium";
-  SecuritySeverity["HIGH"] = "high";
-  SecuritySeverity["CRITICAL"] = "critical";
+((SecuritySeverity) => {
+  SecuritySeverity.INFO = "info";
+  SecuritySeverity.LOW = "low";
+  SecuritySeverity.MEDIUM = "medium";
+  SecuritySeverity.HIGH = "high";
+  SecuritySeverity.CRITICAL = "critical";
 })(SecuritySeverity || (exports.SecuritySeverity = SecuritySeverity = {}));
 var SessionStatus;
-(function (SessionStatus) {
-  SessionStatus["ACTIVE"] = "active";
-  SessionStatus["EXPIRED"] = "expired";
-  SessionStatus["TERMINATED"] = "terminated";
-  SessionStatus["INVALID"] = "invalid";
+((SessionStatus) => {
+  SessionStatus.ACTIVE = "active";
+  SessionStatus.EXPIRED = "expired";
+  SessionStatus.TERMINATED = "terminated";
+  SessionStatus.INVALID = "invalid";
 })(SessionStatus || (exports.SessionStatus = SessionStatus = {}));
 // Type guards
 function isValidSessionStatus(status) {

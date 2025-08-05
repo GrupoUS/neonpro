@@ -7,11 +7,11 @@
  */
 
 import type {
-  NotificationChannel,
-  NotificationDelivery,
-  NotificationContext,
   ChannelConfig,
   DeliveryStatus,
+  NotificationChannel,
+  NotificationContext,
+  NotificationDelivery,
 } from "../types";
 
 // ============================================================================
@@ -319,6 +319,6 @@ export class NotificationChannelManager implements ChannelManager {
 
 export default NotificationChannelManager;
 export * from "./email-provider";
-export * from "./sms-provider";
-export * from "./push-provider";
 export * from "./in-app-provider";
+export * from "./push-provider";
+export * from "./sms-provider";

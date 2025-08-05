@@ -2,18 +2,19 @@
  * NEONPROV1 Design System - StatusBadge Component
  * Healthcare status indicators with NEONPROV1 styling
  */
-import React from "react";
-import type { cn } from "@/lib/utils";
-import type { Badge } from "@/components/ui/badge";
+
 import type {
-  AlertTriangle,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Zap,
   Activity,
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  XCircle,
+  Zap,
 } from "lucide-react";
+import type React from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { cn } from "@/lib/utils";
 
 type HealthcareStatus =
   | "critical"

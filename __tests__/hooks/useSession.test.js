@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @fileoverview Unit tests for useSession hooks
  * @version 1.0.0
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,7 +37,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -67,8 +66,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -89,9 +86,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var vitest_1 = require("vitest");
 var react_1 = require("@testing-library/react");
@@ -196,9 +193,9 @@ var mockDevice = {
   browser: "Chrome",
   userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
 };
-(0, vitest_1.describe)("useSession", function () {
+(0, vitest_1.describe)("useSession", () => {
   var mockSessionManager;
-  (0, vitest_1.beforeEach)(function () {
+  (0, vitest_1.beforeEach)(() => {
     vitest_1.vi.clearAllMocks();
     mockSessionManager = {
       getUserSessions: vitest_1.vi.fn(),
@@ -209,38 +206,32 @@ var mockDevice = {
       detectSuspiciousActivity: vitest_1.vi.fn(),
       applySessionPolicies: vitest_1.vi.fn(),
     };
-    MockSessionManager.mockImplementation(function () {
-      return mockSessionManager;
-    });
+    MockSessionManager.mockImplementation(() => mockSessionManager);
   });
-  (0, vitest_1.afterEach)(function () {
+  (0, vitest_1.afterEach)(() => {
     vitest_1.vi.restoreAllMocks();
   });
-  (0, vitest_1.it)("should initialize with default state", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, useSession_1.useSession)("user-123");
-    }).result;
+  (0, vitest_1.it)("should initialize with default state", () => {
+    var result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
     (0, vitest_1.expect)(result.current.sessions).toEqual([]);
     (0, vitest_1.expect)(result.current.activeSessions).toEqual([]);
     (0, vitest_1.expect)(result.current.loading).toBe(true);
     (0, vitest_1.expect)(result.current.error).toBeNull();
   });
-  (0, vitest_1.it)("should load user sessions on mount", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.it)("should load user sessions on mount", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getUserSessions.mockResolvedValue({
               success: true,
               data: [mockSessionData],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSession)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -254,24 +245,22 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should handle loading error", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should handle loading error", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getUserSessions.mockResolvedValue({
               success: false,
               error: "Failed to load sessions",
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSession)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -282,12 +271,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should create new session", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should create new session", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getUserSessions.mockResolvedValue({
@@ -298,12 +287,10 @@ var mockDevice = {
               success: true,
               data: mockSessionData,
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSession)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -311,9 +298,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [
@@ -325,8 +312,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -339,12 +326,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should update session activity", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should update session activity", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getUserSessions.mockResolvedValue({
@@ -355,12 +342,10 @@ var mockDevice = {
               success: true,
               data: __assign(__assign({}, mockSessionData), { activityCount: 2 }),
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSession)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -368,9 +353,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [4 /*yield*/, result.current.updateActivity("session-123")];
@@ -379,8 +364,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -394,12 +379,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should terminate session", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should terminate session", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getUserSessions.mockResolvedValue({
@@ -410,12 +395,10 @@ var mockDevice = {
               success: true,
               data: __assign(__assign({}, mockSessionData), { isActive: false }),
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSession)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -423,9 +406,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [4 /*yield*/, result.current.terminateSession("session-123")];
@@ -434,8 +417,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -445,12 +428,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should terminate all sessions", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should terminate all sessions", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getUserSessions.mockResolvedValue({
@@ -461,12 +444,10 @@ var mockDevice = {
               success: true,
               data: 1,
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSession)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -474,9 +455,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [4 /*yield*/, result.current.terminateAllSessions()];
@@ -485,8 +466,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -496,24 +477,22 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should refresh sessions", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should refresh sessions", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getUserSessions.mockResolvedValue({
               success: true,
               data: [mockSessionData],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSession)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -521,9 +500,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [4 /*yield*/, result.current.refreshSessions()];
@@ -532,8 +511,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -541,12 +520,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should filter active sessions correctly", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should filter active sessions correctly", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var inactiveSession, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             inactiveSession = __assign(__assign({}, mockSessionData), {
@@ -557,12 +536,10 @@ var mockDevice = {
               success: true,
               data: [mockSessionData, inactiveSession],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSession)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() => (0, useSession_1.useSession)("user-123")).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -574,47 +551,45 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-(0, vitest_1.describe)("useSecurityEvents", function () {
+(0, vitest_1.describe)("useSecurityEvents", () => {
   var mockSessionManager;
-  (0, vitest_1.beforeEach)(function () {
+  (0, vitest_1.beforeEach)(() => {
     vitest_1.vi.clearAllMocks();
     mockSessionManager = {
       getSecurityEvents: vitest_1.vi.fn(),
       logSecurityEvent: vitest_1.vi.fn(),
       resolveSecurityEvent: vitest_1.vi.fn(),
     };
-    MockSessionManager.mockImplementation(function () {
-      return mockSessionManager;
-    });
+    MockSessionManager.mockImplementation(() => mockSessionManager);
   });
-  (0, vitest_1.it)("should initialize with default state", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, useSession_1.useSecurityEvents)("user-123");
-    }).result;
+  (0, vitest_1.it)("should initialize with default state", () => {
+    var result = (0, react_1.renderHook)(() =>
+      (0, useSession_1.useSecurityEvents)("user-123"),
+    ).result;
     (0, vitest_1.expect)(result.current.events).toEqual([]);
     (0, vitest_1.expect)(result.current.unresolvedEvents).toEqual([]);
     (0, vitest_1.expect)(result.current.loading).toBe(true);
     (0, vitest_1.expect)(result.current.error).toBeNull();
   });
-  (0, vitest_1.it)("should load security events on mount", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.it)("should load security events on mount", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getSecurityEvents.mockResolvedValue({
               success: true,
               data: [mockSecurityEvent],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSecurityEvents)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useSecurityEvents)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -629,12 +604,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should apply filters", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should apply filters", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var filters, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             filters = { severity: "high", resolved: false };
@@ -642,12 +617,12 @@ var mockDevice = {
               success: true,
               data: [],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSecurityEvents)("user-123", filters);
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useSecurityEvents)("user-123", filters),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -660,12 +635,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should log security event", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should log security event", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getSecurityEvents.mockResolvedValue({
@@ -676,12 +651,12 @@ var mockDevice = {
               success: true,
               data: mockSecurityEvent,
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSecurityEvents)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useSecurityEvents)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -689,9 +664,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [
@@ -709,8 +684,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -718,12 +693,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should resolve security event", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should resolve security event", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getSecurityEvents.mockResolvedValue({
@@ -734,12 +709,12 @@ var mockDevice = {
               success: true,
               data: __assign(__assign({}, mockSecurityEvent), { resolved: true }),
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSecurityEvents)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useSecurityEvents)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -747,9 +722,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [
@@ -761,8 +736,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -774,12 +749,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should filter unresolved events correctly", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should filter unresolved events correctly", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var resolvedEvent, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             resolvedEvent = __assign(__assign({}, mockSecurityEvent), {
@@ -790,12 +765,12 @@ var mockDevice = {
               success: true,
               data: [mockSecurityEvent, resolvedEvent],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useSecurityEvents)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useSecurityEvents)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -807,35 +782,33 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-(0, vitest_1.describe)("useDeviceManagement", function () {
+(0, vitest_1.describe)("useDeviceManagement", () => {
   var mockSessionManager;
-  (0, vitest_1.beforeEach)(function () {
+  (0, vitest_1.beforeEach)(() => {
     vitest_1.vi.clearAllMocks();
     mockSessionManager = {
       getDevices: vitest_1.vi.fn(),
       updateDeviceTrust: vitest_1.vi.fn(),
     };
-    MockSessionManager.mockImplementation(function () {
-      return mockSessionManager;
-    });
+    MockSessionManager.mockImplementation(() => mockSessionManager);
   });
-  (0, vitest_1.it)("should initialize with default state", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, useSession_1.useDeviceManagement)("user-123");
-    }).result;
+  (0, vitest_1.it)("should initialize with default state", () => {
+    var result = (0, react_1.renderHook)(() =>
+      (0, useSession_1.useDeviceManagement)("user-123"),
+    ).result;
     (0, vitest_1.expect)(result.current.devices).toEqual([]);
     (0, vitest_1.expect)(result.current.trustedDevices).toEqual([]);
     (0, vitest_1.expect)(result.current.suspiciousDevices).toEqual([]);
     (0, vitest_1.expect)(result.current.loading).toBe(true);
     (0, vitest_1.expect)(result.current.error).toBeNull();
   });
-  (0, vitest_1.it)("should load devices on mount", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.it)("should load devices on mount", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockDeviceData, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockDeviceData = __assign(__assign({ id: "device-123" }, mockDevice), {
@@ -846,12 +819,12 @@ var mockDevice = {
               success: true,
               data: [mockDeviceData],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useDeviceManagement)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useDeviceManagement)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -863,12 +836,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should update device trust level", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should update device trust level", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockDeviceData, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockDeviceData = __assign(__assign({ id: "device-123" }, mockDevice), {
@@ -883,12 +856,12 @@ var mockDevice = {
               success: true,
               data: __assign(__assign({}, mockDeviceData), { trustLevel: "trusted" }),
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useDeviceManagement)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useDeviceManagement)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -896,9 +869,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [
@@ -910,8 +883,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -922,12 +895,12 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should filter devices by trust level correctly", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should filter devices by trust level correctly", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var trustedDevice, suspiciousDevice, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             trustedDevice = __assign(__assign({ id: "device-123" }, mockDevice), {
@@ -942,12 +915,12 @@ var mockDevice = {
               success: true,
               data: [trustedDevice, suspiciousDevice],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useDeviceManagement)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useDeviceManagement)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -961,24 +934,24 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should refresh devices", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should refresh devices", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getDevices.mockResolvedValue({
               success: true,
               data: [],
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useDeviceManagement)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useDeviceManagement)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -986,9 +959,9 @@ var mockDevice = {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_1.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [4 /*yield*/, result.current.refreshDevices()];
@@ -997,8 +970,8 @@ var mockDevice = {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 2:
             _a.sent();
@@ -1006,24 +979,24 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("should handle loading error", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("should handle loading error", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSessionManager.getDevices.mockResolvedValue({
               success: false,
               error: "Failed to load devices",
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, useSession_1.useDeviceManagement)("user-123");
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, useSession_1.useDeviceManagement)("user-123"),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, vitest_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -1034,6 +1007,6 @@ var mockDevice = {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

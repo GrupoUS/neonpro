@@ -2,13 +2,13 @@
 // TDD Implementation following QA Best Practices
 // Test Strategy: Unit → Integration → E2E
 
-import type { StockAlertService } from "../stock-alert.service";
 import type {
-  StockAlertError,
-  CreateAlertConfigRequest,
   AcknowledgeAlertRequest,
+  CreateAlertConfigRequest,
   ResolveAlertRequest,
+  StockAlertError,
 } from "@/app/lib/types/stock";
+import type { StockAlertService } from "../stock-alert.service";
 
 // ============================================================================
 // MOCKS AND TEST SETUP

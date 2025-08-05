@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdvancedAnalyticsHub = AdvancedAnalyticsHub;
 /**
@@ -187,7 +184,6 @@ var forecasting_charts_1 = require("./forecasting-charts");
 var advanced_metrics_dashboard_1 = require("./advanced-metrics-dashboard");
 var statistical_insights_1 = require("./statistical-insights");
 function AdvancedAnalyticsHub(_a) {
-  var _this = this;
   var _b, _c;
   var _d = _a.initialConfig,
     initialConfig = _d === void 0 ? {} : _d,
@@ -247,220 +243,201 @@ function AdvancedAnalyticsHub(_a) {
     selectedView = _l[0],
     setSelectedView = _l[1];
   // Fetch analytics data
-  var fetchAnalyticsData = (0, react_1.useCallback)(
-    function () {
-      var args_1 = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args_1[_i] = arguments[_i];
+  var fetchAnalyticsData = (0, react_1.useCallback)(() => {
+    var args_1 = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args_1[_i] = arguments[_i];
+    }
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (showLoading) {
+      var cohortResponse,
+        forecastResponse,
+        statisticsResponse,
+        _a,
+        cohortData,
+        forecastData,
+        statisticsData,
+        kpis,
+        timeSeriesData,
+        segmentationData,
+        benchmarkData,
+        err_1;
+      if (showLoading === void 0) {
+        showLoading = true;
       }
-      return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (showLoading) {
-        var cohortResponse,
-          forecastResponse,
-          statisticsResponse,
-          _a,
-          cohortData,
-          forecastData,
-          statisticsData,
-          kpis,
-          timeSeriesData,
-          segmentationData,
-          benchmarkData,
-          err_1;
-        if (showLoading === void 0) {
-          showLoading = true;
+      return __generator(this, (_b) => {
+        switch (_b.label) {
+          case 0:
+            if (showLoading) setLoading(true);
+            setError(null);
+            _b.label = 1;
+          case 1:
+            _b.trys.push([1, 6, 7, 8]);
+            return [
+              4 /*yield*/,
+              fetch("/api/analytics/advanced?type=cohort-analysis", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  startDate: config.dateRange.start,
+                  endDate: config.dateRange.end,
+                  cohortSize: "monthly",
+                  metrics: ["retention", "revenue", "churn"],
+                }),
+              }),
+              // Fetch forecasting data
+            ];
+          case 2:
+            cohortResponse = _b.sent();
+            return [
+              4 /*yield*/,
+              fetch("/api/analytics/advanced?type=forecasting", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  metric: "revenue",
+                  periods: 30,
+                  confidence_level: config.confidenceLevel / 100,
+                  include_scenarios: true,
+                }),
+              }),
+              // Fetch statistical analysis
+            ];
+          case 3:
+            forecastResponse = _b.sent();
+            return [
+              4 /*yield*/,
+              fetch("/api/analytics/advanced?type=statistical-analysis", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  metrics: config.selectedMetrics,
+                  analysis_type: "all",
+                  confidence_level: config.confidenceLevel / 100,
+                  include_outliers: true,
+                }),
+              }),
+              // Process responses
+            ];
+          case 4:
+            statisticsResponse = _b.sent();
+            return [
+              4 /*yield*/,
+              Promise.all([
+                cohortResponse.json(),
+                forecastResponse.json(),
+                statisticsResponse.json(),
+              ]),
+              // Generate mock KPIs and other data for dashboard
+            ];
+          case 5:
+            (_a = _b.sent()),
+              (cohortData = _a[0]),
+              (forecastData = _a[1]),
+              (statisticsData = _a[2]);
+            kpis = generateMockKPIs();
+            timeSeriesData = generateMockTimeSeriesData();
+            segmentationData = generateMockSegmentationData();
+            benchmarkData = generateMockBenchmarkData();
+            setAnalyticsData({
+              cohortData: cohortData.success ? cohortData.data.cohort_data : [],
+              forecastData: forecastData.success ? forecastData.data.forecast : [],
+              kpis: kpis,
+              timeSeriesData: timeSeriesData,
+              segmentationData: segmentationData,
+              benchmarkData: benchmarkData,
+              correlations: statisticsData.success ? statisticsData.data.correlations || [] : [],
+              statisticalTests: statisticsData.success
+                ? statisticsData.data.significance_tests || []
+                : [],
+              dataQuality: statisticsData.success ? statisticsData.data.data_quality || {} : {},
+              predictiveModels: statisticsData.success
+                ? statisticsData.data.predictive_models || []
+                : [],
+            });
+            setLastRefresh(new Date());
+            return [3 /*break*/, 8];
+          case 6:
+            err_1 = _b.sent();
+            console.error("Analytics data fetch error:", err_1);
+            setError("Failed to load analytics data. Please try again.");
+            return [3 /*break*/, 8];
+          case 7:
+            if (showLoading) setLoading(false);
+            return [7 /*endfinally*/];
+          case 8:
+            return [2 /*return*/];
         }
-        return __generator(this, function (_b) {
-          switch (_b.label) {
-            case 0:
-              if (showLoading) setLoading(true);
-              setError(null);
-              _b.label = 1;
-            case 1:
-              _b.trys.push([1, 6, 7, 8]);
-              return [
-                4 /*yield*/,
-                fetch("/api/analytics/advanced?type=cohort-analysis", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    startDate: config.dateRange.start,
-                    endDate: config.dateRange.end,
-                    cohortSize: "monthly",
-                    metrics: ["retention", "revenue", "churn"],
-                  }),
-                }),
-                // Fetch forecasting data
-              ];
-            case 2:
-              cohortResponse = _b.sent();
-              return [
-                4 /*yield*/,
-                fetch("/api/analytics/advanced?type=forecasting", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    metric: "revenue",
-                    periods: 30,
-                    confidence_level: config.confidenceLevel / 100,
-                    include_scenarios: true,
-                  }),
-                }),
-                // Fetch statistical analysis
-              ];
-            case 3:
-              forecastResponse = _b.sent();
-              return [
-                4 /*yield*/,
-                fetch("/api/analytics/advanced?type=statistical-analysis", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    metrics: config.selectedMetrics,
-                    analysis_type: "all",
-                    confidence_level: config.confidenceLevel / 100,
-                    include_outliers: true,
-                  }),
-                }),
-                // Process responses
-              ];
-            case 4:
-              statisticsResponse = _b.sent();
-              return [
-                4 /*yield*/,
-                Promise.all([
-                  cohortResponse.json(),
-                  forecastResponse.json(),
-                  statisticsResponse.json(),
-                ]),
-                // Generate mock KPIs and other data for dashboard
-              ];
-            case 5:
-              (_a = _b.sent()),
-                (cohortData = _a[0]),
-                (forecastData = _a[1]),
-                (statisticsData = _a[2]);
-              kpis = generateMockKPIs();
-              timeSeriesData = generateMockTimeSeriesData();
-              segmentationData = generateMockSegmentationData();
-              benchmarkData = generateMockBenchmarkData();
-              setAnalyticsData({
-                cohortData: cohortData.success ? cohortData.data.cohort_data : [],
-                forecastData: forecastData.success ? forecastData.data.forecast : [],
-                kpis: kpis,
-                timeSeriesData: timeSeriesData,
-                segmentationData: segmentationData,
-                benchmarkData: benchmarkData,
-                correlations: statisticsData.success ? statisticsData.data.correlations || [] : [],
-                statisticalTests: statisticsData.success
-                  ? statisticsData.data.significance_tests || []
-                  : [],
-                dataQuality: statisticsData.success ? statisticsData.data.data_quality || {} : {},
-                predictiveModels: statisticsData.success
-                  ? statisticsData.data.predictive_models || []
-                  : [],
-              });
-              setLastRefresh(new Date());
-              return [3 /*break*/, 8];
-            case 6:
-              err_1 = _b.sent();
-              console.error("Analytics data fetch error:", err_1);
-              setError("Failed to load analytics data. Please try again.");
-              return [3 /*break*/, 8];
-            case 7:
-              if (showLoading) setLoading(false);
-              return [7 /*endfinally*/];
-            case 8:
-              return [2 /*return*/];
-          }
-        });
       });
-    },
-    [config],
-  );
-  // Auto-refresh effect
-  (0, react_1.useEffect)(
-    function () {
-      if (config.autoRefresh && config.refreshInterval > 0) {
-        var interval_1 = setInterval(function () {
-          fetchAnalyticsData(false);
-        }, config.refreshInterval);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [config.autoRefresh, config.refreshInterval, fetchAnalyticsData],
-  );
-  // Initial data load
-  (0, react_1.useEffect)(
-    function () {
-      fetchAnalyticsData();
-    },
-    [fetchAnalyticsData],
-  );
-  // Config change handler
-  (0, react_1.useEffect)(
-    function () {
-      onConfigChange === null || onConfigChange === void 0 ? void 0 : onConfigChange(config);
-    },
-    [config, onConfigChange],
-  );
-  // Analytics summary calculations
-  var analyticsSummary = (0, react_1.useMemo)(
-    function () {
-      var _a;
-      var totalKPIs = analyticsData.kpis.length;
-      var overPerformingKPIs = analyticsData.kpis.filter(function (kpi) {
-        return kpi.value.target && kpi.value.current >= kpi.value.target;
-      }).length;
-      var strongCorrelations = analyticsData.correlations.filter(function (c) {
-        return Math.abs(c.correlation) >= 0.6;
-      }).length;
-      var significantTests = analyticsData.statisticalTests.filter(function (t) {
-        return t.result === "reject";
-      }).length;
-      var overallDataQuality =
-        (analyticsData.dataQuality.completeness +
-          analyticsData.dataQuality.accuracy +
-          analyticsData.dataQuality.consistency +
-          analyticsData.dataQuality.validity +
-          analyticsData.dataQuality.uniqueness) /
-          5 || 0;
-      var bestModel = analyticsData.predictiveModels.reduce(function (best, model) {
-        return model.accuracy > ((best === null || best === void 0 ? void 0 : best.accuracy) || 0)
-          ? model
-          : best;
-      }, analyticsData.predictiveModels[0]);
-      return {
-        totalKPIs: totalKPIs,
-        overPerformingKPIs: overPerformingKPIs,
-        strongCorrelations: strongCorrelations,
-        significantTests: significantTests,
-        overallDataQuality: overallDataQuality,
-        bestModel: bestModel,
-        outliers:
-          ((_a = analyticsData.dataQuality.outliers) === null || _a === void 0
-            ? void 0
-            : _a.filter(function (o) {
-                return o.isOutlier;
-              }).length) || 0,
-      };
-    },
-    [analyticsData],
-  );
-  // Event handlers
-  var handleConfigUpdate = function (updates) {
-    setConfig(function (prev) {
-      return __assign(__assign({}, prev), updates);
     });
+  }, [config]);
+  // Auto-refresh effect
+  (0, react_1.useEffect)(() => {
+    if (config.autoRefresh && config.refreshInterval > 0) {
+      var interval_1 = setInterval(() => {
+        fetchAnalyticsData(false);
+      }, config.refreshInterval);
+      return () => clearInterval(interval_1);
+    }
+  }, [config.autoRefresh, config.refreshInterval, fetchAnalyticsData]);
+  // Initial data load
+  (0, react_1.useEffect)(() => {
+    fetchAnalyticsData();
+  }, [fetchAnalyticsData]);
+  // Config change handler
+  (0, react_1.useEffect)(() => {
+    onConfigChange === null || onConfigChange === void 0 ? void 0 : onConfigChange(config);
+  }, [config, onConfigChange]);
+  // Analytics summary calculations
+  var analyticsSummary = (0, react_1.useMemo)(() => {
+    var _a;
+    var totalKPIs = analyticsData.kpis.length;
+    var overPerformingKPIs = analyticsData.kpis.filter(
+      (kpi) => kpi.value.target && kpi.value.current >= kpi.value.target,
+    ).length;
+    var strongCorrelations = analyticsData.correlations.filter(
+      (c) => Math.abs(c.correlation) >= 0.6,
+    ).length;
+    var significantTests = analyticsData.statisticalTests.filter(
+      (t) => t.result === "reject",
+    ).length;
+    var overallDataQuality =
+      (analyticsData.dataQuality.completeness +
+        analyticsData.dataQuality.accuracy +
+        analyticsData.dataQuality.consistency +
+        analyticsData.dataQuality.validity +
+        analyticsData.dataQuality.uniqueness) /
+        5 || 0;
+    var bestModel = analyticsData.predictiveModels.reduce(
+      (best, model) =>
+        model.accuracy > ((best === null || best === void 0 ? void 0 : best.accuracy) || 0)
+          ? model
+          : best,
+      analyticsData.predictiveModels[0],
+    );
+    return {
+      totalKPIs: totalKPIs,
+      overPerformingKPIs: overPerformingKPIs,
+      strongCorrelations: strongCorrelations,
+      significantTests: significantTests,
+      overallDataQuality: overallDataQuality,
+      bestModel: bestModel,
+      outliers:
+        ((_a = analyticsData.dataQuality.outliers) === null || _a === void 0
+          ? void 0
+          : _a.filter((o) => o.isOutlier).length) || 0,
+    };
+  }, [analyticsData]);
+  // Event handlers
+  var handleConfigUpdate = (updates) => {
+    setConfig((prev) => __assign(__assign({}, prev), updates));
   };
-  var handleRefresh = function () {
+  var handleRefresh = () => {
     fetchAnalyticsData();
   };
-  var handleExport = function (format) {
+  var handleExport = (format) => {
     onDataExport === null || onDataExport === void 0 ? void 0 : onDataExport(analyticsData, format);
   };
-  var handleDateRangeChange = function (start, end) {
+  var handleDateRangeChange = (start, end) => {
     handleConfigUpdate({ dateRange: { start: start, end: end } });
   };
   if (loading && !analyticsData.kpis.length) {
@@ -473,9 +450,9 @@ function AdvancedAnalyticsHub(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              {Array.from({ length: 4 }).map(function (_, i) {
-                return <div key={i} className="h-24 bg-gray-100 rounded animate-pulse" />;
-              })}
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="h-24 bg-gray-100 rounded animate-pulse" />
+              ))}
             </div>
             <div className="h-96 bg-gray-50 rounded animate-pulse" />
           </card_1.CardContent>
@@ -516,9 +493,7 @@ function AdvancedAnalyticsHub(_a) {
             <div className="flex items-center gap-4">
               <select_1.Select
                 value={selectedView}
-                onValueChange={function (value) {
-                  return setSelectedView(value);
-                }}
+                onValueChange={(value) => setSelectedView(value)}
               >
                 <select_1.SelectTrigger className="w-48">
                   <select_1.SelectValue />
@@ -534,9 +509,7 @@ function AdvancedAnalyticsHub(_a) {
 
               <select_1.Select
                 value={config.confidenceLevel.toString()}
-                onValueChange={function (value) {
-                  return handleConfigUpdate({ confidenceLevel: parseInt(value) });
-                }}
+                onValueChange={(value) => handleConfigUpdate({ confidenceLevel: parseInt(value) })}
               >
                 <select_1.SelectTrigger className="w-32">
                   <select_1.SelectValue />
@@ -553,9 +526,7 @@ function AdvancedAnalyticsHub(_a) {
               <button_1.Button
                 variant={config.autoRefresh ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return handleConfigUpdate({ autoRefresh: !config.autoRefresh });
-                }}
+                onClick={() => handleConfigUpdate({ autoRefresh: !config.autoRefresh })}
               >
                 <lucide_react_1.Zap className="h-4 w-4 mr-1" />
                 Auto-refresh
@@ -570,13 +541,7 @@ function AdvancedAnalyticsHub(_a) {
                   className={"h-4 w-4 ".concat(loading ? "animate-spin" : "")}
                 />
               </button_1.Button>
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                onClick={function () {
-                  return handleExport("csv");
-                }}
-              >
+              <button_1.Button variant="outline" size="sm" onClick={() => handleExport("csv")}>
                 <lucide_react_1.Download className="h-4 w-4" />
               </button_1.Button>
             </div>
@@ -779,9 +744,10 @@ function AdvancedAnalyticsHub(_a) {
       {selectedView === "forecasting" && (
         <forecasting_charts_1.ForecastingCharts
           metric="revenue"
-          historicalData={analyticsData.timeSeriesData.map(function (d) {
-            return { date: d.date, value: d.revenue };
-          })}
+          historicalData={analyticsData.timeSeriesData.map((d) => ({
+            date: d.date,
+            value: d.revenue,
+          }))}
           forecastData={analyticsData.forecastData}
           loading={loading}
           onDateRangeChange={handleDateRangeChange}

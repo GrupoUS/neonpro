@@ -3,8 +3,8 @@
 
 import type { NextRequest, NextResponse } from "next/server";
 import type { DeviceManager } from "../device-manager";
-import type { SessionManager } from "../session-manager";
 import type { SecurityMonitor } from "../security-monitor";
+import type { SessionManager } from "../session-manager";
 import type { DeviceInfo, DeviceRegistration } from "../types";
 import type { ValidationUtils } from "../utils";
 

@@ -1,13 +1,13 @@
+import type { createClient } from "@supabase/supabase-js";
 import type { ResolutionEngine } from "../resolution-engine";
 import type {
-  ConflictType,
-  ConflictSeverity,
-  ResolutionStrategy,
-  ResolutionOption,
-  ResolutionEngineConfig,
   Conflict,
+  ConflictSeverity,
+  ConflictType,
+  ResolutionEngineConfig,
+  ResolutionOption,
+  ResolutionStrategy,
 } from "../types";
-import type { createClient } from "@supabase/supabase-js";
 
 // Mock Supabase
 jest.mock("@supabase/supabase-js");

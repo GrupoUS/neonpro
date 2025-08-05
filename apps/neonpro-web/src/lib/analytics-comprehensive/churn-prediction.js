@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🤖 NeonPro Churn Prediction Engine
  *
@@ -32,26 +31,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -71,13 +70,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -99,9 +98,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -173,7 +170,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChurnPredictionEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -185,7 +182,7 @@ var logger_1 = require("@/lib/utils/logger");
  * Churn Prediction Engine
  * Sistema principal para predição e prevenção de abandono de pacientes
  */
-var ChurnPredictionEngine = /** @class */ (function () {
+var ChurnPredictionEngine = /** @class */ (() => {
   function ChurnPredictionEngine(config) {
     this.supabase = (0, client_1.createClient)();
     this.modelStatus = "not_trained";
@@ -722,8 +719,8 @@ var ChurnPredictionEngine = /** @class */ (function () {
   // ============================================================================
   // HELPER METHODS
   // ============================================================================
-  ChurnPredictionEngine.prototype.initializeModelConfig = function (config) {
-    return __assign(
+  ChurnPredictionEngine.prototype.initializeModelConfig = (config) =>
+    __assign(
       {
         model_name: "neonpro_churn_predictor_v1",
         model_type: "ensemble",
@@ -771,10 +768,9 @@ var ChurnPredictionEngine = /** @class */ (function () {
       },
       config,
     );
-  };
   ChurnPredictionEngine.prototype.initializeEngine = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Initialize feature extractors, model cache, etc.
         logger_1.logger.debug("Churn prediction engine initialized");
         return [2 /*return*/];
@@ -783,7 +779,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.createBaselineFeatures = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Create initial feature baseline for new patients
         logger_1.logger.debug("Baseline features created", { patient_id: patientId });
         return [2 /*return*/];
@@ -792,7 +788,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.scheduleRiskAssessments = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Schedule regular risk assessments
         logger_1.logger.debug("Risk assessments scheduled", { patient_id: patientId });
         return [2 /*return*/];
@@ -806,7 +802,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.getModelMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Return cached model metrics
         return [
           2 /*return*/,
@@ -838,7 +834,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.engineerFeatures = function (trainingData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Apply feature engineering transformations
         return [2 /*return*/, __assign(__assign({}, trainingData), { engineered: true })];
       });
@@ -846,7 +842,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.trainModel = function (engineeredFeatures) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Train the actual ML model
         return [
           2 /*return*/,
@@ -861,7 +857,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.validateModel = function (trainingResults) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Validate model performance
         return [
           2 /*return*/,
@@ -890,7 +886,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
     validationResults,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Save model metadata to database
         logger_1.logger.debug("Model metadata saved");
         return [2 /*return*/];
@@ -1006,12 +1002,9 @@ var ChurnPredictionEngine = /** @class */ (function () {
   ChurnPredictionEngine.prototype.makePrediction = function (features) {
     return __awaiter(this, void 0, void 0, function () {
       var featureValues, avgFeatureValue, probability;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         featureValues = Object.values(features);
-        avgFeatureValue =
-          featureValues.reduce(function (sum, val) {
-            return sum + val;
-          }, 0) / featureValues.length;
+        avgFeatureValue = featureValues.reduce((sum, val) => sum + val, 0) / featureValues.length;
         probability = 0.5; // Base probability
         if (avgFeatureValue < 0.3) probability += 0.3;
         if (avgFeatureValue < 0.2) probability += 0.2;
@@ -1026,7 +1019,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
       });
     });
   };
-  ChurnPredictionEngine.prototype.calculateRiskLevel = function (probability) {
+  ChurnPredictionEngine.prototype.calculateRiskLevel = (probability) => {
     if (probability <= 0.2) return "very_low";
     if (probability <= 0.4) return "low";
     if (probability <= 0.6) return "medium";
@@ -1066,18 +1059,15 @@ var ChurnPredictionEngine = /** @class */ (function () {
           case 5:
             return [
               2 /*return*/,
-              factors.sort(function (a, b) {
-                return b.risk_contribution - a.risk_contribution;
-              }),
+              factors.sort((a, b) => b.risk_contribution - a.risk_contribution),
             ];
         }
       });
     });
   };
   ChurnPredictionEngine.prototype.generateRiskIndicators = function (contributingFactors) {
-    var _this = this;
     var indicators = [];
-    contributingFactors.forEach(function (factor) {
+    contributingFactors.forEach((factor) => {
       if (factor.risk_contribution > 0.2) {
         indicators.push({
           indicator: "high_risk_".concat(factor.feature),
@@ -1085,7 +1075,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
           description: ""
             .concat(factor.feature, " shows high risk contribution (")
             .concat(Math.round(factor.risk_contribution * 100), "%)"),
-          recommendation: _this.getFeatureRecommendation(factor.feature),
+          recommendation: this.getFeatureRecommendation(factor.feature),
         });
       }
     });
@@ -1099,8 +1089,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var interventions;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         interventions = [];
         // Risk-level based interventions
         if (riskLevel === "very_high") {
@@ -1124,18 +1113,13 @@ var ChurnPredictionEngine = /** @class */ (function () {
           });
         }
         // Factor-specific interventions
-        contributingFactors.forEach(function (factor) {
-          var intervention = _this.getFactorSpecificIntervention(factor);
+        contributingFactors.forEach((factor) => {
+          var intervention = this.getFactorSpecificIntervention(factor);
           if (intervention) {
             interventions.push(intervention);
           }
         });
-        return [
-          2 /*return*/,
-          interventions.sort(function (a, b) {
-            return a.priority - b.priority;
-          }),
-        ];
+        return [2 /*return*/, interventions.sort((a, b) => a.priority - b.priority)];
       });
     });
   };
@@ -1203,9 +1187,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
               2 /*return*/,
               (predictions === null || predictions === void 0
                 ? void 0
-                : predictions.map(function (p) {
-                    return p.patient_id;
-                  })) || [],
+                : predictions.map((p) => p.patient_id)) || [],
             ];
         }
       });
@@ -1245,7 +1227,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.executePatientIntervention = function (patientId, campaign) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Execute specific interventions for patient
         logger_1.logger.debug("Patient intervention executed", {
           patient_id: patientId,
@@ -1269,11 +1251,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
             patients = _a.sent().data;
             return [
               2 /*return*/,
-              (patients === null || patients === void 0
-                ? void 0
-                : patients.map(function (p) {
-                    return p.id;
-                  })) || [],
+              (patients === null || patients === void 0 ? void 0 : patients.map((p) => p.id)) || [],
             ];
         }
       });
@@ -1316,7 +1294,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.sendChurnAlerts = function (alerts) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Send alerts to appropriate channels
         logger_1.logger.info("Churn alerts sent", { count: alerts.length });
         return [2 /*return*/];
@@ -1328,7 +1306,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
       var importance;
       return __generator(this, function (_a) {
         importance = {};
-        this.modelConfig.feature_selection.forEach(function (feature) {
+        this.modelConfig.feature_selection.forEach((feature) => {
           importance[feature] = {
             importance_score: Math.random() * 0.8 + 0.1, // Mock importance
             stability_score: Math.random() * 0.3 + 0.7,
@@ -1342,7 +1320,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.analyzeFeatureInteractions = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Analyze interactions between features
         return [
           2 /*return*/,
@@ -1358,20 +1336,18 @@ var ChurnPredictionEngine = /** @class */ (function () {
       });
     });
   };
-  ChurnPredictionEngine.prototype.generateFeatureInsights = function (
+  ChurnPredictionEngine.prototype.generateFeatureInsights = (
     featureImportance,
     featureInteractions,
-  ) {
-    return [
-      {
-        insight_type: "trend",
-        description: "Satisfaction trend is the strongest predictor of churn",
-        affected_features: ["satisfaction_trend"],
-        business_recommendation: "Focus on improving patient satisfaction monitoring",
-        confidence_level: 0.9,
-      },
-    ];
-  };
+  ) => [
+    {
+      insight_type: "trend",
+      description: "Satisfaction trend is the strongest predictor of churn",
+      affected_features: ["satisfaction_trend"],
+      business_recommendation: "Focus on improving patient satisfaction monitoring",
+      confidence_level: 0.9,
+    },
+  ];
   // Feature calculation helpers
   ChurnPredictionEngine.prototype.calculateFeatureValue = function (patientId, feature) {
     return __awaiter(this, void 0, void 0, function () {
@@ -1409,7 +1385,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.calculateEngagementFrequency = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate engagement frequency (0-1 scale)
         return [2 /*return*/, Math.random() * 0.8 + 0.1];
       });
@@ -1417,7 +1393,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.calculateSatisfactionTrend = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate satisfaction trend (0-1 scale)
         return [2 /*return*/, Math.random() * 0.8 + 0.1];
       });
@@ -1425,7 +1401,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.calculateAppointmentAdherence = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate appointment adherence rate (0-1 scale)
         return [2 /*return*/, Math.random() * 0.8 + 0.2];
       });
@@ -1433,30 +1409,26 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.getFeatureImportance = function (feature) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get importance score for feature
         return [2 /*return*/, Math.random() * 0.3 + 0.1];
       });
     });
   };
-  ChurnPredictionEngine.prototype.calculateRiskContribution = function (
-    feature,
-    value,
-    importance,
-  ) {
+  ChurnPredictionEngine.prototype.calculateRiskContribution = (feature, value, importance) => {
     // Calculate how much this feature contributes to risk
     return importance * (1 - value); // Higher risk when value is lower
   };
   ChurnPredictionEngine.prototype.getFeatureTrend = function (patientId, feature) {
     return __awaiter(this, void 0, void 0, function () {
       var trends;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         trends = ["improving", "stable", "declining"];
         return [2 /*return*/, trends[Math.floor(Math.random() * trends.length)]];
       });
     });
   };
-  ChurnPredictionEngine.prototype.getFeatureRecommendation = function (feature) {
+  ChurnPredictionEngine.prototype.getFeatureRecommendation = (feature) => {
     var recommendations = {
       engagement_frequency: "Increase patient engagement through personalized communications",
       satisfaction_trend: "Conduct satisfaction survey and address concerns",
@@ -1476,7 +1448,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
     };
     return recommendations[feature] || "Review and optimize this factor";
   };
-  ChurnPredictionEngine.prototype.getFactorSpecificIntervention = function (factor) {
+  ChurnPredictionEngine.prototype.getFactorSpecificIntervention = (factor) => {
     if (factor.risk_contribution < 0.15) return null;
     var interventions = {
       satisfaction_trend: {
@@ -1500,7 +1472,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.getPatientSatisfactionData = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get patient satisfaction data
         return [
           2 /*return*/,
@@ -1514,7 +1486,7 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.getPatientEngagementData = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get patient engagement data
         return [
           2 /*return*/,
@@ -1529,13 +1501,11 @@ var ChurnPredictionEngine = /** @class */ (function () {
   };
   ChurnPredictionEngine.prototype.triggerImmediateIntervention = function (result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Trigger immediate intervention for very high risk patients
         logger_1.logger.info("Immediate intervention triggered", {
           patient_id: result.patient_id,
-          interventions: result.recommended_interventions.filter(function (i) {
-            return i.timing === "immediate";
-          }),
+          interventions: result.recommended_interventions.filter((i) => i.timing === "immediate"),
         });
         return [2 /*return*/];
       });

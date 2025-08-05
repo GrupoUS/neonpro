@@ -3,10 +3,10 @@
  * Automated bundle analysis and optimization recommendations
  */
 
-import { execFile, spawn } from "child_process";
-import { promisify } from "util";
-import { writeFileSync, readFileSync } from "fs";
-import { join } from "path";
+import { execFile } from "node:child_process";
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 

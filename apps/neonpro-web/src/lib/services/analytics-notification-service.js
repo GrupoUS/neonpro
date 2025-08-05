@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyticsNotificationService = exports.AnalyticsNotificationService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -278,7 +275,7 @@ var ANALYTICS_NOTIFICATION_TEMPLATES = {
     variables: ["trend", "rate", "actionRequired"],
   },
 };
-var AnalyticsNotificationService = /** @class */ (function () {
+var AnalyticsNotificationService = /** @class */ (() => {
   function AnalyticsNotificationService() {}
   /**
    * Send an analytics notification using a template
@@ -367,7 +364,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
             if (!notificationId) {
               return [2 /*return*/, null];
             }
-            promises = data.channels.map(function (channel) {
+            promises = data.channels.map((channel) => {
               switch (channel) {
                 case "websocket":
                   return _this.sendWebSocketNotification(data);
@@ -394,7 +391,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var _a, notification, error, error_3;
       var _b, _c;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         switch (_d.label) {
           case 0:
             _d.trys.push([0, 2, , 3]);
@@ -445,7 +442,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
   AnalyticsNotificationService.sendWebSocketNotification = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var wsMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           wsMessage = {
             type: "analytics_notification",
@@ -484,7 +481,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var _a, user, error, analyticsEmailPrefs, error_4;
       var _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 3, , 4]);
@@ -548,7 +545,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
   AnalyticsNotificationService.sendPushNotification = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, tokens, error, pushJobs, error_5;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -566,7 +563,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
               console.log("No push tokens found for user ".concat(data.userId));
               return [2 /*return*/];
             }
-            pushJobs = tokens.map(function (tokenData) {
+            pushJobs = tokens.map((tokenData) => {
               var _a;
               return {
                 token: tokenData.token,
@@ -599,19 +596,18 @@ var AnalyticsNotificationService = /** @class */ (function () {
   /**
    * Replace variables in template strings
    */
-  AnalyticsNotificationService.replaceVariables = function (template, variables) {
-    return template.replace(/\{\{(\w+)\}\}/g, function (match, key) {
+  AnalyticsNotificationService.replaceVariables = (template, variables) =>
+    template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
       var _a;
       return ((_a = variables[key]) === null || _a === void 0 ? void 0 : _a.toString()) || match;
     });
-  };
   /**
    * Mark analytics notification as read
    */
   AnalyticsNotificationService.markAsRead = function (notificationId, userId) {
     return __awaiter(this, void 0, void 0, function () {
       var error, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -648,7 +644,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
       if (options === void 0) {
         options = {};
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -696,7 +692,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
   AnalyticsNotificationService.getUnreadCount = function (userId, clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, count, error, error_8;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -864,7 +860,7 @@ var AnalyticsNotificationService = /** @class */ (function () {
       if (daysOld === void 0) {
         daysOld = 30;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);

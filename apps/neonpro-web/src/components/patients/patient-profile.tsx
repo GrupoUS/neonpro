@@ -1,6 +1,24 @@
 "use client";
 
+import type {
+  Activity,
+  AlertTriangle,
+  Brain,
+  Calendar,
+  Clock,
+  FileText,
+  Heart,
+  Mail,
+  MapPin,
+  Phone,
+  Star,
+  TrendingUp,
+  User,
+} from "lucide-react";
 import React, { useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,26 +26,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Progress } from "@/components/ui/progress";
-import type {
-  User,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  Heart,
-  Brain,
-  Activity,
-  AlertTriangle,
-  Star,
-  Clock,
-  FileText,
-  TrendingUp,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface PatientProfileProps {
   selectedPatient?: any;

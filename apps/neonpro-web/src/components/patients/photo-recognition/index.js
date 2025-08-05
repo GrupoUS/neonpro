@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrivacyControls =
   exports.PhotoGallery =
@@ -157,30 +154,22 @@ var use_toast_1 = require("@/components/ui/use-toast");
 var photo_upload_1 = require("./photo-upload");
 Object.defineProperty(exports, "PhotoUpload", {
   enumerable: true,
-  get: function () {
-    return photo_upload_1.PhotoUpload;
-  },
+  get: () => photo_upload_1.PhotoUpload,
 });
 var identity_verification_1 = require("./identity-verification");
 Object.defineProperty(exports, "IdentityVerification", {
   enumerable: true,
-  get: function () {
-    return identity_verification_1.IdentityVerification;
-  },
+  get: () => identity_verification_1.IdentityVerification,
 });
 var photo_gallery_1 = require("./photo-gallery");
 Object.defineProperty(exports, "PhotoGallery", {
   enumerable: true,
-  get: function () {
-    return photo_gallery_1.PhotoGallery;
-  },
+  get: () => photo_gallery_1.PhotoGallery,
 });
 var privacy_controls_1 = require("./privacy-controls");
 Object.defineProperty(exports, "PrivacyControls", {
   enumerable: true,
-  get: function () {
-    return privacy_controls_1.PrivacyControls;
-  },
+  get: () => privacy_controls_1.PrivacyControls,
 });
 var DEFAULT_PERMISSIONS = {
   canUpload: true,
@@ -198,7 +187,6 @@ var PHOTO_TYPE_LABELS = {
   other: "Outro",
 };
 function PhotoRecognitionSystem(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     patientName = _a.patientName,
     patientEmail = _a.patientEmail,
@@ -220,16 +208,13 @@ function PhotoRecognitionSystem(_a) {
     refreshKey = _g[0],
     setRefreshKey = _g[1];
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      loadSystemStats();
-    },
-    [patientId, refreshKey],
-  );
-  var loadSystemStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadSystemStats();
+  }, [patientId, refreshKey]);
+  var loadSystemStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!permissions.canViewStats) {
@@ -269,22 +254,19 @@ function PhotoRecognitionSystem(_a) {
         }
       });
     });
-  };
-  var handleSystemUpdate = function (updateData) {
+  var handleSystemUpdate = (updateData) => {
     // Refresh stats when system is updated
-    setRefreshKey(function (prev) {
-      return prev + 1;
-    });
+    setRefreshKey((prev) => prev + 1);
     onSystemUpdate === null || onSystemUpdate === void 0 ? void 0 : onSystemUpdate(updateData);
   };
-  var handlePhotoUploaded = function (photoData) {
+  var handlePhotoUploaded = (photoData) => {
     toast({
       title: "Foto enviada com sucesso",
       description: "A foto ".concat(photoData.fileName, " foi processada e armazenada."),
     });
     handleSystemUpdate({ type: "photo_uploaded", data: photoData });
   };
-  var handleVerificationCompleted = function (verificationData) {
+  var handleVerificationCompleted = (verificationData) => {
     toast({
       title: "Verificação concluída",
       description: "Identidade verificada com ".concat(
@@ -294,28 +276,28 @@ function PhotoRecognitionSystem(_a) {
     });
     handleSystemUpdate({ type: "verification_completed", data: verificationData });
   };
-  var handlePrivacyUpdated = function (privacyData) {
+  var handlePrivacyUpdated = (privacyData) => {
     toast({
       title: "Configurações atualizadas",
       description: "As configurações de privacidade foram atualizadas com sucesso.",
     });
     handleSystemUpdate({ type: "privacy_updated", data: privacyData });
   };
-  var handlePhotoDeleted = function (photoId) {
+  var handlePhotoDeleted = (photoId) => {
     toast({
       title: "Foto excluída",
       description: "A foto foi removida do sistema com sucesso.",
     });
     handleSystemUpdate({ type: "photo_deleted", data: { photoId: photoId } });
   };
-  var formatFileSize = function (bytes) {
+  var formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     var k = 1024;
     var sizes = ["Bytes", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
-  var formatDate = function (dateString) {
+  var formatDate = (dateString) => {
     if (!dateString) return "Nunca";
     return new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -325,7 +307,7 @@ function PhotoRecognitionSystem(_a) {
       minute: "2-digit",
     });
   };
-  var getComplianceStatus = function () {
+  var getComplianceStatus = () => {
     if (!(systemStats === null || systemStats === void 0 ? void 0 : systemStats.privacyCompliance))
       return null;
     var _a = systemStats.privacyCompliance,
@@ -339,7 +321,7 @@ function PhotoRecognitionSystem(_a) {
       return { status: "non-compliant", label: "Não conforme", color: "bg-red-100 text-red-800" };
     }
   };
-  var renderStatsOverview = function () {
+  var renderStatsOverview = () => {
     if (isLoadingStats) {
       return (
         <card_1.Card>
@@ -425,7 +407,7 @@ function PhotoRecognitionSystem(_a) {
       </div>
     );
   };
-  var renderPhotoTypeBreakdown = function () {
+  var renderPhotoTypeBreakdown = () => {
     if (
       !(systemStats === null || systemStats === void 0 ? void 0 : systemStats.photosByType) ||
       !permissions.canViewStats
@@ -438,7 +420,7 @@ function PhotoRecognitionSystem(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {Object.entries(systemStats.photosByType).map(function (_a) {
+            {Object.entries(systemStats.photosByType).map((_a) => {
               var type = _a[0],
                 count = _a[1];
               return (
@@ -453,7 +435,7 @@ function PhotoRecognitionSystem(_a) {
       </card_1.Card>
     );
   };
-  var renderRecentActivity = function () {
+  var renderRecentActivity = () => {
     if (
       !(systemStats === null || systemStats === void 0 ? void 0 : systemStats.recentActivity) ||
       !permissions.canViewStats
@@ -504,11 +486,7 @@ function PhotoRecognitionSystem(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setRefreshKey(function (prev) {
-                    return prev + 1;
-                  });
-                }}
+                onClick={() => setRefreshKey((prev) => prev + 1)}
               >
                 <lucide_react_1.Settings className="h-4 w-4 mr-2" />
                 Atualizar

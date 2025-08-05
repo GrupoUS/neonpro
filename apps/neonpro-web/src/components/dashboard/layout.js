@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DashboardLayout;
 var utils_1 = require("@/lib/utils");

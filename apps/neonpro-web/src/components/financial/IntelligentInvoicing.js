@@ -6,32 +6,31 @@
  * automated calculations, and compliance checking.
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,10 +150,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -165,7 +162,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntelligentInvoicing = IntelligentInvoicing;
 var react_1 = require("react");
@@ -182,7 +179,6 @@ var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 var use_toast_1 = require("@/components/ui/use-toast");
 function IntelligentInvoicing(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     appointmentId = _a.appointmentId,
     onInvoiceGenerated = _a.onInvoiceGenerated;
@@ -263,10 +259,10 @@ function IntelligentInvoicing(_a) {
     },
   ];
   // AI-powered template recommendation based on patient history and appointment
-  var recommendTemplate = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var recommendTemplate = () =>
+    __awaiter(this, void 0, void 0, function () {
       var recommendedTemplate, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!patientId && !appointmentId) return [2 /*return*/];
@@ -275,12 +271,7 @@ function IntelligentInvoicing(_a) {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Simulate AI analysis
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simulate AI analysis
             _a.sent();
@@ -308,12 +299,9 @@ function IntelligentInvoicing(_a) {
         }
       });
     });
-  };
   // Calculate totals with tax and discount
-  var calculateTotals = function () {
-    var subtotal = invoiceItems.reduce(function (sum, item) {
-      return sum + item.total;
-    }, 0);
+  var calculateTotals = () => {
+    var subtotal = invoiceItems.reduce((sum, item) => sum + item.total, 0);
     var discountAmount = subtotal * (discount / 100);
     var taxableAmount = subtotal - discountAmount;
     var taxAmount = taxableAmount * (taxRate / 100);
@@ -326,10 +314,10 @@ function IntelligentInvoicing(_a) {
     };
   };
   // Generate invoice with automated processing
-  var generateInvoice = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generateInvoice = () =>
+    __awaiter(this, void 0, void 0, function () {
       var totals_1, invoiceData, invoiceId, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!patient || invoiceItems.length === 0) {
@@ -367,12 +355,7 @@ function IntelligentInvoicing(_a) {
               },
             );
             // Mock API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
           case 2:
             // Mock API call
             _a.sent();
@@ -401,7 +384,6 @@ function IntelligentInvoicing(_a) {
         }
       });
     });
-  };
   var totals = calculateTotals();
   return (
     <div className="space-y-6">
@@ -421,7 +403,7 @@ function IntelligentInvoicing(_a) {
             <div className="space-y-2">
               <label_1.Label htmlFor="patient">Paciente</label_1.Label>
               <select_1.Select
-                onValueChange={function (value) {
+                onValueChange={(value) => {
                   // Mock patient data
                   setPatient({
                     id: value,
@@ -481,10 +463,8 @@ function IntelligentInvoicing(_a) {
             </div>
 
             <select_1.Select
-              onValueChange={function (templateId) {
-                var template = templates.find(function (t) {
-                  return t.id === templateId;
-                });
+              onValueChange={(templateId) => {
+                var template = templates.find((t) => t.id === templateId);
                 if (template) {
                   setSelectedTemplate(template);
                   setInvoiceItems(__spreadArray([], template.items, true));
@@ -495,16 +475,14 @@ function IntelligentInvoicing(_a) {
                 <select_1.SelectValue placeholder="Selecionar template" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
-                {templates.map(function (template) {
-                  return (
-                    <select_1.SelectItem key={template.id} value={template.id}>
-                      <div className="flex items-center gap-2">
-                        <badge_1.Badge variant="secondary">{template.type}</badge_1.Badge>
-                        {template.name}
-                      </div>
-                    </select_1.SelectItem>
-                  );
-                })}
+                {templates.map((template) => (
+                  <select_1.SelectItem key={template.id} value={template.id}>
+                    <div className="flex items-center gap-2">
+                      <badge_1.Badge variant="secondary">{template.type}</badge_1.Badge>
+                      {template.name}
+                    </div>
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
           </div>
@@ -515,24 +493,22 @@ function IntelligentInvoicing(_a) {
               <label_1.Label>Itens da Fatura</label_1.Label>
               <div className="border rounded-lg">
                 <div className="p-4 space-y-4">
-                  {invoiceItems.map(function (item, index) {
-                    return (
-                      <div
-                        key={item.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded"
-                      >
-                        <div>
-                          <p className="font-medium">{item.serviceName}</p>
-                          <p className="text-sm text-gray-600">
-                            Qtd: {item.quantity} × R$ {item.unitPrice.toFixed(2)}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium">R$ {item.total.toFixed(2)}</p>
-                        </div>
+                  {invoiceItems.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded"
+                    >
+                      <div>
+                        <p className="font-medium">{item.serviceName}</p>
+                        <p className="text-sm text-gray-600">
+                          Qtd: {item.quantity} × R$ {item.unitPrice.toFixed(2)}
+                        </p>
                       </div>
-                    );
-                  })}
+                      <div className="text-right">
+                        <p className="font-medium">R$ {item.total.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -548,9 +524,7 @@ function IntelligentInvoicing(_a) {
                 min="0"
                 max="100"
                 value={discount}
-                onChange={function (e) {
-                  return setDiscount(Number(e.target.value));
-                }}
+                onChange={(e) => setDiscount(Number(e.target.value))}
               />
             </div>
             <div className="space-y-2">
@@ -561,9 +535,7 @@ function IntelligentInvoicing(_a) {
                 min="0"
                 max="100"
                 value={taxRate}
-                onChange={function (e) {
-                  return setTaxRate(Number(e.target.value));
-                }}
+                onChange={(e) => setTaxRate(Number(e.target.value))}
               />
             </div>
           </div>
@@ -607,12 +579,7 @@ function IntelligentInvoicing(_a) {
               {isGenerating ? "Gerando..." : "Gerar Fatura"}
             </button_1.Button>
 
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setPreviewMode(true);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setPreviewMode(true)}>
               <lucide_react_1.Eye className="mr-2 h-4 w-4" />
               Visualizar
             </button_1.Button>

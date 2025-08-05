@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Notification System - In-App Provider
  * Story 1.7: Sistema de Notificações
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InAppProvider = void 0;
 var types_1 = require("../types");
@@ -162,7 +159,7 @@ var types_1 = require("../types");
 /**
  * Provedor de notificações in-app
  */
-var InAppProvider = /** @class */ (function () {
+var InAppProvider = /** @class */ (() => {
   function InAppProvider() {
     this.name = "In-App Notification Provider";
     this.channel = types_1.NotificationChannel.IN_APP;
@@ -233,10 +230,10 @@ var InAppProvider = /** @class */ (function () {
           return [2 /*return*/];
         try {
           this.websocket = new WebSocket(this.config.websocketUrl);
-          this.websocket.onopen = function () {
+          this.websocket.onopen = () => {
             console.log("🔗 WebSocket conectado para notificações in-app");
           };
-          this.websocket.onmessage = function (event) {
+          this.websocket.onmessage = (event) => {
             try {
               var message = JSON.parse(event.data);
               _this.handleWebSocketMessage(message);
@@ -244,13 +241,11 @@ var InAppProvider = /** @class */ (function () {
               console.error("Erro ao processar mensagem WebSocket:", error);
             }
           };
-          this.websocket.onclose = function () {
+          this.websocket.onclose = () => {
             console.log("🔌 WebSocket desconectado. Tentando reconectar...");
-            setTimeout(function () {
-              return _this.initializeWebSocket();
-            }, 5000);
+            setTimeout(() => _this.initializeWebSocket(), 5000);
           };
-          this.websocket.onerror = function (error) {
+          this.websocket.onerror = (error) => {
             console.error("Erro no WebSocket:", error);
           };
         } catch (error) {
@@ -272,18 +267,18 @@ var InAppProvider = /** @class */ (function () {
           if (stored) {
             data = JSON.parse(stored);
             this.notifications = new Map(
-              Object.entries(data).map(function (_a) {
+              Object.entries(data).map((_a) => {
                 var userId = _a[0],
                   notifications = _a[1];
                 return [
                   userId,
-                  notifications.map(function (n) {
-                    return __assign(__assign({}, n), {
+                  notifications.map((n) =>
+                    __assign(__assign({}, n), {
                       createdAt: new Date(n.createdAt),
                       readAt: n.readAt ? new Date(n.readAt) : undefined,
                       expiresAt: n.expiresAt ? new Date(n.expiresAt) : undefined,
-                    });
-                  }),
+                    }),
+                  ),
                 ];
               }),
             );
@@ -433,7 +428,7 @@ var InAppProvider = /** @class */ (function () {
       options = {};
     }
     var userNotifications = this.notifications.get(userId) || [];
-    var filtered = userNotifications.filter(function (n) {
+    var filtered = userNotifications.filter((n) => {
       if (options.unreadOnly && n.isRead) return false;
       if (options.category && n.category !== options.category) return false;
       if (n.isArchived) return false;
@@ -457,9 +452,7 @@ var InAppProvider = /** @class */ (function () {
           case 0:
             userNotifications = this.notifications.get(userId);
             if (!userNotifications) return [2 /*return*/, false];
-            notification = userNotifications.find(function (n) {
-              return n.id === notificationId;
-            });
+            notification = userNotifications.find((n) => n.id === notificationId);
             if (!notification) return [2 /*return*/, false];
             notification.isRead = true;
             notification.readAt = new Date();
@@ -499,7 +492,7 @@ var InAppProvider = /** @class */ (function () {
             if (!userNotifications) return [2 /*return*/, 0];
             count = 0;
             now = new Date();
-            userNotifications.forEach(function (notification) {
+            userNotifications.forEach((notification) => {
               if (!notification.isRead && !notification.isArchived) {
                 notification.isRead = true;
                 notification.readAt = now;
@@ -535,9 +528,7 @@ var InAppProvider = /** @class */ (function () {
           case 0:
             userNotifications = this.notifications.get(userId);
             if (!userNotifications) return [2 /*return*/, false];
-            notification = userNotifications.find(function (n) {
-              return n.id === notificationId;
-            });
+            notification = userNotifications.find((n) => n.id === notificationId);
             if (!notification) return [2 /*return*/, false];
             notification.isArchived = true;
             if (!((_a = this.config) === null || _a === void 0 ? void 0 : _a.persistNotifications))
@@ -564,9 +555,7 @@ var InAppProvider = /** @class */ (function () {
           case 0:
             userNotifications = this.notifications.get(userId);
             if (!userNotifications) return [2 /*return*/, false];
-            index = userNotifications.findIndex(function (n) {
-              return n.id === notificationId;
-            });
+            index = userNotifications.findIndex((n) => n.id === notificationId);
             if (index === -1) return [2 /*return*/, false];
             userNotifications.splice(index, 1);
             if (!((_a = this.config) === null || _a === void 0 ? void 0 : _a.persistNotifications))
@@ -588,14 +577,13 @@ var InAppProvider = /** @class */ (function () {
    * Adiciona listener para notificações
    */
   InAppProvider.prototype.addNotificationListener = function (userId, callback) {
-    var _this = this;
     if (!this.listeners.has(userId)) {
       this.listeners.set(userId, []);
     }
     this.listeners.get(userId).push(callback);
     // Retorna função para remover listener
-    return function () {
-      var userListeners = _this.listeners.get(userId);
+    return () => {
+      var userListeners = this.listeners.get(userId);
       if (userListeners) {
         var index = userListeners.indexOf(callback);
         if (index > -1) {
@@ -610,7 +598,7 @@ var InAppProvider = /** @class */ (function () {
   InAppProvider.prototype.notifyListeners = function (userId, notification) {
     var userListeners = this.listeners.get(userId);
     if (userListeners) {
-      userListeners.forEach(function (callback) {
+      userListeners.forEach((callback) => {
         try {
           callback(notification);
         } catch (error) {
@@ -622,7 +610,7 @@ var InAppProvider = /** @class */ (function () {
   /**
    * Processa mensagens WebSocket
    */
-  InAppProvider.prototype.handleWebSocketMessage = function (message) {
+  InAppProvider.prototype.handleWebSocketMessage = (message) => {
     switch (message.type) {
       case "notification":
         // Notificação recebida de outro cliente
@@ -644,7 +632,7 @@ var InAppProvider = /** @class */ (function () {
   /**
    * Calcula data de expiração baseada na prioridade
    */
-  InAppProvider.prototype.calculateExpirationDate = function (priority) {
+  InAppProvider.prototype.calculateExpirationDate = (priority) => {
     var now = new Date();
     switch (priority) {
       case types_1.NotificationPriority.URGENT:
@@ -666,9 +654,7 @@ var InAppProvider = /** @class */ (function () {
     var userNotifications = this.notifications.get(userId);
     if (!userNotifications) return;
     var now = new Date();
-    var validNotifications = userNotifications.filter(function (n) {
-      return !n.expiresAt || n.expiresAt > now;
-    });
+    var validNotifications = userNotifications.filter((n) => !n.expiresAt || n.expiresAt > now);
     if (validNotifications.length !== userNotifications.length) {
       this.notifications.set(userId, validNotifications);
     }
@@ -676,7 +662,7 @@ var InAppProvider = /** @class */ (function () {
   /**
    * Reproduz som de notificação
    */
-  InAppProvider.prototype.playNotificationSound = function (priority) {
+  InAppProvider.prototype.playNotificationSound = (priority) => {
     try {
       var audio = new Audio();
       switch (priority) {
@@ -691,7 +677,7 @@ var InAppProvider = /** @class */ (function () {
           break;
       }
       audio.volume = 0.5;
-      audio.play().catch(function () {
+      audio.play().catch(() => {
         // Ignorar erros de reprodução (usuário pode ter bloqueado áudio)
       });
     } catch (error) {
@@ -718,16 +704,15 @@ var InAppProvider = /** @class */ (function () {
   /**
    * Gera ID único para entrega
    */
-  InAppProvider.prototype.generateDeliveryId = function () {
-    return "inapp_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  InAppProvider.prototype.generateDeliveryId = () =>
+    "inapp_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   // ============================================================================
   // VALIDAÇÃO E STATUS
   // ============================================================================
   /**
    * Valida configuração do provedor
    */
-  InAppProvider.prototype.validateConfig = function (config) {
+  InAppProvider.prototype.validateConfig = (config) => {
     var errors = [];
     var settings = config.settings;
     if (
@@ -778,11 +763,9 @@ var InAppProvider = /** @class */ (function () {
     var _a;
     var totalNotifications = 0;
     var unreadNotifications = 0;
-    this.notifications.forEach(function (userNotifications) {
+    this.notifications.forEach((userNotifications) => {
       totalNotifications += userNotifications.length;
-      unreadNotifications += userNotifications.filter(function (n) {
-        return !n.isRead && !n.isArchived;
-      }).length;
+      unreadNotifications += userNotifications.filter((n) => !n.isRead && !n.isArchived).length;
     });
     return {
       totalNotifications: totalNotifications,

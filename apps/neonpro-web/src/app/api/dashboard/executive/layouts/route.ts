@@ -1,8 +1,4 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
-import type { DashboardLayoutEngine } from "@/lib/dashboard/executive/dashboard-layout-engine";
+import type { NextRequest } from "next/server";
 
 // Schema for layout creation/update
 const CreateLayoutSchema = z.object({
@@ -27,10 +23,10 @@ const CreateLayoutSchema = z.object({
   }),
 });
 
-const UpdateLayoutSchema = CreateLayoutSchema.partial();
+const _UpdateLayoutSchema = CreateLayoutSchema.partial();
 
 // GET /api/dashboard/executive/layouts
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
 

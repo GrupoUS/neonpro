@@ -6,32 +6,31 @@
  * including recurring schedules, exceptions, and breaks
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -168,7 +165,7 @@ var lucide_react_1 = require("lucide-react");
 var date_fns_1 = require("date-fns");
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 var react_query_1 = require("@tanstack/react-query");
-var ProfessionalScheduleManager = function (_a) {
+var ProfessionalScheduleManager = (_a) => {
   var _b;
   var professionalId = _a.professionalId,
     onScheduleUpdate = _a.onScheduleUpdate;
@@ -205,10 +202,10 @@ var ProfessionalScheduleManager = function (_a) {
   // Fetch professionals
   var _j = (0, react_query_1.useQuery)({
       queryKey: ["professionals"],
-      queryFn: function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 return [
@@ -225,17 +222,16 @@ var ProfessionalScheduleManager = function (_a) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
     }).data,
     professionals = _j === void 0 ? [] : _j;
   // Fetch professional availability
   var _k = (0, react_query_1.useQuery)({
       queryKey: ["professional_availability", selectedProfessional],
-      queryFn: function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var _a, data, error;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 if (!selectedProfessional) return [2 /*return*/, []];
@@ -253,8 +249,7 @@ var ProfessionalScheduleManager = function (_a) {
                 return [2 /*return*/, data];
             }
           });
-        });
-      },
+        }),
       enabled: !!selectedProfessional,
     }),
     _l = _k.data,
@@ -262,16 +257,14 @@ var ProfessionalScheduleManager = function (_a) {
     availabilityLoading = _k.isLoading,
     refetchAvailability = _k.refetch;
   // Get current professional data
-  var currentProfessional = professionals.find(function (p) {
-    return p.id === selectedProfessional;
-  });
+  var currentProfessional = professionals.find((p) => p.id === selectedProfessional);
   // Generate week days for display
   var weekDays = (0, date_fns_1.eachDayOfInterval)({
     start: (0, date_fns_1.startOfWeek)(selectedWeek, { weekStartsOn: 1 }),
     end: (0, date_fns_1.endOfWeek)(selectedWeek, { weekStartsOn: 1 }),
   });
   // Time slot options
-  var timeOptions = Array.from({ length: 24 * 2 }, function (_, i) {
+  var timeOptions = Array.from({ length: 24 * 2 }, (_, i) => {
     var hour = Math.floor(i / 2);
     var minute = (i % 2) * 30;
     var time = ""
@@ -281,10 +274,10 @@ var ProfessionalScheduleManager = function (_a) {
   });
   // Update availability mutation
   var updateAvailabilityMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (availabilityData) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    mutationFn: (availabilityData) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, data, error, _b, data, error;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               if (!availabilityData.id) return [3 /*break*/, 2];
@@ -316,9 +309,8 @@ var ProfessionalScheduleManager = function (_a) {
               return [2 /*return*/, data];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["professional_availability"] });
       onScheduleUpdate === null || onScheduleUpdate === void 0 ? void 0 : onScheduleUpdate();
       setEditingAvailability(null);
@@ -326,10 +318,10 @@ var ProfessionalScheduleManager = function (_a) {
   });
   // Delete availability mutation
   var deleteAvailabilityMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (id) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    mutationFn: (id) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var error;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -342,53 +334,49 @@ var ProfessionalScheduleManager = function (_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["professional_availability"] });
       onScheduleUpdate === null || onScheduleUpdate === void 0 ? void 0 : onScheduleUpdate();
     },
   });
   // Create default schedule
-  var createDefaultSchedule = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var createDefaultSchedule = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var defaultSchedule, error, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedProfessional) return [2 /*return*/];
             defaultSchedule = daysOfWeek
-              .filter(function (day) {
-                return (
+              .filter(
+                (day) =>
                   (currentProfessional === null || currentProfessional === void 0
                     ? void 0
                     : currentProfessional.can_work_weekends) ||
-                  (day.value !== 0 && day.value !== 6)
-                );
-              })
-              .map(function (day) {
-                return {
-                  professional_id: selectedProfessional,
-                  day_of_week: day.value,
-                  start_time:
-                    (currentProfessional === null || currentProfessional === void 0
-                      ? void 0
-                      : currentProfessional.default_start_time) || "08:00",
-                  end_time:
-                    (currentProfessional === null || currentProfessional === void 0
-                      ? void 0
-                      : currentProfessional.default_end_time) || "18:00",
-                  break_start_time:
-                    (currentProfessional === null || currentProfessional === void 0
-                      ? void 0
-                      : currentProfessional.default_break_start) || "12:00",
-                  break_end_time:
-                    (currentProfessional === null || currentProfessional === void 0
-                      ? void 0
-                      : currentProfessional.default_break_end) || "13:00",
-                  is_available: true,
-                };
-              });
+                  (day.value !== 0 && day.value !== 6),
+              )
+              .map((day) => ({
+                professional_id: selectedProfessional,
+                day_of_week: day.value,
+                start_time:
+                  (currentProfessional === null || currentProfessional === void 0
+                    ? void 0
+                    : currentProfessional.default_start_time) || "08:00",
+                end_time:
+                  (currentProfessional === null || currentProfessional === void 0
+                    ? void 0
+                    : currentProfessional.default_end_time) || "18:00",
+                break_start_time:
+                  (currentProfessional === null || currentProfessional === void 0
+                    ? void 0
+                    : currentProfessional.default_break_start) || "12:00",
+                break_end_time:
+                  (currentProfessional === null || currentProfessional === void 0
+                    ? void 0
+                    : currentProfessional.default_break_end) || "13:00",
+                is_available: true,
+              }));
             _a.label = 1;
           case 1:
             _a.trys.push([1, 3, , 4]);
@@ -410,15 +398,10 @@ var ProfessionalScheduleManager = function (_a) {
         }
       });
     });
-  };
   // Get availability for a specific day
-  var getAvailabilityForDay = function (dayOfWeek) {
-    return availability.find(function (a) {
-      return a.day_of_week === dayOfWeek;
-    });
-  };
+  var getAvailabilityForDay = (dayOfWeek) => availability.find((a) => a.day_of_week === dayOfWeek);
   // Handle edit availability
-  var handleEditAvailability = function (dayOfWeek) {
+  var handleEditAvailability = (dayOfWeek) => {
     var existingAvailability = getAvailabilityForDay(dayOfWeek);
     if (existingAvailability) {
       setEditingAvailability(existingAvailability);
@@ -436,19 +419,19 @@ var ProfessionalScheduleManager = function (_a) {
     }
   };
   // Save availability
-  var handleSaveAvailability = function () {
+  var handleSaveAvailability = () => {
     if (!editingAvailability) return;
     updateAvailabilityMutation.mutate(editingAvailability);
   };
   // Bulk update all days
-  var handleBulkUpdate = function (template) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleBulkUpdate = (template) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var updates, _i, updates_1, update, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedProfessional) return [2 /*return*/];
-            updates = daysOfWeek.map(function (day) {
+            updates = daysOfWeek.map((day) => {
               var existing = getAvailabilityForDay(day.value);
               return __assign(
                 __assign(
@@ -484,7 +467,6 @@ var ProfessionalScheduleManager = function (_a) {
         }
       });
     });
-  };
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -504,9 +486,7 @@ var ProfessionalScheduleManager = function (_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setBulkUpdateMode(!bulkUpdateMode);
-                }}
+                onClick={() => setBulkUpdateMode(!bulkUpdateMode)}
               >
                 <lucide_react_1.Settings className="w-4 h-4 mr-2" />
                 Edição em Lote
@@ -524,24 +504,22 @@ var ProfessionalScheduleManager = function (_a) {
                   <select_1.SelectValue placeholder="Selecione um profissional" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {professionals.map(function (professional) {
-                    return (
-                      <select_1.SelectItem key={professional.id} value={professional.id}>
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: professional.color }}
-                          />
-                          <span>{professional.full_name}</span>
-                          {professional.specialization && (
-                            <span className="text-gray-500 text-sm">
-                              - {professional.specialization}
-                            </span>
-                          )}
-                        </div>
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {professionals.map((professional) => (
+                    <select_1.SelectItem key={professional.id} value={professional.id}>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: professional.color }}
+                        />
+                        <span>{professional.full_name}</span>
+                        {professional.specialization && (
+                          <span className="text-gray-500 text-sm">
+                            - {professional.specialization}
+                          </span>
+                        )}
+                      </div>
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -572,21 +550,17 @@ var ProfessionalScheduleManager = function (_a) {
                   <div>
                     <label_1.Label>Horário de Início</label_1.Label>
                     <select_1.Select
-                      onValueChange={function (value) {
-                        return handleBulkUpdate({ start_time: value });
-                      }}
+                      onValueChange={(value) => handleBulkUpdate({ start_time: value })}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Início" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {timeOptions.slice(16, 40).map(function (option) {
-                          return (
-                            <select_1.SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {timeOptions.slice(16, 40).map((option) => (
+                          <select_1.SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -594,21 +568,17 @@ var ProfessionalScheduleManager = function (_a) {
                   <div>
                     <label_1.Label>Horário de Fim</label_1.Label>
                     <select_1.Select
-                      onValueChange={function (value) {
-                        return handleBulkUpdate({ end_time: value });
-                      }}
+                      onValueChange={(value) => handleBulkUpdate({ end_time: value })}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Fim" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {timeOptions.slice(32, 48).map(function (option) {
-                          return (
-                            <select_1.SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {timeOptions.slice(32, 48).map((option) => (
+                          <select_1.SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -616,21 +586,17 @@ var ProfessionalScheduleManager = function (_a) {
                   <div>
                     <label_1.Label>Início do Intervalo</label_1.Label>
                     <select_1.Select
-                      onValueChange={function (value) {
-                        return handleBulkUpdate({ break_start_time: value });
-                      }}
+                      onValueChange={(value) => handleBulkUpdate({ break_start_time: value })}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Intervalo" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {timeOptions.slice(22, 32).map(function (option) {
-                          return (
-                            <select_1.SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {timeOptions.slice(22, 32).map((option) => (
+                          <select_1.SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -638,21 +604,17 @@ var ProfessionalScheduleManager = function (_a) {
                   <div>
                     <label_1.Label>Fim do Intervalo</label_1.Label>
                     <select_1.Select
-                      onValueChange={function (value) {
-                        return handleBulkUpdate({ break_end_time: value });
-                      }}
+                      onValueChange={(value) => handleBulkUpdate({ break_end_time: value })}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Fim Intervalo" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {timeOptions.slice(24, 34).map(function (option) {
-                          return (
-                            <select_1.SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {timeOptions.slice(24, 34).map((option) => (
+                          <select_1.SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -660,9 +622,7 @@ var ProfessionalScheduleManager = function (_a) {
 
                 <div className="flex items-center gap-4 mt-4">
                   <button_1.Button
-                    onClick={function () {
-                      return handleBulkUpdate({ is_available: true });
-                    }}
+                    onClick={() => handleBulkUpdate({ is_available: true })}
                     size="sm"
                     variant="outline"
                   >
@@ -671,9 +631,7 @@ var ProfessionalScheduleManager = function (_a) {
                   </button_1.Button>
 
                   <button_1.Button
-                    onClick={function () {
-                      return handleBulkUpdate({ is_available: false });
-                    }}
+                    onClick={() => handleBulkUpdate({ is_available: false })}
                     size="sm"
                     variant="outline"
                   >
@@ -703,7 +661,7 @@ var ProfessionalScheduleManager = function (_a) {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
                 : <div className="space-y-4">
-                    {daysOfWeek.map(function (day) {
+                    {daysOfWeek.map((day) => {
                       var dayAvailability = getAvailabilityForDay(day.value);
                       var isWeekend = day.value === 0 || day.value === 6;
                       return (
@@ -765,9 +723,7 @@ var ProfessionalScheduleManager = function (_a) {
                               <button_1.Button
                                 size="sm"
                                 variant="outline"
-                                onClick={function () {
-                                  return handleEditAvailability(day.value);
-                                }}
+                                onClick={() => handleEditAvailability(day.value)}
                               >
                                 <lucide_react_1.Edit className="w-3 h-3 mr-1" />
                                 {dayAvailability ? "Editar" : "Configurar"}
@@ -777,9 +733,9 @@ var ProfessionalScheduleManager = function (_a) {
                                 <button_1.Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={function () {
-                                    return deleteAvailabilityMutation.mutate(dayAvailability.id);
-                                  }}
+                                  onClick={() =>
+                                    deleteAvailabilityMutation.mutate(dayAvailability.id)
+                                  }
                                 >
                                   <lucide_react_1.Trash2 className="w-3 h-3" />
                                 </button_1.Button>
@@ -797,17 +753,14 @@ var ProfessionalScheduleManager = function (_a) {
           {editingAvailability && (
             <dialog_1.Dialog
               open={!!editingAvailability}
-              onOpenChange={function () {
-                return setEditingAvailability(null);
-              }}
+              onOpenChange={() => setEditingAvailability(null)}
             >
               <dialog_1.DialogContent className="sm:max-w-md">
                 <dialog_1.DialogHeader>
                   <dialog_1.DialogTitle>
                     Configurar Disponibilidade -{" "}
-                    {(_b = daysOfWeek.find(function (d) {
-                      return d.value === editingAvailability.day_of_week;
-                    })) === null || _b === void 0
+                    {(_b = daysOfWeek.find((d) => d.value === editingAvailability.day_of_week)) ===
+                      null || _b === void 0
                       ? void 0
                       : _b.label}
                   </dialog_1.DialogTitle>
@@ -821,11 +774,11 @@ var ProfessionalScheduleManager = function (_a) {
                     <switch_1.Switch
                       id="available"
                       checked={editingAvailability.is_available}
-                      onCheckedChange={function (checked) {
-                        return setEditingAvailability(
+                      onCheckedChange={(checked) =>
+                        setEditingAvailability(
                           __assign(__assign({}, editingAvailability), { is_available: checked }),
-                        );
-                      }}
+                        )
+                      }
                     />
                     <label_1.Label htmlFor="available">Disponível neste dia</label_1.Label>
                   </div>
@@ -837,23 +790,21 @@ var ProfessionalScheduleManager = function (_a) {
                           <label_1.Label>Horário de Início</label_1.Label>
                           <select_1.Select
                             value={editingAvailability.start_time}
-                            onValueChange={function (value) {
-                              return setEditingAvailability(
+                            onValueChange={(value) =>
+                              setEditingAvailability(
                                 __assign(__assign({}, editingAvailability), { start_time: value }),
-                              );
-                            }}
+                              )
+                            }
                           >
                             <select_1.SelectTrigger>
                               <select_1.SelectValue />
                             </select_1.SelectTrigger>
                             <select_1.SelectContent>
-                              {timeOptions.slice(16, 40).map(function (option) {
-                                return (
-                                  <select_1.SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </select_1.SelectItem>
-                                );
-                              })}
+                              {timeOptions.slice(16, 40).map((option) => (
+                                <select_1.SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </select_1.SelectItem>
+                              ))}
                             </select_1.SelectContent>
                           </select_1.Select>
                         </div>
@@ -862,23 +813,21 @@ var ProfessionalScheduleManager = function (_a) {
                           <label_1.Label>Horário de Fim</label_1.Label>
                           <select_1.Select
                             value={editingAvailability.end_time}
-                            onValueChange={function (value) {
-                              return setEditingAvailability(
+                            onValueChange={(value) =>
+                              setEditingAvailability(
                                 __assign(__assign({}, editingAvailability), { end_time: value }),
-                              );
-                            }}
+                              )
+                            }
                           >
                             <select_1.SelectTrigger>
                               <select_1.SelectValue />
                             </select_1.SelectTrigger>
                             <select_1.SelectContent>
-                              {timeOptions.slice(32, 48).map(function (option) {
-                                return (
-                                  <select_1.SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </select_1.SelectItem>
-                                );
-                              })}
+                              {timeOptions.slice(32, 48).map((option) => (
+                                <select_1.SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </select_1.SelectItem>
+                              ))}
                             </select_1.SelectContent>
                           </select_1.Select>
                         </div>
@@ -891,26 +840,24 @@ var ProfessionalScheduleManager = function (_a) {
                           <label_1.Label>Início do Intervalo</label_1.Label>
                           <select_1.Select
                             value={editingAvailability.break_start_time || ""}
-                            onValueChange={function (value) {
-                              return setEditingAvailability(
+                            onValueChange={(value) =>
+                              setEditingAvailability(
                                 __assign(__assign({}, editingAvailability), {
                                   break_start_time: value || undefined,
                                 }),
-                              );
-                            }}
+                              )
+                            }
                           >
                             <select_1.SelectTrigger>
                               <select_1.SelectValue placeholder="Sem intervalo" />
                             </select_1.SelectTrigger>
                             <select_1.SelectContent>
                               <select_1.SelectItem value="">Sem intervalo</select_1.SelectItem>
-                              {timeOptions.slice(22, 32).map(function (option) {
-                                return (
-                                  <select_1.SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </select_1.SelectItem>
-                                );
-                              })}
+                              {timeOptions.slice(22, 32).map((option) => (
+                                <select_1.SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </select_1.SelectItem>
+                              ))}
                             </select_1.SelectContent>
                           </select_1.Select>
                         </div>
@@ -919,26 +866,24 @@ var ProfessionalScheduleManager = function (_a) {
                           <label_1.Label>Fim do Intervalo</label_1.Label>
                           <select_1.Select
                             value={editingAvailability.break_end_time || ""}
-                            onValueChange={function (value) {
-                              return setEditingAvailability(
+                            onValueChange={(value) =>
+                              setEditingAvailability(
                                 __assign(__assign({}, editingAvailability), {
                                   break_end_time: value || undefined,
                                 }),
-                              );
-                            }}
+                              )
+                            }
                             disabled={!editingAvailability.break_start_time}
                           >
                             <select_1.SelectTrigger>
                               <select_1.SelectValue placeholder="Fim do intervalo" />
                             </select_1.SelectTrigger>
                             <select_1.SelectContent>
-                              {timeOptions.slice(24, 34).map(function (option) {
-                                return (
-                                  <select_1.SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </select_1.SelectItem>
-                                );
-                              })}
+                              {timeOptions.slice(24, 34).map((option) => (
+                                <select_1.SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </select_1.SelectItem>
+                              ))}
                             </select_1.SelectContent>
                           </select_1.Select>
                         </div>
@@ -948,12 +893,7 @@ var ProfessionalScheduleManager = function (_a) {
                 </div>
 
                 <dialog_1.DialogFooter>
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setEditingAvailability(null);
-                    }}
-                  >
+                  <button_1.Button variant="outline" onClick={() => setEditingAvailability(null)}>
                     Cancelar
                   </button_1.Button>
                   <button_1.Button

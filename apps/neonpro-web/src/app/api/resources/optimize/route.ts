@@ -4,9 +4,9 @@
 // =====================================================
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { AllocationEngine } from "@/lib/resources/allocation-engine";
 import type { ResourceManager } from "@/lib/resources/resource-manager";
+import type { createClient } from "@/lib/supabase/server";
 
 // =====================================================
 // POST /api/resources/optimize - Get allocation suggestions

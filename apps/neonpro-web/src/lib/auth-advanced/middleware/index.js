@@ -1,17 +1,16 @@
-"use strict";
 // Auth Middleware Export
 // Story 1.4: Session Management & Security Implementation
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,10 +130,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -145,7 +142,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MiddlewarePresets =
   exports.MiddlewareUtils =
@@ -162,47 +159,33 @@ exports.createCombinedMiddleware = createCombinedMiddleware;
 var auth_middleware_1 = require("./auth-middleware");
 Object.defineProperty(exports, "createAuthMiddleware", {
   enumerable: true,
-  get: function () {
-    return auth_middleware_1.createAuthMiddleware;
-  },
+  get: () => auth_middleware_1.createAuthMiddleware,
 });
 Object.defineProperty(exports, "recordSuspiciousActivity", {
   enumerable: true,
-  get: function () {
-    return auth_middleware_1.recordSuspiciousActivity;
-  },
+  get: () => auth_middleware_1.recordSuspiciousActivity,
 });
 Object.defineProperty(exports, "clearSuspiciousActivity", {
   enumerable: true,
-  get: function () {
-    return auth_middleware_1.clearSuspiciousActivity;
-  },
+  get: () => auth_middleware_1.clearSuspiciousActivity,
 });
 // Security Middleware
 var security_middleware_1 = require("./security-middleware");
 Object.defineProperty(exports, "createSecurityMiddleware", {
   enumerable: true,
-  get: function () {
-    return security_middleware_1.createSecurityMiddleware;
-  },
+  get: () => security_middleware_1.createSecurityMiddleware,
 });
 Object.defineProperty(exports, "getMonitoringStats", {
   enumerable: true,
-  get: function () {
-    return security_middleware_1.getMonitoringStats;
-  },
+  get: () => security_middleware_1.getMonitoringStats,
 });
 Object.defineProperty(exports, "clearBlockedIP", {
   enumerable: true,
-  get: function () {
-    return security_middleware_1.clearBlockedIP;
-  },
+  get: () => security_middleware_1.clearBlockedIP,
 });
 Object.defineProperty(exports, "blockIP", {
   enumerable: true,
-  get: function () {
-    return security_middleware_1.blockIP;
-  },
+  get: () => security_middleware_1.blockIP,
 });
 // Combined Middleware Factory
 var server_1 = require("next/server");
@@ -230,7 +213,7 @@ function createCombinedMiddleware(sessionManager, securityMonitor, deviceManager
   return function combinedMiddleware(request) {
     return __awaiter(this, void 0, void 0, function () {
       var securityResult, authResult, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -275,7 +258,7 @@ exports.MiddlewareUtils = {
   /**
    * Extract client IP from request
    */
-  getClientIP: function (request) {
+  getClientIP: (request) => {
     var forwarded = request.headers.get("x-forwarded-for");
     var realIP = request.headers.get("x-real-ip");
     var remoteAddr = request.headers.get("x-remote-addr");
@@ -287,7 +270,7 @@ exports.MiddlewareUtils = {
   /**
    * Extract session token from request
    */
-  getSessionToken: function (request) {
+  getSessionToken: (request) => {
     var authHeader = request.headers.get("authorization");
     if (authHeader && authHeader.startsWith("Bearer ")) {
       return authHeader.substring(7);
@@ -301,13 +284,11 @@ exports.MiddlewareUtils = {
   /**
    * Check if request is from API route
    */
-  isAPIRoute: function (request) {
-    return request.nextUrl.pathname.startsWith("/api/");
-  },
+  isAPIRoute: (request) => request.nextUrl.pathname.startsWith("/api/"),
   /**
    * Check if request is for static assets
    */
-  isStaticAsset: function (request) {
+  isStaticAsset: (request) => {
     var pathname = request.nextUrl.pathname;
     return (
       pathname.startsWith("/_next/") || pathname.startsWith("/static/") || pathname.includes(".") // Files with extensions
@@ -316,7 +297,7 @@ exports.MiddlewareUtils = {
   /**
    * Check if request is for public routes
    */
-  isPublicRoute: function (request, publicRoutes) {
+  isPublicRoute: (request, publicRoutes) => {
     if (publicRoutes === void 0) {
       publicRoutes = [];
     }
@@ -334,9 +315,7 @@ exports.MiddlewareUtils = {
       publicRoutes,
       true,
     );
-    return allPublicRoutes.some(function (route) {
-      return pathname === route || pathname.startsWith(route + "/");
-    });
+    return allPublicRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"));
   },
 };
 /**

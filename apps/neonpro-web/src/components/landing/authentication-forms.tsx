@@ -1,18 +1,18 @@
 // components/landing/authentication-forms.tsx
 "use client";
 
+import type {
+  ArrowRight,
+  Clock,
+  Heart,
+  Shield,
+  Smartphone,
+  Stethoscope,
+  UserCheck,
+} from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  UserCheck,
-  Heart,
-  Stethoscope,
-  Shield,
-  Clock,
-  Smartphone,
-  ArrowRight,
-} from "lucide-react";
 
 interface AuthenticationFormsProps {
   onProfessionalLogin: () => void;

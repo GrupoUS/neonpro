@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 11.2: Proactive Intervention Engine
  * Automated intervention system for high-risk patients and no-show prevention
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.interventionEngine = exports.InterventionEngine = exports.InterventionStatus = void 0;
 exports.formatCost = formatCost;
@@ -158,7 +155,7 @@ exports.getInterventionStatusColor = getInterventionStatusColor;
 exports.calculateROI = calculateROI;
 // Intervention execution status
 var InterventionStatus;
-(function (InterventionStatus) {
+((InterventionStatus) => {
   InterventionStatus["SCHEDULED"] = "SCHEDULED";
   InterventionStatus["EXECUTED"] = "EXECUTED";
   InterventionStatus["FAILED"] = "FAILED";
@@ -166,7 +163,7 @@ var InterventionStatus;
   InterventionStatus["PENDING_RESPONSE"] = "PENDING_RESPONSE";
 })(InterventionStatus || (exports.InterventionStatus = InterventionStatus = {}));
 // Main intervention engine class
-var InterventionEngine = /** @class */ (function () {
+var InterventionEngine = /** @class */ (() => {
   function InterventionEngine() {
     this.supabase = createClient(ComponentClient());
     this.interventionTypes = new Map();
@@ -177,7 +174,6 @@ var InterventionEngine = /** @class */ (function () {
    * Initialize predefined intervention types
    */
   InterventionEngine.prototype.initializeInterventionTypes = function () {
-    var _this = this;
     var types = [
       {
         id: "sms_reminder_24h",
@@ -245,9 +241,7 @@ var InterventionEngine = /** @class */ (function () {
         contraindications: [],
       },
     ];
-    types.forEach(function (type) {
-      return _this.interventionTypes.set(type.id, type);
-    });
+    types.forEach((type) => this.interventionTypes.set(type.id, type));
   };
   /**
    * Generate smart intervention recommendations for a patient
@@ -320,7 +314,7 @@ var InterventionEngine = /** @class */ (function () {
             return [3 /*break*/, 3];
           case 6:
             // Sort by expected ROI and priority
-            recommendations.sort(function (a, b) {
+            recommendations.sort((a, b) => {
               if (a.priority !== b.priority) {
                 return b.priority - a.priority;
               }
@@ -344,24 +338,24 @@ var InterventionEngine = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var executions, batchSize, _loop_1, i;
       var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             executions = [];
             batchSize = 20;
             _loop_1 = function (i) {
               var batch, batchPromises, batchResults;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     batch = predictions.slice(i, i + batchSize);
-                    batchPromises = batch.map(function (prediction) {
-                      return _this.executePatientInterventions(prediction, campaignId);
-                    });
+                    batchPromises = batch.map((prediction) =>
+                      _this.executePatientInterventions(prediction, campaignId),
+                    );
                     return [4 /*yield*/, Promise.allSettled(batchPromises)];
                   case 1:
                     batchResults = _b.sent();
-                    batchResults.forEach(function (result, index) {
+                    batchResults.forEach((result, index) => {
                       if (result.status === "fulfilled") {
                         executions.push.apply(executions, result.value);
                       } else {
@@ -641,7 +635,7 @@ var InterventionEngine = /** @class */ (function () {
             analytics = _a.sent();
             recommendations = [];
             estimatedImpact = 0;
-            bestChannel = Object.entries(analytics.channelEffectiveness).sort(function (_a, _b) {
+            bestChannel = Object.entries(analytics.channelEffectiveness).sort((_a, _b) => {
               var a = _a[1];
               var b = _b[1];
               return b - a;
@@ -663,7 +657,7 @@ var InterventionEngine = /** @class */ (function () {
               );
               estimatedImpact += 0.1;
             }
-            riskAnalysis = Object.entries(analytics.riskLevelEffectiveness).sort(function (_a, _b) {
+            riskAnalysis = Object.entries(analytics.riskLevelEffectiveness).sort((_a, _b) => {
               var a = _a[1];
               var b = _b[1];
               return b - a;
@@ -695,7 +689,6 @@ var InterventionEngine = /** @class */ (function () {
     patientConstraints,
     timeToAppointment,
   ) {
-    var _this = this;
     var reasons = [];
     var score = 0;
     // Check risk level compatibility
@@ -713,9 +706,9 @@ var InterventionEngine = /** @class */ (function () {
       reasons.push("Insufficient time for execution");
     }
     // Check prerequisites
-    var prerequisitesMet = interventionType.prerequisites.every(function (req) {
-      return _this.checkPrerequisite(req, patientConstraints);
-    });
+    var prerequisitesMet = interventionType.prerequisites.every((req) =>
+      this.checkPrerequisite(req, patientConstraints),
+    );
     if (prerequisitesMet) {
       score += 20;
     } else {
@@ -723,9 +716,9 @@ var InterventionEngine = /** @class */ (function () {
       reasons.push("Prerequisites not met");
     }
     // Check contraindications
-    var hasContraindications = interventionType.contraindications.some(function (contra) {
-      return _this.checkContraindication(contra, patientConstraints);
-    });
+    var hasContraindications = interventionType.contraindications.some((contra) =>
+      this.checkContraindication(contra, patientConstraints),
+    );
     if (hasContraindications) {
       score -= 100;
       reasons.push("Contraindications present");
@@ -812,7 +805,7 @@ var InterventionEngine = /** @class */ (function () {
       });
     });
   };
-  InterventionEngine.prototype.parseExecutionTime = function (executionTime) {
+  InterventionEngine.prototype.parseExecutionTime = (executionTime) => {
     // Convert execution time string to milliseconds
     var timeMap = {
       "2h before": 2 * 60 * 60 * 1000,
@@ -827,13 +820,8 @@ var InterventionEngine = /** @class */ (function () {
     var timeOffset = this.parseExecutionTime(executionTime);
     return new Date(appointmentDate.getTime() - timeOffset);
   };
-  InterventionEngine.prototype.calculatePriority = function (
-    riskScore,
-    suitabilityScore,
-    expectedROI,
-  ) {
-    return Math.round(((riskScore * 0.4 + suitabilityScore * 0.3 + expectedROI * 30) / 100) * 10);
-  };
+  InterventionEngine.prototype.calculatePriority = (riskScore, suitabilityScore, expectedROI) =>
+    Math.round(((riskScore * 0.4 + suitabilityScore * 0.3 + expectedROI * 30) / 100) * 10);
   InterventionEngine.prototype.generatePersonalizedMessage = function (
     interventionType,
     prediction,
@@ -841,7 +829,7 @@ var InterventionEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var patientName, appointmentDate, appointmentTime, templates;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         patientName = appointmentData.patient_name || "Patient";
         appointmentDate = new Date(appointmentData.scheduled_date).toLocaleDateString();
         appointmentTime = new Date(appointmentData.scheduled_date).toLocaleTimeString([], {
@@ -891,7 +879,7 @@ var InterventionEngine = /** @class */ (function () {
     var timingBonus = this.calculateTimingBonus(execution);
     return Math.min(baseScore + responseBonus + timingBonus, 100);
   };
-  InterventionEngine.prototype.calculateTimingBonus = function (execution) {
+  InterventionEngine.prototype.calculateTimingBonus = (execution) => {
     if (!execution.executedAt) return 0;
     var timeDiff = Math.abs(execution.scheduledAt.getTime() - execution.executedAt.getTime());
     var hoursDiff = timeDiff / (1000 * 60 * 60);
@@ -901,14 +889,10 @@ var InterventionEngine = /** @class */ (function () {
   InterventionEngine.prototype.calculateCampaignResults = function (campaignId, executions) {
     return __awaiter(this, void 0, void 0, function () {
       var totalCost, completedExecutions, attendedAppointments, noShowReduction;
-      return __generator(this, function (_a) {
-        totalCost = executions.reduce(function (sum, exec) {
-          return sum + exec.cost;
-        }, 0);
-        completedExecutions = executions.filter(function (exec) {
-          return exec.outcome;
-        });
-        attendedAppointments = completedExecutions.filter(function (exec) {
+      return __generator(this, (_a) => {
+        totalCost = executions.reduce((sum, exec) => sum + exec.cost, 0);
+        completedExecutions = executions.filter((exec) => exec.outcome);
+        attendedAppointments = completedExecutions.filter((exec) => {
           var _a;
           return (_a = exec.outcome) === null || _a === void 0 ? void 0 : _a.appointmentKept;
         });
@@ -919,11 +903,7 @@ var InterventionEngine = /** @class */ (function () {
         return [
           2 /*return*/,
           {
-            totalParticipants: new Set(
-              executions.map(function (exec) {
-                return exec.patientId;
-              }),
-            ).size,
+            totalParticipants: new Set(executions.map((exec) => exec.patientId)).size,
             interventionsExecuted: executions.length,
             costIncurred: totalCost,
             noShowReduction: noShowReduction,
@@ -931,17 +911,11 @@ var InterventionEngine = /** @class */ (function () {
               attendedAppointments.length > 0 ? totalCost / attendedAppointments.length : 0,
             patientSatisfactionScore: 85, // Placeholder
             completionRate:
-              (executions.filter(function (exec) {
-                return exec.status === InterventionStatus.EXECUTED;
-              }).length /
+              (executions.filter((exec) => exec.status === InterventionStatus.EXECUTED).length /
                 executions.length) *
               100,
             responseRate:
-              (executions.filter(function (exec) {
-                return exec.response;
-              }).length /
-                executions.length) *
-              100,
+              (executions.filter((exec) => exec.response).length / executions.length) * 100,
             effectivenessByRiskLevel: {},
             effectivenessByInterventionType: {},
           },
@@ -949,22 +923,18 @@ var InterventionEngine = /** @class */ (function () {
       });
     });
   };
-  InterventionEngine.prototype.calculateInterventionAnalytics = function (
+  InterventionEngine.prototype.calculateInterventionAnalytics = (
     executions,
     startDate,
     endDate,
-  ) {
-    var totalCost = executions.reduce(function (sum, exec) {
-      return sum + exec.cost;
-    }, 0);
+  ) => {
+    var totalCost = executions.reduce((sum, exec) => sum + exec.cost, 0);
     var totalSavings = executions
-      .filter(function (exec) {
+      .filter((exec) => {
         var _a;
         return (_a = exec.outcome) === null || _a === void 0 ? void 0 : _a.appointmentKept;
       })
-      .reduce(function (sum, exec) {
-        return sum + (exec.metadata.appointmentValue || 100);
-      }, 0);
+      .reduce((sum, exec) => sum + (exec.metadata.appointmentValue || 100), 0);
     return {
       period: { start: startDate, end: endDate },
       totalInterventions: executions.length,
@@ -981,15 +951,13 @@ var InterventionEngine = /** @class */ (function () {
     };
   };
   // Placeholder methods for database operations
-  InterventionEngine.prototype.generateExecutionId = function () {
-    return "int_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  InterventionEngine.prototype.generateCampaignId = function () {
-    return "camp_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  InterventionEngine.prototype.generateExecutionId = () =>
+    "int_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  InterventionEngine.prototype.generateCampaignId = () =>
+    "camp_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   InterventionEngine.prototype.getPatientConstraints = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Fetch patient communication preferences, opt-outs, etc.
         return [
           2 /*return*/,
@@ -1008,7 +976,7 @@ var InterventionEngine = /** @class */ (function () {
   };
   InterventionEngine.prototype.getHistoricalEffectiveness = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get patient-specific intervention effectiveness
         return [2 /*return*/, {}];
       });
@@ -1016,7 +984,7 @@ var InterventionEngine = /** @class */ (function () {
   };
   InterventionEngine.prototype.getPatientRiskProfile = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would integrate with the risk scoring engine
         throw new Error("Method not implemented");
       });
@@ -1041,13 +1009,13 @@ var InterventionEngine = /** @class */ (function () {
   };
   InterventionEngine.prototype.getAppointmentValue = function (appointmentData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate the monetary value of the appointment
         return [2 /*return*/, appointmentData.estimated_value || 100];
       });
     });
   };
-  InterventionEngine.prototype.checkPrerequisite = function (prerequisite, constraints) {
+  InterventionEngine.prototype.checkPrerequisite = (prerequisite, constraints) => {
     var checks = {
       valid_phone_number: constraints.validPhoneNumber,
       valid_email: constraints.validEmail,
@@ -1055,7 +1023,7 @@ var InterventionEngine = /** @class */ (function () {
     };
     return checks[prerequisite] || false;
   };
-  InterventionEngine.prototype.checkContraindication = function (contraindication, constraints) {
+  InterventionEngine.prototype.checkContraindication = (contraindication, constraints) => {
     var checks = {
       opted_out_sms: constraints.optedOutSms,
       opted_out_email: constraints.optedOutEmail,
@@ -1070,26 +1038,23 @@ var InterventionEngine = /** @class */ (function () {
         return [
           2 /*return*/,
           Array.from(this.interventionTypes.values())
-            .filter(function (type) {
-              return type.category === currentType.category && type.id !== currentType.id;
-            })
-            .map(function (type) {
-              return type.name;
-            }),
+            .filter((type) => type.category === currentType.category && type.id !== currentType.id)
+            .map((type) => type.name),
         ];
       });
     });
   };
   InterventionEngine.prototype.analyzeOptimalTiming = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { optimalTiming: "24h before", confidence: 0.8 }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { optimalTiming: "24h before", confidence: 0.8 },
+      ]);
     });
   };
   InterventionEngine.prototype.findEligiblePatients = function (criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Find patients matching campaign criteria
         return [2 /*return*/, []];
       });
@@ -1097,35 +1062,27 @@ var InterventionEngine = /** @class */ (function () {
   };
   InterventionEngine.prototype.saveInterventionExecution = function (execution) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   InterventionEngine.prototype.scheduleAutomatedExecution = function (execution) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   InterventionEngine.prototype.saveCampaign = function (campaign) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   InterventionEngine.prototype.updateCampaign = function (campaign) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   InterventionEngine.prototype.getExecutionHistory = function (startDate, endDate) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get execution history from database
         return [2 /*return*/, []];
       });
@@ -1133,7 +1090,7 @@ var InterventionEngine = /** @class */ (function () {
   };
   InterventionEngine.prototype.getExecution = function (executionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get specific execution from database
         return [2 /*return*/, null];
       });
@@ -1141,9 +1098,7 @@ var InterventionEngine = /** @class */ (function () {
   };
   InterventionEngine.prototype.updateExecution = function (execution) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   InterventionEngine.prototype.updateInterventionTypeEffectiveness = function (
@@ -1151,9 +1106,7 @@ var InterventionEngine = /** @class */ (function () {
     effectiveness,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return InterventionEngine;

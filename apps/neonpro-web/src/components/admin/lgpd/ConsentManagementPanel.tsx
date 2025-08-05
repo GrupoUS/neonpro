@@ -1,6 +1,22 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  Filter,
+  Plus,
+  RefreshCw,
+  Search,
+  Trash2,
+  XCircle,
+} from "lucide-react";
 import React, { useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,20 +24,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Dialog,
   DialogContent,
@@ -31,6 +34,8 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
   Select,
   SelectContent,
@@ -38,21 +43,16 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Checkbox } from "@/components/ui/checkbox";
 import type {
-  Search,
-  Filter,
-  Plus,
-  Edit,
-  Trash2,
-  Download,
-  RefreshCw,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertTriangle,
-} from "lucide-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useConsentManagement } from "@/hooks/useLGPD";
 import type { ConsentPurpose, UserConsent } from "@/types/lgpd";
 

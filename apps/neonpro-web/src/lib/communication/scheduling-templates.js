@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Intelligent Scheduling Communication Templates
  * Story 5.3: Automated Communication for Scheduling
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.schedulingTemplateEngine = exports.SchedulingTemplateEngine = void 0;
-var SchedulingTemplateEngine = /** @class */ (function () {
+var SchedulingTemplateEngine = /** @class */ (() => {
   function SchedulingTemplateEngine() {
     this.templates = new Map();
     this.initializeDefaultTemplates();
@@ -416,14 +413,9 @@ var SchedulingTemplateEngine = /** @class */ (function () {
    * Get templates by type and conditions
    */
   SchedulingTemplateEngine.prototype.getTemplatesByType = function (type, conditions) {
-    var _this = this;
     return Array.from(this.templates.values())
-      .filter(function (template) {
-        return template.type === type && template.active;
-      })
-      .filter(function (template) {
-        return _this.matchesConditions(template, conditions);
-      });
+      .filter((template) => template.type === type && template.active)
+      .filter((template) => this.matchesConditions(template, conditions));
   };
   /**
    * Select best template based on appointment and patient data
@@ -434,7 +426,6 @@ var SchedulingTemplateEngine = /** @class */ (function () {
     patientData,
     noShowPrediction,
   ) {
-    var _this = this;
     var availableTemplates = this.getTemplatesByType(type);
     if (availableTemplates.length === 0) {
       return null;
@@ -445,29 +436,29 @@ var SchedulingTemplateEngine = /** @class */ (function () {
       noShowPrediction || {},
     );
     // Find templates that match conditions
-    var matchingTemplates = availableTemplates.filter(function (template) {
-      return _this.matchesConditions(template, contextData);
-    });
+    var matchingTemplates = availableTemplates.filter((template) =>
+      this.matchesConditions(template, contextData),
+    );
     if (matchingTemplates.length === 0) {
       // Return first available template as fallback
       return availableTemplates[0];
     }
     // Select template with best performance (highest response rate)
-    return matchingTemplates.reduce(function (best, current) {
-      return current.analytics.responseRate > best.analytics.responseRate ? current : best;
-    });
+    return matchingTemplates.reduce((best, current) =>
+      current.analytics.responseRate > best.analytics.responseRate ? current : best,
+    );
   };
   /**
    * Check if template conditions match the provided data
    */
-  SchedulingTemplateEngine.prototype.matchesConditions = function (template, data) {
+  SchedulingTemplateEngine.prototype.matchesConditions = (template, data) => {
     if (template.conditions.length === 0) {
       return true;
     }
     if (!data) {
       return false;
     }
-    return template.conditions.every(function (condition) {
+    return template.conditions.every((condition) => {
       var fieldValue = data[condition.field];
       switch (condition.operator) {
         case "equals":
@@ -547,7 +538,7 @@ var SchedulingTemplateEngine = /** @class */ (function () {
   SchedulingTemplateEngine.prototype.applyPersonalization = function (rules, variables) {
     return __awaiter(this, void 0, void 0, function () {
       var personalized, hour;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         personalized = __assign({}, variables);
         // Add time-based greeting
         if (rules.useTimeOfDay) {
@@ -577,19 +568,16 @@ var SchedulingTemplateEngine = /** @class */ (function () {
   /**
    * Simple template rendering with variable substitution
    */
-  SchedulingTemplateEngine.prototype.renderText = function (template, variables) {
+  SchedulingTemplateEngine.prototype.renderText = (template, variables) => {
     var rendered = template;
     // Replace simple variables {{variable}}
-    Object.keys(variables).forEach(function (key) {
+    Object.keys(variables).forEach((key) => {
       var regex = new RegExp("{{".concat(key, "}}"), "g");
       rendered = rendered.replace(regex, String(variables[key] || ""));
     });
     // Handle simple conditionals {{#if condition}}...{{/if}}
-    rendered = rendered.replace(
-      /{{#if (\w+)}}(.*?){{\/if}}/gs,
-      function (match, condition, content) {
-        return variables[condition] ? content : "";
-      },
+    rendered = rendered.replace(/{{#if (\w+)}}(.*?){{\/if}}/gs, (match, condition, content) =>
+      variables[condition] ? content : "",
     );
     return rendered;
   };
@@ -608,9 +596,7 @@ var SchedulingTemplateEngine = /** @class */ (function () {
    * Get all active templates
    */
   SchedulingTemplateEngine.prototype.getAllActiveTemplates = function () {
-    return Array.from(this.templates.values()).filter(function (t) {
-      return t.active;
-    });
+    return Array.from(this.templates.values()).filter((t) => t.active);
   };
   /**
    * Add custom template

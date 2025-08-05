@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorForm = VendorForm;
 var button_1 = require("@/components/ui/button");
@@ -179,7 +176,6 @@ var paymentMethods = [
   { value: "other", label: "Outro" },
 ];
 function VendorForm(_a) {
-  var _this = this;
   var vendor = _a.vendor,
     open = _a.open,
     onOpenChange = _a.onOpenChange,
@@ -225,86 +221,80 @@ function VendorForm(_a) {
     formData = _e[0],
     setFormData = _e[1];
   // Generate vendor code when creating new vendor
-  (0, react_1.useEffect)(
-    function () {
-      if (!vendor && open && !formData.vendor_code) {
-        generateVendorCode();
-      }
-    },
-    [vendor, open, formData.vendor_code],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!vendor && open && !formData.vendor_code) {
+      generateVendorCode();
+    }
+  }, [vendor, open, formData.vendor_code]);
   // Populate form when editing existing vendor
-  (0, react_1.useEffect)(
-    function () {
-      if (vendor) {
-        setFormData({
-          vendor_code: vendor.vendor_code,
-          company_name: vendor.company_name,
-          legal_name: vendor.legal_name || "",
-          contact_person: vendor.contact_person || "",
-          email: vendor.email || "",
-          phone: vendor.phone || "",
-          mobile: vendor.mobile || "",
-          address_line1: vendor.address_line1 || "",
-          address_line2: vendor.address_line2 || "",
-          city: vendor.city || "",
-          state: vendor.state || "",
-          postal_code: vendor.postal_code || "",
-          country: vendor.country || "Brazil",
-          tax_id: vendor.tax_id || "",
-          state_registration: vendor.state_registration || "",
-          municipal_registration: vendor.municipal_registration || "",
-          bank_name: vendor.bank_name || "",
-          bank_branch: vendor.bank_branch || "",
-          bank_account: vendor.bank_account || "",
-          pix_key: vendor.pix_key || "",
-          vendor_type: vendor.vendor_type,
-          payment_terms_days: vendor.payment_terms_days,
-          payment_method: vendor.payment_method,
-          credit_limit: vendor.credit_limit,
-          is_active: vendor.is_active,
-          requires_approval: vendor.requires_approval,
-          tax_exempt: vendor.tax_exempt,
-        });
-      } else if (open) {
-        // Reset form for new vendor
-        setFormData({
-          vendor_code: "",
-          company_name: "",
-          legal_name: "",
-          contact_person: "",
-          email: "",
-          phone: "",
-          mobile: "",
-          address_line1: "",
-          address_line2: "",
-          city: "",
-          state: "",
-          postal_code: "",
-          country: "Brazil",
-          tax_id: "",
-          state_registration: "",
-          municipal_registration: "",
-          bank_name: "",
-          bank_branch: "",
-          bank_account: "",
-          pix_key: "",
-          vendor_type: "supplier",
-          payment_terms_days: 30,
-          payment_method: "pix",
-          credit_limit: undefined,
-          is_active: true,
-          requires_approval: false,
-          tax_exempt: false,
-        });
-      }
-    },
-    [vendor, open],
-  );
-  var loadDocuments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (vendor) {
+      setFormData({
+        vendor_code: vendor.vendor_code,
+        company_name: vendor.company_name,
+        legal_name: vendor.legal_name || "",
+        contact_person: vendor.contact_person || "",
+        email: vendor.email || "",
+        phone: vendor.phone || "",
+        mobile: vendor.mobile || "",
+        address_line1: vendor.address_line1 || "",
+        address_line2: vendor.address_line2 || "",
+        city: vendor.city || "",
+        state: vendor.state || "",
+        postal_code: vendor.postal_code || "",
+        country: vendor.country || "Brazil",
+        tax_id: vendor.tax_id || "",
+        state_registration: vendor.state_registration || "",
+        municipal_registration: vendor.municipal_registration || "",
+        bank_name: vendor.bank_name || "",
+        bank_branch: vendor.bank_branch || "",
+        bank_account: vendor.bank_account || "",
+        pix_key: vendor.pix_key || "",
+        vendor_type: vendor.vendor_type,
+        payment_terms_days: vendor.payment_terms_days,
+        payment_method: vendor.payment_method,
+        credit_limit: vendor.credit_limit,
+        is_active: vendor.is_active,
+        requires_approval: vendor.requires_approval,
+        tax_exempt: vendor.tax_exempt,
+      });
+    } else if (open) {
+      // Reset form for new vendor
+      setFormData({
+        vendor_code: "",
+        company_name: "",
+        legal_name: "",
+        contact_person: "",
+        email: "",
+        phone: "",
+        mobile: "",
+        address_line1: "",
+        address_line2: "",
+        city: "",
+        state: "",
+        postal_code: "",
+        country: "Brazil",
+        tax_id: "",
+        state_registration: "",
+        municipal_registration: "",
+        bank_name: "",
+        bank_branch: "",
+        bank_account: "",
+        pix_key: "",
+        vendor_type: "supplier",
+        payment_terms_days: 30,
+        payment_method: "pix",
+        credit_limit: undefined,
+        is_active: true,
+        requires_approval: false,
+        tax_exempt: false,
+      });
+    }
+  }, [vendor, open]);
+  var loadDocuments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var vendorDocuments, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!(vendor === null || vendor === void 0 ? void 0 : vendor.id)) return [2 /*return*/];
@@ -330,29 +320,23 @@ function VendorForm(_a) {
         }
       });
     });
-  };
   // Load documents when vendor changes or dialog opens
-  (0, react_1.useEffect)(
-    function () {
-      if (open && (vendor === null || vendor === void 0 ? void 0 : vendor.id)) {
-        loadDocuments();
-      }
-    },
-    [open, vendor === null || vendor === void 0 ? void 0 : vendor.id],
-  );
-  var generateVendorCode = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (open && (vendor === null || vendor === void 0 ? void 0 : vendor.id)) {
+      loadDocuments();
+    }
+  }, [open, vendor === null || vendor === void 0 ? void 0 : vendor.id]);
+  var generateVendorCode = () =>
+    __awaiter(this, void 0, void 0, function () {
       var code_1, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             return [4 /*yield*/, vendors_1.VendorService.generateVendorCode()];
           case 1:
             code_1 = _a.sent();
-            setFormData(function (prev) {
-              return __assign(__assign({}, prev), { vendor_code: code_1 });
-            });
+            setFormData((prev) => __assign(__assign({}, prev), { vendor_code: code_1 }));
             return [3 /*break*/, 3];
           case 2:
             error_2 = _a.sent();
@@ -363,11 +347,10 @@ function VendorForm(_a) {
         }
       });
     });
-  };
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
@@ -408,9 +391,8 @@ function VendorForm(_a) {
         }
       });
     });
-  };
-  var updateField = function (field, value) {
-    setFormData(function (prev) {
+  var updateField = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
@@ -461,9 +443,7 @@ function VendorForm(_a) {
                     <input_1.Input
                       id="vendor_code"
                       value={formData.vendor_code}
-                      onChange={function (e) {
-                        return updateField("vendor_code", e.target.value);
-                      }}
+                      onChange={(e) => updateField("vendor_code", e.target.value)}
                       placeholder="VEND001"
                       required
                     />
@@ -474,9 +454,7 @@ function VendorForm(_a) {
                     <input_1.Input
                       id="company_name"
                       value={formData.company_name}
-                      onChange={function (e) {
-                        return updateField("company_name", e.target.value);
-                      }}
+                      onChange={(e) => updateField("company_name", e.target.value)}
                       placeholder="Nome da empresa"
                       required
                     />
@@ -487,9 +465,7 @@ function VendorForm(_a) {
                     <input_1.Input
                       id="legal_name"
                       value={formData.legal_name}
-                      onChange={function (e) {
-                        return updateField("legal_name", e.target.value);
-                      }}
+                      onChange={(e) => updateField("legal_name", e.target.value)}
                       placeholder="Razão social"
                     />
                   </div>
@@ -498,21 +474,17 @@ function VendorForm(_a) {
                     <label_1.Label htmlFor="vendor_type">Tipo</label_1.Label>
                     <select_1.Select
                       value={formData.vendor_type}
-                      onValueChange={function (value) {
-                        return updateField("vendor_type", value);
-                      }}
+                      onValueChange={(value) => updateField("vendor_type", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {vendorTypes.map(function (type) {
-                          return (
-                            <select_1.SelectItem key={type.value} value={type.value}>
-                              {type.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {vendorTypes.map((type) => (
+                          <select_1.SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -533,9 +505,7 @@ function VendorForm(_a) {
                     <input_1.Input
                       id="contact_person"
                       value={formData.contact_person}
-                      onChange={function (e) {
-                        return updateField("contact_person", e.target.value);
-                      }}
+                      onChange={(e) => updateField("contact_person", e.target.value)}
                       placeholder="Nome do contato"
                     />
                   </div>
@@ -546,9 +516,7 @@ function VendorForm(_a) {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={function (e) {
-                        return updateField("email", e.target.value);
-                      }}
+                      onChange={(e) => updateField("email", e.target.value)}
                       placeholder="email@exemplo.com"
                     />
                   </div>
@@ -558,9 +526,7 @@ function VendorForm(_a) {
                     <input_1.Input
                       id="phone"
                       value={formData.phone}
-                      onChange={function (e) {
-                        return updateField("phone", e.target.value);
-                      }}
+                      onChange={(e) => updateField("phone", e.target.value)}
                       placeholder="(11) 1234-5678"
                     />
                   </div>
@@ -570,9 +536,7 @@ function VendorForm(_a) {
                     <input_1.Input
                       id="mobile"
                       value={formData.mobile}
-                      onChange={function (e) {
-                        return updateField("mobile", e.target.value);
-                      }}
+                      onChange={(e) => updateField("mobile", e.target.value)}
                       placeholder="(11) 98765-4321"
                     />
                   </div>
@@ -591,9 +555,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="address_line1"
                         value={formData.address_line1}
-                        onChange={function (e) {
-                          return updateField("address_line1", e.target.value);
-                        }}
+                        onChange={(e) => updateField("address_line1", e.target.value)}
                         placeholder="Rua, número"
                       />
                     </div>
@@ -603,9 +565,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="address_line2"
                         value={formData.address_line2}
-                        onChange={function (e) {
-                          return updateField("address_line2", e.target.value);
-                        }}
+                        onChange={(e) => updateField("address_line2", e.target.value)}
                         placeholder="Apartamento, sala, etc."
                       />
                     </div>
@@ -615,9 +575,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="city"
                         value={formData.city}
-                        onChange={function (e) {
-                          return updateField("city", e.target.value);
-                        }}
+                        onChange={(e) => updateField("city", e.target.value)}
                         placeholder="São Paulo"
                       />
                     </div>
@@ -627,9 +585,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="state"
                         value={formData.state}
-                        onChange={function (e) {
-                          return updateField("state", e.target.value);
-                        }}
+                        onChange={(e) => updateField("state", e.target.value)}
                         placeholder="SP"
                       />
                     </div>
@@ -639,9 +595,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="postal_code"
                         value={formData.postal_code}
-                        onChange={function (e) {
-                          return updateField("postal_code", e.target.value);
-                        }}
+                        onChange={(e) => updateField("postal_code", e.target.value)}
                         placeholder="01234-567"
                       />
                     </div>
@@ -651,9 +605,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="country"
                         value={formData.country}
-                        onChange={function (e) {
-                          return updateField("country", e.target.value);
-                        }}
+                        onChange={(e) => updateField("country", e.target.value)}
                         placeholder="Brasil"
                       />
                     </div>
@@ -674,9 +626,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="tax_id"
                         value={formData.tax_id}
-                        onChange={function (e) {
-                          return updateField("tax_id", e.target.value);
-                        }}
+                        onChange={(e) => updateField("tax_id", e.target.value)}
                         placeholder="000.000.000-00"
                       />
                     </div>
@@ -686,9 +636,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="state_registration"
                         value={formData.state_registration}
-                        onChange={function (e) {
-                          return updateField("state_registration", e.target.value);
-                        }}
+                        onChange={(e) => updateField("state_registration", e.target.value)}
                         placeholder="123.456.789.012"
                       />
                     </div>
@@ -700,9 +648,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="municipal_registration"
                         value={formData.municipal_registration}
-                        onChange={function (e) {
-                          return updateField("municipal_registration", e.target.value);
-                        }}
+                        onChange={(e) => updateField("municipal_registration", e.target.value)}
                         placeholder="123456789"
                       />
                     </div>
@@ -711,9 +657,7 @@ function VendorForm(_a) {
                       <checkbox_1.Checkbox
                         id="tax_exempt"
                         checked={formData.tax_exempt}
-                        onCheckedChange={function (checked) {
-                          return updateField("tax_exempt", checked);
-                        }}
+                        onCheckedChange={(checked) => updateField("tax_exempt", checked)}
                       />
                       <label_1.Label htmlFor="tax_exempt">Isento de Impostos</label_1.Label>
                     </div>
@@ -731,9 +675,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="bank_name"
                         value={formData.bank_name}
-                        onChange={function (e) {
-                          return updateField("bank_name", e.target.value);
-                        }}
+                        onChange={(e) => updateField("bank_name", e.target.value)}
                         placeholder="Nome do banco"
                       />
                     </div>
@@ -743,9 +685,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="bank_branch"
                         value={formData.bank_branch}
-                        onChange={function (e) {
-                          return updateField("bank_branch", e.target.value);
-                        }}
+                        onChange={(e) => updateField("bank_branch", e.target.value)}
                         placeholder="0123-4"
                       />
                     </div>
@@ -755,9 +695,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="bank_account"
                         value={formData.bank_account}
-                        onChange={function (e) {
-                          return updateField("bank_account", e.target.value);
-                        }}
+                        onChange={(e) => updateField("bank_account", e.target.value)}
                         placeholder="12345-6"
                       />
                     </div>
@@ -767,9 +705,7 @@ function VendorForm(_a) {
                       <input_1.Input
                         id="pix_key"
                         value={formData.pix_key}
-                        onChange={function (e) {
-                          return updateField("pix_key", e.target.value);
-                        }}
+                        onChange={(e) => updateField("pix_key", e.target.value)}
                         placeholder="email@exemplo.com"
                       />
                     </div>
@@ -789,9 +725,9 @@ function VendorForm(_a) {
                       id="payment_terms_days"
                       type="number"
                       value={formData.payment_terms_days}
-                      onChange={function (e) {
-                        return updateField("payment_terms_days", parseInt(e.target.value) || 30);
-                      }}
+                      onChange={(e) =>
+                        updateField("payment_terms_days", parseInt(e.target.value) || 30)
+                      }
                       min="0"
                       max="365"
                     />
@@ -801,21 +737,17 @@ function VendorForm(_a) {
                     <label_1.Label htmlFor="payment_method">Método de Pagamento</label_1.Label>
                     <select_1.Select
                       value={formData.payment_method}
-                      onValueChange={function (value) {
-                        return updateField("payment_method", value);
-                      }}
+                      onValueChange={(value) => updateField("payment_method", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {paymentMethods.map(function (method) {
-                          return (
-                            <select_1.SelectItem key={method.value} value={method.value}>
-                              {method.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {paymentMethods.map((method) => (
+                          <select_1.SelectItem key={method.value} value={method.value}>
+                            {method.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -826,9 +758,9 @@ function VendorForm(_a) {
                       id="credit_limit"
                       type="number"
                       value={formData.credit_limit || ""}
-                      onChange={function (e) {
-                        return updateField("credit_limit", parseFloat(e.target.value) || undefined);
-                      }}
+                      onChange={(e) =>
+                        updateField("credit_limit", parseFloat(e.target.value) || undefined)
+                      }
                       placeholder="0.00"
                       step="0.01"
                       min="0"
@@ -847,9 +779,7 @@ function VendorForm(_a) {
                     <checkbox_1.Checkbox
                       id="is_active"
                       checked={formData.is_active}
-                      onCheckedChange={function (checked) {
-                        return updateField("is_active", checked);
-                      }}
+                      onCheckedChange={(checked) => updateField("is_active", checked)}
                     />
                     <label_1.Label htmlFor="is_active">Ativo</label_1.Label>
                   </div>
@@ -858,9 +788,7 @@ function VendorForm(_a) {
                     <checkbox_1.Checkbox
                       id="requires_approval"
                       checked={formData.requires_approval}
-                      onCheckedChange={function (checked) {
-                        return updateField("requires_approval", checked);
-                      }}
+                      onCheckedChange={(checked) => updateField("requires_approval", checked)}
                     />
                     <label_1.Label htmlFor="requires_approval">Requer Aprovação</label_1.Label>
                   </div>
@@ -882,13 +810,7 @@ function VendorForm(_a) {
         </tabs_1.Tabs>
 
         <dialog_1.DialogFooter>
-          <button_1.Button
-            type="button"
-            variant="outline"
-            onClick={function () {
-              return onOpenChange(false);
-            }}
-          >
+          <button_1.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </button_1.Button>
           <button_1.Button type="submit" onClick={handleSubmit} disabled={loading}>

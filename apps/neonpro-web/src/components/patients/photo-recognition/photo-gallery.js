@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PhotoGallery = PhotoGallery;
 /**
@@ -183,7 +180,6 @@ var PHOTO_TYPE_COLORS = {
   other: "bg-yellow-100 text-yellow-800",
 };
 function PhotoGallery(_a) {
-  var _this = this;
   var _b;
   var patientId = _a.patientId,
     patientName = _a.patientName,
@@ -214,17 +210,14 @@ function PhotoGallery(_a) {
     showPrivacyDialog = _l[0],
     setShowPrivacyDialog = _l[1];
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      loadPhotos();
-      loadPrivacyControls();
-    },
-    [patientId],
-  );
-  var loadPhotos = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadPhotos();
+    loadPrivacyControls();
+  }, [patientId]);
+  var loadPhotos = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -269,11 +262,10 @@ function PhotoGallery(_a) {
         }
       });
     });
-  };
-  var loadPrivacyControls = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPrivacyControls = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -304,11 +296,10 @@ function PhotoGallery(_a) {
         }
       });
     });
-  };
-  var updatePrivacyControls = function (newControls) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updatePrivacyControls = (newControls) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -353,11 +344,10 @@ function PhotoGallery(_a) {
         }
       });
     });
-  };
-  var deletePhoto = function (photoId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deletePhoto = (photoId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -378,11 +368,7 @@ function PhotoGallery(_a) {
             if (!response.ok) {
               throw new Error("Failed to delete photo");
             }
-            setPhotos(
-              photos.filter(function (photo) {
-                return photo.id !== photoId;
-              }),
-            );
+            setPhotos(photos.filter((photo) => photo.id !== photoId));
             onPhotoDeleted === null || onPhotoDeleted === void 0 ? void 0 : onPhotoDeleted(photoId);
             toast({
               title: "Foto excluída",
@@ -402,11 +388,10 @@ function PhotoGallery(_a) {
         }
       });
     });
-  };
-  var downloadPhoto = function (photo) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var downloadPhoto = (photo) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, blob, url, a, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -442,26 +427,24 @@ function PhotoGallery(_a) {
         }
       });
     });
-  };
-  var filteredPhotos = photos.filter(function (photo) {
-    return selectedPhotoType === "all" || photo.photoType === selectedPhotoType;
-  });
-  var formatFileSize = function (bytes) {
+  var filteredPhotos = photos.filter(
+    (photo) => selectedPhotoType === "all" || photo.photoType === selectedPhotoType,
+  );
+  var formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     var k = 1024;
     var sizes = ["Bytes", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
+  var formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
   if (isLoading) {
     return (
       <card_1.Card>
@@ -487,9 +470,7 @@ function PhotoGallery(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setShowPrivacyDialog(true);
-                }}
+                onClick={() => setShowPrivacyDialog(true)}
               >
                 <lucide_react_1.Shield className="h-4 w-4 mr-2" />
                 Privacidade
@@ -508,7 +489,7 @@ function PhotoGallery(_a) {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todas</select_1.SelectItem>
-                  {Object.entries(PHOTO_TYPE_LABELS).map(function (_a) {
+                  {Object.entries(PHOTO_TYPE_LABELS).map((_a) => {
                     var value = _a[0],
                       label = _a[1];
                     return (
@@ -526,18 +507,14 @@ function PhotoGallery(_a) {
               <button_1.Button
                 variant={viewMode === "grid" ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setViewMode("grid");
-                }}
+                onClick={() => setViewMode("grid")}
               >
                 <lucide_react_1.Grid className="h-4 w-4" />
               </button_1.Button>
               <button_1.Button
                 variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
-                onClick={function () {
-                  return setViewMode("list");
-                }}
+                onClick={() => setViewMode("list")}
               >
                 <lucide_react_1.List className="h-4 w-4" />
               </button_1.Button>
@@ -563,123 +540,45 @@ function PhotoGallery(_a) {
                 : "space-y-4"
             }
           >
-            {filteredPhotos.map(function (photo) {
-              return (
-                <card_1.Card key={photo.id} className="overflow-hidden">
-                  {viewMode === "grid"
-                    ? <div>
-                        <div className="aspect-square relative overflow-hidden">
-                          <img
-                            src={photo.storageUrl}
-                            alt={photo.fileName}
-                            className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
-                            onClick={function () {
-                              return setSelectedPhoto(photo);
-                            }}
-                          />
-                          <div className="absolute top-2 left-2">
-                            <badge_1.Badge className={PHOTO_TYPE_COLORS[photo.photoType]}>
-                              {PHOTO_TYPE_LABELS[photo.photoType]}
-                            </badge_1.Badge>
-                          </div>
+            {filteredPhotos.map((photo) => (
+              <card_1.Card key={photo.id} className="overflow-hidden">
+                {viewMode === "grid"
+                  ? <div>
+                      <div className="aspect-square relative overflow-hidden">
+                        <img
+                          src={photo.storageUrl}
+                          alt={photo.fileName}
+                          className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform"
+                          onClick={() => setSelectedPhoto(photo)}
+                        />
+                        <div className="absolute top-2 left-2">
+                          <badge_1.Badge className={PHOTO_TYPE_COLORS[photo.photoType]}>
+                            {PHOTO_TYPE_LABELS[photo.photoType]}
+                          </badge_1.Badge>
                         </div>
-                        <card_1.CardContent className="p-4">
-                          <div className="space-y-2">
-                            <p className="font-medium text-sm truncate">{photo.fileName}</p>
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <span>{formatFileSize(photo.fileSize)}</span>
-                              <span>{formatDate(photo.uploadedAt)}</span>
-                            </div>
-                            <div className="flex gap-1">
-                              {allowDownload && (
-                                <button_1.Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={function () {
-                                    return downloadPhoto(photo);
-                                  }}
-                                >
-                                  <lucide_react_1.Download className="h-3 w-3" />
-                                </button_1.Button>
-                              )}
-                              {allowDelete && (
-                                <alert_dialog_1.AlertDialog>
-                                  <alert_dialog_1.AlertDialogTrigger asChild>
-                                    <button_1.Button variant="outline" size="sm">
-                                      <lucide_react_1.Trash2 className="h-3 w-3" />
-                                    </button_1.Button>
-                                  </alert_dialog_1.AlertDialogTrigger>
-                                  <alert_dialog_1.AlertDialogContent>
-                                    <alert_dialog_1.AlertDialogHeader>
-                                      <alert_dialog_1.AlertDialogTitle>
-                                        Excluir foto
-                                      </alert_dialog_1.AlertDialogTitle>
-                                      <alert_dialog_1.AlertDialogDescription>
-                                        Tem certeza que deseja excluir esta foto? Esta ação não pode
-                                        ser desfeita.
-                                      </alert_dialog_1.AlertDialogDescription>
-                                    </alert_dialog_1.AlertDialogHeader>
-                                    <alert_dialog_1.AlertDialogFooter>
-                                      <alert_dialog_1.AlertDialogCancel>
-                                        Cancelar
-                                      </alert_dialog_1.AlertDialogCancel>
-                                      <alert_dialog_1.AlertDialogAction
-                                        onClick={function () {
-                                          return deletePhoto(photo.id);
-                                        }}
-                                      >
-                                        Excluir
-                                      </alert_dialog_1.AlertDialogAction>
-                                    </alert_dialog_1.AlertDialogFooter>
-                                  </alert_dialog_1.AlertDialogContent>
-                                </alert_dialog_1.AlertDialog>
-                              )}
-                            </div>
-                          </div>
-                        </card_1.CardContent>
                       </div>
-                    : <card_1.CardContent className="p-4">
-                        <div className="flex items-center gap-4">
-                          <img
-                            src={photo.storageUrl}
-                            alt={photo.fileName}
-                            className="w-16 h-16 object-cover rounded cursor-pointer"
-                            onClick={function () {
-                              return setSelectedPhoto(photo);
-                            }}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="font-medium truncate">{photo.fileName}</p>
-                              <badge_1.Badge className={PHOTO_TYPE_COLORS[photo.photoType]}>
-                                {PHOTO_TYPE_LABELS[photo.photoType]}
-                              </badge_1.Badge>
-                            </div>
-                            <div className="text-sm text-gray-500">
-                              <p>
-                                {formatFileSize(photo.fileSize)} • {photo.dimensions.width}x
-                                {photo.dimensions.height}
-                              </p>
-                              <p>{formatDate(photo.uploadedAt)}</p>
-                            </div>
+                      <card_1.CardContent className="p-4">
+                        <div className="space-y-2">
+                          <p className="font-medium text-sm truncate">{photo.fileName}</p>
+                          <div className="flex items-center justify-between text-xs text-gray-500">
+                            <span>{formatFileSize(photo.fileSize)}</span>
+                            <span>{formatDate(photo.uploadedAt)}</span>
                           </div>
                           <div className="flex gap-1">
                             {allowDownload && (
                               <button_1.Button
                                 variant="outline"
                                 size="sm"
-                                onClick={function () {
-                                  return downloadPhoto(photo);
-                                }}
+                                onClick={() => downloadPhoto(photo)}
                               >
-                                <lucide_react_1.Download className="h-4 w-4" />
+                                <lucide_react_1.Download className="h-3 w-3" />
                               </button_1.Button>
                             )}
                             {allowDelete && (
                               <alert_dialog_1.AlertDialog>
                                 <alert_dialog_1.AlertDialogTrigger asChild>
                                   <button_1.Button variant="outline" size="sm">
-                                    <lucide_react_1.Trash2 className="h-4 w-4" />
+                                    <lucide_react_1.Trash2 className="h-3 w-3" />
                                   </button_1.Button>
                                 </alert_dialog_1.AlertDialogTrigger>
                                 <alert_dialog_1.AlertDialogContent>
@@ -697,9 +596,7 @@ function PhotoGallery(_a) {
                                       Cancelar
                                     </alert_dialog_1.AlertDialogCancel>
                                     <alert_dialog_1.AlertDialogAction
-                                      onClick={function () {
-                                        return deletePhoto(photo.id);
-                                      }}
+                                      onClick={() => deletePhoto(photo.id)}
                                     >
                                       Excluir
                                     </alert_dialog_1.AlertDialogAction>
@@ -709,20 +606,81 @@ function PhotoGallery(_a) {
                             )}
                           </div>
                         </div>
-                      </card_1.CardContent>}
-                </card_1.Card>
-              );
-            })}
+                      </card_1.CardContent>
+                    </div>
+                  : <card_1.CardContent className="p-4">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={photo.storageUrl}
+                          alt={photo.fileName}
+                          className="w-16 h-16 object-cover rounded cursor-pointer"
+                          onClick={() => setSelectedPhoto(photo)}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-medium truncate">{photo.fileName}</p>
+                            <badge_1.Badge className={PHOTO_TYPE_COLORS[photo.photoType]}>
+                              {PHOTO_TYPE_LABELS[photo.photoType]}
+                            </badge_1.Badge>
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            <p>
+                              {formatFileSize(photo.fileSize)} • {photo.dimensions.width}x
+                              {photo.dimensions.height}
+                            </p>
+                            <p>{formatDate(photo.uploadedAt)}</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-1">
+                          {allowDownload && (
+                            <button_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => downloadPhoto(photo)}
+                            >
+                              <lucide_react_1.Download className="h-4 w-4" />
+                            </button_1.Button>
+                          )}
+                          {allowDelete && (
+                            <alert_dialog_1.AlertDialog>
+                              <alert_dialog_1.AlertDialogTrigger asChild>
+                                <button_1.Button variant="outline" size="sm">
+                                  <lucide_react_1.Trash2 className="h-4 w-4" />
+                                </button_1.Button>
+                              </alert_dialog_1.AlertDialogTrigger>
+                              <alert_dialog_1.AlertDialogContent>
+                                <alert_dialog_1.AlertDialogHeader>
+                                  <alert_dialog_1.AlertDialogTitle>
+                                    Excluir foto
+                                  </alert_dialog_1.AlertDialogTitle>
+                                  <alert_dialog_1.AlertDialogDescription>
+                                    Tem certeza que deseja excluir esta foto? Esta ação não pode ser
+                                    desfeita.
+                                  </alert_dialog_1.AlertDialogDescription>
+                                </alert_dialog_1.AlertDialogHeader>
+                                <alert_dialog_1.AlertDialogFooter>
+                                  <alert_dialog_1.AlertDialogCancel>
+                                    Cancelar
+                                  </alert_dialog_1.AlertDialogCancel>
+                                  <alert_dialog_1.AlertDialogAction
+                                    onClick={() => deletePhoto(photo.id)}
+                                  >
+                                    Excluir
+                                  </alert_dialog_1.AlertDialogAction>
+                                </alert_dialog_1.AlertDialogFooter>
+                              </alert_dialog_1.AlertDialogContent>
+                            </alert_dialog_1.AlertDialog>
+                          )}
+                        </div>
+                      </div>
+                    </card_1.CardContent>}
+              </card_1.Card>
+            ))}
           </div>}
 
       {/* Photo Detail Dialog */}
       {selectedPhoto && (
-        <dialog_1.Dialog
-          open={!!selectedPhoto}
-          onOpenChange={function () {
-            return setSelectedPhoto(null);
-          }}
-        >
+        <dialog_1.Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
           <dialog_1.DialogContent className="max-w-4xl">
             <dialog_1.DialogHeader>
               <dialog_1.DialogTitle>{selectedPhoto.fileName}</dialog_1.DialogTitle>
@@ -784,9 +742,9 @@ function PhotoGallery(_a) {
                 <switch_1.Switch
                   id="facial-recognition"
                   checked={privacyControls.allowFacialRecognition}
-                  onCheckedChange={function (checked) {
-                    return updatePrivacyControls({ allowFacialRecognition: checked });
-                  }}
+                  onCheckedChange={(checked) =>
+                    updatePrivacyControls({ allowFacialRecognition: checked })
+                  }
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -796,18 +754,16 @@ function PhotoGallery(_a) {
                 <switch_1.Switch
                   id="photo-sharing"
                   checked={privacyControls.allowPhotoSharing}
-                  onCheckedChange={function (checked) {
-                    return updatePrivacyControls({ allowPhotoSharing: checked });
-                  }}
+                  onCheckedChange={(checked) =>
+                    updatePrivacyControls({ allowPhotoSharing: checked })
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <label_1.Label>Nível de acesso</label_1.Label>
                 <select_1.Select
                   value={privacyControls.accessLevel}
-                  onValueChange={function (value) {
-                    return updatePrivacyControls({ accessLevel: value });
-                  }}
+                  onValueChange={(value) => updatePrivacyControls({ accessLevel: value })}
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />

@@ -1,7 +1,7 @@
-import type { NextRequest, NextResponse } from "next/server";
 import type { createClient } from "@supabase/supabase-js";
-import type { z } from "zod";
+import type { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
+import type { z } from "zod";
 
 // Initialize Supabase client
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       data = data.map((row) => {
         const filteredRow: any = {};
         validatedRequest.columns!.forEach((col) => {
-          if (row.hasOwnProperty(col)) {
+          if (Object.hasOwn(row, col)) {
             filteredRow[col] = row[col];
           }
         });
@@ -109,12 +109,13 @@ export async function POST(request: NextRequest) {
     let fileExtension: string;
 
     switch (validatedRequest.format) {
-      case "csv":
+      case "csv": {
         const csvContent = convertToCSV(data);
         fileBuffer = Buffer.from(csvContent, "utf-8");
         contentType = "text/csv";
         fileExtension = "csv";
         break;
+      }
 
       case "xlsx":
         fileBuffer = convertToXLSX(data);
@@ -122,12 +123,13 @@ export async function POST(request: NextRequest) {
         fileExtension = "xlsx";
         break;
 
-      case "json":
+      case "json": {
         const jsonContent = JSON.stringify(data, null, 2);
         fileBuffer = Buffer.from(jsonContent, "utf-8");
         contentType = "application/json";
         fileExtension = "json";
         break;
+      }
 
       default:
         return NextResponse.json({ error: "Unsupported export format" }, { status: 400 });

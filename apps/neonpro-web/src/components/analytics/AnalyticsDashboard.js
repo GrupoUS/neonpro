@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsDashboard = AnalyticsDashboard;
 var react_1 = require("react");
@@ -141,7 +138,6 @@ var lucide_react_1 = require("lucide-react");
 var charts_1 = require("@/components/charts");
 var date_fns_1 = require("date-fns");
 function AnalyticsDashboard() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     kpis = _a[0],
     setKpis = _a[1];
@@ -163,8 +159,8 @@ function AnalyticsDashboard() {
     }),
     dateRange = _e[0],
     setDateRange = _e[1];
-  var fetchDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var kpiResponse,
         kpiData,
         revenueResponse,
@@ -172,7 +168,7 @@ function AnalyticsDashboard() {
         appointmentResponse,
         appointmentData,
         error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -243,28 +239,20 @@ function AnalyticsDashboard() {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      fetchDashboardData();
-    },
-    [dateRange],
-  );
-  var revenueChartData = revenueTrends.map(function (trend) {
-    return {
-      name: trend.period_label,
-      Receita: trend.revenue || 0,
-      Transações: trend.transactions_count || 0,
-    };
-  });
-  var appointmentChartData = appointmentTrends.map(function (trend) {
-    return {
-      name: trend.period_label,
-      "Total de Agendamentos": trend.total_appointments || 0,
-      "Agendamentos Concluídos": trend.completed_appointments || 0,
-      "Taxa de Conclusão": trend.completion_rate || 0,
-    };
-  });
+  (0, react_1.useEffect)(() => {
+    fetchDashboardData();
+  }, [dateRange]);
+  var revenueChartData = revenueTrends.map((trend) => ({
+    name: trend.period_label,
+    Receita: trend.revenue || 0,
+    Transações: trend.transactions_count || 0,
+  }));
+  var appointmentChartData = appointmentTrends.map((trend) => ({
+    name: trend.period_label,
+    "Total de Agendamentos": trend.total_appointments || 0,
+    "Agendamentos Concluídos": trend.completed_appointments || 0,
+    "Taxa de Conclusão": trend.completion_rate || 0,
+  }));
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -297,20 +285,18 @@ function AnalyticsDashboard() {
       {/* KPI Cards */}
       {kpis.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {kpis.map(function (kpi) {
-            return (
-              <charts_1.KPICard
-                key={kpi.metric_name}
-                title={kpi.metric_name}
-                value={kpi.metric_value}
-                formattedValue={kpi.metric_formatted}
-                previousValue={kpi.previous_value}
-                percentageChange={kpi.percentage_change}
-                trend={kpi.trend}
-                description="em relação ao período anterior"
-              />
-            );
-          })}
+          {kpis.map((kpi) => (
+            <charts_1.KPICard
+              key={kpi.metric_name}
+              title={kpi.metric_name}
+              value={kpi.metric_value}
+              formattedValue={kpi.metric_formatted}
+              previousValue={kpi.previous_value}
+              percentageChange={kpi.percentage_change}
+              trend={kpi.trend}
+              description="em relação ao período anterior"
+            />
+          ))}
         </div>
       )}
 

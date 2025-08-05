@@ -1,17 +1,16 @@
-"use strict";
 // Suspicious Activity Detection System
 // Advanced behavioral analysis and anomaly detection for session security
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,13 +130,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SuspiciousActivityDetector = void 0;
 exports.getSuspiciousActivityDetector = getSuspiciousActivityDetector;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
-var SuspiciousActivityDetector = /** @class */ (function () {
+var SuspiciousActivityDetector = /** @class */ (() => {
   function SuspiciousActivityDetector() {
     this.behaviorBaselines = new Map();
     this.activePatterns = new Map();
@@ -156,7 +153,6 @@ var SuspiciousActivityDetector = /** @class */ (function () {
    * Initialize default detection rules
    */
   SuspiciousActivityDetector.prototype.initializeDetectionRules = function () {
-    var _this = this;
     var rules = [
       {
         id: "typing_speed_anomaly",
@@ -225,17 +221,16 @@ var SuspiciousActivityDetector = /** @class */ (function () {
         lastUpdated: Date.now(),
       },
     ];
-    rules.forEach(function (rule) {
-      _this.detectionRules.set(rule.id, rule);
+    rules.forEach((rule) => {
+      this.detectionRules.set(rule.id, rule);
     });
   };
   /**
    * Start continuous behavioral analysis
    */
   SuspiciousActivityDetector.prototype.startContinuousAnalysis = function () {
-    var _this = this;
-    this.analysisInterval = setInterval(function () {
-      _this.performBehaviorAnalysis();
+    this.analysisInterval = setInterval(() => {
+      this.performBehaviorAnalysis();
     }, 30000); // Analyze every 30 seconds
   };
   /**
@@ -328,13 +323,8 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   ) {
     var userPatterns = this.activePatterns.get(userId) || [];
     var recentApiPatterns = userPatterns
-      .filter(function (p) {
-        return p.patternType === "api_usage" && Date.now() - p.timestamp < 300000;
-      })
-      .map(function (p) {
-        return p.currentMetrics.apiEndpoints || [];
-      })
-      .flat();
+      .filter((p) => p.patternType === "api_usage" && Date.now() - p.timestamp < 300000)
+      .flatMap((p) => p.currentMetrics.apiEndpoints || []);
     recentApiPatterns.push(endpoint);
     this.recordBehavior(userId, sessionId, "api_usage", {
       apiEndpoints: recentApiPatterns,
@@ -367,9 +357,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
             if (!(_i < _a.length)) return [3 /*break*/, 9];
             (_b = _a[_i]), (userId = _b[0]), (patterns = _b[1]);
             recentPatterns = patterns.filter(
-              function (p) {
-                return Date.now() - p.timestamp < 300000;
-              }, // Last 5 minutes
+              (p) => Date.now() - p.timestamp < 300000, // Last 5 minutes
             );
             if (recentPatterns.length === 0) return [3 /*break*/, 8];
             return [4 /*yield*/, this.detectAnomalies(userId, recentPatterns)];
@@ -421,13 +409,13 @@ var SuspiciousActivityDetector = /** @class */ (function () {
             anomalies = [];
             _loop_1 = function (rule) {
               var relevantPatterns, anomaly;
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
                     if (!rule.enabled) return [2 /*return*/, "continue"];
-                    relevantPatterns = patterns.filter(function (p) {
-                      return rule.patternTypes.includes(p.patternType);
-                    });
+                    relevantPatterns = patterns.filter((p) =>
+                      rule.patternTypes.includes(p.patternType),
+                    );
                     if (relevantPatterns.length === 0) return [2 /*return*/, "continue"];
                     return [4 /*yield*/, this_1.applyDetectionRule(userId, rule, relevantPatterns)];
                   case 1:
@@ -466,14 +454,8 @@ var SuspiciousActivityDetector = /** @class */ (function () {
       var avgAnomalyScore, avgConfidence, alertId, sessionId, anomaly;
       return __generator(this, function (_a) {
         try {
-          avgAnomalyScore =
-            patterns.reduce(function (sum, p) {
-              return sum + p.anomalyScore;
-            }, 0) / patterns.length;
-          avgConfidence =
-            patterns.reduce(function (sum, p) {
-              return sum + p.confidence;
-            }, 0) / patterns.length;
+          avgAnomalyScore = patterns.reduce((sum, p) => sum + p.anomalyScore, 0) / patterns.length;
+          avgConfidence = patterns.reduce((sum, p) => sum + p.confidence, 0) / patterns.length;
           if (
             avgAnomalyScore >= rule.thresholds.deviation &&
             avgConfidence >= rule.thresholds.confidence
@@ -617,7 +599,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   /**
    * Calculate anomaly score for behavior pattern
    */
-  SuspiciousActivityDetector.prototype.calculateAnomalyScore = function (pattern) {
+  SuspiciousActivityDetector.prototype.calculateAnomalyScore = (pattern) => {
     var baseline = pattern.baseline;
     var current = pattern.currentMetrics;
     var score = 0;
@@ -637,17 +619,19 @@ var SuspiciousActivityDetector = /** @class */ (function () {
           score = Math.min(100, deviation * 100);
         }
         break;
-      case "time_pattern":
+      case "time_pattern": {
         var currentHour_1 = new Date().getHours();
-        var isUsualTime = baseline.usualLoginTimes.some(function (hour) {
-          return Math.abs(hour - currentHour_1) <= 2;
-        });
+        var isUsualTime = baseline.usualLoginTimes.some(
+          (hour) => Math.abs(hour - currentHour_1) <= 2,
+        );
         score = isUsualTime ? 0 : 80;
         break;
-      case "location_pattern":
+      }
+      case "location_pattern": {
         var isKnownLocation = baseline.frequentLocations.includes(current.location);
         score = isKnownLocation ? 0 : 90;
         break;
+      }
       case "interaction_frequency":
         if (baseline.interactionFrequency > 0) {
           var deviation =
@@ -664,7 +648,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   /**
    * Calculate confidence score
    */
-  SuspiciousActivityDetector.prototype.calculateConfidence = function (pattern) {
+  SuspiciousActivityDetector.prototype.calculateConfidence = (pattern) => {
     var baseline = pattern.baseline;
     var confidence = 50; // Base confidence
     // Increase confidence based on baseline data quality
@@ -749,12 +733,13 @@ var SuspiciousActivityDetector = /** @class */ (function () {
         baseline.avgMouseSpeed =
           baseline.avgMouseSpeed * (1 - alpha) + current.currentMouseSpeed * alpha;
         break;
-      case "time_pattern":
+      case "time_pattern": {
         var hour = new Date().getHours();
         if (!baseline.usualLoginTimes.includes(hour)) {
           baseline.usualLoginTimes.push(hour);
         }
         break;
+      }
       case "location_pattern":
         if (!baseline.frequentLocations.includes(current.location)) {
           baseline.frequentLocations.push(current.location);
@@ -763,7 +748,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     }
     this.behaviorBaselines.set(userId, baseline);
   };
-  SuspiciousActivityDetector.prototype.mapRuleToAnomalyType = function (ruleId) {
+  SuspiciousActivityDetector.prototype.mapRuleToAnomalyType = (ruleId) => {
     var mapping = {
       typing_speed_anomaly: "unusual_typing_pattern",
       mouse_behavior_anomaly: "abnormal_mouse_behavior",
@@ -774,7 +759,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     };
     return mapping[ruleId] || "bot_like_behavior";
   };
-  SuspiciousActivityDetector.prototype.mapPatternToAnomalyType = function (patternType) {
+  SuspiciousActivityDetector.prototype.mapPatternToAnomalyType = (patternType) => {
     var mapping = {
       typing_speed: "unusual_typing_pattern",
       mouse_movement: "abnormal_mouse_behavior",
@@ -787,9 +772,9 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     };
     return mapping[patternType];
   };
-  SuspiciousActivityDetector.prototype.calculatePatternDeviations = function (patterns) {
+  SuspiciousActivityDetector.prototype.calculatePatternDeviations = (patterns) => {
     var deviations = {};
-    patterns.forEach(function (pattern) {
+    patterns.forEach((pattern) => {
       deviations[pattern.patternType] = pattern.anomalyScore;
     });
     return deviations;
@@ -798,26 +783,19 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     var baseline = this.getBehaviorBaseline(userId);
     return {
       baseline: baseline,
-      currentPatterns: patterns.map(function (p) {
-        return p.currentMetrics;
-      }),
+      currentPatterns: patterns.map((p) => p.currentMetrics),
     };
   };
-  SuspiciousActivityDetector.prototype.getContextualFactors = function (patterns) {
+  SuspiciousActivityDetector.prototype.getContextualFactors = (patterns) => {
     var factors = [];
     var now = new Date();
     var hour = now.getHours();
     if (hour < 6 || hour > 22) factors.push("off_hours");
     if (patterns.length > 10) factors.push("high_activity");
-    if (
-      patterns.some(function (p) {
-        return p.anomalyScore > 70;
-      })
-    )
-      factors.push("multiple_anomalies");
+    if (patterns.some((p) => p.anomalyScore > 70)) factors.push("multiple_anomalies");
     return factors;
   };
-  SuspiciousActivityDetector.prototype.calculateRiskScore = function (anomalyScore, severity) {
+  SuspiciousActivityDetector.prototype.calculateRiskScore = (anomalyScore, severity) => {
     var severityMultiplier = {
       low: 0.5,
       medium: 0.7,
@@ -829,7 +807,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   SuspiciousActivityDetector.prototype.createSecurityEvent = function (anomaly) {
     return __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -870,7 +848,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   };
   SuspiciousActivityDetector.prototype.suspendSession = function (sessionId, reason) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -892,7 +870,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   };
   SuspiciousActivityDetector.prototype.requireReAuthentication = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -914,7 +892,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   };
   SuspiciousActivityDetector.prototype.increaseMonitoring = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Increase monitoring frequency for this user
         console.log("Increasing monitoring for user ".concat(userId));
         return [2 /*return*/];
@@ -923,7 +901,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   };
   SuspiciousActivityDetector.prototype.logForReview = function (anomaly) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Anomaly logged for review:", anomaly);
         return [2 /*return*/];
       });
@@ -931,7 +909,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   };
   SuspiciousActivityDetector.prototype.sendAnomalyNotification = function (anomaly) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Send notification to security team
         console.log("Security notification sent for anomaly ".concat(anomaly.id));
         return [2 /*return*/];
@@ -941,13 +919,10 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   SuspiciousActivityDetector.prototype.updateUserRiskScore = function (userId, patterns) {
     return __awaiter(this, void 0, void 0, function () {
       var avgRiskScore;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            avgRiskScore =
-              patterns.reduce(function (sum, p) {
-                return sum + p.anomalyScore;
-              }, 0) / patterns.length;
+            avgRiskScore = patterns.reduce((sum, p) => sum + p.anomalyScore, 0) / patterns.length;
             return [
               4 /*yield*/,
               fetch("/api/users/risk-score", {
@@ -972,9 +947,9 @@ var SuspiciousActivityDetector = /** @class */ (function () {
    * Public methods for external use
    */
   SuspiciousActivityDetector.prototype.getAnomalyAlerts = function (userId) {
-    return Array.from(this.anomalyAlerts.values()).filter(function (alert) {
-      return alert.userId === userId && !alert.resolved;
-    });
+    return Array.from(this.anomalyAlerts.values()).filter(
+      (alert) => alert.userId === userId && !alert.resolved,
+    );
   };
   SuspiciousActivityDetector.prototype.resolveAnomaly = function (anomalyId, falsePositive) {
     if (falsePositive === void 0) {
@@ -990,18 +965,14 @@ var SuspiciousActivityDetector = /** @class */ (function () {
   };
   SuspiciousActivityDetector.prototype.getUserRiskProfile = function (userId) {
     var patterns = this.activePatterns.get(userId) || [];
-    var recentPatterns = patterns.filter(function (p) {
-      return Date.now() - p.timestamp < 86400000;
-    }); // Last 24 hours
+    var recentPatterns = patterns.filter((p) => Date.now() - p.timestamp < 86400000); // Last 24 hours
     var avgRiskScore =
       recentPatterns.length > 0
-        ? recentPatterns.reduce(function (sum, p) {
-            return sum + p.anomalyScore;
-          }, 0) / recentPatterns.length
+        ? recentPatterns.reduce((sum, p) => sum + p.anomalyScore, 0) / recentPatterns.length
         : 0;
-    var recentAnomalies = Array.from(this.anomalyAlerts.values()).filter(function (a) {
-      return a.userId === userId && Date.now() - a.timestamp < 86400000;
-    }).length;
+    var recentAnomalies = Array.from(this.anomalyAlerts.values()).filter(
+      (a) => a.userId === userId && Date.now() - a.timestamp < 86400000,
+    ).length;
     return {
       riskScore: Math.round(avgRiskScore),
       recentAnomalies: recentAnomalies,
@@ -1010,9 +981,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
         recentPatterns.length > 0
           ? Math.max.apply(
               Math,
-              recentPatterns.map(function (p) {
-                return p.timestamp;
-              }),
+              recentPatterns.map((p) => p.timestamp),
             )
           : 0,
     };
@@ -1028,9 +997,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
       var _b = _a[_i],
         userId = _b[0],
         patterns = _b[1];
-      var recentPatterns = patterns.filter(function (p) {
-        return now - p.timestamp < maxAge;
-      });
+      var recentPatterns = patterns.filter((p) => now - p.timestamp < maxAge);
       this.activePatterns.set(userId, recentPatterns);
     }
     // Clean up old anomalies

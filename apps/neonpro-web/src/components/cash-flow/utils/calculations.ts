@@ -1,7 +1,7 @@
 // Cash Flow Calculations and Utilities
 // Following financial dashboard patterns from Context7 research
 
-import type { CashFlowEntry, CashFlowAnalytics } from "../types";
+import type { CashFlowAnalytics, CashFlowEntry } from "../types";
 
 // Currency formatting for Brazilian Real
 export function formatCurrency(amount: number): string {

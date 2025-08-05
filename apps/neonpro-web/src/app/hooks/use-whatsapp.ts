@@ -2,18 +2,18 @@
 // Provides React integration for WhatsApp Business API
 
 import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { toast } from "react-hot-toast";
 import type { whatsAppService } from "@/app/lib/services/whatsapp-service";
 import type {
-  WhatsAppConfig,
-  WhatsAppTemplate,
-  WhatsAppMessage,
-  WhatsAppAnalytics,
-  WhatsAppConfigForm,
-  WhatsAppTemplateForm,
   SendBulkMessageForm,
+  WhatsAppAnalytics,
+  WhatsAppConfig,
+  WhatsAppConfigForm,
+  WhatsAppMessage,
   WhatsAppMessageType,
+  WhatsAppTemplate,
+  WhatsAppTemplateForm,
 } from "@/app/types/whatsapp";
-import type { toast } from "react-hot-toast";
 
 // Configuration hooks
 export function useWhatsAppConfig() {

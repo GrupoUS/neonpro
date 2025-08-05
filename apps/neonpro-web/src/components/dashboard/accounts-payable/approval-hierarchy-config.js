@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ApprovalHierarchyConfig;
 var badge_1 = require("@/components/ui/badge");
@@ -214,7 +211,6 @@ var userRoles = [
   { value: "super_admin", label: "Super Admin", icon: lucide_react_1.Crown },
 ];
 function ApprovalHierarchyConfig(_a) {
-  var _this = this;
   var open = _a.open,
     onOpenChange = _a.onOpenChange,
     onSave = _a.onSave;
@@ -243,26 +239,23 @@ function ApprovalHierarchyConfig(_a) {
   var _j = (0, react_1.useState)(false),
     showUserForm = _j[0],
     setShowUserForm = _j[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (open) {
-        loadApprovalHierarchy();
-      }
-    },
-    [open],
-  );
-  var loadApprovalHierarchy = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (open) {
+      loadApprovalHierarchy();
+    }
+  }, [open]);
+  var loadApprovalHierarchy = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockLevels, mockUsers;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
-          mockLevels = defaultLevels.map(function (level, index) {
-            return __assign(__assign({ id: "level_".concat(index + 1) }, level), {
+          mockLevels = defaultLevels.map((level, index) =>
+            __assign(__assign({ id: "level_".concat(index + 1) }, level), {
               is_active: true,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
-            });
-          });
+            }),
+          );
           mockUsers = [
             {
               id: "user_1",
@@ -313,31 +306,30 @@ function ApprovalHierarchyConfig(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var formatCurrency = function (amount) {
+  var formatCurrency = (amount) => {
     if (amount === null) return "Sem limite";
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
   };
-  var handleSaveLevel = function (levelData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSaveLevel = (levelData) =>
+    __awaiter(this, void 0, void 0, function () {
       var newLevel_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         setLoading(true);
         try {
           if (editingLevel) {
             // Update existing level
-            setApprovalLevels(function (levels) {
-              return levels.map(function (level) {
-                return level.id === editingLevel.id
+            setApprovalLevels((levels) =>
+              levels.map((level) =>
+                level.id === editingLevel.id
                   ? __assign(__assign(__assign({}, level), levelData), {
                       updated_at: new Date().toISOString(),
                     })
-                  : level;
-              });
-            });
+                  : level,
+              ),
+            );
             sonner_1.toast.success("Nível de aprovação atualizado");
           } else {
             newLevel_1 = __assign(__assign({ id: "level_".concat(Date.now()) }, levelData), {
@@ -345,9 +337,9 @@ function ApprovalHierarchyConfig(_a) {
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             });
-            setApprovalLevels(function (levels) {
-              return __spreadArray(__spreadArray([], levels, true), [newLevel_1], false);
-            });
+            setApprovalLevels((levels) =>
+              __spreadArray(__spreadArray([], levels, true), [newLevel_1], false),
+            );
             sonner_1.toast.success("Nível de aprovação criado");
           }
           setShowLevelForm(false);
@@ -361,29 +353,28 @@ function ApprovalHierarchyConfig(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleSaveUser = function (userData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSaveUser = (userData) =>
+    __awaiter(this, void 0, void 0, function () {
       var newUser_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         setLoading(true);
         try {
           if (editingUser) {
             // Update existing user
-            setApprovalUsers(function (users) {
-              return users.map(function (user) {
-                return user.id === editingUser.id ? __assign(__assign({}, user), userData) : user;
-              });
-            });
+            setApprovalUsers((users) =>
+              users.map((user) =>
+                user.id === editingUser.id ? __assign(__assign({}, user), userData) : user,
+              ),
+            );
             sonner_1.toast.success("Usuário aprovador atualizado");
           } else {
             newUser_1 = __assign(__assign({ id: "user_".concat(Date.now()) }, userData), {
               is_active: true,
               created_at: new Date().toISOString(),
             });
-            setApprovalUsers(function (users) {
-              return __spreadArray(__spreadArray([], users, true), [newUser_1], false);
-            });
+            setApprovalUsers((users) =>
+              __spreadArray(__spreadArray([], users, true), [newUser_1], false),
+            );
             sonner_1.toast.success("Usuário aprovador adicionado");
           }
           setShowUserForm(false);
@@ -397,18 +388,13 @@ function ApprovalHierarchyConfig(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleDeleteLevel = function (levelId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDeleteLevel = (levelId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         if (!confirm("Tem certeza que deseja excluir este nível de aprovação?"))
           return [2 /*return*/];
         try {
-          setApprovalLevels(function (levels) {
-            return levels.filter(function (level) {
-              return level.id !== levelId;
-            });
-          });
+          setApprovalLevels((levels) => levels.filter((level) => level.id !== levelId));
           sonner_1.toast.success("Nível de aprovação excluído");
         } catch (error) {
           console.error("Error deleting level:", error);
@@ -417,18 +403,13 @@ function ApprovalHierarchyConfig(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleDeleteUser = function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDeleteUser = (userId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         if (!confirm("Tem certeza que deseja remover este usuário aprovador?"))
           return [2 /*return*/];
         try {
-          setApprovalUsers(function (users) {
-            return users.filter(function (user) {
-              return user.id !== userId;
-            });
-          });
+          setApprovalUsers((users) => users.filter((user) => user.id !== userId));
           sonner_1.toast.success("Usuário aprovador removido");
         } catch (error) {
           console.error("Error deleting user:", error);
@@ -437,11 +418,10 @@ function ApprovalHierarchyConfig(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleSaveHierarchy = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSaveHierarchy = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -454,12 +434,7 @@ function ApprovalHierarchyConfig(_a) {
               approvalUsers: approvalUsers,
             });
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simulate API call
             _a.sent();
@@ -480,22 +455,16 @@ function ApprovalHierarchyConfig(_a) {
         }
       });
     });
-  };
-  var getUsersForLevel = function (levelId) {
-    return approvalUsers.filter(function (user) {
-      return user.approval_level_id === levelId;
-    });
-  };
-  var getRoleIcon = function (role) {
-    var roleConfig = userRoles.find(function (r) {
-      return r.value === role;
-    });
+  var getUsersForLevel = (levelId) =>
+    approvalUsers.filter((user) => user.approval_level_id === levelId);
+  var getRoleIcon = (role) => {
+    var roleConfig = userRoles.find((r) => r.value === role);
     return (
       (roleConfig === null || roleConfig === void 0 ? void 0 : roleConfig.icon) ||
       lucide_react_1.UserCheck
     );
   };
-  var getLevelStatus = function (level) {
+  var getLevelStatus = (level) => {
     var users = getUsersForLevel(level.id);
     if (users.length === 0) {
       return {
@@ -533,9 +502,7 @@ function ApprovalHierarchyConfig(_a) {
         {/* Tab Navigation */}
         <div className="flex space-x-1 border-b">
           <button
-            onClick={function () {
-              return setActiveTab("levels");
-            }}
+            onClick={() => setActiveTab("levels")}
             className={(0, utils_1.cn)(
               "px-4 py-2 text-sm font-medium rounded-t-lg transition-colors",
               activeTab === "levels"
@@ -546,9 +513,7 @@ function ApprovalHierarchyConfig(_a) {
             Níveis de Aprovação
           </button>
           <button
-            onClick={function () {
-              return setActiveTab("users");
-            }}
+            onClick={() => setActiveTab("users")}
             className={(0, utils_1.cn)(
               "px-4 py-2 text-sm font-medium rounded-t-lg transition-colors",
               activeTab === "users"
@@ -572,7 +537,7 @@ function ApprovalHierarchyConfig(_a) {
                   </p>
                 </div>
                 <button_1.Button
-                  onClick={function () {
+                  onClick={() => {
                     setEditingLevel(null);
                     setShowLevelForm(true);
                   }}
@@ -600,10 +565,8 @@ function ApprovalHierarchyConfig(_a) {
                     </table_1.TableHeader>
                     <table_1.TableBody>
                       {approvalLevels
-                        .sort(function (a, b) {
-                          return a.level_order - b.level_order;
-                        })
-                        .map(function (level) {
+                        .sort((a, b) => a.level_order - b.level_order)
+                        .map((level) => {
                           var statusInfo = getLevelStatus(level);
                           var users = getUsersForLevel(level.id);
                           return (
@@ -664,7 +627,7 @@ function ApprovalHierarchyConfig(_a) {
                                   <button_1.Button
                                     variant="ghost"
                                     size="sm"
-                                    onClick={function () {
+                                    onClick={() => {
                                       setEditingLevel(level);
                                       setShowLevelForm(true);
                                     }}
@@ -674,9 +637,7 @@ function ApprovalHierarchyConfig(_a) {
                                   <button_1.Button
                                     variant="ghost"
                                     size="sm"
-                                    onClick={function () {
-                                      return handleDeleteLevel(level.id);
-                                    }}
+                                    onClick={() => handleDeleteLevel(level.id)}
                                   >
                                     <lucide_react_1.Trash2 className="h-3 w-3" />
                                   </button_1.Button>
@@ -710,7 +671,7 @@ function ApprovalHierarchyConfig(_a) {
                   </p>
                 </div>
                 <button_1.Button
-                  onClick={function () {
+                  onClick={() => {
                     setEditingUser(null);
                     setShowUserForm(true);
                   }}
@@ -736,11 +697,9 @@ function ApprovalHierarchyConfig(_a) {
                       </table_1.TableRow>
                     </table_1.TableHeader>
                     <table_1.TableBody>
-                      {approvalUsers.map(function (user) {
+                      {approvalUsers.map((user) => {
                         var _a;
-                        var level = approvalLevels.find(function (l) {
-                          return l.id === user.approval_level_id;
-                        });
+                        var level = approvalLevels.find((l) => l.id === user.approval_level_id);
                         var RoleIcon = getRoleIcon(user.role);
                         return (
                           <table_1.TableRow key={user.id}>
@@ -774,9 +733,8 @@ function ApprovalHierarchyConfig(_a) {
                               <div className="flex items-center gap-2">
                                 <RoleIcon className="h-3 w-3" />
                                 <span className="text-sm capitalize">
-                                  {(_a = userRoles.find(function (r) {
-                                    return r.value === user.role;
-                                  })) === null || _a === void 0
+                                  {(_a = userRoles.find((r) => r.value === user.role)) === null ||
+                                  _a === void 0
                                     ? void 0
                                     : _a.label}
                                 </span>
@@ -804,7 +762,7 @@ function ApprovalHierarchyConfig(_a) {
                                 <button_1.Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={function () {
+                                  onClick={() => {
                                     setEditingUser(user);
                                     setShowUserForm(true);
                                   }}
@@ -814,9 +772,7 @@ function ApprovalHierarchyConfig(_a) {
                                 <button_1.Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={function () {
-                                    return handleDeleteUser(user.id);
-                                  }}
+                                  onClick={() => handleDeleteUser(user.id)}
                                 >
                                   <lucide_react_1.Trash2 className="h-3 w-3" />
                                 </button_1.Button>
@@ -841,13 +797,7 @@ function ApprovalHierarchyConfig(_a) {
         </div>
 
         <dialog_1.DialogFooter>
-          <button_1.Button
-            type="button"
-            variant="outline"
-            onClick={function () {
-              return onOpenChange(false);
-            }}
-          >
+          <button_1.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </button_1.Button>
           <button_1.Button onClick={handleSaveHierarchy} disabled={loading}>
@@ -897,32 +847,29 @@ function LevelFormModal(_a) {
     }),
     formData = _b[0],
     setFormData = _b[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (level) {
-        setFormData(level);
-      } else {
-        setFormData({
-          level_order: 1,
-          level_name: "",
-          min_amount: 0,
-          max_amount: null,
-          required_approvers: 1,
-          approval_timeout_hours: 24,
-          can_be_skipped: false,
-          auto_approve_below: null,
-          description: "",
-        });
-      }
-    },
-    [level, open],
-  );
-  var handleSubmit = function (e) {
+  (0, react_1.useEffect)(() => {
+    if (level) {
+      setFormData(level);
+    } else {
+      setFormData({
+        level_order: 1,
+        level_name: "",
+        min_amount: 0,
+        max_amount: null,
+        required_approvers: 1,
+        approval_timeout_hours: 24,
+        can_be_skipped: false,
+        auto_approve_below: null,
+        description: "",
+      });
+    }
+  }, [level, open]);
+  var handleSubmit = (e) => {
     e.preventDefault();
     onSave(formData);
   };
-  var updateField = function (field, value) {
-    setFormData(function (prev) {
+  var updateField = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
@@ -948,9 +895,7 @@ function LevelFormModal(_a) {
                 type="number"
                 min="1"
                 value={formData.level_order || ""}
-                onChange={function (e) {
-                  return updateField("level_order", parseInt(e.target.value) || 1);
-                }}
+                onChange={(e) => updateField("level_order", parseInt(e.target.value) || 1)}
                 required
               />
             </div>
@@ -960,9 +905,7 @@ function LevelFormModal(_a) {
               <input_1.Input
                 id="level_name"
                 value={formData.level_name || ""}
-                onChange={function (e) {
-                  return updateField("level_name", e.target.value);
-                }}
+                onChange={(e) => updateField("level_name", e.target.value)}
                 placeholder="Ex: Supervisor Direto"
                 required
               />
@@ -978,9 +921,7 @@ function LevelFormModal(_a) {
                 step="0.01"
                 min="0"
                 value={formData.min_amount || ""}
-                onChange={function (e) {
-                  return updateField("min_amount", parseFloat(e.target.value) || 0);
-                }}
+                onChange={(e) => updateField("min_amount", parseFloat(e.target.value) || 0)}
                 required
               />
             </div>
@@ -993,12 +934,9 @@ function LevelFormModal(_a) {
                 step="0.01"
                 min="0"
                 value={formData.max_amount || ""}
-                onChange={function (e) {
-                  return updateField(
-                    "max_amount",
-                    e.target.value ? parseFloat(e.target.value) : null,
-                  );
-                }}
+                onChange={(e) =>
+                  updateField("max_amount", e.target.value ? parseFloat(e.target.value) : null)
+                }
                 placeholder="Deixe vazio para sem limite"
               />
             </div>
@@ -1012,9 +950,7 @@ function LevelFormModal(_a) {
                 type="number"
                 min="1"
                 value={formData.required_approvers || ""}
-                onChange={function (e) {
-                  return updateField("required_approvers", parseInt(e.target.value) || 1);
-                }}
+                onChange={(e) => updateField("required_approvers", parseInt(e.target.value) || 1)}
                 required
               />
             </div>
@@ -1026,9 +962,9 @@ function LevelFormModal(_a) {
                 type="number"
                 min="1"
                 value={formData.approval_timeout_hours || ""}
-                onChange={function (e) {
-                  return updateField("approval_timeout_hours", parseInt(e.target.value) || 24);
-                }}
+                onChange={(e) =>
+                  updateField("approval_timeout_hours", parseInt(e.target.value) || 24)
+                }
                 required
               />
             </div>
@@ -1042,12 +978,12 @@ function LevelFormModal(_a) {
               step="0.01"
               min="0"
               value={formData.auto_approve_below || ""}
-              onChange={function (e) {
-                return updateField(
+              onChange={(e) =>
+                updateField(
                   "auto_approve_below",
                   e.target.value ? parseFloat(e.target.value) : null,
-                );
-              }}
+                )
+              }
               placeholder="Deixe vazio para desabilitar"
             />
           </div>
@@ -1057,9 +993,7 @@ function LevelFormModal(_a) {
             <textarea_1.Textarea
               id="description"
               value={formData.description || ""}
-              onChange={function (e) {
-                return updateField("description", e.target.value);
-              }}
+              onChange={(e) => updateField("description", e.target.value)}
               placeholder="Descrição opcional do nível"
               rows={2}
             />
@@ -1069,9 +1003,7 @@ function LevelFormModal(_a) {
             <switch_1.Switch
               id="can_be_skipped"
               checked={formData.can_be_skipped || false}
-              onCheckedChange={function (checked) {
-                return updateField("can_be_skipped", checked);
-              }}
+              onCheckedChange={(checked) => updateField("can_be_skipped", checked)}
             />
             <label_1.Label htmlFor="can_be_skipped">
               Este nível pode ser pulado em situações especiais
@@ -1079,13 +1011,7 @@ function LevelFormModal(_a) {
           </div>
 
           <dialog_1.DialogFooter>
-            <button_1.Button
-              type="button"
-              variant="outline"
-              onClick={function () {
-                return onOpenChange(false);
-              }}
-            >
+            <button_1.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </button_1.Button>
             <button_1.Button type="submit" disabled={loading}>
@@ -1116,32 +1042,29 @@ function UserFormModal(_a) {
     }),
     formData = _b[0],
     setFormData = _b[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (user) {
-        setFormData(user);
-      } else {
-        setFormData({
-          user_name: "",
-          user_email: "",
-          approval_level_id: "",
-          spending_limit: null,
-          can_override: false,
-          role: "approver",
-          department: "",
-        });
-      }
-    },
-    [user, open],
-  );
-  var handleSubmit = function (e) {
+  (0, react_1.useEffect)(() => {
+    if (user) {
+      setFormData(user);
+    } else {
+      setFormData({
+        user_name: "",
+        user_email: "",
+        approval_level_id: "",
+        spending_limit: null,
+        can_override: false,
+        role: "approver",
+        department: "",
+      });
+    }
+  }, [user, open]);
+  var handleSubmit = (e) => {
     e.preventDefault();
     onSave(
       __assign(__assign({}, formData), { user_id: formData.user_id || "user_".concat(Date.now()) }),
     );
   };
-  var updateField = function (field, value) {
-    setFormData(function (prev) {
+  var updateField = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
@@ -1165,9 +1088,7 @@ function UserFormModal(_a) {
               <input_1.Input
                 id="user_name"
                 value={formData.user_name || ""}
-                onChange={function (e) {
-                  return updateField("user_name", e.target.value);
-                }}
+                onChange={(e) => updateField("user_name", e.target.value)}
                 required
               />
             </div>
@@ -1178,9 +1099,7 @@ function UserFormModal(_a) {
                 id="user_email"
                 type="email"
                 value={formData.user_email || ""}
-                onChange={function (e) {
-                  return updateField("user_email", e.target.value);
-                }}
+                onChange={(e) => updateField("user_email", e.target.value)}
                 required
               />
             </div>
@@ -1191,21 +1110,17 @@ function UserFormModal(_a) {
               <label_1.Label htmlFor="approval_level_id">Nível de Aprovação *</label_1.Label>
               <select_1.Select
                 value={formData.approval_level_id || ""}
-                onValueChange={function (value) {
-                  return updateField("approval_level_id", value);
-                }}
+                onValueChange={(value) => updateField("approval_level_id", value)}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Selecione um nível" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {approvalLevels.map(function (level) {
-                    return (
-                      <select_1.SelectItem key={level.id} value={level.id}>
-                        Nível {level.level_order} - {level.level_name}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {approvalLevels.map((level) => (
+                    <select_1.SelectItem key={level.id} value={level.id}>
+                      Nível {level.level_order} - {level.level_name}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -1214,24 +1129,20 @@ function UserFormModal(_a) {
               <label_1.Label htmlFor="role">Função *</label_1.Label>
               <select_1.Select
                 value={formData.role || ""}
-                onValueChange={function (value) {
-                  return updateField("role", value);
-                }}
+                onValueChange={(value) => updateField("role", value)}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Selecione a função" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {userRoles.map(function (role) {
-                    return (
-                      <select_1.SelectItem key={role.value} value={role.value}>
-                        <div className="flex items-center gap-2">
-                          <role.icon className="h-4 w-4" />
-                          {role.label}
-                        </div>
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {userRoles.map((role) => (
+                    <select_1.SelectItem key={role.value} value={role.value}>
+                      <div className="flex items-center gap-2">
+                        <role.icon className="h-4 w-4" />
+                        {role.label}
+                      </div>
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -1246,12 +1157,9 @@ function UserFormModal(_a) {
                 step="0.01"
                 min="0"
                 value={formData.spending_limit || ""}
-                onChange={function (e) {
-                  return updateField(
-                    "spending_limit",
-                    e.target.value ? parseFloat(e.target.value) : null,
-                  );
-                }}
+                onChange={(e) =>
+                  updateField("spending_limit", e.target.value ? parseFloat(e.target.value) : null)
+                }
                 placeholder="Deixe vazio para sem limite"
               />
             </div>
@@ -1261,9 +1169,7 @@ function UserFormModal(_a) {
               <input_1.Input
                 id="department"
                 value={formData.department || ""}
-                onChange={function (e) {
-                  return updateField("department", e.target.value);
-                }}
+                onChange={(e) => updateField("department", e.target.value)}
                 placeholder="Ex: Financeiro, Operações"
               />
             </div>
@@ -1273,9 +1179,7 @@ function UserFormModal(_a) {
             <switch_1.Switch
               id="can_override"
               checked={formData.can_override || false}
-              onCheckedChange={function (checked) {
-                return updateField("can_override", checked);
-              }}
+              onCheckedChange={(checked) => updateField("can_override", checked)}
             />
             <label_1.Label htmlFor="can_override">
               Pode substituir/anular aprovações de outros usuários
@@ -1283,13 +1187,7 @@ function UserFormModal(_a) {
           </div>
 
           <dialog_1.DialogFooter>
-            <button_1.Button
-              type="button"
-              variant="outline"
-              onClick={function () {
-                return onOpenChange(false);
-              }}
-            >
+            <button_1.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </button_1.Button>
             <button_1.Button type="submit" disabled={loading}>

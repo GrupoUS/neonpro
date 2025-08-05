@@ -1,4 +1,3 @@
-"use strict";
 // Stock Alerts Types Validation Tests
 // Story 11.4: Alertas e Relatórios de Estoque
 // Unit tests for Zod schemas and validation functions
@@ -7,28 +6,27 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var stock_alerts_1 = require("@/app/lib/types/stock-alerts");
@@ -87,9 +85,9 @@ var validResolveAlert = {
 // =====================================================
 // STOCK ALERT CONFIG SCHEMA TESTS
 // =====================================================
-(0, globals_1.describe)("Stock Alert Config Schema Validation", function () {
-  (0, globals_1.describe)("stockAlertConfigSchema", function () {
-    (0, globals_1.it)("should validate a complete valid alert config", function () {
+(0, globals_1.describe)("Stock Alert Config Schema Validation", () => {
+  (0, globals_1.describe)("stockAlertConfigSchema", () => {
+    (0, globals_1.it)("should validate a complete valid alert config", () => {
       var result = stock_alerts_1.stockAlertConfigSchema.safeParse(validAlertConfig);
       (0, globals_1.expect)(result.success).toBe(true);
       if (result.success) {
@@ -98,7 +96,7 @@ var validResolveAlert = {
         (0, globals_1.expect)(result.data.isActive).toBe(true);
       }
     });
-    (0, globals_1.it)("should reject invalid UUID formats", function () {
+    (0, globals_1.it)("should reject invalid UUID formats", () => {
       var invalidConfig = __assign(__assign({}, validAlertConfig), { clinicId: "invalid-uuid" });
       var result = stock_alerts_1.stockAlertConfigSchema.safeParse(invalidConfig);
       (0, globals_1.expect)(result.success).toBe(false);
@@ -106,7 +104,7 @@ var validResolveAlert = {
         (0, globals_1.expect)(result.error.issues[0].message).toContain("Invalid UUID format");
       }
     });
-    (0, globals_1.it)("should reject negative threshold values", function () {
+    (0, globals_1.it)("should reject negative threshold values", () => {
       var invalidConfig = __assign(__assign({}, validAlertConfig), { thresholdValue: -5 });
       var result = stock_alerts_1.stockAlertConfigSchema.safeParse(invalidConfig);
       (0, globals_1.expect)(result.success).toBe(false);
@@ -116,12 +114,12 @@ var validResolveAlert = {
         );
       }
     });
-    (0, globals_1.it)("should reject invalid alert types", function () {
+    (0, globals_1.it)("should reject invalid alert types", () => {
       var invalidConfig = __assign(__assign({}, validAlertConfig), { alertType: "invalid_type" });
       var result = stock_alerts_1.stockAlertConfigSchema.safeParse(invalidConfig);
       (0, globals_1.expect)(result.success).toBe(false);
     });
-    (0, globals_1.it)("should reject empty notification channels array", function () {
+    (0, globals_1.it)("should reject empty notification channels array", () => {
       var invalidConfig = __assign(__assign({}, validAlertConfig), { notificationChannels: [] });
       var result = stock_alerts_1.stockAlertConfigSchema.safeParse(invalidConfig);
       (0, globals_1.expect)(result.success).toBe(false);
@@ -131,7 +129,7 @@ var validResolveAlert = {
         );
       }
     });
-    (0, globals_1.it)("should validate config with category instead of product", function () {
+    (0, globals_1.it)("should validate config with category instead of product", () => {
       var categoryConfig = __assign(__assign({}, validAlertConfig), {
         productId: undefined,
         categoryId: "cat123e45-e89b-12d3-a456-426614174000",
@@ -139,7 +137,7 @@ var validResolveAlert = {
       var result = stock_alerts_1.stockAlertConfigSchema.safeParse(categoryConfig);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.it)("should validate global config (no product or category)", function () {
+    (0, globals_1.it)("should validate global config (no product or category)", () => {
       var globalConfig = __assign(__assign({}, validAlertConfig), {
         productId: undefined,
         categoryId: undefined,
@@ -148,17 +146,17 @@ var validResolveAlert = {
       (0, globals_1.expect)(result.success).toBe(true);
     });
   });
-  (0, globals_1.describe)("createStockAlertConfigSchema", function () {
-    (0, globals_1.it)("should validate valid create request", function () {
+  (0, globals_1.describe)("createStockAlertConfigSchema", () => {
+    (0, globals_1.it)("should validate valid create request", () => {
       var result = stock_alerts_1.createStockAlertConfigSchema.safeParse(validCreateAlertConfig);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.it)("should reject creation with id field", function () {
+    (0, globals_1.it)("should reject creation with id field", () => {
       var invalidConfig = __assign(__assign({}, validCreateAlertConfig), { id: "some-id" });
       var result = stock_alerts_1.createStockAlertConfigSchema.safeParse(invalidConfig);
       (0, globals_1.expect)(result.success).toBe(false);
     });
-    (0, globals_1.it)("should apply default values correctly", function () {
+    (0, globals_1.it)("should apply default values correctly", () => {
       var minimalConfig = {
         clinicId: "cc123e45-e89b-12d3-a456-426614174000",
         alertType: "low_stock",
@@ -174,8 +172,8 @@ var validResolveAlert = {
       }
     });
   });
-  (0, globals_1.describe)("updateStockAlertConfigSchema", function () {
-    (0, globals_1.it)("should validate partial updates", function () {
+  (0, globals_1.describe)("updateStockAlertConfigSchema", () => {
+    (0, globals_1.it)("should validate partial updates", () => {
       var partialUpdate = {
         thresholdValue: 20,
         severityLevel: "high",
@@ -183,7 +181,7 @@ var validResolveAlert = {
       var result = stock_alerts_1.updateStockAlertConfigSchema.safeParse(partialUpdate);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.it)("should reject update with readonly fields", function () {
+    (0, globals_1.it)("should reject update with readonly fields", () => {
       var invalidUpdate = {
         clinicId: "new-clinic-id",
         thresholdValue: 20,
@@ -196,18 +194,18 @@ var validResolveAlert = {
 // =====================================================
 // STOCK ALERT SCHEMA TESTS
 // =====================================================
-(0, globals_1.describe)("Stock Alert Schema Validation", function () {
-  (0, globals_1.describe)("stockAlertSchema", function () {
-    (0, globals_1.it)("should validate a complete valid alert", function () {
+(0, globals_1.describe)("Stock Alert Schema Validation", () => {
+  (0, globals_1.describe)("stockAlertSchema", () => {
+    (0, globals_1.it)("should validate a complete valid alert", () => {
       var result = stock_alerts_1.stockAlertSchema.safeParse(validAlert);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.it)("should reject invalid severity levels", function () {
+    (0, globals_1.it)("should reject invalid severity levels", () => {
       var invalidAlert = __assign(__assign({}, validAlert), { severityLevel: "super_critical" });
       var result = stock_alerts_1.stockAlertSchema.safeParse(invalidAlert);
       (0, globals_1.expect)(result.success).toBe(false);
     });
-    (0, globals_1.it)("should reject negative current values", function () {
+    (0, globals_1.it)("should reject negative current values", () => {
       var invalidAlert = __assign(__assign({}, validAlert), { currentValue: -1 });
       var result = stock_alerts_1.stockAlertSchema.safeParse(invalidAlert);
       (0, globals_1.expect)(result.success).toBe(false);
@@ -215,7 +213,7 @@ var validResolveAlert = {
         (0, globals_1.expect)(result.error.issues[0].message).toContain("Must be non-negative");
       }
     });
-    (0, globals_1.it)("should reject empty or too long messages", function () {
+    (0, globals_1.it)("should reject empty or too long messages", () => {
       var emptyMessage = __assign(__assign({}, validAlert), { message: "" });
       var longMessage = __assign(__assign({}, validAlert), { message: "a".repeat(1001) });
       (0, globals_1.expect)(stock_alerts_1.stockAlertSchema.safeParse(emptyMessage).success).toBe(
@@ -225,7 +223,7 @@ var validResolveAlert = {
         false,
       );
     });
-    (0, globals_1.it)("should validate acknowledgment constraint", function () {
+    (0, globals_1.it)("should validate acknowledgment constraint", () => {
       // Valid: both acknowledgedBy and acknowledgedAt present
       var validAck = __assign(__assign({}, validAlert), {
         acknowledgedBy: "user123",
@@ -243,14 +241,14 @@ var validResolveAlert = {
       }
     });
   });
-  (0, globals_1.describe)("acknowledgeAlertSchema", function () {
-    (0, globals_1.it)("should validate valid acknowledgment request", function () {
+  (0, globals_1.describe)("acknowledgeAlertSchema", () => {
+    (0, globals_1.it)("should validate valid acknowledgment request", () => {
       var result = stock_alerts_1.acknowledgeAlertSchema.safeParse(validAcknowledgeAlert);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.it)("should trim and validate note length", function () {
+    (0, globals_1.it)("should trim and validate note length", () => {
       var longNote = __assign(__assign({}, validAcknowledgeAlert), {
-        note: " " + "a".repeat(501) + " ",
+        note: ` ${"a".repeat(501)} `,
       });
       var result = stock_alerts_1.acknowledgeAlertSchema.safeParse(longNote);
       (0, globals_1.expect)(result.success).toBe(false);
@@ -258,19 +256,19 @@ var validResolveAlert = {
         (0, globals_1.expect)(result.error.issues[0].message).toContain("Note too long");
       }
     });
-    (0, globals_1.it)("should allow acknowledgment without note", function () {
-      var note = validAcknowledgeAlert.note,
+    (0, globals_1.it)("should allow acknowledgment without note", () => {
+      var _note = validAcknowledgeAlert.note,
         ackWithoutNote = __rest(validAcknowledgeAlert, ["note"]);
       var result = stock_alerts_1.acknowledgeAlertSchema.safeParse(ackWithoutNote);
       (0, globals_1.expect)(result.success).toBe(true);
     });
   });
-  (0, globals_1.describe)("resolveAlertSchema", function () {
-    (0, globals_1.it)("should validate valid resolution request", function () {
+  (0, globals_1.describe)("resolveAlertSchema", () => {
+    (0, globals_1.it)("should validate valid resolution request", () => {
       var result = stock_alerts_1.resolveAlertSchema.safeParse(validResolveAlert);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.it)("should require resolution description", function () {
+    (0, globals_1.it)("should require resolution description", () => {
       var invalidResolve = __assign(__assign({}, validResolveAlert), { resolution: "" });
       var result = stock_alerts_1.resolveAlertSchema.safeParse(invalidResolve);
       (0, globals_1.expect)(result.success).toBe(false);
@@ -280,7 +278,7 @@ var validResolveAlert = {
         );
       }
     });
-    (0, globals_1.it)("should reject overly long resolution description", function () {
+    (0, globals_1.it)("should reject overly long resolution description", () => {
       var longResolution = __assign(__assign({}, validResolveAlert), {
         resolution: "a".repeat(1001),
       });
@@ -295,7 +293,7 @@ var validResolveAlert = {
 // =====================================================
 // CUSTOM REPORTS SCHEMA TESTS
 // =====================================================
-(0, globals_1.describe)("Custom Stock Reports Schema Validation", function () {
+(0, globals_1.describe)("Custom Stock Reports Schema Validation", () => {
   var validReport = {
     clinicId: "cc123e45-e89b-12d3-a456-426614174000",
     userId: "user123e45-e89b-12d3-a456-426614174000",
@@ -310,16 +308,16 @@ var validResolveAlert = {
     },
     isActive: true,
   };
-  (0, globals_1.it)("should validate valid custom report", function () {
+  (0, globals_1.it)("should validate valid custom report", () => {
     var result = stock_alerts_1.customStockReportSchema.safeParse(validReport);
     (0, globals_1.expect)(result.success).toBe(true);
   });
-  (0, globals_1.it)("should reject empty report names", function () {
+  (0, globals_1.it)("should reject empty report names", () => {
     var invalidReport = __assign(__assign({}, validReport), { reportName: "" });
     var result = stock_alerts_1.customStockReportSchema.safeParse(invalidReport);
     (0, globals_1.expect)(result.success).toBe(false);
   });
-  (0, globals_1.it)("should trim report names", function () {
+  (0, globals_1.it)("should trim report names", () => {
     var reportWithSpaces = __assign(__assign({}, validReport), {
       reportName: "  Trimmed Report  ",
     });
@@ -329,7 +327,7 @@ var validResolveAlert = {
       (0, globals_1.expect)(result.data.reportName).toBe("Trimmed Report");
     }
   });
-  (0, globals_1.it)("should validate date range constraint", function () {
+  (0, globals_1.it)("should validate date range constraint", () => {
     var invalidDateRange = __assign(__assign({}, validReport), {
       filters: {
         dateRange: {
@@ -346,7 +344,7 @@ var validResolveAlert = {
       );
     }
   });
-  (0, globals_1.it)("should validate schedule config constraints", function () {
+  (0, globals_1.it)("should validate schedule config constraints", () => {
     var validSchedule = {
       frequency: "weekly",
       dayOfWeek: 1, // Monday
@@ -358,7 +356,7 @@ var validResolveAlert = {
     var result = stock_alerts_1.customStockReportSchema.safeParse(reportWithSchedule);
     (0, globals_1.expect)(result.success).toBe(true);
   });
-  (0, globals_1.it)("should reject invalid time format in schedule", function () {
+  (0, globals_1.it)("should reject invalid time format in schedule", () => {
     var invalidSchedule = {
       frequency: "daily",
       time: "25:70", // Invalid time
@@ -377,7 +375,7 @@ var validResolveAlert = {
 // =====================================================
 // PERFORMANCE METRICS SCHEMA TESTS
 // =====================================================
-(0, globals_1.describe)("Stock Performance Metrics Schema Validation", function () {
+(0, globals_1.describe)("Stock Performance Metrics Schema Validation", () => {
   var validMetrics = {
     clinicId: "cc123e45-e89b-12d3-a456-426614174000",
     metricDate: new Date(),
@@ -393,21 +391,21 @@ var validResolveAlert = {
     outOfStockCount: 5,
     lowStockCount: 12,
   };
-  (0, globals_1.it)("should validate valid performance metrics", function () {
+  (0, globals_1.it)("should validate valid performance metrics", () => {
     var result = stock_alerts_1.stockPerformanceMetricsSchema.safeParse(validMetrics);
     (0, globals_1.expect)(result.success).toBe(true);
   });
-  (0, globals_1.it)("should reject negative values where inappropriate", function () {
+  (0, globals_1.it)("should reject negative values where inappropriate", () => {
     var negativeMetrics = __assign(__assign({}, validMetrics), { totalValue: -100 });
     var result = stock_alerts_1.stockPerformanceMetricsSchema.safeParse(negativeMetrics);
     (0, globals_1.expect)(result.success).toBe(false);
   });
-  (0, globals_1.it)("should reject invalid percentage values", function () {
+  (0, globals_1.it)("should reject invalid percentage values", () => {
     var invalidPercentage = __assign(__assign({}, validMetrics), { accuracyPercentage: 150 });
     var result = stock_alerts_1.stockPerformanceMetricsSchema.safeParse(invalidPercentage);
     (0, globals_1.expect)(result.success).toBe(false);
   });
-  (0, globals_1.it)("should allow optional fields to be undefined", function () {
+  (0, globals_1.it)("should allow optional fields to be undefined", () => {
     var minimalMetrics = {
       clinicId: "cc123e45-e89b-12d3-a456-426614174000",
       metricDate: new Date(),
@@ -427,7 +425,7 @@ var validResolveAlert = {
 // =====================================================
 // DASHBOARD DATA SCHEMA TESTS
 // =====================================================
-(0, globals_1.describe)("Stock Dashboard Data Schema Validation", function () {
+(0, globals_1.describe)("Stock Dashboard Data Schema Validation", () => {
   var validDashboardData = {
     kpis: {
       totalValue: 50000,
@@ -490,12 +488,12 @@ var validResolveAlert = {
     ],
     lastUpdated: new Date(),
   };
-  (0, globals_1.it)("should validate complete dashboard data", function () {
+  (0, globals_1.it)("should validate complete dashboard data", () => {
     var result = stock_alerts_1.stockDashboardDataSchema.safeParse(validDashboardData);
     (0, globals_1.expect)(result.success).toBe(true);
   });
-  (0, globals_1.it)("should apply default values for lastUpdated", function () {
-    var lastUpdated = validDashboardData.lastUpdated,
+  (0, globals_1.it)("should apply default values for lastUpdated", () => {
+    var _lastUpdated = validDashboardData.lastUpdated,
       dataWithoutLastUpdated = __rest(validDashboardData, ["lastUpdated"]);
     var result = stock_alerts_1.stockDashboardDataSchema.safeParse(dataWithoutLastUpdated);
     (0, globals_1.expect)(result.success).toBe(true);
@@ -507,9 +505,9 @@ var validResolveAlert = {
 // =====================================================
 // QUERY SCHEMA TESTS
 // =====================================================
-(0, globals_1.describe)("Query Schema Validation", function () {
-  (0, globals_1.describe)("alertsQuerySchema", function () {
-    (0, globals_1.it)("should validate valid query parameters", function () {
+(0, globals_1.describe)("Query Schema Validation", () => {
+  (0, globals_1.describe)("alertsQuerySchema", () => {
+    (0, globals_1.it)("should validate valid query parameters", () => {
       var validQuery = {
         status: "active",
         severity: "high",
@@ -521,7 +519,7 @@ var validResolveAlert = {
       var result = stock_alerts_1.alertsQuerySchema.safeParse(validQuery);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.it)("should apply default values", function () {
+    (0, globals_1.it)("should apply default values", () => {
       var minimalQuery = {};
       var result = stock_alerts_1.alertsQuerySchema.safeParse(minimalQuery);
       (0, globals_1.expect)(result.success).toBe(true);
@@ -532,7 +530,7 @@ var validResolveAlert = {
         (0, globals_1.expect)(result.data.sortOrder).toBe("desc");
       }
     });
-    (0, globals_1.it)("should enforce limit constraints", function () {
+    (0, globals_1.it)("should enforce limit constraints", () => {
       var invalidQuery = { limit: 150 }; // Over max
       var result = stock_alerts_1.alertsQuerySchema.safeParse(invalidQuery);
       (0, globals_1.expect)(result.success).toBe(false);
@@ -542,81 +540,81 @@ var validResolveAlert = {
 // =====================================================
 // VALIDATION FUNCTION TESTS
 // =====================================================
-(0, globals_1.describe)("Validation Functions", function () {
-  (0, globals_1.describe)("validateStockAlertConfig", function () {
-    (0, globals_1.it)("should validate valid config", function () {
-      (0, globals_1.expect)(function () {
-        return (0, stock_alerts_1.validateStockAlertConfig)(validAlertConfig);
-      }).not.toThrow();
+(0, globals_1.describe)("Validation Functions", () => {
+  (0, globals_1.describe)("validateStockAlertConfig", () => {
+    (0, globals_1.it)("should validate valid config", () => {
+      (0, globals_1.expect)(() =>
+        (0, stock_alerts_1.validateStockAlertConfig)(validAlertConfig),
+      ).not.toThrow();
     });
-    (0, globals_1.it)("should throw on invalid config", function () {
+    (0, globals_1.it)("should throw on invalid config", () => {
       var invalidConfig = __assign(__assign({}, validAlertConfig), { clinicId: "invalid" });
-      (0, globals_1.expect)(function () {
-        return (0, stock_alerts_1.validateStockAlertConfig)(invalidConfig);
-      }).toThrow();
+      (0, globals_1.expect)(() =>
+        (0, stock_alerts_1.validateStockAlertConfig)(invalidConfig),
+      ).toThrow();
     });
   });
-  (0, globals_1.describe)("validateCreateStockAlertConfig", function () {
-    (0, globals_1.it)("should validate valid create config", function () {
-      (0, globals_1.expect)(function () {
-        return (0, stock_alerts_1.validateCreateStockAlertConfig)(validCreateAlertConfig);
-      }).not.toThrow();
+  (0, globals_1.describe)("validateCreateStockAlertConfig", () => {
+    (0, globals_1.it)("should validate valid create config", () => {
+      (0, globals_1.expect)(() =>
+        (0, stock_alerts_1.validateCreateStockAlertConfig)(validCreateAlertConfig),
+      ).not.toThrow();
     });
-    (0, globals_1.it)("should throw on invalid create config", function () {
+    (0, globals_1.it)("should throw on invalid create config", () => {
       var invalidConfig = __assign(__assign({}, validCreateAlertConfig), { thresholdValue: -1 });
-      (0, globals_1.expect)(function () {
-        return (0, stock_alerts_1.validateCreateStockAlertConfig)(invalidConfig);
-      }).toThrow();
+      (0, globals_1.expect)(() =>
+        (0, stock_alerts_1.validateCreateStockAlertConfig)(invalidConfig),
+      ).toThrow();
     });
   });
-  (0, globals_1.describe)("validateAcknowledgeAlert", function () {
-    (0, globals_1.it)("should validate valid acknowledge request", function () {
-      (0, globals_1.expect)(function () {
-        return (0, stock_alerts_1.validateAcknowledgeAlert)(validAcknowledgeAlert);
-      }).not.toThrow();
+  (0, globals_1.describe)("validateAcknowledgeAlert", () => {
+    (0, globals_1.it)("should validate valid acknowledge request", () => {
+      (0, globals_1.expect)(() =>
+        (0, stock_alerts_1.validateAcknowledgeAlert)(validAcknowledgeAlert),
+      ).not.toThrow();
     });
-    (0, globals_1.it)("should throw on invalid acknowledge request", function () {
+    (0, globals_1.it)("should throw on invalid acknowledge request", () => {
       var invalidAck = __assign(__assign({}, validAcknowledgeAlert), { alertId: "invalid" });
-      (0, globals_1.expect)(function () {
-        return (0, stock_alerts_1.validateAcknowledgeAlert)(invalidAck);
-      }).toThrow();
+      (0, globals_1.expect)(() =>
+        (0, stock_alerts_1.validateAcknowledgeAlert)(invalidAck),
+      ).toThrow();
     });
   });
-  (0, globals_1.describe)("validateResolveAlert", function () {
-    (0, globals_1.it)("should validate valid resolve request", function () {
-      (0, globals_1.expect)(function () {
-        return (0, stock_alerts_1.validateResolveAlert)(validResolveAlert);
-      }).not.toThrow();
+  (0, globals_1.describe)("validateResolveAlert", () => {
+    (0, globals_1.it)("should validate valid resolve request", () => {
+      (0, globals_1.expect)(() =>
+        (0, stock_alerts_1.validateResolveAlert)(validResolveAlert),
+      ).not.toThrow();
     });
-    (0, globals_1.it)("should throw on invalid resolve request", function () {
+    (0, globals_1.it)("should throw on invalid resolve request", () => {
       var invalidResolve = __assign(__assign({}, validResolveAlert), { resolution: "" });
-      (0, globals_1.expect)(function () {
-        return (0, stock_alerts_1.validateResolveAlert)(invalidResolve);
-      }).toThrow();
+      (0, globals_1.expect)(() =>
+        (0, stock_alerts_1.validateResolveAlert)(invalidResolve),
+      ).toThrow();
     });
   });
 });
 // =====================================================
 // EDGE CASES AND SECURITY TESTS
 // =====================================================
-(0, globals_1.describe)("Edge Cases and Security", function () {
-  (0, globals_1.it)("should handle extremely large numbers appropriately", function () {
+(0, globals_1.describe)("Edge Cases and Security", () => {
+  (0, globals_1.it)("should handle extremely large numbers appropriately", () => {
     var configWithLargeNumber = __assign(__assign({}, validCreateAlertConfig), {
       thresholdValue: Number.MAX_SAFE_INTEGER,
     });
     var result = stock_alerts_1.createStockAlertConfigSchema.safeParse(configWithLargeNumber);
     (0, globals_1.expect)(result.success).toBe(true);
   });
-  (0, globals_1.it)("should reject null/undefined values where required", function () {
+  (0, globals_1.it)("should reject null/undefined values where required", () => {
     var configWithNull = __assign(__assign({}, validCreateAlertConfig), { clinicId: null });
     var result = stock_alerts_1.createStockAlertConfigSchema.safeParse(configWithNull);
     (0, globals_1.expect)(result.success).toBe(false);
   });
-  (0, globals_1.it)("should sanitize string inputs", function () {
-    var configWithWhitespace = __assign({}, validCreateAlertConfig);
+  (0, globals_1.it)("should sanitize string inputs", () => {
+    var _configWithWhitespace = __assign({}, validCreateAlertConfig);
     // Additional sanitization tests can be added here
   });
-  (0, globals_1.it)("should handle array validation correctly", function () {
+  (0, globals_1.it)("should handle array validation correctly", () => {
     var configWithInvalidChannels = __assign(__assign({}, validCreateAlertConfig), {
       notificationChannels: ["invalid_channel"],
     });
@@ -627,17 +625,15 @@ var validResolveAlert = {
 // =====================================================
 // PERFORMANCE TESTS
 // =====================================================
-(0, globals_1.describe)("Performance and Scalability", function () {
-  (0, globals_1.it)("should handle large arrays efficiently", function () {
+(0, globals_1.describe)("Performance and Scalability", () => {
+  (0, globals_1.it)("should handle large arrays efficiently", () => {
     var largeArray = Array(1000)
       .fill(0)
-      .map(function (_, i) {
-        return {
-          date: new Date().toISOString(),
-          value: i,
-          trend: "stable",
-        };
-      });
+      .map((_, i) => ({
+        date: new Date().toISOString(),
+        value: i,
+        trend: "stable",
+      }));
     var dashboardWithLargeData = {
       kpis: {
         totalValue: 50000,

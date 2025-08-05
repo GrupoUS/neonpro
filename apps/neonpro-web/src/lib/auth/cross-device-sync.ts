@@ -915,11 +915,12 @@ export class CrossDeviceSync {
           // Use the data from the most recent event
           resolution = "use_local"; // Assuming local is more recent
           break;
-        case "primary_wins":
+        case "primary_wins": {
           // Use data from primary device
           const session = this.activeSessions.get(conflict.sessionId);
           resolution = session?.isPrimary ? "use_local" : "use_remote";
           break;
+        }
         default:
           return; // Manual resolution required
       }

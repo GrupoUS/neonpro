@@ -1,17 +1,15 @@
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AlertDescription = exports.AlertTitle = exports.Alert = void 0;
 var React = require("react");
@@ -32,7 +30,7 @@ var alertVariants = (0, class_variance_authority_1.cva)(
     },
   },
 );
-var Alert = React.forwardRef(function (_a, ref) {
+var Alert = React.forwardRef((_a, ref) => {
   var className = _a.className,
     variant = _a.variant,
     props = __rest(_a, ["className", "variant"]);
@@ -47,7 +45,7 @@ var Alert = React.forwardRef(function (_a, ref) {
 });
 exports.Alert = Alert;
 Alert.displayName = "Alert";
-var AlertTitle = React.forwardRef(function (_a, ref) {
+var AlertTitle = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -60,7 +58,7 @@ var AlertTitle = React.forwardRef(function (_a, ref) {
 });
 exports.AlertTitle = AlertTitle;
 AlertTitle.displayName = "AlertTitle";
-var AlertDescription = React.forwardRef(function (_a, ref) {
+var AlertDescription = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ToastAction =
   exports.ToastClose =
@@ -29,7 +27,7 @@ var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var ToastProvider = ToastPrimitives.Provider;
 exports.ToastProvider = ToastProvider;
-var ToastViewport = React.forwardRef(function (_a, ref) {
+var ToastViewport = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -60,7 +58,7 @@ var toastVariants = (0, class_variance_authority_1.cva)(
     },
   },
 );
-var Toast = React.forwardRef(function (_a, ref) {
+var Toast = React.forwardRef((_a, ref) => {
   var className = _a.className,
     variant = _a.variant,
     props = __rest(_a, ["className", "variant"]);
@@ -74,7 +72,7 @@ var Toast = React.forwardRef(function (_a, ref) {
 });
 exports.Toast = Toast;
 Toast.displayName = ToastPrimitives.Root.displayName;
-var ToastAction = React.forwardRef(function (_a, ref) {
+var ToastAction = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -90,7 +88,7 @@ var ToastAction = React.forwardRef(function (_a, ref) {
 });
 exports.ToastAction = ToastAction;
 ToastAction.displayName = ToastPrimitives.Action.displayName;
-var ToastClose = React.forwardRef(function (_a, ref) {
+var ToastClose = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -109,7 +107,7 @@ var ToastClose = React.forwardRef(function (_a, ref) {
 });
 exports.ToastClose = ToastClose;
 ToastClose.displayName = ToastPrimitives.Close.displayName;
-var ToastTitle = React.forwardRef(function (_a, ref) {
+var ToastTitle = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -122,7 +120,7 @@ var ToastTitle = React.forwardRef(function (_a, ref) {
 });
 exports.ToastTitle = ToastTitle;
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
-var ToastDescription = React.forwardRef(function (_a, ref) {
+var ToastDescription = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

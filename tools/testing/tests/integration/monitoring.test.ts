@@ -3,11 +3,11 @@
  * Testing monitoring infrastructure components
  */
 
-import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
-import { performance } from "../../lib/monitoring/performance";
+import { afterAll, beforeAll, describe, expect, it } from "@jest/globals";
 import { analytics } from "../../lib/monitoring/analytics";
-import { featureFlags } from "../../lib/monitoring/feature-flags";
 import { errorTracking } from "../../lib/monitoring/error-tracking";
+import { featureFlags } from "../../lib/monitoring/feature-flags";
+import { performance } from "../../lib/monitoring/performance";
 
 describe("TASK-001 Monitoring Infrastructure Integration", () => {
   beforeAll(async () => {

@@ -1,12 +1,12 @@
 // SSO React Hook
 // Story 1.3: SSO Integration - React Hook for Frontend
 
-import type { useState, useEffect, useCallback } from "react";
-import type { useRouter } from "next/navigation";
-import type { SSOProvider, SSOSession, SSOUserInfo, SSOError, SSOErrorCode } from "@/types/sso";
 import type { useUser } from "@supabase/auth-helpers-nextjs";
-import type { logger } from "@/lib/logger";
+import type { useRouter } from "next/navigation";
+import type { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { logger } from "@/lib/logger";
+import type { SSOError, SSOErrorCode, SSOProvider, SSOSession, SSOUserInfo } from "@/types/sso";
 
 export interface SSOState {
   isLoading: boolean;

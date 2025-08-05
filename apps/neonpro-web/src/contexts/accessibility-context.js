@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccessibilityProvider = AccessibilityProvider;
 exports.useAccessibility = useAccessibility;
@@ -18,18 +17,18 @@ function AccessibilityProvider(_a) {
     fontSize = _d[0],
     setFontSize = _d[1];
   var announceRef = (0, react_1.useRef)(null);
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Detect high contrast preference
     var highContrastQuery = window.matchMedia("(prefers-contrast: high)");
     setIsHighContrast(highContrastQuery.matches);
-    var handleHighContrastChange = function (e) {
+    var handleHighContrastChange = (e) => {
       setIsHighContrast(e.matches);
     };
     highContrastQuery.addEventListener("change", handleHighContrastChange);
     // Detect reduced motion preference
     var motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduceMotion(motionQuery.matches);
-    var handleMotionChange = function (e) {
+    var handleMotionChange = (e) => {
       setReduceMotion(e.matches);
     };
     motionQuery.addEventListener("change", handleMotionChange);
@@ -37,12 +36,12 @@ function AccessibilityProvider(_a) {
     var savedFontSize = localStorage.getItem("neonpro-font-size") || "normal";
     setFontSize(savedFontSize);
     document.documentElement.setAttribute("data-font-size", savedFontSize);
-    return function () {
+    return () => {
       highContrastQuery.removeEventListener("change", handleHighContrastChange);
       motionQuery.removeEventListener("change", handleMotionChange);
     };
   }, []);
-  var announceToScreenReader = function (message, priority) {
+  var announceToScreenReader = (message, priority) => {
     if (priority === void 0) {
       priority = "polite";
     }
@@ -50,7 +49,7 @@ function AccessibilityProvider(_a) {
       // Clear previous message
       announceRef.current.textContent = "";
       // Add new message after a brief delay to ensure it's announced
-      setTimeout(function () {
+      setTimeout(() => {
         if (announceRef.current) {
           announceRef.current.textContent = message;
           announceRef.current.setAttribute("aria-live", priority);
@@ -58,7 +57,7 @@ function AccessibilityProvider(_a) {
       }, 100);
     }
   };
-  var setFocusOn = function (element) {
+  var setFocusOn = (element) => {
     var targetElement =
       typeof element === "string"
         ? document.getElementById(element) || document.querySelector(element)
@@ -79,13 +78,13 @@ function AccessibilityProvider(_a) {
       });
     }
   };
-  var trapFocus = function (container) {
+  var trapFocus = (container) => {
     var focusableElements = container.querySelectorAll(
       'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
     );
     var firstFocusable = focusableElements[0];
     var lastFocusable = focusableElements[focusableElements.length - 1];
-    var handleKeyDown = function (e) {
+    var handleKeyDown = (e) => {
       if (e.key === "Tab") {
         if (e.shiftKey) {
           // Shift + Tab
@@ -115,11 +114,11 @@ function AccessibilityProvider(_a) {
       firstFocusable.focus();
     }
     // Return cleanup function
-    return function () {
+    return () => {
       container.removeEventListener("keydown", handleKeyDown);
     };
   };
-  var handleFontSizeChange = function (newSize) {
+  var handleFontSizeChange = (newSize) => {
     setFontSize(newSize);
     localStorage.setItem("neonpro-font-size", newSize);
     document.documentElement.setAttribute("data-font-size", newSize);
@@ -161,7 +160,7 @@ function useAccessibility() {
 }
 // Hook for keyboard navigation
 function useKeyboardNavigation() {
-  var handleArrowNavigation = function (e, items, currentIndex, onIndexChange, options) {
+  var handleArrowNavigation = (e, items, currentIndex, onIndexChange, options) => {
     var _a, _b, _c, _d;
     if (options === void 0) {
       options = {};
@@ -172,31 +171,34 @@ function useKeyboardNavigation() {
       wrap = _f === void 0 ? true : _f,
       enterAction = options.enterAction;
     switch (e.key) {
-      case horizontal ? "ArrowLeft" : "ArrowUp":
+      case horizontal ? "ArrowLeft" : "ArrowUp": {
         e.preventDefault();
         var prevIndex =
           currentIndex > 0 ? currentIndex - 1 : wrap ? items.length - 1 : currentIndex;
         onIndexChange(prevIndex);
         (_a = items[prevIndex]) === null || _a === void 0 ? void 0 : _a.focus();
         break;
-      case horizontal ? "ArrowRight" : "ArrowDown":
+      }
+      case horizontal ? "ArrowRight" : "ArrowDown": {
         e.preventDefault();
         var nextIndex =
           currentIndex < items.length - 1 ? currentIndex + 1 : wrap ? 0 : currentIndex;
         onIndexChange(nextIndex);
         (_b = items[nextIndex]) === null || _b === void 0 ? void 0 : _b.focus();
         break;
+      }
       case "Home":
         e.preventDefault();
         onIndexChange(0);
         (_c = items[0]) === null || _c === void 0 ? void 0 : _c.focus();
         break;
-      case "End":
+      case "End": {
         e.preventDefault();
         var lastIndex = items.length - 1;
         onIndexChange(lastIndex);
         (_d = items[lastIndex]) === null || _d === void 0 ? void 0 : _d.focus();
         break;
+      }
       case "Enter":
       case " ":
         if (enterAction) {
@@ -213,16 +215,13 @@ function useRovingTabIndex(items, activeIndex) {
   if (activeIndex === void 0) {
     activeIndex = 0;
   }
-  (0, react_1.useEffect)(
-    function () {
-      items.forEach(function (item, index) {
-        if (index === activeIndex) {
-          item.setAttribute("tabindex", "0");
-        } else {
-          item.setAttribute("tabindex", "-1");
-        }
-      });
-    },
-    [items, activeIndex],
-  );
+  (0, react_1.useEffect)(() => {
+    items.forEach((item, index) => {
+      if (index === activeIndex) {
+        item.setAttribute("tabindex", "0");
+      } else {
+        item.setAttribute("tabindex", "-1");
+      }
+    });
+  }, [items, activeIndex]);
 }

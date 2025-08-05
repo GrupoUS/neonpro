@@ -1,4 +1,4 @@
-function generateInsightsCSV(data: any): string {
+function _generateInsightsCSV(data: any): string {
   if (!data.correlations && !data.anomalies) {
     throw new Error("Invalid insights data structure");
   }
@@ -12,7 +12,7 @@ function generateInsightsCSV(data: any): string {
 
     data.correlations.forEach((corr: any) => {
       const row = [corr.metric1, corr.metric2, corr.correlation, corr.significance, corr.strength];
-      csv += row.join(",") + "\n";
+      csv += `${row.join(",")}\n`;
     });
     csv += "\n";
   }
@@ -31,20 +31,20 @@ function generateInsightsCSV(data: any): string {
         anomaly.deviation,
         anomaly.severity,
       ];
-      csv += row.join(",") + "\n";
+      csv += `${row.join(",")}\n`;
     });
   }
 
   return csv;
 }
 
-function generateDashboardCSV(data: any): string {
+function _generateDashboardCSV(data: any): string {
   if (!data.kpis) {
     throw new Error("Invalid dashboard data structure");
   }
 
   const headers = ["Metric", "Value", "Change", "Trend"];
-  let csv = headers.join(",") + "\n";
+  let csv = `${headers.join(",")}\n`;
 
   Object.entries(data.kpis).forEach(([key, value]: [string, any]) => {
     const row = [
@@ -53,13 +53,13 @@ function generateDashboardCSV(data: any): string {
       "", // TODO: Add change calculation
       "", // TODO: Add trend calculation
     ];
-    csv += row.join(",") + "\n";
+    csv += `${row.join(",")}\n`;
   });
 
   return csv;
 }
 
-function generateRealtimeCSV(data: any): string {
+function _generateRealtimeCSV(data: any): string {
   if (!data.metrics) {
     throw new Error("Invalid realtime data structure");
   }
@@ -72,7 +72,7 @@ function generateRealtimeCSV(data: any): string {
     "Churn Rate",
     "New Signups",
   ];
-  let csv = headers.join(",") + "\n";
+  let csv = `${headers.join(",")}\n`;
 
   const timestamp = new Date().toISOString();
   const row = [
@@ -83,13 +83,13 @@ function generateRealtimeCSV(data: any): string {
     data.metrics.churnRate,
     data.metrics.newSignups,
   ];
-  csv += row.join(",") + "\n";
+  csv += `${row.join(",")}\n`;
 
   return csv;
 }
 
 // Excel Generation Functions
-function addCohortSheetsToWorkbook(workbook: any, data: any, options: any) {
+function _addCohortSheetsToWorkbook(workbook: any, data: any, _options: any) {
   // Cohort Overview Sheet
   const overviewData = [
     ["Cohort Analysis Report"],
@@ -148,7 +148,7 @@ function addCohortSheetsToWorkbook(workbook: any, data: any, options: any) {
   }
 }
 
-function addForecastSheetsToWorkbook(workbook: any, data: any, options: any) {
+function _addForecastSheetsToWorkbook(workbook: any, data: any, _options: any) {
   // Forecast Data Sheet
   const forecastData = [
     ["Forecast Report"],
@@ -211,7 +211,7 @@ function addForecastSheetsToWorkbook(workbook: any, data: any, options: any) {
   }
 }
 
-function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
+function _addInsightsSheetsToWorkbook(workbook: any, data: any, _options: any) {
   // Correlations Sheet
   if (data.correlations) {
     const corrData = [
@@ -301,7 +301,7 @@ function addInsightsSheetsToWorkbook(workbook: any, data: any, options: any) {
   }
 }
 
-function addDashboardSheetsToWorkbook(workbook: any, data: any, options: any) {
+function _addDashboardSheetsToWorkbook(workbook: any, data: any, _options: any) {
   // KPIs Sheet
   const kpiData = [
     ["Analytics Dashboard"],

@@ -1,19 +1,18 @@
-"use strict";
 // KPI Calculation and Monitoring Engine
 // Description: High-performance KPI calculation engine with real-time monitoring
 // Author: Dev Agent
 // Date: 2025-01-26
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,11 +132,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.kpiEngine = exports.KPIEngine = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var KPIEngine = /** @class */ (function () {
+var KPIEngine = /** @class */ (() => {
   function KPIEngine() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -172,14 +169,12 @@ var KPIEngine = /** @class */ (function () {
           case 5:
             kpisToCalculate = _a;
             results = [];
-            calculations = kpisToCalculate.map(function (kpi) {
-              return _this.calculateSingleKPI(kpi, request);
-            });
+            calculations = kpisToCalculate.map((kpi) => _this.calculateSingleKPI(kpi, request));
             return [4 /*yield*/, Promise.all(calculations)];
           case 6:
             calculationResults = _b.sent();
             results.push.apply(results, calculationResults);
-            if (!!request.force_recalculation) return [3 /*break*/, 9];
+            if (request.force_recalculation) return [3 /*break*/, 9];
             return [4 /*yield*/, this.updateKPIValues(results)];
           case 7:
             _b.sent();
@@ -380,14 +375,12 @@ var KPIEngine = /** @class */ (function () {
             value = 0;
             breakdown = [];
             if (!(kpi.kpi_name === "Total Revenue")) return [3 /*break*/, 2];
-            value = invoices.reduce(function (sum, inv) {
-              return sum + inv.amount;
-            }, 0);
-            serviceBreakdown = invoices.reduce(function (acc, inv) {
+            value = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+            serviceBreakdown = invoices.reduce((acc, inv) => {
               acc[inv.service_type] = (acc[inv.service_type] || 0) + inv.amount;
               return acc;
             }, {});
-            Object.entries(serviceBreakdown).forEach(function (_a) {
+            Object.entries(serviceBreakdown).forEach((_a) => {
               var service = _a[0],
                 amount = _a[1];
               breakdown.push({
@@ -409,9 +402,7 @@ var KPIEngine = /** @class */ (function () {
             ];
           case 3:
             patients = _c.sent().data;
-            totalRevenue = invoices.reduce(function (sum, inv) {
-              return sum + inv.amount;
-            }, 0);
+            totalRevenue = invoices.reduce((sum, inv) => sum + inv.amount, 0);
             value = (patients === null || patients === void 0 ? void 0 : patients.length)
               ? totalRevenue / patients.length
               : 0;
@@ -472,21 +463,15 @@ var KPIEngine = /** @class */ (function () {
             totalRevenue =
               (invoices === null || invoices === void 0
                 ? void 0
-                : invoices.reduce(function (sum, inv) {
-                    return sum + inv.amount;
-                  }, 0)) || 0;
+                : invoices.reduce((sum, inv) => sum + inv.amount, 0)) || 0;
             totalDirectCosts =
               (invoices === null || invoices === void 0
                 ? void 0
-                : invoices.reduce(function (sum, inv) {
-                    return sum + (inv.direct_costs || 0);
-                  }, 0)) || 0;
+                : invoices.reduce((sum, inv) => sum + (inv.direct_costs || 0), 0)) || 0;
             totalExpenses =
               (expenses === null || expenses === void 0
                 ? void 0
-                : expenses.reduce(function (sum, exp) {
-                    return sum + exp.amount;
-                  }, 0)) || 0;
+                : expenses.reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             value = 0;
             breakdown = [];
             if (kpi.kpi_name === "Gross Profit Margin") {
@@ -500,11 +485,11 @@ var KPIEngine = /** @class */ (function () {
             expenseBreakdown =
               (expenses === null || expenses === void 0
                 ? void 0
-                : expenses.reduce(function (acc, exp) {
+                : expenses.reduce((acc, exp) => {
                     acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
                     return acc;
                   }, {})) || {};
-            Object.entries(expenseBreakdown).forEach(function (_a) {
+            Object.entries(expenseBreakdown).forEach((_a) => {
               var category = _a[0],
                 amount = _a[1];
               breakdown.push({
@@ -576,9 +561,7 @@ var KPIEngine = /** @class */ (function () {
             returningPatients = new Set(
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.map(function (a) {
-                    return a.patient_id;
-                  })) || [],
+                : appointments.map((a) => a.patient_id)) || [],
             );
             totalPatients =
               (patients === null || patients === void 0 ? void 0 : patients.length) || 0;
@@ -604,9 +587,7 @@ var KPIEngine = /** @class */ (function () {
               ((_a =
                 appointments === null || appointments === void 0
                   ? void 0
-                  : appointments.filter(function (a) {
-                      return a.status !== "cancelled";
-                    })) === null || _a === void 0
+                  : appointments.filter((a) => a.status !== "cancelled")) === null || _a === void 0
                 ? void 0
                 : _a.length) || 0;
             value = totalSlots ? (bookedSlots / totalSlots) * 100 : 0;
@@ -638,9 +619,7 @@ var KPIEngine = /** @class */ (function () {
             marketingCosts =
               (expenses === null || expenses === void 0
                 ? void 0
-                : expenses.reduce(function (sum, exp) {
-                    return sum + exp.amount;
-                  }, 0)) || 0;
+                : expenses.reduce((sum, exp) => sum + exp.amount, 0)) || 0;
             newPatientCount =
               (newPatients === null || newPatients === void 0 ? void 0 : newPatients.length) || 0;
             value = newPatientCount ? marketingCosts / newPatientCount : 0;
@@ -709,20 +688,14 @@ var KPIEngine = /** @class */ (function () {
             operatingCashFlow =
               ((revenue === null || revenue === void 0
                 ? void 0
-                : revenue.reduce(function (sum, r) {
-                    return sum + r.amount;
-                  }, 0)) || 0) -
+                : revenue.reduce((sum, r) => sum + r.amount, 0)) || 0) -
               ((expenses === null || expenses === void 0
                 ? void 0
-                : expenses.reduce(function (sum, e) {
-                    return sum + e.amount;
-                  }, 0)) || 0);
+                : expenses.reduce((sum, e) => sum + e.amount, 0)) || 0);
             monthlyExpenses =
               (expenses === null || expenses === void 0
                 ? void 0
-                : expenses.reduce(function (sum, e) {
-                    return sum + e.amount;
-                  }, 0)) || 0;
+                : expenses.reduce((sum, e) => sum + e.amount, 0)) || 0;
             currentLiabilities = monthlyExpenses * 0.3;
             value = currentLiabilities ? operatingCashFlow / currentLiabilities : 0;
             dataPoints =
@@ -744,20 +717,14 @@ var KPIEngine = /** @class */ (function () {
             totalRevenue =
               (invoices === null || invoices === void 0
                 ? void 0
-                : invoices.reduce(function (sum, inv) {
-                    return sum + inv.amount;
-                  }, 0)) || 0;
+                : invoices.reduce((sum, inv) => sum + inv.amount, 0)) || 0;
             pendingReceivables =
               ((_a =
                 invoices === null || invoices === void 0
                   ? void 0
-                  : invoices.filter(function (inv) {
-                      return inv.status === "pending";
-                    })) === null || _a === void 0
+                  : invoices.filter((inv) => inv.status === "pending")) === null || _a === void 0
                 ? void 0
-                : _a.reduce(function (sum, inv) {
-                    return sum + inv.amount;
-                  }, 0)) || 0;
+                : _a.reduce((sum, inv) => sum + inv.amount, 0)) || 0;
             value = pendingReceivables ? totalRevenue / pendingReceivables : 0;
             dataPoints = (invoices === null || invoices === void 0 ? void 0 : invoices.length) || 0;
             _b.label = 5;
@@ -833,14 +800,14 @@ var KPIEngine = /** @class */ (function () {
     });
   };
   // Helper Methods
-  KPIEngine.prototype.determineTrendDirection = function (current, previous) {
+  KPIEngine.prototype.determineTrendDirection = (current, previous) => {
     if (!previous) return "stable";
     var threshold = 0.05; // 5% threshold for stability
     var change = Math.abs((current - previous) / previous);
     if (change < threshold) return "stable";
     return current > previous ? "increasing" : "decreasing";
   };
-  KPIEngine.prototype.calculateConfidenceScore = function (dataPoints, category) {
+  KPIEngine.prototype.calculateConfidenceScore = (dataPoints, category) => {
     // Simple confidence scoring based on data points and category
     var baseScore = Math.min(dataPoints / 100, 1); // More data points = higher confidence
     var categoryMultiplier = category === "revenue" ? 1.2 : 1.0; // Revenue data typically more reliable
@@ -927,16 +894,14 @@ var KPIEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            updates = results.map(function (result) {
-              return {
-                id: result.kpi_id,
-                current_value: result.calculated_value,
-                previous_value: result.previous_value || null,
-                variance_percent: result.variance_percent || null,
-                trend_direction: result.trend_direction,
-                last_updated: result.calculation_timestamp,
-              };
-            });
+            updates = results.map((result) => ({
+              id: result.kpi_id,
+              current_value: result.calculated_value,
+              previous_value: result.previous_value || null,
+              variance_percent: result.variance_percent || null,
+              trend_direction: result.trend_direction,
+              last_updated: result.calculation_timestamp,
+            }));
             (_i = 0), (updates_1 = updates);
             _a.label = 1;
           case 1:
@@ -964,18 +929,16 @@ var KPIEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            historyRecords = results.map(function (result) {
-              return {
-                kpi_id: result.kpi_id,
-                value: result.calculated_value,
-                recorded_at: result.calculation_timestamp,
-                calculation_metadata: {
-                  data_points_used: result.data_points_used,
-                  confidence_score: result.confidence_score,
-                  breakdown: result.breakdown,
-                },
-              };
-            });
+            historyRecords = results.map((result) => ({
+              kpi_id: result.kpi_id,
+              value: result.calculated_value,
+              recorded_at: result.calculation_timestamp,
+              calculation_metadata: {
+                data_points_used: result.data_points_used,
+                confidence_score: result.confidence_score,
+                breakdown: result.breakdown,
+              },
+            }));
             return [4 /*yield*/, this.supabase.from("kpi_history").insert(historyRecords)];
           case 1:
             _a.sent();
@@ -1030,7 +993,7 @@ var KPIEngine = /** @class */ (function () {
       });
     });
   };
-  KPIEngine.prototype.checkThresholdBreach = function (value, threshold) {
+  KPIEngine.prototype.checkThresholdBreach = (value, threshold) => {
     var threshold_value = threshold.threshold_value,
       comparison_operator = threshold.comparison_operator;
     switch (comparison_operator) {
@@ -1111,7 +1074,7 @@ var KPIEngine = /** @class */ (function () {
   // Drill-down implementations (simplified)
   KPIEngine.prototype.drillDownByTime = function (kpi, request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would vary based on aggregation level (day, week, month, etc.)
         return [2 /*return*/, []];
       });
@@ -1119,7 +1082,7 @@ var KPIEngine = /** @class */ (function () {
   };
   KPIEngine.prototype.drillDownByServiceType = function (kpi, request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for service type breakdown
         return [2 /*return*/, []];
       });
@@ -1127,7 +1090,7 @@ var KPIEngine = /** @class */ (function () {
   };
   KPIEngine.prototype.drillDownByProvider = function (kpi, request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for provider breakdown
         return [2 /*return*/, []];
       });
@@ -1135,7 +1098,7 @@ var KPIEngine = /** @class */ (function () {
   };
   KPIEngine.prototype.drillDownByPatientSegment = function (kpi, request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for patient segment breakdown
         return [2 /*return*/, []];
       });

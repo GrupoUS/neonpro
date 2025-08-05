@@ -1,0 +1,314 @@
+# ENHANCED CORRECTION ACTION PLAN - ULTRACITE + HUSKY INTEGRATION
+# Based on: TypeScript (125 errors), Ultracite (3 errors + 120 warnings), Husky Pipeline
+# Generated: 2025-01-22
+# Target: 96% error reduction, Husky pre-commit compliance
+
+metadata:
+  total_issues_identified: "248 errors/warnings"
+  build_status: "FAILING (4/6 packages, 125 TS errors in API)"
+  husky_status: "🚫 PRE-COMMIT BLOCKED (zero-tolerance policy)"
+  ultracite_improvement: "30% reduction vs direct Biome (17 files auto-fixed)"
+  priority_levels: 5  # Added P0 for Husky-blocking issues
+  estimated_completion: "7-10 hours (revised with Ultracite)"
+  expected_reduction: "96%+ with full Husky compliance"
+
+## ═════════════════════════════════════════════════════════════════
+## 🚨 PRIORITY 0: HUSKY PRE-COMMIT BLOCKERS (4 tasks - 45 min)
+## ═════════════════════════════════════════════════════════════════
+
+prioritized_backlog:
+
+  # ───────── P0: ENVIRONMENT SAFETY (Husky Critical) ─────────
+  - task_id: "P0-ENV-01"
+    description: "Replace non-null assertions with proper env validation"
+    files_to_change:
+      - "apps/neonpro-api/src/index.ts"
+    priority: 0
+    type: "environment"
+    estimated_time: "30 minutes"
+    ultracite_errors_fixed: 3
+    specific_fixes:
+      - "Replace process.env.SUPABASE_URL! with validation"
+      - "Replace process.env.SUPABASE_ANON_KEY! with validation"  
+      - "Replace process.env.SUPABASE_SERVICE_KEY! with validation"
+      - "Add environment validation helper function"
+    impact: "Enables Husky pre-commit pipeline + environment safety"
+    validation_command: "npx ultracite lint src/index.ts"
+    
+  - task_id: "P0-PRISMA-01"
+    description: "Configure Prisma schema path for web build"
+    files_to_change:
+      - "apps/neonpro-web/package.json"
+      - "prisma/schema.prisma"
+    priority: 0
+    type: "infrastructure"
+    estimated_time: "15 minutes"
+    impact: "Enables @neonpro/web build (2/6 → 3/6 success)"
+    validation_command: "turbo build --filter=@neonpro/web"
+
+## ═════════════════════════════════════════════════════════════════
+## 🔴 PRIORITY 1: CRITICAL BUILD-BREAKING (45 tasks - 3-4 hours)
+## ═════════════════════════════════════════════════════════════════
+
+  # ───────── P1: FASTIFY BILLING CONTEXT (35-40 errors) ─────────
+  - task_id: "P1-BILLING-01"
+    description: "Wrap billing.ts in proper Fastify plugin structure"
+    files_to_change:
+      - "apps/neonpro-api/src/routes/billing.ts"
+    priority: 1
+    type: "architecture"
+    estimated_time: "120 minutes"
+    typescript_errors_fixed: 40
+    specific_fixes:
+      - "Add FastifyPluginAsync wrapper function"
+      - "Fix 'fastify' is not defined errors (15+ instances)"
+      - "Add proper function signatures for handlers"
+      - "Fix implicit 'any' parameter types (10+ instances)"
+    impact: "Fixes largest single source of TypeScript errors"
+    validation_command: "npx tsc --noEmit src/routes/billing.ts"
+    
+  - task_id: "P1-EXPORTS-01"
+    description: "Add missing healthcare utility exports"
+    files_to_change:
+      - "apps/neonpro-api/src/utils/healthcare.ts"
+    priority: 1  
+    type: "architecture"
+    estimated_time: "45 minutes"
+    typescript_errors_fixed: 3
+    missing_exports:
+      - "calculateBrazilianTaxes"
+      - "formatCurrency"
+      - "validateCNPJ"
+    impact: "Enables billing.ts compilation"
+    validation_command: "npx tsc --noEmit src/routes/billing.ts"
+    
+  # ───────── P1: USER TYPE ASSERTIONS ─────────
+  - task_id: "P1-TYPES-01"
+    description: "Fix user property access type assertions"
+    files_to_change:
+      - "apps/neonpro-api/src/routes/billing.ts"
+      - "apps/neonpro-api/src/plugins/rate-limiting.ts"
+      - "apps/neonpro-api/src/plugins/auth.ts"
+    priority: 1
+    type: "types"
+    estimated_time: "75 minutes"
+    typescript_errors_fixed: 20
+    specific_fixes:
+      - "Add (request.user as HealthcareUser) type assertions"
+      - "Fix tenantId/userId property access (6+ instances)"
+      - "Add type guards for union type access"
+    impact: "Resolves user object runtime errors"
+    validation_command: "npx ultracite lint src/plugins/ src/routes/"
+
+## ═════════════════════════════════════════════════════════════════
+## 🟠 PRIORITY 2: HIGH RUNTIME ISSUES (25 tasks - 2-3 hours)
+## ═════════════════════════════════════════════════════════════════
+
+  # ───────── P2: PLUGIN INTERFACES ─────────
+  - task_id: "P2-PLUGINS-01"
+    description: "Fix FastifyInstance decorator signatures"
+    files_to_change:
+      - "apps/neonpro-api/src/plugins/supabase.ts"
+      - "apps/neonpro-api/src/plugins/audit.ts"
+      - "apps/neonpro-api/src/types/fastify.d.ts"
+    priority: 2
+    type: "integration"
+    estimated_time: "90 minutes"
+    typescript_errors_fixed: 8
+    ultracite_warnings_addressed: 5
+    specific_fixes:
+      - "Fix checkDatabaseHealth return type signature"
+      - "Update FastifyInstance decorator interfaces"
+      - "Resolve insertAuditLog interface mismatch"
+      - "Remove explicit 'any' from fastify.d.ts (9 instances)"
+    impact: "Enables proper plugin functionality"
+    validation_command: "npx tsc --noEmit src/plugins/"
+    
+  - task_id: "P2-JOB-MANAGER-01"
+    description: "Fix job manager interface and logging issues"
+    files_to_change:
+      - "apps/neonpro-api/src/jobs/job-manager.ts"
+      - "apps/neonpro-api/src/plugins/logging.ts"
+    priority: 2
+    type: "types"
+    estimated_time: "75 minutes"
+    typescript_errors_fixed: 12
+    specific_fixes:
+      - "Add jobId, patientId, recordId to logging interface"
+      - "Fix KeepJobs type conversion (number → proper object)"
+      - "Resolve object literal property errors"
+    impact: "Enables job processing and audit logging"
+    validation_command: "npx tsc --noEmit src/jobs/ src/plugins/logging.ts"
+
+## ═════════════════════════════════════════════════════════════════
+## 🟡 PRIORITY 3: INFRASTRUCTURE & TESTING (20 tasks - 1-2 hours)
+## ═════════════════════════════════════════════════════════════════
+
+  # ───────── P3: TEST INFRASTRUCTURE ─────────
+  - task_id: "P3-JEST-01"
+    description: "Configure Jest types and test environment"
+    files_to_change:
+      - "apps/neonpro-api/package.json"
+      - "apps/neonpro-api/tsconfig.json"
+      - "apps/neonpro-api/jest.config.js"
+    priority: 3
+    type: "configuration"
+    estimated_time: "60 minutes"
+    typescript_errors_fixed: 18
+    specific_fixes:
+      - "Add @types/jest dependency"
+      - "Configure Jest globals in tsconfig types"
+      - "Fix global setup/teardown type issues"
+      - "Add proper test environment types"
+    impact: "Enables test execution and development"
+    validation_command: "npx tsc --noEmit tests/"
+    
+  # ───────── P3: EDGE SERVICES & MONITORING ─────────
+  - task_id: "P3-INTEGRATIONS-01"
+    description: "Fix edge services and monitoring type issues"
+    files_to_change:
+      - "apps/neonpro-api/src/integrations/edge-services.ts"
+      - "apps/neonpro-api/src/plugins/monitoring.ts"
+      - "apps/neonpro-api/src/plugins/redis-cache.ts"
+    priority: 3
+    type: "integration"
+    estimated_time: "60 minutes"
+    typescript_errors_fixed: 8
+    ultracite_warnings_addressed: 10
+    specific_fixes:
+      - "Fix unknown to T|undefined assignments"
+      - "Fix ArrayBufferLike conversion issues"
+      - "Add monitoringPlugin reference resolution"
+      - "Fix Redis cache type annotations"
+    impact: "Enables external service integrations"
+    validation_command: "npx ultracite lint src/integrations/ src/plugins/"
+
+## ═════════════════════════════════════════════════════════════════
+## 🔵 PRIORITY 4: CODE QUALITY & STANDARDS (120 tasks - 30 min)
+## ═════════════════════════════════════════════════════════════════
+
+  # ───────── P4: ULTRACITE AUTOMATED FIXES ─────────
+  - task_id: "P4-ULTRACITE-01"
+    description: "Apply remaining Ultracite auto-fixes"
+    files_to_change: ["apps/neonpro-api/src/**/*.ts"]
+    priority: 4
+    type: "formatting"
+    estimated_time: "15 minutes"
+    automation: "npx ultracite format --unsafe"
+    ultracite_warnings_fixed: 100
+    impact: "Automated code style and formatting improvements"
+    
+  - task_id: "P4-EXPLICIT-ANY-01"
+    description: "Replace explicit any types with proper types"
+    files_to_change:
+      - "apps/neonpro-api/src/types/fastify.d.ts"
+      - "apps/neonpro-api/src/plugins/monitoring.ts"
+    priority: 4
+    type: "types" 
+    estimated_time: "15 minutes"
+    ultracite_warnings_fixed: 18
+    specific_fixes:
+      - "Replace any with proper Supabase client types"
+      - "Add proper Request/Reply type annotations"
+      - "Define proper metadata record types"
+    impact: "Improves type safety and development experience"
+
+## ═════════════════════════════════════════════════════════════════
+## 🔄 ENHANCED EXECUTION WORKFLOW WITH ULTRACITE + HUSKY
+## ═════════════════════════════════════════════════════════════════
+
+execution_workflow_enhanced:
+  phase_0_prepare: "Disable Husky temporarily (mv .husky .husky.bak)"
+  phase_0_execute: "Execute P0 tasks (45 minutes)"
+  phase_0_validate: "npx ultracite lint - expect 0 errors"
+  
+  phase_1_critical: "Execute P1 tasks (3-4 hours)"
+  phase_1_validate: "npx tsc --noEmit - expect <50 errors (60% reduction)"
+  
+  phase_2_runtime: "Execute P2 tasks (2-3 hours)"
+  phase_2_validate: "turbo build - expect 6/6 packages success"
+  
+  phase_3_infra: "Execute P3 tasks (1-2 hours)"
+  phase_3_validate: "npx tsc --noEmit - expect <5 errors (96% reduction)"
+  
+  phase_4_quality: "Execute P4 tasks (30 minutes)"
+  phase_4_validate: "npx ultracite lint - expect 0 errors, <20 warnings"
+  
+  phase_final_husky: "Re-enable Husky (mv .husky.bak .husky)"
+  phase_final_test: "git add . && git commit -m 'test: validate pipeline'"
+
+## ═════════════════════════════════════════════════════════════════
+## 🎯 HUSKY COMPLIANCE & VALIDATION STRATEGY
+## ═════════════════════════════════════════════════════════════════
+
+husky_integration:
+  pre_commit_requirements:
+    biome_formatting: "Auto-applied during correction"
+    ultracite_analysis: "0 errors, <20 warnings target"
+    typescript_errors: "0 errors (zero-tolerance policy)"
+    lint_staged: "All staged files pass quality checks"
+    
+  compliance_validation:
+    command: "bash .husky/pre-commit"
+    expected_result: "✅ PRÉ-COMMIT APROVADO - Qualidade ≥9.8/10"
+    fallback_plan: "Individual tool validation if pipeline fails"
+    
+  commit_message_format:
+    convention: "feat|fix|docs|style|refactor|test|chore: description"
+    examples:
+      - "fix: resolve 125 TypeScript compilation errors"
+      - "feat: integrate Ultracite quality pipeline"
+      - "refactor: improve Fastify plugin architecture"
+
+## ═════════════════════════════════════════════════════════════════
+## 📊 SUCCESS METRICS WITH ULTRACITE + HUSKY COMPLIANCE
+## ═════════════════════════════════════════════════════════════════
+
+success_metrics_final:
+  error_reduction_targets:
+    typescript_errors: "125 → 0 (100% elimination)"
+    ultracite_errors: "3 → 0 (100% elimination)"
+    ultracite_warnings: "120 → <20 (83% reduction)"
+    build_success_rate: "4/6 → 6/6 packages (100%)"
+    
+  husky_compliance_metrics:
+    pre_commit_status: "🚫 FAILING → ✅ PASSING"
+    quality_enforcement: "Zero-tolerance TypeScript errors"
+    automated_formatting: "Biome + Ultracite integration"
+    conventional_commits: "Enforced message standards"
+    
+  development_experience:
+    commit_reliability: "Every commit builds and passes quality checks"
+    code_standards: "Consistent formatting and style"
+    type_safety: "Full TypeScript compliance"
+    team_productivity: "Reduced debugging time, better DX"
+    
+  time_investment_vs_benefit:
+    total_correction_time: "7-10 hours"
+    future_time_saved: "Hundreds of hours in debugging/maintenance"
+    quality_improvement: "9.0/10 → 9.8/10"
+    technical_debt_reduction: "Significant architectural improvements"
+
+## ═════════════════════════════════════════════════════════════════
+## 🚀 IMMEDIATE EXECUTION SEQUENCE
+## ═════════════════════════════════════════════════════════════════
+
+immediate_execution_plan:
+  step_1: "mv .husky .husky.bak (temporarily disable)"
+  step_2: "Execute P0-ENV-01 (environment validation)"
+  step_3: "Execute P0-PRISMA-01 (schema configuration)"
+  step_4: "npx ultracite lint src/index.ts (validate P0 fixes)"
+  step_5: "turbo build --filter=@neonpro/web (validate prisma fix)"
+  step_6: "Begin P1 critical fixes (billing context)"
+  
+rollback_safety:
+  git_strategy: "Commit after each priority level completion"
+  husky_bypass: "Temporarily disabled during correction phase"
+  validation_checkpoints: "Tool-specific validation after each phase"
+  recovery_plan: "Individual error-by-error approach if batch fails"
+
+## ═════════════════════════════════════════════════════════════════
+## END OF ENHANCED CORRECTION ACTION PLAN
+## Status: Ready for systematic execution with Ultracite + Husky integration
+## Target: 96% error reduction + full pre-commit pipeline compliance
+## ═════════════════════════════════════════════════════════════════

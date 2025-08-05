@@ -1,10 +1,10 @@
+import type { createClient } from "@supabase/supabase-js";
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
-import type { createClient } from "@supabase/supabase-js";
 import type {
+  ReceiptData,
   ReceiptInvoiceManager,
-  type ReceiptData,
-  type TemplateOptions,
+  TemplateOptions,
 } from "@/lib/payments/receipts/receipt-invoice-manager";
 
 // Validation schemas

@@ -10,17 +10,17 @@
  */
 
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { validateUUID, removeUndefined } from "./utils";
 import type {
+  AuthenticationResponse,
   SecurityConfig,
   SecurityEvent,
   SecurityEventType,
-  SecuritySeverity,
   SecurityPattern,
   SecurityReport,
+  SecuritySeverity,
   ThreatLevel,
-  AuthenticationResponse,
 } from "./types";
+import type { removeUndefined, validateUUID } from "./utils";
 
 /**
  * Security Event Logger Class

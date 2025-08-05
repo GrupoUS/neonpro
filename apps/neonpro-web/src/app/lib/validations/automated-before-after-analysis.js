@@ -1,4 +1,3 @@
-"use strict";
 // app/lib/validations/automated-before-after-analysis.ts
 // Validation schemas for Story 10.1: Automated Before/After Analysis
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -392,14 +391,9 @@ exports.bulkUpdatePhotoPairSchema = zod_1.z.object({
 });
 exports.bulkDeleteSchema = zod_1.z.object({
   ids: zod_1.z.array(zod_1.z.string().uuid()).min(1),
-  confirm: zod_1.z.boolean().refine(
-    function (val) {
-      return val === true;
-    },
-    {
-      message: "Confirmation required for bulk delete operation",
-    },
-  ),
+  confirm: zod_1.z.boolean().refine((val) => val === true, {
+    message: "Confirmation required for bulk delete operation",
+  }),
 });
 // Export validation schemas with proper error handling
 exports.validationSchemas = {

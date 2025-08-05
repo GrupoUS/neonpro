@@ -1,12 +1,25 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
 import type { motion } from "framer-motion";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
+import type {
+  Clock,
+  DollarSign,
+  Heart,
+  Info,
+  Search,
+  Sparkles,
+  Star,
+  User,
+  X,
+  Zap,
+} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import type { useTranslation } from "@/app/lib/i18n/use-translation";
+import type { Service, ServiceCategory } from "@/app/types/appointments";
+import type { createClient } from "@/app/utils/supabase/client";
 import type { Badge } from "@/components/ui/badge";
-import type { Skeleton } from "@/components/ui/skeleton";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -14,21 +27,8 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type {
-  Search,
-  Clock,
-  DollarSign,
-  Sparkles,
-  User,
-  Heart,
-  Zap,
-  Star,
-  Info,
-  X,
-} from "lucide-react";
-import type { useTranslation } from "@/app/lib/i18n/use-translation";
-import type { createClient } from "@/app/utils/supabase/client";
-import type { Service, ServiceCategory } from "@/app/types/appointments";
+import type { Input } from "@/components/ui/input";
+import type { Skeleton } from "@/components/ui/skeleton";
 
 interface ServiceSelectionProps {
   selectedService?: Service;

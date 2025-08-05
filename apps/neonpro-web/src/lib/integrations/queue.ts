@@ -7,13 +7,13 @@
  * @created 2025-01-27
  */
 
-import crypto from "crypto";
 import type { createClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 import type {
-  IntegrationQueue,
   IntegrationJob,
-  JobStatus,
+  IntegrationQueue,
   JobProcessor,
+  JobStatus,
   QueueConfig,
   QueueStats,
 } from "./types";
@@ -291,7 +291,7 @@ export class MemoryIntegrationQueue implements IntegrationQueue {
    */
   private calculateRetryDelay(attempts: number): number {
     // Exponential backoff: delay * 2^(attempts-1)
-    return this.config.retryDelay * Math.pow(2, attempts - 1);
+    return this.config.retryDelay * 2 ** (attempts - 1);
   }
 
   /**
@@ -697,7 +697,7 @@ export class SupabaseIntegrationQueue implements IntegrationQueue {
    */
   private calculateRetryDelay(attempts: number): number {
     // Exponential backoff: delay * 2^(attempts-1)
-    return this.config.retryDelay * Math.pow(2, attempts - 1);
+    return this.config.retryDelay * 2 ** (attempts - 1);
   }
 
   /**

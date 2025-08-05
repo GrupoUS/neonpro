@@ -1,14 +1,13 @@
 "use client";
 
-import type { useState, useCallback } from "react";
-import type { useRealTimeAvailability } from "@/hooks/useRealTimeAvailability";
-import type { TimeSlot } from "@/hooks/useRealTimeAvailability";
-import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Loader2, Clock, AlertCircle, RefreshCw, Wifi, WifiOff } from "lucide-react";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { AlertCircle, Clock, Loader2, RefreshCw, Wifi, WifiOff } from "lucide-react";
+import type { useCallback, useState } from "react";
 import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { TimeSlot, useRealTimeAvailability } from "@/hooks/useRealTimeAvailability";
 import type { cn } from "@/lib/utils";
 
 /**

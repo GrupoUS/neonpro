@@ -1,5 +1,7 @@
 "use client";
 
+import type { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { createClient } from "@/lib/supabase/client";
 import type {
   CreateInvoiceData,
@@ -20,8 +22,6 @@ import type {
   UpdateInvoiceData,
   UpdateServiceData,
 } from "@/types/billing";
-import type { useCallback, useEffect, useState } from "react";
-import type { toast } from "sonner";
 
 export function useBilling() {
   const [loading, setLoading] = useState(false);
@@ -597,10 +597,11 @@ export function useBilling() {
             case "daily":
               periodKey = date.toISOString().split("T")[0];
               break;
-            case "weekly":
+            case "weekly": {
               const weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
               periodKey = weekStart.toISOString().split("T")[0];
               break;
+            }
             case "monthly":
               periodKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
               break;

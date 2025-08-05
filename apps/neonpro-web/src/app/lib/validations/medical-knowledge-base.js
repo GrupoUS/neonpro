@@ -1,4 +1,3 @@
-"use strict";
 // Medical Knowledge Base Validation Schemas
 // Story 9.5: Zod validation for medical knowledge management
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -139,15 +138,10 @@ exports.drugInteractionSchema = zod_1.z
     evidence_level: zod_1.z.string().max(50).optional(),
     source_id: zod_1.z.string().uuid().optional(),
   })
-  .refine(
-    function (data) {
-      return data.drug_1_id !== data.drug_2_id;
-    },
-    {
-      message: "Drug IDs must be different",
-      path: ["drug_2_id"],
-    },
-  );
+  .refine((data) => data.drug_1_id !== data.drug_2_id, {
+    message: "Drug IDs must be different",
+    path: ["drug_2_id"],
+  });
 exports.medicalGuidelineSchema = zod_1.z.object({
   id: zod_1.z.string().uuid().optional(),
   guideline_title: zod_1.z.string().min(1).max(500),

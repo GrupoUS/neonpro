@@ -8,12 +8,12 @@
 import type { createClient } from "@/lib/supabase/client";
 import type { createServerClient } from "@/lib/supabase/server";
 import type {
-  FHIRPatient,
-  PatientDB,
-  PatientConsentDB,
-  MedicalConditionDB,
   AllergyIntoleranceDB,
+  FHIRPatient,
   LGPDConsent,
+  MedicalConditionDB,
+  PatientConsentDB,
+  PatientDB,
 } from "@/lib/types/fhir";
 import type { PatientRegistrationData, PatientSearchParams } from "@/lib/validations/patient";
 

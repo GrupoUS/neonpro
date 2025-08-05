@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🔐 Utilitários do Sistema de Gerenciamento de Sessões
  *
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionUtils = void 0;
 exports.generateUUID = generateUUID;
@@ -189,7 +186,7 @@ var DEVICE_FINGERPRINT_LENGTH = 32;
  * Gera um UUID v4
  */
 function generateUUID() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     var r = (Math.random() * 16) | 0;
     var v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
@@ -307,7 +304,7 @@ function validatePasswordStrength(password) {
     feedback.push("Inclua pelo menos um número");
   }
   // Caracteres especiais
-  if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
     score += 1;
   } else {
     feedback.push("Inclua pelo menos um caractere especial");
@@ -373,7 +370,7 @@ function formatBytes(bytes) {
   var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
   if (bytes === 0) return "0 Bytes";
   var i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
+  return Math.round((bytes / 1024 ** i) * 100) / 100 + " " + sizes[i];
 }
 /**
  * Converte string para timestamp
@@ -565,9 +562,7 @@ function calculateDeviceRiskScore(device, recentActivity) {
   }
   // Calcular score total
   var score =
-    Object.values(factors).reduce(function (sum, factor) {
-      return sum + factor;
-    }, 0) / Object.keys(factors).length;
+    Object.values(factors).reduce((sum, factor) => sum + factor, 0) / Object.keys(factors).length;
   // Determinar nível de risco
   var level = "low";
   if (score >= 0.7) {
@@ -598,20 +593,14 @@ function detectAnomalousActivity(activities, userBaseline) {
     confidence += 0.3;
   }
   // Verificar padrões de navegação
-  var pageViews = activities.filter(function (a) {
-    return a.type === "page_view";
-  });
-  var uniquePages = new Set(
-    pageViews.map(function (a) {
-      return a.pageUrl;
-    }),
-  ).size;
+  var pageViews = activities.filter((a) => a.type === "page_view");
+  var uniquePages = new Set(pageViews.map((a) => a.pageUrl)).size;
   if (pageViews.length > 0 && uniquePages / pageViews.length < 0.3) {
     anomalies.push("Padrão de navegação repetitivo");
     confidence += 0.2;
   }
   // Verificar horários incomuns
-  var nightActivities = activities.filter(function (a) {
+  var nightActivities = activities.filter((a) => {
     var hour = new Date(a.createdAt).getHours();
     return hour < 6 || hour > 23;
   });
@@ -633,7 +622,7 @@ function detectAnomalousActivity(activities, userBaseline) {
  */
 function getLocationByIP(ipAddress) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       // Mock implementation - substituir por serviço real como MaxMind ou IPGeolocation
       try {
         // Simular resposta baseada no IP
@@ -769,7 +758,7 @@ function removeUndefined(obj) {
  * Agrupa array por propriedade
  */
 function groupBy(array, key) {
-  return array.reduce(function (groups, item) {
+  return array.reduce((groups, item) => {
     var group = String(item[key]);
     groups[group] = groups[group] || [];
     groups[group].push(item);
@@ -801,7 +790,7 @@ function paginate(array, page, limit) {
  */
 function debounce(func, wait) {
   var timeout = null;
-  return function () {
+  return () => {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args[_i] = arguments[_i];
@@ -809,7 +798,7 @@ function debounce(func, wait) {
     if (timeout) {
       clearTimeout(timeout);
     }
-    timeout = setTimeout(function () {
+    timeout = setTimeout(() => {
       func.apply(void 0, args);
     }, wait);
   };
@@ -819,7 +808,7 @@ function debounce(func, wait) {
  */
 function throttle(func, limit) {
   var inThrottle = false;
-  return function () {
+  return () => {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args[_i] = arguments[_i];
@@ -827,9 +816,7 @@ function throttle(func, limit) {
     if (!inThrottle) {
       func.apply(void 0, args);
       inThrottle = true;
-      setTimeout(function () {
-        return (inThrottle = false);
-      }, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 }

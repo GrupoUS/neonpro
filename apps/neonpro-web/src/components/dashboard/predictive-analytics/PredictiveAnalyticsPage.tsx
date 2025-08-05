@@ -1,5 +1,19 @@
 "use client";
 
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  Download,
+  Plus,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Alert, ForecastingModel, Prediction } from "@/app/types/predictive-analytics";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -19,20 +33,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Activity,
-  AlertTriangle,
-  BarChart3,
-  Brain,
-  Download,
-  Plus,
-  RefreshCw,
-  Settings,
-  Target,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 
 export default function PredictiveAnalyticsPage() {
   const [activeTab, setActiveTab] = useState("dashboard");

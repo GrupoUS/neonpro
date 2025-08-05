@@ -11,18 +11,17 @@
  * - Security incident response
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -42,13 +41,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,9 +69,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -144,10 +141,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -156,7 +153,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmergencyTerminationDashboard = EmergencyTerminationDashboard;
 var react_1 = require("react");
@@ -179,7 +176,6 @@ var ROLE_COLORS = {
   patient: "bg-gray-100 text-gray-800",
 };
 function EmergencyTerminationDashboard(_a) {
-  var _this = this;
   var emergencyTermination = _a.emergencyTermination,
     currentUser = _a.currentUser;
   var _b = (0, react_1.useState)([]),
@@ -236,20 +232,20 @@ function EmergencyTerminationDashboard(_a) {
     stats = _s[0],
     setStats = _s[1];
   // Load initial data
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadDashboardData();
     // Set up auto-refresh
     var interval = setInterval(loadDashboardData, 30000); // Refresh every 30 seconds
     setRefreshInterval(interval);
-    return function () {
+    return () => {
       if (interval) clearInterval(interval);
     };
   }, []);
   var loadDashboardData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var mockSessions, protocolsList, logs, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
@@ -316,15 +312,13 @@ function EmergencyTerminationDashboard(_a) {
               // Calculate stats
               setStats({
                 totalSessions: mockSessions.length,
-                highRiskSessions: mockSessions.filter(function (s) {
-                  return s.riskLevel === "high" || s.riskLevel === "critical";
-                }).length,
-                recentTerminations: logs.filter(function (log) {
-                  return new Date(log.terminatedAt).getTime() > Date.now() - 24 * 60 * 60 * 1000;
-                }).length,
-                activeProtocols: protocolsList.filter(function (p) {
-                  return p.isActive;
-                }).length,
+                highRiskSessions: mockSessions.filter(
+                  (s) => s.riskLevel === "high" || s.riskLevel === "critical",
+                ).length,
+                recentTerminations: logs.filter(
+                  (log) => new Date(log.terminatedAt).getTime() > Date.now() - 24 * 60 * 60 * 1000,
+                ).length,
+                activeProtocols: protocolsList.filter((p) => p.isActive).length,
               });
               return [3 /*break*/, 4];
             case 2:
@@ -339,38 +333,29 @@ function EmergencyTerminationDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [emergencyTermination],
   );
-  var handleSessionSelection = function (sessionId, selected) {
+  var handleSessionSelection = (sessionId, selected) => {
     if (selected) {
-      setSelectedSessions(function (prev) {
-        return __spreadArray(__spreadArray([], prev, true), [sessionId], false);
-      });
+      setSelectedSessions((prev) =>
+        __spreadArray(__spreadArray([], prev, true), [sessionId], false),
+      );
     } else {
-      setSelectedSessions(function (prev) {
-        return prev.filter(function (id) {
-          return id !== sessionId;
-        });
-      });
+      setSelectedSessions((prev) => prev.filter((id) => id !== sessionId));
     }
   };
-  var handleSelectAll = function () {
+  var handleSelectAll = () => {
     if (selectedSessions.length === activeSessions.length) {
       setSelectedSessions([]);
     } else {
-      setSelectedSessions(
-        activeSessions.map(function (s) {
-          return s.sessionId;
-        }),
-      );
+      setSelectedSessions(activeSessions.map((s) => s.sessionId));
     }
   };
-  var handleTerminateSession = function (sessionId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleTerminateSession = (sessionId) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!terminationReason.trim()) {
@@ -394,11 +379,7 @@ function EmergencyTerminationDashboard(_a) {
             result = _a.sent();
             if (!result.success) return [3 /*break*/, 4];
             sonner_1.toast.success("Sess\u00E3o terminada com sucesso");
-            setSelectedSessions(function (prev) {
-              return prev.filter(function (id) {
-                return id !== sessionId;
-              });
-            });
+            setSelectedSessions((prev) => prev.filter((id) => id !== sessionId));
             return [4 /*yield*/, loadDashboardData()];
           case 3:
             _a.sent();
@@ -425,11 +406,10 @@ function EmergencyTerminationDashboard(_a) {
         }
       });
     });
-  };
-  var handleBulkTermination = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBulkTermination = () =>
+    __awaiter(this, void 0, void 0, function () {
       var results, successful, failed, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!terminationReason.trim()) {
@@ -447,24 +427,20 @@ function EmergencyTerminationDashboard(_a) {
             return [
               4 /*yield*/,
               Promise.all(
-                selectedSessions.map(function (sessionId) {
-                  return emergencyTermination.terminateSession(
+                selectedSessions.map((sessionId) =>
+                  emergencyTermination.terminateSession(
                     sessionId,
                     currentUser.id,
                     terminationReason,
                     preserveData,
-                  );
-                }),
+                  ),
+                ),
               ),
             ];
           case 2:
             results = _a.sent();
-            successful = results.filter(function (r) {
-              return r.success;
-            }).length;
-            failed = results.filter(function (r) {
-              return !r.success;
-            }).length;
+            successful = results.filter((r) => r.success).length;
+            failed = results.filter((r) => !r.success).length;
             if (successful > 0) {
               sonner_1.toast.success("".concat(successful, " sess\u00F5es terminadas com sucesso"));
             }
@@ -491,11 +467,10 @@ function EmergencyTerminationDashboard(_a) {
         }
       });
     });
-  };
-  var handleTerminateAll = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleTerminateAll = () =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!terminationReason.trim()) {
@@ -550,11 +525,10 @@ function EmergencyTerminationDashboard(_a) {
         }
       });
     });
-  };
-  var handleExecuteProtocol = function (protocolId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleExecuteProtocol = (protocolId) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -594,8 +568,7 @@ function EmergencyTerminationDashboard(_a) {
         }
       });
     });
-  };
-  var getRiskLevelIcon = function (riskLevel) {
+  var getRiskLevelIcon = (riskLevel) => {
     switch (riskLevel) {
       case "low":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />;
@@ -609,7 +582,7 @@ function EmergencyTerminationDashboard(_a) {
         return <lucide_react_1.Activity className="h-4 w-4 text-gray-600" />;
     }
   };
-  var getSeverityIcon = function (severity) {
+  var getSeverityIcon = (severity) => {
     switch (severity) {
       case "low":
         return <lucide_react_1.CheckCircle className="h-4 w-4" />;
@@ -708,26 +681,20 @@ function EmergencyTerminationDashboard(_a) {
         <card_1.CardContent>
           <div className="flex flex-wrap gap-2">
             {protocols
-              .filter(function (p) {
-                return p.isActive;
-              })
-              .map(function (protocol) {
-                return (
-                  <ui_1.Button
-                    key={protocol.protocolId}
-                    variant={protocol.severity === "critical" ? "destructive" : "outline"}
-                    size="sm"
-                    onClick={function () {
-                      return handleExecuteProtocol(protocol.protocolId);
-                    }}
-                    disabled={terminationInProgress}
-                    className="flex items-center"
-                  >
-                    {getSeverityIcon(protocol.severity)}
-                    <span className="ml-2">{protocol.name}</span>
-                  </ui_1.Button>
-                );
-              })}
+              .filter((p) => p.isActive)
+              .map((protocol) => (
+                <ui_1.Button
+                  key={protocol.protocolId}
+                  variant={protocol.severity === "critical" ? "destructive" : "outline"}
+                  size="sm"
+                  onClick={() => handleExecuteProtocol(protocol.protocolId)}
+                  disabled={terminationInProgress}
+                  className="flex items-center"
+                >
+                  {getSeverityIcon(protocol.severity)}
+                  <span className="ml-2">{protocol.name}</span>
+                </ui_1.Button>
+              ))}
 
             <ui_1.Dialog open={showTerminationDialog} onOpenChange={setShowTerminationDialog}>
               <ui_1.DialogTrigger asChild>
@@ -735,7 +702,7 @@ function EmergencyTerminationDashboard(_a) {
                   variant="destructive"
                   size="sm"
                   disabled={terminationInProgress}
-                  onClick={function () {
+                  onClick={() => {
                     setTerminationType("all");
                     setShowTerminationDialog(true);
                   }}
@@ -780,7 +747,7 @@ function EmergencyTerminationDashboard(_a) {
                           variant="destructive"
                           size="sm"
                           disabled={terminationInProgress}
-                          onClick={function () {
+                          onClick={() => {
                             setTerminationType("bulk");
                             setShowTerminationDialog(true);
                           }}
@@ -819,143 +786,136 @@ function EmergencyTerminationDashboard(_a) {
                     </ui_1.TableRow>
                   </ui_1.TableHeader>
                   <ui_1.TableBody>
-                    {activeSessions.map(function (session) {
-                      return (
-                        <ui_1.TableRow key={session.sessionId}>
-                          <ui_1.TableCell>
-                            <input
-                              type="checkbox"
-                              checked={selectedSessions.includes(session.sessionId)}
-                              onChange={function (e) {
-                                return handleSessionSelection(session.sessionId, e.target.checked);
+                    {activeSessions.map((session) => (
+                      <ui_1.TableRow key={session.sessionId}>
+                        <ui_1.TableCell>
+                          <input
+                            type="checkbox"
+                            checked={selectedSessions.includes(session.sessionId)}
+                            onChange={(e) =>
+                              handleSessionSelection(session.sessionId, e.target.checked)
+                            }
+                            className="rounded"
+                          />
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{session.userName}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {session.userEmail}
+                            </span>
+                            <ui_1.Badge
+                              className={"w-fit mt-1 ".concat(ROLE_COLORS[session.userRole])}
+                            >
+                              {session.userRole}
+                            </ui_1.Badge>
+                          </div>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{session.deviceName}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {session.ipAddress}
+                            </span>
+                          </div>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <span className="text-sm">{session.location}</span>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <div className="flex flex-col">
+                            <span className="text-sm">
+                              Iniciada{" "}
+                              {(0, date_fns_1.formatDistanceToNow)(session.startedAt, {
+                                addSuffix: true,
+                                locale: locale_1.ptBR,
+                              })}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              Última atividade{" "}
+                              {(0, date_fns_1.formatDistanceToNow)(session.lastActivity, {
+                                addSuffix: true,
+                                locale: locale_1.ptBR,
+                              })}
+                            </span>
+                          </div>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getRiskLevelIcon(session.riskLevel)}
+                            <ui_1.Badge className={SEVERITY_COLORS[session.riskLevel]}>
+                              {session.riskLevel}
+                            </ui_1.Badge>
+                          </div>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            <ui_1.Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                // View session details
+                                sonner_1.toast.info("Funcionalidade em desenvolvimento");
                               }}
-                              className="rounded"
-                            />
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{session.userName}</span>
-                              <span className="text-sm text-muted-foreground">
-                                {session.userEmail}
-                              </span>
-                              <ui_1.Badge
-                                className={"w-fit mt-1 ".concat(ROLE_COLORS[session.userRole])}
-                              >
-                                {session.userRole}
-                              </ui_1.Badge>
-                            </div>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{session.deviceName}</span>
-                              <span className="text-sm text-muted-foreground">
-                                {session.ipAddress}
-                              </span>
-                            </div>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <span className="text-sm">{session.location}</span>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <div className="flex flex-col">
-                              <span className="text-sm">
-                                Iniciada{" "}
-                                {(0, date_fns_1.formatDistanceToNow)(session.startedAt, {
-                                  addSuffix: true,
-                                  locale: locale_1.ptBR,
-                                })}
-                              </span>
-                              <span className="text-sm text-muted-foreground">
-                                Última atividade{" "}
-                                {(0, date_fns_1.formatDistanceToNow)(session.lastActivity, {
-                                  addSuffix: true,
-                                  locale: locale_1.ptBR,
-                                })}
-                              </span>
-                            </div>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <div className="flex items-center space-x-2">
-                              {getRiskLevelIcon(session.riskLevel)}
-                              <ui_1.Badge className={SEVERITY_COLORS[session.riskLevel]}>
-                                {session.riskLevel}
-                              </ui_1.Badge>
-                            </div>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <div className="flex items-center space-x-2">
-                              <ui_1.Button
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  // View session details
-                                  sonner_1.toast.info("Funcionalidade em desenvolvimento");
-                                }}
-                              >
-                                <lucide_react_1.Eye className="h-4 w-4" />
-                              </ui_1.Button>
-                              <ui_1.Dialog>
-                                <ui_1.DialogTrigger asChild>
+                            >
+                              <lucide_react_1.Eye className="h-4 w-4" />
+                            </ui_1.Button>
+                            <ui_1.Dialog>
+                              <ui_1.DialogTrigger asChild>
+                                <ui_1.Button
+                                  variant="destructive"
+                                  size="sm"
+                                  disabled={terminationInProgress}
+                                >
+                                  <lucide_react_1.Ban className="h-4 w-4" />
+                                </ui_1.Button>
+                              </ui_1.DialogTrigger>
+                              <ui_1.DialogContent>
+                                <ui_1.DialogHeader>
+                                  <ui_1.DialogTitle>Terminar Sessão</ui_1.DialogTitle>
+                                  <ui_1.DialogDescription>
+                                    Tem certeza que deseja terminar a sessão de {session.userName}?
+                                  </ui_1.DialogDescription>
+                                </ui_1.DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <ui_1.Label htmlFor="reason">Motivo da terminação</ui_1.Label>
+                                    <ui_1.Textarea
+                                      id="reason"
+                                      placeholder="Descreva o motivo da terminação..."
+                                      value={terminationReason}
+                                      onChange={(e) => setTerminationReason(e.target.value)}
+                                    />
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <ui_1.Switch
+                                      id="preserve-data"
+                                      checked={preserveData}
+                                      onCheckedChange={setPreserveData}
+                                    />
+                                    <ui_1.Label htmlFor="preserve-data">
+                                      Preservar dados da sessão
+                                    </ui_1.Label>
+                                  </div>
+                                </div>
+                                <ui_1.DialogFooter>
                                   <ui_1.Button
                                     variant="destructive"
-                                    size="sm"
-                                    disabled={terminationInProgress}
+                                    onClick={() => handleTerminateSession(session.sessionId)}
+                                    disabled={terminationInProgress || !terminationReason.trim()}
                                   >
-                                    <lucide_react_1.Ban className="h-4 w-4" />
+                                    {terminationInProgress
+                                      ? <lucide_react_1.RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                      : <lucide_react_1.Ban className="h-4 w-4 mr-2" />}
+                                    Terminar Sessão
                                   </ui_1.Button>
-                                </ui_1.DialogTrigger>
-                                <ui_1.DialogContent>
-                                  <ui_1.DialogHeader>
-                                    <ui_1.DialogTitle>Terminar Sessão</ui_1.DialogTitle>
-                                    <ui_1.DialogDescription>
-                                      Tem certeza que deseja terminar a sessão de {session.userName}
-                                      ?
-                                    </ui_1.DialogDescription>
-                                  </ui_1.DialogHeader>
-                                  <div className="space-y-4">
-                                    <div>
-                                      <ui_1.Label htmlFor="reason">Motivo da terminação</ui_1.Label>
-                                      <ui_1.Textarea
-                                        id="reason"
-                                        placeholder="Descreva o motivo da terminação..."
-                                        value={terminationReason}
-                                        onChange={function (e) {
-                                          return setTerminationReason(e.target.value);
-                                        }}
-                                      />
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <ui_1.Switch
-                                        id="preserve-data"
-                                        checked={preserveData}
-                                        onCheckedChange={setPreserveData}
-                                      />
-                                      <ui_1.Label htmlFor="preserve-data">
-                                        Preservar dados da sessão
-                                      </ui_1.Label>
-                                    </div>
-                                  </div>
-                                  <ui_1.DialogFooter>
-                                    <ui_1.Button
-                                      variant="destructive"
-                                      onClick={function () {
-                                        return handleTerminateSession(session.sessionId);
-                                      }}
-                                      disabled={terminationInProgress || !terminationReason.trim()}
-                                    >
-                                      {terminationInProgress
-                                        ? <lucide_react_1.RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                                        : <lucide_react_1.Ban className="h-4 w-4 mr-2" />}
-                                      Terminar Sessão
-                                    </ui_1.Button>
-                                  </ui_1.DialogFooter>
-                                </ui_1.DialogContent>
-                              </ui_1.Dialog>
-                            </div>
-                          </ui_1.TableCell>
-                        </ui_1.TableRow>
-                      );
-                    })}
+                                </ui_1.DialogFooter>
+                              </ui_1.DialogContent>
+                            </ui_1.Dialog>
+                          </div>
+                        </ui_1.TableCell>
+                      </ui_1.TableRow>
+                    ))}
                   </ui_1.TableBody>
                 </ui_1.Table>
               </div>
@@ -977,9 +937,7 @@ function EmergencyTerminationDashboard(_a) {
                 <ui_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return setShowProtocolDialog(true);
-                  }}
+                  onClick={() => setShowProtocolDialog(true)}
                 >
                   <lucide_react_1.Settings className="h-4 w-4 mr-2" />
                   Novo Protocolo
@@ -988,88 +946,82 @@ function EmergencyTerminationDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {protocols.map(function (protocol) {
-                  return (
-                    <card_1.Card key={protocol.protocolId} className="border-l-4 border-l-blue-500">
-                      <card_1.CardHeader>
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <ui_1.Badge className={SEVERITY_COLORS[protocol.severity]}>
-                              {protocol.severity}
+                {protocols.map((protocol) => (
+                  <card_1.Card key={protocol.protocolId} className="border-l-4 border-l-blue-500">
+                    <card_1.CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <ui_1.Badge className={SEVERITY_COLORS[protocol.severity]}>
+                            {protocol.severity}
+                          </ui_1.Badge>
+                          <h3 className="font-semibold">{protocol.name}</h3>
+                          {protocol.automaticTrigger && (
+                            <ui_1.Badge variant="outline">
+                              <lucide_react_1.Zap className="h-3 w-3 mr-1" />
+                              Auto
                             </ui_1.Badge>
-                            <h3 className="font-semibold">{protocol.name}</h3>
-                            {protocol.automaticTrigger && (
-                              <ui_1.Badge variant="outline">
-                                <lucide_react_1.Zap className="h-3 w-3 mr-1" />
-                                Auto
-                              </ui_1.Badge>
-                            )}
-                            {!protocol.isActive && (
-                              <ui_1.Badge variant="secondary">
-                                <lucide_react_1.Pause className="h-3 w-3 mr-1" />
-                                Inativo
-                              </ui_1.Badge>
-                            )}
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <ui_1.Button
-                              variant="outline"
-                              size="sm"
-                              onClick={function () {
-                                return handleExecuteProtocol(protocol.protocolId);
-                              }}
-                              disabled={!protocol.isActive || terminationInProgress}
-                            >
-                              <lucide_react_1.Play className="h-4 w-4 mr-2" />
-                              Executar
-                            </ui_1.Button>
-                          </div>
+                          )}
+                          {!protocol.isActive && (
+                            <ui_1.Badge variant="secondary">
+                              <lucide_react_1.Pause className="h-3 w-3 mr-1" />
+                              Inativo
+                            </ui_1.Badge>
+                          )}
                         </div>
-                      </card_1.CardHeader>
-                      <card_1.CardContent>
-                        <p className="text-sm text-muted-foreground mb-4">{protocol.description}</p>
+                        <div className="flex items-center space-x-2">
+                          <ui_1.Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleExecuteProtocol(protocol.protocolId)}
+                            disabled={!protocol.isActive || terminationInProgress}
+                          >
+                            <lucide_react_1.Play className="h-4 w-4 mr-2" />
+                            Executar
+                          </ui_1.Button>
+                        </div>
+                      </div>
+                    </card_1.CardHeader>
+                    <card_1.CardContent>
+                      <p className="text-sm text-muted-foreground mb-4">{protocol.description}</p>
 
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <strong>Condições de Ativação:</strong>
-                            <ul className="list-disc list-inside mt-1 text-muted-foreground">
-                              {protocol.triggerConditions.map(function (condition, index) {
-                                return <li key={index}>{condition}</li>;
-                              })}
-                            </ul>
-                          </div>
-
-                          <div>
-                            <strong>Ações:</strong>
-                            <ul className="list-disc list-inside mt-1 text-muted-foreground">
-                              {protocol.actions.terminateAllSessions && (
-                                <li>Terminar todas as sessões</li>
-                              )}
-                              {protocol.actions.lockAccounts && <li>Bloquear contas</li>}
-                              {protocol.actions.disableNewLogins && (
-                                <li>Desabilitar novos logins</li>
-                              )}
-                              {protocol.actions.notifyAdministrators && (
-                                <li>Notificar administradores</li>
-                              )}
-                            </ul>
-                          </div>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <strong>Condições de Ativação:</strong>
+                          <ul className="list-disc list-inside mt-1 text-muted-foreground">
+                            {protocol.triggerConditions.map((condition, index) => (
+                              <li key={index}>{condition}</li>
+                            ))}
+                          </ul>
                         </div>
 
-                        {protocol.lastTriggered && (
-                          <div className="mt-4 pt-4 border-t">
-                            <span className="text-sm text-muted-foreground">
-                              Última execução:{" "}
-                              {(0, date_fns_1.format)(protocol.lastTriggered, "dd/MM/yyyy HH:mm", {
-                                locale: locale_1.ptBR,
-                              })}
-                            </span>
-                          </div>
-                        )}
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                        <div>
+                          <strong>Ações:</strong>
+                          <ul className="list-disc list-inside mt-1 text-muted-foreground">
+                            {protocol.actions.terminateAllSessions && (
+                              <li>Terminar todas as sessões</li>
+                            )}
+                            {protocol.actions.lockAccounts && <li>Bloquear contas</li>}
+                            {protocol.actions.disableNewLogins && <li>Desabilitar novos logins</li>}
+                            {protocol.actions.notifyAdministrators && (
+                              <li>Notificar administradores</li>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+
+                      {protocol.lastTriggered && (
+                        <div className="mt-4 pt-4 border-t">
+                          <span className="text-sm text-muted-foreground">
+                            Última execução:{" "}
+                            {(0, date_fns_1.format)(protocol.lastTriggered, "dd/MM/yyyy HH:mm", {
+                              locale: locale_1.ptBR,
+                            })}
+                          </span>
+                        </div>
+                      )}
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -1089,7 +1041,7 @@ function EmergencyTerminationDashboard(_a) {
                 <ui_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
+                  onClick={() => {
                     // Export audit logs
                     sonner_1.toast.info("Funcionalidade de exportação em desenvolvimento");
                   }}
@@ -1113,49 +1065,45 @@ function EmergencyTerminationDashboard(_a) {
                     </ui_1.TableRow>
                   </ui_1.TableHeader>
                   <ui_1.TableBody>
-                    {auditLogs.map(function (log) {
-                      return (
-                        <ui_1.TableRow key={log.logId}>
-                          <ui_1.TableCell>
-                            {(0, date_fns_1.format)(log.terminatedAt, "dd/MM/yyyy HH:mm", {
-                              locale: locale_1.ptBR,
-                            })}
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{log.userId}</span>
-                              <span className="text-sm text-muted-foreground">{log.sessionId}</span>
-                            </div>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{log.initiatedBy}</span>
-                              <ui_1.Badge
-                                className={"w-fit ".concat(ROLE_COLORS[log.initiatorRole])}
-                              >
-                                {log.initiatorRole}
-                              </ui_1.Badge>
-                            </div>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <ui_1.Badge variant="outline">{log.terminationType}</ui_1.Badge>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <span className="text-sm">{log.reason}</span>
-                          </ui_1.TableCell>
-                          <ui_1.TableCell>
-                            <div className="flex items-center space-x-2">
-                              {log.success
-                                ? <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
-                                : <lucide_react_1.XCircle className="h-4 w-4 text-red-600" />}
-                              <span className={log.success ? "text-green-600" : "text-red-600"}>
-                                {log.success ? "Sucesso" : "Falha"}
-                              </span>
-                            </div>
-                          </ui_1.TableCell>
-                        </ui_1.TableRow>
-                      );
-                    })}
+                    {auditLogs.map((log) => (
+                      <ui_1.TableRow key={log.logId}>
+                        <ui_1.TableCell>
+                          {(0, date_fns_1.format)(log.terminatedAt, "dd/MM/yyyy HH:mm", {
+                            locale: locale_1.ptBR,
+                          })}
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{log.userId}</span>
+                            <span className="text-sm text-muted-foreground">{log.sessionId}</span>
+                          </div>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{log.initiatedBy}</span>
+                            <ui_1.Badge className={"w-fit ".concat(ROLE_COLORS[log.initiatorRole])}>
+                              {log.initiatorRole}
+                            </ui_1.Badge>
+                          </div>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <ui_1.Badge variant="outline">{log.terminationType}</ui_1.Badge>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <span className="text-sm">{log.reason}</span>
+                        </ui_1.TableCell>
+                        <ui_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            {log.success
+                              ? <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
+                              : <lucide_react_1.XCircle className="h-4 w-4 text-red-600" />}
+                            <span className={log.success ? "text-green-600" : "text-red-600"}>
+                              {log.success ? "Sucesso" : "Falha"}
+                            </span>
+                          </div>
+                        </ui_1.TableCell>
+                      </ui_1.TableRow>
+                    ))}
                   </ui_1.TableBody>
                 </ui_1.Table>
               </div>
@@ -1227,9 +1175,7 @@ function EmergencyTerminationDashboard(_a) {
                 id="termination-reason"
                 placeholder="Descreva o motivo da terminação de emergência..."
                 value={terminationReason}
-                onChange={function (e) {
-                  return setTerminationReason(e.target.value);
-                }}
+                onChange={(e) => setTerminationReason(e.target.value)}
                 className="mt-1"
               />
             </div>
@@ -1258,7 +1204,7 @@ function EmergencyTerminationDashboard(_a) {
           <ui_1.DialogFooter>
             <ui_1.Button
               variant="outline"
-              onClick={function () {
+              onClick={() => {
                 setShowTerminationDialog(false);
                 setTerminationReason("");
               }}
@@ -1268,7 +1214,7 @@ function EmergencyTerminationDashboard(_a) {
             </ui_1.Button>
             <ui_1.Button
               variant="destructive"
-              onClick={function () {
+              onClick={() => {
                 if (terminationType === "all") {
                   handleTerminateAll();
                 } else if (terminationType === "bulk") {

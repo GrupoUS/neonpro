@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MetricCard = void 0;
 /**
@@ -9,7 +8,7 @@ var react_1 = require("react");
 var utils_1 = require("@/lib/utils");
 var neon_card_1 = require("./neon-card");
 var lucide_react_1 = require("lucide-react");
-var MetricCard = function (_a) {
+var MetricCard = (_a) => {
   var title = _a.title,
     value = _a.value,
     subtitle = _a.subtitle,
@@ -23,7 +22,7 @@ var MetricCard = function (_a) {
     _d = _a.loading,
     loading = _d === void 0 ? false : _d,
     className = _a.className;
-  var getTrendIcon = function () {
+  var getTrendIcon = () => {
     switch (trend) {
       case "up":
         return lucide_react_1.TrendingUp;
@@ -34,7 +33,7 @@ var MetricCard = function (_a) {
     }
   };
   var TrendIcon = getTrendIcon();
-  var getTrendColor = function () {
+  var getTrendColor = () => {
     if (variant === "danger") return "text-healthcare-critical";
     if (variant === "warning") return "text-healthcare-urgent";
     if (variant === "success") return "text-healthcare-completed";
@@ -47,7 +46,7 @@ var MetricCard = function (_a) {
         return "text-slate-500";
     }
   };
-  var getVariantStyles = function () {
+  var getVariantStyles = () => {
     switch (variant) {
       case "success":
         return "border-l-healthcare-completed bg-gradient-to-r from-green-50 to-white dark:from-green-950 dark:to-slate-900";

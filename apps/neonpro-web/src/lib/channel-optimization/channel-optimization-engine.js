@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Channel Optimization Engine
  * NeonPro - Sistema inteligente de otimização de canais de comunicação
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,11 +146,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createchannelOptimizationEngine = exports.ChannelOptimizationEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var ChannelOptimizationEngine = /** @class */ (function () {
+var ChannelOptimizationEngine = /** @class */ (() => {
   function ChannelOptimizationEngine() {
     this.cache = new Map();
     this.profiles = new Map();
@@ -227,254 +224,252 @@ var ChannelOptimizationEngine = /** @class */ (function () {
       });
     });
   };
-  ChannelOptimizationEngine.prototype.getDefaultConfig = function () {
-    return {
-      clinicId: "",
-      globalSettings: {
+  ChannelOptimizationEngine.prototype.getDefaultConfig = () => ({
+    clinicId: "",
+    globalSettings: {
+      enabled: true,
+      defaultStrategy: "effectiveness",
+      learningEnabled: true,
+      adaptationRate: 0.1,
+      confidenceThreshold: 0.7,
+      fallbackChannels: ["email", "sms"],
+      maxChannelsPerCommunication: 2,
+      optimizationFrequency: "realtime",
+    },
+    channelSettings: {
+      email: {
         enabled: true,
-        defaultStrategy: "effectiveness",
-        learningEnabled: true,
-        adaptationRate: 0.1,
-        confidenceThreshold: 0.7,
-        fallbackChannels: ["email", "sms"],
-        maxChannelsPerCommunication: 2,
-        optimizationFrequency: "realtime",
-      },
-      channelSettings: {
-        email: {
-          enabled: true,
-          priority: 1,
-          costModel: {
-            type: "per_message",
-            baseCost: 0.05,
-            volumeDiscounts: [
-              { threshold: 1000, discount: 10 },
-              { threshold: 5000, discount: 20 },
-            ],
-            additionalCosts: [],
-          },
-          constraints: {
-            maxDaily: 3,
-            maxWeekly: 15,
-            maxMonthly: 50,
-            cooldownPeriod: 240,
-            blackoutPeriods: [],
-            requiresConsent: true,
-          },
-          adaptations: [],
-          qualityThresholds: {
-            minEffectiveness: 15,
-            minSatisfaction: 7,
-            maxComplaints: 2,
-            minCompliance: 95,
-          },
+        priority: 1,
+        costModel: {
+          type: "per_message",
+          baseCost: 0.05,
+          volumeDiscounts: [
+            { threshold: 1000, discount: 10 },
+            { threshold: 5000, discount: 20 },
+          ],
+          additionalCosts: [],
         },
-        sms: {
-          enabled: true,
-          priority: 2,
-          costModel: {
-            type: "per_message",
-            baseCost: 0.15,
-            volumeDiscounts: [
-              { threshold: 500, discount: 8 },
-              { threshold: 2000, discount: 15 },
-            ],
-            additionalCosts: [],
-          },
-          constraints: {
-            maxDaily: 2,
-            maxWeekly: 8,
-            maxMonthly: 25,
-            cooldownPeriod: 480,
-            blackoutPeriods: [
-              {
-                startHour: 22,
-                startMinute: 0,
-                endHour: 8,
-                endMinute: 0,
-                timezone: "America/Sao_Paulo",
-              },
-            ],
-            requiresConsent: true,
-          },
-          adaptations: [],
-          qualityThresholds: {
-            minEffectiveness: 25,
-            minSatisfaction: 7,
-            maxComplaints: 1,
-            minCompliance: 98,
-          },
+        constraints: {
+          maxDaily: 3,
+          maxWeekly: 15,
+          maxMonthly: 50,
+          cooldownPeriod: 240,
+          blackoutPeriods: [],
+          requiresConsent: true,
         },
-        whatsapp: {
-          enabled: true,
-          priority: 3,
-          costModel: {
-            type: "per_message",
-            baseCost: 0.08,
-            volumeDiscounts: [
-              { threshold: 1000, discount: 12 },
-              { threshold: 3000, discount: 22 },
-            ],
-            additionalCosts: [],
-          },
-          constraints: {
-            maxDaily: 2,
-            maxWeekly: 10,
-            maxMonthly: 30,
-            cooldownPeriod: 360,
-            blackoutPeriods: [
-              {
-                startHour: 21,
-                startMinute: 0,
-                endHour: 9,
-                endMinute: 0,
-                timezone: "America/Sao_Paulo",
-              },
-            ],
-            requiresConsent: true,
-          },
-          adaptations: [],
-          qualityThresholds: {
-            minEffectiveness: 30,
-            minSatisfaction: 8,
-            maxComplaints: 1,
-            minCompliance: 98,
-          },
-        },
-        push: {
-          enabled: true,
-          priority: 4,
-          costModel: {
-            type: "per_message",
-            baseCost: 0.02,
-            volumeDiscounts: [
-              { threshold: 2000, discount: 15 },
-              { threshold: 10000, discount: 30 },
-            ],
-            additionalCosts: [],
-          },
-          constraints: {
-            maxDaily: 3,
-            maxWeekly: 12,
-            maxMonthly: 40,
-            cooldownPeriod: 120,
-            blackoutPeriods: [
-              {
-                startHour: 23,
-                startMinute: 0,
-                endHour: 7,
-                endMinute: 0,
-                timezone: "America/Sao_Paulo",
-              },
-            ],
-            requiresConsent: false,
-          },
-          adaptations: [],
-          qualityThresholds: {
-            minEffectiveness: 10,
-            minSatisfaction: 6,
-            maxComplaints: 3,
-            minCompliance: 90,
-          },
-        },
-        voice: {
-          enabled: false,
-          priority: 5,
-          costModel: {
-            type: "per_minute",
-            baseCost: 0.3,
-            volumeDiscounts: [],
-            additionalCosts: [],
-          },
-          constraints: {
-            maxDaily: 1,
-            maxWeekly: 3,
-            maxMonthly: 10,
-            cooldownPeriod: 1440,
-            blackoutPeriods: [
-              {
-                startHour: 20,
-                startMinute: 0,
-                endHour: 9,
-                endMinute: 0,
-                timezone: "America/Sao_Paulo",
-              },
-            ],
-            requiresConsent: true,
-          },
-          adaptations: [],
-          qualityThresholds: {
-            minEffectiveness: 40,
-            minSatisfaction: 8,
-            maxComplaints: 0,
-            minCompliance: 100,
-          },
-        },
-        video: {
-          enabled: false,
-          priority: 6,
-          costModel: {
-            type: "per_minute",
-            baseCost: 0.5,
-            volumeDiscounts: [],
-            additionalCosts: [],
-          },
-          constraints: {
-            maxDaily: 1,
-            maxWeekly: 2,
-            maxMonthly: 5,
-            cooldownPeriod: 2880,
-            blackoutPeriods: [
-              {
-                startHour: 19,
-                startMinute: 0,
-                endHour: 10,
-                endMinute: 0,
-                timezone: "America/Sao_Paulo",
-              },
-            ],
-            requiresConsent: true,
-          },
-          adaptations: [],
-          qualityThresholds: {
-            minEffectiveness: 50,
-            minSatisfaction: 9,
-            maxComplaints: 0,
-            minCompliance: 100,
-          },
+        adaptations: [],
+        qualityThresholds: {
+          minEffectiveness: 15,
+          minSatisfaction: 7,
+          maxComplaints: 2,
+          minCompliance: 95,
         },
       },
-      contentSettings: {
-        personalizationLevel: "moderate",
-        adaptationEnabled: true,
-        a11yRequired: true,
-        languageAdaptation: true,
-        toneAdaptation: true,
-        lengthOptimization: true,
-      },
-      complianceSettings: {
-        strictMode: true,
-        requiredConsents: ["treatment", "communication"],
-        auditingEnabled: true,
-        dataRetention: {
-          defaultPeriod: 2555, // 7 years
-          byDataType: {
-            analytics: 1095, // 3 years
-            communications: 2555, // 7 years
-            preferences: 1825, // 5 years
-          },
-          autoDelete: true,
-          archivingEnabled: true,
+      sms: {
+        enabled: true,
+        priority: 2,
+        costModel: {
+          type: "per_message",
+          baseCost: 0.15,
+          volumeDiscounts: [
+            { threshold: 500, discount: 8 },
+            { threshold: 2000, discount: 15 },
+          ],
+          additionalCosts: [],
         },
-        privacySettings: {
-          anonymizeAnalytics: true,
-          encryptPersonalData: true,
-          minimizeDataCollection: true,
-          respectDoNotContact: true,
+        constraints: {
+          maxDaily: 2,
+          maxWeekly: 8,
+          maxMonthly: 25,
+          cooldownPeriod: 480,
+          blackoutPeriods: [
+            {
+              startHour: 22,
+              startMinute: 0,
+              endHour: 8,
+              endMinute: 0,
+              timezone: "America/Sao_Paulo",
+            },
+          ],
+          requiresConsent: true,
+        },
+        adaptations: [],
+        qualityThresholds: {
+          minEffectiveness: 25,
+          minSatisfaction: 7,
+          maxComplaints: 1,
+          minCompliance: 98,
         },
       },
-    };
-  };
+      whatsapp: {
+        enabled: true,
+        priority: 3,
+        costModel: {
+          type: "per_message",
+          baseCost: 0.08,
+          volumeDiscounts: [
+            { threshold: 1000, discount: 12 },
+            { threshold: 3000, discount: 22 },
+          ],
+          additionalCosts: [],
+        },
+        constraints: {
+          maxDaily: 2,
+          maxWeekly: 10,
+          maxMonthly: 30,
+          cooldownPeriod: 360,
+          blackoutPeriods: [
+            {
+              startHour: 21,
+              startMinute: 0,
+              endHour: 9,
+              endMinute: 0,
+              timezone: "America/Sao_Paulo",
+            },
+          ],
+          requiresConsent: true,
+        },
+        adaptations: [],
+        qualityThresholds: {
+          minEffectiveness: 30,
+          minSatisfaction: 8,
+          maxComplaints: 1,
+          minCompliance: 98,
+        },
+      },
+      push: {
+        enabled: true,
+        priority: 4,
+        costModel: {
+          type: "per_message",
+          baseCost: 0.02,
+          volumeDiscounts: [
+            { threshold: 2000, discount: 15 },
+            { threshold: 10000, discount: 30 },
+          ],
+          additionalCosts: [],
+        },
+        constraints: {
+          maxDaily: 3,
+          maxWeekly: 12,
+          maxMonthly: 40,
+          cooldownPeriod: 120,
+          blackoutPeriods: [
+            {
+              startHour: 23,
+              startMinute: 0,
+              endHour: 7,
+              endMinute: 0,
+              timezone: "America/Sao_Paulo",
+            },
+          ],
+          requiresConsent: false,
+        },
+        adaptations: [],
+        qualityThresholds: {
+          minEffectiveness: 10,
+          minSatisfaction: 6,
+          maxComplaints: 3,
+          minCompliance: 90,
+        },
+      },
+      voice: {
+        enabled: false,
+        priority: 5,
+        costModel: {
+          type: "per_minute",
+          baseCost: 0.3,
+          volumeDiscounts: [],
+          additionalCosts: [],
+        },
+        constraints: {
+          maxDaily: 1,
+          maxWeekly: 3,
+          maxMonthly: 10,
+          cooldownPeriod: 1440,
+          blackoutPeriods: [
+            {
+              startHour: 20,
+              startMinute: 0,
+              endHour: 9,
+              endMinute: 0,
+              timezone: "America/Sao_Paulo",
+            },
+          ],
+          requiresConsent: true,
+        },
+        adaptations: [],
+        qualityThresholds: {
+          minEffectiveness: 40,
+          minSatisfaction: 8,
+          maxComplaints: 0,
+          minCompliance: 100,
+        },
+      },
+      video: {
+        enabled: false,
+        priority: 6,
+        costModel: {
+          type: "per_minute",
+          baseCost: 0.5,
+          volumeDiscounts: [],
+          additionalCosts: [],
+        },
+        constraints: {
+          maxDaily: 1,
+          maxWeekly: 2,
+          maxMonthly: 5,
+          cooldownPeriod: 2880,
+          blackoutPeriods: [
+            {
+              startHour: 19,
+              startMinute: 0,
+              endHour: 10,
+              endMinute: 0,
+              timezone: "America/Sao_Paulo",
+            },
+          ],
+          requiresConsent: true,
+        },
+        adaptations: [],
+        qualityThresholds: {
+          minEffectiveness: 50,
+          minSatisfaction: 9,
+          maxComplaints: 0,
+          minCompliance: 100,
+        },
+      },
+    },
+    contentSettings: {
+      personalizationLevel: "moderate",
+      adaptationEnabled: true,
+      a11yRequired: true,
+      languageAdaptation: true,
+      toneAdaptation: true,
+      lengthOptimization: true,
+    },
+    complianceSettings: {
+      strictMode: true,
+      requiredConsents: ["treatment", "communication"],
+      auditingEnabled: true,
+      dataRetention: {
+        defaultPeriod: 2555, // 7 years
+        byDataType: {
+          analytics: 1095, // 3 years
+          communications: 2555, // 7 years
+          preferences: 1825, // 5 years
+        },
+        autoDelete: true,
+        archivingEnabled: true,
+      },
+      privacySettings: {
+        anonymizeAnalytics: true,
+        encryptPersonalData: true,
+        minimizeDataCollection: true,
+        respectDoNotContact: true,
+      },
+    },
+  });
   /**
    * ====================================================================
    * CHANNEL OPTIMIZATION
@@ -753,9 +748,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
             return [3 /*break*/, 1];
           case 4:
             // Ordenar por prioridade
-            recommendations.sort(function (a, b) {
-              return a.priority - b.priority;
-            });
+            recommendations.sort((a, b) => a.priority - b.priority);
             maxChannels =
               ((_d = this.config) === null || _d === void 0
                 ? void 0
@@ -787,9 +780,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
-            preference = profile.preferences.find(function (p) {
-              return p.channel === channel;
-            });
+            preference = profile.preferences.find((p) => p.channel === channel);
             if (preference && preference.preference < 0.2) {
               return [2 /*return*/, null]; // Canal evitado pelo paciente
             }
@@ -797,9 +788,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
             if (!this.meetsConstraints(channel, request, profile)) {
               return [2 /*return*/, null];
             }
-            behavior = profile.behaviors.find(function (b) {
-              return b.channel === channel;
-            });
+            behavior = profile.behaviors.find((b) => b.channel === channel);
             confidence = this.calculateChannelConfidence(channel, preference, behavior, context);
             return [4 /*yield*/, this.determineContentAdaptations(channel, request, profile)];
           case 1:
@@ -920,9 +909,9 @@ var ChannelOptimizationEngine = /** @class */ (function () {
             profile = _a.sent();
             // Atualizar comportamentos
             if (newBehavior.channel) {
-              existingBehaviorIndex = profile.behaviors.findIndex(function (b) {
-                return b.channel === newBehavior.channel;
-              });
+              existingBehaviorIndex = profile.behaviors.findIndex(
+                (b) => b.channel === newBehavior.channel,
+              );
               if (existingBehaviorIndex >= 0) {
                 // Atualizar comportamento existente
                 profile.behaviors[existingBehaviorIndex] = __assign(
@@ -1029,12 +1018,12 @@ var ChannelOptimizationEngine = /** @class */ (function () {
   ChannelOptimizationEngine.prototype.getAvailableChannels = function () {
     if (!this.config) return ["email", "sms"];
     return Object.entries(this.config.channelSettings)
-      .filter(function (_a) {
+      .filter((_a) => {
         var _ = _a[0],
           settings = _a[1];
         return settings.enabled;
       })
-      .map(function (_a) {
+      .map((_a) => {
         var channel = _a[0];
         return channel;
       });
@@ -1051,9 +1040,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     var excluded =
       (_b = request.constraints.exclusions) === null || _b === void 0
         ? void 0
-        : _b.some(function (exc) {
-            return exc.channel === channel && (!exc.until || exc.until > new Date());
-          });
+        : _b.some((exc) => exc.channel === channel && (!exc.until || exc.until > new Date()));
     if (excluded) return false;
     // Verificar consent se necessário
     if (channelSettings.constraints.requiresConsent) {
@@ -1069,20 +1056,16 @@ var ChannelOptimizationEngine = /** @class */ (function () {
   /**
    * Verificar se canal é acessível para o paciente
    */
-  ChannelOptimizationEngine.prototype.isChannelAccessible = function (channel, needs) {
+  ChannelOptimizationEngine.prototype.isChannelAccessible = (channel, needs) => {
     // Implementar lógica de acessibilidade por canal
     if (
-      needs.needs.some(function (need) {
-        return need.type === "visual_impairment" && need.severity === "severe";
-      })
+      needs.needs.some((need) => need.type === "visual_impairment" && need.severity === "severe")
     ) {
       // Para deficiência visual severa, preferir canais de áudio
       return ["voice", "sms"].includes(channel);
     }
     if (
-      needs.needs.some(function (need) {
-        return need.type === "hearing_impairment" && need.severity === "severe";
-      })
+      needs.needs.some((need) => need.type === "hearing_impairment" && need.severity === "severe")
     ) {
       // Para deficiência auditiva severa, evitar canais de áudio
       return !["voice", "video"].includes(channel);
@@ -1092,12 +1075,12 @@ var ChannelOptimizationEngine = /** @class */ (function () {
   /**
    * Calcular confidence de um canal
    */
-  ChannelOptimizationEngine.prototype.calculateChannelConfidence = function (
+  ChannelOptimizationEngine.prototype.calculateChannelConfidence = (
     channel,
     preference,
     behavior,
     context,
-  ) {
+  ) => {
     var confidence = 0.5; // Base confidence
     // Aumentar baseado na preferência
     if (preference) {
@@ -1144,13 +1127,13 @@ var ChannelOptimizationEngine = /** @class */ (function () {
   /**
    * Gerar reasoning para canal
    */
-  ChannelOptimizationEngine.prototype.generateChannelReasoning = function (
+  ChannelOptimizationEngine.prototype.generateChannelReasoning = (
     channel,
     preference,
     behavior,
     context,
     adaptations,
-  ) {
+  ) => {
     var reasons = [];
     if (preference && preference.preference > 0.7) {
       reasons.push(
@@ -1182,19 +1165,19 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     return reasons;
   };
   // Métodos placeholder para implementação completa
-  ChannelOptimizationEngine.prototype.analyzeCommunicationBehaviors = function (communications) {
+  ChannelOptimizationEngine.prototype.analyzeCommunicationBehaviors = (communications) => {
     // Implementar análise de comportamentos históricos
     return [];
   };
-  ChannelOptimizationEngine.prototype.inferInitialPreferences = function (patient, behaviors) {
+  ChannelOptimizationEngine.prototype.inferInitialPreferences = (patient, behaviors) => {
     // Implementar inferência de preferências iniciais
     return [];
   };
-  ChannelOptimizationEngine.prototype.detectDevices = function (communications) {
+  ChannelOptimizationEngine.prototype.detectDevices = (communications) => {
     // Implementar detecção de dispositivos
     return [];
   };
-  ChannelOptimizationEngine.prototype.assessAccessibilityNeeds = function (patient) {
+  ChannelOptimizationEngine.prototype.assessAccessibilityNeeds = (patient) => {
     // Implementar avaliação de necessidades de acessibilidade
     return {
       hasNeeds: false,
@@ -1225,7 +1208,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
       communicationStyle: "formal",
     };
   };
-  ChannelOptimizationEngine.prototype.calculateAge = function (birthDate) {
+  ChannelOptimizationEngine.prototype.calculateAge = (birthDate) => {
     var today = new Date();
     var age = today.getFullYear() - birthDate.getFullYear();
     var monthDiff = today.getMonth() - birthDate.getMonth();
@@ -1234,7 +1217,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     }
     return age;
   };
-  ChannelOptimizationEngine.prototype.getAgeGroup = function (age) {
+  ChannelOptimizationEngine.prototype.getAgeGroup = (age) => {
     if (age < 25) return "18-24";
     if (age < 35) return "25-34";
     if (age < 45) return "35-44";
@@ -1246,7 +1229,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     // Implementar mapeamento do banco de dados
     return this.getDefaultConfig();
   };
-  ChannelOptimizationEngine.prototype.mapProfileFromDB = function (data) {
+  ChannelOptimizationEngine.prototype.mapProfileFromDB = (data) => {
     // Implementar mapeamento do banco de dados
     return {
       patientId: data.patient_id,
@@ -1267,51 +1250,43 @@ var ChannelOptimizationEngine = /** @class */ (function () {
   };
   ChannelOptimizationEngine.prototype.saveConfiguration = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ChannelOptimizationEngine.prototype.savePatientProfile = function (profile) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ChannelOptimizationEngine.prototype.saveOptimizationResult = function (result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ChannelOptimizationEngine.prototype.saveLearningData = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  ChannelOptimizationEngine.prototype.classifyPatientSegment = function (profile) {
+  ChannelOptimizationEngine.prototype.classifyPatientSegment = (profile) => {
     // Implementar classificação de segmento
     return "standard";
   };
   ChannelOptimizationEngine.prototype.getRecentEngagement = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar busca de engajamento recente
         return [2 /*return*/, {}];
       });
     });
   };
-  ChannelOptimizationEngine.prototype.analyzeDeviceContext = function (devices) {
+  ChannelOptimizationEngine.prototype.analyzeDeviceContext = (devices) => {
     // Implementar análise de contexto de dispositivo
     return {};
   };
   ChannelOptimizationEngine.prototype.getCommunicationHistory = function (patientId, purpose) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar busca do histórico
         return [2 /*return*/, []];
       });
@@ -1323,17 +1298,17 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     profile,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar identificação de canais alternativos
         return [2 /*return*/, []];
       });
     });
   };
-  ChannelOptimizationEngine.prototype.generateOptimizationReasoning = function (
+  ChannelOptimizationEngine.prototype.generateOptimizationReasoning = (
     recommendations,
     context,
     profile,
-  ) {
+  ) => {
     // Implementar geração de reasoning
     return {
       primaryFactors: [],
@@ -1348,7 +1323,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     context,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar estimativa de efetividade
         return [
           2 /*return*/,
@@ -1362,7 +1337,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
       });
     });
   };
-  ChannelOptimizationEngine.prototype.calculateCosts = function (recommendations, request) {
+  ChannelOptimizationEngine.prototype.calculateCosts = (recommendations, request) => {
     // Implementar cálculo de custos
     return {
       total: 0,
@@ -1386,7 +1361,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     profile,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar validação de compliance
         return [
           2 /*return*/,
@@ -1400,11 +1375,9 @@ var ChannelOptimizationEngine = /** @class */ (function () {
       });
     });
   };
-  ChannelOptimizationEngine.prototype.calculateOverallConfidence = function (recommendations) {
+  ChannelOptimizationEngine.prototype.calculateOverallConfidence = (recommendations) => {
     if (recommendations.length === 0) return 0;
-    var totalConfidence = recommendations.reduce(function (sum, rec) {
-      return sum + rec.confidence;
-    }, 0);
+    var totalConfidence = recommendations.reduce((sum, rec) => sum + rec.confidence, 0);
     return totalConfidence / recommendations.length;
   };
   ChannelOptimizationEngine.prototype.determineContentAdaptations = function (
@@ -1413,7 +1386,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     profile,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar determinação de adaptações
         return [2 /*return*/, []];
       });
@@ -1425,7 +1398,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
     urgency,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar cálculo de timing
         return [
           2 /*return*/,
@@ -1445,11 +1418,7 @@ var ChannelOptimizationEngine = /** @class */ (function () {
       });
     });
   };
-  ChannelOptimizationEngine.prototype.estimateChannelOutcome = function (
-    channel,
-    behavior,
-    context,
-  ) {
+  ChannelOptimizationEngine.prototype.estimateChannelOutcome = (channel, behavior, context) => {
     // Implementar estimativa de outcome
     return {
       responseRate: 25,
@@ -1459,38 +1428,36 @@ var ChannelOptimizationEngine = /** @class */ (function () {
       timeToResponse: 120,
     };
   };
-  ChannelOptimizationEngine.prototype.calculatePredictionAccuracy = function (expected, actual) {
+  ChannelOptimizationEngine.prototype.calculatePredictionAccuracy = (expected, actual) => {
     // Implementar cálculo de accuracy
     return 0.8;
   };
-  ChannelOptimizationEngine.prototype.analyzeFeedbackFactors = function (prediction, outcome) {
+  ChannelOptimizationEngine.prototype.analyzeFeedbackFactors = (prediction, outcome) => {
     // Implementar análise de fatores
     return [];
   };
-  ChannelOptimizationEngine.prototype.generateImprovements = function (factors, accuracy) {
+  ChannelOptimizationEngine.prototype.generateImprovements = (factors, accuracy) => {
     // Implementar geração de melhorias
     return [];
   };
-  ChannelOptimizationEngine.prototype.calculateFeedbackConfidence = function (outcome) {
+  ChannelOptimizationEngine.prototype.calculateFeedbackConfidence = (outcome) => {
     // Implementar cálculo de confidence do feedback
     return 0.8;
   };
   ChannelOptimizationEngine.prototype.updatePredictionModels = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  ChannelOptimizationEngine.prototype.recalculatePreferences = function (behaviors) {
+  ChannelOptimizationEngine.prototype.recalculatePreferences = (behaviors) => {
     // Implementar recálculo de preferências
     return [];
   };
-  ChannelOptimizationEngine.prototype.calculateChannelMetrics = function (communications) {
+  ChannelOptimizationEngine.prototype.calculateChannelMetrics = (communications) => {
     // Implementar cálculo de métricas por canal
     return [];
   };
-  ChannelOptimizationEngine.prototype.calculateOptimizationMetrics = function (communications) {
+  ChannelOptimizationEngine.prototype.calculateOptimizationMetrics = (communications) => {
     // Implementar cálculo de métricas de otimização
     return {
       optimizationRate: 0,
@@ -1499,39 +1466,30 @@ var ChannelOptimizationEngine = /** @class */ (function () {
       successRate: 0,
     };
   };
-  ChannelOptimizationEngine.prototype.generateChannelInsights = function (
-    channelMetrics,
-    optimization,
-  ) {
+  ChannelOptimizationEngine.prototype.generateChannelInsights = (channelMetrics, optimization) => {
     // Implementar geração de insights
     return [];
   };
-  ChannelOptimizationEngine.prototype.generateAnalyticsRecommendations = function (
-    metrics,
-    insights,
-  ) {
+  ChannelOptimizationEngine.prototype.generateAnalyticsRecommendations = (metrics, insights) => {
     // Implementar geração de recomendações analíticas
     return [];
   };
-  ChannelOptimizationEngine.prototype.getEmptyAnalytics = function (period, granularity) {
-    return {
-      period: __assign(__assign({}, period), { granularity: granularity }),
-      metrics: [],
-      optimization: {
-        optimizationRate: 0,
-        improvementRate: 0,
-        adoptionRate: 0,
-        successRate: 0,
-      },
-      insights: [],
-      recommendations: [],
-    };
-  };
+  ChannelOptimizationEngine.prototype.getEmptyAnalytics = (period, granularity) => ({
+    period: __assign(__assign({}, period), { granularity: granularity }),
+    metrics: [],
+    optimization: {
+      optimizationRate: 0,
+      improvementRate: 0,
+      adoptionRate: 0,
+      successRate: 0,
+    },
+    insights: [],
+    recommendations: [],
+  });
   ChannelOptimizationEngine.prototype.startPeriodicOptimization = function () {
-    var _this = this;
     // Implementar otimização periódica
-    setInterval(function () {
-      _this.performPeriodicMaintenance();
+    setInterval(() => {
+      this.performPeriodicMaintenance();
     }, 3600000); // Cada hora
   };
   ChannelOptimizationEngine.prototype.performPeriodicMaintenance = function () {
@@ -1572,26 +1530,19 @@ var ChannelOptimizationEngine = /** @class */ (function () {
   };
   ChannelOptimizationEngine.prototype.updateMLModels = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ChannelOptimizationEngine.prototype.processLearningQueue = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  ChannelOptimizationEngine.prototype.generateId = function () {
-    return "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
-  };
+  ChannelOptimizationEngine.prototype.generateId = () =>
+    "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
   return ChannelOptimizationEngine;
 })();
 exports.ChannelOptimizationEngine = ChannelOptimizationEngine;
 // Export singleton instance
-var createchannelOptimizationEngine = function () {
-  return new ChannelOptimizationEngine();
-};
+var createchannelOptimizationEngine = () => new ChannelOptimizationEngine();
 exports.createchannelOptimizationEngine = createchannelOptimizationEngine;

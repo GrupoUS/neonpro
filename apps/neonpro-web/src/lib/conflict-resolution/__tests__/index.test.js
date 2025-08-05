@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("../index");
 var types_1 = require("../types");
@@ -153,52 +150,30 @@ var supabase_js_1 = require("@supabase/supabase-js");
 // Mock Supabase
 jest.mock("@supabase/supabase-js");
 var mockSupabase = {
-  from: jest.fn(function () {
-    return {
-      select: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              gte: jest.fn(function () {
-                return {
-                  lte: jest.fn(function () {
-                    return {
-                      neq: jest.fn(function () {
-                        return {
-                          order: jest.fn(function () {
-                            return Promise.resolve({ data: [], error: null });
-                          }),
-                        };
-                      }),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      update: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return Promise.resolve({ data: [], error: null });
-          }),
-        };
-      }),
-      insert: jest.fn(function () {
-        return Promise.resolve({ data: [], error: null });
-      }),
-    };
-  }),
-  rpc: jest.fn(function () {
-    return Promise.resolve({ data: null, error: null });
-  }),
+  from: jest.fn(() => ({
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        gte: jest.fn(() => ({
+          lte: jest.fn(() => ({
+            neq: jest.fn(() => ({
+              order: jest.fn(() => Promise.resolve({ data: [], error: null })),
+            })),
+          })),
+        })),
+      })),
+    })),
+    update: jest.fn(() => ({
+      eq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    })),
+    insert: jest.fn(() => Promise.resolve({ data: [], error: null })),
+  })),
+  rpc: jest.fn(() => Promise.resolve({ data: null, error: null })),
 };
 supabase_js_1.createClient.mockReturnValue(mockSupabase);
-describe("IntelligentConflictResolutionSystem", function () {
+describe("IntelligentConflictResolutionSystem", () => {
   var system;
   var mockConfig;
-  beforeEach(function () {
+  beforeEach(() => {
     mockConfig = {
       detection: {
         enabledTypes: [
@@ -279,15 +254,15 @@ describe("IntelligentConflictResolutionSystem", function () {
     system = new index_1.IntelligentConflictResolutionSystem(mockConfig);
     jest.clearAllMocks();
   });
-  describe("Initialization", function () {
-    it("should initialize with default config", function () {
+  describe("Initialization", () => {
+    it("should initialize with default config", () => {
       var defaultSystem = new index_1.IntelligentConflictResolutionSystem();
       expect(defaultSystem).toBeInstanceOf(index_1.IntelligentConflictResolutionSystem);
     });
-    it("should initialize with custom config", function () {
+    it("should initialize with custom config", () => {
       expect(system).toBeInstanceOf(index_1.IntelligentConflictResolutionSystem);
     });
-    it("should validate config on initialization", function () {
+    it("should validate config on initialization", () => {
       var invalidConfig = __assign(__assign({}, mockConfig), {
         detection: __assign(__assign({}, mockConfig.detection), {
           severityThresholds: {
@@ -297,17 +272,15 @@ describe("IntelligentConflictResolutionSystem", function () {
           },
         }),
       });
-      expect(function () {
-        return new index_1.IntelligentConflictResolutionSystem(invalidConfig);
-      }).toThrow();
+      expect(() => new index_1.IntelligentConflictResolutionSystem(invalidConfig)).toThrow();
     });
-    it("should initialize all subsystems", function () {
+    it("should initialize all subsystems", () => {
       expect(system).toHaveProperty("detector");
       expect(system).toHaveProperty("resolutionEngine");
       expect(system).toHaveProperty("optimizer");
     });
   });
-  describe("detectAndResolveConflicts", function () {
+  describe("detectAndResolveConflicts", () => {
     var mockAppointment = {
       id: "appointment-1",
       start_time: "2024-01-15T10:00:00Z",
@@ -318,10 +291,10 @@ describe("IntelligentConflictResolutionSystem", function () {
       service_id: "service-1",
       status: "scheduled",
     };
-    it("should detect and resolve conflicts automatically", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should detect and resolve conflicts automatically", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockConflicts, overlappingAppointment, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockConflicts = [
@@ -349,47 +322,35 @@ describe("IntelligentConflictResolutionSystem", function () {
                 service_id: "service-2",
                 status: "scheduled",
               };
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
-                    select: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                eq: jest.fn(function () {
-                                  return {
-                                    neq: jest.fn(function () {
-                                      return Promise.resolve({
-                                        data: [overlappingAppointment],
-                                        error: null,
-                                      });
-                                    }),
-                                  };
-                                }),
-                              };
-                            }),
-                          };
+                    select: jest.fn(() => ({
+                      gte: jest.fn(() => ({
+                        lte: jest.fn(() => ({
+                          eq: jest.fn(() => ({
+                            neq: jest.fn(() =>
+                              Promise.resolve({
+                                data: [overlappingAppointment],
+                                error: null,
+                              }),
+                            ),
+                          })),
+                        })),
+                      })),
+                    })),
+                    update: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
+                          data: [{ id: "appointment-1" }],
+                          error: null,
                         }),
-                      };
-                    }),
-                    update: jest.fn(function () {
-                      return {
-                        eq: jest.fn(function () {
-                          return Promise.resolve({
-                            data: [{ id: "appointment-1" }],
-                            error: null,
-                          });
-                        }),
-                      };
-                    }),
+                      ),
+                    })),
                   };
                 }
                 return {
-                  select: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
+                  select: jest.fn(() => Promise.resolve({ data: [], error: null })),
                 };
               });
               return [4 /*yield*/, system.detectAndResolveConflicts(mockAppointment)];
@@ -403,37 +364,28 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle no conflicts scenario", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle no conflicts scenario", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, system.detectAndResolveConflicts(mockAppointment)];
             case 1:
@@ -444,12 +396,11 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should respect automation rules", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should respect automation rules", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var automationRule, configWithAutomation, automatedSystem, lowSeverityConflict, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               automationRule = {
@@ -487,47 +438,35 @@ describe("IntelligentConflictResolutionSystem", function () {
                 service_id: "service-2",
                 status: "scheduled",
               };
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
-                    select: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                eq: jest.fn(function () {
-                                  return {
-                                    neq: jest.fn(function () {
-                                      return Promise.resolve({
-                                        data: [lowSeverityConflict],
-                                        error: null,
-                                      });
-                                    }),
-                                  };
-                                }),
-                              };
-                            }),
-                          };
+                    select: jest.fn(() => ({
+                      gte: jest.fn(() => ({
+                        lte: jest.fn(() => ({
+                          eq: jest.fn(() => ({
+                            neq: jest.fn(() =>
+                              Promise.resolve({
+                                data: [lowSeverityConflict],
+                                error: null,
+                              }),
+                            ),
+                          })),
+                        })),
+                      })),
+                    })),
+                    update: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
+                          data: [{ id: "appointment-1" }],
+                          error: null,
                         }),
-                      };
-                    }),
-                    update: jest.fn(function () {
-                      return {
-                        eq: jest.fn(function () {
-                          return Promise.resolve({
-                            data: [{ id: "appointment-1" }],
-                            error: null,
-                          });
-                        }),
-                      };
-                    }),
+                      ),
+                    })),
                   };
                 }
                 return {
-                  select: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
+                  select: jest.fn(() => Promise.resolve({ data: [], error: null })),
                 };
               });
               return [4 /*yield*/, automatedSystem.detectAndResolveConflicts(mockAppointment)];
@@ -538,12 +477,11 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle high severity conflicts requiring approval", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle high severity conflicts requiring approval", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var highSeverityConflict, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               highSeverityConflict = {
@@ -556,37 +494,27 @@ describe("IntelligentConflictResolutionSystem", function () {
                 service_id: "service-2",
                 status: "scheduled",
               };
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
-                    select: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                eq: jest.fn(function () {
-                                  return {
-                                    neq: jest.fn(function () {
-                                      return Promise.resolve({
-                                        data: [highSeverityConflict],
-                                        error: null,
-                                      });
-                                    }),
-                                  };
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
+                    select: jest.fn(() => ({
+                      gte: jest.fn(() => ({
+                        lte: jest.fn(() => ({
+                          eq: jest.fn(() => ({
+                            neq: jest.fn(() =>
+                              Promise.resolve({
+                                data: [highSeverityConflict],
+                                error: null,
+                              }),
+                            ),
+                          })),
+                        })),
+                      })),
+                    })),
                   };
                 }
                 return {
-                  select: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
+                  select: jest.fn(() => Promise.resolve({ data: [], error: null })),
                 };
               });
               return [4 /*yield*/, system.detectAndResolveConflicts(mockAppointment)];
@@ -598,18 +526,17 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("optimizeResourceAllocation", function () {
+  describe("optimizeResourceAllocation", () => {
     var mockDateRange = {
       startDate: new Date("2024-01-15T00:00:00Z"),
       endDate: new Date("2024-01-15T23:59:59Z"),
     };
-    it("should optimize resource allocation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should optimize resource allocation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAppointments, mockStaff, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAppointments = [
@@ -632,43 +559,35 @@ describe("IntelligentConflictResolutionSystem", function () {
                   availability: "09:00-17:00",
                 },
               ];
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
-                    select: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                eq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: mockAppointments,
-                                    error: null,
-                                  });
-                                }),
-                              };
+                    select: jest.fn(() => ({
+                      gte: jest.fn(() => ({
+                        lte: jest.fn(() => ({
+                          eq: jest.fn(() =>
+                            Promise.resolve({
+                              data: mockAppointments,
+                              error: null,
                             }),
-                          };
-                        }),
-                      };
-                    }),
+                          ),
+                        })),
+                      })),
+                    })),
                   };
                 }
                 if (table === "staff") {
                   return {
-                    select: jest.fn(function () {
-                      return Promise.resolve({
+                    select: jest.fn(() =>
+                      Promise.resolve({
                         data: mockStaff,
                         error: null,
-                      });
-                    }),
+                      }),
+                    ),
                   };
                 }
                 return {
-                  select: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
+                  select: jest.fn(() => Promise.resolve({ data: [], error: null })),
                 };
               });
               return [4 /*yield*/, system.optimizeResourceAllocation(mockDateRange)];
@@ -681,12 +600,11 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should apply optimizations when auto-apply is enabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should apply optimizations when auto-apply is enabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var configWithAutoApply, autoSystem, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               configWithAutoApply = __assign(__assign({}, mockConfig), {
@@ -695,38 +613,28 @@ describe("IntelligentConflictResolutionSystem", function () {
                 }),
               });
               autoSystem = new index_1.IntelligentConflictResolutionSystem(configWithAutoApply);
-              mockSupabase.from.mockImplementation(function (table) {
-                return {
-                  select: jest.fn(function () {
-                    return {
-                      gte: jest.fn(function () {
-                        return {
-                          lte: jest.fn(function () {
-                            return {
-                              eq: jest.fn(function () {
-                                return Promise.resolve({
-                                  data: [],
-                                  error: null,
-                                });
-                              }),
-                            };
-                          }),
-                        };
-                      }),
-                    };
-                  }),
-                  update: jest.fn(function () {
-                    return {
-                      eq: jest.fn(function () {
-                        return Promise.resolve({
+              mockSupabase.from.mockImplementation((table) => ({
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
                           data: [],
                           error: null,
-                        });
-                      }),
-                    };
-                  }),
-                };
-              });
+                        }),
+                      ),
+                    })),
+                  })),
+                })),
+                update: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [],
+                      error: null,
+                    }),
+                  ),
+                })),
+              }));
               return [4 /*yield*/, autoSystem.optimizeResourceAllocation(mockDateRange)];
             case 1:
               result = _a.sent();
@@ -734,14 +642,13 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("balanceWorkload", function () {
-    it("should balance workload across staff", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("balanceWorkload", () => {
+    it("should balance workload across staff", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockStaffWorkload, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockStaffWorkload = [
@@ -761,24 +668,18 @@ describe("IntelligentConflictResolutionSystem", function () {
                 },
               ];
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return Promise.resolve({
-                                data: [],
-                                error: null,
-                              });
-                            }),
-                          };
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
+                          data: [],
+                          error: null,
                         }),
-                      };
-                    }),
-                  };
-                }),
+                      ),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, system.balanceWorkload(mockStaffWorkload)];
             case 1:
@@ -789,14 +690,13 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getSystemAnalytics", function () {
-    it("should provide comprehensive system analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getSystemAnalytics", () => {
+    it("should provide comprehensive system analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var dateRange, analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               dateRange = {
@@ -804,24 +704,18 @@ describe("IntelligentConflictResolutionSystem", function () {
                 endDate: new Date("2024-01-31T23:59:59Z"),
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return Promise.resolve({
-                                data: [],
-                                error: null,
-                              });
-                            }),
-                          };
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
+                          data: [],
+                          error: null,
                         }),
-                      };
-                    }),
-                  };
-                }),
+                      ),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, system.getSystemAnalytics(dateRange)];
             case 1:
@@ -835,12 +729,11 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate performance trends", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate performance trends", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var dateRange, mockConflictHistory, analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               dateRange = {
@@ -862,24 +755,18 @@ describe("IntelligentConflictResolutionSystem", function () {
                 },
               ];
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return Promise.resolve({
-                                data: mockConflictHistory,
-                                error: null,
-                              });
-                            }),
-                          };
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
+                          data: mockConflictHistory,
+                          error: null,
                         }),
-                      };
-                    }),
-                  };
-                }),
+                      ),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, system.getSystemAnalytics(dateRange)];
             case 1:
@@ -891,18 +778,17 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("updateConfiguration", function () {
-    it("should update system configuration", function () {
+  describe("updateConfiguration", () => {
+    it("should update system configuration", () => {
       var newConfig = __assign(__assign({}, mockConfig), {
         automation: __assign(__assign({}, mockConfig.automation), { autoResolveConflicts: true }),
       });
       system.updateConfiguration(newConfig);
       // Configuration should be updated (no direct way to test, but method should not throw)
     });
-    it("should validate new configuration", function () {
+    it("should validate new configuration", () => {
       var invalidConfig = __assign(__assign({}, mockConfig), {
         detection: __assign(__assign({}, mockConfig.detection), {
           severityThresholds: {
@@ -912,11 +798,9 @@ describe("IntelligentConflictResolutionSystem", function () {
           },
         }),
       });
-      expect(function () {
-        return system.updateConfiguration(invalidConfig);
-      }).toThrow();
+      expect(() => system.updateConfiguration(invalidConfig)).toThrow();
     });
-    it("should update subsystem configurations", function () {
+    it("should update subsystem configurations", () => {
       var newConfig = __assign(__assign({}, mockConfig), {
         detection: __assign(__assign({}, mockConfig.detection), { cacheEnabled: false }),
         resolution: __assign(__assign({}, mockConfig.resolution), { autoApplyThreshold: 0.95 }),
@@ -928,24 +812,22 @@ describe("IntelligentConflictResolutionSystem", function () {
       // All subsystems should be updated
     });
   });
-  describe("performHealthCheck", function () {
-    it("should perform comprehensive health check", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("performHealthCheck", () => {
+    it("should perform comprehensive health check", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var healthCheck;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    limit: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [{ id: "test" }],
-                        error: null,
-                      });
+                select: jest.fn(() => ({
+                  limit: jest.fn(() =>
+                    Promise.resolve({
+                      data: [{ id: "test" }],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, system.performHealthCheck()];
             case 1:
@@ -961,22 +843,17 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should detect database connectivity issues", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should detect database connectivity issues", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var healthCheck;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    limit: jest.fn(function () {
-                      return Promise.reject(new Error("Connection failed"));
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  limit: jest.fn(() => Promise.reject(new Error("Connection failed"))),
+                })),
               });
               return [4 /*yield*/, system.performHealthCheck()];
             case 1:
@@ -987,25 +864,22 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should measure performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should measure performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, healthCheck, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    limit: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [{ id: "test" }],
-                        error: null,
-                      });
+                select: jest.fn(() => ({
+                  limit: jest.fn(() =>
+                    Promise.resolve({
+                      data: [{ id: "test" }],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               startTime = Date.now();
               return [4 /*yield*/, system.performHealthCheck()];
@@ -1018,14 +892,13 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling and Edge Cases", function () {
-    it("should handle invalid appointment data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling and Edge Cases", () => {
+    it("should handle invalid appointment data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidAppointment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidAppointment = {
@@ -1047,12 +920,11 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database connection failures", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle database connection failures", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var appointment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               appointment = {
@@ -1066,25 +938,15 @@ describe("IntelligentConflictResolutionSystem", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.reject(new Error("Database error"));
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() => Promise.reject(new Error("Database error"))),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [
                 4 /*yield*/,
@@ -1097,12 +959,11 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle empty date ranges gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle empty date ranges gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var emptyDateRange;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               emptyDateRange = {
@@ -1118,12 +979,11 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle network timeouts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle network timeouts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var appointment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               appointment = {
@@ -1137,29 +997,20 @@ describe("IntelligentConflictResolutionSystem", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return new Promise(function (_, reject) {
-                                    setTimeout(function () {
-                                      return reject(new Error("Timeout"));
-                                    }, 100);
-                                  });
-                                }),
-                              };
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(
+                          () =>
+                            new Promise((_, reject) => {
+                              setTimeout(() => reject(new Error("Timeout")), 100);
                             }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [
                 4 /*yield*/,
@@ -1170,14 +1021,13 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance and Scalability", function () {
-    it("should handle large numbers of appointments efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance and Scalability", () => {
+    it("should handle large numbers of appointments efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var appointment, largeDataset, startTime, result, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               appointment = {
@@ -1190,41 +1040,31 @@ describe("IntelligentConflictResolutionSystem", function () {
                 service_id: "service-1",
                 status: "scheduled",
               };
-              largeDataset = Array.from({ length: 500 }, function (_, i) {
-                return {
-                  id: "appointment-".concat(i),
-                  start_time: "2024-01-15T10:30:00Z",
-                  end_time: "2024-01-15T11:30:00Z",
-                  staff_id: "staff-".concat(i % 10),
-                  room_id: "room-".concat(i % 5),
-                  client_id: "client-".concat(i),
-                  service_id: "service-".concat(i),
-                  status: "scheduled",
-                };
-              });
+              largeDataset = Array.from({ length: 500 }, (_, i) => ({
+                id: "appointment-".concat(i),
+                start_time: "2024-01-15T10:30:00Z",
+                end_time: "2024-01-15T11:30:00Z",
+                staff_id: "staff-".concat(i % 10),
+                room_id: "room-".concat(i % 5),
+                client_id: "client-".concat(i),
+                service_id: "service-".concat(i),
+                status: "scheduled",
+              }));
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: largeDataset,
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: largeDataset,
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               startTime = Date.now();
               return [4 /*yield*/, system.detectAndResolveConflicts(appointment)];
@@ -1236,12 +1076,11 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should cache results for improved performance", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should cache results for improved performance", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var appointment, startTime, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               appointment = {
@@ -1255,28 +1094,20 @@ describe("IntelligentConflictResolutionSystem", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               // First call
               return [4 /*yield*/, system.detectAndResolveConflicts(appointment)];
@@ -1292,7 +1123,6 @@ describe("IntelligentConflictResolutionSystem", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

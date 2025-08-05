@@ -10,7 +10,7 @@
  * - Database integration
  */
 
-import { describe, test, expect, beforeAll, afterAll, jest } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 
 // Simple test that verifies the service structure and basic functionality
 describe("AI Duration Prediction Integration", () => {
@@ -73,6 +73,9 @@ describe("AI Duration Prediction Integration", () => {
     test("should have correct interface structure for PredictionFeatures", async () => {
       const { AIDurationPredictionService } = await import("@/lib/ai/duration-prediction");
 
+      // Validate service exists
+      expect(AIDurationPredictionService).toBeDefined();
+
       // Test that the interface structure is as expected
       const features = {
         treatmentType: "consultation",
@@ -89,7 +92,7 @@ describe("AI Duration Prediction Integration", () => {
     test("should validate basic parameter types", async () => {
       const { AIDurationPredictionService } = await import("@/lib/ai/duration-prediction");
 
-      const aiService = new AIDurationPredictionService();
+      const _aiService = new AIDurationPredictionService();
 
       // Test that methods expect correct parameter types
       expect(() => {
@@ -172,8 +175,8 @@ describe("AI Duration Prediction Integration", () => {
   describe("Architecture Validation", () => {
     test("should have proper database schema structure", async () => {
       // Verify that the schema migration exists
-      const fs = require("fs");
-      const path = require("path");
+      const fs = require("node:fs");
+      const path = require("node:path");
 
       const migrationPath = path.join(
         process.cwd(),
@@ -189,8 +192,8 @@ describe("AI Duration Prediction Integration", () => {
 
     test("should have API routes defined", async () => {
       // Verify that API route files exist
-      const fs = require("fs");
-      const path = require("path");
+      const fs = require("node:fs");
+      const path = require("node:path");
 
       const apiRoutes = [
         "app/api/ai/predict-duration/route.ts",
@@ -208,8 +211,8 @@ describe("AI Duration Prediction Integration", () => {
 
     test("should have React components defined", async () => {
       // Verify that component files exist
-      const fs = require("fs");
-      const path = require("path");
+      const fs = require("node:fs");
+      const path = require("node:path");
 
       const components = [
         "components/ai/duration-prediction.tsx",
@@ -227,8 +230,8 @@ describe("AI Duration Prediction Integration", () => {
 
   describe("Story 2.1 Completion Validation", () => {
     test("should have all required implementation files", async () => {
-      const fs = require("fs");
-      const path = require("path");
+      const fs = require("node:fs");
+      const path = require("node:path");
 
       const requiredFiles = [
         // Core service

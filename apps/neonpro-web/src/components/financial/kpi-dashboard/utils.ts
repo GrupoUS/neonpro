@@ -1,21 +1,21 @@
 import type {
-  format,
-  differenceInDays,
-  startOfMonth,
-  endOfMonth,
-  subMonths,
   addDays,
+  differenceInDays,
+  endOfMonth,
+  format,
+  startOfMonth,
+  subMonths,
 } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
-  KPIMetric,
-  KPIAlert,
-  FinancialData,
   DateRange,
-  TrendDirection,
+  DrillDownData,
+  FinancialData,
+  KPIAlert,
+  KPIMetric,
   KPIStatus,
   TimeSeriesPoint,
-  DrillDownData,
+  TrendDirection,
 } from "./types";
 
 // Currency formatting
@@ -172,13 +172,13 @@ export const calculateMovingAverage = (data: number[], window: number): number[]
 // Calculate growth rate
 export const calculateGrowthRate = (current: number, previous: number, periods = 1): number => {
   if (previous === 0) return 0;
-  return (Math.pow(current / previous, 1 / periods) - 1) * 100;
+  return ((current / previous) ** (1 / periods) - 1) * 100;
 };
 
 // Calculate compound annual growth rate (CAGR)
 export const calculateCAGR = (endValue: number, startValue: number, years: number): number => {
   if (startValue === 0 || years === 0) return 0;
-  return (Math.pow(endValue / startValue, 1 / years) - 1) * 100;
+  return ((endValue / startValue) ** (1 / years) - 1) * 100;
 };
 
 // Generate date range presets
@@ -314,7 +314,7 @@ export const calculateStatistics = (values: number[]) => {
       ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
       : sorted[Math.floor(sorted.length / 2)];
 
-  const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / values.length;
+  const variance = values.reduce((sum, val) => sum + (val - mean) ** 2, 0) / values.length;
   const stdDev = Math.sqrt(variance);
 
   return {

@@ -1,4 +1,3 @@
-"use strict";
 // app/api/appointments/[id]/route.ts
 // API route for appointment details and updates
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,7 +35,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,8 +64,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -87,9 +84,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.PATCH = PATCH;
@@ -159,8 +156,8 @@ var server_2 = require("@/app/utils/supabase/server");
  * GET /api/appointments/[id]
  * Fetch detailed appointment information with related data
  */
-function GET(request_1, _a) {
-  return __awaiter(this, arguments, void 0, function (request, _b) {
+function GET(_request_1, _a) {
+  return __awaiter(this, arguments, void 0, function (_request, _b) {
     var supabase,
       session,
       resolvedParams,
@@ -172,10 +169,10 @@ function GET(request_1, _a) {
       response,
       error_1;
     var params = _b.params;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
-          _d.trys.push([0, 5, , 6]);
+          _d.trys.push([0, 5, undefined, 6]);
           return [4 /*yield*/, (0, server_2.createClient)()];
         case 1:
           supabase = _d.sent();
@@ -252,7 +249,7 @@ function GET(request_1, _a) {
  * PATCH /api/appointments/[id]
  * Update appointment with conflict validation and audit logging
  */
-function PATCH(request_1, _a) {
+function PATCH(_request_1, _a) {
   return __awaiter(this, arguments, void 0, function (request, _b) {
     var supabase,
       session,
@@ -261,7 +258,7 @@ function PATCH(request_1, _a) {
       updateData,
       processedData,
       _c,
-      data,
+      _data,
       error,
       _d,
       updatedAppointment,
@@ -271,10 +268,10 @@ function PATCH(request_1, _a) {
       error_2;
     var _e, _f;
     var params = _b.params;
-    return __generator(this, function (_g) {
+    return __generator(this, (_g) => {
       switch (_g.label) {
         case 0:
-          _g.trys.push([0, 7, , 8]);
+          _g.trys.push([0, 7, undefined, 8]);
           return [4 /*yield*/, (0, server_2.createClient)()];
         case 1:
           supabase = _g.sent();
@@ -322,7 +319,7 @@ function PATCH(request_1, _a) {
             }),
           ];
         case 5:
-          (_c = _g.sent()), (data = _c.data), (error = _c.error);
+          (_c = _g.sent()), (_data = _c.data), (error = _c.error);
           if (error) {
             // Handle specific validation errors
             if ((_e = error.message) === null || _e === void 0 ? void 0 : _e.includes("conflict")) {
@@ -408,14 +405,14 @@ function PATCH(request_1, _a) {
  * DELETE /api/appointments/[id]
  * Soft delete appointment with reason tracking
  */
-function DELETE(request_1, _a) {
+function DELETE(_request_1, _a) {
   return __awaiter(this, arguments, void 0, function (request, _b) {
-    var supabase, session, resolvedParams, appointmentId, reason, _c, data, error, error_3;
+    var supabase, session, resolvedParams, appointmentId, reason, _c, _data, error, error_3;
     var params = _b.params;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
-          _d.trys.push([0, 6, , 7]);
+          _d.trys.push([0, 6, undefined, 7]);
           return [4 /*yield*/, (0, server_2.createClient)()];
         case 1:
           supabase = _d.sent();
@@ -447,7 +444,7 @@ function DELETE(request_1, _a) {
             }),
           ];
         case 5:
-          (_c = _d.sent()), (data = _c.data), (error = _c.error);
+          (_c = _d.sent()), (_data = _c.data), (error = _c.error);
           if (error) {
             throw error;
           }

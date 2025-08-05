@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmailService = void 0;
 var nodemailer_1 = require("nodemailer");
@@ -153,7 +150,7 @@ var client_ses_1 = require("@aws-sdk/client-ses");
 // =======================================
 // EMAIL SERVICE CLASS
 // =======================================
-var EmailService = /** @class */ (function () {
+var EmailService = /** @class */ (() => {
   function EmailService(supabase, clinicId) {
     this.supabase = supabase;
     this.clinicId = clinicId;
@@ -203,7 +200,7 @@ var EmailService = /** @class */ (function () {
   };
   EmailService.prototype.createProvider = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (config.provider) {
           case "smtp":
             return [2 /*return*/, new SMTPEmailProvider(config.settings)];
@@ -336,12 +333,7 @@ var EmailService = /** @class */ (function () {
             totalSent += batchResult.totalSent;
             totalFailed += batchResult.totalFailed;
             if (!(i + batchSize < messages.length)) return [3 /*break*/, 5];
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 4:
             _d.sent();
             _d.label = 5;
@@ -410,7 +402,7 @@ var EmailService = /** @class */ (function () {
               2 /*return*/,
               {
                 success: false,
-                results: messages.map(function (msg) {
+                results: messages.map((msg) => {
                   var _a;
                   return {
                     email:
@@ -731,21 +723,11 @@ var EmailService = /** @class */ (function () {
               return [2 /*return*/, null];
             }
             events = data.map(this.mapDatabaseEvent);
-            sentEvent = events.find(function (e) {
-              return e.event === "sent";
-            });
-            deliveredEvent = events.find(function (e) {
-              return e.event === "delivered";
-            });
-            openedEvent = events.find(function (e) {
-              return e.event === "opened";
-            });
-            clickedEvent = events.find(function (e) {
-              return e.event === "clicked";
-            });
-            bouncedEvent = events.find(function (e) {
-              return e.event === "bounced";
-            });
+            sentEvent = events.find((e) => e.event === "sent");
+            deliveredEvent = events.find((e) => e.event === "delivered");
+            openedEvent = events.find((e) => e.event === "opened");
+            clickedEvent = events.find((e) => e.event === "clicked");
+            bouncedEvent = events.find((e) => e.event === "bounced");
             return [
               2 /*return*/,
               {
@@ -861,7 +843,7 @@ var EmailService = /** @class */ (function () {
       return __generator(this, function (_d) {
         switch (_d.label) {
           case 0:
-            if (!!this.settings) return [3 /*break*/, 2];
+            if (this.settings) return [3 /*break*/, 2];
             _a = this;
             return [4 /*yield*/, this.getEmailSettings()];
           case 1:
@@ -911,44 +893,39 @@ var EmailService = /** @class */ (function () {
       });
     });
   };
-  EmailService.prototype.interpolateTemplate = function (template, variables) {
-    return template.replace(/\{\{(\w+)\}\}/g, function (match, key) {
-      return variables[key] !== undefined ? String(variables[key]) : match;
-    });
-  };
-  EmailService.prototype.mapDatabaseTemplate = function (data) {
-    return {
-      id: data.id,
-      name: data.name,
-      subject: data.subject,
-      htmlContent: data.html_content,
-      textContent: data.text_content,
-      variables: data.variables || [],
-      category: data.category,
-      isActive: data.is_active,
-      clinicId: data.clinic_id,
-      createdBy: data.created_by,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
-    };
-  };
-  EmailService.prototype.mapDatabaseEvent = function (data) {
-    return {
-      id: data.id,
-      emailId: data.email_id,
-      messageId: data.message_id,
-      event: data.event,
-      timestamp: new Date(data.timestamp),
-      metadata: data.metadata || {},
-      providerEventId: data.provider_event_id,
-      reason: data.reason,
-      userAgent: data.user_agent,
-      ipAddress: data.ip_address,
-      linkUrl: data.link_url,
-    };
-  };
-  EmailService.prototype.calculateAnalytics = function (events) {
-    var eventCounts = events.reduce(function (acc, event) {
+  EmailService.prototype.interpolateTemplate = (template, variables) =>
+    template.replace(/\{\{(\w+)\}\}/g, (match, key) =>
+      variables[key] !== undefined ? String(variables[key]) : match,
+    );
+  EmailService.prototype.mapDatabaseTemplate = (data) => ({
+    id: data.id,
+    name: data.name,
+    subject: data.subject,
+    htmlContent: data.html_content,
+    textContent: data.text_content,
+    variables: data.variables || [],
+    category: data.category,
+    isActive: data.is_active,
+    clinicId: data.clinic_id,
+    createdBy: data.created_by,
+    createdAt: new Date(data.created_at),
+    updatedAt: new Date(data.updated_at),
+  });
+  EmailService.prototype.mapDatabaseEvent = (data) => ({
+    id: data.id,
+    emailId: data.email_id,
+    messageId: data.message_id,
+    event: data.event,
+    timestamp: new Date(data.timestamp),
+    metadata: data.metadata || {},
+    providerEventId: data.provider_event_id,
+    reason: data.reason,
+    userAgent: data.user_agent,
+    ipAddress: data.ip_address,
+    linkUrl: data.link_url,
+  });
+  EmailService.prototype.calculateAnalytics = (events) => {
+    var eventCounts = events.reduce((acc, event) => {
       acc[event.event] = (acc[event.event] || 0) + 1;
       return acc;
     }, {});
@@ -1014,7 +991,7 @@ exports.EmailService = EmailService;
 // =======================================
 // EMAIL PROVIDER IMPLEMENTATIONS
 // =======================================
-var SMTPEmailProvider = /** @class */ (function () {
+var SMTPEmailProvider = /** @class */ (() => {
   function SMTPEmailProvider(config) {
     this.config = config;
     this.transporter = nodemailer_1.default.createTransporter({
@@ -1040,26 +1017,16 @@ var SMTPEmailProvider = /** @class */ (function () {
               this.transporter.sendMail({
                 from: "".concat(message.from.name || "", " <").concat(message.from.email, ">"),
                 to: message.to
-                  .map(function (r) {
-                    return "".concat(r.name || "", " <").concat(r.email, ">");
-                  })
+                  .map((r) => "".concat(r.name || "", " <").concat(r.email, ">"))
                   .join(", "),
                 cc:
                   (_a = message.cc) === null || _a === void 0
                     ? void 0
-                    : _a
-                        .map(function (r) {
-                          return "".concat(r.name || "", " <").concat(r.email, ">");
-                        })
-                        .join(", "),
+                    : _a.map((r) => "".concat(r.name || "", " <").concat(r.email, ">")).join(", "),
                 bcc:
                   (_b = message.bcc) === null || _b === void 0
                     ? void 0
-                    : _b
-                        .map(function (r) {
-                          return "".concat(r.name || "", " <").concat(r.email, ">");
-                        })
-                        .join(", "),
+                    : _b.map((r) => "".concat(r.name || "", " <").concat(r.email, ">")).join(", "),
                 replyTo: message.replyTo
                   ? "".concat(message.replyTo.name || "", " <").concat(message.replyTo.email, ">")
                   : undefined,
@@ -1069,14 +1036,12 @@ var SMTPEmailProvider = /** @class */ (function () {
                 attachments:
                   (_c = message.attachments) === null || _c === void 0
                     ? void 0
-                    : _c.map(function (att) {
-                        return {
-                          filename: att.filename,
-                          content: att.content,
-                          contentType: att.contentType,
-                          cid: att.cid,
-                        };
-                      }),
+                    : _c.map((att) => ({
+                        filename: att.filename,
+                        content: att.content,
+                        contentType: att.contentType,
+                        cid: att.cid,
+                      })),
               }),
             ];
           case 1:
@@ -1154,7 +1119,7 @@ var SMTPEmailProvider = /** @class */ (function () {
   };
   SMTPEmailProvider.prototype.getDeliveryStatus = function (messageId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // SMTP doesn't provide delivery status by default
         return [2 /*return*/, "sent"];
       });
@@ -1182,7 +1147,7 @@ var SMTPEmailProvider = /** @class */ (function () {
   };
   SMTPEmailProvider.prototype.getQuotaUsage = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // SMTP doesn't have quota limits by default
         return [2 /*return*/, { used: 0, limit: Number.MAX_SAFE_INTEGER }];
       });
@@ -1190,7 +1155,7 @@ var SMTPEmailProvider = /** @class */ (function () {
   };
   return SMTPEmailProvider;
 })();
-var SESEmailProvider = /** @class */ (function () {
+var SESEmailProvider = /** @class */ (() => {
   function SESEmailProvider(config) {
     this.config = config;
     this.client = new client_ses_1.SESClient({
@@ -1212,21 +1177,17 @@ var SESEmailProvider = /** @class */ (function () {
             command = new client_ses_1.SendEmailCommand({
               Source: "".concat(message.from.name || "", " <").concat(message.from.email, ">"),
               Destination: {
-                ToAddresses: message.to.map(function (r) {
-                  return "".concat(r.name || "", " <").concat(r.email, ">");
-                }),
+                ToAddresses: message.to.map((r) =>
+                  "".concat(r.name || "", " <").concat(r.email, ">"),
+                ),
                 CcAddresses:
                   (_a = message.cc) === null || _a === void 0
                     ? void 0
-                    : _a.map(function (r) {
-                        return "".concat(r.name || "", " <").concat(r.email, ">");
-                      }),
+                    : _a.map((r) => "".concat(r.name || "", " <").concat(r.email, ">")),
                 BccAddresses:
                   (_b = message.bcc) === null || _b === void 0
                     ? void 0
-                    : _b.map(function (r) {
-                        return "".concat(r.name || "", " <").concat(r.email, ">");
-                      }),
+                    : _b.map((r) => "".concat(r.name || "", " <").concat(r.email, ">")),
               },
               Message: {
                 Subject: { Data: message.subject },
@@ -1316,7 +1277,7 @@ var SESEmailProvider = /** @class */ (function () {
   };
   SESEmailProvider.prototype.getDeliveryStatus = function (messageId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Would need to implement SES event tracking
         return [2 /*return*/, "sent"];
       });
@@ -1344,7 +1305,7 @@ var SESEmailProvider = /** @class */ (function () {
   };
   SESEmailProvider.prototype.getQuotaUsage = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Would need to implement SES quota checking
         return [2 /*return*/, { used: 0, limit: 200 }]; // SES default for new accounts
       });
@@ -1353,13 +1314,13 @@ var SESEmailProvider = /** @class */ (function () {
   return SESEmailProvider;
 })();
 // Placeholder implementations for other providers
-var SendGridEmailProvider = /** @class */ (function () {
+var SendGridEmailProvider = /** @class */ (() => {
   function SendGridEmailProvider(config) {
     this.config = config;
   }
   SendGridEmailProvider.prototype.sendEmail = function (message) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // SendGrid implementation would go here
         return [2 /*return*/, { success: false, error: "SendGrid not implemented yet" }];
       });
@@ -1367,165 +1328,136 @@ var SendGridEmailProvider = /** @class */ (function () {
   };
   SendGridEmailProvider.prototype.sendBulkEmail = function (messages) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          { success: false, results: [], totalSent: 0, totalFailed: messages.length },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { success: false, results: [], totalSent: 0, totalFailed: messages.length },
+      ]);
     });
   };
   SendGridEmailProvider.prototype.getDeliveryStatus = function (messageId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, "sent"];
-      });
+      return __generator(this, (_a) => [2 /*return*/, "sent"]);
     });
   };
   SendGridEmailProvider.prototype.validateConfiguration = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, false];
-      });
+      return __generator(this, (_a) => [2 /*return*/, false]);
     });
   };
   SendGridEmailProvider.prototype.getQuotaUsage = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { used: 0, limit: 100 }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { used: 0, limit: 100 }]);
     });
   };
   return SendGridEmailProvider;
 })();
-var MailgunEmailProvider = /** @class */ (function () {
+var MailgunEmailProvider = /** @class */ (() => {
   function MailgunEmailProvider(config) {
     this.config = config;
   }
   MailgunEmailProvider.prototype.sendEmail = function (message) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { success: false, error: "Mailgun not implemented yet" }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { success: false, error: "Mailgun not implemented yet" },
+      ]);
     });
   };
   MailgunEmailProvider.prototype.sendBulkEmail = function (messages) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          { success: false, results: [], totalSent: 0, totalFailed: messages.length },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { success: false, results: [], totalSent: 0, totalFailed: messages.length },
+      ]);
     });
   };
   MailgunEmailProvider.prototype.getDeliveryStatus = function (messageId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, "sent"];
-      });
+      return __generator(this, (_a) => [2 /*return*/, "sent"]);
     });
   };
   MailgunEmailProvider.prototype.validateConfiguration = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, false];
-      });
+      return __generator(this, (_a) => [2 /*return*/, false]);
     });
   };
   MailgunEmailProvider.prototype.getQuotaUsage = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { used: 0, limit: 100 }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { used: 0, limit: 100 }]);
     });
   };
   return MailgunEmailProvider;
 })();
-var ResendEmailProvider = /** @class */ (function () {
+var ResendEmailProvider = /** @class */ (() => {
   function ResendEmailProvider(config) {
     this.config = config;
   }
   ResendEmailProvider.prototype.sendEmail = function (message) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { success: false, error: "Resend not implemented yet" }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { success: false, error: "Resend not implemented yet" },
+      ]);
     });
   };
   ResendEmailProvider.prototype.sendBulkEmail = function (messages) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          { success: false, results: [], totalSent: 0, totalFailed: messages.length },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { success: false, results: [], totalSent: 0, totalFailed: messages.length },
+      ]);
     });
   };
   ResendEmailProvider.prototype.getDeliveryStatus = function (messageId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, "sent"];
-      });
+      return __generator(this, (_a) => [2 /*return*/, "sent"]);
     });
   };
   ResendEmailProvider.prototype.validateConfiguration = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, false];
-      });
+      return __generator(this, (_a) => [2 /*return*/, false]);
     });
   };
   ResendEmailProvider.prototype.getQuotaUsage = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { used: 0, limit: 100 }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { used: 0, limit: 100 }]);
     });
   };
   return ResendEmailProvider;
 })();
-var PostmarkEmailProvider = /** @class */ (function () {
+var PostmarkEmailProvider = /** @class */ (() => {
   function PostmarkEmailProvider(config) {
     this.config = config;
   }
   PostmarkEmailProvider.prototype.sendEmail = function (message) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { success: false, error: "Postmark not implemented yet" }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { success: false, error: "Postmark not implemented yet" },
+      ]);
     });
   };
   PostmarkEmailProvider.prototype.sendBulkEmail = function (messages) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          { success: false, results: [], totalSent: 0, totalFailed: messages.length },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { success: false, results: [], totalSent: 0, totalFailed: messages.length },
+      ]);
     });
   };
   PostmarkEmailProvider.prototype.getDeliveryStatus = function (messageId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, "sent"];
-      });
+      return __generator(this, (_a) => [2 /*return*/, "sent"]);
     });
   };
   PostmarkEmailProvider.prototype.validateConfiguration = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, false];
-      });
+      return __generator(this, (_a) => [2 /*return*/, false]);
     });
   };
   PostmarkEmailProvider.prototype.getQuotaUsage = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { used: 0, limit: 100 }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { used: 0, limit: 100 }]);
     });
   };
   return PostmarkEmailProvider;

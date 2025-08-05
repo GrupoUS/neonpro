@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================
 // useSessionActivity Hook - Automatic Activity Tracking
 // Story 1.4: Session Management & Security
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -161,7 +158,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSessionActivity = useSessionActivity;
 exports.dispatchCustomActivity = dispatchCustomActivity;
@@ -189,7 +186,6 @@ var DEFAULT_OPTIONS = {
 // MAIN HOOK
 // =====================================================
 function useSessionActivity(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -210,11 +206,11 @@ function useSessionActivity(options) {
   // ACTIVITY TRACKING FUNCTIONS
   // =====================================================
   var trackActivity = (0, react_1.useCallback)(
-    function (activityType, metadata) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (activityType, metadata) =>
+      __awaiter(this, void 0, void 0, function () {
         var now, activityEvent, error_1;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!isAuthenticated) return [2 /*return*/];
@@ -276,16 +272,15 @@ function useSessionActivity(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [isAuthenticated, updateActivity, pathname],
   );
   var debouncedTrackActivity = (0, react_1.useCallback)(
-    function (activityType, metadata) {
+    (activityType, metadata) => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
-      debounceTimerRef.current = setTimeout(function () {
+      debounceTimerRef.current = setTimeout(() => {
         trackActivity(activityType, metadata);
       }, config.debounceMs);
     },
@@ -294,19 +289,19 @@ function useSessionActivity(options) {
   // =====================================================
   // IDLE DETECTION
   // =====================================================
-  var resetIdleTimer = (0, react_1.useCallback)(
-    function () {
-      if (!config.trackIdleTime) return;
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
-      idleTimerRef.current = setTimeout(function () {
-        return __awaiter(_this, void 0, void 0, function () {
+  var resetIdleTimer = (0, react_1.useCallback)(() => {
+    if (!config.trackIdleTime) return;
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current);
+    }
+    idleTimerRef.current = setTimeout(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var _a;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
-                if (!!isIdleRef.current) return [3 /*break*/, 2];
+                if (isIdleRef.current) return [3 /*break*/, 2];
                 isIdleRef.current = true;
                 return [
                   4 /*yield*/,
@@ -324,33 +319,24 @@ function useSessionActivity(options) {
                 return [2 /*return*/];
             }
           });
-        });
-      }, config.idleThresholdMs);
-    },
-    [config.trackIdleTime, config.idleThresholdMs, trackActivity],
-  );
+        }),
+      config.idleThresholdMs,
+    );
+  }, [config.trackIdleTime, config.idleThresholdMs, trackActivity]);
   // =====================================================
   // EVENT HANDLERS
   // =====================================================
-  var handlePageView = (0, react_1.useCallback)(
-    function () {
-      if (!config.trackPageViews) return;
-      if (
-        config.excludePaths.some(function (path) {
-          return pathname.startsWith(path);
-        })
-      )
-        return;
-      trackActivity("page_view", {
-        path: pathname,
-        referrer: document.referrer,
-        title: document.title,
-      });
-    },
-    [config.trackPageViews, config.excludePaths, pathname, trackActivity],
-  );
+  var handlePageView = (0, react_1.useCallback)(() => {
+    if (!config.trackPageViews) return;
+    if (config.excludePaths.some((path) => pathname.startsWith(path))) return;
+    trackActivity("page_view", {
+      path: pathname,
+      referrer: document.referrer,
+      title: document.title,
+    });
+  }, [config.trackPageViews, config.excludePaths, pathname, trackActivity]);
   var handleClick = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       var _a;
       if (!config.trackClicks) return;
       var target = event.target;
@@ -371,7 +357,7 @@ function useSessionActivity(options) {
     [config.trackClicks, debouncedTrackActivity],
   );
   var handleFormSubmit = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       if (!config.trackFormSubmissions) return;
       var form = event.target;
       var formData = new FormData(form);
@@ -381,36 +367,31 @@ function useSessionActivity(options) {
         formAction: form.action,
         formMethod: form.method,
         fieldCount: fields.length,
-        fields: fields.filter(function (field) {
-          return !field.toLowerCase().includes("password");
-        }),
+        fields: fields.filter((field) => !field.toLowerCase().includes("password")),
       });
     },
     [config.trackFormSubmissions, trackActivity],
   );
-  var handleScroll = (0, react_1.useCallback)(
-    function () {
-      if (!config.trackScrolling) return;
-      if (scrollDebounceRef.current) {
-        clearTimeout(scrollDebounceRef.current);
-      }
-      scrollDebounceRef.current = setTimeout(function () {
-        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        var scrollHeight = document.documentElement.scrollHeight;
-        var clientHeight = document.documentElement.clientHeight;
-        var scrollPercentage = Math.round((scrollTop / (scrollHeight - clientHeight)) * 100);
-        debouncedTrackActivity("scroll", {
-          scrollTop: scrollTop,
-          scrollPercentage: scrollPercentage,
-          scrollHeight: scrollHeight,
-          clientHeight: clientHeight,
-        });
-      }, 500);
-    },
-    [config.trackScrolling, debouncedTrackActivity],
-  );
+  var handleScroll = (0, react_1.useCallback)(() => {
+    if (!config.trackScrolling) return;
+    if (scrollDebounceRef.current) {
+      clearTimeout(scrollDebounceRef.current);
+    }
+    scrollDebounceRef.current = setTimeout(() => {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight;
+      var clientHeight = document.documentElement.clientHeight;
+      var scrollPercentage = Math.round((scrollTop / (scrollHeight - clientHeight)) * 100);
+      debouncedTrackActivity("scroll", {
+        scrollTop: scrollTop,
+        scrollPercentage: scrollPercentage,
+        scrollHeight: scrollHeight,
+        clientHeight: clientHeight,
+      });
+    }, 500);
+  }, [config.trackScrolling, debouncedTrackActivity]);
   var handleKeyPress = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       // Track specific key combinations
       if (event.ctrlKey || event.metaKey) {
         debouncedTrackActivity("keyboard_shortcut", {
@@ -424,132 +405,114 @@ function useSessionActivity(options) {
     },
     [debouncedTrackActivity],
   );
-  var handleVisibilityChange = (0, react_1.useCallback)(
-    function () {
-      if (document.hidden) {
-        trackActivity("page_hidden", {
-          timestamp: new Date().toISOString(),
-        });
-      } else {
-        trackActivity("page_visible", {
-          timestamp: new Date().toISOString(),
-        });
-      }
-    },
-    [trackActivity],
-  );
-  var handleBeforeUnload = (0, react_1.useCallback)(
-    function () {
-      trackActivity("page_unload", {
+  var handleVisibilityChange = (0, react_1.useCallback)(() => {
+    if (document.hidden) {
+      trackActivity("page_hidden", {
         timestamp: new Date().toISOString(),
-        sessionDuration: lastActivityRef.current
-          ? Date.now() - lastActivityRef.current.getTime()
-          : 0,
       });
-    },
-    [trackActivity],
-  );
+    } else {
+      trackActivity("page_visible", {
+        timestamp: new Date().toISOString(),
+      });
+    }
+  }, [trackActivity]);
+  var handleBeforeUnload = (0, react_1.useCallback)(() => {
+    trackActivity("page_unload", {
+      timestamp: new Date().toISOString(),
+      sessionDuration: lastActivityRef.current ? Date.now() - lastActivityRef.current.getTime() : 0,
+    });
+  }, [trackActivity]);
   // =====================================================
   // EFFECTS
   // =====================================================
   // Track page view on pathname change
-  (0, react_1.useEffect)(
-    function () {
-      if (isAuthenticated) {
-        handlePageView();
-      }
-    },
-    [pathname, isAuthenticated, handlePageView],
-  );
+  (0, react_1.useEffect)(() => {
+    if (isAuthenticated) {
+      handlePageView();
+    }
+  }, [pathname, isAuthenticated, handlePageView]);
   // Set up event listeners
-  (0, react_1.useEffect)(
-    function () {
-      if (!isAuthenticated) return;
-      // Add event listeners
-      if (config.trackClicks) {
-        document.addEventListener("click", handleClick, { passive: true });
+  (0, react_1.useEffect)(() => {
+    if (!isAuthenticated) return;
+    // Add event listeners
+    if (config.trackClicks) {
+      document.addEventListener("click", handleClick, { passive: true });
+    }
+    if (config.trackFormSubmissions) {
+      document.addEventListener("submit", handleFormSubmit);
+    }
+    if (config.trackScrolling) {
+      window.addEventListener("scroll", handleScroll, { passive: true });
+    }
+    document.addEventListener("keydown", handleKeyPress);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    // Mouse movement for idle detection
+    var handleMouseMove = () => resetIdleTimer();
+    document.addEventListener("mousemove", handleMouseMove, { passive: true });
+    // Initial idle timer
+    resetIdleTimer();
+    // Cleanup
+    return () => {
+      document.removeEventListener("click", handleClick);
+      document.removeEventListener("submit", handleFormSubmit);
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("keydown", handleKeyPress);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      document.removeEventListener("mousemove", handleMouseMove);
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
       }
-      if (config.trackFormSubmissions) {
-        document.addEventListener("submit", handleFormSubmit);
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
       }
-      if (config.trackScrolling) {
-        window.addEventListener("scroll", handleScroll, { passive: true });
+      if (scrollDebounceRef.current) {
+        clearTimeout(scrollDebounceRef.current);
       }
-      document.addEventListener("keydown", handleKeyPress);
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      // Mouse movement for idle detection
-      var handleMouseMove = function () {
-        return resetIdleTimer();
-      };
-      document.addEventListener("mousemove", handleMouseMove, { passive: true });
-      // Initial idle timer
-      resetIdleTimer();
-      // Cleanup
-      return function () {
-        document.removeEventListener("click", handleClick);
-        document.removeEventListener("submit", handleFormSubmit);
-        window.removeEventListener("scroll", handleScroll);
-        document.removeEventListener("keydown", handleKeyPress);
-        document.removeEventListener("visibilitychange", handleVisibilityChange);
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-        document.removeEventListener("mousemove", handleMouseMove);
-        if (idleTimerRef.current) {
-          clearTimeout(idleTimerRef.current);
-        }
-        if (debounceTimerRef.current) {
-          clearTimeout(debounceTimerRef.current);
-        }
-        if (scrollDebounceRef.current) {
-          clearTimeout(scrollDebounceRef.current);
-        }
-      };
-    },
-    [
-      isAuthenticated,
-      config,
-      handleClick,
-      handleFormSubmit,
-      handleScroll,
-      handleKeyPress,
-      handleVisibilityChange,
-      handleBeforeUnload,
-      resetIdleTimer,
-    ],
-  );
+    };
+  }, [
+    isAuthenticated,
+    config,
+    handleClick,
+    handleFormSubmit,
+    handleScroll,
+    handleKeyPress,
+    handleVisibilityChange,
+    handleBeforeUnload,
+    resetIdleTimer,
+  ]);
   // =====================================================
   // UTILITY FUNCTIONS
   // =====================================================
-  var getActivityHistory = (0, react_1.useCallback)(function () {
-    return __spreadArray([], activityHistoryRef.current, true);
-  }, []);
-  var clearActivityHistory = (0, react_1.useCallback)(function () {
+  var getActivityHistory = (0, react_1.useCallback)(
+    () => __spreadArray([], activityHistoryRef.current, true),
+    [],
+  );
+  var clearActivityHistory = (0, react_1.useCallback)(() => {
     activityHistoryRef.current = [];
   }, []);
   // =====================================================
   // CUSTOM ACTIVITY TRACKING
   // =====================================================
   // Track custom activities defined in options
-  (0, react_1.useEffect)(
-    function () {
-      if (!isAuthenticated || config.customActivities.length === 0) return;
-      var handleCustomActivity = function (event) {
-        if (config.customActivities.includes(event.type)) {
-          trackActivity(event.type, event.detail);
-        }
-      };
-      // Listen for custom events
-      config.customActivities.forEach(function (activityType) {
-        document.addEventListener(activityType, handleCustomActivity);
+  (0, react_1.useEffect)(() => {
+    if (!isAuthenticated || config.customActivities.length === 0) return;
+    var handleCustomActivity = (event) => {
+      if (config.customActivities.includes(event.type)) {
+        trackActivity(event.type, event.detail);
+      }
+    };
+    // Listen for custom events
+    config.customActivities.forEach((activityType) => {
+      document.addEventListener(activityType, handleCustomActivity);
+    });
+    return () => {
+      config.customActivities.forEach((activityType) => {
+        document.removeEventListener(activityType, handleCustomActivity);
       });
-      return function () {
-        config.customActivities.forEach(function (activityType) {
-          document.removeEventListener(activityType, handleCustomActivity);
-        });
-      };
-    },
-    [isAuthenticated, config.customActivities, trackActivity],
-  );
+    };
+  }, [isAuthenticated, config.customActivities, trackActivity]);
   // =====================================================
   // RETURN HOOK INTERFACE
   // =====================================================
@@ -579,19 +542,16 @@ function dispatchCustomActivity(activityType, metadata) {
 function withActivityTracking(Component, activityType) {
   return function TrackedComponent(props) {
     var trackActivity = useSessionActivity().trackActivity;
-    (0, react_1.useEffect)(
-      function () {
-        trackActivity("component_mount_".concat(activityType), {
+    (0, react_1.useEffect)(() => {
+      trackActivity("component_mount_".concat(activityType), {
+        componentName: Component.displayName || Component.name,
+      });
+      return () => {
+        trackActivity("component_unmount_".concat(activityType), {
           componentName: Component.displayName || Component.name,
         });
-        return function () {
-          trackActivity("component_unmount_".concat(activityType), {
-            componentName: Component.displayName || Component.name,
-          });
-        };
-      },
-      [trackActivity],
-    );
+      };
+    }, [trackActivity]);
     return __assign({}, props) /  >
         ;
   };
@@ -602,24 +562,15 @@ function withActivityTracking(Component, activityType) {
 function useBusinessActivityTracking() {
   var trackActivity = useSessionActivity().trackActivity;
   return {
-    trackPurchase: function (metadata) {
-      return trackActivity("purchase", metadata);
-    },
-    trackSearch: function (query, results) {
-      return trackActivity("search", { query: query, results: results });
-    },
-    trackDownload: function (filename, fileType) {
-      return trackActivity("download", { filename: filename, fileType: fileType });
-    },
-    trackShare: function (content, platform) {
-      return trackActivity("share", { content: content, platform: platform });
-    },
-    trackError: function (error, context) {
-      return trackActivity("error", { error: error, context: context });
-    },
-    trackFeatureUsage: function (feature, metadata) {
-      return trackActivity("feature_usage", __assign({ feature: feature }, metadata));
-    },
+    trackPurchase: (metadata) => trackActivity("purchase", metadata),
+    trackSearch: (query, results) => trackActivity("search", { query: query, results: results }),
+    trackDownload: (filename, fileType) =>
+      trackActivity("download", { filename: filename, fileType: fileType }),
+    trackShare: (content, platform) =>
+      trackActivity("share", { content: content, platform: platform }),
+    trackError: (error, context) => trackActivity("error", { error: error, context: context }),
+    trackFeatureUsage: (feature, metadata) =>
+      trackActivity("feature_usage", __assign({ feature: feature }, metadata)),
   };
 }
 // =====================================================

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Third-party Integrations Framework
  * Types and interfaces for integration system
@@ -10,7 +9,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntegrationType = void 0;
 var IntegrationType;
-(function (IntegrationType) {
+((IntegrationType) => {
   IntegrationType["ERP"] = "erp";
   IntegrationType["CRM"] = "crm";
   IntegrationType["PAYMENT"] = "payment";

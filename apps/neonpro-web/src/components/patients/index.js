@@ -1,4 +1,3 @@
-"use strict";
 // Patient Management Components Export
 // Epic 5 Story 5.1: Advanced Patient Profile Management System
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -15,33 +14,25 @@ exports.COMPONENT_METADATA =
 var patient_profile_manager_1 = require("./patient-profile-manager");
 Object.defineProperty(exports, "PatientProfileManager", {
   enumerable: true,
-  get: function () {
-    return patient_profile_manager_1.default;
-  },
+  get: () => patient_profile_manager_1.default,
 });
 // Medical History Management
 var medical_history_manager_1 = require("./medical-history/medical-history-manager");
 Object.defineProperty(exports, "MedicalHistoryManager", {
   enumerable: true,
-  get: function () {
-    return medical_history_manager_1.default;
-  },
+  get: () => medical_history_manager_1.default,
 });
 // Treatment Plans Management
 var treatment_plan_manager_1 = require("./treatment-plans/treatment-plan-manager");
 Object.defineProperty(exports, "TreatmentPlanManager", {
   enumerable: true,
-  get: function () {
-    return treatment_plan_manager_1.default;
-  },
+  get: () => treatment_plan_manager_1.default,
 });
 // Progress Tracking Management
 var progress_tracking_manager_1 = require("./progress-tracking/progress-tracking-manager");
 Object.defineProperty(exports, "ProgressTrackingManager", {
   enumerable: true,
-  get: function () {
-    return progress_tracking_manager_1.default;
-  },
+  get: () => progress_tracking_manager_1.default,
 });
 // Component configuration and utilities
 exports.PATIENT_MANAGEMENT_CONFIG = {
@@ -92,7 +83,7 @@ exports.PATIENT_MANAGEMENT_CONFIG = {
 // Utility functions for patient management
 exports.PatientUtils = {
   // Calculate age from birth date
-  calculateAge: function (birthDate) {
+  calculateAge: (birthDate) => {
     var today = new Date();
     var birth = new Date(birthDate);
     var age = today.getFullYear() - birth.getFullYear();
@@ -103,7 +94,7 @@ exports.PatientUtils = {
     return age;
   },
   // Format patient name
-  formatPatientName: function (name) {
+  formatPatientName: (name) => {
     var _a, _b, _c;
     var parts = [];
     if ((_a = name.prefix) === null || _a === void 0 ? void 0 : _a.length)
@@ -116,7 +107,7 @@ exports.PatientUtils = {
     return parts.join(" ");
   },
   // Validate CPF (Brazilian tax ID)
-  validateCPF: function (cpf) {
+  validateCPF: (cpf) => {
     var cleanCPF = cpf.replace(/[^\d]/g, "");
     if (cleanCPF.length !== 11) return false;
     if (/^(\d)\1{10}$/.test(cleanCPF)) return false;
@@ -137,7 +128,7 @@ exports.PatientUtils = {
     return true;
   },
   // Format phone number (Brazilian format)
-  formatPhoneNumber: function (phone) {
+  formatPhoneNumber: (phone) => {
     var cleanPhone = phone.replace(/[^\d]/g, "");
     if (cleanPhone.length === 11) {
       return "+55 "
@@ -153,19 +144,19 @@ exports.PatientUtils = {
     return phone;
   },
   // Calculate BMI
-  calculateBMI: function (weight, height) {
+  calculateBMI: (weight, height) => {
     var heightInMeters = height / 100;
     return Number((weight / (heightInMeters * heightInMeters)).toFixed(1));
   },
   // Get BMI category
-  getBMICategory: function (bmi) {
+  getBMICategory: (bmi) => {
     if (bmi < 18.5) return "Underweight";
     if (bmi < 25) return "Normal weight";
     if (bmi < 30) return "Overweight";
     return "Obese";
   },
   // Risk level assessment
-  assessRiskLevel: function (conditions, allergies, age) {
+  assessRiskLevel: (conditions, allergies, age) => {
     var riskScore = 0;
     // Age factor
     if (age > 65) riskScore += 2;
@@ -178,21 +169,17 @@ exports.PatientUtils = {
       "cancer",
       "kidney disease",
     ];
-    var hasHighRiskCondition = conditions.some(function (condition) {
-      return highRiskConditions.some(function (risk) {
-        return condition.toLowerCase().includes(risk);
-      });
-    });
+    var hasHighRiskCondition = conditions.some((condition) =>
+      highRiskConditions.some((risk) => condition.toLowerCase().includes(risk)),
+    );
     if (hasHighRiskCondition) riskScore += 3;
     // Multiple conditions
     if (conditions.length > 2) riskScore += 1;
     // Severe allergies
     var severeAllergies = ["penicillin", "latex", "shellfish", "nuts"];
-    var hasSevereAllergy = allergies.some(function (allergy) {
-      return severeAllergies.some(function (severe) {
-        return allergy.toLowerCase().includes(severe);
-      });
-    });
+    var hasSevereAllergy = allergies.some((allergy) =>
+      severeAllergies.some((severe) => allergy.toLowerCase().includes(severe)),
+    );
     if (hasSevereAllergy) riskScore += 2;
     // Determine risk level
     if (riskScore >= 6) return "critical";

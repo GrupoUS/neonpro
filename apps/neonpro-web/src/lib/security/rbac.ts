@@ -286,7 +286,7 @@ export class HealthcareRBAC {
   }> {
     try {
       // Get user's roles and permissions
-      const userRoles = await this.getUserRoles(userId);
+      const userRoles = await HealthcareRBAC.getUserRoles(userId);
 
       if (userRoles.length === 0) {
         return { granted: false, reason: "No roles assigned" };
@@ -294,7 +294,7 @@ export class HealthcareRBAC {
 
       // Check each role for the permission
       for (const userRole of userRoles) {
-        const hasPermission = await this.checkRolePermission(
+        const hasPermission = await HealthcareRBAC.checkRolePermission(
           userRole,
           permission,
           context,
@@ -303,18 +303,30 @@ export class HealthcareRBAC {
 
         if (hasPermission.granted) {
           // Log access decision for audit
-          await this.logAccessDecision(userId, permission, context, true, hasPermission.reason);
+          await HealthcareRBAC.logAccessDecision(
+            userId,
+            permission,
+            context,
+            true,
+            hasPermission.reason,
+          );
 
           return {
             granted: true,
             conditions: hasPermission.conditions,
-            auditRequired: this.requiresAudit(permission),
+            auditRequired: HealthcareRBAC.requiresAudit(permission),
           };
         }
       }
 
       // Permission denied
-      await this.logAccessDecision(userId, permission, context, false, "Permission denied");
+      await HealthcareRBAC.logAccessDecision(
+        userId,
+        permission,
+        context,
+        false,
+        "Permission denied",
+      );
 
       return { granted: false, reason: "Insufficient permissions" };
     } catch (error) {
@@ -338,7 +350,7 @@ export class HealthcareRBAC {
     expiresAt?: Date;
   }> {
     // Verify user can use emergency access
-    const canBreakGlass = await this.hasPermission(
+    const canBreakGlass = await HealthcareRBAC.hasPermission(
       userId,
       Permission.BREAK_GLASS,
       AccessContext.EMERGENCY,
@@ -353,7 +365,7 @@ export class HealthcareRBAC {
     const expiresAt = new Date(Date.now() + 4 * 60 * 60 * 1000); // 4 hours
 
     // Store emergency access record
-    await this.storeEmergencyAccess({
+    await HealthcareRBAC.storeEmergencyAccess({
       token: emergencyToken,
       userId,
       permission,
@@ -365,7 +377,7 @@ export class HealthcareRBAC {
     });
 
     // Log emergency access
-    await this.logAccessDecision(
+    await HealthcareRBAC.logAccessDecision(
       userId,
       permission,
       AccessContext.EMERGENCY,
@@ -374,7 +386,7 @@ export class HealthcareRBAC {
     );
 
     // Alert security team
-    await this.alertEmergencyAccess(userId, permission, patientId, justification);
+    await HealthcareRBAC.alertEmergencyAccess(userId, permission, patientId, justification);
 
     return {
       granted: true,
@@ -406,16 +418,16 @@ export class HealthcareRBAC {
     };
 
     // Validate role assignment
-    const canAssign = await this.canAssignRole(assignedBy, role);
+    const canAssign = await HealthcareRBAC.canAssignRole(assignedBy, role);
     if (!canAssign) {
       throw new Error("Insufficient permissions to assign role");
     }
 
     // Store user role
-    await this.storeUserRole(userRole);
+    await HealthcareRBAC.storeUserRole(userRole);
 
     // Log role assignment
-    await this.logRoleChange(userId, "assigned", role, assignedBy);
+    await HealthcareRBAC.logRoleChange(userId, "assigned", role, assignedBy);
 
     return userRole;
   }
@@ -430,16 +442,16 @@ export class HealthcareRBAC {
     reason: string,
   ): Promise<void> {
     // Check permission to revoke
-    const canRevoke = await this.canRevokeRole(revokedBy, role);
+    const canRevoke = await HealthcareRBAC.canRevokeRole(revokedBy, role);
     if (!canRevoke) {
       throw new Error("Insufficient permissions to revoke role");
     }
 
     // Deactivate user role
-    await this.deactivateUserRole(userId, role);
+    await HealthcareRBAC.deactivateUserRole(userId, role);
 
     // Log role revocation
-    await this.logRoleChange(userId, "revoked", role, revokedBy, reason);
+    await HealthcareRBAC.logRoleChange(userId, "revoked", role, revokedBy, reason);
   }
 
   /**
@@ -451,14 +463,14 @@ export class HealthcareRBAC {
     restrictions: any[];
     expiringRoles: Array<{ role: Role; expiresAt: Date }>;
   }> {
-    const userRoles = await this.getUserRoles(userId);
+    const userRoles = await HealthcareRBAC.getUserRoles(userId);
     const permissions = new Set<Permission>();
     const restrictions: any[] = [];
     const expiringRoles: Array<{ role: Role; expiresAt: Date }> = [];
 
     for (const userRole of userRoles) {
       // Get role permissions (including inherited)
-      const rolePermissions = await this.getRolePermissions(userRole.role);
+      const rolePermissions = await HealthcareRBAC.getRolePermissions(userRole.role);
       rolePermissions.forEach((p) => permissions.add(p));
 
       // Add additional permissions
@@ -532,13 +544,13 @@ export class HealthcareRBAC {
     resourceId?: string,
   ): Promise<{ granted: boolean; reason?: string; conditions?: any[] }> {
     // Get role definition
-    const roleDefinition = await this.getRoleDefinition(userRole.role);
+    const roleDefinition = await HealthcareRBAC.getRoleDefinition(userRole.role);
     if (!roleDefinition) {
       return { granted: false, reason: "Role not found" };
     }
 
     // Check if role has permission (including inherited)
-    const rolePermissions = await this.getRolePermissions(userRole.role);
+    const rolePermissions = await HealthcareRBAC.getRolePermissions(userRole.role);
     if (!rolePermissions.includes(permission)) {
       return { granted: false, reason: "Permission not in role" };
     }
@@ -546,7 +558,7 @@ export class HealthcareRBAC {
     // Check time restrictions
     if (roleDefinition.timeRestrictions) {
       const now = new Date();
-      const timeValid = this.checkTimeRestrictions(now, roleDefinition.timeRestrictions);
+      const timeValid = HealthcareRBAC.checkTimeRestrictions(now, roleDefinition.timeRestrictions);
       if (!timeValid) {
         return { granted: false, reason: "Outside allowed time" };
       }
@@ -554,7 +566,10 @@ export class HealthcareRBAC {
 
     // Check user-specific restrictions
     if (userRole.restrictions) {
-      const restrictionValid = this.checkUserRestrictions(userRole.restrictions, resourceId);
+      const restrictionValid = HealthcareRBAC.checkUserRestrictions(
+        userRole.restrictions,
+        resourceId,
+      );
       if (!restrictionValid) {
         return { granted: false, reason: "User restriction violated" };
       }
@@ -573,13 +588,13 @@ export class HealthcareRBAC {
     const permissions = new Set<Permission>();
 
     // Add direct permissions
-    const directPermissions = this.ROLE_PERMISSIONS[role] || [];
+    const directPermissions = HealthcareRBAC.ROLE_PERMISSIONS[role] || [];
     directPermissions.forEach((p) => permissions.add(p));
 
     // Add inherited permissions from parent roles
-    const parentRoles = this.getParentRoles(role);
+    const parentRoles = HealthcareRBAC.getParentRoles(role);
     for (const parentRole of parentRoles) {
-      const parentPermissions = await this.getRolePermissions(parentRole);
+      const parentPermissions = await HealthcareRBAC.getRolePermissions(parentRole);
       parentPermissions.forEach((p) => permissions.add(p));
     }
 
@@ -588,9 +603,9 @@ export class HealthcareRBAC {
 
   private static getParentRoles(role: Role): Role[] {
     // Find parent roles in hierarchy
-    for (const [parentRole, childRoles] of Object.entries(this.ROLE_HIERARCHY)) {
+    for (const [parentRole, childRoles] of Object.entries(HealthcareRBAC.ROLE_HIERARCHY)) {
       if (childRoles.includes(role)) {
-        return [parentRole as Role, ...this.getParentRoles(parentRole as Role)];
+        return [parentRole as Role, ...HealthcareRBAC.getParentRoles(parentRole as Role)];
       }
     }
     return [];
@@ -642,13 +657,13 @@ export class HealthcareRBAC {
 
   private static async canAssignRole(assignerId: string, role: Role): Promise<boolean> {
     // Check if assigner has permission to assign this role
-    const canManageUsers = await this.hasPermission(assignerId, Permission.MANAGE_USERS);
+    const canManageUsers = await HealthcareRBAC.hasPermission(assignerId, Permission.MANAGE_USERS);
     return canManageUsers.granted;
   }
 
   private static async canRevokeRole(revokerId: string, role: Role): Promise<boolean> {
     // Check if revoker has permission to revoke this role
-    const canManageUsers = await this.hasPermission(revokerId, Permission.MANAGE_USERS);
+    const canManageUsers = await HealthcareRBAC.hasPermission(revokerId, Permission.MANAGE_USERS);
     return canManageUsers.granted;
   }
 

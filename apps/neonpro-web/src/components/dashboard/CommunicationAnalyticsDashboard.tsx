@@ -1,6 +1,54 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import type { format, subDays } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  ArrowDownRight,
+  ArrowUpRight,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Eye,
+  Mail,
+  MessageCircle,
+  MessageSquare,
+  Minus,
+  MousePointer,
+  Phone,
+  PieChart as PieChartIcon,
+  Reply,
+  Send,
+  Star,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Scatter,
+  ScatterChart,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,10 +56,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import type { DatePickerWithRange } from "@/components/ui/date-picker-with-range";
+import type { Icons } from "@/components/ui/icons";
 import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Select,
   SelectContent,
@@ -19,61 +66,15 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { DatePickerWithRange } from "@/components/ui/date-picker-with-range";
-import type { Icons } from "@/components/ui/icons";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-  ScatterChart,
-  Scatter,
-} from "recharts";
-import type { format, subDays } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  MessageCircle,
-  Users,
-  Target,
-  BarChart3,
-  PieChart as PieChartIcon,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Zap,
-  ArrowUpRight,
-  ArrowDownRight,
-  Minus,
-  Mail,
-  Phone,
-  MessageSquare,
-  Send,
-  Eye,
-  MousePointer,
-  Reply,
-  Star,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { communicationAnalytics } from "@/lib/communication-analytics/analytics-engine";
 import type {
-  AnalyticsFilter,
   AnalyticsDashboard,
+  AnalyticsFilter,
+  BenchmarkComparison,
   ChannelPerformance,
   ROIMetrics,
-  BenchmarkComparison,
   TrendAnalysis,
 } from "@/lib/communication-analytics/types/analytics";
 

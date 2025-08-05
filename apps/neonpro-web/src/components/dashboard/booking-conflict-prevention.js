@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BookingConflictPrevention = BookingConflictPrevention;
 var react_1 = require("react");
@@ -147,7 +144,6 @@ var locale_1 = require("date-fns/locale");
 var use_toast_1 = require("@/hooks/use-toast");
 var client_1 = require("@/app/utils/supabase/client");
 function BookingConflictPrevention(_a) {
-  var _this = this;
   var selectedSlot = _a.selectedSlot,
     patientId = _a.patientId,
     onConflictResolved = _a.onConflictResolved;
@@ -164,8 +160,8 @@ function BookingConflictPrevention(_a) {
   var toast = (0, use_toast_1.useToast)().toast;
   var checkIntervalRef = (0, react_1.useRef)(null);
   // Função para verificar conflitos
-  var checkForConflicts = function (slot) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkForConflicts = (slot) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a,
         currentSlot,
         slotError,
@@ -178,7 +174,7 @@ function BookingConflictPrevention(_a) {
         patientError,
         sameDayAppointments,
         error_1;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         switch (_d.label) {
           case 0:
             _d.trys.push([0, 4, , 5]);
@@ -216,7 +212,7 @@ function BookingConflictPrevention(_a) {
             if (profError) {
               throw new Error("Erro ao verificar profissional: ".concat(profError.message));
             }
-            conflictingSlots = professionalSlots.filter(function (profSlot) {
+            conflictingSlots = professionalSlots.filter((profSlot) => {
               var slotStart = new Date("".concat(slot.date, "T").concat(slot.start_time));
               var slotEnd = new Date("".concat(slot.date, "T").concat(slot.end_time));
               var profStart = new Date("".concat(profSlot.date, "T").concat(profSlot.start_time));
@@ -250,7 +246,7 @@ function BookingConflictPrevention(_a) {
             if (patientError) {
               throw new Error("Erro ao verificar paciente: ".concat(patientError.message));
             }
-            sameDayAppointments = patientAppointments.filter(function (apt) {
+            sameDayAppointments = patientAppointments.filter((apt) => {
               var _a;
               return (
                 ((_a = apt.time_slot) === null || _a === void 0 ? void 0 : _a.date) === slot.date
@@ -262,9 +258,7 @@ function BookingConflictPrevention(_a) {
                 {
                   hasConflict: true,
                   conflictType: "double_booking",
-                  conflictingSlots: sameDayAppointments.map(function (apt) {
-                    return apt.time_slot;
-                  }),
+                  conflictingSlots: sameDayAppointments.map((apt) => apt.time_slot),
                   message: "Você já possui um agendamento neste dia",
                 },
               ];
@@ -296,12 +290,11 @@ function BookingConflictPrevention(_a) {
         }
       });
     });
-  };
   // Função para executar verificação
-  var runConflictCheck = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var runConflictCheck = () =>
+    __awaiter(this, void 0, void 0, function () {
       var detector, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedSlot) return [2 /*return*/];
@@ -346,12 +339,11 @@ function BookingConflictPrevention(_a) {
         }
       });
     });
-  };
   // Função para resolver conflito
-  var resolveConflict = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var resolveConflict = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (
@@ -392,7 +384,6 @@ function BookingConflictPrevention(_a) {
         }
       });
     });
-  };
   if (!selectedSlot) {
     return (
       <card_1.Card>
@@ -492,24 +483,22 @@ function BookingConflictPrevention(_a) {
             {conflictDetector.conflictingSlots.length > 0 && (
               <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground">Horários conflitantes:</p>
-                {conflictDetector.conflictingSlots.map(function (slot, index) {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between text-xs p-2 bg-muted rounded"
-                    >
-                      <div className="flex items-center gap-2">
-                        <lucide_react_1.Users className="h-3 w-3" />
-                        <span>
-                          {slot.date} às {slot.start_time}
-                        </span>
-                      </div>
-                      <badge_1.Badge variant="secondary" className="text-xs">
-                        {slot.is_available ? "Disponível" : "Ocupado"}
-                      </badge_1.Badge>
+                {conflictDetector.conflictingSlots.map((slot, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between text-xs p-2 bg-muted rounded"
+                  >
+                    <div className="flex items-center gap-2">
+                      <lucide_react_1.Users className="h-3 w-3" />
+                      <span>
+                        {slot.date} às {slot.start_time}
+                      </span>
                     </div>
-                  );
-                })}
+                    <badge_1.Badge variant="secondary" className="text-xs">
+                      {slot.is_available ? "Disponível" : "Ocupado"}
+                    </badge_1.Badge>
+                  </div>
+                ))}
               </div>
             )}
 

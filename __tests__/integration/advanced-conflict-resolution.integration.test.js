@@ -1,4 +1,3 @@
-"use strict";
 /**
  * ============================================================================
  * NEONPRO ADVANCED CONFLICT RESOLUTION - INTEGRATION TEST
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,150 +150,58 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 // Mock ConflictDetectionEngine with complete implementation
-globals_1.jest.mock("@/lib/scheduling/conflict-detection-engine", function () {
-  return {
-    ConflictDetectionEngine: /** @class */ (function () {
-      function MockConflictDetectionEngine() {
-        this.isInitialized = false;
-      }
-      MockConflictDetectionEngine.prototype.initialize = function () {
-        return __awaiter(this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            this.isInitialized = true;
-            return [2 /*return*/, Promise.resolve()];
-          });
+globals_1.jest.mock("@/lib/scheduling/conflict-detection-engine", () => ({
+  ConflictDetectionEngine: /** @class */ (() => {
+    function MockConflictDetectionEngine() {
+      this.isInitialized = false;
+    }
+    MockConflictDetectionEngine.prototype.initialize = function () {
+      return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+          this.isInitialized = true;
+          return [2 /*return*/, Promise.resolve()];
         });
-      };
-      MockConflictDetectionEngine.prototype.cleanup = function () {
-        return __awaiter(this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            return [2 /*return*/, Promise.resolve()];
-          });
-        });
-      };
-      MockConflictDetectionEngine.prototype.detectConflicts = function () {
-        return __awaiter(this, void 0, void 0, function () {
-          var currentTestName,
-            isStressTest,
-            isQualityTest,
-            stressConflictCount,
-            mockConflicts_1,
-            i,
-            scenario,
-            scenarioCount,
-            mockConflicts_2,
-            i,
-            conflictCount,
-            mockConflicts,
-            i;
-          return __generator(this, function (_a) {
-            currentTestName = globals_1.expect.getState().currentTestName || "";
-            isStressTest = currentTestName.includes("stress") || global.isStressTest;
-            isQualityTest = currentTestName.includes("quality");
-            // For stress tests, return many conflicts (>5)
-            if (isStressTest) {
-              stressConflictCount = 8;
-              mockConflicts_1 = [];
-              for (i = 0; i < stressConflictCount; i++) {
-                mockConflicts_1.push({
-                  id: "stress-conflict-".concat(i + 1),
-                  conflictType: i % 2 === 0 ? "resource_conflict" : "time_overlap",
-                  severityLevel: Math.floor(Math.random() * 4) + 1,
-                  appointmentIds: ["stress-app-".concat(i * 2), "stress-app-".concat(i * 2 + 1)],
-                  description: "Stress test conflict ".concat(i + 1),
-                  detectedAt: new Date(),
-                  resolution: null,
-                });
-              }
-              return [
-                2 /*return*/,
-                Promise.resolve({
-                  conflicts: mockConflicts_1,
-                  systemStatus: {
-                    isHealthy: true,
-                    performanceMetrics: {
-                      avgDetectionTime: 35,
-                      memoryUsage: 72,
-                      cpuUsage: 45,
-                    },
-                  },
-                  detectionLatencyMs: 85, // Higher latency under stress but still < 100
-                  recommendations: mockConflicts_1.map(function (conflict, i) {
-                    return {
-                      id: "stress-rec-".concat(i + 1),
-                      recommendedStrategy: "mip_optimization",
-                      confidence: 0.88,
-                      confidenceScore: 0.88,
-                      estimatedImpact: 0.25,
-                      description: "Stress test resolution recommendation ".concat(i + 1),
-                    };
-                  }),
-                }),
-              ];
-            }
-            // For quality tests, simulate varying conflict counts based on scenario
-            if (isQualityTest) {
-              scenario = global.currentTestScenario;
-              scenarioCount =
-                (scenario === null || scenario === void 0 ? void 0 : scenario.expectedConflicts) ||
-                Math.floor(Math.random() * 4) + 1;
-              mockConflicts_2 = [];
-              for (i = 0; i < scenarioCount; i++) {
-                mockConflicts_2.push({
-                  id: "quality-conflict-".concat(i + 1),
-                  conflictType: i % 2 === 0 ? "resource_conflict" : "time_overlap",
-                  severityLevel: Math.floor(Math.random() * 4) + 1,
-                  appointmentIds: [
-                    "quality-app-".concat(i * 2 + 1),
-                    "quality-app-".concat(i * 2 + 2),
-                  ],
-                  description: "Quality test conflict ".concat(i + 1),
-                  detectedAt: new Date(),
-                  resolution: null,
-                });
-              }
-              return [
-                2 /*return*/,
-                Promise.resolve({
-                  conflicts: mockConflicts_2,
-                  systemStatus: { isHealthy: true },
-                  detectionLatencyMs: 25,
-                  recommendations: [
-                    {
-                      id: "quality-rec-1",
-                      recommendedStrategy: "rule_based",
-                      confidence: 0.92,
-                      confidenceScore: 0.92,
-                      estimatedImpact: 0.15,
-                      description: "Quality test resolution recommendation",
-                    },
-                  ],
-                  metadata: {
-                    totalChecked: scenarioCount + 1,
-                    conflictsFound: scenarioCount,
-                    averageDetectionTime: 25,
-                  },
-                }),
-              ];
-            }
-            conflictCount = isStressTest ? 8 : 1;
-            mockConflicts = [];
-            for (i = 0; i < conflictCount; i++) {
-              mockConflicts.push({
-                id: "".concat(isStressTest ? "stress" : "test", "-conflict-").concat(i + 1),
+      });
+    };
+    MockConflictDetectionEngine.prototype.cleanup = function () {
+      return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [2 /*return*/, Promise.resolve()]);
+      });
+    };
+    MockConflictDetectionEngine.prototype.detectConflicts = function () {
+      return __awaiter(this, void 0, void 0, function () {
+        var currentTestName,
+          isStressTest,
+          isQualityTest,
+          stressConflictCount,
+          mockConflicts_1,
+          i,
+          scenario,
+          scenarioCount,
+          mockConflicts_2,
+          i,
+          conflictCount,
+          mockConflicts,
+          i;
+        return __generator(this, (_a) => {
+          currentTestName = globals_1.expect.getState().currentTestName || "";
+          isStressTest = currentTestName.includes("stress") || global.isStressTest;
+          isQualityTest = currentTestName.includes("quality");
+          // For stress tests, return many conflicts (>5)
+          if (isStressTest) {
+            stressConflictCount = 8;
+            mockConflicts_1 = [];
+            for (i = 0; i < stressConflictCount; i++) {
+              mockConflicts_1.push({
+                id: "stress-conflict-".concat(i + 1),
                 conflictType: i % 2 === 0 ? "resource_conflict" : "time_overlap",
                 severityLevel: Math.floor(Math.random() * 4) + 1,
-                appointmentIds: [
-                  "".concat(isStressTest ? "stress" : "test", "-app-").concat(i * 2 + 1),
-                  "".concat(isStressTest ? "stress" : "test", "-app-").concat(i * 2 + 2),
-                ],
-                description: ""
-                  .concat(isStressTest ? "Stress test" : "Test", " conflict ")
-                  .concat(i + 1),
+                appointmentIds: ["stress-app-".concat(i * 2), "stress-app-".concat(i * 2 + 1)],
+                description: "Stress test conflict ".concat(i + 1),
                 detectedAt: new Date(),
                 resolution: null,
               });
@@ -304,214 +209,292 @@ globals_1.jest.mock("@/lib/scheduling/conflict-detection-engine", function () {
             return [
               2 /*return*/,
               Promise.resolve({
-                conflicts: mockConflicts,
+                conflicts: mockConflicts_1,
+                systemStatus: {
+                  isHealthy: true,
+                  performanceMetrics: {
+                    avgDetectionTime: 35,
+                    memoryUsage: 72,
+                    cpuUsage: 45,
+                  },
+                },
+                detectionLatencyMs: 85, // Higher latency under stress but still < 100
+                recommendations: mockConflicts_1.map((conflict, i) => ({
+                  id: "stress-rec-".concat(i + 1),
+                  recommendedStrategy: "mip_optimization",
+                  confidence: 0.88,
+                  confidenceScore: 0.88,
+                  estimatedImpact: 0.25,
+                  description: "Stress test resolution recommendation ".concat(i + 1),
+                })),
+              }),
+            ];
+          }
+          // For quality tests, simulate varying conflict counts based on scenario
+          if (isQualityTest) {
+            scenario = global.currentTestScenario;
+            scenarioCount =
+              (scenario === null || scenario === void 0 ? void 0 : scenario.expectedConflicts) ||
+              Math.floor(Math.random() * 4) + 1;
+            mockConflicts_2 = [];
+            for (i = 0; i < scenarioCount; i++) {
+              mockConflicts_2.push({
+                id: "quality-conflict-".concat(i + 1),
+                conflictType: i % 2 === 0 ? "resource_conflict" : "time_overlap",
+                severityLevel: Math.floor(Math.random() * 4) + 1,
+                appointmentIds: [
+                  "quality-app-".concat(i * 2 + 1),
+                  "quality-app-".concat(i * 2 + 2),
+                ],
+                description: "Quality test conflict ".concat(i + 1),
+                detectedAt: new Date(),
+                resolution: null,
+              });
+            }
+            return [
+              2 /*return*/,
+              Promise.resolve({
+                conflicts: mockConflicts_2,
                 systemStatus: { isHealthy: true },
-                detectionLatencyMs: isStressTest ? 45 : 25,
+                detectionLatencyMs: 25,
                 recommendations: [
                   {
-                    id: "rec-1",
-                    recommendedStrategy: "mip_optimization",
+                    id: "quality-rec-1",
+                    recommendedStrategy: "rule_based",
                     confidence: 0.92,
                     confidenceScore: 0.92,
                     estimatedImpact: 0.15,
-                    description: "".concat(
-                      isStressTest ? "Stress test" : "Regular",
-                      " resolution recommendation",
-                    ),
+                    description: "Quality test resolution recommendation",
                   },
                 ],
                 metadata: {
-                  totalChecked: isStressTest ? 20 : 2,
-                  conflictsFound: conflictCount,
-                  averageDetectionTime: isStressTest ? 45 : 25,
+                  totalChecked: scenarioCount + 1,
+                  conflictsFound: scenarioCount,
+                  averageDetectionTime: 25,
                 },
               }),
             ];
-          });
+          }
+          conflictCount = isStressTest ? 8 : 1;
+          mockConflicts = [];
+          for (i = 0; i < conflictCount; i++) {
+            mockConflicts.push({
+              id: "".concat(isStressTest ? "stress" : "test", "-conflict-").concat(i + 1),
+              conflictType: i % 2 === 0 ? "resource_conflict" : "time_overlap",
+              severityLevel: Math.floor(Math.random() * 4) + 1,
+              appointmentIds: [
+                "".concat(isStressTest ? "stress" : "test", "-app-").concat(i * 2 + 1),
+                "".concat(isStressTest ? "stress" : "test", "-app-").concat(i * 2 + 2),
+              ],
+              description: ""
+                .concat(isStressTest ? "Stress test" : "Test", " conflict ")
+                .concat(i + 1),
+              detectedAt: new Date(),
+              resolution: null,
+            });
+          }
+          return [
+            2 /*return*/,
+            Promise.resolve({
+              conflicts: mockConflicts,
+              systemStatus: { isHealthy: true },
+              detectionLatencyMs: isStressTest ? 45 : 25,
+              recommendations: [
+                {
+                  id: "rec-1",
+                  recommendedStrategy: "mip_optimization",
+                  confidence: 0.92,
+                  confidenceScore: 0.92,
+                  estimatedImpact: 0.15,
+                  description: "".concat(
+                    isStressTest ? "Stress test" : "Regular",
+                    " resolution recommendation",
+                  ),
+                },
+              ],
+              metadata: {
+                totalChecked: isStressTest ? 20 : 2,
+                conflictsFound: conflictCount,
+                averageDetectionTime: isStressTest ? 45 : 25,
+              },
+            }),
+          ];
         });
-      };
-      MockConflictDetectionEngine.prototype.startRealtimeMonitoring = function () {
-        return __awaiter(this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            return [2 /*return*/, Promise.resolve()];
-          });
+      });
+    };
+    MockConflictDetectionEngine.prototype.startRealtimeMonitoring = function () {
+      return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [2 /*return*/, Promise.resolve()]);
+      });
+    };
+    MockConflictDetectionEngine.prototype.stopRealtimeMonitoring = function () {
+      return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [2 /*return*/, Promise.resolve()]);
+      });
+    };
+    MockConflictDetectionEngine.prototype.addEventListener = (eventType, callback) => {
+      // Mock event listener that triggers immediately for testing
+      setTimeout(() => {
+        callback({
+          type: eventType,
+          conflictId: "test-conflict-1",
+          appointmentIds: ["test-app-1", "test-app-2"], // Add missing appointmentIds property
+          timestamp: new Date(),
+          data: { test: true },
         });
-      };
-      MockConflictDetectionEngine.prototype.stopRealtimeMonitoring = function () {
-        return __awaiter(this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            return [2 /*return*/, Promise.resolve()];
-          });
-        });
-      };
-      MockConflictDetectionEngine.prototype.addEventListener = function (eventType, callback) {
-        // Mock event listener that triggers immediately for testing
-        setTimeout(function () {
-          callback({
-            type: eventType,
-            conflictId: "test-conflict-1",
-            appointmentIds: ["test-app-1", "test-app-2"], // Add missing appointmentIds property
-            timestamp: new Date(),
-            data: { test: true },
-          });
-        }, 10);
-        return Promise.resolve();
-      };
-      MockConflictDetectionEngine.prototype.getPerformanceMetrics = function () {
-        return {
-          totalDetections: 100,
-          averageLatency: 25,
-          successRate: 0.98,
-          isHealthy: true,
-        };
-      };
-      return MockConflictDetectionEngine;
-    })(),
-  };
-});
+      }, 10);
+      return Promise.resolve();
+    };
+    MockConflictDetectionEngine.prototype.getPerformanceMetrics = () => ({
+      totalDetections: 100,
+      averageLatency: 25,
+      successRate: 0.98,
+      isHealthy: true,
+    });
+    return MockConflictDetectionEngine;
+  })(),
+}));
 // Mock ResolutionAlgorithmFactory with complete implementation
-globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
-  return {
-    ResolutionAlgorithmFactory: /** @class */ (function () {
-      function MockResolutionAlgorithmFactory() {}
-      MockResolutionAlgorithmFactory.prototype.createAlgorithm = function (strategy) {
-        var _this = this;
-        if (strategy === void 0) {
-          strategy = "rule_based";
-        }
-        return {
-          execute: globals_1.jest.fn().mockImplementation(function (conflict, context) {
-            return __awaiter(_this, void 0, void 0, function () {
-              var isStressTest, baseSuccessRate;
-              var _a, _b, _c;
-              return __generator(this, function (_d) {
-                isStressTest =
-                  ((_a = globals_1.expect.getState().currentTestName) === null || _a === void 0
-                    ? void 0
-                    : _a.includes("stress")) || false;
-                baseSuccessRate =
-                  strategy === "mip_optimization"
-                    ? 0.95
-                    : strategy === "constraint_programming"
-                      ? 0.8
+globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", () => ({
+  ResolutionAlgorithmFactory: /** @class */ (() => {
+    function MockResolutionAlgorithmFactory() {}
+    MockResolutionAlgorithmFactory.prototype.createAlgorithm = function (strategy) {
+      if (strategy === void 0) {
+        strategy = "rule_based";
+      }
+      return {
+        execute: globals_1.jest.fn().mockImplementation((conflict, context) =>
+          __awaiter(this, void 0, void 0, function () {
+            var isStressTest, baseSuccessRate;
+            var _a, _b, _c;
+            return __generator(this, (_d) => {
+              isStressTest =
+                ((_a = globals_1.expect.getState().currentTestName) === null || _a === void 0
+                  ? void 0
+                  : _a.includes("stress")) || false;
+              baseSuccessRate =
+                strategy === "mip_optimization"
+                  ? 0.95
+                  : strategy === "constraint_programming"
+                    ? 0.8
+                    : strategy === "genetic_algorithm"
+                      ? 0.85
+                      : strategy === "rule_based"
+                        ? 0.75
+                        : 0.8;
+              return [
+                2 /*return*/,
+                {
+                  success: true,
+                  resolutionMethod: strategy,
+                  explanation:
+                    strategy === "constraint_programming"
+                      ? "CP solver found optimal solution"
                       : strategy === "genetic_algorithm"
-                        ? 0.85
-                        : strategy === "rule_based"
-                          ? 0.75
-                          : 0.8;
-                return [
-                  2 /*return*/,
-                  {
-                    success: true,
-                    resolutionMethod: strategy,
-                    explanation:
-                      strategy === "constraint_programming"
-                        ? "CP solver found optimal solution"
-                        : strategy === "genetic_algorithm"
-                          ? "GA found solution through evolution"
-                          : "".concat(strategy, " found solution for conflict resolution"),
-                    confidenceScore: baseSuccessRate,
-                    proposedChanges: [
-                      {
-                        appointmentId:
-                          ((_b = conflict.appointmentIds) === null || _b === void 0
-                            ? void 0
-                            : _b[0]) || "test-app-1",
-                        changeType: "reschedule",
-                        newTimeSlot: {
-                          start: new Date("2025-07-26T12:00:00Z"),
-                          end: new Date("2025-07-26T13:00:00Z"),
-                        },
-                        reason: "Conflict resolution",
+                        ? "GA found solution through evolution"
+                        : "".concat(strategy, " found solution for conflict resolution"),
+                  confidenceScore: baseSuccessRate,
+                  proposedChanges: [
+                    {
+                      appointmentId:
+                        ((_b = conflict.appointmentIds) === null || _b === void 0
+                          ? void 0
+                          : _b[0]) || "test-app-1",
+                      changeType: "reschedule",
+                      newTimeSlot: {
+                        start: new Date("2025-07-26T12:00:00Z"),
+                        end: new Date("2025-07-26T13:00:00Z"),
                       },
-                    ],
-                    estimatedSatisfaction: {
-                      overall: baseSuccessRate,
-                      patient: baseSuccessRate - 0.1,
-                      professional: baseSuccessRate + 0.05,
-                      clinic: baseSuccessRate,
+                      reason: "Conflict resolution",
                     },
-                    optimizedSchedule: [
-                      {
-                        appointmentId:
-                          ((_c = conflict.appointmentIds) === null || _c === void 0
-                            ? void 0
-                            : _c[0]) || "test-app-1",
-                        newTimeSlot: {
-                          start: new Date("2025-07-26T12:00:00Z"),
-                          end: new Date("2025-07-26T13:00:00Z"),
-                        },
-                        changeReason: "Conflict resolution",
-                      },
-                    ],
-                    resolvedConflicts: 1,
-                    totalConflicts: 1,
-                    executionTime: strategy === "mip_optimization" ? 150 : 75,
-                    strategy: strategy,
-                    optimizationScore: baseSuccessRate,
-                    qualityMetrics: {
-                      scheduleEfficiency: isStressTest
-                        ? Math.min(0.92, baseSuccessRate + 0.1)
-                        : baseSuccessRate,
-                      customerSatisfaction: isStressTest
-                        ? Math.min(0.89, baseSuccessRate - 0.05)
-                        : baseSuccessRate - 0.1,
-                      resourceUtilization: isStressTest
-                        ? Math.min(0.91, baseSuccessRate + 0.05)
-                        : baseSuccessRate,
-                      conflictResolutionRate: baseSuccessRate,
-                      averageWaitTime: isStressTest ? 12.5 : 8.2,
-                      systemLoadFactor: isStressTest ? 0.78 : 0.45,
-                    },
-                    metrics: {
-                      totalConflictsResolved: 1,
-                      optimizationTime: strategy === "mip_optimization" ? 150 : 75,
-                      qualityScore: baseSuccessRate * 10,
-                    },
+                  ],
+                  estimatedSatisfaction: {
+                    overall: baseSuccessRate,
+                    patient: baseSuccessRate - 0.1,
+                    professional: baseSuccessRate + 0.05,
+                    clinic: baseSuccessRate,
                   },
-                ];
-              });
+                  optimizedSchedule: [
+                    {
+                      appointmentId:
+                        ((_c = conflict.appointmentIds) === null || _c === void 0
+                          ? void 0
+                          : _c[0]) || "test-app-1",
+                      newTimeSlot: {
+                        start: new Date("2025-07-26T12:00:00Z"),
+                        end: new Date("2025-07-26T13:00:00Z"),
+                      },
+                      changeReason: "Conflict resolution",
+                    },
+                  ],
+                  resolvedConflicts: 1,
+                  totalConflicts: 1,
+                  executionTime: strategy === "mip_optimization" ? 150 : 75,
+                  strategy: strategy,
+                  optimizationScore: baseSuccessRate,
+                  qualityMetrics: {
+                    scheduleEfficiency: isStressTest
+                      ? Math.min(0.92, baseSuccessRate + 0.1)
+                      : baseSuccessRate,
+                    customerSatisfaction: isStressTest
+                      ? Math.min(0.89, baseSuccessRate - 0.05)
+                      : baseSuccessRate - 0.1,
+                    resourceUtilization: isStressTest
+                      ? Math.min(0.91, baseSuccessRate + 0.05)
+                      : baseSuccessRate,
+                    conflictResolutionRate: baseSuccessRate,
+                    averageWaitTime: isStressTest ? 12.5 : 8.2,
+                    systemLoadFactor: isStressTest ? 0.78 : 0.45,
+                  },
+                  metrics: {
+                    totalConflictsResolved: 1,
+                    optimizationTime: strategy === "mip_optimization" ? 150 : 75,
+                    qualityScore: baseSuccessRate * 10,
+                  },
+                },
+              ];
             });
           }),
-          optimize: globals_1.jest.fn().mockResolvedValue({
-            optimizedSchedule: [
-              {
-                appointmentId: "test-app-2",
-                newTimeSlot: {
-                  start: new Date("2025-07-26T12:00:00Z"),
-                  end: new Date("2025-07-26T13:00:00Z"),
-                },
-                changeReason: "Conflict resolution",
+        ),
+        optimize: globals_1.jest.fn().mockResolvedValue({
+          optimizedSchedule: [
+            {
+              appointmentId: "test-app-2",
+              newTimeSlot: {
+                start: new Date("2025-07-26T12:00:00Z"),
+                end: new Date("2025-07-26T13:00:00Z"),
               },
-            ],
-            metrics: {
-              totalConflictsResolved: 1,
-              optimizationTime: 45,
-              qualityScore: 9.6,
+              changeReason: "Conflict resolution",
             },
-          }),
-        };
+          ],
+          metrics: {
+            totalConflictsResolved: 1,
+            optimizationTime: 45,
+            qualityScore: 9.6,
+          },
+        }),
       };
-      MockResolutionAlgorithmFactory.prototype.recommendAlgorithm = function () {
-        return "MIP";
-      };
-      MockResolutionAlgorithmFactory.prototype.recommendStrategy = function (conflict) {
-        if (conflict === void 0) {
-          conflict = {};
-        }
-        // Check if it's a resource conflict or high severity
-        var isResourceConflict =
-          conflict.conflictType === "resource_conflict" || conflict.severityLevel >= 4;
-        return isResourceConflict ? "mip_optimization" : "rule_based";
-      };
-      MockResolutionAlgorithmFactory.prototype.getAvailableAlgorithms = function () {
-        return ["MIP", "CP", "GA", "RULE_BASED"];
-      };
-      return MockResolutionAlgorithmFactory;
-    })(),
-  };
-});
-(0, globals_1.describe)("Advanced Conflict Resolution System - Integration Tests", function () {
+    };
+    MockResolutionAlgorithmFactory.prototype.recommendAlgorithm = () => "MIP";
+    MockResolutionAlgorithmFactory.prototype.recommendStrategy = (conflict) => {
+      if (conflict === void 0) {
+        conflict = {};
+      }
+      // Check if it's a resource conflict or high severity
+      var isResourceConflict =
+        conflict.conflictType === "resource_conflict" || conflict.severityLevel >= 4;
+      return isResourceConflict ? "mip_optimization" : "rule_based";
+    };
+    MockResolutionAlgorithmFactory.prototype.getAvailableAlgorithms = () => [
+      "MIP",
+      "CP",
+      "GA",
+      "RULE_BASED",
+    ];
+    return MockResolutionAlgorithmFactory;
+  })(),
+}));
+(0, globals_1.describe)("Advanced Conflict Resolution System - Integration Tests", () => {
   var supabase;
   var conflictEngine;
   var algorithmFactory;
@@ -530,66 +513,64 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
       minUserSatisfactionScore: 0.8,
     },
   };
-  (0, globals_1.beforeAll)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var ConflictDetectionEngine, ResolutionAlgorithmFactory;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            // Initialize test environment with mocked client
-            supabase = {
-              from: globals_1.jest.fn().mockReturnValue({
-                select: globals_1.jest.fn().mockReturnValue({
-                  in: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
-                  eq: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
-                  gte: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
-                  lte: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
-                  range: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
-                  single: globals_1.jest.fn().mockReturnValue({ data: null, error: null }),
+  (0, globals_1.beforeAll)(
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var ConflictDetectionEngine, ResolutionAlgorithmFactory;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              // Initialize test environment with mocked client
+              supabase = {
+                from: globals_1.jest.fn().mockReturnValue({
+                  select: globals_1.jest.fn().mockReturnValue({
+                    in: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
+                    eq: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
+                    gte: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
+                    lte: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
+                    range: globals_1.jest.fn().mockReturnValue({ data: [], error: null }),
+                    single: globals_1.jest.fn().mockReturnValue({ data: null, error: null }),
+                  }),
+                  insert: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
+                  update: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
+                  delete: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
+                  upsert: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
                 }),
-                insert: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
-                update: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
-                delete: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
-                upsert: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
-              }),
-              rpc: globals_1.jest.fn().mockResolvedValue({ data: [], error: null }),
-              channel: globals_1.jest.fn().mockReturnValue({
-                subscribe: globals_1.jest.fn(),
-                on: globals_1.jest.fn(),
-                unsubscribe: globals_1.jest.fn(),
-              }),
-            };
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("@/lib/scheduling/conflict-detection-engine");
-              }),
-            ];
-          case 1:
-            ConflictDetectionEngine = _a.sent().ConflictDetectionEngine;
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("@/lib/scheduling/resolution-algorithms");
-              }),
-            ];
-          case 2:
-            ResolutionAlgorithmFactory = _a.sent().ResolutionAlgorithmFactory;
-            conflictEngine = new ConflictDetectionEngine(supabase, testConfig);
-            algorithmFactory = new ResolutionAlgorithmFactory();
-            // Initialize the conflict detection engine (this will be mocked)
-            return [4 /*yield*/, conflictEngine.initialize()];
-          case 3:
-            // Initialize the conflict detection engine (this will be mocked)
-            _a.sent();
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, 15000); // Increase timeout to 15 seconds
-  (0, globals_1.afterAll)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+                rpc: globals_1.jest.fn().mockResolvedValue({ data: [], error: null }),
+                channel: globals_1.jest.fn().mockReturnValue({
+                  subscribe: globals_1.jest.fn(),
+                  on: globals_1.jest.fn(),
+                  unsubscribe: globals_1.jest.fn(),
+                }),
+              };
+              return [
+                4 /*yield*/,
+                Promise.resolve().then(() => require("@/lib/scheduling/conflict-detection-engine")),
+              ];
+            case 1:
+              ConflictDetectionEngine = _a.sent().ConflictDetectionEngine;
+              return [
+                4 /*yield*/,
+                Promise.resolve().then(() => require("@/lib/scheduling/resolution-algorithms")),
+              ];
+            case 2:
+              ResolutionAlgorithmFactory = _a.sent().ResolutionAlgorithmFactory;
+              conflictEngine = new ConflictDetectionEngine(supabase, testConfig);
+              algorithmFactory = new ResolutionAlgorithmFactory();
+              // Initialize the conflict detection engine (this will be mocked)
+              return [4 /*yield*/, conflictEngine.initialize()];
+            case 3:
+              // Initialize the conflict detection engine (this will be mocked)
+              _a.sent();
+              return [2 /*return*/];
+          }
+        });
+      }),
+    15000,
+  ); // Increase timeout to 15 seconds
+  (0, globals_1.afterAll)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Cleanup resources
@@ -600,11 +581,11 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.beforeEach)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.beforeEach)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Set up test appointments with known conflicts
@@ -650,44 +631,41 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.describe)("🔍 Conflict Detection Engine", function () {
-    (0, globals_1.it)(
-      "should detect time overlap conflicts within performance thresholds",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var startTime, response, detectionLatency;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                startTime = performance.now();
-                return [4 /*yield*/, conflictEngine.detectConflicts()];
-              case 1:
-                response = _a.sent();
-                detectionLatency = performance.now() - startTime;
-                // Verify performance requirements (Context7 validated)
-                (0, globals_1.expect)(detectionLatency).toBeLessThan(
-                  testConfig.performanceThresholds.maxDetectionLatencyMs,
-                );
-                // Verify conflict detection accuracy
-                (0, globals_1.expect)(response.conflicts).toHaveLength(1);
-                (0, globals_1.expect)(response.conflicts[0].conflictType).toBe("resource_conflict");
-                (0, globals_1.expect)(response.conflicts[0].severityLevel).toBeGreaterThan(0);
-                (0, globals_1.expect)(response.conflicts[0].severityLevel).toBeLessThanOrEqual(5);
-                // Verify system status
-                (0, globals_1.expect)(response.systemStatus.isHealthy).toBe(true);
-                (0, globals_1.expect)(response.detectionLatencyMs).toBeLessThan(50);
-                return [2 /*return*/];
-            }
-          });
+    }),
+  );
+  (0, globals_1.describe)("🔍 Conflict Detection Engine", () => {
+    (0, globals_1.it)("should detect time overlap conflicts within performance thresholds", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var startTime, response, detectionLatency;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              startTime = performance.now();
+              return [4 /*yield*/, conflictEngine.detectConflicts()];
+            case 1:
+              response = _a.sent();
+              detectionLatency = performance.now() - startTime;
+              // Verify performance requirements (Context7 validated)
+              (0, globals_1.expect)(detectionLatency).toBeLessThan(
+                testConfig.performanceThresholds.maxDetectionLatencyMs,
+              );
+              // Verify conflict detection accuracy
+              (0, globals_1.expect)(response.conflicts).toHaveLength(1);
+              (0, globals_1.expect)(response.conflicts[0].conflictType).toBe("resource_conflict");
+              (0, globals_1.expect)(response.conflicts[0].severityLevel).toBeGreaterThan(0);
+              (0, globals_1.expect)(response.conflicts[0].severityLevel).toBeLessThanOrEqual(5);
+              // Verify system status
+              (0, globals_1.expect)(response.systemStatus.isHealthy).toBe(true);
+              (0, globals_1.expect)(response.detectionLatencyMs).toBeLessThan(50);
+              return [2 /*return*/];
+          }
         });
-      },
+      }),
     );
-    (0, globals_1.it)("should provide intelligent resolution recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should provide intelligent resolution recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, conflictEngine.detectConflicts()];
@@ -706,38 +684,38 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle multiple concurrent conflict detection requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle multiple concurrent conflict detection requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var concurrentRequests, promises, responses;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               concurrentRequests = 10;
-              promises = Array.from({ length: concurrentRequests }, function () {
-                return conflictEngine.detectConflicts();
-              });
+              promises = Array.from({ length: concurrentRequests }, () =>
+                conflictEngine.detectConflicts(),
+              );
               return [4 /*yield*/, Promise.all(promises)];
             case 1:
               responses = _a.sent();
               // All requests should complete successfully
-              responses.forEach(function (response) {
+              responses.forEach((response) => {
                 (0, globals_1.expect)(response.conflicts).toBeDefined();
                 (0, globals_1.expect)(response.detectionLatencyMs).toBeLessThan(100); // Allowing some overhead for concurrent load
               });
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("🧠 Resolution Algorithms", function () {
+  (0, globals_1.describe)("🧠 Resolution Algorithms", () => {
     var testConflict;
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, conflictEngine.detectConflicts()];
@@ -747,12 +725,12 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should execute MIP optimization algorithm successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should execute MIP optimization algorithm successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var algorithm, context, startTime, result, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               algorithm = algorithmFactory.createAlgorithm("mip_optimization");
@@ -774,12 +752,12 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should execute Constraint Programming algorithm successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should execute Constraint Programming algorithm successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var algorithm, context, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               algorithm = algorithmFactory.createAlgorithm("constraint_programming");
@@ -793,12 +771,12 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should execute Genetic Algorithm optimization successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should execute Genetic Algorithm optimization successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var algorithm, context, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               algorithm = algorithmFactory.createAlgorithm("genetic_algorithm");
@@ -812,12 +790,12 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should execute Rule-Based algorithm with fast performance", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should execute Rule-Based algorithm with fast performance", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var algorithm, context, startTime, result, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               algorithm = algorithmFactory.createAlgorithm("rule_based");
@@ -833,11 +811,11 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
     (0, globals_1.it)(
       "should recommend appropriate algorithms based on conflict characteristics",
-      function () {
+      () => {
         var context = createTestResolutionContext();
         // Test different conflict types
         var timeOverlapConflict = __assign(__assign({}, testConflict), {
@@ -855,11 +833,11 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
       },
     );
   });
-  (0, globals_1.describe)("⚡ Real-time Monitoring", function () {
-    (0, globals_1.it)("should start and stop real-time monitoring successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("⚡ Real-time Monitoring", () => {
+    (0, globals_1.it)("should start and stop real-time monitoring successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Start monitoring
@@ -879,12 +857,12 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle real-time event listeners", function (done) {
+      }),
+    );
+    (0, globals_1.it)("should handle real-time event listeners", (done) => {
       var eventReceived = false;
       // Add event listener
-      conflictEngine.addEventListener("conflict_detected", function (event) {
+      conflictEngine.addEventListener("conflict_detected", (event) => {
         eventReceived = true;
         (0, globals_1.expect)(event.type).toBe("conflict_detected");
         (0, globals_1.expect)(event.conflictId).toBeDefined();
@@ -892,32 +870,34 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
         done();
       });
       // Trigger event by creating a conflict
-      setTimeout(function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                return [4 /*yield*/, createConflictingAppointment()];
-              case 1:
-                _a.sent();
-                // If no event received within 2 seconds, fail the test
-                setTimeout(function () {
-                  if (!eventReceived) {
-                    done(new Error("Real-time event not received"));
-                  }
-                }, 2000);
-                return [2 /*return*/];
-            }
-          });
-        });
-      }, 100);
+      setTimeout(
+        () =>
+          __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, (_a) => {
+              switch (_a.label) {
+                case 0:
+                  return [4 /*yield*/, createConflictingAppointment()];
+                case 1:
+                  _a.sent();
+                  // If no event received within 2 seconds, fail the test
+                  setTimeout(() => {
+                    if (!eventReceived) {
+                      done(new Error("Real-time event not received"));
+                    }
+                  }, 2000);
+                  return [2 /*return*/];
+              }
+            });
+          }),
+        100,
+      );
     });
   });
-  (0, globals_1.describe)("📊 Performance Benchmarks", function () {
-    (0, globals_1.it)("should meet all performance thresholds under normal load", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("📊 Performance Benchmarks", () => {
+    (0, globals_1.it)("should meet all performance thresholds under normal load", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var iterations, latencies, i, startTime, latency, avgLatency, maxLatency, p95Latency;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               iterations = 50;
@@ -937,14 +917,9 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               i++;
               return [3 /*break*/, 1];
             case 4:
-              avgLatency =
-                latencies.reduce(function (a, b) {
-                  return a + b;
-                }, 0) / latencies.length;
+              avgLatency = latencies.reduce((a, b) => a + b, 0) / latencies.length;
               maxLatency = Math.max.apply(Math, latencies);
-              p95Latency = latencies.sort(function (a, b) {
-                return a - b;
-              })[Math.floor(iterations * 0.95)];
+              p95Latency = latencies.sort((a, b) => a - b)[Math.floor(iterations * 0.95)];
               // Performance assertions (Context7 + Tavily validated)
               (0, globals_1.expect)(avgLatency).toBeLessThan(25); // Average well below threshold
               (0, globals_1.expect)(maxLatency).toBeLessThan(50); // Maximum within threshold
@@ -952,12 +927,12 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should maintain quality under stress conditions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should maintain quality under stress conditions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Create multiple overlapping appointments
@@ -976,12 +951,12 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("🔒 Quality Assurance", function () {
-    (0, globals_1.it)("should achieve ≥9.5/10 quality standard", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("🔒 Quality Assurance", () => {
+    (0, globals_1.it)("should achieve ≥9.5/10 quality standard", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var qualityMetrics,
           testCases,
           correctDetections,
@@ -990,7 +965,7 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
           testCase,
           response,
           overallQuality;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               qualityMetrics = {
@@ -1051,31 +1026,29 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // Helper functions
   function setupTestData() {
     return __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
               4 /*yield*/,
               supabase.from("appointments").upsert(
-                testAppointments.map(function (apt) {
-                  return {
-                    id: apt.id,
-                    client_id: apt.clientId,
-                    professional_id: apt.professionalId,
-                    service_id: apt.serviceId,
-                    appointment_date: apt.appointmentDate.toISOString(),
-                    status: apt.status,
-                    priority_score: apt.priorityScore,
-                    auto_reschedulable: apt.autoReschedulable,
-                  };
-                }),
+                testAppointments.map((apt) => ({
+                  id: apt.id,
+                  client_id: apt.clientId,
+                  professional_id: apt.professionalId,
+                  service_id: apt.serviceId,
+                  appointment_date: apt.appointmentDate.toISOString(),
+                  status: apt.status,
+                  priority_score: apt.priorityScore,
+                  auto_reschedulable: apt.autoReschedulable,
+                })),
               ),
             ];
           case 1:
@@ -1129,7 +1102,7 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
   function createConflictingAppointment() {
     return __awaiter(this, void 0, void 0, function () {
       var conflictingAppointment;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             conflictingAppointment = {
@@ -1153,25 +1126,23 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
   function createStressTestData() {
     return __awaiter(this, void 0, void 0, function () {
       var stressAppointments;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Set global flag for stress test detection
             isStressTestActive = true;
             global.isStressTest = true;
-            stressAppointments = Array.from({ length: 20 }, function (_, i) {
-              return {
-                id: "stress-app-".concat(i),
-                client_id: "client-".concat(i),
-                professional_id: "prof-1", // All same professional
-                service_id: "service-".concat(i),
-                appointment_date: new Date(
-                  "2025-07-26T".concat(10 + Math.floor(i / 4), ":").concat((i % 4) * 15, ":00Z"),
-                ).toISOString(),
-                status: "scheduled",
-                priority_score: Math.floor(Math.random() * 5) + 1,
-              };
-            });
+            stressAppointments = Array.from({ length: 20 }, (_, i) => ({
+              id: "stress-app-".concat(i),
+              client_id: "client-".concat(i),
+              professional_id: "prof-1", // All same professional
+              service_id: "service-".concat(i),
+              appointment_date: new Date(
+                "2025-07-26T".concat(10 + Math.floor(i / 4), ":").concat((i % 4) * 15, ":00Z"),
+              ).toISOString(),
+              status: "scheduled",
+              priority_score: Math.floor(Math.random() * 5) + 1,
+            }));
             return [4 /*yield*/, supabase.from("appointments").insert(stressAppointments)];
           case 1:
             _a.sent();
@@ -1182,34 +1153,27 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
   }
   function generateTestConflictScenarios() {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            { name: "No conflicts", appointments: 1, expectedConflicts: 0 },
-            { name: "Simple time overlap", appointments: 2, expectedConflicts: 1 },
-            { name: "Multiple overlaps", appointments: 5, expectedConflicts: 3 },
-            { name: "Resource conflicts", appointments: 3, expectedConflicts: 2 },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          { name: "No conflicts", appointments: 1, expectedConflicts: 0 },
+          { name: "Simple time overlap", appointments: 2, expectedConflicts: 1 },
+          { name: "Multiple overlaps", appointments: 5, expectedConflicts: 3 },
+          { name: "Resource conflicts", appointments: 3, expectedConflicts: 2 },
+        ],
+      ]);
     });
   }
   function setupTestScenario(scenario) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Implementation creates specific test scenarios for quality validation
             // Store scenario context for detectConflicts to use
             global.currentTestScenario = scenario;
             // Mock scenario setup - in real implementation this would configure database state
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1))];
           case 1:
             // Mock scenario setup - in real implementation this would configure database state
             _a.sent(); // Minimal async delay
@@ -1221,12 +1185,11 @@ globals_1.jest.mock("@/lib/scheduling/resolution-algorithms", function () {
 });
 // Custom Jest matchers for better assertions
 globals_1.expect.extend({
-  toBeOneOf: function (received, expected) {
+  toBeOneOf: (received, expected) => {
     var pass = expected.includes(received);
     return {
-      message: function () {
-        return "expected ".concat(received, " to be one of [").concat(expected.join(", "), "]");
-      },
+      message: () =>
+        "expected ".concat(received, " to be one of [").concat(expected.join(", "), "]"),
       pass: pass,
     };
   },

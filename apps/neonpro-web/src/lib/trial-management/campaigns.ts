@@ -3,15 +3,7 @@
 // Created: 2025-01-22
 
 import type { createClient } from "@/lib/supabase/server";
-import type {
-  TrialCampaign,
-  CampaignTarget,
-  ABTestConfig,
-  Trial,
-  UserSegment,
-  TrialStage,
-  ConversionStrategy,
-} from "./types";
+import type { ABTestConfig, CampaignTarget, Trial, TrialCampaign } from "./types";
 
 export class CampaignManager {
   private supabase: ReturnType<typeof createClient>;

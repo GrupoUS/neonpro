@@ -1,6 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  Bell,
+  Clock,
+  Database,
+  FileText,
+  RefreshCw,
+  Save,
+  Settings,
+  Shield,
+  Users,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,11 +22,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Switch } from "@/components/ui/switch";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Select,
   SelectContent,
@@ -20,21 +31,10 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Separator } from "@/components/ui/separator";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  Settings,
-  Clock,
-  Bell,
-  Shield,
-  Database,
-  Users,
-  FileText,
-  Save,
-  RefreshCw,
-  AlertTriangle,
-} from "lucide-react";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useToast } from "@/components/ui/use-toast";
 
 interface AutomationConfig {

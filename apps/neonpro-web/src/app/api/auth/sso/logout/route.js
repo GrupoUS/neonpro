@@ -1,4 +1,3 @@
-"use strict";
 // SSO Logout Route
 // Story 1.3: SSO Integration - Session Termination & Token Revocation
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,7 +34,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,8 +63,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -86,9 +83,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.GET = GET;
@@ -161,15 +158,11 @@ var logoutSchema = zod_1.z.object({
   redirect_to: zod_1.z.string().url().optional(),
   revoke_tokens: zod_1.z
     .string()
-    .transform(function (val) {
-      return val === "true";
-    })
+    .transform((val) => val === "true")
     .optional(),
   global_logout: zod_1.z
     .string()
-    .transform(function (val) {
-      return val === "true";
-    })
+    .transform((val) => val === "true")
     .optional(),
 });
 function POST(request) {
@@ -197,16 +190,16 @@ function POST(request) {
       redirectUrlObj,
       finalUrl,
       error_2;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
-          _d.trys.push([0, 9, , 10]);
+          _d.trys.push([0, 9, undefined, 10]);
           sessionCookie = cookieStore.get("sso_session");
           userCookie = cookieStore.get("sso_user");
           logoutOptions = {};
           _d.label = 1;
         case 1:
-          _d.trys.push([1, 3, , 4]);
+          _d.trys.push([1, 3, undefined, 4]);
           return [4 /*yield*/, request.json()];
         case 2:
           body = _d.sent();
@@ -254,7 +247,7 @@ function POST(request) {
           if (!sessionId) return [3 /*break*/, 8];
           _d.label = 5;
         case 5:
-          _d.trys.push([5, 7, , 8]);
+          _d.trys.push([5, 7, undefined, 8]);
           return [
             4 /*yield*/,
             sso_manager_1.ssoManager.logout(sessionId, {
@@ -356,35 +349,29 @@ function POST(request) {
 // Support GET for simple logout links
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, POST(request)];
-    });
+    return __generator(this, (_a) => [2 /*return*/, POST(request)]);
   });
 }
 // Handle unsupported methods
 function PUT() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        server_1.NextResponse.json(
-          { error: "METHOD_NOT_ALLOWED", message: "PUT method not allowed" },
-          { status: 405 },
-        ),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      server_1.NextResponse.json(
+        { error: "METHOD_NOT_ALLOWED", message: "PUT method not allowed" },
+        { status: 405 },
+      ),
+    ]);
   });
 }
 function DELETE() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        server_1.NextResponse.json(
-          { error: "METHOD_NOT_ALLOWED", message: "DELETE method not allowed" },
-          { status: 405 },
-        ),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      server_1.NextResponse.json(
+        { error: "METHOD_NOT_ALLOWED", message: "DELETE method not allowed" },
+        { status: 405 },
+      ),
+    ]);
   });
 }

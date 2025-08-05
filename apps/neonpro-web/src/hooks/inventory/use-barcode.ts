@@ -6,6 +6,7 @@
 
 "use client";
 
+import type { useCallback, useEffect, useRef, useState } from "react";
 import type {
   BarcodeFormat,
   BarcodeResult,
@@ -13,7 +14,6 @@ import type {
   ScannerError,
   ScannerState,
 } from "@/lib/types/inventory";
-import type { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseBarcodeOptions {
   enableContinuousScanning?: boolean;

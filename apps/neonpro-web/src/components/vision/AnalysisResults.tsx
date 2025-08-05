@@ -1,24 +1,24 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Activity,
+  BarChart3,
+  Clock,
+  Download,
+  Eye,
+  Share2,
+  Target,
+  TrendingUp,
+  ZoomIn,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Progress } from "@/components/ui/progress";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Eye,
-  Clock,
-  TrendingUp,
-  Target,
-  Download,
-  Share2,
-  ZoomIn,
-  BarChart3,
-  Activity,
-} from "lucide-react";
-import type { AnalysisResult, ChangeMetrics, AnnotationData } from "@/lib/vision/analysis-engine";
 import type { cn } from "@/lib/utils";
+import type { AnalysisResult, AnnotationData, ChangeMetrics } from "@/lib/vision/analysis-engine";
 
 interface AnalysisResultsProps {
   analysisResult: AnalysisResult;

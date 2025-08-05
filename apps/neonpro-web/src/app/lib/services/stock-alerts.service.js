@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Stock Alerts Service
  * Service for managing stock alerts and inventory notifications
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,16 +132,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockAlertsService = void 0;
 var server_1 = require("@/lib/supabase/server");
-var StockAlertsService = /** @class */ (function () {
+var StockAlertsService = /** @class */ (() => {
   function StockAlertsService() {}
   StockAlertsService.prototype.getActiveAlerts = function (clinicId, filters) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -183,7 +180,7 @@ var StockAlertsService = /** @class */ (function () {
   StockAlertsService.prototype.acknowledgeAlert = function (data, userId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -219,7 +216,7 @@ var StockAlertsService = /** @class */ (function () {
   StockAlertsService.prototype.resolveAlert = function (data, userId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -256,7 +253,7 @@ var StockAlertsService = /** @class */ (function () {
   StockAlertsService.prototype.dismissAlert = function (alertId, userId, reason) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -292,7 +289,7 @@ var StockAlertsService = /** @class */ (function () {
   };
   StockAlertsService.prototype.generateAlerts = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Mock implementation for now
           return [
@@ -315,51 +312,45 @@ var StockAlertsService = /** @class */ (function () {
   };
   StockAlertsService.generateAlert = function (itemId, currentStock, minThreshold) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            id: "alert-id",
-            itemId: itemId,
-            currentStock: currentStock,
-            minThreshold: minThreshold,
-            alertType: "low_stock",
-            priority: "medium",
-            createdAt: new Date(),
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          id: "alert-id",
+          itemId: itemId,
+          currentStock: currentStock,
+          minThreshold: minThreshold,
+          alertType: "low_stock",
+          priority: "medium",
+          createdAt: new Date(),
+        },
+      ]);
     });
   };
   StockAlertsService.processAlerts = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            clinicId: clinicId,
-            processedAlerts: 0,
-            newAlerts: 0,
-            resolvedAlerts: 0,
-            processedAt: new Date(),
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          clinicId: clinicId,
+          processedAlerts: 0,
+          newAlerts: 0,
+          resolvedAlerts: 0,
+          processedAt: new Date(),
+        },
+      ]);
     });
   };
   StockAlertsService.resolveAlert = function (alertId, resolution) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            alertId: alertId,
-            resolution: resolution,
-            resolvedAt: new Date(),
-            status: "resolved",
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          alertId: alertId,
+          resolution: resolution,
+          resolvedAt: new Date(),
+          status: "resolved",
+        },
+      ]);
     });
   };
   return StockAlertsService;

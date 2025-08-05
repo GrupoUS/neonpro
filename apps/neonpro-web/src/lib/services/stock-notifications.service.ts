@@ -3,11 +3,11 @@
 // Story 11.4: Enhanced Stock Alerts System
 // Created: 2025-01-21 (Claude Code Implementation)
 
-import type { createClient } from "@/lib/supabase/server";
+import axios from "axios";
+import type { Resend } from "resend";
 import emailService from "@/lib/email-service";
 import pushNotificationService from "@/lib/push-notification-service";
-import type { Resend } from "resend";
-import axios from "axios";
+import type { createClient } from "@/lib/supabase/server";
 
 export interface NotificationTemplate {
   id: string;
@@ -838,7 +838,7 @@ class StockNotificationsService {
         const now = new Date();
         const timeSinceFailure = now.getTime() - lastFailure.getTime();
 
-        if (timeSinceFailure < this.retryDelayMs * Math.pow(2, notification.retry_count)) {
+        if (timeSinceFailure < this.retryDelayMs * 2 ** notification.retry_count) {
           continue; // Not ready to retry yet (exponential backoff)
         }
 

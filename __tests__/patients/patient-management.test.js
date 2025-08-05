@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Patient Management Core Integration Tests
  *
@@ -12,15 +11,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,7 +29,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -40,13 +39,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,8 +58,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -68,9 +67,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -81,9 +78,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -142,108 +139,66 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var profile_manager_1 = require("../../lib/patients/profile-manager");
 // Mock the entire Supabase module to avoid ES module issues
-jest.mock("@supabase/auth-helpers-nextjs", function () {
-  return {
-    createClientComponentClient: jest.fn(function () {
-      return {
-        from: jest.fn(function () {
-          return {
-            insert: jest.fn(function () {
-              return {
-                select: jest.fn(function () {
-                  return { single: jest.fn() };
-                }),
-              };
-            }),
-            select: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return { single: jest.fn() };
-                }),
-              };
-            }),
-            update: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return {
-                    select: jest.fn(function () {
-                      return { single: jest.fn() };
-                    }),
-                  };
-                }),
-              };
-            }),
-          };
-        }),
-      };
-    }),
-  };
-});
+jest.mock("@supabase/auth-helpers-nextjs", () => ({
+  createClientComponentClient: jest.fn(() => ({
+    from: jest.fn(() => ({
+      insert: jest.fn(() => ({
+        select: jest.fn(() => ({ single: jest.fn() })),
+      })),
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({ single: jest.fn() })),
+      })),
+      update: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          select: jest.fn(() => ({ single: jest.fn() })),
+        })),
+      })),
+    })),
+  })),
+}));
 // Mock AuditLogger to avoid dependencies
-jest.mock("../../lib/auth/audit/audit-logger", function () {
-  return {
-    AuditLogger: jest.fn().mockImplementation(function () {
-      return {
-        log: jest.fn().mockResolvedValue(true),
-      };
-    }),
-  };
-});
+jest.mock("../../lib/auth/audit/audit-logger", () => ({
+  AuditLogger: jest.fn().mockImplementation(() => ({
+    log: jest.fn().mockResolvedValue(true),
+  })),
+}));
 // Mock LGPDComplianceManager to avoid dependencies
-jest.mock("../../lib/lgpd/LGPDComplianceManager", function () {
-  return {
-    LGPDComplianceManager: jest.fn().mockImplementation(function () {
-      return {
-        validateDataConsent: jest.fn().mockResolvedValue(true),
-        validateDataAccess: jest.fn().mockResolvedValue(true),
-      };
-    }),
-  };
-});
+jest.mock("../../lib/lgpd/LGPDComplianceManager", () => ({
+  LGPDComplianceManager: jest.fn().mockImplementation(() => ({
+    validateDataConsent: jest.fn().mockResolvedValue(true),
+    validateDataAccess: jest.fn().mockResolvedValue(true),
+  })),
+}));
 // Mock createClient
-jest.mock("../../app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return {
-        auth: {
-          getSession: jest.fn().mockResolvedValue({
-            data: { session: { user: { id: "test-user" } } },
-          }),
-        },
-        from: jest.fn(function () {
-          return {
-            insert: jest.fn(function () {
-              return {
-                select: jest.fn(function () {
-                  return { single: jest.fn() };
-                }),
-              };
-            }),
-            select: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return { single: jest.fn() };
-                }),
-              };
-            }),
-          };
-        }),
-      };
-    }),
-  };
-});
-describe("Patient Management Core - Story 2.1", function () {
+jest.mock("../../app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => ({
+    auth: {
+      getSession: jest.fn().mockResolvedValue({
+        data: { session: { user: { id: "test-user" } } },
+      }),
+    },
+    from: jest.fn(() => ({
+      insert: jest.fn(() => ({
+        select: jest.fn(() => ({ single: jest.fn() })),
+      })),
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({ single: jest.fn() })),
+      })),
+    })),
+  })),
+}));
+describe("Patient Management Core - Story 2.1", () => {
   var profileManager;
   var testUserId = "test-user-123";
-  beforeEach(function () {
+  beforeEach(() => {
     profileManager = new profile_manager_1.ProfileManager();
     jest.clearAllMocks();
   });
-  describe("Patient Profile Creation (AC: CRUD + Audit + Compliance)", function () {
+  describe("Patient Profile Creation (AC: CRUD + Audit + Compliance)", () => {
     var mockPatientData = {
       demographics: {
         name: "João Silva",
@@ -267,10 +222,10 @@ describe("Patient Management Core - Story 2.1", function () {
         allergies: ["Penicilina"],
       },
     };
-    it("should create patient profile with LGPD compliance validation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should create patient profile with LGPD compliance validation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -296,12 +251,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should meet performance requirement: create ≤20s", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should meet performance requirement: create ≤20s", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, result, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -317,12 +271,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should include audit trail for profile creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should include audit trail for profile creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -335,12 +288,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate completeness score calculation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate completeness score calculation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -359,13 +311,12 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Patient Profile Retrieval (AC: Search + Performance + Audit)", function () {
-    beforeEach(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Patient Profile Retrieval (AC: Search + Performance + Audit)", () => {
+    beforeEach(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Create a test patient first
@@ -392,12 +343,12 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should retrieve patient profile successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    it("should retrieve patient profile successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -417,12 +368,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should meet performance requirement: search ≤2s", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should meet performance requirement: search ≤2s", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, result, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -438,12 +388,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should update last_accessed timestamp", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should update last_accessed timestamp", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var beforeAccess, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               beforeAccess = new Date().toISOString();
@@ -465,12 +414,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should return null for non-existent patient", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should return null for non-existent patient", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -483,14 +431,13 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Data Validation and Compliance (AC: LGPD/ANVISA)", function () {
-    it("should validate required demographic fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Data Validation and Compliance (AC: LGPD/ANVISA)", () => {
+    it("should validate required demographic fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var incompleteData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               incompleteData = {
@@ -513,12 +460,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle LGPD compliance validation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle LGPD compliance validation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -543,14 +489,13 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Profile Completeness Scoring (AC: Data Quality)", function () {
-    it("should calculate higher score for complete profiles", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Profile Completeness Scoring (AC: Data Quality)", () => {
+    it("should calculate higher score for complete profiles", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var completeProfile, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               completeProfile = {
@@ -597,12 +542,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate lower score for minimal profiles", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate lower score for minimal profiles", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var minimalProfile, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               minimalProfile = {
@@ -625,14 +569,13 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling and Resilience", function () {
-    it("should handle errors gracefully and log audit trail", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling and Resilience", () => {
+    it("should handle errors gracefully and log audit trail", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, profileManager.createPatientProfile(null, testUserId)];
@@ -642,12 +585,11 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should maintain system stability on edge cases", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should maintain system stability on edge cases", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var edgeCaseData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               edgeCaseData = {
@@ -667,7 +609,6 @@ describe("Patient Management Core - Story 2.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

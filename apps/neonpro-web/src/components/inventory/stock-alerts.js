@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockAlerts = StockAlerts;
 var react_1 = require("react");
@@ -147,35 +146,26 @@ function StockAlerts() {
   var _b = (0, react_1.useState)("all"),
     selectedType = _b[0],
     setSelectedType = _b[1];
-  var alertCounts = (0, react_1.useMemo)(function () {
-    var unresolved = mockAlerts.filter(function (alert) {
-      return !alert.resolvedAt;
-    });
+  var alertCounts = (0, react_1.useMemo)(() => {
+    var unresolved = mockAlerts.filter((alert) => !alert.resolvedAt);
     return {
       total: unresolved.length,
-      critical: unresolved.filter(function (alert) {
-        return alert.severity === "critical";
-      }).length,
-      warning: unresolved.filter(function (alert) {
-        return alert.severity === "warning";
-      }).length,
-      actionRequired: unresolved.filter(function (alert) {
-        return alert.actionRequired;
-      }).length,
+      critical: unresolved.filter((alert) => alert.severity === "critical").length,
+      warning: unresolved.filter((alert) => alert.severity === "warning").length,
+      actionRequired: unresolved.filter((alert) => alert.actionRequired).length,
     };
   }, []);
   var filteredAlerts = (0, react_1.useMemo)(
-    function () {
-      return mockAlerts.filter(function (alert) {
+    () =>
+      mockAlerts.filter((alert) => {
         if (alert.resolvedAt) return false; // Only show unresolved alerts
         var matchesSeverity = selectedSeverity === "all" || alert.severity === selectedSeverity;
         var matchesType = selectedType === "all" || alert.type === selectedType;
         return matchesSeverity && matchesType;
-      });
-    },
+      }),
     [selectedSeverity, selectedType],
   );
-  var getSeverityBadgeColor = function (severity) {
+  var getSeverityBadgeColor = (severity) => {
     switch (severity) {
       case "critical":
         return "bg-red-100 text-red-800 border-red-200";
@@ -187,7 +177,7 @@ function StockAlerts() {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var handleResolveAlert = function (alertId) {
+  var handleResolveAlert = (alertId) => {
     // In a real implementation, this would update the database
     console.log("Resolving alert:", alertId);
   };
@@ -266,7 +256,7 @@ function StockAlerts() {
       </div>
       {/* Alerts List */}
       <div className="space-y-4">
-        {filteredAlerts.map(function (alert) {
+        {filteredAlerts.map((alert) => {
           var config = alertTypeConfig[alert.type];
           var Icon = config.icon;
           return (
@@ -323,9 +313,7 @@ function StockAlerts() {
                     <button_1.Button
                       size="sm"
                       variant="outline"
-                      onClick={function () {
-                        return handleResolveAlert(alert.id);
-                      }}
+                      onClick={() => handleResolveAlert(alert.id)}
                     >
                       <lucide_react_1.CheckCircle className="w-4 h-4 mr-1" />
                       Resolver

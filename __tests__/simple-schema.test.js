@@ -1,4 +1,3 @@
-"use strict";
 // Simple Schema Test - Validation for Stock Alerts
 // Story 11.4: Basic validation testing for implemented schemas
 var __assign =
@@ -6,13 +5,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -35,7 +34,7 @@ var testAlertConfigSchema = zod_1.z.object({
 var testCreateAlertConfigSchema = testAlertConfigSchema.omit({
   id: true,
 });
-(0, globals_1.describe)("Stock Alert Schema Validation - Basic Tests", function () {
+(0, globals_1.describe)("Stock Alert Schema Validation - Basic Tests", () => {
   var validConfig = {
     clinicId: "123e4567-e89b-12d3-a456-426614174000",
     productId: "123e4567-e89b-12d3-a456-426614174001",
@@ -45,32 +44,32 @@ var testCreateAlertConfigSchema = testAlertConfigSchema.omit({
     isActive: true,
     notificationChannels: ["in_app", "email"],
   };
-  (0, globals_1.it)("should validate a complete valid alert config", function () {
+  (0, globals_1.it)("should validate a complete valid alert config", () => {
     var result = testAlertConfigSchema.safeParse(
       __assign({ id: "123e4567-e89b-12d3-a456-426614174002" }, validConfig),
     );
     (0, globals_1.expect)(result.success).toBe(true);
   });
-  (0, globals_1.it)("should validate create alert config (without id)", function () {
+  (0, globals_1.it)("should validate create alert config (without id)", () => {
     var result = testCreateAlertConfigSchema.safeParse(validConfig);
     (0, globals_1.expect)(result.success).toBe(true);
   });
-  (0, globals_1.it)("should reject invalid UUID formats", function () {
+  (0, globals_1.it)("should reject invalid UUID formats", () => {
     var invalidConfig = __assign(__assign({}, validConfig), { clinicId: "invalid-uuid" });
     var result = testCreateAlertConfigSchema.safeParse(invalidConfig);
     (0, globals_1.expect)(result.success).toBe(false);
   });
-  (0, globals_1.it)("should reject negative threshold values", function () {
+  (0, globals_1.it)("should reject negative threshold values", () => {
     var invalidConfig = __assign(__assign({}, validConfig), { thresholdValue: -5 });
     var result = testCreateAlertConfigSchema.safeParse(invalidConfig);
     (0, globals_1.expect)(result.success).toBe(false);
   });
-  (0, globals_1.it)("should reject empty notification channels", function () {
+  (0, globals_1.it)("should reject empty notification channels", () => {
     var invalidConfig = __assign(__assign({}, validConfig), { notificationChannels: [] });
     var result = testCreateAlertConfigSchema.safeParse(invalidConfig);
     (0, globals_1.expect)(result.success).toBe(false);
   });
-  (0, globals_1.it)("should reject invalid alert types", function () {
+  (0, globals_1.it)("should reject invalid alert types", () => {
     var invalidConfig = __assign(__assign({}, validConfig), { alertType: "invalid_type" });
     var result = testCreateAlertConfigSchema.safeParse(invalidConfig);
     (0, globals_1.expect)(result.success).toBe(false);

@@ -1,11 +1,10 @@
-"use strict";
 /**
  * Performance Monitor - VIBECODE V1.0 Enhanced
  * Comprehensive performance monitoring for subscription middleware
  */
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -14,15 +13,15 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.performanceMonitor = exports.PerformanceMonitor = void 0;
-var PerformanceMonitor = /** @class */ (function () {
+var PerformanceMonitor = /** @class */ (() => {
   function PerformanceMonitor() {
     this.metrics = [];
     this.benchmarks = new Map();
   }
-  PerformanceMonitor.getInstance = function () {
+  PerformanceMonitor.getInstance = () => {
     if (!PerformanceMonitor.instance) {
       PerformanceMonitor.instance = new PerformanceMonitor();
     }
@@ -30,7 +29,7 @@ var PerformanceMonitor = /** @class */ (function () {
   }; /**
    * Start performance measurement for operation
    */
-  PerformanceMonitor.prototype.startMeasurement = function (operation) {
+  PerformanceMonitor.prototype.startMeasurement = (operation) => {
     var measurementId = "".concat(operation, "-").concat(Date.now());
     performance.mark("".concat(measurementId, "-start"));
     return measurementId;
@@ -60,7 +59,7 @@ var PerformanceMonitor = /** @class */ (function () {
   /**
    * Get current memory usage in MB
    */
-  PerformanceMonitor.prototype.getMemoryUsage = function () {
+  PerformanceMonitor.prototype.getMemoryUsage = () => {
     if (typeof window !== "undefined" && "memory" in performance) {
       // Browser environment
       var memory = performance.memory;
@@ -77,21 +76,13 @@ var PerformanceMonitor = /** @class */ (function () {
    * Calculate performance benchmark for operation
    */
   PerformanceMonitor.prototype.getBenchmark = function (operation) {
-    var operationMetrics = this.metrics.filter(function (m) {
-      return m.operation === operation;
-    });
+    var operationMetrics = this.metrics.filter((m) => m.operation === operation);
     if (operationMetrics.length === 0) return null;
     var avgResponseTime =
-      operationMetrics.reduce(function (sum, m) {
-        return sum + m.duration;
-      }, 0) / operationMetrics.length;
+      operationMetrics.reduce((sum, m) => sum + m.duration, 0) / operationMetrics.length;
     var avgMemory =
-      operationMetrics.reduce(function (sum, m) {
-        return sum + m.memory;
-      }, 0) / operationMetrics.length;
-    var errorCount = operationMetrics.filter(function (m) {
-      return !m.success;
-    }).length;
+      operationMetrics.reduce((sum, m) => sum + m.memory, 0) / operationMetrics.length;
+    var errorCount = operationMetrics.filter((m) => !m.success).length;
     var errorRate = (errorCount / operationMetrics.length) * 100;
     var benchmark = {
       responseTime: avgResponseTime,
@@ -114,27 +105,16 @@ var PerformanceMonitor = /** @class */ (function () {
    */
   PerformanceMonitor.prototype.cleanOldMetrics = function () {
     var oneHourAgo = Date.now() - 60 * 60 * 1000;
-    this.metrics = this.metrics.filter(function (m) {
-      return m.timestamp > oneHourAgo;
-    });
+    this.metrics = this.metrics.filter((m) => m.timestamp > oneHourAgo);
   };
   /**
    * Generate performance report
    */
   PerformanceMonitor.prototype.generateReport = function () {
-    var _this = this;
     var report = {};
-    var operations = __spreadArray(
-      [],
-      new Set(
-        this.metrics.map(function (m) {
-          return m.operation;
-        }),
-      ),
-      true,
-    );
-    operations.forEach(function (op) {
-      var benchmark = _this.getBenchmark(op);
+    var operations = __spreadArray([], new Set(this.metrics.map((m) => m.operation)), true);
+    operations.forEach((op) => {
+      var benchmark = this.getBenchmark(op);
       if (benchmark) report[op] = benchmark;
     });
     return report;

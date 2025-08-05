@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationSettings = NotificationSettings;
 var react_1 = require("react");
@@ -147,7 +144,6 @@ var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 var notification_context_1 = require("@/contexts/notification-context");
 function NotificationSettings(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, notification_context_1.useNotificationContext)(),
     preferences = _b.preferences,
@@ -164,11 +160,11 @@ function NotificationSettings(_a) {
     ),
     permissionStatus = _d[0],
     setPermissionStatus = _d[1];
-  var handlePreferenceChange = function (key, value) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handlePreferenceChange = (key, value) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -187,11 +183,10 @@ function NotificationSettings(_a) {
         }
       });
     });
-  };
-  var handleRequestPermission = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRequestPermission = () =>
+    __awaiter(this, void 0, void 0, function () {
       var permission, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -217,7 +212,6 @@ function NotificationSettings(_a) {
         }
       });
     });
-  };
   var settingsSections = [
     {
       title: "Notificações por Email",
@@ -365,88 +359,75 @@ function NotificationSettings(_a) {
       )}
 
       {/* Settings Sections */}
-      {settingsSections.map(function (section, sectionIndex) {
-        return (
-          <card_1.Card key={section.title}>
-            <card_1.CardHeader>
-              <card_1.CardTitle className="flex items-center gap-2">
-                <section.icon className="h-5 w-5" />
-                {section.title}
-              </card_1.CardTitle>
-              <card_1.CardDescription>{section.description}</card_1.CardDescription>
-            </card_1.CardHeader>
-            <card_1.CardContent className="space-y-6">
-              {section.settings.map(function (setting, settingIndex) {
-                return (
-                  <div key={setting.key}>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <label_1.Label htmlFor={setting.key}>{setting.label}</label_1.Label>
-                        <p className="text-sm text-muted-foreground">{setting.description}</p>
-                      </div>
+      {settingsSections.map((section, sectionIndex) => (
+        <card_1.Card key={section.title}>
+          <card_1.CardHeader>
+            <card_1.CardTitle className="flex items-center gap-2">
+              <section.icon className="h-5 w-5" />
+              {section.title}
+            </card_1.CardTitle>
+            <card_1.CardDescription>{section.description}</card_1.CardDescription>
+          </card_1.CardHeader>
+          <card_1.CardContent className="space-y-6">
+            {section.settings.map((setting, settingIndex) => (
+              <div key={setting.key}>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <label_1.Label htmlFor={setting.key}>{setting.label}</label_1.Label>
+                    <p className="text-sm text-muted-foreground">{setting.description}</p>
+                  </div>
 
-                      <div className="flex items-center">
-                        {setting.type === "switch" && (
-                          <switch_1.Switch
-                            id={setting.key}
-                            checked={preferences[setting.key]}
-                            onCheckedChange={function (checked) {
-                              return handlePreferenceChange(setting.key, checked);
-                            }}
-                            disabled={saving}
-                          />
-                        )}
+                  <div className="flex items-center">
+                    {setting.type === "switch" && (
+                      <switch_1.Switch
+                        id={setting.key}
+                        checked={preferences[setting.key]}
+                        onCheckedChange={(checked) => handlePreferenceChange(setting.key, checked)}
+                        disabled={saving}
+                      />
+                    )}
 
-                        {setting.type === "select" && setting.options && (
-                          <select_1.Select
-                            value={String(preferences[setting.key] || "")}
-                            onValueChange={function (value) {
-                              return handlePreferenceChange(setting.key, parseInt(value));
-                            }}
-                          >
-                            <select_1.SelectTrigger className="w-48">
-                              <select_1.SelectValue />
-                            </select_1.SelectTrigger>
-                            <select_1.SelectContent>
-                              {setting.options.map(function (option) {
-                                return (
-                                  <select_1.SelectItem
-                                    key={option.value}
-                                    value={String(option.value)}
-                                  >
-                                    {option.label}
-                                  </select_1.SelectItem>
-                                );
-                              })}
-                            </select_1.SelectContent>
-                          </select_1.Select>
-                        )}
+                    {setting.type === "select" && setting.options && (
+                      <select_1.Select
+                        value={String(preferences[setting.key] || "")}
+                        onValueChange={(value) =>
+                          handlePreferenceChange(setting.key, parseInt(value))
+                        }
+                      >
+                        <select_1.SelectTrigger className="w-48">
+                          <select_1.SelectValue />
+                        </select_1.SelectTrigger>
+                        <select_1.SelectContent>
+                          {setting.options.map((option) => (
+                            <select_1.SelectItem key={option.value} value={String(option.value)}>
+                              {option.label}
+                            </select_1.SelectItem>
+                          ))}
+                        </select_1.SelectContent>
+                      </select_1.Select>
+                    )}
 
-                        {setting.type === "time" && (
-                          <input
-                            type="time"
-                            id={setting.key}
-                            value={preferences[setting.key] || ""}
-                            onChange={function (e) {
-                              return handlePreferenceChange(setting.key, e.target.value);
-                            }}
-                            className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-                            disabled={saving}
-                          />
-                        )}
-                      </div>
-                    </div>
-
-                    {settingIndex < section.settings.length - 1 && (
-                      <separator_1.Separator className="mt-6" />
+                    {setting.type === "time" && (
+                      <input
+                        type="time"
+                        id={setting.key}
+                        value={preferences[setting.key] || ""}
+                        onChange={(e) => handlePreferenceChange(setting.key, e.target.value)}
+                        className="px-3 py-2 border border-input bg-background rounded-md text-sm"
+                        disabled={saving}
+                      />
                     )}
                   </div>
-                );
-              })}
-            </card_1.CardContent>
-          </card_1.Card>
-        );
-      })}
+                </div>
+
+                {settingIndex < section.settings.length - 1 && (
+                  <separator_1.Separator className="mt-6" />
+                )}
+              </div>
+            ))}
+          </card_1.CardContent>
+        </card_1.Card>
+      ))}
 
       {/* Test Notification */}
       <card_1.Card>
@@ -461,7 +442,7 @@ function NotificationSettings(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <button_1.Button
-            onClick={function () {
+            onClick={() => {
               sonner_1.toast.success("Teste de notificação!", {
                 description: "Suas configurações de notificação estão funcionando corretamente.",
                 duration: 5000,

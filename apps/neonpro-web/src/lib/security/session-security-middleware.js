@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionSecurityMiddleware = void 0;
 exports.createSessionSecurityMiddleware = createSessionSecurityMiddleware;
@@ -166,7 +163,7 @@ var DEFAULT_CONFIG = {
   ],
   maxConcurrentSessions: 3,
 };
-var SessionSecurityMiddleware = /** @class */ (function () {
+var SessionSecurityMiddleware = /** @class */ (() => {
   function SessionSecurityMiddleware(config) {
     if (config === void 0) {
       config = {};
@@ -513,7 +510,7 @@ var SessionSecurityMiddleware = /** @class */ (function () {
    */
   SessionSecurityMiddleware.prototype.checkRateLimit = function (request, userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would integrate with your existing rate limiting logic
           // For now, return true as placeholder
@@ -535,7 +532,7 @@ var SessionSecurityMiddleware = /** @class */ (function () {
       : this.createErrorResponse(result.reason || "Security check failed", 403);
     // Add custom headers
     if (result.headers) {
-      Object.entries(result.headers).forEach(function (_a) {
+      Object.entries(result.headers).forEach((_a) => {
         var key = _a[0],
           value = _a[1];
         response.headers.set(key, value);
@@ -562,16 +559,14 @@ var SessionSecurityMiddleware = /** @class */ (function () {
     return (
       ((_a = this.config.skipPaths) === null || _a === void 0
         ? void 0
-        : _a.some(function (path) {
-            return pathname.startsWith(path);
-          })) || false
+        : _a.some((path) => pathname.startsWith(path))) || false
     );
   };
-  SessionSecurityMiddleware.prototype.requiresCSRFCheck = function (request) {
+  SessionSecurityMiddleware.prototype.requiresCSRFCheck = (request) => {
     var method = request.method;
     return ["POST", "PUT", "DELETE", "PATCH"].includes(method);
   };
-  SessionSecurityMiddleware.prototype.extractSessionId = function (request) {
+  SessionSecurityMiddleware.prototype.extractSessionId = (request) => {
     // Try to get session ID from various sources
     var authHeader = request.headers.get("authorization");
     if (authHeader === null || authHeader === void 0 ? void 0 : authHeader.startsWith("Bearer ")) {
@@ -588,7 +583,7 @@ var SessionSecurityMiddleware = /** @class */ (function () {
   SessionSecurityMiddleware.prototype.extractUserId = function (request) {
     return __awaiter(this, void 0, void 0, function () {
       var authHeader;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           authHeader = request.headers.get("authorization");
           if (
@@ -608,12 +603,11 @@ var SessionSecurityMiddleware = /** @class */ (function () {
       });
     });
   };
-  SessionSecurityMiddleware.prototype.createErrorResponse = function (message, status) {
-    return server_1.NextResponse.json(
+  SessionSecurityMiddleware.prototype.createErrorResponse = (message, status) =>
+    server_1.NextResponse.json(
       { error: message, timestamp: new Date().toISOString() },
       { status: status },
     );
-  };
   SessionSecurityMiddleware.prototype.logSecurityEvent = function (params) {
     return __awaiter(this, void 0, void 0, function () {
       var eventType, riskScore, eventDetails, request, error_6;
@@ -649,7 +643,7 @@ var SessionSecurityMiddleware = /** @class */ (function () {
       });
     });
   };
-  SessionSecurityMiddleware.prototype.getClientIP = function (request) {
+  SessionSecurityMiddleware.prototype.getClientIP = (request) => {
     var _a;
     return (
       ((_a = request.headers.get("x-forwarded-for")) === null || _a === void 0
@@ -669,7 +663,5 @@ exports.SessionSecurityMiddleware = SessionSecurityMiddleware;
  */
 function createSessionSecurityMiddleware(config) {
   var middleware = new SessionSecurityMiddleware(config);
-  return function (request) {
-    return middleware.middleware(request);
-  };
+  return (request) => middleware.middleware(request);
 }

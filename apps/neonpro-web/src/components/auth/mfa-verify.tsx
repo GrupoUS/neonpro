@@ -21,23 +21,23 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
 import type {
-  AlertTriangle,
-  Smartphone,
-  Shield,
-  RefreshCw,
-  Clock,
   AlertCircle,
+  AlertTriangle,
   CheckCircle,
-  Phone,
+  Clock,
   Key,
-  Zap,
   Lock,
+  Phone,
+  RefreshCw,
+  Shield,
+  Smartphone,
+  Zap,
 } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
 import type {
   Card,
   CardContent,
@@ -45,15 +45,15 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
 import type { Checkbox } from "@/components/ui/checkbox";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { toast } from "@/components/ui/use-toast";
 import type { useMFA } from "@/hooks/use-mfa";
-import type { MFAVerifyProps, MFAVerificationResult, MFAMethodType, MFAError } from "@/types/auth";
 import type { cn } from "@/lib/utils";
+import type { MFAError, MFAMethodType, MFAVerificationResult, MFAVerifyProps } from "@/types/auth";
 
 // Component state interface
 interface MFAVerifyState {

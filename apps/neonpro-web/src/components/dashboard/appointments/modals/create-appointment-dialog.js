@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAppointmentDialog = CreateAppointmentDialog;
 var react_1 = require("react");
@@ -165,7 +162,6 @@ var createAppointmentSchema = zod_2.z.object({
   send_reminder: zod_2.z.boolean().default(true),
 });
 function CreateAppointmentDialog(_a) {
-  var _this = this;
   var open = _a.open,
     onOpenChange = _a.onOpenChange,
     onCreateSuccess = _a.onCreateSuccess,
@@ -214,114 +210,104 @@ function CreateAppointmentDialog(_a) {
     },
   });
   // Set default values when dialog opens
-  (0, react_1.useEffect)(
-    function () {
-      if (open) {
-        var defaultDateTime =
-          defaultDate && defaultTime
-            ? "".concat((0, date_fns_1.format)(defaultDate, "yyyy-MM-dd"), "T").concat(defaultTime)
-            : "";
-        form.reset({
-          patient_id: "",
-          professional_id: professionalId || "",
-          service_type_id: "",
-          start_time: defaultDateTime,
-          status: "scheduled",
-          notes: "",
-          internal_notes: "",
-          send_confirmation: true,
-          send_reminder: true,
-        });
-        if (defaultDate) {
-          setSelectedDate((0, date_fns_1.format)(defaultDate, "yyyy-MM-dd"));
-        }
+  (0, react_1.useEffect)(() => {
+    if (open) {
+      var defaultDateTime =
+        defaultDate && defaultTime
+          ? "".concat((0, date_fns_1.format)(defaultDate, "yyyy-MM-dd"), "T").concat(defaultTime)
+          : "";
+      form.reset({
+        patient_id: "",
+        professional_id: professionalId || "",
+        service_type_id: "",
+        start_time: defaultDateTime,
+        status: "scheduled",
+        notes: "",
+        internal_notes: "",
+        send_confirmation: true,
+        send_reminder: true,
+      });
+      if (defaultDate) {
+        setSelectedDate((0, date_fns_1.format)(defaultDate, "yyyy-MM-dd"));
       }
-    },
-    [open, defaultDate, defaultTime, professionalId, form],
-  );
+    }
+  }, [open, defaultDate, defaultTime, professionalId, form]);
   // Load reference data
-  (0, react_1.useEffect)(
-    function () {
-      if (!open) return;
-      var loadReferenceData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var _a,
-            patientsRes,
-            professionalsRes,
-            servicesRes,
-            patientsData,
-            professionalsData,
-            servicesData,
-            error_1;
-          return __generator(this, function (_b) {
-            switch (_b.label) {
-              case 0:
-                _b.trys.push([0, 8, , 9]);
-                return [
-                  4 /*yield*/,
-                  Promise.all([
-                    fetch("/api/patients"),
-                    fetch("/api/professionals"),
-                    fetch("/api/service-types"),
-                  ]),
-                ];
-              case 1:
-                (_a = _b.sent()),
-                  (patientsRes = _a[0]),
-                  (professionalsRes = _a[1]),
-                  (servicesRes = _a[2]);
-                if (!patientsRes.ok) return [3 /*break*/, 3];
-                return [4 /*yield*/, patientsRes.json()];
-              case 2:
-                patientsData = _b.sent();
-                setPatients(patientsData.data || []);
-                _b.label = 3;
-              case 3:
-                if (!professionalsRes.ok) return [3 /*break*/, 5];
-                return [4 /*yield*/, professionalsRes.json()];
-              case 4:
-                professionalsData = _b.sent();
-                setProfessionals(professionalsData.data || []);
-                _b.label = 5;
-              case 5:
-                if (!servicesRes.ok) return [3 /*break*/, 7];
-                return [4 /*yield*/, servicesRes.json()];
-              case 6:
-                servicesData = _b.sent();
-                setServices(servicesData.data || []);
-                _b.label = 7;
-              case 7:
-                return [3 /*break*/, 9];
-              case 8:
-                error_1 = _b.sent();
-                console.error("Error loading reference data:", error_1);
-                sonner_1.toast.error("Erro ao carregar dados de referência");
-                return [3 /*break*/, 9];
-              case 9:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    if (!open) return;
+    var loadReferenceData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var _a,
+          patientsRes,
+          professionalsRes,
+          servicesRes,
+          patientsData,
+          professionalsData,
+          servicesData,
+          error_1;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              _b.trys.push([0, 8, , 9]);
+              return [
+                4 /*yield*/,
+                Promise.all([
+                  fetch("/api/patients"),
+                  fetch("/api/professionals"),
+                  fetch("/api/service-types"),
+                ]),
+              ];
+            case 1:
+              (_a = _b.sent()),
+                (patientsRes = _a[0]),
+                (professionalsRes = _a[1]),
+                (servicesRes = _a[2]);
+              if (!patientsRes.ok) return [3 /*break*/, 3];
+              return [4 /*yield*/, patientsRes.json()];
+            case 2:
+              patientsData = _b.sent();
+              setPatients(patientsData.data || []);
+              _b.label = 3;
+            case 3:
+              if (!professionalsRes.ok) return [3 /*break*/, 5];
+              return [4 /*yield*/, professionalsRes.json()];
+            case 4:
+              professionalsData = _b.sent();
+              setProfessionals(professionalsData.data || []);
+              _b.label = 5;
+            case 5:
+              if (!servicesRes.ok) return [3 /*break*/, 7];
+              return [4 /*yield*/, servicesRes.json()];
+            case 6:
+              servicesData = _b.sent();
+              setServices(servicesData.data || []);
+              _b.label = 7;
+            case 7:
+              return [3 /*break*/, 9];
+            case 8:
+              error_1 = _b.sent();
+              console.error("Error loading reference data:", error_1);
+              sonner_1.toast.error("Erro ao carregar dados de referência");
+              return [3 /*break*/, 9];
+            case 9:
+              return [2 /*return*/];
+          }
         });
-      };
-      loadReferenceData();
-    },
-    [open],
-  );
+      });
+    loadReferenceData();
+  }, [open]);
   // Load available slots when professional, date, or service changes
-  (0, react_1.useEffect)(
-    function () {
-      var professionalId = form.watch("professional_id");
-      var serviceId = form.watch("service_type_id");
-      if (selectedDate && professionalId && serviceId) {
-        loadAvailableSlots(selectedDate, professionalId, serviceId);
-      }
-    },
-    [selectedDate, form.watch("professional_id"), form.watch("service_type_id")],
-  );
-  var loadAvailableSlots = function (date, professionalId, serviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var professionalId = form.watch("professional_id");
+    var serviceId = form.watch("service_type_id");
+    if (selectedDate && professionalId && serviceId) {
+      loadAvailableSlots(selectedDate, professionalId, serviceId);
+    }
+  }, [selectedDate, form.watch("professional_id"), form.watch("service_type_id")]);
+  var loadAvailableSlots = (date, professionalId, serviceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -358,13 +344,12 @@ function CreateAppointmentDialog(_a) {
         }
       });
     });
-  };
   // Check for conflicts when time changes
-  var checkConflicts = function (professionalId, startTime, serviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkConflicts = (professionalId, startTime, serviceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var selectedService, endTime, response, data, conflicts, error_3;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!professionalId || !startTime || !serviceId) return [2 /*return*/];
@@ -373,9 +358,7 @@ function CreateAppointmentDialog(_a) {
             _b.trys.push([1, 4, 5, 6]);
             setCheckingConflict(true);
             setConflictError("");
-            selectedService = services.find(function (s) {
-              return s.id === serviceId;
-            });
+            selectedService = services.find((s) => s.id === serviceId);
             if (!selectedService) return [2 /*return*/];
             endTime = new Date(
               new Date(startTime).getTime() + selectedService.duration_minutes * 60000,
@@ -402,14 +385,14 @@ function CreateAppointmentDialog(_a) {
               ((_a = data.conflicting_appointments) === null || _a === void 0 ? void 0 : _a.length)
             ) {
               conflicts = data.conflicting_appointments
-                .map(function (c) {
-                  return "".concat(c.patient_name, " (").concat(
+                .map((c) =>
+                  "".concat(c.patient_name, " (").concat(
                     (0, date_fns_1.format)(new Date(c.start_time), "HH:mm", {
                       locale: locale_1.ptBR,
                     }),
                     ")",
-                  );
-                })
+                  ),
+                )
                 .join(", ");
               setConflictError("Conflito detectado com: ".concat(conflicts));
             }
@@ -426,39 +409,33 @@ function CreateAppointmentDialog(_a) {
         }
       });
     });
-  };
   // Watch form changes for conflict checking
   var watchedValues = form.watch(["professional_id", "start_time", "service_type_id"]);
-  (0, react_1.useEffect)(
-    function () {
-      var professionalId = watchedValues[0],
-        startTime = watchedValues[1],
-        serviceId = watchedValues[2];
-      if (professionalId && startTime && serviceId && services.length > 0) {
-        var timer_1 = setTimeout(function () {
-          checkConflicts(professionalId, startTime, serviceId);
-        }, 500);
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [watchedValues, services],
-  );
+  (0, react_1.useEffect)(() => {
+    var professionalId = watchedValues[0],
+      startTime = watchedValues[1],
+      serviceId = watchedValues[2];
+    if (professionalId && startTime && serviceId && services.length > 0) {
+      var timer_1 = setTimeout(() => {
+        checkConflicts(professionalId, startTime, serviceId);
+      }, 500);
+      return () => clearTimeout(timer_1);
+    }
+  }, [watchedValues, services]);
   // Handle date selection for slot loading
-  var handleDateChange = function (date) {
+  var handleDateChange = (date) => {
     setSelectedDate(date);
     form.setValue("start_time", "");
   };
   // Handle slot selection
-  var handleSlotSelect = function (slot) {
+  var handleSlotSelect = (slot) => {
     if (!slot.is_available) return;
     var dateTimeValue = (0, date_fns_1.format)(new Date(slot.start_time), "yyyy-MM-dd'T'HH:mm");
     form.setValue("start_time", dateTimeValue);
   };
   // Handle form submission
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var selectedService,
         startTime,
         endTime,
@@ -468,7 +445,7 @@ function CreateAppointmentDialog(_a) {
         conflicts,
         error_4;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (conflictError) {
@@ -479,9 +456,7 @@ function CreateAppointmentDialog(_a) {
           case 1:
             _b.trys.push([1, 4, 5, 6]);
             setIsCreating(true);
-            selectedService = services.find(function (s) {
-              return s.id === data.service_type_id;
-            });
+            selectedService = services.find((s) => s.id === data.service_type_id);
             if (!selectedService) {
               sonner_1.toast.error("Serviço não encontrado");
               return [2 /*return*/];
@@ -516,14 +491,14 @@ function CreateAppointmentDialog(_a) {
             if (!response.ok) {
               if ((_a = result.conflicts) === null || _a === void 0 ? void 0 : _a.length) {
                 conflicts = result.conflicts
-                  .map(function (c) {
-                    return "".concat(c.patient_name, " (").concat(
+                  .map((c) =>
+                    "".concat(c.patient_name, " (").concat(
                       (0, date_fns_1.format)(new Date(c.start_time), "HH:mm", {
                         locale: locale_1.ptBR,
                       }),
                       ")",
-                    );
-                  })
+                    ),
+                  )
                   .join(", ");
                 setConflictError("Conflito detectado: ".concat(conflicts));
                 return [2 /*return*/];
@@ -547,13 +522,9 @@ function CreateAppointmentDialog(_a) {
         }
       });
     });
-  };
-  var getMinDateTime = function () {
-    return (0, date_fns_1.format)(new Date(), "yyyy-MM-dd'T'HH:mm");
-  };
-  var getMaxDate = function () {
-    return (0, date_fns_1.format)((0, date_fns_1.addDays)(new Date(), 90), "yyyy-MM-dd");
-  };
+  var getMinDateTime = () => (0, date_fns_1.format)(new Date(), "yyyy-MM-dd'T'HH:mm");
+  var getMaxDate = () =>
+    (0, date_fns_1.format)((0, date_fns_1.addDays)(new Date(), 90), "yyyy-MM-dd");
   return (
     <dialog_1.Dialog open={open} onOpenChange={onOpenChange}>
       <dialog_1.DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
@@ -584,7 +555,7 @@ function CreateAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="patient_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -596,16 +567,14 @@ function CreateAppointmentDialog(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {patients.map(function (patient) {
-                            return (
-                              <select_1.SelectItem key={patient.id} value={patient.id}>
-                                <div className="flex items-center gap-2">
-                                  <lucide_react_1.User className="h-4 w-4" />
-                                  {patient.full_name}
-                                </div>
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {patients.map((patient) => (
+                            <select_1.SelectItem key={patient.id} value={patient.id}>
+                              <div className="flex items-center gap-2">
+                                <lucide_react_1.User className="h-4 w-4" />
+                                {patient.full_name}
+                              </div>
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -617,7 +586,7 @@ function CreateAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="professional_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -629,20 +598,18 @@ function CreateAppointmentDialog(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {professionals.map(function (professional) {
-                            return (
-                              <select_1.SelectItem key={professional.id} value={professional.id}>
-                                <div>
-                                  <div className="font-medium">{professional.full_name}</div>
-                                  {professional.specialization && (
-                                    <div className="text-xs text-muted-foreground">
-                                      {professional.specialization}
-                                    </div>
-                                  )}
-                                </div>
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {professionals.map((professional) => (
+                            <select_1.SelectItem key={professional.id} value={professional.id}>
+                              <div>
+                                <div className="font-medium">{professional.full_name}</div>
+                                {professional.specialization && (
+                                  <div className="text-xs text-muted-foreground">
+                                    {professional.specialization}
+                                  </div>
+                                )}
+                              </div>
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                       <form_1.FormMessage />
@@ -656,7 +623,7 @@ function CreateAppointmentDialog(_a) {
             <form_1.FormField
               control={form.control}
               name="service_type_id"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -668,26 +635,24 @@ function CreateAppointmentDialog(_a) {
                         </select_1.SelectTrigger>
                       </form_1.FormControl>
                       <select_1.SelectContent>
-                        {services.map(function (service) {
-                          return (
-                            <select_1.SelectItem key={service.id} value={service.id}>
-                              <div className="flex items-center justify-between w-full">
-                                <span>{service.name}</span>
-                                <div className="flex items-center gap-2 ml-4">
-                                  <badge_1.Badge variant="secondary" className="text-xs">
-                                    {Math.floor(service.duration_minutes / 60)}h
-                                    {service.duration_minutes % 60}min
+                        {services.map((service) => (
+                          <select_1.SelectItem key={service.id} value={service.id}>
+                            <div className="flex items-center justify-between w-full">
+                              <span>{service.name}</span>
+                              <div className="flex items-center gap-2 ml-4">
+                                <badge_1.Badge variant="secondary" className="text-xs">
+                                  {Math.floor(service.duration_minutes / 60)}h
+                                  {service.duration_minutes % 60}min
+                                </badge_1.Badge>
+                                {service.price && (
+                                  <badge_1.Badge variant="outline" className="text-xs">
+                                    R$ {service.price.toFixed(2)}
                                   </badge_1.Badge>
-                                  {service.price && (
-                                    <badge_1.Badge variant="outline" className="text-xs">
-                                      R$ {service.price.toFixed(2)}
-                                    </badge_1.Badge>
-                                  )}
-                                </div>
+                                )}
                               </div>
-                            </select_1.SelectItem>
-                          );
-                        })}
+                            </div>
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                     <form_1.FormMessage />
@@ -702,9 +667,7 @@ function CreateAppointmentDialog(_a) {
               <input_1.Input
                 type="date"
                 value={selectedDate}
-                onChange={function (e) {
-                  return handleDateChange(e.target.value);
-                }}
+                onChange={(e) => handleDateChange(e.target.value)}
                 min={(0, date_fns_1.format)(new Date(), "yyyy-MM-dd")}
                 max={getMaxDate()}
               />
@@ -727,41 +690,37 @@ function CreateAppointmentDialog(_a) {
                     </div>
                   : availableSlots.length > 0
                     ? <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 max-h-40 overflow-y-auto">
-                        {availableSlots.map(function (slot, index) {
-                          return (
-                            <button_1.Button
-                              key={index}
-                              type="button"
-                              variant={
-                                form.watch("start_time") ===
+                        {availableSlots.map((slot, index) => (
+                          <button_1.Button
+                            key={index}
+                            type="button"
+                            variant={
+                              form.watch("start_time") ===
+                              (0, date_fns_1.format)(
+                                new Date(slot.start_time),
+                                "yyyy-MM-dd'T'HH:mm",
+                              )
+                                ? "default"
+                                : slot.is_available
+                                  ? "outline"
+                                  : "secondary"
+                            }
+                            size="sm"
+                            disabled={!slot.is_available}
+                            onClick={() => handleSlotSelect(slot)}
+                            className="relative"
+                          >
+                            {(0, date_fns_1.format)(new Date(slot.start_time), "HH:mm")}
+                            {slot.is_available &&
+                              form.watch("start_time") ===
                                 (0, date_fns_1.format)(
                                   new Date(slot.start_time),
                                   "yyyy-MM-dd'T'HH:mm",
-                                )
-                                  ? "default"
-                                  : slot.is_available
-                                    ? "outline"
-                                    : "secondary"
-                              }
-                              size="sm"
-                              disabled={!slot.is_available}
-                              onClick={function () {
-                                return handleSlotSelect(slot);
-                              }}
-                              className="relative"
-                            >
-                              {(0, date_fns_1.format)(new Date(slot.start_time), "HH:mm")}
-                              {slot.is_available &&
-                                form.watch("start_time") ===
-                                  (0, date_fns_1.format)(
-                                    new Date(slot.start_time),
-                                    "yyyy-MM-dd'T'HH:mm",
-                                  ) && (
-                                  <lucide_react_1.CheckCircle className="h-3 w-3 absolute -top-1 -right-1" />
-                                )}
-                            </button_1.Button>
-                          );
-                        })}
+                                ) && (
+                                <lucide_react_1.CheckCircle className="h-3 w-3 absolute -top-1 -right-1" />
+                              )}
+                          </button_1.Button>
+                        ))}
                       </div>
                     : <div className="text-center py-8 text-muted-foreground">
                         <lucide_react_1.Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
@@ -774,7 +733,7 @@ function CreateAppointmentDialog(_a) {
             <form_1.FormField
               control={form.control}
               name="start_time"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -801,7 +760,7 @@ function CreateAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="status"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -827,7 +786,7 @@ function CreateAppointmentDialog(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="send_confirmation"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem className="flex flex-row items-start space-x-3 space-y-0">
@@ -848,7 +807,7 @@ function CreateAppointmentDialog(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="send_reminder"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem className="flex flex-row items-start space-x-3 space-y-0">
@@ -873,7 +832,7 @@ function CreateAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="notes"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -893,7 +852,7 @@ function CreateAppointmentDialog(_a) {
               <form_1.FormField
                 control={form.control}
                 name="internal_notes"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -915,9 +874,7 @@ function CreateAppointmentDialog(_a) {
               <button_1.Button
                 type="button"
                 variant="outline"
-                onClick={function () {
-                  return onOpenChange(false);
-                }}
+                onClick={() => onOpenChange(false)}
                 disabled={isCreating}
               >
                 Cancelar

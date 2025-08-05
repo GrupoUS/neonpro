@@ -6,22 +6,17 @@
  * VOIDBEAST V4.0 APEX ENHANCED - Quality ≥9.5/10
  */
 
-import type { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import type { toast } from "sonner";
-import type { VISION_CONFIG } from "./config";
 import type {
-  AnalysisResult,
-  AnalysisRequest,
   AnalysisProgress,
-  ImageData,
-  ProcessingMetrics,
+  AnalysisRequest,
+  AnalysisResult,
+  AnnotationData,
   ExportOptions,
   ExportResult,
-  TreatmentType,
-  AnalysisStatus,
-  ValidationResult,
-  AnnotationData,
+  ImageData,
   MeasurementData,
+  ProcessingMetrics,
+  ValidationResult,
 } from "./types";
 import type { VisionUtils } from "./utils";
 
@@ -312,7 +307,7 @@ export function useAnalysisExport() {
 /**
  * Hook for managing annotations
  */
-export function useAnnotations(imageId?: string) {
+export function useAnnotations(_imageId?: string) {
   const [annotations, setAnnotations] = useState<AnnotationData[]>([]);
   const [selectedAnnotation, setSelectedAnnotation] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -390,7 +385,7 @@ export function useAnnotations(imageId?: string) {
 /**
  * Hook for managing measurements
  */
-export function useMeasurements(imageId?: string) {
+export function useMeasurements(_imageId?: string) {
   const [measurements, setMeasurements] = useState<MeasurementData[]>([]);
   const [selectedMeasurement, setSelectedMeasurement] = useState<string | null>(null);
   const [calibration, setCalibration] = useState<{ pixelToMmRatio: number } | null>(null);

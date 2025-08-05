@@ -7,8 +7,8 @@
  * @created 2025-01-27
  */
 
-import type { RateLimiter, RateLimitConfig } from "./types";
 import type { createClient } from "@supabase/supabase-js";
+import type { RateLimitConfig, RateLimiter } from "./types";
 
 /**
  * Redis-like rate limiter implementation using Supabase

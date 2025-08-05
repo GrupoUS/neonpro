@@ -5,32 +5,31 @@
 // multi-step wizard, and real-time validation for NeonPro
 // ============================================================================
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,10 +149,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -164,7 +161,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplierForm = SupplierForm;
 var react_1 = require("react");
@@ -189,7 +186,7 @@ var utils_1 = require("@/lib/utils");
 // ============================================================================
 // VALIDATION HELPERS
 // ============================================================================
-var validateCNPJ = function (cnpj) {
+var validateCNPJ = (cnpj) => {
   var cleanCNPJ = cnpj.replace(/[^\d]/g, "");
   if (cleanCNPJ.length !== 14) return false;
   // Basic CNPJ validation algorithm
@@ -212,7 +209,7 @@ var validateCNPJ = function (cnpj) {
   var secondDigit = remainder2 < 2 ? 0 : 11 - remainder2;
   return parseInt(cleanCNPJ.charAt(13)) === secondDigit;
 };
-var validateCPF = function (cpf) {
+var validateCPF = (cpf) => {
   var cleanCPF = cpf.replace(/[^\d]/g, "");
   if (cleanCPF.length !== 11) return false;
   // Check for same digits
@@ -279,10 +276,6 @@ var FORM_STEPS = [
 // MAIN COMPONENT
 // ============================================================================
 function SupplierForm(_a) {
-  // ============================================================================
-  // STATE MANAGEMENT
-  // ============================================================================
-  var _this = this;
   var supplier = _a.supplier,
     clinicId = _a.clinicId,
     open = _a.open,
@@ -425,11 +418,9 @@ function SupplierForm(_a) {
   // ============================================================================
   function validateCurrentStep() {
     var stepFields = FORM_STEPS[currentStep].fields;
-    var currentStepErrors = Object.keys(errors).filter(function (field) {
-      return stepFields.some(function (stepField) {
-        return field.startsWith(stepField);
-      });
-    });
+    var currentStepErrors = Object.keys(errors).filter((field) =>
+      stepFields.some((stepField) => field.startsWith(stepField)),
+    );
     return currentStepErrors.length === 0;
   }
   function validateBusinessRules() {
@@ -462,10 +453,10 @@ function SupplierForm(_a) {
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  var handleStepChange = function (stepIndex) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleStepChange = (stepIndex) =>
+    __awaiter(this, void 0, void 0, function () {
       var stepFields, isStepValid;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (stepIndex < currentStep || completedSteps.includes(stepIndex)) {
@@ -477,20 +468,19 @@ function SupplierForm(_a) {
           case 1:
             isStepValid = _a.sent();
             if (isStepValid) {
-              setCompletedSteps(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [currentStep], false);
-              });
+              setCompletedSteps((prev) =>
+                __spreadArray(__spreadArray([], prev, true), [currentStep], false),
+              );
               setCurrentStep(stepIndex);
             }
             return [2 /*return*/];
         }
       });
     });
-  };
-  var handleNext = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleNext = () =>
+    __awaiter(this, void 0, void 0, function () {
       var stepFields, isStepValid;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             stepFields = FORM_STEPS[currentStep].fields;
@@ -498,31 +488,26 @@ function SupplierForm(_a) {
           case 1:
             isStepValid = _a.sent();
             if (isStepValid) {
-              setCompletedSteps(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), [currentStep], false);
-              });
+              setCompletedSteps((prev) =>
+                __spreadArray(__spreadArray([], prev, true), [currentStep], false),
+              );
               if (!isLastStep) {
-                setCurrentStep(function (prev) {
-                  return prev + 1;
-                });
+                setCurrentStep((prev) => prev + 1);
               }
             }
             return [2 /*return*/];
         }
       });
     });
-  };
-  var handlePrevious = function () {
+  var handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(function (prev) {
-        return prev - 1;
-      });
+      setCurrentStep((prev) => prev - 1);
     }
   };
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var businessErrors, submissionData, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsSubmitting(true);
@@ -531,9 +516,7 @@ function SupplierForm(_a) {
             _a.trys.push([1, 6, 7, 8]);
             businessErrors = validateBusinessRules();
             if (businessErrors.length > 0) {
-              businessErrors.forEach(function (error) {
-                return sonner_1.toast.error(error);
-              });
+              businessErrors.forEach((error) => sonner_1.toast.error(error));
               return [2 /*return*/];
             }
             submissionData = __assign(
@@ -576,8 +559,7 @@ function SupplierForm(_a) {
         }
       });
     });
-  };
-  var addSecondaryContact = function () {
+  var addSecondaryContact = () => {
     appendSecondaryContact({
       id: "temp_".concat(Date.now()),
       name: "",
@@ -587,7 +569,7 @@ function SupplierForm(_a) {
       preferred_contact_method: "email",
     });
   };
-  var addCertification = function () {
+  var addCertification = () => {
     appendCertification({
       id: "temp_".concat(Date.now()),
       name: "",
@@ -597,235 +579,156 @@ function SupplierForm(_a) {
       verification_status: "pending",
     });
   };
-  var addRiskFactor = function () {
+  var addRiskFactor = () => {
     appendRiskFactor("");
   };
   // ============================================================================
   // EFFECTS
   // ============================================================================
-  (0, react_1.useEffect)(
-    function () {
-      if (open) {
-        setCurrentStep(0);
-        setCompletedSteps([]);
-      }
-    },
-    [open],
-  );
+  (0, react_1.useEffect)(() => {
+    if (open) {
+      setCurrentStep(0);
+      setCompletedSteps([]);
+    }
+  }, [open]);
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  var renderStepIndicator = function () {
-    return (
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">
-            {mode === "create" ? "Novo Fornecedor" : "Editar Fornecedor"}
-          </h2>
-          <badge_1.Badge variant="secondary" className="text-xs">
-            Etapa {currentStep + 1} de {FORM_STEPS.length}
-          </badge_1.Badge>
-        </div>
-
-        <progress_1.Progress value={formProgress} className="mb-4" />
-
-        <div className="flex items-center justify-between">
-          {FORM_STEPS.map(function (step, index) {
-            var isComplete = completedSteps.includes(index);
-            var isActive = index === currentStep;
-            return (
-              <div
-                key={step.id}
-                className={(0, utils_1.cn)(
-                  "flex items-center cursor-pointer transition-colors",
-                  isActive && "text-blue-600",
-                  isComplete && "text-green-600",
-                  !isActive && !isComplete && "text-gray-400",
-                )}
-                onClick={function () {
-                  return handleStepChange(index);
-                }}
-              >
-                <div
-                  className={(0, utils_1.cn)(
-                    "flex items-center justify-center w-8 h-8 rounded-full border-2 mr-2",
-                    isActive && "border-blue-600 bg-blue-50",
-                    isComplete && "border-green-600 bg-green-50",
-                    !isActive && !isComplete && "border-gray-300",
-                  )}
-                >
-                  {isComplete ? <lucide_react_1.Check className="h-4 w-4" /> : step.icon}
-                </div>
-                <div className="hidden sm:block">
-                  <p className="text-sm font-medium">{step.title}</p>
-                  <p className="text-xs text-gray-500">{step.description}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+  var renderStepIndicator = () => (
+    <div className="mb-6">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">
+          {mode === "create" ? "Novo Fornecedor" : "Editar Fornecedor"}
+        </h2>
+        <badge_1.Badge variant="secondary" className="text-xs">
+          Etapa {currentStep + 1} de {FORM_STEPS.length}
+        </badge_1.Badge>
       </div>
-    );
-  };
-  var renderBasicInfoStep = function () {
-    return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <form_1.FormField
-            control={control}
-            name="name"
-            render={function (_a) {
-              var field = _a.field;
-              return (
-                <form_1.FormItem>
-                  <form_1.FormLabel>Nome do Fornecedor *</form_1.FormLabel>
-                  <form_1.FormControl>
-                    <input_1.Input {...field} placeholder="Ex: Empresa Médica Ltda" />
-                  </form_1.FormControl>
-                  <form_1.FormMessage />
-                </form_1.FormItem>
-              );
-            }}
-          />
 
-          <form_1.FormField
-            control={control}
-            name="legal_name"
-            render={function (_a) {
-              var field = _a.field;
-              return (
-                <form_1.FormItem>
-                  <form_1.FormLabel>Razão Social *</form_1.FormLabel>
-                  <form_1.FormControl>
-                    <input_1.Input {...field} placeholder="Ex: Empresa Médica Ltda" />
-                  </form_1.FormControl>
-                  <form_1.FormMessage />
-                </form_1.FormItem>
-              );
-            }}
-          />
-        </div>
+      <progress_1.Progress value={formProgress} className="mb-4" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <form_1.FormField
-            control={control}
-            name="cnpj"
-            render={function (_a) {
-              var field = _a.field;
-              return (
-                <form_1.FormItem>
-                  <form_1.FormLabel>CNPJ</form_1.FormLabel>
-                  <form_1.FormControl>
-                    <input_1.Input
-                      {...field}
-                      placeholder="00.000.000/0000-00"
-                      onChange={function (e) {
-                        var value = e.target.value.replace(/\D/g, "");
-                        var formatted = value.replace(
-                          /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-                          "$1.$2.$3/$4-$5",
-                        );
-                        field.onChange(formatted);
-                      }}
-                    />
-                  </form_1.FormControl>
-                  <form_1.FormMessage />
-                </form_1.FormItem>
-              );
-            }}
-          />
-
-          <form_1.FormField
-            control={control}
-            name="cpf"
-            render={function (_a) {
-              var field = _a.field;
-              return (
-                <form_1.FormItem>
-                  <form_1.FormLabel>CPF</form_1.FormLabel>
-                  <form_1.FormControl>
-                    <input_1.Input
-                      {...field}
-                      placeholder="000.000.000-00"
-                      onChange={function (e) {
-                        var value = e.target.value.replace(/\D/g, "");
-                        var formatted = value.replace(
-                          /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
-                          "$1.$2.$3-$4",
-                        );
-                        field.onChange(formatted);
-                      }}
-                    />
-                  </form_1.FormControl>
-                  <form_1.FormMessage />
-                </form_1.FormItem>
-              );
-            }}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <form_1.FormField
-            control={control}
-            name="category"
-            render={function (_a) {
-              var field = _a.field;
-              return (
-                <form_1.FormItem>
-                  <form_1.FormLabel>Categoria *</form_1.FormLabel>
-                  <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <form_1.FormControl>
-                      <select_1.SelectTrigger>
-                        <select_1.SelectValue placeholder="Selecione uma categoria" />
-                      </select_1.SelectTrigger>
-                    </form_1.FormControl>
-                    <select_1.SelectContent>
-                      {Object.values(supplier_1.SupplierCategory).map(function (category) {
-                        return (
-                          <select_1.SelectItem key={category} value={category}>
-                            {category.replace(/_/g, " ").toLowerCase()}
-                          </select_1.SelectItem>
-                        );
-                      })}
-                    </select_1.SelectContent>
-                  </select_1.Select>
-                  <form_1.FormMessage />
-                </form_1.FormItem>
-              );
-            }}
-          />
-
-          <form_1.FormField
-            control={control}
-            name="website"
-            render={function (_a) {
-              var field = _a.field;
-              return (
-                <form_1.FormItem>
-                  <form_1.FormLabel>Website</form_1.FormLabel>
-                  <form_1.FormControl>
-                    <input_1.Input {...field} placeholder="https://exemplo.com" type="url" />
-                  </form_1.FormControl>
-                  <form_1.FormMessage />
-                </form_1.FormItem>
-              );
-            }}
-          />
-        </div>
-
+      <div className="flex items-center justify-between">
+        {FORM_STEPS.map((step, index) => {
+          var isComplete = completedSteps.includes(index);
+          var isActive = index === currentStep;
+          return (
+            <div
+              key={step.id}
+              className={(0, utils_1.cn)(
+                "flex items-center cursor-pointer transition-colors",
+                isActive && "text-blue-600",
+                isComplete && "text-green-600",
+                !isActive && !isComplete && "text-gray-400",
+              )}
+              onClick={() => handleStepChange(index)}
+            >
+              <div
+                className={(0, utils_1.cn)(
+                  "flex items-center justify-center w-8 h-8 rounded-full border-2 mr-2",
+                  isActive && "border-blue-600 bg-blue-50",
+                  isComplete && "border-green-600 bg-green-50",
+                  !isActive && !isComplete && "border-gray-300",
+                )}
+              >
+                {isComplete ? <lucide_react_1.Check className="h-4 w-4" /> : step.icon}
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-sm font-medium">{step.title}</p>
+                <p className="text-xs text-gray-500">{step.description}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+  var renderBasicInfoStep = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <form_1.FormField
           control={control}
-          name="notes"
-          render={function (_a) {
+          name="name"
+          render={(_a) => {
             var field = _a.field;
             return (
               <form_1.FormItem>
-                <form_1.FormLabel>Observações</form_1.FormLabel>
+                <form_1.FormLabel>Nome do Fornecedor *</form_1.FormLabel>
                 <form_1.FormControl>
-                  <textarea_1.Textarea
+                  <input_1.Input {...field} placeholder="Ex: Empresa Médica Ltda" />
+                </form_1.FormControl>
+                <form_1.FormMessage />
+              </form_1.FormItem>
+            );
+          }}
+        />
+
+        <form_1.FormField
+          control={control}
+          name="legal_name"
+          render={(_a) => {
+            var field = _a.field;
+            return (
+              <form_1.FormItem>
+                <form_1.FormLabel>Razão Social *</form_1.FormLabel>
+                <form_1.FormControl>
+                  <input_1.Input {...field} placeholder="Ex: Empresa Médica Ltda" />
+                </form_1.FormControl>
+                <form_1.FormMessage />
+              </form_1.FormItem>
+            );
+          }}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form_1.FormField
+          control={control}
+          name="cnpj"
+          render={(_a) => {
+            var field = _a.field;
+            return (
+              <form_1.FormItem>
+                <form_1.FormLabel>CNPJ</form_1.FormLabel>
+                <form_1.FormControl>
+                  <input_1.Input
                     {...field}
-                    placeholder="Informações adicionais sobre o fornecedor..."
-                    rows={3}
+                    placeholder="00.000.000/0000-00"
+                    onChange={(e) => {
+                      var value = e.target.value.replace(/\D/g, "");
+                      var formatted = value.replace(
+                        /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
+                        "$1.$2.$3/$4-$5",
+                      );
+                      field.onChange(formatted);
+                    }}
+                  />
+                </form_1.FormControl>
+                <form_1.FormMessage />
+              </form_1.FormItem>
+            );
+          }}
+        />
+
+        <form_1.FormField
+          control={control}
+          name="cpf"
+          render={(_a) => {
+            var field = _a.field;
+            return (
+              <form_1.FormItem>
+                <form_1.FormLabel>CPF</form_1.FormLabel>
+                <form_1.FormControl>
+                  <input_1.Input
+                    {...field}
+                    placeholder="000.000.000-00"
+                    onChange={(e) => {
+                      var value = e.target.value.replace(/\D/g, "");
+                      var formatted = value.replace(
+                        /^(\d{3})(\d{3})(\d{3})(\d{2})$/,
+                        "$1.$2.$3-$4",
+                      );
+                      field.onChange(formatted);
+                    }}
                   />
                 </form_1.FormControl>
                 <form_1.FormMessage />
@@ -834,95 +737,291 @@ function SupplierForm(_a) {
           }}
         />
       </div>
-    );
-  };
-  var renderContactStep = function () {
-    return (
-      <div className="space-y-6">
-        {/* Primary Contact */}
-        <card_1.Card>
-          <card_1.CardHeader>
-            <card_1.CardTitle className="text-lg flex items-center gap-2">
-              <lucide_react_1.User className="h-5 w-5" />
-              Contato Principal
-            </card_1.CardTitle>
-          </card_1.CardHeader>
-          <card_1.CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <form_1.FormField
-                control={control}
-                name="primary_contact.name"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Nome *</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input {...field} placeholder="Ex: João Silva" />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
 
-              <form_1.FormField
-                control={control}
-                name="primary_contact.title"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Cargo</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input {...field} placeholder="Ex: Gerente Comercial" />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form_1.FormField
+          control={control}
+          name="category"
+          render={(_a) => {
+            var field = _a.field;
+            return (
+              <form_1.FormItem>
+                <form_1.FormLabel>Categoria *</form_1.FormLabel>
+                <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <form_1.FormControl>
+                    <select_1.SelectTrigger>
+                      <select_1.SelectValue placeholder="Selecione uma categoria" />
+                    </select_1.SelectTrigger>
+                  </form_1.FormControl>
+                  <select_1.SelectContent>
+                    {Object.values(supplier_1.SupplierCategory).map((category) => (
+                      <select_1.SelectItem key={category} value={category}>
+                        {category.replace(/_/g, " ").toLowerCase()}
+                      </select_1.SelectItem>
+                    ))}
+                  </select_1.SelectContent>
+                </select_1.Select>
+                <form_1.FormMessage />
+              </form_1.FormItem>
+            );
+          }}
+        />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <form_1.FormField
-                control={control}
-                name="primary_contact.email"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Email *</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input {...field} placeholder="contato@empresa.com" type="email" />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
+        <form_1.FormField
+          control={control}
+          name="website"
+          render={(_a) => {
+            var field = _a.field;
+            return (
+              <form_1.FormItem>
+                <form_1.FormLabel>Website</form_1.FormLabel>
+                <form_1.FormControl>
+                  <input_1.Input {...field} placeholder="https://exemplo.com" type="url" />
+                </form_1.FormControl>
+                <form_1.FormMessage />
+              </form_1.FormItem>
+            );
+          }}
+        />
+      </div>
 
+      <form_1.FormField
+        control={control}
+        name="notes"
+        render={(_a) => {
+          var field = _a.field;
+          return (
+            <form_1.FormItem>
+              <form_1.FormLabel>Observações</form_1.FormLabel>
+              <form_1.FormControl>
+                <textarea_1.Textarea
+                  {...field}
+                  placeholder="Informações adicionais sobre o fornecedor..."
+                  rows={3}
+                />
+              </form_1.FormControl>
+              <form_1.FormMessage />
+            </form_1.FormItem>
+          );
+        }}
+      />
+    </div>
+  );
+  var renderContactStep = () => (
+    <div className="space-y-6">
+      {/* Primary Contact */}
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="text-lg flex items-center gap-2">
+            <lucide_react_1.User className="h-5 w-5" />
+            Contato Principal
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form_1.FormField
+              control={control}
+              name="primary_contact.name"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Nome *</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input {...field} placeholder="Ex: João Silva" />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+
+            <form_1.FormField
+              control={control}
+              name="primary_contact.title"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Cargo</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input {...field} placeholder="Ex: Gerente Comercial" />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form_1.FormField
+              control={control}
+              name="primary_contact.email"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Email *</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input {...field} placeholder="contato@empresa.com" type="email" />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+
+            <form_1.FormField
+              control={control}
+              name="primary_contact.phone"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Telefone *</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input
+                        {...field}
+                        placeholder="(11) 99999-9999"
+                        onChange={(e) => {
+                          var value = e.target.value.replace(/\D/g, "");
+                          var formatted = value.replace(/^(\d{2})(\d{4,5})(\d{4})$/, "($1) $2-$3");
+                          field.onChange(formatted);
+                        }}
+                      />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+          </div>
+
+          <form_1.FormField
+            control={control}
+            name="primary_contact.preferred_contact_method"
+            render={(_a) => {
+              var field = _a.field;
+              return (
+                <form_1.FormItem>
+                  <form_1.FormLabel>Método de Contato Preferido</form_1.FormLabel>
+                  <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <form_1.FormControl>
+                      <select_1.SelectTrigger>
+                        <select_1.SelectValue />
+                      </select_1.SelectTrigger>
+                    </form_1.FormControl>
+                    <select_1.SelectContent>
+                      <select_1.SelectItem value="email">Email</select_1.SelectItem>
+                      <select_1.SelectItem value="phone">Telefone</select_1.SelectItem>
+                      <select_1.SelectItem value="whatsapp">WhatsApp</select_1.SelectItem>
+                    </select_1.SelectContent>
+                  </select_1.Select>
+                  <form_1.FormMessage />
+                </form_1.FormItem>
+              );
+            }}
+          />
+        </card_1.CardContent>
+      </card_1.Card>
+
+      {/* Secondary Contacts */}
+      <card_1.Card>
+        <card_1.CardHeader className="flex flex-row items-center justify-between">
+          <card_1.CardTitle className="text-lg">Contatos Secundários</card_1.CardTitle>
+          <button_1.Button type="button" variant="outline" size="sm" onClick={addSecondaryContact}>
+            <lucide_react_1.Plus className="h-4 w-4 mr-2" />
+            Adicionar Contato
+          </button_1.Button>
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          {secondaryContactFields.length === 0
+            ? <p className="text-gray-500 text-sm">Nenhum contato secundário adicionado.</p>
+            : <div className="space-y-4">
+                {secondaryContactFields.map((contact, index) => (
+                  <card_1.Card key={contact.id} className="p-4">
+                    <div className="flex justify-between items-start mb-4">
+                      <h4 className="font-medium">Contato {index + 1}</h4>
+                      <button_1.Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeSecondaryContact(index)}
+                      >
+                        <lucide_react_1.Trash2 className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <form_1.FormField
+                        control={control}
+                        name={"secondary_contacts.".concat(index, ".name")}
+                        render={(_a) => {
+                          var field = _a.field;
+                          return (
+                            <form_1.FormItem>
+                              <form_1.FormLabel>Nome</form_1.FormLabel>
+                              <form_1.FormControl>
+                                <input_1.Input {...field} placeholder="Nome do contato" />
+                              </form_1.FormControl>
+                              <form_1.FormMessage />
+                            </form_1.FormItem>
+                          );
+                        }}
+                      />
+
+                      <form_1.FormField
+                        control={control}
+                        name={"secondary_contacts.".concat(index, ".email")}
+                        render={(_a) => {
+                          var field = _a.field;
+                          return (
+                            <form_1.FormItem>
+                              <form_1.FormLabel>Email</form_1.FormLabel>
+                              <form_1.FormControl>
+                                <input_1.Input
+                                  {...field}
+                                  placeholder="email@empresa.com"
+                                  type="email"
+                                />
+                              </form_1.FormControl>
+                              <form_1.FormMessage />
+                            </form_1.FormItem>
+                          );
+                        }}
+                      />
+                    </div>
+                  </card_1.Card>
+                ))}
+              </div>}
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
+  var renderAddressStep = () => (
+    <div className="space-y-6">
+      {/* Main Address */}
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="text-lg flex items-center gap-2">
+            <lucide_react_1.MapPin className="h-5 w-5" />
+            Endereço Principal
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2">
               <form_1.FormField
                 control={control}
-                name="primary_contact.phone"
-                render={function (_a) {
+                name="address.street"
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
-                      <form_1.FormLabel>Telefone *</form_1.FormLabel>
+                      <form_1.FormLabel>Rua *</form_1.FormLabel>
                       <form_1.FormControl>
-                        <input_1.Input
-                          {...field}
-                          placeholder="(11) 99999-9999"
-                          onChange={function (e) {
-                            var value = e.target.value.replace(/\D/g, "");
-                            var formatted = value.replace(
-                              /^(\d{2})(\d{4,5})(\d{4})$/,
-                              "($1) $2-$3",
-                            );
-                            field.onChange(formatted);
-                          }}
-                        />
+                        <input_1.Input {...field} placeholder="Ex: Rua das Flores" />
                       </form_1.FormControl>
                       <form_1.FormMessage />
                     </form_1.FormItem>
@@ -933,12 +1032,141 @@ function SupplierForm(_a) {
 
             <form_1.FormField
               control={control}
-              name="primary_contact.preferred_contact_method"
-              render={function (_a) {
+              name="address.number"
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
-                    <form_1.FormLabel>Método de Contato Preferido</form_1.FormLabel>
+                    <form_1.FormLabel>Número *</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input {...field} placeholder="123" />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form_1.FormField
+              control={control}
+              name="address.complement"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Complemento</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input {...field} placeholder="Apto 101, Bloco A" />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+
+            <form_1.FormField
+              control={control}
+              name="address.neighborhood"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Bairro *</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input {...field} placeholder="Centro" />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <form_1.FormField
+              control={control}
+              name="address.city"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Cidade *</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input {...field} placeholder="São Paulo" />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+
+            <form_1.FormField
+              control={control}
+              name="address.state"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Estado *</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input {...field} placeholder="SP" maxLength={2} />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+
+            <form_1.FormField
+              control={control}
+              name="address.postal_code"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>CEP *</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input
+                        {...field}
+                        placeholder="01234-567"
+                        onChange={(e) => {
+                          var value = e.target.value.replace(/\D/g, "");
+                          var formatted = value.replace(/^(\d{5})(\d{3})$/, "$1-$2");
+                          field.onChange(formatted);
+                        }}
+                      />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+          </div>
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
+  var renderBusinessStep = () => (
+    <div className="space-y-6">
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="text-lg flex items-center gap-2">
+            <lucide_react_1.TrendingUp className="h-5 w-5" />
+            Informações Comerciais
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form_1.FormField
+              control={control}
+              name="payment_terms"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Prazo de Pagamento</form_1.FormLabel>
                     <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
                       <form_1.FormControl>
                         <select_1.SelectTrigger>
@@ -946,9 +1174,11 @@ function SupplierForm(_a) {
                         </select_1.SelectTrigger>
                       </form_1.FormControl>
                       <select_1.SelectContent>
-                        <select_1.SelectItem value="email">Email</select_1.SelectItem>
-                        <select_1.SelectItem value="phone">Telefone</select_1.SelectItem>
-                        <select_1.SelectItem value="whatsapp">WhatsApp</select_1.SelectItem>
+                        {Object.values(supplier_1.PaymentTerms).map((term) => (
+                          <select_1.SelectItem key={term} value={term}>
+                            {term.replace(/_/g, " ")}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                     <form_1.FormMessage />
@@ -956,504 +1186,215 @@ function SupplierForm(_a) {
                 );
               }}
             />
-          </card_1.CardContent>
-        </card_1.Card>
-
-        {/* Secondary Contacts */}
-        <card_1.Card>
-          <card_1.CardHeader className="flex flex-row items-center justify-between">
-            <card_1.CardTitle className="text-lg">Contatos Secundários</card_1.CardTitle>
-            <button_1.Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={addSecondaryContact}
-            >
-              <lucide_react_1.Plus className="h-4 w-4 mr-2" />
-              Adicionar Contato
-            </button_1.Button>
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            {secondaryContactFields.length === 0
-              ? <p className="text-gray-500 text-sm">Nenhum contato secundário adicionado.</p>
-              : <div className="space-y-4">
-                  {secondaryContactFields.map(function (contact, index) {
-                    return (
-                      <card_1.Card key={contact.id} className="p-4">
-                        <div className="flex justify-between items-start mb-4">
-                          <h4 className="font-medium">Contato {index + 1}</h4>
-                          <button_1.Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={function () {
-                              return removeSecondaryContact(index);
-                            }}
-                          >
-                            <lucide_react_1.Trash2 className="h-4 w-4" />
-                          </button_1.Button>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <form_1.FormField
-                            control={control}
-                            name={"secondary_contacts.".concat(index, ".name")}
-                            render={function (_a) {
-                              var field = _a.field;
-                              return (
-                                <form_1.FormItem>
-                                  <form_1.FormLabel>Nome</form_1.FormLabel>
-                                  <form_1.FormControl>
-                                    <input_1.Input {...field} placeholder="Nome do contato" />
-                                  </form_1.FormControl>
-                                  <form_1.FormMessage />
-                                </form_1.FormItem>
-                              );
-                            }}
-                          />
-
-                          <form_1.FormField
-                            control={control}
-                            name={"secondary_contacts.".concat(index, ".email")}
-                            render={function (_a) {
-                              var field = _a.field;
-                              return (
-                                <form_1.FormItem>
-                                  <form_1.FormLabel>Email</form_1.FormLabel>
-                                  <form_1.FormControl>
-                                    <input_1.Input
-                                      {...field}
-                                      placeholder="email@empresa.com"
-                                      type="email"
-                                    />
-                                  </form_1.FormControl>
-                                  <form_1.FormMessage />
-                                </form_1.FormItem>
-                              );
-                            }}
-                          />
-                        </div>
-                      </card_1.Card>
-                    );
-                  })}
-                </div>}
-          </card_1.CardContent>
-        </card_1.Card>
-      </div>
-    );
-  };
-  var renderAddressStep = function () {
-    return (
-      <div className="space-y-6">
-        {/* Main Address */}
-        <card_1.Card>
-          <card_1.CardHeader>
-            <card_1.CardTitle className="text-lg flex items-center gap-2">
-              <lucide_react_1.MapPin className="h-5 w-5" />
-              Endereço Principal
-            </card_1.CardTitle>
-          </card_1.CardHeader>
-          <card_1.CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2">
-                <form_1.FormField
-                  control={control}
-                  name="address.street"
-                  render={function (_a) {
-                    var field = _a.field;
-                    return (
-                      <form_1.FormItem>
-                        <form_1.FormLabel>Rua *</form_1.FormLabel>
-                        <form_1.FormControl>
-                          <input_1.Input {...field} placeholder="Ex: Rua das Flores" />
-                        </form_1.FormControl>
-                        <form_1.FormMessage />
-                      </form_1.FormItem>
-                    );
-                  }}
-                />
-              </div>
-
-              <form_1.FormField
-                control={control}
-                name="address.number"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Número *</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input {...field} placeholder="123" />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <form_1.FormField
-                control={control}
-                name="address.complement"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Complemento</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input {...field} placeholder="Apto 101, Bloco A" />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-
-              <form_1.FormField
-                control={control}
-                name="address.neighborhood"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Bairro *</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input {...field} placeholder="Centro" />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <form_1.FormField
-                control={control}
-                name="address.city"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Cidade *</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input {...field} placeholder="São Paulo" />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-
-              <form_1.FormField
-                control={control}
-                name="address.state"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Estado *</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input {...field} placeholder="SP" maxLength={2} />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-
-              <form_1.FormField
-                control={control}
-                name="address.postal_code"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>CEP *</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input
-                          {...field}
-                          placeholder="01234-567"
-                          onChange={function (e) {
-                            var value = e.target.value.replace(/\D/g, "");
-                            var formatted = value.replace(/^(\d{5})(\d{3})$/, "$1-$2");
-                            field.onChange(formatted);
-                          }}
-                        />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-            </div>
-          </card_1.CardContent>
-        </card_1.Card>
-      </div>
-    );
-  };
-  var renderBusinessStep = function () {
-    return (
-      <div className="space-y-6">
-        <card_1.Card>
-          <card_1.CardHeader>
-            <card_1.CardTitle className="text-lg flex items-center gap-2">
-              <lucide_react_1.TrendingUp className="h-5 w-5" />
-              Informações Comerciais
-            </card_1.CardTitle>
-          </card_1.CardHeader>
-          <card_1.CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <form_1.FormField
-                control={control}
-                name="payment_terms"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Prazo de Pagamento</form_1.FormLabel>
-                      <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <form_1.FormControl>
-                          <select_1.SelectTrigger>
-                            <select_1.SelectValue />
-                          </select_1.SelectTrigger>
-                        </form_1.FormControl>
-                        <select_1.SelectContent>
-                          {Object.values(supplier_1.PaymentTerms).map(function (term) {
-                            return (
-                              <select_1.SelectItem key={term} value={term}>
-                                {term.replace(/_/g, " ")}
-                              </select_1.SelectItem>
-                            );
-                          })}
-                        </select_1.SelectContent>
-                      </select_1.Select>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-
-              <form_1.FormField
-                control={control}
-                name="currency"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Moeda</form_1.FormLabel>
-                      <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <form_1.FormControl>
-                          <select_1.SelectTrigger>
-                            <select_1.SelectValue />
-                          </select_1.SelectTrigger>
-                        </form_1.FormControl>
-                        <select_1.SelectContent>
-                          <select_1.SelectItem value="BRL">Real (BRL)</select_1.SelectItem>
-                          <select_1.SelectItem value="USD">Dólar (USD)</select_1.SelectItem>
-                          <select_1.SelectItem value="EUR">Euro (EUR)</select_1.SelectItem>
-                        </select_1.SelectContent>
-                      </select_1.Select>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <form_1.FormField
-                control={control}
-                name="early_payment_discount"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Desconto Pgto Antecipado (%)</form_1.FormLabel>
-                      <form_1.FormControl>
-                        <input_1.Input
-                          {...field}
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="0.1"
-                          onChange={function (e) {
-                            return field.onChange(Number(e.target.value));
-                          }}
-                        />
-                      </form_1.FormControl>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-
-              <form_1.FormField
-                control={control}
-                name="risk_level"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem>
-                      <form_1.FormLabel>Nível de Risco</form_1.FormLabel>
-                      <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <form_1.FormControl>
-                          <select_1.SelectTrigger>
-                            <select_1.SelectValue />
-                          </select_1.SelectTrigger>
-                        </form_1.FormControl>
-                        <select_1.SelectContent>
-                          {Object.values(supplier_1.RiskLevel).map(function (level) {
-                            return (
-                              <select_1.SelectItem key={level} value={level}>
-                                {level}
-                              </select_1.SelectItem>
-                            );
-                          })}
-                        </select_1.SelectContent>
-                      </select_1.Select>
-                      <form_1.FormMessage />
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-            </div>
-          </card_1.CardContent>
-        </card_1.Card>
-      </div>
-    );
-  };
-  var renderComplianceStep = function () {
-    return (
-      <div className="space-y-6">
-        <card_1.Card>
-          <card_1.CardHeader>
-            <card_1.CardTitle className="text-lg flex items-center gap-2">
-              <lucide_react_1.Shield className="h-5 w-5" />
-              Conformidade e Certificações
-            </card_1.CardTitle>
-          </card_1.CardHeader>
-          <card_1.CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <form_1.FormField
-                control={control}
-                name="regulatory_compliance"
-                render={function (_a) {
-                  var field = _a.field;
-                  return (
-                    <form_1.FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                      <form_1.FormControl>
-                        <switch_1.Switch checked={field.value} onCheckedChange={field.onChange} />
-                      </form_1.FormControl>
-                      <div className="space-y-1 leading-none">
-                        <form_1.FormLabel>Conformidade Regulatória</form_1.FormLabel>
-                        <form_1.FormDescription>
-                          Indica se o fornecedor está em conformidade com as regulamentações
-                        </form_1.FormDescription>
-                      </div>
-                    </form_1.FormItem>
-                  );
-                }}
-              />
-            </div>
 
             <form_1.FormField
               control={control}
-              name="anvisa_registration"
-              render={function (_a) {
+              name="currency"
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
-                    <form_1.FormLabel>Registro ANVISA</form_1.FormLabel>
-                    <form_1.FormControl>
-                      <input_1.Input {...field} placeholder="Número do registro na ANVISA" />
-                    </form_1.FormControl>
-                    <form_1.FormDescription>
-                      Necessário para fornecedores de produtos médicos e farmacêuticos
-                    </form_1.FormDescription>
+                    <form_1.FormLabel>Moeda</form_1.FormLabel>
+                    <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <form_1.FormControl>
+                        <select_1.SelectTrigger>
+                          <select_1.SelectValue />
+                        </select_1.SelectTrigger>
+                      </form_1.FormControl>
+                      <select_1.SelectContent>
+                        <select_1.SelectItem value="BRL">Real (BRL)</select_1.SelectItem>
+                        <select_1.SelectItem value="USD">Dólar (USD)</select_1.SelectItem>
+                        <select_1.SelectItem value="EUR">Euro (EUR)</select_1.SelectItem>
+                      </select_1.SelectContent>
+                    </select_1.Select>
                     <form_1.FormMessage />
                   </form_1.FormItem>
                 );
               }}
             />
-          </card_1.CardContent>
-        </card_1.Card>
+          </div>
 
-        {/* Certifications */}
-        <card_1.Card>
-          <card_1.CardHeader className="flex flex-row items-center justify-between">
-            <card_1.CardTitle className="text-lg">Certificações</card_1.CardTitle>
-            <button_1.Button type="button" variant="outline" size="sm" onClick={addCertification}>
-              <lucide_react_1.Plus className="h-4 w-4 mr-2" />
-              Adicionar Certificação
-            </button_1.Button>
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            {certificationFields.length === 0
-              ? <p className="text-gray-500 text-sm">Nenhuma certificação adicionada.</p>
-              : <div className="space-y-4">
-                  {certificationFields.map(function (cert, index) {
-                    return (
-                      <card_1.Card key={cert.id} className="p-4">
-                        <div className="flex justify-between items-start mb-4">
-                          <h4 className="font-medium">Certificação {index + 1}</h4>
-                          <button_1.Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={function () {
-                              return removeCertification(index);
-                            }}
-                          >
-                            <lucide_react_1.Trash2 className="h-4 w-4" />
-                          </button_1.Button>
-                        </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form_1.FormField
+              control={control}
+              name="early_payment_discount"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Desconto Pgto Antecipado (%)</form_1.FormLabel>
+                    <form_1.FormControl>
+                      <input_1.Input
+                        {...field}
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
+                    </form_1.FormControl>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <form_1.FormField
-                            control={control}
-                            name={"certifications.".concat(index, ".name")}
-                            render={function (_a) {
-                              var field = _a.field;
-                              return (
-                                <form_1.FormItem>
-                                  <form_1.FormLabel>Nome da Certificação</form_1.FormLabel>
-                                  <form_1.FormControl>
-                                    <input_1.Input {...field} placeholder="Ex: ISO 9001" />
-                                  </form_1.FormControl>
-                                  <form_1.FormMessage />
-                                </form_1.FormItem>
-                              );
-                            }}
-                          />
+            <form_1.FormField
+              control={control}
+              name="risk_level"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem>
+                    <form_1.FormLabel>Nível de Risco</form_1.FormLabel>
+                    <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <form_1.FormControl>
+                        <select_1.SelectTrigger>
+                          <select_1.SelectValue />
+                        </select_1.SelectTrigger>
+                      </form_1.FormControl>
+                      <select_1.SelectContent>
+                        {Object.values(supplier_1.RiskLevel).map((level) => (
+                          <select_1.SelectItem key={level} value={level}>
+                            {level}
+                          </select_1.SelectItem>
+                        ))}
+                      </select_1.SelectContent>
+                    </select_1.Select>
+                    <form_1.FormMessage />
+                  </form_1.FormItem>
+                );
+              }}
+            />
+          </div>
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
+  var renderComplianceStep = () => (
+    <div className="space-y-6">
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="text-lg flex items-center gap-2">
+            <lucide_react_1.Shield className="h-5 w-5" />
+            Conformidade e Certificações
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <form_1.FormField
+              control={control}
+              name="regulatory_compliance"
+              render={(_a) => {
+                var field = _a.field;
+                return (
+                  <form_1.FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                    <form_1.FormControl>
+                      <switch_1.Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </form_1.FormControl>
+                    <div className="space-y-1 leading-none">
+                      <form_1.FormLabel>Conformidade Regulatória</form_1.FormLabel>
+                      <form_1.FormDescription>
+                        Indica se o fornecedor está em conformidade com as regulamentações
+                      </form_1.FormDescription>
+                    </div>
+                  </form_1.FormItem>
+                );
+              }}
+            />
+          </div>
 
-                          <form_1.FormField
-                            control={control}
-                            name={"certifications.".concat(index, ".issuing_authority")}
-                            render={function (_a) {
-                              var field = _a.field;
-                              return (
-                                <form_1.FormItem>
-                                  <form_1.FormLabel>Autoridade Emissora</form_1.FormLabel>
-                                  <form_1.FormControl>
-                                    <input_1.Input {...field} placeholder="Ex: ABNT" />
-                                  </form_1.FormControl>
-                                  <form_1.FormMessage />
-                                </form_1.FormItem>
-                              );
-                            }}
-                          />
-                        </div>
-                      </card_1.Card>
-                    );
-                  })}
-                </div>}
-          </card_1.CardContent>
-        </card_1.Card>
-      </div>
-    );
-  };
+          <form_1.FormField
+            control={control}
+            name="anvisa_registration"
+            render={(_a) => {
+              var field = _a.field;
+              return (
+                <form_1.FormItem>
+                  <form_1.FormLabel>Registro ANVISA</form_1.FormLabel>
+                  <form_1.FormControl>
+                    <input_1.Input {...field} placeholder="Número do registro na ANVISA" />
+                  </form_1.FormControl>
+                  <form_1.FormDescription>
+                    Necessário para fornecedores de produtos médicos e farmacêuticos
+                  </form_1.FormDescription>
+                  <form_1.FormMessage />
+                </form_1.FormItem>
+              );
+            }}
+          />
+        </card_1.CardContent>
+      </card_1.Card>
+
+      {/* Certifications */}
+      <card_1.Card>
+        <card_1.CardHeader className="flex flex-row items-center justify-between">
+          <card_1.CardTitle className="text-lg">Certificações</card_1.CardTitle>
+          <button_1.Button type="button" variant="outline" size="sm" onClick={addCertification}>
+            <lucide_react_1.Plus className="h-4 w-4 mr-2" />
+            Adicionar Certificação
+          </button_1.Button>
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          {certificationFields.length === 0
+            ? <p className="text-gray-500 text-sm">Nenhuma certificação adicionada.</p>
+            : <div className="space-y-4">
+                {certificationFields.map((cert, index) => (
+                  <card_1.Card key={cert.id} className="p-4">
+                    <div className="flex justify-between items-start mb-4">
+                      <h4 className="font-medium">Certificação {index + 1}</h4>
+                      <button_1.Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeCertification(index)}
+                      >
+                        <lucide_react_1.Trash2 className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <form_1.FormField
+                        control={control}
+                        name={"certifications.".concat(index, ".name")}
+                        render={(_a) => {
+                          var field = _a.field;
+                          return (
+                            <form_1.FormItem>
+                              <form_1.FormLabel>Nome da Certificação</form_1.FormLabel>
+                              <form_1.FormControl>
+                                <input_1.Input {...field} placeholder="Ex: ISO 9001" />
+                              </form_1.FormControl>
+                              <form_1.FormMessage />
+                            </form_1.FormItem>
+                          );
+                        }}
+                      />
+
+                      <form_1.FormField
+                        control={control}
+                        name={"certifications.".concat(index, ".issuing_authority")}
+                        render={(_a) => {
+                          var field = _a.field;
+                          return (
+                            <form_1.FormItem>
+                              <form_1.FormLabel>Autoridade Emissora</form_1.FormLabel>
+                              <form_1.FormControl>
+                                <input_1.Input {...field} placeholder="Ex: ABNT" />
+                              </form_1.FormControl>
+                              <form_1.FormMessage />
+                            </form_1.FormItem>
+                          );
+                        }}
+                      />
+                    </div>
+                  </card_1.Card>
+                ))}
+              </div>}
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
   // ============================================================================
   // MAIN RENDER
   // ============================================================================
@@ -1512,13 +1453,7 @@ function SupplierForm(_a) {
                     </button_1.Button>}
               </div>
 
-              <button_1.Button
-                type="button"
-                variant="ghost"
-                onClick={function () {
-                  return onOpenChange(false);
-                }}
-              >
+              <button_1.Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
                 <lucide_react_1.X className="h-4 w-4 mr-2" />
                 Cancelar
               </button_1.Button>

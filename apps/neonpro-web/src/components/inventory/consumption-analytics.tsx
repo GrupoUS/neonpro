@@ -5,7 +5,9 @@
  * Advanced consumption analytics and cost control interface
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,8 +15,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Icons } from "@/components/ui/icons";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
@@ -33,13 +33,13 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  ConsumptionAnalyzer,
-  type ConsumptionAnalytics,
-  type ConsumptionForecast,
-  type EfficiencyOpportunity,
-} from "@/lib/inventory";
 import type { useToast } from "@/hooks/use-toast";
+import type {
+  ConsumptionAnalytics,
+  ConsumptionAnalyzer,
+  ConsumptionForecast,
+  EfficiencyOpportunity,
+} from "@/lib/inventory";
 
 interface ConsumptionAnalyticsProps {
   onRefresh: () => void;

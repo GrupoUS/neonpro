@@ -6,45 +6,45 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
-import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Clock,
+  HelpCircle,
+  Loader2,
   Mic,
   MicOff,
+  Pause,
+  Play,
+  Settings,
+  Square,
+  TrendingUp,
   Volume2,
   VolumeX,
-  Play,
-  Pause,
-  Square,
-  Loader2,
-  CheckCircle,
   XCircle,
-  Brain,
   Zap,
-  Clock,
-  TrendingUp,
-  AlertTriangle,
-  HelpCircle,
-  Settings,
-  BarChart3,
 } from "lucide-react";
-import type { cn } from "@/lib/utils";
-import type {
-  voiceSearch,
-  type VoiceSearchOptions,
-  type VoiceRecognitionResult,
-  type VoiceQuery,
-  type VoiceCommand,
-  type VoiceError,
-  type VoiceSearchSession,
-} from "@/lib/search/voice-search";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
 import type { ComprehensiveSearchResponse } from "@/lib/search/comprehensive-search";
+import type {
+  VoiceCommand,
+  VoiceError,
+  VoiceQuery,
+  VoiceRecognitionResult,
+  VoiceSearchOptions,
+  VoiceSearchSession,
+  voiceSearch,
+} from "@/lib/search/voice-search";
+import type { cn } from "@/lib/utils";
 
 interface VoiceSearchProps {
   onSearchResults?: (results: ComprehensiveSearchResponse) => void;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Analytics Utility Functions
  * Helper functions for data processing, calculations, and formatting
@@ -23,7 +22,7 @@ exports.formatDate =
 var date_fns_1 = require("date-fns");
 var lodash_1 = require("lodash");
 // Formatting Utilities
-var formatCurrency = function (value, currency, precision) {
+var formatCurrency = (value, currency, precision) => {
   if (currency === void 0) {
     currency = "USD";
   }
@@ -44,7 +43,7 @@ var formatCurrency = function (value, currency, precision) {
   return formatter.format(value);
 };
 exports.formatCurrency = formatCurrency;
-var formatPercentage = function (value, precision) {
+var formatPercentage = (value, precision) => {
   if (precision === void 0) {
     precision = 2;
   }
@@ -56,7 +55,7 @@ var formatPercentage = function (value, precision) {
 };
 exports.formatPercentage = formatPercentage;
 // Calculation Utilities
-var calculateGrowthRate = function (previous, current) {
+var calculateGrowthRate = (previous, current) => {
   // Handle invalid inputs
   if (previous === null || previous === undefined || current === null || current === undefined) {
     return NaN;
@@ -72,7 +71,7 @@ var calculateGrowthRate = function (previous, current) {
   return (current - previous) / previous;
 };
 exports.calculateGrowthRate = calculateGrowthRate;
-var calculateChurnRate = function (customersChurned, customersAtStart) {
+var calculateChurnRate = (customersChurned, customersAtStart) => {
   // Handle invalid inputs
   if (
     customersAtStart === null ||
@@ -96,7 +95,7 @@ var calculateChurnRate = function (customersChurned, customersAtStart) {
   return customersChurned / customersAtStart;
 };
 exports.calculateChurnRate = calculateChurnRate;
-var calculateLTV = function (arpu, churnRate) {
+var calculateLTV = (arpu, churnRate) => {
   // Handle invalid inputs
   if (arpu === null || arpu === undefined || churnRate === null || churnRate === undefined) {
     return NaN;
@@ -120,22 +119,21 @@ var calculateLTV = function (arpu, churnRate) {
   return arpu / churnRate;
 };
 exports.calculateLTV = calculateLTV;
-var calculateMRR = function (subscriptions) {
+var calculateMRR = (subscriptions) => {
   // Handle invalid inputs
   if (!subscriptions || !Array.isArray(subscriptions)) {
     return 0;
   }
   // Filter active subscriptions and sum amounts (convert from cents to dollars)
   return subscriptions
-    .filter(function (sub) {
-      return sub && sub.status === "active" && typeof sub.amount === "number" && !isNaN(sub.amount);
-    })
-    .reduce(function (total, sub) {
-      return total + sub.amount / 100;
-    }, 0);
+    .filter(
+      (sub) =>
+        sub && sub.status === "active" && typeof sub.amount === "number" && !isNaN(sub.amount),
+    )
+    .reduce((total, sub) => total + sub.amount / 100, 0);
 };
 exports.calculateMRR = calculateMRR;
-var calculateARR = function (mrr) {
+var calculateARR = (mrr) => {
   // Handle invalid inputs
   if (mrr === null || mrr === undefined || isNaN(mrr)) {
     return NaN;
@@ -147,16 +145,16 @@ var calculateARR = function (mrr) {
 };
 exports.calculateARR = calculateARR;
 // Data Processing Utilities
-var aggregateMetricsByPeriod = function (
+var aggregateMetricsByPeriod = (
   data, // Accept any array since test uses strings for dates
   period,
   aggregateFunction,
-) {
+) => {
   if (!data || !Array.isArray(data) || data.length === 0) {
     return [];
   }
   // Simple date formatting without date-fns dependency for testing
-  var formatDate = function (date, formatType) {
+  var formatDate = (date, formatType) => {
     if (formatType === "MMM yyyy") {
       var monthNames = [
         "Jan",
@@ -191,7 +189,7 @@ var aggregateMetricsByPeriod = function (
   };
   var formatString = formatMap[period];
   // Handle both Date objects and date strings
-  var grouped = (0, lodash_1.groupBy)(data, function (item) {
+  var grouped = (0, lodash_1.groupBy)(data, (item) => {
     // Parse date string carefully to avoid timezone issues
     var date;
     if (typeof item.date === "string") {
@@ -208,17 +206,15 @@ var aggregateMetricsByPeriod = function (
     return formatDate(date, formatString);
   });
   // Aggregate each group and return as array
-  var result = Object.keys(grouped).map(function (key) {
-    return {
-      period: key,
-      value: aggregateFunction(grouped[key]),
-    };
-  });
+  var result = Object.keys(grouped).map((key) => ({
+    period: key,
+    value: aggregateFunction(grouped[key]),
+  }));
   // Sort by date instead of alphabetically
-  result.sort(function (a, b) {
+  result.sort((a, b) => {
     // For month format "MMM yyyy", parse back to date for proper sorting
     if (formatString === "MMM yyyy") {
-      var parseMonthYear = function (str) {
+      var parseMonthYear = (str) => {
         var monthNames = [
           "Jan",
           "Feb",
@@ -250,7 +246,7 @@ var aggregateMetricsByPeriod = function (
 };
 exports.aggregateMetricsByPeriod = aggregateMetricsByPeriod;
 // Date Utilities
-var generateDateRange = function (startDate, endDate) {
+var generateDateRange = (startDate, endDate) => {
   // Handle reverse order
   if (startDate > endDate) {
     throw new Error("Start date must be before or equal to end date");
@@ -264,7 +260,7 @@ var generateDateRange = function (startDate, endDate) {
   return dates;
 };
 exports.generateDateRange = generateDateRange;
-var validateDateRange = function (startDate, endDate) {
+var validateDateRange = (startDate, endDate) => {
   // Check if dates are valid using getTime() method
   if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
     return false;
@@ -274,7 +270,7 @@ var validateDateRange = function (startDate, endDate) {
 };
 exports.validateDateRange = validateDateRange;
 // Filter Parsing
-var parseAnalyticsFilters = function (params) {
+var parseAnalyticsFilters = (params) => {
   var period = params.get("period") || "last_30_days";
   var metric = params.get("metric") || "all";
   var startDateStr = params.get("start_date") || params.get("startDate");
@@ -347,7 +343,7 @@ var parseAnalyticsFilters = function (params) {
 };
 exports.parseAnalyticsFilters = parseAnalyticsFilters;
 // Export Functions
-var exportToCSV = function (data, type, options) {
+var exportToCSV = (data, type, options) => {
   // Use XLSX to convert data to CSV for testing compatibility
   var XLSX = require("xlsx");
   var worksheet = XLSX.utils.json_to_sheet(data);
@@ -355,7 +351,7 @@ var exportToCSV = function (data, type, options) {
   return csvData || "mock,csv,data";
 };
 exports.exportToCSV = exportToCSV;
-var exportToPDF = function (data, title, options) {
+var exportToPDF = (data, title, options) => {
   var jsPDF = require("jspdf").default;
   var doc = new jsPDF();
   // Add title
@@ -365,7 +361,7 @@ var exportToPDF = function (data, title, options) {
     doc.addPage();
   }
   // Add data (simplified for testing)
-  data.forEach(function (item, index) {
+  data.forEach((item, index) => {
     var y = 40 + index * 10;
     if (y > 250) {
       // New page if needed
@@ -376,21 +372,17 @@ var exportToPDF = function (data, title, options) {
   return doc.output();
 };
 exports.exportToPDF = exportToPDF;
-var exportToExcel = function (data, filename, options) {
+var exportToExcel = (data, filename, options) => {
   var XLSX = require("xlsx");
   // Create new workbook
   var workbook = XLSX.utils.book_new();
   // Check if data itself contains multiple sheets (object with multiple arrays)
   if (typeof data === "object" && !Array.isArray(data) && data !== null) {
     var keys = Object.keys(data);
-    var hasMultipleArrays =
-      keys.length > 1 &&
-      keys.every(function (key) {
-        return Array.isArray(data[key]);
-      });
+    var hasMultipleArrays = keys.length > 1 && keys.every((key) => Array.isArray(data[key]));
     if (hasMultipleArrays) {
       // Data is a multi-sheet object
-      Object.entries(data).forEach(function (_a) {
+      Object.entries(data).forEach((_a) => {
         var sheetName = _a[0],
           sheetData = _a[1];
         var worksheet = XLSX.utils.json_to_sheet(sheetData);
@@ -398,7 +390,7 @@ var exportToExcel = function (data, filename, options) {
       });
     } else if (options === null || options === void 0 ? void 0 : options.sheets) {
       // Multiple sheets in options
-      Object.entries(options.sheets).forEach(function (_a) {
+      Object.entries(options.sheets).forEach((_a) => {
         var sheetName = _a[0],
           sheetData = _a[1];
         var worksheet = XLSX.utils.json_to_sheet(sheetData);
@@ -419,7 +411,7 @@ var exportToExcel = function (data, filename, options) {
 };
 exports.exportToExcel = exportToExcel;
 // Date formatting
-var formatDate = function (date, formatString) {
+var formatDate = (date, formatString) => {
   if (formatString === void 0) {
     formatString = "MMM dd, yyyy";
   }

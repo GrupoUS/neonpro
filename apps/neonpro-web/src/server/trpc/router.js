@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.appRouter = void 0;
 var trpc_1 = require("./trpc");

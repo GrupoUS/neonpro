@@ -7,29 +7,29 @@
  */
 
 import type {
+  AuditTrailAnalytics,
+  auditTrailManager,
+  DataSubjectRequest,
+  DataSubjectRequestStatus,
+  DataSubjectRequestType,
+  LGPDAuditEventType,
+  LGPDAuditRecord,
+  LGPDAuditSeverity,
+} from "./audit-trail-manager";
+import type {
+  ConsentAnalytics,
+  ConsentCollectionRequest,
+  ConsentRecord,
+  ConsentWithdrawalRequest,
   consentAutomationManager,
   LGPDDataType,
   LGPDPurpose,
-  ConsentRecord,
-  ConsentAnalytics,
-  ConsentCollectionRequest,
-  ConsentWithdrawalRequest,
 } from "./consent-automation-manager";
 import type {
-  auditTrailManager,
-  LGPDAuditEventType,
-  LGPDAuditSeverity,
-  LGPDAuditRecord,
-  AuditTrailAnalytics,
-  DataSubjectRequest,
-  DataSubjectRequestType,
-  DataSubjectRequestStatus,
-} from "./audit-trail-manager";
-import type {
-  dataRetentionManager,
   DataRetentionPolicy,
-  RetentionAnalytics,
   DataRetentionRecord,
+  dataRetentionManager,
+  RetentionAnalytics,
 } from "./data-retention-manager";
 
 /**
@@ -705,7 +705,7 @@ export function createLGPDComplianceSystem(
 export const lgpdComplianceSystem = createLGPDComplianceSystem("default-clinic");
 
 // Export all types and enums for external use
-export {
+export type {
   LGPDDataType,
   LGPDPurpose,
   LGPDAuditEventType,

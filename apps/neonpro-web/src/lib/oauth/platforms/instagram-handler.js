@@ -1,20 +1,19 @@
-"use strict";
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -26,15 +25,15 @@ var __extends =
   })();
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,7 +153,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InstagramOAuthHandler = void 0;
 var axios_1 = require("axios");
@@ -166,7 +163,7 @@ var base_oauth_handler_1 = require("../base-oauth-handler");
  * Implements Instagram-specific OAuth 2.0 flow with best practices
  * Based on official Meta Developer documentation and security standards
  */
-var InstagramOAuthHandler = /** @class */ (function (_super) {
+var InstagramOAuthHandler = /** @class */ ((_super) => {
   __extends(InstagramOAuthHandler, _super);
   function InstagramOAuthHandler() {
     var _this = this;
@@ -184,7 +181,7 @@ var InstagramOAuthHandler = /** @class */ (function (_super) {
     _this.validateInstagramConfig();
     return _this;
   }
-  InstagramOAuthHandler.prototype.validateInstagramConfig = function () {
+  InstagramOAuthHandler.prototype.validateInstagramConfig = () => {
     if (!process.env.INSTAGRAM_CLIENT_ID) {
       throw new Error("INSTAGRAM_CLIENT_ID environment variable is required");
     }
@@ -436,7 +433,7 @@ var InstagramOAuthHandler = /** @class */ (function (_super) {
    */
   InstagramOAuthHandler.prototype.revokeTokens = function (accessToken) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Instagram doesn't provide a programmatic way to revoke tokens
         // The token will expire naturally after 60 days
         // Users can revoke access through Instagram settings manually

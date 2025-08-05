@@ -1,5 +1,5 @@
-import type { TreatmentSuccessService } from "@/app/lib/services/treatment-success";
 import type { NextRequest, NextResponse } from "next/server";
+import type { TreatmentSuccessService } from "@/app/lib/services/treatment-success";
 
 const treatmentSuccessService = new TreatmentSuccessService();
 

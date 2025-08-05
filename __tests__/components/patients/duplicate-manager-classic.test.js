@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var duplicate_manager_classic_1 = require("@/components/patients/duplicate-manager-classic");
 require("@testing-library/jest-dom");
@@ -26,14 +25,14 @@ var mockDuplicates = [
     suggestedPrimary: "patient-1",
   },
 ];
-describe("DuplicateManagerClassic", function () {
+describe("DuplicateManagerClassic", () => {
   var mockOnMerge = jest.fn();
   var mockOnDismiss = jest.fn();
-  beforeEach(function () {
+  beforeEach(() => {
     mockOnMerge.mockClear();
     mockOnDismiss.mockClear();
   });
-  test("renders duplicate detection UI", function () {
+  test("renders duplicate detection UI", () => {
     (0, react_1.render)(
       <duplicate_manager_classic_1.default
         duplicates={mockDuplicates}
@@ -44,7 +43,7 @@ describe("DuplicateManagerClassic", function () {
     expect(react_1.screen.getByText("Found 1 potential duplicate")).toBeInTheDocument();
     expect(react_1.screen.getByText("85% confidence")).toBeInTheDocument();
   });
-  test("shows confidence percentage", function () {
+  test("shows confidence percentage", () => {
     (0, react_1.render)(
       <duplicate_manager_classic_1.default
         duplicates={mockDuplicates}
@@ -54,7 +53,7 @@ describe("DuplicateManagerClassic", function () {
     );
     expect(react_1.screen.getByText("85% confidence")).toBeInTheDocument();
   });
-  test("displays patient information", function () {
+  test("displays patient information", () => {
     (0, react_1.render)(
       <duplicate_manager_classic_1.default
         duplicates={mockDuplicates}

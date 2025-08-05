@@ -12,8 +12,8 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { getConnectionPoolManager } from "./connection-pool-manager";
 import type { Database } from "@/types/database";
+import type { getConnectionPoolManager } from "./connection-pool-manager";
 
 // Healthcare query classification
 export type HealthcareQueryType =
@@ -278,7 +278,7 @@ class HealthcareQueryStrategies {
 
         // Exponential backoff for retries
         if (attempt < maxRetries) {
-          const backoffTime = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+          const backoffTime = Math.min(1000 * 2 ** (attempt - 1), 5000);
           await new Promise((resolve) => setTimeout(resolve, backoffTime));
         }
       }

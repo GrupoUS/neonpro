@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Financial System Types and Interfaces
  * Story 4.1: Automated Invoice Generation + Payment Tracking

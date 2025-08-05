@@ -1,6 +1,7 @@
 // Story 10.2: Progress Tracking through Computer Vision Service
 // Backend service for progress tracking system
 
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type {
   CreateMultiSessionAnalysisRequest,
   CreateProgressAlertRequest,
@@ -22,7 +23,6 @@ import type {
   TrackingMetricRequest,
   UpdateProgressTrackingRequest,
 } from "@/app/types/progress-tracking";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 class ProgressTrackingService {
   private supabase = createClientComponentClient();
@@ -706,7 +706,7 @@ class ProgressTrackingService {
 
     // Calculate statistical significance (simplified)
     const variance =
-      scores.reduce((sum, score) => sum + Math.pow(score - (firstScore + lastScore) / 2, 2), 0) /
+      scores.reduce((sum, score) => sum + (score - (firstScore + lastScore) / 2) ** 2, 0) /
       scores.length;
     const statisticalSignificance = Math.min(
       100,

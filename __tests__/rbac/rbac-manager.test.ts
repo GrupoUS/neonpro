@@ -1,15 +1,8 @@
 // Story 1.2: Role-Based Permissions Enhancement
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { RBACPermissionManager } from "@/lib/auth/rbac/permissions";
-import { createClient } from "@/lib/supabase/client";
-import {
-  UserRole,
-  Permission,
-  PermissionCheck,
-  RoleDefinition,
-  UserRoleAssignment,
-} from "@/types/rbac";
+import type { Permission, RoleDefinition, UserRoleAssignment } from "@/types/rbac";
 
 // Mock Supabase client
 jest.mock("@/lib/supabase/client", () => ({

@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // CHURN PREDICTIONS API ENDPOINTS
 // Epic 7.4: Patient Retention Analytics + Predictions
@@ -6,15 +5,15 @@
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -171,14 +168,9 @@ var GeneratePredictionSchema = zod_1.z
       .default(retention_analytics_1.ChurnModelType.ENSEMBLE),
     forceRegenerate: zod_1.z.boolean().default(false),
   })
-  .refine(
-    function (data) {
-      return data.patientId || (data.patientIds && data.patientIds.length > 0);
-    },
-    {
-      message: "Either patientId or patientIds must be provided",
-    },
-  );
+  .refine((data) => data.patientId || (data.patientIds && data.patientIds.length > 0), {
+    message: "Either patientId or patientIds must be provided",
+  });
 // =====================================================================================
 // GET CHURN PREDICTIONS
 // =====================================================================================
@@ -210,7 +202,7 @@ function GET(request_1, _a) {
       summary,
       error_1;
     var params = _b.params;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 5, , 6]);
@@ -303,7 +295,7 @@ function GET(request_1, _a) {
           filteredPredictions = predictions;
           // Date filtering
           if (startDate_1 || endDate_1) {
-            filteredPredictions = predictions.filter(function (prediction) {
+            filteredPredictions = predictions.filter((prediction) => {
               var predictionDate = new Date(prediction.prediction_date);
               if (startDate_1 && predictionDate < new Date(startDate_1)) return false;
               if (endDate_1 && predictionDate > new Date(endDate_1)) return false;
@@ -311,7 +303,7 @@ function GET(request_1, _a) {
             });
           }
           // Sorting
-          filteredPredictions.sort(function (a, b) {
+          filteredPredictions.sort((a, b) => {
             var valueA, valueB;
             switch (sortBy_1) {
               case "prediction_date":
@@ -322,11 +314,12 @@ function GET(request_1, _a) {
                 valueA = a.churn_probability;
                 valueB = b.churn_probability;
                 break;
-              case "risk_level":
+              case "risk_level": {
                 var riskOrder = { low: 1, medium: 2, high: 3, critical: 4 };
                 valueA = riskOrder[a.risk_level];
                 valueB = riskOrder[b.risk_level];
                 break;
+              }
               default:
                 valueA = a.prediction_date;
                 valueB = b.prediction_date;
@@ -341,27 +334,26 @@ function GET(request_1, _a) {
           summary = {
             total_predictions: filteredPredictions.length,
             risk_distribution: {
-              low: filteredPredictions.filter(function (p) {
-                return p.risk_level === retention_analytics_1.ChurnRiskLevel.LOW;
-              }).length,
-              medium: filteredPredictions.filter(function (p) {
-                return p.risk_level === retention_analytics_1.ChurnRiskLevel.MEDIUM;
-              }).length,
-              high: filteredPredictions.filter(function (p) {
-                return p.risk_level === retention_analytics_1.ChurnRiskLevel.HIGH;
-              }).length,
-              critical: filteredPredictions.filter(function (p) {
-                return p.risk_level === retention_analytics_1.ChurnRiskLevel.CRITICAL;
-              }).length,
+              low: filteredPredictions.filter(
+                (p) => p.risk_level === retention_analytics_1.ChurnRiskLevel.LOW,
+              ).length,
+              medium: filteredPredictions.filter(
+                (p) => p.risk_level === retention_analytics_1.ChurnRiskLevel.MEDIUM,
+              ).length,
+              high: filteredPredictions.filter(
+                (p) => p.risk_level === retention_analytics_1.ChurnRiskLevel.HIGH,
+              ).length,
+              critical: filteredPredictions.filter(
+                (p) => p.risk_level === retention_analytics_1.ChurnRiskLevel.CRITICAL,
+              ).length,
             },
             average_churn_probability:
-              filteredPredictions.reduce(function (sum, p) {
-                return sum + p.churn_probability;
-              }, 0) / filteredPredictions.length || 0,
-            high_risk_patients: filteredPredictions.filter(function (p) {
-              return ["high", "critical"].includes(p.risk_level);
-            }).length,
-            recent_predictions: filteredPredictions.filter(function (p) {
+              filteredPredictions.reduce((sum, p) => sum + p.churn_probability, 0) /
+                filteredPredictions.length || 0,
+            high_risk_patients: filteredPredictions.filter((p) =>
+              ["high", "critical"].includes(p.risk_level),
+            ).length,
+            recent_predictions: filteredPredictions.filter((p) => {
               var predictionDate = new Date(p.prediction_date);
               var dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
               return predictionDate > dayAgo;
@@ -447,9 +439,8 @@ function POST(request_1, _a) {
       batchResults,
       summary,
       error_2;
-    var _this = this;
     var params = _b.params;
-    return __generator(this, function (_g) {
+    return __generator(this, (_g) => {
       switch (_g.label) {
         case 0:
           _g.trys.push([0, 10, , 11]);
@@ -548,11 +539,7 @@ function POST(request_1, _a) {
             throw new Error("Failed to validate patients: ".concat(validationError.message));
           }
           if (validPatients_1.length !== targetPatientIds.length) {
-            invalidIds = targetPatientIds.filter(function (id) {
-              return !validPatients_1.some(function (p) {
-                return p.id === id;
-              });
-            });
+            invalidIds = targetPatientIds.filter((id) => !validPatients_1.some((p) => p.id === id));
             return [
               2 /*return*/,
               server_1.NextResponse.json(
@@ -573,10 +560,10 @@ function POST(request_1, _a) {
         case 6:
           if (!(i < targetPatientIds.length)) return [3 /*break*/, 9];
           batch = targetPatientIds.slice(i, i + batchSize);
-          batchPromises = batch.map(function (patientId) {
-            return __awaiter(_this, void 0, void 0, function () {
+          batchPromises = batch.map((patientId) =>
+            __awaiter(this, void 0, void 0, function () {
               var prediction, error_3;
-              return __generator(this, function (_a) {
+              return __generator(this, (_a) => {
                 switch (_a.label) {
                   case 0:
                     _a.trys.push([0, 2, , 3]);
@@ -612,12 +599,12 @@ function POST(request_1, _a) {
                     return [2 /*return*/];
                 }
               });
-            });
-          });
+            }),
+          );
           return [4 /*yield*/, Promise.allSettled(batchPromises)];
         case 7:
           batchResults = _g.sent();
-          batchResults.forEach(function (result) {
+          batchResults.forEach((result) => {
             var _a;
             if (result.status === "fulfilled") {
               if (result.value.success) {
@@ -646,18 +633,16 @@ function POST(request_1, _a) {
             failed: errors_1.length,
             success_rate: results_1.length / targetPatientIds.length,
             model_type: modelType_1,
-            high_risk_detected: results_1.filter(function (r) {
-              return ["high", "critical"].includes(r.prediction.risk_level);
-            }).length,
+            high_risk_detected: results_1.filter((r) =>
+              ["high", "critical"].includes(r.prediction.risk_level),
+            ).length,
           };
           return [
             2 /*return*/,
             server_1.NextResponse.json({
               success: true,
               data: {
-                predictions: results_1.map(function (r) {
-                  return r.prediction;
-                }),
+                predictions: results_1.map((r) => r.prediction),
                 summary: summary,
                 errors: errors_1.length > 0 ? errors_1 : undefined,
               },

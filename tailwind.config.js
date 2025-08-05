@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var config = {
   darkMode: ["class"],
@@ -92,32 +91,6 @@ var config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      // NEONPROV1 Animation System
-      animation: {
-        "fade-in": "fadeIn 0.3s ease-in-out",
-        "slide-in": "slideIn 0.3s ease-out",
-        "pulse-neon": "pulseNeon 2s ease-in-out infinite",
-        "bounce-soft": "bounceSoft 0.6s ease-out",
-      },
-      keyframes: {
-        fadeIn: {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        slideIn: {
-          "0%": { opacity: "0", transform: "translateX(-20px)" },
-          "100%": { opacity: "1", transform: "translateX(0)" },
-        },
-        pulseNeon: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.8" },
-        },
-        bounceSoft: {
-          "0%, 20%, 53%, 80%, 100%": { transform: "translateY(0)" },
-          "40%, 43%": { transform: "translateY(-8px)" },
-          "70%": { transform: "translateY(-4px)" },
-        },
-      },
       // Healthcare specific spacing
       spacing: {
         18: "4.5rem",
@@ -134,6 +107,8 @@ var config = {
           to: { height: "0" },
         },
       },
+      // NEONPROV1 Animation System
+
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",

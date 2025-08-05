@@ -5,7 +5,7 @@
 
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { Database } from "@/types/database";
-import type { RiskFactor, RiskFactorCategory, NoShowPattern } from "./no-show-prediction";
+import type { NoShowPattern, RiskFactor, RiskFactorCategory } from "./no-show-prediction";
 
 // Risk scoring configuration
 export interface RiskScoringConfig {
@@ -567,7 +567,7 @@ export class RiskScoringEngine {
         0,
         (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
       );
-      const weight = Math.pow(this.config.decayFactors.timeDecay, monthsAgo);
+      const weight = this.config.decayFactors.timeDecay ** monthsAgo;
 
       weightedSum += weight;
       totalWeight += weight;
@@ -580,7 +580,7 @@ export class RiskScoringEngine {
         0,
         (now.getTime() - eventDate.getTime()) / (1000 * 60 * 60 * 24 * 30),
       );
-      return sum + Math.pow(this.config.decayFactors.timeDecay, monthsAgo);
+      return sum + this.config.decayFactors.timeDecay ** monthsAgo;
     }, 0);
 
     return totalEventWeight > 0 ? weightedSum / totalEventWeight : 0;
@@ -627,7 +627,7 @@ export class RiskScoringEngine {
     // Calculate timing consistency
     const avgBookingTime = bookings.reduce((sum, days) => sum + days, 0) / bookings.length;
     const variance =
-      bookings.reduce((sum, days) => sum + Math.pow(days - avgBookingTime, 2), 0) / bookings.length;
+      bookings.reduce((sum, days) => sum + (days - avgBookingTime) ** 2, 0) / bookings.length;
     const inconsistentTiming = Math.min(variance / 100, 1); // Normalize variance
 
     return {
@@ -651,7 +651,7 @@ export class RiskScoringEngine {
     }
 
     const avgGap = gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
-    const variance = gaps.reduce((sum, gap) => sum + Math.pow(gap - avgGap, 2), 0) / gaps.length;
+    const variance = gaps.reduce((sum, gap) => sum + (gap - avgGap) ** 2, 0) / gaps.length;
 
     // Higher variance indicates inconsistent scheduling patterns
     return Math.min(Math.sqrt(variance) / 30, 1); // Normalize

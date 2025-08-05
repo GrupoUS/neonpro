@@ -1,4 +1,3 @@
-"use strict";
 // Patient Communication Center Types
 // NeonPro - Epic 6 Story 6.2 Task 1: Patient Communication Center
 // Comprehensive type definitions for modern healthcare communication platform

@@ -13,10 +13,10 @@
  */
 
 import type {
-  SubscriptionError,
+  ErrorCategory,
   ErrorContext,
   ErrorSeverity,
-  ErrorCategory,
+  SubscriptionError,
 } from "../types/subscription-errors";
 
 // Log entry structure

@@ -1,32 +1,31 @@
 // Transaction Entry Form - Add/Edit cash flow transactions
 // Following financial dashboard patterns from Context7 research
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionEntryForm = TransactionEntryForm;
 var react_1 = require("react");
@@ -166,7 +163,6 @@ var use_cash_flow_1 = require("../hooks/use-cash-flow");
 var use_cash_registers_1 = require("../hooks/use-cash-registers");
 var calculations_1 = require("../utils/calculations");
 function TransactionEntryForm(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userId = _a.userId,
     onSuccess = _a.onSuccess,
@@ -187,10 +183,10 @@ function TransactionEntryForm(_a) {
       payment_method: "cash",
     },
   });
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var entryData, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -220,7 +216,6 @@ function TransactionEntryForm(_a) {
         }
       });
     });
-  };
   return (
     <card_1.Card className="w-full max-w-2xl">
       <card_1.CardHeader>
@@ -234,7 +229,7 @@ function TransactionEntryForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="transaction_type"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -267,7 +262,7 @@ function TransactionEntryForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="category"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -302,7 +297,7 @@ function TransactionEntryForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="amount"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -313,9 +308,7 @@ function TransactionEntryForm(_a) {
                           step="0.01"
                           placeholder="0,00"
                           {...field}
-                          onChange={function (e) {
-                            return field.onChange(parseFloat(e.target.value));
-                          }}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
                         />
                       </form_1.FormControl>
                       <form_1.FormMessage />
@@ -327,7 +320,7 @@ function TransactionEntryForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="payment_method"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -363,7 +356,7 @@ function TransactionEntryForm(_a) {
             <form_1.FormField
               control={form.control}
               name="register_id"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -375,14 +368,12 @@ function TransactionEntryForm(_a) {
                         </select_1.SelectTrigger>
                       </form_1.FormControl>
                       <select_1.SelectContent>
-                        {registers.map(function (register) {
-                          return (
-                            <select_1.SelectItem key={register.id} value={register.id}>
-                              {register.register_name} -{" "}
-                              {(0, calculations_1.formatCurrency)(register.current_balance)}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {registers.map((register) => (
+                          <select_1.SelectItem key={register.id} value={register.id}>
+                            {register.register_name} -{" "}
+                            {(0, calculations_1.formatCurrency)(register.current_balance)}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                     <form_1.FormMessage />
@@ -393,7 +384,7 @@ function TransactionEntryForm(_a) {
             <form_1.FormField
               control={form.control}
               name="description"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -413,7 +404,7 @@ function TransactionEntryForm(_a) {
             <form_1.FormField
               control={form.control}
               name="reference_number"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>

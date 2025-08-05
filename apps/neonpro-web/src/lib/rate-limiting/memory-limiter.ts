@@ -4,10 +4,10 @@
  */
 
 import type {
-  RateLimitConfig,
   RATE_LIMIT_CONFIGS,
-  USER_ROLE_LIMITS,
   RATE_LIMIT_WHITELIST,
+  RateLimitConfig,
+  USER_ROLE_LIMITS,
 } from "./config";
 
 interface RateLimitEntry {

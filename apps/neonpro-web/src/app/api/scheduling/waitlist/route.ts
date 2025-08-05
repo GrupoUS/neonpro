@@ -6,11 +6,11 @@
  * Manages patient waitlist for appointment availability
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { cookies } from "next/headers";
-import type { WaitlistService, TimeSlot, UrgencyLevel } from "@/lib/scheduling/conflict-resolution";
+import type { NextRequest, NextResponse } from "next/server";
 import type { AuditLogger } from "@/lib/auth/audit/audit-logger";
+import type { TimeSlot, UrgencyLevel, WaitlistService } from "@/lib/scheduling/conflict-resolution";
+import type { createClient } from "@/lib/supabase/server";
 
 interface WaitlistRequest {
   action: "add" | "process" | "notify";

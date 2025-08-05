@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var user_event_1 = require("@testing-library/user-event");
@@ -156,30 +153,28 @@ var sonner_1 = require("sonner");
 jest.mock("@/app/utils/supabase/client");
 jest.mock("sonner");
 var mockSupabase = {
-  from: jest.fn(function () {
-    return {
-      insert: jest.fn().mockResolvedValue({ data: null, error: null }),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-    };
-  }),
+  from: jest.fn(() => ({
+    insert: jest.fn().mockResolvedValue({ data: null, error: null }),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
 };
 client_1.createClient.mockReturnValue(mockSupabase);
 var mockOnSuccess = jest.fn();
-var setup = function () {
+var setup = () => {
   var user = user_event_1.default.setup();
   var utils = (0, react_1.render)(<PatientRegistrationForm_1.default onSuccess={mockOnSuccess} />);
   return __assign({ user: user }, utils);
 };
-describe("PatientRegistrationForm", function () {
-  beforeEach(function () {
+describe("PatientRegistrationForm", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     sonner_1.toast.success.mockClear();
     sonner_1.toast.error.mockClear();
   });
-  describe("Rendering and Form Structure", function () {
-    it("renders all required form sections", function () {
+  describe("Rendering and Form Structure", () => {
+    it("renders all required form sections", () => {
       setup();
       // Check main form sections exist
       expect(react_1.screen.getByText("Dados Pessoais")).toBeInTheDocument();
@@ -189,7 +184,7 @@ describe("PatientRegistrationForm", function () {
       expect(react_1.screen.getByText("Informações do Plano de Saúde")).toBeInTheDocument();
       expect(react_1.screen.getByText("Consentimentos LGPD")).toBeInTheDocument();
     });
-    it("renders all personal data fields", function () {
+    it("renders all personal data fields", () => {
       setup();
       expect(react_1.screen.getByLabelText("Nome Completo")).toBeInTheDocument();
       expect(react_1.screen.getByLabelText("CPF")).toBeInTheDocument();
@@ -199,7 +194,7 @@ describe("PatientRegistrationForm", function () {
       expect(react_1.screen.getByLabelText("Telefone")).toBeInTheDocument();
       expect(react_1.screen.getByLabelText("Email")).toBeInTheDocument();
     });
-    it("renders all LGPD consent checkboxes", function () {
+    it("renders all LGPD consent checkboxes", () => {
       setup();
       expect(react_1.screen.getByText(/Dados básicos para cadastro/)).toBeInTheDocument();
       expect(react_1.screen.getByText(/Comunicação de marketing/)).toBeInTheDocument();
@@ -208,11 +203,11 @@ describe("PatientRegistrationForm", function () {
       expect(react_1.screen.getByText(/Pesquisas de satisfação/)).toBeInTheDocument();
     });
   });
-  describe("LGPD Consent Management", function () {
-    it("requires basic consent to submit form", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("LGPD Consent Management", () => {
+    it("requires basic consent to submit form", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, submitButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -236,12 +231,11 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("allows submission when basic consent is provided", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("allows submission when basic consent is provided", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, basicConsentCheckbox, submitButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -268,7 +262,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(mockSupabase.from).toHaveBeenCalled();
                 }),
               ];
@@ -277,12 +271,11 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("properly handles optional consents", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("properly handles optional consents", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, marketingCheckbox;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -296,14 +289,13 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Field Validation", function () {
-    it("validates CPF format", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Field Validation", () => {
+    it("validates CPF format", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, cpfInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -316,7 +308,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText(/CPF deve ter 11 dígitos/)).toBeInTheDocument();
                 }),
               ];
@@ -325,12 +317,11 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("validates email format", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("validates email format", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, emailInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -343,7 +334,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText(/Email inválido/)).toBeInTheDocument();
                 }),
               ];
@@ -352,12 +343,11 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("validates phone format", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("validates phone format", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, phoneInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -370,7 +360,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText(/Telefone inválido/)).toBeInTheDocument();
                 }),
               ];
@@ -379,12 +369,11 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("validates birth date is not in future", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("validates birth date is not in future", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, tomorrow, tomorrowString, birthDateInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -400,7 +389,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByText(/Data de nascimento não pode ser no futuro/),
                   ).toBeInTheDocument();
@@ -411,12 +400,11 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("validates CEP format", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("validates CEP format", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, cepInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -429,7 +417,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText(/CEP deve ter 8 dígitos/)).toBeInTheDocument();
                 }),
               ];
@@ -438,14 +426,13 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("FHIR Compliance", function () {
-    it("includes all required FHIR Patient resource fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("FHIR Compliance", () => {
+    it("includes all required FHIR Patient resource fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -483,20 +470,19 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles emergency contact as FHIR RelatedPerson", function () {
+      }));
+    it("handles emergency contact as FHIR RelatedPerson", () => {
       setup();
       expect(react_1.screen.getByLabelText("Nome do Contato")).toBeInTheDocument();
       expect(react_1.screen.getByLabelText("Parentesco")).toBeInTheDocument();
       expect(react_1.screen.getByLabelText("Telefone do Contato")).toBeInTheDocument();
     });
   });
-  describe("Form Submission", function () {
-    var fillValidForm = function (user) {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Form Submission", () => {
+    var fillValidForm = (user) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var basicConsentCheckbox;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -585,11 +571,10 @@ describe("PatientRegistrationForm", function () {
           }
         });
       });
-    };
-    it("successfully submits valid form", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("successfully submits valid form", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, submitButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -602,7 +587,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(mockSupabase.from).toHaveBeenCalledWith("patients");
                   expect(sonner_1.toast.success).toHaveBeenCalledWith(
                     "Paciente cadastrado com sucesso!",
@@ -615,24 +600,24 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("shows loading state during submission", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("shows loading state during submission", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, submitButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
               // Mock slow submission
               mockSupabase.from.mockReturnValue({
-                insert: jest.fn().mockImplementation(function () {
-                  return new Promise(function (resolve) {
-                    return setTimeout(function () {
-                      return resolve({ data: null, error: null });
-                    }, 100);
-                  });
-                }),
+                insert: jest
+                  .fn()
+                  .mockImplementation(
+                    () =>
+                      new Promise((resolve) =>
+                        setTimeout(() => resolve({ data: null, error: null }), 100),
+                      ),
+                  ),
               });
               return [4 /*yield*/, fillValidForm(user)];
             case 1:
@@ -647,12 +632,11 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles submission errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("handles submission errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, submitButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -672,7 +656,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(sonner_1.toast.error).toHaveBeenCalledWith(
                     "Erro ao cadastrar paciente. Tente novamente.",
                   );
@@ -683,11 +667,10 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Accessibility", function () {
-    it("has proper ARIA labels for form sections", function () {
+  describe("Accessibility", () => {
+    it("has proper ARIA labels for form sections", () => {
       setup();
       // Check that form sections have proper headings
       expect(react_1.screen.getByRole("heading", { name: "Dados Pessoais" })).toBeInTheDocument();
@@ -696,17 +679,17 @@ describe("PatientRegistrationForm", function () {
         react_1.screen.getByRole("heading", { name: "Consentimentos LGPD" }),
       ).toBeInTheDocument();
     });
-    it("has proper form labels and associations", function () {
+    it("has proper form labels and associations", () => {
       setup();
       var nameInput = react_1.screen.getByLabelText("Nome Completo");
       expect(nameInput).toHaveAttribute("aria-required", "true");
       var cpfInput = react_1.screen.getByLabelText("CPF");
       expect(cpfInput).toHaveAttribute("aria-required", "true");
     });
-    it("provides proper error announcements", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("provides proper error announcements", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, cpfInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = setup().user;
@@ -719,7 +702,7 @@ describe("PatientRegistrationForm", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var errorMessage = react_1.screen.getByText(/CPF deve ter 11 dígitos/);
                   expect(errorMessage).toHaveAttribute("role", "alert");
                 }),
@@ -729,7 +712,6 @@ describe("PatientRegistrationForm", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

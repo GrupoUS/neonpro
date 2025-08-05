@@ -1,12 +1,12 @@
 "use client";
 
+import type { endOfDay, format, isSameDay, startOfDay } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 import React from "react";
+import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
 import type { ScrollArea } from "@/components/ui/scroll-area";
 import type { cn } from "@/lib/utils";
-import type { format, isSameDay, startOfDay, endOfDay } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 import type { AppointmentCard } from "./appointment-card";
-import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
 
 interface DayViewProps {
   date: Date;

@@ -1,6 +1,7 @@
 // app/auth/auth-code-error/page.tsx
-import Link from "next/link";
+
 import type { AlertCircle } from "lucide-react";
+import Link from "next/link";
 import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 

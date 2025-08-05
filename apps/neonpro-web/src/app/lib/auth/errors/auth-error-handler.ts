@@ -284,7 +284,7 @@ class AuthErrorHandler {
         if (attempt > 0) {
           // Wait before retry
           const delay = Math.min(
-            RETRY_CONFIG.BASE_DELAY * Math.pow(RETRY_CONFIG.BACKOFF_FACTOR, attempt - 1),
+            RETRY_CONFIG.BASE_DELAY * RETRY_CONFIG.BACKOFF_FACTOR ** (attempt - 1),
             RETRY_CONFIG.MAX_DELAY,
           );
 

@@ -1,4 +1,3 @@
-"use strict";
 // Test Suite Index
 // Story 1.4: Session Management & Security Implementation
 var __assign =
@@ -6,53 +5,50 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -72,13 +68,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -100,9 +96,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -174,7 +168,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runTestSuite =
   exports.IntegrationTestUtils =
@@ -192,7 +186,7 @@ exports.TestUtils = {
   /**
    * Create mock session data
    */
-  createMockSessionData: function (overrides) {
+  createMockSessionData: (overrides) => {
     if (overrides === void 0) {
       overrides = {};
     }
@@ -221,7 +215,7 @@ exports.TestUtils = {
   /**
    * Create mock device registration
    */
-  createMockDeviceRegistration: function (overrides) {
+  createMockDeviceRegistration: (overrides) => {
     if (overrides === void 0) {
       overrides = {};
     }
@@ -249,7 +243,7 @@ exports.TestUtils = {
   /**
    * Create mock security event
    */
-  createMockSecurityEvent: function (overrides) {
+  createMockSecurityEvent: (overrides) => {
     if (overrides === void 0) {
       overrides = {};
     }
@@ -271,7 +265,7 @@ exports.TestUtils = {
   /**
    * Create mock security config
    */
-  createMockSecurityConfig: function (overrides) {
+  createMockSecurityConfig: (overrides) => {
     if (overrides === void 0) {
       overrides = {};
     }
@@ -303,7 +297,7 @@ exports.TestUtils = {
   /**
    * Create mock session config
    */
-  createMockSessionConfig: function (overrides) {
+  createMockSessionConfig: (overrides) => {
     if (overrides === void 0) {
       overrides = {};
     }
@@ -328,24 +322,16 @@ exports.TestUtils = {
   /**
    * Wait for async operations
    */
-  wait: function (ms) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, ms);
-    });
-  },
+  wait: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
   /**
    * Generate random test data
    */
-  generateRandomId: function () {
-    return Math.random().toString(36).substring(2, 15);
-  },
-  generateRandomIP: function () {
-    var octets = Array.from({ length: 4 }, function () {
-      return Math.floor(Math.random() * 256);
-    });
+  generateRandomId: () => Math.random().toString(36).substring(2, 15),
+  generateRandomIP: () => {
+    var octets = Array.from({ length: 4 }, () => Math.floor(Math.random() * 256));
     return octets.join(".");
   },
-  generateRandomUserAgent: function () {
+  generateRandomUserAgent: () => {
     var browsers = [
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
@@ -358,16 +344,12 @@ exports.TestUtils = {
    * Mock time functions
    */
   mockTime: {
-    now: function () {
-      return Date.now();
-    },
-    advanceBy: function (ms) {
+    now: () => Date.now(),
+    advanceBy: (ms) => {
       var originalNow = Date.now;
       var startTime = originalNow();
-      Date.now = function () {
-        return startTime + ms;
-      };
-      return function () {
+      Date.now = () => startTime + ms;
+      return () => {
         Date.now = originalNow;
       };
     },
@@ -376,21 +358,11 @@ exports.TestUtils = {
    * Assertion helpers
    */
   assertions: {
-    isValidSessionId: function (sessionId) {
-      return typeof sessionId === "string" && sessionId.length > 0;
-    },
-    isValidDeviceId: function (deviceId) {
-      return typeof deviceId === "string" && deviceId.length > 0;
-    },
-    isValidTimestamp: function (timestamp) {
-      return timestamp instanceof Date && !isNaN(timestamp.getTime());
-    },
-    isValidRiskScore: function (score) {
-      return typeof score === "number" && score >= 0 && score <= 1;
-    },
-    isValidTrustScore: function (score) {
-      return typeof score === "number" && score >= 0 && score <= 1;
-    },
+    isValidSessionId: (sessionId) => typeof sessionId === "string" && sessionId.length > 0,
+    isValidDeviceId: (deviceId) => typeof deviceId === "string" && deviceId.length > 0,
+    isValidTimestamp: (timestamp) => timestamp instanceof Date && !isNaN(timestamp.getTime()),
+    isValidRiskScore: (score) => typeof score === "number" && score >= 0 && score <= 1,
+    isValidTrustScore: (score) => typeof score === "number" && score >= 0 && score <= 1,
   },
 };
 // Test configuration
@@ -417,15 +389,15 @@ exports.TEST_CONFIG = {
   },
 };
 // Test environment setup
-var setupTestEnvironment = function () {
+var setupTestEnvironment = () => {
   // Mock console methods to reduce noise in tests
   var originalConsole = __assign({}, console);
-  beforeEach(function () {
+  beforeEach(() => {
     console.log = vi.fn();
     console.warn = vi.fn();
     console.error = vi.fn();
   });
-  afterEach(function () {
+  afterEach(() => {
     Object.assign(console, originalConsole);
     vi.clearAllMocks();
   });
@@ -436,10 +408,10 @@ exports.PerformanceTestUtils = {
   /**
    * Measure execution time
    */
-  measureTime: function (fn) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  measureTime: (fn) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var start, end;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             start = performance.now();
@@ -450,15 +422,14 @@ exports.PerformanceTestUtils = {
             return [2 /*return*/, end - start];
         }
       });
-    });
-  },
+    }),
   /**
    * Run load test
    */
-  loadTest: function (fn, iterations) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  loadTest: (fn, iterations) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var times, i, time;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             times = [];
@@ -479,13 +450,8 @@ exports.PerformanceTestUtils = {
               2 /*return*/,
               {
                 iterations: iterations,
-                totalTime: times.reduce(function (sum, time) {
-                  return sum + time;
-                }, 0),
-                averageTime:
-                  times.reduce(function (sum, time) {
-                    return sum + time;
-                  }, 0) / times.length,
+                totalTime: times.reduce((sum, time) => sum + time, 0),
+                averageTime: times.reduce((sum, time) => sum + time, 0) / times.length,
                 minTime: Math.min.apply(Math, times),
                 maxTime: Math.max.apply(Math, times),
                 times: times,
@@ -493,12 +459,11 @@ exports.PerformanceTestUtils = {
             ];
         }
       });
-    });
-  },
+    }),
   /**
    * Memory usage tracking
    */
-  trackMemory: function () {
+  trackMemory: () => {
     if (typeof process !== "undefined" && process.memoryUsage) {
       return process.memoryUsage();
     }
@@ -510,8 +475,8 @@ exports.IntegrationTestUtils = {
   /**
    * Setup complete auth system for integration tests
    */
-  setupAuthSystem: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  setupAuthSystem: () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var SessionManager,
         SecurityMonitor,
         DeviceManager,
@@ -520,31 +485,16 @@ exports.IntegrationTestUtils = {
         securityMonitor,
         sessionManager,
         deviceManager;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("../session-manager");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("../session-manager"))];
           case 1:
             SessionManager = _a.sent().SessionManager;
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("../security-monitor");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("../security-monitor"))];
           case 2:
             SecurityMonitor = _a.sent().SecurityMonitor;
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("../device-manager");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("../device-manager"))];
           case 3:
             DeviceManager = _a.sent().DeviceManager;
             securityConfig = exports.TestUtils.createMockSecurityConfig();
@@ -566,15 +516,14 @@ exports.IntegrationTestUtils = {
             ];
         }
       });
-    });
-  },
+    }),
   /**
    * Simulate user workflow
    */
-  simulateUserWorkflow: function (authSystem, userId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  simulateUserWorkflow: (authSystem, userId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var sessionManager, deviceManager, deviceRegistration, deviceId, sessionData, sessionId;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (sessionManager = authSystem.sessionManager),
@@ -607,14 +556,13 @@ exports.IntegrationTestUtils = {
             ];
         }
       });
-    });
-  },
+    }),
 };
 // Export test suite runner
-var runTestSuite = function () {
-  return __awaiter(void 0, void 0, void 0, function () {
+var runTestSuite = () =>
+  __awaiter(void 0, void 0, void 0, function () {
     var testResults, error_1;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           console.log("🧪 Running Auth System Test Suite...");
@@ -624,15 +572,9 @@ var runTestSuite = function () {
           return [
             4 /*yield*/,
             Promise.all([
-              Promise.resolve().then(function () {
-                return require("./session-manager.test");
-              }),
-              Promise.resolve().then(function () {
-                return require("./security-monitor.test");
-              }),
-              Promise.resolve().then(function () {
-                return require("./device-manager.test");
-              }),
+              Promise.resolve().then(() => require("./session-manager.test")),
+              Promise.resolve().then(() => require("./security-monitor.test")),
+              Promise.resolve().then(() => require("./device-manager.test")),
             ]),
           ];
         case 2:
@@ -648,5 +590,4 @@ var runTestSuite = function () {
       }
     });
   });
-};
 exports.runTestSuite = runTestSuite;

@@ -1,32 +1,27 @@
-"use strict";
 // =====================================================================================
 // SIMPLIFIED MARKETING CAMPAIGNS TESTS - Story 7.2
 // Simplified tests for marketing campaigns dashboard
 // =====================================================================================
 Object.defineProperty(exports, "__esModule", { value: true });
 // Mock Next.js components
-jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: jest.fn(),
-        back: jest.fn(),
-        forward: jest.fn(),
-        refresh: jest.fn(),
-      };
-    },
-  };
-});
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+  }),
+}));
 // Simple component test without complex UI dependencies
-describe("Marketing Campaigns Dashboard - Basic Tests", function () {
-  beforeEach(function () {
+describe("Marketing Campaigns Dashboard - Basic Tests", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("Basic Component Loading", function () {
-    it("should pass basic test", function () {
+  describe("Basic Component Loading", () => {
+    it("should pass basic test", () => {
       expect(true).toBe(true);
     });
-    it("should validate Story 7.2 implementation requirements", function () {
+    it("should validate Story 7.2 implementation requirements", () => {
       // Test automation rate requirement
       var automationRate = 0.89; // 89% from our mock data
       expect(automationRate).toBeGreaterThanOrEqual(0.8);
@@ -51,7 +46,7 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
       var abTestingEnabled = true;
       expect(abTestingEnabled).toBe(true);
     });
-    it("should validate campaign automation features", function () {
+    it("should validate campaign automation features", () => {
       var campaignAutomation = {
         trigger_based_campaigns: 0.94,
         ai_personalization: 0.87,
@@ -72,7 +67,7 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
       expect(campaignAutomation.lgpd_compliance).toBe(1.0);
       expect(campaignAutomation.automation_triggers.length).toBeGreaterThan(0);
     });
-    it("should validate analytics and ROI tracking", function () {
+    it("should validate analytics and ROI tracking", () => {
       var analyticsFeatures = {
         roi_tracking: true,
         real_time_metrics: true,
@@ -86,7 +81,7 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
       expect(analyticsFeatures.revenue_attribution).toBe(true);
       expect(analyticsFeatures.campaign_performance).toBe(true);
     });
-    it("should validate A/B testing framework", function () {
+    it("should validate A/B testing framework", () => {
       var abTestingFramework = {
         statistical_significance: true,
         automated_winner_selection: true,
@@ -100,7 +95,7 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
       expect(abTestingFramework.confidence_levels).toContain(95);
       expect(abTestingFramework.traffic_split_options).toContain(50);
     });
-    it("should validate campaign creation requirements", function () {
+    it("should validate campaign creation requirements", () => {
       var campaignRequirements = {
         name: "required",
         type: "required",
@@ -116,7 +111,7 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
       expect(campaignRequirements.lgpd_compliance).toBe("required");
       expect(campaignRequirements.automation_rate_threshold).toBe(0.8);
     });
-    it("should validate Story 7.2 acceptance criteria compliance", function () {
+    it("should validate Story 7.2 acceptance criteria compliance", () => {
       // Story 7.2: Automated Marketing Campaigns + Personalization
       var storyRequirements = {
         // ≥80% automation rate
@@ -169,8 +164,8 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
       expect(storyRequirements.documentation.user_guides).toBe(true);
     });
   });
-  describe("Implementation Validation", function () {
-    it("should have all required files implemented", function () {
+  describe("Implementation Validation", () => {
+    it("should have all required files implemented", () => {
       var implementedFiles = [
         "app/dashboard/marketing-campaigns/page.tsx",
         "app/components/marketing/marketing-campaigns-dashboard.tsx",
@@ -183,22 +178,22 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
       ];
       // All files should be present in the implementation
       expect(implementedFiles.length).toBeGreaterThan(0);
-      implementedFiles.forEach(function (file) {
+      implementedFiles.forEach((file) => {
         expect(file).toBeTruthy();
       });
     });
-    it("should have all required tests implemented", function () {
+    it("should have all required tests implemented", () => {
       var testFiles = [
         "__tests__/marketing-campaigns/marketing-campaigns-dashboard.test.tsx",
         "__tests__/marketing-campaigns/campaigns-api.test.ts",
         "__tests__/marketing-campaigns/marketing-campaigns.e2e.test.ts",
       ];
       expect(testFiles.length).toBe(3);
-      testFiles.forEach(function (testFile) {
+      testFiles.forEach((testFile) => {
         expect(testFile).toBeTruthy();
       });
     });
-    it("should validate backend service implementation", function () {
+    it("should validate backend service implementation", () => {
       // Validate that service methods are available
       var serviceMethodsRequired = [
         "getCampaigns",
@@ -209,24 +204,24 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
         "calculateAutomationRate",
         "validateLGPDCompliance",
       ];
-      serviceMethodsRequired.forEach(function (method) {
+      serviceMethodsRequired.forEach((method) => {
         expect(method).toBeTruthy();
       });
     });
-    it("should validate API endpoints implementation", function () {
+    it("should validate API endpoints implementation", () => {
       var apiEndpoints = [
         "GET /api/campaigns",
         "POST /api/campaigns",
         "PUT /api/campaigns",
         "DELETE /api/campaigns",
       ];
-      apiEndpoints.forEach(function (endpoint) {
+      apiEndpoints.forEach((endpoint) => {
         expect(endpoint).toBeTruthy();
       });
     });
   });
-  describe("Quality Assurance", function () {
-    it("should meet quality standards", function () {
+  describe("Quality Assurance", () => {
+    it("should meet quality standards", () => {
       var qualityMetrics = {
         code_coverage: 0.85,
         automation_rate: 0.89,
@@ -240,7 +235,7 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
       expect(qualityMetrics.lgpd_compliance).toBe(1.0);
       expect(qualityMetrics.performance_score).toBeGreaterThanOrEqual(0.9);
     });
-    it("should validate all acceptance criteria are met", function () {
+    it("should validate all acceptance criteria are met", () => {
       var acceptanceCriteria = {
         // AC1: ≥80% automation rate achieved
         automation_rate_met: true,
@@ -257,7 +252,7 @@ describe("Marketing Campaigns Dashboard - Basic Tests", function () {
         // AC7: Comprehensive documentation provided
         documentation_complete: true,
       };
-      Object.values(acceptanceCriteria).forEach(function (criterion) {
+      Object.values(acceptanceCriteria).forEach((criterion) => {
         expect(criterion).toBe(true);
       });
     });

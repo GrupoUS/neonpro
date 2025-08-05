@@ -1,19 +1,18 @@
 // Transactions List - Display and manage cash flow transactions
 // Following financial dashboard patterns from Context7 research
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -49,20 +48,18 @@ function TransactionsList(_a) {
     loadEntries = _d.loadEntries,
     updateEntry = _d.updateEntry,
     deleteEntry = _d.deleteEntry;
-  var handleFilterChange = function (key, value) {
+  var handleFilterChange = (key, value) => {
     var _a;
     var newFilters = __assign(__assign({}, filters), ((_a = {}), (_a[key] = value), _a));
     setFilters(newFilters);
     loadEntries(newFilters);
   };
-  var handleSearch = function (term) {
+  var handleSearch = (term) => {
     setSearchTerm(term);
     loadEntries(__assign(__assign({}, filters), { search: term }));
   };
-  var getRegisterName = function (registerId) {
-    var register = registers.find(function (r) {
-      return r.id === registerId;
-    });
+  var getRegisterName = (registerId) => {
+    var register = registers.find((r) => r.id === registerId);
     return (register === null || register === void 0 ? void 0 : register.register_name) || "N/A";
   };
   return (
@@ -85,9 +82,7 @@ function TransactionsList(_a) {
               <input_1.Input
                 placeholder="Buscar transações..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return handleSearch(e.target.value);
-                }}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -99,9 +94,7 @@ function TransactionsList(_a) {
           <div className="flex gap-2">
             <select_1.Select
               value={filters.transactionType || ""}
-              onValueChange={function (value) {
-                return handleFilterChange("transactionType", value || undefined);
-              }}
+              onValueChange={(value) => handleFilterChange("transactionType", value || undefined)}
             >
               <select_1.SelectTrigger className="w-[180px]">
                 <select_1.SelectValue placeholder="Tipo" />
@@ -117,9 +110,7 @@ function TransactionsList(_a) {
 
             <select_1.Select
               value={filters.paymentMethod || ""}
-              onValueChange={function (value) {
-                return handleFilterChange("paymentMethod", value || undefined);
-              }}
+              onValueChange={(value) => handleFilterChange("paymentMethod", value || undefined)}
             >
               <select_1.SelectTrigger className="w-[180px]">
                 <select_1.SelectValue placeholder="Forma de pagamento" />
@@ -136,22 +127,18 @@ function TransactionsList(_a) {
 
             <select_1.Select
               value={filters.registerId || ""}
-              onValueChange={function (value) {
-                return handleFilterChange("registerId", value || undefined);
-              }}
+              onValueChange={(value) => handleFilterChange("registerId", value || undefined)}
             >
               <select_1.SelectTrigger className="w-[180px]">
                 <select_1.SelectValue placeholder="Caixa" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="">Todos os caixas</select_1.SelectItem>
-                {registers.map(function (register) {
-                  return (
-                    <select_1.SelectItem key={register.id} value={register.id}>
-                      {register.register_name}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {registers.map((register) => (
+                  <select_1.SelectItem key={register.id} value={register.id}>
+                    {register.register_name}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
           </div>
@@ -186,17 +173,15 @@ function TransactionsList(_a) {
                           Nenhuma transação encontrada
                         </td>
                       </tr>
-                    : entries.map(function (entry) {
-                        return (
-                          <TransactionRow
-                            key={entry.id}
-                            entry={entry}
-                            registerName={getRegisterName(entry.register_id || "")}
-                            onUpdate={updateEntry}
-                            onDelete={deleteEntry}
-                          />
-                        );
-                      })}
+                    : entries.map((entry) => (
+                        <TransactionRow
+                          key={entry.id}
+                          entry={entry}
+                          registerName={getRegisterName(entry.register_id || "")}
+                          onUpdate={updateEntry}
+                          onDelete={deleteEntry}
+                        />
+                      ))}
               </tbody>
             </table>
           </div>
@@ -212,9 +197,7 @@ function TransactionsList(_a) {
                 variant="outline"
                 size="sm"
                 disabled={currentPage === 1}
-                onClick={function () {
-                  return loadEntries(filters, currentPage - 1);
-                }}
+                onClick={() => loadEntries(filters, currentPage - 1)}
               >
                 Anterior
               </button_1.Button>
@@ -222,9 +205,7 @@ function TransactionsList(_a) {
                 variant="outline"
                 size="sm"
                 disabled={currentPage === totalPages}
-                onClick={function () {
-                  return loadEntries(filters, currentPage + 1);
-                }}
+                onClick={() => loadEntries(filters, currentPage + 1)}
               >
                 Próxima
               </button_1.Button>

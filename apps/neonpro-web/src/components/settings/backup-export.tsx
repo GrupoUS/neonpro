@@ -1,9 +1,27 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Database,
+  Download,
+  FileText,
+  HardDrive,
+  Loader2,
+  Save,
+  Shield,
+  Upload,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import * as z from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -21,9 +39,7 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Switch } from "@/components/ui/switch";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -31,23 +47,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Download,
-  Upload,
-  Database,
-  Shield,
-  Calendar,
-  FileText,
-  Clock,
-  Save,
-  Loader2,
-  CheckCircle2,
-  AlertTriangle,
-  HardDrive,
-} from "lucide-react";
-import type { toast } from "sonner";
+import type { Switch } from "@/components/ui/switch";
 
 const backupExportSchema = z.object({
   // Automatic Backup Settings
@@ -251,7 +251,7 @@ export default function BackupExport() {
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   const formatDuration = (seconds: number) => {

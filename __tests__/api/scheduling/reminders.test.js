@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
@@ -145,47 +142,31 @@ var mockSupabase = {
   auth: {
     getUser: globals_1.jest.fn(),
   },
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-          insert: globals_1.jest.fn(function () {
-            return {
-              select: globals_1.jest.fn(),
-            };
-          }),
-          gte: globals_1.jest.fn(function () {
-            return {
-              lte: globals_1.jest.fn(function () {
-                return {
-                  order: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(),
+        })),
+      })),
+      insert: globals_1.jest.fn(() => ({
+        select: globals_1.jest.fn(),
+      })),
+      gte: globals_1.jest.fn(() => ({
+        lte: globals_1.jest.fn(() => ({
+          order: globals_1.jest.fn(),
+        })),
+      })),
+    })),
+  })),
 };
-var mockCreateClient = globals_1.jest.fn(function () {
-  return Promise.resolve(mockSupabase);
-});
-(0, globals_1.beforeEach)(function () {
+var mockCreateClient = globals_1.jest.fn(() => Promise.resolve(mockSupabase));
+(0, globals_1.beforeEach)(() => {
   globals_1.jest.clearAllMocks();
   require("@/app/utils/supabase/server").createClient = mockCreateClient;
 });
-(0, globals_1.describe)("/api/scheduling/reminders", function () {
+(0, globals_1.describe)("/api/scheduling/reminders", () => {
   var mockUser = {
     id: "350e8400-e29b-41d4-a716-446655440000",
     email: "test@example.com",
@@ -216,11 +197,11 @@ var mockCreateClient = globals_1.jest.fn(function () {
       phone: "+5511888888888",
     },
   };
-  (0, globals_1.describe)("POST /api/scheduling/reminders", function () {
-    (0, globals_1.it)("should schedule reminders using workflow by default", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("POST /api/scheduling/reminders", () => {
+    (0, globals_1.it)("should schedule reminders using workflow by default", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWorkflows, mockWorkflowModule, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Setup mocks
@@ -285,10 +266,10 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle immediate reminders", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle immediate reminders", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockCommunicationService,
           mockCommModule,
           mockTemplateEngine,
@@ -296,7 +277,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
           request,
           response,
           data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Setup mocks
@@ -332,9 +313,9 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 }),
               };
               mockCommModule = require("@/lib/communication/communication-service");
-              mockCommModule.CommunicationService = globals_1.jest.fn(function () {
-                return mockCommunicationService;
-              });
+              mockCommModule.CommunicationService = globals_1.jest.fn(
+                () => mockCommunicationService,
+              );
               mockTemplateEngine = {
                 selectBestTemplate: globals_1.jest.fn().mockReturnValue({
                   id: "template-123",
@@ -369,12 +350,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should prevent duplicate immediate reminders", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should prevent duplicate immediate reminders", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockRecentReminder, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Setup mocks
@@ -388,7 +369,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 reminder_type: "immediate",
                 sent_at: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
               };
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -437,12 +418,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle authentication errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle authentication errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -468,12 +449,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate request schema", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate request schema", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -500,12 +481,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle appointment not found", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle appointment not found", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -541,14 +522,14 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("GET /api/scheduling/reminders", function () {
-    (0, globals_1.it)("should fetch reminders with filters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("GET /api/scheduling/reminders", () => {
+    (0, globals_1.it)("should fetch reminders with filters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockReminders, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -597,12 +578,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should fetch workflow information when workflowId provided", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should fetch workflow information when workflowId provided", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWorkflow, mockWorkflowModule, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -634,14 +615,14 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("PUT /api/scheduling/reminders (bulk)", function () {
-    (0, globals_1.it)("should schedule bulk reminders for all appointments on date", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("PUT /api/scheduling/reminders (bulk)", () => {
+    (0, globals_1.it)("should schedule bulk reminders for all appointments on date", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAppointments, mockWorkflowModule, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -653,7 +634,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 { id: "550e8400-e29b-41d4-a716-446655440002" },
                 { id: "550e8400-e29b-41d4-a716-446655440003" },
               ];
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -705,12 +686,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle no appointments found", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle no appointments found", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -753,14 +734,14 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error handling", function () {
-    (0, globals_1.it)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error handling", () => {
+    (0, globals_1.it)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -795,7 +776,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

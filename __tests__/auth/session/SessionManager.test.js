@@ -1,4 +1,3 @@
-"use strict";
 /**
  * SessionManager Unit Tests
  *
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,7 +42,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,8 +71,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -94,9 +91,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -155,78 +152,52 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var SessionManager_1 = require("../../../lib/auth/session/SessionManager");
 var setup_1 = require("./setup");
 // Mock Supabase
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-              maybeSingle: globals_1.jest.fn(),
-            };
-          }),
-          in: globals_1.jest.fn(function () {
-            return {
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      insert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-            };
-          }),
-        };
-      }),
-      update: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              select: globals_1.jest.fn(function () {
-                return {
-                  single: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      delete: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+        maybeSingle: globals_1.jest.fn(),
+      })),
+      in: globals_1.jest.fn(() => ({
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(),
+        })),
+      })),
+    })),
+    insert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+      })),
+    })),
+    update: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        select: globals_1.jest.fn(() => ({
+          single: globals_1.jest.fn(),
+        })),
+      })),
+    })),
+    delete: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(),
+    })),
+  })),
   rpc: globals_1.jest.fn(),
 };
-globals_1.jest.mock("@supabase/supabase-js", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return mockSupabase;
-    }),
-  };
-});
-(0, globals_1.describe)("SessionManager", function () {
+globals_1.jest.mock("@supabase/supabase-js", () => ({
+  createClient: globals_1.jest.fn(() => mockSupabase),
+}));
+(0, globals_1.describe)("SessionManager", () => {
   var sessionManager;
-  var testDb;
+  var _testDb;
   var mockConfig;
-  (0, globals_1.beforeEach)(function () {
-    testDb = (0, setup_1.createTestDatabase)();
+  (0, globals_1.beforeEach)(() => {
+    _testDb = (0, setup_1.createTestDatabase)();
     mockConfig = {
       maxSessions: 5,
       sessionTimeout: 24 * 60 * 60 * 1000, // 24 hours
@@ -245,15 +216,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
     };
     sessionManager = new SessionManager_1.SessionManager(mockConfig);
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     (0, setup_1.cleanup)();
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("Session Creation", function () {
-    (0, globals_1.it)("should create a new session successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Session Creation", () => {
+    (0, globals_1.it)("should create a new session successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var sessionData, mockSession, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               sessionData = {
@@ -281,12 +252,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should generate unique session tokens", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate unique session tokens", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var sessionData, tokens, i, mockSession, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               sessionData = {
@@ -322,13 +293,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should enforce maximum session limit", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should enforce maximum session limit", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var sessionData, existingSessions, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               sessionData = {
@@ -337,11 +308,11 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
                 ipAddress: "192.168.1.1",
                 userAgent: "Mozilla/5.0...",
               };
-              existingSessions = Array.from({ length: 5 }, function (_, i) {
-                return (0, setup_1.createMockSession)(
+              existingSessions = Array.from({ length: 5 }, (_, i) =>
+                (0, setup_1.createMockSession)(
                   __assign(__assign({}, sessionData), { id: "session-".concat(i) }),
-                );
-              });
+                ),
+              );
               mockSupabase.from().select().eq().mockResolvedValue({
                 data: existingSessions,
                 error: null,
@@ -356,14 +327,14 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Session Validation", function () {
-    (0, globals_1.it)("should validate active session successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Session Validation", () => {
+    (0, globals_1.it)("should validate active session successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSession, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSession = (0, setup_1.createMockSession)({
@@ -382,12 +353,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should reject expired session", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should reject expired session", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSession, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSession = (0, setup_1.createMockSession)({
@@ -406,12 +377,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should reject inactive session", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should reject inactive session", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSession, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSession = (0, setup_1.createMockSession)({
@@ -430,12 +401,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle non-existent session", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle non-existent session", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase
@@ -454,14 +425,14 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Session Updates", function () {
-    (0, globals_1.it)("should update session activity", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Session Updates", () => {
+    (0, globals_1.it)("should update session activity", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSession, updatedSession, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSession = (0, setup_1.createMockSession)();
@@ -484,12 +455,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should extend session expiration on activity", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should extend session expiration on activity", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSession, futureExpiration, updatedSession, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSession = (0, setup_1.createMockSession)();
@@ -515,14 +486,14 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Session Termination", function () {
-    (0, globals_1.it)("should terminate single session", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Session Termination", () => {
+    (0, globals_1.it)("should terminate single session", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase
@@ -549,13 +520,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should terminate all user sessions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should terminate all user sessions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSessions, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSessions = [
@@ -572,9 +543,9 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
                 .update()
                 .in()
                 .mockResolvedValue({
-                  data: mockSessions.map(function (s) {
-                    return __assign(__assign({}, s), { status: "terminated" });
-                  }),
+                  data: mockSessions.map((s) =>
+                    __assign(__assign({}, s), { status: "terminated" }),
+                  ),
                   error: null,
                 });
               return [4 /*yield*/, sessionManager.terminateAllSessions("user-123")];
@@ -587,15 +558,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Session Cleanup", function () {
-    (0, globals_1.it)("should clean up expired sessions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Session Cleanup", () => {
+    (0, globals_1.it)("should clean up expired sessions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expiredSessions, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               expiredSessions = [
@@ -626,13 +597,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should clean up inactive sessions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should clean up inactive sessions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var inactiveSessions, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               inactiveSessions = [
@@ -652,9 +623,9 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
                 .update()
                 .in()
                 .mockResolvedValue({
-                  data: inactiveSessions.map(function (s) {
-                    return __assign(__assign({}, s), { status: "inactive" });
-                  }),
+                  data: inactiveSessions.map((s) =>
+                    __assign(__assign({}, s), { status: "inactive" }),
+                  ),
                   error: null,
                 });
               return [4 /*yield*/, sessionManager.cleanupInactiveSessions()];
@@ -667,15 +638,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Session Queries", function () {
-    (0, globals_1.it)("should get user sessions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Session Queries", () => {
+    (0, globals_1.it)("should get user sessions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var userSessions, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               userSessions = [
@@ -697,12 +668,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should get session statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should get session statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockStats, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockStats = {
@@ -723,15 +694,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.it)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.it)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase
@@ -760,13 +731,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle invalid input data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle invalid input data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               return [
@@ -787,15 +758,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Security Features", function () {
-    (0, globals_1.it)("should detect suspicious activity patterns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Security Features", () => {
+    (0, globals_1.it)("should detect suspicious activity patterns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var sessionData, i, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               sessionData = {
@@ -834,12 +805,12 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate session token format", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate session token format", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidTokens, _i, invalidTokens_1, token, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidTokens = [
@@ -867,7 +838,7 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

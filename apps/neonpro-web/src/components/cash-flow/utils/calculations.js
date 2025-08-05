@@ -1,4 +1,3 @@
-"use strict";
 // Cash Flow Calculations and Utilities
 // Following financial dashboard patterns from Context7 research
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -198,25 +197,15 @@ function getDateRange(period) {
 // Cash flow summary calculation
 function getCashFlowSummary(entries) {
   var income = entries
-    .filter(function (entry) {
-      return entry.transaction_type === "receipt";
-    })
-    .reduce(function (sum, entry) {
-      return sum + entry.amount;
-    }, 0);
+    .filter((entry) => entry.transaction_type === "receipt")
+    .reduce((sum, entry) => sum + entry.amount, 0);
   var expenses = entries
-    .filter(function (entry) {
-      return entry.transaction_type === "expense";
-    })
-    .reduce(function (sum, entry) {
-      return sum + entry.amount;
-    }, 0);
+    .filter((entry) => entry.transaction_type === "expense")
+    .reduce((sum, entry) => sum + entry.amount, 0);
   var netCashFlow = income - expenses;
   // Get recent transactions (last 5)
   var recentTransactions = entries
-    .sort(function (a, b) {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    })
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, 5);
   return {
     totalIncome: income,

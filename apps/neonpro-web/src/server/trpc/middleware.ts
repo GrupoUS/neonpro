@@ -1,6 +1,4 @@
-import type { TRPCError } from "@trpc/server";
-import type { middleware, publicProcedure } from "./trpc";
-import type { type Context } from "./context";
+import type { Context } from "./context";
 
 // Healthcare audit trail interface
 interface AuditTrailData {

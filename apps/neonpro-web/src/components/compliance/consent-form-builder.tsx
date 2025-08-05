@@ -1,21 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
+  Calendar,
+  CheckSquare,
+  Circle,
+  Copy,
+  Download,
+  Eye,
+  FileText,
+  GripVertical,
+  Image,
+  Plus,
+  Save,
+  Signature,
+  Trash2,
+  Type,
+  Upload,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -25,24 +32,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Plus,
-  Trash2,
-  GripVertical,
-  Type,
-  CheckSquare,
-  Circle,
-  Calendar,
-  FileText,
-  Image,
-  Signature,
-  Save,
-  Eye,
-  Copy,
-  Upload,
-  Download,
-} from "lucide-react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 interface FormField {

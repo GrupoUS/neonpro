@@ -8,92 +8,85 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
+export { ComplicationAlertSystem, complicationAlertSystem } from "./alert-system";
 // Main Components
 export { ComplicationDetector } from "./complication-detector";
-export { ComplicationAlertSystem, complicationAlertSystem } from "./alert-system";
-
-// Types
-export type {
-  ComplicationCategory,
-  ComplicationSeverity,
-  AlertLevel,
-  DetectionConfidence,
-  EmergencyProtocolLevel,
-  ComplicationDetectionRequest,
-  ComplicationDetectionResult,
-  DetectedComplication,
-  BoundingBox,
-  EmergencyProtocol,
-  NotificationTarget,
-  EmergencyContact,
-  DetectionMetadata,
-  ModelVersion,
-  QualityMetrics,
-  ProcessingMetadata,
-  ValidationResult,
-  ComplicationAlert,
-  AlertStatus,
-  AlertNotification,
-  ValidationRequest,
-  ValidationResponse,
-  QualityAssuranceMetrics,
-  ModelPerformanceMetrics,
-  QualityTrend,
-  ComplicationDetectionConfig,
-  ModelConfig,
-  ComplicationStatistics,
-  ModelPerformanceComparison,
-  PatientComplicationHistory,
-  TreatmentRecord,
-  RealtimeDetectionEvent,
-  SystemHealthMetrics,
-  ApiResponse,
-  ComplicationDetectionResponse,
-  ValidationResponse_API,
-  StatisticsResponse,
-  HealthResponse,
-  ComplicationDetectionError,
-} from "./types";
-
 // Configuration
 export {
-  COMPLICATION_DETECTION_CONFIG,
-  DETECTION_MODELS,
-  EMERGENCY_CONTACTS,
+  ALERT_CONFIG,
   ALERT_THRESHOLDS,
-  NOTIFICATION_PRIORITY,
+  COMPLICATION_DETECTION_CONFIG,
   COMPLICATION_RISK_WEIGHTS,
+  calculateComplicationRiskScore,
+  DETECTION_MODELS,
+  disableModel,
+  EMERGENCY_CONTACTS,
+  enableModel,
+  getAlertLevelForRiskScore,
+  getEnabledModels,
+  getModelByType,
+  getNotificationTargetsForAlert,
+  NOTIFICATION_PRIORITY,
+  PERFORMANCE_BENCHMARKS,
   PROCESSING_CONFIG,
   QUALITY_CONFIG,
-  ALERT_CONFIG,
-  PERFORMANCE_BENCHMARKS,
   SECURITY_CONFIG,
-  validateConfiguration,
-  getModelByType,
-  getAlertLevelForRiskScore,
-  getNotificationTargetsForAlert,
-  calculateComplicationRiskScore,
   updateModelConfig,
-  enableModel,
-  disableModel,
-  getEnabledModels,
+  validateConfiguration,
 } from "./config";
-
+// Types
+export type {
+  AlertLevel,
+  AlertNotification,
+  AlertStatus,
+  ApiResponse,
+  BoundingBox,
+  ComplicationAlert,
+  ComplicationCategory,
+  ComplicationDetectionConfig,
+  ComplicationDetectionError,
+  ComplicationDetectionRequest,
+  ComplicationDetectionResponse,
+  ComplicationDetectionResult,
+  ComplicationSeverity,
+  ComplicationStatistics,
+  DetectedComplication,
+  DetectionConfidence,
+  DetectionMetadata,
+  EmergencyContact,
+  EmergencyProtocol,
+  EmergencyProtocolLevel,
+  HealthResponse,
+  ModelConfig,
+  ModelPerformanceComparison,
+  ModelPerformanceMetrics,
+  ModelVersion,
+  NotificationTarget,
+  PatientComplicationHistory,
+  ProcessingMetadata,
+  QualityAssuranceMetrics,
+  QualityMetrics,
+  QualityTrend,
+  RealtimeDetectionEvent,
+  StatisticsResponse,
+  SystemHealthMetrics,
+  TreatmentRecord,
+  ValidationRequest,
+  ValidationResponse,
+  ValidationResponse_API,
+  ValidationResult,
+} from "./types";
 // Validation Schemas
+// Constants
 export {
+  AlertAcknowledgmentSchema,
+  COMPLICATION_DETECTION_CONSTANTS,
   ComplicationDetectionRequestSchema,
   ValidationRequestSchema,
-  AlertAcknowledgmentSchema,
 } from "./types";
-
-// Constants
-export { COMPLICATION_DETECTION_CONSTANTS } from "./types";
 
 // Utility Functions
 import type { ComplicationDetector } from "./complication-detector";
-import type { complicationAlertSystem } from "./alert-system";
-import type { validateConfiguration } from "./config";
-import type { logger } from "@/lib/utils/logger";
 
 /**
  * Initialize the complete complication detection system
@@ -179,7 +172,7 @@ export async function getSystemHealth(): Promise<import("./types").SystemHealthM
     const detectorHealth = await detector.healthCheck();
 
     // Get active alerts count
-    const activeAlerts = await alertSystem.getActiveAlerts();
+    const _activeAlerts = await alertSystem.getActiveAlerts();
 
     return {
       timestamp: new Date().toISOString(),
@@ -352,7 +345,7 @@ export const Emergency = {
       const alertSystem = complicationAlertSystem;
 
       // Create emergency alert
-      const emergencyAlert: import("./types").ComplicationAlert = {
+      const _emergencyAlert: import("./types").ComplicationAlert = {
         id: `emergency_${patientId}_${Date.now()}`,
         detectionResultId: "manual_emergency",
         patientId,

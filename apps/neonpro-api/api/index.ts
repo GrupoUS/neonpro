@@ -17,14 +17,7 @@ let fastifyInstance: any = null;
 async function initializeFastify() {
   if (!fastifyInstance) {
     try {
-      fastifyInstance = await createHealthcareService({
-        logger: false, // Use our custom healthcare logger
-        trustProxy: true, // Trust Vercel proxy
-        maxParamLength: 500,
-        bodyLimit: 10485760, // 10MB for medical file uploads
-        keepAliveTimeout: 30000,
-        connectionTimeout: 30000,
-      });
+      fastifyInstance = await createHealthcareService();
 
       await fastifyInstance.ready();
 

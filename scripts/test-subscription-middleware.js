@@ -56,8 +56,8 @@ async function runTest(name, testFn) {
 async function runAllTests() {
   // Teste 1: Verificar estrutura de middleware
   await runTest("Verificar arquivo de middleware principal", async () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const middlewareFile = path.join(process.cwd(), "middleware.ts");
     if (!fs.existsSync(middlewareFile)) {
@@ -74,8 +74,8 @@ async function runAllTests() {
 
   // Teste 2: Verificar arquivo de middleware de subscription
   await runTest("Verificar middleware de subscription", async () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const subscriptionMiddlewareFile = path.join(process.cwd(), "middleware", "subscription.ts");
     if (!fs.existsSync(subscriptionMiddlewareFile)) {
@@ -101,8 +101,8 @@ async function runAllTests() {
 
   // Teste 3: Verificar hook de subscription
   await runTest("Verificar hook de subscription", async () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const hookFile = path.join(process.cwd(), "hooks", "use-subscription.ts");
     if (!fs.existsSync(hookFile)) {
@@ -123,8 +123,8 @@ async function runAllTests() {
 
   // Teste 4: Verificar componentes de subscription
   await runTest("Verificar componentes de subscription", async () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const componentsDir = path.join(process.cwd(), "components", "subscription");
     if (!fs.existsSync(componentsDir)) {
@@ -155,8 +155,8 @@ async function runAllTests() {
 
   // Teste 5: Verificar integração no layout
   await runTest("Verificar integração no layout principal", async () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const layoutFile = path.join(process.cwd(), "app", "layout.tsx");
     if (!fs.existsSync(layoutFile)) {
@@ -184,7 +184,7 @@ async function runAllTests() {
 
   // Teste 7: Verificar configuração de rotas protegidas
   await runTest("Verificar configuração de rotas protegidas", async () => {
-    const fs = require("fs");
+    const fs = require("node:fs");
     const content = fs.readFileSync("middleware/subscription.ts", "utf8");
 
     const protectedRoutesMatch = content.match(/PROTECTED_ROUTES\s*=\s*\[([\s\S]*?)\]/);
@@ -202,8 +202,8 @@ async function runAllTests() {
 
   // Teste 8: Verificar página de subscription
   await runTest("Verificar página de subscription", async () => {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
 
     const subscriptionPageFile = path.join(
       process.cwd(),
@@ -226,7 +226,7 @@ async function runAllTests() {
 
   // Teste 9: Verificar cache de subscription
   await runTest("Verificar implementação de cache", async () => {
-    const fs = require("fs");
+    const fs = require("node:fs");
     const content = fs.readFileSync("middleware/subscription.ts", "utf8");
 
     if (!content.includes("subscriptionCache")) {
@@ -246,7 +246,7 @@ async function runAllTests() {
 
   // Teste 10: Verificar tipos TypeScript
   await runTest("Verificar tipos TypeScript", async () => {
-    const fs = require("fs");
+    const fs = require("node:fs");
     const hookContent = fs.readFileSync("hooks/use-subscription.ts", "utf8");
 
     if (!hookContent.includes("SubscriptionStatus")) {
@@ -261,7 +261,7 @@ async function runAllTests() {
   });
 
   // Resumo dos resultados
-  console.log("\n" + "=".repeat(50));
+  console.log(`\n${"=".repeat(50)}`);
   console.log("📊 RESUMO DOS TESTES");
   console.log("=".repeat(50));
   console.log(`Total de testes: ${totalTests}`);

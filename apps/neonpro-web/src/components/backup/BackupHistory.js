@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -174,7 +171,7 @@ var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var sonner_1 = require("sonner");
-var BackupHistory = function () {
+var BackupHistory = () => {
   var _a = (0, react_1.useState)([]),
     backups = _a[0],
     setBackups = _a[1];
@@ -206,22 +203,16 @@ var BackupHistory = function () {
     filters = _h[0],
     setFilters = _h[1];
   var itemsPerPage = 20;
-  (0, react_1.useEffect)(
-    function () {
-      loadBackupHistory();
-    },
-    [currentPage],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      applyFilters();
-    },
-    [backups, filters],
-  );
-  var loadBackupHistory = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadBackupHistory();
+  }, [currentPage]);
+  (0, react_1.useEffect)(() => {
+    applyFilters();
+  }, [backups, filters]);
+  var loadBackupHistory = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var params, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -258,46 +249,36 @@ var BackupHistory = function () {
         }
       });
     });
-  };
-  var applyFilters = function () {
+  var applyFilters = () => {
     var filtered = __spreadArray([], backups, true);
     if (filters.status) {
-      filtered = filtered.filter(function (backup) {
-        return backup.status === filters.status;
-      });
+      filtered = filtered.filter((backup) => backup.status === filters.status);
     }
     if (filters.type) {
-      filtered = filtered.filter(function (backup) {
-        return backup.type === filters.type;
-      });
+      filtered = filtered.filter((backup) => backup.type === filters.type);
     }
     if (filters.dateFrom) {
       var fromDate_1 = new Date(filters.dateFrom);
-      filtered = filtered.filter(function (backup) {
-        return new Date(backup.start_time) >= fromDate_1;
-      });
+      filtered = filtered.filter((backup) => new Date(backup.start_time) >= fromDate_1);
     }
     if (filters.dateTo) {
       var toDate_1 = new Date(filters.dateTo);
-      filtered = filtered.filter(function (backup) {
-        return new Date(backup.start_time) <= toDate_1;
-      });
+      filtered = filtered.filter((backup) => new Date(backup.start_time) <= toDate_1);
     }
     if (filters.searchTerm) {
       var term_1 = filters.searchTerm.toLowerCase();
-      filtered = filtered.filter(function (backup) {
-        return (
+      filtered = filtered.filter(
+        (backup) =>
           backup.config_name.toLowerCase().includes(term_1) ||
-          backup.id.toLowerCase().includes(term_1)
-        );
-      });
+          backup.id.toLowerCase().includes(term_1),
+      );
     }
     setFilteredBackups(filtered);
   };
-  var loadBackupDetails = function (backupId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadBackupDetails = (backupId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -326,10 +307,9 @@ var BackupHistory = function () {
         }
       });
     });
-  };
-  var handleDownloadBackup = function (backupId) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDownloadBackup = (backupId) =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           sonner_1.toast.info("Iniciando download do backup...");
           // Implementar download do backup
@@ -342,11 +322,10 @@ var BackupHistory = function () {
         return [2 /*return*/];
       });
     });
-  };
-  var handleDeleteBackup = function (backupId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleDeleteBackup = (backupId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -375,8 +354,7 @@ var BackupHistory = function () {
         }
       });
     });
-  };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "COMPLETED":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -392,7 +370,7 @@ var BackupHistory = function () {
         return <lucide_react_1.Clock className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getTypeIcon = function (type) {
+  var getTypeIcon = (type) => {
     switch (type) {
       case "DATABASE":
         return <lucide_react_1.Database className="h-4 w-4" />;
@@ -402,7 +380,7 @@ var BackupHistory = function () {
         return <lucide_react_1.Shield className="h-4 w-4" />;
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "COMPLETED":
         return "default";
@@ -453,11 +431,9 @@ var BackupHistory = function () {
                   id="search"
                   placeholder="Nome ou ID..."
                   value={filters.searchTerm}
-                  onChange={function (e) {
-                    return setFilters(
-                      __assign(__assign({}, filters), { searchTerm: e.target.value }),
-                    );
-                  }}
+                  onChange={(e) =>
+                    setFilters(__assign(__assign({}, filters), { searchTerm: e.target.value }))
+                  }
                   className="pl-9"
                 />
               </div>
@@ -467,9 +443,9 @@ var BackupHistory = function () {
               <label_1.Label>Status</label_1.Label>
               <select_1.Select
                 value={filters.status}
-                onValueChange={function (value) {
-                  return setFilters(__assign(__assign({}, filters), { status: value }));
-                }}
+                onValueChange={(value) =>
+                  setFilters(__assign(__assign({}, filters), { status: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Todos" />
@@ -489,9 +465,9 @@ var BackupHistory = function () {
               <label_1.Label>Tipo</label_1.Label>
               <select_1.Select
                 value={filters.type}
-                onValueChange={function (value) {
-                  return setFilters(__assign(__assign({}, filters), { type: value }));
-                }}
+                onValueChange={(value) =>
+                  setFilters(__assign(__assign({}, filters), { type: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Todos" />
@@ -513,9 +489,9 @@ var BackupHistory = function () {
                 id="dateFrom"
                 type="date"
                 value={filters.dateFrom}
-                onChange={function (e) {
-                  return setFilters(__assign(__assign({}, filters), { dateFrom: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFilters(__assign(__assign({}, filters), { dateFrom: e.target.value }))
+                }
               />
             </div>
 
@@ -525,9 +501,9 @@ var BackupHistory = function () {
                 id="dateTo"
                 type="date"
                 value={filters.dateTo}
-                onChange={function (e) {
-                  return setFilters(__assign(__assign({}, filters), { dateTo: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFilters(__assign(__assign({}, filters), { dateTo: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -564,108 +540,100 @@ var BackupHistory = function () {
                     </table_1.TableRow>
                   </table_1.TableHeader>
                   <table_1.TableBody>
-                    {filteredBackups.map(function (backup) {
-                      return (
-                        <table_1.TableRow key={backup.id}>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-2">
-                              {getTypeIcon(backup.type)}
-                              <div>
-                                <div className="font-medium">{backup.config_name}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  {backup.id.slice(0, 8)}...
-                                </div>
+                    {filteredBackups.map((backup) => (
+                      <table_1.TableRow key={backup.id}>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getTypeIcon(backup.type)}
+                            <div>
+                              <div className="font-medium">{backup.config_name}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {backup.id.slice(0, 8)}...
                               </div>
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge variant="outline">{backup.type}</badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-2">
-                              {getStatusIcon(backup.status)}
-                              <badge_1.Badge variant={getStatusColor(backup.status)}>
-                                {backup.status}
-                              </badge_1.Badge>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge variant="outline">{backup.type}</badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getStatusIcon(backup.status)}
+                            <badge_1.Badge variant={getStatusColor(backup.status)}>
+                              {backup.status}
+                            </badge_1.Badge>
+                          </div>
+                          {backup.status === "FAILED" && backup.error_message && (
+                            <div className="text-xs text-red-500 mt-1 max-w-xs truncate">
+                              {backup.error_message}
                             </div>
-                            {backup.status === "FAILED" && backup.error_message && (
-                              <div className="text-xs text-red-500 mt-1 max-w-xs truncate">
-                                {backup.error_message}
-                              </div>
-                            )}
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="text-sm">
-                              {(0, utils_1.formatDate)(new Date(backup.start_time))}
-                              <div className="text-muted-foreground">
-                                {new Date(backup.start_time).toLocaleTimeString()}
-                              </div>
+                          )}
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">
+                            {(0, utils_1.formatDate)(new Date(backup.start_time))}
+                            <div className="text-muted-foreground">
+                              {new Date(backup.start_time).toLocaleTimeString()}
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            {backup.duration
-                              ? (0, utils_1.formatDuration)(backup.duration)
-                              : backup.status === "RUNNING"
-                                ? <span className="text-blue-500">Em execução...</span>
-                                : <span className="text-muted-foreground">-</span>}
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            {backup.size
-                              ? <div>
-                                  <div>{(0, utils_1.formatBytes)(backup.size)}</div>
-                                  {backup.compressed_size && (
-                                    <div className="text-xs text-muted-foreground">
-                                      Comprimido: {(0, utils_1.formatBytes)(backup.compressed_size)}
-                                    </div>
-                                  )}
-                                </div>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          {backup.duration
+                            ? (0, utils_1.formatDuration)(backup.duration)
+                            : backup.status === "RUNNING"
+                              ? <span className="text-blue-500">Em execução...</span>
                               : <span className="text-muted-foreground">-</span>}
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <dropdown_menu_1.DropdownMenu>
-                              <dropdown_menu_1.DropdownMenuTrigger asChild>
-                                <button_1.Button variant="ghost" size="sm">
-                                  <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-                                </button_1.Button>
-                              </dropdown_menu_1.DropdownMenuTrigger>
-                              <dropdown_menu_1.DropdownMenuContent align="end">
-                                <dropdown_menu_1.DropdownMenuLabel>
-                                  Ações
-                                </dropdown_menu_1.DropdownMenuLabel>
-                                <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return loadBackupDetails(backup.id);
-                                  }}
-                                >
-                                  <lucide_react_1.Eye className="h-4 w-4 mr-2" />
-                                  Ver Detalhes
-                                </dropdown_menu_1.DropdownMenuItem>
-                                {backup.status === "COMPLETED" && (
-                                  <dropdown_menu_1.DropdownMenuItem
-                                    onClick={function () {
-                                      return handleDownloadBackup(backup.id);
-                                    }}
-                                  >
-                                    <lucide_react_1.Download className="h-4 w-4 mr-2" />
-                                    Download
-                                  </dropdown_menu_1.DropdownMenuItem>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          {backup.size
+                            ? <div>
+                                <div>{(0, utils_1.formatBytes)(backup.size)}</div>
+                                {backup.compressed_size && (
+                                  <div className="text-xs text-muted-foreground">
+                                    Comprimido: {(0, utils_1.formatBytes)(backup.compressed_size)}
+                                  </div>
                                 )}
-                                <dropdown_menu_1.DropdownMenuSeparator />
+                              </div>
+                            : <span className="text-muted-foreground">-</span>}
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <dropdown_menu_1.DropdownMenu>
+                            <dropdown_menu_1.DropdownMenuTrigger asChild>
+                              <button_1.Button variant="ghost" size="sm">
+                                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+                              </button_1.Button>
+                            </dropdown_menu_1.DropdownMenuTrigger>
+                            <dropdown_menu_1.DropdownMenuContent align="end">
+                              <dropdown_menu_1.DropdownMenuLabel>
+                                Ações
+                              </dropdown_menu_1.DropdownMenuLabel>
+                              <dropdown_menu_1.DropdownMenuItem
+                                onClick={() => loadBackupDetails(backup.id)}
+                              >
+                                <lucide_react_1.Eye className="h-4 w-4 mr-2" />
+                                Ver Detalhes
+                              </dropdown_menu_1.DropdownMenuItem>
+                              {backup.status === "COMPLETED" && (
                                 <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleDeleteBackup(backup.id);
-                                  }}
-                                  className="text-red-600"
+                                  onClick={() => handleDownloadBackup(backup.id)}
                                 >
-                                  <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
-                                  Remover
+                                  <lucide_react_1.Download className="h-4 w-4 mr-2" />
+                                  Download
                                 </dropdown_menu_1.DropdownMenuItem>
-                              </dropdown_menu_1.DropdownMenuContent>
-                            </dropdown_menu_1.DropdownMenu>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                              )}
+                              <dropdown_menu_1.DropdownMenuSeparator />
+                              <dropdown_menu_1.DropdownMenuItem
+                                onClick={() => handleDeleteBackup(backup.id)}
+                                className="text-red-600"
+                              >
+                                <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
+                                Remover
+                              </dropdown_menu_1.DropdownMenuItem>
+                            </dropdown_menu_1.DropdownMenuContent>
+                          </dropdown_menu_1.DropdownMenu>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
                   </table_1.TableBody>
                 </table_1.Table>}
         </card_1.CardContent>
@@ -676,9 +644,7 @@ var BackupHistory = function () {
         <div className="flex justify-center space-x-2">
           <button_1.Button
             variant="outline"
-            onClick={function () {
-              return setCurrentPage(Math.max(1, currentPage - 1));
-            }}
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
           >
             Anterior
@@ -688,9 +654,7 @@ var BackupHistory = function () {
           </span>
           <button_1.Button
             variant="outline"
-            onClick={function () {
-              return setCurrentPage(Math.min(totalPages, currentPage + 1));
-            }}
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
           >
             Próximo

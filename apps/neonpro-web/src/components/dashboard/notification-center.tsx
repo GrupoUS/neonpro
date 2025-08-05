@@ -1,15 +1,28 @@
 "use client";
 
-import type { useState } from "react";
 import type { format } from "date-fns";
 import type { pt } from "date-fns/locale";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import type {
+  AlertTriangle,
+  Bell,
+  BellRing,
+  Calendar,
+  Check,
+  CheckCheck,
+  Clock,
+  Filter,
+  Gift,
+  Info,
+  MoreVertical,
+  RefreshCw,
+  Settings,
+  Trash2,
+} from "lucide-react";
+import type { useState } from "react";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Separator } from "@/components/ui/separator";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,25 +31,12 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type {
-  Bell,
-  BellRing,
-  Check,
-  CheckCheck,
-  Trash2,
-  Settings,
-  Calendar,
-  AlertTriangle,
-  Info,
-  Gift,
-  Clock,
-  MoreVertical,
-  RefreshCw,
-  Filter,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
 import type { useNotificationContext } from "@/contexts/notification-context";
 import type { Notification } from "@/hooks/use-notifications";
+import type { cn } from "@/lib/utils";
 
 interface NotificationCenterProps {
   className?: string;

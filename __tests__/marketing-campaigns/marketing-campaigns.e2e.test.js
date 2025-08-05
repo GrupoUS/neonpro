@@ -1,19 +1,18 @@
-"use strict";
 // =====================================================================================
 // MARKETING CAMPAIGNS E2E TESTS - Story 7.2
 // End-to-end tests for automated marketing campaigns functionality
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -23,7 +22,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -52,8 +51,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -74,9 +71,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -135,14 +132,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var test_1 = require("@playwright/test");
-test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
-  test_1.test.beforeEach(function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", () => {
+  test_1.test.beforeEach((_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Navigate to login and authenticate
@@ -153,7 +150,7 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
             // Mock authentication for testing
             return [
               4 /*yield*/,
-              page.evaluate(function () {
+              page.evaluate(() => {
                 window.localStorage.setItem("supabase.auth.token", "mock-auth-token");
               }),
             ];
@@ -171,13 +168,13 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test_1.test.describe("Dashboard Loading and Layout", function () {
-    (0, test_1.test)("should load the marketing campaigns dashboard", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  test_1.test.describe("Dashboard Loading and Layout", () => {
+    (0, test_1.test)("should load the marketing campaigns dashboard", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -197,12 +194,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display key metrics cards", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display key metrics cards", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -232,12 +229,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display tab navigation", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display tab navigation", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -273,14 +270,14 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Tab Navigation", function () {
-    (0, test_1.test)("should navigate between tabs correctly", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Tab Navigation", () => {
+    (0, test_1.test)("should navigate between tabs correctly", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               // Test Campaigns tab
@@ -362,12 +359,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should maintain tab state when switching", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should maintain tab state when switching", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               // Go to Campaigns tab
@@ -404,14 +401,14 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Campaign Data Display", function () {
-    (0, test_1.test)("should display campaign list in campaigns tab", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Campaign Data Display", () => {
+    (0, test_1.test)("should display campaign list in campaigns tab", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("Campaigns")')];
@@ -442,12 +439,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display campaign metrics correctly", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display campaign metrics correctly", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("Campaigns")')];
@@ -476,12 +473,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display campaign status badges", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display campaign status badges", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("Campaigns")')];
@@ -508,14 +505,14 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Automation Features", function () {
-    (0, test_1.test)("should display automation statistics", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Automation Features", () => {
+    (0, test_1.test)("should display automation statistics", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("Automation")')];
@@ -562,12 +559,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display quick automation setup options", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display quick automation setup options", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("Automation")')];
@@ -606,13 +603,13 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should verify automation rate meets ≥80% requirement", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should verify automation rate meets ≥80% requirement", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var automationRateElement, automationText, automationValue;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               automationRateElement = page.locator("text=89%").first();
@@ -631,14 +628,14 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("AI Personalization Features", function () {
-    (0, test_1.test)("should display AI personalization status", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("AI Personalization Features", () => {
+    (0, test_1.test)("should display AI personalization status", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               // Should be visible on overview tab by default
@@ -670,12 +667,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display LGPD compliance status", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display LGPD compliance status", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -687,13 +684,13 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should show AI feature progress bars", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should show AI feature progress bars", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var progressBars;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               progressBars = page.locator('[data-testid="progress"]');
@@ -703,14 +700,14 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("A/B Testing Framework", function () {
-    (0, test_1.test)("should display A/B testing interface", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("A/B Testing Framework", () => {
+    (0, test_1.test)("should display A/B testing interface", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("A/B Testing")')];
@@ -743,13 +740,13 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display create A/B test button", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display create A/B test button", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var createTestButton;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("A/B Testing")')];
@@ -765,14 +762,14 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Analytics and ROI Tracking", function () {
-    (0, test_1.test)("should display analytics interface", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Analytics and ROI Tracking", () => {
+    (0, test_1.test)("should display analytics interface", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("Analytics")')];
@@ -795,12 +792,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display ROI metrics in overview", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display ROI metrics in overview", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               // Check ROI display
@@ -817,15 +814,15 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Campaign Creation Flow", function () {
-    (0, test_1.test)("should display create campaign button", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Campaign Creation Flow", () => {
+    (0, test_1.test)("should display create campaign button", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var createButton;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               createButton = page.locator('button:has-text("Create Campaign")');
@@ -838,13 +835,13 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should be able to click create campaign button", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should be able to click create campaign button", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var createButton;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               createButton = page.locator('button:has-text("Create Campaign")');
@@ -854,14 +851,14 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Multi-Channel Support", function () {
-    (0, test_1.test)("should display multi-channel campaign types", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Multi-Channel Support", () => {
+    (0, test_1.test)("should display multi-channel campaign types", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("Campaigns")')];
@@ -884,14 +881,14 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Responsive Design", function () {
-    (0, test_1.test)("should work on mobile viewport", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Responsive Design", () => {
+    (0, test_1.test)("should work on mobile viewport", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.setViewportSize({ width: 375, height: 667 })];
@@ -927,12 +924,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should work on tablet viewport", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should work on tablet viewport", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.setViewportSize({ width: 768, height: 1024 })];
@@ -955,12 +952,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should work on desktop viewport", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should work on desktop viewport", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.setViewportSize({ width: 1920, height: 1080 })];
@@ -983,15 +980,15 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Performance and Loading", function () {
-    (0, test_1.test)("should load dashboard within acceptable time", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Performance and Loading", () => {
+    (0, test_1.test)("should load dashboard within acceptable time", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var startTime, loadTime;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               startTime = Date.now();
@@ -1006,13 +1003,13 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should handle navigation between tabs quickly", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should handle navigation between tabs quickly", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var startTime, navigationTime;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               startTime = Date.now();
@@ -1039,15 +1036,15 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Accessibility", function () {
-    (0, test_1.test)("should have proper heading structure", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Accessibility", () => {
+    (0, test_1.test)("should have proper heading structure", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var h1;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               h1 = page.locator("h1");
@@ -1063,13 +1060,13 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should have accessible tab navigation", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should have accessible tab navigation", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var tabs, i, _c, tab;
         var page = _b.page;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               tabs = page.locator('button[role="tab"], [data-testid="tabs-trigger"]');
@@ -1098,13 +1095,13 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should have proper button accessibility", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should have proper button accessibility", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var buttons, createButton;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               buttons = page.locator("button");
@@ -1121,15 +1118,15 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  test_1.test.describe("Story 7.2 Acceptance Criteria Validation", function () {
-    (0, test_1.test)("should meet ≥80% automation rate requirement", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+  test_1.test.describe("Story 7.2 Acceptance Criteria Validation", () => {
+    (0, test_1.test)("should meet ≥80% automation rate requirement", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var automationRate;
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               automationRate = page.locator("text=89%").first();
@@ -1164,12 +1161,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display AI-driven personalization features", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display AI-driven personalization features", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -1199,12 +1196,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should support multi-channel delivery", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should support multi-channel delivery", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("Campaigns")')];
@@ -1225,12 +1222,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should provide A/B testing framework", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should provide A/B testing framework", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [4 /*yield*/, page.click('button:has-text("A/B Testing")')];
@@ -1261,12 +1258,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should display analytics and ROI tracking", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should display analytics and ROI tracking", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               // Check ROI in overview
@@ -1296,12 +1293,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should ensure LGPD compliance", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should ensure LGPD compliance", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -1330,12 +1327,12 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, test_1.test)("should provide comprehensive documentation interface", function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
+      }),
+    );
+    (0, test_1.test)("should provide comprehensive documentation interface", (_a) =>
+      __awaiter(void 0, [_a], void 0, function (_b) {
         var page = _b.page;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               // Dashboard should have clear descriptions and help text
@@ -1377,7 +1374,7 @@ test_1.test.describe("Marketing Campaigns Dashboard - E2E Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

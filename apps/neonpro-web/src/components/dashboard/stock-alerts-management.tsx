@@ -1,5 +1,21 @@
 "use client";
 
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  Bell,
+  CheckCircle,
+  Clock,
+  Edit,
+  Filter,
+  Info,
+  Package,
+  Plus,
+  RefreshCw,
+  Settings,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type {
   AlertType,
   SeverityLevel,
@@ -40,22 +56,6 @@ import type {
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useToast } from "@/hooks/use-toast";
 import type { cn } from "@/lib/utils";
-import type { format } from "date-fns";
-import type { pt } from "date-fns/locale";
-import type {
-  AlertTriangle,
-  Bell,
-  CheckCircle,
-  Clock,
-  Edit,
-  Filter,
-  Info,
-  Package,
-  Plus,
-  RefreshCw,
-  Settings,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface StockAlertsManagementProps {
   className?: string;

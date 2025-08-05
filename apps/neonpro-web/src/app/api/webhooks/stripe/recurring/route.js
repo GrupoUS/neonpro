@@ -1,18 +1,17 @@
-"use strict";
 // NeonPro - Stripe Recurring Payments Webhook
 // Story 6.1 - Task 2: Recurring Payment System
 // Webhook handler for Stripe recurring payment events
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var server_1 = require("next/server");
@@ -155,7 +152,7 @@ var endpointSecret = process.env.STRIPE_WEBHOOK_SECRET_RECURRING;
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var body, headersList, signature, event_1, _a, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 24, , 25]);
@@ -277,7 +274,7 @@ function POST(request) {
 function handleInvoicePaymentSucceeded(invoice) {
   return __awaiter(this, void 0, void 0, function () {
     var billingEvent, error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 5, , 6]);
@@ -347,7 +344,7 @@ function handleInvoicePaymentFailed(invoice) {
   return __awaiter(this, void 0, void 0, function () {
     var billingEvent, error_3;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 5, , 6]);
@@ -412,7 +409,7 @@ function handleInvoicePaymentFailed(invoice) {
 function handleInvoiceCreated(invoice) {
   return __awaiter(this, void 0, void 0, function () {
     var subscription, error_4;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 4, , 5]);
@@ -470,7 +467,7 @@ function handleInvoiceCreated(invoice) {
 function handleInvoiceFinalized(invoice) {
   return __awaiter(this, void 0, void 0, function () {
     var error_5;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -512,7 +509,7 @@ function handleInvoiceFinalized(invoice) {
 function handleSubscriptionCreated(subscription) {
   return __awaiter(this, void 0, void 0, function () {
     var error_6;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -556,7 +553,7 @@ function handleSubscriptionCreated(subscription) {
 function handleSubscriptionUpdated(subscription) {
   return __awaiter(this, void 0, void 0, function () {
     var error_7;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -600,7 +597,7 @@ function handleSubscriptionUpdated(subscription) {
 function handleSubscriptionDeleted(subscription) {
   return __awaiter(this, void 0, void 0, function () {
     var error_8;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -635,7 +632,7 @@ function handleSubscriptionDeleted(subscription) {
 function handleSubscriptionTrialWillEnd(subscription) {
   return __awaiter(this, void 0, void 0, function () {
     var subscriptionData, error_9;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -671,7 +668,7 @@ function handleSubscriptionTrialWillEnd(subscription) {
 function handlePaymentIntentSucceeded(paymentIntent) {
   return __awaiter(this, void 0, void 0, function () {
     var error_10;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -706,7 +703,7 @@ function handlePaymentIntentFailed(paymentIntent) {
   return __awaiter(this, void 0, void 0, function () {
     var error_11;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);

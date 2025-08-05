@@ -1,11 +1,11 @@
+import { Clock, Heart, Shield, User } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/app/utils/supabase/server";
-import { DashboardLayout } from "@/components/navigation/dashboard-layout";
 import { PatientProfileEditForm } from "@/components/dashboard/patients/profile-edit-form";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardLayout } from "@/components/navigation/dashboard-layout";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { User, Shield, Clock, Heart } from "lucide-react";
 
 interface PatientProfilePageProps {
   params: {

@@ -4,8 +4,8 @@
 // Date: 2025-01-30
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
 
 // Validation schemas
 const declarationGenerationSchema = z.object({

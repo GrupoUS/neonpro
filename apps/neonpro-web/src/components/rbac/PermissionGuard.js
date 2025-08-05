@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Permission Guard Component for RBAC
  * Story 1.2: Role-Based Access Control Implementation
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,20 +134,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PermissionLink =
   exports.PermissionButton =
@@ -167,19 +163,17 @@ var lucide_react_1 = require("lucide-react");
 /**
  * Default loading component
  */
-var DefaultLoading = function () {
-  return (
-    <div className="space-y-2">
-      <skeleton_1.Skeleton className="h-4 w-full" />
-      <skeleton_1.Skeleton className="h-4 w-3/4" />
-      <skeleton_1.Skeleton className="h-4 w-1/2" />
-    </div>
-  );
-};
+var DefaultLoading = () => (
+  <div className="space-y-2">
+    <skeleton_1.Skeleton className="h-4 w-full" />
+    <skeleton_1.Skeleton className="h-4 w-3/4" />
+    <skeleton_1.Skeleton className="h-4 w-1/2" />
+  </div>
+);
 /**
  * Default access denied component
  */
-var DefaultAccessDenied = function (_a) {
+var DefaultAccessDenied = (_a) => {
   var message = _a.message;
   return (
     <alert_1.Alert variant="destructive" className="border-red-200 bg-red-50">
@@ -193,7 +187,7 @@ var DefaultAccessDenied = function (_a) {
 /**
  * Permission Guard Component
  */
-var PermissionGuard = function (_a) {
+var PermissionGuard = (_a) => {
   var children = _a.children,
     requiredRole = _a.requiredRole,
     _b = _a.requiredPermissions,
@@ -231,10 +225,10 @@ var PermissionGuard = function (_a) {
   /**
    * Check all access conditions
    */
-  var checkAccess = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var checkAccess = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var hasRequired, hasAny, customResult, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 7, , 8]);
@@ -280,69 +274,64 @@ var PermissionGuard = function (_a) {
         }
       });
     });
-  };
   /**
    * Effect to check permissions when dependencies change
    */
-  (0, react_1.useEffect)(
-    function () {
-      var mounted = true;
-      var performCheck = function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var access, error_2;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (permissionsLoading || roleLoading) {
-                  return [2 /*return*/];
-                }
-                setIsChecking(true);
-                setCheckError(null);
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                return [4 /*yield*/, checkAccess()];
-              case 2:
-                access = _a.sent();
-                if (mounted) {
-                  setHasAccess(access);
-                }
-                return [3 /*break*/, 5];
-              case 3:
-                error_2 = _a.sent();
-                console.error("Access check error:", error_2);
-                if (mounted) {
-                  setHasAccess(false);
-                  setCheckError(error_2 instanceof Error ? error_2.message : "Access check failed");
-                }
-                return [3 /*break*/, 5];
-              case 4:
-                if (mounted) {
-                  setIsChecking(false);
-                }
-                return [7 /*endfinally*/];
-              case 5:
+  (0, react_1.useEffect)(() => {
+    var mounted = true;
+    var performCheck = () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var access, error_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (permissionsLoading || roleLoading) {
                 return [2 /*return*/];
-            }
-          });
+              }
+              setIsChecking(true);
+              setCheckError(null);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              return [4 /*yield*/, checkAccess()];
+            case 2:
+              access = _a.sent();
+              if (mounted) {
+                setHasAccess(access);
+              }
+              return [3 /*break*/, 5];
+            case 3:
+              error_2 = _a.sent();
+              console.error("Access check error:", error_2);
+              if (mounted) {
+                setHasAccess(false);
+                setCheckError(error_2 instanceof Error ? error_2.message : "Access check failed");
+              }
+              return [3 /*break*/, 5];
+            case 4:
+              if (mounted) {
+                setIsChecking(false);
+              }
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      performCheck();
-      return function () {
-        mounted = false;
-      };
-    },
-    [
-      permissionsLoading,
-      roleLoading,
-      role,
-      requiredRole,
-      requiredPermissions,
-      anyPermissions,
-      resourceId,
-      customCheck,
-    ],
-  );
+      });
+    performCheck();
+    return () => {
+      mounted = false;
+    };
+  }, [
+    permissionsLoading,
+    roleLoading,
+    role,
+    requiredRole,
+    requiredPermissions,
+    anyPermissions,
+    resourceId,
+    customCheck,
+  ]);
   /**
    * Show loading state
    */
@@ -382,7 +371,7 @@ var PermissionGuard = function (_a) {
   return asFragment ? <>{children}</> : <div>{children}</div>;
 };
 exports.PermissionGuard = PermissionGuard;
-var RoleGuard = function (_a) {
+var RoleGuard = (_a) => {
   var children = _a.children,
     allowedRoles = _a.allowedRoles,
     fallback = _a.fallback,
@@ -403,7 +392,7 @@ var RoleGuard = function (_a) {
   return <>{children}</>;
 };
 exports.RoleGuard = RoleGuard;
-var FeatureGuard = function (_a) {
+var FeatureGuard = (_a) => {
   var children = _a.children,
     feature = _a.feature,
     _b = _a.action,
@@ -431,14 +420,14 @@ var FeatureGuard = function (_a) {
   return <>{children}</>;
 };
 exports.FeatureGuard = FeatureGuard;
-var ConditionalRender = function (_a) {
+var ConditionalRender = (_a) => {
   var condition = _a.condition,
     children = _a.children,
     fallback = _a.fallback;
   return condition ? <>{children}</> : <>{fallback || null}</>;
 };
 exports.ConditionalRender = ConditionalRender;
-var PermissionButton = function (_a) {
+var PermissionButton = (_a) => {
   var _b = _a.requiredPermissions,
     requiredPermissions = _b === void 0 ? [] : _b,
     _c = _a.anyPermissions,
@@ -474,7 +463,7 @@ var PermissionButton = function (_a) {
   );
 };
 exports.PermissionButton = PermissionButton;
-var PermissionLink = function (_a) {
+var PermissionLink = (_a) => {
   var _b = _a.requiredPermissions,
     requiredPermissions = _b === void 0 ? [] : _b,
     _c = _a.anyPermissions,

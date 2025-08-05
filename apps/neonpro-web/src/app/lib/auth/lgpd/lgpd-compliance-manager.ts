@@ -14,7 +14,7 @@
  */
 
 import type { createClient } from "@/lib/supabase/client";
-import type { securityAuditLogger, AuditEventType } from "../audit/security-audit-logger";
+import type { AuditEventType, securityAuditLogger } from "../audit/security-audit-logger";
 
 // LGPD Data Subject Rights
 export enum LGPDRights {
@@ -467,10 +467,11 @@ class LGPDComplianceManager {
       let response = "";
 
       switch (request.type) {
-        case LGPDRights.ACCESS:
+        case LGPDRights.ACCESS: {
           const userData = await this.exportUserData(request.userId);
           response = "Dados exportados e disponibilizados para download";
           break;
+        }
 
         case LGPDRights.RECTIFICATION:
           response = "Solicitação de retificação registrada. Entre em contato para prosseguir.";

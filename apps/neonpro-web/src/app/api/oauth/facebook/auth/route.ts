@@ -1,7 +1,7 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { FacebookOAuthHandler } from "@/lib/oauth/platforms/facebook-handler";
 import type { OAuthState } from "@/lib/oauth/types";
+import type { createClient } from "@/lib/supabase/server";
 
 /**
  * Facebook OAuth Authorization Endpoint

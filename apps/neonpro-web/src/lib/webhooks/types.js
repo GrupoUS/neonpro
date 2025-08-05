@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Webhook & Event System Types
  * Story 7.3: Webhook & Event System Implementation

@@ -1,5 +1,5 @@
-import type { Document, Page, Text, View, StyleSheet, Image, Font, pdf } from "@react-pdf/renderer";
-import React from "react";
+import type { Document, Font, Image, Page, pdf, StyleSheet, Text, View } from "@react-pdf/renderer";
+import type React from "react";
 
 // Register fonts (optional)
 // Font.register({

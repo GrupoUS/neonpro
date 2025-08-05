@@ -6,7 +6,25 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import type {
+  ArrowRight,
+  Brain,
+  ChevronRight,
+  Clock,
+  Filter,
+  History,
+  Search,
+  Sparkles,
+  Star,
+  Target,
+  TrendingUp,
+  User,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Command,
   CommandEmpty,
@@ -16,34 +34,17 @@ import type {
   CommandList,
 } from "@/components/ui/command";
 import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Separator } from "@/components/ui/separator";
 import type { ScrollArea } from "@/components/ui/scroll-area";
-import type {
-  Search,
-  Clock,
-  TrendingUp,
-  User,
-  Brain,
-  Sparkles,
-  Filter,
-  ArrowRight,
-  Zap,
-  Target,
-  History,
-  Star,
-  ChevronRight,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
+import type { Separator } from "@/components/ui/separator";
 import type { useDebounce } from "@/hooks/use-debounce";
 import type {
+  LearningData,
+  SearchSuggestion,
+  SuggestionContext,
+  SuggestionOptions,
   searchSuggestions,
-  type SearchSuggestion,
-  type SuggestionContext,
-  type SuggestionOptions,
-  type LearningData,
 } from "@/lib/search/search-suggestions";
+import type { cn } from "@/lib/utils";
 
 interface SmartAutocompleteProps {
   value: string;

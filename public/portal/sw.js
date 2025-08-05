@@ -87,7 +87,7 @@ self.addEventListener("fetch", (event) => {
 
 // Handle portal page requests
 async function handlePortalRequest(request) {
-  const url = new URL(request.url);
+  const _url = new URL(request.url);
 
   try {
     // Try network first for HTML pages
@@ -119,7 +119,7 @@ async function handlePortalRequest(request) {
     }
 
     return networkResponse;
-  } catch (error) {
+  } catch (_error) {
     console.log("Portal SW: Network failed, serving from cache or offline page");
 
     // Try to serve from cache
@@ -179,7 +179,7 @@ async function handleAPIRequest(request) {
 
     // For POST/PUT/DELETE requests, always go to network
     return fetch(request);
-  } catch (error) {
+  } catch (_error) {
     console.log("Portal SW: API request failed, trying cache");
 
     // For GET requests, try to serve from cache

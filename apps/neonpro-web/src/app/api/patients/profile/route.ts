@@ -1,8 +1,8 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { ProfileManager } from "@/lib/patients/profile-manager";
-import type { PatientInsights } from "@/lib/ai/patient-insights";
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
+import type { PatientInsights } from "@/lib/ai/patient-insights";
+import type { ProfileManager } from "@/lib/patients/profile-manager";
+import type { createClient } from "@/lib/supabase/server";
 
 // Initialize services
 const profileManager = new ProfileManager();

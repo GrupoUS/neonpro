@@ -10,9 +10,9 @@
 
 "use client";
 
-import type { cn } from "@/lib/utils";
 import type { AlertTriangle, Crown, Sparkles, TrendingUp, X, Zap } from "lucide-react";
 import type { useState } from "react";
+import type { cn } from "@/lib/utils";
 import type { Badge } from "../ui/badge";
 import type { Button } from "../ui/button";
 import type {

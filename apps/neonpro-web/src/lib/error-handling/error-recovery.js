@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Error Recovery System - VIBECODE V1.0 Resilience
  * Automatic error recovery and self-healing mechanisms
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorRecoverySystem = exports.ErrorRecoverySystem = void 0;
-var ErrorRecoverySystem = /** @class */ (function () {
+var ErrorRecoverySystem = /** @class */ (() => {
   function ErrorRecoverySystem() {
     this.recoveryStrategies = new Map();
     this.recoveryAttempts = new Map();
@@ -163,63 +160,53 @@ var ErrorRecoverySystem = /** @class */ (function () {
    * Initialize default recovery strategies
    */
   ErrorRecoverySystem.prototype.initializeDefaultStrategies = function () {
-    var _this = this;
     // Network retry strategy
     this.addRecoveryStrategy({
       name: "network_retry",
-      condition: function (error) {
-        return error.errorType.includes("network") || error.errorType.includes("timeout");
-      },
-      action: function (error) {
-        return __awaiter(_this, void 0, void 0, function () {
+      condition: (error) =>
+        error.errorType.includes("network") || error.errorType.includes("timeout"),
+      action: (error) =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
-                return [
-                  4 /*yield*/,
-                  this.delay(Math.pow(2, this.getRetryCount(error.errorId)) * 1000),
-                ];
+                return [4 /*yield*/, this.delay(2 ** this.getRetryCount(error.errorId) * 1000)];
               case 1:
                 _a.sent();
                 return [2 /*return*/, true];
             }
           });
-        });
-      },
+        }),
       maxRetries: 3,
     });
     // Token refresh strategy
     this.addRecoveryStrategy({
       name: "token_refresh",
-      condition: function (error) {
-        return error.errorType.includes("auth") || error.errorType.includes("unauthorized");
-      },
-      action: function (error) {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+      condition: (error) =>
+        error.errorType.includes("auth") || error.errorType.includes("unauthorized"),
+      action: (error) =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             console.log("🔑 Attempting token refresh");
             // Token refresh logic would go here
             return [2 /*return*/, true];
           });
-        });
-      },
+        }),
       maxRetries: 1,
     });
     // Data validation strategy
     this.addRecoveryStrategy({
       name: "data_validation",
-      condition: function (error) {
-        return error.errorType.includes("validation") || error.errorType.includes("invalid");
-      },
-      action: function (error) {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+      condition: (error) =>
+        error.errorType.includes("validation") || error.errorType.includes("invalid"),
+      action: (error) =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             console.log("✅ Attempting data validation recovery");
             // Data validation recovery logic
             return [2 /*return*/, true];
           });
-        });
-      },
+        }),
       maxRetries: 2,
     });
   };
@@ -247,10 +234,8 @@ var ErrorRecoverySystem = /** @class */ (function () {
             console.log(
               "\uD83D\uDD27 Attempting recovery for error: ".concat(errorContext.errorId),
             );
-            applicableStrategies = Array.from(this.recoveryStrategies.values()).filter(
-              function (strategy) {
-                return strategy.condition(errorContext);
-              },
+            applicableStrategies = Array.from(this.recoveryStrategies.values()).filter((strategy) =>
+              strategy.condition(errorContext),
             );
             if (applicableStrategies.length === 0) {
               console.log(
@@ -327,14 +312,14 @@ var ErrorRecoverySystem = /** @class */ (function () {
   /**
    * ⏰ Schedule retry with exponential backoff
    */
-  ErrorRecoverySystem.prototype.scheduleRetry = function (errorContext) {
+  ErrorRecoverySystem.prototype.scheduleRetry = (errorContext) => {
     var _a;
     var retryCount =
       ((_a = errorContext.metadata) === null || _a === void 0 ? void 0 : _a.retryCount) || 0;
     var maxRetries = 3;
     if (retryCount < maxRetries) {
-      var backoffMs = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
-      setTimeout(function () {
+      var backoffMs = 2 ** retryCount * 1000; // 1s, 2s, 4s
+      setTimeout(() => {
         console.log(
           "\uD83D\uDD04 Auto-retry attempt "
             .concat(retryCount + 1, " for error ")
@@ -352,7 +337,7 @@ var ErrorRecoverySystem = /** @class */ (function () {
   /**
    * 📝 Log recovery action taken
    */
-  ErrorRecoverySystem.prototype.logRecoveryAction = function (errorContext, action) {
+  ErrorRecoverySystem.prototype.logRecoveryAction = (errorContext, action) => {
     console.log(
       "\uD83D\uDD27 Recovery action for ".concat(errorContext.errorId, ": ").concat(action),
     );
@@ -392,11 +377,7 @@ var ErrorRecoverySystem = /** @class */ (function () {
   /**
    * Delay utility
    */
-  ErrorRecoverySystem.prototype.delay = function (ms) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, ms);
-    });
-  };
+  ErrorRecoverySystem.prototype.delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   /**
    * Get recovery statistics
    */
@@ -426,7 +407,7 @@ var ErrorRecoverySystem = /** @class */ (function () {
       maxAge = 3600000;
     }
     var cutoff = Date.now() - maxAge;
-    this.recoveryHistory = this.recoveryHistory.filter(function (recovery) {
+    this.recoveryHistory = this.recoveryHistory.filter((recovery) => {
       var _a;
       return (
         (((_a = recovery.metadata) === null || _a === void 0 ? void 0 : _a.recoveredAt) || 0) >

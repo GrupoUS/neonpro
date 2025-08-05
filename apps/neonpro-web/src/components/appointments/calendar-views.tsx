@@ -1,18 +1,18 @@
 "use client";
 
-import React from "react";
-import type { Button } from "@/components/ui/button";
 import type {
   Calendar,
   CalendarDays,
-  Clock,
-  List,
   ChevronLeft,
   ChevronRight,
+  Clock,
+  List,
   RotateCcw,
 } from "lucide-react";
-import type { cn } from "@/lib/utils";
 import moment from "moment";
+import React from "react";
+import type { Button } from "@/components/ui/button";
+import type { cn } from "@/lib/utils";
 import "moment/locale/pt-br";
 
 // Configure moment for Brazilian Portuguese
@@ -96,7 +96,7 @@ export function CalendarViews({
     switch (currentView) {
       case "month":
         return momentDate.format("MMMM YYYY");
-      case "week":
+      case "week": {
         const weekStart = momentDate.startOf("week");
         const weekEnd = momentDate.endOf("week");
 
@@ -105,6 +105,7 @@ export function CalendarViews({
         } else {
           return `${weekStart.format("DD MMM")} - ${weekEnd.format("DD MMM YYYY")}`;
         }
+      }
       case "day":
         return momentDate.format("dddd, DD [de] MMMM [de] YYYY");
       case "agenda":

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Performance Testing Suite
  * Tests subscription system performance and load handling
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -42,7 +41,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,8 +70,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -93,9 +90,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -154,25 +151,25 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var testUtils_1 = require("../utils/testUtils");
 // ============================================================================
 // Performance Testing Suite
 // ============================================================================
-(0, globals_1.describe)("Subscription System Performance", function () {
-  (0, globals_1.beforeEach)(function () {
+(0, globals_1.describe)("Subscription System Performance", () => {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
   });
   // ============================================================================
   // Response Time Tests
   // ============================================================================
-  (0, globals_1.describe)("Response Time Performance", function () {
-    (0, globals_1.it)("should validate subscription within 100ms threshold", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Response Time Performance", () => {
+    (0, globals_1.it)("should validate subscription within 100ms threshold", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, subscription, isValid, endTime, responseTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           startTime = performance.now();
           subscription = (0, testUtils_1.createMockSubscription)({ status: "active" });
           isValid = subscription.status === "active" && subscription.endDate > new Date();
@@ -182,23 +179,23 @@ var testUtils_1 = require("../utils/testUtils");
           (0, globals_1.expect)(responseTime).toBeLessThan(100); // 100ms threshold
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should handle concurrent subscription checks efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle concurrent subscription checks efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, promises, results, endTime, totalTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = performance.now();
-              promises = Array.from({ length: 100 }, function (_, index) {
-                return Promise.resolve(
+              promises = Array.from({ length: 100 }, (_, index) =>
+                Promise.resolve(
                   (0, testUtils_1.createMockSubscription)({
                     id: "test-sub-".concat(index),
                     status: "active",
                   }),
-                );
-              });
+                ),
+              );
               return [4 /*yield*/, Promise.all(promises)];
             case 1:
               results = _a.sent();
@@ -209,20 +206,20 @@ var testUtils_1 = require("../utils/testUtils");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // ============================================================================
   // Memory Usage Tests
   // ============================================================================
-  (0, globals_1.describe)("Memory Usage Optimization", function () {
-    (0, globals_1.it)("should not cause memory leaks with repeated operations", function () {
+  (0, globals_1.describe)("Memory Usage Optimization", () => {
+    (0, globals_1.it)("should not cause memory leaks with repeated operations", () => {
       var initialMemory = process.memoryUsage().heapUsed;
       // Simulate 1000 subscription operations
       for (var i = 0; i < 1000; i++) {
         var subscription = (0, testUtils_1.createMockSubscription)({ id: "test-".concat(i) });
         // Simulate processing
-        var processed = __assign(__assign({}, subscription), { processed: true });
+        var _processed = __assign(__assign({}, subscription), { processed: true });
       }
       // Force garbage collection if available
       if (global.gc) {
@@ -233,18 +230,14 @@ var testUtils_1 = require("../utils/testUtils");
       // Memory increase should be reasonable (less than 50MB)
       (0, globals_1.expect)(memoryIncrease).toBeLessThan(50 * 1024 * 1024);
     });
-    (0, globals_1.it)("should efficiently handle large subscription datasets", function () {
-      var largeDataset = Array.from({ length: 10000 }, function (_, index) {
-        return (0, testUtils_1.createMockSubscription)({ id: "large-dataset-".concat(index) });
-      });
+    (0, globals_1.it)("should efficiently handle large subscription datasets", () => {
+      var largeDataset = Array.from({ length: 10000 }, (_, index) =>
+        (0, testUtils_1.createMockSubscription)({ id: "large-dataset-".concat(index) }),
+      );
       var startTime = performance.now();
       // Simulate filtering operations
-      var activeSubscriptions = largeDataset.filter(function (sub) {
-        return sub.status === "active";
-      });
-      var premiumSubscriptions = activeSubscriptions.filter(function (sub) {
-        return sub.tier === "premium";
-      });
+      var activeSubscriptions = largeDataset.filter((sub) => sub.status === "active");
+      var _premiumSubscriptions = activeSubscriptions.filter((sub) => sub.tier === "premium");
       var endTime = performance.now();
       var processingTime = endTime - startTime;
       (0, globals_1.expect)(largeDataset).toHaveLength(10000);
@@ -254,45 +247,42 @@ var testUtils_1 = require("../utils/testUtils");
   // ============================================================================
   // Cache Performance Tests
   // ============================================================================
-  (0, globals_1.describe)("Caching Performance", function () {
-    (0, globals_1.it)(
-      "should provide significant performance improvement with caching",
-      function () {
-        var startTimeNoCacache = performance.now();
-        var subscription1 = (0, testUtils_1.createMockSubscription)();
-        var endTimeNoCache = performance.now();
-        var noCacheTime = endTimeNoCache - startTimeNoCacache;
-        // Simulate cache hit (subsequent call)
-        var startTimeCached = performance.now();
-        var subscription2 = __assign({}, subscription1); // Simulate cached result
-        var endTimeCached = performance.now();
-        var cachedTime = endTimeCached - startTimeCached;
-        // Cached access should be significantly faster
-        (0, globals_1.expect)(cachedTime).toBeLessThan(noCacheTime);
-      },
-    );
+  (0, globals_1.describe)("Caching Performance", () => {
+    (0, globals_1.it)("should provide significant performance improvement with caching", () => {
+      var startTimeNoCacache = performance.now();
+      var subscription1 = (0, testUtils_1.createMockSubscription)();
+      var endTimeNoCache = performance.now();
+      var noCacheTime = endTimeNoCache - startTimeNoCacache;
+      // Simulate cache hit (subsequent call)
+      var startTimeCached = performance.now();
+      var _subscription2 = __assign({}, subscription1); // Simulate cached result
+      var endTimeCached = performance.now();
+      var cachedTime = endTimeCached - startTimeCached;
+      // Cached access should be significantly faster
+      (0, globals_1.expect)(cachedTime).toBeLessThan(noCacheTime);
+    });
   });
   // ============================================================================
   // Load Testing
   // ============================================================================
-  (0, globals_1.describe)("Load Testing", function () {
-    (0, globals_1.it)("should handle high-frequency subscription checks", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Load Testing", () => {
+    (0, globals_1.it)("should handle high-frequency subscription checks", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var numberOfRequests, startTime, promises, results, endTime, totalTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               numberOfRequests = 1000;
               startTime = Date.now();
-              promises = Array.from({ length: numberOfRequests }, function () {
-                return __awaiter(void 0, void 0, void 0, function () {
+              promises = Array.from({ length: numberOfRequests }, () =>
+                __awaiter(void 0, void 0, void 0, function () {
                   var subscription;
-                  return __generator(this, function (_a) {
+                  return __generator(this, (_a) => {
                     subscription = (0, testUtils_1.createMockSubscription)();
                     return [2 /*return*/, subscription.status === "active"];
                   });
-                });
-              });
+                }),
+              );
               return [4 /*yield*/, Promise.all(promises)];
             case 1:
               results = _a.sent();
@@ -304,10 +294,10 @@ var testUtils_1 = require("../utils/testUtils");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should maintain performance under sustained load", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should maintain performance under sustained load", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var iterations,
           requestsPerIteration,
           performanceResults,
@@ -318,7 +308,7 @@ var testUtils_1 = require("../utils/testUtils");
           mean,
           variance,
           standardDeviation;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               iterations = 5;
@@ -329,9 +319,9 @@ var testUtils_1 = require("../utils/testUtils");
             case 1:
               if (!(i < iterations)) return [3 /*break*/, 4];
               startTime = performance.now();
-              promises = Array.from({ length: requestsPerIteration }, function () {
-                return Promise.resolve((0, testUtils_1.createMockSubscription)());
-              });
+              promises = Array.from({ length: requestsPerIteration }, () =>
+                Promise.resolve((0, testUtils_1.createMockSubscription)()),
+              );
               return [4 /*yield*/, Promise.all(promises)];
             case 2:
               _a.sent();
@@ -342,20 +332,16 @@ var testUtils_1 = require("../utils/testUtils");
               i++;
               return [3 /*break*/, 1];
             case 4:
-              mean =
-                performanceResults.reduce(function (a, b) {
-                  return a + b;
-                }) / performanceResults.length;
+              mean = performanceResults.reduce((a, b) => a + b) / performanceResults.length;
               variance =
-                performanceResults.reduce(function (acc, time) {
-                  return acc + Math.pow(time - mean, 2);
-                }, 0) / performanceResults.length;
+                performanceResults.reduce((acc, time) => acc + (time - mean) ** 2, 0) /
+                performanceResults.length;
               standardDeviation = Math.sqrt(variance);
               (0, globals_1.expect)(standardDeviation).toBeLessThan(mean * 0.5);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

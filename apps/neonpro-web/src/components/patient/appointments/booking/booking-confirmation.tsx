@@ -1,13 +1,5 @@
 "use client";
 
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Label } from "@/components/ui/label";
-import type { Separator } from "@/components/ui/separator";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
@@ -24,6 +16,14 @@ import type {
   User,
 } from "lucide-react";
 import type { useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
 
 interface Service {
   id: string;

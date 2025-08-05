@@ -1,11 +1,7 @@
 // app/api/automated-analysis/reports/route.ts
 // API endpoints for analysis reports generation and management
 
-import type { createautomatedBeforeAfterAnalysisService } from "@/app/lib/services/automated-before-after-analysis";
-import type { validationSchemas } from "@/app/lib/validations/automated-before-after-analysis";
-import type { cookies } from "next/headers";
-import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // GET /api/automated-analysis/reports - Get analysis reports with filters
 export async function GET(request: NextRequest) {

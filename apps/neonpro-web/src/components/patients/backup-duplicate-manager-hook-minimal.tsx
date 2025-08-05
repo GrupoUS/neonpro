@@ -1,7 +1,7 @@
 "use client";
 
-import type { Button } from "@/components/ui/button";
 import React from "react";
+import type { Button } from "@/components/ui/button";
 
 export interface DuplicateManagerHookMinimalProps {
   duplicates: Array<{

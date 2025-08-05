@@ -1,5 +1,16 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Package,
+  Plus,
+  Search,
+  Shield,
+  Thermometer,
+} from "lucide-react";
+import type { useMemo, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -25,17 +36,6 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Package,
-  Plus,
-  Search,
-  Shield,
-  Thermometer,
-} from "lucide-react";
-import type { useMemo, useState } from "react";
 
 interface Product {
   id: string;

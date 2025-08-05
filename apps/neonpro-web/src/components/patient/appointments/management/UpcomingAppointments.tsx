@@ -1,12 +1,5 @@
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent } from "@/components/ui/card";
-import type {
-  CancellationPolicies,
-  PatientAppointment,
-} from "@/hooks/patient/usePatientAppointments";
 import type { format, parseISO } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
@@ -18,6 +11,13 @@ import type {
   User,
   XCircle,
 } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
+  CancellationPolicies,
+  PatientAppointment,
+} from "@/hooks/patient/usePatientAppointments";
 
 /**
  * Upcoming Appointments Component for NeonPro

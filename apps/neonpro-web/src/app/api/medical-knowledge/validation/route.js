@@ -1,17 +1,16 @@
-"use strict";
 // Evidence Validation API Endpoints
 // Story 9.5: API endpoints for evidence validation and recommendation analysis
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -166,7 +163,7 @@ function GET(request) {
       evidence,
       evidenceError,
       error_1;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 13, , 14]);
@@ -257,39 +254,27 @@ function GET(request) {
             automated_validations:
               (stats === null || stats === void 0
                 ? void 0
-                : stats.filter(function (v) {
-                    return v.automated;
-                  }).length) || 0,
+                : stats.filter((v) => v.automated).length) || 0,
             manual_validations:
               (stats === null || stats === void 0
                 ? void 0
-                : stats.filter(function (v) {
-                    return !v.automated;
-                  }).length) || 0,
+                : stats.filter((v) => !v.automated).length) || 0,
             validated:
               (stats === null || stats === void 0
                 ? void 0
-                : stats.filter(function (v) {
-                    return v.validation_status === "validated";
-                  }).length) || 0,
+                : stats.filter((v) => v.validation_status === "validated").length) || 0,
             conflicted:
               (stats === null || stats === void 0
                 ? void 0
-                : stats.filter(function (v) {
-                    return v.validation_status === "conflicted";
-                  }).length) || 0,
+                : stats.filter((v) => v.validation_status === "conflicted").length) || 0,
             unsupported:
               (stats === null || stats === void 0
                 ? void 0
-                : stats.filter(function (v) {
-                    return v.validation_status === "unsupported";
-                  }).length) || 0,
+                : stats.filter((v) => v.validation_status === "unsupported").length) || 0,
             pending_review:
               (stats === null || stats === void 0
                 ? void 0
-                : stats.filter(function (v) {
-                    return v.validation_status === "requires_review";
-                  }).length) || 0,
+                : stats.filter((v) => v.validation_status === "requires_review").length) || 0,
           };
           return [2 /*return*/, server_2.NextResponse.json({ success: true, data: statistics })];
         case 9:
@@ -365,7 +350,7 @@ function POST(request) {
       synthesisData,
       synthesis,
       error_2;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 15, , 16]);
@@ -422,11 +407,7 @@ function POST(request) {
           }
           return [
             4 /*yield*/,
-            Promise.all(
-              recommendations.map(function (rec) {
-                return service.validateRecommendation(rec);
-              }),
-            ),
+            Promise.all(recommendations.map((rec) => service.validateRecommendation(rec))),
           ];
         case 7:
           batchResults = _c.sent();
@@ -585,7 +566,7 @@ function PUT(request) {
       rejected,
       rejectError,
       error_3;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 12, , 13]);

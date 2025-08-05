@@ -1,4 +1,3 @@
-"use strict";
 // Stock Analytics Service
 // Analytics and metrics system for stock alert resolution tracking
 // Story 11.4: Enhanced Stock Alerts System
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,14 +146,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("@/lib/supabase/server");
-var StockAnalyticsService = /** @class */ (function () {
+var StockAnalyticsService = /** @class */ (() => {
   function StockAnalyticsService() {}
   StockAnalyticsService.prototype.getSupabaseClient = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -231,43 +228,32 @@ var StockAnalyticsService = /** @class */ (function () {
               return [2 /*return*/, null];
             }
             totalAlertsCreated = alerts.length;
-            resolvedAlerts = alerts.filter(function (a) {
-              return a.status === "resolved";
-            });
-            dismissedAlerts = alerts.filter(function (a) {
-              return a.status === "dismissed";
-            });
+            resolvedAlerts = alerts.filter((a) => a.status === "resolved");
+            dismissedAlerts = alerts.filter((a) => a.status === "dismissed");
             totalAlertsResolved = resolvedAlerts.length;
             totalAlertsDismissed = dismissedAlerts.length;
             resolutionTimes = resolvedAlerts
-              .filter(function (a) {
-                return a.resolved_at;
-              })
-              .map(function (a) {
+              .filter((a) => a.resolved_at)
+              .map((a) => {
                 var created = new Date(a.created_at);
                 var resolved = new Date(a.resolved_at);
                 return (resolved.getTime() - created.getTime()) / (1000 * 60 * 60); // hours
               });
             acknowledgmentTimes = alerts
-              .filter(function (a) {
-                return a.acknowledged_at;
-              })
-              .map(function (a) {
+              .filter((a) => a.acknowledged_at)
+              .map((a) => {
                 var created = new Date(a.created_at);
                 var acknowledged = new Date(a.acknowledged_at);
                 return (acknowledged.getTime() - created.getTime()) / (1000 * 60 * 60); // hours
               });
             avgResolutionTime =
               resolutionTimes.length > 0
-                ? resolutionTimes.reduce(function (sum, time) {
-                    return sum + time;
-                  }, 0) / resolutionTimes.length
+                ? resolutionTimes.reduce((sum, time) => sum + time, 0) / resolutionTimes.length
                 : undefined;
             avgAcknowledgmentTime =
               acknowledgmentTimes.length > 0
-                ? acknowledgmentTimes.reduce(function (sum, time) {
-                    return sum + time;
-                  }, 0) / acknowledgmentTimes.length
+                ? acknowledgmentTimes.reduce((sum, time) => sum + time, 0) /
+                  acknowledgmentTimes.length
                 : undefined;
             fastestResolutionTime =
               resolutionTimes.length > 0 ? Math.min.apply(Math, resolutionTimes) : undefined;
@@ -361,16 +347,11 @@ var StockAnalyticsService = /** @class */ (function () {
               console.error("Error calculating recurrence count:", error);
               return [2 /*return*/, 0];
             }
-            productCounts = alerts.reduce(function (acc, alert) {
+            productCounts = alerts.reduce((acc, alert) => {
               acc[alert.product_id] = (acc[alert.product_id] || 0) + 1;
               return acc;
             }, {});
-            return [
-              2 /*return*/,
-              Object.values(productCounts).filter(function (count) {
-                return count > 1;
-              }).length,
-            ];
+            return [2 /*return*/, Object.values(productCounts).filter((count) => count > 1).length];
           case 3:
             error_2 = _b.sent();
             console.error("Error in calculateRecurrenceCount:", error_2);
@@ -434,7 +415,7 @@ var StockAnalyticsService = /** @class */ (function () {
             filteredNotifications =
               notifications === null || notifications === void 0
                 ? void 0
-                : notifications.filter(function (notif) {
+                : notifications.filter((notif) => {
                     var alert = notif.stock_alerts_history;
                     if (alertType && alertType !== "all" && alert.alert_type !== alertType)
                       return false;
@@ -447,9 +428,9 @@ var StockAnalyticsService = /** @class */ (function () {
                     return true;
                   });
             totalNotifications = filteredNotifications.length;
-            successfulNotifications = filteredNotifications.filter(function (n) {
-              return n.status === "sent" || n.status === "delivered";
-            }).length;
+            successfulNotifications = filteredNotifications.filter(
+              (n) => n.status === "sent" || n.status === "delivered",
+            ).length;
             successRate =
               totalNotifications > 0 ? (successfulNotifications / totalNotifications) * 100 : 0;
             return [
@@ -649,9 +630,9 @@ var StockAnalyticsService = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              data.map(function (row) {
-                return __assign(__assign({}, row), { metric_date: new Date(row.metric_date) });
-              }),
+              data.map((row) =>
+                __assign(__assign({}, row), { metric_date: new Date(row.metric_date) }),
+              ),
             ];
           case 3:
             error_6 = _b.sent();
@@ -697,7 +678,7 @@ var StockAnalyticsService = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              alerts.map(function (alert) {
+              alerts.map((alert) => {
                 var created = new Date(alert.created_at);
                 var acknowledged = alert.acknowledged_at
                   ? new Date(alert.acknowledged_at)
@@ -761,7 +742,7 @@ var StockAnalyticsService = /** @class */ (function () {
               return [2 /*return*/, []];
             }
             patterns_1 = new Map();
-            alerts.forEach(function (alert) {
+            alerts.forEach((alert) => {
               var key = "".concat(alert.product_id, "_").concat(alert.alert_type);
               if (!patterns_1.has(key)) {
                 patterns_1.set(key, {
@@ -777,13 +758,9 @@ var StockAnalyticsService = /** @class */ (function () {
             return [
               2 /*return*/,
               Array.from(patterns_1.values())
-                .filter(function (pattern) {
-                  return pattern.dates.length > 1;
-                })
-                .map(function (pattern) {
-                  var sortedDates = pattern.dates.sort(function (a, b) {
-                    return a.getTime() - b.getTime();
-                  });
+                .filter((pattern) => pattern.dates.length > 1)
+                .map((pattern) => {
+                  var sortedDates = pattern.dates.sort((a, b) => a.getTime() - b.getTime());
                   var intervals = [];
                   for (var i = 1; i < sortedDates.length; i++) {
                     var days =
@@ -792,19 +769,13 @@ var StockAnalyticsService = /** @class */ (function () {
                     intervals.push(days);
                   }
                   var avgDaysBetween =
-                    intervals.reduce(function (sum, days) {
-                      return sum + days;
-                    }, 0) / intervals.length;
+                    intervals.reduce((sum, days) => sum + days, 0) / intervals.length;
                   // Determine trend (simplified - compare first half to second half)
                   var mid = Math.floor(intervals.length / 2);
                   var firstHalfAvg =
-                    intervals.slice(0, mid).reduce(function (sum, days) {
-                      return sum + days;
-                    }, 0) / mid;
+                    intervals.slice(0, mid).reduce((sum, days) => sum + days, 0) / mid;
                   var secondHalfAvg =
-                    intervals.slice(mid).reduce(function (sum, days) {
-                      return sum + days;
-                    }, 0) /
+                    intervals.slice(mid).reduce((sum, days) => sum + days, 0) /
                     (intervals.length - mid);
                   var trend = "stable";
                   if (secondHalfAvg < firstHalfAvg * 0.8) {
@@ -822,9 +793,7 @@ var StockAnalyticsService = /** @class */ (function () {
                     trend: trend,
                   };
                 })
-                .sort(function (a, b) {
-                  return b.frequency_count - a.frequency_count;
-                }),
+                .sort((a, b) => b.frequency_count - a.frequency_count),
             ];
           case 3:
             error_8 = _b.sent();
@@ -879,45 +848,23 @@ var StockAnalyticsService = /** @class */ (function () {
             ];
           case 1:
             metrics = _b.sent();
-            totalAlerts = metrics.reduce(function (sum, m) {
-              return sum + m.total_alerts_created;
-            }, 0);
-            resolvedAlerts = metrics.reduce(function (sum, m) {
-              return sum + m.total_alerts_resolved;
-            }, 0);
+            totalAlerts = metrics.reduce((sum, m) => sum + m.total_alerts_created, 0);
+            resolvedAlerts = metrics.reduce((sum, m) => sum + m.total_alerts_resolved, 0);
             resolutionRate = totalAlerts > 0 ? (resolvedAlerts / totalAlerts) * 100 : 0;
             avgResolutionTime =
               metrics
-                .filter(function (m) {
-                  return m.avg_resolution_time_hours;
-                })
-                .reduce(function (sum, m) {
-                  return sum + (m.avg_resolution_time_hours || 0);
-                }, 0) /
-                metrics.filter(function (m) {
-                  return m.avg_resolution_time_hours;
-                }).length || 0;
+                .filter((m) => m.avg_resolution_time_hours)
+                .reduce((sum, m) => sum + (m.avg_resolution_time_hours || 0), 0) /
+                metrics.filter((m) => m.avg_resolution_time_hours).length || 0;
             criticalAlertsCount = metrics
-              .filter(function (m) {
-                return m.severity_level === "critical";
-              })
-              .reduce(function (sum, m) {
-                return sum + m.total_alerts_created;
-              }, 0);
-            recurringIssuesCount = metrics.reduce(function (sum, m) {
-              return sum + m.recurrence_count;
-            }, 0);
+              .filter((m) => m.severity_level === "critical")
+              .reduce((sum, m) => sum + m.total_alerts_created, 0);
+            recurringIssuesCount = metrics.reduce((sum, m) => sum + m.recurrence_count, 0);
             notificationSuccessRate =
               metrics
-                .filter(function (m) {
-                  return m.notification_success_rate;
-                })
-                .reduce(function (sum, m) {
-                  return sum + (m.notification_success_rate || 0);
-                }, 0) /
-                metrics.filter(function (m) {
-                  return m.notification_success_rate;
-                }).length || 0;
+                .filter((m) => m.notification_success_rate)
+                .reduce((sum, m) => sum + (m.notification_success_rate || 0), 0) /
+                metrics.filter((m) => m.notification_success_rate).length || 0;
             return [4 /*yield*/, this.getSupabaseClient()];
           case 2:
             supabase = _b.sent();
@@ -934,32 +881,26 @@ var StockAnalyticsService = /** @class */ (function () {
             (_a = _b.sent()), (alertTypes = _a.data), (alertTypesError = _a.error);
             topAlertTypes = alertTypes
               ? Object.entries(
-                  alertTypes.reduce(function (acc, alert) {
+                  alertTypes.reduce((acc, alert) => {
                     acc[alert.alert_type] = (acc[alert.alert_type] || 0) + 1;
                     return acc;
                   }, {}),
                 )
-                  .map(function (_a) {
+                  .map((_a) => {
                     var type = _a[0],
                       count = _a[1];
                     return { type: type, count: count };
                   })
-                  .sort(function (a, b) {
-                    return b.count - a.count;
-                  })
+                  .sort((a, b) => b.count - a.count)
                   .slice(0, 5)
               : [];
             resolutionTrend = metrics
-              .filter(function (m) {
-                return m.alert_type === "all" && m.severity_level === "all";
-              })
-              .map(function (m) {
-                return {
-                  date: m.metric_date.toISOString().split("T")[0],
-                  resolved: m.total_alerts_resolved,
-                  created: m.total_alerts_created,
-                };
-              });
+              .filter((m) => m.alert_type === "all" && m.severity_level === "all")
+              .map((m) => ({
+                date: m.metric_date.toISOString().split("T")[0],
+                resolved: m.total_alerts_resolved,
+                created: m.total_alerts_created,
+              }));
             return [
               2 /*return*/,
               {

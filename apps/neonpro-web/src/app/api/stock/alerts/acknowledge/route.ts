@@ -2,10 +2,10 @@
 // Implementation of Story 11.4: Alert Acknowledgment with Service Layer
 // Following Senior Developer patterns and audit trail
 
-import { NextRequest, NextResponse } from "next/server";
-import { createStockAlertService } from "@/app/lib/services/stock-alert.service";
-import { StockAlertError, AcknowledgeAlertRequest } from "@/app/lib/types/stock";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { createStockAlertService } from "@/app/lib/services/stock-alert.service";
+import { AcknowledgeAlertRequest, StockAlertError } from "@/app/lib/types/stock";
 
 // ============================================================================
 // VALIDATION SCHEMAS (QA Enhancement)

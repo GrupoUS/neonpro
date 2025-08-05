@@ -12,16 +12,16 @@
  * - Comprehensive audit trail
  */
 
+import type { createClient } from "@supabase/supabase-js";
 import type { z } from "zod";
 import type {
-  Permission,
+  getPermission,
+  HEALTHCARE_PERMISSIONS,
   HealthcareRole,
   MedicalSpecialty,
-  HEALTHCARE_PERMISSIONS,
-  getPermission,
+  Permission,
   permissionRequiresSpecialty,
 } from "./permissions";
-import type { createClient } from "@supabase/supabase-js";
 
 // ============================================================================
 // CORE RBAC TYPES & SCHEMAS

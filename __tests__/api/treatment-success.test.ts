@@ -117,7 +117,7 @@ const mockProtocolOptimization = {
   updated_at: "2025-01-26T10:00:00Z",
 };
 
-const mockQualityBenchmark = {
+const _mockQualityBenchmark = {
   id: "550e8400-e29b-41d4-a716-446655440007",
   treatment_type: "Botox",
   benchmark_type: "industry_standard",
@@ -133,7 +133,7 @@ const mockQualityBenchmark = {
   updated_at: "2025-01-26T10:00:00Z",
 };
 
-const mockComplianceReport = {
+const _mockComplianceReport = {
   id: "550e8400-e29b-41d4-a716-446655440008",
   report_type: "Monthly Quality Report",
   reporting_period: "January 2025",

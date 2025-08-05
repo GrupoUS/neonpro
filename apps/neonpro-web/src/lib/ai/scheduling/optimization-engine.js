@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Optimization Engine for AI Scheduling
  * Story 2.3: AI-Powered Automatic Scheduling Implementation
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -155,10 +152,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -167,11 +164,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OptimizationEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var OptimizationEngine = /** @class */ (function () {
+var OptimizationEngine = /** @class */ (() => {
   function OptimizationEngine(aiCore) {
     this.supabase = (0, client_1.createClient)();
     this.optimizationHistory = new Map();
@@ -316,7 +313,7 @@ var OptimizationEngine = /** @class */ (function () {
             return [4 /*yield*/, this.buildConstraintContext(recommendation, criteria)];
           case 3:
             context = _l.sent();
-            if (!!constraint.validator(recommendation.timeSlot, context)) return [3 /*break*/, 5];
+            if (constraint.validator(recommendation.timeSlot, context)) return [3 /*break*/, 5];
             isValid = false;
             _d = (_c = violations).push;
             _j = {
@@ -372,9 +369,7 @@ var OptimizationEngine = /** @class */ (function () {
           case 13:
             return [
               2 /*return*/,
-              validatedRecommendations.sort(function (a, b) {
-                return b.optimizationScore - a.optimizationScore;
-              }),
+              validatedRecommendations.sort((a, b) => b.optimizationScore - a.optimizationScore),
             ];
         }
       });
@@ -390,8 +385,7 @@ var OptimizationEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var objectives, optimizedRecommendations;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             objectives = {
@@ -404,8 +398,8 @@ var OptimizationEngine = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                recommendations.map(function (rec) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                recommendations.map((rec) =>
+                  __awaiter(this, void 0, void 0, function () {
                     var scores, multiObjectiveScore;
                     return __generator(this, function (_a) {
                       switch (_a.label) {
@@ -446,17 +440,15 @@ var OptimizationEngine = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 1:
             optimizedRecommendations = _a.sent();
             return [
               2 /*return*/,
-              optimizedRecommendations.sort(function (a, b) {
-                return b.optimizationScore - a.optimizationScore;
-              }),
+              optimizedRecommendations.sort((a, b) => b.optimizationScore - a.optimizationScore),
             ];
         }
       });
@@ -492,12 +484,7 @@ var OptimizationEngine = /** @class */ (function () {
           case 4:
             earliestAvailable = _a.sent();
             scenarios.push(earliestAvailable);
-            return [
-              2 /*return*/,
-              scenarios.sort(function (a, b) {
-                return b.score - a.score;
-              }),
-            ];
+            return [2 /*return*/, scenarios.sort((a, b) => b.score - a.score)];
         }
       });
     });
@@ -505,10 +492,7 @@ var OptimizationEngine = /** @class */ (function () {
   /**
    * Calculate comprehensive optimization metrics
    */
-  OptimizationEngine.prototype.calculateOptimizationMetrics = function (
-    recommendations,
-    startTime,
-  ) {
+  OptimizationEngine.prototype.calculateOptimizationMetrics = (recommendations, startTime) => {
     if (recommendations.length === 0) {
       return {
         totalScore: 0,
@@ -534,7 +518,7 @@ var OptimizationEngine = /** @class */ (function () {
   /**
    * Calculate confidence score based on data quality and optimization results
    */
-  OptimizationEngine.prototype.calculateConfidenceScore = function (recommendations, metrics) {
+  OptimizationEngine.prototype.calculateConfidenceScore = (recommendations, metrics) => {
     if (recommendations.length === 0) return 0;
     var confidence = 0.5; // Base confidence
     // Increase confidence based on recommendation quality
@@ -551,24 +535,22 @@ var OptimizationEngine = /** @class */ (function () {
   // Helper methods for constraint validation
   OptimizationEngine.prototype.buildConstraintContext = function (recommendation, criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            timeSlot: recommendation.timeSlot,
-            staffId: recommendation.staffId,
-            patientId: criteria.patientId,
-            treatmentId: criteria.treatmentId,
-            urgencyLevel: criteria.urgencyLevel,
-            isFollowUp: criteria.isFollowUp,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          timeSlot: recommendation.timeSlot,
+          staffId: recommendation.staffId,
+          patientId: criteria.patientId,
+          treatmentId: criteria.treatmentId,
+          urgencyLevel: criteria.urgencyLevel,
+          isFollowUp: criteria.isFollowUp,
+        },
+      ]);
     });
   };
   OptimizationEngine.prototype.suggestConstraintResolution = function (constraint, recommendation) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (constraint.type) {
           case "staff_availability":
             return [2 /*return*/, "Consider alternative staff members or adjust time slot"];
@@ -597,24 +579,22 @@ var OptimizationEngine = /** @class */ (function () {
   // Helper methods for objective scoring
   OptimizationEngine.prototype.calculateObjectiveScores = function (recommendation, criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            revenue: recommendation.estimatedRevenue / 200, // Normalized
-            patientSatisfaction: recommendation.patientSatisfactionPrediction,
-            staffEfficiency: 0.8, // Would be calculated from staff data
-            resourceUtilization: 0.75, // Would be calculated from resource usage
-            workloadBalance: 0.7, // Would be calculated from workload distribution
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          revenue: recommendation.estimatedRevenue / 200, // Normalized
+          patientSatisfaction: recommendation.patientSatisfactionPrediction,
+          staffEfficiency: 0.8, // Would be calculated from staff data
+          resourceUtilization: 0.75, // Would be calculated from resource usage
+          workloadBalance: 0.7, // Would be calculated from workload distribution
+        },
+      ]);
     });
   };
   // Scenario generation methods
   OptimizationEngine.prototype.generateRevenueOptimizedScenario = function (criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for revenue-optimized scenario
         return [
           2 /*return*/,
@@ -634,7 +614,7 @@ var OptimizationEngine = /** @class */ (function () {
   };
   OptimizationEngine.prototype.generatePatientOptimizedScenario = function (criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for patient-optimized scenario
         return [
           2 /*return*/,
@@ -651,7 +631,7 @@ var OptimizationEngine = /** @class */ (function () {
   };
   OptimizationEngine.prototype.generateStaffOptimizedScenario = function (criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for staff-optimized scenario
         return [
           2 /*return*/,
@@ -668,7 +648,7 @@ var OptimizationEngine = /** @class */ (function () {
   };
   OptimizationEngine.prototype.generateEarliestAvailableScenario = function (criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for earliest available scenario
         return [
           2 /*return*/,
@@ -684,52 +664,42 @@ var OptimizationEngine = /** @class */ (function () {
     });
   };
   // Constraint initialization
-  OptimizationEngine.prototype.initializeDefaultConstraints = function () {
-    return {
-      hardConstraints: [
-        {
-          id: "staff-availability",
-          type: "staff_availability",
-          description: "Staff must be available during the scheduled time",
-          validator: function (slot, context) {
-            return true;
-          }, // Implementation needed
-          priority: 1,
-        },
-        {
-          id: "equipment-availability",
-          type: "equipment_availability",
-          description: "Required equipment must be available",
-          validator: function (slot, context) {
-            return true;
-          }, // Implementation needed
-          priority: 2,
-        },
-      ],
-      softConstraints: [
-        {
-          id: "patient-preference",
-          type: "patient_preference",
-          description: "Patient preferred time slots",
-          weight: 0.3,
-          scorer: function (slot, context) {
-            return 0.8;
-          }, // Implementation needed
-        },
-        {
-          id: "revenue-optimization",
-          type: "revenue_optimization",
-          description: "Revenue optimization during peak hours",
-          weight: 0.25,
-          scorer: function (slot, context) {
-            return 0.7;
-          }, // Implementation needed
-        },
-      ],
-      businessRules: [],
-      resourceLimits: [],
-    };
-  };
+  OptimizationEngine.prototype.initializeDefaultConstraints = () => ({
+    hardConstraints: [
+      {
+        id: "staff-availability",
+        type: "staff_availability",
+        description: "Staff must be available during the scheduled time",
+        validator: (slot, context) => true, // Implementation needed
+        priority: 1,
+      },
+      {
+        id: "equipment-availability",
+        type: "equipment_availability",
+        description: "Required equipment must be available",
+        validator: (slot, context) => true, // Implementation needed
+        priority: 2,
+      },
+    ],
+    softConstraints: [
+      {
+        id: "patient-preference",
+        type: "patient_preference",
+        description: "Patient preferred time slots",
+        weight: 0.3,
+        scorer: (slot, context) => 0.8, // Implementation needed
+      },
+      {
+        id: "revenue-optimization",
+        type: "revenue_optimization",
+        description: "Revenue optimization during peak hours",
+        weight: 0.25,
+        scorer: (slot, context) => 0.7, // Implementation needed
+      },
+    ],
+    businessRules: [],
+    resourceLimits: [],
+  });
   OptimizationEngine.prototype.mergeConstraints = function (additionalConstraints) {
     return {
       hardConstraints: __spreadArray(

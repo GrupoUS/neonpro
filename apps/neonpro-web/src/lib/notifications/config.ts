@@ -304,14 +304,15 @@ export function isChannelEnabled(
   switch (channel) {
     case NotificationChannel.EMAIL:
       return !!(channelConfig as EmailConfig).apiKey || config.development.mockProviders;
-    case NotificationChannel.SMS:
+    case NotificationChannel.SMS: {
       const smsConfig = channelConfig as SMSConfig;
       return (
         (smsConfig.provider === "twilio" && !!(smsConfig.accountSid && smsConfig.authToken)) ||
         (smsConfig.provider === "vonage" && !!(smsConfig.apiKey && smsConfig.apiSecret)) ||
         config.development.mockProviders
       );
-    case NotificationChannel.PUSH:
+    }
+    case NotificationChannel.PUSH: {
       const pushConfig = channelConfig as PushConfig;
       return (
         (pushConfig.provider === "fcm" && !!pushConfig.projectId) ||
@@ -319,6 +320,7 @@ export function isChannelEnabled(
         (pushConfig.provider === "expo" && !!pushConfig.accessToken) ||
         config.development.mockProviders
       );
+    }
     case NotificationChannel.IN_APP:
       return true; // Sempre habilitado
     default:

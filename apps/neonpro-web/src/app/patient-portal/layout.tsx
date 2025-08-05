@@ -3,7 +3,7 @@
 
 "use client";
 
-import React from "react";
+import type React from "react";
 import type { PatientAuthProvider } from "@/lib/hooks/use-patient-auth";
 
 export default function PatientPortalLayout({ children }: { children: React.ReactNode }) {

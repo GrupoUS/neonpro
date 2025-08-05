@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Enhanced Subscription Caching System v2
  *
@@ -18,53 +17,50 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -84,13 +80,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -112,9 +108,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -186,14 +180,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.enhancedSubscriptionCache = exports.EnhancedSubscriptionCache = void 0;
 var subscription_performance_monitor_1 = require("./subscription-performance-monitor");
 /**
  * Enhanced subscription cache with advanced features
  */
-var EnhancedSubscriptionCache = /** @class */ (function () {
+var EnhancedSubscriptionCache = /** @class */ (() => {
   function EnhancedSubscriptionCache(config) {
     this.cache = new Map();
     this.hitCount = 0;
@@ -572,9 +566,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
         switch (_b.label) {
           case 0:
             if (!this.config.prefetch.enabled) return [2 /*return*/];
-            strategies = this.prefetchStrategies.filter(function (s) {
-              return s.enabled;
-            });
+            strategies = this.prefetchStrategies.filter((s) => s.enabled);
             candidateKeys = new Set();
             (_i = 0), (strategies_1 = strategies);
             _b.label = 1;
@@ -584,9 +576,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
             return [4 /*yield*/, this.getPrefetchCandidates(strategy)];
           case 2:
             keys_2 = _b.sent();
-            keys_2.forEach(function (key) {
-              return candidateKeys.add(key);
-            });
+            keys_2.forEach((key) => candidateKeys.add(key));
             _b.label = 3;
           case 3:
             _i++;
@@ -614,7 +604,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
   /**
    * Calculate hotness score based on access patterns
    */
-  EnhancedSubscriptionCache.prototype.calculateHotness = function (entry) {
+  EnhancedSubscriptionCache.prototype.calculateHotness = (entry) => {
     var now = Date.now();
     var age = now - entry.created;
     var recency = now - entry.lastAccessed;
@@ -626,7 +616,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
   /**
    * Calculate priority for cache entry
    */
-  EnhancedSubscriptionCache.prototype.calculatePriority = function (value) {
+  EnhancedSubscriptionCache.prototype.calculatePriority = (value) => {
     var _a, _b, _c;
     var priority = 5; // Base priority
     // Higher priority for users with access
@@ -656,9 +646,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
     }
     // Calculate access frequency
     var now = Date.now();
-    var recentAccesses = pattern.filter(function (time) {
-      return now - time < 60 * 60 * 1000;
-    }); // Last hour
+    var recentAccesses = pattern.filter((time) => now - time < 60 * 60 * 1000); // Last hour
     var frequency = recentAccesses.length / 60; // accesses per minute
     // Adjust TTL based on frequency
     var adjustedTTL = baseTTL;
@@ -690,9 +678,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
     pattern.push(now);
     // Keep only recent accesses (last 24 hours)
     var cutoff = now - 24 * 60 * 60 * 1000;
-    var recentPattern = pattern.filter(function (time) {
-      return time > cutoff;
-    });
+    var recentPattern = pattern.filter((time) => time > cutoff);
     this.accessPatterns.set(key, recentPattern.slice(-100)); // Keep max 100 entries
   };
   /**
@@ -751,11 +737,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
       var _b = _a[_i],
         key = _b[0],
         pattern = _b[1];
-      if (
-        pattern.some(function (time) {
-          return time > cutoff;
-        })
-      ) {
+      if (pattern.some((time) => time > cutoff)) {
         candidates.push(key);
       }
     }
@@ -779,7 +761,6 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
    * Update popular keys set
    */
   EnhancedSubscriptionCache.prototype.updatePopularKeys = function (key) {
-    var _this = this;
     var pattern = this.accessPatterns.get(key);
     if (pattern && pattern.length > 10) {
       // Threshold for popularity
@@ -789,9 +770,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
     if (this.popularKeys.size > 1000) {
       var keysArray = Array.from(this.popularKeys);
       var toRemove = keysArray.slice(0, 100); // Remove oldest 100
-      toRemove.forEach(function (k) {
-        return _this.popularKeys.delete(k);
-      });
+      toRemove.forEach((k) => this.popularKeys.delete(k));
     }
   };
   /**
@@ -868,9 +847,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
           candidates.push({ key: key, entry: entry, score: score });
         }
         // Sort by eviction score (higher = more likely to evict)
-        candidates.sort(function (a, b) {
-          return b.score - a.score;
-        });
+        candidates.sort((a, b) => b.score - a.score);
         // Evict entries until we've freed enough memory
         for (_c = 0, candidates_1 = candidates; _c < candidates_1.length; _c++) {
           (_d = candidates_1[_c]), (key = _d.key), (entry = _d.entry);
@@ -888,7 +865,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
   /**
    * Estimate memory size of an object
    */
-  EnhancedSubscriptionCache.prototype.estimateSize = function (obj) {
+  EnhancedSubscriptionCache.prototype.estimateSize = (obj) => {
     // Rough estimation - in production you might use a more accurate method
     var json = JSON.stringify(obj);
     return json.length * 2; // Approximate bytes (UTF-16)
@@ -902,7 +879,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
   /**
    * Check if data should be compressed
    */
-  EnhancedSubscriptionCache.prototype.shouldCompress = function (data) {
+  EnhancedSubscriptionCache.prototype.shouldCompress = (data) => {
     // Don't compress already compressed data or small objects
     return typeof data === "object" && data !== null;
   };
@@ -911,7 +888,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
    */
   EnhancedSubscriptionCache.prototype.compress = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for actual compression
         // In production, use gzip, lz4, or similar
         return [2 /*return*/, { compressed: true, data: JSON.stringify(data) }];
@@ -923,7 +900,7 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
    */
   EnhancedSubscriptionCache.prototype.decompress = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for actual decompression
         if (data.compressed && data.data) {
           return [2 /*return*/, JSON.parse(data.data)];
@@ -965,7 +942,6 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
    * Handle cache errors
    */
   EnhancedSubscriptionCache.prototype.handleCacheError = function (error, operation, key) {
-    var _this = this;
     this.failureCount++;
     this.lastFailureTime = Date.now();
     console.error(
@@ -975,9 +951,9 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
     // Circuit breaker logic
     if (this.failureCount > 10) {
       this.circuitBreakerState = "open";
-      setTimeout(function () {
-        _this.circuitBreakerState = "half-open";
-        _this.failureCount = 0;
+      setTimeout(() => {
+        this.circuitBreakerState = "half-open";
+        this.failureCount = 0;
       }, 30000); // 30 second timeout
     }
   };
@@ -985,20 +961,18 @@ var EnhancedSubscriptionCache = /** @class */ (function () {
    * Start cleanup timer
    */
   EnhancedSubscriptionCache.prototype.startCleanupTimer = function () {
-    var _this = this;
-    this.cleanupTimer = setInterval(function () {
-      _this.cleanup();
+    this.cleanupTimer = setInterval(() => {
+      this.cleanup();
     }, this.config.cleanupInterval);
   };
   /**
    * Start prefetch timer
    */
   EnhancedSubscriptionCache.prototype.startPrefetchTimer = function () {
-    var _this = this;
     if (!this.config.prefetch.enabled) return;
     this.prefetchTimer = setInterval(
-      function () {
-        _this.prefetch().catch(function (error) {
+      () => {
+        this.prefetch().catch((error) => {
           console.error("Prefetch error:", error);
         });
       },

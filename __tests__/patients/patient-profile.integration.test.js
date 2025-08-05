@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Patient Profile Integration Tests
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,106 +148,64 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var patient_insights_1 = require("../../lib/ai/patient-insights");
 var profile_manager_1 = require("../../lib/patients/profile-manager");
 // Mock the entire Supabase module to avoid ES module issues
-jest.mock("@supabase/auth-helpers-nextjs", function () {
-  return {
-    createClientComponentClient: jest.fn(function () {
-      return {
-        from: jest.fn(function () {
-          return {
-            insert: jest.fn(function () {
-              return {
-                select: jest.fn(function () {
-                  return { single: jest.fn() };
-                }),
-              };
-            }),
-            select: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return { single: jest.fn() };
-                }),
-              };
-            }),
-            update: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return {
-                    select: jest.fn(function () {
-                      return { single: jest.fn() };
-                    }),
-                  };
-                }),
-              };
-            }),
-          };
-        }),
-      };
-    }),
-  };
-});
+jest.mock("@supabase/auth-helpers-nextjs", () => ({
+  createClientComponentClient: jest.fn(() => ({
+    from: jest.fn(() => ({
+      insert: jest.fn(() => ({
+        select: jest.fn(() => ({ single: jest.fn() })),
+      })),
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({ single: jest.fn() })),
+      })),
+      update: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          select: jest.fn(() => ({ single: jest.fn() })),
+        })),
+      })),
+    })),
+  })),
+}));
 // Mock AuditLogger to avoid dependencies
-jest.mock("../../lib/auth/audit/audit-logger", function () {
-  return {
-    AuditLogger: jest.fn().mockImplementation(function () {
-      return {
-        log: jest.fn().mockResolvedValue(true),
-        logProfileUpdate: jest.fn().mockResolvedValue(true),
-        logProfileAccess: jest.fn().mockResolvedValue(true),
-      };
-    }),
-  };
-});
+jest.mock("../../lib/auth/audit/audit-logger", () => ({
+  AuditLogger: jest.fn().mockImplementation(() => ({
+    log: jest.fn().mockResolvedValue(true),
+    logProfileUpdate: jest.fn().mockResolvedValue(true),
+    logProfileAccess: jest.fn().mockResolvedValue(true),
+  })),
+}));
 // Mock LGPDComplianceManager to avoid dependencies
-jest.mock("../../lib/lgpd/LGPDComplianceManager", function () {
-  return {
-    LGPDComplianceManager: jest.fn().mockImplementation(function () {
-      return {
-        validateDataConsent: jest.fn().mockResolvedValue(true),
-        validateDataAccess: jest.fn().mockResolvedValue(true),
-      };
-    }),
-  };
-});
+jest.mock("../../lib/lgpd/LGPDComplianceManager", () => ({
+  LGPDComplianceManager: jest.fn().mockImplementation(() => ({
+    validateDataConsent: jest.fn().mockResolvedValue(true),
+    validateDataAccess: jest.fn().mockResolvedValue(true),
+  })),
+}));
 // Mock createClient
-jest.mock("../../app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return {
-        auth: {
-          getSession: jest.fn().mockResolvedValue({
-            data: { session: { user: { id: "test-user" } } },
-          }),
-        },
-        from: jest.fn(function () {
-          return {
-            insert: jest.fn(function () {
-              return {
-                select: jest.fn(function () {
-                  return { single: jest.fn() };
-                }),
-              };
-            }),
-            select: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return { single: jest.fn() };
-                }),
-              };
-            }),
-          };
-        }),
-      };
-    }),
-  };
-});
-describe("Patient Profile System Integration Tests", function () {
+jest.mock("../../app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => ({
+    auth: {
+      getSession: jest.fn().mockResolvedValue({
+        data: { session: { user: { id: "test-user" } } },
+      }),
+    },
+    from: jest.fn(() => ({
+      insert: jest.fn(() => ({
+        select: jest.fn(() => ({ single: jest.fn() })),
+      })),
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({ single: jest.fn() })),
+      })),
+    })),
+  })),
+}));
+describe("Patient Profile System Integration Tests", () => {
   var profileManager;
-  var mockSupabaseClient;
+  var _mockSupabaseClient;
   var mockPatientData = {
     patient_id: "test-patient-001",
     demographics: {
@@ -304,59 +259,37 @@ describe("Patient Profile System Integration Tests", function () {
       },
     ],
   };
-  beforeEach(function () {
+  beforeEach(() => {
     // Create mock Supabase client
-    mockSupabaseClient = {
-      from: jest.fn(function () {
-        return {
-          insert: jest.fn(function () {
-            return {
-              select: jest.fn(function () {
-                return {
-                  single: jest.fn(function () {
-                    return { data: mockPatientData, error: null };
-                  }),
-                };
-              }),
-            };
-          }),
-          select: jest.fn(function () {
-            return {
-              eq: jest.fn(function () {
-                return {
-                  single: jest.fn(function () {
-                    return { data: mockPatientData, error: null };
-                  }),
-                };
-              }),
-            };
-          }),
-          update: jest.fn(function () {
-            return {
-              eq: jest.fn(function () {
-                return {
-                  select: jest.fn(function () {
-                    return {
-                      single: jest.fn(function () {
-                        return { data: mockPatientData, error: null };
-                      }),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
+    _mockSupabaseClient = {
+      from: jest.fn(() => ({
+        insert: jest.fn(() => ({
+          select: jest.fn(() => ({
+            single: jest.fn(() => ({ data: mockPatientData, error: null })),
+          })),
+        })),
+        select: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            single: jest.fn(() => ({ data: mockPatientData, error: null })),
+          })),
+        })),
+        update: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            select: jest.fn(() => ({
+              single: jest.fn(() => ({ data: mockPatientData, error: null })),
+            })),
+          })),
+        })),
+      })),
     };
     profileManager = new profile_manager_1.ProfileManager();
     // patientInsights is now imported as a ready-to-use object
   });
-  describe("ProfileManager Core Operations", function () {
-    test("should create a comprehensive patient profile", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("ProfileManager Core Operations", () => {
+    test("should create a comprehensive patient profile", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, profileManager.createPatientProfile(mockPatientData)];
@@ -376,12 +309,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should retrieve existing patient profile", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should retrieve existing patient profile", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // First create a profile
@@ -405,12 +337,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should update patient profile selectively", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should update patient profile selectively", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updateData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Create initial profile
@@ -443,12 +374,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should calculate profile completeness score accurately", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should calculate profile completeness score accurately", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, profileManager.createPatientProfile(mockPatientData)];
@@ -463,12 +393,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should search patients by various criteria", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should search patients by various criteria", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var testPatient1, testPatient2, nameResults, phoneResults;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               testPatient1 = {
@@ -519,12 +448,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should identify incomplete profiles", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should identify incomplete profiles", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var incompleteData, incompleteProfiles, found;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Create a complete profile
@@ -550,9 +478,7 @@ describe("Patient Profile System Integration Tests", function () {
             case 3:
               incompleteProfiles = _a.sent();
               expect(incompleteProfiles.length).toBeGreaterThan(0);
-              found = incompleteProfiles.find(function (p) {
-                return p.patient_id === "incomplete-patient";
-              });
+              found = incompleteProfiles.find((p) => p.patient_id === "incomplete-patient");
               expect(found).toBeTruthy();
               expect(
                 found === null || found === void 0 ? void 0 : found.profile_completeness_score,
@@ -560,12 +486,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should archive patient profile", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should archive patient profile", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var archived, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Create profile
@@ -587,12 +512,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should provide patient analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should provide patient analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Create some test profiles
@@ -619,14 +543,13 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("AI Patient Insights Integration", function () {
-    test("should generate comprehensive patient insights", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("AI Patient Insights Integration", () => {
+    test("should generate comprehensive patient insights", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var insights;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -643,12 +566,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should provide clinical insights with proper structure", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should provide clinical insights with proper structure", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var insights, clinicalInsights, firstInsight;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -669,12 +591,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should provide personalization insights", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should provide personalization insights", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var insights, personalization;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -696,12 +617,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should perform risk assessment", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should perform risk assessment", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var insights, riskAssessment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -718,12 +638,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should generate care recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should generate care recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var insights, recommendations, firstRecommendation;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -742,12 +661,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should update insights successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should update insights successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -762,12 +680,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should provide trending insights", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should provide trending insights", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var trends, firstTrend;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, patient_insights_1.patientInsights.getTrendingInsights()];
@@ -782,14 +699,13 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Integrated Workflows", function () {
-    test("should create profile and generate insights in workflow", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Integrated Workflows", () => {
+    test("should create profile and generate insights in workflow", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var profile, insights;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, profileManager.createPatientProfile(mockPatientData)];
@@ -811,12 +727,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle profile updates and insight regeneration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle profile updates and insight regeneration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var vitalUpdate, updatedProfile, insightUpdate;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Create initial profile
@@ -856,14 +771,13 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling and Edge Cases", function () {
-    test("should handle missing patient profile gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling and Edge Cases", () => {
+    test("should handle missing patient profile gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, profileManager.getPatientProfile("non-existent-patient")];
@@ -873,12 +787,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle empty search criteria", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle empty search criteria", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, profileManager.searchPatients({})];
@@ -888,12 +801,11 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle insights generation with minimal data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle insights generation with minimal data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var minimalData, insights;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               minimalData = {
@@ -922,7 +834,6 @@ describe("Patient Profile System Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

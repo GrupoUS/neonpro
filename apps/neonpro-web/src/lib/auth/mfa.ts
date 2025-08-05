@@ -16,10 +16,10 @@
  * @author NeonPro Development Team
  */
 
-import * as OTPAuth from "otpauth";
 import type { createClient } from "@supabase/supabase-js";
-import type { z } from "zod";
 import crypto from "crypto";
+import * as OTPAuth from "otpauth";
+import type { z } from "zod";
 
 // Types and Interfaces
 export interface MFAConfig {
@@ -317,11 +317,12 @@ export class MFAService {
 
       // Verify token based on method
       switch (method) {
-        case "totp":
+        case "totp": {
           const totpResult = await this.verifyTOTP(userId, token);
           isValid = totpResult.isValid;
           delta = totpResult.delta;
           break;
+        }
 
         case "sms":
           isValid = await this.verifySMS(userId, token);

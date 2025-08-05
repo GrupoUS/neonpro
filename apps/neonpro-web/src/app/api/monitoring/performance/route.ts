@@ -1,6 +1,6 @@
-import type { createClient } from "@/lib/supabase/server";
 import type { NextResponse } from "next/server";
 import type { performanceMonitor } from "@/lib/monitoring/performance-monitor";
+import type { createClient } from "@/lib/supabase/server";
 
 // 🚀 Edge Runtime para monitoramento de performance ultra-rápido
 export const runtime = "edge";

@@ -8,7 +8,36 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertCircle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  DollarSign,
+  LineChart,
+  PieChart,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart as RechartsLineChart,
+  PieChart as RechartsPieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -16,7 +45,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type {
   Select,
   SelectContent,
@@ -24,35 +52,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Calendar,
-  Target,
-  AlertCircle,
-  CheckCircle,
-  BarChart3,
-  PieChart,
-  LineChart,
-} from "lucide-react";
-import type {
-  LineChart as RechartsLineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart as RechartsPieChart,
-  Cell,
-  Area,
-  AreaChart,
-} from "recharts";
 import type { useToast } from "@/components/ui/use-toast";
 
 interface FinancialMetric {

@@ -5,6 +5,9 @@
 // Story 1.2: Business rules configuration
 // =============================================
 
+import type { AlertTriangle, Clock, Plus, Save, Settings, User } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { ProfessionalSchedule, WorkingHoursConfig } from "@/app/lib/types/conflict-prevention";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -13,9 +16,6 @@ import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { AlertTriangle, Clock, Plus, Save, Settings, User } from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 
 interface ProfessionalScheduleManagerProps {
   professionalId: string;

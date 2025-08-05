@@ -19,7 +19,63 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  Eye,
+  Filter,
+  Mail,
+  MessageCircle,
+  MessageSquare,
+  Plus,
+  RefreshCw,
+  Search,
+  Send,
+  Settings,
+  Settings2,
+  Share,
+  Sliders,
+  Smartphone,
+  Target,
+  Timer,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { toast } from "sonner";
+import type { createClient } from "@/app/utils/supabase/client";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -27,20 +83,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Switch } from "@/components/ui/switch";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Dialog,
   DialogContent,
@@ -49,61 +91,19 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { toast } from "sonner";
-import type { createClient } from "@/app/utils/supabase/client";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { Database } from "@/lib/database.types";
-import type {
-  Bell,
-  Send,
-  MessageSquare,
-  Mail,
-  Smartphone,
-  Settings,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  BarChart3,
-  Activity,
-  Zap,
-  Target,
-  MessageCircle,
-  Timer,
-  Calendar,
-  RefreshCw,
-  Filter,
-  Search,
-  Download,
-  Upload,
-  Share,
-  Settings2,
-  Sliders,
-} from "lucide-react";
-import type {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
 
 // Types e Interfaces
 interface NotificationTemplate {

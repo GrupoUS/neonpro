@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -162,7 +159,7 @@ var table_1 = require("@/components/ui/table");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var sonner_1 = require("sonner");
-var BackupScheduler = function () {
+var BackupScheduler = () => {
   var _a = (0, react_1.useState)([]),
     configs = _a[0],
     setConfigs = _a[1];
@@ -186,13 +183,13 @@ var BackupScheduler = function () {
     }),
     newConfig = _d[0],
     setNewConfig = _d[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadConfigs();
   }, []);
-  var loadConfigs = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadConfigs = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -224,11 +221,10 @@ var BackupScheduler = function () {
         }
       });
     });
-  };
-  var handleCreateConfig = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleCreateConfig = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, errorData, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -279,11 +275,10 @@ var BackupScheduler = function () {
         }
       });
     });
-  };
-  var handleToggleConfig = function (id, enabled) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleToggleConfig = (id, enabled) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -321,8 +316,7 @@ var BackupScheduler = function () {
         }
       });
     });
-  };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "ACTIVE":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -334,7 +328,7 @@ var BackupScheduler = function () {
         return <lucide_react_1.Clock className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getTypeIcon = function (type) {
+  var getTypeIcon = (type) => {
     switch (type) {
       case "DATABASE":
         return <lucide_react_1.Database className="h-4 w-4" />;
@@ -344,7 +338,7 @@ var BackupScheduler = function () {
         return <lucide_react_1.Shield className="h-4 w-4" />;
     }
   };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "CRITICAL":
         return "destructive";
@@ -387,11 +381,9 @@ var BackupScheduler = function () {
                 <input_1.Input
                   id="name"
                   value={newConfig.name}
-                  onChange={function (e) {
-                    return setNewConfig(
-                      __assign(__assign({}, newConfig), { name: e.target.value }),
-                    );
-                  }}
+                  onChange={(e) =>
+                    setNewConfig(__assign(__assign({}, newConfig), { name: e.target.value }))
+                  }
                   placeholder="Ex: Backup Diário Completo"
                 />
               </div>
@@ -399,9 +391,9 @@ var BackupScheduler = function () {
                 <label_1.Label htmlFor="type">Tipo de Backup</label_1.Label>
                 <select_1.Select
                   value={newConfig.type}
-                  onValueChange={function (value) {
-                    return setNewConfig(__assign(__assign({}, newConfig), { type: value }));
-                  }}
+                  onValueChange={(value) =>
+                    setNewConfig(__assign(__assign({}, newConfig), { type: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
@@ -419,11 +411,9 @@ var BackupScheduler = function () {
                 <label_1.Label htmlFor="frequency">Frequência</label_1.Label>
                 <select_1.Select
                   value={newConfig.schedule_frequency}
-                  onValueChange={function (value) {
-                    return setNewConfig(
-                      __assign(__assign({}, newConfig), { schedule_frequency: value }),
-                    );
-                  }}
+                  onValueChange={(value) =>
+                    setNewConfig(__assign(__assign({}, newConfig), { schedule_frequency: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
@@ -443,22 +433,20 @@ var BackupScheduler = function () {
                   id="time"
                   type="time"
                   value={newConfig.schedule_time}
-                  onChange={function (e) {
-                    return setNewConfig(
+                  onChange={(e) =>
+                    setNewConfig(
                       __assign(__assign({}, newConfig), { schedule_time: e.target.value }),
-                    );
-                  }}
+                    )
+                  }
                 />
               </div>
               <div className="space-y-2">
                 <label_1.Label htmlFor="provider">Armazenamento</label_1.Label>
                 <select_1.Select
                   value={newConfig.storage_provider}
-                  onValueChange={function (value) {
-                    return setNewConfig(
-                      __assign(__assign({}, newConfig), { storage_provider: value }),
-                    );
-                  }}
+                  onValueChange={(value) =>
+                    setNewConfig(__assign(__assign({}, newConfig), { storage_provider: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
@@ -479,13 +467,13 @@ var BackupScheduler = function () {
                   min="1"
                   max="365"
                   value={newConfig.retention_daily}
-                  onChange={function (e) {
-                    return setNewConfig(
+                  onChange={(e) =>
+                    setNewConfig(
                       __assign(__assign({}, newConfig), {
                         retention_daily: parseInt(e.target.value),
                       }),
-                    );
-                  }}
+                    )
+                  }
                 />
               </div>
               <div className="col-span-2 space-y-2">
@@ -493,22 +481,15 @@ var BackupScheduler = function () {
                 <textarea_1.Textarea
                   id="description"
                   value={newConfig.description}
-                  onChange={function (e) {
-                    return setNewConfig(
-                      __assign(__assign({}, newConfig), { description: e.target.value }),
-                    );
-                  }}
+                  onChange={(e) =>
+                    setNewConfig(__assign(__assign({}, newConfig), { description: e.target.value }))
+                  }
                   placeholder="Descrição opcional da configuração..."
                 />
               </div>
             </div>
             <dialog_1.DialogFooter>
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setShowNewDialog(false);
-                }}
-              >
+              <button_1.Button variant="outline" onClick={() => setShowNewDialog(false)}>
                 Cancelar
               </button_1.Button>
               <button_1.Button onClick={handleCreateConfig}>Criar Configuração</button_1.Button>
@@ -549,70 +530,68 @@ var BackupScheduler = function () {
                       </table_1.TableRow>
                     </table_1.TableHeader>
                     <table_1.TableBody>
-                      {configs.map(function (config) {
-                        return (
-                          <table_1.TableRow key={config.id}>
-                            <table_1.TableCell>
-                              <div className="flex items-center space-x-2">
-                                {getTypeIcon(config.type)}
-                                <div>
-                                  <div className="font-medium">{config.name}</div>
-                                  {config.description && (
-                                    <div className="text-sm text-muted-foreground">
-                                      {config.description}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </table_1.TableCell>
-                            <table_1.TableCell>
-                              <badge_1.Badge variant="outline">{config.type}</badge_1.Badge>
-                            </table_1.TableCell>
-                            <table_1.TableCell>
-                              {config.schedule_frequency}
-                              {config.schedule_time && (
-                                <div className="text-sm text-muted-foreground">
-                                  às {config.schedule_time}
-                                </div>
-                              )}
-                            </table_1.TableCell>
-                            <table_1.TableCell>
-                              {config.next_backup
-                                ? <div className="text-sm">
-                                    {(0, utils_1.formatDate)(new Date(config.next_backup))}
-                                    <div className="text-muted-foreground">
-                                      {(0, utils_1.formatTime)(new Date(config.next_backup))}
-                                    </div>
+                      {configs.map((config) => (
+                        <table_1.TableRow key={config.id}>
+                          <table_1.TableCell>
+                            <div className="flex items-center space-x-2">
+                              {getTypeIcon(config.type)}
+                              <div>
+                                <div className="font-medium">{config.name}</div>
+                                {config.description && (
+                                  <div className="text-sm text-muted-foreground">
+                                    {config.description}
                                   </div>
-                                : <span className="text-muted-foreground">-</span>}
-                            </table_1.TableCell>
-                            <table_1.TableCell>
-                              <div className="flex items-center space-x-2">
-                                {getStatusIcon(config.status)}
-                                <span className="text-sm">{config.status}</span>
+                                )}
                               </div>
-                            </table_1.TableCell>
-                            <table_1.TableCell>
-                              <badge_1.Badge variant={getPriorityColor(config.priority)}>
-                                {config.priority}
-                              </badge_1.Badge>
-                            </table_1.TableCell>
-                            <table_1.TableCell>
-                              <div className="flex items-center space-x-2">
-                                <switch_1.Switch
-                                  checked={config.enabled}
-                                  onCheckedChange={function (checked) {
-                                    return handleToggleConfig(config.id, checked);
-                                  }}
-                                />
-                                <button_1.Button variant="ghost" size="sm">
-                                  <lucide_react_1.Settings className="h-4 w-4" />
-                                </button_1.Button>
+                            </div>
+                          </table_1.TableCell>
+                          <table_1.TableCell>
+                            <badge_1.Badge variant="outline">{config.type}</badge_1.Badge>
+                          </table_1.TableCell>
+                          <table_1.TableCell>
+                            {config.schedule_frequency}
+                            {config.schedule_time && (
+                              <div className="text-sm text-muted-foreground">
+                                às {config.schedule_time}
                               </div>
-                            </table_1.TableCell>
-                          </table_1.TableRow>
-                        );
-                      })}
+                            )}
+                          </table_1.TableCell>
+                          <table_1.TableCell>
+                            {config.next_backup
+                              ? <div className="text-sm">
+                                  {(0, utils_1.formatDate)(new Date(config.next_backup))}
+                                  <div className="text-muted-foreground">
+                                    {(0, utils_1.formatTime)(new Date(config.next_backup))}
+                                  </div>
+                                </div>
+                              : <span className="text-muted-foreground">-</span>}
+                          </table_1.TableCell>
+                          <table_1.TableCell>
+                            <div className="flex items-center space-x-2">
+                              {getStatusIcon(config.status)}
+                              <span className="text-sm">{config.status}</span>
+                            </div>
+                          </table_1.TableCell>
+                          <table_1.TableCell>
+                            <badge_1.Badge variant={getPriorityColor(config.priority)}>
+                              {config.priority}
+                            </badge_1.Badge>
+                          </table_1.TableCell>
+                          <table_1.TableCell>
+                            <div className="flex items-center space-x-2">
+                              <switch_1.Switch
+                                checked={config.enabled}
+                                onCheckedChange={(checked) =>
+                                  handleToggleConfig(config.id, checked)
+                                }
+                              />
+                              <button_1.Button variant="ghost" size="sm">
+                                <lucide_react_1.Settings className="h-4 w-4" />
+                              </button_1.Button>
+                            </div>
+                          </table_1.TableCell>
+                        </table_1.TableRow>
+                      ))}
                     </table_1.TableBody>
                   </table_1.Table>}
             </card_1.CardContent>

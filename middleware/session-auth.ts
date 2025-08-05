@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
 import { SessionManager } from "@/lib/auth/session-manager";
 import { SecurityEventType } from "@/types/session";
 
@@ -33,7 +33,7 @@ export class SessionAuthMiddleware {
 
     try {
       // Create Supabase client
-      const supabase = createServerClient(
+      const _supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
@@ -44,7 +44,7 @@ export class SessionAuthMiddleware {
             set(name: string, value: string, options: any) {
               response.cookies.set(name, value, options);
             },
-            remove(name: string, options: any) {
+            remove(name: string, _options: any) {
               response.cookies.delete(name);
             },
           },
@@ -284,7 +284,7 @@ export class SessionAuthMiddleware {
   /**
    * Get recent request count for IP (simplified implementation)
    */
-  private async getRecentRequests(ipAddress: string): Promise<number> {
+  private async getRecentRequests(_ipAddress: string): Promise<number> {
     // In a real implementation, this would check a cache/database
     // For now, return 0 to avoid false positives
     return 0;
@@ -311,7 +311,7 @@ export class SessionAuthMiddleware {
   /**
    * Check for unusual geographic location (simplified)
    */
-  private async checkUnusualLocation(userId: string, ipAddress: string): Promise<boolean> {
+  private async checkUnusualLocation(_userId: string, _ipAddress: string): Promise<boolean> {
     // In a real implementation, this would:
     // 1. Get IP geolocation
     // 2. Compare with user's typical locations

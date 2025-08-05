@@ -4,7 +4,7 @@
  */
 
 import type { format, isValid } from "date-fns";
-import type { groupBy, sumBy, orderBy } from "lodash";
+import type { groupBy, orderBy, sumBy } from "lodash";
 
 // Types
 export interface TimeRange {

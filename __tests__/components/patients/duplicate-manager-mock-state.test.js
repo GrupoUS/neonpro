@@ -1,16 +1,15 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -18,17 +17,15 @@ var react_1 = require("@testing-library/react");
 var duplicate_manager_hook_minimal_1 = require("../../../components/patients/duplicate-manager-hook-minimal");
 // Mock useState specifically for React 19 compatibility
 var mockSetState = jest.fn();
-var mockUseState = jest.fn(function (initialValue) {
-  return [initialValue, mockSetState];
-});
-jest.mock("react", function () {
-  return __assign(__assign({}, jest.requireActual("react")), { useState: mockUseState });
-});
-describe("DuplicateManagerHookMinimal - Mocked State", function () {
-  beforeEach(function () {
+var mockUseState = jest.fn((initialValue) => [initialValue, mockSetState]);
+jest.mock("react", () =>
+  __assign(__assign({}, jest.requireActual("react")), { useState: mockUseState }),
+);
+describe("DuplicateManagerHookMinimal - Mocked State", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  it("renders without crashing with mocked useState", function () {
+  it("renders without crashing with mocked useState", () => {
     var mockDuplicates = [
       {
         id: "dup1",
@@ -45,13 +42,13 @@ describe("DuplicateManagerHookMinimal - Mocked State", function () {
         },
       },
     ];
-    expect(function () {
+    expect(() => {
       (0, react_1.render)(<duplicate_manager_hook_minimal_1.default duplicates={mockDuplicates} />);
     }).not.toThrow();
     // Verify useState was called
     expect(mockUseState).toHaveBeenCalledWith(null);
   });
-  it("component structure is valid", function () {
+  it("component structure is valid", () => {
     var mockDuplicates = [
       {
         id: "dup1",

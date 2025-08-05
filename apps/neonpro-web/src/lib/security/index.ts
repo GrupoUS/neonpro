@@ -34,41 +34,39 @@
  * ```
  */
 
+// Encryption
+export {
+  DataClassification,
+  type EncryptedData,
+  EncryptionAlgorithm,
+  EncryptionUtils,
+  encryptedDataSchema,
+  HealthcareEncryption,
+  type KeyInfo,
+  keyInfoSchema,
+} from "./encryption";
+// Role-Based Access Control
+export {
+  AccessContext,
+  HealthcareRBAC,
+  Permission,
+  type PermissionGrant,
+  permissionSchema,
+  Role,
+  type RoleDefinition,
+  roleSchema,
+  type UserRole,
+  userRoleSchema,
+} from "./rbac";
 // Session Management
 export {
   HealthcareSessionManager,
-  UserRole,
-  SessionStatus,
   MFAMethod,
-  sessionSchema,
   type Session,
+  SessionStatus,
+  sessionSchema,
+  UserRole,
 } from "./session-manager";
-
-// Encryption
-export {
-  HealthcareEncryption,
-  EncryptionUtils,
-  EncryptionAlgorithm,
-  DataClassification,
-  encryptedDataSchema,
-  keyInfoSchema,
-  type EncryptedData,
-  type KeyInfo,
-} from "./encryption";
-
-// Role-Based Access Control
-export {
-  HealthcareRBAC,
-  Role,
-  Permission,
-  AccessContext,
-  permissionSchema,
-  roleSchema,
-  userRoleSchema,
-  type PermissionGrant,
-  type RoleDefinition,
-  type UserRole,
-} from "./rbac";
 
 /**
  * Unified Healthcare Security Manager
@@ -209,7 +207,7 @@ export class HealthcareSecurity {
     if (!sessionResult.valid) {
       return {
         granted: false,
-        auditId: await this.createAuditRecord("emergency_access_denied", {
+        auditId: await HealthcareSecurity.createAuditRecord("emergency_access_denied", {
           userId: params.userId,
           reason: "Invalid session",
           patientId: params.patientId,
@@ -227,7 +225,7 @@ export class HealthcareSecurity {
     );
 
     // Create comprehensive audit record
-    const auditId = await this.createAuditRecord("emergency_access_requested", {
+    const auditId = await HealthcareSecurity.createAuditRecord("emergency_access_requested", {
       userId: params.userId,
       patientId: params.patientId,
       permission: params.permission,
@@ -434,12 +432,12 @@ export class SecurityMiddleware {
   }> {
     // Handle API key authentication
     if (params.apiKey) {
-      return await this.validateApiKey(params.apiKey, params.requiredPermission);
+      return await SecurityMiddleware.validateApiKey(params.apiKey, params.requiredPermission);
     }
 
     // Handle session authentication
     if (params.sessionId) {
-      return await this.validateSessionAuth(params);
+      return await SecurityMiddleware.validateSessionAuth(params);
     }
 
     return {

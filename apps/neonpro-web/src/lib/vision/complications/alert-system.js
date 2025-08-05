@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Complication Alert System
  * Epic 10 - Story 10.3: Automated Complication Detection + Alerts (≥90% Accuracy)
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -28,7 +27,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,8 +56,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -79,9 +76,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -140,13 +137,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createcomplicationAlertSystem = exports.ComplicationAlertSystem = void 0;
 var client_1 = require("@/lib/supabase/client");
 var logger_1 = require("@/lib/utils/logger");
 var config_1 = require("./config");
-var ComplicationAlertSystem = /** @class */ (function () {
+var ComplicationAlertSystem = /** @class */ (() => {
   function ComplicationAlertSystem() {
     this.supabase = (0, client_1.createClient)();
     this.notificationQueue = new Map();
@@ -160,7 +157,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             logger_1.logger.info("Initializing Complication Alert System...");
             // Load active alerts from database
             return [4 /*yield*/, this.loadActiveAlerts()];
@@ -190,7 +187,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 8, , 9]);
+            _b.trys.push([0, 8, undefined, 9]);
             logger_1.logger.info(
               "Processing detection result ".concat(result.id, " for alert evaluation"),
             );
@@ -346,7 +343,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 8, , 9]);
+            _b.trys.push([0, 8, undefined, 9]);
             targets = (0, config_1.getNotificationTargetsForAlert)(alert.alertLevel);
             notifications = [];
             (_i = 0), (targets_1 = targets);
@@ -419,7 +416,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
             };
             _b.label = 1;
           case 1:
-            _b.trys.push([1, 12, , 13]);
+            _b.trys.push([1, 12, undefined, 13]);
             return [4 /*yield*/, this.getContactInfo(alert.patientId, target)];
           case 2:
             contactInfo = _b.sent();
@@ -469,7 +466,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
             notification.status = "failed";
             // Schedule retry if within retry limits
             if (notification.retryCount < config_1.ALERT_CONFIG.maxRetryAttempts) {
-              setTimeout(function () {
+              setTimeout(() => {
                 _this.retryNotification(notification, alert);
               }, config_1.ALERT_CONFIG.retryDelayMs);
             }
@@ -489,7 +486,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_d) {
         switch (_d.label) {
           case 0:
-            _d.trys.push([0, 14, , 15]);
+            _d.trys.push([0, 14, undefined, 15]);
             logger_1.logger.warn(
               "Activating emergency protocol for critical alert ".concat(alert.id),
             );
@@ -566,7 +563,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3, , 4]);
+            _a.trys.push([0, 3, undefined, 4]);
             alert_2 = this.activeAlerts.get(alertId);
             if (!alert_2) {
               throw new Error("Alert ".concat(alertId, " not found"));
@@ -613,7 +610,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3, , 4]);
+            _a.trys.push([0, 3, undefined, 4]);
             alert_3 = this.activeAlerts.get(alertId);
             if (!alert_3) {
               throw new Error("Alert ".concat(alertId, " not found"));
@@ -657,7 +654,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 4, , 5]);
+            _a.trys.push([0, 4, undefined, 5]);
             alert_4 = this.activeAlerts.get(alertId);
             if (!alert_4) {
               throw new Error("Alert ".concat(alertId, " not found"));
@@ -698,9 +695,9 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         return [
           2 /*return*/,
-          Array.from(this.activeAlerts.values()).filter(function (alert) {
-            return alert.patientId === patientId && alert.status !== "resolved";
-          }),
+          Array.from(this.activeAlerts.values()).filter(
+            (alert) => alert.patientId === patientId && alert.status !== "resolved",
+          ),
         ];
       });
     });
@@ -713,9 +710,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         return [
           2 /*return*/,
-          Array.from(this.activeAlerts.values()).filter(function (alert) {
-            return alert.status !== "resolved";
-          }),
+          Array.from(this.activeAlerts.values()).filter((alert) => alert.status !== "resolved"),
         ];
       });
     });
@@ -723,11 +718,11 @@ var ComplicationAlertSystem = /** @class */ (function () {
   /**
    * Helper methods
    */
-  ComplicationAlertSystem.prototype.shouldCreateIndividualAlert = function (complication) {
+  ComplicationAlertSystem.prototype.shouldCreateIndividualAlert = (complication) => {
     // Create individual alerts for high-severity complications
     return complication.severity === "high" || complication.severity === "critical";
   };
-  ComplicationAlertSystem.prototype.calculateComplicationAlertLevel = function (complication) {
+  ComplicationAlertSystem.prototype.calculateComplicationAlertLevel = (complication) => {
     var confidenceLevel = complication.confidence;
     var severityMultiplier = {
       low: 0.3,
@@ -738,7 +733,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
     var riskScore = confidenceLevel * severityMultiplier;
     return (0, config_1.getAlertLevelForRiskScore)(riskScore);
   };
-  ComplicationAlertSystem.prototype.getNotificationMethods = function (alertLevel, target) {
+  ComplicationAlertSystem.prototype.getNotificationMethods = (alertLevel, _target) => {
     var baseMethods = ["email", "push"];
     if (alertLevel === "high" || alertLevel === "critical") {
       baseMethods.push("sms");
@@ -748,10 +743,10 @@ var ComplicationAlertSystem = /** @class */ (function () {
     }
     return baseMethods;
   };
-  ComplicationAlertSystem.prototype.getContactInfo = function (patientId, target) {
+  ComplicationAlertSystem.prototype.getContactInfo = function (_patientId, target) {
     return __awaiter(this, void 0, void 0, function () {
       var mockContacts;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         mockContacts = {
           attending_physician: {
             email: "physician@neonpro.com.br",
@@ -779,7 +774,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
       });
     });
   };
-  ComplicationAlertSystem.prototype.createNotificationContent = function (alert) {
+  ComplicationAlertSystem.prototype.createNotificationContent = (alert) => {
     var urgencyText = {
       critical: "🚨 CRÍTICO",
       high: "⚠️ ALTO",
@@ -817,9 +812,9 @@ var ComplicationAlertSystem = /** @class */ (function () {
       priority: alert.alertLevel === "critical" ? "high" : "normal",
     };
   };
-  ComplicationAlertSystem.prototype.sendEmailNotification = function (email, content, alert) {
+  ComplicationAlertSystem.prototype.sendEmailNotification = function (email, _content, alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use actual email service (SendGrid, SES, etc.)
         logger_1.logger.info(
           "Email notification sent to ".concat(email, " for alert ").concat(alert.id),
@@ -828,9 +823,9 @@ var ComplicationAlertSystem = /** @class */ (function () {
       });
     });
   };
-  ComplicationAlertSystem.prototype.sendSMSNotification = function (phone, content, alert) {
+  ComplicationAlertSystem.prototype.sendSMSNotification = function (phone, _content, alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use SMS service (Twilio, AWS SNS, etc.)
         logger_1.logger.info(
           "SMS notification sent to ".concat(phone, " for alert ").concat(alert.id),
@@ -839,9 +834,9 @@ var ComplicationAlertSystem = /** @class */ (function () {
       });
     });
   };
-  ComplicationAlertSystem.prototype.sendPushNotification = function (userId, content, alert) {
+  ComplicationAlertSystem.prototype.sendPushNotification = function (userId, _content, alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use push notification service
         logger_1.logger.info(
           "Push notification sent to user ".concat(userId, " for alert ").concat(alert.id),
@@ -850,9 +845,9 @@ var ComplicationAlertSystem = /** @class */ (function () {
       });
     });
   };
-  ComplicationAlertSystem.prototype.initiatePhoneCall = function (phone, content, alert) {
+  ComplicationAlertSystem.prototype.initiatePhoneCall = function (phone, _content, alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use voice call service (Twilio Voice, etc.)
         logger_1.logger.info(
           "Phone call initiated to ".concat(phone, " for alert ").concat(alert.id),
@@ -862,25 +857,26 @@ var ComplicationAlertSystem = /** @class */ (function () {
     });
   };
   ComplicationAlertSystem.prototype.setupEscalationTimer = function (alert) {
-    var _this = this;
     var timeout = config_1.ALERT_CONFIG.escalationTimeouts[alert.alertLevel];
     if (timeout > 0 && config_1.ALERT_CONFIG.autoEscalationEnabled) {
-      var timer = setTimeout(function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (!(alert.status === "pending")) return [3 /*break*/, 2];
-                return [4 /*yield*/, this.autoEscalateAlert(alert)];
-              case 1:
-                _a.sent();
-                _a.label = 2;
-              case 2:
-                return [2 /*return*/];
-            }
-          });
-        });
-      }, timeout);
+      var timer = setTimeout(
+        () =>
+          __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+              switch (_a.label) {
+                case 0:
+                  if (!(alert.status === "pending")) return [3 /*break*/, 2];
+                  return [4 /*yield*/, this.autoEscalateAlert(alert)];
+                case 1:
+                  _a.sent();
+                  _a.label = 2;
+                case 2:
+                  return [2 /*return*/];
+              }
+            });
+          }),
+        timeout,
+      );
       this.escalationTimers.set(alert.id, timer);
     }
   };
@@ -908,7 +904,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
   };
   ComplicationAlertSystem.prototype.executeEmergencyAction = function (action, alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.info(
           "Executing emergency action: ".concat(action, " for alert ").concat(alert.id),
         );
@@ -916,9 +912,9 @@ var ComplicationAlertSystem = /** @class */ (function () {
       });
     });
   };
-  ComplicationAlertSystem.prototype.contactEmergencyServices = function (alert, protocol) {
+  ComplicationAlertSystem.prototype.contactEmergencyServices = function (alert, _protocol) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.warn("Contacting emergency services for alert ".concat(alert.id));
         return [2 /*return*/];
       });
@@ -926,7 +922,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
   };
   ComplicationAlertSystem.prototype.sendEscalationNotifications = function (alert, escalatedTo) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Send notifications to escalated target
         logger_1.logger.info(
           "Sending escalation notifications to "
@@ -937,9 +933,9 @@ var ComplicationAlertSystem = /** @class */ (function () {
       });
     });
   };
-  ComplicationAlertSystem.prototype.retryNotification = function (notification, alert) {
+  ComplicationAlertSystem.prototype.retryNotification = function (notification, _alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         notification.retryCount++;
         logger_1.logger.info(
           "Retrying notification "
@@ -967,7 +963,7 @@ var ComplicationAlertSystem = /** @class */ (function () {
           case 1:
             alerts = _a.sent().data;
             if (alerts) {
-              alerts.forEach(function (alert) {
+              alerts.forEach((alert) => {
                 _this.activeAlerts.set(alert.id, alert);
               });
             }
@@ -977,10 +973,9 @@ var ComplicationAlertSystem = /** @class */ (function () {
     });
   };
   ComplicationAlertSystem.prototype.startBackgroundMonitoring = function () {
-    var _this = this;
     // Start background processes for monitoring alert status
-    setInterval(function () {
-      _this.checkAlertTimeouts();
+    setInterval(() => {
+      this.checkAlertTimeouts();
     }, 60000); // Check every minute
   };
   ComplicationAlertSystem.prototype.checkAlertTimeouts = function () {
@@ -1107,7 +1102,5 @@ var ComplicationAlertSystem = /** @class */ (function () {
 })();
 exports.ComplicationAlertSystem = ComplicationAlertSystem;
 // Export singleton instance
-var createcomplicationAlertSystem = function () {
-  return new ComplicationAlertSystem();
-};
+var createcomplicationAlertSystem = () => new ComplicationAlertSystem();
 exports.createcomplicationAlertSystem = createcomplicationAlertSystem;

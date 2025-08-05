@@ -1,21 +1,20 @@
 "use client";
-"use strict";
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -36,18 +35,18 @@ var button_1 = require("@/components/ui/button");
 var card_1 = require("@/components/ui/card");
 var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
-var ErrorBoundary = /** @class */ (function (_super) {
+var ErrorBoundary = /** @class */ ((_super) => {
   __extends(ErrorBoundary, _super);
   function ErrorBoundary(props) {
     var _this = _super.call(this, props) || this;
-    _this.handleRetry = function () {
+    _this.handleRetry = () => {
       _this.setState({
         hasError: false,
         error: null,
         errorInfo: null,
       });
     };
-    _this.handleGoHome = function () {
+    _this.handleGoHome = () => {
       window.location.href = "/dashboard";
     };
     _this.state = {
@@ -57,7 +56,7 @@ var ErrorBoundary = /** @class */ (function (_super) {
     };
     return _this;
   }
-  ErrorBoundary.getDerivedStateFromError = function (error) {
+  ErrorBoundary.getDerivedStateFromError = (error) => {
     // Update state so the next render will show the fallback UI
     return {
       hasError: true,
@@ -148,7 +147,7 @@ exports.ErrorBoundary = ErrorBoundary;
 // HOOK-BASED ERROR BOUNDARY (for functional components)
 // =====================================================================================
 function useErrorHandler() {
-  return function (error, errorInfo) {
+  return (error, errorInfo) => {
     console.error("Error caught by useErrorHandler:", error, errorInfo);
     // Report to error tracking service
     // reportError(error, errorInfo);
@@ -174,7 +173,7 @@ function DashboardErrorBoundary(_a) {
           </alert_1.Alert>
         </div>
       }
-      onError={function (error, errorInfo) {
+      onError={(error, errorInfo) => {
         console.error("Dashboard Error:", error, errorInfo);
       }}
     >
@@ -195,7 +194,7 @@ function FormErrorBoundary(_a) {
           </alert_1.AlertDescription>
         </alert_1.Alert>
       }
-      onError={function (error, errorInfo) {
+      onError={(error, errorInfo) => {
         console.error("Form Error:", error, errorInfo);
       }}
     >
@@ -216,7 +215,7 @@ function APIErrorBoundary(_a) {
           </alert_1.AlertDescription>
         </alert_1.Alert>
       }
-      onError={function (error, errorInfo) {
+      onError={(error, errorInfo) => {
         console.error("API Error:", error, errorInfo);
       }}
     >

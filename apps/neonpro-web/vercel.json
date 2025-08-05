@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "name": "neonpro-healthcare-web",
+  "framework": "nextjs",
+  "buildCommand": "prisma generate && next build",
+  "installCommand": "npm install",
+  "env": {
+    "PRISMA_GENERATE_SKIP_AUTOINSTALL": "true",
+    "SKIP_ENV_VALIDATION": "true",
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "src/app/api/**/*.ts": {
+      "maxDuration": 30,
+      "regions": ["gru1", "iad1"],
+      "runtime": "nodejs18.x",
+      "environment": {
+        "DATABASE_URL": "@database-url",
+        "DIRECT_URL": "@direct-url",
+        "NEXT_PUBLIC_SUPABASE_URL": "@next-public-supabase-url",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next-public-supabase-anon-key",
+        "SUPABASE_SERVICE_ROLE_KEY": "@supabase-service-role-key",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": "@next-public-clerk-publishable-key",
+        "CLERK_SECRET_KEY": "@clerk-secret-key",
+        "NEXTAUTH_SECRET": "@nextauth-secret",
+        "NEXTAUTH_URL": "@nextauth-url"
+      }
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=0, stale-while-revalidate"
+        }
+      ]
+    }
+  ]
+}

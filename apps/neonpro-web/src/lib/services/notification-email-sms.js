@@ -1,17 +1,16 @@
-"use strict";
 // Serviço de notificações por email e SMS
 // lib/services/notification-email-sms.ts
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,16 +130,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.notificationService = void 0;
 var resend_1 = require("resend");
 // Configuração do Resend para emails
 var resend = new resend_1.Resend(process.env.RESEND_API_KEY);
-var NotificationService = /** @class */ (function () {
+var NotificationService = /** @class */ (() => {
   function NotificationService() {}
   // Templates de email
-  NotificationService.prototype.getEmailTemplate = function (type, context) {
+  NotificationService.prototype.getEmailTemplate = (type, context) => {
     var baseSubject = "[NeonPro] Contas a Pagar - ";
     switch (type) {
       case "overdue":
@@ -247,7 +244,7 @@ var NotificationService = /** @class */ (function () {
     }
   };
   // Templates de SMS
-  NotificationService.prototype.getSMSTemplate = function (type, context) {
+  NotificationService.prototype.getSMSTemplate = (type, context) => {
     switch (type) {
       case "overdue":
         return "[NeonPro] URGENTE: Conta "

@@ -1,9 +1,9 @@
 // Suspicious Activity Detection System
 // Advanced behavioral analysis and anomaly detection for session security
 
-import type { UserSession, SecurityEvent, SuspiciousActivity, UserRole } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
 import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { SecurityEvent, SuspiciousActivity, UserRole, UserSession } from "@/types/session";
 
 export interface BehaviorPattern {
   userId: string;
@@ -303,8 +303,7 @@ export class SuspiciousActivityDetector {
     const userPatterns = this.activePatterns.get(userId) || [];
     const recentApiPatterns = userPatterns
       .filter((p) => p.patternType === "api_usage" && Date.now() - p.timestamp < 300000)
-      .map((p) => p.currentMetrics.apiEndpoints || [])
-      .flat();
+      .flatMap((p) => p.currentMetrics.apiEndpoints || []);
 
     recentApiPatterns.push(endpoint);
 
@@ -495,18 +494,20 @@ export class SuspiciousActivityDetector {
         }
         break;
 
-      case "time_pattern":
+      case "time_pattern": {
         const currentHour = new Date().getHours();
         const isUsualTime = baseline.usualLoginTimes.some(
           (hour) => Math.abs(hour - currentHour) <= 2,
         );
         score = isUsualTime ? 0 : 80;
         break;
+      }
 
-      case "location_pattern":
+      case "location_pattern": {
         const isKnownLocation = baseline.frequentLocations.includes(current.location);
         score = isKnownLocation ? 0 : 90;
         break;
+      }
 
       case "interaction_frequency":
         if (baseline.interactionFrequency > 0) {
@@ -619,12 +620,13 @@ export class SuspiciousActivityDetector {
         baseline.avgMouseSpeed =
           baseline.avgMouseSpeed * (1 - alpha) + current.currentMouseSpeed * alpha;
         break;
-      case "time_pattern":
+      case "time_pattern": {
         const hour = new Date().getHours();
         if (!baseline.usualLoginTimes.includes(hour)) {
           baseline.usualLoginTimes.push(hour);
         }
         break;
+      }
       case "location_pattern":
         if (!baseline.frequentLocations.includes(current.location)) {
           baseline.frequentLocations.push(current.location);

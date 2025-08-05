@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("next/server");
@@ -176,7 +173,7 @@ function GET(request) {
       wastePercentage,
       kpis,
       error_1;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 5, , 6]);
@@ -272,21 +269,22 @@ function GET(request) {
           totalValue =
             (stockData === null || stockData === void 0
               ? void 0
-              : stockData.reduce(function (sum, item) {
-                  return sum + item.quantity_available * item.unit_cost;
-                }, 0)) || 0;
+              : stockData.reduce(
+                  (sum, item) => sum + item.quantity_available * item.unit_cost,
+                  0,
+                )) || 0;
           totalConsumption =
             (movementData === null || movementData === void 0
               ? void 0
-              : movementData.reduce(function (sum, movement) {
-                  return movement.movement_type === "out" ? sum + movement.quantity_out : sum;
-                }, 0)) || 0;
+              : movementData.reduce(
+                  (sum, movement) =>
+                    movement.movement_type === "out" ? sum + movement.quantity_out : sum,
+                  0,
+                )) || 0;
           averageInventory =
             (stockData === null || stockData === void 0
               ? void 0
-              : stockData.reduce(function (sum, item) {
-                  return sum + item.quantity_available;
-                }, 0)) /
+              : stockData.reduce((sum, item) => sum + item.quantity_available, 0)) /
             ((stockData === null || stockData === void 0 ? void 0 : stockData.length) || 1);
           turnoverRate = averageInventory > 0 ? totalConsumption / averageInventory : 0;
           dailyConsumption =
@@ -296,9 +294,8 @@ function GET(request) {
           productsInRange =
             (stockData === null || stockData === void 0
               ? void 0
-              : stockData.filter(function (item) {
-                  return item.quantity_available >= item.min_stock_level;
-                }).length) || 0;
+              : stockData.filter((item) => item.quantity_available >= item.min_stock_level)
+                  .length) || 0;
           accuracyPercentage = (
             stockData === null || stockData === void 0
               ? void 0
@@ -309,11 +306,13 @@ function GET(request) {
           wasteValue =
             (movementData === null || movementData === void 0
               ? void 0
-              : movementData.reduce(function (sum, movement) {
-                  return movement.movement_type === "waste"
-                    ? sum + movement.quantity_out * movement.unit_cost
-                    : sum;
-                }, 0)) || 0;
+              : movementData.reduce(
+                  (sum, movement) =>
+                    movement.movement_type === "waste"
+                      ? sum + movement.quantity_out * movement.unit_cost
+                      : sum,
+                  0,
+                )) || 0;
           wastePercentage = totalValue > 0 ? (wasteValue / totalValue) * 100 : 0;
           kpis = [
             {

@@ -2,9 +2,9 @@
 // Story 6.1 - Task 3: Installment Management System
 // API endpoints for individual payment plan management
 
-import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getInstallmentManager } from "@/lib/payments/installments/installment-manager";
 
@@ -286,11 +286,12 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         result = await installmentManager.recalculateInstallmentAmounts(id);
         break;
 
-      case "mark_as_defaulted":
+      case "mark_as_defaulted": {
         // Mark payment plan as defaulted
         const reason = data?.reason || "Marked as defaulted";
         result = await installmentManager.markAsDefaulted(id, reason);
         break;
+      }
 
       case "reactivate":
         // Reactivate a cancelled payment plan

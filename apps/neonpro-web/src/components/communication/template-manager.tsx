@@ -1,24 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
 import type {
+  Copy,
+  Edit,
+  Eye,
   Mail,
   MessageSquare,
-  Smartphone,
   Plus,
-  Edit,
-  Trash2,
-  Copy,
-  Eye,
   Save,
+  Smartphone,
+  Trash2,
   X,
 } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from "react";
 import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -28,6 +25,8 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
   Select,
   SelectContent,
@@ -35,11 +34,12 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Label } from "@/components/ui/label";
-import type { CommunicationTemplate } from "@/types/communication";
-import type { createClient } from "@/lib/supabase/client";
+import type { Separator } from "@/components/ui/separator";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useToast } from "@/hooks/use-toast";
+import type { createClient } from "@/lib/supabase/client";
 import type { cn } from "@/lib/utils";
+import type { CommunicationTemplate } from "@/types/communication";
 
 export interface TemplateManagerProps {
   templates: CommunicationTemplate[];

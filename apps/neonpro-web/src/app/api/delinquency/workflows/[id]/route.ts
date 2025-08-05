@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { DelinquencyManager } from "@/lib/payments/delinquency/delinquency-manager";
 
 // Validation schemas

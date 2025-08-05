@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Notification System - Template Engine
  * Story 1.7: Sistema de Notificações
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TemplateEngine = void 0;
 var types_1 = require("./types");
@@ -162,7 +159,7 @@ var types_1 = require("./types");
 /**
  * Engine de templates para notificações
  */
-var TemplateEngine = /** @class */ (function () {
+var TemplateEngine = /** @class */ (() => {
   function TemplateEngine() {
     this.templates = new Map();
     this.functions = new Map();
@@ -193,57 +190,44 @@ var TemplateEngine = /** @class */ (function () {
    * Registra funções padrão do template
    */
   TemplateEngine.prototype.registerDefaultFunctions = function () {
-    var _this = this;
     // Formatação de data
-    this.functions.set("formatDate", function (context) {
-      return function (date, format) {
-        if (format === void 0) {
-          format = "dd/MM/yyyy";
-        }
-        var d = typeof date === "string" ? new Date(date) : date;
-        return _this.formatDate(d, format);
-      };
+    this.functions.set("formatDate", (context) => (date, format) => {
+      if (format === void 0) {
+        format = "dd/MM/yyyy";
+      }
+      var d = typeof date === "string" ? new Date(date) : date;
+      return this.formatDate(d, format);
     });
     // Formatação de moeda
-    this.functions.set("formatCurrency", function (context) {
-      return function (value, currency) {
-        if (currency === void 0) {
-          currency = "BRL";
-        }
-        return new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: currency,
-        }).format(value);
-      };
+    this.functions.set("formatCurrency", (context) => (value, currency) => {
+      if (currency === void 0) {
+        currency = "BRL";
+      }
+      return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: currency,
+      }).format(value);
     });
     // Formatação de telefone
-    this.functions.set("formatPhone", function (context) {
-      return function (phone) {
-        var cleaned = phone.replace(/\D/g, "");
-        if (cleaned.length === 11) {
-          return "("
-            .concat(cleaned.slice(0, 2), ") ")
-            .concat(cleaned.slice(2, 7), "-")
-            .concat(cleaned.slice(7));
-        }
-        return phone;
-      };
+    this.functions.set("formatPhone", (context) => (phone) => {
+      var cleaned = phone.replace(/\D/g, "");
+      if (cleaned.length === 11) {
+        return "("
+          .concat(cleaned.slice(0, 2), ") ")
+          .concat(cleaned.slice(2, 7), "-")
+          .concat(cleaned.slice(7));
+      }
+      return phone;
     });
     // Saudação baseada no horário
-    this.functions.set("greeting", function (context) {
-      return function () {
-        var hour = new Date().getHours();
-        if (hour < 12) return "Bom dia";
-        if (hour < 18) return "Boa tarde";
-        return "Boa noite";
-      };
+    this.functions.set("greeting", (context) => () => {
+      var hour = new Date().getHours();
+      if (hour < 12) return "Bom dia";
+      if (hour < 18) return "Boa tarde";
+      return "Boa noite";
     });
     // Nome do primeiro nome
-    this.functions.set("firstName", function (context) {
-      return function (fullName) {
-        return fullName.split(" ")[0];
-      };
-    });
+    this.functions.set("firstName", (context) => (fullName) => fullName.split(" ")[0]);
   };
   // ============================================================================
   // GERENCIAMENTO DE TEMPLATES
@@ -347,17 +331,16 @@ var TemplateEngine = /** @class */ (function () {
    * Renderiza string com variáveis
    */
   TemplateEngine.prototype.renderString = function (template, variables, context) {
-    var _this = this;
     var result = template;
     // Substituir variáveis simples {{variable}}
-    result = result.replace(/\{\{\s*([^}]+)\s*\}\}/g, function (match, varName) {
-      var value = _this.getVariableValue(varName.trim(), variables, context);
+    result = result.replace(/\{\{\s*([^}]+)\s*\}\}/g, (match, varName) => {
+      var value = this.getVariableValue(varName.trim(), variables, context);
       return value !== undefined ? String(value) : match;
     });
     // Processar funções {%function(args)%}
-    result = result.replace(/\{%\s*([^}]+)\s*%\}/g, function (match, funcCall) {
+    result = result.replace(/\{%\s*([^}]+)\s*%\}/g, (match, funcCall) => {
       try {
-        var value = _this.evaluateFunction(funcCall.trim(), context);
+        var value = this.evaluateFunction(funcCall.trim(), context);
         return value !== undefined ? String(value) : match;
       } catch (error) {
         console.warn("Erro ao avaliar fun\u00E7\u00E3o: ".concat(funcCall), error);
@@ -367,9 +350,9 @@ var TemplateEngine = /** @class */ (function () {
     // Processar condicionais {?condition}content{/condition}
     result = result.replace(
       /\{\?\s*([^}]+)\s*\}([\s\S]*?)\{\/\1\}/g,
-      function (match, condition, content) {
+      (match, condition, content) => {
         try {
-          var shouldShow = _this.evaluateCondition(condition.trim(), variables, context);
+          var shouldShow = this.evaluateCondition(condition.trim(), variables, context);
           return shouldShow ? content : "";
         } catch (error) {
           console.warn("Erro ao avaliar condi\u00E7\u00E3o: ".concat(condition), error);
@@ -382,8 +365,8 @@ var TemplateEngine = /** @class */ (function () {
   /**
    * Extrai variáveis do contexto
    */
-  TemplateEngine.prototype.extractVariables = function (context) {
-    return __assign(
+  TemplateEngine.prototype.extractVariables = (context) =>
+    __assign(
       __assign(
         {
           // Dados do destinatário
@@ -418,11 +401,10 @@ var TemplateEngine = /** @class */ (function () {
         },
       },
     );
-  };
   /**
    * Obtém valor de variável com suporte a notação de ponto
    */
-  TemplateEngine.prototype.getVariableValue = function (path, variables, context) {
+  TemplateEngine.prototype.getVariableValue = (path, variables, context) => {
     var keys = path.split(".");
     var value = variables;
     for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
@@ -439,7 +421,6 @@ var TemplateEngine = /** @class */ (function () {
    * Avalia função do template
    */
   TemplateEngine.prototype.evaluateFunction = function (funcCall, context) {
-    var _this = this;
     // Parse simples de função: functionName(arg1, arg2)
     var match = funcCall.match(/^(\w+)\((.*)\)$/);
     if (!match) {
@@ -453,7 +434,7 @@ var TemplateEngine = /** @class */ (function () {
     }
     // Parse simples de argumentos (sem suporte a objetos complexos)
     var args = argsStr
-      ? argsStr.split(",").map(function (arg) {
+      ? argsStr.split(",").map((arg) => {
           var trimmed = arg.trim();
           // String literal
           if (trimmed.startsWith("'") && trimmed.endsWith("'")) {
@@ -470,7 +451,7 @@ var TemplateEngine = /** @class */ (function () {
           if (trimmed === "true") return true;
           if (trimmed === "false") return false;
           // Variável
-          return _this.getVariableValue(trimmed, _this.extractVariables(context), context);
+          return this.getVariableValue(trimmed, this.extractVariables(context), context);
         })
       : [];
     var templateFunc = func(context);
@@ -493,9 +474,7 @@ var TemplateEngine = /** @class */ (function () {
     for (var _i = 0, operators_1 = operators; _i < operators_1.length; _i++) {
       var op = operators_1[_i];
       if (condition.includes(op)) {
-        var _a = condition.split(op).map(function (s) {
-            return s.trim();
-          }),
+        var _a = condition.split(op).map((s) => s.trim()),
           left = _a[0],
           right = _a[1];
         var leftValue = this.getVariableValue(left, variables, context);
@@ -578,9 +557,7 @@ var TemplateEngine = /** @class */ (function () {
    */
   TemplateEngine.prototype.getDefaultTemplate = function (type, channel) {
     var templates = this.getDefaultTemplates();
-    var template = templates.find(function (t) {
-      return t.type === type && t.channel === channel;
-    });
+    var template = templates.find((t) => t.type === type && t.channel === channel);
     if (template) {
       return template;
     }
@@ -602,107 +579,105 @@ var TemplateEngine = /** @class */ (function () {
   /**
    * Define templates padrão do sistema
    */
-  TemplateEngine.prototype.getDefaultTemplates = function () {
-    return [
-      // Templates de Agendamento - Email
-      {
-        id: "appointment_created_email",
-        name: "Agendamento Criado - Email",
-        type: types_1.NotificationType.APPOINTMENT_CREATED,
-        channel: types_1.NotificationChannel.EMAIL,
-        subject: "Agendamento Confirmado - {{clinic.name}}",
-        title: "Seu agendamento foi confirmado!",
-        body: '\n          <h2>{%greeting()%}, {{firstName(recipient.name)}}!</h2>\n          \n          <p>Seu agendamento foi confirmado com sucesso:</p>\n          \n          <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">\n            <h3>Detalhes do Agendamento</h3>\n            <p><strong>Procedimento:</strong> {{appointment.procedure}}</p>\n            <p><strong>Data:</strong> {{formatDate(appointment.date, \'dd/MM/yyyy\')}}</p>\n            <p><strong>Hor\u00E1rio:</strong> {{appointment.time}}</p>\n            <p><strong>Profissional:</strong> {{appointment.professional}}</p>\n            {?appointment.location}<p><strong>Local:</strong> {{appointment.location}}</p>{/appointment.location}\n          </div>\n          \n          <p>Chegue com 15 minutos de anteced\u00EAncia.</p>\n          \n          <p>Em caso de d\u00FAvidas, entre em contato:</p>\n          <p>\uD83D\uDCDE {{formatPhone(clinic.contact.phone)}}</p>\n          <p>\u2709\uFE0F {{clinic.contact.email}}</p>\n          \n          <hr>\n          <p style="font-size: 12px; color: #666;">\n            {{clinic.name}}<br>\n            {{clinic.contact.address}}\n          </p>\n        ',
-        variables: [
-          "recipient.name",
-          "appointment.procedure",
-          "appointment.date",
-          "appointment.time",
-          "appointment.professional",
-          "appointment.location",
-          "clinic.name",
-          "clinic.contact.phone",
-          "clinic.contact.email",
-          "clinic.contact.address",
-        ],
-        isActive: true,
-        version: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      // Templates de Agendamento - SMS
-      {
-        id: "appointment_reminder_sms",
-        name: "Lembrete de Agendamento - SMS",
-        type: types_1.NotificationType.APPOINTMENT_REMINDER,
-        channel: types_1.NotificationChannel.SMS,
-        title: "Lembrete de Consulta",
-        body: "\n          \uD83C\uDFE5 {{clinic.name}}\n          \n          Ol\u00E1 {{firstName(recipient.name)}}! Lembrete da sua consulta:\n          \n          \uD83D\uDCC5 {{formatDate(appointment.date, 'dd/MM')}}\n          \uD83D\uDD50 {{appointment.time}}\n          \uD83D\uDC68\u200D\u2695\uFE0F {{appointment.professional}}\n          \n          Chegue 15min antes.\n          \n          Para cancelar: {{urls.app}}/cancel/{{appointment.id}}\n        ",
-        variables: [
-          "recipient.name",
-          "appointment.date",
-          "appointment.time",
-          "appointment.professional",
-          "appointment.id",
-          "clinic.name",
-        ],
-        isActive: true,
-        version: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      // Templates de Sistema - In-App
-      {
-        id: "system_alert_in_app",
-        name: "Alerta do Sistema - In-App",
-        type: types_1.NotificationType.SYSTEM_ALERT,
-        channel: types_1.NotificationChannel.IN_APP,
-        title: "{{alert.title}}",
-        body: '\n          <div class="alert alert-{{alert.severity}}">\n            <h4>{{alert.title}}</h4>\n            <p>{{alert.message}}</p>\n            \n            {?alert.action}\n            <button onclick="{{alert.action.handler}}">\n              {{alert.action.label}}\n            </button>\n            {/alert.action}\n            \n            <small>{{formatDate(timestamp, \'dd/MM/yyyy HH:mm\')}}</small>\n          </div>\n        ',
-        variables: [
-          "alert.title",
-          "alert.message",
-          "alert.severity",
-          "alert.action.label",
-          "alert.action.handler",
-          "timestamp",
-        ],
-        isActive: true,
-        version: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      // Templates de Pagamento - Email
-      {
-        id: "payment_received_email",
-        name: "Pagamento Recebido - Email",
-        type: types_1.NotificationType.PAYMENT_RECEIVED,
-        channel: types_1.NotificationChannel.EMAIL,
-        subject: "Pagamento Confirmado - {{clinic.name}}",
-        title: "Pagamento confirmado!",
-        body: "\n          <h2>Pagamento Confirmado</h2>\n          \n          <p>Ol\u00E1 {{firstName(recipient.name)}},</p>\n          \n          <p>Confirmamos o recebimento do seu pagamento:</p>\n          \n          <div style=\"background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;\">\n            <h3>Detalhes do Pagamento</h3>\n            <p><strong>Valor:</strong> {{formatCurrency(payment.amount)}}</p>\n            <p><strong>M\u00E9todo:</strong> {{payment.method}}</p>\n            <p><strong>Data:</strong> {{formatDate(payment.date, 'dd/MM/yyyy HH:mm')}}</p>\n            <p><strong>Refer\u00EAncia:</strong> {{payment.reference}}</p>\n          </div>\n          \n          <p>Obrigado pela prefer\u00EAncia!</p>\n          \n          <p>Atenciosamente,<br>{{clinic.name}}</p>\n        ",
-        variables: [
-          "recipient.name",
-          "payment.amount",
-          "payment.method",
-          "payment.date",
-          "payment.reference",
-          "clinic.name",
-        ],
-        isActive: true,
-        version: 1,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ];
-  };
+  TemplateEngine.prototype.getDefaultTemplates = () => [
+    // Templates de Agendamento - Email
+    {
+      id: "appointment_created_email",
+      name: "Agendamento Criado - Email",
+      type: types_1.NotificationType.APPOINTMENT_CREATED,
+      channel: types_1.NotificationChannel.EMAIL,
+      subject: "Agendamento Confirmado - {{clinic.name}}",
+      title: "Seu agendamento foi confirmado!",
+      body: '\n          <h2>{%greeting()%}, {{firstName(recipient.name)}}!</h2>\n          \n          <p>Seu agendamento foi confirmado com sucesso:</p>\n          \n          <div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">\n            <h3>Detalhes do Agendamento</h3>\n            <p><strong>Procedimento:</strong> {{appointment.procedure}}</p>\n            <p><strong>Data:</strong> {{formatDate(appointment.date, \'dd/MM/yyyy\')}}</p>\n            <p><strong>Hor\u00E1rio:</strong> {{appointment.time}}</p>\n            <p><strong>Profissional:</strong> {{appointment.professional}}</p>\n            {?appointment.location}<p><strong>Local:</strong> {{appointment.location}}</p>{/appointment.location}\n          </div>\n          \n          <p>Chegue com 15 minutos de anteced\u00EAncia.</p>\n          \n          <p>Em caso de d\u00FAvidas, entre em contato:</p>\n          <p>\uD83D\uDCDE {{formatPhone(clinic.contact.phone)}}</p>\n          <p>\u2709\uFE0F {{clinic.contact.email}}</p>\n          \n          <hr>\n          <p style="font-size: 12px; color: #666;">\n            {{clinic.name}}<br>\n            {{clinic.contact.address}}\n          </p>\n        ',
+      variables: [
+        "recipient.name",
+        "appointment.procedure",
+        "appointment.date",
+        "appointment.time",
+        "appointment.professional",
+        "appointment.location",
+        "clinic.name",
+        "clinic.contact.phone",
+        "clinic.contact.email",
+        "clinic.contact.address",
+      ],
+      isActive: true,
+      version: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    // Templates de Agendamento - SMS
+    {
+      id: "appointment_reminder_sms",
+      name: "Lembrete de Agendamento - SMS",
+      type: types_1.NotificationType.APPOINTMENT_REMINDER,
+      channel: types_1.NotificationChannel.SMS,
+      title: "Lembrete de Consulta",
+      body: "\n          \uD83C\uDFE5 {{clinic.name}}\n          \n          Ol\u00E1 {{firstName(recipient.name)}}! Lembrete da sua consulta:\n          \n          \uD83D\uDCC5 {{formatDate(appointment.date, 'dd/MM')}}\n          \uD83D\uDD50 {{appointment.time}}\n          \uD83D\uDC68\u200D\u2695\uFE0F {{appointment.professional}}\n          \n          Chegue 15min antes.\n          \n          Para cancelar: {{urls.app}}/cancel/{{appointment.id}}\n        ",
+      variables: [
+        "recipient.name",
+        "appointment.date",
+        "appointment.time",
+        "appointment.professional",
+        "appointment.id",
+        "clinic.name",
+      ],
+      isActive: true,
+      version: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    // Templates de Sistema - In-App
+    {
+      id: "system_alert_in_app",
+      name: "Alerta do Sistema - In-App",
+      type: types_1.NotificationType.SYSTEM_ALERT,
+      channel: types_1.NotificationChannel.IN_APP,
+      title: "{{alert.title}}",
+      body: '\n          <div class="alert alert-{{alert.severity}}">\n            <h4>{{alert.title}}</h4>\n            <p>{{alert.message}}</p>\n            \n            {?alert.action}\n            <button onclick="{{alert.action.handler}}">\n              {{alert.action.label}}\n            </button>\n            {/alert.action}\n            \n            <small>{{formatDate(timestamp, \'dd/MM/yyyy HH:mm\')}}</small>\n          </div>\n        ',
+      variables: [
+        "alert.title",
+        "alert.message",
+        "alert.severity",
+        "alert.action.label",
+        "alert.action.handler",
+        "timestamp",
+      ],
+      isActive: true,
+      version: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    // Templates de Pagamento - Email
+    {
+      id: "payment_received_email",
+      name: "Pagamento Recebido - Email",
+      type: types_1.NotificationType.PAYMENT_RECEIVED,
+      channel: types_1.NotificationChannel.EMAIL,
+      subject: "Pagamento Confirmado - {{clinic.name}}",
+      title: "Pagamento confirmado!",
+      body: "\n          <h2>Pagamento Confirmado</h2>\n          \n          <p>Ol\u00E1 {{firstName(recipient.name)}},</p>\n          \n          <p>Confirmamos o recebimento do seu pagamento:</p>\n          \n          <div style=\"background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 20px 0;\">\n            <h3>Detalhes do Pagamento</h3>\n            <p><strong>Valor:</strong> {{formatCurrency(payment.amount)}}</p>\n            <p><strong>M\u00E9todo:</strong> {{payment.method}}</p>\n            <p><strong>Data:</strong> {{formatDate(payment.date, 'dd/MM/yyyy HH:mm')}}</p>\n            <p><strong>Refer\u00EAncia:</strong> {{payment.reference}}</p>\n          </div>\n          \n          <p>Obrigado pela prefer\u00EAncia!</p>\n          \n          <p>Atenciosamente,<br>{{clinic.name}}</p>\n        ",
+      variables: [
+        "recipient.name",
+        "payment.amount",
+        "payment.method",
+        "payment.date",
+        "payment.reference",
+        "clinic.name",
+      ],
+      isActive: true,
+      version: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
   // ============================================================================
   // UTILITÁRIOS
   // ============================================================================
   /**
    * Formata data
    */
-  TemplateEngine.prototype.formatDate = function (date, format) {
+  TemplateEngine.prototype.formatDate = (date, format) => {
     var day = date.getDate().toString().padStart(2, "0");
     var month = (date.getMonth() + 1).toString().padStart(2, "0");
     var year = date.getFullYear();
@@ -718,7 +693,7 @@ var TemplateEngine = /** @class */ (function () {
   /**
    * Valida template
    */
-  TemplateEngine.prototype.validateTemplate = function (template) {
+  TemplateEngine.prototype.validateTemplate = (template) => {
     var errors = [];
     if (!template.title.trim()) {
       errors.push("Título é obrigatório");

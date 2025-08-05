@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheManager =
   exports.staticCache =
@@ -140,7 +137,7 @@ exports.CacheManager =
   exports.apiCache =
   exports.defaultCache =
     void 0;
-var CacheManager = /** @class */ (function () {
+var CacheManager = /** @class */ (() => {
   function CacheManager(options) {
     if (options === void 0) {
       options = {};
@@ -253,25 +250,20 @@ var CacheManager = /** @class */ (function () {
   };
   // Batch operations
   CacheManager.prototype.setMany = function (items) {
-    var _this = this;
-    items.forEach(function (_a) {
+    items.forEach((_a) => {
       var key = _a.key,
         data = _a.data,
         ttl = _a.ttl;
-      _this.set(key, data, ttl);
+      this.set(key, data, ttl);
     });
   };
   CacheManager.prototype.getMany = function (keys) {
-    var _this = this;
-    return keys.map(function (key) {
-      return { key: key, data: _this.get(key) };
-    });
+    return keys.map((key) => ({ key: key, data: this.get(key) }));
   };
   CacheManager.prototype.deleteMany = function (keys) {
-    var _this = this;
     var deleted = 0;
-    keys.forEach(function (key) {
-      if (_this.delete(key)) deleted++;
+    keys.forEach((key) => {
+      if (this.delete(key)) deleted++;
     });
     return deleted;
   };
@@ -322,7 +314,6 @@ var CacheManager = /** @class */ (function () {
     }
   };
   CacheManager.prototype.cleanup = function () {
-    var _this = this;
     var now = Date.now();
     var expiredKeys = [];
     for (var _i = 0, _a = this.cache.entries(); _i < _a.length; _i++) {
@@ -333,15 +324,12 @@ var CacheManager = /** @class */ (function () {
         expiredKeys.push(key);
       }
     }
-    expiredKeys.forEach(function (key) {
-      return _this.delete(key);
-    });
+    expiredKeys.forEach((key) => this.delete(key));
   };
   CacheManager.prototype.startCleanup = function () {
-    var _this = this;
     // Run cleanup every minute
-    this.cleanupInterval = setInterval(function () {
-      _this.cleanup();
+    this.cleanupInterval = setInterval(() => {
+      this.cleanup();
     }, 60 * 1000);
   };
   // =====================================================================================
@@ -401,9 +389,7 @@ var CacheManager = /** @class */ (function () {
           keysToRemove.push(key);
         }
       }
-      keysToRemove.forEach(function (key) {
-        return localStorage.removeItem(key);
-      });
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
     } catch (error) {
       console.warn("Failed to clear cache storage:", error);
     }

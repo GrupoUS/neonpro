@@ -1,5 +1,19 @@
 "use client";
 
+import type {
+  Clock,
+  Crown,
+  Edit,
+  Loader2,
+  Plus,
+  Settings,
+  Shield,
+  Trash2,
+  UserCheck,
+  Users,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent } from "@/components/ui/card";
@@ -31,20 +45,6 @@ import type {
 } from "@/components/ui/table";
 import type { Textarea } from "@/components/ui/textarea";
 import type { cn } from "@/lib/utils";
-import type {
-  Clock,
-  Crown,
-  Edit,
-  Loader2,
-  Plus,
-  Settings,
-  Shield,
-  Trash2,
-  UserCheck,
-  Users,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 
 export interface ApprovalLevel {
   id: string;

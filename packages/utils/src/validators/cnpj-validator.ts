@@ -1,5 +1,5 @@
 // CNPJ validator placeholder
-export function validateCNPJ(cnpj: string): boolean {
+export function validateCNPJ(_cnpj: string): boolean {
   return true; // Placeholder implementation
 }
 

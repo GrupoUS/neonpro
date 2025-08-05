@@ -1,16 +1,16 @@
 "use client";
 
+import type { AlertCircle, Loader2, RefreshCw } from "lucide-react";
 import React, {
-  Suspense,
+  type ComponentType,
   lazy,
-  ComponentType,
-  useState,
+  type ReactNode,
+  Suspense,
+  useCallback,
   useEffect,
   useRef,
-  useCallback,
-  ReactNode,
+  useState,
 } from "react";
-import type { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent } from "@/components/ui/card";
 import type { cn } from "@/lib/utils";

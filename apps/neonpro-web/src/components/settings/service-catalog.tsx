@@ -1,9 +1,28 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  Briefcase,
+  Clock,
+  DollarSign,
+  Edit,
+  Eye,
+  EyeOff,
+  Filter,
+  Loader2,
+  Plus,
+  Search,
+  Star,
+  Tag,
+  Trash2,
+  TrendingUp,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import * as z from "zod";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,6 +30,14 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type {
   Form,
   FormControl,
@@ -21,9 +48,6 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type {
   Select,
   SelectContent,
@@ -31,14 +55,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import type { Switch } from "@/components/ui/switch";
 import type {
   Table,
   TableBody,
@@ -47,24 +64,7 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Switch } from "@/components/ui/switch";
-import type {
-  Briefcase,
-  Plus,
-  Edit,
-  Trash2,
-  Clock,
-  DollarSign,
-  Search,
-  Filter,
-  Eye,
-  EyeOff,
-  Star,
-  TrendingUp,
-  Loader2,
-  Tag,
-} from "lucide-react";
-import type { toast } from "sonner";
+import type { Textarea } from "@/components/ui/textarea";
 
 const serviceCategories = [
   { value: "facial", label: "Tratamentos Faciais", color: "bg-blue-100 text-blue-800" },

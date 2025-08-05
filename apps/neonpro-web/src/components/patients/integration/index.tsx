@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Search, Zap, BarChart3, Users, Clock, Star } from "lucide-react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { BarChart3, Clock, Search, Star, Users, Zap } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { AdvancedSearch } from "./advanced-search";
 import type { QuickAccess } from "./quick-access";
-import type { toast } from "sonner";
 
 interface SystemStats {
   totalPatients: number;

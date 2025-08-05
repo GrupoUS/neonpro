@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConversationSidebar = ConversationSidebar;
 var react_1 = require("react");
@@ -159,7 +156,6 @@ var sonner_1 = require("sonner");
 var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 function ConversationSidebar(_a) {
-  var _this = this;
   var selectedConversationId = _a.selectedConversationId,
     onSelectConversation = _a.onSelectConversation,
     onNewConversation = _a.onNewConversation;
@@ -169,13 +165,13 @@ function ConversationSidebar(_a) {
   var _c = (0, react_1.useState)(true),
     loading = _c[0],
     setLoading = _c[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadConversations();
   }, []);
-  var loadConversations = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadConversations = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -207,11 +203,10 @@ function ConversationSidebar(_a) {
         }
       });
     });
-  };
-  var createNewConversation = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createNewConversation = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data_1, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -234,9 +229,7 @@ function ConversationSidebar(_a) {
             return [4 /*yield*/, response.json()];
           case 2:
             data_1 = _a.sent();
-            setConversations(function (prev) {
-              return __spreadArray([data_1.conversation], prev, true);
-            });
+            setConversations((prev) => __spreadArray([data_1.conversation], prev, true));
             onSelectConversation(data_1.conversation.id);
             onNewConversation();
             sonner_1.toast.success("Nova conversa criada");
@@ -256,11 +249,10 @@ function ConversationSidebar(_a) {
         }
       });
     });
-  };
-  var deleteConversation = function (conversationId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteConversation = (conversationId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -273,11 +265,7 @@ function ConversationSidebar(_a) {
           case 1:
             response = _a.sent();
             if (response.ok) {
-              setConversations(function (prev) {
-                return prev.filter(function (conv) {
-                  return conv.id !== conversationId;
-                });
-              });
+              setConversations((prev) => prev.filter((conv) => conv.id !== conversationId));
               if (selectedConversationId === conversationId) {
                 onNewConversation(); // Reset to new conversation
               }
@@ -296,8 +284,7 @@ function ConversationSidebar(_a) {
         }
       });
     });
-  };
-  var getModelBadgeColor = function (model) {
+  var getModelBadgeColor = (model) => {
     switch (model) {
       case "gpt4":
         return "bg-green-100 text-green-800";
@@ -309,7 +296,7 @@ function ConversationSidebar(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getModelName = function (model) {
+  var getModelName = (model) => {
     switch (model) {
       case "gpt4":
         return "GPT-4";
@@ -340,9 +327,9 @@ function ConversationSidebar(_a) {
         <scroll_area_1.ScrollArea className="h-full px-3">
           {loading
             ? <div className="space-y-3 py-4">
-                {__spreadArray([], Array(5), true).map(function (_, i) {
-                  return <div key={i} className="bg-gray-100 rounded-lg h-16 animate-pulse" />;
-                })}
+                {__spreadArray([], Array(5), true).map((_, i) => (
+                  <div key={i} className="bg-gray-100 rounded-lg h-16 animate-pulse" />
+                ))}
               </div>
             : conversations.length === 0
               ? <div className="text-center text-muted-foreground py-8">
@@ -351,83 +338,77 @@ function ConversationSidebar(_a) {
                   <p className="text-xs">Clique em + para começar</p>
                 </div>
               : <div className="space-y-2 py-3">
-                  {conversations.map(function (conversation) {
-                    return (
-                      <div
-                        key={conversation.id}
-                        className={"group p-3 rounded-lg cursor-pointer transition-colors border ".concat(
-                          selectedConversationId === conversation.id
-                            ? "bg-blue-50 border-blue-200"
-                            : "hover:bg-gray-50 border-transparent",
-                        )}
-                        onClick={function () {
-                          return onSelectConversation(conversation.id);
-                        }}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-medium truncate">{conversation.title}</h4>
-                            <div className="flex items-center gap-2 mt-1">
-                              <badge_1.Badge
-                                variant="secondary"
-                                className={"text-xs ".concat(
-                                  getModelBadgeColor(conversation.model_used),
-                                )}
-                              >
-                                {getModelName(conversation.model_used)}
-                              </badge_1.Badge>
-                              <span className="text-xs text-muted-foreground">
-                                {conversation.message_count} mensagens
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1 mt-1">
-                              <lucide_react_1.Calendar className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-xs text-muted-foreground">
-                                {(0, date_fns_1.formatDistanceToNow)(
-                                  new Date(conversation.updated_at),
-                                  {
-                                    addSuffix: true,
-                                    locale: locale_1.ptBR,
-                                  },
-                                )}
-                              </span>
-                            </div>
+                  {conversations.map((conversation) => (
+                    <div
+                      key={conversation.id}
+                      className={"group p-3 rounded-lg cursor-pointer transition-colors border ".concat(
+                        selectedConversationId === conversation.id
+                          ? "bg-blue-50 border-blue-200"
+                          : "hover:bg-gray-50 border-transparent",
+                      )}
+                      onClick={() => onSelectConversation(conversation.id)}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium truncate">{conversation.title}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <badge_1.Badge
+                              variant="secondary"
+                              className={"text-xs ".concat(
+                                getModelBadgeColor(conversation.model_used),
+                              )}
+                            >
+                              {getModelName(conversation.model_used)}
+                            </badge_1.Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {conversation.message_count} mensagens
+                            </span>
                           </div>
-
-                          <dropdown_menu_1.DropdownMenu>
-                            <dropdown_menu_1.DropdownMenuTrigger asChild>
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={function (e) {
-                                  return e.stopPropagation();
-                                }}
-                              >
-                                <lucide_react_1.MoreVertical className="h-3 w-3" />
-                              </button_1.Button>
-                            </dropdown_menu_1.DropdownMenuTrigger>
-                            <dropdown_menu_1.DropdownMenuContent align="end" className="w-48">
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.Edit className="h-4 w-4 mr-2" />
-                                Renomear
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuItem
-                                className="text-red-600"
-                                onClick={function (e) {
-                                  e.stopPropagation();
-                                  deleteConversation(conversation.id);
-                                }}
-                              >
-                                <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
-                                Excluir
-                              </dropdown_menu_1.DropdownMenuItem>
-                            </dropdown_menu_1.DropdownMenuContent>
-                          </dropdown_menu_1.DropdownMenu>
+                          <div className="flex items-center gap-1 mt-1">
+                            <lucide_react_1.Calendar className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
+                              {(0, date_fns_1.formatDistanceToNow)(
+                                new Date(conversation.updated_at),
+                                {
+                                  addSuffix: true,
+                                  locale: locale_1.ptBR,
+                                },
+                              )}
+                            </span>
+                          </div>
                         </div>
+
+                        <dropdown_menu_1.DropdownMenu>
+                          <dropdown_menu_1.DropdownMenuTrigger asChild>
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <lucide_react_1.MoreVertical className="h-3 w-3" />
+                            </button_1.Button>
+                          </dropdown_menu_1.DropdownMenuTrigger>
+                          <dropdown_menu_1.DropdownMenuContent align="end" className="w-48">
+                            <dropdown_menu_1.DropdownMenuItem>
+                              <lucide_react_1.Edit className="h-4 w-4 mr-2" />
+                              Renomear
+                            </dropdown_menu_1.DropdownMenuItem>
+                            <dropdown_menu_1.DropdownMenuItem
+                              className="text-red-600"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteConversation(conversation.id);
+                              }}
+                            >
+                              <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
+                              Excluir
+                            </dropdown_menu_1.DropdownMenuItem>
+                          </dropdown_menu_1.DropdownMenuContent>
+                        </dropdown_menu_1.DropdownMenu>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>}
         </scroll_area_1.ScrollArea>
       </card_1.CardContent>

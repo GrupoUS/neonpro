@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Tests for Treatment Success Service, Types, and Validations
  * Tests backend logic for Story 8.4 - Treatment Success Rate Tracking & Optimization
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,7 +36,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,8 +65,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -88,9 +85,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -149,65 +146,31 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var treatment_success_1 = require("@/app/lib/services/treatment-success");
 var treatment_success_2 = require("@/app/lib/validations/treatment-success");
 // Mock Supabase client
 var mockSupabaseClient = {
-  from: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  select: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  insert: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  update: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  delete: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  eq: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  gte: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  lte: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  not: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  is: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  range: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  order: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  single: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  upsert: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
-  limit: jest.fn(function () {
-    return mockSupabaseClient;
-  }),
+  from: jest.fn(() => mockSupabaseClient),
+  select: jest.fn(() => mockSupabaseClient),
+  insert: jest.fn(() => mockSupabaseClient),
+  update: jest.fn(() => mockSupabaseClient),
+  delete: jest.fn(() => mockSupabaseClient),
+  eq: jest.fn(() => mockSupabaseClient),
+  gte: jest.fn(() => mockSupabaseClient),
+  lte: jest.fn(() => mockSupabaseClient),
+  not: jest.fn(() => mockSupabaseClient),
+  is: jest.fn(() => mockSupabaseClient),
+  range: jest.fn(() => mockSupabaseClient),
+  order: jest.fn(() => mockSupabaseClient),
+  single: jest.fn(() => mockSupabaseClient),
+  upsert: jest.fn(() => mockSupabaseClient),
+  limit: jest.fn(() => mockSupabaseClient),
 };
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return Promise.resolve(mockSupabaseClient);
-    }),
-  };
-});
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => Promise.resolve(mockSupabaseClient)),
+}));
 // Mock data for testing
 var mockTreatmentOutcome = {
   id: "550e8400-e29b-41d4-a716-446655440001",
@@ -247,9 +210,9 @@ var mockSuccessMetrics = {
   created_at: "2025-01-31T23:59:59Z",
   updated_at: "2025-01-31T23:59:59Z",
 };
-describe("Treatment Success Validation Schemas", function () {
-  describe("createTreatmentOutcomeSchema", function () {
-    it("should validate correct treatment outcome data", function () {
+describe("Treatment Success Validation Schemas", () => {
+  describe("createTreatmentOutcomeSchema", () => {
+    it("should validate correct treatment outcome data", () => {
       var validData = {
         patient_id: "550e8400-e29b-41d4-a716-446655440002",
         treatment_id: "treatment-001",
@@ -262,7 +225,7 @@ describe("Treatment Success Validation Schemas", function () {
       var result = treatment_success_2.createTreatmentOutcomeSchema.safeParse(validData);
       expect(result.success).toBe(true);
     });
-    it("should reject invalid UUID for patient_id", function () {
+    it("should reject invalid UUID for patient_id", () => {
       var invalidData = {
         patient_id: "invalid-uuid",
         treatment_id: "treatment-001",
@@ -277,7 +240,7 @@ describe("Treatment Success Validation Schemas", function () {
         expect(result.error.issues[0].message).toContain("UUID válido");
       }
     });
-    it("should reject empty success_criteria", function () {
+    it("should reject empty success_criteria", () => {
       var invalidData = {
         patient_id: "550e8400-e29b-41d4-a716-446655440002",
         treatment_id: "treatment-001",
@@ -292,7 +255,7 @@ describe("Treatment Success Validation Schemas", function () {
         expect(result.error.issues[0].message).toContain("Critérios de sucesso são obrigatórios");
       }
     });
-    it("should reject invalid date format", function () {
+    it("should reject invalid date format", () => {
       var invalidData = {
         patient_id: "550e8400-e29b-41d4-a716-446655440002",
         treatment_id: "treatment-001",
@@ -308,8 +271,8 @@ describe("Treatment Success Validation Schemas", function () {
       }
     });
   });
-  describe("updateTreatmentOutcomeSchema", function () {
-    it("should validate success score range", function () {
+  describe("updateTreatmentOutcomeSchema", () => {
+    it("should validate success score range", () => {
       var validData = { success_score: 0.95 };
       var result = treatment_success_2.updateTreatmentOutcomeSchema.safeParse(validData);
       expect(result.success).toBe(true);
@@ -317,7 +280,7 @@ describe("Treatment Success Validation Schemas", function () {
       var result2 = treatment_success_2.updateTreatmentOutcomeSchema.safeParse(invalidData);
       expect(result2.success).toBe(false);
     });
-    it("should validate patient satisfaction score range", function () {
+    it("should validate patient satisfaction score range", () => {
       var validData = { patient_satisfaction_score: 0.89 };
       var result = treatment_success_2.updateTreatmentOutcomeSchema.safeParse(validData);
       expect(result.success).toBe(true);
@@ -325,7 +288,7 @@ describe("Treatment Success Validation Schemas", function () {
       var result2 = treatment_success_2.updateTreatmentOutcomeSchema.safeParse(invalidData);
       expect(result2.success).toBe(false);
     });
-    it("should validate photo URLs", function () {
+    it("should validate photo URLs", () => {
       var validData = {
         before_photos: ["https://example.com/before.jpg"],
         after_photos: ["https://example.com/after.jpg"],
@@ -337,8 +300,8 @@ describe("Treatment Success Validation Schemas", function () {
       expect(result2.success).toBe(false);
     });
   });
-  describe("createSuccessMetricsSchema", function () {
-    it("should validate success metrics data", function () {
+  describe("createSuccessMetricsSchema", () => {
+    it("should validate success metrics data", () => {
       var validData = {
         treatment_type: "Botox",
         time_period: "monthly",
@@ -351,7 +314,7 @@ describe("Treatment Success Validation Schemas", function () {
       var result = treatment_success_2.createSuccessMetricsSchema.safeParse(validData);
       expect(result.success).toBe(true);
     });
-    it("should reject when successful_treatments > total_treatments", function () {
+    it("should reject when successful_treatments > total_treatments", () => {
       var invalidData = {
         treatment_type: "Botox",
         time_period: "monthly",
@@ -367,7 +330,7 @@ describe("Treatment Success Validation Schemas", function () {
         expect(result.error.issues[0].message).toContain("não pode ser maior que o total");
       }
     });
-    it("should validate time period enum", function () {
+    it("should validate time period enum", () => {
       var invalidData = {
         treatment_type: "Botox",
         time_period: "invalid_period",
@@ -381,8 +344,8 @@ describe("Treatment Success Validation Schemas", function () {
       expect(result.success).toBe(false);
     });
   });
-  describe("createProtocolOptimizationSchema", function () {
-    it("should validate protocol optimization data", function () {
+  describe("createProtocolOptimizationSchema", () => {
+    it("should validate protocol optimization data", () => {
       var validData = {
         treatment_type: "Botox",
         current_protocol: { units: "20-30", injection_points: 5 },
@@ -393,7 +356,7 @@ describe("Treatment Success Validation Schemas", function () {
       var result = treatment_success_2.createProtocolOptimizationSchema.safeParse(validData);
       expect(result.success).toBe(true);
     });
-    it("should reject empty protocols", function () {
+    it("should reject empty protocols", () => {
       var invalidData = {
         treatment_type: "Botox",
         current_protocol: {},
@@ -406,7 +369,7 @@ describe("Treatment Success Validation Schemas", function () {
         expect(result.error.issues[0].message).toContain("Protocolo atual é obrigatório");
       }
     });
-    it("should validate implementation priority enum", function () {
+    it("should validate implementation priority enum", () => {
       var invalidData = {
         treatment_type: "Botox",
         current_protocol: { units: "20-30" },
@@ -417,8 +380,8 @@ describe("Treatment Success Validation Schemas", function () {
       expect(result.success).toBe(false);
     });
   });
-  describe("createQualityBenchmarkSchema", function () {
-    it("should validate quality benchmark data", function () {
+  describe("createQualityBenchmarkSchema", () => {
+    it("should validate quality benchmark data", () => {
       var validData = {
         treatment_type: "Botox",
         benchmark_type: "industry_standard",
@@ -428,7 +391,7 @@ describe("Treatment Success Validation Schemas", function () {
       var result = treatment_success_2.createQualityBenchmarkSchema.safeParse(validData);
       expect(result.success).toBe(true);
     });
-    it("should reject negative target values", function () {
+    it("should reject negative target values", () => {
       var invalidData = {
         treatment_type: "Botox",
         benchmark_type: "industry_standard",
@@ -439,8 +402,8 @@ describe("Treatment Success Validation Schemas", function () {
       expect(result.success).toBe(false);
     });
   });
-  describe("treatmentSuccessQuerySchema", function () {
-    it("should parse and validate query parameters", function () {
+  describe("treatmentSuccessQuerySchema", () => {
+    it("should parse and validate query parameters", () => {
       var queryParams = {
         page: "2",
         limit: "20",
@@ -456,7 +419,7 @@ describe("Treatment Success Validation Schemas", function () {
         expect(result.data.success_rate_min).toBe(0.8);
       }
     });
-    it("should use default values for missing parameters", function () {
+    it("should use default values for missing parameters", () => {
       var queryParams = {};
       var result = treatment_success_2.treatmentSuccessQuerySchema.safeParse(queryParams);
       expect(result.success).toBe(true);
@@ -467,17 +430,17 @@ describe("Treatment Success Validation Schemas", function () {
     });
   });
 });
-describe("TreatmentSuccessService", function () {
+describe("TreatmentSuccessService", () => {
   var service;
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     service = new treatment_success_1.TreatmentSuccessService();
   });
-  describe("getTreatmentOutcomes", function () {
-    it("should fetch treatment outcomes with filters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getTreatmentOutcomes", () => {
+    it("should fetch treatment outcomes with filters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var filters, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -516,12 +479,11 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle date range filters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle date range filters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var filters;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -549,11 +511,10 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle complications filter", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle complications filter", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -580,11 +541,10 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -611,14 +571,13 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("createTreatmentOutcome", function () {
-    it("should create a new treatment outcome", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("createTreatmentOutcome", () => {
+    it("should create a new treatment outcome", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var outcomeData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.insert.mockReturnValue(
@@ -650,14 +609,13 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("generateSuccessMetrics", function () {
-    it("should calculate and generate success metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("generateSuccessMetrics", () => {
+    it("should calculate and generate success metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockOutcomes, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockOutcomes = [
@@ -712,14 +670,13 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("createSuccessPrediction", function () {
-    it("should create success prediction with calculated rate", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("createSuccessPrediction", () => {
+    it("should create success prediction with calculated rate", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockHistoricalData, predictionData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockHistoricalData = [
@@ -776,12 +733,11 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should use default success rate when no historical data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should use default success rate when no historical data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var predictionData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.select.mockReturnValue(
@@ -828,14 +784,13 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Dashboard Statistics", function () {
-    it("should calculate success rate statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Dashboard Statistics", () => {
+    it("should calculate success rate statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetricsData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetricsData = [
@@ -863,12 +818,11 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate provider statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate provider statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockPerformanceData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockPerformanceData = [
@@ -898,7 +852,6 @@ describe("TreatmentSuccessService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

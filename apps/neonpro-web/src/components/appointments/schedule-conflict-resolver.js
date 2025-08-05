@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -47,55 +46,48 @@ function ScheduleConflictResolver(_a) {
     selectedConflictId = _c[0],
     setSelectedConflictId = _c[1];
   // Group conflicts by professional and time overlap
-  var conflictGroups = (0, react_1.useMemo)(
-    function () {
-      var groups = [];
-      conflicts.forEach(function (appointment) {
-        var professional = professionals.find(function (p) {
-          return p.id === appointment.professionalId;
-        });
-        // Find if there's an existing group for this professional with overlapping time
-        var existingGroup = groups.find(function (group) {
-          return (
-            group.professionalId === appointment.professionalId &&
-            ((appointment.start >= group.timeRange.start &&
-              appointment.start < group.timeRange.end) ||
-              (appointment.end > group.timeRange.start && appointment.end <= group.timeRange.end) ||
-              (appointment.start <= group.timeRange.start &&
-                appointment.end >= group.timeRange.end))
-          );
-        });
-        if (existingGroup) {
-          existingGroup.appointments.push(appointment);
-          // Expand time range if necessary
-          if (appointment.start < existingGroup.timeRange.start) {
-            existingGroup.timeRange.start = appointment.start;
-          }
-          if (appointment.end > existingGroup.timeRange.end) {
-            existingGroup.timeRange.end = appointment.end;
-          }
-        } else {
-          groups.push({
-            professionalId: appointment.professionalId,
-            professionalName:
-              (professional === null || professional === void 0 ? void 0 : professional.name) ||
-              "Profissional não encontrado",
-            timeRange: { start: appointment.start, end: appointment.end },
-            appointments: [appointment],
-          });
+  var conflictGroups = (0, react_1.useMemo)(() => {
+    var groups = [];
+    conflicts.forEach((appointment) => {
+      var professional = professionals.find((p) => p.id === appointment.professionalId);
+      // Find if there's an existing group for this professional with overlapping time
+      var existingGroup = groups.find(
+        (group) =>
+          group.professionalId === appointment.professionalId &&
+          ((appointment.start >= group.timeRange.start &&
+            appointment.start < group.timeRange.end) ||
+            (appointment.end > group.timeRange.start && appointment.end <= group.timeRange.end) ||
+            (appointment.start <= group.timeRange.start && appointment.end >= group.timeRange.end)),
+      );
+      if (existingGroup) {
+        existingGroup.appointments.push(appointment);
+        // Expand time range if necessary
+        if (appointment.start < existingGroup.timeRange.start) {
+          existingGroup.timeRange.start = appointment.start;
         }
-      });
-      return groups;
-    },
-    [conflicts, professionals],
-  );
-  // Generate suggested resolutions
-  var generateSuggestions = function (conflictGroup) {
-    var suggestions = [];
-    var sortedAppointments = conflictGroup.appointments.sort(function (a, b) {
-      return a.start.getTime() - b.start.getTime();
+        if (appointment.end > existingGroup.timeRange.end) {
+          existingGroup.timeRange.end = appointment.end;
+        }
+      } else {
+        groups.push({
+          professionalId: appointment.professionalId,
+          professionalName:
+            (professional === null || professional === void 0 ? void 0 : professional.name) ||
+            "Profissional não encontrado",
+          timeRange: { start: appointment.start, end: appointment.end },
+          appointments: [appointment],
+        });
+      }
     });
-    sortedAppointments.forEach(function (appointment, index) {
+    return groups;
+  }, [conflicts, professionals]);
+  // Generate suggested resolutions
+  var generateSuggestions = (conflictGroup) => {
+    var suggestions = [];
+    var sortedAppointments = conflictGroup.appointments.sort(
+      (a, b) => a.start.getTime() - b.start.getTime(),
+    );
+    sortedAppointments.forEach((appointment, index) => {
       if (index === 0) {
         // Keep the first appointment as is
         suggestions.push({
@@ -145,34 +137,29 @@ function ScheduleConflictResolver(_a) {
     return suggestions;
   };
   // Initialize resolutions when conflicts change
-  react_1.default.useEffect(
-    function () {
-      if (conflicts.length > 0) {
-        var initialResolutions_1 = [];
-        conflictGroups.forEach(function (group) {
-          var suggestions = generateSuggestions(group);
-          initialResolutions_1.push.apply(initialResolutions_1, suggestions);
-        });
-        setResolutions(initialResolutions_1);
-      }
-    },
-    [conflicts, conflictGroups],
-  );
-  // Handle resolution change
-  var updateResolution = function (appointmentId, resolution) {
-    setResolutions(function (prev) {
-      return prev.map(function (r) {
-        return r.appointmentId === appointmentId ? __assign(__assign({}, r), resolution) : r;
+  react_1.default.useEffect(() => {
+    if (conflicts.length > 0) {
+      var initialResolutions_1 = [];
+      conflictGroups.forEach((group) => {
+        var suggestions = generateSuggestions(group);
+        initialResolutions_1.push.apply(initialResolutions_1, suggestions);
       });
-    });
+      setResolutions(initialResolutions_1);
+    }
+  }, [conflicts, conflictGroups]);
+  // Handle resolution change
+  var updateResolution = (appointmentId, resolution) => {
+    setResolutions((prev) =>
+      prev.map((r) =>
+        r.appointmentId === appointmentId ? __assign(__assign({}, r), resolution) : r,
+      ),
+    );
   };
   // Handle resolve conflicts
-  var handleResolve = function () {
+  var handleResolve = () => {
     var resolvedAppointments = [];
-    conflicts.forEach(function (appointment) {
-      var resolution = resolutions.find(function (r) {
-        return r.appointmentId === appointment.id;
-      });
+    conflicts.forEach((appointment) => {
+      var resolution = resolutions.find((r) => r.appointmentId === appointment.id);
       if (!resolution || resolution.action === "cancel") {
         // Skip cancelled appointments
         return;
@@ -213,203 +200,191 @@ function ScheduleConflictResolver(_a) {
         </dialog_1.DialogHeader>
 
         <div className="space-y-6">
-          {conflictGroups.map(function (group, groupIndex) {
-            return (
-              <card_1.Card key={"".concat(group.professionalId, "-").concat(groupIndex)}>
-                <card_1.CardHeader>
-                  <card_1.CardTitle className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <lucide_react_1.User className="h-4 w-4" />
-                      <span>{group.professionalName}</span>
-                    </div>
-                    <badge_1.Badge variant="secondary">
-                      {(0, moment_1.default)(group.timeRange.start).format("DD/MM HH:mm")} -{" "}
-                      {(0, moment_1.default)(group.timeRange.end).format("HH:mm")}
-                    </badge_1.Badge>
-                  </card_1.CardTitle>
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="space-y-4">
-                    {group.appointments.map(function (appointment, index) {
-                      var resolution = resolutions.find(function (r) {
-                        return r.appointmentId === appointment.id;
-                      });
-                      var isSelected = selectedConflictId === appointment.id;
-                      return (
-                        <div key={appointment.id} className="space-y-3">
-                          {/* Appointment Card */}
-                          <div
-                            className={(0, utils_1.cn)(
-                              "p-4 border rounded-lg cursor-pointer transition-all",
-                              isSelected
-                                ? "border-primary bg-primary/5"
-                                : "border-border hover:border-muted-foreground",
-                            )}
-                            onClick={function () {
-                              return setSelectedConflictId(isSelected ? null : appointment.id);
-                            }}
-                          >
-                            <div className="flex items-start justify-between">
-                              <div className="space-y-2">
-                                <div className="flex items-center space-x-2">
-                                  <badge_1.Badge className={serviceColors[appointment.serviceType]}>
-                                    {appointment.serviceType === "consultation"
-                                      ? "Consulta"
-                                      : appointment.serviceType === "botox"
-                                        ? "Botox"
-                                        : appointment.serviceType === "fillers"
-                                          ? "Preenchimento"
-                                          : "Procedimento"}
-                                  </badge_1.Badge>
-                                  <span className="font-medium">{appointment.patientName}</span>
-                                </div>
-                                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                                  <div className="flex items-center space-x-1">
-                                    <lucide_react_1.Clock className="h-3 w-3" />
-                                    <span>
-                                      {(0, moment_1.default)(appointment.start).format("HH:mm")} -{" "}
-                                      {(0, moment_1.default)(appointment.end).format("HH:mm")}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center space-x-1">
-                                    <lucide_react_1.Calendar className="h-3 w-3" />
-                                    <span>
-                                      {(0, moment_1.default)(appointment.start).format(
-                                        "DD/MM/YYYY",
-                                      )}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-
-                              {/* Resolution Status */}
+          {conflictGroups.map((group, groupIndex) => (
+            <card_1.Card key={"".concat(group.professionalId, "-").concat(groupIndex)}>
+              <card_1.CardHeader>
+                <card_1.CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <lucide_react_1.User className="h-4 w-4" />
+                    <span>{group.professionalName}</span>
+                  </div>
+                  <badge_1.Badge variant="secondary">
+                    {(0, moment_1.default)(group.timeRange.start).format("DD/MM HH:mm")} -{" "}
+                    {(0, moment_1.default)(group.timeRange.end).format("HH:mm")}
+                  </badge_1.Badge>
+                </card_1.CardTitle>
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="space-y-4">
+                  {group.appointments.map((appointment, index) => {
+                    var resolution = resolutions.find((r) => r.appointmentId === appointment.id);
+                    var isSelected = selectedConflictId === appointment.id;
+                    return (
+                      <div key={appointment.id} className="space-y-3">
+                        {/* Appointment Card */}
+                        <div
+                          className={(0, utils_1.cn)(
+                            "p-4 border rounded-lg cursor-pointer transition-all",
+                            isSelected
+                              ? "border-primary bg-primary/5"
+                              : "border-border hover:border-muted-foreground",
+                          )}
+                          onClick={() => setSelectedConflictId(isSelected ? null : appointment.id)}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="space-y-2">
                               <div className="flex items-center space-x-2">
-                                {(resolution === null || resolution === void 0
-                                  ? void 0
-                                  : resolution.action) === "keep" && (
-                                  <badge_1.Badge variant="default" className="bg-green-500">
-                                    <lucide_react_1.CheckCircle className="h-3 w-3 mr-1" />
-                                    Manter
-                                  </badge_1.Badge>
-                                )}
-                                {(resolution === null || resolution === void 0
-                                  ? void 0
-                                  : resolution.action) === "move" && (
-                                  <badge_1.Badge variant="default" className="bg-blue-500">
-                                    <lucide_react_1.ArrowRight className="h-3 w-3 mr-1" />
-                                    Reagendar
-                                  </badge_1.Badge>
-                                )}
-                                {(resolution === null || resolution === void 0
-                                  ? void 0
-                                  : resolution.action) === "cancel" && (
-                                  <badge_1.Badge variant="destructive">
-                                    <lucide_react_1.XCircle className="h-3 w-3 mr-1" />
-                                    Cancelar
-                                  </badge_1.Badge>
-                                )}
+                                <badge_1.Badge className={serviceColors[appointment.serviceType]}>
+                                  {appointment.serviceType === "consultation"
+                                    ? "Consulta"
+                                    : appointment.serviceType === "botox"
+                                      ? "Botox"
+                                      : appointment.serviceType === "fillers"
+                                        ? "Preenchimento"
+                                        : "Procedimento"}
+                                </badge_1.Badge>
+                                <span className="font-medium">{appointment.patientName}</span>
                               </div>
-                            </div>
-
-                            {/* Resolution Details */}
-                            {resolution && resolution.action === "move" && resolution.newStart && (
-                              <div className="mt-3 pt-3 border-t">
-                                <div className="flex items-center space-x-2 text-sm">
-                                  <lucide_react_1.ArrowRight className="h-3 w-3 text-muted-foreground" />
-                                  <span className="text-muted-foreground">Novo horário:</span>
-                                  <span className="font-medium">
-                                    {(0, moment_1.default)(resolution.newStart).format(
-                                      "DD/MM HH:mm",
-                                    )}{" "}
-                                    - {(0, moment_1.default)(resolution.newEnd).format("HH:mm")}
+                              <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                                <div className="flex items-center space-x-1">
+                                  <lucide_react_1.Clock className="h-3 w-3" />
+                                  <span>
+                                    {(0, moment_1.default)(appointment.start).format("HH:mm")} -{" "}
+                                    {(0, moment_1.default)(appointment.end).format("HH:mm")}
                                   </span>
                                 </div>
-                                {resolution.reason && (
-                                  <p className="text-xs text-muted-foreground mt-1">
-                                    {resolution.reason}
-                                  </p>
-                                )}
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Resolution Options */}
-                          {isSelected && (
-                            <div className="pl-4 border-l-2 border-primary/20">
-                              <h4 className="font-medium mb-3">Opções de Resolução:</h4>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                <button_1.Button
-                                  variant={
-                                    (resolution === null || resolution === void 0
-                                      ? void 0
-                                      : resolution.action) === "keep"
-                                      ? "default"
-                                      : "outline"
-                                  }
-                                  size="sm"
-                                  onClick={function () {
-                                    return updateResolution(appointment.id, { action: "keep" });
-                                  }}
-                                  className="justify-start"
-                                >
-                                  <lucide_react_1.CheckCircle className="h-3 w-3 mr-2" />
-                                  Manter
-                                </button_1.Button>
-
-                                <button_1.Button
-                                  variant={
-                                    (resolution === null || resolution === void 0
-                                      ? void 0
-                                      : resolution.action) === "move"
-                                      ? "default"
-                                      : "outline"
-                                  }
-                                  size="sm"
-                                  onClick={function () {
-                                    var suggestions = generateSuggestions(group);
-                                    var suggestion = suggestions.find(function (s) {
-                                      return s.appointmentId === appointment.id;
-                                    });
-                                    if (suggestion && suggestion.action === "move") {
-                                      updateResolution(appointment.id, suggestion);
-                                    }
-                                  }}
-                                  className="justify-start"
-                                >
-                                  <lucide_react_1.RotateCcw className="h-3 w-3 mr-2" />
-                                  Reagendar
-                                </button_1.Button>
-
-                                <button_1.Button
-                                  variant={
-                                    (resolution === null || resolution === void 0
-                                      ? void 0
-                                      : resolution.action) === "cancel"
-                                      ? "destructive"
-                                      : "outline"
-                                  }
-                                  size="sm"
-                                  onClick={function () {
-                                    return updateResolution(appointment.id, { action: "cancel" });
-                                  }}
-                                  className="justify-start"
-                                >
-                                  <lucide_react_1.XCircle className="h-3 w-3 mr-2" />
-                                  Cancelar
-                                </button_1.Button>
+                                <div className="flex items-center space-x-1">
+                                  <lucide_react_1.Calendar className="h-3 w-3" />
+                                  <span>
+                                    {(0, moment_1.default)(appointment.start).format("DD/MM/YYYY")}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          )}
 
-                          {index < group.appointments.length - 1 && <separator_1.Separator />}
+                            {/* Resolution Status */}
+                            <div className="flex items-center space-x-2">
+                              {(resolution === null || resolution === void 0
+                                ? void 0
+                                : resolution.action) === "keep" && (
+                                <badge_1.Badge variant="default" className="bg-green-500">
+                                  <lucide_react_1.CheckCircle className="h-3 w-3 mr-1" />
+                                  Manter
+                                </badge_1.Badge>
+                              )}
+                              {(resolution === null || resolution === void 0
+                                ? void 0
+                                : resolution.action) === "move" && (
+                                <badge_1.Badge variant="default" className="bg-blue-500">
+                                  <lucide_react_1.ArrowRight className="h-3 w-3 mr-1" />
+                                  Reagendar
+                                </badge_1.Badge>
+                              )}
+                              {(resolution === null || resolution === void 0
+                                ? void 0
+                                : resolution.action) === "cancel" && (
+                                <badge_1.Badge variant="destructive">
+                                  <lucide_react_1.XCircle className="h-3 w-3 mr-1" />
+                                  Cancelar
+                                </badge_1.Badge>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Resolution Details */}
+                          {resolution && resolution.action === "move" && resolution.newStart && (
+                            <div className="mt-3 pt-3 border-t">
+                              <div className="flex items-center space-x-2 text-sm">
+                                <lucide_react_1.ArrowRight className="h-3 w-3 text-muted-foreground" />
+                                <span className="text-muted-foreground">Novo horário:</span>
+                                <span className="font-medium">
+                                  {(0, moment_1.default)(resolution.newStart).format("DD/MM HH:mm")}{" "}
+                                  - {(0, moment_1.default)(resolution.newEnd).format("HH:mm")}
+                                </span>
+                              </div>
+                              {resolution.reason && (
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {resolution.reason}
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </div>
-                      );
-                    })}
-                  </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+
+                        {/* Resolution Options */}
+                        {isSelected && (
+                          <div className="pl-4 border-l-2 border-primary/20">
+                            <h4 className="font-medium mb-3">Opções de Resolução:</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                              <button_1.Button
+                                variant={
+                                  (resolution === null || resolution === void 0
+                                    ? void 0
+                                    : resolution.action) === "keep"
+                                    ? "default"
+                                    : "outline"
+                                }
+                                size="sm"
+                                onClick={() => updateResolution(appointment.id, { action: "keep" })}
+                                className="justify-start"
+                              >
+                                <lucide_react_1.CheckCircle className="h-3 w-3 mr-2" />
+                                Manter
+                              </button_1.Button>
+
+                              <button_1.Button
+                                variant={
+                                  (resolution === null || resolution === void 0
+                                    ? void 0
+                                    : resolution.action) === "move"
+                                    ? "default"
+                                    : "outline"
+                                }
+                                size="sm"
+                                onClick={() => {
+                                  var suggestions = generateSuggestions(group);
+                                  var suggestion = suggestions.find(
+                                    (s) => s.appointmentId === appointment.id,
+                                  );
+                                  if (suggestion && suggestion.action === "move") {
+                                    updateResolution(appointment.id, suggestion);
+                                  }
+                                }}
+                                className="justify-start"
+                              >
+                                <lucide_react_1.RotateCcw className="h-3 w-3 mr-2" />
+                                Reagendar
+                              </button_1.Button>
+
+                              <button_1.Button
+                                variant={
+                                  (resolution === null || resolution === void 0
+                                    ? void 0
+                                    : resolution.action) === "cancel"
+                                    ? "destructive"
+                                    : "outline"
+                                }
+                                size="sm"
+                                onClick={() =>
+                                  updateResolution(appointment.id, { action: "cancel" })
+                                }
+                                className="justify-start"
+                              >
+                                <lucide_react_1.XCircle className="h-3 w-3 mr-2" />
+                                Cancelar
+                              </button_1.Button>
+                            </div>
+                          </div>
+                        )}
+
+                        {index < group.appointments.length - 1 && <separator_1.Separator />}
+                      </div>
+                    );
+                  })}
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
 
         <dialog_1.DialogFooter>

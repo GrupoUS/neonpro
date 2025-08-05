@@ -2,7 +2,6 @@
 // VIBECODE V1.0 - Healthcare PWA Pattern
 // Purpose: Fallback page when user is offline
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = OfflinePage;
 var badge_1 = require("@/components/ui/badge");
@@ -70,21 +69,13 @@ function OfflinePage() {
 
           {/* Actions */}
           <div className="space-y-3">
-            <button_1.Button
-              onClick={function () {
-                return window.location.reload();
-              }}
-              className="w-full"
-              size="lg"
-            >
+            <button_1.Button onClick={() => window.location.reload()} className="w-full" size="lg">
               <lucide_react_1.Wifi className="w-4 h-4 mr-2" />
               Tentar reconectar
             </button_1.Button>
 
             <button_1.Button
-              onClick={function () {
-                return window.history.back();
-              }}
+              onClick={() => window.history.back()}
               variant="outline"
               className="w-full"
               size="lg"

@@ -5,7 +5,10 @@
  * Comprehensive inventory overview with alerts, stock levels, and quick actions
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,11 +16,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Icons } from "@/components/ui/icons";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Table,
   TableBody,
@@ -26,7 +26,7 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { type InventoryDashboardSummary } from "@/lib/inventory";
+import type { InventoryDashboardSummary } from "@/lib/inventory";
 
 interface InventoryOverviewProps {
   dashboardData: InventoryDashboardSummary | null;

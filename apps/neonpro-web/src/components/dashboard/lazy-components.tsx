@@ -1,8 +1,8 @@
 "use client";
 
 import type { lazy, Suspense } from "react";
-import type { Skeleton } from "@/components/ui/skeleton";
 import type { Card, CardContent, CardHeader } from "@/components/ui/card";
+import type { Skeleton } from "@/components/ui/skeleton";
 
 // Lazy load heavy dashboard components
 export const LazyAppointmentCalendar = lazy(() =>

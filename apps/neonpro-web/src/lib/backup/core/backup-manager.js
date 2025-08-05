@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,14 +142,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BackupManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var audit_logger_1 = require("../../audit/audit-logger");
 var encryption_service_1 = require("../../security/encryption-service");
 var lgpd_manager_1 = require("../../lgpd/lgpd-manager");
-var BackupManager = /** @class */ (function () {
+var BackupManager = /** @class */ (() => {
   function BackupManager(config) {
     this.activeJobs = new Map();
     this.scheduledJobs = new Map();
@@ -350,7 +347,7 @@ var BackupManager = /** @class */ (function () {
             // Adicionar à fila de execução
             this.activeJobs.set(jobId_1, job);
             // Executar backup
-            this.executeBackupJob(jobId_1).catch(function (error) {
+            this.executeBackupJob(jobId_1).catch((error) => {
               console.error("Erro no backup ".concat(jobId_1, ":"), error);
             });
             return [
@@ -627,7 +624,7 @@ var BackupManager = /** @class */ (function () {
             insertError = _b.sent().error;
             if (insertError) throw insertError;
             // Executar recuperação
-            this.executeRecovery(requestId_1).catch(function (error) {
+            this.executeRecovery(requestId_1).catch((error) => {
               console.error("Erro na recupera\u00E7\u00E3o ".concat(requestId_1, ":"), error);
             });
             return [
@@ -703,35 +700,23 @@ var BackupManager = /** @class */ (function () {
             (_a = _b.sent()), (jobs = _a.data), (error = _a.error);
             if (error) throw error;
             totalBackups = jobs.length;
-            successfulBackups = jobs.filter(function (j) {
-              return j.status === "completed";
-            }).length;
-            failedBackups = jobs.filter(function (j) {
-              return j.status === "failed";
-            }).length;
+            successfulBackups = jobs.filter((j) => j.status === "completed").length;
+            failedBackups = jobs.filter((j) => j.status === "failed").length;
             successRate = totalBackups > 0 ? (successfulBackups / totalBackups) * 100 : 0;
-            completedJobs = jobs.filter(function (j) {
-              return j.status === "completed" && j.duration_seconds;
-            });
+            completedJobs = jobs.filter((j) => j.status === "completed" && j.duration_seconds);
             averageDuration =
               completedJobs.length > 0
-                ? completedJobs.reduce(function (sum, j) {
-                    return sum + j.duration_seconds;
-                  }, 0) /
+                ? completedJobs.reduce((sum, j) => sum + j.duration_seconds, 0) /
                   completedJobs.length /
                   60
                 : 0;
-            totalStorageBytes = jobs.reduce(function (sum, j) {
-              return sum + (j.total_size_bytes || 0);
-            }, 0);
+            totalStorageBytes = jobs.reduce((sum, j) => sum + (j.total_size_bytes || 0), 0);
             totalStorageGB = totalStorageBytes / (1024 * 1024 * 1024);
             lastSuccessful = jobs
-              .filter(function (j) {
-                return j.status === "completed";
-              })
-              .sort(function (a, b) {
-                return new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime();
-              })[0];
+              .filter((j) => j.status === "completed")
+              .sort(
+                (a, b) => new Date(b.completed_at).getTime() - new Date(a.completed_at).getTime(),
+              )[0];
             nextScheduled = new Date();
             nextScheduled.setDate(nextScheduled.getDate() + 1);
             nextScheduled.setHours(2, 0, 0, 0);
@@ -841,29 +826,30 @@ var BackupManager = /** @class */ (function () {
   BackupManager.prototype.scheduleAutomaticBackups = function () {
     return __awaiter(this, void 0, void 0, function () {
       var scheduleNextFullBackup;
-      var _this = this;
-      return __generator(this, function (_a) {
-        scheduleNextFullBackup = function () {
-          var nextRun = _this.getNextCronDate(_this.config.schedule.full_backup_cron);
+      return __generator(this, (_a) => {
+        scheduleNextFullBackup = () => {
+          var nextRun = this.getNextCronDate(this.config.schedule.full_backup_cron);
           var timeout = nextRun.getTime() - Date.now();
-          var timeoutId = setTimeout(function () {
-            return __awaiter(_this, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                switch (_a.label) {
-                  case 0:
-                    return [
-                      4 /*yield*/,
-                      this.createBackup("full", Object.keys(this.config.data_sources), "system"),
-                    ];
-                  case 1:
-                    _a.sent();
-                    scheduleNextFullBackup();
-                    return [2 /*return*/];
-                }
-              });
-            });
-          }, timeout);
-          _this.scheduledJobs.set("full_backup", timeoutId);
+          var timeoutId = setTimeout(
+            () =>
+              __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                  switch (_a.label) {
+                    case 0:
+                      return [
+                        4 /*yield*/,
+                        this.createBackup("full", Object.keys(this.config.data_sources), "system"),
+                      ];
+                    case 1:
+                      _a.sent();
+                      scheduleNextFullBackup();
+                      return [2 /*return*/];
+                  }
+                });
+              }),
+            timeout,
+          );
+          this.scheduledJobs.set("full_backup", timeoutId);
         };
         scheduleNextFullBackup();
         return [2 /*return*/];
@@ -882,11 +868,11 @@ var BackupManager = /** @class */ (function () {
             ];
           case 1:
             pendingJobs = _b.sent().data;
-            _loop_1 = function (job) {
+            _loop_1 = (job) => {
               var backupJob = this_1.mapDatabaseToBackupJob(job);
               this_1.activeJobs.set(backupJob.id, backupJob);
               // Retomar execução
-              this_1.executeBackupJob(backupJob.id).catch(function (error) {
+              this_1.executeBackupJob(backupJob.id).catch((error) => {
                 console.error("Erro ao retomar backup ".concat(backupJob.id, ":"), error);
               });
             };
@@ -903,28 +889,29 @@ var BackupManager = /** @class */ (function () {
   BackupManager.prototype.scheduleCleanupTasks = function () {
     return __awaiter(this, void 0, void 0, function () {
       var scheduleCleanup;
-      var _this = this;
-      return __generator(this, function (_a) {
-        scheduleCleanup = function () {
+      return __generator(this, (_a) => {
+        scheduleCleanup = () => {
           var nextMidnight = new Date();
           nextMidnight.setDate(nextMidnight.getDate() + 1);
           nextMidnight.setHours(0, 0, 0, 0);
           var timeout = nextMidnight.getTime() - Date.now();
-          var timeoutId = setTimeout(function () {
-            return __awaiter(_this, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                switch (_a.label) {
-                  case 0:
-                    return [4 /*yield*/, this.cleanupExpiredBackups()];
-                  case 1:
-                    _a.sent();
-                    scheduleCleanup();
-                    return [2 /*return*/];
-                }
-              });
-            });
-          }, timeout);
-          _this.scheduledJobs.set("cleanup", timeoutId);
+          var timeoutId = setTimeout(
+            () =>
+              __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                  switch (_a.label) {
+                    case 0:
+                      return [4 /*yield*/, this.cleanupExpiredBackups()];
+                    case 1:
+                      _a.sent();
+                      scheduleCleanup();
+                      return [2 /*return*/];
+                  }
+                });
+              }),
+            timeout,
+          );
+          this.scheduledJobs.set("cleanup", timeoutId);
         };
         scheduleCleanup();
         return [2 /*return*/];
@@ -1077,12 +1064,7 @@ var BackupManager = /** @class */ (function () {
             _b.label = 4;
           case 4:
             if (!(progress <= 100)) return [3 /*break*/, 8];
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 5:
             _b.sent(); // Simular trabalho
             return [
@@ -1195,9 +1177,7 @@ var BackupManager = /** @class */ (function () {
                 .delete()
                 .in(
                   "id",
-                  expiredJobs.map(function (j) {
-                    return j.id;
-                  }),
+                  expiredJobs.map((j) => j.id),
                 ),
             ];
           case 3:
@@ -1214,10 +1194,9 @@ var BackupManager = /** @class */ (function () {
     });
   };
   // Métodos auxiliares
-  BackupManager.prototype.generateJobId = function () {
-    return "backup_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  BackupManager.prototype.generateChecksum = function (job) {
+  BackupManager.prototype.generateJobId = () =>
+    "backup_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  BackupManager.prototype.generateChecksum = (job) => {
     // Implementar geração de checksum real
     return "sha256_".concat(Math.random().toString(36).substr(2, 16));
   };
@@ -1228,7 +1207,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.backupDatabase = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup do banco de dados
         return [2 /*return*/, { size: 1024 * 1024 * 100, files: 1 }]; // 100MB simulado
       });
@@ -1236,7 +1215,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.backupFiles = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar backup de arquivos
         return [2 /*return*/, { size: 1024 * 1024 * 500, files: 150 }]; // 500MB, 150 arquivos simulado
       });
@@ -1244,7 +1223,7 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.verifyChecksum = function (job) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de checksum
         return [2 /*return*/, true]; // Simulado
       });
@@ -1252,17 +1231,17 @@ var BackupManager = /** @class */ (function () {
   };
   BackupManager.prototype.performIntegrityCheck = function (job) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de integridade
         return [2 /*return*/, true]; // Simulado
       });
     });
   };
-  BackupManager.prototype.isValidCronExpression = function (cron) {
+  BackupManager.prototype.isValidCronExpression = (cron) => {
     // Implementar validação de expressão cron
     return cron.split(" ").length === 5;
   };
-  BackupManager.prototype.getNextCronDate = function (cron) {
+  BackupManager.prototype.getNextCronDate = (cron) => {
     // Implementar cálculo da próxima execução
     var next = new Date();
     next.setDate(next.getDate() + 1);
@@ -1272,7 +1251,7 @@ var BackupManager = /** @class */ (function () {
   BackupManager.prototype.getStorageTrend = function (period) {
     return __awaiter(this, void 0, void 0, function () {
       var trend, days, i, date;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         trend = [];
         days = period === "month" ? 30 : period === "week" ? 7 : 1;
         for (i = days - 1; i >= 0; i--) {
@@ -1287,27 +1266,25 @@ var BackupManager = /** @class */ (function () {
       });
     });
   };
-  BackupManager.prototype.mapDatabaseToBackupJob = function (data) {
-    return {
-      id: data.id,
-      type: data.type,
-      status: data.status,
-      data_sources: data.data_sources || [],
-      started_at: data.started_at ? new Date(data.started_at) : undefined,
-      completed_at: data.completed_at ? new Date(data.completed_at) : undefined,
-      duration_seconds: data.duration_seconds,
-      total_size_bytes: data.total_size_bytes || 0,
-      compressed_size_bytes: data.compressed_size_bytes || 0,
-      files_count: data.files_count || 0,
-      storage_location: data.storage_location || "",
-      encryption_key_id: data.encryption_key_id,
-      checksum: data.checksum || "",
-      error_message: data.error_message,
-      metadata: data.metadata || {},
-      created_by: data.created_by,
-      created_at: new Date(data.created_at),
-    };
-  };
+  BackupManager.prototype.mapDatabaseToBackupJob = (data) => ({
+    id: data.id,
+    type: data.type,
+    status: data.status,
+    data_sources: data.data_sources || [],
+    started_at: data.started_at ? new Date(data.started_at) : undefined,
+    completed_at: data.completed_at ? new Date(data.completed_at) : undefined,
+    duration_seconds: data.duration_seconds,
+    total_size_bytes: data.total_size_bytes || 0,
+    compressed_size_bytes: data.compressed_size_bytes || 0,
+    files_count: data.files_count || 0,
+    storage_location: data.storage_location || "",
+    encryption_key_id: data.encryption_key_id,
+    checksum: data.checksum || "",
+    error_message: data.error_message,
+    metadata: data.metadata || {},
+    created_by: data.created_by,
+    created_at: new Date(data.created_at),
+  });
   BackupManager.prototype.saveBackupJob = function (job) {
     return __awaiter(this, void 0, void 0, function () {
       var error;

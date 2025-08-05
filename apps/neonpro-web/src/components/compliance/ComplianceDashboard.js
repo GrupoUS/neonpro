@@ -7,18 +7,17 @@
  * @compliance LGPD Art. 37, 38, 39 (Relatórios e Monitoramento)
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -140,7 +137,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ComplianceDashboard;
 var react_1 = require("react");
@@ -159,10 +156,6 @@ var audit_trail_1 = require("@/lib/compliance/audit-trail");
 // MAIN COMPONENT
 // ============================================================================
 function ComplianceDashboard() {
-  // ============================================================================
-  // STATE MANAGEMENT
-  // ============================================================================
-  var _this = this;
   var _a = (0, react_1.useState)("30d"),
     selectedPeriod = _a[0],
     setSelectedPeriod = _a[1];
@@ -190,27 +183,21 @@ function ComplianceDashboard() {
   // ============================================================================
   // EFFECTS
   // ============================================================================
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-    },
-    [selectedPeriod],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      if (auditEvents && complianceReport) {
-        processComplianceData();
-      }
-    },
-    [auditEvents, complianceReport],
-  );
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+  }, [selectedPeriod]);
+  (0, react_1.useEffect)(() => {
+    if (auditEvents && complianceReport) {
+      processComplianceData();
+    }
+  }, [auditEvents, complianceReport]);
   // ============================================================================
   // DATA PROCESSING
   // ============================================================================
-  var loadDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
@@ -234,29 +221,27 @@ function ComplianceDashboard() {
         }
       });
     });
-  };
-  var processComplianceData = function () {
+  var processComplianceData = () => {
     if (!auditEvents || !complianceReport) return;
     // Calculate metrics
     var totalEvents = auditEvents.length;
-    var dataAccesses = auditEvents.filter(function (e) {
-      return [
-        audit_trail_1.AuditEventType.DATA_ACCESS,
-        audit_trail_1.AuditEventType.DATA_VIEW,
-      ].includes(e.eventType);
-    }).length;
-    var consentChanges = auditEvents.filter(function (e) {
-      return [
+    var dataAccesses = auditEvents.filter((e) =>
+      [audit_trail_1.AuditEventType.DATA_ACCESS, audit_trail_1.AuditEventType.DATA_VIEW].includes(
+        e.eventType,
+      ),
+    ).length;
+    var consentChanges = auditEvents.filter((e) =>
+      [
         audit_trail_1.AuditEventType.CONSENT_GRANTED,
         audit_trail_1.AuditEventType.CONSENT_WITHDRAWN,
-      ].includes(e.eventType);
-    }).length;
-    var securityEvents = auditEvents.filter(function (e) {
-      return [
+      ].includes(e.eventType),
+    ).length;
+    var securityEvents = auditEvents.filter((e) =>
+      [
         audit_trail_1.AuditEventType.UNAUTHORIZED_ACCESS,
         audit_trail_1.AuditEventType.DATA_BREACH,
-      ].includes(e.eventType);
-    }).length;
+      ].includes(e.eventType),
+    ).length;
     // Calculate compliance score
     var complianceScore = calculateComplianceScore(auditEvents);
     var criticalIssues = complianceReport.compliance.issues.length;
@@ -277,29 +262,27 @@ function ComplianceDashboard() {
     var complianceAlerts = generateAlerts(auditEvents, complianceReport);
     setAlerts(complianceAlerts);
   };
-  var calculateComplianceScore = function (events) {
+  var calculateComplianceScore = (events) => {
     if (events.length === 0) return 100;
     var totalEvents = events.length;
-    var failedEvents = events.filter(function (e) {
-      return e.status === audit_trail_1.AuditStatus.FAILURE;
-    }).length;
-    var securityEvents = events.filter(function (e) {
-      return [
+    var failedEvents = events.filter((e) => e.status === audit_trail_1.AuditStatus.FAILURE).length;
+    var securityEvents = events.filter((e) =>
+      [
         audit_trail_1.AuditEventType.UNAUTHORIZED_ACCESS,
         audit_trail_1.AuditEventType.DATA_BREACH,
-      ].includes(e.eventType);
-    }).length;
+      ].includes(e.eventType),
+    ).length;
     // Calculate score based on success rate and security events
     var successRate = ((totalEvents - failedEvents) / totalEvents) * 100;
     var securityPenalty = Math.min(securityEvents * 10, 50); // Max 50% penalty
     return Math.max(0, Math.round(successRate - securityPenalty));
   };
-  var processEventSummaries = function (events) {
-    var eventCounts = events.reduce(function (acc, event) {
+  var processEventSummaries = (events) => {
+    var eventCounts = events.reduce((acc, event) => {
       acc[event.eventType] = (acc[event.eventType] || 0) + 1;
       return acc;
     }, {});
-    return Object.entries(eventCounts).map(function (_a) {
+    return Object.entries(eventCounts).map((_a) => {
       var type = _a[0],
         count = _a[1];
       return {
@@ -310,12 +293,10 @@ function ComplianceDashboard() {
       };
     });
   };
-  var generateAlerts = function (events, report) {
+  var generateAlerts = (events, report) => {
     var alerts = [];
     // Critical security events
-    var criticalEvents = events.filter(function (e) {
-      return e.severity === audit_trail_1.AuditSeverity.CRITICAL;
-    });
+    var criticalEvents = events.filter((e) => e.severity === audit_trail_1.AuditSeverity.CRITICAL);
     if (criticalEvents.length > 0) {
       alerts.push({
         id: "critical-events",
@@ -342,7 +323,7 @@ function ComplianceDashboard() {
     }
     return alerts;
   };
-  var getSeverityForEventType = function (eventType) {
+  var getSeverityForEventType = (eventType) => {
     switch (eventType) {
       case audit_trail_1.AuditEventType.DATA_BREACH:
       case audit_trail_1.AuditEventType.UNAUTHORIZED_ACCESS:
@@ -356,7 +337,7 @@ function ComplianceDashboard() {
         return audit_trail_1.AuditSeverity.LOW;
     }
   };
-  var getPeriodDates = function () {
+  var getPeriodDates = () => {
     var end = (0, date_fns_1.endOfDay)(new Date());
     var start = (0, date_fns_1.startOfDay)(
       (0, date_fns_1.subDays)(
@@ -369,29 +350,27 @@ function ComplianceDashboard() {
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  var renderMetricCard = function (title, value, icon, trend, color) {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <card_1.CardTitle className="text-sm font-medium">{title}</card_1.CardTitle>
-          {icon}
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          <div className="text-2xl font-bold">{value}</div>
-          {trend && (
-            <div className="flex items-center text-xs text-muted-foreground">
-              <lucide_react_1.TrendingUp className="mr-1 h-3 w-3" />
-              <span>
-                Tendência:{" "}
-                {trend === "up" ? "Crescente" : trend === "down" ? "Decrescente" : "Estável"}
-              </span>
-            </div>
-          )}
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
-  var renderComplianceScore = function () {
+  var renderMetricCard = (title, value, icon, trend, color) => (
+    <card_1.Card>
+      <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <card_1.CardTitle className="text-sm font-medium">{title}</card_1.CardTitle>
+        {icon}
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {trend && (
+          <div className="flex items-center text-xs text-muted-foreground">
+            <lucide_react_1.TrendingUp className="mr-1 h-3 w-3" />
+            <span>
+              Tendência:{" "}
+              {trend === "up" ? "Crescente" : trend === "down" ? "Decrescente" : "Estável"}
+            </span>
+          </div>
+        )}
+      </card_1.CardContent>
+    </card_1.Card>
+  );
+  var renderComplianceScore = () => {
     var score = (metrics === null || metrics === void 0 ? void 0 : metrics.complianceScore) || 0;
     var color = score >= 90 ? "text-green-600" : score >= 70 ? "text-yellow-600" : "text-red-600";
     var bgColor = score >= 90 ? "bg-green-100" : score >= 70 ? "bg-yellow-100" : "bg-red-100";
@@ -427,80 +406,72 @@ function ComplianceDashboard() {
       </card_1.Card>
     );
   };
-  var renderAlerts = function () {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle className="flex items-center gap-2">
-            <lucide_react_1.AlertTriangle className="h-5 w-5" />
-            Alertas de Compliance
-          </card_1.CardTitle>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          {alerts.length === 0
-            ? <div className="text-center py-4 text-muted-foreground">
-                <lucide_react_1.CheckCircle className="mx-auto h-8 w-8 mb-2" />
-                <p>Nenhum alerta ativo</p>
+  var renderAlerts = () => (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle className="flex items-center gap-2">
+          <lucide_react_1.AlertTriangle className="h-5 w-5" />
+          Alertas de Compliance
+        </card_1.CardTitle>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        {alerts.length === 0
+          ? <div className="text-center py-4 text-muted-foreground">
+              <lucide_react_1.CheckCircle className="mx-auto h-8 w-8 mb-2" />
+              <p>Nenhum alerta ativo</p>
+            </div>
+          : <div className="space-y-3">
+              {alerts.map((alert) => (
+                <alert_1.Alert
+                  key={alert.id}
+                  variant={alert.type === "critical" ? "destructive" : "default"}
+                >
+                  <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                  <alert_1.AlertTitle>{alert.title}</alert_1.AlertTitle>
+                  <alert_1.AlertDescription>
+                    {alert.description}
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {(0, date_fns_1.format)(alert.timestamp, "dd/MM/yyyy HH:mm", {
+                        locale: locale_1.ptBR,
+                      })}
+                    </div>
+                  </alert_1.AlertDescription>
+                </alert_1.Alert>
+              ))}
+            </div>}
+      </card_1.CardContent>
+    </card_1.Card>
+  );
+  var renderEventSummary = () => (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle className="flex items-center gap-2">
+          <lucide_react_1.Activity className="h-5 w-5" />
+          Resumo de Eventos
+        </card_1.CardTitle>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        <div className="space-y-3">
+          {events.slice(0, 5).map((event) => (
+            <div key={event.type} className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <badge_1.Badge
+                  variant={
+                    event.severity === audit_trail_1.AuditSeverity.CRITICAL
+                      ? "destructive"
+                      : "secondary"
+                  }
+                >
+                  {event.type.replace("_", " ")}
+                </badge_1.Badge>
               </div>
-            : <div className="space-y-3">
-                {alerts.map(function (alert) {
-                  return (
-                    <alert_1.Alert
-                      key={alert.id}
-                      variant={alert.type === "critical" ? "destructive" : "default"}
-                    >
-                      <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                      <alert_1.AlertTitle>{alert.title}</alert_1.AlertTitle>
-                      <alert_1.AlertDescription>
-                        {alert.description}
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {(0, date_fns_1.format)(alert.timestamp, "dd/MM/yyyy HH:mm", {
-                            locale: locale_1.ptBR,
-                          })}
-                        </div>
-                      </alert_1.AlertDescription>
-                    </alert_1.Alert>
-                  );
-                })}
-              </div>}
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
-  var renderEventSummary = function () {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle className="flex items-center gap-2">
-            <lucide_react_1.Activity className="h-5 w-5" />
-            Resumo de Eventos
-          </card_1.CardTitle>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          <div className="space-y-3">
-            {events.slice(0, 5).map(function (event) {
-              return (
-                <div key={event.type} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <badge_1.Badge
-                      variant={
-                        event.severity === audit_trail_1.AuditSeverity.CRITICAL
-                          ? "destructive"
-                          : "secondary"
-                      }
-                    >
-                      {event.type.replace("_", " ")}
-                    </badge_1.Badge>
-                  </div>
-                  <div className="text-sm font-medium">{event.count}</div>
-                </div>
-              );
-            })}
-          </div>
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
+              <div className="text-sm font-medium">{event.count}</div>
+            </div>
+          ))}
+        </div>
+      </card_1.CardContent>
+    </card_1.Card>
+  );
   // ============================================================================
   // MAIN RENDER
   // ============================================================================
@@ -547,20 +518,16 @@ function ComplianceDashboard() {
         <lucide_react_1.Filter className="h-4 w-4" />
         <span className="text-sm font-medium">Período:</span>
         <div className="flex gap-1">
-          {["7d", "30d", "90d"].map(function (period) {
-            return (
-              <button_1.Button
-                key={period}
-                variant={selectedPeriod === period ? "default" : "outline"}
-                size="sm"
-                onClick={function () {
-                  return setSelectedPeriod(period);
-                }}
-              >
-                {period === "7d" ? "7 dias" : period === "30d" ? "30 dias" : "90 dias"}
-              </button_1.Button>
-            );
-          })}
+          {["7d", "30d", "90d"].map((period) => (
+            <button_1.Button
+              key={period}
+              variant={selectedPeriod === period ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedPeriod(period)}
+            >
+              {period === "7d" ? "7 dias" : period === "30d" ? "30 dias" : "90 dias"}
+            </button_1.Button>
+          ))}
         </div>
       </div>
 

@@ -1,18 +1,17 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AuditLogger } from "../audit/audit-logger";
 import type { LGPDManager } from "../lgpd/lgpd-manager";
-import type { EncryptionService } from "../security/encryption-service";
 import type { NotificationService } from "../notifications/notification-service";
-
+import type { EncryptionService } from "../security/encryption-service";
+import type { AppointmentConfig, AppointmentManager } from "./appointments/appointment-manager";
 // Import patient portal components
-import type { SessionManager, SessionConfig } from "./auth/session-manager";
-import type { PortalDashboard, DashboardConfig } from "./dashboard/portal-dashboard";
-import type { AppointmentManager, AppointmentConfig } from "./appointments/appointment-manager";
-import type { UploadManager, UploadConfig } from "./uploads/upload-manager";
+import type { SessionConfig, SessionManager } from "./auth/session-manager";
 import type {
-  CommunicationManager,
   CommunicationConfig,
+  CommunicationManager,
 } from "./communication/communication-manager";
+import type { DashboardConfig, PortalDashboard } from "./dashboard/portal-dashboard";
+import type { UploadConfig, UploadManager } from "./uploads/upload-manager";
 
 /**
  * Main patient portal configuration

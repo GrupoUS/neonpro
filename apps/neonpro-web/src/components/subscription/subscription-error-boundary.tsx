@@ -14,13 +14,14 @@
 
 "use client";
 
-import React, { Component, ErrorInfo, ReactNode } from "react";
-import type { Button } from "@/components/ui/button";
+import type { AlertCircle, AlertTriangle, RefreshCw } from "lucide-react";
+import type React from "react";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { AlertCircle, RefreshCw, AlertTriangle } from "lucide-react";
 import type { subscriptionErrorHandler } from "@/lib/subscription-error-handler";
-import type { SubscriptionErrorFactory, ErrorSeverity } from "@/types/subscription-errors";
+import type { ErrorSeverity, SubscriptionErrorFactory } from "@/types/subscription-errors";
 
 interface SubscriptionErrorBoundaryState {
   hasError: boolean;

@@ -1,23 +1,23 @@
+import { createClient } from "@/app/utils/supabase/server";
 import {
+  addPerformanceMetric,
   createProfessional,
-  updateProfessional,
+  createProfessionalCredential,
+  createProfessionalService,
   deleteProfessional,
-  getProfessionals,
+  deleteProfessionalCredential,
+  deleteProfessionalService,
   getProfessionalById,
   getProfessionalCredentials,
-  getProfessionalServices,
   getProfessionalPerformanceMetrics,
-  createProfessionalCredential,
-  updateProfessionalCredential,
-  deleteProfessionalCredential,
-  verifyCredential,
-  createProfessionalService,
-  updateProfessionalService,
-  deleteProfessionalService,
-  addPerformanceMetric,
+  getProfessionalServices,
+  getProfessionals,
   updatePerformanceMetric,
+  updateProfessional,
+  updateProfessionalCredential,
+  updateProfessionalService,
+  verifyCredential,
 } from "@/lib/supabase/professionals";
-import { createClient } from "@/app/utils/supabase/server";
 
 // Mock Supabase client
 const mockSupabaseClient = {

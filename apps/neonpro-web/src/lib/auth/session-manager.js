@@ -1,24 +1,23 @@
-"use strict";
 /**
  * Session Manager - Core Session Management System
  * Handles intelligent session timeout, concurrent sessions, device tracking, and security monitoring
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -33,26 +32,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -72,13 +71,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -100,9 +99,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -174,7 +171,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SuspiciousActivityDetector =
   exports.DeviceTracker =
@@ -187,7 +184,7 @@ var events_1 = require("events");
 var session_1 = require("@/types/session");
 var crypto_1 = require("crypto");
 var ua_parser_js_1 = require("ua-parser-js");
-var SessionManager = /** @class */ (function (_super) {
+var SessionManager = /** @class */ ((_super) => {
   __extends(SessionManager, _super);
   function SessionManager(config) {
     var _this = _super.call(this) || this;
@@ -390,7 +387,7 @@ var SessionManager = /** @class */ (function (_super) {
             return [4 /*yield*/, this.getCachedSession(sessionId)];
           case 1:
             session = _b.sent();
-            if (!!session) return [3 /*break*/, 4];
+            if (session) return [3 /*break*/, 4];
             return [4 /*yield*/, this.getSessionFromDatabase(sessionId)];
           case 2:
             session = _b.sent();
@@ -426,7 +423,7 @@ var SessionManager = /** @class */ (function (_super) {
             return [4 /*yield*/, this.performSecurityChecks(session, ipAddress, userAgent)];
           case 7:
             securityChecks = _b.sent();
-            if (!!securityChecks.passed) return [3 /*break*/, 9];
+            if (securityChecks.passed) return [3 /*break*/, 9];
             return [
               4 /*yield*/,
               this.logSecurityEvent({
@@ -695,13 +692,11 @@ var SessionManager = /** @class */ (function (_super) {
                 notifications: [], // TODO: Implement notifications
                 last_sync: new Date(),
               },
-              devices: devices.map(function (device) {
-                return {
-                  device_fingerprint: device.device_fingerprint,
-                  last_sync: device.last_used,
-                  sync_status: "synced",
-                };
-              }),
+              devices: devices.map((device) => ({
+                device_fingerprint: device.device_fingerprint,
+                last_sync: device.last_used,
+                sync_status: "synced",
+              })),
             };
             // Cache sync data
             return [
@@ -722,9 +717,7 @@ var SessionManager = /** @class */ (function (_super) {
     });
   };
   // Private helper methods
-  SessionManager.prototype.generateSessionId = function () {
-    return (0, crypto_1.randomBytes)(32).toString("hex");
-  };
+  SessionManager.prototype.generateSessionId = () => (0, crypto_1.randomBytes)(32).toString("hex");
   SessionManager.prototype.getUserRole = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, data, error;
@@ -828,7 +821,7 @@ var SessionManager = /** @class */ (function (_super) {
   };
   SessionManager.prototype.getLocationFromIP = function (ipAddress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement IP geolocation
         return [2 /*return*/, null];
       });
@@ -922,7 +915,7 @@ var SessionManager = /** @class */ (function (_super) {
             return [4 /*yield*/, this.getCachedSession(sessionId)];
           case 1:
             session = _a.sent();
-            if (!!session) return [3 /*break*/, 4];
+            if (session) return [3 /*break*/, 4];
             return [4 /*yield*/, this.getSessionFromDatabase(sessionId)];
           case 2:
             session = _a.sent();
@@ -1179,10 +1172,9 @@ var SessionManager = /** @class */ (function (_super) {
     });
   };
   SessionManager.prototype.initializeCleanupInterval = function () {
-    var _this = this;
     this.cleanupInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1192,8 +1184,7 @@ var SessionManager = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.policies.cleanup_interval_minutes * 60 * 1000,
     );
   };
@@ -1236,99 +1227,89 @@ var SessionManager = /** @class */ (function (_super) {
     });
   };
   SessionManager.prototype.setupEventHandlers = function () {
-    this.on("sessionCreated", function (session) {
+    this.on("sessionCreated", (session) => {
       console.log("Session created for user ".concat(session.user_id, ": ").concat(session.id));
     });
-    this.on("sessionExpired", function (session) {
+    this.on("sessionExpired", (session) => {
       console.log("Session expired for user ".concat(session.user_id, ": ").concat(session.id));
     });
-    this.on("securityEvent", function (event) {
+    this.on("securityEvent", (event) => {
       console.log("Security event: ".concat(event.event_type, " - ").concat(event.severity));
     });
   };
   // Mapping functions
-  SessionManager.prototype.mapSessionToDatabaseRow = function (session) {
-    return {
-      id: session.id,
-      user_id: session.user_id,
-      device_fingerprint: session.device_fingerprint,
-      device_name: session.device_name,
-      ip_address: session.ip_address,
-      user_agent: session.user_agent,
-      location_data: session.location,
-      created_at: session.created_at.toISOString(),
-      last_activity: session.last_activity.toISOString(),
-      expires_at: session.expires_at.toISOString(),
-      is_active: session.is_active,
-      security_score: session.security_score,
-      session_data: session.session_data,
-    };
-  };
-  SessionManager.prototype.mapDatabaseRowToSession = function (row) {
-    return {
-      id: row.id,
-      user_id: row.user_id,
-      device_fingerprint: row.device_fingerprint,
-      device_name: row.device_name,
-      ip_address: row.ip_address,
-      user_agent: row.user_agent,
-      location: row.location_data,
-      created_at: new Date(row.created_at),
-      last_activity: new Date(row.last_activity),
-      expires_at: new Date(row.expires_at),
-      is_active: row.is_active,
-      security_score: row.security_score,
-      session_data: row.session_data,
-    };
-  };
-  SessionManager.prototype.mapDatabaseRowToSessionPolicy = function (row) {
-    return {
-      id: row.id,
-      role_id: row.role_id,
-      role_name: row.role_name,
-      max_concurrent_sessions: row.max_concurrent_sessions,
-      session_timeout_minutes: row.session_timeout_minutes,
-      idle_timeout_minutes: row.idle_timeout_minutes,
-      require_device_registration: row.require_device_registration,
-      allow_concurrent_devices: row.allow_concurrent_devices,
-      security_level: row.security_level,
-      ip_restriction_enabled: row.ip_restriction_enabled,
-      allowed_ip_ranges: row.allowed_ip_ranges,
-      geo_restriction_enabled: row.geo_restriction_enabled,
-      allowed_countries: row.allowed_countries,
-      created_at: new Date(row.created_at),
-      updated_at: new Date(row.updated_at),
-    };
-  };
-  SessionManager.prototype.mapSecurityEventToDatabaseRow = function (event) {
-    return {
-      id: event.id,
-      session_id: event.session_id,
-      user_id: event.user_id,
-      event_type: event.event_type,
-      severity: event.severity,
-      details: event.details,
-      ip_address: event.ip_address,
-      user_agent: event.user_agent,
-      timestamp: event.timestamp.toISOString(),
-      resolved: event.resolved,
-      resolution_notes: event.resolution_notes,
-    };
-  };
-  SessionManager.prototype.mapAuditEventToDatabaseRow = function (event) {
-    return {
-      id: event.id,
-      session_id: event.session_id,
-      user_id: event.user_id,
-      action: event.action,
-      details: event.details,
-      ip_address: event.ip_address,
-      user_agent: event.user_agent,
-      timestamp: event.timestamp.toISOString(),
-      success: event.success,
-      error_message: event.error_message,
-    };
-  };
+  SessionManager.prototype.mapSessionToDatabaseRow = (session) => ({
+    id: session.id,
+    user_id: session.user_id,
+    device_fingerprint: session.device_fingerprint,
+    device_name: session.device_name,
+    ip_address: session.ip_address,
+    user_agent: session.user_agent,
+    location_data: session.location,
+    created_at: session.created_at.toISOString(),
+    last_activity: session.last_activity.toISOString(),
+    expires_at: session.expires_at.toISOString(),
+    is_active: session.is_active,
+    security_score: session.security_score,
+    session_data: session.session_data,
+  });
+  SessionManager.prototype.mapDatabaseRowToSession = (row) => ({
+    id: row.id,
+    user_id: row.user_id,
+    device_fingerprint: row.device_fingerprint,
+    device_name: row.device_name,
+    ip_address: row.ip_address,
+    user_agent: row.user_agent,
+    location: row.location_data,
+    created_at: new Date(row.created_at),
+    last_activity: new Date(row.last_activity),
+    expires_at: new Date(row.expires_at),
+    is_active: row.is_active,
+    security_score: row.security_score,
+    session_data: row.session_data,
+  });
+  SessionManager.prototype.mapDatabaseRowToSessionPolicy = (row) => ({
+    id: row.id,
+    role_id: row.role_id,
+    role_name: row.role_name,
+    max_concurrent_sessions: row.max_concurrent_sessions,
+    session_timeout_minutes: row.session_timeout_minutes,
+    idle_timeout_minutes: row.idle_timeout_minutes,
+    require_device_registration: row.require_device_registration,
+    allow_concurrent_devices: row.allow_concurrent_devices,
+    security_level: row.security_level,
+    ip_restriction_enabled: row.ip_restriction_enabled,
+    allowed_ip_ranges: row.allowed_ip_ranges,
+    geo_restriction_enabled: row.geo_restriction_enabled,
+    allowed_countries: row.allowed_countries,
+    created_at: new Date(row.created_at),
+    updated_at: new Date(row.updated_at),
+  });
+  SessionManager.prototype.mapSecurityEventToDatabaseRow = (event) => ({
+    id: event.id,
+    session_id: event.session_id,
+    user_id: event.user_id,
+    event_type: event.event_type,
+    severity: event.severity,
+    details: event.details,
+    ip_address: event.ip_address,
+    user_agent: event.user_agent,
+    timestamp: event.timestamp.toISOString(),
+    resolved: event.resolved,
+    resolution_notes: event.resolution_notes,
+  });
+  SessionManager.prototype.mapAuditEventToDatabaseRow = (event) => ({
+    id: event.id,
+    session_id: event.session_id,
+    user_id: event.user_id,
+    action: event.action,
+    details: event.details,
+    ip_address: event.ip_address,
+    user_agent: event.user_agent,
+    timestamp: event.timestamp.toISOString(),
+    success: event.success,
+    error_message: event.error_message,
+  });
   // Cleanup
   SessionManager.prototype.destroy = function () {
     if (this.cleanupInterval) {
@@ -1341,22 +1322,20 @@ var SessionManager = /** @class */ (function (_super) {
 })(events_1.EventEmitter);
 exports.SessionManager = SessionManager;
 // Helper classes (to be implemented in separate files)
-var SecurityMonitor = /** @class */ (function () {
+var SecurityMonitor = /** @class */ (() => {
   function SecurityMonitor(supabase, redis) {
     this.supabase = supabase;
     this.redis = redis;
   }
   SecurityMonitor.prototype.monitorSession = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return SecurityMonitor;
 })();
 exports.SecurityMonitor = SecurityMonitor;
-var DeviceTracker = /** @class */ (function () {
+var DeviceTracker = /** @class */ (() => {
   function DeviceTracker(supabase, redis) {
     this.supabase = supabase;
     this.redis = redis;
@@ -1399,7 +1378,7 @@ var DeviceTracker = /** @class */ (function () {
       });
     });
   };
-  DeviceTracker.prototype.getDeviceType = function (result) {
+  DeviceTracker.prototype.getDeviceType = (result) => {
     if (result.device.type === "mobile") return session_1.DeviceType.MOBILE;
     if (result.device.type === "tablet") return session_1.DeviceType.TABLET;
     return session_1.DeviceType.DESKTOP;
@@ -1407,7 +1386,7 @@ var DeviceTracker = /** @class */ (function () {
   return DeviceTracker;
 })();
 exports.DeviceTracker = DeviceTracker;
-var SuspiciousActivityDetector = /** @class */ (function () {
+var SuspiciousActivityDetector = /** @class */ (() => {
   function SuspiciousActivityDetector(supabase, redis) {
     this.supabase = supabase;
     this.redis = redis;
@@ -1419,7 +1398,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     userAgent,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement sophisticated suspicious activity detection
         return [
           2 /*return*/,
@@ -1449,7 +1428,7 @@ var SuspiciousActivityDetector = /** @class */ (function () {
     userAgent,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement session activity analysis
         return [
           2 /*return*/,

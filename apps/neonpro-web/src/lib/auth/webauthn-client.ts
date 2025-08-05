@@ -9,12 +9,12 @@
  */
 
 import type {
-  startRegistration,
-  startAuthentication,
+  AuthenticationResponseJSON,
   browserSupportsWebAuthn,
   platformAuthenticatorIsAvailable,
-  type RegistrationResponseJSON,
-  type AuthenticationResponseJSON,
+  RegistrationResponseJSON,
+  startAuthentication,
+  startRegistration,
 } from "@simplewebauthn/browser";
 
 export interface WebAuthnRegistrationResult {

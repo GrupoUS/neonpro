@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - API Gateway Types
  * Type definitions for the API Gateway system

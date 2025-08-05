@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentCalendar = PaymentCalendar;
 var badge_1 = require("@/components/ui/badge");
@@ -217,7 +214,6 @@ var mockPaymentCalendar = [
   },
 ];
 function PaymentCalendar(_a) {
-  var _this = this;
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)([]),
     payments = _b[0],
@@ -232,7 +228,7 @@ function PaymentCalendar(_a) {
     selectedDate = _e[0],
     setSelectedDate = _e[1];
   // Initialize currentDate on client side only
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     setCurrentDate(new Date());
   }, []);
   var _f = (0, react_1.useState)("all"),
@@ -241,21 +237,18 @@ function PaymentCalendar(_a) {
   var _g = (0, react_1.useState)("all"),
     priorityFilter = _g[0],
     setPriorityFilter = _g[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadPayments();
-    },
-    [clinicId, currentDate],
-  );
-  var loadPayments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    loadPayments();
+  }, [clinicId, currentDate]);
+  var loadPayments = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           setLoading(true);
           // TODO: Implementar chamada real para o serviço
           // const data = await paymentService.getPaymentsByMonth(clinicId, currentDate)
           // Usando dados mock por enquanto
-          setTimeout(function () {
+          setTimeout(() => {
             setPayments(mockPaymentCalendar);
             setLoading(false);
           }, 300);
@@ -266,40 +259,29 @@ function PaymentCalendar(_a) {
         return [2 /*return*/];
       });
     });
-  };
   // Filtros aplicados
-  var filteredPayments = (0, react_1.useMemo)(
-    function () {
-      var filtered = payments;
-      if (statusFilter !== "all") {
-        filtered = filtered.filter(function (payment) {
-          return payment.status === statusFilter;
-        });
-      }
-      if (priorityFilter !== "all") {
-        filtered = filtered.filter(function (payment) {
-          return payment.priority === priorityFilter;
-        });
-      }
-      return filtered;
-    },
-    [payments, statusFilter, priorityFilter],
-  );
+  var filteredPayments = (0, react_1.useMemo)(() => {
+    var filtered = payments;
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((payment) => payment.status === statusFilter);
+    }
+    if (priorityFilter !== "all") {
+      filtered = filtered.filter((payment) => payment.priority === priorityFilter);
+    }
+    return filtered;
+  }, [payments, statusFilter, priorityFilter]);
   // Organizar pagamentos por data
-  var paymentsByDate = (0, react_1.useMemo)(
-    function () {
-      var grouped = {};
-      filteredPayments.forEach(function (payment) {
-        var dateKey = (0, date_fns_1.format)(new Date(payment.due_date), "yyyy-MM-dd");
-        if (!grouped[dateKey]) {
-          grouped[dateKey] = [];
-        }
-        grouped[dateKey].push(payment);
-      });
-      return grouped;
-    },
-    [filteredPayments],
-  );
+  var paymentsByDate = (0, react_1.useMemo)(() => {
+    var grouped = {};
+    filteredPayments.forEach((payment) => {
+      var dateKey = (0, date_fns_1.format)(new Date(payment.due_date), "yyyy-MM-dd");
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = [];
+      }
+      grouped[dateKey].push(payment);
+    });
+    return grouped;
+  }, [filteredPayments]);
   // Dias do mês atual
   var monthStart = currentDate ? (0, date_fns_1.startOfMonth)(currentDate) : null;
   var monthEnd = currentDate ? (0, date_fns_1.endOfMonth)(currentDate) : null;
@@ -307,8 +289,8 @@ function PaymentCalendar(_a) {
     monthStart && monthEnd
       ? (0, date_fns_1.eachDayOfInterval)({ start: monthStart, end: monthEnd })
       : [];
-  var navigateMonth = function (direction) {
-    setCurrentDate(function (prev) {
+  var navigateMonth = (direction) => {
+    setCurrentDate((prev) => {
       if (!prev) return new Date();
       return direction === "prev"
         ? (0, date_fns_1.subMonths)(prev, 1)
@@ -316,29 +298,25 @@ function PaymentCalendar(_a) {
     });
     setSelectedDate(null);
   };
-  var getDayPayments = function (date) {
+  var getDayPayments = (date) => {
     var dateKey = (0, date_fns_1.format)(date, "yyyy-MM-dd");
     return paymentsByDate[dateKey] || [];
   };
-  var getDayStatus = function (date) {
+  var getDayStatus = (date) => {
     var dayPayments = getDayPayments(date);
     if (dayPayments.length === 0) return "empty";
-    var hasOverdue = dayPayments.some(function (p) {
+    var hasOverdue = dayPayments.some((p) => {
       var paymentDate = new Date(p.due_date);
       return paymentDate < new Date() && p.status !== "paid";
     });
     if (hasOverdue) return "overdue";
-    var hasUrgent = dayPayments.some(function (p) {
-      return p.priority === "urgent";
-    });
+    var hasUrgent = dayPayments.some((p) => p.priority === "urgent");
     if (hasUrgent) return "urgent";
-    var hasHigh = dayPayments.some(function (p) {
-      return p.priority === "high";
-    });
+    var hasHigh = dayPayments.some((p) => p.priority === "high");
     if (hasHigh) return "high";
     return "normal";
   };
-  var getDayBadgeColor = function (status) {
+  var getDayBadgeColor = (status) => {
     switch (status) {
       case "overdue":
         return "bg-red-500";
@@ -352,13 +330,12 @@ function PaymentCalendar(_a) {
         return "bg-gray-200";
     }
   };
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
-  var getPriorityBadgeColor = function (priority) {
+  var getPriorityBadgeColor = (priority) => {
     switch (priority) {
       case "urgent":
         return "destructive";
@@ -372,7 +349,7 @@ function PaymentCalendar(_a) {
         return "outline";
     }
   };
-  var getStatusBadgeColor = function (status) {
+  var getStatusBadgeColor = (status) => {
     switch (status) {
       case "paid":
         return "default";
@@ -386,7 +363,7 @@ function PaymentCalendar(_a) {
         return "outline";
     }
   };
-  var getStatusLabel = function (status) {
+  var getStatusLabel = (status) => {
     switch (status) {
       case "paid":
         return "Pago";
@@ -406,9 +383,9 @@ function PaymentCalendar(_a) {
         <div className="animate-pulse">
           <div className="h-8 bg-gray-300 rounded w-1/3 mb-4"></div>
           <div className="grid grid-cols-7 gap-2">
-            {Array.from({ length: 35 }).map(function (_, i) {
-              return <div key={i} className="h-20 bg-gray-300 rounded"></div>;
-            })}
+            {Array.from({ length: 35 }).map((_, i) => (
+              <div key={i} className="h-20 bg-gray-300 rounded"></div>
+            ))}
           </div>
         </div>
       </div>
@@ -464,13 +441,7 @@ function PaymentCalendar(_a) {
         <card_1.CardContent>
           {/* Navegação do Calendário */}
           <div className="flex items-center justify-between mb-6">
-            <button_1.Button
-              variant="outline"
-              size="sm"
-              onClick={function () {
-                return navigateMonth("prev");
-              }}
-            >
+            <button_1.Button variant="outline" size="sm" onClick={() => navigateMonth("prev")}>
               <lucide_react_1.ChevronLeft className="h-4 w-4" />
             </button_1.Button>
 
@@ -478,43 +449,30 @@ function PaymentCalendar(_a) {
               {(0, date_fns_1.format)(currentDate, "MMMM yyyy", { locale: locale_1.ptBR })}
             </h3>
 
-            <button_1.Button
-              variant="outline"
-              size="sm"
-              onClick={function () {
-                return navigateMonth("next");
-              }}
-            >
+            <button_1.Button variant="outline" size="sm" onClick={() => navigateMonth("next")}>
               <lucide_react_1.ChevronRight className="h-4 w-4" />
             </button_1.Button>
           </div>
 
           {/* Cabeçalho dos dias da semana */}
           <div className="grid grid-cols-7 gap-2 mb-2">
-            {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(function (day) {
-              return (
-                <div
-                  key={day}
-                  className="text-center text-sm font-medium text-muted-foreground py-2"
-                >
-                  {day}
-                </div>
-              );
-            })}
+            {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((day) => (
+              <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
+                {day}
+              </div>
+            ))}
           </div>
 
           {/* Grid do Calendário */}
           <div className="grid grid-cols-7 gap-2">
-            {calendarDays.map(function (day) {
+            {calendarDays.map((day) => {
               var dayPayments = getDayPayments(day);
               var dayStatus = getDayStatus(day);
               var isSelected = selectedDate && (0, date_fns_1.isSameDay)(day, selectedDate);
               return (
                 <button
                   key={day.toISOString()}
-                  onClick={function () {
-                    return setSelectedDate(day);
-                  }}
+                  onClick={() => setSelectedDate(day)}
                   className={"\n                    relative min-h-[80px] p-2 rounded-lg border text-left transition-colors\n                    "
                     .concat(
                       isSelected ? "ring-2 ring-primary bg-primary/10" : "hover:bg-muted/50",
@@ -560,19 +518,17 @@ function PaymentCalendar(_a) {
 
                   {dayPayments.length > 0 && (
                     <div className="mt-1 space-y-1">
-                      {dayPayments.slice(0, 2).map(function (payment) {
-                        return (
-                          <div
-                            key={payment.id}
-                            className="text-xs p-1 rounded bg-background/80 border truncate"
-                          >
-                            <div className="font-medium truncate">{payment.vendor_name}</div>
-                            <div className="text-muted-foreground">
-                              {formatCurrency(payment.amount)}
-                            </div>
+                      {dayPayments.slice(0, 2).map((payment) => (
+                        <div
+                          key={payment.id}
+                          className="text-xs p-1 rounded bg-background/80 border truncate"
+                        >
+                          <div className="font-medium truncate">{payment.vendor_name}</div>
+                          <div className="text-muted-foreground">
+                            {formatCurrency(payment.amount)}
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                       {dayPayments.length > 2 && (
                         <div className="text-xs text-center text-muted-foreground">
                           +{dayPayments.length - 2} mais
@@ -606,55 +562,53 @@ function PaymentCalendar(_a) {
           {selectedDatePayments.length > 0 && (
             <card_1.CardContent>
               <div className="space-y-3">
-                {selectedDatePayments.map(function (payment) {
-                  return (
-                    <div
-                      key={payment.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h4 className="font-medium">{payment.vendor_name}</h4>
-                          {payment.recurring && (
-                            <badge_1.Badge variant="outline" className="text-xs">
-                              Recorrente
-                            </badge_1.Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-2">{payment.description}</p>
-                        <div className="flex items-center gap-2">
-                          <badge_1.Badge variant={getStatusBadgeColor(payment.status)}>
-                            {getStatusLabel(payment.status)}
+                {selectedDatePayments.map((payment) => (
+                  <div
+                    key={payment.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h4 className="font-medium">{payment.vendor_name}</h4>
+                        {payment.recurring && (
+                          <badge_1.Badge variant="outline" className="text-xs">
+                            Recorrente
                           </badge_1.Badge>
-                          <badge_1.Badge variant={getPriorityBadgeColor(payment.priority)}>
-                            {payment.priority === "urgent"
-                              ? "Urgente"
-                              : payment.priority === "high"
-                                ? "Alta"
-                                : payment.priority === "medium"
-                                  ? "Média"
-                                  : "Baixa"}
-                          </badge_1.Badge>
-                        </div>
+                        )}
                       </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="text-right">
-                          <div className="font-semibold">{formatCurrency(payment.amount)}</div>
-                          {new Date(payment.due_date) < new Date() && payment.status !== "paid" && (
-                            <div className="flex items-center gap-1 text-red-600 text-sm">
-                              <lucide_react_1.AlertTriangle className="h-3 w-3" />
-                              Em atraso
-                            </div>
-                          )}
-                        </div>
-                        <button_1.Button size="sm" variant="outline">
-                          <lucide_react_1.Eye className="h-4 w-4" />
-                        </button_1.Button>
+                      <p className="text-sm text-muted-foreground mb-2">{payment.description}</p>
+                      <div className="flex items-center gap-2">
+                        <badge_1.Badge variant={getStatusBadgeColor(payment.status)}>
+                          {getStatusLabel(payment.status)}
+                        </badge_1.Badge>
+                        <badge_1.Badge variant={getPriorityBadgeColor(payment.priority)}>
+                          {payment.priority === "urgent"
+                            ? "Urgente"
+                            : payment.priority === "high"
+                              ? "Alta"
+                              : payment.priority === "medium"
+                                ? "Média"
+                                : "Baixa"}
+                        </badge_1.Badge>
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="font-semibold">{formatCurrency(payment.amount)}</div>
+                        {new Date(payment.due_date) < new Date() && payment.status !== "paid" && (
+                          <div className="flex items-center gap-1 text-red-600 text-sm">
+                            <lucide_react_1.AlertTriangle className="h-3 w-3" />
+                            Em atraso
+                          </div>
+                        )}
+                      </div>
+                      <button_1.Button size="sm" variant="outline">
+                        <lucide_react_1.Eye className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           )}

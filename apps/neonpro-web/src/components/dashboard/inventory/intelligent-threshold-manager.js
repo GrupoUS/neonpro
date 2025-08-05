@@ -1,32 +1,31 @@
 // Intelligent Threshold Management Component
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntelligentThresholdManager = IntelligentThresholdManager;
 var useIntelligentThresholds_1 = require("@/app/hooks/useIntelligentThresholds");
@@ -164,7 +161,6 @@ var textarea_1 = require("@/components/ui/textarea");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function IntelligentThresholdManager(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     className = _a.className;
   var _b = (0, useIntelligentThresholds_1.useIntelligentThresholds)({
@@ -230,10 +226,10 @@ function IntelligentThresholdManager(_a) {
       </card_1.Card>
     );
   }
-  var handleCreateThreshold = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreateThreshold = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -266,11 +262,10 @@ function IntelligentThresholdManager(_a) {
         }
       });
     });
-  };
-  var handleUpdateThreshold = function (id, updates) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleUpdateThreshold = (id, updates) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -287,11 +282,10 @@ function IntelligentThresholdManager(_a) {
         }
       });
     });
-  };
-  var handleOptimizeThreshold = function (optimization) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleOptimizeThreshold = (optimization) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -316,7 +310,6 @@ function IntelligentThresholdManager(_a) {
         }
       });
     });
-  };
   return (
     <div className={"space-y-6 ".concat(className)}>
       {/* Header with Stats */}
@@ -427,51 +420,47 @@ function IntelligentThresholdManager(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {optimizations.slice(0, 3).map(function (optimization) {
-                return (
-                  <div
-                    key={optimization.item_id}
-                    className="flex items-center justify-between p-3 bg-white rounded-lg border"
-                  >
-                    <div className="flex-1">
-                      <p className="font-medium">{optimization.item_name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {optimization.optimization_reason}
-                      </p>
-                      <div className="flex gap-4 mt-1 text-xs">
-                        <span>Atual: {optimization.current_reorder_point}</span>
-                        <lucide_react_1.ArrowUp className="h-3 w-3" />
-                        <span>Sugerido: {optimization.recommended_reorder_point}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <badge_1.Badge
-                        variant={
-                          optimization.implementation_priority === "high"
-                            ? "destructive"
-                            : "secondary"
-                        }
-                        className="mb-2"
-                      >
-                        {optimization.implementation_priority === "high" ? "Alta" : "Média"}{" "}
-                        Prioridade
-                      </badge_1.Badge>
-                      <p className="text-sm font-medium text-green-600">
-                        +R$ {optimization.potential_savings.toFixed(2)}
-                      </p>
-                      <button_1.Button
-                        size="sm"
-                        onClick={function () {
-                          return handleOptimizeThreshold(optimization);
-                        }}
-                        className="mt-2"
-                      >
-                        Aplicar
-                      </button_1.Button>
+              {optimizations.slice(0, 3).map((optimization) => (
+                <div
+                  key={optimization.item_id}
+                  className="flex items-center justify-between p-3 bg-white rounded-lg border"
+                >
+                  <div className="flex-1">
+                    <p className="font-medium">{optimization.item_name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {optimization.optimization_reason}
+                    </p>
+                    <div className="flex gap-4 mt-1 text-xs">
+                      <span>Atual: {optimization.current_reorder_point}</span>
+                      <lucide_react_1.ArrowUp className="h-3 w-3" />
+                      <span>Sugerido: {optimization.recommended_reorder_point}</span>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="text-right">
+                    <badge_1.Badge
+                      variant={
+                        optimization.implementation_priority === "high"
+                          ? "destructive"
+                          : "secondary"
+                      }
+                      className="mb-2"
+                    >
+                      {optimization.implementation_priority === "high" ? "Alta" : "Média"}{" "}
+                      Prioridade
+                    </badge_1.Badge>
+                    <p className="text-sm font-medium text-green-600">
+                      +R$ {optimization.potential_savings.toFixed(2)}
+                    </p>
+                    <button_1.Button
+                      size="sm"
+                      onClick={() => handleOptimizeThreshold(optimization)}
+                      className="mt-2"
+                    >
+                      Aplicar
+                    </button_1.Button>
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -522,9 +511,9 @@ function CreateThresholdForm(_a) {
           <input_1.Input
             id="item_id"
             value={threshold.item_id}
-            onChange={function (e) {
-              return onChange(__assign(__assign({}, threshold), { item_id: e.target.value }));
-            }}
+            onChange={(e) =>
+              onChange(__assign(__assign({}, threshold), { item_id: e.target.value }))
+            }
             placeholder="ID do item"
           />
         </div>
@@ -534,11 +523,11 @@ function CreateThresholdForm(_a) {
             id="reorder_point"
             type="number"
             value={threshold.reorder_point}
-            onChange={function (e) {
-              return onChange(
+            onChange={(e) =>
+              onChange(
                 __assign(__assign({}, threshold), { reorder_point: parseInt(e.target.value) }),
-              );
-            }}
+              )
+            }
           />
         </div>
       </div>
@@ -550,11 +539,11 @@ function CreateThresholdForm(_a) {
             id="safety_stock"
             type="number"
             value={threshold.safety_stock}
-            onChange={function (e) {
-              return onChange(
+            onChange={(e) =>
+              onChange(
                 __assign(__assign({}, threshold), { safety_stock: parseInt(e.target.value) }),
-              );
-            }}
+              )
+            }
           />
         </div>
         <div>
@@ -563,11 +552,11 @@ function CreateThresholdForm(_a) {
             id="lead_time_days"
             type="number"
             value={threshold.lead_time_days}
-            onChange={function (e) {
-              return onChange(
+            onChange={(e) =>
+              onChange(
                 __assign(__assign({}, threshold), { lead_time_days: parseInt(e.target.value) }),
-              );
-            }}
+              )
+            }
           />
         </div>
       </div>
@@ -576,9 +565,9 @@ function CreateThresholdForm(_a) {
         <switch_1.Switch
           id="auto_reorder"
           checked={threshold.auto_reorder_enabled}
-          onCheckedChange={function (checked) {
-            return onChange(__assign(__assign({}, threshold), { auto_reorder_enabled: checked }));
-          }}
+          onCheckedChange={(checked) =>
+            onChange(__assign(__assign({}, threshold), { auto_reorder_enabled: checked }))
+          }
         />
         <label_1.Label htmlFor="auto_reorder">Ativar Reposição Automática</label_1.Label>
       </div>
@@ -588,15 +577,13 @@ function CreateThresholdForm(_a) {
         <textarea_1.Textarea
           id="notes"
           value={threshold.notes}
-          onChange={function (e) {
-            return onChange(__assign(__assign({}, threshold), { notes: e.target.value }));
-          }}
+          onChange={(e) => onChange(__assign(__assign({}, threshold), { notes: e.target.value }))}
           placeholder="Observações sobre este limite..."
         />
       </div>
 
       <div className="flex justify-end space-x-2">
-        <button_1.Button variant="outline" onClick={function () {}}>
+        <button_1.Button variant="outline" onClick={() => {}}>
           Cancelar
         </button_1.Button>
         <button_1.Button onClick={onSubmit}>
@@ -613,44 +600,42 @@ function ThresholdsList(_a) {
     onDelete = _a.onDelete;
   return (
     <div className="space-y-4">
-      {thresholds.map(function (threshold) {
-        return (
-          <card_1.Card key={threshold.id}>
-            <card_1.CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h4 className="font-semibold">{threshold.item_id}</h4>
-                  <div className="grid grid-cols-3 gap-4 mt-2 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Reposição:</span>
-                      <p className="font-medium">{threshold.reorder_point}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Segurança:</span>
-                      <p className="font-medium">{threshold.safety_stock}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Lead Time:</span>
-                      <p className="font-medium">{threshold.lead_time_days || 7} dias</p>
-                    </div>
+      {thresholds.map((threshold) => (
+        <card_1.Card key={threshold.id}>
+          <card_1.CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h4 className="font-semibold">{threshold.item_id}</h4>
+                <div className="grid grid-cols-3 gap-4 mt-2 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Reposição:</span>
+                    <p className="font-medium">{threshold.reorder_point}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Segurança:</span>
+                    <p className="font-medium">{threshold.safety_stock}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Lead Time:</span>
+                    <p className="font-medium">{threshold.lead_time_days || 7} dias</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  {threshold.auto_reorder_enabled && (
-                    <badge_1.Badge variant="outline">
-                      <lucide_react_1.Zap className="h-3 w-3 mr-1" />
-                      Auto
-                    </badge_1.Badge>
-                  )}
-                  <button_1.Button variant="outline" size="sm">
-                    <lucide_react_1.Settings className="h-4 w-4" />
-                  </button_1.Button>
-                </div>
               </div>
-            </card_1.CardContent>
-          </card_1.Card>
-        );
-      })}
+              <div className="flex items-center space-x-2">
+                {threshold.auto_reorder_enabled && (
+                  <badge_1.Badge variant="outline">
+                    <lucide_react_1.Zap className="h-3 w-3 mr-1" />
+                    Auto
+                  </badge_1.Badge>
+                )}
+                <button_1.Button variant="outline" size="sm">
+                  <lucide_react_1.Settings className="h-4 w-4" />
+                </button_1.Button>
+              </div>
+            </div>
+          </card_1.CardContent>
+        </card_1.Card>
+      ))}
     </div>
   );
 }

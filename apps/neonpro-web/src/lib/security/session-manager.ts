@@ -110,12 +110,12 @@ export class HealthcareSessionManager {
     allowedPatients?: string[];
   }): Promise<Session> {
     const now = new Date();
-    const timeoutMinutes = this.SESSION_TIMEOUTS[params.userRole];
+    const timeoutMinutes = HealthcareSessionManager.SESSION_TIMEOUTS[params.userRole];
     const expiresAt = new Date(now.getTime() + timeoutMinutes * 60 * 1000);
     const timeoutWarningAt = new Date(expiresAt.getTime() - 5 * 60 * 1000); // 5 minutes before
 
     // Calculate initial risk score based on various factors
-    const riskScore = await this.calculateRiskScore({
+    const riskScore = await HealthcareSessionManager.calculateRiskScore({
       userRole: params.userRole,
       ipAddress: params.ipAddress,
       loginMethod: params.loginMethod,
@@ -135,7 +135,9 @@ export class HealthcareSessionManager {
       expiresAt,
       timeoutWarningAt,
       mfaVerified: false,
-      permissions: params.permissions || (await this.getDefaultPermissions(params.userRole)),
+      permissions:
+        params.permissions ||
+        (await HealthcareSessionManager.getDefaultPermissions(params.userRole)),
       allowedPatients: params.allowedPatients,
       loginMethod: params.loginMethod,
       riskScore,
@@ -146,18 +148,21 @@ export class HealthcareSessionManager {
     const validated = sessionSchema.parse(session);
 
     // Store session securely (Redis recommended for healthcare)
-    await this.storeSession(validated);
+    await HealthcareSessionManager.storeSession(validated);
 
     // Log session creation
-    await this.logSessionEvent(validated.id, "session_created", {
+    await HealthcareSessionManager.logSessionEvent(validated.id, "session_created", {
       userRole: params.userRole,
       riskScore,
       loginMethod: params.loginMethod,
     });
 
     // Check if MFA is required
-    if (riskScore >= this.RISK_THRESHOLDS.MFA_REQUIRED || this.requiresMFA(params.userRole)) {
-      await this.initiateMFA(validated.id);
+    if (
+      riskScore >= HealthcareSessionManager.RISK_THRESHOLDS.MFA_REQUIRED ||
+      HealthcareSessionManager.requiresMFA(params.userRole)
+    ) {
+      await HealthcareSessionManager.initiateMFA(validated.id);
     }
 
     return validated;
@@ -176,7 +181,7 @@ export class HealthcareSessionManager {
     requiresMFA?: boolean;
   }> {
     try {
-      const session = await this.getSession(sessionId);
+      const session = await HealthcareSessionManager.getSession(sessionId);
 
       if (!session) {
         return { valid: false, reason: "Session not found" };
@@ -189,13 +194,13 @@ export class HealthcareSessionManager {
 
       // Check expiration
       if (new Date() > session.expiresAt) {
-        await this.terminateSession(sessionId, "expired");
+        await HealthcareSessionManager.terminateSession(sessionId, "expired");
         return { valid: false, reason: "Session expired" };
       }
 
       // Validate IP address (healthcare security requirement)
       if (session.ipAddress !== ipAddress) {
-        await this.flagSuspiciousActivity(sessionId, "ip_mismatch", {
+        await HealthcareSessionManager.flagSuspiciousActivity(sessionId, "ip_mismatch", {
           originalIp: session.ipAddress,
           currentIp: ipAddress,
         });
@@ -215,18 +220,18 @@ export class HealthcareSessionManager {
       // Extend session if user is active (healthcare workflow consideration)
       if (timeUntilTimeout <= 10 * 60 * 1000) {
         // Extend when 10 minutes left
-        const extension = this.SESSION_TIMEOUTS[session.userRole] * 60 * 1000;
+        const extension = HealthcareSessionManager.SESSION_TIMEOUTS[session.userRole] * 60 * 1000;
         session.expiresAt = new Date(Date.now() + extension);
         session.timeoutWarningAt = new Date(session.expiresAt.getTime() - 5 * 60 * 1000);
       }
 
-      await this.updateSession(session);
+      await HealthcareSessionManager.updateSession(session);
 
       // Check if additional security measures are needed
       const requiresMFA =
         !session.mfaVerified &&
-        (session.riskScore >= this.RISK_THRESHOLDS.MFA_REQUIRED ||
-          this.requiresMFA(session.userRole));
+        (session.riskScore >= HealthcareSessionManager.RISK_THRESHOLDS.MFA_REQUIRED ||
+          HealthcareSessionManager.requiresMFA(session.userRole));
 
       return {
         valid: true,
@@ -247,13 +252,13 @@ export class HealthcareSessionManager {
     method: MFAMethod,
     code: string,
   ): Promise<{ success: boolean; session?: Session }> {
-    const session = await this.getSession(sessionId);
+    const session = await HealthcareSessionManager.getSession(sessionId);
     if (!session) {
       return { success: false };
     }
 
     // Verify MFA code (implementation depends on method)
-    const isValid = await this.verifyMFACode(session.userId, method, code);
+    const isValid = await HealthcareSessionManager.verifyMFACode(session.userId, method, code);
 
     if (isValid) {
       session.mfaVerified = true;
@@ -261,14 +266,14 @@ export class HealthcareSessionManager {
       session.mfaVerifiedAt = new Date();
       session.riskScore = Math.max(0, session.riskScore - 30); // Reduce risk after MFA
 
-      await this.updateSession(session);
-      await this.logSessionEvent(sessionId, "mfa_verified", { method });
+      await HealthcareSessionManager.updateSession(session);
+      await HealthcareSessionManager.logSessionEvent(sessionId, "mfa_verified", { method });
 
       return { success: true, session };
     } else {
       // Log failed MFA attempt
-      await this.logSessionEvent(sessionId, "mfa_failed", { method });
-      await this.flagSuspiciousActivity(sessionId, "mfa_failure", { method });
+      await HealthcareSessionManager.logSessionEvent(sessionId, "mfa_failed", { method });
+      await HealthcareSessionManager.flagSuspiciousActivity(sessionId, "mfa_failure", { method });
 
       return { success: false };
     }
@@ -282,17 +287,17 @@ export class HealthcareSessionManager {
     reason: string,
     terminatedBy?: string,
   ): Promise<void> {
-    const session = await this.getSession(sessionId);
+    const session = await HealthcareSessionManager.getSession(sessionId);
     if (!session) return;
 
     session.status = SessionStatus.TERMINATED;
     session.terminationReason = reason;
     session.terminatedBy = terminatedBy;
 
-    await this.updateSession(session);
-    await this.removeSessionFromCache(sessionId);
+    await HealthcareSessionManager.updateSession(session);
+    await HealthcareSessionManager.removeSessionFromCache(sessionId);
 
-    await this.logSessionEvent(sessionId, "session_terminated", {
+    await HealthcareSessionManager.logSessionEvent(sessionId, "session_terminated", {
       reason,
       terminatedBy,
       duration: Date.now() - session.createdAt.getTime(),
@@ -315,13 +320,13 @@ export class HealthcareSessionManager {
     reason: string,
     terminatedBy: string,
   ): Promise<number> {
-    const sessions = await this.getUserSessions(userId);
+    const sessions = await HealthcareSessionManager.getUserSessions(userId);
 
     for (const session of sessions) {
-      await this.terminateSession(session.id, reason, terminatedBy);
+      await HealthcareSessionManager.terminateSession(session.id, reason, terminatedBy);
     }
 
-    await this.logSessionEvent("system", "all_sessions_terminated", {
+    await HealthcareSessionManager.logSessionEvent("system", "all_sessions_terminated", {
       userId,
       reason,
       terminatedBy,

@@ -12,8 +12,8 @@
  * enhancements for SaaS subscription metrics.
  */
 
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
 
 // Types for cohort analysis
 export interface CohortDefinition {

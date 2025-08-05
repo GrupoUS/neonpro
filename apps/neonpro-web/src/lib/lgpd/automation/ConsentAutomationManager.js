@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,10 +128,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentAutomationManager = void 0;
-var ConsentAutomationManager = /** @class */ (function () {
+var ConsentAutomationManager = /** @class */ (() => {
   function ConsentAutomationManager(supabase, complianceManager, config) {
     this.supabase = supabase;
     this.complianceManager = complianceManager;
@@ -376,7 +373,7 @@ var ConsentAutomationManager = /** @class */ (function () {
           case 3:
             _c.trys.push([3, 10, , 11]);
             processed++;
-            if (!!renewal.notification_sent) return [3 /*break*/, 6];
+            if (renewal.notification_sent) return [3 /*break*/, 6];
             return [4 /*yield*/, this.sendConsentRenewalNotification(renewal)];
           case 4:
             _c.sent();
@@ -502,7 +499,7 @@ var ConsentAutomationManager = /** @class */ (function () {
           case 2:
             // Create tracking record
             _a.sent();
-            if (!!metadata.immediate) return [3 /*break*/, 4];
+            if (metadata.immediate) return [3 /*break*/, 4];
             return [
               4 /*yield*/,
               this.scheduleDataProcessingCessation(userId, purposeId, effectiveDate),
@@ -693,7 +690,7 @@ var ConsentAutomationManager = /** @class */ (function () {
     });
   };
   // Private helper methods
-  ConsentAutomationManager.prototype.parseRetentionPeriod = function (period) {
+  ConsentAutomationManager.prototype.parseRetentionPeriod = (period) => {
     // Parse retention period string (e.g., "1 year", "6 months", "30 days")
     var match = period.match(/(\d+)\s*(year|month|day)s?/i);
     if (!match) return 365 * 24 * 60 * 60 * 1000; // Default 1 year
@@ -708,7 +705,7 @@ var ConsentAutomationManager = /** @class */ (function () {
   };
   ConsentAutomationManager.prototype.sendConsentRenewalNotification = function (renewal) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for sending renewal notifications
         // This would integrate with your notification system
         console.log(
@@ -827,7 +824,7 @@ var ConsentAutomationManager = /** @class */ (function () {
     metadata,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Sync consent status with third-party systems
         console.log(
           "Syncing consent with third parties for user "
@@ -839,7 +836,7 @@ var ConsentAutomationManager = /** @class */ (function () {
       });
     });
   };
-  ConsentAutomationManager.prototype.shouldInheritConsent = function (purpose, rules) {
+  ConsentAutomationManager.prototype.shouldInheritConsent = (purpose, rules) => {
     var purposeRuleMap = {
       essential: rules.inherit_essential,
       analytics: rules.inherit_analytics,

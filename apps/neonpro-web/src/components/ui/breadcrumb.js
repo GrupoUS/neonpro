@@ -1,17 +1,15 @@
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BreadcrumbSeparator =
   exports.BreadcrumbPage =
@@ -25,7 +23,7 @@ var react_1 = require("react");
 var link_1 = require("next/link");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
-var BreadcrumbRoot = react_1.default.forwardRef(function (_a, ref) {
+var BreadcrumbRoot = react_1.default.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -42,7 +40,7 @@ var BreadcrumbRoot = react_1.default.forwardRef(function (_a, ref) {
 });
 exports.Breadcrumb = BreadcrumbRoot;
 BreadcrumbRoot.displayName = "Breadcrumb";
-var BreadcrumbList = react_1.default.forwardRef(function (_a, ref) {
+var BreadcrumbList = react_1.default.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -58,7 +56,7 @@ var BreadcrumbList = react_1.default.forwardRef(function (_a, ref) {
 });
 exports.BreadcrumbList = BreadcrumbList;
 BreadcrumbList.displayName = "BreadcrumbList";
-var BreadcrumbItem = react_1.default.forwardRef(function (_a, ref) {
+var BreadcrumbItem = react_1.default.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -71,7 +69,7 @@ var BreadcrumbItem = react_1.default.forwardRef(function (_a, ref) {
 });
 exports.BreadcrumbItem = BreadcrumbItem;
 BreadcrumbItem.displayName = "BreadcrumbItem";
-var BreadcrumbLink = react_1.default.forwardRef(function (_a, ref) {
+var BreadcrumbLink = react_1.default.forwardRef((_a, ref) => {
   var className = _a.className,
     href = _a.href,
     children = _a.children,
@@ -100,7 +98,7 @@ var BreadcrumbLink = react_1.default.forwardRef(function (_a, ref) {
 });
 exports.BreadcrumbLink = BreadcrumbLink;
 BreadcrumbLink.displayName = "BreadcrumbLink";
-var BreadcrumbPage = react_1.default.forwardRef(function (_a, ref) {
+var BreadcrumbPage = react_1.default.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -116,7 +114,7 @@ var BreadcrumbPage = react_1.default.forwardRef(function (_a, ref) {
 });
 exports.BreadcrumbPage = BreadcrumbPage;
 BreadcrumbPage.displayName = "BreadcrumbPage";
-var BreadcrumbSeparator = function (_a) {
+var BreadcrumbSeparator = (_a) => {
   var children = _a.children,
     className = _a.className,
     props = __rest(_a, ["children", "className"]);
@@ -152,21 +150,16 @@ function BreadcrumbLegacy(_a) {
         <lucide_react_1.Home className="h-4 w-4" />
       </link_1.default>
 
-      {items.map(function (item, index) {
-        return (
-          <react_1.default.Fragment key={index}>
-            <lucide_react_1.ChevronRight className="h-4 w-4" />
-            {item.href && index < items.length - 1
-              ? <link_1.default
-                  href={item.href}
-                  className="hover:text-foreground transition-colors"
-                >
-                  {item.title}
-                </link_1.default>
-              : <span className="text-foreground font-medium">{item.title}</span>}
-          </react_1.default.Fragment>
-        );
-      })}
+      {items.map((item, index) => (
+        <react_1.default.Fragment key={index}>
+          <lucide_react_1.ChevronRight className="h-4 w-4" />
+          {item.href && index < items.length - 1
+            ? <link_1.default href={item.href} className="hover:text-foreground transition-colors">
+                {item.title}
+              </link_1.default>
+            : <span className="text-foreground font-medium">{item.title}</span>}
+        </react_1.default.Fragment>
+      ))}
     </nav>
   );
 }

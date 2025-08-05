@@ -1,17 +1,16 @@
-"use strict";
 // SSO Callback Route
 // Story 1.3: SSO Integration - OAuth Callback Processing
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -172,7 +169,7 @@ function GET(request) {
       error_1,
       loginUrl;
     var _b, _c, _d, _e, _f, _g;
-    return __generator(this, function (_h) {
+    return __generator(this, (_h) => {
       switch (_h.label) {
         case 0:
           _h.trys.push([0, 2, , 3]);
@@ -314,40 +311,34 @@ function GET(request) {
 // Handle unsupported methods
 function POST() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        server_1.NextResponse.json(
-          { error: "METHOD_NOT_ALLOWED", message: "POST method not allowed" },
-          { status: 405 },
-        ),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      server_1.NextResponse.json(
+        { error: "METHOD_NOT_ALLOWED", message: "POST method not allowed" },
+        { status: 405 },
+      ),
+    ]);
   });
 }
 function PUT() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        server_1.NextResponse.json(
-          { error: "METHOD_NOT_ALLOWED", message: "PUT method not allowed" },
-          { status: 405 },
-        ),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      server_1.NextResponse.json(
+        { error: "METHOD_NOT_ALLOWED", message: "PUT method not allowed" },
+        { status: 405 },
+      ),
+    ]);
   });
 }
 function DELETE() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        server_1.NextResponse.json(
-          { error: "METHOD_NOT_ALLOWED", message: "DELETE method not allowed" },
-          { status: 405 },
-        ),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      server_1.NextResponse.json(
+        { error: "METHOD_NOT_ALLOWED", message: "DELETE method not allowed" },
+        { status: 405 },
+      ),
+    ]);
   });
 }

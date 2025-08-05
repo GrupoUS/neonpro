@@ -83,7 +83,6 @@ export class DatabasePoolManager {
       max: validatedConfig.pool?.max || 20,
       idleTimeoutMillis: validatedConfig.pool?.idleTimeoutMillis || 30000,
       connectionTimeoutMillis: validatedConfig.pool?.connectionTimeoutMillis || 10000,
-      acquireTimeoutMillis: validatedConfig.pool?.acquireTimeoutMillis || 60000,
       maxUses: validatedConfig.pool?.maxUses || 7500,
 
       // Healthcare-specific optimizations
@@ -246,7 +245,9 @@ export class DatabasePoolManager {
     const placeholders = values
       .map(
         (_, index) =>
-          `(${columns.map((_, colIndex) => `$${index * columns.length + colIndex + 1}`).join(", ")})`,
+          `(${columns
+            .map((_, colIndex) => `$${index * columns.length + colIndex + 1}`)
+            .join(", ")})`,
       )
       .join(", ");
 
@@ -337,16 +338,16 @@ export class DatabasePoolManager {
   // Private methods
 
   private setupPoolEvents(pool: Pool, tenantId: string): void {
-    pool.on("connect", (client) => {
+    pool.on("connect", (_client) => {
       console.log(`New client connected for tenant: ${tenantId}`);
     });
 
-    pool.on("error", (err, client) => {
+    pool.on("error", (err, _client) => {
       console.error(`Database pool error for tenant ${tenantId}:`, err);
       this.updateErrorMetrics(tenantId, err.message);
     });
 
-    pool.on("remove", (client) => {
+    pool.on("remove", (_client) => {
       console.log(`Client removed from pool for tenant: ${tenantId}`);
     });
   }

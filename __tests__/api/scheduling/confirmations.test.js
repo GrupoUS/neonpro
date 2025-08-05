@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
@@ -160,58 +157,38 @@ var mockSupabase = {
   auth: {
     getUser: globals_1.jest.fn(),
   },
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-              neq: globals_1.jest.fn(function () {
-                return {
-                  single: globals_1.jest.fn(),
-                };
-              }),
-              order: globals_1.jest.fn(),
-            };
-          }),
-          insert: globals_1.jest.fn(function () {
-            return {
-              select: globals_1.jest.fn(function () {
-                return {
-                  single: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-          update: globals_1.jest.fn(function () {
-            return {
-              eq: globals_1.jest.fn(),
-              select: globals_1.jest.fn(),
-            };
-          }),
-          gte: globals_1.jest.fn(function () {
-            return {
-              lte: globals_1.jest.fn(function () {
-                return {
-                  order: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+        neq: globals_1.jest.fn(() => ({
+          single: globals_1.jest.fn(),
+        })),
+        order: globals_1.jest.fn(),
+      })),
+      insert: globals_1.jest.fn(() => ({
+        select: globals_1.jest.fn(() => ({
+          single: globals_1.jest.fn(),
+        })),
+      })),
+      update: globals_1.jest.fn(() => ({
+        eq: globals_1.jest.fn(),
+        select: globals_1.jest.fn(),
+      })),
+      gte: globals_1.jest.fn(() => ({
+        lte: globals_1.jest.fn(() => ({
+          order: globals_1.jest.fn(),
+        })),
+      })),
+    })),
+  })),
 };
-var mockCreateClient = globals_1.jest.fn(function () {
-  return Promise.resolve(mockSupabase);
-});
-(0, globals_1.beforeEach)(function () {
+var mockCreateClient = globals_1.jest.fn(() => Promise.resolve(mockSupabase));
+(0, globals_1.beforeEach)(() => {
   globals_1.jest.clearAllMocks();
   require("@/app/utils/supabase/server").createClient = mockCreateClient;
 });
-(0, globals_1.describe)("/api/scheduling/confirmations", function () {
+(0, globals_1.describe)("/api/scheduling/confirmations", () => {
   var mockUser = {
     id: "user-123",
     email: "test@example.com",
@@ -258,11 +235,11 @@ var mockCreateClient = globals_1.jest.fn(function () {
     patients: mockAppointment.patients,
     clinics: mockAppointment.clinics,
   };
-  (0, globals_1.describe)("POST /api/scheduling/confirmations", function () {
-    (0, globals_1.it)("should create confirmation request using workflow by default", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("POST /api/scheduling/confirmations", () => {
+    (0, globals_1.it)("should create confirmation request using workflow by default", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWorkflows, mockWorkflowModule, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Setup mocks
@@ -270,7 +247,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 data: { user: mockUser },
                 error: null,
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -360,12 +337,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should create legacy confirmation when workflow disabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should create legacy confirmation when workflow disabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockPredictor, mockPredictorModule, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Setup mocks
@@ -373,7 +350,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 data: { user: mockUser },
                 error: null,
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -415,9 +392,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 }),
               };
               mockPredictorModule = require("@/lib/communication/no-show-predictor");
-              mockPredictorModule.NoShowPredictor = globals_1.jest.fn(function () {
-                return mockPredictor;
-              });
+              mockPredictorModule.NoShowPredictor = globals_1.jest.fn(() => mockPredictor);
               request = new server_1.NextRequest(
                 "http://localhost:3000/api/scheduling/confirmations",
                 {
@@ -447,19 +422,19 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should prevent duplicate confirmation requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should prevent duplicate confirmation requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
                 data: { user: mockUser },
                 error: null,
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -508,12 +483,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle appointment not found", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle appointment not found", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -550,25 +525,25 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("PUT /api/scheduling/confirmations", function () {
-    (0, globals_1.it)("should handle patient confirmation response", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("PUT /api/scheduling/confirmations", () => {
+    (0, globals_1.it)("should handle patient confirmation response", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var confirmedConfirmation,
           mockCommunicationService,
           mockCommModule,
           request,
           response,
           data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               confirmedConfirmation = __assign(__assign({}, mockConfirmation), {
                 expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
               });
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointment_confirmations") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -604,9 +579,9 @@ var mockCreateClient = globals_1.jest.fn(function () {
                 }),
               };
               mockCommModule = require("@/lib/communication/communication-service");
-              mockCommModule.CommunicationService = globals_1.jest.fn(function () {
-                return mockCommunicationService;
-              });
+              mockCommModule.CommunicationService = globals_1.jest.fn(
+                () => mockCommunicationService,
+              );
               request = new server_1.NextRequest(
                 "http://localhost:3000/api/scheduling/confirmations",
                 {
@@ -634,15 +609,15 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle reschedule requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle reschedule requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointment_confirmations") {
                   return {
                     select: globals_1.jest.fn().mockReturnValue({
@@ -701,12 +676,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should reject expired confirmation tokens", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should reject expired confirmation tokens", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expiredConfirmation, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               expiredConfirmation = __assign(__assign({}, mockConfirmation), {
@@ -743,12 +718,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should reject duplicate responses", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should reject duplicate responses", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var respondedConfirmation, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               respondedConfirmation = __assign(__assign({}, mockConfirmation), {
@@ -787,12 +762,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle invalid confirmation tokens", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle invalid confirmation tokens", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -826,76 +801,73 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("GET /api/scheduling/confirmations", function () {
-    (0, globals_1.it)(
-      "should fetch confirmations with filters for authenticated users",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var mockConfirmations, request, response, data;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                mockSupabase.auth.getUser.mockResolvedValue({
-                  data: { user: mockUser },
-                  error: null,
-                });
-                mockConfirmations = [
-                  __assign(__assign({}, mockConfirmation), {
-                    id: "confirmation-1",
-                    status: "pending",
-                    expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-                  }),
-                  __assign(__assign({}, mockConfirmation), {
-                    id: "confirmation-2",
-                    status: "confirmed",
-                    expires_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-                  }),
-                ];
-                mockSupabase.from.mockReturnValue({
-                  select: globals_1.jest.fn().mockReturnValue({
-                    eq: globals_1.jest.fn().mockReturnValue({
-                      order: globals_1.jest.fn().mockResolvedValue({
-                        data: mockConfirmations,
-                        error: null,
-                      }),
+  (0, globals_1.describe)("GET /api/scheduling/confirmations", () => {
+    (0, globals_1.it)("should fetch confirmations with filters for authenticated users", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var mockConfirmations, request, response, data;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              mockSupabase.auth.getUser.mockResolvedValue({
+                data: { user: mockUser },
+                error: null,
+              });
+              mockConfirmations = [
+                __assign(__assign({}, mockConfirmation), {
+                  id: "confirmation-1",
+                  status: "pending",
+                  expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+                }),
+                __assign(__assign({}, mockConfirmation), {
+                  id: "confirmation-2",
+                  status: "confirmed",
+                  expires_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
+                }),
+              ];
+              mockSupabase.from.mockReturnValue({
+                select: globals_1.jest.fn().mockReturnValue({
+                  eq: globals_1.jest.fn().mockReturnValue({
+                    order: globals_1.jest.fn().mockResolvedValue({
+                      data: mockConfirmations,
+                      error: null,
                     }),
                   }),
-                });
-                request = new server_1.NextRequest(
-                  "http://localhost:3000/api/scheduling/confirmations?clinicId=clinic-123&status=pending",
-                );
-                return [4 /*yield*/, (0, route_1.GET)(request)];
-              case 1:
-                response = _a.sent();
-                return [4 /*yield*/, response.json()];
-              case 2:
-                data = _a.sent();
-                (0, globals_1.expect)(response.status).toBe(200);
-                (0, globals_1.expect)(data.success).toBe(true);
-                (0, globals_1.expect)(data.confirmations).toHaveLength(2);
-                (0, globals_1.expect)(data.count).toBe(2);
-                (0, globals_1.expect)(data.summary).toEqual({
-                  pending: 1,
-                  confirmed: 1,
-                  cancelled: 0,
-                  reschedule: 0,
-                  expired: 1,
-                });
-                (0, globals_1.expect)(data.confirmations[0]).toHaveProperty("expired", false);
-                (0, globals_1.expect)(data.confirmations[1]).toHaveProperty("expired", true);
-                return [2 /*return*/];
-            }
-          });
+                }),
+              });
+              request = new server_1.NextRequest(
+                "http://localhost:3000/api/scheduling/confirmations?clinicId=clinic-123&status=pending",
+              );
+              return [4 /*yield*/, (0, route_1.GET)(request)];
+            case 1:
+              response = _a.sent();
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              (0, globals_1.expect)(response.status).toBe(200);
+              (0, globals_1.expect)(data.success).toBe(true);
+              (0, globals_1.expect)(data.confirmations).toHaveLength(2);
+              (0, globals_1.expect)(data.count).toBe(2);
+              (0, globals_1.expect)(data.summary).toEqual({
+                pending: 1,
+                confirmed: 1,
+                cancelled: 0,
+                reschedule: 0,
+                expired: 1,
+              });
+              (0, globals_1.expect)(data.confirmations[0]).toHaveProperty("expired", false);
+              (0, globals_1.expect)(data.confirmations[1]).toHaveProperty("expired", true);
+              return [2 /*return*/];
+          }
         });
-      },
+      }),
     );
-    (0, globals_1.it)("should fetch single confirmation by token (public endpoint)", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should fetch single confirmation by token (public endpoint)", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var publicConfirmation, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               publicConfirmation = __assign(__assign({}, mockConfirmation), {
@@ -929,12 +901,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle invalid tokens gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle invalid tokens gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -961,14 +933,14 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("DELETE /api/scheduling/confirmations", function () {
-    (0, globals_1.it)("should expire confirmation by ID", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("DELETE /api/scheduling/confirmations", () => {
+    (0, globals_1.it)("should expire confirmation by ID", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -1004,12 +976,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should expire confirmations by appointment ID", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should expire confirmations by appointment ID", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -1044,12 +1016,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should require either confirmationId or appointmentId", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should require either confirmationId or appointmentId", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -1073,14 +1045,14 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error handling", function () {
-    (0, globals_1.it)("should handle authentication errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error handling", () => {
+    (0, globals_1.it)("should handle authentication errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -1107,12 +1079,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate request schemas", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate request schemas", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -1142,12 +1114,12 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.auth.getUser.mockResolvedValue({
@@ -1183,7 +1155,7 @@ var mockCreateClient = globals_1.jest.fn(function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

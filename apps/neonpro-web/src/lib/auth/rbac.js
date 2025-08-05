@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Healthcare RBAC Engine
  * AUTH-02 Implementation - Healthcare Role-Based Access Control Engine
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,10 +155,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -170,7 +167,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthcareRBACEngine =
@@ -213,22 +210,14 @@ exports.UserRoleContextSchema = zod_1.z.object({
   active: zod_1.z.boolean().default(true),
   temporary_access: zod_1.z.boolean().default(false),
   emergency_access: zod_1.z.boolean().default(false),
-  access_granted_at: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  access_granted_at: zod_1.z.date().default(() => new Date()),
   access_expires_at: zod_1.z.date().optional(),
   // Audit Information
   granted_by: zod_1.z.string().uuid().optional(),
-  last_validated: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  last_validated: zod_1.z.date().default(() => new Date()),
   validation_required: zod_1.z.boolean().default(false),
-  created_at: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updated_at: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  created_at: zod_1.z.date().default(() => new Date()),
+  updated_at: zod_1.z.date().default(() => new Date()),
 });
 /**
  * Role Definition with Hierarchy and Permissions
@@ -264,12 +253,8 @@ exports.RoleDefinitionSchema = zod_1.z.object({
   multi_clinic_access: zod_1.z.boolean().default(false),
   emergency_override_capable: zod_1.z.boolean().default(false),
   can_approve_emergency_access: zod_1.z.boolean().default(false),
-  created_at: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updated_at: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  created_at: zod_1.z.date().default(() => new Date()),
+  updated_at: zod_1.z.date().default(() => new Date()),
 });
 /**
  * Permission Check Result
@@ -290,9 +275,7 @@ exports.PermissionCheckResultSchema = zod_1.z.object({
   cfm_compliant: zod_1.z.boolean().default(true),
   lgpd_compliant: zod_1.z.boolean().default(true),
   // Audit Trail
-  checked_at: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  checked_at: zod_1.z.date().default(() => new Date()),
   audit_log_id: zod_1.z.string().optional(),
 });
 // ============================================================================
@@ -1054,7 +1037,7 @@ exports.HEALTHCARE_ROLE_DEFINITIONS =
 /**
  * Healthcare RBAC Engine with CFM Compliance
  */
-var HealthcareRBACEngine = /** @class */ (function () {
+var HealthcareRBACEngine = /** @class */ (() => {
   function HealthcareRBACEngine(supabaseClient) {
     this.permissionCache = new Map();
     this.cacheExpiry = 5 * 60 * 1000; // 5 minutes
@@ -1241,16 +1224,13 @@ var HealthcareRBACEngine = /** @class */ (function () {
   HealthcareRBACEngine.prototype.checkPermissions = function (userId, permissions, context) {
     return __awaiter(this, void 0, void 0, function () {
       var results;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
               4 /*yield*/,
               Promise.all(
-                permissions.map(function (permission) {
-                  return _this.checkPermission(userId, permission, context);
-                }),
+                permissions.map((permission) => this.checkPermission(userId, permission, context)),
               ),
             ];
           case 1:
@@ -1281,9 +1261,7 @@ var HealthcareRBACEngine = /** @class */ (function () {
               inheritedRole = _a[_i];
               inheritedRoleDef = exports.HEALTHCARE_ROLE_DEFINITIONS[inheritedRole];
               if (inheritedRoleDef) {
-                inheritedRoleDef.permissions.forEach(function (p) {
-                  return permissions.add(p);
-                });
+                inheritedRoleDef.permissions.forEach((p) => permissions.add(p));
               }
             }
             return [2 /*return*/, Array.from(permissions)];
@@ -1521,7 +1499,7 @@ var HealthcareRBACEngine = /** @class */ (function () {
       });
     });
   };
-  HealthcareRBACEngine.prototype.checkSpecialtyRequirement = function (userContext, permission) {
+  HealthcareRBACEngine.prototype.checkSpecialtyRequirement = (userContext, permission) => {
     if (permission.requires_specialty.length === 0) return true;
     if (!userContext.medical_specialty && userContext.additional_specialties.length === 0)
       return false;
@@ -1530,9 +1508,7 @@ var HealthcareRBACEngine = /** @class */ (function () {
       userContext.additional_specialties,
       true,
     );
-    return permission.requires_specialty.some(function (required) {
-      return userSpecialties.includes(required);
-    });
+    return permission.requires_specialty.some((required) => userSpecialties.includes(required));
   };
   HealthcareRBACEngine.prototype.validateContext = function (userContext, permission, context) {
     return __awaiter(this, void 0, void 0, function () {
@@ -1603,14 +1579,14 @@ var HealthcareRBACEngine = /** @class */ (function () {
       });
     });
   };
-  HealthcareRBACEngine.prototype.createPermissionResult = function (
+  HealthcareRBACEngine.prototype.createPermissionResult = (
     granted,
     permission,
     userId,
     role,
     reason,
     additionalData,
-  ) {
+  ) => {
     if (additionalData === void 0) {
       additionalData = {};
     }
@@ -1683,13 +1659,10 @@ var HealthcareRBACEngine = /** @class */ (function () {
     this.permissionCache.set(key, [result]);
   };
   HealthcareRBACEngine.prototype.clearUserCache = function (userId) {
-    var _this = this;
-    var keysToDelete = Array.from(this.permissionCache.keys()).filter(function (key) {
-      return key.startsWith("".concat(userId, ":"));
-    });
-    keysToDelete.forEach(function (key) {
-      return _this.permissionCache.delete(key);
-    });
+    var keysToDelete = Array.from(this.permissionCache.keys()).filter((key) =>
+      key.startsWith("".concat(userId, ":")),
+    );
+    keysToDelete.forEach((key) => this.permissionCache.delete(key));
   };
   return HealthcareRBACEngine;
 })();
@@ -1707,25 +1680,25 @@ function getRoleDefinition(role) {
  * Get roles by category
  */
 function getRolesByCategory(category) {
-  return Object.values(exports.HEALTHCARE_ROLE_DEFINITIONS).filter(function (role) {
-    return role.category === category;
-  });
+  return Object.values(exports.HEALTHCARE_ROLE_DEFINITIONS).filter(
+    (role) => role.category === category,
+  );
 }
 /**
  * Get roles requiring medical license
  */
 function getLicenseRequiredRoles() {
-  return Object.values(exports.HEALTHCARE_ROLE_DEFINITIONS).filter(function (role) {
-    return role.requires_medical_license;
-  });
+  return Object.values(exports.HEALTHCARE_ROLE_DEFINITIONS).filter(
+    (role) => role.requires_medical_license,
+  );
 }
 /**
  * Get roles by hierarchy level
  */
 function getRolesByLevel(minLevel, maxLevel) {
-  return Object.values(exports.HEALTHCARE_ROLE_DEFINITIONS).filter(function (role) {
-    return role.level >= minLevel && (!maxLevel || role.level <= maxLevel);
-  });
+  return Object.values(exports.HEALTHCARE_ROLE_DEFINITIONS).filter(
+    (role) => role.level >= minLevel && (!maxLevel || role.level <= maxLevel),
+  );
 }
 /**
  * Check if role can delegate to another role

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Offline Synchronization System
  * Story 7.4: Mobile App API Support - Offline Sync
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OfflineSync = void 0;
-var OfflineSync = /** @class */ (function () {
+var OfflineSync = /** @class */ (() => {
   function OfflineSync(supabase, config) {
     this.operationQueue = [];
     this.conflictQueue = [];
@@ -402,9 +399,9 @@ var OfflineSync = /** @class */ (function () {
               },
               duration: 0,
             };
-            pendingOps = this.operationQueue.filter(function (op) {
-              return entities.includes(op.entity) && op.status === "pending";
-            });
+            pendingOps = this.operationQueue.filter(
+              (op) => entities.includes(op.entity) && op.status === "pending",
+            );
             if (pendingOps.length === 0) {
               return [2 /*return*/, result];
             }
@@ -697,7 +694,7 @@ var OfflineSync = /** @class */ (function () {
           case 0:
             _loop_1 = function (conflict) {
               var resolution, index, error_6;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     _b.trys.push([0, 5, , 6]);
@@ -718,9 +715,7 @@ var OfflineSync = /** @class */ (function () {
                   case 2:
                     // Apply resolution
                     _b.sent();
-                    index = this_1.conflictQueue.findIndex(function (c) {
-                      return c.id === conflict.id;
-                    });
+                    index = this_1.conflictQueue.findIndex((c) => c.id === conflict.id);
                     if (index > -1) {
                       this_1.conflictQueue.splice(index, 1);
                     }
@@ -843,36 +838,28 @@ var OfflineSync = /** @class */ (function () {
               return [
                 2 /*return*/,
                 entityId_1
-                  ? this.offlineStorage.patients.find(function (p) {
-                      return p.id === entityId_1;
-                    })
+                  ? this.offlineStorage.patients.find((p) => p.id === entityId_1)
                   : this.filterPatients(params),
               ];
             case "appointments":
               return [
                 2 /*return*/,
                 entityId_1
-                  ? this.offlineStorage.appointments.find(function (a) {
-                      return a.id === entityId_1;
-                    })
+                  ? this.offlineStorage.appointments.find((a) => a.id === entityId_1)
                   : this.filterAppointments(params),
               ];
             case "treatments":
               return [
                 2 /*return*/,
                 entityId_1
-                  ? this.offlineStorage.treatments.find(function (t) {
-                      return t.id === entityId_1;
-                    })
+                  ? this.offlineStorage.treatments.find((t) => t.id === entityId_1)
                   : this.filterTreatments(params),
               ];
             case "payments":
               return [
                 2 /*return*/,
                 entityId_1
-                  ? this.offlineStorage.payments.find(function (p) {
-                      return p.id === entityId_1;
-                    })
+                  ? this.offlineStorage.payments.find((p) => p.id === entityId_1)
                   : this.filterPayments(params),
               ];
             default:
@@ -919,26 +906,24 @@ var OfflineSync = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (entity) {
           case "patients":
-            this.offlineStorage.patients = this.offlineStorage.patients.filter(function (p) {
-              return p.id !== entityId;
-            });
+            this.offlineStorage.patients = this.offlineStorage.patients.filter(
+              (p) => p.id !== entityId,
+            );
             break;
           case "appointments":
             this.offlineStorage.appointments = this.offlineStorage.appointments.filter(
-              function (a) {
-                return a.id !== entityId;
-              },
+              (a) => a.id !== entityId,
             );
             break;
           case "treatments":
-            this.offlineStorage.treatments = this.offlineStorage.treatments.filter(function (t) {
-              return t.id !== entityId;
-            });
+            this.offlineStorage.treatments = this.offlineStorage.treatments.filter(
+              (t) => t.id !== entityId,
+            );
             break;
           case "payments":
-            this.offlineStorage.payments = this.offlineStorage.payments.filter(function (p) {
-              return p.id !== entityId;
-            });
+            this.offlineStorage.payments = this.offlineStorage.payments.filter(
+              (p) => p.id !== entityId,
+            );
             break;
         }
         return [2 /*return*/];
@@ -1036,9 +1021,7 @@ var OfflineSync = /** @class */ (function () {
             isOnline: navigator.onLine,
             lastSyncAt: this.lastSyncTimestamp ? new Date(this.lastSyncTimestamp) : undefined,
             nextSyncAt: this.getNextSyncTime(),
-            pendingOperations: this.operationQueue.filter(function (op) {
-              return op.status === "pending";
-            }).length,
+            pendingOperations: this.operationQueue.filter((op) => op.status === "pending").length,
             conflictCount: this.conflictQueue.length,
             syncInProgress: this.isSyncing,
             syncProgress: this.syncProgress,
@@ -1058,9 +1041,7 @@ var OfflineSync = /** @class */ (function () {
     if (!this.isSyncing) {
       return undefined;
     }
-    var pendingOps = this.operationQueue.filter(function (op) {
-      return op.status === "pending";
-    }).length;
+    var pendingOps = this.operationQueue.filter((op) => op.status === "pending").length;
     var avgTimePerOp = 100; // milliseconds
     return pendingOps * avgTimePerOp;
   };
@@ -1176,19 +1157,16 @@ var OfflineSync = /** @class */ (function () {
   // UTILITY METHODS
   // ============================================================================
   OfflineSync.prototype.startAutoSync = function () {
-    var _this = this;
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
     }
-    this.syncInterval = setInterval(function () {
-      if (navigator.onLine && !_this.isSyncing && _this.userId && _this.clinicId) {
-        _this
-          .performSync({
-            userId: _this.userId,
-            clinicId: _this.clinicId,
-            priority: "low",
-          })
-          .catch(console.error);
+    this.syncInterval = setInterval(() => {
+      if (navigator.onLine && !this.isSyncing && this.userId && this.clinicId) {
+        this.performSync({
+          userId: this.userId,
+          clinicId: this.clinicId,
+          priority: "low",
+        }).catch(console.error);
       }
     }, this.config.syncInterval * 1000);
   };
@@ -1198,48 +1176,42 @@ var OfflineSync = /** @class */ (function () {
       this.syncInterval = undefined;
     }
   };
-  OfflineSync.prototype.chunkArray = function (array, size) {
+  OfflineSync.prototype.chunkArray = (array, size) => {
     var chunks = [];
     for (var i = 0; i < array.length; i += size) {
       chunks.push(array.slice(i, i + size));
     }
     return chunks;
   };
-  OfflineSync.prototype.createDownloadOperations = function (entity, serverData) {
-    return serverData.map(function (data) {
-      return {
-        id: "download-".concat(entity, "-").concat(data.id, "-").concat(Date.now()),
-        type: "update",
-        entity: entity,
-        entityId: data.id,
-        data: data,
-        timestamp: Date.now(),
-        status: "pending",
-        retryCount: 0,
-        priority: "normal",
-      };
-    });
-  };
-  OfflineSync.prototype.isConflictError = function (error) {
-    return error.message && error.message.includes("conflict");
-  };
-  OfflineSync.prototype.createConflict = function (operation, error) {
-    return {
-      id: "conflict-".concat(operation.id, "-").concat(Date.now()),
-      operationId: operation.id,
-      entity: operation.entity,
-      entityId: operation.entityId,
-      localData: operation.data,
-      serverData: error.serverData || {},
-      conflictType: "data",
+  OfflineSync.prototype.createDownloadOperations = (entity, serverData) =>
+    serverData.map((data) => ({
+      id: "download-".concat(entity, "-").concat(data.id, "-").concat(Date.now()),
+      type: "update",
+      entity: entity,
+      entityId: data.id,
+      data: data,
       timestamp: Date.now(),
-    };
-  };
-  OfflineSync.prototype.extractEntityFromEndpoint = function (endpoint) {
+      status: "pending",
+      retryCount: 0,
+      priority: "normal",
+    }));
+  OfflineSync.prototype.isConflictError = (error) =>
+    error.message && error.message.includes("conflict");
+  OfflineSync.prototype.createConflict = (operation, error) => ({
+    id: "conflict-".concat(operation.id, "-").concat(Date.now()),
+    operationId: operation.id,
+    entity: operation.entity,
+    entityId: operation.entityId,
+    localData: operation.data,
+    serverData: error.serverData || {},
+    conflictType: "data",
+    timestamp: Date.now(),
+  });
+  OfflineSync.prototype.extractEntityFromEndpoint = (endpoint) => {
     var parts = endpoint.split("/").filter(Boolean);
     return parts[0] || "unknown";
   };
-  OfflineSync.prototype.extractEntityIdFromEndpoint = function (endpoint) {
+  OfflineSync.prototype.extractEntityIdFromEndpoint = (endpoint) => {
     var parts = endpoint.split("/").filter(Boolean);
     return parts[1] || null;
   };
@@ -1247,7 +1219,7 @@ var OfflineSync = /** @class */ (function () {
     var patients = this.offlineStorage.patients;
     if (params === null || params === void 0 ? void 0 : params.search) {
       var search_1 = params.search.toLowerCase();
-      patients = patients.filter(function (p) {
+      patients = patients.filter((p) => {
         var _a, _b;
         return (
           p.name.toLowerCase().includes(search_1) ||
@@ -1259,64 +1231,46 @@ var OfflineSync = /** @class */ (function () {
       });
     }
     if ((params === null || params === void 0 ? void 0 : params.isActive) !== undefined) {
-      patients = patients.filter(function (p) {
-        return p.isActive === params.isActive;
-      });
+      patients = patients.filter((p) => p.isActive === params.isActive);
     }
     return patients;
   };
   OfflineSync.prototype.filterAppointments = function (params) {
     var appointments = this.offlineStorage.appointments;
     if (params === null || params === void 0 ? void 0 : params.patientId) {
-      appointments = appointments.filter(function (a) {
-        return a.patientId === params.patientId;
-      });
+      appointments = appointments.filter((a) => a.patientId === params.patientId);
     }
     if (params === null || params === void 0 ? void 0 : params.status) {
-      appointments = appointments.filter(function (a) {
-        return a.status === params.status;
-      });
+      appointments = appointments.filter((a) => a.status === params.status);
     }
     if (params === null || params === void 0 ? void 0 : params.date) {
       var date_1 = new Date(params.date).toDateString();
-      appointments = appointments.filter(function (a) {
-        return new Date(a.scheduledAt).toDateString() === date_1;
-      });
+      appointments = appointments.filter((a) => new Date(a.scheduledAt).toDateString() === date_1);
     }
     return appointments;
   };
   OfflineSync.prototype.filterTreatments = function (params) {
     var treatments = this.offlineStorage.treatments;
     if (params === null || params === void 0 ? void 0 : params.category) {
-      treatments = treatments.filter(function (t) {
-        return t.category === params.category;
-      });
+      treatments = treatments.filter((t) => t.category === params.category);
     }
     if ((params === null || params === void 0 ? void 0 : params.isActive) !== undefined) {
-      treatments = treatments.filter(function (t) {
-        return t.isActive === params.isActive;
-      });
+      treatments = treatments.filter((t) => t.isActive === params.isActive);
     }
     return treatments;
   };
   OfflineSync.prototype.filterPayments = function (params) {
     var payments = this.offlineStorage.payments;
     if (params === null || params === void 0 ? void 0 : params.patientId) {
-      payments = payments.filter(function (p) {
-        return p.patientId === params.patientId;
-      });
+      payments = payments.filter((p) => p.patientId === params.patientId);
     }
     if (params === null || params === void 0 ? void 0 : params.status) {
-      payments = payments.filter(function (p) {
-        return p.status === params.status;
-      });
+      payments = payments.filter((p) => p.status === params.status);
     }
     return payments;
   };
   OfflineSync.prototype.updatePatientRecord = function (data) {
-    var index = this.offlineStorage.patients.findIndex(function (p) {
-      return p.id === data.id;
-    });
+    var index = this.offlineStorage.patients.findIndex((p) => p.id === data.id);
     if (index > -1) {
       this.offlineStorage.patients[index] = __assign(
         __assign({}, this.offlineStorage.patients[index]),
@@ -1327,9 +1281,7 @@ var OfflineSync = /** @class */ (function () {
     }
   };
   OfflineSync.prototype.updateAppointmentRecord = function (data) {
-    var index = this.offlineStorage.appointments.findIndex(function (a) {
-      return a.id === data.id;
-    });
+    var index = this.offlineStorage.appointments.findIndex((a) => a.id === data.id);
     if (index > -1) {
       this.offlineStorage.appointments[index] = __assign(
         __assign({}, this.offlineStorage.appointments[index]),
@@ -1340,9 +1292,7 @@ var OfflineSync = /** @class */ (function () {
     }
   };
   OfflineSync.prototype.updateTreatmentRecord = function (data) {
-    var index = this.offlineStorage.treatments.findIndex(function (t) {
-      return t.id === data.id;
-    });
+    var index = this.offlineStorage.treatments.findIndex((t) => t.id === data.id);
     if (index > -1) {
       this.offlineStorage.treatments[index] = __assign(
         __assign({}, this.offlineStorage.treatments[index]),
@@ -1353,9 +1303,7 @@ var OfflineSync = /** @class */ (function () {
     }
   };
   OfflineSync.prototype.updatePaymentRecord = function (data) {
-    var index = this.offlineStorage.payments.findIndex(function (p) {
-      return p.id === data.id;
-    });
+    var index = this.offlineStorage.payments.findIndex((p) => p.id === data.id);
     if (index > -1) {
       this.offlineStorage.payments[index] = __assign(
         __assign({}, this.offlineStorage.payments[index]),

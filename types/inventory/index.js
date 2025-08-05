@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Inventory Management System Types
  *

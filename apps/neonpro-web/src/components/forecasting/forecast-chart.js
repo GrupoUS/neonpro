@@ -11,10 +11,9 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -23,7 +22,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ForecastChart = ForecastChart;
 var react_1 = require("react");
@@ -54,106 +53,75 @@ function ForecastChart(_a) {
     showActual = _h[0],
     setShowActual = _h[1];
   // Process forecast data for chart display
-  var chartData = (0, react_1.useMemo)(
-    function () {
-      if (!forecasts.length) return [];
-      // Filter forecasts by selected type
-      var filteredForecasts =
-        selectedType === "all"
-          ? forecasts
-          : forecasts.filter(function (f) {
-              return f.forecast_type === selectedType;
-            });
-      // Generate chart data points
-      var dataPoints = [];
-      filteredForecasts.forEach(function (forecast) {
-        // Generate daily data points for the forecast period
-        var startDate = (0, date_fns_1.startOfDay)((0, date_fns_1.parseISO)(forecast.period_start));
-        var endDate = (0, date_fns_1.endOfDay)((0, date_fns_1.parseISO)(forecast.period_end));
-        var days = (0, date_fns_1.eachDayOfInterval)({ start: startDate, end: endDate });
-        days.forEach(function (day, index) {
-          // Calculate confidence intervals (mock calculation)
-          var baseValue = forecast.predicted_demand;
-          var confidence = forecast.confidence_level;
-          var variance = baseValue * (1 - confidence) * 0.5;
-          // Add some daily variation for realistic visualization
-          var dailyVariation = Math.sin((index / days.length) * Math.PI * 2) * (baseValue * 0.1);
-          var predicted = baseValue + dailyVariation;
-          dataPoints.push({
-            date: (0, date_fns_1.format)(day, "yyyy-MM-dd"),
-            dateObj: day,
-            predicted: Math.round(predicted),
-            actual:
-              Math.random() > 0.3
-                ? Math.round(predicted + (Math.random() - 0.5) * variance)
-                : undefined,
-            upperBound: Math.round(predicted + variance),
-            lowerBound: Math.round(Math.max(0, predicted - variance)),
-            confidence: confidence * 100,
-            forecastType: forecast.forecast_type,
-            modelVersion: forecast.model_version || "unknown",
-          });
+  var chartData = (0, react_1.useMemo)(() => {
+    if (!forecasts.length) return [];
+    // Filter forecasts by selected type
+    var filteredForecasts =
+      selectedType === "all"
+        ? forecasts
+        : forecasts.filter((f) => f.forecast_type === selectedType);
+    // Generate chart data points
+    var dataPoints = [];
+    filteredForecasts.forEach((forecast) => {
+      // Generate daily data points for the forecast period
+      var startDate = (0, date_fns_1.startOfDay)((0, date_fns_1.parseISO)(forecast.period_start));
+      var endDate = (0, date_fns_1.endOfDay)((0, date_fns_1.parseISO)(forecast.period_end));
+      var days = (0, date_fns_1.eachDayOfInterval)({ start: startDate, end: endDate });
+      days.forEach((day, index) => {
+        // Calculate confidence intervals (mock calculation)
+        var baseValue = forecast.predicted_demand;
+        var confidence = forecast.confidence_level;
+        var variance = baseValue * (1 - confidence) * 0.5;
+        // Add some daily variation for realistic visualization
+        var dailyVariation = Math.sin((index / days.length) * Math.PI * 2) * (baseValue * 0.1);
+        var predicted = baseValue + dailyVariation;
+        dataPoints.push({
+          date: (0, date_fns_1.format)(day, "yyyy-MM-dd"),
+          dateObj: day,
+          predicted: Math.round(predicted),
+          actual:
+            Math.random() > 0.3
+              ? Math.round(predicted + (Math.random() - 0.5) * variance)
+              : undefined,
+          upperBound: Math.round(predicted + variance),
+          lowerBound: Math.round(Math.max(0, predicted - variance)),
+          confidence: confidence * 100,
+          forecastType: forecast.forecast_type,
+          modelVersion: forecast.model_version || "unknown",
         });
       });
-      // Sort by date and return
-      return dataPoints.sort(function (a, b) {
-        return a.dateObj.getTime() - b.dateObj.getTime();
-      });
-    },
-    [forecasts, selectedType],
-  );
+    });
+    // Sort by date and return
+    return dataPoints.sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
+  }, [forecasts, selectedType]);
   // Calculate trend and statistics
-  var statistics = (0, react_1.useMemo)(
-    function () {
-      if (!chartData.length) return null;
-      var values = chartData.map(function (d) {
-        return d.predicted;
-      });
-      var actualValues = chartData
-        .map(function (d) {
-          return d.actual;
-        })
-        .filter(function (v) {
-          return v !== undefined;
-        });
-      var avgPredicted =
-        values.reduce(function (sum, val) {
-          return sum + val;
-        }, 0) / values.length;
-      var avgActual =
-        actualValues.length > 0
-          ? actualValues.reduce(function (sum, val) {
-              return sum + val;
-            }, 0) / actualValues.length
-          : null;
-      // Calculate trend (simplified linear regression slope)
-      var trend = values.length > 1 ? (values[values.length - 1] - values[0]) / values.length : 0;
-      // Calculate accuracy if we have actual values
-      var accuracy =
-        avgActual !== null
-          ? Math.max(0, 100 - Math.abs(((avgPredicted - avgActual) / avgActual) * 100))
-          : null;
-      return {
-        avgPredicted: Math.round(avgPredicted),
-        avgActual: avgActual ? Math.round(avgActual) : null,
-        trend: trend,
-        accuracy: accuracy ? Math.round(accuracy * 10) / 10 : null,
-        totalDataPoints: chartData.length,
-        forecastTypes: __spreadArray(
-          [],
-          new Set(
-            chartData.map(function (d) {
-              return d.forecastType;
-            }),
-          ),
-          true,
-        ),
-      };
-    },
-    [chartData],
-  );
+  var statistics = (0, react_1.useMemo)(() => {
+    if (!chartData.length) return null;
+    var values = chartData.map((d) => d.predicted);
+    var actualValues = chartData.map((d) => d.actual).filter((v) => v !== undefined);
+    var avgPredicted = values.reduce((sum, val) => sum + val, 0) / values.length;
+    var avgActual =
+      actualValues.length > 0
+        ? actualValues.reduce((sum, val) => sum + val, 0) / actualValues.length
+        : null;
+    // Calculate trend (simplified linear regression slope)
+    var trend = values.length > 1 ? (values[values.length - 1] - values[0]) / values.length : 0;
+    // Calculate accuracy if we have actual values
+    var accuracy =
+      avgActual !== null
+        ? Math.max(0, 100 - Math.abs(((avgPredicted - avgActual) / avgActual) * 100))
+        : null;
+    return {
+      avgPredicted: Math.round(avgPredicted),
+      avgActual: avgActual ? Math.round(avgActual) : null,
+      trend: trend,
+      accuracy: accuracy ? Math.round(accuracy * 10) / 10 : null,
+      totalDataPoints: chartData.length,
+      forecastTypes: __spreadArray([], new Set(chartData.map((d) => d.forecastType)), true),
+    };
+  }, [chartData]);
   // Custom tooltip component
-  var CustomTooltip = function (_a) {
+  var CustomTooltip = (_a) => {
     var active = _a.active,
       payload = _a.payload,
       label = _a.label;
@@ -165,17 +133,15 @@ function ForecastChart(_a) {
           {(0, date_fns_1.format)((0, date_fns_1.parseISO)(label), "MMM dd, yyyy")}
         </p>
         <div className="space-y-1 mt-2">
-          {payload.map(function (entry, index) {
-            return (
-              <div key={index} className="flex items-center justify-between space-x-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
-                  <span className="text-sm">{entry.name}</span>
-                </div>
-                <span className="font-medium">{entry.value}</span>
+          {payload.map((entry, index) => (
+            <div key={index} className="flex items-center justify-between space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
+                <span className="text-sm">{entry.name}</span>
               </div>
-            );
-          })}
+              <span className="font-medium">{entry.value}</span>
+            </div>
+          ))}
           <div className="border-t pt-2 mt-2 space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Confidence:</span>
@@ -195,28 +161,13 @@ function ForecastChart(_a) {
     );
   };
   // Get unique forecast types for filter
-  var forecastTypes = (0, react_1.useMemo)(
-    function () {
-      var types = __spreadArray(
-        [],
-        new Set(
-          forecasts.map(function (f) {
-            return f.forecast_type;
-          }),
-        ),
-        true,
-      );
-      return types.map(function (type) {
-        return {
-          value: type,
-          label: type.replace("_", " ").replace(/\b\w/g, function (l) {
-            return l.toUpperCase();
-          }),
-        };
-      });
-    },
-    [forecasts],
-  );
+  var forecastTypes = (0, react_1.useMemo)(() => {
+    var types = __spreadArray([], new Set(forecasts.map((f) => f.forecast_type)), true);
+    return types.map((type) => ({
+      value: type,
+      label: type.replace("_", " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+    }));
+  }, [forecasts]);
   if (!forecasts.length) {
     return (
       <card_1.Card className={className}>
@@ -272,25 +223,18 @@ function ForecastChart(_a) {
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">All Types</select_1.SelectItem>
-                {forecastTypes.map(function (type) {
-                  return (
-                    <select_1.SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {forecastTypes.map((type) => (
+                  <select_1.SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
           </div>
 
           <div className="flex items-center space-x-2">
             <label className="text-sm font-medium">Chart:</label>
-            <select_1.Select
-              value={chartMode}
-              onValueChange={function (value) {
-                return setChartMode(value);
-              }}
-            >
+            <select_1.Select value={chartMode} onValueChange={(value) => setChartMode(value)}>
               <select_1.SelectTrigger className="w-[100px]">
                 <select_1.SelectValue />
               </select_1.SelectTrigger>
@@ -331,9 +275,9 @@ function ForecastChart(_a) {
                   <recharts_1.CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <recharts_1.XAxis
                     dataKey="date"
-                    tickFormatter={function (value) {
-                      return (0, date_fns_1.format)((0, date_fns_1.parseISO)(value), "MMM dd");
-                    }}
+                    tickFormatter={(value) =>
+                      (0, date_fns_1.format)((0, date_fns_1.parseISO)(value), "MMM dd")
+                    }
                     stroke="#666"
                   />
                   <recharts_1.YAxis stroke="#666" />
@@ -398,9 +342,9 @@ function ForecastChart(_a) {
                   <recharts_1.CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                   <recharts_1.XAxis
                     dataKey="date"
-                    tickFormatter={function (value) {
-                      return (0, date_fns_1.format)((0, date_fns_1.parseISO)(value), "MMM dd");
-                    }}
+                    tickFormatter={(value) =>
+                      (0, date_fns_1.format)((0, date_fns_1.parseISO)(value), "MMM dd")
+                    }
                     stroke="#666"
                   />
                   <recharts_1.YAxis stroke="#666" />

@@ -8,15 +8,15 @@
 
 import type { promises as fs } from "fs";
 import path from "path";
+import type { auditLogger } from "../auth/audit/audit-logger";
 import type {
+  ApiResponse,
+  DownloadProgress,
   StorageConfig,
+  StorageMetrics,
   StorageType,
   UploadProgress,
-  DownloadProgress,
-  StorageMetrics,
-  ApiResponse,
 } from "./types";
-import type { auditLogger } from "../auth/audit/audit-logger";
 
 /**
  * Interface para provedores de storage

@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RecoveryManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -153,7 +150,7 @@ var audit_logger_1 = require("../../audit/audit-logger");
 var encryption_service_1 = require("../../security/encryption-service");
 var lgpd_manager_1 = require("../../lgpd/lgpd-manager");
 var backup_strategies_1 = require("../strategies/backup-strategies");
-var RecoveryManager = /** @class */ (function () {
+var RecoveryManager = /** @class */ (() => {
   function RecoveryManager() {
     this.activeExecutions = new Map();
     this.supabase = (0, supabase_js_1.createClient)(
@@ -230,7 +227,7 @@ var RecoveryManager = /** @class */ (function () {
             if (!plan) {
               throw new Error("Plano de recuperação não encontrado");
             }
-            if (!!(options === null || options === void 0 ? void 0 : options.force_execution))
+            if (options === null || options === void 0 ? void 0 : options.force_execution)
               return [3 /*break*/, 3];
             return [4 /*yield*/, this.checkPrerequisites(plan)];
           case 2:
@@ -274,7 +271,7 @@ var RecoveryManager = /** @class */ (function () {
             _a.sent();
             this.activeExecutions.set(executionId_1, execution);
             // Executar plano
-            this.executeRecoverySteps(executionId_1, plan).catch(function (error) {
+            this.executeRecoverySteps(executionId_1, plan).catch((error) => {
               console.error("Erro na execu\u00E7\u00E3o ".concat(executionId_1, ":"), error);
             });
             return [
@@ -611,35 +608,28 @@ var RecoveryManager = /** @class */ (function () {
             (_a = _b.sent()), (executions = _a.data), (error = _a.error);
             if (error) throw error;
             totalRecoveries_1 = executions.length;
-            successfulRecoveries = executions.filter(function (e) {
-              return e.status === "completed";
-            }).length;
-            failedRecoveries = executions.filter(function (e) {
-              return e.status === "failed";
-            }).length;
+            successfulRecoveries = executions.filter((e) => e.status === "completed").length;
+            failedRecoveries = executions.filter((e) => e.status === "failed").length;
             successRate =
               totalRecoveries_1 > 0 ? (successfulRecoveries / totalRecoveries_1) * 100 : 0;
-            completedExecutions = executions.filter(function (e) {
-              return e.actual_duration_minutes;
-            });
+            completedExecutions = executions.filter((e) => e.actual_duration_minutes);
             averageDuration =
               completedExecutions.length > 0
-                ? completedExecutions.reduce(function (sum, e) {
-                    return sum + e.actual_duration_minutes;
-                  }, 0) / completedExecutions.length
+                ? completedExecutions.reduce((sum, e) => sum + e.actual_duration_minutes, 0) /
+                  completedExecutions.length
                 : 0;
             errorCounts_1 = new Map();
-            executions.forEach(function (e) {
+            executions.forEach((e) => {
               var _a;
               (_a = e.errors) === null || _a === void 0
                 ? void 0
-                : _a.forEach(function (error) {
+                : _a.forEach((error) => {
                     var count = errorCounts_1.get(error.error_type) || 0;
                     errorCounts_1.set(error.error_type, count + 1);
                   });
             });
             mostCommonErrors = Array.from(errorCounts_1.entries())
-              .map(function (_a) {
+              .map((_a) => {
                 var type = _a[0],
                   count = _a[1];
                 return {
@@ -648,9 +638,7 @@ var RecoveryManager = /** @class */ (function () {
                   percentage: (count / totalRecoveries_1) * 100,
                 };
               })
-              .sort(function (a, b) {
-                return b.count - a.count;
-              })
+              .sort((a, b) => b.count - a.count)
               .slice(0, 5);
             return [4 /*yield*/, this.getRecoveryTrends(period)];
           case 2:
@@ -833,7 +821,7 @@ var RecoveryManager = /** @class */ (function () {
             i++;
             return [3 /*break*/, 3];
           case 11:
-            if (!!execution.metadata.skip_validation) return [3 /*break*/, 13];
+            if (execution.metadata.skip_validation) return [3 /*break*/, 13];
             return [4 /*yield*/, this.executeValidationChecks(plan.validation_checks, execution)];
           case 12:
             _a.sent();
@@ -927,10 +915,7 @@ var RecoveryManager = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            (_i = 0),
-              (_a = rollbackSteps.sort(function (a, b) {
-                return a.order - b.order;
-              }));
+            (_i = 0), (_a = rollbackSteps.sort((a, b) => a.order - b.order));
             _b.label = 1;
           case 1:
             if (!(_i < _a.length)) return [3 /*break*/, 6];
@@ -957,7 +942,7 @@ var RecoveryManager = /** @class */ (function () {
   };
   RecoveryManager.prototype.executeRollbackStep = function (step) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (step.action) {
           case "restore_backup":
             // Implementar restauração de backup anterior
@@ -1108,16 +1093,14 @@ var RecoveryManager = /** @class */ (function () {
     });
   };
   // Métodos auxiliares
-  RecoveryManager.prototype.generatePlanId = function () {
-    return "plan_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  RecoveryManager.prototype.generateExecutionId = function () {
-    return "exec_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  RecoveryManager.prototype.generatePlanId = () =>
+    "plan_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  RecoveryManager.prototype.generateExecutionId = () =>
+    "exec_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   RecoveryManager.prototype.validateRecoveryPlan = function (plan) {
     return __awaiter(this, void 0, void 0, function () {
       var errors;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errors = [];
         if (!plan.name) errors.push("Nome é obrigatório");
         if (!plan.recovery_type) errors.push("Tipo de recuperação é obrigatório");
@@ -1140,7 +1123,7 @@ var RecoveryManager = /** @class */ (function () {
   RecoveryManager.prototype.checkPrerequisites = function (plan) {
     return __awaiter(this, void 0, void 0, function () {
       var _i, _a, prerequisite;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         for (_i = 0, _a = plan.prerequisites; _i < _a.length; _i++) {
           prerequisite = _a[_i];
           // Implementar verificação de pré-requisitos
@@ -1150,15 +1133,13 @@ var RecoveryManager = /** @class */ (function () {
       });
     });
   };
-  RecoveryManager.prototype.orderStepsByDependencies = function (steps) {
+  RecoveryManager.prototype.orderStepsByDependencies = (steps) => {
     // Implementar ordenação topológica baseada em dependências
-    return steps.sort(function (a, b) {
-      return a.order - b.order;
-    });
+    return steps.sort((a, b) => a.order - b.order);
   };
   RecoveryManager.prototype.prepareRecoveryStep = function (step, execution) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar preparação do step
         console.log("Preparando step: ".concat(step.name));
         return [2 /*return*/];
@@ -1167,7 +1148,7 @@ var RecoveryManager = /** @class */ (function () {
   };
   RecoveryManager.prototype.cleanupRecoveryStep = function (step, execution) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar limpeza do step
         console.log("Limpando step: ".concat(step.name));
         return [2 /*return*/];
@@ -1177,7 +1158,7 @@ var RecoveryManager = /** @class */ (function () {
   RecoveryManager.prototype.validateRecoveryStep = function (step) {
     return __awaiter(this, void 0, void 0, function () {
       var errors, warnings;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errors = [];
         warnings = [];
         if (!step.name) errors.push("Nome do step é obrigatório");
@@ -1190,13 +1171,9 @@ var RecoveryManager = /** @class */ (function () {
   RecoveryManager.prototype.validateStepDependencies = function (steps) {
     return __awaiter(this, void 0, void 0, function () {
       var errors, stepIds, _i, steps_1, step, _a, _b, dependency;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         errors = [];
-        stepIds = new Set(
-          steps.map(function (s) {
-            return s.id;
-          }),
-        );
+        stepIds = new Set(steps.map((s) => s.id));
         for (_i = 0, steps_1 = steps; _i < steps_1.length; _i++) {
           step = steps_1[_i];
           for (_a = 0, _b = step.dependencies; _a < _b.length; _a++) {
@@ -1245,7 +1222,7 @@ var RecoveryManager = /** @class */ (function () {
   };
   RecoveryManager.prototype.checkBackupExists = function (location) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de existência do backup
         return [2 /*return*/, true]; // Simulado
       });
@@ -1254,7 +1231,7 @@ var RecoveryManager = /** @class */ (function () {
   RecoveryManager.prototype.getRecoveryTrends = function (period) {
     return __awaiter(this, void 0, void 0, function () {
       var trends, days, i, date;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         trends = [];
         days = period === "month" ? 30 : period === "week" ? 7 : 1;
         for (i = days - 1; i >= 0; i--) {
@@ -1272,7 +1249,7 @@ var RecoveryManager = /** @class */ (function () {
   };
   RecoveryManager.prototype.getDataSourcePerformance = function (period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar cálculo de performance por data source
         return [
           2 /*return*/,
@@ -1287,35 +1264,35 @@ var RecoveryManager = /** @class */ (function () {
   };
   RecoveryManager.prototype.validateChecksum = function (target) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simulado
       });
     });
   };
   RecoveryManager.prototype.validateIntegrity = function (target) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simulado
       });
     });
   };
   RecoveryManager.prototype.validateConnectivity = function (target) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Simulado
       });
     });
   };
   RecoveryManager.prototype.validatePerformance = function (target) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, Math.random() * 100]; // Simulado
       });
     });
   };
   RecoveryManager.prototype.executeCustomValidation = function (script) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar execução de script customizado
         return [2 /*return*/, true]; // Simulado
       });
@@ -1451,43 +1428,39 @@ var RecoveryManager = /** @class */ (function () {
       });
     });
   };
-  RecoveryManager.prototype.mapDatabaseToRecoveryPlan = function (data) {
-    return {
-      id: data.id,
-      name: data.name,
-      description: data.description,
-      recovery_type: data.recovery_type,
-      target_timestamp: new Date(data.target_timestamp),
-      data_sources: data.data_sources || [],
-      recovery_steps: data.recovery_steps || [],
-      estimated_duration_minutes: data.estimated_duration_minutes || 0,
-      prerequisites: data.prerequisites || [],
-      rollback_plan: data.rollback_plan || [],
-      validation_checks: data.validation_checks || [],
-      metadata: data.metadata || {},
-    };
-  };
-  RecoveryManager.prototype.mapDatabaseToRecoveryExecution = function (data) {
-    return {
-      id: data.id,
-      plan_id: data.plan_id,
-      status: data.status,
-      started_at: new Date(data.started_at),
-      completed_at: data.completed_at ? new Date(data.completed_at) : undefined,
-      current_step: data.current_step,
-      progress_percentage: data.progress_percentage || 0,
-      steps_completed: data.steps_completed || 0,
-      steps_total: data.steps_total || 0,
-      errors: data.errors || [],
-      warnings: data.warnings || [],
-      rollback_executed: data.rollback_executed || false,
-      validation_results: data.validation_results || [],
-      estimated_completion: new Date(data.estimated_completion),
-      actual_duration_minutes: data.actual_duration_minutes,
-      executed_by: data.executed_by,
-      metadata: data.metadata || {},
-    };
-  };
+  RecoveryManager.prototype.mapDatabaseToRecoveryPlan = (data) => ({
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    recovery_type: data.recovery_type,
+    target_timestamp: new Date(data.target_timestamp),
+    data_sources: data.data_sources || [],
+    recovery_steps: data.recovery_steps || [],
+    estimated_duration_minutes: data.estimated_duration_minutes || 0,
+    prerequisites: data.prerequisites || [],
+    rollback_plan: data.rollback_plan || [],
+    validation_checks: data.validation_checks || [],
+    metadata: data.metadata || {},
+  });
+  RecoveryManager.prototype.mapDatabaseToRecoveryExecution = (data) => ({
+    id: data.id,
+    plan_id: data.plan_id,
+    status: data.status,
+    started_at: new Date(data.started_at),
+    completed_at: data.completed_at ? new Date(data.completed_at) : undefined,
+    current_step: data.current_step,
+    progress_percentage: data.progress_percentage || 0,
+    steps_completed: data.steps_completed || 0,
+    steps_total: data.steps_total || 0,
+    errors: data.errors || [],
+    warnings: data.warnings || [],
+    rollback_executed: data.rollback_executed || false,
+    validation_results: data.validation_results || [],
+    estimated_completion: new Date(data.estimated_completion),
+    actual_duration_minutes: data.actual_duration_minutes,
+    executed_by: data.executed_by,
+    metadata: data.metadata || {},
+  });
   return RecoveryManager;
 })();
 exports.RecoveryManager = RecoveryManager;

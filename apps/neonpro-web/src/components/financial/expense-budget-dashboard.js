@@ -4,18 +4,17 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ExpenseBudgetDashboard;
 var react_1 = require("react");
@@ -151,7 +148,6 @@ var select_1 = require("@/components/ui/select");
 var lucide_react_1 = require("lucide-react");
 var expense_budget_engine_1 = require("@/lib/financial/expense-budget-engine");
 function ExpenseBudgetDashboard() {
-  var _this = this;
   var _a = (0, react_1.useState)(true),
     loading = _a[0],
     setLoading = _a[1];
@@ -177,14 +173,11 @@ function ExpenseBudgetDashboard() {
     costCenters = _h[0],
     setCostCenters = _h[1];
   var expenseEngine = new expense_budget_engine_1.ExpenseBudgetEngine();
-  (0, react_1.useEffect)(
-    function () {
-      loadExpenseData();
-    },
-    [period],
-  );
-  var loadExpenseData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadExpenseData();
+  }, [period]);
+  var loadExpenseData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var clinicId,
         dateRange,
         _a,
@@ -194,7 +187,7 @@ function ExpenseBudgetDashboard() {
         optimizationInsights,
         costCenterData,
         error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             setLoading(true);
@@ -239,8 +232,7 @@ function ExpenseBudgetDashboard() {
         }
       });
     });
-  };
-  var parsePeriodToDates = function (period) {
+  var parsePeriodToDates = (period) => {
     var now = new Date();
     switch (period) {
       case "current_month":
@@ -248,12 +240,13 @@ function ExpenseBudgetDashboard() {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
           end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case "current_quarter":
+      case "current_quarter": {
         var quarterStart = Math.floor(now.getMonth() / 3) * 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
           end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
+      }
       case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),
@@ -266,16 +259,13 @@ function ExpenseBudgetDashboard() {
         };
     }
   };
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
-  var formatPercent = function (percent) {
-    return "".concat(percent.toFixed(1), "%");
-  };
-  var getAlertColor = function (alertType) {
+  var formatPercent = (percent) => "".concat(percent.toFixed(1), "%");
+  var getAlertColor = (alertType) => {
     switch (alertType) {
       case "warning":
         return "bg-yellow-100 border-yellow-200 text-yellow-800";
@@ -287,12 +277,8 @@ function ExpenseBudgetDashboard() {
         return "bg-gray-100 border-gray-200 text-gray-800";
     }
   };
-  var totalBudget = categories.reduce(function (sum, cat) {
-    return sum + cat.budgetAllocation;
-  }, 0);
-  var totalActual = categories.reduce(function (sum, cat) {
-    return sum + cat.actualSpending;
-  }, 0);
+  var totalBudget = categories.reduce((sum, cat) => sum + cat.budgetAllocation, 0);
+  var totalActual = categories.reduce((sum, cat) => sum + cat.actualSpending, 0);
   var totalVariance = totalActual - totalBudget;
   var variancePercent = totalBudget > 0 ? (totalVariance / totalBudget) * 100 : 0;
   if (loading) {
@@ -336,31 +322,25 @@ function ExpenseBudgetDashboard() {
       </div>
 
       {/* Budget Alerts */}
-      {alerts.filter(function (alert) {
-        return !alert.isResolved;
-      }).length > 0 && (
+      {alerts.filter((alert) => !alert.isResolved).length > 0 && (
         <div className="space-y-2">
           {alerts
-            .filter(function (alert) {
-              return !alert.isResolved;
-            })
+            .filter((alert) => !alert.isResolved)
             .slice(0, 3)
-            .map(function (alert) {
-              return (
-                <alert_1.Alert key={alert.alertId} className={getAlertColor(alert.alertType)}>
-                  <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                  <alert_1.AlertTitle>
-                    {alert.alertType === "warning"
-                      ? "Atenção"
-                      : alert.alertType === "critical"
-                        ? "Crítico"
-                        : "Orçamento Excedido"}
-                    : {alert.categoryName}
-                  </alert_1.AlertTitle>
-                  <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
-                </alert_1.Alert>
-              );
-            })}
+            .map((alert) => (
+              <alert_1.Alert key={alert.alertId} className={getAlertColor(alert.alertType)}>
+                <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                <alert_1.AlertTitle>
+                  {alert.alertType === "warning"
+                    ? "Atenção"
+                    : alert.alertType === "critical"
+                      ? "Crítico"
+                      : "Orçamento Excedido"}
+                  : {alert.categoryName}
+                </alert_1.AlertTitle>
+                <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
+              </alert_1.Alert>
+            ))}
         </div>
       )}
 
@@ -414,11 +394,7 @@ function ExpenseBudgetDashboard() {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">
-              {
-                alerts.filter(function (alert) {
-                  return !alert.isResolved;
-                }).length
-              }
+              {alerts.filter((alert) => !alert.isResolved).length}
             </div>
             <p className="text-xs text-muted-foreground">Requerem atenção</p>
           </card_1.CardContent>
@@ -443,48 +419,46 @@ function ExpenseBudgetDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {categories.map(function (category) {
-                  return (
-                    <div key={category.categoryId} className="space-y-2 p-4 border rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold">{category.categoryName}</h4>
-                        <div className="flex items-center space-x-2">
-                          {category.isOverBudget && (
-                            <badge_1.Badge variant="destructive">Excedido</badge_1.Badge>
-                          )}
-                          <badge_1.Badge
-                            variant={
-                              Math.abs(category.variancePercent) < 5
-                                ? "default"
-                                : Math.abs(category.variancePercent) < 10
-                                  ? "secondary"
-                                  : "destructive"
-                            }
-                          >
-                            {formatPercent(category.variancePercent)} variação
-                          </badge_1.Badge>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Orçado: {formatCurrency(category.budgetAllocation)}</span>
-                          <span>Realizado: {formatCurrency(category.actualSpending)}</span>
-                        </div>
-                        <progress_1.Progress
-                          value={Math.min(
-                            100,
-                            (category.actualSpending / category.budgetAllocation) * 100,
-                          )}
-                          className="h-2"
-                        />
-                        <div className="text-xs text-muted-foreground">
-                          Variação: {category.variance > 0 ? "+" : ""}
-                          {formatCurrency(category.variance)}
-                        </div>
+                {categories.map((category) => (
+                  <div key={category.categoryId} className="space-y-2 p-4 border rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold">{category.categoryName}</h4>
+                      <div className="flex items-center space-x-2">
+                        {category.isOverBudget && (
+                          <badge_1.Badge variant="destructive">Excedido</badge_1.Badge>
+                        )}
+                        <badge_1.Badge
+                          variant={
+                            Math.abs(category.variancePercent) < 5
+                              ? "default"
+                              : Math.abs(category.variancePercent) < 10
+                                ? "secondary"
+                                : "destructive"
+                          }
+                        >
+                          {formatPercent(category.variancePercent)} variação
+                        </badge_1.Badge>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Orçado: {formatCurrency(category.budgetAllocation)}</span>
+                        <span>Realizado: {formatCurrency(category.actualSpending)}</span>
+                      </div>
+                      <progress_1.Progress
+                        value={Math.min(
+                          100,
+                          (category.actualSpending / category.budgetAllocation) * 100,
+                        )}
+                        className="h-2"
+                      />
+                      <div className="text-xs text-muted-foreground">
+                        Variação: {category.variance > 0 ? "+" : ""}
+                        {formatCurrency(category.variance)}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -498,60 +472,56 @@ function ExpenseBudgetDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {vendors.map(function (vendor) {
-                  return (
-                    <div
-                      key={vendor.vendorId}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">{vendor.vendorName}</h4>
-                          <div className="flex items-center space-x-2">
-                            <badge_1.Badge variant="outline">{vendor.category}</badge_1.Badge>
-                            <badge_1.Badge
-                              variant={
-                                vendor.performanceScore > 8
-                                  ? "default"
-                                  : vendor.performanceScore > 6
-                                    ? "secondary"
-                                    : "destructive"
-                              }
-                            >
-                              {vendor.performanceScore.toFixed(1)} score
-                            </badge_1.Badge>
-                          </div>
+                {vendors.map((vendor) => (
+                  <div
+                    key={vendor.vendorId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{vendor.vendorName}</h4>
+                        <div className="flex items-center space-x-2">
+                          <badge_1.Badge variant="outline">{vendor.category}</badge_1.Badge>
+                          <badge_1.Badge
+                            variant={
+                              vendor.performanceScore > 8
+                                ? "default"
+                                : vendor.performanceScore > 6
+                                  ? "secondary"
+                                  : "destructive"
+                            }
+                          >
+                            {vendor.performanceScore.toFixed(1)} score
+                          </badge_1.Badge>
                         </div>
-                        <div className="grid grid-cols-5 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">Total Gasto</p>
-                            <p className="font-medium">{formatCurrency(vendor.totalSpent)}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Transações</p>
-                            <p className="font-medium">{vendor.transactionCount}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Valor Médio</p>
-                            <p className="font-medium">{formatCurrency(vendor.averageAmount)}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Pendente</p>
-                            <p className="font-medium">
-                              {formatCurrency(vendor.outstandingAmount)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Último Pagamento</p>
-                            <p className="font-medium">
-                              {vendor.lastPayment.toLocaleDateString("pt-BR")}
-                            </p>
-                          </div>
+                      </div>
+                      <div className="grid grid-cols-5 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Total Gasto</p>
+                          <p className="font-medium">{formatCurrency(vendor.totalSpent)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Transações</p>
+                          <p className="font-medium">{vendor.transactionCount}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Valor Médio</p>
+                          <p className="font-medium">{formatCurrency(vendor.averageAmount)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Pendente</p>
+                          <p className="font-medium">{formatCurrency(vendor.outstandingAmount)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Último Pagamento</p>
+                          <p className="font-medium">
+                            {vendor.lastPayment.toLocaleDateString("pt-BR")}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -567,43 +537,41 @@ function ExpenseBudgetDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {trends.map(function (trend, index) {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">{trend.period}</h4>
-                          <badge_1.Badge variant={trend.growthRate > 0 ? "destructive" : "default"}>
-                            {trend.growthRate > 0
-                              ? <lucide_react_1.TrendingUp className="h-3 w-3 mr-1" />
-                              : <lucide_react_1.TrendingDown className="h-3 w-3 mr-1" />}
-                            {trend.growthRate > 0 ? "+" : ""}
-                            {formatPercent(trend.growthRate)}
-                          </badge_1.Badge>
+                {trends.map((trend, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{trend.period}</h4>
+                        <badge_1.Badge variant={trend.growthRate > 0 ? "destructive" : "default"}>
+                          {trend.growthRate > 0
+                            ? <lucide_react_1.TrendingUp className="h-3 w-3 mr-1" />
+                            : <lucide_react_1.TrendingDown className="h-3 w-3 mr-1" />}
+                          {trend.growthRate > 0 ? "+" : ""}
+                          {formatPercent(trend.growthRate)}
+                        </badge_1.Badge>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Total Despesas</p>
+                          <p className="font-medium">{formatCurrency(trend.totalExpenses)}</p>
                         </div>
-                        <div className="grid grid-cols-3 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">Total Despesas</p>
-                            <p className="font-medium">{formatCurrency(trend.totalExpenses)}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Volatilidade</p>
-                            <p className="font-medium">{formatPercent(trend.volatility)}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Economia Potencial</p>
-                            <p className="font-medium text-green-600">
-                              {formatCurrency(trend.costSavingPotential)}
-                            </p>
-                          </div>
+                        <div>
+                          <p className="text-muted-foreground">Volatilidade</p>
+                          <p className="font-medium">{formatPercent(trend.volatility)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Economia Potencial</p>
+                          <p className="font-medium text-green-600">
+                            {formatCurrency(trend.costSavingPotential)}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -619,57 +587,53 @@ function ExpenseBudgetDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {insights.map(function (insight, index) {
-                  return (
-                    <div key={index} className="p-4 border rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold">{insight.category}</h4>
-                        <div className="flex items-center space-x-2">
-                          <badge_1.Badge
-                            variant={
-                              insight.priority === "high"
-                                ? "destructive"
-                                : insight.priority === "medium"
-                                  ? "default"
-                                  : "secondary"
-                            }
-                          >
-                            {insight.priority}
-                          </badge_1.Badge>
-                          <badge_1.Badge variant="outline">
-                            {formatCurrency(insight.savingsPotential)} economia
-                          </badge_1.Badge>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4 text-sm mb-3">
-                        <div>
-                          <p className="text-muted-foreground">Gasto Atual</p>
-                          <p className="font-medium">{formatCurrency(insight.currentSpending)}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Benchmark</p>
-                          <p className="font-medium">{formatCurrency(insight.benchmarkSpending)}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Esforço</p>
-                          <p className="font-medium">{insight.implementationEffort}</p>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Recomendações:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {insight.recommendations.map(function (rec, recIndex) {
-                            return (
-                              <badge_1.Badge key={recIndex} variant="outline" className="text-xs">
-                                {rec}
-                              </badge_1.Badge>
-                            );
-                          })}
-                        </div>
+                {insights.map((insight, index) => (
+                  <div key={index} className="p-4 border rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold">{insight.category}</h4>
+                      <div className="flex items-center space-x-2">
+                        <badge_1.Badge
+                          variant={
+                            insight.priority === "high"
+                              ? "destructive"
+                              : insight.priority === "medium"
+                                ? "default"
+                                : "secondary"
+                          }
+                        >
+                          {insight.priority}
+                        </badge_1.Badge>
+                        <badge_1.Badge variant="outline">
+                          {formatCurrency(insight.savingsPotential)} economia
+                        </badge_1.Badge>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="grid grid-cols-3 gap-4 text-sm mb-3">
+                      <div>
+                        <p className="text-muted-foreground">Gasto Atual</p>
+                        <p className="font-medium">{formatCurrency(insight.currentSpending)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Benchmark</p>
+                        <p className="font-medium">{formatCurrency(insight.benchmarkSpending)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Esforço</p>
+                        <p className="font-medium">{insight.implementationEffort}</p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Recomendações:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {insight.recommendations.map((rec, recIndex) => (
+                          <badge_1.Badge key={recIndex} variant="outline" className="text-xs">
+                            {rec}
+                          </badge_1.Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -685,49 +649,43 @@ function ExpenseBudgetDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {costCenters.map(function (center) {
-                  return (
-                    <div
-                      key={center.costCenterId}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-semibold">{center.costCenterName}</h4>
-                          <badge_1.Badge variant="outline">{center.department}</badge_1.Badge>
+                {costCenters.map((center) => (
+                  <div
+                    key={center.costCenterId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold">{center.costCenterName}</h4>
+                        <badge_1.Badge variant="outline">{center.department}</badge_1.Badge>
+                      </div>
+                      <div className="grid grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Orçamento</p>
+                          <p className="font-medium">{formatCurrency(center.allocatedBudget)}</p>
                         </div>
-                        <div className="grid grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <p className="text-muted-foreground">Orçamento</p>
-                            <p className="font-medium">{formatCurrency(center.allocatedBudget)}</p>
+                        <div>
+                          <p className="text-muted-foreground">Executado</p>
+                          <p className="font-medium">{formatCurrency(center.actualExpenses)}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Utilização</p>
+                          <div className="flex items-center space-x-2">
+                            <progress_1.Progress
+                              value={center.utilizationRate}
+                              className="flex-1"
+                            />
+                            <span className="text-xs">{formatPercent(center.utilizationRate)}</span>
                           </div>
-                          <div>
-                            <p className="text-muted-foreground">Executado</p>
-                            <p className="font-medium">{formatCurrency(center.actualExpenses)}</p>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Utilização</p>
-                            <div className="flex items-center space-x-2">
-                              <progress_1.Progress
-                                value={center.utilizationRate}
-                                className="flex-1"
-                              />
-                              <span className="text-xs">
-                                {formatPercent(center.utilizationRate)}
-                              </span>
-                            </div>
-                          </div>
-                          <div>
-                            <p className="text-muted-foreground">Contribuição</p>
-                            <p className="font-medium">
-                              {formatCurrency(center.profitContribution)}
-                            </p>
-                          </div>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Contribuição</p>
+                          <p className="font-medium">{formatCurrency(center.profitContribution)}</p>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

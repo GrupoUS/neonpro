@@ -3,7 +3,6 @@
  * Comprehensive overview of no-show predictions with risk visualization and insights
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PredictionOverview = PredictionOverview;
 var react_1 = require("react");
@@ -40,159 +39,136 @@ function PredictionOverview(_a) {
   /**
    * Filter and sort predictions based on current criteria
    */
-  var filteredPredictions = (0, react_1.useMemo)(
-    function () {
-      var filtered = predictions;
-      // Apply risk level filter
-      if (riskLevelFilter !== "ALL") {
-        filtered = filtered.filter(function (p) {
-          return p.riskLevel === riskLevelFilter;
-        });
+  var filteredPredictions = (0, react_1.useMemo)(() => {
+    var filtered = predictions;
+    // Apply risk level filter
+    if (riskLevelFilter !== "ALL") {
+      filtered = filtered.filter((p) => p.riskLevel === riskLevelFilter);
+    }
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (p) =>
+          p.patientId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.appointmentId.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+    // Apply sorting
+    filtered.sort((a, b) => {
+      var comparison = 0;
+      switch (sortBy) {
+        case "riskScore":
+          comparison = a.riskScore - b.riskScore;
+          break;
+        case "predictedAt":
+          comparison = new Date(a.predictedAt).getTime() - new Date(b.predictedAt).getTime();
+          break;
+        case "patientName":
+          comparison = a.patientId.localeCompare(b.patientId);
+          break;
       }
-      // Apply search filter
-      if (searchTerm) {
-        filtered = filtered.filter(function (p) {
-          return (
-            p.patientId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            p.appointmentId.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        });
-      }
-      // Apply sorting
-      filtered.sort(function (a, b) {
-        var comparison = 0;
-        switch (sortBy) {
-          case "riskScore":
-            comparison = a.riskScore - b.riskScore;
-            break;
-          case "predictedAt":
-            comparison = new Date(a.predictedAt).getTime() - new Date(b.predictedAt).getTime();
-            break;
-          case "patientName":
-            comparison = a.patientId.localeCompare(b.patientId);
-            break;
-        }
-        return sortOrder === "desc" ? -comparison : comparison;
-      });
-      return filtered;
-    },
-    [predictions, riskLevelFilter, searchTerm, sortBy, sortOrder],
-  );
+      return sortOrder === "desc" ? -comparison : comparison;
+    });
+    return filtered;
+  }, [predictions, riskLevelFilter, searchTerm, sortBy, sortOrder]);
   /**
    * Generate summary analytics data
    */
-  var summaryData = (0, react_1.useMemo)(
-    function () {
-      // Risk level distribution
-      var riskDistribution = [
-        {
-          level: "LOW",
-          count: predictions.filter(function (p) {
-            return p.riskLevel === "LOW";
-          }).length,
-          color: "#10B981",
-        },
-        {
-          level: "MEDIUM",
-          count: predictions.filter(function (p) {
-            return p.riskLevel === "MEDIUM";
-          }).length,
-          color: "#F59E0B",
-        },
-        {
-          level: "HIGH",
-          count: predictions.filter(function (p) {
-            return p.riskLevel === "HIGH";
-          }).length,
-          color: "#F97316",
-        },
-        {
-          level: "CRITICAL",
-          count: predictions.filter(function (p) {
-            return p.riskLevel === "CRITICAL";
-          }).length,
-          color: "#EF4444",
-        },
-      ];
-      // Time-based distribution (hourly)
-      var timeDistribution = Array.from({ length: 24 }, function (_, hour) {
-        var hourPredictions = predictions.filter(function (p) {
-          var predHour = new Date(p.predictedAt).getHours();
-          return predHour === hour;
-        });
-        var avgRisk =
-          hourPredictions.length > 0
-            ? hourPredictions.reduce(function (sum, p) {
-                return sum + p.riskScore;
-              }, 0) / hourPredictions.length
-            : 0;
-        return {
-          hour: "".concat(hour.toString().padStart(2, "0"), ":00"),
-          predictions: hourPredictions.length,
-          avgRisk: Math.round(avgRisk),
-        };
+  var summaryData = (0, react_1.useMemo)(() => {
+    // Risk level distribution
+    var riskDistribution = [
+      {
+        level: "LOW",
+        count: predictions.filter((p) => p.riskLevel === "LOW").length,
+        color: "#10B981",
+      },
+      {
+        level: "MEDIUM",
+        count: predictions.filter((p) => p.riskLevel === "MEDIUM").length,
+        color: "#F59E0B",
+      },
+      {
+        level: "HIGH",
+        count: predictions.filter((p) => p.riskLevel === "HIGH").length,
+        color: "#F97316",
+      },
+      {
+        level: "CRITICAL",
+        count: predictions.filter((p) => p.riskLevel === "CRITICAL").length,
+        color: "#EF4444",
+      },
+    ];
+    // Time-based distribution (hourly)
+    var timeDistribution = Array.from({ length: 24 }, (_, hour) => {
+      var hourPredictions = predictions.filter((p) => {
+        var predHour = new Date(p.predictedAt).getHours();
+        return predHour === hour;
       });
-      // Risk trends over time (daily for last 7 days)
-      var riskTrends = Array.from({ length: 7 }, function (_, dayIndex) {
-        var date = new Date();
-        date.setDate(date.getDate() - (6 - dayIndex));
-        var dayPredictions = predictions.filter(function (p) {
-          var predDate = new Date(p.predictedAt);
-          return predDate.toDateString() === date.toDateString();
-        });
-        var avgRisk =
-          dayPredictions.length > 0
-            ? dayPredictions.reduce(function (sum, p) {
-                return sum + p.riskScore;
-              }, 0) / dayPredictions.length
-            : 0;
-        return {
-          date: date.toLocaleDateString("pt-BR", { month: "short", day: "numeric" }),
-          avgRisk: Math.round(avgRisk),
-          count: dayPredictions.length,
-        };
-      });
-      // Top risk factors analysis
-      var factorImpacts = {};
-      predictions.forEach(function (prediction) {
-        prediction.factors.forEach(function (factor) {
-          if (!factorImpacts[factor.factorName]) {
-            factorImpacts[factor.factorName] = { impact: 0, frequency: 0 };
-          }
-          factorImpacts[factor.factorName].impact += factor.contribution;
-          factorImpacts[factor.factorName].frequency += 1;
-        });
-      });
-      var topRiskFactors = Object.entries(factorImpacts)
-        .map(function (_a) {
-          var factor = _a[0],
-            data = _a[1];
-          return {
-            factor: factor,
-            impact: Math.round(data.impact / data.frequency), // Average impact
-            frequency: data.frequency,
-          };
-        })
-        .sort(function (a, b) {
-          return b.impact - a.impact;
-        })
-        .slice(0, 10);
+      var avgRisk =
+        hourPredictions.length > 0
+          ? hourPredictions.reduce((sum, p) => sum + p.riskScore, 0) / hourPredictions.length
+          : 0;
       return {
-        riskDistribution: riskDistribution,
-        timeDistribution: timeDistribution,
-        riskTrends: riskTrends,
-        topRiskFactors: topRiskFactors,
+        hour: "".concat(hour.toString().padStart(2, "0"), ":00"),
+        predictions: hourPredictions.length,
+        avgRisk: Math.round(avgRisk),
       };
-    },
-    [predictions],
-  );
+    });
+    // Risk trends over time (daily for last 7 days)
+    var riskTrends = Array.from({ length: 7 }, (_, dayIndex) => {
+      var date = new Date();
+      date.setDate(date.getDate() - (6 - dayIndex));
+      var dayPredictions = predictions.filter((p) => {
+        var predDate = new Date(p.predictedAt);
+        return predDate.toDateString() === date.toDateString();
+      });
+      var avgRisk =
+        dayPredictions.length > 0
+          ? dayPredictions.reduce((sum, p) => sum + p.riskScore, 0) / dayPredictions.length
+          : 0;
+      return {
+        date: date.toLocaleDateString("pt-BR", { month: "short", day: "numeric" }),
+        avgRisk: Math.round(avgRisk),
+        count: dayPredictions.length,
+      };
+    });
+    // Top risk factors analysis
+    var factorImpacts = {};
+    predictions.forEach((prediction) => {
+      prediction.factors.forEach((factor) => {
+        if (!factorImpacts[factor.factorName]) {
+          factorImpacts[factor.factorName] = { impact: 0, frequency: 0 };
+        }
+        factorImpacts[factor.factorName].impact += factor.contribution;
+        factorImpacts[factor.factorName].frequency += 1;
+      });
+    });
+    var topRiskFactors = Object.entries(factorImpacts)
+      .map((_a) => {
+        var factor = _a[0],
+          data = _a[1];
+        return {
+          factor: factor,
+          impact: Math.round(data.impact / data.frequency), // Average impact
+          frequency: data.frequency,
+        };
+      })
+      .sort((a, b) => b.impact - a.impact)
+      .slice(0, 10);
+    return {
+      riskDistribution: riskDistribution,
+      timeDistribution: timeDistribution,
+      riskTrends: riskTrends,
+      topRiskFactors: topRiskFactors,
+    };
+  }, [predictions]);
   /**
    * Get recommendation for a specific prediction
    */
-  var getRecommendation = function (prediction) {
+  var getRecommendation = (prediction) => {
     var recommendations = prediction.interventionRecommendations;
     if (recommendations.length === 0) return "No specific intervention required";
-    var highestPriority = recommendations.sort(function (a, b) {
+    var highestPriority = recommendations.sort((a, b) => {
       var priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     })[0];
@@ -201,7 +177,7 @@ function PredictionOverview(_a) {
   /**
    * Format confidence level for display
    */
-  var formatConfidence = function (confidence) {
+  var formatConfidence = (confidence) => {
     var percentage = Math.round(confidence * 100);
     if (percentage >= 90) return "Very High";
     if (percentage >= 70) return "High";
@@ -232,9 +208,7 @@ function PredictionOverview(_a) {
             <div className="text-2xl font-bold">
               {predictions.length > 0
                 ? Math.round(
-                    predictions.reduce(function (sum, p) {
-                      return sum + p.riskScore;
-                    }, 0) / predictions.length,
+                    predictions.reduce((sum, p) => sum + p.riskScore, 0) / predictions.length,
                   )
                 : 0}
               %
@@ -250,9 +224,8 @@ function PredictionOverview(_a) {
           <card_1.CardContent>
             <div className="text-2xl font-bold text-orange-600">
               {
-                predictions.filter(function (p) {
-                  return p.riskLevel === "HIGH" || p.riskLevel === "CRITICAL";
-                }).length
+                predictions.filter((p) => p.riskLevel === "HIGH" || p.riskLevel === "CRITICAL")
+                  .length
               }
             </div>
             <div className="text-xs text-muted-foreground">Requiring intervention</div>
@@ -267,10 +240,7 @@ function PredictionOverview(_a) {
             <div className="text-2xl font-bold text-blue-600">
               {predictions.length > 0
                 ? Math.round(
-                    (predictions.reduce(function (sum, p) {
-                      return sum + p.confidence;
-                    }, 0) /
-                      predictions.length) *
+                    (predictions.reduce((sum, p) => sum + p.confidence, 0) / predictions.length) *
                       100,
                   )
                 : 0}
@@ -300,7 +270,7 @@ function PredictionOverview(_a) {
                   cy="50%"
                   outerRadius={80}
                   dataKey="count"
-                  label={function (_a) {
+                  label={(_a) => {
                     var level = _a.level,
                       count = _a.count,
                       percent = _a.percent;
@@ -310,9 +280,9 @@ function PredictionOverview(_a) {
                       .concat((percent * 100).toFixed(0), "%)");
                   }}
                 >
-                  {summaryData.riskDistribution.map(function (entry, index) {
-                    return <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />;
-                  })}
+                  {summaryData.riskDistribution.map((entry, index) => (
+                    <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />
+                  ))}
                 </recharts_1.Pie>
                 <recharts_1.Tooltip />
               </recharts_1.PieChart>
@@ -335,12 +305,11 @@ function PredictionOverview(_a) {
                 <recharts_1.XAxis dataKey="hour" />
                 <recharts_1.YAxis />
                 <recharts_1.Tooltip
-                  labelFormatter={function (hour) {
-                    return "Time: ".concat(hour);
-                  }}
-                  formatter={function (value, name) {
-                    return [value, name === "predictions" ? "Predictions" : "Avg Risk %"];
-                  }}
+                  labelFormatter={(hour) => "Time: ".concat(hour)}
+                  formatter={(value, name) => [
+                    value,
+                    name === "predictions" ? "Predictions" : "Avg Risk %",
+                  ]}
                 />
                 <recharts_1.Area
                   type="monotone"
@@ -378,9 +347,7 @@ function PredictionOverview(_a) {
                 <recharts_1.XAxis dataKey="date" />
                 <recharts_1.YAxis />
                 <recharts_1.Tooltip
-                  formatter={function (value, name) {
-                    return [value, name === "avgRisk" ? "Avg Risk %" : "Count"];
-                  }}
+                  formatter={(value, name) => [value, name === "avgRisk" ? "Avg Risk %" : "Count"]}
                 />
                 <recharts_1.Line
                   type="monotone"
@@ -404,22 +371,20 @@ function PredictionOverview(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {summaryData.topRiskFactors.slice(0, 8).map(function (factor, index) {
-                return (
-                  <div key={factor.factor} className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="text-sm font-medium">{factor.factor}</div>
-                      <div className="text-xs text-muted-foreground">
-                        Frequency: {factor.frequency} patients
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <progress_1.Progress value={factor.impact} className="w-16 h-2" />
-                      <span className="text-sm font-medium">{factor.impact}%</span>
+              {summaryData.topRiskFactors.slice(0, 8).map((factor, index) => (
+                <div key={factor.factor} className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="text-sm font-medium">{factor.factor}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Frequency: {factor.frequency} patients
                     </div>
                   </div>
-                );
-              })}
+                  <div className="flex items-center gap-2">
+                    <progress_1.Progress value={factor.impact} className="w-16 h-2" />
+                    <span className="text-sm font-medium">{factor.impact}%</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -437,9 +402,7 @@ function PredictionOverview(_a) {
               <input_1.Input
                 placeholder="Search by patient ID or appointment..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return setSearchTerm(e.target.value);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
               />
             </div>
@@ -455,12 +418,7 @@ function PredictionOverview(_a) {
               </select_1.SelectContent>
             </select_1.Select>
 
-            <select_1.Select
-              value={sortBy}
-              onValueChange={function (value) {
-                return setSortBy(value);
-              }}
-            >
+            <select_1.Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
               <select_1.SelectTrigger className="w-full sm:w-48">
                 <select_1.SelectValue placeholder="Sort by" />
               </select_1.SelectTrigger>
@@ -473,9 +431,7 @@ function PredictionOverview(_a) {
 
             <button_1.Button
               variant="outline"
-              onClick={function () {
-                return setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-              }}
+              onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
             >
               {sortOrder === "asc" ? "↑" : "↓"}
             </button_1.Button>
@@ -497,17 +453,15 @@ function PredictionOverview(_a) {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredPredictions.slice(0, 20).map(function (prediction) {
-                  var topFactor = prediction.factors.sort(function (a, b) {
-                    return b.contribution - a.contribution;
-                  })[0];
+                {filteredPredictions.slice(0, 20).map((prediction) => {
+                  var topFactor = prediction.factors.sort(
+                    (a, b) => b.contribution - a.contribution,
+                  )[0];
                   return (
                     <table_1.TableRow
                       key={prediction.appointmentId}
                       className="cursor-pointer hover:bg-muted/50"
-                      onClick={function () {
-                        return setSelectedPrediction(prediction);
-                      }}
+                      onClick={() => setSelectedPrediction(prediction)}
                     >
                       <table_1.TableCell className="font-medium">
                         <div className="flex items-center gap-2">
@@ -590,9 +544,7 @@ function PredictionOverview(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setSelectedPrediction(null);
-                }}
+                onClick={() => setSelectedPrediction(null)}
               >
                 Close
               </button_1.Button>
@@ -635,24 +587,22 @@ function PredictionOverview(_a) {
               <div className="space-y-4">
                 <h4 className="font-medium">Risk Factors</h4>
                 <div className="space-y-2">
-                  {selectedPrediction.factors.map(function (factor, index) {
-                    return (
-                      <div key={index} className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="text-sm font-medium">{factor.factorName}</div>
-                          <div className="text-xs text-muted-foreground">{factor.description}</div>
+                  {selectedPrediction.factors.map((factor, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="text-sm font-medium">{factor.factorName}</div>
+                        <div className="text-xs text-muted-foreground">{factor.description}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">
+                          +{factor.contribution.toFixed(1)}%
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium">
-                            +{factor.contribution.toFixed(1)}%
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            Weight: {(factor.weight * 100).toFixed(0)}%
-                          </div>
+                        <div className="text-xs text-muted-foreground">
+                          Weight: {(factor.weight * 100).toFixed(0)}%
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -662,42 +612,38 @@ function PredictionOverview(_a) {
               <div className="mt-6">
                 <h4 className="font-medium mb-4">Recommended Interventions</h4>
                 <div className="space-y-3">
-                  {selectedPrediction.interventionRecommendations.map(
-                    function (intervention, index) {
-                      return (
-                        <alert_1.Alert key={index}>
-                          <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                          <alert_1.AlertDescription>
-                            <div className="flex items-center justify-between">
-                              <div className="flex-1">
-                                <div className="font-medium">{intervention.type}</div>
-                                <div className="text-sm">{intervention.message}</div>
-                                <div className="text-xs text-muted-foreground mt-1">
-                                  Channel: {intervention.channel} | Timing: {intervention.timing}
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <badge_1.Badge
-                                  variant={
-                                    intervention.priority === "URGENT"
-                                      ? "destructive"
-                                      : intervention.priority === "HIGH"
-                                        ? "default"
-                                        : "secondary"
-                                  }
-                                >
-                                  {intervention.priority}
-                                </badge_1.Badge>
-                                <div className="text-xs text-muted-foreground mt-1">
-                                  {(intervention.effectiveness * 100).toFixed(0)}% effective
-                                </div>
-                              </div>
+                  {selectedPrediction.interventionRecommendations.map((intervention, index) => (
+                    <alert_1.Alert key={index}>
+                      <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                      <alert_1.AlertDescription>
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <div className="font-medium">{intervention.type}</div>
+                            <div className="text-sm">{intervention.message}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Channel: {intervention.channel} | Timing: {intervention.timing}
                             </div>
-                          </alert_1.AlertDescription>
-                        </alert_1.Alert>
-                      );
-                    },
-                  )}
+                          </div>
+                          <div className="text-right">
+                            <badge_1.Badge
+                              variant={
+                                intervention.priority === "URGENT"
+                                  ? "destructive"
+                                  : intervention.priority === "HIGH"
+                                    ? "default"
+                                    : "secondary"
+                              }
+                            >
+                              {intervention.priority}
+                            </badge_1.Badge>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {(intervention.effectiveness * 100).toFixed(0)}% effective
+                            </div>
+                          </div>
+                        </div>
+                      </alert_1.AlertDescription>
+                    </alert_1.Alert>
+                  ))}
                 </div>
               </div>
             )}

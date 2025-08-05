@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 6.1 Task 2: Barcode Generator Component Tests
  * Comprehensive tests for barcode generation functionality
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -24,7 +23,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -53,8 +52,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -75,9 +72,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -136,63 +133,53 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 var vitest_1 = require("vitest");
 var barcode_generator_1 = require("@/app/components/inventory/barcode/barcode-generator");
 // Mock the hooks
-vitest_1.vi.mock("@/app/hooks/use-barcode-scanner", function () {
-  return {
-    useBarcodeGeneration: vitest_1.vi.fn(function () {
-      return {
-        generateBarcode: vitest_1.vi.fn(),
-        isGenerating: false,
-        error: null,
-        data: null,
-      };
-    }),
-    useBarcodeData: vitest_1.vi.fn(function () {
-      return {
-        data: [],
-        isLoading: false,
-      };
-    }),
-    useLabelPrinting: vitest_1.vi.fn(function () {
-      return {
-        printLabel: vitest_1.vi.fn(),
-        isPrinting: false,
-      };
-    }),
-  };
-});
+vitest_1.vi.mock("@/app/hooks/use-barcode-scanner", () => ({
+  useBarcodeGeneration: vitest_1.vi.fn(() => ({
+    generateBarcode: vitest_1.vi.fn(),
+    isGenerating: false,
+    error: null,
+    data: null,
+  })),
+  useBarcodeData: vitest_1.vi.fn(() => ({
+    data: [],
+    isLoading: false,
+  })),
+  useLabelPrinting: vitest_1.vi.fn(() => ({
+    printLabel: vitest_1.vi.fn(),
+    isPrinting: false,
+  })),
+}));
 // Mock the toast
-vitest_1.vi.mock("sonner", function () {
-  return {
-    toast: {
-      success: vitest_1.vi.fn(),
-      error: vitest_1.vi.fn(),
-    },
-  };
-});
-(0, vitest_1.describe)("BarcodeGenerator Component", function () {
-  (0, vitest_1.beforeEach)(function () {
+vitest_1.vi.mock("sonner", () => ({
+  toast: {
+    success: vitest_1.vi.fn(),
+    error: vitest_1.vi.fn(),
+  },
+}));
+(0, vitest_1.describe)("BarcodeGenerator Component", () => {
+  (0, vitest_1.beforeEach)(() => {
     vitest_1.vi.clearAllMocks();
   });
-  (0, vitest_1.it)("renders generator interface correctly", function () {
+  (0, vitest_1.it)("renders generator interface correctly", () => {
     (0, react_2.render)(<barcode_generator_1.default />);
     (0, vitest_1.expect)(react_2.screen.getByText("Gerador de Códigos")).toBeInTheDocument();
     (0, vitest_1.expect)(react_2.screen.getByLabelText("Item do Inventário")).toBeInTheDocument();
     (0, vitest_1.expect)(react_2.screen.getByText("Gerar Códigos")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("pre-fills item ID when provided", function () {
+  (0, vitest_1.it)("pre-fills item ID when provided", () => {
     var testItemId = "test-item-123";
     (0, react_2.render)(<barcode_generator_1.default itemId={testItemId} />);
     var itemInput = react_2.screen.getByPlaceholderText("ID do item (UUID)");
     (0, vitest_1.expect)(itemInput.value).toBe(testItemId);
   });
-  (0, vitest_1.it)("handles barcode type selection", function () {
+  (0, vitest_1.it)("handles barcode type selection", () => {
     (0, react_2.render)(<barcode_generator_1.default />);
     var select = react_2.screen.getByRole("combobox");
     react_2.fireEvent.click(select);
@@ -200,17 +187,17 @@ vitest_1.vi.mock("sonner", function () {
     (0, vitest_1.expect)(react_2.screen.getByText("EAN13")).toBeInTheDocument();
     (0, vitest_1.expect)(react_2.screen.getByText("CODE39")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("toggles QR code inclusion", function () {
+  (0, vitest_1.it)("toggles QR code inclusion", () => {
     (0, react_2.render)(<barcode_generator_1.default />);
     var qrSwitch = react_2.screen.getByRole("switch");
     (0, vitest_1.expect)(qrSwitch).not.toBeChecked();
     react_2.fireEvent.click(qrSwitch);
     (0, vitest_1.expect)(qrSwitch).toBeChecked();
   });
-  (0, vitest_1.it)("validates required fields before generation", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.it)("validates required fields before generation", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var generateButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_2.render)(<barcode_generator_1.default />);
@@ -219,7 +206,7 @@ vitest_1.vi.mock("sonner", function () {
             // Should show error for missing item ID
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 var toast = require("sonner").toast;
                 (0, vitest_1.expect)(toast.error).toHaveBeenCalledWith("Selecione um item");
               }),
@@ -230,12 +217,12 @@ vitest_1.vi.mock("sonner", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("generates barcode with valid input", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, vitest_1.it)("generates barcode with valid input", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockGenerate, useBarcodeGeneration, itemInput, generateButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         mockGenerate = vitest_1.vi.fn();
         useBarcodeGeneration = require("@/app/hooks/use-barcode-scanner").useBarcodeGeneration;
         useBarcodeGeneration.mockReturnValue({
@@ -259,9 +246,9 @@ vitest_1.vi.mock("sonner", function () {
         });
         return [2 /*return*/];
       });
-    });
-  });
-  (0, vitest_1.it)("displays generated barcode preview", function () {
+    }),
+  );
+  (0, vitest_1.it)("displays generated barcode preview", () => {
     var mockData = {
       barcode: "1234567890123",
       barcode_type: "EAN13",
@@ -281,7 +268,7 @@ vitest_1.vi.mock("sonner", function () {
     (0, vitest_1.expect)(react_2.screen.getByText("Test Item")).toBeInTheDocument();
     (0, vitest_1.expect)(react_2.screen.getByText("1234567890123")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("handles generation errors", function () {
+  (0, vitest_1.it)("handles generation errors", () => {
     var mockError = new Error("Generation failed");
     var useBarcodeGeneration = require("@/app/hooks/use-barcode-scanner").useBarcodeGeneration;
     useBarcodeGeneration.mockReturnValue({
@@ -293,7 +280,7 @@ vitest_1.vi.mock("sonner", function () {
     (0, react_2.render)(<barcode_generator_1.default />);
     (0, vitest_1.expect)(react_2.screen.getByText("Generation failed")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("enables print functionality when barcode is generated", function () {
+  (0, vitest_1.it)("enables print functionality when barcode is generated", () => {
     var mockPrint = vitest_1.vi.fn();
     var mockData = {
       barcode: "1234567890123",
@@ -319,10 +306,10 @@ vitest_1.vi.mock("sonner", function () {
     react_2.fireEvent.click(printButton);
     (0, vitest_1.expect)(mockPrint).toHaveBeenCalled();
   });
-  (0, vitest_1.it)("copies barcode to clipboard", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.it)("copies barcode to clipboard", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockData, mockWriteText, useBarcodeGeneration, copyButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockData = {
@@ -349,7 +336,7 @@ vitest_1.vi.mock("sonner", function () {
             react_2.fireEvent.click(copyButton);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 (0, vitest_1.expect)(mockWriteText).toHaveBeenCalledWith("1234567890123");
               }),
             ];
@@ -358,9 +345,9 @@ vitest_1.vi.mock("sonner", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, vitest_1.it)("calls onGenerated callback when barcode is created", function () {
+    }),
+  );
+  (0, vitest_1.it)("calls onGenerated callback when barcode is created", () => {
     var onGenerated = vitest_1.vi.fn();
     var mockData = {
       barcode: "1234567890123",
@@ -378,7 +365,7 @@ vitest_1.vi.mock("sonner", function () {
     (0, react_2.render)(<barcode_generator_1.default onGenerated={onGenerated} />);
     (0, vitest_1.expect)(onGenerated).toHaveBeenCalledWith(mockData);
   });
-  (0, vitest_1.it)("shows existing barcodes for item", function () {
+  (0, vitest_1.it)("shows existing barcodes for item", () => {
     var existingBarcodes = [
       {
         barcode: "9876543210",
@@ -396,7 +383,7 @@ vitest_1.vi.mock("sonner", function () {
     (0, vitest_1.expect)(react_2.screen.getByText("Códigos Existentes")).toBeInTheDocument();
     (0, vitest_1.expect)(react_2.screen.getByText("9876543210")).toBeInTheDocument();
   });
-  (0, vitest_1.it)("warns about duplicate barcode types", function () {
+  (0, vitest_1.it)("warns about duplicate barcode types", () => {
     var existingBarcodes = [
       {
         barcode: "9876543210",
@@ -416,7 +403,7 @@ vitest_1.vi.mock("sonner", function () {
       react_2.screen.getByText(/Já existe um código CODE128/),
     ).toBeInTheDocument();
   });
-  (0, vitest_1.it)("handles optional fields correctly", function () {
+  (0, vitest_1.it)("handles optional fields correctly", () => {
     var mockGenerate = vitest_1.vi.fn();
     var useBarcodeGeneration = require("@/app/hooks/use-barcode-scanner").useBarcodeGeneration;
     useBarcodeGeneration.mockReturnValue({

@@ -6,32 +6,31 @@
  * and management with real-time analytics, consent management, and audit trail.
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = LGPDComplianceDashboard;
 var react_1 = require("react");
@@ -177,7 +174,6 @@ var audit_trail_manager_1 = require("@/lib/lgpd/audit-trail-manager");
 var data_retention_manager_1 = require("@/lib/lgpd/data-retention-manager");
 var COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 function LGPDComplianceDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userRole = _a.userRole;
   // State management
@@ -236,8 +232,8 @@ function LGPDComplianceDashboard(_a) {
   /**
    * Load dashboard data
    */
-  var loadDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var startDate,
         endDate,
         _a,
@@ -247,7 +243,7 @@ function LGPDComplianceDashboard(_a) {
         overview,
         auditRecords,
         err_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, 4, 5]);
@@ -324,13 +320,12 @@ function LGPDComplianceDashboard(_a) {
         }
       });
     });
-  };
   /**
    * Refresh dashboard data
    */
-  var refreshData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var refreshData = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setRefreshing(true);
@@ -341,12 +336,11 @@ function LGPDComplianceDashboard(_a) {
         }
       });
     });
-  };
   /**
    * Handle date range change
    */
-  var handleDateRangeChange = function (field, value) {
-    setDateRange(function (prev) {
+  var handleDateRangeChange = (field, value) => {
+    setDateRange((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
@@ -354,13 +348,13 @@ function LGPDComplianceDashboard(_a) {
   /**
    * Apply filters
    */
-  var applyFilters = function () {
+  var applyFilters = () => {
     loadDashboardData();
   };
   /**
    * Get compliance score color
    */
-  var getComplianceColor = function (score) {
+  var getComplianceColor = (score) => {
     if (score >= 90) return "text-green-600";
     if (score >= 70) return "text-yellow-600";
     return "text-red-600";
@@ -368,7 +362,7 @@ function LGPDComplianceDashboard(_a) {
   /**
    * Get risk level badge
    */
-  var getRiskBadge = function (score) {
+  var getRiskBadge = (score) => {
     if (score <= 20) return <badge_1.Badge variant="default">Baixo</badge_1.Badge>;
     if (score <= 50) return <badge_1.Badge variant="secondary">Médio</badge_1.Badge>;
     if (score <= 80) return <badge_1.Badge variant="destructive">Alto</badge_1.Badge>;
@@ -377,19 +371,18 @@ function LGPDComplianceDashboard(_a) {
   /**
    * Format date for display
    */
-  var formatDate = function (date) {
-    return new Date(date).toLocaleDateString("pt-BR", {
+  var formatDate = (date) =>
+    new Date(date).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
   /**
    * Get event type icon
    */
-  var getEventTypeIcon = function (eventType) {
+  var getEventTypeIcon = (eventType) => {
     var _a;
     var iconMap =
       ((_a = {}),
@@ -420,7 +413,7 @@ function LGPDComplianceDashboard(_a) {
   /**
    * Get severity badge
    */
-  var getSeverityBadge = function (severity) {
+  var getSeverityBadge = (severity) => {
     var _a;
     var variants =
       ((_a = {}),
@@ -432,12 +425,9 @@ function LGPDComplianceDashboard(_a) {
     return <badge_1.Badge variant={variants[severity]}>{severity.toUpperCase()}</badge_1.Badge>;
   };
   // Load data on component mount and when filters change
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-    },
-    [clinicId],
-  );
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+  }, [clinicId]);
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -493,9 +483,7 @@ function LGPDComplianceDashboard(_a) {
                 id="start-date"
                 type="date"
                 value={dateRange.start}
-                onChange={function (e) {
-                  return handleDateRangeChange("start", e.target.value);
-                }}
+                onChange={(e) => handleDateRangeChange("start", e.target.value)}
               />
             </div>
             <div>
@@ -504,33 +492,27 @@ function LGPDComplianceDashboard(_a) {
                 id="end-date"
                 type="date"
                 value={dateRange.end}
-                onChange={function (e) {
-                  return handleDateRangeChange("end", e.target.value);
-                }}
+                onChange={(e) => handleDateRangeChange("end", e.target.value)}
               />
             </div>
             <div>
               <label_1.Label>Tipo de Evento</label_1.Label>
               <select_1.Select
                 value={auditFilters.eventType}
-                onValueChange={function (value) {
-                  return setAuditFilters(function (prev) {
-                    return __assign(__assign({}, prev), { eventType: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setAuditFilters((prev) => __assign(__assign({}, prev), { eventType: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Todos" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="">Todos</select_1.SelectItem>
-                  {Object.values(audit_trail_manager_1.LGPDAuditEventType).map(function (type) {
-                    return (
-                      <select_1.SelectItem key={type} value={type}>
-                        {type}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {Object.values(audit_trail_manager_1.LGPDAuditEventType).map((type) => (
+                    <select_1.SelectItem key={type} value={type}>
+                      {type}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -630,7 +612,7 @@ function LGPDComplianceDashboard(_a) {
                 <card_1.CardContent>
                   <recharts_1.ResponsiveContainer width="100%" height={300}>
                     <recharts_1.BarChart
-                      data={Object.entries(consentAnalytics.consentsByDataType).map(function (_a) {
+                      data={Object.entries(consentAnalytics.consentsByDataType).map((_a) => {
                         var type = _a[0],
                           count = _a[1];
                         return {
@@ -660,7 +642,7 @@ function LGPDComplianceDashboard(_a) {
                   <recharts_1.ResponsiveContainer width="100%" height={300}>
                     <recharts_1.PieChart>
                       <recharts_1.Pie
-                        data={Object.entries(auditAnalytics.eventsBySeverity).map(function (_a) {
+                        data={Object.entries(auditAnalytics.eventsBySeverity).map((_a) => {
                           var severity = _a[0],
                             count = _a[1];
                           return {
@@ -671,7 +653,7 @@ function LGPDComplianceDashboard(_a) {
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={function (_a) {
+                        label={(_a) => {
                           var name = _a.name,
                             percent = _a.percent;
                           return "".concat(name, " ").concat((percent * 100).toFixed(0), "%");
@@ -680,16 +662,12 @@ function LGPDComplianceDashboard(_a) {
                         fill="#8884d8"
                         dataKey="value"
                       >
-                        {Object.entries(auditAnalytics.eventsBySeverity).map(
-                          function (entry, index) {
-                            return (
-                              <recharts_1.Cell
-                                key={"cell-".concat(index)}
-                                fill={COLORS[index % COLORS.length]}
-                              />
-                            );
-                          },
-                        )}
+                        {Object.entries(auditAnalytics.eventsBySeverity).map((entry, index) => (
+                          <recharts_1.Cell
+                            key={"cell-".concat(index)}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        ))}
                       </recharts_1.Pie>
                       <recharts_1.Tooltip />
                     </recharts_1.PieChart>
@@ -745,11 +723,7 @@ function LGPDComplianceDashboard(_a) {
                 </div>
               )}
 
-              <button_1.Button
-                onClick={function () {
-                  return setShowConsentDialog(true);
-                }}
-              >
+              <button_1.Button onClick={() => setShowConsentDialog(true)}>
                 <lucide_react_1.UserCheck className="h-4 w-4 mr-2" />
                 Coletar Novo Consentimento
               </button_1.Button>
@@ -779,37 +753,35 @@ function LGPDComplianceDashboard(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {auditTrail.map(function (record) {
-                    return (
-                      <table_1.TableRow key={record.id}>
-                        <table_1.TableCell className="font-mono text-sm">
-                          {formatDate(record.timestamp)}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center space-x-2">
-                            {getEventTypeIcon(record.eventType)}
-                            <span className="text-sm">{record.eventType}</span>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>{getSeverityBadge(record.severity)}</table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge variant="outline">{record.dataType}</badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell className="max-w-xs truncate">
-                          {record.description}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge
-                            variant={
-                              record.complianceStatus === "compliant" ? "default" : "destructive"
-                            }
-                          >
-                            {record.complianceStatus}
-                          </badge_1.Badge>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                  {auditTrail.map((record) => (
+                    <table_1.TableRow key={record.id}>
+                      <table_1.TableCell className="font-mono text-sm">
+                        {formatDate(record.timestamp)}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getEventTypeIcon(record.eventType)}
+                          <span className="text-sm">{record.eventType}</span>
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>{getSeverityBadge(record.severity)}</table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge variant="outline">{record.dataType}</badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell className="max-w-xs truncate">
+                        {record.description}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge
+                          variant={
+                            record.complianceStatus === "compliant" ? "default" : "destructive"
+                          }
+                        >
+                          {record.complianceStatus}
+                        </badge_1.Badge>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
             </card_1.CardContent>
@@ -857,22 +829,20 @@ function LGPDComplianceDashboard(_a) {
                     <div>
                       <h4 className="font-semibold mb-2">Próximas Expirações</h4>
                       <div className="space-y-2">
-                        {retentionAnalytics.upcomingExpirations.slice(0, 5).map(function (record) {
-                          return (
-                            <div
-                              key={record.id}
-                              className="flex items-center justify-between p-2 border rounded"
-                            >
-                              <div>
-                                <div className="font-medium">{record.dataType}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  Expira em: {formatDate(record.retentionExpiresAt)}
-                                </div>
+                        {retentionAnalytics.upcomingExpirations.slice(0, 5).map((record) => (
+                          <div
+                            key={record.id}
+                            className="flex items-center justify-between p-2 border rounded"
+                          >
+                            <div>
+                              <div className="font-medium">{record.dataType}</div>
+                              <div className="text-sm text-muted-foreground">
+                                Expira em: {formatDate(record.retentionExpiresAt)}
                               </div>
-                              <badge_1.Badge variant="secondary">{record.status}</badge_1.Badge>
                             </div>
-                          );
-                        })}
+                            <badge_1.Badge variant="secondary">{record.status}</badge_1.Badge>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   )}
@@ -915,11 +885,7 @@ function LGPDComplianceDashboard(_a) {
                 </div>
               )}
 
-              <button_1.Button
-                onClick={function () {
-                  return setShowRequestDialog(true);
-                }}
-              >
+              <button_1.Button onClick={() => setShowRequestDialog(true)}>
                 <lucide_react_1.FileText className="h-4 w-4 mr-2" />
                 Nova Solicitação
               </button_1.Button>
@@ -949,13 +915,11 @@ function LGPDComplianceDashboard(_a) {
                   <select_1.SelectValue placeholder="Selecione os tipos de dados" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {Object.values(consent_automation_manager_1.LGPDDataType).map(function (type) {
-                    return (
-                      <select_1.SelectItem key={type} value={type}>
-                        {type}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {Object.values(consent_automation_manager_1.LGPDDataType).map((type) => (
+                    <select_1.SelectItem key={type} value={type}>
+                      {type}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -969,19 +933,10 @@ function LGPDComplianceDashboard(_a) {
             </div>
           </div>
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowConsentDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowConsentDialog(false)}>
               Cancelar
             </button_1.Button>
-            <button_1.Button
-              onClick={function () {
-                return setShowConsentDialog(false);
-              }}
-            >
+            <button_1.Button onClick={() => setShowConsentDialog(false)}>
               Coletar Consentimento
             </button_1.Button>
           </dialog_1.DialogFooter>
@@ -1028,19 +983,10 @@ function LGPDComplianceDashboard(_a) {
             </div>
           </div>
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowRequestDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowRequestDialog(false)}>
               Cancelar
             </button_1.Button>
-            <button_1.Button
-              onClick={function () {
-                return setShowRequestDialog(false);
-              }}
-            >
+            <button_1.Button onClick={() => setShowRequestDialog(false)}>
               Criar Solicitação
             </button_1.Button>
           </dialog_1.DialogFooter>

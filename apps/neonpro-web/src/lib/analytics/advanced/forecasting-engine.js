@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Time Series Forecasting Engine for NeonPro
  *
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,10 +156,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -171,7 +168,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.forecastUtils = exports.ForecastingEngine = void 0;
 exports.createForecastingEngine = createForecastingEngine;
@@ -187,7 +184,7 @@ var forecastConfigSchema = zod_1.z.object({
   confidenceLevel: zod_1.z.number().min(0.8).max(0.99).default(0.95),
   modelType: zod_1.z.enum(["linear", "polynomial", "exponential", "seasonal"]).default("seasonal"),
 });
-var ForecastingEngine = /** @class */ (function () {
+var ForecastingEngine = /** @class */ (() => {
   function ForecastingEngine() {
     this.supabase = (0, server_1.createClient)();
     this.modelCache = new Map();
@@ -239,13 +236,12 @@ var ForecastingEngine = /** @class */ (function () {
   ForecastingEngine.prototype.forecastMultipleSeries = function (metrics, config) {
     return __awaiter(this, void 0, void 0, function () {
       var results, forecastPromises, forecastResults;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             results = {};
-            forecastPromises = metrics.map(function (metric) {
-              return __awaiter(_this, void 0, void 0, function () {
+            forecastPromises = metrics.map((metric) =>
+              __awaiter(this, void 0, void 0, function () {
                 var seriesConfig, forecast, error_1;
                 return __generator(this, function (_a) {
                   switch (_a.label) {
@@ -264,12 +260,12 @@ var ForecastingEngine = /** @class */ (function () {
                       return [2 /*return*/];
                   }
                 });
-              });
-            });
+              }),
+            );
             return [4 /*yield*/, Promise.all(forecastPromises)];
           case 1:
             forecastResults = _a.sent();
-            forecastResults.forEach(function (_a) {
+            forecastResults.forEach((_a) => {
               var metric = _a.metric,
                 forecast = _a.forecast;
               results[metric] = forecast;
@@ -381,7 +377,7 @@ var ForecastingEngine = /** @class */ (function () {
               });
               errors.push({
                 absolute: Math.abs(actual - predicted),
-                squared: Math.pow(actual - predicted, 2),
+                squared: (actual - predicted) ** 2,
                 percentage: actual !== 0 ? Math.abs((actual - predicted) / actual) * 100 : 0,
               });
             }
@@ -393,19 +389,10 @@ var ForecastingEngine = /** @class */ (function () {
             if (errors.length === 0) {
               throw new Error("Insufficient data for accuracy evaluation");
             }
-            mae =
-              errors.reduce(function (sum, e) {
-                return sum + e.absolute;
-              }, 0) / errors.length;
-            mse =
-              errors.reduce(function (sum, e) {
-                return sum + e.squared;
-              }, 0) / errors.length;
+            mae = errors.reduce((sum, e) => sum + e.absolute, 0) / errors.length;
+            mse = errors.reduce((sum, e) => sum + e.squared, 0) / errors.length;
             rmse = Math.sqrt(mse);
-            mape =
-              errors.reduce(function (sum, e) {
-                return sum + e.percentage;
-              }, 0) / errors.length;
+            mape = errors.reduce((sum, e) => sum + e.percentage, 0) / errors.length;
             accuracy_score = Math.max(0, 100 - mape);
             return [
               2 /*return*/,
@@ -424,7 +411,7 @@ var ForecastingEngine = /** @class */ (function () {
   /**
    * Automated feature engineering for time series
    */
-  ForecastingEngine.prototype.generateModelFeatures = function (config) {
+  ForecastingEngine.prototype.generateModelFeatures = (config) => {
     var features = {
       lags: [],
       rolling_stats: [],
@@ -483,7 +470,7 @@ var ForecastingEngine = /** @class */ (function () {
   /**
    * Prepare training data with lag features and rolling statistics
    */
-  ForecastingEngine.prototype.prepareTrainingData = function (data, features) {
+  ForecastingEngine.prototype.prepareTrainingData = (data, features) => {
     var trainingData = [];
     var maxLag = Math.max.apply(
       Math,
@@ -494,9 +481,7 @@ var ForecastingEngine = /** @class */ (function () {
       __spreadArray(
         __spreadArray(
           [],
-          features.rolling_stats.map(function (rs) {
-            return rs.window;
-          }),
+          features.rolling_stats.map((rs) => rs.window),
           false,
         ),
         [0],
@@ -504,38 +489,28 @@ var ForecastingEngine = /** @class */ (function () {
       ),
     );
     var startIndex = Math.max(maxLag, maxWindow);
-    var _loop_1 = function (i) {
+    var _loop_1 = (i) => {
       var featureVector = {};
       // Add lag features
-      features.lags.forEach(function (lag) {
+      features.lags.forEach((lag) => {
         if (i - lag >= 0) {
           featureVector["lag_".concat(lag)] = data[i - lag].value;
         }
       });
       // Add rolling statistics
-      features.rolling_stats.forEach(function (_a) {
+      features.rolling_stats.forEach((_a) => {
         var window = _a.window,
           stats = _a.stats;
         if (i - window + 1 >= 0) {
-          var windowData_1 = data.slice(i - window + 1, i + 1).map(function (d) {
-            return d.value;
-          });
-          stats.forEach(function (stat) {
+          var windowData_1 = data.slice(i - window + 1, i + 1).map((d) => d.value);
+          stats.forEach((stat) => {
             var value = 0;
             if (stat === "mean") {
-              value =
-                windowData_1.reduce(function (sum, v) {
-                  return sum + v;
-                }, 0) / windowData_1.length;
+              value = windowData_1.reduce((sum, v) => sum + v, 0) / windowData_1.length;
             } else if (stat === "std") {
-              var mean_1 =
-                windowData_1.reduce(function (sum, v) {
-                  return sum + v;
-                }, 0) / windowData_1.length;
+              var mean_1 = windowData_1.reduce((sum, v) => sum + v, 0) / windowData_1.length;
               value = Math.sqrt(
-                windowData_1.reduce(function (sum, v) {
-                  return sum + Math.pow(v - mean_1, 2);
-                }, 0) / windowData_1.length,
+                windowData_1.reduce((sum, v) => sum + (v - mean_1) ** 2, 0) / windowData_1.length,
               );
             } else if (stat === "min") {
               value = Math.min.apply(Math, windowData_1);
@@ -571,7 +546,7 @@ var ForecastingEngine = /** @class */ (function () {
       }
       // Add exogenous variables
       if (data[i].exogenous) {
-        features.exogenous_vars.forEach(function (varName) {
+        features.exogenous_vars.forEach((varName) => {
           if (data[i].exogenous[varName] !== undefined) {
             featureVector[varName] = data[i].exogenous[varName];
           }
@@ -657,14 +632,8 @@ var ForecastingEngine = /** @class */ (function () {
           throw new Error("No training data available");
         }
         features = Object.keys(trainingData[0].features);
-        X = trainingData.map(function (d) {
-          return features.map(function (f) {
-            return d.features[f] || 0;
-          });
-        });
-        y = trainingData.map(function (d) {
-          return d.target;
-        });
+        X = trainingData.map((d) => features.map((f) => d.features[f] || 0));
+        y = trainingData.map((d) => d.target);
         if (config.modelType === "linear") {
           model = this.trainLinearRegression(X, y);
         } else if (config.modelType === "polynomial") {
@@ -735,33 +704,24 @@ var ForecastingEngine = /** @class */ (function () {
     return predictions;
   };
   // Simplified ML model implementations (in production, use proper ML libraries)
-  ForecastingEngine.prototype.trainLinearRegression = function (X, y) {
+  ForecastingEngine.prototype.trainLinearRegression = (X, y) => {
     // Simple linear regression using normal equation
     // For production, use proper ML libraries
     var n = X.length;
     var features = X[0].length;
     // Add bias term
-    var XWithBias = X.map(function (row) {
-      return __spreadArray([1], row, true);
-    });
+    var XWithBias = X.map((row) => __spreadArray([1], row, true));
     // Calculate weights using normal equation: w = (X^T * X)^-1 * X^T * y
     // Simplified implementation
     var weights = new Array(features + 1).fill(0);
     // Simple gradient descent approximation
     for (var iter = 0; iter < 1000; iter++) {
-      var predictions = XWithBias.map(function (row) {
-        return row.reduce(function (sum, xi, i) {
-          return sum + xi * weights[i];
-        }, 0);
-      });
-      var errors = predictions.map(function (pred, i) {
-        return pred - y[i];
-      });
-      var _loop_2 = function (j) {
-        var gradient =
-          errors.reduce(function (sum, error, i) {
-            return sum + error * XWithBias[i][j];
-          }, 0) / n;
+      var predictions = XWithBias.map((row) =>
+        row.reduce((sum, xi, i) => sum + xi * weights[i], 0),
+      );
+      var errors = predictions.map((pred, i) => pred - y[i]);
+      var _loop_2 = (j) => {
+        var gradient = errors.reduce((sum, error, i) => sum + error * XWithBias[i][j], 0) / n;
         weights[j] -= 0.001 * gradient; // learning rate
       };
       // Update weights
@@ -770,20 +730,11 @@ var ForecastingEngine = /** @class */ (function () {
       }
     }
     // Calculate residual standard deviation
-    var finalPredictions = XWithBias.map(function (row) {
-      return row.reduce(function (sum, xi, i) {
-        return sum + xi * weights[i];
-      }, 0);
-    });
-    var residuals = finalPredictions.map(function (pred, i) {
-      return Math.pow(pred - y[i], 2);
-    });
-    var residualStd = Math.sqrt(
-      residuals.reduce(function (sum, r) {
-        return sum + r;
-      }, 0) /
-        (n - 1),
+    var finalPredictions = XWithBias.map((row) =>
+      row.reduce((sum, xi, i) => sum + xi * weights[i], 0),
     );
+    var residuals = finalPredictions.map((pred, i) => (pred - y[i]) ** 2);
+    var residualStd = Math.sqrt(residuals.reduce((sum, r) => sum + r, 0) / (n - 1));
     return {
       type: "linear",
       weights: weights,
@@ -792,14 +743,12 @@ var ForecastingEngine = /** @class */ (function () {
   };
   ForecastingEngine.prototype.trainPolynomialRegression = function (X, y, degree) {
     // Transform features to polynomial features
-    var polyX = X.map(function (row) {
+    var polyX = X.map((row) => {
       var polyRow = [1]; // bias
-      row.forEach(function (x) {
-        return polyRow.push(x);
-      }); // linear terms
+      row.forEach((x) => polyRow.push(x)); // linear terms
       if (degree >= 2) {
         // Add quadratic terms
-        row.forEach(function (x, i) {
+        row.forEach((x, i) => {
           polyRow.push(x * x); // x^2
           for (var j = i + 1; j < row.length; j++) {
             polyRow.push(x * row[j]); // xi * xj
@@ -810,13 +759,11 @@ var ForecastingEngine = /** @class */ (function () {
     });
     // Use linear regression on polynomial features
     return this.trainLinearRegression(
-      polyX.map(function (row) {
-        return row.slice(1);
-      }),
+      polyX.map((row) => row.slice(1)),
       y,
     );
   };
-  ForecastingEngine.prototype.trainExponentialSmoothing = function (y) {
+  ForecastingEngine.prototype.trainExponentialSmoothing = (y) => {
     // Simple exponential smoothing
     var alpha = 0.3; // smoothing parameter
     var smoothed = y[0];
@@ -825,15 +772,8 @@ var ForecastingEngine = /** @class */ (function () {
       smoothed = alpha * y[i] + (1 - alpha) * smoothed;
       smoothedValues.push(smoothed);
     }
-    var residuals = y.map(function (actual, i) {
-      return Math.pow(actual - smoothedValues[i], 2);
-    });
-    var residualStd = Math.sqrt(
-      residuals.reduce(function (sum, r) {
-        return sum + r;
-      }, 0) /
-        (y.length - 1),
-    );
+    var residuals = y.map((actual, i) => (actual - smoothedValues[i]) ** 2);
+    var residualStd = Math.sqrt(residuals.reduce((sum, r) => sum + r, 0) / (y.length - 1));
     return {
       type: "exponential",
       alpha: alpha,
@@ -848,9 +788,7 @@ var ForecastingEngine = /** @class */ (function () {
     // Calculate seasonal components
     var seasonal = this.calculateSeasonalComponents(y, seasonalPeriod);
     // Deseasonalize the data
-    var deseasonalized = y.map(function (value, i) {
-      return value - seasonal[i % seasonalPeriod];
-    });
+    var deseasonalized = y.map((value, i) => value - seasonal[i % seasonalPeriod]);
     // Train linear model on deseasonalized data
     var linearModel = this.trainLinearRegression(X, deseasonalized);
     return {
@@ -860,10 +798,10 @@ var ForecastingEngine = /** @class */ (function () {
       seasonalPeriod: seasonalPeriod,
     };
   };
-  ForecastingEngine.prototype.calculateSeasonalComponents = function (y, period) {
+  ForecastingEngine.prototype.calculateSeasonalComponents = (y, period) => {
     var seasonal = new Array(period).fill(0);
     var counts = new Array(period).fill(0);
-    y.forEach(function (value, i) {
+    y.forEach((value, i) => {
       var seasonIndex = i % period;
       seasonal[seasonIndex] += value;
       counts[seasonIndex]++;
@@ -873,18 +811,13 @@ var ForecastingEngine = /** @class */ (function () {
       seasonal[i] = counts[i] > 0 ? seasonal[i] / counts[i] : 0;
     }
     // Center the seasonal components
-    var mean =
-      seasonal.reduce(function (sum, s) {
-        return sum + s;
-      }, 0) / period;
-    return seasonal.map(function (s) {
-      return s - mean;
-    });
+    var mean = seasonal.reduce((sum, s) => sum + s, 0) / period;
+    return seasonal.map((s) => s - mean);
   };
-  ForecastingEngine.prototype.prepareFeatureVector = function (data, features, index) {
+  ForecastingEngine.prototype.prepareFeatureVector = (data, features, index) => {
     var featureVector = {};
     // Add lag features
-    features.lags.forEach(function (lag) {
+    features.lags.forEach((lag) => {
       var lagIndex = index - lag;
       if (lagIndex >= 0 && lagIndex < data.length) {
         featureVector["lag_".concat(lag)] = data[lagIndex].value;
@@ -893,31 +826,21 @@ var ForecastingEngine = /** @class */ (function () {
       }
     });
     // Add rolling statistics (simplified)
-    features.rolling_stats.forEach(function (_a) {
+    features.rolling_stats.forEach((_a) => {
       var window = _a.window,
         stats = _a.stats;
       var windowStart = Math.max(0, index - window + 1);
       var windowEnd = Math.min(data.length, index + 1);
-      var windowData = data.slice(windowStart, windowEnd).map(function (d) {
-        return d.value;
-      });
+      var windowData = data.slice(windowStart, windowEnd).map((d) => d.value);
       if (windowData.length > 0) {
-        stats.forEach(function (stat) {
+        stats.forEach((stat) => {
           var value = 0;
           if (stat === "mean") {
-            value =
-              windowData.reduce(function (sum, v) {
-                return sum + v;
-              }, 0) / windowData.length;
+            value = windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
           } else if (stat === "std") {
-            var mean_2 =
-              windowData.reduce(function (sum, v) {
-                return sum + v;
-              }, 0) / windowData.length;
+            var mean_2 = windowData.reduce((sum, v) => sum + v, 0) / windowData.length;
             value = Math.sqrt(
-              windowData.reduce(function (sum, v) {
-                return sum + Math.pow(v - mean_2, 2);
-              }, 0) / windowData.length,
+              windowData.reduce((sum, v) => sum + (v - mean_2) ** 2, 0) / windowData.length,
             );
           } else if (stat === "min") {
             value = Math.min.apply(Math, windowData);
@@ -936,14 +859,10 @@ var ForecastingEngine = /** @class */ (function () {
     if (model.type === "linear" || model.type === "polynomial") {
       var features = __spreadArray(
         [1],
-        model.features.map(function (f) {
-          return featureVector[f] || 0;
-        }),
+        model.features.map((f) => featureVector[f] || 0),
         true,
       );
-      return features.reduce(function (sum, xi, i) {
-        return sum + xi * (model.weights[i] || 0);
-      }, 0);
+      return features.reduce((sum, xi, i) => sum + xi * (model.weights[i] || 0), 0);
     } else if (model.type === "exponential") {
       return model.lastSmoothed;
     } else if (model.type === "seasonal") {
@@ -953,11 +872,11 @@ var ForecastingEngine = /** @class */ (function () {
     }
     return 0;
   };
-  ForecastingEngine.prototype.calculateConfidenceInterval = function (
+  ForecastingEngine.prototype.calculateConfidenceInterval = (
     prediction,
     standardError,
     confidenceLevel,
-  ) {
+  ) => {
     // Z-scores for common confidence levels
     var zScores = {
       0.9: 1.645,
@@ -971,7 +890,7 @@ var ForecastingEngine = /** @class */ (function () {
       upper_bound: prediction + margin,
     };
   };
-  ForecastingEngine.prototype.getNextDate = function (lastDate, features, frequency) {
+  ForecastingEngine.prototype.getNextDate = (lastDate, features, frequency) => {
     var nextDate = new Date(lastDate);
     if (frequency === "daily") {
       nextDate.setDate(nextDate.getDate() + 1);
@@ -983,12 +902,12 @@ var ForecastingEngine = /** @class */ (function () {
     }
     return nextDate;
   };
-  ForecastingEngine.prototype.applyScenarioAdjustments = function (baselineForecast, adjustments) {
-    return baselineForecast.map(function (forecast, i) {
+  ForecastingEngine.prototype.applyScenarioAdjustments = (baselineForecast, adjustments) =>
+    baselineForecast.map((forecast, i) => {
       var adjusted = forecast.predicted;
       // Apply growth rate adjustment
       if (adjustments.growth_rate) {
-        var growthMultiplier = Math.pow(1 + adjustments.growth_rate / 100, i + 1);
+        var growthMultiplier = (1 + adjustments.growth_rate / 100) ** (i + 1);
         adjusted *= growthMultiplier;
       }
       // Apply seasonality factor
@@ -997,9 +916,10 @@ var ForecastingEngine = /** @class */ (function () {
       }
       // Apply external factors (simplified)
       if (adjustments.external_factors) {
-        var factorSum = Object.values(adjustments.external_factors).reduce(function (sum, factor) {
-          return sum + factor;
-        }, 0);
+        var factorSum = Object.values(adjustments.external_factors).reduce(
+          (sum, factor) => sum + factor,
+          0,
+        );
         adjusted *= 1 + factorSum / 100;
       }
       // Recalculate bounds proportionally
@@ -1010,16 +930,14 @@ var ForecastingEngine = /** @class */ (function () {
         upper_bound: Math.round(forecast.upper_bound * ratio * 100) / 100,
       });
     });
-  };
-  ForecastingEngine.prototype.generateModelCacheKey = function (config) {
-    return ""
+  ForecastingEngine.prototype.generateModelCacheKey = (config) =>
+    ""
       .concat(config.metric, "_")
       .concat(config.frequency, "_")
       .concat(config.modelType, "_")
       .concat(config.horizon, "_")
       .concat(config.includeSeasonality, "_")
       .concat(config.includeExogenous);
-  };
   return ForecastingEngine;
 })();
 exports.ForecastingEngine = ForecastingEngine;
@@ -1032,99 +950,66 @@ exports.forecastUtils = {
   /**
    * Calculate forecast accuracy metrics
    */
-  calculateAccuracyMetrics: function (actual, predicted) {
+  calculateAccuracyMetrics: (actual, predicted) => {
     if (actual.length !== predicted.length) {
       throw new Error("Actual and predicted arrays must have the same length");
     }
     var n = actual.length;
-    var errors = actual.map(function (a, i) {
-      return a - predicted[i];
-    });
-    var absoluteErrors = errors.map(function (e) {
-      return Math.abs(e);
-    });
-    var squaredErrors = errors.map(function (e) {
-      return e * e;
-    });
-    var percentageErrors = actual.map(function (a, i) {
-      return a !== 0 ? Math.abs((a - predicted[i]) / a) * 100 : 0;
-    });
+    var errors = actual.map((a, i) => a - predicted[i]);
+    var absoluteErrors = errors.map((e) => Math.abs(e));
+    var squaredErrors = errors.map((e) => e * e);
+    var percentageErrors = actual.map((a, i) =>
+      a !== 0 ? Math.abs((a - predicted[i]) / a) * 100 : 0,
+    );
     return {
-      mae:
-        absoluteErrors.reduce(function (sum, e) {
-          return sum + e;
-        }, 0) / n,
-      mse:
-        squaredErrors.reduce(function (sum, e) {
-          return sum + e;
-        }, 0) / n,
-      rmse: Math.sqrt(
-        squaredErrors.reduce(function (sum, e) {
-          return sum + e;
-        }, 0) / n,
-      ),
-      mape:
-        percentageErrors.reduce(function (sum, e) {
-          return sum + e;
-        }, 0) / n,
+      mae: absoluteErrors.reduce((sum, e) => sum + e, 0) / n,
+      mse: squaredErrors.reduce((sum, e) => sum + e, 0) / n,
+      rmse: Math.sqrt(squaredErrors.reduce((sum, e) => sum + e, 0) / n),
+      mape: percentageErrors.reduce((sum, e) => sum + e, 0) / n,
     };
   },
   /**
    * Format forecast data for visualization
    */
-  formatForChart: function (historical, forecasts) {
-    return __spreadArray(
+  formatForChart: (historical, forecasts) =>
+    __spreadArray(
       __spreadArray(
         [],
-        historical.map(function (h) {
-          return {
-            date: h.date,
-            actual: h.value,
-            type: "historical",
-          };
-        }),
+        historical.map((h) => ({
+          date: h.date,
+          actual: h.value,
+          type: "historical",
+        })),
         true,
       ),
-      forecasts.map(function (f) {
-        return {
-          date: f.date,
-          predicted: f.predicted,
-          lower_bound: f.lower_bound,
-          upper_bound: f.upper_bound,
-          type: "forecast",
-        };
-      }),
+      forecasts.map((f) => ({
+        date: f.date,
+        predicted: f.predicted,
+        lower_bound: f.lower_bound,
+        upper_bound: f.upper_bound,
+        type: "forecast",
+      })),
       true,
-    );
-  },
+    ),
   /**
    * Detect anomalies in forecast vs actual
    */
-  detectAnomalies: function (actual, predicted, threshold) {
+  detectAnomalies: (actual, predicted, threshold) => {
     if (threshold === void 0) {
       threshold = 2;
     }
-    var errors = actual.map(function (a, i) {
-      return a - predicted[i];
-    });
-    var meanError =
-      errors.reduce(function (sum, e) {
-        return sum + e;
-      }, 0) / errors.length;
+    var errors = actual.map((a, i) => a - predicted[i]);
+    var meanError = errors.reduce((sum, e) => sum + e, 0) / errors.length;
     var stdError = Math.sqrt(
-      errors.reduce(function (sum, e) {
-        return sum + Math.pow(e - meanError, 2);
-      }, 0) / errors.length,
+      errors.reduce((sum, e) => sum + (e - meanError) ** 2, 0) / errors.length,
     );
-    return errors.map(function (error, i) {
-      return {
-        index: i,
-        actual: actual[i],
-        predicted: predicted[i],
-        error: error,
-        isAnomaly: Math.abs(error - meanError) > threshold * stdError,
-        zScore: stdError > 0 ? (error - meanError) / stdError : 0,
-      };
-    });
+    return errors.map((error, i) => ({
+      index: i,
+      actual: actual[i],
+      predicted: predicted[i],
+      error: error,
+      isAnomaly: Math.abs(error - meanError) > threshold * stdError,
+      zScore: stdError > 0 ? (error - meanError) / stdError : 0,
+    }));
   },
 };

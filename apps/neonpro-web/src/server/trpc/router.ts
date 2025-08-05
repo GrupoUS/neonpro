@@ -1,6 +1,3 @@
-import type { createTRPCRouter } from "./trpc";
-import type { authRouter } from "./routers/auth";
-
 /**
  * Main tRPC router for NeonPro Healthcare
  *

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,7 +33,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,8 +62,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -85,9 +82,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentsPage;
 var react_1 = require("react");
@@ -193,7 +190,6 @@ var statusConfig = {
   faltou: { label: "Faltou", color: "bg-red-100 text-red-800", icon: lucide_react_1.AlertCircle },
 };
 function AppointmentsPage() {
-  var _this = this;
   var _a = (0, react_1.useState)(true),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -215,20 +211,15 @@ function AppointmentsPage() {
   var _g = (0, react_1.useState)(false),
     isDialogOpen = _g[0],
     setIsDialogOpen = _g[1];
-  (0, react_1.useEffect)(function () {
-    var loadAppointments = function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    var loadAppointments = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsLoading(true);
               // Simulate API call
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 1000);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
             case 1:
               // Simulate API call
               _a.sent();
@@ -294,10 +285,9 @@ function AppointmentsPage() {
           }
         });
       });
-    };
     loadAppointments();
   }, []);
-  var filteredAppointments = appointments.filter(function (appointment) {
+  var filteredAppointments = appointments.filter((appointment) => {
     var matchesSearch =
       appointment.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase());
@@ -306,14 +296,9 @@ function AppointmentsPage() {
     var matchesDate = appointment.date === selectedDate.toISOString().split("T")[0];
     return matchesSearch && matchesStatus && matchesType && matchesDate;
   });
-  var getTypeConfig = function (type) {
-    return (
-      appointmentTypes.find(function (t) {
-        return t.value === type;
-      }) || appointmentTypes[0]
-    );
-  };
-  var StatusIcon = function (_a) {
+  var _getTypeConfig = (type) =>
+    appointmentTypes.find((t) => t.value === type) || appointmentTypes[0];
+  var _StatusIcon = (_a) => {
     var status = _a.status;
     var config = statusConfig[status];
     var Icon =
@@ -353,11 +338,7 @@ function AppointmentsPage() {
                   Preencha os dados para agendar uma nova consulta
                 </dialog_1.DialogDescription>
               </dialog_1.DialogHeader>
-              <NewAppointmentForm
-                onClose={function () {
-                  return setIsDialogOpen(false);
-                }}
-              />
+              <NewAppointmentForm onClose={() => setIsDialogOpen(false)} />
             </dialog_1.DialogContent>
           </dialog_1.Dialog>
         </div>
@@ -374,9 +355,7 @@ function AppointmentsPage() {
             <calendar_1.Calendar
               mode="single"
               selected={selectedDate}
-              onSelect={function (date) {
-                return date && setSelectedDate(date);
-              }}
+              onSelect={(date) => date && setSelectedDate(date)}
               className="rounded-md border w-full"
             />
 
@@ -389,21 +368,13 @@ function AppointmentsPage() {
               <div className="flex justify-between text-sm">
                 <span>Confirmados:</span>
                 <span className="font-medium text-green-600">
-                  {
-                    filteredAppointments.filter(function (a) {
-                      return a.status === "confirmado";
-                    }).length
-                  }
+                  {filteredAppointments.filter((a) => a.status === "confirmado").length}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Pendentes:</span>
                 <span className="font-medium text-yellow-600">
-                  {
-                    filteredAppointments.filter(function (a) {
-                      return a.status === "agendado";
-                    }).length
-                  }
+                  {filteredAppointments.filter((a) => a.status === "agendado").length}
                 </span>
               </div>
             </div>
@@ -422,9 +393,7 @@ function AppointmentsPage() {
                     <input_1.Input
                       placeholder="Buscar paciente ou médico..."
                       value={searchTerm}
-                      onChange={function (e) {
-                        return setSearchTerm(e.target.value);
-                      }}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10"
                     />
                   </div>
@@ -436,7 +405,7 @@ function AppointmentsPage() {
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="all">Todos os Status</select_1.SelectItem>
-                    {Object.entries(statusConfig).map(function (_a) {
+                    {Object.entries(statusConfig).map((_a) => {
                       var value = _a[0],
                         config = _a[1];
                       return (
@@ -454,13 +423,11 @@ function AppointmentsPage() {
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
                     <select_1.SelectItem value="all">Todos os Tipos</select_1.SelectItem>
-                    {appointmentTypes.map(function (type) {
-                      return (
-                        <select_1.SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {appointmentTypes.map((type) => (
+                      <select_1.SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -490,20 +457,14 @@ function AppointmentsPage() {
                     </p>
                   </div>
                 : <div className="space-y-4">
-                    {filteredAppointments.map(function (appointment) {
-                      return (
-                        <AppointmentCard
-                          key={appointment.id}
-                          appointment={appointment}
-                          onEdit={function (id) {
-                            return console.log("Edit", id);
-                          }}
-                          onCancel={function (id) {
-                            return console.log("Cancel", id);
-                          }}
-                        />
-                      );
-                    })}
+                    {filteredAppointments.map((appointment) => (
+                      <AppointmentCard
+                        key={appointment.id}
+                        appointment={appointment}
+                        onEdit={(id) => console.log("Edit", id)}
+                        onCancel={(id) => console.log("Cancel", id)}
+                      />
+                    ))}
                   </div>}
             </card_1.CardContent>
           </card_1.Card>
@@ -527,9 +488,7 @@ function AppointmentCard(_a) {
             <avatar_1.AvatarFallback className="bg-neon-100 text-neon-700">
               {appointment.patientName
                 .split(" ")
-                .map(function (n) {
-                  return n[0];
-                })
+                .map((n) => n[0])
                 .join("")}
             </avatar_1.AvatarFallback>
           </avatar_1.Avatar>
@@ -591,9 +550,7 @@ function AppointmentCard(_a) {
           <button_1.Button
             variant="ghost"
             size="sm"
-            onClick={function () {
-              return onEdit(appointment.id);
-            }}
+            onClick={() => onEdit(appointment.id)}
             className="text-neon-600 hover:text-neon-700 hover:bg-neon-50"
           >
             <lucide_react_1.Edit className="w-4 h-4" />
@@ -601,9 +558,7 @@ function AppointmentCard(_a) {
           <button_1.Button
             variant="ghost"
             size="sm"
-            onClick={function () {
-              return onCancel(appointment.id);
-            }}
+            onClick={() => onCancel(appointment.id)}
             className="text-red-600 hover:text-red-700 hover:bg-red-50"
           >
             <lucide_react_1.Trash2 className="w-4 h-4" />
@@ -630,7 +585,7 @@ function NewAppointmentForm(_a) {
     }),
     formData = _b[0],
     setFormData = _b[1];
-  var handleSubmit = function (e) {
+  var handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission
     console.log("New appointment:", formData);
@@ -644,9 +599,9 @@ function NewAppointmentForm(_a) {
           <input_1.Input
             id="patientName"
             value={formData.patientName}
-            onChange={function (e) {
-              return setFormData(__assign(__assign({}, formData), { patientName: e.target.value }));
-            }}
+            onChange={(e) =>
+              setFormData(__assign(__assign({}, formData), { patientName: e.target.value }))
+            }
             required
           />
         </div>
@@ -655,11 +610,9 @@ function NewAppointmentForm(_a) {
           <input_1.Input
             id="patientPhone"
             value={formData.patientPhone}
-            onChange={function (e) {
-              return setFormData(
-                __assign(__assign({}, formData), { patientPhone: e.target.value }),
-              );
-            }}
+            onChange={(e) =>
+              setFormData(__assign(__assign({}, formData), { patientPhone: e.target.value }))
+            }
             required
           />
         </div>
@@ -672,9 +625,9 @@ function NewAppointmentForm(_a) {
             id="date"
             type="date"
             value={formData.date}
-            onChange={function (e) {
-              return setFormData(__assign(__assign({}, formData), { date: e.target.value }));
-            }}
+            onChange={(e) =>
+              setFormData(__assign(__assign({}, formData), { date: e.target.value }))
+            }
             required
           />
         </div>
@@ -684,9 +637,9 @@ function NewAppointmentForm(_a) {
             id="time"
             type="time"
             value={formData.time}
-            onChange={function (e) {
-              return setFormData(__assign(__assign({}, formData), { time: e.target.value }));
-            }}
+            onChange={(e) =>
+              setFormData(__assign(__assign({}, formData), { time: e.target.value }))
+            }
             required
           />
         </div>
@@ -694,9 +647,9 @@ function NewAppointmentForm(_a) {
           <label_1.Label htmlFor="duration">Duração (min)</label_1.Label>
           <select_1.Select
             value={formData.duration}
-            onValueChange={function (value) {
-              return setFormData(__assign(__assign({}, formData), { duration: value }));
-            }}
+            onValueChange={(value) =>
+              setFormData(__assign(__assign({}, formData), { duration: value }))
+            }
           >
             <select_1.SelectTrigger>
               <select_1.SelectValue />
@@ -716,9 +669,9 @@ function NewAppointmentForm(_a) {
         <textarea_1.Textarea
           id="symptoms"
           value={formData.symptoms}
-          onChange={function (e) {
-            return setFormData(__assign(__assign({}, formData), { symptoms: e.target.value }));
-          }}
+          onChange={(e) =>
+            setFormData(__assign(__assign({}, formData), { symptoms: e.target.value }))
+          }
           placeholder="Descreva os sintomas ou motivo da consulta..."
         />
       </div>

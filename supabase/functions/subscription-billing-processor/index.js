@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Subscription Billing Processor - Supabase Edge Function
  * Epic: EPIC-001 - Advanced Subscription Management
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -41,7 +40,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,8 +69,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -92,9 +89,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_ts_1 = require("https://deno.land/std@0.208.0/http/server.ts");
 var supabase_js_2_1 = require("https://esm.sh/@supabase/supabase-js@2");
@@ -161,10 +158,10 @@ var corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-(0, server_ts_1.serve)(function (req) {
-  return __awaiter(void 0, void 0, void 0, function () {
+(0, server_ts_1.serve)((req) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var supabaseUrl, supabaseKey, supabase, error_1;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           // Handle CORS
@@ -173,7 +170,7 @@ var corsHeaders = {
           }
           _a.label = 1;
         case 1:
-          _a.trys.push([1, 6, , 7]);
+          _a.trys.push([1, 6, undefined, 7]);
           supabaseUrl = Deno.env.get("SUPABASE_URL");
           supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
           supabase = (0, supabase_js_2_1.createClient)(supabaseUrl, supabaseKey);
@@ -235,15 +232,15 @@ var corsHeaders = {
           return [2 /*return*/];
       }
     });
-  });
-});
+  }),
+);
 function processTrialExpirations(supabase) {
   return __awaiter(this, void 0, void 0, function () {
     var now, _a, expiredTrials, error, _i, _b, subscription, error_2, error_3;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 9, , 10]);
+          _c.trys.push([0, 9, undefined, 10]);
           console.log("Processing trial expirations...");
           now = new Date().toISOString();
           return [
@@ -275,7 +272,7 @@ function processTrialExpirations(supabase) {
           subscription = _b[_i];
           _c.label = 3;
         case 3:
-          _c.trys.push([3, 6, , 7]);
+          _c.trys.push([3, 6, undefined, 7]);
           // Update subscription status to unpaid
           return [
             4 /*yield*/,
@@ -351,10 +348,10 @@ function processBillingRenewals(supabase) {
       amount,
       error_4,
       error_5;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 9, , 10]);
+          _c.trys.push([0, 9, undefined, 10]);
           console.log("Processing billing renewals...");
           now = new Date();
           renewalWindow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -386,7 +383,7 @@ function processBillingRenewals(supabase) {
           subscription = _b[_i];
           _c.label = 3;
         case 3:
-          _c.trys.push([3, 6, , 7]);
+          _c.trys.push([3, 6, undefined, 7]);
           currentPeriodEnd = new Date(subscription.current_period_end);
           nextPeriodStart = currentPeriodEnd;
           nextPeriodEnd = calculateNextPeriodEnd(nextPeriodStart, subscription.billing_cycle);
@@ -464,10 +461,10 @@ function processBillingRenewals(supabase) {
 function processSubscriptionCancellations(supabase) {
   return __awaiter(this, void 0, void 0, function () {
     var now, _a, toCancelSubs, error, _i, _b, subscription, error_6, error_7;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 9, , 10]);
+          _c.trys.push([0, 9, undefined, 10]);
           console.log("Processing subscription cancellations...");
           now = new Date().toISOString();
           return [
@@ -499,7 +496,7 @@ function processSubscriptionCancellations(supabase) {
           subscription = _b[_i];
           _c.label = 3;
         case 3:
-          _c.trys.push([3, 6, , 7]);
+          _c.trys.push([3, 6, undefined, 7]);
           // Cancel subscription
           return [
             4 /*yield*/,
@@ -559,10 +556,10 @@ function processSubscriptionCancellations(supabase) {
 function processFailedPaymentRetries(supabase) {
   return __awaiter(this, void 0, void 0, function () {
     var now, retryWindow, _a, failedPayments, error, _i, _b, payment, error_8, error_9;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 9, , 10]);
+          _c.trys.push([0, 9, undefined, 10]);
           console.log("Processing failed payment retries...");
           now = new Date();
           retryWindow = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -597,7 +594,7 @@ function processFailedPaymentRetries(supabase) {
           payment = _b[_i];
           _c.label = 3;
         case 3:
-          _c.trys.push([3, 5, , 7]);
+          _c.trys.push([3, 5, undefined, 7]);
           // Update attempt count
           return [
             4 /*yield*/,

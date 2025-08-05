@@ -7,7 +7,21 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  MapPin,
+  RefreshCw,
+  Users,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -16,21 +30,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Clock,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  RefreshCw,
-  Calendar,
-  Users,
-  MapPin,
-} from "lucide-react";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 // Types matching our backend service
 interface ConflictDetectionResult {

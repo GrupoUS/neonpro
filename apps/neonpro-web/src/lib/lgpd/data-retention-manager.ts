@@ -6,15 +6,15 @@
  * with configurable retention periods, automated cleanup, and audit trail integration.
  */
 
+import type { logger } from "@/lib/logger";
 import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/database";
-import type { logger } from "@/lib/logger";
-import type { LGPDDataType, LGPDPurpose } from "./consent-automation-manager";
 import type {
   auditTrailManager,
   LGPDAuditEventType,
   LGPDAuditSeverity,
 } from "./audit-trail-manager";
+import type { LGPDDataType, LGPDPurpose } from "./consent-automation-manager";
 
 /**
  * Data Retention Policy Interface

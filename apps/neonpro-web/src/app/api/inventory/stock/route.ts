@@ -1,7 +1,7 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { MultiLocationInventoryService } from "@/app/lib/services/multi-location-inventory-service";
 import type { InventoryFilters, UpdateInventoryStock } from "@/app/lib/types/inventory";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {

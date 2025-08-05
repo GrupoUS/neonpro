@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BackgroundJobsMonitor = BackgroundJobsMonitor;
 var react_1 = require("react");
@@ -190,7 +187,6 @@ var JOB_TYPE_CONFIGS = {
   },
 };
 function BackgroundJobsMonitor() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     jobs = _a[0],
     setJobs = _a[1];
@@ -215,29 +211,26 @@ function BackgroundJobsMonitor() {
   var _h = (0, react_1.useState)(true),
     isAutoRefresh = _h[0],
     setIsAutoRefresh = _h[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadJobs();
-      loadStats();
-      loadQueueHealth();
-      var interval = null;
-      if (isAutoRefresh) {
-        interval = setInterval(function () {
-          loadJobs();
-          loadStats();
-          loadQueueHealth();
-        }, 5000); // Refresh every 5 seconds
-      }
-      return function () {
-        if (interval) clearInterval(interval);
-      };
-    },
-    [selectedStatus, selectedType, isAutoRefresh],
-  );
-  var loadJobs = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadJobs();
+    loadStats();
+    loadQueueHealth();
+    var interval = null;
+    if (isAutoRefresh) {
+      interval = setInterval(() => {
+        loadJobs();
+        loadStats();
+        loadQueueHealth();
+      }, 5000); // Refresh every 5 seconds
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [selectedStatus, selectedType, isAutoRefresh]);
+  var loadJobs = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -269,11 +262,10 @@ function BackgroundJobsMonitor() {
         }
       });
     });
-  };
-  var loadStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -297,11 +289,10 @@ function BackgroundJobsMonitor() {
         }
       });
     });
-  };
-  var loadQueueHealth = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadQueueHealth = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -325,11 +316,10 @@ function BackgroundJobsMonitor() {
         }
       });
     });
-  };
-  var retryJob = function (jobId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var retryJob = (jobId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -359,11 +349,10 @@ function BackgroundJobsMonitor() {
         }
       });
     });
-  };
-  var cancelJob = function (jobId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var cancelJob = (jobId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -393,11 +382,10 @@ function BackgroundJobsMonitor() {
         }
       });
     });
-  };
-  var deleteJob = function (jobId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteJob = (jobId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -427,8 +415,7 @@ function BackgroundJobsMonitor() {
         }
       });
     });
-  };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "completed":
         return (
@@ -467,7 +454,7 @@ function BackgroundJobsMonitor() {
         );
     }
   };
-  var getPriorityBadge = function (priority) {
+  var getPriorityBadge = (priority) => {
     switch (priority) {
       case "critical":
         return (
@@ -493,7 +480,7 @@ function BackgroundJobsMonitor() {
         );
     }
   };
-  var getQueueHealthBadge = function (status) {
+  var getQueueHealthBadge = (status) => {
     switch (status) {
       case "healthy":
         return <badge_1.Badge className="bg-green-100 text-green-800">Healthy</badge_1.Badge>;
@@ -503,12 +490,12 @@ function BackgroundJobsMonitor() {
         return <badge_1.Badge variant="destructive">Critical</badge_1.Badge>;
     }
   };
-  var formatDuration = function (ms) {
+  var formatDuration = (ms) => {
     if (ms < 1000) return "".concat(ms, "ms");
     if (ms < 60000) return "".concat((ms / 1000).toFixed(1), "s");
     return "".concat(Math.round(ms / 60000), "m");
   };
-  var formatRelativeTime = function (timestamp) {
+  var formatRelativeTime = (timestamp) => {
     var now = new Date();
     var time = new Date(timestamp);
     var diffMs = now.getTime() - time.getTime();
@@ -517,24 +504,21 @@ function BackgroundJobsMonitor() {
     if (diffMs < 86400000) return "".concat(Math.round(diffMs / 3600000), "h ago");
     return "".concat(Math.round(diffMs / 86400000), "d ago");
   };
-  var getJobTypeConfig = function (type) {
-    return (
-      JOB_TYPE_CONFIGS[type] || {
-        name: type,
-        description: "Unknown job type",
-        icon: lucide_react_1.Activity,
-        color: "bg-gray-500",
-      }
-    );
-  };
+  var getJobTypeConfig = (type) =>
+    JOB_TYPE_CONFIGS[type] || {
+      name: type,
+      description: "Unknown job type",
+      icon: lucide_react_1.Activity,
+      color: "bg-gray-500",
+    };
   if (loading) {
     return (
       <div className="space-y-4">
         <div className="h-8 bg-gray-200 rounded animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {__spreadArray([], Array(3), true).map(function (_, i) {
-            return <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />;
-          })}
+          {__spreadArray([], Array(3), true).map((_, i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />
+          ))}
         </div>
       </div>
     );
@@ -672,9 +656,7 @@ function BackgroundJobsMonitor() {
                 <button_1.Button
                   variant={isAutoRefresh ? "default" : "outline"}
                   size="sm"
-                  onClick={function () {
-                    return setIsAutoRefresh(!isAutoRefresh);
-                  }}
+                  onClick={() => setIsAutoRefresh(!isAutoRefresh)}
                 >
                   {isAutoRefresh
                     ? <lucide_react_1.Pause className="w-4 h-4 mr-2" />
@@ -711,7 +693,7 @@ function BackgroundJobsMonitor() {
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">All Types</select_1.SelectItem>
-                {Object.entries(JOB_TYPE_CONFIGS).map(function (_a) {
+                {Object.entries(JOB_TYPE_CONFIGS).map((_a) => {
                   var key = _a[0],
                     config = _a[1];
                   return (
@@ -739,7 +721,7 @@ function BackgroundJobsMonitor() {
               </table_1.TableRow>
             </table_1.TableHeader>
             <table_1.TableBody>
-              {jobs.map(function (job) {
+              {jobs.map((job) => {
                 var config = getJobTypeConfig(job.type);
                 var Icon = config.icon;
                 return (
@@ -784,9 +766,7 @@ function BackgroundJobsMonitor() {
                             <button_1.Button
                               variant="ghost"
                               size="sm"
-                              onClick={function () {
-                                return setSelectedJob(job);
-                              }}
+                              onClick={() => setSelectedJob(job)}
                             >
                               <lucide_react_1.Eye className="w-4 h-4" />
                             </button_1.Button>
@@ -852,9 +832,7 @@ function BackgroundJobsMonitor() {
                           <button_1.Button
                             variant="ghost"
                             size="sm"
-                            onClick={function () {
-                              return retryJob(job.id);
-                            }}
+                            onClick={() => retryJob(job.id)}
                           >
                             <lucide_react_1.RefreshCw className="w-4 h-4" />
                           </button_1.Button>
@@ -864,9 +842,7 @@ function BackgroundJobsMonitor() {
                           <button_1.Button
                             variant="ghost"
                             size="sm"
-                            onClick={function () {
-                              return cancelJob(job.id);
-                            }}
+                            onClick={() => cancelJob(job.id)}
                           >
                             <lucide_react_1.XCircle className="w-4 h-4" />
                           </button_1.Button>
@@ -878,9 +854,7 @@ function BackgroundJobsMonitor() {
                           <button_1.Button
                             variant="ghost"
                             size="sm"
-                            onClick={function () {
-                              return deleteJob(job.id);
-                            }}
+                            onClick={() => deleteJob(job.id)}
                           >
                             <lucide_react_1.Trash2 className="w-4 h-4" />
                           </button_1.Button>

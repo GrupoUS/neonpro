@@ -5,12 +5,12 @@
  * Tests UI functionality, data visualization, and user interactions
  */
 
-import React from "react";
-import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import ForecastingDashboard from "@/src/components/dashboard/forecasting/forecasting-dashboard";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import type React from "react";
 import { toast } from "sonner";
+import ForecastingDashboard from "@/src/components/dashboard/forecasting/forecasting-dashboard";
 
 // Mock the toast notifications
 jest.mock("sonner", () => ({
@@ -43,7 +43,7 @@ jest.mock("recharts", () => ({
 
 // Mock date-fns
 jest.mock("date-fns", () => ({
-  format: jest.fn((date, formatString) => {
+  format: jest.fn((_date, formatString) => {
     if (formatString === "MMM dd") return "Feb 15";
     if (formatString === "MMM dd, yyyy") return "Feb 15, 2024";
     if (formatString === "yyyy-MM-dd") return "2024-02-15";

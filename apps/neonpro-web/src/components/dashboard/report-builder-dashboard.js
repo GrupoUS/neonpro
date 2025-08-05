@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportBuilderDashboard = ReportBuilderDashboard;
 var lucide_react_1 = require("lucide-react");
@@ -94,7 +93,7 @@ function ReportBuilderDashboard() {
       usage_count: 43,
     },
   ];
-  var getVisualizationIcon = function (type) {
+  var getVisualizationIcon = (type) => {
     switch (type) {
       case "chart":
         return lucide_react_1.LineChart;
@@ -108,7 +107,7 @@ function ReportBuilderDashboard() {
         return lucide_react_1.BarChart3;
     }
   };
-  var getCategoryIcon = function (category) {
+  var getCategoryIcon = (category) => {
     switch (category) {
       case "financial":
         return lucide_react_1.DollarSign;
@@ -122,7 +121,7 @@ function ReportBuilderDashboard() {
         return lucide_react_1.BarChart3;
     }
   };
-  var getCategoryColor = function (category) {
+  var getCategoryColor = (category) => {
     switch (category) {
       case "financial":
         return "bg-green-100 text-green-800";
@@ -136,13 +135,12 @@ function ReportBuilderDashboard() {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var filteredReports = reports.filter(function (report) {
-    return (
+  var filteredReports = reports.filter(
+    (report) =>
       report.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (report.description && report.description.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-  });
-  var filteredTemplates = templates.filter(function (template) {
+      (report.description && report.description.toLowerCase().includes(searchQuery.toLowerCase())),
+  );
+  var filteredTemplates = templates.filter((template) => {
     var matchesSearch =
       template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (template.description &&
@@ -160,9 +158,7 @@ function ReportBuilderDashboard() {
             <input_1.Input
               placeholder="Buscar relatórios..."
               value={searchQuery}
-              onChange={function (e) {
-                return setSearchQuery(e.target.value);
-              }}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -226,7 +222,7 @@ function ReportBuilderDashboard() {
 
         <tabs_1.TabsContent value="reports" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredReports.map(function (report) {
+            {filteredReports.map((report) => {
               var IconComponent = getVisualizationIcon(report.visualization_type);
               return (
                 <card_1.Card
@@ -330,7 +326,7 @@ function ReportBuilderDashboard() {
 
         <tabs_1.TabsContent value="templates" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredTemplates.map(function (template) {
+            {filteredTemplates.map((template) => {
               var IconComponent = getVisualizationIcon(template.visualization_type);
               var CategoryIcon = getCategoryIcon(template.category);
               return (

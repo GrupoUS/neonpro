@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Patient-Appointment Integration System
  * Integrates patient profiles with appointment scheduling
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,12 +147,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientAppointmentIntegration = void 0;
 var client_1 = require("@/lib/supabase/client");
 var logger_1 = require("@/lib/logger");
-var PatientAppointmentIntegration = /** @class */ (function () {
+var PatientAppointmentIntegration = /** @class */ (() => {
   function PatientAppointmentIntegration() {}
   /**
    * Get comprehensive appointment history for a patient
@@ -193,30 +190,20 @@ var PatientAppointmentIntegration = /** @class */ (function () {
             completed =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (apt) {
-                    return apt.status === "completed";
-                  })) || [];
+                : appointments.filter((apt) => apt.status === "completed")) || [];
             cancelled =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (apt) {
-                    return apt.status === "cancelled";
-                  })) || [];
+                : appointments.filter((apt) => apt.status === "cancelled")) || [];
             noShows =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (apt) {
-                    return apt.status === "no_show";
-                  })) || [];
+                : appointments.filter((apt) => apt.status === "no_show")) || [];
             timePreferences = this.calculateTimePreferences(completed);
             servicePreferences = this.calculateServicePreferences(completed);
             ratingsSum = completed
-              .filter(function (apt) {
-                return apt.rating;
-              })
-              .reduce(function (sum, apt) {
-                return sum + (apt.rating || 0);
-              }, 0);
+              .filter((apt) => apt.rating)
+              .reduce((sum, apt) => sum + (apt.rating || 0), 0);
             averageRating = completed.length > 0 ? ratingsSum / completed.length : 0;
             return [
               4 /*yield*/,
@@ -381,21 +368,20 @@ var PatientAppointmentIntegration = /** @class */ (function () {
    * Calculate time preferences based on appointment history
    */
   PatientAppointmentIntegration.calculateTimePreferences = function (appointments) {
-    var _this = this;
     var timeSlots = {};
-    appointments.forEach(function (apt) {
+    appointments.forEach((apt) => {
       var hour = new Date(apt.appointment_date).getHours();
-      var timeSlot = _this.getTimeSlot(hour);
+      var timeSlot = this.getTimeSlot(hour);
       timeSlots[timeSlot] = (timeSlots[timeSlot] || 0) + 1;
     });
     return Object.entries(timeSlots)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
       .slice(0, 3)
-      .map(function (_a) {
+      .map((_a) => {
         var slot = _a[0];
         return slot;
       });
@@ -403,21 +389,21 @@ var PatientAppointmentIntegration = /** @class */ (function () {
   /**
    * Calculate service preferences based on appointment history
    */
-  PatientAppointmentIntegration.calculateServicePreferences = function (appointments) {
+  PatientAppointmentIntegration.calculateServicePreferences = (appointments) => {
     var services = {};
-    appointments.forEach(function (apt) {
+    appointments.forEach((apt) => {
       if (apt.service_type) {
         services[apt.service_type] = (services[apt.service_type] || 0) + 1;
       }
     });
     return Object.entries(services)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
       .slice(0, 5)
-      .map(function (_a) {
+      .map((_a) => {
         var service = _a[0];
         return service;
       });
@@ -428,7 +414,7 @@ var PatientAppointmentIntegration = /** @class */ (function () {
   PatientAppointmentIntegration.calculatePunctualityScore = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, checkIns, error, punctualAppointments, error_4;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -444,7 +430,7 @@ var PatientAppointmentIntegration = /** @class */ (function () {
             (_a = _b.sent()), (checkIns = _a.data), (error = _a.error);
             if (error || !(checkIns === null || checkIns === void 0 ? void 0 : checkIns.length))
               return [2 /*return*/, 75]; // Default score
-            punctualAppointments = checkIns.filter(function (checkIn) {
+            punctualAppointments = checkIns.filter((checkIn) => {
               var scheduledTime = new Date(checkIn.scheduled_time);
               var checkInTime = new Date(checkIn.check_in_time);
               var diffMinutes = (checkInTime.getTime() - scheduledTime.getTime()) / (1000 * 60);
@@ -472,16 +458,12 @@ var PatientAppointmentIntegration = /** @class */ (function () {
       averageRating: (history.average_rating / 5) * 20,
       consistency: this.calculateConsistency(history) * 10,
     };
-    return Math.round(
-      Object.values(factors).reduce(function (sum, factor) {
-        return sum + factor;
-      }, 0),
-    );
+    return Math.round(Object.values(factors).reduce((sum, factor) => sum + factor, 0));
   };
   /**
    * Calculate appointment consistency
    */
-  PatientAppointmentIntegration.calculateConsistency = function (history) {
+  PatientAppointmentIntegration.calculateConsistency = (history) => {
     if (history.appointments.length < 2) return 0;
     // Calculate average time between appointments
     var intervals = [];
@@ -492,20 +474,16 @@ var PatientAppointmentIntegration = /** @class */ (function () {
       intervals.push(daysDiff);
     }
     // Calculate consistency (lower variance = higher consistency)
-    var avgInterval =
-      intervals.reduce(function (sum, interval) {
-        return sum + interval;
-      }, 0) / intervals.length;
+    var avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
     var variance =
-      intervals.reduce(function (sum, interval) {
-        return sum + Math.pow(interval - avgInterval, 2);
-      }, 0) / intervals.length;
+      intervals.reduce((sum, interval) => sum + (interval - avgInterval) ** 2, 0) /
+      intervals.length;
     return Math.max(0, 1 - variance / (avgInterval * avgInterval));
   };
   /**
    * Identify risk factors based on appointment history
    */
-  PatientAppointmentIntegration.identifyRiskFactors = function (history, attendanceRate) {
+  PatientAppointmentIntegration.identifyRiskFactors = (history, attendanceRate) => {
     var risks = [];
     if (attendanceRate < 70) {
       risks.push("Low attendance rate");
@@ -530,11 +508,11 @@ var PatientAppointmentIntegration = /** @class */ (function () {
   /**
    * Generate recommendations based on patient data
    */
-  PatientAppointmentIntegration.generateRecommendations = function (
+  PatientAppointmentIntegration.generateRecommendations = (
     history,
     attendanceRate,
     satisfactionScore,
-  ) {
+  ) => {
     var recommendations = [];
     if (attendanceRate < 80) {
       recommendations.push("Send appointment reminders 24h and 2h before");
@@ -560,7 +538,7 @@ var PatientAppointmentIntegration = /** @class */ (function () {
   /**
    * Get time slot category from hour
    */
-  PatientAppointmentIntegration.getTimeSlot = function (hour) {
+  PatientAppointmentIntegration.getTimeSlot = (hour) => {
     if (hour >= 8 && hour < 12) return "Morning (8-12)";
     if (hour >= 12 && hour < 17) return "Afternoon (12-17)";
     if (hour >= 17 && hour < 20) return "Evening (17-20)";

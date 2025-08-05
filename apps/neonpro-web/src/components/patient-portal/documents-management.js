@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentsManagement = DocumentsManagement;
 var react_1 = require("react");
@@ -204,7 +201,6 @@ var statusLabels = {
   error: "Erro",
 };
 function DocumentsManagement() {
-  var _this = this;
   var _a = (0, react_1.useState)(mockDocuments),
     documents = _a[0],
     setDocuments = _a[1];
@@ -224,13 +220,13 @@ function DocumentsManagement() {
     lgpdConsent = _f[0],
     setLgpdConsent = _f[1];
   var fileInputRef = (0, react_1.useRef)(null);
-  var filteredDocuments = documents.filter(function (doc) {
-    return selectedType === "all" || doc.type === selectedType;
-  });
-  var handleFileUpload = function (event) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var filteredDocuments = documents.filter(
+    (doc) => selectedType === "all" || doc.type === selectedType,
+  );
+  var handleFileUpload = (event) =>
+    __awaiter(this, void 0, void 0, function () {
       var files, progressInterval;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         files = event.target.files;
         if (!files || files.length === 0) return [2 /*return*/];
         if (!lgpdConsent) {
@@ -239,8 +235,8 @@ function DocumentsManagement() {
         }
         setIsUploading(true);
         setUploadProgress(0);
-        progressInterval = setInterval(function () {
-          setUploadProgress(function (prev) {
+        progressInterval = setInterval(() => {
+          setUploadProgress((prev) => {
             if (prev >= 100) {
               clearInterval(progressInterval);
               setIsUploading(false);
@@ -256,9 +252,7 @@ function DocumentsManagement() {
                 isConfidential: true,
                 lgpdConsent: true,
               };
-              setDocuments(function (prev) {
-                return __spreadArray([newDoc_1], prev, true);
-              });
+              setDocuments((prev) => __spreadArray([newDoc_1], prev, true));
               return 100;
             }
             return prev + 10;
@@ -267,19 +261,14 @@ function DocumentsManagement() {
         return [2 /*return*/];
       });
     });
-  };
-  var handleDownload = function (doc) {
+  var handleDownload = (doc) => {
     // Simulate document download
     console.log("Downloading ".concat(doc.name));
   };
-  var handleDelete = function (docId) {
-    setDocuments(function (prev) {
-      return prev.filter(function (doc) {
-        return doc.id !== docId;
-      });
-    });
+  var handleDelete = (docId) => {
+    setDocuments((prev) => prev.filter((doc) => doc.id !== docId));
   };
-  var getDocumentIcon = function (type) {
+  var getDocumentIcon = (type) => {
     switch (type) {
       case "exam":
       case "report":
@@ -292,7 +281,7 @@ function DocumentsManagement() {
         return lucide_react_1.FileText;
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "processed":
         return "bg-green-100 text-green-800 border-green-200";
@@ -331,9 +320,7 @@ function DocumentsManagement() {
               <checkbox_1.Checkbox
                 id="consent"
                 checked={lgpdConsent}
-                onCheckedChange={function (checked) {
-                  return setLgpdConsent(checked);
-                }}
+                onCheckedChange={(checked) => setLgpdConsent(checked)}
               />
               <label_1.Label htmlFor="consent" className="text-sm">
                 Consinto com o processamento dos meus dados médicos para fins de tratamento e
@@ -342,7 +329,7 @@ function DocumentsManagement() {
             </div>
             <div className="flex gap-2">
               <button_1.Button
-                onClick={function () {
+                onClick={() => {
                   var _a;
                   setShowLgpdDialog(false);
                   if (
@@ -359,9 +346,7 @@ function DocumentsManagement() {
               </button_1.Button>
               <button_1.Button
                 variant="outline"
-                onClick={function () {
-                  return setShowLgpdDialog(false);
-                }}
+                onClick={() => setShowLgpdDialog(false)}
                 className="flex-1"
               >
                 Cancelar
@@ -392,7 +377,7 @@ function DocumentsManagement() {
             </select_1.SelectContent>
           </select_1.Select>
           <button_1.Button
-            onClick={function () {
+            onClick={() => {
               var _a;
               return (_a = fileInputRef.current) === null || _a === void 0 ? void 0 : _a.click();
             }}
@@ -455,7 +440,7 @@ function DocumentsManagement() {
                       : "Nenhum documento encontrado para este filtro"}
                   </p>
                 </div>
-              : filteredDocuments.map(function (doc, index) {
+              : filteredDocuments.map((doc, index) => {
                   var IconComponent = getDocumentIcon(doc.type);
                   return (
                     <div key={doc.id}>
@@ -486,9 +471,7 @@ function DocumentsManagement() {
                             <button_1.Button
                               size="sm"
                               variant="ghost"
-                              onClick={function () {
-                                return handleDownload(doc);
-                              }}
+                              onClick={() => handleDownload(doc)}
                               disabled={doc.status !== "processed"}
                             >
                               <lucide_react_1.Eye className="h-4 w-4" />
@@ -496,9 +479,7 @@ function DocumentsManagement() {
                             <button_1.Button
                               size="sm"
                               variant="ghost"
-                              onClick={function () {
-                                return handleDownload(doc);
-                              }}
+                              onClick={() => handleDownload(doc)}
                               disabled={doc.status !== "processed"}
                             >
                               <lucide_react_1.Download className="h-4 w-4" />
@@ -506,9 +487,7 @@ function DocumentsManagement() {
                             <button_1.Button
                               size="sm"
                               variant="ghost"
-                              onClick={function () {
-                                return handleDelete(doc.id);
-                              }}
+                              onClick={() => handleDelete(doc.id)}
                               className="text-red-600 hover:text-red-700"
                             >
                               <lucide_react_1.X className="h-4 w-4" />

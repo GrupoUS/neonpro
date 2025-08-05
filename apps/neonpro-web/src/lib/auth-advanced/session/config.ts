@@ -4,11 +4,11 @@
 // ============================================================================
 
 import type {
+  AuditConfig,
+  DeviceConfig,
+  SecurityConfig,
   SessionConfig,
   SessionPolicy,
-  SecurityConfig,
-  DeviceConfig,
-  AuditConfig,
 } from "./types";
 
 // ============================================================================

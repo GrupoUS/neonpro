@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Security Event Logger - Advanced Security Monitoring and Threat Detection
  *
@@ -11,15 +10,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,13 +38,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -67,9 +66,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -141,7 +138,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityEventLogger = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -156,7 +153,7 @@ var utils_1 = require("./utils");
  * - Automated response triggers
  * - Security reporting and analytics
  */
-var SecurityEventLogger = /** @class */ (function () {
+var SecurityEventLogger = /** @class */ (() => {
   function SecurityEventLogger(config) {
     this.patternCache = new Map();
     this.riskScores = new Map();
@@ -451,9 +448,7 @@ var SecurityEventLogger = /** @class */ (function () {
                   },
                 ];
               }
-              events = (data || []).map(function (row) {
-                return _this.convertToSecurityEvent(row);
-              });
+              events = (data || []).map((row) => _this.convertToSecurityEvent(row));
               return [
                 2 /*return*/,
                 {
@@ -606,17 +601,13 @@ var SecurityEventLogger = /** @class */ (function () {
             if (error) {
               throw new Error("Failed to fetch events for report: ".concat(error.message));
             }
-            securityEvents = (events || []).map(function (row) {
-              return _this.convertToSecurityEvent(row);
-            });
+            securityEvents = (events || []).map((row) => _this.convertToSecurityEvent(row));
             totalEvents = securityEvents.length;
             eventsBySeverity = this.groupEventsBySeverity(securityEvents);
             eventsByType = this.groupEventsByType(securityEvents);
             threatLevelDistribution = this.getThreatLevelDistribution(securityEvents);
             topThreats = this.getTopThreats(securityEvents);
-            resolvedEvents = securityEvents.filter(function (e) {
-              return e.resolved;
-            }).length;
+            resolvedEvents = securityEvents.filter((e) => e.resolved).length;
             unresolvedEvents = totalEvents - resolvedEvents;
             averageRiskScore = this.calculateAverageRiskScore(securityEvents);
             trends = this.identifySecurityTrends(securityEvents);
@@ -902,7 +893,7 @@ var SecurityEventLogger = /** @class */ (function () {
       });
     });
   };
-  SecurityEventLogger.prototype.determineThreatLevel = function (riskScore, severity) {
+  SecurityEventLogger.prototype.determineThreatLevel = (riskScore, severity) => {
     if (severity === "critical" || riskScore >= 15) return "critical";
     if (severity === "high" || riskScore >= 10) return "high";
     if (severity === "medium" || riskScore >= 5) return "medium";
@@ -950,7 +941,7 @@ var SecurityEventLogger = /** @class */ (function () {
           this.riskScores.set(userId, currentScore + increment);
           // Decay risk scores over time (simple implementation)
           setTimeout(
-            function () {
+            () => {
               var score = _this.riskScores.get(userId) || 0;
               _this.riskScores.set(userId, Math.max(0, score - 1));
             },
@@ -963,12 +954,10 @@ var SecurityEventLogger = /** @class */ (function () {
       });
     });
   };
-  SecurityEventLogger.prototype.detectPatterns = function (events) {
+  SecurityEventLogger.prototype.detectPatterns = (events) => {
     var patterns = [];
     // Detect repeated failed logins
-    var failedLogins = events.filter(function (e) {
-      return e.type === "login_failed";
-    });
+    var failedLogins = events.filter((e) => e.type === "login_failed");
     if (failedLogins.length >= 3) {
       patterns.push({
         type: "repeated_failed_logins",
@@ -980,9 +969,7 @@ var SecurityEventLogger = /** @class */ (function () {
       });
     }
     // Detect suspicious device registrations
-    var deviceRegistrations = events.filter(function (e) {
-      return e.type === "device_registered";
-    });
+    var deviceRegistrations = events.filter((e) => e.type === "device_registered");
     if (deviceRegistrations.length >= 3) {
       patterns.push({
         type: "multiple_device_registrations",
@@ -995,10 +982,10 @@ var SecurityEventLogger = /** @class */ (function () {
     }
     return patterns;
   };
-  SecurityEventLogger.prototype.detectAnomalies = function (events) {
+  SecurityEventLogger.prototype.detectAnomalies = (events) => {
     var anomalies = [];
     // Detect unusual time patterns
-    var offHoursEvents = events.filter(function (e) {
+    var offHoursEvents = events.filter((e) => {
       var hour = new Date(e.created_at).getHours();
       return hour < 6 || hour > 22; // Outside 6 AM - 10 PM
     });
@@ -1014,16 +1001,14 @@ var SecurityEventLogger = /** @class */ (function () {
   SecurityEventLogger.prototype.assessUserRisk = function (userId, events) {
     var riskFactors = [];
     var totalEvents = events.length;
-    var highSeverityEvents = events.filter(function (e) {
-      return e.severity === "high" || e.severity === "critical";
-    });
+    var highSeverityEvents = events.filter(
+      (e) => e.severity === "high" || e.severity === "critical",
+    );
     var highSeverityRatio = totalEvents > 0 ? highSeverityEvents.length / totalEvents : 0;
     if (highSeverityRatio > 0.2) {
       riskFactors.push("High percentage of severe security events");
     }
-    var failedLogins = events.filter(function (e) {
-      return e.type === "login_failed";
-    });
+    var failedLogins = events.filter((e) => e.type === "login_failed");
     if (failedLogins.length > 5) {
       riskFactors.push("Excessive failed login attempts");
     }
@@ -1067,51 +1052,41 @@ var SecurityEventLogger = /** @class */ (function () {
       });
     });
   };
-  SecurityEventLogger.prototype.groupEventsBySeverity = function (events) {
-    return events.reduce(function (acc, event) {
+  SecurityEventLogger.prototype.groupEventsBySeverity = (events) =>
+    events.reduce((acc, event) => {
       acc[event.severity] = (acc[event.severity] || 0) + 1;
       return acc;
     }, {});
-  };
-  SecurityEventLogger.prototype.groupEventsByType = function (events) {
-    return events.reduce(function (acc, event) {
+  SecurityEventLogger.prototype.groupEventsByType = (events) =>
+    events.reduce((acc, event) => {
       acc[event.type] = (acc[event.type] || 0) + 1;
       return acc;
     }, {});
-  };
-  SecurityEventLogger.prototype.getThreatLevelDistribution = function (events) {
-    return events.reduce(function (acc, event) {
+  SecurityEventLogger.prototype.getThreatLevelDistribution = (events) =>
+    events.reduce((acc, event) => {
       acc[event.threatLevel] = (acc[event.threatLevel] || 0) + 1;
       return acc;
     }, {});
-  };
   SecurityEventLogger.prototype.getTopThreats = function (events) {
-    var _this = this;
     var threatCounts = this.groupEventsByType(events);
     return Object.entries(threatCounts)
-      .map(function (_a) {
+      .map((_a) => {
         var type = _a[0],
           count = _a[1];
         return {
           type: type,
           count: count,
-          severity: _this.getMostCommonSeverity(
-            events.filter(function (e) {
-              return e.type === type;
-            }),
-          ),
+          severity: this.getMostCommonSeverity(events.filter((e) => e.type === type)),
         };
       })
-      .sort(function (a, b) {
-        return b.count - a.count;
-      })
+      .sort((a, b) => b.count - a.count)
       .slice(0, 5);
   };
   SecurityEventLogger.prototype.getMostCommonSeverity = function (events) {
     var _a;
     var severityCounts = this.groupEventsBySeverity(events);
     return (
-      ((_a = Object.entries(severityCounts).sort(function (_a, _b) {
+      ((_a = Object.entries(severityCounts).sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
@@ -1120,21 +1095,15 @@ var SecurityEventLogger = /** @class */ (function () {
         : _a[0]) || "low"
     );
   };
-  SecurityEventLogger.prototype.calculateAverageRiskScore = function (events) {
+  SecurityEventLogger.prototype.calculateAverageRiskScore = (events) => {
     if (events.length === 0) return 0;
-    var total = events.reduce(function (sum, event) {
-      return sum + event.riskScore;
-    }, 0);
+    var total = events.reduce((sum, event) => sum + event.riskScore, 0);
     return Math.round((total / events.length) * 10) / 10;
   };
-  SecurityEventLogger.prototype.getHighestThreatLevel = function (events) {
+  SecurityEventLogger.prototype.getHighestThreatLevel = (events) => {
     var levels = ["low", "medium", "high", "critical"];
-    var _loop_1 = function (i) {
-      if (
-        events.some(function (e) {
-          return e.threatLevel === levels[i];
-        })
-      ) {
+    var _loop_1 = (i) => {
+      if (events.some((e) => e.threatLevel === levels[i])) {
         return { value: levels[i] };
       }
     };
@@ -1144,15 +1113,15 @@ var SecurityEventLogger = /** @class */ (function () {
     }
     return "low";
   };
-  SecurityEventLogger.prototype.identifySecurityTrends = function (events) {
+  SecurityEventLogger.prototype.identifySecurityTrends = (events) => {
     // Simple trend analysis - could be enhanced with more sophisticated algorithms
     var trends = [];
-    var recentEvents = events.filter(function (e) {
+    var recentEvents = events.filter((e) => {
       var eventDate = new Date(e.createdAt);
       var daysDiff = (Date.now() - eventDate.getTime()) / (1000 * 60 * 60 * 24);
       return daysDiff <= 7;
     });
-    var olderEvents = events.filter(function (e) {
+    var olderEvents = events.filter((e) => {
       var eventDate = new Date(e.createdAt);
       var daysDiff = (Date.now() - eventDate.getTime()) / (1000 * 60 * 60 * 24);
       return daysDiff > 7 && daysDiff <= 14;
@@ -1174,25 +1143,19 @@ var SecurityEventLogger = /** @class */ (function () {
     }
     return trends;
   };
-  SecurityEventLogger.prototype.generateSecurityRecommendations = function (events, trends) {
+  SecurityEventLogger.prototype.generateSecurityRecommendations = (events, trends) => {
     var recommendations = [];
-    var failedLogins = events.filter(function (e) {
-      return e.type === "login_failed";
-    }).length;
+    var failedLogins = events.filter((e) => e.type === "login_failed").length;
     if (failedLogins > 10) {
       recommendations.push("Consider implementing additional authentication factors");
       recommendations.push("Review and strengthen password policies");
     }
-    var suspiciousActivity = events.filter(function (e) {
-      return e.type === "suspicious_activity";
-    }).length;
+    var suspiciousActivity = events.filter((e) => e.type === "suspicious_activity").length;
     if (suspiciousActivity > 5) {
       recommendations.push("Enhance device fingerprinting and detection");
       recommendations.push("Implement stricter device trust policies");
     }
-    var increasingTrend = trends.find(function (t) {
-      return t.type === "increasing_activity";
-    });
+    var increasingTrend = trends.find((t) => t.type === "increasing_activity");
     if (increasingTrend) {
       recommendations.push("Monitor security events more closely due to increasing activity");
       recommendations.push("Consider implementing automated response mechanisms");
@@ -1202,25 +1165,23 @@ var SecurityEventLogger = /** @class */ (function () {
     }
     return recommendations;
   };
-  SecurityEventLogger.prototype.convertToSecurityEvent = function (row) {
-    return {
-      id: row.id,
-      type: row.type,
-      severity: row.severity,
-      userId: row.user_id,
-      deviceId: row.device_id,
-      ipAddress: row.ip_address,
-      userAgent: row.user_agent,
-      details: row.details ? JSON.parse(row.details) : undefined,
-      riskScore: row.risk_score,
-      threatLevel: row.threat_level,
-      resolved: row.resolved,
-      resolution: row.resolution,
-      resolvedBy: row.resolved_by,
-      resolvedAt: row.resolved_at,
-      createdAt: row.created_at,
-    };
-  };
+  SecurityEventLogger.prototype.convertToSecurityEvent = (row) => ({
+    id: row.id,
+    type: row.type,
+    severity: row.severity,
+    userId: row.user_id,
+    deviceId: row.device_id,
+    ipAddress: row.ip_address,
+    userAgent: row.user_agent,
+    details: row.details ? JSON.parse(row.details) : undefined,
+    riskScore: row.risk_score,
+    threatLevel: row.threat_level,
+    resolved: row.resolved,
+    resolution: row.resolution,
+    resolvedBy: row.resolved_by,
+    resolvedAt: row.resolved_at,
+    createdAt: row.created_at,
+  });
   return SecurityEventLogger;
 })();
 exports.SecurityEventLogger = SecurityEventLogger;

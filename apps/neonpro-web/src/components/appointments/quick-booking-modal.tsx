@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { AlertTriangle, CalendarDays, Clock, MessageCircle, Phone, User } from "lucide-react";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import * as z from "zod";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Dialog,
   DialogContent,
@@ -18,6 +25,7 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
 import type {
   Select,
   SelectContent,
@@ -25,16 +33,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Input } from "@/components/ui/input";
-import type { Button } from "@/components/ui/button";
-import type { Textarea } from "@/components/ui/textarea";
 import type { Switch } from "@/components/ui/switch";
-import type { Badge } from "@/components/ui/badge";
-import type { CalendarDays, Clock, User, Phone, MessageCircle, AlertTriangle } from "lucide-react";
-import type { useForm } from "react-hook-form";
-import type { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import moment from "moment";
+import type { Textarea } from "@/components/ui/textarea";
 import "moment/locale/pt-br";
 import type { AppointmentEvent, Professional } from "@/app/appointments/page";
 import type { cn } from "@/lib/utils";

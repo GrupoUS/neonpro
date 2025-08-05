@@ -1,4 +1,3 @@
-"use strict";
 /**
  * OAuth Error Handling System
  *
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,7 +156,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authErrorHandler = exports.AuthErrorSeverity = exports.AuthErrorType = void 0;
 exports.handleAuthError = handleAuthError;
@@ -168,7 +165,7 @@ exports.withRetry = withRetry;
 var sonner_1 = require("sonner");
 // Error types and categories
 var AuthErrorType;
-(function (AuthErrorType) {
+((AuthErrorType) => {
   AuthErrorType["OAUTH_PROVIDER"] = "oauth_provider";
   AuthErrorType["NETWORK"] = "network";
   AuthErrorType["SESSION"] = "session";
@@ -179,7 +176,7 @@ var AuthErrorType;
   AuthErrorType["UNKNOWN"] = "unknown";
 })(AuthErrorType || (exports.AuthErrorType = AuthErrorType = {}));
 var AuthErrorSeverity;
-(function (AuthErrorSeverity) {
+((AuthErrorSeverity) => {
   AuthErrorSeverity["LOW"] = "low";
   AuthErrorSeverity["MEDIUM"] = "medium";
   AuthErrorSeverity["HIGH"] = "high";
@@ -276,7 +273,7 @@ var RETRY_CONFIG = {
   MAX_DELAY: 10000, // 10 seconds
   BACKOFF_FACTOR: 2,
 };
-var AuthErrorHandler = /** @class */ (function () {
+var AuthErrorHandler = /** @class */ (() => {
   function AuthErrorHandler() {
     this.errorLog = [];
   }
@@ -373,7 +370,6 @@ var AuthErrorHandler = /** @class */ (function () {
    * Display user-friendly error message
    */
   AuthErrorHandler.prototype.displayError = function (error) {
-    var _this = this;
     var errorConfig = ERROR_MESSAGES[error.code] || ERROR_MESSAGES["unknown_error"];
     // Choose appropriate toast type based on severity
     var toastOptions = {
@@ -381,9 +377,7 @@ var AuthErrorHandler = /** @class */ (function () {
       action: error.actionable
         ? {
             label: "Como resolver",
-            onClick: function () {
-              return _this.showErrorDetails(error);
-            },
+            onClick: () => this.showErrorDetails(error),
           }
         : undefined,
     };
@@ -403,7 +397,7 @@ var AuthErrorHandler = /** @class */ (function () {
   /**
    * Show detailed error information
    */
-  AuthErrorHandler.prototype.showErrorDetails = function (error) {
+  AuthErrorHandler.prototype.showErrorDetails = (error) => {
     var errorConfig = ERROR_MESSAGES[error.code] || ERROR_MESSAGES["unknown_error"];
     sonner_1.toast.info(errorConfig.action || "Entre em contato com o suporte", {
       duration: 8000,
@@ -423,13 +417,13 @@ var AuthErrorHandler = /** @class */ (function () {
           case 0:
             _loop_1 = function (attempt) {
               var delay_1, _b, error_1, authError;
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
                     _c.trys.push([0, 4, , 5]);
                     if (!(attempt > 0)) return [3 /*break*/, 2];
                     delay_1 = Math.min(
-                      RETRY_CONFIG.BASE_DELAY * Math.pow(RETRY_CONFIG.BACKOFF_FACTOR, attempt - 1),
+                      RETRY_CONFIG.BASE_DELAY * RETRY_CONFIG.BACKOFF_FACTOR ** (attempt - 1),
                       RETRY_CONFIG.MAX_DELAY,
                     );
                     sonner_1.toast.info(
@@ -438,12 +432,7 @@ var AuthErrorHandler = /** @class */ (function () {
                         duration: delay_1,
                       },
                     );
-                    return [
-                      4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, delay_1);
-                      }),
-                    ];
+                    return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, delay_1))];
                   case 1:
                     _c.sent();
                     _c.label = 2;
@@ -531,7 +520,7 @@ var AuthErrorHandler = /** @class */ (function () {
   /**
    * Get fallback authentication options
    */
-  AuthErrorHandler.prototype.getFallbackOptions = function (error) {
+  AuthErrorHandler.prototype.getFallbackOptions = (error) => {
     var fallbacks = [];
     if (error.type === AuthErrorType.OAUTH_PROVIDER) {
       fallbacks.push("email_password");
@@ -546,7 +535,7 @@ var AuthErrorHandler = /** @class */ (function () {
    */
   AuthErrorHandler.prototype.getErrorStats = function () {
     var stats = {};
-    this.errorLog.forEach(function (error) {
+    this.errorLog.forEach((error) => {
       var key = "".concat(error.type, "_").concat(error.code);
       stats[key] = (stats[key] || 0) + 1;
     });
@@ -574,7 +563,7 @@ var AuthErrorHandler = /** @class */ (function () {
       this.sendToMonitoring(error);
     }
   };
-  AuthErrorHandler.prototype.determineSeverity = function (type, code) {
+  AuthErrorHandler.prototype.determineSeverity = (type, code) => {
     // Critical errors
     if (type === AuthErrorType.SERVER || code.includes("critical")) {
       return AuthErrorSeverity.CRITICAL;
@@ -589,14 +578,13 @@ var AuthErrorHandler = /** @class */ (function () {
     }
     return AuthErrorSeverity.LOW;
   };
-  AuthErrorHandler.prototype.isRetryable = function (type, code) {
+  AuthErrorHandler.prototype.isRetryable = (type, code) => {
     var nonRetryable = ["oauth_cancelled", "permission_denied", "role_required"];
     return !nonRetryable.includes(code) && type !== AuthErrorType.PERMISSION;
   };
-  AuthErrorHandler.prototype.hasFallback = function (type, code) {
-    return type === AuthErrorType.OAUTH_PROVIDER || type === AuthErrorType.NETWORK;
-  };
-  AuthErrorHandler.prototype.getToastDuration = function (severity) {
+  AuthErrorHandler.prototype.hasFallback = (type, code) =>
+    type === AuthErrorType.OAUTH_PROVIDER || type === AuthErrorType.NETWORK;
+  AuthErrorHandler.prototype.getToastDuration = (severity) => {
     switch (severity) {
       case AuthErrorSeverity.LOW:
         return 3000;
@@ -612,7 +600,7 @@ var AuthErrorHandler = /** @class */ (function () {
   };
   AuthErrorHandler.prototype.sendToMonitoring = function (error) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Send to monitoring service (implement based on your monitoring setup)
           // Example: Sentry, LogRocket, DataDog, etc.

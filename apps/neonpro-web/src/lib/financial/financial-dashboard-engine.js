@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Financial Dashboard Engine - Real-time Analytics Hub
  * Story 4.2: Financial Analytics & Business Intelligence
@@ -14,15 +13,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -42,13 +41,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,9 +69,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -144,14 +141,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialDashboardEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
 var cash_flow_engine_1 = require("./cash-flow-engine");
 var automated_alerts_engine_1 = require("./automated-alerts-engine");
 var predictive_analytics_engine_1 = require("./predictive-analytics-engine");
-var FinancialDashboardEngine = /** @class */ (function () {
+var FinancialDashboardEngine = /** @class */ (() => {
   function FinancialDashboardEngine() {
     this.supabase = (0, client_1.createClient)();
     this.cashFlowEngine = new cash_flow_engine_1.CashFlowEngine();
@@ -242,9 +239,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
               timestamp: new Date().toISOString(),
               cash_flow: cashFlow,
               metrics: metrics,
-              alerts: alerts.filter(function (alert) {
-                return !alert.acknowledged_at;
-              }), // Only unacknowledged alerts
+              alerts: alerts.filter((alert) => !alert.acknowledged_at), // Only unacknowledged alerts
               forecasts: forecasts,
               risk_assessment: riskAssessment,
               performance_indicators: performanceIndicators,
@@ -414,9 +409,9 @@ var FinancialDashboardEngine = /** @class */ (function () {
             ];
           case 4:
             currentCashFlow = _a.sent();
-            revenue30d = revenueForecast.predictions.slice(0, 30).reduce(function (sum, p) {
-              return sum + p.predicted_value;
-            }, 0);
+            revenue30d = revenueForecast.predictions
+              .slice(0, 30)
+              .reduce((sum, p) => sum + p.predicted_value, 0);
             forecasts.push({
               type: "revenue",
               period: "30d",
@@ -431,9 +426,9 @@ var FinancialDashboardEngine = /** @class */ (function () {
                     : "stable",
               change_percentage: ((revenue30d - currentRevenue) / currentRevenue) * 100,
             });
-            cashFlow30d = cashFlowForecast.predictions.slice(0, 30).reduce(function (sum, p) {
-              return sum + p.predicted_value;
-            }, 0);
+            cashFlow30d = cashFlowForecast.predictions
+              .slice(0, 30)
+              .reduce((sum, p) => sum + p.predicted_value, 0);
             forecasts.push({
               type: "cash_flow",
               period: "30d",
@@ -596,7 +591,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
   FinancialDashboardEngine.prototype.generateRecommendations = function (clinicId, analysisData) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations, _i, _a, riskFactor;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         recommendations = [];
         try {
           // Revenue optimization recommendations
@@ -730,7 +725,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
    */
   FinancialDashboardEngine.prototype.getRevenueMetrics = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified implementation
         return [
           2 /*return*/,
@@ -746,7 +741,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
   };
   FinancialDashboardEngine.prototype.getExpenseMetrics = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified implementation
         return [
           2 /*return*/,
@@ -759,10 +754,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
       });
     });
   };
-  FinancialDashboardEngine.prototype.calculateProfitabilityMetrics = function (
-    revenueData,
-    expenseData,
-  ) {
+  FinancialDashboardEngine.prototype.calculateProfitabilityMetrics = (revenueData, expenseData) => {
     var grossProfit = revenueData.total_revenue - expenseData.total_expenses;
     return {
       gross_profit: grossProfit,
@@ -775,7 +767,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
   };
   FinancialDashboardEngine.prototype.calculateEfficiencyMetrics = function (clinicId, revenueData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified implementation
         return [
           2 /*return*/,
@@ -791,7 +783,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
   };
   FinancialDashboardEngine.prototype.calculateActivityMetrics = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified implementation
         return [
           2 /*return*/,
@@ -805,7 +797,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
       });
     });
   };
-  FinancialDashboardEngine.prototype.calculateFinancialHealthScore = function (metrics) {
+  FinancialDashboardEngine.prototype.calculateFinancialHealthScore = (metrics) => {
     // Simplified scoring algorithm
     var score = 50; // Base score
     // Positive factors
@@ -815,14 +807,14 @@ var FinancialDashboardEngine = /** @class */ (function () {
     if (metrics.collection_efficiency > 0.9) score += 10;
     return Math.min(100, Math.max(0, score));
   };
-  FinancialDashboardEngine.prototype.calculateGrowthScore = function (metrics) {
+  FinancialDashboardEngine.prototype.calculateGrowthScore = (metrics) => {
     // Simplified growth scoring
     var score = 50;
     if (metrics.revenue_growth.monthly > 0.1) score += 25;
     if (metrics.revenue_growth.yearly > 0.15) score += 25;
     return Math.min(100, Math.max(0, score));
   };
-  FinancialDashboardEngine.prototype.calculateEfficiencyScore = function (metrics) {
+  FinancialDashboardEngine.prototype.calculateEfficiencyScore = (metrics) => {
     // Simplified efficiency scoring
     var score = 50;
     if (metrics.collection_efficiency > 0.95) score += 20;
@@ -852,7 +844,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
   };
   FinancialDashboardEngine.prototype.getIndustryBenchmarks = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified benchmarks
         return [
           2 /*return*/,
@@ -865,7 +857,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
       });
     });
   };
-  FinancialDashboardEngine.prototype.analyzePerformance = function (scores, metrics) {
+  FinancialDashboardEngine.prototype.analyzePerformance = (scores, metrics) => {
     var strengths = [];
     var improvements = [];
     if (scores.financialHealthScore > 80) strengths.push("Strong financial health");
@@ -874,21 +866,13 @@ var FinancialDashboardEngine = /** @class */ (function () {
     else if (scores.growthScore < 60) improvements.push("Focus on growth strategies");
     return { strengths: strengths, improvements: improvements };
   };
-  FinancialDashboardEngine.prototype.analyzeTrendComponent = function (data, field) {
+  FinancialDashboardEngine.prototype.analyzeTrendComponent = (data, field) => {
     // Simplified trend analysis
-    var values = data.map(function (d) {
-      return d[field] || 0;
-    });
+    var values = data.map((d) => d[field] || 0);
     var recent = values.slice(-7);
     var older = values.slice(-14, -7);
-    var recentAvg =
-      recent.reduce(function (sum, val) {
-        return sum + val;
-      }, 0) / recent.length;
-    var olderAvg =
-      older.reduce(function (sum, val) {
-        return sum + val;
-      }, 0) / older.length;
+    var recentAvg = recent.reduce((sum, val) => sum + val, 0) / recent.length;
+    var olderAvg = older.reduce((sum, val) => sum + val, 0) / older.length;
     var direction = recentAvg > olderAvg ? "up" : recentAvg < olderAvg ? "down" : "stable";
     var strength = Math.abs(recentAvg - olderAvg) / olderAvg;
     return {
@@ -902,7 +886,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
   };
   FinancialDashboardEngine.prototype.analyzePatientVolumeTrend = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified patient volume trend
         return [
           2 /*return*/,
@@ -920,7 +904,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
   };
   FinancialDashboardEngine.prototype.generateComparisons = function (clinicId, metrics) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified comparison data
         return [
           2 /*return*/,
@@ -991,9 +975,7 @@ var FinancialDashboardEngine = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.reduce(function (sum, d) {
-                    return sum + d.total_inflows;
-                  }, 0)) || 0,
+                : data.reduce((sum, d) => sum + d.total_inflows, 0)) || 0,
             ];
         }
       });

@@ -1,8 +1,8 @@
 // RBAC Middleware Tests
 // Story 1.2: Role-Based Permissions Enhancement
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
-import { NextRequest, NextResponse } from "next/server";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { NextRequest } from "next/server";
 
 // Mock the entire middleware to avoid ESM issues
 jest.mock("@/middleware/rbac", () => ({
@@ -120,7 +120,7 @@ describe("RBAC Middleware", () => {
       });
 
       // Mock clinic ID in query params
-      mockRequest.nextUrl!.searchParams.set("clinicId", mockClinicId);
+      mockRequest.nextUrl?.searchParams.set("clinicId", mockClinicId);
 
       const config: RoutePermissionConfig = {
         "/api/users": {
@@ -286,7 +286,7 @@ describe("RBAC Middleware", () => {
       };
 
       // Mock clinic ID in query params
-      mockRequest.nextUrl!.searchParams.set("clinicId", mockClinicId);
+      mockRequest.nextUrl?.searchParams.set("clinicId", mockClinicId);
 
       const response = await rbacMiddleware(mockRequest as NextRequest, config);
 
@@ -330,7 +330,7 @@ describe("RBAC Middleware", () => {
     });
 
     it("should extract clinic ID from query parameters", async () => {
-      mockRequest.nextUrl!.searchParams.set("clinicId", mockClinicId);
+      mockRequest.nextUrl?.searchParams.set("clinicId", mockClinicId);
 
       mockRBACManager.checkPermission.mockResolvedValue({
         granted: true,

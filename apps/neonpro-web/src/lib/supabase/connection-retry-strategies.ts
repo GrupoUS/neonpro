@@ -11,8 +11,8 @@
  * - Emergency escalation protocols
  */
 
-import type { Database } from "@/types/database";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/types/database";
 import type { getConnectionPoolManager } from "./connection-pool-manager";
 
 // Healthcare retry configuration
@@ -371,7 +371,7 @@ class HealthcareConnectionRetryManager {
    */
   private calculateDelay(attempt: number, config: HealthcareRetryConfig): number {
     const exponentialDelay = Math.min(
-      config.baseDelay * Math.pow(config.backoffMultiplier, attempt - 1),
+      config.baseDelay * config.backoffMultiplier ** (attempt - 1),
       config.maxDelay,
     );
 

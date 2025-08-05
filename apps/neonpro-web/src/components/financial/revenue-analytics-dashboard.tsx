@@ -6,7 +6,20 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  Calendar,
+  DollarSign,
+  Download,
+  RefreshCw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,9 +27,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
@@ -25,17 +35,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  Calendar,
-  Target,
-  AlertTriangle,
-  Download,
-  RefreshCw,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { RevenueAnalyticsEngine } from "@/lib/financial/revenue-analytics-engine";
 
 interface ServiceRevenueData {
@@ -133,12 +133,13 @@ export default function RevenueAnalyticsDashboard() {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
           end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case "last_quarter":
+      case "last_quarter": {
         const quarterStart = Math.floor(now.getMonth() / 3) * 3 - 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
           end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
+      }
       case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * RLS Performance Monitoring System
  * Healthcare-compliant monitoring for NeonPro platform
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,11 +133,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RLSPerformanceMonitor = void 0;
 exports.useRLSPerformanceMonitoring = useRLSPerformanceMonitoring;
-var RLSPerformanceMonitor = /** @class */ (function () {
+var RLSPerformanceMonitor = /** @class */ (() => {
   function RLSPerformanceMonitor(supabaseClient) {
     this.supabase = supabaseClient;
   }
@@ -340,18 +337,16 @@ var RLSPerformanceMonitor = /** @class */ (function () {
             return [4 /*yield*/, this.validateOptimization()];
           case 3:
             healthStatus = _a.sent();
-            failedSystems = healthStatus.filter(function (system) {
-              return system.status !== "OPTIMIZED" && system.status !== "VALIDATED";
-            });
+            failedSystems = healthStatus.filter(
+              (system) => system.status !== "OPTIMIZED" && system.status !== "VALIDATED",
+            );
             if (failedSystems.length > 0) {
               alerts.push("WARNING: ".concat(failedSystems.length, " systems not fully optimized"));
             }
             return [4 /*yield*/, this.getCacheStatistics()];
           case 4:
             cacheStats = _a.sent();
-            invalidCache = cacheStats.filter(function (stat) {
-              return !stat.cache_valid;
-            });
+            invalidCache = cacheStats.filter((stat) => !stat.cache_valid);
             if (invalidCache.length > 0) {
               alerts.push("INFO: Cache efficiency may be suboptimal");
             }
@@ -376,18 +371,10 @@ exports.RLSPerformanceMonitor = RLSPerformanceMonitor;
 function useRLSPerformanceMonitoring(supabaseClient) {
   var monitor = new RLSPerformanceMonitor(supabaseClient);
   return {
-    getMetrics: function () {
-      return monitor.getDashboardMetrics();
-    },
-    checkAlerts: function () {
-      return monitor.checkPerformanceAlerts();
-    },
-    clearCache: function () {
-      return monitor.clearCache();
-    },
-    validateOptimization: function () {
-      return monitor.validateOptimization();
-    },
+    getMetrics: () => monitor.getDashboardMetrics(),
+    checkAlerts: () => monitor.checkPerformanceAlerts(),
+    clearCache: () => monitor.clearCache(),
+    validateOptimization: () => monitor.validateOptimization(),
   };
 }
 exports.default = RLSPerformanceMonitor;

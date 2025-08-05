@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 
@@ -69,20 +69,20 @@ const supabasePlugin: FastifyPluginAsync<SupabasePluginOptions> = async (
   });
 
   // Health check for database connectivity
-  fastify.decorate("checkDatabaseHealth", async (): Promise<"healthy" | "unhealthy"> => {
+  fastify.decorate("checkDatabaseHealth", async (): Promise<{ status: string; details?: any }> => {
     try {
       const { data, error } = await serviceClient.from("health_check").select("id").limit(1);
 
       if (error && error.code !== "PGRST116") {
         // PGRST116 = table not found, which is OK
         fastify.log.error("Database health check failed:", error);
-        return "unhealthy";
+        return { status: "unhealthy", details: error };
       }
 
-      return "healthy";
+      return { status: "healthy" };
     } catch (error) {
       fastify.log.error("Database health check error:", error);
-      return "unhealthy";
+      return { status: "unhealthy", details: error };
     }
   });
 

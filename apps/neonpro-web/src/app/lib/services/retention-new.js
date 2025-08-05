@@ -1,17 +1,16 @@
-"use strict";
 // Backend service for Patient Retention Analytics + Predictions
 // Story 7.4: Advanced patient retention analytics with predictive modeling
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,10 +130,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -145,15 +142,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RetentionService = void 0;
 var client_1 = require("@/lib/supabase/client");
-var RetentionService = /** @class */ (function () {
+var RetentionService = /** @class */ (() => {
   function RetentionService() {}
-  RetentionService.getClient = function () {
-    return (0, client_1.createClient)();
-  };
+  RetentionService.getClient = () => (0, client_1.createClient)();
   // Patient Retention Analytics Operations
   /**
    * Get patient retention analytics with filtering and pagination
@@ -180,7 +175,7 @@ var RetentionService = /** @class */ (function () {
         _e,
         data,
         error;
-      return __generator(this, function (_f) {
+      return __generator(this, (_f) => {
         switch (_f.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -262,7 +257,7 @@ var RetentionService = /** @class */ (function () {
   RetentionService.createPatientRetentionAnalytics = function (analyticsData) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -293,7 +288,7 @@ var RetentionService = /** @class */ (function () {
   RetentionService.updatePatientRetentionAnalytics = function (id, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -343,7 +338,7 @@ var RetentionService = /** @class */ (function () {
         _e,
         data,
         error;
-      return __generator(this, function (_f) {
+      return __generator(this, (_f) => {
         switch (_f.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -419,7 +414,7 @@ var RetentionService = /** @class */ (function () {
   RetentionService.createChurnPrediction = function (predictionData) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -462,7 +457,7 @@ var RetentionService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, updates, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -519,7 +514,7 @@ var RetentionService = /** @class */ (function () {
         _e,
         data,
         error;
-      return __generator(this, function (_f) {
+      return __generator(this, (_f) => {
         switch (_f.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -593,7 +588,7 @@ var RetentionService = /** @class */ (function () {
   RetentionService.createRetentionIntervention = function (interventionData) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -626,7 +621,7 @@ var RetentionService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, updates, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -686,7 +681,7 @@ var RetentionService = /** @class */ (function () {
         avgRetentionScore,
         error_1;
       var _a, _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 4, , 5]);
@@ -724,27 +719,23 @@ var RetentionService = /** @class */ (function () {
             avgChurnProbability =
               (churnSummary === null || churnSummary === void 0
                 ? void 0
-                : churnSummary.reduce(function (sum, item) {
-                    return sum + (item.churn_probability || 0);
-                  }, 0)) / totalPatients || 0;
+                : churnSummary.reduce((sum, item) => sum + (item.churn_probability || 0), 0)) /
+                totalPatients || 0;
             avgLifetimeValue =
               (churnSummary === null || churnSummary === void 0
                 ? void 0
-                : churnSummary.reduce(function (sum, item) {
-                    return sum + (item.lifetime_value || 0);
-                  }, 0)) / totalPatients || 0;
+                : churnSummary.reduce((sum, item) => sum + (item.lifetime_value || 0), 0)) /
+                totalPatients || 0;
             avgPredictedLTV =
               (churnSummary === null || churnSummary === void 0
                 ? void 0
-                : churnSummary.reduce(function (sum, item) {
-                    return sum + (item.predicted_ltv || 0);
-                  }, 0)) / totalPatients || 0;
+                : churnSummary.reduce((sum, item) => sum + (item.predicted_ltv || 0), 0)) /
+                totalPatients || 0;
             avgRetentionScore =
               (churnSummary === null || churnSummary === void 0
                 ? void 0
-                : churnSummary.reduce(function (sum, item) {
-                    return sum + (item.retention_score || 0);
-                  }, 0)) / totalPatients || 0;
+                : churnSummary.reduce((sum, item) => sum + (item.retention_score || 0), 0)) /
+                totalPatients || 0;
             return [
               2 /*return*/,
               {
@@ -780,7 +771,7 @@ var RetentionService = /** @class */ (function () {
   RetentionService.getDashboardSummary = function (date_range) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, summary;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -806,47 +797,28 @@ var RetentionService = /** @class */ (function () {
               {
                 total_patients: summary.length,
                 risk_distribution: {
-                  low: summary.filter(function (p) {
-                    return p.churn_risk_level === "low";
-                  }).length,
-                  medium: summary.filter(function (p) {
-                    return p.churn_risk_level === "medium";
-                  }).length,
-                  high: summary.filter(function (p) {
-                    return p.churn_risk_level === "high";
-                  }).length,
-                  critical: summary.filter(function (p) {
-                    return p.churn_risk_level === "critical";
-                  }).length,
+                  low: summary.filter((p) => p.churn_risk_level === "low").length,
+                  medium: summary.filter((p) => p.churn_risk_level === "medium").length,
+                  high: summary.filter((p) => p.churn_risk_level === "high").length,
+                  critical: summary.filter((p) => p.churn_risk_level === "critical").length,
                 },
                 average_retention_score:
-                  summary.reduce(function (sum, p) {
-                    return sum + (p.retention_score || 0);
-                  }, 0) / summary.length || 0,
+                  summary.reduce((sum, p) => sum + (p.retention_score || 0), 0) / summary.length ||
+                  0,
                 average_churn_probability:
-                  summary.reduce(function (sum, p) {
-                    return sum + (p.churn_probability || 0);
-                  }, 0) / summary.length || 0,
+                  summary.reduce((sum, p) => sum + (p.churn_probability || 0), 0) /
+                    summary.length || 0,
                 average_lifetime_value:
-                  summary.reduce(function (sum, p) {
-                    return sum + (p.lifetime_value || 0);
-                  }, 0) / summary.length || 0,
+                  summary.reduce((sum, p) => sum + (p.lifetime_value || 0), 0) / summary.length ||
+                  0,
                 segments: __spreadArray(
                   [],
-                  new Set(
-                    summary.map(function (p) {
-                      return p.retention_segment;
-                    }),
-                  ),
+                  new Set(summary.map((p) => p.retention_segment)),
                   true,
-                ).map(function (segment) {
-                  return {
-                    name: segment,
-                    count: summary.filter(function (p) {
-                      return p.retention_segment === segment;
-                    }).length,
-                  };
-                }),
+                ).map((segment) => ({
+                  name: segment,
+                  count: summary.filter((p) => p.retention_segment === segment).length,
+                })),
               },
             ];
         }

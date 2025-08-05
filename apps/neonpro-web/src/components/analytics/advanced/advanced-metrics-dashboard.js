@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -34,7 +33,7 @@ var progress_1 = require("@/components/ui/progress");
 var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 // Utility functions
-var formatValue = function (value, format) {
+var formatValue = (value, format) => {
   switch (format) {
     case "currency":
       return "$".concat(value.toLocaleString());
@@ -46,12 +45,12 @@ var formatValue = function (value, format) {
       return value.toLocaleString();
   }
 };
-var getChangeColor = function (change) {
+var getChangeColor = (change) => {
   if (change > 0) return "text-green-600";
   if (change < 0) return "text-red-600";
   return "text-gray-600";
 };
-var getChangeIcon = function (trend) {
+var getChangeIcon = (trend) => {
   switch (trend) {
     case "up":
       return lucide_react_1.TrendingUp;
@@ -61,7 +60,7 @@ var getChangeIcon = function (trend) {
       return lucide_react_1.ArrowUpDown;
   }
 };
-var getBenchmarkStatus = function (value, benchmark) {
+var getBenchmarkStatus = (value, benchmark) => {
   var ratio = value / benchmark;
   if (ratio >= 1.1)
     return { status: "excellent", color: "text-green-600", icon: lucide_react_1.CheckCircle };
@@ -101,94 +100,81 @@ function AdvancedMetricsDashboard(_a) {
     timeGranularity = _j[0],
     setTimeGranularity = _j[1];
   // Calculate dashboard summary
-  var dashboardSummary = (0, react_1.useMemo)(
-    function () {
-      var _a, _b;
-      var totalRevenue =
-        ((_a = kpis.find(function (k) {
-          return k.id === "revenue";
-        })) === null || _a === void 0
-          ? void 0
-          : _a.value.current) || 0;
-      var totalUsers =
-        ((_b = kpis.find(function (k) {
-          return k.id === "users";
-        })) === null || _b === void 0
-          ? void 0
-          : _b.value.current) || 0;
-      var avgGrowth =
-        kpis.reduce(function (sum, kpi) {
-          return sum + kpi.value.changePercent;
-        }, 0) / kpis.length;
-      var overPerforming = kpis.filter(function (kpi) {
-        return kpi.value.target && kpi.value.current >= kpi.value.target;
-      }).length;
-      var underPerforming = kpis.filter(function (kpi) {
-        return kpi.value.target && kpi.value.current < kpi.value.target * 0.8;
-      }).length;
-      return {
-        totalRevenue: totalRevenue,
-        totalUsers: totalUsers,
-        avgGrowth: avgGrowth,
-        overPerforming: overPerforming,
-        underPerforming: underPerforming,
-        totalKPIs: kpis.length,
-      };
-    },
-    [kpis],
-  );
+  var dashboardSummary = (0, react_1.useMemo)(() => {
+    var _a, _b;
+    var totalRevenue =
+      ((_a = kpis.find((k) => k.id === "revenue")) === null || _a === void 0
+        ? void 0
+        : _a.value.current) || 0;
+    var totalUsers =
+      ((_b = kpis.find((k) => k.id === "users")) === null || _b === void 0
+        ? void 0
+        : _b.value.current) || 0;
+    var avgGrowth = kpis.reduce((sum, kpi) => sum + kpi.value.changePercent, 0) / kpis.length;
+    var overPerforming = kpis.filter(
+      (kpi) => kpi.value.target && kpi.value.current >= kpi.value.target,
+    ).length;
+    var underPerforming = kpis.filter(
+      (kpi) => kpi.value.target && kpi.value.current < kpi.value.target * 0.8,
+    ).length;
+    return {
+      totalRevenue: totalRevenue,
+      totalUsers: totalUsers,
+      avgGrowth: avgGrowth,
+      overPerforming: overPerforming,
+      underPerforming: underPerforming,
+      totalKPIs: kpis.length,
+    };
+  }, [kpis]);
   // Process time series data for different granularities
-  var processedTimeSeriesData = (0, react_1.useMemo)(
-    function () {
-      if (timeGranularity === "day") return timeSeriesData;
-      var grouped = timeSeriesData.reduce(function (acc, item) {
-        var date = new Date(item.date);
-        var key;
-        if (timeGranularity === "week") {
-          var weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
-          key = weekStart.toISOString().split("T")[0];
-        } else {
-          key = ""
-            .concat(date.getFullYear(), "-")
-            .concat(String(date.getMonth() + 1).padStart(2, "0"));
-        }
-        if (!acc[key]) {
-          acc[key] = { date: key, count: 0 };
-          Object.keys(item).forEach(function (k) {
-            if (k !== "date") acc[key][k] = 0;
-          });
-        }
-        Object.keys(item).forEach(function (k) {
-          if (k !== "date" && typeof item[k] === "number") {
-            acc[key][k] += item[k];
-          }
+  var processedTimeSeriesData = (0, react_1.useMemo)(() => {
+    if (timeGranularity === "day") return timeSeriesData;
+    var grouped = timeSeriesData.reduce((acc, item) => {
+      var date = new Date(item.date);
+      var key;
+      if (timeGranularity === "week") {
+        var weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
+        key = weekStart.toISOString().split("T")[0];
+      } else {
+        key = ""
+          .concat(date.getFullYear(), "-")
+          .concat(String(date.getMonth() + 1).padStart(2, "0"));
+      }
+      if (!acc[key]) {
+        acc[key] = { date: key, count: 0 };
+        Object.keys(item).forEach((k) => {
+          if (k !== "date") acc[key][k] = 0;
         });
-        acc[key].count += 1;
-        return acc;
-      }, {});
-      return Object.values(grouped).map(function (item) {
-        var processed = __assign({}, item);
-        Object.keys(processed).forEach(function (k) {
-          if (k !== "date" && k !== "count" && typeof processed[k] === "number") {
-            processed[k] = processed[k] / item.count;
-          }
-        });
-        delete processed.count;
-        return processed;
+      }
+      Object.keys(item).forEach((k) => {
+        if (k !== "date" && typeof item[k] === "number") {
+          acc[key][k] += item[k];
+        }
       });
-    },
-    [timeSeriesData, timeGranularity],
-  );
+      acc[key].count += 1;
+      return acc;
+    }, {});
+    return Object.values(grouped).map((item) => {
+      var processed = __assign({}, item);
+      Object.keys(processed).forEach((k) => {
+        if (k !== "date" && k !== "count" && typeof processed[k] === "number") {
+          processed[k] = processed[k] / item.count;
+        }
+      });
+      delete processed.count;
+      return processed;
+    });
+  }, [timeSeriesData, timeGranularity]);
   // Handle KPI card click
   var handleKPIClick = (0, react_1.useCallback)(
-    function (kpiId) {
+    (kpiId) => {
       setSelectedKPI(kpiId === selectedKPI ? null : kpiId);
       onMetricClick === null || onMetricClick === void 0 ? void 0 : onMetricClick(kpiId);
     },
     [selectedKPI, onMetricClick],
   );
   // Custom tooltip for charts
-  var CustomTooltip = function (_a) {
+  var CustomTooltip = (_a) => {
     var active = _a.active,
       payload = _a.payload,
       label = _a.label;
@@ -196,17 +182,15 @@ function AdvancedMetricsDashboard(_a) {
     return (
       <div className="bg-white p-4 border rounded-lg shadow-lg max-w-xs">
         <p className="font-semibold text-gray-900 mb-2">{new Date(label).toLocaleDateString()}</p>
-        {payload.map(function (entry, index) {
-          return (
-            <div key={index} className="flex items-center gap-2 text-sm">
-              <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
-              <span className="text-gray-600">{entry.name}:</span>
-              <span className="font-medium">
-                {typeof entry.value === "number" ? entry.value.toLocaleString() : entry.value}
-              </span>
-            </div>
-          );
-        })}
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center gap-2 text-sm">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: entry.color }} />
+            <span className="text-gray-600">{entry.name}:</span>
+            <span className="font-medium">
+              {typeof entry.value === "number" ? entry.value.toLocaleString() : entry.value}
+            </span>
+          </div>
+        ))}
       </div>
     );
   };
@@ -214,19 +198,17 @@ function AdvancedMetricsDashboard(_a) {
     return (
       <div className={"w-full space-y-6 ".concat(className)}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 8 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="animate-pulse">
-                <card_1.CardHeader className="pb-2">
-                  <div className="h-4 bg-gray-200 rounded" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="h-8 bg-gray-200 rounded mb-2" />
-                  <div className="h-3 bg-gray-100 rounded" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {Array.from({ length: 8 }).map((_, i) => (
+            <card_1.Card key={i} className="animate-pulse">
+              <card_1.CardHeader className="pb-2">
+                <div className="h-4 bg-gray-200 rounded" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="h-8 bg-gray-200 rounded mb-2" />
+                <div className="h-3 bg-gray-100 rounded" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
         <card_1.Card className="animate-pulse">
           <card_1.CardContent className="p-6">
@@ -249,9 +231,7 @@ function AdvancedMetricsDashboard(_a) {
         <div className="flex items-center gap-2">
           <select_1.Select
             value={timeGranularity}
-            onValueChange={function (value) {
-              return setTimeGranularity(value);
-            }}
+            onValueChange={(value) => setTimeGranularity(value)}
           >
             <select_1.SelectTrigger className="w-32">
               <select_1.SelectValue />
@@ -268,9 +248,7 @@ function AdvancedMetricsDashboard(_a) {
           <button_1.Button
             variant="outline"
             size="sm"
-            onClick={function () {
-              return onExport === null || onExport === void 0 ? void 0 : onExport("csv");
-            }}
+            onClick={() => (onExport === null || onExport === void 0 ? void 0 : onExport("csv"))}
           >
             <lucide_react_1.Download className="h-4 w-4" />
           </button_1.Button>
@@ -338,12 +316,7 @@ function AdvancedMetricsDashboard(_a) {
       </div>
 
       {/* Main Dashboard Tabs */}
-      <tabs_1.Tabs
-        value={selectedView}
-        onValueChange={function (value) {
-          return setSelectedView(value);
-        }}
-      >
+      <tabs_1.Tabs value={selectedView} onValueChange={(value) => setSelectedView(value)}>
         <tabs_1.TabsList className="grid w-full grid-cols-4">
           <tabs_1.TabsTrigger value="overview">Overview</tabs_1.TabsTrigger>
           <tabs_1.TabsTrigger value="performance">Performance</tabs_1.TabsTrigger>
@@ -355,7 +328,7 @@ function AdvancedMetricsDashboard(_a) {
           <div className="space-y-6">
             {/* KPI Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {kpis.map(function (kpi) {
+              {kpis.map((kpi) => {
                 var Icon = kpi.icon;
                 var ChangeIcon = getChangeIcon(kpi.value.trend);
                 var isSelected = selectedKPI === kpi.id;
@@ -365,9 +338,7 @@ function AdvancedMetricsDashboard(_a) {
                     className={"cursor-pointer transition-all hover:shadow-md ".concat(
                       isSelected ? "ring-2 ring-blue-500 shadow-md" : "",
                     )}
-                    onClick={function () {
-                      return handleKPIClick(kpi.id);
-                    }}
+                    onClick={() => handleKPIClick(kpi.id)}
                   >
                     <card_1.CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
@@ -436,9 +407,7 @@ function AdvancedMetricsDashboard(_a) {
                   <div className="flex items-center gap-2">
                     <select_1.Select
                       value={chartType}
-                      onValueChange={function (value) {
-                        return setChartType(value);
-                      }}
+                      onValueChange={(value) => setChartType(value)}
                     >
                       <select_1.SelectTrigger className="w-24">
                         <select_1.SelectValue />
@@ -460,28 +429,26 @@ function AdvancedMetricsDashboard(_a) {
                         <recharts_1.CartesianGrid strokeDasharray="3 3" />
                         <recharts_1.XAxis
                           dataKey="date"
-                          tickFormatter={function (date) {
-                            return new Date(date).toLocaleDateString("en-US", {
+                          tickFormatter={(date) =>
+                            new Date(date).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
-                            });
-                          }}
+                            })
+                          }
                         />
                         <recharts_1.YAxis />
                         <recharts_1.Tooltip content={<CustomTooltip />} />
                         <recharts_1.Legend />
-                        {kpis.slice(0, 4).map(function (kpi, index) {
-                          return (
-                            <recharts_1.Line
-                              key={kpi.id}
-                              type="monotone"
-                              dataKey={kpi.id}
-                              stroke={["#3b82f6", "#10b981", "#f59e0b", "#ef4444"][index]}
-                              strokeWidth={2}
-                              name={kpi.title}
-                            />
-                          );
-                        })}
+                        {kpis.slice(0, 4).map((kpi, index) => (
+                          <recharts_1.Line
+                            key={kpi.id}
+                            type="monotone"
+                            dataKey={kpi.id}
+                            stroke={["#3b82f6", "#10b981", "#f59e0b", "#ef4444"][index]}
+                            strokeWidth={2}
+                            name={kpi.title}
+                          />
+                        ))}
                       </recharts_1.LineChart>
                     )}
 
@@ -490,30 +457,28 @@ function AdvancedMetricsDashboard(_a) {
                         <recharts_1.CartesianGrid strokeDasharray="3 3" />
                         <recharts_1.XAxis
                           dataKey="date"
-                          tickFormatter={function (date) {
-                            return new Date(date).toLocaleDateString("en-US", {
+                          tickFormatter={(date) =>
+                            new Date(date).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
-                            });
-                          }}
+                            })
+                          }
                         />
                         <recharts_1.YAxis />
                         <recharts_1.Tooltip content={<CustomTooltip />} />
                         <recharts_1.Legend />
-                        {kpis.slice(0, 4).map(function (kpi, index) {
-                          return (
-                            <recharts_1.Area
-                              key={kpi.id}
-                              type="monotone"
-                              dataKey={kpi.id}
-                              stackId="1"
-                              stroke={["#3b82f6", "#10b981", "#f59e0b", "#ef4444"][index]}
-                              fill={["#3b82f6", "#10b981", "#f59e0b", "#ef4444"][index]}
-                              fillOpacity={0.6}
-                              name={kpi.title}
-                            />
-                          );
-                        })}
+                        {kpis.slice(0, 4).map((kpi, index) => (
+                          <recharts_1.Area
+                            key={kpi.id}
+                            type="monotone"
+                            dataKey={kpi.id}
+                            stackId="1"
+                            stroke={["#3b82f6", "#10b981", "#f59e0b", "#ef4444"][index]}
+                            fill={["#3b82f6", "#10b981", "#f59e0b", "#ef4444"][index]}
+                            fillOpacity={0.6}
+                            name={kpi.title}
+                          />
+                        ))}
                       </recharts_1.AreaChart>
                     )}
 
@@ -522,26 +487,24 @@ function AdvancedMetricsDashboard(_a) {
                         <recharts_1.CartesianGrid strokeDasharray="3 3" />
                         <recharts_1.XAxis
                           dataKey="date"
-                          tickFormatter={function (date) {
-                            return new Date(date).toLocaleDateString("en-US", {
+                          tickFormatter={(date) =>
+                            new Date(date).toLocaleDateString("en-US", {
                               month: "short",
                               day: "numeric",
-                            });
-                          }}
+                            })
+                          }
                         />
                         <recharts_1.YAxis />
                         <recharts_1.Tooltip content={<CustomTooltip />} />
                         <recharts_1.Legend />
-                        {kpis.slice(0, 4).map(function (kpi, index) {
-                          return (
-                            <recharts_1.Bar
-                              key={kpi.id}
-                              dataKey={kpi.id}
-                              fill={["#3b82f6", "#10b981", "#f59e0b", "#ef4444"][index]}
-                              name={kpi.title}
-                            />
-                          );
-                        })}
+                        {kpis.slice(0, 4).map((kpi, index) => (
+                          <recharts_1.Bar
+                            key={kpi.id}
+                            dataKey={kpi.id}
+                            fill={["#3b82f6", "#10b981", "#f59e0b", "#ef4444"][index]}
+                            name={kpi.title}
+                          />
+                        ))}
                       </recharts_1.BarChart>
                     )}
                   </recharts_1.ResponsiveContainer>
@@ -566,22 +529,16 @@ function AdvancedMetricsDashboard(_a) {
                   <recharts_1.ResponsiveContainer width="100%" height="100%">
                     <recharts_1.RadialBarChart
                       data={kpis
-                        .filter(function (k) {
-                          return k.value.target;
-                        })
-                        .map(function (kpi) {
-                          return {
-                            name: kpi.title,
-                            value: Math.min((kpi.value.current / kpi.value.target) * 100, 150),
-                            fill: kpi.color.replace("text-", "#").replace("-600", ""),
-                          };
-                        })}
+                        .filter((k) => k.value.target)
+                        .map((kpi) => ({
+                          name: kpi.title,
+                          value: Math.min((kpi.value.current / kpi.value.target) * 100, 150),
+                          fill: kpi.color.replace("text-", "#").replace("-600", ""),
+                        }))}
                     >
                       <recharts_1.RadialBar dataKey="value" cornerRadius={4} fill="#8884d8" />
                       <recharts_1.Tooltip
-                        formatter={function (value) {
-                          return ["".concat(value.toFixed(1), "%"), "Achievement"];
-                        }}
+                        formatter={(value) => ["".concat(value.toFixed(1), "%"), "Achievement"]}
                       />
                     </recharts_1.RadialBarChart>
                   </recharts_1.ResponsiveContainer>
@@ -600,13 +557,11 @@ function AdvancedMetricsDashboard(_a) {
               <card_1.CardContent>
                 <div className="space-y-4">
                   {kpis
-                    .filter(function (k) {
-                      return k.value.target;
-                    })
-                    .sort(function (a, b) {
-                      return b.value.current / b.value.target - a.value.current / a.value.target;
-                    })
-                    .map(function (kpi, index) {
+                    .filter((k) => k.value.target)
+                    .sort(
+                      (a, b) => b.value.current / b.value.target - a.value.current / a.value.target,
+                    )
+                    .map((kpi, index) => {
                       var achievement = (kpi.value.current / kpi.value.target) * 100;
                       var Icon = kpi.icon;
                       return (
@@ -681,20 +636,18 @@ function AdvancedMetricsDashboard(_a) {
                         cy="50%"
                         outerRadius={80}
                         dataKey="value"
-                        label={function (_a) {
+                        label={(_a) => {
                           var name = _a.name,
                             percent = _a.percent;
                           return "".concat(name, ": ").concat((percent * 100).toFixed(0), "%");
                         }}
                       >
-                        {segmentationData.map(function (entry, index) {
-                          return <recharts_1.Cell key={index} fill={entry.color} />;
-                        })}
+                        {segmentationData.map((entry, index) => (
+                          <recharts_1.Cell key={index} fill={entry.color} />
+                        ))}
                       </recharts_1.Pie>
                       <recharts_1.Tooltip
-                        formatter={function (value) {
-                          return [value.toLocaleString(), "Value"];
-                        }}
+                        formatter={(value) => [value.toLocaleString(), "Value"]}
                       />
                     </recharts_1.PieChart>
                   </recharts_1.ResponsiveContainer>
@@ -710,43 +663,39 @@ function AdvancedMetricsDashboard(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {segmentationData.map(function (segment, index) {
-                    return (
-                      <div key={segment.name} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-3 h-3 rounded"
-                              style={{ backgroundColor: segment.color }}
-                            />
-                            <span className="font-medium">{segment.name}</span>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-medium">{segment.value.toLocaleString()}</div>
-                            {segment.change !== undefined && (
-                              <div className={"text-xs ".concat(getChangeColor(segment.change))}>
-                                {segment.change > 0 ? "+" : ""}
-                                {segment.change.toFixed(1)}%
-                              </div>
-                            )}
-                          </div>
+                  {segmentationData.map((segment, index) => (
+                    <div key={segment.name} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded"
+                            style={{ backgroundColor: segment.color }}
+                          />
+                          <span className="font-medium">{segment.name}</span>
                         </div>
-                        <progress_1.Progress
-                          value={
-                            (segment.value /
-                              Math.max.apply(
-                                Math,
-                                segmentationData.map(function (s) {
-                                  return s.value;
-                                }),
-                              )) *
-                            100
-                          }
-                          className="h-2"
-                        />
+                        <div className="text-right">
+                          <div className="font-medium">{segment.value.toLocaleString()}</div>
+                          {segment.change !== undefined && (
+                            <div className={"text-xs ".concat(getChangeColor(segment.change))}>
+                              {segment.change > 0 ? "+" : ""}
+                              {segment.change.toFixed(1)}%
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    );
-                  })}
+                      <progress_1.Progress
+                        value={
+                          (segment.value /
+                            Math.max.apply(
+                              Math,
+                              segmentationData.map((s) => s.value),
+                            )) *
+                          100
+                        }
+                        className="h-2"
+                      />
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -763,11 +712,7 @@ function AdvancedMetricsDashboard(_a) {
                     <div>
                       <p className="text-green-600 text-sm font-medium">Above Benchmark</p>
                       <p className="text-2xl font-bold text-green-900">
-                        {
-                          benchmarkData.filter(function (b) {
-                            return b.value >= b.benchmark;
-                          }).length
-                        }
+                        {benchmarkData.filter((b) => b.value >= b.benchmark).length}
                       </p>
                     </div>
                     <lucide_react_1.CheckCircle className="h-8 w-8 text-green-600" />
@@ -782,9 +727,9 @@ function AdvancedMetricsDashboard(_a) {
                       <p className="text-yellow-600 text-sm font-medium">Near Benchmark</p>
                       <p className="text-2xl font-bold text-yellow-900">
                         {
-                          benchmarkData.filter(function (b) {
-                            return b.value < b.benchmark && b.value >= b.benchmark * 0.8;
-                          }).length
+                          benchmarkData.filter(
+                            (b) => b.value < b.benchmark && b.value >= b.benchmark * 0.8,
+                          ).length
                         }
                       </p>
                     </div>
@@ -799,11 +744,7 @@ function AdvancedMetricsDashboard(_a) {
                     <div>
                       <p className="text-red-600 text-sm font-medium">Below Benchmark</p>
                       <p className="text-2xl font-bold text-red-900">
-                        {
-                          benchmarkData.filter(function (b) {
-                            return b.value < b.benchmark * 0.8;
-                          }).length
-                        }
+                        {benchmarkData.filter((b) => b.value < b.benchmark * 0.8).length}
                       </p>
                     </div>
                     <lucide_react_1.XCircle className="h-8 w-8 text-red-600" />
@@ -822,7 +763,7 @@ function AdvancedMetricsDashboard(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-6">
-                  {benchmarkData.map(function (benchmark) {
+                  {benchmarkData.map((benchmark) => {
                     var status = getBenchmarkStatus(benchmark.value, benchmark.benchmark);
                     var StatusIcon = status.icon;
                     return (

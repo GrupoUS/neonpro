@@ -6,32 +6,31 @@
  * with filtering, sorting, and resolution capabilities.
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,10 +150,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -165,7 +162,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SecurityEventsTable;
 var react_1 = require("react");
@@ -185,7 +182,6 @@ var locale_1 = require("date-fns/locale");
 // MAIN COMPONENT
 // ============================================================================
 function SecurityEventsTable(_a) {
-  var _this = this;
   var events = _a.events,
     onReportActivity = _a.onReportActivity;
   var _b = (0, useSession_1.useSecurityEvents)(),
@@ -206,71 +202,61 @@ function SecurityEventsTable(_a) {
   // ============================================================================
   // FILTERING AND SORTING
   // ============================================================================
-  var filteredEvents = (0, react_1.useMemo)(
-    function () {
-      var filtered = __spreadArray([], events, true);
-      // Search filter
-      if (filters.search) {
-        var searchLower_1 = filters.search.toLowerCase();
-        filtered = filtered.filter(function (event) {
-          return (
-            event.event_type.toLowerCase().includes(searchLower_1) ||
-            event.ip_address.toLowerCase().includes(searchLower_1) ||
-            (event.details && JSON.stringify(event.details).toLowerCase().includes(searchLower_1))
-          );
-        });
+  var filteredEvents = (0, react_1.useMemo)(() => {
+    var filtered = __spreadArray([], events, true);
+    // Search filter
+    if (filters.search) {
+      var searchLower_1 = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (event) =>
+          event.event_type.toLowerCase().includes(searchLower_1) ||
+          event.ip_address.toLowerCase().includes(searchLower_1) ||
+          (event.details && JSON.stringify(event.details).toLowerCase().includes(searchLower_1)),
+      );
+    }
+    // Severity filter
+    if (filters.severity !== "all") {
+      filtered = filtered.filter((event) => event.severity === filters.severity);
+    }
+    // Event type filter
+    if (filters.eventType !== "all") {
+      filtered = filtered.filter((event) => event.event_type === filters.eventType);
+    }
+    // Resolved filter
+    if (filters.resolved !== "all") {
+      filtered = filtered.filter((event) =>
+        filters.resolved === "resolved" ? event.resolved : !event.resolved,
+      );
+    }
+    // Date range filter
+    if (filters.dateRange !== "all") {
+      var now = new Date();
+      var cutoff_1 = new Date();
+      switch (filters.dateRange) {
+        case "24h":
+          cutoff_1.setHours(now.getHours() - 24);
+          break;
+        case "7d":
+          cutoff_1.setDate(now.getDate() - 7);
+          break;
+        case "30d":
+          cutoff_1.setDate(now.getDate() - 30);
+          break;
       }
-      // Severity filter
-      if (filters.severity !== "all") {
-        filtered = filtered.filter(function (event) {
-          return event.severity === filters.severity;
-        });
-      }
-      // Event type filter
-      if (filters.eventType !== "all") {
-        filtered = filtered.filter(function (event) {
-          return event.event_type === filters.eventType;
-        });
-      }
-      // Resolved filter
-      if (filters.resolved !== "all") {
-        filtered = filtered.filter(function (event) {
-          return filters.resolved === "resolved" ? event.resolved : !event.resolved;
-        });
-      }
-      // Date range filter
-      if (filters.dateRange !== "all") {
-        var now = new Date();
-        var cutoff_1 = new Date();
-        switch (filters.dateRange) {
-          case "24h":
-            cutoff_1.setHours(now.getHours() - 24);
-            break;
-          case "7d":
-            cutoff_1.setDate(now.getDate() - 7);
-            break;
-          case "30d":
-            cutoff_1.setDate(now.getDate() - 30);
-            break;
-        }
-        filtered = filtered.filter(function (event) {
-          return new Date(event.timestamp) >= cutoff_1;
-        });
-      }
-      // Sort by timestamp (newest first)
-      return filtered.sort(function (a, b) {
-        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
-      });
-    },
-    [events, filters],
-  );
+      filtered = filtered.filter((event) => new Date(event.timestamp) >= cutoff_1);
+    }
+    // Sort by timestamp (newest first)
+    return filtered.sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
+  }, [events, filters]);
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  var handleResolveEvent = function (eventId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleResolveEvent = (eventId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -287,11 +273,10 @@ function SecurityEventsTable(_a) {
         }
       });
     });
-  };
-  var handleDismissEvent = function (eventId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDismissEvent = (eventId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -308,21 +293,16 @@ function SecurityEventsTable(_a) {
         }
       });
     });
-  };
-  var handleBulkResolve = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleBulkResolve = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             return [
               4 /*yield*/,
-              Promise.all(
-                selectedEvents.map(function (eventId) {
-                  return resolveEvent(eventId);
-                }),
-              ),
+              Promise.all(selectedEvents.map((eventId) => resolveEvent(eventId))),
             ];
           case 1:
             _a.sent();
@@ -337,20 +317,19 @@ function SecurityEventsTable(_a) {
         }
       });
     });
-  };
-  var handleExportEvents = function () {
+  var handleExportEvents = () => {
     var csvContent = __spreadArray(
       [["Timestamp", "Event Type", "Severity", "IP Address", "Resolved", "Details"].join(",")],
-      filteredEvents.map(function (event) {
-        return [
+      filteredEvents.map((event) =>
+        [
           (0, date_fns_1.format)(new Date(event.timestamp), "yyyy-MM-dd HH:mm:ss"),
           event.event_type,
           event.severity,
           event.ip_address,
           event.resolved ? "Yes" : "No",
           JSON.stringify(event.details || {}),
-        ].join(",");
-      }),
+        ].join(","),
+      ),
       true,
     ).join("\n");
     var blob = new Blob([csvContent], { type: "text/csv" });
@@ -369,7 +348,7 @@ function SecurityEventsTable(_a) {
   // ============================================================================
   // UTILITY FUNCTIONS
   // ============================================================================
-  var getSeverityBadge = function (severity) {
+  var getSeverityBadge = (severity) => {
     var config = {
       low: { variant: "secondary", color: "text-blue-600" },
       medium: { variant: "default", color: "text-yellow-600" },
@@ -385,7 +364,7 @@ function SecurityEventsTable(_a) {
       </badge_1.Badge>
     );
   };
-  var getEventTypeLabel = function (eventType) {
+  var getEventTypeLabel = (eventType) => {
     var _a;
     var labels =
       ((_a = {}),
@@ -400,7 +379,7 @@ function SecurityEventsTable(_a) {
       _a);
     return labels[eventType] || eventType;
   };
-  var getEventTypeIcon = function (eventType) {
+  var getEventTypeIcon = (eventType) => {
     var _a;
     var icons =
       ((_a = {}),
@@ -458,12 +437,12 @@ function SecurityEventsTable(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return onReportActivity(session_1.SecurityEventType.SUSPICIOUS_USER_AGENT, {
+              onClick={() =>
+                onReportActivity(session_1.SecurityEventType.SUSPICIOUS_USER_AGENT, {
                   manual_report: true,
                   description: "Atividade suspeita reportada pelo usuário",
-                });
-              }}
+                })
+              }
             >
               <lucide_react_1.AlertTriangle className="h-4 w-4 mr-2" />
               Reportar Atividade
@@ -480,11 +459,9 @@ function SecurityEventsTable(_a) {
               <input_1.Input
                 placeholder="Buscar eventos..."
                 value={filters.search}
-                onChange={function (e) {
-                  return setFilters(function (prev) {
-                    return __assign(__assign({}, prev), { search: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setFilters((prev) => __assign(__assign({}, prev), { search: e.target.value }))
+                }
                 className="pl-8"
               />
             </div>
@@ -492,11 +469,9 @@ function SecurityEventsTable(_a) {
 
           <select_1.Select
             value={filters.severity}
-            onValueChange={function (value) {
-              return setFilters(function (prev) {
-                return __assign(__assign({}, prev), { severity: value });
-              });
-            }}
+            onValueChange={(value) =>
+              setFilters((prev) => __assign(__assign({}, prev), { severity: value }))
+            }
           >
             <select_1.SelectTrigger className="w-[140px]">
               <select_1.SelectValue placeholder="Severidade" />
@@ -512,34 +487,28 @@ function SecurityEventsTable(_a) {
 
           <select_1.Select
             value={filters.eventType}
-            onValueChange={function (value) {
-              return setFilters(function (prev) {
-                return __assign(__assign({}, prev), { eventType: value });
-              });
-            }}
+            onValueChange={(value) =>
+              setFilters((prev) => __assign(__assign({}, prev), { eventType: value }))
+            }
           >
             <select_1.SelectTrigger className="w-[180px]">
               <select_1.SelectValue placeholder="Tipo de Evento" />
             </select_1.SelectTrigger>
             <select_1.SelectContent>
               <select_1.SelectItem value="all">Todos</select_1.SelectItem>
-              {Object.values(session_1.SecurityEventType).map(function (type) {
-                return (
-                  <select_1.SelectItem key={type} value={type}>
-                    {getEventTypeLabel(type)}
-                  </select_1.SelectItem>
-                );
-              })}
+              {Object.values(session_1.SecurityEventType).map((type) => (
+                <select_1.SelectItem key={type} value={type}>
+                  {getEventTypeLabel(type)}
+                </select_1.SelectItem>
+              ))}
             </select_1.SelectContent>
           </select_1.Select>
 
           <select_1.Select
             value={filters.resolved}
-            onValueChange={function (value) {
-              return setFilters(function (prev) {
-                return __assign(__assign({}, prev), { resolved: value });
-              });
-            }}
+            onValueChange={(value) =>
+              setFilters((prev) => __assign(__assign({}, prev), { resolved: value }))
+            }
           >
             <select_1.SelectTrigger className="w-[140px]">
               <select_1.SelectValue placeholder="Status" />
@@ -553,11 +522,9 @@ function SecurityEventsTable(_a) {
 
           <select_1.Select
             value={filters.dateRange}
-            onValueChange={function (value) {
-              return setFilters(function (prev) {
-                return __assign(__assign({}, prev), { dateRange: value });
-              });
-            }}
+            onValueChange={(value) =>
+              setFilters((prev) => __assign(__assign({}, prev), { dateRange: value }))
+            }
           >
             <select_1.SelectTrigger className="w-[120px]">
               <select_1.SelectValue placeholder="Período" />
@@ -582,13 +549,9 @@ function SecurityEventsTable(_a) {
                     checked={
                       selectedEvents.length === filteredEvents.length && filteredEvents.length > 0
                     }
-                    onChange={function (e) {
+                    onChange={(e) => {
                       if (e.target.checked) {
-                        setSelectedEvents(
-                          filteredEvents.map(function (event) {
-                            return event.id;
-                          }),
-                        );
+                        setSelectedEvents(filteredEvents.map((event) => event.id));
                       } else {
                         setSelectedEvents([]);
                       }
@@ -613,106 +576,90 @@ function SecurityEventsTable(_a) {
                       Nenhum evento encontrado
                     </table_1.TableCell>
                   </table_1.TableRow>
-                : filteredEvents.map(function (event) {
-                    return (
-                      <table_1.TableRow key={event.id}>
-                        <table_1.TableCell>
-                          <input
-                            type="checkbox"
-                            checked={selectedEvents.includes(event.id)}
-                            onChange={function (e) {
-                              if (e.target.checked) {
-                                setSelectedEvents(function (prev) {
-                                  return __spreadArray(
-                                    __spreadArray([], prev, true),
-                                    [event.id],
-                                    false,
-                                  );
-                                });
-                              } else {
-                                setSelectedEvents(function (prev) {
-                                  return prev.filter(function (id) {
-                                    return id !== event.id;
-                                  });
-                                });
-                              }
-                            }}
-                          />
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div className="flex items-center space-x-2">
-                            {getEventTypeIcon(event.event_type)}
-                            <span className="font-medium">
-                              {getEventTypeLabel(event.event_type)}
-                            </span>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>{getSeverityBadge(event.severity)}</table_1.TableCell>
-                        <table_1.TableCell className="font-mono text-sm">
-                          {event.ip_address}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {(0, date_fns_1.format)(new Date(event.timestamp), "dd/MM/yyyy HH:mm", {
-                            locale: locale_1.ptBR,
-                          })}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {event.resolved
-                            ? <div className="flex items-center space-x-1 text-green-600">
-                                <lucide_react_1.CheckCircle className="h-4 w-4" />
-                                <span>Resolvido</span>
-                              </div>
-                            : <div className="flex items-center space-x-1 text-red-600">
-                                <lucide_react_1.XCircle className="h-4 w-4" />
-                                <span>Pendente</span>
-                              </div>}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <dropdown_menu_1.DropdownMenu>
-                            <dropdown_menu_1.DropdownMenuTrigger asChild>
-                              <button_1.Button variant="ghost" className="h-8 w-8 p-0">
-                                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-                              </button_1.Button>
-                            </dropdown_menu_1.DropdownMenuTrigger>
-                            <dropdown_menu_1.DropdownMenuContent align="end">
-                              <dropdown_menu_1.DropdownMenuLabel>
-                                Ações
-                              </dropdown_menu_1.DropdownMenuLabel>
-                              <dropdown_menu_1.DropdownMenuSeparator />
-                              {!event.resolved && (
-                                <>
-                                  <dropdown_menu_1.DropdownMenuItem
-                                    onClick={function () {
-                                      return handleResolveEvent(event.id);
-                                    }}
-                                  >
-                                    <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
-                                    Resolver
-                                  </dropdown_menu_1.DropdownMenuItem>
-                                  <dropdown_menu_1.DropdownMenuItem
-                                    onClick={function () {
-                                      return handleDismissEvent(event.id);
-                                    }}
-                                  >
-                                    <lucide_react_1.XCircle className="h-4 w-4 mr-2" />
-                                    Descartar
-                                  </dropdown_menu_1.DropdownMenuItem>
-                                </>
-                              )}
-                              <dropdown_menu_1.DropdownMenuItem
-                                onClick={function () {
-                                  navigator.clipboard.writeText(JSON.stringify(event, null, 2));
-                                }}
-                              >
-                                <lucide_react_1.Eye className="h-4 w-4 mr-2" />
-                                Ver Detalhes
-                              </dropdown_menu_1.DropdownMenuItem>
-                            </dropdown_menu_1.DropdownMenuContent>
-                          </dropdown_menu_1.DropdownMenu>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                : filteredEvents.map((event) => (
+                    <table_1.TableRow key={event.id}>
+                      <table_1.TableCell>
+                        <input
+                          type="checkbox"
+                          checked={selectedEvents.includes(event.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedEvents((prev) =>
+                                __spreadArray(__spreadArray([], prev, true), [event.id], false),
+                              );
+                            } else {
+                              setSelectedEvents((prev) => prev.filter((id) => id !== event.id));
+                            }
+                          }}
+                        />
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getEventTypeIcon(event.event_type)}
+                          <span className="font-medium">{getEventTypeLabel(event.event_type)}</span>
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>{getSeverityBadge(event.severity)}</table_1.TableCell>
+                      <table_1.TableCell className="font-mono text-sm">
+                        {event.ip_address}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {(0, date_fns_1.format)(new Date(event.timestamp), "dd/MM/yyyy HH:mm", {
+                          locale: locale_1.ptBR,
+                        })}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {event.resolved
+                          ? <div className="flex items-center space-x-1 text-green-600">
+                              <lucide_react_1.CheckCircle className="h-4 w-4" />
+                              <span>Resolvido</span>
+                            </div>
+                          : <div className="flex items-center space-x-1 text-red-600">
+                              <lucide_react_1.XCircle className="h-4 w-4" />
+                              <span>Pendente</span>
+                            </div>}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <dropdown_menu_1.DropdownMenu>
+                          <dropdown_menu_1.DropdownMenuTrigger asChild>
+                            <button_1.Button variant="ghost" className="h-8 w-8 p-0">
+                              <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+                            </button_1.Button>
+                          </dropdown_menu_1.DropdownMenuTrigger>
+                          <dropdown_menu_1.DropdownMenuContent align="end">
+                            <dropdown_menu_1.DropdownMenuLabel>
+                              Ações
+                            </dropdown_menu_1.DropdownMenuLabel>
+                            <dropdown_menu_1.DropdownMenuSeparator />
+                            {!event.resolved && (
+                              <>
+                                <dropdown_menu_1.DropdownMenuItem
+                                  onClick={() => handleResolveEvent(event.id)}
+                                >
+                                  <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
+                                  Resolver
+                                </dropdown_menu_1.DropdownMenuItem>
+                                <dropdown_menu_1.DropdownMenuItem
+                                  onClick={() => handleDismissEvent(event.id)}
+                                >
+                                  <lucide_react_1.XCircle className="h-4 w-4 mr-2" />
+                                  Descartar
+                                </dropdown_menu_1.DropdownMenuItem>
+                              </>
+                            )}
+                            <dropdown_menu_1.DropdownMenuItem
+                              onClick={() => {
+                                navigator.clipboard.writeText(JSON.stringify(event, null, 2));
+                              }}
+                            >
+                              <lucide_react_1.Eye className="h-4 w-4 mr-2" />
+                              Ver Detalhes
+                            </dropdown_menu_1.DropdownMenuItem>
+                          </dropdown_menu_1.DropdownMenuContent>
+                        </dropdown_menu_1.DropdownMenu>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
             </table_1.TableBody>
           </table_1.Table>
         </div>
@@ -723,18 +670,8 @@ function SecurityEventsTable(_a) {
             Mostrando {filteredEvents.length} de {events.length} eventos
           </span>
           <span>
-            {
-              filteredEvents.filter(function (e) {
-                return !e.resolved;
-              }).length
-            }{" "}
-            pendentes,{" "}
-            {
-              filteredEvents.filter(function (e) {
-                return e.resolved;
-              }).length
-            }{" "}
-            resolvidos
+            {filteredEvents.filter((e) => !e.resolved).length} pendentes,{" "}
+            {filteredEvents.filter((e) => e.resolved).length} resolvidos
           </span>
         </div>
       </card_1.CardContent>

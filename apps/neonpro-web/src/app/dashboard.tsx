@@ -1,19 +1,19 @@
 "use client";
 
-import React from "react";
 import type { motion } from "framer-motion";
 import type {
-  Users,
-  Calendar,
-  DollarSign,
   Activity,
-  TrendingUp,
-  Clock,
-  UserCheck,
   AlertCircle,
+  Calendar,
+  Clock,
+  DollarSign,
+  TrendingUp,
+  UserCheck,
+  Users,
 } from "lucide-react";
-import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
+import React from "react";
 import type { CosmicGlowButton } from "@/components/ui/CosmicGlowButton";
+import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
 import type { formatCurrency } from "@/lib/utils";
 
 // Dados mock para o dashboard

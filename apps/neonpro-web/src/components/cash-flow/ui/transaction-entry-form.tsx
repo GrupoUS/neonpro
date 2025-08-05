@@ -3,9 +3,9 @@
 
 "use client";
 
+import type { zodResolver } from "@hookform/resolvers/zod";
 import type { useState } from "react";
 import type { useForm } from "react-hook-form";
-import type { zodResolver } from "@hookform/resolvers/zod";
 import type { toast } from "sonner";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -24,7 +24,6 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Select,
   SelectContent,
@@ -32,16 +31,17 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { CashFlowEntrySchema, type CashFlowEntryInput } from "../utils/validation";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useCashFlow } from "../hooks/use-cash-flow";
 import type { useCashRegisters } from "../hooks/use-cash-registers";
 import type {
   formatCurrency,
-  getTransactionTypeDisplayName,
+  generateReferenceNumber,
   getCategoryDisplayName,
   getPaymentMethodDisplayName,
-  generateReferenceNumber,
+  getTransactionTypeDisplayName,
 } from "../utils/calculations";
+import type { CashFlowEntryInput, CashFlowEntrySchema } from "../utils/validation";
 
 interface TransactionEntryFormProps {
   clinicId: string;

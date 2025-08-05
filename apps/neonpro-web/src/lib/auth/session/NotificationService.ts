@@ -10,16 +10,16 @@
  */
 
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { validateUUID, removeUndefined } from "./utils";
 import type {
+  AuthenticationResponse,
+  NotificationChannel,
   NotificationConfig,
   NotificationData,
-  NotificationType,
   NotificationPriority,
-  NotificationChannel,
   NotificationTemplate,
-  AuthenticationResponse,
+  NotificationType,
 } from "./types";
+import type { removeUndefined, validateUUID } from "./utils";
 
 /**
  * Notification Service Class

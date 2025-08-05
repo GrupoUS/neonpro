@@ -2,12 +2,12 @@
 // Story 6.1 - Task 2: Recurring Payment System
 // Individual subscription management endpoints
 
-import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { subscriptionManager } from "@/lib/payments/recurring/subscription-manager";
 import { logger } from "@/lib/utils/logger";
-import { z } from "zod";
 
 // Validation Schemas
 const updateSubscriptionSchema = z.object({

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 require("@testing-library/jest-dom");
@@ -208,18 +205,18 @@ function TestWrapper(_a) {
     </react_query_1.QueryClientProvider>
   );
 }
-(0, globals_1.describe)("MultiLocationStockOverview", function () {
-  (0, globals_1.beforeEach)(function () {
+(0, globals_1.describe)("MultiLocationStockOverview", () => {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
     mockService.getInventoryStock.mockResolvedValue(mockStockData);
     mockService.getLocationStockSummary.mockResolvedValue(mockLocationSummary);
     mockService.getLowStockAlerts.mockResolvedValue([mockStockData[1]]);
     mockService.getExpiringItems.mockResolvedValue([mockStockData[1]]);
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.it)("renders loading state initially", function () {
+  (0, globals_1.it)("renders loading state initially", () => {
     (0, react_1.render)(
       <TestWrapper>
         <multi_location_stock_overview_1.MultiLocationStockOverview />
@@ -227,9 +224,9 @@ function TestWrapper(_a) {
     );
     (0, globals_1.expect)(react_1.screen.getByText("Carregando...")).toBeInTheDocument();
   });
-  (0, globals_1.it)("renders stock overview with data", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, globals_1.it)("renders stock overview with data", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -239,7 +236,7 @@ function TestWrapper(_a) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Visão Geral do Estoque"),
                 ).toBeInTheDocument();
@@ -253,11 +250,11 @@ function TestWrapper(_a) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("shows low stock and expiring alerts", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("shows low stock and expiring alerts", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -267,7 +264,7 @@ function TestWrapper(_a) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(
                   react_1.screen.getByText("Estoque Baixo"),
                 ).toBeInTheDocument();
@@ -279,12 +276,12 @@ function TestWrapper(_a) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("filters by search term", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("filters by search term", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var searchInput;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -294,7 +291,7 @@ function TestWrapper(_a) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(react_1.screen.getByText("Botox 100u")).toBeInTheDocument();
               }),
             ];
@@ -306,7 +303,7 @@ function TestWrapper(_a) {
             react_1.fireEvent.change(searchInput, { target: { value: "Botox" } });
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(mockService.getInventoryStock).toHaveBeenCalledWith(
                   globals_1.expect.objectContaining({
                     search: "Botox",
@@ -319,11 +316,11 @@ function TestWrapper(_a) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("shows location filter when showLocationFilter is true", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }),
+  );
+  (0, globals_1.it)("shows location filter when showLocationFilter is true", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -335,7 +332,7 @@ function TestWrapper(_a) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(react_1.screen.getByText("Localização")).toBeInTheDocument();
               }),
             ];
@@ -347,9 +344,9 @@ function TestWrapper(_a) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("does not show location filter when showLocationFilter is false", function () {
+    }),
+  );
+  (0, globals_1.it)("does not show location filter when showLocationFilter is false", () => {
     (0, react_1.render)(
       <TestWrapper>
         <multi_location_stock_overview_1.MultiLocationStockOverview showLocationFilter={false} />
@@ -357,10 +354,10 @@ function TestWrapper(_a) {
     );
     (0, globals_1.expect)(react_1.screen.queryByText("Localização")).not.toBeInTheDocument();
   });
-  (0, globals_1.it)("handles category filter changes", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("handles category filter changes", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var categorySelect, medicationOption;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(
@@ -370,7 +367,7 @@ function TestWrapper(_a) {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(react_1.screen.getByText("Categoria")).toBeInTheDocument();
               }),
             ];
@@ -382,7 +379,7 @@ function TestWrapper(_a) {
             react_1.fireEvent.click(medicationOption);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(mockService.getInventoryStock).toHaveBeenCalledWith(
                   globals_1.expect.objectContaining({
                     category: "medication",
@@ -395,6 +392,6 @@ function TestWrapper(_a) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

@@ -1,17 +1,5 @@
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  AgingReportItem,
-  BudgetTrackingReport,
-  CategoryExpenseReport,
-  financialReportsService,
-  FinancialSummaryMetrics,
-  VendorPerformanceMetrics,
-} from "@/lib/services/financial-reports-service";
 import type {
   AlertTriangle,
   BarChart3,
@@ -24,6 +12,18 @@ import type {
   TrendingUp,
 } from "lucide-react";
 import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type {
+  AgingReportItem,
+  BudgetTrackingReport,
+  CategoryExpenseReport,
+  FinancialSummaryMetrics,
+  financialReportsService,
+  VendorPerformanceMetrics,
+} from "@/lib/services/financial-reports-service";
 
 interface FinancialReportsPageProps {
   clinicId: string;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Unit Tests for RBAC Permissions System
  * Story 1.2: Role-Based Access Control Implementation
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,40 +134,30 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var permissions_1 = require("@/lib/auth/rbac/permissions");
 // Mock Supabase client
-globals_1.jest.mock("@/app/utils/supabase/client", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return {
-        from: globals_1.jest.fn(function () {
-          return {
-            select: globals_1.jest.fn(function () {
-              return {
-                eq: globals_1.jest.fn(function () {
-                  return {
-                    single: globals_1.jest.fn(),
-                  };
-                }),
-              };
-            }),
-            insert: globals_1.jest.fn(),
-          };
-        }),
-      };
-    }),
-  };
-});
+globals_1.jest.mock("@/app/utils/supabase/client", () => ({
+  createClient: globals_1.jest.fn(() => ({
+    from: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        eq: globals_1.jest.fn(() => ({
+          single: globals_1.jest.fn(),
+        })),
+      })),
+      insert: globals_1.jest.fn(),
+    })),
+  })),
+}));
 // Mock console.error to avoid noise in tests
 var originalConsoleError = console.error;
-(0, globals_1.beforeEach)(function () {
+(0, globals_1.beforeEach)(() => {
   console.error = globals_1.jest.fn();
   (0, permissions_1.clearAllPermissionCache)();
 });
-(0, globals_1.afterEach)(function () {
+(0, globals_1.afterEach)(() => {
   console.error = originalConsoleError;
   globals_1.jest.clearAllMocks();
 });
@@ -190,53 +177,47 @@ function createMockUser(role, clinicId) {
     exp: Date.now() + 3600000,
   };
 }
-(0, globals_1.describe)("RBAC Permissions System", function () {
-  (0, globals_1.describe)("hasPermission", function () {
-    (0, globals_1.it)(
-      "should grant permission when user role has the required permission",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var user, result;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                user = createMockUser("manager");
-                return [4 /*yield*/, (0, permissions_1.hasPermission)(user, "patients.read")];
-              case 1:
-                result = _a.sent();
-                (0, globals_1.expect)(result.granted).toBe(true);
-                (0, globals_1.expect)(result.roleUsed).toBe("manager");
-                return [2 /*return*/];
-            }
-          });
-        });
-      },
-    );
-    (0, globals_1.it)(
-      "should deny permission when user role lacks the required permission",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var user, result;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                user = createMockUser("patient");
-                return [4 /*yield*/, (0, permissions_1.hasPermission)(user, "users.manage")];
-              case 1:
-                result = _a.sent();
-                (0, globals_1.expect)(result.granted).toBe(false);
-                (0, globals_1.expect)(result.reason).toContain("does not have permission");
-                (0, globals_1.expect)(result.roleUsed).toBe("patient");
-                return [2 /*return*/];
-            }
-          });
-        });
-      },
-    );
-    (0, globals_1.it)("should deny permission for invalid user role", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("RBAC Permissions System", () => {
+  (0, globals_1.describe)("hasPermission", () => {
+    (0, globals_1.it)("should grant permission when user role has the required permission", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              user = createMockUser("manager");
+              return [4 /*yield*/, (0, permissions_1.hasPermission)(user, "patients.read")];
+            case 1:
+              result = _a.sent();
+              (0, globals_1.expect)(result.granted).toBe(true);
+              (0, globals_1.expect)(result.roleUsed).toBe("manager");
+              return [2 /*return*/];
+          }
+        });
+      }),
+    );
+    (0, globals_1.it)("should deny permission when user role lacks the required permission", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var user, result;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              user = createMockUser("patient");
+              return [4 /*yield*/, (0, permissions_1.hasPermission)(user, "users.manage")];
+            case 1:
+              result = _a.sent();
+              (0, globals_1.expect)(result.granted).toBe(false);
+              (0, globals_1.expect)(result.reason).toContain("does not have permission");
+              (0, globals_1.expect)(result.roleUsed).toBe("patient");
+              return [2 /*return*/];
+          }
+        });
+      }),
+    );
+    (0, globals_1.it)("should deny permission for invalid user role", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var user, result;
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("invalid");
@@ -248,12 +229,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should deny cross-clinic access for non-admin users", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should deny cross-clinic access for non-admin users", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("staff", "clinic-1");
@@ -270,12 +251,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should use permission cache for repeated checks", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should use permission cache for repeated checks", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result1, result2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("manager");
@@ -291,16 +272,16 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("hasAnyPermission", function () {
+  (0, globals_1.describe)("hasAnyPermission", () => {
     (0, globals_1.it)(
       "should grant access when user has at least one of the required permissions",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var user, permissions, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 user = createMockUser("staff");
@@ -313,36 +294,32 @@ function createMockUser(role, clinicId) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     );
-    (0, globals_1.it)(
-      "should deny access when user has none of the required permissions",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var user, permissions, result;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                user = createMockUser("patient");
-                permissions = ["billing.manage", "users.manage"];
-                return [4 /*yield*/, (0, permissions_1.hasAnyPermission)(user, permissions)];
-              case 1:
-                result = _a.sent();
-                (0, globals_1.expect)(result.granted).toBe(false);
-                (0, globals_1.expect)(result.reason).toContain(
-                  "does not have any of the required permissions",
-                );
-                return [2 /*return*/];
-            }
-          });
-        });
-      },
-    );
-    (0, globals_1.it)("should handle empty permissions array", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should deny access when user has none of the required permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, permissions, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              user = createMockUser("patient");
+              permissions = ["billing.manage", "users.manage"];
+              return [4 /*yield*/, (0, permissions_1.hasAnyPermission)(user, permissions)];
+            case 1:
+              result = _a.sent();
+              (0, globals_1.expect)(result.granted).toBe(false);
+              (0, globals_1.expect)(result.reason).toContain(
+                "does not have any of the required permissions",
+              );
+              return [2 /*return*/];
+          }
+        });
+      }),
+    );
+    (0, globals_1.it)("should handle empty permissions array", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var user, permissions, result;
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("staff");
@@ -354,14 +331,14 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("hasAllPermissions", function () {
-    (0, globals_1.it)("should grant access when user has all required permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("hasAllPermissions", () => {
+    (0, globals_1.it)("should grant access when user has all required permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, permissions, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("manager");
@@ -374,33 +351,30 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)(
-      "should deny access when user is missing any required permission",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var user, permissions, result;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                user = createMockUser("staff");
-                permissions = ["patients.read", "billing.manage"];
-                return [4 /*yield*/, (0, permissions_1.hasAllPermissions)(user, permissions)];
-              case 1:
-                result = _a.sent();
-                (0, globals_1.expect)(result.granted).toBe(false);
-                (0, globals_1.expect)(result.reason).toContain("Missing required permission");
-                return [2 /*return*/];
-            }
-          });
-        });
-      },
+      }),
     );
-    (0, globals_1.it)("should handle empty permissions array", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should deny access when user is missing any required permission", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, permissions, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              user = createMockUser("staff");
+              permissions = ["patients.read", "billing.manage"];
+              return [4 /*yield*/, (0, permissions_1.hasAllPermissions)(user, permissions)];
+            case 1:
+              result = _a.sent();
+              (0, globals_1.expect)(result.granted).toBe(false);
+              (0, globals_1.expect)(result.reason).toContain("Missing required permission");
+              return [2 /*return*/];
+          }
+        });
+      }),
+    );
+    (0, globals_1.it)("should handle empty permissions array", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var user, permissions, result;
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("patient");
@@ -412,14 +386,14 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Role-based permission validation", function () {
-    (0, globals_1.it)("should validate owner permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Role-based permission validation", () => {
+    (0, globals_1.it)("should validate owner permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, patientRead, billingManage, clinicManage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("owner");
@@ -438,12 +412,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate manager permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate manager permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, patientRead, billingManage, clinicManage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("manager");
@@ -462,12 +436,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate staff permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate staff permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, patientRead, appointmentManage, billingManage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("staff");
@@ -486,12 +460,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate patient permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate patient permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, patientRead, appointmentManage, billingRead;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("patient");
@@ -510,14 +484,14 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error handling", function () {
-    (0, globals_1.it)("should handle permission validation errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error handling", () => {
+    (0, globals_1.it)("should handle permission validation errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, originalValidation, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("staff");
@@ -533,12 +507,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle missing user data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle missing user data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidUser, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidUser = {
@@ -556,14 +530,14 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Performance and caching", function () {
-    (0, globals_1.it)("should cache permission results for performance", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Performance and caching", () => {
+    (0, globals_1.it)("should cache permission results for performance", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, start1, result1, time1, start2, result2, time2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("manager");
@@ -584,12 +558,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should clear cache when requested", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should clear cache when requested", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("manager");
@@ -607,14 +581,14 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Resource-specific permissions", function () {
-    (0, globals_1.it)("should handle patient-specific access", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Resource-specific permissions", () => {
+    (0, globals_1.it)("should handle patient-specific access", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("staff");
@@ -629,12 +603,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle appointment-specific access", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle appointment-specific access", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("staff");
@@ -649,12 +623,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle financial data access restrictions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle financial data access restrictions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var staffUser, managerUser, staffResult, managerResult;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               staffUser = createMockUser("staff");
@@ -670,14 +644,14 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Audit logging", function () {
-    (0, globals_1.it)("should log successful permission checks", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Audit logging", () => {
+    (0, globals_1.it)("should log successful permission checks", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("manager");
@@ -688,12 +662,12 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should log failed permission checks", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should log failed permission checks", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = createMockUser("patient");
@@ -704,7 +678,7 @@ function createMockUser(role, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

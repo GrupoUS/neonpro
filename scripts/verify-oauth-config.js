@@ -1,6 +1,6 @@
 // scripts/verify-oauth-config.js
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 console.log("🔍 Verificando Configuração do Google OAuth...\n");
 
@@ -22,10 +22,8 @@ if (fs.existsSync(envPath)) {
     const clientIdMatch = envContent.match(/GOOGLE_CLIENT_ID=(.+)/);
     const clientSecretMatch = envContent.match(/GOOGLE_CLIENT_SECRET=(.+)/);
 
-    const clientIdPlaceholder =
-      clientIdMatch && clientIdMatch[1].includes("your_google_client_id_here");
-    const secretPlaceholder =
-      clientSecretMatch && clientSecretMatch[1].includes("your_google_client_secret_here");
+    const clientIdPlaceholder = clientIdMatch?.[1].includes("your_google_client_id_here");
+    const secretPlaceholder = clientSecretMatch?.[1].includes("your_google_client_secret_here");
 
     if (clientIdPlaceholder) {
       console.log("⚠️  GOOGLE_CLIENT_ID ainda é um placeholder");

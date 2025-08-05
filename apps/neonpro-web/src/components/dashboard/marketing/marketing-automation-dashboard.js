@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MarketingAutomationDashboard = MarketingAutomationDashboard;
 var react_1 = require("react");
@@ -208,7 +205,6 @@ var CAMPAIGN_TYPES = [
   },
 ];
 function MarketingAutomationDashboard() {
-  var _this = this;
   var _a;
   var _b = (0, react_1.useState)([]),
     campaigns = _b[0],
@@ -231,15 +227,15 @@ function MarketingAutomationDashboard() {
   var _h = (0, react_1.useState)({}),
     editingCampaign = _h[0],
     setEditingCampaign = _h[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadCampaigns();
     loadTemplates();
     loadTriggers();
   }, []);
-  var loadCampaigns = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadCampaigns = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -267,11 +263,10 @@ function MarketingAutomationDashboard() {
         }
       });
     });
-  };
-  var loadTemplates = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTemplates = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -295,11 +290,10 @@ function MarketingAutomationDashboard() {
         }
       });
     });
-  };
-  var loadTriggers = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTriggers = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -323,11 +317,10 @@ function MarketingAutomationDashboard() {
         }
       });
     });
-  };
-  var createCampaign = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createCampaign = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -360,11 +353,10 @@ function MarketingAutomationDashboard() {
         }
       });
     });
-  };
-  var updateCampaign = function (campaignId, updates) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateCampaign = (campaignId, updates) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -395,11 +387,10 @@ function MarketingAutomationDashboard() {
         }
       });
     });
-  };
-  var deleteCampaign = function (campaignId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteCampaign = (campaignId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -428,11 +419,10 @@ function MarketingAutomationDashboard() {
         }
       });
     });
-  };
-  var runCampaign = function (campaignId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var runCampaign = (campaignId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -461,11 +451,10 @@ function MarketingAutomationDashboard() {
         }
       });
     });
-  };
-  var pauseCampaign = function (campaignId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var pauseCampaign = (campaignId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -494,8 +483,7 @@ function MarketingAutomationDashboard() {
         }
       });
     });
-  };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "active":
         return (
@@ -524,23 +512,19 @@ function MarketingAutomationDashboard() {
         return <badge_1.Badge variant="outline">Draft</badge_1.Badge>;
     }
   };
-  var getCampaignTypeIcon = function (type) {
-    var campaignType = CAMPAIGN_TYPES.find(function (t) {
-      return t.value === type;
-    });
+  var getCampaignTypeIcon = (type) => {
+    var campaignType = CAMPAIGN_TYPES.find((t) => t.value === type);
     if (campaignType) {
       var Icon = campaignType.icon;
       return <Icon className="w-4 h-4" />;
     }
     return <lucide_react_1.Target className="w-4 h-4" />;
   };
-  var getCampaignTypeName = function (type) {
-    var campaignType = CAMPAIGN_TYPES.find(function (t) {
-      return t.value === type;
-    });
+  var getCampaignTypeName = (type) => {
+    var campaignType = CAMPAIGN_TYPES.find((t) => t.value === type);
     return (campaignType === null || campaignType === void 0 ? void 0 : campaignType.label) || type;
   };
-  var formatMetrics = function (metrics) {
+  var formatMetrics = (metrics) => {
     if (!metrics) return "No data";
     var openRate =
       metrics.total_sent > 0 ? ((metrics.opened / metrics.total_sent) * 100).toFixed(1) : "0";
@@ -553,20 +537,19 @@ function MarketingAutomationDashboard() {
       .concat(clickRate, "% click, ")
       .concat(conversionRate, "% conversion");
   };
-  var formatRevenue = function (revenue) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatRevenue = (revenue) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(revenue);
-  };
   if (loading) {
     return (
       <div className="space-y-4">
         <div className="h-8 bg-gray-200 rounded animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {__spreadArray([], Array(3), true).map(function (_, i) {
-            return <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />;
-          })}
+          {__spreadArray([], Array(3), true).map((_, i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />
+          ))}
         </div>
       </div>
     );
@@ -593,11 +576,7 @@ function MarketingAutomationDashboard() {
               <div>
                 <p className="text-sm font-medium text-gray-600">Active</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {
-                    campaigns.filter(function (c) {
-                      return c.status === "active";
-                    }).length
-                  }
+                  {campaigns.filter((c) => c.status === "active").length}
                 </p>
               </div>
               <lucide_react_1.Play className="w-8 h-8 text-green-400" />
@@ -612,7 +591,7 @@ function MarketingAutomationDashboard() {
                 <p className="text-sm font-medium text-gray-600">This Month Revenue</p>
                 <p className="text-2xl font-bold text-blue-600">
                   {formatRevenue(
-                    campaigns.reduce(function (sum, c) {
+                    campaigns.reduce((sum, c) => {
                       var _a;
                       return (
                         sum +
@@ -637,12 +616,12 @@ function MarketingAutomationDashboard() {
                 <p className="text-2xl font-bold">
                   {campaigns.length > 0
                     ? (
-                        campaigns.reduce(function (sum, c) {
+                        campaigns.reduce((sum, c) => {
                           var metrics = c.performance_metrics;
                           if (!metrics || metrics.total_sent === 0) return sum;
                           return sum + (metrics.converted / metrics.total_sent) * 100;
                         }, 0) /
-                        campaigns.filter(function (c) {
+                        campaigns.filter((c) => {
                           var _a;
                           return (_a = c.performance_metrics) === null || _a === void 0
                             ? void 0
@@ -692,11 +671,11 @@ function MarketingAutomationDashboard() {
                       <input_1.Input
                         id="name"
                         value={editingCampaign.name || ""}
-                        onChange={function (e) {
-                          return setEditingCampaign(function (prev) {
-                            return __assign(__assign({}, prev), { name: e.target.value });
-                          });
-                        }}
+                        onChange={(e) =>
+                          setEditingCampaign((prev) =>
+                            __assign(__assign({}, prev), { name: e.target.value }),
+                          )
+                        }
                         placeholder="Enter campaign name"
                       />
                     </div>
@@ -705,26 +684,24 @@ function MarketingAutomationDashboard() {
                       <label_1.Label htmlFor="type">Campaign Type</label_1.Label>
                       <select_1.Select
                         value={editingCampaign.type || ""}
-                        onValueChange={function (value) {
-                          return setEditingCampaign(function (prev) {
-                            return __assign(__assign({}, prev), { type: value });
-                          });
-                        }}
+                        onValueChange={(value) =>
+                          setEditingCampaign((prev) =>
+                            __assign(__assign({}, prev), { type: value }),
+                          )
+                        }
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue placeholder="Select campaign type" />
                         </select_1.SelectTrigger>
                         <select_1.SelectContent>
-                          {CAMPAIGN_TYPES.map(function (type) {
-                            return (
-                              <select_1.SelectItem key={type.value} value={type.value}>
-                                <div className="flex items-center space-x-2">
-                                  <type.icon className="w-4 h-4" />
-                                  <span>{type.label}</span>
-                                </div>
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {CAMPAIGN_TYPES.map((type) => (
+                            <select_1.SelectItem key={type.value} value={type.value}>
+                              <div className="flex items-center space-x-2">
+                                <type.icon className="w-4 h-4" />
+                                <span>{type.label}</span>
+                              </div>
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                     </div>
@@ -735,11 +712,11 @@ function MarketingAutomationDashboard() {
                     <textarea_1.Textarea
                       id="description"
                       value={editingCampaign.description || ""}
-                      onChange={function (e) {
-                        return setEditingCampaign(function (prev) {
-                          return __assign(__assign({}, prev), { description: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setEditingCampaign((prev) =>
+                          __assign(__assign({}, prev), { description: e.target.value }),
+                        )
+                      }
                       placeholder="Describe the campaign goals and strategy"
                       rows={3}
                     />
@@ -749,9 +726,8 @@ function MarketingAutomationDashboard() {
                     <alert_1.Alert>
                       <lucide_react_1.AlertTriangle className="w-4 h-4" />
                       <alert_1.AlertDescription>
-                        {(_a = CAMPAIGN_TYPES.find(function (t) {
-                          return t.value === editingCampaign.type;
-                        })) === null || _a === void 0
+                        {(_a = CAMPAIGN_TYPES.find((t) => t.value === editingCampaign.type)) ===
+                          null || _a === void 0
                           ? void 0
                           : _a.description}
                       </alert_1.AlertDescription>
@@ -760,12 +736,7 @@ function MarketingAutomationDashboard() {
                 </div>
 
                 <dialog_1.DialogFooter>
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setShowCreateDialog(false);
-                    }}
-                  >
+                  <button_1.Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                     Cancel
                   </button_1.Button>
                   <button_1.Button
@@ -794,7 +765,7 @@ function MarketingAutomationDashboard() {
               </table_1.TableRow>
             </table_1.TableHeader>
             <table_1.TableBody>
-              {campaigns.map(function (campaign) {
+              {campaigns.map((campaign) => {
                 var _a;
                 return (
                   <table_1.TableRow key={campaign.id}>
@@ -844,9 +815,7 @@ function MarketingAutomationDashboard() {
                           ? <button_1.Button
                               variant="ghost"
                               size="sm"
-                              onClick={function () {
-                                return runCampaign(campaign.id);
-                              }}
+                              onClick={() => runCampaign(campaign.id)}
                             >
                               <lucide_react_1.Play className="w-4 h-4" />
                             </button_1.Button>
@@ -854,9 +823,7 @@ function MarketingAutomationDashboard() {
                             ? <button_1.Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={function () {
-                                  return pauseCampaign(campaign.id);
-                                }}
+                                onClick={() => pauseCampaign(campaign.id)}
                               >
                                 <lucide_react_1.Pause className="w-4 h-4" />
                               </button_1.Button>
@@ -882,9 +849,7 @@ function MarketingAutomationDashboard() {
                               Campaign Settings
                             </dropdown_menu_1.DropdownMenuItem>
                             <dropdown_menu_1.DropdownMenuItem
-                              onClick={function () {
-                                return deleteCampaign(campaign.id);
-                              }}
+                              onClick={() => deleteCampaign(campaign.id)}
                               className="text-red-600"
                             >
                               <lucide_react_1.Trash2 className="w-4 h-4 mr-2" />
@@ -907,12 +872,7 @@ function MarketingAutomationDashboard() {
               <p className="text-sm text-gray-500">
                 Create your first marketing campaign to get started
               </p>
-              <button_1.Button
-                className="mt-4"
-                onClick={function () {
-                  return setShowCreateDialog(true);
-                }}
-              >
+              <button_1.Button className="mt-4" onClick={() => setShowCreateDialog(true)}>
                 <lucide_react_1.Plus className="w-4 h-4 mr-2" />
                 Create Your First Campaign
               </button_1.Button>

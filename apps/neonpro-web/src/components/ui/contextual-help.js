@@ -1,6 +1,5 @@
 // Contextual Help System for Error Resolution
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContextualHelp = ContextualHelp;
 var react_1 = require("react");
@@ -341,19 +340,17 @@ function ContextualHelp(_a) {
                 Passos para resolver:
               </h4>
               <ol className="space-y-2">
-                {helpContent.steps.map(function (step, index) {
-                  return (
-                    <li key={index} className="flex items-start gap-2 text-sm">
-                      <badge_1.Badge
-                        variant="outline"
-                        className="w-5 h-5 p-0 flex items-center justify-center text-xs"
-                      >
-                        {index + 1}
-                      </badge_1.Badge>
-                      <span className="flex-1 text-gray-700">{step}</span>
-                    </li>
-                  );
-                })}
+                {helpContent.steps.map((step, index) => (
+                  <li key={index} className="flex items-start gap-2 text-sm">
+                    <badge_1.Badge
+                      variant="outline"
+                      className="w-5 h-5 p-0 flex items-center justify-center text-xs"
+                    >
+                      {index + 1}
+                    </badge_1.Badge>
+                    <span className="flex-1 text-gray-700">{step}</span>
+                  </li>
+                ))}
               </ol>
             </div>
 
@@ -365,14 +362,12 @@ function ContextualHelp(_a) {
                   Dicas úteis:
                 </h4>
                 <ul className="space-y-1">
-                  {helpContent.tips.map(function (tip, index) {
-                    return (
-                      <li key={index} className="flex items-start gap-2 text-sm text-blue-800">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-                        {tip}
-                      </li>
-                    );
-                  })}
+                  {helpContent.tips.map((tip, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm text-blue-800">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+                      {tip}
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -385,14 +380,12 @@ function ContextualHelp(_a) {
                   Atenção:
                 </h4>
                 <ul className="space-y-1">
-                  {helpContent.warnings.map(function (warning, index) {
-                    return (
-                      <li key={index} className="flex items-start gap-2 text-sm text-yellow-800">
-                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-2 flex-shrink-0" />
-                        {warning}
-                      </li>
-                    );
-                  })}
+                  {helpContent.warnings.map((warning, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm text-yellow-800">
+                      <div className="w-1.5 h-1.5 rounded-full bg-yellow-500 mt-2 flex-shrink-0" />
+                      {warning}
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -405,23 +398,21 @@ function ContextualHelp(_a) {
                   {roleContacts.title}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {roleContacts.contacts.map(function (contact, index) {
-                    return (
-                      <div key={index} className="flex items-center gap-2 text-sm">
-                        {contact.type === "email" && (
-                          <lucide_react_1.Mail className="w-3 h-3 text-gray-500" />
-                        )}
-                        {contact.type === "phone" && (
-                          <lucide_react_1.Phone className="w-3 h-3 text-gray-500" />
-                        )}
-                        {contact.type === "chat" && (
-                          <lucide_react_1.MessageSquare className="w-3 h-3 text-gray-500" />
-                        )}
-                        <span className="font-medium text-gray-700">{contact.label}:</span>
-                        <span className="text-gray-600">{contact.value}</span>
-                      </div>
-                    );
-                  })}
+                  {roleContacts.contacts.map((contact, index) => (
+                    <div key={index} className="flex items-center gap-2 text-sm">
+                      {contact.type === "email" && (
+                        <lucide_react_1.Mail className="w-3 h-3 text-gray-500" />
+                      )}
+                      {contact.type === "phone" && (
+                        <lucide_react_1.Phone className="w-3 h-3 text-gray-500" />
+                      )}
+                      {contact.type === "chat" && (
+                        <lucide_react_1.MessageSquare className="w-3 h-3 text-gray-500" />
+                      )}
+                      <span className="font-medium text-gray-700">{contact.label}:</span>
+                      <span className="text-gray-600">{contact.value}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -431,22 +422,18 @@ function ContextualHelp(_a) {
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">Documentação relacionada:</h4>
                 <div className="space-y-1">
-                  {helpContent.relatedDocuments.map(function (doc, index) {
-                    return (
-                      <button_1.Button
-                        key={index}
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start h-auto p-2"
-                        onClick={function () {
-                          return window.open(doc.url, "_blank");
-                        }}
-                      >
-                        <lucide_react_1.ExternalLink className="w-3 h-3 mr-2 flex-shrink-0" />
-                        <span className="text-sm">{doc.title}</span>
-                      </button_1.Button>
-                    );
-                  })}
+                  {helpContent.relatedDocuments.map((doc, index) => (
+                    <button_1.Button
+                      key={index}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start h-auto p-2"
+                      onClick={() => window.open(doc.url, "_blank")}
+                    >
+                      <lucide_react_1.ExternalLink className="w-3 h-3 mr-2 flex-shrink-0" />
+                      <span className="text-sm">{doc.title}</span>
+                    </button_1.Button>
+                  ))}
                 </div>
               </div>
             )}

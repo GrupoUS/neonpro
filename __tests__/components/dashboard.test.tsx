@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, test, expect, beforeEach } from "@jest/globals";
+import { beforeEach, describe, expect, test } from "@jest/globals";
+import { fireEvent, render, screen } from "@testing-library/react";
 import Dashboard from "@/app/dashboard/page";
 
 // Mock framer-motion to avoid animation issues in tests

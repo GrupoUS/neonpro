@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ConsentWithdrawalManager;
 var react_1 = require("react");
@@ -149,7 +146,6 @@ var lucide_react_1 = require("lucide-react");
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 var use_toast_1 = require("@/hooks/use-toast");
 function ConsentWithdrawalManager(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     clinicId = _a.clinicId;
   var _b = (0, react_1.useState)([]),
@@ -172,16 +168,13 @@ function ConsentWithdrawalManager(_a) {
     setSelectedStatus = _g[1];
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      fetchPatientConsents();
-    },
-    [patientId, clinicId, selectedConsentType, selectedStatus],
-  );
-  var fetchPatientConsents = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    fetchPatientConsents();
+  }, [patientId, clinicId, selectedConsentType, selectedStatus]);
+  var fetchPatientConsents = () =>
+    __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -234,11 +227,10 @@ function ConsentWithdrawalManager(_a) {
         }
       });
     });
-  };
-  var handleWithdrawConsent = function (consentId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleWithdrawConsent = (consentId) =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!withdrawalReason.trim()) {
@@ -306,8 +298,7 @@ function ConsentWithdrawalManager(_a) {
         }
       });
     });
-  };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "active":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -321,7 +312,7 @@ function ConsentWithdrawalManager(_a) {
         return <lucide_react_1.FileText className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var variants = {
       active: "default",
       pending: "secondary",
@@ -335,18 +326,15 @@ function ConsentWithdrawalManager(_a) {
       </badge_1.Badge>
     );
   };
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
+  var formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-  var canWithdraw = function (consent) {
-    return consent.status === "active" || consent.status === "pending";
-  };
+  var canWithdraw = (consent) => consent.status === "active" || consent.status === "pending";
   if (loading) {
     return (
       <card_1.Card>
@@ -429,7 +417,7 @@ function ConsentWithdrawalManager(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {consents.map(function (consent) {
+                  {consents.map((consent) => {
                     var _a, _b, _c, _d;
                     return (
                       <table_1.TableRow key={consent.id}>
@@ -515,9 +503,7 @@ function ConsentWithdrawalManager(_a) {
                                       id="reason"
                                       placeholder="Please provide a reason for withdrawing this consent..."
                                       value={withdrawalReason}
-                                      onChange={function (e) {
-                                        return setWithdrawalReason(e.target.value);
-                                      }}
+                                      onChange={(e) => setWithdrawalReason(e.target.value)}
                                       rows={3}
                                     />
                                   </div>
@@ -525,7 +511,7 @@ function ConsentWithdrawalManager(_a) {
                                 <dialog_1.DialogFooter>
                                   <button_1.Button
                                     variant="outline"
-                                    onClick={function () {
+                                    onClick={() => {
                                       setWithdrawalReason("");
                                       setWithdrawing(null);
                                     }}
@@ -534,9 +520,7 @@ function ConsentWithdrawalManager(_a) {
                                   </button_1.Button>
                                   <button_1.Button
                                     variant="destructive"
-                                    onClick={function () {
-                                      return handleWithdrawConsent(consent.id);
-                                    }}
+                                    onClick={() => handleWithdrawConsent(consent.id)}
                                     disabled={
                                       withdrawing === consent.id || !withdrawalReason.trim()
                                     }

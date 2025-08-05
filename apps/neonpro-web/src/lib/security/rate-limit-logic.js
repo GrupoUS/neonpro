@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Rate Limiting Logic for Security
  * Advanced rate limiting with adaptive thresholds
@@ -7,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RateLimitLogic = void 0;
 // In-memory cache for rate limiting
 var rateLimitCache = new Map();
-var RateLimitLogic = /** @class */ (function () {
+var RateLimitLogic = /** @class */ (() => {
   function RateLimitLogic() {}
   /**
    * Check if request is allowed based on rate limits
@@ -73,7 +72,7 @@ var RateLimitLogic = /** @class */ (function () {
   /**
    * 🤖 Adaptive limits based on route sensitivity
    */
-  RateLimitLogic.getAdaptiveLimits = function (route, method) {
+  RateLimitLogic.getAdaptiveLimits = (route, method) => {
     // High sensitivity routes (auth, payments)
     if (route.includes("/auth") || route.includes("/payment")) {
       return {
@@ -100,22 +99,20 @@ var RateLimitLogic = /** @class */ (function () {
   /**
    * Clear rate limit cache (for testing or admin purposes)
    */
-  RateLimitLogic.clearCache = function () {
+  RateLimitLogic.clearCache = () => {
     rateLimitCache.clear();
   };
   /**
    * Get current cache stats
    */
-  RateLimitLogic.getCacheStats = function () {
-    return {
-      size: rateLimitCache.size,
-      entries: Array.from(rateLimitCache.entries()).map(function (_a) {
-        var key = _a[0],
-          entry = _a[1];
-        return { key: key, entry: entry };
-      }),
-    };
-  };
+  RateLimitLogic.getCacheStats = () => ({
+    size: rateLimitCache.size,
+    entries: Array.from(rateLimitCache.entries()).map((_a) => {
+      var key = _a[0],
+        entry = _a[1];
+      return { key: key, entry: entry };
+    }),
+  });
   return RateLimitLogic;
 })();
 exports.RateLimitLogic = RateLimitLogic;

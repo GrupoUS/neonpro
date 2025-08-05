@@ -1,9 +1,9 @@
 // Session Preservation System
 // Maintains session state during reconnections and network failures
 
-import type { UserSession, UserDevice } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
 import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { UserDevice, UserSession } from "@/types/session";
 
 export interface SessionSnapshot {
   id: string;

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PerformanceTracking;
 var alert_1 = require("@/components/ui/alert");
@@ -144,7 +141,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function PerformanceTracking() {
-  var _this = this;
   var _a, _b, _c;
   var _d = (0, react_1.useState)([]),
     performanceData = _d[0],
@@ -158,14 +154,14 @@ function PerformanceTracking() {
   var _g = (0, react_1.useState)(true),
     isLoading = _g[0],
     setIsLoading = _g[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadPerformanceData();
   }, []);
-  var loadPerformanceData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPerformanceData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockData, error_1;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             setIsLoading(true);
@@ -173,12 +169,7 @@ function PerformanceTracking() {
           case 1:
             _b.trys.push([1, 3, 4, 5]);
             // Mock data - replace with actual API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 2:
             // Mock data - replace with actual API call
             _b.sent();
@@ -277,15 +268,13 @@ function PerformanceTracking() {
             );
             // Mock comparison data
             setComparisonData({
-              segments: mockData.map(function (segment, index) {
-                return {
-                  name: segment.name,
-                  engagementRate: segment.metrics.engagementRate,
-                  conversionRate: segment.metrics.conversionRate,
-                  averageRevenue: segment.metrics.averageRevenue,
-                  color: ["#8884d8", "#82ca9d", "#ffc658"][index % 3],
-                };
-              }),
+              segments: mockData.map((segment, index) => ({
+                name: segment.name,
+                engagementRate: segment.metrics.engagementRate,
+                conversionRate: segment.metrics.conversionRate,
+                averageRevenue: segment.metrics.averageRevenue,
+                color: ["#8884d8", "#82ca9d", "#ffc658"][index % 3],
+              })),
             });
             return [3 /*break*/, 5];
           case 3:
@@ -300,20 +289,14 @@ function PerformanceTracking() {
         }
       });
     });
-  };
-  var selectedSegmentData = performanceData.find(function (s) {
-    return s.id === selectedSegment;
-  });
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var selectedSegmentData = performanceData.find((s) => s.id === selectedSegment);
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(1), "%");
-  };
-  var getMetricTrend = function (current, previous) {
+  var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
+  var getMetricTrend = (current, previous) => {
     var change = ((current - previous) / previous) * 100;
     return {
       direction: change >= 0 ? "up" : "down",
@@ -325,18 +308,16 @@ function PerformanceTracking() {
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardContent className="p-6">
-                  <div className="animate-pulse">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                  </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {Array.from({ length: 4 }).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardContent className="p-6">
+                <div className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -368,9 +349,8 @@ function PerformanceTracking() {
                 <div className="flex items-center">
                   <div className="text-2xl font-bold">
                     {formatPercentage(
-                      performanceData.reduce(function (acc, s) {
-                        return acc + s.metrics.engagementRate;
-                      }, 0) / performanceData.length,
+                      performanceData.reduce((acc, s) => acc + s.metrics.engagementRate, 0) /
+                        performanceData.length,
                     )}
                   </div>
                 </div>
@@ -388,9 +368,8 @@ function PerformanceTracking() {
                 <div className="flex items-center">
                   <div className="text-2xl font-bold">
                     {formatPercentage(
-                      performanceData.reduce(function (acc, s) {
-                        return acc + s.metrics.conversionRate;
-                      }, 0) / performanceData.length,
+                      performanceData.reduce((acc, s) => acc + s.metrics.conversionRate, 0) /
+                        performanceData.length,
                     )}
                   </div>
                 </div>
@@ -408,9 +387,8 @@ function PerformanceTracking() {
                 <div className="flex items-center">
                   <div className="text-2xl font-bold">
                     {formatPercentage(
-                      performanceData.reduce(function (acc, s) {
-                        return acc + s.campaigns.totalROI;
-                      }, 0) / performanceData.length,
+                      performanceData.reduce((acc, s) => acc + s.campaigns.totalROI, 0) /
+                        performanceData.length,
                     )}
                   </div>
                 </div>
@@ -440,19 +418,15 @@ function PerformanceTracking() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="flex flex-wrap gap-2 mb-6">
-                {performanceData.map(function (segment) {
-                  return (
-                    <button_1.Button
-                      key={segment.id}
-                      variant={selectedSegment === segment.id ? "default" : "outline"}
-                      onClick={function () {
-                        return setSelectedSegment(segment.id);
-                      }}
-                    >
-                      {segment.name}
-                    </button_1.Button>
-                  );
-                })}
+                {performanceData.map((segment) => (
+                  <button_1.Button
+                    key={segment.id}
+                    variant={selectedSegment === segment.id ? "default" : "outline"}
+                    onClick={() => setSelectedSegment(segment.id)}
+                  >
+                    {segment.name}
+                  </button_1.Button>
+                ))}
               </div>
 
               {selectedSegmentData && (
@@ -460,17 +434,15 @@ function PerformanceTracking() {
                   {/* Alerts */}
                   {selectedSegmentData.alerts.length > 0 && (
                     <div className="space-y-2">
-                      {selectedSegmentData.alerts.map(function (alert, index) {
-                        return (
-                          <alert_1.Alert
-                            key={index}
-                            variant={alert.type === "warning" ? "destructive" : "default"}
-                          >
-                            <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                            <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
-                          </alert_1.Alert>
-                        );
-                      })}
+                      {selectedSegmentData.alerts.map((alert, index) => (
+                        <alert_1.Alert
+                          key={index}
+                          variant={alert.type === "warning" ? "destructive" : "default"}
+                        >
+                          <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                          <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
+                        </alert_1.Alert>
+                      ))}
                     </div>
                   )}
 
@@ -673,28 +645,24 @@ function PerformanceTracking() {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {performanceData.map(function (segment) {
-                    return (
-                      <table_1.TableRow key={segment.id}>
-                        <table_1.TableCell className="font-medium">
-                          {segment.name}
-                        </table_1.TableCell>
-                        <table_1.TableCell>{segment.metrics.size}</table_1.TableCell>
-                        <table_1.TableCell>
-                          {formatPercentage(segment.metrics.engagementRate)}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {formatPercentage(segment.metrics.conversionRate)}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {formatCurrency(segment.metrics.averageRevenue)}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {formatPercentage(segment.campaigns.totalROI)}
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                  {performanceData.map((segment) => (
+                    <table_1.TableRow key={segment.id}>
+                      <table_1.TableCell className="font-medium">{segment.name}</table_1.TableCell>
+                      <table_1.TableCell>{segment.metrics.size}</table_1.TableCell>
+                      <table_1.TableCell>
+                        {formatPercentage(segment.metrics.engagementRate)}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {formatPercentage(segment.metrics.conversionRate)}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {formatCurrency(segment.metrics.averageRevenue)}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {formatPercentage(segment.campaigns.totalROI)}
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>
             </card_1.CardContent>

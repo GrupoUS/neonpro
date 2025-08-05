@@ -1,17 +1,16 @@
-"use strict";
 // Intelligent Session Timeout System
 // Implements activity-based session management with role-specific timeouts
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,13 +130,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntelligentTimeoutManager = void 0;
 exports.getTimeoutManager = getTimeoutManager;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
-var IntelligentTimeoutManager = /** @class */ (function () {
+var IntelligentTimeoutManager = /** @class */ (() => {
   function IntelligentTimeoutManager() {
     this.activityBuffer = new Map();
     this.timeoutTimers = new Map();
@@ -154,43 +151,42 @@ var IntelligentTimeoutManager = /** @class */ (function () {
    * Initialize activity tracking for the current session
    */
   IntelligentTimeoutManager.prototype.initializeActivityTracking = function () {
-    var _this = this;
     if (typeof window !== "undefined") {
       // Mouse movement tracking
       document.addEventListener(
         "mousemove",
-        this.throttle(function () {
-          _this.recordActivity("mouse_move");
+        this.throttle(() => {
+          this.recordActivity("mouse_move");
         }, 1000),
       );
       // Keyboard input tracking
-      document.addEventListener("keydown", function () {
-        _this.recordActivity("keyboard_input");
+      document.addEventListener("keydown", () => {
+        this.recordActivity("keyboard_input");
       });
       // Click tracking
-      document.addEventListener("click", function () {
-        _this.recordActivity("click");
+      document.addEventListener("click", () => {
+        this.recordActivity("click");
       });
       // Scroll tracking
       document.addEventListener(
         "scroll",
-        this.throttle(function () {
-          _this.recordActivity("scroll");
+        this.throttle(() => {
+          this.recordActivity("scroll");
         }, 2000),
       );
       // Page visibility change
-      document.addEventListener("visibilitychange", function () {
+      document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") {
-          _this.recordActivity("page_navigation");
+          this.recordActivity("page_navigation");
         }
       });
       // Form interaction tracking
-      document.addEventListener("input", function () {
-        _this.recordActivity("form_interaction");
+      document.addEventListener("input", () => {
+        this.recordActivity("form_interaction");
       });
       // Focus tracking
-      window.addEventListener("focus", function () {
-        _this.recordActivity("system_interaction");
+      window.addEventListener("focus", () => {
+        this.recordActivity("system_interaction");
       });
     }
   };
@@ -198,7 +194,6 @@ var IntelligentTimeoutManager = /** @class */ (function () {
    * Start timeout management for a session
    */
   IntelligentTimeoutManager.prototype.startTimeoutManagement = function (session) {
-    var _this = this;
     var timeoutConfig = this.getTimeoutConfig(session.userId);
     var timeoutDuration = timeoutConfig.baseTimeout * 60 * 1000; // Convert to milliseconds
     // Clear any existing timers
@@ -209,8 +204,8 @@ var IntelligentTimeoutManager = /** @class */ (function () {
     // Schedule warning timers
     this.scheduleWarnings(session, timeoutConfig);
     // Schedule main timeout
-    var timeoutTimer = setTimeout(function () {
-      _this.handleSessionTimeout(session);
+    var timeoutTimer = setTimeout(() => {
+      this.handleSessionTimeout(session);
     }, timeoutDuration);
     this.timeoutTimers.set(session.id, timeoutTimer);
     console.log(
@@ -283,16 +278,15 @@ var IntelligentTimeoutManager = /** @class */ (function () {
    * Schedule timeout warnings
    */
   IntelligentTimeoutManager.prototype.scheduleWarnings = function (session, config) {
-    var _this = this;
     var warnings = [];
-    config.warningIntervals.forEach(function (minutesBefore, index) {
+    config.warningIntervals.forEach((minutesBefore, index) => {
       var warningTime = (config.baseTimeout - minutesBefore) * 60 * 1000;
       var warningType = index === config.warningIntervals.length - 1 ? "final" : "initial";
-      var timer = setTimeout(function () {
-        _this.showTimeoutWarning(session, minutesBefore * 60, warningType);
+      var timer = setTimeout(() => {
+        this.showTimeoutWarning(session, minutesBefore * 60, warningType);
       }, warningTime);
       var warning = {
-        id: _this.utils.generateSessionToken(),
+        id: this.utils.generateSessionToken(),
         sessionId: session.id,
         warningType: warningType,
         timeRemaining: minutesBefore * 60,
@@ -300,7 +294,7 @@ var IntelligentTimeoutManager = /** @class */ (function () {
         dismissed: false,
       };
       warnings.push(warning);
-      _this.warningTimers.set("".concat(session.id, "_").concat(warning.id), timer);
+      this.warningTimers.set("".concat(session.id, "_").concat(warning.id), timer);
     });
     this.activeWarnings.set(session.id, warnings);
   };
@@ -404,16 +398,12 @@ var IntelligentTimeoutManager = /** @class */ (function () {
   IntelligentTimeoutManager.prototype.evaluateSessionExtension = function (sessionId) {
     var activities = this.activityBuffer.get(sessionId) || [];
     var now = Date.now();
-    var recentActivities = activities.filter(function (a) {
-      return now - a.timestamp < 60000;
-    }); // Last minute
+    var recentActivities = activities.filter((a) => now - a.timestamp < 60000); // Last minute
     var config = this.getTimeoutConfig("");
     if (recentActivities.length >= config.activityThreshold) {
       // High activity detected, consider auto-extension
       var warnings = this.activeWarnings.get(sessionId) || [];
-      var hasActiveWarnings = warnings.some(function (w) {
-        return !w.dismissed;
-      });
+      var hasActiveWarnings = warnings.some((w) => !w.dismissed);
       if (hasActiveWarnings && this.canExtendSession(sessionId)) {
         this.extendSession(sessionId, "High user activity detected");
       }
@@ -431,9 +421,7 @@ var IntelligentTimeoutManager = /** @class */ (function () {
             _a.trys.push([0, 4, , 5]);
             activities = this.activityBuffer.get(session.id) || [];
             now_1 = Date.now();
-            recentActivity = activities.find(function (a) {
-              return now_1 - a.timestamp < 30000;
-            });
+            recentActivity = activities.find((a) => now_1 - a.timestamp < 30000);
             if (!(recentActivity && this.canExtendSession(session.id))) return [3 /*break*/, 2];
             // Grace period extension for recent activity
             return [
@@ -493,15 +481,14 @@ var IntelligentTimeoutManager = /** @class */ (function () {
    * Dismiss timeout warnings
    */
   IntelligentTimeoutManager.prototype.dismissWarnings = function (sessionId) {
-    var _this = this;
     var warnings = this.activeWarnings.get(sessionId) || [];
-    warnings.forEach(function (warning) {
+    warnings.forEach((warning) => {
       warning.dismissed = true;
       var timerId = "".concat(sessionId, "_").concat(warning.id);
-      var timer = _this.warningTimers.get(timerId);
+      var timer = this.warningTimers.get(timerId);
       if (timer) {
         clearTimeout(timer);
-        _this.warningTimers.delete(timerId);
+        this.warningTimers.delete(timerId);
       }
     });
   };
@@ -509,7 +496,6 @@ var IntelligentTimeoutManager = /** @class */ (function () {
    * Clear all timers for a session
    */
   IntelligentTimeoutManager.prototype.clearSessionTimers = function (sessionId) {
-    var _this = this;
     // Clear main timeout timer
     var timeoutTimer = this.timeoutTimers.get(sessionId);
     if (timeoutTimer) {
@@ -518,12 +504,12 @@ var IntelligentTimeoutManager = /** @class */ (function () {
     }
     // Clear warning timers
     var warnings = this.activeWarnings.get(sessionId) || [];
-    warnings.forEach(function (warning) {
+    warnings.forEach((warning) => {
       var timerId = "".concat(sessionId, "_").concat(warning.id);
-      var timer = _this.warningTimers.get(timerId);
+      var timer = this.warningTimers.get(timerId);
       if (timer) {
         clearTimeout(timer);
-        _this.warningTimers.delete(timerId);
+        this.warningTimers.delete(timerId);
       }
     });
   };
@@ -533,9 +519,7 @@ var IntelligentTimeoutManager = /** @class */ (function () {
   IntelligentTimeoutManager.prototype.getSessionActivity = function (sessionId) {
     var activities = this.activityBuffer.get(sessionId) || [];
     var now = Date.now();
-    var recentActivities = activities.filter(function (a) {
-      return now - a.timestamp < 300000;
-    }); // Last 5 minutes
+    var recentActivities = activities.filter((a) => now - a.timestamp < 300000); // Last 5 minutes
     var activityTypes = {
       mouse_move: 0,
       keyboard_input: 0,
@@ -548,7 +532,7 @@ var IntelligentTimeoutManager = /** @class */ (function () {
       data_entry: 0,
       system_interaction: 0,
     };
-    activities.forEach(function (activity) {
+    activities.forEach((activity) => {
       activityTypes[activity.type]++;
     });
     var lastActivity = activities.length > 0 ? activities[activities.length - 1].timestamp : 0;
@@ -573,7 +557,7 @@ var IntelligentTimeoutManager = /** @class */ (function () {
   /**
    * Utility functions
    */
-  IntelligentTimeoutManager.prototype.throttle = function (func, limit) {
+  IntelligentTimeoutManager.prototype.throttle = (func, limit) => {
     var inThrottle;
     return function () {
       var args = [];
@@ -583,25 +567,23 @@ var IntelligentTimeoutManager = /** @class */ (function () {
       if (!inThrottle) {
         func.apply(this, args);
         inThrottle = true;
-        setTimeout(function () {
-          return (inThrottle = false);
-        }, limit);
+        setTimeout(() => (inThrottle = false), limit);
       }
     };
   };
-  IntelligentTimeoutManager.prototype.getCurrentSessionId = function () {
+  IntelligentTimeoutManager.prototype.getCurrentSessionId = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("sessionId");
     }
     return null;
   };
-  IntelligentTimeoutManager.prototype.getCurrentUserId = function () {
+  IntelligentTimeoutManager.prototype.getCurrentUserId = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("userId");
     }
     return null;
   };
-  IntelligentTimeoutManager.prototype.getUserRole = function (userId) {
+  IntelligentTimeoutManager.prototype.getUserRole = (userId) => {
     // This would typically come from user context or API
     // For now, return a default role
     return "patient";
@@ -609,7 +591,7 @@ var IntelligentTimeoutManager = /** @class */ (function () {
   IntelligentTimeoutManager.prototype.getSessionById = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);

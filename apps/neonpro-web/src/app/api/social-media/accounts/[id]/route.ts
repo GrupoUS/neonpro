@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { createClient } from "@/app/utils/supabase/server";
 
 /**
  * Individual Social Media Account API Route
@@ -342,7 +342,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     switch (action) {
-      case "sync":
+      case "sync": {
         // Update sync timestamp and status
         const { error: syncError } = await supabase
           .from("social_media_accounts")
@@ -365,6 +365,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
           success: true,
           message: "Account sync initiated successfully",
         });
+      }
 
       case "test_connection":
         // TODO: Implement connection test logic

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,14 +155,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useBilling = useBilling;
 var client_1 = require("@/lib/supabase/client");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function useBilling() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     loading = _a[0],
     setLoading = _a[1];
@@ -189,11 +185,11 @@ function useBilling() {
   // SERVICES MANAGEMENT
   // =====================================================
   var fetchServices = (0, react_1.useCallback)(
-    function (filters) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
         var query, sortBy, sortOrder, _a, data, error, error_1;
         var _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               _d.trys.push([0, 2, 3, 4]);
@@ -267,15 +263,14 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   var createService = (0, react_1.useCallback)(
-    function (serviceData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (serviceData) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error, error_2;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, 4, 5]);
@@ -308,15 +303,14 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchServices],
   );
   var updateService = (0, react_1.useCallback)(
-    function (id, updates) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (id, updates) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error, error_3;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, 4, 5]);
@@ -349,15 +343,14 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchServices],
   );
   var deleteService = (0, react_1.useCallback)(
-    function (id) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (id) =>
+      __awaiter(this, void 0, void 0, function () {
         var error, error_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, 4, 5]);
@@ -387,19 +380,18 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchServices],
   );
   // =====================================================
   // INVOICES MANAGEMENT
   // =====================================================
   var fetchInvoices = (0, react_1.useCallback)(
-    function (filters) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
         var query, page, limit, offset, sortBy, sortOrder, _a, data, error, error_5;
         var _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               _c.trys.push([0, 2, 3, 4]);
@@ -475,15 +467,14 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   var createInvoice = (0, react_1.useCallback)(
-    function (invoiceData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (invoiceData) =>
+      __awaiter(this, void 0, void 0, function () {
         var calculations, _a, invoice_1, invoiceError, itemsWithInvoiceId, itemsError, error_6;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 6, 7, 8]);
@@ -516,13 +507,13 @@ function useBilling() {
                 sonner_1.toast.error("Erro ao criar fatura");
                 return [2 /*return*/, null];
               }
-              itemsWithInvoiceId = invoiceData.items.map(function (item) {
-                return __assign(__assign({}, item), {
+              itemsWithInvoiceId = invoiceData.items.map((item) =>
+                __assign(__assign({}, item), {
                   invoice_id: invoice_1.id,
                   subtotal: item.quantity * item.unit_price,
                   total: item.quantity * item.unit_price - (item.discount_value || 0),
-                });
-              });
+                }),
+              );
               return [4 /*yield*/, supabase.from("invoice_items").insert(itemsWithInvoiceId)];
             case 2:
               itemsError = _b.sent().error;
@@ -553,15 +544,14 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchInvoices],
   );
   var updateInvoice = (0, react_1.useCallback)(
-    function (id, updates) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (id, updates) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error, error_7;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, 4, 5]);
@@ -594,19 +584,18 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchInvoices],
   );
   // =====================================================
   // PAYMENTS MANAGEMENT
   // =====================================================
   var fetchPayments = (0, react_1.useCallback)(
-    function (filters) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
         var query, page, limit, offset, sortBy, sortOrder, _a, data, error, error_8;
         var _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               _d.trys.push([0, 2, 3, 4]);
@@ -688,15 +677,14 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   var createPayment = (0, react_1.useCallback)(
-    function (paymentData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (paymentData) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error, error_9;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, 4, 5]);
@@ -729,18 +717,17 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, fetchPayments],
   );
   // =====================================================
   // FINANCIAL ANALYTICS
   // =====================================================
   var fetchFinancialSummary = (0, react_1.useCallback)(
-    function (startDate, endDate) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (startDate, endDate) =>
+      __awaiter(this, void 0, void 0, function () {
         var now, _a, invoicesData, invoicesError, summary_1, daysDiff, monthsDiff, error_10;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, 3, 4]);
@@ -781,7 +768,7 @@ function useBilling() {
               };
               invoicesData === null || invoicesData === void 0
                 ? void 0
-                : invoicesData.forEach(function (invoice) {
+                : invoicesData.forEach((invoice) => {
                     summary_1.total_revenue += invoice.paid_amount || 0;
                     switch (invoice.status) {
                       case "paid":
@@ -823,118 +810,113 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
-  var fetchRevenueByPeriod = (0, react_1.useCallback)(
-    function () {
-      var args_1 = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args_1[_i] = arguments[_i];
-      }
-      return __awaiter(
-        _this,
-        __spreadArray([], args_1, true),
-        void 0,
-        function (period, startDate, endDate) {
-          var now, _a, data, error, grouped_1, error_11;
-          if (period === void 0) {
-            period = "monthly";
-          }
-          return __generator(this, function (_b) {
-            switch (_b.label) {
-              case 0:
-                _b.trys.push([0, 2, , 3]);
-                // Default to last 12 periods if no dates provided
-                if (!startDate) {
-                  now = new Date();
-                  startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1)
-                    .toISOString()
-                    .split("T")[0];
-                }
-                if (!endDate) {
-                  endDate = new Date().toISOString().split("T")[0];
-                }
-                return [
-                  4 /*yield*/,
-                  supabase
-                    .from("payments")
-                    .select("amount, payment_date")
-                    .eq("status", "completed")
-                    .gte("payment_date", startDate)
-                    .lte("payment_date", endDate),
-                ];
-              case 1:
-                (_a = _b.sent()), (data = _a.data), (error = _a.error);
-                if (error) {
-                  console.error("Error fetching revenue by period:", error);
-                  return [2 /*return*/, []];
-                }
-                grouped_1 = {};
-                data === null || data === void 0
-                  ? void 0
-                  : data.forEach(function (payment) {
-                      var date = new Date(payment.payment_date);
-                      var periodKey = "";
-                      switch (period) {
-                        case "daily":
-                          periodKey = date.toISOString().split("T")[0];
-                          break;
-                        case "weekly":
-                          var weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
-                          periodKey = weekStart.toISOString().split("T")[0];
-                          break;
-                        case "monthly":
-                          periodKey = ""
-                            .concat(date.getFullYear(), "-")
-                            .concat(String(date.getMonth() + 1).padStart(2, "0"));
-                          break;
-                      }
-                      if (!grouped_1[periodKey]) {
-                        grouped_1[periodKey] = { revenue: 0, count: 0 };
-                      }
-                      grouped_1[periodKey].revenue += payment.amount;
-                      grouped_1[periodKey].count += 1;
-                    });
-                return [
-                  2 /*return*/,
-                  Object.entries(grouped_1)
-                    .map(function (_a) {
-                      var period = _a[0],
-                        data = _a[1];
-                      return {
-                        period: period,
-                        revenue: data.revenue,
-                        invoices_count: data.count,
-                        payments_count: data.count,
-                      };
-                    })
-                    .sort(function (a, b) {
-                      return a.period.localeCompare(b.period);
-                    }),
-                ];
-              case 2:
-                error_11 = _b.sent();
-                console.error("Error in fetchRevenueByPeriod:", error_11);
+  var fetchRevenueByPeriod = (0, react_1.useCallback)(() => {
+    var args_1 = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args_1[_i] = arguments[_i];
+    }
+    return __awaiter(
+      this,
+      __spreadArray([], args_1, true),
+      void 0,
+      function (period, startDate, endDate) {
+        var now, _a, data, error, grouped_1, error_11;
+        if (period === void 0) {
+          period = "monthly";
+        }
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              _b.trys.push([0, 2, , 3]);
+              // Default to last 12 periods if no dates provided
+              if (!startDate) {
+                now = new Date();
+                startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1)
+                  .toISOString()
+                  .split("T")[0];
+              }
+              if (!endDate) {
+                endDate = new Date().toISOString().split("T")[0];
+              }
+              return [
+                4 /*yield*/,
+                supabase
+                  .from("payments")
+                  .select("amount, payment_date")
+                  .eq("status", "completed")
+                  .gte("payment_date", startDate)
+                  .lte("payment_date", endDate),
+              ];
+            case 1:
+              (_a = _b.sent()), (data = _a.data), (error = _a.error);
+              if (error) {
+                console.error("Error fetching revenue by period:", error);
                 return [2 /*return*/, []];
-              case 3:
-                return [2 /*return*/];
-            }
-          });
-        },
-      );
-    },
-    [supabase],
-  );
+              }
+              grouped_1 = {};
+              data === null || data === void 0
+                ? void 0
+                : data.forEach((payment) => {
+                    var date = new Date(payment.payment_date);
+                    var periodKey = "";
+                    switch (period) {
+                      case "daily":
+                        periodKey = date.toISOString().split("T")[0];
+                        break;
+                      case "weekly": {
+                        var weekStart = new Date(date.setDate(date.getDate() - date.getDay()));
+                        periodKey = weekStart.toISOString().split("T")[0];
+                        break;
+                      }
+                      case "monthly":
+                        periodKey = ""
+                          .concat(date.getFullYear(), "-")
+                          .concat(String(date.getMonth() + 1).padStart(2, "0"));
+                        break;
+                    }
+                    if (!grouped_1[periodKey]) {
+                      grouped_1[periodKey] = { revenue: 0, count: 0 };
+                    }
+                    grouped_1[periodKey].revenue += payment.amount;
+                    grouped_1[periodKey].count += 1;
+                  });
+              return [
+                2 /*return*/,
+                Object.entries(grouped_1)
+                  .map((_a) => {
+                    var period = _a[0],
+                      data = _a[1];
+                    return {
+                      period: period,
+                      revenue: data.revenue,
+                      invoices_count: data.count,
+                      payments_count: data.count,
+                    };
+                  })
+                  .sort((a, b) => a.period.localeCompare(b.period)),
+              ];
+            case 2:
+              error_11 = _b.sent();
+              console.error("Error in fetchRevenueByPeriod:", error_11);
+              return [2 /*return*/, []];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      },
+    );
+  }, [supabase]);
   // =====================================================
   // SETTINGS MANAGEMENT
   // =====================================================
   var fetchFinancialSettings = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error, error_12;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, , 3]);
@@ -963,15 +945,14 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   var updateFinancialSettings = (0, react_1.useCallback)(
-    function (updates) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (updates) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error, error_13;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, 3, 4]);
@@ -1007,18 +988,17 @@ function useBilling() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, settings === null || settings === void 0 ? void 0 : settings.id],
   );
   // =====================================================
   // UTILITY FUNCTIONS
   // =====================================================
   var calculateInvoiceTotals = (0, react_1.useCallback)(
-    function (items) {
+    (items) => {
       var subtotal = 0;
       var totalDiscount = 0;
-      items.forEach(function (item) {
+      items.forEach((item) => {
         var itemSubtotal = item.quantity * item.unit_price;
         subtotal += itemSubtotal;
         totalDiscount += item.discount_value || 0;
@@ -1036,7 +1016,7 @@ function useBilling() {
     },
     [settings === null || settings === void 0 ? void 0 : settings.tax_rate],
   );
-  var calculatePaymentBalance = (0, react_1.useCallback)(function (invoice) {
+  var calculatePaymentBalance = (0, react_1.useCallback)((invoice) => {
     var totalPaid = invoice.paid_amount || 0;
     var remainingBalance = invoice.total_amount - totalPaid;
     var isFullyPaid = remainingBalance <= 0.01; // Consider small amounts as paid
@@ -1047,14 +1027,11 @@ function useBilling() {
     };
   }, []);
   // Initialize data on mount
-  (0, react_1.useEffect)(
-    function () {
-      fetchServices();
-      fetchFinancialSettings();
-      fetchFinancialSummary();
-    },
-    [fetchServices, fetchFinancialSettings, fetchFinancialSummary],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchServices();
+    fetchFinancialSettings();
+    fetchFinancialSummary();
+  }, [fetchServices, fetchFinancialSettings, fetchFinancialSummary]);
   return {
     // State
     loading: loading,

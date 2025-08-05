@@ -18,32 +18,31 @@
  * @author NeonPro Development Team
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -63,13 +62,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -91,9 +90,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -165,10 +162,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -177,7 +174,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MFASetup = MFASetup;
 var react_1 = require("react");
@@ -201,7 +198,6 @@ var utils_1 = require("@/lib/utils");
  * MFA Setup Component with comprehensive healthcare compliance
  */
 function MFASetup(_a) {
-  var _this = this;
   var _b;
   var userId = _a.userId,
     onSetupComplete = _a.onSetupComplete,
@@ -271,44 +267,36 @@ function MFASetup(_a) {
   /**
    * Handle method selection
    */
-  var handleMethodSelect = (0, react_1.useCallback)(function (method) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { selectedMethod: method });
-    });
+  var handleMethodSelect = (0, react_1.useCallback)((method) => {
+    setState((prev) => __assign(__assign({}, prev), { selectedMethod: method }));
   }, []);
   /**
    * Handle device name change
    */
-  var handleDeviceNameChange = (0, react_1.useCallback)(function (name) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { deviceName: name });
-    });
+  var handleDeviceNameChange = (0, react_1.useCallback)((name) => {
+    setState((prev) => __assign(__assign({}, prev), { deviceName: name }));
   }, []);
   /**
    * Handle phone number change
    */
-  var handlePhoneNumberChange = (0, react_1.useCallback)(function (phone) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { phoneNumber: phone });
-    });
+  var handlePhoneNumberChange = (0, react_1.useCallback)((phone) => {
+    setState((prev) => __assign(__assign({}, prev), { phoneNumber: phone }));
   }, []);
   /**
    * Handle LGPD consent change
    */
-  var handleLGPDConsentChange = (0, react_1.useCallback)(function (consent) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { lgpdConsent: consent });
-    });
+  var handleLGPDConsentChange = (0, react_1.useCallback)((consent) => {
+    setState((prev) => __assign(__assign({}, prev), { lgpdConsent: consent }));
   }, []);
   /**
    * Start MFA setup process
    */
   var startSetup = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var result_1, _a, err_1, error_1;
         var _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               if (!state.lgpdConsent) {
@@ -352,15 +340,15 @@ function MFASetup(_a) {
               return [4 /*yield*/, _a.apply(void 0, [((_b.ipAddress = _c.sent()), _b)])];
             case 3:
               result_1 = _c.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   qrCodeUri: result_1.qrCodeUri,
                   secret: result_1.secret,
                   backupCodes: result_1.backupCodes,
                   recoveryToken: result_1.recoveryToken,
                   currentStep: 2,
-                });
-              });
+                }),
+              );
               (0, use_toast_1.toast)({
                 title: t.success.setupInitiated,
                 description: t.success.setupInitiatedDescription,
@@ -380,8 +368,7 @@ function MFASetup(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       state.lgpdConsent,
       state.deviceName,
@@ -397,11 +384,11 @@ function MFASetup(_a) {
    * Verify MFA token
    */
   var verifyToken = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var result, _a, err_2, error_2;
         var _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               if (!state.verificationToken.trim()) {
@@ -412,9 +399,7 @@ function MFASetup(_a) {
                 });
                 return [2 /*return*/];
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isVerifying: true });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isVerifying: true }));
               _c.label = 1;
             case 1:
               _c.trys.push([1, 4, 5, 6]);
@@ -431,9 +416,7 @@ function MFASetup(_a) {
             case 3:
               result = _c.sent();
               if (result.isValid) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), { currentStep: 3 });
-                }); // Move to backup codes step
+                setState((prev) => __assign(__assign({}, prev), { currentStep: 3 })); // Move to backup codes step
                 (0, use_toast_1.toast)({
                   title: t.success.verificationSuccess,
                   description: t.success.verificationSuccessDescription,
@@ -457,45 +440,39 @@ function MFASetup(_a) {
               });
               return [3 /*break*/, 6];
             case 5:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isVerifying: false });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isVerifying: false }));
               return [7 /*endfinally*/];
             case 6:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state.verificationToken, state.selectedMethod, userId, verifyMFA, t],
   );
   /**
    * Complete setup process
    */
-  var completeSetup = (0, react_1.useCallback)(
-    function () {
-      var result = {
-        secret: state.secret,
-        qrCodeUri: state.qrCodeUri,
-        backupCodes: state.backupCodes,
-        recoveryToken: state.recoveryToken,
-      };
-      onSetupComplete(result);
-      (0, use_toast_1.toast)({
-        title: t.success.setupComplete,
-        description: t.success.setupCompleteDescription,
-      });
-    },
-    [state, onSetupComplete, t],
-  );
+  var completeSetup = (0, react_1.useCallback)(() => {
+    var result = {
+      secret: state.secret,
+      qrCodeUri: state.qrCodeUri,
+      backupCodes: state.backupCodes,
+      recoveryToken: state.recoveryToken,
+    };
+    onSetupComplete(result);
+    (0, use_toast_1.toast)({
+      title: t.success.setupComplete,
+      description: t.success.setupCompleteDescription,
+    });
+  }, [state, onSetupComplete, t]);
   /**
    * Copy text to clipboard
    */
   var copyToClipboard = (0, react_1.useCallback)(
-    function (text, label) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (text, label) =>
+      __awaiter(this, void 0, void 0, function () {
         var err_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -519,42 +496,36 @@ function MFASetup(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [t],
   );
   /**
    * Download backup codes as text file
    */
-  var downloadBackupCodes = (0, react_1.useCallback)(
-    function () {
-      var content = __spreadArray(
-        __spreadArray(
-          [t.backupCodes.fileHeader, t.backupCodes.fileWarning, ""],
-          state.backupCodes.map(function (code, index) {
-            return "".concat(index + 1, ". ").concat(code);
-          }),
-          true,
-        ),
-        ["", t.backupCodes.fileFooter, "Generated: ".concat(new Date().toLocaleString(locale))],
-        false,
-      ).join("\n");
-      var blob = new Blob([content], { type: "text/plain" });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "neonpro-backup-codes-".concat(new Date().toISOString().split("T")[0], ".txt");
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      (0, use_toast_1.toast)({
-        title: t.success.downloaded,
-        description: t.success.downloadedDescription,
-      });
-    },
-    [state.backupCodes, locale, t],
-  );
+  var downloadBackupCodes = (0, react_1.useCallback)(() => {
+    var content = __spreadArray(
+      __spreadArray(
+        [t.backupCodes.fileHeader, t.backupCodes.fileWarning, ""],
+        state.backupCodes.map((code, index) => "".concat(index + 1, ". ").concat(code)),
+        true,
+      ),
+      ["", t.backupCodes.fileFooter, "Generated: ".concat(new Date().toLocaleString(locale))],
+      false,
+    ).join("\n");
+    var blob = new Blob([content], { type: "text/plain" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "neonpro-backup-codes-".concat(new Date().toISOString().split("T")[0], ".txt");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    (0, use_toast_1.toast)({
+      title: t.success.downloaded,
+      description: t.success.downloadedDescription,
+    });
+  }, [state.backupCodes, locale, t]);
   // Calculate setup progress
   var progress = ((state.currentStep + 1) / setupSteps.length) * 100;
   return (
@@ -665,9 +636,7 @@ function MFASetup(_a) {
                   type="text"
                   placeholder={t.deviceName.placeholder}
                   value={state.deviceName}
-                  onChange={function (e) {
-                    return handleDeviceNameChange(e.target.value);
-                  }}
+                  onChange={(e) => handleDeviceNameChange(e.target.value)}
                   maxLength={50}
                 />
                 <p className="text-sm text-gray-500">{t.deviceName.help}</p>
@@ -682,9 +651,7 @@ function MFASetup(_a) {
                     type="tel"
                     placeholder={t.phoneNumber.placeholder}
                     value={state.phoneNumber}
-                    onChange={function (e) {
-                      return handlePhoneNumberChange(e.target.value);
-                    }}
+                    onChange={(e) => handlePhoneNumberChange(e.target.value)}
                   />
                   <p className="text-sm text-gray-500">{t.phoneNumber.help}</p>
                 </div>
@@ -711,11 +678,9 @@ function MFASetup(_a) {
               {/* Continue Button */}
               <div className="flex justify-end">
                 <button_1.Button
-                  onClick={function () {
-                    return setState(function (prev) {
-                      return __assign(__assign({}, prev), { currentStep: 1 });
-                    });
-                  }}
+                  onClick={() =>
+                    setState((prev) => __assign(__assign({}, prev), { currentStep: 1 }))
+                  }
                   disabled={
                     !state.deviceName.trim() ||
                     !state.lgpdConsent ||
@@ -768,11 +733,9 @@ function MFASetup(_a) {
               <div className="flex justify-between">
                 <button_1.Button
                   variant="outline"
-                  onClick={function () {
-                    return setState(function (prev) {
-                      return __assign(__assign({}, prev), { currentStep: 0 });
-                    });
-                  }}
+                  onClick={() =>
+                    setState((prev) => __assign(__assign({}, prev), { currentStep: 0 }))
+                  }
                 >
                   {t.buttons.back}
                 </button_1.Button>
@@ -823,13 +786,13 @@ function MFASetup(_a) {
                           <button_1.Button
                             variant="outline"
                             size="sm"
-                            onClick={function () {
-                              return setState(function (prev) {
-                                return __assign(__assign({}, prev), {
+                            onClick={() =>
+                              setState((prev) =>
+                                __assign(__assign({}, prev), {
                                   showSecret: !prev.showSecret,
-                                });
-                              });
-                            }}
+                                }),
+                              )
+                            }
                           >
                             {state.showSecret
                               ? <lucide_react_1.EyeOff className="h-4 w-4" />
@@ -838,9 +801,9 @@ function MFASetup(_a) {
                           <button_1.Button
                             variant="outline"
                             size="sm"
-                            onClick={function () {
-                              return copyToClipboard(state.secret, t.verification.totp.secret);
-                            }}
+                            onClick={() =>
+                              copyToClipboard(state.secret, t.verification.totp.secret)
+                            }
                           >
                             <lucide_react_1.Copy className="h-4 w-4" />
                           </button_1.Button>
@@ -882,13 +845,13 @@ function MFASetup(_a) {
                         type="text"
                         placeholder="123456"
                         value={state.verificationToken}
-                        onChange={function (e) {
-                          return setState(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setState((prev) =>
+                            __assign(__assign({}, prev), {
                               verificationToken: e.target.value.replace(/\D/g, "").slice(0, 6),
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                         maxLength={6}
                         className="text-center text-2xl font-mono"
                       />
@@ -897,11 +860,9 @@ function MFASetup(_a) {
                     <div className="flex justify-between">
                       <button_1.Button
                         variant="outline"
-                        onClick={function () {
-                          return setState(function (prev) {
-                            return __assign(__assign({}, prev), { currentStep: 1 });
-                          });
-                        }}
+                        onClick={() =>
+                          setState((prev) => __assign(__assign({}, prev), { currentStep: 1 }))
+                        }
                       >
                         {t.buttons.back}
                       </button_1.Button>
@@ -940,13 +901,13 @@ function MFASetup(_a) {
                       <button_1.Button
                         variant="outline"
                         size="sm"
-                        onClick={function () {
-                          return setState(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onClick={() =>
+                          setState((prev) =>
+                            __assign(__assign({}, prev), {
                               showBackupCodes: !prev.showBackupCodes,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       >
                         {state.showBackupCodes
                           ? <lucide_react_1.EyeOff className="h-4 w-4" />
@@ -956,9 +917,9 @@ function MFASetup(_a) {
                       <button_1.Button
                         variant="outline"
                         size="sm"
-                        onClick={function () {
-                          return copyToClipboard(state.backupCodes.join("\n"), t.backupCodes.title);
-                        }}
+                        onClick={() =>
+                          copyToClipboard(state.backupCodes.join("\n"), t.backupCodes.title)
+                        }
                       >
                         <lucide_react_1.Copy className="h-4 w-4" />
                         {t.buttons.copy}
@@ -974,28 +935,26 @@ function MFASetup(_a) {
                 <card_1.CardContent>
                   {state.showBackupCodes
                     ? <div className="grid grid-cols-2 gap-3">
-                        {state.backupCodes.map(function (code, index) {
-                          return (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border"
+                        {state.backupCodes.map((code, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border"
+                          >
+                            <span className="font-mono text-sm">{code}</span>
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                copyToClipboard(
+                                  code,
+                                  "".concat(t.backupCodes.code, " ").concat(index + 1),
+                                )
+                              }
                             >
-                              <span className="font-mono text-sm">{code}</span>
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return copyToClipboard(
-                                    code,
-                                    "".concat(t.backupCodes.code, " ").concat(index + 1),
-                                  );
-                                }}
-                              >
-                                <lucide_react_1.Copy className="h-3 w-3" />
-                              </button_1.Button>
-                            </div>
-                          );
-                        })}
+                              <lucide_react_1.Copy className="h-3 w-3" />
+                            </button_1.Button>
+                          </div>
+                        ))}
                       </div>
                     : <div className="text-center py-8 text-gray-500">
                         <lucide_react_1.EyeOff className="h-8 w-8 mx-auto mb-2" />
@@ -1021,9 +980,7 @@ function MFASetup(_a) {
                     <button_1.Button
                       variant="outline"
                       size="sm"
-                      onClick={function () {
-                        return copyToClipboard(state.recoveryToken, t.recoveryToken.title);
-                      }}
+                      onClick={() => copyToClipboard(state.recoveryToken, t.recoveryToken.title)}
                     >
                       <lucide_react_1.Copy className="h-4 w-4" />
                     </button_1.Button>
@@ -1065,11 +1022,9 @@ function MFASetup(_a) {
               <div className="flex justify-between">
                 <button_1.Button
                   variant="outline"
-                  onClick={function () {
-                    return setState(function (prev) {
-                      return __assign(__assign({}, prev), { currentStep: 2 });
-                    });
-                  }}
+                  onClick={() =>
+                    setState((prev) => __assign(__assign({}, prev), { currentStep: 2 }))
+                  }
                 >
                   {t.buttons.back}
                 </button_1.Button>
@@ -1107,7 +1062,7 @@ function MFASetup(_a) {
  */
 function getUserIpAddress() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         // In production, this would call your backend to get the real IP
         return [2 /*return*/, "0.0.0.0"];

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Cache Optimizer - VIBECODE V1.0 Caching Strategy
  * Advanced caching optimization for subscription data
@@ -8,18 +7,18 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheOptimizer = void 0;
-var CacheOptimizer = /** @class */ (function () {
+var CacheOptimizer = /** @class */ (() => {
   function CacheOptimizer(strategy) {
     this.cache = new Map();
     this.accessTimes = new Map();
@@ -49,7 +48,6 @@ var CacheOptimizer = /** @class */ (function () {
    * Set value in cache
    */
   CacheOptimizer.prototype.set = function (key, value, ttl) {
-    var _this = this;
     // Check if cache is full
     if (this.cache.size >= this.strategy.maxSize && !this.cache.has(key)) {
       this.evictEntry();
@@ -61,8 +59,8 @@ var CacheOptimizer = /** @class */ (function () {
     this.accessCounts.set(key, 1);
     // Set TTL if specified
     if (ttl || this.strategy.ttl) {
-      setTimeout(function () {
-        _this.delete(key);
+      setTimeout(() => {
+        this.delete(key);
       }, ttl || this.strategy.ttl);
     }
     this.updateMemoryUsage();
@@ -164,7 +162,7 @@ var CacheOptimizer = /** @class */ (function () {
   /**
    * Compress value (placeholder implementation)
    */
-  CacheOptimizer.prototype.compress = function (value) {
+  CacheOptimizer.prototype.compress = (value) => {
     // Simple JSON compression - in production, use proper compression
     return JSON.stringify(value);
   };

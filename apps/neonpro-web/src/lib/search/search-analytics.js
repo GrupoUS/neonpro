@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Search Analytics System
  * Story 3.4: Smart Search + NLP Integration - Task 6
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createsearchAnalytics = exports.SearchAnalytics = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -158,7 +155,7 @@ var client_1 = require("@/lib/supabase/client");
  * Search Analytics Class
  * Comprehensive analytics and performance monitoring for search operations
  */
-var SearchAnalytics = /** @class */ (function () {
+var SearchAnalytics = /** @class */ (() => {
   function SearchAnalytics() {
     this.supabase = (0, client_1.createClient)();
     this.performanceThresholds = {
@@ -368,9 +365,7 @@ var SearchAnalytics = /** @class */ (function () {
                   "session_id",
                   (searchEvents === null || searchEvents === void 0
                     ? void 0
-                    : searchEvents.map(function (e) {
-                        return e.session_id;
-                      })) || [],
+                    : searchEvents.map((e) => e.session_id)) || [],
                 )
                 .gte("created_at", startDate.toISOString()),
             ];
@@ -421,22 +416,20 @@ var SearchAnalytics = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (alert) {
-                    return {
-                      id: alert.id,
-                      type: alert.type,
-                      severity: alert.severity,
-                      message: alert.message,
-                      metrics: alert.metrics,
-                      threshold: alert.threshold,
-                      currentValue: alert.current_value,
-                      timestamp: new Date(alert.created_at).getTime(),
-                      resolved: alert.resolved,
-                      resolvedAt: alert.resolved_at
-                        ? new Date(alert.resolved_at).getTime()
-                        : undefined,
-                    };
-                  })) || [],
+                : data.map((alert) => ({
+                    id: alert.id,
+                    type: alert.type,
+                    severity: alert.severity,
+                    message: alert.message,
+                    metrics: alert.metrics,
+                    threshold: alert.threshold,
+                    currentValue: alert.current_value,
+                    timestamp: new Date(alert.created_at).getTime(),
+                    resolved: alert.resolved,
+                    resolvedAt: alert.resolved_at
+                      ? new Date(alert.resolved_at).getTime()
+                      : undefined,
+                  }))) || [],
             ];
           case 2:
             error_5 = _b.sent();
@@ -535,12 +528,11 @@ var SearchAnalytics = /** @class */ (function () {
    * Subscribe to performance alerts
    */
   SearchAnalytics.prototype.onPerformanceAlert = function (callback) {
-    var _this = this;
     this.alertCallbacks.push(callback);
-    return function () {
-      var index = _this.alertCallbacks.indexOf(callback);
+    return () => {
+      var index = this.alertCallbacks.indexOf(callback);
       if (index > -1) {
-        _this.alertCallbacks.splice(index, 1);
+        this.alertCallbacks.splice(index, 1);
       }
     };
   };
@@ -551,7 +543,7 @@ var SearchAnalytics = /** @class */ (function () {
     this.metricsCache.clear();
   };
   // Private methods
-  SearchAnalytics.prototype.calculateMetrics = function (searchEvents) {
+  SearchAnalytics.prototype.calculateMetrics = (searchEvents) => {
     if (searchEvents.length === 0) {
       return {
         totalSearches: 0,
@@ -573,17 +565,13 @@ var SearchAnalytics = /** @class */ (function () {
       };
     }
     var totalSearches = searchEvents.length;
-    var successfulSearches = searchEvents.filter(function (e) {
-      return e.success;
-    }).length;
+    var successfulSearches = searchEvents.filter((e) => e.success).length;
     var averageResponseTime =
-      searchEvents.reduce(function (sum, e) {
-        return sum + e.response_time;
-      }, 0) / totalSearches;
+      searchEvents.reduce((sum, e) => sum + e.response_time, 0) / totalSearches;
     var successRate = successfulSearches / totalSearches;
     // Popular queries
     var queryCount = new Map();
-    searchEvents.forEach(function (event) {
+    searchEvents.forEach((event) => {
       var existing = queryCount.get(event.query) || { count: 0, totalTime: 0, successes: 0 };
       queryCount.set(event.query, {
         count: existing.count + 1,
@@ -592,7 +580,7 @@ var SearchAnalytics = /** @class */ (function () {
       });
     });
     var popularQueries = Array.from(queryCount.entries())
-      .map(function (_a) {
+      .map((_a) => {
         var query = _a[0],
           stats = _a[1];
         return {
@@ -602,20 +590,18 @@ var SearchAnalytics = /** @class */ (function () {
           successRate: stats.successes / stats.count,
         };
       })
-      .sort(function (a, b) {
-        return b.count - a.count;
-      })
+      .sort((a, b) => b.count - a.count)
       .slice(0, 10);
     // Search types
     var typeCount = new Map();
-    searchEvents.forEach(function (event) {
+    searchEvents.forEach((event) => {
       var existing = typeCount.get(event.search_type) || { count: 0, totalTime: 0 };
       typeCount.set(event.search_type, {
         count: existing.count + 1,
         totalTime: existing.totalTime + event.response_time,
       });
     });
-    var searchTypes = Array.from(typeCount.entries()).map(function (_a) {
+    var searchTypes = Array.from(typeCount.entries()).map((_a) => {
       var type = _a[0],
         stats = _a[1];
       return {
@@ -626,7 +612,7 @@ var SearchAnalytics = /** @class */ (function () {
     });
     // Performance breakdown
     var performanceBreakdown = searchEvents.reduce(
-      function (acc, event) {
+      (acc, event) => {
         var breakdown = event.performance_breakdown || {};
         return {
           nlpProcessing: acc.nlpProcessing + (breakdown.nlpProcessing || 0),
@@ -638,7 +624,7 @@ var SearchAnalytics = /** @class */ (function () {
       { nlpProcessing: 0, databaseQuery: 0, resultProcessing: 0, total: 0 },
     );
     // Average the breakdown
-    Object.keys(performanceBreakdown).forEach(function (key) {
+    Object.keys(performanceBreakdown).forEach((key) => {
       performanceBreakdown[key] /= totalSearches;
     });
     return {
@@ -655,7 +641,7 @@ var SearchAnalytics = /** @class */ (function () {
       performanceBreakdown: performanceBreakdown,
     };
   };
-  SearchAnalytics.prototype.analyzeBehavior = function (searchEvents, interactions) {
+  SearchAnalytics.prototype.analyzeBehavior = (searchEvents, interactions) => {
     var _a;
     var totalSearches = searchEvents.length;
     if (totalSearches === 0) {
@@ -676,7 +662,7 @@ var SearchAnalytics = /** @class */ (function () {
     }
     // Calculate session durations
     var sessions = new Map();
-    searchEvents.forEach(function (event) {
+    searchEvents.forEach((event) => {
       var timestamp = new Date(event.created_at).getTime();
       var existing = sessions.get(event.session_id);
       if (!existing) {
@@ -689,45 +675,36 @@ var SearchAnalytics = /** @class */ (function () {
       }
     });
     var averageSessionDuration =
-      Array.from(sessions.values()).reduce(function (sum, session) {
-        return sum + (session.end - session.start);
-      }, 0) / sessions.size;
+      Array.from(sessions.values()).reduce(
+        (sum, session) => sum + (session.end - session.start),
+        0,
+      ) / sessions.size;
     // Preferred search types
     var typeCount = new Map();
-    searchEvents.forEach(function (event) {
+    searchEvents.forEach((event) => {
       typeCount.set(event.search_type, (typeCount.get(event.search_type) || 0) + 1);
     });
     var preferredSearchTypes = Array.from(typeCount.entries())
-      .sort(function (a, b) {
-        return b[1] - a[1];
-      })
-      .map(function (_a) {
+      .sort((a, b) => b[1] - a[1])
+      .map((_a) => {
         var type = _a[0];
         return type;
       });
     // Common queries
     var queryCount = new Map();
-    searchEvents.forEach(function (event) {
+    searchEvents.forEach((event) => {
       queryCount.set(event.query, (queryCount.get(event.query) || 0) + 1);
     });
     var commonQueries = Array.from(queryCount.entries())
-      .sort(function (a, b) {
-        return b[1] - a[1];
-      })
+      .sort((a, b) => b[1] - a[1])
       .slice(0, 10)
-      .map(function (_a) {
+      .map((_a) => {
         var query = _a[0];
         return query;
       });
     // Click-through rate
     var clickedSessions = new Set(
-      interactions
-        .filter(function (i) {
-          return i.action === "click";
-        })
-        .map(function (i) {
-          return i.session_id;
-        }),
+      interactions.filter((i) => i.action === "click").map((i) => i.session_id),
     );
     var clickThroughRate = clickedSessions.size / sessions.size;
     return {
@@ -740,13 +717,9 @@ var SearchAnalytics = /** @class */ (function () {
       refinementPatterns: [], // TODO: Implement refinement pattern analysis
       performancePreferences: {
         prefersVoice: preferredSearchTypes[0] === "voice",
-        prefersFilters: searchEvents.some(function (e) {
-          return e.filters && Object.keys(e.filters).length > 0;
-        }),
+        prefersFilters: searchEvents.some((e) => e.filters && Object.keys(e.filters).length > 0),
         averageResultsViewed:
-          interactions.filter(function (i) {
-            return i.action === "view";
-          }).length / totalSearches,
+          interactions.filter((i) => i.action === "view").length / totalSearches,
       },
     };
   };
@@ -793,15 +766,13 @@ var SearchAnalytics = /** @class */ (function () {
               });
             }
             _loop_1 = function (alert_1) {
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     return [4 /*yield*/, this_1.storeAlert(alert_1)];
                   case 1:
                     _b.sent();
-                    this_1.alertCallbacks.forEach(function (callback) {
-                      return callback(alert_1);
-                    });
+                    this_1.alertCallbacks.forEach((callback) => callback(alert_1));
                     return [2 /*return*/];
                 }
               });
@@ -881,11 +852,11 @@ var SearchAnalytics = /** @class */ (function () {
       }
     }
   };
-  SearchAnalytics.prototype.generateOptimizations = function (slowQueries) {
+  SearchAnalytics.prototype.generateOptimizations = (slowQueries) => {
     var optimizations = [];
     // Analyze query patterns
     var queryPatterns = new Map();
-    slowQueries.forEach(function (query) {
+    slowQueries.forEach((query) => {
       // Simple pattern detection (could be enhanced with ML)
       var pattern = query.query
         .toLowerCase()
@@ -894,7 +865,7 @@ var SearchAnalytics = /** @class */ (function () {
       queryPatterns.set(pattern, (queryPatterns.get(pattern) || 0) + 1);
     });
     // Generate optimizations for common patterns
-    queryPatterns.forEach(function (count, pattern) {
+    queryPatterns.forEach((count, pattern) => {
       if (count >= 5) {
         // Pattern appears in at least 5 slow queries
         optimizations.push({
@@ -979,9 +950,7 @@ var SearchAnalytics = /** @class */ (function () {
       );
     }
     // Alert-based recommendations
-    var criticalAlerts = alerts.filter(function (a) {
-      return a.severity === "critical";
-    }).length;
+    var criticalAlerts = alerts.filter((a) => a.severity === "critical").length;
     if (criticalAlerts > 0) {
       recommendations.push(
         "".concat(
@@ -992,9 +961,9 @@ var SearchAnalytics = /** @class */ (function () {
     }
     // Optimization recommendations
     if (optimizations.length > 0) {
-      var highImpactOptimizations = optimizations.filter(function (o) {
-        return o.impact.potentialSpeedup > 0.3;
-      }).length;
+      var highImpactOptimizations = optimizations.filter(
+        (o) => o.impact.potentialSpeedup > 0.3,
+      ).length;
       if (highImpactOptimizations > 0) {
         recommendations.push(
           "".concat(
@@ -1019,7 +988,5 @@ var SearchAnalytics = /** @class */ (function () {
 })();
 exports.SearchAnalytics = SearchAnalytics;
 // Export singleton instance
-var createsearchAnalytics = function () {
-  return new SearchAnalytics();
-};
+var createsearchAnalytics = () => new SearchAnalytics();
 exports.createsearchAnalytics = createsearchAnalytics;

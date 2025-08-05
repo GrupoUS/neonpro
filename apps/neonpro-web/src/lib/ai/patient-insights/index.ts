@@ -1,23 +1,23 @@
 // AI-Powered Patient Insights Integration Module
 // Story 3.2: Task 7 - Main Integration Module
 
+import type { BehaviorAnalysisEngine } from "./behavior-analysis";
+import type { ContinuousLearningSystem } from "./continuous-learning";
+import type { HealthTrendMonitor } from "./health-trend-monitor";
+import type { createpredictiveAnalyticsEngine } from "./predictive-analytics";
 import type { RiskAssessmentEngine } from "./risk-assessment";
 import type { TreatmentRecommendationEngine } from "./treatment-recommendations";
-import type { createpredictiveAnalyticsEngine } from "./predictive-analytics";
-import type { BehaviorAnalysisEngine } from "./behavior-analysis";
-import type { HealthTrendMonitor } from "./health-trend-monitor";
-import type { ContinuousLearningSystem } from "./continuous-learning";
 
 import type {
-  PatientInsightRequest,
+  AlertSummary,
+  BehaviorAnalysis,
   ComprehensivePatientInsights,
+  HealthTrendAnalysis,
+  InsightConfiguration,
+  LearningInsight,
+  PatientInsightRequest,
   PatientRiskAssessment,
   TreatmentRecommendations,
-  BehaviorAnalysis,
-  HealthTrendAnalysis,
-  LearningInsight,
-  AlertSummary,
-  InsightConfiguration,
 } from "./types";
 
 export class PatientInsightsIntegration {
@@ -799,10 +799,10 @@ interface PerformanceMetrics {
 // Export all engine classes for direct use if needed
 export {
   PatientInsightsIntegration,
-  RiskAssessmentEngine,
-  TreatmentRecommendationEngine,
-  createpredictiveAnalyticsEngine,
-  BehaviorAnalysisEngine,
-  HealthTrendMonitor,
-  ContinuousLearningSystem,
+  type RiskAssessmentEngine,
+  type TreatmentRecommendationEngine,
+  type createpredictiveAnalyticsEngine,
+  type BehaviorAnalysisEngine,
+  type HealthTrendMonitor,
+  type ContinuousLearningSystem,
 };

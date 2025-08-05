@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createreportSystem =
   exports.ReportSystem =
@@ -303,7 +300,7 @@ exports.ReportInstanceSchema = zod_1.z.object({
     .optional(),
 });
 // Report System Service
-var ReportSystem = /** @class */ (function () {
+var ReportSystem = /** @class */ (() => {
   function ReportSystem() {
     this.supabase = (0, client_1.createClient)();
     this.schedulerTimer = null;
@@ -314,33 +311,34 @@ var ReportSystem = /** @class */ (function () {
    * Start the report system scheduler
    */
   ReportSystem.prototype.start = function () {
-    var _this = this;
     if (this.isRunning) {
       return;
     }
     this.isRunning = true;
     logger_1.logger.info("Starting Report System Scheduler...");
-    this.schedulerTimer = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_1;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.processScheduledReports()];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_1 = _a.sent();
-              logger_1.logger.error("Error processing scheduled reports:", error_1);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.SCHEDULER_INTERVAL);
+    this.schedulerTimer = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_1;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.processScheduledReports()];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_1 = _a.sent();
+                logger_1.logger.error("Error processing scheduled reports:", error_1);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.SCHEDULER_INTERVAL,
+    );
     logger_1.logger.info("Report System Scheduler started");
   };
   /**
@@ -618,28 +616,26 @@ var ReportSystem = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              data.map(function (report) {
-                return {
-                  id: report.id,
-                  templateId: report.template_id,
-                  scheduleId: report.schedule_id,
-                  clinicId: report.clinic_id,
-                  name: report.name,
-                  type: report.type,
-                  format: report.format,
-                  status: report.status,
-                  parameters: report.parameters,
-                  generatedBy: report.generated_by,
-                  startedAt: report.started_at,
-                  completedAt: report.completed_at,
-                  filePath: report.file_path,
-                  fileSize: report.file_size,
-                  downloadUrl: report.download_url,
-                  expiresAt: report.expires_at,
-                  errorMessage: report.error_message,
-                  metadata: report.metadata,
-                };
-              }),
+              data.map((report) => ({
+                id: report.id,
+                templateId: report.template_id,
+                scheduleId: report.schedule_id,
+                clinicId: report.clinic_id,
+                name: report.name,
+                type: report.type,
+                format: report.format,
+                status: report.status,
+                parameters: report.parameters,
+                generatedBy: report.generated_by,
+                startedAt: report.started_at,
+                completedAt: report.completed_at,
+                filePath: report.file_path,
+                fileSize: report.file_size,
+                downloadUrl: report.download_url,
+                expiresAt: report.expires_at,
+                errorMessage: report.error_message,
+                metadata: report.metadata,
+              })),
             ];
           case 2:
             error_5 = _b.sent();
@@ -943,7 +939,7 @@ var ReportSystem = /** @class */ (function () {
   ReportSystem.prototype.collectKPIData = function (clinicId, dataSource, parameters) {
     return __awaiter(this, void 0, void 0, function () {
       var periodStart, periodEnd, _a, allKPIs;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             periodStart = parameters.periodStart ? new Date(parameters.periodStart) : undefined;
@@ -978,12 +974,7 @@ var ReportSystem = /** @class */ (function () {
             ];
           case 4:
             allKPIs = _b.sent();
-            return [
-              2 /*return*/,
-              allKPIs.filter(function (kpi) {
-                return kpi.kpi.category === "financial";
-              }),
-            ];
+            return [2 /*return*/, allKPIs.filter((kpi) => kpi.kpi.category === "financial")];
           case 5:
             return [2 /*return*/, []];
         }
@@ -995,7 +986,7 @@ var ReportSystem = /** @class */ (function () {
    */
   ReportSystem.prototype.collectChartTableData = function (clinicId, dataSource, parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would use the same data sources as widgets
         // For now, return mock data
         return [
@@ -1018,7 +1009,7 @@ var ReportSystem = /** @class */ (function () {
    */
   ReportSystem.prototype.collectTextData = function (dataSource, parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would generate dynamic text content
         return [
           2 /*return*/,
@@ -1077,7 +1068,7 @@ var ReportSystem = /** @class */ (function () {
    */
   ReportSystem.prototype.generatePDFReport = function (filePath, template, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use a PDF library like puppeteer, jsPDF, or PDFKit
         logger_1.logger.info("Generating PDF report: ".concat(filePath));
         // Mock implementation
@@ -1090,7 +1081,7 @@ var ReportSystem = /** @class */ (function () {
    */
   ReportSystem.prototype.generateExcelReport = function (filePath, template, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use a library like ExcelJS
         logger_1.logger.info("Generating Excel report: ".concat(filePath));
         // Mock implementation
@@ -1103,7 +1094,7 @@ var ReportSystem = /** @class */ (function () {
    */
   ReportSystem.prototype.generateCSVReport = function (filePath, template, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate CSV content
         logger_1.logger.info("Generating CSV report: ".concat(filePath));
         // Mock implementation
@@ -1116,7 +1107,7 @@ var ReportSystem = /** @class */ (function () {
    */
   ReportSystem.prototype.generateJSONReport = function (filePath, template, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would serialize data to JSON
         logger_1.logger.info("Generating JSON report: ".concat(filePath));
         // Mock implementation
@@ -1127,7 +1118,7 @@ var ReportSystem = /** @class */ (function () {
   /**
    * Calculate next run time for scheduled report
    */
-  ReportSystem.prototype.calculateNextRun = function (frequency, schedule) {
+  ReportSystem.prototype.calculateNextRun = (frequency, schedule) => {
     var now = new Date();
     var _a = schedule.time.split(":").map(Number),
       hours = _a[0],
@@ -1162,7 +1153,7 @@ var ReportSystem = /** @class */ (function () {
   /**
    * Count total records in report data
    */
-  ReportSystem.prototype.countTotalRecords = function (data) {
+  ReportSystem.prototype.countTotalRecords = (data) => {
     var total = 0;
     for (var _i = 0, _a = Object.values(data); _i < _a.length; _i++) {
       var value = _a[_i];
@@ -1175,99 +1166,92 @@ var ReportSystem = /** @class */ (function () {
   /**
    * Get data sources used in template
    */
-  ReportSystem.prototype.getDataSourcesUsed = function (template) {
-    return template.configuration.sections.map(function (section) {
-      return section.dataSource;
-    });
-  };
+  ReportSystem.prototype.getDataSourcesUsed = (template) =>
+    template.configuration.sections.map((section) => section.dataSource);
   /**
    * Get default report templates
    */
-  ReportSystem.prototype.getDefaultTemplates = function () {
-    return [
-      {
-        name: "Relatório Executivo Mensal",
-        description: "Resumo executivo com principais KPIs e métricas do mês",
-        type: "executive_summary",
-        isActive: true,
-        configuration: {
-          sections: [
-            {
-              id: "financial_summary",
-              title: "Resumo Financeiro",
-              type: "kpi_summary",
-              dataSource: "financial_kpis",
-            },
-            {
-              id: "revenue_trend",
-              title: "Tendência de Receita",
-              type: "chart",
-              dataSource: "monthly_revenue_trend",
-            },
-            {
-              id: "operational_metrics",
-              title: "Métricas Operacionais",
-              type: "table",
-              dataSource: "operational_summary",
-            },
-          ],
-          layout: {
-            orientation: "portrait",
-            pageSize: "A4",
-            margins: { top: 20, right: 20, bottom: 20, left: 20 },
-            header: { enabled: true, content: "Relatório Executivo", height: 50 },
-            footer: { enabled: true, content: "Confidencial", height: 30 },
+  ReportSystem.prototype.getDefaultTemplates = () => [
+    {
+      name: "Relatório Executivo Mensal",
+      description: "Resumo executivo com principais KPIs e métricas do mês",
+      type: "executive_summary",
+      isActive: true,
+      configuration: {
+        sections: [
+          {
+            id: "financial_summary",
+            title: "Resumo Financeiro",
+            type: "kpi_summary",
+            dataSource: "financial_kpis",
           },
-          filters: {
-            dateRange: { enabled: true, defaultPeriod: "last_30_days" },
+          {
+            id: "revenue_trend",
+            title: "Tendência de Receita",
+            type: "chart",
+            dataSource: "monthly_revenue_trend",
           },
+          {
+            id: "operational_metrics",
+            title: "Métricas Operacionais",
+            type: "table",
+            dataSource: "operational_summary",
+          },
+        ],
+        layout: {
+          orientation: "portrait",
+          pageSize: "A4",
+          margins: { top: 20, right: 20, bottom: 20, left: 20 },
+          header: { enabled: true, content: "Relatório Executivo", height: 50 },
+          footer: { enabled: true, content: "Confidencial", height: 30 },
+        },
+        filters: {
+          dateRange: { enabled: true, defaultPeriod: "last_30_days" },
         },
       },
-      {
-        name: "Relatório Financeiro Detalhado",
-        description: "Análise financeira completa com receitas, custos e margens",
-        type: "financial_report",
-        isActive: true,
-        configuration: {
-          sections: [
-            {
-              id: "revenue_analysis",
-              title: "Análise de Receita",
-              type: "chart",
-              dataSource: "revenue_breakdown",
-            },
-            {
-              id: "cost_analysis",
-              title: "Análise de Custos",
-              type: "table",
-              dataSource: "cost_breakdown",
-            },
-            {
-              id: "profit_margins",
-              title: "Margens de Lucro",
-              type: "kpi_summary",
-              dataSource: "profit_metrics",
-            },
-          ],
-          layout: {
-            orientation: "landscape",
-            pageSize: "A4",
-            margins: { top: 15, right: 15, bottom: 15, left: 15 },
-            header: { enabled: true, content: "Relatório Financeiro", height: 40 },
-            footer: { enabled: true, content: "Página {page}", height: 25 },
+    },
+    {
+      name: "Relatório Financeiro Detalhado",
+      description: "Análise financeira completa com receitas, custos e margens",
+      type: "financial_report",
+      isActive: true,
+      configuration: {
+        sections: [
+          {
+            id: "revenue_analysis",
+            title: "Análise de Receita",
+            type: "chart",
+            dataSource: "revenue_breakdown",
           },
-          filters: {
-            dateRange: { enabled: true, defaultPeriod: "last_quarter" },
+          {
+            id: "cost_analysis",
+            title: "Análise de Custos",
+            type: "table",
+            dataSource: "cost_breakdown",
           },
+          {
+            id: "profit_margins",
+            title: "Margens de Lucro",
+            type: "kpi_summary",
+            dataSource: "profit_metrics",
+          },
+        ],
+        layout: {
+          orientation: "landscape",
+          pageSize: "A4",
+          margins: { top: 15, right: 15, bottom: 15, left: 15 },
+          header: { enabled: true, content: "Relatório Financeiro", height: 40 },
+          footer: { enabled: true, content: "Página {page}", height: 25 },
+        },
+        filters: {
+          dateRange: { enabled: true, defaultPeriod: "last_quarter" },
         },
       },
-    ];
-  };
+    },
+  ];
   return ReportSystem;
 })();
 exports.ReportSystem = ReportSystem;
 // Export singleton instance
-var createreportSystem = function () {
-  return new ReportSystem();
-};
+var createreportSystem = () => new ReportSystem();
 exports.createreportSystem = createreportSystem;

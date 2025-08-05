@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Integration Tests for TASK-001 Foundation Setup
  * Testing monitoring infrastructure components
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -23,7 +22,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -52,8 +51,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -74,9 +71,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -135,17 +132,17 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var performance_1 = require("../../lib/monitoring/performance");
 var analytics_1 = require("../../lib/monitoring/analytics");
 var feature_flags_1 = require("../../lib/monitoring/feature-flags");
 var error_tracking_1 = require("../../lib/monitoring/error-tracking");
-(0, globals_1.describe)("TASK-001 Monitoring Infrastructure Integration", function () {
-  (0, globals_1.beforeAll)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+(0, globals_1.describe)("TASK-001 Monitoring Infrastructure Integration", () => {
+  (0, globals_1.beforeAll)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Initialize monitoring systems
@@ -162,12 +159,12 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.afterAll)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.afterAll)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a, _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Cleanup
@@ -191,13 +188,13 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.describe)("Performance Monitoring", function () {
-    (0, globals_1.it)("should track page load times", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.describe)("Performance Monitoring", () => {
+    (0, globals_1.it)("should track page load times", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, performance_1.performance.trackPageLoad("/dashboard", 450)];
@@ -209,12 +206,12 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should track API response times", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should track API response times", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -229,12 +226,12 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should collect user interaction metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should collect user interaction metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -249,14 +246,14 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Analytics Integration", function () {
-    (0, globals_1.it)("should track page views", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Analytics Integration", () => {
+    (0, globals_1.it)("should track page views", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, analytics_1.analytics.trackPageView("/dashboard/patients")];
@@ -266,12 +263,12 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should track user events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should track user events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -287,12 +284,12 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should track conversion events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should track conversion events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -305,14 +302,14 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Feature Flags Integration", function () {
-    (0, globals_1.it)("should evaluate feature flags correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Feature Flags Integration", () => {
+    (0, globals_1.it)("should evaluate feature flags correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var isEnabled;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, feature_flags_1.featureFlags.isEnabled("monitoring_dashboard")];
@@ -322,12 +319,12 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle gradual rollout", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle gradual rollout", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var rolloutData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -341,12 +338,12 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should track feature flag usage", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should track feature flag usage", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -359,14 +356,14 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Tracking Integration", function () {
-    (0, globals_1.it)("should capture and log errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error Tracking Integration", () => {
+    (0, globals_1.it)("should capture and log errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var testError, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               testError = new Error("Test integration error");
@@ -383,12 +380,12 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should track error recovery", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should track error recovery", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -404,14 +401,14 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("API Endpoints Integration", function () {
-    (0, globals_1.it)("should have health endpoint responding", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("API Endpoints Integration", () => {
+    (0, globals_1.it)("should have health endpoint responding", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("http://localhost:3000/api/monitoring/health")];
@@ -426,42 +423,42 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
     // Note: Feature flags and metrics endpoints require authentication
     // These would be tested with proper auth tokens in real scenarios
   });
-  (0, globals_1.describe)("Database Integration", function () {
-    (0, globals_1.it)("should have monitoring tables available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Database Integration", () => {
+    (0, globals_1.it)("should have monitoring tables available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           // This would typically use a database testing utility
           // For now, we verify structure through our utilities
           (0, globals_1.expect)(feature_flags_1.featureFlags.isInitialized()).toBe(true);
           (0, globals_1.expect)(performance_1.performance.isInitialized()).toBe(true);
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
 });
 /**
  * Component Integration Tests
  * Testing React components can be imported and used
  */
-(0, globals_1.describe)("TASK-001 UI Components Integration", function () {
-  (0, globals_1.describe)("Component Imports", function () {
-    (0, globals_1.it)("should import FeatureFlagManager component", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("TASK-001 UI Components Integration", () => {
+  (0, globals_1.describe)("Component Imports", () => {
+    (0, globals_1.it)("should import FeatureFlagManager component", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var FeatureFlagManager;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../components/dashboard/FeatureFlagManager");
-                }),
+                Promise.resolve().then(() =>
+                  require("../../components/dashboard/FeatureFlagManager"),
+                ),
               ];
             case 1:
               FeatureFlagManager = _a.sent().FeatureFlagManager;
@@ -470,19 +467,19 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should import SystemHealthWidget component", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should import SystemHealthWidget component", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var SystemHealthWidget;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../components/dashboard/SystemHealthWidget");
-                }),
+                Promise.resolve().then(() =>
+                  require("../../components/dashboard/SystemHealthWidget"),
+                ),
               ];
             case 1:
               SystemHealthWidget = _a.sent().SystemHealthWidget;
@@ -491,19 +488,19 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should import PerformanceDashboard component", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should import PerformanceDashboard component", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var PerformanceDashboard;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("../../components/dashboard/performance-dashboard");
-                }),
+                Promise.resolve().then(() =>
+                  require("../../components/dashboard/performance-dashboard"),
+                ),
               ];
             case 1:
               PerformanceDashboard = _a.sent().PerformanceDashboard;
@@ -512,37 +509,37 @@ var error_tracking_1 = require("../../lib/monitoring/error-tracking");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });
 /**
  * End-to-End Integration Validation
  * Comprehensive system validation
  */
-(0, globals_1.describe)("TASK-001 System Integration Validation", function () {
-  (0, globals_1.it)("should have all monitoring utilities available", function () {
+(0, globals_1.describe)("TASK-001 System Integration Validation", () => {
+  (0, globals_1.it)("should have all monitoring utilities available", () => {
     (0, globals_1.expect)(performance_1.performance).toBeDefined();
     (0, globals_1.expect)(analytics_1.analytics).toBeDefined();
     (0, globals_1.expect)(feature_flags_1.featureFlags).toBeDefined();
     (0, globals_1.expect)(error_tracking_1.errorTracking).toBeDefined();
   });
-  (0, globals_1.it)("should have database schema in place", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("should have database schema in place", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var tablesExist;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         tablesExist = true;
         (0, globals_1.expect)(tablesExist).toBe(true);
         return [2 /*return*/];
       });
-    });
-  });
-  (0, globals_1.it)("should have API endpoints configured", function () {
+    }),
+  );
+  (0, globals_1.it)("should have API endpoints configured", () => {
     // API endpoints exist and are properly configured
     var endpointsConfigured = true; // We created these endpoints
     (0, globals_1.expect)(endpointsConfigured).toBe(true);
   });
-  (0, globals_1.it)("should have UI components ready for integration", function () {
+  (0, globals_1.it)("should have UI components ready for integration", () => {
     // UI components are created and can be imported
     var componentsReady = true; // We created these components
     (0, globals_1.expect)(componentsReady).toBe(true);

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InteractiveLineChart = InteractiveLineChart;
 var recharts_1 = require("recharts");
@@ -20,7 +19,7 @@ function InteractiveLineChart(_a) {
     formatTooltip = _a.formatTooltip,
     formatXAxisLabel = _a.formatXAxisLabel,
     formatYAxisLabel = _a.formatYAxisLabel;
-  var defaultTooltipFormatter = function (value, name) {
+  var defaultTooltipFormatter = (value, name) => {
     if (formatTooltip) {
       return formatTooltip(value, name);
     }
@@ -65,20 +64,18 @@ function InteractiveLineChart(_a) {
               }}
             />
             {showLegend && <recharts_1.Legend />}
-            {lines.map(function (line) {
-              return (
-                <recharts_1.Line
-                  key={line.dataKey}
-                  type="monotone"
-                  dataKey={line.dataKey}
-                  stroke={line.color}
-                  strokeWidth={line.strokeWidth || 2}
-                  name={line.name}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-              );
-            })}
+            {lines.map((line) => (
+              <recharts_1.Line
+                key={line.dataKey}
+                type="monotone"
+                dataKey={line.dataKey}
+                stroke={line.color}
+                strokeWidth={line.strokeWidth || 2}
+                name={line.name}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            ))}
           </recharts_1.LineChart>
         </recharts_1.ResponsiveContainer>
       </card_1.CardContent>

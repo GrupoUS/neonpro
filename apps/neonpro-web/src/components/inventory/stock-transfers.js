@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockTransfers = StockTransfers;
 /**
@@ -167,7 +164,6 @@ var dialog_1 = require("@/components/ui/dialog");
 var inventory_1 = require("@/lib/inventory");
 var use_toast_1 = require("@/hooks/use-toast");
 function StockTransfers(_a) {
-  var _this = this;
   var onRefresh = _a.onRefresh,
     className = _a.className;
   var _b = (0, react_1.useState)([]),
@@ -206,16 +202,13 @@ function StockTransfers(_a) {
     setFormData = _k[1];
   var toast = (0, use_toast_1.useToast)().toast;
   var stockOutputManager = new inventory_1.StockOutputManager();
-  (0, react_1.useEffect)(
-    function () {
-      loadTransfers();
-    },
-    [selectedStatus],
-  );
-  var loadTransfers = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadTransfers();
+  }, [selectedStatus]);
+  var loadTransfers = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, transfersData, transfersError, error_1, errorMessage;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -252,11 +245,10 @@ function StockTransfers(_a) {
         }
       });
     });
-  };
-  var handleSubmitTransfer = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmitTransfer = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var transferRequest, _a, data, error, error_2, errorMessage;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             e.preventDefault();
@@ -332,11 +324,10 @@ function StockTransfers(_a) {
         }
       });
     });
-  };
-  var handleApproveTransfer = function (transferId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleApproveTransfer = (transferId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_3, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -372,11 +363,10 @@ function StockTransfers(_a) {
         }
       });
     });
-  };
-  var handleRejectTransfer = function (transferId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRejectTransfer = (transferId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error, error_4, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -415,8 +405,7 @@ function StockTransfers(_a) {
         }
       });
     });
-  };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     var colors = {
       pendente: "bg-yellow-100 text-yellow-800",
       aprovado: "bg-green-100 text-green-800",
@@ -425,7 +414,7 @@ function StockTransfers(_a) {
     };
     return colors[status] || "bg-gray-100 text-gray-800";
   };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     var colors = {
       baixa: "bg-gray-100 text-gray-800",
       media: "bg-orange-100 text-orange-800",
@@ -433,9 +422,7 @@ function StockTransfers(_a) {
     };
     return colors[priority] || "bg-gray-100 text-gray-800";
   };
-  var formatDateTime = function (dateString) {
-    return new Date(dateString).toLocaleString("pt-BR");
-  };
+  var formatDateTime = (dateString) => new Date(dateString).toLocaleString("pt-BR");
   if (isLoading) {
     return (
       <div className={"space-y-6 ".concat(className)}>
@@ -491,11 +478,9 @@ function StockTransfers(_a) {
                     <label_1.Label htmlFor="produto_id">Produto *</label_1.Label>
                     <select_1.Select
                       value={formData.produto_id}
-                      onValueChange={function (value) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), { produto_id: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setFormData((prev) => __assign(__assign({}, prev), { produto_id: value }))
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o produto" />
@@ -515,11 +500,11 @@ function StockTransfers(_a) {
                     </label_1.Label>
                     <select_1.Select
                       value={formData.centro_custo_origem}
-                      onValueChange={function (value) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), { centro_custo_origem: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setFormData((prev) =>
+                          __assign(__assign({}, prev), { centro_custo_origem: value }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione a origem" />
@@ -540,11 +525,11 @@ function StockTransfers(_a) {
                     </label_1.Label>
                     <select_1.Select
                       value={formData.centro_custo_destino}
-                      onValueChange={function (value) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), { centro_custo_destino: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setFormData((prev) =>
+                          __assign(__assign({}, prev), { centro_custo_destino: value }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o destino" />
@@ -566,13 +551,13 @@ function StockTransfers(_a) {
                       type="number"
                       min="1"
                       value={formData.quantidade}
-                      onChange={function (e) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), {
+                      onChange={(e) =>
+                        setFormData((prev) =>
+                          __assign(__assign({}, prev), {
                             quantidade: parseInt(e.target.value) || 1,
-                          });
-                        });
-                      }}
+                          }),
+                        )
+                      }
                       required
                     />
                   </div>
@@ -581,11 +566,9 @@ function StockTransfers(_a) {
                     <label_1.Label htmlFor="prioridade">Prioridade</label_1.Label>
                     <select_1.Select
                       value={formData.prioridade}
-                      onValueChange={function (value) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), { prioridade: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setFormData((prev) => __assign(__assign({}, prev), { prioridade: value }))
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -603,11 +586,11 @@ function StockTransfers(_a) {
                     <textarea_1.Textarea
                       id="observacoes"
                       value={formData.observacoes}
-                      onChange={function (e) {
-                        return setFormData(function (prev) {
-                          return __assign(__assign({}, prev), { observacoes: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setFormData((prev) =>
+                          __assign(__assign({}, prev), { observacoes: e.target.value }),
+                        )
+                      }
                       placeholder="Observações adicionais..."
                       rows={3}
                     />
@@ -618,9 +601,7 @@ function StockTransfers(_a) {
                   <button_1.Button
                     type="button"
                     variant="outline"
-                    onClick={function () {
-                      return setIsDialogOpen(false);
-                    }}
+                    onClick={() => setIsDialogOpen(false)}
                   >
                     Cancelar
                   </button_1.Button>
@@ -701,80 +682,74 @@ function StockTransfers(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {displayTransfers.map(function (transfer) {
-                    return (
-                      <table_1.TableRow key={transfer.id}>
-                        <table_1.TableCell className="font-mono text-sm">
-                          {transfer.id.slice(-8)}
-                        </table_1.TableCell>
-                        <table_1.TableCell className="font-medium">
-                          {transfer.nome_produto}
-                          {transfer.observacoes && (
-                            <p className="text-sm text-muted-foreground">{transfer.observacoes}</p>
-                          )}
-                        </table_1.TableCell>
-                        <table_1.TableCell>{transfer.centro_custo_origem}</table_1.TableCell>
-                        <table_1.TableCell>{transfer.centro_custo_destino}</table_1.TableCell>
-                        <table_1.TableCell>{transfer.quantidade}</table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge className={getPriorityColor(transfer.prioridade)}>
-                            {transfer.prioridade}
-                          </badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <badge_1.Badge className={getStatusColor(transfer.status)}>
-                            {transfer.status}
-                          </badge_1.Badge>
-                        </table_1.TableCell>
-                        <table_1.TableCell className="text-sm">
-                          {formatDateTime(transfer.data_solicitacao)}
-                          {transfer.data_aprovacao && (
-                            <p className="text-muted-foreground">
-                              Aprovado: {formatDateTime(transfer.data_aprovacao)}
-                            </p>
-                          )}
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {transfer.status === "pendente" && (
-                            <div className="flex gap-2">
-                              <button_1.Button
-                                size="sm"
-                                variant="outline"
-                                onClick={function () {
-                                  return handleApproveTransfer(transfer.id);
-                                }}
-                                disabled={isApproving === transfer.id}
-                                className="text-green-600 hover:text-green-700"
-                              >
-                                {isApproving === transfer.id
-                                  ? <icons_1.Icons.Loader2 className="w-4 h-4 animate-spin" />
-                                  : <icons_1.Icons.Check className="w-4 h-4" />}
-                              </button_1.Button>
-                              <button_1.Button
-                                size="sm"
-                                variant="outline"
-                                onClick={function () {
-                                  return handleRejectTransfer(transfer.id);
-                                }}
-                                disabled={isRejecting === transfer.id}
-                                className="text-red-600 hover:text-red-700"
-                              >
-                                {isRejecting === transfer.id
-                                  ? <icons_1.Icons.Loader2 className="w-4 h-4 animate-spin" />
-                                  : <icons_1.Icons.X className="w-4 h-4" />}
-                              </button_1.Button>
-                            </div>
-                          )}
-                          {transfer.status === "aprovado" && (
-                            <badge_1.Badge variant="outline">Aguardando execução</badge_1.Badge>
-                          )}
-                          {transfer.status === "concluido" && (
-                            <badge_1.Badge variant="secondary">Concluído</badge_1.Badge>
-                          )}
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                  {displayTransfers.map((transfer) => (
+                    <table_1.TableRow key={transfer.id}>
+                      <table_1.TableCell className="font-mono text-sm">
+                        {transfer.id.slice(-8)}
+                      </table_1.TableCell>
+                      <table_1.TableCell className="font-medium">
+                        {transfer.nome_produto}
+                        {transfer.observacoes && (
+                          <p className="text-sm text-muted-foreground">{transfer.observacoes}</p>
+                        )}
+                      </table_1.TableCell>
+                      <table_1.TableCell>{transfer.centro_custo_origem}</table_1.TableCell>
+                      <table_1.TableCell>{transfer.centro_custo_destino}</table_1.TableCell>
+                      <table_1.TableCell>{transfer.quantidade}</table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge className={getPriorityColor(transfer.prioridade)}>
+                          {transfer.prioridade}
+                        </badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <badge_1.Badge className={getStatusColor(transfer.status)}>
+                          {transfer.status}
+                        </badge_1.Badge>
+                      </table_1.TableCell>
+                      <table_1.TableCell className="text-sm">
+                        {formatDateTime(transfer.data_solicitacao)}
+                        {transfer.data_aprovacao && (
+                          <p className="text-muted-foreground">
+                            Aprovado: {formatDateTime(transfer.data_aprovacao)}
+                          </p>
+                        )}
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {transfer.status === "pendente" && (
+                          <div className="flex gap-2">
+                            <button_1.Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleApproveTransfer(transfer.id)}
+                              disabled={isApproving === transfer.id}
+                              className="text-green-600 hover:text-green-700"
+                            >
+                              {isApproving === transfer.id
+                                ? <icons_1.Icons.Loader2 className="w-4 h-4 animate-spin" />
+                                : <icons_1.Icons.Check className="w-4 h-4" />}
+                            </button_1.Button>
+                            <button_1.Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleRejectTransfer(transfer.id)}
+                              disabled={isRejecting === transfer.id}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              {isRejecting === transfer.id
+                                ? <icons_1.Icons.Loader2 className="w-4 h-4 animate-spin" />
+                                : <icons_1.Icons.X className="w-4 h-4" />}
+                            </button_1.Button>
+                          </div>
+                        )}
+                        {transfer.status === "aprovado" && (
+                          <badge_1.Badge variant="outline">Aguardando execução</badge_1.Badge>
+                        )}
+                        {transfer.status === "concluido" && (
+                          <badge_1.Badge variant="secondary">Concluído</badge_1.Badge>
+                        )}
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
                 </table_1.TableBody>
               </table_1.Table>}
         </card_1.CardContent>

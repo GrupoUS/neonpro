@@ -1,7 +1,7 @@
-import { Database } from "@/types/supabase";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import type { Database } from "@/types/supabase";
 
 /**
  * Get Patient Medical Timeline

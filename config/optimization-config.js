@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -176,16 +175,16 @@ exports.TESTING_CONFIG = {
 // =====================================================================================
 // CONFIGURATION MANAGER
 // =====================================================================================
-var OptimizationConfigManager = /** @class */ (function () {
+var OptimizationConfigManager = /** @class */ (() => {
   function OptimizationConfigManager(initialConfig) {
     this.observers = new Set();
     this.config = this.mergeConfigs(exports.DEFAULT_OPTIMIZATION_CONFIG, initialConfig);
     this.loadEnvironmentConfig();
   }
-  OptimizationConfigManager.prototype.mergeConfigs = function (base, override) {
+  OptimizationConfigManager.prototype.mergeConfigs = (base, override) => {
     if (!override) return __assign({}, base);
     var merged = __assign({}, base);
-    Object.keys(override).forEach(function (key) {
+    Object.keys(override).forEach((key) => {
       var typedKey = key;
       if (typeof override[typedKey] === "object" && !Array.isArray(override[typedKey])) {
         merged[typedKey] = __assign(__assign({}, merged[typedKey]), override[typedKey]);
@@ -236,11 +235,8 @@ var OptimizationConfigManager = /** @class */ (function () {
     this.notifyObservers();
   };
   OptimizationConfigManager.prototype.subscribe = function (observer) {
-    var _this = this;
     this.observers.add(observer);
-    return function () {
-      return _this.observers.delete(observer);
-    };
+    return () => this.observers.delete(observer);
   };
   OptimizationConfigManager.prototype.saveConfig = function () {
     if (typeof window !== "undefined") {
@@ -252,10 +248,7 @@ var OptimizationConfigManager = /** @class */ (function () {
     }
   };
   OptimizationConfigManager.prototype.notifyObservers = function () {
-    var _this = this;
-    this.observers.forEach(function (observer) {
-      return observer(_this.config);
-    });
+    this.observers.forEach((observer) => observer(this.config));
   };
   // Specific getters for different modules
   OptimizationConfigManager.prototype.getPerformanceConfig = function () {
@@ -311,45 +304,35 @@ var OptimizationConfigManager = /** @class */ (function () {
 // =====================================================================================
 var react_1 = require("react");
 function useOptimizationConfig(initialConfig) {
-  var manager = (0, react_1.useState)(function () {
-    return new OptimizationConfigManager(initialConfig);
-  })[0];
+  var manager = (0, react_1.useState)(() => new OptimizationConfigManager(initialConfig))[0];
   var _a = (0, react_1.useState)(manager.getConfig()),
     config = _a[0],
     setConfig = _a[1];
-  (0, react_1.useEffect)(
-    function () {
-      var unsubscribe = manager.subscribe(setConfig);
-      return unsubscribe;
-    },
-    [manager],
-  );
+  (0, react_1.useEffect)(() => {
+    var unsubscribe = manager.subscribe(setConfig);
+    return unsubscribe;
+  }, [manager]);
   var updateConfig = (0, react_1.useCallback)(
-    function (updates) {
+    (updates) => {
       manager.updateConfig(updates);
     },
     [manager],
   );
-  var resetConfig = (0, react_1.useCallback)(
-    function () {
-      manager.resetConfig();
-    },
-    [manager],
-  );
+  var resetConfig = (0, react_1.useCallback)(() => {
+    manager.resetConfig();
+  }, [manager]);
   var isFeatureEnabled = (0, react_1.useCallback)(
-    function (feature) {
-      return manager.isFeatureEnabled(feature);
-    },
+    (feature) => manager.isFeatureEnabled(feature),
     [manager],
   );
   var enableFeature = (0, react_1.useCallback)(
-    function (feature) {
+    (feature) => {
       manager.enableFeature(feature);
     },
     [manager],
   );
   var disableFeature = (0, react_1.useCallback)(
-    function (feature) {
+    (feature) => {
       manager.disableFeature(feature);
     },
     [manager],
@@ -379,13 +362,9 @@ function useFeatureFlag(feature) {
     disableFeature = _a.disableFeature;
   return {
     enabled: isFeatureEnabled(feature),
-    enable: function () {
-      return enableFeature(feature);
-    },
-    disable: function () {
-      return disableFeature(feature);
-    },
-    toggle: function () {
+    enable: () => enableFeature(feature),
+    disable: () => disableFeature(feature),
+    toggle: () => {
       if (isFeatureEnabled(feature)) {
         disableFeature(feature);
       } else {
@@ -439,7 +418,7 @@ function validateConfig(config) {
 function getOptimalConfigForDevice() {
   if (typeof window === "undefined") return {};
   var memory = navigator.deviceMemory || 4; // Default to 4GB
-  var cores = navigator.hardwareConcurrency || 4; // Default to 4 cores
+  var _cores = navigator.hardwareConcurrency || 4; // Default to 4 cores
   var connection = navigator.connection;
   var config = {};
   // Adjust based on device memory

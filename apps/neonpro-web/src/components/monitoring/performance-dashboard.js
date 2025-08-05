@@ -3,18 +3,17 @@
  * Real-time monitoring dashboard for subscription middleware
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,10 +133,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -148,7 +145,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PerformanceDashboard = PerformanceDashboard;
 var react_1 = require("react");
@@ -158,7 +155,6 @@ var progress_1 = require("@/components/ui/progress");
 var tabs_1 = require("@/components/ui/tabs");
 var lucide_react_1 = require("lucide-react");
 function PerformanceDashboard() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     metrics = _a[0],
     setMetrics = _a[1];
@@ -168,17 +164,15 @@ function PerformanceDashboard() {
   var _c = (0, react_1.useState)(true),
     loading = _c[0],
     setLoading = _c[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     fetchMetrics();
     var interval = setInterval(fetchMetrics, 5000); // Update every 5s
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
-  var fetchMetrics = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchMetrics = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, metricsRes, healthRes, _b, metricsData, healthData, error_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 4, 5, 6]);
@@ -209,8 +203,7 @@ function PerformanceDashboard() {
         }
       });
     });
-  };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "healthy":
         return "bg-green-500";
@@ -222,7 +215,7 @@ function PerformanceDashboard() {
         return "bg-gray-500";
     }
   };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "healthy":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -237,19 +230,17 @@ function PerformanceDashboard() {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {__spreadArray([], Array(4), true).map(function (_, i) {
-          return (
-            <card_1.Card key={i} className="animate-pulse">
-              <card_1.CardHeader className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-              </card_1.CardHeader>
-              <card_1.CardContent>
-                <div className="h-8 bg-gray-200 rounded"></div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+        {__spreadArray([], Array(4), true).map((_, i) => (
+          <card_1.Card key={i} className="animate-pulse">
+            <card_1.CardHeader className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            </card_1.CardHeader>
+            <card_1.CardContent>
+              <div className="h-8 bg-gray-200 rounded"></div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
     );
   }

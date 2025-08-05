@@ -11,10 +11,8 @@
  * - Error handling and edge cases
  */
 
-import type { describe, it, expect, beforeEach, afterEach, vi, Mock } from "vitest";
 import type { EventSystem } from "../event-system";
-import type { EventUtils } from "../utils";
-import type { BaseEvent, EventType, EventPriority, EventSubscription, EventFilter } from "../types";
+import type { BaseEvent, EventFilter, EventPriority, EventSubscription, EventType } from "../types";
 
 // Mock Supabase
 const mockSupabase = {
@@ -366,7 +364,7 @@ describe("EventSystem", () => {
 
     it("should handle queue overflow", async () => {
       // Mock queue at capacity
-      const largeQueue = Array.from({ length: 1001 }, (_, i) => ({
+      const _largeQueue = Array.from({ length: 1001 }, (_, i) => ({
         id: `event-${i}`,
         type: "patient.created",
         source: "patient-service",

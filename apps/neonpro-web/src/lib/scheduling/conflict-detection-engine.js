@@ -1,4 +1,3 @@
-"use strict";
 /**
  * ============================================================================
  * NEONPRO ADVANCED CONFLICT DETECTION ENGINE
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConflictDetectionEngine = void 0;
 var conflict_types_1 = require("./conflict-types");
@@ -167,7 +164,7 @@ var conflict_types_1 = require("./conflict-types");
  * - Multi-dimensional conflict analysis
  * - Performance optimization with sub-50ms detection
  */
-var ConflictDetectionEngine = /** @class */ (function () {
+var ConflictDetectionEngine = /** @class */ (() => {
   function ConflictDetectionEngine(supabaseClient, config) {
     this.realtimeChannel = null;
     this.isInitialized = false;
@@ -293,9 +290,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
                 conflictId: enhancedConflicts[0].id,
                 appointmentIds: appointmentId
                   ? [appointmentId]
-                  : enhancedConflicts.flatMap(function (c) {
-                      return [c.appointmentAId, c.appointmentBId];
-                    }),
+                  : enhancedConflicts.flatMap((c) => [c.appointmentAId, c.appointmentBId]),
                 timestamp: new Date(),
                 metadata: {
                   detectionLatency: detectionLatency,
@@ -352,11 +347,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
                   event: "UPDATE",
                   schema: "public",
                   table: "appointments",
-                  filter: appointmentIds
-                    .map(function (id) {
-                      return "id=eq.".concat(id);
-                    })
-                    .join(","),
+                  filter: appointmentIds.map((id) => "id=eq.".concat(id)).join(","),
                 },
                 this.handleAppointmentChange.bind(this),
               );
@@ -502,7 +493,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
           config: { presence: { key: "conflict_engine" } },
         });
         // Subscribe to channel
-        this.realtimeChannel.subscribe(function (status) {
+        this.realtimeChannel.subscribe((status) => {
           if (status === "SUBSCRIBED") {
             console.log("Real-time conflict monitoring active");
           } else if (status === "CHANNEL_ERROR") {
@@ -649,7 +640,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
       });
     });
   };
-  ConflictDetectionEngine.prototype.estimateExecutionTime = function (strategyType) {
+  ConflictDetectionEngine.prototype.estimateExecutionTime = (strategyType) => {
     // Estimated execution times in milliseconds based on research
     var estimations = {
       rule_based: 100,
@@ -691,32 +682,20 @@ var ConflictDetectionEngine = /** @class */ (function () {
               (recentMetrics === null || recentMetrics === void 0
                 ? void 0
                 : recentMetrics
-                    .filter(function (m) {
-                      return m.metric_type === "detection_latency";
-                    })
-                    .reduce(function (sum, m) {
-                      return sum + m.metric_value;
-                    }, 0)) /
+                    .filter((m) => m.metric_type === "detection_latency")
+                    .reduce((sum, m) => sum + m.metric_value, 0)) /
               ((recentMetrics === null || recentMetrics === void 0
                 ? void 0
-                : recentMetrics.filter(function (m) {
-                    return m.metric_type === "detection_latency";
-                  }).length) || 1);
+                : recentMetrics.filter((m) => m.metric_type === "detection_latency").length) || 1);
             avgResolutionTime =
               (recentMetrics === null || recentMetrics === void 0
                 ? void 0
                 : recentMetrics
-                    .filter(function (m) {
-                      return m.metric_type === "resolution_time";
-                    })
-                    .reduce(function (sum, m) {
-                      return sum + m.metric_value;
-                    }, 0)) /
+                    .filter((m) => m.metric_type === "resolution_time")
+                    .reduce((sum, m) => sum + m.metric_value, 0)) /
               ((recentMetrics === null || recentMetrics === void 0
                 ? void 0
-                : recentMetrics.filter(function (m) {
-                    return m.metric_type === "resolution_time";
-                  }).length) || 1);
+                : recentMetrics.filter((m) => m.metric_type === "resolution_time").length) || 1);
             return [
               2 /*return*/,
               {
@@ -736,7 +715,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
   };
   ConflictDetectionEngine.prototype.handleAppointmentChange = function (payload) {
     // Trigger conflict detection for changed appointment
-    this.detectConflicts(payload.new.id).catch(function (error) {
+    this.detectConflicts(payload.new.id).catch((error) => {
       console.error("Failed to detect conflicts after appointment change:", error);
     });
   };
@@ -750,13 +729,13 @@ var ConflictDetectionEngine = /** @class */ (function () {
       metadata: { source: "realtime_insert" },
     });
   };
-  ConflictDetectionEngine.prototype.handleRealtimeConflictEvent = function (payload) {
+  ConflictDetectionEngine.prototype.handleRealtimeConflictEvent = (payload) => {
     // Process real-time conflict events
     console.log("Real-time conflict event:", payload);
   };
   ConflictDetectionEngine.prototype.emitConflictEvent = function (event) {
     var listeners = this.eventListeners.get(event.type) || [];
-    listeners.forEach(function (listener) {
+    listeners.forEach((listener) => {
       try {
         listener(event);
       } catch (error) {
@@ -791,9 +770,7 @@ var ConflictDetectionEngine = /** @class */ (function () {
           measurement_unit: "milliseconds",
           context_data: { threshold: this.config.performanceThresholds.maxDetectionLatencyMs },
         })
-        .then(null, function (error) {
-          return console.error("Failed to record performance warning:", error);
-        });
+        .then(null, (error) => console.error("Failed to record performance warning:", error));
     }
   };
   ConflictDetectionEngine.prototype.validateInitialization = function () {

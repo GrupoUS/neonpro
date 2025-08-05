@@ -3,18 +3,17 @@
  * Comprehensive session management interface with security monitoring
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionDashboard = SessionDashboard;
 var react_1 = require("react");
@@ -156,7 +153,6 @@ var session_1 = require("@/types/session");
 var date_fns_1 = require("date-fns");
 var sonner_1 = require("sonner");
 function SessionDashboard(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, use_session_1.useSession)(),
     session = _b.session,
@@ -185,10 +181,10 @@ function SessionDashboard(_a) {
     isRefreshing = _g[0],
     setIsRefreshing = _g[1];
   // Load active sessions
-  var loadActiveSessions = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadActiveSessions = () =>
+    __awaiter(this, void 0, void 0, function () {
       var sessions, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -210,25 +206,20 @@ function SessionDashboard(_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      if (session) {
-        loadActiveSessions();
-      }
-    },
-    [session],
-  );
+  (0, react_1.useEffect)(() => {
+    if (session) {
+      loadActiveSessions();
+    }
+  }, [session]);
   // Calculate session health score
-  var calculateHealthScore = function (sessionData) {
+  var calculateHealthScore = (sessionData) => {
     var score = 100;
     // Deduct points for security issues
-    var recentEvents = securityEvents.filter(function (event) {
-      return (
+    var recentEvents = securityEvents.filter(
+      (event) =>
         event.session_id === sessionData.id &&
-        new Date(event.timestamp) > new Date(Date.now() - 24 * 60 * 60 * 1000)
-      );
-    });
+        new Date(event.timestamp) > new Date(Date.now() - 24 * 60 * 60 * 1000),
+    );
     score -= recentEvents.length * 10;
     // Deduct points for old sessions
     var sessionAge = Date.now() - new Date(sessionData.created_at).getTime();
@@ -242,7 +233,7 @@ function SessionDashboard(_a) {
     return Math.max(0, Math.min(100, score));
   };
   // Get device icon
-  var getDeviceIcon = function (deviceType) {
+  var getDeviceIcon = (deviceType) => {
     switch (deviceType) {
       case session_1.DeviceType.MOBILE:
         return <lucide_react_1.Smartphone className="h-4 w-4" />;
@@ -255,7 +246,7 @@ function SessionDashboard(_a) {
     }
   };
   // Get security severity color
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case session_1.SecuritySeverity.LOW:
         return "text-green-600 bg-green-100";
@@ -380,23 +371,11 @@ function SessionDashboard(_a) {
 
           {/* Session Actions */}
           <div className="flex items-center gap-2">
-            <button_1.Button
-              variant="outline"
-              size="sm"
-              onClick={function () {
-                return extend(30);
-              }}
-            >
+            <button_1.Button variant="outline" size="sm" onClick={() => extend(30)}>
               <lucide_react_1.Plus className="h-4 w-4 mr-1" />
               Extend 30min
             </button_1.Button>
-            <button_1.Button
-              variant="outline"
-              size="sm"
-              onClick={function () {
-                return extend(60);
-              }}
-            >
+            <button_1.Button variant="outline" size="sm" onClick={() => extend(60)}>
               <lucide_react_1.Plus className="h-4 w-4 mr-1" />
               Extend 1hr
             </button_1.Button>
@@ -446,7 +425,7 @@ function SessionDashboard(_a) {
                   </table_1.TableRow>
                 </table_1.TableHeader>
                 <table_1.TableBody>
-                  {activeSessions.map(function (activeSession) {
+                  {activeSessions.map((activeSession) => {
                     var _a;
                     return (
                       <table_1.TableRow key={activeSession.id}>
@@ -509,18 +488,14 @@ function SessionDashboard(_a) {
                             </dropdown_menu_1.DropdownMenuTrigger>
                             <dropdown_menu_1.DropdownMenuContent>
                               <dropdown_menu_1.DropdownMenuItem
-                                onClick={function () {
-                                  return setSelectedSession(activeSession);
-                                }}
+                                onClick={() => setSelectedSession(activeSession)}
                               >
                                 <lucide_react_1.Eye className="h-4 w-4 mr-2" />
                                 View Details
                               </dropdown_menu_1.DropdownMenuItem>
                               {activeSession.id !== session.id && (
                                 <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return terminateSession(activeSession.id);
-                                  }}
+                                  onClick={() => terminateSession(activeSession.id)}
                                   className="text-red-600"
                                 >
                                   <lucide_react_1.LogOut className="h-4 w-4 mr-2" />
@@ -548,37 +523,32 @@ function SessionDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {securityEvents.slice(0, 10).map(function (event) {
-                  return (
-                    <div key={event.id} className="flex items-start gap-3 p-3 border rounded-lg">
-                      <lucide_react_1.AlertTriangle
-                        className={"h-4 w-4 mt-0.5 ".concat(
-                          event.severity === session_1.SecuritySeverity.HIGH ||
-                            event.severity === session_1.SecuritySeverity.CRITICAL
-                            ? "text-red-600"
-                            : event.severity === session_1.SecuritySeverity.MEDIUM
-                              ? "text-yellow-600"
-                              : "text-blue-600",
-                        )}
-                      />
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center gap-2">
-                          <p className="font-medium">{event.event_type}</p>
-                          <badge_1.Badge className={getSeverityColor(event.severity)}>
-                            {event.severity}
-                          </badge_1.Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{event.description}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {(0, date_fns_1.format)(
-                            new Date(event.timestamp),
-                            "MMM dd, yyyy HH:mm:ss",
-                          )}
-                        </p>
+                {securityEvents.slice(0, 10).map((event) => (
+                  <div key={event.id} className="flex items-start gap-3 p-3 border rounded-lg">
+                    <lucide_react_1.AlertTriangle
+                      className={"h-4 w-4 mt-0.5 ".concat(
+                        event.severity === session_1.SecuritySeverity.HIGH ||
+                          event.severity === session_1.SecuritySeverity.CRITICAL
+                          ? "text-red-600"
+                          : event.severity === session_1.SecuritySeverity.MEDIUM
+                            ? "text-yellow-600"
+                            : "text-blue-600",
+                      )}
+                    />
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium">{event.event_type}</p>
+                        <badge_1.Badge className={getSeverityColor(event.severity)}>
+                          {event.severity}
+                        </badge_1.Badge>
                       </div>
+                      <p className="text-sm text-muted-foreground">{event.description}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {(0, date_fns_1.format)(new Date(event.timestamp), "MMM dd, yyyy HH:mm:ss")}
+                      </p>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
                 {securityEvents.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
                     <lucide_react_1.Shield className="h-8 w-8 mx-auto mb-2" />
@@ -601,58 +571,52 @@ function SessionDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {devices.map(function (device) {
-                  return (
-                    <div
-                      key={device.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        {getDeviceIcon(device.device_type)}
-                        <div>
-                          <p className="font-medium">{device.device_name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            Last seen:{" "}
-                            {(0, date_fns_1.formatDistanceToNow)(new Date(device.last_seen))} ago
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {device.is_trusted
-                          ? <badge_1.Badge variant="default">Trusted</badge_1.Badge>
-                          : <badge_1.Badge variant="secondary">Pending</badge_1.Badge>}
-                        <dropdown_menu_1.DropdownMenu>
-                          <dropdown_menu_1.DropdownMenuTrigger asChild>
-                            <button_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.MoreVertical className="h-4 w-4" />
-                            </button_1.Button>
-                          </dropdown_menu_1.DropdownMenuTrigger>
-                          <dropdown_menu_1.DropdownMenuContent>
-                            {!device.is_trusted && (
-                              <dropdown_menu_1.DropdownMenuItem
-                                onClick={function () {
-                                  return trustDevice(device.id);
-                                }}
-                              >
-                                <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
-                                Trust Device
-                              </dropdown_menu_1.DropdownMenuItem>
-                            )}
-                            <dropdown_menu_1.DropdownMenuItem
-                              onClick={function () {
-                                return revokeDevice(device.id);
-                              }}
-                              className="text-red-600"
-                            >
-                              <lucide_react_1.XCircle className="h-4 w-4 mr-2" />
-                              Revoke Access
-                            </dropdown_menu_1.DropdownMenuItem>
-                          </dropdown_menu_1.DropdownMenuContent>
-                        </dropdown_menu_1.DropdownMenu>
+                {devices.map((device) => (
+                  <div
+                    key={device.id}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      {getDeviceIcon(device.device_type)}
+                      <div>
+                        <p className="font-medium">{device.device_name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Last seen:{" "}
+                          {(0, date_fns_1.formatDistanceToNow)(new Date(device.last_seen))} ago
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center gap-2">
+                      {device.is_trusted
+                        ? <badge_1.Badge variant="default">Trusted</badge_1.Badge>
+                        : <badge_1.Badge variant="secondary">Pending</badge_1.Badge>}
+                      <dropdown_menu_1.DropdownMenu>
+                        <dropdown_menu_1.DropdownMenuTrigger asChild>
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.MoreVertical className="h-4 w-4" />
+                          </button_1.Button>
+                        </dropdown_menu_1.DropdownMenuTrigger>
+                        <dropdown_menu_1.DropdownMenuContent>
+                          {!device.is_trusted && (
+                            <dropdown_menu_1.DropdownMenuItem
+                              onClick={() => trustDevice(device.id)}
+                            >
+                              <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
+                              Trust Device
+                            </dropdown_menu_1.DropdownMenuItem>
+                          )}
+                          <dropdown_menu_1.DropdownMenuItem
+                            onClick={() => revokeDevice(device.id)}
+                            className="text-red-600"
+                          >
+                            <lucide_react_1.XCircle className="h-4 w-4 mr-2" />
+                            Revoke Access
+                          </dropdown_menu_1.DropdownMenuItem>
+                        </dropdown_menu_1.DropdownMenuContent>
+                      </dropdown_menu_1.DropdownMenu>
+                    </div>
+                  </div>
+                ))}
                 {devices.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
                     <lucide_react_1.Smartphone className="h-8 w-8 mx-auto mb-2" />
@@ -667,12 +631,7 @@ function SessionDashboard(_a) {
 
       {/* Session Details Dialog */}
       {selectedSession && (
-        <dialog_1.Dialog
-          open={!!selectedSession}
-          onOpenChange={function () {
-            return setSelectedSession(null);
-          }}
-        >
+        <dialog_1.Dialog open={!!selectedSession} onOpenChange={() => setSelectedSession(null)}>
           <dialog_1.DialogContent className="max-w-2xl">
             <dialog_1.DialogHeader>
               <dialog_1.DialogTitle>Session Details</dialog_1.DialogTitle>

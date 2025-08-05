@@ -1,6 +1,5 @@
 // components/landing/feature-highlights.tsx
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeatureHighlights = FeatureHighlights;
 var card_1 = require("@/components/ui/card");
@@ -124,47 +123,43 @@ function FeatureHighlights() {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {complianceFeatures.map(function (feature, index) {
-              return (
-                <card_1.Card
-                  key={index}
-                  className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800"
-                >
-                  <card_1.CardHeader className="pb-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-600">
-                        <feature.icon className="h-6 w-6 text-white" />
-                      </div>
-                      <badge_1.Badge variant="secondary" className="text-xs font-semibold">
-                        {feature.badge}
-                      </badge_1.Badge>
+            {complianceFeatures.map((feature, index) => (
+              <card_1.Card
+                key={index}
+                className="border-0 shadow-lg hover:shadow-xl transition-shadow bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800"
+              >
+                <card_1.CardHeader className="pb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-600">
+                      <feature.icon className="h-6 w-6 text-white" />
                     </div>
-                    <card_1.CardTitle className="text-lg font-bold text-slate-900 dark:text-white">
-                      {feature.title}
-                    </card_1.CardTitle>
-                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </card_1.CardHeader>
-                  <card_1.CardContent className="pt-0">
-                    <separator_1.Separator className="mb-4" />
-                    <ul className="space-y-2">
-                      {feature.details.map(function (detail, idx) {
-                        return (
-                          <li
-                            key={idx}
-                            className="flex items-center text-sm text-slate-600 dark:text-slate-400"
-                          >
-                            <div className="w-1.5 h-1.5 bg-sky-600 rounded-full mr-3 flex-shrink-0"></div>
-                            {detail}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    <badge_1.Badge variant="secondary" className="text-xs font-semibold">
+                      {feature.badge}
+                    </badge_1.Badge>
+                  </div>
+                  <card_1.CardTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                    {feature.title}
+                  </card_1.CardTitle>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </card_1.CardHeader>
+                <card_1.CardContent className="pt-0">
+                  <separator_1.Separator className="mb-4" />
+                  <ul className="space-y-2">
+                    {feature.details.map((detail, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-center text-sm text-slate-600 dark:text-slate-400"
+                      >
+                        <div className="w-1.5 h-1.5 bg-sky-600 rounded-full mr-3 flex-shrink-0"></div>
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </div>
 
@@ -180,29 +175,25 @@ function FeatureHighlights() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {intelligentFeatures.map(function (feature, index) {
-              return (
-                <card_1.Card
-                  key={index}
-                  className="text-center border-0 shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <card_1.CardContent className="pt-6">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 mx-auto mb-4">
-                      <feature.icon className="h-8 w-8 text-white" />
-                    </div>
-                    <h4 className="font-bold text-slate-900 dark:text-white mb-2">
-                      {feature.title}
-                    </h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
-                      {feature.description}
-                    </p>
-                    <badge_1.Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs font-semibold">
-                      {feature.stats}
-                    </badge_1.Badge>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+            {intelligentFeatures.map((feature, index) => (
+              <card_1.Card
+                key={index}
+                className="text-center border-0 shadow-md hover:shadow-lg transition-shadow"
+              >
+                <card_1.CardContent className="pt-6">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 mx-auto mb-4">
+                    <feature.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <h4 className="font-bold text-slate-900 dark:text-white mb-2">{feature.title}</h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 leading-relaxed">
+                    {feature.description}
+                  </p>
+                  <badge_1.Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs font-semibold">
+                    {feature.stats}
+                  </badge_1.Badge>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </div>
 
@@ -218,23 +209,21 @@ function FeatureHighlights() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {coreFeatures.map(function (feature, index) {
-              return (
-                <div key={index} className="group cursor-pointer">
-                  <div className="flex flex-col items-center text-center p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-sky-300 dark:hover:border-sky-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:bg-sky-100 dark:group-hover:bg-sky-900 transition-colors mb-4">
-                      <feature.icon className="h-6 w-6 text-slate-600 dark:text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors" />
-                    </div>
-                    <h4 className="font-semibold text-slate-900 dark:text-white mb-2">
-                      {feature.title}
-                    </h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                      {feature.description}
-                    </p>
+            {coreFeatures.map((feature, index) => (
+              <div key={index} className="group cursor-pointer">
+                <div className="flex flex-col items-center text-center p-6 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-sky-300 dark:hover:border-sky-600 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 group-hover:bg-sky-100 dark:group-hover:bg-sky-900 transition-colors mb-4">
+                    <feature.icon className="h-6 w-6 text-slate-600 dark:text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors" />
                   </div>
+                  <h4 className="font-semibold text-slate-900 dark:text-white mb-2">
+                    {feature.title}
+                  </h4>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    {feature.description}
+                  </p>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </div>
 

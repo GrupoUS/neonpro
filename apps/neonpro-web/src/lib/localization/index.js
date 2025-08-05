@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocalizationProvider = LocalizationProvider;
 exports.useLocalization = useLocalization;
@@ -21,7 +20,7 @@ function LocalizationProvider(_a) {
   // For now we only support PT-BR, but this structure allows for easy expansion
   var strings = pt_br_1.ptBRStrings;
   // Simple key-based translation function
-  var t = function (key, params) {
+  var t = (key, params) => {
     // Navigate nested object using dot notation
     var keys = key.split(".");
     var value = strings;
@@ -129,15 +128,9 @@ function useFormTranslations() {
     cancel: t("forms.cancel"),
     reset: t("forms.reset"),
     clear: t("forms.clear"),
-    fieldRequired: function (field) {
-      return t("forms.fieldRequired", { field: field });
-    },
-    fieldOptional: function (field) {
-      return t("forms.fieldOptional", { field: field });
-    },
-    formHasErrors: function (count) {
-      return t("forms.formHasErrors", { count: count });
-    },
+    fieldRequired: (field) => t("forms.fieldRequired", { field: field }),
+    fieldOptional: (field) => t("forms.fieldOptional", { field: field }),
+    formHasErrors: (count) => t("forms.formHasErrors", { count: count }),
     pleaseCorrectErrors: t("forms.pleaseCorrectErrors"),
   };
 }
@@ -151,78 +144,45 @@ function useNavigationTranslations() {
     breadcrumbs: t("navigation.breadcrumbs"),
     previousPage: t("navigation.previousPage"),
     nextPage: t("navigation.nextPage"),
-    goToPage: function (page) {
-      return t("navigation.goToPage", { page: page });
-    },
+    goToPage: (page) => t("navigation.goToPage", { page: page }),
   };
 }
 // Accessibility-specific translations hook
 function useAccessibilityTranslations() {
   var t = useLocalization().t;
   return {
-    openDialog: function (dialogName) {
-      return t("accessibility.openDialog", { dialogName: dialogName });
-    },
+    openDialog: (dialogName) => t("accessibility.openDialog", { dialogName: dialogName }),
     closeDialog: t("accessibility.closeDialog"),
-    expandSection: function (section) {
-      return t("accessibility.expandSection", { section: section });
-    },
-    collapseSection: function (section) {
-      return t("accessibility.collapseSection", { section: section });
-    },
-    sortColumn: function (column, direction) {
-      return t("accessibility.sortColumn", { column: column, direction: direction });
-    },
-    filterResults: function (count) {
-      return t("accessibility.filterResults", { count: count });
-    },
-    searchResults: function (count, query) {
-      return t("accessibility.searchResults", { count: count, query: query });
-    },
-    pageOf: function (current, total) {
-      return t("accessibility.pageOf", { current: current, total: total });
-    },
-    selectedOption: function (option) {
-      return t("accessibility.selectedOption", { option: option });
-    },
+    expandSection: (section) => t("accessibility.expandSection", { section: section }),
+    collapseSection: (section) => t("accessibility.collapseSection", { section: section }),
+    sortColumn: (column, direction) =>
+      t("accessibility.sortColumn", { column: column, direction: direction }),
+    filterResults: (count) => t("accessibility.filterResults", { count: count }),
+    searchResults: (count, query) =>
+      t("accessibility.searchResults", { count: count, query: query }),
+    pageOf: (current, total) => t("accessibility.pageOf", { current: current, total: total }),
+    selectedOption: (option) => t("accessibility.selectedOption", { option: option }),
     menuExpanded: t("accessibility.menuExpanded"),
     menuCollapsed: t("accessibility.menuCollapsed"),
-    tabSelected: function (tab) {
-      return t("accessibility.tabSelected", { tab: tab });
-    },
+    tabSelected: (tab) => t("accessibility.tabSelected", { tab: tab }),
   };
 }
 // Status announcements hook
 function useStatusTranslations() {
   var t = useLocalization().t;
   return {
-    loading: function (context) {
-      return t("status.loading", { context: context });
-    },
-    loadingComplete: function (context) {
-      return t("status.loadingComplete", { context: context });
-    },
-    saving: function (context) {
-      return t("status.saving", { context: context });
-    },
-    saveComplete: function (context) {
-      return t("status.saveComplete", { context: context });
-    },
-    deleting: function (context) {
-      return t("status.deleting", { context: context });
-    },
-    deleteComplete: function (context) {
-      return t("status.deleteComplete", { context: context });
-    },
-    appointmentScheduled: function (patientName) {
-      return t("status.appointmentScheduled", { patientName: patientName });
-    },
-    appointmentCanceled: function (patientName) {
-      return t("status.appointmentCanceled", { patientName: patientName });
-    },
-    appointmentCompleted: function (patientName) {
-      return t("status.appointmentCompleted", { patientName: patientName });
-    },
+    loading: (context) => t("status.loading", { context: context }),
+    loadingComplete: (context) => t("status.loadingComplete", { context: context }),
+    saving: (context) => t("status.saving", { context: context }),
+    saveComplete: (context) => t("status.saveComplete", { context: context }),
+    deleting: (context) => t("status.deleting", { context: context }),
+    deleteComplete: (context) => t("status.deleteComplete", { context: context }),
+    appointmentScheduled: (patientName) =>
+      t("status.appointmentScheduled", { patientName: patientName }),
+    appointmentCanceled: (patientName) =>
+      t("status.appointmentCanceled", { patientName: patientName }),
+    appointmentCompleted: (patientName) =>
+      t("status.appointmentCompleted", { patientName: patientName }),
     formSubmitted: t("status.formSubmitted"),
     formSubmissionError: t("status.formSubmissionError"),
     dataUpdated: t("status.dataUpdated"),
@@ -262,16 +222,12 @@ function useMessageTranslations() {
     notFound: t("errors.notFound"),
     serverError: t("errors.serverError"),
     validationFailed: t("errors.validationFailed"),
-    requiredField: function (field) {
-      return t("errors.requiredField", { field: field });
-    },
+    requiredField: (field) => t("errors.requiredField", { field: field }),
     invalidEmail: t("errors.invalidEmail"),
     invalidPhone: t("errors.invalidPhone"),
     invalidDate: t("errors.invalidDate"),
     invalidTime: t("errors.invalidTime"),
-    passwordTooShort: function (minLength) {
-      return t("errors.passwordTooShort", { minLength: minLength });
-    },
+    passwordTooShort: (minLength) => t("errors.passwordTooShort", { minLength: minLength }),
     passwordMismatch: t("errors.passwordMismatch"),
     // Success messages
     saved: t("success.saved"),

@@ -8,17 +8,11 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import type { z } from "zod";
-import type { createHash } from "crypto";
-import type { logger } from "@/lib/monitoring";
-import type { supabase } from "@/lib/supabase/client";
-import type { VISION_CONFIG, TREATMENT_TYPES, ERROR_CODES } from "../config";
 import type {
+  AlertLevel,
+  ComplicationCategory,
   ComplicationDetectionRequest,
   ComplicationDetectionResult,
-  ComplicationCategory,
-  DetectionConfidence,
-  AlertLevel,
   EmergencyProtocol,
 } from "./types";
 
@@ -48,8 +42,6 @@ const ComplicationDetectionRequestSchema = z.object({
 export class ComplicationDetector {
   private models: Map<string, any> = new Map();
   private isInitialized = false;
-  private detectionQueue: ComplicationDetectionRequest[] = [];
-  private processingActive = false;
 
   constructor() {
     this.initializeDetector();
@@ -290,7 +282,7 @@ export class ComplicationDetector {
    */
   private async runMultiModelDetection(
     image: any,
-    request: ComplicationDetectionRequest,
+    _request: ComplicationDetectionRequest,
   ): Promise<any[]> {
     const results = [];
 
@@ -316,13 +308,13 @@ export class ComplicationDetector {
   /**
    * Simulate model inference (replace with actual TensorFlow.js inference)
    */
-  private async runModelInference(image: any, model: any, modelType: string): Promise<any> {
+  private async runModelInference(_image: any, model: any, modelType: string): Promise<any> {
     // Simulate processing delay
     await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000 + 200));
 
     // Generate realistic predictions based on model type
     const classes = model.classes;
-    const predictions = classes.map((cls: string, index: number) => {
+    const predictions = classes.map((cls: string, _index: number) => {
       // Normal class gets higher probability in most cases
       const baseProb = cls === "normal" || cls === "normal_healing" ? 0.7 : 0.1;
       const randomFactor = Math.random() * 0.3;
@@ -353,7 +345,7 @@ export class ComplicationDetector {
    */
   private async analyzeDetectionResults(
     detectionResults: any[],
-    request: ComplicationDetectionRequest,
+    _request: ComplicationDetectionRequest,
   ): Promise<any> {
     const complications = [];
     let overallRiskScore = 0;
@@ -510,7 +502,7 @@ export class ComplicationDetector {
    */
   private getEmergencyProtocol(
     alertLevel: AlertLevel,
-    complications: any[],
+    _complications: any[],
   ): EmergencyProtocol | null {
     if (alertLevel === "critical") {
       return {
@@ -730,7 +722,7 @@ export class ComplicationDetector {
   /**
    * Get detection statistics
    */
-  async getDetectionStatistics(timeframe: string = "24h"): Promise<any> {
+  async getDetectionStatistics(_timeframe: string = "24h"): Promise<any> {
     try {
       const { data, error } = await supabase
         .from("complication_detections")

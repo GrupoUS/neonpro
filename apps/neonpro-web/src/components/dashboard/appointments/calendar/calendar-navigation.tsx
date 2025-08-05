@@ -1,5 +1,15 @@
 "use client";
 
+import type { addDays, addMonths, addWeeks, format, subDays, subMonths, subWeeks } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Grid3X3,
+  LayoutGrid,
+} from "lucide-react";
 import React from "react";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -10,16 +20,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { cn } from "@/lib/utils";
-import type {
-  ChevronLeft,
-  ChevronRight,
-  Calendar as CalendarIcon,
-  Clock,
-  Grid3X3,
-  LayoutGrid,
-} from "lucide-react";
-import type { format, addDays, addWeeks, addMonths, subDays, subWeeks, subMonths } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 
 export type CalendarView = "day" | "week" | "month";
 

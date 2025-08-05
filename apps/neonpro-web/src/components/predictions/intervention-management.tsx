@@ -5,21 +5,50 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
-import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Switch } from "@/components/ui/switch";
 import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  AlertTriangle,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Eye,
+  Heart,
+  Mail,
+  MessageSquare,
+  Pause,
+  Phone,
+  Play,
+  RotateCcw,
+  Send,
+  Settings,
+  Shield,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import { useMemo, useState } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -27,52 +56,24 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Input } from "@/components/ui/input";
 import type { Progress } from "@/components/ui/progress";
 import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type {
-  MessageSquare,
-  Phone,
-  Mail,
-  Bell,
-  Calendar,
-  Clock,
-  Users,
-  TrendingUp,
-  TrendingDown,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Target,
-  Send,
-  Eye,
-  Settings,
-  Play,
-  Pause,
-  RotateCcw,
-  Zap,
-  Heart,
-  Shield,
-} from "lucide-react";
-import type {
+  CommunicationChannel,
+  InterventionOutcome,
   InterventionStrategy,
   InterventionTrigger,
-  InterventionOutcome,
   InterventionType,
-  CommunicationChannel,
 } from "@/lib/analytics/intervention-engine";
 
 interface InterventionManagementProps {

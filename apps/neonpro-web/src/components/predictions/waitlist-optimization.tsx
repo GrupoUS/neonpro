@@ -5,19 +5,46 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
-import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Input } from "@/components/ui/input";
 import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  AlertTriangle,
+  ArrowDown,
+  ArrowUp,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Eye,
+  Mail,
+  MessageSquare,
+  Phone,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -25,44 +52,17 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Input } from "@/components/ui/input";
 import type { Progress } from "@/components/ui/progress";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
-import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  Cell,
-} from "recharts";
-import type {
-  Clock,
-  Users,
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Target,
-  Zap,
-  Eye,
-  Settings,
-  RefreshCw,
-  ArrowUp,
-  ArrowDown,
-  Phone,
-  MessageSquare,
-  Mail,
-  Bell,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface WaitlistEntry {
   id: string;
@@ -340,9 +340,10 @@ export function WaitlistOptimization({
       switch (sortBy) {
         case "waitTime":
           return b.estimatedWaitTime - a.estimatedWaitTime;
-        case "priority":
+        case "priority": {
           const priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
           return priorityOrder[b.priority] - priorityOrder[a.priority];
+        }
         case "risk":
           return b.noShowRisk - a.noShowRisk;
         case "date":

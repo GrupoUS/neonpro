@@ -1,5 +1,6 @@
-import { Resend } from "resend";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Resend } from "resend";
+
 // FIXED: Removed direct import of 'next/headers' to avoid client-side errors
 
 const resend = new Resend(process.env.RESEND_API_KEY);

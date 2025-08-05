@@ -4,17 +4,6 @@
 
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { useNetworkStatus } from "@/hooks/useNetworkStatus";
-import type { cn } from "@/lib/utils";
 import type {
   AlertCircle,
   CheckCircle2,
@@ -26,6 +15,17 @@ import type {
   X,
 } from "lucide-react";
 import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import type { cn } from "@/lib/utils";
 
 interface OfflineStatusProps {
   className?: string;

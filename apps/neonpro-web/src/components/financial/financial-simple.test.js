@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Simple test file for financial components
  * Tests the basic functionality without complex setup
@@ -7,38 +6,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var utils_1 = require("./utils");
 // Simple utility function tests
-(0, globals_1.describe)("Financial Utils", function () {
-  (0, globals_1.it)("should format currency correctly", function () {
+(0, globals_1.describe)("Financial Utils", () => {
+  (0, globals_1.it)("should format currency correctly", () => {
     // Simple currency formatting function
-    var formatCurrency = function (value) {
-      return new Intl.NumberFormat("pt-BR", {
+    var formatCurrency = (value) =>
+      new Intl.NumberFormat("pt-BR", {
         style: "currency",
         currency: "BRL",
       }).format(value);
-    };
     (0, globals_1.expect)(formatCurrency(1000)).toBe("R$\u00a01.000,00");
     (0, globals_1.expect)(formatCurrency(0)).toBe("R$\u00a00,00");
     (0, globals_1.expect)(formatCurrency(-500)).toBe("-R$\u00a0500,00");
   });
-  (0, globals_1.it)("should format percentage correctly", function () {
+  (0, globals_1.it)("should format percentage correctly", () => {
     // Simple percentage formatting function
-    var formatPercentage = function (value) {
-      return new Intl.NumberFormat("pt-BR", {
+    var formatPercentage = (value) =>
+      new Intl.NumberFormat("pt-BR", {
         style: "percent",
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
       }).format(value / 100);
-    };
     (0, globals_1.expect)(formatPercentage(25)).toBe("25,0%");
     (0, globals_1.expect)(formatPercentage(0)).toBe("0,0%");
     (0, globals_1.expect)(formatPercentage(100)).toBe("100,0%");
   });
-  (0, globals_1.it)("should calculate totals correctly", function () {
+  (0, globals_1.it)("should calculate totals correctly", () => {
     // Simple totals calculation function
-    var calculateTotals = function (items) {
-      var subtotal = items.reduce(function (sum, item) {
-        return sum + item.amount * item.quantity;
-      }, 0);
+    var calculateTotals = (items) => {
+      var subtotal = items.reduce((sum, item) => sum + item.amount * item.quantity, 0);
       var tax = subtotal * 0.1; // 10% tax
       var total = subtotal + tax;
       return {
@@ -60,8 +55,8 @@ var utils_1 = require("./utils");
   });
 });
 // Basic component interface tests
-(0, globals_1.describe)("Financial Component Interfaces", function () {
-  (0, globals_1.it)("should define correct invoice data structure", function () {
+(0, globals_1.describe)("Financial Component Interfaces", () => {
+  (0, globals_1.it)("should define correct invoice data structure", () => {
     var testInvoice = {
       id: "INV-001",
       patientId: "PAT-001",
@@ -82,7 +77,7 @@ var utils_1 = require("./utils");
     (0, globals_1.expect)(testInvoice.items).toHaveLength(1);
     (0, globals_1.expect)(testInvoice.status).toBe("pending");
   });
-  (0, globals_1.it)("should define correct appointment data structure", function () {
+  (0, globals_1.it)("should define correct appointment data structure", () => {
     var testAppointment = {
       id: "APP-001",
       patientId: "PAT-001",
@@ -100,18 +95,16 @@ var utils_1 = require("./utils");
   });
 });
 // Mock data validation tests
-(0, globals_1.describe)("Financial Data Validation", function () {
-  (0, globals_1.it)("should validate invoice amounts", function () {
-    var validateInvoiceAmount = function (amount) {
-      return amount > 0 && Number.isFinite(amount);
-    };
+(0, globals_1.describe)("Financial Data Validation", () => {
+  (0, globals_1.it)("should validate invoice amounts", () => {
+    var validateInvoiceAmount = (amount) => amount > 0 && Number.isFinite(amount);
     (0, globals_1.expect)(validateInvoiceAmount(100)).toBe(true);
     (0, globals_1.expect)(validateInvoiceAmount(0)).toBe(false);
     (0, globals_1.expect)(validateInvoiceAmount(-50)).toBe(false);
     (0, globals_1.expect)(validateInvoiceAmount(Infinity)).toBe(false);
     (0, globals_1.expect)(validateInvoiceAmount(NaN)).toBe(false);
   });
-  (0, globals_1.it)("should validate appointment scheduling", function () {
+  (0, globals_1.it)("should validate appointment scheduling", () => {
     // Use the global Date.now mock which is set to 2025-01-24T10:00:00.000Z (1737712800000)
     var globalFixedTime = Date.now(); // This returns the mocked timestamp
     // Create ISO date strings manually to avoid Date constructor mock

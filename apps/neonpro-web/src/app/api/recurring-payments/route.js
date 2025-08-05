@@ -1,18 +1,17 @@
-"use strict";
 // NeonPro - Recurring Payments API Routes
 // Story 6.1 - Task 2: Recurring Payment System
 // Recurring payment processing endpoints
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -183,7 +180,7 @@ function GET(request) {
       summary,
       totalCount,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 7, , 8]);
@@ -262,37 +259,26 @@ function GET(request) {
             successful_payments:
               (summaryData === null || summaryData === void 0
                 ? void 0
-                : summaryData.filter(function (e) {
-                    return e.status === "paid";
-                  }).length) || 0,
+                : summaryData.filter((e) => e.status === "paid").length) || 0,
             failed_payments:
               (summaryData === null || summaryData === void 0
                 ? void 0
-                : summaryData.filter(function (e) {
-                    return e.status === "payment_failed";
-                  }).length) || 0,
+                : summaryData.filter((e) => e.status === "payment_failed").length) || 0,
             pending_payments:
               (summaryData === null || summaryData === void 0
                 ? void 0
-                : summaryData.filter(function (e) {
-                    return e.status === "pending";
-                  }).length) || 0,
+                : summaryData.filter((e) => e.status === "pending").length) || 0,
             total_amount:
               (summaryData === null || summaryData === void 0
                 ? void 0
-                : summaryData.reduce(function (sum, e) {
-                    return sum + (e.amount || 0);
-                  }, 0)) || 0,
+                : summaryData.reduce((sum, e) => sum + (e.amount || 0), 0)) || 0,
             success_rate: (
               summaryData === null || summaryData === void 0
                 ? void 0
                 : summaryData.length
             )
               ? (
-                  (summaryData.filter(function (e) {
-                    return e.status === "paid";
-                  }).length /
-                    summaryData.length) *
+                  (summaryData.filter((e) => e.status === "paid").length / summaryData.length) *
                   100
                 ).toFixed(2)
               : "0",
@@ -345,7 +331,7 @@ function POST(request) {
       subscriptionError,
       result,
       error_2;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 7, , 8]);
@@ -484,7 +470,7 @@ function PUT(request) {
       result,
       error_3,
       error_4;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 11, , 12]);

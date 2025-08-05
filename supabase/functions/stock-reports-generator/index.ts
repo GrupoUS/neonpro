@@ -216,7 +216,7 @@ async function generateReport(supabase: any, config: ReportConfig) {
 async function generateConsumptionReport(
   supabase: any,
   clinicId: string,
-  filters: any,
+  _filters: any,
   startDate: Date,
   endDate: Date,
 ) {
@@ -292,7 +292,7 @@ async function generateConsumptionReport(
 async function generateValuationReport(
   supabase: any,
   clinicId: string,
-  filters: any,
+  _filters: any,
   startDate: Date,
   endDate: Date,
 ) {
@@ -369,7 +369,7 @@ async function generateValuationReport(
 async function generateMovementReport(
   supabase: any,
   clinicId: string,
-  filters: any,
+  _filters: any,
   startDate: Date,
   endDate: Date,
 ) {
@@ -430,8 +430,8 @@ async function generateMovementReport(
 }
 
 async function generateCustomReport(
-  supabase: any,
-  clinicId: string,
+  _supabase: any,
+  _clinicId: string,
   filters: any,
   startDate: Date,
   endDate: Date,

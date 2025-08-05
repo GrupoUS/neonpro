@@ -11,18 +11,18 @@
 
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type {
-  generateDeviceFingerprint,
-  validateUUID,
-  removeUndefined,
-  parseUserAgent,
-} from "./utils";
-import type {
+  AuthenticationResponse,
   DeviceConfig,
   DeviceData,
   DeviceRegistrationRequest,
   DeviceStats,
-  AuthenticationResponse,
 } from "./types";
+import type {
+  generateDeviceFingerprint,
+  parseUserAgent,
+  removeUndefined,
+  validateUUID,
+} from "./utils";
 
 /**
  * Device Manager Class

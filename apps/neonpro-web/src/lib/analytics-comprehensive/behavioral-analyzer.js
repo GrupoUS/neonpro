@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 📊 NeonPro Behavioral Analysis System
  *
@@ -32,26 +31,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -71,13 +70,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -99,9 +98,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -173,10 +170,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -185,7 +182,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BehavioralAnalysisSystem = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -197,7 +194,7 @@ var logger_1 = require("@/lib/utils/logger");
  * Behavioral Analysis System
  * Sistema principal para análise comportamental de pacientes
  */
-var BehavioralAnalysisSystem = /** @class */ (function () {
+var BehavioralAnalysisSystem = /** @class */ (() => {
   function BehavioralAnalysisSystem() {
     this.supabase = (0, client_1.createClient)();
     this.eventProcessingQueue = [];
@@ -551,7 +548,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
             anomalies = _c.sent();
             changes.push.apply(changes, anomalies);
             // Sort by significance and business impact
-            changes.sort(function (a, b) {
+            changes.sort((a, b) => {
               var aScore = a.statistical_significance * a.business_impact.retention_impact;
               var bScore = b.statistical_significance * b.business_impact.retention_impact;
               return bScore - aScore;
@@ -707,7 +704,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
           case 5:
             insights = _a.sent();
             // Cache segments for future use
-            enrichedSegments.forEach(function (segment) {
+            enrichedSegments.forEach((segment) => {
               _this.segmentCache.set(segment.segment_id, segment);
             });
             return [
@@ -775,7 +772,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
               });
             }
             patterns = this.patternCache.get(patientId) || [];
-            patterns.forEach(function (pattern) {
+            patterns.forEach((pattern) => {
               if (pattern.confidence_score > 0.8) {
                 recommendations_1.push({
                   recommendation: "Leverage ".concat(
@@ -806,7 +803,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
               });
             }
             // Personalization recommendations from predictions
-            predictions.personalization_recommendations.forEach(function (rec) {
+            predictions.personalization_recommendations.forEach((rec) => {
               recommendations_1.push({
                 recommendation: rec.recommended_approach,
                 rationale: "High personalization potential for ".concat(rec.dimension),
@@ -817,11 +814,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
             });
             return [
               2 /*return*/,
-              recommendations_1
-                .sort(function (a, b) {
-                  return b.expected_impact - a.expected_impact;
-                })
-                .slice(0, 5),
+              recommendations_1.sort((a, b) => b.expected_impact - a.expected_impact).slice(0, 5),
             ];
           case 4:
             error_7 = _a.sent();
@@ -838,7 +831,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   // ============================================================================
   BehavioralAnalysisSystem.prototype.initializeSystem = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Initialize pattern recognition, event processing, etc.
         logger_1.logger.debug("Behavioral analysis system initialized");
         return [2 /*return*/];
@@ -847,7 +840,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.createBehavioralBaseline = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Create initial behavioral baseline for new patients
         logger_1.logger.debug("Behavioral baseline created", { patient_id: patientId });
         return [2 /*return*/];
@@ -856,7 +849,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.startEventTracking = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Initialize event tracking for patient
         logger_1.logger.debug("Event tracking started", { patient_id: patientId });
         return [2 /*return*/];
@@ -865,17 +858,14 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.initializePatternRecognition = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Initialize pattern recognition algorithms
         logger_1.logger.debug("Pattern recognition initialized", { patient_id: patientId });
         return [2 /*return*/];
       });
     });
   };
-  BehavioralAnalysisSystem.prototype.calculateEventEngagementScore = function (
-    eventType,
-    eventDetails,
-  ) {
+  BehavioralAnalysisSystem.prototype.calculateEventEngagementScore = (eventType, eventDetails) => {
     // Calculate engagement score for individual event
     var baseScores = {
       page_view: 0.1,
@@ -935,13 +925,11 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
       });
     });
   };
-  BehavioralAnalysisSystem.prototype.assessDataQuality = function (eventDetails) {
+  BehavioralAnalysisSystem.prototype.assessDataQuality = (eventDetails) => {
     // Assess quality of event data (completeness, consistency, etc.)
     var quality = 1.0;
     var requiredFields = ["timestamp", "event_type"];
-    var missingFields = requiredFields.filter(function (field) {
-      return !eventDetails[field];
-    });
+    var missingFields = requiredFields.filter((field) => !eventDetails[field]);
     quality -= missingFields.length * 0.2;
     return Math.max(0, quality);
   };
@@ -961,7 +949,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
             eventsToProcess = __spreadArray([], this.eventProcessingQueue, true);
             this.eventProcessingQueue = [];
             eventsByPatient = new Map();
-            eventsToProcess.forEach(function (event) {
+            eventsToProcess.forEach((event) => {
               if (!eventsByPatient.has(event.patient_id)) {
                 eventsByPatient.set(event.patient_id, []);
               }
@@ -1041,18 +1029,16 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
       });
     });
   };
-  BehavioralAnalysisSystem.prototype.calculateOverallEngagementScore = function (events) {
+  BehavioralAnalysisSystem.prototype.calculateOverallEngagementScore = (events) => {
     if (events.length === 0) return 0;
     // Calculate weighted average of engagement scores
-    var totalScore = events.reduce(function (sum, event) {
-      return sum + event.engagement_score;
-    }, 0);
+    var totalScore = events.reduce((sum, event) => sum + event.engagement_score, 0);
     var averageScore = totalScore / events.length;
     // Apply frequency bonus
     var frequencyBonus = Math.min(0.2, events.length / 100);
     return Math.min(1, averageScore + frequencyBonus);
   };
-  BehavioralAnalysisSystem.prototype.determineEngagementLevel = function (score) {
+  BehavioralAnalysisSystem.prototype.determineEngagementLevel = (score) => {
     if (score <= 0.2) return "very_low";
     if (score <= 0.4) return "low";
     if (score <= 0.6) return "moderate";
@@ -1150,15 +1136,15 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var insights, lowScoreDimensions, highScoreDimensions;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         insights = [];
         lowScoreDimensions = Object.entries(dimensionScores)
-          .filter(function (_a) {
+          .filter((_a) => {
             var _ = _a[0],
               score = _a[1];
             return score.score < 0.4;
           })
-          .map(function (_a) {
+          .map((_a) => {
             var dimension = _a[0],
               _ = _a[1];
             return dimension;
@@ -1174,12 +1160,12 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
           });
         }
         highScoreDimensions = Object.entries(dimensionScores)
-          .filter(function (_a) {
+          .filter((_a) => {
             var _ = _a[0],
               score = _a[1];
             return score.score > 0.8;
           })
-          .map(function (_a) {
+          .map((_a) => {
             var dimension = _a[0],
               _ = _a[1];
             return dimension;
@@ -1241,13 +1227,13 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
     });
   };
   // Additional helper methods...
-  BehavioralAnalysisSystem.prototype.getCurrentAnalysisPeriod = function () {
+  BehavioralAnalysisSystem.prototype.getCurrentAnalysisPeriod = () => {
     var end = new Date();
     var start = new Date();
     start.setDate(start.getDate() - 30);
     return { start: start, end: end };
   };
-  BehavioralAnalysisSystem.prototype.getBaselineAnalysisPeriod = function () {
+  BehavioralAnalysisSystem.prototype.getBaselineAnalysisPeriod = () => {
     var end = new Date();
     end.setDate(end.getDate() - 30);
     var start = new Date();
@@ -1357,7 +1343,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
     baselineEvents,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Detect changes in behavioral patterns
         return [2 /*return*/, []];
       });
@@ -1365,7 +1351,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.detectBehavioralAnomalies = function (patientId, events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Detect behavioral anomalies using statistical analysis
         return [2 /*return*/, []];
       });
@@ -1398,13 +1384,11 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var predictions, eventTypes, uniqueTypes;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         predictions = {};
-        eventTypes = Object.values(historicalData).map(function (e) {
-          return e.event_type;
-        });
+        eventTypes = Object.values(historicalData).map((e) => e.event_type);
         uniqueTypes = __spreadArray([], new Set(eventTypes), true);
-        uniqueTypes.forEach(function (eventType) {
+        uniqueTypes.forEach((eventType) => {
           predictions[eventType] = {
             probability: Math.random() * 0.8 + 0.1,
             expected_frequency: Math.random() * 5 + 1,
@@ -1423,7 +1407,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
     horizonDays,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Predict future engagement levels
         return [
           2 /*return*/,
@@ -1453,7 +1437,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
     historicalData,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Predict next lifecycle milestones
         return [
           2 /*return*/,
@@ -1469,7 +1453,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.assessBehavioralRisks = function (patientId, historicalData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Assess various behavioral risks
         return [
           2 /*return*/,
@@ -1489,7 +1473,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
     predictedBehaviors,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate personalization recommendations
         return [
           2 /*return*/,
@@ -1525,7 +1509,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   // Additional helper methods for cohort analysis, segmentation, etc.
   BehavioralAnalysisSystem.prototype.getPatientsForSegmentation = function (criteria) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get patients matching segmentation criteria
         return [2 /*return*/, ["patient1", "patient2", "patient3"]]; // Mock data
       });
@@ -1533,7 +1517,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.extractBehavioralFeatures = function (patients) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Extract behavioral features for segmentation
         return [2 /*return*/, {}];
       });
@@ -1541,7 +1525,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.performBehavioralSegmentation = function (features) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Perform clustering/segmentation
         return [2 /*return*/, []];
       });
@@ -1549,7 +1533,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.enrichSegmentCharacteristics = function (segments) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Enrich segments with additional characteristics
         return [2 /*return*/, segments];
       });
@@ -1557,7 +1541,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.generateCohortInsights = function (segments) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate insights from cohort analysis
         return [2 /*return*/, []];
       });
@@ -1565,7 +1549,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.getBehavioralProfile = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get comprehensive behavioral profile
         return [2 /*return*/, {}];
       });
@@ -1574,7 +1558,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   // More helper methods would be implemented here...
   BehavioralAnalysisSystem.prototype.getTimeSinceLastEvent = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate time since last event
         return [2 /*return*/, Math.random() * 24 * 60]; // Minutes
       });
@@ -1582,7 +1566,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.getEventsInCurrentSession = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Count events in current session
         return [2 /*return*/, Math.floor(Math.random() * 10) + 1];
       });
@@ -1590,7 +1574,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.updateEngagementMetrics = function (patientId, events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Update real-time engagement metrics
         logger_1.logger.debug("Engagement metrics updated", { patient_id: patientId });
         return [2 /*return*/];
@@ -1599,7 +1583,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.checkPatternMatches = function (patientId, events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Check for pattern matches
         logger_1.logger.debug("Pattern matches checked", { patient_id: patientId });
         return [2 /*return*/];
@@ -1608,7 +1592,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.detectImmediateChanges = function (patientId, events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Detect immediate behavioral changes
         logger_1.logger.debug("Immediate changes detected", { patient_id: patientId });
         return [2 /*return*/];
@@ -1617,7 +1601,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.updatePatternRecognition = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Update pattern recognition for patient
         logger_1.logger.debug("Pattern recognition updated", { patient_id: patientId });
         return [2 /*return*/];
@@ -1626,7 +1610,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.getPreviousPeriodEngagementScore = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get engagement score from previous period
         return [2 /*return*/, Math.random() * 0.8 + 0.1];
       });
@@ -1634,26 +1618,26 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
   };
   BehavioralAnalysisSystem.prototype.calculateDimensionScore = function (dimension, events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Calculate score for specific dimension
         return [2 /*return*/, Math.random() * 0.8 + 0.1];
       });
     });
   };
-  BehavioralAnalysisSystem.prototype.calculatePercentile = function (score) {
+  BehavioralAnalysisSystem.prototype.calculatePercentile = (score) => {
     // Calculate percentile ranking
     return Math.round(score * 100);
   };
   BehavioralAnalysisSystem.prototype.calculateDimensionTrend = function (dimension, events) {
     return __awaiter(this, void 0, void 0, function () {
       var trends;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         trends = ["improving", "stable", "declining"];
         return [2 /*return*/, trends[Math.floor(Math.random() * trends.length)]];
       });
     });
   };
-  BehavioralAnalysisSystem.prototype.analyzeHourlyActivity = function (events) {
+  BehavioralAnalysisSystem.prototype.analyzeHourlyActivity = (events) => {
     // Analyze hourly activity patterns
     return {
       peak_hours: [9, 14, 19],
@@ -1661,7 +1645,7 @@ var BehavioralAnalysisSystem = /** @class */ (function () {
       intensity: 0.8,
     };
   };
-  BehavioralAnalysisSystem.prototype.analyzeWeeklyActivity = function (events) {
+  BehavioralAnalysisSystem.prototype.analyzeWeeklyActivity = (events) => {
     // Analyze weekly activity patterns
     return {
       preferred_days: ["Monday", "Wednesday", "Friday"],

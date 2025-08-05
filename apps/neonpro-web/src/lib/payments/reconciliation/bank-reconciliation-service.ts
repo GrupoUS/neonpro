@@ -7,7 +7,7 @@
 
 import type { createClient } from "@supabase/supabase-js";
 import type { parse } from "csv-parse/sync";
-import type { format, parseISO, isValid } from "date-fns";
+import type { format, isValid, parseISO } from "date-fns";
 import type { z } from "zod";
 
 // Initialize Supabase client
@@ -104,7 +104,10 @@ export class BankReconciliationService {
 
           // Extract and validate date
           const dateStr = record[validatedMapping.date_column];
-          const parsedDate = this.parseDate(dateStr, validatedMapping.date_format);
+          const parsedDate = BankReconciliationService.parseDate(
+            dateStr,
+            validatedMapping.date_format,
+          );
 
           if (!parsedDate) {
             errors.push(`Row ${i + 1}: Invalid date format: ${dateStr}`);
@@ -113,7 +116,10 @@ export class BankReconciliationService {
 
           // Extract and validate amount
           const amountStr = record[validatedMapping.amount_column];
-          const amount = this.parseAmount(amountStr, validatedMapping.amount_format);
+          const amount = BankReconciliationService.parseAmount(
+            amountStr,
+            validatedMapping.amount_format,
+          );
 
           if (isNaN(amount)) {
             errors.push(`Row ${i + 1}: Invalid amount format: ${amountStr}`);
@@ -171,7 +177,7 @@ export class BankReconciliationService {
       }
 
       // Perform automatic matching
-      const matchingResult = await this.performAutomaticMatching(
+      const matchingResult = await BankReconciliationService.performAutomaticMatching(
         insertedTransactions || [],
         userId,
       );
@@ -296,7 +302,7 @@ export class BankReconciliationService {
 
     // Match transactions
     for (const transaction of transactions) {
-      const matches = this.findPaymentMatches(transaction, allPayments);
+      const matches = BankReconciliationService.findPaymentMatches(transaction, allPayments);
 
       if (matches.length > 0) {
         const bestMatch = matches[0];
@@ -394,7 +400,7 @@ export class BankReconciliationService {
 
       // Description matching
       if (payment.description && transaction.description) {
-        const similarity = this.calculateStringSimilarity(
+        const similarity = BankReconciliationService.calculateStringSimilarity(
           transaction.description.toLowerCase(),
           payment.description.toLowerCase(),
         );
@@ -403,7 +409,7 @@ export class BankReconciliationService {
 
       // Customer name matching
       if (payment.customer_name && transaction.description) {
-        const similarity = this.calculateStringSimilarity(
+        const similarity = BankReconciliationService.calculateStringSimilarity(
           transaction.description.toLowerCase(),
           payment.customer_name.toLowerCase(),
         );
@@ -521,7 +527,7 @@ export class BankReconciliationService {
 
     if (longer.length === 0) return 1.0;
 
-    const editDistance = this.levenshteinDistance(longer, shorter);
+    const editDistance = BankReconciliationService.levenshteinDistance(longer, shorter);
     return (longer.length - editDistance) / longer.length;
   }
 

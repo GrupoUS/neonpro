@@ -1,13 +1,13 @@
 "use client";
 
+import type { Eye, EyeOff, Mail } from "lucide-react";
+import type { useState } from "react";
+import type { toast } from "sonner";
 import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type { Separator } from "@/components/ui/separator";
 import type { useAuth } from "@/contexts/auth-context";
-import type { Eye, EyeOff, Mail } from "lucide-react";
-import type { useState } from "react";
-import type { toast } from "sonner";
 import type { SignInWithGooglePopupButton } from "./google-popup-button";
 
 interface AuthWithFallbackProps {

@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.medicalColors = void 0;
 // Medical color palette for healthcare applications

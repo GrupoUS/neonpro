@@ -1,18 +1,17 @@
-"use strict";
 // NeonPro - Stripe Installments Webhook
 // Story 6.1 - Task 3: Installment Management System
 // Webhook handler for Stripe installment payment events
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.handlePaymentIntentSucceeded = handlePaymentIntentSucceeded;
@@ -161,7 +158,7 @@ var webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var body, headersList, signature, event_1, installmentProcessor, _a, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 23, , 24]);
@@ -284,7 +281,7 @@ function POST(request) {
 function handlePaymentIntentSucceeded(paymentIntent) {
   return __awaiter(this, void 0, void 0, function () {
     var installmentId, paymentPlanId, customerId, lateFee;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         installmentId = paymentIntent.metadata.installment_id;
         paymentPlanId = paymentIntent.metadata.payment_plan_id;
@@ -323,7 +320,7 @@ function handlePaymentIntentFailed(paymentIntent) {
   return __awaiter(this, void 0, void 0, function () {
     var installmentId, paymentPlanId, customerId, errorMessage;
     var _a, _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       try {
         installmentId = paymentIntent.metadata.installment_id;
         paymentPlanId = paymentIntent.metadata.payment_plan_id;
@@ -371,7 +368,7 @@ function handlePaymentIntentFailed(paymentIntent) {
 function handlePaymentIntentCanceled(paymentIntent) {
   return __awaiter(this, void 0, void 0, function () {
     var installmentId, paymentPlanId, customerId;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         installmentId = paymentIntent.metadata.installment_id;
         paymentPlanId = paymentIntent.metadata.payment_plan_id;
@@ -406,7 +403,7 @@ function handlePaymentIntentRequiresAction(paymentIntent) {
   return __awaiter(this, void 0, void 0, function () {
     var installmentId, paymentPlanId, customerId;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       try {
         installmentId = paymentIntent.metadata.installment_id;
         paymentPlanId = paymentIntent.metadata.payment_plan_id;
@@ -446,7 +443,7 @@ function handlePaymentIntentRequiresAction(paymentIntent) {
 function handlePaymentIntentProcessing(paymentIntent) {
   return __awaiter(this, void 0, void 0, function () {
     var installmentId, paymentPlanId, customerId;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         installmentId = paymentIntent.metadata.installment_id;
         paymentPlanId = paymentIntent.metadata.payment_plan_id;
@@ -479,7 +476,7 @@ function handlePaymentIntentProcessing(paymentIntent) {
  */
 function handlePaymentMethodAttached(paymentMethod) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         console.log(
           "Payment method "
@@ -516,7 +513,7 @@ function handlePaymentMethodAttached(paymentMethod) {
  */
 function handleCustomerUpdated(customer) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         if (customer.deleted) {
           console.log("Customer ".concat(customer.id, " was deleted"));
@@ -547,7 +544,7 @@ function handleInvoicePaymentSucceeded(invoice) {
   return __awaiter(this, void 0, void 0, function () {
     var installmentId, paymentPlanId;
     var _a, _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       try {
         installmentId =
           (_a = invoice.metadata) === null || _a === void 0 ? void 0 : _a.installment_id;
@@ -584,7 +581,7 @@ function handleInvoicePaymentFailed(invoice) {
   return __awaiter(this, void 0, void 0, function () {
     var installmentId, paymentPlanId;
     var _a, _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       try {
         installmentId =
           (_a = invoice.metadata) === null || _a === void 0 ? void 0 : _a.installment_id;

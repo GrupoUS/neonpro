@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,13 +142,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationScheduler = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var audit_logger_1 = require("../../auth/audit/audit-logger");
 var node_cron_1 = require("node-cron");
-var NotificationScheduler = /** @class */ (function () {
+var NotificationScheduler = /** @class */ (() => {
   function NotificationScheduler() {
     this.cronJobs = new Map();
     this.isRunning = false;
@@ -178,11 +175,12 @@ var NotificationScheduler = /** @class */ (function () {
             }
             this.isRunning = true;
             // Processar notificações pendentes a cada minuto
-            this.processingInterval = setInterval(function () {
-              return _this.processScheduledNotifications();
-            }, this.processingIntervalMs);
+            this.processingInterval = setInterval(
+              () => _this.processScheduledNotifications(),
+              this.processingIntervalMs,
+            );
             // Limpar notificações expiradas diariamente
-            node_cron_1.default.schedule("0 0 * * *", function () {
+            node_cron_1.default.schedule("0 0 * * *", () => {
               _this.cleanupExpiredNotifications();
             });
             return [
@@ -511,7 +509,7 @@ var NotificationScheduler = /** @class */ (function () {
               priorities: {},
             };
             // Calcular estatísticas
-            data.forEach(function (notification) {
+            data.forEach((notification) => {
               // Status
               stats_1[notification.status] = stats_1[notification.status] + 1;
               // Canais
@@ -675,7 +673,7 @@ var NotificationScheduler = /** @class */ (function () {
   };
   NotificationScheduler.prototype.sendNotification = function (notification) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Aqui seria feita a integração com o NotificationManager
@@ -687,12 +685,7 @@ var NotificationScheduler = /** @class */ (function () {
                 .concat(notification.recipient),
             );
             // Simular delay de envio
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 100);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 100))];
           case 1:
             // Simular delay de envio
             _a.sent();
@@ -854,8 +847,8 @@ var NotificationScheduler = /** @class */ (function () {
         cronExpression = this.dateToCronExpression(scheduledAt);
         job = node_cron_1.default.schedule(
           cronExpression,
-          function () {
-            return __awaiter(_this, void 0, void 0, function () {
+          () =>
+            __awaiter(_this, void 0, void 0, function () {
               var notification, error_10;
               return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -890,8 +883,7 @@ var NotificationScheduler = /** @class */ (function () {
                     return [2 /*return*/];
                 }
               });
-            });
-          },
+            }),
           {
             scheduled: false,
           },
@@ -902,7 +894,7 @@ var NotificationScheduler = /** @class */ (function () {
       });
     });
   };
-  NotificationScheduler.prototype.dateToCronExpression = function (date) {
+  NotificationScheduler.prototype.dateToCronExpression = (date) => {
     var minute = date.getMinutes();
     var hour = date.getHours();
     var day = date.getDate();
@@ -910,7 +902,7 @@ var NotificationScheduler = /** @class */ (function () {
     var year = date.getFullYear();
     return "".concat(minute, " ").concat(hour, " ").concat(day, " ").concat(month, " *");
   };
-  NotificationScheduler.prototype.isNearFuture = function (date) {
+  NotificationScheduler.prototype.isNearFuture = (date) => {
     var now = new Date();
     var diffMs = date.getTime() - now.getTime();
     var diffHours = diffMs / (1000 * 60 * 60);
@@ -918,7 +910,7 @@ var NotificationScheduler = /** @class */ (function () {
   };
   NotificationScheduler.prototype.validateScheduleConfig = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!config.notification_id) {
           throw new Error("notification_id é obrigatório");
         }
@@ -953,9 +945,8 @@ var NotificationScheduler = /** @class */ (function () {
       });
     });
   };
-  NotificationScheduler.prototype.generateScheduleId = function () {
-    return "schedule_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  NotificationScheduler.prototype.generateScheduleId = () =>
+    "schedule_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   return NotificationScheduler;
 })();
 exports.NotificationScheduler = NotificationScheduler;

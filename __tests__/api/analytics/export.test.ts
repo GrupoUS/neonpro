@@ -1,6 +1,6 @@
 import { createMocks } from "node-mocks-http";
-import handler from "@/app/api/analytics/export/route";
 import { mockExportData, mockSession } from "@/../../__tests__/utils/mockData";
+import handler from "@/app/api/analytics/export/route";
 
 // Mock Supabase auth
 jest.mock("@/utils/supabase/server", () => ({

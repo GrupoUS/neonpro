@@ -8,15 +8,31 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  AlertTriangle,
+  Ban,
+  CheckCircle,
+  Clock,
+  Eye,
+  MapPin,
+  Monitor,
+  MoreHorizontal,
+  RefreshCw,
+  Search,
+  Shield,
+  ShieldCheck,
+  ShieldX,
+  Smartphone,
+  Tablet,
+  Trash2,
+  Wifi,
+  XCircle,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -24,24 +40,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import type {
   Dialog,
   DialogContent,
@@ -52,29 +50,31 @@ import type {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type {
-  Smartphone,
-  Monitor,
-  Tablet,
-  MoreHorizontal,
-  Search,
-  Shield,
-  ShieldCheck,
-  ShieldX,
-  MapPin,
-  Clock,
-  Wifi,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Eye,
-  Ban,
-  Trash2,
-  RefreshCw,
-} from "lucide-react";
-import type { SessionDevice, DeviceStatus, DeviceTrustLevel } from "@/types/session";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { Input } from "@/components/ui/input";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { useDeviceManagement } from "@/hooks/useSession";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { DeviceStatus, DeviceTrustLevel, SessionDevice } from "@/types/session";
 
 // ============================================================================
 // INTERFACES

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Demand Forecasting Dashboard Tests - Story 11.1
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,95 +148,65 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 var user_event_1 = require("@testing-library/user-event");
 var react_query_1 = require("@tanstack/react-query");
 var forecasting_dashboard_1 = require("@/src/components/dashboard/forecasting/forecasting-dashboard");
 var sonner_1 = require("sonner");
 // Mock the toast notifications
-jest.mock("sonner", function () {
-  return {
-    toast: {
-      success: jest.fn(),
-      error: jest.fn(),
-    },
-  };
-});
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
 // Mock the chart components to avoid canvas rendering issues in tests
-jest.mock("recharts", function () {
-  return {
-    LineChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="line-chart">{children}</div>;
-    },
-    Line: function () {
-      return <div data-testid="line" />;
-    },
-    AreaChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="area-chart">{children}</div>;
-    },
-    Area: function () {
-      return <div data-testid="area" />;
-    },
-    BarChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="bar-chart">{children}</div>;
-    },
-    Bar: function () {
-      return <div data-testid="bar" />;
-    },
-    PieChart: function (_a) {
-      var children = _a.children;
-      return <div data-testid="pie-chart">{children}</div>;
-    },
-    Pie: function () {
-      return <div data-testid="pie" />;
-    },
-    Cell: function () {
-      return <div data-testid="cell" />;
-    },
-    XAxis: function () {
-      return <div data-testid="x-axis" />;
-    },
-    YAxis: function () {
-      return <div data-testid="y-axis" />;
-    },
-    CartesianGrid: function () {
-      return <div data-testid="cartesian-grid" />;
-    },
-    Tooltip: function () {
-      return <div data-testid="tooltip" />;
-    },
-    Legend: function () {
-      return <div data-testid="legend" />;
-    },
-    ResponsiveContainer: function (_a) {
-      var children = _a.children;
-      return <div data-testid="responsive-container">{children}</div>;
-    },
-  };
-});
+jest.mock("recharts", () => ({
+  LineChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="line-chart">{children}</div>;
+  },
+  Line: () => <div data-testid="line" />,
+  AreaChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="area-chart">{children}</div>;
+  },
+  Area: () => <div data-testid="area" />,
+  BarChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="bar-chart">{children}</div>;
+  },
+  Bar: () => <div data-testid="bar" />,
+  PieChart: (_a) => {
+    var children = _a.children;
+    return <div data-testid="pie-chart">{children}</div>;
+  },
+  Pie: () => <div data-testid="pie" />,
+  Cell: () => <div data-testid="cell" />,
+  XAxis: () => <div data-testid="x-axis" />,
+  YAxis: () => <div data-testid="y-axis" />,
+  CartesianGrid: () => <div data-testid="cartesian-grid" />,
+  Tooltip: () => <div data-testid="tooltip" />,
+  Legend: () => <div data-testid="legend" />,
+  ResponsiveContainer: (_a) => {
+    var children = _a.children;
+    return <div data-testid="responsive-container">{children}</div>;
+  },
+}));
 // Mock date-fns
-jest.mock("date-fns", function () {
-  return {
-    format: jest.fn(function (date, formatString) {
-      if (formatString === "MMM dd") return "Feb 15";
-      if (formatString === "MMM dd, yyyy") return "Feb 15, 2024";
-      if (formatString === "yyyy-MM-dd") return "2024-02-15";
-      return "2024-02-15T10:00:00Z";
-    }),
-    parseISO: jest.fn(function (dateString) {
-      return new Date(dateString);
-    }),
-    addDays: jest.fn(function (date, days) {
-      return new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
-    }),
-  };
-});
+jest.mock("date-fns", () => ({
+  format: jest.fn((_date, formatString) => {
+    if (formatString === "MMM dd") return "Feb 15";
+    if (formatString === "MMM dd, yyyy") return "Feb 15, 2024";
+    if (formatString === "yyyy-MM-dd") return "2024-02-15";
+    return "2024-02-15T10:00:00Z";
+  }),
+  parseISO: jest.fn((dateString) => new Date(dateString)),
+  addDays: jest.fn((date, days) => new Date(date.getTime() + days * 24 * 60 * 60 * 1000)),
+}));
 // Mock fetch for API calls
 var mockFetch = jest.fn();
 global.fetch = mockFetch;
@@ -329,8 +296,8 @@ var mockResourceAllocationData = {
   total_cost_impact: 15000,
   efficiency_improvement: 12.5,
 };
-var createTestQueryClient = function () {
-  return new react_query_1.QueryClient({
+var createTestQueryClient = () =>
+  new react_query_1.QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
@@ -339,8 +306,7 @@ var createTestQueryClient = function () {
       },
     },
   });
-};
-var renderWithQueryClient = function (component) {
+var renderWithQueryClient = (component) => {
   var queryClient = createTestQueryClient();
   return (0, react_2.render)(
     <react_query_1.QueryClientProvider client={queryClient}>
@@ -348,42 +314,36 @@ var renderWithQueryClient = function (component) {
     </react_query_1.QueryClientProvider>,
   );
 };
-describe("ForecastingDashboard", function () {
-  beforeEach(function () {
+describe("ForecastingDashboard", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Setup default successful API responses
-    mockFetch.mockImplementation(function (url) {
+    mockFetch.mockImplementation((url) => {
       if (url.includes("/api/forecasting/alerts")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return Promise.resolve({ success: true, data: mockAlertsData });
-          },
+          json: () => Promise.resolve({ success: true, data: mockAlertsData }),
         });
       }
       if (url.includes("/api/forecasting/resource-allocation") && url.includes("POST")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return Promise.resolve({ success: true, data: mockResourceAllocationData });
-          },
+          json: () => Promise.resolve({ success: true, data: mockResourceAllocationData }),
         });
       }
       if (url.includes("/api/forecasting")) {
         return Promise.resolve({
           ok: true,
-          json: function () {
-            return Promise.resolve({ success: true, data: mockForecastData });
-          },
+          json: () => Promise.resolve({ success: true, data: mockForecastData }),
         });
       }
       return Promise.reject(new Error("Unknown API endpoint"));
     });
   });
-  describe("Component Rendering", function () {
-    test("should render dashboard header with title and controls", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Component Rendering", () => {
+    test("should render dashboard header with title and controls", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           renderWithQueryClient(<forecasting_dashboard_1.default />);
           expect(react_2.screen.getByText("Demand Forecasting")).toBeInTheDocument();
           expect(
@@ -393,17 +353,16 @@ describe("ForecastingDashboard", function () {
           expect(react_2.screen.getByRole("button", { name: /regenerate/i })).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    test("should render key metrics cards", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should render key metrics cards", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Overall Accuracy")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Active Forecasts")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Active Alerts")).toBeInTheDocument();
@@ -415,11 +374,10 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should render tabs for different views", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should render tabs for different views", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           renderWithQueryClient(<forecasting_dashboard_1.default />);
           expect(react_2.screen.getByRole("tab", { name: /overview/i })).toBeInTheDocument();
           expect(react_2.screen.getByRole("tab", { name: /forecasts/i })).toBeInTheDocument();
@@ -427,28 +385,25 @@ describe("ForecastingDashboard", function () {
           expect(react_2.screen.getByRole("tab", { name: /alerts/i })).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    test("should display loading skeletons while fetching data", function () {
+      }));
+    test("should display loading skeletons while fetching data", () => {
       // Mock pending API call
-      mockFetch.mockImplementation(function () {
-        return new Promise(function () {});
-      }); // Never resolves
+      mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
       renderWithQueryClient(<forecasting_dashboard_1.default />);
       // Should show skeleton loaders
       expect(react_2.screen.getAllByTestId(/skeleton/i)).toHaveLength(4); // One for each metric card
     });
   });
-  describe("Metrics Display", function () {
-    test("should calculate and display correct accuracy percentage", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Metrics Display", () => {
+    test("should calculate and display correct accuracy percentage", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("90%")).toBeInTheDocument(); // mockForecastData.accuracy * 100
                   expect(react_2.screen.getByText("Above 80% threshold")).toBeInTheDocument();
                 }),
@@ -458,30 +413,25 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should show warning when accuracy is below threshold", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should show warning when accuracy is below threshold", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var lowAccuracyData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               lowAccuracyData = __assign(__assign({}, mockForecastData), { accuracy: 0.75 });
-              mockFetch.mockImplementation(function (url) {
+              mockFetch.mockImplementation((url) => {
                 if (url.includes("/api/forecasting/alerts")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: mockAlertsData });
-                    },
+                    json: () => Promise.resolve({ success: true, data: mockAlertsData }),
                   });
                 }
                 if (url.includes("/api/forecasting")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: lowAccuracyData });
-                    },
+                    json: () => Promise.resolve({ success: true, data: lowAccuracyData }),
                   });
                 }
                 return Promise.reject(new Error("Unknown API endpoint"));
@@ -489,7 +439,7 @@ describe("ForecastingDashboard", function () {
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("75%")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Below 80% threshold")).toBeInTheDocument();
                 }),
@@ -499,17 +449,16 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should display correct count of active forecasts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should display correct count of active forecasts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("2")).toBeInTheDocument(); // mockForecastData.forecasts.length
                 }),
               ];
@@ -518,17 +467,16 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should display correct count of active alerts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should display correct count of active alerts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("2")).toBeInTheDocument(); // mockAlertsData.length
                 }),
               ];
@@ -537,17 +485,16 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should calculate and display average confidence", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should calculate and display average confidence", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var avgConfidence = Math.round(((0.92 + 0.88) / 2) * 100); // Average of forecast confidence levels
                   expect(
                     react_2.screen.getByText("".concat(avgConfidence, "%")),
@@ -559,19 +506,18 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Chart Rendering", function () {
-    test("should render demand forecast trend chart", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Chart Rendering", () => {
+    test("should render demand forecast trend chart", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Demand Forecast Trend")).toBeInTheDocument();
                   expect(react_2.screen.getByTestId("line-chart")).toBeInTheDocument();
                 }),
@@ -581,17 +527,16 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should render confidence distribution chart", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should render confidence distribution chart", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Confidence Distribution")).toBeInTheDocument();
                   expect(react_2.screen.getByTestId("bar-chart")).toBeInTheDocument();
                 }),
@@ -601,17 +546,16 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should display accuracy status with progress bar", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should display accuracy status with progress bar", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Accuracy Status")).toBeInTheDocument();
                   expect(react_2.screen.getByText("90% / 80% required")).toBeInTheDocument();
                   expect(
@@ -624,14 +568,13 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Tab Navigation", function () {
-    test("should switch between tabs correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Tab Navigation", () => {
+    test("should switch between tabs correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -650,7 +593,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Forecast Details")).toBeInTheDocument();
                 }),
               ];
@@ -666,7 +609,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Resource Allocation")).toBeInTheDocument();
                 }),
               ];
@@ -682,7 +625,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Active Alerts")).toBeInTheDocument();
                 }),
               ];
@@ -691,14 +634,13 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Forecasts Tab", function () {
-    test("should display forecast details correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Forecasts Tab", () => {
+    test("should display forecast details correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -711,7 +653,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("WEEKLY")).toBeInTheDocument();
                   expect(react_2.screen.getByText("MONTHLY")).toBeInTheDocument();
                   expect(react_2.screen.getByText("35 appointments")).toBeInTheDocument();
@@ -725,30 +667,25 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle empty forecasts gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle empty forecasts gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var emptyData, user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               emptyData = __assign(__assign({}, mockForecastData), { forecasts: [] });
-              mockFetch.mockImplementation(function (url) {
+              mockFetch.mockImplementation((url) => {
                 if (url.includes("/api/forecasting/alerts")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: [] });
-                    },
+                    json: () => Promise.resolve({ success: true, data: [] }),
                   });
                 }
                 if (url.includes("/api/forecasting")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: emptyData });
-                    },
+                    json: () => Promise.resolve({ success: true, data: emptyData }),
                   });
                 }
                 return Promise.reject(new Error("Unknown API endpoint"));
@@ -763,7 +700,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("No forecasts available")).toBeInTheDocument();
                   expect(
                     react_2.screen.getByRole("button", { name: /generate forecasts/i }),
@@ -775,14 +712,13 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Resources Tab", function () {
-    test("should display resource allocation recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Resources Tab", () => {
+    test("should display resource allocation recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -795,7 +731,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("8 Staff Members")).toBeInTheDocument();
                   expect(react_2.screen.getByText("high")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Cost Impact: $15,000")).toBeInTheDocument();
@@ -807,22 +743,19 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle no resource allocations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle no resource allocations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var emptyData, user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               emptyData = __assign(__assign({}, mockForecastData), { forecasts: [] });
-              mockFetch.mockImplementation(function (url) {
+              mockFetch.mockImplementation((url) => {
                 if (url.includes("/api/forecasting")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: emptyData });
-                    },
+                    json: () => Promise.resolve({ success: true, data: emptyData }),
                   });
                 }
                 return Promise.reject(new Error("Unknown API endpoint"));
@@ -837,7 +770,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByText(
                       "No resource allocations available. Generate forecasts first.",
@@ -850,14 +783,13 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Alerts Tab", function () {
-    test("should display active alerts correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Alerts Tab", () => {
+    test("should display active alerts correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -870,7 +802,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("High demand - warning")).toBeInTheDocument();
                   expect(
                     react_2.screen.getByText("Capacity shortage - critical"),
@@ -888,30 +820,25 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle no active alerts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle no active alerts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock empty alerts
-              mockFetch.mockImplementation(function (url) {
+              mockFetch.mockImplementation((url) => {
                 if (url.includes("/api/forecasting/alerts")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: [] });
-                    },
+                    json: () => Promise.resolve({ success: true, data: [] }),
                   });
                 }
                 if (url.includes("/api/forecasting")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: mockForecastData });
-                    },
+                    json: () => Promise.resolve({ success: true, data: mockForecastData }),
                   });
                 }
                 return Promise.reject(new Error("Unknown API endpoint"));
@@ -926,7 +853,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("No active alerts")).toBeInTheDocument();
                 }),
               ];
@@ -935,14 +862,13 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("User Interactions", function () {
-    test("should handle regenerate forecast button click", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("User Interactions", () => {
+    test("should handle regenerate forecast button click", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, regenerateButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -953,7 +879,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(sonner_1.toast.success).toHaveBeenCalledWith(
                     "Demand forecast generated successfully",
                   );
@@ -964,19 +890,16 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle export data button click", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle export data button click", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, mockCreateObjectURL, mockRevokeObjectURL, mockClick, mockLink, exportButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
               renderWithQueryClient(<forecasting_dashboard_1.default />);
-              mockCreateObjectURL = jest.fn(function () {
-                return "mock-url";
-              });
+              mockCreateObjectURL = jest.fn(() => "mock-url");
               mockRevokeObjectURL = jest.fn();
               Object.defineProperty(URL, "createObjectURL", { value: mockCreateObjectURL });
               Object.defineProperty(URL, "revokeObjectURL", { value: mockRevokeObjectURL });
@@ -985,7 +908,7 @@ describe("ForecastingDashboard", function () {
               jest.spyOn(document, "createElement").mockReturnValue(mockLink);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByRole("button", { name: /export/i }),
                   ).not.toBeDisabled();
@@ -999,7 +922,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(mockCreateObjectURL).toHaveBeenCalled();
                   expect(mockClick).toHaveBeenCalled();
                   expect(sonner_1.toast.success).toHaveBeenCalledWith(
@@ -1012,22 +935,19 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should disable export button when no data available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should disable export button when no data available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var emptyData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               emptyData = __assign(__assign({}, mockForecastData), { forecasts: [] });
-              mockFetch.mockImplementation(function (url) {
+              mockFetch.mockImplementation((url) => {
                 if (url.includes("/api/forecasting")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: emptyData });
-                    },
+                    json: () => Promise.resolve({ success: true, data: emptyData }),
                   });
                 }
                 return Promise.reject(new Error("Unknown API endpoint"));
@@ -1035,7 +955,7 @@ describe("ForecastingDashboard", function () {
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByRole("button", { name: /export/i })).toBeDisabled();
                 }),
               ];
@@ -1044,28 +964,26 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling", function () {
-    test("should display error message when API call fails", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Error Handling", () => {
+    test("should display error message when API call fails", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockFetch.mockImplementation(function () {
-                return Promise.resolve({
+              mockFetch.mockImplementation(() =>
+                Promise.resolve({
                   ok: false,
                   status: 500,
-                  json: function () {
-                    return Promise.resolve({ success: false, error: { message: "Server error" } });
-                  },
-                });
-              });
+                  json: () =>
+                    Promise.resolve({ success: false, error: { message: "Server error" } }),
+                }),
+              );
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Error Loading Forecasts")).toBeInTheDocument();
                   expect(react_2.screen.getByText(/server error/i)).toBeInTheDocument();
                 }),
@@ -1075,20 +993,17 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle network errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle network errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockFetch.mockImplementation(function () {
-                return Promise.reject(new Error("Network error"));
-              });
+              mockFetch.mockImplementation(() => Promise.reject(new Error("Network error")));
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Error Loading Forecasts")).toBeInTheDocument();
                 }),
               ];
@@ -1097,50 +1012,44 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should show error toast when regenerate fails", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should show error toast when regenerate fails", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, callCount, regenerateButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
               callCount = 0;
-              mockFetch.mockImplementation(function (url) {
+              mockFetch.mockImplementation((url) => {
                 callCount++;
                 if (callCount === 1 && url.includes("/api/forecasting/alerts")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: mockAlertsData });
-                    },
+                    json: () => Promise.resolve({ success: true, data: mockAlertsData }),
                   });
                 }
                 if (callCount === 2 && url.includes("/api/forecasting")) {
                   return Promise.resolve({
                     ok: true,
-                    json: function () {
-                      return Promise.resolve({ success: true, data: mockForecastData });
-                    },
+                    json: () => Promise.resolve({ success: true, data: mockForecastData }),
                   });
                 }
                 // Subsequent calls fail
                 return Promise.resolve({
                   ok: false,
                   status: 500,
-                  json: function () {
-                    return Promise.resolve({
+                  json: () =>
+                    Promise.resolve({
                       success: false,
                       error: { message: "Regenerate failed" },
-                    });
-                  },
+                    }),
                 });
               });
               renderWithQueryClient(<forecasting_dashboard_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByRole("button", { name: /regenerate/i }),
                   ).toBeInTheDocument();
@@ -1154,7 +1063,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(sonner_1.toast.error).toHaveBeenCalledWith(
                     "Failed to generate forecast: Regenerate failed",
                   );
@@ -1165,13 +1074,12 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Accessibility", function () {
-    test("should have proper ARIA labels and roles", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Accessibility", () => {
+    test("should have proper ARIA labels and roles", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           renderWithQueryClient(<forecasting_dashboard_1.default />);
           expect(react_2.screen.getByRole("tablist")).toBeInTheDocument();
           expect(react_2.screen.getAllByRole("tab")).toHaveLength(4);
@@ -1180,12 +1088,11 @@ describe("ForecastingDashboard", function () {
           expect(react_2.screen.getByRole("button", { name: /regenerate/i })).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    test("should support keyboard navigation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should support keyboard navigation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, firstTab, secondTab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -1204,7 +1111,7 @@ describe("ForecastingDashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(secondTab).toHaveAttribute("aria-selected", "true");
                 }),
               ];
@@ -1213,7 +1120,6 @@ describe("ForecastingDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

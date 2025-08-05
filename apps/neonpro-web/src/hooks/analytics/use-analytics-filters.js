@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Analytics Filters Utility Hook for NeonPro
  *
@@ -16,18 +15,18 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -36,7 +35,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useAnalyticsFilters = useAnalyticsFilters;
 exports.useFilterPresets = useFilterPresets;
@@ -71,98 +70,81 @@ function useAnalyticsFilters(initialFilters) {
     savedFilterSets = _c[0],
     setSavedFilterSets = _c[1];
   // Load filters from URL on mount
-  (0, react_1.useEffect)(
-    function () {
-      var urlFilters = parseFiltersFromURL(searchParams);
-      if (urlFilters) {
-        setFilters(function (prev) {
-          return __assign(__assign({}, prev), urlFilters);
-        });
-      }
-    },
-    [searchParams],
-  );
+  (0, react_1.useEffect)(() => {
+    var urlFilters = parseFiltersFromURL(searchParams);
+    if (urlFilters) {
+      setFilters((prev) => __assign(__assign({}, prev), urlFilters));
+    }
+  }, [searchParams]);
   // Validate filters
-  var validation = (0, react_1.useMemo)(
-    function () {
-      var errors = [];
-      var isValid = true;
-      // Validate date range
-      if (new Date(filters.dateRange.start) > new Date(filters.dateRange.end)) {
-        errors.push("Start date must be before end date");
-        isValid = false;
-      }
-      // Validate metrics
-      if (filters.metrics.metrics.length === 0) {
-        errors.push("At least one metric must be selected");
-        isValid = false;
-      }
-      // Validate date range span (not too large)
-      var daysDiff =
-        (new Date(filters.dateRange.end).getTime() - new Date(filters.dateRange.start).getTime()) /
-        (1000 * 60 * 60 * 24);
-      if (daysDiff > 365) {
-        errors.push("Date range cannot exceed 365 days");
-        isValid = false;
-      }
-      return { isValid: isValid, errors: errors };
-    },
-    [filters],
-  );
+  var validation = (0, react_1.useMemo)(() => {
+    var errors = [];
+    var isValid = true;
+    // Validate date range
+    if (new Date(filters.dateRange.start) > new Date(filters.dateRange.end)) {
+      errors.push("Start date must be before end date");
+      isValid = false;
+    }
+    // Validate metrics
+    if (filters.metrics.metrics.length === 0) {
+      errors.push("At least one metric must be selected");
+      isValid = false;
+    }
+    // Validate date range span (not too large)
+    var daysDiff =
+      (new Date(filters.dateRange.end).getTime() - new Date(filters.dateRange.start).getTime()) /
+      (1000 * 60 * 60 * 24);
+    if (daysDiff > 365) {
+      errors.push("Date range cannot exceed 365 days");
+      isValid = false;
+    }
+    return { isValid: isValid, errors: errors };
+  }, [filters]);
   // Check if filters have changed since last applied
-  var hasChanges = (0, react_1.useMemo)(
-    function () {
-      if (!appliedFilters) return true;
-      return JSON.stringify(filters) !== JSON.stringify(appliedFilters);
-    },
-    [filters, appliedFilters],
-  );
+  var hasChanges = (0, react_1.useMemo)(() => {
+    if (!appliedFilters) return true;
+    return JSON.stringify(filters) !== JSON.stringify(appliedFilters);
+  }, [filters, appliedFilters]);
   // Actions
-  var updateDateRange = (0, react_1.useCallback)(function (dateRange) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), {
+  var updateDateRange = (0, react_1.useCallback)((dateRange) => {
+    setFilters((prev) =>
+      __assign(__assign({}, prev), {
         dateRange: __assign(
           __assign({}, dateRange),
           dateRange.preset && dateRange.preset !== "custom"
             ? getPresetDateRange(dateRange.preset)
             : {},
         ),
-      });
-    });
+      }),
+    );
   }, []);
-  var addSegmentFilter = (0, react_1.useCallback)(function (segment) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), {
+  var addSegmentFilter = (0, react_1.useCallback)((segment) => {
+    setFilters((prev) =>
+      __assign(__assign({}, prev), {
         segments: __spreadArray(
           __spreadArray(
             [],
-            prev.segments.filter(function (s) {
-              return s.type !== segment.type;
-            }),
+            prev.segments.filter((s) => s.type !== segment.type),
             true,
           ),
           [segment],
           false,
         ),
-      });
-    });
+      }),
+    );
   }, []);
-  var removeSegmentFilter = (0, react_1.useCallback)(function (type) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), {
-        segments: prev.segments.filter(function (s) {
-          return s.type !== type;
-        }),
-      });
-    });
+  var removeSegmentFilter = (0, react_1.useCallback)((type) => {
+    setFilters((prev) =>
+      __assign(__assign({}, prev), {
+        segments: prev.segments.filter((s) => s.type !== type),
+      }),
+    );
   }, []);
-  var updateMetricFilter = (0, react_1.useCallback)(function (metricFilter) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), { metrics: metricFilter });
-    });
+  var updateMetricFilter = (0, react_1.useCallback)((metricFilter) => {
+    setFilters((prev) => __assign(__assign({}, prev), { metrics: metricFilter }));
   }, []);
-  var setCustomFilter = (0, react_1.useCallback)(function (key, value) {
-    setFilters(function (prev) {
+  var setCustomFilter = (0, react_1.useCallback)((key, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), {
         customFilters: __assign(
@@ -172,34 +154,31 @@ function useAnalyticsFilters(initialFilters) {
       });
     });
   }, []);
-  var clearCustomFilter = (0, react_1.useCallback)(function (key) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), {
+  var clearCustomFilter = (0, react_1.useCallback)((key) => {
+    setFilters((prev) =>
+      __assign(__assign({}, prev), {
         customFilters: Object.fromEntries(
-          Object.entries(prev.customFilters).filter(function (_a) {
+          Object.entries(prev.customFilters).filter((_a) => {
             var k = _a[0];
             return k !== key;
           }),
         ),
-      });
-    });
+      }),
+    );
   }, []);
-  var applyFilters = (0, react_1.useCallback)(
-    function () {
-      if (validation.isValid) {
-        setAppliedFilters(__assign({}, filters));
-        // Update URL with current filters
-        updateURLWithFilters(filters);
-      }
-    },
-    [filters, validation.isValid],
-  );
-  var resetFilters = (0, react_1.useCallback)(function () {
+  var applyFilters = (0, react_1.useCallback)(() => {
+    if (validation.isValid) {
+      setAppliedFilters(__assign({}, filters));
+      // Update URL with current filters
+      updateURLWithFilters(filters);
+    }
+  }, [filters, validation.isValid]);
+  var resetFilters = (0, react_1.useCallback)(() => {
     setFilters(DEFAULT_FILTERS);
     setAppliedFilters(null);
   }, []);
   var saveFilterSet = (0, react_1.useCallback)(
-    function (name) {
+    (name) => {
       var _a;
       var newFilterSets = __assign(
         __assign({}, savedFilterSets),
@@ -216,7 +195,7 @@ function useAnalyticsFilters(initialFilters) {
     [filters, savedFilterSets],
   );
   var loadFilterSet = (0, react_1.useCallback)(
-    function (name) {
+    (name) => {
       var filterSet = savedFilterSets[name];
       if (filterSet) {
         setFilters(filterSet);
@@ -224,40 +203,37 @@ function useAnalyticsFilters(initialFilters) {
     },
     [savedFilterSets],
   );
-  var getFilterSummary = (0, react_1.useCallback)(
-    function () {
-      var parts = [];
-      // Date range
-      if (filters.dateRange.preset && filters.dateRange.preset !== "custom") {
-        parts.push("Last ".concat(getPresetLabel(filters.dateRange.preset)));
-      } else {
-        parts.push("".concat(filters.dateRange.start, " to ").concat(filters.dateRange.end));
-      }
-      // Metrics
+  var getFilterSummary = (0, react_1.useCallback)(() => {
+    var parts = [];
+    // Date range
+    if (filters.dateRange.preset && filters.dateRange.preset !== "custom") {
+      parts.push("Last ".concat(getPresetLabel(filters.dateRange.preset)));
+    } else {
+      parts.push("".concat(filters.dateRange.start, " to ").concat(filters.dateRange.end));
+    }
+    // Metrics
+    parts.push(
+      ""
+        .concat(filters.metrics.metrics.length, " metric")
+        .concat(filters.metrics.metrics.length > 1 ? "s" : ""),
+    );
+    // Segments
+    if (filters.segments.length > 0) {
       parts.push(
         ""
-          .concat(filters.metrics.metrics.length, " metric")
-          .concat(filters.metrics.metrics.length > 1 ? "s" : ""),
+          .concat(filters.segments.length, " segment")
+          .concat(filters.segments.length > 1 ? "s" : ""),
       );
-      // Segments
-      if (filters.segments.length > 0) {
-        parts.push(
-          ""
-            .concat(filters.segments.length, " segment")
-            .concat(filters.segments.length > 1 ? "s" : ""),
-        );
-      }
-      // Custom filters
-      var customCount = Object.keys(filters.customFilters).length;
-      if (customCount > 0) {
-        parts.push("".concat(customCount, " custom filter").concat(customCount > 1 ? "s" : ""));
-      }
-      return parts.join(", ");
-    },
-    [filters],
-  );
+    }
+    // Custom filters
+    var customCount = Object.keys(filters.customFilters).length;
+    if (customCount > 0) {
+      parts.push("".concat(customCount, " custom filter").concat(customCount > 1 ? "s" : ""));
+    }
+    return parts.join(", ");
+  }, [filters]);
   // Load saved filter sets on mount
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     try {
       var saved = localStorage.getItem("neonpro-analytics-filters");
       if (saved) {
@@ -356,8 +332,8 @@ function updateURLWithFilters(filters) {
  * Hook for common filter presets
  */
 function useFilterPresets() {
-  return (0, react_1.useMemo)(function () {
-    return {
+  return (0, react_1.useMemo)(
+    () => ({
       // Date range presets
       datePresets: [
         { label: "Today", value: "today" },
@@ -398,6 +374,7 @@ function useFilterPresets() {
           values: ["north_america", "europe", "asia_pacific"],
         },
       ],
-    };
-  }, []);
+    }),
+    [],
+  );
 }

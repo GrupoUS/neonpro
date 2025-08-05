@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,12 +128,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreatmentPredictionService = void 0;
 var server_1 = require("@/lib/supabase/server");
 var server_2 = require("@/lib/supabase/server");
-var TreatmentPredictionService = /** @class */ (function () {
+var TreatmentPredictionService = /** @class */ (() => {
   // Supabase client created per method for proper request context
   function TreatmentPredictionService() {
     supabase = (0, server_2.createServerClient)();
@@ -145,7 +142,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.getModels = function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -187,7 +184,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.getActiveModel = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -214,7 +211,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.createModel = function (model) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -235,7 +232,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.updateModel = function (id, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -257,7 +254,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.createPrediction = function (predictionData) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -282,7 +279,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.getPredictions = function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -379,7 +376,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.getPatientFactors = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -400,7 +397,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.upsertPatientFactors = function (factors) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -426,7 +423,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.getTreatmentCharacteristics = function (treatmentType) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -448,7 +445,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.createTreatmentCharacteristics = function (characteristics) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -500,9 +497,7 @@ var TreatmentPredictionService = /** @class */ (function () {
             return [4 /*yield*/, this.getTreatmentCharacteristics(request.treatment_type)];
           case 3:
             treatmentChars = _b.sent();
-            treatmentChar = treatmentChars.find(function (t) {
-              return t.treatment_type === request.treatment_type;
-            });
+            treatmentChar = treatmentChars.find((t) => t.treatment_type === request.treatment_type);
             if (!treatmentChar) {
               throw new Error("Treatment characteristics not found for this treatment type");
             }
@@ -642,7 +637,7 @@ var TreatmentPredictionService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var features;
       var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-      return __generator(this, function (_o) {
+      return __generator(this, (_o) => {
         features = {
           // Patient demographics
           age: patientFactors.age,
@@ -723,7 +718,7 @@ var TreatmentPredictionService = /** @class */ (function () {
         risk_assessment,
         predicted_outcome,
         explainability_data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -843,7 +838,7 @@ var TreatmentPredictionService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
       var _a, _b, _c;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         recommendations = [];
         // Risk-based recommendations
         if (prediction.risk_assessment === "high") {
@@ -938,9 +933,7 @@ var TreatmentPredictionService = /** @class */ (function () {
             return [4 /*yield*/, this.getTreatmentCharacteristics()];
           case 1:
             allTreatments = _b.sent();
-            alternatives = allTreatments.filter(function (t) {
-              return t.treatment_type !== currentTreatment;
-            });
+            alternatives = allTreatments.filter((t) => t.treatment_type !== currentTreatment);
             alternativeTreatments = [];
             (_i = 0), (_a = alternatives.slice(0, 3));
             _b.label = 2;
@@ -978,15 +971,13 @@ var TreatmentPredictionService = /** @class */ (function () {
           case 7:
             return [
               2 /*return*/,
-              alternativeTreatments.sort(function (a, b) {
-                return b.prediction_score - a.prediction_score;
-              }),
+              alternativeTreatments.sort((a, b) => b.prediction_score - a.prediction_score),
             ];
         }
       });
     });
   };
-  TreatmentPredictionService.prototype.getTreatmentAdvantages = function (treatment) {
+  TreatmentPredictionService.prototype.getTreatmentAdvantages = (treatment) => {
     var advantages = [];
     if (treatment.invasiveness_level <= 2) {
       advantages.push("Non-invasive procedure");
@@ -1002,7 +993,7 @@ var TreatmentPredictionService = /** @class */ (function () {
     }
     return advantages;
   };
-  TreatmentPredictionService.prototype.getTreatmentDisadvantages = function (treatment) {
+  TreatmentPredictionService.prototype.getTreatmentDisadvantages = (treatment) => {
     var disadvantages = [];
     if (treatment.invasiveness_level >= 4) {
       disadvantages.push("Invasive procedure");
@@ -1036,16 +1027,11 @@ var TreatmentPredictionService = /** @class */ (function () {
             });
           }
         }
-        return [
-          2 /*return*/,
-          riskFactors.sort(function (a, b) {
-            return Math.abs(b.impact) - Math.abs(a.impact);
-          }),
-        ];
+        return [2 /*return*/, riskFactors.sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact))];
       });
     });
   };
-  TreatmentPredictionService.prototype.humanReadableFactor = function (factor) {
+  TreatmentPredictionService.prototype.humanReadableFactor = (factor) => {
     var factorMap = {
       age: "Patient Age",
       bmi: "Body Mass Index",
@@ -1059,7 +1045,7 @@ var TreatmentPredictionService = /** @class */ (function () {
     };
     return factorMap[factor] || factor;
   };
-  TreatmentPredictionService.prototype.isModifiableFactor = function (factor) {
+  TreatmentPredictionService.prototype.isModifiableFactor = (factor) => {
     var modifiableFactors = [
       "smoking_status",
       "bmi",
@@ -1082,24 +1068,16 @@ var TreatmentPredictionService = /** @class */ (function () {
     };
     return impact < 0 ? recommendations[factor] : undefined;
   };
-  TreatmentPredictionService.prototype.generatePredictionSummary = function (predictions) {
+  TreatmentPredictionService.prototype.generatePredictionSummary = (predictions) => {
     var total = predictions.length;
-    var highSuccess = predictions.filter(function (p) {
-      return p.prediction.prediction_score >= 0.8;
-    }).length;
-    var mediumSuccess = predictions.filter(function (p) {
-      return p.prediction.prediction_score >= 0.6 && p.prediction.prediction_score < 0.8;
-    }).length;
-    var lowSuccess = predictions.filter(function (p) {
-      return p.prediction.prediction_score < 0.6;
-    }).length;
+    var highSuccess = predictions.filter((p) => p.prediction.prediction_score >= 0.8).length;
+    var mediumSuccess = predictions.filter(
+      (p) => p.prediction.prediction_score >= 0.6 && p.prediction.prediction_score < 0.8,
+    ).length;
+    var lowSuccess = predictions.filter((p) => p.prediction.prediction_score < 0.6).length;
     var avgConfidence =
-      predictions.reduce(function (sum, p) {
-        return sum + p.prediction.prediction_score;
-      }, 0) / total;
-    var totalRecommendations = predictions.reduce(function (sum, p) {
-      return sum + p.recommendations.length;
-    }, 0);
+      predictions.reduce((sum, p) => sum + p.prediction.prediction_score, 0) / total;
+    var totalRecommendations = predictions.reduce((sum, p) => sum + p.recommendations.length, 0);
     return {
       total_predictions: total,
       high_success_probability: highSuccess,
@@ -1113,7 +1091,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.getModelPerformance = function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1160,7 +1138,7 @@ var TreatmentPredictionService = /** @class */ (function () {
         _b,
         performanceData,
         perfError;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1178,7 +1156,7 @@ var TreatmentPredictionService = /** @class */ (function () {
             (_a = _c.sent()), (predictions = _a.data), (error = _a.error);
             if (error) throw error;
             if (!(predictions && predictions.length > 0)) return [3 /*break*/, 4];
-            correctPredictions = predictions.filter(function (p) {
+            correctPredictions = predictions.filter((p) => {
               // Define success threshold for predictions
               var successThreshold = 0.7;
               var predictedSuccess = p.prediction_score >= successThreshold;
@@ -1214,7 +1192,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.createFeedback = function (feedback) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1235,7 +1213,7 @@ var TreatmentPredictionService = /** @class */ (function () {
   TreatmentPredictionService.prototype.getFeedback = function (predictionId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1285,44 +1263,46 @@ var TreatmentPredictionService = /** @class */ (function () {
             newModel = _b.sent();
             // In production, this would trigger actual ML training
             // For now, simulate training completion
-            setTimeout(function () {
-              return __awaiter(_this, void 0, void 0, function () {
-                var error_3;
-                return __generator(this, function (_a) {
-                  switch (_a.label) {
-                    case 0:
-                      _a.trys.push([0, 2, , 3]);
-                      return [
-                        4 /*yield*/,
-                        this.updateModel(newModel.id, {
-                          status: "active",
-                          accuracy: 0.87, // Simulated training result
-                          training_data_size: 5000,
-                          performance_metrics: {
-                            precision: 0.89,
-                            recall: 0.85,
-                            f1_score: 0.87,
-                            auc_roc: 0.92,
-                            training_accuracy: 0.91,
-                            validation_accuracy: 0.87,
-                            cross_validation_mean: 0.86,
-                            cross_validation_std: 0.02,
-                          },
-                        }),
-                      ];
-                    case 1:
-                      _a.sent();
-                      return [3 /*break*/, 3];
-                    case 2:
-                      error_3 = _a.sent();
-                      console.error("Error updating model after training:", error_3);
-                      return [3 /*break*/, 3];
-                    case 3:
-                      return [2 /*return*/];
-                  }
-                });
-              });
-            }, 60000); // Simulate 1 minute training time
+            setTimeout(
+              () =>
+                __awaiter(_this, void 0, void 0, function () {
+                  var error_3;
+                  return __generator(this, function (_a) {
+                    switch (_a.label) {
+                      case 0:
+                        _a.trys.push([0, 2, , 3]);
+                        return [
+                          4 /*yield*/,
+                          this.updateModel(newModel.id, {
+                            status: "active",
+                            accuracy: 0.87, // Simulated training result
+                            training_data_size: 5000,
+                            performance_metrics: {
+                              precision: 0.89,
+                              recall: 0.85,
+                              f1_score: 0.87,
+                              auc_roc: 0.92,
+                              training_accuracy: 0.91,
+                              validation_accuracy: 0.87,
+                              cross_validation_mean: 0.86,
+                              cross_validation_std: 0.02,
+                            },
+                          }),
+                        ];
+                      case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                      case 2:
+                        error_3 = _a.sent();
+                        console.error("Error updating model after training:", error_3);
+                        return [3 /*break*/, 3];
+                      case 3:
+                        return [2 /*return*/];
+                    }
+                  });
+                }),
+              60000,
+            ); // Simulate 1 minute training time
             return [
               2 /*return*/,
               {
@@ -1363,43 +1343,26 @@ var TreatmentPredictionService = /** @class */ (function () {
             if (error) throw error;
             analytics = {
               total_predictions: data.length,
-              validated_predictions: data.filter(function (p) {
-                return p.accuracy_validated;
-              }).length,
+              validated_predictions: data.filter((p) => p.accuracy_validated).length,
               average_prediction_score:
-                data.reduce(function (sum, p) {
-                  return sum + p.prediction_score;
-                }, 0) / data.length,
+                data.reduce((sum, p) => sum + p.prediction_score, 0) / data.length,
               risk_distribution: {
-                low: data.filter(function (p) {
-                  return p.risk_assessment === "low";
-                }).length,
-                medium: data.filter(function (p) {
-                  return p.risk_assessment === "medium";
-                }).length,
-                high: data.filter(function (p) {
-                  return p.risk_assessment === "high";
-                }).length,
+                low: data.filter((p) => p.risk_assessment === "low").length,
+                medium: data.filter((p) => p.risk_assessment === "medium").length,
+                high: data.filter((p) => p.risk_assessment === "high").length,
               },
               outcome_distribution: {
-                success: data.filter(function (p) {
-                  return p.predicted_outcome === "success";
-                }).length,
-                partial_success: data.filter(function (p) {
-                  return p.predicted_outcome === "partial_success";
-                }).length,
-                failure: data.filter(function (p) {
-                  return p.predicted_outcome === "failure";
-                }).length,
+                success: data.filter((p) => p.predicted_outcome === "success").length,
+                partial_success: data.filter((p) => p.predicted_outcome === "partial_success")
+                  .length,
+                failure: data.filter((p) => p.predicted_outcome === "failure").length,
               },
-              treatment_type_distribution: data.reduce(function (acc, p) {
+              treatment_type_distribution: data.reduce((acc, p) => {
                 acc[p.treatment_type] = (acc[p.treatment_type] || 0) + 1;
                 return acc;
               }, {}),
               model_accuracy: this.calculateOverallAccuracy(
-                data.filter(function (p) {
-                  return p.accuracy_validated;
-                }),
+                data.filter((p) => p.accuracy_validated),
               ),
             };
             return [2 /*return*/, analytics];
@@ -1407,9 +1370,9 @@ var TreatmentPredictionService = /** @class */ (function () {
       });
     });
   };
-  TreatmentPredictionService.prototype.calculateOverallAccuracy = function (validatedPredictions) {
+  TreatmentPredictionService.prototype.calculateOverallAccuracy = (validatedPredictions) => {
     if (validatedPredictions.length === 0) return 0;
-    var correctPredictions = validatedPredictions.filter(function (p) {
+    var correctPredictions = validatedPredictions.filter((p) => {
       var successThreshold = 0.7;
       var predictedSuccess = p.prediction_score >= successThreshold;
       var actualSuccess = p.actual_outcome === "success";

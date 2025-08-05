@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // SUPPLIER MANAGEMENT VALIDATION SCHEMAS
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
@@ -157,15 +156,10 @@ exports.volumeDiscountTierSchema = zod_1.z
     discount_percentage: zod_1.z.number().min(0).max(100, "Percentual deve estar entre 0 e 100"),
     description: zod_1.z.string().optional(),
   })
-  .refine(
-    function (data) {
-      return !data.max_quantity || data.max_quantity > data.min_quantity;
-    },
-    {
-      message: "Quantidade máxima deve ser maior que a mínima",
-      path: ["max_quantity"],
-    },
-  );
+  .refine((data) => !data.max_quantity || data.max_quantity > data.min_quantity, {
+    message: "Quantidade máxima deve ser maior que a mínima",
+    path: ["max_quantity"],
+  });
 exports.supplierSchema = zod_1.z.object({
   id: zod_1.z.string().uuid(),
   clinic_id: zod_1.z.string().uuid(),
@@ -247,15 +241,10 @@ exports.supplierContractSchema = zod_1.z
     created_at: zod_1.z.string().datetime(),
     updated_at: zod_1.z.string().datetime(),
   })
-  .refine(
-    function (data) {
-      return !data.end_date || new Date(data.end_date) > new Date(data.start_date);
-    },
-    {
-      message: "Data de fim deve ser posterior à data de início",
-      path: ["end_date"],
-    },
-  );
+  .refine((data) => !data.end_date || new Date(data.end_date) > new Date(data.start_date), {
+    message: "Data de fim deve ser posterior à data de início",
+    path: ["end_date"],
+  });
 exports.supplierContactSchema = zod_1.z
   .object({
     id: zod_1.z.string().uuid(),
@@ -287,15 +276,10 @@ exports.supplierContactSchema = zod_1.z
     created_at: zod_1.z.string().datetime(),
     updated_at: zod_1.z.string().datetime(),
   })
-  .refine(
-    function (data) {
-      return data.email || data.phone || data.mobile;
-    },
-    {
-      message: "Pelo menos um método de contato deve ser fornecido",
-      path: ["email"],
-    },
-  );
+  .refine((data) => data.email || data.phone || data.mobile, {
+    message: "Pelo menos um método de contato deve ser fornecido",
+    path: ["email"],
+  });
 exports.supplierPerformanceSchema = zod_1.z
   .object({
     id: zod_1.z.string().uuid(),
@@ -332,15 +316,10 @@ exports.supplierPerformanceSchema = zod_1.z
     calculated_at: zod_1.z.string().datetime(),
     calculated_by: zod_1.z.string().uuid().optional(),
   })
-  .refine(
-    function (data) {
-      return new Date(data.period_end) > new Date(data.period_start);
-    },
-    {
-      message: "Data de fim deve ser posterior à data de início",
-      path: ["period_end"],
-    },
-  );
+  .refine((data) => new Date(data.period_end) > new Date(data.period_start), {
+    message: "Data de fim deve ser posterior à data de início",
+    path: ["period_end"],
+  });
 exports.supplierEvaluationSchema = zod_1.z
   .object({
     id: zod_1.z.string().uuid(),
@@ -377,15 +356,10 @@ exports.supplierEvaluationSchema = zod_1.z
     created_at: zod_1.z.string().datetime(),
     updated_at: zod_1.z.string().datetime(),
   })
-  .refine(
-    function (data) {
-      return new Date(data.evaluation_period_end) > new Date(data.evaluation_period_start);
-    },
-    {
-      message: "Data de fim deve ser posterior à data de início",
-      path: ["evaluation_period_end"],
-    },
-  );
+  .refine((data) => new Date(data.evaluation_period_end) > new Date(data.evaluation_period_start), {
+    message: "Data de fim deve ser posterior à data de início",
+    path: ["evaluation_period_end"],
+  });
 exports.supplierCommunicationSchema = zod_1.z.object({
   id: zod_1.z.string().uuid(),
   supplier_id: zod_1.z.string().uuid(),
@@ -511,15 +485,10 @@ exports.createContractSchema = zod_1.z
     contract_document_url: zod_1.z.string().url().optional(),
     signed_date: zod_1.z.string().datetime().optional(),
   })
-  .refine(
-    function (data) {
-      return !data.end_date || new Date(data.end_date) > new Date(data.start_date);
-    },
-    {
-      message: "Data de fim deve ser posterior à data de início",
-      path: ["end_date"],
-    },
-  );
+  .refine((data) => !data.end_date || new Date(data.end_date) > new Date(data.start_date), {
+    message: "Data de fim deve ser posterior à data de início",
+    path: ["end_date"],
+  });
 exports.createEvaluationSchema = zod_1.z
   .object({
     supplier_id: zod_1.z.string().uuid(),
@@ -540,15 +509,10 @@ exports.createEvaluationSchema = zod_1.z
     preferred_supplier_status: zod_1.z.boolean().optional(),
     risk_level: exports.riskLevelSchema.optional(),
   })
-  .refine(
-    function (data) {
-      return new Date(data.evaluation_period_end) > new Date(data.evaluation_period_start);
-    },
-    {
-      message: "Data de fim deve ser posterior à data de início",
-      path: ["evaluation_period_end"],
-    },
-  );
+  .refine((data) => new Date(data.evaluation_period_end) > new Date(data.evaluation_period_start), {
+    message: "Data de fim deve ser posterior à data de início",
+    path: ["evaluation_period_end"],
+  });
 exports.createQualityIssueSchema = zod_1.z.object({
   supplier_id: zod_1.z.string().uuid(),
   issue_type: exports.qualityIssueTypeSchema,
@@ -600,15 +564,10 @@ exports.createContactSchema = zod_1.z
     can_receive_complaints: zod_1.z.boolean().default(false),
     emergency_contact: zod_1.z.boolean().default(false),
   })
-  .refine(
-    function (data) {
-      return data.email || data.phone || data.mobile;
-    },
-    {
-      message: "Pelo menos um método de contato deve ser fornecido",
-      path: ["email"],
-    },
-  );
+  .refine((data) => data.email || data.phone || data.mobile, {
+    message: "Pelo menos um método de contato deve ser fornecido",
+    path: ["email"],
+  });
 // =====================================================================================
 // FILTER SCHEMAS
 // =====================================================================================
@@ -623,7 +582,7 @@ exports.supplierFiltersSchema = zod_1.z
     search: zod_1.z.string().max(255).optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.performance_score_min && data.performance_score_max) {
         return data.performance_score_min <= data.performance_score_max;
       }
@@ -647,7 +606,7 @@ exports.qualityIssueFiltersSchema = zod_1.z
     requires_follow_up: zod_1.z.boolean().optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.date_from && data.date_to) {
         return new Date(data.date_from) <= new Date(data.date_to);
       }
@@ -692,15 +651,10 @@ exports.performanceAnalysisSchema = zod_1.z
     include_delivery_metrics: zod_1.z.boolean().default(true),
     group_by: zod_1.z.enum(["supplier", "category", "type", "month"]).optional(),
   })
-  .refine(
-    function (data) {
-      return new Date(data.period_end) > new Date(data.period_start);
-    },
-    {
-      message: "Data final deve ser posterior à data inicial",
-      path: ["period_end"],
-    },
-  );
+  .refine((data) => new Date(data.period_end) > new Date(data.period_start), {
+    message: "Data final deve ser posterior à data inicial",
+    path: ["period_end"],
+  });
 exports.supplierComparisonSchema = zod_1.z.object({
   supplier_ids: zod_1.z
     .array(zod_1.z.string().uuid())

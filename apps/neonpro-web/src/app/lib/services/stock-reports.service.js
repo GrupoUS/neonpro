@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 11.4: Stock Reports Service
  * Servi�o para gerenciamento de relat�rios de estoque
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,16 +146,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockReportsService = void 0;
 var server_1 = require("@/lib/supabase/server");
-var StockReportsService = /** @class */ (function () {
+var StockReportsService = /** @class */ (() => {
   function StockReportsService() {}
   StockReportsService.prototype.getSupabase = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -180,7 +177,7 @@ var StockReportsService = /** @class */ (function () {
   StockReportsService.prototype.createCustomReport = function (data, user_id) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, report, error, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -231,7 +228,7 @@ var StockReportsService = /** @class */ (function () {
   StockReportsService.prototype.getClinicReports = function (clinic_id, filters) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -283,7 +280,7 @@ var StockReportsService = /** @class */ (function () {
   StockReportsService.prototype.updateReportConfig = function (id, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -329,7 +326,7 @@ var StockReportsService = /** @class */ (function () {
   StockReportsService.prototype.deleteReportConfig = function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -438,7 +435,7 @@ var StockReportsService = /** @class */ (function () {
   StockReportsService.prototype.generateValuationReport = function (clinic_id, filters) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, reportData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -555,7 +552,7 @@ var StockReportsService = /** @class */ (function () {
   StockReportsService.prototype.generateExpirationReport = function (clinic_id, filters) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, today, next30Days, next90Days, reportData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -699,9 +696,7 @@ var StockReportsService = /** @class */ (function () {
             criticalAlerts =
               (alertsData === null || alertsData === void 0
                 ? void 0
-                : alertsData.filter(function (a) {
-                    return a.alert_severity === "critical";
-                  }).length) || 0;
+                : alertsData.filter((a) => a.alert_severity === "critical").length) || 0;
             metrics = {
               clinicId: clinic_id,
               metricDate: date,
@@ -758,7 +753,7 @@ var StockReportsService = /** @class */ (function () {
       if (days === void 0) {
         days = 30;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -803,13 +798,13 @@ var StockReportsService = /** @class */ (function () {
   // ==========================================
   // UTILIT�RIOS PRIVADOS
   // ==========================================
-  StockReportsService.prototype.calculateTotalCost = function (usageData) {
-    return usageData.reduce(function (total, item) {
-      return total + (item.cost_per_unit || 0) * (item.quantity_used || 0);
-    }, 0);
-  };
-  StockReportsService.prototype.groupByCategory = function (usageData) {
-    var grouped = usageData.reduce(function (acc, item) {
+  StockReportsService.prototype.calculateTotalCost = (usageData) =>
+    usageData.reduce(
+      (total, item) => total + (item.cost_per_unit || 0) * (item.quantity_used || 0),
+      0,
+    );
+  StockReportsService.prototype.groupByCategory = (usageData) => {
+    var grouped = usageData.reduce((acc, item) => {
       var category = item.material_category || "Outros";
       if (!acc[category]) {
         acc[category] = {
@@ -825,8 +820,8 @@ var StockReportsService = /** @class */ (function () {
     }, {});
     return grouped;
   };
-  StockReportsService.prototype.groupByUser = function (usageData) {
-    var grouped = usageData.reduce(function (acc, item) {
+  StockReportsService.prototype.groupByUser = (usageData) => {
+    var grouped = usageData.reduce((acc, item) => {
       var userId = item.user_id || "Unknown";
       if (!acc[userId]) {
         acc[userId] = {
@@ -842,8 +837,8 @@ var StockReportsService = /** @class */ (function () {
     }, {});
     return grouped;
   };
-  StockReportsService.prototype.groupByDate = function (usageData) {
-    var grouped = usageData.reduce(function (acc, item) {
+  StockReportsService.prototype.groupByDate = (usageData) => {
+    var grouped = usageData.reduce((acc, item) => {
       var _a;
       var date =
         ((_a = item.created_at) === null || _a === void 0 ? void 0 : _a.split("T")[0]) || "Unknown";
@@ -861,11 +856,11 @@ var StockReportsService = /** @class */ (function () {
     }, {});
     return grouped;
   };
-  StockReportsService.prototype.getTopConsumed = function (usageData, limit) {
+  StockReportsService.prototype.getTopConsumed = (usageData, limit) => {
     if (limit === void 0) {
       limit = 10;
     }
-    var grouped = usageData.reduce(function (acc, item) {
+    var grouped = usageData.reduce((acc, item) => {
       var key = "".concat(item.material_name, "_").concat(item.material_type);
       if (!acc[key]) {
         acc[key] = {
@@ -882,9 +877,7 @@ var StockReportsService = /** @class */ (function () {
       return acc;
     }, {});
     return Object.values(grouped)
-      .sort(function (a, b) {
-        return b.total_quantity - a.total_quantity;
-      })
+      .sort((a, b) => b.total_quantity - a.total_quantity)
       .slice(0, limit);
   };
   StockReportsService.prototype.calculateTurnoverRate = function (usageData) {
@@ -894,18 +887,16 @@ var StockReportsService = /** @class */ (function () {
     var estimatedStockValue = 50000; // Simula��o
     return totalCost / estimatedStockValue;
   };
-  StockReportsService.prototype.calculateDaysCoverage = function (usageData) {
+  StockReportsService.prototype.calculateDaysCoverage = (usageData) => {
     // Simula��o de c�lculo de cobertura em dias
     // Em uma implementa��o real, seria baseado no estoque atual vs consumo m�dio di�rio
     var dailyAverage = usageData.length / 30; // Assumindo 30 dias
     var estimatedStockQuantity = 1000; // Simula��o
     return estimatedStockQuantity / (dailyAverage || 1);
   };
-  StockReportsService.prototype.getUniqueProductsCount = function (usageData) {
+  StockReportsService.prototype.getUniqueProductsCount = (usageData) => {
     var uniqueProducts = new Set(
-      usageData.map(function (item) {
-        return "".concat(item.material_name, "_").concat(item.material_type);
-      }),
+      usageData.map((item) => "".concat(item.material_name, "_").concat(item.material_type)),
     );
     return uniqueProducts.size;
   };

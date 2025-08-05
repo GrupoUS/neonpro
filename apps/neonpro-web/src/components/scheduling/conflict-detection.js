@@ -5,18 +5,17 @@
  * React component for real-time conflict detection in appointment scheduling
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ConflictDetection;
 var react_1 = require("react");
@@ -150,7 +147,6 @@ var separator_1 = require("@/components/ui/separator");
 var lucide_react_1 = require("lucide-react");
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 function ConflictDetection(_a) {
-  var _this = this;
   var appointmentStart = _a.appointmentStart,
     appointmentEnd = _a.appointmentEnd,
     professionalId = _a.professionalId,
@@ -175,26 +171,23 @@ function ConflictDetection(_a) {
     setSelectedResolution = _f[1];
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   // Auto-detect conflicts when props change
-  (0, react_1.useEffect)(
-    function () {
-      if (autoDetect && appointmentStart && appointmentEnd && professionalId && treatmentType) {
-        detectConflicts();
-      }
-    },
-    [
-      appointmentStart,
-      appointmentEnd,
-      professionalId,
-      treatmentType,
-      roomId,
-      equipmentIds,
-      autoDetect,
-    ],
-  );
-  var detectConflicts = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (autoDetect && appointmentStart && appointmentEnd && professionalId && treatmentType) {
+      detectConflicts();
+    }
+  }, [
+    appointmentStart,
+    appointmentEnd,
+    professionalId,
+    treatmentType,
+    roomId,
+    equipmentIds,
+    autoDetect,
+  ]);
+  var detectConflicts = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, errorData, result, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
@@ -221,7 +214,7 @@ function ConflictDetection(_a) {
             ];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.json()];
           case 3:
             errorData = _a.sent();
@@ -247,14 +240,13 @@ function ConflictDetection(_a) {
         }
       });
     });
-  };
-  var handleResolutionSelect = function (option) {
+  var handleResolutionSelect = (option) => {
     setSelectedResolution(option);
     if (onResolutionSelected) {
       onResolutionSelected(option);
     }
   };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "low":
         return "bg-blue-100 text-blue-800";
@@ -268,7 +260,7 @@ function ConflictDetection(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getConflictTypeIcon = function (type) {
+  var getConflictTypeIcon = (type) => {
     switch (type) {
       case "time":
         return <lucide_react_1.Clock className="w-4 h-4" />;
@@ -284,7 +276,7 @@ function ConflictDetection(_a) {
         return <lucide_react_1.AlertTriangle className="w-4 h-4" />;
     }
   };
-  var getImpactColor = function (impact) {
+  var getImpactColor = (impact) => {
     switch (impact) {
       case "minimal":
         return "bg-green-100 text-green-800";
@@ -393,38 +385,34 @@ function ConflictDetection(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {detectionResult.conflicts.map(function (conflict) {
-                return (
-                  <div key={conflict.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        {getConflictTypeIcon(conflict.type)}
-                        <span className="font-medium capitalize">{conflict.type} Conflict</span>
-                      </div>
-                      <badge_1.Badge className={getSeverityColor(conflict.severity)}>
-                        {conflict.severity}
-                      </badge_1.Badge>
+              {detectionResult.conflicts.map((conflict) => (
+                <div key={conflict.id} className="border rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      {getConflictTypeIcon(conflict.type)}
+                      <span className="font-medium capitalize">{conflict.type} Conflict</span>
                     </div>
-
-                    <p className="text-sm text-gray-600 mb-3">{conflict.conflictDescription}</p>
-
-                    {conflict.suggestedActions.length > 0 && (
-                      <div>
-                        <span className="text-sm font-medium">Suggested actions:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {conflict.suggestedActions.map(function (action, index) {
-                            return (
-                              <badge_1.Badge key={index} variant="outline" className="text-xs">
-                                {action.replace("_", " ")}
-                              </badge_1.Badge>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
+                    <badge_1.Badge className={getSeverityColor(conflict.severity)}>
+                      {conflict.severity}
+                    </badge_1.Badge>
                   </div>
-                );
-              })}
+
+                  <p className="text-sm text-gray-600 mb-3">{conflict.conflictDescription}</p>
+
+                  {conflict.suggestedActions.length > 0 && (
+                    <div>
+                      <span className="text-sm font-medium">Suggested actions:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {conflict.suggestedActions.map((action, index) => (
+                          <badge_1.Badge key={index} variant="outline" className="text-xs">
+                            {action.replace("_", " ")}
+                          </badge_1.Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -444,71 +432,65 @@ function ConflictDetection(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {detectionResult.resolutionOptions.map(function (option) {
-                  return (
-                    <div
-                      key={option.id}
-                      className={"border rounded-lg p-4 cursor-pointer transition-all ".concat(
-                        (selectedResolution === null || selectedResolution === void 0
-                          ? void 0
-                          : selectedResolution.id) === option.id
-                          ? "border-blue-500 bg-blue-50"
-                          : "hover:border-gray-300",
-                      )}
-                      onClick={function () {
-                        return handleResolutionSelect(option);
-                      }}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <span className="font-medium capitalize">{option.type} Solution</span>
-                          <div className="flex items-center gap-2 mt-1">
-                            <badge_1.Badge variant="outline">
-                              {Math.round(option.confidence * 100)}% confidence
-                            </badge_1.Badge>
-                            <badge_1.Badge className={getImpactColor(option.impact)}>
-                              {option.impact} impact
-                            </badge_1.Badge>
-                          </div>
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          ~{Math.round(option.estimatedResolutionTime / 60)}min to resolve
+                {detectionResult.resolutionOptions.map((option) => (
+                  <div
+                    key={option.id}
+                    className={"border rounded-lg p-4 cursor-pointer transition-all ".concat(
+                      (selectedResolution === null || selectedResolution === void 0
+                        ? void 0
+                        : selectedResolution.id) === option.id
+                        ? "border-blue-500 bg-blue-50"
+                        : "hover:border-gray-300",
+                    )}
+                    onClick={() => handleResolutionSelect(option)}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <span className="font-medium capitalize">{option.type} Solution</span>
+                        <div className="flex items-center gap-2 mt-1">
+                          <badge_1.Badge variant="outline">
+                            {Math.round(option.confidence * 100)}% confidence
+                          </badge_1.Badge>
+                          <badge_1.Badge className={getImpactColor(option.impact)}>
+                            {option.impact} impact
+                          </badge_1.Badge>
                         </div>
                       </div>
-
-                      <p className="text-sm text-gray-600 mb-3">{option.description}</p>
-
-                      {option.alternativeSlots && option.alternativeSlots.length > 0 && (
-                        <div className="text-sm">
-                          <span className="font-medium">Alternative times available:</span>
-                          <span className="text-gray-600 ml-1">
-                            {option.alternativeSlots.length} option
-                            {option.alternativeSlots.length !== 1 ? "s" : ""}
-                          </span>
-                        </div>
-                      )}
-
-                      {option.resourceAlternatives && option.resourceAlternatives.length > 0 && (
-                        <div className="text-sm">
-                          <span className="font-medium">Alternative resources available:</span>
-                          <span className="text-gray-600 ml-1">
-                            {option.resourceAlternatives.length} option
-                            {option.resourceAlternatives.length !== 1 ? "s" : ""}
-                          </span>
-                        </div>
-                      )}
+                      <div className="text-sm text-gray-500">
+                        ~{Math.round(option.estimatedResolutionTime / 60)}min to resolve
+                      </div>
                     </div>
-                  );
-                })}
+
+                    <p className="text-sm text-gray-600 mb-3">{option.description}</p>
+
+                    {option.alternativeSlots && option.alternativeSlots.length > 0 && (
+                      <div className="text-sm">
+                        <span className="font-medium">Alternative times available:</span>
+                        <span className="text-gray-600 ml-1">
+                          {option.alternativeSlots.length} option
+                          {option.alternativeSlots.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                    )}
+
+                    {option.resourceAlternatives && option.resourceAlternatives.length > 0 && (
+                      <div className="text-sm">
+                        <span className="font-medium">Alternative resources available:</span>
+                        <span className="text-gray-600 ml-1">
+                          {option.resourceAlternatives.length} option
+                          {option.resourceAlternatives.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
 
             {selectedResolution && (
               <card_1.CardFooter>
                 <button_1.Button
-                  onClick={function () {
-                    return handleResolutionSelect(selectedResolution);
-                  }}
+                  onClick={() => handleResolutionSelect(selectedResolution)}
                   className="w-full"
                 >
                   Apply {selectedResolution.type} Solution

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Event System Core
  * Story 7.3: Webhook & Event System Implementation
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,7 +44,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,8 +73,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -96,9 +93,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -157,11 +154,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventSystem = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var EventSystem = /** @class */ (function () {
+var EventSystem = /** @class */ (() => {
   function EventSystem(config) {
     this.eventQueue = [];
     this.eventHandlers = new Map();
@@ -179,7 +176,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 6, , 7]);
+            _a.trys.push([0, 6, undefined, 7]);
             console.log("Initializing Event System...");
             // Setup database tables if needed
             return [
@@ -231,7 +228,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 8, , 9]);
+            _a.trys.push([0, 8, undefined, 9]);
             event_1 = __assign({ id: this.generateEventId(), timestamp: new Date() }, eventData);
             console.log("Publishing event: ".concat(event_1.type, " (").concat(event_1.id, ")"));
             // Validate event
@@ -296,9 +293,7 @@ var EventSystem = /** @class */ (function () {
       var handlers = this.eventHandlers.get(handler.eventType);
       handlers.push(handler);
       // Sort by priority (higher priority first)
-      handlers.sort(function (a, b) {
-        return b.priority - a.priority;
-      });
+      handlers.sort((a, b) => b.priority - a.priority);
       console.log("\u2705 Event handler registered for ".concat(handler.eventType));
     } catch (error) {
       console.error("❌ Failed to register event handler:", error);
@@ -312,9 +307,7 @@ var EventSystem = /** @class */ (function () {
     try {
       var handlers = this.eventHandlers.get(eventType);
       if (!handlers) return;
-      var index = handlers.findIndex(function (h) {
-        return h.handler === handlerFunction;
-      });
+      var index = handlers.findIndex((h) => h.handler === handlerFunction);
       if (index !== -1) {
         handlers.splice(index, 1);
         console.log("\u2705 Event handler unregistered for ".concat(eventType));
@@ -357,7 +350,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
-            _c.trys.push([0, 6, , 7]);
+            _c.trys.push([0, 6, undefined, 7]);
             console.log("Generating event analytics...");
             period = {
               startDate:
@@ -429,7 +422,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 2, , 3]);
+            _b.trys.push([0, 2, undefined, 3]);
             query = this.supabase
               .from("events")
               .select("*")
@@ -485,7 +478,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase.from("events").select("*").eq("id", eventId).single(),
@@ -512,7 +505,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 2, , 3]);
+            _b.trys.push([0, 2, undefined, 3]);
             cutoffDate = new Date(Date.now() - this.config.retentionDays * 24 * 60 * 60 * 1000);
             return [
               4 /*yield*/,
@@ -545,7 +538,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 6, , 7]);
+            _a.trys.push([0, 6, undefined, 7]);
             console.log("Stopping Event System...");
             // Stop queue processing
             if (this.processingInterval) {
@@ -555,12 +548,7 @@ var EventSystem = /** @class */ (function () {
             _a.label = 1;
           case 1:
             if (!this.isProcessing) return [3 /*break*/, 3];
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 100);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 100))];
           case 2:
             _a.sent();
             return [3 /*break*/, 1];
@@ -584,10 +572,9 @@ var EventSystem = /** @class */ (function () {
     });
   };
   // Private Methods
-  EventSystem.prototype.generateEventId = function () {
-    return "evt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  EventSystem.prototype.validateEvent = function (event) {
+  EventSystem.prototype.generateEventId = () =>
+    "evt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  EventSystem.prototype.validateEvent = (event) => {
     var _a;
     if (!event.type) {
       throw new Error("Event type is required");
@@ -622,25 +609,20 @@ var EventSystem = /** @class */ (function () {
     });
   };
   EventSystem.prototype.evaluateFilter = function (event, filter) {
-    var _this = this;
     try {
-      var results = filter.conditions.map(function (condition) {
-        var fieldValue = _this.getFieldValue(event, condition.field);
-        return _this.evaluateCondition(fieldValue, condition.operator, condition.value);
+      var results = filter.conditions.map((condition) => {
+        var fieldValue = this.getFieldValue(event, condition.field);
+        return this.evaluateCondition(fieldValue, condition.operator, condition.value);
       });
       return filter.logic === "AND"
-        ? results.every(function (result) {
-            return result;
-          })
-        : results.some(function (result) {
-            return result;
-          });
+        ? results.every((result) => result)
+        : results.some((result) => result);
     } catch (error) {
       console.error("❌ Error evaluating filter:", error);
       return true; // Allow event through on evaluation error
     }
   };
-  EventSystem.prototype.getFieldValue = function (event, field) {
+  EventSystem.prototype.getFieldValue = (event, field) => {
     var parts = field.split(".");
     var value = event;
     for (var _i = 0, parts_1 = parts; _i < parts_1.length; _i++) {
@@ -650,7 +632,7 @@ var EventSystem = /** @class */ (function () {
     }
     return value;
   };
-  EventSystem.prototype.evaluateCondition = function (fieldValue, operator, expectedValue) {
+  EventSystem.prototype.evaluateCondition = (fieldValue, operator, expectedValue) => {
     switch (operator) {
       case "equals":
         return fieldValue === expectedValue;
@@ -678,7 +660,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase.from("events").insert({
@@ -726,7 +708,7 @@ var EventSystem = /** @class */ (function () {
           };
           this.eventQueue.push(queueItem);
           // Sort queue by priority and scheduled time
-          this.eventQueue.sort(function (a, b) {
+          this.eventQueue.sort((a, b) => {
             var priorityOrder = { critical: 4, high: 3, normal: 2, low: 1 };
             var priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
             if (priorityDiff !== 0) {
@@ -751,11 +733,9 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 7, , 8]);
+            _a.trys.push([0, 7, undefined, 8]);
             handlers = this.eventHandlers.get(event.type) || [];
-            immediateHandlers = handlers.filter(function (h) {
-              return !h.async;
-            });
+            immediateHandlers = handlers.filter((h) => !h.async);
             (_i = 0), (immediateHandlers_1 = immediateHandlers);
             _a.label = 1;
           case 1:
@@ -763,7 +743,7 @@ var EventSystem = /** @class */ (function () {
             handler = immediateHandlers_1[_i];
             _a.label = 2;
           case 2:
-            _a.trys.push([2, 4, , 5]);
+            _a.trys.push([2, 4, undefined, 5]);
             return [4 /*yield*/, handler.handler(event)];
           case 3:
             _a.sent();
@@ -793,7 +773,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3, , 4]);
+            _a.trys.push([0, 3, undefined, 4]);
             if (!this.realtimeChannel) return [3 /*break*/, 2];
             return [
               4 /*yield*/,
@@ -820,16 +800,12 @@ var EventSystem = /** @class */ (function () {
   };
   EventSystem.prototype.setupDatabase = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   EventSystem.prototype.loadEventHandlers = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   EventSystem.prototype.loadEventFilters = function () {
@@ -839,7 +815,7 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase.from("event_filters").select("*").eq("is_active", true),
@@ -847,7 +823,7 @@ var EventSystem = /** @class */ (function () {
           case 1:
             filters = _a.sent().data;
             if (filters) {
-              filters.forEach(function (filter) {
+              filters.forEach((filter) => {
                 _this.eventFilters.set(filter.id, _this.convertDbRecordToFilter(filter));
               });
             }
@@ -868,11 +844,11 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             this.realtimeChannel = this.supabase.channel("events");
             return [
               4 /*yield*/,
-              this.realtimeChannel.subscribe(function (status) {
+              this.realtimeChannel.subscribe((status) => {
                 if (status === "SUBSCRIBED") {
                   console.log("✅ Real-time event channel subscribed");
                 }
@@ -892,10 +868,10 @@ var EventSystem = /** @class */ (function () {
     });
   };
   EventSystem.prototype.startQueueProcessing = function () {
-    var _this = this;
-    this.processingInterval = setInterval(function () {
-      return _this.processEventQueue();
-    }, this.config.queueConfig.processingInterval);
+    this.processingInterval = setInterval(
+      () => this.processEventQueue(),
+      this.config.queueConfig.processingInterval,
+    );
   };
   EventSystem.prototype.processEventQueue = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -913,14 +889,7 @@ var EventSystem = /** @class */ (function () {
             _a.trys.push([1, 3, 4, 5]);
             batchSize = Math.min(this.config.queueConfig.batchSize, this.eventQueue.length);
             batch = this.eventQueue.splice(0, batchSize);
-            return [
-              4 /*yield*/,
-              Promise.all(
-                batch.map(function (item) {
-                  return _this.processQueueItem(item);
-                }),
-              ),
-            ];
+            return [4 /*yield*/, Promise.all(batch.map((item) => _this.processQueueItem(item)))];
           case 2:
             _a.sent();
             return [3 /*break*/, 5];
@@ -944,23 +913,21 @@ var EventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             item.status = "processing";
             item.processingStartedAt = new Date();
             handlers = this.eventHandlers.get(item.event.type) || [];
-            asyncHandlers = handlers.filter(function (h) {
-              return h.async;
-            });
+            asyncHandlers = handlers.filter((h) => h.async);
             return [
               4 /*yield*/,
               Promise.all(
-                asyncHandlers.map(function (handler) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                asyncHandlers.map((handler) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var error_16;
-                    return __generator(this, function (_a) {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
-                          _a.trys.push([0, 2, , 3]);
+                          _a.trys.push([0, 2, undefined, 3]);
                           return [4 /*yield*/, handler.handler(item.event)];
                         case 1:
                           _a.sent();
@@ -976,8 +943,8 @@ var EventSystem = /** @class */ (function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 1:
@@ -1001,21 +968,21 @@ var EventSystem = /** @class */ (function () {
     });
   };
   // Analytics calculation methods
-  EventSystem.prototype.calculateEventsByType = function (events) {
+  EventSystem.prototype.calculateEventsByType = (events) => {
     var result = {};
-    events.forEach(function (event) {
+    events.forEach((event) => {
       result[event.type] = (result[event.type] || 0) + 1;
     });
     return result;
   };
-  EventSystem.prototype.calculateEventsByPriority = function (events) {
+  EventSystem.prototype.calculateEventsByPriority = (events) => {
     var result = {};
-    events.forEach(function (event) {
+    events.forEach((event) => {
       result[event.priority] = (result[event.priority] || 0) + 1;
     });
     return result;
   };
-  EventSystem.prototype.calculateEventsByStatus = function (events) {
+  EventSystem.prototype.calculateEventsByStatus = (_events) => {
     // This would be calculated from event delivery records
     return {
       delivered: 0,
@@ -1023,9 +990,9 @@ var EventSystem = /** @class */ (function () {
       pending: 0,
     };
   };
-  EventSystem.prototype.calculateDeliveryMetrics = function (events, period) {
+  EventSystem.prototype.calculateDeliveryMetrics = function (_events, _period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would calculate delivery metrics from webhook delivery records
         return [
           2 /*return*/,
@@ -1040,9 +1007,9 @@ var EventSystem = /** @class */ (function () {
       });
     });
   };
-  EventSystem.prototype.calculateWebhookMetrics = function (period) {
+  EventSystem.prototype.calculateWebhookMetrics = function (_period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would calculate webhook performance metrics
         return [
           2 /*return*/,
@@ -1057,9 +1024,9 @@ var EventSystem = /** @class */ (function () {
       });
     });
   };
-  EventSystem.prototype.calculateErrorAnalysis = function (events, period) {
+  EventSystem.prototype.calculateErrorAnalysis = function (_events, _period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would analyze errors from delivery records
         return [
           2 /*return*/,
@@ -1072,7 +1039,7 @@ var EventSystem = /** @class */ (function () {
       });
     });
   };
-  EventSystem.prototype.calculatePerformanceMetrics = function (period) {
+  EventSystem.prototype.calculatePerformanceMetrics = function (_period) {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
         // This would calculate system performance metrics
@@ -1091,29 +1058,25 @@ var EventSystem = /** @class */ (function () {
       });
     });
   };
-  EventSystem.prototype.convertDbRecordToEvent = function (record) {
-    return {
-      id: record.id,
-      type: record.type,
-      version: record.version,
-      timestamp: new Date(record.timestamp),
-      source: record.source,
-      priority: record.priority,
-      metadata: record.metadata,
-      data: record.data,
-      context: record.context,
-    };
-  };
-  EventSystem.prototype.convertDbRecordToFilter = function (record) {
-    return {
-      id: record.id,
-      name: record.name,
-      description: record.description,
-      conditions: record.conditions,
-      logic: record.logic,
-      isActive: record.is_active,
-    };
-  };
+  EventSystem.prototype.convertDbRecordToEvent = (record) => ({
+    id: record.id,
+    type: record.type,
+    version: record.version,
+    timestamp: new Date(record.timestamp),
+    source: record.source,
+    priority: record.priority,
+    metadata: record.metadata,
+    data: record.data,
+    context: record.context,
+  });
+  EventSystem.prototype.convertDbRecordToFilter = (record) => ({
+    id: record.id,
+    name: record.name,
+    description: record.description,
+    conditions: record.conditions,
+    logic: record.logic,
+    isActive: record.is_active,
+  });
   return EventSystem;
 })();
 exports.EventSystem = EventSystem;

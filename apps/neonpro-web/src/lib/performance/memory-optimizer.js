@@ -1,11 +1,10 @@
-"use strict";
 /**
  * Memory Optimizer - VIBECODE V1.0 Memory Management
  * Advanced memory optimization for subscription middleware
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemoryOptimizer = void 0;
-var MemoryOptimizer = /** @class */ (function () {
+var MemoryOptimizer = /** @class */ (() => {
   function MemoryOptimizer() {
     this.snapshots = [];
     this.gcCallbacks = [];
@@ -14,14 +13,13 @@ var MemoryOptimizer = /** @class */ (function () {
    * Start memory monitoring
    */
   MemoryOptimizer.prototype.startMonitoring = function (intervalMs) {
-    var _this = this;
     if (intervalMs === void 0) {
       intervalMs = 5000;
     }
     this.stopMonitoring();
-    this.monitoringInterval = setInterval(function () {
-      _this.takeSnapshot();
-      _this.detectLeaks();
+    this.monitoringInterval = setInterval(() => {
+      this.takeSnapshot();
+      this.detectLeaks();
     }, intervalMs);
     console.log("🧠 Memory monitoring started");
   }; /**
@@ -105,9 +103,7 @@ var MemoryOptimizer = /** @class */ (function () {
       this.takeSnapshot();
     }
     var baseline = this.snapshots[0];
-    var peak = this.snapshots.reduce(function (max, snap) {
-      return snap.heapUsed > max.heapUsed ? snap : max;
-    });
+    var peak = this.snapshots.reduce((max, snap) => (snap.heapUsed > max.heapUsed ? snap : max));
     var current = this.snapshots[this.snapshots.length - 1];
     return {
       baseline: baseline,
@@ -121,7 +117,7 @@ var MemoryOptimizer = /** @class */ (function () {
   /**
    * Force garbage collection (if available)
    */
-  MemoryOptimizer.prototype.forceGC = function () {
+  MemoryOptimizer.prototype.forceGC = () => {
     if (typeof global !== "undefined" && global.gc) {
       global.gc();
       console.log("🗑️ Forced garbage collection");
@@ -140,7 +136,7 @@ var MemoryOptimizer = /** @class */ (function () {
   /**
    * Calculate memory growth rate
    */
-  MemoryOptimizer.prototype.calculateGrowthRate = function (snapshots) {
+  MemoryOptimizer.prototype.calculateGrowthRate = (snapshots) => {
     if (snapshots.length < 2) return 0;
     var first = snapshots[0];
     var last = snapshots[snapshots.length - 1];

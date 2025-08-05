@@ -1,15 +1,5 @@
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { Progress } from "@/components/ui/progress";
-import type { CancellationPolicies } from "@/hooks/patient/usePatientAppointments";
 import type {
   Activity,
   AlertTriangle,
@@ -20,6 +10,16 @@ import type {
   TrendingUp,
   XCircle,
 } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type { CancellationPolicies } from "@/hooks/patient/usePatientAppointments";
 
 /**
  * Appointment Status Tracker Component for NeonPro

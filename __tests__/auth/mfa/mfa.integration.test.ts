@@ -19,27 +19,10 @@
  * @author NeonPro Development Team
  */
 
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  jest,
-  beforeAll,
-  afterAll,
-} from "@jest/globals";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "@jest/globals";
 import { createClient } from "@supabase/supabase-js";
 import * as OTPAuth from "otpauth";
-import { MFAService, getMFAService } from "@/lib/auth/mfa";
-import {
-  MFASetupRequest,
-  MFAVerificationRequest,
-  MFAError,
-  MFASetupError,
-  MFAVerificationError,
-  MFARateLimitError,
-} from "@/types/auth";
+import { MFAService } from "@/lib/auth/mfa";
 
 // Test environment setup
 const TEST_SUPABASE_URL = process.env.TEST_SUPABASE_URL || "http://localhost:54321";
@@ -303,7 +286,7 @@ describe("MFA Integration Tests", () => {
         const auditLogs = await dbManager.getAuditLogs(mockUserId);
         const verifyLog = auditLogs.find((log) => log.action === "verify");
         expect(verifyLog).toBeDefined();
-        expect(verifyLog!.result).toBe("success");
+        expect(verifyLog?.result).toBe("success");
       });
 
       it("should reject invalid TOTP token", async () => {
@@ -323,7 +306,7 @@ describe("MFA Integration Tests", () => {
         // Verify audit log
         const auditLogs = await dbManager.getAuditLogs(mockUserId);
         const verifyLog = auditLogs.find((log) => log.action === "verify");
-        expect(verifyLog!.result).toBe("failure");
+        expect(verifyLog?.result).toBe("failure");
       });
 
       it("should handle TOTP token window tolerance", async () => {
@@ -437,7 +420,7 @@ describe("MFA Integration Tests", () => {
       // Assert
       expect(result.remainingAttempts).toBe(0);
       expect(result.lockedUntil).toBeDefined();
-      expect(result.lockedUntil!.getTime()).toBeGreaterThan(Date.now());
+      expect(result.lockedUntil?.getTime()).toBeGreaterThan(Date.now());
 
       // Verify audit log shows locked status
       const auditLogs = await dbManager.getAuditLogs(mockUserId);
@@ -513,8 +496,8 @@ describe("MFA Integration Tests", () => {
       const auditLogs = await dbManager.getAuditLogs(mockUserId);
       const bypassLog = auditLogs.find((log) => log.action === "bypass");
       expect(bypassLog).toBeDefined();
-      expect(bypassLog!.emergency_bypass).toBe(true);
-      expect(bypassLog!.metadata).toHaveProperty("reason");
+      expect(bypassLog?.emergency_bypass).toBe(true);
+      expect(bypassLog?.metadata).toHaveProperty("reason");
     });
 
     it("should enforce daily emergency bypass limit", async () => {
@@ -579,8 +562,8 @@ describe("MFA Integration Tests", () => {
         .eq("fingerprint", mockDeviceFingerprint);
 
       expect(trustedDevices).toHaveLength(1);
-      expect(trustedDevices![0].fingerprint).toBe(mockDeviceFingerprint);
-      expect(trustedDevices![0].user_agent).toBe(mockUserAgent);
+      expect(trustedDevices?.[0].fingerprint).toBe(mockDeviceFingerprint);
+      expect(trustedDevices?.[0].user_agent).toBe(mockUserAgent);
     });
   });
 

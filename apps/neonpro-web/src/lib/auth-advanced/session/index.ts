@@ -7,19 +7,19 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { EventEmitter } from "events";
-import type { SessionManager } from "./session-manager";
-import type { SecurityMonitor } from "./security-monitor";
-import type { DeviceManager } from "./device-manager";
 import type { AuditLogger } from "./audit-logger";
+import type { DeviceManager } from "./device-manager";
+import type { SecurityMonitor } from "./security-monitor";
+import type { SessionManager } from "./session-manager";
 import type {
-  UserSession,
-  SessionConfig,
-  SessionError,
+  DeviceFingerprint,
   DeviceRegistration,
   SessionAuditLog,
-  SessionSecurityEvent,
+  SessionConfig,
+  SessionError,
   SessionLocation,
-  DeviceFingerprint,
+  SessionSecurityEvent,
+  UserSession,
 } from "./types";
 
 interface SessionSystemConfig extends SessionConfig {
@@ -1028,7 +1028,7 @@ export class SessionSystem extends EventEmitter {
 }
 
 // Export types and classes
-export {
+export type {
   SessionSystemConfig,
   SessionCreationParams,
   SessionValidationResult,

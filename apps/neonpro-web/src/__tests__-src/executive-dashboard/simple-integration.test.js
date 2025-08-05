@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Executive Dashboard Simple Integration Test
  * Story 7.1: Executive Dashboard Implementation
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,40 +134,36 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var executive_dashboard_1 = require("../../lib/services/executive-dashboard");
 // Mock the Supabase client
-jest.mock("../../app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return {
-        from: jest.fn().mockReturnThis(),
-        select: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis(),
-        gte: jest.fn().mockReturnThis(),
-        lte: jest.fn().mockReturnThis(),
-        order: jest.fn().mockReturnValue({
-          data: [
-            {
-              id: "1",
-              kpi_name: "total_revenue",
-              kpi_value: 85000,
-              unit: "BRL",
-            },
-          ],
-          error: null,
-        }),
-      };
+jest.mock("../../app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => ({
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    gte: jest.fn().mockReturnThis(),
+    lte: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnValue({
+      data: [
+        {
+          id: "1",
+          kpi_name: "total_revenue",
+          kpi_value: 85000,
+          unit: "BRL",
+        },
+      ],
+      error: null,
     }),
-  };
-});
-describe("ExecutiveDashboard Integration Test", function () {
-  it("should create service instance", function () {
+  })),
+}));
+describe("ExecutiveDashboard Integration Test", () => {
+  it("should create service instance", () => {
     var service = new executive_dashboard_1.ExecutiveDashboardService();
     expect(service).toBeDefined();
   });
-  it("should have all required methods", function () {
+  it("should have all required methods", () => {
     var service = new executive_dashboard_1.ExecutiveDashboardService();
     expect(typeof service.getKPIs).toBe("function");
     expect(typeof service.getAlerts).toBe("function");
@@ -180,10 +173,10 @@ describe("ExecutiveDashboard Integration Test", function () {
     expect(typeof service.generateReport).toBe("function");
     expect(typeof service.comparePerformance).toBe("function");
   });
-  it("should fetch KPIs with mocked data", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should fetch KPIs with mocked data", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var service, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             service = new executive_dashboard_1.ExecutiveDashboardService();
@@ -199,6 +192,5 @@ describe("ExecutiveDashboard Integration Test", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

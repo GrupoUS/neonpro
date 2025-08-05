@@ -1,4 +1,3 @@
-"use strict";
 /**
  * API Routes Integration Tests
  * Tests subscription API endpoints and integration functionality
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -28,7 +27,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,8 +56,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -79,9 +76,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -140,16 +137,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var node_mocks_http_1 = require("node-mocks-http");
 var testUtils_1 = require("../utils/testUtils");
 // Mock API handler (to be imported when it exists)
-var mockSubscriptionHandler = function (req, res) {
-  return __awaiter(void 0, void 0, void 0, function () {
+var mockSubscriptionHandler = (req, res) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var subscription;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       if (req.method === "GET") {
         subscription = (0, testUtils_1.createMockSubscription)();
         res.status(200).json(subscription);
@@ -161,22 +158,21 @@ var mockSubscriptionHandler = function (req, res) {
       return [2 /*return*/];
     });
   });
-};
 // ============================================================================
 // API Integration Tests
 // ============================================================================
-(0, globals_1.describe)("Subscription API Routes", function () {
-  (0, globals_1.beforeEach)(function () {
+(0, globals_1.describe)("Subscription API Routes", () => {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
   });
   // ============================================================================
   // GET /api/subscription Tests
   // ============================================================================
-  (0, globals_1.describe)("GET /api/subscription", function () {
-    (0, globals_1.it)("should return subscription data for authenticated user", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("GET /api/subscription", () => {
+    (0, globals_1.it)("should return subscription data for authenticated user", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, data;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -198,12 +194,12 @@ var mockSubscriptionHandler = function (req, res) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return 401 for unauthenticated requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return 401 for unauthenticated requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, unauthenticatedHandler, data;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -212,14 +208,13 @@ var mockSubscriptionHandler = function (req, res) {
               })),
                 (req = _a.req),
                 (res = _a.res);
-              unauthenticatedHandler = function (req, res) {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              unauthenticatedHandler = (_req, res) =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     res.status(401).json({ error: "Unauthorized" });
                     return [2 /*return*/];
                   });
                 });
-              };
               return [4 /*yield*/, unauthenticatedHandler(req, res)];
             case 1:
               _b.sent();
@@ -229,12 +224,12 @@ var mockSubscriptionHandler = function (req, res) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, errorHandler;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -245,14 +240,13 @@ var mockSubscriptionHandler = function (req, res) {
               })),
                 (req = _a.req),
                 (res = _a.res);
-              errorHandler = function (req, res) {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              errorHandler = (_req, res) =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     res.status(500).json({ error: "Internal server error" });
                     return [2 /*return*/];
                   });
                 });
-              };
               return [4 /*yield*/, errorHandler(req, res)];
             case 1:
               _b.sent();
@@ -260,17 +254,17 @@ var mockSubscriptionHandler = function (req, res) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // ============================================================================
   // POST /api/subscription Tests
   // ============================================================================
-  (0, globals_1.describe)("POST /api/subscription", function () {
-    (0, globals_1.it)("should create new subscription successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("POST /api/subscription", () => {
+    (0, globals_1.it)("should create new subscription successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, data;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -294,12 +288,12 @@ var mockSubscriptionHandler = function (req, res) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, validationHandler;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -313,14 +307,13 @@ var mockSubscriptionHandler = function (req, res) {
               })),
                 (req = _a.req),
                 (res = _a.res);
-              validationHandler = function (req, res) {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              validationHandler = (_req, res) =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     res.status(400).json({ error: "Missing required fields" });
                     return [2 /*return*/];
                   });
                 });
-              };
               return [4 /*yield*/, validationHandler(req, res)];
             case 1:
               _b.sent();
@@ -328,17 +321,17 @@ var mockSubscriptionHandler = function (req, res) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // ============================================================================
   // Method Not Allowed Tests
   // ============================================================================
-  (0, globals_1.describe)("Unsupported HTTP Methods", function () {
-    (0, globals_1.it)("should return 405 for unsupported methods", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Unsupported HTTP Methods", () => {
+    (0, globals_1.it)("should return 405 for unsupported methods", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, data;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -355,12 +348,12 @@ var mockSubscriptionHandler = function (req, res) {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle OPTIONS requests correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle OPTIONS requests correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, optionsHandler;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -368,15 +361,14 @@ var mockSubscriptionHandler = function (req, res) {
               })),
                 (req = _a.req),
                 (res = _a.res);
-              optionsHandler = function (req, res) {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              optionsHandler = (_req, res) =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     res.setHeader("Allow", ["GET", "POST"]);
                     res.status(200).end();
                     return [2 /*return*/];
                   });
                 });
-              };
               return [4 /*yield*/, optionsHandler(req, res)];
             case 1:
               _b.sent();
@@ -385,7 +377,7 @@ var mockSubscriptionHandler = function (req, res) {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

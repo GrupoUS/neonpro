@@ -11,16 +11,14 @@
  * - Event analytics and monitoring
  */
 
-import type { createClient } from "@supabase/supabase-js";
 import type {
   BaseEvent,
-  EventType,
+  EventAnalytics,
+  EventFilter,
+  EventHandler,
   EventPriority,
   EventQueueItem,
-  EventHandler,
-  EventFilter,
-  EventAnalytics,
-  WebhookSystemConfig,
+  EventType,
 } from "./types";
 
 interface EventSystemConfig {
@@ -671,7 +669,7 @@ export class EventSystem {
     return result;
   }
 
-  private calculateEventsByStatus(events: any[]): Record<string, number> {
+  private calculateEventsByStatus(_events: any[]): Record<string, number> {
     // This would be calculated from event delivery records
     return {
       delivered: 0,
@@ -681,8 +679,8 @@ export class EventSystem {
   }
 
   private async calculateDeliveryMetrics(
-    events: any[],
-    period: { startDate: Date; endDate: Date },
+    _events: any[],
+    _period: { startDate: Date; endDate: Date },
   ): Promise<any> {
     // This would calculate delivery metrics from webhook delivery records
     return {
@@ -694,7 +692,7 @@ export class EventSystem {
     };
   }
 
-  private async calculateWebhookMetrics(period: { startDate: Date; endDate: Date }): Promise<any> {
+  private async calculateWebhookMetrics(_period: { startDate: Date; endDate: Date }): Promise<any> {
     // This would calculate webhook performance metrics
     return {
       totalWebhooks: 0,
@@ -706,8 +704,8 @@ export class EventSystem {
   }
 
   private async calculateErrorAnalysis(
-    events: any[],
-    period: { startDate: Date; endDate: Date },
+    _events: any[],
+    _period: { startDate: Date; endDate: Date },
   ): Promise<any> {
     // This would analyze errors from delivery records
     return {
@@ -717,7 +715,7 @@ export class EventSystem {
     };
   }
 
-  private async calculatePerformanceMetrics(period: {
+  private async calculatePerformanceMetrics(_period: {
     startDate: Date;
     endDate: Date;
   }): Promise<any> {

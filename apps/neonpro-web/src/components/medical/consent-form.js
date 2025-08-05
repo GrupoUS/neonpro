@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentForm = ConsentForm;
 var react_1 = require("react");
@@ -355,7 +352,6 @@ var CONSENT_METHODS = [
   },
 ];
 function ConsentForm(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     clinicId = _a.clinicId,
     formId = _a.formId,
@@ -448,20 +444,17 @@ function ConsentForm(_a) {
     newOption = _u[0],
     setNewOption = _u[1];
   // Load forms and responses
-  (0, react_1.useEffect)(
-    function () {
-      loadForms();
-      loadResponses();
-      if (formId) {
-        loadForm(formId);
-      }
-    },
-    [formId, patientId],
-  );
-  var loadForms = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadForms();
+    loadResponses();
+    if (formId) {
+      loadForm(formId);
+    }
+  }, [formId, patientId]);
+  var loadForms = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockForms;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mockForms = [
             {
@@ -557,11 +550,10 @@ function ConsentForm(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var loadResponses = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadResponses = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockResponses;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mockResponses = [
             {
@@ -590,18 +582,15 @@ function ConsentForm(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var loadForm = function (id) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadForm = (id) =>
+    __awaiter(this, void 0, void 0, function () {
       var form, initialData_1;
-      return __generator(this, function (_a) {
-        form = forms.find(function (f) {
-          return f.id === id;
-        });
+      return __generator(this, (_a) => {
+        form = forms.find((f) => f.id === id);
         if (form) {
           setCurrentForm(form);
           initialData_1 = {};
-          form.content.fields.forEach(function (field) {
+          form.content.fields.forEach((field) => {
             if (field.defaultValue !== undefined) {
               initialData_1[field.name] = field.defaultValue;
             }
@@ -611,8 +600,7 @@ function ConsentForm(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var validateField = function (field, value) {
+  var validateField = (field, value) => {
     if (field.isRequired && (!value || value === "")) {
       return "".concat(field.label, " \u00E9 obrigat\u00F3rio");
     }
@@ -651,11 +639,11 @@ function ConsentForm(_a) {
     }
     return null;
   };
-  var validateForm = function () {
+  var validateForm = () => {
     if (!currentForm) return false;
     var errors = {};
     var isValid = true;
-    currentForm.content.fields.forEach(function (field) {
+    currentForm.content.fields.forEach((field) => {
       var error = validateField(field, formData[field.name]);
       if (error) {
         errors[field.name] = error;
@@ -665,24 +653,24 @@ function ConsentForm(_a) {
     setValidationErrors(errors);
     return isValid;
   };
-  var handleFieldChange = function (fieldName, value) {
-    setFormData(function (prev) {
+  var handleFieldChange = (fieldName, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[fieldName] = value), _a));
     });
     // Clear validation error for this field
     if (validationErrors[fieldName]) {
-      setValidationErrors(function (prev) {
+      setValidationErrors((prev) => {
         var newErrors = __assign({}, prev);
         delete newErrors[fieldName];
         return newErrors;
       });
     }
   };
-  var handleSubmit = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!currentForm || !validateForm()) return [2 /*return*/];
         setIsLoading(true);
         try {
@@ -702,9 +690,7 @@ function ConsentForm(_a) {
               clinicId: clinicId,
             },
           };
-          setResponses(function (prev) {
-            return __spreadArray(__spreadArray([], prev, true), [response_1], false);
-          });
+          setResponses((prev) => __spreadArray(__spreadArray([], prev, true), [response_1], false));
           setCurrentResponse(response_1);
           onSubmit === null || onSubmit === void 0 ? void 0 : onSubmit(response_1);
           // Reset form
@@ -718,30 +704,28 @@ function ConsentForm(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var withdrawConsent = function (responseId, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var withdrawConsent = (responseId, reason) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
-          setResponses(function (prev) {
-            return prev.map(function (response) {
-              return response.id === responseId
+          setResponses((prev) =>
+            prev.map((response) =>
+              response.id === responseId
                 ? __assign(__assign({}, response), {
                     isActive: false,
                     withdrawnAt: new Date(),
                     withdrawalReason: reason,
                   })
-                : response;
-            });
-          });
+                : response,
+            ),
+          );
         } catch (error) {
           console.error("Erro ao retirar consentimento:", error);
         }
         return [2 /*return*/];
       });
     });
-  };
-  var addSection = function () {
+  var addSection = () => {
     var _a;
     if (!newSection.title) return;
     var section = {
@@ -753,7 +737,7 @@ function ConsentForm(_a) {
       isRequired: newSection.isRequired,
       fields: [],
     };
-    setNewForm(function (prev) {
+    setNewForm((prev) => {
       var _a;
       return __assign(__assign({}, prev), {
         content: __assign(__assign({}, prev.content), {
@@ -771,7 +755,7 @@ function ConsentForm(_a) {
     });
     setNewSection({ title: "", description: "", isRequired: false });
   };
-  var addField = function () {
+  var addField = () => {
     var _a;
     if (!newField.name || !newField.label || !newField.sectionId) return;
     var field = {
@@ -788,7 +772,7 @@ function ConsentForm(_a) {
       sectionId: newField.sectionId,
       metadata: {},
     };
-    setNewForm(function (prev) {
+    setNewForm((prev) => {
       var _a;
       return __assign(__assign({}, prev), {
         content: __assign(__assign({}, prev.content), {
@@ -805,19 +789,19 @@ function ConsentForm(_a) {
       });
     });
     // Add field to section
-    setNewForm(function (prev) {
-      return __assign(__assign({}, prev), {
+    setNewForm((prev) =>
+      __assign(__assign({}, prev), {
         content: __assign(__assign({}, prev.content), {
-          sections: prev.content.sections.map(function (section) {
-            return section.id === newField.sectionId
+          sections: prev.content.sections.map((section) =>
+            section.id === newField.sectionId
               ? __assign(__assign({}, section), {
                   fields: __spreadArray(__spreadArray([], section.fields, true), [field.id], false),
                 })
-              : section;
-          }),
+              : section,
+          ),
         }),
-      });
-    });
+      }),
+    );
     setNewField({
       name: "",
       label: "",
@@ -829,24 +813,24 @@ function ConsentForm(_a) {
       sectionId: "",
     });
   };
-  var addOption = function () {
+  var addOption = () => {
     if (!newOption.value || !newOption.label) return;
     var option = {
       value: newOption.value,
       label: newOption.label,
       description: newOption.description,
     };
-    setNewField(function (prev) {
-      return __assign(__assign({}, prev), {
+    setNewField((prev) =>
+      __assign(__assign({}, prev), {
         options: __spreadArray(__spreadArray([], prev.options, true), [option], false),
-      });
-    });
+      }),
+    );
     setNewOption({ value: "", label: "", description: "" });
   };
-  var saveForm = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveForm = () =>
+    __awaiter(this, void 0, void 0, function () {
       var form_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!newForm.title || !newForm.type) return [2 /*return*/];
         try {
           form_1 = {
@@ -867,9 +851,7 @@ function ConsentForm(_a) {
             createdBy: "current-user",
             metadata: newForm.metadata,
           };
-          setForms(function (prev) {
-            return __spreadArray(__spreadArray([], prev, true), [form_1], false);
-          });
+          setForms((prev) => __spreadArray(__spreadArray([], prev, true), [form_1], false));
           onSave === null || onSave === void 0 ? void 0 : onSave(form_1);
           setShowFormBuilder(false);
           setNewForm({
@@ -896,17 +878,14 @@ function ConsentForm(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var renderField = function (field) {
+  var renderField = (field) => {
     var _a, _b;
     var value = formData[field.name] || "";
     var error = validationErrors[field.name];
     var baseProps = {
       id: field.name,
       value: value,
-      onChange: function (e) {
-        return handleFieldChange(field.name, e.target ? e.target.value : e);
-      },
+      onChange: (e) => handleFieldChange(field.name, e.target ? e.target.value : e),
       placeholder: field.placeholder,
       className: error ? "border-red-500" : "",
     };
@@ -924,9 +903,7 @@ function ConsentForm(_a) {
         return (
           <select_1.Select
             value={value}
-            onValueChange={function (val) {
-              return handleFieldChange(field.name, val);
-            }}
+            onValueChange={(val) => handleFieldChange(field.name, val)}
           >
             <select_1.SelectTrigger className={error ? "border-red-500" : ""}>
               <select_1.SelectValue placeholder={field.placeholder} />
@@ -934,13 +911,11 @@ function ConsentForm(_a) {
             <select_1.SelectContent>
               {(_a = field.options) === null || _a === void 0
                 ? void 0
-                : _a.map(function (option) {
-                    return (
-                      <select_1.SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                : _a.map((option) => (
+                    <select_1.SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </select_1.SelectItem>
+                  ))}
             </select_1.SelectContent>
           </select_1.Select>
         );
@@ -948,25 +923,21 @@ function ConsentForm(_a) {
         return (
           <radio_group_1.RadioGroup
             value={value}
-            onValueChange={function (val) {
-              return handleFieldChange(field.name, val);
-            }}
+            onValueChange={(val) => handleFieldChange(field.name, val)}
           >
             {(_b = field.options) === null || _b === void 0
               ? void 0
-              : _b.map(function (option) {
-                  return (
-                    <div key={option.value} className="flex items-center space-x-2">
-                      <radio_group_1.RadioGroupItem
-                        value={option.value}
-                        id={"".concat(field.name, "_").concat(option.value)}
-                      />
-                      <label_1.Label htmlFor={"".concat(field.name, "_").concat(option.value)}>
-                        {option.label}
-                      </label_1.Label>
-                    </div>
-                  );
-                })}
+              : _b.map((option) => (
+                  <div key={option.value} className="flex items-center space-x-2">
+                    <radio_group_1.RadioGroupItem
+                      value={option.value}
+                      id={"".concat(field.name, "_").concat(option.value)}
+                    />
+                    <label_1.Label htmlFor={"".concat(field.name, "_").concat(option.value)}>
+                      {option.label}
+                    </label_1.Label>
+                  </div>
+                ))}
           </radio_group_1.RadioGroup>
         );
       case "checkbox":
@@ -975,31 +946,27 @@ function ConsentForm(_a) {
           var selectedValues_1 = Array.isArray(value) ? value : [];
           return (
             <div className="space-y-2">
-              {field.options.map(function (option) {
-                return (
-                  <div key={option.value} className="flex items-center space-x-2">
-                    <checkbox_1.Checkbox
-                      id={"".concat(field.name, "_").concat(option.value)}
-                      checked={selectedValues_1.includes(option.value)}
-                      onCheckedChange={function (checked) {
-                        var newValues = checked
-                          ? __spreadArray(
-                              __spreadArray([], selectedValues_1, true),
-                              [option.value],
-                              false,
-                            )
-                          : selectedValues_1.filter(function (v) {
-                              return v !== option.value;
-                            });
-                        handleFieldChange(field.name, newValues);
-                      }}
-                    />
-                    <label_1.Label htmlFor={"".concat(field.name, "_").concat(option.value)}>
-                      {option.label}
-                    </label_1.Label>
-                  </div>
-                );
-              })}
+              {field.options.map((option) => (
+                <div key={option.value} className="flex items-center space-x-2">
+                  <checkbox_1.Checkbox
+                    id={"".concat(field.name, "_").concat(option.value)}
+                    checked={selectedValues_1.includes(option.value)}
+                    onCheckedChange={(checked) => {
+                      var newValues = checked
+                        ? __spreadArray(
+                            __spreadArray([], selectedValues_1, true),
+                            [option.value],
+                            false,
+                          )
+                        : selectedValues_1.filter((v) => v !== option.value);
+                      handleFieldChange(field.name, newValues);
+                    }}
+                  />
+                  <label_1.Label htmlFor={"".concat(field.name, "_").concat(option.value)}>
+                    {option.label}
+                  </label_1.Label>
+                </div>
+              ))}
             </div>
           );
         } else {
@@ -1009,9 +976,7 @@ function ConsentForm(_a) {
               <checkbox_1.Checkbox
                 id={field.name}
                 checked={!!value}
-                onCheckedChange={function (checked) {
-                  return handleFieldChange(field.name, checked);
-                }}
+                onCheckedChange={(checked) => handleFieldChange(field.name, checked)}
               />
               <label_1.Label htmlFor={field.name}>{field.label}</label_1.Label>
             </div>
@@ -1035,9 +1000,7 @@ function ConsentForm(_a) {
               <checkbox_1.Checkbox
                 id={field.name}
                 checked={!!value}
-                onCheckedChange={function (checked) {
-                  return handleFieldChange(field.name, checked);
-                }}
+                onCheckedChange={(checked) => handleFieldChange(field.name, checked)}
                 className={error ? "border-red-500" : ""}
               />
               <label_1.Label htmlFor={field.name} className="text-sm">
@@ -1050,28 +1013,12 @@ function ConsentForm(_a) {
         return <input_1.Input {...baseProps} />;
     }
   };
-  var getFormTypeInfo = function (type) {
-    return (
-      FORM_TYPES.find(function (t) {
-        return t.value === type;
-      }) || FORM_TYPES[0]
-    );
-  };
-  var getDataCategoryInfo = function (category) {
-    return (
-      DATA_CATEGORIES.find(function (c) {
-        return c.value === category;
-      }) || DATA_CATEGORIES[0]
-    );
-  };
-  var getLegalBasisInfo = function (type) {
-    return (
-      LEGAL_BASIS_TYPES.find(function (b) {
-        return b.value === type;
-      }) || LEGAL_BASIS_TYPES[0]
-    );
-  };
-  var filteredForms = forms.filter(function (form) {
+  var getFormTypeInfo = (type) => FORM_TYPES.find((t) => t.value === type) || FORM_TYPES[0];
+  var getDataCategoryInfo = (category) =>
+    DATA_CATEGORIES.find((c) => c.value === category) || DATA_CATEGORIES[0];
+  var getLegalBasisInfo = (type) =>
+    LEGAL_BASIS_TYPES.find((b) => b.value === type) || LEGAL_BASIS_TYPES[0];
+  var filteredForms = forms.filter((form) => {
     var matchesSearch =
       form.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       form.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1095,60 +1042,52 @@ function ConsentForm(_a) {
         <card_1.Card>
           <card_1.CardContent className="p-6">
             <form
-              onSubmit={function (e) {
+              onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit();
               }}
               className="space-y-6"
             >
-              {currentForm.content.sections.map(function (section) {
-                return (
-                  <div key={section.id} className="space-y-4">
-                    <div className="border-b pb-2">
-                      <h2 className="text-xl font-semibold text-gray-900">{section.title}</h2>
-                      {section.description && (
-                        <p className="text-gray-600 mt-1">{section.description}</p>
-                      )}
-                    </div>
-
-                    {currentForm.content.fields
-                      .filter(function (field) {
-                        return field.sectionId === section.id;
-                      })
-                      .sort(function (a, b) {
-                        return a.order - b.order;
-                      })
-                      .map(function (field) {
-                        return (
-                          <div key={field.id} className="space-y-2">
-                            {field.type !== "consent" && field.type !== "checkbox" && (
-                              <label_1.Label
-                                htmlFor={field.name}
-                                className="flex items-center space-x-1"
-                              >
-                                <span>{field.label}</span>
-                                {field.isRequired && <span className="text-red-500">*</span>}
-                              </label_1.Label>
-                            )}
-
-                            {renderField(field)}
-
-                            {field.helpText && field.type !== "consent" && (
-                              <p className="text-sm text-gray-500">{field.helpText}</p>
-                            )}
-
-                            {validationErrors[field.name] && (
-                              <p className="text-sm text-red-600 flex items-center space-x-1">
-                                <lucide_react_1.AlertCircle className="w-4 h-4" />
-                                <span>{validationErrors[field.name]}</span>
-                              </p>
-                            )}
-                          </div>
-                        );
-                      })}
+              {currentForm.content.sections.map((section) => (
+                <div key={section.id} className="space-y-4">
+                  <div className="border-b pb-2">
+                    <h2 className="text-xl font-semibold text-gray-900">{section.title}</h2>
+                    {section.description && (
+                      <p className="text-gray-600 mt-1">{section.description}</p>
+                    )}
                   </div>
-                );
-              })}
+
+                  {currentForm.content.fields
+                    .filter((field) => field.sectionId === section.id)
+                    .sort((a, b) => a.order - b.order)
+                    .map((field) => (
+                      <div key={field.id} className="space-y-2">
+                        {field.type !== "consent" && field.type !== "checkbox" && (
+                          <label_1.Label
+                            htmlFor={field.name}
+                            className="flex items-center space-x-1"
+                          >
+                            <span>{field.label}</span>
+                            {field.isRequired && <span className="text-red-500">*</span>}
+                          </label_1.Label>
+                        )}
+
+                        {renderField(field)}
+
+                        {field.helpText && field.type !== "consent" && (
+                          <p className="text-sm text-gray-500">{field.helpText}</p>
+                        )}
+
+                        {validationErrors[field.name] && (
+                          <p className="text-sm text-red-600 flex items-center space-x-1">
+                            <lucide_react_1.AlertCircle className="w-4 h-4" />
+                            <span>{validationErrors[field.name]}</span>
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              ))}
 
               <div className="flex items-center justify-between pt-6 border-t">
                 <div className="text-sm text-gray-500">
@@ -1205,11 +1144,11 @@ function ConsentForm(_a) {
                     <input_1.Input
                       id="formTitle"
                       value={newForm.title}
-                      onChange={function (e) {
-                        return setNewForm(function (prev) {
-                          return __assign(__assign({}, prev), { title: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setNewForm((prev) =>
+                          __assign(__assign({}, prev), { title: e.target.value }),
+                        )
+                      }
                       placeholder="Ex: Termo de Consentimento para Cirurgia"
                     />
                   </div>
@@ -1218,26 +1157,22 @@ function ConsentForm(_a) {
                     <label_1.Label htmlFor="formType">Tipo de Formulário *</label_1.Label>
                     <select_1.Select
                       value={newForm.type}
-                      onValueChange={function (value) {
-                        return setNewForm(function (prev) {
-                          return __assign(__assign({}, prev), { type: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setNewForm((prev) => __assign(__assign({}, prev), { type: value }))
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o tipo" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {FORM_TYPES.map(function (type) {
-                          return (
-                            <select_1.SelectItem key={type.value} value={type.value}>
-                              <div className="flex items-center space-x-2">
-                                {type.icon}
-                                <span>{type.label}</span>
-                              </div>
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {FORM_TYPES.map((type) => (
+                          <select_1.SelectItem key={type.value} value={type.value}>
+                            <div className="flex items-center space-x-2">
+                              {type.icon}
+                              <span>{type.label}</span>
+                            </div>
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -1248,11 +1183,11 @@ function ConsentForm(_a) {
                   <textarea_1.Textarea
                     id="formDescription"
                     value={newForm.description}
-                    onChange={function (e) {
-                      return setNewForm(function (prev) {
-                        return __assign(__assign({}, prev), { description: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setNewForm((prev) =>
+                        __assign(__assign({}, prev), { description: e.target.value }),
+                      )
+                    }
                     placeholder="Descreva o propósito e contexto do formulário"
                     rows={3}
                   />
@@ -1262,9 +1197,7 @@ function ConsentForm(_a) {
                   <button_1.Button
                     type="button"
                     variant="outline"
-                    onClick={function () {
-                      return setShowFormBuilder(false);
-                    }}
+                    onClick={() => setShowFormBuilder(false)}
                   >
                     Cancelar
                   </button_1.Button>
@@ -1286,9 +1219,7 @@ function ConsentForm(_a) {
             <input_1.Input
               placeholder="Buscar formulários..."
               value={searchTerm}
-              onChange={function (e) {
-                return setSearchTerm(e.target.value);
-              }}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -1299,16 +1230,14 @@ function ConsentForm(_a) {
           </select_1.SelectTrigger>
           <select_1.SelectContent>
             <select_1.SelectItem value="">Todos os tipos</select_1.SelectItem>
-            {FORM_TYPES.map(function (type) {
-              return (
-                <select_1.SelectItem key={type.value} value={type.value}>
-                  <div className="flex items-center space-x-2">
-                    {type.icon}
-                    <span>{type.label}</span>
-                  </div>
-                </select_1.SelectItem>
-              );
-            })}
+            {FORM_TYPES.map((type) => (
+              <select_1.SelectItem key={type.value} value={type.value}>
+                <div className="flex items-center space-x-2">
+                  {type.icon}
+                  <span>{type.label}</span>
+                </div>
+              </select_1.SelectItem>
+            ))}
           </select_1.SelectContent>
         </select_1.Select>
       </div>
@@ -1333,18 +1262,14 @@ function ConsentForm(_a) {
                       ? "Tente ajustar os filtros de busca"
                       : "Crie seu primeiro formulário de consentimento"}
                   </p>
-                  <button_1.Button
-                    onClick={function () {
-                      return setShowFormBuilder(true);
-                    }}
-                  >
+                  <button_1.Button onClick={() => setShowFormBuilder(true)}>
                     <lucide_react_1.Plus className="w-4 h-4 mr-2" />
                     Criar Formulário
                   </button_1.Button>
                 </card_1.CardContent>
               </card_1.Card>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredForms.map(function (form) {
+                {filteredForms.map((form) => {
                   var typeInfo = getFormTypeInfo(form.type);
                   return (
                     <card_1.Card key={form.id} className="hover:shadow-md transition-shadow">
@@ -1398,7 +1323,7 @@ function ConsentForm(_a) {
                             <div className="space-y-1">
                               <span className="text-sm text-gray-600">Dados:</span>
                               <div className="flex flex-wrap gap-1">
-                                {form.dataCategories.slice(0, 2).map(function (category) {
+                                {form.dataCategories.slice(0, 2).map((category) => {
                                   var categoryInfo = getDataCategoryInfo(category);
                                   return (
                                     <badge_1.Badge
@@ -1430,16 +1355,14 @@ function ConsentForm(_a) {
                               <button_1.Button
                                 variant="outline"
                                 size="sm"
-                                onClick={function () {
-                                  return loadForm(form.id);
-                                }}
+                                onClick={() => loadForm(form.id)}
                               >
                                 <lucide_react_1.Eye className="w-3 h-3" />
                               </button_1.Button>
                               <button_1.Button
                                 variant="outline"
                                 size="sm"
-                                onClick={function () {
+                                onClick={() => {
                                   setCurrentForm(form);
                                   setSelectedTab("responses");
                                 }}
@@ -1471,11 +1394,9 @@ function ConsentForm(_a) {
                 </card_1.CardContent>
               </card_1.Card>
             : <div className="space-y-4">
-                {responses.map(function (response) {
+                {responses.map((response) => {
                   var _a;
-                  var form = forms.find(function (f) {
-                    return f.id === response.formId;
-                  });
+                  var form = forms.find((f) => f.id === response.formId);
                   var typeInfo = form ? getFormTypeInfo(form.type) : null;
                   return (
                     <card_1.Card key={response.id}>
@@ -1520,9 +1441,9 @@ function ConsentForm(_a) {
                             <div>
                               <span className="text-gray-600">Método:</span>
                               <div className="font-medium">
-                                {((_a = CONSENT_METHODS.find(function (m) {
-                                  return m.value === response.consentMethod;
-                                })) === null || _a === void 0
+                                {((_a = CONSENT_METHODS.find(
+                                  (m) => m.value === response.consentMethod,
+                                )) === null || _a === void 0
                                   ? void 0
                                   : _a.label) || response.consentMethod}
                               </div>
@@ -1604,11 +1525,7 @@ function ConsentForm(_a) {
                   <lucide_react_1.CheckCircle className="w-8 h-8 text-green-600" />
                   <div>
                     <div className="text-2xl font-bold">
-                      {
-                        responses.filter(function (r) {
-                          return r.isActive;
-                        }).length
-                      }
+                      {responses.filter((r) => r.isActive).length}
                     </div>
                     <div className="text-sm text-gray-600">Consentimentos Ativos</div>
                   </div>
@@ -1622,11 +1539,7 @@ function ConsentForm(_a) {
                   <lucide_react_1.X className="w-8 h-8 text-red-600" />
                   <div>
                     <div className="text-2xl font-bold">
-                      {
-                        responses.filter(function (r) {
-                          return !r.isActive;
-                        }).length
-                      }
+                      {responses.filter((r) => !r.isActive).length}
                     </div>
                     <div className="text-sm text-gray-600">Consentimentos Retirados</div>
                   </div>
@@ -1640,11 +1553,7 @@ function ConsentForm(_a) {
                   <lucide_react_1.Shield className="w-8 h-8 text-purple-600" />
                   <div>
                     <div className="text-2xl font-bold">
-                      {
-                        responses.filter(function (r) {
-                          return r.consentMethod === "digital_signature";
-                        }).length
-                      }
+                      {responses.filter((r) => r.consentMethod === "digital_signature").length}
                     </div>
                     <div className="text-sm text-gray-600">Assinaturas Digitais</div>
                   </div>

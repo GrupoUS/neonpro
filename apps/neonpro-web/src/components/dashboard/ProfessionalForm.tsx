@@ -1,9 +1,32 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { useRouter } from "next/navigation";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  Award,
+  Briefcase,
+  Calendar,
+  Certificate,
+  FileText,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Save,
+  Star,
+  Stethoscope,
+  Trash2,
+  Upload,
+  User,
+  X,
+} from "lucide-react";
+import type { useRouter } from "next/navigation";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
+import type { z } from "zod";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,28 +34,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Badge } from "@/components/ui/badge";
 import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Dialog,
@@ -43,48 +44,48 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { toast } from "sonner";
 import type {
-  Save,
-  X,
-  Plus,
-  Trash2,
-  Upload,
-  FileText,
-  Certificate,
-  User,
-  Briefcase,
-  Star,
-  Calendar,
-  Phone,
-  Mail,
-  MapPin,
-  Award,
-  Stethoscope,
-} from "lucide-react";
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
+import type {
+  createCredential,
+  createProfessional,
+  createService,
+  getProfessional,
+  getSpecialties,
+  updateProfessional,
+} from "@/lib/supabase/professionals";
+import type {
+  EmploymentStatus,
   Professional,
   ProfessionalCredential,
-  ProfessionalSpecialty,
   ProfessionalService,
-  EmploymentStatus,
+  ProfessionalSpecialty,
   ProfessionalStatus,
 } from "@/lib/types/professional";
 import type {
+  CredentialCreateSchema,
   ProfessionalCreateSchema,
   ProfessionalUpdateSchema,
-  CredentialCreateSchema,
   ServiceCreateSchema,
 } from "@/lib/validations/professional";
-import type {
-  createProfessional,
-  updateProfessional,
-  getProfessional,
-  createCredential,
-  createService,
-  getSpecialties,
-} from "@/lib/supabase/professionals";
-import type { z } from "zod";
 
 interface ProfessionalFormProps {
   professionalId?: string;

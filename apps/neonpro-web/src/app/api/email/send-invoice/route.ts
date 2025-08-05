@@ -1,9 +1,9 @@
+import type { renderToBuffer } from "@react-pdf/renderer";
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
+import type { z } from "zod";
 import type { sendInvoiceEmail } from "@/lib/payments/email";
 import type { generateInvoicePDF } from "@/lib/payments/pdf";
-import type { renderToBuffer } from "@react-pdf/renderer";
-import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
 
 const sendInvoiceSchema = z.object({
   invoiceId: z.string().uuid("ID da fatura inválido"),

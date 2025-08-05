@@ -10,21 +10,21 @@
 import type { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import type {
-  ConsentType,
-  ConsentStatus,
-  LegalBasis,
-  ConsentRecord,
-  DataSubjectRight,
-  DataSubjectRequest,
-  RequestStatus,
   AuditEventType,
-  LGPDAuditLog,
-  SensitiveDataType,
+  ConsentCheckResult,
+  ConsentRecord,
+  ConsentStatus,
+  ConsentType,
+  DataSubjectRequest,
+  DataSubjectRight,
   EncryptedData,
   EncryptionConfig,
-  LGPDContext,
-  ConsentCheckResult,
+  LegalBasis,
   LGPDApiResponse,
+  LGPDAuditLog,
+  LGPDContext,
+  RequestStatus,
+  SensitiveDataType,
 } from "../../types/lgpd";
 
 // ============================================================================
@@ -44,8 +44,8 @@ export class LGPDEncryptionService {
     return crypto.pbkdf2Sync(
       password,
       salt,
-      this.DEFAULT_CONFIG.iterations,
-      this.DEFAULT_CONFIG.keySize,
+      LGPDEncryptionService.DEFAULT_CONFIG.iterations,
+      LGPDEncryptionService.DEFAULT_CONFIG.keySize,
       "sha512",
     );
   }
@@ -55,11 +55,11 @@ export class LGPDEncryptionService {
    */
   static encrypt(data: string, masterKey: string): EncryptedData {
     try {
-      const salt = crypto.randomBytes(this.DEFAULT_CONFIG.saltSize);
-      const iv = crypto.randomBytes(this.DEFAULT_CONFIG.ivSize);
-      const key = this.getEncryptionKey(masterKey, salt);
+      const salt = crypto.randomBytes(LGPDEncryptionService.DEFAULT_CONFIG.saltSize);
+      const iv = crypto.randomBytes(LGPDEncryptionService.DEFAULT_CONFIG.ivSize);
+      const key = LGPDEncryptionService.getEncryptionKey(masterKey, salt);
 
-      const cipher = crypto.createCipher(this.DEFAULT_CONFIG.algorithm, key);
+      const cipher = crypto.createCipher(LGPDEncryptionService.DEFAULT_CONFIG.algorithm, key);
       cipher.setAAD(Buffer.from("lgpd-compliance"));
 
       let encrypted = cipher.update(data, "utf8", "hex");
@@ -71,7 +71,7 @@ export class LGPDEncryptionService {
         data: encrypted + ":" + authTag.toString("hex"),
         iv: iv.toString("hex"),
         salt: salt.toString("hex"),
-        algorithm: this.DEFAULT_CONFIG.algorithm,
+        algorithm: LGPDEncryptionService.DEFAULT_CONFIG.algorithm,
         timestamp: new Date(),
       };
     } catch (error) {
@@ -86,7 +86,7 @@ export class LGPDEncryptionService {
     try {
       const salt = Buffer.from(encryptedData.salt, "hex");
       const iv = Buffer.from(encryptedData.iv, "hex");
-      const key = this.getEncryptionKey(masterKey, salt);
+      const key = LGPDEncryptionService.getEncryptionKey(masterKey, salt);
 
       const [encrypted, authTagHex] = encryptedData.data.split(":");
       const authTag = Buffer.from(authTagHex, "hex");
@@ -524,17 +524,17 @@ export { LGPDComplianceService as LGPDCore };
 
 // Export types that are being imported
 export type {
-  ConsentType,
-  ConsentStatus,
-  LegalBasis,
   AuditEventType,
+  ConsentStatus,
+  ConsentType,
+  LegalBasis,
 } from "../../types/lgpd";
-
 // Export DataSubjectRight as DataSubjectRequestType for compatibility
-export { DataSubjectRight as DataSubjectRequestType } from "../../types/lgpd";
-
 // Export RequestStatus as DataSubjectRequestStatus for compatibility
-export { RequestStatus as DataSubjectRequestStatus } from "../../types/lgpd";
+export {
+  DataSubjectRight as DataSubjectRequestType,
+  RequestStatus as DataSubjectRequestStatus,
+} from "../../types/lgpd";
 
 // Export the main LGPDManager class
 export { LGPDComplianceService as LGPDManager };

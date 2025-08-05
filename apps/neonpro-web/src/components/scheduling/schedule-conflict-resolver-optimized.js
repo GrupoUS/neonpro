@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var lodash_1 = require("lodash");
@@ -172,45 +169,47 @@ var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 // Optimized API hooks with caching and debouncing
-var useOptimizedConflictApi = function () {
+var useOptimizedConflictApi = () => {
   var queryClient = (0, react_query_1.useQueryClient)();
   var requestCache = (0, react_1.useRef)(new Map());
   var batchQueue = (0, react_1.useRef)([]);
   var batchTimer = (0, react_1.useRef)(null);
   // Debounced search function
   var debouncedSearch = (0, react_1.useCallback)(
-    (0, lodash_1.debounce)(function (searchTerm, filters) {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          return [
+    (0, lodash_1.debounce)(
+      (searchTerm, filters) =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => [
             2 /*return*/,
             queryClient.invalidateQueries({
               queryKey: ["conflicts", "search", searchTerm, filters],
             }),
-          ];
-        });
-      });
-    }, 300),
+          ]);
+        }),
+      300,
+    ),
     [queryClient],
   );
   // Request deduplication
-  var deduplicatedRequest = (0, react_1.useCallback)(function (key, requestFn) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var promise;
-      return __generator(this, function (_a) {
-        if (requestCache.current.has(key)) {
-          return [2 /*return*/, requestCache.current.get(key)];
-        }
-        promise = requestFn().finally(function () {
-          requestCache.current.delete(key);
+  var deduplicatedRequest = (0, react_1.useCallback)(
+    (key, requestFn) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var promise;
+        return __generator(this, (_a) => {
+          if (requestCache.current.has(key)) {
+            return [2 /*return*/, requestCache.current.get(key)];
+          }
+          promise = requestFn().finally(() => {
+            requestCache.current.delete(key);
+          });
+          requestCache.current.set(key, promise);
+          return [2 /*return*/, promise];
         });
-        requestCache.current.set(key, promise);
-        return [2 /*return*/, promise];
-      });
-    });
-  }, []);
+      }),
+    [],
+  );
   // Batch request processing
-  var processBatch = (0, react_1.useCallback)(function () {
+  var processBatch = (0, react_1.useCallback)(() => {
     if (batchQueue.current.length === 0) return;
     var batch = __spreadArray([], batchQueue.current, true);
     batchQueue.current = [];
@@ -219,17 +218,13 @@ var useOptimizedConflictApi = function () {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        requests: batch.map(function (item) {
-          return { id: item.id };
-        }),
+        requests: batch.map((item) => ({ id: item.id })),
         timestamp: new Date().toISOString(),
       }),
     })
-      .then(function (res) {
-        return res.json();
-      })
-      .then(function (data) {
-        batch.forEach(function (item, index) {
+      .then((res) => res.json())
+      .then((data) => {
+        batch.forEach((item, index) => {
           if (data.results && data.results[index]) {
             item.resolve(data.results[index]);
           } else {
@@ -237,24 +232,21 @@ var useOptimizedConflictApi = function () {
           }
         });
       })
-      .catch(function (error) {
-        batch.forEach(function (item) {
-          return item.reject(error);
-        });
+      .catch((error) => {
+        batch.forEach((item) => item.reject(error));
       });
     return batchRequest;
   }, []);
   // Batched conflict check
   var batchedConflictCheck = (0, react_1.useCallback)(
-    function (conflictId) {
-      return new Promise(function (resolve, reject) {
+    (conflictId) =>
+      new Promise((resolve, reject) => {
         batchQueue.current.push({ id: conflictId, resolve: resolve, reject: reject });
         if (batchTimer.current) {
           clearTimeout(batchTimer.current);
         }
         batchTimer.current = setTimeout(processBatch, 50); // 50ms batch window
-      });
-    },
+      }),
     [processBatch],
   );
   return {
@@ -264,10 +256,10 @@ var useOptimizedConflictApi = function () {
   };
 };
 // Intelligent cache management with TTL
-var useCacheManager = function () {
+var useCacheManager = () => {
   var queryClient = (0, react_query_1.useQueryClient)();
   var invalidateConflictCache = (0, react_1.useCallback)(
-    function (conflictId) {
+    (conflictId) => {
       if (conflictId) {
         queryClient.invalidateQueries({ queryKey: ["conflicts", conflictId] });
       } else {
@@ -277,13 +269,13 @@ var useCacheManager = function () {
     [queryClient],
   );
   var setCachedData = (0, react_1.useCallback)(
-    function (key, data, ttl) {
+    (key, data, ttl) => {
       if (ttl === void 0) {
         ttl = 300000;
       }
       queryClient.setQueryData(key, data);
       // Set TTL for automatic invalidation
-      setTimeout(function () {
+      setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: key });
       }, ttl);
     },
@@ -291,7 +283,7 @@ var useCacheManager = function () {
   );
   return { invalidateConflictCache: invalidateConflictCache, setCachedData: setCachedData };
 }; // Main component with optimized API usage
-var ScheduleConflictResolverOptimized = function () {
+var ScheduleConflictResolverOptimized = () => {
   var _a = (0, react_1.useState)(""),
     searchTerm = _a[0],
     setSearchTerm = _a[1];
@@ -318,19 +310,19 @@ var ScheduleConflictResolverOptimized = function () {
   // Optimized conflicts query with caching
   var _g = (0, react_query_1.useQuery)({
       queryKey: ["conflicts", "list", searchTerm, filters],
-      queryFn: function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var cacheKey;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             cacheKey = "conflicts-".concat(
               JSON.stringify({ searchTerm: searchTerm, filters: filters }),
             );
             return [
               2 /*return*/,
-              deduplicatedRequest(cacheKey, function () {
-                return __awaiter(void 0, void 0, void 0, function () {
+              deduplicatedRequest(cacheKey, () =>
+                __awaiter(void 0, void 0, void 0, function () {
                   var response, result;
-                  return __generator(this, function (_a) {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [
@@ -360,17 +352,16 @@ var ScheduleConflictResolverOptimized = function () {
                         return [2 /*return*/, result.data];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           });
-        });
-      },
+        }),
       staleTime: 60000, // 1 minute cache
       gcTime: 300000, // 5 minutes garbage collection
       refetchOnWindowFocus: false,
       refetchInterval: false,
-      retry: function (failureCount, error) {
+      retry: (failureCount, error) => {
         var _a, _b;
         // Smart retry logic for healthcare applications
         if (
@@ -394,10 +385,10 @@ var ScheduleConflictResolverOptimized = function () {
     refetchConflicts = _g.refetch;
   // Optimized resolution mutation with batch processing
   var resolveConflictsMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (resolutionData) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    mutationFn: (resolutionData) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var response, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsResolving(true);
@@ -431,9 +422,8 @@ var ScheduleConflictResolverOptimized = function () {
               return [2 /*return*/, result.data];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
+      }),
+    onSuccess: (data) => {
       // Invalidate relevant caches
       invalidateConflictCache();
       setSelectedConflicts([]);
@@ -444,7 +434,7 @@ var ScheduleConflictResolverOptimized = function () {
           .concat(data.cancelled, " cancelled"),
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       setIsResolving(false);
       sonner_1.toast.error("Failed to resolve conflicts", {
         description: error.message,
@@ -453,7 +443,7 @@ var ScheduleConflictResolverOptimized = function () {
   });
   // Debounced search handler
   var handleSearch = (0, react_1.useCallback)(
-    function (value) {
+    (value) => {
       setSearchTerm(value);
       debouncedSearch(value, filters);
     },
@@ -461,7 +451,7 @@ var ScheduleConflictResolverOptimized = function () {
   );
   // Optimized filter change handler
   var handleFilterChange = (0, react_1.useCallback)(
-    function (newFilters) {
+    (newFilters) => {
       setFilters(newFilters);
       // Cache previous results while loading new ones
       var currentData = conflictsData;
@@ -472,30 +462,21 @@ var ScheduleConflictResolverOptimized = function () {
     [conflictsData, searchTerm, setCachedData],
   );
   // Memoized conflict statistics
-  var conflictStats = (0, react_1.useMemo)(
-    function () {
-      if (!conflictsData) return null;
-      return {
-        total: conflictsData.length,
-        critical: conflictsData.filter(function (c) {
-          return c.severity === "critical";
-        }).length,
-        high: conflictsData.filter(function (c) {
-          return c.severity === "high";
-        }).length,
-        pending: conflictsData.filter(function (c) {
-          return !c.suggestedResolutions.length;
-        }).length,
-      };
-    },
-    [conflictsData],
-  );
+  var conflictStats = (0, react_1.useMemo)(() => {
+    if (!conflictsData) return null;
+    return {
+      total: conflictsData.length,
+      critical: conflictsData.filter((c) => c.severity === "critical").length,
+      high: conflictsData.filter((c) => c.severity === "high").length,
+      pending: conflictsData.filter((c) => !c.suggestedResolutions.length).length,
+    };
+  }, [conflictsData]);
   // Batch resolution handler
   var handleBatchResolve = (0, react_1.useCallback)(
-    function (resolutionType) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (resolutionType) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var selectedData, hasEmergency;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (selectedConflicts.length === 0) {
@@ -505,12 +486,8 @@ var ScheduleConflictResolverOptimized = function () {
               selectedData =
                 (conflictsData === null || conflictsData === void 0
                   ? void 0
-                  : conflictsData.filter(function (c) {
-                      return selectedConflicts.includes(c.id);
-                    })) || [];
-              hasEmergency = selectedData.some(function (c) {
-                return c.metadata.emergencyFlag;
-              });
+                  : conflictsData.filter((c) => selectedConflicts.includes(c.id))) || [];
+              hasEmergency = selectedData.some((c) => c.metadata.emergencyFlag);
               if (hasEmergency) {
                 sonner_1.toast.warning(
                   "Emergency cases require individual resolution for compliance",
@@ -534,49 +511,41 @@ var ScheduleConflictResolverOptimized = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [selectedConflicts, conflictsData, resolveConflictsMutation],
   );
   // Real-time conflict detection (optimized)
-  (0, react_1.useEffect)(
-    function () {
-      var eventSource = new EventSource("/api/scheduling/conflicts/stream");
-      eventSource.onmessage = function (event) {
-        var newConflict = JSON.parse(event.data);
-        // Update cache with new conflict
-        if (conflictsData) {
-          var updatedData = __spreadArray([newConflict], conflictsData, true);
-          setCachedData(["conflicts", "list", searchTerm, filters], updatedData, 60000);
-        }
-        // Show notification for critical conflicts
-        if (newConflict.severity === "critical") {
-          sonner_1.toast.error("Critical conflict detected: ".concat(newConflict.description), {
-            action: {
-              label: "Resolve",
-              onClick: function () {
-                return setSelectedConflicts([newConflict.id]);
-              },
-            },
-          });
-        }
-      };
-      eventSource.onerror = function () {
-        console.warn("Conflict stream disconnected, falling back to polling");
-        // Fallback to periodic refresh
-        var interval = setInterval(function () {
-          refetchConflicts();
-        }, 30000);
-        return function () {
-          return clearInterval(interval);
-        };
-      };
-      return function () {
-        eventSource.close();
-      };
-    },
-    [conflictsData, searchTerm, filters, setCachedData, refetchConflicts],
-  );
+  (0, react_1.useEffect)(() => {
+    var eventSource = new EventSource("/api/scheduling/conflicts/stream");
+    eventSource.onmessage = (event) => {
+      var newConflict = JSON.parse(event.data);
+      // Update cache with new conflict
+      if (conflictsData) {
+        var updatedData = __spreadArray([newConflict], conflictsData, true);
+        setCachedData(["conflicts", "list", searchTerm, filters], updatedData, 60000);
+      }
+      // Show notification for critical conflicts
+      if (newConflict.severity === "critical") {
+        sonner_1.toast.error("Critical conflict detected: ".concat(newConflict.description), {
+          action: {
+            label: "Resolve",
+            onClick: () => setSelectedConflicts([newConflict.id]),
+          },
+        });
+      }
+    };
+    eventSource.onerror = () => {
+      console.warn("Conflict stream disconnected, falling back to polling");
+      // Fallback to periodic refresh
+      var interval = setInterval(() => {
+        refetchConflicts();
+      }, 30000);
+      return () => clearInterval(interval);
+    };
+    return () => {
+      eventSource.close();
+    };
+  }, [conflictsData, searchTerm, filters, setCachedData, refetchConflicts]);
   return (
     <div className="space-y-6 p-6">
       [Content continues...] {/* Performance Dashboard */}
@@ -649,9 +618,7 @@ var ScheduleConflictResolverOptimized = function () {
                 <input_1.Input
                   placeholder="Search conflicts by patient, professional, or description..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return handleSearch(e.target.value);
-                  }}
+                  onChange={(e) => handleSearch(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -660,11 +627,9 @@ var ScheduleConflictResolverOptimized = function () {
             <div className="flex gap-2">
               <select
                 value={filters.severity}
-                onChange={function (e) {
-                  return handleFilterChange(
-                    __assign(__assign({}, filters), { severity: e.target.value }),
-                  );
-                }}
+                onChange={(e) =>
+                  handleFilterChange(__assign(__assign({}, filters), { severity: e.target.value }))
+                }
                 className="px-3 py-2 border rounded-md"
               >
                 <option value="all">All Severities</option>
@@ -676,11 +641,9 @@ var ScheduleConflictResolverOptimized = function () {
 
               <select
                 value={filters.type}
-                onChange={function (e) {
-                  return handleFilterChange(
-                    __assign(__assign({}, filters), { type: e.target.value }),
-                  );
-                }}
+                onChange={(e) =>
+                  handleFilterChange(__assign(__assign({}, filters), { type: e.target.value }))
+                }
                 className="px-3 py-2 border rounded-md"
               >
                 <option value="all">All Types</option>
@@ -692,11 +655,9 @@ var ScheduleConflictResolverOptimized = function () {
 
               <select
                 value={filters.dateRange}
-                onChange={function (e) {
-                  return handleFilterChange(
-                    __assign(__assign({}, filters), { dateRange: e.target.value }),
-                  );
-                }}
+                onChange={(e) =>
+                  handleFilterChange(__assign(__assign({}, filters), { dateRange: e.target.value }))
+                }
                 className="px-3 py-2 border rounded-md"
               >
                 <option value="today">Today</option>
@@ -722,9 +683,7 @@ var ScheduleConflictResolverOptimized = function () {
                 <button_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return handleBatchResolve("reschedule");
-                  }}
+                  onClick={() => handleBatchResolve("reschedule")}
                   disabled={isResolving}
                 >
                   Batch Reschedule
@@ -732,9 +691,7 @@ var ScheduleConflictResolverOptimized = function () {
                 <button_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return handleBatchResolve("reassign");
-                  }}
+                  onClick={() => handleBatchResolve("reassign")}
                   disabled={isResolving}
                 >
                   Batch Reassign
@@ -742,9 +699,7 @@ var ScheduleConflictResolverOptimized = function () {
                 <button_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return setSelectedConflicts([]);
-                  }}
+                  onClick={() => setSelectedConflicts([])}
                 >
                   Clear Selection
                 </button_1.Button>
@@ -762,9 +717,7 @@ var ScheduleConflictResolverOptimized = function () {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return refetchConflicts();
-              }}
+              onClick={() => refetchConflicts()}
               className="ml-2"
             >
               Retry
@@ -780,70 +733,58 @@ var ScheduleConflictResolverOptimized = function () {
         <card_1.CardContent>
           {conflictsLoading
             ? <div className="space-y-4">
-                {__spreadArray([], Array(5), true).map(function (_, i) {
-                  return (
-                    <div key={i} className="flex items-center space-x-4">
-                      <skeleton_1.Skeleton className="h-12 w-12 rounded-full" />
-                      <div className="space-y-2">
-                        <skeleton_1.Skeleton className="h-4 w-[250px]" />
-                        <skeleton_1.Skeleton className="h-4 w-[200px]" />
-                      </div>
+                {__spreadArray([], Array(5), true).map((_, i) => (
+                  <div key={i} className="flex items-center space-x-4">
+                    <skeleton_1.Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2">
+                      <skeleton_1.Skeleton className="h-4 w-[250px]" />
+                      <skeleton_1.Skeleton className="h-4 w-[200px]" />
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             : conflictsData && conflictsData.length > 0
               ? <div className="space-y-4">
-                  {conflictsData.map(function (conflict) {
-                    return (
-                      <ConflictCard
-                        key={conflict.id}
-                        conflict={conflict}
-                        isSelected={selectedConflicts.includes(conflict.id)}
-                        onSelect={function (selected) {
-                          if (selected) {
-                            setSelectedConflicts(function (prev) {
-                              return __spreadArray(
-                                __spreadArray([], prev, true),
-                                [conflict.id],
-                                false,
-                              );
-                            });
-                          } else {
-                            setSelectedConflicts(function (prev) {
-                              return prev.filter(function (id) {
-                                return id !== conflict.id;
-                              });
-                            });
-                          }
-                        }}
-                        onResolve={function (resolutionType) {
-                          return __awaiter(void 0, void 0, void 0, function () {
-                            return __generator(this, function (_a) {
-                              switch (_a.label) {
-                                case 0:
-                                  return [
-                                    4 /*yield*/,
-                                    resolveConflictsMutation.mutateAsync({
-                                      conflictIds: [conflict.id],
-                                      resolutionType: resolutionType,
-                                      metadata: {
-                                        individualResolution: true,
-                                        emergencyFlag: conflict.metadata.emergencyFlag,
-                                        clinicalPriority: conflict.metadata.clinicalPriority,
-                                      },
-                                    }),
-                                  ];
-                                case 1:
-                                  _a.sent();
-                                  return [2 /*return*/];
-                              }
-                            });
+                  {conflictsData.map((conflict) => (
+                    <ConflictCard
+                      key={conflict.id}
+                      conflict={conflict}
+                      isSelected={selectedConflicts.includes(conflict.id)}
+                      onSelect={(selected) => {
+                        if (selected) {
+                          setSelectedConflicts((prev) =>
+                            __spreadArray(__spreadArray([], prev, true), [conflict.id], false),
+                          );
+                        } else {
+                          setSelectedConflicts((prev) => prev.filter((id) => id !== conflict.id));
+                        }
+                      }}
+                      onResolve={(resolutionType) =>
+                        __awaiter(void 0, void 0, void 0, function () {
+                          return __generator(this, (_a) => {
+                            switch (_a.label) {
+                              case 0:
+                                return [
+                                  4 /*yield*/,
+                                  resolveConflictsMutation.mutateAsync({
+                                    conflictIds: [conflict.id],
+                                    resolutionType: resolutionType,
+                                    metadata: {
+                                      individualResolution: true,
+                                      emergencyFlag: conflict.metadata.emergencyFlag,
+                                      clinicalPriority: conflict.metadata.clinicalPriority,
+                                    },
+                                  }),
+                                ];
+                              case 1:
+                                _a.sent();
+                                return [2 /*return*/];
+                            }
                           });
-                        }}
-                      />
-                    );
-                  })}
+                        })
+                      }
+                    />
+                  ))}
                 </div>
               : <div className="text-center py-8 text-muted-foreground">
                   <lucide_react_1.CheckCircle2 className="h-12 w-12 mx-auto mb-4 text-green-500" />
@@ -856,7 +797,7 @@ var ScheduleConflictResolverOptimized = function () {
   );
 };
 // Optimized Conflict Card Component
-var ConflictCard = react_1.default.memo(function (_a) {
+var ConflictCard = react_1.default.memo((_a) => {
   var conflict = _a.conflict,
     isSelected = _a.isSelected,
     onSelect = _a.onSelect,
@@ -864,7 +805,7 @@ var ConflictCard = react_1.default.memo(function (_a) {
   var _b = (0, react_1.useState)(false),
     isResolving = _b[0],
     setIsResolving = _b[1];
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "border-red-500 bg-red-50";
@@ -876,9 +817,9 @@ var ConflictCard = react_1.default.memo(function (_a) {
         return "border-gray-300 bg-gray-50";
     }
   };
-  var handleResolve = function (resolutionType) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleResolve = (resolutionType) =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsResolving(true);
@@ -897,7 +838,6 @@ var ConflictCard = react_1.default.memo(function (_a) {
         }
       });
     });
-  };
   return (
     <div
       className={"border rounded-lg p-4 "
@@ -909,9 +849,7 @@ var ConflictCard = react_1.default.memo(function (_a) {
           <input
             type="checkbox"
             checked={isSelected}
-            onChange={function (e) {
-              return onSelect(e.target.checked);
-            }}
+            onChange={(e) => onSelect(e.target.checked)}
             className="mt-1"
             disabled={conflict.metadata.emergencyFlag} // Emergency cases require individual handling
           />
@@ -937,41 +875,31 @@ var ConflictCard = react_1.default.memo(function (_a) {
             {conflict.suggestedResolutions.length > 0 && (
               <div className="space-y-2">
                 <p className="text-sm font-medium">Suggested Resolutions:</p>
-                {conflict.suggestedResolutions.map(function (resolution) {
-                  return (
-                    <div
-                      key={resolution.id}
-                      className="flex items-center justify-between bg-white p-2 rounded border"
-                    >
-                      <div>
-                        <p className="text-sm font-medium">{resolution.description}</p>
-                        <p className="text-xs text-muted-foreground">{resolution.impact}</p>
-                      </div>
-                      <button_1.Button
-                        size="sm"
-                        variant="outline"
-                        onClick={function () {
-                          return handleResolve(resolution.type);
-                        }}
-                        disabled={isResolving}
-                      >
-                        Apply
-                      </button_1.Button>
+                {conflict.suggestedResolutions.map((resolution) => (
+                  <div
+                    key={resolution.id}
+                    className="flex items-center justify-between bg-white p-2 rounded border"
+                  >
+                    <div>
+                      <p className="text-sm font-medium">{resolution.description}</p>
+                      <p className="text-xs text-muted-foreground">{resolution.impact}</p>
                     </div>
-                  );
-                })}
+                    <button_1.Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleResolve(resolution.type)}
+                      disabled={isResolving}
+                    >
+                      Apply
+                    </button_1.Button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         </div>
 
-        <button_1.Button
-          variant="ghost"
-          size="sm"
-          onClick={function () {
-            return onSelect(!isSelected);
-          }}
-        >
+        <button_1.Button variant="ghost" size="sm" onClick={() => onSelect(!isSelected)}>
           <lucide_react_1.X className="h-4 w-4" />
         </button_1.Button>
       </div>

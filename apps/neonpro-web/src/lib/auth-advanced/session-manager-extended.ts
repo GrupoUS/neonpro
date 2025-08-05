@@ -2,16 +2,16 @@
 // Story 1.4: Session Management & Security Implementation
 // This file contains the remaining methods for SessionManagerService
 
+import type { v4 as uuidv4 } from "uuid";
 import type {
-  UserSession,
-  SessionSecurityEvent,
-  DeviceRegistration,
-  SessionAuditLog,
   DeviceInfo,
+  DeviceRegistration,
   SecurityEventType,
   SessionAction,
+  SessionAuditLog,
+  SessionSecurityEvent,
+  UserSession,
 } from "./types";
-import type { v4 as uuidv4 } from "uuid";
 
 // Extended methods for SessionManagerService class
 export class SessionManagerExtended {

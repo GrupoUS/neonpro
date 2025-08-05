@@ -6,6 +6,8 @@
 
 "use client";
 
+import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { useCallback, useEffect, useRef, useState } from "react";
 import type {
   addScannedItem,
   completeBarcodeSession,
@@ -21,16 +23,15 @@ import type {
   updateStockLevel,
 } from "@/lib/supabase/inventory";
 import type {
+  AlertStatus,
   BarcodeSession,
+  ConnectionStatus,
   InventoryItem,
   InventoryState,
   MovementType,
   ScannedItem,
   SessionType,
 } from "@/lib/types/inventory";
-import type { AlertStatus, ConnectionStatus } from "@/lib/types/inventory";
-import type { RealtimeChannel } from "@supabase/supabase-js";
-import type { useCallback, useEffect, useRef, useState } from "react";
 
 interface UseInventoryOptions {
   enableRealTime?: boolean;

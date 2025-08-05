@@ -3,19 +3,18 @@
  * Configure no-show prediction models, thresholds, and system parameters
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -52,17 +51,15 @@ function PredictionConfiguration(_a) {
   /**
    * Update configuration and mark as changed
    */
-  var updateConfig = function (updates) {
-    setConfig(function (prev) {
-      return __assign(__assign({}, prev), updates);
-    });
+  var updateConfig = (updates) => {
+    setConfig((prev) => __assign(__assign({}, prev), updates));
     setHasChanges(true);
   };
   /**
    * Update nested configuration properties
    */
-  var updateNestedConfig = function (key, updates) {
-    setConfig(function (prev) {
+  var updateNestedConfig = (key, updates) => {
+    setConfig((prev) => {
       var _a;
       return __assign(
         __assign({}, prev),
@@ -74,21 +71,21 @@ function PredictionConfiguration(_a) {
   /**
    * Save configuration
    */
-  var handleSaveConfiguration = function () {
+  var handleSaveConfiguration = () => {
     onSaveConfiguration(config);
     setHasChanges(false);
   };
   /**
    * Reset to original configuration
    */
-  var handleResetConfiguration = function () {
+  var handleResetConfiguration = () => {
     setConfig(currentConfiguration);
     setHasChanges(false);
   };
   /**
    * Get model type display info
    */
-  var getModelTypeInfo = function (type) {
+  var getModelTypeInfo = (type) => {
     var typeMap = {
       ENSEMBLE: { label: "Ensemble", color: "bg-purple-100 text-purple-800" },
       NEURAL_NETWORK: { label: "Neural Network", color: "bg-blue-100 text-blue-800" },
@@ -100,7 +97,7 @@ function PredictionConfiguration(_a) {
   /**
    * Get accuracy color
    */
-  var getAccuracyColor = function (accuracy) {
+  var getAccuracyColor = (accuracy) => {
     if (accuracy >= 90) return "text-green-600";
     if (accuracy >= 80) return "text-yellow-600";
     return "text-red-600";
@@ -108,9 +105,7 @@ function PredictionConfiguration(_a) {
   /**
    * Format threshold display
    */
-  var formatThreshold = function (value) {
-    return "".concat(value, "%");
-  };
+  var formatThreshold = (value) => "".concat(value, "%");
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -161,31 +156,19 @@ function PredictionConfiguration(_a) {
                 </span>
               </div>
               <badge_1.Badge variant={config.enabled ? "default" : "secondary"}>
-                {
-                  availableModels.filter(function (m) {
-                    return m.isActive;
-                  }).length
-                }{" "}
-                models active
+                {availableModels.filter((m) => m.isActive).length} models active
               </badge_1.Badge>
             </div>
             <switch_1.Switch
               checked={config.enabled}
-              onCheckedChange={function (enabled) {
-                return updateConfig({ enabled: enabled });
-              }}
+              onCheckedChange={(enabled) => updateConfig({ enabled: enabled })}
             />
           </div>
         </card_1.CardContent>
       </card_1.Card>
 
       {/* Configuration Tabs */}
-      <tabs_1.Tabs
-        value={activeTab}
-        onValueChange={function (value) {
-          return setActiveTab(value);
-        }}
-      >
+      <tabs_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
         <tabs_1.TabsList className="grid w-full grid-cols-5">
           <tabs_1.TabsTrigger value="general">General</tabs_1.TabsTrigger>
           <tabs_1.TabsTrigger value="models">Models</tabs_1.TabsTrigger>
@@ -210,7 +193,7 @@ function PredictionConfiguration(_a) {
                   <div className="space-y-2">
                     <slider_1.Slider
                       value={[config.predictionWindow]}
-                      onValueChange={function (_a) {
+                      onValueChange={(_a) => {
                         var value = _a[0];
                         return updateConfig({ predictionWindow: value });
                       }}
@@ -232,7 +215,7 @@ function PredictionConfiguration(_a) {
                   <div className="space-y-2">
                     <slider_1.Slider
                       value={[config.minimumConfidence]}
-                      onValueChange={function (_a) {
+                      onValueChange={(_a) => {
                         var value = _a[0];
                         return updateConfig({ minimumConfidence: value });
                       }}
@@ -260,9 +243,9 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.autoRetraining}
-                    onCheckedChange={function (autoRetraining) {
-                      return updateConfig({ autoRetraining: autoRetraining });
-                    }}
+                    onCheckedChange={(autoRetraining) =>
+                      updateConfig({ autoRetraining: autoRetraining })
+                    }
                   />
                 </div>
 
@@ -272,7 +255,7 @@ function PredictionConfiguration(_a) {
                     <div className="space-y-2">
                       <slider_1.Slider
                         value={[config.retrainingInterval]}
-                        onValueChange={function (_a) {
+                        onValueChange={(_a) => {
                           var value = _a[0];
                           return updateConfig({ retrainingInterval: value });
                         }}
@@ -305,9 +288,7 @@ function PredictionConfiguration(_a) {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">
-                    {((_b = availableModels.find(function (m) {
-                      return m.isActive;
-                    })) === null || _b === void 0
+                    {((_b = availableModels.find((m) => m.isActive)) === null || _b === void 0
                       ? void 0
                       : _b.accuracy.toFixed(1)) || 0}
                     %
@@ -326,11 +307,7 @@ function PredictionConfiguration(_a) {
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-orange-600">
-                    {
-                      availableModels.filter(function (m) {
-                        return m.isActive;
-                      }).length
-                    }
+                    {availableModels.filter((m) => m.isActive).length}
                   </div>
                   <div className="text-xs text-muted-foreground">Active Models</div>
                 </div>
@@ -350,7 +327,7 @@ function PredictionConfiguration(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {availableModels.map(function (model) {
+                {availableModels.map((model) => {
                   var typeInfo = getModelTypeInfo(model.type);
                   return (
                     <card_1.Card
@@ -411,9 +388,7 @@ function PredictionConfiguration(_a) {
                           <button_1.Button
                             variant="outline"
                             size="sm"
-                            onClick={function () {
-                              return onRetrainModel(model.id);
-                            }}
+                            onClick={() => onRetrainModel(model.id)}
                           >
                             <lucide_react_1.RotateCcw className="h-4 w-4 mr-1" />
                             Retrain
@@ -422,9 +397,7 @@ function PredictionConfiguration(_a) {
                             ? <button_1.Button
                                 variant="default"
                                 size="sm"
-                                onClick={function () {
-                                  return onActivateModel(model.id);
-                                }}
+                                onClick={() => onActivateModel(model.id)}
                               >
                                 <lucide_react_1.Play className="h-4 w-4 mr-1" />
                                 Activate
@@ -486,7 +459,7 @@ function PredictionConfiguration(_a) {
                   </div>
                   <slider_1.Slider
                     value={[config.riskThresholds.low]}
-                    onValueChange={function (_a) {
+                    onValueChange={(_a) => {
                       var value = _a[0];
                       return updateNestedConfig("riskThresholds", { low: value });
                     }}
@@ -507,7 +480,7 @@ function PredictionConfiguration(_a) {
                   </div>
                   <slider_1.Slider
                     value={[config.riskThresholds.medium]}
-                    onValueChange={function (_a) {
+                    onValueChange={(_a) => {
                       var value = _a[0];
                       return updateNestedConfig("riskThresholds", { medium: value });
                     }}
@@ -528,7 +501,7 @@ function PredictionConfiguration(_a) {
                   </div>
                   <slider_1.Slider
                     value={[config.riskThresholds.high]}
-                    onValueChange={function (_a) {
+                    onValueChange={(_a) => {
                       var value = _a[0];
                       return updateNestedConfig("riskThresholds", { high: value });
                     }}
@@ -632,9 +605,9 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.features.historicalData}
-                    onCheckedChange={function (historicalData) {
-                      return updateNestedConfig("features", { historicalData: historicalData });
-                    }}
+                    onCheckedChange={(historicalData) =>
+                      updateNestedConfig("features", { historicalData: historicalData })
+                    }
                   />
                 </div>
 
@@ -647,9 +620,9 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.features.demographicInfo}
-                    onCheckedChange={function (demographicInfo) {
-                      return updateNestedConfig("features", { demographicInfo: demographicInfo });
-                    }}
+                    onCheckedChange={(demographicInfo) =>
+                      updateNestedConfig("features", { demographicInfo: demographicInfo })
+                    }
                   />
                 </div>
 
@@ -662,11 +635,11 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.features.appointmentCharacteristics}
-                    onCheckedChange={function (appointmentCharacteristics) {
-                      return updateNestedConfig("features", {
+                    onCheckedChange={(appointmentCharacteristics) =>
+                      updateNestedConfig("features", {
                         appointmentCharacteristics: appointmentCharacteristics,
-                      });
-                    }}
+                      })
+                    }
                   />
                 </div>
 
@@ -679,9 +652,9 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.features.externalFactors}
-                    onCheckedChange={function (externalFactors) {
-                      return updateNestedConfig("features", { externalFactors: externalFactors });
-                    }}
+                    onCheckedChange={(externalFactors) =>
+                      updateNestedConfig("features", { externalFactors: externalFactors })
+                    }
                   />
                 </div>
 
@@ -694,11 +667,11 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.features.communicationPatterns}
-                    onCheckedChange={function (communicationPatterns) {
-                      return updateNestedConfig("features", {
+                    onCheckedChange={(communicationPatterns) =>
+                      updateNestedConfig("features", {
                         communicationPatterns: communicationPatterns,
-                      });
-                    }}
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -738,32 +711,30 @@ function PredictionConfiguration(_a) {
                     importance: 4,
                     enabled: config.features.externalFactors,
                   },
-                ].map(function (item, index) {
-                  return (
-                    <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={"text-sm font-medium ".concat(
-                            item.enabled ? "" : "text-muted-foreground",
-                          )}
-                        >
-                          {item.feature}
-                        </span>
-                        <span
-                          className={"text-sm ".concat(
-                            item.enabled ? "font-medium" : "text-muted-foreground",
-                          )}
-                        >
-                          {item.importance}%
-                        </span>
-                      </div>
-                      <progress_1.Progress
-                        value={item.enabled ? item.importance : 0}
-                        className={"h-2 ".concat(item.enabled ? "" : "opacity-50")}
-                      />
+                ].map((item, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={"text-sm font-medium ".concat(
+                          item.enabled ? "" : "text-muted-foreground",
+                        )}
+                      >
+                        {item.feature}
+                      </span>
+                      <span
+                        className={"text-sm ".concat(
+                          item.enabled ? "font-medium" : "text-muted-foreground",
+                        )}
+                      >
+                        {item.importance}%
+                      </span>
                     </div>
-                  );
-                })}
+                    <progress_1.Progress
+                      value={item.enabled ? item.importance : 0}
+                      className={"h-2 ".concat(item.enabled ? "" : "opacity-50")}
+                    />
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -789,11 +760,11 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.notifications.highRiskPatients}
-                    onCheckedChange={function (highRiskPatients) {
-                      return updateNestedConfig("notifications", {
+                    onCheckedChange={(highRiskPatients) =>
+                      updateNestedConfig("notifications", {
                         highRiskPatients: highRiskPatients,
-                      });
-                    }}
+                      })
+                    }
                   />
                 </div>
 
@@ -806,11 +777,11 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.notifications.modelPerformanceDrop}
-                    onCheckedChange={function (modelPerformanceDrop) {
-                      return updateNestedConfig("notifications", {
+                    onCheckedChange={(modelPerformanceDrop) =>
+                      updateNestedConfig("notifications", {
                         modelPerformanceDrop: modelPerformanceDrop,
-                      });
-                    }}
+                      })
+                    }
                   />
                 </div>
 
@@ -823,11 +794,11 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.notifications.retrainingRequired}
-                    onCheckedChange={function (retrainingRequired) {
-                      return updateNestedConfig("notifications", {
+                    onCheckedChange={(retrainingRequired) =>
+                      updateNestedConfig("notifications", {
                         retrainingRequired: retrainingRequired,
-                      });
-                    }}
+                      })
+                    }
                   />
                 </div>
 
@@ -840,11 +811,11 @@ function PredictionConfiguration(_a) {
                   </div>
                   <switch_1.Switch
                     checked={config.notifications.predictionErrors}
-                    onCheckedChange={function (predictionErrors) {
-                      return updateNestedConfig("notifications", {
+                    onCheckedChange={(predictionErrors) =>
+                      updateNestedConfig("notifications", {
                         predictionErrors: predictionErrors,
-                      });
-                    }}
+                      })
+                    }
                   />
                 </div>
               </div>

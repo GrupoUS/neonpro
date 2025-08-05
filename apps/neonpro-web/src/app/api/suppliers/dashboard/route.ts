@@ -3,8 +3,8 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
-import type { SupplierManagementService } from "@/app/lib/services/supplier-management-service";
 import type { NextRequest, NextResponse } from "next/server";
+import type { SupplierManagementService } from "@/app/lib/services/supplier-management-service";
 
 const supplierService = new SupplierManagementService();
 

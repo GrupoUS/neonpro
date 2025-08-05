@@ -3,10 +3,10 @@
 // Comprehensive payment plan and installment processing
 
 import type { createClient } from "@supabase/supabase-js";
+import type { addDays, addMonths, format, isAfter, isBefore, parseISO } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 import Stripe from "stripe";
 import type { logger } from "@/lib/utils/logger";
-import type { addDays, addMonths, format, parseISO, isBefore, isAfter } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

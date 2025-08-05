@@ -6,19 +6,19 @@
  * gerenciando cronogramas e execução de tarefas.
  */
 
-import cron from "node-cron";
 import type { createClient } from "@supabase/supabase-js";
+import cron from "node-cron";
+import type { auditLogger } from "../auth/audit/audit-logger";
 import type {
-  BackupConfig,
-  BackupSchedule,
-  ScheduleFrequency,
-  BackupStatus,
-  BackupPriority,
   ApiResponse,
+  BackupConfig,
+  BackupPriority,
+  BackupSchedule,
+  BackupStatus,
   ScheduledTask,
+  ScheduleFrequency,
   TaskStatus,
 } from "./types";
-import type { auditLogger } from "../auth/audit/audit-logger";
 
 /**
  * Interface para tarefas agendadas
@@ -311,13 +311,15 @@ export class SchedulerService {
       case ScheduleFrequency.DAILY:
         return `${minute} ${hour} * * *`;
 
-      case ScheduleFrequency.WEEKLY:
+      case ScheduleFrequency.WEEKLY: {
         const day = dayOfWeek || 0; // 0 = domingo
         return `${minute} ${hour} * * ${day}`;
+      }
 
-      case ScheduleFrequency.MONTHLY:
+      case ScheduleFrequency.MONTHLY: {
         const monthDay = dayOfMonth || 1;
         return `${minute} ${hour} ${monthDay} * *`;
+      }
 
       case ScheduleFrequency.CUSTOM:
         return schedule.cronExpression || "0 2 * * *"; // Default: 2:00 AM diário

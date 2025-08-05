@@ -1,35 +1,33 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
-import type { motion, AnimatePresence } from "framer-motion";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Progress } from "@/components/ui/progress";
-import type { AlertCircle, Check, ArrowLeft, ArrowRight } from "lucide-react";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Badge } from "@/components/ui/badge";
+import type { AnimatePresence, motion } from "framer-motion";
+import type { AlertCircle, ArrowLeft, ArrowRight, Check } from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
 import type { useTranslation } from "@/app/lib/i18n/use-translation";
 import type {
-  BookingWizardState,
-  BookingStep,
-  Service,
-  Professional,
   AvailableTimeSlot,
   BookingResponse,
+  BookingStep,
+  BookingWizardState,
+  Professional,
+  Service,
 } from "@/app/types/appointments";
-
-// Step components (to be imported)
-import ServiceSelection from "./service-selection";
-import ProfessionalSelection from "./professional-selection";
-import TimeSlotPicker from "./time-slot-picker";
-import AppointmentNotes from "./appointment-notes";
-import BookingConfirmation from "./booking-confirmation";
-
+import type { BookingConflictPrevention } from "@/components/dashboard/booking-conflict-prevention";
 // Import real-time availability components
 import type { RealTimeAvailability } from "@/components/dashboard/real-time-availability";
-import type { BookingConflictPrevention } from "@/components/dashboard/booking-conflict-prevention";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
 import type { useAvailabilityManager } from "@/hooks/use-availability-manager";
 import type { TimeSlot } from "@/hooks/use-realtime-availability";
+import AppointmentNotes from "./appointment-notes";
+import BookingConfirmation from "./booking-confirmation";
+import ProfessionalSelection from "./professional-selection";
+// Step components (to be imported)
+import ServiceSelection from "./service-selection";
+import TimeSlotPicker from "./time-slot-picker";
 
 interface AppointmentBookingWizardProps {
   patientId: string;

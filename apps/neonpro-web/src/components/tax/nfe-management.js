@@ -1,32 +1,31 @@
 // NFE Management Component
 // Story 5.5: List, create, and manage Brazilian electronic invoices
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = NFEManagement;
 var react_1 = require("react");
@@ -161,7 +158,6 @@ var select_1 = require("@/components/ui/select");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 function NFEManagement(_a) {
-  var _this = this;
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)([]),
     documents = _b[0],
@@ -189,10 +185,10 @@ function NFEManagement(_a) {
     }),
     pagination = _g[0],
     setPagination = _g[1];
-  var loadDocuments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDocuments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -233,26 +229,20 @@ function NFEManagement(_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      loadDocuments();
-    },
-    [clinicId, pagination, filters],
-  );
-  var handleFilterChange = function (field, value) {
-    setFilters(function (prev) {
+  (0, react_1.useEffect)(() => {
+    loadDocuments();
+  }, [clinicId, pagination, filters]);
+  var handleFilterChange = (field, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
-    setPagination(function (prev) {
-      return __assign(__assign({}, prev), { offset: 0 });
-    }); // Reset to first page
+    setPagination((prev) => __assign(__assign({}, prev), { offset: 0 })); // Reset to first page
   };
-  var handleAuthorizeNFE = function (nfeId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAuthorizeNFE = (nfeId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, errorData, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -264,7 +254,7 @@ function NFEManagement(_a) {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             errorData = _a.sent();
@@ -286,11 +276,10 @@ function NFEManagement(_a) {
         }
       });
     });
-  };
-  var handleCancelNFE = function (nfeId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCancelNFE = (nfeId) =>
+    __awaiter(this, void 0, void 0, function () {
       var reason, response, errorData, err_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             reason = prompt("Digite o motivo do cancelamento:");
@@ -310,7 +299,7 @@ function NFEManagement(_a) {
             ];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.json()];
           case 3:
             errorData = _a.sent();
@@ -332,8 +321,7 @@ function NFEManagement(_a) {
         }
       });
     });
-  };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var config = {
       draft: {
         color: "bg-yellow-100 text-yellow-800",
@@ -403,11 +391,7 @@ function NFEManagement(_a) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Status</label>
-              <select_1.Select
-                onValueChange={function (value) {
-                  return handleFilterChange("status", value);
-                }}
-              >
+              <select_1.Select onValueChange={(value) => handleFilterChange("status", value)}>
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Todos os status" />
                 </select_1.SelectTrigger>
@@ -426,9 +410,7 @@ function NFEManagement(_a) {
               <input_1.Input
                 placeholder="Nome do cliente"
                 value={filters.customerName}
-                onChange={function (e) {
-                  return handleFilterChange("customerName", e.target.value);
-                }}
+                onChange={(e) => handleFilterChange("customerName", e.target.value)}
               />
             </div>
 
@@ -437,9 +419,7 @@ function NFEManagement(_a) {
               <input_1.Input
                 type="date"
                 value={filters.startDate}
-                onChange={function (e) {
-                  return handleFilterChange("startDate", e.target.value);
-                }}
+                onChange={(e) => handleFilterChange("startDate", e.target.value)}
               />
             </div>
 
@@ -448,9 +428,7 @@ function NFEManagement(_a) {
               <input_1.Input
                 type="date"
                 value={filters.endDate}
-                onChange={function (e) {
-                  return handleFilterChange("endDate", e.target.value);
-                }}
+                onChange={(e) => handleFilterChange("endDate", e.target.value)}
               />
             </div>
           </div>
@@ -493,64 +471,58 @@ function NFEManagement(_a) {
                       Nenhuma NFe encontrada
                     </table_1.TableCell>
                   </table_1.TableRow>
-                : documents.map(function (doc) {
-                    return (
-                      <table_1.TableRow key={doc.id}>
-                        <table_1.TableCell className="font-medium">
-                          {doc.numero_nfe.toString().padStart(9, "0")}
-                          <div className="text-xs text-gray-500">Série: {doc.serie_nfe}</div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          <div>
-                            <div className="font-medium">{doc.cliente_nome || "N/A"}</div>
-                            <div className="text-xs text-gray-500">{doc.cliente_cnpj_cpf}</div>
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell>
-                          {(0, utils_1.formatCurrency)(doc.valor_total)}
-                        </table_1.TableCell>
-                        <table_1.TableCell>{getStatusBadge(doc.status)}</table_1.TableCell>
-                        <table_1.TableCell>
-                          {new Date(doc.created_at).toLocaleDateString()}
-                          <div className="text-xs text-gray-500">
-                            {new Date(doc.created_at).toLocaleTimeString()}
-                          </div>
-                        </table_1.TableCell>
-                        <table_1.TableCell className="text-right">
-                          <div className="flex items-center justify-end space-x-2">
-                            <button_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.Eye className="h-4 w-4" />
+                : documents.map((doc) => (
+                    <table_1.TableRow key={doc.id}>
+                      <table_1.TableCell className="font-medium">
+                        {doc.numero_nfe.toString().padStart(9, "0")}
+                        <div className="text-xs text-gray-500">Série: {doc.serie_nfe}</div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        <div>
+                          <div className="font-medium">{doc.cliente_nome || "N/A"}</div>
+                          <div className="text-xs text-gray-500">{doc.cliente_cnpj_cpf}</div>
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell>
+                        {(0, utils_1.formatCurrency)(doc.valor_total)}
+                      </table_1.TableCell>
+                      <table_1.TableCell>{getStatusBadge(doc.status)}</table_1.TableCell>
+                      <table_1.TableCell>
+                        {new Date(doc.created_at).toLocaleDateString()}
+                        <div className="text-xs text-gray-500">
+                          {new Date(doc.created_at).toLocaleTimeString()}
+                        </div>
+                      </table_1.TableCell>
+                      <table_1.TableCell className="text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.Eye className="h-4 w-4" />
+                          </button_1.Button>
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.Download className="h-4 w-4" />
+                          </button_1.Button>
+                          {doc.status === "draft" && (
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleAuthorizeNFE(doc.id)}
+                            >
+                              <lucide_react_1.CheckCircle className="h-4 w-4" />
                             </button_1.Button>
-                            <button_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.Download className="h-4 w-4" />
+                          )}
+                          {doc.status === "authorized" && (
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCancelNFE(doc.id)}
+                            >
+                              <lucide_react_1.XCircle className="h-4 w-4" />
                             </button_1.Button>
-                            {doc.status === "draft" && (
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return handleAuthorizeNFE(doc.id);
-                                }}
-                              >
-                                <lucide_react_1.CheckCircle className="h-4 w-4" />
-                              </button_1.Button>
-                            )}
-                            {doc.status === "authorized" && (
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return handleCancelNFE(doc.id);
-                                }}
-                              >
-                                <lucide_react_1.XCircle className="h-4 w-4" />
-                              </button_1.Button>
-                            )}
-                          </div>
-                        </table_1.TableCell>
-                      </table_1.TableRow>
-                    );
-                  })}
+                          )}
+                        </div>
+                      </table_1.TableCell>
+                    </table_1.TableRow>
+                  ))}
             </table_1.TableBody>
           </table_1.Table>
         </card_1.CardContent>
@@ -568,13 +540,13 @@ function NFEManagement(_a) {
               variant="outline"
               size="sm"
               disabled={!hasPrevPage}
-              onClick={function () {
-                return setPagination(function (prev) {
-                  return __assign(__assign({}, prev), {
+              onClick={() =>
+                setPagination((prev) =>
+                  __assign(__assign({}, prev), {
                     offset: Math.max(0, prev.offset - prev.limit),
-                  });
-                });
-              }}
+                  }),
+                )
+              }
             >
               Anterior
             </button_1.Button>
@@ -582,11 +554,11 @@ function NFEManagement(_a) {
               variant="outline"
               size="sm"
               disabled={!hasNextPage}
-              onClick={function () {
-                return setPagination(function (prev) {
-                  return __assign(__assign({}, prev), { offset: prev.offset + prev.limit });
-                });
-              }}
+              onClick={() =>
+                setPagination((prev) =>
+                  __assign(__assign({}, prev), { offset: prev.offset + prev.limit }),
+                )
+              }
             >
               Próximo
             </button_1.Button>

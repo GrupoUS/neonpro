@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Financial Management System - Main Integration
  * Story 4.1: Automated Invoice Generation + Payment Tracking Implementation
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialDashboardEngine =
   exports.createpredictiveAnalyticsEngine =
@@ -170,19 +167,15 @@ exports.FinancialDashboardEngine =
 var invoice_generator_1 = require("./invoice-generator");
 Object.defineProperty(exports, "AutomatedInvoiceGenerator", {
   enumerable: true,
-  get: function () {
-    return invoice_generator_1.AutomatedInvoiceGenerator;
-  },
+  get: () => invoice_generator_1.AutomatedInvoiceGenerator,
 });
 var payment_tracker_1 = require("./payment-tracker");
 Object.defineProperty(exports, "PaymentTracker", {
   enumerable: true,
-  get: function () {
-    return payment_tracker_1.PaymentTracker;
-  },
+  get: () => payment_tracker_1.PaymentTracker,
 });
 var client_1 = require("@/lib/supabase/client");
-var FinancialManagementSystem = /** @class */ (function () {
+var FinancialManagementSystem = /** @class */ (() => {
   function FinancialManagementSystem(config) {
     this.supabase = (0, client_1.createClient)();
     this.isInitialized = false;
@@ -524,9 +517,10 @@ var FinancialManagementSystem = /** @class */ (function () {
               paymentMethodDistribution: paymentAnalytics.byMethod,
               successRate: paymentAnalytics.summary.successRate * 100,
             };
-            gatewayFees = Object.values(paymentAnalytics.byGateway).reduce(function (sum, gateway) {
-              return sum + gateway.fees;
-            }, 0);
+            gatewayFees = Object.values(paymentAnalytics.byGateway).reduce(
+              (sum, gateway) => sum + gateway.fees,
+              0,
+            );
             expenses = {
               gatewayFees: gatewayFees,
               processingFees: gatewayFees * 0.1, // Estimated processing fees
@@ -851,7 +845,7 @@ var FinancialManagementSystem = /** @class */ (function () {
     });
   };
   // Private helper methods
-  FinancialManagementSystem.prototype.initializeConfig = function (config) {
+  FinancialManagementSystem.prototype.initializeConfig = (config) => {
     var defaultConfig = {
       invoiceGeneration: {},
       paymentTracking: {},
@@ -898,19 +892,13 @@ var FinancialManagementSystem = /** @class */ (function () {
         // Setup real-time subscriptions for invoice and payment updates
         this.supabase
           .channel("financial_updates")
-          .on(
-            "postgres_changes",
-            { event: "*", schema: "public", table: "invoices" },
-            function (payload) {
-              return _this.handleInvoiceUpdate(payload);
-            },
+          .on("postgres_changes", { event: "*", schema: "public", table: "invoices" }, (payload) =>
+            _this.handleInvoiceUpdate(payload),
           )
           .on(
             "postgres_changes",
             { event: "*", schema: "public", table: "payment_records" },
-            function (payload) {
-              return _this.handlePaymentUpdate(payload);
-            },
+            (payload) => _this.handlePaymentUpdate(payload),
           )
           .subscribe();
         return [2 /*return*/];
@@ -919,7 +907,7 @@ var FinancialManagementSystem = /** @class */ (function () {
   };
   FinancialManagementSystem.prototype.setupComplianceMonitoring = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Setting up compliance monitoring...");
         return [2 /*return*/];
       });
@@ -1052,9 +1040,7 @@ var FinancialManagementSystem = /** @class */ (function () {
               2 /*return*/,
               (payments === null || payments === void 0
                 ? void 0
-                : payments.reduce(function (sum, payment) {
-                    return sum + payment.amount;
-                  }, 0)) || 0,
+                : payments.reduce((sum, payment) => sum + payment.amount, 0)) || 0,
             ];
         }
       });
@@ -1063,7 +1049,7 @@ var FinancialManagementSystem = /** @class */ (function () {
   // Report generation methods
   FinancialManagementSystem.prototype.generateRevenueReportData = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate revenue report data
         return [2 /*return*/, { type: "revenue", data: "Revenue report data" }];
       });
@@ -1071,7 +1057,7 @@ var FinancialManagementSystem = /** @class */ (function () {
   };
   FinancialManagementSystem.prototype.generatePaymentsReportData = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate payments report data
         return [2 /*return*/, { type: "payments", data: "Payments report data" }];
       });
@@ -1079,7 +1065,7 @@ var FinancialManagementSystem = /** @class */ (function () {
   };
   FinancialManagementSystem.prototype.generateTaxReportData = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate tax report data
         return [2 /*return*/, { type: "taxes", data: "Tax report data" }];
       });
@@ -1087,7 +1073,7 @@ var FinancialManagementSystem = /** @class */ (function () {
   };
   FinancialManagementSystem.prototype.generateReconciliationReportData = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate reconciliation report data
         return [2 /*return*/, { type: "reconciliation", data: "Reconciliation report data" }];
       });
@@ -1095,7 +1081,7 @@ var FinancialManagementSystem = /** @class */ (function () {
   };
   FinancialManagementSystem.prototype.generateComplianceReportData = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate compliance report data
         return [2 /*return*/, { type: "compliance", data: "Compliance report data" }];
       });
@@ -1103,7 +1089,7 @@ var FinancialManagementSystem = /** @class */ (function () {
   };
   FinancialManagementSystem.prototype.generateCustomReportData = function (config) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate custom report data
         return [2 /*return*/, { type: "custom", data: "Custom report data" }];
       });
@@ -1140,7 +1126,7 @@ var FinancialManagementSystem = /** @class */ (function () {
   };
   FinancialManagementSystem.prototype.generateReportFile = function (report, includeCharts) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate report file based on format
         // This would integrate with a report generation service
         return [
@@ -1174,31 +1160,29 @@ var FinancialManagementSystem = /** @class */ (function () {
     });
   };
   // Conversion methods
-  FinancialManagementSystem.prototype.convertDbRecordToPaymentRecord = function (data) {
+  FinancialManagementSystem.prototype.convertDbRecordToPaymentRecord = (data) => {
     // Convert database record to PaymentRecord
     // Implementation would match the PaymentTracker conversion method
     return {};
   };
-  FinancialManagementSystem.prototype.convertDbRecordToInvoiceData = function (data) {
+  FinancialManagementSystem.prototype.convertDbRecordToInvoiceData = (data) => {
     // Convert database record to InvoiceData
     // Implementation would match the InvoiceGenerator conversion method
     return {};
   };
-  FinancialManagementSystem.prototype.convertDbRecordToAlert = function (data) {
-    return {
-      id: data.id,
-      type: data.type,
-      severity: data.severity,
-      title: data.title,
-      description: data.description,
-      affectedEntities: JSON.parse(data.affected_entities || "{}"),
-      actionRequired: data.action_required,
-      suggestedActions: JSON.parse(data.suggested_actions || "[]"),
-      createdAt: new Date(data.created_at),
-      resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
-      resolvedBy: data.resolved_by,
-    };
-  };
+  FinancialManagementSystem.prototype.convertDbRecordToAlert = (data) => ({
+    id: data.id,
+    type: data.type,
+    severity: data.severity,
+    title: data.title,
+    description: data.description,
+    affectedEntities: JSON.parse(data.affected_entities || "{}"),
+    actionRequired: data.action_required,
+    suggestedActions: JSON.parse(data.suggested_actions || "[]"),
+    createdAt: new Date(data.created_at),
+    resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
+    resolvedBy: data.resolved_by,
+  });
   return FinancialManagementSystem;
 })();
 exports.FinancialManagementSystem = FinancialManagementSystem;
@@ -1206,28 +1190,20 @@ exports.FinancialManagementSystem = FinancialManagementSystem;
 var cash_flow_engine_1 = require("./cash-flow-engine");
 Object.defineProperty(exports, "CashFlowEngine", {
   enumerable: true,
-  get: function () {
-    return cash_flow_engine_1.CashFlowEngine;
-  },
+  get: () => cash_flow_engine_1.CashFlowEngine,
 });
 var automated_alerts_engine_1 = require("./automated-alerts-engine");
 Object.defineProperty(exports, "AutomatedAlertsEngine", {
   enumerable: true,
-  get: function () {
-    return automated_alerts_engine_1.AutomatedAlertsEngine;
-  },
+  get: () => automated_alerts_engine_1.AutomatedAlertsEngine,
 });
 var predictive_analytics_engine_1 = require("./predictive-analytics-engine");
 Object.defineProperty(exports, "createpredictiveAnalyticsEngine", {
   enumerable: true,
-  get: function () {
-    return predictive_analytics_engine_1.createpredictiveAnalyticsEngine;
-  },
+  get: () => predictive_analytics_engine_1.createpredictiveAnalyticsEngine,
 });
 var financial_dashboard_engine_1 = require("./financial-dashboard-engine");
 Object.defineProperty(exports, "FinancialDashboardEngine", {
   enumerable: true,
-  get: function () {
-    return financial_dashboard_engine_1.FinancialDashboardEngine;
-  },
+  get: () => financial_dashboard_engine_1.FinancialDashboardEngine,
 });

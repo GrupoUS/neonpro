@@ -7,7 +7,11 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { AlertTriangle, Brain, CheckCircle, Clock, Info, TrendingUp } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -26,12 +30,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Textarea } from "@/components/ui/textarea";
 import type { Switch } from "@/components/ui/switch";
-import type { Brain, Clock, TrendingUp, AlertTriangle, CheckCircle, Info } from "lucide-react";
-import type { toast } from "sonner";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Types
 interface PredictionRequest {

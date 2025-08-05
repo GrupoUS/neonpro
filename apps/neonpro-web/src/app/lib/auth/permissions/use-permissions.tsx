@@ -9,12 +9,12 @@ import type { useCallback, useEffect, useMemo, useState } from "react";
 import type {
   checkMultiplePermissions,
   hasPermission,
-  type Permission,
-  type PermissionResult,
+  Permission,
+  PermissionResult,
   permissionValidator,
-  type ResourceType,
+  ResourceType,
   SystemRole,
-  type UserPermissions,
+  UserPermissions,
 } from "./permission-validator";
 
 export interface UsePermissionsResult {

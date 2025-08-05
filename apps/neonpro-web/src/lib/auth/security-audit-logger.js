@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Security Audit Logger for OAuth and LGPD Compliance
  * Comprehensive logging system for security events and compliance requirements
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,12 +146,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.securityAuditLogger = void 0;
 var client_1 = require("@/lib/supabase/client");
 var performance_tracker_1 = require("./performance-tracker");
-var SecurityAuditLogger = /** @class */ (function () {
+var SecurityAuditLogger = /** @class */ (() => {
   function SecurityAuditLogger() {
     this.eventQueue = [];
     this.batchSize = 50;
@@ -162,7 +159,7 @@ var SecurityAuditLogger = /** @class */ (function () {
     this.flushTimer = null;
     this.startBatchProcessor();
   }
-  SecurityAuditLogger.getInstance = function () {
+  SecurityAuditLogger.getInstance = () => {
     if (!SecurityAuditLogger.instance) {
       SecurityAuditLogger.instance = new SecurityAuditLogger();
     }
@@ -412,7 +409,7 @@ var SecurityAuditLogger = /** @class */ (function () {
   SecurityAuditLogger.prototype.queryAuditLogs = function (query) {
     return __awaiter(this, void 0, void 0, function () {
       var startTime, supabase, queryBuilder, _a, data, error, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             startTime = Date.now();
@@ -538,17 +535,16 @@ var SecurityAuditLogger = /** @class */ (function () {
   /**
    * Private helper methods
    */
-  SecurityAuditLogger.prototype.generateEventId = function () {
-    return "evt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  SecurityAuditLogger.prototype.determineSeverity = function (eventType) {
+  SecurityAuditLogger.prototype.generateEventId = () =>
+    "evt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  SecurityAuditLogger.prototype.determineSeverity = (eventType) => {
     var criticalEvents = ["security_violation", "suspicious_activity"];
     var warningEvents = ["authentication_failure", "permission_denied", "session_expired"];
     if (criticalEvents.includes(eventType)) return "critical";
     if (warningEvents.includes(eventType)) return "warning";
     return "info";
   };
-  SecurityAuditLogger.prototype.determineComplianceFlags = function (eventType) {
+  SecurityAuditLogger.prototype.determineComplianceFlags = (eventType) => {
     var flags = [];
     // LGPD relevant events
     var lgpdEvents = [
@@ -572,10 +568,9 @@ var SecurityAuditLogger = /** @class */ (function () {
     return flags;
   };
   SecurityAuditLogger.prototype.startBatchProcessor = function () {
-    var _this = this;
-    this.flushTimer = setInterval(function () {
-      if (_this.eventQueue.length > 0) {
-        _this.flushEvents();
+    this.flushTimer = setInterval(() => {
+      if (this.eventQueue.length > 0) {
+        this.flushEvents();
       }
     }, this.flushInterval);
   };
@@ -597,21 +592,19 @@ var SecurityAuditLogger = /** @class */ (function () {
             return [
               4 /*yield*/,
               supabase.from("security_audit_log").insert(
-                eventsToFlush.map(function (event) {
-                  return {
-                    event_id: event.eventId,
-                    event_type: event.eventType,
-                    severity: event.severity,
-                    user_id: event.userId,
-                    session_id: event.sessionId,
-                    ip_address: event.ipAddress,
-                    user_agent: event.userAgent,
-                    timestamp: new Date(event.timestamp).toISOString(),
-                    description: event.description,
-                    metadata: event.metadata,
-                    compliance_flags: event.complianceFlags,
-                  };
-                }),
+                eventsToFlush.map((event) => ({
+                  event_id: event.eventId,
+                  event_type: event.eventType,
+                  severity: event.severity,
+                  user_id: event.userId,
+                  session_id: event.sessionId,
+                  ip_address: event.ipAddress,
+                  user_agent: event.userAgent,
+                  timestamp: new Date(event.timestamp).toISOString(),
+                  description: event.description,
+                  metadata: event.metadata,
+                  compliance_flags: event.complianceFlags,
+                })),
               ),
             ];
           case 3:
@@ -634,71 +627,55 @@ var SecurityAuditLogger = /** @class */ (function () {
       });
     });
   };
-  SecurityAuditLogger.prototype.groupEventsByType = function (events) {
-    return events.reduce(function (acc, event) {
+  SecurityAuditLogger.prototype.groupEventsByType = (events) =>
+    events.reduce((acc, event) => {
       acc[event.event_type] = (acc[event.event_type] || 0) + 1;
       return acc;
     }, {});
-  };
-  SecurityAuditLogger.prototype.groupEventsBySeverity = function (events) {
-    return events.reduce(function (acc, event) {
+  SecurityAuditLogger.prototype.groupEventsBySeverity = (events) =>
+    events.reduce((acc, event) => {
       acc[event.severity] = (acc[event.severity] || 0) + 1;
       return acc;
     }, {});
-  };
-  SecurityAuditLogger.prototype.generateComplianceSummary = function (events) {
-    var lgpdEvents = events.filter(function (e) {
-      return e.compliance_flags && e.compliance_flags.includes("lgpd_relevant");
-    });
+  SecurityAuditLogger.prototype.generateComplianceSummary = (events) => {
+    var lgpdEvents = events.filter(
+      (e) => e.compliance_flags && e.compliance_flags.includes("lgpd_relevant"),
+    );
     return {
       total_compliance_events: lgpdEvents.length,
-      data_processing_events: events.filter(function (e) {
-        return e.compliance_flags && e.compliance_flags.includes("data_processing");
-      }).length,
-      consent_events: events.filter(function (e) {
-        return e.compliance_flags && e.compliance_flags.includes("consent_required");
-      }).length,
+      data_processing_events: events.filter(
+        (e) => e.compliance_flags && e.compliance_flags.includes("data_processing"),
+      ).length,
+      consent_events: events.filter(
+        (e) => e.compliance_flags && e.compliance_flags.includes("consent_required"),
+      ).length,
     };
   };
-  SecurityAuditLogger.prototype.generateLGPDSummary = function (events) {
-    var lgpdEvents = events.filter(function (e) {
-      return e.compliance_flags && e.compliance_flags.includes("lgpd_relevant");
-    });
+  SecurityAuditLogger.prototype.generateLGPDSummary = (events) => {
+    var lgpdEvents = events.filter(
+      (e) => e.compliance_flags && e.compliance_flags.includes("lgpd_relevant"),
+    );
     return {
       total_lgpd_events: lgpdEvents.length,
-      consent_given: events.filter(function (e) {
-        return e.event_type === "privacy_consent_given";
-      }).length,
-      consent_withdrawn: events.filter(function (e) {
-        return e.event_type === "privacy_consent_withdrawn";
-      }).length,
-      data_exports: events.filter(function (e) {
-        return e.event_type === "data_export_requested";
-      }).length,
-      data_deletions: events.filter(function (e) {
-        return e.event_type === "data_deletion_requested";
-      }).length,
+      consent_given: events.filter((e) => e.event_type === "privacy_consent_given").length,
+      consent_withdrawn: events.filter((e) => e.event_type === "privacy_consent_withdrawn").length,
+      data_exports: events.filter((e) => e.event_type === "data_export_requested").length,
+      data_deletions: events.filter((e) => e.event_type === "data_deletion_requested").length,
     };
   };
-  SecurityAuditLogger.prototype.generateRecommendations = function (events) {
+  SecurityAuditLogger.prototype.generateRecommendations = (events) => {
     var recommendations = [];
-    var criticalEvents = events.filter(function (e) {
-      return e.severity === "critical";
-    });
+    var criticalEvents = events.filter((e) => e.severity === "critical");
     if (criticalEvents.length > 0) {
       recommendations.push("Investigate critical security events immediately");
     }
-    var failedAuth = events.filter(function (e) {
-      return e.event_type === "authentication_failure";
-    });
+    var failedAuth = events.filter((e) => e.event_type === "authentication_failure");
     if (failedAuth.length > 10) {
       recommendations.push(
         "High number of authentication failures detected - consider implementing additional security measures",
       );
     }
-    var suspiciousActivity = events.filter(function (e) {
-      return e.event_type === "suspicious_activity";
-    });
+    var suspiciousActivity = events.filter((e) => e.event_type === "suspicious_activity");
     if (suspiciousActivity.length > 0) {
       recommendations.push("Suspicious activity detected - review and investigate");
     }

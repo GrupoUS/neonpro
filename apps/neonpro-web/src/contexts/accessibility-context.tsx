@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 interface AccessibilityContextValue {
   announceToScreenReader: (message: string, priority?: "polite" | "assertive") => void;
@@ -195,21 +196,23 @@ export function useKeyboardNavigation() {
     const { horizontal = false, wrap = true, enterAction } = options;
 
     switch (e.key) {
-      case horizontal ? "ArrowLeft" : "ArrowUp":
+      case horizontal ? "ArrowLeft" : "ArrowUp": {
         e.preventDefault();
         const prevIndex =
           currentIndex > 0 ? currentIndex - 1 : wrap ? items.length - 1 : currentIndex;
         onIndexChange(prevIndex);
         items[prevIndex]?.focus();
         break;
+      }
 
-      case horizontal ? "ArrowRight" : "ArrowDown":
+      case horizontal ? "ArrowRight" : "ArrowDown": {
         e.preventDefault();
         const nextIndex =
           currentIndex < items.length - 1 ? currentIndex + 1 : wrap ? 0 : currentIndex;
         onIndexChange(nextIndex);
         items[nextIndex]?.focus();
         break;
+      }
 
       case "Home":
         e.preventDefault();
@@ -217,12 +220,13 @@ export function useKeyboardNavigation() {
         items[0]?.focus();
         break;
 
-      case "End":
+      case "End": {
         e.preventDefault();
         const lastIndex = items.length - 1;
         onIndexChange(lastIndex);
         items[lastIndex]?.focus();
         break;
+      }
 
       case "Enter":
       case " ":

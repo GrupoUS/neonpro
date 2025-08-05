@@ -1,6 +1,30 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  ExternalLink,
+  Eye,
+  FileText,
+  Filter,
+  Mail,
+  Phone,
+  Plus,
+  RefreshCw,
+  Search,
+  Shield,
+  Users,
+  XCircle,
+} from "lucide-react";
 import React, { useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,20 +32,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import type {
   Dialog,
   DialogContent,
@@ -31,6 +41,8 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
   Select,
   SelectContent,
@@ -38,28 +50,16 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
-  Search,
-  Filter,
-  Plus,
-  Eye,
-  Edit,
-  AlertTriangle,
-  Shield,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Download,
-  RefreshCw,
-  Bell,
-  Users,
-  Calendar,
-  FileText,
-  ExternalLink,
-  Mail,
-  Phone,
-} from "lucide-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useBreachManagement } from "@/hooks/useLGPD";
 import type { BreachIncident } from "@/types/lgpd";
 

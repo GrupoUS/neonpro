@@ -1,4 +1,3 @@
-"use strict";
 /**
  * CRM Business Logic Test Suite
  * Comprehensive tests for Customer Relationship Management utilities
@@ -9,18 +8,18 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -29,7 +28,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("./utils");
 // Test data - hardcoded ISO strings to avoid Date mocking issues
@@ -74,8 +73,8 @@ var mockAppointments = [
     satisfaction: 4,
   },
 ];
-describe("CRM Lead Scoring Functions", function () {
-  test("calculateLeadScore should calculate correct score for customer", function () {
+describe("CRM Lead Scoring Functions", () => {
+  test("calculateLeadScore should calculate correct score for customer", () => {
     var leadScore = (0, utils_1.calculateLeadScore)(mockCustomer, mockAppointments);
     expect(leadScore.customerId).toBe(mockCustomer.id);
     expect(leadScore.score).toBeGreaterThan(0);
@@ -86,22 +85,18 @@ describe("CRM Lead Scoring Functions", function () {
     expect(leadScore.factors.recency).toBeGreaterThan(0);
     expect(["high", "medium", "low"]).toContain(leadScore.priority);
   });
-  test("calculateLeadScore should handle customer without appointments", function () {
+  test("calculateLeadScore should handle customer without appointments", () => {
     var leadScore = (0, utils_1.calculateLeadScore)(mockCustomer, []);
     expect(leadScore.customerId).toBe(mockCustomer.id);
     expect(leadScore.score).toBeGreaterThanOrEqual(0);
     expect(leadScore.score).toBeLessThanOrEqual(100);
   });
-  test("calculateLeadScore should throw error for invalid customer", function () {
+  test("calculateLeadScore should throw error for invalid customer", () => {
     // @ts-ignore - Testing invalid input
-    expect(function () {
-      return (0, utils_1.calculateLeadScore)(null);
-    }).toThrow("Invalid customer data provided");
-    expect(function () {
-      return (0, utils_1.calculateLeadScore)({});
-    }).toThrow("Invalid customer data provided");
+    expect(() => (0, utils_1.calculateLeadScore)(null)).toThrow("Invalid customer data provided");
+    expect(() => (0, utils_1.calculateLeadScore)({})).toThrow("Invalid customer data provided");
   });
-  test("categorizeLeadPriority should categorize scores correctly", function () {
+  test("categorizeLeadPriority should categorize scores correctly", () => {
     expect((0, utils_1.categorizeLeadPriority)(80)).toBe("high");
     expect((0, utils_1.categorizeLeadPriority)(70)).toBe("high");
     expect((0, utils_1.categorizeLeadPriority)(60)).toBe("medium");
@@ -110,12 +105,12 @@ describe("CRM Lead Scoring Functions", function () {
     expect((0, utils_1.categorizeLeadPriority)(0)).toBe("low");
   });
 });
-describe("CRM Lifecycle Functions", function () {
-  test("determineCustomerLifecycle should classify active customer correctly", function () {
+describe("CRM Lifecycle Functions", () => {
+  test("determineCustomerLifecycle should classify active customer correctly", () => {
     var lifecycle = (0, utils_1.determineCustomerLifecycle)(mockCustomer);
     expect(["new", "active", "at-risk", "churned"]).toContain(lifecycle);
   });
-  test("determineCustomerLifecycle should handle new customer", function () {
+  test("determineCustomerLifecycle should handle new customer", () => {
     var newCustomer = __assign(__assign({}, mockCustomer), {
       registrationDate: RECENT_DATE,
       appointmentCount: 1,
@@ -124,7 +119,7 @@ describe("CRM Lifecycle Functions", function () {
     var lifecycle = (0, utils_1.determineCustomerLifecycle)(newCustomer);
     expect(["new", "active"]).toContain(lifecycle);
   });
-  test("determineCustomerLifecycle should handle churned customer", function () {
+  test("determineCustomerLifecycle should handle churned customer", () => {
     var churnedCustomer = __assign(__assign({}, mockCustomer), {
       lastVisitDate: "2024-08-01T12:00:00.000Z",
       status: "churned",
@@ -132,48 +127,44 @@ describe("CRM Lifecycle Functions", function () {
     var lifecycle = (0, utils_1.determineCustomerLifecycle)(churnedCustomer);
     expect(lifecycle).toBe("churned");
   });
-  test("calculateDaysSinceLastVisit should calculate days correctly", function () {
+  test("calculateDaysSinceLastVisit should calculate days correctly", () => {
     // Mock Date.now to return our fixed date
     var originalDateNow = Date.now;
-    Date.now = jest.fn(function () {
-      return Date.parse(FIXED_NOW);
-    });
+    Date.now = jest.fn(() => Date.parse(FIXED_NOW));
     var days = (0, utils_1.calculateDaysSinceLastVisit)(RECENT_DATE);
     expect(days).toBe(14); // 14 days difference
     // Restore original Date.now
     Date.now = originalDateNow;
   });
-  test("calculateDaysSinceLastVisit should throw error for invalid date", function () {
-    expect(function () {
-      return (0, utils_1.calculateDaysSinceLastVisit)("");
-    }).toThrow("Last visit date is required");
-    expect(function () {
-      return (0, utils_1.calculateDaysSinceLastVisit)("invalid-date");
-    }).toThrow("Invalid date format for last visit date");
+  test("calculateDaysSinceLastVisit should throw error for invalid date", () => {
+    expect(() => (0, utils_1.calculateDaysSinceLastVisit)("")).toThrow(
+      "Last visit date is required",
+    );
+    expect(() => (0, utils_1.calculateDaysSinceLastVisit)("invalid-date")).toThrow(
+      "Invalid date format for last visit date",
+    );
   });
-  test("predictChurnRisk should calculate risk percentage", function () {
+  test("predictChurnRisk should calculate risk percentage", () => {
     var churnRisk = (0, utils_1.predictChurnRisk)(mockCustomer);
     expect(churnRisk).toBeGreaterThanOrEqual(0);
     expect(churnRisk).toBeLessThanOrEqual(100);
     expect(typeof churnRisk).toBe("number");
   });
-  test("predictChurnRisk should throw error for invalid customer", function () {
+  test("predictChurnRisk should throw error for invalid customer", () => {
     // @ts-ignore - Testing invalid input
-    expect(function () {
-      return (0, utils_1.predictChurnRisk)(null);
-    }).toThrow("Customer data is required");
+    expect(() => (0, utils_1.predictChurnRisk)(null)).toThrow("Customer data is required");
   });
 });
-describe("CRM Value Functions", function () {
-  test("calculateCustomerLifetimeValue should calculate total value from completed appointments", function () {
+describe("CRM Value Functions", () => {
+  test("calculateCustomerLifetimeValue should calculate total value from completed appointments", () => {
     var ltv = (0, utils_1.calculateCustomerLifetimeValue)(mockAppointments);
     expect(ltv).toBe(350); // 200 + 150
   });
-  test("calculateCustomerLifetimeValue should handle empty appointments", function () {
+  test("calculateCustomerLifetimeValue should handle empty appointments", () => {
     var ltv = (0, utils_1.calculateCustomerLifetimeValue)([]);
     expect(ltv).toBe(0);
   });
-  test("calculateCustomerLifetimeValue should ignore cancelled appointments", function () {
+  test("calculateCustomerLifetimeValue should ignore cancelled appointments", () => {
     var appointmentsWithCancelled = __spreadArray(
       __spreadArray([], mockAppointments, true),
       [
@@ -193,15 +184,15 @@ describe("CRM Value Functions", function () {
     var ltv = (0, utils_1.calculateCustomerLifetimeValue)(appointmentsWithCancelled);
     expect(ltv).toBe(350); // Still 200 + 150, cancelled appointment ignored
   });
-  test("calculateAverageAppointmentValue should calculate correct average", function () {
+  test("calculateAverageAppointmentValue should calculate correct average", () => {
     var avgValue = (0, utils_1.calculateAverageAppointmentValue)(mockAppointments);
     expect(avgValue).toBe(175); // (200 + 150) / 2
   });
-  test("calculateAverageAppointmentValue should handle empty appointments", function () {
+  test("calculateAverageAppointmentValue should handle empty appointments", () => {
     var avgValue = (0, utils_1.calculateAverageAppointmentValue)([]);
     expect(avgValue).toBe(0);
   });
-  test("rankCustomersByValue should sort customers by total spent", function () {
+  test("rankCustomersByValue should sort customers by total spent", () => {
     var customers = [
       __assign(__assign({}, mockCustomer), { id: "1", totalSpent: 500 }),
       __assign(__assign({}, mockCustomer), { id: "2", totalSpent: 1000 }),
@@ -212,23 +203,23 @@ describe("CRM Value Functions", function () {
     expect(ranked[1].totalSpent).toBe(500);
     expect(ranked[2].totalSpent).toBe(200);
   });
-  test("rankCustomersByValue should handle empty array", function () {
+  test("rankCustomersByValue should handle empty array", () => {
     var ranked = (0, utils_1.rankCustomersByValue)([]);
     expect(ranked).toEqual([]);
   });
 });
-describe("CRM Follow-up Functions", function () {
-  beforeAll(function () {
+describe("CRM Follow-up Functions", () => {
+  beforeAll(() => {
     // Use fake timers to ensure consistent date calculations
     jest.useFakeTimers();
     // Set a fixed system time for all date operations
     jest.setSystemTime(new Date("2025-01-01T10:00:00.000Z"));
   });
-  afterAll(function () {
+  afterAll(() => {
     // Restore real timers after tests
     jest.useRealTimers();
   });
-  test("determineNextFollowUpDate should calculate correct dates for different customer types", function () {
+  test("determineNextFollowUpDate should calculate correct dates for different customer types", () => {
     // Test that follow-up dates are calculated correctly for different customer types
     var newCustomerFollowUp = (0, utils_1.determineNextFollowUpDate)(RECENT_DATE, "new");
     var activeCustomerFollowUp = (0, utils_1.determineNextFollowUpDate)(RECENT_DATE, "active");
@@ -262,15 +253,15 @@ describe("CRM Follow-up Functions", function () {
       new Date(churnedCustomerFollowUp).getTime(),
     );
   });
-  test("determineNextFollowUpDate should throw error for invalid date", function () {
-    expect(function () {
-      return (0, utils_1.determineNextFollowUpDate)("", "active");
-    }).toThrow("Last contact date is required");
-    expect(function () {
-      return (0, utils_1.determineNextFollowUpDate)("invalid-date", "active");
-    }).toThrow("Invalid date format for last contact date");
+  test("determineNextFollowUpDate should throw error for invalid date", () => {
+    expect(() => (0, utils_1.determineNextFollowUpDate)("", "active")).toThrow(
+      "Last contact date is required",
+    );
+    expect(() => (0, utils_1.determineNextFollowUpDate)("invalid-date", "active")).toThrow(
+      "Invalid date format for last contact date",
+    );
   });
-  test("generateFollowUpMessage should create appropriate messages", function () {
+  test("generateFollowUpMessage should create appropriate messages", () => {
     var appointmentMessage = (0, utils_1.generateFollowUpMessage)(mockCustomer, "appointment");
     expect(appointmentMessage).toContain("John");
     expect(appointmentMessage).toContain("appointment");
@@ -286,18 +277,18 @@ describe("CRM Follow-up Functions", function () {
     var defaultMessage = (0, utils_1.generateFollowUpMessage)(mockCustomer, "other");
     expect(defaultMessage).toContain("John");
   });
-  test("generateFollowUpMessage should throw error for invalid customer", function () {
+  test("generateFollowUpMessage should throw error for invalid customer", () => {
     // @ts-ignore - Testing invalid input
-    expect(function () {
-      return (0, utils_1.generateFollowUpMessage)(null, "appointment");
-    }).toThrow("Customer data with name is required");
-    expect(function () {
-      return (0, utils_1.generateFollowUpMessage)({}, "appointment");
-    }).toThrow("Customer data with name is required");
+    expect(() => (0, utils_1.generateFollowUpMessage)(null, "appointment")).toThrow(
+      "Customer data with name is required",
+    );
+    expect(() => (0, utils_1.generateFollowUpMessage)({}, "appointment")).toThrow(
+      "Customer data with name is required",
+    );
   });
 });
-describe("CRM Analytics Functions", function () {
-  test("segmentCustomers should create segments based on criteria", function () {
+describe("CRM Analytics Functions", () => {
+  test("segmentCustomers should create segments based on criteria", () => {
     var customers = [
       __assign(__assign({}, mockCustomer), { id: "1", totalSpent: 1500, appointmentCount: 8 }),
       __assign(__assign({}, mockCustomer), { id: "2", totalSpent: 500, appointmentCount: 3 }),
@@ -315,18 +306,18 @@ describe("CRM Analytics Functions", function () {
     };
     var segments = (0, utils_1.segmentCustomers)(customers, criteria);
     expect(segments.length).toBeGreaterThan(0);
-    segments.forEach(function (segment) {
+    segments.forEach((segment) => {
       expect(segment.name).toBeDefined();
       expect(segment.customers).toBeDefined();
       expect(segment.criteria).toBeDefined();
       expect(segment.size).toBe(segment.customers.length);
     });
   });
-  test("segmentCustomers should handle empty customer array", function () {
+  test("segmentCustomers should handle empty customer array", () => {
     var segments = (0, utils_1.segmentCustomers)([], {});
     expect(segments).toEqual([]);
   });
-  test("calculateRetentionRate should calculate retention metrics", function () {
+  test("calculateRetentionRate should calculate retention metrics", () => {
     var customers = [
       __assign(__assign({}, mockCustomer), {
         id: "1",
@@ -353,7 +344,7 @@ describe("CRM Analytics Functions", function () {
     expect(retention.averageLifetimeValue).toBeGreaterThanOrEqual(0);
     expect(Array.isArray(retention.riskCustomers)).toBe(true);
   });
-  test("calculateRetentionRate should handle empty customer array", function () {
+  test("calculateRetentionRate should handle empty customer array", () => {
     var retention = (0, utils_1.calculateRetentionRate)([], 12);
     expect(retention.totalCustomers).toBe(0);
     expect(retention.activeCustomers).toBe(0);

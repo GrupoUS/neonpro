@@ -6,13 +6,13 @@
  */
 
 import {
+  type DependencyList,
+  startTransition,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
-  useEffect,
   useState,
-  startTransition,
-  type DependencyList,
 } from "react";
 
 // Performance thresholds for monitoring

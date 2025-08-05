@@ -5,11 +5,10 @@
  * Test suite for React hook that manages permissions in frontend components
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { usePermissions } from "@/hooks/usePermissions";
-import { UserRole, Permission } from "@/types/rbac";
-import { AuthUser } from "@/lib/middleware/auth";
+import type { UserRole } from "@/types/rbac";
 
 // Mock the auth context
 const mockUser = {

@@ -1,9 +1,9 @@
 // API Routes for Demand Forecasting
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
-import type { IntelligentThresholdService } from "@/app/lib/services/intelligent-threshold-service";
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
+import type { IntelligentThresholdService } from "@/app/lib/services/intelligent-threshold-service";
 
 const thresholdService = new IntelligentThresholdService();
 

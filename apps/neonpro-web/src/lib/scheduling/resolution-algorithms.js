@@ -1,4 +1,3 @@
-"use strict";
 /**
  * ============================================================================
  * NEONPRO INTELLIGENT CONFLICT RESOLUTION ALGORITHMS
@@ -9,15 +8,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,13 +36,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,9 +64,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -139,10 +136,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -151,7 +148,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResolutionAlgorithmFactory =
   exports.RuleBasedAlgorithm =
@@ -164,7 +161,7 @@ var conflict_types_1 = require("./conflict-types");
  * Mixed-Integer Programming (MIP) Optimization Algorithm
  * Optimal resource allocation with mathematical precision
  */
-var MIPOptimizationAlgorithm = /** @class */ (function () {
+var MIPOptimizationAlgorithm = /** @class */ (() => {
   function MIPOptimizationAlgorithm() {
     this.name = "Mixed-Integer Programming Optimizer";
     this.type = "mip_optimization";
@@ -209,9 +206,7 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
                 alternatives:
                   (_a = solution.alternativeSolutions) === null || _a === void 0
                     ? void 0
-                    : _a.map(function (alt) {
-                        return _this.convertAlternativeToResult(alt, conflict, context);
-                      }),
+                    : _a.map((alt) => _this.convertAlternativeToResult(alt, conflict, context)),
               },
             ];
           case 3:
@@ -229,13 +224,13 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
       });
     });
   };
-  MIPOptimizationAlgorithm.prototype.estimateExecutionTime = function (conflict) {
+  MIPOptimizationAlgorithm.prototype.estimateExecutionTime = (conflict) => {
     // Estimate based on conflict complexity
     var baseTime = 500; // milliseconds
     var complexityFactor = conflict.severityLevel * 200;
     return baseTime + complexityFactor;
   };
-  MIPOptimizationAlgorithm.prototype.calculateSuccessProbability = function (conflict, context) {
+  MIPOptimizationAlgorithm.prototype.calculateSuccessProbability = (conflict, context) => {
     // Higher success probability for resource conflicts, lower for complex scenarios
     var baseProbability = 0.85;
     var severityPenalty = (conflict.severityLevel - 1) * 0.05;
@@ -254,11 +249,11 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
       bounds: this.defineVariableBounds(conflict, context),
     };
   };
-  MIPOptimizationAlgorithm.prototype.defineDecisionVariables = function (conflict, context) {
+  MIPOptimizationAlgorithm.prototype.defineDecisionVariables = (conflict, context) => {
     // Binary variables for appointment slot assignments
     var variables = new Map();
     // x_ij: appointment i assigned to time slot j
-    context.availableAppointments.forEach(function (appointment) {
+    context.availableAppointments.forEach((appointment) => {
       // Define available time slots (simplified)
       for (var slot = 0; slot < 48; slot++) {
         // 30-minute slots in a day
@@ -270,16 +265,16 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
     });
     return variables;
   };
-  MIPOptimizationAlgorithm.prototype.defineConstraints = function (conflict, context) {
+  MIPOptimizationAlgorithm.prototype.defineConstraints = (conflict, context) => {
     var constraints = [];
     // Each appointment must be assigned to exactly one slot
-    context.availableAppointments.forEach(function (appointment) {
+    context.availableAppointments.forEach((appointment) => {
       var constraint = {
         type: "equality",
         value: 1,
-        variables: Array.from({ length: 48 }, function (_, slot) {
-          return "x_".concat(appointment.id, "_").concat(slot);
-        }),
+        variables: Array.from({ length: 48 }, (_, slot) =>
+          "x_".concat(appointment.id, "_").concat(slot),
+        ),
       };
       constraints.push(constraint);
     });
@@ -288,7 +283,7 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
     // Time overlap prevention
     return constraints;
   };
-  MIPOptimizationAlgorithm.prototype.defineObjectiveFunction = function (conflict, context) {
+  MIPOptimizationAlgorithm.prototype.defineObjectiveFunction = (conflict, context) => {
     // Minimize total disruption and maximize satisfaction
     return {
       type: "minimize",
@@ -299,13 +294,13 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
       ],
     };
   };
-  MIPOptimizationAlgorithm.prototype.defineVariableBounds = function (conflict, context) {
+  MIPOptimizationAlgorithm.prototype.defineVariableBounds = (conflict, context) => {
     // All binary variables bounded between 0 and 1
     return { lower: 0, upper: 1 };
   };
   MIPOptimizationAlgorithm.prototype.solveMIPProblem = function (problem) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified solver implementation (would use professional solver in production)
         return [
           2 /*return*/,
@@ -327,21 +322,20 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
     conflict,
     context,
   ) {
-    var _this = this;
     var changes = [];
     // Convert variable assignments to appointment changes
-    solution.solution.forEach(function (value, variable) {
+    solution.solution.forEach((value, variable) => {
       if (value > 0.5) {
         // Binary variable is "on"
         var _a = variable.split("_"),
           appointmentId_1 = _a[1],
           slotStr = _a[2];
         var slot = parseInt(slotStr);
-        var originalAppointment = context.availableAppointments.find(function (a) {
-          return a.id === appointmentId_1;
-        });
+        var originalAppointment = context.availableAppointments.find(
+          (a) => a.id === appointmentId_1,
+        );
         if (originalAppointment) {
-          var newTime = _this.slotToDateTime(slot, originalAppointment.appointmentDate);
+          var newTime = this.slotToDateTime(slot, originalAppointment.appointmentDate);
           changes.push({
             appointmentId: appointmentId_1,
             changeType: "reschedule",
@@ -349,7 +343,7 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
             proposedValue: newTime,
             impact: {
               stakeholder: "patient",
-              severity: _this.calculateChangeImpact(originalAppointment.appointmentDate, newTime),
+              severity: this.calculateChangeImpact(originalAppointment.appointmentDate, newTime),
               description: "Rescheduled from "
                 .concat(originalAppointment.appointmentDate, " to ")
                 .concat(newTime),
@@ -360,24 +354,21 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
     });
     return changes;
   };
-  MIPOptimizationAlgorithm.prototype.slotToDateTime = function (slot, baseDate) {
+  MIPOptimizationAlgorithm.prototype.slotToDateTime = (slot, baseDate) => {
     var newDate = new Date(baseDate);
     newDate.setHours(Math.floor(slot / 2), (slot % 2) * 30, 0, 0);
     return newDate;
   };
-  MIPOptimizationAlgorithm.prototype.calculateChangeImpact = function (originalTime, newTime) {
+  MIPOptimizationAlgorithm.prototype.calculateChangeImpact = (originalTime, newTime) => {
     var hoursDiff = Math.abs(newTime.getTime() - originalTime.getTime()) / (1000 * 60 * 60);
     return Math.min(5, Math.ceil(hoursDiff / 2)); // 1-5 severity scale
   };
-  MIPOptimizationAlgorithm.prototype.calculateStakeholderSatisfaction = function (
-    changes,
-    context,
-  ) {
+  MIPOptimizationAlgorithm.prototype.calculateStakeholderSatisfaction = (changes, context) => {
     // Calculate satisfaction based on change impact and preferences
     var patientSatisfaction = 1.0;
     var professionalSatisfaction = 1.0;
     var clinicSatisfaction = 1.0;
-    changes.forEach(function (change) {
+    changes.forEach((change) => {
       var impactFactor = (6 - change.impact.severity) / 5; // Convert severity to satisfaction
       if (change.impact.stakeholder === "patient") {
         patientSatisfaction *= impactFactor;
@@ -394,27 +385,17 @@ var MIPOptimizationAlgorithm = /** @class */ (function () {
       overall: Math.max(0, overall),
     };
   };
-  MIPOptimizationAlgorithm.prototype.determineResolutionMethod = function (changes) {
+  MIPOptimizationAlgorithm.prototype.determineResolutionMethod = (changes) => {
     if (changes.length === 0) return "manual_override";
-    if (
-      changes.every(function (c) {
-        return c.changeType === "reschedule";
-      })
-    )
-      return "automatic_reschedule";
-    if (
-      changes.some(function (c) {
-        return c.changeType === "reassign";
-      })
-    )
-      return "staff_reassignment";
+    if (changes.every((c) => c.changeType === "reschedule")) return "automatic_reschedule";
+    if (changes.some((c) => c.changeType === "reassign")) return "staff_reassignment";
     return "resource_reallocation";
   };
-  MIPOptimizationAlgorithm.prototype.convertAlternativeToResult = function (
+  MIPOptimizationAlgorithm.prototype.convertAlternativeToResult = (
     alternative,
     conflict,
     context,
-  ) {
+  ) => {
     // Convert alternative solution to ResolutionResult format
     return {
       success: true,
@@ -433,7 +414,7 @@ exports.MIPOptimizationAlgorithm = MIPOptimizationAlgorithm;
  * Constraint Programming (CP) Algorithm
  * Rule-based optimization with logical constraints
  */
-var ConstraintProgrammingAlgorithm = /** @class */ (function () {
+var ConstraintProgrammingAlgorithm = /** @class */ (() => {
   function ConstraintProgrammingAlgorithm() {
     this.name = "Constraint Programming Solver";
     this.type = "constraint_programming";
@@ -490,13 +471,9 @@ var ConstraintProgrammingAlgorithm = /** @class */ (function () {
       });
     });
   };
-  ConstraintProgrammingAlgorithm.prototype.estimateExecutionTime = function (conflict) {
-    return 500 + conflict.severityLevel * 100;
-  };
-  ConstraintProgrammingAlgorithm.prototype.calculateSuccessProbability = function (
-    conflict,
-    context,
-  ) {
+  ConstraintProgrammingAlgorithm.prototype.estimateExecutionTime = (conflict) =>
+    500 + conflict.severityLevel * 100;
+  ConstraintProgrammingAlgorithm.prototype.calculateSuccessProbability = (conflict, context) => {
     // CP works well for heavily constrained problems
     var baseProb = 0.82;
     var constraintBonus = Math.min(
@@ -515,45 +492,39 @@ var ConstraintProgrammingAlgorithm = /** @class */ (function () {
       constraints: this.defineCSPConstraints(conflict, context),
     };
   };
-  ConstraintProgrammingAlgorithm.prototype.defineCSPVariables = function (conflict, context) {
+  ConstraintProgrammingAlgorithm.prototype.defineCSPVariables = (conflict, context) => {
     // Variables for appointment scheduling
     var variables = new Set();
-    context.availableAppointments.forEach(function (appointment) {
+    context.availableAppointments.forEach((appointment) => {
       variables.add("start_".concat(appointment.id));
       variables.add("professional_".concat(appointment.id));
       variables.add("room_".concat(appointment.id));
     });
     return variables;
   };
-  ConstraintProgrammingAlgorithm.prototype.defineVariableDomains = function (conflict, context) {
+  ConstraintProgrammingAlgorithm.prototype.defineVariableDomains = (conflict, context) => {
     var domains = new Map();
-    context.availableAppointments.forEach(function (appointment) {
+    context.availableAppointments.forEach((appointment) => {
       // Time slot domains (0-47 for 30-minute slots)
       domains.set(
         "start_".concat(appointment.id),
-        Array.from({ length: 48 }, function (_, i) {
-          return i;
-        }),
+        Array.from({ length: 48 }, (_, i) => i),
       );
       // Professional domains
       var availableProfessionals = context.professionalAvailability
-        .map(function (p) {
-          return p.professionalId;
-        })
-        .filter(function (id, index, arr) {
-          return arr.indexOf(id) === index;
-        });
+        .map((p) => p.professionalId)
+        .filter((id, index, arr) => arr.indexOf(id) === index);
       domains.set("professional_".concat(appointment.id), availableProfessionals);
       // Room domains (simplified)
       domains.set("room_".concat(appointment.id), ["room1", "room2", "room3"]);
     });
     return domains;
   };
-  ConstraintProgrammingAlgorithm.prototype.defineCSPConstraints = function (conflict, context) {
+  ConstraintProgrammingAlgorithm.prototype.defineCSPConstraints = (conflict, context) => {
     var constraints = [];
     // No time overlap constraint
-    context.availableAppointments.forEach(function (app1, i) {
-      context.availableAppointments.slice(i + 1).forEach(function (app2) {
+    context.availableAppointments.forEach((app1, i) => {
+      context.availableAppointments.slice(i + 1).forEach((app2) => {
         constraints.push({
           type: "no_overlap",
           variables: ["start_".concat(app1.id), "start_".concat(app2.id)],
@@ -562,7 +533,7 @@ var ConstraintProgrammingAlgorithm = /** @class */ (function () {
       });
     });
     // Professional availability constraints
-    context.professionalAvailability.forEach(function (pattern) {
+    context.professionalAvailability.forEach((pattern) => {
       constraints.push({
         type: "availability",
         professional: pattern.professionalId,
@@ -574,7 +545,7 @@ var ConstraintProgrammingAlgorithm = /** @class */ (function () {
   };
   ConstraintProgrammingAlgorithm.prototype.solveCSP = function (csp) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified CSP solver (would use CP-SAT or similar in production)
         return [
           2 /*return*/,
@@ -596,17 +567,16 @@ var ConstraintProgrammingAlgorithm = /** @class */ (function () {
     conflict,
     context,
   ) {
-    var _this = this;
     var changes = [];
     if (solution.satisfiable) {
-      solution.assignments.forEach(function (value, variable) {
+      solution.assignments.forEach((value, variable) => {
         if (variable.startsWith("start_")) {
           var appointmentId_2 = variable.split("_")[1];
-          var originalAppointment = context.availableAppointments.find(function (a) {
-            return a.id === appointmentId_2;
-          });
+          var originalAppointment = context.availableAppointments.find(
+            (a) => a.id === appointmentId_2,
+          );
           if (originalAppointment) {
-            var newTime = _this.slotToDateTime(value, originalAppointment.appointmentDate);
+            var newTime = this.slotToDateTime(value, originalAppointment.appointmentDate);
             changes.push({
               appointmentId: appointmentId_2,
               changeType: "reschedule",
@@ -616,7 +586,7 @@ var ConstraintProgrammingAlgorithm = /** @class */ (function () {
                 stakeholder: "patient",
                 severity: Math.min(
                   5,
-                  Math.abs(value - _this.dateTimeToSlot(originalAppointment.appointmentDate)),
+                  Math.abs(value - this.dateTimeToSlot(originalAppointment.appointmentDate)),
                 ),
                 description: "CP rescheduling to resolve conflict",
               },
@@ -627,18 +597,17 @@ var ConstraintProgrammingAlgorithm = /** @class */ (function () {
     }
     return changes;
   };
-  ConstraintProgrammingAlgorithm.prototype.slotToDateTime = function (slot, baseDate) {
+  ConstraintProgrammingAlgorithm.prototype.slotToDateTime = (slot, baseDate) => {
     var newDate = new Date(baseDate);
     newDate.setHours(Math.floor(slot / 2), (slot % 2) * 30, 0, 0);
     return newDate;
   };
-  ConstraintProgrammingAlgorithm.prototype.dateTimeToSlot = function (date) {
-    return date.getHours() * 2 + Math.floor(date.getMinutes() / 30);
-  };
-  ConstraintProgrammingAlgorithm.prototype.calculateStakeholderSatisfaction = function (
+  ConstraintProgrammingAlgorithm.prototype.dateTimeToSlot = (date) =>
+    date.getHours() * 2 + Math.floor(date.getMinutes() / 30);
+  ConstraintProgrammingAlgorithm.prototype.calculateStakeholderSatisfaction = (
     changes,
     context,
-  ) {
+  ) => {
     // Simplified satisfaction calculation
     var impactFactor = changes.length > 0 ? 0.85 : 1.0;
     return {
@@ -655,7 +624,7 @@ exports.ConstraintProgrammingAlgorithm = ConstraintProgrammingAlgorithm;
  * Genetic Algorithm (GA) Optimization
  * Evolutionary approach for complex multi-objective optimization
  */
-var GeneticAlgorithmOptimizer = /** @class */ (function () {
+var GeneticAlgorithmOptimizer = /** @class */ (() => {
   function GeneticAlgorithmOptimizer() {
     this.name = "Genetic Algorithm Optimizer";
     this.type = "genetic_algorithm";
@@ -717,10 +686,9 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
       });
     });
   };
-  GeneticAlgorithmOptimizer.prototype.estimateExecutionTime = function (conflict) {
-    return 2000 + conflict.severityLevel * 400;
-  };
-  GeneticAlgorithmOptimizer.prototype.calculateSuccessProbability = function (conflict, context) {
+  GeneticAlgorithmOptimizer.prototype.estimateExecutionTime = (conflict) =>
+    2000 + conflict.severityLevel * 400;
+  GeneticAlgorithmOptimizer.prototype.calculateSuccessProbability = (conflict, context) => {
     // GA good for complex multi-objective problems
     return 0.78 + (context.availableAppointments.length > 5 ? 0.1 : 0);
   };
@@ -732,10 +700,10 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
     }
     return population;
   };
-  GeneticAlgorithmOptimizer.prototype.createRandomIndividual = function (conflict, context) {
+  GeneticAlgorithmOptimizer.prototype.createRandomIndividual = (conflict, context) => {
     var genes = new Map();
     // Each gene represents an appointment's new time slot
-    context.availableAppointments.forEach(function (appointment) {
+    context.availableAppointments.forEach((appointment) => {
       genes.set(appointment.id, Math.floor(Math.random() * 48)); // Random time slot
     });
     return {
@@ -749,13 +717,13 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
       var _this = this;
       return __generator(this, function (_a) {
         // Evaluate initial fitness
-        population.forEach(function (individual) {
+        population.forEach((individual) => {
           individual.fitness = _this.evaluateFitness(individual, conflict, context).overall;
         });
         for (generation = 0; generation < this.parameters.generations; generation++) {
           newPopulation = this.createNextGeneration(population, conflict, context);
           // Evaluate fitness for new population
-          newPopulation.forEach(function (individual) {
+          newPopulation.forEach((individual) => {
             individual.fitness = _this.evaluateFitness(individual, conflict, context).overall;
           });
           population.splice.apply(
@@ -766,9 +734,7 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
         // Return best individual
         return [
           2 /*return*/,
-          population.reduce(function (best, current) {
-            return current.fitness > best.fitness ? current : best;
-          }),
+          population.reduce((best, current) => (current.fitness > best.fitness ? current : best)),
         ];
       });
     });
@@ -780,9 +746,7 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
   ) {
     var newPopulation = [];
     // Elitism: keep best individuals
-    var sorted = __spreadArray([], population, true).sort(function (a, b) {
-      return b.fitness - a.fitness;
-    });
+    var sorted = __spreadArray([], population, true).sort((a, b) => b.fitness - a.fitness);
     newPopulation.push.apply(newPopulation, sorted.slice(0, this.parameters.elitismCount));
     // Generate offspring through crossover and mutation
     while (newPopulation.length < this.parameters.populationSize) {
@@ -794,7 +758,7 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
     }
     return newPopulation;
   };
-  GeneticAlgorithmOptimizer.prototype.tournamentSelection = function (population, tournamentSize) {
+  GeneticAlgorithmOptimizer.prototype.tournamentSelection = (population, tournamentSize) => {
     if (tournamentSize === void 0) {
       tournamentSize = 3;
     }
@@ -802,17 +766,15 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
     for (var i = 0; i < tournamentSize; i++) {
       tournament.push(population[Math.floor(Math.random() * population.length)]);
     }
-    return tournament.reduce(function (best, current) {
-      return current.fitness > best.fitness ? current : best;
-    });
+    return tournament.reduce((best, current) => (current.fitness > best.fitness ? current : best));
   };
-  GeneticAlgorithmOptimizer.prototype.crossover = function (parent1, parent2) {
+  GeneticAlgorithmOptimizer.prototype.crossover = (parent1, parent2) => {
     var offspring = { genes: new Map(), fitness: 0 };
     // Single-point crossover
     var genes1 = Array.from(parent1.genes.entries());
     var genes2 = Array.from(parent2.genes.entries());
     var crossoverPoint = Math.floor(Math.random() * genes1.length);
-    genes1.forEach(function (_a, index) {
+    genes1.forEach((_a, index) => {
       var key = _a[0],
         value = _a[1];
       if (index < crossoverPoint) {
@@ -824,18 +786,16 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
     return offspring;
   };
   GeneticAlgorithmOptimizer.prototype.mutate = function (individual, conflict, context) {
-    var _this = this;
     var mutated = { genes: new Map(individual.genes), fitness: 0 };
     // Mutate with specified probability
-    mutated.genes.forEach(function (value, key) {
-      if (Math.random() < _this.parameters.mutationRate) {
+    mutated.genes.forEach((value, key) => {
+      if (Math.random() < this.parameters.mutationRate) {
         mutated.genes.set(key, Math.floor(Math.random() * 48));
       }
     });
     return mutated;
   };
   GeneticAlgorithmOptimizer.prototype.evaluateFitness = function (individual, conflict, context) {
-    var _this = this;
     // Multi-objective fitness evaluation
     var conflictResolution = 1.0;
     var disruption = 0.0;
@@ -853,8 +813,8 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
       }
     }
     // Calculate disruption from original schedule
-    appointments.forEach(function (appointment) {
-      var originalSlot = _this.dateTimeToSlot(appointment.appointmentDate);
+    appointments.forEach((appointment) => {
+      var originalSlot = this.dateTimeToSlot(appointment.appointmentDate);
       var newSlot = individual.genes.get(appointment.id);
       disruption += Math.abs(newSlot - originalSlot) / 48;
     });
@@ -868,13 +828,12 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
     };
   };
   GeneticAlgorithmOptimizer.prototype.solutionToChanges = function (solution, conflict, context) {
-    var _this = this;
     var changes = [];
-    context.availableAppointments.forEach(function (appointment) {
+    context.availableAppointments.forEach((appointment) => {
       var newSlot = solution.genes.get(appointment.id);
-      var originalSlot = _this.dateTimeToSlot(appointment.appointmentDate);
+      var originalSlot = this.dateTimeToSlot(appointment.appointmentDate);
       if (newSlot !== originalSlot) {
-        var newTime = _this.slotToDateTime(newSlot, appointment.appointmentDate);
+        var newTime = this.slotToDateTime(newSlot, appointment.appointmentDate);
         changes.push({
           appointmentId: appointment.id,
           changeType: "reschedule",
@@ -890,10 +849,9 @@ var GeneticAlgorithmOptimizer = /** @class */ (function () {
     });
     return changes;
   };
-  GeneticAlgorithmOptimizer.prototype.dateTimeToSlot = function (date) {
-    return date.getHours() * 2 + Math.floor(date.getMinutes() / 30);
-  };
-  GeneticAlgorithmOptimizer.prototype.slotToDateTime = function (slot, baseDate) {
+  GeneticAlgorithmOptimizer.prototype.dateTimeToSlot = (date) =>
+    date.getHours() * 2 + Math.floor(date.getMinutes() / 30);
+  GeneticAlgorithmOptimizer.prototype.slotToDateTime = (slot, baseDate) => {
     var newDate = new Date(baseDate);
     newDate.setHours(Math.floor(slot / 2), (slot % 2) * 30, 0, 0);
     return newDate;
@@ -905,7 +863,7 @@ exports.GeneticAlgorithmOptimizer = GeneticAlgorithmOptimizer;
  * Rule-Based Resolution Algorithm
  * Fast heuristic-based resolution for simple conflicts
  */
-var RuleBasedAlgorithm = /** @class */ (function () {
+var RuleBasedAlgorithm = /** @class */ (() => {
   function RuleBasedAlgorithm() {
     this.name = "Rule-Based Resolver";
     this.type = "rule_based";
@@ -951,22 +909,18 @@ var RuleBasedAlgorithm = /** @class */ (function () {
       });
     });
   };
-  RuleBasedAlgorithm.prototype.estimateExecutionTime = function (conflict) {
+  RuleBasedAlgorithm.prototype.estimateExecutionTime = (conflict) => {
     return 100; // Very fast rule-based approach
   };
-  RuleBasedAlgorithm.prototype.calculateSuccessProbability = function (conflict, context) {
+  RuleBasedAlgorithm.prototype.calculateSuccessProbability = (conflict, context) => {
     // Higher success for simple conflicts
     return conflict.severityLevel <= 2 ? 0.9 : 0.6;
   };
   RuleBasedAlgorithm.prototype.applyResolutionRules = function (conflict, context) {
     var changes = [];
     // Rule 1: Reschedule lower priority appointment first
-    var appointment1 = context.availableAppointments.find(function (a) {
-      return a.id === conflict.appointmentAId;
-    });
-    var appointment2 = context.availableAppointments.find(function (a) {
-      return a.id === conflict.appointmentBId;
-    });
+    var appointment1 = context.availableAppointments.find((a) => a.id === conflict.appointmentAId);
+    var appointment2 = context.availableAppointments.find((a) => a.id === conflict.appointmentBId);
     if (!appointment1 || !appointment2) return changes;
     var targetAppointment =
       appointment1.priorityScore <= appointment2.priorityScore ? appointment1 : appointment2;
@@ -1000,19 +954,19 @@ var RuleBasedAlgorithm = /** @class */ (function () {
     }
     return null;
   };
-  RuleBasedAlgorithm.prototype.isSlotAvailable = function (time, appointment, context) {
+  RuleBasedAlgorithm.prototype.isSlotAvailable = (time, appointment, context) => {
     // Check against business hours
     var hour = time.getHours();
     if (hour < 8 || hour > 18) return false;
     // Check against other appointments (simplified)
-    var conflicts = context.availableAppointments.filter(function (a) {
+    var conflicts = context.availableAppointments.filter((a) => {
       if (a.id === appointment.id) return false;
       var timeDiff = Math.abs(a.appointmentDate.getTime() - time.getTime());
       return timeDiff < 60 * 60 * 1000; // Less than 1 hour difference
     });
     return conflicts.length === 0;
   };
-  RuleBasedAlgorithm.prototype.calculateImpactSeverity = function (originalTime, newTime) {
+  RuleBasedAlgorithm.prototype.calculateImpactSeverity = (originalTime, newTime) => {
     var hoursDiff = Math.abs(newTime.getTime() - originalTime.getTime()) / (1000 * 60 * 60);
     if (hoursDiff <= 2) return 1;
     if (hoursDiff <= 6) return 2;
@@ -1020,14 +974,11 @@ var RuleBasedAlgorithm = /** @class */ (function () {
     if (hoursDiff <= 24) return 4;
     return 5;
   };
-  RuleBasedAlgorithm.prototype.estimateSatisfaction = function (changes, context) {
+  RuleBasedAlgorithm.prototype.estimateSatisfaction = (changes, context) => {
     if (changes.length === 0) {
       return { patient: 0.5, professional: 0.5, clinic: 0.5, overall: 0.5 };
     }
-    var avgSeverity =
-      changes.reduce(function (sum, c) {
-        return sum + c.impact.severity;
-      }, 0) / changes.length;
+    var avgSeverity = changes.reduce((sum, c) => sum + c.impact.severity, 0) / changes.length;
     var satisfaction = Math.max(0.2, 1 - (avgSeverity - 1) / 4);
     return {
       patient: satisfaction,
@@ -1036,7 +987,7 @@ var RuleBasedAlgorithm = /** @class */ (function () {
       overall: satisfaction * 0.95,
     };
   };
-  RuleBasedAlgorithm.prototype.determineResolutionMethod = function (changes) {
+  RuleBasedAlgorithm.prototype.determineResolutionMethod = (changes) => {
     if (changes.length === 0) return "manual_override";
     return "automatic_reschedule";
   };
@@ -1046,33 +997,13 @@ exports.RuleBasedAlgorithm = RuleBasedAlgorithm;
 /**
  * Algorithm Factory for creating appropriate resolution algorithms
  */
-var ResolutionAlgorithmFactory = /** @class */ (function () {
+var ResolutionAlgorithmFactory = /** @class */ (() => {
   function ResolutionAlgorithmFactory() {
     this.algorithms = new Map([
-      [
-        "mip_optimization",
-        function () {
-          return new MIPOptimizationAlgorithm();
-        },
-      ],
-      [
-        "constraint_programming",
-        function () {
-          return new ConstraintProgrammingAlgorithm();
-        },
-      ],
-      [
-        "genetic_algorithm",
-        function () {
-          return new GeneticAlgorithmOptimizer();
-        },
-      ],
-      [
-        "rule_based",
-        function () {
-          return new RuleBasedAlgorithm();
-        },
-      ],
+      ["mip_optimization", () => new MIPOptimizationAlgorithm()],
+      ["constraint_programming", () => new ConstraintProgrammingAlgorithm()],
+      ["genetic_algorithm", () => new GeneticAlgorithmOptimizer()],
+      ["rule_based", () => new RuleBasedAlgorithm()],
     ]);
   }
   ResolutionAlgorithmFactory.prototype.createAlgorithm = function (strategyType) {
@@ -1085,7 +1016,7 @@ var ResolutionAlgorithmFactory = /** @class */ (function () {
   ResolutionAlgorithmFactory.prototype.getAvailableStrategies = function () {
     return Array.from(this.algorithms.keys());
   };
-  ResolutionAlgorithmFactory.prototype.recommendStrategy = function (conflict, context) {
+  ResolutionAlgorithmFactory.prototype.recommendStrategy = (conflict, context) => {
     // Simple recommendation logic - would be ML-powered in production
     if (conflict.severityLevel <= 2) return "rule_based";
     if (conflict.conflictType === "resource_conflict") return "mip_optimization";

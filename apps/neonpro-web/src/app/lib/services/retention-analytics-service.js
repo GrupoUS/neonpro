@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // RETENTION ANALYTICS SERVICE
 // Epic 7.4: Patient Retention Analytics + Predictions
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,12 +147,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RetentionAnalyticsService = void 0;
 var client_1 = require("@/lib/supabase/client");
 var retention_analytics_1 = require("@/app/types/retention-analytics");
-var RetentionAnalyticsService = /** @class */ (function () {
+var RetentionAnalyticsService = /** @class */ (() => {
   // Supabase client created per method for proper request context
   function RetentionAnalyticsService() {}
   // =====================================================================================
@@ -271,40 +268,29 @@ var RetentionAnalyticsService = /** @class */ (function () {
             respondedFollowups =
               (responses === null || responses === void 0
                 ? void 0
-                : responses.filter(function (r) {
-                    return r.response_text;
-                  }).length) || 0;
+                : responses.filter((r) => r.response_text).length) || 0;
             responseRate = totalFollowups > 0 ? respondedFollowups / totalFollowups : 0;
             satisfactionScores =
               (responses === null || responses === void 0
                 ? void 0
                 : responses
-                    .filter(function (r) {
-                      return r.satisfaction_rating;
-                    })
-                    .map(function (r) {
-                      return r.satisfaction_rating;
-                    })) || [];
+                    .filter((r) => r.satisfaction_rating)
+                    .map((r) => r.satisfaction_rating)) || [];
             satisfactionScore =
               satisfactionScores.length > 0
-                ? satisfactionScores.reduce(function (sum, score) {
-                    return sum + score;
-                  }, 0) / satisfactionScores.length
+                ? satisfactionScores.reduce((sum, score) => sum + score, 0) /
+                  satisfactionScores.length
                 : 0;
             totalSpent =
               (payments === null || payments === void 0
                 ? void 0
-                : payments.reduce(function (sum, payment) {
-                    return sum + (payment.amount || 0);
-                  }, 0)) || 0;
+                : payments.reduce((sum, payment) => sum + (payment.amount || 0), 0)) || 0;
             averageTicket = totalAppointments > 0 ? totalSpent / totalAppointments : 0;
             lifetimeValue = totalSpent;
             onTimePayments =
               (payments === null || payments === void 0
                 ? void 0
-                : payments.filter(function (p) {
-                    return new Date(p.paid_at) <= new Date(p.due_date);
-                  }).length) || 0;
+                : payments.filter((p) => new Date(p.paid_at) <= new Date(p.due_date)).length) || 0;
             paymentPunctuality =
               (payments === null || payments === void 0 ? void 0 : payments.length) > 0
                 ? onTimePayments / payments.length
@@ -312,17 +298,13 @@ var RetentionAnalyticsService = /** @class */ (function () {
             cancelledAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "cancelled";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "cancelled").length) || 0;
             cancellationRate =
               totalAppointments > 0 ? cancelledAppointments / totalAppointments : 0;
             noShowAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "no_show";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "no_show").length) || 0;
             noShowRate = totalAppointments > 0 ? noShowAppointments / totalAppointments : 0;
             rebookedCount = 0;
             rebookingRate =
@@ -332,9 +314,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
             completedTreatments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "completed";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "completed").length) || 0;
             treatmentCompletionRate =
               totalAppointments > 0 ? completedTreatments / totalAppointments : 0;
             churnRiskScore = this.calculateChurnRiskScore({
@@ -410,7 +390,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   RetentionAnalyticsService.prototype.getPatientRetentionMetrics = function (patientId, clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -452,7 +432,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
       if (offset === void 0) {
         offset = 0;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -576,7 +556,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
       if (offset === void 0) {
         offset = 0;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -613,7 +593,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   RetentionAnalyticsService.prototype.createRetentionStrategy = function (strategy) {
     return __awaiter(this, void 0, void 0, function () {
       var newStrategy, _a, data, error, error_6;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -651,7 +631,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
       if (activeOnly === void 0) {
         activeOnly = false;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -819,7 +799,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   /**
    * Calculate churn risk score based on multiple factors
    */
-  RetentionAnalyticsService.prototype.calculateChurnRiskScore = function (factors) {
+  RetentionAnalyticsService.prototype.calculateChurnRiskScore = (factors) => {
     // Weighted scoring algorithm
     var weights = {
       daysSinceLastAppointment: 0.25,
@@ -855,7 +835,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   /**
    * Get churn risk level from score
    */
-  RetentionAnalyticsService.prototype.getChurnRiskLevel = function (score) {
+  RetentionAnalyticsService.prototype.getChurnRiskLevel = (score) => {
     if (score >= 0.8) return retention_analytics_1.ChurnRiskLevel.CRITICAL;
     if (score >= 0.6) return retention_analytics_1.ChurnRiskLevel.HIGH;
     if (score >= 0.3) return retention_analytics_1.ChurnRiskLevel.MEDIUM;
@@ -864,10 +844,10 @@ var RetentionAnalyticsService = /** @class */ (function () {
   /**
    * Predict days to churn based on risk score and patterns
    */
-  RetentionAnalyticsService.prototype.predictDaysToChurn = function (
+  RetentionAnalyticsService.prototype.predictDaysToChurn = (
     churnRiskScore,
     appointmentFrequency,
-  ) {
+  ) => {
     if (churnRiskScore < 0.3) return null; // Low risk, no prediction
     // Use inverse relationship: higher risk = sooner churn
     var baseChurnDays = 180; // 6 months base
@@ -878,7 +858,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   /**
    * Check if metrics are outdated (older than 7 days)
    */
-  RetentionAnalyticsService.prototype.isMetricsOutdated = function (metrics) {
+  RetentionAnalyticsService.prototype.isMetricsOutdated = (metrics) => {
     var lastCalculated = new Date(metrics.last_calculated);
     var sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     return lastCalculated < sevenDaysAgo;
@@ -886,7 +866,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   /**
    * Generate prediction using specified model
    */
-  RetentionAnalyticsService.prototype.generatePredictionWithModel = function (metrics, modelType) {
+  RetentionAnalyticsService.prototype.generatePredictionWithModel = (metrics, modelType) => {
     // For now, use the existing churn risk score as base
     // In production, this would use actual ML models
     var churnProbability = metrics.churn_risk_score;
@@ -917,7 +897,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   /**
    * Identify top risk factors for a patient
    */
-  RetentionAnalyticsService.prototype.identifyRiskFactors = function (metrics) {
+  RetentionAnalyticsService.prototype.identifyRiskFactors = (metrics) => {
     var factors = [
       {
         factor: "days_since_last_appointment",
@@ -956,11 +936,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
       },
     ];
     // Sort by importance and return top 5
-    return factors
-      .sort(function (a, b) {
-        return b.importance - a.importance;
-      })
-      .slice(0, 5);
+    return factors.sort((a, b) => b.importance - a.importance).slice(0, 5);
   };
   /**
    * Generate recommended retention actions
@@ -972,7 +948,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var actions;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         actions = [];
         // High-risk patients get more aggressive interventions
         if (
@@ -1040,7 +1016,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   /**
    * Get intervention priority based on churn probability
    */
-  RetentionAnalyticsService.prototype.getInterventionPriority = function (churnProbability) {
+  RetentionAnalyticsService.prototype.getInterventionPriority = (churnProbability) => {
     if (churnProbability >= 0.8) return retention_analytics_1.InterventionPriority.URGENT;
     if (churnProbability >= 0.6) return retention_analytics_1.InterventionPriority.HIGH;
     if (churnProbability >= 0.3) return retention_analytics_1.InterventionPriority.MEDIUM;
@@ -1052,7 +1028,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   RetentionAnalyticsService.prototype.executeStrategyForPatient = function (strategy, patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var executionId, executionDate, performance, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             executionId = crypto.randomUUID();
@@ -1062,12 +1038,8 @@ var RetentionAnalyticsService = /** @class */ (function () {
               strategy_id: strategy.id,
               patient_id: patientId,
               execution_date: executionDate,
-              actions_executed: strategy.actions.map(function (a) {
-                return a.id;
-              }),
-              total_cost: strategy.actions.reduce(function (sum, action) {
-                return sum + action.cost;
-              }, 0),
+              actions_executed: strategy.actions.map((a) => a.id),
+              total_cost: strategy.actions.reduce((sum, action) => sum + action.cost, 0),
               outcome: retention_analytics_1.RetentionOutcome.PENDING,
               success: false,
               retention_period_days: 0,
@@ -1101,21 +1073,15 @@ var RetentionAnalyticsService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var successful, total, successRate, totalCost, costPerRetention, totalRevenue, roi, supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            successful = performances.filter(function (p) {
-              return p.success;
-            }).length;
+            successful = performances.filter((p) => p.success).length;
             total = performances.length;
             successRate = total > 0 ? successful / total : 0;
-            totalCost = performances.reduce(function (sum, p) {
-              return sum + p.total_cost;
-            }, 0);
+            totalCost = performances.reduce((sum, p) => sum + p.total_cost, 0);
             costPerRetention = successful > 0 ? totalCost / successful : 0;
-            totalRevenue = performances.reduce(function (sum, p) {
-              return sum + p.revenue_generated;
-            }, 0);
+            totalRevenue = performances.reduce((sum, p) => sum + p.revenue_generated, 0);
             roi = totalCost > 0 ? (totalRevenue - totalCost) / totalCost : 0;
             return [4 /*yield*/, (0, client_1.createClient)()];
           case 1:
@@ -1148,7 +1114,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would query actual data
         return [
           2 /*return*/,
@@ -1176,7 +1142,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         // Implementation would analyze actual churn data
         return [
           2 /*return*/,
@@ -1202,9 +1168,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   RetentionAnalyticsService.prototype.getRetentionBySegment = function (
@@ -1213,9 +1177,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   RetentionAnalyticsService.prototype.getRetentionTrends = function (
@@ -1224,9 +1186,7 @@ var RetentionAnalyticsService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   RetentionAnalyticsService.prototype.getChurnPredictionsSummary = function (
@@ -1235,21 +1195,19 @@ var RetentionAnalyticsService = /** @class */ (function () {
     periodEnd,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            total_predictions: 125,
-            high_risk_patients: 25,
-            medium_risk_patients: 45,
-            low_risk_patients: 55,
-            model_accuracy: 0.87,
-            predictions_this_week: 18,
-            interventions_triggered: 12,
-            successful_interventions: 8,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          total_predictions: 125,
+          high_risk_patients: 25,
+          medium_risk_patients: 45,
+          low_risk_patients: 55,
+          model_accuracy: 0.87,
+          predictions_this_week: 18,
+          interventions_triggered: 12,
+          successful_interventions: 8,
+        },
+      ]);
     });
   };
   return RetentionAnalyticsService;

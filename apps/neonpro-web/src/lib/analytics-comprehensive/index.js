@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyticsManager =
   exports.AdvancedAnalyticsManager =
@@ -143,23 +140,17 @@ exports.analyticsManager =
 var scheduling_analytics_1 = require("./scheduling-analytics");
 Object.defineProperty(exports, "SchedulingAnalytics", {
   enumerable: true,
-  get: function () {
-    return scheduling_analytics_1.default;
-  },
+  get: () => scheduling_analytics_1.default,
 });
 var performance_calculator_1 = require("./performance-calculator");
 Object.defineProperty(exports, "PerformanceCalculator", {
   enumerable: true,
-  get: function () {
-    return performance_calculator_1.default;
-  },
+  get: () => performance_calculator_1.default,
 });
 var alert_system_1 = require("./alert-system");
 Object.defineProperty(exports, "AlertSystem", {
   enumerable: true,
-  get: function () {
-    return alert_system_1.default;
-  },
+  get: () => alert_system_1.default,
 });
 var scheduling_analytics_2 = require("./scheduling-analytics");
 var performance_calculator_2 = require("./performance-calculator");
@@ -168,7 +159,7 @@ var alert_system_2 = require("./alert-system");
  * Advanced Analytics Manager
  * Orchestrates all analytics components for comprehensive insights
  */
-var AdvancedAnalyticsManager = /** @class */ (function () {
+var AdvancedAnalyticsManager = /** @class */ (() => {
   function AdvancedAnalyticsManager() {
     this.schedulingAnalytics = new scheduling_analytics_2.default();
     this.performanceCalculator = new performance_calculator_2.default();
@@ -222,7 +213,7 @@ var AdvancedAnalyticsManager = /** @class */ (function () {
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _c.sent();
@@ -272,9 +263,9 @@ var AdvancedAnalyticsManager = /** @class */ (function () {
                 alerts: {
                   dashboard: alertDashboard,
                   activeCount: alertDashboard.activeAlerts.length,
-                  criticalCount: alertDashboard.activeAlerts.filter(function (a) {
-                    return a.severity === "critical";
-                  }).length,
+                  criticalCount: alertDashboard.activeAlerts.filter(
+                    (a) => a.severity === "critical",
+                  ).length,
                 },
                 insights: insights,
                 summary: summary,
@@ -400,7 +391,7 @@ var AdvancedAnalyticsManager = /** @class */ (function () {
   AdvancedAnalyticsManager.prototype.generateOptimizationRecommendations = function (metrics) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
         // Efficiency recommendations
         if (metrics.efficiency.appointmentCompletionRate < 90) {
@@ -462,23 +453,18 @@ var AdvancedAnalyticsManager = /** @class */ (function () {
             ],
           });
         }
-        return [
-          2 /*return*/,
-          recommendations.sort(function (a, b) {
-            return b.priority - a.priority;
-          }),
-        ];
+        return [2 /*return*/, recommendations.sort((a, b) => b.priority - a.priority)];
       });
     });
   };
   /**
    * Generate actionable insights
    */
-  AdvancedAnalyticsManager.prototype.generateInsights = function (
+  AdvancedAnalyticsManager.prototype.generateInsights = (
     schedulingMetrics,
     performanceMetrics,
     alertDashboard,
-  ) {
+  ) => {
     var keyFindings = [];
     var actionItems = [];
     var trends = [];
@@ -568,7 +554,7 @@ var AdvancedAnalyticsManager = /** @class */ (function () {
   /**
    * Calculate overall performance score
    */
-  AdvancedAnalyticsManager.prototype.calculateOverallScore = function (metrics) {
+  AdvancedAnalyticsManager.prototype.calculateOverallScore = (metrics) => {
     var weights = {
       efficiency: 0.25,
       productivity: 0.2,
@@ -586,7 +572,7 @@ var AdvancedAnalyticsManager = /** @class */ (function () {
       utilization: Math.max(0, 100 - Math.abs(metrics.utilization.staffUtilizationRate - 80) * 2),
       satisfaction: (metrics.satisfaction.overallSatisfactionScore / 5) * 100,
     };
-    return Object.entries(weights).reduce(function (total, _a) {
+    return Object.entries(weights).reduce((total, _a) => {
       var key = _a[0],
         weight = _a[1];
       return total + scores[key] * weight;
@@ -595,7 +581,7 @@ var AdvancedAnalyticsManager = /** @class */ (function () {
   /**
    * Calculate performance grade
    */
-  AdvancedAnalyticsManager.prototype.calculatePerformanceGrade = function (score) {
+  AdvancedAnalyticsManager.prototype.calculatePerformanceGrade = (score) => {
     if (score >= 90) return "A";
     if (score >= 80) return "B";
     if (score >= 70) return "C";
@@ -605,7 +591,7 @@ var AdvancedAnalyticsManager = /** @class */ (function () {
   /**
    * Determine system status
    */
-  AdvancedAnalyticsManager.prototype.determineStatus = function (score, alertCount) {
+  AdvancedAnalyticsManager.prototype.determineStatus = (score, alertCount) => {
     if (alertCount > 10 || score < 60) return "critical";
     if (alertCount > 5 || score < 75) return "warning";
     if (score >= 90 && alertCount === 0) return "excellent";

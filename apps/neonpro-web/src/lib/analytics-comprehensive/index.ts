@@ -1,48 +1,46 @@
 // Analytics Module Exports
-export { default as SchedulingAnalytics } from "./scheduling-analytics";
-export { default as PerformanceCalculator } from "./performance-calculator";
+
+export type {
+  AlertAction,
+  AlertDashboard,
+  AlertHistory,
+  AlertRule,
+  AlertTemplate,
+  NotificationChannel,
+} from "./alert-system";
 export { default as AlertSystem } from "./alert-system";
-
-// Type Exports
 export type {
-  SchedulingMetrics,
-  AppointmentPattern,
-  StaffPerformance,
-  RevenueAnalytics,
-  PredictiveInsights,
-  AnalyticsFilter,
-  TimeRange,
-  MetricTrend,
-  AnalyticsDashboard,
-} from "./scheduling-analytics";
-
-export type {
-  PerformanceMetrics,
+  BenchmarkComparison,
   EfficiencyMetrics,
+  OptimizationRecommendation,
+  PerformanceAlert,
+  PerformanceMetrics,
   ProductivityMetrics,
   QualityMetrics,
-  UtilizationMetrics,
   SatisfactionMetrics,
-  BenchmarkComparison,
-  PerformanceAlert,
-  OptimizationRecommendation,
+  UtilizationMetrics,
 } from "./performance-calculator";
-
+export { default as PerformanceCalculator } from "./performance-calculator";
+// Type Exports
 export type {
-  AlertRule,
-  AlertAction,
-  AlertHistory,
-  NotificationChannel,
-  AlertDashboard,
-  AlertTemplate,
-} from "./alert-system";
+  AnalyticsDashboard,
+  AnalyticsFilter,
+  AppointmentPattern,
+  MetricTrend,
+  PredictiveInsights,
+  RevenueAnalytics,
+  SchedulingMetrics,
+  StaffPerformance,
+  TimeRange,
+} from "./scheduling-analytics";
+export { default as SchedulingAnalytics } from "./scheduling-analytics";
 
-import SchedulingAnalytics from "./scheduling-analytics";
-import PerformanceCalculator from "./performance-calculator";
-import AlertSystem from "./alert-system";
-import type { AnalyticsFilter } from "./scheduling-analytics";
-import type { PerformanceMetrics } from "./performance-calculator";
 import type { AlertDashboard } from "./alert-system";
+import AlertSystem from "./alert-system";
+import type { PerformanceMetrics } from "./performance-calculator";
+import PerformanceCalculator from "./performance-calculator";
+import type { AnalyticsFilter } from "./scheduling-analytics";
+import SchedulingAnalytics from "./scheduling-analytics";
 
 /**
  * Comprehensive Analytics Dashboard Data

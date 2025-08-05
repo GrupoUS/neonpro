@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Management System - Main Export Index
  *
@@ -12,20 +11,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -38,41 +37,38 @@ var __extends =
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -92,13 +88,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -120,9 +116,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -194,7 +188,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DevUtils =
   exports.SESSION_SYSTEM_VERSION =
@@ -230,44 +224,32 @@ exports.DevUtils =
 var UnifiedSessionSystem_1 = require("./UnifiedSessionSystem");
 Object.defineProperty(exports, "UnifiedSessionSystem", {
   enumerable: true,
-  get: function () {
-    return UnifiedSessionSystem_1.UnifiedSessionSystem;
-  },
+  get: () => UnifiedSessionSystem_1.UnifiedSessionSystem,
 });
 var SessionManager_1 = require("./SessionManager");
 Object.defineProperty(exports, "SessionManager", {
   enumerable: true,
-  get: function () {
-    return SessionManager_1.SessionManager;
-  },
+  get: () => SessionManager_1.SessionManager,
 });
 var DeviceManager_1 = require("./DeviceManager");
 Object.defineProperty(exports, "DeviceManager", {
   enumerable: true,
-  get: function () {
-    return DeviceManager_1.DeviceManager;
-  },
+  get: () => DeviceManager_1.DeviceManager,
 });
 var SecurityEventLogger_1 = require("./SecurityEventLogger");
 Object.defineProperty(exports, "SecurityEventLogger", {
   enumerable: true,
-  get: function () {
-    return SecurityEventLogger_1.SecurityEventLogger;
-  },
+  get: () => SecurityEventLogger_1.SecurityEventLogger,
 });
 var NotificationService_1 = require("./NotificationService");
 Object.defineProperty(exports, "NotificationService", {
   enumerable: true,
-  get: function () {
-    return NotificationService_1.NotificationService;
-  },
+  get: () => NotificationService_1.NotificationService,
 });
 var DataCleanupService_1 = require("./DataCleanupService");
 Object.defineProperty(exports, "DataCleanupService", {
   enumerable: true,
-  get: function () {
-    return DataCleanupService_1.DataCleanupService;
-  },
+  get: () => DataCleanupService_1.DataCleanupService,
 });
 // Configuration and Types
 __exportStar(require("./config"), exports);
@@ -277,92 +259,66 @@ __exportStar(require("./utils"), exports);
 var useSession_1 = require("./hooks/useSession");
 Object.defineProperty(exports, "useSession", {
   enumerable: true,
-  get: function () {
-    return useSession_1.useSession;
-  },
+  get: () => useSession_1.useSession,
 });
 var useDeviceManagement_1 = require("./hooks/useDeviceManagement");
 Object.defineProperty(exports, "useDeviceManagement", {
   enumerable: true,
-  get: function () {
-    return useDeviceManagement_1.useDeviceManagement;
-  },
+  get: () => useDeviceManagement_1.useDeviceManagement,
 });
 var useSecurityMonitoring_1 = require("./hooks/useSecurityMonitoring");
 Object.defineProperty(exports, "useSecurityMonitoring", {
   enumerable: true,
-  get: function () {
-    return useSecurityMonitoring_1.useSecurityMonitoring;
-  },
+  get: () => useSecurityMonitoring_1.useSecurityMonitoring,
 });
 var useNotifications_1 = require("./hooks/useNotifications");
 Object.defineProperty(exports, "useNotifications", {
   enumerable: true,
-  get: function () {
-    return useNotifications_1.useNotifications;
-  },
+  get: () => useNotifications_1.useNotifications,
 });
 var useDataCleanup_1 = require("./hooks/useDataCleanup");
 Object.defineProperty(exports, "useDataCleanup", {
   enumerable: true,
-  get: function () {
-    return useDataCleanup_1.useDataCleanup;
-  },
+  get: () => useDataCleanup_1.useDataCleanup,
 });
 // React Components
 var SessionStatus_1 = require("../../../components/auth/session/SessionStatus");
 Object.defineProperty(exports, "SessionStatus", {
   enumerable: true,
-  get: function () {
-    return SessionStatus_1.SessionStatus;
-  },
+  get: () => SessionStatus_1.SessionStatus,
 });
 var SessionWarning_1 = require("../../../components/auth/session/SessionWarning");
 Object.defineProperty(exports, "SessionWarning", {
   enumerable: true,
-  get: function () {
-    return SessionWarning_1.SessionWarning;
-  },
+  get: () => SessionWarning_1.SessionWarning,
 });
 var DeviceManagement_1 = require("../../../components/auth/session/DeviceManagement");
 Object.defineProperty(exports, "DeviceManagement", {
   enumerable: true,
-  get: function () {
-    return DeviceManagement_1.DeviceManagement;
-  },
+  get: () => DeviceManagement_1.DeviceManagement,
 });
 var SecurityDashboard_1 = require("../../../components/auth/session/SecurityDashboard");
 Object.defineProperty(exports, "SecurityDashboard", {
   enumerable: true,
-  get: function () {
-    return SecurityDashboard_1.SecurityDashboard;
-  },
+  get: () => SecurityDashboard_1.SecurityDashboard,
 });
 // Component Collections
 var session_1 = require("../../../components/auth/session");
 Object.defineProperty(exports, "SessionComponents", {
   enumerable: true,
-  get: function () {
-    return session_1.SessionComponents;
-  },
+  get: () => session_1.SessionComponents,
 });
 Object.defineProperty(exports, "StatusComponents", {
   enumerable: true,
-  get: function () {
-    return session_1.StatusComponents;
-  },
+  get: () => session_1.StatusComponents,
 });
 Object.defineProperty(exports, "ManagementComponents", {
   enumerable: true,
-  get: function () {
-    return session_1.ManagementComponents;
-  },
+  get: () => session_1.ManagementComponents,
 });
 Object.defineProperty(exports, "defaultSessionConfig", {
   enumerable: true,
-  get: function () {
-    return session_1.defaultSessionConfig;
-  },
+  get: () => session_1.defaultSessionConfig,
 });
 // API Utilities
 exports.API_ENDPOINTS = {
@@ -373,7 +329,7 @@ exports.API_ENDPOINTS = {
   cleanup: "/api/auth/cleanup",
 };
 // Session Management Factory
-var SessionManagementFactory = /** @class */ (function () {
+var SessionManagementFactory = /** @class */ (() => {
   function SessionManagementFactory() {}
   /**
    * Get or create the singleton instance of UnifiedSessionSystem
@@ -393,9 +349,7 @@ var SessionManagementFactory = /** @class */ (function () {
   /**
    * Create a new instance with custom configuration
    */
-  SessionManagementFactory.createInstance = function (config) {
-    return new UnifiedSessionSystem(config);
-  };
+  SessionManagementFactory.createInstance = (config) => new UnifiedSessionSystem(config);
   SessionManagementFactory.instance = null;
   return SessionManagementFactory;
 })();
@@ -404,35 +358,26 @@ exports.SessionManagementFactory = SessionManagementFactory;
 exports.sessionManager = SessionManagementFactory.getInstance();
 // Type guards and validators
 exports.SessionValidators = {
-  isValidSession: function (session) {
-    return (
-      session &&
-      typeof session.id === "string" &&
-      typeof session.userId === "string" &&
-      typeof session.status === "string" &&
-      ["active", "expired", "terminated"].includes(session.status)
-    );
-  },
-  isValidDevice: function (device) {
-    return (
-      device &&
-      typeof device.id === "string" &&
-      typeof device.fingerprint === "string" &&
-      typeof device.trusted === "boolean"
-    );
-  },
-  isValidSecurityEvent: function (event) {
-    return (
-      event &&
-      typeof event.id === "string" &&
-      typeof event.type === "string" &&
-      typeof event.severity === "string" &&
-      ["low", "medium", "high", "critical"].includes(event.severity)
-    );
-  },
+  isValidSession: (session) =>
+    session &&
+    typeof session.id === "string" &&
+    typeof session.userId === "string" &&
+    typeof session.status === "string" &&
+    ["active", "expired", "terminated"].includes(session.status),
+  isValidDevice: (device) =>
+    device &&
+    typeof device.id === "string" &&
+    typeof device.fingerprint === "string" &&
+    typeof device.trusted === "boolean",
+  isValidSecurityEvent: (event) =>
+    event &&
+    typeof event.id === "string" &&
+    typeof event.type === "string" &&
+    typeof event.severity === "string" &&
+    ["low", "medium", "high", "critical"].includes(event.severity),
 };
 // Error classes
-var SessionError = /** @class */ (function (_super) {
+var SessionError = /** @class */ ((_super) => {
   __extends(SessionError, _super);
   function SessionError(message, code, statusCode) {
     if (statusCode === void 0) {
@@ -447,7 +392,7 @@ var SessionError = /** @class */ (function (_super) {
   return SessionError;
 })(Error);
 exports.SessionError = SessionError;
-var DeviceError = /** @class */ (function (_super) {
+var DeviceError = /** @class */ ((_super) => {
   __extends(DeviceError, _super);
   function DeviceError(message, code, statusCode) {
     if (statusCode === void 0) {
@@ -462,7 +407,7 @@ var DeviceError = /** @class */ (function (_super) {
   return DeviceError;
 })(Error);
 exports.DeviceError = DeviceError;
-var SecurityError = /** @class */ (function (_super) {
+var SecurityError = /** @class */ ((_super) => {
   __extends(SecurityError, _super);
   function SecurityError(message, code, statusCode) {
     if (statusCode === void 0) {
@@ -497,19 +442,18 @@ exports.SESSION_SYSTEM_VERSION = {
   minor: 0,
   patch: 0,
   build: Date.now(),
-  toString: function () {
-    return ""
+  toString: () =>
+    ""
       .concat(exports.SESSION_SYSTEM_VERSION.major, ".")
       .concat(exports.SESSION_SYSTEM_VERSION.minor, ".")
-      .concat(exports.SESSION_SYSTEM_VERSION.patch);
-  },
+      .concat(exports.SESSION_SYSTEM_VERSION.patch),
 };
 // Development utilities
 exports.DevUtils = {
   /**
    * Enable debug mode for session management
    */
-  enableDebugMode: function () {
+  enableDebugMode: () => {
     if (typeof window !== "undefined") {
       window.__NEONPRO_SESSION_DEBUG__ = true;
     }
@@ -517,7 +461,7 @@ exports.DevUtils = {
   /**
    * Disable debug mode
    */
-  disableDebugMode: function () {
+  disableDebugMode: () => {
     if (typeof window !== "undefined") {
       delete window.__NEONPRO_SESSION_DEBUG__;
     }
@@ -525,11 +469,11 @@ exports.DevUtils = {
   /**
    * Get current session state for debugging
    */
-  getDebugState: function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  getDebugState: () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var session;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             session = SessionManagementFactory.getInstance();
@@ -547,8 +491,7 @@ exports.DevUtils = {
             return [2 /*return*/, ((_a.recentEvents = _b.sent()), _a)];
         }
       });
-    });
-  },
+    }),
 };
 // Export default instance for convenience
 exports.default = exports.sessionManager;

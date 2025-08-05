@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExportErrorCode =
   exports.DEFAULT_EXPORT_OPTIONS =
@@ -31,13 +30,13 @@ exports.DEFAULT_EXPORT_OPTIONS = {
 };
 // Error Codes
 var ExportErrorCode;
-(function (ExportErrorCode) {
-  ExportErrorCode["INVALID_FORMAT"] = "INVALID_FORMAT";
-  ExportErrorCode["INVALID_TYPE"] = "INVALID_TYPE";
-  ExportErrorCode["MISSING_DATA"] = "MISSING_DATA";
-  ExportErrorCode["GENERATION_FAILED"] = "GENERATION_FAILED";
-  ExportErrorCode["VALIDATION_FAILED"] = "VALIDATION_FAILED";
-  ExportErrorCode["UNAUTHORIZED"] = "UNAUTHORIZED";
-  ExportErrorCode["RATE_LIMITED"] = "RATE_LIMITED";
-  ExportErrorCode["SERVER_ERROR"] = "SERVER_ERROR";
+((ExportErrorCode) => {
+  ExportErrorCode.INVALID_FORMAT = "INVALID_FORMAT";
+  ExportErrorCode.INVALID_TYPE = "INVALID_TYPE";
+  ExportErrorCode.MISSING_DATA = "MISSING_DATA";
+  ExportErrorCode.GENERATION_FAILED = "GENERATION_FAILED";
+  ExportErrorCode.VALIDATION_FAILED = "VALIDATION_FAILED";
+  ExportErrorCode.UNAUTHORIZED = "UNAUTHORIZED";
+  ExportErrorCode.RATE_LIMITED = "RATE_LIMITED";
+  ExportErrorCode.SERVER_ERROR = "SERVER_ERROR";
 })(ExportErrorCode || (exports.ExportErrorCode = ExportErrorCode = {}));

@@ -25,6 +25,9 @@ const LogContextSchema = z.object({
   duration: z.number().optional(),
   error: z.any().optional(),
   metadata: z.record(z.any()).optional(),
+  // Healthcare-specific properties
+  patientId: z.string().optional(),
+  recordId: z.string().optional(),
 });
 
 type LogContext = z.infer<typeof LogContextSchema>;
@@ -391,7 +394,7 @@ export class HealthcareLogger {
 
   private hashSensitiveData(data: string): string {
     // Simple hash for demonstration - use proper hashing in production
-    return Buffer.from(data).toString("base64").substring(0, 8) + "***";
+    return `${Buffer.from(data).toString("base64").substring(0, 8)}***`;
   }
 
   private maskIpAddress(ip: string): string {

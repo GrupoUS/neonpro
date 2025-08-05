@@ -1,5 +1,4 @@
 #!/usr/bin/env tsx
-"use strict";
 /**
  * 🧪 Test Script for NeonPro Background Jobs
  *
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -28,7 +27,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,8 +56,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -79,9 +76,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -140,7 +137,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testEmailAutomation = testEmailAutomation;
 var trigger_jobs_1 = require("@/lib/automation/trigger-jobs");
@@ -155,20 +152,20 @@ function testEmailAutomation() {
       missingVars,
       supabase,
       _a,
-      data,
+      _data,
       error,
       supabaseError_1,
       deploymentChecks,
       allChecksPass,
       error_1;
     var _b, _c;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           console.log("🧪 Testing NeonPro Background Jobs Integration...\n");
           _d.label = 1;
         case 1:
-          _d.trys.push([1, 12, , 13]);
+          _d.trys.push([1, 12, undefined, 13]);
           testAppointmentData = {
             appointmentId: "test-appointment-001",
             patientEmail: "paciente.teste@example.com",
@@ -217,9 +214,7 @@ function testEmailAutomation() {
         case 6:
           console.log("\n🔧 Testing configuration...");
           requiredEnvVars = ["TRIGGER_SECRET_KEY", "TRIGGER_PROJECT_ID", "RESEND_API_KEY"];
-          missingVars = requiredEnvVars.filter(function (envVar) {
-            return !process.env[envVar];
-          });
+          missingVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
           if (missingVars.length > 0) {
             console.log("⚠️ Missing environment variables:", missingVars);
             console.log("   Please check your .env.local file");
@@ -229,13 +224,13 @@ function testEmailAutomation() {
           console.log("\n🏗️ Testing Supabase integration...");
           _d.label = 7;
         case 7:
-          _d.trys.push([7, 10, , 11]);
+          _d.trys.push([7, 10, undefined, 11]);
           return [4 /*yield*/, (0, server_1.createClient)()];
         case 8:
           supabase = _d.sent();
           return [4 /*yield*/, supabase.from("appointments").select("count").limit(1)];
         case 9:
-          (_a = _d.sent()), (data = _a.data), (error = _a.error);
+          (_a = _d.sent()), (_data = _a.data), (error = _a.error);
           if (error) {
             console.log("⚠️ Supabase connection issue:", error.message);
           } else {
@@ -255,12 +250,10 @@ function testEmailAutomation() {
             { name: "Integration utils", status: existsFile("lib/automation/trigger-jobs.ts") },
             { name: "Enhanced API", status: existsFile("app/api/appointments/enhanced/route.ts") },
           ];
-          deploymentChecks.forEach(function (check) {
+          deploymentChecks.forEach((check) => {
             console.log("".concat(check.status ? "✅" : "❌", " ").concat(check.name));
           });
-          allChecksPass = deploymentChecks.every(function (check) {
-            return check.status;
-          });
+          allChecksPass = deploymentChecks.every((check) => check.status);
           if (allChecksPass) {
             console.log("\n🎉 All systems ready for Vercel deployment!");
             console.log("📋 Next steps:");
@@ -284,8 +277,8 @@ function testEmailAutomation() {
 }
 function existsFile(relativePath) {
   try {
-    var fs = require("fs");
-    var path = require("path");
+    var fs = require("node:fs");
+    var path = require("node:path");
     return fs.existsSync(path.join(process.cwd(), relativePath));
   } catch (_a) {
     return false;

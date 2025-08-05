@@ -1,6 +1,13 @@
 "use client";
 
+import type { Briefcase, Calendar, Clock, Filter, RotateCcw, Search, User, X } from "lucide-react";
+import moment from "moment";
 import React, { useState } from "react";
+import type { CalendarFilters as CalendarFiltersType, Professional } from "@/app/appointments/page";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Dialog,
   DialogContent,
@@ -9,17 +16,10 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Checkbox } from "@/components/ui/checkbox";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type { Separator } from "@/components/ui/separator";
-import type { Filter, User, Briefcase, Calendar, Clock, X, RotateCcw, Search } from "lucide-react";
-import type { CalendarFilters as CalendarFiltersType, Professional } from "@/app/appointments/page";
 import type { cn } from "@/lib/utils";
-import moment from "moment";
 import "moment/locale/pt-br";
 
 moment.locale("pt-br");

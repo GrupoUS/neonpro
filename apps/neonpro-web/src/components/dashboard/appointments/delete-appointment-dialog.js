@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DeleteAppointmentDialog;
 var alert_1 = require("@/components/ui/alert");
@@ -145,7 +142,6 @@ var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function DeleteAppointmentDialog(_a) {
-  var _this = this;
   var _b, _c, _d;
   var appointment = _a.appointment,
     isOpen = _a.isOpen,
@@ -199,10 +195,10 @@ function DeleteAppointmentDialog(_a) {
       severity: "warning",
     });
   }
-  var handleDelete = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDelete = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, errorData, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!reason.trim()) {
@@ -251,8 +247,7 @@ function DeleteAppointmentDialog(_a) {
         }
       });
     });
-  };
-  var handleClose = function () {
+  var handleClose = () => {
     if (!isDeleting) {
       setReason("");
       onClose();
@@ -309,7 +304,7 @@ function DeleteAppointmentDialog(_a) {
           {/* Warnings */}
           {warnings.length > 0 && (
             <div className="space-y-2">
-              {warnings.map(function (warning, index) {
+              {warnings.map((warning, index) => {
                 var IconComponent = warning.icon;
                 return (
                   <alert_1.Alert
@@ -333,9 +328,7 @@ function DeleteAppointmentDialog(_a) {
               id="reason"
               placeholder="Ex: Paciente solicitou reagendamento, conflito de horário, etc..."
               value={reason}
-              onChange={function (e) {
-                return setReason(e.target.value);
-              }}
+              onChange={(e) => setReason(e.target.value)}
               disabled={isDeleting}
               className="min-h-[80px]"
             />

@@ -4,7 +4,6 @@
  * Displays key revenue metrics and performance indicators
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RevenueMetricsCard = RevenueMetricsCard;
 var card_1 = require("@/components/ui/card");

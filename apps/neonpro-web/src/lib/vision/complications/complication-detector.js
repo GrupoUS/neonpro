@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Complication Detection Engine
  * Epic 10 - Story 10.3: Automated Complication Detection + Alerts (≥90% Accuracy)
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -28,7 +27,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,8 +56,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -79,9 +76,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -140,11 +137,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.complicationDetector = exports.ComplicationDetector = void 0;
 var zod_1 = require("zod");
-var crypto_1 = require("crypto");
+var crypto_1 = require("node:crypto");
 var monitoring_1 = require("@/lib/monitoring");
 var client_1 = require("@/lib/supabase/client");
 var config_1 = require("../config");
@@ -170,7 +167,7 @@ var ComplicationDetectionRequestSchema = zod_1.z.object({
  * Core Complication Detection Engine
  * Implements machine learning models for ≥90% accuracy medical complication detection
  */
-var ComplicationDetector = /** @class */ (function () {
+var ComplicationDetector = /** @class */ (() => {
   function ComplicationDetector() {
     this.models = new Map();
     this.isInitialized = false;
@@ -188,7 +185,7 @@ var ComplicationDetector = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 4, , 5]);
+            _a.trys.push([0, 4, undefined, 5]);
             monitoring_1.logger.info("Initializing Complication Detection System...");
             // Load pre-trained models for different complication types
             return [4 /*yield*/, this.loadComplicationModels()];
@@ -266,7 +263,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Get classification classes for each model type
    */
-  ComplicationDetector.prototype.getClassesForModel = function (modelType) {
+  ComplicationDetector.prototype.getClassesForModel = (modelType) => {
     switch (modelType) {
       case "infection_detector":
         return [
@@ -323,9 +320,9 @@ var ComplicationDetector = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 11, , 12]);
+            _a.trys.push([0, 11, undefined, 12]);
             validatedRequest = ComplicationDetectionRequestSchema.parse(request);
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initializeDetector()];
           case 1:
             _a.sent();
@@ -365,7 +362,7 @@ var ComplicationDetector = /** @class */ (function () {
               recommendations: analysis.recommendations,
               requiresManualReview: analysis.requiresManualReview,
               metadata: {
-                modelVersions: Array.from(this.models.entries()).map(function (_a) {
+                modelVersions: Array.from(this.models.entries()).map((_a) => {
                   var type = _a[0],
                     model = _a[1];
                   return {
@@ -420,10 +417,10 @@ var ComplicationDetector = /** @class */ (function () {
   ComplicationDetector.prototype.getImageData = function (imageId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 3, , 4]);
+            _b.trys.push([0, 3, undefined, 4]);
             return [
               4 /*yield*/,
               client_1.supabase.storage.from("patient-images").download("".concat(imageId, ".jpg")),
@@ -449,7 +446,7 @@ var ComplicationDetector = /** @class */ (function () {
    */
   ComplicationDetector.prototype.preprocessImage = function (imageData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would implement actual image preprocessing
         // For now, return a mock processed image
         return [
@@ -469,7 +466,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Run detection across all models
    */
-  ComplicationDetector.prototype.runMultiModelDetection = function (image, request) {
+  ComplicationDetector.prototype.runMultiModelDetection = function (image, _request) {
     return __awaiter(this, void 0, void 0, function () {
       var results, _i, _a, _b, modelType, model, prediction, error_4;
       return __generator(this, function (_c) {
@@ -483,7 +480,7 @@ var ComplicationDetector = /** @class */ (function () {
             (_b = _a[_i]), (modelType = _b[0]), (model = _b[1]);
             _c.label = 2;
           case 2:
-            _c.trys.push([2, 4, , 5]);
+            _c.trys.push([2, 4, undefined, 5]);
             return [4 /*yield*/, this.runModelInference(image, model, modelType)];
           case 3:
             prediction = _c.sent();
@@ -510,24 +507,22 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Simulate model inference (replace with actual TensorFlow.js inference)
    */
-  ComplicationDetector.prototype.runModelInference = function (image, model, modelType) {
+  ComplicationDetector.prototype.runModelInference = function (_image, model, modelType) {
     return __awaiter(this, void 0, void 0, function () {
       var classes, predictions, total;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Simulate processing delay
             return [
               4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, Math.random() * 1000 + 200);
-              }),
+              new Promise((resolve) => setTimeout(resolve, Math.random() * 1000 + 200)),
             ];
           case 1:
             // Simulate processing delay
             _a.sent();
             classes = model.classes;
-            predictions = classes.map(function (cls, index) {
+            predictions = classes.map((cls, _index) => {
               // Normal class gets higher probability in most cases
               var baseProb = cls === "normal" || cls === "normal_healing" ? 0.7 : 0.1;
               var randomFactor = Math.random() * 0.3;
@@ -536,16 +531,10 @@ var ComplicationDetector = /** @class */ (function () {
                 probability: Math.min(0.99, Math.max(0.01, baseProb + randomFactor - 0.15)),
               };
             });
-            total = predictions.reduce(function (sum, p) {
-              return sum + p.probability;
-            }, 0);
-            predictions.forEach(function (p) {
-              return (p.probability /= total);
-            });
+            total = predictions.reduce((sum, p) => sum + p.probability, 0);
+            predictions.forEach((p) => (p.probability /= total));
             // Sort by probability
-            predictions.sort(function (a, b) {
-              return b.probability - a.probability;
-            });
+            predictions.sort((a, b) => b.probability - a.probability);
             return [
               2 /*return*/,
               {
@@ -563,7 +552,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Analyze and aggregate detection results
    */
-  ComplicationDetector.prototype.analyzeDetectionResults = function (detectionResults, request) {
+  ComplicationDetector.prototype.analyzeDetectionResults = function (detectionResults, _request) {
     return __awaiter(this, void 0, void 0, function () {
       var complications,
         overallRiskScore,
@@ -630,7 +619,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Map model predictions to complication categories
    */
-  ComplicationDetector.prototype.mapToComplicationCategory = function (prediction) {
+  ComplicationDetector.prototype.mapToComplicationCategory = (prediction) => {
     var mappings = {
       bacterial_infection: "infection",
       viral_infection: "infection",
@@ -655,7 +644,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Calculate complication severity
    */
-  ComplicationDetector.prototype.calculateSeverity = function (probability) {
+  ComplicationDetector.prototype.calculateSeverity = (probability) => {
     if (probability >= 0.9) return "critical";
     if (probability >= 0.75) return "high";
     if (probability >= 0.6) return "moderate";
@@ -664,7 +653,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Get human-readable complication description
    */
-  ComplicationDetector.prototype.getComplicationDescription = function (complicationType) {
+  ComplicationDetector.prototype.getComplicationDescription = (complicationType) => {
     var descriptions = {
       bacterial_infection:
         "Possible bacterial infection detected - requires immediate medical attention",
@@ -694,13 +683,9 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Determine alert level based on risk score and complications
    */
-  ComplicationDetector.prototype.determineAlertLevel = function (riskScore, complications) {
-    var criticalComplications = complications.filter(function (c) {
-      return c.severity === "critical";
-    });
-    var highComplications = complications.filter(function (c) {
-      return c.severity === "high";
-    });
+  ComplicationDetector.prototype.determineAlertLevel = (riskScore, complications) => {
+    var criticalComplications = complications.filter((c) => c.severity === "critical");
+    var highComplications = complications.filter((c) => c.severity === "high");
     if (criticalComplications.length > 0 || riskScore >= 0.9) {
       return "critical";
     }
@@ -718,7 +703,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Get emergency protocol based on alert level
    */
-  ComplicationDetector.prototype.getEmergencyProtocol = function (alertLevel, complications) {
+  ComplicationDetector.prototype.getEmergencyProtocol = (alertLevel, _complications) => {
     if (alertLevel === "critical") {
       return {
         level: "emergency",
@@ -756,7 +741,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Generate treatment recommendations
    */
-  ComplicationDetector.prototype.generateRecommendations = function (complications, riskScore) {
+  ComplicationDetector.prototype.generateRecommendations = (complications, riskScore) => {
     var recommendations = [];
     if (complications.length === 0 && riskScore < 0.3) {
       recommendations.push("Treatment progressing normally");
@@ -770,25 +755,19 @@ var ComplicationDetector = /** @class */ (function () {
       recommendations.push("Consider treatment modification");
     }
     // Specific recommendations based on complication types
-    var infectionComplications = complications.filter(function (c) {
-      return c.type === "infection";
-    });
+    var infectionComplications = complications.filter((c) => c.type === "infection");
     if (infectionComplications.length > 0) {
       recommendations.push("Consider antibiotic prophylaxis or treatment");
       recommendations.push("Improve wound care hygiene protocol");
       recommendations.push("Culture if systemic infection suspected");
     }
-    var healingComplications = complications.filter(function (c) {
-      return c.type === "healing_issue";
-    });
+    var healingComplications = complications.filter((c) => c.type === "healing_issue");
     if (healingComplications.length > 0) {
       recommendations.push("Optimize wound healing environment");
       recommendations.push("Consider nutritional supplementation");
       recommendations.push("Review patient compliance with post-care instructions");
     }
-    var adverseReactions = complications.filter(function (c) {
-      return c.type === "adverse_reaction";
-    });
+    var adverseReactions = complications.filter((c) => c.type === "adverse_reaction");
     if (adverseReactions.length > 0) {
       recommendations.push("Review patient allergy history");
       recommendations.push("Consider patch testing for future treatments");
@@ -799,7 +778,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Calculate detection reliability score
    */
-  ComplicationDetector.prototype.calculateReliability = function (detectionResults) {
+  ComplicationDetector.prototype.calculateReliability = (detectionResults) => {
     var totalAccuracy = 0;
     var totalConfidence = 0;
     for (var _i = 0, detectionResults_2 = detectionResults; _i < detectionResults_2.length; _i++) {
@@ -817,10 +796,10 @@ var ComplicationDetector = /** @class */ (function () {
   ComplicationDetector.prototype.storeDetectionResult = function (result) {
     return __awaiter(this, void 0, void 0, function () {
       var error, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               client_1.supabase.from("complication_detections").insert({
@@ -861,7 +840,7 @@ var ComplicationDetector = /** @class */ (function () {
   ComplicationDetector.prototype.triggerAlerts = function (result) {
     return __awaiter(this, void 0, void 0, function () {
       var alertPayload;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would integrate with the notification system
           monitoring_1.logger.info(
@@ -890,7 +869,7 @@ var ComplicationDetector = /** @class */ (function () {
   ComplicationDetector.prototype.validateQualityStandards = function (result) {
     return __awaiter(this, void 0, void 0, function () {
       var qualityScore, accuracy, confidence;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         qualityScore = result.metadata.qualityMetrics.processing_quality;
         accuracy = result.metadata.qualityMetrics.accuracy;
         confidence = result.confidence;
@@ -921,18 +900,10 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Handle detection errors
    */
-  ComplicationDetector.prototype.handleDetectionError = function (error, request) {
+  ComplicationDetector.prototype.handleDetectionError = (error, request) => {
     var _a;
     if (error instanceof zod_1.z.ZodError) {
-      return new Error(
-        "Invalid request: ".concat(
-          error.errors
-            .map(function (e) {
-              return e.message;
-            })
-            .join(", "),
-        ),
-      );
+      return new Error("Invalid request: ".concat(error.errors.map((e) => e.message).join(", ")));
     }
     if ((_a = error.message) === null || _a === void 0 ? void 0 : _a.includes("timeout")) {
       return new Error("Detection timeout for patient ".concat(request.patientId));
@@ -944,7 +915,7 @@ var ComplicationDetector = /** @class */ (function () {
    */
   ComplicationDetector.prototype.setupRealTimeMonitoring = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would set up performance monitoring, health checks, etc.
         monitoring_1.logger.info("Real-time monitoring initialized for complication detection");
         return [2 /*return*/];
@@ -956,7 +927,7 @@ var ComplicationDetector = /** @class */ (function () {
    */
   ComplicationDetector.prototype.warmUpModels = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         monitoring_1.logger.info("Warming up detection models...");
         // Model warm-up would happen here
         monitoring_1.logger.info("Model warm-up completed");
@@ -976,7 +947,7 @@ var ComplicationDetector = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 2, , 3]);
+            _b.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               client_1.supabase
@@ -991,7 +962,7 @@ var ComplicationDetector = /** @class */ (function () {
               2 /*return*/,
               {
                 totalDetections: data.length,
-                complicationsDetected: data.filter(function (d) {
+                complicationsDetected: data.filter((d) => {
                   var _a;
                   return (
                     ((_a = d.detected_complications) === null || _a === void 0
@@ -1000,13 +971,10 @@ var ComplicationDetector = /** @class */ (function () {
                   );
                 }).length,
                 averageProcessingTime:
-                  data.reduce(function (sum, d) {
-                    return sum + d.processing_time_ms;
-                  }, 0) / data.length,
+                  data.reduce((sum, d) => sum + d.processing_time_ms, 0) / data.length,
                 averageAccuracy:
-                  data.reduce(function (sum, d) {
-                    return sum + d.metadata.qualityMetrics.accuracy;
-                  }, 0) / data.length,
+                  data.reduce((sum, d) => sum + d.metadata.qualityMetrics.accuracy, 0) /
+                  data.length,
                 alertLevelDistribution: this.getAlertDistribution(data),
               },
             ];
@@ -1023,7 +991,7 @@ var ComplicationDetector = /** @class */ (function () {
   /**
    * Get alert level distribution
    */
-  ComplicationDetector.prototype.getAlertDistribution = function (detections) {
+  ComplicationDetector.prototype.getAlertDistribution = (detections) => {
     var distribution = {
       none: 0,
       low: 0,
@@ -1031,7 +999,7 @@ var ComplicationDetector = /** @class */ (function () {
       high: 0,
       critical: 0,
     };
-    detections.forEach(function (d) {
+    detections.forEach((d) => {
       distribution[d.alert_level] = (distribution[d.alert_level] || 0) + 1;
     });
     return distribution;

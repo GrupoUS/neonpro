@@ -5,48 +5,45 @@
 
 import React from "react";
 
-// Main Session Hook
-export { useSession } from "./useSession";
 export type {
-  SessionState,
-  SessionActions,
-  LoginCredentials,
-  DeviceInfo,
-  UseSessionOptions,
-  UseSessionReturn,
-} from "./useSession";
-
-// Session Activity Tracking Hook
-export { useSessionActivity } from "./useSessionActivity";
-export type {
-  ActivityTrackingOptions,
-  ActivityEvent,
-  UseSessionActivityReturn,
-} from "./useSessionActivity";
-
-// Additional activity tracking utilities
-export {
-  dispatchCustomActivity,
-  withActivityTracking,
-  useBusinessActivityTracking,
-} from "./useSessionActivity";
-
-// Device Management Hook
-export { useDeviceManagement } from "./useDeviceManagement";
-export type {
-  DeviceState,
   DeviceActions,
+  DeviceState,
   UseDeviceManagementOptions,
   UseDeviceManagementReturn,
 } from "./useDeviceManagement";
+// Device Management Hook
+export { useDeviceManagement } from "./useDeviceManagement";
+export type {
+  DeviceInfo,
+  LoginCredentials,
+  SessionActions,
+  SessionState,
+  UseSessionOptions,
+  UseSessionReturn,
+} from "./useSession";
+// Main Session Hook
+export { useSession } from "./useSession";
+export type {
+  ActivityEvent,
+  ActivityTrackingOptions,
+  UseSessionActivityReturn,
+} from "./useSessionActivity";
+// Session Activity Tracking Hook
+// Additional activity tracking utilities
+export {
+  dispatchCustomActivity,
+  useBusinessActivityTracking,
+  useSessionActivity,
+  withActivityTracking,
+} from "./useSessionActivity";
 
 // =====================================================
 // COMBINED HOOKS FOR CONVENIENCE
 // =====================================================
 
+import type { useDeviceManagement } from "./useDeviceManagement";
 import type { useSession } from "./useSession";
 import type { useSessionActivity } from "./useSessionActivity";
-import type { useDeviceManagement } from "./useDeviceManagement";
 
 /**
  * Combined hook that provides all session-related functionality
@@ -198,7 +195,7 @@ export function useSessionStatistics() {
 // CONTEXT PROVIDERS (Optional)
 // =====================================================
 
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, type ReactNode, useContext } from "react";
 
 // Session Context
 const SessionContext = createContext<ReturnType<typeof useCompleteSessionManagement> | null>(null);

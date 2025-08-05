@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateCohortPDF = generateCohortPDF;
 exports.generateForecastPDF = generateForecastPDF;
@@ -24,7 +23,7 @@ function generateCohortPDF(data, options) {
   doc.text("Cohort Overview", 14, yPosition);
   yPosition += 10;
   if (data.metrics && data.metrics.length > 0) {
-    var tableData = data.metrics.map(function (metric) {
+    var tableData = data.metrics.map((metric) => {
       var _a;
       return [
         metric.cohortId || "N/A",
@@ -55,7 +54,7 @@ function generateCohortPDF(data, options) {
     doc.text("Key Insights", 14, yPosition);
     yPosition += 10;
     doc.setFontSize(10);
-    data.insights.forEach(function (insight, index) {
+    data.insights.forEach((insight, index) => {
       var text = typeof insight === "string" ? insight : insight.text || "";
       var lines = doc.splitTextToSize("".concat(index + 1, ". ").concat(text), 260);
       doc.text(lines, 14, yPosition);
@@ -121,7 +120,7 @@ function generateForecastPDF(data, options) {
     doc.setFontSize(16);
     doc.text("Predictions", 14, yPosition);
     yPosition += 10;
-    var tableData = data.predictions.slice(0, 20).map(function (prediction) {
+    var tableData = data.predictions.slice(0, 20).map((prediction) => {
       var _a, _b, _c;
       return [
         new Date(prediction.date).toLocaleDateString(),
@@ -174,7 +173,7 @@ function generateForecastPDF(data, options) {
     doc.setFontSize(16);
     doc.text("Scenario Analysis", 14, yPosition);
     yPosition += 15;
-    var scenarioData = Object.entries(data.scenarios).map(function (_a) {
+    var scenarioData = Object.entries(data.scenarios).map((_a) => {
       var name = _a[0],
         scenario = _a[1];
       return [
@@ -217,15 +216,13 @@ function generateInsightsPDF(data, options) {
     doc.setFontSize(16);
     doc.text("Correlation Analysis", 14, yPosition);
     yPosition += 15;
-    var corrData = data.correlations.map(function (corr) {
-      return [
-        corr.metric1 || "",
-        corr.metric2 || "",
-        (corr.correlation || 0).toFixed(3),
-        corr.significance || "N/A",
-        corr.strength || "N/A",
-      ];
-    });
+    var corrData = data.correlations.map((corr) => [
+      corr.metric1 || "",
+      corr.metric2 || "",
+      (corr.correlation || 0).toFixed(3),
+      corr.significance || "N/A",
+      corr.strength || "N/A",
+    ]);
     doc.autoTable({
       startY: yPosition,
       head: [["Metric 1", "Metric 2", "Correlation", "Significance", "Strength"]],
@@ -245,16 +242,16 @@ function generateInsightsPDF(data, options) {
     doc.setFontSize(16);
     doc.text("Anomaly Detection", 14, yPosition);
     yPosition += 15;
-    var anomalyData = data.anomalies.slice(0, 15).map(function (anomaly) {
-      return [
+    var anomalyData = data.anomalies
+      .slice(0, 15)
+      .map((anomaly) => [
         anomaly.metric || "",
         new Date(anomaly.timestamp).toLocaleDateString(),
         (anomaly.value || 0).toString(),
         (anomaly.expectedValue || 0).toString(),
         "".concat(((anomaly.deviation || 0) * 100).toFixed(2), "%"),
         anomaly.severity || "Low",
-      ];
-    });
+      ]);
     doc.autoTable({
       startY: yPosition,
       head: [["Metric", "Date", "Value", "Expected", "Deviation", "Severity"]],
@@ -274,7 +271,7 @@ function generateInsightsPDF(data, options) {
     doc.setFontSize(16);
     doc.text("Predictive Insights", 14, yPosition);
     yPosition += 15;
-    data.predictions.slice(0, 10).forEach(function (pred, index) {
+    data.predictions.slice(0, 10).forEach((pred, index) => {
       doc.setFontSize(12);
       doc.text("".concat(index + 1, ". ").concat(pred.metric || "Unknown Metric"), 14, yPosition);
       yPosition += 6;
@@ -308,7 +305,7 @@ function generateInsightsPDF(data, options) {
     doc.setFontSize(16);
     doc.text("Recommendations", 14, yPosition);
     yPosition += 15;
-    data.recommendations.slice(0, 8).forEach(function (rec, index) {
+    data.recommendations.slice(0, 8).forEach((rec, index) => {
       var text = typeof rec === "string" ? rec : rec.text || rec.recommendation || "";
       var lines = doc.splitTextToSize("".concat(index + 1, ". ").concat(text), 170);
       doc.setFontSize(10);
@@ -340,13 +337,11 @@ function generateDashboardPDF(data, options) {
     doc.setFontSize(16);
     doc.text("Key Performance Indicators", 14, yPosition);
     yPosition += 15;
-    var kpiData = Object.entries(data.kpis).map(function (_a) {
+    var kpiData = Object.entries(data.kpis).map((_a) => {
       var key = _a[0],
         value = _a[1];
       return [
-        key.replace(/([A-Z])/g, " $1").replace(/^./, function (str) {
-          return str.toUpperCase();
-        }),
+        key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase()),
         typeof value === "number"
           ? value.toLocaleString()
           : (value === null || value === void 0 ? void 0 : value.toString()) || "N/A",
@@ -369,7 +364,7 @@ function generateDashboardPDF(data, options) {
     { key: "forecasts", title: "Forecast Summary", maxRows: 5 },
     { key: "insights", title: "Key Insights", maxRows: 8 },
   ];
-  sections.forEach(function (section) {
+  sections.forEach((section) => {
     if (data[section.key] && data[section.key].length > 0) {
       if (yPosition > 150) {
         doc.addPage();
@@ -380,7 +375,7 @@ function generateDashboardPDF(data, options) {
       yPosition += 10;
       if (section.key === "insights") {
         doc.setFontSize(10);
-        data[section.key].slice(0, section.maxRows).forEach(function (insight, index) {
+        data[section.key].slice(0, section.maxRows).forEach((insight, _index) => {
           var text = typeof insight === "string" ? insight : insight.text || "";
           var lines = doc.splitTextToSize("\u2022 ".concat(text), 260);
           doc.text(lines, 14, yPosition);
@@ -388,7 +383,7 @@ function generateDashboardPDF(data, options) {
         });
       } else {
         // For cohorts and forecasts, show basic summary table
-        var summaryData = data[section.key].slice(0, section.maxRows).map(function (item, index) {
+        var summaryData = data[section.key].slice(0, section.maxRows).map((item, index) => {
           var _a, _b;
           return [
             "Item ".concat(index + 1),

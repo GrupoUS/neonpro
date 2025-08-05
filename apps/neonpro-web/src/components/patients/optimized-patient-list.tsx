@@ -1,11 +1,22 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import type {
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Mail,
+  Phone,
+  RefreshCw,
+  Search,
+  User,
+} from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { createClient } from "@/app/utils/supabase/client";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Badge } from "@/components/ui/badge";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
 import type {
   Table,
   TableBody,
@@ -14,17 +25,6 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type {
-  Search,
-  User,
-  Phone,
-  Mail,
-  Eye,
-  RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
 
 // =====================================================================================
 // OPTIMIZED PATIENT LIST COMPONENT

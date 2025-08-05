@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // CLINIC RETENTION METRICS API ENDPOINTS
 // Epic 7.4: Patient Retention Analytics + Predictions
@@ -6,15 +5,15 @@
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -188,7 +185,7 @@ function GET(request_1, _a) {
       summary,
       error_1;
     var params = _b.params;
-    return __generator(this, function (_g) {
+    return __generator(this, (_g) => {
       switch (_g.label) {
         case 0:
           _g.trys.push([0, 6, , 7]);
@@ -285,7 +282,7 @@ function GET(request_1, _a) {
           metrics = _g.sent();
           filteredMetrics = metrics;
           if (startDate_1 || endDate_1 || riskLevel_1) {
-            filteredMetrics = metrics.filter(function (metric) {
+            filteredMetrics = metrics.filter((metric) => {
               // Filter by date range
               if (startDate_1 && new Date(metric.last_appointment_date) < new Date(startDate_1)) {
                 return false;
@@ -303,33 +300,21 @@ function GET(request_1, _a) {
           summary = {
             total_patients: filteredMetrics.length,
             average_retention_rate:
-              filteredMetrics.reduce(function (sum, m) {
-                return sum + m.retention_rate;
-              }, 0) / filteredMetrics.length || 0,
+              filteredMetrics.reduce((sum, m) => sum + m.retention_rate, 0) /
+                filteredMetrics.length || 0,
             average_churn_risk:
-              filteredMetrics.reduce(function (sum, m) {
-                return sum + m.churn_risk_score;
-              }, 0) / filteredMetrics.length || 0,
+              filteredMetrics.reduce((sum, m) => sum + m.churn_risk_score, 0) /
+                filteredMetrics.length || 0,
             risk_distribution: {
-              low: filteredMetrics.filter(function (m) {
-                return m.churn_risk_level === "low";
-              }).length,
-              medium: filteredMetrics.filter(function (m) {
-                return m.churn_risk_level === "medium";
-              }).length,
-              high: filteredMetrics.filter(function (m) {
-                return m.churn_risk_level === "high";
-              }).length,
-              critical: filteredMetrics.filter(function (m) {
-                return m.churn_risk_level === "critical";
-              }).length,
+              low: filteredMetrics.filter((m) => m.churn_risk_level === "low").length,
+              medium: filteredMetrics.filter((m) => m.churn_risk_level === "medium").length,
+              high: filteredMetrics.filter((m) => m.churn_risk_level === "high").length,
+              critical: filteredMetrics.filter((m) => m.churn_risk_level === "critical").length,
             },
-            total_lifetime_value: filteredMetrics.reduce(function (sum, m) {
-              return sum + m.lifetime_value;
-            }, 0),
-            patients_at_risk: filteredMetrics.filter(function (m) {
-              return ["high", "critical"].includes(m.churn_risk_level);
-            }).length,
+            total_lifetime_value: filteredMetrics.reduce((sum, m) => sum + m.lifetime_value, 0),
+            patients_at_risk: filteredMetrics.filter((m) =>
+              ["high", "critical"].includes(m.churn_risk_level),
+            ).length,
           };
           return [
             2 /*return*/,
@@ -408,9 +393,8 @@ function POST(request_1, _a) {
       batchResults,
       summary,
       error_2;
-    var _this = this;
     var params = _b.params;
-    return __generator(this, function (_h) {
+    return __generator(this, (_h) => {
       switch (_h.label) {
         case 0:
           _h.trys.push([0, 12, , 13]);
@@ -490,9 +474,7 @@ function POST(request_1, _a) {
           if (patientsError) {
             throw new Error("Failed to get patients: ".concat(patientsError.message));
           }
-          targetPatientIds = patients.map(function (p) {
-            return p.id;
-          });
+          targetPatientIds = patients.map((p) => p.id);
           _h.label = 6;
         case 6:
           return [
@@ -523,10 +505,10 @@ function POST(request_1, _a) {
         case 8:
           if (!(i < targetPatientIds.length)) return [3 /*break*/, 11];
           batch = targetPatientIds.slice(i, i + batchSize);
-          batchPromises = batch.map(function (patientId) {
-            return __awaiter(_this, void 0, void 0, function () {
+          batchPromises = batch.map((patientId) =>
+            __awaiter(this, void 0, void 0, function () {
               var metrics, error_3;
-              return __generator(this, function (_a) {
+              return __generator(this, (_a) => {
                 switch (_a.label) {
                   case 0:
                     _a.trys.push([0, 2, , 3]);
@@ -558,12 +540,12 @@ function POST(request_1, _a) {
                     return [2 /*return*/];
                 }
               });
-            });
-          });
+            }),
+          );
           return [4 /*yield*/, Promise.allSettled(batchPromises)];
         case 9:
           batchResults = _h.sent();
-          batchResults.forEach(function (result) {
+          batchResults.forEach((result) => {
             var _a;
             if (result.status === "fulfilled") {
               if (result.value.success) {
@@ -597,9 +579,7 @@ function POST(request_1, _a) {
             server_1.NextResponse.json({
               success: true,
               data: {
-                results: results_1.map(function (r) {
-                  return r.metrics;
-                }),
+                results: results_1.map((r) => r.metrics),
                 summary: summary,
                 errors: errors_1.length > 0 ? errors_1 : undefined,
               },

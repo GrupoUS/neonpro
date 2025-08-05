@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfileManagement = ProfileManagement;
 var react_1 = require("react");
@@ -176,17 +173,11 @@ var passwordSchema = zod_2.z
     newPassword: zod_2.z.string().min(8, "Nova senha deve ter pelo menos 8 caracteres"),
     confirmPassword: zod_2.z.string().min(1, "Confirmação de senha é obrigatória"),
   })
-  .refine(
-    function (data) {
-      return data.newPassword === data.confirmPassword;
-    },
-    {
-      message: "Senhas não coincidem",
-      path: ["confirmPassword"],
-    },
-  );
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Senhas não coincidem",
+    path: ["confirmPassword"],
+  });
 function ProfileManagement() {
-  var _this = this;
   var _a = (0, patient_auth_1.usePatientAuth)(),
     patient = _a.patient,
     updatePatient = _a.updatePatient;
@@ -233,10 +224,10 @@ function ProfileManagement() {
       confirmPassword: "",
     },
   });
-  var handleProfileUpdate = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleProfileUpdate = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsUpdating(true);
@@ -272,11 +263,10 @@ function ProfileManagement() {
         }
       });
     });
-  };
-  var handlePasswordUpdate = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handlePasswordUpdate = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsUpdating(true);
@@ -284,12 +274,7 @@ function ProfileManagement() {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // TODO: Call API to update password
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
           case 2:
             // TODO: Call API to update password
             _a.sent();
@@ -309,12 +294,11 @@ function ProfileManagement() {
         }
       });
     });
-  };
-  var handleAvatarUpload = function (event) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAvatarUpload = (event) =>
+    __awaiter(this, void 0, void 0, function () {
       var file;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         file = (_a = event.target.files) === null || _a === void 0 ? void 0 : _a[0];
         if (!file) return [2 /*return*/];
         // Validate file type and size
@@ -336,17 +320,13 @@ function ProfileManagement() {
         return [2 /*return*/];
       });
     });
-  };
-  var getInitials = function (name) {
-    return name
+  var getInitials = (name) =>
+    name
       .split(" ")
-      .map(function (n) {
-        return n[0];
-      })
+      .map((n) => n[0])
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -426,7 +406,7 @@ function ProfileManagement() {
                 <form_1.FormField
                   control={profileForm.control}
                   name="name"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -443,7 +423,7 @@ function ProfileManagement() {
                 <form_1.FormField
                   control={profileForm.control}
                   name="email"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -462,7 +442,7 @@ function ProfileManagement() {
                 <form_1.FormField
                   control={profileForm.control}
                   name="phone"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -471,7 +451,7 @@ function ProfileManagement() {
                           <input_1.Input
                             placeholder="(11) 99999-9999"
                             {...field}
-                            onChange={function (e) {
+                            onChange={(e) => {
                               var formatted = (0, utils_1.formatPhone)(e.target.value);
                               field.onChange(formatted);
                             }}
@@ -486,7 +466,7 @@ function ProfileManagement() {
                 <form_1.FormField
                   control={profileForm.control}
                   name="birth_date"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -503,7 +483,7 @@ function ProfileManagement() {
                 <form_1.FormField
                   control={profileForm.control}
                   name="gender"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -540,7 +520,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="emergency_contact_name"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -557,7 +537,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="emergency_contact"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -566,7 +546,7 @@ function ProfileManagement() {
                             <input_1.Input
                               placeholder="(11) 99999-9999"
                               {...field}
-                              onChange={function (e) {
+                              onChange={(e) => {
                                 var formatted = (0, utils_1.formatPhone)(e.target.value);
                                 field.onChange(formatted);
                               }}
@@ -593,7 +573,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="address.street"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="md:col-span-2">
@@ -610,7 +590,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="address.number"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -629,7 +609,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="address.complement"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -646,7 +626,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="address.neighborhood"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -665,7 +645,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="address.city"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -682,7 +662,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="address.state"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -699,7 +679,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={profileForm.control}
                     name="address.zipcode"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -751,12 +731,7 @@ function ProfileManagement() {
                   <h4 className="font-medium">Senha</h4>
                   <p className="text-sm text-muted-foreground">Última alteração: Há 3 meses</p>
                 </div>
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setShowPasswordForm(true);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setShowPasswordForm(true)}>
                   Alterar Senha
                 </button_1.Button>
               </div>
@@ -768,7 +743,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={passwordForm.control}
                     name="currentPassword"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -785,9 +760,7 @@ function ProfileManagement() {
                                 variant="ghost"
                                 size="sm"
                                 className="absolute right-0 top-0 h-full px-3"
-                                onClick={function () {
-                                  return setShowCurrentPassword(!showCurrentPassword);
-                                }}
+                                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                               >
                                 {showCurrentPassword
                                   ? <lucide_react_1.EyeOff className="w-4 h-4" />
@@ -804,7 +777,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={passwordForm.control}
                     name="newPassword"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -821,9 +794,7 @@ function ProfileManagement() {
                                 variant="ghost"
                                 size="sm"
                                 className="absolute right-0 top-0 h-full px-3"
-                                onClick={function () {
-                                  return setShowNewPassword(!showNewPassword);
-                                }}
+                                onClick={() => setShowNewPassword(!showNewPassword)}
                               >
                                 {showNewPassword
                                   ? <lucide_react_1.EyeOff className="w-4 h-4" />
@@ -843,7 +814,7 @@ function ProfileManagement() {
                   <form_1.FormField
                     control={passwordForm.control}
                     name="confirmPassword"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -865,7 +836,7 @@ function ProfileManagement() {
                     <button_1.Button
                       type="button"
                       variant="outline"
-                      onClick={function () {
+                      onClick={() => {
                         setShowPasswordForm(false);
                         passwordForm.reset();
                       }}

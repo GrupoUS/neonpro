@@ -1,5 +1,5 @@
-import { AISchedulingOptimizer } from "../../../lib/ai/scheduling-optimizer";
 import { PatientPreferenceLearner } from "../../../lib/ai/preference-learner";
+import { AISchedulingOptimizer } from "../../../lib/ai/scheduling-optimizer";
 
 // Mock Supabase client
 const mockSupabaseClient = {

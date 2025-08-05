@@ -1,4 +1,3 @@
-"use strict";
 // lib/supabase/lgpd-compliance.ts
 // LGPD (Lei Geral de Proteção de Dados) Compliance Utilities for NeonPro
 // Provides comprehensive audit logging, consent management, and data protection features
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,12 +145,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.lgpdUtils = exports.HealthcareLGPDHooks = exports.LGPDComplianceManager = void 0;
 var client_1 = require("@/lib/supabase/client");
 // LGPD Compliance Manager Class
-var LGPDComplianceManager = /** @class */ (function () {
+var LGPDComplianceManager = /** @class */ (() => {
   function LGPDComplianceManager(serverSide) {
     if (serverSide === void 0) {
       serverSide = false;
@@ -613,7 +610,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   /**
    * Get relevant LGPD article for audit event type
    */
-  LGPDComplianceManager.prototype.getLGPDArticle = function (eventType) {
+  LGPDComplianceManager.prototype.getLGPDArticle = (eventType) => {
     var articleMap = {
       data_access: "Article 17 - Right of access",
       data_modification: "Article 18 - Right to rectification",
@@ -634,7 +631,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   /**
    * Get LGPD article for data subject rights
    */
-  LGPDComplianceManager.prototype.getDataSubjectRightsArticle = function (right) {
+  LGPDComplianceManager.prototype.getDataSubjectRightsArticle = (right) => {
     var rightsMap = {
       access: "17 - Right of access",
       rectification: "18 - Right to rectification",
@@ -650,7 +647,7 @@ var LGPDComplianceManager = /** @class */ (function () {
 })();
 exports.LGPDComplianceManager = LGPDComplianceManager;
 // Healthcare-specific LGPD compliance hooks
-var HealthcareLGPDHooks = /** @class */ (function () {
+var HealthcareLGPDHooks = /** @class */ (() => {
   function HealthcareLGPDHooks(serverSide) {
     if (serverSide === void 0) {
       serverSide = false;
@@ -828,7 +825,7 @@ exports.lgpdUtils = {
   /**
    * Create LGPD-compliant audit logger
    */
-  createAuditLogger: function (serverSide) {
+  createAuditLogger: (serverSide) => {
     if (serverSide === void 0) {
       serverSide = false;
     }
@@ -837,7 +834,7 @@ exports.lgpdUtils = {
   /**
    * Create healthcare-specific LGPD hooks
    */
-  createHealthcareHooks: function (serverSide) {
+  createHealthcareHooks: (serverSide) => {
     if (serverSide === void 0) {
       serverSide = false;
     }
@@ -846,26 +843,24 @@ exports.lgpdUtils = {
   /**
    * Generate LGPD-compliant consent form data
    */
-  generateConsentFormData: function (consentType, purpose, retentionPeriod) {
-    return {
-      consent_type: consentType,
-      purpose: purpose,
-      retention_period: retentionPeriod || "20_years",
-      legal_basis: "Article 8 - Consent",
-      consent_date: new Date().toISOString(),
-      consent_version: "1.0",
-      can_withdraw: true,
-      withdrawal_method: "Patient portal or written request",
-      data_categories: ["personal", "medical", "contact"],
-      processing_activities: [purpose],
-      third_party_sharing: false,
-      international_transfer: false,
-    };
-  },
+  generateConsentFormData: (consentType, purpose, retentionPeriod) => ({
+    consent_type: consentType,
+    purpose: purpose,
+    retention_period: retentionPeriod || "20_years",
+    legal_basis: "Article 8 - Consent",
+    consent_date: new Date().toISOString(),
+    consent_version: "1.0",
+    can_withdraw: true,
+    withdrawal_method: "Patient portal or written request",
+    data_categories: ["personal", "medical", "contact"],
+    processing_activities: [purpose],
+    third_party_sharing: false,
+    international_transfer: false,
+  }),
   /**
    * Validate if data processing is LGPD compliant
    */
-  validateDataProcessing: function (purpose, legalBasis, dataCategories) {
+  validateDataProcessing: (purpose, legalBasis, dataCategories) => {
     var issues = [];
     // Basic validation rules
     if (!purpose || purpose.length < 10) {

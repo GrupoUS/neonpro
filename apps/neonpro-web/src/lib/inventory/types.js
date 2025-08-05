@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 11.3: Centralized Inventory Types and Configuration
  * Type definitions and configuration for the Stock Output and Consumption Control System
@@ -54,7 +53,7 @@ exports.DEFAULT_INVENTORY_CONFIG = {
 };
 // Status enums
 var StockOutputStatus;
-(function (StockOutputStatus) {
+((StockOutputStatus) => {
   StockOutputStatus["DRAFT"] = "rascunho";
   StockOutputStatus["PENDING"] = "pendente";
   StockOutputStatus["APPROVED"] = "aprovada";
@@ -63,7 +62,7 @@ var StockOutputStatus;
   StockOutputStatus["CANCELLED"] = "cancelada";
 })(StockOutputStatus || (exports.StockOutputStatus = StockOutputStatus = {}));
 var BatchStatus;
-(function (BatchStatus) {
+((BatchStatus) => {
   BatchStatus["AVAILABLE"] = "disponivel";
   BatchStatus["RESERVED"] = "reservado";
   BatchStatus["BLOCKED"] = "bloqueado";
@@ -71,7 +70,7 @@ var BatchStatus;
   BatchStatus["CONSUMED"] = "consumido";
 })(BatchStatus || (exports.BatchStatus = BatchStatus = {}));
 var AlertType;
-(function (AlertType) {
+((AlertType) => {
   AlertType["LOW_STOCK"] = "estoque_baixo";
   AlertType["EXPIRY_WARNING"] = "alerta_vencimento";
   AlertType["EXPIRED"] = "vencido";
@@ -80,7 +79,7 @@ var AlertType;
   AlertType["FIFO_VIOLATION"] = "violacao_fifo";
 })(AlertType || (exports.AlertType = AlertType = {}));
 var TransferStatus;
-(function (TransferStatus) {
+((TransferStatus) => {
   TransferStatus["PENDING"] = "pendente";
   TransferStatus["APPROVED"] = "aprovada";
   TransferStatus["IN_TRANSIT"] = "em_transito";

@@ -8,7 +8,6 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import type { z } from "zod";
 import type { TreatmentType } from "../types";
 
 // Core Types
@@ -469,11 +468,6 @@ export interface ComplicationDetectionError extends Error {
   timestamp: string;
   retryable: boolean;
 }
-
-// Export all types
-export type {
-  // ... (all types are already exported above)
-};
 
 // Constants
 export const COMPLICATION_DETECTION_CONSTANTS = {

@@ -1,4 +1,14 @@
 import "dotenv/config";
+/// <reference types="jest" />
+import { jest } from "@jest/globals";
+
+// Global type declarations for tests
+declare global {
+  var testConfig: any;
+  var __HEALTHCARE_DB__: any;
+  var __REDIS_SERVER__: any;
+  var __TEST_FASTIFY__: any;
+}
 
 export default async function globalSetup() {
   // Configuração global antes de todos os testes
@@ -72,7 +82,7 @@ export default async function globalSetup() {
   process.env.CFM_COMPLIANCE_MODE = "test";
 
   // Seed data para testes (IDs determinísticos)
-  global.testSeeds = {
+  (global as any).testSeeds = {
     tenants: [
       {
         id: "test-tenant-id",
@@ -145,16 +155,18 @@ export default async function globalSetup() {
   jest.setTimeout(30000); // 30 segundos para testes de integração
 
   // Interceptors para APIs externas durante testes
-  if (typeof global.fetch === "undefined") {
-    global.fetch = jest.fn().mockResolvedValue({
-      ok: true,
-      json: jest.fn().mockResolvedValue({ success: true }),
-      text: jest.fn().mockResolvedValue("Mock response"),
-    });
+  if (typeof (global as any).fetch === "undefined") {
+    (global as any).fetch = jest.fn().mockImplementation(() => 
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({ success: true }),
+        text: () => Promise.resolve("Mock response")
+      })
+    );
   }
 
   // Mock para serviços externos
-  global.mockServices = {
+  (global as any).mockServices = {
     supabase: {
       connected: true,
       testMode: true,
@@ -177,18 +189,18 @@ export default async function globalSetup() {
   };
 
   // Função para resetar mocks entre testes
-  global.resetMocks = () => {
-    global.mockServices.notifications = {
+  (global as any).resetMocks = () => {
+    (global as any).mockServices.notifications = {
       sms: { sent: 0, failed: 0 },
       email: { sent: 0, failed: 0 },
       whatsapp: { sent: 0, failed: 0 },
     };
-    global.mockServices.payments = {
+    (global as any).mockServices.payments = {
       pix: { generated: 0, paid: 0 },
       creditCard: { processed: 0, failed: 0 },
       cash: { recorded: 0 },
     };
-    global.mockServices.taxes = {
+    (global as any).mockServices.taxes = {
       calculated: 0,
       issApplied: 0,
       irApplied: 0,
@@ -196,7 +208,7 @@ export default async function globalSetup() {
   };
 
   // Utilitários de teste específicos para sistema de saúde
-  global.healthcareTestUtils = {
+  (global as any).healthcareTestUtils = {
     // Gerador de CPF válido para testes (não real)
     generateValidCPF: (): string => {
       const validTestCPFs = [
@@ -206,7 +218,8 @@ export default async function globalSetup() {
         "44455588834",
         "55599911156",
       ];
-      return validTestCPFs[Math.floor(Math.random() * validTestCPFs.length)];
+      const randomIndex = Math.floor(Math.random() * validTestCPFs.length);
+      return validTestCPFs[randomIndex] || "11144477735";
     },
 
     // Gerador de CNPJ válido para testes (não real)
@@ -240,7 +253,7 @@ export default async function globalSetup() {
     // Função para criar token JWT de teste
     createTestJWT: (payload: any) => {
       const jwt = require("jsonwebtoken");
-      return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+      return jwt.sign(payload, process.env.JWT_SECRET || "test-jwt-secret", { expiresIn: "1h" });
     },
 
     // Função para validar conformidade LGPD em respostas
@@ -287,7 +300,7 @@ export default async function globalSetup() {
     networkDelay: (ms: number = 100) => new Promise((resolve) => setTimeout(resolve, ms)),
 
     // Função para contar operações de auditoria
-    countAuditLogs: () => global.mockServices?.auditLogs?.length || 0,
+    countAuditLogs: () => (global as any).mockServices?.auditLogs?.length || 0,
 
     // Função para validar cálculos de impostos brasileiros
     validateBrazilianTaxes: (amount: number, taxResult: any) => {
@@ -303,7 +316,7 @@ export default async function globalSetup() {
   };
 
   console.log("✅ Ambiente de testes configurado com sucesso!");
-  console.log(`📊 Modo de teste: ${process.env.NODE_ENV}`);
+  console.log(`📊 Modo de teste: ${process.env.NODE_ENV || 'test'}`);
   console.log(`🏥 Sistema: NeonPro Healthcare API`);
   console.log(`🇧🇷 Conformidade: LGPD + ANVISA + CFM`);
   console.log(`⏱️  Timeout de testes: ${30000}ms`);

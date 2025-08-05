@@ -1,4 +1,3 @@
-"use strict";
 // Cash Flow Validation Schemas
 // Using Zod for type-safe validation following Context7 patterns
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -54,9 +53,7 @@ exports.CashFlowEntrySchema = zod_1.z.object({
     .number()
     .positive("Amount must be positive")
     .max(999999999, "Amount too large")
-    .refine(function (val) {
-      return Number.isFinite(val);
-    }, "Amount must be a valid number"),
+    .refine((val) => Number.isFinite(val), "Amount must be a valid number"),
   currency: zod_1.z.string().default("BRL"),
   description: zod_1.z.string().min(1, "Description is required").max(500, "Description too long"),
   reference_number: zod_1.z.string().optional(),
@@ -99,7 +96,7 @@ exports.CashFlowFiltersSchema = zod_1.z
     search: zod_1.z.string().max(200).optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // For YYYY-MM-DD format strings, we can use string comparison
       // This avoids Jest Date parsing issues and is more efficient
       return !data.dateFrom || !data.dateTo || data.dateFrom <= data.dateTo;
@@ -123,15 +120,10 @@ exports.ReconciliationSchema = zod_1.z
     notes: zod_1.z.string().max(1000).optional(),
     created_by: zod_1.z.string().uuid("Invalid user ID"),
   })
-  .refine(
-    function (data) {
-      return new Date(data.period_start) <= new Date(data.period_end);
-    },
-    {
-      message: "Period start must be before period end",
-      path: ["period_end"],
-    },
-  );
+  .refine((data) => new Date(data.period_start) <= new Date(data.period_end), {
+    message: "Period start must be before period end",
+    path: ["period_end"],
+  });
 // Validation helper functions
 function validateCashFlowEntry(data) {
   return exports.CashFlowEntrySchema.safeParse(data);

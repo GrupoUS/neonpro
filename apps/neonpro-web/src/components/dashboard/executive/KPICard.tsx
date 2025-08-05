@@ -5,35 +5,36 @@
  * and interactive features for the executive dashboard.
  */
 
-import React, { useState, useMemo } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Info,
+  Minus,
+  MoreVertical,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  XCircle,
+} from "lucide-react";
+import type React from "react";
+import { useMemo, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Info,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Clock,
-  Target,
-  MoreVertical,
-} from "lucide-react";
-import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
 
 import type { KPIMetric, KPIStatus, TrendDirection } from "@/lib/dashboard/types";
 

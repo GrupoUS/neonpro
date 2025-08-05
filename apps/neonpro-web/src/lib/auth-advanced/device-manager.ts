@@ -1,8 +1,8 @@
 // Device Manager Service
 // Story 1.4: Session Management & Security Implementation
 
-import type { DeviceRegistration, DeviceInfo, LocationInfo, UserSession } from "./types";
 import type { DEVICE_TRUST_FACTORS, LOCATION_RISK_FACTORS } from "./config";
+import type { DeviceInfo, DeviceRegistration, LocationInfo, UserSession } from "./types";
 
 export interface DeviceFingerprint {
   userAgent: string;

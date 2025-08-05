@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useRealTimeAvailability = useRealTimeAvailability;
 exports.useConflictDetection = useConflictDetection;
@@ -152,7 +149,6 @@ exports.useOptimisticBooking = useOptimisticBooking;
 var client_1 = require("@/lib/supabase/client");
 var react_1 = require("react");
 function useRealTimeAvailability(_a) {
-  var _this = this;
   var serviceId = _a.serviceId,
     professionalId = _a.professionalId,
     startDate = _a.startDate,
@@ -179,10 +175,10 @@ function useRealTimeAvailability(_a) {
     setChannel = _h[1];
   var supabase = yield (0, client_1.createClient)();
   var fetchAvailability = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, fetchError, enrichedSlots, err_1;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!serviceId || !enabled) return [2 /*return*/];
@@ -203,16 +199,14 @@ function useRealTimeAvailability(_a) {
             case 2:
               (_a = _b.sent()), (data = _a.data), (fetchError = _a.error);
               if (fetchError) throw fetchError;
-              enrichedSlots = data.map(function (slot) {
-                return {
-                  datetime: slot.datetime,
-                  is_available: slot.is_available,
-                  professional_id: slot.professional_id,
-                  professional_name: slot.professional_name,
-                  booking_count: slot.booking_count || 0,
-                  conflict_reason: slot.conflict_reason,
-                };
-              });
+              enrichedSlots = data.map((slot) => ({
+                datetime: slot.datetime,
+                is_available: slot.is_available,
+                professional_id: slot.professional_id,
+                professional_name: slot.professional_name,
+                booking_count: slot.booking_count || 0,
+                conflict_reason: slot.conflict_reason,
+              }));
               setSlots(enrichedSlots);
               setLastUpdated(new Date());
               return [3 /*break*/, 5];
@@ -228,95 +222,86 @@ function useRealTimeAvailability(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [serviceId, professionalId, startDate, endDate, enabled, supabase],
   );
   // Set up real-time subscription
-  (0, react_1.useEffect)(
-    function () {
-      if (!serviceId || !enabled) return;
-      var channelName = "availability:"
-        .concat(serviceId)
-        .concat(professionalId ? ":".concat(professionalId) : "");
-      var newChannel = supabase
-        .channel(channelName)
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "appointments",
-            filter: professionalId ? "professional_id=eq.".concat(professionalId) : undefined,
-          },
-          function (payload) {
-            console.log("Real-time appointment change:", payload);
-            // Refresh availability when appointments change
-            fetchAvailability();
-          },
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "patient_appointments",
-          },
-          function (payload) {
-            console.log("Real-time patient appointment change:", payload);
-            // Refresh availability when patient appointments change
-            fetchAvailability();
-          },
-        )
-        .on("presence", { event: "sync" }, function () {
-          setIsConnected(true);
-          console.log("Real-time availability connected");
-        })
-        .on("presence", { event: "leave" }, function () {
-          setIsConnected(false);
-          console.log("Real-time availability disconnected");
-        });
-      newChannel.subscribe(function (status) {
-        if (status === "SUBSCRIBED") {
-          setIsConnected(true);
-          console.log("Real-time availability subscribed");
-        } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
-          setIsConnected(false);
-          console.error("Real-time availability connection error:", status);
-        }
-      });
-      setChannel(newChannel);
-      // Initial fetch
-      fetchAvailability();
-      // Cleanup on unmount
-      return function () {
-        newChannel.unsubscribe();
-        setChannel(null);
-        setIsConnected(false);
-      };
-    },
-    [serviceId, professionalId, enabled, fetchAvailability, supabase],
-  );
-  // Periodic refresh fallback (every 30 seconds)
-  (0, react_1.useEffect)(
-    function () {
-      if (!enabled) return;
-      var interval = setInterval(function () {
-        if (!isConnected) {
-          console.log("Real-time disconnected, fallback refresh");
+  (0, react_1.useEffect)(() => {
+    if (!serviceId || !enabled) return;
+    var channelName = "availability:"
+      .concat(serviceId)
+      .concat(professionalId ? ":".concat(professionalId) : "");
+    var newChannel = supabase
+      .channel(channelName)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "appointments",
+          filter: professionalId ? "professional_id=eq.".concat(professionalId) : undefined,
+        },
+        (payload) => {
+          console.log("Real-time appointment change:", payload);
+          // Refresh availability when appointments change
           fetchAvailability();
-        }
-      }, 30000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [enabled, isConnected, fetchAvailability],
-  );
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "patient_appointments",
+        },
+        (payload) => {
+          console.log("Real-time patient appointment change:", payload);
+          // Refresh availability when patient appointments change
+          fetchAvailability();
+        },
+      )
+      .on("presence", { event: "sync" }, () => {
+        setIsConnected(true);
+        console.log("Real-time availability connected");
+      })
+      .on("presence", { event: "leave" }, () => {
+        setIsConnected(false);
+        console.log("Real-time availability disconnected");
+      });
+    newChannel.subscribe((status) => {
+      if (status === "SUBSCRIBED") {
+        setIsConnected(true);
+        console.log("Real-time availability subscribed");
+      } else if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+        setIsConnected(false);
+        console.error("Real-time availability connection error:", status);
+      }
+    });
+    setChannel(newChannel);
+    // Initial fetch
+    fetchAvailability();
+    // Cleanup on unmount
+    return () => {
+      newChannel.unsubscribe();
+      setChannel(null);
+      setIsConnected(false);
+    };
+  }, [serviceId, professionalId, enabled, fetchAvailability, supabase]);
+  // Periodic refresh fallback (every 30 seconds)
+  (0, react_1.useEffect)(() => {
+    if (!enabled) return;
+    var interval = setInterval(() => {
+      if (!isConnected) {
+        console.log("Real-time disconnected, fallback refresh");
+        fetchAvailability();
+      }
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [enabled, isConnected, fetchAvailability]);
   var refreshAvailability = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetchAvailability()];
@@ -325,8 +310,7 @@ function useRealTimeAvailability(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchAvailability],
   );
   return {
@@ -340,13 +324,12 @@ function useRealTimeAvailability(_a) {
 }
 // Hook for conflict detection during booking
 function useConflictDetection() {
-  var _this = this;
   var supabase = yield (0, client_1.createClient)();
   var checkForConflicts = (0, react_1.useCallback)(
-    function (datetime, serviceId, professionalId, duration) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (datetime, serviceId, professionalId, duration) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, conflictCheck, conflictError, _b, alternatives, altError, error_1;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               _c.trys.push([0, 4, , 5]);
@@ -407,24 +390,22 @@ function useConflictDetection() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   return { checkForConflicts: checkForConflicts };
 }
 // Hook for optimistic booking (temporary reservation)
 function useOptimisticBooking() {
-  var _this = this;
   var supabase = yield (0, client_1.createClient)();
   var _a = (0, react_1.useState)(new Set()),
     reservedSlots = _a[0],
     setReservedSlots = _a[1];
   var reserveSlot = (0, react_1.useCallback)(
-    function (datetime, serviceId, professionalId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (datetime, serviceId, professionalId) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error, error_2;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, , 3]);
@@ -441,13 +422,14 @@ function useOptimisticBooking() {
               (_a = _b.sent()), (data = _a.data), (error = _a.error);
               if (error) throw error;
               if (data === null || data === void 0 ? void 0 : data.reservation_id) {
-                setReservedSlots(function (prev) {
-                  return new Set(__spreadArray(__spreadArray([], prev, true), [datetime], false));
-                });
+                setReservedSlots(
+                  (prev) =>
+                    new Set(__spreadArray(__spreadArray([], prev, true), [datetime], false)),
+                );
                 // Auto-remove from reserved slots after 10 minutes
                 setTimeout(
-                  function () {
-                    setReservedSlots(function (prev) {
+                  () => {
+                    setReservedSlots((prev) => {
                       var newSet = new Set(prev);
                       newSet.delete(datetime);
                       return newSet;
@@ -466,15 +448,14 @@ function useOptimisticBooking() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   var releaseSlot = (0, react_1.useCallback)(
-    function (reservationId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (reservationId) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -495,8 +476,7 @@ function useOptimisticBooking() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   return {

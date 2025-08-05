@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import type {
   Card,
   CardContent,
@@ -7,7 +8,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { ReactNode } from "react";
 
 interface ChartCardProps {
   title: string;

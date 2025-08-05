@@ -5,15 +5,15 @@
  * rights interface for the NeonPro healthcare application.
  */
 
-import type { useState, useEffect, useCallback } from "react";
+import type { useCallback, useEffect, useState } from "react";
 import type {
-  lgpdComplianceManager,
-  PrivacySettings,
+  ConsentRecord,
   ConsentType,
   DataProcessingPurpose,
-  LGPDRights,
   DataSubjectRequest,
-  ConsentRecord,
+  LGPDRights,
+  lgpdComplianceManager,
+  PrivacySettings,
 } from "./lgpd-compliance-manager";
 
 export interface UsePrivacyControlsResult {

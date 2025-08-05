@@ -1,13 +1,13 @@
 // Role Management Component Tests
 // Story 1.2: Role-Based Permissions Enhancement
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "@jest/globals";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it } from "@jest/globals";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { RoleManagement } from "@/components/admin/role-management";
 import { useRBAC } from "@/hooks/use-rbac";
 import { RBACPermissionManager } from "@/lib/auth/rbac/permissions";
-import { UserRole, Permission } from "@/types/rbac";
+import type { Permission, UserRole } from "@/types/rbac";
 
 // Mock dependencies
 jest.mock("@/hooks/use-rbac", () => ({

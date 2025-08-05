@@ -1,17 +1,16 @@
-"use strict";
 // WhatsApp React Hooks for NeonPro
 // Provides React integration for WhatsApp Business API
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useWhatsAppConfig = useWhatsAppConfig;
 exports.useUpdateWhatsAppConfig = useUpdateWhatsAppConfig;
@@ -157,23 +154,19 @@ var react_hot_toast_1 = require("react-hot-toast");
 function useWhatsAppConfig() {
   return (0, react_query_1.useQuery)({
     queryKey: ["whatsapp-config"],
-    queryFn: function () {
-      return whatsapp_service_1.whatsAppService.getConfig();
-    },
+    queryFn: () => whatsapp_service_1.whatsAppService.getConfig(),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 }
 function useUpdateWhatsAppConfig() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (config) {
-      return whatsapp_service_1.whatsAppService.updateConfig(config);
-    },
-    onSuccess: function (data) {
+    mutationFn: (config) => whatsapp_service_1.whatsAppService.updateConfig(config),
+    onSuccess: (data) => {
       queryClient.setQueryData(["whatsapp-config"], data);
       react_hot_toast_1.toast.success("Configuração do WhatsApp atualizada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error updating WhatsApp config:", error);
       react_hot_toast_1.toast.error(
         "Erro ao atualizar configura\u00E7\u00E3o: ".concat(error.message),
@@ -185,118 +178,102 @@ function useUpdateWhatsAppConfig() {
 function useWhatsAppTemplates() {
   return (0, react_query_1.useQuery)({
     queryKey: ["whatsapp-templates"],
-    queryFn: function () {
-      return whatsapp_service_1.whatsAppService.getTemplates();
-    },
+    queryFn: () => whatsapp_service_1.whatsAppService.getTemplates(),
     staleTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 function useWhatsAppTemplate(name) {
   return (0, react_query_1.useQuery)({
     queryKey: ["whatsapp-template", name],
-    queryFn: function () {
-      return whatsapp_service_1.whatsAppService.getTemplate(name);
-    },
+    queryFn: () => whatsapp_service_1.whatsAppService.getTemplate(name),
     enabled: !!name,
     staleTime: 10 * 60 * 1000,
   });
 }
 // Message hooks
 function useSendWhatsAppMessage() {
-  var _this = this;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var phoneNumber = _b.phoneNumber,
           content = _b.content,
           _c = _b.type,
           type = _c === void 0 ? whatsapp_1.WhatsAppMessageType.TEXT : _c,
           patientId = _b.patientId,
           templateName = _b.templateName;
-        return __generator(this, function (_d) {
-          return [
-            2 /*return*/,
-            whatsapp_service_1.whatsAppService.sendMessage(
-              phoneNumber,
-              content,
-              type,
-              patientId,
-              templateName,
-            ),
-          ];
-        });
-      });
-    },
-    onSuccess: function () {
+        return __generator(this, (_d) => [
+          2 /*return*/,
+          whatsapp_service_1.whatsAppService.sendMessage(
+            phoneNumber,
+            content,
+            type,
+            patientId,
+            templateName,
+          ),
+        ]);
+      }),
+    onSuccess: () => {
       react_hot_toast_1.toast.success("Mensagem WhatsApp enviada com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error sending WhatsApp message:", error);
       react_hot_toast_1.toast.error("Erro ao enviar mensagem: ".concat(error.message));
     },
   });
 }
 function useSendWhatsAppTemplate() {
-  var _this = this;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var phoneNumber = _b.phoneNumber,
           templateName = _b.templateName,
           _c = _b.parameters,
           parameters = _c === void 0 ? {} : _c,
           patientId = _b.patientId;
-        return __generator(this, function (_d) {
-          return [
-            2 /*return*/,
-            whatsapp_service_1.whatsAppService.sendTemplateMessage(
-              phoneNumber,
-              templateName,
-              parameters,
-              patientId,
-            ),
-          ];
-        });
-      });
-    },
-    onSuccess: function () {
+        return __generator(this, (_d) => [
+          2 /*return*/,
+          whatsapp_service_1.whatsAppService.sendTemplateMessage(
+            phoneNumber,
+            templateName,
+            parameters,
+            patientId,
+          ),
+        ]);
+      }),
+    onSuccess: () => {
       react_hot_toast_1.toast.success("Template WhatsApp enviado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error sending WhatsApp template:", error);
       react_hot_toast_1.toast.error("Erro ao enviar template: ".concat(error.message));
     },
   });
 }
 function useSendBulkWhatsAppMessages() {
-  var _this = this;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var phoneNumbers = _b.phoneNumbers,
           templateName = _b.templateName,
           _c = _b.parameters,
           parameters = _c === void 0 ? {} : _c;
-        return __generator(this, function (_d) {
-          return [
-            2 /*return*/,
-            whatsapp_service_1.whatsAppService.sendBulkMessages(
-              phoneNumbers,
-              templateName,
-              parameters,
-            ),
-          ];
-        });
-      });
-    },
-    onSuccess: function (results) {
+        return __generator(this, (_d) => [
+          2 /*return*/,
+          whatsapp_service_1.whatsAppService.sendBulkMessages(
+            phoneNumbers,
+            templateName,
+            parameters,
+          ),
+        ]);
+      }),
+    onSuccess: (results) => {
       react_hot_toast_1.toast.success(
         "Envio em massa conclu\u00EDdo: "
           .concat(results.sent, " enviadas, ")
           .concat(results.failed, " falharam"),
       );
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error sending bulk WhatsApp messages:", error);
       react_hot_toast_1.toast.error("Erro no envio em massa: ".concat(error.message));
     },
@@ -306,42 +283,36 @@ function useSendBulkWhatsAppMessages() {
 function useCheckWhatsAppOptIn(phoneNumber) {
   return (0, react_query_1.useQuery)({
     queryKey: ["whatsapp-opt-in", phoneNumber],
-    queryFn: function () {
-      return whatsapp_service_1.whatsAppService.checkOptIn(phoneNumber);
-    },
+    queryFn: () => whatsapp_service_1.whatsAppService.checkOptIn(phoneNumber),
     enabled: !!phoneNumber,
     staleTime: 5 * 60 * 1000,
   });
 }
 function useRecordWhatsAppOptIn() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var patientId = _b.patientId,
           phoneNumber = _b.phoneNumber,
           _c = _b.source,
           source = _c === void 0 ? "manual" : _c,
           consentMessage = _b.consentMessage;
-        return __generator(this, function (_d) {
-          return [
-            2 /*return*/,
-            whatsapp_service_1.whatsAppService.recordOptIn(
-              patientId,
-              phoneNumber,
-              source,
-              consentMessage,
-            ),
-          ];
-        });
-      });
-    },
-    onSuccess: function (_, variables) {
+        return __generator(this, (_d) => [
+          2 /*return*/,
+          whatsapp_service_1.whatsAppService.recordOptIn(
+            patientId,
+            phoneNumber,
+            source,
+            consentMessage,
+          ),
+        ]);
+      }),
+    onSuccess: (_, variables) => {
       queryClient.setQueryData(["whatsapp-opt-in", variables.phoneNumber], true);
       react_hot_toast_1.toast.success("Consentimento WhatsApp registrado com sucesso!");
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Error recording WhatsApp opt-in:", error);
       react_hot_toast_1.toast.error("Erro ao registrar consentimento: ".concat(error.message));
     },
@@ -351,9 +322,7 @@ function useRecordWhatsAppOptIn() {
 function useWhatsAppAnalytics(startDate, endDate) {
   return (0, react_query_1.useQuery)({
     queryKey: ["whatsapp-analytics", startDate.toISOString(), endDate.toISOString()],
-    queryFn: function () {
-      return whatsapp_service_1.whatsAppService.getAnalytics(startDate, endDate);
-    },
+    queryFn: () => whatsapp_service_1.whatsAppService.getAnalytics(startDate, endDate),
     enabled: !!startDate && !!endDate,
     staleTime: 60 * 1000, // 1 minute for analytics
   });
@@ -448,19 +417,18 @@ function useWhatsAppTemplateValidation() {
 }
 // Custom hook for automatic WhatsApp notifications based on appointments
 function useWhatsAppNotifications() {
-  var _this = this;
   var sendTemplate = useSendWhatsAppTemplate();
   var checkOptIn = useCheckWhatsAppOptIn;
-  var sendAppointmentReminder = function (
+  var sendAppointmentReminder = (
     patientId,
     phoneNumber,
     appointmentDate,
     appointmentTime,
     doctorName,
-  ) {
-    return __awaiter(_this, void 0, void 0, function () {
+  ) =>
+    __awaiter(this, void 0, void 0, function () {
       var isOptedIn, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -495,17 +463,16 @@ function useWhatsAppNotifications() {
         }
       });
     });
-  };
-  var sendTreatmentFollowup = function (
+  var sendTreatmentFollowup = (
     patientId,
     phoneNumber,
     treatmentName,
     doctorName,
     daysAfterTreatment,
-  ) {
-    return __awaiter(_this, void 0, void 0, function () {
+  ) =>
+    __awaiter(this, void 0, void 0, function () {
       var isOptedIn, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -540,7 +507,6 @@ function useWhatsAppNotifications() {
         }
       });
     });
-  };
   return {
     sendAppointmentReminder: sendAppointmentReminder,
     sendTreatmentFollowup: sendTreatmentFollowup,

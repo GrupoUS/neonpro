@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Rate Limiting Configuration for NeonPro
  * Configures rate limits for different API endpoints and user types

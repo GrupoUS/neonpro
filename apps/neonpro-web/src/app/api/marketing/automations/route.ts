@@ -3,8 +3,8 @@
 // Epic 7 - Story 7.2: Automated marketing campaigns with personalization
 // =====================================================================================
 
-import type { marketingCampaignsService } from "@/app/lib/services/marketing-campaigns-service";
 import type { NextRequest, NextResponse } from "next/server";
+import type { marketingCampaignsService } from "@/app/lib/services/marketing-campaigns-service";
 
 // GET /api/marketing/automations - List campaign automations
 export async function GET(request: NextRequest) {

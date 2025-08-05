@@ -4,10 +4,10 @@
 
 "use client";
 
-import * as React from "react";
+import type { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import type { usePathname } from "next/navigation";
-import type { ChevronRight, Home } from "lucide-react";
+import * as React from "react";
 import type {
   Breadcrumb,
   BreadcrumbItem,

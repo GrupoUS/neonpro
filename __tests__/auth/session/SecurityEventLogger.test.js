@@ -1,4 +1,3 @@
-"use strict";
 /**
  * SecurityEventLogger Unit Tests
  *
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,7 +42,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,8 +71,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -94,9 +91,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -155,97 +152,63 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var SecurityEventLogger_1 = require("../../../lib/auth/session/SecurityEventLogger");
 var setup_1 = require("./setup");
 // Mock Supabase
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-              maybeSingle: globals_1.jest.fn(),
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-          in: globals_1.jest.fn(function () {
-            return {
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-          gte: globals_1.jest.fn(function () {
-            return {
-              lte: globals_1.jest.fn(function () {
-                return {
-                  order: globals_1.jest.fn(function () {
-                    return {
-                      limit: globals_1.jest.fn(),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      insert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(),
-            };
-          }),
-        };
-      }),
-      update: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              select: globals_1.jest.fn(function () {
-                return {
-                  single: globals_1.jest.fn(),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      delete: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(),
-          lt: globals_1.jest.fn(),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+        maybeSingle: globals_1.jest.fn(),
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(),
+        })),
+      })),
+      in: globals_1.jest.fn(() => ({
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(),
+        })),
+      })),
+      gte: globals_1.jest.fn(() => ({
+        lte: globals_1.jest.fn(() => ({
+          order: globals_1.jest.fn(() => ({
+            limit: globals_1.jest.fn(),
+          })),
+        })),
+      })),
+    })),
+    insert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(),
+      })),
+    })),
+    update: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        select: globals_1.jest.fn(() => ({
+          single: globals_1.jest.fn(),
+        })),
+      })),
+    })),
+    delete: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(),
+      lt: globals_1.jest.fn(),
+    })),
+  })),
   rpc: globals_1.jest.fn(),
 };
-globals_1.jest.mock("@supabase/supabase-js", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return mockSupabase;
-    }),
-  };
-});
-(0, globals_1.describe)("SecurityEventLogger", function () {
+globals_1.jest.mock("@supabase/supabase-js", () => ({
+  createClient: globals_1.jest.fn(() => mockSupabase),
+}));
+(0, globals_1.describe)("SecurityEventLogger", () => {
   var securityLogger;
-  var testDb;
+  var _testDb;
   var mockConfig;
-  (0, globals_1.beforeEach)(function () {
-    testDb = (0, setup_1.createTestDatabase)();
+  (0, globals_1.beforeEach)(() => {
+    _testDb = (0, setup_1.createTestDatabase)();
     mockConfig = {
       enableLogging: true,
       logLevel: "info",
@@ -268,15 +231,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
     };
     securityLogger = new SecurityEventLogger_1.SecurityEventLogger(mockConfig);
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     (0, setup_1.cleanup)();
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("Event Logging", function () {
-    (0, globals_1.it)("should log security event successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Event Logging", () => {
+    (0, globals_1.it)("should log security event successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var eventData, mockEvent, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               eventData = {
@@ -312,13 +275,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should log different event types", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should log different event types", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var eventTypes, _i, eventTypes_1, type, eventData, mockEvent, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               eventTypes = [
@@ -367,13 +330,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should assign correlation IDs to related events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should assign correlation IDs to related events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var correlationId, events, _i, events_1, eventData, mockEvent, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               correlationId = "correlation-123";
@@ -418,26 +381,26 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Event Analysis", function () {
-    (0, globals_1.it)("should detect failed login patterns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Event Analysis", () => {
+    (0, globals_1.it)("should detect failed login patterns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var failedLoginEvents, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
-              failedLoginEvents = Array.from({ length: 6 }, function (_, i) {
-                return (0, setup_1.createMockSecurityEvent)({
+              failedLoginEvents = Array.from({ length: 6 }, (_, i) =>
+                (0, setup_1.createMockSecurityEvent)({
                   id: "event-".concat(i),
                   userId: "user-123",
                   type: "login_attempt",
                   details: { success: false },
                   createdAt: new Date(Date.now() - i * 60000).toISOString(), // 1 minute apart
-                });
-              });
+                }),
+              );
               mockSupabase.from().select().eq().gte().order().limit.mockResolvedValue({
                 data: failedLoginEvents,
                 error: null,
@@ -455,13 +418,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should detect suspicious activity patterns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should detect suspicious activity patterns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var suspiciousEvents, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               suspiciousEvents = [
@@ -498,9 +461,9 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should calculate risk scores accurately", function () {
+      }),
+    );
+    (0, globals_1.it)("should calculate risk scores accurately", () => {
       var events = [
         (0, setup_1.createMockSecurityEvent)({ type: "login_attempt", severity: "low" }),
         (0, setup_1.createMockSecurityEvent)({ type: "unauthorized_access", severity: "high" }),
@@ -512,11 +475,11 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
       (0, globals_1.expect)(riskScore).toBeLessThanOrEqual(1);
       (0, globals_1.expect)(riskScore).toBeGreaterThan(0.6); // Should be high due to high severity events
     });
-    (0, globals_1.it)("should identify anomalous patterns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should identify anomalous patterns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var anomalousEvents, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               anomalousEvents = [
@@ -548,15 +511,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Event Queries", function () {
-    (0, globals_1.it)("should get user security events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Event Queries", () => {
+    (0, globals_1.it)("should get user security events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var userEvents, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               userEvents = [
@@ -578,13 +541,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should filter events by type", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should filter events by type", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var loginEvents, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               loginEvents = [
@@ -608,20 +571,18 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               (0, globals_1.expect)(
                 (_a = result.data) === null || _a === void 0
                   ? void 0
-                  : _a.every(function (event) {
-                      return event.type === "login_attempt";
-                    }),
+                  : _a.every((event) => event.type === "login_attempt"),
               ).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should filter events by severity", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should filter events by severity", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var highSeverityEvents, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               highSeverityEvents = [
@@ -645,19 +606,17 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               (0, globals_1.expect)(
                 (_a = result.data) === null || _a === void 0
                   ? void 0
-                  : _a.every(function (event) {
-                      return event.severity === "high";
-                    }),
+                  : _a.every((event) => event.severity === "high"),
               ).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should filter events by date range", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should filter events by date range", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startDate, endDate, recentEvents, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -687,15 +646,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Event Resolution", function () {
-    (0, globals_1.it)("should resolve security event", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Event Resolution", () => {
+    (0, globals_1.it)("should resolve security event", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockEvent, resolvedEvent, result;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               mockEvent = (0, setup_1.createMockSecurityEvent)({ resolved: false });
@@ -724,13 +683,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should get unresolved events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should get unresolved events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var unresolvedEvents, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               unresolvedEvents = [
@@ -748,22 +707,20 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               (0, globals_1.expect)(
                 (_a = result.data) === null || _a === void 0
                   ? void 0
-                  : _a.every(function (event) {
-                      return !event.resolved;
-                    }),
+                  : _a.every((event) => !event.resolved),
               ).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Event Cleanup", function () {
-    (0, globals_1.it)("should clean up old events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Event Cleanup", () => {
+    (0, globals_1.it)("should clean up old events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var oldEvents, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               oldEvents = [
@@ -794,23 +751,23 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Alert System", function () {
-    (0, globals_1.it)("should trigger alerts for threshold violations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Alert System", () => {
+    (0, globals_1.it)("should trigger alerts for threshold violations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var failedLoginEvents, alertSpy;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              failedLoginEvents = Array.from({ length: 6 }, function (_, i) {
-                return (0, setup_1.createMockSecurityEvent)({
+              failedLoginEvents = Array.from({ length: 6 }, (_, _i) =>
+                (0, setup_1.createMockSecurityEvent)({
                   type: "login_attempt",
                   details: { success: false },
                   userId: "user-123",
-                });
-              });
+                }),
+              );
               mockSupabase.from().select().eq().gte().order().limit.mockResolvedValue({
                 data: failedLoginEvents,
                 error: null,
@@ -831,21 +788,21 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should auto-block users exceeding thresholds", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should auto-block users exceeding thresholds", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var suspiciousEvents, blockSpy;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              suspiciousEvents = Array.from({ length: 11 }, function (_, i) {
-                return (0, setup_1.createMockSecurityEvent)({
+              suspiciousEvents = Array.from({ length: 11 }, (_, _i) =>
+                (0, setup_1.createMockSecurityEvent)({
                   type: "suspicious_activity",
                   severity: "high",
                   userId: "user-123",
-                });
-              });
+                }),
+              );
               mockSupabase.from().select().eq().gte().order().limit.mockResolvedValue({
                 data: suspiciousEvents,
                 error: null,
@@ -864,15 +821,15 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.it)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.it)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase
@@ -904,13 +861,13 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle invalid event data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle invalid event data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidEventData, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               invalidEventData = {
@@ -929,33 +886,31 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Performance", function () {
-    (0, globals_1.it)("should handle bulk event logging efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Performance", () => {
+    (0, globals_1.it)("should handle bulk event logging efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var events, mockEvents, startTime, result, endTime;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
-              events = Array.from({ length: 100 }, function (_, i) {
-                return {
-                  userId: "user-123",
-                  type: "login_attempt",
-                  severity: "low",
-                  description: "Bulk event ".concat(i),
-                  details: {},
-                  ipAddress: "192.168.1.1",
-                  userAgent: "Mozilla/5.0...",
-                };
-              });
-              mockEvents = events.map(function (event, i) {
-                return (0, setup_1.createMockSecurityEvent)(
+              events = Array.from({ length: 100 }, (_, i) => ({
+                userId: "user-123",
+                type: "login_attempt",
+                severity: "low",
+                description: "Bulk event ".concat(i),
+                details: {},
+                ipAddress: "192.168.1.1",
+                userAgent: "Mozilla/5.0...",
+              }));
+              mockEvents = events.map((event, i) =>
+                (0, setup_1.createMockSecurityEvent)(
                   __assign(__assign({}, event), { id: "bulk-".concat(i) }),
-                );
-              });
+                ),
+              );
               mockSupabase.from().insert().select().mockResolvedValue({
                 data: mockEvents,
                 error: null,
@@ -973,7 +928,7 @@ globals_1.jest.mock("@supabase/supabase-js", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

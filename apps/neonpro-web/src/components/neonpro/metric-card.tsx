@@ -2,10 +2,11 @@
  * NEONPROV1 Design System - MetricCard Component
  * KPI and metrics display with healthcare-specific indicators
  */
-import React from "react";
+
+import type { Activity, Minus, TrendingDown, TrendingUp } from "lucide-react";
+import type React from "react";
 import type { cn } from "@/lib/utils";
 import type { NeonCard } from "./neon-card";
-import type { TrendingUp, TrendingDown, Minus, Activity } from "lucide-react";
 
 interface MetricCardProps {
   title: string;

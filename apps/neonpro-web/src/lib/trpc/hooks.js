@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useHealthcareAuth = useHealthcareAuth;
 exports.useLGPDConsent = useLGPDConsent;
@@ -21,7 +20,7 @@ function useHealthcareAuth() {
   var _a = client_1.trpc.auth.me.useQuery(undefined, {
       retry: false,
       refetchOnWindowFocus: true,
-      onError: function (error) {
+      onError: (error) => {
         var _a, _b;
         if (((_a = error.data) === null || _a === void 0 ? void 0 : _a.code) === "UNAUTHORIZED") {
           // Redirect to login for unauthorized healthcare access
@@ -52,9 +51,7 @@ function useHealthcareAuth() {
     (user === null || user === void 0 ? void 0 : user.data_consent_given);
   // Healthcare role checker
   var hasRole = (0, react_1.useCallback)(
-    function (roles) {
-      return user ? roles.includes(user.role) : false;
-    },
+    (roles) => (user ? roles.includes(user.role) : false),
     [user],
   );
   // Check if user can access patient data
@@ -76,32 +73,26 @@ function useHealthcareAuth() {
 // LGPD consent management hook
 function useLGPDConsent() {
   var updateConsent = client_1.trpc.auth.updateConsent.useMutation({
-    onSuccess: function () {
+    onSuccess: () => {
       // Refetch user data after consent update
       client_1.trpc.auth.me.useQuery().refetch();
     },
-    onError: function (error) {
+    onError: (error) => {
       console.error("Failed to update LGPD consent:", error);
     },
   });
-  var grantConsent = (0, react_1.useCallback)(
-    function () {
-      updateConsent.mutate({
-        lgpd_consent: true,
-        data_consent_given: true,
-      });
-    },
-    [updateConsent],
-  );
-  var revokeConsent = (0, react_1.useCallback)(
-    function () {
-      updateConsent.mutate({
-        lgpd_consent: false,
-        data_consent_given: false,
-      });
-    },
-    [updateConsent],
-  );
+  var grantConsent = (0, react_1.useCallback)(() => {
+    updateConsent.mutate({
+      lgpd_consent: true,
+      data_consent_given: true,
+    });
+  }, [updateConsent]);
+  var revokeConsent = (0, react_1.useCallback)(() => {
+    updateConsent.mutate({
+      lgpd_consent: false,
+      data_consent_given: false,
+    });
+  }, [updateConsent]);
   return {
     updateConsent: updateConsent.mutate,
     grantConsent: grantConsent,
@@ -115,7 +106,7 @@ function useLGPDConsent() {
 function useHealthcareErrorHandler() {
   var router = (0, navigation_1.useRouter)();
   var handleError = (0, react_1.useCallback)(
-    function (error) {
+    (error) => {
       var _a;
       var errorCode =
         (_a = error === null || error === void 0 ? void 0 : error.data) === null || _a === void 0

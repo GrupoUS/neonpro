@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -149,7 +146,7 @@ var CreatePaymentSchema = zod_1.z.object({
   external_id: zod_1.z.string().optional(),
   gateway: zod_1.z.string().optional(),
 });
-var UpdatePaymentSchema = zod_1.z.object({
+var _UpdatePaymentSchema = zod_1.z.object({
   status: zod_1.z.enum(["pending", "processing", "completed", "failed", "cancelled"]).optional(),
   notes: zod_1.z.string().optional(),
   processed_at: zod_1.z.string().optional(),
@@ -175,10 +172,10 @@ function GET(request) {
       totalAmount,
       pendingAmount,
       error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
-          _b.trys.push([0, 4, , 5]);
+          _b.trys.push([0, 4, undefined, 5]);
           return [4 /*yield*/, (0, server_1.createClient)()];
         case 1:
           supabase = _b.sent();
@@ -237,17 +234,18 @@ function GET(request) {
           totalAmount =
             (payments === null || payments === void 0
               ? void 0
-              : payments.reduce(function (sum, payment) {
-                  return payment.status === "completed" ? sum + payment.amount : sum;
-                }, 0)) || 0;
+              : payments.reduce(
+                  (sum, payment) => (payment.status === "completed" ? sum + payment.amount : sum),
+                  0,
+                )) || 0;
           pendingAmount =
             (payments === null || payments === void 0
               ? void 0
-              : payments.reduce(function (sum, payment) {
-                  return ["pending", "processing"].includes(payment.status)
-                    ? sum + payment.amount
-                    : sum;
-                }, 0)) || 0;
+              : payments.reduce(
+                  (sum, payment) =>
+                    ["pending", "processing"].includes(payment.status) ? sum + payment.amount : sum,
+                  0,
+                )) || 0;
           return [
             2 /*return*/,
             server_2.NextResponse.json({
@@ -258,9 +256,7 @@ function GET(request) {
                 completed_count:
                   (payments === null || payments === void 0
                     ? void 0
-                    : payments.filter(function (p) {
-                        return p.status === "completed";
-                      }).length) || 0,
+                    : payments.filter((p) => p.status === "completed").length) || 0,
                 total_count: count || 0,
               },
               pagination: {
@@ -309,10 +305,10 @@ function POST(request) {
       dueDate,
       installmentsError,
       error_2;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
-          _d.trys.push([0, 11, , 12]);
+          _d.trys.push([0, 11, undefined, 12]);
           return [4 /*yield*/, (0, server_1.createClient)()];
         case 1:
           supabase = _d.sent();
@@ -368,9 +364,7 @@ function POST(request) {
           paidAmount =
             (existingPayments === null || existingPayments === void 0
               ? void 0
-              : existingPayments.reduce(function (sum, p) {
-                  return sum + p.amount;
-                }, 0)) || 0;
+              : existingPayments.reduce((sum, p) => sum + p.amount, 0)) || 0;
           remainingBalance = invoice.total_amount - paidAmount;
           if (validatedData.amount > remainingBalance) {
             return [

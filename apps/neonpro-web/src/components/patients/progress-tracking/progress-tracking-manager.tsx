@@ -1,6 +1,45 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { format } from "date-fns";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar as CalendarIcon,
+  Camera,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  Eye,
+  FileText,
+  Filter,
+  Image as ImageIcon,
+  Info,
+  LineChart,
+  Mic,
+  Minus,
+  PieChart,
+  Plus,
+  Print,
+  RefreshCw,
+  Save,
+  Search,
+  Settings,
+  Share2,
+  Star,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  Video,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -8,12 +47,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Dialog,
   DialogContent,
@@ -22,6 +55,10 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -29,46 +66,9 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Progress } from "@/components/ui/progress";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { cn } from "@/lib/utils";
-import type { format } from "date-fns";
-import type {
-  Camera,
-  Upload,
-  Download,
-  Calendar as CalendarIcon,
-  Clock,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Eye,
-  Edit,
-  Trash2,
-  Plus,
-  FileText,
-  Image as ImageIcon,
-  Video,
-  Mic,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Info,
-  Star,
-  Target,
-  Activity,
-  BarChart3,
-  PieChart,
-  LineChart,
-  Filter,
-  Search,
-  RefreshCw,
-  Share2,
-  Print,
-  Save,
-  Settings,
-} from "lucide-react";
 
 // Types based on FHIR R4 and existing schemas
 interface ProgressEntry {

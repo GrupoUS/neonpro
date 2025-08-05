@@ -1,6 +1,6 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { IntegratedSessionSecurity } from "@/lib/security/integrated-session-security";
 import type { requireAuth } from "@/lib/auth";
+import type { IntegratedSessionSecurity } from "@/lib/security/integrated-session-security";
 
 /**
  * Session Security API Route

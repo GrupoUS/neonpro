@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerPortalServiceWorker = registerPortalServiceWorker;
 exports.enableOfflineSupport = enableOfflineSupport;

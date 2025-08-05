@@ -1,10 +1,7 @@
 // SSO Providers Route
 // Story 1.3: SSO Integration - Available Providers API
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { ssoManager } from "@/lib/auth/sso/sso-manager";
-import type { logger } from "@/lib/logger";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 const providersQuerySchema = z.object({
   domain: z.string().optional(),

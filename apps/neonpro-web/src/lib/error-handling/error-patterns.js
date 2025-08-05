@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KNOWN_ERROR_PATTERNS = void 0;
 /**

@@ -5,24 +5,26 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { Calendar, Filter, TrendingDown, TrendingUp } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type {
-  LineChart,
-  Line,
-  AreaChart,
   Area,
-  BarChart,
+  AreaChart,
   Bar,
-  PieChart,
-  Pie,
+  BarChart,
+  CartesianGrid,
   Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
 } from "recharts";
+import type { Badge } from "@/components/ui/badge";
 import type {
   Card,
   CardContent,
@@ -30,7 +32,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Select,
   SelectContent,
@@ -38,8 +39,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { TrendingUp, TrendingDown, Calendar, Filter } from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { cn } from "@/lib/utils";
 
 // Chart color palette following shadcn/ui theme

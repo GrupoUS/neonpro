@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TimeSlotDisplay = TimeSlotDisplay;
 var client_1 = require("@/app/utils/supabase/client");
@@ -145,7 +142,6 @@ var locale_1 = require("date-fns/locale");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function TimeSlotDisplay(_a) {
-  var _this = this;
   var serviceId = _a.serviceId,
     selectedSlot = _a.selectedSlot,
     onSlotSelect = _a.onSlotSelect,
@@ -164,18 +160,15 @@ function TimeSlotDisplay(_a) {
   var _f = (0, react_1.useState)((0, date_fns_1.format)(new Date(), "yyyy-MM-dd")),
     selectedDate = _f[0],
     setSelectedDate = _f[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (serviceId) {
-        fetchAvailableSlots();
-      }
-    },
-    [serviceId, professionalId, selectedDate],
-  );
-  var fetchAvailableSlots = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (serviceId) {
+      fetchAvailableSlots();
+    }
+  }, [serviceId, professionalId, selectedDate]);
+  var fetchAvailableSlots = () =>
+    __awaiter(this, void 0, void 0, function () {
       var supabase, startDate, endDate, _a, data, fetchError, groupedSlots_1, slotsArray, err_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -196,7 +189,7 @@ function TimeSlotDisplay(_a) {
             (_a = _b.sent()), (data = _a.data), (fetchError = _a.error);
             if (fetchError) throw fetchError;
             groupedSlots_1 = {};
-            data.forEach(function (slot) {
+            data.forEach((slot) => {
               var date = (0, date_fns_1.format)(new Date(slot.datetime), "yyyy-MM-dd");
               if (!groupedSlots_1[date]) {
                 groupedSlots_1[date] = [];
@@ -208,21 +201,17 @@ function TimeSlotDisplay(_a) {
                 professional_name: slot.professional_name,
               });
             });
-            slotsArray = Object.entries(groupedSlots_1).map(function (_a) {
+            slotsArray = Object.entries(groupedSlots_1).map((_a) => {
               var date = _a[0],
                 slots = _a[1];
               return {
                 date: date,
-                slots: slots.sort(function (a, b) {
-                  return new Date(a.datetime).getTime() - new Date(b.datetime).getTime();
-                }),
+                slots: slots.sort(
+                  (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
+                ),
               };
             });
-            setAvailableSlots(
-              slotsArray.sort(function (a, b) {
-                return a.date.localeCompare(b.date);
-              }),
-            );
+            setAvailableSlots(slotsArray.sort((a, b) => a.date.localeCompare(b.date)));
             return [3 /*break*/, 4];
           case 2:
             err_1 = _b.sent();
@@ -237,18 +226,16 @@ function TimeSlotDisplay(_a) {
         }
       });
     });
-  };
-  var formatDateHeader = function (dateString) {
+  var formatDateHeader = (dateString) => {
     var date = new Date(dateString);
     if ((0, date_fns_1.isToday)(date)) return "Hoje";
     if ((0, date_fns_1.isTomorrow)(date)) return "Amanhã";
     return (0, date_fns_1.format)(date, "EEEE, d 'de' MMMM", { locale: locale_1.ptBR });
   };
-  var formatTimeSlot = function (datetime) {
-    return (0, date_fns_1.format)(new Date(datetime), "HH:mm", { locale: locale_1.ptBR });
-  };
+  var formatTimeSlot = (datetime) =>
+    (0, date_fns_1.format)(new Date(datetime), "HH:mm", { locale: locale_1.ptBR });
   // Generate date navigation
-  var generateDateOptions = function () {
+  var generateDateOptions = () => {
     var options = [];
     for (var i = 0; i < 30; i++) {
       var date = (0, date_fns_1.addDays)(new Date(), i);
@@ -287,21 +274,17 @@ function TimeSlotDisplay(_a) {
       <div className="flex overflow-x-auto gap-2 pb-2">
         {generateDateOptions()
           .slice(0, 7)
-          .map(function (option) {
-            return (
-              <button_1.Button
-                key={option.value}
-                variant={selectedDate === option.value ? "default" : "outline"}
-                size="sm"
-                onClick={function () {
-                  return setSelectedDate(option.value);
-                }}
-                className="whitespace-nowrap min-w-fit"
-              >
-                {option.isToday ? "Hoje" : option.isTomorrow ? "Amanhã" : option.label}
-              </button_1.Button>
-            );
-          })}
+          .map((option) => (
+            <button_1.Button
+              key={option.value}
+              variant={selectedDate === option.value ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedDate(option.value)}
+              className="whitespace-nowrap min-w-fit"
+            >
+              {option.isToday ? "Hoje" : option.isTomorrow ? "Amanhã" : option.label}
+            </button_1.Button>
+          ))}
       </div>
 
       {/* Available Slots */}
@@ -317,7 +300,7 @@ function TimeSlotDisplay(_a) {
                 Atualizar Horários
               </button_1.Button>
             </card_1.Card>
-          : availableSlots.map(function (_a) {
+          : availableSlots.map((_a) => {
               var date = _a.date,
                 slots = _a.slots;
               return (
@@ -330,52 +313,44 @@ function TimeSlotDisplay(_a) {
                   <card_1.CardContent className="p-6">
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                       {slots
-                        .filter(function (slot) {
-                          return slot.is_available;
-                        })
-                        .map(function (slot) {
-                          return (
-                            <button_1.Button
-                              key={slot.datetime}
-                              variant={
-                                (selectedSlot === null || selectedSlot === void 0
-                                  ? void 0
-                                  : selectedSlot.datetime) === slot.datetime
-                                  ? "default"
-                                  : "outline"
-                              }
-                              size="sm"
-                              onClick={function () {
-                                return onSlotSelect(slot);
-                              }}
-                              className={"flex flex-col items-center p-3 h-auto ".concat(
-                                (selectedSlot === null || selectedSlot === void 0
-                                  ? void 0
-                                  : selectedSlot.datetime) === slot.datetime
-                                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                                  : "hover:border-blue-300 hover:bg-blue-50",
-                              )}
-                              aria-pressed={
-                                (selectedSlot === null || selectedSlot === void 0
-                                  ? void 0
-                                  : selectedSlot.datetime) === slot.datetime
-                              }
-                            >
-                              <lucide_react_1.Clock className="h-4 w-4 mb-1" />
-                              <span className="font-medium">{formatTimeSlot(slot.datetime)}</span>
-                              {slot.professional_name && (
-                                <span className="text-xs opacity-80 truncate w-full">
-                                  {slot.professional_name}
-                                </span>
-                              )}
-                            </button_1.Button>
-                          );
-                        })}
+                        .filter((slot) => slot.is_available)
+                        .map((slot) => (
+                          <button_1.Button
+                            key={slot.datetime}
+                            variant={
+                              (selectedSlot === null || selectedSlot === void 0
+                                ? void 0
+                                : selectedSlot.datetime) === slot.datetime
+                                ? "default"
+                                : "outline"
+                            }
+                            size="sm"
+                            onClick={() => onSlotSelect(slot)}
+                            className={"flex flex-col items-center p-3 h-auto ".concat(
+                              (selectedSlot === null || selectedSlot === void 0
+                                ? void 0
+                                : selectedSlot.datetime) === slot.datetime
+                                ? "bg-blue-600 text-white hover:bg-blue-700"
+                                : "hover:border-blue-300 hover:bg-blue-50",
+                            )}
+                            aria-pressed={
+                              (selectedSlot === null || selectedSlot === void 0
+                                ? void 0
+                                : selectedSlot.datetime) === slot.datetime
+                            }
+                          >
+                            <lucide_react_1.Clock className="h-4 w-4 mb-1" />
+                            <span className="font-medium">{formatTimeSlot(slot.datetime)}</span>
+                            {slot.professional_name && (
+                              <span className="text-xs opacity-80 truncate w-full">
+                                {slot.professional_name}
+                              </span>
+                            )}
+                          </button_1.Button>
+                        ))}
                     </div>
 
-                    {slots.filter(function (slot) {
-                      return slot.is_available;
-                    }).length === 0 && (
+                    {slots.filter((slot) => slot.is_available).length === 0 && (
                       <div className="text-center py-6 text-gray-500">
                         <lucide_react_1.Clock className="mx-auto h-8 w-8 mb-2 opacity-50" />
                         <p>Nenhum horário disponível nesta data</p>

@@ -1166,7 +1166,7 @@ export class ImpactAssessmentManager extends EventEmitter {
               ],
         };
 
-      case "Art. 46":
+      case "Art. 46": {
         const hasBasicSecurity =
           context.technicalMeasures.encryption && context.technicalMeasures.accessControls;
         return {
@@ -1189,6 +1189,7 @@ export class ImpactAssessmentManager extends EventEmitter {
                 },
               ],
         };
+      }
 
       default:
         return {

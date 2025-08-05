@@ -4,10 +4,11 @@
  */
 "use client";
 
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import type { cn } from "@/lib/utils";
-import type { AppSidebar } from "./app-sidebar";
 import type { AppHeader } from "./app-header";
+import type { AppSidebar } from "./app-sidebar";
 
 interface AppLayoutProps {
   children: React.ReactNode;

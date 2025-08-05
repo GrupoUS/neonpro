@@ -1,13 +1,42 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays } from "date-fns";
+import type {
+  BarChart3,
+  Building,
+  Calendar as CalendarIcon,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Download,
+  Filter,
+  RefreshCw,
+  Save,
+  Settings,
+  Star,
+  Tag,
+  Trash2,
+  TrendingUp,
+  Upload,
+  Users,
+  X,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
-import type { Label } from "@/components/ui/label";
-import type { Input } from "@/components/ui/input";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Checkbox } from "@/components/ui/checkbox";
+import type {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -15,39 +44,10 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { Calendar } from "@/components/ui/calendar";
 import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import type {
-  Filter,
-  Calendar as CalendarIcon,
-  Clock,
-  Users,
-  Building,
-  Tag,
-  TrendingUp,
-  BarChart3,
-  RefreshCw,
-  X,
-  ChevronDown,
-  ChevronUp,
-  Save,
-  Download,
-  Upload,
-  Trash2,
-  Star,
-  Settings,
-} from "lucide-react";
-import type { format, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
 
 // Types
-import type { DateRangeFilter, DashboardFilters } from "@/lib/dashboard/types";
+import type { DashboardFilters, DateRangeFilter } from "@/lib/dashboard/types";
 
 interface FilterPanelProps {
   filters: DashboardFilters;

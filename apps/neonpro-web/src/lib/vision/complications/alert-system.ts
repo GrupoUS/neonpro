@@ -8,29 +8,18 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import type { createClient } from "@/lib/supabase/client";
-import type { logger } from "@/lib/utils/logger";
 import type {
-  ComplicationAlert,
   AlertLevel,
-  AlertStatus,
   AlertNotification,
-  NotificationTarget,
-  EmergencyProtocol,
+  ComplicationAlert,
   ComplicationDetectionResult,
   DetectedComplication,
+  EmergencyProtocol,
+  NotificationTarget,
 } from "./types";
-import type {
-  EMERGENCY_CONTACTS,
-  NOTIFICATION_PRIORITY,
-  ALERT_CONFIG,
-  getNotificationTargetsForAlert,
-  getAlertLevelForRiskScore,
-} from "./config";
 
 export class ComplicationAlertSystem {
   private supabase = createClient();
-  private notificationQueue: Map<string, AlertNotification[]> = new Map();
   private activeAlerts: Map<string, ComplicationAlert> = new Map();
   private escalationTimers: Map<string, NodeJS.Timeout> = new Map();
 
@@ -426,7 +415,7 @@ export class ComplicationAlertSystem {
 
   private getNotificationMethods(
     alertLevel: AlertLevel,
-    target: NotificationTarget,
+    _target: NotificationTarget,
   ): Array<"email" | "sms" | "push" | "call"> {
     const baseMethods: Array<"email" | "sms" | "push" | "call"> = ["email", "push"];
 
@@ -441,7 +430,7 @@ export class ComplicationAlertSystem {
     return baseMethods;
   }
 
-  private async getContactInfo(patientId: string, target: NotificationTarget): Promise<any> {
+  private async getContactInfo(_patientId: string, target: NotificationTarget): Promise<any> {
     // This would fetch contact information from the database
     // For now, returning mock data
     const mockContacts = {
@@ -515,7 +504,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async sendEmailNotification(
     email: string,
-    content: any,
+    _content: any,
     alert: ComplicationAlert,
   ): Promise<void> {
     // Implementation would use actual email service (SendGrid, SES, etc.)
@@ -524,7 +513,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async sendSMSNotification(
     phone: string,
-    content: any,
+    _content: any,
     alert: ComplicationAlert,
   ): Promise<void> {
     // Implementation would use SMS service (Twilio, AWS SNS, etc.)
@@ -533,7 +522,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async sendPushNotification(
     userId: string,
-    content: any,
+    _content: any,
     alert: ComplicationAlert,
   ): Promise<void> {
     // Implementation would use push notification service
@@ -542,7 +531,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async initiatePhoneCall(
     phone: string,
-    content: any,
+    _content: any,
     alert: ComplicationAlert,
   ): Promise<void> {
     // Implementation would use voice call service (Twilio Voice, etc.)
@@ -587,7 +576,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async contactEmergencyServices(
     alert: ComplicationAlert,
-    protocol: EmergencyProtocol,
+    _protocol: EmergencyProtocol,
   ): Promise<void> {
     logger.warn(`Contacting emergency services for alert ${alert.id}`);
     // Implementation would contact emergency services
@@ -603,7 +592,7 @@ Para emergências, ligue: 192 (SAMU)
 
   private async retryNotification(
     notification: AlertNotification,
-    alert: ComplicationAlert,
+    _alert: ComplicationAlert,
   ): Promise<void> {
     notification.retryCount++;
     logger.info(`Retrying notification ${notification.id} (attempt ${notification.retryCount})`);

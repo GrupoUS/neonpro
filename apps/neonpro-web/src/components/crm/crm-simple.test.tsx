@@ -5,21 +5,21 @@
  */
 
 import type {
-  Customer,
   Appointment,
-  SegmentCriteria,
+  Customer,
+  calculateAverageAppointmentValue,
+  calculateCustomerLifetimeValue,
+  calculateDaysSinceLastVisit,
   calculateLeadScore,
+  calculateRetentionRate,
   categorizeLeadPriority,
   determineCustomerLifecycle,
-  calculateDaysSinceLastVisit,
-  predictChurnRisk,
-  calculateCustomerLifetimeValue,
-  calculateAverageAppointmentValue,
-  rankCustomersByValue,
   determineNextFollowUpDate,
   generateFollowUpMessage,
+  predictChurnRisk,
+  rankCustomersByValue,
+  SegmentCriteria,
   segmentCustomers,
-  calculateRetentionRate,
 } from "./utils";
 
 // Test data - hardcoded ISO strings to avoid Date mocking issues

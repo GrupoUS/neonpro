@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = KPIDrillDown;
 var react_1 = require("react");
@@ -15,7 +14,7 @@ var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 var utils_1 = require("@/lib/utils");
 // Mock drill-down data generator
-var generateDrillDownData = function (kpi) {
+var generateDrillDownData = (kpi) => {
   var baseData = [];
   switch (kpi.id) {
     case "revenue":
@@ -128,7 +127,7 @@ var generateDrillDownData = function (kpi) {
   }
 };
 // Generate time series data
-var generateTimeSeriesData = function (kpi) {
+var generateTimeSeriesData = (kpi) => {
   var data = [];
   var now = new Date();
   for (var i = 29; i >= 0; i--) {
@@ -169,32 +168,19 @@ function KPIDrillDown(_a) {
   var _d = (0, react_1.useState)("bar"),
     chartType = _d[0],
     setChartType = _d[1];
-  var drillDownData = (0, react_1.useMemo)(
-    function () {
-      return generateDrillDownData(kpi);
-    },
-    [kpi],
-  );
-  var timeSeriesData = (0, react_1.useMemo)(
-    function () {
-      return generateTimeSeriesData(kpi);
-    },
-    [kpi],
-  );
+  var drillDownData = (0, react_1.useMemo)(() => generateDrillDownData(kpi), [kpi]);
+  var timeSeriesData = (0, react_1.useMemo)(() => generateTimeSeriesData(kpi), [kpi]);
   if (!isOpen) return null;
   // Format currency
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   // Format percentage
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(1), "%");
-  };
+  var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
   // Get trend icon
-  var getTrendIcon = function (trend, change) {
+  var getTrendIcon = (trend, change) => {
     if (trend === "up") {
       return (
         <lucide_react_1.TrendingUp
@@ -211,7 +197,7 @@ function KPIDrillDown(_a) {
     return <div className="h-4 w-4" />;
   };
   // Render breakdown chart
-  var renderBreakdownChart = function () {
+  var renderBreakdownChart = () => {
     if (chartType === "bar") {
       return (
         <recharts_1.ResponsiveContainer width="100%" height={300}>
@@ -226,12 +212,10 @@ function KPIDrillDown(_a) {
             />
             <recharts_1.YAxis />
             <recharts_1.Tooltip
-              formatter={function (value) {
-                return [
-                  kpi.format === "currency" ? formatCurrency(value) : formatPercentage(value),
-                  "Valor",
-                ];
-              }}
+              formatter={(value) => [
+                kpi.format === "currency" ? formatCurrency(value) : formatPercentage(value),
+                "Valor",
+              ]}
             />
             <recharts_1.Bar dataKey="value" fill={COLORS.primary} />
           </recharts_1.BarChart>
@@ -246,7 +230,7 @@ function KPIDrillDown(_a) {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={function (_a) {
+              label={(_a) => {
                 var label = _a.label,
                   percent = _a.percent;
                 return "".concat(label, " ").concat((percent * 100).toFixed(0), "%");
@@ -255,22 +239,18 @@ function KPIDrillDown(_a) {
               fill="#8884d8"
               dataKey="value"
             >
-              {drillDownData.map(function (entry, index) {
-                return (
-                  <recharts_1.Cell
-                    key={"cell-".concat(index)}
-                    fill={PIE_COLORS[index % PIE_COLORS.length]}
-                  />
-                );
-              })}
+              {drillDownData.map((entry, index) => (
+                <recharts_1.Cell
+                  key={"cell-".concat(index)}
+                  fill={PIE_COLORS[index % PIE_COLORS.length]}
+                />
+              ))}
             </recharts_1.Pie>
             <recharts_1.Tooltip
-              formatter={function (value) {
-                return [
-                  kpi.format === "currency" ? formatCurrency(value) : formatPercentage(value),
-                  "Valor",
-                ];
-              }}
+              formatter={(value) => [
+                kpi.format === "currency" ? formatCurrency(value) : formatPercentage(value),
+                "Valor",
+              ]}
             />
           </recharts_1.PieChart>
         </recharts_1.ResponsiveContainer>
@@ -279,44 +259,40 @@ function KPIDrillDown(_a) {
     return null;
   };
   // Render trend chart
-  var renderTrendChart = function () {
-    return (
-      <recharts_1.ResponsiveContainer width="100%" height={300}>
-        <recharts_1.AreaChart data={timeSeriesData}>
-          <recharts_1.CartesianGrid strokeDasharray="3 3" />
-          <recharts_1.XAxis dataKey="date" />
-          <recharts_1.YAxis />
-          <recharts_1.Tooltip
-            formatter={function (value, name) {
-              return [
-                kpi.format === "currency" ? formatCurrency(value) : formatPercentage(value),
-                name === "value" ? "Atual" : name === "target" ? "Meta" : "Anterior",
-              ];
-            }}
-          />
-          <recharts_1.Area
-            type="monotone"
-            dataKey="value"
-            stroke={COLORS.primary}
-            fill={COLORS.primary}
-            fillOpacity={0.3}
-          />
-          <recharts_1.Line
-            type="monotone"
-            dataKey="target"
-            stroke={COLORS.secondary}
-            strokeDasharray="5 5"
-          />
-          <recharts_1.Line
-            type="monotone"
-            dataKey="previous"
-            stroke={COLORS.muted}
-            strokeDasharray="3 3"
-          />
-        </recharts_1.AreaChart>
-      </recharts_1.ResponsiveContainer>
-    );
-  };
+  var renderTrendChart = () => (
+    <recharts_1.ResponsiveContainer width="100%" height={300}>
+      <recharts_1.AreaChart data={timeSeriesData}>
+        <recharts_1.CartesianGrid strokeDasharray="3 3" />
+        <recharts_1.XAxis dataKey="date" />
+        <recharts_1.YAxis />
+        <recharts_1.Tooltip
+          formatter={(value, name) => [
+            kpi.format === "currency" ? formatCurrency(value) : formatPercentage(value),
+            name === "value" ? "Atual" : name === "target" ? "Meta" : "Anterior",
+          ]}
+        />
+        <recharts_1.Area
+          type="monotone"
+          dataKey="value"
+          stroke={COLORS.primary}
+          fill={COLORS.primary}
+          fillOpacity={0.3}
+        />
+        <recharts_1.Line
+          type="monotone"
+          dataKey="target"
+          stroke={COLORS.secondary}
+          strokeDasharray="5 5"
+        />
+        <recharts_1.Line
+          type="monotone"
+          dataKey="previous"
+          stroke={COLORS.muted}
+          strokeDasharray="3 3"
+        />
+      </recharts_1.AreaChart>
+    </recharts_1.ResponsiveContainer>
+  );
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <card_1.Card
@@ -431,9 +407,7 @@ function KPIDrillDown(_a) {
                   <button_1.Button
                     variant={chartType === "bar" ? "default" : "outline"}
                     size="sm"
-                    onClick={function () {
-                      return setChartType("bar");
-                    }}
+                    onClick={() => setChartType("bar")}
                   >
                     <lucide_react_1.BarChart3 className="h-4 w-4" />
                   </button_1.Button>
@@ -441,9 +415,7 @@ function KPIDrillDown(_a) {
                   <button_1.Button
                     variant={chartType === "pie" ? "default" : "outline"}
                     size="sm"
-                    onClick={function () {
-                      return setChartType("pie");
-                    }}
+                    onClick={() => setChartType("pie")}
                   >
                     <lucide_react_1.PieChart className="h-4 w-4" />
                   </button_1.Button>
@@ -465,45 +437,43 @@ function KPIDrillDown(_a) {
                   <card_1.CardContent>
                     <scroll_area_1.ScrollArea className="h-[300px]">
                       <div className="space-y-4">
-                        {drillDownData.map(function (item) {
-                          return (
-                            <div key={item.id} className="border rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-2">
-                                <h4 className="font-medium">{item.label}</h4>
-                                <div className="flex items-center space-x-1">
-                                  {getTrendIcon(item.trend, item.change)}
-                                  <span
-                                    className={(0, utils_1.cn)(
-                                      "text-sm font-medium",
-                                      item.change > 0 ? "text-green-600" : "text-red-600",
-                                    )}
-                                  >
-                                    {item.change > 0 ? "+" : ""}
-                                    {formatPercentage(item.change)}
-                                  </span>
-                                </div>
-                              </div>
-
-                              <div className="text-lg font-bold mb-2">
-                                {kpi.format === "currency"
-                                  ? formatCurrency(item.value)
-                                  : formatPercentage(item.value)}
-                              </div>
-
-                              <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-                                {Object.entries(item.details).map(function (_a) {
-                                  var key = _a[0],
-                                    value = _a[1];
-                                  return (
-                                    <div key={key}>
-                                      <span className="capitalize">{key}:</span> {value}
-                                    </div>
-                                  );
-                                })}
+                        {drillDownData.map((item) => (
+                          <div key={item.id} className="border rounded-lg p-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <h4 className="font-medium">{item.label}</h4>
+                              <div className="flex items-center space-x-1">
+                                {getTrendIcon(item.trend, item.change)}
+                                <span
+                                  className={(0, utils_1.cn)(
+                                    "text-sm font-medium",
+                                    item.change > 0 ? "text-green-600" : "text-red-600",
+                                  )}
+                                >
+                                  {item.change > 0 ? "+" : ""}
+                                  {formatPercentage(item.change)}
+                                </span>
                               </div>
                             </div>
-                          );
-                        })}
+
+                            <div className="text-lg font-bold mb-2">
+                              {kpi.format === "currency"
+                                ? formatCurrency(item.value)
+                                : formatPercentage(item.value)}
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                              {Object.entries(item.details).map((_a) => {
+                                var key = _a[0],
+                                  value = _a[1];
+                                return (
+                                  <div key={key}>
+                                    <span className="capitalize">{key}:</span> {value}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </scroll_area_1.ScrollArea>
                   </card_1.CardContent>

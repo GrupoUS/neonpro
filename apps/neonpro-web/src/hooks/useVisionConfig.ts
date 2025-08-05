@@ -12,7 +12,7 @@
  * Integrates with the vision config API and provides real-time updates.
  */
 
-import type { useState, useEffect, useCallback } from "react";
+import type { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
 
 // Configuration interfaces

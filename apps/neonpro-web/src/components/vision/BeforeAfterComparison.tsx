@@ -1,24 +1,25 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Slider } from "@/components/ui/slider";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
   Download,
-  Maximize2,
-  Move,
   Eye,
   EyeOff,
   Grid3X3,
-  Ruler,
+  Maximize2,
   MousePointer2,
+  Move,
+  RotateCcw,
+  Ruler,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Slider } from "@/components/ui/slider";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { cn } from "@/lib/utils";
 import type { AnalysisResult, AnnotationData } from "@/lib/vision/analysis-engine";
 import type { MeasurementResult, ObjectiveMeasurement } from "@/lib/vision/measurement-system";

@@ -1,4 +1,3 @@
-"use strict";
 // Approval Service
 // Handles approval workflow operations for accounts payable
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,11 +144,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.approvalService = void 0;
-var ApprovalService = /** @class */ (function () {
+var ApprovalService = /** @class */ (() => {
   function ApprovalService() {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     this.supabase = createClient(ComponentClient()
@@ -165,11 +162,11 @@ var ApprovalService = /** @class */ (function () {
                     .select('*')
                     .eq('is_active', true)
                     .order('level_order'), data = _a.data, error = _a.error, _a),
-                if: function (error) { },
+                if: (error) => { },
                 throw: error,
                 return: data || []
             },
-            catch: function (error) {
+            catch: (error) => {
                 console.error('Error fetching approval levels:', error);
                 throw new Error('Falha ao carregar níveis de aprovação');
             }
@@ -180,11 +177,11 @@ var ApprovalService = /** @class */ (function () {
                     .insert([__assign(__assign({}, levelData), { is_active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() })])
                     .select()
                     .single(), data = _b.data, error = _b.error, _b),
-                if: function (error) { },
+                if: (error) => { },
                 throw: error,
                 return: data
             },
-            catch: function (error) {
+            catch: (error) => {
                 console.error('Error creating approval level:', error);
                 throw new Error('Falha ao criar nível de aprovação');
             }
@@ -196,11 +193,11 @@ var ApprovalService = /** @class */ (function () {
                     .eq('id', id)
                     .select()
                     .single(), data = _c.data, error = _c.error, _c),
-                if: function (error) { },
+                if: (error) => { },
                 throw: error,
                 return: data
             },
-            catch: function (error) {
+            catch: (error) => {
                 console.error('Error updating approval level:', error);
                 throw new Error('Falha ao atualizar nível de aprovação');
             }
@@ -210,10 +207,10 @@ var ApprovalService = /** @class */ (function () {
                     .from('approval_levels')
                     .update({ is_active: false, updated_at: new Date().toISOString() })
                     .eq('id', id), error = _d.error, _d),
-                if: function (error) { },
+                if: (error) => { },
                 throw: error
             },
-            catch: function (error) {
+            catch: (error) => {
                 console.error('Error deleting approval level:', error);
                 throw new Error('Falha ao excluir nível de aprovação');
             }
@@ -228,11 +225,11 @@ var ApprovalService = /** @class */ (function () {
                     .select("\n          *,\n          approval_levels (\n            id,\n            level_name,\n            level_order\n          )\n        ")
                     .eq('is_active', true)
                     .order('user_name'), data = _e.data, error = _e.error, _e),
-                if: function (error) { },
+                if: (error) => { },
                 throw: error,
                 return: data || []
             },
-            catch: function (error) {
+            catch: (error) => {
                 console.error('Error fetching approval users:', error);
                 throw new Error('Falha ao carregar usuários aprovadores');
             }
@@ -243,11 +240,11 @@ var ApprovalService = /** @class */ (function () {
                     .insert([__assign(__assign({}, userData), { is_active: true, created_at: new Date().toISOString() })])
                     .select()
                     .single(), data = _f.data, error = _f.error, _f),
-                if: function (error) { },
+                if: (error) => { },
                 throw: error,
                 return: data
             },
-            catch: function (error) {
+            catch: (error) => {
                 console.error('Error creating approval user:', error);
                 throw new Error('Falha ao criar usuário aprovador');
             }
@@ -259,11 +256,11 @@ var ApprovalService = /** @class */ (function () {
                     .eq('id', id)
                     .select()
                     .single(), data = _g.data, error = _g.error, _g),
-                if: function (error) { },
+                if: (error) => { },
                 throw: error,
                 return: data
             },
-            catch: function (error) {
+            catch: (error) => {
                 console.error('Error updating approval user:', error);
                 throw new Error('Falha ao atualizar usuário aprovador');
             }
@@ -273,10 +270,10 @@ var ApprovalService = /** @class */ (function () {
                     .from('approval_users')
                     .update({ is_active: false })
                     .eq('id', id), error = _h.error, _h),
-                if: function (error) { },
+                if: (error) => { },
                 throw: error
             },
-            catch: function (error) {
+            catch: (error) => {
                 console.error('Error deleting approval user:', error);
                 throw new Error('Falha ao excluir usuário aprovador');
             }
@@ -295,23 +292,21 @@ var ApprovalService = /** @class */ (function () {
             try: {
                 // Get current user
                 const: (_j = yield this.supabase.auth.getUser(), user = _j.data.user, _j),
-                if: function (, user) { },
+                if: (, user) => { },
                 throw: new Error('Usuário não autenticado')
                 // Determine approval levels based on amount
                 ,
                 // Determine approval levels based on amount
                 const: levels = yield this.getApprovalLevels(),
-                const: applicableLevels = levels.filter(function (level) {
-                    return requestData.amount >= level.min_amount &&
-                        (level.max_amount === null || requestData.amount <= level.max_amount);
-                }),
-                if: function (applicableLevels) { },
+                const: applicableLevels = levels.filter((level) => requestData.amount >= level.min_amount &&
+                        (level.max_amount === null || requestData.amount <= level.max_amount)),
+                if: (applicableLevels) => { },
                 : .length === 0
             }
         });
   }
-  return ApprovalService;
-})();
+return ApprovalService;
+})()
 {
   throw new Error("Nenhum nível de aprovação configurado para este valor");
 }
@@ -345,19 +340,17 @@ var _r = await this.supabase
   requestError = _r.error;
 if (requestError) throw requestError;
 // Create approval steps
-var steps = applicableLevels.map(function (level, index) {
-  return {
-    approval_request_id: request.id,
-    level_order: level.level_order,
-    level_name: level.level_name,
-    required_approvers: level.required_approvers,
-    approved_count: isAutoApproved && index === 0 ? level.required_approvers : 0,
-    status: isAutoApproved && index === 0 ? "approved" : "pending",
-    deadline: new Date(Date.now() + level.approval_timeout_hours * 60 * 60 * 1000).toISOString(),
-    created_at: new Date().toISOString(),
-    completed_at: isAutoApproved && index === 0 ? new Date().toISOString() : undefined,
-  };
-});
+var steps = applicableLevels.map((level, index) => ({
+  approval_request_id: request.id,
+  level_order: level.level_order,
+  level_name: level.level_name,
+  required_approvers: level.required_approvers,
+  approved_count: isAutoApproved && index === 0 ? level.required_approvers : 0,
+  status: isAutoApproved && index === 0 ? "approved" : "pending",
+  deadline: new Date(Date.now() + level.approval_timeout_hours * 60 * 60 * 1000).toISOString(),
+  created_at: new Date().toISOString(),
+  completed_at: isAutoApproved && index === 0 ? new Date().toISOString() : undefined,
+}));
 var stepsError = (await this.supabase.from("approval_steps").insert(steps)).error;
 if (stepsError) throw stepsError;
 return request;
@@ -378,7 +371,7 @@ Promise < ApprovalRequest & {
             .select("\n          *,\n          accounts_payable (\n            id,\n            invoice_number,\n            vendor_name,\n            category\n          )\n        ")
             .eq('id', id)
             .single(), request = _a.data, requestError = _a.error, _a),
-        if: function (requestError) { },
+        if: (requestError) => { },
         throw: requestError
         // Get approval steps
         ,
@@ -388,12 +381,12 @@ Promise < ApprovalRequest & {
             .select('*')
             .eq('approval_request_id', id)
             .order('level_order'), steps = _b.data, stepsError = _b.error, _b),
-        if: function (stepsError) { },
+        if: (stepsError) => { },
         throw: stepsError
         // Get approval actions for each step
         ,
         // Get approval actions for each step
-        const: stepsWithActions = await Promise.all((steps || []).map(function (step) { return __awaiter(void 0, void 0, void 0, function () {
+        const: stepsWithActions = await Promise.all((steps || []).map((step) => __awaiter(void 0, void 0, void 0, function () {
             var _a, actions, actionsError;
             return __generator(this, function (_b) {
                 switch (_b.label) {
@@ -409,10 +402,10 @@ Promise < ApprovalRequest & {
                         return [2 /*return*/, __assign(__assign({}, step), { approvers: actions || [] })];
                 }
             });
-        }); })),
+        }))),
         return: __assign(__assign({}, request), { approval_chain: stepsWithActions })
     },
-    catch: function (error) {
+    catch: (error) => {
         console.error('Error fetching approval request:', error);
         throw new Error('Falha ao carregar solicitação de aprovação');
     }
@@ -422,46 +415,51 @@ getMyApprovalRequests();
 Promise < ApprovalRequest[] > {
     try: {
         const: (_c = await this.supabase.auth.getUser(), user = _c.data.user, _c),
-        if: function (, user) { },
+        if: (, user) => { },
         throw: new Error('Usuário não autenticado'),
         const: (_d = await this.supabase
             .from('approval_requests')
             .select("\n          *,\n          accounts_payable (\n            invoice_number,\n            vendor_name,\n            category\n          )\n        ")
             .eq('requester_id', user.id)
             .order('created_at', { ascending: false }), data = _d.data, error = _d.error, _d),
-        if: function (error) { },
+        if: (error) => { },
         throw: error,
         return: data || []
     },
-    catch: function (error) {
-        console.error('Error fetching my approval requests:', error);
-        throw new Error('Falha ao carregar minhas solicitações');
-    }
-};
-async;
-getPendingApprovals();
-Promise < ApprovalRequest[] > {
-    try: {
-        const: (_e = await this.supabase.auth.getUser(), user = _e.data.user, _e),
-        if: function (, user) { },
-        throw: new Error('Usuário não autenticado')
-        // Get user's approval permissions
-        ,
-        // Get user's approval permissions
-        const: (_f = await this.supabase
-            .from('approval_users')
+catch: (error) =>
+{
+  console.error("Error fetching my approval requests:", error);
+  throw new Error("Falha ao carregar minhas solicitações");
+}
+}
+async
+getPendingApprovals()
+Promise < ApprovalRequest[] >
+{
+  try
+  :
+  const: (_e = await this.supabase.auth.getUser(), user = _e.data.user, _e
+  ),
+  if
+  : (, user) =>
+    ,
+  throw : new Error('Usuário não autenticado')
+  // Get user's approval permissions
+  ,
+  // Get user's approval permissions
+  const: (_f = await this.supabase
+  .from('approval_users')
             .select('approval_level_id')
             .eq('user_id', user.id)
             .eq('is_active', true), userPermissions = _f.data, _f),
-        if: function (, userPermissions) { }
-    } || userPermissions.length === 0
-};
+  if
+  : (, userPermissions) =>
+  || userPermissions.length === 0
+}
 {
   return [];
 }
-var levelIds = userPermissions.map(function (p) {
-  return p.approval_level_id;
-});
+var levelIds = userPermissions.map((p) => p.approval_level_id);
 // Find requests where user can approve
 var _s = await this.supabase
     .from("approval_requests")
@@ -486,7 +484,7 @@ processApprovalAction(stepId, string, action, 'approve' | 'reject' | 'request_in
 Promise < void  > {
     try: {
         const: (_g = await this.supabase.auth.getUser(), user = _g.data.user, _g),
-        if: function (, user) { },
+        if: (, user) => { },
         throw: new Error('Usuário não autenticado')
         // Get step details
         ,
@@ -496,7 +494,7 @@ Promise < void  > {
             .select("\n          *,\n          approval_requests (*)\n        ")
             .eq('id', stepId)
             .single(), step = _h.data, stepError = _h.error, _h),
-        if: function (stepError) { },
+        if: (stepError) => { },
         throw: stepError
         // Verify user can approve this step
         ,
@@ -507,55 +505,70 @@ Promise < void  > {
             .eq('user_id', user.id)
             .eq('is_active', true)
             .single(), userPermission = _j.data, _j),
-        if: function (, userPermission) {
+        if: (, userPermission) => {
             throw new Error('Usuário não tem permissão para aprovar');
-        }
+}
         // Record the action
         ,
-        // Record the action
-        const: (_k = await this.supabase
-            .from('approval_actions')
-            .insert([{
-                approval_step_id: stepId,
-                approver_id: user.id,
+// Record the action
+const: (_k = await this.supabase
+.from('approval_actions')
+            .insert([
+{
+  approval_step_id: stepId, approver_id;
+  : user.id,
                 approver_name: user.email || 'Usuário',
                 approver_email: user.email || '',
                 action: action,
                 comments: comments,
                 action_date: new Date().toISOString(),
                 can_override: userPermission.can_override
-            }]), actionError = _k.error, _k),
-        if: function (actionError) { },
-        throw: actionError
-        // Update step status
-        ,
-        // Update step status
-        const: newApprovedCount = action === 'approve'
-            ? step.approved_count + 1
+}
+]), actionError = _k.error, _k),
+if
+: (actionError) =>
+{
+}
+,
+throw : actionError
+// Update step status
+,
+// Update step status
+const: newApprovedCount = action === 'approve'
+? step.approved_count + 1
             : step.approved_count,
-        const: stepStatus = action === 'reject'
-            ? 'rejected'
+const: stepStatus = action === 'reject'
+? 'rejected'
             : action === 'escalate'
                 ? 'escalated'
                 : newApprovedCount >= step.required_approvers
                     ? 'approved'
                     : 'pending',
-        const: (_l = await this.supabase
-            .from('approval_steps')
-            .update({
-            approved_count: newApprovedCount,
-            status: stepStatus,
+const: (_l = await this.supabase
+.from('approval_steps')
+            .update(
+{
+  approved_count: newApprovedCount, status;
+  : stepStatus,
             completed_at: stepStatus !== 'pending' ? new Date().toISOString() : undefined
-        })
+}
+)
             .eq('id', stepId), updateStepError = _l.error, _l),
-        if: function (updateStepError) { },
-        throw: updateStepError
-        // Update request status if necessary
-        ,
-        // Update request status if necessary
-        if: function (stepStatus) { }
-    } === 'approved' || stepStatus === 'rejected'
-};
+if
+: (updateStepError) =>
+{
+}
+,
+throw : updateStepError
+// Update request status if necessary
+,
+// Update request status if necessary
+if
+: (stepStatus) =>
+{
+}
+} === 'approved' || stepStatus === 'rejected'
+}
 {
   var updateRequestError = (
     await this.supabase
@@ -589,7 +602,7 @@ cancelApprovalRequest(requestId, string);
 Promise < void  > {
     try: {
         const: (_m = await this.supabase.auth.getUser(), user = _m.data.user, _m),
-        if: function (, user) { },
+        if: (, user) => { },
         throw: new Error('Usuário não autenticado')
         // Verify user can cancel (must be requester or admin)
         ,
@@ -599,9 +612,9 @@ Promise < void  > {
             .select('requester_id')
             .eq('id', requestId)
             .single(), request = _o.data, _o),
-        if: function (, request) { }
-    } || request.requester_id !== user.id
-};
+        if: (, request) => { }
+} || request.requester_id !== user.id
+}
 {
   // Check if user is admin
   var userPermission = (
@@ -641,7 +654,7 @@ Promise < void  > {
         //   approverName
         // })
     },
-    catch: function (error) {
+    catch: (error) => {
         console.error('Error sending notification:', error);
         // Don't throw - notification failures shouldn't break approval flow
     }
@@ -664,7 +677,7 @@ Promise <
         (data = _p.data),
         (error = _p.error),
         _p),
-      if: function (error) {},
+      if: (error) => {},
       throw: error,
       return: data || {
         pending: 0,
@@ -674,7 +687,7 @@ Promise <
         overdue: 0,
       },
     },
-    catch: function (error) {
+    catch: (error) => {
       console.error("Error fetching approval stats:", error);
       return {
         pending: 0,
@@ -718,10 +731,8 @@ function (let, i, i) {
     issues.push("N\u00EDvel ".concat(i, " n\u00E3o existe na hierarquia"));
   }
 }
-var _loop_1 = function (level) {
-  var levelUsers = users.filter(function (u) {
-    return u.approval_level_id === level.id;
-  });
+var _loop_1 = (level) => {
+  var levelUsers = users.filter((u) => u.approval_level_id === level.id);
   if (levelUsers.length < level.required_approvers) {
     issues.push(
       "N\u00EDvel "

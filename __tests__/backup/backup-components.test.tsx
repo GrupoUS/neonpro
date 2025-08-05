@@ -1,9 +1,8 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { jest } from "@jest/globals";
-import BackupDashboard from "@/components/backup/backup-dashboard";
-import BackupConfigForm from "@/components/backup/backup-config-form";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import BackupHistory from "@/components/backup/BackupHistory";
+import BackupConfigForm from "@/components/backup/backup-config-form";
+import BackupDashboard from "@/components/backup/backup-dashboard";
 
 // Mock fetch globally
 global.fetch = jest.fn();

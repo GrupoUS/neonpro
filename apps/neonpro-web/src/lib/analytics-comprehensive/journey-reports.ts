@@ -28,12 +28,12 @@
  * - LGPD-compliant data anonymization for external reports
  */
 
-import type { type Database } from "@/lib/database.types";
+import type { Database } from "@/lib/database.types";
 import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/utils/logger";
-import type { type PerformanceAnalysis, type PerformanceMetrics } from "./journey-performance";
-import type { type JourneyStage, type JourneyEvent } from "./journey-mapping-engine";
-import type { type SatisfactionMetrics } from "./satisfaction-metrics";
+import type { JourneyEvent, JourneyStage } from "./journey-mapping-engine";
+import type { PerformanceAnalysis, PerformanceMetrics } from "./journey-performance";
+import type { SatisfactionMetrics } from "./satisfaction-metrics";
 
 // ============================================================================
 // TYPES & INTERFACES

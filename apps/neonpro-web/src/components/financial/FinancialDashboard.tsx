@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import type { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@neonpro/ui/card";
-import type { Button } from "@neonpro/ui/button";
+import type { Alert, AlertDescription, AlertTitle } from "@neonpro/ui/alert";
 import type { Badge } from "@neonpro/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@neonpro/ui/tabs";
+import type { Button } from "@neonpro/ui/button";
+import type { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@neonpro/ui/card";
+import type { Progress } from "@neonpro/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -12,33 +12,33 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@neonpro/ui/select";
-import type { Alert, AlertDescription, AlertTitle } from "@neonpro/ui/alert";
 import type { Skeleton } from "@neonpro/ui/skeleton";
-import type { Progress } from "@neonpro/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@neonpro/ui/tabs";
 import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  Calendar,
-  Target,
-  AlertTriangle,
-  CheckCircle,
-  RefreshCw,
-  Download,
-  Settings,
-  BarChart3,
-  PieChart,
-  LineChart,
   Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
   Clock,
+  DollarSign,
+  Download,
+  LineChart,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
   Zap,
 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import type { FinancialSystem, getDefaultFinancialConfig } from "@/lib/financial";
-import type { FinancialKPICards } from "./FinancialKPICards";
 import type { FinancialCharts } from "./FinancialCharts";
-import type { FinancialReports } from "./FinancialReports";
 import type { FinancialInsights } from "./FinancialInsights";
+import type { FinancialKPICards } from "./FinancialKPICards";
+import type { FinancialReports } from "./FinancialReports";
 import type { FinancialSettings } from "./FinancialSettings";
 
 interface FinancialDashboardProps {

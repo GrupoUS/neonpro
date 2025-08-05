@@ -6,7 +6,7 @@
  * Displays key metrics for patient management dashboard
  */
 
-import type { Users, UserPlus, Calendar, Activity } from "lucide-react";
+import type { Activity, Calendar, UserPlus, Users } from "lucide-react";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface StatsCardProps {

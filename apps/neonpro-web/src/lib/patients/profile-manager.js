@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Patient Profile Manager
  *
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -155,13 +152,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfileManager = void 0;
 var audit_logger_1 = require("@/lib/auth/audit/audit-logger");
 var LGPDComplianceManager_1 = require("@/lib/lgpd/LGPDComplianceManager");
 var server_1 = require("@/lib/supabase/server");
-var ProfileManager = /** @class */ (function () {
+var ProfileManager = /** @class */ (() => {
   function ProfileManager() {
     this.mockProfiles = new Map();
     this.initialized = false;
@@ -502,9 +499,7 @@ var ProfileManager = /** @class */ (function () {
         }
         // Emergency contacts completeness
         if (profileData.emergency_contacts && profileData.emergency_contacts.length > 0) {
-          primaryContact = profileData.emergency_contacts.find(function (contact) {
-            return contact.is_primary;
-          });
+          primaryContact = profileData.emergency_contacts.find((contact) => contact.is_primary);
           if (primaryContact) {
             contactFields = ["name", "relationship", "phone"];
             contactScore = this.calculateSectionCompleteness(primaryContact, contactFields, [
@@ -526,39 +521,35 @@ var ProfileManager = /** @class */ (function () {
       var allPatients, results;
       return __generator(this, function (_a) {
         try {
-          allPatients = Array.from(this.mockProfiles.values()).filter(function (patient) {
-            return patient.is_active;
-          });
+          allPatients = Array.from(this.mockProfiles.values()).filter(
+            (patient) => patient.is_active,
+          );
           results = allPatients;
           // Apply search filters
           if (searchCriteria.name) {
-            results = results.filter(function (patient) {
-              return patient.demographics.name
-                .toLowerCase()
-                .includes(searchCriteria.name.toLowerCase());
-            });
+            results = results.filter((patient) =>
+              patient.demographics.name.toLowerCase().includes(searchCriteria.name.toLowerCase()),
+            );
           }
           if (searchCriteria.phone) {
-            results = results.filter(function (patient) {
-              return patient.demographics.phone === searchCriteria.phone;
-            });
+            results = results.filter(
+              (patient) => patient.demographics.phone === searchCriteria.phone,
+            );
           }
           if (searchCriteria.email) {
-            results = results.filter(function (patient) {
-              return patient.demographics.email
-                .toLowerCase()
-                .includes(searchCriteria.email.toLowerCase());
-            });
+            results = results.filter((patient) =>
+              patient.demographics.email.toLowerCase().includes(searchCriteria.email.toLowerCase()),
+            );
           }
           if (searchCriteria.dateOfBirth) {
-            results = results.filter(function (patient) {
-              return patient.demographics.date_of_birth === searchCriteria.dateOfBirth;
-            });
+            results = results.filter(
+              (patient) => patient.demographics.date_of_birth === searchCriteria.dateOfBirth,
+            );
           }
           if (searchCriteria.insuranceId) {
-            results = results.filter(function (patient) {
-              return patient.demographics.insurance_id === searchCriteria.insuranceId;
-            });
+            results = results.filter(
+              (patient) => patient.demographics.insurance_id === searchCriteria.insuranceId,
+            );
           }
           // Apply limit
           if (searchCriteria.limit) {
@@ -566,9 +557,9 @@ var ProfileManager = /** @class */ (function () {
           }
           return [
             2 /*return*/,
-            results.sort(function (a, b) {
-              return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-            }),
+            results.sort(
+              (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime(),
+            ),
           ];
         } catch (error) {
           console.error("Error in searchPatients:", error);
@@ -596,12 +587,11 @@ var ProfileManager = /** @class */ (function () {
               return [
                 2 /*return*/,
                 Array.from(this.mockProfiles.values())
-                  .filter(function (patient) {
-                    return patient.is_active && patient.profile_completeness_score < threshold;
-                  })
-                  .sort(function (a, b) {
-                    return a.profile_completeness_score - b.profile_completeness_score;
-                  }),
+                  .filter(
+                    (patient) =>
+                      patient.is_active && patient.profile_completeness_score < threshold,
+                  )
+                  .sort((a, b) => a.profile_completeness_score - b.profile_completeness_score),
               ];
             } catch (error) {
               console.error("Error in getIncompleteProfiles:", error);
@@ -662,23 +652,22 @@ var ProfileManager = /** @class */ (function () {
             _a.sent();
             try {
               allPatients = Array.from(this.mockProfiles.values());
-              activePatients = allPatients.filter(function (patient) {
-                return patient.is_active;
-              });
+              activePatients = allPatients.filter((patient) => patient.is_active);
               avgCompleteness =
                 activePatients.length > 0
-                  ? activePatients.reduce(function (sum, patient) {
-                      return sum + patient.profile_completeness_score;
-                    }, 0) / activePatients.length
+                  ? activePatients.reduce(
+                      (sum, patient) => sum + patient.profile_completeness_score,
+                      0,
+                    ) / activePatients.length
                   : 0;
-              needingAttention = activePatients.filter(function (patient) {
-                return patient.profile_completeness_score < 0.7;
-              });
+              needingAttention = activePatients.filter(
+                (patient) => patient.profile_completeness_score < 0.7,
+              );
               sevenDaysAgo_1 = new Date();
               sevenDaysAgo_1.setDate(sevenDaysAgo_1.getDate() - 7);
-              recentlyUpdated = activePatients.filter(function (patient) {
-                return new Date(patient.updated_at) >= sevenDaysAgo_1;
-              });
+              recentlyUpdated = activePatients.filter(
+                (patient) => new Date(patient.updated_at) >= sevenDaysAgo_1,
+              );
               return [
                 2 /*return*/,
                 {
@@ -737,14 +726,14 @@ var ProfileManager = /** @class */ (function () {
     var maxScore = requiredFields.length * 2 + optionalFields.length;
     return maxScore > 0 ? score / maxScore : 0;
   };
-  ProfileManager.prototype.hasValidValue = function (value) {
+  ProfileManager.prototype.hasValidValue = (value) => {
     if (value === null || value === undefined) return false;
     if (typeof value === "string" && value.trim() === "") return false;
     if (Array.isArray(value) && value.length === 0) return false;
     return true;
   };
-  ProfileManager.prototype.mergeProfileData = function (currentProfile, updateData) {
-    return __assign(__assign({}, currentProfile), {
+  ProfileManager.prototype.mergeProfileData = (currentProfile, updateData) =>
+    __assign(__assign({}, currentProfile), {
       demographics: updateData.demographics
         ? __assign(__assign({}, currentProfile.demographics), updateData.demographics)
         : currentProfile.demographics,
@@ -759,7 +748,6 @@ var ProfileManager = /** @class */ (function () {
         : currentProfile.care_preferences,
       emergency_contacts: updateData.emergency_contacts || currentProfile.emergency_contacts,
     });
-  };
   /**
    * Archive patient profile (soft delete)
    */

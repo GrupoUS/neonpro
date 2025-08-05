@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardContent = DashboardContent;
 var card_1 = require("@/components/ui/card");
@@ -48,7 +47,7 @@ function DashboardContent(_a) {
       status: "confirmed",
     },
   ];
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "confirmed":
         return <badge_1.Badge variant="default">Confirmado</badge_1.Badge>;
@@ -156,29 +155,27 @@ function DashboardContent(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {recentAppointments.map(function (appointment) {
-                return (
-                  <div
-                    key={appointment.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                        <lucide_react_1.Clock className="h-4 w-4 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-medium">{appointment.patient}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {appointment.time} - {appointment.type}
-                        </p>
-                      </div>
+              {recentAppointments.map((appointment) => (
+                <div
+                  key={appointment.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                      <lucide_react_1.Clock className="h-4 w-4 text-primary" />
                     </div>
-                    <div className="flex items-center gap-2">
-                      {getStatusBadge(appointment.status)}
+                    <div>
+                      <p className="font-medium">{appointment.patient}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {appointment.time} - {appointment.type}
+                      </p>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="flex items-center gap-2">
+                    {getStatusBadge(appointment.status)}
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>

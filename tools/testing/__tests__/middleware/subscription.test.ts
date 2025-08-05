@@ -8,9 +8,8 @@
  * @created 2025-07-22
  */
 
-import { describe, it, expect, jest, beforeEach, afterEach } from "@jest/globals";
-import type { SubscriptionStatus } from "@/types/subscription";
-import { createMockSubscription, createMockResponse } from "../utils/testUtils";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { createMockResponse, createMockSubscription } from "../utils/testUtils";
 
 // Mock Next.js modules
 jest.mock("next/headers", () => ({

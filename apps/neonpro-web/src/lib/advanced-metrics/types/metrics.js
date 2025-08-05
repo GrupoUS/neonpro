@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Metrics Types
  * NeonPro - Sistema de métricas avançadas para análise detalhada de comunicação

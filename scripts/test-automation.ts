@@ -9,8 +9,8 @@
  * Usage: npx tsx scripts/test-automation.ts
  */
 
-import { NeonProAutomation } from "@/lib/automation/trigger-jobs";
 import { createClient } from "@/app/utils/supabase/server";
+import { NeonProAutomation } from "@/lib/automation/trigger-jobs";
 
 async function testEmailAutomation() {
   console.log("🧪 Testing NeonPro Background Jobs Integration...\n");
@@ -114,8 +114,8 @@ async function testEmailAutomation() {
 
 function existsFile(relativePath: string): boolean {
   try {
-    const fs = require("fs");
-    const path = require("path");
+    const fs = require("node:fs");
+    const path = require("node:path");
     return fs.existsSync(path.join(process.cwd(), relativePath));
   } catch {
     return false;

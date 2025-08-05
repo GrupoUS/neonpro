@@ -1,26 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
-import type { motion, AnimatePresence } from "framer-motion";
+import type { AnimatePresence, motion } from "framer-motion";
 import type {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  CreditCard,
-  Receipt,
-  PieChart,
+  AlertTriangle,
   BarChart3,
-  Filter,
-  Download,
-  Plus,
+  Calendar,
   CheckCircle,
   Clock,
+  CreditCard,
+  DollarSign,
+  Download,
+  Filter,
+  PieChart,
+  Plus,
+  Receipt,
+  TrendingDown,
+  TrendingUp,
   XCircle,
-  AlertTriangle,
 } from "lucide-react";
-import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
+import React, { useState } from "react";
 import type { CosmicGlowButton } from "@/components/ui/CosmicGlowButton";
+import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
 import type { formatCurrency, formatDate } from "@/lib/utils";
 
 // Dados mock para financeiro

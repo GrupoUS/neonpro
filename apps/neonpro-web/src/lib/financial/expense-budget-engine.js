@@ -1,4 +1,3 @@
-"use strict";
 // Expense & Budget Management Engine
 // Epic 5, Story 5.1, Task 5: Expense & Budget Management
 // Created: 2025-01-27
@@ -6,15 +5,15 @@
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,11 +133,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpenseBudgetEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var ExpenseBudgetEngine = /** @class */ (function () {
+var ExpenseBudgetEngine = /** @class */ (() => {
   function ExpenseBudgetEngine() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -201,19 +198,17 @@ var ExpenseBudgetEngine = /** @class */ (function () {
               throw new Error("Failed to fetch expense categories: ".concat(error.message));
             return [
               2 /*return*/,
-              categoryData.map(function (category) {
-                return {
-                  categoryId: category.category_id,
-                  categoryName: category.category_name,
-                  parentCategoryId: category.parent_category_id,
-                  budgetAllocation: parseFloat(category.budget_allocation),
-                  actualSpending: parseFloat(category.actual_spending),
-                  variance: parseFloat(category.variance),
-                  variancePercent: parseFloat(category.variance_percent),
-                  alertThreshold: parseFloat(category.alert_threshold),
-                  isOverBudget: category.is_over_budget,
-                };
-              }),
+              categoryData.map((category) => ({
+                categoryId: category.category_id,
+                categoryName: category.category_name,
+                parentCategoryId: category.parent_category_id,
+                budgetAllocation: parseFloat(category.budget_allocation),
+                actualSpending: parseFloat(category.actual_spending),
+                variance: parseFloat(category.variance),
+                variancePercent: parseFloat(category.variance_percent),
+                alertThreshold: parseFloat(category.alert_threshold),
+                isOverBudget: category.is_over_budget,
+              })),
             ];
         }
       });
@@ -251,12 +246,8 @@ var ExpenseBudgetEngine = /** @class */ (function () {
             ];
           case 1:
             (_a = _b.sent()), (categories = _a[0]), (alerts = _a[1]);
-            totalBudget = categories.reduce(function (sum, cat) {
-              return sum + cat.budgetAllocation;
-            }, 0);
-            totalActual = categories.reduce(function (sum, cat) {
-              return sum + cat.actualSpending;
-            }, 0);
+            totalBudget = categories.reduce((sum, cat) => sum + cat.budgetAllocation, 0);
+            totalActual = categories.reduce((sum, cat) => sum + cat.actualSpending, 0);
             totalVariance = totalActual - totalBudget;
             variancePercent = totalBudget > 0 ? (totalVariance / totalBudget) * 100 : 0;
             return [
@@ -299,19 +290,17 @@ var ExpenseBudgetEngine = /** @class */ (function () {
             if (error) throw new Error("Failed to fetch budget alerts: ".concat(error.message));
             return [
               2 /*return*/,
-              alertData.map(function (alert) {
-                return {
-                  alertId: alert.id,
-                  categoryId: alert.category_id,
-                  categoryName: alert.category_name,
-                  alertType: alert.alert_type,
-                  threshold: parseFloat(alert.threshold),
-                  currentAmount: parseFloat(alert.current_amount),
-                  message: alert.message,
-                  createdAt: new Date(alert.created_at),
-                  isResolved: alert.is_resolved,
-                };
-              }),
+              alertData.map((alert) => ({
+                alertId: alert.id,
+                categoryId: alert.category_id,
+                categoryName: alert.category_name,
+                alertType: alert.alert_type,
+                threshold: parseFloat(alert.threshold),
+                currentAmount: parseFloat(alert.current_amount),
+                message: alert.message,
+                createdAt: new Date(alert.created_at),
+                isResolved: alert.is_resolved,
+              })),
             ];
         }
       });
@@ -386,16 +375,14 @@ var ExpenseBudgetEngine = /** @class */ (function () {
             if (error) throw new Error("Expense trend analysis failed: ".concat(error.message));
             return [
               2 /*return*/,
-              trendData.map(function (trend) {
-                return {
-                  period: trend.period,
-                  totalExpenses: parseFloat(trend.total_expenses),
-                  growthRate: parseFloat(trend.growth_rate),
-                  volatility: parseFloat(trend.volatility),
-                  optimization_opportunities: trend.optimization_opportunities || [],
-                  costSavingPotential: parseFloat(trend.cost_saving_potential || 0),
-                };
-              }),
+              trendData.map((trend) => ({
+                period: trend.period,
+                totalExpenses: parseFloat(trend.total_expenses),
+                growthRate: parseFloat(trend.growth_rate),
+                volatility: parseFloat(trend.volatility),
+                optimization_opportunities: trend.optimization_opportunities || [],
+                costSavingPotential: parseFloat(trend.cost_saving_potential || 0),
+              })),
             ];
         }
       });
@@ -423,17 +410,15 @@ var ExpenseBudgetEngine = /** @class */ (function () {
             if (error) throw new Error("Cost optimization analysis failed: ".concat(error.message));
             return [
               2 /*return*/,
-              insights.map(function (insight) {
-                return {
-                  category: insight.category,
-                  currentSpending: parseFloat(insight.current_spending),
-                  benchmarkSpending: parseFloat(insight.benchmark_spending),
-                  savingsPotential: parseFloat(insight.savings_potential),
-                  recommendations: insight.recommendations || [],
-                  priority: insight.priority,
-                  implementationEffort: insight.implementation_effort,
-                };
-              }),
+              insights.map((insight) => ({
+                category: insight.category,
+                currentSpending: parseFloat(insight.current_spending),
+                benchmarkSpending: parseFloat(insight.benchmark_spending),
+                savingsPotential: parseFloat(insight.savings_potential),
+                recommendations: insight.recommendations || [],
+                priority: insight.priority,
+                implementationEffort: insight.implementation_effort,
+              })),
             ];
         }
       });
@@ -464,20 +449,18 @@ var ExpenseBudgetEngine = /** @class */ (function () {
             if (error) throw new Error("Vendor expense analysis failed: ".concat(error.message));
             return [
               2 /*return*/,
-              vendorData.map(function (vendor) {
-                return {
-                  vendorId: vendor.vendor_id,
-                  vendorName: vendor.vendor_name,
-                  category: vendor.category,
-                  totalSpent: parseFloat(vendor.total_spent),
-                  transactionCount: parseInt(vendor.transaction_count),
-                  averageAmount: parseFloat(vendor.average_amount),
-                  paymentTerms: vendor.payment_terms,
-                  lastPayment: new Date(vendor.last_payment),
-                  outstandingAmount: parseFloat(vendor.outstanding_amount),
-                  performanceScore: parseFloat(vendor.performance_score),
-                };
-              }),
+              vendorData.map((vendor) => ({
+                vendorId: vendor.vendor_id,
+                vendorName: vendor.vendor_name,
+                category: vendor.category,
+                totalSpent: parseFloat(vendor.total_spent),
+                transactionCount: parseInt(vendor.transaction_count),
+                averageAmount: parseFloat(vendor.average_amount),
+                paymentTerms: vendor.payment_terms,
+                lastPayment: new Date(vendor.last_payment),
+                outstandingAmount: parseFloat(vendor.outstanding_amount),
+                performanceScore: parseFloat(vendor.performance_score),
+              })),
             ];
         }
       });
@@ -508,18 +491,16 @@ var ExpenseBudgetEngine = /** @class */ (function () {
             if (error) throw new Error("Cost center allocation failed: ".concat(error.message));
             return [
               2 /*return*/,
-              allocationData.map(function (center) {
-                return {
-                  costCenterId: center.cost_center_id,
-                  costCenterName: center.cost_center_name,
-                  department: center.department,
-                  allocatedBudget: parseFloat(center.allocated_budget),
-                  actualExpenses: parseFloat(center.actual_expenses),
-                  utilizationRate: parseFloat(center.utilization_rate),
-                  efficiency: parseFloat(center.efficiency),
-                  profitContribution: parseFloat(center.profit_contribution),
-                };
-              }),
+              allocationData.map((center) => ({
+                costCenterId: center.cost_center_id,
+                costCenterName: center.cost_center_name,
+                department: center.department,
+                allocatedBudget: parseFloat(center.allocated_budget),
+                actualExpenses: parseFloat(center.actual_expenses),
+                utilizationRate: parseFloat(center.utilization_rate),
+                efficiency: parseFloat(center.efficiency),
+                profitContribution: parseFloat(center.profit_contribution),
+              })),
             ];
         }
       });
@@ -553,19 +534,17 @@ var ExpenseBudgetEngine = /** @class */ (function () {
             if (error) throw new Error("Expense forecasting failed: ".concat(error.message));
             return [
               2 /*return*/,
-              forecastData.map(function (forecast) {
-                return {
-                  period: forecast.period,
-                  forecastedAmount: parseFloat(forecast.forecasted_amount),
-                  confidenceInterval: {
-                    lower: parseFloat(forecast.confidence_lower),
-                    upper: parseFloat(forecast.confidence_upper),
-                  },
-                  trend: forecast.trend,
-                  seasonalFactor: parseFloat(forecast.seasonal_factor),
-                  riskFactors: forecast.risk_factors || [],
-                };
-              }),
+              forecastData.map((forecast) => ({
+                period: forecast.period,
+                forecastedAmount: parseFloat(forecast.forecasted_amount),
+                confidenceInterval: {
+                  lower: parseFloat(forecast.confidence_lower),
+                  upper: parseFloat(forecast.confidence_upper),
+                },
+                trend: forecast.trend,
+                seasonalFactor: parseFloat(forecast.seasonal_factor),
+                riskFactors: forecast.risk_factors || [],
+              })),
             ];
         }
       });
@@ -605,7 +584,7 @@ var ExpenseBudgetEngine = /** @class */ (function () {
   /**
    * Parse period string to date range
    */
-  ExpenseBudgetEngine.prototype.parsePeriodToDates = function (period) {
+  ExpenseBudgetEngine.prototype.parsePeriodToDates = (period) => {
     var now = new Date();
     switch (period) {
       case "current_month":
@@ -613,12 +592,13 @@ var ExpenseBudgetEngine = /** @class */ (function () {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
           end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case "current_quarter":
+      case "current_quarter": {
         var quarterStart = Math.floor(now.getMonth() / 3) * 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
           end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
+      }
       case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),
@@ -635,11 +615,7 @@ var ExpenseBudgetEngine = /** @class */ (function () {
   /**
    * Generate alert message based on alert type and amounts
    */
-  ExpenseBudgetEngine.prototype.generateAlertMessage = function (
-    alertType,
-    currentAmount,
-    threshold,
-  ) {
+  ExpenseBudgetEngine.prototype.generateAlertMessage = (alertType, currentAmount, threshold) => {
     var percentage = ((currentAmount / threshold) * 100).toFixed(1);
     switch (alertType) {
       case "warning":

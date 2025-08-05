@@ -8,8 +8,8 @@
  */
 
 import type {
-  IntegrationConnector,
   IntegrationConfig,
+  IntegrationConnector,
   IntegrationRequest,
   IntegrationResponse,
   WebhookConfig,

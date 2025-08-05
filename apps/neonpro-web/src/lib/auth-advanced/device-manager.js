@@ -1,4 +1,3 @@
-"use strict";
 // Device Manager Service
 // Story 1.4: Session Management & Security Implementation
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,11 +144,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeviceManager = void 0;
 var config_1 = require("./config");
-var DeviceManager = /** @class */ (function () {
+var DeviceManager = /** @class */ (() => {
   function DeviceManager(supabase) {
     this.fingerprintCache = new Map();
     this.trustScoreCache = new Map();
@@ -759,7 +756,7 @@ var DeviceManager = /** @class */ (function () {
     var deviceType = this.detectDeviceType(deviceInfo);
     return "".concat(browser, " on ").concat(os, " (").concat(deviceType, ")");
   };
-  DeviceManager.prototype.detectDeviceType = function (deviceInfo) {
+  DeviceManager.prototype.detectDeviceType = (deviceInfo) => {
     var _a;
     var userAgent =
       ((_a = deviceInfo.userAgent) === null || _a === void 0 ? void 0 : _a.toLowerCase()) || "";
@@ -845,18 +842,13 @@ var DeviceManager = /** @class */ (function () {
       });
     });
   };
-  DeviceManager.prototype.calculateDeviceAnalytics = function (devices) {
+  DeviceManager.prototype.calculateDeviceAnalytics = (devices) => {
     var analytics = {
       totalDevices: devices.length,
-      trustedDevices: devices.filter(function (d) {
-        return d.is_trusted;
-      }).length,
-      suspiciousDevices: devices.filter(function (d) {
-        return d.risk_indicators && d.risk_indicators.length > 0;
-      }).length,
-      blockedDevices: devices.filter(function (d) {
-        return d.is_blocked;
-      }).length,
+      trustedDevices: devices.filter((d) => d.is_trusted).length,
+      suspiciousDevices: devices.filter((d) => d.risk_indicators && d.risk_indicators.length > 0)
+        .length,
+      blockedDevices: devices.filter((d) => d.is_blocked).length,
       devicesByType: {},
       devicesByLocation: {},
       averageTrustScore: 0,
@@ -872,7 +864,7 @@ var DeviceManager = /** @class */ (function () {
     }
     // Calculate averages and distributions
     var totalTrustScore = 0;
-    devices.forEach(function (device) {
+    devices.forEach((device) => {
       var _a;
       // Trust score
       totalTrustScore += device.trust_score;
@@ -898,23 +890,21 @@ var DeviceManager = /** @class */ (function () {
     analytics.averageTrustScore = totalTrustScore / devices.length;
     return analytics;
   };
-  DeviceManager.prototype.getEmptyAnalytics = function () {
-    return {
-      totalDevices: 0,
-      trustedDevices: 0,
-      suspiciousDevices: 0,
-      blockedDevices: 0,
-      devicesByType: {},
-      devicesByLocation: {},
-      averageTrustScore: 0,
-      riskDistribution: {
-        low: 0,
-        medium: 0,
-        high: 0,
-        critical: 0,
-      },
-    };
-  };
+  DeviceManager.prototype.getEmptyAnalytics = () => ({
+    totalDevices: 0,
+    trustedDevices: 0,
+    suspiciousDevices: 0,
+    blockedDevices: 0,
+    devicesByType: {},
+    devicesByLocation: {},
+    averageTrustScore: 0,
+    riskDistribution: {
+      low: 0,
+      medium: 0,
+      high: 0,
+      critical: 0,
+    },
+  });
   // Cleanup Methods
   DeviceManager.prototype.cleanupOldDevices = function () {
     return __awaiter(this, arguments, void 0, function (daysOld) {

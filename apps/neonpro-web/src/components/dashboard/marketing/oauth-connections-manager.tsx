@@ -1,6 +1,26 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Building2,
+  Calendar,
+  CheckCircle,
+  ExternalLink,
+  Facebook,
+  Instagram,
+  MessageCircle,
+  MoreVertical,
+  RefreshCw,
+  Settings,
+  Trash2,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,43 +28,23 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Switch } from "@/components/ui/switch";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Separator } from "@/components/ui/separator";
-import type { Progress } from "@/components/ui/progress";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import type {
-  Instagram,
-  Facebook,
-  MessageCircle,
-  Building2,
-  Settings,
-  RefreshCw,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  MoreVertical,
-  ExternalLink,
-  Trash2,
-  Calendar,
-  BarChart3,
-} from "lucide-react";
-import type { toast } from "sonner";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
 
 /**
  * OAuth Connection Management Component - Research-Backed Implementation

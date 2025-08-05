@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuditReportingAutomation = void 0;
-var AuditReportingAutomation = /** @class */ (function () {
+var AuditReportingAutomation = /** @class */ (() => {
   function AuditReportingAutomation(supabase, complianceManager, config) {
     this.reportingInterval = null;
     this.auditCallbacks = [];
@@ -182,8 +179,8 @@ var AuditReportingAutomation = /** @class */ (function () {
             // Set up automated reporting
             if (this.config.auto_report_generation) {
               this.reportingInterval = setInterval(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
+                () =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var error_2;
                     return __generator(this, function (_a) {
                       switch (_a.label) {
@@ -207,8 +204,7 @@ var AuditReportingAutomation = /** @class */ (function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                },
+                  }),
                 60 * 60 * 1000,
               ); // Check every hour
             }
@@ -913,11 +909,7 @@ var AuditReportingAutomation = /** @class */ (function () {
       });
     });
   };
-  AuditReportingAutomation.prototype.generateReportTitle = function (
-    reportType,
-    periodStart,
-    periodEnd,
-  ) {
+  AuditReportingAutomation.prototype.generateReportTitle = (reportType, periodStart, periodEnd) => {
     var startDate = new Date(periodStart).toLocaleDateString();
     var endDate = new Date(periodEnd).toLocaleDateString();
     var titles = {
@@ -940,7 +932,7 @@ var AuditReportingAutomation = /** @class */ (function () {
     };
     return titles[reportType] || "Relat\u00F3rio LGPD - ".concat(startDate, " a ").concat(endDate);
   };
-  AuditReportingAutomation.prototype.generateReportDescription = function (reportType, scope) {
+  AuditReportingAutomation.prototype.generateReportDescription = (reportType, scope) => {
     var descriptions = {
       compliance_overview:
         "Relatório abrangente de conformidade LGPD incluindo métricas gerais, gaps de conformidade e recomendações.",
@@ -961,7 +953,7 @@ var AuditReportingAutomation = /** @class */ (function () {
     scope,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate comprehensive report content based on type
         return [
           2 /*return*/,
@@ -983,7 +975,7 @@ var AuditReportingAutomation = /** @class */ (function () {
   };
   AuditReportingAutomation.prototype.generateExecutiveSummary = function (reportContent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate executive summary
         return [2 /*return*/, "Resumo executivo do relatório de conformidade LGPD."];
       });
@@ -991,7 +983,7 @@ var AuditReportingAutomation = /** @class */ (function () {
   };
   AuditReportingAutomation.prototype.identifyKeyFindings = function (reportContent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would identify key findings
         return [2 /*return*/, []];
       });
@@ -999,7 +991,7 @@ var AuditReportingAutomation = /** @class */ (function () {
   };
   AuditReportingAutomation.prototype.analyzeComplianceGaps = function (reportContent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze compliance gaps
         return [2 /*return*/, []];
       });
@@ -1010,13 +1002,13 @@ var AuditReportingAutomation = /** @class */ (function () {
     complianceGaps,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate recommendations
         return [2 /*return*/, []];
       });
     });
   };
-  AuditReportingAutomation.prototype.calculateNextAuditDate = function (reportType) {
+  AuditReportingAutomation.prototype.calculateNextAuditDate = (reportType) => {
     var nextDate = new Date();
     // Different audit frequencies based on report type
     switch (reportType) {
@@ -1036,7 +1028,7 @@ var AuditReportingAutomation = /** @class */ (function () {
   };
   AuditReportingAutomation.prototype.exportReportToFile = function (reportId, content, format) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would export report to specified format
         return [2 /*return*/, "/reports/".concat(reportId, ".").concat(format)];
       });
@@ -1044,16 +1036,13 @@ var AuditReportingAutomation = /** @class */ (function () {
   };
   AuditReportingAutomation.prototype.getFileSize = function (filePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would get file size
         return [2 /*return*/, 1024]; // Placeholder
       });
     });
   };
-  AuditReportingAutomation.prototype.calculateNextGenerationDate = function (
-    frequency,
-    customDays,
-  ) {
+  AuditReportingAutomation.prototype.calculateNextGenerationDate = (frequency, customDays) => {
     var nextDate = new Date();
     switch (frequency) {
       case "daily":
@@ -1082,7 +1071,7 @@ var AuditReportingAutomation = /** @class */ (function () {
   AuditReportingAutomation.prototype.validateDashboardConfig = function (dashboardData) {
     return __awaiter(this, void 0, void 0, function () {
       var errors;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errors = [];
         if (!dashboardData.title || dashboardData.title.trim().length === 0) {
           errors.push("Dashboard title is required");
@@ -1105,21 +1094,17 @@ var AuditReportingAutomation = /** @class */ (function () {
     dashboardData,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AuditReportingAutomation.prototype.processScheduledReport = function (schedule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AuditReportingAutomation.prototype.performAutomatedComplianceChecks = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would perform automated compliance checks
         return [2 /*return*/, { overall_score: 92 }];
       });
@@ -1127,16 +1112,12 @@ var AuditReportingAutomation = /** @class */ (function () {
   };
   AuditReportingAutomation.prototype.triggerComplianceAlert = function (complianceResults) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AuditReportingAutomation.prototype.refreshDashboardData = function (dashboardId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AuditReportingAutomation.prototype.generateExportData = function (
@@ -1145,7 +1126,7 @@ var AuditReportingAutomation = /** @class */ (function () {
     includeMetadata,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate export data
         return [2 /*return*/, {}];
       });
@@ -1153,7 +1134,7 @@ var AuditReportingAutomation = /** @class */ (function () {
   };
   AuditReportingAutomation.prototype.exportDataToFile = function (data, format, exportType) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would export data to file
         return [
           2 /*return*/,

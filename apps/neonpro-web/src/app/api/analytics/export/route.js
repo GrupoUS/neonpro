@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Analytics Export API Route for NeonPro
  *
@@ -12,15 +11,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,7 +29,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -40,13 +39,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,8 +58,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -68,9 +67,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -81,9 +78,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -142,7 +139,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var server_1 = require("@/lib/supabase/server");
@@ -191,10 +188,10 @@ function POST(request) {
       response,
       error_1;
     var _d, _e, _f, _g;
-    return __generator(this, function (_h) {
+    return __generator(this, (_h) => {
       switch (_h.label) {
         case 0:
-          _h.trys.push([0, 15, , 16]);
+          _h.trys.push([0, 15, undefined, 16]);
           return [4 /*yield*/, (0, server_1.createClient)()];
         case 1:
           supabase = _h.sent();
@@ -325,7 +322,7 @@ function POST(request) {
 function generateCSVExport(type, data, options) {
   return __awaiter(this, void 0, void 0, function () {
     var csvData, filename;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       csvData = "";
       filename = "".concat(type, "-export-").concat(new Date().toISOString().split("T")[0], ".csv");
       switch (type) {
@@ -379,7 +376,7 @@ function generateCSVExport(type, data, options) {
 function generateExcelExport(type, data, options) {
   return __awaiter(this, void 0, void 0, function () {
     var workbook, filename, excelBuffer;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       workbook = XLSX.utils.book_new();
       filename = ""
         .concat(type, "-export-")
@@ -430,7 +427,7 @@ function generateExcelExport(type, data, options) {
 function generatePDFExport(type, data, options) {
   return __awaiter(this, void 0, void 0, function () {
     var pdf, template, filename, pdfBuffer;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       pdf = new jspdf_1.default("p", "mm", "a4");
       template = options.template || "standard";
       filename = "".concat(type, "-report-").concat(new Date().toISOString().split("T")[0], ".pdf");
@@ -484,7 +481,7 @@ function generatePDFExport(type, data, options) {
 function generateJSONExport(type, data, options) {
   return __awaiter(this, void 0, void 0, function () {
     var exportData, filename;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       exportData = data;
       filename = ""
         .concat(type, "-export-")
@@ -518,8 +515,8 @@ function generateCohortCSV(data) {
     throw new Error("Invalid cohort data structure");
   }
   var headers = ["Cohort", "Period", "Users", "Retention Rate", "Revenue", "Churn Rate"];
-  var csv = headers.join(",") + "\n";
-  data.metrics.forEach(function (metric) {
+  var csv = `${headers.join(",")}\n`;
+  data.metrics.forEach((metric) => {
     var row = [
       metric.cohortId,
       metric.period,
@@ -528,7 +525,7 @@ function generateCohortCSV(data) {
       "$".concat(metric.revenue),
       "".concat(metric.churnRate, "%"),
     ];
-    csv += row.join(",") + "\n";
+    csv += `${row.join(",")}\n`;
   });
   return csv;
 }
@@ -537,8 +534,8 @@ function generateForecastCSV(data) {
     throw new Error("Invalid forecast data structure");
   }
   var headers = ["Date", "Prediction", "Lower Bound", "Upper Bound", "Confidence"];
-  var csv = headers.join(",") + "\n";
-  data.predictions.forEach(function (prediction) {
+  var csv = `${headers.join(",")}\n`;
+  data.predictions.forEach((prediction) => {
     var row = [
       prediction.date,
       prediction.value,
@@ -546,7 +543,7 @@ function generateForecastCSV(data) {
       prediction.upperBound || "",
       prediction.confidence || "",
     ];
-    csv += row.join(",") + "\n";
+    csv += `${row.join(",")}\n`;
   });
   return csv;
 }

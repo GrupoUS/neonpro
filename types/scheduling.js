@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TypeScript Type Definitions
  * NeonPro Intelligent Scheduling System

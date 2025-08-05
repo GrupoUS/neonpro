@@ -9,7 +9,7 @@
  * - Performance monitoring and feedback
  */
 
-import { describe, test, expect, jest } from "@jest/globals";
+import { describe, expect, jest, test } from "@jest/globals";
 import { NextRequest } from "next/server";
 
 // Mock the Supabase client

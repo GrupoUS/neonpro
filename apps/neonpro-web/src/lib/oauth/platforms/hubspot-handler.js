@@ -1,20 +1,19 @@
-"use strict";
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -26,15 +25,15 @@ var __extends =
   })();
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,11 +153,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HubSpotOAuthHandler = void 0;
 var base_oauth_handler_1 = require("../base-oauth-handler");
-var HubSpotOAuthHandler = /** @class */ (function (_super) {
+var HubSpotOAuthHandler = /** @class */ ((_super) => {
   __extends(HubSpotOAuthHandler, _super);
   function HubSpotOAuthHandler() {
     var _this = _super.call(this) || this;
@@ -189,11 +186,8 @@ var HubSpotOAuthHandler = /** @class */ (function (_super) {
     return _this;
   }
   HubSpotOAuthHandler.prototype.validateConfig = function () {
-    var _this = this;
     var requiredFields = ["clientId", "clientSecret", "redirectUri"];
-    var missing = requiredFields.filter(function (field) {
-      return !_this.config[field];
-    });
+    var missing = requiredFields.filter((field) => !this.config[field]);
     if (missing.length > 0) {
       throw new Error("Missing required HubSpot OAuth configuration: ".concat(missing.join(", ")));
     }
@@ -253,7 +247,7 @@ var HubSpotOAuthHandler = /** @class */ (function (_super) {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.text()];
           case 2:
             errorData = _a.sent();
@@ -332,7 +326,7 @@ var HubSpotOAuthHandler = /** @class */ (function (_super) {
             ];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.text()];
           case 3:
             errorData = _a.sent();
@@ -439,7 +433,7 @@ var HubSpotOAuthHandler = /** @class */ (function (_super) {
             ];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.text()];
           case 3:
             errorData = _a.sent();
@@ -541,7 +535,7 @@ var HubSpotOAuthHandler = /** @class */ (function (_super) {
             ];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.text()];
           case 3:
             errorData = _a.sent();
@@ -596,7 +590,7 @@ var HubSpotOAuthHandler = /** @class */ (function (_super) {
             ];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.text()];
           case 3:
             errorData = _a.sent();

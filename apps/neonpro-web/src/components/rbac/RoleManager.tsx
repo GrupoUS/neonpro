@@ -5,9 +5,22 @@
  * This component provides role and permission management interface for administrators
  */
 
-import React, { useState, useEffect } from "react";
-import type { UserRole, Permission, DEFAULT_ROLES } from "@/types/rbac";
-import type { usePermissions } from "@/hooks/usePermissions";
+import type {
+  AlertTriangle,
+  Edit,
+  Plus,
+  Save,
+  Settings,
+  Shield,
+  Trash2,
+  Users,
+  X,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -15,20 +28,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type { Checkbox } from "@/components/ui/checkbox";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Dialog,
   DialogContent,
@@ -38,6 +38,15 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type {
   Table,
   TableBody,
@@ -46,17 +55,9 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  Shield,
-  Users,
-  Settings,
-  Plus,
-  Edit,
-  Trash2,
-  Save,
-  X,
-  AlertTriangle,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { usePermissions } from "@/hooks/usePermissions";
+import type { DEFAULT_ROLES, Permission, UserRole } from "@/types/rbac";
 import type { PermissionGuard } from "./PermissionGuard";
 
 /**

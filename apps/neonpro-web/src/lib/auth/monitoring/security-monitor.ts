@@ -1,13 +1,13 @@
 // Real-time Security Monitoring System
 // Advanced threat detection and automated response for session security
 
-import type { UserSession, SecurityEvent, SuspiciousActivity } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
-import type { SessionUtils } from "@/lib/auth/utils/session-utils";
 import type {
-  getSuspiciousActivityDetector,
   AnomalyAlert,
+  getSuspiciousActivityDetector,
 } from "@/lib/auth/suspicious/suspicious-activity-detector";
+import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { SecurityEvent, SuspiciousActivity, UserSession } from "@/types/session";
 
 export interface SecurityThreat {
   id: string;

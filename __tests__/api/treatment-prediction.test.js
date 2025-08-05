@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Treatment Prediction API Tests
  * Story 9.1: AI-powered treatment success prediction
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,7 +42,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,8 +71,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -94,9 +91,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -155,7 +152,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
@@ -178,46 +175,40 @@ var mockSupabaseClient = {
     }),
   },
 };
-globals_1.jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: globals_1.jest.fn().mockResolvedValue(mockSupabaseClient),
-  };
-});
+globals_1.jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: globals_1.jest.fn().mockResolvedValue(mockSupabaseClient),
+}));
 // Mock the service
-globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
-  return {
-    TreatmentPredictionService: globals_1.jest.fn().mockImplementation(function () {
-      return {
-        generatePrediction: globals_1.jest.fn(),
-        createPrediction: globals_1.jest.fn(),
-        getPredictions: globals_1.jest.fn(),
-        getModels: globals_1.jest.fn(),
-        createModel: globals_1.jest.fn(),
-        updateModel: globals_1.jest.fn(),
-        getBatchPredictions: globals_1.jest.fn(),
-        getAnalytics: globals_1.jest.fn(),
-        createFeedback: globals_1.jest.fn(),
-        getModelPerformance: globals_1.jest.fn(),
-      };
-    }),
-  };
-});
-(0, globals_1.describe)("Treatment Prediction API Endpoints", function () {
-  beforeEach(function () {
+globals_1.jest.mock("@/app/lib/services/treatment-prediction", () => ({
+  TreatmentPredictionService: globals_1.jest.fn().mockImplementation(() => ({
+    generatePrediction: globals_1.jest.fn(),
+    createPrediction: globals_1.jest.fn(),
+    getPredictions: globals_1.jest.fn(),
+    getModels: globals_1.jest.fn(),
+    createModel: globals_1.jest.fn(),
+    updateModel: globals_1.jest.fn(),
+    getBatchPredictions: globals_1.jest.fn(),
+    getAnalytics: globals_1.jest.fn(),
+    createFeedback: globals_1.jest.fn(),
+    getModelPerformance: globals_1.jest.fn(),
+  })),
+}));
+(0, globals_1.describe)("Treatment Prediction API Endpoints", () => {
+  beforeEach(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("POST /api/treatment-prediction/predictions", function () {
-    (0, globals_1.test)("generates prediction with high accuracy", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("POST /api/treatment-prediction/predictions", () => {
+    (0, globals_1.test)("generates prediction with high accuracy", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, mockPredictionRequest, mockPredictionResponse, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/predictions/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/predictions/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -279,19 +270,19 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("validates required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("validates required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, invalidRequest, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/predictions/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/predictions/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -319,19 +310,19 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("handles authentication", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("handles authentication", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/predictions/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/predictions/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -355,21 +346,21 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("GET /api/treatment-prediction/predictions", function () {
-    (0, globals_1.test)("retrieves predictions with filtering", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("GET /api/treatment-prediction/predictions", () => {
+    (0, globals_1.test)("retrieves predictions with filtering", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, mockPredictions, url, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/predictions/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/predictions/route"),
+                ),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -406,29 +397,23 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               (0, globals_1.expect)(response.status).toBe(200);
               (0, globals_1.expect)(data.success).toBe(true);
               (0, globals_1.expect)(data.data).toHaveLength(2);
-              (0, globals_1.expect)(
-                data.data.every(function (p) {
-                  return p.prediction_score >= 0.85;
-                }),
-              ).toBe(true);
+              (0, globals_1.expect)(data.data.every((p) => p.prediction_score >= 0.85)).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("POST /api/treatment-prediction/batch", function () {
-    (0, globals_1.test)("processes batch predictions efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("POST /api/treatment-prediction/batch", () => {
+    (0, globals_1.test)("processes batch predictions efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, mockBatchRequest, mockBatchResponse, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/batch/route");
-                }),
+                Promise.resolve().then(() => require("@/app/api/treatment-prediction/batch/route")),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -495,21 +480,21 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("POST /api/treatment-prediction/models", function () {
-    (0, globals_1.test)("creates new prediction model with accuracy validation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("POST /api/treatment-prediction/models", () => {
+    (0, globals_1.test)("creates new prediction model with accuracy validation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, mockModelRequest, mockModelResponse, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/models/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/models/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -560,19 +545,19 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("rejects models below accuracy threshold", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("rejects models below accuracy threshold", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, lowAccuracyModel, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/models/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/models/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -603,21 +588,21 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("GET /api/treatment-prediction/analytics", function () {
-    (0, globals_1.test)("provides comprehensive analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("GET /api/treatment-prediction/analytics", () => {
+    (0, globals_1.test)("provides comprehensive analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, mockAnalytics, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/analytics/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/analytics/route"),
+                ),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -677,28 +662,26 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
                 data.data.overall_metrics.overall_accuracy,
               ).toBeGreaterThanOrEqual(0.85);
               (0, globals_1.expect)(
-                data.data.model_performance.every(function (m) {
-                  return m.accuracy >= 0.85;
-                }),
+                data.data.model_performance.every((m) => m.accuracy >= 0.85),
               ).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("POST /api/treatment-prediction/feedback", function () {
-    (0, globals_1.test)("processes medical professional feedback", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("POST /api/treatment-prediction/feedback", () => {
+    (0, globals_1.test)("processes medical professional feedback", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, mockFeedbackRequest, mockFeedbackResponse, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/feedback/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/feedback/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -747,21 +730,21 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("GET /api/treatment-prediction/performance", function () {
-    (0, globals_1.test)("monitors real-time performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("GET /api/treatment-prediction/performance", () => {
+    (0, globals_1.test)("monitors real-time performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, mockPerformanceMetrics, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/performance/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/performance/route"),
+                ),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -814,21 +797,21 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.test)("handles invalid JSON requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.test)("handles invalid JSON requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/predictions/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/predictions/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -851,19 +834,19 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("handles database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("handles database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var GET, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/predictions/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/predictions/route"),
+                ),
               ];
             case 1:
               GET = _a.sent().GET;
@@ -886,25 +869,25 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("handles rate limiting", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("handles rate limiting", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, promises, responses, successfulRequests;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/predictions/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/predictions/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
               promises = Array(100)
                 .fill(null)
-                .map(function () {
+                .map(() => {
                   var request = new server_1.NextRequest(
                     "http://localhost:3000/api/treatment-prediction/predictions",
                     {
@@ -918,28 +901,26 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [4 /*yield*/, Promise.all(promises)];
             case 2:
               responses = _a.sent();
-              successfulRequests = responses.filter(function (r) {
-                return r.status < 400;
-              });
+              successfulRequests = responses.filter((r) => r.status < 400);
               (0, globals_1.expect)(successfulRequests.length).toBeGreaterThan(0);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Performance Requirements", function () {
-    (0, globals_1.test)("meets response time requirements", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Performance Requirements", () => {
+    (0, globals_1.test)("meets response time requirements", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var POST, request, startTime, endTime, responseTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.resolve().then(function () {
-                  return require("@/app/api/treatment-prediction/predictions/route");
-                }),
+                Promise.resolve().then(() =>
+                  require("@/app/api/treatment-prediction/predictions/route"),
+                ),
               ];
             case 1:
               POST = _a.sent().POST;
@@ -969,7 +950,7 @@ globals_1.jest.mock("@/app/lib/services/treatment-prediction", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

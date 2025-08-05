@@ -3,7 +3,6 @@
  * Main navigation sidebar with NEONPROV1 branding
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppSidebar = void 0;
 var react_1 = require("react");
@@ -37,13 +36,13 @@ var sidebarItems = [
     icon: lucide_react_1.DollarSign,
   },
 ];
-var AppSidebar = function (_a) {
+var AppSidebar = (_a) => {
   var _b = _a.isOpen,
     isOpen = _b === void 0 ? true : _b,
     onToggle = _a.onToggle,
     className = _a.className;
   var pathname = (0, navigation_1.usePathname)();
-  var isActiveRoute = function (href) {
+  var isActiveRoute = (href) => {
     if (href === "/dashboard") {
       return pathname === "/" || pathname === "/dashboard";
     }
@@ -91,7 +90,7 @@ var AppSidebar = function (_a) {
         {/* Navigation */}
         <nav className="flex-1 p-4">
           <ul className="space-y-2">
-            {sidebarItems.map(function (item) {
+            {sidebarItems.map((item) => {
               var Icon = item.icon;
               var isActive = isActiveRoute(item.href);
               return (

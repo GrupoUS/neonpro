@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Marketing ROI Analysis Service
  * Comprehensive ROI calculation and optimization service for marketing campaigns and treatments
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,12 +155,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createmarketingROIService = exports.MarketingROIService = void 0;
 var server_1 = require("@/lib/supabase/server");
 var marketing_roi_1 = require("@/app/types/marketing-roi");
-var MarketingROIService = /** @class */ (function () {
+var MarketingROIService = /** @class */ (() => {
   // Supabase client created per method for proper request context
   function MarketingROIService() {}
   // ===== MARKETING CAMPAIGN ROI MANAGEMENT =====
@@ -350,7 +347,7 @@ var MarketingROIService = /** @class */ (function () {
       if (limit === void 0) {
         limit = 20;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -524,7 +521,7 @@ var MarketingROIService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var query, sortBy, sortOrder, _a, data, error, error_5;
       var _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 2, , 3]);
@@ -627,21 +624,15 @@ var MarketingROIService = /** @class */ (function () {
             totalSpend =
               (campaigns === null || campaigns === void 0
                 ? void 0
-                : campaigns.reduce(function (sum, c) {
-                    return sum + c.actual_spend;
-                  }, 0)) || 0;
+                : campaigns.reduce((sum, c) => sum + c.actual_spend, 0)) || 0;
             totalCustomers =
               (campaigns === null || campaigns === void 0
                 ? void 0
-                : campaigns.reduce(function (sum, c) {
-                    return sum + c.conversions;
-                  }, 0)) || 0;
+                : campaigns.reduce((sum, c) => sum + c.conversions, 0)) || 0;
             totalLeads =
               (campaigns === null || campaigns === void 0
                 ? void 0
-                : campaigns.reduce(function (sum, c) {
-                    return sum + c.leads_generated;
-                  }, 0)) || 0;
+                : campaigns.reduce((sum, c) => sum + c.leads_generated, 0)) || 0;
             cac = totalCustomers > 0 ? totalSpend / totalCustomers : 0;
             costPerLead = totalLeads > 0 ? totalSpend / totalLeads : 0;
             conversionRate = totalLeads > 0 ? (totalCustomers / totalLeads) * 100 : 0;
@@ -819,19 +810,19 @@ var MarketingROIService = /** @class */ (function () {
           case 0:
             _a.trys.push([0, 4, , 5]);
             channels = Object.values(marketing_roi_1.MarketingChannel);
-            cacPromises = channels.map(function (channel) {
-              return _this.calculateCAC(clinicId, channel, periodStart, periodEnd);
-            });
+            cacPromises = channels.map((channel) =>
+              _this.calculateCAC(clinicId, channel, periodStart, periodEnd),
+            );
             return [4 /*yield*/, Promise.all(cacPromises)];
           case 1:
             cacAnalysis = _a.sent();
-            ltvPromises = channels.map(function (channel) {
-              return _this.calculateLTV(clinicId, undefined, channel);
-            });
+            ltvPromises = channels.map((channel) =>
+              _this.calculateLTV(clinicId, undefined, channel),
+            );
             return [4 /*yield*/, Promise.all(ltvPromises)];
           case 2:
             ltvAnalysis_1 = _a.sent();
-            ltvCacRatios = cacAnalysis.map(function (cac, index) {
+            ltvCacRatios = cacAnalysis.map((cac, index) => {
               var ltv = ltvAnalysis_1[index];
               var ratio = ltv.ltv_cac_ratio;
               var status = "poor";
@@ -959,7 +950,7 @@ var MarketingROIService = /** @class */ (function () {
   MarketingROIService.prototype.getActiveAlerts = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, error_11;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -1023,7 +1014,7 @@ var MarketingROIService = /** @class */ (function () {
             channelRecommendations = _a.sent();
             recommendations.push.apply(recommendations, channelRecommendations);
             // Sort by priority score and potential impact
-            recommendations.sort(function (a, b) {
+            recommendations.sort((a, b) => {
               var aPriority = a.priority_score * a.estimated_profit_impact;
               var bPriority = b.priority_score * b.estimated_profit_impact;
               return bPriority - aPriority;
@@ -1049,7 +1040,7 @@ var MarketingROIService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendation, _a, data, error, error_13;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -1138,41 +1129,30 @@ var MarketingROIService = /** @class */ (function () {
             totalSpend =
               (campaigns === null || campaigns === void 0
                 ? void 0
-                : campaigns.reduce(function (sum, c) {
-                    return sum + c.actual_spend;
-                  }, 0)) || 0;
+                : campaigns.reduce((sum, c) => sum + c.actual_spend, 0)) || 0;
             totalRevenue =
               (campaigns === null || campaigns === void 0
                 ? void 0
-                : campaigns.reduce(function (sum, c) {
-                    return sum + c.revenue_generated;
-                  }, 0)) || 0;
+                : campaigns.reduce((sum, c) => sum + c.revenue_generated, 0)) || 0;
             totalProfit =
               (campaigns === null || campaigns === void 0
                 ? void 0
-                : campaigns.reduce(function (sum, c) {
-                    return sum + c.profit_generated;
-                  }, 0)) || 0;
+                : campaigns.reduce((sum, c) => sum + c.profit_generated, 0)) || 0;
             overallROI = totalSpend > 0 ? ((totalRevenue - totalSpend) / totalSpend) * 100 : 0;
             overallProfitROI = totalSpend > 0 ? (totalProfit / totalSpend) * 100 : 0;
             activeCampaigns =
               (campaigns === null || campaigns === void 0
                 ? void 0
-                : campaigns.filter(function (c) {
-                    return c.status === marketing_roi_1.CampaignStatus.ACTIVE;
-                  })) || [];
+                : campaigns.filter((c) => c.status === marketing_roi_1.CampaignStatus.ACTIVE)) ||
+              [];
             avgCampaignROI =
               (campaigns === null || campaigns === void 0 ? void 0 : campaigns.length) > 0
-                ? campaigns.reduce(function (sum, c) {
-                    return sum + c.roi_percentage;
-                  }, 0) / campaigns.length
+                ? campaigns.reduce((sum, c) => sum + c.roi_percentage, 0) / campaigns.length
                 : 0;
             sortedCampaigns =
               (campaigns === null || campaigns === void 0
                 ? void 0
-                : campaigns.sort(function (a, b) {
-                    return b.roi_percentage - a.roi_percentage;
-                  })) || [];
+                : campaigns.sort((a, b) => b.roi_percentage - a.roi_percentage)) || [];
             bestCampaign = sortedCampaigns[0];
             worstCampaign = sortedCampaigns[sortedCampaigns.length - 1];
             return [4 /*yield*/, this.getChannelPerformance(clinicId, periodStart, periodEnd)];
@@ -1231,9 +1211,10 @@ var MarketingROIService = /** @class */ (function () {
               most_profitable_treatments: treatmentProfitability,
               active_alerts_count: activeAlerts.length,
               optimization_opportunities_count: optimizationOpportunities.length,
-              potential_roi_improvement: optimizationOpportunities.reduce(function (sum, o) {
-                return sum + o.roi_improvement_percentage;
-              }, 0),
+              potential_roi_improvement: optimizationOpportunities.reduce(
+                (sum, o) => sum + o.roi_improvement_percentage,
+                0,
+              ),
               roi_trend_percentage: trends.roiTrend,
               cac_trend_percentage: trends.cacTrend,
               ltv_trend_percentage: trends.ltvTrend,
@@ -1267,7 +1248,7 @@ var MarketingROIService = /** @class */ (function () {
         if (granularity === void 0) {
           granularity = "daily";
         }
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, , 4]);
@@ -1377,7 +1358,7 @@ var MarketingROIService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var channelLTVMultipliers, baseLTV, multiplier;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         channelLTVMultipliers =
           ((_a = {}),
           (_a[marketing_roi_1.MarketingChannel.GOOGLE_ADS] = 1.2),
@@ -1403,7 +1384,7 @@ var MarketingROIService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var rules;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             rules = [
@@ -1443,7 +1424,7 @@ var MarketingROIService = /** @class */ (function () {
    */
   MarketingROIService.prototype.sendAlertNotifications = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would depend on your notification system
         console.log(
           "Sending ROI alert notification: ".concat(alert.title, " (").concat(alert.severity, ")"),
@@ -1457,7 +1438,7 @@ var MarketingROIService = /** @class */ (function () {
    */
   MarketingROIService.prototype.evaluateMonitoringRule = function (rule, campaign) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified evaluation logic
         if (rule.metric_type === marketing_roi_1.ROIMetricType.REVENUE_ROI) {
           switch (rule.comparison_operator) {
@@ -1476,7 +1457,5 @@ var MarketingROIService = /** @class */ (function () {
   return MarketingROIService;
 })();
 exports.MarketingROIService = MarketingROIService;
-var createmarketingROIService = function () {
-  return new MarketingROIService();
-};
+var createmarketingROIService = () => new MarketingROIService();
 exports.createmarketingROIService = createmarketingROIService;

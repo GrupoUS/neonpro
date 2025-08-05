@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useLGPDDashboard = useLGPDDashboard;
 exports.useConsentManagement = useConsentManagement;
@@ -161,7 +158,6 @@ var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 var sonner_1 = require("sonner");
 // Main LGPD Dashboard Hook
 function useLGPDDashboard() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     metrics = _a[0],
     setMetrics = _a[1];
@@ -172,46 +168,45 @@ function useLGPDDashboard() {
     error = _c[0],
     setError = _c[1];
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
-  var fetchMetrics = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data, err_1;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            setError(null);
-            return [4 /*yield*/, fetch("/api/lgpd/compliance")];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch LGPD metrics");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            setMetrics(data.metrics);
-            return [3 /*break*/, 5];
-          case 3:
-            err_1 = _a.sent();
-            setError(err_1);
-            sonner_1.toast.error("Erro ao carregar métricas LGPD");
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  (0, react_1.useEffect)(
-    function () {
-      fetchMetrics();
-    },
-    [fetchMetrics],
+  var fetchMetrics = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, err_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              setError(null);
+              return [4 /*yield*/, fetch("/api/lgpd/compliance")];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch LGPD metrics");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setMetrics(data.metrics);
+              return [3 /*break*/, 5];
+            case 3:
+              err_1 = _a.sent();
+              setError(err_1);
+              sonner_1.toast.error("Erro ao carregar métricas LGPD");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
   );
+  (0, react_1.useEffect)(() => {
+    fetchMetrics();
+  }, [fetchMetrics]);
   return {
     metrics: metrics,
     isLoading: isLoading,
@@ -221,7 +216,6 @@ function useLGPDDashboard() {
 }
 // Consent Management Hook
 function useConsentManagement() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     consents = _a[0],
     setConsents = _a[1];
@@ -232,55 +226,57 @@ function useConsentManagement() {
     error = _c[0],
     setError = _c[1];
   var user = (0, auth_helpers_react_1.useUser)();
-  var fetchConsents = (0, react_1.useCallback)(function (filters) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var params_1, response, data, err_2;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            setError(null);
-            params_1 = new URLSearchParams();
-            if (filters) {
-              Object.entries(filters).forEach(function (_a) {
-                var key = _a[0],
-                  value = _a[1];
-                if (value !== undefined) {
-                  params_1.append(key, value.toString());
-                }
-              });
-            }
-            return [4 /*yield*/, fetch("/api/lgpd/consent?".concat(params_1))];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch consents");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            setConsents(data.consents);
-            return [3 /*break*/, 5];
-          case 3:
-            err_2 = _a.sent();
-            setError(err_2);
-            sonner_1.toast.error("Erro ao carregar consentimentos");
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var fetchConsents = (0, react_1.useCallback)(
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
+        var params_1, response, data, err_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              setError(null);
+              params_1 = new URLSearchParams();
+              if (filters) {
+                Object.entries(filters).forEach((_a) => {
+                  var key = _a[0],
+                    value = _a[1];
+                  if (value !== undefined) {
+                    params_1.append(key, value.toString());
+                  }
+                });
+              }
+              return [4 /*yield*/, fetch("/api/lgpd/consent?".concat(params_1))];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch consents");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setConsents(data.consents);
+              return [3 /*break*/, 5];
+            case 3:
+              err_2 = _a.sent();
+              setError(err_2);
+              sonner_1.toast.error("Erro ao carregar consentimentos");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var updateConsent = (0, react_1.useCallback)(
-    function (consentData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (consentData) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -318,15 +314,14 @@ function useConsentManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchConsents],
   );
   var withdrawConsent = (0, react_1.useCallback)(
-    function (consentId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (consentId) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, err_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -361,8 +356,7 @@ function useConsentManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchConsents],
   );
   return {
@@ -376,7 +370,6 @@ function useConsentManagement() {
 }
 // Data Subject Rights Hook
 function useDataSubjectRights() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     requests = _a[0],
     setRequests = _a[1];
@@ -386,55 +379,57 @@ function useDataSubjectRights() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var fetchRequests = (0, react_1.useCallback)(function (filters) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var params_2, response, data, err_5;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            setError(null);
-            params_2 = new URLSearchParams();
-            if (filters) {
-              Object.entries(filters).forEach(function (_a) {
-                var key = _a[0],
-                  value = _a[1];
-                if (value !== undefined) {
-                  params_2.append(key, value.toString());
-                }
-              });
-            }
-            return [4 /*yield*/, fetch("/api/lgpd/data-subject-rights?".concat(params_2))];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch data subject requests");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            setRequests(data.requests);
-            return [3 /*break*/, 5];
-          case 3:
-            err_5 = _a.sent();
-            setError(err_5);
-            sonner_1.toast.error("Erro ao carregar solicitações");
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var fetchRequests = (0, react_1.useCallback)(
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
+        var params_2, response, data, err_5;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              setError(null);
+              params_2 = new URLSearchParams();
+              if (filters) {
+                Object.entries(filters).forEach((_a) => {
+                  var key = _a[0],
+                    value = _a[1];
+                  if (value !== undefined) {
+                    params_2.append(key, value.toString());
+                  }
+                });
+              }
+              return [4 /*yield*/, fetch("/api/lgpd/data-subject-rights?".concat(params_2))];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch data subject requests");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setRequests(data.requests);
+              return [3 /*break*/, 5];
+            case 3:
+              err_5 = _a.sent();
+              setError(err_5);
+              sonner_1.toast.error("Erro ao carregar solicitações");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var createRequest = (0, react_1.useCallback)(
-    function (requestData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (requestData) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -472,15 +467,14 @@ function useDataSubjectRights() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchRequests],
   );
   var updateRequest = (0, react_1.useCallback)(
-    function (requestId, updateData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (requestId, updateData) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_7;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -518,8 +512,7 @@ function useDataSubjectRights() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchRequests],
   );
   return {
@@ -533,7 +526,6 @@ function useDataSubjectRights() {
 }
 // Breach Management Hook
 function useBreachManagement() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     breaches = _a[0],
     setBreaches = _a[1];
@@ -543,55 +535,57 @@ function useBreachManagement() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var fetchBreaches = (0, react_1.useCallback)(function (filters) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var params_3, response, data, err_8;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            setError(null);
-            params_3 = new URLSearchParams();
-            if (filters) {
-              Object.entries(filters).forEach(function (_a) {
-                var key = _a[0],
-                  value = _a[1];
-                if (value !== undefined) {
-                  params_3.append(key, value.toString());
-                }
-              });
-            }
-            return [4 /*yield*/, fetch("/api/lgpd/breach?".concat(params_3))];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch breach incidents");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            setBreaches(data.breaches);
-            return [3 /*break*/, 5];
-          case 3:
-            err_8 = _a.sent();
-            setError(err_8);
-            sonner_1.toast.error("Erro ao carregar incidentes");
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var fetchBreaches = (0, react_1.useCallback)(
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
+        var params_3, response, data, err_8;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              setError(null);
+              params_3 = new URLSearchParams();
+              if (filters) {
+                Object.entries(filters).forEach((_a) => {
+                  var key = _a[0],
+                    value = _a[1];
+                  if (value !== undefined) {
+                    params_3.append(key, value.toString());
+                  }
+                });
+              }
+              return [4 /*yield*/, fetch("/api/lgpd/breach?".concat(params_3))];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch breach incidents");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setBreaches(data.breaches);
+              return [3 /*break*/, 5];
+            case 3:
+              err_8 = _a.sent();
+              setError(err_8);
+              sonner_1.toast.error("Erro ao carregar incidentes");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var reportBreach = (0, react_1.useCallback)(
-    function (breachData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (breachData) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_9;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -629,15 +623,14 @@ function useBreachManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchBreaches],
   );
   var updateBreach = (0, react_1.useCallback)(
-    function (breachId, updateData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (breachId, updateData) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_10;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -675,8 +668,7 @@ function useBreachManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchBreaches],
   );
   return {
@@ -690,7 +682,6 @@ function useBreachManagement() {
 }
 // Audit Trail Hook
 function useAuditTrail() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     events = _a[0],
     setEvents = _a[1];
@@ -700,100 +691,104 @@ function useAuditTrail() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var fetchEvents = (0, react_1.useCallback)(function (filters) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var params_4, response, data, err_11;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            setError(null);
-            params_4 = new URLSearchParams();
-            if (filters) {
-              Object.entries(filters).forEach(function (_a) {
-                var key = _a[0],
-                  value = _a[1];
-                if (value !== undefined) {
-                  params_4.append(key, value.toString());
-                }
-              });
-            }
-            return [4 /*yield*/, fetch("/api/lgpd/audit?".concat(params_4))];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch audit events");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            setEvents(data.events);
-            return [3 /*break*/, 5];
-          case 3:
-            err_11 = _a.sent();
-            setError(err_11);
-            sonner_1.toast.error("Erro ao carregar eventos de auditoria");
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var exportEvents = (0, react_1.useCallback)(function (format, filters) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var params_5, response, blob, url, a, err_12;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, , 4]);
-            params_5 = new URLSearchParams();
-            params_5.append("export", format);
-            if (filters) {
-              Object.entries(filters).forEach(function (_a) {
-                var key = _a[0],
-                  value = _a[1];
-                if (value !== undefined) {
-                  params_5.append(key, value.toString());
-                }
-              });
-            }
-            return [4 /*yield*/, fetch("/api/lgpd/audit?".concat(params_5))];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to export audit events");
-            }
-            return [4 /*yield*/, response.blob()];
-          case 2:
-            blob = _a.sent();
-            url = window.URL.createObjectURL(blob);
-            a = document.createElement("a");
-            a.href = url;
-            a.download = "audit-trail-"
-              .concat(new Date().toISOString().split("T")[0], ".")
-              .concat(format);
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-            sonner_1.toast.success("Exportação concluída com sucesso");
-            return [3 /*break*/, 4];
-          case 3:
-            err_12 = _a.sent();
-            setError(err_12);
-            sonner_1.toast.error("Erro ao exportar eventos");
-            throw err_12;
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var fetchEvents = (0, react_1.useCallback)(
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
+        var params_4, response, data, err_11;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              setError(null);
+              params_4 = new URLSearchParams();
+              if (filters) {
+                Object.entries(filters).forEach((_a) => {
+                  var key = _a[0],
+                    value = _a[1];
+                  if (value !== undefined) {
+                    params_4.append(key, value.toString());
+                  }
+                });
+              }
+              return [4 /*yield*/, fetch("/api/lgpd/audit?".concat(params_4))];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch audit events");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setEvents(data.events);
+              return [3 /*break*/, 5];
+            case 3:
+              err_11 = _a.sent();
+              setError(err_11);
+              sonner_1.toast.error("Erro ao carregar eventos de auditoria");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var exportEvents = (0, react_1.useCallback)(
+    (format, filters) =>
+      __awaiter(this, void 0, void 0, function () {
+        var params_5, response, blob, url, a, err_12;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, , 4]);
+              params_5 = new URLSearchParams();
+              params_5.append("export", format);
+              if (filters) {
+                Object.entries(filters).forEach((_a) => {
+                  var key = _a[0],
+                    value = _a[1];
+                  if (value !== undefined) {
+                    params_5.append(key, value.toString());
+                  }
+                });
+              }
+              return [4 /*yield*/, fetch("/api/lgpd/audit?".concat(params_5))];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to export audit events");
+              }
+              return [4 /*yield*/, response.blob()];
+            case 2:
+              blob = _a.sent();
+              url = window.URL.createObjectURL(blob);
+              a = document.createElement("a");
+              a.href = url;
+              a.download = "audit-trail-"
+                .concat(new Date().toISOString().split("T")[0], ".")
+                .concat(format);
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+              sonner_1.toast.success("Exportação concluída com sucesso");
+              return [3 /*break*/, 4];
+            case 3:
+              err_12 = _a.sent();
+              setError(err_12);
+              sonner_1.toast.error("Erro ao exportar eventos");
+              throw err_12;
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   return {
     events: events,
     isLoading: isLoading,
@@ -804,7 +799,6 @@ function useAuditTrail() {
 }
 // Compliance Assessment Hook
 function useComplianceAssessment() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     assessments = _a[0],
     setAssessments = _a[1];
@@ -814,55 +808,57 @@ function useComplianceAssessment() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var fetchAssessments = (0, react_1.useCallback)(function (filters) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var params_6, response, data, err_13;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, 4, 5]);
-            setIsLoading(true);
-            setError(null);
-            params_6 = new URLSearchParams();
-            if (filters) {
-              Object.entries(filters).forEach(function (_a) {
-                var key = _a[0],
-                  value = _a[1];
-                if (value !== undefined) {
-                  params_6.append(key, value.toString());
-                }
-              });
-            }
-            return [4 /*yield*/, fetch("/api/lgpd/compliance?".concat(params_6))];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to fetch assessments");
-            }
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            setAssessments(data.assessments || []);
-            return [3 /*break*/, 5];
-          case 3:
-            err_13 = _a.sent();
-            setError(err_13);
-            sonner_1.toast.error("Erro ao carregar avaliações");
-            return [3 /*break*/, 5];
-          case 4:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var fetchAssessments = (0, react_1.useCallback)(
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
+        var params_6, response, data, err_13;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setIsLoading(true);
+              setError(null);
+              params_6 = new URLSearchParams();
+              if (filters) {
+                Object.entries(filters).forEach((_a) => {
+                  var key = _a[0],
+                    value = _a[1];
+                  if (value !== undefined) {
+                    params_6.append(key, value.toString());
+                  }
+                });
+              }
+              return [4 /*yield*/, fetch("/api/lgpd/compliance?".concat(params_6))];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to fetch assessments");
+              }
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setAssessments(data.assessments || []);
+              return [3 /*break*/, 5];
+            case 3:
+              err_13 = _a.sent();
+              setError(err_13);
+              sonner_1.toast.error("Erro ao carregar avaliações");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var createAssessment = (0, react_1.useCallback)(
-    function (assessmentData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (assessmentData) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_14;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -900,15 +896,14 @@ function useComplianceAssessment() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchAssessments],
   );
   var runAutomatedAssessment = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_15;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -945,8 +940,7 @@ function useComplianceAssessment() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchAssessments],
   );
   return {
@@ -960,7 +954,6 @@ function useComplianceAssessment() {
 }
 // Consent Banner Hook (for public use)
 function useConsentBanner() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     purposes = _a[0],
     setPurposes = _a[1];
@@ -976,10 +969,10 @@ function useConsentBanner() {
   var user = (0, auth_helpers_react_1.useUser)();
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   var fetchConsentPurposes = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, data, error_1, err_16;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, 3, 4]);
@@ -1010,15 +1003,14 @@ function useConsentBanner() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   var fetchUserConsents = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, err_17;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!(user === null || user === void 0 ? void 0 : user.id)) return [2 /*return*/];
@@ -1045,15 +1037,14 @@ function useConsentBanner() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user === null || user === void 0 ? void 0 : user.id],
   );
   var updateUserConsent = (0, react_1.useCallback)(
-    function (purposeId, granted) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (purposeId, granted) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, err_18;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -1095,28 +1086,24 @@ function useConsentBanner() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchUserConsents],
   );
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     fetchConsentPurposes();
   }, []);
-  (0, react_1.useEffect)(
-    function () {
-      if (user === null || user === void 0 ? void 0 : user.id) {
-        fetchUserConsents();
-      }
-    },
-    [user === null || user === void 0 ? void 0 : user.id, fetchUserConsents],
-  );
+  (0, react_1.useEffect)(() => {
+    if (user === null || user === void 0 ? void 0 : user.id) {
+      fetchUserConsents();
+    }
+  }, [user === null || user === void 0 ? void 0 : user.id, fetchUserConsents]);
   return {
     purposes: purposes,
     userConsents: userConsents,
     isLoading: isLoading,
     error: error,
     updateUserConsent: updateUserConsent,
-    refetch: function () {
+    refetch: () => {
       fetchConsentPurposes();
       fetchUserConsents();
     },

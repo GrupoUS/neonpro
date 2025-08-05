@@ -5,9 +5,9 @@
  * Based on 2025 deployment best practices
  */
 
-import { promises as fs } from "fs";
-import path from "path";
-import { execSync } from "child_process";
+import { execSync } from "node:child_process";
+import { promises as fs } from "node:fs";
+import path from "node:path";
 
 // Deployment configuration
 export const DEPLOYMENT_CONFIG = {
@@ -49,13 +49,13 @@ export class PreBuildOptimizer {
 
     try {
       // Optimize images in public directory
-      await this.optimizeImages();
+      await PreBuildOptimizer.optimizeImages();
 
       // Clean up temporary files
-      await this.cleanupTempFiles();
+      await PreBuildOptimizer.cleanupTempFiles();
 
       // Validate environment variables
-      await this.validateEnvironment();
+      await PreBuildOptimizer.validateEnvironment();
 
       console.log("✅ Assets optimized successfully");
     } catch (error) {
@@ -68,7 +68,7 @@ export class PreBuildOptimizer {
     const publicDir = path.join(process.cwd(), "public");
 
     try {
-      const files = await this.getAllFiles(publicDir, [".png", ".jpg", ".jpeg"]);
+      const files = await PreBuildOptimizer.getAllFiles(publicDir, [".png", ".jpg", ".jpeg"]);
 
       for (const file of files) {
         // Check if image needs optimization (> 500KB)
@@ -92,8 +92,8 @@ export class PreBuildOptimizer {
       try {
         await fs.access(fullPath);
         // Don't delete, just report size
-        const size = await this.getDirectorySize(fullPath);
-        console.log(`📁 ${dir}: ${this.formatBytes(size)}`);
+        const size = await PreBuildOptimizer.getDirectorySize(fullPath);
+        console.log(`📁 ${dir}: ${PreBuildOptimizer.formatBytes(size)}`);
       } catch {
         // Directory doesn't exist, skip
       }
@@ -126,12 +126,12 @@ export class PreBuildOptimizer {
         const fullPath = path.join(dir, item.name);
 
         if (item.isDirectory()) {
-          files.push(...(await this.getAllFiles(fullPath, extensions)));
+          files.push(...(await PreBuildOptimizer.getAllFiles(fullPath, extensions)));
         } else if (extensions.some((ext) => item.name.toLowerCase().endsWith(ext))) {
           files.push(fullPath);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Directory doesn't exist or is not accessible
     }
 
@@ -148,13 +148,13 @@ export class PreBuildOptimizer {
         const fullPath = path.join(dirPath, item.name);
 
         if (item.isDirectory()) {
-          totalSize += await this.getDirectorySize(fullPath);
+          totalSize += await PreBuildOptimizer.getDirectorySize(fullPath);
         } else {
           const stats = await fs.stat(fullPath);
           totalSize += stats.size;
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Skip inaccessible directories
     }
 
@@ -165,7 +165,7 @@ export class PreBuildOptimizer {
     const sizes = ["B", "KB", "MB", "GB"];
     if (bytes === 0) return "0 B";
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
+    return `${(bytes / 1024 ** i).toFixed(1)} ${sizes[i]}`;
   }
 }
 
@@ -181,13 +181,13 @@ export class BuildOptimizer {
       await PreBuildOptimizer.optimizeAssets();
 
       // Configure build environment
-      this.configureBuildEnvironment();
+      BuildOptimizer.configureBuildEnvironment();
 
       // Run build with optimizations
-      await this.runBuild();
+      await BuildOptimizer.runBuild();
 
       // Post-build analysis
-      await this.analyzeBuild();
+      await BuildOptimizer.analyzeBuild();
 
       const buildTime = Date.now() - startTime;
       console.log(`🎉 Build completed in ${(buildTime / 1000).toFixed(2)}s`);
@@ -244,8 +244,8 @@ export class BuildOptimizer {
       await fs.access(buildDir);
 
       // Analyze build size
-      const buildSize = await PreBuildOptimizer["getDirectorySize"](buildDir);
-      console.log(`📦 Build size: ${PreBuildOptimizer["formatBytes"](buildSize)}`);
+      const buildSize = await PreBuildOptimizer.getDirectorySize(buildDir);
+      console.log(`📦 Build size: ${PreBuildOptimizer.formatBytes(buildSize)}`);
 
       // Check for critical files
       const criticalFiles = [".next/static", ".next/server", ".next/standalone"];
@@ -271,11 +271,11 @@ export class ProductionHealthCheck {
     console.log("🏥 Running production health checks...");
 
     const checks = [
-      this.checkBuildArtifacts,
-      this.checkEnvironmentVariables,
-      this.checkDependencies,
-      this.checkSecurityHeaders,
-      this.checkPerformanceConfig,
+      ProductionHealthCheck.checkBuildArtifacts,
+      ProductionHealthCheck.checkEnvironmentVariables,
+      ProductionHealthCheck.checkDependencies,
+      ProductionHealthCheck.checkSecurityHeaders,
+      ProductionHealthCheck.checkPerformanceConfig,
     ];
 
     const results = await Promise.allSettled(checks.map((check) => check()));
@@ -398,7 +398,7 @@ export class DeploymentAutomation {
       await BuildOptimizer.optimizedBuild();
 
       // Environment-specific deployment steps
-      await this.deployToEnvironment(environment);
+      await DeploymentAutomation.deployToEnvironment(environment);
 
       console.log(`🎉 Deployment to ${environment} completed successfully`);
     } catch (error) {
@@ -444,10 +444,11 @@ if (require.main === module) {
       ProductionHealthCheck.runHealthChecks().then((passed) => process.exit(passed ? 0 : 1));
       break;
 
-    case "deploy":
+    case "deploy": {
       const env = (process.argv[3] as "staging" | "production") || "production";
       DeploymentAutomation.deploy(env);
       break;
+    }
 
     default:
       console.log(`

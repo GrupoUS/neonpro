@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,10 +128,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -143,7 +140,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useInventoryReports = useInventoryReports;
 exports.useStockMovementReport = useStockMovementReport;
@@ -164,13 +161,11 @@ var react_1 = require("react");
 // =============================================================================
 var QUERY_KEYS = {
   reports: ["inventory-reports"],
-  report: function (params) {
-    return __spreadArray(__spreadArray([], QUERY_KEYS.reports, true), ["generate", params], false);
-  },
+  report: (params) =>
+    __spreadArray(__spreadArray([], QUERY_KEYS.reports, true), ["generate", params], false),
   definitions: ["inventory-reports", "definitions"],
-  definitionsWithFilter: function (filters) {
-    return __spreadArray(__spreadArray([], QUERY_KEYS.definitions, true), [filters], false);
-  },
+  definitionsWithFilter: (filters) =>
+    __spreadArray(__spreadArray([], QUERY_KEYS.definitions, true), [filters], false),
   dashboard: ["inventory-reports", "dashboard"],
 };
 // =============================================================================
@@ -179,7 +174,7 @@ var QUERY_KEYS = {
 function generateReport(parameters) {
   return __awaiter(this, void 0, void 0, function () {
     var response, error, result;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [
@@ -194,7 +189,7 @@ function generateReport(parameters) {
           ];
         case 1:
           response = _a.sent();
-          if (!!response.ok) return [3 /*break*/, 3];
+          if (response.ok) return [3 /*break*/, 3];
           return [4 /*yield*/, response.json()];
         case 2:
           error = _a.sent();
@@ -211,12 +206,12 @@ function generateReport(parameters) {
 function generateReportFromURL(type, filters) {
   return __awaiter(this, void 0, void 0, function () {
     var searchParams, response, error, result;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           searchParams = new URLSearchParams();
           searchParams.set("type", type);
-          Object.entries(filters).forEach(function (_a) {
+          Object.entries(filters).forEach((_a) => {
             var key = _a[0],
               value = _a[1];
             if (value !== undefined && value !== null) {
@@ -229,7 +224,7 @@ function generateReportFromURL(type, filters) {
           ];
         case 1:
           response = _a.sent();
-          if (!!response.ok) return [3 /*break*/, 3];
+          if (response.ok) return [3 /*break*/, 3];
           return [4 /*yield*/, response.json()];
         case 2:
           error = _a.sent();
@@ -246,7 +241,7 @@ function generateReportFromURL(type, filters) {
 function fetchReportDefinitions(filters) {
   return __awaiter(this, void 0, void 0, function () {
     var searchParams, response, error, result;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           searchParams = new URLSearchParams();
@@ -260,7 +255,7 @@ function fetchReportDefinitions(filters) {
           ];
         case 1:
           response = _a.sent();
-          if (!!response.ok) return [3 /*break*/, 3];
+          if (response.ok) return [3 /*break*/, 3];
           return [4 /*yield*/, response.json()];
         case 2:
           error = _a.sent();
@@ -277,7 +272,7 @@ function fetchReportDefinitions(filters) {
 function createReportDefinition(definition) {
   return __awaiter(this, void 0, void 0, function () {
     var response, error, result;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [
@@ -292,7 +287,7 @@ function createReportDefinition(definition) {
           ];
         case 1:
           response = _a.sent();
-          if (!!response.ok) return [3 /*break*/, 3];
+          if (response.ok) return [3 /*break*/, 3];
           return [4 /*yield*/, response.json()];
         case 2:
           error = _a.sent();
@@ -309,13 +304,13 @@ function createReportDefinition(definition) {
 function fetchDashboardStats() {
   return __awaiter(this, void 0, void 0, function () {
     var response, error, result;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, fetch("/api/inventory/reports/dashboard")];
         case 1:
           response = _a.sent();
-          if (!!response.ok) return [3 /*break*/, 3];
+          if (response.ok) return [3 /*break*/, 3];
           return [4 /*yield*/, response.json()];
         case 2:
           error = _a.sent();
@@ -336,7 +331,7 @@ function useInventoryReports() {
   var queryClient = (0, react_query_1.useQueryClient)();
   var generateReportMutation = (0, react_query_1.useMutation)({
     mutationFn: generateReport,
-    onSuccess: function () {
+    onSuccess: () => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.reports });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.dashboard });
@@ -344,7 +339,7 @@ function useInventoryReports() {
   });
   var createDefinitionMutation = (0, react_query_1.useMutation)({
     mutationFn: createReportDefinition,
-    onSuccess: function () {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.definitions });
     },
   });
@@ -368,9 +363,7 @@ function useStockMovementReport(filters, options) {
   };
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: function () {
-      return generateReport(parameters);
-    },
+    queryFn: () => generateReport(parameters),
     enabled: (options === null || options === void 0 ? void 0 : options.enabled) !== false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
@@ -384,9 +377,7 @@ function useStockValuationReport(filters, options) {
   };
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: function () {
-      return generateReport(parameters);
-    },
+    queryFn: () => generateReport(parameters),
     enabled: (options === null || options === void 0 ? void 0 : options.enabled) !== false,
     staleTime: 1000 * 60 * 10, // 10 minutes (valuation changes less frequently)
     refetchOnWindowFocus: false,
@@ -400,9 +391,7 @@ function useLowStockReport(filters, options) {
   };
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: function () {
-      return generateReport(parameters);
-    },
+    queryFn: () => generateReport(parameters),
     enabled: (options === null || options === void 0 ? void 0 : options.enabled) !== false,
     staleTime: 1000 * 60 * 2, // 2 minutes (low stock is critical)
     refetchOnWindowFocus: true,
@@ -416,9 +405,7 @@ function useExpiringItemsReport(filters, options) {
   };
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: function () {
-      return generateReport(parameters);
-    },
+    queryFn: () => generateReport(parameters),
     enabled: (options === null || options === void 0 ? void 0 : options.enabled) !== false,
     staleTime: 1000 * 60 * 60, // 1 hour (expiration dates don't change frequently)
     refetchOnWindowFocus: false,
@@ -432,9 +419,7 @@ function useTransferReport(filters, options) {
   };
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: function () {
-      return generateReport(parameters);
-    },
+    queryFn: () => generateReport(parameters),
     enabled: (options === null || options === void 0 ? void 0 : options.enabled) !== false,
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
@@ -448,9 +433,7 @@ function useLocationPerformanceReport(filters, options) {
   };
   return (0, react_query_1.useQuery)({
     queryKey: QUERY_KEYS.report(parameters),
-    queryFn: function () {
-      return generateReport(parameters);
-    },
+    queryFn: () => generateReport(parameters),
     enabled: (options === null || options === void 0 ? void 0 : options.enabled) !== false,
     staleTime: 1000 * 60 * 15, // 15 minutes (performance metrics change slowly)
     refetchOnWindowFocus: false,
@@ -462,9 +445,7 @@ function useLocationPerformanceReport(filters, options) {
 function useReportDefinitions(filters) {
   return (0, react_query_1.useQuery)({
     queryKey: filters ? QUERY_KEYS.definitionsWithFilter(filters) : QUERY_KEYS.definitions,
-    queryFn: function () {
-      return fetchReportDefinitions(filters);
-    },
+    queryFn: () => fetchReportDefinitions(filters),
     staleTime: 1000 * 60 * 10, // 10 minutes
     refetchOnWindowFocus: false,
   });
@@ -485,7 +466,7 @@ function useReportsDashboard() {
 // UTILITY HOOKS
 // =============================================================================
 function useReportFilters() {
-  var buildDateRangeFilter = (0, react_1.useCallback)(function (days) {
+  var buildDateRangeFilter = (0, react_1.useCallback)((days) => {
     var endDate = new Date();
     var startDate = new Date(endDate);
     startDate.setDate(startDate.getDate() - days);
@@ -494,7 +475,7 @@ function useReportFilters() {
       end_date: endDate.toISOString(),
     };
   }, []);
-  var buildMonthFilter = (0, react_1.useCallback)(function (monthsBack) {
+  var buildMonthFilter = (0, react_1.useCallback)((monthsBack) => {
     if (monthsBack === void 0) {
       monthsBack = 0;
     }
@@ -506,7 +487,7 @@ function useReportFilters() {
       end_date: endOfMonth.toISOString(),
     };
   }, []);
-  var buildYearFilter = (0, react_1.useCallback)(function (yearsBack) {
+  var buildYearFilter = (0, react_1.useCallback)((yearsBack) => {
     if (yearsBack === void 0) {
       yearsBack = 0;
     }
@@ -525,48 +506,49 @@ function useReportFilters() {
   };
 }
 function useReportExport() {
-  var _this = this;
-  var exportToCSV = (0, react_1.useCallback)(function (type, filters, filename) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var searchParams, response, blob, url, a;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            searchParams = new URLSearchParams();
-            searchParams.set("type", type);
-            searchParams.set("format", "csv");
-            Object.entries(filters).forEach(function (_a) {
-              var key = _a[0],
-                value = _a[1];
-              if (value !== undefined && value !== null) {
-                searchParams.set(key, value.toString());
+  var exportToCSV = (0, react_1.useCallback)(
+    (type, filters, filename) =>
+      __awaiter(this, void 0, void 0, function () {
+        var searchParams, response, blob, url, a;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              searchParams = new URLSearchParams();
+              searchParams.set("type", type);
+              searchParams.set("format", "csv");
+              Object.entries(filters).forEach((_a) => {
+                var key = _a[0],
+                  value = _a[1];
+                if (value !== undefined && value !== null) {
+                  searchParams.set(key, value.toString());
+                }
+              });
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/reports/generate?".concat(searchParams.toString())),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to export report");
               }
-            });
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/reports/generate?".concat(searchParams.toString())),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to export report");
-            }
-            return [4 /*yield*/, response.blob()];
-          case 2:
-            blob = _a.sent();
-            url = window.URL.createObjectURL(blob);
-            a = document.createElement("a");
-            a.href = url;
-            a.download = filename || "".concat(type, "_report_").concat(Date.now(), ".csv");
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+              return [4 /*yield*/, response.blob()];
+            case 2:
+              blob = _a.sent();
+              url = window.URL.createObjectURL(blob);
+              a = document.createElement("a");
+              a.href = url;
+              a.download = filename || "".concat(type, "_report_").concat(Date.now(), ".csv");
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   return { exportToCSV: exportToCSV };
 }
 // =============================================================================
@@ -579,61 +561,58 @@ function useInventoryAnalytics(filters) {
   var expiringItems = useExpiringItemsReport(filters);
   var transfers = useTransferReport(filters);
   var locationPerformance = useLocationPerformanceReport(filters);
-  var analytics = (0, react_1.useMemo)(
-    function () {
-      var _a, _b, _c, _d, _e, _f;
-      if (!stockValuation.data || !stockMovement.data) {
-        return null;
-      }
-      return {
-        overview: {
-          totalValue: stockValuation.data.summary.total_value,
-          totalItems: stockValuation.data.summary.total_items,
-          totalMovements: stockMovement.data.summary.total_movements,
-          lowStockItems:
-            ((_a = lowStock.data) === null || _a === void 0
-              ? void 0
-              : _a.summary.total_low_stock_items) || 0,
-          expiringItems:
-            ((_b = expiringItems.data) === null || _b === void 0
-              ? void 0
-              : _b.summary.total_expiring_items) || 0,
-          activeTransfers:
-            ((_c = transfers.data) === null || _c === void 0
-              ? void 0
-              : _c.summary.pending_transfers) || 0,
-        },
-        performance: {
-          averageTurnover:
-            ((_d = locationPerformance.data) === null || _d === void 0
-              ? void 0
-              : _d.summary.average_turnover_rate) || 0,
-          bestLocation:
-            ((_e = locationPerformance.data) === null || _e === void 0
-              ? void 0
-              : _e.summary.best_performing_location) || "",
-          systemEfficiency:
-            ((_f = locationPerformance.data) === null || _f === void 0
-              ? void 0
-              : _f.summary.average_performance_score) || 0,
-        },
-        trends: {
-          valueIn: stockMovement.data.summary.total_value_in,
-          valueOut: stockMovement.data.summary.total_value_out,
-          netValue: stockMovement.data.summary.net_value,
-          movementsByType: stockMovement.data.summary.by_type,
-        },
-      };
-    },
-    [
-      stockValuation.data,
-      stockMovement.data,
-      lowStock.data,
-      expiringItems.data,
-      transfers.data,
-      locationPerformance.data,
-    ],
-  );
+  var analytics = (0, react_1.useMemo)(() => {
+    var _a, _b, _c, _d, _e, _f;
+    if (!stockValuation.data || !stockMovement.data) {
+      return null;
+    }
+    return {
+      overview: {
+        totalValue: stockValuation.data.summary.total_value,
+        totalItems: stockValuation.data.summary.total_items,
+        totalMovements: stockMovement.data.summary.total_movements,
+        lowStockItems:
+          ((_a = lowStock.data) === null || _a === void 0
+            ? void 0
+            : _a.summary.total_low_stock_items) || 0,
+        expiringItems:
+          ((_b = expiringItems.data) === null || _b === void 0
+            ? void 0
+            : _b.summary.total_expiring_items) || 0,
+        activeTransfers:
+          ((_c = transfers.data) === null || _c === void 0
+            ? void 0
+            : _c.summary.pending_transfers) || 0,
+      },
+      performance: {
+        averageTurnover:
+          ((_d = locationPerformance.data) === null || _d === void 0
+            ? void 0
+            : _d.summary.average_turnover_rate) || 0,
+        bestLocation:
+          ((_e = locationPerformance.data) === null || _e === void 0
+            ? void 0
+            : _e.summary.best_performing_location) || "",
+        systemEfficiency:
+          ((_f = locationPerformance.data) === null || _f === void 0
+            ? void 0
+            : _f.summary.average_performance_score) || 0,
+      },
+      trends: {
+        valueIn: stockMovement.data.summary.total_value_in,
+        valueOut: stockMovement.data.summary.total_value_out,
+        netValue: stockMovement.data.summary.net_value,
+        movementsByType: stockMovement.data.summary.by_type,
+      },
+    };
+  }, [
+    stockValuation.data,
+    stockMovement.data,
+    lowStock.data,
+    expiringItems.data,
+    transfers.data,
+    locationPerformance.data,
+  ]);
   var isLoading =
     stockValuation.isLoading ||
     stockMovement.isLoading ||
@@ -648,24 +627,21 @@ function useInventoryAnalytics(filters) {
     expiringItems.error ||
     transfers.error ||
     locationPerformance.error;
-  var refetchAll = (0, react_1.useCallback)(
-    function () {
-      stockValuation.refetch();
-      stockMovement.refetch();
-      lowStock.refetch();
-      expiringItems.refetch();
-      transfers.refetch();
-      locationPerformance.refetch();
-    },
-    [
-      stockValuation.refetch,
-      stockMovement.refetch,
-      lowStock.refetch,
-      expiringItems.refetch,
-      transfers.refetch,
-      locationPerformance.refetch,
-    ],
-  );
+  var refetchAll = (0, react_1.useCallback)(() => {
+    stockValuation.refetch();
+    stockMovement.refetch();
+    lowStock.refetch();
+    expiringItems.refetch();
+    transfers.refetch();
+    locationPerformance.refetch();
+  }, [
+    stockValuation.refetch,
+    stockMovement.refetch,
+    lowStock.refetch,
+    expiringItems.refetch,
+    transfers.refetch,
+    locationPerformance.refetch,
+  ]);
   return {
     analytics: analytics,
     isLoading: isLoading,

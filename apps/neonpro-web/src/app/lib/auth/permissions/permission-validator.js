@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Permission Validation System
  *
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,10 +156,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -171,7 +168,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createpermissionValidator =
@@ -188,7 +185,7 @@ var client_1 = require("@/lib/supabase/client");
 var security_audit_logger_1 = require("../audit/security-audit-logger");
 // System roles with hierarchical permissions
 var SystemRole;
-(function (SystemRole) {
+((SystemRole) => {
   SystemRole["SUPER_ADMIN"] = "super_admin";
   SystemRole["ADMIN"] = "admin";
   SystemRole["MANAGER"] = "manager";
@@ -201,7 +198,7 @@ var SystemRole;
 })(SystemRole || (exports.SystemRole = SystemRole = {}));
 // Resource types in the system
 var ResourceType;
-(function (ResourceType) {
+((ResourceType) => {
   ResourceType["USER"] = "user";
   ResourceType["PATIENT"] = "patient";
   ResourceType["APPOINTMENT"] = "appointment";
@@ -217,7 +214,7 @@ var ResourceType;
 })(ResourceType || (exports.ResourceType = ResourceType = {}));
 // Actions that can be performed on resources
 var Permission;
-(function (Permission) {
+((Permission) => {
   Permission["CREATE"] = "create";
   Permission["READ"] = "read";
   Permission["UPDATE"] = "update";
@@ -475,7 +472,7 @@ var DEFAULT_PERMISSIONS = [
     conditions: ["booking_only"],
   },
 ];
-var PermissionValidationSystem = /** @class */ (function () {
+var PermissionValidationSystem = /** @class */ (() => {
   function PermissionValidationSystem() {
     this.supabase = (0, client_1.createClient)();
     this.permissionCache = new Map();
@@ -538,18 +535,10 @@ var PermissionValidationSystem = /** @class */ (function () {
   PermissionValidationSystem.prototype.checkMultiplePermissions = function (checks) {
     return __awaiter(this, void 0, void 0, function () {
       var results;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            return [
-              4 /*yield*/,
-              Promise.all(
-                checks.map(function (check) {
-                  return _this.checkPermission(check);
-                }),
-              ),
-            ];
+            return [4 /*yield*/, Promise.all(checks.map((check) => this.checkPermission(check)))];
           case 1:
             results = _a.sent();
             return [2 /*return*/, results];
@@ -698,31 +687,22 @@ var PermissionValidationSystem = /** @class */ (function () {
   /**
    * Get permissions for role
    */
-  PermissionValidationSystem.prototype.getRolePermissions = function (role) {
-    return DEFAULT_PERMISSIONS.filter(function (p) {
-      return p.role === role;
-    });
-  };
+  PermissionValidationSystem.prototype.getRolePermissions = (role) =>
+    DEFAULT_PERMISSIONS.filter((p) => p.role === role);
   /**
    * Check if role has higher privilege than another role
    */
-  PermissionValidationSystem.prototype.isHigherRole = function (role1, role2) {
-    return ROLE_HIERARCHY[role1] > ROLE_HIERARCHY[role2];
-  };
+  PermissionValidationSystem.prototype.isHigherRole = (role1, role2) =>
+    ROLE_HIERARCHY[role1] > ROLE_HIERARCHY[role2];
   /**
    * Get all available roles
    */
-  PermissionValidationSystem.prototype.getAvailableRoles = function () {
-    return Object.values(SystemRole);
-  };
+  PermissionValidationSystem.prototype.getAvailableRoles = () => Object.values(SystemRole);
   /**
    * Get permission requirements for resource action
    */
-  PermissionValidationSystem.prototype.getPermissionRequirements = function (resource, action) {
-    return DEFAULT_PERMISSIONS.filter(function (p) {
-      return p.resource === resource && p.actions.includes(action);
-    });
-  };
+  PermissionValidationSystem.prototype.getPermissionRequirements = (resource, action) =>
+    DEFAULT_PERMISSIONS.filter((p) => p.resource === resource && p.actions.includes(action));
   // Private methods
   PermissionValidationSystem.prototype.evaluatePermission = function (check, userPermissions) {
     return __awaiter(this, void 0, void 0, function () {
@@ -818,9 +798,8 @@ var PermissionValidationSystem = /** @class */ (function () {
       });
     });
   };
-  PermissionValidationSystem.prototype.matchesPermission = function (check, permission) {
-    return permission.resource === check.resource && permission.actions.includes(check.action);
-  };
+  PermissionValidationSystem.prototype.matchesPermission = (check, permission) =>
+    permission.resource === check.resource && permission.actions.includes(check.action);
   PermissionValidationSystem.prototype.evaluateConditions = function (
     check,
     conditions,
@@ -828,7 +807,7 @@ var PermissionValidationSystem = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var _i, conditions_1, condition;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement condition evaluation logic
         for (_i = 0, conditions_1 = conditions; _i < conditions_1.length; _i++) {
           condition = conditions_1[_i];
@@ -855,31 +834,27 @@ var PermissionValidationSystem = /** @class */ (function () {
       });
     });
   };
-  PermissionValidationSystem.prototype.generateCacheKey = function (check) {
-    return ""
+  PermissionValidationSystem.prototype.generateCacheKey = (check) =>
+    ""
       .concat(check.userId, ":")
       .concat(check.resource, ":")
       .concat(check.action, ":")
       .concat(check.resourceId || "none");
-  };
   PermissionValidationSystem.prototype.clearUserPermissionCache = function (userId) {
-    var _this = this;
     var keysToDelete = [];
-    this.permissionCache.forEach(function (_, key) {
+    this.permissionCache.forEach((_, key) => {
       if (key.startsWith("".concat(userId, ":"))) {
         keysToDelete.push(key);
       }
     });
-    keysToDelete.forEach(function (key) {
-      return _this.permissionCache.delete(key);
-    });
+    keysToDelete.forEach((key) => this.permissionCache.delete(key));
   };
   PermissionValidationSystem.prototype.logPermissionCheck = function (check, result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            if (!!result.allowed) return [3 /*break*/, 2];
+            if (result.allowed) return [3 /*break*/, 2];
             return [
               4 /*yield*/,
               security_audit_logger_1.securityAuditLogger.logPermissionDenied(
@@ -900,15 +875,13 @@ var PermissionValidationSystem = /** @class */ (function () {
   return PermissionValidationSystem;
 })();
 // Export singleton instance
-var createpermissionValidator = function () {
-  return new PermissionValidationSystem();
-};
+var createpermissionValidator = () => new PermissionValidationSystem();
 exports.createpermissionValidator = createpermissionValidator;
 // Export convenience functions
 function hasPermission(userId, resource, action, resourceId) {
   return __awaiter(this, void 0, void 0, function () {
     var result;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [
@@ -930,7 +903,7 @@ function hasPermission(userId, resource, action, resourceId) {
 function requirePermission(userId, resource, action, resourceId) {
   return __awaiter(this, void 0, void 0, function () {
     var result;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [
@@ -955,21 +928,14 @@ function requirePermission(userId, resource, action, resourceId) {
 function checkMultiplePermissions(userId, checks) {
   return __awaiter(this, void 0, void 0, function () {
     var permissionChecks, results;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
-          permissionChecks = checks.map(function (check) {
-            return __assign({ userId: userId }, check);
-          });
+          permissionChecks = checks.map((check) => __assign({ userId: userId }, check));
           return [4 /*yield*/, permissionValidator.checkMultiplePermissions(permissionChecks)];
         case 1:
           results = _a.sent();
-          return [
-            2 /*return*/,
-            results.map(function (result) {
-              return result.allowed;
-            }),
-          ];
+          return [2 /*return*/, results.map((result) => result.allowed)];
       }
     });
   });
@@ -977,7 +943,7 @@ function checkMultiplePermissions(userId, checks) {
 function getUserRoles(userId) {
   return __awaiter(this, void 0, void 0, function () {
     var permissions;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, permissionValidator.getUserPermissions(userId)];
@@ -990,8 +956,9 @@ function getUserRoles(userId) {
 }
 function updateUserRoles(userId, roles) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, permissionValidator.updateUserRoles(userId, roles)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      permissionValidator.updateUserRoles(userId, roles),
+    ]);
   });
 }

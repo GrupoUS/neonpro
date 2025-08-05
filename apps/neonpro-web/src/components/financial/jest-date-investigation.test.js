@@ -1,8 +1,8 @@
 /**
  * Test to see what Jest actually thinks the current date is
  */
-describe("Jest Date Investigation", function () {
-  it("should show what Jest thinks now is", function () {
+describe("Jest Date Investigation", () => {
+  it("should show what Jest thinks now is", () => {
     var now = new Date();
     var futureDate = new Date("2025-01-25T14:00:00.000Z");
     var comparison = futureDate > now;

@@ -42,36 +42,35 @@
  * ```
  */
 
+// Audit Logging
+export {
+  AUDIT_DATA_CATEGORIES,
+  type AuditLog,
+  AuditLogger,
+  auditLogSchema,
+  DataProcessingActivity,
+  RiskLevel,
+} from "./audit-logger";
 // Consent Management
 export {
   ConsentManager,
-  ConsentType,
+  type ConsentRecord,
   ConsentStatus,
-  LegalBasis,
+  ConsentType,
   consentRecordSchema,
   HEALTHCARE_CONSENT_PURPOSES,
   HEALTHCARE_DATA_CATEGORIES,
-  type ConsentRecord,
+  LegalBasis,
 } from "./consent-manager";
-
-// Audit Logging
-export {
-  AuditLogger,
-  DataProcessingActivity,
-  RiskLevel,
-  auditLogSchema,
-  AUDIT_DATA_CATEGORIES,
-  type AuditLog,
-} from "./audit-logger";
 
 // Data Subject Rights
 export {
-  DataSubjectRightsManager,
-  DataSubjectRight,
-  RequestStatus,
-  dataSubjectRequestSchema,
-  STANDARD_RESPONSE_TIMES,
   type DataSubjectRequest,
+  DataSubjectRight,
+  DataSubjectRightsManager,
+  dataSubjectRequestSchema,
+  RequestStatus,
+  STANDARD_RESPONSE_TIMES,
 } from "./data-subject-rights";
 
 /**
@@ -103,7 +102,7 @@ export class LGPDCompliance {
         consentType,
         granted: true,
         purpose: HEALTHCARE_CONSENT_PURPOSES[consentType],
-        dataCategories: this.getDataCategoriesForConsent(consentType),
+        dataCategories: LGPDCompliance.getDataCategoriesForConsent(consentType),
         ipAddress: params.ipAddress,
         userAgent: params.userAgent,
         source: "web",
@@ -151,7 +150,7 @@ export class LGPDCompliance {
     let authorized = true;
 
     for (const category of params.dataCategories) {
-      const requiredConsents = this.getRequiredConsentsForDataCategory(category);
+      const requiredConsents = LGPDCompliance.getRequiredConsentsForDataCategory(category);
       for (const consentType of requiredConsents) {
         const hasConsent = await ConsentManager.hasValidConsent(params.patientId, consentType);
         consentStatus[consentType] = hasConsent;
@@ -206,7 +205,7 @@ export class LGPDCompliance {
     });
 
     // Determine if ANPD notification is required
-    const notificationRequired = this.requiresANPDNotification(
+    const notificationRequired = LGPDCompliance.requiresANPDNotification(
       params.severity,
       params.dataCategories,
     );

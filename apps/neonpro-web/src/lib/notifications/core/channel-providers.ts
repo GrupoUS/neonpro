@@ -1,13 +1,13 @@
+import type { AuditLogger } from "../../auth/audit/audit-logger";
+import type { EmailProvider } from "../channels/email-provider";
+import type { PushProvider } from "../channels/push-provider";
+import type { SMSProvider } from "../channels/sms-provider";
+import type { WhatsAppProvider } from "../channels/whatsapp-provider";
 import type {
+  NotificationChannelEnum,
   NotificationConfig,
   NotificationResult,
-  NotificationChannelEnum,
 } from "./notification-manager";
-import type { EmailProvider } from "../channels/email-provider";
-import type { SMSProvider } from "../channels/sms-provider";
-import type { PushProvider } from "../channels/push-provider";
-import type { WhatsAppProvider } from "../channels/whatsapp-provider";
-import type { AuditLogger } from "../../auth/audit/audit-logger";
 
 export interface ChannelConfig {
   enabled: boolean;
@@ -161,10 +161,7 @@ export class ChannelProvider {
           });
 
           return result;
-        } catch (fallbackError) {
-          // Continuar para próximo fallback
-          continue;
-        }
+        } catch (fallbackError) {}
       }
 
       // Se todos os fallbacks falharam, lançar erro original

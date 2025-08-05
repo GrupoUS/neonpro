@@ -2,10 +2,10 @@
 // Epic 10.1: Automated Before/After Analysis
 // Target: ≥95% accuracy, <30s processing time
 
-import { describe, it, expect, jest, beforeEach, afterEach } from "@jest/globals";
-import { VisionAnalysisEngine } from "../../lib/vision/analysis-engine";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { createClient } from "@supabase/supabase-js";
 import * as tf from "@tensorflow/tfjs";
+import { VisionAnalysisEngine } from "../../lib/vision/analysis-engine";
 import { ANALYSIS_REQUIREMENTS } from "../../types/vision";
 
 // Mock dependencies
@@ -247,8 +247,8 @@ describe("VisionAnalysisEngine", () => {
       );
 
       expect(metrics.skinTexture).toBeDefined();
-      expect(metrics.skinTexture!.improvement).toBeGreaterThan(0);
-      expect(metrics.skinTexture!.confidence).toBeGreaterThanOrEqual(0.8);
+      expect(metrics.skinTexture?.improvement).toBeGreaterThan(0);
+      expect(metrics.skinTexture?.confidence).toBeGreaterThanOrEqual(0.8);
     });
 
     it("should calculate wrinkle reduction", async () => {
@@ -262,7 +262,7 @@ describe("VisionAnalysisEngine", () => {
       );
 
       expect(metrics.wrinkleReduction).toBeDefined();
-      expect(metrics.wrinkleReduction!.improvement).toBeGreaterThan(0);
+      expect(metrics.wrinkleReduction?.improvement).toBeGreaterThan(0);
     });
 
     it("should calculate scar healing progress", async () => {
@@ -276,7 +276,7 @@ describe("VisionAnalysisEngine", () => {
       );
 
       expect(metrics.scarHealing).toBeDefined();
-      expect(metrics.scarHealing!.improvement).toBeGreaterThan(0);
+      expect(metrics.scarHealing?.improvement).toBeGreaterThan(0);
     });
 
     it("should handle edge cases in metric calculation", async () => {
@@ -289,7 +289,7 @@ describe("VisionAnalysisEngine", () => {
       );
 
       expect(metrics.overallImprovement).toBe(0);
-      expect(metrics.skinTexture!.improvement).toBe(0);
+      expect(metrics.skinTexture?.improvement).toBe(0);
     });
   });
 

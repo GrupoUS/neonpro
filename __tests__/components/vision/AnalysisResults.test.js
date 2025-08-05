@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AnalysisResults Component Tests
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,37 +148,31 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 require("@testing-library/jest-dom");
 var AnalysisResults_1 = require("@/components/vision/AnalysisResults");
 // Mock the toast notifications
-jest.mock("sonner", function () {
-  return {
-    toast: {
-      success: jest.fn(),
-      error: jest.fn(),
-      info: jest.fn(),
-    },
-  };
-});
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+  },
+}));
 // Mock the export and share functions
 var mockExportAnalysis = jest.fn();
 var mockShareAnalysis = jest.fn();
-jest.mock("@/hooks/useVisionAnalysis", function () {
-  return {
-    useVisionAnalysis: function () {
-      return {
-        exportAnalysis: mockExportAnalysis,
-        shareAnalysis: mockShareAnalysis,
-        isExporting: false,
-        isSharing: false,
-      };
-    },
-  };
-});
+jest.mock("@/hooks/useVisionAnalysis", () => ({
+  useVisionAnalysis: () => ({
+    exportAnalysis: mockExportAnalysis,
+    shareAnalysis: mockShareAnalysis,
+    isExporting: false,
+    isSharing: false,
+  }),
+}));
 var mockAnalysisResult = {
   id: "analysis-123",
   patientId: "patient-456",
@@ -223,11 +214,11 @@ var mockAnalysisResult = {
   createdAt: "2024-01-15T10:30:00Z",
   updatedAt: "2024-01-15T10:30:00Z",
 };
-describe("AnalysisResults", function () {
-  beforeEach(function () {
+describe("AnalysisResults", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  it("should render analysis results correctly", function () {
+  it("should render analysis results correctly", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     // Check if main metrics are displayed
     expect(react_2.screen.getByText("96%")).toBeInTheDocument(); // Accuracy
@@ -235,7 +226,7 @@ describe("AnalysisResults", function () {
     expect(react_2.screen.getByText("15.0s")).toBeInTheDocument(); // Processing time
     expect(react_2.screen.getByText("94%")).toBeInTheDocument(); // Confidence
   });
-  it("should display before and after images", function () {
+  it("should display before and after images", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     var beforeImage = react_2.screen.getByAltText("Before treatment");
     var afterImage = react_2.screen.getByAltText("After treatment");
@@ -244,7 +235,7 @@ describe("AnalysisResults", function () {
     expect(beforeImage).toHaveAttribute("src", "/images/before.jpg");
     expect(afterImage).toHaveAttribute("src", "/images/after.jpg");
   });
-  it("should show detailed change metrics", function () {
+  it("should show detailed change metrics", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     // Check if all change metrics are displayed
     expect(react_2.screen.getByText("30.2%")).toBeInTheDocument(); // Texture
@@ -252,7 +243,7 @@ describe("AnalysisResults", function () {
     expect(react_2.screen.getByText("28.1%")).toBeInTheDocument(); // Clarity
     expect(react_2.screen.getByText("22.3%")).toBeInTheDocument(); // Symmetry
   });
-  it("should display annotations correctly", function () {
+  it("should display annotations correctly", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     // Check if annotations are listed
     expect(
@@ -262,10 +253,10 @@ describe("AnalysisResults", function () {
     expect(react_2.screen.getByText("95%")).toBeInTheDocument(); // First annotation confidence
     expect(react_2.screen.getByText("88%")).toBeInTheDocument(); // Second annotation confidence
   });
-  it("should handle export functionality", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should handle export functionality", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var exportButton, pdfOption;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockExportAnalysis.mockResolvedValue({ success: true });
@@ -276,7 +267,7 @@ describe("AnalysisResults", function () {
             react_2.fireEvent.click(pdfOption);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(mockExportAnalysis).toHaveBeenCalledWith(
                   mockAnalysisResult.id,
                   expect.objectContaining({
@@ -292,12 +283,11 @@ describe("AnalysisResults", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle share functionality", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle share functionality", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var shareButton, professionalOption;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockShareAnalysis.mockResolvedValue({
@@ -311,7 +301,7 @@ describe("AnalysisResults", function () {
             react_2.fireEvent.click(professionalOption);
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(mockShareAnalysis).toHaveBeenCalledWith(
                   mockAnalysisResult.id,
                   expect.objectContaining({
@@ -327,9 +317,8 @@ describe("AnalysisResults", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should show performance indicators", function () {
+    }));
+  it("should show performance indicators", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     // Check for performance indicators
     var accuracyIndicator = react_2.screen.getByTestId("accuracy-indicator");
@@ -337,7 +326,7 @@ describe("AnalysisResults", function () {
     expect(accuracyIndicator).toHaveClass("text-green-600"); // High accuracy
     expect(timeIndicator).toHaveClass("text-green-600"); // Fast processing
   });
-  it("should handle missing or incomplete data gracefully", function () {
+  it("should handle missing or incomplete data gracefully", () => {
     var incompleteResult = __assign(__assign({}, mockAnalysisResult), {
       changeMetrics: undefined,
       annotations: [],
@@ -350,21 +339,21 @@ describe("AnalysisResults", function () {
     expect(react_2.screen.getByText("No detailed metrics available")).toBeInTheDocument();
     expect(react_2.screen.getByText("No annotations found")).toBeInTheDocument();
   });
-  it("should display metadata information", function () {
+  it("should display metadata information", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     // Check if metadata is displayed
     expect(react_2.screen.getByText("Model Version: 2.1.0")).toBeInTheDocument();
     expect(react_2.screen.getByText("Resolution: 1024x768")).toBeInTheDocument();
     expect(react_2.screen.getByText(/January 15, 2024/)).toBeInTheDocument();
   });
-  it("should show quality indicators based on thresholds", function () {
+  it("should show quality indicators based on thresholds", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     // High accuracy (>85%) should show green indicator
     var qualityBadge = react_2.screen.getByTestId("quality-badge");
     expect(qualityBadge).toHaveClass("bg-green-100", "text-green-800");
     expect(qualityBadge).toHaveTextContent("Excellent");
   });
-  it("should handle low quality results appropriately", function () {
+  it("should handle low quality results appropriately", () => {
     var lowQualityResult = __assign(__assign({}, mockAnalysisResult), {
       accuracyScore: 0.75,
       confidenceScore: 0.7,
@@ -374,7 +363,7 @@ describe("AnalysisResults", function () {
     expect(qualityBadge).toHaveClass("bg-yellow-100", "text-yellow-800");
     expect(qualityBadge).toHaveTextContent("Needs Review");
   });
-  it("should allow toggling between different view modes", function () {
+  it("should allow toggling between different view modes", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     // Check if view mode tabs are present
     var overviewTab = react_2.screen.getByRole("tab", { name: /overview/i });
@@ -389,7 +378,7 @@ describe("AnalysisResults", function () {
     react_2.fireEvent.click(annotationsTab);
     expect(react_2.screen.getByText("Visual Annotations")).toBeInTheDocument();
   });
-  it("should handle image loading errors", function () {
+  it("should handle image loading errors", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     var beforeImage = react_2.screen.getByAltText("Before treatment");
     // Simulate image load error
@@ -397,7 +386,7 @@ describe("AnalysisResults", function () {
     // Should show fallback or error state
     expect(react_2.screen.getByText("Image failed to load")).toBeInTheDocument();
   });
-  it("should be accessible with proper ARIA labels", function () {
+  it("should be accessible with proper ARIA labels", () => {
     (0, react_2.render)(<AnalysisResults_1.AnalysisResults result={mockAnalysisResult} />);
     // Check for accessibility attributes
     expect(react_2.screen.getByRole("region", { name: /analysis results/i })).toBeInTheDocument();

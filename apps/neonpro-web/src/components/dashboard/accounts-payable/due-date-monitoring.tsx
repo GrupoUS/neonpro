@@ -1,5 +1,20 @@
 "use client";
 
+import type { format, isToday, isTomorrow, isYesterday } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  Bell,
+  Calendar,
+  Clock,
+  Eye,
+  Filter,
+  Mail,
+  Search,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -25,21 +40,6 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { format, isToday, isTomorrow, isYesterday } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type {
-  AlertTriangle,
-  Bell,
-  Calendar,
-  Clock,
-  Eye,
-  Filter,
-  Mail,
-  Search,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 
 // Mock data - substituir por dados reais do Supabase
 const mockPaymentReminders = [

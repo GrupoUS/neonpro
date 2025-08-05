@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var conflict_detector_1 = require("../conflict-detector");
 var types_1 = require("../types");
@@ -153,35 +150,23 @@ var supabase_js_1 = require("@supabase/supabase-js");
 // Mock Supabase
 jest.mock("@supabase/supabase-js");
 var mockSupabase = {
-  from: jest.fn(function () {
-    return {
-      select: jest.fn(function () {
-        return {
-          gte: jest.fn(function () {
-            return {
-              lte: jest.fn(function () {
-                return {
-                  eq: jest.fn(function () {
-                    return {
-                      neq: jest.fn(function () {
-                        return Promise.resolve({ data: [], error: null });
-                      }),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-    };
-  }),
+  from: jest.fn(() => ({
+    select: jest.fn(() => ({
+      gte: jest.fn(() => ({
+        lte: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            neq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+          })),
+        })),
+      })),
+    })),
+  })),
 };
 supabase_js_1.createClient.mockReturnValue(mockSupabase);
-describe("ConflictDetector", function () {
+describe("ConflictDetector", () => {
   var detector;
   var mockConfig;
-  beforeEach(function () {
+  beforeEach(() => {
     mockConfig = {
       enabledTypes: [
         types_1.ConflictType.TIME_OVERLAP,
@@ -201,15 +186,15 @@ describe("ConflictDetector", function () {
     detector = new conflict_detector_1.ConflictDetector(mockConfig);
     jest.clearAllMocks();
   });
-  describe("Initialization", function () {
-    it("should initialize with default config", function () {
+  describe("Initialization", () => {
+    it("should initialize with default config", () => {
       var defaultDetector = new conflict_detector_1.ConflictDetector();
       expect(defaultDetector).toBeInstanceOf(conflict_detector_1.ConflictDetector);
     });
-    it("should initialize with custom config", function () {
+    it("should initialize with custom config", () => {
       expect(detector).toBeInstanceOf(conflict_detector_1.ConflictDetector);
     });
-    it("should validate config on initialization", function () {
+    it("should validate config on initialization", () => {
       var invalidConfig = __assign(__assign({}, mockConfig), {
         severityThresholds: {
           low: 0.8,
@@ -217,12 +202,10 @@ describe("ConflictDetector", function () {
           high: 0.3,
         },
       });
-      expect(function () {
-        return new conflict_detector_1.ConflictDetector(invalidConfig);
-      }).toThrow();
+      expect(() => new conflict_detector_1.ConflictDetector(invalidConfig)).toThrow();
     });
   });
-  describe("detectConflicts", function () {
+  describe("detectConflicts", () => {
     var mockAppointment = {
       id: "test-appointment",
       start_time: "2024-01-15T10:00:00Z",
@@ -233,10 +216,10 @@ describe("ConflictDetector", function () {
       service_id: "service-1",
       status: "scheduled",
     };
-    it("should detect time overlap conflicts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should detect time overlap conflicts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var overlappingAppointment, conflicts;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               overlappingAppointment = {
@@ -250,28 +233,20 @@ describe("ConflictDetector", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [overlappingAppointment],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [overlappingAppointment],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, detector.detectConflicts(mockAppointment)];
             case 1:
@@ -282,12 +257,11 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should detect staff conflicts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should detect staff conflicts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var staffConflictAppointment, conflicts;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               staffConflictAppointment = {
@@ -301,28 +275,20 @@ describe("ConflictDetector", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [staffConflictAppointment],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [staffConflictAppointment],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, detector.detectConflicts(mockAppointment)];
             case 1:
@@ -332,12 +298,11 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should detect room conflicts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should detect room conflicts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var roomConflictAppointment, conflicts;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               roomConflictAppointment = {
@@ -351,28 +316,20 @@ describe("ConflictDetector", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [roomConflictAppointment],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [roomConflictAppointment],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, detector.detectConflicts(mockAppointment)];
             case 1:
@@ -382,12 +339,11 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle multiple conflicts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle multiple conflicts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var multipleConflicts, conflicts;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               multipleConflicts = [
@@ -413,28 +369,20 @@ describe("ConflictDetector", function () {
                 },
               ];
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: multipleConflicts,
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: multipleConflicts,
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, detector.detectConflicts(mockAppointment)];
             case 1:
@@ -443,37 +391,28 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should return empty array when no conflicts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should return empty array when no conflicts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var conflicts;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, detector.detectConflicts(mockAppointment)];
             case 1:
@@ -482,36 +421,27 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: null,
-                                    error: { message: "Database error" },
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: null,
+                            error: { message: "Database error" },
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [
                 4 /*yield*/,
@@ -522,10 +452,9 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("detectBatchConflicts", function () {
+  describe("detectBatchConflicts", () => {
     var mockAppointments = [
       {
         id: "appointment-1",
@@ -548,35 +477,27 @@ describe("ConflictDetector", function () {
         status: "scheduled",
       },
     ];
-    it("should detect conflicts for multiple appointments", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should detect conflicts for multiple appointments", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, detector.detectBatchConflicts(mockAppointments)];
             case 1:
@@ -587,12 +508,11 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle empty appointment list", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle empty appointment list", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, detector.detectBatchConflicts([])];
@@ -602,49 +522,38 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should respect batch size limits", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should respect batch size limits", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var largeAppointmentList, results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              largeAppointmentList = Array.from({ length: 250 }, function (_, i) {
-                return {
-                  id: "appointment-".concat(i),
-                  start_time: "2024-01-15T10:00:00Z",
-                  end_time: "2024-01-15T11:00:00Z",
-                  staff_id: "staff-".concat(i),
-                  room_id: "room-".concat(i),
-                  client_id: "client-".concat(i),
-                  service_id: "service-".concat(i),
-                  status: "scheduled",
-                };
-              });
+              largeAppointmentList = Array.from({ length: 250 }, (_, i) => ({
+                id: "appointment-".concat(i),
+                start_time: "2024-01-15T10:00:00Z",
+                end_time: "2024-01-15T11:00:00Z",
+                staff_id: "staff-".concat(i),
+                room_id: "room-".concat(i),
+                client_id: "client-".concat(i),
+                service_id: "service-".concat(i),
+                status: "scheduled",
+              }));
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, detector.detectBatchConflicts(largeAppointmentList)];
             case 1:
@@ -653,11 +562,10 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Severity Calculation", function () {
-    it("should calculate correct severity for high overlap", function () {
+  describe("Severity Calculation", () => {
+    it("should calculate correct severity for high overlap", () => {
       var appointment1 = {
         start_time: "2024-01-15T10:00:00Z",
         end_time: "2024-01-15T12:00:00Z",
@@ -670,7 +578,7 @@ describe("ConflictDetector", function () {
       var severity = detector.calculateOverlapSeverity(appointment1, appointment2);
       expect(severity).toBeGreaterThan(0.5);
     });
-    it("should calculate correct severity for low overlap", function () {
+    it("should calculate correct severity for low overlap", () => {
       var appointment1 = {
         start_time: "2024-01-15T10:00:00Z",
         end_time: "2024-01-15T12:00:00Z",
@@ -683,11 +591,11 @@ describe("ConflictDetector", function () {
       expect(severity).toBeLessThan(0.3);
     });
   });
-  describe("Cache Management", function () {
-    it("should use cache when enabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Cache Management", () => {
+    it("should use cache when enabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var appointment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               appointment = {
@@ -701,28 +609,20 @@ describe("ConflictDetector", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               // First call
               return [4 /*yield*/, detector.detectConflicts(appointment)];
@@ -739,11 +639,10 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should clear cache when requested", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should clear cache when requested", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, detector.clearCache()];
@@ -752,16 +651,15 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Configuration Updates", function () {
-    it("should update configuration", function () {
+  describe("Configuration Updates", () => {
+    it("should update configuration", () => {
       var newConfig = __assign(__assign({}, mockConfig), { cacheEnabled: false });
       detector.updateConfig(newConfig);
       // Configuration should be updated (no direct way to test, but method should not throw)
     });
-    it("should validate new configuration", function () {
+    it("should validate new configuration", () => {
       var invalidConfig = __assign(__assign({}, mockConfig), {
         severityThresholds: {
           low: 1.5,
@@ -769,16 +667,14 @@ describe("ConflictDetector", function () {
           high: 0.3,
         },
       });
-      expect(function () {
-        return detector.updateConfig(invalidConfig);
-      }).toThrow();
+      expect(() => detector.updateConfig(invalidConfig)).toThrow();
     });
   });
-  describe("Error Handling", function () {
-    it("should handle invalid appointment data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling", () => {
+    it("should handle invalid appointment data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidAppointment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidAppointment = {
@@ -800,12 +696,11 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle network timeouts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle network timeouts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var appointment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               appointment = {
@@ -819,25 +714,15 @@ describe("ConflictDetector", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.reject(new Error("Network timeout"));
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() => Promise.reject(new Error("Network timeout"))),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [
                 4 /*yield*/,
@@ -848,14 +733,13 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance", function () {
-    it("should handle large datasets efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance", () => {
+    it("should handle large datasets efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var appointment, largeDataset, startTime, conflicts, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               appointment = {
@@ -868,41 +752,31 @@ describe("ConflictDetector", function () {
                 service_id: "service-1",
                 status: "scheduled",
               };
-              largeDataset = Array.from({ length: 1000 }, function (_, i) {
-                return {
-                  id: "conflict-".concat(i),
-                  start_time: "2024-01-15T10:30:00Z",
-                  end_time: "2024-01-15T11:30:00Z",
-                  staff_id: "staff-".concat(i),
-                  room_id: "room-".concat(i),
-                  client_id: "client-".concat(i),
-                  service_id: "service-".concat(i),
-                  status: "scheduled",
-                };
-              });
+              largeDataset = Array.from({ length: 1000 }, (_, i) => ({
+                id: "conflict-".concat(i),
+                start_time: "2024-01-15T10:30:00Z",
+                end_time: "2024-01-15T11:30:00Z",
+                staff_id: "staff-".concat(i),
+                room_id: "room-".concat(i),
+                client_id: "client-".concat(i),
+                service_id: "service-".concat(i),
+                status: "scheduled",
+              }));
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: largeDataset,
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: largeDataset,
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               startTime = Date.now();
               return [4 /*yield*/, detector.detectConflicts(appointment)];
@@ -914,7 +788,6 @@ describe("ConflictDetector", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

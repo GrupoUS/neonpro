@@ -7,16 +7,7 @@
  * @compliance LGPD Art. 7�, 8�, 9�
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/client";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
-import type { LGPDCore, ConsentRecord } from "@/lib/compliance/lgpd-core";
-import type { ConsentType, ConsentStatus, LegalBasis } from "@/types/lgpd";
-import type { withAuth } from "@/lib/auth/middleware";
-import type { withRateLimit } from "@/lib/security/rate-limit";
-import type { auditLog } from "@/lib/audit/audit-logger";
-import type { validateCSRF } from "@/lib/security/csrf";
+import type { NextRequest } from "next/server";
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -115,7 +106,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Initialize LGPD Core
-    const lgpdCore = new LGPDCore(supabase);
+    const _lgpdCore = new LGPDCore(supabase);
 
     // Build query filters
     const filters: any = { clinicId };

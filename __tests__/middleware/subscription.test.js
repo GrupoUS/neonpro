@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Subscription Middleware Unit Tests
  * Tests core subscription validation and middleware functionality
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -28,7 +27,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,8 +56,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -79,9 +76,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -140,51 +137,45 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var testUtils_1 = require("../utils/testUtils");
 // Mock Next.js modules
-globals_1.jest.mock("next/headers", function () {
-  return {
-    cookies: globals_1.jest.fn(function () {
-      return {
-        get: globals_1.jest.fn(),
-        set: globals_1.jest.fn(),
-        delete: globals_1.jest.fn(),
-      };
-    }),
-  };
-});
-globals_1.jest.mock("next/navigation", function () {
-  return {
-    redirect: globals_1.jest.fn(),
-    permanentRedirect: globals_1.jest.fn(),
-  };
-});
+globals_1.jest.mock("next/headers", () => ({
+  cookies: globals_1.jest.fn(() => ({
+    get: globals_1.jest.fn(),
+    set: globals_1.jest.fn(),
+    delete: globals_1.jest.fn(),
+  })),
+}));
+globals_1.jest.mock("next/navigation", () => ({
+  redirect: globals_1.jest.fn(),
+  permanentRedirect: globals_1.jest.fn(),
+}));
 // ============================================================================
 // Test Setup
 // ============================================================================
-(0, globals_1.describe)("Subscription Middleware", function () {
+(0, globals_1.describe)("Subscription Middleware", () => {
   var mockFetch;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     // Reset all mocks
     globals_1.jest.clearAllMocks();
     // Setup fetch mock
     mockFetch = global.fetch;
     mockFetch.mockClear();
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.restoreAllMocks();
   });
   // ============================================================================
   // Core Middleware Tests
   // ============================================================================
-  (0, globals_1.describe)("validateSubscriptionStatus", function () {
-    (0, globals_1.it)("should validate active subscription correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("validateSubscriptionStatus", () => {
+    (0, globals_1.it)("should validate active subscription correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSubscription;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           mockSubscription = (0, testUtils_1.createMockSubscription)({
             status: "active",
             endDate: new Date(Date.now() + 86400000), // Tomorrow
@@ -193,12 +184,12 @@ globals_1.jest.mock("next/navigation", function () {
           (0, globals_1.expect)(mockSubscription.endDate > new Date()).toBe(true);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should detect expired subscriptions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should detect expired subscriptions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expiredSubscription;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           expiredSubscription = (0, testUtils_1.createMockSubscription)({
             status: "expired",
             endDate: new Date(Date.now() - 86400000), // Yesterday
@@ -207,12 +198,12 @@ globals_1.jest.mock("next/navigation", function () {
           (0, globals_1.expect)(expiredSubscription.endDate < new Date()).toBe(true);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should handle cancelled subscriptions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle cancelled subscriptions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var cancelledSubscription;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           cancelledSubscription = (0, testUtils_1.createMockSubscription)({
             status: "cancelled",
             autoRenew: false,
@@ -221,12 +212,12 @@ globals_1.jest.mock("next/navigation", function () {
           (0, globals_1.expect)(cancelledSubscription.autoRenew).toBe(false);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should validate subscription features correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate subscription features correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var premiumSubscription;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           premiumSubscription = (0, testUtils_1.createMockSubscription)({
             tier: "premium",
             features: ["premium-feature", "advanced-analytics", "priority-support"],
@@ -236,46 +227,46 @@ globals_1.jest.mock("next/navigation", function () {
           (0, globals_1.expect)(premiumSubscription.features.length).toBeGreaterThan(0);
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
   // ============================================================================
   // Route Protection Tests
   // ============================================================================
-  (0, globals_1.describe)("routeProtection", function () {
-    (0, globals_1.it)("should allow access to public routes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("routeProtection", () => {
+    (0, globals_1.it)("should allow access to public routes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var publicRoutes;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           publicRoutes = ["/", "/login", "/signup", "/about"];
-          publicRoutes.forEach(function (route) {
+          publicRoutes.forEach((route) => {
             (0, globals_1.expect)(route).toMatch(/^\/[a-z]*$/);
           });
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should protect premium routes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should protect premium routes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var premiumRoutes, subscription;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           premiumRoutes = ["/dashboard", "/analytics", "/settings"];
           subscription = (0, testUtils_1.createMockSubscription)({
             status: "active",
             tier: "premium",
           });
           (0, globals_1.expect)(subscription.status).toBe("active");
-          premiumRoutes.forEach(function (route) {
+          premiumRoutes.forEach((route) => {
             (0, globals_1.expect)(route).toMatch(/^\/[a-z]+$/);
           });
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should redirect expired users to upgrade page", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should redirect expired users to upgrade page", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expiredSubscription;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           expiredSubscription = (0, testUtils_1.createMockSubscription)({
             status: "expired",
             tier: "premium",
@@ -283,50 +274,50 @@ globals_1.jest.mock("next/navigation", function () {
           (0, globals_1.expect)(expiredSubscription.status).toBe("expired");
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
   // ============================================================================
   // Caching Tests
   // ============================================================================
-  (0, globals_1.describe)("subscriptionCaching", function () {
-    (0, globals_1.it)("should cache subscription data correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("subscriptionCaching", () => {
+    (0, globals_1.it)("should cache subscription data correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var cacheKey, mockData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           cacheKey = "subscription:test-user-123";
           mockData = (0, testUtils_1.createMockSubscription)();
           (0, globals_1.expect)(cacheKey).toContain("subscription:");
           (0, globals_1.expect)(mockData.id).toBeDefined();
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should handle cache invalidation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle cache invalidation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var cacheKey;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           cacheKey = "subscription:test-user-123";
           (0, globals_1.expect)(cacheKey).toMatch(/^subscription:[a-z0-9-]+$/);
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
   // ============================================================================
   // Error Handling Tests
   // ============================================================================
-  (0, globals_1.describe)("errorHandling", function () {
-    (0, globals_1.it)("should handle network errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("errorHandling", () => {
+    (0, globals_1.it)("should handle network errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockRejectedValueOnce(new Error("Network error"));
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, fetch("/api/subscription")];
             case 2:
               _a.sent();
@@ -340,12 +331,12 @@ globals_1.jest.mock("next/navigation", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle invalid subscription responses", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle invalid subscription responses", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce((0, testUtils_1.createMockResponse)(null, 404));
@@ -356,7 +347,7 @@ globals_1.jest.mock("next/navigation", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

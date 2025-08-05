@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🎯 NeonPro Experience Optimizer
  *
@@ -33,26 +32,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -72,13 +71,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -100,9 +99,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -174,7 +171,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExperienceOptimizer = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -186,7 +183,7 @@ var logger_1 = require("@/lib/utils/logger");
  * Experience Optimizer System
  * Sistema principal para otimização da experiência do paciente
  */
-var ExperienceOptimizer = /** @class */ (function () {
+var ExperienceOptimizer = /** @class */ (() => {
   function ExperienceOptimizer() {
     this.supabase = (0, client_1.createClient)();
     this.personalizationCache = new Map();
@@ -721,7 +718,7 @@ var ExperienceOptimizer = /** @class */ (function () {
                 optimization_scope: allocationScope,
                 current_allocation: currentAllocation,
                 optimized_allocation: optimizedAllocation,
-                optimization_constraints: Object.entries(constraints).map(function (_a) {
+                optimization_constraints: Object.entries(constraints).map((_a) => {
                   var key = _a[0],
                     value = _a[1];
                   return {
@@ -806,7 +803,7 @@ var ExperienceOptimizer = /** @class */ (function () {
               });
             }
             bestChannel = Object.entries(profile.behavioral_patterns.channel_preferences).sort(
-              function (_a, _b) {
+              (_a, _b) => {
                 var a = _a[1];
                 var b = _b[1];
                 return b.preference_score - a.preference_score;
@@ -823,9 +820,9 @@ var ExperienceOptimizer = /** @class */ (function () {
             }
             // Timing optimization
             if (profile.behavioral_patterns.optimal_contact_times.length > 0) {
-              bestTime = profile.behavioral_patterns.optimal_contact_times.sort(function (a, b) {
-                return b.response_probability - a.response_probability;
-              })[0];
+              bestTime = profile.behavioral_patterns.optimal_contact_times.sort(
+                (a, b) => b.response_probability - a.response_probability,
+              )[0];
               recommendations.push({
                 recommendation_type: "timing_optimization",
                 recommendation: "Contact during "
@@ -839,11 +836,10 @@ var ExperienceOptimizer = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              recommendations.sort(function (a, b) {
-                return (
-                  b.confidence_score * b.expected_impact - a.confidence_score * a.expected_impact
-                );
-              }),
+              recommendations.sort(
+                (a, b) =>
+                  b.confidence_score * b.expected_impact - a.confidence_score * a.expected_impact,
+              ),
             ];
           case 3:
             error_7 = _b.sent();
@@ -939,7 +935,7 @@ var ExperienceOptimizer = /** @class */ (function () {
   // ============================================================================
   ExperienceOptimizer.prototype.initializeOptimizer = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Initialize ML models, load configurations, etc.
         logger_1.logger.debug("Experience optimizer system initialized");
         return [2 /*return*/];
@@ -963,7 +959,7 @@ var ExperienceOptimizer = /** @class */ (function () {
           case 1:
             profiles = _a.sent().data;
             if (profiles) {
-              profiles.forEach(function (profile) {
+              profiles.forEach((profile) => {
                 _this.personalizationCache.set(profile.patient_id, profile);
               });
             }
@@ -986,7 +982,7 @@ var ExperienceOptimizer = /** @class */ (function () {
           case 1:
             tests = _a.sent().data;
             if (tests) {
-              tests.forEach(function (test) {
+              tests.forEach((test) => {
                 _this.activeABTests.set(test.test_id, test);
               });
             }
@@ -1010,23 +1006,24 @@ var ExperienceOptimizer = /** @class */ (function () {
     });
   };
   ExperienceOptimizer.prototype.startOptimizationLoop = function () {
-    var _this = this;
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!(this.optimizationQueue.length > 0)) return [3 /*break*/, 2];
-              return [4 /*yield*/, this.processOptimizationQueue()];
-            case 1:
-              _a.sent();
-              _a.label = 2;
-            case 2:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 30000); // Process every 30 seconds
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                if (!(this.optimizationQueue.length > 0)) return [3 /*break*/, 2];
+                return [4 /*yield*/, this.processOptimizationQueue()];
+              case 1:
+                _a.sent();
+                _a.label = 2;
+              case 2:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      30000,
+    ); // Process every 30 seconds
   };
   ExperienceOptimizer.prototype.processOptimizationQueue = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -1035,9 +1032,7 @@ var ExperienceOptimizer = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             batch = this.optimizationQueue
-              .sort(function (a, b) {
-                return b.priority - a.priority;
-              })
+              .sort((a, b) => b.priority - a.priority)
               .splice(0, this.OPTIMIZATION_BATCH_SIZE);
             (_i = 0), (batch_1 = batch);
             _a.label = 1;
@@ -1059,7 +1054,7 @@ var ExperienceOptimizer = /** @class */ (function () {
   };
   ExperienceOptimizer.prototype.processOptimizationItem = function (item) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Process individual optimization items
         logger_1.logger.debug("Processing optimization item", { type: item.type });
         return [2 /*return*/];
@@ -1068,7 +1063,7 @@ var ExperienceOptimizer = /** @class */ (function () {
   };
   ExperienceOptimizer.prototype.analyzeBehavioralPatterns = function (behavioralData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Analyze behavioral patterns for personalization
         return [
           2 /*return*/,
@@ -1108,7 +1103,7 @@ var ExperienceOptimizer = /** @class */ (function () {
   };
   ExperienceOptimizer.prototype.extractDemographicInsights = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Extract demographic insights for personalization
         return [
           2 /*return*/,
@@ -1127,68 +1122,65 @@ var ExperienceOptimizer = /** @class */ (function () {
     satisfactionData,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            appointment_booking_style: "planned",
-            communication_frequency: "regular",
-            follow_up_preferences: "automated",
-            feedback_willingness: 0.8,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          appointment_booking_style: "planned",
+          communication_frequency: "regular",
+          follow_up_preferences: "automated",
+          feedback_willingness: 0.8,
+        },
+      ]);
     });
   };
   ExperienceOptimizer.prototype.optimizePatientJourney = function (patientId, behavioralData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            optimal_journey_length: 7,
-            preferred_touchpoint_sequence: ["website", "phone", "in_person"],
-            conversion_triggers: [
-              {
-                trigger_type: "social_proof",
-                effectiveness_score: 0.8,
-                timing_sensitivity: 0.6,
-              },
-            ],
-            abandonment_risk_factors: [
-              {
-                factor: "long_wait_time",
-                risk_weight: 0.7,
-                mitigation_strategy: "proactive_communication",
-              },
-            ],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          optimal_journey_length: 7,
+          preferred_touchpoint_sequence: ["website", "phone", "in_person"],
+          conversion_triggers: [
+            {
+              trigger_type: "social_proof",
+              effectiveness_score: 0.8,
+              timing_sensitivity: 0.6,
+            },
+          ],
+          abandonment_risk_factors: [
+            {
+              factor: "long_wait_time",
+              risk_weight: 0.7,
+              mitigation_strategy: "proactive_communication",
+            },
+          ],
+        },
+      ]);
     });
   };
-  ExperienceOptimizer.prototype.calculatePersonalizationScore = function (
+  ExperienceOptimizer.prototype.calculatePersonalizationScore = (
     behavioralPatterns,
     demographicInsights,
     experiencePreferences,
-  ) {
+  ) => {
     // Calculate composite personalization score
     return 0.75; // Mock calculation
   };
-  ExperienceOptimizer.prototype.calculateConfidenceLevel = function (behavioralData) {
+  ExperienceOptimizer.prototype.calculateConfidenceLevel = (behavioralData) => {
     // Calculate confidence level based on data quality and quantity
     return Math.min(0.95, behavioralData.length / 100);
   };
-  ExperienceOptimizer.prototype.validateABTestConfig = function (config) {
+  ExperienceOptimizer.prototype.validateABTestConfig = (config) => {
     if (!config.test_name || config.test_name.trim().length === 0) {
       return { isValid: false, error: "Test name is required" };
     }
     if (!config.test_variants || config.test_variants.length < 2) {
       return { isValid: false, error: "At least 2 test variants are required" };
     }
-    var totalAllocation = config.test_variants.reduce(function (sum, variant) {
-      return sum + variant.traffic_allocation_percentage;
-    }, 0);
+    var totalAllocation = config.test_variants.reduce(
+      (sum, variant) => sum + variant.traffic_allocation_percentage,
+      0,
+    );
     if (Math.abs(totalAllocation - 100) > 0.01) {
       return { isValid: false, error: "Traffic allocation must sum to 100%" };
     }
@@ -1211,7 +1203,7 @@ var ExperienceOptimizer = /** @class */ (function () {
   };
   ExperienceOptimizer.prototype.initializeABTestTracking = function (test) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Initialize tracking for A/B test
         logger_1.logger.info("A/B test tracking initialized", { test_id: test.test_id });
         return [2 /*return*/];
@@ -1223,43 +1215,41 @@ var ExperienceOptimizer = /** @class */ (function () {
   ExperienceOptimizer.prototype.collectBaselineMetrics = function (target) {
     return __awaiter(this, void 0, void 0, function () {
       var _a;
-      return __generator(this, function (_b) {
-        return [
-          2 /*return*/,
-          ((_a = {}), (_a[target.target_metric] = target.current_baseline), _a),
-        ];
-      });
+      return __generator(this, (_b) => [
+        2 /*return*/,
+        ((_a = {}), (_a[target.target_metric] = target.current_baseline), _a),
+      ]);
     });
   };
   ExperienceOptimizer.prototype.prepareOptimizationData = function (target, strategy) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Would collect relevant data for optimization
       });
     });
   };
   ExperienceOptimizer.prototype.applyOptimizationAlgorithm = function (algorithm, data, target) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Would apply chosen algorithm
       });
     });
   };
   ExperienceOptimizer.prototype.implementOptimizationActions = function (actions) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, {}]; // Would implement the optimization actions
       });
     });
   };
   ExperienceOptimizer.prototype.measureOptimizationResults = function (target, results) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, {}]; // Would measure post-optimization metrics
       });
     });
   };
-  ExperienceOptimizer.prototype.calculateImprovements = function (baseline, optimized) {
+  ExperienceOptimizer.prototype.calculateImprovements = (baseline, optimized) => {
     var absolute = {};
     var percentage = {};
     for (var _i = 0, _a = Object.entries(optimized); _i < _a.length; _i++) {
@@ -1279,39 +1269,32 @@ var ExperienceOptimizer = /** @class */ (function () {
   };
   ExperienceOptimizer.prototype.extractPersonalizationInsights = function (actions, results) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  ExperienceOptimizer.prototype.calculateBusinessImpact = function (improvements, target) {
-    return {
-      revenue_impact: 0,
-      cost_savings: 0,
-      satisfaction_improvement: 0,
-      efficiency_gains: {},
-      roi_percentage: 0,
-    };
-  };
-  ExperienceOptimizer.prototype.generateLessonsLearned = function (actions, improvements, results) {
-    return [];
-  };
+  ExperienceOptimizer.prototype.calculateBusinessImpact = (improvements, target) => ({
+    revenue_impact: 0,
+    cost_savings: 0,
+    satisfaction_improvement: 0,
+    efficiency_gains: {},
+    roi_percentage: 0,
+  });
+  ExperienceOptimizer.prototype.generateLessonsLearned = (actions, improvements, results) => [];
   ExperienceOptimizer.prototype.generateNextOptimizationRecommendations = function (
     target,
     improvements,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  ExperienceOptimizer.prototype.assessDataQuality = function (data) {
+  ExperienceOptimizer.prototype.assessDataQuality = (data) => {
     return 0.8; // Mock assessment
   };
-  ExperienceOptimizer.prototype.evaluateAlgorithmPerformance = function (algorithm, improvements) {
-    return { accuracy: 0.8, efficiency: 0.7 };
-  };
+  ExperienceOptimizer.prototype.evaluateAlgorithmPerformance = (algorithm, improvements) => ({
+    accuracy: 0.8,
+    efficiency: 0.7,
+  });
   ExperienceOptimizer.prototype.saveOptimizationResult = function (result) {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
@@ -1328,23 +1311,17 @@ var ExperienceOptimizer = /** @class */ (function () {
   // Journey optimization helpers
   ExperienceOptimizer.prototype.analyzeCurrentJourneyPerformance = function (journeyData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
   ExperienceOptimizer.prototype.identifyJourneyBottlenecks = function (journeyData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   ExperienceOptimizer.prototype.analyzeSuccessPatterns = function (segment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   ExperienceOptimizer.prototype.generateOptimizedJourney = function (
@@ -1353,28 +1330,17 @@ var ExperienceOptimizer = /** @class */ (function () {
     patterns,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  ExperienceOptimizer.prototype.calculateExpectedJourneyImprovements = function (
-    current,
-    optimized,
-  ) {
-    return {
-      journey_completion_rate_improvement: 0.1,
-      average_satisfaction_improvement: 0.15,
-      time_to_conversion_improvement: 0.2,
-      resource_efficiency_improvement: 0.12,
-    };
-  };
-  ExperienceOptimizer.prototype.createJourneyImplementationPlan = function (journey) {
-    return [];
-  };
-  ExperienceOptimizer.prototype.defineJourneyValidationMetrics = function (current, expected) {
-    return [];
-  };
+  ExperienceOptimizer.prototype.calculateExpectedJourneyImprovements = (current, optimized) => ({
+    journey_completion_rate_improvement: 0.1,
+    average_satisfaction_improvement: 0.15,
+    time_to_conversion_improvement: 0.2,
+    resource_efficiency_improvement: 0.12,
+  });
+  ExperienceOptimizer.prototype.createJourneyImplementationPlan = (journey) => [];
+  ExperienceOptimizer.prototype.defineJourneyValidationMetrics = (current, expected) => [];
   ExperienceOptimizer.prototype.saveJourneyOptimization = function (optimization) {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
@@ -1391,23 +1357,19 @@ var ExperienceOptimizer = /** @class */ (function () {
   // Resource allocation helpers
   ExperienceOptimizer.prototype.analyzeCurrentResourceAllocation = function (scope) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
   ExperienceOptimizer.prototype.forecastResourceDemand = function (scope) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            forecasting_period_days: 30,
-            demand_predictions: [],
-            seasonal_patterns: [],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          forecasting_period_days: 30,
+          demand_predictions: [],
+          seasonal_patterns: [],
+        },
+      ]);
     });
   };
   ExperienceOptimizer.prototype.optimizeAllocation = function (
@@ -1417,27 +1379,18 @@ var ExperienceOptimizer = /** @class */ (function () {
     constraints,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
-  ExperienceOptimizer.prototype.performCostBenefitAnalysis = function (current, optimized) {
-    return {
-      implementation_costs: {},
-      operational_cost_changes: {},
-      revenue_impact: 0,
-      satisfaction_impact: 0,
-      efficiency_gains: {},
-      payback_period_months: 6,
-    };
-  };
-  ExperienceOptimizer.prototype.createResourceImplementationTimeline = function (
-    allocation,
-    analysis,
-  ) {
-    return [];
-  };
+  ExperienceOptimizer.prototype.performCostBenefitAnalysis = (current, optimized) => ({
+    implementation_costs: {},
+    operational_cost_changes: {},
+    revenue_impact: 0,
+    satisfaction_impact: 0,
+    efficiency_gains: {},
+    payback_period_months: 6,
+  });
+  ExperienceOptimizer.prototype.createResourceImplementationTimeline = (allocation, analysis) => [];
   ExperienceOptimizer.prototype.saveResourceOptimization = function (optimization) {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
@@ -1475,38 +1428,26 @@ var ExperienceOptimizer = /** @class */ (function () {
   // A/B testing helpers
   ExperienceOptimizer.prototype.collectABTestPerformanceData = function (testId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            total_participants: 0,
-            conversion_rates: {},
-            statistical_metrics: {},
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          total_participants: 0,
+          conversion_rates: {},
+          statistical_metrics: {},
+        },
+      ]);
     });
   };
-  ExperienceOptimizer.prototype.calculateStatisticalSignificance = function (data, config) {
-    return {
-      significance_achieved: false,
-      confidence_levels: {},
-      p_values: {},
-    };
-  };
-  ExperienceOptimizer.prototype.checkEarlyStoppingConditions = function (results, config) {
-    return false;
-  };
-  ExperienceOptimizer.prototype.identifyWinningVariant = function (data, results) {
-    return undefined;
-  };
-  ExperienceOptimizer.prototype.generateABTestRecommendations = function (
-    data,
-    results,
-    shouldStop,
-  ) {
-    return ["Continue monitoring test performance"];
-  };
+  ExperienceOptimizer.prototype.calculateStatisticalSignificance = (data, config) => ({
+    significance_achieved: false,
+    confidence_levels: {},
+    p_values: {},
+  });
+  ExperienceOptimizer.prototype.checkEarlyStoppingConditions = (results, config) => false;
+  ExperienceOptimizer.prototype.identifyWinningVariant = (data, results) => undefined;
+  ExperienceOptimizer.prototype.generateABTestRecommendations = (data, results, shouldStop) => [
+    "Continue monitoring test performance",
+  ];
   return ExperienceOptimizer;
 })();
 exports.ExperienceOptimizer = ExperienceOptimizer;

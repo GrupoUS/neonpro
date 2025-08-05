@@ -1,17 +1,16 @@
 // components/search/unified-search.tsx
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,10 +130,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -145,14 +142,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = UnifiedSearch;
 var search_client_1 = require("@/lib/search/search-client");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function UnifiedSearch(_a) {
-  var _this = this;
   var onResultSelect = _a.onResultSelect,
     _b = _a.placeholder,
     placeholder = _b === void 0 ? "Buscar pacientes, consultas, registros..." : _b,
@@ -188,7 +184,7 @@ function UnifiedSearch(_a) {
     savedSearches = _o[0],
     setSavedSearches = _o[1];
   // Carrega histórico de busca do localStorage
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     var history = localStorage.getItem("searchHistory");
     if (history) {
       setSearchHistory(JSON.parse(history));
@@ -200,10 +196,10 @@ function UnifiedSearch(_a) {
   }, []);
   // Função de busca debounced
   var performSearch = (0, react_1.useCallback)(
-    function (searchTerm) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (searchTerm) =>
+      __awaiter(this, void 0, void 0, function () {
         var searchQuery, response, newHistory, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!searchTerm.trim()) {
@@ -234,9 +230,7 @@ function UnifiedSearch(_a) {
               setSearchStats(response);
               newHistory = __spreadArray(
                 [searchTerm],
-                searchHistory.filter(function (h) {
-                  return h !== searchTerm;
-                }),
+                searchHistory.filter((h) => h !== searchTerm),
                 true,
               ).slice(0, 10);
               setSearchHistory(newHistory);
@@ -254,23 +248,17 @@ function UnifiedSearch(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [selectedTypes, searchHistory],
   );
   // Debounce para busca automática
-  (0, react_1.useEffect)(
-    function () {
-      var timer = setTimeout(function () {
-        performSearch(query);
-      }, 300);
-      return function () {
-        return clearTimeout(timer);
-      };
-    },
-    [query, performSearch],
-  );
-  var handleResultClick = function (result) {
+  (0, react_1.useEffect)(() => {
+    var timer = setTimeout(() => {
+      performSearch(query);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [query, performSearch]);
+  var handleResultClick = (result) => {
     if (onResultSelect) {
       onResultSelect(result);
     } else if (result.url) {
@@ -278,16 +266,14 @@ function UnifiedSearch(_a) {
     }
     setShowResults(false);
   };
-  var handleTypeToggle = function (type) {
-    setSelectedTypes(function (prev) {
-      return prev.includes(type)
-        ? prev.filter(function (t) {
-            return t !== type;
-          })
-        : __spreadArray(__spreadArray([], prev, true), [type], false);
-    });
+  var handleTypeToggle = (type) => {
+    setSelectedTypes((prev) =>
+      prev.includes(type)
+        ? prev.filter((t) => t !== type)
+        : __spreadArray(__spreadArray([], prev, true), [type], false),
+    );
   };
-  var saveCurrentSearch = function () {
+  var saveCurrentSearch = () => {
     if (!query.trim()) return;
     var name = prompt("Nome para esta busca:");
     if (name) {
@@ -300,11 +286,11 @@ function UnifiedSearch(_a) {
       localStorage.setItem("savedSearches", JSON.stringify(newSaved));
     }
   };
-  var loadSavedSearch = function (savedQuery) {
+  var loadSavedSearch = (savedQuery) => {
     setQuery(savedQuery);
     setShowResults(false);
   };
-  var getTypeIcon = function (type) {
+  var getTypeIcon = (type) => {
     var icons = {
       patients: "👤",
       appointments: "📅",
@@ -319,7 +305,7 @@ function UnifiedSearch(_a) {
     };
     return icons[type] || "📄";
   };
-  var getTypeLabel = function (type) {
+  var getTypeLabel = (type) => {
     var labels = {
       patients: "Pacientes",
       appointments: "Consultas",
@@ -343,18 +329,14 @@ function UnifiedSearch(_a) {
           <input
             type="text"
             value={query}
-            onChange={function (e) {
-              return setQuery(e.target.value);
-            }}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder={placeholder}
             className="w-full pl-10 pr-20 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
           />
 
           {query && (
             <button
-              onClick={function () {
-                return setQuery("");
-              }}
+              onClick={() => setQuery("")}
               className="absolute right-12 p-1 text-gray-400 hover:text-gray-600"
             >
               <lucide_react_1.X className="h-4 w-4" />
@@ -382,24 +364,20 @@ function UnifiedSearch(_a) {
       {showFilters && (
         <div className="mt-3 flex flex-wrap gap-2">
           {["patients", "appointments", "medical_records", "insights", "timeline_events"].map(
-            function (type) {
-              return (
-                <button
-                  key={type}
-                  onClick={function () {
-                    return handleTypeToggle(type);
-                  }}
-                  className={"flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-colors ".concat(
-                    selectedTypes.includes(type)
-                      ? "bg-blue-100 text-blue-800 border border-blue-200"
-                      : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200",
-                  )}
-                >
-                  <span>{getTypeIcon(type)}</span>
-                  {getTypeLabel(type)}
-                </button>
-              );
-            },
+            (type) => (
+              <button
+                key={type}
+                onClick={() => handleTypeToggle(type)}
+                className={"flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium transition-colors ".concat(
+                  selectedTypes.includes(type)
+                    ? "bg-blue-100 text-blue-800 border border-blue-200"
+                    : "bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200",
+                )}
+              >
+                <span>{getTypeIcon(type)}</span>
+                {getTypeLabel(type)}
+              </button>
+            ),
           )}
         </div>
       )}
@@ -414,19 +392,15 @@ function UnifiedSearch(_a) {
                 Buscas recentes
               </h3>
               <div className="flex flex-wrap gap-2">
-                {searchHistory.slice(0, 5).map(function (term, index) {
-                  return (
-                    <button
-                      key={index}
-                      onClick={function () {
-                        return setQuery(term);
-                      }}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs hover:bg-gray-200"
-                    >
-                      {term}
-                    </button>
-                  );
-                })}
+                {searchHistory.slice(0, 5).map((term, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setQuery(term)}
+                    className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs hover:bg-gray-200"
+                  >
+                    {term}
+                  </button>
+                ))}
               </div>
             </div>
           )}
@@ -438,20 +412,16 @@ function UnifiedSearch(_a) {
                 Buscas salvas
               </h3>
               <div className="space-y-1">
-                {savedSearches.slice(0, 3).map(function (saved, index) {
-                  return (
-                    <button
-                      key={index}
-                      onClick={function () {
-                        return loadSavedSearch(saved.query);
-                      }}
-                      className="flex justify-between items-center w-full p-2 text-left rounded-lg hover:bg-gray-50"
-                    >
-                      <span className="text-sm font-medium">{saved.name}</span>
-                      <span className="text-xs text-gray-500">{saved.query}</span>
-                    </button>
-                  );
-                })}
+                {savedSearches.slice(0, 3).map((saved, index) => (
+                  <button
+                    key={index}
+                    onClick={() => loadSavedSearch(saved.query)}
+                    className="flex justify-between items-center w-full p-2 text-left rounded-lg hover:bg-gray-50"
+                  >
+                    <span className="text-sm font-medium">{saved.name}</span>
+                    <span className="text-xs text-gray-500">{saved.query}</span>
+                  </button>
+                ))}
               </div>
             </div>
           )}
@@ -479,54 +449,43 @@ function UnifiedSearch(_a) {
                 {loading ? "Buscando..." : "Nenhum resultado encontrado"}
               </div>
             : <div className="divide-y divide-gray-100">
-                {results.map(function (result) {
-                  return (
-                    <button
-                      key={result.id}
-                      onClick={function () {
-                        return handleResultClick(result);
-                      }}
-                      className="w-full p-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="text-lg">{getTypeIcon(result.type)}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-medium text-gray-900 truncate">{result.title}</h4>
-                            <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
-                              {getTypeLabel(result.type)}
-                            </span>
+                {results.map((result) => (
+                  <button
+                    key={result.id}
+                    onClick={() => handleResultClick(result)}
+                    className="w-full p-3 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="text-lg">{getTypeIcon(result.type)}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium text-gray-900 truncate">{result.title}</h4>
+                          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded-full">
+                            {getTypeLabel(result.type)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 truncate">{result.description}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className="w-16 bg-gray-200 rounded-full h-1">
+                            <div
+                              className="bg-blue-500 h-1 rounded-full"
+                              style={{ width: "".concat(result.relevanceScore * 100, "%") }}
+                            />
                           </div>
-                          <p className="text-sm text-gray-600 truncate">{result.description}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <div className="w-16 bg-gray-200 rounded-full h-1">
-                              <div
-                                className="bg-blue-500 h-1 rounded-full"
-                                style={{ width: "".concat(result.relevanceScore * 100, "%") }}
-                              />
-                            </div>
-                            <span className="text-xs text-gray-500">
-                              {(result.relevanceScore * 100).toFixed(0)}% relevante
-                            </span>
-                          </div>
+                          <span className="text-xs text-gray-500">
+                            {(result.relevanceScore * 100).toFixed(0)}% relevante
+                          </span>
                         </div>
                       </div>
-                    </button>
-                  );
-                })}
+                    </div>
+                  </button>
+                ))}
               </div>}
         </div>
       )}
 
       {/* Overlay para fechar resultados */}
-      {showResults && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={function () {
-            return setShowResults(false);
-          }}
-        />
-      )}
+      {showResults && <div className="fixed inset-0 z-40" onClick={() => setShowResults(false)} />}
     </div>
   );
 }

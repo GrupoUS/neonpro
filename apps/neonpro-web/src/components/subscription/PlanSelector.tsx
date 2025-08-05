@@ -6,7 +6,11 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { BarChart3, Check, Crown, Rocket, Shield, Star, Users, Zap } from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,11 +18,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Switch } from "@/components/ui/switch";
 import type { Label } from "@/components/ui/label";
-import type { Check, Star, Rocket, Crown, Zap, Shield, Users, BarChart3 } from "lucide-react";
+import type { Switch } from "@/components/ui/switch";
 import type { formatCurrency } from "@/lib/utils";
 
 interface SubscriptionPlan {

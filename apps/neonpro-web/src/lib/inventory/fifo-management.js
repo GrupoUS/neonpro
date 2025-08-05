@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Story 11.3: FIFO Management and Batch Control System
  * Advanced FIFO optimization with expiry management and intelligent batch selection
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fifoManager = exports.FIFOManager = void 0;
 var stock_output_management_1 = require("./stock-output-management");
@@ -157,7 +154,7 @@ var stock_output_management_1 = require("./stock-output-management");
  * FIFO Management System
  * Advanced batch control with expiry optimization and intelligent selection
  */
-var FIFOManager = /** @class */ (function () {
+var FIFOManager = /** @class */ (() => {
   function FIFOManager() {
     this.supabase = createClient(ComponentClient());
     this.stockOutputManager = new stock_output_management_1.StockOutputManager();
@@ -190,7 +187,7 @@ var FIFOManager = /** @class */ (function () {
             batchesByProduct =
               (batches === null || batches === void 0
                 ? void 0
-                : batches.reduce(function (acc, batch) {
+                : batches.reduce((acc, batch) => {
                     var productId = batch.produto_id;
                     if (!acc[productId]) {
                       acc[productId] = [];
@@ -198,7 +195,7 @@ var FIFOManager = /** @class */ (function () {
                     acc[productId].push(batch);
                     return acc;
                   }, {})) || {};
-            analyses = Object.entries(batchesByProduct).map(function (_a) {
+            analyses = Object.entries(batchesByProduct).map((_a) => {
               var productId = _a[0],
                 productBatches = _a[1];
               return _this.analyzeProductFIFO(productId, productBatches);
@@ -261,7 +258,7 @@ var FIFOManager = /** @class */ (function () {
             alerts =
               (expiringBatches === null || expiringBatches === void 0
                 ? void 0
-                : expiringBatches.map(function (batch) {
+                : expiringBatches.map((batch) => {
                     var _a, _b;
                     var daysToExpiry = batch.dias_para_vencer;
                     var estimatedValue =
@@ -503,9 +500,7 @@ var FIFOManager = /** @class */ (function () {
                 })
                 .in(
                   "id",
-                  expiringBatches.map(function (b) {
-                    return b.id;
-                  }),
+                  expiringBatches.map((b) => b.id),
                 ),
             ];
           case 2:
@@ -602,18 +597,14 @@ var FIFOManager = /** @class */ (function () {
         recomendacoes;
       var _a, _b;
       return __generator(this, function (_c) {
-        sortedBatches = batches.sort(function (a, b) {
+        sortedBatches = batches.sort((a, b) => {
           if (a.data_validade && b.data_validade) {
             return new Date(a.data_validade).getTime() - new Date(b.data_validade).getTime();
           }
           return a.prioridade_uso - b.prioridade_uso;
         });
-        lotesPriorizados = sortedBatches.filter(function (b) {
-          return b.prioridade_uso <= 3;
-        });
-        lotesVencendo = sortedBatches.filter(function (b) {
-          return b.dias_para_vencer <= 30;
-        });
+        lotesPriorizados = sortedBatches.filter((b) => b.prioridade_uso <= 3);
+        lotesVencendo = sortedBatches.filter((b) => b.dias_para_vencer <= 30);
         economiaFifo = this.calculateFIFOEconomy(sortedBatches);
         desperdicioEvitado = this.calculateWastePrevention(lotesVencendo);
         recomendacoes = this.generateFIFORecommendations(sortedBatches);
@@ -700,7 +691,7 @@ var FIFOManager = /** @class */ (function () {
   /**
    * Generate expiry actions for a batch
    */
-  FIFOManager.prototype.generateExpiryActions = function (batch, estimatedValue) {
+  FIFOManager.prototype.generateExpiryActions = (batch, estimatedValue) => {
     var actions = [];
     var daysToExpiry = batch.dias_para_vencer;
     if (daysToExpiry > 7) {
@@ -749,7 +740,7 @@ var FIFOManager = /** @class */ (function () {
   /**
    * Calculate expiry priority based on days and value
    */
-  FIFOManager.prototype.calculateExpiryPriority = function (daysToExpiry, estimatedValue) {
+  FIFOManager.prototype.calculateExpiryPriority = (daysToExpiry, estimatedValue) => {
     if (daysToExpiry <= 0) return "critica";
     if (daysToExpiry <= 3) return "alta";
     if (daysToExpiry <= 7 || estimatedValue > 1000) return "media";
@@ -758,7 +749,7 @@ var FIFOManager = /** @class */ (function () {
   /**
    * Get recommendation reason for batch
    */
-  FIFOManager.prototype.getRecommendationReason = function (batch) {
+  FIFOManager.prototype.getRecommendationReason = (batch) => {
     if (batch.dias_para_vencer <= 7) return "Vencimento iminente";
     if (batch.dias_para_vencer <= 30) return "Próximo ao vencimento";
     if (batch.prioridade_uso <= 3) return "Alta prioridade FIFO";
@@ -767,7 +758,7 @@ var FIFOManager = /** @class */ (function () {
   /**
    * Calculate FIFO economy (simplified)
    */
-  FIFOManager.prototype.calculateFIFOEconomy = function (batches) {
+  FIFOManager.prototype.calculateFIFOEconomy = (batches) => {
     // This would contain complex calculations
     // For now, returning a placeholder
     return batches.length * 50; // R$ 50 per batch in FIFO savings
@@ -775,17 +766,17 @@ var FIFOManager = /** @class */ (function () {
   /**
    * Calculate waste prevention value
    */
-  FIFOManager.prototype.calculateWastePrevention = function (expiringBatches) {
-    return expiringBatches.reduce(function (total, batch) {
-      return total + batch.quantidade_disponivel * (batch.custo_unitario || 0);
-    }, 0);
-  };
+  FIFOManager.prototype.calculateWastePrevention = (expiringBatches) =>
+    expiringBatches.reduce(
+      (total, batch) => total + batch.quantidade_disponivel * (batch.custo_unitario || 0),
+      0,
+    );
   /**
    * Generate FIFO recommendations
    */
-  FIFOManager.prototype.generateFIFORecommendations = function (batches) {
+  FIFOManager.prototype.generateFIFORecommendations = (batches) => {
     var recommendations = [];
-    batches.forEach(function (batch) {
+    batches.forEach((batch) => {
       if (batch.dias_para_vencer <= 7) {
         recommendations.push({
           tipo: "usar_prioritario",

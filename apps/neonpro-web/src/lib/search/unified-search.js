@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,7 +154,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createunifiedSearchSystem = void 0;
 // lib/search/unified-search.ts - Server-side search implementation
@@ -168,7 +165,7 @@ var duplicate_detection_1 = require("@/lib/patients/duplicate-detection");
 var photo_recognition_1 = require("@/lib/patients/photo-recognition");
 var profile_manager_1 = require("@/lib/patients/profile-manager");
 var nlp_engine_1 = require("./nlp-engine");
-var createunifiedSearchSystem = /** @class */ (function () {
+var createunifiedSearchSystem = /** @class */ (() => {
   function createunifiedSearchSystem() {
     this.supabase = (0, server_1.createClient)();
     this.profileManager = new profile_manager_1.ProfileManager();
@@ -257,9 +254,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
             searchResults = _e.sent();
             allResults = searchResults.flat();
             // Ordenar por relevância (considerando scores NLP se disponível)
-            allResults.sort(function (a, b) {
-              return b.relevanceScore - a.relevanceScore;
-            });
+            allResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
             offset = ((_c = query.options) === null || _c === void 0 ? void 0 : _c.offset) || 0;
             limit = ((_d = query.options) === null || _d === void 0 ? void 0 : _d.limit) || 50;
             paginatedResults = allResults.slice(offset, offset + limit);
@@ -292,10 +287,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
   /**
    * Refina tipos de busca baseado na análise NLP
    */
-  createunifiedSearchSystem.prototype.refineSearchTypesFromNLP = function (
-    defaultTypes,
-    nlpAnalysis,
-  ) {
+  createunifiedSearchSystem.prototype.refineSearchTypesFromNLP = (defaultTypes, nlpAnalysis) => {
     var refinedTypes = __spreadArray([], defaultTypes, true);
     // Based on intent target, prioritize certain search types
     switch (nlpAnalysis.intent.target) {
@@ -321,15 +313,9 @@ var createunifiedSearchSystem = /** @class */ (function () {
         break;
     }
     // Based on entities found, add relevant search types
-    var hasPersonEntity = nlpAnalysis.entities.some(function (e) {
-      return e.type === "person";
-    });
-    var hasProcedureEntity = nlpAnalysis.entities.some(function (e) {
-      return e.type === "procedure";
-    });
-    var hasConditionEntity = nlpAnalysis.entities.some(function (e) {
-      return e.type === "condition";
-    });
+    var hasPersonEntity = nlpAnalysis.entities.some((e) => e.type === "person");
+    var hasProcedureEntity = nlpAnalysis.entities.some((e) => e.type === "procedure");
+    var hasConditionEntity = nlpAnalysis.entities.some((e) => e.type === "condition");
     if (hasPersonEntity && !refinedTypes.includes("patients")) {
       refinedTypes.unshift("patients");
     }
@@ -377,22 +363,16 @@ var createunifiedSearchSystem = /** @class */ (function () {
           specialtyFilter = void 0;
           // Extract filters from NLP analysis if available
           if (nlpAnalysis) {
-            personEntities = nlpAnalysis.entities.filter(function (e) {
-              return e.type === "person";
-            });
+            personEntities = nlpAnalysis.entities.filter((e) => e.type === "person");
             if (personEntities.length > 0) {
               nameFilter = personEntities[0].value;
             }
-            ageEntities = nlpAnalysis.entities.filter(function (e) {
-              return e.type === "age";
-            });
+            ageEntities = nlpAnalysis.entities.filter((e) => e.type === "age");
             if (ageEntities.length > 0) {
               age = parseInt(ageEntities[0].value);
               ageFilter = { min: age - 2, max: age + 2 }; // Allow some variance
             }
-            specialtyEntities = nlpAnalysis.entities.filter(function (e) {
-              return e.type === "specialty";
-            });
+            specialtyEntities = nlpAnalysis.entities.filter((e) => e.type === "specialty");
             if (specialtyEntities.length > 0) {
               specialtyFilter = specialtyEntities[0].value;
             }
@@ -463,9 +443,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
             }
             // Check for procedure entities (enhanced matching)
             if (nlpAnalysis) {
-              procedureEntities = nlpAnalysis.entities.filter(function (e) {
-                return e.type === "procedure";
-              });
+              procedureEntities = nlpAnalysis.entities.filter((e) => e.type === "procedure");
               for (
                 _a = 0, procedureEntities_1 = procedureEntities;
                 _a < procedureEntities_1.length;
@@ -511,12 +489,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
               });
             }
           }
-          return [
-            2 /*return*/,
-            results.sort(function (a, b) {
-              return b.relevanceScore - a.relevanceScore;
-            }),
-          ];
+          return [2 /*return*/, results.sort((a, b) => b.relevanceScore - a.relevanceScore)];
         } catch (error) {
           console.error("Erro na busca de pacientes:", error);
           return [2 /*return*/, []];
@@ -724,7 +697,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
    */
   createunifiedSearchSystem.prototype.searchMedicalRecords = function (query) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simular busca de registros médicos
           return [2 /*return*/, []];
@@ -741,7 +714,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
    */
   createunifiedSearchSystem.prototype.searchAppointments = function (query) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simular busca de consultas
           return [2 /*return*/, []];
@@ -758,7 +731,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
    */
   createunifiedSearchSystem.prototype.searchDocuments = function (query) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simular busca de documentos
           return [2 /*return*/, []];
@@ -773,20 +746,18 @@ var createunifiedSearchSystem = /** @class */ (function () {
   /**
    * Verifica se o termo de busca corresponde aos campos
    */
-  createunifiedSearchSystem.prototype.matchesSearchTerm = function (searchTerm) {
+  createunifiedSearchSystem.prototype.matchesSearchTerm = (searchTerm) => {
     var fields = [];
     for (var _i = 1; _i < arguments.length; _i++) {
       fields[_i - 1] = arguments[_i];
     }
     var term = searchTerm.toLowerCase();
-    return fields.some(function (field) {
-      return field && field.toLowerCase().includes(term);
-    });
+    return fields.some((field) => field && field.toLowerCase().includes(term));
   };
   /**
    * Calcula relevância do resultado
    */
-  createunifiedSearchSystem.prototype.calculateRelevance = function (searchTerm, text) {
+  createunifiedSearchSystem.prototype.calculateRelevance = (searchTerm, text) => {
     var term = searchTerm.toLowerCase();
     var content = text.toLowerCase();
     if (content === term) return 1.0;
@@ -795,17 +766,15 @@ var createunifiedSearchSystem = /** @class */ (function () {
     // Calcular similaridade por palavras
     var termWords = term.split(" ");
     var contentWords = content.split(" ");
-    var matches = termWords.filter(function (word) {
-      return contentWords.some(function (contentWord) {
-        return contentWord.includes(word);
-      });
-    }).length;
+    var matches = termWords.filter((word) =>
+      contentWords.some((contentWord) => contentWord.includes(word)),
+    ).length;
     return (matches / termWords.length) * 0.6;
   };
   /**
    * Gera sugestões de busca
    */
-  createunifiedSearchSystem.prototype.generateSearchSuggestions = function (term) {
+  createunifiedSearchSystem.prototype.generateSearchSuggestions = (term) => {
     var suggestions = [
       "".concat(term, " consultas"),
       "".concat(term, " exames"),
@@ -818,14 +787,14 @@ var createunifiedSearchSystem = /** @class */ (function () {
   /**
    * Gera facetas para filtros
    */
-  createunifiedSearchSystem.prototype.generateSearchFacets = function (results) {
+  createunifiedSearchSystem.prototype.generateSearchFacets = (results) => {
     var facets = {};
     // Faceta por tipo
     var typeCount = {};
-    results.forEach(function (result) {
+    results.forEach((result) => {
       typeCount[result.type] = (typeCount[result.type] || 0) + 1;
     });
-    facets.type = Object.entries(typeCount).map(function (_a) {
+    facets.type = Object.entries(typeCount).map((_a) => {
       var value = _a[0],
         count = _a[1];
       return { value: value, count: count };
@@ -912,9 +881,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
               console.log(
                 "Entities: ".concat(
                   response.nlpAnalysis.entities
-                    .map(function (e) {
-                      return "".concat(e.type, ":").concat(e.value);
-                    })
+                    .map((e) => "".concat(e.type, ":").concat(e.value))
                     .join(", "),
                 ),
               );
@@ -977,7 +944,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
   createunifiedSearchSystem.prototype.saveSearch = function (name, query, userId) {
     return __awaiter(this, void 0, void 0, function () {
       var savedSearchId;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           savedSearchId = "search_".concat(Date.now());
           // Simular salvamento da busca
@@ -1000,7 +967,7 @@ var createunifiedSearchSystem = /** @class */ (function () {
       if (timeframe === void 0) {
         timeframe = "30days";
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           stats = {
             totalSearches: 1847,

@@ -14,7 +14,42 @@
 
 "use client";
 
-import type { useState, useEffect, useMemo } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  Brain,
+  Clock,
+  Cpu,
+  Database,
+  HardDrive,
+  Monitor,
+  RefreshCw,
+  Server,
+  TrendingDown,
+  TrendingUp,
+  Wifi,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -22,51 +57,16 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Progress } from "@/components/ui/progress";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
-import type {
-  Activity,
-  Cpu,
-  HardDrive,
-  Wifi,
-  Database,
-  Brain,
-  Clock,
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  Zap,
-  Server,
-  Monitor,
-  RefreshCw,
-} from "lucide-react";
 
 // Analytics Engine
 import type {
-  performanceMonitoringEngine,
-  type RealtimePerformanceData,
-  type PerformanceCategory,
-  type AnalyticsTimeframe,
+  AnalyticsTimeframe,
   AnalyticsUtils,
+  PerformanceCategory,
+  performanceMonitoringEngine,
+  RealtimePerformanceData,
 } from "@/lib/analytics";
 
 // Types

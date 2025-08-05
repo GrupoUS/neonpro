@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Data Breach Detection System
  * Implements real-time monitoring and detection of data breaches
@@ -17,20 +16,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -45,26 +44,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -84,13 +83,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -112,9 +111,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -186,7 +183,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.breachDetectionSystem =
   exports.BreachDetectionSystem =
@@ -204,7 +201,7 @@ var events_1 = require("events");
  * Breach Types
  */
 var BreachType;
-(function (BreachType) {
+((BreachType) => {
   BreachType["UNAUTHORIZED_ACCESS"] = "unauthorized_access";
   BreachType["DATA_EXFILTRATION"] = "data_exfiltration";
   BreachType["SYSTEM_COMPROMISE"] = "system_compromise";
@@ -222,7 +219,7 @@ var BreachType;
  * Breach Severity Levels
  */
 var BreachSeverity;
-(function (BreachSeverity) {
+((BreachSeverity) => {
   BreachSeverity["CRITICAL"] = "critical";
   BreachSeverity["HIGH"] = "high";
   BreachSeverity["MEDIUM"] = "medium";
@@ -233,7 +230,7 @@ var BreachSeverity;
  * Breach Status
  */
 var BreachStatus;
-(function (BreachStatus) {
+((BreachStatus) => {
   BreachStatus["DETECTED"] = "detected";
   BreachStatus["INVESTIGATING"] = "investigating";
   BreachStatus["CONFIRMED"] = "confirmed";
@@ -246,7 +243,7 @@ var BreachStatus;
  * Data Categories Affected
  */
 var AffectedDataCategory;
-(function (AffectedDataCategory) {
+((AffectedDataCategory) => {
   AffectedDataCategory["PERSONAL_IDENTIFIERS"] = "personal_identifiers";
   AffectedDataCategory["SENSITIVE_PERSONAL"] = "sensitive_personal";
   AffectedDataCategory["FINANCIAL_DATA"] = "financial_data";
@@ -262,7 +259,7 @@ var AffectedDataCategory;
  * Detection Source Types
  */
 var DetectionSource;
-(function (DetectionSource) {
+((DetectionSource) => {
   DetectionSource["SECURITY_MONITORING"] = "security_monitoring";
   DetectionSource["USER_REPORT"] = "user_report";
   DetectionSource["AUTOMATED_SCAN"] = "automated_scan";
@@ -284,7 +281,7 @@ var DetectionSource;
  * - Compliance timeline tracking
  * - Forensic evidence collection
  */
-var BreachDetectionSystem = /** @class */ (function (_super) {
+var BreachDetectionSystem = /** @class */ ((_super) => {
   __extends(BreachDetectionSystem, _super);
   function BreachDetectionSystem(config) {
     if (config === void 0) {
@@ -372,7 +369,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -500,7 +497,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -556,7 +553,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _b.sent();
@@ -612,29 +609,21 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
     var incidents = Array.from(this.incidents.values());
     if (filters) {
       if (filters.status) {
-        incidents = incidents.filter(function (i) {
-          return i.status === filters.status;
-        });
+        incidents = incidents.filter((i) => i.status === filters.status);
       }
       if (filters.severity) {
-        incidents = incidents.filter(function (i) {
-          return i.severity === filters.severity;
-        });
+        incidents = incidents.filter((i) => i.severity === filters.severity);
       }
       if (filters.type) {
-        incidents = incidents.filter(function (i) {
-          return i.type === filters.type;
-        });
+        incidents = incidents.filter((i) => i.type === filters.type);
       }
       if (filters.dateRange) {
-        incidents = incidents.filter(function (i) {
-          return i.detectedAt >= filters.dateRange.start && i.detectedAt <= filters.dateRange.end;
-        });
+        incidents = incidents.filter(
+          (i) => i.detectedAt >= filters.dateRange.start && i.detectedAt <= filters.dateRange.end,
+        );
       }
     }
-    return incidents.sort(function (a, b) {
-      return b.detectedAt.getTime() - a.detectedAt.getTime();
-    });
+    return incidents.sort((a, b) => b.detectedAt.getTime() - a.detectedAt.getTime());
   };
   /**
    * Get alerts with filtering
@@ -643,24 +632,16 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
     var alerts = Array.from(this.alerts.values());
     if (filters) {
       if (filters.status) {
-        alerts = alerts.filter(function (a) {
-          return a.status === filters.status;
-        });
+        alerts = alerts.filter((a) => a.status === filters.status);
       }
       if (filters.severity) {
-        alerts = alerts.filter(function (a) {
-          return a.severity === filters.severity;
-        });
+        alerts = alerts.filter((a) => a.severity === filters.severity);
       }
       if (filters.ruleId) {
-        alerts = alerts.filter(function (a) {
-          return a.ruleId === filters.ruleId;
-        });
+        alerts = alerts.filter((a) => a.ruleId === filters.ruleId);
       }
     }
-    return alerts.sort(function (a, b) {
-      return b.detectedAt.getTime() - a.detectedAt.getTime();
-    });
+    return alerts.sort((a, b) => b.detectedAt.getTime() - a.detectedAt.getTime());
   };
   /**
    * Generate breach report
@@ -713,7 +694,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
   /**
    * Calculate incident severity
    */
-  BreachDetectionSystem.prototype.calculateSeverity = function (incident) {
+  BreachDetectionSystem.prototype.calculateSeverity = (incident) => {
     var score = 0;
     // Data sensitivity scoring
     if (incident.affectedData.categories.includes(AffectedDataCategory.SENSITIVE_PERSONAL))
@@ -753,7 +734,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
   /**
    * Set compliance deadlines
    */
-  BreachDetectionSystem.prototype.setComplianceDeadlines = function (incident) {
+  BreachDetectionSystem.prototype.setComplianceDeadlines = (incident) => {
     var now = new Date();
     // ANPD notification deadline (72 hours for high-risk breaches)
     if (
@@ -988,62 +969,58 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
   BreachDetectionSystem.prototype.shouldEscalate = function (alert, threshold) {
     // Count similar alerts in the last hour
     var oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    var similarAlerts = Array.from(this.alerts.values()).filter(function (a) {
-      return a.ruleId === alert.ruleId && a.detectedAt >= oneHourAgo && a.status === "open";
-    });
+    var similarAlerts = Array.from(this.alerts.values()).filter(
+      (a) => a.ruleId === alert.ruleId && a.detectedAt >= oneHourAgo && a.status === "open",
+    );
     return similarAlerts.length >= threshold;
   };
   /**
    * Generate ANPD report
    */
-  BreachDetectionSystem.prototype.generateANPDReport = function (incident) {
-    return {
-      incidentId: incident.id,
-      organizationInfo: {
-        name: "NeonPro",
-        cnpj: "00.000.000/0001-00",
-        dpo: "dpo@neonpro.com",
-      },
-      incidentDetails: {
-        type: incident.type,
-        detectedAt: incident.detectedAt,
-        description: incident.description,
-        affectedDataCategories: incident.affectedData.categories,
-        estimatedAffectedRecords: incident.affectedData.estimatedRecords,
-      },
-      riskAssessment: {
-        severity: incident.severity,
-        businessImpact: incident.impact.businessImpact,
-        dataSubjectsAffected: incident.impact.dataSubjectsAffected,
-      },
-      responseActions: {
-        containmentMeasures: incident.response.containmentMeasures,
-        mitigationSteps: incident.response.mitigationSteps,
-      },
-      timeline: incident.investigation.timeline,
-    };
-  };
+  BreachDetectionSystem.prototype.generateANPDReport = (incident) => ({
+    incidentId: incident.id,
+    organizationInfo: {
+      name: "NeonPro",
+      cnpj: "00.000.000/0001-00",
+      dpo: "dpo@neonpro.com",
+    },
+    incidentDetails: {
+      type: incident.type,
+      detectedAt: incident.detectedAt,
+      description: incident.description,
+      affectedDataCategories: incident.affectedData.categories,
+      estimatedAffectedRecords: incident.affectedData.estimatedRecords,
+    },
+    riskAssessment: {
+      severity: incident.severity,
+      businessImpact: incident.impact.businessImpact,
+      dataSubjectsAffected: incident.impact.dataSubjectsAffected,
+    },
+    responseActions: {
+      containmentMeasures: incident.response.containmentMeasures,
+      mitigationSteps: incident.response.mitigationSteps,
+    },
+    timeline: incident.investigation.timeline,
+  });
   /**
    * Generate internal report
    */
-  BreachDetectionSystem.prototype.generateInternalReport = function (incident) {
-    return {
-      executiveSummary: {
-        incidentId: incident.id,
-        type: incident.type,
-        severity: incident.severity,
-        status: incident.status,
-        detectedAt: incident.detectedAt,
-        affectedRecords: incident.affectedData.estimatedRecords,
-      },
-      technicalDetails: incident.technicalDetails,
-      impactAssessment: incident.impact,
-      responseActions: incident.response,
-      investigation: incident.investigation,
-      lessonsLearned: [],
-      recommendations: [],
-    };
-  };
+  BreachDetectionSystem.prototype.generateInternalReport = (incident) => ({
+    executiveSummary: {
+      incidentId: incident.id,
+      type: incident.type,
+      severity: incident.severity,
+      status: incident.status,
+      detectedAt: incident.detectedAt,
+      affectedRecords: incident.affectedData.estimatedRecords,
+    },
+    technicalDetails: incident.technicalDetails,
+    impactAssessment: incident.impact,
+    responseActions: incident.response,
+    investigation: incident.investigation,
+    lessonsLearned: [],
+    recommendations: [],
+  });
   /**
    * Generate data subject report
    */
@@ -1072,26 +1049,24 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
   /**
    * Generate forensic report
    */
-  BreachDetectionSystem.prototype.generateForensicReport = function (incident) {
-    return {
-      incidentOverview: {
-        id: incident.id,
-        type: incident.type,
-        detectedAt: incident.detectedAt,
-        investigator: incident.investigation.leadInvestigator,
-      },
-      technicalAnalysis: incident.technicalDetails,
-      evidenceCollection: incident.investigation.forensicEvidence,
-      timeline: incident.investigation.timeline,
-      findings: incident.investigation.findings,
-      rootCause: incident.investigation.rootCause,
-      recommendations: [],
-    };
-  };
+  BreachDetectionSystem.prototype.generateForensicReport = (incident) => ({
+    incidentOverview: {
+      id: incident.id,
+      type: incident.type,
+      detectedAt: incident.detectedAt,
+      investigator: incident.investigation.leadInvestigator,
+    },
+    technicalAnalysis: incident.technicalDetails,
+    evidenceCollection: incident.investigation.forensicEvidence,
+    timeline: incident.investigation.timeline,
+    findings: incident.investigation.findings,
+    rootCause: incident.investigation.rootCause,
+    recommendations: [],
+  });
   /**
    * Assess risk to individuals
    */
-  BreachDetectionSystem.prototype.assessRiskToIndividuals = function (incident) {
+  BreachDetectionSystem.prototype.assessRiskToIndividuals = (incident) => {
     if (
       incident.affectedData.categories.includes(AffectedDataCategory.SENSITIVE_PERSONAL) ||
       incident.affectedData.categories.includes(AffectedDataCategory.FINANCIAL_DATA)
@@ -1106,7 +1081,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
   /**
    * Get potential consequences
    */
-  BreachDetectionSystem.prototype.getPotentialConsequences = function (incident) {
+  BreachDetectionSystem.prototype.getPotentialConsequences = (incident) => {
     var consequences = [];
     if (incident.affectedData.categories.includes(AffectedDataCategory.FINANCIAL_DATA)) {
       consequences.push("Financial fraud or identity theft");
@@ -1122,7 +1097,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
   /**
    * Get recommended actions for data subjects
    */
-  BreachDetectionSystem.prototype.getRecommendedActionsForDataSubjects = function (incident) {
+  BreachDetectionSystem.prototype.getRecommendedActionsForDataSubjects = (incident) => {
     var actions = [];
     if (incident.affectedData.categories.includes(AffectedDataCategory.AUTHENTICATION_DATA)) {
       actions.push("Change your password immediately");
@@ -1140,10 +1115,9 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
    * Start monitoring interval
    */
   BreachDetectionSystem.prototype.startMonitoringInterval = function () {
-    var _this = this;
     this.monitoringInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1153,8 +1127,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.monitoringIntervalMinutes * 60 * 1000,
     );
   };
@@ -1162,10 +1135,9 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
    * Start compliance check interval
    */
   BreachDetectionSystem.prototype.startComplianceCheckInterval = function () {
-    var _this = this;
     this.complianceCheckInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1175,8 +1147,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       this.config.complianceCheckIntervalHours * 60 * 60 * 1000,
     );
   };
@@ -1188,25 +1159,21 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
       var openAlerts, staleIncidents;
       return __generator(this, function (_a) {
         try {
-          openAlerts = Array.from(this.alerts.values()).filter(function (a) {
-            return a.status === "open";
-          });
+          openAlerts = Array.from(this.alerts.values()).filter((a) => a.status === "open");
           if (openAlerts.length > 100) {
             this.logActivity("system", "high_alert_volume", {
               openAlerts: openAlerts.length,
               timestamp: new Date(),
             });
           }
-          staleIncidents = Array.from(this.incidents.values()).filter(function (i) {
+          staleIncidents = Array.from(this.incidents.values()).filter((i) => {
             var daysSinceUpdate = (Date.now() - i.updatedAt.getTime()) / (1000 * 60 * 60 * 24);
             return i.status === BreachStatus.INVESTIGATING && daysSinceUpdate > 7;
           });
           if (staleIncidents.length > 0) {
             this.logActivity("system", "stale_incidents_detected", {
               staleIncidents: staleIncidents.length,
-              incidents: staleIncidents.map(function (i) {
-                return i.id;
-              }),
+              incidents: staleIncidents.map((i) => i.id),
             });
           }
         } catch (error) {
@@ -1258,7 +1225,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
   /**
    * Validate incident data
    */
-  BreachDetectionSystem.prototype.validateIncident = function (incident) {
+  BreachDetectionSystem.prototype.validateIncident = (incident) => {
     if (!incident.title || incident.title.trim().length === 0) {
       throw new Error("Incident title is required");
     }
@@ -1272,11 +1239,13 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
   /**
    * Get nested value from object
    */
-  BreachDetectionSystem.prototype.getNestedValue = function (obj, path) {
-    return path.split(".").reduce(function (current, key) {
-      return current === null || current === void 0 ? void 0 : current[key];
-    }, obj);
-  };
+  BreachDetectionSystem.prototype.getNestedValue = (obj, path) =>
+    path
+      .split(".")
+      .reduce(
+        (current, key) => (current === null || current === void 0 ? void 0 : current[key]),
+        obj,
+      );
   /**
    * Load detection rules
    */
@@ -1336,9 +1305,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
    */
   BreachDetectionSystem.prototype.loadIncidents = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1346,9 +1313,7 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
    */
   BreachDetectionSystem.prototype.loadAlerts = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1392,27 +1357,21 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
    */
   BreachDetectionSystem.prototype.saveReport = function (report) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
    * Log activity
    */
-  BreachDetectionSystem.prototype.logActivity = function (actor, action, details) {
+  BreachDetectionSystem.prototype.logActivity = (actor, action, details) => {
     // In a real implementation, this would log to audit trail
     console.log("[BreachDetection] ".concat(actor, " - ").concat(action, ":"), details);
   };
   /**
    * Generate ID
    */
-  BreachDetectionSystem.prototype.generateId = function (prefix) {
-    return ""
-      .concat(prefix, "_")
-      .concat(Date.now(), "_")
-      .concat(Math.random().toString(36).substr(2, 9));
-  };
+  BreachDetectionSystem.prototype.generateId = (prefix) =>
+    "".concat(prefix, "_").concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Shutdown the breach detection system
    */
@@ -1450,15 +1409,13 @@ var BreachDetectionSystem = /** @class */ (function (_super) {
     if (!this.complianceCheckInterval) {
       issues.push("Compliance checking not running");
     }
-    var enabledRules = Array.from(this.rules.values()).filter(function (r) {
-      return r.enabled;
-    });
+    var enabledRules = Array.from(this.rules.values()).filter((r) => r.enabled);
     if (enabledRules.length === 0) {
       issues.push("No enabled detection rules");
     }
-    var openIncidents = Array.from(this.incidents.values()).filter(function (i) {
-      return i.status !== BreachStatus.RESOLVED && i.status !== BreachStatus.FALSE_POSITIVE;
-    });
+    var openIncidents = Array.from(this.incidents.values()).filter(
+      (i) => i.status !== BreachStatus.RESOLVED && i.status !== BreachStatus.FALSE_POSITIVE,
+    );
     if (openIncidents.length > 50) {
       issues.push("High number of open incidents: ".concat(openIncidents.length));
     }

@@ -383,7 +383,7 @@ export class MedicalTimelineManager {
             events: timeline,
           };
 
-        case "csv":
+        case "csv": {
           const csvHeaders = "Data,Tipo,Categoria,Título,Descrição,Provedor,Status\n";
           const csvData = timeline
             .map(
@@ -392,6 +392,7 @@ export class MedicalTimelineManager {
             )
             .join("\n");
           return csvHeaders + csvData;
+        }
 
         case "pdf":
           return {

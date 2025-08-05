@@ -1,16 +1,9 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateMedicalRecord = exports.validateCPF = exports.validateCRM = void 0;
 // Healthcare validators placeholder
-var validateCRM = function (crm) {
-  return true;
-};
+var validateCRM = (_crm) => true;
 exports.validateCRM = validateCRM;
-var validateCPF = function (cpf) {
-  return true;
-};
+var validateCPF = (_cpf) => true;
 exports.validateCPF = validateCPF;
-var validateMedicalRecord = function (record) {
-  return true;
-};
+var validateMedicalRecord = (_record) => true;
 exports.validateMedicalRecord = validateMedicalRecord;

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DocumentCenter;
 var badge_1 = require("@/components/ui/badge");
@@ -236,7 +233,6 @@ var mockDocuments = [
   },
 ];
 function DocumentCenter() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     documents = _a[0],
     setDocuments = _a[1];
@@ -255,18 +251,16 @@ function DocumentCenter() {
   var _f = (0, react_1.useState)(null),
     downloading = _f[0],
     setDownloading = _f[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Simular carregamento de documentos
-    var timer = setTimeout(function () {
+    var timer = setTimeout(() => {
       setDocuments(mockDocuments);
       setLoading(false);
     }, 1000);
-    return function () {
-      return clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, []);
   // Filtrar documentos baseado nos critérios de busca
-  var filteredDocuments = documents.filter(function (doc) {
+  var filteredDocuments = documents.filter((doc) => {
     var _a, _b;
     var matchesSearch =
       doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -281,30 +275,25 @@ function DocumentCenter() {
     return matchesSearch && matchesType && matchesCategory;
   });
   // Simular download de documento
-  var handleDownload = function (document) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDownload = (document) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setDownloading(document.id);
             // Simular processo de download seguro
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 1:
             // Simular processo de download seguro
             _a.sent();
             // Incrementar contador de acesso (compliance LGPD)
-            setDocuments(function (prev) {
-              return prev.map(function (doc) {
-                return doc.id === document.id
+            setDocuments((prev) =>
+              prev.map((doc) =>
+                doc.id === document.id
                   ? __assign(__assign({}, doc), { accessCount: doc.accessCount + 1 })
-                  : doc;
-              });
-            });
+                  : doc,
+              ),
+            );
             setDownloading(null);
             // Em implementação real, iniciar download aqui
             console.log("Downloading document: ".concat(document.title));
@@ -312,14 +301,13 @@ function DocumentCenter() {
         }
       });
     });
-  };
   // Simular visualização de documento
-  var handlePreview = function (document) {
+  var handlePreview = (document) => {
     // Em implementação real, abrir preview seguro
     console.log("Previewing document: ".concat(document.title));
   };
   // Ícone baseado no tipo de documento
-  var getDocumentIcon = function (type) {
+  var getDocumentIcon = (type) => {
     switch (type) {
       case "receipt":
         return <lucide_react_1.CreditCard className="h-5 w-5 text-green-600" />;
@@ -338,7 +326,7 @@ function DocumentCenter() {
     }
   };
   // Badge de status do documento
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "ready":
         return (
@@ -418,9 +406,7 @@ function DocumentCenter() {
               <input_1.Input
                 placeholder="Buscar por título, tratamento ou médico..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return setSearchTerm(e.target.value);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -475,168 +461,160 @@ function DocumentCenter() {
                 </p>
               </card_1.CardContent>
             </card_1.Card>
-          : filteredDocuments.map(function (document) {
-              return (
-                <card_1.Card key={document.id} className="hover:shadow-md transition-shadow">
-                  <card_1.CardContent className="p-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      {/* Informações do Documento */}
-                      <div className="flex-1">
-                        <div className="flex items-start gap-3 mb-3">
-                          {getDocumentIcon(document.type)}
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 mb-1">{document.title}</h3>
-                            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+          : filteredDocuments.map((document) => (
+              <card_1.Card key={document.id} className="hover:shadow-md transition-shadow">
+                <card_1.CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    {/* Informações do Documento */}
+                    <div className="flex-1">
+                      <div className="flex items-start gap-3 mb-3">
+                        {getDocumentIcon(document.type)}
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 mb-1">{document.title}</h3>
+                          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                            <div className="flex items-center gap-1">
+                              <lucide_react_1.Calendar className="h-4 w-4" />
+                              {(0, date_fns_1.format)(document.date, "dd 'de' MMMM 'de' yyyy", {
+                                locale: locale_1.ptBR,
+                              })}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <lucide_react_1.FileText className="h-4 w-4" />
+                              {document.format} • {document.size}
+                            </div>
+                            {document.doctor && (
                               <div className="flex items-center gap-1">
-                                <lucide_react_1.Calendar className="h-4 w-4" />
-                                {(0, date_fns_1.format)(document.date, "dd 'de' MMMM 'de' yyyy", {
-                                  locale: locale_1.ptBR,
+                                <lucide_react_1.User className="h-4 w-4" />
+                                {document.doctor}
+                              </div>
+                            )}
+                            {document.amount && (
+                              <div className="flex items-center gap-1">
+                                <lucide_react_1.CreditCard className="h-4 w-4" />
+                                R${" "}
+                                {document.amount.toLocaleString("pt-BR", {
+                                  minimumFractionDigits: 2,
                                 })}
                               </div>
-                              <div className="flex items-center gap-1">
-                                <lucide_react_1.FileText className="h-4 w-4" />
-                                {document.format} • {document.size}
-                              </div>
-                              {document.doctor && (
-                                <div className="flex items-center gap-1">
-                                  <lucide_react_1.User className="h-4 w-4" />
-                                  {document.doctor}
-                                </div>
-                              )}
-                              {document.amount && (
-                                <div className="flex items-center gap-1">
-                                  <lucide_react_1.CreditCard className="h-4 w-4" />
-                                  R${" "}
-                                  {document.amount.toLocaleString("pt-BR", {
-                                    minimumFractionDigits: 2,
-                                  })}
-                                </div>
-                              )}
-                            </div>
+                            )}
                           </div>
                         </div>
-                        {/* Badges e Informações Adicionais */}
-                        <div className="flex flex-wrap items-center gap-2 mb-3">
-                          {getStatusBadge(document.status)}
-                          {document.encrypted && (
-                            <badge_1.Badge
-                              variant="outline"
-                              className="text-green-700 border-green-300"
-                            >
-                              <lucide_react_1.Shield className="h-3 w-3 mr-1" />
-                              Criptografado
-                            </badge_1.Badge>
-                          )}
-                          {document.lgpdCompliant && (
-                            <badge_1.Badge
-                              variant="outline"
-                              className="text-blue-700 border-blue-300"
-                            >
-                              <lucide_react_1.CheckCircle className="h-3 w-3 mr-1" />
-                              LGPD
-                            </badge_1.Badge>
-                          )}
-                          {document.expiryDate && (
-                            <badge_1.Badge
-                              variant="outline"
-                              className="text-orange-700 border-orange-300"
-                            >
-                              <lucide_react_1.Clock className="h-3 w-3 mr-1" />
-                              Expira em {(0, date_fns_1.format)(document.expiryDate, "dd/MM/yyyy")}
-                            </badge_1.Badge>
-                          )}
-                        </div>{" "}
-                        {/* Informações de Acesso LGPD */}
-                        <div className="text-xs text-gray-500 mb-4">
-                          Acessado {document.accessCount}{" "}
-                          {document.accessCount === 1 ? "vez" : "vezes"} • Último acesso registrado
-                          conforme LGPD
-                        </div>
-                        {/* Tratamento Relacionado */}
-                        {document.treatment && (
-                          <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                            <div className="flex items-center gap-2 text-sm">
-                              <lucide_react_1.Building className="h-4 w-4 text-gray-600" />
-                              <span className="font-medium text-gray-700">Tratamento:</span>
-                              <span className="text-gray-600">{document.treatment}</span>
-                            </div>
-                          </div>
+                      </div>
+                      {/* Badges e Informações Adicionais */}
+                      <div className="flex flex-wrap items-center gap-2 mb-3">
+                        {getStatusBadge(document.status)}
+                        {document.encrypted && (
+                          <badge_1.Badge
+                            variant="outline"
+                            className="text-green-700 border-green-300"
+                          >
+                            <lucide_react_1.Shield className="h-3 w-3 mr-1" />
+                            Criptografado
+                          </badge_1.Badge>
                         )}
+                        {document.lgpdCompliant && (
+                          <badge_1.Badge
+                            variant="outline"
+                            className="text-blue-700 border-blue-300"
+                          >
+                            <lucide_react_1.CheckCircle className="h-3 w-3 mr-1" />
+                            LGPD
+                          </badge_1.Badge>
+                        )}
+                        {document.expiryDate && (
+                          <badge_1.Badge
+                            variant="outline"
+                            className="text-orange-700 border-orange-300"
+                          >
+                            <lucide_react_1.Clock className="h-3 w-3 mr-1" />
+                            Expira em {(0, date_fns_1.format)(document.expiryDate, "dd/MM/yyyy")}
+                          </badge_1.Badge>
+                        )}
+                      </div>{" "}
+                      {/* Informações de Acesso LGPD */}
+                      <div className="text-xs text-gray-500 mb-4">
+                        Acessado {document.accessCount}{" "}
+                        {document.accessCount === 1 ? "vez" : "vezes"} • Último acesso registrado
+                        conforme LGPD
                       </div>
-
-                      {/* Ações */}
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        {/* Visualizar */}
-                        <button_1.Button
-                          variant="outline"
-                          size="sm"
-                          onClick={function () {
-                            return handlePreview(document);
-                          }}
-                          className="flex items-center gap-2"
-                        >
-                          <lucide_react_1.Eye className="h-4 w-4" />
-                          Visualizar
-                        </button_1.Button>
-
-                        {/* Download */}
-                        <button_1.Button
-                          size="sm"
-                          onClick={function () {
-                            return handleDownload(document);
-                          }}
-                          disabled={downloading === document.id || document.status === "processing"}
-                          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-                        >
-                          {downloading === document.id
-                            ? <>
-                                <loading_spinner_1.default size="sm" />
-                                Baixando...
-                              </>
-                            : <>
-                                <lucide_react_1.Download className="h-4 w-4" />
-                                Download
-                              </>}
-                        </button_1.Button>
-                      </div>
+                      {/* Tratamento Relacionado */}
+                      {document.treatment && (
+                        <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                          <div className="flex items-center gap-2 text-sm">
+                            <lucide_react_1.Building className="h-4 w-4 text-gray-600" />
+                            <span className="font-medium text-gray-700">Tratamento:</span>
+                            <span className="text-gray-600">{document.treatment}</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Avisos Especiais */}
-                    {document.requiresPassword && (
-                      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    {/* Ações */}
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      {/* Visualizar */}
+                      <button_1.Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePreview(document)}
+                        className="flex items-center gap-2"
+                      >
+                        <lucide_react_1.Eye className="h-4 w-4" />
+                        Visualizar
+                      </button_1.Button>
+
+                      {/* Download */}
+                      <button_1.Button
+                        size="sm"
+                        onClick={() => handleDownload(document)}
+                        disabled={downloading === document.id || document.status === "processing"}
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+                      >
+                        {downloading === document.id
+                          ? <>
+                              <loading_spinner_1.default size="sm" />
+                              Baixando...
+                            </>
+                          : <>
+                              <lucide_react_1.Download className="h-4 w-4" />
+                              Download
+                            </>}
+                      </button_1.Button>
+                    </div>
+                  </div>
+
+                  {/* Avisos Especiais */}
+                  {document.requiresPassword && (
+                    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <lucide_react_1.AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="font-medium text-yellow-800 mb-1">Documento Protegido</p>
+                          <p className="text-yellow-700">
+                            Este documento requer senha para acesso. A senha foi enviada por
+                            SMS/email.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {document.expiryDate &&
+                    document.expiryDate < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && (
+                      <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
                         <div className="flex items-start gap-3">
-                          <lucide_react_1.AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                          <lucide_react_1.Clock className="h-5 w-5 text-orange-600 mt-0.5" />
                           <div className="text-sm">
-                            <p className="font-medium text-yellow-800 mb-1">Documento Protegido</p>
-                            <p className="text-yellow-700">
-                              Este documento requer senha para acesso. A senha foi enviada por
-                              SMS/email.
+                            <p className="font-medium text-orange-800 mb-1">Documento Expirando</p>
+                            <p className="text-orange-700">
+                              Este documento expira em breve. Faça o download se necessário.
                             </p>
                           </div>
                         </div>
                       </div>
                     )}
-
-                    {document.expiryDate &&
-                      document.expiryDate < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && (
-                        <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-                          <div className="flex items-start gap-3">
-                            <lucide_react_1.Clock className="h-5 w-5 text-orange-600 mt-0.5" />
-                            <div className="text-sm">
-                              <p className="font-medium text-orange-800 mb-1">
-                                Documento Expirando
-                              </p>
-                              <p className="text-orange-700">
-                                Este documento expira em breve. Faça o download se necessário.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
       </div>
       {/* Informações Adicionais LGPD */}
       <card_1.Card className="border-blue-200 bg-blue-50">

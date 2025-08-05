@@ -4,11 +4,11 @@
 
 "use client";
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
 import type { useRouter, useSearchParams } from "next/navigation";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 import type {
-  AppointmentFilters,
   AppointmentFilterParams,
+  AppointmentFilters,
   AppointmentStatus,
 } from "@/app/lib/types/appointments";
 

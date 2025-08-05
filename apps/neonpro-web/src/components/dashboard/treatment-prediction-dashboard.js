@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = TreatmentPredictionDashboard;
 var react_1 = require("react");
@@ -190,7 +187,6 @@ var mockPredictions = [
   },
 ];
 function TreatmentPredictionDashboard() {
-  var _this = this;
   var _a = (0, react_1.useState)({}),
     patientData = _a[0],
     setPatientData = _a[1];
@@ -200,19 +196,14 @@ function TreatmentPredictionDashboard() {
   var _c = (0, react_1.useState)(false),
     isAnalyzing = _c[0],
     setIsAnalyzing = _c[1];
-  var handleAnalyze = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleAnalyze = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsAnalyzing(true);
             // Simular análise de IA
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 3000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 3000))];
           case 1:
             // Simular análise de IA
             _a.sent();
@@ -222,8 +213,7 @@ function TreatmentPredictionDashboard() {
         }
       });
     });
-  };
-  var getRiskColor = function (risk) {
+  var getRiskColor = (risk) => {
     switch (risk) {
       case "low":
         return "text-green-600 bg-green-100";
@@ -235,7 +225,7 @@ function TreatmentPredictionDashboard() {
         return "text-gray-600 bg-gray-100";
     }
   };
-  var getRiskIcon = function (risk) {
+  var getRiskIcon = (risk) => {
     switch (risk) {
       case "low":
         return <lucide_react_1.Heart className="h-4 w-4" />;
@@ -295,22 +285,20 @@ function TreatmentPredictionDashboard() {
                     type="number"
                     placeholder="Ex: 32"
                     value={patientData.age || ""}
-                    onChange={function (e) {
-                      return setPatientData(function (prev) {
-                        return __assign(__assign({}, prev), { age: parseInt(e.target.value) });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setPatientData((prev) =>
+                        __assign(__assign({}, prev), { age: parseInt(e.target.value) }),
+                      )
+                    }
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label_1.Label htmlFor="skinType">Tipo de Pele</label_1.Label>
                   <select_1.Select
-                    onValueChange={function (value) {
-                      return setPatientData(function (prev) {
-                        return __assign(__assign({}, prev), { skinType: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setPatientData((prev) => __assign(__assign({}, prev), { skinType: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Selecione" />
@@ -328,11 +316,9 @@ function TreatmentPredictionDashboard() {
                 <div className="space-y-2">
                   <label_1.Label htmlFor="budget">Orçamento</label_1.Label>
                   <select_1.Select
-                    onValueChange={function (value) {
-                      return setPatientData(function (prev) {
-                        return __assign(__assign({}, prev), { budget: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setPatientData((prev) => __assign(__assign({}, prev), { budget: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Faixa de investimento" />
@@ -352,15 +338,13 @@ function TreatmentPredictionDashboard() {
                 <input_1.Input
                   id="concerns"
                   placeholder="Ex: rugas, flacidez, manchas, volume facial..."
-                  onChange={function (e) {
-                    return setPatientData(function (prev) {
-                      return __assign(__assign({}, prev), {
-                        concerns: e.target.value.split(",").map(function (c) {
-                          return c.trim();
-                        }),
-                      });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setPatientData((prev) =>
+                      __assign(__assign({}, prev), {
+                        concerns: e.target.value.split(",").map((c) => c.trim()),
+                      }),
+                    )
+                  }
                 />
               </div>
 
@@ -369,15 +353,13 @@ function TreatmentPredictionDashboard() {
                 <input_1.Input
                   id="previous"
                   placeholder="Ex: botox, preenchimento, peeling..."
-                  onChange={function (e) {
-                    return setPatientData(function (prev) {
-                      return __assign(__assign({}, prev), {
-                        previousTreatments: e.target.value.split(",").map(function (t) {
-                          return t.trim();
-                        }),
-                      });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setPatientData((prev) =>
+                      __assign(__assign({}, prev), {
+                        previousTreatments: e.target.value.split(",").map((t) => t.trim()),
+                      }),
+                    )
+                  }
                 />
               </div>
 
@@ -413,105 +395,96 @@ function TreatmentPredictionDashboard() {
                 </card_1.CardContent>
               </card_1.Card>
             : <div className="space-y-4">
-                {predictions.map(function (prediction, index) {
-                  return (
-                    <card_1.Card key={index} className="relative">
-                      <card_1.CardHeader>
-                        <div className="flex justify-between items-start">
-                          <div className="space-y-1">
-                            <card_1.CardTitle className="text-lg">
-                              {prediction.treatment}
-                            </card_1.CardTitle>
-                            <div className="flex items-center gap-2">
-                              <badge_1.Badge
-                                variant="secondary"
-                                className="flex items-center gap-1"
-                              >
-                                <lucide_react_1.Target className="h-3 w-3" />
-                                {prediction.confidence}% Confiança
-                              </badge_1.Badge>
-                              <badge_1.Badge
-                                variant="outline"
-                                className={"flex items-center gap-1 ".concat(
-                                  getRiskColor(prediction.riskLevel),
-                                )}
-                              >
-                                {getRiskIcon(prediction.riskLevel)}
-                                Risco{" "}
-                                {prediction.riskLevel === "low"
-                                  ? "Baixo"
-                                  : prediction.riskLevel === "medium"
-                                    ? "Médio"
-                                    : "Alto"}
-                              </badge_1.Badge>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-primary">#{index + 1}</div>
-                            <div className="text-xs text-muted-foreground">Recomendação</div>
+                {predictions.map((prediction, index) => (
+                  <card_1.Card key={index} className="relative">
+                    <card_1.CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <card_1.CardTitle className="text-lg">
+                            {prediction.treatment}
+                          </card_1.CardTitle>
+                          <div className="flex items-center gap-2">
+                            <badge_1.Badge variant="secondary" className="flex items-center gap-1">
+                              <lucide_react_1.Target className="h-3 w-3" />
+                              {prediction.confidence}% Confiança
+                            </badge_1.Badge>
+                            <badge_1.Badge
+                              variant="outline"
+                              className={"flex items-center gap-1 ".concat(
+                                getRiskColor(prediction.riskLevel),
+                              )}
+                            >
+                              {getRiskIcon(prediction.riskLevel)}
+                              Risco{" "}
+                              {prediction.riskLevel === "low"
+                                ? "Baixo"
+                                : prediction.riskLevel === "medium"
+                                  ? "Médio"
+                                  : "Alto"}
+                            </badge_1.Badge>
                           </div>
                         </div>
-                      </card_1.CardHeader>
-                      <card_1.CardContent className="space-y-4">
-                        <div>
-                          <label_1.Label className="text-sm font-medium">
-                            Justificativa da IA
-                          </label_1.Label>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {prediction.reasoning}
-                          </p>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-primary">#{index + 1}</div>
+                          <div className="text-xs text-muted-foreground">Recomendação</div>
                         </div>
+                      </div>
+                    </card_1.CardHeader>
+                    <card_1.CardContent className="space-y-4">
+                      <div>
+                        <label_1.Label className="text-sm font-medium">
+                          Justificativa da IA
+                        </label_1.Label>
+                        <p className="text-sm text-muted-foreground mt-1">{prediction.reasoning}</p>
+                      </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <label_1.Label className="font-medium flex items-center gap-1">
-                              <lucide_react_1.TrendingUp className="h-4 w-4" />
-                              Resultados Esperados
-                            </label_1.Label>
-                            <p className="text-muted-foreground mt-1">
-                              {prediction.expectedResults}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <label_1.Label className="font-medium flex items-center gap-1">
+                            <lucide_react_1.TrendingUp className="h-4 w-4" />
+                            Resultados Esperados
+                          </label_1.Label>
+                          <p className="text-muted-foreground mt-1">{prediction.expectedResults}</p>
+                        </div>
+                        <div>
+                          <label_1.Label className="font-medium flex items-center gap-1">
+                            <lucide_react_1.Clock className="h-4 w-4" />
+                            Duração
+                          </label_1.Label>
+                          <p className="text-muted-foreground mt-1">{prediction.duration}</p>
+                        </div>
+                        <div>
+                          <label_1.Label className="font-medium flex items-center gap-1">
+                            <lucide_react_1.DollarSign className="h-4 w-4" />
+                            Investimento
+                          </label_1.Label>
+                          <p className="text-muted-foreground mt-1">{prediction.cost}</p>
+                        </div>
+                        <div>
+                          <label_1.Label className="font-medium">Confiança</label_1.Label>
+                          <div className="mt-1">
+                            <progress_1.Progress value={prediction.confidence} className="h-2" />
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {prediction.confidence}%
                             </p>
                           </div>
-                          <div>
-                            <label_1.Label className="font-medium flex items-center gap-1">
-                              <lucide_react_1.Clock className="h-4 w-4" />
-                              Duração
-                            </label_1.Label>
-                            <p className="text-muted-foreground mt-1">{prediction.duration}</p>
-                          </div>
-                          <div>
-                            <label_1.Label className="font-medium flex items-center gap-1">
-                              <lucide_react_1.DollarSign className="h-4 w-4" />
-                              Investimento
-                            </label_1.Label>
-                            <p className="text-muted-foreground mt-1">{prediction.cost}</p>
-                          </div>
-                          <div>
-                            <label_1.Label className="font-medium">Confiança</label_1.Label>
-                            <div className="mt-1">
-                              <progress_1.Progress value={prediction.confidence} className="h-2" />
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {prediction.confidence}%
-                              </p>
-                            </div>
-                          </div>
                         </div>
+                      </div>
 
-                        <div className="flex gap-2">
-                          <button_1.Button size="sm" variant="default">
-                            Agendar Consulta
-                          </button_1.Button>
-                          <button_1.Button size="sm" variant="outline">
-                            Mais Detalhes
-                          </button_1.Button>
-                          <button_1.Button size="sm" variant="outline">
-                            Compartilhar
-                          </button_1.Button>
-                        </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                      <div className="flex gap-2">
+                        <button_1.Button size="sm" variant="default">
+                          Agendar Consulta
+                        </button_1.Button>
+                        <button_1.Button size="sm" variant="outline">
+                          Mais Detalhes
+                        </button_1.Button>
+                        <button_1.Button size="sm" variant="outline">
+                          Compartilhar
+                        </button_1.Button>
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>}
         </tabs_1.TabsContent>
 

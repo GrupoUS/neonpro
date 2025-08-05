@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useCashFlow = useCashFlow;
 // Cash Flow Hook - React hook for cash flow operations
@@ -153,7 +150,6 @@ var react_1 = require("react");
 var sonner_1 = require("sonner");
 var cash_flow_service_1 = require("../services/cash-flow-service");
 function useCashFlow(clinicId, initialFilters) {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     entries = _a[0],
     setEntries = _a[1];
@@ -176,13 +172,13 @@ function useCashFlow(clinicId, initialFilters) {
     filters = _g[0],
     setFilters = _g[1];
   var loadEntries = (0, react_1.useCallback)(
-    function (newFilters_1) {
+    (newFilters_1) => {
       var args_1 = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         args_1[_i - 1] = arguments[_i];
       }
       return __awaiter(
-        _this,
+        this,
         __spreadArray([newFilters_1], args_1, true),
         void 0,
         function (newFilters, page) {
@@ -190,7 +186,7 @@ function useCashFlow(clinicId, initialFilters) {
           if (page === void 0) {
             page = 1;
           }
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 _a.trys.push([0, 2, 3, 4]);
@@ -232,10 +228,10 @@ function useCashFlow(clinicId, initialFilters) {
     [clinicId, filters],
   );
   var loadAnalytics = (0, react_1.useCallback)(
-    function (periodStart, periodEnd, registerId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (periodStart, periodEnd, registerId) =>
+      __awaiter(this, void 0, void 0, function () {
         var analyticsData, err_2, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, 3, 4]);
@@ -267,120 +263,118 @@ function useCashFlow(clinicId, initialFilters) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
-  var createEntry = (0, react_1.useCallback)(function (entry) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var newEntry_1, err_3, errorMessage;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, 3, 4]);
-            setLoading(true);
-            setError(null);
-            return [4 /*yield*/, cash_flow_service_1.cashFlowService.createCashFlowEntry(entry)];
-          case 1:
-            newEntry_1 = _a.sent();
-            // Add the new entry to the current list (optimistic update)
-            setEntries(function (prev) {
-              return __spreadArray([newEntry_1], prev, true);
-            });
-            sonner_1.toast.success("Transaction created successfully");
-            return [3 /*break*/, 4];
-          case 2:
-            err_3 = _a.sent();
-            errorMessage = err_3 instanceof Error ? err_3.message : "Failed to create transaction";
-            setError(errorMessage);
-            sonner_1.toast.error(errorMessage);
-            throw err_3;
-          case 3:
-            setLoading(false);
-            return [7 /*endfinally*/];
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var updateEntry = (0, react_1.useCallback)(function (id, updates) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var updatedEntry_1, err_4, errorMessage;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, 3, 4]);
-            setLoading(true);
-            setError(null);
-            return [
-              4 /*yield*/,
-              cash_flow_service_1.cashFlowService.updateCashFlowEntry(id, updates),
-            ];
-          case 1:
-            updatedEntry_1 = _a.sent();
-            // Update the entry in the current list (optimistic update)
-            setEntries(function (prev) {
-              return prev.map(function (entry) {
-                return entry.id === id ? updatedEntry_1 : entry;
-              });
-            });
-            sonner_1.toast.success("Transaction updated successfully");
-            return [3 /*break*/, 4];
-          case 2:
-            err_4 = _a.sent();
-            errorMessage = err_4 instanceof Error ? err_4.message : "Failed to update transaction";
-            setError(errorMessage);
-            sonner_1.toast.error(errorMessage);
-            throw err_4;
-          case 3:
-            setLoading(false);
-            return [7 /*endfinally*/];
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var deleteEntry = (0, react_1.useCallback)(function (id) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var err_5, errorMessage;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, 3, 4]);
-            setLoading(true);
-            setError(null);
-            return [4 /*yield*/, cash_flow_service_1.cashFlowService.deleteCashFlowEntry(id)];
-          case 1:
-            _a.sent();
-            // Remove the entry from the current list (optimistic update)
-            setEntries(function (prev) {
-              return prev.filter(function (entry) {
-                return entry.id !== id;
-              });
-            });
-            sonner_1.toast.success("Transaction deleted successfully");
-            return [3 /*break*/, 4];
-          case 2:
-            err_5 = _a.sent();
-            errorMessage = err_5 instanceof Error ? err_5.message : "Failed to delete transaction";
-            setError(errorMessage);
-            sonner_1.toast.error(errorMessage);
-            throw err_5;
-          case 3:
-            setLoading(false);
-            return [7 /*endfinally*/];
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var createEntry = (0, react_1.useCallback)(
+    (entry) =>
+      __awaiter(this, void 0, void 0, function () {
+        var newEntry_1, err_3, errorMessage;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, 3, 4]);
+              setLoading(true);
+              setError(null);
+              return [4 /*yield*/, cash_flow_service_1.cashFlowService.createCashFlowEntry(entry)];
+            case 1:
+              newEntry_1 = _a.sent();
+              // Add the new entry to the current list (optimistic update)
+              setEntries((prev) => __spreadArray([newEntry_1], prev, true));
+              sonner_1.toast.success("Transaction created successfully");
+              return [3 /*break*/, 4];
+            case 2:
+              err_3 = _a.sent();
+              errorMessage =
+                err_3 instanceof Error ? err_3.message : "Failed to create transaction";
+              setError(errorMessage);
+              sonner_1.toast.error(errorMessage);
+              throw err_3;
+            case 3:
+              setLoading(false);
+              return [7 /*endfinally*/];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var updateEntry = (0, react_1.useCallback)(
+    (id, updates) =>
+      __awaiter(this, void 0, void 0, function () {
+        var updatedEntry_1, err_4, errorMessage;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, 3, 4]);
+              setLoading(true);
+              setError(null);
+              return [
+                4 /*yield*/,
+                cash_flow_service_1.cashFlowService.updateCashFlowEntry(id, updates),
+              ];
+            case 1:
+              updatedEntry_1 = _a.sent();
+              // Update the entry in the current list (optimistic update)
+              setEntries((prev) => prev.map((entry) => (entry.id === id ? updatedEntry_1 : entry)));
+              sonner_1.toast.success("Transaction updated successfully");
+              return [3 /*break*/, 4];
+            case 2:
+              err_4 = _a.sent();
+              errorMessage =
+                err_4 instanceof Error ? err_4.message : "Failed to update transaction";
+              setError(errorMessage);
+              sonner_1.toast.error(errorMessage);
+              throw err_4;
+            case 3:
+              setLoading(false);
+              return [7 /*endfinally*/];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var deleteEntry = (0, react_1.useCallback)(
+    (id) =>
+      __awaiter(this, void 0, void 0, function () {
+        var err_5, errorMessage;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, 3, 4]);
+              setLoading(true);
+              setError(null);
+              return [4 /*yield*/, cash_flow_service_1.cashFlowService.deleteCashFlowEntry(id)];
+            case 1:
+              _a.sent();
+              // Remove the entry from the current list (optimistic update)
+              setEntries((prev) => prev.filter((entry) => entry.id !== id));
+              sonner_1.toast.success("Transaction deleted successfully");
+              return [3 /*break*/, 4];
+            case 2:
+              err_5 = _a.sent();
+              errorMessage =
+                err_5 instanceof Error ? err_5.message : "Failed to delete transaction";
+              setError(errorMessage);
+              sonner_1.toast.error(errorMessage);
+              throw err_5;
+            case 3:
+              setLoading(false);
+              return [7 /*endfinally*/];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var refetch = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, loadEntries(filters, currentPage)];
@@ -389,19 +383,15 @@ function useCashFlow(clinicId, initialFilters) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadEntries, filters, currentPage],
   );
   // Load initial data
-  (0, react_1.useEffect)(
-    function () {
-      if (clinicId) {
-        loadEntries(initialFilters);
-      }
-    },
-    [clinicId, loadEntries, initialFilters],
-  );
+  (0, react_1.useEffect)(() => {
+    if (clinicId) {
+      loadEntries(initialFilters);
+    }
+  }, [clinicId, loadEntries, initialFilters]);
   return {
     entries: entries,
     analytics: analytics,

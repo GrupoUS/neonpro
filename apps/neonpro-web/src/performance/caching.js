@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheHeaders = exports.performanceCache = exports.cacheConfig = void 0;
 // Temporary caching module for build compatibility
@@ -7,15 +6,9 @@ exports.cacheConfig = {
   maxSize: 1000,
 };
 exports.performanceCache = {
-  get: function (key) {
-    return null;
-  },
-  set: function (key, value) {
-    return true;
-  },
-  clear: function () {
-    return true;
-  },
+  get: (_key) => null,
+  set: (_key, _value) => true,
+  clear: () => true,
 };
 // Additional exports to fix build errors
 exports.CacheHeaders = {

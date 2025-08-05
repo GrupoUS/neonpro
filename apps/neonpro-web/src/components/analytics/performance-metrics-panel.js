@@ -12,18 +12,17 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,7 +154,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PerformanceMetricsPanel = PerformanceMetricsPanel;
 var react_1 = require("react");
@@ -171,7 +168,6 @@ var lucide_react_1 = require("lucide-react");
 // Analytics Engine
 var analytics_1 = require("@/lib/analytics");
 function PerformanceMetricsPanel(_a) {
-  var _this = this;
   var data = _a.data,
     isLoading = _a.isLoading,
     timeframe = _a.timeframe,
@@ -188,10 +184,10 @@ function PerformanceMetricsPanel(_a) {
   /**
    * Load historical performance data
    */
-  var loadHistoricalData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadHistoricalData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var history_1, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!clinicId || isLoadingHistory) return [2 /*return*/];
@@ -223,17 +219,13 @@ function PerformanceMetricsPanel(_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      loadHistoricalData();
-    },
-    [timeframe, clinicId],
-  );
+  (0, react_1.useEffect)(() => {
+    loadHistoricalData();
+  }, [timeframe, clinicId]);
   /**
    * MetricCard component for individual performance metrics
    */
-  var MetricCard = function (_a) {
+  var MetricCard = (_a) => {
     var title = _a.title,
       value = _a.value,
       unit = _a.unit,
@@ -272,190 +264,178 @@ function PerformanceMetricsPanel(_a) {
     );
   };
   // Memoized calculations
-  var categoryData = (0, react_1.useMemo)(
-    function () {
-      if (!data) return null;
-      return data.categories[selectedCategory];
-    },
-    [data, selectedCategory],
-  );
-  var overallMetrics = (0, react_1.useMemo)(
-    function () {
-      var _a, _b, _c, _d;
-      if (!data) return [];
-      return [
-        {
-          title: "Health Score",
-          value: data.healthScore,
-          unit: "%",
-          icon: <lucide_react_1.Activity className="h-4 w-4" />,
-          status: analytics_1.AnalyticsUtils.getStatusFromScore(data.healthScore),
-          trend: ((_a = data.trends) === null || _a === void 0 ? void 0 : _a.healthScore) || 0,
-          description: "Overall system health",
-        },
-        {
-          title: "Availability",
-          value: data.summary.availability,
-          unit: "%",
-          icon: <lucide_react_1.Server className="h-4 w-4" />,
-          status:
-            data.summary.availability > 99.5
-              ? "optimal"
-              : data.summary.availability > 99
-                ? "good"
-                : "warning",
-          trend: ((_b = data.trends) === null || _b === void 0 ? void 0 : _b.availability) || 0,
-          description: "System uptime",
-        },
-        {
-          title: "Efficiency",
-          value: data.summary.efficiency,
-          unit: "%",
-          icon: <lucide_react_1.Zap className="h-4 w-4" />,
-          status:
-            data.summary.efficiency > 90
-              ? "optimal"
-              : data.summary.efficiency > 80
-                ? "good"
-                : "warning",
-          trend: ((_c = data.trends) === null || _c === void 0 ? void 0 : _c.efficiency) || 0,
-          description: "Resource utilization efficiency",
-        },
-        {
-          title: "Security Score",
-          value: data.summary.securityScore,
-          unit: "%",
-          icon: <lucide_react_1.Monitor className="h-4 w-4" />,
-          status:
-            data.summary.securityScore > 95
-              ? "optimal"
-              : data.summary.securityScore > 90
-                ? "good"
-                : "warning",
-          trend: ((_d = data.trends) === null || _d === void 0 ? void 0 : _d.securityScore) || 0,
-          description: "Security compliance score",
-        },
-      ];
-    },
-    [data],
-  );
-  var categoryMetrics = (0, react_1.useMemo)(
-    function () {
-      if (!categoryData) return [];
-      var metrics = Object.entries(categoryData.metrics).map(function (_a) {
-        var _b;
-        var key = _a[0],
-          value = _a[1];
-        var title, unit, icon, threshold;
-        switch (key) {
-          case "cpu_usage":
-            title = "CPU Usage";
-            unit = "%";
-            icon = <lucide_react_1.Cpu className="h-4 w-4" />;
-            threshold = { optimal: 30, good: 50, warning: 70 };
-            break;
-          case "memory_usage":
-            title = "Memory Usage";
-            unit = "%";
-            icon = <lucide_react_1.HardDrive className="h-4 w-4" />;
-            threshold = { optimal: 40, good: 60, warning: 80 };
-            break;
-          case "disk_usage":
-            title = "Disk Usage";
-            unit = "%";
-            icon = <lucide_react_1.HardDrive className="h-4 w-4" />;
-            threshold = { optimal: 50, good: 70, warning: 85 };
-            break;
-          case "network_latency":
-            title = "Network Latency";
-            unit = "ms";
-            icon = <lucide_react_1.Wifi className="h-4 w-4" />;
-            threshold = { optimal: 50, good: 100, warning: 200 };
-            break;
-          case "avg_response_time":
-            title = "Response Time";
-            unit = "ms";
-            icon = <lucide_react_1.Clock className="h-4 w-4" />;
-            threshold = { optimal: 200, good: 500, warning: 1000 };
-            break;
-          case "throughput":
-            title = "Throughput";
-            unit = " req/s";
-            icon = <lucide_react_1.TrendingUp className="h-4 w-4" />;
-            threshold = { optimal: 100, good: 50, warning: 20 };
-            break;
-          case "error_rate":
-            title = "Error Rate";
-            unit = "%";
-            icon = <lucide_react_1.AlertTriangle className="h-4 w-4" />;
-            threshold = { optimal: 0.1, good: 0.5, warning: 1 };
-            break;
-          case "query_time":
-            title = "Query Time";
-            unit = "ms";
-            icon = <lucide_react_1.Database className="h-4 w-4" />;
-            threshold = { optimal: 50, good: 100, warning: 200 };
-            break;
-          case "inference_time":
-            title = "AI Inference";
-            unit = "ms";
-            icon = <lucide_react_1.Brain className="h-4 w-4" />;
-            threshold = { optimal: 300, good: 500, warning: 1000 };
-            break;
-          default:
-            title = key.replace(/_/g, " ").replace(/\b\w/g, function (l) {
-              return l.toUpperCase();
-            });
-            unit = "";
-            icon = <lucide_react_1.Activity className="h-4 w-4" />;
-            threshold = { optimal: 80, good: 60, warning: 40 };
-        }
-        var status;
-        if (key === "error_rate") {
-          status =
-            value <= threshold.optimal
-              ? "optimal"
-              : value <= threshold.good
-                ? "good"
-                : value <= threshold.warning
-                  ? "warning"
-                  : "critical";
-        } else if (key === "throughput") {
-          status =
-            value >= threshold.optimal
-              ? "optimal"
-              : value >= threshold.good
-                ? "good"
-                : value >= threshold.warning
-                  ? "warning"
-                  : "critical";
-        } else {
-          status =
-            value <= threshold.optimal
-              ? "optimal"
-              : value <= threshold.good
-                ? "good"
-                : value <= threshold.warning
-                  ? "warning"
-                  : "critical";
-        }
-        return {
-          title: title,
-          value: typeof value === "number" ? value : 0,
-          unit: unit,
-          icon: icon,
-          status: status,
-          trend:
-            ((_b = data === null || data === void 0 ? void 0 : data.trends) === null ||
-            _b === void 0
-              ? void 0
-              : _b[key]) || 0,
-        };
-      });
-      return metrics;
-    },
-    [categoryData, data],
-  );
+  var categoryData = (0, react_1.useMemo)(() => {
+    if (!data) return null;
+    return data.categories[selectedCategory];
+  }, [data, selectedCategory]);
+  var overallMetrics = (0, react_1.useMemo)(() => {
+    var _a, _b, _c, _d;
+    if (!data) return [];
+    return [
+      {
+        title: "Health Score",
+        value: data.healthScore,
+        unit: "%",
+        icon: <lucide_react_1.Activity className="h-4 w-4" />,
+        status: analytics_1.AnalyticsUtils.getStatusFromScore(data.healthScore),
+        trend: ((_a = data.trends) === null || _a === void 0 ? void 0 : _a.healthScore) || 0,
+        description: "Overall system health",
+      },
+      {
+        title: "Availability",
+        value: data.summary.availability,
+        unit: "%",
+        icon: <lucide_react_1.Server className="h-4 w-4" />,
+        status:
+          data.summary.availability > 99.5
+            ? "optimal"
+            : data.summary.availability > 99
+              ? "good"
+              : "warning",
+        trend: ((_b = data.trends) === null || _b === void 0 ? void 0 : _b.availability) || 0,
+        description: "System uptime",
+      },
+      {
+        title: "Efficiency",
+        value: data.summary.efficiency,
+        unit: "%",
+        icon: <lucide_react_1.Zap className="h-4 w-4" />,
+        status:
+          data.summary.efficiency > 90
+            ? "optimal"
+            : data.summary.efficiency > 80
+              ? "good"
+              : "warning",
+        trend: ((_c = data.trends) === null || _c === void 0 ? void 0 : _c.efficiency) || 0,
+        description: "Resource utilization efficiency",
+      },
+      {
+        title: "Security Score",
+        value: data.summary.securityScore,
+        unit: "%",
+        icon: <lucide_react_1.Monitor className="h-4 w-4" />,
+        status:
+          data.summary.securityScore > 95
+            ? "optimal"
+            : data.summary.securityScore > 90
+              ? "good"
+              : "warning",
+        trend: ((_d = data.trends) === null || _d === void 0 ? void 0 : _d.securityScore) || 0,
+        description: "Security compliance score",
+      },
+    ];
+  }, [data]);
+  var categoryMetrics = (0, react_1.useMemo)(() => {
+    if (!categoryData) return [];
+    var metrics = Object.entries(categoryData.metrics).map((_a) => {
+      var _b;
+      var key = _a[0],
+        value = _a[1];
+      var title, unit, icon, threshold;
+      switch (key) {
+        case "cpu_usage":
+          title = "CPU Usage";
+          unit = "%";
+          icon = <lucide_react_1.Cpu className="h-4 w-4" />;
+          threshold = { optimal: 30, good: 50, warning: 70 };
+          break;
+        case "memory_usage":
+          title = "Memory Usage";
+          unit = "%";
+          icon = <lucide_react_1.HardDrive className="h-4 w-4" />;
+          threshold = { optimal: 40, good: 60, warning: 80 };
+          break;
+        case "disk_usage":
+          title = "Disk Usage";
+          unit = "%";
+          icon = <lucide_react_1.HardDrive className="h-4 w-4" />;
+          threshold = { optimal: 50, good: 70, warning: 85 };
+          break;
+        case "network_latency":
+          title = "Network Latency";
+          unit = "ms";
+          icon = <lucide_react_1.Wifi className="h-4 w-4" />;
+          threshold = { optimal: 50, good: 100, warning: 200 };
+          break;
+        case "avg_response_time":
+          title = "Response Time";
+          unit = "ms";
+          icon = <lucide_react_1.Clock className="h-4 w-4" />;
+          threshold = { optimal: 200, good: 500, warning: 1000 };
+          break;
+        case "throughput":
+          title = "Throughput";
+          unit = " req/s";
+          icon = <lucide_react_1.TrendingUp className="h-4 w-4" />;
+          threshold = { optimal: 100, good: 50, warning: 20 };
+          break;
+        case "error_rate":
+          title = "Error Rate";
+          unit = "%";
+          icon = <lucide_react_1.AlertTriangle className="h-4 w-4" />;
+          threshold = { optimal: 0.1, good: 0.5, warning: 1 };
+          break;
+        case "query_time":
+          title = "Query Time";
+          unit = "ms";
+          icon = <lucide_react_1.Database className="h-4 w-4" />;
+          threshold = { optimal: 50, good: 100, warning: 200 };
+          break;
+        case "inference_time":
+          title = "AI Inference";
+          unit = "ms";
+          icon = <lucide_react_1.Brain className="h-4 w-4" />;
+          threshold = { optimal: 300, good: 500, warning: 1000 };
+          break;
+        default:
+          title = key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+          unit = "";
+          icon = <lucide_react_1.Activity className="h-4 w-4" />;
+          threshold = { optimal: 80, good: 60, warning: 40 };
+      }
+      var status;
+      if (key === "error_rate") {
+        status =
+          value <= threshold.optimal
+            ? "optimal"
+            : value <= threshold.good
+              ? "good"
+              : value <= threshold.warning
+                ? "warning"
+                : "critical";
+      } else if (key === "throughput") {
+        status =
+          value >= threshold.optimal
+            ? "optimal"
+            : value >= threshold.good
+              ? "good"
+              : value >= threshold.warning
+                ? "warning"
+                : "critical";
+      } else {
+        status =
+          value <= threshold.optimal
+            ? "optimal"
+            : value <= threshold.good
+              ? "good"
+              : value <= threshold.warning
+                ? "warning"
+                : "critical";
+      }
+      return {
+        title: title,
+        value: typeof value === "number" ? value : 0,
+        unit: unit,
+        icon: icon,
+        status: status,
+        trend:
+          ((_b = data === null || data === void 0 ? void 0 : data.trends) === null || _b === void 0
+            ? void 0
+            : _b[key]) || 0,
+      };
+    });
+    return metrics;
+  }, [categoryData, data]);
   // Chart colors
   var chartColors = {
     primary: "#3b82f6",
@@ -470,9 +450,9 @@ function PerformanceMetricsPanel(_a) {
         <div className="animate-pulse">
           <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {__spreadArray([], Array(4), true).map(function (_, i) {
-              return <div key={i} className="h-32 bg-gray-200 rounded"></div>;
-            })}
+            {__spreadArray([], Array(4), true).map((_, i) => (
+              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+            ))}
           </div>
           <div className="h-96 bg-gray-200 rounded"></div>
         </div>
@@ -487,12 +467,7 @@ function PerformanceMetricsPanel(_a) {
             <lucide_react_1.AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No Performance Data</h3>
             <p className="text-gray-600">Unable to load performance metrics at this time.</p>
-            <button_1.Button
-              className="mt-4"
-              onClick={function () {
-                return window.location.reload();
-              }}
-            >
+            <button_1.Button className="mt-4" onClick={() => window.location.reload()}>
               <lucide_react_1.RefreshCw className="w-4 h-4 mr-2" />
               Retry
             </button_1.Button>
@@ -507,9 +482,9 @@ function PerformanceMetricsPanel(_a) {
       <div>
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Overall Performance</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {overallMetrics.map(function (metric) {
-            return <MetricCard key={metric.title} {...metric} />;
-          })}
+          {overallMetrics.map((metric) => (
+            <MetricCard key={metric.title} {...metric} />
+          ))}
         </div>
       </div>
 
@@ -527,9 +502,7 @@ function PerformanceMetricsPanel(_a) {
         <card_1.CardContent>
           <tabs_1.Tabs
             value={selectedCategory}
-            onValueChange={function (value) {
-              return setSelectedCategory(value);
-            }}
+            onValueChange={(value) => setSelectedCategory(value)}
           >
             <tabs_1.TabsList className="grid w-full grid-cols-4">
               <tabs_1.TabsTrigger value="system">System</tabs_1.TabsTrigger>
@@ -585,9 +558,9 @@ function PerformanceMetricsPanel(_a) {
 
               {/* Category Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {categoryMetrics.map(function (metric) {
-                  return <MetricCard key={metric.title} {...metric} />;
-                })}
+                {categoryMetrics.map((metric) => (
+                  <MetricCard key={metric.title} {...metric} />
+                ))}
               </div>
             </tabs_1.TabsContent>
           </tabs_1.Tabs>
@@ -613,33 +586,25 @@ function PerformanceMetricsPanel(_a) {
                   <recharts_1.CartesianGrid strokeDasharray="3 3" />
                   <recharts_1.XAxis
                     dataKey="timestamp"
-                    tickFormatter={function (value) {
-                      return new Date(value).toLocaleTimeString();
-                    }}
+                    tickFormatter={(value) => new Date(value).toLocaleTimeString()}
                   />
                   <recharts_1.YAxis />
                   <recharts_1.Tooltip
-                    labelFormatter={function (value) {
-                      return new Date(value).toLocaleString();
-                    }}
-                    formatter={function (value, name) {
-                      return [
-                        ""
-                          .concat(value.toFixed(1))
-                          .concat(
-                            name.includes("time")
-                              ? "ms"
-                              : name.includes("rate")
+                    labelFormatter={(value) => new Date(value).toLocaleString()}
+                    formatter={(value, name) => [
+                      ""
+                        .concat(value.toFixed(1))
+                        .concat(
+                          name.includes("time")
+                            ? "ms"
+                            : name.includes("rate")
+                              ? "%"
+                              : name.includes("usage")
                                 ? "%"
-                                : name.includes("usage")
-                                  ? "%"
-                                  : "",
-                          ),
-                        name.replace(/_/g, " ").replace(/\b\w/g, function (l) {
-                          return l.toUpperCase();
-                        }),
-                      ];
-                    }}
+                                : "",
+                        ),
+                      name.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()),
+                    ]}
                   />
                   <recharts_1.Legend />
                   <recharts_1.Line
@@ -691,41 +656,39 @@ function PerformanceMetricsPanel(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {data.alerts.map(function (alert, index) {
-                return (
-                  <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
-                    <lucide_react_1.AlertTriangle
-                      className={"w-5 h-5 mt-0.5 ".concat(
-                        alert.severity === "critical"
-                          ? "text-red-600"
-                          : alert.severity === "warning"
-                            ? "text-amber-600"
-                            : "text-blue-600",
-                      )}
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-medium text-gray-900">{alert.title}</h4>
-                        <badge_1.Badge
-                          variant={
-                            alert.severity === "critical"
-                              ? "destructive"
-                              : alert.severity === "warning"
-                                ? "secondary"
-                                : "default"
-                          }
-                        >
-                          {alert.severity}
-                        </badge_1.Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 mt-1">{alert.description}</p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        {new Date(alert.timestamp).toLocaleString()}
-                      </p>
+              {data.alerts.map((alert, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 border rounded-lg">
+                  <lucide_react_1.AlertTriangle
+                    className={"w-5 h-5 mt-0.5 ".concat(
+                      alert.severity === "critical"
+                        ? "text-red-600"
+                        : alert.severity === "warning"
+                          ? "text-amber-600"
+                          : "text-blue-600",
+                    )}
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-gray-900">{alert.title}</h4>
+                      <badge_1.Badge
+                        variant={
+                          alert.severity === "critical"
+                            ? "destructive"
+                            : alert.severity === "warning"
+                              ? "secondary"
+                              : "default"
+                        }
+                      >
+                        {alert.severity}
+                      </badge_1.Badge>
                     </div>
+                    <p className="text-sm text-gray-600 mt-1">{alert.description}</p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {new Date(alert.timestamp).toLocaleString()}
+                    </p>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>

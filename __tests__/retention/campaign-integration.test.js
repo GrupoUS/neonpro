@@ -1,4 +1,3 @@
-"use strict";
 // RETENTION CAMPAIGN INTEGRATION TESTS
 // Epic 7.4: Patient Retention Analytics + Predictions - Task 5
 // Comprehensive test suite for retention campaign integration
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,7 +36,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,8 +65,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -88,9 +85,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_mocks_http_1 = require("node-mocks-http");
 var route_1 = require("@/app/api/retention-analytics/campaigns/route");
@@ -158,82 +155,52 @@ var route_2 = require("@/app/api/retention-analytics/campaigns/[id]/route");
 // MOCKS
 // =====================================================================================
 // Mock Supabase client
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(function () {
-      return {
-        from: jest.fn(function () {
-          return {
-            select: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return {
-                    order: jest.fn(function () {
-                      return {
-                        data: mockCampaigns,
-                        error: null,
-                      };
-                    }),
-                    single: jest.fn(function () {
-                      return {
-                        data: mockCampaigns[0],
-                        error: null,
-                      };
-                    }),
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            data: mockCampaigns,
-                            error: null,
-                          };
-                        }),
-                      };
-                    }),
-                    in: jest.fn(function () {
-                      return {
-                        data: mockCampaigns.slice(0, 2),
-                        error: null,
-                      };
-                    }),
-                  };
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: jest.fn(() => ({
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          order: jest.fn(() => ({
+            data: mockCampaigns,
+            error: null,
+          })),
+          single: jest.fn(() => ({
+            data: mockCampaigns[0],
+            error: null,
+          })),
+          gte: jest.fn(() => ({
+            lte: jest.fn(() => ({
+              data: mockCampaigns,
+              error: null,
+            })),
+          })),
+          in: jest.fn(() => ({
+            data: mockCampaigns.slice(0, 2),
+            error: null,
+          })),
+        })),
+        insert: jest.fn(() => ({
+          select: jest.fn(() => ({
+            data: [mockCampaigns[0]],
+            error: null,
+          })),
+        })),
+        update: jest.fn(() => ({
+          eq: jest.fn(() => ({
+            select: jest.fn(() => ({
+              data: [
+                __assign(__assign({}, mockCampaigns[0]), {
+                  name: "Updated Campaign",
                 }),
-                insert: jest.fn(function () {
-                  return {
-                    select: jest.fn(function () {
-                      return {
-                        data: [mockCampaigns[0]],
-                        error: null,
-                      };
-                    }),
-                  };
-                }),
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return {
-                        select: jest.fn(function () {
-                          return {
-                            data: [
-                              __assign(__assign({}, mockCampaigns[0]), {
-                                name: "Updated Campaign",
-                              }),
-                            ],
-                            error: null,
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
-              };
-            }),
-          };
-        }),
-      };
-    }),
-  };
-});
+              ],
+              error: null,
+            })),
+          })),
+        })),
+      })),
+    })),
+  })),
+}));
 // Mock campaign data
 var mockCampaigns = [
   {
@@ -320,15 +287,15 @@ var mockCampaigns = [
 // =====================================================================================
 // CAMPAIGN CRUD TESTS
 // =====================================================================================
-describe("/api/retention-analytics/campaigns", function () {
-  beforeEach(function () {
+describe("/api/retention-analytics/campaigns", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("GET - List campaigns", function () {
-    it("should return campaigns for a clinic", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET - List campaigns", () => {
+    it("should return campaigns for a clinic", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -348,12 +315,11 @@ describe("/api/retention-analytics/campaigns", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should filter campaigns by status", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should filter campaigns by status", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -366,20 +332,15 @@ describe("/api/retention-analytics/campaigns", function () {
             case 1:
               _b.sent();
               responseData = JSON.parse(res._getData());
-              expect(
-                responseData.data.campaigns.every(function (c) {
-                  return c.status === "active";
-                }),
-              ).toBe(true);
+              expect(responseData.data.campaigns.every((c) => c.status === "active")).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should return 400 for invalid clinic_id", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should return 400 for invalid clinic_id", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -397,14 +358,13 @@ describe("/api/retention-analytics/campaigns", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("POST - Create campaign", function () {
-    it("should create a new retention campaign", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("POST - Create campaign", () => {
+    it("should create a new retention campaign", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var campaignData, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               campaignData = {
@@ -440,12 +400,11 @@ describe("/api/retention-analytics/campaigns", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidData, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               invalidData = {
@@ -467,19 +426,18 @@ describe("/api/retention-analytics/campaigns", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });
 // =====================================================================================
 // CAMPAIGN EXECUTION TESTS
 // =====================================================================================
-describe("/api/retention-analytics/campaigns/[id]", function () {
-  describe("PUT - Execute campaign", function () {
-    it("should execute a retention campaign", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+describe("/api/retention-analytics/campaigns/[id]", () => {
+  describe("PUT - Execute campaign", () => {
+    it("should execute a retention campaign", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var executionData, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               executionData = {
@@ -509,12 +467,11 @@ describe("/api/retention-analytics/campaigns/[id]", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle test mode execution", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle test mode execution", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var testExecutionData, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               testExecutionData = {
@@ -543,14 +500,13 @@ describe("/api/retention-analytics/campaigns/[id]", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("GET - Get campaign by ID", function () {
-    it("should return campaign details with metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET - Get campaign by ID", () => {
+    it("should return campaign details with metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -572,12 +528,11 @@ describe("/api/retention-analytics/campaigns/[id]", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should return 404 for non-existent campaign", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should return 404 for non-existent campaign", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSupabase, _a, req, res;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase = require("@/app/utils/supabase/server").createClient();
@@ -604,7 +559,6 @@ describe("/api/retention-analytics/campaigns/[id]", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

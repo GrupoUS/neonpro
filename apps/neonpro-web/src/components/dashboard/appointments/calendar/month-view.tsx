@@ -1,22 +1,22 @@
 "use client";
 
-import React from "react";
-import type { Badge } from "@/components/ui/badge";
-import type { cn } from "@/lib/utils";
 import type {
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
   eachDayOfInterval,
-  isSameDay,
-  isToday,
-  isSameMonth,
+  endOfMonth,
+  endOfWeek,
+  format,
   getDay,
+  isSameDay,
+  isSameMonth,
+  isToday,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
 import type { ptBR } from "date-fns/locale";
+import React from "react";
 import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
+import type { Badge } from "@/components/ui/badge";
+import type { cn } from "@/lib/utils";
 
 interface MonthViewProps {
   date: Date;
@@ -67,7 +67,7 @@ export function MonthView({
     };
 
     dayAppointments.forEach((appointment) => {
-      if (counts.hasOwnProperty(appointment.status)) {
+      if (Object.hasOwn(counts, appointment.status)) {
         counts[appointment.status as keyof typeof counts]++;
       }
     });

@@ -1,7 +1,7 @@
 ﻿// Custom Report Builder Service
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
-import {
+import type {
   CreateReportRequest,
   CustomReport,
   DataSourceConnector,

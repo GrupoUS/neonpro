@@ -1,18 +1,17 @@
-"use strict";
 // NeonPro - Installments API Routes
 // Story 6.1 - Task 3: Installment Management System
 // API endpoints for installment processing and management
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -174,25 +171,15 @@ var querySchema = zod_1.z.object({
   customerId: zod_1.z.string().uuid().optional(),
   dueDateFrom: zod_1.z
     .string()
-    .refine(
-      function (date) {
-        return !isNaN(Date.parse(date));
-      },
-      {
-        message: "Invalid date format",
-      },
-    )
+    .refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid date format",
+    })
     .optional(),
   dueDateTo: zod_1.z
     .string()
-    .refine(
-      function (date) {
-        return !isNaN(Date.parse(date));
-      },
-      {
-        message: "Invalid date format",
-      },
-    )
+    .refine((date) => !isNaN(Date.parse(date)), {
+      message: "Invalid date format",
+    })
     .optional(),
   sortBy: zod_1.z
     .enum(["due_date", "amount", "status", "created_at"])
@@ -226,7 +213,7 @@ function GET(request) {
       filters,
       result,
       error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 4, , 5]);
@@ -334,7 +321,7 @@ function POST(request) {
       retryData,
       error_2;
     var _c, _d, _e;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 14, , 15]);
@@ -501,8 +488,7 @@ function PUT(request) {
       successful,
       failed,
       error_3;
-    var _this = this;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 12, , 13]);
@@ -553,10 +539,10 @@ function PUT(request) {
           return [
             4 /*yield*/,
             Promise.all(
-              installmentIds.map(function (id) {
-                return __awaiter(_this, void 0, void 0, function () {
+              installmentIds.map((id) =>
+                __awaiter(this, void 0, void 0, function () {
                   var error_4;
-                  return __generator(this, function (_a) {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -585,8 +571,8 @@ function PUT(request) {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ),
           ];
         case 5:
@@ -596,10 +582,10 @@ function PUT(request) {
           return [
             4 /*yield*/,
             Promise.all(
-              installmentIds.map(function (id) {
-                return __awaiter(_this, void 0, void 0, function () {
+              installmentIds.map((id) =>
+                __awaiter(this, void 0, void 0, function () {
                   var error_5;
-                  return __generator(this, function (_a) {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -621,8 +607,8 @@ function PUT(request) {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ),
           ];
         case 7:
@@ -635,10 +621,10 @@ function PUT(request) {
           return [
             4 /*yield*/,
             Promise.all(
-              installmentIds.map(function (id) {
-                return __awaiter(_this, void 0, void 0, function () {
+              installmentIds.map((id) =>
+                __awaiter(this, void 0, void 0, function () {
                   var error_6;
-                  return __generator(this, function (_a) {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -663,8 +649,8 @@ function PUT(request) {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ),
           ];
         case 9:
@@ -682,12 +668,8 @@ function PUT(request) {
             ),
           ];
         case 11:
-          successful = results.filter(function (r) {
-            return r.success;
-          }).length;
-          failed = results.filter(function (r) {
-            return !r.success;
-          }).length;
+          successful = results.filter((r) => r.success).length;
+          failed = results.filter((r) => !r.success).length;
           return [
             2 /*return*/,
             server_1.NextResponse.json({

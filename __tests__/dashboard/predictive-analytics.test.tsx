@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
-import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import React from "react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import type React from "react";
 import PredictiveAnalyticsPage from "@/components/dashboard/predictive-analytics/PredictiveAnalyticsPage";
 
 // Mock fetch globally

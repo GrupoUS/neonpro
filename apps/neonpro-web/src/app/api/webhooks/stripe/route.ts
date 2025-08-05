@@ -6,8 +6,8 @@
  * POST /api/webhooks/stripe - Handle Stripe webhook events
  */
 
-import type { NextRequest, NextResponse } from "next/server";
 import type { createServerClient } from "@supabase/ssr";
+import type { NextRequest, NextResponse } from "next/server";
 import type { Database } from "@/types/database";
 
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;

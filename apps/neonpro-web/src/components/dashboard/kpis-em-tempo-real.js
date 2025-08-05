@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KpisEmTempoReal = KpisEmTempoReal;
 var card_1 = require("@/components/ui/card");
@@ -32,23 +31,21 @@ function KpisEmTempoReal() {
       </card_1.CardHeader>
       <card_1.CardContent>
         <div className="grid grid-cols-1 gap-4">
-          {mockKpis.map(function (kpi, index) {
-            return (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-              >
-                <div className="flex items-center space-x-3">
-                  {kpi.icon}
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">{kpi.title}</p>
-                    <p className="text-2xl font-bold">{kpi.value}</p>
-                  </div>
+          {mockKpis.map((kpi, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
+            >
+              <div className="flex items-center space-x-3">
+                {kpi.icon}
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">{kpi.title}</p>
+                  <p className="text-2xl font-bold">{kpi.value}</p>
                 </div>
-                {kpi.trend && <div className="text-sm font-medium text-green-600">{kpi.trend}</div>}
               </div>
-            );
-          })}
+              {kpi.trend && <div className="text-sm font-medium text-green-600">{kpi.trend}</div>}
+            </div>
+          ))}
         </div>
       </card_1.CardContent>
     </card_1.Card>

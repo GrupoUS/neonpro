@@ -3,9 +3,9 @@
  * Healthcare-compliant patient management with LGPD audit
  */
 
-import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 
 // Patient schemas
 const patientSchema = z.object({

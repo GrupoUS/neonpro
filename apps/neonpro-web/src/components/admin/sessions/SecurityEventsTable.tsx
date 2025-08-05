@@ -8,15 +8,25 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
+  Filter,
+  MapPin,
+  Monitor,
+  MoreHorizontal,
+  Search,
+  Shield,
+  XCircle,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -24,8 +34,14 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import type { Input } from "@/components/ui/input";
 import type {
   Select,
@@ -35,31 +51,15 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type {
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  MoreHorizontal,
-  Search,
-  Filter,
-  Download,
-  Eye,
-  Shield,
-  Clock,
-  MapPin,
-  Monitor,
-} from "lucide-react";
-import type { SessionSecurityEvent, SecurityEventType, SecuritySeverity } from "@/types/session";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { useSecurityEvents } from "@/hooks/useSession";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { SecurityEventType, SecuritySeverity, SessionSecurityEvent } from "@/types/session";
 
 // ============================================================================
 // INTERFACES

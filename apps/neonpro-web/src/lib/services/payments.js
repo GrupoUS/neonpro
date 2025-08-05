@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,11 +142,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createpaymentsService = exports.PaymentsService = void 0;
 var client_1 = require("@/lib/supabase/client");
-var PaymentsService = /** @class */ (function () {
+var PaymentsService = /** @class */ (() => {
   function PaymentsService() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -176,7 +173,7 @@ var PaymentsService = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (payment) {
+                : data.map((payment) => {
                     var _a, _b;
                     return __assign(__assign({}, payment), {
                       vendor_name:
@@ -323,20 +320,18 @@ var PaymentsService = /** @class */ (function () {
           case 1:
             currentUser_1 = _c.sent().data;
             if (!currentUser_1.user) throw new Error("Usuário não autenticado");
-            payments = bulkData.payments.map(function (payment) {
-              return {
-                accounts_payable_id: payment.accounts_payable_id,
-                payment_date: bulkData.payment_date,
-                amount_paid: payment.amount_paid,
-                payment_method: bulkData.payment_method,
-                reference_number: "BULK".concat(Date.now()),
-                notes: bulkData.notes || "Pagamento em lote",
-                status: "completed",
-                created_by: currentUser_1.user.id,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-              };
-            });
+            payments = bulkData.payments.map((payment) => ({
+              accounts_payable_id: payment.accounts_payable_id,
+              payment_date: bulkData.payment_date,
+              amount_paid: payment.amount_paid,
+              payment_method: bulkData.payment_method,
+              reference_number: "BULK".concat(Date.now()),
+              notes: bulkData.notes || "Pagamento em lote",
+              status: "completed",
+              created_by: currentUser_1.user.id,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            }));
             return [4 /*yield*/, this.supabase.from("ap_payments").insert(payments).select()];
           case 2:
             (_a = _c.sent()), (data = _a.data), (error_10 = _a.error);
@@ -465,22 +460,14 @@ var PaymentsService = /** @class */ (function () {
             (_a = _b.sent()), (data = _a.data), (error_16 = _a.error);
             if (error_16) throw error_16;
             payments = data || [];
-            completedPayments = payments.filter(function (p) {
-              return p.status === "completed";
-            });
-            pendingPayments = payments.filter(function (p) {
-              return p.status === "pending";
-            });
-            failedPayments = payments.filter(function (p) {
-              return p.status === "failed";
-            });
-            totalAmount = completedPayments.reduce(function (sum, p) {
-              return sum + p.amount_paid;
-            }, 0);
+            completedPayments = payments.filter((p) => p.status === "completed");
+            pendingPayments = payments.filter((p) => p.status === "pending");
+            failedPayments = payments.filter((p) => p.status === "failed");
+            totalAmount = completedPayments.reduce((sum, p) => sum + p.amount_paid, 0);
             averageAmount =
               completedPayments.length > 0 ? totalAmount / completedPayments.length : 0;
             paymentMethods_1 = {};
-            completedPayments.forEach(function (payment) {
+            completedPayments.forEach((payment) => {
               paymentMethods_1[payment.payment_method] =
                 (paymentMethods_1[payment.payment_method] || 0) + 1;
             });
@@ -530,7 +517,7 @@ var PaymentsService = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (payment) {
+                : data.map((payment) => {
                     var _a, _b;
                     return __assign(__assign({}, payment), {
                       vendor_name:
@@ -610,7 +597,7 @@ var PaymentsService = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (payment) {
+                : data.map((payment) => {
                     var _a, _b;
                     return __assign(__assign({}, payment), {
                       vendor_name:
@@ -654,9 +641,7 @@ var PaymentsService = /** @class */ (function () {
             totalPaid =
               (payments === null || payments === void 0
                 ? void 0
-                : payments.reduce(function (sum, p) {
-                    return sum + p.amount_paid;
-                  }, 0)) || 0;
+                : payments.reduce((sum, p) => sum + p.amount_paid, 0)) || 0;
             // Update the accounts payable record
             return [
               4 /*yield*/,
@@ -687,7 +672,5 @@ var PaymentsService = /** @class */ (function () {
 })();
 exports.PaymentsService = PaymentsService;
 // Export singleton instance
-var createpaymentsService = function () {
-  return new PaymentsService();
-};
+var createpaymentsService = () => new PaymentsService();
 exports.createpaymentsService = createpaymentsService;

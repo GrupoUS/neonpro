@@ -1,21 +1,20 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PERMISSIONS = void 0;
 exports.hasPermission = hasPermission;
 function hasPermission(userPermissions, resource, action, conditions) {
   // Check direct permissions
-  var directPermission = userPermissions.directPermissions.find(function (p) {
-    return p.resource === resource && p.action === action;
-  });
+  var directPermission = userPermissions.directPermissions.find(
+    (p) => p.resource === resource && p.action === action,
+  );
   if (directPermission && checkConditions(directPermission.conditions, conditions)) {
     return true;
   }
   // Check role permissions
   for (var _i = 0, _a = userPermissions.roles; _i < _a.length; _i++) {
     var role = _a[_i];
-    var rolePermission = role.permissions.find(function (p) {
-      return p.resource === resource && p.action === action;
-    });
+    var rolePermission = role.permissions.find(
+      (p) => p.resource === resource && p.action === action,
+    );
     if (rolePermission && checkConditions(rolePermission.conditions, conditions)) {
       return true;
     }
@@ -25,7 +24,7 @@ function hasPermission(userPermissions, resource, action, conditions) {
 function checkConditions(permissionConditions, requestConditions) {
   if (!permissionConditions) return true;
   if (!requestConditions) return false;
-  return Object.entries(permissionConditions).every(function (_a) {
+  return Object.entries(permissionConditions).every((_a) => {
     var key = _a[0],
       value = _a[1];
     return requestConditions[key] === value;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Comprehensive Analytics Dashboard Hook for NeonPro
  *
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,10 +153,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -168,7 +165,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useAnalyticsDashboard = useAnalyticsDashboard;
 var react_1 = require("react");
@@ -178,7 +175,6 @@ var index_1 = require("./index");
  * Master analytics dashboard hook
  */
 function useAnalyticsDashboard(initialConfig) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var _a = (0, react_1.useState)(initialConfig),
     config = _a[0],
@@ -205,14 +201,11 @@ function useAnalyticsDashboard(initialConfig) {
   var statisticalInsights = (0, index_1.useStatisticalInsights)(config.statisticalInsights);
   // Aggregate loading states
   var isLoading = (0, react_1.useMemo)(
-    function () {
-      return (
-        cohortAnalysis.isLoading ||
-        forecasting.isLoading ||
-        realTimeAnalytics.isConnected === false ||
-        statisticalInsights.isLoading
-      );
-    },
+    () =>
+      cohortAnalysis.isLoading ||
+      forecasting.isLoading ||
+      realTimeAnalytics.isConnected === false ||
+      statisticalInsights.isLoading,
     [
       cohortAnalysis.isLoading,
       forecasting.isLoading,
@@ -221,103 +214,87 @@ function useAnalyticsDashboard(initialConfig) {
     ],
   );
   // Aggregate error states
-  var errors = (0, react_1.useMemo)(
-    function () {
-      var errorList = [];
-      if (cohortAnalysis.error) errorList.push("Cohort Analysis: ".concat(cohortAnalysis.error));
-      if (forecasting.error) errorList.push("Forecasting: ".concat(forecasting.error));
-      if (realTimeAnalytics.error) errorList.push("Real-time: ".concat(realTimeAnalytics.error));
-      if (statisticalInsights.error)
-        errorList.push("Statistical: ".concat(statisticalInsights.error));
-      return errorList;
-    },
-    [cohortAnalysis.error, forecasting.error, realTimeAnalytics.error, statisticalInsights.error],
-  );
+  var errors = (0, react_1.useMemo)(() => {
+    var errorList = [];
+    if (cohortAnalysis.error) errorList.push("Cohort Analysis: ".concat(cohortAnalysis.error));
+    if (forecasting.error) errorList.push("Forecasting: ".concat(forecasting.error));
+    if (realTimeAnalytics.error) errorList.push("Real-time: ".concat(realTimeAnalytics.error));
+    if (statisticalInsights.error)
+      errorList.push("Statistical: ".concat(statisticalInsights.error));
+    return errorList;
+  }, [cohortAnalysis.error, forecasting.error, realTimeAnalytics.error, statisticalInsights.error]);
   // Aggregate insights and recommendations
-  var aggregatedInsights = (0, react_1.useMemo)(
-    function () {
-      var insights = __spreadArray(
-        __spreadArray([], cohortAnalysis.insights, true),
-        statisticalInsights.insights,
-        true,
-      );
-      var recommendations = __spreadArray([], statisticalInsights.recommendations, true);
-      var correlations = __spreadArray([], statisticalInsights.correlations, true);
-      return { insights: insights, recommendations: recommendations, correlations: correlations };
-    },
-    [
-      cohortAnalysis.insights,
+  var aggregatedInsights = (0, react_1.useMemo)(() => {
+    var insights = __spreadArray(
+      __spreadArray([], cohortAnalysis.insights, true),
       statisticalInsights.insights,
-      statisticalInsights.recommendations,
-      statisticalInsights.correlations,
-    ],
-  );
+      true,
+    );
+    var recommendations = __spreadArray([], statisticalInsights.recommendations, true);
+    var correlations = __spreadArray([], statisticalInsights.correlations, true);
+    return { insights: insights, recommendations: recommendations, correlations: correlations };
+  }, [
+    cohortAnalysis.insights,
+    statisticalInsights.insights,
+    statisticalInsights.recommendations,
+    statisticalInsights.correlations,
+  ]);
   // Calculate KPIs from all sources
-  (0, react_1.useEffect)(
-    function () {
-      var calculateKPIs = function () {
-        var _a, _b;
-        var newKpis = {
-          totalRevenue: realTimeAnalytics.metrics.monthlyRecurringRevenue,
-          activeSubscriptions: realTimeAnalytics.metrics.activeSubscriptions,
-          churnRate: realTimeAnalytics.metrics.churnRate,
-          conversionRate:
-            realTimeAnalytics.metrics.trialConversions > 0
-              ? (realTimeAnalytics.metrics.trialConversions /
-                  realTimeAnalytics.metrics.newSignups) *
-                100
-              : 0,
-          growthRate: 0, // Calculate from historical data
-        };
-        // Calculate growth rate from forecasting data
-        if (forecasting.forecast && forecasting.forecast.predictions.length > 1) {
-          var current =
-            ((_a = forecasting.forecast.predictions[0]) === null || _a === void 0
-              ? void 0
-              : _a.value) || 0;
-          var future =
-            ((_b =
-              forecasting.forecast.predictions[forecasting.forecast.predictions.length - 1]) ===
-              null || _b === void 0
-              ? void 0
-              : _b.value) || 0;
-          newKpis.growthRate = current > 0 ? ((future - current) / current) * 100 : 0;
-        }
-        setKpis(newKpis);
+  (0, react_1.useEffect)(() => {
+    var calculateKPIs = () => {
+      var _a, _b;
+      var newKpis = {
+        totalRevenue: realTimeAnalytics.metrics.monthlyRecurringRevenue,
+        activeSubscriptions: realTimeAnalytics.metrics.activeSubscriptions,
+        churnRate: realTimeAnalytics.metrics.churnRate,
+        conversionRate:
+          realTimeAnalytics.metrics.trialConversions > 0
+            ? (realTimeAnalytics.metrics.trialConversions / realTimeAnalytics.metrics.newSignups) *
+              100
+            : 0,
+        growthRate: 0, // Calculate from historical data
       };
-      if (isInitialized) {
-        calculateKPIs();
+      // Calculate growth rate from forecasting data
+      if (forecasting.forecast && forecasting.forecast.predictions.length > 1) {
+        var current =
+          ((_a = forecasting.forecast.predictions[0]) === null || _a === void 0
+            ? void 0
+            : _a.value) || 0;
+        var future =
+          ((_b = forecasting.forecast.predictions[forecasting.forecast.predictions.length - 1]) ===
+            null || _b === void 0
+            ? void 0
+            : _b.value) || 0;
+        newKpis.growthRate = current > 0 ? ((future - current) / current) * 100 : 0;
       }
-    },
-    [isInitialized, realTimeAnalytics.metrics, forecasting.forecast],
-  );
+      setKpis(newKpis);
+    };
+    if (isInitialized) {
+      calculateKPIs();
+    }
+  }, [isInitialized, realTimeAnalytics.metrics, forecasting.forecast]);
   // Combine alerts from all sources
   var allAlerts = (0, react_1.useMemo)(
-    function () {
-      return __spreadArray(
+    () =>
+      __spreadArray(
         __spreadArray(__spreadArray([], dashboardAlerts, true), realTimeAnalytics.alerts, true),
-        statisticalInsights.anomalies.map(function (anomaly) {
-          return {
-            id: "anomaly-".concat(anomaly.metric, "-").concat(Date.now()),
-            type: anomaly.severity === "high" ? "critical" : "warning",
-            message: "Anomaly detected in "
-              .concat(anomaly.metric, ": ")
-              .concat(anomaly.explanation),
-            timestamp: new Date(anomaly.timestamp),
-            metric: anomaly.metric,
-          };
-        }),
+        statisticalInsights.anomalies.map((anomaly) => ({
+          id: "anomaly-".concat(anomaly.metric, "-").concat(Date.now()),
+          type: anomaly.severity === "high" ? "critical" : "warning",
+          message: "Anomaly detected in ".concat(anomaly.metric, ": ").concat(anomaly.explanation),
+          timestamp: new Date(anomaly.timestamp),
+          metric: anomaly.metric,
+        })),
         true,
-      );
-    },
+      ),
     [dashboardAlerts, realTimeAnalytics.alerts, statisticalInsights.anomalies],
   );
   // Initialize dashboard
   var initialize = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -383,8 +360,8 @@ function useAnalyticsDashboard(initialConfig) {
             case 5:
               error_1 = _a.sent();
               console.error("Dashboard initialization failed:", error_1);
-              setDashboardAlerts(function (prev) {
-                return __spreadArray(
+              setDashboardAlerts((prev) =>
+                __spreadArray(
                   __spreadArray([], prev, true),
                   [
                     {
@@ -396,23 +373,22 @@ function useAnalyticsDashboard(initialConfig) {
                     },
                   ],
                   false,
-                );
-              });
+                ),
+              );
               return [3 /*break*/, 6];
             case 6:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [config, cohortAnalysis, forecasting, realTimeAnalytics, statisticalInsights],
   );
   // Refresh all analytics
   var refreshAll = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -436,16 +412,15 @@ function useAnalyticsDashboard(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [cohortAnalysis, forecasting, realTimeAnalytics, statisticalInsights],
   );
   // Update configuration
   var updateConfig = (0, react_1.useCallback)(
-    function (newConfig) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (newConfig) =>
+      __awaiter(this, void 0, void 0, function () {
         var updatedConfig;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updatedConfig = __assign(__assign({}, config), newConfig);
@@ -468,16 +443,15 @@ function useAnalyticsDashboard(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [config, cohortAnalysis, forecasting, realTimeAnalytics, refreshAll],
   );
   // Export dashboard
   var exportDashboard = (0, react_1.useCallback)(
-    function (format) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (format) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, blob, url, a, error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -524,40 +498,33 @@ function useAnalyticsDashboard(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [kpis, cohortAnalysis.metrics, forecasting.predictions, aggregatedInsights, config],
   );
   // Alert management
-  var addAlert = (0, react_1.useCallback)(function (alert) {
-    setDashboardAlerts(function (prev) {
-      return __spreadArray(
+  var addAlert = (0, react_1.useCallback)((alert) => {
+    setDashboardAlerts((prev) =>
+      __spreadArray(
         __spreadArray([], prev, true),
         [__assign(__assign({}, alert), { id: "custom-".concat(Date.now()) })],
         false,
-      );
-    });
+      ),
+    );
   }, []);
-  var clearAlerts = (0, react_1.useCallback)(
-    function () {
-      setDashboardAlerts([]);
-      realTimeAnalytics.clearAlerts();
-    },
-    [realTimeAnalytics],
-  );
+  var clearAlerts = (0, react_1.useCallback)(() => {
+    setDashboardAlerts([]);
+    realTimeAnalytics.clearAlerts();
+  }, [realTimeAnalytics]);
   // Auto-initialize on mount
-  (0, react_1.useEffect)(
-    function () {
-      if (!isInitialized) {
-        initialize();
-      }
-      return function () {
-        // Cleanup on unmount
-        realTimeAnalytics.stopMonitoring();
-      };
-    },
-    [isInitialized, initialize, realTimeAnalytics],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!isInitialized) {
+      initialize();
+    }
+    return () => {
+      // Cleanup on unmount
+      realTimeAnalytics.stopMonitoring();
+    };
+  }, [isInitialized, initialize, realTimeAnalytics]);
   return {
     // State
     isInitialized: isInitialized,

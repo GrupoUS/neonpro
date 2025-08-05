@@ -1,6 +1,5 @@
-﻿import type { AvailableSlotsResponse } from "@/app/lib/types/appointments";
-import type { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+﻿import { type NextRequest, NextResponse } from "next/server";
+import type { AvailableSlotsResponse } from "@/app/lib/types/appointments";
 
 // ðŸš€ Edge Runtime para busca ultra-rÃ¡pida de horÃ¡rios disponÃ­veis
 export const runtime = "edge";
@@ -49,7 +48,7 @@ export async function GET(request: NextRequest) {
     // Generate time slots for the day (8 AM to 6 PM, 15-minute intervals)
     const generateTimeSlots = (date: string) => {
       const slots = [];
-      const baseDate = new Date(date + "T00:00:00.000Z");
+      const baseDate = new Date(`${date}T00:00:00.000Z`);
 
       for (let hour = 8; hour < 18; hour++) {
         for (let minute = 0; minute < 60; minute += 15) {
@@ -73,8 +72,8 @@ export async function GET(request: NextRequest) {
     const timeSlots = generateTimeSlots(date);
 
     // Get existing appointments for the professional on the specified date
-    const startOfDay = new Date(date + "T00:00:00.000Z");
-    const endOfDay = new Date(date + "T23:59:59.999Z");
+    const startOfDay = new Date(`${date}T00:00:00.000Z`);
+    const endOfDay = new Date(`${date}T23:59:59.999Z`);
 
     const { data: existingAppointments, error: appointmentsError } = await supabase
       .from("appointments")

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Safety Alerts System
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,10 +155,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -170,11 +167,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SafetyAlertsSystem = void 0;
 var client_1 = require("@/lib/supabase/client");
-var SafetyAlertsSystem = /** @class */ (function () {
+var SafetyAlertsSystem = /** @class */ (() => {
   function SafetyAlertsSystem(config) {
     this.supabase = (0, client_1.createClient)();
     this.alertRules = new Map();
@@ -379,9 +376,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
             contraindications =
               (_b = riskResult.criticalAlerts) === null || _b === void 0
                 ? void 0
-                : _b.filter(function (alert) {
-                    return alert.type === "contraindication";
-                  });
+                : _b.filter((alert) => alert.type === "contraindication");
             if (!(contraindications && contraindications.length > 0)) return [3 /*break*/, 9];
             return [
               4 /*yield*/,
@@ -393,9 +388,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
                 {
                   patientId: patientId,
                   treatmentId: treatmentId,
-                  riskFactors: contraindications.map(function (c) {
-                    return c.message;
-                  }),
+                  riskFactors: contraindications.map((c) => c.message),
                   requiredActions: ["Treatment blocked", "Physician review required"],
                   timeframe: "Immediate",
                   consequences: ["Treatment cannot proceed", "Alternative treatment required"],
@@ -624,7 +617,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
             _a.label = 1;
           case 1:
             _a.trys.push([1, 8, , 9]);
-            if (!!status.operational) return [3 /*break*/, 3];
+            if (status.operational) return [3 /*break*/, 3];
             return [
               4 /*yield*/,
               this.createAlert(
@@ -728,7 +721,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
             alert_12.metadata.acknowledgedBy = userId;
             alert_12.metadata.acknowledgedAt = new Date();
             // Update recipients
-            alert_12.recipients.forEach(function (recipient) {
+            alert_12.recipients.forEach((recipient) => {
               if (recipient.userId === userId) {
                 recipient.acknowledged = true;
                 recipient.acknowledgedAt = new Date();
@@ -859,28 +852,15 @@ var SafetyAlertsSystem = /** @class */ (function () {
   SafetyAlertsSystem.prototype.getActiveAlerts = function (filters) {
     var alerts = Array.from(this.activeAlerts.values());
     if (filters) {
-      if (filters.type)
-        alerts = alerts.filter(function (a) {
-          return a.type === filters.type;
-        });
-      if (filters.severity)
-        alerts = alerts.filter(function (a) {
-          return a.severity === filters.severity;
-        });
-      if (filters.priority)
-        alerts = alerts.filter(function (a) {
-          return a.priority === filters.priority;
-        });
+      if (filters.type) alerts = alerts.filter((a) => a.type === filters.type);
+      if (filters.severity) alerts = alerts.filter((a) => a.severity === filters.severity);
+      if (filters.priority) alerts = alerts.filter((a) => a.priority === filters.priority);
       if (filters.patientId)
-        alerts = alerts.filter(function (a) {
-          return a.details.patientId === filters.patientId;
-        });
+        alerts = alerts.filter((a) => a.details.patientId === filters.patientId);
       if (filters.treatmentId)
-        alerts = alerts.filter(function (a) {
-          return a.details.treatmentId === filters.treatmentId;
-        });
+        alerts = alerts.filter((a) => a.details.treatmentId === filters.treatmentId);
     }
-    return alerts.sort(function (a, b) {
+    return alerts.sort((a, b) => {
       // Sort by priority and timestamp
       var priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
       var aPriority = priorityOrder[a.priority];
@@ -922,37 +902,23 @@ var SafetyAlertsSystem = /** @class */ (function () {
               falsePositiveRate: 0,
             };
             // Calculate statistics
-            alerts.forEach(function (alert) {
+            alerts.forEach((alert) => {
               stats_1.byType[alert.type] = (stats_1.byType[alert.type] || 0) + 1;
               stats_1.bySeverity[alert.severity] = (stats_1.bySeverity[alert.severity] || 0) + 1;
               stats_1.byStatus[alert.status] = (stats_1.byStatus[alert.status] || 0) + 1;
             });
-            resolvedAlerts = alerts.filter(function (a) {
-              return a.status === "resolved";
-            });
-            escalatedAlerts = alerts.filter(function (a) {
-              return a.status === "escalated";
-            });
+            resolvedAlerts = alerts.filter((a) => a.status === "resolved");
+            escalatedAlerts = alerts.filter((a) => a.status === "escalated");
             stats_1.resolutionRate = alerts.length > 0 ? resolvedAlerts.length / alerts.length : 0;
             stats_1.escalationRate = alerts.length > 0 ? escalatedAlerts.length / alerts.length : 0;
             responseTimes = resolvedAlerts
-              .filter(function (a) {
-                return a.acknowledged_at && a.created_at;
-              })
-              .map(function (a) {
-                return new Date(a.acknowledged_at).getTime() - new Date(a.created_at).getTime();
-              })
-              .map(function (ms) {
-                return ms / 60000;
-              }); // Convert to minutes
+              .filter((a) => a.acknowledged_at && a.created_at)
+              .map((a) => new Date(a.acknowledged_at).getTime() - new Date(a.created_at).getTime())
+              .map((ms) => ms / 60000); // Convert to minutes
             if (responseTimes.length > 0) {
               stats_1.responseTime.average =
-                responseTimes.reduce(function (sum, time) {
-                  return sum + time;
-                }, 0) / responseTimes.length;
-              responseTimes.sort(function (a, b) {
-                return a - b;
-              });
+                responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+              responseTimes.sort((a, b) => a - b);
               stats_1.responseTime.median = responseTimes[Math.floor(responseTimes.length / 2)];
               stats_1.responseTime.percentile95 =
                 responseTimes[Math.floor(responseTimes.length * 0.95)];
@@ -972,7 +938,6 @@ var SafetyAlertsSystem = /** @class */ (function () {
    * Start real-time monitoring
    */
   SafetyAlertsSystem.prototype.startRealTimeMonitoring = function () {
-    var _this = this;
     if (this.isMonitoring) return;
     this.isMonitoring = true;
     console.log("Starting real-time safety monitoring");
@@ -980,9 +945,10 @@ var SafetyAlertsSystem = /** @class */ (function () {
     this.setupRealtimeSubscriptions();
     // Set up periodic monitoring
     if (this.config.monitoring.batchProcessing) {
-      this.monitoringInterval = setInterval(function () {
-        return _this.performPeriodicChecks();
-      }, this.config.monitoring.intervalMinutes * 60000);
+      this.monitoringInterval = setInterval(
+        () => this.performPeriodicChecks(),
+        this.config.monitoring.intervalMinutes * 60000,
+      );
     }
   };
   /**
@@ -1000,16 +966,13 @@ var SafetyAlertsSystem = /** @class */ (function () {
    * Setup Supabase real-time subscriptions
    */
   SafetyAlertsSystem.prototype.setupRealtimeSubscriptions = function () {
-    var _this = this;
     // Subscribe to patient vitals changes
     this.supabase
       .channel("patient_vitals")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "patient_vitals" },
-        function (payload) {
-          return _this.handleVitalsUpdate(payload.new);
-        },
+        (payload) => this.handleVitalsUpdate(payload.new),
       )
       .subscribe();
     // Subscribe to equipment status changes
@@ -1018,9 +981,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "equipment" },
-        function (payload) {
-          return _this.handleEquipmentUpdate(payload.new);
-        },
+        (payload) => this.handleEquipmentUpdate(payload.new),
       )
       .subscribe();
     // Subscribe to treatment updates
@@ -1029,9 +990,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
       .on(
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "treatments" },
-        function (payload) {
-          return _this.handleTreatmentUpdate(payload.new);
-        },
+        (payload) => this.handleTreatmentUpdate(payload.new),
       )
       .subscribe();
   };
@@ -1347,10 +1306,9 @@ var SafetyAlertsSystem = /** @class */ (function () {
   /**
    * Helper methods
    */
-  SafetyAlertsSystem.prototype.generateAlertId = function () {
-    return "alert_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  SafetyAlertsSystem.prototype.determinePriority = function (severity) {
+  SafetyAlertsSystem.prototype.generateAlertId = () =>
+    "alert_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  SafetyAlertsSystem.prototype.determinePriority = (severity) => {
     var priorityMap = {
       emergency: "critical",
       critical: "critical",
@@ -1360,7 +1318,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
     };
     return priorityMap[severity];
   };
-  SafetyAlertsSystem.prototype.getDefaultChannels = function (severity) {
+  SafetyAlertsSystem.prototype.getDefaultChannels = (severity) => {
     if (severity === "emergency" || severity === "critical") {
       return ["dashboard", "email", "sms", "push", "emergency"];
     }
@@ -1377,7 +1335,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
           case 0:
             recipients = [];
             if (!customRecipients) return [3 /*break*/, 1];
-            customRecipients.forEach(function (userId) {
+            customRecipients.forEach((userId) => {
               recipients.push({
                 userId: userId,
                 role: "custom",
@@ -1401,32 +1359,25 @@ var SafetyAlertsSystem = /** @class */ (function () {
   };
   SafetyAlertsSystem.prototype.getDefaultRecipients = function (type, severity) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would query the database for default recipients based on roles
         // For now, return empty array
         return [2 /*return*/, []];
       });
     });
   };
-  SafetyAlertsSystem.prototype.determineComplianceRequirements = function (type, severity) {
-    return {
-      cfmRequired: severity === "critical" || severity === "emergency",
-      anvisaRequired: type === "equipment_failure" || severity === "emergency",
-      ethicsRequired: type === "contraindication" || severity === "critical",
-      documentationRequired: true,
-      reportingRequired: severity === "critical" || severity === "emergency",
-    };
-  };
-  SafetyAlertsSystem.prototype.extractRiskFactors = function (categoryRisks) {
-    return categoryRisks
-      .filter(function (risk) {
-        return risk.severity === "high" || risk.severity === "critical";
-      })
-      .flatMap(function (risk) {
-        return risk.factors;
-      });
-  };
-  SafetyAlertsSystem.prototype.mapInteractionSeverity = function (severity) {
+  SafetyAlertsSystem.prototype.determineComplianceRequirements = (type, severity) => ({
+    cfmRequired: severity === "critical" || severity === "emergency",
+    anvisaRequired: type === "equipment_failure" || severity === "emergency",
+    ethicsRequired: type === "contraindication" || severity === "critical",
+    documentationRequired: true,
+    reportingRequired: severity === "critical" || severity === "emergency",
+  });
+  SafetyAlertsSystem.prototype.extractRiskFactors = (categoryRisks) =>
+    categoryRisks
+      .filter((risk) => risk.severity === "high" || risk.severity === "critical")
+      .flatMap((risk) => risk.factors);
+  SafetyAlertsSystem.prototype.mapInteractionSeverity = (severity) => {
     var severityMap = {
       major: "critical",
       moderate: "urgent",
@@ -1467,7 +1418,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
   };
   SafetyAlertsSystem.prototype.sendAlertNotifications = function (alert, channels) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would send notifications via various channels
         console.log(
           "Sending alert notifications for "
@@ -1611,7 +1562,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
           case 1:
             rules = _a.sent().data;
             if (rules) {
-              rules.forEach(function (rule) {
+              rules.forEach((rule) => {
                 _this.alertRules.set(rule.type, {
                   id: rule.id,
                   name: rule.name,
@@ -1658,7 +1609,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
           case 1:
             alerts = _a.sent().data;
             if (alerts) {
-              alerts.forEach(function (alertData) {
+              alerts.forEach((alertData) => {
                 var alert = {
                   id: alertData.id,
                   type: alertData.type,
@@ -1687,7 +1638,7 @@ var SafetyAlertsSystem = /** @class */ (function () {
       });
     });
   };
-  SafetyAlertsSystem.prototype.initializeConfig = function (config) {
+  SafetyAlertsSystem.prototype.initializeConfig = (config) => {
     var defaultConfig = {
       enabled: true,
       channels: {
@@ -1722,23 +1673,19 @@ var SafetyAlertsSystem = /** @class */ (function () {
     };
     return __assign(__assign({}, defaultConfig), config);
   };
-  SafetyAlertsSystem.prototype.getEmptyStatistics = function () {
-    return {
-      total: 0,
-      byType: {},
-      bySeverity: {},
-      byStatus: {},
-      responseTime: { average: 0, median: 0, percentile95: 0 },
-      escalationRate: 0,
-      resolutionRate: 0,
-      falsePositiveRate: 0,
-    };
-  };
+  SafetyAlertsSystem.prototype.getEmptyStatistics = () => ({
+    total: 0,
+    byType: {},
+    bySeverity: {},
+    byStatus: {},
+    responseTime: { average: 0, median: 0, percentile95: 0 },
+    escalationRate: 0,
+    resolutionRate: 0,
+    falsePositiveRate: 0,
+  });
   SafetyAlertsSystem.prototype.updateAlertStatistics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return SafetyAlertsSystem;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Webhook Utilities Tests
  * Story 7.3: Webhook & Event System Implementation
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,7 +30,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,8 +59,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -82,9 +79,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -143,37 +140,25 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var vitest_1 = require("vitest");
 var utils_1 = require("../utils");
 // Mock crypto for consistent results
-vitest_1.vi.mock("crypto", function () {
-  return {
-    createHash: vitest_1.vi.fn(function () {
-      return {
-        update: vitest_1.vi.fn().mockReturnThis(),
-        digest: vitest_1.vi.fn(function () {
-          return "test-hash-123";
-        }),
-      };
-    }),
-    createHmac: vitest_1.vi.fn(function () {
-      return {
-        update: vitest_1.vi.fn().mockReturnThis(),
-        digest: vitest_1.vi.fn(function () {
-          return "test-signature";
-        }),
-      };
-    }),
-    timingSafeEqual: vitest_1.vi.fn(function () {
-      return true;
-    }),
-  };
-});
-(0, vitest_1.describe)("EventUtils", function () {
-  (0, vitest_1.describe)("validateEvent", function () {
-    (0, vitest_1.it)("should validate a complete valid event", function () {
+vitest_1.vi.mock("crypto", () => ({
+  createHash: vitest_1.vi.fn(() => ({
+    update: vitest_1.vi.fn().mockReturnThis(),
+    digest: vitest_1.vi.fn(() => "test-hash-123"),
+  })),
+  createHmac: vitest_1.vi.fn(() => ({
+    update: vitest_1.vi.fn().mockReturnThis(),
+    digest: vitest_1.vi.fn(() => "test-signature"),
+  })),
+  timingSafeEqual: vitest_1.vi.fn(() => true),
+}));
+(0, vitest_1.describe)("EventUtils", () => {
+  (0, vitest_1.describe)("validateEvent", () => {
+    (0, vitest_1.it)("should validate a complete valid event", () => {
       var validEvent = {
         type: "patient.created",
         source: "patient-service",
@@ -186,7 +171,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.isValid).toBe(true);
       (0, vitest_1.expect)(result.errors).toHaveLength(0);
     });
-    (0, vitest_1.it)("should reject event without required fields", function () {
+    (0, vitest_1.it)("should reject event without required fields", () => {
       var invalidEvent = {
         type: undefined,
         source: "",
@@ -200,7 +185,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.errors).toContain("Event data is required");
       (0, vitest_1.expect)(result.errors).toContain("Clinic ID is required in metadata");
     });
-    (0, vitest_1.it)("should reject invalid event type", function () {
+    (0, vitest_1.it)("should reject invalid event type", () => {
       var invalidEvent = {
         type: "invalid.type",
         source: "test-service",
@@ -211,7 +196,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.isValid).toBe(false);
       (0, vitest_1.expect)(result.errors).toContain("Invalid event type: invalid.type");
     });
-    (0, vitest_1.it)("should reject invalid priority", function () {
+    (0, vitest_1.it)("should reject invalid priority", () => {
       var invalidEvent = {
         type: "patient.created",
         source: "test-service",
@@ -223,7 +208,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.isValid).toBe(false);
       (0, vitest_1.expect)(result.errors).toContain("Invalid event priority: invalid");
     });
-    (0, vitest_1.it)("should reject invalid version format", function () {
+    (0, vitest_1.it)("should reject invalid version format", () => {
       var invalidEvent = {
         type: "patient.created",
         source: "test-service",
@@ -238,8 +223,8 @@ vitest_1.vi.mock("crypto", function () {
       );
     });
   });
-  (0, vitest_1.describe)("sanitizeEventForWebhook", function () {
-    (0, vitest_1.it)("should sanitize event data for webhook delivery", function () {
+  (0, vitest_1.describe)("sanitizeEventForWebhook", () => {
+    (0, vitest_1.it)("should sanitize event data for webhook delivery", () => {
       var event = {
         id: "event-123",
         type: "patient.created",
@@ -281,8 +266,8 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(sanitized.timestamp).toBe("2024-01-01T00:00:00.000Z");
     });
   });
-  (0, vitest_1.describe)("generateEventFingerprint", function () {
-    (0, vitest_1.it)("should generate consistent fingerprints for same event data", function () {
+  (0, vitest_1.describe)("generateEventFingerprint", () => {
+    (0, vitest_1.it)("should generate consistent fingerprints for same event data", () => {
       var eventData = {
         type: "patient.created",
         source: "patient-service",
@@ -297,114 +282,103 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(fingerprint1).toBe(fingerprint2);
       (0, vitest_1.expect)(fingerprint1).toBe("test-hash-123");
     });
-    (0, vitest_1.it)(
-      "should generate different fingerprints for different event data",
-      function () {
-        var eventData1 = {
-          type: "patient.created",
-          source: "patient-service",
-          data: { patientId: "123" },
-          metadata: { clinicId: "clinic-123" },
-          priority: "normal",
-          version: "1.0.0",
-          context: {},
-        };
-        var eventData2 = {
-          type: "patient.created",
-          source: "patient-service",
-          data: { patientId: "456" },
-          metadata: { clinicId: "clinic-123" },
-          priority: "normal",
-          version: "1.0.0",
-          context: {},
-        };
-        // Mock different hash for different data
-        var mockCreateHash = vitest_1.vi.mocked(require("crypto").createHash);
-        mockCreateHash
-          .mockReturnValueOnce({
-            update: vitest_1.vi.fn().mockReturnThis(),
-            digest: vitest_1.vi.fn(function () {
-              return "hash-1";
-            }),
-          })
-          .mockReturnValueOnce({
-            update: vitest_1.vi.fn().mockReturnThis(),
-            digest: vitest_1.vi.fn(function () {
-              return "hash-2";
-            }),
-          });
-        var fingerprint1 = utils_1.EventUtils.generateEventFingerprint(eventData1);
-        var fingerprint2 = utils_1.EventUtils.generateEventFingerprint(eventData2);
-        (0, vitest_1.expect)(fingerprint1).not.toBe(fingerprint2);
-      },
-    );
+    (0, vitest_1.it)("should generate different fingerprints for different event data", () => {
+      var eventData1 = {
+        type: "patient.created",
+        source: "patient-service",
+        data: { patientId: "123" },
+        metadata: { clinicId: "clinic-123" },
+        priority: "normal",
+        version: "1.0.0",
+        context: {},
+      };
+      var eventData2 = {
+        type: "patient.created",
+        source: "patient-service",
+        data: { patientId: "456" },
+        metadata: { clinicId: "clinic-123" },
+        priority: "normal",
+        version: "1.0.0",
+        context: {},
+      };
+      // Mock different hash for different data
+      var mockCreateHash = vitest_1.vi.mocked(require("node:crypto").createHash);
+      mockCreateHash
+        .mockReturnValueOnce({
+          update: vitest_1.vi.fn().mockReturnThis(),
+          digest: vitest_1.vi.fn(() => "hash-1"),
+        })
+        .mockReturnValueOnce({
+          update: vitest_1.vi.fn().mockReturnThis(),
+          digest: vitest_1.vi.fn(() => "hash-2"),
+        });
+      var fingerprint1 = utils_1.EventUtils.generateEventFingerprint(eventData1);
+      var fingerprint2 = utils_1.EventUtils.generateEventFingerprint(eventData2);
+      (0, vitest_1.expect)(fingerprint1).not.toBe(fingerprint2);
+    });
   });
 });
-(0, vitest_1.describe)("WebhookUtils", function () {
-  (0, vitest_1.describe)("generateSignature", function () {
-    (0, vitest_1.it)("should generate webhook signature", function () {
+(0, vitest_1.describe)("WebhookUtils", () => {
+  (0, vitest_1.describe)("generateSignature", () => {
+    (0, vitest_1.it)("should generate webhook signature", () => {
       var payload = JSON.stringify({ test: "data" });
       var secret = "webhook-secret";
       var signature = utils_1.WebhookUtils.generateSignature(payload, secret);
       (0, vitest_1.expect)(signature).toBe("test-signature");
     });
-    (0, vitest_1.it)("should generate different signatures for different payloads", function () {
+    (0, vitest_1.it)("should generate different signatures for different payloads", () => {
       var payload1 = JSON.stringify({ test: "data1" });
       var payload2 = JSON.stringify({ test: "data2" });
       var secret = "webhook-secret";
       // Mock different signatures
-      var mockCreateHmac = vitest_1.vi.mocked(require("crypto").createHmac);
+      var mockCreateHmac = vitest_1.vi.mocked(require("node:crypto").createHmac);
       mockCreateHmac
         .mockReturnValueOnce({
           update: vitest_1.vi.fn().mockReturnThis(),
-          digest: vitest_1.vi.fn(function () {
-            return "signature-1";
-          }),
+          digest: vitest_1.vi.fn(() => "signature-1"),
         })
         .mockReturnValueOnce({
           update: vitest_1.vi.fn().mockReturnThis(),
-          digest: vitest_1.vi.fn(function () {
-            return "signature-2";
-          }),
+          digest: vitest_1.vi.fn(() => "signature-2"),
         });
       var signature1 = utils_1.WebhookUtils.generateSignature(payload1, secret);
       var signature2 = utils_1.WebhookUtils.generateSignature(payload2, secret);
       (0, vitest_1.expect)(signature1).not.toBe(signature2);
     });
   });
-  (0, vitest_1.describe)("verifySignature", function () {
-    (0, vitest_1.it)("should verify valid signature", function () {
+  (0, vitest_1.describe)("verifySignature", () => {
+    (0, vitest_1.it)("should verify valid signature", () => {
       var payload = JSON.stringify({ test: "data" });
       var secret = "webhook-secret";
       var signature = "test-signature";
       var isValid = utils_1.WebhookUtils.verifySignature(payload, signature, secret);
       (0, vitest_1.expect)(isValid).toBe(true);
     });
-    (0, vitest_1.it)("should reject invalid signature", function () {
+    (0, vitest_1.it)("should reject invalid signature", () => {
       var payload = JSON.stringify({ test: "data" });
       var secret = "webhook-secret";
       var signature = "invalid-signature";
       // Mock timingSafeEqual to return false
-      var mockTimingSafeEqual = vitest_1.vi.mocked(require("crypto").timingSafeEqual);
+      var mockTimingSafeEqual = vitest_1.vi.mocked(require("node:crypto").timingSafeEqual);
       mockTimingSafeEqual.mockReturnValueOnce(false);
       var isValid = utils_1.WebhookUtils.verifySignature(payload, signature, secret);
       (0, vitest_1.expect)(isValid).toBe(false);
     });
-    (0, vitest_1.it)("should handle signature verification errors", function () {
+    (0, vitest_1.it)("should handle signature verification errors", () => {
       var payload = JSON.stringify({ test: "data" });
       var secret = "webhook-secret";
       var signature = "malformed-signature";
       // Mock error in verification
-      var mockTimingSafeEqual = vitest_1.vi.mocked(require("crypto").timingSafeEqual);
-      mockTimingSafeEqual.mockImplementationOnce(function () {
+      var mockTimingSafeEqual = vitest_1.vi.mocked(require("node:crypto").timingSafeEqual);
+      mockTimingSafeEqual.mockImplementationOnce(() => {
         throw new Error("Invalid signature format");
       });
       var isValid = utils_1.WebhookUtils.verifySignature(payload, signature, secret);
       (0, vitest_1.expect)(isValid).toBe(false);
     });
   });
-  (0, vitest_1.describe)("validateWebhookUrl", function () {
-    (0, vitest_1.it)("should validate HTTPS URLs in production", function () {
+  (0, vitest_1.describe)("validateWebhookUrl", () => {
+    (0, vitest_1.it)("should validate HTTPS URLs in production", () => {
       var originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = "production";
       var result = utils_1.WebhookUtils.validateWebhookUrl("https://api.example.com/webhook");
@@ -412,7 +386,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.errors).toHaveLength(0);
       process.env.NODE_ENV = originalEnv;
     });
-    (0, vitest_1.it)("should reject HTTP URLs in production", function () {
+    (0, vitest_1.it)("should reject HTTP URLs in production", () => {
       var originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = "production";
       var result = utils_1.WebhookUtils.validateWebhookUrl("http://api.example.com/webhook");
@@ -420,7 +394,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.errors).toContain("Webhook URL must use HTTPS in production");
       process.env.NODE_ENV = originalEnv;
     });
-    (0, vitest_1.it)("should reject localhost URLs in production", function () {
+    (0, vitest_1.it)("should reject localhost URLs in production", () => {
       var originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = "production";
       var result = utils_1.WebhookUtils.validateWebhookUrl("https://localhost:3000/webhook");
@@ -430,7 +404,7 @@ vitest_1.vi.mock("crypto", function () {
       );
       process.env.NODE_ENV = originalEnv;
     });
-    (0, vitest_1.it)("should reject private IP addresses in production", function () {
+    (0, vitest_1.it)("should reject private IP addresses in production", () => {
       var originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = "production";
       var privateIPs = [
@@ -438,7 +412,7 @@ vitest_1.vi.mock("crypto", function () {
         "https://10.0.0.1/webhook",
         "https://172.16.0.1/webhook",
       ];
-      privateIPs.forEach(function (url) {
+      privateIPs.forEach((url) => {
         var result = utils_1.WebhookUtils.validateWebhookUrl(url);
         (0, vitest_1.expect)(result.isValid).toBe(false);
         (0, vitest_1.expect)(result.errors).toContain(
@@ -447,12 +421,12 @@ vitest_1.vi.mock("crypto", function () {
       });
       process.env.NODE_ENV = originalEnv;
     });
-    (0, vitest_1.it)("should reject invalid URL format", function () {
+    (0, vitest_1.it)("should reject invalid URL format", () => {
       var result = utils_1.WebhookUtils.validateWebhookUrl("not-a-valid-url");
       (0, vitest_1.expect)(result.isValid).toBe(false);
       (0, vitest_1.expect)(result.errors).toContain("Invalid URL format");
     });
-    (0, vitest_1.it)("should allow HTTP URLs in development", function () {
+    (0, vitest_1.it)("should allow HTTP URLs in development", () => {
       var originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = "development";
       var result = utils_1.WebhookUtils.validateWebhookUrl("http://localhost:3000/webhook");
@@ -461,8 +435,8 @@ vitest_1.vi.mock("crypto", function () {
       process.env.NODE_ENV = originalEnv;
     });
   });
-  (0, vitest_1.describe)("generateWebhookHeaders", function () {
-    (0, vitest_1.it)("should generate proper webhook headers", function () {
+  (0, vitest_1.describe)("generateWebhookHeaders", () => {
+    (0, vitest_1.it)("should generate proper webhook headers", () => {
       var event = {
         id: "event-123",
         type: "patient.created",
@@ -502,7 +476,7 @@ vitest_1.vi.mock("crypto", function () {
         "X-Webhook-Signature": "sha256=test-signature",
       });
     });
-    (0, vitest_1.it)("should not include signature when disabled", function () {
+    (0, vitest_1.it)("should not include signature when disabled", () => {
       var event = {
         id: "event-123",
         type: "patient.created",
@@ -530,8 +504,8 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(headers["X-Webhook-Signature"]).toBeUndefined();
     });
   });
-  (0, vitest_1.describe)("parseSignatureHeader", function () {
-    (0, vitest_1.it)("should parse valid signature header", function () {
+  (0, vitest_1.describe)("parseSignatureHeader", () => {
+    (0, vitest_1.it)("should parse valid signature header", () => {
       var signatureHeader = "sha256=abc123def456";
       var result = utils_1.WebhookUtils.parseSignatureHeader(signatureHeader);
       (0, vitest_1.expect)(result).toEqual({
@@ -539,28 +513,28 @@ vitest_1.vi.mock("crypto", function () {
         signature: "abc123def456",
       });
     });
-    (0, vitest_1.it)("should return null for invalid signature header", function () {
+    (0, vitest_1.it)("should return null for invalid signature header", () => {
       var invalidHeaders = ["invalid-format", "sha256", "sha256=", "=signature-only"];
-      invalidHeaders.forEach(function (header) {
+      invalidHeaders.forEach((header) => {
         var result = utils_1.WebhookUtils.parseSignatureHeader(header);
         (0, vitest_1.expect)(result).toBeNull();
       });
     });
   });
 });
-(0, vitest_1.describe)("RateLimitUtils", function () {
-  (0, vitest_1.beforeEach)(function () {
+(0, vitest_1.describe)("RateLimitUtils", () => {
+  (0, vitest_1.beforeEach)(() => {
     // Clear rate limiters before each test
     utils_1.RateLimitUtils.resetRateLimit("test-identifier");
   });
-  (0, vitest_1.describe)("checkRateLimit", function () {
-    (0, vitest_1.it)("should allow requests within rate limit", function () {
+  (0, vitest_1.describe)("checkRateLimit", () => {
+    (0, vitest_1.it)("should allow requests within rate limit", () => {
       var result = utils_1.RateLimitUtils.checkRateLimit("test-id", 10, 60000); // 10 requests per minute
       (0, vitest_1.expect)(result.allowed).toBe(true);
       (0, vitest_1.expect)(result.remaining).toBe(9);
       (0, vitest_1.expect)(result.resetTime).toBeGreaterThan(Date.now());
     });
-    (0, vitest_1.it)("should deny requests exceeding rate limit", function () {
+    (0, vitest_1.it)("should deny requests exceeding rate limit", () => {
       var identifier = "test-id-2";
       var maxRequests = 2;
       var windowMs = 60000;
@@ -574,7 +548,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.allowed).toBe(false);
       (0, vitest_1.expect)(result.remaining).toBe(0);
     });
-    (0, vitest_1.it)("should reset rate limit after time window", function () {
+    (0, vitest_1.it)("should reset rate limit after time window", () => {
       var identifier = "test-id-3";
       var maxRequests = 1;
       var windowMs = 100; // Short window for testing
@@ -584,15 +558,15 @@ vitest_1.vi.mock("crypto", function () {
       var result2 = utils_1.RateLimitUtils.checkRateLimit(identifier, maxRequests, windowMs);
       (0, vitest_1.expect)(result2.allowed).toBe(false);
       // Wait for window to reset
-      return new Promise(function (resolve) {
-        setTimeout(function () {
+      return new Promise((resolve) => {
+        setTimeout(() => {
           var result3 = utils_1.RateLimitUtils.checkRateLimit(identifier, maxRequests, windowMs);
           (0, vitest_1.expect)(result3.allowed).toBe(true);
           resolve(undefined);
         }, windowMs + 10);
       });
     });
-    (0, vitest_1.it)("should handle burst limits", function () {
+    (0, vitest_1.it)("should handle burst limits", () => {
       var identifier = "test-id-4";
       var maxRequests = 10;
       var windowMs = 60000;
@@ -617,8 +591,8 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.allowed).toBe(false);
     });
   });
-  (0, vitest_1.describe)("getRateLimitStatus", function () {
-    (0, vitest_1.it)("should return rate limit status for existing identifier", function () {
+  (0, vitest_1.describe)("getRateLimitStatus", () => {
+    (0, vitest_1.it)("should return rate limit status for existing identifier", () => {
       var identifier = "test-id-5";
       // Make a request to initialize rate limiter
       utils_1.RateLimitUtils.checkRateLimit(identifier, 10, 60000);
@@ -629,15 +603,15 @@ vitest_1.vi.mock("crypto", function () {
         resetTime: vitest_1.expect.any(Number),
       });
     });
-    (0, vitest_1.it)("should return null for non-existent identifier", function () {
+    (0, vitest_1.it)("should return null for non-existent identifier", () => {
       var status = utils_1.RateLimitUtils.getRateLimitStatus("non-existent");
       (0, vitest_1.expect)(status).toBeNull();
     });
   });
 });
-(0, vitest_1.describe)("RetryUtils", function () {
-  (0, vitest_1.describe)("calculateRetryDelay", function () {
-    (0, vitest_1.it)("should calculate exponential backoff delay", function () {
+(0, vitest_1.describe)("RetryUtils", () => {
+  (0, vitest_1.describe)("calculateRetryDelay", () => {
+    (0, vitest_1.it)("should calculate exponential backoff delay", () => {
       var strategy = {
         strategy: "exponential",
         maxAttempts: 3,
@@ -650,7 +624,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(delay2).toBeGreaterThanOrEqual(2000); // 2x base delay + jitter
       (0, vitest_1.expect)(delay3).toBeGreaterThanOrEqual(4000); // 4x base delay + jitter
     });
-    (0, vitest_1.it)("should calculate linear backoff delay", function () {
+    (0, vitest_1.it)("should calculate linear backoff delay", () => {
       var strategy = {
         strategy: "linear",
         maxAttempts: 3,
@@ -663,7 +637,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(delay2).toBeGreaterThanOrEqual(2000); // 2x base delay + jitter
       (0, vitest_1.expect)(delay3).toBeGreaterThanOrEqual(3000); // 3x base delay + jitter
     });
-    (0, vitest_1.it)("should calculate fixed delay", function () {
+    (0, vitest_1.it)("should calculate fixed delay", () => {
       var strategy = {
         strategy: "fixed",
         maxAttempts: 3,
@@ -680,7 +654,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(delay3).toBeGreaterThanOrEqual(1000);
       (0, vitest_1.expect)(delay3).toBeLessThan(1200);
     });
-    (0, vitest_1.it)("should respect maximum delay limit", function () {
+    (0, vitest_1.it)("should respect maximum delay limit", () => {
       var strategy = {
         strategy: "exponential",
         maxAttempts: 10,
@@ -691,51 +665,51 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(delay).toBeLessThanOrEqual(300000);
     });
   });
-  (0, vitest_1.describe)("isRetryableError", function () {
-    (0, vitest_1.it)("should identify retryable network errors", function () {
+  (0, vitest_1.describe)("isRetryableError", () => {
+    (0, vitest_1.it)("should identify retryable network errors", () => {
       var networkErrors = [{ code: "ECONNRESET" }, { code: "ENOTFOUND" }, { code: "ETIMEDOUT" }];
-      networkErrors.forEach(function (error) {
+      networkErrors.forEach((error) => {
         (0, vitest_1.expect)(utils_1.RetryUtils.isRetryableError(error)).toBe(true);
       });
     });
-    (0, vitest_1.it)("should identify retryable HTTP status codes", function () {
+    (0, vitest_1.it)("should identify retryable HTTP status codes", () => {
       var retryableStatuses = [408, 429, 500, 502, 503, 504];
-      retryableStatuses.forEach(function (status) {
+      retryableStatuses.forEach((status) => {
         (0, vitest_1.expect)(utils_1.RetryUtils.isRetryableError({}, status)).toBe(true);
       });
     });
-    (0, vitest_1.it)("should identify non-retryable HTTP status codes", function () {
+    (0, vitest_1.it)("should identify non-retryable HTTP status codes", () => {
       var nonRetryableStatuses = [400, 401, 403, 404, 422];
-      nonRetryableStatuses.forEach(function (status) {
+      nonRetryableStatuses.forEach((status) => {
         (0, vitest_1.expect)(utils_1.RetryUtils.isRetryableError({}, status)).toBe(false);
       });
     });
-    (0, vitest_1.it)("should identify timeout errors", function () {
+    (0, vitest_1.it)("should identify timeout errors", () => {
       var timeoutErrors = [
         { name: "AbortError" },
         { message: "Request timeout occurred" },
         { message: "Connection timeout" },
       ];
-      timeoutErrors.forEach(function (error) {
+      timeoutErrors.forEach((error) => {
         (0, vitest_1.expect)(utils_1.RetryUtils.isRetryableError(error)).toBe(true);
       });
     });
-    (0, vitest_1.it)("should not retry non-retryable errors", function () {
+    (0, vitest_1.it)("should not retry non-retryable errors", () => {
       var nonRetryableErrors = [
         { code: "EACCES" },
         { name: "ValidationError" },
         { message: "Invalid input" },
       ];
-      nonRetryableErrors.forEach(function (error) {
+      nonRetryableErrors.forEach((error) => {
         (0, vitest_1.expect)(utils_1.RetryUtils.isRetryableError(error)).toBe(false);
       });
     });
   });
-  (0, vitest_1.describe)("executeWithRetry", function () {
-    (0, vitest_1.it)("should succeed on first attempt", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("executeWithRetry", () => {
+    (0, vitest_1.it)("should succeed on first attempt", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockFn, strategy, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFn = vitest_1.vi.fn().mockResolvedValue("success");
@@ -752,12 +726,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should retry on retryable errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should retry on retryable errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockFn, strategy, onRetry, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFn = vitest_1.vi
@@ -783,12 +757,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should fail after max attempts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should fail after max attempts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockFn, strategy;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFn = vitest_1.vi.fn().mockRejectedValue(new Error("ECONNRESET"));
@@ -809,12 +783,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should not retry non-retryable errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should not retry non-retryable errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockFn, strategy;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFn = vitest_1.vi.fn().mockRejectedValue(new Error("ValidationError"));
@@ -835,20 +809,20 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });
-(0, vitest_1.describe)("ValidationUtils", function () {
-  (0, vitest_1.describe)("validateJsonPayload", function () {
-    (0, vitest_1.it)("should validate valid JSON", function () {
+(0, vitest_1.describe)("ValidationUtils", () => {
+  (0, vitest_1.describe)("validateJsonPayload", () => {
+    (0, vitest_1.it)("should validate valid JSON", () => {
       var validJson = JSON.stringify({ test: "data", number: 123 });
       var result = utils_1.ValidationUtils.validateJsonPayload(validJson);
       (0, vitest_1.expect)(result.isValid).toBe(true);
       (0, vitest_1.expect)(result.data).toEqual({ test: "data", number: 123 });
       (0, vitest_1.expect)(result.error).toBeUndefined();
     });
-    (0, vitest_1.it)("should reject invalid JSON", function () {
+    (0, vitest_1.it)("should reject invalid JSON", () => {
       var invalidJson = "{ invalid json }";
       var result = utils_1.ValidationUtils.validateJsonPayload(invalidJson);
       (0, vitest_1.expect)(result.isValid).toBe(false);
@@ -856,8 +830,8 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.error).toContain("Invalid JSON");
     });
   });
-  (0, vitest_1.describe)("validateWebhookConfig", function () {
-    (0, vitest_1.it)("should validate complete webhook configuration", function () {
+  (0, vitest_1.describe)("validateWebhookConfig", () => {
+    (0, vitest_1.it)("should validate complete webhook configuration", () => {
       var validConfig = {
         name: "Test Webhook",
         url: "https://api.example.com/webhook",
@@ -877,7 +851,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.isValid).toBe(true);
       (0, vitest_1.expect)(result.errors).toHaveLength(0);
     });
-    (0, vitest_1.it)("should reject webhook with missing required fields", function () {
+    (0, vitest_1.it)("should reject webhook with missing required fields", () => {
       var invalidConfig = {
         name: "",
         url: "",
@@ -891,7 +865,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.errors).toContain("Clinic ID is required");
       (0, vitest_1.expect)(result.errors).toContain("At least one event type must be specified");
     });
-    (0, vitest_1.it)("should validate timeout constraints", function () {
+    (0, vitest_1.it)("should validate timeout constraints", () => {
       var configWithInvalidTimeout = {
         name: "Test Webhook",
         url: "https://api.example.com/webhook",
@@ -903,7 +877,7 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(result.isValid).toBe(false);
       (0, vitest_1.expect)(result.errors).toContain("Timeout must be between 1000ms and 30000ms");
     });
-    (0, vitest_1.it)("should validate retry strategy constraints", function () {
+    (0, vitest_1.it)("should validate retry strategy constraints", () => {
       var configWithInvalidRetry = {
         name: "Test Webhook",
         url: "https://api.example.com/webhook",
@@ -922,7 +896,7 @@ vitest_1.vi.mock("crypto", function () {
         "Retry delay must be between 1000ms and 300000ms",
       );
     });
-    (0, vitest_1.it)("should validate rate limit constraints", function () {
+    (0, vitest_1.it)("should validate rate limit constraints", () => {
       var configWithInvalidRateLimit = {
         name: "Test Webhook",
         url: "https://api.example.com/webhook",
@@ -939,81 +913,77 @@ vitest_1.vi.mock("crypto", function () {
       );
     });
   });
-  (0, vitest_1.describe)("sanitizeWebhookName", function () {
-    (0, vitest_1.it)("should sanitize webhook name", function () {
+  (0, vitest_1.describe)("sanitizeWebhookName", () => {
+    (0, vitest_1.it)("should sanitize webhook name", () => {
       var dirtyName = "  Test@Webhook#Name!  ";
       var sanitized = utils_1.ValidationUtils.sanitizeWebhookName(dirtyName);
       (0, vitest_1.expect)(sanitized).toBe("TestWebhookName");
     });
-    (0, vitest_1.it)("should limit name length", function () {
+    (0, vitest_1.it)("should limit name length", () => {
       var longName = "A".repeat(150);
       var sanitized = utils_1.ValidationUtils.sanitizeWebhookName(longName);
       (0, vitest_1.expect)(sanitized.length).toBeLessThanOrEqual(100);
     });
-    (0, vitest_1.it)("should normalize whitespace", function () {
+    (0, vitest_1.it)("should normalize whitespace", () => {
       var nameWithSpaces = "Test   Webhook    Name";
       var sanitized = utils_1.ValidationUtils.sanitizeWebhookName(nameWithSpaces);
       (0, vitest_1.expect)(sanitized).toBe("Test Webhook Name");
     });
   });
 });
-(0, vitest_1.describe)("MonitoringUtils", function () {
-  (0, vitest_1.describe)("calculateSuccessRate", function () {
-    (0, vitest_1.it)("should calculate success rate correctly", function () {
+(0, vitest_1.describe)("MonitoringUtils", () => {
+  (0, vitest_1.describe)("calculateSuccessRate", () => {
+    (0, vitest_1.it)("should calculate success rate correctly", () => {
       (0, vitest_1.expect)(utils_1.MonitoringUtils.calculateSuccessRate(80, 100)).toBe(80);
       (0, vitest_1.expect)(utils_1.MonitoringUtils.calculateSuccessRate(0, 100)).toBe(0);
       (0, vitest_1.expect)(utils_1.MonitoringUtils.calculateSuccessRate(100, 100)).toBe(100);
     });
-    (0, vitest_1.it)("should handle zero total deliveries", function () {
+    (0, vitest_1.it)("should handle zero total deliveries", () => {
       (0, vitest_1.expect)(utils_1.MonitoringUtils.calculateSuccessRate(0, 0)).toBe(0);
     });
-    (0, vitest_1.it)("should round to 2 decimal places", function () {
+    (0, vitest_1.it)("should round to 2 decimal places", () => {
       (0, vitest_1.expect)(utils_1.MonitoringUtils.calculateSuccessRate(33, 100)).toBe(33);
       (0, vitest_1.expect)(utils_1.MonitoringUtils.calculateSuccessRate(1, 3)).toBe(33.33);
     });
   });
-  (0, vitest_1.describe)("calculateAverageResponseTime", function () {
-    (0, vitest_1.it)("should calculate average response time", function () {
+  (0, vitest_1.describe)("calculateAverageResponseTime", () => {
+    (0, vitest_1.it)("should calculate average response time", () => {
       var responseTimes = [100, 200, 300, 400, 500];
       var average = utils_1.MonitoringUtils.calculateAverageResponseTime(responseTimes);
       (0, vitest_1.expect)(average).toBe(300);
     });
-    (0, vitest_1.it)("should handle empty array", function () {
+    (0, vitest_1.it)("should handle empty array", () => {
       var average = utils_1.MonitoringUtils.calculateAverageResponseTime([]);
       (0, vitest_1.expect)(average).toBe(0);
     });
-    (0, vitest_1.it)("should round to nearest integer", function () {
+    (0, vitest_1.it)("should round to nearest integer", () => {
       var responseTimes = [100, 150, 200];
       var average = utils_1.MonitoringUtils.calculateAverageResponseTime(responseTimes);
       (0, vitest_1.expect)(average).toBe(150);
     });
   });
-  (0, vitest_1.describe)("calculatePercentileResponseTime", function () {
-    (0, vitest_1.it)("should calculate 95th percentile", function () {
-      var responseTimes = Array.from({ length: 100 }, function (_, i) {
-        return i + 1;
-      }); // 1-100
+  (0, vitest_1.describe)("calculatePercentileResponseTime", () => {
+    (0, vitest_1.it)("should calculate 95th percentile", () => {
+      var responseTimes = Array.from({ length: 100 }, (_, i) => i + 1); // 1-100
       var p95 = utils_1.MonitoringUtils.calculatePercentileResponseTime(responseTimes, 95);
       (0, vitest_1.expect)(p95).toBe(95);
     });
-    (0, vitest_1.it)("should calculate 99th percentile", function () {
-      var responseTimes = Array.from({ length: 100 }, function (_, i) {
-        return i + 1;
-      }); // 1-100
+    (0, vitest_1.it)("should calculate 99th percentile", () => {
+      var responseTimes = Array.from({ length: 100 }, (_, i) => i + 1); // 1-100
       var p99 = utils_1.MonitoringUtils.calculatePercentileResponseTime(responseTimes, 99);
       (0, vitest_1.expect)(p99).toBe(99);
     });
-    (0, vitest_1.it)("should handle empty array", function () {
+    (0, vitest_1.it)("should handle empty array", () => {
       var percentile = utils_1.MonitoringUtils.calculatePercentileResponseTime([], 95);
       (0, vitest_1.expect)(percentile).toBe(0);
     });
-    (0, vitest_1.it)("should handle single value", function () {
+    (0, vitest_1.it)("should handle single value", () => {
       var percentile = utils_1.MonitoringUtils.calculatePercentileResponseTime([100], 95);
       (0, vitest_1.expect)(percentile).toBe(100);
     });
   });
-  (0, vitest_1.describe)("generatePerformanceMetrics", function () {
-    (0, vitest_1.it)("should generate comprehensive performance metrics", function () {
+  (0, vitest_1.describe)("generatePerformanceMetrics", () => {
+    (0, vitest_1.it)("should generate comprehensive performance metrics", () => {
       var deliveries = [
         { status: "delivered", responseTimeMs: 100, createdAt: new Date() },
         { status: "delivered", responseTimeMs: 200, createdAt: new Date() },
@@ -1032,7 +1002,7 @@ vitest_1.vi.mock("crypto", function () {
         p99ResponseTime: 400,
       });
     });
-    (0, vitest_1.it)("should handle empty deliveries array", function () {
+    (0, vitest_1.it)("should handle empty deliveries array", () => {
       var metrics = utils_1.MonitoringUtils.generatePerformanceMetrics([]);
       (0, vitest_1.expect)(metrics).toEqual({
         totalDeliveries: 0,
@@ -1044,7 +1014,7 @@ vitest_1.vi.mock("crypto", function () {
         p99ResponseTime: 0,
       });
     });
-    (0, vitest_1.it)("should handle deliveries without response times", function () {
+    (0, vitest_1.it)("should handle deliveries without response times", () => {
       var deliveries = [
         { status: "delivered", createdAt: new Date() },
         { status: "failed", createdAt: new Date() },

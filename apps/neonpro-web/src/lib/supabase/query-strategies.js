@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🎯 Query Strategies for Healthcare Connection Pooling
  * Task 1.3 - CONNECTION POOLING OPTIMIZATION
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,11 +154,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthcareQueries = exports.createQueryContext = exports.getQueryStrategies = void 0;
 var connection_pool_manager_1 = require("./connection-pool-manager");
-var HealthcareQueryStrategies = /** @class */ (function () {
+var HealthcareQueryStrategies = /** @class */ (() => {
   function HealthcareQueryStrategies() {
     this.poolManager = (0, connection_pool_manager_1.getConnectionPoolManager)();
     // Predefined strategies for healthcare operations
@@ -240,7 +237,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
       },
     };
   }
-  HealthcareQueryStrategies.getInstance = function () {
+  HealthcareQueryStrategies.getInstance = () => {
     if (!HealthcareQueryStrategies.instance) {
       HealthcareQueryStrategies.instance = new HealthcareQueryStrategies();
     }
@@ -276,10 +273,11 @@ var HealthcareQueryStrategies = /** @class */ (function () {
             _a.label = 1;
           case 1:
             _a.trys.push([1, 6, , 9]);
-            timeoutPromise = new Promise(function (_, reject) {
-              setTimeout(function () {
-                return reject(new Error("Query timeout after ".concat(strategy.timeout, "ms")));
-              }, strategy.timeout);
+            timeoutPromise = new Promise((_, reject) => {
+              setTimeout(
+                () => reject(new Error("Query timeout after ".concat(strategy.timeout, "ms"))),
+                strategy.timeout,
+              );
             });
             queryPromise = this.executeWithRetry(queryFn, client, strategy.retryAttempts, context);
             return [4 /*yield*/, Promise.race([queryPromise, timeoutPromise])];
@@ -360,7 +358,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
             lastError = null;
             _loop_1 = function (attempt) {
               var _b, error_2, backoffTime_1;
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
                     _c.trys.push([0, 2, , 5]);
@@ -384,12 +382,10 @@ var HealthcareQueryStrategies = /** @class */ (function () {
                       return [2 /*return*/, "break"];
                     }
                     if (!(attempt < maxRetries)) return [3 /*break*/, 4];
-                    backoffTime_1 = Math.min(1000 * Math.pow(2, attempt - 1), 5000);
+                    backoffTime_1 = Math.min(1000 * 2 ** (attempt - 1), 5000);
                     return [
                       4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, backoffTime_1);
-                      }),
+                      new Promise((resolve) => setTimeout(resolve, backoffTime_1)),
                     ];
                   case 3:
                     _c.sent();
@@ -424,7 +420,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   /**
    * Check if error should not be retried
    */
-  HealthcareQueryStrategies.prototype.isNonRetryableError = function (error) {
+  HealthcareQueryStrategies.prototype.isNonRetryableError = (error) => {
     var nonRetryablePatterns = [
       "PGRST116", // No rows found
       "PGRST301", // Invalid authentication
@@ -433,9 +429,9 @@ var HealthcareQueryStrategies = /** @class */ (function () {
       "23503", // Foreign key violation
       "23514", // Check violation
     ];
-    return nonRetryablePatterns.some(function (pattern) {
-      return error.message.includes(pattern) || error.code === pattern;
-    });
+    return nonRetryablePatterns.some(
+      (pattern) => error.message.includes(pattern) || error.code === pattern,
+    );
   };
   /**
    * Get optimal client based on strategy
@@ -455,9 +451,8 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   /**
    * Generate pool key for monitoring
    */
-  HealthcareQueryStrategies.prototype.generatePoolKey = function (clinicId, poolType) {
-    return "healthcare_".concat(clinicId, "_").concat(poolType);
-  };
+  HealthcareQueryStrategies.prototype.generatePoolKey = (clinicId, poolType) =>
+    "healthcare_".concat(clinicId, "_").concat(poolType);
   /**
    * Validate query context for healthcare compliance
    */
@@ -482,7 +477,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   /**
    * Check patient access permissions
    */
-  HealthcareQueryStrategies.prototype.hasPatientAccess = function (context) {
+  HealthcareQueryStrategies.prototype.hasPatientAccess = (context) => {
     // Implement patient access validation logic
     // For now, allow access for professionals and admins
     return (
@@ -493,7 +488,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   /**
    * Check LGPD compliance
    */
-  HealthcareQueryStrategies.prototype.isLGPDCompliant = function (context) {
+  HealthcareQueryStrategies.prototype.isLGPDCompliant = (context) => {
     // Implement LGPD compliance checks
     // Verify audit trail, consent, and data minimization
     return context.requiresAudit && !!context.clinicId;
@@ -508,7 +503,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var auditEntry;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         auditEntry = {
           timestamp: new Date(),
           clinicId: context.clinicId,
@@ -553,7 +548,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   /**
    * Verify LGPD compliance for patient data
    */
-  HealthcareQueryStrategies.prototype.verifyLGPDCompliance = function (context, data) {
+  HealthcareQueryStrategies.prototype.verifyLGPDCompliance = (context, data) => {
     // Implement LGPD verification logic
     // Check consent status, data minimization, purpose limitation
     return context.requiresAudit && !!context.patientId;
@@ -561,7 +556,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   /**
    * Verify financial data compliance
    */
-  HealthcareQueryStrategies.prototype.verifyFinancialCompliance = function (context, data) {
+  HealthcareQueryStrategies.prototype.verifyFinancialCompliance = (context, data) => {
     // Implement financial compliance verification
     // Check encryption, access controls, audit requirements
     return true;
@@ -590,7 +585,7 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   /**
    * Generate optimization suggestions
    */
-  HealthcareQueryStrategies.prototype.generateOptimizations = function (queryType, strategy) {
+  HealthcareQueryStrategies.prototype.generateOptimizations = (queryType, strategy) => {
     var optimizations = [];
     switch (queryType) {
       case "patient_critical":
@@ -638,12 +633,10 @@ var HealthcareQueryStrategies = /** @class */ (function () {
   return HealthcareQueryStrategies;
 })();
 // Export singleton factory
-var getQueryStrategies = function () {
-  return HealthcareQueryStrategies.getInstance();
-};
+var getQueryStrategies = () => HealthcareQueryStrategies.getInstance();
 exports.getQueryStrategies = getQueryStrategies;
 // Helper functions for common query patterns
-var createQueryContext = function (clinicId, userId, queryType, options) {
+var createQueryContext = (clinicId, userId, queryType, options) => {
   if (options === void 0) {
     options = {};
   }
@@ -663,32 +656,27 @@ var createQueryContext = function (clinicId, userId, queryType, options) {
 exports.createQueryContext = createQueryContext;
 // Healthcare query builder helpers
 exports.HealthcareQueries = {
-  patientData: function (patientId) {
-    return (0, exports.createQueryContext)("", "", "patient_standard", {
+  patientData: (patientId) =>
+    (0, exports.createQueryContext)("", "", "patient_standard", {
       patientId: patientId,
       lgpdSensitive: true,
-    });
-  },
-  emergencyAccess: function (patientId) {
-    return (0, exports.createQueryContext)("", "", "patient_critical", {
+    }),
+  emergencyAccess: (patientId) =>
+    (0, exports.createQueryContext)("", "", "patient_critical", {
       patientId: patientId,
       priority: "emergency",
       lgpdSensitive: true,
-    });
-  },
-  clinicalWorkflow: function () {
-    return (0, exports.createQueryContext)("", "", "clinical_workflow", { priority: "high" });
-  },
-  analytics: function () {
-    return (0, exports.createQueryContext)("", "", "analytics_readonly", {
+    }),
+  clinicalWorkflow: () =>
+    (0, exports.createQueryContext)("", "", "clinical_workflow", { priority: "high" }),
+  analytics: () =>
+    (0, exports.createQueryContext)("", "", "analytics_readonly", {
       requiresAudit: false,
       lgpdSensitive: false,
-    });
-  },
-  financial: function () {
-    return (0, exports.createQueryContext)("", "", "financial_sensitive", {
+    }),
+  financial: () =>
+    (0, exports.createQueryContext)("", "", "financial_sensitive", {
       priority: "high",
       lgpdSensitive: true,
-    });
-  },
+    }),
 };

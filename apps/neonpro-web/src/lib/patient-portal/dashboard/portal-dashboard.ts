@@ -1,7 +1,7 @@
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type { AuditLogger } from "../../audit/audit-logger";
 import type { LGPDManager } from "../../lgpd/lgpd-manager";
-import type { SessionManager, SessionData } from "../auth/session-manager";
+import type { SessionData, SessionManager } from "../auth/session-manager";
 
 // Dashboard configuration
 export interface DashboardConfig {

@@ -5,18 +5,17 @@
 // procurement history, quality tracking, and management features
 // ============================================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplierDetail = SupplierDetail;
 var react_1 = require("react");
@@ -159,7 +156,7 @@ var utils_1 = require("@/lib/utils");
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
-var getStatusColor = function (status) {
+var getStatusColor = (status) => {
   switch (status) {
     case supplier_1.SupplierStatus.ACTIVE:
       return "bg-green-100 text-green-800 border-green-200";
@@ -175,7 +172,7 @@ var getStatusColor = function (status) {
       return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
-var getRiskLevelColor = function (level) {
+var getRiskLevelColor = (level) => {
   switch (level) {
     case supplier_1.RiskLevel.LOW:
       return "text-green-600";
@@ -189,19 +186,17 @@ var getRiskLevelColor = function (level) {
       return "text-gray-600";
   }
 };
-var getPerformanceColor = function (score) {
+var getPerformanceColor = (score) => {
   if (score >= 90) return "text-green-600";
   if (score >= 70) return "text-yellow-600";
   if (score >= 50) return "text-orange-600";
   return "text-red-600";
 };
-var formatScore = function (score) {
-  return "".concat(score.toFixed(1), "%");
-};
+var formatScore = (score) => "".concat(score.toFixed(1), "%");
 // ============================================================================
 // METRIC CARD COMPONENT
 // ============================================================================
-var MetricCard = function (_a) {
+var MetricCard = (_a) => {
   var title = _a.title,
     value = _a.value,
     subtitle = _a.subtitle,
@@ -256,10 +251,6 @@ var MetricCard = function (_a) {
 // MAIN COMPONENT
 // ============================================================================
 function SupplierDetail(_a) {
-  // ============================================================================
-  // STATE MANAGEMENT
-  // ============================================================================
-  var _this = this;
   var supplierId = _a.supplierId,
     clinicId = _a.clinicId,
     open = _a.open,
@@ -302,11 +293,7 @@ function SupplierDetail(_a) {
     isLoadingCommunications = _k.isLoading;
   // Get current supplier data
   var currentSupplier =
-    supplier === null || supplier === void 0
-      ? void 0
-      : supplier.find(function (s) {
-          return s.id === supplierId;
-        });
+    supplier === null || supplier === void 0 ? void 0 : supplier.find((s) => s.id === supplierId);
   // ============================================================================
   // COMPUTED VALUES
   // ============================================================================
@@ -327,16 +314,16 @@ function SupplierDetail(_a) {
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  var handleEdit = function () {
+  var handleEdit = () => {
     if (currentSupplier && onEdit) {
       onEdit(currentSupplier);
     }
     setEditFormOpen(true);
   };
-  var handleDelete = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDelete = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!currentSupplier) return [2 /*return*/];
@@ -360,19 +347,18 @@ function SupplierDetail(_a) {
         }
       });
     });
-  };
-  var handleExport = function () {
+  var handleExport = () => {
     // Implementation for exporting supplier data
     sonner_1.toast.info("Funcionalidade de exportação em desenvolvimento");
   };
-  var handleCopyId = function () {
+  var handleCopyId = () => {
     navigator.clipboard.writeText(supplierId);
     sonner_1.toast.success("ID copiado para a área de transferência");
   };
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  var renderHeader = function () {
+  var renderHeader = () => {
     var _a;
     if (!currentSupplier) return null;
     return (
@@ -465,7 +451,7 @@ function SupplierDetail(_a) {
       </div>
     );
   };
-  var renderOverviewTab = function () {
+  var renderOverviewTab = () => {
     if (!currentSupplier) return null;
     return (
       <div className="space-y-6">
@@ -562,13 +548,11 @@ function SupplierDetail(_a) {
                 <div>
                   <p className="text-gray-600 text-sm mb-2">Tags</p>
                   <div className="flex flex-wrap gap-2">
-                    {currentSupplier.tags.map(function (tag, index) {
-                      return (
-                        <badge_1.Badge key={index} variant="secondary" className="text-xs">
-                          {tag}
-                        </badge_1.Badge>
-                      );
-                    })}
+                    {currentSupplier.tags.map((tag, index) => (
+                      <badge_1.Badge key={index} variant="secondary" className="text-xs">
+                        {tag}
+                      </badge_1.Badge>
+                    ))}
                   </div>
                 </div>
               )}
@@ -619,16 +603,12 @@ function SupplierDetail(_a) {
                       Contatos Secundários ({currentSupplier.secondary_contacts.length})
                     </p>
                     <div className="space-y-2">
-                      {currentSupplier.secondary_contacts
-                        .slice(0, 2)
-                        .map(function (contact, index) {
-                          return (
-                            <div key={index} className="text-sm">
-                              <p className="font-medium">{contact.name}</p>
-                              <p className="text-gray-600">{contact.email}</p>
-                            </div>
-                          );
-                        })}
+                      {currentSupplier.secondary_contacts.slice(0, 2).map((contact, index) => (
+                        <div key={index} className="text-sm">
+                          <p className="font-medium">{contact.name}</p>
+                          <p className="text-gray-600">{contact.email}</p>
+                        </div>
+                      ))}
                       {currentSupplier.secondary_contacts.length > 2 && (
                         <p className="text-xs text-gray-500">
                           +{currentSupplier.secondary_contacts.length - 2} contatos adicionais
@@ -700,22 +680,20 @@ function SupplierDetail(_a) {
                     Certificações ({currentSupplier.certifications.length})
                   </p>
                   <div className="space-y-2">
-                    {currentSupplier.certifications.slice(0, 3).map(function (cert, index) {
-                      return (
-                        <div key={index} className="flex items-center space-x-2">
-                          <lucide_react_1.Award className="h-4 w-4 text-gray-400" />
-                          <span className="text-sm">{cert.name}</span>
-                          <badge_1.Badge
-                            variant={
-                              cert.verification_status === "verified" ? "default" : "secondary"
-                            }
-                            className="text-xs"
-                          >
-                            {cert.verification_status}
-                          </badge_1.Badge>
-                        </div>
-                      );
-                    })}
+                    {currentSupplier.certifications.slice(0, 3).map((cert, index) => (
+                      <div key={index} className="flex items-center space-x-2">
+                        <lucide_react_1.Award className="h-4 w-4 text-gray-400" />
+                        <span className="text-sm">{cert.name}</span>
+                        <badge_1.Badge
+                          variant={
+                            cert.verification_status === "verified" ? "default" : "secondary"
+                          }
+                          className="text-xs"
+                        >
+                          {cert.verification_status}
+                        </badge_1.Badge>
+                      </div>
+                    ))}
                     {currentSupplier.certifications.length > 3 && (
                       <p className="text-xs text-gray-500">
                         +{currentSupplier.certifications.length - 3} certificações adicionais
@@ -745,357 +723,333 @@ function SupplierDetail(_a) {
       </div>
     );
   };
-  var renderPerformanceTab = function () {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Análise de Performance</h3>
-          <div className="flex space-x-2">
-            <button_1.Button
-              variant={selectedTimeRange === "1month" ? "default" : "outline"}
-              size="sm"
-              onClick={function () {
-                return setSelectedTimeRange("1month");
-              }}
-            >
-              1 Mês
-            </button_1.Button>
-            <button_1.Button
-              variant={selectedTimeRange === "3months" ? "default" : "outline"}
-              size="sm"
-              onClick={function () {
-                return setSelectedTimeRange("3months");
-              }}
-            >
-              3 Meses
-            </button_1.Button>
-            <button_1.Button
-              variant={selectedTimeRange === "6months" ? "default" : "outline"}
-              size="sm"
-              onClick={function () {
-                return setSelectedTimeRange("6months");
-              }}
-            >
-              6 Meses
-            </button_1.Button>
-            <button_1.Button
-              variant={selectedTimeRange === "1year" ? "default" : "outline"}
-              size="sm"
-              onClick={function () {
-                return setSelectedTimeRange("1year");
-              }}
-            >
-              1 Ano
-            </button_1.Button>
-          </div>
-        </div>
-
-        {/* Performance Metrics Cards */}
-        {performanceStats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <MetricCard
-              title="Entregas no Prazo"
-              value={(0, utils_1.formatPercentage)(performanceStats.on_time_delivery_rate)}
-              icon={<lucide_react_1.Clock className="h-5 w-5" />}
-              color={
-                performanceStats.on_time_delivery_rate >= 0.9
-                  ? "success"
-                  : performanceStats.on_time_delivery_rate >= 0.7
-                    ? "warning"
-                    : "danger"
-              }
-            />
-
-            <MetricCard
-              title="Taxa de Qualidade"
-              value={(0, utils_1.formatPercentage)(performanceStats.quality_score)}
-              icon={<lucide_react_1.Star className="h-5 w-5" />}
-              color={
-                performanceStats.quality_score >= 0.9
-                  ? "success"
-                  : performanceStats.quality_score >= 0.7
-                    ? "warning"
-                    : "danger"
-              }
-            />
-
-            <MetricCard
-              title="Pedidos Entregues"
-              value={performanceStats.total_orders.toString()}
-              subtitle="Total no período"
-              icon={<lucide_react_1.Package className="h-5 w-5" />}
-            />
-
-            <MetricCard
-              title="Valor Total"
-              value={(0, utils_1.formatCurrency)(performanceStats.total_value)}
-              subtitle="Total faturado"
-              icon={<lucide_react_1.DollarSign className="h-5 w-5" />}
-            />
-          </div>
-        )}
-
-        {/* Performance Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <card_1.Card>
-            <card_1.CardHeader>
-              <card_1.CardTitle className="flex items-center space-x-2">
-                <lucide_react_1.LineChart className="h-5 w-5" />
-                <span>Tendência de Performance</span>
-              </card_1.CardTitle>
-            </card_1.CardHeader>
-            <card_1.CardContent>
-              {/* Chart implementation would go here */}
-              <div className="h-64 flex items-center justify-center text-gray-500">
-                <div className="text-center">
-                  <lucide_react_1.BarChart3 className="h-12 w-12 mx-auto mb-2" />
-                  <p>Gráfico de tendência em desenvolvimento</p>
-                </div>
-              </div>
-            </card_1.CardContent>
-          </card_1.Card>
-
-          <card_1.Card>
-            <card_1.CardHeader>
-              <card_1.CardTitle className="flex items-center space-x-2">
-                <lucide_react_1.PieChart className="h-5 w-5" />
-                <span>Distribuição de Qualidade</span>
-              </card_1.CardTitle>
-            </card_1.CardHeader>
-            <card_1.CardContent>
-              {/* Chart implementation would go here */}
-              <div className="h-64 flex items-center justify-center text-gray-500">
-                <div className="text-center">
-                  <lucide_react_1.PieChart className="h-12 w-12 mx-auto mb-2" />
-                  <p>Gráfico de distribuição em desenvolvimento</p>
-                </div>
-              </div>
-            </card_1.CardContent>
-          </card_1.Card>
-        </div>
-
-        {/* Recent Performance Issues */}
-        <card_1.Card>
-          <card_1.CardHeader>
-            <card_1.CardTitle className="flex items-center space-x-2">
-              <lucide_react_1.AlertTriangle className="h-5 w-5" />
-              <span>Alertas de Performance</span>
-            </card_1.CardTitle>
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <lucide_react_1.AlertTriangle className="h-5 w-5 text-yellow-600" />
-                <div>
-                  <p className="font-medium text-yellow-800">Atraso em Entregas</p>
-                  <p className="text-sm text-yellow-700">
-                    Taxa de entregas no prazo abaixo de 85% nos últimos 30 dias
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <lucide_react_1.TrendingUp className="h-5 w-5 text-blue-600" />
-                <div>
-                  <p className="font-medium text-blue-800">Melhoria de Qualidade</p>
-                  <p className="text-sm text-blue-700">
-                    Pontuação de qualidade aumentou 12% este mês
-                  </p>
-                </div>
-              </div>
-            </div>
-          </card_1.CardContent>
-        </card_1.Card>
-      </div>
-    );
-  };
-  var renderProcurementTab = function () {
-    return (
-      <div className="space-y-6">
-        <h3 className="text-lg font-semibold">Histórico de Compras</h3>
-
-        {/* Procurement Stats */}
-        {procurementStats && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <MetricCard
-              title="Total de Pedidos"
-              value={procurementStats.total_orders.toString()}
-              icon={<lucide_react_1.Package className="h-5 w-5" />}
-            />
-
-            <MetricCard
-              title="Valor Total"
-              value={(0, utils_1.formatCurrency)(procurementStats.total_value)}
-              icon={<lucide_react_1.DollarSign className="h-5 w-5" />}
-            />
-
-            <MetricCard
-              title="Ticket Médio"
-              value={(0, utils_1.formatCurrency)(procurementStats.average_order_value)}
-              icon={<lucide_react_1.TrendingUp className="h-5 w-5" />}
-            />
-          </div>
-        )}
-
-        {/* Recent Orders */}
-        <card_1.Card>
-          <card_1.CardHeader>
-            <card_1.CardTitle className="flex items-center space-x-2">
-              <lucide_react_1.FileText className="h-5 w-5" />
-              <span>Pedidos Recentes</span>
-            </card_1.CardTitle>
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            <div className="space-y-4">
-              {procurementHistory && procurementHistory.length > 0
-                ? procurementHistory.slice(0, 5).map(function (order, index) {
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-3 border rounded-lg"
-                      >
-                        <div>
-                          <p className="font-medium">Pedido #{order.id}</p>
-                          <p className="text-sm text-gray-600">
-                            {(0, utils_1.formatDate)(order.date)} • {order.items} itens
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-medium">
-                            {(0, utils_1.formatCurrency)(order.total_value)}
-                          </p>
-                          <badge_1.Badge
-                            variant={order.status === "delivered" ? "default" : "secondary"}
-                            className="text-xs"
-                          >
-                            {order.status}
-                          </badge_1.Badge>
-                        </div>
-                      </div>
-                    );
-                  })
-                : <p className="text-gray-500 text-center py-8">
-                    Nenhum histórico de compras encontrado
-                  </p>}
-            </div>
-          </card_1.CardContent>
-        </card_1.Card>
-      </div>
-    );
-  };
-  var renderContractsTab = function () {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Contratos</h3>
-          <button_1.Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Novo Contrato
+  var renderPerformanceTab = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Análise de Performance</h3>
+        <div className="flex space-x-2">
+          <button_1.Button
+            variant={selectedTimeRange === "1month" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedTimeRange("1month")}
+          >
+            1 Mês
+          </button_1.Button>
+          <button_1.Button
+            variant={selectedTimeRange === "3months" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedTimeRange("3months")}
+          >
+            3 Meses
+          </button_1.Button>
+          <button_1.Button
+            variant={selectedTimeRange === "6months" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedTimeRange("6months")}
+          >
+            6 Meses
+          </button_1.Button>
+          <button_1.Button
+            variant={selectedTimeRange === "1year" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedTimeRange("1year")}
+          >
+            1 Ano
           </button_1.Button>
         </div>
-
-        {/* Active Contracts */}
-        <card_1.Card>
-          <card_1.CardHeader>
-            <card_1.CardTitle className="flex items-center space-x-2">
-              <lucide_react_1.FileText className="h-5 w-5" />
-              <span>Contratos Ativos</span>
-            </card_1.CardTitle>
-          </card_1.CardHeader>
-          <card_1.CardContent>
-            <div className="space-y-4">
-              {activeContracts && activeContracts.length > 0
-                ? activeContracts.map(function (contract, index) {
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-4 border rounded-lg"
-                      >
-                        <div>
-                          <p className="font-medium">{contract.title}</p>
-                          <p className="text-sm text-gray-600">
-                            Vigência: {(0, utils_1.formatDate)(contract.start_date)} -{" "}
-                            {(0, utils_1.formatDate)(contract.end_date)}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Valor: {(0, utils_1.formatCurrency)(contract.total_value)}
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <badge_1.Badge
-                            variant={contract.status === "active" ? "default" : "secondary"}
-                          >
-                            {contract.status}
-                          </badge_1.Badge>
-                          <button_1.Button variant="outline" size="sm">
-                            <lucide_react_1.Eye className="h-4 w-4" />
-                          </button_1.Button>
-                        </div>
-                      </div>
-                    );
-                  })
-                : <p className="text-gray-500 text-center py-8">
-                    Nenhum contrato ativo encontrado
-                  </p>}
-            </div>
-          </card_1.CardContent>
-        </card_1.Card>
       </div>
-    );
-  };
-  var renderCommunicationsTab = function () {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Comunicações</h3>
-          <button_1.Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Comunicação
-          </button_1.Button>
+
+      {/* Performance Metrics Cards */}
+      {performanceStats && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard
+            title="Entregas no Prazo"
+            value={(0, utils_1.formatPercentage)(performanceStats.on_time_delivery_rate)}
+            icon={<lucide_react_1.Clock className="h-5 w-5" />}
+            color={
+              performanceStats.on_time_delivery_rate >= 0.9
+                ? "success"
+                : performanceStats.on_time_delivery_rate >= 0.7
+                  ? "warning"
+                  : "danger"
+            }
+          />
+
+          <MetricCard
+            title="Taxa de Qualidade"
+            value={(0, utils_1.formatPercentage)(performanceStats.quality_score)}
+            icon={<lucide_react_1.Star className="h-5 w-5" />}
+            color={
+              performanceStats.quality_score >= 0.9
+                ? "success"
+                : performanceStats.quality_score >= 0.7
+                  ? "warning"
+                  : "danger"
+            }
+          />
+
+          <MetricCard
+            title="Pedidos Entregues"
+            value={performanceStats.total_orders.toString()}
+            subtitle="Total no período"
+            icon={<lucide_react_1.Package className="h-5 w-5" />}
+          />
+
+          <MetricCard
+            title="Valor Total"
+            value={(0, utils_1.formatCurrency)(performanceStats.total_value)}
+            subtitle="Total faturado"
+            icon={<lucide_react_1.DollarSign className="h-5 w-5" />}
+          />
         </div>
+      )}
 
-        {/* Recent Communications */}
+      {/* Performance Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <card_1.Card>
           <card_1.CardHeader>
             <card_1.CardTitle className="flex items-center space-x-2">
-              <lucide_react_1.Mail className="h-5 w-5" />
-              <span>Comunicações Recentes</span>
+              <lucide_react_1.LineChart className="h-5 w-5" />
+              <span>Tendência de Performance</span>
             </card_1.CardTitle>
           </card_1.CardHeader>
           <card_1.CardContent>
-            <div className="space-y-4">
-              {recentCommunications && recentCommunications.length > 0
-                ? recentCommunications.map(function (comm, index) {
-                    return (
-                      <div key={index} className="flex items-start space-x-3 p-3 border rounded-lg">
-                        <div className="flex-shrink-0">
-                          {comm.type === "email"
-                            ? <lucide_react_1.Mail className="h-5 w-5 text-blue-600" />
-                            : comm.type === "phone"
-                              ? <lucide_react_1.Phone className="h-5 w-5 text-green-600" />
-                              : <lucide_react_1.Activity className="h-5 w-5 text-gray-600" />}
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-medium">{comm.subject}</p>
-                          <p className="text-sm text-gray-600">{comm.content}</p>
-                          <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-                            <span>{(0, utils_1.formatDate)(comm.date)}</span>
-                            <span>Por: {comm.created_by}</span>
-                            <badge_1.Badge variant="outline" className="text-xs">
-                              {comm.type}
-                            </badge_1.Badge>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                : <p className="text-gray-500 text-center py-8">Nenhuma comunicação registrada</p>}
+            {/* Chart implementation would go here */}
+            <div className="h-64 flex items-center justify-center text-gray-500">
+              <div className="text-center">
+                <lucide_react_1.BarChart3 className="h-12 w-12 mx-auto mb-2" />
+                <p>Gráfico de tendência em desenvolvimento</p>
+              </div>
+            </div>
+          </card_1.CardContent>
+        </card_1.Card>
+
+        <card_1.Card>
+          <card_1.CardHeader>
+            <card_1.CardTitle className="flex items-center space-x-2">
+              <lucide_react_1.PieChart className="h-5 w-5" />
+              <span>Distribuição de Qualidade</span>
+            </card_1.CardTitle>
+          </card_1.CardHeader>
+          <card_1.CardContent>
+            {/* Chart implementation would go here */}
+            <div className="h-64 flex items-center justify-center text-gray-500">
+              <div className="text-center">
+                <lucide_react_1.PieChart className="h-12 w-12 mx-auto mb-2" />
+                <p>Gráfico de distribuição em desenvolvimento</p>
+              </div>
             </div>
           </card_1.CardContent>
         </card_1.Card>
       </div>
-    );
-  };
+
+      {/* Recent Performance Issues */}
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="flex items-center space-x-2">
+            <lucide_react_1.AlertTriangle className="h-5 w-5" />
+            <span>Alertas de Performance</span>
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <lucide_react_1.AlertTriangle className="h-5 w-5 text-yellow-600" />
+              <div>
+                <p className="font-medium text-yellow-800">Atraso em Entregas</p>
+                <p className="text-sm text-yellow-700">
+                  Taxa de entregas no prazo abaixo de 85% nos últimos 30 dias
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <lucide_react_1.TrendingUp className="h-5 w-5 text-blue-600" />
+              <div>
+                <p className="font-medium text-blue-800">Melhoria de Qualidade</p>
+                <p className="text-sm text-blue-700">
+                  Pontuação de qualidade aumentou 12% este mês
+                </p>
+              </div>
+            </div>
+          </div>
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
+  var renderProcurementTab = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold">Histórico de Compras</h3>
+
+      {/* Procurement Stats */}
+      {procurementStats && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <MetricCard
+            title="Total de Pedidos"
+            value={procurementStats.total_orders.toString()}
+            icon={<lucide_react_1.Package className="h-5 w-5" />}
+          />
+
+          <MetricCard
+            title="Valor Total"
+            value={(0, utils_1.formatCurrency)(procurementStats.total_value)}
+            icon={<lucide_react_1.DollarSign className="h-5 w-5" />}
+          />
+
+          <MetricCard
+            title="Ticket Médio"
+            value={(0, utils_1.formatCurrency)(procurementStats.average_order_value)}
+            icon={<lucide_react_1.TrendingUp className="h-5 w-5" />}
+          />
+        </div>
+      )}
+
+      {/* Recent Orders */}
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="flex items-center space-x-2">
+            <lucide_react_1.FileText className="h-5 w-5" />
+            <span>Pedidos Recentes</span>
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="space-y-4">
+            {procurementHistory && procurementHistory.length > 0
+              ? procurementHistory.slice(0, 5).map((order, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium">Pedido #{order.id}</p>
+                      <p className="text-sm text-gray-600">
+                        {(0, utils_1.formatDate)(order.date)} • {order.items} itens
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">
+                        {(0, utils_1.formatCurrency)(order.total_value)}
+                      </p>
+                      <badge_1.Badge
+                        variant={order.status === "delivered" ? "default" : "secondary"}
+                        className="text-xs"
+                      >
+                        {order.status}
+                      </badge_1.Badge>
+                    </div>
+                  </div>
+                ))
+              : <p className="text-gray-500 text-center py-8">
+                  Nenhum histórico de compras encontrado
+                </p>}
+          </div>
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
+  var renderContractsTab = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Contratos</h3>
+        <button_1.Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Novo Contrato
+        </button_1.Button>
+      </div>
+
+      {/* Active Contracts */}
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="flex items-center space-x-2">
+            <lucide_react_1.FileText className="h-5 w-5" />
+            <span>Contratos Ativos</span>
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="space-y-4">
+            {activeContracts && activeContracts.length > 0
+              ? activeContracts.map((contract, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium">{contract.title}</p>
+                      <p className="text-sm text-gray-600">
+                        Vigência: {(0, utils_1.formatDate)(contract.start_date)} -{" "}
+                        {(0, utils_1.formatDate)(contract.end_date)}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Valor: {(0, utils_1.formatCurrency)(contract.total_value)}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <badge_1.Badge
+                        variant={contract.status === "active" ? "default" : "secondary"}
+                      >
+                        {contract.status}
+                      </badge_1.Badge>
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Eye className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+                  </div>
+                ))
+              : <p className="text-gray-500 text-center py-8">Nenhum contrato ativo encontrado</p>}
+          </div>
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
+  var renderCommunicationsTab = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Comunicações</h3>
+        <button_1.Button>
+          <Plus className="h-4 w-4 mr-2" />
+          Nova Comunicação
+        </button_1.Button>
+      </div>
+
+      {/* Recent Communications */}
+      <card_1.Card>
+        <card_1.CardHeader>
+          <card_1.CardTitle className="flex items-center space-x-2">
+            <lucide_react_1.Mail className="h-5 w-5" />
+            <span>Comunicações Recentes</span>
+          </card_1.CardTitle>
+        </card_1.CardHeader>
+        <card_1.CardContent>
+          <div className="space-y-4">
+            {recentCommunications && recentCommunications.length > 0
+              ? recentCommunications.map((comm, index) => (
+                  <div key={index} className="flex items-start space-x-3 p-3 border rounded-lg">
+                    <div className="flex-shrink-0">
+                      {comm.type === "email"
+                        ? <lucide_react_1.Mail className="h-5 w-5 text-blue-600" />
+                        : comm.type === "phone"
+                          ? <lucide_react_1.Phone className="h-5 w-5 text-green-600" />
+                          : <lucide_react_1.Activity className="h-5 w-5 text-gray-600" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-medium">{comm.subject}</p>
+                      <p className="text-sm text-gray-600">{comm.content}</p>
+                      <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
+                        <span>{(0, utils_1.formatDate)(comm.date)}</span>
+                        <span>Por: {comm.created_by}</span>
+                        <badge_1.Badge variant="outline" className="text-xs">
+                          {comm.type}
+                        </badge_1.Badge>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              : <p className="text-gray-500 text-center py-8">Nenhuma comunicação registrada</p>}
+          </div>
+        </card_1.CardContent>
+      </card_1.Card>
+    </div>
+  );
   // ============================================================================
   // MAIN RENDER
   // ============================================================================
@@ -1170,7 +1124,7 @@ function SupplierDetail(_a) {
             open={editFormOpen}
             onOpenChange={setEditFormOpen}
             mode="edit"
-            onSuccess={function () {
+            onSuccess={() => {
               setEditFormOpen(false);
               // Refresh data
             }}

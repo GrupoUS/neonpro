@@ -12,9 +12,9 @@
  */
 
 import type {
+  ConnectionMetrics,
   getConnectionPoolManager,
   HealthcheckResult,
-  ConnectionMetrics,
 } from "@/lib/supabase/connection-pool-manager";
 
 // Healthcare monitoring types

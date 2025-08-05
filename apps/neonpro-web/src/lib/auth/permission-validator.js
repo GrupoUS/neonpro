@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Permission Validation System
  * Comprehensive role-based access control with fine-grained permissions
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,19 +132,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.permissionValidator = void 0;
 var client_1 = require("@/lib/supabase/client");
 var security_audit_logger_1 = require("./security-audit-logger");
 var performance_tracker_1 = require("./performance-tracker");
-var PermissionValidator = /** @class */ (function () {
+var PermissionValidator = /** @class */ (() => {
   function PermissionValidator() {
     this.permissionCache = new Map();
     this.cacheExpiry = new Map();
     this.CACHE_TTL = 300000; // 5 minutes
   }
-  PermissionValidator.getInstance = function () {
+  PermissionValidator.getInstance = () => {
     if (!PermissionValidator.instance) {
       PermissionValidator.instance = new PermissionValidator();
     }
@@ -183,7 +180,7 @@ var PermissionValidator = /** @class */ (function () {
               resource,
               action,
             );
-            if (!!matchedPermission) return [3 /*break*/, 4];
+            if (matchedPermission) return [3 /*break*/, 4];
             result_1 = {
               granted: false,
               reason: "No permission found for ".concat(action, " on ").concat(resource),
@@ -199,7 +196,7 @@ var PermissionValidator = /** @class */ (function () {
             ];
           case 5:
             conditionResult = _a.sent();
-            if (!!conditionResult.passed) return [3 /*break*/, 7];
+            if (conditionResult.passed) return [3 /*break*/, 7];
             result_2 = {
               granted: false,
               reason: "Permission conditions not met: ".concat(conditionResult.reason),
@@ -715,11 +712,10 @@ var PermissionValidator = /** @class */ (function () {
   /**
    * Private helper methods
    */
-  PermissionValidator.prototype.findMatchingPermission = function (permissions, resource, action) {
-    return permissions.find(function (permission) {
-      return permission.resource === resource && permission.action === action;
-    });
-  };
+  PermissionValidator.prototype.findMatchingPermission = (permissions, resource, action) =>
+    permissions.find(
+      (permission) => permission.resource === resource && permission.action === action,
+    );
   PermissionValidator.prototype.evaluateConditions = function (conditions, context) {
     return __awaiter(this, void 0, void 0, function () {
       var _i, conditions_1, condition, result;
@@ -789,7 +785,7 @@ var PermissionValidator = /** @class */ (function () {
       });
     });
   };
-  PermissionValidator.prototype.evaluateTimeCondition = function (condition, context) {
+  PermissionValidator.prototype.evaluateTimeCondition = (condition, context) => {
     var currentTime = new Date(context.timestamp);
     var currentHour = currentTime.getHours();
     switch (condition.operator) {
@@ -813,11 +809,11 @@ var PermissionValidator = /** @class */ (function () {
         return { passed: true };
     }
   };
-  PermissionValidator.prototype.evaluateLocationCondition = function (condition, context) {
+  PermissionValidator.prototype.evaluateLocationCondition = (condition, context) => {
     // IP-based location checking (simplified)
     var userIP = context.ipAddress;
     switch (condition.operator) {
-      case "in":
+      case "in": {
         var allowedIPs = Array.isArray(condition.value) ? condition.value : [condition.value];
         return {
           passed: allowedIPs.includes(userIP),
@@ -825,6 +821,7 @@ var PermissionValidator = /** @class */ (function () {
             ? "IP ".concat(userIP, " not in allowed list")
             : undefined,
         };
+      }
       default:
         return { passed: true };
     }
@@ -832,7 +829,7 @@ var PermissionValidator = /** @class */ (function () {
   PermissionValidator.prototype.evaluateResourceOwnerCondition = function (condition, context) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, data, isOwner, error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!context.resourceId || !context.resourceType) {
@@ -883,7 +880,7 @@ var PermissionValidator = /** @class */ (function () {
   PermissionValidator.prototype.evaluateClinicMemberCondition = function (condition, context) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, data, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!context.clinicId) {
@@ -925,7 +922,7 @@ var PermissionValidator = /** @class */ (function () {
   };
   PermissionValidator.prototype.evaluateCustomCondition = function (condition, context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Custom condition evaluation logic
         // This can be extended based on specific business requirements
         return [2 /*return*/, { passed: true }];
@@ -935,7 +932,7 @@ var PermissionValidator = /** @class */ (function () {
   PermissionValidator.prototype.checkElevationRequirements = function (permission, context) {
     return __awaiter(this, void 0, void 0, function () {
       var sensitiveActions, sensitiveResources;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         sensitiveActions = ["delete", "export", "manage"];
         sensitiveResources = ["user", "clinic", "financial_data", "medical_records"];
         if (
@@ -954,9 +951,9 @@ var PermissionValidator = /** @class */ (function () {
       });
     });
   };
-  PermissionValidator.prototype.deduplicatePermissions = function (permissions) {
+  PermissionValidator.prototype.deduplicatePermissions = (permissions) => {
     var seen = new Set();
-    return permissions.filter(function (permission) {
+    return permissions.filter((permission) => {
       var key = "".concat(permission.resource, ":").concat(permission.action);
       if (seen.has(key)) {
         return false;
@@ -969,7 +966,7 @@ var PermissionValidator = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var eventType;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             eventType = result.granted ? "permission_granted" : "permission_denied";

@@ -1,6 +1,6 @@
+import type { logger } from "@/lib/logger";
 import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
-import type { logger } from "@/lib/logger";
 
 type Tables = Database["public"]["Tables"];
 type Appointment = Tables["appointments"]["Row"];

@@ -4,15 +4,15 @@
  * Quality: ≥9.5/10 with comprehensive error handling and real-time updates
  */
 
-import type { useState, useCallback, useEffect, useRef } from "react";
 import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type {
-  barcodeService,
-  type ScanResult,
-  type BarcodeData,
-  type BulkScanOperation,
-} from "@/app/lib/services/barcode-service";
+import type { useCallback, useEffect, useRef, useState } from "react";
 import type { toast } from "sonner";
+import type {
+  BarcodeData,
+  BulkScanOperation,
+  barcodeService,
+  ScanResult,
+} from "@/app/lib/services/barcode-service";
 
 // Barcode Generation Hook
 export function useBarcodeGeneration() {

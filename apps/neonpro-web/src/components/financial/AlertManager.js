@@ -3,19 +3,18 @@
  * Interface completa para gerenciamento de alertas financeiros
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -55,13 +54,9 @@ function AlertManager(_a) {
     realTimeAlerts = _g.alerts,
     unreadCount = _g.unreadCount,
     markAsRead = _g.markAsRead;
-  var activeAlerts = alerts.filter(function (alert) {
-    return !alert.is_resolved;
-  });
-  var resolvedAlerts = alerts.filter(function (alert) {
-    return alert.is_resolved;
-  });
-  var getSeverityColor = function (severity) {
+  var activeAlerts = alerts.filter((alert) => !alert.is_resolved);
+  var resolvedAlerts = alerts.filter((alert) => alert.is_resolved);
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "bg-red-100 text-red-800 border-red-300";
@@ -73,7 +68,7 @@ function AlertManager(_a) {
         return "bg-gray-100 text-gray-800 border-gray-300";
     }
   };
-  var getSeverityIcon = function (severity) {
+  var getSeverityIcon = (severity) => {
     switch (severity) {
       case "critical":
         return <lucide_react_1.AlertTriangle className="h-4 w-4 text-red-600" />;
@@ -85,7 +80,7 @@ function AlertManager(_a) {
         return <lucide_react_1.Bell className="h-4 w-4 text-gray-600" />;
     }
   };
-  var handleResolveAlert = function (alertId, resolution) {
+  var handleResolveAlert = (alertId, resolution) => {
     resolveAlert({ alertId: alertId, resolution: resolution, userId: userId });
     markAsRead(alertId);
   };
@@ -185,9 +180,7 @@ function AlertManager(_a) {
             </div>
             <select_1.Select
               value={filterSeverity}
-              onValueChange={function (value) {
-                return setFilterSeverity(value);
-              }}
+              onValueChange={(value) => setFilterSeverity(value)}
             >
               <select_1.SelectTrigger className="w-[120px]">
                 <select_1.SelectValue placeholder="Severidade" />
@@ -198,12 +191,7 @@ function AlertManager(_a) {
                 <select_1.SelectItem value="info">Info</select_1.SelectItem>
               </select_1.SelectContent>
             </select_1.Select>
-            <select_1.Select
-              value={filterType}
-              onValueChange={function (value) {
-                return setFilterType(value);
-              }}
-            >
+            <select_1.Select value={filterType} onValueChange={(value) => setFilterType(value)}>
               <select_1.SelectTrigger className="w-[150px]">
                 <select_1.SelectValue placeholder="Tipo" />
               </select_1.SelectTrigger>
@@ -221,7 +209,7 @@ function AlertManager(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
+              onClick={() => {
                 setFilterSeverity(undefined);
                 setFilterType(undefined);
               }}
@@ -249,16 +237,14 @@ function AlertManager(_a) {
                     </p>
                   </div>
                 : <div className="grid gap-4">
-                    {activeAlerts.map(function (alert) {
-                      return (
-                        <AlertCard
-                          key={alert.id}
-                          alert={alert}
-                          onResolve={handleResolveAlert}
-                          isResolving={isResolving}
-                        />
-                      );
-                    })}
+                    {activeAlerts.map((alert) => (
+                      <AlertCard
+                        key={alert.id}
+                        alert={alert}
+                        onResolve={handleResolveAlert}
+                        isResolving={isResolving}
+                      />
+                    ))}
                   </div>}
             </tabs_1.TabsContent>
 
@@ -272,9 +258,9 @@ function AlertManager(_a) {
                     </p>
                   </div>
                 : <div className="grid gap-4">
-                    {resolvedAlerts.map(function (alert) {
-                      return <AlertCard key={alert.id} alert={alert} isResolved />;
-                    })}
+                    {resolvedAlerts.map((alert) => (
+                      <AlertCard key={alert.id} alert={alert} isResolved />
+                    ))}
                   </div>}
             </tabs_1.TabsContent>
           </tabs_1.Tabs>
@@ -294,7 +280,7 @@ function AlertCard(_a) {
   var _c = (0, react_1.useState)(false),
     showResolveDialog = _c[0],
     setShowResolveDialog = _c[1];
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "bg-red-100 text-red-800 border-red-300";
@@ -362,23 +348,16 @@ function AlertCard(_a) {
                     <input_1.Input
                       id="resolution"
                       value={resolution}
-                      onChange={function (e) {
-                        return setResolution(e.target.value);
-                      }}
+                      onChange={(e) => setResolution(e.target.value)}
                       placeholder="Ex: Transferência realizada para normalizar saldo"
                     />
                   </div>
                   <div className="flex justify-end space-x-2">
-                    <button_1.Button
-                      variant="outline"
-                      onClick={function () {
-                        return setShowResolveDialog(false);
-                      }}
-                    >
+                    <button_1.Button variant="outline" onClick={() => setShowResolveDialog(false)}>
                       Cancelar
                     </button_1.Button>
                     <button_1.Button
-                      onClick={function () {
+                      onClick={() => {
                         onResolve(alert.id, resolution);
                         setShowResolveDialog(false);
                         setResolution("");
@@ -418,7 +397,7 @@ function CreateAlertRuleDialog(_a) {
   var _g = (0, react_1.useState)(""),
     threshold = _g[0],
     setThreshold = _g[1];
-  var handleCreateRule = function () {
+  var handleCreateRule = () => {
     var _a;
     if (!selectedTemplate || !ruleName || !threshold) return;
     var template = createFromTemplate(selectedTemplate, {
@@ -426,9 +405,7 @@ function CreateAlertRuleDialog(_a) {
       condition: __assign(
         __assign(
           {},
-          (_a = templates.find(function (t) {
-            return t.id === selectedTemplate;
-          })) === null || _a === void 0
+          (_a = templates.find((t) => t.id === selectedTemplate)) === null || _a === void 0
             ? void 0
             : _a.template.condition,
         ),
@@ -466,13 +443,11 @@ function CreateAlertRuleDialog(_a) {
                 <select_1.SelectValue placeholder="Selecione um template" />
               </select_1.SelectTrigger>
               <select_1.SelectContent>
-                {templates.map(function (template) {
-                  return (
-                    <select_1.SelectItem key={template.id} value={template.id}>
-                      {template.name}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {templates.map((template) => (
+                  <select_1.SelectItem key={template.id} value={template.id}>
+                    {template.name}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
           </div>
@@ -482,9 +457,7 @@ function CreateAlertRuleDialog(_a) {
             <input_1.Input
               id="ruleName"
               value={ruleName}
-              onChange={function (e) {
-                return setRuleName(e.target.value);
-              }}
+              onChange={(e) => setRuleName(e.target.value)}
               placeholder="Ex: Monitoramento Saldo Conta Principal"
             />
           </div>
@@ -495,20 +468,13 @@ function CreateAlertRuleDialog(_a) {
               id="threshold"
               type="number"
               value={threshold}
-              onChange={function (e) {
-                return setThreshold(e.target.value);
-              }}
+              onChange={(e) => setThreshold(e.target.value)}
               placeholder="Ex: 5000"
             />
           </div>
 
           <div className="flex justify-end space-x-2">
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setOpen(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setOpen(false)}>
               Cancelar
             </button_1.Button>
             <button_1.Button
@@ -555,18 +521,16 @@ function AlertSettingsDialog() {
               <switch_1.Switch
                 id="email-enabled"
                 checked={config.email.enabled}
-                onCheckedChange={function (enabled) {
-                  return updateChannelConfig("email", { enabled: enabled });
-                }}
+                onCheckedChange={(enabled) => updateChannelConfig("email", { enabled: enabled })}
               />
             </div>
             {config.email.enabled && (
               <div className="ml-4 space-y-2">
                 <select_1.Select
                   value={config.email.severityThreshold}
-                  onValueChange={function (value) {
-                    return updateChannelConfig("email", { severityThreshold: value });
-                  }}
+                  onValueChange={(value) =>
+                    updateChannelConfig("email", { severityThreshold: value })
+                  }
                 >
                   <select_1.SelectTrigger className="w-[200px]">
                     <select_1.SelectValue />
@@ -588,9 +552,9 @@ function AlertSettingsDialog() {
               <switch_1.Switch
                 id="dashboard-enabled"
                 checked={config.dashboard.enabled}
-                onCheckedChange={function (enabled) {
-                  return updateChannelConfig("dashboard", { enabled: enabled });
-                }}
+                onCheckedChange={(enabled) =>
+                  updateChannelConfig("dashboard", { enabled: enabled })
+                }
               />
             </div>
             {config.dashboard.enabled && (
@@ -600,9 +564,9 @@ function AlertSettingsDialog() {
                   <switch_1.Switch
                     id="auto-refresh"
                     checked={config.dashboard.autoRefresh}
-                    onCheckedChange={function (autoRefresh) {
-                      return updateChannelConfig("dashboard", { autoRefresh: autoRefresh });
-                    }}
+                    onCheckedChange={(autoRefresh) =>
+                      updateChannelConfig("dashboard", { autoRefresh: autoRefresh })
+                    }
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -610,9 +574,9 @@ function AlertSettingsDialog() {
                   <switch_1.Switch
                     id="sound-alerts"
                     checked={config.dashboard.soundAlerts}
-                    onCheckedChange={function (soundAlerts) {
-                      return updateChannelConfig("dashboard", { soundAlerts: soundAlerts });
-                    }}
+                    onCheckedChange={(soundAlerts) =>
+                      updateChannelConfig("dashboard", { soundAlerts: soundAlerts })
+                    }
                   />
                 </div>
               </div>

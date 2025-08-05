@@ -1,5 +1,6 @@
 import { Type } from "@sinclair/typebox";
 import type { FastifyPluginAsync } from "fastify";
+import type { HealthcareUser } from "../plugins/auth.js";
 import {
   AppointmentListResponseSchema,
   type AppointmentQuery,
@@ -11,13 +12,6 @@ import {
   ConfirmAppointmentSchema,
   type CreateAppointment,
   CreateAppointmentSchema,
-  ProviderAvailabilitySchema,
-  RescheduleAppointment,
-  RescheduleAppointmentSchema,
-  ScheduleAppointment,
-  ScheduleAppointmentSchema,
-  UpdateAppointment,
-  UpdateAppointmentSchema,
 } from "../schemas/appointment";
 
 const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
@@ -45,7 +39,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         },
       },
     },
-    async (request, reply) => {
+    async (request, _reply) => {
       const query = request.query as AppointmentQuery;
       const {
         page = 1,
@@ -138,7 +132,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
 
         const response = {
           appointments:
-            appointments?.map((apt) => ({
+            appointments?.map((apt: any) => ({
               ...apt,
               patient: apt.patients,
               provider: apt.providers,
@@ -215,7 +209,10 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         }
 
         // For patient role, ensure they can only view their own appointments
-        if (request.user.role === "patient" && appointment.patient_id !== request.user.id) {
+        if (
+          (request.user as HealthcareUser).role === "patient" &&
+          appointment.patient_id !== (request.user as HealthcareUser).id
+        ) {
           reply.code(403);
           return { error: "Access denied - can only view own appointments" };
         }
@@ -296,7 +293,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         // Check for scheduling conflicts
         const conflicts = await checkSchedulingConflicts(
           request.supabaseClient,
-          request.tenantId,
+          request.tenantId!,
           appointmentData.providerId,
           appointmentData.patientId,
           appointmentData.appointmentDate,
@@ -314,7 +311,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         // Validate provider availability
         const isProviderAvailable = await checkProviderAvailability(
           request.supabaseClient,
-          request.tenantId,
+          request.tenantId!,
           appointmentData.providerId,
           appointmentData.appointmentDate,
           appointmentData.duration,
@@ -328,9 +325,9 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         // Prepare appointment data with system fields
         const newAppointment = {
           ...appointmentData,
-          tenant_id: request.tenantId,
+          tenant_id: request.tenantId!,
           status: "scheduled",
-          created_by: request.user.id,
+          created_by: (request.user as HealthcareUser).id,
           appointment_date: appointmentData.appointmentDate,
           patient_id: appointmentData.patientId,
           provider_id: appointmentData.providerId,
@@ -439,7 +436,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         const confirmationUpdate = {
           status: "confirmed",
           confirmed_at: new Date().toISOString(),
-          confirmed_by: request.user.id,
+          confirmed_by: (request.user as HealthcareUser).id,
           confirmation_method: confirmationData.confirmationMethod,
           confirmation_notes: confirmationData.confirmationNotes,
           reminder_config: confirmationData.reminderPreferences || {
@@ -483,7 +480,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
           patientId: existingAppointment.patient_id,
           providerId: existingAppointment.provider_id,
           confirmationMethod: confirmationData.confirmationMethod,
-          confirmedBy: request.user.id,
+          confirmedBy: (request.user as HealthcareUser).id,
         });
 
         // TODO: Send confirmation notification to patient
@@ -564,7 +561,10 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         }
 
         // For patient role, ensure they can only cancel their own appointments
-        if (request.user.role === "patient" && existingAppointment.patient_id !== request.user.id) {
+        if (
+          (request.user as HealthcareUser).role === "patient" &&
+          existingAppointment.patient_id !== (request.user as HealthcareUser).id
+        ) {
           reply.code(403);
           return { error: "Access denied - can only cancel own appointments" };
         }
@@ -585,7 +585,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         const cancellationUpdate = {
           status: "cancelled",
           cancelled_at: new Date().toISOString(),
-          cancelled_by: request.user.id,
+          cancelled_by: (request.user as HealthcareUser).id,
           cancellation_reason: cancellationData.reason,
           cancellation_notes: cancellationData.notes,
           refund_requested: cancellationData.refundRequested && refundEligible,
@@ -612,7 +612,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
         if (cancellationData.rescheduleRequested) {
           rescheduleOptions = await findAlternativeAppointmentSlots(
             request.supabaseClient,
-            request.tenantId,
+            request.tenantId!,
             existingAppointment.provider_id,
             new Date(),
             3, // Get 3 alternative options
@@ -636,7 +636,7 @@ const appointmentsRoutes: FastifyPluginAsync = async (fastify) => {
           providerName: existingAppointment.providers?.name,
           reason: cancellationData.reason,
           refundEligible,
-          cancelledBy: request.user.id,
+          cancelledBy: (request.user as HealthcareUser).id,
         });
 
         // TODO: Send cancellation notification to relevant parties
@@ -852,7 +852,7 @@ async function findAlternativeAppointmentSlots(
 
       // Find available slots (simplified logic)
       const workStart = parseTime(schedule.start_time);
-      const workEnd = parseTime(schedule.end_time);
+      const _workEnd = parseTime(schedule.end_time);
 
       // Check for a 30-minute slot at the start of the day
       if (workStart && !hasConflictAtTime(existingAppointments, workStart, 30)) {
@@ -874,7 +874,14 @@ async function findAlternativeAppointmentSlots(
  */
 function parseTime(timeString: string): Date | null {
   if (!timeString) return null;
-  const [hours, minutes] = timeString.split(":").map(Number);
+  const parts = timeString.split(":");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) return null;
+
+  const hours = parseInt(parts[0], 10);
+  const minutes = parseInt(parts[1], 10);
+
+  if (isNaN(hours) || isNaN(minutes)) return null;
+
   const date = new Date();
   date.setHours(hours, minutes, 0, 0);
   return date;

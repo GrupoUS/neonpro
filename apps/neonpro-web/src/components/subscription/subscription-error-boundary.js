@@ -12,23 +12,22 @@
  * @version 2.0.0 - Error Handling Enhanced
  */
 "use client";
-"use strict";
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -40,15 +39,15 @@ var __extends =
   })();
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -68,13 +67,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -96,9 +95,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -170,7 +167,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionPaymentErrorBoundary =
   exports.SubscriptionStatusErrorBoundary =
@@ -184,13 +181,13 @@ var card_1 = require("@/components/ui/card");
 var lucide_react_1 = require("lucide-react");
 var subscription_error_handler_1 = require("@/lib/subscription-error-handler");
 var subscription_errors_1 = require("@/types/subscription-errors");
-var SubscriptionErrorBoundary = /** @class */ (function (_super) {
+var SubscriptionErrorBoundary = /** @class */ ((_super) => {
   __extends(SubscriptionErrorBoundary, _super);
   function SubscriptionErrorBoundary(props) {
     var _this = _super.call(this, props) || this;
     _this.retryTimeouts = [];
-    _this.handleRetry = function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    _this.handleRetry = () =>
+      __awaiter(_this, void 0, void 0, function () {
         var retryError_1;
         return __generator(this, function (_a) {
           switch (_a.label) {
@@ -205,9 +202,7 @@ var SubscriptionErrorBoundary = /** @class */ (function (_super) {
               // Wait a bit before retrying
               return [
                 4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 1000);
-                }),
+                new Promise((resolve) => setTimeout(resolve, 1000)),
                 // Reset error state to trigger re-render
               ];
             case 2:
@@ -237,8 +232,7 @@ var SubscriptionErrorBoundary = /** @class */ (function (_super) {
           }
         });
       });
-    };
-    _this.handleRefresh = function () {
+    _this.handleRefresh = () => {
       window.location.reload();
     };
     _this.state = {
@@ -250,16 +244,13 @@ var SubscriptionErrorBoundary = /** @class */ (function (_super) {
     };
     return _this;
   }
-  SubscriptionErrorBoundary.getDerivedStateFromError = function (error) {
-    return {
-      hasError: true,
-      error: error,
-      userMessage: "Something went wrong with the subscription system.",
-      canRetry: true,
-    };
-  };
+  SubscriptionErrorBoundary.getDerivedStateFromError = (error) => ({
+    hasError: true,
+    error: error,
+    userMessage: "Something went wrong with the subscription system.",
+    canRetry: true,
+  });
   SubscriptionErrorBoundary.prototype.componentDidCatch = function (error, errorInfo) {
-    var _this = this;
     // Log error using centralized error handler
     var subscriptionError = subscription_errors_1.SubscriptionErrorFactory.createError(
       "validation",
@@ -273,16 +264,13 @@ var SubscriptionErrorBoundary = /** @class */ (function (_super) {
       },
     );
     // Handle error through centralized system
-    subscription_error_handler_1.subscriptionErrorHandler.handleError(
-      subscriptionError,
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            // This is just for logging, no recovery operation
-            return [2 /*return*/, Promise.resolve()];
-          });
+    subscription_error_handler_1.subscriptionErrorHandler.handleError(subscriptionError, () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          // This is just for logging, no recovery operation
+          return [2 /*return*/, Promise.resolve()];
         });
-      },
+      }),
     );
     // Update state
     this.setState({
@@ -384,14 +372,12 @@ var SubscriptionErrorBoundary = /** @class */ (function (_super) {
   };
   SubscriptionErrorBoundary.prototype.componentWillUnmount = function () {
     // Clean up any retry timeouts
-    this.retryTimeouts.forEach(function (timeout) {
-      return clearTimeout(timeout);
-    });
+    this.retryTimeouts.forEach((timeout) => clearTimeout(timeout));
   };
   return SubscriptionErrorBoundary;
 })(react_1.Component); // Specialized Error Boundary for different subscription contexts
 exports.SubscriptionErrorBoundary = SubscriptionErrorBoundary;
-var SubscriptionStatusErrorBoundary = function (_a) {
+var SubscriptionStatusErrorBoundary = (_a) => {
   var children = _a.children;
   return (
     <SubscriptionErrorBoundary
@@ -405,7 +391,7 @@ var SubscriptionStatusErrorBoundary = function (_a) {
   );
 };
 exports.SubscriptionStatusErrorBoundary = SubscriptionStatusErrorBoundary;
-var SubscriptionPaymentErrorBoundary = function (_a) {
+var SubscriptionPaymentErrorBoundary = (_a) => {
   var children = _a.children;
   return (
     <SubscriptionErrorBoundary
@@ -422,13 +408,11 @@ var SubscriptionPaymentErrorBoundary = function (_a) {
 exports.SubscriptionPaymentErrorBoundary = SubscriptionPaymentErrorBoundary;
 // Higher-order component for easy wrapping
 function withSubscriptionErrorBoundary(WrappedComponent, options) {
-  var ComponentWithErrorBoundary = function (props) {
-    return (
-      <SubscriptionErrorBoundary {...options}>
-        <WrappedComponent {...props} />
-      </SubscriptionErrorBoundary>
-    );
-  };
+  var ComponentWithErrorBoundary = (props) => (
+    <SubscriptionErrorBoundary {...options}>
+      <WrappedComponent {...props} />
+    </SubscriptionErrorBoundary>
+  );
   ComponentWithErrorBoundary.displayName = "withSubscriptionErrorBoundary(".concat(
     WrappedComponent.displayName || WrappedComponent.name,
     ")",

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorList = VendorList;
 var badge_1 = require("@/components/ui/badge");
@@ -163,7 +160,6 @@ var react_1 = require("react");
 var sonner_1 = require("sonner");
 var vendor_form_1 = require("./vendor-form");
 function VendorList() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     vendors = _a[0],
     setVendors = _a[1];
@@ -203,16 +199,13 @@ function VendorList() {
     }),
     filters = _k[0],
     setFilters = _k[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadVendors();
-    },
-    [filters, currentPage],
-  );
-  var loadVendors = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadVendors();
+  }, [filters, currentPage]);
+  var loadVendors = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -239,28 +232,25 @@ function VendorList() {
         }
       });
     });
-  };
-  var handleSearch = function (search) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), { search: search });
-    });
+  var handleSearch = (search) => {
+    setFilters((prev) => __assign(__assign({}, prev), { search: search }));
     setCurrentPage(1);
   };
-  var handleFilterChange = function (key, value) {
-    setFilters(function (prev) {
+  var handleFilterChange = (key, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[key] = value), _a));
     });
     setCurrentPage(1);
   };
-  var handleEdit = function (vendor) {
+  var handleEdit = (vendor) => {
     setSelectedVendor(vendor);
     setShowForm(true);
   };
-  var handleDelete = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDelete = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!vendorToDelete) return [2 /*return*/];
@@ -292,11 +282,10 @@ function VendorList() {
         }
       });
     });
-  };
-  var handleToggleStatus = function (vendor) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleToggleStatus = (vendor) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -321,23 +310,22 @@ function VendorList() {
         }
       });
     });
-  };
-  var handleFormSuccess = function () {
+  var handleFormSuccess = () => {
     loadVendors();
     setSelectedVendor(undefined);
   };
-  var formatCurrency = function (value) {
+  var formatCurrency = (value) => {
     if (!value) return "-";
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
   };
-  var formatPhone = function (phone) {
+  var formatPhone = (phone) => {
     if (!phone) return "-";
     return phone;
   };
-  var getVendorTypeBadge = function (type) {
+  var getVendorTypeBadge = (type) => {
     var types = {
       supplier: { label: "Fornecedor", variant: "default" },
       service_provider: { label: "Prestador", variant: "secondary" },
@@ -348,7 +336,7 @@ function VendorList() {
     var typeInfo = types[type] || types.other;
     return <badge_1.Badge variant={typeInfo.variant}>{typeInfo.label}</badge_1.Badge>;
   };
-  var getPaymentMethodBadge = function (method) {
+  var getPaymentMethodBadge = (method) => {
     var methods = {
       cash: "Dinheiro",
       check: "Cheque",
@@ -368,11 +356,7 @@ function VendorList() {
           <h2 className="text-2xl font-bold tracking-tight">Fornecedores</h2>
           <p className="text-muted-foreground">Gerencie os fornecedores do sistema</p>
         </div>
-        <button_1.Button
-          onClick={function () {
-            return setShowForm(true);
-          }}
-        >
+        <button_1.Button onClick={() => setShowForm(true)}>
           <lucide_react_1.Plus className="mr-2 h-4 w-4" />
           Novo Fornecedor
         </button_1.Button>
@@ -388,9 +372,7 @@ function VendorList() {
                 <input_1.Input
                   placeholder="Buscar por nome, código ou contato..."
                   value={filters.search || ""}
-                  onChange={function (e) {
-                    return handleSearch(e.target.value);
-                  }}
+                  onChange={(e) => handleSearch(e.target.value)}
                   className="pl-8"
                 />
               </div>
@@ -398,9 +380,9 @@ function VendorList() {
 
             <select_1.Select
               value={filters.vendor_type || "all"}
-              onValueChange={function (value) {
-                return handleFilterChange("vendor_type", value === "all" ? undefined : value);
-              }}
+              onValueChange={(value) =>
+                handleFilterChange("vendor_type", value === "all" ? undefined : value)
+              }
             >
               <select_1.SelectTrigger className="w-[180px]">
                 <select_1.SelectValue placeholder="Tipo" />
@@ -417,12 +399,9 @@ function VendorList() {
 
             <select_1.Select
               value={filters.is_active === undefined ? "all" : filters.is_active.toString()}
-              onValueChange={function (value) {
-                return handleFilterChange(
-                  "is_active",
-                  value === "all" ? undefined : value === "true",
-                );
-              }}
+              onValueChange={(value) =>
+                handleFilterChange("is_active", value === "all" ? undefined : value === "true")
+              }
             >
               <select_1.SelectTrigger className="w-[120px]">
                 <select_1.SelectValue placeholder="Status" />
@@ -436,9 +415,9 @@ function VendorList() {
 
             <select_1.Select
               value={filters.payment_method || "all"}
-              onValueChange={function (value) {
-                return handleFilterChange("payment_method", value === "all" ? undefined : value);
-              }}
+              onValueChange={(value) =>
+                handleFilterChange("payment_method", value === "all" ? undefined : value)
+              }
             >
               <select_1.SelectTrigger className="w-[140px]">
                 <select_1.SelectValue placeholder="Pagamento" />
@@ -492,107 +471,99 @@ function VendorList() {
                         </p>
                       </table_1.TableCell>
                     </table_1.TableRow>
-                  : vendors.map(function (vendor) {
-                      return (
-                        <table_1.TableRow key={vendor.id}>
-                          <table_1.TableCell>
-                            <div>
-                              <div className="font-medium">{vendor.company_name}</div>
-                              <div className="text-sm text-muted-foreground">
-                                {vendor.vendor_code}
+                  : vendors.map((vendor) => (
+                      <table_1.TableRow key={vendor.id}>
+                        <table_1.TableCell>
+                          <div>
+                            <div className="font-medium">{vendor.company_name}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {vendor.vendor_code}
+                            </div>
+                          </div>
+                        </table_1.TableCell>
+
+                        <table_1.TableCell>
+                          <div className="space-y-1">
+                            {vendor.contact_person && (
+                              <div className="text-sm">{vendor.contact_person}</div>
+                            )}
+                            {vendor.email && (
+                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <lucide_react_1.Mail className="h-3 w-3" />
+                                {vendor.email}
                               </div>
-                            </div>
-                          </table_1.TableCell>
+                            )}
+                            {vendor.phone && (
+                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <lucide_react_1.Phone className="h-3 w-3" />
+                                {formatPhone(vendor.phone)}
+                              </div>
+                            )}
+                          </div>
+                        </table_1.TableCell>
 
-                          <table_1.TableCell>
-                            <div className="space-y-1">
-                              {vendor.contact_person && (
-                                <div className="text-sm">{vendor.contact_person}</div>
-                              )}
-                              {vendor.email && (
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                  <lucide_react_1.Mail className="h-3 w-3" />
-                                  {vendor.email}
-                                </div>
-                              )}
-                              {vendor.phone && (
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                  <lucide_react_1.Phone className="h-3 w-3" />
-                                  {formatPhone(vendor.phone)}
-                                </div>
-                              )}
-                            </div>
-                          </table_1.TableCell>
+                        <table_1.TableCell>
+                          {getVendorTypeBadge(vendor.vendor_type)}
+                        </table_1.TableCell>
 
-                          <table_1.TableCell>
-                            {getVendorTypeBadge(vendor.vendor_type)}
-                          </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">
+                            {getPaymentMethodBadge(vendor.payment_method)}
+                          </div>
+                        </table_1.TableCell>
 
-                          <table_1.TableCell>
-                            <div className="text-sm">
-                              {getPaymentMethodBadge(vendor.payment_method)}
-                            </div>
-                          </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">{vendor.payment_terms_days} dias</div>
+                        </table_1.TableCell>
 
-                          <table_1.TableCell>
-                            <div className="text-sm">{vendor.payment_terms_days} dias</div>
-                          </table_1.TableCell>
-
-                          <table_1.TableCell>
-                            <div className="flex items-center gap-2">
-                              <badge_1.Badge variant={vendor.is_active ? "default" : "secondary"}>
-                                {vendor.is_active ? "Ativo" : "Inativo"}
+                        <table_1.TableCell>
+                          <div className="flex items-center gap-2">
+                            <badge_1.Badge variant={vendor.is_active ? "default" : "secondary"}>
+                              {vendor.is_active ? "Ativo" : "Inativo"}
+                            </badge_1.Badge>
+                            {vendor.requires_approval && (
+                              <badge_1.Badge variant="outline" className="text-xs">
+                                Aprovação
                               </badge_1.Badge>
-                              {vendor.requires_approval && (
-                                <badge_1.Badge variant="outline" className="text-xs">
-                                  Aprovação
-                                </badge_1.Badge>
-                              )}
-                            </div>
-                          </table_1.TableCell>
+                            )}
+                          </div>
+                        </table_1.TableCell>
 
-                          <table_1.TableCell>
-                            <dropdown_menu_1.DropdownMenu>
-                              <dropdown_menu_1.DropdownMenuTrigger asChild>
-                                <button_1.Button variant="ghost" className="h-8 w-8 p-0">
-                                  <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-                                </button_1.Button>
-                              </dropdown_menu_1.DropdownMenuTrigger>
-                              <dropdown_menu_1.DropdownMenuContent align="end">
-                                <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleEdit(vendor);
-                                  }}
-                                >
-                                  <lucide_react_1.Pencil className="mr-2 h-4 w-4" />
-                                  Editar
-                                </dropdown_menu_1.DropdownMenuItem>
-                                <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleToggleStatus(vendor);
-                                  }}
-                                >
-                                  {vendor.is_active
-                                    ? <lucide_react_1.ToggleLeft className="mr-2 h-4 w-4" />
-                                    : <lucide_react_1.ToggleRight className="mr-2 h-4 w-4" />}
-                                  {vendor.is_active ? "Desativar" : "Ativar"}
-                                </dropdown_menu_1.DropdownMenuItem>
-                                <dropdown_menu_1.DropdownMenuItem
-                                  className="text-destructive"
-                                  onClick={function () {
-                                    setVendorToDelete(vendor);
-                                    setShowDeleteDialog(true);
-                                  }}
-                                >
-                                  <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
-                                  Deletar
-                                </dropdown_menu_1.DropdownMenuItem>
-                              </dropdown_menu_1.DropdownMenuContent>
-                            </dropdown_menu_1.DropdownMenu>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                        <table_1.TableCell>
+                          <dropdown_menu_1.DropdownMenu>
+                            <dropdown_menu_1.DropdownMenuTrigger asChild>
+                              <button_1.Button variant="ghost" className="h-8 w-8 p-0">
+                                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+                              </button_1.Button>
+                            </dropdown_menu_1.DropdownMenuTrigger>
+                            <dropdown_menu_1.DropdownMenuContent align="end">
+                              <dropdown_menu_1.DropdownMenuItem onClick={() => handleEdit(vendor)}>
+                                <lucide_react_1.Pencil className="mr-2 h-4 w-4" />
+                                Editar
+                              </dropdown_menu_1.DropdownMenuItem>
+                              <dropdown_menu_1.DropdownMenuItem
+                                onClick={() => handleToggleStatus(vendor)}
+                              >
+                                {vendor.is_active
+                                  ? <lucide_react_1.ToggleLeft className="mr-2 h-4 w-4" />
+                                  : <lucide_react_1.ToggleRight className="mr-2 h-4 w-4" />}
+                                {vendor.is_active ? "Desativar" : "Ativar"}
+                              </dropdown_menu_1.DropdownMenuItem>
+                              <dropdown_menu_1.DropdownMenuItem
+                                className="text-destructive"
+                                onClick={() => {
+                                  setVendorToDelete(vendor);
+                                  setShowDeleteDialog(true);
+                                }}
+                              >
+                                <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
+                                Deletar
+                              </dropdown_menu_1.DropdownMenuItem>
+                            </dropdown_menu_1.DropdownMenuContent>
+                          </dropdown_menu_1.DropdownMenu>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
             </table_1.TableBody>
           </table_1.Table>
         </card_1.CardContent>
@@ -609,26 +580,20 @@ function VendorList() {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setCurrentPage(function (prev) {
-                  return Math.max(1, prev - 1);
-                });
-              }}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
             >
               Anterior
             </button_1.Button>
             <div className="flex items-center gap-1">
-              {Array.from({ length: Math.min(5, totalPages) }, function (_, i) {
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 var pageNum = Math.max(1, Math.min(totalPages, currentPage - 2 + i));
                 return (
                   <button_1.Button
                     key={pageNum}
                     variant={currentPage === pageNum ? "default" : "outline"}
                     size="sm"
-                    onClick={function () {
-                      return setCurrentPage(pageNum);
-                    }}
+                    onClick={() => setCurrentPage(pageNum)}
                   >
                     {pageNum}
                   </button_1.Button>
@@ -638,11 +603,7 @@ function VendorList() {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setCurrentPage(function (prev) {
-                  return Math.min(totalPages, prev + 1);
-                });
-              }}
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
             >
               Próximo
@@ -655,7 +616,7 @@ function VendorList() {
       <vendor_form_1.VendorForm
         vendor={selectedVendor}
         open={showForm}
-        onOpenChange={function (open) {
+        onOpenChange={(open) => {
           setShowForm(open);
           if (!open) setSelectedVendor(undefined);
         }}
@@ -676,12 +637,7 @@ function VendorList() {
             </dialog_1.DialogDescription>
           </dialog_1.DialogHeader>
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowDeleteDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
               Cancelar
             </button_1.Button>
             <button_1.Button variant="destructive" onClick={handleDelete} disabled={deleteLoading}>

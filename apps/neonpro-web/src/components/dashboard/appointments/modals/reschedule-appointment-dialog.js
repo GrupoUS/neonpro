@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RescheduleAppointmentDialog = RescheduleAppointmentDialog;
 var react_1 = require("react");
@@ -158,7 +155,6 @@ var rescheduleSchema = zod_2.z.object({
   notify_patient: zod_2.z.boolean().default(true),
 });
 function RescheduleAppointmentDialog(_a) {
-  var _this = this;
   var _b, _c;
   var appointment = _a.appointment,
     open = _a.open,
@@ -188,34 +184,28 @@ function RescheduleAppointmentDialog(_a) {
     },
   });
   // Reset form when appointment changes
-  (0, react_1.useEffect)(
-    function () {
-      if (appointment && open) {
-        form.reset({
-          new_start_time: "",
-          reschedule_reason: "",
-          notify_patient: true,
-        });
-        setSelectedDate("");
-        setAvailableSlots([]);
-        setConflictError("");
-      }
-    },
-    [appointment, open, form],
-  );
+  (0, react_1.useEffect)(() => {
+    if (appointment && open) {
+      form.reset({
+        new_start_time: "",
+        reschedule_reason: "",
+        notify_patient: true,
+      });
+      setSelectedDate("");
+      setAvailableSlots([]);
+      setConflictError("");
+    }
+  }, [appointment, open, form]);
   // Load available slots when date is selected
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedDate && appointment) {
-        loadAvailableSlots(selectedDate);
-      }
-    },
-    [selectedDate, appointment],
-  );
-  var loadAvailableSlots = function (date) {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (selectedDate && appointment) {
+      loadAvailableSlots(selectedDate);
+    }
+  }, [selectedDate, appointment]);
+  var loadAvailableSlots = (date) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!appointment) return [2 /*return*/];
@@ -259,13 +249,12 @@ function RescheduleAppointmentDialog(_a) {
         }
       });
     });
-  };
   // Check for conflicts when time changes
-  var checkConflicts = function (newStartTime) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var checkConflicts = (newStartTime) =>
+    __awaiter(this, void 0, void 0, function () {
       var startTime, serviceDuration, endTime, response, data, conflicts, error_2;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             if (!appointment || !newStartTime) return [2 /*return*/];
@@ -299,14 +288,14 @@ function RescheduleAppointmentDialog(_a) {
               ((_a = data.conflicting_appointments) === null || _a === void 0 ? void 0 : _a.length)
             ) {
               conflicts = data.conflicting_appointments
-                .map(function (c) {
-                  return "".concat(c.patient_name, " (").concat(
+                .map((c) =>
+                  "".concat(c.patient_name, " (").concat(
                     (0, date_fns_1.format)(new Date(c.start_time), "HH:mm", {
                       locale: locale_1.ptBR,
                     }),
                     ")",
-                  );
-                })
+                  ),
+                )
                 .join(", ");
               setConflictError("Conflito detectado com: ".concat(conflicts));
             }
@@ -320,24 +309,23 @@ function RescheduleAppointmentDialog(_a) {
         }
       });
     });
-  };
   // Handle date selection
-  var handleDateChange = function (date) {
+  var handleDateChange = (date) => {
     setSelectedDate(date);
     form.setValue("new_start_time", "");
   };
   // Handle slot selection
-  var handleSlotSelect = function (slot) {
+  var handleSlotSelect = (slot) => {
     if (!slot.is_available) return;
     var dateTimeValue = (0, date_fns_1.format)(new Date(slot.start_time), "yyyy-MM-dd'T'HH:mm");
     form.setValue("new_start_time", dateTimeValue);
     checkConflicts(slot.start_time);
   };
   // Handle form submission
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (conflictError) {
@@ -375,12 +363,11 @@ function RescheduleAppointmentDialog(_a) {
         }
       });
     });
-  };
-  var getMinDate = function () {
+  var getMinDate = () => {
     // Allow rescheduling from tomorrow onwards
     return (0, date_fns_1.format)((0, date_fns_1.addDays)(new Date(), 1), "yyyy-MM-dd");
   };
-  var getMaxDate = function () {
+  var getMaxDate = () => {
     // Allow rescheduling up to 3 months ahead
     return (0, date_fns_1.format)((0, date_fns_1.addDays)(new Date(), 90), "yyyy-MM-dd");
   };
@@ -451,9 +438,7 @@ function RescheduleAppointmentDialog(_a) {
               <input_1.Input
                 type="date"
                 value={selectedDate}
-                onChange={function (e) {
-                  return handleDateChange(e.target.value);
-                }}
+                onChange={(e) => handleDateChange(e.target.value)}
                 min={getMinDate()}
                 max={getMaxDate()}
                 className="w-full"
@@ -477,41 +462,37 @@ function RescheduleAppointmentDialog(_a) {
                     </div>
                   : availableSlots.length > 0
                     ? <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 max-h-40 overflow-y-auto">
-                        {availableSlots.map(function (slot, index) {
-                          return (
-                            <button_1.Button
-                              key={index}
-                              type="button"
-                              variant={
-                                form.watch("new_start_time") ===
+                        {availableSlots.map((slot, index) => (
+                          <button_1.Button
+                            key={index}
+                            type="button"
+                            variant={
+                              form.watch("new_start_time") ===
+                              (0, date_fns_1.format)(
+                                new Date(slot.start_time),
+                                "yyyy-MM-dd'T'HH:mm",
+                              )
+                                ? "default"
+                                : slot.is_available
+                                  ? "outline"
+                                  : "secondary"
+                            }
+                            size="sm"
+                            disabled={!slot.is_available}
+                            onClick={() => handleSlotSelect(slot)}
+                            className="relative"
+                          >
+                            {(0, date_fns_1.format)(new Date(slot.start_time), "HH:mm")}
+                            {slot.is_available &&
+                              form.watch("new_start_time") ===
                                 (0, date_fns_1.format)(
                                   new Date(slot.start_time),
                                   "yyyy-MM-dd'T'HH:mm",
-                                )
-                                  ? "default"
-                                  : slot.is_available
-                                    ? "outline"
-                                    : "secondary"
-                              }
-                              size="sm"
-                              disabled={!slot.is_available}
-                              onClick={function () {
-                                return handleSlotSelect(slot);
-                              }}
-                              className="relative"
-                            >
-                              {(0, date_fns_1.format)(new Date(slot.start_time), "HH:mm")}
-                              {slot.is_available &&
-                                form.watch("new_start_time") ===
-                                  (0, date_fns_1.format)(
-                                    new Date(slot.start_time),
-                                    "yyyy-MM-dd'T'HH:mm",
-                                  ) && (
-                                  <lucide_react_1.CheckCircle className="h-3 w-3 absolute -top-1 -right-1" />
-                                )}
-                            </button_1.Button>
-                          );
-                        })}
+                                ) && (
+                                <lucide_react_1.CheckCircle className="h-3 w-3 absolute -top-1 -right-1" />
+                              )}
+                          </button_1.Button>
+                        ))}
                       </div>
                     : <div className="text-center py-8 text-muted-foreground">
                         <lucide_react_1.Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
@@ -524,7 +505,7 @@ function RescheduleAppointmentDialog(_a) {
             <form_1.FormField
               control={form.control}
               name="new_start_time"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -553,7 +534,7 @@ function RescheduleAppointmentDialog(_a) {
             <form_1.FormField
               control={form.control}
               name="reschedule_reason"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -574,9 +555,7 @@ function RescheduleAppointmentDialog(_a) {
               <button_1.Button
                 type="button"
                 variant="outline"
-                onClick={function () {
-                  return onOpenChange(false);
-                }}
+                onClick={() => onOpenChange(false)}
                 disabled={isRescheduling}
               >
                 Cancelar

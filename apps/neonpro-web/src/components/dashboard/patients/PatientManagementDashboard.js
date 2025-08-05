@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientManagementDashboard = PatientManagementDashboard;
 /**
@@ -170,7 +167,6 @@ var PatientStatsCards_1 = require("./PatientStatsCards");
 var auth_context_1 = require("@/contexts/auth-context");
 var patients_1 = require("@/lib/supabase/patients");
 function PatientManagementDashboard() {
-  var _this = this;
   var user = (0, auth_context_1.useAuth)().user;
   var _a = (0, react_1.useState)([]),
     patients = _a[0],
@@ -197,10 +193,10 @@ function PatientManagementDashboard() {
     setSearchParams = _f[1];
   // Load patients data
   var loadPatients = (0, react_1.useCallback)(
-    function (params) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (params) =>
+      __awaiter(this, void 0, void 0, function () {
         var result, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!(user === null || user === void 0 ? void 0 : user.id)) return [2 /*return*/];
@@ -227,31 +223,27 @@ function PatientManagementDashboard() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user === null || user === void 0 ? void 0 : user.id],
   );
   // Initial load
-  (0, react_1.useEffect)(
-    function () {
-      loadPatients(searchParams);
-    },
-    [loadPatients, searchParams],
-  );
+  (0, react_1.useEffect)(() => {
+    loadPatients(searchParams);
+  }, [loadPatients, searchParams]);
   // Handle search
-  var handleSearch = function (newParams) {
+  var handleSearch = (newParams) => {
     var updatedParams = __assign(__assign(__assign({}, searchParams), newParams), {
       offset: 0, // Reset to first page when searching
     });
     setSearchParams(updatedParams);
   };
   // Handle pagination
-  var handlePageChange = function (newOffset) {
+  var handlePageChange = (newOffset) => {
     var updatedParams = __assign(__assign({}, searchParams), { offset: newOffset });
     setSearchParams(updatedParams);
   };
   // Handle successful patient registration
-  var handleRegistrationSuccess = function (patientId) {
+  var handleRegistrationSuccess = (patientId) => {
     setIsRegistrationOpen(false);
     loadPatients(searchParams); // Reload patients list
     sonner_1.toast.success("Patient registered successfully");
@@ -259,18 +251,14 @@ function PatientManagementDashboard() {
   // Stats data (calculated from current patients)
   var stats = {
     total_patients: totalCount,
-    active_patients: patients.filter(function (p) {
-      return p.active;
-    }).length,
-    new_this_month: patients.filter(function (p) {
+    active_patients: patients.filter((p) => p.active).length,
+    new_this_month: patients.filter((p) => {
       var createdDate = new Date(p.created_at);
       var now = new Date();
       var firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
       return createdDate >= firstOfMonth;
     }).length,
-    with_consents: patients.filter(function (p) {
-      return p.consents_count > 0;
-    }).length,
+    with_consents: patients.filter((p) => p.consents_count > 0).length,
   };
   return (
     <div className="space-y-6">
@@ -290,9 +278,7 @@ function PatientManagementDashboard() {
               </dialog_1.DialogHeader>
               <PatientRegistrationForm_1.PatientRegistrationForm
                 onSuccess={handleRegistrationSuccess}
-                onCancel={function () {
-                  return setIsRegistrationOpen(false);
-                }}
+                onCancel={() => setIsRegistrationOpen(false)}
               />
             </dialog_1.DialogContent>
           </dialog_1.Dialog>
@@ -347,9 +333,7 @@ function PatientManagementDashboard() {
             totalCount={totalCount}
             hasNextPage={hasNextPage}
             onPageChange={handlePageChange}
-            onSort={function (field, order) {
-              return handleSearch({ sort_by: field, sort_order: order });
-            }}
+            onSort={(field, order) => handleSearch({ sort_by: field, sort_order: order })}
           />
         </tabs_1.TabsContent>
 

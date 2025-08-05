@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientsPage;
 var react_1 = require("react");
@@ -164,7 +161,6 @@ var table_1 = require("@/components/ui/table");
 var loading_spinner_1 = require("@/components/ui/loading-spinner");
 var lucide_react_1 = require("lucide-react");
 function PatientsPage() {
-  var _this = this;
   var _a = (0, react_1.useState)(true),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -186,20 +182,15 @@ function PatientsPage() {
   var _g = (0, react_1.useState)(false),
     isDetailsOpen = _g[0],
     setIsDetailsOpen = _g[1];
-  (0, react_1.useEffect)(function () {
-    var loadPatients = function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    var loadPatients = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsLoading(true);
               // Simulate API call
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 1200);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1200))];
             case 1:
               // Simulate API call
               _a.sent();
@@ -300,10 +291,9 @@ function PatientsPage() {
           }
         });
       });
-    };
     loadPatients();
   }, []);
-  var filteredPatients = patients.filter(function (patient) {
+  var filteredPatients = patients.filter((patient) => {
     var matchesSearch =
       patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -352,11 +342,7 @@ function PatientsPage() {
                   Preencha as informações do novo paciente
                 </dialog_1.DialogDescription>
               </dialog_1.DialogHeader>
-              <NewPatientForm
-                onClose={function () {
-                  return setIsDialogOpen(false);
-                }}
-              />
+              <NewPatientForm onClose={() => setIsDialogOpen(false)} />
             </dialog_1.DialogContent>
           </dialog_1.Dialog>
         </div>
@@ -372,12 +358,7 @@ function PatientsPage() {
           <card_1.CardContent>
             <div className="text-2xl font-bold">{patients.length}</div>
             <p className="text-xs text-muted-foreground">
-              {
-                patients.filter(function (p) {
-                  return p.status === "ativo";
-                }).length
-              }{" "}
-              ativos
+              {patients.filter((p) => p.status === "ativo").length} ativos
             </p>
           </card_1.CardContent>
         </card_1.Card>
@@ -426,9 +407,7 @@ function PatientsPage() {
                 <input_1.Input
                   placeholder="Buscar por nome, email ou telefone..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -488,122 +467,114 @@ function PatientsPage() {
                     </table_1.TableRow>
                   </table_1.TableHeader>
                   <table_1.TableBody>
-                    {filteredPatients.map(function (patient) {
-                      return (
-                        <table_1.TableRow key={patient.id} className="hover:bg-muted/50">
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-3">
-                              <avatar_1.Avatar>
-                                <avatar_1.AvatarImage src={patient.avatar} />
-                                <avatar_1.AvatarFallback className="bg-neon-100 text-neon-700">
-                                  {patient.name
-                                    .split(" ")
-                                    .map(function (n) {
-                                      return n[0];
-                                    })
-                                    .join("")}
-                                </avatar_1.AvatarFallback>
-                              </avatar_1.Avatar>
-                              <div>
-                                <p className="font-medium">{patient.name}</p>
-                                <p className="text-sm text-muted-foreground">ID: {patient.id}</p>
-                              </div>
+                    {filteredPatients.map((patient) => (
+                      <table_1.TableRow key={patient.id} className="hover:bg-muted/50">
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-3">
+                            <avatar_1.Avatar>
+                              <avatar_1.AvatarImage src={patient.avatar} />
+                              <avatar_1.AvatarFallback className="bg-neon-100 text-neon-700">
+                                {patient.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
+                              </avatar_1.AvatarFallback>
+                            </avatar_1.Avatar>
+                            <div>
+                              <p className="font-medium">{patient.name}</p>
+                              <p className="text-sm text-muted-foreground">ID: {patient.id}</p>
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="space-y-1">
-                              <div className="flex items-center text-sm">
-                                <lucide_react_1.Phone className="w-3 h-3 mr-1" />
-                                {patient.phone}
-                              </div>
-                              <div className="flex items-center text-sm text-muted-foreground">
-                                <lucide_react_1.Mail className="w-3 h-3 mr-1" />
-                                {patient.email}
-                              </div>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="space-y-1">
+                            <div className="flex items-center text-sm">
+                              <lucide_react_1.Phone className="w-3 h-3 mr-1" />
+                              {patient.phone}
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="text-sm">
-                              <p>{calculateAge(patient.dateOfBirth)} anos</p>
-                              <p className="text-muted-foreground">{patient.gender}</p>
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <lucide_react_1.Mail className="w-3 h-3 mr-1" />
+                              {patient.email}
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge
-                              variant="outline"
-                              className="bg-red-50 text-red-700 border-red-200"
-                            >
-                              <lucide_react_1.Heart className="w-3 h-3 mr-1" />
-                              {patient.medicalInfo.bloodType}
-                            </badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="text-sm">
-                              {patient.medicalInfo.lastVisit
-                                ? <>
-                                    <p>
-                                      {new Date(patient.medicalInfo.lastVisit).toLocaleDateString(
-                                        "pt-BR",
-                                      )}
-                                    </p>
-                                    {patient.medicalInfo.nextAppointment && (
-                                      <p className="text-muted-foreground">
-                                        Próxima:{" "}
-                                        {new Date(
-                                          patient.medicalInfo.nextAppointment,
-                                        ).toLocaleDateString("pt-BR")}
-                                      </p>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">
+                            <p>{calculateAge(patient.dateOfBirth)} anos</p>
+                            <p className="text-muted-foreground">{patient.gender}</p>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge
+                            variant="outline"
+                            className="bg-red-50 text-red-700 border-red-200"
+                          >
+                            <lucide_react_1.Heart className="w-3 h-3 mr-1" />
+                            {patient.medicalInfo.bloodType}
+                          </badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">
+                            {patient.medicalInfo.lastVisit
+                              ? <>
+                                  <p>
+                                    {new Date(patient.medicalInfo.lastVisit).toLocaleDateString(
+                                      "pt-BR",
                                     )}
-                                  </>
-                                : <span className="text-muted-foreground">Nunca</span>}
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge
-                              variant="outline"
-                              className={getStatusColor(patient.status)}
+                                  </p>
+                                  {patient.medicalInfo.nextAppointment && (
+                                    <p className="text-muted-foreground">
+                                      Próxima:{" "}
+                                      {new Date(
+                                        patient.medicalInfo.nextAppointment,
+                                      ).toLocaleDateString("pt-BR")}
+                                    </p>
+                                  )}
+                                </>
+                              : <span className="text-muted-foreground">Nunca</span>}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge
+                            variant="outline"
+                            className={getStatusColor(patient.status)}
+                          >
+                            {patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
+                          </badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedPatient(patient);
+                                setIsDetailsOpen(true);
+                              }}
+                              className="text-neon-600 hover:text-neon-700 hover:bg-neon-50"
                             >
-                              {patient.status.charAt(0).toUpperCase() + patient.status.slice(1)}
-                            </badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-2">
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  setSelectedPatient(patient);
-                                  setIsDetailsOpen(true);
-                                }}
-                                className="text-neon-600 hover:text-neon-700 hover:bg-neon-50"
-                              >
-                                <lucide_react_1.Eye className="w-4 h-4" />
-                              </button_1.Button>
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return console.log("Edit patient", patient.id);
-                                }}
-                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                              >
-                                <lucide_react_1.Edit className="w-4 h-4" />
-                              </button_1.Button>
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return console.log("Delete patient", patient.id);
-                                }}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                              >
-                                <lucide_react_1.Trash2 className="w-4 h-4" />
-                              </button_1.Button>
-                            </div>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                              <lucide_react_1.Eye className="w-4 h-4" />
+                            </button_1.Button>
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => console.log("Edit patient", patient.id)}
+                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            >
+                              <lucide_react_1.Edit className="w-4 h-4" />
+                            </button_1.Button>
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => console.log("Delete patient", patient.id)}
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <lucide_react_1.Trash2 className="w-4 h-4" />
+                            </button_1.Button>
+                          </div>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
                   </table_1.TableBody>
                 </table_1.Table>
               </div>}
@@ -614,12 +585,7 @@ function PatientsPage() {
       <dialog_1.Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <dialog_1.DialogContent className="sm:max-w-[800px] max-h-[80vh] overflow-y-auto">
           {selectedPatient && (
-            <PatientDetailsView
-              patient={selectedPatient}
-              onClose={function () {
-                return setIsDetailsOpen(false);
-              }}
-            />
+            <PatientDetailsView patient={selectedPatient} onClose={() => setIsDetailsOpen(false)} />
           )}
         </dialog_1.DialogContent>
       </dialog_1.Dialog>
@@ -627,7 +593,7 @@ function PatientsPage() {
   );
 }
 // Helper function for age calculation
-var calculateAge = function (dateOfBirth) {
+var calculateAge = (dateOfBirth) => {
   var today = new Date();
   var birthDate = new Date(dateOfBirth);
   var age = today.getFullYear() - birthDate.getFullYear();
@@ -638,7 +604,7 @@ var calculateAge = function (dateOfBirth) {
   return age;
 };
 // Helper function for status colors
-var getStatusColor = function (status) {
+var getStatusColor = (status) => {
   switch (status) {
     case "ativo":
       return "bg-green-100 text-green-800 border-green-200";
@@ -663,9 +629,7 @@ function PatientDetailsView(_a) {
             <avatar_1.AvatarFallback className="bg-neon-100 text-neon-700">
               {patient.name
                 .split(" ")
-                .map(function (n) {
-                  return n[0];
-                })
+                .map((n) => n[0])
                 .join("")}
             </avatar_1.AvatarFallback>
           </avatar_1.Avatar>
@@ -767,18 +731,16 @@ function PatientDetailsView(_a) {
             </label_1.Label>
             <div className="flex flex-wrap gap-2 mt-1">
               {patient.medicalInfo.allergies.length > 0
-                ? patient.medicalInfo.allergies.map(function (allergy, index) {
-                    return (
-                      <badge_1.Badge
-                        key={index}
-                        variant="outline"
-                        className="bg-yellow-50 text-yellow-700 border-yellow-200"
-                      >
-                        <lucide_react_1.AlertCircle className="w-3 h-3 mr-1" />
-                        {allergy}
-                      </badge_1.Badge>
-                    );
-                  })
+                ? patient.medicalInfo.allergies.map((allergy, index) => (
+                    <badge_1.Badge
+                      key={index}
+                      variant="outline"
+                      className="bg-yellow-50 text-yellow-700 border-yellow-200"
+                    >
+                      <lucide_react_1.AlertCircle className="w-3 h-3 mr-1" />
+                      {allergy}
+                    </badge_1.Badge>
+                  ))
                 : <span className="text-muted-foreground">Nenhuma alergia conhecida</span>}
             </div>
           </div>
@@ -789,17 +751,15 @@ function PatientDetailsView(_a) {
             </label_1.Label>
             <div className="flex flex-wrap gap-2 mt-1">
               {patient.medicalInfo.medications.length > 0
-                ? patient.medicalInfo.medications.map(function (medication, index) {
-                    return (
-                      <badge_1.Badge
-                        key={index}
-                        variant="outline"
-                        className="bg-blue-50 text-blue-700 border-blue-200"
-                      >
-                        {medication}
-                      </badge_1.Badge>
-                    );
-                  })
+                ? patient.medicalInfo.medications.map((medication, index) => (
+                    <badge_1.Badge
+                      key={index}
+                      variant="outline"
+                      className="bg-blue-50 text-blue-700 border-blue-200"
+                    >
+                      {medication}
+                    </badge_1.Badge>
+                  ))
                 : <span className="text-muted-foreground">Nenhum medicamento</span>}
             </div>
           </div>
@@ -810,17 +770,15 @@ function PatientDetailsView(_a) {
             </label_1.Label>
             <div className="flex flex-wrap gap-2 mt-1">
               {patient.medicalInfo.conditions.length > 0
-                ? patient.medicalInfo.conditions.map(function (condition, index) {
-                    return (
-                      <badge_1.Badge
-                        key={index}
-                        variant="outline"
-                        className="bg-orange-50 text-orange-700 border-orange-200"
-                      >
-                        {condition}
-                      </badge_1.Badge>
-                    );
-                  })
+                ? patient.medicalInfo.conditions.map((condition, index) => (
+                    <badge_1.Badge
+                      key={index}
+                      variant="outline"
+                      className="bg-orange-50 text-orange-700 border-orange-200"
+                    >
+                      {condition}
+                    </badge_1.Badge>
+                  ))
                 : <span className="text-muted-foreground">Nenhuma condição conhecida</span>}
             </div>
           </div>
@@ -952,7 +910,7 @@ function NewPatientForm(_a) {
     }),
     formData = _b[0],
     setFormData = _b[1];
-  var handleSubmit = function (e) {
+  var handleSubmit = (e) => {
     e.preventDefault();
     console.log("New patient:", formData);
     onClose();
@@ -973,9 +931,9 @@ function NewPatientForm(_a) {
               <input_1.Input
                 id="name"
                 value={formData.name}
-                onChange={function (e) {
-                  return setFormData(__assign(__assign({}, formData), { name: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFormData(__assign(__assign({}, formData), { name: e.target.value }))
+                }
                 required
               />
             </div>
@@ -985,9 +943,9 @@ function NewPatientForm(_a) {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={function (e) {
-                  return setFormData(__assign(__assign({}, formData), { email: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFormData(__assign(__assign({}, formData), { email: e.target.value }))
+                }
                 required
               />
             </div>
@@ -996,9 +954,9 @@ function NewPatientForm(_a) {
               <input_1.Input
                 id="phone"
                 value={formData.phone}
-                onChange={function (e) {
-                  return setFormData(__assign(__assign({}, formData), { phone: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFormData(__assign(__assign({}, formData), { phone: e.target.value }))
+                }
                 required
               />
             </div>
@@ -1008,11 +966,9 @@ function NewPatientForm(_a) {
                 id="dateOfBirth"
                 type="date"
                 value={formData.dateOfBirth}
-                onChange={function (e) {
-                  return setFormData(
-                    __assign(__assign({}, formData), { dateOfBirth: e.target.value }),
-                  );
-                }}
+                onChange={(e) =>
+                  setFormData(__assign(__assign({}, formData), { dateOfBirth: e.target.value }))
+                }
                 required
               />
             </div>
@@ -1022,9 +978,9 @@ function NewPatientForm(_a) {
             <label_1.Label htmlFor="gender">Gênero</label_1.Label>
             <select_1.Select
               value={formData.gender}
-              onValueChange={function (value) {
-                return setFormData(__assign(__assign({}, formData), { gender: value }));
-              }}
+              onValueChange={(value) =>
+                setFormData(__assign(__assign({}, formData), { gender: value }))
+              }
             >
               <select_1.SelectTrigger>
                 <select_1.SelectValue />
@@ -1042,31 +998,31 @@ function NewPatientForm(_a) {
             <input_1.Input
               placeholder="Rua, número"
               value={formData.street}
-              onChange={function (e) {
-                return setFormData(__assign(__assign({}, formData), { street: e.target.value }));
-              }}
+              onChange={(e) =>
+                setFormData(__assign(__assign({}, formData), { street: e.target.value }))
+              }
             />
             <div className="grid grid-cols-3 gap-2">
               <input_1.Input
                 placeholder="Cidade"
                 value={formData.city}
-                onChange={function (e) {
-                  return setFormData(__assign(__assign({}, formData), { city: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFormData(__assign(__assign({}, formData), { city: e.target.value }))
+                }
               />
               <input_1.Input
                 placeholder="Estado"
                 value={formData.state}
-                onChange={function (e) {
-                  return setFormData(__assign(__assign({}, formData), { state: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFormData(__assign(__assign({}, formData), { state: e.target.value }))
+                }
               />
               <input_1.Input
                 placeholder="CEP"
                 value={formData.zipCode}
-                onChange={function (e) {
-                  return setFormData(__assign(__assign({}, formData), { zipCode: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFormData(__assign(__assign({}, formData), { zipCode: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -1078,9 +1034,9 @@ function NewPatientForm(_a) {
               <label_1.Label htmlFor="bloodType">Tipo Sanguíneo</label_1.Label>
               <select_1.Select
                 value={formData.bloodType}
-                onValueChange={function (value) {
-                  return setFormData(__assign(__assign({}, formData), { bloodType: value }));
-                }}
+                onValueChange={(value) =>
+                  setFormData(__assign(__assign({}, formData), { bloodType: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Selecione" />
@@ -1104,9 +1060,9 @@ function NewPatientForm(_a) {
             <textarea_1.Textarea
               id="allergies"
               value={formData.allergies}
-              onChange={function (e) {
-                return setFormData(__assign(__assign({}, formData), { allergies: e.target.value }));
-              }}
+              onChange={(e) =>
+                setFormData(__assign(__assign({}, formData), { allergies: e.target.value }))
+              }
               placeholder="Ex: Penicilina, Pólen, Lactose"
             />
           </div>
@@ -1116,11 +1072,9 @@ function NewPatientForm(_a) {
             <textarea_1.Textarea
               id="medications"
               value={formData.medications}
-              onChange={function (e) {
-                return setFormData(
-                  __assign(__assign({}, formData), { medications: e.target.value }),
-                );
-              }}
+              onChange={(e) =>
+                setFormData(__assign(__assign({}, formData), { medications: e.target.value }))
+              }
               placeholder="Ex: Losartana 50mg, Sinvastatina 20mg"
             />
           </div>
@@ -1130,11 +1084,9 @@ function NewPatientForm(_a) {
             <textarea_1.Textarea
               id="conditions"
               value={formData.conditions}
-              onChange={function (e) {
-                return setFormData(
-                  __assign(__assign({}, formData), { conditions: e.target.value }),
-                );
-              }}
+              onChange={(e) =>
+                setFormData(__assign(__assign({}, formData), { conditions: e.target.value }))
+              }
               placeholder="Ex: Hipertensão, Diabetes, Asma"
             />
           </div>
@@ -1147,11 +1099,11 @@ function NewPatientForm(_a) {
               <input_1.Input
                 id="insuranceProvider"
                 value={formData.insuranceProvider}
-                onChange={function (e) {
-                  return setFormData(
+                onChange={(e) =>
+                  setFormData(
                     __assign(__assign({}, formData), { insuranceProvider: e.target.value }),
-                  );
-                }}
+                  )
+                }
                 placeholder="Ex: Unimed, SulAmérica"
               />
             </div>
@@ -1160,11 +1112,9 @@ function NewPatientForm(_a) {
               <input_1.Input
                 id="planNumber"
                 value={formData.planNumber}
-                onChange={function (e) {
-                  return setFormData(
-                    __assign(__assign({}, formData), { planNumber: e.target.value }),
-                  );
-                }}
+                onChange={(e) =>
+                  setFormData(__assign(__assign({}, formData), { planNumber: e.target.value }))
+                }
                 placeholder="Número da carteirinha"
               />
             </div>

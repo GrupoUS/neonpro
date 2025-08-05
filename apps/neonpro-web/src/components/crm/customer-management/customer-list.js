@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = CustomerList;
 var badge_1 = require("@/components/ui/badge");
@@ -159,7 +156,6 @@ var utils_1 = require("@/lib/utils");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function CustomerList(_a) {
-  var _this = this;
   var onCustomerSelect = _a.onCustomerSelect,
     onCreateCustomer = _a.onCreateCustomer,
     onEditCustomer = _a.onEditCustomer;
@@ -178,166 +174,149 @@ function CustomerList(_a) {
     selectedCustomers = _c[0],
     setSelectedCustomers = _c[1];
   // Mock data for development - will be replaced with real data
-  (0, react_1.useEffect)(
-    function () {
-      var loadCustomers = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var mockCustomers, error_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                setLoading("customers", true);
-                setError("customers", undefined);
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                mockCustomers = [
-                  {
-                    id: "1",
-                    profile_id: "profile-1",
-                    profile: {
-                      full_name: "Ana Silva Santos",
-                      email: "ana.silva@email.com",
-                      phone: "(11) 99999-1234",
-                    },
-                    customer_since: "2024-01-15",
-                    lifetime_value: 3450.0,
-                    last_treatment: "2024-12-20",
-                    last_visit: "2024-12-20",
-                    total_visits: 8,
-                    preferred_contact_method: "whatsapp",
-                    notes: "Prefere horários pela manhã. Alérgica a produtos com parabenos.",
-                    tags: ["vip", "fidelizada"],
-                    status: "vip",
-                    created_at: "2024-01-15T10:00:00Z",
-                    updated_at: "2024-12-20T15:30:00Z",
+  (0, react_1.useEffect)(() => {
+    var loadCustomers = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var mockCustomers, error_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setLoading("customers", true);
+              setError("customers", undefined);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              mockCustomers = [
+                {
+                  id: "1",
+                  profile_id: "profile-1",
+                  profile: {
+                    full_name: "Ana Silva Santos",
+                    email: "ana.silva@email.com",
+                    phone: "(11) 99999-1234",
                   },
-                  {
-                    id: "2",
-                    profile_id: "profile-2",
-                    profile: {
-                      full_name: "Maria Oliveira Costa",
-                      email: "maria.costa@email.com",
-                      phone: "(11) 98888-5678",
-                    },
-                    customer_since: "2024-06-10",
-                    lifetime_value: 1250.0,
-                    last_treatment: "2024-11-15",
-                    last_visit: "2024-11-15",
-                    total_visits: 4,
-                    preferred_contact_method: "email",
-                    notes: "Interessada em tratamentos anti-idade.",
-                    tags: ["regular"],
-                    status: "active",
-                    created_at: "2024-06-10T14:00:00Z",
-                    updated_at: "2024-11-15T16:45:00Z",
+                  customer_since: "2024-01-15",
+                  lifetime_value: 3450.0,
+                  last_treatment: "2024-12-20",
+                  last_visit: "2024-12-20",
+                  total_visits: 8,
+                  preferred_contact_method: "whatsapp",
+                  notes: "Prefere horários pela manhã. Alérgica a produtos com parabenos.",
+                  tags: ["vip", "fidelizada"],
+                  status: "vip",
+                  created_at: "2024-01-15T10:00:00Z",
+                  updated_at: "2024-12-20T15:30:00Z",
+                },
+                {
+                  id: "2",
+                  profile_id: "profile-2",
+                  profile: {
+                    full_name: "Maria Oliveira Costa",
+                    email: "maria.costa@email.com",
+                    phone: "(11) 98888-5678",
                   },
-                  {
-                    id: "3",
-                    profile_id: "profile-3",
-                    profile: {
-                      full_name: "Juliana Ferreira Lima",
-                      email: "juliana.lima@email.com",
-                      phone: "(11) 97777-9012",
-                    },
-                    customer_since: "2024-03-22",
-                    lifetime_value: 850.0,
-                    last_treatment: "2024-08-30",
-                    last_visit: "2024-08-30",
-                    total_visits: 2,
-                    preferred_contact_method: "phone",
-                    notes: "Cliente nova, ainda experimentando os serviços.",
-                    tags: ["nova"],
-                    status: "inactive",
-                    created_at: "2024-03-22T09:30:00Z",
-                    updated_at: "2024-08-30T11:20:00Z",
+                  customer_since: "2024-06-10",
+                  lifetime_value: 1250.0,
+                  last_treatment: "2024-11-15",
+                  last_visit: "2024-11-15",
+                  total_visits: 4,
+                  preferred_contact_method: "email",
+                  notes: "Interessada em tratamentos anti-idade.",
+                  tags: ["regular"],
+                  status: "active",
+                  created_at: "2024-06-10T14:00:00Z",
+                  updated_at: "2024-11-15T16:45:00Z",
+                },
+                {
+                  id: "3",
+                  profile_id: "profile-3",
+                  profile: {
+                    full_name: "Juliana Ferreira Lima",
+                    email: "juliana.lima@email.com",
+                    phone: "(11) 97777-9012",
                   },
-                  {
-                    id: "4",
-                    profile_id: "profile-4",
-                    profile: {
-                      full_name: "Carla Mendes Souza",
-                      email: "carla.souza@email.com",
-                      phone: "(11) 96666-3456",
-                    },
-                    customer_since: "2023-11-08",
-                    lifetime_value: 5200.0,
-                    last_treatment: "2024-12-18",
-                    last_visit: "2024-12-18",
-                    total_visits: 15,
-                    preferred_contact_method: "whatsapp",
-                    notes: "Cliente fidelíssima, sempre indica amigas.",
-                    tags: ["vip", "embaixadora"],
-                    status: "vip",
-                    created_at: "2023-11-08T16:15:00Z",
-                    updated_at: "2024-12-18T14:00:00Z",
+                  customer_since: "2024-03-22",
+                  lifetime_value: 850.0,
+                  last_treatment: "2024-08-30",
+                  last_visit: "2024-08-30",
+                  total_visits: 2,
+                  preferred_contact_method: "phone",
+                  notes: "Cliente nova, ainda experimentando os serviços.",
+                  tags: ["nova"],
+                  status: "inactive",
+                  created_at: "2024-03-22T09:30:00Z",
+                  updated_at: "2024-08-30T11:20:00Z",
+                },
+                {
+                  id: "4",
+                  profile_id: "profile-4",
+                  profile: {
+                    full_name: "Carla Mendes Souza",
+                    email: "carla.souza@email.com",
+                    phone: "(11) 96666-3456",
                   },
-                ];
-                // Simulate API delay
-                return [
-                  4 /*yield*/,
-                  new Promise(function (resolve) {
-                    return setTimeout(resolve, 800);
-                  }),
-                ];
-              case 2:
-                // Simulate API delay
-                _a.sent();
-                // In real app, this would be:
-                // const { data: customers, error } = await supabase
-                //   .from('customers')
-                //   .select(`
-                //     *,
-                //     profile:profiles(full_name, email, phone)
-                //   `)
-                //   .eq('profiles.clinic_id', userClinicId);
-                // if (error) throw error;
-                // For now, dispatch mock data
-                dispatch({ type: "SET_CUSTOMERS", payload: mockCustomers });
-                return [3 /*break*/, 5];
-              case 3:
-                error_1 = _a.sent();
-                console.error("Error loading customers:", error_1);
-                setError("customers", "Erro ao carregar clientes. Tente novamente.");
-                return [3 /*break*/, 5];
-              case 4:
-                setLoading("customers", false);
-                return [7 /*endfinally*/];
-              case 5:
-                return [2 /*return*/];
-            }
-          });
+                  customer_since: "2023-11-08",
+                  lifetime_value: 5200.0,
+                  last_treatment: "2024-12-18",
+                  last_visit: "2024-12-18",
+                  total_visits: 15,
+                  preferred_contact_method: "whatsapp",
+                  notes: "Cliente fidelíssima, sempre indica amigas.",
+                  tags: ["vip", "embaixadora"],
+                  status: "vip",
+                  created_at: "2023-11-08T16:15:00Z",
+                  updated_at: "2024-12-18T14:00:00Z",
+                },
+              ];
+              // Simulate API delay
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 800))];
+            case 2:
+              // Simulate API delay
+              _a.sent();
+              // In real app, this would be:
+              // const { data: customers, error } = await supabase
+              //   .from('customers')
+              //   .select(`
+              //     *,
+              //     profile:profiles(full_name, email, phone)
+              //   `)
+              //   .eq('profiles.clinic_id', userClinicId);
+              // if (error) throw error;
+              // For now, dispatch mock data
+              dispatch({ type: "SET_CUSTOMERS", payload: mockCustomers });
+              return [3 /*break*/, 5];
+            case 3:
+              error_1 = _a.sent();
+              console.error("Error loading customers:", error_1);
+              setError("customers", "Erro ao carregar clientes. Tente novamente.");
+              return [3 /*break*/, 5];
+            case 4:
+              setLoading("customers", false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      loadCustomers();
-    },
-    [setLoading, setError, dispatch],
-  );
-  var handleSelectAll = function () {
+      });
+    loadCustomers();
+  }, [setLoading, setError, dispatch]);
+  var handleSelectAll = () => {
     if (selectedCustomers.length === filteredCustomers.length) {
       setSelectedCustomers([]);
     } else {
-      setSelectedCustomers(
-        filteredCustomers.map(function (c) {
-          return c.id;
-        }),
+      setSelectedCustomers(filteredCustomers.map((c) => c.id));
+    }
+  };
+  var handleSelectCustomer = (customerId) => {
+    if (selectedCustomers.includes(customerId)) {
+      setSelectedCustomers((prev) => prev.filter((id) => id !== customerId));
+    } else {
+      setSelectedCustomers((prev) =>
+        __spreadArray(__spreadArray([], prev, true), [customerId], false),
       );
     }
   };
-  var handleSelectCustomer = function (customerId) {
-    if (selectedCustomers.includes(customerId)) {
-      setSelectedCustomers(function (prev) {
-        return prev.filter(function (id) {
-          return id !== customerId;
-        });
-      });
-    } else {
-      setSelectedCustomers(function (prev) {
-        return __spreadArray(__spreadArray([], prev, true), [customerId], false);
-      });
-    }
-  };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var variants = {
       active: { variant: "default", label: "Ativo" },
       vip: { variant: "secondary", label: "VIP" },
@@ -347,7 +326,7 @@ function CustomerList(_a) {
     var config = variants[status];
     return <badge_1.Badge variant={config.variant}>{config.label}</badge_1.Badge>;
   };
-  var handleExportCustomers = function () {
+  var handleExportCustomers = () => {
     // Create CSV content
     var headers = [
       "Nome",
@@ -360,7 +339,7 @@ function CustomerList(_a) {
     ];
     var csvContent = __spreadArray(
       [headers.join(",")],
-      filteredCustomers.map(function (customer) {
+      filteredCustomers.map((customer) => {
         var _a, _b, _c;
         return [
           ((_a = customer.profile) === null || _a === void 0 ? void 0 : _a.full_name) || "",
@@ -399,12 +378,7 @@ function CustomerList(_a) {
         <card_1.CardContent className="p-6">
           <div className="text-center text-red-600">
             <p>{state.errors.customers}</p>
-            <button_1.Button
-              onClick={function () {
-                return window.location.reload();
-              }}
-              className="mt-4"
-            >
+            <button_1.Button onClick={() => window.location.reload()} className="mt-4">
               Tentar Novamente
             </button_1.Button>
           </div>
@@ -486,18 +460,14 @@ function CustomerList(_a) {
               <input_1.Input
                 placeholder="Buscar por nome ou email..."
                 value={state.filters.customer_search}
-                onChange={function (e) {
-                  return setFilter("customer_search", e.target.value);
-                }}
+                onChange={(e) => setFilter("customer_search", e.target.value)}
                 className="pl-10"
               />
             </div>
 
             <select_1.Select
               value={state.filters.customer_status}
-              onValueChange={function (value) {
-                return setFilter("customer_status", value);
-              }}
+              onValueChange={(value) => setFilter("customer_status", value)}
             >
               <select_1.SelectTrigger className="w-full sm:w-[180px]">
                 <select_1.SelectValue placeholder="Status" />
@@ -554,29 +524,23 @@ function CustomerList(_a) {
                         </div>
                       </table_1.TableCell>
                     </table_1.TableRow>
-                  : filteredCustomers.map(function (customer) {
+                  : filteredCustomers.map((customer) => {
                       var _a, _b, _c;
                       return (
                         <table_1.TableRow
                           key={customer.id}
                           className="cursor-pointer hover:bg-muted/50"
-                          onClick={function () {
-                            return onCustomerSelect === null || onCustomerSelect === void 0
+                          onClick={() =>
+                            onCustomerSelect === null || onCustomerSelect === void 0
                               ? void 0
-                              : onCustomerSelect(customer);
-                          }}
+                              : onCustomerSelect(customer)
+                          }
                         >
-                          <table_1.TableCell
-                            onClick={function (e) {
-                              return e.stopPropagation();
-                            }}
-                          >
+                          <table_1.TableCell onClick={(e) => e.stopPropagation()}>
                             <input
                               type="checkbox"
                               checked={selectedCustomers.includes(customer.id)}
-                              onChange={function () {
-                                return handleSelectCustomer(customer.id);
-                              }}
+                              onChange={() => handleSelectCustomer(customer.id)}
                               className="rounded border-gray-300"
                             />
                           </table_1.TableCell>
@@ -609,11 +573,7 @@ function CustomerList(_a) {
                               : "-"}
                           </table_1.TableCell>
                           <table_1.TableCell>{customer.total_visits}</table_1.TableCell>
-                          <table_1.TableCell
-                            onClick={function (e) {
-                              return e.stopPropagation();
-                            }}
-                          >
+                          <table_1.TableCell onClick={(e) => e.stopPropagation()}>
                             <dropdown_menu_1.DropdownMenu>
                               <dropdown_menu_1.DropdownMenuTrigger asChild>
                                 <button_1.Button variant="ghost" size="sm">
@@ -626,19 +586,17 @@ function CustomerList(_a) {
                                 </dropdown_menu_1.DropdownMenuLabel>
                                 <dropdown_menu_1.DropdownMenuSeparator />
                                 <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return onCustomerSelect === null || onCustomerSelect === void 0
+                                  onClick={() =>
+                                    onCustomerSelect === null || onCustomerSelect === void 0
                                       ? void 0
-                                      : onCustomerSelect(customer);
-                                  }}
+                                      : onCustomerSelect(customer)
+                                  }
                                 >
                                   Ver Detalhes
                                 </dropdown_menu_1.DropdownMenuItem>
                                 {onEditCustomer && (
                                   <dropdown_menu_1.DropdownMenuItem
-                                    onClick={function () {
-                                      return onEditCustomer(customer);
-                                    }}
+                                    onClick={() => onEditCustomer(customer)}
                                   >
                                     Editar
                                   </dropdown_menu_1.DropdownMenuItem>

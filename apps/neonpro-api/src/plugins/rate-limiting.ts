@@ -84,7 +84,8 @@ class HealthcareRateLimiter {
 
     // Limpar store expirado
     Object.keys(this.store).forEach((key) => {
-      if (this.store[key].resetTime < now) {
+      const entry = this.store[key];
+      if (entry && entry.resetTime < now) {
         delete this.store[key];
       }
     });
@@ -99,7 +100,7 @@ class HealthcareRateLimiter {
 
   private generateKey(request: FastifyRequest, endpoint: string): string {
     const tenantId = request.headers["x-tenant-id"] || "anonymous";
-    const userId = request.user?.userId || "anonymous";
+    const userId = (request.user as any)?.userId || "anonymous";
     const ip = request.ip;
 
     // Para endpoints críticos, usar apenas IP
@@ -162,13 +163,13 @@ class HealthcareRateLimiter {
     }
 
     // Override de emergência
-    if (config.emergencyOverride && this.isEmergencyOverride(request)) {
+    if ((config as any).emergencyOverride && this.isEmergencyOverride(request)) {
       return { allowed: true, remaining: 999, resetTime: Date.now() + config.windowMs };
     }
 
     const key = this.generateKey(request, endpoint);
     const now = Date.now();
-    const windowStart = now - config.windowMs;
+    const _windowStart = now - config.windowMs;
 
     // Obter ou criar entrada no store
     let entry = this.store[key];
@@ -183,8 +184,8 @@ class HealthcareRateLimiter {
     // Verificar se excedeu o limite
     if (entry.count >= config.maxRequests) {
       // Para autenticação, bloquear IP temporariamente
-      if (endpoint === "auth" && config.blockDuration) {
-        this.blockIP(request.ip, config.blockDuration);
+      if (endpoint === "auth" && (config as any).blockDuration) {
+        this.blockIP(request.ip, (config as any).blockDuration);
       }
 
       return {
@@ -216,6 +217,27 @@ class HealthcareRateLimiter {
     if (path.includes("/auth") || path.includes("/login")) return "auth";
 
     return "general";
+  }
+
+  // Métodos públicos para acessar informações de bloqueio
+  public isIPBlocked(ip: string): boolean {
+    return this.blockedIPs.has(ip);
+  }
+
+  public getBlockedIPInfo(ip: string): number | undefined {
+    return this.blockedIPs.get(ip);
+  }
+
+  public getBlockedIPsCount(): number {
+    return this.blockedIPs.size;
+  }
+
+  public getStoreSize(): number {
+    return Object.keys(this.store).length;
+  }
+
+  public unblockIP(ip: string): boolean {
+    return this.blockedIPs.delete(ip);
   }
 }
 
@@ -276,11 +298,11 @@ async function rateLimitingPlugin(fastify: FastifyInstance) {
     async (request, reply) => {
       const ip = request.ip;
       const stats = {
-        blocked: rateLimiter["blockedIPs"].has(ip),
-        blockedUntil: rateLimiter["blockedIPs"].get(ip),
+        blocked: rateLimiter.isIPBlocked(ip),
+        blockedUntil: rateLimiter.getBlockedIPInfo(ip),
         currentLimits: healthcareRateLimits,
-        storeSize: Object.keys(rateLimiter["store"]).length,
-        blockedIPsCount: rateLimiter["blockedIPs"].size,
+        storeSize: rateLimiter.getStoreSize(),
+        blockedIPsCount: rateLimiter.getBlockedIPsCount(),
       };
 
       reply.send({
@@ -309,10 +331,10 @@ async function rateLimitingPlugin(fastify: FastifyInstance) {
     },
     async (request, reply) => {
       const { ip, reason, emergencyJustification } = request.body as any;
-      const { userId, tenantId } = request.user;
+      const { userId, tenantId } = request.user as { userId: string; tenantId: string };
 
       // Remover bloqueio
-      rateLimiter["blockedIPs"].delete(ip);
+      rateLimiter.unblockIP(ip);
 
       // Log da ação de desbloqueio
       request.log.info({

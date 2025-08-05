@@ -1,4 +1,3 @@
-"use strict";
 // Trial Management Types - STORY-SUB-002 Task 3
 // AI-powered trial management system with conversion optimization
 // Created: 2025-01-22

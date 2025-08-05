@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DigitalSignature = DigitalSignature;
 var react_1 = require("react");
@@ -255,7 +252,6 @@ var SIGNER_ROLES = [
   },
 ];
 function DigitalSignature(_a) {
-  var _this = this;
   var documentId = _a.documentId,
     documentName = _a.documentName,
     patientId = _a.patientId,
@@ -320,17 +316,14 @@ function DigitalSignature(_a) {
     signatureCanvas = _p[0],
     setSignatureCanvas = _p[1];
   // Load signatures and requests
-  (0, react_1.useEffect)(
-    function () {
-      loadSignatures();
-      loadSignatureRequests();
-    },
-    [documentId],
-  );
-  var loadSignatures = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadSignatures();
+    loadSignatureRequests();
+  }, [documentId]);
+  var loadSignatures = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockSignatures;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mockSignatures = [
             {
@@ -368,11 +361,10 @@ function DigitalSignature(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var loadSignatureRequests = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadSignatureRequests = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockRequests;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mockRequests = [
             {
@@ -413,9 +405,8 @@ function DigitalSignature(_a) {
         return [2 /*return*/];
       });
     });
-  };
   // Canvas drawing functions
-  var startDrawing = function (e) {
+  var startDrawing = (e) => {
     setIsDrawing(true);
     var canvas = canvasRef.current;
     if (!canvas) return;
@@ -425,7 +416,7 @@ function DigitalSignature(_a) {
     ctx.beginPath();
     ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
   };
-  var draw = function (e) {
+  var draw = (e) => {
     if (!isDrawing) return;
     var canvas = canvasRef.current;
     if (!canvas) return;
@@ -435,14 +426,14 @@ function DigitalSignature(_a) {
     ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
     ctx.stroke();
   };
-  var stopDrawing = function () {
+  var stopDrawing = () => {
     setIsDrawing(false);
     var canvas = canvasRef.current;
     if (canvas) {
       setSignatureCanvas(canvas.toDataURL());
     }
   };
-  var clearCanvas = function () {
+  var clearCanvas = () => {
     var canvas = canvasRef.current;
     if (!canvas) return;
     var ctx = canvas.getContext("2d");
@@ -450,10 +441,10 @@ function DigitalSignature(_a) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setSignatureCanvas("");
   };
-  var handleSign = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSign = () =>
+    __awaiter(this, void 0, void 0, function () {
       var newSignature_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         setIsLoading(true);
         try {
           newSignature_1 = {
@@ -490,9 +481,9 @@ function DigitalSignature(_a) {
               deviceInfo: navigator.platform,
             },
           };
-          setSignatures(function (prev) {
-            return __spreadArray(__spreadArray([], prev, true), [newSignature_1], false);
-          });
+          setSignatures((prev) =>
+            __spreadArray(__spreadArray([], prev, true), [newSignature_1], false),
+          );
           onSignatureComplete === null || onSignatureComplete === void 0
             ? void 0
             : onSignatureComplete(newSignature_1);
@@ -517,8 +508,7 @@ function DigitalSignature(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var addSigner = function () {
+  var addSigner = () => {
     if (newSigner.name && newSigner.email && newSigner.role && newSigner.signatureType) {
       var signer_1 = {
         id: crypto.randomUUID(),
@@ -528,15 +518,15 @@ function DigitalSignature(_a) {
         signatureType: newSigner.signatureType,
         isRequired: newSigner.isRequired,
       };
-      setNewRequest(function (prev) {
-        return __assign(__assign({}, prev), {
+      setNewRequest((prev) =>
+        __assign(__assign({}, prev), {
           requiredSigners: __spreadArray(
             __spreadArray([], prev.requiredSigners, true),
             [signer_1],
             false,
           ),
-        });
-      });
+        }),
+      );
       setNewSigner({
         name: "",
         email: "",
@@ -546,19 +536,17 @@ function DigitalSignature(_a) {
       });
     }
   };
-  var removeSigner = function (signerId) {
-    setNewRequest(function (prev) {
-      return __assign(__assign({}, prev), {
-        requiredSigners: prev.requiredSigners.filter(function (s) {
-          return s.id !== signerId;
-        }),
-      });
-    });
+  var removeSigner = (signerId) => {
+    setNewRequest((prev) =>
+      __assign(__assign({}, prev), {
+        requiredSigners: prev.requiredSigners.filter((s) => s.id !== signerId),
+      }),
+    );
   };
-  var sendSignatureRequest = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var sendSignatureRequest = () =>
+    __awaiter(this, void 0, void 0, function () {
       var request_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           request_1 = {
             id: crypto.randomUUID(),
@@ -573,9 +561,9 @@ function DigitalSignature(_a) {
             createdAt: new Date(),
             signatures: [],
           };
-          setSignatureRequests(function (prev) {
-            return __spreadArray(__spreadArray([], prev, true), [request_1], false);
-          });
+          setSignatureRequests((prev) =>
+            __spreadArray(__spreadArray([], prev, true), [request_1], false),
+          );
           onRequestSent === null || onRequestSent === void 0 ? void 0 : onRequestSent(request_1);
           setShowRequestDialog(false);
           setNewRequest({
@@ -589,25 +577,11 @@ function DigitalSignature(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var getSignatureTypeInfo = function (type) {
-    return (
-      SIGNATURE_TYPES.find(function (t) {
-        return t.value === type;
-      }) || SIGNATURE_TYPES[0]
-    );
-  };
-  var getSignerRoleInfo = function (role) {
-    return (
-      SIGNER_ROLES.find(function (r) {
-        return r.value === role;
-      }) || SIGNER_ROLES[0]
-    );
-  };
-  var getStatusBadge = function (status) {
-    var statusInfo = SIGNATURE_STATUS.find(function (s) {
-      return s.value === status;
-    });
+  var getSignatureTypeInfo = (type) =>
+    SIGNATURE_TYPES.find((t) => t.value === type) || SIGNATURE_TYPES[0];
+  var getSignerRoleInfo = (role) => SIGNER_ROLES.find((r) => r.value === role) || SIGNER_ROLES[0];
+  var getStatusBadge = (status) => {
+    var statusInfo = SIGNATURE_STATUS.find((s) => s.value === status);
     return (
       <badge_1.Badge
         className={statusInfo === null || statusInfo === void 0 ? void 0 : statusInfo.color}
@@ -619,15 +593,14 @@ function DigitalSignature(_a) {
       </badge_1.Badge>
     );
   };
-  var validateSignature = function (signatureId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var validateSignature = (signatureId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // Simulate signature validation
         console.log("Validating signature:", signatureId);
         return [2 /*return*/];
       });
     });
-  };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -657,11 +630,11 @@ function DigitalSignature(_a) {
                   <textarea_1.Textarea
                     id="message"
                     value={newRequest.message}
-                    onChange={function (e) {
-                      return setNewRequest(function (prev) {
-                        return __assign(__assign({}, prev), { message: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setNewRequest((prev) =>
+                        __assign(__assign({}, prev), { message: e.target.value }),
+                      )
+                    }
                     placeholder="Mensagem para os signatários"
                     rows={3}
                   />
@@ -673,11 +646,11 @@ function DigitalSignature(_a) {
                     id="deadline"
                     type="datetime-local"
                     value={(0, date_fns_1.format)(newRequest.deadline, "yyyy-MM-dd'T'HH:mm")}
-                    onChange={function (e) {
-                      return setNewRequest(function (prev) {
-                        return __assign(__assign({}, prev), { deadline: new Date(e.target.value) });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setNewRequest((prev) =>
+                        __assign(__assign({}, prev), { deadline: new Date(e.target.value) }),
+                      )
+                    }
                   />
                 </div>
 
@@ -691,11 +664,11 @@ function DigitalSignature(_a) {
                       <input_1.Input
                         id="signerName"
                         value={newSigner.name}
-                        onChange={function (e) {
-                          return setNewSigner(function (prev) {
-                            return __assign(__assign({}, prev), { name: e.target.value });
-                          });
-                        }}
+                        onChange={(e) =>
+                          setNewSigner((prev) =>
+                            __assign(__assign({}, prev), { name: e.target.value }),
+                          )
+                        }
                         placeholder="Nome do signatário"
                       />
                     </div>
@@ -706,11 +679,11 @@ function DigitalSignature(_a) {
                         id="signerEmail"
                         type="email"
                         value={newSigner.email}
-                        onChange={function (e) {
-                          return setNewSigner(function (prev) {
-                            return __assign(__assign({}, prev), { email: e.target.value });
-                          });
-                        }}
+                        onChange={(e) =>
+                          setNewSigner((prev) =>
+                            __assign(__assign({}, prev), { email: e.target.value }),
+                          )
+                        }
                         placeholder="email@exemplo.com"
                       />
                     </div>
@@ -721,26 +694,22 @@ function DigitalSignature(_a) {
                       <label_1.Label htmlFor="signerRole">Função</label_1.Label>
                       <select_1.Select
                         value={newSigner.role}
-                        onValueChange={function (value) {
-                          return setNewSigner(function (prev) {
-                            return __assign(__assign({}, prev), { role: value });
-                          });
-                        }}
+                        onValueChange={(value) =>
+                          setNewSigner((prev) => __assign(__assign({}, prev), { role: value }))
+                        }
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue placeholder="Selecione a função" />
                         </select_1.SelectTrigger>
                         <select_1.SelectContent>
-                          {SIGNER_ROLES.map(function (role) {
-                            return (
-                              <select_1.SelectItem key={role.value} value={role.value}>
-                                <div className="flex items-center space-x-2">
-                                  {role.icon}
-                                  <span>{role.label}</span>
-                                </div>
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {SIGNER_ROLES.map((role) => (
+                            <select_1.SelectItem key={role.value} value={role.value}>
+                              <div className="flex items-center space-x-2">
+                                {role.icon}
+                                <span>{role.label}</span>
+                              </div>
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                     </div>
@@ -751,28 +720,26 @@ function DigitalSignature(_a) {
                       </label_1.Label>
                       <select_1.Select
                         value={newSigner.signatureType}
-                        onValueChange={function (value) {
-                          return setNewSigner(function (prev) {
-                            return __assign(__assign({}, prev), { signatureType: value });
-                          });
-                        }}
+                        onValueChange={(value) =>
+                          setNewSigner((prev) =>
+                            __assign(__assign({}, prev), { signatureType: value }),
+                          )
+                        }
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue placeholder="Tipo de assinatura" />
                         </select_1.SelectTrigger>
                         <select_1.SelectContent>
-                          {SIGNATURE_TYPES.filter(function (type) {
-                            return allowedSignatureTypes.includes(type.value);
-                          }).map(function (type) {
-                            return (
-                              <select_1.SelectItem key={type.value} value={type.value}>
-                                <div className="flex items-center space-x-2">
-                                  {type.icon}
-                                  <span>{type.label}</span>
-                                </div>
-                              </select_1.SelectItem>
-                            );
-                          })}
+                          {SIGNATURE_TYPES.filter((type) =>
+                            allowedSignatureTypes.includes(type.value),
+                          ).map((type) => (
+                            <select_1.SelectItem key={type.value} value={type.value}>
+                              <div className="flex items-center space-x-2">
+                                {type.icon}
+                                <span>{type.label}</span>
+                              </div>
+                            </select_1.SelectItem>
+                          ))}
                         </select_1.SelectContent>
                       </select_1.Select>
                     </div>
@@ -783,11 +750,11 @@ function DigitalSignature(_a) {
                       type="checkbox"
                       id="isRequired"
                       checked={newSigner.isRequired}
-                      onChange={function (e) {
-                        return setNewSigner(function (prev) {
-                          return __assign(__assign({}, prev), { isRequired: e.target.checked });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setNewSigner((prev) =>
+                          __assign(__assign({}, prev), { isRequired: e.target.checked }),
+                        )
+                      }
                       className="rounded"
                     />
                     <label_1.Label htmlFor="isRequired">Assinatura obrigatória</label_1.Label>
@@ -814,7 +781,7 @@ function DigitalSignature(_a) {
                   <div className="space-y-2">
                     <label_1.Label>Signatários Adicionados</label_1.Label>
                     <div className="space-y-2">
-                      {newRequest.requiredSigners.map(function (signer) {
+                      {newRequest.requiredSigners.map((signer) => {
                         var roleInfo = getSignerRoleInfo(signer.role);
                         var typeInfo = getSignatureTypeInfo(signer.signatureType);
                         return (
@@ -848,9 +815,7 @@ function DigitalSignature(_a) {
                             <button_1.Button
                               variant="outline"
                               size="sm"
-                              onClick={function () {
-                                return removeSigner(signer.id);
-                              }}
+                              onClick={() => removeSigner(signer.id)}
                               className="text-red-600 hover:text-red-700"
                             >
                               <lucide_react_1.X className="w-4 h-4" />
@@ -866,9 +831,7 @@ function DigitalSignature(_a) {
                   <button_1.Button
                     type="button"
                     variant="outline"
-                    onClick={function () {
-                      return setShowRequestDialog(false);
-                    }}
+                    onClick={() => setShowRequestDialog(false)}
                   >
                     Cancelar
                   </button_1.Button>
@@ -900,26 +863,20 @@ function DigitalSignature(_a) {
 
               <tabs_1.Tabs value={selectedSignatureType} onValueChange={setSelectedSignatureType}>
                 <tabs_1.TabsList className="grid w-full grid-cols-3">
-                  {SIGNATURE_TYPES.filter(function (type) {
-                    return allowedSignatureTypes.includes(type.value);
-                  })
+                  {SIGNATURE_TYPES.filter((type) => allowedSignatureTypes.includes(type.value))
                     .slice(0, 3)
-                    .map(function (type) {
-                      return (
-                        <tabs_1.TabsTrigger key={type.value} value={type.value}>
-                          <div className="flex items-center space-x-1">
-                            {type.icon}
-                            <span className="hidden sm:inline">{type.label}</span>
-                          </div>
-                        </tabs_1.TabsTrigger>
-                      );
-                    })}
+                    .map((type) => (
+                      <tabs_1.TabsTrigger key={type.value} value={type.value}>
+                        <div className="flex items-center space-x-1">
+                          {type.icon}
+                          <span className="hidden sm:inline">{type.label}</span>
+                        </div>
+                      </tabs_1.TabsTrigger>
+                    ))}
                 </tabs_1.TabsList>
 
-                {SIGNATURE_TYPES.filter(function (type) {
-                  return allowedSignatureTypes.includes(type.value);
-                }).map(function (type) {
-                  return (
+                {SIGNATURE_TYPES.filter((type) => allowedSignatureTypes.includes(type.value)).map(
+                  (type) => (
                     <tabs_1.TabsContent key={type.value} value={type.value} className="space-y-4">
                       <alert_1.Alert>
                         <lucide_react_1.Info className="w-4 h-4" />
@@ -932,11 +889,11 @@ function DigitalSignature(_a) {
                           <input_1.Input
                             id="signerName"
                             value={signatureData.signerName}
-                            onChange={function (e) {
-                              return setSignatureData(function (prev) {
-                                return __assign(__assign({}, prev), { signerName: e.target.value });
-                              });
-                            }}
+                            onChange={(e) =>
+                              setSignatureData((prev) =>
+                                __assign(__assign({}, prev), { signerName: e.target.value }),
+                              )
+                            }
                             placeholder="Seu nome completo"
                           />
                         </div>
@@ -945,26 +902,24 @@ function DigitalSignature(_a) {
                           <label_1.Label htmlFor="signerRole">Função *</label_1.Label>
                           <select_1.Select
                             value={signatureData.signerRole}
-                            onValueChange={function (value) {
-                              return setSignatureData(function (prev) {
-                                return __assign(__assign({}, prev), { signerRole: value });
-                              });
-                            }}
+                            onValueChange={(value) =>
+                              setSignatureData((prev) =>
+                                __assign(__assign({}, prev), { signerRole: value }),
+                              )
+                            }
                           >
                             <select_1.SelectTrigger>
                               <select_1.SelectValue placeholder="Sua função" />
                             </select_1.SelectTrigger>
                             <select_1.SelectContent>
-                              {SIGNER_ROLES.map(function (role) {
-                                return (
-                                  <select_1.SelectItem key={role.value} value={role.value}>
-                                    <div className="flex items-center space-x-2">
-                                      {role.icon}
-                                      <span>{role.label}</span>
-                                    </div>
-                                  </select_1.SelectItem>
-                                );
-                              })}
+                              {SIGNER_ROLES.map((role) => (
+                                <select_1.SelectItem key={role.value} value={role.value}>
+                                  <div className="flex items-center space-x-2">
+                                    {role.icon}
+                                    <span>{role.label}</span>
+                                  </div>
+                                </select_1.SelectItem>
+                              ))}
                             </select_1.SelectContent>
                           </select_1.Select>
                         </div>
@@ -978,8 +933,8 @@ function DigitalSignature(_a) {
                               id="certificate"
                               type="file"
                               accept=".p12,.pfx"
-                              onChange={function (e) {
-                                return setSignatureData(function (prev) {
+                              onChange={(e) =>
+                                setSignatureData((prev) => {
                                   var _a;
                                   return __assign(__assign({}, prev), {
                                     certificateFile:
@@ -987,8 +942,8 @@ function DigitalSignature(_a) {
                                         ? void 0
                                         : _a[0]) || null,
                                   });
-                                });
-                              }}
+                                })
+                              }
                             />
                           </div>
                           <div className="space-y-2">
@@ -999,11 +954,11 @@ function DigitalSignature(_a) {
                               id="certPassword"
                               type="password"
                               value={signatureData.password}
-                              onChange={function (e) {
-                                return setSignatureData(function (prev) {
-                                  return __assign(__assign({}, prev), { password: e.target.value });
-                                });
-                              }}
+                              onChange={(e) =>
+                                setSignatureData((prev) =>
+                                  __assign(__assign({}, prev), { password: e.target.value }),
+                                )
+                              }
                               placeholder="Senha do certificado"
                             />
                           </div>
@@ -1046,11 +1001,11 @@ function DigitalSignature(_a) {
                               id="password"
                               type="password"
                               value={signatureData.password}
-                              onChange={function (e) {
-                                return setSignatureData(function (prev) {
-                                  return __assign(__assign({}, prev), { password: e.target.value });
-                                });
-                              }}
+                              onChange={(e) =>
+                                setSignatureData((prev) =>
+                                  __assign(__assign({}, prev), { password: e.target.value }),
+                                )
+                              }
                               placeholder="Sua senha de login"
                             />
                           </div>
@@ -1080,11 +1035,11 @@ function DigitalSignature(_a) {
                               id="pinCode"
                               type="password"
                               value={signatureData.pinCode}
-                              onChange={function (e) {
-                                return setSignatureData(function (prev) {
-                                  return __assign(__assign({}, prev), { pinCode: e.target.value });
-                                });
-                              }}
+                              onChange={(e) =>
+                                setSignatureData((prev) =>
+                                  __assign(__assign({}, prev), { pinCode: e.target.value }),
+                                )
+                              }
                               placeholder="Seu código PIN"
                               maxLength={6}
                             />
@@ -1107,11 +1062,11 @@ function DigitalSignature(_a) {
                             <input_1.Input
                               id="otpCode"
                               value={signatureData.otpCode}
-                              onChange={function (e) {
-                                return setSignatureData(function (prev) {
-                                  return __assign(__assign({}, prev), { otpCode: e.target.value });
-                                });
-                              }}
+                              onChange={(e) =>
+                                setSignatureData((prev) =>
+                                  __assign(__assign({}, prev), { otpCode: e.target.value }),
+                                )
+                              }
                               placeholder="Código recebido por SMS"
                               maxLength={6}
                             />
@@ -1124,11 +1079,11 @@ function DigitalSignature(_a) {
                         <textarea_1.Textarea
                           id="reason"
                           value={signatureData.reason}
-                          onChange={function (e) {
-                            return setSignatureData(function (prev) {
-                              return __assign(__assign({}, prev), { reason: e.target.value });
-                            });
-                          }}
+                          onChange={(e) =>
+                            setSignatureData((prev) =>
+                              __assign(__assign({}, prev), { reason: e.target.value }),
+                            )
+                          }
                           placeholder="Motivo ou contexto da assinatura"
                           rows={2}
                         />
@@ -1138,9 +1093,7 @@ function DigitalSignature(_a) {
                         <button_1.Button
                           type="button"
                           variant="outline"
-                          onClick={function () {
-                            return setShowSignDialog(false);
-                          }}
+                          onClick={() => setShowSignDialog(false)}
                         >
                           Cancelar
                         </button_1.Button>
@@ -1157,8 +1110,8 @@ function DigitalSignature(_a) {
                         </button_1.Button>
                       </div>
                     </tabs_1.TabsContent>
-                  );
-                })}
+                  ),
+                )}
               </tabs_1.Tabs>
             </dialog_1.DialogContent>
           </dialog_1.Dialog>
@@ -1181,17 +1134,13 @@ function DigitalSignature(_a) {
                   Nenhuma assinatura encontrada
                 </h3>
                 <p className="text-gray-600 mb-4">Este documento ainda não foi assinado</p>
-                <button_1.Button
-                  onClick={function () {
-                    return setShowSignDialog(true);
-                  }}
-                >
+                <button_1.Button onClick={() => setShowSignDialog(true)}>
                   <lucide_react_1.PenTool className="w-4 h-4 mr-2" />
                   Primeira Assinatura
                 </button_1.Button>
               </div>
             : <div className="space-y-4">
-                {signatures.map(function (signature) {
+                {signatures.map((signature) => {
                   var typeInfo = getSignatureTypeInfo(signature.signatureType);
                   var roleInfo = getSignerRoleInfo(signature.signerRole);
                   return (
@@ -1252,9 +1201,7 @@ function DigitalSignature(_a) {
                           <button_1.Button
                             variant="outline"
                             size="sm"
-                            onClick={function () {
-                              return validateSignature(signature.id);
-                            }}
+                            onClick={() => validateSignature(signature.id)}
                           >
                             <lucide_react_1.Shield className="w-4 h-4" />
                           </button_1.Button>
@@ -1281,72 +1228,70 @@ function DigitalSignature(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {signatureRequests.map(function (request) {
-                return (
-                  <div key={request.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-medium">{request.documentName}</h3>
-                        <p className="text-sm text-gray-600">Por: {request.requesterName}</p>
-                      </div>
-                      {getStatusBadge(request.status)}
+              {signatureRequests.map((request) => (
+                <div key={request.id} className="border rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="font-medium">{request.documentName}</h3>
+                      <p className="text-sm text-gray-600">Por: {request.requesterName}</p>
                     </div>
+                    {getStatusBadge(request.status)}
+                  </div>
 
-                    {request.message && (
-                      <div className="mb-3 p-2 bg-blue-50 rounded text-sm">{request.message}</div>
-                    )}
+                  {request.message && (
+                    <div className="mb-3 p-2 bg-blue-50 rounded text-sm">{request.message}</div>
+                  )}
 
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-sm">Signatários:</h4>
-                      {request.requiredSigners.map(function (signer) {
-                        var roleInfo = getSignerRoleInfo(signer.role);
-                        var typeInfo = getSignatureTypeInfo(signer.signatureType);
-                        return (
-                          <div
-                            key={signer.id}
-                            className="flex items-center justify-between p-2 bg-gray-50 rounded"
-                          >
-                            <div className="flex items-center space-x-2">
-                              {roleInfo.icon}
-                              <span className="text-sm">{signer.name}</span>
-                              <badge_1.Badge className={typeInfo.color} variant="outline">
-                                {typeInfo.label}
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-sm">Signatários:</h4>
+                    {request.requiredSigners.map((signer) => {
+                      var roleInfo = getSignerRoleInfo(signer.role);
+                      var typeInfo = getSignatureTypeInfo(signer.signatureType);
+                      return (
+                        <div
+                          key={signer.id}
+                          className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                        >
+                          <div className="flex items-center space-x-2">
+                            {roleInfo.icon}
+                            <span className="text-sm">{signer.name}</span>
+                            <badge_1.Badge className={typeInfo.color} variant="outline">
+                              {typeInfo.label}
+                            </badge_1.Badge>
+                            {signer.isRequired && (
+                              <badge_1.Badge variant="outline" className="text-red-600">
+                                Obrigatório
                               </badge_1.Badge>
-                              {signer.isRequired && (
-                                <badge_1.Badge variant="outline" className="text-red-600">
-                                  Obrigatório
-                                </badge_1.Badge>
-                              )}
-                            </div>
-                            <div className="text-xs text-gray-500">
-                              {signer.hasSignedAt
-                                ? <span className="text-green-600">Assinado</span>
-                                : <span>Pendente</span>}
-                            </div>
+                            )}
                           </div>
-                        );
-                      })}
-                    </div>
+                          <div className="text-xs text-gray-500">
+                            {signer.hasSignedAt
+                              ? <span className="text-green-600">Assinado</span>
+                              : <span>Pendente</span>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
 
-                    <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
+                  <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
+                    <span>
+                      Criado em:{" "}
+                      {(0, date_fns_1.format)(request.createdAt, "dd/MM/yyyy HH:mm", {
+                        locale: locale_1.ptBR,
+                      })}
+                    </span>
+                    {request.deadline && (
                       <span>
-                        Criado em:{" "}
-                        {(0, date_fns_1.format)(request.createdAt, "dd/MM/yyyy HH:mm", {
+                        Prazo:{" "}
+                        {(0, date_fns_1.format)(request.deadline, "dd/MM/yyyy HH:mm", {
                           locale: locale_1.ptBR,
                         })}
                       </span>
-                      {request.deadline && (
-                        <span>
-                          Prazo:{" "}
-                          {(0, date_fns_1.format)(request.deadline, "dd/MM/yyyy HH:mm", {
-                            locale: locale_1.ptBR,
-                          })}
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -1365,39 +1310,25 @@ function DigitalSignature(_a) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {
-                    signatures.filter(function (s) {
-                      return s.isValid;
-                    }).length
-                  }
+                  {signatures.filter((s) => s.isValid).length}
                 </div>
                 <div className="text-sm text-gray-600">Assinaturas Válidas</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
-                  {
-                    signatures.filter(function (s) {
-                      return s.signatureType === "digital_certificate";
-                    }).length
-                  }
+                  {signatures.filter((s) => s.signatureType === "digital_certificate").length}
                 </div>
                 <div className="text-sm text-gray-600">Certificado Digital</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-600">
-                  {
-                    signatureRequests.filter(function (r) {
-                      return r.status === "pending";
-                    }).length
-                  }
+                  {signatureRequests.filter((r) => r.status === "pending").length}
                 </div>
                 <div className="text-sm text-gray-600">Pendentes</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
-                  {signatureRequests.reduce(function (acc, req) {
-                    return acc + req.requiredSigners.length;
-                  }, 0)}
+                  {signatureRequests.reduce((acc, req) => acc + req.requiredSigners.length, 0)}
                 </div>
                 <div className="text-sm text-gray-600">Total Solicitações</div>
               </div>

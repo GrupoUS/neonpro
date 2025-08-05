@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionStatusIndicator = SubscriptionStatusIndicator;
 exports.SubscriptionBadge = SubscriptionBadge;
@@ -45,7 +44,7 @@ function SubscriptionStatusIndicator(_a) {
       </alert_1.Alert>
     );
   }
-  var getStatusConfig = function () {
+  var getStatusConfig = () => {
     if (isActive) {
       return {
         icon: lucide_react_1.CheckCircle,

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = EnhancedPatientProfile;
 var react_1 = require("react");
@@ -162,7 +159,6 @@ var dropdown_menu_1 = require("@/components/ui/dropdown-menu");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 function EnhancedPatientProfile(_a) {
-  var _this = this;
   var _b;
   var patient = _a.patient,
     onPatientUpdate = _a.onPatientUpdate,
@@ -178,65 +174,61 @@ function EnhancedPatientProfile(_a) {
     setActiveTab = _e[1];
   var supabase = (0, client_1.createClient)();
   // Load timeline events
-  (0, react_1.useEffect)(
-    function () {
-      var loadTimelineEvents = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var _a, data, error, eventsWithStaff, error_1;
-          return __generator(this, function (_b) {
-            switch (_b.label) {
-              case 0:
-                if (!patient.id) return [2 /*return*/];
-                _b.label = 1;
-              case 1:
-                _b.trys.push([1, 3, , 4]);
-                return [
-                  4 /*yield*/,
-                  supabase
-                    .from("medical_timeline")
-                    .select(
-                      "\n            *,\n            profiles!medical_timeline_staff_id_fkey(raw_user_meta_data)\n          ",
-                    )
-                    .eq("patient_id", patient.id)
-                    .order("event_date", { ascending: false }),
-                ];
-              case 2:
-                (_a = _b.sent()), (data = _a.data), (error = _a.error);
-                if (error) throw error;
-                eventsWithStaff =
-                  (data === null || data === void 0
-                    ? void 0
-                    : data.map(function (event) {
-                        var _a, _b;
-                        return __assign(__assign({}, event), {
-                          staff_name:
-                            ((_b =
-                              (_a = event.profiles) === null || _a === void 0
-                                ? void 0
-                                : _a.raw_user_meta_data) === null || _b === void 0
+  (0, react_1.useEffect)(() => {
+    var loadTimelineEvents = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var _a, data, error, eventsWithStaff, error_1;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              if (!patient.id) return [2 /*return*/];
+              _b.label = 1;
+            case 1:
+              _b.trys.push([1, 3, , 4]);
+              return [
+                4 /*yield*/,
+                supabase
+                  .from("medical_timeline")
+                  .select(
+                    "\n            *,\n            profiles!medical_timeline_staff_id_fkey(raw_user_meta_data)\n          ",
+                  )
+                  .eq("patient_id", patient.id)
+                  .order("event_date", { ascending: false }),
+              ];
+            case 2:
+              (_a = _b.sent()), (data = _a.data), (error = _a.error);
+              if (error) throw error;
+              eventsWithStaff =
+                (data === null || data === void 0
+                  ? void 0
+                  : data.map((event) => {
+                      var _a, _b;
+                      return __assign(__assign({}, event), {
+                        staff_name:
+                          ((_b =
+                            (_a = event.profiles) === null || _a === void 0
                               ? void 0
-                              : _b.full_name) || "Sistema",
-                        });
-                      })) || [];
-                setTimelineEvents(eventsWithStaff);
-                return [3 /*break*/, 4];
-              case 3:
-                error_1 = _b.sent();
-                console.error("Error loading timeline:", error_1);
-                sonner_1.toast.error("Erro ao carregar histórico médico");
-                return [3 /*break*/, 4];
-              case 4:
-                return [2 /*return*/];
-            }
-          });
+                              : _a.raw_user_meta_data) === null || _b === void 0
+                            ? void 0
+                            : _b.full_name) || "Sistema",
+                      });
+                    })) || [];
+              setTimelineEvents(eventsWithStaff);
+              return [3 /*break*/, 4];
+            case 3:
+              error_1 = _b.sent();
+              console.error("Error loading timeline:", error_1);
+              sonner_1.toast.error("Erro ao carregar histórico médico");
+              return [3 /*break*/, 4];
+            case 4:
+              return [2 /*return*/];
+          }
         });
-      };
-      loadTimelineEvents();
-    },
-    [patient.id, supabase],
-  );
+      });
+    loadTimelineEvents();
+  }, [patient.id, supabase]);
   // Utility functions
-  var calculateAge = function (dateOfBirth) {
+  var calculateAge = (dateOfBirth) => {
     var today = new Date();
     var birthDate = new Date(dateOfBirth);
     var age = today.getFullYear() - birthDate.getFullYear();
@@ -246,18 +238,18 @@ function EnhancedPatientProfile(_a) {
     }
     return age;
   };
-  var calculateBMI = function (height, weight) {
+  var calculateBMI = (height, weight) => {
     if (!height || !weight) return null;
     var heightInMeters = height / 100;
     return (weight / (heightInMeters * heightInMeters)).toFixed(1);
   };
-  var getBMICategory = function (bmi) {
+  var getBMICategory = (bmi) => {
     if (bmi < 18.5) return { category: "Abaixo do peso", color: "text-blue-600" };
     if (bmi < 25) return { category: "Peso normal", color: "text-green-600" };
     if (bmi < 30) return { category: "Sobrepeso", color: "text-yellow-600" };
     return { category: "Obesidade", color: "text-red-600" };
   };
-  var getRiskColor = function (level) {
+  var getRiskColor = (level) => {
     switch (level) {
       case "low":
         return "bg-green-100 text-green-800 border-green-200";
@@ -271,7 +263,7 @@ function EnhancedPatientProfile(_a) {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getEventTypeIcon = function (type) {
+  var getEventTypeIcon = (type) => {
     switch (type) {
       case "appointment":
         return <lucide_react_1.Calendar className="h-4 w-4" />;
@@ -291,7 +283,7 @@ function EnhancedPatientProfile(_a) {
         return <lucide_react_1.FileText className="h-4 w-4" />;
     }
   };
-  var getEventTypeColor = function (type) {
+  var getEventTypeColor = (type) => {
     switch (type) {
       case "appointment":
         return "bg-blue-100 text-blue-800";
@@ -311,7 +303,7 @@ function EnhancedPatientProfile(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var formatEventType = function (type) {
+  var formatEventType = (type) => {
     var types = {
       appointment: "Consulta",
       treatment: "Tratamento",
@@ -324,7 +316,7 @@ function EnhancedPatientProfile(_a) {
     return types[type] || type;
   };
   // Render functions
-  var renderOverview = function () {
+  var renderOverview = () => {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
     return (
       <div className="grid gap-6 lg:grid-cols-3">
@@ -347,9 +339,7 @@ function EnhancedPatientProfile(_a) {
                     ((_c =
                       (_b = patient.patient_photos) === null || _b === void 0
                         ? void 0
-                        : _b.find(function (p) {
-                            return p.is_primary;
-                          })) === null || _c === void 0
+                        : _b.find((p) => p.is_primary)) === null || _c === void 0
                       ? void 0
                       : _c.photo_url)
                   }
@@ -491,7 +481,7 @@ function EnhancedPatientProfile(_a) {
                     </div>
                     <div>
                       <span className="text-muted-foreground">IMC</span>
-                      {(function () {
+                      {(() => {
                         var bmi = calculateBMI(
                           patient.patient_profiles_extended.height_cm,
                           patient.patient_profiles_extended.weight_kg,
@@ -558,40 +548,36 @@ function EnhancedPatientProfile(_a) {
           <card_1.CardContent>
             {timelineEvents.length > 0
               ? <div className="space-y-3">
-                  {timelineEvents.slice(0, 5).map(function (event) {
-                    return (
-                      <div key={event.id} className="flex items-start gap-3">
-                        <div
-                          className={"\n                    flex items-center justify-center w-8 h-8 rounded-full \n                    ".concat(
-                            getEventTypeColor(event.event_type),
-                            "\n                  ",
-                          )}
-                        >
-                          {getEventTypeIcon(event.event_type)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">{event.title}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {formatEventType(event.event_type)} •
-                            {new Date(event.event_date).toLocaleDateString("pt-BR")}
-                          </p>
-                          {event.description && (
-                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                              {event.description}
-                            </p>
-                          )}
-                        </div>
+                  {timelineEvents.slice(0, 5).map((event) => (
+                    <div key={event.id} className="flex items-start gap-3">
+                      <div
+                        className={"\n                    flex items-center justify-center w-8 h-8 rounded-full \n                    ".concat(
+                          getEventTypeColor(event.event_type),
+                          "\n                  ",
+                        )}
+                      >
+                        {getEventTypeIcon(event.event_type)}
                       </div>
-                    );
-                  })}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">{event.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatEventType(event.event_type)} •
+                          {new Date(event.event_date).toLocaleDateString("pt-BR")}
+                        </p>
+                        {event.description && (
+                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                            {event.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                   {timelineEvents.length > 5 && (
                     <button_1.Button
                       variant="ghost"
                       size="sm"
                       className="w-full"
-                      onClick={function () {
-                        return setActiveTab("timeline");
-                      }}
+                      onClick={() => setActiveTab("timeline")}
                     >
                       Ver todos ({timelineEvents.length})
                     </button_1.Button>
@@ -606,7 +592,7 @@ function EnhancedPatientProfile(_a) {
       </div>
     );
   };
-  var renderMedicalInfo = function () {
+  var renderMedicalInfo = () => {
     var _a, _b, _c, _d, _e, _f, _g;
     return (
       <div className="grid gap-6 lg:grid-cols-2">
@@ -632,13 +618,11 @@ function EnhancedPatientProfile(_a) {
               )
                 ? <div className="flex flex-wrap gap-1">
                     {patient.patient_profiles_extended.chronic_conditions.map(
-                      function (condition, index) {
-                        return (
-                          <badge_1.Badge key={index} variant="outline" className="text-xs">
-                            {condition}
-                          </badge_1.Badge>
-                        );
-                      },
+                      (condition, index) => (
+                        <badge_1.Badge key={index} variant="outline" className="text-xs">
+                          {condition}
+                        </badge_1.Badge>
+                      ),
                     )}
                   </div>
                 : <p className="text-sm text-muted-foreground">
@@ -658,13 +642,11 @@ function EnhancedPatientProfile(_a) {
                   : _d.length
               )
                 ? <div className="flex flex-wrap gap-1">
-                    {patient.patient_profiles_extended.allergies.map(function (allergy, index) {
-                      return (
-                        <badge_1.Badge key={index} variant="destructive" className="text-xs">
-                          {allergy}
-                        </badge_1.Badge>
-                      );
-                    })}
+                    {patient.patient_profiles_extended.allergies.map((allergy, index) => (
+                      <badge_1.Badge key={index} variant="destructive" className="text-xs">
+                        {allergy}
+                      </badge_1.Badge>
+                    ))}
                   </div>
                 : <p className="text-sm text-muted-foreground">Nenhuma alergia registrada</p>}
             </div>
@@ -681,16 +663,12 @@ function EnhancedPatientProfile(_a) {
                   : _f.length
               )
                 ? <div className="space-y-2">
-                    {patient.patient_profiles_extended.medications.map(
-                      function (medication, index) {
-                        return (
-                          <div key={index} className="flex items-center gap-2 text-sm">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                            {medication}
-                          </div>
-                        );
-                      },
-                    )}
+                    {patient.patient_profiles_extended.medications.map((medication, index) => (
+                      <div key={index} className="flex items-center gap-2 text-sm">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                        {medication}
+                      </div>
+                    ))}
                   </div>
                 : <p className="text-sm text-muted-foreground">Nenhuma medicação registrada</p>}
             </div>
@@ -745,176 +723,166 @@ function EnhancedPatientProfile(_a) {
       </div>
     );
   };
-  var renderTimeline = function () {
-    return (
-      <card_1.Card>
-        <card_1.CardHeader>
-          <card_1.CardTitle className="flex items-center gap-2">
-            <lucide_react_1.Clock className="h-5 w-5" />
-            Linha do Tempo Médica
-          </card_1.CardTitle>
-          <card_1.CardDescription>
-            Histórico completo de atendimentos e procedimentos
-          </card_1.CardDescription>
-        </card_1.CardHeader>
-        <card_1.CardContent>
-          {timelineEvents.length > 0
-            ? <div className="space-y-6">
-                {timelineEvents.map(function (event, index) {
-                  return (
-                    <div key={event.id} className="relative flex gap-4">
-                      {/* Timeline Line */}
-                      {index < timelineEvents.length - 1 && (
-                        <div className="absolute left-6 top-12 w-px h-16 bg-border" />
-                      )}
+  var renderTimeline = () => (
+    <card_1.Card>
+      <card_1.CardHeader>
+        <card_1.CardTitle className="flex items-center gap-2">
+          <lucide_react_1.Clock className="h-5 w-5" />
+          Linha do Tempo Médica
+        </card_1.CardTitle>
+        <card_1.CardDescription>
+          Histórico completo de atendimentos e procedimentos
+        </card_1.CardDescription>
+      </card_1.CardHeader>
+      <card_1.CardContent>
+        {timelineEvents.length > 0
+          ? <div className="space-y-6">
+              {timelineEvents.map((event, index) => (
+                <div key={event.id} className="relative flex gap-4">
+                  {/* Timeline Line */}
+                  {index < timelineEvents.length - 1 && (
+                    <div className="absolute left-6 top-12 w-px h-16 bg-border" />
+                  )}
 
-                      {/* Event Icon */}
-                      <div
-                        className={"\n                  flex items-center justify-center w-12 h-12 rounded-full border-2 bg-white\n                  ".concat(
-                          getEventTypeColor(event.event_type),
-                          "\n                ",
-                        )}
-                      >
-                        {getEventTypeIcon(event.event_type)}
+                  {/* Event Icon */}
+                  <div
+                    className={"\n                  flex items-center justify-center w-12 h-12 rounded-full border-2 bg-white\n                  ".concat(
+                      getEventTypeColor(event.event_type),
+                      "\n                ",
+                    )}
+                  >
+                    {getEventTypeIcon(event.event_type)}
+                  </div>
+
+                  {/* Event Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h4 className="font-medium">{event.title}</h4>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <badge_1.Badge variant="outline" className="text-xs">
+                            {formatEventType(event.event_type)}
+                          </badge_1.Badge>
+                          <span>•</span>
+                          <span>{new Date(event.event_date).toLocaleDateString("pt-BR")}</span>
+                          <span>•</span>
+                          <span>{event.staff_name}</span>
+                        </div>
                       </div>
 
-                      {/* Event Content */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h4 className="font-medium">{event.title}</h4>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <badge_1.Badge variant="outline" className="text-xs">
-                                {formatEventType(event.event_type)}
-                              </badge_1.Badge>
-                              <span>•</span>
-                              <span>{new Date(event.event_date).toLocaleDateString("pt-BR")}</span>
-                              <span>•</span>
-                              <span>{event.staff_name}</span>
-                            </div>
-                          </div>
+                      <dropdown_menu_1.DropdownMenu>
+                        <dropdown_menu_1.DropdownMenuTrigger asChild>
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.MoreHorizontal className="h-4 w-4" />
+                          </button_1.Button>
+                        </dropdown_menu_1.DropdownMenuTrigger>
+                        <dropdown_menu_1.DropdownMenuContent align="end">
+                          <dropdown_menu_1.DropdownMenuItem>
+                            <lucide_react_1.Eye className="mr-2 h-4 w-4" />
+                            Ver Detalhes
+                          </dropdown_menu_1.DropdownMenuItem>
+                          <dropdown_menu_1.DropdownMenuItem>
+                            <lucide_react_1.Edit className="mr-2 h-4 w-4" />
+                            Editar
+                          </dropdown_menu_1.DropdownMenuItem>
+                          <dropdown_menu_1.DropdownMenuSeparator />
+                          <dropdown_menu_1.DropdownMenuItem>
+                            <lucide_react_1.Archive className="mr-2 h-4 w-4" />
+                            Arquivar
+                          </dropdown_menu_1.DropdownMenuItem>
+                        </dropdown_menu_1.DropdownMenuContent>
+                      </dropdown_menu_1.DropdownMenu>
+                    </div>
 
-                          <dropdown_menu_1.DropdownMenu>
-                            <dropdown_menu_1.DropdownMenuTrigger asChild>
-                              <button_1.Button variant="ghost" size="sm">
-                                <lucide_react_1.MoreHorizontal className="h-4 w-4" />
-                              </button_1.Button>
-                            </dropdown_menu_1.DropdownMenuTrigger>
-                            <dropdown_menu_1.DropdownMenuContent align="end">
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.Eye className="mr-2 h-4 w-4" />
-                                Ver Detalhes
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.Edit className="mr-2 h-4 w-4" />
-                                Editar
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuSeparator />
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.Archive className="mr-2 h-4 w-4" />
-                                Arquivar
-                              </dropdown_menu_1.DropdownMenuItem>
-                            </dropdown_menu_1.DropdownMenuContent>
-                          </dropdown_menu_1.DropdownMenu>
+                    {event.description && (
+                      <p className="text-sm text-muted-foreground mt-2">{event.description}</p>
+                    )}
+
+                    {event.notes && (
+                      <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                        <h5 className="font-medium text-xs text-gray-700 mb-1">Observações</h5>
+                        <p className="text-sm text-gray-600">{event.notes}</p>
+                      </div>
+                    )}
+
+                    {event.outcome_score && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground">Resultado:</span>
+                        <div className="flex items-center gap-1">
+                          {event.outcome_score >= 0.8
+                            ? <lucide_react_1.TrendingUp className="h-4 w-4 text-green-500" />
+                            : event.outcome_score >= 0.5
+                              ? <lucide_react_1.Minus className="h-4 w-4 text-yellow-500" />
+                              : <lucide_react_1.TrendingDown className="h-4 w-4 text-red-500" />}
+                          <span className="text-sm font-medium">
+                            {Math.round(event.outcome_score * 100)}%
+                          </span>
                         </div>
+                      </div>
+                    )}
 
-                        {event.description && (
-                          <p className="text-sm text-muted-foreground mt-2">{event.description}</p>
+                    {event.follow_up_required && (
+                      <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
+                        <div className="flex items-center gap-2 text-orange-800">
+                          <lucide_react_1.Bell className="h-4 w-4" />
+                          <span className="text-sm font-medium">Retorno necessário</span>
+                        </div>
+                        {event.follow_up_date && (
+                          <p className="text-sm text-orange-600 mt-1">
+                            Data sugerida:{" "}
+                            {new Date(event.follow_up_date).toLocaleDateString("pt-BR")}
+                          </p>
                         )}
+                      </div>
+                    )}
 
-                        {event.notes && (
-                          <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-                            <h5 className="font-medium text-xs text-gray-700 mb-1">Observações</h5>
-                            <p className="text-sm text-gray-600">{event.notes}</p>
-                          </div>
-                        )}
-
-                        {event.outcome_score && (
-                          <div className="mt-2 flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground">Resultado:</span>
-                            <div className="flex items-center gap-1">
-                              {event.outcome_score >= 0.8
-                                ? <lucide_react_1.TrendingUp className="h-4 w-4 text-green-500" />
-                                : event.outcome_score >= 0.5
-                                  ? <lucide_react_1.Minus className="h-4 w-4 text-yellow-500" />
-                                  : <lucide_react_1.TrendingDown className="h-4 w-4 text-red-500" />}
-                              <span className="text-sm font-medium">
-                                {Math.round(event.outcome_score * 100)}%
+                    {event.photos && event.photos.length > 0 && (
+                      <div className="mt-3">
+                        <h5 className="font-medium text-xs text-gray-700 mb-2">Fotos</h5>
+                        <div className="flex gap-2">
+                          {event.photos.slice(0, 3).map((photoId, photoIndex) => (
+                            <div
+                              key={photoIndex}
+                              className="w-16 h-16 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
+                              onClick={() => setSelectedPhoto(photoId)}
+                            >
+                              <lucide_react_1.Camera className="w-full h-full p-4 text-gray-400" />
+                            </div>
+                          ))}
+                          {event.photos.length > 3 && (
+                            <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                              <span className="text-xs text-gray-500">
+                                +{event.photos.length - 3}
                               </span>
                             </div>
-                          </div>
-                        )}
-
-                        {event.follow_up_required && (
-                          <div className="mt-2 p-2 bg-orange-50 border border-orange-200 rounded-lg">
-                            <div className="flex items-center gap-2 text-orange-800">
-                              <lucide_react_1.Bell className="h-4 w-4" />
-                              <span className="text-sm font-medium">Retorno necessário</span>
-                            </div>
-                            {event.follow_up_date && (
-                              <p className="text-sm text-orange-600 mt-1">
-                                Data sugerida:{" "}
-                                {new Date(event.follow_up_date).toLocaleDateString("pt-BR")}
-                              </p>
-                            )}
-                          </div>
-                        )}
-
-                        {event.photos && event.photos.length > 0 && (
-                          <div className="mt-3">
-                            <h5 className="font-medium text-xs text-gray-700 mb-2">Fotos</h5>
-                            <div className="flex gap-2">
-                              {event.photos.slice(0, 3).map(function (photoId, photoIndex) {
-                                return (
-                                  <div
-                                    key={photoIndex}
-                                    className="w-16 h-16 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
-                                    onClick={function () {
-                                      return setSelectedPhoto(photoId);
-                                    }}
-                                  >
-                                    <lucide_react_1.Camera className="w-full h-full p-4 text-gray-400" />
-                                  </div>
-                                );
-                              })}
-                              {event.photos.length > 3 && (
-                                <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                                  <span className="text-xs text-gray-500">
-                                    +{event.photos.length - 3}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            : <div className="text-center py-12 text-muted-foreground">
-                <lucide_react_1.Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Nenhum evento médico registrado</p>
-                <p className="text-sm">O histórico aparecerá aqui conforme os atendimentos</p>
-              </div>}
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
-  var renderPhotos = function () {
-    return (
-      <photo_upload_system_1.PhotoUploadSystem
-        patientId={patient.id}
-        onPhotosUploaded={function (photos) {
-          // Callback when photos are uploaded
-          console.log("Photos uploaded:", photos);
-          // You could update patient state here if needed
-        }}
-        readonly={false} // Allow upload and editing
-        className="w-full"
-      />
-    );
-  };
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          : <div className="text-center py-12 text-muted-foreground">
+              <lucide_react_1.Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>Nenhum evento médico registrado</p>
+              <p className="text-sm">O histórico aparecerá aqui conforme os atendimentos</p>
+            </div>}
+      </card_1.CardContent>
+    </card_1.Card>
+  );
+  var renderPhotos = () => (
+    <photo_upload_system_1.PhotoUploadSystem
+      patientId={patient.id}
+      onPhotosUploaded={(photos) => {
+        // Callback when photos are uploaded
+        console.log("Photos uploaded:", photos);
+        // You could update patient state here if needed
+      }}
+      readonly={false} // Allow upload and editing
+      className="w-full"
+    />
+  );
   return (
     <div className="space-y-6">
       {/* Header */}

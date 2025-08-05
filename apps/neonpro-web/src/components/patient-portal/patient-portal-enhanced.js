@@ -11,7 +11,6 @@
  * - Integração com wellness intelligence
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientPortalEnhanced = PatientPortalEnhanced;
 var react_1 = require("react");
@@ -103,38 +102,28 @@ function PatientPortalEnhanced(_a) {
     },
   ];
   // Cálculos derivados
-  var daysUntilNext = (0, react_1.useMemo)(
-    function () {
-      if (!nextAppointment) return null;
-      var today = new Date();
-      var appointmentDate = new Date(nextAppointment.date);
-      var diffTime = appointmentDate.getTime() - today.getTime();
-      var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      return diffDays;
-    },
-    [nextAppointment],
-  );
-  var completedTreatments = treatments.filter(function (t) {
-    return t.status === "completed";
-  }).length;
-  var activeTreatments = treatments.filter(function (t) {
-    return t.status === "active";
-  }).length;
+  var daysUntilNext = (0, react_1.useMemo)(() => {
+    if (!nextAppointment) return null;
+    var today = new Date();
+    var appointmentDate = new Date(nextAppointment.date);
+    var diffTime = appointmentDate.getTime() - today.getTime();
+    var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }, [nextAppointment]);
+  var completedTreatments = treatments.filter((t) => t.status === "completed").length;
+  var activeTreatments = treatments.filter((t) => t.status === "active").length;
   // Anúncios para acessibilidade
-  (0, react_1.useEffect)(
-    function () {
-      if (daysUntilNext !== null && daysUntilNext <= 2) {
-        announceToScreenReader(
-          "Lembrete: Voc\u00EA tem uma consulta em "
-            .concat(daysUntilNext, " dia")
-            .concat(daysUntilNext > 1 ? "s" : ""),
-          "polite",
-        );
-      }
-    },
-    [daysUntilNext, announceToScreenReader],
-  );
-  var getStatusColor = function (status) {
+  (0, react_1.useEffect)(() => {
+    if (daysUntilNext !== null && daysUntilNext <= 2) {
+      announceToScreenReader(
+        "Lembrete: Voc\u00EA tem uma consulta em "
+          .concat(daysUntilNext, " dia")
+          .concat(daysUntilNext > 1 ? "s" : ""),
+        "polite",
+      );
+    }
+  }, [daysUntilNext, announceToScreenReader]);
+  var getStatusColor = (status) => {
     switch (status) {
       case "confirmed":
         return "bg-green-100 text-green-800 border-green-200";
@@ -148,7 +137,7 @@ function PatientPortalEnhanced(_a) {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getStatusLabel = function (status) {
+  var getStatusLabel = (status) => {
     switch (status) {
       case "confirmed":
         return "Confirmada";
@@ -162,7 +151,7 @@ function PatientPortalEnhanced(_a) {
         return status;
     }
   };
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return "↗️";
@@ -184,9 +173,7 @@ function PatientPortalEnhanced(_a) {
             <avatar_1.AvatarFallback className="text-2xl">
               {patient.name
                 .split(" ")
-                .map(function (n) {
-                  return n[0];
-                })
+                .map((n) => n[0])
                 .join("")}
             </avatar_1.AvatarFallback>
           </avatar_1.Avatar>
@@ -282,14 +269,12 @@ function PatientPortalEnhanced(_a) {
                     <div>
                       <h4 className="font-medium mb-2">Preparação:</h4>
                       <ul className="space-y-1">
-                        {nextAppointment.preparation.map(function (item, index) {
-                          return (
-                            <li key={index} className="flex items-start text-sm">
-                              <lucide_react_1.CheckCircle2 className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                              {item}
-                            </li>
-                          );
-                        })}
+                        {nextAppointment.preparation.map((item, index) => (
+                          <li key={index} className="flex items-start text-sm">
+                            <lucide_react_1.CheckCircle2 className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                            {item}
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   )}
@@ -312,40 +297,36 @@ function PatientPortalEnhanced(_a) {
           {/* Progresso dos tratamentos ativos */}
           <div className="grid gap-4 md:grid-cols-2">
             {treatments
-              .filter(function (t) {
-                return t.status === "active";
-              })
-              .map(function (treatment) {
-                return (
-                  <card_1.Card key={treatment.id}>
-                    <card_1.CardHeader>
-                      <card_1.CardTitle className="text-lg">{treatment.name}</card_1.CardTitle>
-                      <card_1.CardDescription>
-                        Sessão {treatment.sessions.completed} de {treatment.sessions.total}
-                      </card_1.CardDescription>
-                    </card_1.CardHeader>
-                    <card_1.CardContent>
-                      <div className="space-y-3">
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Progresso</span>
-                            <span>{treatment.progress}%</span>
-                          </div>
-                          <progress_1.Progress value={treatment.progress} className="h-2" />
+              .filter((t) => t.status === "active")
+              .map((treatment) => (
+                <card_1.Card key={treatment.id}>
+                  <card_1.CardHeader>
+                    <card_1.CardTitle className="text-lg">{treatment.name}</card_1.CardTitle>
+                    <card_1.CardDescription>
+                      Sessão {treatment.sessions.completed} de {treatment.sessions.total}
+                    </card_1.CardDescription>
+                  </card_1.CardHeader>
+                  <card_1.CardContent>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span>Progresso</span>
+                          <span>{treatment.progress}%</span>
                         </div>
-
-                        {treatment.nextSession && (
-                          <div className="flex items-center text-sm text-muted-foreground">
-                            <lucide_react_1.Clock className="h-4 w-4 mr-1" />
-                            Próxima sessão:{" "}
-                            {new Date(treatment.nextSession).toLocaleDateString("pt-BR")}
-                          </div>
-                        )}
+                        <progress_1.Progress value={treatment.progress} className="h-2" />
                       </div>
-                    </card_1.CardContent>
-                  </card_1.Card>
-                );
-              })}
+
+                      {treatment.nextSession && (
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <lucide_react_1.Clock className="h-4 w-4 mr-1" />
+                          Próxima sessão:{" "}
+                          {new Date(treatment.nextSession).toLocaleDateString("pt-BR")}
+                        </div>
+                      )}
+                    </div>
+                  </card_1.CardContent>
+                </card_1.Card>
+              ))}
           </div>
 
           {/* Métricas de bem-estar */}
@@ -361,7 +342,7 @@ function PatientPortalEnhanced(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="grid gap-4 md:grid-cols-3">
-                {wellnessMetrics.map(function (metric) {
+                {wellnessMetrics.map((metric) => {
                   var IconComponent = metric.icon;
                   return (
                     <div key={metric.id} className="text-center">
@@ -393,49 +374,45 @@ function PatientPortalEnhanced(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {upcomingAppointments.map(function (appointment) {
-                  return (
-                    <div
-                      key={appointment.id}
-                      className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="text-center">
-                          <p className="text-lg font-bold">
-                            {new Date(appointment.date).getDate()}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(appointment.date).toLocaleDateString("pt-BR", {
-                              month: "short",
-                            })}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="font-medium">{appointment.type}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {appointment.time} - {appointment.doctor}
-                          </p>
-                          <badge_1.Badge
-                            className={getStatusColor(appointment.status)}
-                            variant="outline"
-                          >
-                            {getStatusLabel(appointment.status)}
-                          </badge_1.Badge>
-                        </div>
+                {upcomingAppointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="text-center">
+                        <p className="text-lg font-bold">{new Date(appointment.date).getDate()}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(appointment.date).toLocaleDateString("pt-BR", {
+                            month: "short",
+                          })}
+                        </p>
                       </div>
-                      <div className="flex space-x-2">
-                        <button_1.Button variant="outline" size="sm">
-                          Detalhes
-                        </button_1.Button>
-                        {appointment.status === "confirmed" && (
-                          <button_1.Button variant="outline" size="sm">
-                            Reagendar
-                          </button_1.Button>
-                        )}
+                      <div>
+                        <p className="font-medium">{appointment.type}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {appointment.time} - {appointment.doctor}
+                        </p>
+                        <badge_1.Badge
+                          className={getStatusColor(appointment.status)}
+                          variant="outline"
+                        >
+                          {getStatusLabel(appointment.status)}
+                        </badge_1.Badge>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex space-x-2">
+                      <button_1.Button variant="outline" size="sm">
+                        Detalhes
+                      </button_1.Button>
+                      {appointment.status === "confirmed" && (
+                        <button_1.Button variant="outline" size="sm">
+                          Reagendar
+                        </button_1.Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -451,69 +428,65 @@ function PatientPortalEnhanced(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-6">
-                {treatments.map(function (treatment) {
-                  return (
-                    <div key={treatment.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-4">
-                        <div>
-                          <h3 className="font-semibold text-lg">{treatment.name}</h3>
-                          <p className="text-muted-foreground">
-                            Iniciado em {new Date(treatment.startDate).toLocaleDateString("pt-BR")}
-                          </p>
-                        </div>
-                        <badge_1.Badge
-                          variant={treatment.status === "completed" ? "default" : "secondary"}
-                          className={
-                            treatment.status === "completed" ? "bg-green-100 text-green-800" : ""
-                          }
-                        >
-                          {treatment.status === "completed"
-                            ? "Concluído"
-                            : treatment.status === "active"
-                              ? "Ativo"
-                              : "Pausado"}
-                        </badge_1.Badge>
+                {treatments.map((treatment) => (
+                  <div key={treatment.id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="font-semibold text-lg">{treatment.name}</h3>
+                        <p className="text-muted-foreground">
+                          Iniciado em {new Date(treatment.startDate).toLocaleDateString("pt-BR")}
+                        </p>
                       </div>
-
-                      <div className="space-y-3">
-                        <div>
-                          <div className="flex justify-between text-sm mb-2">
-                            <span>Progresso Geral</span>
-                            <span>{treatment.progress}%</span>
-                          </div>
-                          <progress_1.Progress value={treatment.progress} className="h-3" />
-                        </div>
-
-                        <div className="flex justify-between text-sm">
-                          <span>Sessões realizadas:</span>
-                          <span>
-                            {treatment.sessions.completed} de {treatment.sessions.total}
-                          </span>
-                        </div>
-
-                        {treatment.nextSession && (
-                          <div className="flex justify-between text-sm">
-                            <span>Próxima sessão:</span>
-                            <span>
-                              {new Date(treatment.nextSession).toLocaleDateString("pt-BR")}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="flex space-x-2 mt-4">
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Camera className="h-4 w-4 mr-2" />
-                          Ver Fotos
-                        </button_1.Button>
-                        <button_1.Button variant="outline" size="sm">
-                          <lucide_react_1.MessageCircle className="h-4 w-4 mr-2" />
-                          Dúvidas
-                        </button_1.Button>
-                      </div>
+                      <badge_1.Badge
+                        variant={treatment.status === "completed" ? "default" : "secondary"}
+                        className={
+                          treatment.status === "completed" ? "bg-green-100 text-green-800" : ""
+                        }
+                      >
+                        {treatment.status === "completed"
+                          ? "Concluído"
+                          : treatment.status === "active"
+                            ? "Ativo"
+                            : "Pausado"}
+                      </badge_1.Badge>
                     </div>
-                  );
-                })}
+
+                    <div className="space-y-3">
+                      <div>
+                        <div className="flex justify-between text-sm mb-2">
+                          <span>Progresso Geral</span>
+                          <span>{treatment.progress}%</span>
+                        </div>
+                        <progress_1.Progress value={treatment.progress} className="h-3" />
+                      </div>
+
+                      <div className="flex justify-between text-sm">
+                        <span>Sessões realizadas:</span>
+                        <span>
+                          {treatment.sessions.completed} de {treatment.sessions.total}
+                        </span>
+                      </div>
+
+                      {treatment.nextSession && (
+                        <div className="flex justify-between text-sm">
+                          <span>Próxima sessão:</span>
+                          <span>{new Date(treatment.nextSession).toLocaleDateString("pt-BR")}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex space-x-2 mt-4">
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Camera className="h-4 w-4 mr-2" />
+                        Ver Fotos
+                      </button_1.Button>
+                      <button_1.Button variant="outline" size="sm">
+                        <lucide_react_1.MessageCircle className="h-4 w-4 mr-2" />
+                        Dúvidas
+                      </button_1.Button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

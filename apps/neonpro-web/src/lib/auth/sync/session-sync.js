@@ -1,4 +1,3 @@
-"use strict";
 // Session Synchronization System
 // Real-time session state synchronization across multiple devices
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,10 +144,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -159,12 +156,12 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionSyncManager = void 0;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
-var SessionSyncManager = /** @class */ (function () {
+var SessionSyncManager = /** @class */ (() => {
   function SessionSyncManager(deviceId) {
     this.syncStates = new Map();
     this.webSocket = null;
@@ -254,54 +251,51 @@ var SessionSyncManager = /** @class */ (function () {
    */
   SessionSyncManager.prototype.connectToSyncServer = function () {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          new Promise(function (resolve, reject) {
-            try {
-              var wsUrl = _this.config.getWebSocketUrl();
-              _this.webSocket = new WebSocket(wsUrl);
-              _this.webSocket.onopen = function () {
-                console.log("Connected to sync server");
-                _this.isConnected = true;
-                _this.reconnectAttempts = 0;
-                // Send authentication
-                _this.sendAuthMessage();
-                // Update sync state
-                var syncState = _this.syncStates.get(_this.userId);
-                if (syncState) {
-                  syncState.isOnline = true;
-                }
-                _this.emit("sync_connected", { deviceId: _this.deviceId });
-                resolve();
-              };
-              _this.webSocket.onmessage = function (event) {
-                _this.handleSyncMessage(JSON.parse(event.data));
-              };
-              _this.webSocket.onclose = function () {
-                console.log("Disconnected from sync server");
-                _this.isConnected = false;
-                // Update sync state
-                var syncState = _this.syncStates.get(_this.userId);
-                if (syncState) {
-                  syncState.isOnline = false;
-                }
-                _this.emit("sync_disconnected", { deviceId: _this.deviceId });
-                // Attempt reconnection
-                _this.attemptReconnection();
-              };
-              _this.webSocket.onerror = function (error) {
-                console.error("WebSocket error:", error);
-                _this.emit("sync_error", { error: error, deviceId: _this.deviceId });
-                reject(error);
-              };
-            } catch (error) {
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        new Promise((resolve, reject) => {
+          try {
+            var wsUrl = this.config.getWebSocketUrl();
+            this.webSocket = new WebSocket(wsUrl);
+            this.webSocket.onopen = () => {
+              console.log("Connected to sync server");
+              this.isConnected = true;
+              this.reconnectAttempts = 0;
+              // Send authentication
+              this.sendAuthMessage();
+              // Update sync state
+              var syncState = this.syncStates.get(this.userId);
+              if (syncState) {
+                syncState.isOnline = true;
+              }
+              this.emit("sync_connected", { deviceId: this.deviceId });
+              resolve();
+            };
+            this.webSocket.onmessage = (event) => {
+              this.handleSyncMessage(JSON.parse(event.data));
+            };
+            this.webSocket.onclose = () => {
+              console.log("Disconnected from sync server");
+              this.isConnected = false;
+              // Update sync state
+              var syncState = this.syncStates.get(this.userId);
+              if (syncState) {
+                syncState.isOnline = false;
+              }
+              this.emit("sync_disconnected", { deviceId: this.deviceId });
+              // Attempt reconnection
+              this.attemptReconnection();
+            };
+            this.webSocket.onerror = (error) => {
+              console.error("WebSocket error:", error);
+              this.emit("sync_error", { error: error, deviceId: this.deviceId });
               reject(error);
-            }
-          }),
-        ];
-      });
+            };
+          } catch (error) {
+            reject(error);
+          }
+        }),
+      ]);
     });
   };
   /**
@@ -423,11 +417,7 @@ var SessionSyncManager = /** @class */ (function () {
           ];
         }
         recentEvents = syncState.pendingEvents.filter(
-          function (e) {
-            return (
-              e.sessionId === event.sessionId && Math.abs(e.timestamp - event.timestamp) < 5000
-            );
-          }, // 5 seconds
+          (e) => e.sessionId === event.sessionId && Math.abs(e.timestamp - event.timestamp) < 5000, // 5 seconds
         );
         if (recentEvents.length > 0) {
           return [
@@ -524,17 +514,17 @@ var SessionSyncManager = /** @class */ (function () {
   /**
    * Conflict resolution strategies
    */
-  SessionSyncManager.prototype.resolveLastWriteWins = function (conflict) {
+  SessionSyncManager.prototype.resolveLastWriteWins = (conflict) => {
     var allEvents = __spreadArray([conflict.localVersion], conflict.remoteVersions, true);
-    return allEvents.reduce(function (latest, current) {
-      return current.timestamp > latest.timestamp ? current : latest;
-    });
+    return allEvents.reduce((latest, current) =>
+      current.timestamp > latest.timestamp ? current : latest,
+    );
   };
-  SessionSyncManager.prototype.resolveFirstWriteWins = function (conflict) {
+  SessionSyncManager.prototype.resolveFirstWriteWins = (conflict) => {
     var allEvents = __spreadArray([conflict.localVersion], conflict.remoteVersions, true);
-    return allEvents.reduce(function (earliest, current) {
-      return current.timestamp < earliest.timestamp ? current : earliest;
-    });
+    return allEvents.reduce((earliest, current) =>
+      current.timestamp < earliest.timestamp ? current : earliest,
+    );
   };
   SessionSyncManager.prototype.resolveMergeChanges = function (conflict) {
     return __awaiter(this, void 0, void 0, function () {
@@ -543,9 +533,7 @@ var SessionSyncManager = /** @class */ (function () {
         try {
           mergedData = this.mergeEventData(
             conflict.localVersion.data,
-            conflict.remoteVersions.map(function (e) {
-              return e.data;
-            }),
+            conflict.remoteVersions.map((e) => e.data),
           );
           mergedEvent = {
             id: this.utils.generateSessionToken(),
@@ -560,9 +548,7 @@ var SessionSyncManager = /** @class */ (function () {
                 Math,
                 __spreadArray(
                   [conflict.localVersion.version],
-                  conflict.remoteVersions.map(function (e) {
-                    return e.version;
-                  }),
+                  conflict.remoteVersions.map((e) => e.version),
                   false,
                 ),
               ) + 1,
@@ -581,7 +567,7 @@ var SessionSyncManager = /** @class */ (function () {
     // Use device priority order (could be configured)
     var devicePriority = this.getDevicePriority();
     var allEvents = __spreadArray([conflict.localVersion], conflict.remoteVersions, true);
-    return allEvents.reduce(function (highest, current) {
+    return allEvents.reduce((highest, current) => {
       var currentPriority = devicePriority[current.deviceId] || 0;
       var highestPriority = devicePriority[highest.deviceId] || 0;
       return currentPriority > highestPriority ? current : highest;
@@ -691,7 +677,7 @@ var SessionSyncManager = /** @class */ (function () {
    */
   SessionSyncManager.prototype.applySessionCreated = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Apply session creation to local state
@@ -713,7 +699,7 @@ var SessionSyncManager = /** @class */ (function () {
   };
   SessionSyncManager.prototype.applySessionUpdated = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Apply session update to local state
@@ -738,7 +724,7 @@ var SessionSyncManager = /** @class */ (function () {
   };
   SessionSyncManager.prototype.applySessionTerminated = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Apply session termination to local state
@@ -763,7 +749,7 @@ var SessionSyncManager = /** @class */ (function () {
   };
   SessionSyncManager.prototype.applyDeviceRegistered = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Apply device registration to local state
@@ -785,7 +771,7 @@ var SessionSyncManager = /** @class */ (function () {
   };
   SessionSyncManager.prototype.applyDeviceUpdated = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Apply device update to local state
@@ -810,7 +796,7 @@ var SessionSyncManager = /** @class */ (function () {
   };
   SessionSyncManager.prototype.applyDeviceRemoved = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Apply device removal to local state
@@ -834,7 +820,7 @@ var SessionSyncManager = /** @class */ (function () {
   };
   SessionSyncManager.prototype.applyPreferencesUpdated = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Apply preferences update to local state
@@ -859,7 +845,7 @@ var SessionSyncManager = /** @class */ (function () {
   };
   SessionSyncManager.prototype.applySecurityEvent = function (event) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Apply security event to local state
@@ -951,15 +937,15 @@ var SessionSyncManager = /** @class */ (function () {
   /**
    * Utility methods
    */
-  SessionSyncManager.prototype.mergeEventData = function (localData, remoteDataArray) {
+  SessionSyncManager.prototype.mergeEventData = (localData, remoteDataArray) => {
     // Simple merge strategy - in production, implement proper conflict resolution
     var merged = __assign({}, localData);
-    remoteDataArray.forEach(function (remoteData) {
+    remoteDataArray.forEach((remoteData) => {
       merged = __assign(__assign({}, merged), remoteData);
     });
     return merged;
   };
-  SessionSyncManager.prototype.calculateChecksum = function (data) {
+  SessionSyncManager.prototype.calculateChecksum = (data) => {
     // Simple checksum calculation
     var str = JSON.stringify(data);
     var hash = 0;
@@ -970,7 +956,7 @@ var SessionSyncManager = /** @class */ (function () {
     }
     return hash.toString(16);
   };
-  SessionSyncManager.prototype.getDevicePriority = function () {
+  SessionSyncManager.prototype.getDevicePriority = () => {
     // Device priority configuration
     return {
       desktop: 3,
@@ -982,7 +968,7 @@ var SessionSyncManager = /** @class */ (function () {
   SessionSyncManager.prototype.loadSyncDataFromStorage = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -1007,55 +993,52 @@ var SessionSyncManager = /** @class */ (function () {
     });
   };
   SessionSyncManager.prototype.startPeriodicSync = function () {
-    var _this = this;
-    this.syncInterval = setInterval(function () {
-      if (_this.isConnected) {
-        _this.requestFullSync();
+    this.syncInterval = setInterval(() => {
+      if (this.isConnected) {
+        this.requestFullSync();
       }
     }, 30000); // Sync every 30 seconds
   };
   SessionSyncManager.prototype.startHeartbeat = function () {
-    var _this = this;
-    this.heartbeatInterval = setInterval(function () {
-      if (_this.isConnected && _this.webSocket) {
+    this.heartbeatInterval = setInterval(() => {
+      if (this.isConnected && this.webSocket) {
         var heartbeat = {
           type: "heartbeat",
           payload: {
-            deviceId: _this.deviceId,
+            deviceId: this.deviceId,
             timestamp: Date.now(),
           },
           timestamp: Date.now(),
-          messageId: _this.utils.generateSessionToken(),
-          senderId: _this.deviceId,
+          messageId: this.utils.generateSessionToken(),
+          senderId: this.deviceId,
         };
-        _this.webSocket.send(JSON.stringify(heartbeat));
+        this.webSocket.send(JSON.stringify(heartbeat));
       }
     }, 15000); // Heartbeat every 15 seconds
   };
   SessionSyncManager.prototype.attemptReconnection = function () {
-    var _this = this;
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       console.error("Max reconnection attempts reached");
       return;
     }
     this.reconnectAttempts++;
-    var delay = Math.pow(2, this.reconnectAttempts) * 1000; // Exponential backoff
-    setTimeout(function () {
+    var delay = 2 ** this.reconnectAttempts * 1000; // Exponential backoff
+    setTimeout(() => {
       console.log(
         "Attempting reconnection "
-          .concat(_this.reconnectAttempts, "/")
-          .concat(_this.maxReconnectAttempts),
+          .concat(this.reconnectAttempts, "/")
+          .concat(this.maxReconnectAttempts),
       );
-      _this.connectToSyncServer().catch(function (error) {
+      this.connectToSyncServer().catch((error) => {
         console.error("Reconnection failed:", error);
       });
     }, delay);
   };
-  SessionSyncManager.prototype.handleSyncRequest = function (message) {
+  SessionSyncManager.prototype.handleSyncRequest = (message) => {
     // Handle sync requests from other devices
     console.log("Received sync request:", message);
   };
-  SessionSyncManager.prototype.handleSyncResponse = function (message) {
+  SessionSyncManager.prototype.handleSyncResponse = (message) => {
     // Handle sync responses
     console.log("Received sync response:", message);
   };
@@ -1083,13 +1066,13 @@ var SessionSyncManager = /** @class */ (function () {
     if (this.userId) {
       var syncState = this.syncStates.get(this.userId);
       if (syncState) {
-        syncState.pendingEvents = syncState.pendingEvents.filter(function (e) {
-          return e.id !== message.payload.eventId;
-        });
+        syncState.pendingEvents = syncState.pendingEvents.filter(
+          (e) => e.id !== message.payload.eventId,
+        );
       }
     }
   };
-  SessionSyncManager.prototype.handleNegativeAcknowledgment = function (message) {
+  SessionSyncManager.prototype.handleNegativeAcknowledgment = (message) => {
     // Handle failed sync events
     console.error("Sync event failed:", message.payload);
   };
@@ -1125,9 +1108,9 @@ var SessionSyncManager = /** @class */ (function () {
             if (this.userId) {
               syncState = this.syncStates.get(this.userId);
               if (syncState) {
-                syncState.conflictQueue = syncState.conflictQueue.filter(function (c) {
-                  return c.id !== conflict.id;
-                });
+                syncState.conflictQueue = syncState.conflictQueue.filter(
+                  (c) => c.id !== conflict.id,
+                );
               }
             }
             this.emit("conflict_resolved", conflict);
@@ -1163,7 +1146,7 @@ var SessionSyncManager = /** @class */ (function () {
   SessionSyncManager.prototype.emit = function (event, data) {
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (callback) {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1194,9 +1177,7 @@ var SessionSyncManager = /** @class */ (function () {
             if (!this.userId) return [2 /*return*/, false];
             syncState = this.syncStates.get(this.userId);
             if (!syncState) return [2 /*return*/, false];
-            conflict = syncState.conflictQueue.find(function (c) {
-              return c.id === conflictId;
-            });
+            conflict = syncState.conflictQueue.find((c) => c.id === conflictId);
             if (!conflict) return [2 /*return*/, false];
             return [4 /*yield*/, this.applyConflictResolution(conflict, resolution)];
           case 1:
@@ -1215,13 +1196,11 @@ var SessionSyncManager = /** @class */ (function () {
         userId = _b[0],
         syncState = _b[1];
       // Clean up old pending events
-      syncState.pendingEvents = syncState.pendingEvents.filter(function (e) {
-        return now - e.timestamp < maxAge;
-      });
+      syncState.pendingEvents = syncState.pendingEvents.filter((e) => now - e.timestamp < maxAge);
       // Clean up resolved conflicts
-      syncState.conflictQueue = syncState.conflictQueue.filter(function (c) {
-        return !c.resolvedAt || now - c.resolvedAt < maxAge;
-      });
+      syncState.conflictQueue = syncState.conflictQueue.filter(
+        (c) => !c.resolvedAt || now - c.resolvedAt < maxAge,
+      );
     }
   };
   SessionSyncManager.prototype.destroy = function () {

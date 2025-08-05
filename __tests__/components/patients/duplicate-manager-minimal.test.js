@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Minimal test for React 19 compatibility verification
  * Testing without React hooks to isolate the compatibility issue
@@ -6,16 +5,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 // Simple component without hooks
-var SimpleComponent = function () {
-  return <div data-testid="simple">Hello World</div>;
-};
-describe("React 19 Compatibility Test", function () {
-  it("renders a simple component without hooks", function () {
+var SimpleComponent = () => <div data-testid="simple">Hello World</div>;
+describe("React 19 Compatibility Test", () => {
+  it("renders a simple component without hooks", () => {
     var getByTestId = (0, react_1.render)(<SimpleComponent />).getByTestId;
     expect(getByTestId("simple")).toBeInTheDocument();
     expect(getByTestId("simple")).toHaveTextContent("Hello World");
   });
-  it("renders static JSX correctly", function () {
+  it("renders static JSX correctly", () => {
     var container = (0, react_1.render)(
       <div>
         <h1>Test Header</h1>

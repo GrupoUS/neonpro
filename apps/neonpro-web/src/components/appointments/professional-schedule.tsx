@@ -1,6 +1,23 @@
 "use client";
 
+import type {
+  AlertCircle,
+  Briefcase,
+  Calendar,
+  Clock,
+  Coffee,
+  Edit3,
+  Plus,
+  Settings,
+  Trash2,
+  User,
+} from "lucide-react";
+import moment from "moment";
 import React, { useState } from "react";
+import type { Professional } from "@/app/appointments/page";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -9,29 +26,12 @@ import type {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Switch } from "@/components/ui/switch";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  User,
-  Clock,
-  Calendar,
-  Settings,
-  Coffee,
-  Briefcase,
-  AlertCircle,
-  Plus,
-  Trash2,
-  Edit3,
-} from "lucide-react";
-import type { Professional } from "@/app/appointments/page";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { cn } from "@/lib/utils";
-import moment from "moment";
 import "moment/locale/pt-br";
 
 moment.locale("pt-br");

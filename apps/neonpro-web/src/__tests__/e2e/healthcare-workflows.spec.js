@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Healthcare E2E Tests - Critical Patient Workflows
  * Tests using synthetic data for LGPD compliance
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -23,7 +22,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -52,8 +51,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -74,9 +71,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var test_1 = require("@playwright/test");
 // Synthetic test data (LGPD compliant)
@@ -152,11 +149,11 @@ var TEST_DOCTOR = {
   crm: "CRM12345",
   specialty: "Cardiologia",
 };
-test_1.test.describe("Healthcare Critical Workflows", function () {
-  test_1.test.beforeEach(function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Healthcare Critical Workflows", () => {
+  test_1.test.beforeEach((_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Login with test user
@@ -184,12 +181,12 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("Patient Registration and Management", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("Patient Registration and Management", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Navigate to patients
@@ -277,13 +274,13 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("Appointment Scheduling Workflow", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("Appointment Scheduling Workflow", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var tomorrow, dateString;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Navigate to appointments
@@ -375,13 +372,13 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("Dashboard Healthcare Metrics", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("Dashboard Healthcare Metrics", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var metricsLoadTime, finalLoadTime;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Navigate to dashboard
@@ -409,23 +406,13 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             ];
           case 4:
             _c.sent();
-            return [
-              4 /*yield*/,
-              page.evaluate(function () {
-                return performance.now();
-              }),
-            ];
+            return [4 /*yield*/, page.evaluate(() => performance.now())];
           case 5:
             metricsLoadTime = _c.sent();
             return [4 /*yield*/, page.waitForSelector("[data-testid=dashboard-metrics]")];
           case 6:
             _c.sent();
-            return [
-              4 /*yield*/,
-              page.evaluate(function () {
-                return performance.now();
-              }),
-            ];
+            return [4 /*yield*/, page.evaluate(() => performance.now())];
           case 7:
             finalLoadTime = _c.sent();
             // Healthcare systems should load within 2 seconds
@@ -433,12 +420,12 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("Patient Portal Access", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("Patient Portal Access", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Test patient portal functionality
@@ -490,12 +477,12 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("Healthcare Compliance Features", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("Healthcare Compliance Features", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Test LGPD compliance features
@@ -531,13 +518,13 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("System Performance and Health", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("System Performance and Health", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var response, health, apiStart, apiResponse, apiTime;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [4 /*yield*/, page.request.get("/api/health")];
@@ -559,13 +546,13 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("Mobile Responsiveness - Patient Portal", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("Mobile Responsiveness - Patient Portal", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var appointmentForm;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Set mobile viewport
@@ -607,6 +594,6 @@ test_1.test.describe("Healthcare Critical Workflows", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

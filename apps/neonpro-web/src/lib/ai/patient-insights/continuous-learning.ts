@@ -3,9 +3,9 @@
 
 import type { createClient } from "@/lib/supabase/client";
 import type {
+  LearningInsight,
   LearningModel,
   ModelPerformance,
-  LearningInsight,
   ModelUpdate,
   PatientOutcome,
   TreatmentResult,

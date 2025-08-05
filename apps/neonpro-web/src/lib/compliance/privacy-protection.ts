@@ -8,10 +8,10 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 
-import type { z } from "zod";
-import type { logger } from "@/lib/utils/logger";
-import type { createClient } from "@/lib/supabase/client";
 import CryptoJS from "crypto-js";
+import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/client";
+import type { logger } from "@/lib/utils/logger";
 
 // Privacy Protection Types
 export type PrivacyRegulation = "LGPD" | "HIPAA" | "GDPR" | "CCPA" | "PIPEDA";

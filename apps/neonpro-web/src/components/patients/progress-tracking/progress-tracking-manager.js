@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ProgressTrackingManager;
 var react_1 = require("react");
@@ -42,7 +41,7 @@ var progress_1 = require("@/components/ui/progress");
 var date_fns_1 = require("date-fns");
 var lucide_react_1 = require("lucide-react");
 // Mock data generator
-var generateMockProgressEntries = function () {
+var generateMockProgressEntries = () => {
   var entries = [];
   var entryTypes = ["photo", "measurement", "note", "video"];
   var categories = ["clinical", "aesthetic", "functional", "patient_reported"];
@@ -81,24 +80,22 @@ var generateMockProgressEntries = function () {
   }
   return entries;
 };
-var generateMockComparisons = function () {
-  return [
-    {
-      id: "comp_1",
-      name: "Before vs After Treatment",
-      baselineEntry: generateMockProgressEntries()[0],
-      currentEntry: generateMockProgressEntries()[1],
-      comparisonType: "before_after",
-      metrics: {
-        improvementPercentage: 75,
-        significantChanges: ["Reduced swelling", "Improved alignment"],
-        concerns: ["Minor discomfort"],
-        recommendations: ["Continue current protocol", "Monitor progress weekly"],
-      },
-      generatedAt: new Date(),
+var generateMockComparisons = () => [
+  {
+    id: "comp_1",
+    name: "Before vs After Treatment",
+    baselineEntry: generateMockProgressEntries()[0],
+    currentEntry: generateMockProgressEntries()[1],
+    comparisonType: "before_after",
+    metrics: {
+      improvementPercentage: 75,
+      significantChanges: ["Reduced swelling", "Improved alignment"],
+      concerns: ["Minor discomfort"],
+      recommendations: ["Continue current protocol", "Monitor progress weekly"],
     },
-  ];
-};
+    generatedAt: new Date(),
+  },
+];
 function ProgressTrackingManager() {
   var _a = (0, react_1.useState)([]),
     progressEntries = _a[0],
@@ -148,12 +145,12 @@ function ProgressTrackingManager() {
     }),
     newEntry = _k[0],
     setNewEntry = _k[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Load mock data
     setProgressEntries(generateMockProgressEntries());
     setComparisons(generateMockComparisons());
   }, []);
-  var filteredEntries = progressEntries.filter(function (entry) {
+  var filteredEntries = progressEntries.filter((entry) => {
     var _a;
     var matchesCategory = filterCategory === "all" || entry.category === filterCategory;
     var matchesStatus = filterStatus === "all" || entry.status === filterStatus;
@@ -165,7 +162,7 @@ function ProgressTrackingManager() {
         : _a.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesCategory && matchesStatus && matchesSearch;
   });
-  var handleAddEntry = function () {
+  var handleAddEntry = () => {
     if (!newEntry.title) return;
     var entry = {
       id: "progress_".concat(Date.now()),
@@ -216,7 +213,7 @@ function ProgressTrackingManager() {
       anonymizationLevel: "none",
     });
   };
-  var getEntryIcon = function (type) {
+  var getEntryIcon = (type) => {
     switch (type) {
       case "photo":
         return <lucide_react_1.Camera className="h-4 w-4" />;
@@ -234,7 +231,7 @@ function ProgressTrackingManager() {
         return <lucide_react_1.FileText className="h-4 w-4" />;
     }
   };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "completed":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -246,7 +243,7 @@ function ProgressTrackingManager() {
         return <lucide_react_1.Info className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "urgent":
         return "bg-red-100 text-red-800";
@@ -299,9 +296,9 @@ function ProgressTrackingManager() {
                     <label_1.Label htmlFor="entry-type">Entry Type</label_1.Label>
                     <select_1.Select
                       value={newEntry.entryType}
-                      onValueChange={function (value) {
-                        return setNewEntry(__assign(__assign({}, newEntry), { entryType: value }));
-                      }}
+                      onValueChange={(value) =>
+                        setNewEntry(__assign(__assign({}, newEntry), { entryType: value }))
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -320,9 +317,9 @@ function ProgressTrackingManager() {
                     <label_1.Label htmlFor="category">Category</label_1.Label>
                     <select_1.Select
                       value={newEntry.category}
-                      onValueChange={function (value) {
-                        return setNewEntry(__assign(__assign({}, newEntry), { category: value }));
-                      }}
+                      onValueChange={(value) =>
+                        setNewEntry(__assign(__assign({}, newEntry), { category: value }))
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -345,11 +342,9 @@ function ProgressTrackingManager() {
                   <input_1.Input
                     id="title"
                     value={newEntry.title}
-                    onChange={function (e) {
-                      return setNewEntry(
-                        __assign(__assign({}, newEntry), { title: e.target.value }),
-                      );
-                    }}
+                    onChange={(e) =>
+                      setNewEntry(__assign(__assign({}, newEntry), { title: e.target.value }))
+                    }
                     placeholder="Enter entry title"
                   />
                 </div>
@@ -359,11 +354,9 @@ function ProgressTrackingManager() {
                   <textarea_1.Textarea
                     id="description"
                     value={newEntry.description}
-                    onChange={function (e) {
-                      return setNewEntry(
-                        __assign(__assign({}, newEntry), { description: e.target.value }),
-                      );
-                    }}
+                    onChange={(e) =>
+                      setNewEntry(__assign(__assign({}, newEntry), { description: e.target.value }))
+                    }
                     placeholder="Enter detailed description"
                     rows={3}
                   />
@@ -378,11 +371,11 @@ function ProgressTrackingManager() {
                       min="0"
                       max="10"
                       value={newEntry.painLevel}
-                      onChange={function (e) {
-                        return setNewEntry(
+                      onChange={(e) =>
+                        setNewEntry(
                           __assign(__assign({}, newEntry), { painLevel: parseInt(e.target.value) }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -393,13 +386,13 @@ function ProgressTrackingManager() {
                       min="0"
                       max="10"
                       value={newEntry.satisfactionLevel}
-                      onChange={function (e) {
-                        return setNewEntry(
+                      onChange={(e) =>
+                        setNewEntry(
                           __assign(__assign({}, newEntry), {
                             satisfactionLevel: parseInt(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -410,13 +403,13 @@ function ProgressTrackingManager() {
                       min="0"
                       max="100"
                       value={newEntry.progressPercentage}
-                      onChange={function (e) {
-                        return setNewEntry(
+                      onChange={(e) =>
+                        setNewEntry(
                           __assign(__assign({}, newEntry), {
                             progressPercentage: parseInt(e.target.value),
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -426,23 +419,18 @@ function ProgressTrackingManager() {
                   <textarea_1.Textarea
                     id="clinical-notes"
                     value={newEntry.clinicalNotes}
-                    onChange={function (e) {
-                      return setNewEntry(
+                    onChange={(e) =>
+                      setNewEntry(
                         __assign(__assign({}, newEntry), { clinicalNotes: e.target.value }),
-                      );
-                    }}
+                      )
+                    }
                     placeholder="Enter clinical observations and notes"
                     rows={4}
                   />
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setIsAddingEntry(false);
-                    }}
-                  >
+                  <button_1.Button variant="outline" onClick={() => setIsAddingEntry(false)}>
                     Cancel
                   </button_1.Button>
                   <button_1.Button onClick={handleAddEntry}>Add Entry</button_1.Button>
@@ -463,9 +451,7 @@ function ProgressTrackingManager() {
                 <input_1.Input
                   placeholder="Search entries..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8"
                 />
               </div>
@@ -513,111 +499,101 @@ function ProgressTrackingManager() {
 
         <tabs_1.TabsContent value="timeline" className="space-y-4">
           <div className="grid gap-4">
-            {filteredEntries.map(function (entry) {
-              return (
-                <card_1.Card
-                  key={entry.id}
-                  className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={function () {
-                    return setSelectedEntry(entry);
-                  }}
-                >
-                  <card_1.CardContent className="pt-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-4">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
-                          {getEntryIcon(entry.entryType)}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <h3 className="font-semibold">{entry.title}</h3>
-                            {getStatusIcon(entry.status)}
-                            <badge_1.Badge className={getPriorityColor(entry.priority)}>
-                              {entry.priority}
-                            </badge_1.Badge>
-                            <badge_1.Badge variant="outline">{entry.category}</badge_1.Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground mb-2">{entry.description}</p>
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                            <span className="flex items-center">
-                              <lucide_react_1.Calendar className="h-4 w-4 mr-1" />
-                              {(0, date_fns_1.format)(entry.entryDate, "MMM dd, yyyy")}
-                            </span>
-                            <span className="flex items-center">
-                              <lucide_react_1.Clock className="h-4 w-4 mr-1" />
-                              {(0, date_fns_1.format)(entry.entryDate, "HH:mm")}
-                            </span>
-                            <span className="flex items-center">
-                              <lucide_react_1.Target className="h-4 w-4 mr-1" />
-                              {entry.progressPercentage}% Progress
-                            </span>
-                          </div>
-                        </div>
+            {filteredEntries.map((entry) => (
+              <card_1.Card
+                key={entry.id}
+                className="cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => setSelectedEntry(entry)}
+              >
+                <card_1.CardContent className="pt-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-4">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10">
+                        {getEntryIcon(entry.entryType)}
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Eye className="h-4 w-4" />
-                        </button_1.Button>
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Edit className="h-4 w-4" />
-                        </button_1.Button>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h3 className="font-semibold">{entry.title}</h3>
+                          {getStatusIcon(entry.status)}
+                          <badge_1.Badge className={getPriorityColor(entry.priority)}>
+                            {entry.priority}
+                          </badge_1.Badge>
+                          <badge_1.Badge variant="outline">{entry.category}</badge_1.Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2">{entry.description}</p>
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <span className="flex items-center">
+                            <lucide_react_1.Calendar className="h-4 w-4 mr-1" />
+                            {(0, date_fns_1.format)(entry.entryDate, "MMM dd, yyyy")}
+                          </span>
+                          <span className="flex items-center">
+                            <lucide_react_1.Clock className="h-4 w-4 mr-1" />
+                            {(0, date_fns_1.format)(entry.entryDate, "HH:mm")}
+                          </span>
+                          <span className="flex items-center">
+                            <lucide_react_1.Target className="h-4 w-4 mr-1" />
+                            {entry.progressPercentage}% Progress
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <div className="flex items-center space-x-2">
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Eye className="h-4 w-4" />
+                      </button_1.Button>
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Edit className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+                  </div>
 
-                    {entry.progressPercentage > 0 && (
-                      <div className="mt-4">
-                        <div className="flex items-center justify-between text-sm mb-2">
-                          <span>Treatment Progress</span>
-                          <span>{entry.progressPercentage}%</span>
-                        </div>
-                        <progress_1.Progress value={entry.progressPercentage} className="h-2" />
+                  {entry.progressPercentage > 0 && (
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between text-sm mb-2">
+                        <span>Treatment Progress</span>
+                        <span>{entry.progressPercentage}%</span>
                       </div>
-                    )}
+                      <progress_1.Progress value={entry.progressPercentage} className="h-2" />
+                    </div>
+                  )}
 
-                    {entry.tags.length > 0 && (
-                      <div className="flex items-center space-x-2 mt-3">
-                        {entry.tags.map(function (tag) {
-                          return (
-                            <badge_1.Badge key={tag} variant="secondary" className="text-xs">
-                              {tag}
-                            </badge_1.Badge>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  {entry.tags.length > 0 && (
+                    <div className="flex items-center space-x-2 mt-3">
+                      {entry.tags.map((tag) => (
+                        <badge_1.Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </badge_1.Badge>
+                      ))}
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
         <tabs_1.TabsContent value="gallery" className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredEntries
-              .filter(function (entry) {
-                return entry.entryType === "photo" || entry.entryType === "video";
-              })
-              .map(function (entry) {
-                return (
-                  <card_1.Card
-                    key={entry.id}
-                    className="cursor-pointer hover:shadow-md transition-shadow"
-                  >
-                    <card_1.CardContent className="p-4">
-                      <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
-                        {entry.entryType === "photo"
-                          ? <lucide_react_1.Image className="h-8 w-8 text-gray-400" />
-                          : <lucide_react_1.Video className="h-8 w-8 text-gray-400" />}
-                      </div>
-                      <h4 className="font-medium text-sm mb-1">{entry.title}</h4>
-                      <p className="text-xs text-muted-foreground">
-                        {(0, date_fns_1.format)(entry.entryDate, "MMM dd, yyyy")}
-                      </p>
-                    </card_1.CardContent>
-                  </card_1.Card>
-                );
-              })}
+              .filter((entry) => entry.entryType === "photo" || entry.entryType === "video")
+              .map((entry) => (
+                <card_1.Card
+                  key={entry.id}
+                  className="cursor-pointer hover:shadow-md transition-shadow"
+                >
+                  <card_1.CardContent className="p-4">
+                    <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                      {entry.entryType === "photo"
+                        ? <lucide_react_1.Image className="h-8 w-8 text-gray-400" />
+                        : <lucide_react_1.Video className="h-8 w-8 text-gray-400" />}
+                    </div>
+                    <h4 className="font-medium text-sm mb-1">{entry.title}</h4>
+                    <p className="text-xs text-muted-foreground">
+                      {(0, date_fns_1.format)(entry.entryDate, "MMM dd, yyyy")}
+                    </p>
+                  </card_1.CardContent>
+                </card_1.Card>
+              ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -686,90 +662,78 @@ function ProgressTrackingManager() {
 
         <tabs_1.TabsContent value="comparisons" className="space-y-4">
           <div className="grid gap-4">
-            {comparisons.map(function (comparison) {
-              return (
-                <card_1.Card key={comparison.id}>
-                  <card_1.CardHeader>
-                    <card_1.CardTitle>{comparison.name}</card_1.CardTitle>
-                    <card_1.CardDescription>
-                      {comparison.comparisonType.replace("_", " ")} comparison
-                    </card_1.CardDescription>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <h4 className="font-medium mb-2">Baseline</h4>
-                        <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                          <lucide_react_1.Image className="h-12 w-12 text-gray-400" />
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-2">
-                          {(0, date_fns_1.format)(
-                            comparison.baselineEntry.entryDate,
-                            "MMM dd, yyyy",
-                          )}
-                        </p>
+            {comparisons.map((comparison) => (
+              <card_1.Card key={comparison.id}>
+                <card_1.CardHeader>
+                  <card_1.CardTitle>{comparison.name}</card_1.CardTitle>
+                  <card_1.CardDescription>
+                    {comparison.comparisonType.replace("_", " ")} comparison
+                  </card_1.CardDescription>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium mb-2">Baseline</h4>
+                      <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                        <lucide_react_1.Image className="h-12 w-12 text-gray-400" />
                       </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Current</h4>
-                        <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                          <lucide_react_1.Image className="h-12 w-12 text-gray-400" />
-                        </div>
-                        <p className="text-sm text-muted-foreground mt-2">
-                          {(0, date_fns_1.format)(
-                            comparison.currentEntry.entryDate,
-                            "MMM dd, yyyy",
-                          )}
-                        </p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        {(0, date_fns_1.format)(comparison.baselineEntry.entryDate, "MMM dd, yyyy")}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">Current</h4>
+                      <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                        <lucide_react_1.Image className="h-12 w-12 text-gray-400" />
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        {(0, date_fns_1.format)(comparison.currentEntry.entryDate, "MMM dd, yyyy")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-2">Improvement</h4>
+                      <div className="flex items-center space-x-2">
+                        <progress_1.Progress
+                          value={comparison.metrics.improvementPercentage}
+                          className="flex-1"
+                        />
+                        <span className="text-sm font-medium">
+                          {comparison.metrics.improvementPercentage}%
+                        </span>
                       </div>
                     </div>
 
-                    <div className="mt-6 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <h4 className="font-medium mb-2">Improvement</h4>
-                        <div className="flex items-center space-x-2">
-                          <progress_1.Progress
-                            value={comparison.metrics.improvementPercentage}
-                            className="flex-1"
-                          />
-                          <span className="text-sm font-medium">
-                            {comparison.metrics.improvementPercentage}%
-                          </span>
-                        </div>
+                        <h5 className="font-medium text-sm mb-2">Significant Changes</h5>
+                        <ul className="text-sm text-muted-foreground space-y-1">
+                          {comparison.metrics.significantChanges.map((change, index) => (
+                            <li key={index} className="flex items-center">
+                              <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500 mr-2" />
+                              {change}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <h5 className="font-medium text-sm mb-2">Significant Changes</h5>
-                          <ul className="text-sm text-muted-foreground space-y-1">
-                            {comparison.metrics.significantChanges.map(function (change, index) {
-                              return (
-                                <li key={index} className="flex items-center">
-                                  <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500 mr-2" />
-                                  {change}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                        <div>
-                          <h5 className="font-medium text-sm mb-2">Recommendations</h5>
-                          <ul className="text-sm text-muted-foreground space-y-1">
-                            {comparison.metrics.recommendations.map(function (rec, index) {
-                              return (
-                                <li key={index} className="flex items-center">
-                                  <lucide_react_1.Star className="h-3 w-3 text-blue-500 mr-2" />
-                                  {rec}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
+                      <div>
+                        <h5 className="font-medium text-sm mb-2">Recommendations</h5>
+                        <ul className="text-sm text-muted-foreground space-y-1">
+                          {comparison.metrics.recommendations.map((rec, index) => (
+                            <li key={index} className="flex items-center">
+                              <lucide_react_1.Star className="h-3 w-3 text-blue-500 mr-2" />
+                              {rec}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -827,12 +791,7 @@ function ProgressTrackingManager() {
 
       {/* Entry Detail Modal */}
       {selectedEntry && (
-        <dialog_1.Dialog
-          open={!!selectedEntry}
-          onOpenChange={function () {
-            return setSelectedEntry(null);
-          }}
-        >
+        <dialog_1.Dialog open={!!selectedEntry} onOpenChange={() => setSelectedEntry(null)}>
           <dialog_1.DialogContent className="max-w-4xl">
             <dialog_1.DialogHeader>
               <dialog_1.DialogTitle className="flex items-center space-x-2">
@@ -896,14 +855,12 @@ function ProgressTrackingManager() {
                 <div>
                   <label_1.Label className="text-sm font-medium">Next Steps</label_1.Label>
                   <ul className="text-sm text-muted-foreground mt-1 space-y-1">
-                    {selectedEntry.nextSteps.map(function (step, index) {
-                      return (
-                        <li key={index} className="flex items-center">
-                          <lucide_react_1.Target className="h-3 w-3 mr-2" />
-                          {step}
-                        </li>
-                      );
-                    })}
+                    {selectedEntry.nextSteps.map((step, index) => (
+                      <li key={index} className="flex items-center">
+                        <lucide_react_1.Target className="h-3 w-3 mr-2" />
+                        {step}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}

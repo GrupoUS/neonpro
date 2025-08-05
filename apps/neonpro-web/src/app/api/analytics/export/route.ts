@@ -10,12 +10,10 @@
  * Supports cohort analysis, forecasting, statistical insights, and dashboard data.
  */
 
-import type { createClient } from "@/lib/supabase/server";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
-import type { z } from "zod";
 
 // Extend jsPDF type for autoTable
 declare module "jspdf" {
@@ -317,7 +315,7 @@ function generateCohortCSV(data: any): string {
   }
 
   const headers = ["Cohort", "Period", "Users", "Retention Rate", "Revenue", "Churn Rate"];
-  let csv = headers.join(",") + "\n";
+  let csv = `${headers.join(",")}\n`;
 
   data.metrics.forEach((metric: any) => {
     const row = [
@@ -328,7 +326,7 @@ function generateCohortCSV(data: any): string {
       `$${metric.revenue}`,
       `${metric.churnRate}%`,
     ];
-    csv += row.join(",") + "\n";
+    csv += `${row.join(",")}\n`;
   });
 
   return csv;
@@ -340,7 +338,7 @@ function generateForecastCSV(data: any): string {
   }
 
   const headers = ["Date", "Prediction", "Lower Bound", "Upper Bound", "Confidence"];
-  let csv = headers.join(",") + "\n";
+  let csv = `${headers.join(",")}\n`;
 
   data.predictions.forEach((prediction: any) => {
     const row = [
@@ -350,7 +348,7 @@ function generateForecastCSV(data: any): string {
       prediction.upperBound || "",
       prediction.confidence || "",
     ];
-    csv += row.join(",") + "\n";
+    csv += `${row.join(",")}\n`;
   });
 
   return csv;

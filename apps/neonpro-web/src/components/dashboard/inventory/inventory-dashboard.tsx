@@ -6,17 +6,6 @@
 
 "use client";
 
-import type { useInventoryAlerts } from "@/app/hooks/useInventoryAlerts";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   AlertTriangle,
   Barcode,
@@ -28,6 +17,17 @@ import type {
   TrendingUp,
 } from "lucide-react";
 import type { useState } from "react";
+import type { useInventoryAlerts } from "@/app/hooks/useInventoryAlerts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { BudgetApprovalWorkflow } from "./budget-approval-workflow";
 import type { DemandForecastingEngine } from "./demand-forecasting-engine";
 import type { IntelligentThresholdManager } from "./intelligent-threshold-manager";

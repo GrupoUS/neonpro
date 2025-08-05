@@ -178,36 +178,40 @@ class CNPJRateLimiter {
 
   static canMakeRequest(ip: string): boolean {
     const now = Date.now();
-    const requests = this.requests.get(ip) || [];
+    const requests = CNPJRateLimiter.requests.get(ip) || [];
 
     // Remove old requests outside the window
-    const validRequests = requests.filter((timestamp) => now - timestamp < this.WINDOW_MS);
+    const validRequests = requests.filter(
+      (timestamp) => now - timestamp < CNPJRateLimiter.WINDOW_MS,
+    );
 
-    if (validRequests.length >= this.MAX_REQUESTS_PER_MINUTE) {
+    if (validRequests.length >= CNPJRateLimiter.MAX_REQUESTS_PER_MINUTE) {
       return false;
     }
 
     // Add current request
     validRequests.push(now);
-    this.requests.set(ip, validRequests);
+    CNPJRateLimiter.requests.set(ip, validRequests);
 
     return true;
   }
 
   static getRemainingRequests(ip: string): number {
     const now = Date.now();
-    const requests = this.requests.get(ip) || [];
-    const validRequests = requests.filter((timestamp) => now - timestamp < this.WINDOW_MS);
+    const requests = CNPJRateLimiter.requests.get(ip) || [];
+    const validRequests = requests.filter(
+      (timestamp) => now - timestamp < CNPJRateLimiter.WINDOW_MS,
+    );
 
-    return Math.max(0, this.MAX_REQUESTS_PER_MINUTE - validRequests.length);
+    return Math.max(0, CNPJRateLimiter.MAX_REQUESTS_PER_MINUTE - validRequests.length);
   }
 
   static getResetTime(ip: string): Date {
     const now = Date.now();
-    const requests = this.requests.get(ip) || [];
+    const requests = CNPJRateLimiter.requests.get(ip) || [];
     const oldestRequest = Math.min(...requests);
 
-    return new Date(oldestRequest + this.WINDOW_MS);
+    return new Date(oldestRequest + CNPJRateLimiter.WINDOW_MS);
   }
 }
 
@@ -227,10 +231,10 @@ class CNPJCache {
 
   static get(cnpj: string): CNPJCompanyData | null {
     const clean = cleanCNPJ(cnpj);
-    const cached = this.cache.get(clean);
+    const cached = CNPJCache.cache.get(clean);
 
     if (!cached || Date.now() > cached.expiry) {
-      this.cache.delete(clean);
+      CNPJCache.cache.delete(clean);
       return null;
     }
 
@@ -239,19 +243,19 @@ class CNPJCache {
 
   static set(cnpj: string, data: CNPJCompanyData): void {
     const clean = cleanCNPJ(cnpj);
-    this.cache.set(clean, {
+    CNPJCache.cache.set(clean, {
       data,
-      expiry: Date.now() + this.CACHE_DURATION,
+      expiry: Date.now() + CNPJCache.CACHE_DURATION,
     });
   }
 
   static clear(): void {
-    this.cache.clear();
+    CNPJCache.cache.clear();
   }
 
   static getCacheExpiry(cnpj: string): Date | null {
     const clean = cleanCNPJ(cnpj);
-    const cached = this.cache.get(clean);
+    const cached = CNPJCache.cache.get(clean);
 
     return cached ? new Date(cached.expiry) : null;
   }

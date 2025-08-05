@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Subscription Performance Monitor
  *
@@ -13,18 +12,18 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -33,10 +32,10 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.subscriptionPerformanceMonitor = exports.SubscriptionPerformanceMonitor = void 0;
-var SubscriptionPerformanceMonitor = /** @class */ (function () {
+var SubscriptionPerformanceMonitor = /** @class */ (() => {
   function SubscriptionPerformanceMonitor() {
     this.alerts = [];
     this.recommendations = [];
@@ -192,35 +191,26 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
    */
   SubscriptionPerformanceMonitor.prototype.updateResponseTimeMetrics = function () {
     if (this.responseTimeHistory.length === 0) return;
-    var sorted = __spreadArray([], this.responseTimeHistory, true).sort(function (a, b) {
-      return a - b;
-    });
+    var sorted = __spreadArray([], this.responseTimeHistory, true).sort((a, b) => a - b);
     var p95Index = Math.floor(sorted.length * 0.95);
     var p99Index = Math.floor(sorted.length * 0.99);
     this.metrics.subscriptionChecks.averageResponseTime =
-      this.responseTimeHistory.reduce(function (a, b) {
-        return a + b;
-      }, 0) / this.responseTimeHistory.length;
+      this.responseTimeHistory.reduce((a, b) => a + b, 0) / this.responseTimeHistory.length;
     this.metrics.subscriptionChecks.p95ResponseTime = sorted[p95Index] || 0;
     this.metrics.subscriptionChecks.p99ResponseTime = sorted[p99Index] || 0;
   };
   /**
    * Calculate hit rate
    */
-  SubscriptionPerformanceMonitor.prototype.calculateHitRate = function (hit) {
+  SubscriptionPerformanceMonitor.prototype.calculateHitRate = (hit) => {
     // This would integrate with actual cache stats
     return hit ? 0.95 : 0.05; // Placeholder
   };
   /**
    * Update running average
    */
-  SubscriptionPerformanceMonitor.prototype.updateAverage = function (
-    currentAverage,
-    newValue,
-    count,
-  ) {
-    return (currentAverage * (count - 1) + newValue) / count;
-  };
+  SubscriptionPerformanceMonitor.prototype.updateAverage = (currentAverage, newValue, count) =>
+    (currentAverage * (count - 1) + newValue) / count;
   /**
    * Check for performance alerts
    */
@@ -279,7 +269,7 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
   /**
    * Get component name for metric
    */
-  SubscriptionPerformanceMonitor.prototype.getComponentForMetric = function (metric) {
+  SubscriptionPerformanceMonitor.prototype.getComponentForMetric = (metric) => {
     if (metric.includes("cache")) return "cache";
     if (metric.includes("db") || metric.includes("Query")) return "database";
     if (metric.includes("realtime") || metric.includes("Latency")) return "realtime";
@@ -288,7 +278,7 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
   /**
    * Generate alert message
    */
-  SubscriptionPerformanceMonitor.prototype.getAlertMessage = function (metric, value, threshold) {
+  SubscriptionPerformanceMonitor.prototype.getAlertMessage = (metric, value, threshold) => {
     var messages = {
       responseTime: "Subscription response time ("
         .concat(value.toFixed(2), "ms) exceeds threshold (")
@@ -345,9 +335,7 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
     var recommendation = recommendations[metric];
     if (
       recommendation &&
-      !this.recommendations.find(function (r) {
-        return r.component === recommendation.component;
-      })
+      !this.recommendations.find((r) => r.component === recommendation.component)
     ) {
       this.recommendations.push(recommendation);
     }
@@ -356,9 +344,8 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
    * Start background monitoring
    */
   SubscriptionPerformanceMonitor.prototype.startMonitoring = function () {
-    var _this = this;
-    setInterval(function () {
-      _this.collectSystemMetrics();
+    setInterval(() => {
+      this.collectSystemMetrics();
     }, 30000); // Every 30 seconds
   };
   /**
@@ -382,9 +369,7 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
    * Get active alerts
    */
   SubscriptionPerformanceMonitor.prototype.getAlerts = function () {
-    return this.alerts.filter(function (alert) {
-      return !alert.resolved;
-    });
+    return this.alerts.filter((alert) => !alert.resolved);
   };
   /**
    * Get optimization recommendations
@@ -396,9 +381,7 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
    * Resolve alert
    */
   SubscriptionPerformanceMonitor.prototype.resolveAlert = function (alertId) {
-    var alert = this.alerts.find(function (a) {
-      return a.id === alertId;
-    });
+    var alert = this.alerts.find((a) => a.id === alertId);
     if (alert) {
       alert.resolved = true;
     }
@@ -408,12 +391,8 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
    */
   SubscriptionPerformanceMonitor.prototype.getPerformanceReport = function () {
     var activeAlerts = this.getAlerts();
-    var criticalAlerts = activeAlerts.filter(function (a) {
-      return a.type === "critical";
-    });
-    var warningAlerts = activeAlerts.filter(function (a) {
-      return a.type === "warning";
-    });
+    var criticalAlerts = activeAlerts.filter((a) => a.type === "critical");
+    var warningAlerts = activeAlerts.filter((a) => a.type === "warning");
     var overallHealth = "excellent";
     if (criticalAlerts.length > 0) {
       overallHealth = "critical";
@@ -422,17 +401,11 @@ var SubscriptionPerformanceMonitor = /** @class */ (function () {
     } else if (warningAlerts.length > 0) {
       overallHealth = "good";
     }
-    var primaryIssues = activeAlerts.slice(0, 3).map(function (alert) {
-      return alert.message;
-    });
+    var primaryIssues = activeAlerts.slice(0, 3).map((alert) => alert.message);
     var topRecommendations = this.recommendations
-      .filter(function (r) {
-        return r.priority === "high";
-      })
+      .filter((r) => r.priority === "high")
       .slice(0, 3)
-      .map(function (r) {
-        return r.recommendation;
-      });
+      .map((r) => r.recommendation);
     return {
       metrics: this.getMetrics(),
       alerts: activeAlerts,

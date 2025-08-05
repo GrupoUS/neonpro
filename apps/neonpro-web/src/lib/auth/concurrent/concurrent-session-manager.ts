@@ -1,9 +1,9 @@
 // Concurrent Session Management System
 // Manages multiple active sessions per user with intelligent conflict resolution
 
-import type { UserSession, UserDevice, SessionPolicy, UserRole } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
 import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { SessionPolicy, UserDevice, UserRole, UserSession } from "@/types/session";
 
 export interface ConcurrentSessionConfig {
   maxConcurrentSessions: number;
@@ -210,7 +210,7 @@ export class ConcurrentSessionManager {
       let transferId: string | undefined;
 
       switch (resolution.action) {
-        case "terminate_oldest":
+        case "terminate_oldest": {
           const oldestSession = this.findOldestSession(conflict.existingSessions);
           if (oldestSession) {
             await this.terminateSession(oldestSession.id, "Replaced by newer session");
@@ -228,6 +228,7 @@ export class ConcurrentSessionManager {
             conflict.newSession.deviceId!,
           );
           break;
+        }
 
         case "terminate_newest":
           // Don't create new session, keep existing ones

@@ -1,4 +1,3 @@
-"use strict";
 // Analytics Service Layer - STORY-SUB-002 Task 2
 // Business logic layer with intelligent caching and data processing
 // Created: 2025-01-22
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,12 +145,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsService = void 0;
 var cache_1 = require("next/cache");
 var repository_1 = require("./repository");
-var AnalyticsService = /** @class */ (function () {
+var AnalyticsService = /** @class */ (() => {
   function AnalyticsService() {
     this.cachePrefix = "analytics";
     this.defaultCacheTTL = 300; // 5 minutes
@@ -181,8 +178,8 @@ var AnalyticsService = /** @class */ (function () {
             return [
               4 /*yield*/,
               (0, cache_1.unstable_cache)(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
+                () =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var _a, mrrAgg, arrAgg, churnAgg, ltvAgg, forecast, tierAnalytics;
                     return __generator(this, function (_b) {
                       switch (_b.label) {
@@ -229,8 +226,7 @@ var AnalyticsService = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                },
+                  }),
                 [cacheKey],
                 { revalidate: this.defaultCacheTTL, tags: ["analytics", "revenue"] },
               )(),
@@ -266,8 +262,8 @@ var AnalyticsService = /** @class */ (function () {
             return [
               4 /*yield*/,
               (0, cache_1.unstable_cache)(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
+                () =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var _a,
                       trialToPaid,
                       signupToTrial,
@@ -326,8 +322,7 @@ var AnalyticsService = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                },
+                  }),
                 [cacheKey],
                 { revalidate: this.defaultCacheTTL, tags: ["analytics", "conversion"] },
               )(),
@@ -357,16 +352,15 @@ var AnalyticsService = /** @class */ (function () {
   AnalyticsService.prototype.predictTrialConversion = function (userId, trialId) {
     return __awaiter(this, void 0, void 0, function () {
       var cacheKey;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             cacheKey = "trial-prediction:".concat(trialId);
             return [
               4 /*yield*/,
               (0, cache_1.unstable_cache)(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
+                () =>
+                  __awaiter(this, void 0, void 0, function () {
                     var trialMetrics, engagementScore, probability;
                     return __generator(this, function (_a) {
                       switch (_a.label) {
@@ -401,8 +395,7 @@ var AnalyticsService = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                },
+                  }),
                 [cacheKey],
                 { revalidate: 3600, tags: ["predictions", "trials"] }, // 1 hour cache
               )(),
@@ -424,9 +417,7 @@ var AnalyticsService = /** @class */ (function () {
             return [4 /*yield*/, this.repository.getRevenueMetrics(query)];
           case 1:
             historicalRevenue = _a.sent();
-            values = historicalRevenue.map(function (m) {
-              return m.value;
-            });
+            values = historicalRevenue.map((m) => m.value);
             trend = this.calculateTrend(values);
             forecast = this.projectForecast(values, trend, 12); // 12 periods ahead
             return [
@@ -446,21 +437,20 @@ var AnalyticsService = /** @class */ (function () {
   AnalyticsService.prototype.getRevenueByTier = function (query) {
     return __awaiter(this, void 0, void 0, function () {
       var tiers, tierData;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             tiers = ["free", "basic", "professional", "enterprise"];
             return [
               4 /*yield*/,
               Promise.all(
-                tiers.map(function (tier) {
-                  return _this.repository.getRevenueAggregation(
+                tiers.map((tier) =>
+                  this.repository.getRevenueAggregation(
                     __assign(__assign({}, query), {
                       filters: __assign(__assign({}, query.filters), { tier: tier }),
                     }),
-                  );
-                }),
+                  ),
+                ),
               ),
             ];
           case 1:
@@ -480,7 +470,7 @@ var AnalyticsService = /** @class */ (function () {
   };
   AnalyticsService.prototype.calculateFunnelAnalysis = function (query) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified funnel calculation
         return [
           2 /*return*/,
@@ -514,7 +504,7 @@ var AnalyticsService = /** @class */ (function () {
   };
   AnalyticsService.prototype.calculateCohortAnalysis = function (query) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified cohort analysis
         return [
           2 /*return*/,
@@ -532,33 +522,22 @@ var AnalyticsService = /** @class */ (function () {
       });
     });
   };
-  AnalyticsService.prototype.calculateEngagementScore = function (metrics) {
+  AnalyticsService.prototype.calculateEngagementScore = (metrics) => {
     if (!metrics.length) return 0.1;
-    var totalActions = metrics.reduce(function (sum, m) {
-      return sum + (m.actionsCount || 0);
-    }, 0);
-    var avgDaysActive =
-      metrics.reduce(function (sum, m) {
-        return sum + (m.daysActive || 0);
-      }, 0) / metrics.length;
+    var totalActions = metrics.reduce((sum, m) => sum + (m.actionsCount || 0), 0);
+    var avgDaysActive = metrics.reduce((sum, m) => sum + (m.daysActive || 0), 0) / metrics.length;
     return Math.min((totalActions / 100) * 0.6 + (avgDaysActive / 30) * 0.4, 1);
   };
-  AnalyticsService.prototype.identifyRiskFactors = function (metrics) {
+  AnalyticsService.prototype.identifyRiskFactors = (metrics) => {
     var factors = [];
-    var avgActions =
-      metrics.reduce(function (sum, m) {
-        return sum + (m.actionsCount || 0);
-      }, 0) / metrics.length;
-    var avgDaysActive =
-      metrics.reduce(function (sum, m) {
-        return sum + (m.daysActive || 0);
-      }, 0) / metrics.length;
+    var avgActions = metrics.reduce((sum, m) => sum + (m.actionsCount || 0), 0) / metrics.length;
+    var avgDaysActive = metrics.reduce((sum, m) => sum + (m.daysActive || 0), 0) / metrics.length;
     if (avgActions < 10) factors.push("Low engagement activity");
     if (avgDaysActive < 3) factors.push("Infrequent usage");
     if (metrics.length < 5) factors.push("Limited trial period usage");
     return factors;
   };
-  AnalyticsService.prototype.generateRecommendations = function (engagementScore) {
+  AnalyticsService.prototype.generateRecommendations = (engagementScore) => {
     var recommendations = [];
     if (engagementScore < 0.3) {
       recommendations.push("Send onboarding email sequence");
@@ -574,44 +553,30 @@ var AnalyticsService = /** @class */ (function () {
   }; // ========================================================================
   // UTILITY METHODS
   // ========================================================================
-  AnalyticsService.prototype.calculateTrend = function (values) {
+  AnalyticsService.prototype.calculateTrend = (values) => {
     if (values.length < 2) return 0;
     var n = values.length;
     var sumX = (n * (n - 1)) / 2;
-    var sumY = values.reduce(function (sum, val) {
-      return sum + val;
-    }, 0);
-    var sumXY = values.reduce(function (sum, val, i) {
-      return sum + i * val;
-    }, 0);
+    var sumY = values.reduce((sum, val) => sum + val, 0);
+    var sumXY = values.reduce((sum, val, i) => sum + i * val, 0);
     var sumXX = (n * (n - 1) * (2 * n - 1)) / 6;
     return (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
   };
-  AnalyticsService.prototype.projectForecast = function (values, trend, periods) {
+  AnalyticsService.prototype.projectForecast = (values, trend, periods) => {
     var lastValue = values[values.length - 1] || 0;
-    var realistic = Array.from({ length: periods }, function (_, i) {
-      return Math.max(0, lastValue + trend * (i + 1));
-    });
+    var realistic = Array.from({ length: periods }, (_, i) =>
+      Math.max(0, lastValue + trend * (i + 1)),
+    );
     return {
       realistic: realistic,
-      conservative: realistic.map(function (v) {
-        return v * 0.8;
-      }),
-      optimistic: realistic.map(function (v) {
-        return v * 1.2;
-      }),
+      conservative: realistic.map((v) => v * 0.8),
+      optimistic: realistic.map((v) => v * 1.2),
       scenarios: {
-        conservative: realistic.map(function (v) {
-          return v * 0.8;
-        }),
-        optimistic: realistic.map(function (v) {
-          return v * 1.2;
-        }),
+        conservative: realistic.map((v) => v * 0.8),
+        optimistic: realistic.map((v) => v * 1.2),
         realistic: realistic,
       },
-      confidence: realistic.map(function () {
-        return Math.random() * 0.3 + 0.7;
-      }), // 70-100% confidence
+      confidence: realistic.map(() => Math.random() * 0.3 + 0.7), // 70-100% confidence
     };
   };
   AnalyticsService.prototype.generateCacheKey = function (type, query) {
@@ -627,7 +592,7 @@ var AnalyticsService = /** @class */ (function () {
       .concat(type, ":")
       .concat(Buffer.from(queryHash).toString("base64").slice(0, 16));
   };
-  AnalyticsService.prototype.createResponse = function (data, query, startTime, cacheHit) {
+  AnalyticsService.prototype.createResponse = (data, query, startTime, cacheHit) => {
     if (cacheHit === void 0) {
       cacheHit = false;
     }

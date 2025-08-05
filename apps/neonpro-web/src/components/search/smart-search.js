@@ -4,18 +4,17 @@
  * Intelligent search interface with NLP processing
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,10 +134,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -149,7 +146,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SmartSearch = SmartSearch;
 var react_1 = require("react");
@@ -164,7 +161,6 @@ var utils_1 = require("@/lib/utils");
  * Smart Search Component with NLP Integration
  */
 function SmartSearch(_a) {
-  var _this = this;
   var onResultSelect = _a.onResultSelect,
     _b = _a.placeholder,
     placeholder = _b === void 0 ? "Pesquisar pacientes, consultas, tratamentos..." : _b,
@@ -226,27 +222,27 @@ function SmartSearch(_a) {
     { id: "provider", label: "Profissionais", icon: "👨‍⚕️" },
   ];
   // Initialize speech recognition
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     if (typeof window !== "undefined" && "webkitSpeechRecognition" in window) {
       recognition.current = new window.webkitSpeechRecognition();
       recognition.current.continuous = false;
       recognition.current.interimResults = false;
       recognition.current.lang = "pt-BR";
-      recognition.current.onresult = function (event) {
+      recognition.current.onresult = (event) => {
         var transcript = event.results[0][0].transcript;
         setQuery(transcript);
         setIsVoiceActive(false);
       };
-      recognition.current.onerror = function () {
+      recognition.current.onerror = () => {
         setIsVoiceActive(false);
       };
-      recognition.current.onend = function () {
+      recognition.current.onend = () => {
         setIsVoiceActive(false);
       };
     }
   }, []);
   // Load recent searches from localStorage
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     var saved = localStorage.getItem("smart-search-recent");
     if (saved) {
       try {
@@ -257,23 +253,20 @@ function SmartSearch(_a) {
     }
   }, []);
   // Get suggestions when query changes
-  (0, react_1.useEffect)(
-    function () {
-      if (debouncedQuery.length >= 2) {
-        getSuggestions(debouncedQuery);
-      } else {
-        setSuggestions([]);
-        setShowSuggestions(false);
-      }
-    },
-    [debouncedQuery],
-  );
+  (0, react_1.useEffect)(() => {
+    if (debouncedQuery.length >= 2) {
+      getSuggestions(debouncedQuery);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [debouncedQuery]);
   // Perform search
   var performSearch = (0, react_1.useCallback)(
-    function (searchQuery) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (searchQuery) =>
+      __awaiter(this, void 0, void 0, function () {
         var startTime, response, data, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!searchQuery.trim()) {
@@ -334,16 +327,15 @@ function SmartSearch(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [contentTypes, selectedFilters, maxResults, showAnalytics],
   );
   // Get search suggestions
   var getSuggestions = (0, react_1.useCallback)(
-    function (searchQuery) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (searchQuery) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data, apiSuggestions, recentSuggestions, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -362,20 +354,14 @@ function SmartSearch(_a) {
             case 2:
               data = _a.sent();
               if (data.success) {
-                apiSuggestions = data.data.suggestions.map(function (text) {
-                  return {
-                    text: text,
-                    type: "nlp",
-                  };
-                });
+                apiSuggestions = data.data.suggestions.map((text) => ({
+                  text: text,
+                  type: "nlp",
+                }));
                 recentSuggestions = recentSearches
-                  .filter(function (recent) {
-                    return recent.toLowerCase().includes(searchQuery.toLowerCase());
-                  })
+                  .filter((recent) => recent.toLowerCase().includes(searchQuery.toLowerCase()))
                   .slice(0, 3)
-                  .map(function (text) {
-                    return { text: text, type: "recent" };
-                  });
+                  .map((text) => ({ text: text, type: "recent" }));
                 setSuggestions(
                   __spreadArray(__spreadArray([], recentSuggestions, true), apiSuggestions, true),
                 );
@@ -390,57 +376,52 @@ function SmartSearch(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [recentSearches],
   );
   // Save recent search
-  var saveRecentSearch = function (searchQuery) {
+  var saveRecentSearch = (searchQuery) => {
     var updated = __spreadArray(
       [searchQuery],
-      recentSearches.filter(function (s) {
-        return s !== searchQuery;
-      }),
+      recentSearches.filter((s) => s !== searchQuery),
       true,
     ).slice(0, 10);
     setRecentSearches(updated);
     localStorage.setItem("smart-search-recent", JSON.stringify(updated));
   };
   // Handle search submission
-  var handleSearch = function (searchQuery) {
+  var handleSearch = (searchQuery) => {
     var queryToSearch = searchQuery || query;
     if (queryToSearch.trim()) {
       performSearch(queryToSearch);
     }
   };
   // Handle voice search
-  var handleVoiceSearch = function () {
+  var handleVoiceSearch = () => {
     if (recognition.current && !isVoiceActive) {
       setIsVoiceActive(true);
       recognition.current.start();
     }
   };
   // Handle filter toggle
-  var toggleFilter = function (filterId) {
-    setSelectedFilters(function (prev) {
-      return prev.includes(filterId)
-        ? prev.filter(function (id) {
-            return id !== filterId;
-          })
-        : __spreadArray(__spreadArray([], prev, true), [filterId], false);
-    });
+  var toggleFilter = (filterId) => {
+    setSelectedFilters((prev) =>
+      prev.includes(filterId)
+        ? prev.filter((id) => id !== filterId)
+        : __spreadArray(__spreadArray([], prev, true), [filterId], false),
+    );
   };
   // Handle suggestion click
-  var handleSuggestionClick = function (suggestion) {
+  var handleSuggestionClick = (suggestion) => {
     setQuery(suggestion.text);
     handleSearch(suggestion.text);
   };
   // Handle result click
-  var handleResultClick = function (result) {
+  var handleResultClick = (result) => {
     onResultSelect === null || onResultSelect === void 0 ? void 0 : onResultSelect(result);
   };
   // Handle key press
-  var handleKeyPress = function (e) {
+  var handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearch();
     } else if (e.key === "Escape") {
@@ -458,13 +439,9 @@ function SmartSearch(_a) {
             type="text"
             placeholder={placeholder}
             value={query}
-            onChange={function (e) {
-              return setQuery(e.target.value);
-            }}
+            onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyPress}
-            onFocus={function () {
-              return setShowSuggestions(suggestions.length > 0);
-            }}
+            onFocus={() => setShowSuggestions(suggestions.length > 0)}
             className="pl-10 pr-20 h-12 text-base"
           />
           <div className="absolute right-2 flex items-center gap-1">
@@ -485,9 +462,7 @@ function SmartSearch(_a) {
             )}
             <button_1.Button
               type="button"
-              onClick={function () {
-                return handleSearch();
-              }}
+              onClick={() => handleSearch()}
               disabled={isSearching || !query.trim()}
               size="sm"
               className="h-8"
@@ -501,27 +476,23 @@ function SmartSearch(_a) {
         {showSuggestions && suggestions.length > 0 && (
           <card_1.Card className="absolute top-full left-0 right-0 z-50 mt-1 max-h-80 overflow-y-auto">
             <card_1.CardContent className="p-2">
-              {suggestions.map(function (suggestion, index) {
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 p-2 hover:bg-muted rounded cursor-pointer"
-                    onClick={function () {
-                      return handleSuggestionClick(suggestion);
-                    }}
-                  >
-                    {suggestion.type === "recent"
-                      ? <lucide_react_1.Clock className="h-4 w-4 text-muted-foreground" />
-                      : <lucide_react_1.TrendingUp className="h-4 w-4 text-muted-foreground" />}
-                    <span className="flex-1">{suggestion.text}</span>
-                    {suggestion.count && (
-                      <badge_1.Badge variant="secondary" className="text-xs">
-                        {suggestion.count}
-                      </badge_1.Badge>
-                    )}
-                  </div>
-                );
-              })}
+              {suggestions.map((suggestion, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 p-2 hover:bg-muted rounded cursor-pointer"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion.type === "recent"
+                    ? <lucide_react_1.Clock className="h-4 w-4 text-muted-foreground" />
+                    : <lucide_react_1.TrendingUp className="h-4 w-4 text-muted-foreground" />}
+                  <span className="flex-1">{suggestion.text}</span>
+                  {suggestion.count && (
+                    <badge_1.Badge variant="secondary" className="text-xs">
+                      {suggestion.count}
+                    </badge_1.Badge>
+                  )}
+                </div>
+              ))}
             </card_1.CardContent>
           </card_1.Card>
         )}
@@ -530,29 +501,23 @@ function SmartSearch(_a) {
       {/* Filters */}
       {showFilters && (
         <div className="flex flex-wrap gap-2 mt-3">
-          {availableContentTypes.map(function (type) {
-            return (
-              <button_1.Button
-                key={type.id}
-                variant={selectedFilters.includes(type.id) ? "default" : "outline"}
-                size="sm"
-                onClick={function () {
-                  return toggleFilter(type.id);
-                }}
-                className="h-8"
-              >
-                <span className="mr-1">{type.icon}</span>
-                {type.label}
-              </button_1.Button>
-            );
-          })}
+          {availableContentTypes.map((type) => (
+            <button_1.Button
+              key={type.id}
+              variant={selectedFilters.includes(type.id) ? "default" : "outline"}
+              size="sm"
+              onClick={() => toggleFilter(type.id)}
+              className="h-8"
+            >
+              <span className="mr-1">{type.icon}</span>
+              {type.label}
+            </button_1.Button>
+          ))}
           {selectedFilters.length > 0 && (
             <button_1.Button
               variant="ghost"
               size="sm"
-              onClick={function () {
-                return setSelectedFilters([]);
-              }}
+              onClick={() => setSelectedFilters([])}
               className="h-8 text-muted-foreground"
             >
               <lucide_react_1.X className="h-4 w-4 mr-1" />
@@ -583,13 +548,11 @@ function SmartSearch(_a) {
                 <div>
                   <span className="font-medium">Entidades:</span>
                   <div className="flex flex-wrap gap-1 mt-1">
-                    {nlpAnalysis.entities.map(function (entity, index) {
-                      return (
-                        <badge_1.Badge key={index} variant="secondary" className="text-xs">
-                          {entity.value} ({entity.type})
-                        </badge_1.Badge>
-                      );
-                    })}
+                    {nlpAnalysis.entities.map((entity, index) => (
+                      <badge_1.Badge key={index} variant="secondary" className="text-xs">
+                        {entity.value} ({entity.type})
+                      </badge_1.Badge>
+                    ))}
                   </div>
                 </div>
               )}
@@ -633,23 +596,21 @@ function SmartSearch(_a) {
                 </div>
               : results.length > 0
                 ? <div className="space-y-3">
-                    {results.map(function (result, index) {
+                    {results.map((result, index) => {
                       var _a;
                       return (
                         <div
                           key={result.id}
                           className="p-3 border rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
-                          onClick={function () {
-                            return handleResultClick(result);
-                          }}
+                          onClick={() => handleResultClick(result)}
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
                                 <badge_1.Badge variant="outline" className="text-xs">
-                                  {((_a = availableContentTypes.find(function (t) {
-                                    return t.id === result.contentType;
-                                  })) === null || _a === void 0
+                                  {((_a = availableContentTypes.find(
+                                    (t) => t.id === result.contentType,
+                                  )) === null || _a === void 0
                                     ? void 0
                                     : _a.label) || result.contentType}
                                 </badge_1.Badge>
@@ -677,20 +638,16 @@ function SmartSearch(_a) {
                         <div className="mt-4">
                           <p className="text-sm mb-2">Tente pesquisar por:</p>
                           <div className="flex flex-wrap gap-2 justify-center">
-                            {nlpAnalysis.suggestions.map(function (suggestion, index) {
-                              return (
-                                <button_1.Button
-                                  key={index}
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={function () {
-                                    return handleSearch(suggestion);
-                                  }}
-                                >
-                                  {suggestion}
-                                </button_1.Button>
-                              );
-                            })}
+                            {nlpAnalysis.suggestions.map((suggestion, index) => (
+                              <button_1.Button
+                                key={index}
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleSearch(suggestion)}
+                              >
+                                {suggestion}
+                              </button_1.Button>
+                            ))}
                           </div>
                         </div>
                       )}

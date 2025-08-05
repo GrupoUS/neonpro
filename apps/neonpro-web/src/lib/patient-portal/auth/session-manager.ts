@@ -1,8 +1,8 @@
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
-import type { AuditLogger } from "../../audit/audit-logger";
-import type { EncryptionService } from "../../security/encryption-service";
-import type { LGPDManager } from "../../lgpd/lgpd-manager";
 import crypto from "crypto";
+import type { AuditLogger } from "../../audit/audit-logger";
+import type { LGPDManager } from "../../lgpd/lgpd-manager";
+import type { EncryptionService } from "../../security/encryption-service";
 
 // Session configuration interface
 export interface SessionConfig {
@@ -247,10 +247,7 @@ export class SessionManager {
 
             return { isValid: true, session };
           }
-        } catch (decryptError) {
-          // Continue to next session if decryption fails
-          continue;
-        }
+        } catch (decryptError) {}
       }
 
       return { isValid: false, reason: "Invalid session token" };
@@ -433,10 +430,7 @@ export class SessionManager {
             isActive: sessionRecord.is_active,
             createdAt: new Date(sessionRecord.created_at),
           });
-        } catch (decryptError) {
-          // Skip sessions that can't be decrypted
-          continue;
-        }
+        } catch (decryptError) {}
       }
 
       return sessions;

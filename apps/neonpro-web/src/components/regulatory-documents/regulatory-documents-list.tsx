@@ -1,5 +1,9 @@
 "use client";
 
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertTriangle, Calendar, FileText, Plus, Search } from "lucide-react";
+import type { useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent } from "@/components/ui/card";
@@ -18,10 +22,6 @@ import type {
   isDocumentExpired,
   isDocumentExpiring,
 } from "@/types/regulatory-documents";
-import type { formatDistanceToNow } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { AlertTriangle, Calendar, FileText, Plus, Search } from "lucide-react";
-import type { useState } from "react";
 
 interface RegulatoryDocumentsListProps {
   onCreateDocument?: () => void;

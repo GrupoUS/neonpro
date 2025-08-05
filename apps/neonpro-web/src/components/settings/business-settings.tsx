@@ -1,9 +1,26 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm, useFieldArray } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  AlertCircle,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Coffee,
+  Loader2,
+  Pause,
+  Plus,
+  Save,
+  Settings,
+  Trash2,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useFieldArray, useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import * as z from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -21,8 +38,6 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type {
   Select,
   SelectContent,
@@ -32,21 +47,6 @@ import type {
 } from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Clock,
-  Calendar,
-  Plus,
-  Trash2,
-  AlertCircle,
-  Save,
-  CheckCircle2,
-  Loader2,
-  Coffee,
-  Pause,
-  Settings,
-} from "lucide-react";
-import type { toast } from "sonner";
 
 const daysOfWeek = [
   { value: "monday", label: "Segunda-feira", short: "SEG" },

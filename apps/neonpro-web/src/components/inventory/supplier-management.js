@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplierManagement = SupplierManagement;
 var react_1 = require("react");
@@ -148,8 +147,8 @@ function SupplierManagement() {
     editingSupplier = _e[0],
     setEditingSupplier = _e[1];
   var filteredSuppliers = (0, react_1.useMemo)(
-    function () {
-      return mockSuppliers.filter(function (supplier) {
+    () =>
+      mockSuppliers.filter((supplier) => {
         var matchesSearch =
           supplier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           supplier.cnpj.includes(searchTerm) ||
@@ -158,12 +157,11 @@ function SupplierManagement() {
         var matchesCategory =
           selectedCategory === "all" || supplier.categories.includes(selectedCategory);
         return matchesSearch && matchesStatus && matchesCategory;
-      });
-    },
+      }),
     [searchTerm, selectedStatus, selectedCategory],
   );
   // CNPJ validation function
-  var validateCNPJ = function (cnpj) {
+  var validateCNPJ = (cnpj) => {
     // Remove formatting
     var cleanCNPJ = cnpj.replace(/[^\d]/g, "");
     if (cleanCNPJ.length !== 14) return false;
@@ -190,11 +188,11 @@ function SupplierManagement() {
     return parseInt(cleanCNPJ.charAt(13)) === digit2;
   };
   // Format CNPJ for display
-  var formatCNPJ = function (cnpj) {
+  var formatCNPJ = (cnpj) => {
     var clean = cnpj.replace(/[^\d]/g, "");
     return clean.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, "$1.$2.$3/$4-$5");
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "active":
         return {
@@ -222,11 +220,11 @@ function SupplierManagement() {
         };
     }
   };
-  var handleEdit = function (supplier) {
+  var handleEdit = (supplier) => {
     setEditingSupplier(supplier);
     setIsDialogOpen(true);
   };
-  var handleDelete = function (supplierId) {
+  var handleDelete = (supplierId) => {
     // In a real implementation, this would show a confirmation dialog
     // and then make an API call to delete the supplier
     console.log("Deleting supplier:", supplierId);
@@ -240,9 +238,7 @@ function SupplierManagement() {
           <input_1.Input
             placeholder="Buscar por nome, CNPJ ou email..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -265,23 +261,17 @@ function SupplierManagement() {
           </select_1.SelectTrigger>
           <select_1.SelectContent>
             <select_1.SelectItem value="all">Todas as categorias</select_1.SelectItem>
-            {categories.map(function (category) {
-              return (
-                <select_1.SelectItem key={category.id} value={category.id}>
-                  {category.icon} {category.name}
-                </select_1.SelectItem>
-              );
-            })}
+            {categories.map((category) => (
+              <select_1.SelectItem key={category.id} value={category.id}>
+                {category.icon} {category.name}
+              </select_1.SelectItem>
+            ))}
           </select_1.SelectContent>
         </select_1.Select>
 
         <dialog_1.Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <dialog_1.DialogTrigger asChild>
-            <button_1.Button
-              onClick={function () {
-                return setEditingSupplier(null);
-              }}
-            >
+            <button_1.Button onClick={() => setEditingSupplier(null)}>
               <lucide_react_1.Plus className="w-4 h-4 mr-2" />
               Novo Fornecedor
             </button_1.Button>
@@ -362,7 +352,7 @@ function SupplierManagement() {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredSuppliers.map(function (supplier) {
+                {filteredSuppliers.map((supplier) => {
                   var statusBadge = getStatusBadge(supplier.status);
                   var StatusIcon = statusBadge.icon;
                   return (
@@ -393,10 +383,8 @@ function SupplierManagement() {
 
                       <table_1.TableCell>
                         <div className="flex flex-wrap gap-1">
-                          {supplier.categories.slice(0, 2).map(function (categoryId) {
-                            var category = categories.find(function (c) {
-                              return c.id === categoryId;
-                            });
+                          {supplier.categories.slice(0, 2).map((categoryId) => {
+                            var category = categories.find((c) => c.id === categoryId);
                             return category
                               ? <badge_1.Badge
                                   key={categoryId}
@@ -506,18 +494,14 @@ function SupplierManagement() {
                           <button_1.Button
                             size="sm"
                             variant="outline"
-                            onClick={function () {
-                              return handleEdit(supplier);
-                            }}
+                            onClick={() => handleEdit(supplier)}
                           >
                             <lucide_react_1.Edit className="w-3 h-3" />
                           </button_1.Button>
                           <button_1.Button
                             size="sm"
                             variant="outline"
-                            onClick={function () {
-                              return handleDelete(supplier.id);
-                            }}
+                            onClick={() => handleDelete(supplier.id)}
                             className="text-red-600 hover:text-red-700"
                           >
                             <lucide_react_1.Trash2 className="w-3 h-3" />
@@ -547,11 +531,7 @@ function SupplierManagement() {
           </card_1.CardHeader>
           <card_1.CardContent className="pt-0">
             <div className="text-2xl font-bold text-green-600">
-              {
-                mockSuppliers.filter(function (s) {
-                  return s.lgpdConsent;
-                }).length
-              }
+              {mockSuppliers.filter((s) => s.lgpdConsent).length}
             </div>
             <p className="text-xs text-muted-foreground">
               de {mockSuppliers.length} fornecedores em compliance
@@ -565,11 +545,7 @@ function SupplierManagement() {
           </card_1.CardHeader>
           <card_1.CardContent className="pt-0">
             <div className="text-2xl font-bold text-blue-600">
-              {
-                mockSuppliers.filter(function (s) {
-                  return s.anvisaAuthorization;
-                }).length
-              }
+              {mockSuppliers.filter((s) => s.anvisaAuthorization).length}
             </div>
             <p className="text-xs text-muted-foreground">fornecedores com autorização médica</p>
           </card_1.CardContent>
@@ -582,9 +558,7 @@ function SupplierManagement() {
           <card_1.CardContent className="pt-0">
             <div className="text-2xl font-bold text-yellow-600">
               {(
-                mockSuppliers.reduce(function (acc, s) {
-                  return acc + s.averageRating;
-                }, 0) / mockSuppliers.length
+                mockSuppliers.reduce((acc, s) => acc + s.averageRating, 0) / mockSuppliers.length
               ).toFixed(1)}
               ★
             </div>

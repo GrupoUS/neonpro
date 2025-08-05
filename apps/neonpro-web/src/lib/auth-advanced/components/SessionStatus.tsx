@@ -3,21 +3,21 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { useSessionContext } from "../context";
-import type { AuthUtils } from "../utils";
 import type {
-  Clock,
-  Shield,
+  Activity,
   AlertTriangle,
   CheckCircle,
-  XCircle,
+  Clock,
+  MapPin,
   Monitor,
+  Shield,
   Smartphone,
   Tablet,
-  MapPin,
-  Activity,
+  XCircle,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { useSessionContext } from "../context";
+import type { AuthUtils } from "../utils";
 
 interface SessionStatusProps {
   className?: string;

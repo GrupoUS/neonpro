@@ -1,4 +1,3 @@
-"use strict";
 // Advanced Authentication System - NeonPro
 // Unified integration of all advanced authentication components
 // Complete session management with security, monitoring, and compliance
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,10 +145,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -160,7 +157,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdvancedAuthSystem = void 0;
 exports.getAdvancedAuthSystem = getAdvancedAuthSystem;
@@ -176,7 +173,7 @@ var session_preservation_1 = require("./preservation/session-preservation");
 var emergency_shutdown_1 = require("./emergency/emergency-shutdown");
 var audit_trail_1 = require("./audit/audit-trail");
 var data_cleanup_1 = require("./cleanup/data-cleanup");
-var AdvancedAuthSystem = /** @class */ (function () {
+var AdvancedAuthSystem = /** @class */ (() => {
   function AdvancedAuthSystem(config) {
     if (config === void 0) {
       config = {};
@@ -522,8 +519,8 @@ var AdvancedAuthSystem = /** @class */ (function () {
         console.log("Setting up component integration...");
         // Integrate suspicious activity detector with security monitor
         if (this.suspiciousDetector && this.securityMonitor) {
-          this.suspiciousDetector.on("anomaly_detected", function (event) {
-            return __awaiter(_this, void 0, void 0, function () {
+          this.suspiciousDetector.on("anomaly_detected", (event) =>
+            __awaiter(_this, void 0, void 0, function () {
               return __generator(this, function (_a) {
                 switch (_a.label) {
                   case 0:
@@ -533,13 +530,13 @@ var AdvancedAuthSystem = /** @class */ (function () {
                     return [2 /*return*/];
                 }
               });
-            });
-          });
+            }),
+          );
         }
         // Integrate security monitor with emergency manager
         if (this.securityMonitor && this.emergencyManager) {
-          this.securityMonitor.on("critical_threat", function (threat) {
-            return __awaiter(_this, void 0, void 0, function () {
+          this.securityMonitor.on("critical_threat", (threat) =>
+            __awaiter(_this, void 0, void 0, function () {
               return __generator(this, function (_a) {
                 switch (_a.label) {
                   case 0:
@@ -563,13 +560,13 @@ var AdvancedAuthSystem = /** @class */ (function () {
                     return [2 /*return*/];
                 }
               });
-            });
-          });
+            }),
+          );
         }
         // Integrate timeout manager with preservation
         if (this.timeoutManager && this.preservationManager) {
-          this.timeoutManager.on("session_warning", function (event) {
-            return __awaiter(_this, void 0, void 0, function () {
+          this.timeoutManager.on("session_warning", (event) =>
+            __awaiter(_this, void 0, void 0, function () {
               return __generator(this, function (_a) {
                 switch (_a.label) {
                   case 0:
@@ -586,8 +583,8 @@ var AdvancedAuthSystem = /** @class */ (function () {
                     return [2 /*return*/];
                 }
               });
-            });
-          });
+            }),
+          );
         }
         // Integrate all components with audit manager
         if (this.auditManager) {
@@ -601,10 +598,10 @@ var AdvancedAuthSystem = /** @class */ (function () {
             this.emergencyManager,
             this.cleanupManager,
           ].filter(Boolean);
-          components.forEach(function (component) {
+          components.forEach((component) => {
             if (component && typeof component.on === "function") {
-              component.on("*", function (event) {
-                return __awaiter(_this, void 0, void 0, function () {
+              component.on("*", (event) =>
+                __awaiter(_this, void 0, void 0, function () {
                   return __generator(this, function (_a) {
                     switch (_a.label) {
                       case 0:
@@ -627,8 +624,8 @@ var AdvancedAuthSystem = /** @class */ (function () {
                         return [2 /*return*/];
                     }
                   });
-                });
-              });
+                }),
+              );
             }
           });
         }
@@ -641,51 +638,54 @@ var AdvancedAuthSystem = /** @class */ (function () {
    * Start system monitoring
    */
   AdvancedAuthSystem.prototype.startSystemMonitoring = function () {
-    var _this = this;
     // Health check interval
-    this.healthCheckInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_2;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.performHealthCheck()];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_2 = _a.sent();
-              console.error("Error during health check:", error_2);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.monitoringInterval);
+    this.healthCheckInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_2;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.performHealthCheck()];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_2 = _a.sent();
+                console.error("Error during health check:", error_2);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.monitoringInterval,
+    );
     // Metrics collection interval
-    this.metricsInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_3;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.collectMetrics()];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_3 = _a.sent();
-              console.error("Error collecting metrics:", error_3);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.monitoringInterval / 2);
+    this.metricsInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_3;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.collectMetrics()];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_3 = _a.sent();
+                console.error("Error collecting metrics:", error_3);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.monitoringInterval / 2,
+    );
     console.log("System monitoring started");
   };
   /**
@@ -962,7 +962,7 @@ var AdvancedAuthSystem = /** @class */ (function () {
             return [4 /*yield*/, this.timeoutManager.checkSession(sessionId)];
           case 2:
             isValid = _a.sent();
-            if (!!isValid) return [3 /*break*/, 4];
+            if (isValid) return [3 /*break*/, 4];
             return [4 /*yield*/, this.terminateSession(sessionId, "timeout")];
           case 3:
             _a.sent();
@@ -972,7 +972,7 @@ var AdvancedAuthSystem = /** @class */ (function () {
             return [4 /*yield*/, this.concurrentManager.validateSession(sessionId)];
           case 5:
             isValid = _a.sent();
-            if (!!isValid) return [3 /*break*/, 7];
+            if (isValid) return [3 /*break*/, 7];
             return [4 /*yield*/, this.terminateSession(sessionId, "concurrent_violation")];
           case 6:
             _a.sent();
@@ -1134,7 +1134,7 @@ var AdvancedAuthSystem = /** @class */ (function () {
     var components = Array.from(this.componentStatuses.values());
     var healthIssues = [];
     // Analyze component health
-    components.forEach(function (component) {
+    components.forEach((component) => {
       if (component.status === "error") {
         healthIssues.push({
           component: component.name,
@@ -1154,9 +1154,7 @@ var AdvancedAuthSystem = /** @class */ (function () {
       }
     });
     // Calculate overall health
-    var healthyComponents = components.filter(function (c) {
-      return c.status === "healthy";
-    }).length;
+    var healthyComponents = components.filter((c) => c.status === "healthy").length;
     var totalComponents = components.length;
     var healthScore = totalComponents > 0 ? (healthyComponents / totalComponents) * 100 : 0;
     var overallHealth;
@@ -1177,18 +1175,12 @@ var AdvancedAuthSystem = /** @class */ (function () {
         issues: healthIssues,
         recommendations: this.generateRecommendations(healthIssues),
       },
-      alerts: this.systemAlerts.filter(function (alert) {
-        return !alert.acknowledged;
-      }),
+      alerts: this.systemAlerts.filter((alert) => !alert.acknowledged),
     };
   };
   AdvancedAuthSystem.prototype.generateRecommendations = function (issues) {
     var recommendations = [];
-    if (
-      issues.some(function (i) {
-        return i.severity === "critical";
-      })
-    ) {
+    if (issues.some((i) => i.severity === "critical")) {
       recommendations.push("Immediate attention required for critical issues");
     }
     if (issues.length > 3) {
@@ -1209,9 +1201,7 @@ var AdvancedAuthSystem = /** @class */ (function () {
     return __spreadArray([], this.systemAlerts, true);
   };
   AdvancedAuthSystem.prototype.acknowledgeAlert = function (alertId) {
-    var alert = this.systemAlerts.find(function (a) {
-      return a.id === alertId;
-    });
+    var alert = this.systemAlerts.find((a) => a.id === alertId);
     if (alert) {
       alert.acknowledged = true;
     }
@@ -1247,7 +1237,7 @@ var AdvancedAuthSystem = /** @class */ (function () {
   AdvancedAuthSystem.prototype.emit = function (event, data) {
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (callback) {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {

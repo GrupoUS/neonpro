@@ -5,32 +5,31 @@
  * React component for managing patient waitlists and automated notifications
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = WaitlistManagement;
 var react_1 = require("react");
@@ -169,7 +166,6 @@ var scroll_area_1 = require("@/components/ui/scroll-area");
 var lucide_react_1 = require("lucide-react");
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 function WaitlistManagement(_a) {
-  var _this = this;
   var treatmentType = _a.treatmentType,
     onPatientAdded = _a.onPatientAdded,
     onNotificationSent = _a.onNotificationSent,
@@ -200,16 +196,13 @@ function WaitlistManagement(_a) {
     setFormData = _g[1];
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   // Load waitlist entries on component mount
-  (0, react_1.useEffect)(
-    function () {
-      loadWaitlistEntries();
-    },
-    [treatmentType],
-  );
-  var loadWaitlistEntries = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadWaitlistEntries();
+  }, [treatmentType]);
+  var loadWaitlistEntries = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, errorData, result, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
@@ -226,7 +219,7 @@ function WaitlistManagement(_a) {
             return [4 /*yield*/, fetch("/api/scheduling/waitlist?".concat(params.toString()))];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.json()];
           case 3:
             errorData = _a.sent();
@@ -249,11 +242,10 @@ function WaitlistManagement(_a) {
         }
       });
     });
-  };
-  var addToWaitlist = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var addToWaitlist = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, errorData, result, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (
@@ -294,7 +286,7 @@ function WaitlistManagement(_a) {
             ];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.json()];
           case 3:
             errorData = _a.sent();
@@ -334,11 +326,10 @@ function WaitlistManagement(_a) {
         }
       });
     });
-  };
-  var sendNotification = function (entryId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var sendNotification = (entryId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, errorData, err_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
@@ -364,7 +355,7 @@ function WaitlistManagement(_a) {
             ];
           case 2:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.json()];
           case 3:
             errorData = _a.sent();
@@ -391,8 +382,7 @@ function WaitlistManagement(_a) {
         }
       });
     });
-  };
-  var getUrgencyColor = function (urgency) {
+  var getUrgencyColor = (urgency) => {
     switch (urgency) {
       case "low":
         return "bg-gray-100 text-gray-800";
@@ -408,7 +398,7 @@ function WaitlistManagement(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -424,10 +414,8 @@ function WaitlistManagement(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString();
-  };
-  var getDayName = function (dayOfWeek) {
+  var formatDate = (dateString) => new Date(dateString).toLocaleDateString();
+  var getDayName = (dayOfWeek) => {
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     return days[dayOfWeek];
   };
@@ -459,12 +447,7 @@ function WaitlistManagement(_a) {
                 Refresh
               </button_1.Button>
               {showAddForm && (
-                <button_1.Button
-                  onClick={function () {
-                    return setShowForm(!showForm);
-                  }}
-                  size="sm"
-                >
+                <button_1.Button onClick={() => setShowForm(!showForm)} size="sm">
                   <lucide_react_1.Plus className="w-4 h-4 mr-2" />
                   Add Patient
                 </button_1.Button>
@@ -481,14 +464,14 @@ function WaitlistManagement(_a) {
             <separator_1.Separator orientation="vertical" className="h-4" />
             <span>
               {
-                waitlistEntries.filter(function (e) {
-                  return e.urgencyLevel === "urgent" || e.urgencyLevel === "emergency";
-                }).length
+                waitlistEntries.filter(
+                  (e) => e.urgencyLevel === "urgent" || e.urgencyLevel === "emergency",
+                ).length
               }{" "}
               urgent case
-              {waitlistEntries.filter(function (e) {
-                return e.urgencyLevel === "urgent" || e.urgencyLevel === "emergency";
-              }).length !== 1
+              {waitlistEntries.filter(
+                (e) => e.urgencyLevel === "urgent" || e.urgencyLevel === "emergency",
+              ).length !== 1
                 ? "s"
                 : ""}
             </span>
@@ -524,11 +507,9 @@ function WaitlistManagement(_a) {
                 <input_1.Input
                   id="patientId"
                   value={formData.patientId}
-                  onChange={function (e) {
-                    return setFormData(
-                      __assign(__assign({}, formData), { patientId: e.target.value }),
-                    );
-                  }}
+                  onChange={(e) =>
+                    setFormData(__assign(__assign({}, formData), { patientId: e.target.value }))
+                  }
                   placeholder="Enter patient ID"
                 />
               </div>
@@ -537,11 +518,9 @@ function WaitlistManagement(_a) {
                 <input_1.Input
                   id="treatmentType"
                   value={formData.treatmentType}
-                  onChange={function (e) {
-                    return setFormData(
-                      __assign(__assign({}, formData), { treatmentType: e.target.value }),
-                    );
-                  }}
+                  onChange={(e) =>
+                    setFormData(__assign(__assign({}, formData), { treatmentType: e.target.value }))
+                  }
                   placeholder="Enter treatment type"
                 />
               </div>
@@ -554,11 +533,11 @@ function WaitlistManagement(_a) {
                   id="startDate"
                   type="date"
                   value={formData.preferredStartDate}
-                  onChange={function (e) {
-                    return setFormData(
+                  onChange={(e) =>
+                    setFormData(
                       __assign(__assign({}, formData), { preferredStartDate: e.target.value }),
-                    );
-                  }}
+                    )
+                  }
                 />
               </div>
               <div>
@@ -567,11 +546,11 @@ function WaitlistManagement(_a) {
                   id="endDate"
                   type="date"
                   value={formData.preferredEndDate}
-                  onChange={function (e) {
-                    return setFormData(
+                  onChange={(e) =>
+                    setFormData(
                       __assign(__assign({}, formData), { preferredEndDate: e.target.value }),
-                    );
-                  }}
+                    )
+                  }
                 />
               </div>
             </div>
@@ -580,9 +559,9 @@ function WaitlistManagement(_a) {
               <label_1.Label htmlFor="urgencyLevel">Urgency Level</label_1.Label>
               <select_1.Select
                 value={formData.urgencyLevel}
-                onValueChange={function (value) {
-                  return setFormData(__assign(__assign({}, formData), { urgencyLevel: value }));
-                }}
+                onValueChange={(value) =>
+                  setFormData(__assign(__assign({}, formData), { urgencyLevel: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Select urgency level" />
@@ -604,11 +583,11 @@ function WaitlistManagement(_a) {
               <textarea_1.Textarea
                 id="specialRequirements"
                 value={formData.specialRequirements}
-                onChange={function (e) {
-                  return setFormData(
+                onChange={(e) =>
+                  setFormData(
                     __assign(__assign({}, formData), { specialRequirements: e.target.value }),
-                  );
-                }}
+                  )
+                }
                 placeholder='{"accessibility": true, "language": "spanish"}'
                 rows={3}
               />
@@ -621,12 +600,7 @@ function WaitlistManagement(_a) {
                 : <lucide_react_1.Plus className="w-4 h-4 mr-2" />}
               Add to Waitlist
             </button_1.Button>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowForm(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowForm(false)}>
               Cancel
             </button_1.Button>
           </card_1.CardFooter>
@@ -654,106 +628,94 @@ function WaitlistManagement(_a) {
                 </div>
               : <scroll_area_1.ScrollArea className="h-96">
                   <div className="space-y-4">
-                    {waitlistEntries.map(function (entry) {
-                      return (
-                        <div key={entry.id} className="border rounded-lg p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <div>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="font-medium">Patient: {entry.patientId}</span>
-                                <badge_1.Badge className={getUrgencyColor(entry.urgencyLevel)}>
-                                  {entry.urgencyLevel}
-                                </badge_1.Badge>
-                                <badge_1.Badge className={getStatusColor(entry.status)}>
-                                  {entry.status}
-                                </badge_1.Badge>
-                              </div>
-                              <p className="text-sm text-gray-600">{entry.treatmentType}</p>
+                    {waitlistEntries.map((entry) => (
+                      <div key={entry.id} className="border rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-medium">Patient: {entry.patientId}</span>
+                              <badge_1.Badge className={getUrgencyColor(entry.urgencyLevel)}>
+                                {entry.urgencyLevel}
+                              </badge_1.Badge>
+                              <badge_1.Badge className={getStatusColor(entry.status)}>
+                                {entry.status}
+                              </badge_1.Badge>
                             </div>
-                            <div className="text-right">
-                              <div className="text-sm font-medium">
-                                Priority: {entry.priorityScore}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                Notifications: {entry.notificationCount}
-                              </div>
+                            <p className="text-sm text-gray-600">{entry.treatmentType}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-medium">
+                              Priority: {entry.priorityScore}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Notifications: {entry.notificationCount}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium">Preferred dates:</span>
+                            <div className="text-gray-600">
+                              {formatDate(entry.preferredDateRange.start.toString())} -{" "}
+                              {formatDate(entry.preferredDateRange.end.toString())}
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-4 text-sm">
+                          {entry.preferredTimeSlots && entry.preferredTimeSlots.length > 0 && (
                             <div>
-                              <span className="font-medium">Preferred dates:</span>
+                              <span className="font-medium">Preferred times:</span>
                               <div className="text-gray-600">
-                                {formatDate(entry.preferredDateRange.start.toString())} -{" "}
-                                {formatDate(entry.preferredDateRange.end.toString())}
-                              </div>
-                            </div>
-
-                            {entry.preferredTimeSlots && entry.preferredTimeSlots.length > 0 && (
-                              <div>
-                                <span className="font-medium">Preferred times:</span>
-                                <div className="text-gray-600">
-                                  {entry.preferredTimeSlots.map(function (slot, index) {
-                                    return (
-                                      <div key={index}>
-                                        {slot.dayOfWeek !== undefined &&
-                                          "".concat(getDayName(slot.dayOfWeek), " ")}
-                                        {slot.startTime} - {slot.endTime}
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-
-                          {Object.keys(entry.specialRequirements).length > 0 && (
-                            <div className="mt-3">
-                              <span className="text-sm font-medium">Special requirements:</span>
-                              <div className="text-sm text-gray-600">
-                                {Object.entries(entry.specialRequirements).map(function (_a) {
-                                  var key = _a[0],
-                                    value = _a[1];
-                                  return (
-                                    <badge_1.Badge
-                                      key={key}
-                                      variant="outline"
-                                      className="mr-1 mt-1"
-                                    >
-                                      {key}: {String(value)}
-                                    </badge_1.Badge>
-                                  );
-                                })}
+                                {entry.preferredTimeSlots.map((slot, index) => (
+                                  <div key={index}>
+                                    {slot.dayOfWeek !== undefined &&
+                                      "".concat(getDayName(slot.dayOfWeek), " ")}
+                                    {slot.startTime} - {slot.endTime}
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           )}
+                        </div>
 
-                          <div className="flex justify-between items-center mt-4 pt-3 border-t">
-                            <div className="text-xs text-gray-500">
-                              {entry.lastNotificationAt && (
-                                <>
-                                  Last notified: {formatDate(entry.lastNotificationAt.toString())}
-                                </>
-                              )}
+                        {Object.keys(entry.specialRequirements).length > 0 && (
+                          <div className="mt-3">
+                            <span className="text-sm font-medium">Special requirements:</span>
+                            <div className="text-sm text-gray-600">
+                              {Object.entries(entry.specialRequirements).map((_a) => {
+                                var key = _a[0],
+                                  value = _a[1];
+                                return (
+                                  <badge_1.Badge key={key} variant="outline" className="mr-1 mt-1">
+                                    {key}: {String(value)}
+                                  </badge_1.Badge>
+                                );
+                              })}
                             </div>
+                          </div>
+                        )}
 
-                            {entry.status === "active" && (
-                              <button_1.Button
-                                size="sm"
-                                variant="outline"
-                                onClick={function () {
-                                  return sendNotification(entry.id);
-                                }}
-                                disabled={isLoading}
-                              >
-                                <lucide_react_1.Send className="w-3 h-3 mr-1" />
-                                Notify
-                              </button_1.Button>
+                        <div className="flex justify-between items-center mt-4 pt-3 border-t">
+                          <div className="text-xs text-gray-500">
+                            {entry.lastNotificationAt && (
+                              <>Last notified: {formatDate(entry.lastNotificationAt.toString())}</>
                             )}
                           </div>
+
+                          {entry.status === "active" && (
+                            <button_1.Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => sendNotification(entry.id)}
+                              disabled={isLoading}
+                            >
+                              <lucide_react_1.Send className="w-3 h-3 mr-1" />
+                              Notify
+                            </button_1.Button>
+                          )}
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </scroll_area_1.ScrollArea>}
         </card_1.CardContent>

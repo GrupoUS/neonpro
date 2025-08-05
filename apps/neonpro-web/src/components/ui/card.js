@@ -1,17 +1,15 @@
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CardContent =
   exports.CardDescription =
@@ -22,7 +20,7 @@ exports.CardContent =
     void 0;
 var React = require("react");
 var utils_1 = require("@/lib/utils");
-var Card = React.forwardRef(function (_a, ref) {
+var Card = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -38,7 +36,7 @@ var Card = React.forwardRef(function (_a, ref) {
 });
 exports.Card = Card;
 Card.displayName = "Card";
-var CardHeader = React.forwardRef(function (_a, ref) {
+var CardHeader = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -51,7 +49,7 @@ var CardHeader = React.forwardRef(function (_a, ref) {
 });
 exports.CardHeader = CardHeader;
 CardHeader.displayName = "CardHeader";
-var CardTitle = React.forwardRef(function (_a, ref) {
+var CardTitle = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -64,7 +62,7 @@ var CardTitle = React.forwardRef(function (_a, ref) {
 });
 exports.CardTitle = CardTitle;
 CardTitle.displayName = "CardTitle";
-var CardDescription = React.forwardRef(function (_a, ref) {
+var CardDescription = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -77,14 +75,14 @@ var CardDescription = React.forwardRef(function (_a, ref) {
 });
 exports.CardDescription = CardDescription;
 CardDescription.displayName = "CardDescription";
-var CardContent = React.forwardRef(function (_a, ref) {
+var CardContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return <div ref={ref} className={(0, utils_1.cn)("p-6 pt-0", className)} {...props} />;
 });
 exports.CardContent = CardContent;
 CardContent.displayName = "CardContent";
-var CardFooter = React.forwardRef(function (_a, ref) {
+var CardFooter = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

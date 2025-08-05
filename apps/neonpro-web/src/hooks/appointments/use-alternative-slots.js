@@ -1,4 +1,3 @@
-"use strict";
 // =============================================
 // NeonPro Alternative Slots Suggestion Hook
 // Story 1.2: Task 5 - Alternative time slot suggestion system
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useAlternativeSlots = useAlternativeSlots;
 exports.formatAlternativeSlot = formatAlternativeSlot;
@@ -171,7 +168,6 @@ dayjs_1.default.extend(duration_1.default);
 dayjs_1.default.extend(isSameOrBefore_1.default);
 dayjs_1.default.extend(isSameOrAfter_1.default);
 function useAlternativeSlots() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     suggestions = _a[0],
     setSuggestions = _a[1];
@@ -191,101 +187,106 @@ function useAlternativeSlots() {
     performanceMetrics = _f[0],
     setPerformanceMetrics = _f[1];
   // Enhanced suggestion retrieval with performance tracking
-  var getSuggestions = (0, react_1.useCallback)(function (request) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var startTime, response, errorData, data, err_1, errorMessage;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            startTime = performance.now();
-            setIsLoading(true);
-            setError(null);
-            setSuggestions([]);
-            setSearchMetadata(null);
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 6, 7, 8]);
-            return [
-              4 /*yield*/,
-              fetch("/api/appointments/suggest-alternatives", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(
-                  __assign(__assign({}, request), {
-                    search_window_days: request.search_window_days || 7,
-                    max_suggestions: request.max_suggestions || 5,
-                  }),
-                ),
-              }),
-            ];
-          case 2:
-            response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
-            return [4 /*yield*/, response.json()];
-          case 3:
-            errorData = _a.sent();
-            throw new Error(
-              errorData.details || errorData.error || "Failed to get alternative suggestions",
-            );
-          case 4:
-            return [4 /*yield*/, response.json()];
-          case 5:
-            data = _a.sent();
-            if (!data.success) {
-              throw new Error("Server returned unsuccessful response");
-            }
-            setSuggestions(data.suggestions);
-            setSearchMetadata(data.metadata);
-            // Show success message if we found suggestions
-            if (data.suggestions.length > 0) {
-              sonner_1.toast.success(
-                "Encontrei "
-                  .concat(data.suggestions.length, " hor\u00E1rio")
-                  .concat(data.suggestions.length > 1 ? "s" : "", " alternativo")
-                  .concat(data.suggestions.length > 1 ? "s" : "", " dispon\u00EDvel")
-                  .concat(data.suggestions.length > 1 ? "is" : ""),
-                {
-                  description: "Tempo de busca: ".concat(data.performance.generation_time_ms, "ms"),
-                  duration: 3000,
-                },
+  var getSuggestions = (0, react_1.useCallback)(
+    (request) =>
+      __awaiter(this, void 0, void 0, function () {
+        var startTime, response, errorData, data, err_1, errorMessage;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              startTime = performance.now();
+              setIsLoading(true);
+              setError(null);
+              setSuggestions([]);
+              setSearchMetadata(null);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 6, 7, 8]);
+              return [
+                4 /*yield*/,
+                fetch("/api/appointments/suggest-alternatives", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(
+                    __assign(__assign({}, request), {
+                      search_window_days: request.search_window_days || 7,
+                      max_suggestions: request.max_suggestions || 5,
+                    }),
+                  ),
+                }),
+              ];
+            case 2:
+              response = _a.sent();
+              if (response.ok) return [3 /*break*/, 4];
+              return [4 /*yield*/, response.json()];
+            case 3:
+              errorData = _a.sent();
+              throw new Error(
+                errorData.details || errorData.error || "Failed to get alternative suggestions",
               );
-            } else {
-              sonner_1.toast.warning("Nenhum horário alternativo encontrado", {
-                description: "Tente expandir a janela de busca ou escolher outro profissional",
-                duration: 4000,
+            case 4:
+              return [4 /*yield*/, response.json()];
+            case 5:
+              data = _a.sent();
+              if (!data.success) {
+                throw new Error("Server returned unsuccessful response");
+              }
+              setSuggestions(data.suggestions);
+              setSearchMetadata(data.metadata);
+              // Show success message if we found suggestions
+              if (data.suggestions.length > 0) {
+                sonner_1.toast.success(
+                  "Encontrei "
+                    .concat(data.suggestions.length, " hor\u00E1rio")
+                    .concat(data.suggestions.length > 1 ? "s" : "", " alternativo")
+                    .concat(data.suggestions.length > 1 ? "s" : "", " dispon\u00EDvel")
+                    .concat(data.suggestions.length > 1 ? "is" : ""),
+                  {
+                    description: "Tempo de busca: ".concat(
+                      data.performance.generation_time_ms,
+                      "ms",
+                    ),
+                    duration: 3000,
+                  },
+                );
+              } else {
+                sonner_1.toast.warning("Nenhum horário alternativo encontrado", {
+                  description: "Tente expandir a janela de busca ou escolher outro profissional",
+                  duration: 4000,
+                });
+              }
+              return [3 /*break*/, 8];
+            case 6:
+              err_1 = _a.sent();
+              errorMessage =
+                err_1 instanceof Error
+                  ? err_1.message
+                  : "Erro desconhecido ao buscar horários alternativos";
+              setError(errorMessage);
+              sonner_1.toast.error("Erro ao buscar horários alternativos", {
+                description: errorMessage,
+                duration: 5000,
               });
-            }
-            return [3 /*break*/, 8];
-          case 6:
-            err_1 = _a.sent();
-            errorMessage =
-              err_1 instanceof Error
-                ? err_1.message
-                : "Erro desconhecido ao buscar horários alternativos";
-            setError(errorMessage);
-            sonner_1.toast.error("Erro ao buscar horários alternativos", {
-              description: errorMessage,
-              duration: 5000,
-            });
-            return [3 /*break*/, 8];
-          case 7:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 8:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var clearSuggestions = (0, react_1.useCallback)(function () {
+              return [3 /*break*/, 8];
+            case 7:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 8:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var clearSuggestions = (0, react_1.useCallback)(() => {
     setSuggestions([]);
     setError(null);
     setSelectedSuggestion(null);
     setSearchMetadata(null);
   }, []);
-  var selectSuggestion = (0, react_1.useCallback)(function (suggestion) {
+  var selectSuggestion = (0, react_1.useCallback)((suggestion) => {
     setSelectedSuggestion(suggestion);
     sonner_1.toast.success("Horário alternativo selecionado", {
       description: ""
@@ -340,7 +341,7 @@ function getSuggestionQualityColor(quality) {
 }
 // Utility function to group suggestions by day
 function groupSuggestionsByDay(suggestions) {
-  return suggestions.reduce(function (groups, suggestion) {
+  return suggestions.reduce((groups, suggestion) => {
     var date = new Date(suggestion.start_time).toDateString();
     if (!groups[date]) {
       groups[date] = [];
@@ -359,16 +360,15 @@ function calculatePreferenceMatch(suggestion, request) {
   // Time preference matching using dayjs optimization
   if (request.preferred_times && request.preferred_times.length > 0) {
     var suggestionTime_1 = (0, dayjs_1.default)(suggestion.start_time).format("HH:mm");
-    var timeMatch = request.preferred_times.some(function (pref) {
-      return (
+    var timeMatch = request.preferred_times.some(
+      (pref) =>
         Math.abs(
           (0, dayjs_1.default)("1970-01-01 ".concat(suggestionTime_1)).diff(
             (0, dayjs_1.default)("1970-01-01 ".concat(pref)),
             "minutes",
           ),
-        ) <= 30
-      );
-    });
+        ) <= 30,
+    );
     if (timeMatch) score += 0.3;
   }
   // Same day preference (higher score)
@@ -380,16 +380,14 @@ function calculatePreferenceMatch(suggestion, request) {
 // KPI calculation for user satisfaction (industry metric)
 function calculateAvgSatisfaction(suggestions) {
   if (suggestions.length === 0) return 0;
-  var totalScore = suggestions.reduce(function (sum, s) {
-    return sum + s.score;
-  }, 0);
+  var totalScore = suggestions.reduce((sum, s) => sum + s.score, 0);
   var avgScore = totalScore / suggestions.length;
   // Convert score to satisfaction percentage (research-based formula)
   return Math.max(0.3, avgScore / 100);
 }
 // Enhanced dayjs-based time filtering (performance optimization)
 function filterSuggestionsWithDayjs(suggestions, filters) {
-  return suggestions.filter(function (suggestion) {
+  return suggestions.filter((suggestion) => {
     var suggestionDayjs = suggestion.dayjs_instance || (0, dayjs_1.default)(suggestion.start_time);
     // Time range filtering
     if (filters.minTime) {

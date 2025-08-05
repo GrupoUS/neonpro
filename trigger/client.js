@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JOB_IDS = exports.client = void 0;
 var sdk_1 = require("@trigger.dev/sdk");

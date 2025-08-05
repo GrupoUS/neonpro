@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = BackupExport;
 var react_1 = require("react");
@@ -188,7 +185,6 @@ var backupExportSchema = z.object({
   }),
 });
 function BackupExport() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -244,52 +240,48 @@ function BackupExport() {
     },
   });
   // Load existing settings and backup history
-  (0, react_1.useEffect)(
-    function () {
-      var loadBackupSettings = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            setIsLoading(true);
-            try {
-              // TODO: Replace with actual API call
-              // Mock backup history
-              setBackupHistory([
-                {
-                  id: "1",
-                  date: new Date(Date.now() - 86400000), // 1 day ago
-                  type: "automatic",
-                  status: "success",
-                  size: 150000000, // 150MB
-                  duration: 120, // 2 minutes
-                  location: "/backups/backup_2024_01_20.tar.gz",
-                },
-                {
-                  id: "2",
-                  date: new Date(Date.now() - 172800000), // 2 days ago
-                  type: "automatic",
-                  status: "success",
-                  size: 148000000,
-                  duration: 115,
-                  location: "/backups/backup_2024_01_19.tar.gz",
-                },
-              ]);
-            } catch (error) {
-              console.error("Erro ao carregar configurações:", error);
-              sonner_1.toast.error("Erro ao carregar configurações de backup");
-            } finally {
-              setIsLoading(false);
-            }
-            return [2 /*return*/];
-          });
+  (0, react_1.useEffect)(() => {
+    var loadBackupSettings = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setIsLoading(true);
+          try {
+            // TODO: Replace with actual API call
+            // Mock backup history
+            setBackupHistory([
+              {
+                id: "1",
+                date: new Date(Date.now() - 86400000), // 1 day ago
+                type: "automatic",
+                status: "success",
+                size: 150000000, // 150MB
+                duration: 120, // 2 minutes
+                location: "/backups/backup_2024_01_20.tar.gz",
+              },
+              {
+                id: "2",
+                date: new Date(Date.now() - 172800000), // 2 days ago
+                type: "automatic",
+                status: "success",
+                size: 148000000,
+                duration: 115,
+                location: "/backups/backup_2024_01_19.tar.gz",
+              },
+            ]);
+          } catch (error) {
+            console.error("Erro ao carregar configurações:", error);
+            sonner_1.toast.error("Erro ao carregar configurações de backup");
+          } finally {
+            setIsLoading(false);
+          }
+          return [2 /*return*/];
         });
-      };
-      loadBackupSettings();
-    },
-    [form],
-  );
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      });
+    loadBackupSettings();
+  }, [form]);
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsSaving(true);
         try {
           setLastSaved(new Date());
@@ -303,16 +295,15 @@ function BackupExport() {
         return [2 /*return*/];
       });
     });
-  };
-  var startManualBackup = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var startManualBackup = () =>
+    __awaiter(this, void 0, void 0, function () {
       var interval_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           setIsExporting(true);
           setExportProgress(0);
-          interval_1 = setInterval(function () {
-            setExportProgress(function (prev) {
+          interval_1 = setInterval(() => {
+            setExportProgress((prev) => {
               if (prev >= 100) {
                 clearInterval(interval_1);
                 setIsExporting(false);
@@ -330,16 +321,15 @@ function BackupExport() {
         return [2 /*return*/];
       });
     });
-  };
-  var exportPatientData = function (patientId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var exportPatientData = (patientId) =>
+    __awaiter(this, void 0, void 0, function () {
       var interval_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           setIsExporting(true);
           setExportProgress(0);
-          interval_2 = setInterval(function () {
-            setExportProgress(function (prev) {
+          interval_2 = setInterval(() => {
+            setExportProgress((prev) => {
               if (prev >= 100) {
                 clearInterval(interval_2);
                 setIsExporting(false);
@@ -357,15 +347,14 @@ function BackupExport() {
         return [2 /*return*/];
       });
     });
-  };
-  var formatBytes = function (bytes) {
+  var formatBytes = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     var k = 1024;
     var sizes = ["Bytes", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
-  var formatDuration = function (seconds) {
+  var formatDuration = (seconds) => {
     var mins = Math.floor(seconds / 60);
     var secs = seconds % 60;
     return "".concat(mins, "m ").concat(secs, "s");
@@ -404,7 +393,7 @@ function BackupExport() {
               <form_1.FormField
                 control={form.control}
                 name="automaticBackup.enabled"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -430,7 +419,7 @@ function BackupExport() {
                     <form_1.FormField
                       control={form.control}
                       name="automaticBackup.frequency"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -459,7 +448,7 @@ function BackupExport() {
                     <form_1.FormField
                       control={form.control}
                       name="automaticBackup.time"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -479,7 +468,7 @@ function BackupExport() {
                     <form_1.FormField
                       control={form.control}
                       name="automaticBackup.retentionDays"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -490,9 +479,7 @@ function BackupExport() {
                                 min="7"
                                 max="365"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value) || 30);
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 30)}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -509,7 +496,7 @@ function BackupExport() {
                     <form_1.FormField
                       control={form.control}
                       name="automaticBackup.includeDatabase"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
@@ -533,7 +520,7 @@ function BackupExport() {
                     <form_1.FormField
                       control={form.control}
                       name="automaticBackup.includeFiles"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
@@ -557,7 +544,7 @@ function BackupExport() {
                     <form_1.FormField
                       control={form.control}
                       name="automaticBackup.encryption"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
@@ -607,9 +594,7 @@ function BackupExport() {
                 <button_1.Button
                   type="button"
                   variant="outline"
-                  onClick={function () {
-                    return exportPatientData();
-                  }}
+                  onClick={() => exportPatientData()}
                   disabled={isExporting}
                   className="flex-1"
                 >
@@ -631,7 +616,7 @@ function BackupExport() {
               <form_1.FormField
                 control={form.control}
                 name="exportSettings.defaultFormat"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="md:w-1/2">
@@ -678,7 +663,7 @@ function BackupExport() {
               <form_1.FormField
                 control={form.control}
                 name="lgpdCompliance.dataPortabilityEnabled"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -702,7 +687,7 @@ function BackupExport() {
               <form_1.FormField
                 control={form.control}
                 name="lgpdCompliance.rightToErasure"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -726,7 +711,7 @@ function BackupExport() {
               <form_1.FormField
                 control={form.control}
                 name="lgpdCompliance.automaticAnonymization"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -750,7 +735,7 @@ function BackupExport() {
                 <form_1.FormField
                   control={form.control}
                   name="lgpdCompliance.anonymizationDays"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem className="md:w-1/3">
@@ -761,9 +746,7 @@ function BackupExport() {
                             min="30"
                             max="2555"
                             {...field}
-                            onChange={function (e) {
-                              return field.onChange(parseInt(e.target.value) || 365);
-                            }}
+                            onChange={(e) => field.onChange(parseInt(e.target.value) || 365)}
                           />
                         </form_1.FormControl>
                         <form_1.FormDescription>
@@ -797,61 +780,59 @@ function BackupExport() {
                     <p className="text-gray-600 mb-4">Realize o primeiro backup da clínica</p>
                   </div>
                 : <div className="space-y-3">
-                    {backupHistory.map(function (backup) {
-                      return (
-                        <div
-                          key={backup.id}
-                          className="flex items-center justify-between p-4 border rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={"p-2 rounded-full ".concat(
-                                backup.status === "success"
-                                  ? "bg-green-100"
-                                  : backup.status === "failed"
-                                    ? "bg-red-100"
-                                    : "bg-yellow-100",
-                              )}
-                            >
-                              {backup.status === "success"
-                                ? <lucide_react_1.CheckCircle2 className="h-4 w-4 text-green-600" />
+                    {backupHistory.map((backup) => (
+                      <div
+                        key={backup.id}
+                        className="flex items-center justify-between p-4 border rounded-lg"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={"p-2 rounded-full ".concat(
+                              backup.status === "success"
+                                ? "bg-green-100"
                                 : backup.status === "failed"
-                                  ? <lucide_react_1.AlertTriangle className="h-4 w-4 text-red-600" />
-                                  : <lucide_react_1.Clock className="h-4 w-4 text-yellow-600" />}
-                            </div>
-                            <div>
-                              <div className="font-medium">
-                                Backup {backup.type === "automatic" ? "Automático" : "Manual"}
-                              </div>
-                              <div className="text-sm text-gray-600">
-                                {backup.date.toLocaleString("pt-BR")} • {formatBytes(backup.size)} •{" "}
-                                {formatDuration(backup.duration)}
-                              </div>
-                            </div>
+                                  ? "bg-red-100"
+                                  : "bg-yellow-100",
+                            )}
+                          >
+                            {backup.status === "success"
+                              ? <lucide_react_1.CheckCircle2 className="h-4 w-4 text-green-600" />
+                              : backup.status === "failed"
+                                ? <lucide_react_1.AlertTriangle className="h-4 w-4 text-red-600" />
+                                : <lucide_react_1.Clock className="h-4 w-4 text-yellow-600" />}
                           </div>
-                          <div className="flex items-center gap-2">
-                            <badge_1.Badge
-                              className={
-                                backup.status === "success"
-                                  ? "bg-green-100 text-green-800"
-                                  : backup.status === "failed"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-yellow-100 text-yellow-800"
-                              }
-                            >
-                              {backup.status === "success"
-                                ? "Sucesso"
-                                : backup.status === "failed"
-                                  ? "Falhou"
-                                  : "Em andamento"}
-                            </badge_1.Badge>
-                            <button_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.Download className="h-4 w-4" />
-                            </button_1.Button>
+                          <div>
+                            <div className="font-medium">
+                              Backup {backup.type === "automatic" ? "Automático" : "Manual"}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              {backup.date.toLocaleString("pt-BR")} • {formatBytes(backup.size)} •{" "}
+                              {formatDuration(backup.duration)}
+                            </div>
                           </div>
                         </div>
-                      );
-                    })}
+                        <div className="flex items-center gap-2">
+                          <badge_1.Badge
+                            className={
+                              backup.status === "success"
+                                ? "bg-green-100 text-green-800"
+                                : backup.status === "failed"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-yellow-100 text-yellow-800"
+                            }
+                          >
+                            {backup.status === "success"
+                              ? "Sucesso"
+                              : backup.status === "failed"
+                                ? "Falhou"
+                                : "Em andamento"}
+                          </badge_1.Badge>
+                          <button_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.Download className="h-4 w-4" />
+                          </button_1.Button>
+                        </div>
+                      </div>
+                    ))}
                   </div>}
             </card_1.CardContent>
           </card_1.Card>

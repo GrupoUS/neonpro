@@ -1,20 +1,19 @@
-"use strict";
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -29,26 +28,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -68,13 +67,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -96,9 +95,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -170,7 +167,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StorageManager =
   exports.S3StorageProvider =
@@ -181,7 +178,7 @@ var supabase_js_1 = require("@supabase/supabase-js");
 var audit_logger_1 = require("../../audit/audit-logger");
 var encryption_service_1 = require("../../security/encryption-service");
 var lgpd_manager_1 = require("../../lgpd/lgpd-manager");
-var StorageProvider = /** @class */ (function () {
+var StorageProvider = /** @class */ (() => {
   function StorageProvider(config) {
     this.config = config;
     this.auditLogger = new audit_logger_1.AuditLogger();
@@ -243,7 +240,7 @@ var StorageProvider = /** @class */ (function () {
   StorageProvider.prototype.compressFile = function (filePath) {
     return __awaiter(this, void 0, void 0, function () {
       var compressedPath;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         compressedPath = "".concat(filePath, ".gz");
         // Lógica de compressão aqui
         return [2 /*return*/, compressedPath];
@@ -253,18 +250,18 @@ var StorageProvider = /** @class */ (function () {
   StorageProvider.prototype.decompressFile = function (filePath) {
     return __awaiter(this, void 0, void 0, function () {
       var decompressedPath;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         decompressedPath = filePath.replace(".gz", "");
         // Lógica de descompressão aqui
         return [2 /*return*/, decompressedPath];
       });
     });
   };
-  StorageProvider.prototype.calculateChecksum = function (filePath) {
+  StorageProvider.prototype.calculateChecksum = (filePath) => {
     // Implementar cálculo de checksum
     return Promise.resolve("mock_checksum");
   };
-  StorageProvider.prototype.getFileSize = function (filePath) {
+  StorageProvider.prototype.getFileSize = (filePath) => {
     // Implementar obtenção do tamanho do arquivo
     return Promise.resolve(0);
   };
@@ -272,7 +269,7 @@ var StorageProvider = /** @class */ (function () {
 })();
 exports.StorageProvider = StorageProvider;
 // Implementação para armazenamento local
-var LocalStorageProvider = /** @class */ (function (_super) {
+var LocalStorageProvider = /** @class */ ((_super) => {
   __extends(LocalStorageProvider, _super);
   function LocalStorageProvider(config) {
     var _this = _super.call(this, config) || this;
@@ -290,7 +287,7 @@ var LocalStorageProvider = /** @class */ (function (_super) {
   };
   LocalStorageProvider.prototype.disconnect = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Desconectando do armazenamento local");
         return [2 /*return*/];
       });
@@ -628,14 +625,13 @@ var LocalStorageProvider = /** @class */ (function (_super) {
       });
     });
   };
-  LocalStorageProvider.prototype.generateLocationId = function () {
-    return "loc_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  LocalStorageProvider.prototype.generateLocationId = () =>
+    "loc_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   return LocalStorageProvider;
 })(StorageProvider);
 exports.LocalStorageProvider = LocalStorageProvider;
 // Implementação para Amazon S3
-var S3StorageProvider = /** @class */ (function (_super) {
+var S3StorageProvider = /** @class */ ((_super) => {
   __extends(S3StorageProvider, _super);
   function S3StorageProvider(config) {
     var _this = _super.call(this, config) || this;
@@ -653,7 +649,7 @@ var S3StorageProvider = /** @class */ (function (_super) {
   };
   S3StorageProvider.prototype.disconnect = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Desconectando do S3");
         return [2 /*return*/];
       });
@@ -899,7 +895,7 @@ var S3StorageProvider = /** @class */ (function (_super) {
   };
   S3StorageProvider.prototype.cleanup = function (olderThanDays) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           console.log("Limpando objetos S3 anteriores a ".concat(olderThanDays, " dias"));
           return [2 /*return*/, Math.floor(Math.random() * 50)];
@@ -910,14 +906,13 @@ var S3StorageProvider = /** @class */ (function (_super) {
       });
     });
   };
-  S3StorageProvider.prototype.generateLocationId = function () {
-    return "s3_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  S3StorageProvider.prototype.generateLocationId = () =>
+    "s3_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   return S3StorageProvider;
 })(StorageProvider);
 exports.S3StorageProvider = S3StorageProvider;
 // Gerenciador de provedores de armazenamento
-var StorageManager = /** @class */ (function () {
+var StorageManager = /** @class */ (() => {
   function StorageManager() {
     this.providers = new Map();
     this.activeOperations = new Map();
@@ -1374,9 +1369,9 @@ var StorageManager = /** @class */ (function () {
   StorageManager.prototype.selectBestProvider = function (operation) {
     // Implementar lógica de seleção do melhor provedor
     // baseado em prioridade, disponibilidade, performance, etc.
-    var availableProviders = Array.from(this.providers.values()).filter(function (provider) {
-      return provider["config"].enabled;
-    });
+    var availableProviders = Array.from(this.providers.values()).filter(
+      (provider) => provider["config"].enabled,
+    );
     if (availableProviders.length === 0) {
       return null;
     }
@@ -1384,9 +1379,8 @@ var StorageManager = /** @class */ (function () {
     // TODO: Implementar lógica mais sofisticada
     return availableProviders[0];
   };
-  StorageManager.prototype.generateOperationId = function () {
-    return "op_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  StorageManager.prototype.generateOperationId = () =>
+    "op_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   // Métodos de persistência
   StorageManager.prototype.saveStorageConfig = function (config) {
     return __awaiter(this, void 0, void 0, function () {
@@ -1473,26 +1467,24 @@ var StorageManager = /** @class */ (function () {
       });
     });
   };
-  StorageManager.prototype.mapDatabaseToStorageOperation = function (data) {
-    return {
-      id: data.id,
-      type: data.type,
-      provider: data.provider,
-      source_path: data.source_path,
-      target_path: data.target_path,
-      status: data.status,
-      started_at: new Date(data.started_at),
-      completed_at: data.completed_at ? new Date(data.completed_at) : undefined,
-      progress_percentage: data.progress_percentage || 0,
-      bytes_total: data.bytes_total || 0,
-      bytes_transferred: data.bytes_transferred || 0,
-      transfer_rate_mbps: data.transfer_rate_mbps || 0,
-      error_message: data.error_message,
-      retry_count: data.retry_count || 0,
-      max_retries: data.max_retries || 3,
-      metadata: data.metadata || {},
-    };
-  };
+  StorageManager.prototype.mapDatabaseToStorageOperation = (data) => ({
+    id: data.id,
+    type: data.type,
+    provider: data.provider,
+    source_path: data.source_path,
+    target_path: data.target_path,
+    status: data.status,
+    started_at: new Date(data.started_at),
+    completed_at: data.completed_at ? new Date(data.completed_at) : undefined,
+    progress_percentage: data.progress_percentage || 0,
+    bytes_total: data.bytes_total || 0,
+    bytes_transferred: data.bytes_transferred || 0,
+    transfer_rate_mbps: data.transfer_rate_mbps || 0,
+    error_message: data.error_message,
+    retry_count: data.retry_count || 0,
+    max_retries: data.max_retries || 3,
+    metadata: data.metadata || {},
+  });
   return StorageManager;
 })();
 exports.StorageManager = StorageManager;

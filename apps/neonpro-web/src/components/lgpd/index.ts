@@ -1,6 +1,4 @@
 // Componentes LGPD públicos
-export { ConsentBanner } from "./ConsentBanner";
-export { PrivacyPreferences } from "./PrivacyPreferences";
 
 // Re-exportar tipos relacionados
 export type {
@@ -8,3 +6,5 @@ export type {
   ConsentRecord,
   LGPDMetrics,
 } from "@/types/lgpd";
+export { ConsentBanner } from "./ConsentBanner";
+export { PrivacyPreferences } from "./PrivacyPreferences";

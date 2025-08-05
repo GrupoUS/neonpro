@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Financeiro;
 var react_1 = require("react");
@@ -127,7 +126,7 @@ var typeConfig = {
     label: "Despesa",
   },
 };
-var TransactionCard = function (_a) {
+var TransactionCard = (_a) => {
   var transaction = _a.transaction,
     index = _a.index;
   var statusInfo = statusConfig[transaction.status];
@@ -218,7 +217,7 @@ var TransactionCard = function (_a) {
     </framer_motion_1.motion.div>
   );
 };
-var FinancialCard = function (_a) {
+var FinancialCard = (_a) => {
   var Icon = _a.icon,
     title = _a.title,
     value = _a.value,
@@ -273,25 +272,17 @@ function Financeiro() {
   var _c = (0, react_1.useState)("mes"),
     filterPeriod = _c[0],
     setFilterPeriod = _c[1];
-  var filteredTransactions = financeiroData.transactions.filter(function (transaction) {
+  var filteredTransactions = financeiroData.transactions.filter((transaction) => {
     var matchesType = filterType === "todos" || transaction.type === filterType;
     var matchesStatus = filterStatus === "todos" || transaction.status === filterStatus;
     return matchesType && matchesStatus;
   });
   var totalReceitas = filteredTransactions
-    .filter(function (t) {
-      return t.type === "receita" && t.status === "pago";
-    })
-    .reduce(function (sum, t) {
-      return sum + t.amount;
-    }, 0);
+    .filter((t) => t.type === "receita" && t.status === "pago")
+    .reduce((sum, t) => sum + t.amount, 0);
   var totalDespesas = filteredTransactions
-    .filter(function (t) {
-      return t.type === "despesa" && t.status === "pago";
-    })
-    .reduce(function (sum, t) {
-      return sum + t.amount;
-    }, 0);
+    .filter((t) => t.type === "despesa" && t.status === "pago")
+    .reduce((sum, t) => sum + t.amount, 0);
   var saldoLiquido = totalReceitas - totalDespesas;
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 animate-background-position-spin">
@@ -375,9 +366,7 @@ function Financeiro() {
               <lucide_react_1.Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <select
                 value={filterType}
-                onChange={function (e) {
-                  return setFilterType(e.target.value);
-                }}
+                onChange={(e) => setFilterType(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
               >
                 <option value="todos">Todos os Tipos</option>
@@ -392,9 +381,7 @@ function Financeiro() {
               <lucide_react_1.CheckCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <select
                 value={filterStatus}
-                onChange={function (e) {
-                  return setFilterStatus(e.target.value);
-                }}
+                onChange={(e) => setFilterStatus(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
               >
                 <option value="todos">Todos os Status</option>
@@ -410,9 +397,7 @@ function Financeiro() {
               <lucide_react_1.Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <select
                 value={filterPeriod}
-                onChange={function (e) {
-                  return setFilterPeriod(e.target.value);
-                }}
+                onChange={(e) => setFilterPeriod(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
               >
                 <option value="mes">Este Mês</option>
@@ -443,11 +428,9 @@ function Financeiro() {
         {/* Lista de transações */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <framer_motion_1.AnimatePresence>
-            {filteredTransactions.map(function (transaction, index) {
-              return (
-                <TransactionCard key={transaction.id} transaction={transaction} index={index} />
-              );
-            })}
+            {filteredTransactions.map((transaction, index) => (
+              <TransactionCard key={transaction.id} transaction={transaction} index={index} />
+            ))}
           </framer_motion_1.AnimatePresence>
         </div>
 

@@ -1,18 +1,17 @@
 // Session Metrics Component
 // Story 1.4: Session Management & Security Implementation
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionMetrics = SessionMetrics;
 var react_1 = require("react");
@@ -142,7 +139,6 @@ var context_1 = require("../context");
 var utils_1 = require("../utils");
 var lucide_react_1 = require("lucide-react");
 function SessionMetrics(_a) {
-  var _this = this;
   var _b, _c, _d, _e;
   var _f = _a.className,
     className = _f === void 0 ? "" : _f,
@@ -168,53 +164,46 @@ function SessionMetrics(_a) {
   var _p = (0, react_1.useState)(null),
     metrics = _p[0],
     setMetrics = _p[1];
-  (0, react_1.useEffect)(
-    function () {
-      // Simulate loading metrics
-      setIsLoading(true);
-      var timer = setTimeout(function () {
-        setMetrics({
-          totalSessions: 156,
-          activeSessions: 12,
-          averageSessionDuration: 1800000, // 30 minutes in ms
-          securityEvents: 3,
-          deviceCount: 8,
-          locationCount: 4,
-          sessionsByHour: Array.from({ length: 24 }, function (_, i) {
-            return {
-              hour: i,
-              count: Math.floor(Math.random() * 20) + 1,
-            };
-          }),
-          securityEventsByType: [
-            { type: "suspicious_login", count: 2 },
-            { type: "unusual_location", count: 1 },
-            { type: "device_change", count: 0 },
-          ],
-          topLocations: [
-            { city: "São Paulo", country: "Brazil", count: 45 },
-            { city: "Rio de Janeiro", country: "Brazil", count: 32 },
-            { city: "Brasília", country: "Brazil", count: 18 },
-          ],
-          topDevices: [
-            { type: "desktop", count: 89 },
-            { type: "mobile", count: 45 },
-            { type: "tablet", count: 22 },
-          ],
-        });
-        setIsLoading(false);
-      }, 1000);
-      return function () {
-        return clearTimeout(timer);
-      };
-    },
-    [selectedTimeRange],
-  );
+  (0, react_1.useEffect)(() => {
+    // Simulate loading metrics
+    setIsLoading(true);
+    var timer = setTimeout(() => {
+      setMetrics({
+        totalSessions: 156,
+        activeSessions: 12,
+        averageSessionDuration: 1800000, // 30 minutes in ms
+        securityEvents: 3,
+        deviceCount: 8,
+        locationCount: 4,
+        sessionsByHour: Array.from({ length: 24 }, (_, i) => ({
+          hour: i,
+          count: Math.floor(Math.random() * 20) + 1,
+        })),
+        securityEventsByType: [
+          { type: "suspicious_login", count: 2 },
+          { type: "unusual_location", count: 1 },
+          { type: "device_change", count: 0 },
+        ],
+        topLocations: [
+          { city: "São Paulo", country: "Brazil", count: 45 },
+          { city: "Rio de Janeiro", country: "Brazil", count: 32 },
+          { city: "Brasília", country: "Brazil", count: 18 },
+        ],
+        topDevices: [
+          { type: "desktop", count: 89 },
+          { type: "mobile", count: 45 },
+          { type: "tablet", count: 22 },
+        ],
+      });
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [selectedTimeRange]);
   // Handle export
-  var handleExport = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleExport = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsExporting(true);
@@ -245,9 +234,8 @@ function SessionMetrics(_a) {
         }
       });
     });
-  };
   // Get trend indicator
-  var getTrendIndicator = function (current, previous) {
+  var getTrendIndicator = (current, previous) => {
     if (current > previous) {
       return <lucide_react_1.TrendingUp className="w-4 h-4 text-green-500" />;
     } else if (current < previous) {
@@ -256,13 +244,13 @@ function SessionMetrics(_a) {
     return <lucide_react_1.Activity className="w-4 h-4 text-gray-500" />;
   };
   // Get security status color
-  var getSecurityStatusColor = function (eventCount) {
+  var getSecurityStatusColor = (eventCount) => {
     if (eventCount === 0) return "text-green-600";
     if (eventCount <= 2) return "text-yellow-600";
     return "text-red-600";
   };
   // Get security status icon
-  var getSecurityStatusIcon = function (eventCount) {
+  var getSecurityStatusIcon = (eventCount) => {
     if (eventCount === 0) return <lucide_react_1.CheckCircle className="w-4 h-4 text-green-500" />;
     if (eventCount <= 2)
       return <lucide_react_1.AlertTriangle className="w-4 h-4 text-yellow-500" />;
@@ -355,9 +343,7 @@ function SessionMetrics(_a) {
           {/* Time Range Selector */}
           <select
             value={selectedTimeRange}
-            onChange={function (e) {
-              return setSelectedTimeRange(e.target.value);
-            }}
+            onChange={(e) => setSelectedTimeRange(e.target.value)}
             className="text-sm border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="1h">Last Hour</option>
@@ -368,9 +354,7 @@ function SessionMetrics(_a) {
 
           {/* Refresh Button */}
           <button
-            onClick={function () {
-              return window.location.reload();
-            }}
+            onClick={() => window.location.reload()}
             disabled={isLoading}
             className="p-2 text-gray-400 hover:text-gray-600 rounded disabled:opacity-50"
           >
@@ -544,7 +528,7 @@ function SessionMetrics(_a) {
                     metrics === null || metrics === void 0 ? void 0 : metrics.sessionsByHour) ===
                     null || _b === void 0
                     ? void 0
-                    : _b.slice(0, 8).map(function (item) {
+                    : _b.slice(0, 8).map((item) => {
                         var _a;
                         return (
                           <div key={item.hour} className="flex items-center justify-between">
@@ -565,9 +549,7 @@ function SessionMetrics(_a) {
                                               ? void 0
                                               : metrics.sessionsByHour) === null || _a === void 0
                                             ? void 0
-                                            : _a.map(function (s) {
-                                                return s.count;
-                                              })) || [1],
+                                            : _a.map((s) => s.count)) || [1],
                                         )) *
                                         100,
                                       "%",
@@ -598,29 +580,25 @@ function SessionMetrics(_a) {
                       ? void 0
                       : metrics.securityEventsByType) === null || _c === void 0
                     ? void 0
-                    : _c.map(function (event) {
-                        return (
-                          <div key={event.type} className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600 capitalize">
-                              {event.type.replace("_", " ")}
-                            </span>
-                            <div className="flex items-center space-x-2">
-                              <div
-                                className={"w-2 h-2 rounded-full ".concat(
-                                  event.count === 0
-                                    ? "bg-green-500"
-                                    : event.count <= 2
-                                      ? "bg-yellow-500"
-                                      : "bg-red-500",
-                                )}
-                              />
-                              <span className="text-sm font-medium text-gray-900">
-                                {event.count}
-                              </span>
-                            </div>
+                    : _c.map((event) => (
+                        <div key={event.type} className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600 capitalize">
+                            {event.type.replace("_", " ")}
+                          </span>
+                          <div className="flex items-center space-x-2">
+                            <div
+                              className={"w-2 h-2 rounded-full ".concat(
+                                event.count === 0
+                                  ? "bg-green-500"
+                                  : event.count <= 2
+                                    ? "bg-yellow-500"
+                                    : "bg-red-500",
+                              )}
+                            />
+                            <span className="text-sm font-medium text-gray-900">{event.count}</span>
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                 </div>
               </div>
 
@@ -635,26 +613,24 @@ function SessionMetrics(_a) {
                   {(_d = metrics === null || metrics === void 0 ? void 0 : metrics.topLocations) ===
                     null || _d === void 0
                     ? void 0
-                    : _d.map(function (location, index) {
-                        return (
-                          <div
-                            key={"".concat(location.city, "-").concat(location.country)}
-                            className="flex items-center justify-between"
-                          >
-                            <div className="flex items-center space-x-2">
-                              <span className="text-xs font-medium text-gray-500 w-4">
-                                #{index + 1}
-                              </span>
-                              <span className="text-sm text-gray-900">
-                                {location.city}, {location.country}
-                              </span>
-                            </div>
-                            <span className="text-sm font-medium text-gray-900">
-                              {location.count}
+                    : _d.map((location, index) => (
+                        <div
+                          key={"".concat(location.city, "-").concat(location.country)}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs font-medium text-gray-500 w-4">
+                              #{index + 1}
+                            </span>
+                            <span className="text-sm text-gray-900">
+                              {location.city}, {location.country}
                             </span>
                           </div>
-                        );
-                      })}
+                          <span className="text-sm font-medium text-gray-900">
+                            {location.count}
+                          </span>
+                        </div>
+                      ))}
                 </div>
               </div>
 
@@ -669,7 +645,7 @@ function SessionMetrics(_a) {
                   {(_e = metrics === null || metrics === void 0 ? void 0 : metrics.topDevices) ===
                     null || _e === void 0
                     ? void 0
-                    : _e.map(function (device) {
+                    : _e.map((device) => {
                         var _a;
                         return (
                           <div key={device.type} className="flex items-center justify-between">
@@ -688,9 +664,7 @@ function SessionMetrics(_a) {
                                               ? void 0
                                               : metrics.topDevices) === null || _a === void 0
                                             ? void 0
-                                            : _a.map(function (d) {
-                                                return d.count;
-                                              })) || [1],
+                                            : _a.map((d) => d.count)) || [1],
                                         )) *
                                         100,
                                       "%",

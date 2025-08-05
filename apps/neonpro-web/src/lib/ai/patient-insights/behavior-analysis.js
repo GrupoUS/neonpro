@@ -1,17 +1,16 @@
-"use strict";
 // AI-Powered Behavioral Analysis Engine
 // Story 3.2: Task 4 - Behavioral Analysis Engine
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,11 +130,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BehaviorAnalysisEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var BehaviorAnalysisEngine = /** @class */ (function () {
+var BehaviorAnalysisEngine = /** @class */ (() => {
   function BehaviorAnalysisEngine() {
     this.supabase = (0, client_1.createClient)();
     this.behaviorPatterns = new Map();
@@ -280,12 +277,7 @@ var BehaviorAnalysisEngine = /** @class */ (function () {
               historicalPatterns,
             );
             anomalies.push.apply(anomalies, satisfactionAnomalies);
-            return [
-              2 /*return*/,
-              anomalies.sort(function (a, b) {
-                return b.severity - a.severity;
-              }),
-            ];
+            return [2 /*return*/, anomalies.sort((a, b) => b.severity - a.severity)];
           case 3:
             error_2 = _a.sent();
             console.error("Anomaly detection error:", error_2);
@@ -691,11 +683,11 @@ var BehaviorAnalysisEngine = /** @class */ (function () {
     });
   };
   // Risk identification methods
-  BehaviorAnalysisEngine.prototype.identifyBehavioralRisks = function (
+  BehaviorAnalysisEngine.prototype.identifyBehavioralRisks = (
     appointmentPatterns,
     compliancePatterns,
     communicationPatterns,
-  ) {
+  ) => {
     var risks = [];
     // High cancellation risk
     if (appointmentPatterns.cancellationRate > 0.3) {
@@ -727,13 +719,13 @@ var BehaviorAnalysisEngine = /** @class */ (function () {
     return risks;
   };
   // Insight generation methods
-  BehaviorAnalysisEngine.prototype.generateBehavioralInsights = function (
+  BehaviorAnalysisEngine.prototype.generateBehavioralInsights = (
     appointmentPatterns,
     compliancePatterns,
     communicationPatterns,
     treatmentPreferences,
     satisfactionPatterns,
-  ) {
+  ) => {
     var insights = [];
     // Scheduling insights
     if (appointmentPatterns.schedulingPreferences.length > 0) {
@@ -779,14 +771,14 @@ var BehaviorAnalysisEngine = /** @class */ (function () {
     return insights;
   };
   // Recommendation generation methods
-  BehaviorAnalysisEngine.prototype.generatePersonalizedRecommendations = function (
+  BehaviorAnalysisEngine.prototype.generatePersonalizedRecommendations = (
     insights,
     riskFactors,
     behaviorData,
-  ) {
+  ) => {
     var recommendations = [];
     // Risk-based recommendations
-    riskFactors.forEach(function (risk) {
+    riskFactors.forEach((risk) => {
       recommendations.push({
         type: "risk_mitigation",
         priority: risk.severity === "high" ? "high" : "medium",
@@ -796,7 +788,7 @@ var BehaviorAnalysisEngine = /** @class */ (function () {
       });
     });
     // Insight-based recommendations
-    insights.forEach(function (insight) {
+    insights.forEach((insight) => {
       if (insight.actionable) {
         recommendations.push({
           type: "optimization",
@@ -834,219 +826,201 @@ var BehaviorAnalysisEngine = /** @class */ (function () {
     };
   };
   // Utility calculation methods
-  BehaviorAnalysisEngine.prototype.calculateCancellationRate = function (appointments) {
+  BehaviorAnalysisEngine.prototype.calculateCancellationRate = (appointments) => {
     if (appointments.length === 0) return 0;
-    var cancelled = appointments.filter(function (apt) {
-      return apt.status === "cancelled";
-    }).length;
+    var cancelled = appointments.filter((apt) => apt.status === "cancelled").length;
     return cancelled / appointments.length;
   };
-  BehaviorAnalysisEngine.prototype.calculateRescheduleRate = function (appointments) {
+  BehaviorAnalysisEngine.prototype.calculateRescheduleRate = (appointments) => {
     if (appointments.length === 0) return 0;
-    var rescheduled = appointments.filter(function (apt) {
-      return apt.rescheduled_count > 0;
-    }).length;
+    var rescheduled = appointments.filter((apt) => apt.rescheduled_count > 0).length;
     return rescheduled / appointments.length;
   };
-  BehaviorAnalysisEngine.prototype.calculateNoShowRate = function (appointments) {
+  BehaviorAnalysisEngine.prototype.calculateNoShowRate = (appointments) => {
     if (appointments.length === 0) return 0;
-    var noShows = appointments.filter(function (apt) {
-      return apt.status === "no_show";
-    }).length;
+    var noShows = appointments.filter((apt) => apt.status === "no_show").length;
     return noShows / appointments.length;
   };
-  BehaviorAnalysisEngine.prototype.calculatePunctualityScore = function (appointments) {
+  BehaviorAnalysisEngine.prototype.calculatePunctualityScore = (appointments) => {
     // Mock implementation - would calculate based on actual arrival times
     return 0.85;
   };
-  BehaviorAnalysisEngine.prototype.analyzeSchedulingPreferences = function (appointments) {
+  BehaviorAnalysisEngine.prototype.analyzeSchedulingPreferences = (appointments) => {
     // Mock implementation - would analyze appointment patterns
     return ["morning", "weekdays"];
   };
-  BehaviorAnalysisEngine.prototype.calculateAverageAdvanceBooking = function (appointments) {
+  BehaviorAnalysisEngine.prototype.calculateAverageAdvanceBooking = (appointments) => {
     // Mock implementation - would calculate average days in advance
     return 14;
   };
-  BehaviorAnalysisEngine.prototype.identifyPreferredTimeSlots = function (appointments) {
+  BehaviorAnalysisEngine.prototype.identifyPreferredTimeSlots = (appointments) => {
     // Mock implementation - would analyze time patterns
     return ["9:00-11:00", "14:00-16:00"];
   };
-  BehaviorAnalysisEngine.prototype.identifySeasonalPatterns = function (appointments) {
+  BehaviorAnalysisEngine.prototype.identifySeasonalPatterns = (appointments) => {
     // Mock implementation - would analyze seasonal trends
     return ["increased_summer_bookings"];
   };
-  BehaviorAnalysisEngine.prototype.calculateAdherenceRate = function (treatmentSessions) {
+  BehaviorAnalysisEngine.prototype.calculateAdherenceRate = (treatmentSessions) => {
     // Mock implementation
     return 0.85;
   };
-  BehaviorAnalysisEngine.prototype.calculateFollowUpCompliance = function (
+  BehaviorAnalysisEngine.prototype.calculateFollowUpCompliance = (
     treatmentSessions,
     communications,
-  ) {
+  ) => {
     // Mock implementation
     return 0.9;
   };
-  BehaviorAnalysisEngine.prototype.calculateInstructionCompliance = function (treatmentSessions) {
+  BehaviorAnalysisEngine.prototype.calculateInstructionCompliance = (treatmentSessions) => {
     // Mock implementation
     return 0.8;
   };
-  BehaviorAnalysisEngine.prototype.calculatePaymentPunctuality = function (paymentHistory) {
+  BehaviorAnalysisEngine.prototype.calculatePaymentPunctuality = (paymentHistory) => {
     // Mock implementation
     return 0.95;
   };
-  BehaviorAnalysisEngine.prototype.calculateDocumentationCompliance = function (treatmentSessions) {
+  BehaviorAnalysisEngine.prototype.calculateDocumentationCompliance = (treatmentSessions) => {
     // Mock implementation
     return 0.9;
   };
-  BehaviorAnalysisEngine.prototype.calculateMedicationCompliance = function (treatmentSessions) {
+  BehaviorAnalysisEngine.prototype.calculateMedicationCompliance = (treatmentSessions) => {
     // Mock implementation
     return 0.85;
   };
-  BehaviorAnalysisEngine.prototype.calculateResponseRate = function (communications) {
+  BehaviorAnalysisEngine.prototype.calculateResponseRate = (communications) => {
     if (communications.length === 0) return 0;
-    var responded = communications.filter(function (comm) {
-      return comm.response_received;
-    }).length;
+    var responded = communications.filter((comm) => comm.response_received).length;
     return responded / communications.length;
   };
-  BehaviorAnalysisEngine.prototype.identifyPreferredChannels = function (communications) {
+  BehaviorAnalysisEngine.prototype.identifyPreferredChannels = (communications) => {
     // Mock implementation - would analyze communication channel usage
     return ["email", "phone"];
   };
-  BehaviorAnalysisEngine.prototype.calculateAverageResponseTime = function (communications) {
+  BehaviorAnalysisEngine.prototype.calculateAverageResponseTime = (communications) => {
     // Mock implementation - hours
     return 4.5;
   };
-  BehaviorAnalysisEngine.prototype.calculateCommunicationFrequency = function (communications) {
+  BehaviorAnalysisEngine.prototype.calculateCommunicationFrequency = (communications) => {
     // Mock implementation - communications per month
     return 3.2;
   };
-  BehaviorAnalysisEngine.prototype.calculateInitiationRate = function (communications) {
+  BehaviorAnalysisEngine.prototype.calculateInitiationRate = (communications) => {
     // Mock implementation
     return 0.3;
   };
-  BehaviorAnalysisEngine.prototype.calculateCommunicationSatisfaction = function (communications) {
+  BehaviorAnalysisEngine.prototype.calculateCommunicationSatisfaction = (communications) => {
     // Mock implementation
     return 8.5;
   };
-  BehaviorAnalysisEngine.prototype.identifyPreferredTreatments = function (treatmentSessions) {
+  BehaviorAnalysisEngine.prototype.identifyPreferredTreatments = (treatmentSessions) => {
     // Mock implementation
     return ["botox", "dermal_fillers"];
   };
-  BehaviorAnalysisEngine.prototype.analyzePricePreferences = function (paymentHistory) {
+  BehaviorAnalysisEngine.prototype.analyzePricePreferences = (paymentHistory) => {
     // Mock implementation
     return "premium";
   };
-  BehaviorAnalysisEngine.prototype.analyzeTimingPreferences = function (treatmentSessions) {
+  BehaviorAnalysisEngine.prototype.analyzeTimingPreferences = (treatmentSessions) => {
     // Mock implementation
     return ["quarterly", "pre_events"];
   };
-  BehaviorAnalysisEngine.prototype.analyzeProviderPreferences = function (treatmentSessions) {
+  BehaviorAnalysisEngine.prototype.analyzeProviderPreferences = (treatmentSessions) => {
     // Mock implementation
     return ["experienced_practitioners"];
   };
-  BehaviorAnalysisEngine.prototype.analyzeServiceAddOnPreferences = function (treatmentSessions) {
+  BehaviorAnalysisEngine.prototype.analyzeServiceAddOnPreferences = (treatmentSessions) => {
     // Mock implementation
     return ["aftercare_products", "follow_up_consultations"];
   };
-  BehaviorAnalysisEngine.prototype.calculateAverageSatisfaction = function (satisfactionScores) {
+  BehaviorAnalysisEngine.prototype.calculateAverageSatisfaction = (satisfactionScores) => {
     if (satisfactionScores.length === 0) return 7.5;
     return (
-      satisfactionScores.reduce(function (sum, score) {
-        return sum + score.score;
-      }, 0) / satisfactionScores.length
+      satisfactionScores.reduce((sum, score) => sum + score.score, 0) / satisfactionScores.length
     );
   };
-  BehaviorAnalysisEngine.prototype.calculateSatisfactionTrend = function (satisfactionScores) {
+  BehaviorAnalysisEngine.prototype.calculateSatisfactionTrend = (satisfactionScores) => {
     // Mock implementation
     return "stable";
   };
-  BehaviorAnalysisEngine.prototype.calculateSatisfactionVolatility = function (satisfactionScores) {
+  BehaviorAnalysisEngine.prototype.calculateSatisfactionVolatility = (satisfactionScores) => {
     // Mock implementation
     return 0.15;
   };
-  BehaviorAnalysisEngine.prototype.identifyKeyDrivers = function (satisfactionScores) {
+  BehaviorAnalysisEngine.prototype.identifyKeyDrivers = (satisfactionScores) => {
     // Mock implementation
     return ["result_quality", "staff_professionalism"];
   };
-  BehaviorAnalysisEngine.prototype.identifyImprovementAreas = function (satisfactionScores) {
+  BehaviorAnalysisEngine.prototype.identifyImprovementAreas = (satisfactionScores) => {
     // Mock implementation
     return ["wait_times", "facility_ambiance"];
   };
-  BehaviorAnalysisEngine.prototype.calculateLoyaltyIndicators = function (behaviorData) {
+  BehaviorAnalysisEngine.prototype.calculateLoyaltyIndicators = (behaviorData) => {
     // Mock implementation
     return [
       { indicator: "referral_rate", value: 0.25, status: "good" },
       { indicator: "repeat_treatments", value: 0.8, status: "excellent" },
     ];
   };
-  BehaviorAnalysisEngine.prototype.calculateAppointmentScore = function (patterns) {
-    return 1 - (patterns.cancellationRate + patterns.noShowRate) / 2;
-  };
-  BehaviorAnalysisEngine.prototype.calculateComplianceScore = function (patterns) {
-    return (
-      (patterns.adherenceRate + patterns.followUpCompliance + patterns.instructionCompliance) / 3
-    );
-  };
-  BehaviorAnalysisEngine.prototype.calculateCommunicationScore = function (patterns) {
-    return patterns.responseRate;
-  };
+  BehaviorAnalysisEngine.prototype.calculateAppointmentScore = (patterns) =>
+    1 - (patterns.cancellationRate + patterns.noShowRate) / 2;
+  BehaviorAnalysisEngine.prototype.calculateComplianceScore = (patterns) =>
+    (patterns.adherenceRate + patterns.followUpCompliance + patterns.instructionCompliance) / 3;
+  BehaviorAnalysisEngine.prototype.calculateCommunicationScore = (patterns) =>
+    patterns.responseRate;
   // Additional methods for anomaly detection, predictions, and communication strategy
   // (Simplified implementations for brevity)
-  BehaviorAnalysisEngine.prototype.detectAppointmentAnomalies = function (current, historical) {
+  BehaviorAnalysisEngine.prototype.detectAppointmentAnomalies = (current, historical) => {
     return []; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.detectCommunicationAnomalies = function (current, historical) {
+  BehaviorAnalysisEngine.prototype.detectCommunicationAnomalies = (current, historical) => {
     return []; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.detectComplianceAnomalies = function (current, historical) {
+  BehaviorAnalysisEngine.prototype.detectComplianceAnomalies = (current, historical) => {
     return []; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.detectSatisfactionAnomalies = function (current, historical) {
+  BehaviorAnalysisEngine.prototype.detectSatisfactionAnomalies = (current, historical) => {
     return []; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.predictAppointmentCompliance = function (
+  BehaviorAnalysisEngine.prototype.predictAppointmentCompliance = (
     behaviorData,
     treatmentData,
     similarPatients,
-  ) {
+  ) => {
     return 0.85; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.predictTreatmentAdherence = function (
+  BehaviorAnalysisEngine.prototype.predictTreatmentAdherence = (
     behaviorData,
     treatmentData,
     similarPatients,
-  ) {
+  ) => {
     return 0.9; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.predictCommunicationNeeds = function (
-    behaviorData,
-    treatmentData,
-  ) {
+  BehaviorAnalysisEngine.prototype.predictCommunicationNeeds = (behaviorData, treatmentData) => {
     return ["pre_appointment_reminder", "post_treatment_follow_up"]; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.predictSatisfactionTrajectory = function (
+  BehaviorAnalysisEngine.prototype.predictSatisfactionTrajectory = (
     behaviorData,
     treatmentData,
     similarPatients,
-  ) {
+  ) => {
     return 8.5; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.generateBehavioralInterventions = function (
+  BehaviorAnalysisEngine.prototype.generateBehavioralInterventions = (
     appointmentCompliance,
     treatmentAdherence,
     communicationNeeds,
     satisfactionTrajectory,
-  ) {
+  ) => {
     return ["Appointment reminders", "Enhanced follow-up"]; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.calculatePredictionConfidence = function (similarPatients) {
+  BehaviorAnalysisEngine.prototype.calculatePredictionConfidence = (similarPatients) => {
     return 0.8; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.analyzeCommunicationPreferences = function (
+  BehaviorAnalysisEngine.prototype.analyzeCommunicationPreferences = (
     behaviorData,
     communicationHistory,
-  ) {
+  ) => {
     return {
       channels: ["email", "sms"],
       frequency: "moderate",
@@ -1054,40 +1028,33 @@ var BehaviorAnalysisEngine = /** @class */ (function () {
       language: "portuguese",
     }; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.determineOptimalTiming = function (
+  BehaviorAnalysisEngine.prototype.determineOptimalTiming = (
     behaviorData,
     communicationHistory,
-  ) {
+  ) => {
     return {
       dayOfWeek: ["tuesday", "wednesday"],
       timeOfDay: ["morning", "afternoon"],
       frequency: "weekly",
     }; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.identifyPreferredCommunicationStyle = function (
+  BehaviorAnalysisEngine.prototype.identifyPreferredCommunicationStyle = (
     behaviorData,
     communicationHistory,
-  ) {
+  ) => {
     return "professional_friendly"; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.generateContentRecommendations = function (
-    behaviorData,
-    preferences,
-  ) {
+  BehaviorAnalysisEngine.prototype.generateContentRecommendations = (behaviorData, preferences) => {
     return ["educational_content", "appointment_reminders", "treatment_updates"]; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.createEngagementStrategy = function (
-    preferences,
-    timing,
-    style,
-  ) {
+  BehaviorAnalysisEngine.prototype.createEngagementStrategy = (preferences, timing, style) => {
     return {
       approach: "personalized",
       touchpoints: ["pre_appointment", "post_treatment", "follow_up"],
       escalationPath: ["email", "phone", "in_person"],
     }; // Mock implementation
   };
-  BehaviorAnalysisEngine.prototype.calculateExpectedResponseRate = function (preferences) {
+  BehaviorAnalysisEngine.prototype.calculateExpectedResponseRate = (preferences) => {
     return 0.75; // Mock implementation
   };
   return BehaviorAnalysisEngine;

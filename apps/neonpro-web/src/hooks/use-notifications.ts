@@ -1,8 +1,8 @@
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
 import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { RealtimeChannel } from "@supabase/supabase-js";
+import type { useCallback, useEffect, useState } from "react";
 
 export interface Notification {
   id: string;

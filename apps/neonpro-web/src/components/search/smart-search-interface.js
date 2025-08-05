@@ -8,32 +8,31 @@
  * @version 1.0.0
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -155,10 +152,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -167,7 +164,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SmartSearchInterface = SmartSearchInterface;
 var badge_1 = require("@/components/ui/badge");
@@ -187,7 +184,6 @@ var DEFAULT_FILTERS = {
   includeInactive: false,
 };
 function SmartSearchInterface(_a) {
-  var _this = this;
   var userId = _a.userId,
     _b = _a.userRole,
     userRole = _b === void 0 ? "user" : _b,
@@ -227,13 +223,13 @@ function SmartSearchInterface(_a) {
   var searchTimeoutRef = (0, react_1.useRef)(null);
   // Debounced search function
   var performSearch = (0, react_1.useCallback)(
-    function (searchTerm_1) {
+    (searchTerm_1) => {
       var args_1 = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         args_1[_i - 1] = arguments[_i];
       }
       return __awaiter(
-        _this,
+        this,
         __spreadArray([searchTerm_1], args_1, true),
         void 0,
         function (searchTerm, searchFilters) {
@@ -241,7 +237,7 @@ function SmartSearchInterface(_a) {
           if (searchFilters === void 0) {
             searchFilters = filters;
           }
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 if (!searchTerm.trim()) {
@@ -307,9 +303,7 @@ function SmartSearchInterface(_a) {
                 setSearchResponse(response);
                 // Add to search history
                 if (!searchHistory.includes(searchTerm)) {
-                  setSearchHistory(function (prev) {
-                    return __spreadArray([searchTerm], prev.slice(0, 4), true);
-                  });
+                  setSearchHistory((prev) => __spreadArray([searchTerm], prev.slice(0, 4), true));
                 }
                 return [3 /*break*/, 10];
               case 8:
@@ -330,19 +324,19 @@ function SmartSearchInterface(_a) {
     [userId, userRole, enableNLP, maxResults, filters, searchHistory],
   );
   // Handle search input change with debouncing
-  var handleSearchChange = function (value) {
+  var handleSearchChange = (value) => {
     setQuery(value);
     // Clear previous timeout
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
     // Set new timeout for debounced search
-    searchTimeoutRef.current = setTimeout(function () {
+    searchTimeoutRef.current = setTimeout(() => {
       performSearch(value);
     }, 300);
   };
   // Handle immediate search (Enter key or search button)
-  var handleSearchSubmit = function (e) {
+  var handleSearchSubmit = (e) => {
     e === null || e === void 0 ? void 0 : e.preventDefault();
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
@@ -350,15 +344,13 @@ function SmartSearchInterface(_a) {
     performSearch(query);
   };
   // Filter results by type for tabs
-  var getFilteredResults = function (type) {
+  var getFilteredResults = (type) => {
     if (!searchResponse) return [];
     if (type === "all") return searchResponse.results;
-    return searchResponse.results.filter(function (result) {
-      return result.type === type;
-    });
+    return searchResponse.results.filter((result) => result.type === type);
   };
   // Get icon for search result type
-  var getTypeIcon = function (type) {
+  var getTypeIcon = (type) => {
     var iconMap = {
       patients: lucide_react_1.User,
       appointments: lucide_react_1.Calendar,
@@ -375,7 +367,7 @@ function SmartSearchInterface(_a) {
     return <IconComponent className="w-4 h-4" />;
   };
   // Get type label in Portuguese
-  var getTypeLabel = function (type) {
+  var getTypeLabel = (type) => {
     var labelMap = {
       patients: "Pacientes",
       appointments: "Agendamentos",
@@ -391,7 +383,7 @@ function SmartSearchInterface(_a) {
     return labelMap[type] || type;
   };
   // Handle result selection
-  var handleResultClick = function (result) {
+  var handleResultClick = (result) => {
     if (onResultSelect) {
       onResultSelect(result);
     } else if (result.url) {
@@ -399,7 +391,7 @@ function SmartSearchInterface(_a) {
     }
   };
   // Get result counts by type
-  var getResultCounts = function () {
+  var getResultCounts = () => {
     if (!searchResponse) return {};
     var counts = {
       all: searchResponse.results.length,
@@ -412,23 +404,17 @@ function SmartSearchInterface(_a) {
   };
   var resultCounts = getResultCounts();
   // Focus input on mount
-  (0, react_1.useEffect)(
-    function () {
-      if (inputRef.current && !initialQuery) {
-        inputRef.current.focus();
-      }
-    },
-    [initialQuery],
-  );
+  (0, react_1.useEffect)(() => {
+    if (inputRef.current && !initialQuery) {
+      inputRef.current.focus();
+    }
+  }, [initialQuery]);
   // Perform initial search if query provided
-  (0, react_1.useEffect)(
-    function () {
-      if (initialQuery) {
-        performSearch(initialQuery);
-      }
-    },
-    [initialQuery, performSearch],
-  );
+  (0, react_1.useEffect)(() => {
+    if (initialQuery) {
+      performSearch(initialQuery);
+    }
+  }, [initialQuery, performSearch]);
   return (
     <div className={"space-y-4 ".concat(className)}>
       {/* Search Input */}
@@ -444,9 +430,7 @@ function SmartSearchInterface(_a) {
                 : "Buscar pacientes, consultas, registros..."
             }
             value={query}
-            onChange={function (e) {
-              return handleSearchChange(e.target.value);
-            }}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-10 pr-20"
           />
           <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
@@ -471,32 +455,28 @@ function SmartSearchInterface(_a) {
                           "medical_records",
                           "timeline_events",
                           "insights",
-                        ].map(function (type) {
-                          return (
-                            <div key={type} className="flex items-center space-x-2">
-                              <checkbox_1.Checkbox
-                                id={type}
-                                checked={filters.types.includes(type)}
-                                onCheckedChange={function (checked) {
-                                  setFilters(function (prev) {
-                                    return __assign(__assign({}, prev), {
-                                      types: checked
-                                        ? __spreadArray(
-                                            __spreadArray([], prev.types, true),
-                                            [type],
-                                            false,
-                                          )
-                                        : prev.types.filter(function (t) {
-                                            return t !== type;
-                                          }),
-                                    });
-                                  });
-                                }}
-                              />
-                              <label_1.Label htmlFor={type}>{getTypeLabel(type)}</label_1.Label>
-                            </div>
-                          );
-                        })}
+                        ].map((type) => (
+                          <div key={type} className="flex items-center space-x-2">
+                            <checkbox_1.Checkbox
+                              id={type}
+                              checked={filters.types.includes(type)}
+                              onCheckedChange={(checked) => {
+                                setFilters((prev) =>
+                                  __assign(__assign({}, prev), {
+                                    types: checked
+                                      ? __spreadArray(
+                                          __spreadArray([], prev.types, true),
+                                          [type],
+                                          false,
+                                        )
+                                      : prev.types.filter((t) => t !== type),
+                                  }),
+                                );
+                              }}
+                            />
+                            <label_1.Label htmlFor={type}>{getTypeLabel(type)}</label_1.Label>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
@@ -507,22 +487,20 @@ function SmartSearchInterface(_a) {
                           { value: "relevance", label: "Relevância" },
                           { value: "date", label: "Data" },
                           { value: "name", label: "Nome" },
-                        ].map(function (option) {
-                          return (
-                            <div key={option.value} className="flex items-center space-x-2">
-                              <checkbox_1.Checkbox
-                                id={option.value}
-                                checked={filters.sortBy === option.value}
-                                onCheckedChange={function () {
-                                  setFilters(function (prev) {
-                                    return __assign(__assign({}, prev), { sortBy: option.value });
-                                  });
-                                }}
-                              />
-                              <label_1.Label htmlFor={option.value}>{option.label}</label_1.Label>
-                            </div>
-                          );
-                        })}
+                        ].map((option) => (
+                          <div key={option.value} className="flex items-center space-x-2">
+                            <checkbox_1.Checkbox
+                              id={option.value}
+                              checked={filters.sortBy === option.value}
+                              onCheckedChange={() => {
+                                setFilters((prev) =>
+                                  __assign(__assign({}, prev), { sortBy: option.value }),
+                                );
+                              }}
+                            />
+                            <label_1.Label htmlFor={option.value}>{option.label}</label_1.Label>
+                          </div>
+                        ))}
                       </div>
                     </div>
 
@@ -530,10 +508,10 @@ function SmartSearchInterface(_a) {
                       <checkbox_1.Checkbox
                         id="includeInactive"
                         checked={filters.includeInactive}
-                        onCheckedChange={function (checked) {
-                          setFilters(function (prev) {
-                            return __assign(__assign({}, prev), { includeInactive: !!checked });
-                          });
+                        onCheckedChange={(checked) => {
+                          setFilters((prev) =>
+                            __assign(__assign({}, prev), { includeInactive: !!checked }),
+                          );
                         }}
                       />
                       <label_1.Label htmlFor="includeInactive">
@@ -542,16 +520,11 @@ function SmartSearchInterface(_a) {
                     </div>
 
                     <div className="flex justify-end space-x-2">
-                      <button_1.Button
-                        variant="outline"
-                        onClick={function () {
-                          return setShowFilters(false);
-                        }}
-                      >
+                      <button_1.Button variant="outline" onClick={() => setShowFilters(false)}>
                         Cancelar
                       </button_1.Button>
                       <button_1.Button
-                        onClick={function () {
+                        onClick={() => {
                           setShowFilters(false);
                           performSearch(query, filters);
                         }}
@@ -584,21 +557,19 @@ function SmartSearchInterface(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="flex flex-wrap gap-2">
-              {searchHistory.map(function (term, index) {
-                return (
-                  <badge_1.Badge
-                    key={index}
-                    variant="secondary"
-                    className="cursor-pointer hover:bg-secondary/80"
-                    onClick={function () {
-                      setQuery(term);
-                      performSearch(term);
-                    }}
-                  >
-                    {term}
-                  </badge_1.Badge>
-                );
-              })}
+              {searchHistory.map((term, index) => (
+                <badge_1.Badge
+                  key={index}
+                  variant="secondary"
+                  className="cursor-pointer hover:bg-secondary/80"
+                  onClick={() => {
+                    setQuery(term);
+                    performSearch(term);
+                  }}
+                >
+                  {term}
+                </badge_1.Badge>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -623,9 +594,7 @@ function SmartSearchInterface(_a) {
                     <span>•</span>
                     <span>
                       {searchResponse.nlpAnalysis.entities
-                        .map(function (e) {
-                          return "".concat(e.type, ": ").concat(e.value);
-                        })
+                        .map((e) => "".concat(e.type, ": ").concat(e.value))
                         .join(", ")}
                     </span>
                   </>
@@ -651,12 +620,7 @@ function SmartSearchInterface(_a) {
           </div>
 
           {/* Results Tabs */}
-          <tabs_1.Tabs
-            value={selectedTab}
-            onValueChange={function (value) {
-              return setSelectedTab(value);
-            }}
-          >
+          <tabs_1.Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value)}>
             <tabs_1.TabsList className="grid w-full grid-cols-6">
               <tabs_1.TabsTrigger value="all" className="flex items-center space-x-1">
                 <span>Todos</span>
@@ -668,7 +632,7 @@ function SmartSearchInterface(_a) {
               </tabs_1.TabsTrigger>
 
               {["patients", "appointments", "medical_records", "timeline_events", "insights"].map(
-                function (type) {
+                (type) => {
                   var count = resultCounts[type] || 0;
                   if (count === 0) return null;
                   return (
@@ -692,80 +656,68 @@ function SmartSearchInterface(_a) {
             <div className="mt-4">
               <scroll_area_1.ScrollArea className="h-[600px]">
                 <div className="space-y-3">
-                  {getFilteredResults(selectedTab).map(function (result, index) {
-                    return (
-                      <card_1.Card
-                        key={result.id}
-                        className="cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={function () {
-                          return handleResultClick(result);
-                        }}
-                      >
-                        <card_1.CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-2 mb-2">
-                                {getTypeIcon(result.type)}
-                                <badge_1.Badge variant="outline" className="text-xs">
-                                  {getTypeLabel(result.type)}
-                                </badge_1.Badge>
-                                <badge_1.Badge variant="secondary" className="text-xs">
-                                  {Math.round(result.relevanceScore * 100)}% relevante
-                                </badge_1.Badge>
-                              </div>
-
-                              <h3 className="font-semibold text-sm mb-1">{result.title}</h3>
-
-                              <p className="text-sm text-muted-foreground mb-2">
-                                {result.description}
-                              </p>
-
-                              {/* Highlights */}
-                              {result.highlights && result.highlights.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mb-2">
-                                  {result.highlights.map(function (highlight, i) {
-                                    return (
-                                      <badge_1.Badge
-                                        key={i}
-                                        variant="secondary"
-                                        className="text-xs"
-                                      >
-                                        {highlight}
-                                      </badge_1.Badge>
-                                    );
-                                  })}
-                                </div>
-                              )}
-
-                              {/* Actions */}
-                              {result.actions && result.actions.length > 0 && (
-                                <div className="flex space-x-2">
-                                  {result.actions.map(function (action) {
-                                    return (
-                                      <button_1.Button
-                                        key={action.id}
-                                        variant="outline"
-                                        size="sm"
-                                        className="text-xs"
-                                        onClick={function (e) {
-                                          e.stopPropagation();
-                                          if (action.url) {
-                                            window.location.href = action.url;
-                                          }
-                                        }}
-                                      >
-                                        {action.label}
-                                      </button_1.Button>
-                                    );
-                                  })}
-                                </div>
-                              )}
+                  {getFilteredResults(selectedTab).map((result, index) => (
+                    <card_1.Card
+                      key={result.id}
+                      className="cursor-pointer hover:shadow-md transition-shadow"
+                      onClick={() => handleResultClick(result)}
+                    >
+                      <card_1.CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              {getTypeIcon(result.type)}
+                              <badge_1.Badge variant="outline" className="text-xs">
+                                {getTypeLabel(result.type)}
+                              </badge_1.Badge>
+                              <badge_1.Badge variant="secondary" className="text-xs">
+                                {Math.round(result.relevanceScore * 100)}% relevante
+                              </badge_1.Badge>
                             </div>
+
+                            <h3 className="font-semibold text-sm mb-1">{result.title}</h3>
+
+                            <p className="text-sm text-muted-foreground mb-2">
+                              {result.description}
+                            </p>
+
+                            {/* Highlights */}
+                            {result.highlights && result.highlights.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mb-2">
+                                {result.highlights.map((highlight, i) => (
+                                  <badge_1.Badge key={i} variant="secondary" className="text-xs">
+                                    {highlight}
+                                  </badge_1.Badge>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Actions */}
+                            {result.actions && result.actions.length > 0 && (
+                              <div className="flex space-x-2">
+                                {result.actions.map((action) => (
+                                  <button_1.Button
+                                    key={action.id}
+                                    variant="outline"
+                                    size="sm"
+                                    className="text-xs"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (action.url) {
+                                        window.location.href = action.url;
+                                      }
+                                    }}
+                                  >
+                                    {action.label}
+                                  </button_1.Button>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                        </card_1.CardContent>
-                      </card_1.Card>
-                    );
-                  })}
+                        </div>
+                      </card_1.CardContent>
+                    </card_1.Card>
+                  ))}
                 </div>
               </scroll_area_1.ScrollArea>
             </div>
@@ -779,21 +731,19 @@ function SmartSearchInterface(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {searchResponse.suggestions.map(function (suggestion, index) {
-                    return (
-                      <badge_1.Badge
-                        key={index}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-secondary/80"
-                        onClick={function () {
-                          setQuery(suggestion);
-                          performSearch(suggestion);
-                        }}
-                      >
-                        {suggestion}
-                      </badge_1.Badge>
-                    );
-                  })}
+                  {searchResponse.suggestions.map((suggestion, index) => (
+                    <badge_1.Badge
+                      key={index}
+                      variant="outline"
+                      className="cursor-pointer hover:bg-secondary/80"
+                      onClick={() => {
+                        setQuery(suggestion);
+                        performSearch(suggestion);
+                      }}
+                    >
+                      {suggestion}
+                    </badge_1.Badge>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -814,21 +764,19 @@ function SmartSearchInterface(_a) {
               <div>
                 <p className="text-sm font-medium mb-2">Que tal tentar:</p>
                 <div className="flex flex-wrap justify-center gap-2">
-                  {searchResponse.suggestions.map(function (suggestion, index) {
-                    return (
-                      <badge_1.Badge
-                        key={index}
-                        variant="secondary"
-                        className="cursor-pointer hover:bg-secondary/80"
-                        onClick={function () {
-                          setQuery(suggestion);
-                          performSearch(suggestion);
-                        }}
-                      >
-                        {suggestion}
-                      </badge_1.Badge>
-                    );
-                  })}
+                  {searchResponse.suggestions.map((suggestion, index) => (
+                    <badge_1.Badge
+                      key={index}
+                      variant="secondary"
+                      className="cursor-pointer hover:bg-secondary/80"
+                      onClick={() => {
+                        setQuery(suggestion);
+                        performSearch(suggestion);
+                      }}
+                    >
+                      {suggestion}
+                    </badge_1.Badge>
+                  ))}
                 </div>
               </div>
             )}

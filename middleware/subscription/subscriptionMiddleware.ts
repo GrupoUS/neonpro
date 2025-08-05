@@ -7,8 +7,8 @@
  * for protected API endpoints based on the user's subscription tier.
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
 import type { Database } from "@/types/database";
 
 type SubscriptionPlan = Database["public"]["Tables"]["subscription_plans"]["Row"];
@@ -75,7 +75,7 @@ const USAGE_LIMIT_MAP: Record<string, string> = {
  */
 export async function subscriptionMiddleware(
   request: NextRequest,
-  context: { params?: any },
+  _context: { params?: any },
 ): Promise<NextResponse | null> {
   try {
     // Get user session
@@ -266,7 +266,7 @@ async function checkUsageLimit(
 
   try {
     switch (limitKey) {
-      case "max_patients":
+      case "max_patients": {
         const { count: patientCount } = await supabase
           .from("patients")
           .select("*", { count: "exact", head: true })
@@ -274,8 +274,9 @@ async function checkUsageLimit(
           .eq("is_active", true);
         currentUsage = patientCount || 0;
         break;
+      }
 
-      case "max_appointments_per_month":
+      case "max_appointments_per_month": {
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
@@ -287,8 +288,9 @@ async function checkUsageLimit(
           .gte("appointment_date", startOfMonth.toISOString());
         currentUsage = appointmentCount || 0;
         break;
+      }
 
-      case "max_users":
+      case "max_users": {
         const { count: userCount } = await supabase
           .from("user_clinics")
           .select("*", { count: "exact", head: true })
@@ -296,9 +298,10 @@ async function checkUsageLimit(
           .eq("is_active", true);
         currentUsage = userCount || 0;
         break;
+      }
 
       case "sms_notifications":
-      case "email_notifications":
+      case "email_notifications": {
         // Get usage from subscription_usage table
         const { data: usage } = await supabase
           .from("subscription_usage")
@@ -312,6 +315,7 @@ async function checkUsageLimit(
           .single();
         currentUsage = usage?.usage_count || 0;
         break;
+      }
 
       default:
         // For unknown limits, allow by default
@@ -334,7 +338,7 @@ async function checkUsageLimit(
  * Helper function to create subscription context for API routes
  */
 export async function getSubscriptionContext(
-  request: NextRequest,
+  _request: NextRequest,
 ): Promise<SubscriptionContext | null> {
   // This will be used in API routes to get subscription context
   // Implementation similar to middleware but returns context object

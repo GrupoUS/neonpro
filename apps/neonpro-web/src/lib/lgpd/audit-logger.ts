@@ -158,7 +158,8 @@ export class AuditLogger {
     const auditEntry: AuditLog = {
       id: crypto.randomUUID(),
       activity: params.activity,
-      riskLevel: params.riskLevel || this.calculateRiskLevel(params.activity, params.success),
+      riskLevel:
+        params.riskLevel || AuditLogger.calculateRiskLevel(params.activity, params.success),
       description: params.description,
       dataSubjectId: params.dataSubjectId,
       dataSubjectType: params.dataSubjectType,
@@ -180,7 +181,7 @@ export class AuditLogger {
       errorMessage: params.errorMessage,
       recordsAffected: params.recordsAffected || 0,
       metadata: params.metadata,
-      retentionPeriod: this.getRetentionPeriod(params.activity),
+      retentionPeriod: AuditLogger.getRetentionPeriod(params.activity),
       createdAt: new Date(),
     };
 
@@ -192,7 +193,7 @@ export class AuditLogger {
 
     // Alert on high/critical risk activities
     if (validated.riskLevel === RiskLevel.HIGH || validated.riskLevel === RiskLevel.CRITICAL) {
-      await this.alertSecurityTeam(validated);
+      await AuditLogger.alertSecurityTeam(validated);
     }
 
     return validated;
@@ -222,7 +223,7 @@ export class AuditLogger {
       delete: DataProcessingActivity.PATIENT_DELETE,
     };
 
-    return this.log({
+    return AuditLogger.log({
       activity: activityMap[params.operation],
       description: `${params.operation.toUpperCase()} operation on patient data`,
       actorId: params.actorId,
@@ -256,7 +257,7 @@ export class AuditLogger {
     userAgent: string;
     reason?: string;
   }): Promise<AuditLog> {
-    return this.log({
+    return AuditLogger.log({
       activity: DataProcessingActivity.CONSENT_CHANGE,
       description: `Consent ${params.consentType} changed from ${params.oldStatus} to ${params.newStatus}`,
       actorId: params.actorId,
@@ -292,7 +293,7 @@ export class AuditLogger {
     ipAddress: string;
     incidentDetails: Record<string, any>;
   }): Promise<AuditLog> {
-    return this.log({
+    return AuditLogger.log({
       activity: DataProcessingActivity.DATA_BREACH,
       description: `Data breach incident: ${params.description}`,
       actorId: params.actorId,

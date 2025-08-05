@@ -82,7 +82,7 @@ async function testEmailNotificationService() {
     console.log('\n✅ Testing "payment completed" notification...');
     const completedData = {
       ...sampleNotificationData,
-      paymentId: "pay_" + Date.now(),
+      paymentId: `pay_${Date.now()}`,
     };
     const completedResult =
       await notificationService.sendPaymentCompletedNotification(completedData);

@@ -3,7 +3,6 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionStatus = SessionStatus;
 var react_1 = require("react");
@@ -55,7 +54,7 @@ function SessionStatus(_a) {
       </card_1.Card>
     );
   }
-  var getSecurityColor = function (status) {
+  var getSecurityColor = (status) => {
     switch (status) {
       case "secure":
         return "text-green-600";
@@ -69,7 +68,7 @@ function SessionStatus(_a) {
         return "text-gray-600";
     }
   };
-  var getSecurityBadgeVariant = function (status) {
+  var getSecurityBadgeVariant = (status) => {
     switch (status) {
       case "secure":
         return "default";
@@ -83,7 +82,7 @@ function SessionStatus(_a) {
         return "secondary";
     }
   };
-  var getRiskColor = function (level) {
+  var getRiskColor = (level) => {
     switch (level) {
       case "low":
         return "text-green-600";

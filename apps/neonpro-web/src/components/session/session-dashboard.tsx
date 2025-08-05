@@ -5,7 +5,30 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { format, formatDistanceToNow } from "date-fns";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Eye,
+  EyeOff,
+  LogOut,
+  MapPin,
+  Monitor,
+  MoreVertical,
+  Plus,
+  RefreshCw,
+  Shield,
+  Smartphone,
+  Wifi,
+  WifiOff,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,12 +36,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Progress } from "@/components/ui/progress";
-import type { Separator } from "@/components/ui/separator";
 import type {
   Dialog,
   DialogContent,
@@ -28,6 +45,14 @@ import type {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type {
   Table,
   TableBody,
   TableCell,
@@ -35,40 +60,15 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { useDeviceManagement, useSession, useSessionSecurity } from "@/hooks/use-session";
 import type {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type {
-  Shield,
-  Clock,
-  Smartphone,
-  Monitor,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  MoreVertical,
-  RefreshCw,
-  LogOut,
-  Plus,
-  Eye,
-  EyeOff,
-  MapPin,
-  Wifi,
-  WifiOff,
-} from "lucide-react";
-import type { useSession, useSessionSecurity, useDeviceManagement } from "@/hooks/use-session";
-import type {
-  UserSession,
-  SessionSecurityEvent,
   DeviceRegistration,
-  SecuritySeverity,
   DeviceType,
+  SecuritySeverity,
+  SessionSecurityEvent,
+  UserSession,
 } from "@/types/session";
-import type { formatDistanceToNow, format } from "date-fns";
-import type { toast } from "sonner";
 
 interface SessionDashboardProps {
   className?: string;

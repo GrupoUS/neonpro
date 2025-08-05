@@ -15,8 +15,8 @@ import type { createClient } from "@supabase/supabase-js";
 import type { UserRole } from "@/types/auth";
 import type { SecurityAuditLogger } from "./security-audit-logger";
 import type {
-  SuspiciousActivityDetector,
   SuspiciousActivityAlert,
+  SuspiciousActivityDetector,
 } from "./suspicious-activity-detector";
 
 export interface SecurityMetrics {

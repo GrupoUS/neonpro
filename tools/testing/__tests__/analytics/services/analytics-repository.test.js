@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var repository_1 = require("@/lib/analytics/repository");
@@ -139,10 +136,10 @@ var server_1 = require("@/utils/supabase/server");
 // Mock Supabase client
 globals_1.jest.mock("@/utils/supabase/server");
 var mockCreateClient = server_1.createClient;
-(0, globals_1.describe)("AnalyticsRepository", function () {
+(0, globals_1.describe)("AnalyticsRepository", () => {
   var repository;
   var mockSupabase;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     // Create mock Supabase client with typed methods
     mockSupabase = {
       from: globals_1.jest.fn(),
@@ -155,14 +152,14 @@ var mockCreateClient = server_1.createClient;
     mockCreateClient.mockResolvedValue(mockSupabase);
     repository = new repository_1.AnalyticsRepository();
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("getSubscriptionMetrics", function () {
-    (0, globals_1.test)("should fetch subscription metrics from database", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("getSubscriptionMetrics", () => {
+    (0, globals_1.test)("should fetch subscription metrics from database", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockData, mockFrom, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockData = {
@@ -204,12 +201,12 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockError, mockFrom;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockError = { message: "Database connection failed" };
@@ -232,12 +229,12 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle missing data gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle missing data gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockFrom;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFrom = {
@@ -259,14 +256,14 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("getTrialMetrics", function () {
-    (0, globals_1.test)("should fetch trial metrics with AI predictions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("getTrialMetrics", () => {
+    (0, globals_1.test)("should fetch trial metrics with AI predictions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockTrialData, mockPredictionData, mockFrom, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockTrialData = {
@@ -318,12 +315,12 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle RPC function calls for complex analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle RPC function calls for complex analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockRpcResult, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRpcResult = {
@@ -349,14 +346,14 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("getCohortAnalysis", function () {
-    (0, globals_1.test)("should fetch cohort data with retention rates", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("getCohortAnalysis", () => {
+    (0, globals_1.test)("should fetch cohort data with retention rates", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startDate, endDate, mockCohortData, mockFrom, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startDate = new Date("2024-01-01");
@@ -398,14 +395,14 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("getRevenueForecasting", function () {
-    (0, globals_1.test)("should fetch revenue predictions from ML model", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("getRevenueForecasting", () => {
+    (0, globals_1.test)("should fetch revenue predictions from ML model", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var periods, mockForecastData, mockFrom, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               periods = 6;
@@ -443,14 +440,14 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("real-time subscriptions", function () {
-    (0, globals_1.test)("should set up real-time listener for metrics updates", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("real-time subscriptions", () => {
+    (0, globals_1.test)("should set up real-time listener for metrics updates", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockCallback, mockChannel;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockCallback = globals_1.jest.fn();
@@ -479,14 +476,14 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("data validation", function () {
-    (0, globals_1.test)("should validate subscription metrics data format", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("data validation", () => {
+    (0, globals_1.test)("should validate subscription metrics data format", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidData, mockFrom;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidData = {
@@ -516,12 +513,12 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should validate date ranges for cohort analysis", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should validate date ranges for cohort analysis", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startDate, endDate;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startDate = new Date("invalid-date");
@@ -539,14 +536,14 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("performance optimization", function () {
-    (0, globals_1.test)("should implement connection pooling", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("performance optimization", () => {
+    (0, globals_1.test)("should implement connection pooling", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics, mockFrom, promises;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -561,9 +558,7 @@ var mockCreateClient = server_1.createClient;
               mockSupabase.from.mockReturnValue(mockFrom);
               promises = Array(5)
                 .fill(null)
-                .map(function () {
-                  return repository.getSubscriptionMetrics("monthly");
-                });
+                .map(() => repository.getSubscriptionMetrics("monthly"));
               return [4 /*yield*/, Promise.all(promises)];
             case 1:
               _a.sent();
@@ -572,12 +567,12 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle concurrent requests efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle concurrent requests efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockData, mockFrom, startTime, promises, results, duration;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockData = {
@@ -593,9 +588,7 @@ var mockCreateClient = server_1.createClient;
               startTime = Date.now();
               promises = Array(10)
                 .fill(null)
-                .map(function () {
-                  return repository.getSubscriptionMetrics("monthly");
-                });
+                .map(() => repository.getSubscriptionMetrics("monthly"));
               return [4 /*yield*/, Promise.all(promises)];
             case 1:
               results = _a.sent();
@@ -606,7 +599,7 @@ var mockCreateClient = server_1.createClient;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

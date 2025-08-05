@@ -1,11 +1,11 @@
 import { jest } from "@jest/globals";
 import { NextRequest } from "next/server";
-import { GET, POST, PUT, DELETE } from "@/app/api/backup/configs/route";
 import {
+  DELETE as deleteConfig,
   GET as getConfig,
   PUT as updateConfig,
-  DELETE as deleteConfig,
 } from "@/app/api/backup/configs/[id]/route";
+import { GET, POST } from "@/app/api/backup/configs/route";
 
 // Mock Supabase
 jest.mock("@/lib/supabase", () => ({
@@ -198,7 +198,7 @@ describe("/api/backup/jobs", () => {
       type: "MANUAL",
     };
 
-    const request = new NextRequest("http://localhost:3000/api/backup/jobs", {
+    const _request = new NextRequest("http://localhost:3000/api/backup/jobs", {
       method: "POST",
       body: JSON.stringify(jobData),
       headers: {
@@ -207,7 +207,7 @@ describe("/api/backup/jobs", () => {
     });
 
     // Mock the jobs route handler
-    const mockJobResponse = {
+    const _mockJobResponse = {
       id: "job-1",
       config_id: jobData.config_id,
       status: "PENDING",
@@ -221,7 +221,7 @@ describe("/api/backup/jobs", () => {
 
   it("should get backup job status", async () => {
     const jobId = "job-1";
-    const request = new NextRequest(`http://localhost:3000/api/backup/jobs/${jobId}`);
+    const _request = new NextRequest(`http://localhost:3000/api/backup/jobs/${jobId}`);
 
     // Mock job status response
     const mockStatus = {
@@ -238,7 +238,7 @@ describe("/api/backup/jobs", () => {
 
   it("should cancel a running backup job", async () => {
     const jobId = "job-1";
-    const request = new NextRequest(`http://localhost:3000/api/backup/jobs/${jobId}/cancel`, {
+    const _request = new NextRequest(`http://localhost:3000/api/backup/jobs/${jobId}/cancel`, {
       method: "POST",
     });
 
@@ -262,7 +262,7 @@ describe("/api/backup/recovery", () => {
       verify_integrity: true,
     };
 
-    const request = new NextRequest("http://localhost:3000/api/backup/recovery", {
+    const _request = new NextRequest("http://localhost:3000/api/backup/recovery", {
       method: "POST",
       body: JSON.stringify(recoveryData),
       headers: {
@@ -289,7 +289,7 @@ describe("/api/backup/recovery", () => {
       target_location: "/tmp/restore",
     };
 
-    const request = new NextRequest("http://localhost:3000/api/backup/recovery", {
+    const _request = new NextRequest("http://localhost:3000/api/backup/recovery", {
       method: "POST",
       body: JSON.stringify(invalidData),
       headers: {
@@ -305,7 +305,7 @@ describe("/api/backup/recovery", () => {
 
 describe("/api/backup/status", () => {
   it("should return overall backup system status", async () => {
-    const request = new NextRequest("http://localhost:3000/api/backup/status");
+    const _request = new NextRequest("http://localhost:3000/api/backup/status");
 
     // Mock status response
     const mockStatus = {
@@ -328,7 +328,7 @@ describe("/api/backup/status", () => {
 
 describe("/api/backup/metrics", () => {
   it("should return backup metrics", async () => {
-    const request = new NextRequest("http://localhost:3000/api/backup/metrics");
+    const _request = new NextRequest("http://localhost:3000/api/backup/metrics");
 
     // Mock metrics response
     const mockMetrics = {
@@ -349,7 +349,7 @@ describe("/api/backup/metrics", () => {
   it("should filter metrics by date range", async () => {
     const startDate = "2024-01-01";
     const endDate = "2024-01-31";
-    const request = new NextRequest(
+    const _request = new NextRequest(
       `http://localhost:3000/api/backup/metrics?start_date=${startDate}&end_date=${endDate}`,
     );
 
@@ -380,7 +380,7 @@ describe("API Error Handling", () => {
   });
 
   it("should handle validation errors", async () => {
-    const invalidData = {
+    const _invalidData = {
       name: "", // Empty name
       type: "INVALID_TYPE", // Invalid type
     };

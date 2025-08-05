@@ -1,23 +1,23 @@
 import type { createClient } from "@supabase/supabase-js";
+import type { API_CONFIG, API_ENDPOINTS, CACHE_KEYS } from "./config";
 import type {
-  KPIMetric,
+  APIResponse,
+  DateRange,
+  ExportOptions,
+  FinancialData,
+  FinancialReport,
   KPIAlert,
   KPIBenchmark,
+  KPIFilter,
   KPIForecast,
-  FinancialData,
-  ServiceMetrics,
-  ProviderMetrics,
+  KPIMetric,
   LocationMetrics,
   PatientSegmentMetrics,
-  FinancialReport,
-  ExportOptions,
-  ShareOptions,
-  KPIFilter,
-  DateRange,
-  APIResponse,
   PerformanceMetrics,
+  ProviderMetrics,
+  ServiceMetrics,
+  ShareOptions,
 } from "./types";
-import type { API_CONFIG, API_ENDPOINTS, CACHE_KEYS } from "./config";
 
 // Supabase client
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
@@ -166,7 +166,7 @@ export class FinancialKPIService {
     }
 
     if (API_CONFIG.enableMocking) {
-      return this.getMockKPIData(filters);
+      return FinancialKPIService.getMockKPIData(filters);
     }
 
     const response = await apiClient.get<KPIMetric[]>(API_ENDPOINTS.KPI_DATA, filters);
@@ -181,7 +181,7 @@ export class FinancialKPIService {
   // Fetch alerts
   static async getAlerts(filters?: Partial<KPIFilter>): Promise<APIResponse<KPIAlert[]>> {
     if (API_CONFIG.enableMocking) {
-      return this.getMockAlerts();
+      return FinancialKPIService.getMockAlerts();
     }
 
     return apiClient.get<KPIAlert[]>(API_ENDPOINTS.ALERTS, filters);
@@ -190,7 +190,7 @@ export class FinancialKPIService {
   // Fetch benchmarks
   static async getBenchmarks(kpiIds: string[]): Promise<APIResponse<KPIBenchmark[]>> {
     if (API_CONFIG.enableMocking) {
-      return this.getMockBenchmarks(kpiIds);
+      return FinancialKPIService.getMockBenchmarks(kpiIds);
     }
 
     return apiClient.get<KPIBenchmark[]>(API_ENDPOINTS.BENCHMARKS, { kpiIds });
@@ -202,7 +202,7 @@ export class FinancialKPIService {
     horizon: number = 30,
   ): Promise<APIResponse<KPIForecast[]>> {
     if (API_CONFIG.enableMocking) {
-      return this.getMockForecasts(kpiIds, horizon);
+      return FinancialKPIService.getMockForecasts(kpiIds, horizon);
     }
 
     return apiClient.get<KPIForecast[]>(API_ENDPOINTS.FORECASTS, { kpiIds, horizon });
@@ -403,7 +403,7 @@ export class SupabaseKPIService {
         },
         (payload) => {
           // Process real-time updates
-          this.processKPIUpdate(payload, callback, filters);
+          SupabaseKPIService.processKPIUpdate(payload, callback, filters);
         },
       )
       .subscribe();
@@ -449,7 +449,7 @@ export class SupabaseKPIService {
       if (error) throw error;
 
       // Process and aggregate data
-      return this.processFinancialData(data || []);
+      return SupabaseKPIService.processFinancialData(data || []);
     } catch (error) {
       console.error("Error fetching financial data:", error);
       return null;
@@ -601,7 +601,7 @@ export class PerformanceService {
     const startTime = performance.now();
     return () => {
       const duration = performance.now() - startTime;
-      this.recordMetric(operation, duration);
+      PerformanceService.recordMetric(operation, duration);
       return duration;
     };
   }
@@ -609,23 +609,23 @@ export class PerformanceService {
   static recordMetric(operation: string, value: number): void {
     switch (operation) {
       case "load":
-        this.metrics.loadTime = value;
+        PerformanceService.metrics.loadTime = value;
         break;
       case "render":
-        this.metrics.renderTime = value;
+        PerformanceService.metrics.renderTime = value;
         break;
       case "data-freshness":
-        this.metrics.dataFreshness = value;
+        PerformanceService.metrics.dataFreshness = value;
         break;
     }
   }
 
   static getMetrics(): PerformanceMetrics {
-    return { ...this.metrics };
+    return { ...PerformanceService.metrics };
   }
 
   static clearMetrics(): void {
-    this.metrics = {
+    PerformanceService.metrics = {
       loadTime: 0,
       renderTime: 0,
       dataFreshness: 0,

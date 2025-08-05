@@ -13,7 +13,7 @@
  * @version 2.0.0 - Performance Optimized
  */
 
-import type { createClient } from "@/lib/supabase/client";
+import type { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { enhancedSubscriptionCache } from "@/lib/subscription-cache-enhanced";
 import type { subscriptionPerformanceMonitor } from "@/lib/subscription-performance-monitor";
 import type { subscriptionQueryOptimizer } from "@/lib/subscription-query-optimizer";
@@ -22,7 +22,7 @@ import type {
   SubscriptionValidationResult,
   UserSubscription,
 } from "@/lib/subscription-status";
-import type { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { createClient } from "@/lib/supabase/client";
 
 // Hook configuration interface
 interface UseSubscriptionConfig {
@@ -364,7 +364,7 @@ export function useSubscription(
         return await fetchSubscription(force, backgroundUpdate);
       } catch (error) {
         if (attempt < mergedConfig.retryAttempts) {
-          const delay = mergedConfig.retryDelay * Math.pow(2, attempt - 1); // Exponential backoff
+          const delay = mergedConfig.retryDelay * 2 ** (attempt - 1); // Exponential backoff
 
           retryTimeoutRef.current = setTimeout(() => {
             fetchWithRetry(attempt + 1, force, backgroundUpdate);

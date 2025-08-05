@@ -1,17 +1,10 @@
 import type {
+  ExportErrorCode,
   ExportFormat,
-  ExportType,
   ExportOptions,
   ExportRequest,
-  SUPPORTED_FORMATS,
-  SUPPORTED_TYPES,
+  ExportType,
   ValidationResult,
-  ExportErrorCode,
-  CohortData,
-  ForecastData,
-  InsightsData,
-  DashboardData,
-  RealtimeData,
 } from "./types";
 
 /**
@@ -70,11 +63,11 @@ export function validateOptions(options: any): ValidationResult {
         const startDate = new Date(options.dateRange.start);
         const endDate = new Date(options.dateRange.end);
 
-        if (isNaN(startDate.getTime())) {
+        if (Number.isNaN(startDate.getTime())) {
           errors.push("Invalid start date format");
         }
 
-        if (isNaN(endDate.getTime())) {
+        if (Number.isNaN(endDate.getTime())) {
           errors.push("Invalid end date format");
         }
 
@@ -199,7 +192,7 @@ function validateForecastData(data: any): string[] {
         errors.push(`Prediction ${index}: date is required`);
       } else {
         const date = new Date(prediction.date);
-        if (isNaN(date.getTime())) {
+        if (Number.isNaN(date.getTime())) {
           errors.push(`Prediction ${index}: invalid date format`);
         }
       }
@@ -346,7 +339,7 @@ function validateRealtimeData(data: any): string[] {
           errors.push(`Metric ${metric} is required`);
         } else {
           const date = new Date(data.metrics[metric]);
-          if (isNaN(date.getTime())) {
+          if (Number.isNaN(date.getTime())) {
             errors.push(`Metric ${metric} must be a valid date`);
           }
         }
@@ -450,7 +443,7 @@ export function validateFileSize(
  * Validates export rate limits
  */
 export function validateRateLimit(
-  userId: string,
+  _userId: string,
   exportHistory: Array<{ createdAt: string }>,
   limits: { maxExportsPerHour: number; maxExportsPerDay: number },
 ): ValidationResult {

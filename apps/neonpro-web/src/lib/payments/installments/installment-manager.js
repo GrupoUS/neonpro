@@ -1,4 +1,3 @@
-"use strict";
 // NeonPro - Installment Management Service
 // Story 6.1 - Task 3: Installment Management System
 // Comprehensive payment plan and installment processing
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.installmentManager = void 0;
 exports.getInstallmentManager = getInstallmentManager;
@@ -163,7 +160,7 @@ var supabase = (0, supabase_js_1.createClient)(
 var stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
 });
-var InstallmentManager = /** @class */ (function () {
+var InstallmentManager = /** @class */ (() => {
   function InstallmentManager() {}
   // Create new payment plan
   InstallmentManager.prototype.createPaymentPlan = function (request) {
@@ -249,7 +246,7 @@ var InstallmentManager = /** @class */ (function () {
   InstallmentManager.prototype.generateInstallments = function (paymentPlanId, request) {
     return __awaiter(this, void 0, void 0, function () {
       var installments, currentDate, i, installment, error, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -490,7 +487,7 @@ var InstallmentManager = /** @class */ (function () {
   InstallmentManager.prototype.checkPaymentPlanCompletion = function (paymentPlanId) {
     return __awaiter(this, void 0, void 0, function () {
       var installments, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -500,14 +497,7 @@ var InstallmentManager = /** @class */ (function () {
             ];
           case 1:
             installments = _a.sent().data;
-            if (
-              !(
-                installments &&
-                installments.every(function (inst) {
-                  return inst.status === "paid";
-                })
-              )
-            )
+            if (!(installments && installments.every((inst) => inst.status === "paid")))
               return [3 /*break*/, 3];
             return [
               4 /*yield*/,
@@ -543,7 +533,7 @@ var InstallmentManager = /** @class */ (function () {
       if (gracePeriodDays === void 0) {
         gracePeriodDays = 0;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -589,9 +579,7 @@ var InstallmentManager = /** @class */ (function () {
             if (overdueInstallments.length === 0) {
               return [2 /*return*/, 0];
             }
-            installmentIds = overdueInstallments.map(function (inst) {
-              return inst.id;
-            });
+            installmentIds = overdueInstallments.map((inst) => inst.id);
             return [
               4 /*yield*/,
               supabase
@@ -642,7 +630,7 @@ var InstallmentManager = /** @class */ (function () {
         result,
         updateError,
         error_8;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 8, , 9]);
@@ -798,7 +786,7 @@ var InstallmentManager = /** @class */ (function () {
   InstallmentManager.prototype.cancelPaymentPlan = function (paymentPlanId, reason) {
     return __awaiter(this, void 0, void 0, function () {
       var error_9;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -851,7 +839,7 @@ var InstallmentManager = /** @class */ (function () {
   InstallmentManager.prototype.getPaymentPlanDetails = function (paymentPlanId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, paymentPlan, error, error_10;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -885,7 +873,7 @@ var InstallmentManager = /** @class */ (function () {
   InstallmentManager.prototype.getCustomerPaymentHistory = function (customerId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, paymentPlans, error, error_11;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,14 +128,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var test_1 = require("@playwright/test");
-test_1.test.describe("Authentication Flow", function () {
-  test_1.test.beforeEach(function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Authentication Flow", () => {
+  test_1.test.beforeEach((_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Navigate to the login page
@@ -149,12 +146,12 @@ test_1.test.describe("Authentication Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should display login page correctly", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should display login page correctly", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Check if login page elements are present
@@ -192,12 +189,12 @@ test_1.test.describe("Authentication Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should show validation errors for invalid inputs", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should show validation errors for invalid inputs", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Try to submit empty form
@@ -241,12 +238,12 @@ test_1.test.describe("Authentication Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should handle login with invalid credentials", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should handle login with invalid credentials", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Fill form with invalid credentials
@@ -281,12 +278,12 @@ test_1.test.describe("Authentication Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should redirect to dashboard after successful login", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should redirect to dashboard after successful login", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Mock successful login (in real test, you'd use test credentials)
@@ -329,12 +326,12 @@ test_1.test.describe("Authentication Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should navigate to signup page", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should navigate to signup page", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Click signup link
@@ -357,16 +354,16 @@ test_1.test.describe("Authentication Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-test_1.test.describe("Google OAuth Flow", function () {
-  (0, test_1.test)("should open Google OAuth popup", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Google OAuth Flow", () => {
+  (0, test_1.test)("should open Google OAuth popup", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var popup;
       var page = _b.page,
         context = _b.context;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [
@@ -391,14 +388,14 @@ test_1.test.describe("Google OAuth Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-test_1.test.describe("Sign Up Flow", function () {
-  test_1.test.beforeEach(function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Sign Up Flow", () => {
+  test_1.test.beforeEach((_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [4 /*yield*/, page.goto("/signup")];
@@ -407,12 +404,12 @@ test_1.test.describe("Sign Up Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should display signup form correctly", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should display signup form correctly", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [4 /*yield*/, (0, test_1.expect)(page.locator("h1")).toContainText("Sign Up")];
@@ -445,12 +442,12 @@ test_1.test.describe("Sign Up Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should validate password requirements", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should validate password requirements", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [4 /*yield*/, page.fill('input[name="name"]', "Test User")];
@@ -482,12 +479,12 @@ test_1.test.describe("Sign Up Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should handle successful signup", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should handle successful signup", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [4 /*yield*/, page.fill('input[name="name"]', "Test User")];
@@ -517,14 +514,14 @@ test_1.test.describe("Sign Up Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-test_1.test.describe("Authentication State Persistence", function () {
-  (0, test_1.test)("should maintain login state across page refreshes", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Authentication State Persistence", () => {
+  (0, test_1.test)("should maintain login state across page refreshes", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Login first
@@ -568,12 +565,12 @@ test_1.test.describe("Authentication State Persistence", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should redirect to login when accessing protected route", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should redirect to login when accessing protected route", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Try to access dashboard without being logged in
@@ -593,14 +590,14 @@ test_1.test.describe("Authentication State Persistence", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-test_1.test.describe("Logout Flow", function () {
-  test_1.test.beforeEach(function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Logout Flow", () => {
+  test_1.test.beforeEach((_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Login first
@@ -623,12 +620,12 @@ test_1.test.describe("Logout Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should logout successfully", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should logout successfully", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             // Click logout button (adjust selector based on your UI)
@@ -666,65 +663,60 @@ test_1.test.describe("Logout Flow", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-});
-test_1.test.describe("Error Boundaries", function () {
-  (0, test_1.test)(
-    "should display error boundary when authentication fails critically",
-    function (_a) {
-      return __awaiter(void 0, [_a], void 0, function (_b) {
-        var page = _b.page;
-        return __generator(this, function (_c) {
-          switch (_c.label) {
-            case 0:
-              // Simulate a critical auth error (you might need to mock this)
-              return [
-                4 /*yield*/,
-                page.goto("/login"),
-                // Inject script to simulate error
-              ];
-            case 1:
-              // Simulate a critical auth error (you might need to mock this)
-              _c.sent();
-              // Inject script to simulate error
-              return [
-                4 /*yield*/,
-                page.evaluate(function () {
-                  // Simulate critical error in auth context
-                  window.dispatchEvent(new Event("auth-critical-error"));
-                }),
-                // Should show error boundary
-              ];
-            case 2:
-              // Inject script to simulate error
-              _c.sent();
-              // Should show error boundary
-              return [
-                4 /*yield*/,
-                (0, test_1.expect)(page.locator("text=Oops! Algo deu errado")).toBeVisible(),
-              ];
-            case 3:
-              // Should show error boundary
-              _c.sent();
-              return [
-                4 /*yield*/,
-                (0, test_1.expect)(
-                  page.locator('button:has-text("Tentar novamente")'),
-                ).toBeVisible(),
-              ];
-            case 4:
-              _c.sent();
-              return [2 /*return*/];
-          }
-        });
-      });
-    },
+    }),
   );
-  (0, test_1.test)("should recover from error boundary", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+});
+test_1.test.describe("Error Boundaries", () => {
+  (0, test_1.test)("should display error boundary when authentication fails critically", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
+        switch (_c.label) {
+          case 0:
+            // Simulate a critical auth error (you might need to mock this)
+            return [
+              4 /*yield*/,
+              page.goto("/login"),
+              // Inject script to simulate error
+            ];
+          case 1:
+            // Simulate a critical auth error (you might need to mock this)
+            _c.sent();
+            // Inject script to simulate error
+            return [
+              4 /*yield*/,
+              page.evaluate(() => {
+                // Simulate critical error in auth context
+                window.dispatchEvent(new Event("auth-critical-error"));
+              }),
+              // Should show error boundary
+            ];
+          case 2:
+            // Inject script to simulate error
+            _c.sent();
+            // Should show error boundary
+            return [
+              4 /*yield*/,
+              (0, test_1.expect)(page.locator("text=Oops! Algo deu errado")).toBeVisible(),
+            ];
+          case 3:
+            // Should show error boundary
+            _c.sent();
+            return [
+              4 /*yield*/,
+              (0, test_1.expect)(page.locator('button:has-text("Tentar novamente")')).toBeVisible(),
+            ];
+          case 4:
+            _c.sent();
+            return [2 /*return*/];
+        }
+      });
+    }),
+  );
+  (0, test_1.test)("should recover from error boundary", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
+      var page = _b.page;
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [
@@ -737,7 +729,7 @@ test_1.test.describe("Error Boundaries", function () {
             // Trigger error
             return [
               4 /*yield*/,
-              page.evaluate(function () {
+              page.evaluate(() => {
                 window.dispatchEvent(new Event("auth-critical-error"));
               }),
             ];
@@ -771,14 +763,14 @@ test_1.test.describe("Error Boundaries", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-test_1.test.describe("Accessibility", function () {
-  (0, test_1.test)("should be keyboard navigable", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Accessibility", () => {
+  (0, test_1.test)("should be keyboard navigable", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [
@@ -820,12 +812,12 @@ test_1.test.describe("Accessibility", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should have proper ARIA labels", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should have proper ARIA labels", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [
@@ -867,15 +859,15 @@ test_1.test.describe("Accessibility", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
-test_1.test.describe("Performance", function () {
-  (0, test_1.test)("should load login page within performance budget", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+test_1.test.describe("Performance", () => {
+  (0, test_1.test)("should load login page within performance budget", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var startTime, loadTime;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             startTime = Date.now();
@@ -891,13 +883,13 @@ test_1.test.describe("Performance", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, test_1.test)("should have good Core Web Vitals", function (_a) {
-    return __awaiter(void 0, [_a], void 0, function (_b) {
+    }),
+  );
+  (0, test_1.test)("should have good Core Web Vitals", (_a) =>
+    __awaiter(void 0, [_a], void 0, function (_b) {
       var lcp;
       var page = _b.page;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             return [
@@ -909,15 +901,16 @@ test_1.test.describe("Performance", function () {
             _c.sent();
             return [
               4 /*yield*/,
-              page.evaluate(function () {
-                return new Promise(function (resolve) {
-                  new PerformanceObserver(function (list) {
-                    var entries = list.getEntries();
-                    var lastEntry = entries[entries.length - 1];
-                    resolve(lastEntry.startTime);
-                  }).observe({ entryTypes: ["largest-contentful-paint"] });
-                });
-              }),
+              page.evaluate(
+                () =>
+                  new Promise((resolve) => {
+                    new PerformanceObserver((list) => {
+                      var entries = list.getEntries();
+                      var lastEntry = entries[entries.length - 1];
+                      resolve(lastEntry.startTime);
+                    }).observe({ entryTypes: ["largest-contentful-paint"] });
+                  }),
+              ),
               // LCP should be under 2.5 seconds
             ];
           case 2:
@@ -927,6 +920,6 @@ test_1.test.describe("Performance", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NLP Search Engine Core
  *
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -140,7 +137,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.nlpSearchEngine = exports.NLPSearchEngine = void 0;
 /**
@@ -149,7 +146,7 @@ exports.nlpSearchEngine = exports.NLPSearchEngine = void 0;
  * Converts natural language queries into structured search parameters
  * and provides intelligent suggestions and context-aware results.
  */
-var NLPSearchEngine = /** @class */ (function () {
+var NLPSearchEngine = /** @class */ (() => {
   function NLPSearchEngine() {
     this.intentPatterns = new Map();
     this.entityPatterns = new Map();
@@ -194,26 +191,23 @@ var NLPSearchEngine = /** @class */ (function () {
   /**
    * Normalize query text for better processing
    */
-  NLPSearchEngine.prototype.normalizeQuery = function (query) {
-    return (
-      query
-        .toLowerCase()
-        .trim()
-        // Remove extra whitespace
-        .replace(/\s+/g, " ")
-        // Handle common contractions
-        .replace(/can't/g, "cannot")
-        .replace(/won't/g, "will not")
-        .replace(/n't/g, " not")
-        // Remove punctuation except for important ones
-        .replace(/[^\w\s\-\.]/g, " ")
-        .trim()
-    );
-  };
+  NLPSearchEngine.prototype.normalizeQuery = (query) =>
+    query
+      .toLowerCase()
+      .trim()
+      // Remove extra whitespace
+      .replace(/\s+/g, " ")
+      // Handle common contractions
+      .replace(/can't/g, "cannot")
+      .replace(/won't/g, "will not")
+      .replace(/n't/g, " not")
+      // Remove punctuation except for important ones
+      .replace(/[^\w\s\-.]/g, " ")
+      .trim();
   /**
    * Extract user intent from the query
    */
-  NLPSearchEngine.prototype.extractIntent = function (query) {
+  NLPSearchEngine.prototype.extractIntent = (query) => {
     // Default intent
     var intent = {
       action: "find",
@@ -426,7 +420,7 @@ var NLPSearchEngine = /** @class */ (function () {
             mode: "insensitive",
           };
           break;
-        case "date":
+        case "date": {
           // Parse and convert to date range
           var date = this.parseDate(entity.value);
           if (date) {
@@ -436,13 +430,15 @@ var NLPSearchEngine = /** @class */ (function () {
             };
           }
           break;
-        case "age":
+        }
+        case "age": {
           var age = parseInt(entity.value);
           filters.birthDate = {
             gte: new Date(new Date().getFullYear() - age - 1, 0, 1),
             lte: new Date(new Date().getFullYear() - age, 11, 31),
           };
           break;
+        }
         case "condition":
           filters.medicalHistory = {
             some: {
@@ -482,14 +478,12 @@ var NLPSearchEngine = /** @class */ (function () {
   NLPSearchEngine.prototype.generateSuggestions = function (query, context) {
     return __awaiter(this, void 0, void 0, function () {
       var suggestions, relevantSearches, commonPatterns, relevantPatterns;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         suggestions = [];
         // Add recent searches as suggestions
         if (context === null || context === void 0 ? void 0 : context.recentSearches) {
           relevantSearches = context.recentSearches
-            .filter(function (search) {
-              return search.toLowerCase().includes(query.toLowerCase());
-            })
+            .filter((search) => search.toLowerCase().includes(query.toLowerCase()))
             .slice(0, 3);
           suggestions.push.apply(suggestions, relevantSearches);
         }
@@ -502,12 +496,11 @@ var NLPSearchEngine = /** @class */ (function () {
           "histórico de alergias",
         ];
         relevantPatterns = commonPatterns
-          .filter(function (pattern) {
-            return (
+          .filter(
+            (pattern) =>
               pattern.toLowerCase().includes(query.toLowerCase()) ||
-              query.toLowerCase().includes(pattern.toLowerCase())
-            );
-          })
+              query.toLowerCase().includes(pattern.toLowerCase()),
+          )
           .slice(0, 2);
         suggestions.push.apply(suggestions, relevantPatterns);
         // Remove duplicates and limit to 5 suggestions
@@ -518,7 +511,7 @@ var NLPSearchEngine = /** @class */ (function () {
   /**
    * Parse natural language date to Date object
    */
-  NLPSearchEngine.prototype.parseDate = function (dateString) {
+  NLPSearchEngine.prototype.parseDate = (dateString) => {
     var today = new Date();
     // Handle relative dates
     switch (dateString.toLowerCase()) {
@@ -528,18 +521,21 @@ var NLPSearchEngine = /** @class */ (function () {
         return new Date(today.getTime() - 24 * 60 * 60 * 1000);
       case "tomorrow":
         return new Date(today.getTime() + 24 * 60 * 60 * 1000);
-      case "this week":
+      case "this week": {
         var startOfWeek = new Date(today);
         startOfWeek.setDate(today.getDate() - today.getDay());
         return startOfWeek;
-      case "last week":
+      }
+      case "last week": {
         var lastWeek = new Date(today);
         lastWeek.setDate(today.getDate() - 7 - today.getDay());
         return lastWeek;
-      case "next week":
+      }
+      case "next week": {
         var nextWeek = new Date(today);
         nextWeek.setDate(today.getDate() + 7 - today.getDay());
         return nextWeek;
+      }
     }
     // Try to parse standard date formats
     var date = new Date(dateString);
@@ -586,19 +582,16 @@ var NLPSearchEngine = /** @class */ (function () {
   /**
    * Remove overlapping entities, keeping the one with higher confidence
    */
-  NLPSearchEngine.prototype.removeOverlappingEntities = function (entities) {
-    var sorted = entities.sort(function (a, b) {
-      return b.confidence - a.confidence;
-    });
+  NLPSearchEngine.prototype.removeOverlappingEntities = (entities) => {
+    var sorted = entities.sort((a, b) => b.confidence - a.confidence);
     var result = [];
-    var _loop_1 = function (entity) {
-      var hasOverlap = result.some(function (existing) {
-        return (
+    var _loop_1 = (entity) => {
+      var hasOverlap = result.some(
+        (existing) =>
           (entity.startIndex >= existing.startIndex && entity.startIndex < existing.endIndex) ||
           (entity.endIndex > existing.startIndex && entity.endIndex <= existing.endIndex) ||
-          (entity.startIndex <= existing.startIndex && entity.endIndex >= existing.endIndex)
-        );
-      });
+          (entity.startIndex <= existing.startIndex && entity.endIndex >= existing.endIndex),
+      );
       if (!hasOverlap) {
         result.push(entity);
       }
@@ -607,9 +600,7 @@ var NLPSearchEngine = /** @class */ (function () {
       var entity = sorted_1[_i];
       _loop_1(entity);
     }
-    return result.sort(function (a, b) {
-      return a.startIndex - b.startIndex;
-    });
+    return result.sort((a, b) => a.startIndex - b.startIndex);
   };
   /**
    * Initialize intent patterns

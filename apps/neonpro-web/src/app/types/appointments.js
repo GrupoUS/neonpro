@@ -1,4 +1,3 @@
-"use strict";
 // =============================================================================
 // NeonPro Appointments System Types
 // Purpose: TypeScript interfaces and types for appointment booking system

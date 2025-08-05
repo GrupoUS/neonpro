@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Executive Dashboard Service Tests
  * Story 7.1: Executive Dashboard Implementation
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,29 +148,27 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var test_helpers_1 = require("../../utils/test-helpers");
 var executive_dashboard_1 = require("../../lib/services/executive-dashboard");
 // Mock the Supabase client
-jest.mock("../../app/utils/supabase/server", function () {
-  return {
-    createClient: jest.fn(),
-  };
-});
+jest.mock("../../app/utils/supabase/server", () => ({
+  createClient: jest.fn(),
+}));
 var mockSupabase = (0, test_helpers_1.createMockSupabaseClient)();
-describe("ExecutiveDashboardService", function () {
+describe("ExecutiveDashboardService", () => {
   var service;
-  beforeEach(function () {
+  beforeEach(() => {
     service = new executive_dashboard_1.ExecutiveDashboardService();
     jest.clearAllMocks();
     require("../../app/utils/supabase/server").createClient.mockResolvedValue(mockSupabase);
   });
-  describe("getKPIs", function () {
-    it("should fetch KPIs for a clinic and period", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getKPIs", () => {
+    it("should fetch KPIs for a clinic and period", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockKPIs, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockKPIs = [
@@ -218,12 +213,11 @@ describe("ExecutiveDashboardService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
@@ -253,14 +247,13 @@ describe("ExecutiveDashboardService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getAlerts", function () {
-    it("should fetch active alerts for a clinic", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getAlerts", () => {
+    it("should fetch active alerts for a clinic", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAlerts, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAlerts = [
@@ -296,14 +289,13 @@ describe("ExecutiveDashboardService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getWidgetConfiguration", function () {
-    it("should fetch widget configuration for a user", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getWidgetConfiguration", () => {
+    it("should fetch widget configuration for a user", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWidgets, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockWidgets = [
@@ -339,14 +331,13 @@ describe("ExecutiveDashboardService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("saveWidgetConfiguration", function () {
-    it("should save widget configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("saveWidgetConfiguration", () => {
+    it("should save widget configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var widgetData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               widgetData = {
@@ -375,14 +366,13 @@ describe("ExecutiveDashboardService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getReports", function () {
-    it("should fetch reports for a clinic", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getReports", () => {
+    it("should fetch reports for a clinic", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockReports, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockReports = [
@@ -413,14 +403,13 @@ describe("ExecutiveDashboardService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("generateReport", function () {
-    it("should create a new report request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("generateReport", () => {
+    it("should create a new report request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var reportData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               reportData = {
@@ -449,15 +438,14 @@ describe("ExecutiveDashboardService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("comparePerformance", function () {
-    it("should calculate performance comparison between periods", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("comparePerformance", () => {
+    it("should calculate performance comparison between periods", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var currentPeriodKPIs, previousPeriodKPIs, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               currentPeriodKPIs = [
@@ -528,7 +516,6 @@ describe("ExecutiveDashboardService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

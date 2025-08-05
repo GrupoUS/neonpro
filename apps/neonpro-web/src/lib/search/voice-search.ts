@@ -4,11 +4,13 @@
  * Advanced voice search with speech recognition, NLP processing, and voice commands
  */
 
+import type {
+  ComprehensiveSearchResponse,
+  comprehensiveSearch,
+  SearchResult,
+} from "./comprehensive-search";
 import type { nlpEngine } from "./nlp-engine";
-import type { comprehensiveSearch } from "./comprehensive-search";
-import type { searchSuggestions } from "./search-suggestions";
-import type { SearchResult, ComprehensiveSearchResponse } from "./comprehensive-search";
-import type { SuggestionContext } from "./search-suggestions";
+import type { SuggestionContext, searchSuggestions } from "./search-suggestions";
 
 // Voice search types
 export interface VoiceSearchOptions {
@@ -532,7 +534,7 @@ export class VoiceSearch {
     }
 
     switch (command.action) {
-      case "search":
+      case "search": {
         // Extract search terms after command pattern
         const searchTerms = this.extractSearchTerms(transcript, command.patterns);
         if (searchTerms) {
@@ -540,6 +542,7 @@ export class VoiceSearch {
           await this.executeSearch(searchTerms, query, command.parameters);
         }
         break;
+      }
 
       case "filter":
         this.emit("filterCommand", { command, transcript, parameters: command.parameters });

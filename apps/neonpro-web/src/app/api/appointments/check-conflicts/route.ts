@@ -1,6 +1,5 @@
-﻿import type { ConflictCheckResponse } from "@/app/lib/types/appointments";
-import type { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
+import type { ConflictCheckResponse } from "@/app/lib/types/appointments";
 
 // ðŸš€ Edge Runtime para detecÃ§Ã£o instantÃ¢nea de conflitos
 export const runtime = "edge";

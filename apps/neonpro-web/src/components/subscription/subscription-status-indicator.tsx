@@ -10,7 +10,27 @@
 
 "use client";
 
+import type {
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Crown,
+  RefreshCw,
+  Settings,
+  Shield,
+  TrendingUp,
+  Wifi,
+  WifiOff,
+  XCircle,
+  Zap,
+} from "lucide-react";
 import type { useEffect, useState } from "react";
+import type {
+  UseSubscriptionStatusOptions,
+  useSubscriptionStatus,
+} from "../../hooks/use-subscription-status";
+import type { cn } from "../../lib/utils";
 import type { Badge } from "../ui/badge";
 import type { Button } from "../ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -18,26 +38,6 @@ import type { Progress } from "../ui/progress";
 import type { Separator } from "../ui/separator";
 import type { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import type { useToast } from "../ui/use-toast";
-import type {
-  useSubscriptionStatus,
-  type UseSubscriptionStatusOptions,
-} from "../../hooks/use-subscription-status";
-import type {
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Wifi,
-  WifiOff,
-  RefreshCw,
-  TrendingUp,
-  AlertTriangle,
-  Settings,
-  Crown,
-  Zap,
-  Shield,
-  Activity,
-} from "lucide-react";
-import type { cn } from "../../lib/utils";
 
 export interface SubscriptionStatusIndicatorProps {
   variant?: "default" | "compact" | "detailed" | "minimal";

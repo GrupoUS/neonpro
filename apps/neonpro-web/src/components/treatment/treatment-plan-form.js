@@ -7,32 +7,31 @@
  * Story: 3.2 - Treatment & Procedure Documentation
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,10 +151,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -166,7 +163,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreatmentPlanForm = TreatmentPlanForm;
 var react_1 = require("react");
@@ -218,7 +215,6 @@ var commonActivities = [
   "Avaliação de resultados",
 ];
 function TreatmentPlanForm(_a) {
-  var _this = this;
   var _b;
   var treatmentPlan = _a.treatmentPlan,
     initialPatientId = _a.patientId,
@@ -268,13 +264,13 @@ function TreatmentPlanForm(_a) {
     },
   });
   // Load patients on mount
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadPatients();
   }, []);
-  var loadPatients = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPatients = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -297,11 +293,10 @@ function TreatmentPlanForm(_a) {
         }
       });
     });
-  };
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var treatmentPlanData, result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -349,8 +344,7 @@ function TreatmentPlanForm(_a) {
         }
       });
     });
-  };
-  var addActivity = function (activityName) {
+  var addActivity = (activityName) => {
     var newActivity = {
       id: crypto.randomUUID(),
       title: activityName,
@@ -358,46 +352,36 @@ function TreatmentPlanForm(_a) {
       status: "not-started",
       scheduled_date: "",
     };
-    setActivities(function (prev) {
-      return __spreadArray(__spreadArray([], prev, true), [newActivity], false);
-    });
+    setActivities((prev) => __spreadArray(__spreadArray([], prev, true), [newActivity], false));
   };
-  var updateActivity = function (id, updates) {
-    setActivities(function (prev) {
-      return prev.map(function (activity) {
-        return activity.id === id ? __assign(__assign({}, activity), updates) : activity;
-      });
-    });
+  var updateActivity = (id, updates) => {
+    setActivities((prev) =>
+      prev.map((activity) =>
+        activity.id === id ? __assign(__assign({}, activity), updates) : activity,
+      ),
+    );
   };
-  var removeActivity = function (id) {
-    setActivities(function (prev) {
-      return prev.filter(function (activity) {
-        return activity.id !== id;
-      });
-    });
+  var removeActivity = (id) => {
+    setActivities((prev) => prev.filter((activity) => activity.id !== id));
   };
-  var addGoal = function () {
+  var addGoal = () => {
     var currentGoals = form.getValues("goals");
     form.setValue("goals", __spreadArray(__spreadArray([], currentGoals, true), [""], false));
   };
-  var updateGoal = function (index, value) {
+  var updateGoal = (index, value) => {
     var currentGoals = form.getValues("goals");
     var newGoals = __spreadArray([], currentGoals, true);
     newGoals[index] = value;
     form.setValue("goals", newGoals);
   };
-  var removeGoal = function (index) {
+  var removeGoal = (index) => {
     var currentGoals = form.getValues("goals");
     form.setValue(
       "goals",
-      currentGoals.filter(function (_, i) {
-        return i !== index;
-      }),
+      currentGoals.filter((_, i) => i !== index),
     );
   };
-  var selectedPatient = patients.find(function (p) {
-    return p.id === form.watch("patient_id");
-  });
+  var selectedPatient = patients.find((p) => p.id === form.watch("patient_id"));
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -433,7 +417,7 @@ function TreatmentPlanForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="patient_id"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -449,7 +433,7 @@ function TreatmentPlanForm(_a) {
                           </select_1.SelectTrigger>
                         </form_1.FormControl>
                         <select_1.SelectContent>
-                          {patients.map(function (patient) {
+                          {patients.map((patient) => {
                             var _a;
                             return (
                               <select_1.SelectItem key={patient.id} value={patient.id}>
@@ -499,7 +483,7 @@ function TreatmentPlanForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="title"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -519,7 +503,7 @@ function TreatmentPlanForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="description"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -544,7 +528,7 @@ function TreatmentPlanForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="status"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -556,13 +540,11 @@ function TreatmentPlanForm(_a) {
                             </select_1.SelectTrigger>
                           </form_1.FormControl>
                           <select_1.SelectContent>
-                            {statusOptions.map(function (option) {
-                              return (
-                                <select_1.SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </select_1.SelectItem>
-                              );
-                            })}
+                            {statusOptions.map((option) => (
+                              <select_1.SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </select_1.SelectItem>
+                            ))}
                           </select_1.SelectContent>
                         </select_1.Select>
                         <form_1.FormMessage />
@@ -574,7 +556,7 @@ function TreatmentPlanForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="intent"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -586,13 +568,11 @@ function TreatmentPlanForm(_a) {
                             </select_1.SelectTrigger>
                           </form_1.FormControl>
                           <select_1.SelectContent>
-                            {intentOptions.map(function (option) {
-                              return (
-                                <select_1.SelectItem key={option.value} value={option.value}>
-                                  {option.label}
-                                </select_1.SelectItem>
-                              );
-                            })}
+                            {intentOptions.map((option) => (
+                              <select_1.SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </select_1.SelectItem>
+                            ))}
                           </select_1.SelectContent>
                         </select_1.Select>
                         <form_1.FormMessage />
@@ -616,7 +596,7 @@ function TreatmentPlanForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="period_start"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -644,16 +624,14 @@ function TreatmentPlanForm(_a) {
                             <calendar_1.Calendar
                               mode="single"
                               selected={field.value ? new Date(field.value) : undefined}
-                              onSelect={function (date) {
-                                return field.onChange(
+                              onSelect={(date) =>
+                                field.onChange(
                                   date === null || date === void 0
                                     ? void 0
                                     : date.toISOString().split("T")[0],
-                                );
-                              }}
-                              disabled={function (date) {
-                                return date < new Date();
-                              }}
+                                )
+                              }
+                              disabled={(date) => date < new Date()}
                               initialFocus
                             />
                           </popover_1.PopoverContent>
@@ -667,7 +645,7 @@ function TreatmentPlanForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="period_end"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -695,14 +673,14 @@ function TreatmentPlanForm(_a) {
                             <calendar_1.Calendar
                               mode="single"
                               selected={field.value ? new Date(field.value) : undefined}
-                              onSelect={function (date) {
-                                return field.onChange(
+                              onSelect={(date) =>
+                                field.onChange(
                                   date === null || date === void 0
                                     ? void 0
                                     : date.toISOString().split("T")[0],
-                                );
-                              }}
-                              disabled={function (date) {
+                                )
+                              }
+                              disabled={(date) => {
                                 var startDate = form.getValues("period_start");
                                 return startDate ? date < new Date(startDate) : date < new Date();
                               }}
@@ -730,31 +708,25 @@ function TreatmentPlanForm(_a) {
               </card_1.CardDescription>
             </card_1.CardHeader>
             <card_1.CardContent className="space-y-4">
-              {form.watch("goals").map(function (goal, index) {
-                return (
-                  <div key={index} className="flex items-center space-x-2">
-                    <div className="flex-1">
-                      <input_1.Input
-                        placeholder="Ex: Reduzir rugas de expressão na região frontal"
-                        value={goal}
-                        onChange={function (e) {
-                          return updateGoal(index, e.target.value);
-                        }}
-                      />
-                    </div>
-                    <button_1.Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={function () {
-                        return removeGoal(index);
-                      }}
-                    >
-                      <lucide_react_1.X className="h-4 w-4" />
-                    </button_1.Button>
+              {form.watch("goals").map((goal, index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <div className="flex-1">
+                    <input_1.Input
+                      placeholder="Ex: Reduzir rugas de expressão na região frontal"
+                      value={goal}
+                      onChange={(e) => updateGoal(index, e.target.value)}
+                    />
                   </div>
-                );
-              })}
+                  <button_1.Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeGoal(index)}
+                  >
+                    <lucide_react_1.X className="h-4 w-4" />
+                  </button_1.Button>
+                </div>
+              ))}
 
               <button_1.Button type="button" variant="outline" onClick={addGoal} className="w-full">
                 <lucide_react_1.Plus className="mr-2 h-4 w-4" />
@@ -775,21 +747,17 @@ function TreatmentPlanForm(_a) {
               <div>
                 <label_1.Label className="text-sm font-medium">Atividades Comuns</label_1.Label>
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {commonActivities.map(function (activity) {
-                    return (
-                      <badge_1.Badge
-                        key={activity}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
-                        onClick={function () {
-                          return addActivity(activity);
-                        }}
-                      >
-                        <lucide_react_1.Plus className="mr-1 h-3 w-3" />
-                        {activity}
-                      </badge_1.Badge>
-                    );
-                  })}
+                  {commonActivities.map((activity) => (
+                    <badge_1.Badge
+                      key={activity}
+                      variant="outline"
+                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                      onClick={() => addActivity(activity)}
+                    >
+                      <lucide_react_1.Plus className="mr-1 h-3 w-3" />
+                      {activity}
+                    </badge_1.Badge>
+                  ))}
                 </div>
               </div>
 
@@ -801,91 +769,83 @@ function TreatmentPlanForm(_a) {
                   <label_1.Label className="text-sm font-medium">
                     Atividades Adicionadas
                   </label_1.Label>
-                  {activities.map(function (activity, index) {
-                    return (
-                      <card_1.Card key={activity.id} className="p-4">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <input_1.Input
-                              placeholder="Nome da atividade"
-                              value={activity.title}
-                              onChange={function (e) {
-                                return updateActivity(activity.id, { title: e.target.value });
-                              }}
-                              className="font-medium"
-                            />
-                            <button_1.Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={function () {
-                                return removeActivity(activity.id);
-                              }}
+                  {activities.map((activity, index) => (
+                    <card_1.Card key={activity.id} className="p-4">
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <input_1.Input
+                            placeholder="Nome da atividade"
+                            value={activity.title}
+                            onChange={(e) => updateActivity(activity.id, { title: e.target.value })}
+                            className="font-medium"
+                          />
+                          <button_1.Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeActivity(activity.id)}
+                          >
+                            <lucide_react_1.X className="h-4 w-4" />
+                          </button_1.Button>
+                        </div>
+
+                        <textarea_1.Textarea
+                          placeholder="Descrição da atividade (opcional)"
+                          value={activity.description}
+                          onChange={(e) =>
+                            updateActivity(activity.id, { description: e.target.value })
+                          }
+                          rows={2}
+                        />
+
+                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                          <div>
+                            <label_1.Label className="text-sm">Status</label_1.Label>
+                            <select_1.Select
+                              value={activity.status}
+                              onValueChange={(value) =>
+                                updateActivity(activity.id, { status: value })
+                              }
                             >
-                              <lucide_react_1.X className="h-4 w-4" />
-                            </button_1.Button>
+                              <select_1.SelectTrigger>
+                                <select_1.SelectValue />
+                              </select_1.SelectTrigger>
+                              <select_1.SelectContent>
+                                <select_1.SelectItem value="not-started">
+                                  Não iniciado
+                                </select_1.SelectItem>
+                                <select_1.SelectItem value="in-progress">
+                                  Em andamento
+                                </select_1.SelectItem>
+                                <select_1.SelectItem value="on-hold">Em pausa</select_1.SelectItem>
+                                <select_1.SelectItem value="completed">
+                                  Concluído
+                                </select_1.SelectItem>
+                                <select_1.SelectItem value="cancelled">
+                                  Cancelado
+                                </select_1.SelectItem>
+                              </select_1.SelectContent>
+                            </select_1.Select>
                           </div>
 
-                          <textarea_1.Textarea
-                            placeholder="Descrição da atividade (opcional)"
-                            value={activity.description}
-                            onChange={function (e) {
-                              return updateActivity(activity.id, { description: e.target.value });
-                            }}
-                            rows={2}
-                          />
-
-                          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                            <div>
-                              <label_1.Label className="text-sm">Status</label_1.Label>
-                              <select_1.Select
-                                value={activity.status}
-                                onValueChange={function (value) {
-                                  return updateActivity(activity.id, { status: value });
-                                }}
-                              >
-                                <select_1.SelectTrigger>
-                                  <select_1.SelectValue />
-                                </select_1.SelectTrigger>
-                                <select_1.SelectContent>
-                                  <select_1.SelectItem value="not-started">
-                                    Não iniciado
-                                  </select_1.SelectItem>
-                                  <select_1.SelectItem value="in-progress">
-                                    Em andamento
-                                  </select_1.SelectItem>
-                                  <select_1.SelectItem value="on-hold">
-                                    Em pausa
-                                  </select_1.SelectItem>
-                                  <select_1.SelectItem value="completed">
-                                    Concluído
-                                  </select_1.SelectItem>
-                                  <select_1.SelectItem value="cancelled">
-                                    Cancelado
-                                  </select_1.SelectItem>
-                                </select_1.SelectContent>
-                              </select_1.Select>
-                            </div>
-
-                            <div>
-                              <label_1.Label className="text-sm">
-                                Data Agendada (Opcional)
-                              </label_1.Label>
-                              <input_1.Input
-                                type="date"
-                                value={activity.scheduled_date}
-                                onChange={function (e) {
-                                  return updateActivity(activity.id, {
-                                    scheduled_date: e.target.value,
-                                  });
-                                }}
-                              />
-                            </div>
+                          <div>
+                            <label_1.Label className="text-sm">
+                              Data Agendada (Opcional)
+                            </label_1.Label>
+                            <input_1.Input
+                              type="date"
+                              value={activity.scheduled_date}
+                              onChange={(e) =>
+                                updateActivity(activity.id, {
+                                  scheduled_date: e.target.value,
+                                })
+                              }
+                            />
                           </div>
                         </div>
-                      </card_1.Card>
-                    );
-                  })}
+                      </div>
+                    </card_1.Card>
+                  ))}
                 </div>
               )}
 
@@ -893,9 +853,7 @@ function TreatmentPlanForm(_a) {
               <button_1.Button
                 type="button"
                 variant="outline"
-                onClick={function () {
-                  return addActivity("Nova atividade");
-                }}
+                onClick={() => addActivity("Nova atividade")}
                 className="w-full"
               >
                 <lucide_react_1.Plus className="mr-2 h-4 w-4" />

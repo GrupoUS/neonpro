@@ -1,27 +1,26 @@
 // Central export file for all medical schemas
 
+export * from "./appointment";
 // Medical schemas
 export * from "./medical";
-export * from "./patient";
-export * from "./appointment";
-
 // Re-export commonly used schemas with descriptive names
 export {
-  patientSchema as CreatePatientSchema,
-  updatePatientSchema as UpdatePatientSchema,
   appointmentSchema as CreateAppointmentSchema,
-  updateAppointmentSchema as UpdateAppointmentSchema,
-  treatmentSchema as TreatmentSchema,
-  financialDataSchema as FinancialDataSchema,
   consentSchema as LGPDConsentSchema,
+  financialDataSchema as FinancialDataSchema,
   medicalAuditSchema as AuditLogSchema,
+  patientSchema as CreatePatientSchema,
+  treatmentSchema as TreatmentSchema,
+  updateAppointmentSchema as UpdateAppointmentSchema,
+  updatePatientSchema as UpdatePatientSchema,
 } from "./medical";
+export * from "./patient";
 
 export {
-  patientFiltersSchema as PatientListFiltersSchema,
-  patientSearchSchema as PatientSearchSchema,
   appointmentFiltersSchema as AppointmentListFiltersSchema,
   availableTimesSchema as AvailableTimesSearchSchema,
+  patientFiltersSchema as PatientListFiltersSchema,
+  patientSearchSchema as PatientSearchSchema,
 } from "./patient";
 
 // Utility function to validate data against any schema

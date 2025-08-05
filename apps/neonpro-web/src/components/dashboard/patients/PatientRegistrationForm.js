@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientRegistrationForm = PatientRegistrationForm;
 /**
@@ -161,7 +158,6 @@ var patient_1 = require("@/lib/validations/patient");
 var patients_1 = require("@/lib/supabase/patients");
 var auth_context_1 = require("@/contexts/auth-context");
 function PatientRegistrationForm(_a) {
-  var _this = this;
   var onSuccess = _a.onSuccess,
     onCancel = _a.onCancel;
   var user = (0, auth_context_1.useAuth)().user;
@@ -199,10 +195,10 @@ function PatientRegistrationForm(_a) {
     givenNameFields = _c.fields,
     appendGivenName = _c.append,
     removeGivenName = _c.remove;
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!(user === null || user === void 0 ? void 0 : user.id)) {
@@ -237,7 +233,6 @@ function PatientRegistrationForm(_a) {
         }
       });
     });
-  };
   return (
     <form_1.Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -263,7 +258,7 @@ function PatientRegistrationForm(_a) {
             <form_1.FormField
               control={form.control}
               name="medical_record_number"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -295,7 +290,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="family_name"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -311,49 +306,43 @@ function PatientRegistrationForm(_a) {
 
               <div className="space-y-2">
                 <label_1.Label>Given Names (First Names) *</label_1.Label>
-                {givenNameFields.map(function (field, index) {
-                  return (
-                    <div key={field.id} className="flex gap-2">
-                      <form_1.FormField
-                        control={form.control}
-                        name={"given_names.".concat(index)}
-                        render={function (_a) {
-                          var field = _a.field;
-                          return (
-                            <form_1.FormItem className="flex-1">
-                              <form_1.FormControl>
-                                <input_1.Input
-                                  placeholder={index === 0 ? "João" : "Middle name"}
-                                  {...field}
-                                />
-                              </form_1.FormControl>
-                              <form_1.FormMessage />
-                            </form_1.FormItem>
-                          );
-                        }}
-                      />
-                      {index > 0 && (
-                        <button_1.Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={function () {
-                            return removeGivenName(index);
-                          }}
-                        >
-                          <lucide_react_1.Trash2 className="h-4 w-4" />
-                        </button_1.Button>
-                      )}
-                    </div>
-                  );
-                })}
+                {givenNameFields.map((field, index) => (
+                  <div key={field.id} className="flex gap-2">
+                    <form_1.FormField
+                      control={form.control}
+                      name={"given_names.".concat(index)}
+                      render={(_a) => {
+                        var field = _a.field;
+                        return (
+                          <form_1.FormItem className="flex-1">
+                            <form_1.FormControl>
+                              <input_1.Input
+                                placeholder={index === 0 ? "João" : "Middle name"}
+                                {...field}
+                              />
+                            </form_1.FormControl>
+                            <form_1.FormMessage />
+                          </form_1.FormItem>
+                        );
+                      }}
+                    />
+                    {index > 0 && (
+                      <button_1.Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeGivenName(index)}
+                      >
+                        <lucide_react_1.Trash2 className="h-4 w-4" />
+                      </button_1.Button>
+                    )}
+                  </div>
+                ))}
                 <button_1.Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return appendGivenName("");
-                  }}
+                  onClick={() => appendGivenName("")}
                   className="w-full"
                 >
                   <lucide_react_1.Plus className="h-4 w-4 mr-2" />
@@ -364,7 +353,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="preferred_name"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -389,7 +378,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="cpf"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -409,7 +398,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="rg"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -432,7 +421,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="gender"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -461,7 +450,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="birth_date"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -478,7 +467,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="marital_status"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -522,7 +511,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="phone_primary"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -542,7 +531,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="phone_secondary"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -561,7 +550,7 @@ function PatientRegistrationForm(_a) {
             <form_1.FormField
               control={form.control}
               name="email"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -591,7 +580,7 @@ function PatientRegistrationForm(_a) {
             <form_1.FormField
               control={form.control}
               name="address_line1"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -611,7 +600,7 @@ function PatientRegistrationForm(_a) {
             <form_1.FormField
               control={form.control}
               name="address_line2"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -632,7 +621,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="city"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -649,7 +638,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="state"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -667,7 +656,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="postal_code"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -697,7 +686,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="emergency_contact_name"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -714,7 +703,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="emergency_contact_relationship"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -733,7 +722,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="emergency_contact_phone"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -750,7 +739,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="emergency_contact_email"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -779,7 +768,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="insurance_provider"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -796,7 +785,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="insurance_plan"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -815,7 +804,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="insurance_policy_number"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -832,7 +821,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="insurance_group_number"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem>
@@ -860,7 +849,7 @@ function PatientRegistrationForm(_a) {
             <form_1.FormField
               control={form.control}
               name="known_allergies"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -884,7 +873,7 @@ function PatientRegistrationForm(_a) {
             <form_1.FormField
               control={form.control}
               name="current_medications"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -908,7 +897,7 @@ function PatientRegistrationForm(_a) {
             <form_1.FormField
               control={form.control}
               name="medical_conditions"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -958,7 +947,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="lgpd_consent_general"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-start space-x-3 space-y-0">
@@ -994,7 +983,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="lgpd_consent_marketing"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-start space-x-3 space-y-0">
@@ -1023,7 +1012,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="lgpd_consent_research"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-start space-x-3 space-y-0">
@@ -1052,7 +1041,7 @@ function PatientRegistrationForm(_a) {
               <form_1.FormField
                 control={form.control}
                 name="lgpd_consent_third_party"
-                render={function (_a) {
+                render={(_a) => {
                   var field = _a.field;
                   return (
                     <form_1.FormItem className="flex flex-row items-start space-x-3 space-y-0">
@@ -1102,7 +1091,7 @@ function PatientRegistrationForm(_a) {
             <form_1.FormField
               control={form.control}
               name="preferred_language"
-              render={function (_a) {
+              render={(_a) => {
                 var field = _a.field;
                 return (
                   <form_1.FormItem>
@@ -1158,7 +1147,7 @@ function PatientRegistrationForm(_a) {
             <alert_1.AlertDescription>
               Please fix the following errors before submitting:
               <ul className="mt-2 list-disc list-inside space-y-1">
-                {Object.entries(form.formState.errors).map(function (_a) {
+                {Object.entries(form.formState.errors).map((_a) => {
                   var field = _a[0],
                     error = _a[1];
                   return (

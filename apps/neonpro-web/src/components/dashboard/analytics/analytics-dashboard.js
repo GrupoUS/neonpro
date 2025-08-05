@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsDashboard = AnalyticsDashboard;
 var export_modal_1 = require("@/components/dashboard/analytics/export-modal");
@@ -97,9 +96,7 @@ function AnalyticsDashboard() {
           </p>
         </div>
         <button_1.Button
-          onClick={function () {
-            return setShowExportModal(true);
-          }}
+          onClick={() => setShowExportModal(true)}
           className="bg-blue-600 hover:bg-blue-700"
         >
           📊 Exportar Relatório
@@ -386,9 +383,7 @@ function AnalyticsDashboard() {
 
       <export_modal_1.ExportModal
         open={showExportModal}
-        onClose={function () {
-          return setShowExportModal(false);
-        }}
+        onClose={() => setShowExportModal(false)}
         data={{
           kpis: kpiData,
           charts: {},

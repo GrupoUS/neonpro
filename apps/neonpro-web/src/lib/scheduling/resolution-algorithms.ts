@@ -8,19 +8,19 @@
  */
 
 import type {
-  ResolutionAlgorithm,
-  SchedulingConflict,
-  ResolutionContext,
-  ResolutionResult,
-  StrategyType,
   AppointmentChange,
-  StakeholderSatisfaction,
-  ResolutionMethod,
-  ResolutionExecutionError,
   EnhancedAppointment,
   ProfessionalAvailabilityPattern,
-  SystemConstraints,
+  ResolutionAlgorithm,
+  ResolutionContext,
+  ResolutionExecutionError,
+  ResolutionMethod,
+  ResolutionResult,
+  SchedulingConflict,
   StakeholderPreferences,
+  StakeholderSatisfaction,
+  StrategyType,
+  SystemConstraints,
 } from "./conflict-types";
 
 /**

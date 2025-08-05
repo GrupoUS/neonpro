@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Bundle Analysis Utilities
  *
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,15 +134,15 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BUNDLE_THRESHOLDS = void 0;
 exports.analyzeBundleStats = analyzeBundleStats;
 exports.formatBytes = formatBytes;
 exports.generateBundleReport = generateBundleReport;
 exports.runBundleAnalysis = runBundleAnalysis;
-var fs_1 = require("fs");
-var path_1 = require("path");
+var fs_1 = require("node:fs");
+var path_1 = require("node:path");
 // Bundle size thresholds (in bytes)
 exports.BUNDLE_THRESHOLDS = {
   CRITICAL: 50 * 1024, // 50KB - critical resources
@@ -159,10 +156,10 @@ function analyzeBundleStats(statsPath) {
   return __awaiter(this, void 0, void 0, function () {
     var statsContent, stats, analysis, _i, _a, chunk, chunkSize, chunkStatus, error_1;
     var _b, _c;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
-          _d.trys.push([0, 2, , 3]);
+          _d.trys.push([0, 2, undefined, 3]);
           return [4 /*yield*/, fs_1.promises.readFile(statsPath, "utf-8")];
         case 1:
           statsContent = _d.sent();
@@ -188,9 +185,7 @@ function analyzeBundleStats(statsPath) {
                 modules:
                   ((_c = chunk.modules) === null || _c === void 0
                     ? void 0
-                    : _c.map(function (m) {
-                        return m.name;
-                      })) || [],
+                    : _c.map((m) => m.name)) || [],
                 status: chunkStatus,
               });
               analysis.totalSize += chunkSize;
@@ -251,34 +246,24 @@ function analyzeModules(modules, analysis) {
       occurrences = _d[1];
     if (occurrences.length > 1) {
       var totalWasted =
-        occurrences.reduce(function (sum, occ) {
-          return sum + occ.size;
-        }, 0) -
+        occurrences.reduce((sum, occ) => sum + occ.size, 0) -
         Math.max.apply(
           Math,
-          occurrences.map(function (occ) {
-            return occ.size;
-          }),
+          occurrences.map((occ) => occ.size),
         );
       if (totalWasted > 1024) {
         // Only report if > 1KB wasted
         analysis.duplicates.push({
           module: moduleName,
-          chunks: occurrences.map(function (occ) {
-            return occ.chunk;
-          }),
+          chunks: occurrences.map((occ) => occ.chunk),
           wastedBytes: totalWasted,
         });
       }
     }
   }
   // Sort by impact
-  analysis.largeModules.sort(function (a, b) {
-    return b.size - a.size;
-  });
-  analysis.duplicates.sort(function (a, b) {
-    return b.wastedBytes - a.wastedBytes;
-  });
+  analysis.largeModules.sort((a, b) => b.size - a.size);
+  analysis.duplicates.sort((a, b) => b.wastedBytes - a.wastedBytes);
 }
 // Clean module names for better readability
 function cleanModuleName(name) {
@@ -301,9 +286,7 @@ function generateRecommendations(analysis) {
     recommendations.push("⚠️ Total bundle size exceeds 1MB - consider code splitting");
   }
   // Large chunk recommendations
-  var largeChunks = analysis.chunks.filter(function (chunk) {
-    return chunk.status === "error";
-  });
+  var largeChunks = analysis.chunks.filter((chunk) => chunk.status === "error");
   if (largeChunks.length > 0) {
     recommendations.push(
       "\uD83D\uDD04 ".concat(
@@ -314,9 +297,7 @@ function generateRecommendations(analysis) {
   }
   // Duplicate module recommendations
   if (analysis.duplicates.length > 0) {
-    var totalWasted = analysis.duplicates.reduce(function (sum, dup) {
-      return sum + dup.wastedBytes;
-    }, 0);
+    var totalWasted = analysis.duplicates.reduce((sum, dup) => sum + dup.wastedBytes, 0);
     recommendations.push(
       "\uD83D\uDCE6 "
         .concat(analysis.duplicates.length, " duplicate modules waste ")
@@ -333,17 +314,13 @@ function generateRecommendations(analysis) {
     );
   }
   // Specific library recommendations
-  var recharts = analysis.largeModules.find(function (m) {
-    return m.name.includes("recharts");
-  });
+  var recharts = analysis.largeModules.find((m) => m.name.includes("recharts"));
   if (recharts) {
     recommendations.push(
       '📊 Recharts detected - use selective imports: import { LineChart } from "recharts"',
     );
   }
-  var lodash = analysis.largeModules.find(function (m) {
-    return m.name.includes("lodash");
-  });
+  var lodash = analysis.largeModules.find((m) => m.name.includes("lodash"));
   if (lodash) {
     recommendations.push(
       '🛠️ Lodash detected - use individual imports: import debounce from "lodash/debounce"',
@@ -357,7 +334,7 @@ function formatBytes(bytes) {
   var k = 1024;
   var sizes = ["B", "KB", "MB", "GB"];
   var i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
 }
 // Generate bundle report
 function generateBundleReport(analysis) {
@@ -372,14 +349,14 @@ function generateBundleReport(analysis) {
   // Recommendations
   if (analysis.recommendations.length > 0) {
     report += "## Recommendations\n";
-    analysis.recommendations.forEach(function (rec) {
+    analysis.recommendations.forEach((rec) => {
       report += "- ".concat(rec, "\n");
     });
     report += "\n";
   }
   // Chunk details
   report += "## Chunks\n";
-  analysis.chunks.forEach(function (chunk) {
+  analysis.chunks.forEach((chunk) => {
     var status = chunk.status === "error" ? "🚨" : chunk.status === "warning" ? "⚠️" : "✅";
     report += "- "
       .concat(status, " **")
@@ -390,7 +367,7 @@ function generateBundleReport(analysis) {
   // Large modules
   if (analysis.largeModules.length > 0) {
     report += "## Large Modules (>".concat(formatBytes(exports.BUNDLE_THRESHOLDS.WARNING), ")\n");
-    analysis.largeModules.slice(0, 10).forEach(function (module) {
+    analysis.largeModules.slice(0, 10).forEach((module) => {
       report += "- **"
         .concat(module.name, "**: ")
         .concat(formatBytes(module.size), " (")
@@ -401,7 +378,7 @@ function generateBundleReport(analysis) {
   // Duplicates
   if (analysis.duplicates.length > 0) {
     report += "## Duplicate Modules\n";
-    analysis.duplicates.slice(0, 10).forEach(function (dup) {
+    analysis.duplicates.slice(0, 10).forEach((dup) => {
       report += "- **"
         .concat(dup.module, "**: ")
         .concat(formatBytes(dup.wastedBytes), " wasted across ")
@@ -414,19 +391,19 @@ function generateBundleReport(analysis) {
 function runBundleAnalysis(statsPath) {
   return __awaiter(this, void 0, void 0, function () {
     var defaultStatsPath, finalStatsPath, analysis, reportPath, error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           defaultStatsPath = path_1.default.join(process.cwd(), ".next", "analyze", "stats.json");
           finalStatsPath = statsPath || defaultStatsPath;
           _a.label = 1;
         case 1:
-          _a.trys.push([1, 4, , 5]);
+          _a.trys.push([1, 4, undefined, 5]);
           console.log("🔍 Analyzing bundle...");
           return [4 /*yield*/, analyzeBundleStats(finalStatsPath)];
         case 2:
           analysis = _a.sent();
-          console.log("\n" + generateBundleReport(analysis));
+          console.log(`\n${generateBundleReport(analysis)}`);
           reportPath = path_1.default.join(process.cwd(), "bundle-analysis-report.md");
           return [4 /*yield*/, fs_1.promises.writeFile(reportPath, generateBundleReport(analysis))];
         case 3:

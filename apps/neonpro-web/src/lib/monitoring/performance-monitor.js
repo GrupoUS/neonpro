@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 📊 NeonPro Performance Monitor
  *
@@ -22,12 +21,12 @@ var aggregationCache = new lru_cache_1.LRUCache({
   max: 200,
   ttl: 30 * 1000, // 30 seconds
 });
-var PerformanceMonitor = /** @class */ (function () {
+var PerformanceMonitor = /** @class */ (() => {
   function PerformanceMonitor() {
     this.metrics = [];
     this.maxMetrics = 10000; // Limit memory usage
   }
-  PerformanceMonitor.getInstance = function () {
+  PerformanceMonitor.getInstance = () => {
     if (!PerformanceMonitor.instance) {
       PerformanceMonitor.instance = new PerformanceMonitor();
     }
@@ -37,9 +36,8 @@ var PerformanceMonitor = /** @class */ (function () {
    * 🚀 Record API performance (zero-overhead async)
    */
   PerformanceMonitor.prototype.recordAPIPerformance = function (data) {
-    var _this = this;
     // Async recording to not block main thread
-    setImmediate(function () {
+    setImmediate(() => {
       var metric = {
         name: "api.".concat(data.route, ".").concat(data.method.toLowerCase()),
         value: data.responseTime,
@@ -55,7 +53,7 @@ var PerformanceMonitor = /** @class */ (function () {
           userAgent: data.userAgent,
         },
       };
-      _this.addMetric(metric);
+      this.addMetric(metric);
     });
   };
   /**
@@ -99,18 +97,10 @@ var PerformanceMonitor = /** @class */ (function () {
     var cached = aggregationCache.get(cacheKey);
     if (cached) return cached;
     var now = Date.now();
-    var recentMetrics = this.metrics.filter(function (m) {
-      return now - m.timestamp <= timeWindow;
-    });
-    var apiMetrics = recentMetrics.filter(function (m) {
-      return m.name.startsWith("api.");
-    });
-    var dbMetrics = recentMetrics.filter(function (m) {
-      return m.name.startsWith("db.");
-    });
-    var clientMetrics = recentMetrics.filter(function (m) {
-      return m.name.startsWith("client.");
-    });
+    var recentMetrics = this.metrics.filter((m) => now - m.timestamp <= timeWindow);
+    var apiMetrics = recentMetrics.filter((m) => m.name.startsWith("api."));
+    var dbMetrics = recentMetrics.filter((m) => m.name.startsWith("db."));
+    var clientMetrics = recentMetrics.filter((m) => m.name.startsWith("client."));
     var summary = {
       apiPerformance: this.aggregateMetrics(apiMetrics),
       databasePerformance: this.aggregateMetrics(dbMetrics),
@@ -128,20 +118,14 @@ var PerformanceMonitor = /** @class */ (function () {
       timeWindow = 30 * 60 * 1000;
     }
     var now = Date.now();
-    var routeMetrics = this.metrics.filter(function (m) {
-      return m.route === route && now - m.timestamp <= timeWindow;
-    });
+    var routeMetrics = this.metrics.filter(
+      (m) => m.route === route && now - m.timestamp <= timeWindow,
+    );
     if (routeMetrics.length === 0) {
       return { p50: 0, p90: 0, p95: 0, p99: 0, count: 0, errorRate: 0, trends: [] };
     }
-    var values = routeMetrics
-      .map(function (m) {
-        return m.value;
-      })
-      .sort(function (a, b) {
-        return a - b;
-      });
-    var errors = routeMetrics.filter(function (m) {
+    var values = routeMetrics.map((m) => m.value).sort((a, b) => a - b);
+    var errors = routeMetrics.filter((m) => {
       var _a;
       return ((_a = m.metadata) === null || _a === void 0 ? void 0 : _a.statusCode) >= 400;
     }).length;
@@ -158,16 +142,12 @@ var PerformanceMonitor = /** @class */ (function () {
   /**
    * ⚠️ Generate intelligent alerts
    */
-  PerformanceMonitor.prototype.generateAlerts = function (metrics) {
+  PerformanceMonitor.prototype.generateAlerts = (metrics) => {
     var alerts = [];
     // API performance alerts
-    var apiMetrics = metrics.filter(function (m) {
-      return m.name.startsWith("api.");
-    });
+    var apiMetrics = metrics.filter((m) => m.name.startsWith("api."));
     if (apiMetrics.length > 0) {
-      var slowAPIs = apiMetrics.filter(function (m) {
-        return m.value > 1000;
-      }); // >1s
+      var slowAPIs = apiMetrics.filter((m) => m.value > 1000); // >1s
       if (slowAPIs.length > apiMetrics.length * 0.05) {
         // >5% slow
         alerts.push(
@@ -176,7 +156,7 @@ var PerformanceMonitor = /** @class */ (function () {
             .concat(apiMetrics.length, " requests >1s"),
         );
       }
-      var errors = apiMetrics.filter(function (m) {
+      var errors = apiMetrics.filter((m) => {
         var _a;
         return ((_a = m.metadata) === null || _a === void 0 ? void 0 : _a.statusCode) >= 500;
       });
@@ -185,13 +165,9 @@ var PerformanceMonitor = /** @class */ (function () {
       }
     }
     // Database performance alerts
-    var dbMetrics = metrics.filter(function (m) {
-      return m.name.startsWith("db.");
-    });
+    var dbMetrics = metrics.filter((m) => m.name.startsWith("db."));
     if (dbMetrics.length > 0) {
-      var slowQueries = dbMetrics.filter(function (m) {
-        return m.value > 500;
-      }); // >500ms
+      var slowQueries = dbMetrics.filter((m) => m.value > 500); // >500ms
       if (slowQueries.length > dbMetrics.length * 0.1) {
         // >10% slow
         alerts.push(
@@ -206,7 +182,7 @@ var PerformanceMonitor = /** @class */ (function () {
   /**
    * 📊 Calculate percentile
    */
-  PerformanceMonitor.prototype.percentile = function (values, p) {
+  PerformanceMonitor.prototype.percentile = (values, p) => {
     if (values.length === 0) return 0;
     var index = Math.ceil((p / 100) * values.length) - 1;
     return values[Math.max(0, index)];
@@ -214,14 +190,12 @@ var PerformanceMonitor = /** @class */ (function () {
   /**
    * 📈 Generate performance trends
    */
-  PerformanceMonitor.prototype.generateTrends = function (metrics, buckets) {
+  PerformanceMonitor.prototype.generateTrends = (metrics, buckets) => {
     if (buckets === void 0) {
       buckets = 10;
     }
     if (metrics.length === 0) return [];
-    var sorted = metrics.sort(function (a, b) {
-      return a.timestamp - b.timestamp;
-    });
+    var sorted = metrics.sort((a, b) => a.timestamp - b.timestamp);
     var bucketSize = Math.ceil(sorted.length / buckets);
     var trends = [];
     for (var i = 0; i < buckets; i++) {
@@ -229,10 +203,7 @@ var PerformanceMonitor = /** @class */ (function () {
       var bucketEnd = Math.min((i + 1) * bucketSize, sorted.length);
       var bucketMetrics = sorted.slice(bucketStart, bucketEnd);
       if (bucketMetrics.length > 0) {
-        var avgValue =
-          bucketMetrics.reduce(function (sum, m) {
-            return sum + m.value;
-          }, 0) / bucketMetrics.length;
+        var avgValue = bucketMetrics.reduce((sum, m) => sum + m.value, 0) / bucketMetrics.length;
         var timestamp = bucketMetrics[Math.floor(bucketMetrics.length / 2)].timestamp;
         trends.push({
           timestamp: timestamp,
@@ -250,16 +221,8 @@ var PerformanceMonitor = /** @class */ (function () {
     if (metrics.length === 0) {
       return { count: 0, avg: 0, p50: 0, p90: 0, p95: 0, p99: 0, min: 0, max: 0 };
     }
-    var values = metrics
-      .map(function (m) {
-        return m.value;
-      })
-      .sort(function (a, b) {
-        return a - b;
-      });
-    var sum = values.reduce(function (a, b) {
-      return a + b;
-    }, 0);
+    var values = metrics.map((m) => m.value).sort((a, b) => a - b);
+    var sum = values.reduce((a, b) => a + b, 0);
     return {
       count: metrics.length,
       avg: Math.round(sum / metrics.length),

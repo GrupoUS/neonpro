@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateInvoicePDFBlob = exports.generateInvoicePDF = exports.InvoicePDFDocument = void 0;
 var renderer_1 = require("@react-pdf/renderer");
@@ -288,7 +285,7 @@ var styles = renderer_1.StyleSheet.create({
     fontSize: 10,
   },
 });
-var InvoicePDFDocument = function (_a) {
+var InvoicePDFDocument = (_a) => {
   var data = _a.data;
   return (
     <renderer_1.Document>
@@ -360,28 +357,24 @@ var InvoicePDFDocument = function (_a) {
           </renderer_1.View>
 
           {/* Table Rows */}
-          {data.items.map(function (item, index) {
-            return (
-              <renderer_1.View style={styles.tableRow} key={index}>
-                <renderer_1.View style={styles.tableCol}>
-                  <renderer_1.Text style={styles.tableCell}>{item.description}</renderer_1.Text>
-                </renderer_1.View>
-                <renderer_1.View style={styles.tableCol}>
-                  <renderer_1.Text style={styles.tableCell}>{item.quantity}</renderer_1.Text>
-                </renderer_1.View>
-                <renderer_1.View style={styles.tableCol}>
-                  <renderer_1.Text style={styles.tableCell}>
-                    ${item.rate.toFixed(2)}
-                  </renderer_1.Text>
-                </renderer_1.View>
-                <renderer_1.View style={styles.tableCol}>
-                  <renderer_1.Text style={styles.tableCell}>
-                    ${item.amount.toFixed(2)}
-                  </renderer_1.Text>
-                </renderer_1.View>
+          {data.items.map((item, index) => (
+            <renderer_1.View style={styles.tableRow} key={index}>
+              <renderer_1.View style={styles.tableCol}>
+                <renderer_1.Text style={styles.tableCell}>{item.description}</renderer_1.Text>
               </renderer_1.View>
-            );
-          })}
+              <renderer_1.View style={styles.tableCol}>
+                <renderer_1.Text style={styles.tableCell}>{item.quantity}</renderer_1.Text>
+              </renderer_1.View>
+              <renderer_1.View style={styles.tableCol}>
+                <renderer_1.Text style={styles.tableCell}>${item.rate.toFixed(2)}</renderer_1.Text>
+              </renderer_1.View>
+              <renderer_1.View style={styles.tableCol}>
+                <renderer_1.Text style={styles.tableCell}>
+                  ${item.amount.toFixed(2)}
+                </renderer_1.Text>
+              </renderer_1.View>
+            </renderer_1.View>
+          ))}
         </renderer_1.View>
 
         {/* Totals */}
@@ -424,10 +417,10 @@ var InvoicePDFDocument = function (_a) {
 };
 exports.InvoicePDFDocument = InvoicePDFDocument;
 // Generate PDF Buffer
-var generateInvoicePDF = function (data) {
-  return __awaiter(void 0, void 0, void 0, function () {
+var generateInvoicePDF = (data) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var document, pdfBuffer;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           document = <exports.InvoicePDFDocument data={data} />;
@@ -438,13 +431,12 @@ var generateInvoicePDF = function (data) {
       }
     });
   });
-};
 exports.generateInvoicePDF = generateInvoicePDF;
 // Generate PDF Blob (for download)
-var generateInvoicePDFBlob = function (data) {
-  return __awaiter(void 0, void 0, void 0, function () {
+var generateInvoicePDFBlob = (data) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var document, pdfBlob;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           document = <exports.InvoicePDFDocument data={data} />;
@@ -455,5 +447,4 @@ var generateInvoicePDFBlob = function (data) {
       }
     });
   });
-};
 exports.generateInvoicePDFBlob = generateInvoicePDFBlob;

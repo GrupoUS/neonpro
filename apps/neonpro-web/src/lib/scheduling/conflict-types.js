@@ -1,4 +1,3 @@
-"use strict";
 /**
  * ============================================================================
  * NEONPRO ADVANCED SCHEDULING CONFLICT RESOLUTION - TYPE DEFINITIONS
@@ -8,20 +7,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -39,7 +38,7 @@ exports.SeverityLevelSchema =
   exports.ConflictDetectionError =
     void 0;
 // Error types
-var ConflictDetectionError = /** @class */ (function (_super) {
+var ConflictDetectionError = /** @class */ ((_super) => {
   __extends(ConflictDetectionError, _super);
   function ConflictDetectionError(message, conflictId, errorCode, details) {
     var _this = _super.call(this, message) || this;
@@ -52,7 +51,7 @@ var ConflictDetectionError = /** @class */ (function (_super) {
   return ConflictDetectionError;
 })(Error);
 exports.ConflictDetectionError = ConflictDetectionError;
-var ResolutionExecutionError = /** @class */ (function (_super) {
+var ResolutionExecutionError = /** @class */ ((_super) => {
   __extends(ResolutionExecutionError, _super);
   function ResolutionExecutionError(message, strategyType, conflictId, executionTimeMs, details) {
     var _this = _super.call(this, message) || this;

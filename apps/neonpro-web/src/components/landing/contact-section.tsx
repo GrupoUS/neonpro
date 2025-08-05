@@ -1,8 +1,28 @@
 "use client";
 
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type {
+  Calendar,
+  CheckCircle,
+  Clock,
+  FileText,
+  Headphones,
+  Heart,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+  Shield,
+  Users,
+  Video,
+} from "lucide-react";
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { z } from "zod";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Form,
   FormControl,
@@ -12,7 +32,6 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Select,
   SelectContent,
@@ -20,26 +39,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { useForm } from "react-hook-form";
-import type { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
-import type { useState } from "react";
-import type {
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
-  MessageCircle,
-  Calendar,
-  Users,
-  Shield,
-  CheckCircle,
-  Heart,
-  Headphones,
-  Video,
-  FileText,
-  Send,
-} from "lucide-react";
+import type { Textarea } from "@/components/ui/textarea";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),

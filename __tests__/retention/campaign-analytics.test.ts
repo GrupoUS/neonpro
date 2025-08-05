@@ -5,8 +5,8 @@
 
 import { createMocks } from "node-mocks-http";
 import {
-  GET as getAnalytics,
   POST as getABResults,
+  GET as getAnalytics,
 } from "@/app/api/retention-analytics/campaigns/analytics/route";
 
 // =====================================================================================

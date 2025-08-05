@@ -5,18 +5,17 @@
  * and manual override capabilities. Integrates with A/B testing framework.
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AIDurationPrediction;
 var react_1 = require("react");
@@ -154,7 +151,6 @@ var switch_1 = require("@/components/ui/switch");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 function AIDurationPrediction(_a) {
-  var _this = this;
   var appointmentId = _a.appointmentId,
     treatmentType = _a.treatmentType,
     professionalId = _a.professionalId,
@@ -203,21 +199,18 @@ function AIDurationPrediction(_a) {
   var timeOfDay = now.getHours() < 12 ? "morning" : now.getHours() < 17 ? "afternoon" : "evening";
   var dayOfWeek = now.getDay();
   // Generate prediction on component mount and when key props change
-  (0, react_1.useEffect)(
-    function () {
-      if (appointmentId && treatmentType && professionalId) {
-        generatePrediction();
-      }
-    },
-    [appointmentId, treatmentType, professionalId, patientAge, isFirstVisit, historicalDuration],
-  );
+  (0, react_1.useEffect)(() => {
+    if (appointmentId && treatmentType && professionalId) {
+      generatePrediction();
+    }
+  }, [appointmentId, treatmentType, professionalId, patientAge, isFirstVisit, historicalDuration]);
   /**
    * Generate AI duration prediction
    */
-  var generatePrediction = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generatePrediction = () =>
+    __awaiter(this, void 0, void 0, function () {
       var requestData, response, data, err_1, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -237,9 +230,7 @@ function AIDurationPrediction(_a) {
               dayOfWeek: dayOfWeek,
               historicalDuration: historicalDuration,
               specialRequirements: specialRequirements
-                ? specialRequirements.split(",").map(function (s) {
-                    return s.trim();
-                  })
+                ? specialRequirements.split(",").map((s) => s.trim())
                 : [],
             };
             return [
@@ -284,11 +275,10 @@ function AIDurationPrediction(_a) {
         }
       });
     });
-  };
   /**
    * Handle duration selection
    */
-  var handleDurationSelect = function () {
+  var handleDurationSelect = () => {
     var selectedDuration = useManualOverride
       ? manualDuration
       : (prediction === null || prediction === void 0 ? void 0 : prediction.predictedDuration) ||
@@ -309,7 +299,7 @@ function AIDurationPrediction(_a) {
   /**
    * Get confidence badge variant
    */
-  var getConfidenceBadge = function (confidence) {
+  var getConfidenceBadge = (confidence) => {
     if (confidence >= 0.8)
       return { variant: "default", icon: lucide_react_1.CheckCircle, color: "text-green-600" };
     if (confidence >= 0.6)
@@ -319,9 +309,7 @@ function AIDurationPrediction(_a) {
   /**
    * Format confidence percentage
    */
-  var formatConfidence = function (confidence) {
-    return "".concat(Math.round(confidence * 100), "%");
-  };
+  var formatConfidence = (confidence) => "".concat(Math.round(confidence * 100), "%");
   return (
     <card_1.Card className={"w-full ".concat(className)}>
       <card_1.CardHeader>
@@ -369,7 +357,7 @@ function AIDurationPrediction(_a) {
               </div>
 
               <div className="text-right">
-                {(function () {
+                {(() => {
                   var _a = getConfidenceBadge(prediction.confidenceScore),
                     variant = _a.variant,
                     Icon = _a.icon,
@@ -422,9 +410,7 @@ function AIDurationPrediction(_a) {
                       min="5"
                       max="300"
                       value={manualDuration}
-                      onChange={function (e) {
-                        return setManualDuration(parseInt(e.target.value) || 0);
-                      }}
+                      onChange={(e) => setManualDuration(parseInt(e.target.value) || 0)}
                       className="mt-1"
                     />
                   </div>
@@ -437,9 +423,7 @@ function AIDurationPrediction(_a) {
                       id="override-reason"
                       placeholder="Why are you overriding the AI prediction?"
                       value={overrideReason}
-                      onChange={function (e) {
-                        return setOverrideReason(e.target.value);
-                      }}
+                      onChange={(e) => setOverrideReason(e.target.value)}
                       className="mt-1"
                       rows={2}
                     />
@@ -453,9 +437,7 @@ function AIDurationPrediction(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setShowAdvancedOptions(!showAdvancedOptions);
-                }}
+                onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}
                 className="w-full"
               >
                 {showAdvancedOptions ? "Hide" : "Show"} Advanced Options
@@ -470,9 +452,7 @@ function AIDurationPrediction(_a) {
                       </label_1.Label>
                       <select_1.Select
                         value={anxietyLevel}
-                        onValueChange={function (value) {
-                          return setAnxietyLevel(value);
-                        }}
+                        onValueChange={(value) => setAnxietyLevel(value)}
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue />
@@ -491,9 +471,7 @@ function AIDurationPrediction(_a) {
                       </label_1.Label>
                       <select_1.Select
                         value={treatmentComplexity}
-                        onValueChange={function (value) {
-                          return setTreatmentComplexity(value);
-                        }}
+                        onValueChange={(value) => setTreatmentComplexity(value)}
                       >
                         <select_1.SelectTrigger>
                           <select_1.SelectValue />
@@ -515,9 +493,7 @@ function AIDurationPrediction(_a) {
                       id="special-requirements"
                       placeholder="e.g., extensive_buildup, wheelchair_access"
                       value={specialRequirements}
-                      onChange={function (e) {
-                        return setSpecialRequirements(e.target.value);
-                      }}
+                      onChange={(e) => setSpecialRequirements(e.target.value)}
                       className="mt-1"
                     />
                   </div>

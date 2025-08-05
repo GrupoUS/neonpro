@@ -1,4 +1,3 @@
-"use strict";
 // WCAG 2.1 AA Compliance utilities for NeonPro
 // Healthcare accessibility standards implementation
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -18,16 +17,15 @@ exports.CONTRAST_RATIOS = {
   AAA_LARGE: 4.5,
 };
 // Focus management utilities
-var FocusManager = /** @class */ (function () {
+var FocusManager = /** @class */ (() => {
   function FocusManager() {}
   FocusManager.trapFocus = function (element) {
-    var _this = this;
     this.trapStack.push(element);
     var focusableElements = this.getFocusableElements(element);
     if (focusableElements.length === 0) return;
     var firstElement = focusableElements[0];
     var lastElement = focusableElements[focusableElements.length - 1];
-    element.addEventListener("keydown", function (e) {
+    element.addEventListener("keydown", (e) => {
       if (e.key === "Tab") {
         if (e.shiftKey) {
           if (document.activeElement === firstElement) {
@@ -42,7 +40,7 @@ var FocusManager = /** @class */ (function () {
         }
       }
       if (e.key === "Escape") {
-        _this.releaseFocus();
+        this.releaseFocus();
       }
     });
     firstElement.focus();
@@ -52,7 +50,7 @@ var FocusManager = /** @class */ (function () {
       this.trapStack.pop();
     }
   };
-  FocusManager.getFocusableElements = function (container) {
+  FocusManager.getFocusableElements = (container) => {
     var focusableSelectors = [
       "button:not([disabled])",
       "input:not([disabled])",
@@ -65,7 +63,7 @@ var FocusManager = /** @class */ (function () {
     ].join(",");
     return Array.from(container.querySelectorAll(focusableSelectors));
   };
-  FocusManager.announceToScreenReader = function (message, priority) {
+  FocusManager.announceToScreenReader = (message, priority) => {
     if (priority === void 0) {
       priority = "polite";
     }
@@ -75,7 +73,7 @@ var FocusManager = /** @class */ (function () {
     announcer.className = "sr-only";
     announcer.textContent = message;
     document.body.appendChild(announcer);
-    setTimeout(function () {
+    setTimeout(() => {
       document.body.removeChild(announcer);
     }, 1000);
   };
@@ -84,12 +82,12 @@ var FocusManager = /** @class */ (function () {
 })();
 exports.FocusManager = FocusManager;
 // Color contrast utilities
-var ContrastChecker = /** @class */ (function () {
+var ContrastChecker = /** @class */ (() => {
   function ContrastChecker() {}
-  ContrastChecker.calculateLuminance = function (r, g, b) {
-    var _a = [r, g, b].map(function (c) {
+  ContrastChecker.calculateLuminance = (r, g, b) => {
+    var _a = [r, g, b].map((c) => {
         c = c / 255;
-        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
       }),
       rs = _a[0],
       gs = _a[1],
@@ -106,7 +104,7 @@ var ContrastChecker = /** @class */ (function () {
     var darker = Math.min(lum1, lum2);
     return (lighter + 0.05) / (darker + 0.05);
   };
-  ContrastChecker.hexToRgb = function (hex) {
+  ContrastChecker.hexToRgb = (hex) => {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result
       ? {
@@ -130,9 +128,9 @@ var ContrastChecker = /** @class */ (function () {
 })();
 exports.ContrastChecker = ContrastChecker;
 // Keyboard navigation utilities
-var KeyboardNavigation = /** @class */ (function () {
+var KeyboardNavigation = /** @class */ (() => {
   function KeyboardNavigation() {}
-  KeyboardNavigation.handleArrowNavigation = function (event, items, currentIndex) {
+  KeyboardNavigation.handleArrowNavigation = (event, items, currentIndex) => {
     var newIndex = currentIndex;
     switch (event.key) {
       case "ArrowDown":
@@ -160,28 +158,27 @@ var KeyboardNavigation = /** @class */ (function () {
     return newIndex;
   };
   KeyboardNavigation.createRovingTabIndex = function (container, selector) {
-    var _this = this;
     var items = container.querySelectorAll(selector);
     var currentIndex = 0;
     // Set initial tab indexes
-    items.forEach(function (item, index) {
+    items.forEach((item, index) => {
       item.tabIndex = index === 0 ? 0 : -1;
     });
     // Handle keyboard navigation
-    container.addEventListener("keydown", function (event) {
+    container.addEventListener("keydown", (event) => {
       if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
-        currentIndex = _this.handleArrowNavigation(event, items, currentIndex);
+        currentIndex = this.handleArrowNavigation(event, items, currentIndex);
         // Update tab indexes
-        items.forEach(function (item, index) {
+        items.forEach((item, index) => {
           item.tabIndex = index === currentIndex ? 0 : -1;
         });
       }
     });
     // Handle focus events
-    items.forEach(function (item, index) {
-      item.addEventListener("focus", function () {
+    items.forEach((item, index) => {
+      item.addEventListener("focus", () => {
         currentIndex = index;
-        items.forEach(function (otherItem, otherIndex) {
+        items.forEach((otherItem, otherIndex) => {
           otherItem.tabIndex = otherIndex === index ? 0 : -1;
         });
       });
@@ -191,43 +188,43 @@ var KeyboardNavigation = /** @class */ (function () {
 })();
 exports.KeyboardNavigation = KeyboardNavigation;
 // ARIA utilities
-var AriaUtils = /** @class */ (function () {
+var AriaUtils = /** @class */ (() => {
   function AriaUtils() {}
-  AriaUtils.setExpanded = function (element, expanded) {
+  AriaUtils.setExpanded = (element, expanded) => {
     element.setAttribute("aria-expanded", expanded.toString());
   };
-  AriaUtils.setSelected = function (element, selected) {
+  AriaUtils.setSelected = (element, selected) => {
     element.setAttribute("aria-selected", selected.toString());
   };
-  AriaUtils.setPressed = function (element, pressed) {
+  AriaUtils.setPressed = (element, pressed) => {
     element.setAttribute("aria-pressed", pressed.toString());
   };
-  AriaUtils.setHidden = function (element, hidden) {
+  AriaUtils.setHidden = (element, hidden) => {
     if (hidden) {
       element.setAttribute("aria-hidden", "true");
     } else {
       element.removeAttribute("aria-hidden");
     }
   };
-  AriaUtils.describedBy = function (element, descriptionId) {
+  AriaUtils.describedBy = (element, descriptionId) => {
     element.setAttribute("aria-describedby", descriptionId);
   };
-  AriaUtils.labelledBy = function (element, labelId) {
+  AriaUtils.labelledBy = (element, labelId) => {
     element.setAttribute("aria-labelledby", labelId);
   };
   return AriaUtils;
 })();
 exports.AriaUtils = AriaUtils;
 // Healthcare-specific accessibility patterns
-var HealthcareA11y = /** @class */ (function () {
+var HealthcareA11y = /** @class */ (() => {
   function HealthcareA11y() {}
-  HealthcareA11y.announceAppointmentStatus = function (status, patientName) {
+  HealthcareA11y.announceAppointmentStatus = (status, patientName) => {
     var message = patientName
       ? "Consulta para ".concat(patientName, ": ").concat(status)
       : "Status da consulta: ".concat(status);
     FocusManager.announceToScreenReader(message, "assertive");
   };
-  HealthcareA11y.announceFormErrors = function (errors) {
+  HealthcareA11y.announceFormErrors = (errors) => {
     if (errors.length === 0) return;
     var message =
       errors.length === 1
@@ -235,7 +232,7 @@ var HealthcareA11y = /** @class */ (function () {
         : "".concat(errors.length, " erros no formul\u00E1rio: ").concat(errors.join(", "));
     FocusManager.announceToScreenReader(message, "assertive");
   };
-  HealthcareA11y.announceLoadingState = function (isLoading, context) {
+  HealthcareA11y.announceLoadingState = (isLoading, context) => {
     if (context === void 0) {
       context = "";
     }
@@ -244,7 +241,7 @@ var HealthcareA11y = /** @class */ (function () {
       : "".concat(context, " carregado com sucesso");
     FocusManager.announceToScreenReader(message, "polite");
   };
-  HealthcareA11y.createErrorSummary = function (errors) {
+  HealthcareA11y.createErrorSummary = (errors) => {
     var summary = document.createElement("div");
     summary.role = "alert";
     summary.className = "error-summary";
@@ -253,14 +250,14 @@ var HealthcareA11y = /** @class */ (function () {
     title.textContent = "Corrija os seguintes erros:";
     summary.appendChild(title);
     var list = document.createElement("ul");
-    Object.entries(errors).forEach(function (_a) {
+    Object.entries(errors).forEach((_a) => {
       var field = _a[0],
         error = _a[1];
       var item = document.createElement("li");
       var link = document.createElement("a");
       link.href = "#".concat(field);
       link.textContent = error;
-      link.addEventListener("click", function (e) {
+      link.addEventListener("click", (e) => {
         e.preventDefault();
         var targetField = document.getElementById(field);
         if (targetField) {

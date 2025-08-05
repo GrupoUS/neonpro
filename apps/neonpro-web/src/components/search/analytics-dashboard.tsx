@@ -6,15 +6,57 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
-import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  Brain,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
+  Filter,
+  Lightbulb,
+  Loader2,
+  MousePointer,
+  RefreshCw,
+  Search,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import type { Progress } from "@/components/ui/progress";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -22,58 +64,16 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { DatePickerWithRange } from "@/components/ui/date-range-picker";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
-} from "recharts";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Search,
-  Users,
-  Zap,
-  AlertTriangle,
-  Target,
-  BarChart3,
-  Activity,
-  Brain,
-  Loader2,
-  Download,
-  RefreshCw,
-  Filter,
-  Calendar,
-  Eye,
-  MousePointer,
-  Lightbulb,
-  Settings,
-  Bell,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
-import type {
+  AnalyticsOptions,
+  PerformanceAlert,
+  SearchMetrics,
+  SearchOptimization,
   searchAnalytics,
-  type SearchMetrics,
-  type PerformanceAlert,
-  type SearchOptimization,
-  type AnalyticsOptions,
 } from "@/lib/search/search-analytics";
-import type { DateRange } from "react-day-picker";
+import type { cn } from "@/lib/utils";
 
 interface AnalyticsDashboardProps {
   userId?: string;

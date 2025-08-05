@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TASK-001: Foundation Setup & Baseline
  * Feature Flag Management System
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createfeatureFlagManager = void 0;
 exports.useFeatureFlag = useFeatureFlag;
@@ -146,7 +143,7 @@ exports.checkFeatureFlagServer = checkFeatureFlagServer;
 var client_1 = require("@/lib/supabase/client");
 var server_1 = require("@/lib/supabase/server");
 var react_1 = require("react");
-var FeatureFlagManager = /** @class */ (function () {
+var FeatureFlagManager = /** @class */ (() => {
   function FeatureFlagManager() {
     this.supabase = (0, client_1.createClient)();
     this.flagCache = new Map();
@@ -165,7 +162,7 @@ var FeatureFlagManager = /** @class */ (function () {
             _b.trys.push([0, 3, , 4]);
             cachedFlag = this.getCachedFlag(flagName);
             flag = cachedFlag;
-            if (!!flag) return [3 /*break*/, 2];
+            if (flag) return [3 /*break*/, 2];
             return [
               4 /*yield*/,
               this.supabase.from("feature_flags").select("*").eq("flag_name", flagName).single(),
@@ -253,7 +250,7 @@ var FeatureFlagManager = /** @class */ (function () {
   /**
    * Evaluate target audience rules
    */
-  FeatureFlagManager.prototype.evaluateTargetAudience = function (targetAudience, userId, context) {
+  FeatureFlagManager.prototype.evaluateTargetAudience = (targetAudience, userId, context) => {
     // Check user ID targeting
     if (targetAudience.userIds && Array.isArray(targetAudience.userIds)) {
       return targetAudience.userIds.includes(userId);
@@ -301,7 +298,7 @@ var FeatureFlagManager = /** @class */ (function () {
   /**
    * Simple hash function for consistent rollout
    */
-  FeatureFlagManager.prototype.simpleHash = function (str) {
+  FeatureFlagManager.prototype.simpleHash = (str) => {
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
       var char = str.charCodeAt(i);
@@ -400,7 +397,7 @@ var FeatureFlagManager = /** @class */ (function () {
               // Schedule next increment if not at target
               if (nextPercentage < targetPercentage) {
                 setTimeout(
-                  function () {
+                  () => {
                     _this.gradualRollout(
                       flagName,
                       targetPercentage,
@@ -590,13 +587,10 @@ var FeatureFlagManager = /** @class */ (function () {
   return FeatureFlagManager;
 })();
 // Export singleton instance
-var createfeatureFlagManager = function () {
-  return new FeatureFlagManager();
-};
+var createfeatureFlagManager = () => new FeatureFlagManager();
 exports.createfeatureFlagManager = createfeatureFlagManager;
 //React Hook for feature flag usage
 function useFeatureFlag(flagName, context) {
-  var _this = this;
   var _a = (0, react_1.useState)({
       flagName: flagName,
       isEnabled: false,
@@ -607,33 +601,26 @@ function useFeatureFlag(flagName, context) {
   var _b = (0, react_1.useState)(true),
     loading = _b[0],
     setLoading = _b[1];
-  (0, react_1.useEffect)(
-    function () {
-      var checkFlag = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var userId, result;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                setLoading(true);
-                userId = context === null || context === void 0 ? void 0 : context.userId;
-                return [
-                  4 /*yield*/,
-                  featureFlagManager.isFeatureEnabled(flagName, userId, context),
-                ];
-              case 1:
-                result = _a.sent();
-                setEvaluation(result);
-                setLoading(false);
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var checkFlag = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var userId, result;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setLoading(true);
+              userId = context === null || context === void 0 ? void 0 : context.userId;
+              return [4 /*yield*/, featureFlagManager.isFeatureEnabled(flagName, userId, context)];
+            case 1:
+              result = _a.sent();
+              setEvaluation(result);
+              setLoading(false);
+              return [2 /*return*/];
+          }
         });
-      };
-      checkFlag();
-    },
-    [flagName, context],
-  );
+      });
+    checkFlag();
+  }, [flagName, context]);
   return {
     isEnabled: evaluation.isEnabled,
     evaluation: evaluation,
@@ -644,7 +631,7 @@ function useFeatureFlag(flagName, context) {
 function checkFeatureFlagServer(flagName, userId, context) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, manager;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       supabase = (0, server_1.createClient)();
       manager = new FeatureFlagManager();
       // Override the client instance for server-side usage

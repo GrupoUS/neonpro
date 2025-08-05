@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -27,11 +26,11 @@ var separator_1 = require("@/components/ui/separator");
 function PatientFilters(_a) {
   var filters = _a.filters,
     onFiltersChange = _a.onFiltersChange;
-  var handleFilterChange = function (key, value) {
+  var handleFilterChange = (key, value) => {
     var _a;
     onFiltersChange(__assign(__assign({}, filters), ((_a = {}), (_a[key] = value), _a)));
   };
-  var clearAllFilters = function () {
+  var clearAllFilters = () => {
     onFiltersChange({
       status: "all",
       riskLevel: "all",
@@ -39,7 +38,7 @@ function PatientFilters(_a) {
       hasUpcomingAppointments: false,
     });
   };
-  var getActiveFiltersCount = function () {
+  var getActiveFiltersCount = () => {
     var count = 0;
     if (filters.status !== "all") count++;
     if (filters.riskLevel !== "all") count++;
@@ -47,7 +46,7 @@ function PatientFilters(_a) {
     if (filters.hasUpcomingAppointments) count++;
     return count;
   };
-  var getActiveFiltersList = function () {
+  var getActiveFiltersList = () => {
     var activeFilters = [];
     if (filters.status !== "all") {
       var statusLabels = {
@@ -112,9 +111,7 @@ function PatientFilters(_a) {
           </label_1.Label>
           <select_1.Select
             value={filters.status}
-            onValueChange={function (value) {
-              return handleFilterChange("status", value);
-            }}
+            onValueChange={(value) => handleFilterChange("status", value)}
           >
             <select_1.SelectTrigger className="w-full">
               <select_1.SelectValue placeholder="Todos os status" />
@@ -157,9 +154,7 @@ function PatientFilters(_a) {
           </label_1.Label>
           <select_1.Select
             value={filters.riskLevel}
-            onValueChange={function (value) {
-              return handleFilterChange("riskLevel", value);
-            }}
+            onValueChange={(value) => handleFilterChange("riskLevel", value)}
           >
             <select_1.SelectTrigger className="w-full">
               <select_1.SelectValue placeholder="Todos os níveis" />
@@ -202,9 +197,7 @@ function PatientFilters(_a) {
           </label_1.Label>
           <select_1.Select
             value={filters.ageRange}
-            onValueChange={function (value) {
-              return handleFilterChange("ageRange", value);
-            }}
+            onValueChange={(value) => handleFilterChange("ageRange", value)}
           >
             <select_1.SelectTrigger className="w-full">
               <select_1.SelectValue placeholder="Todas as idades" />
@@ -230,9 +223,9 @@ function PatientFilters(_a) {
             <checkbox_1.Checkbox
               id="upcoming-appointments"
               checked={filters.hasUpcomingAppointments}
-              onCheckedChange={function (checked) {
-                return handleFilterChange("hasUpcomingAppointments", !!checked);
-              }}
+              onCheckedChange={(checked) =>
+                handleFilterChange("hasUpcomingAppointments", !!checked)
+              }
             />
             <label_1.Label htmlFor="upcoming-appointments" className="text-sm cursor-pointer">
               Com consultas agendadas
@@ -263,31 +256,29 @@ function PatientFilters(_a) {
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {activeFiltersList.map(function (filter) {
-                return (
-                  <badge_1.Badge
-                    key={filter.key}
-                    variant="secondary"
-                    className="flex items-center gap-1 pr-1"
+              {activeFiltersList.map((filter) => (
+                <badge_1.Badge
+                  key={filter.key}
+                  variant="secondary"
+                  className="flex items-center gap-1 pr-1"
+                >
+                  <span className="text-xs">{filter.label}</span>
+                  <button_1.Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      if (filter.key === "hasUpcomingAppointments") {
+                        handleFilterChange(filter.key, false);
+                      } else {
+                        handleFilterChange(filter.key, "all");
+                      }
+                    }}
+                    className="h-4 w-4 p-0 hover:bg-muted-foreground/20 ml-1"
                   >
-                    <span className="text-xs">{filter.label}</span>
-                    <button_1.Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={function () {
-                        if (filter.key === "hasUpcomingAppointments") {
-                          handleFilterChange(filter.key, false);
-                        } else {
-                          handleFilterChange(filter.key, "all");
-                        }
-                      }}
-                      className="h-4 w-4 p-0 hover:bg-muted-foreground/20 ml-1"
-                    >
-                      <lucide_react_1.X className="h-3 w-3" />
-                    </button_1.Button>
-                  </badge_1.Badge>
-                );
-              })}
+                    <lucide_react_1.X className="h-3 w-3" />
+                  </button_1.Button>
+                </badge_1.Badge>
+              ))}
             </div>
           </div>
         </>

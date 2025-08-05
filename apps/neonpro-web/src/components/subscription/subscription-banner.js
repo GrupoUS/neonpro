@@ -8,7 +8,6 @@
  * @version 1.0.0
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionBanner = SubscriptionBanner;
 var utils_1 = require("@/lib/utils");
@@ -37,7 +36,7 @@ function SubscriptionBanner(_a) {
     gracePeriodEnd = _f.gracePeriodEnd,
     nextBilling = _f.nextBilling,
     isLoading = _f.isLoading;
-  var handleDismiss = function () {
+  var handleDismiss = () => {
     setDismissed(true);
     onDismiss === null || onDismiss === void 0 ? void 0 : onDismiss();
   };
@@ -45,7 +44,7 @@ function SubscriptionBanner(_a) {
   if (isLoading || dismissed || status === "active") {
     return null;
   }
-  var getBannerConfig = function () {
+  var getBannerConfig = () => {
     var now = new Date();
     switch (status) {
       case "trialing": {

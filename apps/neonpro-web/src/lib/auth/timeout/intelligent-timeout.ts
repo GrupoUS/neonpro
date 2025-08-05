@@ -1,9 +1,9 @@
 // Intelligent Session Timeout System
 // Implements activity-based session management with role-specific timeouts
 
-import type { UserRole, UserSession, SessionPolicy } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
 import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { SessionPolicy, UserRole, UserSession } from "@/types/session";
 
 export interface ActivityEvent {
   type: ActivityType;

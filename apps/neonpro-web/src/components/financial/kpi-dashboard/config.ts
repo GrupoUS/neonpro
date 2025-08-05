@@ -1,9 +1,9 @@
 import type {
-  KPIConfiguration,
-  DashboardConfig,
+  AlertRule,
   APIConfig,
   ChartConfiguration,
-  AlertRule,
+  DashboardConfig,
+  KPIConfiguration,
 } from "./types";
 
 // Dashboard Configuration

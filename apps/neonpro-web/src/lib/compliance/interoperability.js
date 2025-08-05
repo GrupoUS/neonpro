@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Interoperability Standards
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Interoperability)
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createinteroperabilityManager =
   exports.InteroperabilityValidationSchema =
@@ -164,7 +161,7 @@ var zod_1 = require("zod");
 var logger_1 = require("@/lib/utils/logger");
 var client_1 = require("@/lib/supabase/client");
 // Main Interoperability Manager Class
-var InteroperabilityManager = /** @class */ (function () {
+var InteroperabilityManager = /** @class */ (() => {
   function InteroperabilityManager() {
     this.supabase = (0, client_1.createClient)();
     this.profiles = new Map();
@@ -234,20 +231,12 @@ var InteroperabilityManager = /** @class */ (function () {
             return [4 /*yield*/, this.validateFHIRResource(resourceType, resourceData, profile)];
           case 1:
             validationResults = _a.sent();
-            if (
-              validationResults.some(function (r) {
-                return r.status === "failed";
-              })
-            ) {
+            if (validationResults.some((r) => r.status === "failed")) {
               throw new Error(
                 "FHIR resource validation failed: ".concat(
                   validationResults
-                    .filter(function (r) {
-                      return r.status === "failed";
-                    })
-                    .map(function (r) {
-                      return r.message;
-                    })
+                    .filter((r) => r.status === "failed")
+                    .map((r) => r.message)
                     .join(", "),
                 ),
               );
@@ -391,20 +380,12 @@ var InteroperabilityManager = /** @class */ (function () {
           case 1:
             validationResults = _a.sent();
             processing.validationResults = validationResults;
-            if (
-              validationResults.some(function (r) {
-                return r.status === "failed";
-              })
-            ) {
+            if (validationResults.some((r) => r.status === "failed")) {
               throw new Error(
                 "Validation failed: ".concat(
                   validationResults
-                    .filter(function (r) {
-                      return r.status === "failed";
-                    })
-                    .map(function (r) {
-                      return r.message;
-                    })
+                    .filter((r) => r.status === "failed")
+                    .map((r) => r.message)
                     .join(", "),
                 ),
               );
@@ -508,9 +489,9 @@ var InteroperabilityManager = /** @class */ (function () {
                   .concat(resourceData.resourceType || "undefined"),
               });
             }
-            profileValidationRules = profile.validationRules.filter(function (rule) {
-              return rule.type === "schema" && rule.name.includes(resourceType);
-            });
+            profileValidationRules = profile.validationRules.filter(
+              (rule) => rule.type === "schema" && rule.name.includes(resourceType),
+            );
             (_i = 0), (profileValidationRules_1 = profileValidationRules);
             _a.label = 2;
           case 2:
@@ -583,19 +564,19 @@ var InteroperabilityManager = /** @class */ (function () {
             exchanges = exchangeData || [];
             _a = {
               totalExchanges: exchanges.length,
-              successfulExchanges: exchanges.filter(function (e) {
+              successfulExchanges: exchanges.filter((e) => {
                 var _a;
                 return (
                   ((_a = e.status) === null || _a === void 0 ? void 0 : _a.status) === "completed"
                 );
               }).length,
-              failedExchanges: exchanges.filter(function (e) {
+              failedExchanges: exchanges.filter((e) => {
                 var _a;
                 return (
                   ((_a = e.status) === null || _a === void 0 ? void 0 : _a.status) === "failed"
                 );
               }).length,
-              pendingExchanges: exchanges.filter(function (e) {
+              pendingExchanges: exchanges.filter((e) => {
                 var _a, _b;
                 return (
                   ((_a = e.status) === null || _a === void 0 ? void 0 : _a.status) === "pending" ||
@@ -645,7 +626,7 @@ var InteroperabilityManager = /** @class */ (function () {
           case 1:
             data = _a.sent().data;
             if (data) {
-              data.forEach(function (endpoint) {
+              data.forEach((endpoint) => {
                 _this.endpoints.set(endpoint.id, endpoint);
               });
             }
@@ -665,7 +646,7 @@ var InteroperabilityManager = /** @class */ (function () {
           case 1:
             data = _a.sent().data;
             if (data) {
-              data.forEach(function (mapping) {
+              data.forEach((mapping) => {
                 _this.mappings.set(mapping.id, mapping);
               });
             }
@@ -674,175 +655,167 @@ var InteroperabilityManager = /** @class */ (function () {
       });
     });
   };
-  InteroperabilityManager.prototype.createDefaultFHIRProfile = function () {
-    return {
-      id: "default_fhir",
-      name: "Default FHIR R4 Profile",
-      version: "4.0.1",
-      standards: ["HL7_FHIR"],
-      supportedFormats: ["JSON", "XML"],
-      exchangeMethods: ["REST_API"],
-      messageTypes: [],
-      fhirResources: [
-        "Patient",
-        "Practitioner",
-        "Organization",
-        "Encounter",
-        "Observation",
-        "DiagnosticReport",
-      ],
-      configuration: {
-        baseUrl: process.env.NEXT_PUBLIC_SITE_URL + "/fhir" || "https://neonpro.com/fhir",
-        apiVersion: "R4",
-        authenticationMethod: "oauth2",
-        encryptionRequired: true,
-        compressionEnabled: true,
-        timeout: 30000,
-        retryAttempts: 3,
-        batchSize: 100,
-        rateLimiting: {
-          enabled: true,
-          requestsPerMinute: 1000,
-          requestsPerHour: 10000,
-          burstLimit: 100,
-          backoffStrategy: "exponential",
-        },
-        errorHandling: {
-          retryableErrors: ["timeout", "connection_error", "5xx"],
-          fatalErrors: ["authentication_error", "authorization_error", "4xx"],
-          defaultTimeout: 30000,
-          circuitBreakerEnabled: true,
-          circuitBreakerThreshold: 5,
-          fallbackStrategy: "queue",
-        },
-        logging: {
-          logLevel: "info",
-          logRequests: true,
-          logResponses: true,
-          logErrors: true,
-          logPerformance: true,
-          sanitizeData: true,
-        },
+  InteroperabilityManager.prototype.createDefaultFHIRProfile = () => ({
+    id: "default_fhir",
+    name: "Default FHIR R4 Profile",
+    version: "4.0.1",
+    standards: ["HL7_FHIR"],
+    supportedFormats: ["JSON", "XML"],
+    exchangeMethods: ["REST_API"],
+    messageTypes: [],
+    fhirResources: [
+      "Patient",
+      "Practitioner",
+      "Organization",
+      "Encounter",
+      "Observation",
+      "DiagnosticReport",
+    ],
+    configuration: {
+      baseUrl: process.env.NEXT_PUBLIC_SITE_URL + "/fhir" || "https://neonpro.com/fhir",
+      apiVersion: "R4",
+      authenticationMethod: "oauth2",
+      encryptionRequired: true,
+      compressionEnabled: true,
+      timeout: 30000,
+      retryAttempts: 3,
+      batchSize: 100,
+      rateLimiting: {
+        enabled: true,
+        requestsPerMinute: 1000,
+        requestsPerHour: 10000,
+        burstLimit: 100,
+        backoffStrategy: "exponential",
       },
-      compliance: {
-        hl7FhirCompliance: {
-          fhirVersion: "4.0.1",
-          conformanceStatement: "NeonPro FHIR R4 Implementation",
-          capabilityStatement: {
-            id: "neonpro-capability",
-            url: "https://neonpro.com/fhir/CapabilityStatement/neonpro",
+      errorHandling: {
+        retryableErrors: ["timeout", "connection_error", "5xx"],
+        fatalErrors: ["authentication_error", "authorization_error", "4xx"],
+        defaultTimeout: 30000,
+        circuitBreakerEnabled: true,
+        circuitBreakerThreshold: 5,
+        fallbackStrategy: "queue",
+      },
+      logging: {
+        logLevel: "info",
+        logRequests: true,
+        logResponses: true,
+        logErrors: true,
+        logPerformance: true,
+        sanitizeData: true,
+      },
+    },
+    compliance: {
+      hl7FhirCompliance: {
+        fhirVersion: "4.0.1",
+        conformanceStatement: "NeonPro FHIR R4 Implementation",
+        capabilityStatement: {
+          id: "neonpro-capability",
+          url: "https://neonpro.com/fhir/CapabilityStatement/neonpro",
+          version: "1.0.0",
+          name: "NeonProCapabilityStatement",
+          status: "active",
+          date: new Date().toISOString(),
+          publisher: "NeonPro Healthcare Solutions",
+          description: "FHIR R4 Capability Statement for NeonPro Clinic Management System",
+          kind: "instance",
+          software: {
+            name: "NeonPro",
             version: "1.0.0",
-            name: "NeonProCapabilityStatement",
-            status: "active",
-            date: new Date().toISOString(),
-            publisher: "NeonPro Healthcare Solutions",
-            description: "FHIR R4 Capability Statement for NeonPro Clinic Management System",
-            kind: "instance",
-            software: {
-              name: "NeonPro",
-              version: "1.0.0",
-            },
-            implementation: {
-              description: "NeonPro Healthcare Clinic Management System",
-            },
-            rest: [],
           },
-          supportedResources: [
-            "Patient",
-            "Practitioner",
-            "Organization",
-            "Encounter",
-            "Observation",
-          ],
-          supportedInteractions: [
-            { code: "read" },
-            { code: "create" },
-            { code: "update" },
-            { code: "delete" },
-            { code: "search-type" },
-          ],
-          supportedSearchParameters: [],
-          supportedOperations: [],
-          implementationGuides: [],
-        },
-        dicomCompliance: {
-          dicomVersion: "3.0",
-          applicationEntity: {
-            aeTitle: "NEONPRO",
-            hostname: "localhost",
-            port: 11112,
-            calledAETitle: "NEONPRO",
-            callingAETitle: "NEONPRO_CLIENT",
-            maxPDULength: 16384,
-            supportedSCUServices: [],
-            supportedSCPServices: [],
+          implementation: {
+            description: "NeonPro Healthcare Clinic Management System",
           },
-          sopClasses: [],
-          transferSyntaxes: [],
-          characterSets: ["ISO_IR 100"],
-          conformanceStatement: "NeonPro DICOM Implementation",
+          rest: [],
         },
-        iheCompliance: {
-          profiles: [],
-          actors: [],
-          transactions: [],
-          contentProfiles: [],
-        },
-        securityCompliance: {
-          authenticationMethods: [
-            {
-              type: "oauth2",
-              configuration: {},
-              required: true,
-            },
-          ],
-          authorizationMethods: [
-            {
-              type: "oauth2_scopes",
-              configuration: {},
-              required: true,
-            },
-          ],
-          encryptionMethods: [
-            {
-              type: "tls",
-              version: "1.3",
-              keyLength: 256,
-              required: true,
-            },
-          ],
-          auditingRequired: true,
-          accessControlPolicies: [],
-          securityLabels: [],
-        },
-        privacyCompliance: {
-          consentRequired: true,
-          consentManagement: {
-            consentFormats: ["FHIR Consent"],
-            granularitySupported: true,
-            withdrawalSupported: true,
-            auditingEnabled: true,
-          },
-          dataMinimization: true,
-          purposeLimitation: true,
-          retentionPolicies: [],
-          anonymizationSupported: true,
-          rightToErasure: true,
-          dataPortability: true,
-        },
+        supportedResources: ["Patient", "Practitioner", "Organization", "Encounter", "Observation"],
+        supportedInteractions: [
+          { code: "read" },
+          { code: "create" },
+          { code: "update" },
+          { code: "delete" },
+          { code: "search-type" },
+        ],
+        supportedSearchParameters: [],
+        supportedOperations: [],
+        implementationGuides: [],
       },
-      endpoints: [],
-      mappings: [],
-      validationRules: [],
-    };
-  };
+      dicomCompliance: {
+        dicomVersion: "3.0",
+        applicationEntity: {
+          aeTitle: "NEONPRO",
+          hostname: "localhost",
+          port: 11112,
+          calledAETitle: "NEONPRO",
+          callingAETitle: "NEONPRO_CLIENT",
+          maxPDULength: 16384,
+          supportedSCUServices: [],
+          supportedSCPServices: [],
+        },
+        sopClasses: [],
+        transferSyntaxes: [],
+        characterSets: ["ISO_IR 100"],
+        conformanceStatement: "NeonPro DICOM Implementation",
+      },
+      iheCompliance: {
+        profiles: [],
+        actors: [],
+        transactions: [],
+        contentProfiles: [],
+      },
+      securityCompliance: {
+        authenticationMethods: [
+          {
+            type: "oauth2",
+            configuration: {},
+            required: true,
+          },
+        ],
+        authorizationMethods: [
+          {
+            type: "oauth2_scopes",
+            configuration: {},
+            required: true,
+          },
+        ],
+        encryptionMethods: [
+          {
+            type: "tls",
+            version: "1.3",
+            keyLength: 256,
+            required: true,
+          },
+        ],
+        auditingRequired: true,
+        accessControlPolicies: [],
+        securityLabels: [],
+      },
+      privacyCompliance: {
+        consentRequired: true,
+        consentManagement: {
+          consentFormats: ["FHIR Consent"],
+          granularitySupported: true,
+          withdrawalSupported: true,
+          auditingEnabled: true,
+        },
+        dataMinimization: true,
+        purposeLimitation: true,
+        retentionPolicies: [],
+        anonymizationSupported: true,
+        rightToErasure: true,
+        dataPortability: true,
+      },
+    },
+    endpoints: [],
+    mappings: [],
+    validationRules: [],
+  });
   InteroperabilityManager.prototype.getDefaultFHIRProfile = function () {
     return this.profiles.get("default_fhir");
   };
   InteroperabilityManager.prototype.validateIncomingData = function (standard, format, payload) {
     return __awaiter(this, void 0, void 0, function () {
       var results;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         results = [];
         try {
           // Basic format validation
@@ -890,9 +863,9 @@ var InteroperabilityManager = /** @class */ (function () {
     });
   };
   InteroperabilityManager.prototype.findMapping = function (sourceSystem, standard, format) {
-    return Array.from(this.mappings.values()).find(function (mapping) {
-      return mapping.sourceStandard === standard && mapping.sourceFormat === format;
-    });
+    return Array.from(this.mappings.values()).find(
+      (mapping) => mapping.sourceStandard === standard && mapping.sourceFormat === format,
+    );
   };
   InteroperabilityManager.prototype.transformData = function (payload, mapping) {
     return __awaiter(this, void 0, void 0, function () {
@@ -961,25 +934,25 @@ var InteroperabilityManager = /** @class */ (function () {
       });
     });
   };
-  InteroperabilityManager.prototype.transformFormat = function (data, transformation) {
+  InteroperabilityManager.prototype.transformFormat = (data, transformation) => {
     // Format transformation implementation
     return data;
   };
-  InteroperabilityManager.prototype.transformValue = function (data, transformation) {
+  InteroperabilityManager.prototype.transformValue = (data, transformation) => {
     // Value transformation implementation
     return data;
   };
-  InteroperabilityManager.prototype.transformStructure = function (data, transformation) {
+  InteroperabilityManager.prototype.transformStructure = (data, transformation) => {
     // Structure transformation implementation
     return data;
   };
-  InteroperabilityManager.prototype.transformTerminology = function (data, transformation) {
+  InteroperabilityManager.prototype.transformTerminology = (data, transformation) => {
     // Terminology transformation implementation
     return data;
   };
   InteroperabilityManager.prototype.processAndStoreData = function (payload, metadata) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Process and store the incoming data
         logger_1.logger.info(
           "Processing and storing data from ".concat(metadata.sendingApplication),
@@ -990,7 +963,7 @@ var InteroperabilityManager = /** @class */ (function () {
   };
   InteroperabilityManager.prototype.executeValidationRule = function (data, rule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simplified validation rule execution
           return [
@@ -1016,10 +989,9 @@ var InteroperabilityManager = /** @class */ (function () {
     });
   };
   InteroperabilityManager.prototype.startExchangeProcessing = function () {
-    var _this = this;
     // Start background processing of exchange queue
-    setInterval(function () {
-      _this.processExchangeQueue();
+    setInterval(() => {
+      this.processExchangeQueue();
     }, 5000); // Process every 5 seconds
   };
   InteroperabilityManager.prototype.processExchangeQueue = function () {
@@ -1029,9 +1001,7 @@ var InteroperabilityManager = /** @class */ (function () {
         switch (_b.label) {
           case 0:
             if (this.exchangeQueue.length === 0) return [2 /*return*/];
-            pendingExchanges = this.exchangeQueue.filter(function (e) {
-              return e.status.status === "pending";
-            });
+            pendingExchanges = this.exchangeQueue.filter((e) => e.status.status === "pending");
             (_i = 0), (_a = pendingExchanges.slice(0, 10));
             _b.label = 1;
           case 1:
@@ -1066,13 +1036,12 @@ var InteroperabilityManager = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             exchange.status.status = "processing";
-            endpoint = Array.from(this.endpoints.values()).find(function (ep) {
-              return (
+            endpoint = Array.from(this.endpoints.values()).find(
+              (ep) =>
                 ep.standard === exchange.standard &&
                 ep.format === exchange.format &&
-                ep.status === "active"
-              );
-            });
+                ep.status === "active",
+            );
             if (!endpoint) {
               throw new Error(
                 "No active endpoint found for "
@@ -1153,7 +1122,7 @@ var InteroperabilityManager = /** @class */ (function () {
       });
     });
   };
-  InteroperabilityManager.prototype.getContentType = function (format) {
+  InteroperabilityManager.prototype.getContentType = (format) => {
     var contentTypes = {
       JSON: "application/json",
       XML: "application/xml",
@@ -1166,33 +1135,28 @@ var InteroperabilityManager = /** @class */ (function () {
     };
     return contentTypes[format] || "application/json";
   };
-  InteroperabilityManager.prototype.calculateAverageProcessingTime = function (exchanges) {
-    var completedExchanges = exchanges.filter(function (e) {
+  InteroperabilityManager.prototype.calculateAverageProcessingTime = (exchanges) => {
+    var completedExchanges = exchanges.filter((e) => {
       var _a;
       return (_a = e.processing) === null || _a === void 0 ? void 0 : _a.duration;
     });
     if (completedExchanges.length === 0) return 0;
-    var totalTime = completedExchanges.reduce(function (sum, e) {
-      return sum + e.processing.duration;
-    }, 0);
+    var totalTime = completedExchanges.reduce((sum, e) => sum + e.processing.duration, 0);
     return totalTime / completedExchanges.length;
   };
-  InteroperabilityManager.prototype.groupByField = function (items, field) {
-    return items.reduce(function (acc, item) {
+  InteroperabilityManager.prototype.groupByField = (items, field) =>
+    items.reduce((acc, item) => {
       var key = item[field];
       acc[key] = (acc[key] || 0) + 1;
       return acc;
     }, {});
-  };
   InteroperabilityManager.prototype.generateErrorSummary = function (exchanges) {
-    var failedExchanges = exchanges.filter(function (e) {
+    var failedExchanges = exchanges.filter((e) => {
       var _a;
       return ((_a = e.status) === null || _a === void 0 ? void 0 : _a.status) === "failed";
     });
     return this.groupByField(
-      failedExchanges.map(function (e) {
-        return { reason: e.status.statusReason || "unknown" };
-      }),
+      failedExchanges.map((e) => ({ reason: e.status.statusReason || "unknown" })),
       "reason",
     );
   };
@@ -1201,7 +1165,7 @@ var InteroperabilityManager = /** @class */ (function () {
       averageProcessingTime: this.calculateAverageProcessingTime(exchanges),
       throughput: exchanges.length, // messages per time period
       errorRate:
-        exchanges.filter(function (e) {
+        exchanges.filter((e) => {
           var _a;
           return ((_a = e.status) === null || _a === void 0 ? void 0 : _a.status) === "failed";
         }).length / Math.max(exchanges.length, 1),
@@ -1210,17 +1174,15 @@ var InteroperabilityManager = /** @class */ (function () {
   };
   InteroperabilityManager.prototype.generateComplianceMetrics = function (exchanges) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            fhirComplianceRate: 100, // Would calculate actual compliance
-            securityComplianceRate: 100,
-            privacyComplianceRate: 100,
-            auditCoverageRate: 100,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          fhirComplianceRate: 100, // Would calculate actual compliance
+          securityComplianceRate: 100,
+          privacyComplianceRate: 100,
+          auditCoverageRate: 100,
+        },
+      ]);
     });
   };
   // Database operations
@@ -1327,7 +1289,5 @@ exports.InteroperabilityValidationSchema = zod_1.z.object({
   targetSystem: zod_1.z.string().min(1, "Target system is required"),
 });
 // Export singleton instance
-var createinteroperabilityManager = function () {
-  return new InteroperabilityManager();
-};
+var createinteroperabilityManager = () => new InteroperabilityManager();
 exports.createinteroperabilityManager = createinteroperabilityManager;

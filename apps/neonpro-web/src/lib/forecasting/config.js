@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Forecasting System Configuration
  * Epic 11 - Story 11.1: Configuration management for demand forecasting system
@@ -18,13 +17,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -366,12 +365,12 @@ exports.FEATURE_FLAGS = {
 /**
  * Configuration Helper Functions
  */
-var ConfigManager = /** @class */ (function () {
+var ConfigManager = /** @class */ (() => {
   function ConfigManager() {
     this.config = {};
     this.loadConfiguration();
   }
-  ConfigManager.getInstance = function () {
+  ConfigManager.getInstance = () => {
     if (!ConfigManager.instance) {
       ConfigManager.instance = new ConfigManager();
     }
@@ -447,9 +446,7 @@ var ConfigManager = /** @class */ (function () {
   ConfigManager.prototype.getModelConfig = function (modelType) {
     return this.get("model_configs.".concat(modelType), {});
   };
-  ConfigManager.prototype.getEnvironment = function () {
-    return process.env.NODE_ENV || "development";
-  };
+  ConfigManager.prototype.getEnvironment = () => process.env.NODE_ENV || "development";
   ConfigManager.prototype.isDevelopment = function () {
     return this.getEnvironment() === "development";
   };

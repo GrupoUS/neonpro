@@ -1,4 +1,3 @@
-"use strict";
 // Authentication Utilities
 // Story 1.4: Session Management & Security Implementation
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -17,7 +16,7 @@ exports.SessionValidation = {
   /**
    * Check if a session is still valid based on expiration and activity
    */
-  isSessionValid: function (session) {
+  isSessionValid: (session) => {
     var now = new Date();
     var expiresAt = new Date(session.expires_at);
     var lastActivity = new Date(session.last_activity);
@@ -40,7 +39,7 @@ exports.SessionValidation = {
   /**
    * Check if a session should be extended based on activity
    */
-  shouldExtendSession: function (session) {
+  shouldExtendSession: (session) => {
     var now = new Date();
     var expiresAt = new Date(session.expires_at);
     var timeUntilExpiry = expiresAt.getTime() - now.getTime();
@@ -51,7 +50,7 @@ exports.SessionValidation = {
   /**
    * Calculate session duration in milliseconds
    */
-  getSessionDuration: function (session) {
+  getSessionDuration: (session) => {
     var createdAt = new Date(session.created_at);
     var lastActivity = new Date(session.last_activity);
     return lastActivity.getTime() - createdAt.getTime();
@@ -59,7 +58,7 @@ exports.SessionValidation = {
   /**
    * Get time until session expires
    */
-  getTimeUntilExpiry: function (session) {
+  getTimeUntilExpiry: (session) => {
     var now = new Date();
     var expiresAt = new Date(session.expires_at);
     return Math.max(0, expiresAt.getTime() - now.getTime());
@@ -67,7 +66,7 @@ exports.SessionValidation = {
   /**
    * Check if user has exceeded concurrent session limit
    */
-  checkConcurrentSessionLimit: function (activeSessions, userRole) {
+  checkConcurrentSessionLimit: (activeSessions, userRole) => {
     var policy = config_1.SESSION_POLICIES[userRole];
     if (!policy) return false;
     return activeSessions.length >= policy.maxConcurrentSessions;
@@ -78,7 +77,7 @@ exports.DeviceUtils = {
   /**
    * Generate a device fingerprint from device info
    */
-  generateFingerprint: function (deviceInfo) {
+  generateFingerprint: (deviceInfo) => {
     var _a, _b;
     var components = [
       deviceInfo.userAgent || "",
@@ -95,7 +94,7 @@ exports.DeviceUtils = {
   /**
    * Detect device type from user agent
    */
-  detectDeviceType: function (userAgent) {
+  detectDeviceType: (userAgent) => {
     var ua = userAgent.toLowerCase();
     if (ua.includes("tablet") || ua.includes("ipad")) {
       return "tablet";
@@ -108,7 +107,7 @@ exports.DeviceUtils = {
   /**
    * Extract browser information from user agent
    */
-  parseBrowserInfo: function (userAgent) {
+  parseBrowserInfo: (userAgent) => {
     var ua = userAgent.toLowerCase();
     // Chrome
     if (ua.includes("chrome") && !ua.includes("edg")) {
@@ -150,7 +149,7 @@ exports.DeviceUtils = {
   /**
    * Extract OS information from user agent
    */
-  parseOSInfo: function (userAgent) {
+  parseOSInfo: (userAgent) => {
     var ua = userAgent.toLowerCase();
     // Windows
     if (ua.includes("windows")) {
@@ -218,9 +217,7 @@ exports.LocationUtils = {
   /**
    * Convert degrees to radians
    */
-  toRadians: function (degrees) {
-    return degrees * (Math.PI / 180);
-  },
+  toRadians: (degrees) => degrees * (Math.PI / 180),
   /**
    * Check if location change is suspicious (impossible travel)
    */
@@ -241,7 +238,7 @@ exports.LocationUtils = {
   /**
    * Get location risk score
    */
-  getLocationRiskScore: function (location) {
+  getLocationRiskScore: (location) => {
     var riskScore = 0;
     // High-risk countries (example list)
     var highRiskCountries = ["CN", "RU", "KP", "IR"];
@@ -261,7 +258,7 @@ exports.SecurityEventUtils = {
   /**
    * Classify security event severity
    */
-  classifyEventSeverity: function (eventType) {
+  classifyEventSeverity: (eventType) => {
     var severityMap = {
       login_success: "low",
       login_failure: "medium",
@@ -286,7 +283,7 @@ exports.SecurityEventUtils = {
   /**
    * Generate security event description
    */
-  generateEventDescription: function (eventType, metadata) {
+  generateEventDescription: (eventType, metadata) => {
     var descriptions = {
       login_success: "User successfully logged in",
       login_failure: "Failed login attempt",
@@ -326,7 +323,7 @@ exports.SecurityEventUtils = {
   /**
    * Calculate risk score for security event
    */
-  calculateEventRiskScore: function (eventType, metadata) {
+  calculateEventRiskScore: (eventType, metadata) => {
     var baseScores = {
       login_success: 0,
       login_failure: 20,
@@ -370,7 +367,7 @@ exports.FormatUtils = {
   /**
    * Format session duration
    */
-  formatDuration: function (milliseconds) {
+  formatDuration: (milliseconds) => {
     var seconds = Math.floor(milliseconds / 1000);
     var minutes = Math.floor(seconds / 60);
     var hours = Math.floor(minutes / 60);
@@ -391,7 +388,7 @@ exports.FormatUtils = {
   /**
    * Format timestamp relative to now
    */
-  formatRelativeTime: function (date) {
+  formatRelativeTime: (date) => {
     var now = new Date();
     var diffMs = now.getTime() - date.getTime();
     var diffSeconds = Math.floor(diffMs / 1000);
@@ -411,7 +408,7 @@ exports.FormatUtils = {
   /**
    * Format IP address with location
    */
-  formatIPWithLocation: function (ipAddress, location) {
+  formatIPWithLocation: (ipAddress, location) => {
     if (!location) {
       return ipAddress;
     }
@@ -420,7 +417,7 @@ exports.FormatUtils = {
   /**
    * Format device name
    */
-  formatDeviceName: function (deviceInfo) {
+  formatDeviceName: (deviceInfo) => {
     var browser = exports.DeviceUtils.parseBrowserInfo(deviceInfo.userAgent || "");
     var os = exports.DeviceUtils.parseOSInfo(deviceInfo.userAgent || "");
     var deviceType = exports.DeviceUtils.detectDeviceType(deviceInfo.userAgent || "");
@@ -433,7 +430,7 @@ exports.FormatUtils = {
   /**
    * Format risk score with color coding
    */
-  formatRiskScore: function (score) {
+  formatRiskScore: (score) => {
     if (score <= 25) {
       return {
         score: score,
@@ -470,7 +467,7 @@ exports.ValidationUtils = {
   /**
    * Validate session token format
    */
-  isValidSessionToken: function (token) {
+  isValidSessionToken: (token) => {
     // JWT format: header.payload.signature
     var jwtRegex = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/;
     return jwtRegex.test(token);
@@ -478,7 +475,7 @@ exports.ValidationUtils = {
   /**
    * Validate IP address format
    */
-  isValidIPAddress: function (ip) {
+  isValidIPAddress: (ip) => {
     var ipv4Regex =
       /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
     var ipv6Regex = /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/;
@@ -487,14 +484,14 @@ exports.ValidationUtils = {
   /**
    * Validate device fingerprint
    */
-  isValidDeviceFingerprint: function (fingerprint) {
+  isValidDeviceFingerprint: (fingerprint) => {
     // Should be alphanumeric and reasonable length
     return /^[a-zA-Z0-9]{16,64}$/.test(fingerprint);
   },
   /**
    * Validate user agent string
    */
-  isValidUserAgent: function (userAgent) {
+  isValidUserAgent: (userAgent) => {
     // Basic validation - should contain browser and OS info
     return userAgent.length > 10 && userAgent.length < 500;
   },
@@ -504,7 +501,7 @@ exports.CryptoUtils = {
   /**
    * Generate secure random string
    */
-  generateSecureToken: function (length) {
+  generateSecureToken: (length) => {
     if (length === void 0) {
       length = 32;
     }
@@ -518,7 +515,7 @@ exports.CryptoUtils = {
   /**
    * Hash string using simple algorithm (for client-side use)
    */
-  simpleHash: function (str) {
+  simpleHash: (str) => {
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
       var char = str.charCodeAt(i);

@@ -6,8 +6,8 @@
  * with A/B testing, professional efficiency tracking, and continuous learning.
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { AuditLogger } from "@/lib/auth/audit/audit-logger";
+import type { createClient } from "@/lib/supabase/client";
 
 // ===============================================
 // Types and Interfaces

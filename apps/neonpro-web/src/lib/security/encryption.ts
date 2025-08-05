@@ -103,7 +103,9 @@ export class HealthcareEncryption {
   ): Promise<EncryptedData | any> {
     // Determine classification
     const classification =
-      customClassification || this.FIELD_CLASSIFICATIONS[fieldName] || DataClassification.INTERNAL;
+      customClassification ||
+      HealthcareEncryption.FIELD_CLASSIFICATIONS[fieldName] ||
+      DataClassification.INTERNAL;
 
     // Don't encrypt public data
     if (classification === DataClassification.PUBLIC) {
@@ -114,11 +116,11 @@ export class HealthcareEncryption {
     const stringValue = typeof value === "string" ? value : JSON.stringify(value);
 
     // Get appropriate key
-    const keyId = await this.getEncryptionKey(classification);
+    const keyId = await HealthcareEncryption.getEncryptionKey(classification);
 
     // Encrypt based on classification level
-    const algorithm = this.getAlgorithmForClassification(classification);
-    const encrypted = await this.encrypt(stringValue, keyId, algorithm);
+    const algorithm = HealthcareEncryption.getAlgorithmForClassification(classification);
+    const encrypted = await HealthcareEncryption.encrypt(stringValue, keyId, algorithm);
 
     return encrypted;
   }
@@ -127,7 +129,7 @@ export class HealthcareEncryption {
    * Decrypt field data
    */
   static async decryptField(encryptedData: EncryptedData): Promise<any> {
-    const decrypted = await this.decrypt(encryptedData);
+    const decrypted = await HealthcareEncryption.decrypt(encryptedData);
 
     // Try to parse as JSON, fallback to string
     try {
@@ -153,9 +155,9 @@ export class HealthcareEncryption {
 
       // Handle nested objects
       if (typeof value === "object" && !Array.isArray(value)) {
-        encrypted[fieldName] = await this.encryptPatientRecord(value);
+        encrypted[fieldName] = await HealthcareEncryption.encryptPatientRecord(value);
       } else {
-        encrypted[fieldName] = await this.encryptField(fieldName, value);
+        encrypted[fieldName] = await HealthcareEncryption.encryptField(fieldName, value);
       }
     }
 
@@ -177,10 +179,10 @@ export class HealthcareEncryption {
       }
 
       // Check if it's encrypted data
-      if (this.isEncryptedData(value)) {
-        decrypted[fieldName] = await this.decryptField(value);
+      if (HealthcareEncryption.isEncryptedData(value)) {
+        decrypted[fieldName] = await HealthcareEncryption.decryptField(value);
       } else if (typeof value === "object" && !Array.isArray(value)) {
-        decrypted[fieldName] = await this.decryptPatientRecord(value);
+        decrypted[fieldName] = await HealthcareEncryption.decryptPatientRecord(value);
       } else {
         decrypted[fieldName] = value;
       }
@@ -202,7 +204,7 @@ export class HealthcareEncryption {
       const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV for GCM
 
       // Get encryption key
-      const key = await this.getKey(keyId);
+      const key = await HealthcareEncryption.getKey(keyId);
 
       // Encrypt data
       const encoder = new TextEncoder();
@@ -227,11 +229,11 @@ export class HealthcareEncryption {
       const tag = encryptedArray.slice(-16);
 
       return {
-        data: this.arrayBufferToBase64(ciphertext),
+        data: HealthcareEncryption.arrayBufferToBase64(ciphertext),
         algorithm,
         keyId,
-        iv: this.arrayBufferToBase64(iv),
-        tag: this.arrayBufferToBase64(tag),
+        iv: HealthcareEncryption.arrayBufferToBase64(iv),
+        tag: HealthcareEncryption.arrayBufferToBase64(tag),
         version: 1,
         createdAt: new Date(),
       };
@@ -247,12 +249,12 @@ export class HealthcareEncryption {
   static async decrypt(encryptedData: EncryptedData): Promise<string> {
     try {
       // Get decryption key
-      const key = await this.getKey(encryptedData.keyId);
+      const key = await HealthcareEncryption.getKey(encryptedData.keyId);
 
       // Convert base64 to array buffers
-      const ciphertext = this.base64ToArrayBuffer(encryptedData.data);
-      const iv = this.base64ToArrayBuffer(encryptedData.iv!);
-      const tag = this.base64ToArrayBuffer(encryptedData.tag!);
+      const ciphertext = HealthcareEncryption.base64ToArrayBuffer(encryptedData.data);
+      const iv = HealthcareEncryption.base64ToArrayBuffer(encryptedData.iv!);
+      const tag = HealthcareEncryption.base64ToArrayBuffer(encryptedData.tag!);
 
       // Combine ciphertext and tag for GCM
       const encryptedWithTag = new Uint8Array(ciphertext.byteLength + tag.byteLength);
@@ -296,7 +298,7 @@ export class HealthcareEncryption {
     const keyMaterial = crypto.getRandomValues(new Uint8Array(32)); // 256-bit key
 
     // Store key securely (in production, use HSM or key management service)
-    await this.storeKey(keyId, keyMaterial);
+    await HealthcareEncryption.storeKey(keyId, keyMaterial);
 
     const keyInfo: KeyInfo = {
       id: keyId,
@@ -313,7 +315,7 @@ export class HealthcareEncryption {
     };
 
     // Store key metadata
-    await this.storeKeyInfo(keyInfo);
+    await HealthcareEncryption.storeKeyInfo(keyInfo);
 
     return keyInfo;
   }
@@ -322,13 +324,13 @@ export class HealthcareEncryption {
    * Rotate encryption key
    */
   static async rotateKey(keyId: string): Promise<KeyInfo> {
-    const oldKeyInfo = await this.getKeyInfo(keyId);
+    const oldKeyInfo = await HealthcareEncryption.getKeyInfo(keyId);
     if (!oldKeyInfo) {
       throw new Error("Key not found");
     }
 
     // Generate new key with same properties
-    const newKeyInfo = await this.generateKey(
+    const newKeyInfo = await HealthcareEncryption.generateKey(
       oldKeyInfo.alias,
       oldKeyInfo.classification,
       oldKeyInfo.algorithm,
@@ -338,10 +340,10 @@ export class HealthcareEncryption {
     // Mark old key as rotated
     oldKeyInfo.status = "rotated";
     oldKeyInfo.rotatedAt = new Date();
-    await this.updateKeyInfo(oldKeyInfo);
+    await HealthcareEncryption.updateKeyInfo(oldKeyInfo);
 
     // TODO: Re-encrypt data with new key (background job)
-    this.scheduleDataReencryption(keyId, newKeyInfo.id);
+    HealthcareEncryption.scheduleDataReencryption(keyId, newKeyInfo.id);
 
     return newKeyInfo;
   }
@@ -350,7 +352,7 @@ export class HealthcareEncryption {
    * Check for keys that need rotation
    */
   static async checkKeyRotation(): Promise<KeyInfo[]> {
-    const allKeys = await this.getAllKeys();
+    const allKeys = await HealthcareEncryption.getAllKeys();
     const now = new Date();
 
     return allKeys.filter(
@@ -362,15 +364,15 @@ export class HealthcareEncryption {
    * Securely delete key (for data erasure requests)
    */
   static async deleteKey(keyId: string, reason: string): Promise<void> {
-    const keyInfo = await this.getKeyInfo(keyId);
+    const keyInfo = await HealthcareEncryption.getKeyInfo(keyId);
     if (!keyInfo) return;
 
     // Mark key as revoked
     keyInfo.status = "revoked";
-    await this.updateKeyInfo(keyInfo);
+    await HealthcareEncryption.updateKeyInfo(keyInfo);
 
     // Securely delete key material
-    await this.secureDeleteKey(keyId);
+    await HealthcareEncryption.secureDeleteKey(keyId);
 
     // Log key deletion for audit
     console.log("Key deleted:", { keyId, reason, timestamp: new Date() });
@@ -395,11 +397,11 @@ export class HealthcareEncryption {
   private static async getEncryptionKey(classification: DataClassification): Promise<string> {
     // Get or create key for classification level
     const keyAlias = `healthcare_${classification}`;
-    let keyInfo = await this.getKeyByAlias(keyAlias);
+    let keyInfo = await HealthcareEncryption.getKeyByAlias(keyAlias);
 
     if (!keyInfo) {
       // Create new key
-      keyInfo = await this.generateKey(keyAlias, classification, undefined, 90); // 90-day rotation
+      keyInfo = await HealthcareEncryption.generateKey(keyAlias, classification, undefined, 90); // 90-day rotation
     }
 
     return keyInfo.id;

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import type { Inter } from "next/font/google";
 import "./globals.css";
-import type { ClerkProvider } from "@clerk/nextjs";
 import type { ptBR } from "@clerk/localizations";
+import type { ClerkProvider } from "@clerk/nextjs";
 import type {
   clerkConfig,
   healthcareAppearance,
   validateClerkConfig,
 } from "@/lib/auth/clerk-config";
+import { TRPCProvider } from "@/utils/trpc-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -60,7 +61,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
 
           {/* Main application wrapper */}
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-sky-50">{children}</div>
+          <TRPCProvider>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-sky-50">{children}</div>
+          </TRPCProvider>
 
           {/* Healthcare compliance footer */}
           <div className="sr-only" role="contentinfo" aria-label="Informações de conformidade">

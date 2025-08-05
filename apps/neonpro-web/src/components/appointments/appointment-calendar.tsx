@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
-import type { Calendar, momentLocalizer, Views, View } from "react-big-calendar";
-import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
+import type React from "react";
+import { useCallback, useMemo } from "react";
+import type { Calendar, momentLocalizer, View, Views } from "react-big-calendar";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "moment/locale/pt-br";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import type { AppointmentEvent, Professional } from "@/app/appointments/page";
-import type { AppointmentSlot } from "./appointment-slot";
 import type { cn } from "@/lib/utils";
+import type { AppointmentSlot } from "./appointment-slot";
 
 // Configure moment for Brazilian Portuguese
 moment.locale("pt-br");

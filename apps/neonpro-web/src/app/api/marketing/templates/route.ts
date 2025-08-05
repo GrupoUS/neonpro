@@ -3,9 +3,9 @@
 // Epic 7 - Story 7.2: Automated marketing campaigns with personalization
 // =====================================================================================
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { marketingCampaignsService } from "@/app/lib/services/marketing-campaigns-service";
 import type { CreateTemplateData } from "@/app/types/marketing-campaigns";
-import type { NextRequest, NextResponse } from "next/server";
 
 // GET /api/marketing/templates - List campaign templates
 export async function GET(request: NextRequest) {

@@ -1,13 +1,13 @@
-import type { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import type { MedicalRecordsManager } from "../medical-records";
+import type { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type {
-  MedicalRecord,
-  MedicalHistory,
-  MedicalAttachment,
-  CreateMedicalRecordData,
-  UpdateMedicalRecordData,
   CreateMedicalHistoryData,
+  CreateMedicalRecordData,
+  MedicalAttachment,
+  MedicalHistory,
+  MedicalRecord,
+  MedicalRecordsManager,
   UpdateMedicalHistoryData,
+  UpdateMedicalRecordData,
 } from "../medical-records";
 
 // Mock Supabase

@@ -1,17 +1,16 @@
-"use strict";
 // Drug Search and Interaction API Endpoints
 // Story 9.5: API endpoints for drug information and interaction checking
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -156,7 +153,7 @@ function GET(request) {
       interactions,
       error_1;
     var _b, _c;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           _d.trys.push([0, 11, , 12]);
@@ -277,7 +274,7 @@ function POST(request) {
       allInteractions,
       uniqueInteractions,
       error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 10, , 11]);
@@ -313,14 +310,7 @@ function POST(request) {
               server_2.NextResponse.json({ error: "Queries must be an array" }, { status: 400 }),
             ];
           }
-          return [
-            4 /*yield*/,
-            Promise.all(
-              queries.map(function (query) {
-                return service.searchDrugs(query);
-              }),
-            ),
-          ];
+          return [4 /*yield*/, Promise.all(queries.map((query) => service.searchDrugs(query)))];
         case 5:
           batchResults = _b.sent();
           return [2 /*return*/, server_2.NextResponse.json({ success: true, data: batchResults })];
@@ -339,22 +329,14 @@ function POST(request) {
           }
           return [
             4 /*yield*/,
-            Promise.all(
-              drug_combinations.map(function (combo) {
-                return service.checkDrugInteractions(combo);
-              }),
-            ),
+            Promise.all(drug_combinations.map((combo) => service.checkDrugInteractions(combo))),
           ];
         case 7:
           complexInteractions = _b.sent();
           allInteractions = complexInteractions.flat();
-          uniqueInteractions = allInteractions.filter(function (interaction, index, arr) {
-            return (
-              arr.findIndex(function (i) {
-                return i.id === interaction.id;
-              }) === index
-            );
-          });
+          uniqueInteractions = allInteractions.filter(
+            (interaction, index, arr) => arr.findIndex((i) => i.id === interaction.id) === index,
+          );
           return [
             2 /*return*/,
             server_2.NextResponse.json({
@@ -365,15 +347,11 @@ function POST(request) {
                 patient_factors: patient_factors || {},
                 risk_assessment: {
                   total_interactions: uniqueInteractions.length,
-                  high_severity: uniqueInteractions.filter(function (i) {
-                    return i.severity_level >= 8;
-                  }).length,
-                  moderate_severity: uniqueInteractions.filter(function (i) {
-                    return i.severity_level >= 5 && i.severity_level < 8;
-                  }).length,
-                  low_severity: uniqueInteractions.filter(function (i) {
-                    return i.severity_level < 5;
-                  }).length,
+                  high_severity: uniqueInteractions.filter((i) => i.severity_level >= 8).length,
+                  moderate_severity: uniqueInteractions.filter(
+                    (i) => i.severity_level >= 5 && i.severity_level < 8,
+                  ).length,
+                  low_severity: uniqueInteractions.filter((i) => i.severity_level < 5).length,
                 },
               },
             }),

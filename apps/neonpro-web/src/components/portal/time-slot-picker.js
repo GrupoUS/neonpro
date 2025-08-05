@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = TimeSlotPicker;
 var react_1 = require("react");
@@ -43,37 +42,32 @@ function TimeSlotPicker(_a) {
   // Real-time availability manager with filters
   var availabilityManager = (0, use_availability_manager_1.useAvailabilityManager)();
   // Update filters when props change
-  (0, react_1.useEffect)(
-    function () {
-      availabilityManager.updateFilters({
-        professionalId: professionalId,
-        serviceId: serviceId,
-        date: selectedDate,
-        onlyAvailable: true,
-      });
-    },
-    [professionalId, serviceId, selectedDate, availabilityManager],
-  );
+  (0, react_1.useEffect)(() => {
+    availabilityManager.updateFilters({
+      professionalId: professionalId,
+      serviceId: serviceId,
+      date: selectedDate,
+      onlyAvailable: true,
+    });
+  }, [professionalId, serviceId, selectedDate, availabilityManager]);
   // Convert realtime slot to legacy format for compatibility
-  var convertRealtimeSlot = function (slot) {
-    return {
-      id: slot.id,
-      professional_id: slot.professional_id,
-      professional_name: "Professional", // Will be populated from relations
-      specialty: "specialist",
-      start_time: "".concat(slot.date, "T").concat(slot.start_time, "Z"),
-      end_time: "".concat(slot.date, "T").concat(slot.end_time, "Z"),
-      duration_minutes: 60, // Default duration
-    };
-  };
+  var convertRealtimeSlot = (slot) => ({
+    id: slot.id,
+    professional_id: slot.professional_id,
+    professional_name: "Professional", // Will be populated from relations
+    specialty: "specialist",
+    start_time: "".concat(slot.date, "T").concat(slot.start_time, "Z"),
+    end_time: "".concat(slot.date, "T").concat(slot.end_time, "Z"),
+    duration_minutes: 60, // Default duration
+  });
   // Handle slot selection from real-time component
-  var handleRealtimeSlotSelect = function (slot) {
+  var handleRealtimeSlotSelect = (slot) => {
     setSelectedRealtimeSlot(slot);
     var legacySlot = convertRealtimeSlot(slot);
     onTimeSlotSelect(legacySlot);
   };
   // Format time for display
-  var formatTime = function (time) {
+  var formatTime = (time) => {
     try {
       return (0, date_fns_1.format)(new Date("2000-01-01T".concat(time)), "HH:mm");
     } catch (_a) {
@@ -101,9 +95,9 @@ function TimeSlotPicker(_a) {
             <div className="space-y-4">
               <skeleton_1.Skeleton className="h-6 w-40" />
               <div className="grid grid-cols-2 gap-2">
-                {__spreadArray([], Array(8), true).map(function (_, i) {
-                  return <skeleton_1.Skeleton key={i} className="h-12 w-full" />;
-                })}
+                {__spreadArray([], Array(8), true).map((_, i) => (
+                  <skeleton_1.Skeleton key={i} className="h-12 w-full" />
+                ))}
               </div>
             </div>
           </div>
@@ -133,9 +127,7 @@ function TimeSlotPicker(_a) {
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
-              disabled={function (date) {
-                return date < new Date() || date.getDay() === 0;
-              }} // Disable past dates and Sundays
+              disabled={(date) => date < new Date() || date.getDay() === 0} // Disable past dates and Sundays
               className="rounded-md border"
             />
 
@@ -165,9 +157,7 @@ function TimeSlotPicker(_a) {
           <booking_conflict_prevention_1.BookingConflictPrevention
             selectedSlot={selectedRealtimeSlot}
             patientId={patientId}
-            onConflictResolved={function () {
-              return setSelectedRealtimeSlot(null);
-            }}
+            onConflictResolved={() => setSelectedRealtimeSlot(null)}
           />
         )}
 

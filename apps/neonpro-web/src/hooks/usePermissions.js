@@ -1,4 +1,3 @@
-"use strict";
 /**
  * React Hook for RBAC Permissions Management
  * Story 1.2: Role-Based Access Control Implementation
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usePermissions = usePermissions;
 exports.usePermission = usePermission;
@@ -173,7 +170,6 @@ var FEATURE_PERMISSIONS = {
  * Main permissions hook
  */
 function usePermissions() {
-  var _this = this;
   var _a = (0, auth_context_1.useAuth)(),
     user = _a.user,
     authLoading = _a.isLoading;
@@ -190,69 +186,63 @@ function usePermissions() {
    * Get user's role
    */
   var role = (0, react_1.useMemo)(
-    function () {
-      return (user === null || user === void 0 ? void 0 : user.role) || null;
-    },
+    () => (user === null || user === void 0 ? void 0 : user.role) || null,
     [user === null || user === void 0 ? void 0 : user.role],
   );
   /**
    * Get user's permissions based on role
    */
-  var permissions = (0, react_1.useMemo)(
-    function () {
-      if (!role || !user) return [];
-      // Import DEFAULT_ROLES from types (would need to be imported)
-      // For now, we'll define basic permissions here
-      var rolePermissions = {
-        patient: ["patients.read"],
-        staff: ["patients.read", "patients.manage", "appointments.read", "appointments.manage"],
-        manager: [
-          "patients.read",
-          "patients.manage",
-          "appointments.read",
-          "appointments.manage",
-          "billing.read",
-          "billing.manage",
-          "payments.read",
-          "payments.manage",
-          "users.read",
-          "users.manage",
-          "reports.read",
-          "reports.generate",
-        ],
-        owner: [
-          "patients.read",
-          "patients.manage",
-          "appointments.read",
-          "appointments.manage",
-          "billing.read",
-          "billing.manage",
-          "payments.read",
-          "payments.manage",
-          "users.read",
-          "users.manage",
-          "clinic.read",
-          "clinic.manage",
-          "reports.read",
-          "reports.generate",
-          "audit.read",
-        ],
-      };
-      return rolePermissions[role] || [];
-    },
-    [role, user],
-  );
+  var permissions = (0, react_1.useMemo)(() => {
+    if (!role || !user) return [];
+    // Import DEFAULT_ROLES from types (would need to be imported)
+    // For now, we'll define basic permissions here
+    var rolePermissions = {
+      patient: ["patients.read"],
+      staff: ["patients.read", "patients.manage", "appointments.read", "appointments.manage"],
+      manager: [
+        "patients.read",
+        "patients.manage",
+        "appointments.read",
+        "appointments.manage",
+        "billing.read",
+        "billing.manage",
+        "payments.read",
+        "payments.manage",
+        "users.read",
+        "users.manage",
+        "reports.read",
+        "reports.generate",
+      ],
+      owner: [
+        "patients.read",
+        "patients.manage",
+        "appointments.read",
+        "appointments.manage",
+        "billing.read",
+        "billing.manage",
+        "payments.read",
+        "payments.manage",
+        "users.read",
+        "users.manage",
+        "clinic.read",
+        "clinic.manage",
+        "reports.read",
+        "reports.generate",
+        "audit.read",
+      ],
+    };
+    return rolePermissions[role] || [];
+  }, [role, user]);
   /**
    * Generate cache key
    */
   var getCacheKey = (0, react_1.useCallback)(
-    function (permission, resourceId) {
-      return ""
+    (permission, resourceId) =>
+      ""
         .concat(user === null || user === void 0 ? void 0 : user.id, ":")
         .concat(permission, ":")
         .concat(resourceId || "global", ":")
-        .concat(user === null || user === void 0 ? void 0 : user.clinicId);
-    },
+        .concat(user === null || user === void 0 ? void 0 : user.clinicId),
     [
       user === null || user === void 0 ? void 0 : user.id,
       user === null || user === void 0 ? void 0 : user.clinicId,
@@ -261,9 +251,9 @@ function usePermissions() {
   /**
    * Clear expired cache entries
    */
-  var clearExpiredCache = (0, react_1.useCallback)(function () {
+  var clearExpiredCache = (0, react_1.useCallback)(() => {
     var now = Date.now();
-    Object.keys(permissionCache).forEach(function (key) {
+    Object.keys(permissionCache).forEach((key) => {
       if (now - permissionCache[key].timestamp > CACHE_TTL) {
         delete permissionCache[key];
       }
@@ -273,10 +263,10 @@ function usePermissions() {
    * Check if user has specific permission
    */
   var hasPermission = (0, react_1.useCallback)(
-    function (permission, resourceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (permission, resourceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var cacheKey, cached, hasRolePermission, result_1, result, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (!user || !role) return [2 /*return*/, false];
           cacheKey = getCacheKey(permission, resourceId);
           cached = permissionCache[cacheKey];
@@ -317,18 +307,17 @@ function usePermissions() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [user, role, permissions, getCacheKey],
   );
   /**
    * Check if user has any of the specified permissions
    */
   var hasAnyPermission = (0, react_1.useCallback)(
-    function (permissionList, resourceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (permissionList, resourceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var _i, permissionList_1, permission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (_i = 0), (permissionList_1 = permissionList);
@@ -349,18 +338,17 @@ function usePermissions() {
               return [2 /*return*/, false];
           }
         });
-      });
-    },
+      }),
     [hasPermission],
   );
   /**
    * Check if user has all specified permissions
    */
   var hasAllPermissions = (0, react_1.useCallback)(
-    function (permissionList, resourceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (permissionList, resourceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var _i, permissionList_2, permission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (_i = 0), (permissionList_2 = permissionList);
@@ -381,24 +369,18 @@ function usePermissions() {
               return [2 /*return*/, true];
           }
         });
-      });
-    },
+      }),
     [hasPermission],
   );
   /**
    * Check if user has specific role
    */
-  var hasRole = (0, react_1.useCallback)(
-    function (targetRole) {
-      return role === targetRole;
-    },
-    [role],
-  );
+  var hasRole = (0, react_1.useCallback)((targetRole) => role === targetRole, [role]);
   /**
    * Check if user has minimum role level
    */
   var hasMinimumRole = (0, react_1.useCallback)(
-    function (minimumRole) {
+    (minimumRole) => {
       if (!role) return false;
       return ROLE_HIERARCHY[role] >= ROLE_HIERARCHY[minimumRole];
     },
@@ -408,12 +390,10 @@ function usePermissions() {
    * Check if user can access a feature
    */
   var canAccess = (0, react_1.useCallback)(
-    function (feature) {
+    (feature) => {
       var featurePermissions = FEATURE_PERMISSIONS[feature];
       if (!featurePermissions) return false;
-      return featurePermissions.some(function (permission) {
-        return permissions.includes(permission);
-      });
+      return featurePermissions.some((permission) => permissions.includes(permission));
     },
     [permissions],
   );
@@ -421,7 +401,7 @@ function usePermissions() {
    * Check if user can manage a resource
    */
   var canManage = (0, react_1.useCallback)(
-    function (resource) {
+    (resource) => {
       var managePermission = "".concat(resource, ".manage");
       return permissions.includes(managePermission);
     },
@@ -431,7 +411,7 @@ function usePermissions() {
    * Check if user can view a resource
    */
   var canView = (0, react_1.useCallback)(
-    function (resource) {
+    (resource) => {
       var readPermission = "".concat(resource, ".read");
       var managePermission = "".concat(resource, ".manage");
       return permissions.includes(readPermission) || permissions.includes(managePermission);
@@ -441,24 +421,21 @@ function usePermissions() {
   /**
    * Clear permission cache
    */
-  var clearCache = (0, react_1.useCallback)(
-    function () {
-      Object.keys(permissionCache).forEach(function (key) {
-        if (key.startsWith("".concat(user === null || user === void 0 ? void 0 : user.id, ":"))) {
-          delete permissionCache[key];
-        }
-      });
-    },
-    [user === null || user === void 0 ? void 0 : user.id],
-  );
+  var clearCache = (0, react_1.useCallback)(() => {
+    Object.keys(permissionCache).forEach((key) => {
+      if (key.startsWith("".concat(user === null || user === void 0 ? void 0 : user.id, ":"))) {
+        delete permissionCache[key];
+      }
+    });
+  }, [user === null || user === void 0 ? void 0 : user.id]);
   /**
    * Refresh user permissions
    */
   var refreshPermissions = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var err_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!user) return [2 /*return*/];
@@ -472,12 +449,7 @@ function usePermissions() {
               // In a real implementation, this would fetch fresh permissions from the backend
               // For now, we'll just clear the cache and let the next permission check refresh
               // Simulate API call delay
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 100);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 100))];
             case 2:
               // In a real implementation, this would fetch fresh permissions from the backend
               // For now, we'll just clear the cache and let the next permission check refresh
@@ -498,33 +470,24 @@ function usePermissions() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user, clearCache],
   );
   /**
    * Clear expired cache entries periodically
    */
-  (0, react_1.useEffect)(
-    function () {
-      var interval = setInterval(clearExpiredCache, 60000); // Every minute
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [clearExpiredCache],
-  );
+  (0, react_1.useEffect)(() => {
+    var interval = setInterval(clearExpiredCache, 60000); // Every minute
+    return () => clearInterval(interval);
+  }, [clearExpiredCache]);
   /**
    * Clear cache when user changes
    */
-  (0, react_1.useEffect)(
-    function () {
-      if (user) {
-        clearCache();
-      }
-    },
-    [user === null || user === void 0 ? void 0 : user.id, clearCache],
-  );
+  (0, react_1.useEffect)(() => {
+    if (user) {
+      clearCache();
+    }
+  }, [user === null || user === void 0 ? void 0 : user.id, clearCache]);
   return {
     hasPermission: hasPermission,
     hasAnyPermission: hasAnyPermission,
@@ -546,7 +509,6 @@ function usePermissions() {
  * Hook for checking specific permission (simplified)
  */
 function usePermission(permission, resourceId) {
-  var _this = this;
   var _a = usePermissions(),
     hasPermission = _a.hasPermission,
     isLoading = _a.isLoading,
@@ -557,52 +519,48 @@ function usePermission(permission, resourceId) {
   var _c = (0, react_1.useState)(true),
     checking = _c[0],
     setChecking = _c[1];
-  (0, react_1.useEffect)(
-    function () {
-      var mounted = true;
-      var checkPermission = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var result, err_2;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (isLoading) return [2 /*return*/];
-                setChecking(true);
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                return [4 /*yield*/, hasPermission(permission, resourceId)];
-              case 2:
-                result = _a.sent();
-                if (mounted) {
-                  setAllowed(result);
-                }
-                return [3 /*break*/, 5];
-              case 3:
-                err_2 = _a.sent();
-                console.error("Permission check failed:", err_2);
-                if (mounted) {
-                  setAllowed(false);
-                }
-                return [3 /*break*/, 5];
-              case 4:
-                if (mounted) {
-                  setChecking(false);
-                }
-                return [7 /*endfinally*/];
-              case 5:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var mounted = true;
+    var checkPermission = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var result, err_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (isLoading) return [2 /*return*/];
+              setChecking(true);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              return [4 /*yield*/, hasPermission(permission, resourceId)];
+            case 2:
+              result = _a.sent();
+              if (mounted) {
+                setAllowed(result);
+              }
+              return [3 /*break*/, 5];
+            case 3:
+              err_2 = _a.sent();
+              console.error("Permission check failed:", err_2);
+              if (mounted) {
+                setAllowed(false);
+              }
+              return [3 /*break*/, 5];
+            case 4:
+              if (mounted) {
+                setChecking(false);
+              }
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      checkPermission();
-      return function () {
-        mounted = false;
-      };
-    },
-    [hasPermission, permission, resourceId, isLoading],
-  );
+      });
+    checkPermission();
+    return () => {
+      mounted = false;
+    };
+  }, [hasPermission, permission, resourceId, isLoading]);
   return {
     allowed: allowed,
     isLoading: isLoading || checking,

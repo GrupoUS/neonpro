@@ -1,4 +1,3 @@
-"use strict";
 /**
  * OAuth Integration Types for NeonPro Social Media Management
  * Research-backed implementation following best practices from Instagram Graph API,
@@ -6,7 +5,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IOAuthHandler = void 0;
-var IOAuthHandler = /** @class */ (function () {
+var IOAuthHandler = /** @class */ (() => {
   function IOAuthHandler() {}
   return IOAuthHandler;
 })();

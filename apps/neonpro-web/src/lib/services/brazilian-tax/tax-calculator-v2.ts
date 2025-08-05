@@ -109,11 +109,14 @@ export class BrazilianTaxCalculatorService {
     const regime = request.regime_tributario || "simples_nacional";
 
     // Calculate individual taxes
-    const icms = this.calculateICMS(request, finalConfig);
-    const iss = this.calculateISS(request, finalConfig);
-    const pis = this.calculatePIS(request, regime, finalConfig);
-    const cofins = this.calculateCOFINS(request, regime, finalConfig);
-    const simplesNacional = this.calculateSimplesNacional(request, finalConfig);
+    const icms = BrazilianTaxCalculatorService.calculateICMS(request, finalConfig);
+    const iss = BrazilianTaxCalculatorService.calculateISS(request, finalConfig);
+    const pis = BrazilianTaxCalculatorService.calculatePIS(request, regime, finalConfig);
+    const cofins = BrazilianTaxCalculatorService.calculateCOFINS(request, regime, finalConfig);
+    const simplesNacional = BrazilianTaxCalculatorService.calculateSimplesNacional(
+      request,
+      finalConfig,
+    );
 
     // Calculate totals
     const totalImpostos = icms.valor + iss.valor + pis.valor + cofins.valor + simplesNacional.valor;
@@ -121,7 +124,7 @@ export class BrazilianTaxCalculatorService {
 
     // Create main calculation object
     const calculation: TaxCalculation = {
-      id: this.generateCalculationId(),
+      id: BrazilianTaxCalculatorService.generateCalculationId(),
       clinic_id: request.clinic_id,
       valor_base: request.valor_base,
       tipo_servico: request.tipo_servico,
@@ -191,7 +194,9 @@ export class BrazilianTaxCalculatorService {
     return {
       base_calculo: baseCalculo,
       aliquota: rate,
-      valor: config.roundValues ? this.roundValue(valor, config.precision) : valor,
+      valor: config.roundValues
+        ? BrazilianTaxCalculatorService.roundValue(valor, config.precision)
+        : valor,
     };
   }
 
@@ -226,7 +231,9 @@ export class BrazilianTaxCalculatorService {
     return {
       base_calculo: baseCalculo,
       aliquota: rates.pis,
-      valor: config.roundValues ? this.roundValue(valor, config.precision) : valor,
+      valor: config.roundValues
+        ? BrazilianTaxCalculatorService.roundValue(valor, config.precision)
+        : valor,
     };
   }
 
@@ -261,7 +268,9 @@ export class BrazilianTaxCalculatorService {
     return {
       base_calculo: baseCalculo,
       aliquota: rates.cofins,
-      valor: config.roundValues ? this.roundValue(valor, config.precision) : valor,
+      valor: config.roundValues
+        ? BrazilianTaxCalculatorService.roundValue(valor, config.precision)
+        : valor,
     };
   }
 
@@ -283,12 +292,15 @@ export class BrazilianTaxCalculatorService {
     }
 
     // Determine annexo based on service type
-    const anexo = this.determineSimplexAnexo(request.tipo_servico);
+    const anexo = BrazilianTaxCalculatorService.determineSimplexAnexo(request.tipo_servico);
 
     // For this example, assume annual revenue of R$ 500,000 (mid-range)
     // In production, this would come from the clinic's actual revenue data
     const estimatedAnnualRevenue = 500000;
-    const rate = this.getSimplesNacionalRate(anexo, estimatedAnnualRevenue);
+    const rate = BrazilianTaxCalculatorService.getSimplesNacionalRate(
+      anexo,
+      estimatedAnnualRevenue,
+    );
 
     const baseCalculo = request.valor_base;
     const valor = baseCalculo * rate;
@@ -296,7 +308,9 @@ export class BrazilianTaxCalculatorService {
     return {
       base_calculo: baseCalculo,
       aliquota: rate,
-      valor: config.roundValues ? this.roundValue(valor, config.precision) : valor,
+      valor: config.roundValues
+        ? BrazilianTaxCalculatorService.roundValue(valor, config.precision)
+        : valor,
       anexo: anexo,
     };
   }
@@ -396,7 +410,7 @@ export class BrazilianTaxCalculatorService {
    * Round value to specified precision
    */
   private static roundValue(value: number, precision: number): number {
-    const factor = Math.pow(10, precision);
+    const factor = 10 ** precision;
     return Math.round(value * factor) / factor;
   }
 
@@ -411,7 +425,7 @@ export class BrazilianTaxCalculatorService {
 
     requests.forEach((request, index) => {
       const key = `${request.clinic_id}_${index}`;
-      const result = this.calculateTaxes(request, config);
+      const result = BrazilianTaxCalculatorService.calculateTaxes(request, config);
       results.set(key, result);
     });
 
@@ -445,7 +459,7 @@ export class BrazilianTaxCalculatorService {
       regime_tributario: regime,
     };
 
-    const calculation = this.calculateTaxes(sampleRequest);
+    const calculation = BrazilianTaxCalculatorService.calculateTaxes(sampleRequest);
     const monthlyTax = calculation.total_impostos;
     const annualTax = monthlyTax * 12;
 

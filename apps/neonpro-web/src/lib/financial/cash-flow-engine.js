@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Cash Flow Monitoring Engine - Real-time Financial Analytics
  * Story 4.2: Financial Analytics & Business Intelligence
@@ -14,15 +13,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -42,13 +41,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -70,9 +69,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -144,11 +141,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CashFlowEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var CashFlowEngine = /** @class */ (function () {
+var CashFlowEngine = /** @class */ (() => {
   function CashFlowEngine() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -286,12 +283,12 @@ var CashFlowEngine = /** @class */ (function () {
             if (!historicalData || historicalData.length === 0) {
               throw new Error("No historical cash flow data found");
             }
-            yesterdayData = historicalData.find(function (d) {
-              return d.date === yesterday_1.toISOString().split("T")[0];
-            });
-            weekAgoData = historicalData.find(function (d) {
-              return d.date === weekAgo_1.toISOString().split("T")[0];
-            });
+            yesterdayData = historicalData.find(
+              (d) => d.date === yesterday_1.toISOString().split("T")[0],
+            );
+            weekAgoData = historicalData.find(
+              (d) => d.date === weekAgo_1.toISOString().split("T")[0],
+            );
             monthAgoData = historicalData[0];
             dailyChange = yesterdayData ? currentBalance - yesterdayData.closing_balance : 0;
             weeklyChange = weekAgoData ? currentBalance - weekAgoData.closing_balance : 0;
@@ -300,9 +297,8 @@ var CashFlowEngine = /** @class */ (function () {
             trendDirection = recentTrend > 0.05 ? "up" : recentTrend < -0.05 ? "down" : "stable";
             trendPercentage = Math.abs(recentTrend) * 100;
             avgDailyOutflow =
-              historicalData.reduce(function (sum, d) {
-                return sum + Math.abs(Math.min(d.net_cash_flow, 0));
-              }, 0) / historicalData.length;
+              historicalData.reduce((sum, d) => sum + Math.abs(Math.min(d.net_cash_flow, 0)), 0) /
+              historicalData.length;
             runwayDays =
               avgDailyOutflow > 0 ? Math.floor(currentBalance / avgDailyOutflow) : Infinity;
             return [4 /*yield*/, this.projectCashFlow(clinicId, 7)];
@@ -466,39 +462,25 @@ var CashFlowEngine = /** @class */ (function () {
             total =
               (payments === null || payments === void 0
                 ? void 0
-                : payments.reduce(function (sum, p) {
-                    return sum + p.amount;
-                  }, 0)) || 0;
+                : payments.reduce((sum, p) => sum + p.amount, 0)) || 0;
             operating =
               (payments === null || payments === void 0
                 ? void 0
                 : payments
-                    .filter(function (p) {
-                      return p.category === "treatment" || p.category === "product";
-                    })
-                    .reduce(function (sum, p) {
-                      return sum + p.amount;
-                    }, 0)) || 0;
+                    .filter((p) => p.category === "treatment" || p.category === "product")
+                    .reduce((sum, p) => sum + p.amount, 0)) || 0;
             investing =
               (payments === null || payments === void 0
                 ? void 0
                 : payments
-                    .filter(function (p) {
-                      return p.category === "investment";
-                    })
-                    .reduce(function (sum, p) {
-                      return sum + p.amount;
-                    }, 0)) || 0;
+                    .filter((p) => p.category === "investment")
+                    .reduce((sum, p) => sum + p.amount, 0)) || 0;
             financing =
               (payments === null || payments === void 0
                 ? void 0
                 : payments
-                    .filter(function (p) {
-                      return p.category === "loan" || p.category === "equity";
-                    })
-                    .reduce(function (sum, p) {
-                      return sum + p.amount;
-                    }, 0)) || 0;
+                    .filter((p) => p.category === "loan" || p.category === "equity")
+                    .reduce((sum, p) => sum + p.amount, 0)) || 0;
             return [
               2 /*return*/,
               { total: total, operating: operating, investing: investing, financing: financing },
@@ -531,39 +513,25 @@ var CashFlowEngine = /** @class */ (function () {
             total =
               (expenses === null || expenses === void 0
                 ? void 0
-                : expenses.reduce(function (sum, e) {
-                    return sum + e.amount;
-                  }, 0)) || 0;
+                : expenses.reduce((sum, e) => sum + e.amount, 0)) || 0;
             operating =
               (expenses === null || expenses === void 0
                 ? void 0
                 : expenses
-                    .filter(function (e) {
-                      return e.category === "operational" || e.category === "staff";
-                    })
-                    .reduce(function (sum, e) {
-                      return sum + e.amount;
-                    }, 0)) || 0;
+                    .filter((e) => e.category === "operational" || e.category === "staff")
+                    .reduce((sum, e) => sum + e.amount, 0)) || 0;
             investing =
               (expenses === null || expenses === void 0
                 ? void 0
                 : expenses
-                    .filter(function (e) {
-                      return e.category === "equipment" || e.category === "technology";
-                    })
-                    .reduce(function (sum, e) {
-                      return sum + e.amount;
-                    }, 0)) || 0;
+                    .filter((e) => e.category === "equipment" || e.category === "technology")
+                    .reduce((sum, e) => sum + e.amount, 0)) || 0;
             financing =
               (expenses === null || expenses === void 0
                 ? void 0
                 : expenses
-                    .filter(function (e) {
-                      return e.category === "loan_payment" || e.category === "interest";
-                    })
-                    .reduce(function (sum, e) {
-                      return sum + e.amount;
-                    }, 0)) || 0;
+                    .filter((e) => e.category === "loan_payment" || e.category === "interest")
+                    .reduce((sum, e) => sum + e.amount, 0)) || 0;
             return [
               2 /*return*/,
               { total: total, operating: operating, investing: investing, financing: financing },
@@ -575,7 +543,7 @@ var CashFlowEngine = /** @class */ (function () {
   /**
    * Calculate trend from historical data
    */
-  CashFlowEngine.prototype.calculateTrend = function (data) {
+  CashFlowEngine.prototype.calculateTrend = (data) => {
     if (data.length < 2) return 0;
     var first = data[0].closing_balance;
     var last = data[data.length - 1].closing_balance;
@@ -606,9 +574,7 @@ var CashFlowEngine = /** @class */ (function () {
               return [2 /*return*/, 0];
             }
             avgDailyCashFlow =
-              historicalData.reduce(function (sum, d) {
-                return sum + d.net_cash_flow;
-              }, 0) / historicalData.length;
+              historicalData.reduce((sum, d) => sum + d.net_cash_flow, 0) / historicalData.length;
             return [4 /*yield*/, this.calculateRealTimeCashFlow(clinicId)];
           case 2:
             currentBalance = _a.sent();
@@ -675,34 +641,19 @@ var CashFlowEngine = /** @class */ (function () {
             if (!cashFlowData || cashFlowData.length === 0) {
               throw new Error("No cash flow data found for metrics calculation");
             }
-            dailyInflows = cashFlowData.map(function (d) {
-              return d.total_inflows;
-            });
-            dailyOutflows = cashFlowData.map(function (d) {
-              return d.total_outflows;
-            });
-            balances_1 = cashFlowData.map(function (d) {
-              return d.closing_balance;
-            });
+            dailyInflows = cashFlowData.map((d) => d.total_inflows);
+            dailyOutflows = cashFlowData.map((d) => d.total_outflows);
+            balances_1 = cashFlowData.map((d) => d.closing_balance);
             dailyAverageInflow =
-              dailyInflows.reduce(function (sum, val) {
-                return sum + val;
-              }, 0) / dailyInflows.length;
+              dailyInflows.reduce((sum, val) => sum + val, 0) / dailyInflows.length;
             dailyAverageOutflow =
-              dailyOutflows.reduce(function (sum, val) {
-                return sum + val;
-              }, 0) / dailyOutflows.length;
-            dailyChanges = balances_1.slice(1).map(function (balance, i) {
-              return balance - balances_1[i];
-            });
+              dailyOutflows.reduce((sum, val) => sum + val, 0) / dailyOutflows.length;
+            dailyChanges = balances_1.slice(1).map((balance, i) => balance - balances_1[i]);
             avgDailyChange_1 =
-              dailyChanges.reduce(function (sum, val) {
-                return sum + val;
-              }, 0) / dailyChanges.length;
+              dailyChanges.reduce((sum, val) => sum + val, 0) / dailyChanges.length;
             variance =
-              dailyChanges.reduce(function (sum, val) {
-                return sum + Math.pow(val - avgDailyChange_1, 2);
-              }, 0) / dailyChanges.length;
+              dailyChanges.reduce((sum, val) => sum + (val - avgDailyChange_1) ** 2, 0) /
+              dailyChanges.length;
             weeklyVolatility = Math.sqrt(variance) * Math.sqrt(7); // Annualized to weekly
             firstBalance = balances_1[0];
             lastBalance = balances_1[balances_1.length - 1];

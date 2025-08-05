@@ -1,4 +1,3 @@
-"use strict";
 // ============================================================================
 // Supplier Management Types - Epic 6, Story 6.3
 // ============================================================================
@@ -27,78 +26,78 @@ var zod_1 = require("zod");
 // ENUMS
 // ============================================================================
 var SupplierStatus;
-(function (SupplierStatus) {
-  SupplierStatus["ACTIVE"] = "active";
-  SupplierStatus["INACTIVE"] = "inactive";
-  SupplierStatus["SUSPENDED"] = "suspended";
-  SupplierStatus["PENDING_VERIFICATION"] = "pending_verification";
-  SupplierStatus["BLOCKED"] = "blocked";
+((SupplierStatus) => {
+  SupplierStatus.ACTIVE = "active";
+  SupplierStatus.INACTIVE = "inactive";
+  SupplierStatus.SUSPENDED = "suspended";
+  SupplierStatus.PENDING_VERIFICATION = "pending_verification";
+  SupplierStatus.BLOCKED = "blocked";
 })(SupplierStatus || (exports.SupplierStatus = SupplierStatus = {}));
 var SupplierCategory;
-(function (SupplierCategory) {
-  SupplierCategory["MEDICAL_EQUIPMENT"] = "medical_equipment";
-  SupplierCategory["AESTHETIC_SUPPLIES"] = "aesthetic_supplies";
-  SupplierCategory["PHARMACEUTICALS"] = "pharmaceuticals";
-  SupplierCategory["CONSUMABLES"] = "consumables";
-  SupplierCategory["TECHNOLOGY"] = "technology";
-  SupplierCategory["SERVICES"] = "services";
-  SupplierCategory["MAINTENANCE"] = "maintenance";
-  SupplierCategory["OFFICE_SUPPLIES"] = "office_supplies";
+((SupplierCategory) => {
+  SupplierCategory.MEDICAL_EQUIPMENT = "medical_equipment";
+  SupplierCategory.AESTHETIC_SUPPLIES = "aesthetic_supplies";
+  SupplierCategory.PHARMACEUTICALS = "pharmaceuticals";
+  SupplierCategory.CONSUMABLES = "consumables";
+  SupplierCategory.TECHNOLOGY = "technology";
+  SupplierCategory.SERVICES = "services";
+  SupplierCategory.MAINTENANCE = "maintenance";
+  SupplierCategory.OFFICE_SUPPLIES = "office_supplies";
 })(SupplierCategory || (exports.SupplierCategory = SupplierCategory = {}));
 var ContractType;
-(function (ContractType) {
-  ContractType["FIXED_TERM"] = "fixed_term";
-  ContractType["INDEFINITE"] = "indefinite";
-  ContractType["PROJECT_BASED"] = "project_based";
-  ContractType["FRAMEWORK"] = "framework";
-  ContractType["SPOT_PURCHASE"] = "spot_purchase";
+((ContractType) => {
+  ContractType.FIXED_TERM = "fixed_term";
+  ContractType.INDEFINITE = "indefinite";
+  ContractType.PROJECT_BASED = "project_based";
+  ContractType.FRAMEWORK = "framework";
+  ContractType.SPOT_PURCHASE = "spot_purchase";
 })(ContractType || (exports.ContractType = ContractType = {}));
 var PaymentTerms;
-(function (PaymentTerms) {
-  PaymentTerms["NET_7"] = "net_7";
-  PaymentTerms["NET_15"] = "net_15";
-  PaymentTerms["NET_30"] = "net_30";
-  PaymentTerms["NET_45"] = "net_45";
-  PaymentTerms["NET_60"] = "net_60";
-  PaymentTerms["IMMEDIATE"] = "immediate";
-  PaymentTerms["ADVANCE"] = "advance";
-  PaymentTerms["COD"] = "cod";
+((PaymentTerms) => {
+  PaymentTerms.NET_7 = "net_7";
+  PaymentTerms.NET_15 = "net_15";
+  PaymentTerms.NET_30 = "net_30";
+  PaymentTerms.NET_45 = "net_45";
+  PaymentTerms.NET_60 = "net_60";
+  PaymentTerms.IMMEDIATE = "immediate";
+  PaymentTerms.ADVANCE = "advance";
+  PaymentTerms.COD = "cod";
 })(PaymentTerms || (exports.PaymentTerms = PaymentTerms = {}));
 var PerformanceMetric;
-(function (PerformanceMetric) {
-  PerformanceMetric["DELIVERY_TIME"] = "delivery_time";
-  PerformanceMetric["QUALITY_SCORE"] = "quality_score";
-  PerformanceMetric["PRICING_COMPETITIVENESS"] = "pricing_competitiveness";
-  PerformanceMetric["SERVICE_QUALITY"] = "service_quality";
-  PerformanceMetric["COMMUNICATION"] = "communication";
-  PerformanceMetric["COMPLIANCE"] = "compliance";
-  PerformanceMetric["INNOVATION"] = "innovation";
-  PerformanceMetric["SUSTAINABILITY"] = "sustainability";
+((PerformanceMetric) => {
+  PerformanceMetric.DELIVERY_TIME = "delivery_time";
+  PerformanceMetric.QUALITY_SCORE = "quality_score";
+  PerformanceMetric.PRICING_COMPETITIVENESS = "pricing_competitiveness";
+  PerformanceMetric.SERVICE_QUALITY = "service_quality";
+  PerformanceMetric.COMMUNICATION = "communication";
+  PerformanceMetric.COMPLIANCE = "compliance";
+  PerformanceMetric.INNOVATION = "innovation";
+  PerformanceMetric.SUSTAINABILITY = "sustainability";
 })(PerformanceMetric || (exports.PerformanceMetric = PerformanceMetric = {}));
 var RiskLevel;
-(function (RiskLevel) {
-  RiskLevel["LOW"] = "low";
-  RiskLevel["MEDIUM"] = "medium";
-  RiskLevel["HIGH"] = "high";
-  RiskLevel["CRITICAL"] = "critical";
+((RiskLevel) => {
+  RiskLevel.LOW = "low";
+  RiskLevel.MEDIUM = "medium";
+  RiskLevel.HIGH = "high";
+  RiskLevel.CRITICAL = "critical";
 })(RiskLevel || (exports.RiskLevel = RiskLevel = {}));
 var QualityIssueType;
-(function (QualityIssueType) {
-  QualityIssueType["DEFECTIVE_PRODUCT"] = "defective_product";
-  QualityIssueType["WRONG_SPECIFICATION"] = "wrong_specification";
-  QualityIssueType["PACKAGING_DAMAGE"] = "packaging_damage";
-  QualityIssueType["CONTAMINATION"] = "contamination";
-  QualityIssueType["EXPIRY_ISSUES"] = "expiry_issues";
-  QualityIssueType["DOCUMENTATION_ERROR"] = "documentation_error";
-  QualityIssueType["REGULATORY_NON_COMPLIANCE"] = "regulatory_non_compliance";
+((QualityIssueType) => {
+  QualityIssueType.DEFECTIVE_PRODUCT = "defective_product";
+  QualityIssueType.WRONG_SPECIFICATION = "wrong_specification";
+  QualityIssueType.PACKAGING_DAMAGE = "packaging_damage";
+  QualityIssueType.CONTAMINATION = "contamination";
+  QualityIssueType.EXPIRY_ISSUES = "expiry_issues";
+  QualityIssueType.DOCUMENTATION_ERROR = "documentation_error";
+  QualityIssueType.REGULATORY_NON_COMPLIANCE = "regulatory_non_compliance";
 })(QualityIssueType || (exports.QualityIssueType = QualityIssueType = {}));
 var IssueStatus;
-(function (IssueStatus) {
-  IssueStatus["OPEN"] = "open";
-  IssueStatus["IN_PROGRESS"] = "in_progress";
-  IssueStatus["RESOLVED"] = "resolved";
-  IssueStatus["ESCALATED"] = "escalated";
-  IssueStatus["CLOSED"] = "closed";
+((IssueStatus) => {
+  IssueStatus.OPEN = "open";
+  IssueStatus.IN_PROGRESS = "in_progress";
+  IssueStatus.RESOLVED = "resolved";
+  IssueStatus.ESCALATED = "escalated";
+  IssueStatus.CLOSED = "closed";
 })(IssueStatus || (exports.IssueStatus = IssueStatus = {}));
 // ============================================================================
 // ZOD VALIDATION SCHEMAS

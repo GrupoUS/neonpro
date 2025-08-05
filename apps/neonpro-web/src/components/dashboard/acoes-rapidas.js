@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AcoesRapidas = AcoesRapidas;
 var button_1 = require("@/components/ui/button");

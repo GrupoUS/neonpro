@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -175,7 +172,7 @@ var lucide_react_1 = require("lucide-react");
 var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 var utils_1 = require("@/lib/utils");
-var JourneyAnalyticsDashboard = function () {
+var JourneyAnalyticsDashboard = () => {
   // State Management
   var _a = (0, react_1.useState)(null),
     metrics = _a[0],
@@ -243,25 +240,23 @@ var JourneyAnalyticsDashboard = function () {
   var refreshIntervalRef = (0, react_1.useRef)(null);
   // Memoized filtered data
   var filteredChurnRisks = (0, react_1.useMemo)(
-    function () {
-      return churnRisks.filter(function (risk) {
+    () =>
+      churnRisks.filter((risk) => {
         var matchesSearch = risk.patientName.toLowerCase().includes(searchTerm.toLowerCase());
         var matchesRisk = filters.riskLevel === "all" || risk.riskLevel === filters.riskLevel;
         return matchesSearch && matchesRisk;
-      });
-    },
+      }),
     [churnRisks, searchTerm, filters.riskLevel],
   );
   var filteredRecommendations = (0, react_1.useMemo)(
-    function () {
-      return recommendations.filter(function (rec) {
+    () =>
+      recommendations.filter((rec) => {
         var matchesSearch =
           rec.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           rec.description.toLowerCase().includes(searchTerm.toLowerCase());
         var matchesPriority = filters.priority === "all" || rec.priority === filters.priority;
         return matchesSearch && matchesPriority;
-      });
-    },
+      }),
     [recommendations, searchTerm, filters.priority],
   );
   // Channel performance icons mapping
@@ -276,7 +271,7 @@ var JourneyAnalyticsDashboard = function () {
     "in-person": <lucide_react_1.MapPin className="h-4 w-4" />,
   };
   // Risk level colors and icons
-  var getRiskBadge = function (level) {
+  var getRiskBadge = (level) => {
     switch (level) {
       case "LOW":
         return (
@@ -302,7 +297,7 @@ var JourneyAnalyticsDashboard = function () {
         return <badge_1.Badge variant="outline">Desconhecido</badge_1.Badge>;
     }
   };
-  var getPriorityBadge = function (priority) {
+  var getPriorityBadge = (priority) => {
     switch (priority) {
       case "LOW":
         return <badge_1.Badge variant="secondary">Baixa</badge_1.Badge>;
@@ -326,8 +321,8 @@ var JourneyAnalyticsDashboard = function () {
   };
   // Data fetching functions
   var fetchDashboardData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var params,
           _a,
           metricsRes,
@@ -346,7 +341,7 @@ var JourneyAnalyticsDashboard = function () {
           satisfactionData,
           channelsData,
           err_1;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               _c.trys.push([0, 3, , 4]);
@@ -408,13 +403,13 @@ var JourneyAnalyticsDashboard = function () {
               setRecommendations(recommendationsData);
               setSatisfactionMetrics(satisfactionData);
               setChannelPerformance(
-                channelsData.map(function (channel) {
-                  return __assign(__assign({}, channel), {
+                channelsData.map((channel) =>
+                  __assign(__assign({}, channel), {
                     icon: channelIcons[channel.channel] || (
                       <lucide_react_1.Globe className="h-4 w-4" />
                     ),
-                  });
-                }),
+                  }),
+                ),
               );
               return [3 /*break*/, 4];
             case 3:
@@ -425,14 +420,13 @@ var JourneyAnalyticsDashboard = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [selectedTimeRange, dateRange, selectedStage, selectedChannel],
   );
   var refreshData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setRefreshing(true);
@@ -443,55 +437,44 @@ var JourneyAnalyticsDashboard = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchDashboardData],
   );
   // Real-time events setup
-  var setupRealTimeUpdates = (0, react_1.useCallback)(function () {
+  var setupRealTimeUpdates = (0, react_1.useCallback)(() => {
     if (eventSourceRef.current) {
       eventSourceRef.current.close();
     }
     eventSourceRef.current = new EventSource("/api/analytics/journey/events/stream");
-    eventSourceRef.current.onmessage = function (event) {
+    eventSourceRef.current.onmessage = (event) => {
       var newEvent = JSON.parse(event.data);
-      setRealTimeEvents(function (prev) {
-        return __spreadArray([newEvent], prev.slice(0, 49), true);
-      });
+      setRealTimeEvents((prev) => __spreadArray([newEvent], prev.slice(0, 49), true));
     };
-    eventSourceRef.current.onerror = function () {
+    eventSourceRef.current.onerror = () => {
       console.warn("Real-time connection lost, attempting to reconnect...");
       setTimeout(setupRealTimeUpdates, 5000);
     };
   }, []);
   // Effects
-  (0, react_1.useEffect)(
-    function () {
-      setLoading(true);
-      fetchDashboardData().finally(function () {
-        return setLoading(false);
-      });
-    },
-    [fetchDashboardData],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      setupRealTimeUpdates();
-      // Auto-refresh every 5 minutes
-      refreshIntervalRef.current = setInterval(refreshData, 5 * 60 * 1000);
-      return function () {
-        if (eventSourceRef.current) {
-          eventSourceRef.current.close();
-        }
-        if (refreshIntervalRef.current) {
-          clearInterval(refreshIntervalRef.current);
-        }
-      };
-    },
-    [setupRealTimeUpdates, refreshData],
-  );
+  (0, react_1.useEffect)(() => {
+    setLoading(true);
+    fetchDashboardData().finally(() => setLoading(false));
+  }, [fetchDashboardData]);
+  (0, react_1.useEffect)(() => {
+    setupRealTimeUpdates();
+    // Auto-refresh every 5 minutes
+    refreshIntervalRef.current = setInterval(refreshData, 5 * 60 * 1000);
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+    };
+  }, [setupRealTimeUpdates, refreshData]);
   // Event handlers
-  var handleTimeRangeChange = function (range) {
+  var handleTimeRangeChange = (range) => {
     setSelectedTimeRange(range);
     var now = new Date();
     var from;
@@ -516,10 +499,10 @@ var JourneyAnalyticsDashboard = function () {
     }
     setDateRange({ from: from, to: now });
   };
-  var handleExport = function (format) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleExport = (format) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, blob, url, a, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -562,7 +545,6 @@ var JourneyAnalyticsDashboard = function () {
         }
       });
     });
-  };
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -625,31 +607,13 @@ var JourneyAnalyticsDashboard = function () {
               <div className="space-y-2">
                 <p className="font-medium">Exportar Relatório</p>
                 <div className="flex flex-col space-y-1">
-                  <button_1.Button
-                    onClick={function () {
-                      return handleExport("pdf");
-                    }}
-                    variant="ghost"
-                    size="sm"
-                  >
+                  <button_1.Button onClick={() => handleExport("pdf")} variant="ghost" size="sm">
                     Exportar PDF
                   </button_1.Button>
-                  <button_1.Button
-                    onClick={function () {
-                      return handleExport("excel");
-                    }}
-                    variant="ghost"
-                    size="sm"
-                  >
+                  <button_1.Button onClick={() => handleExport("excel")} variant="ghost" size="sm">
                     Exportar Excel
                   </button_1.Button>
-                  <button_1.Button
-                    onClick={function () {
-                      return handleExport("png");
-                    }}
-                    variant="ghost"
-                    size="sm"
-                  >
+                  <button_1.Button onClick={() => handleExport("png")} variant="ghost" size="sm">
                     Exportar Imagem
                   </button_1.Button>
                 </div>
@@ -785,30 +749,28 @@ var JourneyAnalyticsDashboard = function () {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {patientFlow.map(function (stage, index) {
-                    return (
-                      <div key={index} className="flex items-center space-x-4">
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium">{stage.stage}</span>
-                            <span className="text-sm text-muted-foreground">
-                              {stage.patients} ({stage.percentage.toFixed(1)}%)
-                            </span>
-                          </div>
-                          <progress_1.Progress value={stage.percentage} className="h-2" />
+                  {patientFlow.map((stage, index) => (
+                    <div key={index} className="flex items-center space-x-4">
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium">{stage.stage}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {stage.patients} ({stage.percentage.toFixed(1)}%)
+                          </span>
                         </div>
-                        <div
-                          className={(0, utils_1.cn)(
-                            "text-xs",
-                            stage.trend >= 0 ? "text-green-600" : "text-red-600",
-                          )}
-                        >
-                          {stage.trend >= 0 ? "+" : ""}
-                          {stage.trend.toFixed(1)}%
-                        </div>
+                        <progress_1.Progress value={stage.percentage} className="h-2" />
                       </div>
-                    );
-                  })}
+                      <div
+                        className={(0, utils_1.cn)(
+                          "text-xs",
+                          stage.trend >= 0 ? "text-green-600" : "text-red-600",
+                        )}
+                      >
+                        {stage.trend >= 0 ? "+" : ""}
+                        {stage.trend.toFixed(1)}%
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -823,40 +785,38 @@ var JourneyAnalyticsDashboard = function () {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {channelPerformance.map(function (channel, index) {
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50"
-                      >
-                        <div className="flex items-center space-x-2 flex-1">
-                          {channel.icon}
-                          <span className="font-medium capitalize">{channel.channel}</span>
-                        </div>
-                        <div className="text-sm text-center">
-                          <div className="font-medium">{channel.interactions.toLocaleString()}</div>
-                          <div className="text-muted-foreground">interações</div>
-                        </div>
-                        <div className="text-sm text-center">
-                          <div className="font-medium">{channel.satisfaction.toFixed(1)}</div>
-                          <div className="text-muted-foreground">satisfação</div>
-                        </div>
-                        <div className="text-sm text-center">
-                          <div className="font-medium">{channel.conversion.toFixed(1)}%</div>
-                          <div className="text-muted-foreground">conversão</div>
-                        </div>
-                        <div
-                          className={(0, utils_1.cn)(
-                            "text-xs",
-                            channel.trend >= 0 ? "text-green-600" : "text-red-600",
-                          )}
-                        >
-                          {channel.trend >= 0 ? "+" : ""}
-                          {channel.trend.toFixed(1)}%
-                        </div>
+                  {channelPerformance.map((channel, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-4 p-3 rounded-lg bg-muted/50"
+                    >
+                      <div className="flex items-center space-x-2 flex-1">
+                        {channel.icon}
+                        <span className="font-medium capitalize">{channel.channel}</span>
                       </div>
-                    );
-                  })}
+                      <div className="text-sm text-center">
+                        <div className="font-medium">{channel.interactions.toLocaleString()}</div>
+                        <div className="text-muted-foreground">interações</div>
+                      </div>
+                      <div className="text-sm text-center">
+                        <div className="font-medium">{channel.satisfaction.toFixed(1)}</div>
+                        <div className="text-muted-foreground">satisfação</div>
+                      </div>
+                      <div className="text-sm text-center">
+                        <div className="font-medium">{channel.conversion.toFixed(1)}%</div>
+                        <div className="text-muted-foreground">conversão</div>
+                      </div>
+                      <div
+                        className={(0, utils_1.cn)(
+                          "text-xs",
+                          channel.trend >= 0 ? "text-green-600" : "text-red-600",
+                        )}
+                      >
+                        {channel.trend >= 0 ? "+" : ""}
+                        {channel.trend.toFixed(1)}%
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -879,37 +839,35 @@ var JourneyAnalyticsDashboard = function () {
             <card_1.CardContent>
               <scroll_area_1.ScrollArea className="h-64">
                 <div className="space-y-2">
-                  {realTimeEvents.map(function (event, index) {
-                    return (
+                  {realTimeEvents.map((event, index) => (
+                    <div
+                      key={event.id}
+                      className="flex items-start space-x-3 p-2 rounded-lg hover:bg-muted/50"
+                    >
                       <div
-                        key={event.id}
-                        className="flex items-start space-x-3 p-2 rounded-lg hover:bg-muted/50"
-                      >
-                        <div
-                          className={(0, utils_1.cn)(
-                            "w-2 h-2 rounded-full mt-2",
-                            event.severity === "ERROR" && "bg-red-500",
-                            event.severity === "WARNING" && "bg-yellow-500",
-                            event.severity === "INFO" && "bg-blue-500",
-                          )}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-2">
-                            <span className="font-medium text-sm">{event.patientName}</span>
-                            <badge_1.Badge variant="outline" className="text-xs">
-                              {event.touchpoint}
-                            </badge_1.Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{event.message}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {(0, date_fns_1.format)(event.timestamp, "HH:mm:ss", {
-                              locale: locale_1.ptBR,
-                            })}
-                          </p>
+                        className={(0, utils_1.cn)(
+                          "w-2 h-2 rounded-full mt-2",
+                          event.severity === "ERROR" && "bg-red-500",
+                          event.severity === "WARNING" && "bg-yellow-500",
+                          event.severity === "INFO" && "bg-blue-500",
+                        )}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium text-sm">{event.patientName}</span>
+                          <badge_1.Badge variant="outline" className="text-xs">
+                            {event.touchpoint}
+                          </badge_1.Badge>
                         </div>
+                        <p className="text-sm text-muted-foreground">{event.message}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {(0, date_fns_1.format)(event.timestamp, "HH:mm:ss", {
+                            locale: locale_1.ptBR,
+                          })}
+                        </p>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </scroll_area_1.ScrollArea>
             </card_1.CardContent>
@@ -927,85 +885,81 @@ var JourneyAnalyticsDashboard = function () {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-6">
-                {journeyStages.map(function (stage, index) {
-                  return (
-                    <div key={stage.id} className="relative">
-                      {index < journeyStages.length - 1 && (
-                        <div className="absolute left-6 top-12 w-px h-12 bg-border" />
-                      )}
+                {journeyStages.map((stage, index) => (
+                  <div key={stage.id} className="relative">
+                    {index < journeyStages.length - 1 && (
+                      <div className="absolute left-6 top-12 w-px h-12 bg-border" />
+                    )}
 
-                      <div className="flex items-start space-x-4">
-                        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground font-bold">
-                          {stage.order}
+                    <div className="flex items-start space-x-4">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-primary-foreground font-bold">
+                        {stage.order}
+                      </div>
+
+                      <div className="flex-1 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-semibold">{stage.name}</h3>
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <span>{stage.totalPatients} pacientes</span>
+                            <span>{stage.conversionRate.toFixed(1)}% conversão</span>
+                            <span>{stage.satisfactionScore.toFixed(1)} satisfação</span>
+                          </div>
                         </div>
 
-                        <div className="flex-1 space-y-3">
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-semibold">{stage.name}</h3>
-                            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                              <span>{stage.totalPatients} pacientes</span>
-                              <span>{stage.conversionRate.toFixed(1)}% conversão</span>
-                              <span>{stage.satisfactionScore.toFixed(1)} satisfação</span>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="p-3 rounded-lg bg-muted/50">
+                            <div className="text-sm text-muted-foreground">Tempo Médio</div>
+                            <div className="font-medium">
+                              {Math.round(stage.averageTime / 60)} min
                             </div>
                           </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="p-3 rounded-lg bg-muted/50">
-                              <div className="text-sm text-muted-foreground">Tempo Médio</div>
-                              <div className="font-medium">
-                                {Math.round(stage.averageTime / 60)} min
-                              </div>
-                            </div>
-                            <div className="p-3 rounded-lg bg-muted/50">
-                              <div className="text-sm text-muted-foreground">Taxa de Abandono</div>
-                              <div className="font-medium text-red-600">
-                                {stage.dropOffRate.toFixed(1)}%
-                              </div>
-                            </div>
-                            <div className="p-3 rounded-lg bg-muted/50">
-                              <div className="text-sm text-muted-foreground">Touchpoints</div>
-                              <div className="font-medium">{stage.touchpoints.length}</div>
+                          <div className="p-3 rounded-lg bg-muted/50">
+                            <div className="text-sm text-muted-foreground">Taxa de Abandono</div>
+                            <div className="font-medium text-red-600">
+                              {stage.dropOffRate.toFixed(1)}%
                             </div>
                           </div>
+                          <div className="p-3 rounded-lg bg-muted/50">
+                            <div className="text-sm text-muted-foreground">Touchpoints</div>
+                            <div className="font-medium">{stage.touchpoints.length}</div>
+                          </div>
+                        </div>
 
-                          {/* Touchpoints */}
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {stage.touchpoints.map(function (touchpoint) {
-                              return (
-                                <div key={touchpoint.id} className="p-3 border rounded-lg">
-                                  <div className="flex items-center justify-between mb-2">
-                                    <span className="font-medium text-sm">{touchpoint.name}</span>
-                                    <badge_1.Badge variant="outline" className="text-xs">
-                                      {touchpoint.channel}
-                                    </badge_1.Badge>
-                                  </div>
-                                  <div className="space-y-1">
-                                    <div className="flex justify-between text-xs">
-                                      <span>Interações:</span>
-                                      <span className="font-medium">{touchpoint.interactions}</span>
-                                    </div>
-                                    <div className="flex justify-between text-xs">
-                                      <span>Satisfação:</span>
-                                      <span className="font-medium">
-                                        {touchpoint.satisfaction.toFixed(1)}
-                                      </span>
-                                    </div>
-                                    <div className="flex justify-between text-xs">
-                                      <span>Conversão:</span>
-                                      <span className="font-medium">
-                                        {touchpoint.conversionRate.toFixed(1)}%
-                                      </span>
-                                    </div>
-                                  </div>
+                        {/* Touchpoints */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {stage.touchpoints.map((touchpoint) => (
+                            <div key={touchpoint.id} className="p-3 border rounded-lg">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="font-medium text-sm">{touchpoint.name}</span>
+                                <badge_1.Badge variant="outline" className="text-xs">
+                                  {touchpoint.channel}
+                                </badge_1.Badge>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="flex justify-between text-xs">
+                                  <span>Interações:</span>
+                                  <span className="font-medium">{touchpoint.interactions}</span>
                                 </div>
-                              );
-                            })}
-                          </div>
+                                <div className="flex justify-between text-xs">
+                                  <span>Satisfação:</span>
+                                  <span className="font-medium">
+                                    {touchpoint.satisfaction.toFixed(1)}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between text-xs">
+                                  <span>Conversão:</span>
+                                  <span className="font-medium">
+                                    {touchpoint.conversionRate.toFixed(1)}%
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -1014,101 +968,99 @@ var JourneyAnalyticsDashboard = function () {
         {/* Satisfaction Tab */}
         <tabs_1.TabsContent value="satisfaction" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {satisfactionMetrics.map(function (metric, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader>
-                    <card_1.CardTitle className="flex items-center justify-between">
-                      <span>{metric.category}</span>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-2xl font-bold">{metric.score.toFixed(1)}</span>
-                        <badge_1.Badge
-                          variant={metric.score >= metric.target ? "default" : "destructive"}
-                        >
-                          Meta: {metric.target.toFixed(1)}
-                        </badge_1.Badge>
-                      </div>
-                    </card_1.CardTitle>
-                    <card_1.CardDescription>
-                      {metric.responses} respostas coletadas
-                    </card_1.CardDescription>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-4">
-                      <progress_1.Progress value={(metric.score / 5) * 100} className="h-2" />
+            {satisfactionMetrics.map((metric, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader>
+                  <card_1.CardTitle className="flex items-center justify-between">
+                    <span>{metric.category}</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-2xl font-bold">{metric.score.toFixed(1)}</span>
+                      <badge_1.Badge
+                        variant={metric.score >= metric.target ? "default" : "destructive"}
+                      >
+                        Meta: {metric.target.toFixed(1)}
+                      </badge_1.Badge>
+                    </div>
+                  </card_1.CardTitle>
+                  <card_1.CardDescription>
+                    {metric.responses} respostas coletadas
+                  </card_1.CardDescription>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-4">
+                    <progress_1.Progress value={(metric.score / 5) * 100} className="h-2" />
 
-                      <div className="grid grid-cols-5 gap-2 text-center">
-                        <div className="space-y-1">
-                          <div className="text-xs text-muted-foreground">Péssimo</div>
-                          <div className="font-medium">{metric.breakdown.terrible}</div>
-                          <div
-                            className="w-full h-2 bg-red-500 rounded"
-                            style={{
-                              height: "".concat(
-                                Math.max(4, (metric.breakdown.terrible / metric.responses) * 40),
-                                "px",
-                              ),
-                            }}
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-xs text-muted-foreground">Ruim</div>
-                          <div className="font-medium">{metric.breakdown.poor}</div>
-                          <div
-                            className="w-full h-2 bg-orange-500 rounded"
-                            style={{
-                              height: "".concat(
-                                Math.max(4, (metric.breakdown.poor / metric.responses) * 40),
-                                "px",
-                              ),
-                            }}
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-xs text-muted-foreground">Regular</div>
-                          <div className="font-medium">{metric.breakdown.average}</div>
-                          <div
-                            className="w-full h-2 bg-yellow-500 rounded"
-                            style={{
-                              height: "".concat(
-                                Math.max(4, (metric.breakdown.average / metric.responses) * 40),
-                                "px",
-                              ),
-                            }}
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-xs text-muted-foreground">Bom</div>
-                          <div className="font-medium">{metric.breakdown.good}</div>
-                          <div
-                            className="w-full h-2 bg-blue-500 rounded"
-                            style={{
-                              height: "".concat(
-                                Math.max(4, (metric.breakdown.good / metric.responses) * 40),
-                                "px",
-                              ),
-                            }}
-                          />
-                        </div>
-                        <div className="space-y-1">
-                          <div className="text-xs text-muted-foreground">Excelente</div>
-                          <div className="font-medium">{metric.breakdown.excellent}</div>
-                          <div
-                            className="w-full h-2 bg-green-500 rounded"
-                            style={{
-                              height: "".concat(
-                                Math.max(4, (metric.breakdown.excellent / metric.responses) * 40),
-                                "px",
-                              ),
-                            }}
-                          />
-                        </div>
+                    <div className="grid grid-cols-5 gap-2 text-center">
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">Péssimo</div>
+                        <div className="font-medium">{metric.breakdown.terrible}</div>
+                        <div
+                          className="w-full h-2 bg-red-500 rounded"
+                          style={{
+                            height: "".concat(
+                              Math.max(4, (metric.breakdown.terrible / metric.responses) * 40),
+                              "px",
+                            ),
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">Ruim</div>
+                        <div className="font-medium">{metric.breakdown.poor}</div>
+                        <div
+                          className="w-full h-2 bg-orange-500 rounded"
+                          style={{
+                            height: "".concat(
+                              Math.max(4, (metric.breakdown.poor / metric.responses) * 40),
+                              "px",
+                            ),
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">Regular</div>
+                        <div className="font-medium">{metric.breakdown.average}</div>
+                        <div
+                          className="w-full h-2 bg-yellow-500 rounded"
+                          style={{
+                            height: "".concat(
+                              Math.max(4, (metric.breakdown.average / metric.responses) * 40),
+                              "px",
+                            ),
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">Bom</div>
+                        <div className="font-medium">{metric.breakdown.good}</div>
+                        <div
+                          className="w-full h-2 bg-blue-500 rounded"
+                          style={{
+                            height: "".concat(
+                              Math.max(4, (metric.breakdown.good / metric.responses) * 40),
+                              "px",
+                            ),
+                          }}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground">Excelente</div>
+                        <div className="font-medium">{metric.breakdown.excellent}</div>
+                        <div
+                          className="w-full h-2 bg-green-500 rounded"
+                          style={{
+                            height: "".concat(
+                              Math.max(4, (metric.breakdown.excellent / metric.responses) * 40),
+                              "px",
+                            ),
+                          }}
+                        />
                       </div>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -1123,18 +1075,14 @@ var JourneyAnalyticsDashboard = function () {
               <input_1.Input
                 placeholder="Buscar paciente..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return setSearchTerm(e.target.value);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-64"
               />
               <select_1.Select
                 value={filters.riskLevel}
-                onValueChange={function (value) {
-                  return setFilters(function (prev) {
-                    return __assign(__assign({}, prev), { riskLevel: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFilters((prev) => __assign(__assign({}, prev), { riskLevel: value }))
+                }
               >
                 <select_1.SelectTrigger className="w-32">
                   <select_1.SelectValue placeholder="Risco" />
@@ -1151,72 +1099,66 @@ var JourneyAnalyticsDashboard = function () {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredChurnRisks.map(function (risk) {
-              return (
-                <card_1.Card key={risk.patientId} className="relative">
-                  <card_1.CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <card_1.CardTitle className="text-base">{risk.patientName}</card_1.CardTitle>
-                      {getRiskBadge(risk.riskLevel)}
+            {filteredChurnRisks.map((risk) => (
+              <card_1.Card key={risk.patientId} className="relative">
+                <card_1.CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <card_1.CardTitle className="text-base">{risk.patientName}</card_1.CardTitle>
+                    {getRiskBadge(risk.riskLevel)}
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-muted-foreground">Score de Risco:</span>
+                    <span className="font-bold text-red-600">
+                      {(risk.riskScore * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent className="space-y-3">
+                  <div>
+                    <div className="text-sm text-muted-foreground">Fatores de Risco:</div>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {risk.factors.map((factor, index) => (
+                        <badge_1.Badge key={index} variant="outline" className="text-xs">
+                          {factor}
+                        </badge_1.Badge>
+                      ))}
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm text-muted-foreground">Score de Risco:</span>
-                      <span className="font-bold text-red-600">
-                        {(risk.riskScore * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent className="space-y-3">
-                    <div>
-                      <div className="text-sm text-muted-foreground">Fatores de Risco:</div>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {risk.factors.map(function (factor, index) {
-                          return (
-                            <badge_1.Badge key={index} variant="outline" className="text-xs">
-                              {factor}
-                            </badge_1.Badge>
-                          );
-                        })}
-                      </div>
-                    </div>
+                  </div>
 
-                    <div>
-                      <div className="text-sm text-muted-foreground">Última Atividade:</div>
-                      <div className="text-sm font-medium">
-                        {(0, date_fns_1.format)(risk.lastActivity, "dd/MM/yyyy HH:mm", {
-                          locale: locale_1.ptBR,
-                        })}
-                      </div>
+                  <div>
+                    <div className="text-sm text-muted-foreground">Última Atividade:</div>
+                    <div className="text-sm font-medium">
+                      {(0, date_fns_1.format)(risk.lastActivity, "dd/MM/yyyy HH:mm", {
+                        locale: locale_1.ptBR,
+                      })}
                     </div>
+                  </div>
 
-                    <div>
-                      <div className="text-sm text-muted-foreground">Previsão de Churn:</div>
-                      <div className="text-sm font-medium text-red-600">
-                        {(0, date_fns_1.format)(risk.predictedChurnDate, "dd/MM/yyyy", {
-                          locale: locale_1.ptBR,
-                        })}
-                      </div>
+                  <div>
+                    <div className="text-sm text-muted-foreground">Previsão de Churn:</div>
+                    <div className="text-sm font-medium text-red-600">
+                      {(0, date_fns_1.format)(risk.predictedChurnDate, "dd/MM/yyyy", {
+                        locale: locale_1.ptBR,
+                      })}
                     </div>
+                  </div>
 
-                    <div>
-                      <div className="text-sm text-muted-foreground">Ações Recomendadas:</div>
-                      <div className="space-y-1 mt-1">
-                        {risk.recommendedActions.slice(0, 2).map(function (action, index) {
-                          return (
-                            <div
-                              key={index}
-                              className="text-xs p-2 bg-muted rounded text-muted-foreground"
-                            >
-                              • {action}
-                            </div>
-                          );
-                        })}
-                      </div>
+                  <div>
+                    <div className="text-sm text-muted-foreground">Ações Recomendadas:</div>
+                    <div className="space-y-1 mt-1">
+                      {risk.recommendedActions.slice(0, 2).map((action, index) => (
+                        <div
+                          key={index}
+                          className="text-xs p-2 bg-muted rounded text-muted-foreground"
+                        >
+                          • {action}
+                        </div>
+                      ))}
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -1231,18 +1173,14 @@ var JourneyAnalyticsDashboard = function () {
               <input_1.Input
                 placeholder="Buscar recomendação..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return setSearchTerm(e.target.value);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-64"
               />
               <select_1.Select
                 value={filters.priority}
-                onValueChange={function (value) {
-                  return setFilters(function (prev) {
-                    return __assign(__assign({}, prev), { priority: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFilters((prev) => __assign(__assign({}, prev), { priority: value }))
+                }
               >
                 <select_1.SelectTrigger className="w-32">
                   <select_1.SelectValue placeholder="Prioridade" />
@@ -1259,84 +1197,74 @@ var JourneyAnalyticsDashboard = function () {
           </div>
 
           <div className="space-y-4">
-            {filteredRecommendations.map(function (rec) {
-              return (
-                <card_1.Card key={rec.id}>
-                  <card_1.CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <card_1.CardTitle className="text-base">{rec.title}</card_1.CardTitle>
-                          {getPriorityBadge(rec.priority)}
-                          <badge_1.Badge variant="outline">{rec.type}</badge_1.Badge>
+            {filteredRecommendations.map((rec) => (
+              <card_1.Card key={rec.id}>
+                <card_1.CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <card_1.CardTitle className="text-base">{rec.title}</card_1.CardTitle>
+                        {getPriorityBadge(rec.priority)}
+                        <badge_1.Badge variant="outline">{rec.type}</badge_1.Badge>
+                      </div>
+                      <card_1.CardDescription>{rec.description}</card_1.CardDescription>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-muted-foreground">ROI Estimado</div>
+                      <div className="text-lg font-bold text-green-600">{rec.roi.toFixed(1)}x</div>
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-sm font-medium mb-2">Impacto Esperado:</div>
+                      <div className="text-sm text-muted-foreground">{rec.impact}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium mb-2">Esforço Necessário:</div>
+                      <div className="text-sm text-muted-foreground">{rec.effort}</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-medium mb-2">Touchpoints Afetados:</div>
+                    <div className="flex flex-wrap gap-1">
+                      {rec.touchpoints.map((touchpoint, index) => (
+                        <badge_1.Badge key={index} variant="secondary" className="text-xs">
+                          {touchpoint}
+                        </badge_1.Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-medium mb-2">Passos de Implementação:</div>
+                    <div className="space-y-1">
+                      {rec.implementation.map((step, index) => (
+                        <div key={index} className="flex items-start space-x-2">
+                          <div className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center mt-0.5">
+                            {index + 1}
+                          </div>
+                          <div className="text-sm text-muted-foreground">{step}</div>
                         </div>
-                        <card_1.CardDescription>{rec.description}</card_1.CardDescription>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-muted-foreground">ROI Estimado</div>
-                        <div className="text-lg font-bold text-green-600">
-                          {rec.roi.toFixed(1)}x
-                        </div>
-                      </div>
+                      ))}
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <div className="text-sm font-medium mb-2">Impacto Esperado:</div>
-                        <div className="text-sm text-muted-foreground">{rec.impact}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium mb-2">Esforço Necessário:</div>
-                        <div className="text-sm text-muted-foreground">{rec.effort}</div>
-                      </div>
-                    </div>
+                  </div>
 
-                    <div>
-                      <div className="text-sm font-medium mb-2">Touchpoints Afetados:</div>
-                      <div className="flex flex-wrap gap-1">
-                        {rec.touchpoints.map(function (touchpoint, index) {
-                          return (
-                            <badge_1.Badge key={index} variant="secondary" className="text-xs">
-                              {touchpoint}
-                            </badge_1.Badge>
-                          );
-                        })}
-                      </div>
+                  <div>
+                    <div className="text-sm font-medium mb-2">Métricas de Sucesso:</div>
+                    <div className="flex flex-wrap gap-1">
+                      {rec.metrics.map((metric, index) => (
+                        <badge_1.Badge key={index} variant="outline" className="text-xs">
+                          {metric}
+                        </badge_1.Badge>
+                      ))}
                     </div>
-
-                    <div>
-                      <div className="text-sm font-medium mb-2">Passos de Implementação:</div>
-                      <div className="space-y-1">
-                        {rec.implementation.map(function (step, index) {
-                          return (
-                            <div key={index} className="flex items-start space-x-2">
-                              <div className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center mt-0.5">
-                                {index + 1}
-                              </div>
-                              <div className="text-sm text-muted-foreground">{step}</div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="text-sm font-medium mb-2">Métricas de Sucesso:</div>
-                      <div className="flex flex-wrap gap-1">
-                        {rec.metrics.map(function (metric, index) {
-                          return (
-                            <badge_1.Badge key={index} variant="outline" className="text-xs">
-                              {metric}
-                            </badge_1.Badge>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
       </tabs_1.Tabs>

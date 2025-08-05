@@ -811,7 +811,7 @@ export class NotificationMLEngine {
    * Calcula distância euclidiana entre dois pontos
    */
   private euclideanDistance(a: number[], b: number[]): number {
-    return Math.sqrt(a.reduce((sum, val, i) => sum + Math.pow(val - b[i], 2), 0));
+    return Math.sqrt(a.reduce((sum, val, i) => sum + (val - b[i]) ** 2, 0));
   }
 
   // ================================================================================

@@ -1,5 +1,3 @@
-import type { describe, test, expect } from "@jest/globals";
-
 describe("Patient Insights - Module Resolution Test", () => {
   test("should validate test environment is working", () => {
     expect(1 + 1).toBe(2);

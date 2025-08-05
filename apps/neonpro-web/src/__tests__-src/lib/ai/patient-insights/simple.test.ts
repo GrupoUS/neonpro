@@ -1,6 +1,3 @@
-import type { describe, test, expect } from "@jest/globals";
-import type { PatientInsightsIntegration } from "@/lib/ai/patient-insights/index";
-
 describe("Patient Insights Integration - Simple Test", () => {
   test("should validate PatientInsightsIntegration class exists", () => {
     expect(PatientInsightsIntegration).toBeDefined();

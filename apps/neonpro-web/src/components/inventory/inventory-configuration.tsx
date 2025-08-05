@@ -5,7 +5,9 @@
  * System configuration and settings management
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,12 +15,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Icons } from "@/components/ui/icons";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Switch } from "@/components/ui/switch";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Select,
   SelectContent,
@@ -26,7 +25,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
 import type {
   Table,
   TableBody,
@@ -35,15 +35,15 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
-import type {
-  InventoryConfig,
-  type ConfigurationSettings,
-  type AlertRule,
-  type AutomationRule,
-} from "@/lib/inventory";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useToast } from "@/hooks/use-toast";
+import type {
+  AlertRule,
+  AutomationRule,
+  ConfigurationSettings,
+  InventoryConfig,
+} from "@/lib/inventory";
 
 interface InventoryConfigurationProps {
   onRefresh: () => void;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Unified Session Management System - Core Implementation
  *
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,7 +153,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.unifiedSessionSystem = exports.UnifiedSessionSystem = void 0;
 exports.createUnifiedSessionSystem = createUnifiedSessionSystem;
@@ -179,42 +176,45 @@ var utils_1 = require("./utils");
  * - LGPD-compliant audit logging
  * - Automatic cleanup and data management
  */
-var UnifiedSessionSystem = /** @class */ (function () {
+var UnifiedSessionSystem = /** @class */ (() => {
   function UnifiedSessionSystem(config) {
-    var _this = this;
     // Activity tracking for intelligent timeout
     this.activityTrackers = new Map();
     this.sessionWarnings = new Map();
     // Real-time monitoring
     this.securityMonitor = null;
     this.cleanupScheduler = null;
-    this.updateActivityTracking = (0, utils_1.debounce)(function (sessionId) {
-      return __awaiter(_this, void 0, void 0, function () {
-        var existingTimer, inactivityTimer;
-        var _this = this;
-        return __generator(this, function (_a) {
-          existingTimer = this.activityTrackers.get(sessionId);
-          if (existingTimer) {
-            clearTimeout(existingTimer);
-          }
-          inactivityTimer = setTimeout(function () {
-            return __awaiter(_this, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                switch (_a.label) {
-                  case 0:
-                    return [4 /*yield*/, this.handleSessionInactivity(sessionId)];
-                  case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-                }
-              });
-            });
-          }, this.config.session.inactivityTimeout);
-          this.activityTrackers.set(sessionId, inactivityTimer);
-          return [2 /*return*/];
-        });
-      });
-    }, 1000); // Debounce activity updates
+    this.updateActivityTracking = (0, utils_1.debounce)(
+      (sessionId) =>
+        __awaiter(this, void 0, void 0, function () {
+          var existingTimer, inactivityTimer;
+          var _this = this;
+          return __generator(this, function (_a) {
+            existingTimer = this.activityTrackers.get(sessionId);
+            if (existingTimer) {
+              clearTimeout(existingTimer);
+            }
+            inactivityTimer = setTimeout(
+              () =>
+                __awaiter(_this, void 0, void 0, function () {
+                  return __generator(this, function (_a) {
+                    switch (_a.label) {
+                      case 0:
+                        return [4 /*yield*/, this.handleSessionInactivity(sessionId)];
+                      case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                    }
+                  });
+                }),
+              this.config.session.inactivityTimeout,
+            );
+            this.activityTrackers.set(sessionId, inactivityTimer);
+            return [2 /*return*/];
+          });
+        }),
+      1000,
+    ); // Debounce activity updates
     this.config = {
       session: __assign(
         __assign({}, config_1.sessionConfig.session),
@@ -296,7 +296,7 @@ var UnifiedSessionSystem = /** @class */ (function () {
             ];
           case 1:
             deviceResult = _k.sent();
-            if (!!deviceResult.success) return [3 /*break*/, 3];
+            if (deviceResult.success) return [3 /*break*/, 3];
             return [
               4 /*yield*/,
               this.securityLogger.logEvent({
@@ -379,7 +379,7 @@ var UnifiedSessionSystem = /** @class */ (function () {
             ];
           case 9:
             sessionResult = _k.sent();
-            if (!!sessionResult.success) return [3 /*break*/, 11];
+            if (sessionResult.success) return [3 /*break*/, 11];
             return [
               4 /*yield*/,
               this.securityLogger.logEvent({
@@ -748,8 +748,8 @@ var UnifiedSessionSystem = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                sessions.map(function (session) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                sessions.map((session) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var deviceResult, device;
                     return __generator(this, function (_a) {
                       switch (_a.label) {
@@ -768,8 +768,8 @@ var UnifiedSessionSystem = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 2:
@@ -846,50 +846,56 @@ var UnifiedSessionSystem = /** @class */ (function () {
         finalWarningTime = timeToExpiry - 1 * 60 * 1000;
         // Setup warning timers
         if (warningTime > 0) {
-          warningTimer = setTimeout(function () {
-            return __awaiter(_this, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                switch (_a.label) {
-                  case 0:
-                    return [4 /*yield*/, this.sendSessionWarning(session.id, "5 minutes")];
-                  case 1:
-                    _a.sent();
-                    return [2 /*return*/];
-                }
-              });
-            });
-          }, warningTime);
+          warningTimer = setTimeout(
+            () =>
+              __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                  switch (_a.label) {
+                    case 0:
+                      return [4 /*yield*/, this.sendSessionWarning(session.id, "5 minutes")];
+                    case 1:
+                      _a.sent();
+                      return [2 /*return*/];
+                  }
+                });
+              }),
+            warningTime,
+          );
           this.sessionWarnings.set("".concat(session.id, "-5min"), warningTimer);
         }
         if (finalWarningTime > 0) {
-          finalWarningTimer = setTimeout(function () {
-            return __awaiter(_this, void 0, void 0, function () {
+          finalWarningTimer = setTimeout(
+            () =>
+              __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                  switch (_a.label) {
+                    case 0:
+                      return [4 /*yield*/, this.sendSessionWarning(session.id, "1 minute")];
+                    case 1:
+                      _a.sent();
+                      return [2 /*return*/];
+                  }
+                });
+              }),
+            finalWarningTime,
+          );
+          this.sessionWarnings.set("".concat(session.id, "-1min"), finalWarningTimer);
+        }
+        expiryTimer = setTimeout(
+          () =>
+            __awaiter(_this, void 0, void 0, function () {
               return __generator(this, function (_a) {
                 switch (_a.label) {
                   case 0:
-                    return [4 /*yield*/, this.sendSessionWarning(session.id, "1 minute")];
+                    return [4 /*yield*/, this.handleSessionExpiry(session.id)];
                   case 1:
                     _a.sent();
                     return [2 /*return*/];
                 }
               });
-            });
-          }, finalWarningTime);
-          this.sessionWarnings.set("".concat(session.id, "-1min"), finalWarningTimer);
-        }
-        expiryTimer = setTimeout(function () {
-          return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-              switch (_a.label) {
-                case 0:
-                  return [4 /*yield*/, this.handleSessionExpiry(session.id)];
-                case 1:
-                  _a.sent();
-                  return [2 /*return*/];
-              }
-            });
-          });
-        }, timeToExpiry);
+            }),
+          timeToExpiry,
+        );
         this.activityTrackers.set(session.id, expiryTimer);
         return [2 /*return*/];
       });
@@ -1110,7 +1116,7 @@ var UnifiedSessionSystem = /** @class */ (function () {
       });
     });
   };
-  UnifiedSessionSystem.prototype.calculateDistance = function (loc1, loc2) {
+  UnifiedSessionSystem.prototype.calculateDistance = (loc1, loc2) => {
     var R = 6371; // Earth's radius in kilometers
     var dLat = ((loc2.latitude - loc1.latitude) * Math.PI) / 180;
     var dLon = ((loc2.longitude - loc1.longitude) * Math.PI) / 180;
@@ -1127,36 +1133,36 @@ var UnifiedSessionSystem = /** @class */ (function () {
    * Background Services
    */
   UnifiedSessionSystem.prototype.startSecurityMonitoring = function () {
-    var _this = this;
     // Monitor security events every 30 seconds
-    this.securityMonitor = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_11;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.performSecurityCheck()];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_11 = _a.sent();
-              console.error("Security monitoring error:", error_11);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 30 * 1000);
+    this.securityMonitor = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_11;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.performSecurityCheck()];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_11 = _a.sent();
+                console.error("Security monitoring error:", error_11);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      30 * 1000,
+    );
   };
   UnifiedSessionSystem.prototype.startCleanupScheduler = function () {
-    var _this = this;
     // Run cleanup every hour
     this.cleanupScheduler = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_12;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -1174,8 +1180,7 @@ var UnifiedSessionSystem = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       60 * 60 * 1000,
     );
   };
@@ -1342,9 +1347,9 @@ var UnifiedSessionSystem = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                sessionsResult.data.sessions.map(function (session) {
-                  return _this.terminateSession(session.id, "security_threat");
-                }),
+                sessionsResult.data.sessions.map((session) =>
+                  _this.terminateSession(session.id, "security_threat"),
+                ),
               ),
             ];
           case 3:
@@ -1408,18 +1413,10 @@ var UnifiedSessionSystem = /** @class */ (function () {
               period: period,
               summary: {
                 totalEvents: events.length,
-                criticalEvents: events.filter(function (e) {
-                  return e.severity === "critical";
-                }).length,
-                highEvents: events.filter(function (e) {
-                  return e.severity === "high";
-                }).length,
-                mediumEvents: events.filter(function (e) {
-                  return e.severity === "medium";
-                }).length,
-                lowEvents: events.filter(function (e) {
-                  return e.severity === "low";
-                }).length,
+                criticalEvents: events.filter((e) => e.severity === "critical").length,
+                highEvents: events.filter((e) => e.severity === "high").length,
+                mediumEvents: events.filter((e) => e.severity === "medium").length,
+                lowEvents: events.filter((e) => e.severity === "low").length,
               },
               events: events.slice(0, 100), // Limit to 100 most recent
               statistics: statistics,
@@ -1625,12 +1622,8 @@ var UnifiedSessionSystem = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
         // Clear all timers
-        this.activityTrackers.forEach(function (timer) {
-          return clearTimeout(timer);
-        });
-        this.sessionWarnings.forEach(function (timer) {
-          return clearTimeout(timer);
-        });
+        this.activityTrackers.forEach((timer) => clearTimeout(timer));
+        this.sessionWarnings.forEach((timer) => clearTimeout(timer));
         if (this.securityMonitor) {
           clearInterval(this.securityMonitor);
         }

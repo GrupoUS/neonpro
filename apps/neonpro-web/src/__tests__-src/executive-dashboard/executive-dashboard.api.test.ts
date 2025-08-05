@@ -5,19 +5,6 @@
  * Tests for the API routes of the executive dashboard
  */
 
-import type { NextRequest } from "next/server";
-import type { GET as getKPIs } from "../../../app/api/executive-dashboard/kpis/route";
-import type { GET as getAlerts } from "../../../app/api/executive-dashboard/alerts/route";
-import type {
-  GET as getWidgets,
-  POST as saveWidgets,
-} from "../../../app/api/executive-dashboard/widgets/route";
-import type {
-  GET as getReports,
-  POST as generateReport,
-} from "../../../app/api/executive-dashboard/reports/route";
-import type { GET as getComparison } from "../../../app/api/executive-dashboard/comparison/route";
-
 // Mock the services
 jest.mock("../../../lib/services/executive-dashboard");
 jest.mock("../../../app/utils/supabase/server");

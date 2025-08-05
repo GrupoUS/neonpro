@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorBoundary = ErrorBoundary;
 var react_1 = require("react");

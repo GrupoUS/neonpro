@@ -1,7 +1,7 @@
-import type { ProfileSyncManager } from "@/components/profile/profile-sync-manager";
-import type { Card, CardContent } from "@/components/ui/card";
 import type { RefreshCw } from "lucide-react";
 import type { Suspense } from "react";
+import type { ProfileSyncManager } from "@/components/profile/profile-sync-manager";
+import type { Card, CardContent } from "@/components/ui/card";
 
 function ProfileLoading() {
   return (

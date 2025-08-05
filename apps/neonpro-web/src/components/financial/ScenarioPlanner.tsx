@@ -5,7 +5,44 @@
 
 "use client";
 
-import React, { useState } from "react";
+import type {
+  AlertCircle,
+  AlertTriangle,
+  BarChart3,
+  Calculator,
+  CheckCircle2,
+  Copy,
+  DollarSign,
+  Eye,
+  Play,
+  Plus,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,20 +50,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Dialog,
   DialogContent,
@@ -35,47 +58,25 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  BarChart3,
-  Calculator,
-  Target,
-  AlertCircle,
-  CheckCircle2,
-  Plus,
-  Trash2,
-  Eye,
-  Copy,
-  Play,
-} from "lucide-react";
-import type {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-} from "recharts";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useToast } from "@/hooks/use-toast";
 import type {
-  useScenarioPlanning,
-  useScenarioAnalysis,
-  useScenarioComparison,
   useFinancialDecisionSupport,
   useRiskAssessment,
+  useScenarioAnalysis,
+  useScenarioComparison,
+  useScenarioPlanning,
 } from "../hooks/use-scenario-planning";
 import type { ScenarioParameters } from "../types/cash-flow";
 

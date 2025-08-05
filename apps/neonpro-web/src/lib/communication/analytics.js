@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Communication Analytics - Track and analyze communication performance
  * Story 2.3: Automated Communication System
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,10 +132,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommunicationAnalytics = void 0;
-var CommunicationAnalytics = /** @class */ (function () {
+var CommunicationAnalytics = /** @class */ (() => {
   function CommunicationAnalytics() {}
   /**
    * Track a communication event
@@ -150,7 +147,7 @@ var CommunicationAnalytics = /** @class */ (function () {
         event = _b.event,
         _c = _b.metadata,
         metadata = _c === void 0 ? {} : _c;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         switch (_d.label) {
           case 0:
             _d.trys.push([0, 3, , 4]);
@@ -370,10 +367,8 @@ var CommunicationAnalytics = /** @class */ (function () {
             overallMetrics = this.calculateMetrics(logs || []);
             channels = ["sms", "email", "whatsapp"];
             channelBreakdown = [];
-            _loop_1 = function (channel) {
-              var channelLogs = (logs || []).filter(function (log) {
-                return log.channel === channel;
-              });
+            _loop_1 = (channel) => {
+              var channelLogs = (logs || []).filter((log) => log.channel === channel);
               if (channelLogs.length > 0) {
                 var metrics = this_1.calculateMetrics(channelLogs);
                 channelBreakdown.push({
@@ -534,13 +529,12 @@ var CommunicationAnalytics = /** @class */ (function () {
   CommunicationAnalytics.prototype.getTopPerformingTemplates = function (_a) {
     return __awaiter(this, arguments, void 0, function (_b) {
       var logs, templateGroups, templatePerformance, error_6;
-      var _this = this;
       var clinicId = _b.clinicId,
         startDate = _b.startDate,
         endDate = _b.endDate,
         _c = _b.limit,
         limit = _c === void 0 ? 10 : _c;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         switch (_d.label) {
           case 0:
             _d.trys.push([0, 2, , 3]);
@@ -558,7 +552,7 @@ var CommunicationAnalytics = /** @class */ (function () {
             ];
           case 1:
             logs = _d.sent().data;
-            templateGroups = (logs || []).reduce(function (acc, log) {
+            templateGroups = (logs || []).reduce((acc, log) => {
               var key = log.template_id;
               if (!acc[key]) {
                 acc[key] = [];
@@ -566,12 +560,12 @@ var CommunicationAnalytics = /** @class */ (function () {
               acc[key].push(log);
               return acc;
             }, {});
-            templatePerformance = Object.entries(templateGroups).map(function (_a) {
+            templatePerformance = Object.entries(templateGroups).map((_a) => {
               var _b;
               var templateId = _a[0],
                 templateLogs = _a[1];
               var firstLog = templateLogs[0];
-              var metrics = _this.calculateMetrics(templateLogs);
+              var metrics = this.calculateMetrics(templateLogs);
               return {
                 template_id: templateId,
                 template_name:
@@ -588,7 +582,7 @@ var CommunicationAnalytics = /** @class */ (function () {
             return [
               2 /*return*/,
               templatePerformance
-                .sort(function (a, b) {
+                .sort((a, b) => {
                   var scoreA = a.metrics.delivery_rate * 0.7 + (a.usage_count / 100) * 0.3;
                   var scoreB = b.metrics.delivery_rate * 0.7 + (b.usage_count / 100) * 0.3;
                   return scoreB - scoreA;
@@ -717,55 +711,43 @@ var CommunicationAnalytics = /** @class */ (function () {
     });
   };
   // Private helper methods
-  CommunicationAnalytics.prototype.calculateMetrics = function (logs) {
+  CommunicationAnalytics.prototype.calculateMetrics = (logs) => {
     var totalSent = logs.length;
-    var totalDelivered = logs.filter(function (log) {
+    var totalDelivered = logs.filter((log) => {
       var _a;
       return (_a = log.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "delivered";
-          });
+        : _a.some((e) => e.event_type === "delivered");
     }).length;
-    var totalFailed = logs.filter(function (log) {
+    var totalFailed = logs.filter((log) => {
       var _a;
       return (_a = log.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return ["failed", "bounced"].includes(e.event_type);
-          });
+        : _a.some((e) => ["failed", "bounced"].includes(e.event_type));
     }).length;
-    var totalOpened = logs.filter(function (log) {
+    var totalOpened = logs.filter((log) => {
       var _a;
       return (_a = log.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "opened";
-          });
+        : _a.some((e) => e.event_type === "opened");
     }).length;
-    var totalClicked = logs.filter(function (log) {
+    var totalClicked = logs.filter((log) => {
       var _a;
       return (_a = log.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "clicked";
-          });
+        : _a.some((e) => e.event_type === "clicked");
     }).length;
-    var totalReplied = logs.filter(function (log) {
+    var totalReplied = logs.filter((log) => {
       var _a;
       return (_a = log.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "replied";
-          });
+        : _a.some((e) => e.event_type === "replied");
     }).length;
     var deliveryRate = totalSent > 0 ? (totalDelivered / totalSent) * 100 : 0;
     var openRate = totalDelivered > 0 ? (totalOpened / totalDelivered) * 100 : undefined;
     var clickRate = totalOpened > 0 ? (totalClicked / totalOpened) * 100 : undefined;
     var responseRate = totalSent > 0 ? (totalReplied / totalSent) * 100 : undefined;
-    var costTotal = logs.reduce(function (sum, log) {
-      return sum + (log.cost || 0);
-    }, 0);
+    var costTotal = logs.reduce((sum, log) => sum + (log.cost || 0), 0);
     var costPerMessage = totalSent > 0 ? costTotal / totalSent : 0;
     return {
       total_sent: totalSent,
@@ -782,13 +764,13 @@ var CommunicationAnalytics = /** @class */ (function () {
       cost_per_message: costPerMessage,
     };
   };
-  CommunicationAnalytics.prototype.calculateChangePercentage = function (current, previous) {
+  CommunicationAnalytics.prototype.calculateChangePercentage = (current, previous) => {
     if (previous === 0) return current > 0 ? 100 : 0;
     return ((current - previous) / previous) * 100;
   };
   CommunicationAnalytics.prototype.calculatePatientEngagement = function (campaignId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would require tracking appointment actions after communications
           // For now, return placeholder data
@@ -817,45 +799,42 @@ var CommunicationAnalytics = /** @class */ (function () {
       });
     });
   };
-  CommunicationAnalytics.prototype.calculateROI = function (cost, newAppointments) {
+  CommunicationAnalytics.prototype.calculateROI = (cost, newAppointments) => {
     // Simplified ROI calculation
     // Assumes average appointment value of $100
     var averageAppointmentValue = 100;
     var revenue = newAppointments * averageAppointmentValue;
     return cost > 0 ? ((revenue - cost) / cost) * 100 : 0;
   };
-  CommunicationAnalytics.prototype.calculateResponseRate = function (communications) {
+  CommunicationAnalytics.prototype.calculateResponseRate = (communications) => {
     if (communications.length === 0) return 0;
-    var responses = communications.filter(function (comm) {
+    var responses = communications.filter((comm) => {
       var _a;
       return (_a = comm.communication_events) === null || _a === void 0
         ? void 0
-        : _a.some(function (e) {
-            return e.event_type === "replied";
-          });
+        : _a.some((e) => e.event_type === "replied");
     }).length;
     return (responses / communications.length) * 100;
   };
-  CommunicationAnalytics.prototype.calculateAppointmentAdherence = function (appointments) {
+  CommunicationAnalytics.prototype.calculateAppointmentAdherence = (appointments) => {
     if (appointments.length === 0) return 100; // No data = perfect score
-    var completed = appointments.filter(function (apt) {
-      return apt.status === "completed" && !apt.actual_no_show;
-    }).length;
+    var completed = appointments.filter(
+      (apt) => apt.status === "completed" && !apt.actual_no_show,
+    ).length;
     return (completed / appointments.length) * 100;
   };
   CommunicationAnalytics.prototype.calculatePreferenceAlignment = function (
     communications,
     preferences,
   ) {
-    var _this = this;
     if (!preferences || communications.length === 0) return 50; // Neutral score
-    var alignedCommunications = communications.filter(function (comm) {
+    var alignedCommunications = communications.filter((comm) => {
       if (preferences.preferred_channel && comm.channel === preferences.preferred_channel) {
         return true;
       }
       if (
         preferences.preferred_time &&
-        _this.isTimeAligned(comm.created_at, preferences.preferred_time)
+        this.isTimeAligned(comm.created_at, preferences.preferred_time)
       ) {
         return true;
       }
@@ -863,15 +842,13 @@ var CommunicationAnalytics = /** @class */ (function () {
     }).length;
     return (alignedCommunications / communications.length) * 100;
   };
-  CommunicationAnalytics.prototype.calculateRecencyScore = function (communications) {
+  CommunicationAnalytics.prototype.calculateRecencyScore = (communications) => {
     if (communications.length === 0) return 0;
     var now = new Date();
     var mostRecent = new Date(
       Math.max.apply(
         Math,
-        communications.map(function (c) {
-          return new Date(c.created_at).getTime();
-        }),
+        communications.map((c) => new Date(c.created_at).getTime()),
       ),
     );
     var daysSinceLastCommunication = Math.floor(
@@ -880,7 +857,7 @@ var CommunicationAnalytics = /** @class */ (function () {
     // Score decreases as days increase
     return Math.max(0, 100 - daysSinceLastCommunication * 5);
   };
-  CommunicationAnalytics.prototype.isTimeAligned = function (communicationTime, preferredTime) {
+  CommunicationAnalytics.prototype.isTimeAligned = (communicationTime, preferredTime) => {
     var commHour = new Date(communicationTime).getHours();
     switch (preferredTime) {
       case "morning":
@@ -893,7 +870,7 @@ var CommunicationAnalytics = /** @class */ (function () {
         return true;
     }
   };
-  CommunicationAnalytics.prototype.generateEngagementRecommendations = function (factors) {
+  CommunicationAnalytics.prototype.generateEngagementRecommendations = (factors) => {
     var recommendations = [];
     if (factors.responseRate < 20) {
       recommendations.push("Send more personalized messages to improve response rate");

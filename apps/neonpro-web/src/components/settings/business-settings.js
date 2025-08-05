@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = BusinessSettings;
 var react_1 = require("react");
@@ -185,7 +182,7 @@ var daysOfWeek = [
   { value: "saturday", label: "Sábado", short: "SAB" },
   { value: "sunday", label: "Domingo", short: "DOM" },
 ];
-var timeSlots = Array.from({ length: 24 * 4 }, function (_, i) {
+var timeSlots = Array.from({ length: 24 * 4 }, (_, i) => {
   var hour = Math.floor(i / 4);
   var minute = (i % 4) * 15;
   var time = ""
@@ -202,7 +199,7 @@ var workingHoursSchema = z
     breakStart: z.string().optional(),
     breakEnd: z.string().optional(),
   })
-  .superRefine(function (data, ctx) {
+  .superRefine((data, ctx) => {
     if (data.isOpen) {
       if (!data.openTime) {
         ctx.addIssue({
@@ -272,7 +269,6 @@ var brazilianTimezones = [
   { value: "America/Noronha", label: "Fernando de Noronha (UTC-2)" },
 ];
 function BusinessSettings() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -288,16 +284,14 @@ function BusinessSettings() {
   var form = (0, react_hook_form_1.useForm)({
     resolver: (0, zod_1.zodResolver)(businessSettingsSchema),
     defaultValues: {
-      workingHours: daysOfWeek.map(function (day) {
-        return {
-          day: day.value,
-          isOpen: day.value !== "sunday",
-          openTime: "08:00",
-          closeTime: "18:00",
-          breakStart: "12:00",
-          breakEnd: "13:00",
-        };
-      }),
+      workingHours: daysOfWeek.map((day) => ({
+        day: day.value,
+        isOpen: day.value !== "sunday",
+        openTime: "08:00",
+        closeTime: "18:00",
+        breakStart: "12:00",
+        breakEnd: "13:00",
+      })),
       defaultAppointmentDuration: 60,
       appointmentBuffer: 15,
       maxAppointmentsPerDay: 20,
@@ -323,34 +317,30 @@ function BusinessSettings() {
     appendHoliday = _e.append,
     removeHoliday = _e.remove;
   // Load existing settings
-  (0, react_1.useEffect)(
-    function () {
-      var loadBusinessSettings = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            setIsLoading(true);
-            try {
-              // TODO: Replace with actual API call
-              // const response = await fetch("/api/settings/business");
-              // const data = await response.json();
-              // form.reset(data);
-            } catch (error) {
-              console.error("Erro ao carregar configurações:", error);
-              sonner_1.toast.error("Erro ao carregar configurações de funcionamento");
-            } finally {
-              setIsLoading(false);
-            }
-            return [2 /*return*/];
-          });
+  (0, react_1.useEffect)(() => {
+    var loadBusinessSettings = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setIsLoading(true);
+          try {
+            // TODO: Replace with actual API call
+            // const response = await fetch("/api/settings/business");
+            // const data = await response.json();
+            // form.reset(data);
+          } catch (error) {
+            console.error("Erro ao carregar configurações:", error);
+            sonner_1.toast.error("Erro ao carregar configurações de funcionamento");
+          } finally {
+            setIsLoading(false);
+          }
+          return [2 /*return*/];
         });
-      };
-      loadBusinessSettings();
-    },
-    [form],
-  );
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      });
+    loadBusinessSettings();
+  }, [form]);
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsSaving(true);
         try {
           // TODO: Replace with actual API call
@@ -370,16 +360,11 @@ function BusinessSettings() {
         return [2 /*return*/];
       });
     });
-  };
-  var copyScheduleToAll = function (sourceDay) {
+  var copyScheduleToAll = (sourceDay) => {
     var sourceSchedule = form.getValues(
-      "workingHours.".concat(
-        daysOfWeek.findIndex(function (d) {
-          return d.value === sourceDay;
-        }),
-      ),
+      "workingHours.".concat(daysOfWeek.findIndex((d) => d.value === sourceDay)),
     );
-    daysOfWeek.forEach(function (day, index) {
+    daysOfWeek.forEach((day, index) => {
       if (day.value !== sourceDay) {
         form.setValue(
           "workingHours.".concat(index),
@@ -389,7 +374,7 @@ function BusinessSettings() {
     });
     sonner_1.toast.success("Horário copiado para todos os dias!");
   };
-  var addBrazilianHoliday = function () {
+  var addBrazilianHoliday = () => {
     var currentYear = new Date().getFullYear();
     var commonHolidays = [
       {
@@ -417,13 +402,9 @@ function BusinessSettings() {
       },
       { date: "".concat(currentYear, "-12-25"), name: "Natal", isRecurring: true },
     ];
-    var existingDates = form.getValues("holidays").map(function (h) {
-      return h.date;
-    });
-    var newHolidays = commonHolidays.filter(function (h) {
-      return !existingDates.includes(h.date);
-    });
-    newHolidays.forEach(function (holiday) {
+    var existingDates = form.getValues("holidays").map((h) => h.date);
+    var newHolidays = commonHolidays.filter((h) => !existingDates.includes(h.date));
+    newHolidays.forEach((holiday) => {
       appendHoliday(holiday);
     });
     if (newHolidays.length > 0) {
@@ -481,212 +462,186 @@ function BusinessSettings() {
                   </card_1.CardDescription>
                 </card_1.CardHeader>
                 <card_1.CardContent className="space-y-6">
-                  {daysOfWeek.map(function (day, index) {
-                    return (
-                      <div key={day.value} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-3">
-                            <badge_1.Badge variant="outline" className="w-12 text-center">
-                              {day.short}
-                            </badge_1.Badge>
-                            <span className="font-medium">{day.label}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <form_1.FormField
-                              control={form.control}
-                              name={"workingHours.".concat(index, ".isOpen")}
-                              render={function (_a) {
-                                var field = _a.field;
-                                return (
-                                  <form_1.FormItem className="flex items-center space-x-2">
-                                    <form_1.FormLabel className="text-sm">Aberto</form_1.FormLabel>
-                                    <form_1.FormControl>
-                                      <switch_1.Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                      />
-                                    </form_1.FormControl>
-                                  </form_1.FormItem>
-                                );
-                              }}
-                            />
-                            <button_1.Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={function () {
-                                return copyScheduleToAll(day.value);
-                              }}
-                              disabled={!form.watch("workingHours.".concat(index, ".isOpen"))}
-                            >
-                              Copiar para todos
-                            </button_1.Button>
-                          </div>
+                  {daysOfWeek.map((day, index) => (
+                    <div key={day.value} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <badge_1.Badge variant="outline" className="w-12 text-center">
+                            {day.short}
+                          </badge_1.Badge>
+                          <span className="font-medium">{day.label}</span>
                         </div>
-
-                        {form.watch("workingHours.".concat(index, ".isOpen")) && (
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <form_1.FormField
-                              control={form.control}
-                              name={"workingHours.".concat(index, ".openTime")}
-                              render={function (_a) {
-                                var field = _a.field;
-                                return (
-                                  <form_1.FormItem>
-                                    <form_1.FormLabel>Abertura</form_1.FormLabel>
-                                    <select_1.Select
-                                      onValueChange={field.onChange}
-                                      defaultValue={field.value}
-                                    >
-                                      <form_1.FormControl>
-                                        <select_1.SelectTrigger>
-                                          <select_1.SelectValue placeholder="00:00" />
-                                        </select_1.SelectTrigger>
-                                      </form_1.FormControl>
-                                      <select_1.SelectContent>
-                                        {timeSlots
-                                          .slice(0, timeSlots.length - 4)
-                                          .map(function (slot) {
-                                            return (
-                                              <select_1.SelectItem
-                                                key={slot.value}
-                                                value={slot.value}
-                                              >
-                                                {slot.label}
-                                              </select_1.SelectItem>
-                                            );
-                                          })}
-                                      </select_1.SelectContent>
-                                    </select_1.Select>
-                                    <form_1.FormMessage />
-                                  </form_1.FormItem>
-                                );
-                              }}
-                            />
-
-                            <form_1.FormField
-                              control={form.control}
-                              name={"workingHours.".concat(index, ".closeTime")}
-                              render={function (_a) {
-                                var field = _a.field;
-                                return (
-                                  <form_1.FormItem>
-                                    <form_1.FormLabel>Fechamento</form_1.FormLabel>
-                                    <select_1.Select
-                                      onValueChange={field.onChange}
-                                      defaultValue={field.value}
-                                    >
-                                      <form_1.FormControl>
-                                        <select_1.SelectTrigger>
-                                          <select_1.SelectValue placeholder="00:00" />
-                                        </select_1.SelectTrigger>
-                                      </form_1.FormControl>
-                                      <select_1.SelectContent>
-                                        {timeSlots.slice(4).map(function (slot) {
-                                          return (
-                                            <select_1.SelectItem
-                                              key={slot.value}
-                                              value={slot.value}
-                                            >
-                                              {slot.label}
-                                            </select_1.SelectItem>
-                                          );
-                                        })}
-                                      </select_1.SelectContent>
-                                    </select_1.Select>
-                                    <form_1.FormMessage />
-                                  </form_1.FormItem>
-                                );
-                              }}
-                            />
-
-                            <form_1.FormField
-                              control={form.control}
-                              name={"workingHours.".concat(index, ".breakStart")}
-                              render={function (_a) {
-                                var field = _a.field;
-                                return (
-                                  <form_1.FormItem>
-                                    <form_1.FormLabel>Início Intervalo</form_1.FormLabel>
-                                    <select_1.Select
-                                      onValueChange={field.onChange}
-                                      defaultValue={field.value}
-                                    >
-                                      <form_1.FormControl>
-                                        <select_1.SelectTrigger>
-                                          <select_1.SelectValue placeholder="Sem intervalo" />
-                                        </select_1.SelectTrigger>
-                                      </form_1.FormControl>
-                                      <select_1.SelectContent>
-                                        <select_1.SelectItem value="">
-                                          Sem intervalo
-                                        </select_1.SelectItem>
-                                        {timeSlots.map(function (slot) {
-                                          return (
-                                            <select_1.SelectItem
-                                              key={slot.value}
-                                              value={slot.value}
-                                            >
-                                              {slot.label}
-                                            </select_1.SelectItem>
-                                          );
-                                        })}
-                                      </select_1.SelectContent>
-                                    </select_1.Select>
-                                    <form_1.FormMessage />
-                                  </form_1.FormItem>
-                                );
-                              }}
-                            />
-
-                            <form_1.FormField
-                              control={form.control}
-                              name={"workingHours.".concat(index, ".breakEnd")}
-                              render={function (_a) {
-                                var field = _a.field;
-                                return (
-                                  <form_1.FormItem>
-                                    <form_1.FormLabel>Fim Intervalo</form_1.FormLabel>
-                                    <select_1.Select
-                                      onValueChange={field.onChange}
-                                      defaultValue={field.value}
-                                    >
-                                      <form_1.FormControl>
-                                        <select_1.SelectTrigger>
-                                          <select_1.SelectValue placeholder="Sem intervalo" />
-                                        </select_1.SelectTrigger>
-                                      </form_1.FormControl>
-                                      <select_1.SelectContent>
-                                        <select_1.SelectItem value="">
-                                          Sem intervalo
-                                        </select_1.SelectItem>
-                                        {timeSlots.map(function (slot) {
-                                          return (
-                                            <select_1.SelectItem
-                                              key={slot.value}
-                                              value={slot.value}
-                                            >
-                                              {slot.label}
-                                            </select_1.SelectItem>
-                                          );
-                                        })}
-                                      </select_1.SelectContent>
-                                    </select_1.Select>
-                                    <form_1.FormMessage />
-                                  </form_1.FormItem>
-                                );
-                              }}
-                            />
-                          </div>
-                        )}
+                        <div className="flex items-center gap-2">
+                          <form_1.FormField
+                            control={form.control}
+                            name={"workingHours.".concat(index, ".isOpen")}
+                            render={(_a) => {
+                              var field = _a.field;
+                              return (
+                                <form_1.FormItem className="flex items-center space-x-2">
+                                  <form_1.FormLabel className="text-sm">Aberto</form_1.FormLabel>
+                                  <form_1.FormControl>
+                                    <switch_1.Switch
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                    />
+                                  </form_1.FormControl>
+                                </form_1.FormItem>
+                              );
+                            }}
+                          />
+                          <button_1.Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyScheduleToAll(day.value)}
+                            disabled={!form.watch("workingHours.".concat(index, ".isOpen"))}
+                          >
+                            Copiar para todos
+                          </button_1.Button>
+                        </div>
                       </div>
-                    );
-                  })}
+
+                      {form.watch("workingHours.".concat(index, ".isOpen")) && (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          <form_1.FormField
+                            control={form.control}
+                            name={"workingHours.".concat(index, ".openTime")}
+                            render={(_a) => {
+                              var field = _a.field;
+                              return (
+                                <form_1.FormItem>
+                                  <form_1.FormLabel>Abertura</form_1.FormLabel>
+                                  <select_1.Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                  >
+                                    <form_1.FormControl>
+                                      <select_1.SelectTrigger>
+                                        <select_1.SelectValue placeholder="00:00" />
+                                      </select_1.SelectTrigger>
+                                    </form_1.FormControl>
+                                    <select_1.SelectContent>
+                                      {timeSlots.slice(0, timeSlots.length - 4).map((slot) => (
+                                        <select_1.SelectItem key={slot.value} value={slot.value}>
+                                          {slot.label}
+                                        </select_1.SelectItem>
+                                      ))}
+                                    </select_1.SelectContent>
+                                  </select_1.Select>
+                                  <form_1.FormMessage />
+                                </form_1.FormItem>
+                              );
+                            }}
+                          />
+
+                          <form_1.FormField
+                            control={form.control}
+                            name={"workingHours.".concat(index, ".closeTime")}
+                            render={(_a) => {
+                              var field = _a.field;
+                              return (
+                                <form_1.FormItem>
+                                  <form_1.FormLabel>Fechamento</form_1.FormLabel>
+                                  <select_1.Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                  >
+                                    <form_1.FormControl>
+                                      <select_1.SelectTrigger>
+                                        <select_1.SelectValue placeholder="00:00" />
+                                      </select_1.SelectTrigger>
+                                    </form_1.FormControl>
+                                    <select_1.SelectContent>
+                                      {timeSlots.slice(4).map((slot) => (
+                                        <select_1.SelectItem key={slot.value} value={slot.value}>
+                                          {slot.label}
+                                        </select_1.SelectItem>
+                                      ))}
+                                    </select_1.SelectContent>
+                                  </select_1.Select>
+                                  <form_1.FormMessage />
+                                </form_1.FormItem>
+                              );
+                            }}
+                          />
+
+                          <form_1.FormField
+                            control={form.control}
+                            name={"workingHours.".concat(index, ".breakStart")}
+                            render={(_a) => {
+                              var field = _a.field;
+                              return (
+                                <form_1.FormItem>
+                                  <form_1.FormLabel>Início Intervalo</form_1.FormLabel>
+                                  <select_1.Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                  >
+                                    <form_1.FormControl>
+                                      <select_1.SelectTrigger>
+                                        <select_1.SelectValue placeholder="Sem intervalo" />
+                                      </select_1.SelectTrigger>
+                                    </form_1.FormControl>
+                                    <select_1.SelectContent>
+                                      <select_1.SelectItem value="">
+                                        Sem intervalo
+                                      </select_1.SelectItem>
+                                      {timeSlots.map((slot) => (
+                                        <select_1.SelectItem key={slot.value} value={slot.value}>
+                                          {slot.label}
+                                        </select_1.SelectItem>
+                                      ))}
+                                    </select_1.SelectContent>
+                                  </select_1.Select>
+                                  <form_1.FormMessage />
+                                </form_1.FormItem>
+                              );
+                            }}
+                          />
+
+                          <form_1.FormField
+                            control={form.control}
+                            name={"workingHours.".concat(index, ".breakEnd")}
+                            render={(_a) => {
+                              var field = _a.field;
+                              return (
+                                <form_1.FormItem>
+                                  <form_1.FormLabel>Fim Intervalo</form_1.FormLabel>
+                                  <select_1.Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                  >
+                                    <form_1.FormControl>
+                                      <select_1.SelectTrigger>
+                                        <select_1.SelectValue placeholder="Sem intervalo" />
+                                      </select_1.SelectTrigger>
+                                    </form_1.FormControl>
+                                    <select_1.SelectContent>
+                                      <select_1.SelectItem value="">
+                                        Sem intervalo
+                                      </select_1.SelectItem>
+                                      {timeSlots.map((slot) => (
+                                        <select_1.SelectItem key={slot.value} value={slot.value}>
+                                          {slot.label}
+                                        </select_1.SelectItem>
+                                      ))}
+                                    </select_1.SelectContent>
+                                  </select_1.Select>
+                                  <form_1.FormMessage />
+                                </form_1.FormItem>
+                              );
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
 
                   <form_1.FormField
                     control={form.control}
                     name="timezone"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="md:w-1/2">
@@ -701,13 +656,11 @@ function BusinessSettings() {
                               </select_1.SelectTrigger>
                             </form_1.FormControl>
                             <select_1.SelectContent>
-                              {brazilianTimezones.map(function (tz) {
-                                return (
-                                  <select_1.SelectItem key={tz.value} value={tz.value}>
-                                    {tz.label}
-                                  </select_1.SelectItem>
-                                );
-                              })}
+                              {brazilianTimezones.map((tz) => (
+                                <select_1.SelectItem key={tz.value} value={tz.value}>
+                                  {tz.label}
+                                </select_1.SelectItem>
+                              ))}
                             </select_1.SelectContent>
                           </select_1.Select>
                           <form_1.FormDescription>
@@ -736,7 +689,7 @@ function BusinessSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="defaultAppointmentDuration"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -747,9 +700,7 @@ function BusinessSettings() {
                                 min="15"
                                 step="15"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value) || 60);
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 60)}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -764,7 +715,7 @@ function BusinessSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="appointmentBuffer"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -775,9 +726,7 @@ function BusinessSettings() {
                                 min="0"
                                 step="5"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value) || 0);
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -792,7 +741,7 @@ function BusinessSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="maxAppointmentsPerDay"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -802,9 +751,7 @@ function BusinessSettings() {
                                 type="number"
                                 min="1"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value) || 20);
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 20)}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -821,7 +768,7 @@ function BusinessSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="autoConfirmBookings"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -848,7 +795,7 @@ function BusinessSettings() {
                       <form_1.FormField
                         control={form.control}
                         name="autoConfirmHours"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -859,9 +806,7 @@ function BusinessSettings() {
                                   min="0"
                                   max="168"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseInt(e.target.value) || 2);
-                                  }}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 2)}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -892,7 +837,7 @@ function BusinessSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="advanceBookingLimit"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -902,9 +847,7 @@ function BusinessSettings() {
                                 type="number"
                                 min="0"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value) || 30);
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 30)}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -919,7 +862,7 @@ function BusinessSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="cancellationDeadline"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -929,9 +872,7 @@ function BusinessSettings() {
                                 type="number"
                                 min="0"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value) || 24);
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 24)}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -946,7 +887,7 @@ function BusinessSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="rescheduleLimit"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -956,9 +897,7 @@ function BusinessSettings() {
                                 type="number"
                                 min="0"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value) || 2);
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 2)}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -977,7 +916,7 @@ function BusinessSettings() {
                       <form_1.FormField
                         control={form.control}
                         name="noShowFee"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -988,9 +927,7 @@ function BusinessSettings() {
                                   step="0.01"
                                   min="0"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseFloat(e.target.value) || 0);
-                                  }}
+                                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -1005,7 +942,7 @@ function BusinessSettings() {
                       <form_1.FormField
                         control={form.control}
                         name="noShowAfterMinutes"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -1015,9 +952,7 @@ function BusinessSettings() {
                                   type="number"
                                   min="0"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseInt(e.target.value) || 15);
-                                  }}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 15)}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -1032,7 +967,7 @@ function BusinessSettings() {
                       <form_1.FormField
                         control={form.control}
                         name="blacklistAfterNoShows"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -1042,9 +977,7 @@ function BusinessSettings() {
                                   type="number"
                                   min="0"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseInt(e.target.value) || 3);
-                                  }}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value) || 3)}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -1062,7 +995,7 @@ function BusinessSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="enableReminders"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1091,7 +1024,7 @@ function BusinessSettings() {
                           Horários dos Lembretes
                         </form_1.FormLabel>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {[1, 2, 4, 24, 48].map(function (hours) {
+                          {[1, 2, 4, 24, 48].map((hours) => {
                             var _a;
                             return (
                               <label key={hours} className="flex items-center space-x-2">
@@ -1102,7 +1035,7 @@ function BusinessSettings() {
                                       ? void 0
                                       : _a.includes(hours)) || false
                                   }
-                                  onChange={function (e) {
+                                  onChange={(e) => {
                                     var current = form.getValues("reminderHours") || [];
                                     if (e.target.checked) {
                                       form.setValue(
@@ -1116,9 +1049,7 @@ function BusinessSettings() {
                                     } else {
                                       form.setValue(
                                         "reminderHours",
-                                        current.filter(function (h) {
-                                          return h !== hours;
-                                        }),
+                                        current.filter((h) => h !== hours),
                                       );
                                     }
                                   }}
@@ -1157,13 +1088,13 @@ function BusinessSettings() {
                       </button_1.Button>
                       <button_1.Button
                         type="button"
-                        onClick={function () {
-                          return appendHoliday({
+                        onClick={() =>
+                          appendHoliday({
                             date: "",
                             name: "",
                             isRecurring: false,
-                          });
-                        }}
+                          })
+                        }
                       >
                         <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                         Adicionar Feriado
@@ -1183,81 +1114,77 @@ function BusinessSettings() {
                         </p>
                       </div>
                     : <div className="space-y-4">
-                        {holidayFields.map(function (field, index) {
-                          return (
-                            <div
-                              key={field.id}
-                              className="flex items-end gap-4 p-4 border rounded-lg"
+                        {holidayFields.map((field, index) => (
+                          <div
+                            key={field.id}
+                            className="flex items-end gap-4 p-4 border rounded-lg"
+                          >
+                            <form_1.FormField
+                              control={form.control}
+                              name={"holidays.".concat(index, ".date")}
+                              render={(_a) => {
+                                var field = _a.field;
+                                return (
+                                  <form_1.FormItem className="flex-1">
+                                    <form_1.FormLabel>Data</form_1.FormLabel>
+                                    <form_1.FormControl>
+                                      <input_1.Input type="date" {...field} />
+                                    </form_1.FormControl>
+                                    <form_1.FormMessage />
+                                  </form_1.FormItem>
+                                );
+                              }}
+                            />
+
+                            <form_1.FormField
+                              control={form.control}
+                              name={"holidays.".concat(index, ".name")}
+                              render={(_a) => {
+                                var field = _a.field;
+                                return (
+                                  <form_1.FormItem className="flex-2">
+                                    <form_1.FormLabel>Nome do Feriado</form_1.FormLabel>
+                                    <form_1.FormControl>
+                                      <input_1.Input placeholder="Natal" {...field} />
+                                    </form_1.FormControl>
+                                    <form_1.FormMessage />
+                                  </form_1.FormItem>
+                                );
+                              }}
+                            />
+
+                            <form_1.FormField
+                              control={form.control}
+                              name={"holidays.".concat(index, ".isRecurring")}
+                              render={(_a) => {
+                                var field = _a.field;
+                                return (
+                                  <form_1.FormItem className="flex flex-row items-center space-x-2">
+                                    <form_1.FormControl>
+                                      <input
+                                        type="checkbox"
+                                        checked={field.value}
+                                        onChange={field.onChange}
+                                        className="rounded border-gray-300"
+                                      />
+                                    </form_1.FormControl>
+                                    <form_1.FormLabel className="text-sm">Anual</form_1.FormLabel>
+                                  </form_1.FormItem>
+                                );
+                              }}
+                            />
+
+                            <button_1.Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeHoliday(index)}
+                              className="text-red-600 hover:text-red-800"
                             >
-                              <form_1.FormField
-                                control={form.control}
-                                name={"holidays.".concat(index, ".date")}
-                                render={function (_a) {
-                                  var field = _a.field;
-                                  return (
-                                    <form_1.FormItem className="flex-1">
-                                      <form_1.FormLabel>Data</form_1.FormLabel>
-                                      <form_1.FormControl>
-                                        <input_1.Input type="date" {...field} />
-                                      </form_1.FormControl>
-                                      <form_1.FormMessage />
-                                    </form_1.FormItem>
-                                  );
-                                }}
-                              />
-
-                              <form_1.FormField
-                                control={form.control}
-                                name={"holidays.".concat(index, ".name")}
-                                render={function (_a) {
-                                  var field = _a.field;
-                                  return (
-                                    <form_1.FormItem className="flex-2">
-                                      <form_1.FormLabel>Nome do Feriado</form_1.FormLabel>
-                                      <form_1.FormControl>
-                                        <input_1.Input placeholder="Natal" {...field} />
-                                      </form_1.FormControl>
-                                      <form_1.FormMessage />
-                                    </form_1.FormItem>
-                                  );
-                                }}
-                              />
-
-                              <form_1.FormField
-                                control={form.control}
-                                name={"holidays.".concat(index, ".isRecurring")}
-                                render={function (_a) {
-                                  var field = _a.field;
-                                  return (
-                                    <form_1.FormItem className="flex flex-row items-center space-x-2">
-                                      <form_1.FormControl>
-                                        <input
-                                          type="checkbox"
-                                          checked={field.value}
-                                          onChange={field.onChange}
-                                          className="rounded border-gray-300"
-                                        />
-                                      </form_1.FormControl>
-                                      <form_1.FormLabel className="text-sm">Anual</form_1.FormLabel>
-                                    </form_1.FormItem>
-                                  );
-                                }}
-                              />
-
-                              <button_1.Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                onClick={function () {
-                                  return removeHoliday(index);
-                                }}
-                                className="text-red-600 hover:text-red-800"
-                              >
-                                <lucide_react_1.Trash2 className="h-4 w-4" />
-                              </button_1.Button>
-                            </div>
-                          );
-                        })}
+                              <lucide_react_1.Trash2 className="h-4 w-4" />
+                            </button_1.Button>
+                          </div>
+                        ))}
                       </div>}
                 </card_1.CardContent>
               </card_1.Card>

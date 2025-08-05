@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_ts_1 = require("https://deno.land/std@0.168.0/http/server.ts");
 var supabase_js_2_1 = require("https://esm.sh/@supabase/supabase-js@2");
@@ -153,8 +150,8 @@ var corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-(0, server_ts_1.serve)(function (req) {
-  return __awaiter(void 0, void 0, void 0, function () {
+(0, server_ts_1.serve)((req) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var supabaseUrl,
       supabaseServiceKey,
       supabase,
@@ -182,7 +179,7 @@ var corsHeaders = {
       emailQueue_1,
       email,
       error_2;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           // Handle CORS
@@ -191,7 +188,7 @@ var corsHeaders = {
           }
           _e.label = 1;
         case 1:
-          _e.trys.push([1, 10, , 11]);
+          _e.trys.push([1, 10, undefined, 11]);
           supabaseUrl = Deno.env.get("SUPABASE_URL");
           supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
           supabase = (0, supabase_js_2_1.createClient)(supabaseUrl, supabaseServiceKey);
@@ -257,7 +254,7 @@ var corsHeaders = {
           );
           _e.label = 4;
         case 4:
-          _e.trys.push([4, 7, , 8]);
+          _e.trys.push([4, 7, undefined, 8]);
           return [
             4 /*yield*/,
             generateReport(supabase, config),
@@ -368,12 +365,12 @@ var corsHeaders = {
           return [2 /*return*/];
       }
     });
-  });
-});
+  }),
+);
 function generateReport(supabase, config) {
   return __awaiter(this, void 0, void 0, function () {
     var filters, clinicId, endDate, startDate, _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           filters = config.filters || {};
@@ -429,10 +426,10 @@ function generateReport(supabase, config) {
     });
   });
 }
-function generateConsumptionReport(supabase, clinicId, filters, startDate, endDate) {
+function generateConsumptionReport(supabase, clinicId, _filters, startDate, endDate) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, movements, error, consumptionByProduct, totalConsumption, totalValue, topProducts;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -455,7 +452,7 @@ function generateConsumptionReport(supabase, clinicId, filters, startDate, endDa
           totalValue = 0;
           movements === null || movements === void 0
             ? void 0
-            : movements.forEach(function (movement) {
+            : movements.forEach((movement) => {
                 var _a, _b, _c;
                 var productId = movement.product_id;
                 var quantity = movement.quantity_out || 0;
@@ -487,9 +484,7 @@ function generateConsumptionReport(supabase, clinicId, filters, startDate, endDa
                 }
               });
           topProducts = Array.from(consumptionByProduct.values())
-            .sort(function (a, b) {
-              return b.quantity - a.quantity;
-            })
+            .sort((a, b) => b.quantity - a.quantity)
             .slice(0, 20);
           return [
             2 /*return*/,
@@ -511,10 +506,10 @@ function generateConsumptionReport(supabase, clinicId, filters, startDate, endDa
     });
   });
 }
-function generateValuationReport(supabase, clinicId, filters, startDate, endDate) {
+function generateValuationReport(supabase, clinicId, _filters, startDate, endDate) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, inventory, error, totalValue, byCategory;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -533,13 +528,14 @@ function generateValuationReport(supabase, clinicId, filters, startDate, endDate
           totalValue =
             (inventory === null || inventory === void 0
               ? void 0
-              : inventory.reduce(function (sum, item) {
-                  return sum + item.quantity_available * item.unit_cost;
-                }, 0)) || 0;
+              : inventory.reduce(
+                  (sum, item) => sum + item.quantity_available * item.unit_cost,
+                  0,
+                )) || 0;
           byCategory = new Map();
           inventory === null || inventory === void 0
             ? void 0
-            : inventory.forEach(function (item) {
+            : inventory.forEach((item) => {
                 var _a, _b;
                 var category =
                   ((_b =
@@ -579,7 +575,7 @@ function generateValuationReport(supabase, clinicId, filters, startDate, endDate
                 (inventory === null || inventory === void 0
                   ? void 0
                   : inventory
-                      .map(function (item) {
+                      .map((item) => {
                         var _a;
                         return {
                           productName:
@@ -590,9 +586,7 @@ function generateValuationReport(supabase, clinicId, filters, startDate, endDate
                           totalValue: item.quantity_available * item.unit_cost,
                         };
                       })
-                      .sort(function (a, b) {
-                        return b.totalValue - a.totalValue;
-                      })
+                      .sort((a, b) => b.totalValue - a.totalValue)
                       .slice(0, 20)) || [],
               generatedAt: new Date().toISOString(),
             },
@@ -601,10 +595,10 @@ function generateValuationReport(supabase, clinicId, filters, startDate, endDate
     });
   });
 }
-function generateMovementReport(supabase, clinicId, filters, startDate, endDate) {
+function generateMovementReport(supabase, clinicId, _filters, startDate, endDate) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, movements, error, summary;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -630,7 +624,7 @@ function generateMovementReport(supabase, clinicId, filters, startDate, endDate)
           };
           movements === null || movements === void 0
             ? void 0
-            : movements.forEach(function (movement) {
+            : movements.forEach((movement) => {
                 summary.totalIn += movement.quantity_in || 0;
                 summary.totalOut += movement.quantity_out || 0;
                 var type = movement.movement_type;
@@ -663,9 +657,9 @@ function generateMovementReport(supabase, clinicId, filters, startDate, endDate)
     });
   });
 }
-function generateCustomReport(supabase, clinicId, filters, startDate, endDate) {
+function generateCustomReport(_supabase, _clinicId, filters, startDate, endDate) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       // Custom report based on filters
       return [
         2 /*return*/,

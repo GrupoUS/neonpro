@@ -20,21 +20,21 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import type { QRCodeSVG } from "qrcode.react";
 import type {
-  Eye,
-  EyeOff,
-  Smartphone,
-  Shield,
   AlertTriangle,
   CheckCircle,
   Copy,
   Download,
+  Eye,
+  EyeOff,
+  Shield,
+  Smartphone,
 } from "lucide-react";
+import type { QRCodeSVG } from "qrcode.react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
 import type {
   Card,
   CardContent,
@@ -42,16 +42,16 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Checkbox } from "@/components/ui/checkbox";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { toast } from "@/components/ui/use-toast";
 import type { useMFA } from "@/hooks/use-mfa";
-import type { MFASetupProps, MFASetupResult, MFAMethodType, MFAError } from "@/types/auth";
 import type { cn } from "@/lib/utils";
+import type { MFAError, MFAMethodType, MFASetupProps, MFASetupResult } from "@/types/auth";
 
 // Setup step configuration
 interface SetupStep {

@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AuditLogger } from "../../audit/audit-logger";
 import type { LGPDManager } from "../../lgpd/lgpd-manager";
-import type { SessionManager } from "../auth/session-manager";
 import type { NotificationService } from "../../notifications/notification-service";
+import type { SessionManager } from "../auth/session-manager";
 
 /**
  * Configuration for communication manager

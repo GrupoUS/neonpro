@@ -1,9 +1,4 @@
-import type {
-  createDashboardConfigSchema,
-  updateDashboardConfigSchema,
-} from "@/app/lib/validations/dashboard";
-import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {

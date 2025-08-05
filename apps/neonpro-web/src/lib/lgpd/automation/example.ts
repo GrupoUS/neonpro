@@ -9,9 +9,9 @@ import type { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import type { LGPDComplianceManager } from "../LGPDComplianceManager";
 import type {
-  LGPDAutomationOrchestrator,
   getLGPDAutomationConfig,
   LGPDAutomationConfig,
+  LGPDAutomationOrchestrator,
 } from "./index";
 
 // Configuração do ambiente

@@ -2,18 +2,18 @@
 // Unified integration of all advanced authentication components
 // Complete session management with security, monitoring, and compliance
 
-import type { UserSession, SessionConfig, SessionMetrics } from "@/types/session";
-import type { SessionConfig as Config } from "./config/session-config";
-import type { SessionUtils } from "./utils/session-utils";
-import type { IntelligentTimeoutManager } from "./timeout/intelligent-timeout";
-import type { ConcurrentSessionManager } from "./concurrent/concurrent-session-manager";
-import type { SuspiciousActivityDetector } from "./suspicious/suspicious-activity-detector";
-import type { SecurityMonitor } from "./monitoring/security-monitor";
-import type { SessionSyncManager } from "./sync/session-sync";
-import type { SessionPreservationManager } from "./preservation/session-preservation";
-import type { EmergencyShutdownManager } from "./emergency/emergency-shutdown";
+import type { SessionConfig, SessionMetrics, UserSession } from "@/types/session";
 import type { AuditTrailManager } from "./audit/audit-trail";
 import type { DataCleanupManager } from "./cleanup/data-cleanup";
+import type { ConcurrentSessionManager } from "./concurrent/concurrent-session-manager";
+import type { SessionConfig as Config } from "./config/session-config";
+import type { EmergencyShutdownManager } from "./emergency/emergency-shutdown";
+import type { SecurityMonitor } from "./monitoring/security-monitor";
+import type { SessionPreservationManager } from "./preservation/session-preservation";
+import type { SuspiciousActivityDetector } from "./suspicious/suspicious-activity-detector";
+import type { SessionSyncManager } from "./sync/session-sync";
+import type { IntelligentTimeoutManager } from "./timeout/intelligent-timeout";
+import type { SessionUtils } from "./utils/session-utils";
 
 export interface AdvancedAuthConfig {
   // Core configuration

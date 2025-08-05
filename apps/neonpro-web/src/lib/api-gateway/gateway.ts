@@ -8,21 +8,21 @@
  */
 
 import type {
-  ApiGatewayConfig,
-  ApiGatewayManager,
-  ApiRoute,
   ApiClientConfig,
+  ApiDocumentation,
+  ApiError,
+  ApiGatewayCache,
+  ApiGatewayConfig,
+  ApiGatewayEvents,
+  ApiGatewayLogger,
+  ApiGatewayManager,
+  ApiGatewayPlugin,
+  ApiHealthCheck,
+  ApiMetrics,
+  ApiMiddleware,
   ApiRequestContext,
   ApiResponseContext,
-  ApiError,
-  ApiMetrics,
-  ApiHealthCheck,
-  ApiDocumentation,
-  ApiMiddleware,
-  ApiGatewayPlugin,
-  ApiGatewayEvents,
-  ApiGatewayCache,
-  ApiGatewayLogger,
+  ApiRoute,
 } from "./types";
 
 /**

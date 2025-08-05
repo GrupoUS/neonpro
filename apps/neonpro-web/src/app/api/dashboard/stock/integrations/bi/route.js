@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -140,7 +137,7 @@ var server_2 = require("next/server");
 function GET() {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, session, _a, biMetrics, error, analytics, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, (0, server_1.createClient)()];
@@ -148,7 +145,7 @@ function GET() {
           supabase = _b.sent();
           _b.label = 2;
         case 2:
-          _b.trys.push([2, 5, , 6]);
+          _b.trys.push([2, 5, undefined, 6]);
           return [4 /*yield*/, supabase.auth.getSession()];
         case 3:
           session = _b.sent().data.session;
@@ -181,25 +178,24 @@ function GET() {
             totalValue:
               (biMetrics === null || biMetrics === void 0
                 ? void 0
-                : biMetrics.reduce(function (acc, item) {
-                    return acc + item.current_quantity * item.unit_price;
-                  }, 0)) || 0,
+                : biMetrics.reduce(
+                    (acc, item) => acc + item.current_quantity * item.unit_price,
+                    0,
+                  )) || 0,
             lowStockItems:
               (biMetrics === null || biMetrics === void 0
                 ? void 0
-                : biMetrics.filter(function (item) {
-                    return item.current_quantity <= item.min_threshold;
-                  }).length) || 0,
+                : biMetrics.filter((item) => item.current_quantity <= item.min_threshold).length) ||
+              0,
             overStockItems:
               (biMetrics === null || biMetrics === void 0
                 ? void 0
-                : biMetrics.filter(function (item) {
-                    return item.current_quantity >= item.max_threshold;
-                  }).length) || 0,
+                : biMetrics.filter((item) => item.current_quantity >= item.max_threshold).length) ||
+              0,
             categoryDistribution:
               (biMetrics === null || biMetrics === void 0
                 ? void 0
-                : biMetrics.reduce(function (acc, item) {
+                : biMetrics.reduce((acc, item) => {
                     acc[item.category] = (acc[item.category] || 0) + 1;
                     return acc;
                   }, {})) || {},
@@ -207,10 +203,8 @@ function GET() {
               (biMetrics === null || biMetrics === void 0
                 ? void 0
                 : biMetrics
-                    .flatMap(function (item) {
-                      return item.movements || [];
-                    })
-                    .reduce(function (acc, movement) {
+                    .flatMap((item) => item.movements || [])
+                    .reduce((acc, movement) => {
                       var date = new Date(movement.created_at).toISOString().split("T")[0];
                       acc[date] = (acc[date] || 0) + movement.quantity;
                       return acc;
@@ -251,7 +245,7 @@ function POST(request) {
       error,
       processedData,
       error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, (0, server_1.createClient)()];
@@ -259,7 +253,7 @@ function POST(request) {
           supabase = _b.sent();
           _b.label = 2;
         case 2:
-          _b.trys.push([2, 6, , 7]);
+          _b.trys.push([2, 6, undefined, 7]);
           return [4 /*yield*/, supabase.auth.getSession()];
         case 3:
           session = _b.sent().data.session;
@@ -310,9 +304,10 @@ function POST(request) {
               totalValue:
                 (exportData === null || exportData === void 0
                   ? void 0
-                  : exportData.reduce(function (acc, item) {
-                      return acc + item.current_quantity * item.unit_price;
-                    }, 0)) || 0,
+                  : exportData.reduce(
+                      (acc, item) => acc + item.current_quantity * item.unit_price,
+                      0,
+                    )) || 0,
             },
           };
           return [

@@ -6,9 +6,9 @@
  * GET /api/subscription/plans - Get all available subscription plans
  */
 
+import type { cookies } from "next/headers";
 import type { NextRequest, NextResponse } from "next/server";
 import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
 import type { Database } from "@/types/database";
 
 export async function GET(request: NextRequest) {

@@ -2,10 +2,10 @@
 // Story 1.4: Session Management & Security Implementation
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { SessionManager } from "../session-manager";
-import type { SecurityMonitor } from "../security-monitor";
 import type { DeviceManager } from "../device-manager";
-import type { SessionData, SecurityEvent, DeviceInfo } from "../types";
+import type { SecurityMonitor } from "../security-monitor";
+import type { SessionManager } from "../session-manager";
+import type { DeviceInfo, SecurityEvent, SessionData } from "../types";
 import type { ValidationUtils } from "../utils";
 
 /**

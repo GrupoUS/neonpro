@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Financial Management Validation Schemas
  * Created: January 27, 2025
@@ -52,7 +51,7 @@ var uuidSchema = zod_1.z.string().uuid("Invalid UUID format");
 var cnpjSchema = zod_1.z
   .string()
   .regex(/^\d{14}$/, "CNPJ must have exactly 14 digits")
-  .refine(function (cnpj) {
+  .refine((cnpj) => {
     // Basic CNPJ validation (simplified)
     if (cnpj.length !== 14) return false;
     // Check for invalid patterns (all same digits)
@@ -62,7 +61,7 @@ var cnpjSchema = zod_1.z
 var cpfSchema = zod_1.z
   .string()
   .regex(/^\d{11}$/, "CPF must have exactly 11 digits")
-  .refine(function (cpf) {
+  .refine((cpf) => {
     // Basic CPF validation (simplified)
     if (cpf.length !== 11) return false;
     // Check for invalid patterns (all same digits)
@@ -99,8 +98,8 @@ var paymentProcessingStatusSchema = zod_1.z.enum([
   "cancelled",
   "refunded",
 ]);
-var installmentStatusSchema = zod_1.z.enum(["pending", "paid", "overdue", "cancelled"]);
-var shadowValidationStatusSchema = zod_1.z.enum(["pending", "validated", "failed"]);
+var _installmentStatusSchema = zod_1.z.enum(["pending", "paid", "overdue", "cancelled"]);
+var _shadowValidationStatusSchema = zod_1.z.enum(["pending", "validated", "failed"]);
 var shadowOperationTypeSchema = zod_1.z.enum([
   "invoice_calculation",
   "payment_processing",
@@ -109,7 +108,7 @@ var shadowOperationTypeSchema = zod_1.z.enum([
 ]);
 var reminderTypeSchema = zod_1.z.enum(["pre_due", "due", "overdue", "final_notice"]);
 var deliveryMethodSchema = zod_1.z.enum(["email", "sms", "whatsapp", "phone"]);
-var reminderStatusSchema = zod_1.z.enum(["pending", "sent", "delivered", "failed", "cancelled"]);
+var _reminderStatusSchema = zod_1.z.enum(["pending", "sent", "delivered", "failed", "cancelled"]);
 // Address validation
 var addressSchema = zod_1.z.object({
   street: zod_1.z.string().min(1, "Street is required").max(100, "Street too long"),
@@ -156,7 +155,7 @@ var createInvoiceItemSchema = zod_1.z
       .default(0),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Discount cannot be greater than unit price * quantity
       var itemTotal = data.unit_price * data.quantity;
       return data.discount_amount <= itemTotal;
@@ -184,7 +183,7 @@ exports.createInvoiceSchema = zod_1.z
       .string()
       .datetime("Invalid due date format")
       .optional()
-      .refine(function (date) {
+      .refine((date) => {
         if (!date) return true;
         return new Date(date) > new Date();
       }, "Due date must be in the future"),
@@ -195,11 +194,12 @@ exports.createInvoiceSchema = zod_1.z
     metadata: zod_1.z.record(zod_1.z.any()).default({}),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Calculate total and validate it's reasonable
-      var total = data.items.reduce(function (sum, item) {
-        return sum + item.unit_price * item.quantity - item.discount_amount;
-      }, 0);
+      var total = data.items.reduce(
+        (sum, item) => sum + item.unit_price * item.quantity - item.discount_amount,
+        0,
+      );
       return total > 0;
     },
     {
@@ -221,7 +221,7 @@ exports.updateInvoiceSchema = zod_1.z.object({
     .string()
     .datetime("Invalid due date format")
     .optional()
-    .refine(function (date) {
+    .refine((date) => {
       if (!date) return true;
       return new Date(date) > new Date();
     }, "Due date must be in the future"),
@@ -247,19 +247,12 @@ var createInstallmentSchema = zod_1.z
     due_date: zod_1.z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, "Due date must be in YYYY-MM-DD format")
-      .refine(function (date) {
-        return new Date(date) > new Date();
-      }, "Due date must be in the future"),
+      .refine((date) => new Date(date) > new Date(), "Due date must be in the future"),
   })
-  .refine(
-    function (data) {
-      return data.installment_number <= data.total_installments;
-    },
-    {
-      message: "Installment number cannot exceed total installments",
-      path: ["installment_number"],
-    },
-  );
+  .refine((data) => data.installment_number <= data.total_installments, {
+    message: "Installment number cannot exceed total installments",
+    path: ["installment_number"],
+  });
 // Payment validation
 exports.createPaymentSchema = zod_1.z
   .object({
@@ -280,7 +273,7 @@ exports.createPaymentSchema = zod_1.z
     metadata: zod_1.z.record(zod_1.z.any()).default({}),
   })
   .refine(
-    function (data) {
+    (data) => {
       // If payment method is installment, installments array is required
       if (data.payment_method === "installment") {
         return data.installments && data.installments.length > 0;
@@ -293,12 +286,10 @@ exports.createPaymentSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // If installments are provided, validate total amount matches
       if (data.installments && data.installments.length > 0) {
-        var installmentTotal = data.installments.reduce(function (sum, inst) {
-          return sum + inst.amount;
-        }, 0);
+        var installmentTotal = data.installments.reduce((sum, inst) => sum + inst.amount, 0);
         return Math.abs(installmentTotal - data.amount) < 0.01; // Allow small rounding differences
       }
       return true;
@@ -309,7 +300,7 @@ exports.createPaymentSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // PIX key required for PIX payment method
       if (data.payment_method === "pix") {
         return data.pix_key && data.pix_key.length > 0;
@@ -343,7 +334,7 @@ exports.nfseRequestSchema = zod_1.z.object({
   service_amount: positiveAmountSchema,
   tax_amount: amountSchema,
   issuer_cnpj: cnpjSchema,
-  taker_cpf_cnpj: zod_1.z.string().refine(function (value) {
+  taker_cpf_cnpj: zod_1.z.string().refine((value) => {
     // Can be either CPF (11 digits) or CNPJ (14 digits)
     return /^\d{11}$/.test(value) || /^\d{14}$/.test(value);
   }, "Must be a valid CPF (11 digits) or CNPJ (14 digits)"),
@@ -382,7 +373,7 @@ exports.invoiceReportFiltersSchema = zod_1.z
     nfse_status: zod_1.z.array(nfseStatusSchema).optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // date_to must be after date_from
       if (data.date_from && data.date_to) {
         return new Date(data.date_to) >= new Date(data.date_from);
@@ -395,7 +386,7 @@ exports.invoiceReportFiltersSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // amount_max must be greater than amount_min
       if (data.amount_min !== undefined && data.amount_max !== undefined) {
         return data.amount_max >= data.amount_min;
@@ -419,7 +410,7 @@ exports.paymentReportFiltersSchema = zod_1.z
     amount_max: zod_1.z.number().min(0, "Maximum amount cannot be negative").optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // date_to must be after date_from
       if (data.date_from && data.date_to) {
         return new Date(data.date_to) >= new Date(data.date_from);
@@ -432,7 +423,7 @@ exports.paymentReportFiltersSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // amount_max must be greater than amount_min
       if (data.amount_min !== undefined && data.amount_max !== undefined) {
         return data.amount_max >= data.amount_min;
@@ -505,47 +496,39 @@ exports.paymentQuerySchema = zod_1.z
   })
   .merge(exports.paginationSchema);
 // Utility validation functions
-var validateAmount = function (amount, fieldName) {
+var validateAmount = (amount, fieldName) => {
   if (fieldName === void 0) {
     fieldName = "amount";
   }
   return amountSchema.parse(amount);
 };
 exports.validateAmount = validateAmount;
-var validatePositiveAmount = function (amount, fieldName) {
+var validatePositiveAmount = (amount, fieldName) => {
   if (fieldName === void 0) {
     fieldName = "amount";
   }
   return positiveAmountSchema.parse(amount);
 };
 exports.validatePositiveAmount = validatePositiveAmount;
-var validateUuid = function (id, fieldName) {
+var validateUuid = (id, fieldName) => {
   if (fieldName === void 0) {
     fieldName = "id";
   }
   return uuidSchema.parse(id);
 };
 exports.validateUuid = validateUuid;
-var validateCnpj = function (cnpj) {
-  return cnpjSchema.parse(cnpj);
-};
+var validateCnpj = (cnpj) => cnpjSchema.parse(cnpj);
 exports.validateCnpj = validateCnpj;
-var validateCpf = function (cpf) {
-  return cpfSchema.parse(cpf);
-};
+var validateCpf = (cpf) => cpfSchema.parse(cpf);
 exports.validateCpf = validateCpf;
 // Convert reais to centavos for storage
-var reaisToCentavos = function (reais) {
-  return Math.round(reais * 100);
-};
+var reaisToCentavos = (reais) => Math.round(reais * 100);
 exports.reaisToCentavos = reaisToCentavos;
 // Convert centavos to reais for display
-var centavosToReais = function (centavos) {
-  return centavos / 100;
-};
+var centavosToReais = (centavos) => centavos / 100;
 exports.centavosToReais = centavosToReais;
 // Format currency for display
-var formatCurrency = function (centavos, currency) {
+var formatCurrency = (centavos, currency) => {
   if (currency === void 0) {
     currency = "BRL";
   }
@@ -559,11 +542,11 @@ var formatCurrency = function (centavos, currency) {
 };
 exports.formatCurrency = formatCurrency;
 // Parse currency string to centavos
-var parseCurrencyToCentavos = function (currencyString) {
+var parseCurrencyToCentavos = (currencyString) => {
   // Remove currency symbols and convert to number
   var cleaned = currencyString.replace(/[R$\s.]/g, "").replace(",", ".");
   var reais = parseFloat(cleaned);
-  if (isNaN(reais)) {
+  if (Number.isNaN(reais)) {
     throw new Error("Invalid currency format");
   }
   return (0, exports.reaisToCentavos)(reais);

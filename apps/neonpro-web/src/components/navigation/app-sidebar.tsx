@@ -22,7 +22,7 @@ import type {
 } from "lucide-react";
 import Link from "next/link";
 import type { usePathname } from "next/navigation";
-import * as React from "react";
+import type * as React from "react";
 
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Button } from "@/components/ui/button";

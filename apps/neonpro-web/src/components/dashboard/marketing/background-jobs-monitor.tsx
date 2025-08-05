@@ -1,6 +1,25 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Eye,
+  Filter,
+  Pause,
+  Play,
+  RefreshCw,
+  Timer,
+  Trash2,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,18 +27,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Progress } from "@/components/ui/progress";
-import type { Separator } from "@/components/ui/separator";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   Dialog,
   DialogContent,
@@ -28,6 +35,15 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Progress } from "@/components/ui/progress";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
 import type {
   Table,
   TableBody,
@@ -36,22 +52,6 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  Activity,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  RefreshCw,
-  Pause,
-  Play,
-  Trash2,
-  Eye,
-  Filter,
-  Calendar,
-  Timer,
-} from "lucide-react";
-import type { toast } from "sonner";
 
 /**
  * Background Jobs Monitor Component - Research-Backed Implementation

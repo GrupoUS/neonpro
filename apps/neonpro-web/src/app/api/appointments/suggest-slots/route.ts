@@ -1,6 +1,4 @@
-﻿import type { createClient } from "@/lib/supabase/server";
-import type { addDays, addMinutes, format, parseISO } from "date-fns";
-import { NextRequest, NextResponse } from "next/server";
+﻿import { type NextRequest, NextResponse } from "next/server";
 
 // =============================================
 // NeonPro Alternative Slot Suggestion API

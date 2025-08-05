@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,12 +142,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createmedicalTimelineManager = exports.MedicalTimelineManager = void 0;
 // lib/medical/timeline-manager.ts
 var server_1 = require("@/lib/supabase/server");
-var MedicalTimelineManager = /** @class */ (function () {
+var MedicalTimelineManager = /** @class */ (() => {
   function MedicalTimelineManager() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -160,7 +157,7 @@ var MedicalTimelineManager = /** @class */ (function () {
   MedicalTimelineManager.prototype.addTimelineEvent = function (event) {
     return __awaiter(this, void 0, void 0, function () {
       var newEvent;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           newEvent = __assign(__assign({}, event), {
             id: "evt_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9)),
@@ -183,7 +180,7 @@ var MedicalTimelineManager = /** @class */ (function () {
   MedicalTimelineManager.prototype.getPatientTimeline = function (patientId, filter) {
     return __awaiter(this, void 0, void 0, function () {
       var mockEvents, filteredEvents;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mockEvents = [
             {
@@ -307,38 +304,32 @@ var MedicalTimelineManager = /** @class */ (function () {
           filteredEvents = mockEvents;
           if (filter) {
             if (filter.dateRange) {
-              filteredEvents = filteredEvents.filter(function (event) {
-                return event.date >= filter.dateRange.start && event.date <= filter.dateRange.end;
-              });
+              filteredEvents = filteredEvents.filter(
+                (event) =>
+                  event.date >= filter.dateRange.start && event.date <= filter.dateRange.end,
+              );
             }
             if (filter.types && filter.types.length > 0) {
-              filteredEvents = filteredEvents.filter(function (event) {
-                return filter.types.includes(event.type);
-              });
+              filteredEvents = filteredEvents.filter((event) => filter.types.includes(event.type));
             }
             if (filter.categories && filter.categories.length > 0) {
-              filteredEvents = filteredEvents.filter(function (event) {
-                return filter.categories.includes(event.category);
-              });
+              filteredEvents = filteredEvents.filter((event) =>
+                filter.categories.includes(event.category),
+              );
             }
             if (filter.severity && filter.severity.length > 0) {
-              filteredEvents = filteredEvents.filter(function (event) {
-                return event.severity && filter.severity.includes(event.severity);
-              });
+              filteredEvents = filteredEvents.filter(
+                (event) => event.severity && filter.severity.includes(event.severity),
+              );
             }
             if (filter.status && filter.status.length > 0) {
-              filteredEvents = filteredEvents.filter(function (event) {
-                return filter.status.includes(event.status);
-              });
+              filteredEvents = filteredEvents.filter((event) =>
+                filter.status.includes(event.status),
+              );
             }
           }
           // Ordenar por data (mais recente primeiro)
-          return [
-            2 /*return*/,
-            filteredEvents.sort(function (a, b) {
-              return b.date.getTime() - a.date.getTime();
-            }),
-          ];
+          return [2 /*return*/, filteredEvents.sort((a, b) => b.date.getTime() - a.date.getTime())];
         } catch (error) {
           console.error("Erro ao recuperar timeline do paciente:", error);
           throw new Error("Falha ao carregar timeline médica");
@@ -353,7 +344,7 @@ var MedicalTimelineManager = /** @class */ (function () {
   MedicalTimelineManager.prototype.updateTimelineEvent = function (eventId, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var updatedEvent;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           updatedEvent = {
             id: eventId,
@@ -387,7 +378,7 @@ var MedicalTimelineManager = /** @class */ (function () {
    */
   MedicalTimelineManager.prototype.deleteTimelineEvent = function (eventId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simular remoção do evento
           return [2 /*return*/, true];
@@ -417,11 +408,11 @@ var MedicalTimelineManager = /** @class */ (function () {
             timeline = _a.sent();
             analytics = {
               totalEvents: timeline.length,
-              eventsByType: timeline.reduce(function (acc, event) {
+              eventsByType: timeline.reduce((acc, event) => {
                 acc[event.type] = (acc[event.type] || 0) + 1;
                 return acc;
               }, {}),
-              eventsByCategory: timeline.reduce(function (acc, event) {
+              eventsByCategory: timeline.reduce((acc, event) => {
                 acc[event.category] = (acc[event.category] || 0) + 1;
                 return acc;
               }, {}),
@@ -439,13 +430,11 @@ var MedicalTimelineManager = /** @class */ (function () {
                   treatmentPlan: "Medicação + modificações no estilo de vida",
                 },
               ],
-              upcomingEvents: timeline.filter(function (event) {
-                return event.status === "scheduled" && event.date > new Date();
-              }),
+              upcomingEvents: timeline.filter(
+                (event) => event.status === "scheduled" && event.date > new Date(),
+              ),
               recentSignificantEvents: timeline
-                .filter(function (event) {
-                  return event.severity && ["high", "critical"].includes(event.severity);
-                })
+                .filter((event) => event.severity && ["high", "critical"].includes(event.severity))
                 .slice(0, 5),
             };
             return [2 /*return*/, analytics];
@@ -472,13 +461,12 @@ var MedicalTimelineManager = /** @class */ (function () {
             return [4 /*yield*/, this.getPatientTimeline(patientId)];
           case 1:
             timeline = _a.sent();
-            searchResults = timeline.filter(function (event) {
-              return (
+            searchResults = timeline.filter(
+              (event) =>
                 event.title.toLowerCase().includes(query.toLowerCase()) ||
                 event.description.toLowerCase().includes(query.toLowerCase()) ||
-                event.provider.toLowerCase().includes(query.toLowerCase())
-              );
-            });
+                event.provider.toLowerCase().includes(query.toLowerCase()),
+            );
             return [2 /*return*/, searchResults];
           case 2:
             error_2 = _a.sent();
@@ -519,16 +507,16 @@ var MedicalTimelineManager = /** @class */ (function () {
               case "csv":
                 csvHeaders = "Data,Tipo,Categoria,Título,Descrição,Provedor,Status\n";
                 csvData = timeline
-                  .map(function (event) {
-                    return ""
+                  .map((event) =>
+                    ""
                       .concat(event.date.toISOString(), ",")
                       .concat(event.type, ",")
                       .concat(event.category, ',"')
                       .concat(event.title, '","')
                       .concat(event.description, '",')
                       .concat(event.provider, ",")
-                      .concat(event.status);
-                  })
+                      .concat(event.status),
+                  )
                   .join("\n");
                 return [2 /*return*/, csvHeaders + csvData];
               case "pdf":
@@ -560,7 +548,5 @@ var MedicalTimelineManager = /** @class */ (function () {
   return MedicalTimelineManager;
 })();
 exports.MedicalTimelineManager = MedicalTimelineManager;
-var createmedicalTimelineManager = function () {
-  return new MedicalTimelineManager();
-};
+var createmedicalTimelineManager = () => new MedicalTimelineManager();
 exports.createmedicalTimelineManager = createmedicalTimelineManager;

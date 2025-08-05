@@ -13,8 +13,8 @@
  * - Session heartbeat for real-time monitoring
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import type { createClient } from "@/lib/supabase/client";
 
 // Session configuration
 const SESSION_CONFIG = {

@@ -12,6 +12,8 @@
 
 "use client";
 
+import type { AlertTriangle, CheckCircle, Info } from "lucide-react";
+import React, { forwardRef, type ReactNode, useEffect, useId, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Checkbox } from "@/components/ui/checkbox";
 import type { Input } from "@/components/ui/input";
@@ -31,8 +33,6 @@ import type {
   generateAriaId,
 } from "@/lib/accessibility/accessibility-utils";
 import type { cn } from "@/lib/utils";
-import type { AlertTriangle, CheckCircle, Info } from "lucide-react";
-import React, { forwardRef, ReactNode, useEffect, useId, useState } from "react";
 
 // Form field props with accessibility features
 interface AccessibleFieldProps {

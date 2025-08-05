@@ -16,7 +16,7 @@ const mockSupabaseClient = {
 };
 
 // Mock AuditLogger
-const mockAuditLogger = {
+const _mockAuditLogger = {
   logConflictDetection: jest.fn(),
   logSchedulingAction: jest.fn(),
   logSystemEvent: jest.fn(),

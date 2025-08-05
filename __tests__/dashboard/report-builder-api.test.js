@@ -15,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,7 +44,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -54,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,8 +73,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -82,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -95,9 +93,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -156,71 +154,44 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
-var _this = this;
+  });
 // Mock fetch globally
 global.fetch = jest.fn();
 // Mock Next.js environment
-jest.mock("next/headers", function () {
-  return {
-    cookies: function () {
-      return {
-        get: function () {
-          return { value: "mock-session-token" };
-        },
-      };
-    },
-  };
-});
+jest.mock("next/headers", () => ({
+  cookies: () => ({
+    get: () => ({ value: "mock-session-token" }),
+  }),
+}));
 // Mock Supabase client
 var mockSupabaseClient = {
   auth: {
     getSession: jest.fn(),
     getUser: jest.fn(),
   },
-  from: jest.fn(function () {
-    return {
-      select: jest.fn(function () {
-        return Promise.resolve({ data: [], error: null });
-      }),
-      insert: jest.fn(function () {
-        return Promise.resolve({ data: [], error: null });
-      }),
-      update: jest.fn(function () {
-        return Promise.resolve({ data: [], error: null });
-      }),
-      delete: jest.fn(function () {
-        return Promise.resolve({ data: [], error: null });
-      }),
-      eq: jest.fn(function () {
-        return this;
-      }),
-      order: jest.fn(function () {
-        return this;
-      }),
-      limit: jest.fn(function () {
-        return this;
-      }),
-    };
-  }),
-  rpc: jest.fn(function () {
-    return Promise.resolve({ data: [], error: null });
-  }),
+  from: jest.fn(() => ({
+    select: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    insert: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    update: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    delete: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    eq: jest.fn(function () {
+      return this;
+    }),
+    order: jest.fn(function () {
+      return this;
+    }),
+    limit: jest.fn(function () {
+      return this;
+    }),
+  })),
+  rpc: jest.fn(() => Promise.resolve({ data: [], error: null })),
 };
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: function () {
-      return mockSupabaseClient;
-    },
-  };
-});
-jest.mock("@/app/utils/supabase/client", function () {
-  return {
-    createClient: function () {
-      return mockSupabaseClient;
-    },
-  };
-});
+jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: () => mockSupabaseClient,
+}));
+jest.mock("@/app/utils/supabase/client", () => ({
+  createClient: () => mockSupabaseClient,
+}));
 // Mock data
 var mockReport = {
   id: "test-report-id",
@@ -248,9 +219,9 @@ var mockReport = {
   created_at: "2025-01-26T09:00:00Z",
   updated_at: "2025-01-26T09:00:00Z",
 };
-describe("Report Builder API Integration Tests", function () {
+describe("Report Builder API Integration Tests", () => {
   var mockFetch = global.fetch;
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     mockFetch.mockClear();
     // Setup default auth mocks
@@ -270,39 +241,35 @@ describe("Report Builder API Integration Tests", function () {
       error: null,
     });
   });
-  afterEach(function () {
+  afterEach(() => {
     jest.resetAllMocks();
   });
-  afterAll(function () {
+  afterAll(() => {
     jest.restoreAllMocks();
   });
-  describe("Story 8.2 Acceptance Criteria API Validation", function () {
-    describe("AC4: Real-time Report Generation", function () {
-      it("generates reports with <3 second response time", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+  describe("Story 8.2 Acceptance Criteria API Validation", () => {
+    describe("AC4: Real-time Report Generation", () => {
+      it("generates reports with <3 second response time", () =>
+        __awaiter(this, void 0, void 0, function () {
           var startTime, response, endTime, responseTime, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 startTime = Date.now();
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            report: mockReport,
-                            generation_time: 2.1,
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          report: mockReport,
+                          generation_time: 2.1,
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -326,13 +293,11 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("handles complex queries efficiently", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+        }));
+      it("handles complex queries efficiently", () =>
+        __awaiter(this, void 0, void 0, function () {
           var complexQuery, response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 complexQuery = {
@@ -349,20 +314,17 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            data: [{ total_value: 15000, patient_count: 45 }],
-                            query_execution_time: 1.8,
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          data: [{ total_value: 15000, patient_count: 45 }],
+                          query_execution_time: 1.8,
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -383,15 +345,13 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("AC5: Advanced Filtering Capabilities", function () {
-      it("validates advanced filter configurations", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("AC5: Advanced Filtering Capabilities", () => {
+      it("validates advanced filter configurations", () =>
+        __awaiter(this, void 0, void 0, function () {
           var advancedFilters, response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 advancedFilters = {
@@ -405,20 +365,17 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            valid_filters: true,
-                            filter_count: 4,
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          valid_filters: true,
+                          filter_count: 4,
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -439,15 +396,13 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("AC6: Sharing and Collaboration Features", function () {
-      it("enables report sharing with proper permissions", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("AC6: Sharing and Collaboration Features", () => {
+      it("enables report sharing with proper permissions", () =>
+        __awaiter(this, void 0, void 0, function () {
           var sharingConfig, response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 sharingConfig = {
@@ -459,20 +414,17 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            share_id: "share-123",
-                            shared_with: 2,
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          share_id: "share-123",
+                          shared_with: 2,
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -494,31 +446,26 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("validates sharing permissions correctly", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+        }));
+      it("validates sharing permissions correctly", () =>
+        __awaiter(this, void 0, void 0, function () {
           var response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockFetch.mockResolvedValueOnce({
                   ok: false,
                   status: 403,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: false,
-                            error: "Insufficient permissions",
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: false,
+                          error: "Insufficient permissions",
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -540,15 +487,13 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("AC7: Automated Report Scheduling", function () {
-      it("creates automated report schedules", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("AC7: Automated Report Scheduling", () => {
+      it("creates automated report schedules", () =>
+        __awaiter(this, void 0, void 0, function () {
           var scheduleConfig, response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 scheduleConfig = {
@@ -563,20 +508,17 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 201,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            schedule_id: "schedule-123",
-                            next_run: "2025-02-03T09:00:00Z",
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          schedule_id: "schedule-123",
+                          next_run: "2025-02-03T09:00:00Z",
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -599,13 +541,11 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("validates schedule configuration", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+        }));
+      it("validates schedule configuration", () =>
+        __awaiter(this, void 0, void 0, function () {
           var invalidSchedule, response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 invalidSchedule = {
@@ -616,19 +556,16 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: false,
                   status: 400,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: false,
-                            error: "Invalid schedule configuration",
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: false,
+                          error: "Invalid schedule configuration",
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -650,40 +587,36 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("AC8: Export Capabilities", function () {
-      it("exports reports in multiple formats", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("AC8: Export Capabilities", () => {
+      it("exports reports in multiple formats", () =>
+        __awaiter(this, void 0, void 0, function () {
           var exportFormats, _loop_1, _i, exportFormats_1, format;
           var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 exportFormats = ["pdf", "excel", "csv", "json"];
                 _loop_1 = function (format) {
                   var response, data;
-                  return __generator(this, function (_b) {
+                  return __generator(this, (_b) => {
                     switch (_b.label) {
                       case 0:
                         mockFetch.mockResolvedValueOnce({
                           ok: true,
                           status: 200,
-                          json: function () {
-                            return __awaiter(_this, void 0, void 0, function () {
-                              return __generator(this, function (_a) {
-                                return [
-                                  2 /*return*/,
-                                  {
-                                    success: true,
-                                    download_url: "https://storage.com/report.".concat(format),
-                                    expires_at: "2025-01-27T12:00:00Z",
-                                  },
-                                ];
-                              });
-                            });
-                          },
+                          json: () =>
+                            __awaiter(_this, void 0, void 0, function () {
+                              return __generator(this, (_a) => [
+                                2 /*return*/,
+                                {
+                                  success: true,
+                                  download_url: "https://storage.com/report.".concat(format),
+                                  expires_at: "2025-01-27T12:00:00Z",
+                                },
+                              ]);
+                            }),
                         });
                         return [
                           4 /*yield*/,
@@ -721,33 +654,28 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("AC9: Analytics and Usage Tracking", function () {
-      it("tracks report usage analytics", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("AC9: Analytics and Usage Tracking", () => {
+      it("tracks report usage analytics", () =>
+        __awaiter(this, void 0, void 0, function () {
           var response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            analytics_recorded: true,
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          analytics_recorded: true,
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -772,36 +700,31 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("provides usage analytics dashboard data", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+        }));
+      it("provides usage analytics dashboard data", () =>
+        __awaiter(this, void 0, void 0, function () {
           var response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            analytics: {
-                              total_reports: 42,
-                              active_users: 15,
-                              popular_templates: ["financial", "patient-summary"],
-                              usage_trends: { weekly_growth: 0.12 },
-                            },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          analytics: {
+                            total_reports: 42,
+                            active_users: 15,
+                            popular_templates: ["financial", "patient-summary"],
+                            usage_trends: { weekly_growth: 0.12 },
                           },
-                        ];
-                      });
-                    });
-                  },
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -823,15 +746,13 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("AC10: Integration with NeonPro Data Sources", function () {
-      it("validates access to all NeonPro data sources", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("AC10: Integration with NeonPro Data Sources", () => {
+      it("validates access to all NeonPro data sources", () =>
+        __awaiter(this, void 0, void 0, function () {
           var expectedDataSources, response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 expectedDataSources = [
@@ -847,20 +768,17 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            available_sources: expectedDataSources,
-                            total_count: expectedDataSources.length,
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          available_sources: expectedDataSources,
+                          total_count: expectedDataSources.length,
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -881,31 +799,26 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      it("handles data source access restrictions", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+        }));
+      it("handles data source access restrictions", () =>
+        __awaiter(this, void 0, void 0, function () {
           var response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockFetch.mockResolvedValueOnce({
                   ok: false,
                   status: 403,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: false,
-                            error: "Access denied to restricted data source",
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: false,
+                          error: "Access denied to restricted data source",
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -926,17 +839,15 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Report CRUD Operations", function () {
-    describe("Create Report", function () {
-      it("creates a new report successfully", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+  describe("Report CRUD Operations", () => {
+    describe("Create Report", () => {
+      it("creates a new report successfully", () =>
+        __awaiter(this, void 0, void 0, function () {
           var newReportData, response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 newReportData = {
@@ -962,21 +873,18 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 201,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            report: __assign(__assign(__assign({}, mockReport), newReportData), {
-                              id: "new-report-id",
-                            }),
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          report: __assign(__assign(__assign({}, mockReport), newReportData), {
+                            id: "new-report-id",
+                          }),
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -998,15 +906,13 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("Read Report", function () {
-      it("retrieves report by ID", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("Read Report", () => {
+      it("retrieves report by ID", () =>
+        __awaiter(this, void 0, void 0, function () {
           var response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabaseClient.from.mockReturnValue({
@@ -1020,19 +926,16 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            report: mockReport,
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          report: mockReport,
+                        },
+                      ]);
+                    }),
                 });
                 return [4 /*yield*/, fetch("/api/report-builder/reports/test-report-id")];
               case 1:
@@ -1046,15 +949,13 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("Update Report", function () {
-      it("updates report successfully", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("Update Report", () => {
+      it("updates report successfully", () =>
+        __awaiter(this, void 0, void 0, function () {
           var updateData, response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 updateData = {
@@ -1074,19 +975,16 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            report: __assign(__assign({}, mockReport), updateData),
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          report: __assign(__assign({}, mockReport), updateData),
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -1107,15 +1005,13 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
-    describe("Delete Report", function () {
-      it("deletes report successfully", function () {
-        return __awaiter(_this, void 0, void 0, function () {
+    describe("Delete Report", () => {
+      it("deletes report successfully", () =>
+        __awaiter(this, void 0, void 0, function () {
           var response, data;
-          var _this = this;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 mockSupabaseClient.from.mockReturnValue({
@@ -1129,19 +1025,16 @@ describe("Report Builder API Integration Tests", function () {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            message: "Report deleted successfully",
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          message: "Report deleted successfully",
+                        },
+                      ]);
+                    }),
                 });
                 return [
                   4 /*yield*/,
@@ -1160,16 +1053,14 @@ describe("Report Builder API Integration Tests", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }));
     });
   });
-  describe("Template Management", function () {
-    it("retrieves available templates", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  describe("Template Management", () => {
+    it("retrieves available templates", () =>
+      __awaiter(this, void 0, void 0, function () {
         var mockTemplates, response, data;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockTemplates = [
@@ -1179,19 +1070,16 @@ describe("Report Builder API Integration Tests", function () {
               mockFetch.mockResolvedValueOnce({
                 ok: true,
                 status: 200,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: true,
-                          templates: mockTemplates,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: true,
+                        templates: mockTemplates,
+                      },
+                    ]);
+                  }),
               });
               return [4 /*yield*/, fetch("/api/report-builder/templates")];
             case 1:
@@ -1206,78 +1094,71 @@ describe("Report Builder API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance and Load Testing", function () {
-    it("handles concurrent API requests gracefully", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  describe("Performance and Load Testing", () => {
+    it("handles concurrent API requests gracefully", () =>
+      __awaiter(this, void 0, void 0, function () {
         var _loop_2, i, requests, responses;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              _loop_2 = function (i) {
+              _loop_2 = (i) => {
                 mockFetch.mockResolvedValueOnce({
                   ok: true,
                   status: 200,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [
-                          2 /*return*/,
-                          {
-                            success: true,
-                            report: __assign(__assign({}, mockReport), {
-                              id: "test-report-".concat(i),
-                            }),
-                          },
-                        ];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [
+                        2 /*return*/,
+                        {
+                          success: true,
+                          report: __assign(__assign({}, mockReport), {
+                            id: "test-report-".concat(i),
+                          }),
+                        },
+                      ]);
+                    }),
                 });
               };
               // Mock multiple responses
               for (i = 0; i < 10; i++) {
                 _loop_2(i);
               }
-              requests = Array.from({ length: 10 }, function (_, i) {
-                return fetch("/api/report-builder/reports/test-report-".concat(i));
-              });
+              requests = Array.from({ length: 10 }, (_, i) =>
+                fetch("/api/report-builder/reports/test-report-".concat(i)),
+              );
               return [4 /*yield*/, Promise.all(requests)];
             case 1:
               responses = _a.sent();
-              responses.forEach(function (response) {
+              responses.forEach((response) => {
                 expect(response.ok).toBe(true);
               });
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("maintains response time under load", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+      }));
+    it("maintains response time under load", () =>
+      __awaiter(this, void 0, void 0, function () {
         var startTime, requests, endTime, totalTime;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
               mockFetch.mockResolvedValue({
                 ok: true,
                 status: 200,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [2 /*return*/, { success: true, report: mockReport }];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      { success: true, report: mockReport },
+                    ]);
+                  }),
               });
-              requests = Array.from({ length: 50 }, function () {
-                return fetch("/api/report-builder/reports/test-report-id");
-              });
+              requests = Array.from({ length: 50 }, () =>
+                fetch("/api/report-builder/reports/test-report-id"),
+              );
               return [4 /*yield*/, Promise.all(requests)];
             case 1:
               _a.sent();
@@ -1288,33 +1169,28 @@ describe("Report Builder API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling and Edge Cases", function () {
-    it("handles invalid request data gracefully", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  describe("Error Handling and Edge Cases", () => {
+    it("handles invalid request data gracefully", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: false,
                 status: 400,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: false,
-                          error: "Invalid request data",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: false,
+                        error: "Invalid request data",
+                      },
+                    ]);
+                  }),
               });
               return [
                 4 /*yield*/,
@@ -1336,13 +1212,11 @@ describe("Report Builder API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles database connection errors", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+      }));
+    it("handles database connection errors", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.from.mockReturnValue({
@@ -1354,19 +1228,16 @@ describe("Report Builder API Integration Tests", function () {
               mockFetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: false,
-                          error: "Internal server error",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: false,
+                        error: "Internal server error",
+                      },
+                    ]);
+                  }),
               });
               return [4 /*yield*/, fetch("/api/report-builder/reports/test-report-id")];
             case 1:
@@ -1376,13 +1247,11 @@ describe("Report Builder API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("handles authentication failures", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+      }));
+    it("handles authentication failures", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.auth.getSession.mockResolvedValue({
@@ -1392,19 +1261,16 @@ describe("Report Builder API Integration Tests", function () {
               mockFetch.mockResolvedValueOnce({
                 ok: false,
                 status: 401,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: false,
-                          error: "Unauthorized",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: false,
+                        error: "Unauthorized",
+                      },
+                    ]);
+                  }),
               });
               return [4 /*yield*/, fetch("/api/report-builder/reports")];
             case 1:
@@ -1414,7 +1280,6 @@ describe("Report Builder API Integration Tests", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

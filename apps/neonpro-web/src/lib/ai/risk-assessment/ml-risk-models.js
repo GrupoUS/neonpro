@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Machine Learning Risk Assessment Models
  * Story 3.2: AI-powered Risk Assessment + Insights Implementation
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -143,10 +140,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -155,11 +152,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MLRiskAssessmentEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var MLRiskAssessmentEngine = /** @class */ (function () {
+var MLRiskAssessmentEngine = /** @class */ (() => {
   function MLRiskAssessmentEngine() {
     this.supabase = (0, client_1.createClient)();
     this.models = new Map();
@@ -325,11 +322,9 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
     }
     // Medical history
     var cardiacConditions = ["heart_disease", "arrhythmia", "heart_attack", "stroke"];
-    var hasCardiacHistory = input.patientData.medicalHistory.some(function (condition) {
-      return cardiacConditions.some(function (cardiac) {
-        return condition.toLowerCase().includes(cardiac);
-      });
-    });
+    var hasCardiacHistory = input.patientData.medicalHistory.some((condition) =>
+      cardiacConditions.some((cardiac) => condition.toLowerCase().includes(cardiac)),
+    );
     if (hasCardiacHistory) {
       score += 25;
       factors.push("Previous cardiac conditions");
@@ -368,20 +363,20 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
       recommendations.push("Emergency medications available");
     }
     // Drug allergies specifically
-    var drugAllergies = input.patientData.allergies.filter(function (allergy) {
-      return ["penicillin", "lidocaine", "latex", "iodine"].some(function (drug) {
-        return allergy.toLowerCase().includes(drug);
-      });
-    });
+    var drugAllergies = input.patientData.allergies.filter((allergy) =>
+      ["penicillin", "lidocaine", "latex", "iodine"].some((drug) =>
+        allergy.toLowerCase().includes(drug),
+      ),
+    );
     if (drugAllergies.length > 0) {
       score += 20;
       factors.push("Drug allergies present");
       recommendations.push("Alternative medications required");
     }
     // Family history of allergies
-    var hasAllergyFamilyHistory = input.patientData.familyHistory.some(function (condition) {
-      return condition.toLowerCase().includes("allergy");
-    });
+    var hasAllergyFamilyHistory = input.patientData.familyHistory.some((condition) =>
+      condition.toLowerCase().includes("allergy"),
+    );
     if (hasAllergyFamilyHistory) {
       score += 5;
       factors.push("Family history of allergies");
@@ -418,11 +413,9 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
     }
     // Immune system factors
     var immuneConditions = ["diabetes", "hiv", "cancer", "immunosuppression"];
-    var hasImmuneIssues = input.patientData.medicalHistory.some(function (condition) {
-      return immuneConditions.some(function (immune) {
-        return condition.toLowerCase().includes(immune);
-      });
-    });
+    var hasImmuneIssues = input.patientData.medicalHistory.some((condition) =>
+      immuneConditions.some((immune) => condition.toLowerCase().includes(immune)),
+    );
     if (hasImmuneIssues) {
       score += 20;
       factors.push("Compromised immune system");
@@ -456,11 +449,9 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
     var recommendations = [];
     // Medications affecting bleeding
     var bleedingMeds = ["warfarin", "aspirin", "clopidogrel", "heparin"];
-    var hasBleedingMeds = input.patientData.medications.some(function (med) {
-      return bleedingMeds.some(function (bleeding) {
-        return med.toLowerCase().includes(bleeding);
-      });
-    });
+    var hasBleedingMeds = input.patientData.medications.some((med) =>
+      bleedingMeds.some((bleeding) => med.toLowerCase().includes(bleeding)),
+    );
     if (hasBleedingMeds) {
       score += 25;
       factors.push("Anticoagulant medications");
@@ -469,11 +460,9 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
     }
     // Medical conditions affecting bleeding
     var bleedingConditions = ["hemophilia", "liver_disease", "kidney_disease"];
-    var hasBleedingConditions = input.patientData.medicalHistory.some(function (condition) {
-      return bleedingConditions.some(function (bleeding) {
-        return condition.toLowerCase().includes(bleeding);
-      });
-    });
+    var hasBleedingConditions = input.patientData.medicalHistory.some((condition) =>
+      bleedingConditions.some((bleeding) => condition.toLowerCase().includes(bleeding)),
+    );
     if (hasBleedingConditions) {
       score += 30;
       factors.push("Bleeding disorder history");
@@ -527,20 +516,18 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
     }
     // Respiratory conditions
     var respiratoryConditions = ["asthma", "copd", "sleep_apnea"];
-    var hasRespiratoryIssues = input.patientData.medicalHistory.some(function (condition) {
-      return respiratoryConditions.some(function (resp) {
-        return condition.toLowerCase().includes(resp);
-      });
-    });
+    var hasRespiratoryIssues = input.patientData.medicalHistory.some((condition) =>
+      respiratoryConditions.some((resp) => condition.toLowerCase().includes(resp)),
+    );
     if (hasRespiratoryIssues) {
       score += 15;
       factors.push("Respiratory conditions");
       recommendations.push("Pulmonology consultation may be needed");
     }
     // Previous anesthesia complications
-    var hasAnesthesiaComplications = input.patientData.complications.some(function (comp) {
-      return comp.toLowerCase().includes("anesthesia");
-    });
+    var hasAnesthesiaComplications = input.patientData.complications.some((comp) =>
+      comp.toLowerCase().includes("anesthesia"),
+    );
     if (hasAnesthesiaComplications) {
       score += 25;
       factors.push("Previous anesthesia complications");
@@ -594,11 +581,11 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
               // Add contraindications
               if (treatmentRisk.contraindications) {
                 contraindications = JSON.parse(treatmentRisk.contraindications);
-                hasContraindications = contraindications.some(function (contra) {
-                  return input.patientData.medicalHistory.some(function (condition) {
-                    return condition.toLowerCase().includes(contra.toLowerCase());
-                  });
-                });
+                hasContraindications = contraindications.some((contra) =>
+                  input.patientData.medicalHistory.some((condition) =>
+                    condition.toLowerCase().includes(contra.toLowerCase()),
+                  ),
+                );
                 if (hasContraindications) {
                   score += 40;
                   factors.push("Contraindications present");
@@ -617,9 +604,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
           case 3:
             previousOutcomes = _a.sent().data;
             if (previousOutcomes && previousOutcomes.length > 0) {
-              complications = previousOutcomes.filter(function (outcome) {
-                return outcome.complications;
-              });
+              complications = previousOutcomes.filter((outcome) => outcome.complications);
               if (complications.length > 0) {
                 score += 15;
                 factors.push("Previous complications with this treatment");
@@ -657,20 +642,18 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
     var recommendations = [];
     // Mental health conditions
     var mentalHealthConditions = ["anxiety", "depression", "ptsd", "panic_disorder"];
-    var hasMentalHealthIssues = input.patientData.medicalHistory.some(function (condition) {
-      return mentalHealthConditions.some(function (mental) {
-        return condition.toLowerCase().includes(mental);
-      });
-    });
+    var hasMentalHealthIssues = input.patientData.medicalHistory.some((condition) =>
+      mentalHealthConditions.some((mental) => condition.toLowerCase().includes(mental)),
+    );
     if (hasMentalHealthIssues) {
       score += 15;
       factors.push("Mental health conditions");
       recommendations.push("Consider psychological support");
     }
     // Previous treatment trauma
-    var hasTrauma = input.patientData.complications.some(function (comp) {
-      return comp.toLowerCase().includes("trauma") || comp.toLowerCase().includes("anxiety");
-    });
+    var hasTrauma = input.patientData.complications.some(
+      (comp) => comp.toLowerCase().includes("trauma") || comp.toLowerCase().includes("anxiety"),
+    );
     if (hasTrauma) {
       score += 20;
       factors.push("Previous treatment trauma");
@@ -694,7 +677,6 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
    * Calculate overall risk from category risks
    */
   MLRiskAssessmentEngine.prototype.calculateOverallRisk = function (categoryRisks) {
-    var _this = this;
     // Weighted average of category risks
     var weights = {
       cardiovascular: 0.25,
@@ -711,12 +693,12 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
     var weightedScore = 0;
     var totalWeight = 0;
     var maxSeverity = "minimal";
-    categoryRisks.forEach(function (risk) {
+    categoryRisks.forEach((risk) => {
       var weight = weights[risk.category] || 0.05;
       weightedScore += risk.score * weight;
       totalWeight += weight;
       // Track highest severity
-      if (_this.severityToNumber(risk.severity) > _this.severityToNumber(maxSeverity)) {
+      if (this.severityToNumber(risk.severity) > this.severityToNumber(maxSeverity)) {
         maxSeverity = risk.severity;
       }
     });
@@ -736,10 +718,10 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Generate critical alerts
    */
-  MLRiskAssessmentEngine.prototype.generateCriticalAlerts = function (input, categoryRisks) {
+  MLRiskAssessmentEngine.prototype.generateCriticalAlerts = (input, categoryRisks) => {
     var alerts = [];
     // Check for critical or high risks
-    categoryRisks.forEach(function (risk) {
+    categoryRisks.forEach((risk) => {
       if (risk.severity === "critical") {
         alerts.push({
           type: "high_risk",
@@ -761,16 +743,15 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
       }
     });
     // Check for contraindications
-    var hasContraindications = input.treatmentData.contraindications.some(function (contra) {
-      return (
-        input.patientData.medicalHistory.some(function (condition) {
-          return condition.toLowerCase().includes(contra.toLowerCase());
-        }) ||
-        input.patientData.allergies.some(function (allergy) {
-          return allergy.toLowerCase().includes(contra.toLowerCase());
-        })
-      );
-    });
+    var hasContraindications = input.treatmentData.contraindications.some(
+      (contra) =>
+        input.patientData.medicalHistory.some((condition) =>
+          condition.toLowerCase().includes(contra.toLowerCase()),
+        ) ||
+        input.patientData.allergies.some((allergy) =>
+          allergy.toLowerCase().includes(contra.toLowerCase()),
+        ),
+    );
     if (hasContraindications) {
       alerts.push({
         type: "contraindication",
@@ -797,7 +778,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
           emergency: [],
         };
         // Collect recommendations from category risks
-        categoryRisks.forEach(function (risk) {
+        categoryRisks.forEach((risk) => {
           var _a;
           (_a = recommendations.preOperative).push.apply(_a, risk.recommendations);
         });
@@ -827,7 +808,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
         unit,
         successProbability,
         alternativeTreatments;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         complicationProbability = Math.min(overallRisk.score / 100, 0.95);
         recoveryTimeMin = 1;
         recoveryTimeMax = 7;
@@ -879,7 +860,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Generate compliance notes
    */
-  MLRiskAssessmentEngine.prototype.generateComplianceNotes = function (input, overallRisk) {
+  MLRiskAssessmentEngine.prototype.generateComplianceNotes = (input, overallRisk) => {
     var cfmGuidelines = [
       "Patient autonomy and informed consent required",
       "Risk-benefit analysis documented",
@@ -908,7 +889,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Convert risk score to severity level
    */
-  MLRiskAssessmentEngine.prototype.scoresToSeverity = function (score) {
+  MLRiskAssessmentEngine.prototype.scoresToSeverity = (score) => {
     if (score >= 70) return "critical";
     if (score >= 50) return "high";
     if (score >= 30) return "moderate";
@@ -918,7 +899,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Convert severity to number for comparison
    */
-  MLRiskAssessmentEngine.prototype.severityToNumber = function (severity) {
+  MLRiskAssessmentEngine.prototype.severityToNumber = (severity) => {
     var map = { minimal: 1, low: 2, moderate: 3, high: 4, critical: 5 };
     return map[severity];
   };
@@ -936,7 +917,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Validate input data
    */
-  MLRiskAssessmentEngine.prototype.validateInput = function (input) {
+  MLRiskAssessmentEngine.prototype.validateInput = (input) => {
     if (!input.patientId || !input.treatmentId) {
       throw new Error("Patient ID and Treatment ID are required");
     }
@@ -990,7 +971,6 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
    * Initialize ML models
    */
   MLRiskAssessmentEngine.prototype.initializeModels = function () {
-    var _this = this;
     // Initialize models for each risk category
     var categories = [
       "cardiovascular",
@@ -1001,11 +981,11 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
       "treatment_specific",
       "psychological",
     ];
-    categories.forEach(function (category) {
-      _this.models.set(category, {
+    categories.forEach((category) => {
+      this.models.set(category, {
         modelType: "ensemble",
-        features: _this.getModelFeatures(category),
-        weights: _this.getModelWeights(category),
+        features: this.getModelFeatures(category),
+        weights: this.getModelWeights(category),
         thresholds: {
           minimal: 10,
           low: 30,
@@ -1021,7 +1001,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Get model features for category
    */
-  MLRiskAssessmentEngine.prototype.getModelFeatures = function (category) {
+  MLRiskAssessmentEngine.prototype.getModelFeatures = (category) => {
     var commonFeatures = ["age", "gender", "bmi", "medical_history", "medications"];
     var categorySpecific = {
       cardiovascular: ["blood_pressure", "heart_rate", "smoking", "exercise"],
@@ -1040,7 +1020,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
   /**
    * Get model weights for category
    */
-  MLRiskAssessmentEngine.prototype.getModelWeights = function (category) {
+  MLRiskAssessmentEngine.prototype.getModelWeights = (category) => {
     // Default weights - would be learned from training data
     return {
       age: 0.2,
@@ -1064,7 +1044,7 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
           case 1:
             factors = _a.sent().data;
             if (factors) {
-              factors.forEach(function (factor) {
+              factors.forEach((factor) => {
                 _this.riskFactors.set(factor.id, {
                   id: factor.id,
                   name: factor.name,
@@ -1108,17 +1088,15 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
           case 1:
             historical = _a.sent().data;
             if (historical) {
-              this.historicalData = historical.map(function (record) {
-                return {
-                  patientId: record.patient_id,
-                  treatmentId: record.treatment_id,
-                  predictedRisk: record.predicted_risk || 0,
-                  actualOutcome: record.outcome,
-                  complications: JSON.parse(record.complications || "[]"),
-                  accuracy: record.prediction_accuracy || 0,
-                  timestamp: new Date(record.created_at),
-                };
-              });
+              this.historicalData = historical.map((record) => ({
+                patientId: record.patient_id,
+                treatmentId: record.treatment_id,
+                predictedRisk: record.predicted_risk || 0,
+                actualOutcome: record.outcome,
+                complications: JSON.parse(record.complications || "[]"),
+                accuracy: record.prediction_accuracy || 0,
+                timestamp: new Date(record.created_at),
+              }));
             }
             return [3 /*break*/, 3];
           case 2:
@@ -1146,17 +1124,10 @@ var MLRiskAssessmentEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         if (this.historicalData.length === 0) return [2 /*return*/];
         accuracies = this.historicalData
-          .filter(function (data) {
-            return data.accuracy > 0;
-          })
-          .map(function (data) {
-            return data.accuracy;
-          });
+          .filter((data) => data.accuracy > 0)
+          .map((data) => data.accuracy);
         if (accuracies.length > 0) {
-          this.modelAccuracy =
-            accuracies.reduce(function (sum, acc) {
-              return sum + acc;
-            }, 0) / accuracies.length;
+          this.modelAccuracy = accuracies.reduce((sum, acc) => sum + acc, 0) / accuracies.length;
         }
         return [2 /*return*/];
       });

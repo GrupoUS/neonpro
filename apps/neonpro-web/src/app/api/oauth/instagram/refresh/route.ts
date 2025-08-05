@@ -1,7 +1,7 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { InstagramOAuthHandler } from "@/lib/oauth/platforms/instagram-handler";
 import type { TokenEncryptionService } from "@/lib/oauth/token-encryption";
+import type { createClient } from "@/lib/supabase/server";
 
 /**
  * Instagram Token Refresh Endpoint

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Recovery Strategies for Subscription System
  *
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,7 +155,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionRecoveryManager = void 0;
 var defaultRecoveryConfig = {
@@ -174,7 +171,7 @@ var defaultRecoveryConfig = {
   timeoutMs: 10000, // 10 seconds
 };
 // Recovery strategy implementations
-var SubscriptionRecoveryManager = /** @class */ (function () {
+var SubscriptionRecoveryManager = /** @class */ (() => {
   function SubscriptionRecoveryManager(config) {
     this.config = __assign(__assign({}, defaultRecoveryConfig), config);
   }
@@ -287,7 +284,7 @@ var SubscriptionRecoveryManager = /** @class */ (function () {
     startTime,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement fallback strategy
         return [
           2 /*return*/,
@@ -311,7 +308,7 @@ var SubscriptionRecoveryManager = /** @class */ (function () {
     startTime,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement graceful degradation
         return [
           2 /*return*/,
@@ -335,7 +332,7 @@ var SubscriptionRecoveryManager = /** @class */ (function () {
     startTime,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement circuit breaker strategy
         return [
           2 /*return*/,
@@ -369,18 +366,15 @@ var SubscriptionRecoveryManager = /** @class */ (function () {
     if (!this.config.exponentialBackoff) {
       return this.config.baseRetryDelay;
     }
-    var delay = this.config.baseRetryDelay * Math.pow(2, attempt - 1);
+    var delay = this.config.baseRetryDelay * 2 ** (attempt - 1);
     delay = Math.min(delay, this.config.maxRetryDelay);
     if (this.config.jitterEnabled) {
       delay += Math.random() * 1000;
     }
     return delay;
   };
-  SubscriptionRecoveryManager.prototype.sleep = function (ms) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, ms);
-    });
-  };
+  SubscriptionRecoveryManager.prototype.sleep = (ms) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   return SubscriptionRecoveryManager;
 })();
 exports.SubscriptionRecoveryManager = SubscriptionRecoveryManager;

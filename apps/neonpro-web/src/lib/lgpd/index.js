@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Compliance Framework - Complete Implementation
  *
@@ -44,15 +43,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -72,13 +71,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -100,9 +99,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -174,7 +171,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComplianceChecker =
   exports.LGPDCompliance =
@@ -200,115 +197,81 @@ exports.ComplianceChecker =
 var consent_manager_1 = require("./consent-manager");
 Object.defineProperty(exports, "ConsentManager", {
   enumerable: true,
-  get: function () {
-    return consent_manager_1.ConsentManager;
-  },
+  get: () => consent_manager_1.ConsentManager,
 });
 Object.defineProperty(exports, "ConsentType", {
   enumerable: true,
-  get: function () {
-    return consent_manager_1.ConsentType;
-  },
+  get: () => consent_manager_1.ConsentType,
 });
 Object.defineProperty(exports, "ConsentStatus", {
   enumerable: true,
-  get: function () {
-    return consent_manager_1.ConsentStatus;
-  },
+  get: () => consent_manager_1.ConsentStatus,
 });
 Object.defineProperty(exports, "LegalBasis", {
   enumerable: true,
-  get: function () {
-    return consent_manager_1.LegalBasis;
-  },
+  get: () => consent_manager_1.LegalBasis,
 });
 Object.defineProperty(exports, "consentRecordSchema", {
   enumerable: true,
-  get: function () {
-    return consent_manager_1.consentRecordSchema;
-  },
+  get: () => consent_manager_1.consentRecordSchema,
 });
 Object.defineProperty(exports, "HEALTHCARE_CONSENT_PURPOSES", {
   enumerable: true,
-  get: function () {
-    return consent_manager_1.HEALTHCARE_CONSENT_PURPOSES;
-  },
+  get: () => consent_manager_1.HEALTHCARE_CONSENT_PURPOSES,
 });
 Object.defineProperty(exports, "HEALTHCARE_DATA_CATEGORIES", {
   enumerable: true,
-  get: function () {
-    return consent_manager_1.HEALTHCARE_DATA_CATEGORIES;
-  },
+  get: () => consent_manager_1.HEALTHCARE_DATA_CATEGORIES,
 });
 // Audit Logging
 var audit_logger_1 = require("./audit-logger");
 Object.defineProperty(exports, "AuditLogger", {
   enumerable: true,
-  get: function () {
-    return audit_logger_1.AuditLogger;
-  },
+  get: () => audit_logger_1.AuditLogger,
 });
 Object.defineProperty(exports, "DataProcessingActivity", {
   enumerable: true,
-  get: function () {
-    return audit_logger_1.DataProcessingActivity;
-  },
+  get: () => audit_logger_1.DataProcessingActivity,
 });
 Object.defineProperty(exports, "RiskLevel", {
   enumerable: true,
-  get: function () {
-    return audit_logger_1.RiskLevel;
-  },
+  get: () => audit_logger_1.RiskLevel,
 });
 Object.defineProperty(exports, "auditLogSchema", {
   enumerable: true,
-  get: function () {
-    return audit_logger_1.auditLogSchema;
-  },
+  get: () => audit_logger_1.auditLogSchema,
 });
 Object.defineProperty(exports, "AUDIT_DATA_CATEGORIES", {
   enumerable: true,
-  get: function () {
-    return audit_logger_1.AUDIT_DATA_CATEGORIES;
-  },
+  get: () => audit_logger_1.AUDIT_DATA_CATEGORIES,
 });
 // Data Subject Rights
 var data_subject_rights_1 = require("./data-subject-rights");
 Object.defineProperty(exports, "DataSubjectRightsManager", {
   enumerable: true,
-  get: function () {
-    return data_subject_rights_1.DataSubjectRightsManager;
-  },
+  get: () => data_subject_rights_1.DataSubjectRightsManager,
 });
 Object.defineProperty(exports, "DataSubjectRight", {
   enumerable: true,
-  get: function () {
-    return data_subject_rights_1.DataSubjectRight;
-  },
+  get: () => data_subject_rights_1.DataSubjectRight,
 });
 Object.defineProperty(exports, "RequestStatus", {
   enumerable: true,
-  get: function () {
-    return data_subject_rights_1.RequestStatus;
-  },
+  get: () => data_subject_rights_1.RequestStatus,
 });
 Object.defineProperty(exports, "dataSubjectRequestSchema", {
   enumerable: true,
-  get: function () {
-    return data_subject_rights_1.dataSubjectRequestSchema;
-  },
+  get: () => data_subject_rights_1.dataSubjectRequestSchema,
 });
 Object.defineProperty(exports, "STANDARD_RESPONSE_TIMES", {
   enumerable: true,
-  get: function () {
-    return data_subject_rights_1.STANDARD_RESPONSE_TIMES;
-  },
+  get: () => data_subject_rights_1.STANDARD_RESPONSE_TIMES,
 });
 /**
  * Complete LGPD compliance helper class
  * Provides high-level methods for common compliance scenarios
  */
-var LGPDCompliance = /** @class */ (function () {
+var LGPDCompliance = /** @class */ (() => {
   function LGPDCompliance() {}
   /**
    * Initialize LGPD compliance for a new patient
@@ -491,7 +454,7 @@ var LGPDCompliance = /** @class */ (function () {
    */
   LGPDCompliance.generateComplianceReport = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement comprehensive compliance reporting
         // This would aggregate data from all LGPD components
         return [
@@ -528,7 +491,7 @@ var LGPDCompliance = /** @class */ (function () {
     });
   };
   // Private helper methods
-  LGPDCompliance.getDataCategoriesForConsent = function (consentType) {
+  LGPDCompliance.getDataCategoriesForConsent = (consentType) => {
     var _a;
     var mapping =
       ((_a = {}),
@@ -543,7 +506,7 @@ var LGPDCompliance = /** @class */ (function () {
       _a);
     return mapping[consentType] || [];
   };
-  LGPDCompliance.getRequiredConsentsForDataCategory = function (category) {
+  LGPDCompliance.getRequiredConsentsForDataCategory = (category) => {
     var mapping = {
       identification: [ConsentType.DATA_PROCESSING],
       contact: [ConsentType.DATA_PROCESSING],
@@ -555,7 +518,7 @@ var LGPDCompliance = /** @class */ (function () {
     };
     return mapping[category] || [ConsentType.DATA_PROCESSING];
   };
-  LGPDCompliance.requiresANPDNotification = function (severity, dataCategories) {
+  LGPDCompliance.requiresANPDNotification = (severity, dataCategories) => {
     // High/critical severity always requires notification
     if (severity === "high" || severity === "critical") return true;
     // Health data breaches require notification regardless of severity
@@ -568,14 +531,14 @@ exports.LGPDCompliance = LGPDCompliance;
 /**
  * LGPD compliance status checker
  */
-var ComplianceChecker = /** @class */ (function () {
+var ComplianceChecker = /** @class */ (() => {
   function ComplianceChecker() {}
   /**
    * Check if a patient has all required consents for treatment
    */
   ComplianceChecker.checkPatientConsents = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Check all required consents for patient
         return [
           2 /*return*/,
@@ -592,7 +555,7 @@ var ComplianceChecker = /** @class */ (function () {
   /**
    * Validate data processing activity for LGPD compliance
    */
-  ComplianceChecker.validateProcessingActivity = function (params) {
+  ComplianceChecker.validateProcessingActivity = (params) => {
     var issues = [];
     var recommendations = [];
     // Validate purpose specification
@@ -606,9 +569,7 @@ var ComplianceChecker = /** @class */ (function () {
     }
     // Check for sensitive data processing
     var sensitiveCategories = ["health", "biometric", "genetic"];
-    var hasSensitiveData = params.dataCategories.some(function (cat) {
-      return sensitiveCategories.includes(cat);
-    });
+    var hasSensitiveData = params.dataCategories.some((cat) => sensitiveCategories.includes(cat));
     if (hasSensitiveData && params.legalBasis !== "consent") {
       issues.push("Sensitive data processing requires explicit consent");
     }

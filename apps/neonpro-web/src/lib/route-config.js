@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Route Configuration Management
  *
@@ -13,18 +12,18 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -33,7 +32,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.routeConfigManager =
   exports.RouteConfigManager =
@@ -124,7 +123,7 @@ exports.FEATURE_GROUPS = {
   EXPERIMENTAL_FEATURES: ["ai_suggestions"],
 };
 // Route builder utility
-var RouteBuilder = /** @class */ (function () {
+var RouteBuilder = /** @class */ (() => {
   function RouteBuilder(pattern, name) {
     this.route = {};
     this.route.pattern = pattern;
@@ -171,9 +170,7 @@ var RouteBuilder = /** @class */ (function () {
 })();
 exports.RouteBuilder = RouteBuilder;
 // Quick route creation helpers
-var createRoute = function (pattern, name) {
-  return new RouteBuilder(pattern, name);
-};
+var createRoute = (pattern, name) => new RouteBuilder(pattern, name);
 exports.createRoute = createRoute;
 // Predefined route configurations using the builder
 exports.PREDEFINED_ROUTES = [
@@ -284,9 +281,9 @@ exports.PREDEFINED_ROUTES = [
 ];
 exports.DEFAULT_ROUTE_CONFIG = exports.PREDEFINED_ROUTES;
 // Configuration validation utilities
-var ConfigValidator = /** @class */ (function () {
+var ConfigValidator = /** @class */ (() => {
   function ConfigValidator() {}
-  ConfigValidator.validateRoute = function (route) {
+  ConfigValidator.validateRoute = (route) => {
     var errors = [];
     if (!route.pattern) {
       errors.push("Pattern is required");
@@ -315,11 +312,10 @@ var ConfigValidator = /** @class */ (function () {
     };
   };
   ConfigValidator.validateAllRoutes = function (routes) {
-    var _this = this;
     var errors = {};
     var hasErrors = false;
-    routes.forEach(function (route, index) {
-      var validation = _this.validateRoute(route);
+    routes.forEach((route, index) => {
+      var validation = this.validateRoute(route);
       if (!validation.valid) {
         errors["route_".concat(index, "_").concat(route.name || "unnamed")] = validation.errors;
         hasErrors = true;
@@ -327,7 +323,7 @@ var ConfigValidator = /** @class */ (function () {
     });
     // Check for duplicate patterns
     var patterns = new Set();
-    routes.forEach(function (route, index) {
+    routes.forEach((route, index) => {
       if (patterns.has(route.pattern)) {
         if (!errors["route_".concat(index, "_").concat(route.name)]) {
           errors["route_".concat(index, "_").concat(route.name)] = [];
@@ -346,7 +342,7 @@ var ConfigValidator = /** @class */ (function () {
 })();
 exports.ConfigValidator = ConfigValidator;
 // Configuration management
-var RouteConfigManager = /** @class */ (function () {
+var RouteConfigManager = /** @class */ (() => {
   function RouteConfigManager(initialRoutes) {
     if (initialRoutes === void 0) {
       initialRoutes = exports.PREDEFINED_ROUTES;
@@ -362,9 +358,7 @@ var RouteConfigManager = /** @class */ (function () {
     this.routes.push(route);
   };
   RouteConfigManager.prototype.removeRoute = function (name) {
-    var index = this.routes.findIndex(function (route) {
-      return route.name === name;
-    });
+    var index = this.routes.findIndex((route) => route.name === name);
     if (index !== -1) {
       this.routes.splice(index, 1);
       return true;
@@ -372,9 +366,7 @@ var RouteConfigManager = /** @class */ (function () {
     return false;
   };
   RouteConfigManager.prototype.updateRoute = function (name, updates) {
-    var index = this.routes.findIndex(function (route) {
-      return route.name === name;
-    });
+    var index = this.routes.findIndex((route) => route.name === name);
     if (index !== -1) {
       var updatedRoute = __assign(__assign({}, this.routes[index]), updates);
       var validation = ConfigValidator.validateRoute(updatedRoute);
@@ -387,9 +379,7 @@ var RouteConfigManager = /** @class */ (function () {
     return false;
   };
   RouteConfigManager.prototype.getRoute = function (name) {
-    return this.routes.find(function (route) {
-      return route.name === name;
-    });
+    return this.routes.find((route) => route.name === name);
   };
   RouteConfigManager.prototype.getAllRoutes = function () {
     return __spreadArray([], this.routes, true);

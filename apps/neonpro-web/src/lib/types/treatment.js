@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Treatment & Procedure Documentation Types
  * Based on HL7 FHIR R4 standards for healthcare interoperability

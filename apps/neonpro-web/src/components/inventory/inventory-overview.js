@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryOverview = InventoryOverview;
 /**
@@ -147,7 +144,6 @@ var progress_1 = require("@/components/ui/progress");
 var icons_1 = require("@/components/ui/icons");
 var table_1 = require("@/components/ui/table");
 function InventoryOverview(_a) {
-  var _this = this;
   var dashboardData = _a.dashboardData,
     onRefresh = _a.onRefresh,
     className = _a.className;
@@ -163,17 +159,14 @@ function InventoryOverview(_a) {
   var _e = (0, react_1.useState)(false),
     isLoadingDetails = _e[0],
     setIsLoadingDetails = _e[1];
-  (0, react_1.useEffect)(
-    function () {
-      if (dashboardData) {
-        loadDetailedData();
-      }
-    },
-    [dashboardData],
-  );
-  var loadDetailedData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    if (dashboardData) {
+      loadDetailedData();
+    }
+  }, [dashboardData]);
+  var loadDetailedData = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoadingDetails(true);
@@ -182,12 +175,7 @@ function InventoryOverview(_a) {
             _a.trys.push([1, , 3, 4]);
             // Simulate loading detailed data
             // In real implementation, these would be separate API calls
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 2:
             // Simulate loading detailed data
             // In real implementation, these would be separate API calls
@@ -279,8 +267,7 @@ function InventoryOverview(_a) {
         }
       });
     });
-  };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     var colors = {
       low: "bg-blue-100 text-blue-800 border-blue-200",
       medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -289,18 +276,17 @@ function InventoryOverview(_a) {
     };
     return colors[severity] || colors.low;
   };
-  var getStockStatusColor = function (percentage) {
+  var getStockStatusColor = (percentage) => {
     if (percentage <= 25) return "bg-red-500";
     if (percentage <= 50) return "bg-orange-500";
     if (percentage <= 75) return "bg-yellow-500";
     return "bg-green-500";
   };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   if (!dashboardData) {
     return (
       <div className={"space-y-6 ".concat(className)}>
@@ -326,33 +312,31 @@ function InventoryOverview(_a) {
           <card_1.CardContent>
             {isLoadingDetails
               ? <div className="space-y-3">
-                  {[1, 2, 3].map(function (i) {
-                    return <div key={i} className="h-12 bg-gray-200 rounded animate-pulse" />;
-                  })}
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-12 bg-gray-200 rounded animate-pulse" />
+                  ))}
                 </div>
               : alerts.length > 0
                 ? <div className="space-y-3">
-                    {alerts.map(function (alert) {
-                      return (
-                        <div
-                          key={alert.id}
-                          className={"p-3 rounded-lg border ".concat(
-                            getSeverityColor(alert.severity),
-                          )}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <p className="font-medium">{alert.product_name}</p>
-                              <p className="text-sm opacity-90">{alert.message}</p>
-                              <p className="text-xs mt-1 opacity-75">{alert.action_required}</p>
-                            </div>
-                            <badge_1.Badge variant="outline" className="ml-2">
-                              {alert.severity}
-                            </badge_1.Badge>
+                    {alerts.map((alert) => (
+                      <div
+                        key={alert.id}
+                        className={"p-3 rounded-lg border ".concat(
+                          getSeverityColor(alert.severity),
+                        )}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="font-medium">{alert.product_name}</p>
+                            <p className="text-sm opacity-90">{alert.message}</p>
+                            <p className="text-xs mt-1 opacity-75">{alert.action_required}</p>
                           </div>
+                          <badge_1.Badge variant="outline" className="ml-2">
+                            {alert.severity}
+                          </badge_1.Badge>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 : <div className="text-center py-4">
                     <icons_1.Icons.CheckCircle className="h-8 w-8 mx-auto text-green-500 mb-2" />
@@ -372,42 +356,36 @@ function InventoryOverview(_a) {
           <card_1.CardContent>
             {isLoadingDetails
               ? <div className="space-y-3">
-                  {[1, 2, 3].map(function (i) {
-                    return (
-                      <div key={i} className="space-y-2">
-                        <div className="h-4 bg-gray-200 rounded animate-pulse" />
-                        <div className="h-2 bg-gray-200 rounded animate-pulse" />
-                      </div>
-                    );
-                  })}
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                      <div className="h-2 bg-gray-200 rounded animate-pulse" />
+                    </div>
+                  ))}
                 </div>
               : lowStockProducts.length > 0
                 ? <div className="space-y-4">
-                    {lowStockProducts.map(function (product) {
-                      return (
-                        <div key={product.id} className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="font-medium text-sm">{product.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {product.current_stock}/{product.minimum_stock}
-                            </span>
-                          </div>
-                          <div className="space-y-1">
-                            <progress_1.Progress value={product.percentage} className="h-2" />
-                            <div className="flex justify-between text-xs text-muted-foreground">
-                              <span>{product.percentage}% do mínimo</span>
-                              <badge_1.Badge
-                                variant={
-                                  product.status === "critical" ? "destructive" : "secondary"
-                                }
-                              >
-                                {product.status === "critical" ? "Crítico" : "Baixo"}
-                              </badge_1.Badge>
-                            </div>
+                    {lowStockProducts.map((product) => (
+                      <div key={product.id} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium text-sm">{product.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {product.current_stock}/{product.minimum_stock}
+                          </span>
+                        </div>
+                        <div className="space-y-1">
+                          <progress_1.Progress value={product.percentage} className="h-2" />
+                          <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>{product.percentage}% do mínimo</span>
+                            <badge_1.Badge
+                              variant={product.status === "critical" ? "destructive" : "secondary"}
+                            >
+                              {product.status === "critical" ? "Crítico" : "Baixo"}
+                            </badge_1.Badge>
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 : <div className="text-center py-4">
                     <icons_1.Icons.CheckCircle className="h-8 w-8 mx-auto text-green-500 mb-2" />
@@ -478,34 +456,32 @@ function InventoryOverview(_a) {
                     </table_1.TableRow>
                   </table_1.TableHeader>
                   <table_1.TableBody>
-                    {expiringProducts.map(function (product) {
-                      return (
-                        <table_1.TableRow key={product.id}>
-                          <table_1.TableCell className="font-medium">
-                            {product.name}
-                          </table_1.TableCell>
-                          <table_1.TableCell>{product.batch_number}</table_1.TableCell>
-                          <table_1.TableCell>
-                            {product.expiry_date.toLocaleDateString("pt-BR")}
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge
-                              variant={product.days_to_expiry <= 7 ? "destructive" : "secondary"}
-                            >
-                              {product.days_to_expiry} dias
-                            </badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>{product.quantity}</table_1.TableCell>
-                          <table_1.TableCell>{formatCurrency(product.value)}</table_1.TableCell>
-                          <table_1.TableCell>
-                            <button_1.Button size="sm" variant="outline">
-                              <icons_1.Icons.ArrowRight className="h-4 w-4 mr-1" />
-                              Usar
-                            </button_1.Button>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                    {expiringProducts.map((product) => (
+                      <table_1.TableRow key={product.id}>
+                        <table_1.TableCell className="font-medium">
+                          {product.name}
+                        </table_1.TableCell>
+                        <table_1.TableCell>{product.batch_number}</table_1.TableCell>
+                        <table_1.TableCell>
+                          {product.expiry_date.toLocaleDateString("pt-BR")}
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge
+                            variant={product.days_to_expiry <= 7 ? "destructive" : "secondary"}
+                          >
+                            {product.days_to_expiry} dias
+                          </badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>{product.quantity}</table_1.TableCell>
+                        <table_1.TableCell>{formatCurrency(product.value)}</table_1.TableCell>
+                        <table_1.TableCell>
+                          <button_1.Button size="sm" variant="outline">
+                            <icons_1.Icons.ArrowRight className="h-4 w-4 mr-1" />
+                            Usar
+                          </button_1.Button>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
                   </table_1.TableBody>
                 </table_1.Table>
               : <div className="text-center py-8">

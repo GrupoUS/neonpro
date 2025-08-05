@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🎯 NeonPro Experience Quality Analyzer
  *
@@ -33,26 +32,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -72,13 +71,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -100,9 +99,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -174,7 +171,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExperienceQualityAnalyzer = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -186,7 +183,7 @@ var logger_1 = require("@/lib/utils/logger");
  * Experience Quality Analyzer
  * Sistema principal para análise de qualidade da experiência do paciente
  */
-var ExperienceQualityAnalyzer = /** @class */ (function () {
+var ExperienceQualityAnalyzer = /** @class */ (() => {
   function ExperienceQualityAnalyzer() {
     this.supabase = (0, client_1.createClient)();
     this.config = new Map();
@@ -546,7 +543,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
               ),
               target_dimensions: targetDimensions,
               current_baseline: Object.fromEntries(
-                targetDimensions.map(function (dim) {
+                targetDimensions.map((dim) => {
                   var _a;
                   return [
                     dim,
@@ -712,7 +709,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
   // ============================================================================
   // HELPER METHODS
   // ============================================================================
-  ExperienceQualityAnalyzer.prototype.initializeDefaultConfig = function () {
+  ExperienceQualityAnalyzer.prototype.initializeDefaultConfig = () => {
     // Initialize with default quality thresholds and industry benchmarks
   };
   ExperienceQualityAnalyzer.prototype.createBaselineAssessment = function (patientId) {
@@ -808,7 +805,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
       return __generator(this, function (_a) {
         dimensions = {};
         // Analyze each quality dimension
-        Object.keys(this.industryBenchmarks).forEach(function (dimensionKey) {
+        Object.keys(this.industryBenchmarks).forEach((dimensionKey) => {
           var dimension = dimensionKey;
           // Calculate score based on available data and method
           var score = _this.calculateDimensionScore(dimension, qualityData, method);
@@ -830,12 +827,11 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     });
   };
   ExperienceQualityAnalyzer.prototype.calculateOverallQualityScore = function (dimensionScores) {
-    var _this = this;
     var weightedSum = 0;
     var totalWeight = 0;
-    Object.keys(dimensionScores).forEach(function (dimensionKey) {
+    Object.keys(dimensionScores).forEach((dimensionKey) => {
       var dimension = dimensionKey;
-      var weight = _this.dimensionWeights[dimension] || 0;
+      var weight = this.dimensionWeights[dimension] || 0;
       var score = dimensionScores[dimension].score;
       var confidence = dimensionScores[dimension].confidence;
       // Weight by confidence to reduce impact of low-confidence scores
@@ -845,7 +841,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     });
     return totalWeight > 0 ? Math.round((weightedSum / totalWeight) * 100) / 100 : 0;
   };
-  ExperienceQualityAnalyzer.prototype.getQualityCategory = function (score) {
+  ExperienceQualityAnalyzer.prototype.getQualityCategory = (score) => {
     if (score >= 4.5) return "excellent";
     if (score >= 4.0) return "good";
     if (score >= 3.5) return "fair";
@@ -870,7 +866,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
           communication: this.analyzeCommunicationFriction(qualityData),
         };
         // Process analysis results into friction points
-        Object.entries(analysisResults).forEach(function (_a) {
+        Object.entries(analysisResults).forEach((_a) => {
           var category = _a[0],
             results = _a[1];
           if (results.hasFriction) {
@@ -889,9 +885,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
         });
         return [
           2 /*return*/,
-          frictionPoints.sort(function (a, b) {
-            return b.resolution_priority - a.resolution_priority;
-          }),
+          frictionPoints.sort((a, b) => b.resolution_priority - a.resolution_priority),
         ];
       });
     });
@@ -900,12 +894,11 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     dimensionScores,
     frictionPoints,
   ) {
-    var _this = this;
     var opportunities = [];
-    Object.keys(dimensionScores).forEach(function (dimensionKey) {
+    Object.keys(dimensionScores).forEach((dimensionKey) => {
       var dimension = dimensionKey;
       var currentScore = dimensionScores[dimension].score;
-      var benchmarkScore = _this.industryBenchmarks[dimension];
+      var benchmarkScore = this.industryBenchmarks[dimension];
       // Identify improvement potential
       if (currentScore < benchmarkScore - 0.2) {
         var improvementPotential = benchmarkScore - currentScore;
@@ -915,20 +908,18 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
           current_score: currentScore,
           target_score: targetScore,
           improvement_potential: Math.round(improvementPotential * 100) / 100,
-          effort_required: _this.estimateEffortRequired(dimension, improvementPotential),
-          expected_impact: _this.estimateExpectedImpact(dimension, improvementPotential),
-          implementation_timeline: _this.estimateTimeline(dimension, improvementPotential),
-          recommended_actions: _this.getRecommendedActionsForDimension(dimension, frictionPoints),
+          effort_required: this.estimateEffortRequired(dimension, improvementPotential),
+          expected_impact: this.estimateExpectedImpact(dimension, improvementPotential),
+          implementation_timeline: this.estimateTimeline(dimension, improvementPotential),
+          recommended_actions: this.getRecommendedActionsForDimension(dimension, frictionPoints),
         });
       }
     });
-    return opportunities.sort(function (a, b) {
-      return b.improvement_potential - a.improvement_potential;
-    });
+    return opportunities.sort((a, b) => b.improvement_potential - a.improvement_potential);
   };
   ExperienceQualityAnalyzer.prototype.generateBenchmarkComparison = function (dimensionScores) {
     var clinicPerformance = {};
-    Object.keys(dimensionScores).forEach(function (dimensionKey) {
+    Object.keys(dimensionScores).forEach((dimensionKey) => {
       var dimension = dimensionKey;
       clinicPerformance[dimension] = dimensionScores[dimension].score;
     });
@@ -959,9 +950,9 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
             _a.sent();
             _a.label = 2;
           case 2:
-            criticalFriction = assessment.friction_points.filter(function (fp) {
-              return fp.severity === "critical";
-            });
+            criticalFriction = assessment.friction_points.filter(
+              (fp) => fp.severity === "critical",
+            );
             if (!(criticalFriction.length > 0)) return [3 /*break*/, 4];
             return [
               4 /*yield*/,
@@ -978,7 +969,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
   };
   ExperienceQualityAnalyzer.prototype.updateQualityTrends = function (patientId, assessment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Update quality trend data for analytics and reporting
         logger_1.logger.debug("Quality trends updated", {
           patient_id: patientId,
@@ -989,23 +980,15 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
       });
     });
   };
-  ExperienceQualityAnalyzer.prototype.calculateQualityTrend = function (assessments) {
+  ExperienceQualityAnalyzer.prototype.calculateQualityTrend = (assessments) => {
     if (assessments.length < 2) {
       return { direction: "stable", strength: 0 };
     }
-    var scores = assessments.map(function (a) {
-      return a.overall_quality_score;
-    });
+    var scores = assessments.map((a) => a.overall_quality_score);
     var firstHalf = scores.slice(0, Math.floor(scores.length / 2));
     var secondHalf = scores.slice(Math.floor(scores.length / 2));
-    var firstAvg =
-      firstHalf.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / firstHalf.length;
-    var secondAvg =
-      secondHalf.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / secondHalf.length;
+    var firstAvg = firstHalf.reduce((sum, score) => sum + score, 0) / firstHalf.length;
+    var secondAvg = secondHalf.reduce((sum, score) => sum + score, 0) / secondHalf.length;
     var difference = secondAvg - firstAvg;
     if (Math.abs(difference) < 0.1) {
       return { direction: "stable", strength: 0 };
@@ -1016,9 +999,8 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     };
   };
   ExperienceQualityAnalyzer.prototype.calculateDimensionScores = function (assessments) {
-    var _this = this;
     var dimensionScores = {};
-    Object.keys(this.industryBenchmarks).forEach(function (dimensionKey) {
+    Object.keys(this.industryBenchmarks).forEach((dimensionKey) => {
       var _a;
       var dimension = dimensionKey;
       // Calculate current score (latest assessment)
@@ -1028,18 +1010,18 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
           ? void 0
           : _a.score) || 0;
       // Calculate trend
-      var scores = assessments.map(function (a) {
+      var scores = assessments.map((a) => {
         var _a;
         return (
           ((_a = a.quality_dimensions[dimension]) === null || _a === void 0 ? void 0 : _a.score) ||
           0
         );
       });
-      var trend = _this.calculateDimensionTrend(scores);
+      var trend = this.calculateDimensionTrend(scores);
       // Calculate percentile ranking
-      var percentileRanking = _this.calculatePercentileRanking(currentScore);
+      var percentileRanking = this.calculatePercentileRanking(currentScore);
       // Calculate benchmark comparison
-      var benchmarkComparison = currentScore - _this.industryBenchmarks[dimension];
+      var benchmarkComparison = currentScore - this.industryBenchmarks[dimension];
       dimensionScores[dimension] = {
         current_score: Math.round(currentScore * 100) / 100,
         trend: trend.direction,
@@ -1049,7 +1031,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     });
     return dimensionScores;
   };
-  ExperienceQualityAnalyzer.prototype.calculateDimensionTrend = function (scores) {
+  ExperienceQualityAnalyzer.prototype.calculateDimensionTrend = (scores) => {
     if (scores.length < 2) {
       return { direction: "stable" };
     }
@@ -1058,14 +1040,8 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     if (earlier.length === 0) {
       return { direction: "stable" };
     }
-    var recentAvg =
-      recent.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / recent.length;
-    var earlierAvg =
-      earlier.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / earlier.length;
+    var recentAvg = recent.reduce((sum, score) => sum + score, 0) / recent.length;
+    var earlierAvg = earlier.reduce((sum, score) => sum + score, 0) / earlier.length;
     var difference = recentAvg - earlierAvg;
     if (Math.abs(difference) < 0.1) {
       return { direction: "stable" };
@@ -1073,15 +1049,14 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     return { direction: difference > 0 ? "improving" : "declining" };
   };
   ExperienceQualityAnalyzer.prototype.identifyCriticalFrictionPoints = function (assessments) {
-    var _this = this;
     var criticalPoints = [];
     // Aggregate friction points across assessments
     var frictionPointsMap = new Map();
-    assessments.forEach(function (assessment) {
+    assessments.forEach((assessment) => {
       var _a;
       (_a = assessment.friction_points) === null || _a === void 0
         ? void 0
-        : _a.forEach(function (fp) {
+        : _a.forEach((fp) => {
             if (fp.severity === "high" || fp.severity === "critical") {
               var key = "".concat(fp.type, "_").concat(fp.location);
               if (frictionPointsMap.has(key)) {
@@ -1095,8 +1070,8 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
           });
     });
     // Convert to array and calculate urgency
-    frictionPointsMap.forEach(function (fp) {
-      var urgency = _this.calculateResolutionUrgency(fp);
+    frictionPointsMap.forEach((fp) => {
+      var urgency = this.calculateResolutionUrgency(fp);
       criticalPoints.push({
         type: fp.type,
         severity: fp.severity,
@@ -1105,20 +1080,17 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
         resolution_urgency: urgency,
       });
     });
-    return criticalPoints.sort(function (a, b) {
-      return b.resolution_urgency - a.resolution_urgency;
-    });
+    return criticalPoints.sort((a, b) => b.resolution_urgency - a.resolution_urgency);
   };
   ExperienceQualityAnalyzer.prototype.findTopImprovementOpportunities = function (assessments) {
-    var _this = this;
     var opportunities = [];
     // Get latest assessment's improvement opportunities
     var latestAssessment = assessments[assessments.length - 1];
     if (latestAssessment.improvement_opportunities) {
-      latestAssessment.improvement_opportunities.forEach(function (opp) {
+      latestAssessment.improvement_opportunities.forEach((opp) => {
         var effortToImpactRatio =
-          opp.improvement_potential / _this.getEffortScore(opp.effort_required);
-        var priority = _this.calculateOpportunityPriority(opp, effortToImpactRatio);
+          opp.improvement_potential / this.getEffortScore(opp.effort_required);
+        var priority = this.calculateOpportunityPriority(opp, effortToImpactRatio);
         opportunities.push({
           dimension: opp.dimension,
           improvement_potential: opp.improvement_potential,
@@ -1128,9 +1100,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
       });
     }
     return opportunities
-      .sort(function (a, b) {
-        return b.effort_to_impact_ratio - a.effort_to_impact_ratio;
-      })
+      .sort((a, b) => b.effort_to_impact_ratio - a.effort_to_impact_ratio)
       .slice(0, 5); // Top 5 opportunities
   };
   ExperienceQualityAnalyzer.prototype.generatePredictiveInsights = function (
@@ -1183,7 +1153,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     var methodConfidence = this.getMethodConfidence(method);
     return Math.min(1, baseConfidence * methodConfidence);
   };
-  ExperienceQualityAnalyzer.prototype.getMethodConfidence = function (method) {
+  ExperienceQualityAnalyzer.prototype.getMethodConfidence = (method) => {
     var confidenceMap = {
       user_feedback: 0.9,
       behavioral_analysis: 0.85,
@@ -1200,7 +1170,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     };
     return confidenceMap[method] || 0.7;
   };
-  ExperienceQualityAnalyzer.prototype.getDimensionSpecificMetrics = function (dimension, data) {
+  ExperienceQualityAnalyzer.prototype.getDimensionSpecificMetrics = (dimension, data) => {
     // Return dimension-specific analysis metrics
     return {
       primary_indicator: "mock_metric",
@@ -1209,105 +1179,93 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     };
   };
   // Friction analysis methods
-  ExperienceQualityAnalyzer.prototype.analyzeNavigationFriction = function (data) {
-    return {
-      hasFriction: Math.random() > 0.7,
-      type: "navigation_difficulty",
-      severity: "medium",
-      description: "Users experiencing difficulty navigating to key sections",
-      impactScore: 3.2,
-      frequency: 0.25,
-      affectedPercentage: 25,
-      priority: 7,
-      suggestedSolutions: [
-        "Improve navigation structure",
-        "Add breadcrumbs",
-        "Enhance search functionality",
-      ],
-    };
-  };
-  ExperienceQualityAnalyzer.prototype.analyzeFormFriction = function (data) {
-    return {
-      hasFriction: Math.random() > 0.8,
-      type: "form_completion_issues",
-      severity: "high",
-      description: "High form abandonment rate in registration process",
-      impactScore: 4.1,
-      frequency: 0.35,
-      affectedPercentage: 35,
-      priority: 8,
-      suggestedSolutions: [
-        "Simplify form fields",
-        "Add form validation",
-        "Implement progressive disclosure",
-      ],
-    };
-  };
-  ExperienceQualityAnalyzer.prototype.analyzePerformanceFriction = function (data) {
-    return {
-      hasFriction: Math.random() > 0.6,
-      type: "loading_performance",
-      severity: "medium",
-      description: "Slow loading times affecting user experience",
-      impactScore: 3.8,
-      frequency: 0.4,
-      affectedPercentage: 40,
-      priority: 6,
-      suggestedSolutions: ["Optimize images", "Implement caching", "Reduce server response time"],
-    };
-  };
-  ExperienceQualityAnalyzer.prototype.analyzeContentFriction = function (data) {
-    return {
-      hasFriction: Math.random() > 0.75,
-      type: "content_clarity",
-      severity: "low",
-      description: "Content clarity issues in onboarding process",
-      impactScore: 2.5,
-      frequency: 0.15,
-      affectedPercentage: 15,
-      priority: 4,
-      suggestedSolutions: ["Improve content clarity", "Add visual guides", "Simplify language"],
-    };
-  };
-  ExperienceQualityAnalyzer.prototype.analyzeAccessibilityFriction = function (data) {
-    return {
-      hasFriction: Math.random() > 0.85,
-      type: "accessibility_barriers",
-      severity: "high",
-      description: "Accessibility barriers preventing full participation",
-      impactScore: 4.5,
-      frequency: 0.1,
-      affectedPercentage: 10,
-      priority: 9,
-      suggestedSolutions: [
-        "WCAG compliance audit",
-        "Screen reader optimization",
-        "Keyboard navigation improvements",
-      ],
-    };
-  };
-  ExperienceQualityAnalyzer.prototype.analyzeCommunicationFriction = function (data) {
-    return {
-      hasFriction: Math.random() > 0.7,
-      type: "communication_gaps",
-      severity: "medium",
-      description: "Communication gaps causing confusion in patient journey",
-      impactScore: 3.5,
-      frequency: 0.2,
-      affectedPercentage: 20,
-      priority: 5,
-      suggestedSolutions: [
-        "Improve communication templates",
-        "Add proactive notifications",
-        "Enhance feedback mechanisms",
-      ],
-    };
-  };
+  ExperienceQualityAnalyzer.prototype.analyzeNavigationFriction = (data) => ({
+    hasFriction: Math.random() > 0.7,
+    type: "navigation_difficulty",
+    severity: "medium",
+    description: "Users experiencing difficulty navigating to key sections",
+    impactScore: 3.2,
+    frequency: 0.25,
+    affectedPercentage: 25,
+    priority: 7,
+    suggestedSolutions: [
+      "Improve navigation structure",
+      "Add breadcrumbs",
+      "Enhance search functionality",
+    ],
+  });
+  ExperienceQualityAnalyzer.prototype.analyzeFormFriction = (data) => ({
+    hasFriction: Math.random() > 0.8,
+    type: "form_completion_issues",
+    severity: "high",
+    description: "High form abandonment rate in registration process",
+    impactScore: 4.1,
+    frequency: 0.35,
+    affectedPercentage: 35,
+    priority: 8,
+    suggestedSolutions: [
+      "Simplify form fields",
+      "Add form validation",
+      "Implement progressive disclosure",
+    ],
+  });
+  ExperienceQualityAnalyzer.prototype.analyzePerformanceFriction = (data) => ({
+    hasFriction: Math.random() > 0.6,
+    type: "loading_performance",
+    severity: "medium",
+    description: "Slow loading times affecting user experience",
+    impactScore: 3.8,
+    frequency: 0.4,
+    affectedPercentage: 40,
+    priority: 6,
+    suggestedSolutions: ["Optimize images", "Implement caching", "Reduce server response time"],
+  });
+  ExperienceQualityAnalyzer.prototype.analyzeContentFriction = (data) => ({
+    hasFriction: Math.random() > 0.75,
+    type: "content_clarity",
+    severity: "low",
+    description: "Content clarity issues in onboarding process",
+    impactScore: 2.5,
+    frequency: 0.15,
+    affectedPercentage: 15,
+    priority: 4,
+    suggestedSolutions: ["Improve content clarity", "Add visual guides", "Simplify language"],
+  });
+  ExperienceQualityAnalyzer.prototype.analyzeAccessibilityFriction = (data) => ({
+    hasFriction: Math.random() > 0.85,
+    type: "accessibility_barriers",
+    severity: "high",
+    description: "Accessibility barriers preventing full participation",
+    impactScore: 4.5,
+    frequency: 0.1,
+    affectedPercentage: 10,
+    priority: 9,
+    suggestedSolutions: [
+      "WCAG compliance audit",
+      "Screen reader optimization",
+      "Keyboard navigation improvements",
+    ],
+  });
+  ExperienceQualityAnalyzer.prototype.analyzeCommunicationFriction = (data) => ({
+    hasFriction: Math.random() > 0.7,
+    type: "communication_gaps",
+    severity: "medium",
+    description: "Communication gaps causing confusion in patient journey",
+    impactScore: 3.5,
+    frequency: 0.2,
+    affectedPercentage: 20,
+    priority: 5,
+    suggestedSolutions: [
+      "Improve communication templates",
+      "Add proactive notifications",
+      "Enhance feedback mechanisms",
+    ],
+  });
   // More helper methods...
-  ExperienceQualityAnalyzer.prototype.estimateEffortRequired = function (
+  ExperienceQualityAnalyzer.prototype.estimateEffortRequired = (
     dimension,
     improvementPotential,
-  ) {
+  ) => {
     if (improvementPotential < 0.5) return "low";
     if (improvementPotential < 1.0) return "medium";
     return "high";
@@ -1322,18 +1280,15 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     if (impact < 0.06) return "medium";
     return "high";
   };
-  ExperienceQualityAnalyzer.prototype.estimateTimeline = function (
-    dimension,
-    improvementPotential,
-  ) {
+  ExperienceQualityAnalyzer.prototype.estimateTimeline = (dimension, improvementPotential) => {
     if (improvementPotential < 0.5) return "2-4 weeks";
     if (improvementPotential < 1.0) return "4-8 weeks";
     return "8-12 weeks";
   };
-  ExperienceQualityAnalyzer.prototype.getRecommendedActionsForDimension = function (
+  ExperienceQualityAnalyzer.prototype.getRecommendedActionsForDimension = (
     dimension,
     frictionPoints,
-  ) {
+  ) => {
     var dimensionActions = {
       accessibility: [
         "WCAG compliance audit",
@@ -1385,11 +1340,11 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     };
     return dimensionActions[dimension] || ["General improvement needed"];
   };
-  ExperienceQualityAnalyzer.prototype.calculatePercentileRanking = function (score) {
+  ExperienceQualityAnalyzer.prototype.calculatePercentileRanking = (score) => {
     // Simple percentile calculation - would use actual distribution in production
     return Math.round((score / 5.0) * 100);
   };
-  ExperienceQualityAnalyzer.prototype.getCompetitivePosition = function (percentile) {
+  ExperienceQualityAnalyzer.prototype.getCompetitivePosition = (percentile) => {
     if (percentile >= 90) return "leader";
     if (percentile >= 75) return "above_average";
     if (percentile >= 50) return "average";
@@ -1398,7 +1353,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
   };
   ExperienceQualityAnalyzer.prototype.triggerImmediateIntervention = function (assessment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.warn("Immediate quality intervention triggered", {
           patient_id: assessment.patient_id,
           quality_score: assessment.overall_quality_score,
@@ -1412,7 +1367,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
     criticalFriction,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.warn("Friction point intervention triggered", {
           patient_id: assessment.patient_id,
           critical_friction_count: criticalFriction.length,
@@ -1421,26 +1376,24 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
       });
     });
   };
-  ExperienceQualityAnalyzer.prototype.calculateResolutionUrgency = function (frictionPoint) {
+  ExperienceQualityAnalyzer.prototype.calculateResolutionUrgency = (frictionPoint) => {
     var severityWeight = { low: 1, medium: 2, high: 3, critical: 4 };
     var severity = severityWeight[frictionPoint.severity] || 1;
     return Math.round(severity * frictionPoint.impact_score * frictionPoint.frequency * 100) / 100;
   };
-  ExperienceQualityAnalyzer.prototype.getEffortScore = function (effort) {
+  ExperienceQualityAnalyzer.prototype.getEffortScore = (effort) => {
     var effortScores = { low: 1, medium: 2, high: 3 };
     return effortScores[effort];
   };
-  ExperienceQualityAnalyzer.prototype.calculateOpportunityPriority = function (
+  ExperienceQualityAnalyzer.prototype.calculateOpportunityPriority = (
     opportunity,
     effortToImpactRatio,
-  ) {
-    return Math.round(effortToImpactRatio * opportunity.improvement_potential * 100) / 100;
-  };
-  ExperienceQualityAnalyzer.prototype.generateInterventionRecommendations = function (
+  ) => Math.round(effortToImpactRatio * opportunity.improvement_potential * 100) / 100;
+  ExperienceQualityAnalyzer.prototype.generateInterventionRecommendations = (
     score,
     trend,
     churnRisk,
-  ) {
+  ) => {
     var recommendations = [];
     if (score < 3.0) {
       recommendations.push("Immediate quality improvement program required");
@@ -1459,42 +1412,44 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
   // Mock data methods
   ExperienceQualityAnalyzer.prototype.getFeedbackData = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { feedbackCount: 5, averageRating: 4.2 }];
-      });
+      return __generator(this, (_a) => [2 /*return*/, { feedbackCount: 5, averageRating: 4.2 }]);
     });
   };
   ExperienceQualityAnalyzer.prototype.getBehavioralData = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { sessionDuration: 15, pageViews: 8, bounceRate: 0.3 }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { sessionDuration: 15, pageViews: 8, bounceRate: 0.3 },
+      ]);
     });
   };
   ExperienceQualityAnalyzer.prototype.getSurveyData = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { responseRate: 0.7, satisfactionScore: 4.1 }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { responseRate: 0.7, satisfactionScore: 4.1 },
+      ]);
     });
   };
   ExperienceQualityAnalyzer.prototype.getAnalyticsData = function (patientId, touchpointId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { conversionRate: 0.8, errorRate: 0.05, loadTime: 2.3 }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { conversionRate: 0.8, errorRate: 0.05, loadTime: 2.3 },
+      ]);
     });
   };
-  ExperienceQualityAnalyzer.prototype.generateMockQualityData = function (method) {
-    return { mockMetric: Math.random() * 5, dataPoints: 10 };
-  };
-  ExperienceQualityAnalyzer.prototype.createOptimizationTactics = function (
+  ExperienceQualityAnalyzer.prototype.generateMockQualityData = (method) => ({
+    mockMetric: Math.random() * 5,
+    dataPoints: 10,
+  });
+  ExperienceQualityAnalyzer.prototype.createOptimizationTactics = (
     targetDimensions,
     currentScores,
     targetGoals,
-  ) {
+  ) => {
     // Create optimization tactics for each target dimension
-    return targetDimensions.map(function (dimension) {
+    return targetDimensions.map((dimension) => {
       var _a;
       return {
         tactic_name: "Improve ".concat(dimension),
@@ -1512,50 +1467,37 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
       };
     });
   };
-  ExperienceQualityAnalyzer.prototype.buildImplementationRoadmap = function (tactics) {
+  ExperienceQualityAnalyzer.prototype.buildImplementationRoadmap = (tactics) => {
     // Build phased implementation roadmap
     return [
       {
         phase: 1,
         phase_name: "Foundation",
         duration_weeks: 4,
-        tactics: tactics.slice(0, Math.ceil(tactics.length / 2)).map(function (t) {
-          return t.tactic_name;
-        }),
+        tactics: tactics.slice(0, Math.ceil(tactics.length / 2)).map((t) => t.tactic_name),
         success_criteria: ["Phase 1 metrics achieved"],
         checkpoints: [new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)], // 1 week from now
       },
     ];
   };
-  ExperienceQualityAnalyzer.prototype.defineSuccessTracking = function (
-    targetDimensions,
-    targetGoals,
-  ) {
-    return {
-      key_metrics: targetDimensions.map(function (d) {
-        return "".concat(d, "_score");
-      }),
-      measurement_frequency: "weekly",
-      target_milestones: targetDimensions.map(function (dimension) {
-        return {
-          milestone_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-          target_value: targetGoals[dimension],
-          metric_name: "".concat(dimension, "_score"),
-        };
-      }),
-    };
-  };
-  ExperienceQualityAnalyzer.prototype.identifyRiskMitigation = function (tactics) {
-    return [
-      {
-        risk_type: "implementation_delay",
-        probability: 0.3,
-        impact: 0.4,
-        mitigation_strategy: "Regular progress monitoring and resource adjustment",
-      },
-    ];
-  };
-  ExperienceQualityAnalyzer.prototype.getRecommendedActions = function (metrics) {
+  ExperienceQualityAnalyzer.prototype.defineSuccessTracking = (targetDimensions, targetGoals) => ({
+    key_metrics: targetDimensions.map((d) => "".concat(d, "_score")),
+    measurement_frequency: "weekly",
+    target_milestones: targetDimensions.map((dimension) => ({
+      milestone_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+      target_value: targetGoals[dimension],
+      metric_name: "".concat(dimension, "_score"),
+    })),
+  });
+  ExperienceQualityAnalyzer.prototype.identifyRiskMitigation = (tactics) => [
+    {
+      risk_type: "implementation_delay",
+      probability: 0.3,
+      impact: 0.4,
+      mitigation_strategy: "Regular progress monitoring and resource adjustment",
+    },
+  ];
+  ExperienceQualityAnalyzer.prototype.getRecommendedActions = (metrics) => {
     var actions = [];
     if (metrics.overall_quality_score < 3.5) {
       actions.push("Implement immediate quality improvement plan");
@@ -1570,7 +1512,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
   };
   ExperienceQualityAnalyzer.prototype.getActivePatients = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Mock implementation - would query database for active patients
         return [2 /*return*/, ["patient_1", "patient_2", "patient_3"]];
       });
@@ -1578,7 +1520,7 @@ var ExperienceQualityAnalyzer = /** @class */ (function () {
   };
   ExperienceQualityAnalyzer.prototype.sendQualityAlerts = function (alerts) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Mock implementation - would send actual alerts
         logger_1.logger.info("Quality alerts sent", { count: alerts.length });
         return [2 /*return*/];

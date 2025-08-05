@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,14 +155,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useCommunicationRealtime = useCommunicationRealtime;
 var react_1 = require("react");
 var client_1 = require("@/lib/supabase/client");
 var use_toast_1 = require("./use-toast");
 function useCommunicationRealtime(_a) {
-  var _this = this;
   var conversationId = _a.conversationId,
     userId = _a.userId,
     _b = _a.autoConnect,
@@ -184,16 +180,14 @@ function useCommunicationRealtime(_a) {
   var supabase = yield (0, client_1.createClient)();
   // Carregar mensagens iniciais
   var loadMessages = (0, react_1.useCallback)(
-    function (convId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (convId) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, messages_1, error, error_1;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, , 3]);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
               return [
                 4 /*yield*/,
                 supabase
@@ -207,33 +201,32 @@ function useCommunicationRealtime(_a) {
             case 1:
               (_a = _b.sent()), (messages_1 = _a.data), (error = _a.error);
               if (error) throw error;
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   messages: messages_1 || [],
                   isLoading: false,
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 3];
             case 2:
               error_1 = _b.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   error: error_1 instanceof Error ? error_1.message : "Erro ao carregar mensagens",
                   isLoading: false,
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 3];
             case 3:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   // Conectar ao canal de realtime
   var connect = (0, react_1.useCallback)(
-    function (convId) {
+    (convId) => {
       try {
         var channel = supabase
           .channel("conversation:".concat(convId))
@@ -245,10 +238,10 @@ function useCommunicationRealtime(_a) {
               table: "communication_messages",
               filter: "conversation_id=eq.".concat(convId),
             },
-            function (payload) {
-              return __awaiter(_this, void 0, void 0, function () {
+            (payload) =>
+              __awaiter(this, void 0, void 0, function () {
                 var fullMessage;
-                return __generator(this, function (_a) {
+                return __generator(this, (_a) => {
                   switch (_a.label) {
                     case 0:
                       return [
@@ -264,21 +257,20 @@ function useCommunicationRealtime(_a) {
                     case 1:
                       fullMessage = _a.sent().data;
                       if (fullMessage) {
-                        setState(function (prev) {
-                          return __assign(__assign({}, prev), {
+                        setState((prev) =>
+                          __assign(__assign({}, prev), {
                             messages: __spreadArray(
                               __spreadArray([], prev.messages, true),
                               [fullMessage],
                               false,
                             ),
-                          });
-                        });
+                          }),
+                        );
                       }
                       return [2 /*return*/];
                   }
                 });
-              });
-            },
+              }),
           )
           .on(
             "postgres_changes",
@@ -288,10 +280,10 @@ function useCommunicationRealtime(_a) {
               table: "communication_messages",
               filter: "conversation_id=eq.".concat(convId),
             },
-            function (payload) {
-              return __awaiter(_this, void 0, void 0, function () {
+            (payload) =>
+              __awaiter(this, void 0, void 0, function () {
                 var fullMessage;
-                return __generator(this, function (_a) {
+                return __generator(this, (_a) => {
                   switch (_a.label) {
                     case 0:
                       return [
@@ -307,46 +299,41 @@ function useCommunicationRealtime(_a) {
                     case 1:
                       fullMessage = _a.sent().data;
                       if (fullMessage) {
-                        setState(function (prev) {
-                          return __assign(__assign({}, prev), {
-                            messages: prev.messages.map(function (msg) {
-                              return msg.id === fullMessage.id ? fullMessage : msg;
-                            }),
-                          });
-                        });
+                        setState((prev) =>
+                          __assign(__assign({}, prev), {
+                            messages: prev.messages.map((msg) =>
+                              msg.id === fullMessage.id ? fullMessage : msg,
+                            ),
+                          }),
+                        );
                       }
                       return [2 /*return*/];
                   }
                 });
-              });
-            },
+              }),
           )
-          .on("broadcast", { event: "typing" }, function (payload) {
+          .on("broadcast", { event: "typing" }, (payload) => {
             if (payload.userId !== userId) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   typingUsers: payload.isTyping
                     ? __spreadArray(
                         __spreadArray(
                           [],
-                          prev.typingUsers.filter(function (u) {
-                            return u !== payload.userId;
-                          }),
+                          prev.typingUsers.filter((u) => u !== payload.userId),
                           true,
                         ),
                         [payload.userId],
                         false,
                       )
-                    : prev.typingUsers.filter(function (u) {
-                        return u !== payload.userId;
-                      }),
-                });
-              });
+                    : prev.typingUsers.filter((u) => u !== payload.userId),
+                }),
+              );
             }
           })
-          .on("broadcast", { event: "user_joined" }, function (payload) {
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
+          .on("broadcast", { event: "user_joined" }, (payload) => {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
                 participants: __spreadArray(
                   [],
                   new Set(
@@ -358,34 +345,32 @@ function useCommunicationRealtime(_a) {
                   ),
                   true,
                 ),
-              });
-            });
+              }),
+            );
           })
-          .on("broadcast", { event: "user_left" }, function (payload) {
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                participants: prev.participants.filter(function (p) {
-                  return p !== payload.userId;
-                }),
-              });
-            });
+          .on("broadcast", { event: "user_left" }, (payload) => {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                participants: prev.participants.filter((p) => p !== payload.userId),
+              }),
+            );
           })
-          .subscribe(function (status) {
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
+          .subscribe((status) => {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
                 isConnected: status === "SUBSCRIBED",
                 error: status === "CLOSED" ? "Conexão perdida" : null,
-              });
-            });
+              }),
+            );
           });
         return channel;
       } catch (error) {
-        setState(function (prev) {
-          return __assign(__assign({}, prev), {
+        setState((prev) =>
+          __assign(__assign({}, prev), {
             error: error instanceof Error ? error.message : "Erro ao conectar",
             isConnected: false,
-          });
-        });
+          }),
+        );
         return null;
       }
     },
@@ -393,13 +378,13 @@ function useCommunicationRealtime(_a) {
   );
   // Enviar mensagem
   var sendMessage = (0, react_1.useCallback)(
-    function (content_1) {
+    (content_1) => {
       var args_1 = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         args_1[_i - 1] = arguments[_i];
       }
       return __awaiter(
-        _this,
+        this,
         __spreadArray([content_1], args_1, true),
         void 0,
         function (content, type, conversationId, metadata) {
@@ -407,7 +392,7 @@ function useCommunicationRealtime(_a) {
           if (type === void 0) {
             type = "text";
           }
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 if (!conversationId) {
@@ -458,10 +443,10 @@ function useCommunicationRealtime(_a) {
   );
   // Marcar mensagem como lida
   var markAsRead = (0, react_1.useCallback)(
-    function (messageId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (messageId) =>
+      __awaiter(this, void 0, void 0, function () {
         var error, error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -485,16 +470,15 @@ function useCommunicationRealtime(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, conversationId],
   );
   // Broadcast de digitação
   var broadcastTyping = (0, react_1.useCallback)(
-    function (isTyping) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (isTyping) =>
+      __awaiter(this, void 0, void 0, function () {
         var channel, error_4;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!conversationId) return [2 /*return*/];
@@ -521,48 +505,41 @@ function useCommunicationRealtime(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase, conversationId, userId],
   );
   // Efeito principal
-  (0, react_1.useEffect)(
-    function () {
-      if (!conversationId || !autoConnect) return;
-      var channel = null;
-      var setupConnection = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                // Carregar mensagens iniciais
-                return [4 /*yield*/, loadMessages(conversationId)];
-              case 1:
-                // Carregar mensagens iniciais
-                _a.sent();
-                // Conectar ao realtime
-                channel = connect(conversationId);
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    if (!conversationId || !autoConnect) return;
+    var channel = null;
+    var setupConnection = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              // Carregar mensagens iniciais
+              return [4 /*yield*/, loadMessages(conversationId)];
+            case 1:
+              // Carregar mensagens iniciais
+              _a.sent();
+              // Conectar ao realtime
+              channel = connect(conversationId);
+              return [2 /*return*/];
+          }
         });
-      };
-      setupConnection();
-      return function () {
-        if (channel) {
-          supabase.removeChannel(channel);
-        }
-      };
-    },
-    [conversationId, autoConnect, loadMessages, connect, supabase],
-  );
+      });
+    setupConnection();
+    return () => {
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
+    };
+  }, [conversationId, autoConnect, loadMessages, connect, supabase]);
   return __assign(__assign({}, state), {
     sendMessage: sendMessage,
     markAsRead: markAsRead,
     broadcastTyping: broadcastTyping,
     loadMessages: loadMessages,
-    connect: function (convId) {
-      return connect(convId);
-    },
+    connect: (convId) => connect(convId),
   });
 }

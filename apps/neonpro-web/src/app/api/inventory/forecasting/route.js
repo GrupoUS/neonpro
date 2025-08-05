@@ -1,17 +1,16 @@
-"use strict";
 // API Routes for Demand Forecasting
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var intelligent_threshold_service_1 = require("@/app/lib/services/intelligent-threshold-service");
@@ -144,9 +141,7 @@ var forecastRequestSchema = zod_1.z.object({
   item_id: zod_1.z.string(),
   clinic_id: zod_1.z.string(),
   forecast_period: zod_1.z.enum(["daily", "weekly", "monthly", "quarterly"]),
-  forecast_date: zod_1.z.string().transform(function (str) {
-    return new Date(str);
-  }),
+  forecast_date: zod_1.z.string().transform((str) => new Date(str)),
 });
 var bulkForecastRequestSchema = zod_1.z.object({
   items: zod_1.z.array(
@@ -162,14 +157,12 @@ var bulkForecastRequestSchema = zod_1.z.object({
   forecast_date: zod_1.z
     .string()
     .optional()
-    .transform(function (str) {
-      return str ? new Date(str) : new Date();
-    }),
+    .transform((str) => (str ? new Date(str) : new Date())),
 });
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var body, validatedData, forecast, error_1;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 5, , 6]);
@@ -237,8 +230,7 @@ function POST(request) {
 function handleBulkForecast(body) {
   return __awaiter(this, void 0, void 0, function () {
     var validatedData_1, forecasts, successful, failed, error_2;
-    var _this = this;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -246,10 +238,10 @@ function handleBulkForecast(body) {
           return [
             4 /*yield*/,
             Promise.all(
-              validatedData_1.items.map(function (item) {
-                return __awaiter(_this, void 0, void 0, function () {
+              validatedData_1.items.map((item) =>
+                __awaiter(this, void 0, void 0, function () {
                   var forecast, error_3;
-                  return __generator(this, function (_a) {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         _a.trys.push([0, 2, , 3]);
@@ -282,32 +274,24 @@ function handleBulkForecast(body) {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ),
           ];
         case 1:
           forecasts = _a.sent();
-          successful = forecasts.filter(function (f) {
-            return f.success;
-          });
-          failed = forecasts.filter(function (f) {
-            return !f.success;
-          });
+          successful = forecasts.filter((f) => f.success);
+          failed = forecasts.filter((f) => !f.success);
           return [
             2 /*return*/,
             server_1.NextResponse.json({
               success: true,
-              data: successful.map(function (f) {
-                return f.data;
-              }),
+              data: successful.map((f) => f.data),
               summary: {
                 total_requested: validatedData_1.items.length,
                 successful: successful.length,
                 failed: failed.length,
-                failures: failed.map(function (f) {
-                  return { item_id: f.item_id, error: f.error };
-                }),
+                failures: failed.map((f) => ({ item_id: f.item_id, error: f.error })),
               },
               message: "Bulk forecast completed: "
                 .concat(successful.length, "/")

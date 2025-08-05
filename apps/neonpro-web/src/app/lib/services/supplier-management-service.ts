@@ -3,7 +3,8 @@
 // Epic 6 - Story 6.3: Comprehensive supplier management with performance tracking
 // =====================================================================================
 
-import {
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type {
   ContractRenewalAlert,
   ContractStatus,
   CreateContractRequest,
@@ -30,7 +31,6 @@ import {
   SupplierStatus,
   UpdateSupplierRequest,
 } from "@/app/types/suppliers";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export class SupplierManagementService {
   private supabase: SupabaseClient;

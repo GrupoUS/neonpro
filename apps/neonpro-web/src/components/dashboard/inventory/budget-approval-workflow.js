@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BudgetApprovalWorkflow = BudgetApprovalWorkflow;
 var useBudgetApproval_1 = require("@/app/hooks/useBudgetApproval");
@@ -47,7 +46,7 @@ function BudgetApprovalWorkflow(_a) {
   var _f = (0, react_1.useState)(null),
     selectedBudget = _f[0],
     setSelectedBudget = _f[1];
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "active":
         return "bg-green-100 text-green-800";
@@ -61,7 +60,7 @@ function BudgetApprovalWorkflow(_a) {
         return "bg-blue-100 text-blue-800";
     }
   };
-  var getApprovalStatusColor = function (status) {
+  var getApprovalStatusColor = (status) => {
     switch (status) {
       case "approved":
         return "bg-green-100 text-green-800";
@@ -75,7 +74,7 @@ function BudgetApprovalWorkflow(_a) {
         return "bg-blue-100 text-blue-800";
     }
   };
-  var getApprovalIcon = function (status) {
+  var getApprovalIcon = (status) => {
     switch (status) {
       case "approved":
         return <lucide_react_1.CheckCircle className="h-4 w-4" />;
@@ -89,7 +88,7 @@ function BudgetApprovalWorkflow(_a) {
         return <lucide_react_1.Clock className="h-4 w-4" />;
     }
   };
-  var BudgetCard = function (_a) {
+  var BudgetCard = (_a) => {
     var budget = _a.budget;
     var utilizationPercentage =
       budget.total_amount > 0 ? ((budget.spent_amount || 0) / budget.total_amount) * 100 : 0;
@@ -151,9 +150,7 @@ function BudgetApprovalWorkflow(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return setSelectedBudget(budget);
-                }}
+                onClick={() => setSelectedBudget(budget)}
               >
                 <lucide_react_1.Eye className="h-4 w-4 mr-1" />
                 View Details
@@ -161,9 +158,7 @@ function BudgetApprovalWorkflow(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return generateForecast(budget.id);
-                }}
+                onClick={() => generateForecast(budget.id)}
               >
                 <lucide_react_1.TrendingUp className="h-4 w-4 mr-1" />
                 Forecast
@@ -174,7 +169,7 @@ function BudgetApprovalWorkflow(_a) {
       </card_1.Card>
     );
   };
-  var ApprovalCard = function (_a) {
+  var ApprovalCard = (_a) => {
     var _b;
     var approval = _a.approval;
     return (
@@ -217,9 +212,7 @@ function BudgetApprovalWorkflow(_a) {
               <div className="flex gap-2 mt-4">
                 <button_1.Button
                   size="sm"
-                  onClick={function () {
-                    return processApproval(approval.id, "approve");
-                  }}
+                  onClick={() => processApproval(approval.id, "approve")}
                   className="bg-green-600 hover:bg-green-700"
                 >
                   <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
@@ -228,9 +221,7 @@ function BudgetApprovalWorkflow(_a) {
                 <button_1.Button
                   size="sm"
                   variant="outline"
-                  onClick={function () {
-                    return processApproval(approval.id, "reject");
-                  }}
+                  onClick={() => processApproval(approval.id, "reject")}
                   className="border-red-200 text-red-600 hover:bg-red-50"
                 >
                   <lucide_react_1.XCircle className="h-4 w-4 mr-1" />
@@ -239,9 +230,7 @@ function BudgetApprovalWorkflow(_a) {
                 <button_1.Button
                   size="sm"
                   variant="outline"
-                  onClick={function () {
-                    return processApproval(approval.id, "request_changes");
-                  }}
+                  onClick={() => processApproval(approval.id, "request_changes")}
                 >
                   <lucide_react_1.AlertTriangle className="h-4 w-4 mr-1" />
                   Request Changes
@@ -299,12 +288,7 @@ function BudgetApprovalWorkflow(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">
-              $
-              {budgets
-                .reduce(function (sum, b) {
-                  return sum + b.total_amount;
-                }, 0)
-                .toLocaleString()}
+              ${budgets.reduce((sum, b) => sum + b.total_amount, 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">Across all budgets</p>
           </card_1.CardContent>
@@ -317,12 +301,7 @@ function BudgetApprovalWorkflow(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="text-2xl font-bold">
-              $
-              {budgets
-                .reduce(function (sum, b) {
-                  return sum + (b.spent_amount || 0);
-                }, 0)
-                .toLocaleString()}
+              ${budgets.reduce((sum, b) => sum + (b.spent_amount || 0), 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">Year to date</p>
           </card_1.CardContent>
@@ -371,9 +350,9 @@ function BudgetApprovalWorkflow(_a) {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
               </div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {budgets.map(function (budget) {
-                  return <BudgetCard key={budget.id} budget={budget} />;
-                })}
+                {budgets.map((budget) => (
+                  <BudgetCard key={budget.id} budget={budget} />
+                ))}
               </div>}
         </tabs_1.TabsContent>
 
@@ -411,9 +390,9 @@ function BudgetApprovalWorkflow(_a) {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
               </div>
             : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {approvals.map(function (approval) {
-                  return <ApprovalCard key={approval.id} approval={approval} />;
-                })}
+                {approvals.map((approval) => (
+                  <ApprovalCard key={approval.id} approval={approval} />
+                ))}
               </div>}
         </tabs_1.TabsContent>
 
@@ -429,44 +408,42 @@ function BudgetApprovalWorkflow(_a) {
               <div className="space-y-4">
                 {forecasts.length > 0
                   ? <div className="grid gap-4">
-                      {forecasts.map(function (forecast, index) {
-                        return (
-                          <div key={index} className="border rounded-lg p-4">
-                            <div className="flex justify-between items-center mb-2">
-                              <h4 className="font-medium">
-                                Forecast Period: {forecast.forecast_period} days
-                              </h4>
-                              <badge_1.Badge variant="outline">
-                                {forecast.forecast_accuracy}% accuracy
-                              </badge_1.Badge>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <label_1.Label>Predicted Spend</label_1.Label>
-                                <p className="font-medium">
-                                  ${forecast.predicted_spend.toLocaleString()}
-                                </p>
-                              </div>
-                              <div>
-                                <label_1.Label>Projected Variance</label_1.Label>
-                                <p className="font-medium">
-                                  ${forecast.projected_variance.toLocaleString()}
-                                </p>
-                              </div>
-                            </div>
-                            {forecast.recommendations.length > 0 && (
-                              <div className="mt-3">
-                                <label_1.Label>Recommendations</label_1.Label>
-                                <ul className="list-disc list-inside text-sm text-muted-foreground">
-                                  {forecast.recommendations.map(function (rec, i) {
-                                    return <li key={i}>{rec}</li>;
-                                  })}
-                                </ul>
-                              </div>
-                            )}
+                      {forecasts.map((forecast, index) => (
+                        <div key={index} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-center mb-2">
+                            <h4 className="font-medium">
+                              Forecast Period: {forecast.forecast_period} days
+                            </h4>
+                            <badge_1.Badge variant="outline">
+                              {forecast.forecast_accuracy}% accuracy
+                            </badge_1.Badge>
                           </div>
-                        );
-                      })}
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <label_1.Label>Predicted Spend</label_1.Label>
+                              <p className="font-medium">
+                                ${forecast.predicted_spend.toLocaleString()}
+                              </p>
+                            </div>
+                            <div>
+                              <label_1.Label>Projected Variance</label_1.Label>
+                              <p className="font-medium">
+                                ${forecast.projected_variance.toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                          {forecast.recommendations.length > 0 && (
+                            <div className="mt-3">
+                              <label_1.Label>Recommendations</label_1.Label>
+                              <ul className="list-disc list-inside text-sm text-muted-foreground">
+                                {forecast.recommendations.map((rec, i) => (
+                                  <li key={i}>{rec}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   : <div className="text-center py-8">
                       <p className="text-muted-foreground">
@@ -489,13 +466,7 @@ function BudgetApprovalWorkflow(_a) {
             <card_1.CardContent>
               <div className="space-y-4">
                 <button_1.Button
-                  onClick={function () {
-                    return generateOptimizationRecommendations(
-                      budgets.map(function (b) {
-                        return b.id;
-                      }),
-                    );
-                  }}
+                  onClick={() => generateOptimizationRecommendations(budgets.map((b) => b.id))}
                   disabled={budgets.length === 0}
                 >
                   Generate Optimization Recommendations
@@ -503,57 +474,55 @@ function BudgetApprovalWorkflow(_a) {
 
                 {recommendations.length > 0
                   ? <div className="grid gap-4">
-                      {recommendations.map(function (rec, index) {
-                        return (
-                          <div key={index} className="border rounded-lg p-4">
-                            <div className="flex justify-between items-center mb-2">
-                              <h4 className="font-medium">{rec.type}</h4>
-                              <badge_1.Badge
-                                variant={
-                                  rec.priority === "high"
-                                    ? "destructive"
-                                    : rec.priority === "medium"
-                                      ? "default"
-                                      : "secondary"
-                                }
-                              >
-                                {rec.priority} priority
-                              </badge_1.Badge>
+                      {recommendations.map((rec, index) => (
+                        <div key={index} className="border rounded-lg p-4">
+                          <div className="flex justify-between items-center mb-2">
+                            <h4 className="font-medium">{rec.type}</h4>
+                            <badge_1.Badge
+                              variant={
+                                rec.priority === "high"
+                                  ? "destructive"
+                                  : rec.priority === "medium"
+                                    ? "default"
+                                    : "secondary"
+                              }
+                            >
+                              {rec.priority} priority
+                            </badge_1.Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-3">{rec.reasoning}</p>
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <label_1.Label>Potential Savings</label_1.Label>
+                              <p className="font-medium text-green-600">
+                                ${rec.potential_savings.toLocaleString()}
+                              </p>
                             </div>
-                            <p className="text-sm text-muted-foreground mb-3">{rec.reasoning}</p>
-                            <div className="grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <label_1.Label>Potential Savings</label_1.Label>
-                                <p className="font-medium text-green-600">
-                                  ${rec.potential_savings.toLocaleString()}
-                                </p>
-                              </div>
-                              <div>
-                                <label_1.Label>Implementation Effort</label_1.Label>
-                                <p className="font-medium">{rec.implementation_effort}</p>
-                              </div>
-                            </div>
-                            <div className="mt-3">
-                              <label_1.Label>Impact Analysis</label_1.Label>
-                              <p className="text-sm text-muted-foreground">{rec.impact_analysis}</p>
-                            </div>
-                            <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <label_1.Label>Current Allocation</label_1.Label>
-                                <p className="font-medium">
-                                  ${rec.current_allocation.toLocaleString()}
-                                </p>
-                              </div>
-                              <div>
-                                <label_1.Label>Recommended Allocation</label_1.Label>
-                                <p className="font-medium">
-                                  ${rec.recommended_allocation.toLocaleString()}
-                                </p>
-                              </div>
+                            <div>
+                              <label_1.Label>Implementation Effort</label_1.Label>
+                              <p className="font-medium">{rec.implementation_effort}</p>
                             </div>
                           </div>
-                        );
-                      })}
+                          <div className="mt-3">
+                            <label_1.Label>Impact Analysis</label_1.Label>
+                            <p className="text-sm text-muted-foreground">{rec.impact_analysis}</p>
+                          </div>
+                          <div className="mt-3 grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <label_1.Label>Current Allocation</label_1.Label>
+                              <p className="font-medium">
+                                ${rec.current_allocation.toLocaleString()}
+                              </p>
+                            </div>
+                            <div>
+                              <label_1.Label>Recommended Allocation</label_1.Label>
+                              <p className="font-medium">
+                                ${rec.recommended_allocation.toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   : <div className="text-center py-8">
                       <p className="text-muted-foreground">

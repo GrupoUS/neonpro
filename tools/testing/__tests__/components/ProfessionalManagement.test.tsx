@@ -1,14 +1,12 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { jest } from "@jest/globals";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
 import ProfessionalManagement from "@/components/dashboard/ProfessionalManagement";
 import {
-  getProfessionals,
-  createProfessional,
-  updateProfessional,
   deleteProfessional,
   getProfessionalCredentials,
   getProfessionalServices,
+  getProfessionals,
   verifyCredential,
 } from "@/lib/supabase/professionals";
 

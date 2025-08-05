@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Notification System - Core Manager
  * Story 1.7: Sistema de Notificações
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationManager = void 0;
 exports.getNotificationManager = getNotificationManager;
@@ -170,7 +167,7 @@ var audit_logger_1 = require("../auth/audit/audit-logger");
 /**
  * Gerenciador central do sistema de notificações
  */
-var NotificationManager = /** @class */ (function () {
+var NotificationManager = /** @class */ (() => {
   function NotificationManager(supabaseUrl, supabaseKey) {
     this.isInitialized = false;
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
@@ -221,9 +218,7 @@ var NotificationManager = /** @class */ (function () {
                 category: "system",
                 severity: "info",
                 details: {
-                  channelsEnabled: config.channels.filter(function (c) {
-                    return c.isEnabled;
-                  }).length,
+                  channelsEnabled: config.channels.filter((c) => c.isEnabled).length,
                   analyticsEnabled: config.analytics.enabled,
                   lgpdCompliance: config.compliance.lgpd.enabled,
                 },
@@ -300,25 +295,16 @@ var NotificationManager = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                channels.map(function (channel) {
-                  return _this.createDeliveryNotification(
-                    notification_1,
-                    recipient,
-                    channel,
-                    options,
-                  );
-                }),
+                channels.map((channel) =>
+                  _this.createDeliveryNotification(notification_1, recipient, channel, options),
+                ),
               ),
             ];
           case 4:
             deliveryNotifications = _a.sent();
             return [
               4 /*yield*/,
-              Promise.all(
-                deliveryNotifications.map(function (dn) {
-                  return _this.deliverNotification(dn);
-                }),
-              ),
+              Promise.all(deliveryNotifications.map((dn) => _this.deliverNotification(dn))),
             ];
           case 5:
             results = _a.sent();
@@ -335,9 +321,7 @@ var NotificationManager = /** @class */ (function () {
                   type: type,
                   recipientId: recipient.id,
                   channels: channels.length,
-                  success: results.filter(function (r) {
-                    return r.success;
-                  }).length,
+                  success: results.filter((r) => r.success).length,
                 },
               }),
             ];
@@ -393,21 +377,14 @@ var NotificationManager = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                batch.map(function (recipient) {
-                  return _this.sendNotification(type, recipient, data, options);
-                }),
+                batch.map((recipient) => _this.sendNotification(type, recipient, data, options)),
               ),
             ];
           case 2:
             batchResults = _a.sent();
             results.push.apply(results, batchResults);
             if (!(i + batchSize < recipients.length)) return [3 /*break*/, 4];
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 3:
             _a.sent();
             _a.label = 4;
@@ -679,7 +656,7 @@ var NotificationManager = /** @class */ (function () {
     var preferences = recipient.preferences;
     if (requestedChannels) {
       // Filtrar apenas canais habilitados nas preferências
-      return requestedChannels.filter(function (channel) {
+      return requestedChannels.filter((channel) => {
         var _a;
         return (
           preferences.channels[channel] &&
@@ -699,7 +676,7 @@ var NotificationManager = /** @class */ (function () {
   /**
    * Obtém categoria da notificação
    */
-  NotificationManager.prototype.getNotificationCategory = function (type) {
+  NotificationManager.prototype.getNotificationCategory = (type) => {
     var categoryMap = {
       appointment_: types_1.NotificationCategory.APPOINTMENT,
       patient_: types_1.NotificationCategory.PATIENT,
@@ -724,7 +701,7 @@ var NotificationManager = /** @class */ (function () {
   /**
    * Obtém título padrão para tipo de notificação
    */
-  NotificationManager.prototype.getDefaultTitle = function (type) {
+  NotificationManager.prototype.getDefaultTitle = (type) => {
     var _a;
     var titles =
       ((_a = {}),
@@ -822,7 +799,7 @@ var NotificationManager = /** @class */ (function () {
    */
   NotificationManager.prototype.scheduleNotification = function (notification) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Implementar agendamento (pode usar cron jobs, queue, etc.)
@@ -1083,7 +1060,7 @@ function getNotificationManager() {
 function initializeNotificationSystem(config) {
   return __awaiter(this, void 0, void 0, function () {
     var manager;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           manager = getNotificationManager();

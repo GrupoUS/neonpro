@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Subscription Error Types
  *
@@ -13,22 +12,22 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+        (Array.isArray({ __proto__: [] }) &&
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        throw new TypeError(`Class extends value ${String(b)} is not a constructor or null`);
       extendStatics(d, b);
       function __() {
         this.constructor = d;
@@ -41,13 +40,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -66,38 +65,38 @@ exports.SubscriptionErrorFactory =
     void 0;
 // Base error severity levels
 var ErrorSeverity;
-(function (ErrorSeverity) {
-  ErrorSeverity["LOW"] = "low";
-  ErrorSeverity["MEDIUM"] = "medium";
-  ErrorSeverity["HIGH"] = "high";
-  ErrorSeverity["CRITICAL"] = "critical"; // System-breaking issues
+((ErrorSeverity) => {
+  ErrorSeverity.LOW = "low";
+  ErrorSeverity.MEDIUM = "medium";
+  ErrorSeverity.HIGH = "high";
+  ErrorSeverity.CRITICAL = "critical"; // System-breaking issues
 })(ErrorSeverity || (exports.ErrorSeverity = ErrorSeverity = {}));
 // Error categories for better classification
 var ErrorCategory;
-(function (ErrorCategory) {
-  ErrorCategory["AUTHENTICATION"] = "authentication";
-  ErrorCategory["AUTHORIZATION"] = "authorization";
-  ErrorCategory["NETWORK"] = "network";
-  ErrorCategory["DATABASE"] = "database";
-  ErrorCategory["CACHE"] = "cache";
-  ErrorCategory["VALIDATION"] = "validation";
-  ErrorCategory["EXTERNAL_SERVICE"] = "external_service";
-  ErrorCategory["RATE_LIMIT"] = "rate_limit";
-  ErrorCategory["TIMEOUT"] = "timeout";
-  ErrorCategory["UNKNOWN"] = "unknown";
+((ErrorCategory) => {
+  ErrorCategory.AUTHENTICATION = "authentication";
+  ErrorCategory.AUTHORIZATION = "authorization";
+  ErrorCategory.NETWORK = "network";
+  ErrorCategory.DATABASE = "database";
+  ErrorCategory.CACHE = "cache";
+  ErrorCategory.VALIDATION = "validation";
+  ErrorCategory.EXTERNAL_SERVICE = "external_service";
+  ErrorCategory.RATE_LIMIT = "rate_limit";
+  ErrorCategory.TIMEOUT = "timeout";
+  ErrorCategory.UNKNOWN = "unknown";
 })(ErrorCategory || (exports.ErrorCategory = ErrorCategory = {}));
 // Recovery strategies
 var RecoveryStrategy;
-(function (RecoveryStrategy) {
-  RecoveryStrategy["RETRY"] = "retry";
-  RecoveryStrategy["FALLBACK"] = "fallback";
-  RecoveryStrategy["CIRCUIT_BREAK"] = "circuit_break";
-  RecoveryStrategy["GRACEFUL_DEGRADE"] = "graceful_degrade";
-  RecoveryStrategy["USER_INTERVENTION"] = "user_intervention";
-  RecoveryStrategy["SYSTEM_RESTART"] = "system_restart";
+((RecoveryStrategy) => {
+  RecoveryStrategy.RETRY = "retry";
+  RecoveryStrategy.FALLBACK = "fallback";
+  RecoveryStrategy.CIRCUIT_BREAK = "circuit_break";
+  RecoveryStrategy.GRACEFUL_DEGRADE = "graceful_degrade";
+  RecoveryStrategy.USER_INTERVENTION = "user_intervention";
+  RecoveryStrategy.SYSTEM_RESTART = "system_restart";
 })(RecoveryStrategy || (exports.RecoveryStrategy = RecoveryStrategy = {}));
 // Specific error types
-var SubscriptionAuthError = /** @class */ (function (_super) {
+var SubscriptionAuthError = /** @class */ ((_super) => {
   __extends(SubscriptionAuthError, _super);
   function SubscriptionAuthError(technicalMessage, metadata) {
     var _this = _super.call(this, technicalMessage) || this;
@@ -119,7 +118,7 @@ var SubscriptionAuthError = /** @class */ (function (_super) {
   return SubscriptionAuthError;
 })(Error);
 exports.SubscriptionAuthError = SubscriptionAuthError;
-var SubscriptionValidationError = /** @class */ (function (_super) {
+var SubscriptionValidationError = /** @class */ ((_super) => {
   __extends(SubscriptionValidationError, _super);
   function SubscriptionValidationError(technicalMessage, metadata) {
     var _this = _super.call(this, technicalMessage) || this;
@@ -141,7 +140,7 @@ var SubscriptionValidationError = /** @class */ (function (_super) {
   return SubscriptionValidationError;
 })(Error);
 exports.SubscriptionValidationError = SubscriptionValidationError;
-var SubscriptionNetworkError = /** @class */ (function (_super) {
+var SubscriptionNetworkError = /** @class */ ((_super) => {
   __extends(SubscriptionNetworkError, _super);
   function SubscriptionNetworkError(technicalMessage, metadata) {
     var _this = _super.call(this, technicalMessage) || this;
@@ -163,7 +162,7 @@ var SubscriptionNetworkError = /** @class */ (function (_super) {
   return SubscriptionNetworkError;
 })(Error);
 exports.SubscriptionNetworkError = SubscriptionNetworkError;
-var SubscriptionDatabaseError = /** @class */ (function (_super) {
+var SubscriptionDatabaseError = /** @class */ ((_super) => {
   __extends(SubscriptionDatabaseError, _super);
   function SubscriptionDatabaseError(technicalMessage, metadata) {
     var _this = _super.call(this, technicalMessage) || this;
@@ -185,7 +184,7 @@ var SubscriptionDatabaseError = /** @class */ (function (_super) {
   return SubscriptionDatabaseError;
 })(Error);
 exports.SubscriptionDatabaseError = SubscriptionDatabaseError;
-var SubscriptionCacheError = /** @class */ (function (_super) {
+var SubscriptionCacheError = /** @class */ ((_super) => {
   __extends(SubscriptionCacheError, _super);
   function SubscriptionCacheError(technicalMessage, metadata) {
     var _this = _super.call(this, technicalMessage) || this;
@@ -207,7 +206,7 @@ var SubscriptionCacheError = /** @class */ (function (_super) {
   return SubscriptionCacheError;
 })(Error);
 exports.SubscriptionCacheError = SubscriptionCacheError;
-var SubscriptionRateLimitError = /** @class */ (function (_super) {
+var SubscriptionRateLimitError = /** @class */ ((_super) => {
   __extends(SubscriptionRateLimitError, _super);
   function SubscriptionRateLimitError(technicalMessage, metadata) {
     var _this = _super.call(this, technicalMessage) || this;
@@ -229,7 +228,7 @@ var SubscriptionRateLimitError = /** @class */ (function (_super) {
   return SubscriptionRateLimitError;
 })(Error);
 exports.SubscriptionRateLimitError = SubscriptionRateLimitError;
-var SubscriptionTimeoutError = /** @class */ (function (_super) {
+var SubscriptionTimeoutError = /** @class */ ((_super) => {
   __extends(SubscriptionTimeoutError, _super);
   function SubscriptionTimeoutError(technicalMessage, metadata) {
     var _this = _super.call(this, technicalMessage) || this;
@@ -251,7 +250,7 @@ var SubscriptionTimeoutError = /** @class */ (function (_super) {
   return SubscriptionTimeoutError;
 })(Error);
 exports.SubscriptionTimeoutError = SubscriptionTimeoutError;
-var SubscriptionExternalServiceError = /** @class */ (function (_super) {
+var SubscriptionExternalServiceError = /** @class */ ((_super) => {
   __extends(SubscriptionExternalServiceError, _super);
   function SubscriptionExternalServiceError(technicalMessage, metadata) {
     var _this = _super.call(this, technicalMessage) || this;
@@ -274,9 +273,9 @@ var SubscriptionExternalServiceError = /** @class */ (function (_super) {
 })(Error);
 exports.SubscriptionExternalServiceError = SubscriptionExternalServiceError;
 // Error factory for creating typed errors
-var SubscriptionErrorFactory = /** @class */ (function () {
+var SubscriptionErrorFactory = /** @class */ (() => {
   function SubscriptionErrorFactory() {}
-  SubscriptionErrorFactory.createError = function (type, technicalMessage, context) {
+  SubscriptionErrorFactory.createError = (type, technicalMessage, context) => {
     var metadata = context ? __assign({}, context) : {};
     switch (type) {
       case "auth":
@@ -300,7 +299,7 @@ var SubscriptionErrorFactory = /** @class */ (function () {
         return new SubscriptionValidationError(technicalMessage, metadata);
     }
   };
-  SubscriptionErrorFactory.enrichError = function (error, context) {
+  SubscriptionErrorFactory.enrichError = (error, context) => {
     error.userId = context.userId;
     error.requestId = context.requestId;
     error.metadata = __assign(__assign({}, error.metadata), context);

@@ -1,10 +1,10 @@
-import type { createClient } from "@/lib/supabase/client";
 import type {
   ConsentForm,
-  PatientConsent,
   ConsentFormData,
   DigitalSignature,
+  PatientConsent,
 } from "@/app/types/compliance";
+import type { createClient } from "@/lib/supabase/client";
 
 export class ConsentService {
   private supabase = createClient();

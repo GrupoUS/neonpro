@@ -1,7 +1,7 @@
 // Simple Schema Test - Validation for Stock Alerts
 // Story 11.4: Basic validation testing for implemented schemas
 
-import { describe, it, expect } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import { z } from "zod";
 
 // Simple schema definitions for testing (mimicking our main schemas)
@@ -72,5 +72,3 @@ describe("Stock Alert Schema Validation - Basic Tests", () => {
     expect(result.success).toBe(false);
   });
 });
-
-export {};

@@ -1,12 +1,11 @@
 ﻿// =============================================
+
 // NeonPro Alternative Time Slot Suggestion API
 // Story 1.2: Task 5 - Alternative time slot suggestion system
 // Route: /api/appointments/suggest-alternatives
 // =============================================
 
-import type { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
-import type { z } from "zod";
+import { type NextRequest, NextResponse } from "next/server";
 
 // Validation schema for alternative slot suggestion request
 const suggestAlternativesSchema = z.object({

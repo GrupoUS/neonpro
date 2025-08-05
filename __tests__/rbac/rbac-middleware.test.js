@@ -1,17 +1,16 @@
-"use strict";
 // RBAC Middleware Tests
 // Story 1.2: Role-Based Permissions Enhancement
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -21,7 +20,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -50,8 +49,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -72,9 +69,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -133,52 +130,38 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 // Mock the entire middleware to avoid ESM issues
-globals_1.jest.mock("@/middleware/rbac", function () {
-  return {
-    rbacMiddleware: globals_1.jest.fn(),
-    RoutePermissionConfig: {},
-  };
-});
+globals_1.jest.mock("@/middleware/rbac", () => ({
+  rbacMiddleware: globals_1.jest.fn(),
+  RoutePermissionConfig: {},
+}));
 // Mock all problematic dependencies
-globals_1.jest.mock("@supabase/auth-helpers-nextjs", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return {
-        auth: {
-          getUser: globals_1.jest.fn(),
-        },
-      };
-    }),
-  };
-});
-globals_1.jest.mock("@/lib/supabase/server", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return {
-        auth: {
-          getUser: globals_1.jest.fn(),
-        },
-      };
-    }),
-  };
-});
-globals_1.jest.mock("@/lib/auth/rbac/permissions", function () {
-  return {
-    RBACPermissionManager: globals_1.jest.fn().mockImplementation(function () {
-      return {
-        hasPermission: globals_1.jest.fn(),
-        getUserRole: globals_1.jest.fn(),
-      };
-    }),
-  };
-});
+globals_1.jest.mock("@supabase/auth-helpers-nextjs", () => ({
+  createClient: globals_1.jest.fn(() => ({
+    auth: {
+      getUser: globals_1.jest.fn(),
+    },
+  })),
+}));
+globals_1.jest.mock("@/lib/supabase/server", () => ({
+  createClient: globals_1.jest.fn(() => ({
+    auth: {
+      getUser: globals_1.jest.fn(),
+    },
+  })),
+}));
+globals_1.jest.mock("@/lib/auth/rbac/permissions", () => ({
+  RBACPermissionManager: globals_1.jest.fn().mockImplementation(() => ({
+    hasPermission: globals_1.jest.fn(),
+    getUserRole: globals_1.jest.fn(),
+  })),
+}));
 // Import after mocking
 var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
-(0, globals_1.describe)("RBAC Middleware", function () {
+(0, globals_1.describe)("RBAC Middleware", () => {
   var mockRequest;
   var mockSupabase;
   var mockRBACManager;
@@ -187,7 +170,7 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
     email: "test@example.com",
   };
   var mockClinicId = "clinic-456";
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
     mockSupabase = {
       auth: {
@@ -214,14 +197,14 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
       },
     };
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.restoreAllMocks();
   });
-  (0, globals_1.describe)("Authentication", function () {
-    (0, globals_1.it)("should return 401 when user is not authenticated", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Authentication", () => {
+    (0, globals_1.it)("should return 401 when user is not authenticated", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock no authenticated user
@@ -245,12 +228,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should proceed when user is authenticated", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should proceed when user is authenticated", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock authenticated user
@@ -277,21 +260,21 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Route Permission Matching", function () {
-    (0, globals_1.beforeEach)(function () {
+  (0, globals_1.describe)("Route Permission Matching", () => {
+    (0, globals_1.beforeEach)(() => {
       // Mock authenticated user
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
     });
-    (0, globals_1.it)("should match exact route paths", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should match exact route paths", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.nextUrl.pathname = "/api/users";
@@ -320,12 +303,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should match dynamic route patterns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should match dynamic route patterns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.nextUrl.pathname = "/api/users/user-123";
@@ -347,12 +330,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle nested dynamic routes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle nested dynamic routes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.nextUrl.pathname = "/api/clinics/clinic-456/patients/patient-789";
@@ -380,12 +363,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return 404 for unmatched routes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return 404 for unmatched routes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.nextUrl.pathname = "/api/unknown-route";
@@ -405,11 +388,11 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("HTTP Method Handling", function () {
-    (0, globals_1.beforeEach)(function () {
+  (0, globals_1.describe)("HTTP Method Handling", () => {
+    (0, globals_1.beforeEach)(() => {
       // Mock authenticated user
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
@@ -417,10 +400,10 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
       });
       mockRequest.nextUrl.pathname = "/api/users";
     });
-    (0, globals_1.it)("should handle GET requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should handle GET requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.method = "GET";
@@ -445,12 +428,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle POST requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle POST requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.method = "POST";
@@ -478,12 +461,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return 405 for unsupported HTTP methods", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return 405 for unsupported HTTP methods", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.method = "PATCH";
@@ -504,11 +487,11 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Clinic ID Validation", function () {
-    (0, globals_1.beforeEach)(function () {
+  (0, globals_1.describe)("Clinic ID Validation", () => {
+    (0, globals_1.beforeEach)(() => {
       // Mock authenticated user
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
@@ -517,10 +500,10 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
       mockRequest.nextUrl.pathname = "/api/users";
       mockRequest.method = "GET";
     });
-    (0, globals_1.it)("should extract clinic ID from query parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should extract clinic ID from query parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.nextUrl.searchParams.set("clinicId", mockClinicId);
@@ -545,12 +528,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should extract clinic ID from route parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should extract clinic ID from route parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.nextUrl.pathname = "/api/clinics/clinic-789/users";
@@ -575,12 +558,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return 400 when clinic ID is required but missing", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should return 400 when clinic ID is required but missing", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               config = {
@@ -599,11 +582,11 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Permission Checking", function () {
-    (0, globals_1.beforeEach)(function () {
+  (0, globals_1.describe)("Permission Checking", () => {
+    (0, globals_1.beforeEach)(() => {
       // Mock authenticated user
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
@@ -612,10 +595,10 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
       mockRequest.nextUrl.pathname = "/api/users";
       mockRequest.method = "GET";
     });
-    (0, globals_1.it)("should grant access when permission is granted", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should grant access when permission is granted", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.checkPermission.mockResolvedValue({
@@ -634,12 +617,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should deny access when permission is denied", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should deny access when permission is denied", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.checkPermission.mockResolvedValue({
@@ -663,12 +646,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle permission check errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle permission check errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response, responseData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.checkPermission.mockRejectedValue(
@@ -690,11 +673,11 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Context Extraction", function () {
-    (0, globals_1.beforeEach)(function () {
+  (0, globals_1.describe)("Context Extraction", () => {
+    (0, globals_1.beforeEach)(() => {
       // Mock authenticated user
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
@@ -703,10 +686,10 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
       mockRequest.nextUrl.pathname = "/api/users";
       mockRequest.method = "GET";
     });
-    (0, globals_1.it)("should extract IP address from headers", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should extract IP address from headers", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.headers = new Headers({
@@ -736,12 +719,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should extract user agent from headers", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should extract user agent from headers", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var userAgent, config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36";
@@ -772,12 +755,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle missing headers gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle missing headers gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.headers = new Headers(); // Empty headers
@@ -805,21 +788,21 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Resource Owner Extraction", function () {
-    (0, globals_1.beforeEach)(function () {
+  (0, globals_1.describe)("Resource Owner Extraction", () => {
+    (0, globals_1.beforeEach)(() => {
       // Mock authenticated user
       mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
     });
-    (0, globals_1.it)("should extract resource owner ID from route parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should extract resource owner ID from route parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.nextUrl.pathname = "/api/patients/patient-123";
@@ -845,12 +828,12 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should extract user ID from user-specific routes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should extract user ID from user-specific routes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRequest.nextUrl.pathname = "/api/users/user-456";
@@ -876,7 +859,7 @@ var rbacMiddleware = require("@/middleware/rbac").rbacMiddleware;
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

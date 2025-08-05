@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Breach Detection & Notification System
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationRecipient =
   exports.AffectedDataCategory =
@@ -162,7 +159,7 @@ var server_1 = require("@/app/lib/supabase/server");
 var lgpd_audit_1 = require("../audit/lgpd-audit");
 // Breach severity levels
 var BreachSeverity;
-(function (BreachSeverity) {
+((BreachSeverity) => {
   BreachSeverity["LOW"] = "low";
   BreachSeverity["MEDIUM"] = "medium";
   BreachSeverity["HIGH"] = "high";
@@ -170,7 +167,7 @@ var BreachSeverity;
 })(BreachSeverity || (exports.BreachSeverity = BreachSeverity = {}));
 // Breach types
 var BreachType;
-(function (BreachType) {
+((BreachType) => {
   BreachType["UNAUTHORIZED_ACCESS"] = "unauthorized_access";
   BreachType["DATA_LEAK"] = "data_leak";
   BreachType["SYSTEM_COMPROMISE"] = "system_compromise";
@@ -182,7 +179,7 @@ var BreachType;
 })(BreachType || (exports.BreachType = BreachType = {}));
 // Affected data categories
 var AffectedDataCategory;
-(function (AffectedDataCategory) {
+((AffectedDataCategory) => {
   AffectedDataCategory["PERSONAL_DATA"] = "personal_data";
   AffectedDataCategory["SENSITIVE_PERSONAL_DATA"] = "sensitive_personal_data";
   AffectedDataCategory["HEALTH_DATA"] = "health_data";
@@ -193,7 +190,7 @@ var AffectedDataCategory;
 })(AffectedDataCategory || (exports.AffectedDataCategory = AffectedDataCategory = {}));
 // Notification recipients
 var NotificationRecipient;
-(function (NotificationRecipient) {
+((NotificationRecipient) => {
   NotificationRecipient["DPO"] = "dpo";
   NotificationRecipient["IT_SECURITY"] = "it_security";
   NotificationRecipient["MANAGEMENT"] = "management";
@@ -202,7 +199,7 @@ var NotificationRecipient;
   NotificationRecipient["ANPD"] = "anpd";
   NotificationRecipient["ANVISA"] = "anvisa";
 })(NotificationRecipient || (exports.NotificationRecipient = NotificationRecipient = {}));
-var BreachDetectionSystem = /** @class */ (function () {
+var BreachDetectionSystem = /** @class */ (() => {
   function BreachDetectionSystem() {
     this.supabase = (0, server_1.createClient)();
     this.detectionRules = new Map();
@@ -229,7 +226,7 @@ var BreachDetectionSystem = /** @class */ (function () {
             this.detectionRules.clear();
             rules === null || rules === void 0
               ? void 0
-              : rules.forEach(function (rule) {
+              : rules.forEach((rule) => {
                   _this.detectionRules.set(rule.id, rule);
                 });
             return [3 /*break*/, 3];
@@ -245,7 +242,6 @@ var BreachDetectionSystem = /** @class */ (function () {
   };
   // Setup default detection rules
   BreachDetectionSystem.prototype.setupDefaultRules = function () {
-    var _this = this;
     var defaultRules = [
       {
         name: "Multiple Failed Login Attempts",
@@ -312,16 +308,16 @@ var BreachDetectionSystem = /** @class */ (function () {
       },
     ];
     // Add default rules if not already present
-    defaultRules.forEach(function (rule) {
+    defaultRules.forEach((rule) => {
       var ruleId = "default_".concat(rule.name.toLowerCase().replace(/\s+/g, "_"));
-      if (!_this.detectionRules.has(ruleId)) {
+      if (!this.detectionRules.has(ruleId)) {
         var fullRule = __assign(__assign({}, rule), {
           id: ruleId,
           createdAt: new Date(),
           updatedAt: new Date(),
           triggerCount: 0,
         });
-        _this.detectionRules.set(ruleId, fullRule);
+        this.detectionRules.set(ruleId, fullRule);
       }
     });
   };
@@ -335,19 +331,21 @@ var BreachDetectionSystem = /** @class */ (function () {
             if (this.isMonitoring) return [2 /*return*/];
             this.isMonitoring = true;
             // Set up real-time monitoring
-            this.monitoringInterval = setInterval(function () {
-              return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                  switch (_a.label) {
-                    case 0:
-                      return [4 /*yield*/, this.runDetectionCycle()];
-                    case 1:
-                      _a.sent();
-                      return [2 /*return*/];
-                  }
-                });
-              });
-            }, 60000); // Run every minute
+            this.monitoringInterval = setInterval(
+              () =>
+                __awaiter(_this, void 0, void 0, function () {
+                  return __generator(this, function (_a) {
+                    switch (_a.label) {
+                      case 0:
+                        return [4 /*yield*/, this.runDetectionCycle()];
+                      case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                    }
+                  });
+                }),
+              60000,
+            ); // Run every minute
             // Set up database triggers for real-time detection
             return [4 /*yield*/, this.setupDatabaseTriggers()];
           case 1:
@@ -476,9 +474,7 @@ var BreachDetectionSystem = /** @class */ (function () {
   };
   // Detect failed login patterns
   BreachDetectionSystem.prototype.detectFailedLogins = function (rule, events) {
-    var failedLogins = events.filter(function (e) {
-      return e.outcome === "failure";
-    });
+    var failedLogins = events.filter((e) => e.outcome === "failure");
     var groupedByUser = this.groupEventsByUser(failedLogins);
     for (var _i = 0, _a = Object.entries(groupedByUser); _i < _a.length; _i++) {
       var _b = _a[_i],
@@ -502,9 +498,7 @@ var BreachDetectionSystem = /** @class */ (function () {
   };
   // Detect unusual data access
   BreachDetectionSystem.prototype.detectUnusualAccess = function (rule, events) {
-    var accessEvents = events.filter(function (e) {
-      return e.action === "read" || e.action === "access";
-    });
+    var accessEvents = events.filter((e) => e.action === "read" || e.action === "access");
     var groupedByUser = this.groupEventsByUser(accessEvents);
     for (var _i = 0, _a = Object.entries(groupedByUser); _i < _a.length; _i++) {
       var _b = _a[_i],
@@ -521,10 +515,8 @@ var BreachDetectionSystem = /** @class */ (function () {
     return null;
   };
   // Detect data export anomalies
-  BreachDetectionSystem.prototype.detectExportAnomaly = function (rule, events) {
-    var exportEvents = events.filter(function (e) {
-      return e.action === "export";
-    });
+  BreachDetectionSystem.prototype.detectExportAnomaly = (rule, events) => {
+    var exportEvents = events.filter((e) => e.action === "export");
     for (var _i = 0, exportEvents_1 = exportEvents; _i < exportEvents_1.length; _i++) {
       var event_1 = exportEvents_1[_i];
       var eventTime = new Date(event_1.created_at).getHours();
@@ -541,7 +533,7 @@ var BreachDetectionSystem = /** @class */ (function () {
     return null;
   };
   // Detect unauthorized access
-  BreachDetectionSystem.prototype.detectUnauthorizedAccess = function (rule, events) {
+  BreachDetectionSystem.prototype.detectUnauthorizedAccess = (rule, events) => {
     // This would typically check against known IP ranges, device fingerprints, etc.
     // For now, we'll check for suspicious patterns in the metadata
     for (var _i = 0, events_1 = events; _i < events_1.length; _i++) {
@@ -561,10 +553,8 @@ var BreachDetectionSystem = /** @class */ (function () {
     return null;
   };
   // Detect database query anomalies
-  BreachDetectionSystem.prototype.detectQueryAnomaly = function (rule, events) {
-    var queryEvents = events.filter(function (e) {
-      return e.action === "query";
-    });
+  BreachDetectionSystem.prototype.detectQueryAnomaly = (rule, events) => {
+    var queryEvents = events.filter((e) => e.action === "query");
     for (var _i = 0, queryEvents_1 = queryEvents; _i < queryEvents_1.length; _i++) {
       var event_3 = queryEvents_1[_i];
       var details = event_3.details || {};

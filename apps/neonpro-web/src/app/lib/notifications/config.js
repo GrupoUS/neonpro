@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Notification System Configuration
  * HIPAA-compliant notification management with React Email + Twilio SMS

@@ -13,24 +13,23 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -39,7 +38,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InsightsPanel = InsightsPanel;
 var react_1 = require("react");
@@ -63,8 +62,8 @@ function InsightsPanel(_a) {
    * Process insights with additional metadata
    */
   var processedInsights = (0, react_1.useMemo)(
-    function () {
-      return insights.map(function (insight) {
+    () =>
+      insights.map((insight) => {
         var _a;
         // Determine category icon
         var categoryIcon;
@@ -129,120 +128,107 @@ function InsightsPanel(_a) {
           actionable: actionable,
           estimatedImpact: estimatedImpact,
         });
-      });
-    },
+      }),
     [insights],
   );
   /**
    * Group insights by category
    */
-  var insightCategories = (0, react_1.useMemo)(
-    function () {
-      var categories = new Map();
-      processedInsights.forEach(function (insight) {
-        var category = insight.category;
-        if (!categories.has(category)) {
-          categories.set(category, []);
-        }
-        categories.get(category).push(insight);
+  var insightCategories = (0, react_1.useMemo)(() => {
+    var categories = new Map();
+    processedInsights.forEach((insight) => {
+      var category = insight.category;
+      if (!categories.has(category)) {
+        categories.set(category, []);
+      }
+      categories.get(category).push(insight);
+    });
+    var categoryList = [];
+    categories.forEach((insights, categoryId) => {
+      var label;
+      var icon;
+      switch (categoryId) {
+        case "performance":
+          label = "Performance";
+          icon = <lucide_react_1.BarChart3 className="w-4 h-4" />;
+          break;
+        case "clinical":
+          label = "Clinical";
+          icon = <lucide_react_1.Activity className="w-4 h-4" />;
+          break;
+        case "business":
+          label = "Business";
+          icon = <lucide_react_1.Target className="w-4 h-4" />;
+          break;
+        case "ai_model":
+          label = "AI Models";
+          icon = <lucide_react_1.Brain className="w-4 h-4" />;
+          break;
+        case "compliance":
+          label = "Compliance";
+          icon = <lucide_react_1.Shield className="w-4 h-4" />;
+          break;
+        case "user_experience":
+          label = "User Experience";
+          icon = <lucide_react_1.Users className="w-4 h-4" />;
+          break;
+        default:
+          label = "General";
+          icon = <lucide_react_1.Lightbulb className="w-4 h-4" />;
+      }
+      var averageConfidence =
+        insights.reduce((sum, insight) => sum + insight.confidence, 0) / insights.length;
+      var totalImpact = insights.reduce((sum, insight) => {
+        var _a;
+        return (
+          sum +
+          (((_a = insight.businessImpact) === null || _a === void 0 ? void 0 : _a.efficiency) || 0)
+        );
+      }, 0);
+      categoryList.push({
+        id: categoryId,
+        label: label,
+        icon: icon,
+        insights: insights,
+        averageConfidence: averageConfidence,
+        totalImpact: totalImpact,
       });
-      var categoryList = [];
-      categories.forEach(function (insights, categoryId) {
-        var label;
-        var icon;
-        switch (categoryId) {
-          case "performance":
-            label = "Performance";
-            icon = <lucide_react_1.BarChart3 className="w-4 h-4" />;
-            break;
-          case "clinical":
-            label = "Clinical";
-            icon = <lucide_react_1.Activity className="w-4 h-4" />;
-            break;
-          case "business":
-            label = "Business";
-            icon = <lucide_react_1.Target className="w-4 h-4" />;
-            break;
-          case "ai_model":
-            label = "AI Models";
-            icon = <lucide_react_1.Brain className="w-4 h-4" />;
-            break;
-          case "compliance":
-            label = "Compliance";
-            icon = <lucide_react_1.Shield className="w-4 h-4" />;
-            break;
-          case "user_experience":
-            label = "User Experience";
-            icon = <lucide_react_1.Users className="w-4 h-4" />;
-            break;
-          default:
-            label = "General";
-            icon = <lucide_react_1.Lightbulb className="w-4 h-4" />;
-        }
-        var averageConfidence =
-          insights.reduce(function (sum, insight) {
-            return sum + insight.confidence;
-          }, 0) / insights.length;
-        var totalImpact = insights.reduce(function (sum, insight) {
-          var _a;
-          return (
-            sum +
-            (((_a = insight.businessImpact) === null || _a === void 0 ? void 0 : _a.efficiency) ||
-              0)
-          );
-        }, 0);
-        categoryList.push({
-          id: categoryId,
-          label: label,
-          icon: icon,
-          insights: insights,
-          averageConfidence: averageConfidence,
-          totalImpact: totalImpact,
-        });
-      });
-      return categoryList.sort(function (a, b) {
-        return b.totalImpact - a.totalImpact;
-      });
-    },
-    [processedInsights],
-  );
+    });
+    return categoryList.sort((a, b) => b.totalImpact - a.totalImpact);
+  }, [processedInsights]);
   /**
    * Sort insights
    */
-  var sortedInsights = (0, react_1.useMemo)(
-    function () {
-      var insightsToSort =
-        selectedCategory === "all"
-          ? processedInsights
-          : processedInsights.filter(function (insight) {
-              return insight.category === selectedCategory;
-            });
-      return insightsToSort.sort(function (a, b) {
-        var _a, _b;
-        switch (sortBy) {
-          case "priority":
-            var priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-            return priorityOrder[b.priority] - priorityOrder[a.priority];
-          case "confidence":
-            return b.confidence - a.confidence;
-          case "impact":
-            return (
-              (((_a = b.businessImpact) === null || _a === void 0 ? void 0 : _a.efficiency) || 0) -
-              (((_b = a.businessImpact) === null || _b === void 0 ? void 0 : _b.efficiency) || 0)
-            );
-          case "timestamp":
-            return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
-          default:
-            return 0;
+  var sortedInsights = (0, react_1.useMemo)(() => {
+    var insightsToSort =
+      selectedCategory === "all"
+        ? processedInsights
+        : processedInsights.filter((insight) => insight.category === selectedCategory);
+    return insightsToSort.sort((a, b) => {
+      var _a, _b;
+      switch (sortBy) {
+        case "priority": {
+          var priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
+          return priorityOrder[b.priority] - priorityOrder[a.priority];
         }
-      });
-    },
-    [processedInsights, selectedCategory, sortBy],
-  );
+        case "confidence":
+          return b.confidence - a.confidence;
+        case "impact":
+          return (
+            (((_a = b.businessImpact) === null || _a === void 0 ? void 0 : _a.efficiency) || 0) -
+            (((_b = a.businessImpact) === null || _b === void 0 ? void 0 : _b.efficiency) || 0)
+          );
+        case "timestamp":
+          return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+        default:
+          return 0;
+      }
+    });
+  }, [processedInsights, selectedCategory, sortBy]);
   /**
    * Get insight trend icon
    */
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "improving":
         return <lucide_react_1.TrendingUp className="w-4 h-4 text-green-600" />;
@@ -257,7 +243,7 @@ function InsightsPanel(_a) {
   /**
    * Get impact badge
    */
-  var getImpactBadge = function (impact) {
+  var getImpactBadge = (impact) => {
     var colors = {
       low: "bg-gray-100 text-gray-800",
       medium: "bg-yellow-100 text-yellow-800",
@@ -272,7 +258,7 @@ function InsightsPanel(_a) {
   /**
    * Insight card component
    */
-  var InsightCard = function (_a) {
+  var InsightCard = (_a) => {
     var _b, _c;
     var insight = _a.insight,
       _d = _a.showCategory,
@@ -341,14 +327,12 @@ function InsightsPanel(_a) {
             <div className="space-y-2">
               <div className="text-sm font-medium text-gray-700">Key Data Points</div>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                {insight.dataPoints.slice(0, 4).map(function (point, index) {
-                  return (
-                    <div key={index} className="flex justify-between">
-                      <span className="text-gray-600">{point.label}:</span>
-                      <span className="font-mono">{point.value}</span>
-                    </div>
-                  );
-                })}
+                {insight.dataPoints.slice(0, 4).map((point, index) => (
+                  <div key={index} className="flex justify-between">
+                    <span className="text-gray-600">{point.label}:</span>
+                    <span className="font-mono">{point.value}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -361,14 +345,12 @@ function InsightsPanel(_a) {
                 Recommendations
               </div>
               <div className="space-y-1">
-                {insight.recommendations.slice(0, 3).map(function (rec, index) {
-                  return (
-                    <div key={index} className="text-sm text-gray-600 flex items-start gap-2">
-                      <lucide_react_1.ArrowRight className="w-3 h-3 mt-0.5 text-blue-600" />
-                      <span>{rec}</span>
-                    </div>
-                  );
-                })}
+                {insight.recommendations.slice(0, 3).map((rec, index) => (
+                  <div key={index} className="text-sm text-gray-600 flex items-start gap-2">
+                    <lucide_react_1.ArrowRight className="w-3 h-3 mt-0.5 text-blue-600" />
+                    <span>{rec}</span>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -395,9 +377,9 @@ function InsightsPanel(_a) {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="animate-pulse space-y-4">
-            {__spreadArray([], Array(3), true).map(function (_, i) {
-              return <div key={i} className="h-32 bg-gray-200 rounded"></div>;
-            })}
+            {__spreadArray([], Array(3), true).map((_, i) => (
+              <div key={i} className="h-32 bg-gray-200 rounded"></div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>
@@ -441,9 +423,7 @@ function InsightsPanel(_a) {
           <div className="flex items-center gap-2">
             <select
               value={sortBy}
-              onChange={function (e) {
-                return setSortBy(e.target.value);
-              }}
+              onChange={(e) => setSortBy(e.target.value)}
               className="text-sm border rounded px-2 py-1"
             >
               <option value="priority">Sort by Priority</option>
@@ -458,31 +438,27 @@ function InsightsPanel(_a) {
         <tabs_1.Tabs value={selectedCategory} onValueChange={setSelectedCategory}>
           <tabs_1.TabsList className="grid w-full grid-cols-4 lg:grid-cols-7">
             <tabs_1.TabsTrigger value="all">All</tabs_1.TabsTrigger>
-            {insightCategories.map(function (category) {
-              return (
-                <tabs_1.TabsTrigger
-                  key={category.id}
-                  value={category.id}
-                  className="flex items-center gap-1"
-                >
-                  {category.icon}
-                  <span className="hidden lg:inline">{category.label}</span>
-                  <badge_1.Badge variant="secondary" className="ml-1">
-                    {category.insights.length}
-                  </badge_1.Badge>
-                </tabs_1.TabsTrigger>
-              );
-            })}
+            {insightCategories.map((category) => (
+              <tabs_1.TabsTrigger
+                key={category.id}
+                value={category.id}
+                className="flex items-center gap-1"
+              >
+                {category.icon}
+                <span className="hidden lg:inline">{category.label}</span>
+                <badge_1.Badge variant="secondary" className="ml-1">
+                  {category.insights.length}
+                </badge_1.Badge>
+              </tabs_1.TabsTrigger>
+            ))}
           </tabs_1.TabsList>
 
           <tabs_1.TabsContent value={selectedCategory} className="space-y-4 mt-6">
             {/* Category Summary */}
             {selectedCategory !== "all" && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {(function () {
-                  var category = insightCategories.find(function (cat) {
-                    return cat.id === selectedCategory;
-                  });
+                {(() => {
+                  var category = insightCategories.find((cat) => cat.id === selectedCategory);
                   if (!category) return null;
                   return (
                     <>
@@ -516,15 +492,13 @@ function InsightsPanel(_a) {
 
             {/* Insights List */}
             <div className="space-y-4">
-              {sortedInsights.map(function (insight, index) {
-                return (
-                  <InsightCard
-                    key={"".concat(insight.id, "-").concat(index)}
-                    insight={insight}
-                    showCategory={selectedCategory === "all"}
-                  />
-                );
-              })}
+              {sortedInsights.map((insight, index) => (
+                <InsightCard
+                  key={"".concat(insight.id, "-").concat(index)}
+                  insight={insight}
+                  showCategory={selectedCategory === "all"}
+                />
+              ))}
             </div>
 
             {sortedInsights.length === 0 && (

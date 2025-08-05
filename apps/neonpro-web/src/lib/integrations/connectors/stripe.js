@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Stripe Connector
  * Integration with Stripe API for payment processing
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,13 +150,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StripeUtils = exports.StripeConnector = void 0;
 /**
  * Stripe Connector
  */
-var StripeConnector = /** @class */ (function () {
+var StripeConnector = /** @class */ (() => {
   function StripeConnector(config) {
     this.baseUrl = "https://api.stripe.com/v1";
     this.config = config;
@@ -913,25 +910,24 @@ var StripeConnector = /** @class */ (function () {
    * Encode data as form data for Stripe API
    */
   StripeConnector.prototype.encodeFormData = function (data, prefix) {
-    var _this = this;
     if (prefix === void 0) {
       prefix = "";
     }
     var params = [];
-    var _loop_1 = function (key) {
-      if (data.hasOwnProperty(key)) {
+    var _loop_1 = (key) => {
+      if (Object.hasOwn(data, key)) {
         var value = data[key];
         var encodedKey_1 = prefix ? "".concat(prefix, "[").concat(key, "]") : key;
         if (value === null || value === undefined) {
           return "continue";
         }
         if (typeof value === "object" && !Array.isArray(value)) {
-          params.push(this_1.encodeFormData(value, encodedKey_1));
+          params.push(this.encodeFormData(value, encodedKey_1));
         } else if (Array.isArray(value)) {
-          value.forEach(function (item, index) {
+          value.forEach((item, index) => {
             if (typeof item === "object") {
               params.push(
-                _this.encodeFormData(item, "".concat(encodedKey_1, "[").concat(index, "]")),
+                this.encodeFormData(item, "".concat(encodedKey_1, "[").concat(index, "]")),
               );
             } else {
               params.push(
@@ -944,7 +940,6 @@ var StripeConnector = /** @class */ (function () {
         }
       }
     };
-    var this_1 = this;
     for (var key in data) {
       _loop_1(key);
     }
@@ -956,9 +951,7 @@ var StripeConnector = /** @class */ (function () {
   StripeConnector.prototype.verifyWebhookSignature = function (payload, signature) {
     try {
       // This is a simplified version. In production, use Stripe's webhook verification
-      var expectedSignature = signature.split(",").find(function (s) {
-        return s.startsWith("v1=");
-      });
+      var expectedSignature = signature.split(",").find((s) => s.startsWith("v1="));
       if (!expectedSignature) {
         return false;
       }
@@ -976,12 +969,12 @@ exports.StripeConnector = StripeConnector;
 /**
  * Stripe Utility Functions
  */
-var StripeUtils = /** @class */ (function () {
+var StripeUtils = /** @class */ (() => {
   function StripeUtils() {}
   /**
    * Format amount for display
    */
-  StripeUtils.formatAmount = function (amount, currency) {
+  StripeUtils.formatAmount = (amount, currency) => {
     if (currency === void 0) {
       currency = "BRL";
     }
@@ -993,24 +986,15 @@ var StripeUtils = /** @class */ (function () {
   /**
    * Convert amount to cents
    */
-  StripeUtils.toCents = function (amount) {
-    return Math.round(amount * 100);
-  };
+  StripeUtils.toCents = (amount) => Math.round(amount * 100);
   /**
    * Convert cents to amount
    */
-  StripeUtils.fromCents = function (cents) {
-    return cents / 100;
-  };
+  StripeUtils.fromCents = (cents) => cents / 100;
   /**
    * Generate payment description
    */
-  StripeUtils.generatePaymentDescription = function (
-    appointmentType,
-    patientName,
-    doctorName,
-    date,
-  ) {
+  StripeUtils.generatePaymentDescription = (appointmentType, patientName, doctorName, date) => {
     var formattedDate = date.toLocaleDateString("pt-BR");
     return ""
       .concat(appointmentType, " - ")
@@ -1021,7 +1005,7 @@ var StripeUtils = /** @class */ (function () {
   /**
    * Get payment status in Portuguese
    */
-  StripeUtils.getPaymentStatusText = function (status) {
+  StripeUtils.getPaymentStatusText = (status) => {
     var statusMap = {
       requires_payment_method: "Aguardando método de pagamento",
       requires_confirmation: "Aguardando confirmação",
@@ -1036,7 +1020,7 @@ var StripeUtils = /** @class */ (function () {
   /**
    * Validate Brazilian CPF for customer creation
    */
-  StripeUtils.validateCPF = function (cpf) {
+  StripeUtils.validateCPF = (cpf) => {
     cpf = cpf.replace(/[^\d]/g, "");
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
       return false;
@@ -1061,11 +1045,11 @@ var StripeUtils = /** @class */ (function () {
   /**
    * Create installment options
    */
-  StripeUtils.createInstallmentOptions = function (
+  StripeUtils.createInstallmentOptions = (
     amount,
     maxInstallments,
     minInstallmentAmount, // R$ 5.00 in cents
-  ) {
+  ) => {
     if (maxInstallments === void 0) {
       maxInstallments = 12;
     }

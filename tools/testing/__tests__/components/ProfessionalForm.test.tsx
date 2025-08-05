@@ -1,5 +1,5 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { jest } from "@jest/globals";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { toast } from "sonner";
 import ProfessionalForm from "@/components/dashboard/ProfessionalForm";
 import { createProfessional, updateProfessional } from "@/lib/supabase/professionals";

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Forecasting React Hook for NeonPro
  *
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,7 +166,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useForecasting = useForecasting;
 exports.useForecastComparison = useForecastComparison;
@@ -184,7 +181,6 @@ var forecasting_engine_1 = require("@/lib/analytics/advanced/forecasting-engine"
  * Main forecasting hook
  */
 function useForecasting(initialConfig) {
-  var _this = this;
   var _a, _b;
   var queryClient = (0, react_query_1.useQueryClient)();
   var supabase = yield (0, client_1.createClient)();
@@ -198,28 +194,27 @@ function useForecasting(initialConfig) {
     error = _e[0],
     setError = _e[1];
   // Initialize forecasting engine
-  var forecastingEngine = (0, react_1.useMemo)(function () {
-    return (0, forecasting_engine_1.createForecastingEngine)();
-  }, []);
+  var forecastingEngine = (0, react_1.useMemo)(
+    () => (0, forecasting_engine_1.createForecastingEngine)(),
+    [],
+  );
   // Query key for caching
   var queryKey = (0, react_1.useMemo)(
-    function () {
-      return [
-        "forecasting",
-        config.metric,
-        config.timeHorizon,
-        config.model,
-        config.granularity,
-        config.confidenceLevel,
-      ];
-    },
+    () => [
+      "forecasting",
+      config.metric,
+      config.timeHorizon,
+      config.model,
+      config.granularity,
+      config.confidenceLevel,
+    ],
     [config],
   );
   // Main forecasting query
   var _f = (0, react_query_1.useQuery)({
       queryKey: queryKey,
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var forecastConfig,
             forecast,
             evaluation,
@@ -227,7 +222,7 @@ function useForecasting(initialConfig) {
             chartData,
             confidenceIntervals,
             err_1;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 _a.trys.push([0, 4, , 5]);
@@ -299,8 +294,7 @@ function useForecasting(initialConfig) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       staleTime: 10 * 60 * 1000, // 10 minutes
       cacheTime: 60 * 60 * 1000, // 1 hour
       retry: 2,
@@ -311,24 +305,19 @@ function useForecasting(initialConfig) {
     isLoading = _f.isLoading,
     refreshData = _f.refetch;
   // Auto-refresh effect
-  (0, react_1.useEffect)(
-    function () {
-      if (!config.autoRefresh || !config.refreshInterval) return;
-      var interval = setInterval(function () {
-        refreshData();
-      }, config.refreshInterval * 1000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [config.autoRefresh, config.refreshInterval, refreshData],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!config.autoRefresh || !config.refreshInterval) return;
+    var interval = setInterval(() => {
+      refreshData();
+    }, config.refreshInterval * 1000);
+    return () => clearInterval(interval);
+  }, [config.autoRefresh, config.refreshInterval, refreshData]);
   // Generate forecast mutation
   var generateForecastMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (newConfig) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (newConfig) =>
+      __awaiter(this, void 0, void 0, function () {
         var forecast, evaluation;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, forecastingEngine.generateForecast(newConfig)];
@@ -340,24 +329,23 @@ function useForecasting(initialConfig) {
               return [2 /*return*/, { forecast: forecast, evaluation: evaluation }];
           }
         });
-      });
-    },
-    onSuccess: function (data) {
+      }),
+    onSuccess: (data) => {
       queryClient.setQueryData(queryKey, data);
       setError(null);
     },
-    onError: function (err) {
+    onError: (err) => {
       setError(err instanceof Error ? err.message : "Forecast generation failed");
     },
   });
   // Run scenario mutation
   var runScenarioMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var scenarioResult;
         var name = _b.name,
           scenarioConfig = _b.scenarioConfig;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               if (
@@ -374,27 +362,26 @@ function useForecasting(initialConfig) {
               return [2 /*return*/, { name: name, result: scenarioResult }];
           }
         });
-      });
-    },
-    onSuccess: function (_a) {
+      }),
+    onSuccess: (_a) => {
       var name = _a.name,
         result = _a.result;
-      setScenarios(function (prev) {
+      setScenarios((prev) => {
         var _a;
         return __assign(__assign({}, prev), ((_a = {}), (_a[name] = result), _a));
       });
       setError(null);
     },
-    onError: function (err) {
+    onError: (err) => {
       setError(err instanceof Error ? err.message : "Scenario analysis failed");
     },
   });
   // Export forecast mutation
   var exportForecastMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (format) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (format) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, blob, url, a;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!forecastData) throw new Error("No forecast data to export");
@@ -435,17 +422,16 @@ function useForecasting(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    onError: function (err) {
+      }),
+    onError: (err) => {
       setError(err instanceof Error ? err.message : "Export failed");
     },
   });
   // Actions
   var generateForecast = (0, react_1.useCallback)(
-    function (newConfig) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (newConfig) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, generateForecastMutation.mutateAsync(newConfig)];
@@ -454,14 +440,13 @@ function useForecasting(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [generateForecastMutation],
   );
   var runScenario = (0, react_1.useCallback)(
-    function (name, scenarioConfig) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (name, scenarioConfig) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -473,15 +458,14 @@ function useForecasting(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [runScenarioMutation],
   );
   var updateModel = (0, react_1.useCallback)(
-    function (modelType) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (modelType) =>
+      __awaiter(this, void 0, void 0, function () {
         var newConfig;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               newConfig = __assign(__assign({}, config), { model: modelType });
@@ -492,14 +476,13 @@ function useForecasting(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [config, refreshData],
   );
   var exportForecast = (0, react_1.useCallback)(
-    function (format) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (format) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, exportForecastMutation.mutateAsync(format)];
@@ -508,14 +491,11 @@ function useForecasting(initialConfig) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [exportForecastMutation],
   );
-  var updateConfig = (0, react_1.useCallback)(function (newConfig) {
-    setConfig(function (prev) {
-      return __assign(__assign({}, prev), newConfig);
-    });
+  var updateConfig = (0, react_1.useCallback)((newConfig) => {
+    setConfig((prev) => __assign(__assign({}, prev), newConfig));
     setError(null);
   }, []);
   // Return hook interface
@@ -556,19 +536,13 @@ function useForecasting(initialConfig) {
  * Hook for forecast comparison analysis
  */
 function useForecastComparison(forecasts) {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useQuery)({
-    queryKey: [
-      "forecast-comparison",
-      forecasts.map(function (f) {
-        return f.config.metric;
-      }),
-    ],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryKey: ["forecast-comparison", forecasts.map((f) => f.config.metric)],
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -589,8 +563,7 @@ function useForecastComparison(forecasts) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: forecasts.length > 1,
     staleTime: 15 * 60 * 1000, // 15 minutes
   });
@@ -606,60 +579,56 @@ function useRealTimeForecastUpdates(metric, enabled) {
     updates = _a[0],
     setUpdates = _a[1];
   var supabase = yield (0, client_1.createClient)();
-  (0, react_1.useEffect)(
-    function () {
-      if (!enabled || !metric) return;
-      // Subscribe to real-time data changes that might affect forecasts
-      var subscription = supabase
-        .channel("forecast-updates-".concat(metric))
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: metric === "revenue" ? "subscription_revenue" : "subscriptions",
-          },
-          function (payload) {
-            // Add update to queue for forecast recalculation
-            setUpdates(function (prev) {
-              return __spreadArray(
-                __spreadArray([], prev, true),
-                [
-                  {
-                    timestamp: new Date(),
-                    type: payload.eventType,
-                    data: payload.new || payload.old,
-                    table: payload.table,
-                  },
-                ],
-                false,
-              );
-            });
-          },
-        )
-        .subscribe();
-      return function () {
-        subscription.unsubscribe();
-      };
-    },
-    [metric, enabled, supabase],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!enabled || !metric) return;
+    // Subscribe to real-time data changes that might affect forecasts
+    var subscription = supabase
+      .channel("forecast-updates-".concat(metric))
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: metric === "revenue" ? "subscription_revenue" : "subscriptions",
+        },
+        (payload) => {
+          // Add update to queue for forecast recalculation
+          setUpdates((prev) =>
+            __spreadArray(
+              __spreadArray([], prev, true),
+              [
+                {
+                  timestamp: new Date(),
+                  type: payload.eventType,
+                  data: payload.new || payload.old,
+                  table: payload.table,
+                },
+              ],
+              false,
+            ),
+          );
+        },
+      )
+      .subscribe();
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [metric, enabled, supabase]);
   return updates;
 }
 /**
  * Hook for forecast accuracy tracking
  */
 function useForecastAccuracy(metric, timeWindow) {
-  var _this = this;
   if (timeWindow === void 0) {
     timeWindow = 30;
   }
   return (0, react_query_1.useQuery)({
     queryKey: ["forecast-accuracy", metric, timeWindow],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -680,8 +649,7 @@ function useForecastAccuracy(metric, timeWindow) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     staleTime: 60 * 60 * 1000, // 1 hour
     enabled: !!metric,
   });
@@ -690,9 +658,9 @@ function useForecastAccuracy(metric, timeWindow) {
  * Utility hook for forecast data formatting
  */
 function useForecastFormatters() {
-  return (0, react_1.useMemo)(function () {
-    return {
-      formatPrediction: function (value, metric) {
+  return (0, react_1.useMemo)(
+    () => ({
+      formatPrediction: (value, metric) => {
         if (metric === "revenue") {
           return new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -704,11 +672,9 @@ function useForecastFormatters() {
           return Math.round(value).toLocaleString();
         }
       },
-      formatAccuracy: function (value) {
-        return "".concat(Math.round(value * 100) / 100, "%");
-      },
-      formatConfidenceInterval: function (lower, upper, metric) {
-        var formatValue = function (v) {
+      formatAccuracy: (value) => "".concat(Math.round(value * 100) / 100, "%"),
+      formatConfidenceInterval: (lower, upper, metric) => {
+        var formatValue = (v) => {
           if (metric === "revenue") {
             return new Intl.NumberFormat("en-US", {
               style: "currency",
@@ -723,17 +689,17 @@ function useForecastFormatters() {
         };
         return "".concat(formatValue(lower), " - ").concat(formatValue(upper));
       },
-      getAccuracyColor: function (accuracy) {
+      getAccuracyColor: (accuracy) => {
         if (accuracy >= 90) return "text-green-600";
         if (accuracy >= 75) return "text-yellow-600";
         return "text-red-600";
       },
-      getAccuracyBadgeVariant: function (accuracy) {
+      getAccuracyBadgeVariant: (accuracy) => {
         if (accuracy >= 90) return "default";
         if (accuracy >= 75) return "secondary";
         return "destructive";
       },
-      formatTimeHorizon: function (days) {
+      formatTimeHorizon: (days) => {
         if (days < 7) return "".concat(days, " day").concat(days > 1 ? "s" : "");
         if (days < 30)
           return ""
@@ -747,6 +713,7 @@ function useForecastFormatters() {
           .concat(Math.round(days / 365), " year")
           .concat(Math.round(days / 365) > 1 ? "s" : "");
       },
-    };
-  }, []);
+    }),
+    [],
+  );
 }

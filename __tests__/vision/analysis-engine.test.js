@@ -1,18 +1,17 @@
-"use strict";
 // Vision Analysis Engine Tests
 // Epic 10.1: Automated Before/After Analysis
 // Target: ≥95% accuracy, <30s processing time
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -22,7 +21,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -51,8 +50,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -73,9 +70,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var analysis_engine_1 = require("../../lib/vision/analysis-engine");
@@ -145,26 +142,20 @@ var vision_1 = require("../../types/vision");
 globals_1.jest.mock("@supabase/supabase-js");
 globals_1.jest.mock("@tensorflow/tfjs");
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      insert: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
-      select: globals_1.jest.fn().mockResolvedValue({ data: [], error: null }),
-      update: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    insert: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
+    select: globals_1.jest.fn().mockResolvedValue({ data: [], error: null }),
+    update: globals_1.jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
   storage: {
-    from: globals_1.jest.fn(function () {
-      return {
-        download: globals_1.jest.fn().mockResolvedValue({ data: new Blob(), error: null }),
-      };
-    }),
+    from: globals_1.jest.fn(() => ({
+      download: globals_1.jest.fn().mockResolvedValue({ data: new Blob(), error: null }),
+    })),
   },
 };
 var mockModel = {
   predict: globals_1.jest.fn().mockReturnValue({
-    dataSync: function () {
-      return new Float32Array([0.95, 0.85, 0.9, 0.88]);
-    },
+    dataSync: () => new Float32Array([0.95, 0.85, 0.9, 0.88]),
   }),
   dispose: globals_1.jest.fn(),
 };
@@ -174,18 +165,16 @@ tf.browser.fromPixels.mockReturnValue({
   resizeNearestNeighbor: globals_1.jest.fn().mockReturnValue({
     expandDims: globals_1.jest.fn().mockReturnValue({
       div: globals_1.jest.fn().mockReturnValue({
-        dataSync: function () {
-          return new Float32Array(224 * 224 * 3);
-        },
+        dataSync: () => new Float32Array(224 * 224 * 3),
       }),
     }),
   }),
 });
-(0, globals_1.describe)("VisionAnalysisEngine", function () {
+(0, globals_1.describe)("VisionAnalysisEngine", () => {
   var engine;
   var mockCanvas;
   var mockContext;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     // Setup canvas mock
     mockCanvas = {
       getContext: globals_1.jest.fn(),
@@ -204,32 +193,31 @@ tf.browser.fromPixels.mockReturnValue({
       createElement: globals_1.jest.fn().mockReturnValue(mockCanvas),
     };
     // Setup Image mock
-    global.Image = /** @class */ (function () {
+    global.Image = /** @class */ (() => {
       function class_1() {
-        var _this = this;
         this.onload = null;
         this.onerror = null;
         this.src = "";
         this.width = 224;
         this.height = 224;
-        setTimeout(function () {
-          if (_this.onload) _this.onload();
+        setTimeout(() => {
+          if (this.onload) this.onload();
         }, 0);
       }
       return class_1;
     })();
     engine = new analysis_engine_1.VisionAnalysisEngine();
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("Initialization", function () {
-    (0, globals_1.it)("should initialize with correct configuration", function () {
+  (0, globals_1.describe)("Initialization", () => {
+    (0, globals_1.it)("should initialize with correct configuration", () => {
       (0, globals_1.expect)(engine).toBeInstanceOf(analysis_engine_1.VisionAnalysisEngine);
     });
-    (0, globals_1.it)("should load model successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (0, globals_1.it)("should load model successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.initialize()];
@@ -241,11 +229,11 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle model loading errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should handle model loading errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               tf.loadLayersModel.mockRejectedValueOnce(new Error("Model not found"));
@@ -258,13 +246,13 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Image Analysis", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Image Analysis", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.initialize()];
@@ -273,12 +261,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should analyze before/after images successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should analyze before/after images successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               analysisRequest = {
@@ -302,12 +290,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should meet accuracy requirement (≥95%)", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should meet accuracy requirement (≥95%)", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               analysisRequest = {
@@ -324,12 +312,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should meet processing time requirement (<30s)", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should meet processing time requirement (<30s)", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, analysisRequest, result, actualProcessingTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -349,12 +337,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should generate comprehensive change metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate comprehensive change metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               analysisRequest = {
@@ -373,12 +361,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should generate visual annotations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate visual annotations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               analysisRequest = {
@@ -393,7 +381,7 @@ tf.browser.fromPixels.mockReturnValue({
               (0, globals_1.expect)(result.annotations).toBeDefined();
               (0, globals_1.expect)(Array.isArray(result.annotations)).toBe(true);
               (0, globals_1.expect)(result.annotations.length).toBeGreaterThan(0);
-              result.annotations.forEach(function (annotation) {
+              result.annotations.forEach((annotation) => {
                 (0, globals_1.expect)(annotation.confidence_score).toBeGreaterThanOrEqual(0.8);
                 (0, globals_1.expect)(annotation.coordinates).toBeDefined();
                 (0, globals_1.expect)(Array.isArray(annotation.coordinates)).toBe(true);
@@ -401,12 +389,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle invalid image data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle invalid image data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.storage.from().download.mockResolvedValueOnce({
@@ -430,12 +418,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate treatment type", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate treatment type", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               analysisRequest = {
@@ -455,13 +443,13 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Change Metrics Calculation", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Change Metrics Calculation", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.initialize()];
@@ -470,12 +458,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should calculate skin texture improvements", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should calculate skin texture improvements", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var beforeFeatures, afterFeatures, metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           beforeFeatures = new Float32Array([0.6, 0.7, 0.5, 0.8]);
           afterFeatures = new Float32Array([0.8, 0.9, 0.7, 0.9]);
           metrics = engine.calculateChangeMetrics(beforeFeatures, afterFeatures, "skin-aesthetic");
@@ -484,12 +472,12 @@ tf.browser.fromPixels.mockReturnValue({
           (0, globals_1.expect)(metrics.skinTexture.confidence).toBeGreaterThanOrEqual(0.8);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should calculate wrinkle reduction", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should calculate wrinkle reduction", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var beforeFeatures, afterFeatures, metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           beforeFeatures = new Float32Array([0.8, 0.7, 0.9, 0.6]);
           afterFeatures = new Float32Array([0.5, 0.4, 0.6, 0.3]);
           metrics = engine.calculateChangeMetrics(
@@ -501,12 +489,12 @@ tf.browser.fromPixels.mockReturnValue({
           (0, globals_1.expect)(metrics.wrinkleReduction.improvement).toBeGreaterThan(0);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should calculate scar healing progress", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should calculate scar healing progress", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var beforeFeatures, afterFeatures, metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           beforeFeatures = new Float32Array([0.9, 0.8, 0.7, 0.8]);
           afterFeatures = new Float32Array([0.4, 0.3, 0.2, 0.3]);
           metrics = engine.calculateChangeMetrics(beforeFeatures, afterFeatures, "scar-treatment");
@@ -514,12 +502,12 @@ tf.browser.fromPixels.mockReturnValue({
           (0, globals_1.expect)(metrics.scarHealing.improvement).toBeGreaterThan(0);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should handle edge cases in metric calculation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle edge cases in metric calculation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var identicalFeatures, metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           identicalFeatures = new Float32Array([0.5, 0.5, 0.5, 0.5]);
           metrics = engine.calculateChangeMetrics(
             identicalFeatures,
@@ -530,13 +518,13 @@ tf.browser.fromPixels.mockReturnValue({
           (0, globals_1.expect)(metrics.skinTexture.improvement).toBe(0);
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Annotation Generation", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Annotation Generation", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.initialize()];
@@ -545,69 +533,63 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should generate measurement annotations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate measurement annotations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var features, analysisId, annotations, measurementAnnotations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           features = new Float32Array([0.8, 0.9, 0.7, 0.85]);
           analysisId = "analysis-123";
           annotations = engine.generateAnnotations(features, analysisId, "skin-aesthetic");
           (0, globals_1.expect)(annotations).toBeDefined();
           (0, globals_1.expect)(Array.isArray(annotations)).toBe(true);
-          measurementAnnotations = annotations.filter(function (a) {
-            return a.annotation_type === "measurement";
-          });
+          measurementAnnotations = annotations.filter((a) => a.annotation_type === "measurement");
           (0, globals_1.expect)(measurementAnnotations.length).toBeGreaterThan(0);
-          measurementAnnotations.forEach(function (annotation) {
+          measurementAnnotations.forEach((annotation) => {
             (0, globals_1.expect)(annotation.measurement_value).toBeDefined();
             (0, globals_1.expect)(annotation.measurement_unit).toBeDefined();
             (0, globals_1.expect)(annotation.confidence_score).toBeGreaterThanOrEqual(0.8);
           });
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should generate highlight annotations for significant changes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate highlight annotations for significant changes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var features, analysisId, annotations, highlightAnnotations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           features = new Float32Array([0.95, 0.92, 0.88, 0.9]);
           analysisId = "analysis-456";
           annotations = engine.generateAnnotations(features, analysisId, "facial-rejuvenation");
-          highlightAnnotations = annotations.filter(function (a) {
-            return a.annotation_type === "highlight";
-          });
+          highlightAnnotations = annotations.filter((a) => a.annotation_type === "highlight");
           (0, globals_1.expect)(highlightAnnotations.length).toBeGreaterThan(0);
-          highlightAnnotations.forEach(function (annotation) {
+          highlightAnnotations.forEach((annotation) => {
             (0, globals_1.expect)(annotation.description).toContain("improvement");
             (0, globals_1.expect)(annotation.coordinates.length).toBeGreaterThan(0);
           });
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should generate comparison annotations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should generate comparison annotations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var features, analysisId, annotations, comparisonAnnotations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           features = new Float32Array([0.85, 0.88, 0.82, 0.87]);
           analysisId = "analysis-789";
           annotations = engine.generateAnnotations(features, analysisId, "body-contouring");
-          comparisonAnnotations = annotations.filter(function (a) {
-            return a.annotation_type === "comparison";
-          });
+          comparisonAnnotations = annotations.filter((a) => a.annotation_type === "comparison");
           (0, globals_1.expect)(comparisonAnnotations.length).toBeGreaterThan(0);
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Database Integration", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Database Integration", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.initialize()];
@@ -616,12 +598,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should save analysis results to database", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should save analysis results to database", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               analysisData = {
@@ -650,12 +632,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should save performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should save performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var performanceData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               performanceData = {
@@ -677,12 +659,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from().insert.mockResolvedValueOnce({
@@ -712,13 +694,13 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Performance Requirements", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Performance Requirements", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.initialize()];
@@ -727,92 +709,75 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
     (0, globals_1.it)(
       "should consistently meet accuracy requirements across multiple analyses",
-      function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var analysisRequests, results, averageAccuracy;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
-                analysisRequests = Array.from({ length: 10 }, function (_, i) {
-                  return {
-                    patient_id: "patient-".concat(i),
-                    before_image_id: "before-".concat(i),
-                    after_image_id: "after-".concat(i),
-                    treatment_type: "skin-aesthetic",
-                  };
-                });
+                analysisRequests = Array.from({ length: 10 }, (_, i) => ({
+                  patient_id: "patient-".concat(i),
+                  before_image_id: "before-".concat(i),
+                  after_image_id: "after-".concat(i),
+                  treatment_type: "skin-aesthetic",
+                }));
                 return [
                   4 /*yield*/,
-                  Promise.all(
-                    analysisRequests.map(function (request) {
-                      return engine.analyzeImages(request);
-                    }),
-                  ),
+                  Promise.all(analysisRequests.map((request) => engine.analyzeImages(request))),
                 ];
               case 1:
                 results = _a.sent();
-                results.forEach(function (result) {
+                results.forEach((result) => {
                   (0, globals_1.expect)(result.accuracy_score).toBeGreaterThanOrEqual(0.95);
                   (0, globals_1.expect)(result.meets_accuracy_requirement).toBe(true);
                 });
                 averageAccuracy =
-                  results.reduce(function (sum, r) {
-                    return sum + r.accuracy_score;
-                  }, 0) / results.length;
+                  results.reduce((sum, r) => sum + r.accuracy_score, 0) / results.length;
                 (0, globals_1.expect)(averageAccuracy).toBeGreaterThanOrEqual(0.95);
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     );
-    (0, globals_1.it)("should consistently meet processing time requirements", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should consistently meet processing time requirements", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequests, results, averageProcessingTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              analysisRequests = Array.from({ length: 5 }, function (_, i) {
-                return {
-                  patient_id: "patient-".concat(i),
-                  before_image_id: "before-".concat(i),
-                  after_image_id: "after-".concat(i),
-                  treatment_type: "facial-rejuvenation",
-                };
-              });
+              analysisRequests = Array.from({ length: 5 }, (_, i) => ({
+                patient_id: "patient-".concat(i),
+                before_image_id: "before-".concat(i),
+                after_image_id: "after-".concat(i),
+                treatment_type: "facial-rejuvenation",
+              }));
               return [
                 4 /*yield*/,
-                Promise.all(
-                  analysisRequests.map(function (request) {
-                    return engine.analyzeImages(request);
-                  }),
-                ),
+                Promise.all(analysisRequests.map((request) => engine.analyzeImages(request))),
               ];
             case 1:
               results = _a.sent();
-              results.forEach(function (result) {
+              results.forEach((result) => {
                 (0, globals_1.expect)(result.processing_time).toBeLessThanOrEqual(30000);
                 (0, globals_1.expect)(result.meets_time_requirement).toBe(true);
               });
               averageProcessingTime =
-                results.reduce(function (sum, r) {
-                  return sum + r.processing_time;
-                }, 0) / results.length;
+                results.reduce((sum, r) => sum + r.processing_time, 0) / results.length;
               (0, globals_1.expect)(averageProcessingTime).toBeLessThanOrEqual(30000);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.initialize()];
@@ -821,15 +786,15 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle model prediction errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle model prediction errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockModel.predict.mockImplementationOnce(function () {
+              mockModel.predict.mockImplementationOnce(() => {
                 throw new Error("Model prediction failed");
               });
               analysisRequest = {
@@ -849,22 +814,21 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle image loading timeouts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle image loading timeouts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              global.Image = /** @class */ (function () {
+              global.Image = /** @class */ (() => {
                 function class_2() {
-                  var _this = this;
                   this.onload = null;
                   this.onerror = null;
                   this.src = "";
-                  setTimeout(function () {
-                    if (_this.onerror) _this.onerror();
+                  setTimeout(() => {
+                    if (this.onerror) this.onerror();
                   }, 0);
                 }
                 return class_2;
@@ -886,12 +850,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should validate input parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should validate input parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidRequest = {
@@ -911,13 +875,13 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Memory Management", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Memory Management", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.initialize()];
@@ -926,12 +890,12 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should dispose of tensors after analysis", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should dispose of tensors after analysis", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analysisRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               analysisRequest = {
@@ -949,11 +913,11 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle cleanup on engine disposal", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should handle cleanup on engine disposal", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, engine.dispose()];
@@ -963,7 +927,7 @@ tf.browser.fromPixels.mockReturnValue({
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

@@ -7,10 +7,20 @@
  * Features: Create, edit, view, manage payments with installments
  */
 
+// Icons
+import type {
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Edit,
+  Plus,
+  RefreshCw,
+  Search,
+  XCircle,
+} from "lucide-react";
 import type { useRouter } from "next/navigation";
 import type { useEffect, useState } from "react";
 import type { toast } from "sonner";
-
 // UI Components
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -32,19 +42,13 @@ import type {
 } from "@/components/ui/select";
 import type { Separator } from "@/components/ui/separator";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Icons
+// Services
 import type {
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Edit,
-  Plus,
-  RefreshCw,
-  Search,
-  XCircle,
-} from "lucide-react";
-
+  createPayment,
+  getPaymentById,
+  listPaymentsByInvoice,
+  updatePayment,
+} from "@/lib/supabase/financial";
 // Types
 import type {
   CreatePaymentInput,
@@ -53,14 +57,6 @@ import type {
   PaymentProcessingStatus,
   UpdatePaymentInput,
 } from "@/lib/types/financial";
-
-// Services
-import type {
-  createPayment,
-  getPaymentById,
-  listPaymentsByInvoice,
-  updatePayment,
-} from "@/lib/supabase/financial";
 
 interface PaymentManagerProps {
   invoiceId?: string;

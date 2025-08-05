@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ThreatDetection = exports.IntelligentRateLimit = void 0;
 var lru_cache_1 = require("lru-cache");
@@ -19,11 +18,9 @@ var trustedIPsCache = new lru_cache_1.LRUCache({
 }); /**
  * Rate limiting inteligente baseado em comportamento
  */
-var IntelligentRateLimit = /** @class */ (function () {
+var IntelligentRateLimit = /** @class */ (() => {
   function IntelligentRateLimit() {}
-  IntelligentRateLimit.getKey = function (ip, route) {
-    return "".concat(ip, ":").concat(route);
-  };
+  IntelligentRateLimit.getKey = (ip, route) => "".concat(ip, ":").concat(route);
   /**
    * 🚦 Check if request should be rate limited
    */
@@ -99,7 +96,7 @@ exports.IntelligentRateLimit = IntelligentRateLimit;
 /**
  * 🔍 Threat Detection System
  */
-var ThreatDetection = /** @class */ (function () {
+var ThreatDetection = /** @class */ (() => {
   function ThreatDetection() {}
   /**
    * 🤖 Analyze request for suspicious patterns
@@ -120,20 +117,14 @@ var ThreatDetection = /** @class */ (function () {
     // Check for suspicious request frequency
     var recentEvents = securityCache.get(ip) || [];
     var recentRequests = recentEvents.filter(
-      function (e) {
-        return Date.now() - e.timestamp < 10 * 1000;
-      }, // last 10 seconds
+      (e) => Date.now() - e.timestamp < 10 * 1000, // last 10 seconds
     );
     if (recentRequests.length > 20) {
       riskScore += 5;
       reasons.push("High request frequency");
     }
     // Check for diverse route access (potential reconnaissance)
-    var uniqueRoutes = new Set(
-      recentEvents.map(function (e) {
-        return e.route;
-      }),
-    );
+    var uniqueRoutes = new Set(recentEvents.map((e) => e.route));
     if (uniqueRoutes.size > 10) {
       riskScore += 3;
       reasons.push("Accessing many different routes");
@@ -147,40 +138,34 @@ var ThreatDetection = /** @class */ (function () {
   /**
    * 🤖 Check if user agent indicates bot
    */
-  ThreatDetection.isBotUserAgent = function (userAgent) {
+  ThreatDetection.isBotUserAgent = (userAgent) => {
     var botPatterns = [
       /bot|crawler|spider|scraper/i,
       /curl|wget|python-requests|go-http-client/i,
       /postman|insomnia|httpie/i,
     ];
-    return botPatterns.some(function (pattern) {
-      return pattern.test(userAgent);
-    });
+    return botPatterns.some((pattern) => pattern.test(userAgent));
   };
   /**
    * 🔍 Check if route indicates scanning behavior
    */
-  ThreatDetection.isScanningPattern = function (route) {
+  ThreatDetection.isScanningPattern = (route) => {
     var scanningPatterns = [
       /\.(php|asp|jsp|cgi)$/i,
       /\/admin|\/wp-admin|\/phpmyadmin/i,
       /\.env|\.git|backup|config\./i,
-      /\/api\/[^\/]+\/[^\/]+\/[^\/]+/, // Deep API exploration
+      /\/api\/[^/]+\/[^/]+\/[^/]+/, // Deep API exploration
     ];
-    return scanningPatterns.some(function (pattern) {
-      return pattern.test(route);
-    });
+    return scanningPatterns.some((pattern) => pattern.test(route));
   };
   /**
    * 📝 Record security event
    */
-  ThreatDetection.recordEvent = function (event) {
+  ThreatDetection.recordEvent = (event) => {
     var events = securityCache.get(event.ip) || [];
     events.push(event);
     // Keep only recent events to prevent memory bloat
-    var recent = events.filter(function (e) {
-      return Date.now() - e.timestamp < 15 * 60 * 1000;
-    });
+    var recent = events.filter((e) => Date.now() - e.timestamp < 15 * 60 * 1000);
     securityCache.set(event.ip, recent);
   };
   return ThreatDetection;

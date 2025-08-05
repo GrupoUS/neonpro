@@ -513,7 +513,7 @@ export class PhotoRecognitionManager {
     // Calculate Euclidean distance
     let distance = 0;
     for (let i = 0; i < encoding1.length; i++) {
-      distance += Math.pow(encoding1[i] - encoding2[i], 2);
+      distance += (encoding1[i] - encoding2[i]) ** 2;
     }
     distance = Math.sqrt(distance);
 

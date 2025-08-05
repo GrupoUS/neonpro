@@ -1,7 +1,14 @@
 "use client";
 
-import type { useState, useEffect, useCallback, useRef } from "react";
-import type { createContext, useContext, ReactNode } from "react";
+import type {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 // =====================================================================================
 // GLOBAL STATE MANAGEMENT HOOK
@@ -51,12 +58,10 @@ export function GlobalStateProvider({ children, persistKeys = [] }: GlobalStateP
     }
   }, [persistKeys]);
 
-  const getState = useCallback(function <T>(key: string): T | undefined {
-    return stateRef.current.get(key);
-  }, []);
+  const getState = useCallback(<T,>(key: string): T | undefined => stateRef.current.get(key), []);
 
   const setState = useCallback(
-    function <T>(key: string, value: T | StateUpdater<T>) {
+    <T,>(key: string, value: T | StateUpdater<T>) => {
       const currentValue = stateRef.current.get(key);
       const newValue =
         typeof value === "function" ? (value as StateUpdater<T>)(currentValue) : value;

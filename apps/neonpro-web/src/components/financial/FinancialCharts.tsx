@@ -1,6 +1,39 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import type {
+  Activity,
+  BarChart3,
+  Calendar,
+  DollarSign,
+  Download,
+  Filter,
+  LineChart as LineChartIcon,
+  Maximize2,
+  PieChart as PieChartIcon,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,9 +41,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Select,
   SelectContent,
@@ -19,37 +49,7 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Skeleton } from "@/components/ui/skeleton";
-import type {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  ReferenceLine,
-} from "recharts";
-import type {
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  LineChart as LineChartIcon,
-  PieChart as PieChartIcon,
-  Activity,
-  Download,
-  Maximize2,
-  Filter,
-  Calendar,
-  DollarSign,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface FinancialChartsProps {
   charts: any;

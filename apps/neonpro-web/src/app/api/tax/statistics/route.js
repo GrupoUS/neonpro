@@ -1,17 +1,16 @@
-"use strict";
 // Tax Statistics API Endpoint
 // Story 5.5: Get Brazilian tax statistics and insights
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("next/server");
@@ -162,7 +159,7 @@ function GET(request) {
       nfeError,
       stats_1,
       error_1;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 6, , 7]);
@@ -207,7 +204,7 @@ function GET(request) {
           if (startDate) dateFilters.push(["created_at", "gte", startDate]);
           if (endDate) dateFilters.push(["created_at", "lte", endDate]);
           taxQuery_1 = supabase.from("tax_calculations").select("*").eq("clinic_id", clinicId);
-          dateFilters.forEach(function (_a) {
+          dateFilters.forEach((_a) => {
             var column = _a[0],
               operator = _a[1],
               value = _a[2];
@@ -227,7 +224,7 @@ function GET(request) {
             ];
           }
           nfeQuery_1 = supabase.from("nfe_documents").select("*").eq("clinic_id", clinicId);
-          dateFilters.forEach(function (_a) {
+          dateFilters.forEach((_a) => {
             var column = _a[0],
               operator = _a[1],
               value = _a[2];
@@ -249,57 +246,48 @@ function GET(request) {
           stats_1 = {
             tax_calculations: {
               total: taxCalculations.length,
-              total_base_amount: taxCalculations.reduce(function (sum, calc) {
-                return sum + (calc.base_amount || 0);
-              }, 0),
-              total_tax_amount: taxCalculations.reduce(function (sum, calc) {
+              total_base_amount: taxCalculations.reduce(
+                (sum, calc) => sum + (calc.base_amount || 0),
+                0,
+              ),
+              total_tax_amount: taxCalculations.reduce((sum, calc) => {
                 var taxes = calc.taxes || {};
                 return (
-                  sum +
-                  Object.values(taxes).reduce(function (taxSum, tax) {
-                    return taxSum + (tax.amount || 0);
-                  }, 0)
+                  sum + Object.values(taxes).reduce((taxSum, tax) => taxSum + (tax.amount || 0), 0)
                 );
               }, 0),
-              total_final_amount: taxCalculations.reduce(function (sum, calc) {
-                return sum + (calc.total_amount || 0);
-              }, 0),
+              total_final_amount: taxCalculations.reduce(
+                (sum, calc) => sum + (calc.total_amount || 0),
+                0,
+              ),
               by_service_type: {},
             },
             nfe_documents: {
               total: nfeDocuments.length,
-              by_status: nfeDocuments.reduce(function (acc, nfe) {
+              by_status: nfeDocuments.reduce((acc, nfe) => {
                 acc[nfe.status] = (acc[nfe.status] || 0) + 1;
                 return acc;
               }, {}),
-              total_value: nfeDocuments.reduce(function (sum, nfe) {
+              total_value: nfeDocuments.reduce((sum, nfe) => {
                 var totals = nfe.totals || {};
                 return sum + (totals.total || 0);
               }, 0),
-              authorized_count: nfeDocuments.filter(function (nfe) {
-                return nfe.status === "authorized";
-              }).length,
-              cancelled_count: nfeDocuments.filter(function (nfe) {
-                return nfe.status === "cancelled";
-              }).length,
+              authorized_count: nfeDocuments.filter((nfe) => nfe.status === "authorized").length,
+              cancelled_count: nfeDocuments.filter((nfe) => nfe.status === "cancelled").length,
             },
             compliance: {
               authorization_rate:
                 nfeDocuments.length > 0
-                  ? (nfeDocuments.filter(function (nfe) {
-                      return nfe.status === "authorized";
-                    }).length /
+                  ? (nfeDocuments.filter((nfe) => nfe.status === "authorized").length /
                       nfeDocuments.length) *
                     100
                   : 0,
               average_processing_time: 0, // TODO: Calculate based on actual processing times
-              pending_authorizations: nfeDocuments.filter(function (nfe) {
-                return nfe.status === "draft";
-              }).length,
+              pending_authorizations: nfeDocuments.filter((nfe) => nfe.status === "draft").length,
             },
           };
           // Calculate service type breakdown
-          taxCalculations.forEach(function (calc) {
+          taxCalculations.forEach((calc) => {
             var serviceType = calc.service_type || "unknown";
             if (!stats_1.tax_calculations.by_service_type[serviceType]) {
               stats_1.tax_calculations.by_service_type[serviceType] = {
@@ -314,9 +302,10 @@ function GET(request) {
             serviceStats.total_base += calc.base_amount || 0;
             serviceStats.total_final += calc.total_amount || 0;
             var taxes = calc.taxes || {};
-            serviceStats.total_tax += Object.values(taxes).reduce(function (sum, tax) {
-              return sum + (tax.amount || 0);
-            }, 0);
+            serviceStats.total_tax += Object.values(taxes).reduce(
+              (sum, tax) => sum + (tax.amount || 0),
+              0,
+            );
           });
           return [
             2 /*return*/,

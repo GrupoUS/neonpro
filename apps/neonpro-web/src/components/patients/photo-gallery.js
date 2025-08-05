@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PhotoGallery = PhotoGallery;
 var react_1 = require("react");
@@ -160,7 +157,6 @@ var locale_1 = require("date-fns/locale");
 var utils_1 = require("@/lib/utils");
 var supabase_storage_1 = require("@/lib/supabase-storage");
 function PhotoGallery(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     _b = _a.readonly,
     readonly = _b === void 0 ? false : _b,
@@ -211,22 +207,16 @@ function PhotoGallery(_a) {
   var _r = (0, react_1.useState)(false),
     hasMore = _r[0],
     setHasMore = _r[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadPhotos();
-    },
-    [patientId, currentPage],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      applyFiltersAndSort();
-    },
-    [photos, searchTerm, categoryFilter, treatmentFilter, areaFilter, sortBy],
-  );
-  var loadPhotos = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadPhotos();
+  }, [patientId, currentPage]);
+  (0, react_1.useEffect)(() => {
+    applyFiltersAndSort();
+  }, [photos, searchTerm, categoryFilter, treatmentFilter, areaFilter, sortBy]);
+  var loadPhotos = () =>
+    __awaiter(this, void 0, void 0, function () {
       var result, newPhotos_1, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -248,9 +238,7 @@ function PhotoGallery(_a) {
             if (currentPage === 1) {
               setPhotos(newPhotos_1);
             } else {
-              setPhotos(function (prev) {
-                return __spreadArray(__spreadArray([], prev, true), newPhotos_1, true);
-              });
+              setPhotos((prev) => __spreadArray(__spreadArray([], prev, true), newPhotos_1, true));
             }
             if (result.pagination) {
               setTotalPages(result.pagination.totalPages);
@@ -270,41 +258,33 @@ function PhotoGallery(_a) {
         }
       });
     });
-  };
-  var applyFiltersAndSort = function () {
+  var applyFiltersAndSort = () => {
     var filtered = __spreadArray([], photos, true);
     // Apply search filter
     if (searchTerm) {
       var term_1 = searchTerm.toLowerCase();
-      filtered = filtered.filter(function (photo) {
-        return (
+      filtered = filtered.filter(
+        (photo) =>
           photo.file_name.toLowerCase().includes(term_1) ||
           photo.metadata.treatmentType.toLowerCase().includes(term_1) ||
           photo.metadata.anatomicalArea.toLowerCase().includes(term_1) ||
-          photo.metadata.notes.toLowerCase().includes(term_1)
-        );
-      });
+          photo.metadata.notes.toLowerCase().includes(term_1),
+      );
     }
     // Apply category filter
     if (categoryFilter !== "all") {
-      filtered = filtered.filter(function (photo) {
-        return photo.metadata.category === categoryFilter;
-      });
+      filtered = filtered.filter((photo) => photo.metadata.category === categoryFilter);
     }
     // Apply treatment filter
     if (treatmentFilter !== "all") {
-      filtered = filtered.filter(function (photo) {
-        return photo.metadata.treatmentType === treatmentFilter;
-      });
+      filtered = filtered.filter((photo) => photo.metadata.treatmentType === treatmentFilter);
     }
     // Apply area filter
     if (areaFilter !== "all") {
-      filtered = filtered.filter(function (photo) {
-        return photo.metadata.anatomicalArea === areaFilter;
-      });
+      filtered = filtered.filter((photo) => photo.metadata.anatomicalArea === areaFilter);
     }
     // Apply sorting
-    filtered.sort(function (a, b) {
+    filtered.sort((a, b) => {
       switch (sortBy) {
         case "date_desc":
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -324,10 +304,10 @@ function PhotoGallery(_a) {
     });
     setFilteredPhotos(filtered);
   };
-  var handleDownload = function (photo) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDownload = (photo) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, url, a, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -356,11 +336,10 @@ function PhotoGallery(_a) {
         }
       });
     });
-  };
-  var handleDelete = function (photo) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDelete = (photo) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!confirm('Tem certeza que deseja deletar a foto "'.concat(photo.file_name, '"?'))) {
@@ -376,11 +355,7 @@ function PhotoGallery(_a) {
               throw new Error(result.error || "Erro ao deletar foto");
             }
             // Remove from local state
-            setPhotos(function (prev) {
-              return prev.filter(function (p) {
-                return p.id !== photo.id;
-              });
-            });
+            setPhotos((prev) => prev.filter((p) => p.id !== photo.id));
             if (onPhotoDeleted) {
               onPhotoDeleted(photo.id);
             }
@@ -395,15 +370,14 @@ function PhotoGallery(_a) {
         }
       });
     });
-  };
-  var formatFileSize = function (bytes) {
+  var formatFileSize = (bytes) => {
     if (bytes === 0) return "0 B";
     var k = 1024;
     var sizes = ["B", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
-  var getCategoryColor = function (category) {
+  var getCategoryColor = (category) => {
     switch (category) {
       case "before":
         return "text-blue-600 bg-blue-50";
@@ -415,7 +389,7 @@ function PhotoGallery(_a) {
         return "text-gray-600 bg-gray-50";
     }
   };
-  var getCategoryLabel = function (category) {
+  var getCategoryLabel = (category) => {
     switch (category) {
       case "before":
         return "Antes";
@@ -430,20 +404,12 @@ function PhotoGallery(_a) {
   // Get unique values for filters
   var uniqueTreatments = __spreadArray(
     [],
-    new Set(
-      photos.map(function (p) {
-        return p.metadata.treatmentType;
-      }),
-    ),
+    new Set(photos.map((p) => p.metadata.treatmentType)),
     true,
   ).filter(Boolean);
   var uniqueAreas = __spreadArray(
     [],
-    new Set(
-      photos.map(function (p) {
-        return p.metadata.anatomicalArea;
-      }),
-    ),
+    new Set(photos.map((p) => p.metadata.anatomicalArea)),
     true,
   ).filter(Boolean);
   if (loading && photos.length === 0) {
@@ -467,9 +433,7 @@ function PhotoGallery(_a) {
             <input_1.Input
               placeholder="Buscar por nome, tratamento, área ou observações..."
               value={searchTerm}
-              onChange={function (e) {
-                return setSearchTerm(e.target.value);
-              }}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
             />
           </div>
@@ -479,30 +443,21 @@ function PhotoGallery(_a) {
             <button_1.Button
               variant={viewMode === "grid" ? "default" : "outline"}
               size="sm"
-              onClick={function () {
-                return setViewMode("grid");
-              }}
+              onClick={() => setViewMode("grid")}
             >
               <lucide_react_1.Grid3X3 className="h-4 w-4" />
             </button_1.Button>
             <button_1.Button
               variant={viewMode === "list" ? "default" : "outline"}
               size="sm"
-              onClick={function () {
-                return setViewMode("list");
-              }}
+              onClick={() => setViewMode("list")}
             >
               <lucide_react_1.List className="h-4 w-4" />
             </button_1.Button>
           </div>
 
           {/* Sort */}
-          <select_1.Select
-            value={sortBy}
-            onValueChange={function (value) {
-              return setSortBy(value);
-            }}
-          >
+          <select_1.Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
             <select_1.SelectTrigger className="w-48">
               <lucide_react_1.ArrowUpDown className="h-4 w-4 mr-2" />
               <select_1.SelectValue />
@@ -543,13 +498,11 @@ function PhotoGallery(_a) {
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">Todos os tratamentos</select_1.SelectItem>
-                {uniqueTreatments.map(function (treatment) {
-                  return (
-                    <select_1.SelectItem key={treatment} value={treatment}>
-                      {treatment}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {uniqueTreatments.map((treatment) => (
+                  <select_1.SelectItem key={treatment} value={treatment}>
+                    {treatment}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
           </div>
@@ -562,13 +515,11 @@ function PhotoGallery(_a) {
               </select_1.SelectTrigger>
               <select_1.SelectContent>
                 <select_1.SelectItem value="all">Todas as áreas</select_1.SelectItem>
-                {uniqueAreas.map(function (area) {
-                  return (
-                    <select_1.SelectItem key={area} value={area}>
-                      {area}
-                    </select_1.SelectItem>
-                  );
-                })}
+                {uniqueAreas.map((area) => (
+                  <select_1.SelectItem key={area} value={area}>
+                    {area}
+                  </select_1.SelectItem>
+                ))}
               </select_1.SelectContent>
             </select_1.Select>
           </div>
@@ -584,12 +535,7 @@ function PhotoGallery(_a) {
 
         {filteredPhotos.length > 0 && (
           <div className="text-sm text-muted-foreground">
-            {formatFileSize(
-              filteredPhotos.reduce(function (sum, photo) {
-                return sum + photo.file_size;
-              }, 0),
-            )}{" "}
-            total
+            {formatFileSize(filteredPhotos.reduce((sum, photo) => sum + photo.file_size, 0))} total
           </div>
         )}
       </div>
@@ -619,10 +565,83 @@ function PhotoGallery(_a) {
         : <>
             {viewMode === "grid"
               ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredPhotos.map(function (photo) {
-                    return (
-                      <card_1.Card key={photo.id} className="overflow-hidden group">
-                        <div className="aspect-square relative">
+                  {filteredPhotos.map((photo) => (
+                    <card_1.Card key={photo.id} className="overflow-hidden group">
+                      <div className="aspect-square relative">
+                        {photo.publicUrl && (
+                          <img
+                            src={photo.publicUrl}
+                            alt={photo.file_name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        )}
+
+                        {/* Overlay with actions */}
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <button_1.Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => setSelectedPhoto(photo)}
+                          >
+                            <lucide_react_1.ZoomIn className="h-4 w-4" />
+                          </button_1.Button>
+                          <button_1.Button
+                            size="sm"
+                            variant="secondary"
+                            onClick={() => handleDownload(photo)}
+                          >
+                            <lucide_react_1.Download className="h-4 w-4" />
+                          </button_1.Button>
+                          {!readonly && (
+                            <button_1.Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => handleDelete(photo)}
+                            >
+                              <lucide_react_1.Trash2 className="h-4 w-4" />
+                            </button_1.Button>
+                          )}
+                        </div>
+
+                        {/* Category badge */}
+                        <div className="absolute top-2 left-2">
+                          <badge_1.Badge className={getCategoryColor(photo.metadata.category)}>
+                            {getCategoryLabel(photo.metadata.category)}
+                          </badge_1.Badge>
+                        </div>
+                      </div>
+
+                      <card_1.CardContent className="p-3">
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium truncate">
+                            {photo.metadata.treatmentType}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {photo.metadata.anatomicalArea}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground">
+                              {(0, date_fns_1.format)(new Date(photo.created_at), "dd/MM/yyyy", {
+                                locale: locale_1.ptBR,
+                              })}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {formatFileSize(photo.file_size)}
+                            </span>
+                          </div>
+                        </div>
+                      </card_1.CardContent>
+                    </card_1.Card>
+                  ))}
+                </div>
+              : /* List View */
+                <div className="space-y-2">
+                  {filteredPhotos.map((photo) => (
+                    <card_1.Card key={photo.id} className="p-4">
+                      <div className="flex items-center gap-4">
+                        {/* Thumbnail */}
+                        <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                           {photo.publicUrl && (
                             <img
                               src={photo.publicUrl}
@@ -631,164 +650,75 @@ function PhotoGallery(_a) {
                               loading="lazy"
                             />
                           )}
+                        </div>
 
-                          {/* Overlay with actions */}
-                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                            <button_1.Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={function () {
-                                return setSelectedPhoto(photo);
-                              }}
-                            >
-                              <lucide_react_1.ZoomIn className="h-4 w-4" />
-                            </button_1.Button>
-                            <button_1.Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={function () {
-                                return handleDownload(photo);
-                              }}
-                            >
-                              <lucide_react_1.Download className="h-4 w-4" />
-                            </button_1.Button>
-                            {!readonly && (
-                              <button_1.Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={function () {
-                                  return handleDelete(photo);
-                                }}
-                              >
-                                <lucide_react_1.Trash2 className="h-4 w-4" />
-                              </button_1.Button>
-                            )}
-                          </div>
-
-                          {/* Category badge */}
-                          <div className="absolute top-2 left-2">
+                        {/* Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-medium truncate">{photo.file_name}</p>
                             <badge_1.Badge className={getCategoryColor(photo.metadata.category)}>
                               {getCategoryLabel(photo.metadata.category)}
                             </badge_1.Badge>
                           </div>
-                        </div>
 
-                        <card_1.CardContent className="p-3">
-                          <div className="space-y-2">
-                            <p className="text-sm font-medium truncate">
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <lucide_react_1.Stethoscope className="h-3 w-3" />
                               {photo.metadata.treatmentType}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <lucide_react_1.MapPin className="h-3 w-3" />
                               {photo.metadata.anatomicalArea}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <lucide_react_1.Calendar className="h-3 w-3" />
+                              {(0, date_fns_1.format)(new Date(photo.created_at), "dd/MM/yyyy", {
+                                locale: locale_1.ptBR,
+                              })}
+                            </div>
+                          </div>
+
+                          {photo.metadata.notes && (
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
+                              {photo.metadata.notes}
                             </p>
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs text-muted-foreground">
-                                {(0, date_fns_1.format)(new Date(photo.created_at), "dd/MM/yyyy", {
-                                  locale: locale_1.ptBR,
-                                })}
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {formatFileSize(photo.file_size)}
-                              </span>
-                            </div>
-                          </div>
-                        </card_1.CardContent>
-                      </card_1.Card>
-                    );
-                  })}
-                </div>
-              : /* List View */
-                <div className="space-y-2">
-                  {filteredPhotos.map(function (photo) {
-                    return (
-                      <card_1.Card key={photo.id} className="p-4">
-                        <div className="flex items-center gap-4">
-                          {/* Thumbnail */}
-                          <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                            {photo.publicUrl && (
-                              <img
-                                src={photo.publicUrl}
-                                alt={photo.file_name}
-                                className="w-full h-full object-cover"
-                                loading="lazy"
-                              />
-                            )}
-                          </div>
-
-                          {/* Info */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="font-medium truncate">{photo.file_name}</p>
-                              <badge_1.Badge className={getCategoryColor(photo.metadata.category)}>
-                                {getCategoryLabel(photo.metadata.category)}
-                              </badge_1.Badge>
-                            </div>
-
-                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                              <div className="flex items-center gap-1">
-                                <lucide_react_1.Stethoscope className="h-3 w-3" />
-                                {photo.metadata.treatmentType}
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <lucide_react_1.MapPin className="h-3 w-3" />
-                                {photo.metadata.anatomicalArea}
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <lucide_react_1.Calendar className="h-3 w-3" />
-                                {(0, date_fns_1.format)(new Date(photo.created_at), "dd/MM/yyyy", {
-                                  locale: locale_1.ptBR,
-                                })}
-                              </div>
-                            </div>
-
-                            {photo.metadata.notes && (
-                              <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
-                                {photo.metadata.notes}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* File Size */}
-                          <div className="text-sm text-muted-foreground">
-                            {formatFileSize(photo.file_size)}
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex items-center gap-2">
-                            <button_1.Button
-                              size="sm"
-                              variant="outline"
-                              onClick={function () {
-                                return setSelectedPhoto(photo);
-                              }}
-                            >
-                              <lucide_react_1.Eye className="h-4 w-4" />
-                            </button_1.Button>
-                            <button_1.Button
-                              size="sm"
-                              variant="outline"
-                              onClick={function () {
-                                return handleDownload(photo);
-                              }}
-                            >
-                              <lucide_react_1.Download className="h-4 w-4" />
-                            </button_1.Button>
-                            {!readonly && (
-                              <button_1.Button
-                                size="sm"
-                                variant="outline"
-                                onClick={function () {
-                                  return handleDelete(photo);
-                                }}
-                              >
-                                <lucide_react_1.Trash2 className="h-4 w-4" />
-                              </button_1.Button>
-                            )}
-                          </div>
+                          )}
                         </div>
-                      </card_1.Card>
-                    );
-                  })}
+
+                        {/* File Size */}
+                        <div className="text-sm text-muted-foreground">
+                          {formatFileSize(photo.file_size)}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2">
+                          <button_1.Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSelectedPhoto(photo)}
+                          >
+                            <lucide_react_1.Eye className="h-4 w-4" />
+                          </button_1.Button>
+                          <button_1.Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDownload(photo)}
+                          >
+                            <lucide_react_1.Download className="h-4 w-4" />
+                          </button_1.Button>
+                          {!readonly && (
+                            <button_1.Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDelete(photo)}
+                            >
+                              <lucide_react_1.Trash2 className="h-4 w-4" />
+                            </button_1.Button>
+                          )}
+                        </div>
+                      </div>
+                    </card_1.Card>
+                  ))}
                 </div>}
 
             {/* Load More */}
@@ -796,11 +726,7 @@ function PhotoGallery(_a) {
               <div className="text-center pt-6">
                 <button_1.Button
                   variant="outline"
-                  onClick={function () {
-                    return setCurrentPage(function (prev) {
-                      return prev + 1;
-                    });
-                  }}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
                   disabled={loading}
                 >
                   {loading ? "Carregando..." : "Carregar mais fotos"}
@@ -815,13 +741,7 @@ function PhotoGallery(_a) {
           <div className="bg-background rounded-lg max-w-6xl max-h-[90vh] overflow-auto">
             <div className="p-4 border-b flex items-center justify-between">
               <h3 className="text-lg font-semibold">{selectedPhoto.file_name}</h3>
-              <button_1.Button
-                variant="ghost"
-                size="sm"
-                onClick={function () {
-                  return setSelectedPhoto(null);
-                }}
-              >
+              <button_1.Button variant="ghost" size="sm" onClick={() => setSelectedPhoto(null)}>
                 ✕
               </button_1.Button>
             </div>
@@ -902,9 +822,7 @@ function PhotoGallery(_a) {
                   <div className="flex gap-2 pt-4">
                     <button_1.Button
                       size="sm"
-                      onClick={function () {
-                        return handleDownload(selectedPhoto);
-                      }}
+                      onClick={() => handleDownload(selectedPhoto)}
                       className="flex-1"
                     >
                       <lucide_react_1.Download className="h-4 w-4 mr-2" />
@@ -914,7 +832,7 @@ function PhotoGallery(_a) {
                       <button_1.Button
                         size="sm"
                         variant="destructive"
-                        onClick={function () {
+                        onClick={() => {
                           handleDelete(selectedPhoto);
                           setSelectedPhoto(null);
                         }}

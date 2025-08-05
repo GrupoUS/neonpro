@@ -2,32 +2,31 @@
 // VIBECODE V1.0 - Professional Excellence Standards
 // Purpose: React hook for network connectivity detection with healthcare PWA patterns
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -161,13 +158,12 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useNetworkStatus = useNetworkStatus;
 exports.useOfflineApi = useOfflineApi;
 var react_1 = require("react");
 function useNetworkStatus() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       isOnline: true,
       isOffline: false,
@@ -181,7 +177,7 @@ function useNetworkStatus() {
     isSyncing = _c[0],
     setIsSyncing = _c[1];
   // Update network status
-  var updateNetworkStatus = (0, react_1.useCallback)(function () {
+  var updateNetworkStatus = (0, react_1.useCallback)(() => {
     var connection = navigator.connection;
     var isOnline = navigator.onLine;
     setNetworkStatus({
@@ -194,7 +190,7 @@ function useNetworkStatus() {
     });
   }, []);
   // Load sync queue from localStorage
-  var loadSyncQueue = (0, react_1.useCallback)(function () {
+  var loadSyncQueue = (0, react_1.useCallback)(() => {
     try {
       var stored = localStorage.getItem("neonpro-sync-queue");
       if (stored) {
@@ -207,10 +203,10 @@ function useNetworkStatus() {
   }, []);
   // Process sync queue when coming back online
   var processSyncQueue = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var updatedQueue, i, item, response, error_1, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!networkStatus.isOnline || syncQueue.length === 0 || isSyncing) {
@@ -293,18 +289,17 @@ function useNetworkStatus() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [networkStatus.isOnline, syncQueue, isSyncing],
   );
   // Add item to sync queue
-  var addToSyncQueue = (0, react_1.useCallback)(function (item) {
+  var addToSyncQueue = (0, react_1.useCallback)((item) => {
     var queueItem = __assign(__assign({}, item), {
       id: "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9)),
       timestamp: Date.now(),
       retryCount: 0,
     });
-    setSyncQueue(function (prev) {
+    setSyncQueue((prev) => {
       var newQueue = __spreadArray(__spreadArray([], prev, true), [queueItem], false);
       localStorage.setItem("neonpro-sync-queue", JSON.stringify(newQueue));
       return newQueue;
@@ -312,48 +307,40 @@ function useNetworkStatus() {
     return queueItem.id;
   }, []);
   // Clear sync queue
-  var clearSyncQueue = (0, react_1.useCallback)(function () {
+  var clearSyncQueue = (0, react_1.useCallback)(() => {
     setSyncQueue([]);
     localStorage.removeItem("neonpro-sync-queue");
   }, []);
   // Initialize hook
-  (0, react_1.useEffect)(
-    function () {
-      updateNetworkStatus();
-      loadSyncQueue();
-      // Event listeners
-      window.addEventListener("online", updateNetworkStatus);
-      window.addEventListener("offline", updateNetworkStatus);
-      // Connection change listener (if available)
-      var connection = navigator.connection;
+  (0, react_1.useEffect)(() => {
+    updateNetworkStatus();
+    loadSyncQueue();
+    // Event listeners
+    window.addEventListener("online", updateNetworkStatus);
+    window.addEventListener("offline", updateNetworkStatus);
+    // Connection change listener (if available)
+    var connection = navigator.connection;
+    if (connection) {
+      connection.addEventListener("change", updateNetworkStatus);
+    }
+    return () => {
+      window.removeEventListener("online", updateNetworkStatus);
+      window.removeEventListener("offline", updateNetworkStatus);
       if (connection) {
-        connection.addEventListener("change", updateNetworkStatus);
+        connection.removeEventListener("change", updateNetworkStatus);
       }
-      return function () {
-        window.removeEventListener("online", updateNetworkStatus);
-        window.removeEventListener("offline", updateNetworkStatus);
-        if (connection) {
-          connection.removeEventListener("change", updateNetworkStatus);
-        }
-      };
-    },
-    [updateNetworkStatus, loadSyncQueue],
-  );
+    };
+  }, [updateNetworkStatus, loadSyncQueue]);
   // Process queue when coming online
-  (0, react_1.useEffect)(
-    function () {
-      if (networkStatus.isOnline && syncQueue.length > 0) {
-        // Small delay to ensure connection is stable
-        var timer_1 = setTimeout(function () {
-          processSyncQueue();
-        }, 1000);
-        return function () {
-          return clearTimeout(timer_1);
-        };
-      }
-    },
-    [networkStatus.isOnline, syncQueue.length, processSyncQueue],
-  );
+  (0, react_1.useEffect)(() => {
+    if (networkStatus.isOnline && syncQueue.length > 0) {
+      // Small delay to ensure connection is stable
+      var timer_1 = setTimeout(() => {
+        processSyncQueue();
+      }, 1000);
+      return () => clearTimeout(timer_1);
+    }
+  }, [networkStatus.isOnline, syncQueue.length, processSyncQueue]);
   return __assign(__assign({}, networkStatus), {
     syncQueue: syncQueue,
     syncQueueCount: syncQueue.length,
@@ -365,83 +352,77 @@ function useNetworkStatus() {
 }
 // Utility hook for offline-first API calls
 function useOfflineApi() {
-  var _this = this;
   var _a = useNetworkStatus(),
     isOnline = _a.isOnline,
     addToSyncQueue = _a.addToSyncQueue;
   var makeRequest = (0, react_1.useCallback)(
-    function (url_1) {
+    (url_1) => {
       var args_1 = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         args_1[_i - 1] = arguments[_i];
       }
-      return __awaiter(
-        _this,
-        __spreadArray([url_1], args_1, true),
-        void 0,
-        function (url, options) {
-          var response, error_3;
-          if (options === void 0) {
-            options = {};
+      return __awaiter(this, __spreadArray([url_1], args_1, true), void 0, function (url, options) {
+        var response, error_3;
+        if (options === void 0) {
+          options = {};
+        }
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (!isOnline) return [3 /*break*/, 5];
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, , 4]);
+              return [4 /*yield*/, fetch(url, options)];
+            case 2:
+              response = _a.sent();
+              return [2 /*return*/, response];
+            case 3:
+              error_3 = _a.sent();
+              console.warn("API call failed, adding to sync queue:", error_3);
+              // Add to sync queue if it's a safe method to retry
+              if (options.method && ["POST", "PUT", "PATCH", "DELETE"].includes(options.method)) {
+                addToSyncQueue({
+                  method: options.method,
+                  url: url,
+                  data: options.body ? JSON.parse(options.body) : undefined,
+                });
+              }
+              throw error_3;
+            case 4:
+              return [3 /*break*/, 6];
+            case 5:
+              // Offline - add to sync queue if it's a write operation
+              if (options.method && ["POST", "PUT", "PATCH", "DELETE"].includes(options.method)) {
+                addToSyncQueue({
+                  method: options.method,
+                  url: url,
+                  data: options.body ? JSON.parse(options.body) : undefined,
+                });
+                // Return a mock successful response for UI feedback
+                return [
+                  2 /*return*/,
+                  new Response(
+                    JSON.stringify({
+                      success: true,
+                      offline: true,
+                      message: "Ação salva para sincronização",
+                    }),
+                    {
+                      status: 200,
+                      statusText: "OK (Offline)",
+                      headers: { "Content-Type": "application/json" },
+                    },
+                  ),
+                ];
+              }
+              // For read operations, return null to indicate offline
+              return [2 /*return*/, null];
+            case 6:
+              return [2 /*return*/];
           }
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (!isOnline) return [3 /*break*/, 5];
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, fetch(url, options)];
-              case 2:
-                response = _a.sent();
-                return [2 /*return*/, response];
-              case 3:
-                error_3 = _a.sent();
-                console.warn("API call failed, adding to sync queue:", error_3);
-                // Add to sync queue if it's a safe method to retry
-                if (options.method && ["POST", "PUT", "PATCH", "DELETE"].includes(options.method)) {
-                  addToSyncQueue({
-                    method: options.method,
-                    url: url,
-                    data: options.body ? JSON.parse(options.body) : undefined,
-                  });
-                }
-                throw error_3;
-              case 4:
-                return [3 /*break*/, 6];
-              case 5:
-                // Offline - add to sync queue if it's a write operation
-                if (options.method && ["POST", "PUT", "PATCH", "DELETE"].includes(options.method)) {
-                  addToSyncQueue({
-                    method: options.method,
-                    url: url,
-                    data: options.body ? JSON.parse(options.body) : undefined,
-                  });
-                  // Return a mock successful response for UI feedback
-                  return [
-                    2 /*return*/,
-                    new Response(
-                      JSON.stringify({
-                        success: true,
-                        offline: true,
-                        message: "Ação salva para sincronização",
-                      }),
-                      {
-                        status: 200,
-                        statusText: "OK (Offline)",
-                        headers: { "Content-Type": "application/json" },
-                      },
-                    ),
-                  ];
-                }
-                // For read operations, return null to indicate offline
-                return [2 /*return*/, null];
-              case 6:
-                return [2 /*return*/];
-            }
-          });
-        },
-      );
+        });
+      });
     },
     [isOnline, addToSyncQueue],
   );

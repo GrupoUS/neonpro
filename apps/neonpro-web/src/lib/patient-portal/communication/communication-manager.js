@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,13 +128,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommunicationManager = void 0;
 /**
  * Patient communication manager
  */
-var CommunicationManager = /** @class */ (function () {
+var CommunicationManager = /** @class */ (() => {
   function CommunicationManager(
     supabase,
     auditLogger,
@@ -197,7 +194,7 @@ var CommunicationManager = /** @class */ (function () {
               ];
             }
             conversationId = request.conversationId;
-            if (!!conversationId) return [3 /*break*/, 3];
+            if (conversationId) return [3 /*break*/, 3];
             return [4 /*yield*/, this.createConversation(request)];
           case 2:
             conversationId = _g.sent();
@@ -515,7 +512,7 @@ var CommunicationManager = /** @class */ (function () {
    */
   CommunicationManager.prototype.encryptContent = function (content) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would integrate with encryption service
         // For now, return content as-is
         return [2 /*return*/, content];
@@ -525,7 +522,7 @@ var CommunicationManager = /** @class */ (function () {
   /**
    * Get estimated response time based on priority
    */
-  CommunicationManager.prototype.getEstimatedResponseTime = function (priority) {
+  CommunicationManager.prototype.getEstimatedResponseTime = (priority) => {
     switch (priority) {
       case "urgent":
         return "1-2 horas";
@@ -573,16 +570,14 @@ var CommunicationManager = /** @class */ (function () {
             if (error) throw error;
             stats = {
               totalMessages: messages.length,
-              unreadMessages: messages.filter(function (m) {
-                return m.status !== "read";
-              }).length,
+              unreadMessages: messages.filter((m) => m.status !== "read").length,
               activeConversations: 0, // Would calculate from conversations table
               averageResponseTime: 0, // Would calculate from response times
               messagesByType: {},
               recentActivity: [],
             };
             // Count messages by type
-            messages.forEach(function (message) {
+            messages.forEach((message) => {
               stats.messagesByType[message.message_type] =
                 (stats.messagesByType[message.message_type] || 0) + 1;
             });

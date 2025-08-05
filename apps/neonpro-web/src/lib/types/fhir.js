@@ -1,4 +1,3 @@
-"use strict";
 /**
  * HL7 FHIR R4 Patient Resource Types
  *

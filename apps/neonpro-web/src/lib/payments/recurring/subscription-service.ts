@@ -1,6 +1,6 @@
-import type { createClient } from "@/lib/supabase/server";
+import type Stripe from "stripe";
 import type { stripe } from "@/lib/stripe";
-import Stripe from "stripe";
+import type { createClient } from "@/lib/supabase/server";
 
 // Types for subscription management
 export interface SubscriptionPlan {

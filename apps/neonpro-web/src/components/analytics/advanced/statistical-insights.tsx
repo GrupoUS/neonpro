@@ -8,23 +8,46 @@
  * and data quality assessments for business intelligence.
  */
 
-import React, { useState, useMemo, useCallback } from "react";
 import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  Calculator,
+  CheckCircle,
+  Download,
+  Filter,
+  Info,
+  Layers,
+  LineChart as LineChartIcon,
+  PieChart,
+  RefreshCw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  ReferenceLine,
   ResponsiveContainer,
-  ScatterChart,
   Scatter,
+  ScatterChart,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  Cell,
-  ReferenceLine,
 } from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -32,8 +55,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -42,28 +64,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  BarChart3,
-  TrendingUp,
-  TrendingDown,
-  Target,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Zap,
-  Brain,
-  Calculator,
-  PieChart,
-  LineChart as LineChartIcon,
-  Layers,
-  Filter,
-  RefreshCw,
-  Download,
-  Info,
-} from "lucide-react";
 
 // Types for statistical data
 interface CorrelationData {

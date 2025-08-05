@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Agenda;
 var react_1 = require("react");
@@ -97,7 +96,7 @@ var statusConfig = {
     textColor: "text-danger",
   },
 };
-var AppointmentCard = function (_a) {
+var AppointmentCard = (_a) => {
   var appointment = _a.appointment,
     index = _a.index;
   var statusInfo = statusConfig[appointment.status];
@@ -186,17 +185,17 @@ var AppointmentCard = function (_a) {
 function Agenda() {
   var _a = (0, react_1.useState)(new Date()),
     selectedDate = _a[0],
-    setSelectedDate = _a[1];
+    _setSelectedDate = _a[1];
   var _b = (0, react_1.useState)("list"),
-    viewMode = _b[0],
-    setViewMode = _b[1];
+    _viewMode = _b[0],
+    _setViewMode = _b[1];
   var _c = (0, react_1.useState)("todos"),
     filterStatus = _c[0],
     setFilterStatus = _c[1];
   var _d = (0, react_1.useState)(""),
     searchTerm = _d[0],
     setSearchTerm = _d[1];
-  var filteredAppointments = agendaData.appointments.filter(function (appointment) {
+  var filteredAppointments = agendaData.appointments.filter((appointment) => {
     var matchesSearch =
       appointment.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.doctor.toLowerCase().includes(searchTerm.toLowerCase());
@@ -234,9 +233,7 @@ function Agenda() {
                 type="text"
                 placeholder="Buscar paciente..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return setSearchTerm(e.target.value);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent"
               />
             </div>
@@ -247,9 +244,7 @@ function Agenda() {
               <lucide_react_1.Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <select
                 value={filterStatus}
-                onChange={function (e) {
-                  return setFilterStatus(e.target.value);
-                }}
+                onChange={(e) => setFilterStatus(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent appearance-none"
               >
                 <option value="todos">Todos os Status</option>
@@ -272,11 +267,9 @@ function Agenda() {
         {/* Lista de consultas */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <framer_motion_1.AnimatePresence>
-            {filteredAppointments.map(function (appointment, index) {
-              return (
-                <AppointmentCard key={appointment.id} appointment={appointment} index={index} />
-              );
-            })}
+            {filteredAppointments.map((appointment, index) => (
+              <AppointmentCard key={appointment.id} appointment={appointment} index={index} />
+            ))}
           </framer_motion_1.AnimatePresence>
         </div>
 

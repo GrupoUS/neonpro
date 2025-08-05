@@ -1,7 +1,3 @@
-import type { createClient } from "@/lib/supabase/server";
-import type { NextResponse } from "next/server";
-import type { z } from "zod";
-
 // Validation schemas
 const CreateInvoiceSchema = z.object({
   patient_id: z.string().uuid("ID do paciente inválido"),
@@ -23,7 +19,7 @@ const CreateInvoiceSchema = z.object({
     .min(1, "Pelo menos um item é obrigatório"),
 });
 
-const UpdateInvoiceSchema = z.object({
+const _UpdateInvoiceSchema = z.object({
   status: z.enum(["draft", "pending", "paid", "overdue", "cancelled"]).optional(),
   due_date: z.string().optional(),
   notes: z.string().optional(),

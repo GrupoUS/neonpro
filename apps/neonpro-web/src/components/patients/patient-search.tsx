@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Search, X, Filter, User, Phone, Mail, FileText } from "lucide-react";
-import type { Input } from "@/components/ui/input";
+import type { FileText, Filter, Mail, Phone, Search, User, X } from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type {
   Select,
@@ -12,7 +14,6 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
 
 interface PatientSearchProps {
   searchTerm: string;

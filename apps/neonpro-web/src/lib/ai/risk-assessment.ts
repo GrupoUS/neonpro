@@ -10,9 +10,9 @@
  * - Continuous model validation and calibration
  */
 
-import type { Patient } from "@/types/patient";
-import type { TreatmentHistory, MedicalRecord } from "@/types/treatment";
 import type { AppointmentHistory } from "@/types/appointment";
+import type { Patient } from "@/types/patient";
+import type { MedicalRecord, TreatmentHistory } from "@/types/treatment";
 
 // Risk Assessment Types
 export interface RiskFactor {

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Bank Reconciliation Service
  * Handles automatic bank statement import and transaction matching
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,10 +134,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -149,7 +146,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BankReconciliationService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -181,7 +178,7 @@ var csvMappingSchema = zod_1.z.object({
   credit_indicator: zod_1.z.string().optional(),
   debit_indicator: zod_1.z.string().optional(),
 });
-var BankReconciliationService = /** @class */ (function () {
+var BankReconciliationService = /** @class */ (() => {
   function BankReconciliationService() {}
   /**
    * Import bank statement from CSV file
@@ -402,7 +399,7 @@ var BankReconciliationService = /** @class */ (function () {
               __spreadArray(
                 __spreadArray(
                   [],
-                  (payments || []).map(function (p) {
+                  (payments || []).map((p) => {
                     var _a, _b;
                     return {
                       id: p.id,
@@ -419,30 +416,26 @@ var BankReconciliationService = /** @class */ (function () {
                   }),
                   true,
                 ),
-                (pixPayments || []).map(function (p) {
-                  return {
-                    id: p.id,
-                    amount: p.amount,
-                    payment_date: p.payment_date,
-                    payment_method: "pix",
-                    customer_name: p.customer_name,
-                    description: p.description,
-                    status: "completed",
-                  };
-                }),
-                true,
-              ),
-              (cardPayments || []).map(function (p) {
-                return {
+                (pixPayments || []).map((p) => ({
                   id: p.id,
                   amount: p.amount,
                   payment_date: p.payment_date,
-                  payment_method: "card",
+                  payment_method: "pix",
                   customer_name: p.customer_name,
                   description: p.description,
                   status: "completed",
-                };
-              }),
+                })),
+                true,
+              ),
+              (cardPayments || []).map((p) => ({
+                id: p.id,
+                amount: p.amount,
+                payment_date: p.payment_date,
+                payment_method: "card",
+                customer_name: p.customer_name,
+                description: p.description,
+                status: "completed",
+              })),
               true,
             );
             (_i = 0), (transactions_1 = transactions);
@@ -583,9 +576,7 @@ var BankReconciliationService = /** @class */ (function () {
       }
     }
     // Sort by confidence score (highest first)
-    return matches.sort(function (a, b) {
-      return b.confidence_score - a.confidence_score;
-    });
+    return matches.sort((a, b) => b.confidence_score - a.confidence_score);
   };
   /**
    * Manual transaction matching
@@ -593,7 +584,7 @@ var BankReconciliationService = /** @class */ (function () {
   BankReconciliationService.manualMatch = function (transactionId, paymentId, userId) {
     return __awaiter(this, void 0, void 0, function () {
       var updateError, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -652,7 +643,7 @@ var BankReconciliationService = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, summary, error, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -681,7 +672,7 @@ var BankReconciliationService = /** @class */ (function () {
     });
   };
   // Utility methods
-  BankReconciliationService.parseDate = function (dateStr, format) {
+  BankReconciliationService.parseDate = (dateStr, format) => {
     try {
       // Handle common Brazilian date formats
       if (format === "dd/MM/yyyy") {
@@ -701,7 +692,7 @@ var BankReconciliationService = /** @class */ (function () {
       return null;
     }
   };
-  BankReconciliationService.parseAmount = function (amountStr, format) {
+  BankReconciliationService.parseAmount = (amountStr, format) => {
     // Remove currency symbols and spaces
     var cleaned = amountStr.replace(/[R$\s]/g, "").replace(",", ".");
     var amount = parseFloat(cleaned);
@@ -714,7 +705,7 @@ var BankReconciliationService = /** @class */ (function () {
     var editDistance = this.levenshteinDistance(longer, shorter);
     return (longer.length - editDistance) / longer.length;
   };
-  BankReconciliationService.levenshteinDistance = function (str1, str2) {
+  BankReconciliationService.levenshteinDistance = (str1, str2) => {
     var matrix = [];
     for (var i = 0; i <= str2.length; i++) {
       matrix[i] = [i];

@@ -1,4 +1,3 @@
-"use strict";
 // SMS Integration Types for NeonPro
 // Comprehensive type system for SMS communication with Brazilian providers
 Object.defineProperty(exports, "__esModule", { value: true });

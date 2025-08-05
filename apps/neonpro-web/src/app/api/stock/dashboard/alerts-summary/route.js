@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("next/server");
@@ -176,7 +173,7 @@ function GET(request) {
       criticalAlerts,
       highAlerts,
       error_1;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 6, , 7]);
@@ -266,7 +263,7 @@ function GET(request) {
           alertsByType_1 = new Map();
           alertTypes = ["low_stock", "expiring", "expired", "overstock"];
           // Initialize with zeros
-          alertTypes.forEach(function (type) {
+          alertTypes.forEach((type) => {
             alertsByType_1.set(type, {
               type: type,
               count: 0,
@@ -281,7 +278,7 @@ function GET(request) {
           // Count current alerts
           alertsData === null || alertsData === void 0
             ? void 0
-            : alertsData.forEach(function (alert) {
+            : alertsData.forEach((alert) => {
                 if (alertsByType_1.has(alert.alert_type)) {
                   var typeData = alertsByType_1.get(alert.alert_type);
                   typeData.count++;
@@ -318,14 +315,14 @@ function GET(request) {
           previousPeriodEnd = startDate_1;
           currentPeriodCounts_1 = new Map();
           previousPeriodCounts_1 = new Map();
-          alertTypes.forEach(function (type) {
+          alertTypes.forEach((type) => {
             currentPeriodCounts_1.set(type, 0);
             previousPeriodCounts_1.set(type, 0);
           });
           // Count alerts in current period
           historicalAlertsData === null || historicalAlertsData === void 0
             ? void 0
-            : historicalAlertsData.forEach(function (alert) {
+            : historicalAlertsData.forEach((alert) => {
                 var alertDate = new Date(alert.created_at);
                 if (alertDate >= startDate_1 && alertDate <= endDate_1) {
                   var current = currentPeriodCounts_1.get(alert.alert_type) || 0;
@@ -345,12 +342,12 @@ function GET(request) {
           previousPeriodData = _e.sent().data;
           previousPeriodData === null || previousPeriodData === void 0
             ? void 0
-            : previousPeriodData.forEach(function (alert) {
+            : previousPeriodData.forEach((alert) => {
                 var previous = previousPeriodCounts_1.get(alert.alert_type) || 0;
                 previousPeriodCounts_1.set(alert.alert_type, previous + 1);
               });
           // Calculate trends
-          alertsByType_1.forEach(function (typeData, type) {
+          alertsByType_1.forEach((typeData, type) => {
             var currentCount = currentPeriodCounts_1.get(type) || 0;
             var previousCount = previousPeriodCounts_1.get(type) || 0;
             if (previousCount === 0) {
@@ -372,15 +369,11 @@ function GET(request) {
           criticalAlerts =
             (alertsData === null || alertsData === void 0
               ? void 0
-              : alertsData.filter(function (alert) {
-                  return alert.severity_level === "critical";
-                }).length) || 0;
+              : alertsData.filter((alert) => alert.severity_level === "critical").length) || 0;
           highAlerts =
             (alertsData === null || alertsData === void 0
               ? void 0
-              : alertsData.filter(function (alert) {
-                  return alert.severity_level === "high";
-                }).length) || 0;
+              : alertsData.filter((alert) => alert.severity_level === "high").length) || 0;
           return [
             2 /*return*/,
             server_1.NextResponse.json({

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * API Route: Role Management Endpoint
  * Story 1.2: Role-Based Access Control Implementation
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -26,7 +25,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -55,8 +54,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -77,9 +74,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.PUT = PUT;
@@ -187,10 +184,10 @@ function GET(request) {
       error,
       count,
       error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 5, , 6]);
+          _c.trys.push([0, 5, undefined, 6]);
           return [4 /*yield*/, (0, auth_1.authenticateRequest)(request)];
         case 1:
           authResult = _c.sent();
@@ -306,7 +303,7 @@ function PUT(request) {
   return __awaiter(this, void 0, void 0, function () {
     var authResult,
       requestBody,
-      error_2,
+      _error_2,
       validationResult,
       _a,
       userId,
@@ -325,10 +322,10 @@ function PUT(request) {
       updateError,
       auditLog,
       error_3;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          _c.trys.push([0, 11, , 12]);
+          _c.trys.push([0, 11, undefined, 12]);
           return [4 /*yield*/, (0, auth_1.authenticateRequest)(request)];
         case 1:
           authResult = _c.sent();
@@ -341,13 +338,13 @@ function PUT(request) {
           requestBody = void 0;
           _c.label = 2;
         case 2:
-          _c.trys.push([2, 4, , 5]);
+          _c.trys.push([2, 4, undefined, 5]);
           return [4 /*yield*/, request.json()];
         case 3:
           requestBody = _c.sent();
           return [3 /*break*/, 5];
         case 4:
-          error_2 = _c.sent();
+          _error_2 = _c.sent();
           return [
             2 /*return*/,
             server_1.NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 }),
@@ -540,21 +537,19 @@ function PUT(request) {
 /**
  * OPTIONS handler for CORS preflight requests
  */
-function OPTIONS(request) {
+function OPTIONS(_request) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        new server_1.NextResponse(null, {
-          status: 200,
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET, PUT, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Max-Age": "86400",
-          },
-        }),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      new server_1.NextResponse(null, {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, PUT, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          "Access-Control-Max-Age": "86400",
+        },
+      }),
+    ]);
   });
 }

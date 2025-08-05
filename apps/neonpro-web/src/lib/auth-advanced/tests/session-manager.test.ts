@@ -1,9 +1,9 @@
 // Session Manager Tests
 // Story 1.4: Session Management & Security Implementation
 
-import type { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import type { SessionManager } from "../session-manager";
+import type { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SecurityMonitor } from "../security-monitor";
+import type { SessionManager } from "../session-manager";
 import type { SessionConfig, SessionData, SessionMetrics } from "../types";
 
 // Mock dependencies

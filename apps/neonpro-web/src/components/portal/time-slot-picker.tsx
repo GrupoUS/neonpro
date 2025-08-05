@@ -1,20 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import type { format } from "date-fns";
 import type { motion } from "framer-motion";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Badge } from "@/components/ui/badge";
-import type { Skeleton } from "@/components/ui/skeleton";
-import type { Clock, Calendar as CalendarIcon, AlertCircle } from "lucide-react";
+import type { AlertCircle, Calendar as CalendarIcon, Clock } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { useTranslation } from "@/app/lib/i18n/use-translation";
 import type { AvailableTimeSlot } from "@/app/types/appointments";
-import type { RealTimeAvailability } from "@/components/dashboard/real-time-availability";
 import type { BookingConflictPrevention } from "@/components/dashboard/booking-conflict-prevention";
+import type { RealTimeAvailability } from "@/components/dashboard/real-time-availability";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Skeleton } from "@/components/ui/skeleton";
 import type { useAvailabilityManager } from "@/hooks/use-availability-manager";
 import type { TimeSlot } from "@/hooks/use-realtime-availability";
-import type { format } from "date-fns";
 
 interface TimeSlotPickerProps {
   serviceId?: string;

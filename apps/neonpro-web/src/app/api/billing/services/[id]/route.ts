@@ -1,6 +1,6 @@
-import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { createClient } from "@/app/utils/supabase/server";
 
 const UpdateServiceSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").optional(),
@@ -13,7 +13,7 @@ const UpdateServiceSchema = z.object({
   requires_appointment: z.boolean().optional(),
 });
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();
@@ -85,7 +85,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params;
     const supabase = await createClient();

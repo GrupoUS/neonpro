@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Compliance Framework - Core System
  * Sistema principal de conformidade com LGPD
@@ -9,15 +8,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,13 +36,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,9 +64,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -139,7 +136,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LGPDManager =
   exports.DataSubjectRequestStatus =
@@ -156,7 +153,7 @@ var lgpd_1 = require("../../types/lgpd");
 // ============================================================================
 // ENCRYPTION SERVICE
 // ============================================================================
-var LGPDEncryptionService = /** @class */ (function () {
+var LGPDEncryptionService = /** @class */ (() => {
   function LGPDEncryptionService() {}
   LGPDEncryptionService.getEncryptionKey = function (password, salt) {
     return crypto_1.default.pbkdf2Sync(
@@ -216,16 +213,13 @@ var LGPDEncryptionService = /** @class */ (function () {
   /**
    * Verifica se dados estão criptografados
    */
-  LGPDEncryptionService.isEncrypted = function (data) {
-    return (
-      typeof data === "object" &&
-      data !== null &&
-      "data" in data &&
-      "iv" in data &&
-      "salt" in data &&
-      "algorithm" in data
-    );
-  };
+  LGPDEncryptionService.isEncrypted = (data) =>
+    typeof data === "object" &&
+    data !== null &&
+    "data" in data &&
+    "iv" in data &&
+    "salt" in data &&
+    "algorithm" in data;
   LGPDEncryptionService.DEFAULT_CONFIG = {
     algorithm: "aes-256-gcm",
     keySize: 32,
@@ -239,7 +233,7 @@ exports.LGPDEncryptionService = LGPDEncryptionService;
 // ============================================================================
 // CONSENT MANAGEMENT SERVICE
 // ============================================================================
-var LGPDConsentService = /** @class */ (function () {
+var LGPDConsentService = /** @class */ (() => {
   function LGPDConsentService() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -470,7 +464,7 @@ exports.LGPDConsentService = LGPDConsentService;
 // ============================================================================
 // DATA SUBJECT RIGHTS SERVICE
 // ============================================================================
-var LGPDDataSubjectService = /** @class */ (function () {
+var LGPDDataSubjectService = /** @class */ (() => {
   function LGPDDataSubjectService() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -670,7 +664,7 @@ exports.LGPDDataSubjectService = LGPDDataSubjectService;
 // ============================================================================
 // MAIN LGPD SERVICE
 // ============================================================================
-var LGPDComplianceService = /** @class */ (function () {
+var LGPDComplianceService = /** @class */ (() => {
   function LGPDComplianceService() {
     this.consent = new LGPDConsentService();
     this.dataSubject = new LGPDDataSubjectService();
@@ -679,7 +673,7 @@ var LGPDComplianceService = /** @class */ (function () {
   /**
    * Valida contexto LGPD
    */
-  LGPDComplianceService.validateContext = function (context) {
+  LGPDComplianceService.validateContext = (context) => {
     if (!context.userId || !context.clinicId) {
       throw new Error("User ID and Clinic ID are required");
     }
@@ -694,29 +688,25 @@ var LGPDComplianceService = /** @class */ (function () {
   /**
    * Cria resposta padronizada da API
    */
-  LGPDComplianceService.createApiResponse = function (data, compliance) {
-    return {
-      success: true,
-      data: data,
-      compliance: compliance,
-      timestamp: new Date(),
-    };
-  };
+  LGPDComplianceService.createApiResponse = (data, compliance) => ({
+    success: true,
+    data: data,
+    compliance: compliance,
+    timestamp: new Date(),
+  });
   /**
    * Cria resposta de erro padronizada
    */
-  LGPDComplianceService.createErrorResponse = function (error) {
-    return {
-      success: false,
-      error: error,
-      compliance: {
-        processed: false,
-        auditLogged: true,
-        consentVerified: false,
-      },
-      timestamp: new Date(),
-    };
-  };
+  LGPDComplianceService.createErrorResponse = (error) => ({
+    success: false,
+    error: error,
+    compliance: {
+      processed: false,
+      auditLogged: true,
+      consentVerified: false,
+    },
+    timestamp: new Date(),
+  });
   return LGPDComplianceService;
 })();
 exports.LGPDComplianceService = LGPDComplianceService;
@@ -726,16 +716,12 @@ exports.LGPDManager = LGPDComplianceService;
 var lgpd_2 = require("../../types/lgpd");
 Object.defineProperty(exports, "DataSubjectRequestType", {
   enumerable: true,
-  get: function () {
-    return lgpd_2.DataSubjectRight;
-  },
+  get: () => lgpd_2.DataSubjectRight,
 });
 // Export RequestStatus as DataSubjectRequestStatus for compatibility
 var lgpd_3 = require("../../types/lgpd");
 Object.defineProperty(exports, "DataSubjectRequestStatus", {
   enumerable: true,
-  get: function () {
-    return lgpd_3.RequestStatus;
-  },
+  get: () => lgpd_3.RequestStatus,
 });
 exports.default = LGPDComplianceService;

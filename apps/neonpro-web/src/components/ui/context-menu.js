@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContextMenuRadioGroup =
   exports.ContextMenuSubTrigger =
@@ -46,7 +44,7 @@ var ContextMenuSub = ContextMenuPrimitive.Sub;
 exports.ContextMenuSub = ContextMenuSub;
 var ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
 exports.ContextMenuRadioGroup = ContextMenuRadioGroup;
-var ContextMenuSubTrigger = React.forwardRef(function (_a, ref) {
+var ContextMenuSubTrigger = React.forwardRef((_a, ref) => {
   var className = _a.className,
     inset = _a.inset,
     children = _a.children,
@@ -68,7 +66,7 @@ var ContextMenuSubTrigger = React.forwardRef(function (_a, ref) {
 });
 exports.ContextMenuSubTrigger = ContextMenuSubTrigger;
 ContextMenuSubTrigger.displayName = ContextMenuPrimitive.SubTrigger.displayName;
-var ContextMenuSubContent = React.forwardRef(function (_a, ref) {
+var ContextMenuSubContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -84,7 +82,7 @@ var ContextMenuSubContent = React.forwardRef(function (_a, ref) {
 });
 exports.ContextMenuSubContent = ContextMenuSubContent;
 ContextMenuSubContent.displayName = ContextMenuPrimitive.SubContent.displayName;
-var ContextMenuContent = React.forwardRef(function (_a, ref) {
+var ContextMenuContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -102,7 +100,7 @@ var ContextMenuContent = React.forwardRef(function (_a, ref) {
 });
 exports.ContextMenuContent = ContextMenuContent;
 ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName;
-var ContextMenuItem = React.forwardRef(function (_a, ref) {
+var ContextMenuItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     inset = _a.inset,
     props = __rest(_a, ["className", "inset"]);
@@ -120,7 +118,7 @@ var ContextMenuItem = React.forwardRef(function (_a, ref) {
 });
 exports.ContextMenuItem = ContextMenuItem;
 ContextMenuItem.displayName = ContextMenuPrimitive.Item.displayName;
-var ContextMenuCheckboxItem = React.forwardRef(function (_a, ref) {
+var ContextMenuCheckboxItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     children = _a.children,
     checked = _a.checked,
@@ -146,7 +144,7 @@ var ContextMenuCheckboxItem = React.forwardRef(function (_a, ref) {
 });
 exports.ContextMenuCheckboxItem = ContextMenuCheckboxItem;
 ContextMenuCheckboxItem.displayName = ContextMenuPrimitive.CheckboxItem.displayName;
-var ContextMenuRadioItem = React.forwardRef(function (_a, ref) {
+var ContextMenuRadioItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     children = _a.children,
     props = __rest(_a, ["className", "children"]);
@@ -170,7 +168,7 @@ var ContextMenuRadioItem = React.forwardRef(function (_a, ref) {
 });
 exports.ContextMenuRadioItem = ContextMenuRadioItem;
 ContextMenuRadioItem.displayName = ContextMenuPrimitive.RadioItem.displayName;
-var ContextMenuLabel = React.forwardRef(function (_a, ref) {
+var ContextMenuLabel = React.forwardRef((_a, ref) => {
   var className = _a.className,
     inset = _a.inset,
     props = __rest(_a, ["className", "inset"]);
@@ -188,7 +186,7 @@ var ContextMenuLabel = React.forwardRef(function (_a, ref) {
 });
 exports.ContextMenuLabel = ContextMenuLabel;
 ContextMenuLabel.displayName = ContextMenuPrimitive.Label.displayName;
-var ContextMenuSeparator = React.forwardRef(function (_a, ref) {
+var ContextMenuSeparator = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -201,7 +199,7 @@ var ContextMenuSeparator = React.forwardRef(function (_a, ref) {
 });
 exports.ContextMenuSeparator = ContextMenuSeparator;
 ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName;
-var ContextMenuShortcut = function (_a) {
+var ContextMenuShortcut = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

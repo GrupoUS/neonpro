@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Storage Provider
  * Story 1.8: Sistema de Backup e Recovery
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.storageProvider = exports.StorageProvider = void 0;
 var fs_1 = require("fs");
@@ -148,7 +145,7 @@ var audit_logger_1 = require("../auth/audit/audit-logger");
 /**
  * Provider para armazenamento local
  */
-var LocalStorageProvider = /** @class */ (function () {
+var LocalStorageProvider = /** @class */ (() => {
   function LocalStorageProvider(config) {
     this.basePath = config.path || "./backups";
     this.ensureDirectory();
@@ -303,12 +300,7 @@ var LocalStorageProvider = /** @class */ (function () {
             return [4 /*yield*/, fs_1.promises.readdir(searchPath, { recursive: true })];
           case 2:
             files = _b.sent();
-            return [
-              2 /*return*/,
-              files.filter(function (file) {
-                return typeof file === "string";
-              }),
-            ];
+            return [2 /*return*/, files.filter((file) => typeof file === "string")];
           case 3:
             _a = _b.sent();
             return [2 /*return*/, []];
@@ -375,12 +367,12 @@ var LocalStorageProvider = /** @class */ (function () {
 /**
  * Provider para AWS S3
  */
-var S3StorageProvider = /** @class */ (function () {
+var S3StorageProvider = /** @class */ (() => {
   function S3StorageProvider(config) {
     this.config = config;
     this.initializeS3Client();
   }
-  S3StorageProvider.prototype.initializeS3Client = function () {
+  S3StorageProvider.prototype.initializeS3Client = () => {
     // Implementar inicialização do cliente S3
     // const { S3Client } = require('@aws-sdk/client-s3');
     // this.s3Client = new S3Client({
@@ -393,7 +385,7 @@ var S3StorageProvider = /** @class */ (function () {
   };
   S3StorageProvider.prototype.upload = function (localPath, remotePath, onProgress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar upload para S3
         throw new Error("S3 upload não implementado ainda");
       });
@@ -401,7 +393,7 @@ var S3StorageProvider = /** @class */ (function () {
   };
   S3StorageProvider.prototype.download = function (remotePath, localPath, onProgress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar download do S3
         throw new Error("S3 download não implementado ainda");
       });
@@ -409,7 +401,7 @@ var S3StorageProvider = /** @class */ (function () {
   };
   S3StorageProvider.prototype.delete = function (remotePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar delete do S3
         throw new Error("S3 delete não implementado ainda");
       });
@@ -417,7 +409,7 @@ var S3StorageProvider = /** @class */ (function () {
   };
   S3StorageProvider.prototype.exists = function (remotePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de existência no S3
         return [2 /*return*/, false];
       });
@@ -425,7 +417,7 @@ var S3StorageProvider = /** @class */ (function () {
   };
   S3StorageProvider.prototype.list = function (prefix) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar listagem do S3
         return [2 /*return*/, []];
       });
@@ -433,7 +425,7 @@ var S3StorageProvider = /** @class */ (function () {
   };
   S3StorageProvider.prototype.getMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar métricas do S3
         return [
           2 /*return*/,
@@ -456,12 +448,12 @@ var S3StorageProvider = /** @class */ (function () {
 /**
  * Provider para Google Cloud Storage
  */
-var GCSStorageProvider = /** @class */ (function () {
+var GCSStorageProvider = /** @class */ (() => {
   function GCSStorageProvider(config) {
     this.config = config;
     this.initializeGCSClient();
   }
-  GCSStorageProvider.prototype.initializeGCSClient = function () {
+  GCSStorageProvider.prototype.initializeGCSClient = () => {
     // Implementar inicialização do cliente GCS
     // const { Storage } = require('@google-cloud/storage');
     // this.gcsClient = new Storage({
@@ -471,7 +463,7 @@ var GCSStorageProvider = /** @class */ (function () {
   };
   GCSStorageProvider.prototype.upload = function (localPath, remotePath, onProgress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar upload para GCS
         throw new Error("GCS upload não implementado ainda");
       });
@@ -479,7 +471,7 @@ var GCSStorageProvider = /** @class */ (function () {
   };
   GCSStorageProvider.prototype.download = function (remotePath, localPath, onProgress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar download do GCS
         throw new Error("GCS download não implementado ainda");
       });
@@ -487,7 +479,7 @@ var GCSStorageProvider = /** @class */ (function () {
   };
   GCSStorageProvider.prototype.delete = function (remotePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar delete do GCS
         throw new Error("GCS delete não implementado ainda");
       });
@@ -495,7 +487,7 @@ var GCSStorageProvider = /** @class */ (function () {
   };
   GCSStorageProvider.prototype.exists = function (remotePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de existência no GCS
         return [2 /*return*/, false];
       });
@@ -503,7 +495,7 @@ var GCSStorageProvider = /** @class */ (function () {
   };
   GCSStorageProvider.prototype.list = function (prefix) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar listagem do GCS
         return [2 /*return*/, []];
       });
@@ -511,7 +503,7 @@ var GCSStorageProvider = /** @class */ (function () {
   };
   GCSStorageProvider.prototype.getMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar métricas do GCS
         return [
           2 /*return*/,
@@ -534,12 +526,12 @@ var GCSStorageProvider = /** @class */ (function () {
 /**
  * Provider para Azure Blob Storage
  */
-var AzureStorageProvider = /** @class */ (function () {
+var AzureStorageProvider = /** @class */ (() => {
   function AzureStorageProvider(config) {
     this.config = config;
     this.initializeAzureClient();
   }
-  AzureStorageProvider.prototype.initializeAzureClient = function () {
+  AzureStorageProvider.prototype.initializeAzureClient = () => {
     // Implementar inicialização do cliente Azure
     // const { BlobServiceClient } = require('@azure/storage-blob');
     // this.azureClient = BlobServiceClient.fromConnectionString(
@@ -548,7 +540,7 @@ var AzureStorageProvider = /** @class */ (function () {
   };
   AzureStorageProvider.prototype.upload = function (localPath, remotePath, onProgress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar upload para Azure
         throw new Error("Azure upload não implementado ainda");
       });
@@ -556,7 +548,7 @@ var AzureStorageProvider = /** @class */ (function () {
   };
   AzureStorageProvider.prototype.download = function (remotePath, localPath, onProgress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar download do Azure
         throw new Error("Azure download não implementado ainda");
       });
@@ -564,7 +556,7 @@ var AzureStorageProvider = /** @class */ (function () {
   };
   AzureStorageProvider.prototype.delete = function (remotePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar delete do Azure
         throw new Error("Azure delete não implementado ainda");
       });
@@ -572,7 +564,7 @@ var AzureStorageProvider = /** @class */ (function () {
   };
   AzureStorageProvider.prototype.exists = function (remotePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar verificação de existência no Azure
         return [2 /*return*/, false];
       });
@@ -580,7 +572,7 @@ var AzureStorageProvider = /** @class */ (function () {
   };
   AzureStorageProvider.prototype.list = function (prefix) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar listagem do Azure
         return [2 /*return*/, []];
       });
@@ -588,7 +580,7 @@ var AzureStorageProvider = /** @class */ (function () {
   };
   AzureStorageProvider.prototype.getMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar métricas do Azure
         return [
           2 /*return*/,
@@ -611,7 +603,7 @@ var AzureStorageProvider = /** @class */ (function () {
 /**
  * Gerenciador principal de storage
  */
-var StorageProvider = /** @class */ (function () {
+var StorageProvider = /** @class */ (() => {
   function StorageProvider() {
     this.providers = new Map();
     this.activeUploads = new Map();
@@ -662,7 +654,7 @@ var StorageProvider = /** @class */ (function () {
               remotePath ||
               "backups/".concat(new Date().toISOString().split("T")[0], "/").concat(fileName);
             uploadId_1 = crypto.randomUUID();
-            onProgress = function (progress) {
+            onProgress = (progress) => {
               _this.activeUploads.set(uploadId_1, progress);
             };
             return [4 /*yield*/, provider.upload(localPath, targetPath, onProgress)];
@@ -733,7 +725,7 @@ var StorageProvider = /** @class */ (function () {
               throw new Error("Provider não encontrado");
             }
             downloadId_1 = crypto.randomUUID();
-            onProgress = function (progress) {
+            onProgress = (progress) => {
               _this.activeDownloads.set(downloadId_1, progress);
             };
             return [4 /*yield*/, provider.download(remotePath, localPath, onProgress)];

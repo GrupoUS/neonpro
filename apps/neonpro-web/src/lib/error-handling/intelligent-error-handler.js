@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🔧 NeonPro Intelligent Error Handler
  *
@@ -7,20 +6,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -35,26 +34,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -74,13 +73,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -102,9 +101,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -176,7 +173,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.intelligentErrorHandler = exports.IntelligentErrorHandler = void 0;
 exports.withErrorHandling = withErrorHandling;
@@ -195,12 +192,12 @@ var errorPatternsCache = new lru_cache_1.LRUCache({
   max: 500,
   ttl: 30 * 60 * 1000, // 30 minutes
 });
-var IntelligentErrorHandler = /** @class */ (function () {
+var IntelligentErrorHandler = /** @class */ (() => {
   function IntelligentErrorHandler() {
     this.errorHistory = [];
     this.maxErrors = 10000;
   }
-  IntelligentErrorHandler.getInstance = function () {
+  IntelligentErrorHandler.getInstance = () => {
     if (!IntelligentErrorHandler.instance) {
       IntelligentErrorHandler.instance = new IntelligentErrorHandler();
     }
@@ -250,7 +247,7 @@ var IntelligentErrorHandler = /** @class */ (function () {
   /**
    * 📊 Record error metrics for monitoring
    */
-  IntelligentErrorHandler.prototype.recordErrorMetrics = function (errorContext) {
+  IntelligentErrorHandler.prototype.recordErrorMetrics = (errorContext) => {
     performance_monitor_1.performanceMonitor.recordClientPerformance(
       "error.".concat(errorContext.category, ".").concat(errorContext.severity),
       1,
@@ -280,23 +277,19 @@ var IntelligentErrorHandler = /** @class */ (function () {
       timeWindow = 30 * 60 * 1000;
     }
     var now = Date.now();
-    var recentErrors = this.errorHistory.filter(function (e) {
-      return now - e.timestamp <= timeWindow;
-    });
+    var recentErrors = this.errorHistory.filter((e) => now - e.timestamp <= timeWindow);
     var byCategory = {};
     var bySeverity = {};
-    recentErrors.forEach(function (error) {
+    recentErrors.forEach((error) => {
       byCategory[error.category] = (byCategory[error.category] || 0) + 1;
       bySeverity[error.severity] = (bySeverity[error.severity] || 0) + 1;
     });
     // Get top error patterns
     var topErrors = [];
-    errorPatternsCache.forEach(function (count, pattern) {
+    errorPatternsCache.forEach((count, pattern) => {
       topErrors.push({ pattern: pattern, count: count });
     });
-    topErrors.sort(function (a, b) {
-      return b.count - a.count;
-    });
+    topErrors.sort((a, b) => b.count - a.count);
     return {
       totalErrors: recentErrors.length,
       byCategory: byCategory,
@@ -310,9 +303,7 @@ var IntelligentErrorHandler = /** @class */ (function () {
    */
   IntelligentErrorHandler.prototype.getError = function (errorId) {
     return (
-      this.errorHistory.find(function (e) {
-        return e.errorId === errorId;
-      }) || errorDeduplicationCache.get(errorId)
+      this.errorHistory.find((e) => e.errorId === errorId) || errorDeduplicationCache.get(errorId)
     );
   };
   /**
@@ -333,7 +324,7 @@ var IntelligentErrorHandler = /** @class */ (function () {
   /**
    * 🔍 Analyze error to determine category, severity and recovery action
    */
-  IntelligentErrorHandler.prototype.analyzeError = function (message, stack) {
+  IntelligentErrorHandler.prototype.analyzeError = (message, stack) => {
     var fullText = "".concat(message, " ").concat(stack || "");
     // Check against known patterns
     for (
@@ -379,7 +370,7 @@ var IntelligentErrorHandler = /** @class */ (function () {
   /**
    * 🆔 Generate unique error ID for deduplication
    */
-  IntelligentErrorHandler.prototype.generateErrorId = function (message, route) {
+  IntelligentErrorHandler.prototype.generateErrorId = (message, route) => {
     var baseString = "".concat(message, "_").concat(route || "unknown");
     // Simple hash function for error ID
     var hash = 0;
@@ -417,14 +408,14 @@ var IntelligentErrorHandler = /** @class */ (function () {
   /**
    * ⏰ Schedule retry with exponential backoff
    */
-  IntelligentErrorHandler.prototype.scheduleRetry = function (errorContext) {
+  IntelligentErrorHandler.prototype.scheduleRetry = (errorContext) => {
     var _a;
     var retryCount =
       ((_a = errorContext.metadata) === null || _a === void 0 ? void 0 : _a.retryCount) || 0;
     var maxRetries = 3;
     if (retryCount < maxRetries) {
-      var backoffMs = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
-      setTimeout(function () {
+      var backoffMs = 2 ** retryCount * 1000; // 1s, 2s, 4s
+      setTimeout(() => {
         console.log(
           "\uD83D\uDD04 Auto-retry attempt "
             .concat(retryCount + 1, " for error ")
@@ -442,7 +433,7 @@ var IntelligentErrorHandler = /** @class */ (function () {
   /**
    * 📝 Log recovery action taken
    */
-  IntelligentErrorHandler.prototype.logRecoveryAction = function (errorContext, action) {
+  IntelligentErrorHandler.prototype.logRecoveryAction = (errorContext, action) => {
     console.log(
       "\uD83D\uDD27 Recovery action for ".concat(errorContext.errorId, ": ").concat(action),
     );
@@ -462,15 +453,14 @@ exports.intelligentErrorHandler = IntelligentErrorHandler.getInstance();
  * 🚨 Global error boundary utility
  */
 function withErrorHandling(fn, context) {
-  var _this = this;
-  return function () {
+  return () => {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args[_i] = arguments[_i];
     }
-    return __awaiter(_this, void 0, void 0, function () {
+    return __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -492,16 +482,14 @@ function withErrorHandling(fn, context) {
  * 🛡️ React Error Boundary HOC helper
  */
 function withErrorBoundary(Component, fallback) {
-  return /** @class */ (function (_super) {
+  return /** @class */ ((_super) => {
     __extends(ErrorBoundaryWrapper, _super);
     function ErrorBoundaryWrapper(props) {
       var _this = _super.call(this, props) || this;
       _this.state = { hasError: false };
       return _this;
     }
-    ErrorBoundaryWrapper.getDerivedStateFromError = function (error) {
-      return { hasError: true, error: error };
-    };
+    ErrorBoundaryWrapper.getDerivedStateFromError = (error) => ({ hasError: true, error: error });
     ErrorBoundaryWrapper.prototype.componentDidCatch = function (error, errorInfo) {
       var errorContext = exports.intelligentErrorHandler.captureError(error, {
         route: window.location.pathname,

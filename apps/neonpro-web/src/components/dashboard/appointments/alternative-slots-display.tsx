@@ -6,7 +6,20 @@
 
 "use client";
 
+import dayjs from "dayjs";
+import type {
+  AlertCircle,
+  ArrowRight,
+  Calendar,
+  Clock,
+  Loader2,
+  Star,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
 import React, { useMemo } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,29 +27,16 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  Loader2,
-  Clock,
-  Calendar,
-  Star,
-  ArrowRight,
-  AlertCircle,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
-import dayjs from "dayjs";
 import type {
   AlternativeSlot,
-  UseAlternativeSlotsResult,
+  filterSuggestionsWithDayjs,
   formatAlternativeSlot,
   getSuggestionQuality,
   getSuggestionQualityColor,
   groupSuggestionsByDay,
-  filterSuggestionsWithDayjs,
+  UseAlternativeSlotsResult,
 } from "@/hooks/appointments/use-alternative-slots";
+import type { cn } from "@/lib/utils";
 
 interface AlternativeSlotsDisplayProps {
   alternativeSlots: UseAlternativeSlotsResult;

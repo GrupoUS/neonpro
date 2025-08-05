@@ -3,47 +3,46 @@
  * Type definitions and configuration for the Stock Output and Consumption Control System
  */
 
+export type {
+  ConsumptionAlert,
+  ConsumptionAnalytics,
+  ConsumptionForecast,
+  ConsumptionPattern,
+  ConsumptionTrend,
+  CostEfficiency,
+  EfficiencyOpportunity,
+  ProductConsumption,
+  ProductCorrelation,
+  PurchaseRecommendation,
+} from "./consumption-analytics";
+
+export type {
+  BatchMovement,
+  ExpiryAction,
+  ExpiryAlert,
+  FIFOAnalysis,
+  FIFOOptimizationConfig,
+  FIFORecommendation,
+} from "./fifo-management";
 // Re-export types from other modules
 export type {
+  AutoApprovalRule,
+  BatchStock,
+  ConsumptionPattern as BaseConsumptionPattern,
+  ExpiryMonitoring,
+  FIFOResult,
+  LowStockAlert,
+  QualityCheck,
+  RegulatoryCompliance,
+  StockAlert,
+  StockMovement,
   StockOutput,
   StockOutputItem,
   StockRequest,
   StockRequestStatus,
-  AutoApprovalRule,
   StockTransfer,
   TransferItem,
-  StockAlert,
-  BatchStock,
-  FIFOResult,
-  LowStockAlert,
-  ExpiryMonitoring,
-  ConsumptionPattern as BaseConsumptionPattern,
-  StockMovement,
-  QualityCheck,
-  RegulatoryCompliance,
 } from "./stock-output-management";
-
-export type {
-  FIFOAnalysis,
-  FIFORecommendation,
-  ExpiryAlert,
-  ExpiryAction,
-  BatchMovement,
-  FIFOOptimizationConfig,
-} from "./fifo-management";
-
-export type {
-  ConsumptionAnalytics,
-  ProductConsumption,
-  ConsumptionTrend,
-  CostEfficiency,
-  EfficiencyOpportunity,
-  ConsumptionAlert,
-  ConsumptionForecast,
-  PurchaseRecommendation,
-  ConsumptionPattern,
-  ProductCorrelation,
-} from "./consumption-analytics";
 
 // Main inventory management configuration
 export interface InventoryConfig {

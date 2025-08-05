@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeaturesSection = FeaturesSection;
 var card_1 = require("@/components/ui/card");
@@ -156,73 +155,67 @@ function FeaturesSection() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-        {stats.map(function (stat, index) {
-          return (
-            <card_1.Card
-              key={index}
-              className="text-center bg-gradient-to-br from-[#6366f1]/5 to-purple-500/5 border-[#6366f1]/20"
-            >
-              <card_1.CardContent className="p-6">
-                <div className="text-3xl font-bold text-[#6366f1] mb-2">{stat.value}</div>
-                <div className="font-semibold text-slate-900 mb-1">{stat.label}</div>
-                <div className="text-sm text-slate-600">{stat.description}</div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+        {stats.map((stat, index) => (
+          <card_1.Card
+            key={index}
+            className="text-center bg-gradient-to-br from-[#6366f1]/5 to-purple-500/5 border-[#6366f1]/20"
+          >
+            <card_1.CardContent className="p-6">
+              <div className="text-3xl font-bold text-[#6366f1] mb-2">{stat.value}</div>
+              <div className="font-semibold text-slate-900 mb-1">{stat.label}</div>
+              <div className="text-sm text-slate-600">{stat.description}</div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
 
       {/* Features Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {features.map(function (feature, index) {
-          return (
-            <card_1.Card
-              key={index}
-              className="group hover:shadow-xl transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30"
-            >
-              <card_1.CardHeader className="pb-4">
-                <div className="flex items-start justify-between mb-4">
-                  <div
-                    className={"h-12 w-12 rounded-lg bg-gradient-to-br ".concat(
-                      feature.color,
-                      " flex items-center justify-center group-hover:scale-110 transition-transform duration-300",
-                    )}
-                  >
-                    <feature.icon className="h-6 w-6 text-white" />
-                  </div>
-                  <badge_1.Badge variant="secondary" className="text-xs">
-                    {feature.category}
-                  </badge_1.Badge>
+        {features.map((feature, index) => (
+          <card_1.Card
+            key={index}
+            className="group hover:shadow-xl transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30"
+          >
+            <card_1.CardHeader className="pb-4">
+              <div className="flex items-start justify-between mb-4">
+                <div
+                  className={"h-12 w-12 rounded-lg bg-gradient-to-br ".concat(
+                    feature.color,
+                    " flex items-center justify-center group-hover:scale-110 transition-transform duration-300",
+                  )}
+                >
+                  <feature.icon className="h-6 w-6 text-white" />
                 </div>
+                <badge_1.Badge variant="secondary" className="text-xs">
+                  {feature.category}
+                </badge_1.Badge>
+              </div>
 
-                <card_1.CardTitle className="text-xl font-bold text-slate-900 group-hover:text-[#6366f1] transition-colors">
-                  {feature.title}
-                </card_1.CardTitle>
-              </card_1.CardHeader>
+              <card_1.CardTitle className="text-xl font-bold text-slate-900 group-hover:text-[#6366f1] transition-colors">
+                {feature.title}
+              </card_1.CardTitle>
+            </card_1.CardHeader>
 
-              <card_1.CardContent className="space-y-4">
-                <p className="text-slate-700 leading-relaxed">{feature.description}</p>
+            <card_1.CardContent className="space-y-4">
+              <p className="text-slate-700 leading-relaxed">{feature.description}</p>
 
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm font-medium text-slate-800 mb-2">
-                    <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    Principais Benefícios:
-                  </div>
-                  <ul className="space-y-1">
-                    {feature.benefits.map(function (benefit, benefitIndex) {
-                      return (
-                        <li key={benefitIndex} className="flex items-center text-sm text-slate-600">
-                          <lucide_react_1.Star className="h-3 w-3 text-[#6366f1] mr-2 flex-shrink-0" />
-                          {benefit}
-                        </li>
-                      );
-                    })}
-                  </ul>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm font-medium text-slate-800 mb-2">
+                  <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                  Principais Benefícios:
                 </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+                <ul className="space-y-1">
+                  {feature.benefits.map((benefit, benefitIndex) => (
+                    <li key={benefitIndex} className="flex items-center text-sm text-slate-600">
+                      <lucide_react_1.Star className="h-3 w-3 text-[#6366f1] mr-2 flex-shrink-0" />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
 
       {/* Bottom CTA Section */}

@@ -1,8 +1,8 @@
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
+import type { useCallback, useEffect, useState } from "react";
 import type { createClient } from "@/lib/supabase/client";
-import type { Message, CommunicationConversation } from "@/types/communication";
+import type { CommunicationConversation, Message } from "@/types/communication";
 import type { useToast } from "./use-toast";
 
 export interface UseCommunicationRealtimeProps {

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrivacyControls = PrivacyControls;
 /**
@@ -180,7 +177,6 @@ var RETENTION_PERIODS = [
   { value: -1, label: "Indefinido (conforme legislação)" },
 ];
 function PrivacyControls(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     patientName = _a.patientName,
     onPrivacyUpdated = _a.onPrivacyUpdated,
@@ -211,17 +207,14 @@ function PrivacyControls(_a) {
     deletionReason = _k[0],
     setDeletionReason = _k[1];
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      loadPrivacyControls();
-      loadConsentHistory();
-    },
-    [patientId],
-  );
-  var loadPrivacyControls = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadPrivacyControls();
+    loadConsentHistory();
+  }, [patientId]);
+  var loadPrivacyControls = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, defaultControls, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -280,11 +273,10 @@ function PrivacyControls(_a) {
         }
       });
     });
-  };
-  var loadConsentHistory = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadConsentHistory = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -315,11 +307,10 @@ function PrivacyControls(_a) {
         }
       });
     });
-  };
-  var updatePrivacyControls = function (updates) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updatePrivacyControls = (updates) =>
+    __awaiter(this, void 0, void 0, function () {
       var updatedControls, response, result, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (readOnly) return [2 /*return*/];
@@ -375,11 +366,10 @@ function PrivacyControls(_a) {
         }
       });
     });
-  };
-  var requestDataExport = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var requestDataExport = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -420,11 +410,10 @@ function PrivacyControls(_a) {
         }
       });
     });
-  };
-  var requestDataDeletion = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var requestDataDeletion = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!deletionReason.trim()) {
@@ -478,17 +467,15 @@ function PrivacyControls(_a) {
         }
       });
     });
-  };
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
+  var formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var statusConfig = {
       pending: { color: "bg-yellow-100 text-yellow-800", label: "Pendente" },
       processing: { color: "bg-blue-100 text-blue-800", label: "Processando" },
@@ -559,12 +546,7 @@ function PrivacyControls(_a) {
                 </p>
               </div>
               {!readOnly && (
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setShowConsentDialog(true);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setShowConsentDialog(true)}>
                   {privacyControls.consentGiven ? "Revogar" : "Conceder"} Consentimento
                 </button_1.Button>
               )}
@@ -608,9 +590,9 @@ function PrivacyControls(_a) {
               <switch_1.Switch
                 id="facial-recognition"
                 checked={privacyControls.allowFacialRecognition}
-                onCheckedChange={function (checked) {
-                  return updatePrivacyControls({ allowFacialRecognition: checked });
-                }}
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({ allowFacialRecognition: checked })
+                }
                 disabled={readOnly || isSaving}
               />
             </div>
@@ -628,9 +610,7 @@ function PrivacyControls(_a) {
               <switch_1.Switch
                 id="photo-sharing"
                 checked={privacyControls.allowPhotoSharing}
-                onCheckedChange={function (checked) {
-                  return updatePrivacyControls({ allowPhotoSharing: checked });
-                }}
+                onCheckedChange={(checked) => updatePrivacyControls({ allowPhotoSharing: checked })}
                 disabled={readOnly || isSaving}
               />
             </div>
@@ -648,9 +628,9 @@ function PrivacyControls(_a) {
               <switch_1.Switch
                 id="data-processing"
                 checked={privacyControls.allowDataProcessing}
-                onCheckedChange={function (checked) {
-                  return updatePrivacyControls({ allowDataProcessing: checked });
-                }}
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({ allowDataProcessing: checked })
+                }
                 disabled={readOnly || isSaving}
               />
             </div>
@@ -668,9 +648,9 @@ function PrivacyControls(_a) {
               <switch_1.Switch
                 id="third-party"
                 checked={privacyControls.allowThirdPartyAccess}
-                onCheckedChange={function (checked) {
-                  return updatePrivacyControls({ allowThirdPartyAccess: checked });
-                }}
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({ allowThirdPartyAccess: checked })
+                }
                 disabled={readOnly || isSaving}
               />
             </div>
@@ -680,9 +660,7 @@ function PrivacyControls(_a) {
               <label_1.Label className="text-base font-medium">Nível de Acesso</label_1.Label>
               <select_1.Select
                 value={privacyControls.accessLevel}
-                onValueChange={function (value) {
-                  return updatePrivacyControls({ accessLevel: value });
-                }}
+                onValueChange={(value) => updatePrivacyControls({ accessLevel: value })}
                 disabled={readOnly || isSaving}
               >
                 <select_1.SelectTrigger>
@@ -704,22 +682,20 @@ function PrivacyControls(_a) {
               <label_1.Label className="text-base font-medium">Período de Retenção</label_1.Label>
               <select_1.Select
                 value={privacyControls.dataRetentionPeriod.toString()}
-                onValueChange={function (value) {
-                  return updatePrivacyControls({ dataRetentionPeriod: parseInt(value) });
-                }}
+                onValueChange={(value) =>
+                  updatePrivacyControls({ dataRetentionPeriod: parseInt(value) })
+                }
                 disabled={readOnly || isSaving}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {RETENTION_PERIODS.map(function (period) {
-                    return (
-                      <select_1.SelectItem key={period.value} value={period.value.toString()}>
-                        {period.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {RETENTION_PERIODS.map((period) => (
+                    <select_1.SelectItem key={period.value} value={period.value.toString()}>
+                      {period.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
               <p className="text-sm text-gray-500">Tempo que os dados serão mantidos no sistema</p>
@@ -740,14 +716,14 @@ function PrivacyControls(_a) {
               <switch_1.Switch
                 id="email-notifications"
                 checked={privacyControls.notificationPreferences.emailNotifications}
-                onCheckedChange={function (checked) {
-                  return updatePrivacyControls({
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({
                     notificationPreferences: __assign(
                       __assign({}, privacyControls.notificationPreferences),
                       { emailNotifications: checked },
                     ),
-                  });
-                }}
+                  })
+                }
                 disabled={readOnly || isSaving}
               />
             </div>
@@ -756,14 +732,14 @@ function PrivacyControls(_a) {
               <switch_1.Switch
                 id="sms-notifications"
                 checked={privacyControls.notificationPreferences.smsNotifications}
-                onCheckedChange={function (checked) {
-                  return updatePrivacyControls({
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({
                     notificationPreferences: __assign(
                       __assign({}, privacyControls.notificationPreferences),
                       { smsNotifications: checked },
                     ),
-                  });
-                }}
+                  })
+                }
                 disabled={readOnly || isSaving}
               />
             </div>
@@ -772,14 +748,14 @@ function PrivacyControls(_a) {
               <switch_1.Switch
                 id="processing-alerts"
                 checked={privacyControls.notificationPreferences.dataProcessingAlerts}
-                onCheckedChange={function (checked) {
-                  return updatePrivacyControls({
+                onCheckedChange={(checked) =>
+                  updatePrivacyControls({
                     notificationPreferences: __assign(
                       __assign({}, privacyControls.notificationPreferences),
                       { dataProcessingAlerts: checked },
                     ),
-                  });
-                }}
+                  })
+                }
                 disabled={readOnly || isSaving}
               />
             </div>
@@ -797,9 +773,7 @@ function PrivacyControls(_a) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button_1.Button
                 variant="outline"
-                onClick={function () {
-                  return setShowExportDialog(true);
-                }}
+                onClick={() => setShowExportDialog(true)}
                 disabled={readOnly}
                 className="h-auto p-4 text-left"
               >
@@ -811,9 +785,7 @@ function PrivacyControls(_a) {
 
               <button_1.Button
                 variant="outline"
-                onClick={function () {
-                  return setShowDeletionDialog(true);
-                }}
+                onClick={() => setShowDeletionDialog(true)}
                 disabled={readOnly}
                 className="h-auto p-4 text-left"
               >
@@ -828,27 +800,25 @@ function PrivacyControls(_a) {
             {privacyControls.dataExportRequests.length > 0 && (
               <div className="space-y-2">
                 <h4 className="font-medium">Solicitações de Exportação</h4>
-                {privacyControls.dataExportRequests.map(function (request) {
-                  return (
-                    <div
-                      key={request.id}
-                      className="flex items-center justify-between p-3 border rounded"
-                    >
-                      <div>
-                        <p className="text-sm font-medium">{formatDate(request.requestDate)}</p>
-                        {request.downloadUrl && (
-                          <a
-                            href={request.downloadUrl}
-                            className="text-sm text-blue-600 hover:underline"
-                          >
-                            Download disponível
-                          </a>
-                        )}
-                      </div>
-                      {getStatusBadge(request.status)}
+                {privacyControls.dataExportRequests.map((request) => (
+                  <div
+                    key={request.id}
+                    className="flex items-center justify-between p-3 border rounded"
+                  >
+                    <div>
+                      <p className="text-sm font-medium">{formatDate(request.requestDate)}</p>
+                      {request.downloadUrl && (
+                        <a
+                          href={request.downloadUrl}
+                          className="text-sm text-blue-600 hover:underline"
+                        >
+                          Download disponível
+                        </a>
+                      )}
                     </div>
-                  );
-                })}
+                    {getStatusBadge(request.status)}
+                  </div>
+                ))}
               </div>
             )}
 
@@ -856,20 +826,18 @@ function PrivacyControls(_a) {
             {privacyControls.deletionRequests.length > 0 && (
               <div className="space-y-2">
                 <h4 className="font-medium">Solicitações de Exclusão</h4>
-                {privacyControls.deletionRequests.map(function (request) {
-                  return (
-                    <div
-                      key={request.id}
-                      className="flex items-center justify-between p-3 border rounded"
-                    >
-                      <div>
-                        <p className="text-sm font-medium">{formatDate(request.requestDate)}</p>
-                        <p className="text-sm text-gray-500">{request.reason}</p>
-                      </div>
-                      {getStatusBadge(request.status)}
+                {privacyControls.deletionRequests.map((request) => (
+                  <div
+                    key={request.id}
+                    className="flex items-center justify-between p-3 border rounded"
+                  >
+                    <div>
+                      <p className="text-sm font-medium">{formatDate(request.requestDate)}</p>
+                      <p className="text-sm text-gray-500">{request.reason}</p>
                     </div>
-                  );
-                })}
+                    {getStatusBadge(request.status)}
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -884,32 +852,30 @@ function PrivacyControls(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {consentHistory.map(function (consent) {
-                return (
-                  <div key={consent.id} className="border-l-4 border-blue-500 pl-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Versão {consent.version}</p>
-                        <p className="text-sm text-gray-500">
-                          Concedido em: {formatDate(consent.givenAt)}
-                          {consent.revokedAt &&
-                            " \u2022 Revogado em: ".concat(formatDate(consent.revokedAt))}
-                        </p>
-                      </div>
+              {consentHistory.map((consent) => (
+                <div key={consent.id} className="border-l-4 border-blue-500 pl-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">Versão {consent.version}</p>
+                      <p className="text-sm text-gray-500">
+                        Concedido em: {formatDate(consent.givenAt)}
+                        {consent.revokedAt &&
+                          " \u2022 Revogado em: ".concat(formatDate(consent.revokedAt))}
+                      </p>
                     </div>
-                    {consent.changes.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-sm font-medium">Alterações:</p>
-                        <ul className="text-sm text-gray-600 list-disc list-inside">
-                          {consent.changes.map(function (change, index) {
-                            return <li key={index}>{change}</li>;
-                          })}
-                        </ul>
-                      </div>
-                    )}
                   </div>
-                );
-              })}
+                  {consent.changes.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-sm font-medium">Alterações:</p>
+                      <ul className="text-sm text-gray-600 list-disc list-inside">
+                        {consent.changes.map((change, index) => (
+                          <li key={index}>{change}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -930,16 +896,11 @@ function PrivacyControls(_a) {
                 : "Ao conceder o consentimento, você autoriza o processamento de suas fotos e dados conforme nossa política de privacidade."}
             </p>
             <div className="flex gap-2">
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setShowConsentDialog(false);
-                }}
-              >
+              <button_1.Button variant="outline" onClick={() => setShowConsentDialog(false)}>
                 Cancelar
               </button_1.Button>
               <button_1.Button
-                onClick={function () {
+                onClick={() => {
                   updatePrivacyControls({
                     consentGiven: !privacyControls.consentGiven,
                     consentDate: new Date().toISOString(),
@@ -966,12 +927,7 @@ function PrivacyControls(_a) {
               sistema. O download estará disponível por 7 dias após o processamento.
             </p>
             <div className="flex gap-2">
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setShowExportDialog(false);
-                }}
-              >
+              <button_1.Button variant="outline" onClick={() => setShowExportDialog(false)}>
                 Cancelar
               </button_1.Button>
               <button_1.Button onClick={requestDataExport}>Solicitar Exportação</button_1.Button>
@@ -996,9 +952,7 @@ function PrivacyControls(_a) {
               <textarea_1.Textarea
                 id="deletion-reason"
                 value={deletionReason}
-                onChange={function (e) {
-                  return setDeletionReason(e.target.value);
-                }}
+                onChange={(e) => setDeletionReason(e.target.value)}
                 placeholder="Descreva o motivo da solicitação de exclusão..."
                 rows={3}
               />
@@ -1006,7 +960,7 @@ function PrivacyControls(_a) {
             <div className="flex gap-2">
               <button_1.Button
                 variant="outline"
-                onClick={function () {
+                onClick={() => {
                   setShowDeletionDialog(false);
                   setDeletionReason("");
                 }}

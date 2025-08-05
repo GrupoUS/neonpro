@@ -1,16 +1,5 @@
 import type { z } from "zod";
-import type {
-  patientSchema,
-  appointmentSchema,
-  treatmentSchema,
-  validateData,
-  healthcareValidators,
-  type Patient,
-  type Appointment,
-  type Treatment,
-} from "@/lib/schemas";
-import type { AuditLogger, DataProcessingActivity } from "@/lib/lgpd";
-import type { HealthcareEncryption, HealthcareSecurity } from "@/lib/security";
+import type { Patient } from "@/lib/schemas";
 
 /**
  * Medical Data Validation System
@@ -148,26 +137,26 @@ export class MedicalDataValidator {
       // 1. Schema Validation
       const schemaValidation = validateData(patientSchema, patientData);
       if (!schemaValidation.success) {
-        this.addSchemaErrors(validationResult, schemaValidation.errors || []);
+        MedicalDataValidator.addSchemaErrors(validationResult, schemaValidation.errors || []);
       }
 
       // 2. Clinical Validation
-      await this.validateClinicalData(patientData, validationResult);
+      await MedicalDataValidator.validateClinicalData(patientData, validationResult);
 
       // 3. Business Rules Validation
-      await this.validateBusinessRules(patientData, validationResult);
+      await MedicalDataValidator.validateBusinessRules(patientData, validationResult);
 
       // 4. Security Validation
-      await this.validateSecurity(patientData, context, validationResult);
+      await MedicalDataValidator.validateSecurity(patientData, context, validationResult);
 
       // 5. Compliance Validation
-      await this.validateCompliance(patientData, validationResult);
+      await MedicalDataValidator.validateCompliance(patientData, validationResult);
 
       // 6. Data Quality Assessment
-      this.assessDataQuality(patientData, validationResult);
+      MedicalDataValidator.assessDataQuality(patientData, validationResult);
 
       // Calculate final validation score
-      this.calculateValidationScore(validationResult);
+      MedicalDataValidator.calculateValidationScore(validationResult);
 
       // Log validation for audit
       await AuditLogger.log({
@@ -241,22 +230,25 @@ export class MedicalDataValidator {
       // Schema validation
       const schemaValidation = validateData(appointmentSchema, appointmentData);
       if (!schemaValidation.success) {
-        this.addSchemaErrors(validationResult, schemaValidation.errors || []);
+        MedicalDataValidator.addSchemaErrors(validationResult, schemaValidation.errors || []);
       }
 
       // Appointment-specific validations
-      await this.validateAppointmentRules(appointmentData, validationResult);
-      await this.validateSchedulingConflicts(appointmentData, validationResult);
-      await this.validatePatientAvailability(appointmentData, validationResult);
-      await this.validateProfessionalAvailability(appointmentData, validationResult);
+      await MedicalDataValidator.validateAppointmentRules(appointmentData, validationResult);
+      await MedicalDataValidator.validateSchedulingConflicts(appointmentData, validationResult);
+      await MedicalDataValidator.validatePatientAvailability(appointmentData, validationResult);
+      await MedicalDataValidator.validateProfessionalAvailability(
+        appointmentData,
+        validationResult,
+      );
 
       // Security validation
-      await this.validateSecurity(appointmentData, context, validationResult);
+      await MedicalDataValidator.validateSecurity(appointmentData, context, validationResult);
 
-      this.calculateValidationScore(validationResult);
+      MedicalDataValidator.calculateValidationScore(validationResult);
     } catch (error) {
       console.error("Appointment validation error:", error);
-      this.addSystemError(validationResult, "Appointment validation failed");
+      MedicalDataValidator.addSystemError(validationResult, "Appointment validation failed");
     }
 
     return validationResult;
@@ -296,23 +288,39 @@ export class MedicalDataValidator {
       // Schema validation
       const schemaValidation = validateData(treatmentSchema, treatmentData);
       if (!schemaValidation.success) {
-        this.addSchemaErrors(validationResult, schemaValidation.errors || []);
+        MedicalDataValidator.addSchemaErrors(validationResult, schemaValidation.errors || []);
       }
 
       // Clinical safety validations
-      await this.validateDrugInteractions(treatmentData, patientData, validationResult);
-      await this.validateAllergies(treatmentData, patientData, validationResult);
-      await this.validateContraindications(treatmentData, patientData, validationResult);
-      await this.validateDosage(treatmentData, patientData, validationResult);
+      await MedicalDataValidator.validateDrugInteractions(
+        treatmentData,
+        patientData,
+        validationResult,
+      );
+      await MedicalDataValidator.validateAllergies(treatmentData, patientData, validationResult);
+      await MedicalDataValidator.validateContraindications(
+        treatmentData,
+        patientData,
+        validationResult,
+      );
+      await MedicalDataValidator.validateDosage(treatmentData, patientData, validationResult);
 
       // Age and condition specific validations
-      await this.validateAgeRestrictions(treatmentData, patientData, validationResult);
-      await this.validateMedicalConditions(treatmentData, patientData, validationResult);
+      await MedicalDataValidator.validateAgeRestrictions(
+        treatmentData,
+        patientData,
+        validationResult,
+      );
+      await MedicalDataValidator.validateMedicalConditions(
+        treatmentData,
+        patientData,
+        validationResult,
+      );
 
-      this.calculateValidationScore(validationResult);
+      MedicalDataValidator.calculateValidationScore(validationResult);
     } catch (error) {
       console.error("Treatment validation error:", error);
-      this.addSystemError(validationResult, "Treatment validation failed");
+      MedicalDataValidator.addSystemError(validationResult, "Treatment validation failed");
     }
 
     return validationResult;
@@ -325,7 +333,7 @@ export class MedicalDataValidator {
     fieldName: string,
     value: any,
     schema: z.ZodSchema,
-    context?: Record<string, any>,
+    _context?: Record<string, any>,
   ): Promise<{
     valid: boolean;
     errors: string[];
@@ -350,7 +358,7 @@ export class MedicalDataValidator {
       // Field-specific validations
       switch (fieldName) {
         case "cpf":
-          if (!this.validateCPF(value)) {
+          if (!MedicalDataValidator.validateCPF(value)) {
             result.valid = false;
             result.errors.push("CPF inválido");
             result.suggestions.push("Verifique os dígitos do CPF");
@@ -375,7 +383,7 @@ export class MedicalDataValidator {
           }
           break;
       }
-    } catch (error) {
+    } catch (_error) {
       result.valid = false;
       result.errors.push("Erro interno de validação");
     }
@@ -391,7 +399,7 @@ export class MedicalDataValidator {
     // Validate medical history consistency
     if (patientData.medicalInfo?.medicalHistory) {
       for (const condition of patientData.medicalInfo.medicalHistory) {
-        if (!this.isValidMedicalCondition(condition)) {
+        if (!MedicalDataValidator.isValidMedicalCondition(condition)) {
           result.errors.push({
             field: "medicalHistory",
             code: "INVALID_CONDITION",
@@ -419,7 +427,7 @@ export class MedicalDataValidator {
 
     // Age-related validations
     if (patientData.personalData?.birthDate) {
-      const age = this.calculateAge(patientData.personalData.birthDate);
+      const age = MedicalDataValidator.calculateAge(patientData.personalData.birthDate);
       if (age < 18) {
         result.clinicalAlerts.push({
           type: "age_restriction",
@@ -481,7 +489,10 @@ export class MedicalDataValidator {
     // Check if sensitive data needs encryption
     const sensitiveFields = ["cpf", "rg", "medicalHistory", "diagnosis"];
     for (const field of sensitiveFields) {
-      if (this.hasField(data, field) && !this.isEncrypted(data, field)) {
+      if (
+        MedicalDataValidator.hasField(data, field) &&
+        !MedicalDataValidator.isEncrypted(data, field)
+      ) {
         result.securityFlags.push({
           type: "encryption_required",
           message: `Campo sensível não criptografado: ${field}`,
@@ -539,15 +550,17 @@ export class MedicalDataValidator {
 
     // Completeness assessment
     const requiredFields = ["personalData.name", "personalData.email", "personalData.phone"];
-    const completedFields = requiredFields.filter((field) => this.hasField(data, field));
+    const completedFields = requiredFields.filter((field) =>
+      MedicalDataValidator.hasField(data, field),
+    );
     quality.completeness = (completedFields.length / requiredFields.length) * 100;
 
     // Accuracy assessment (basic checks)
     let accuracyScore = 100;
-    if (data.personalData?.email && !this.isValidEmail(data.personalData.email)) {
+    if (data.personalData?.email && !MedicalDataValidator.isValidEmail(data.personalData.email)) {
       accuracyScore -= 20;
     }
-    if (data.personalData?.phone && !this.isValidPhone(data.personalData.phone)) {
+    if (data.personalData?.phone && !MedicalDataValidator.isValidPhone(data.personalData.phone)) {
       accuracyScore -= 20;
     }
     quality.accuracy = Math.max(0, accuracyScore);
@@ -605,8 +618,8 @@ export class MedicalDataValidator {
   }
 
   private static async validateSchedulingConflicts(
-    appointmentData: any,
-    result: ValidationResult,
+    _appointmentData: any,
+    _result: ValidationResult,
   ): Promise<void> {
     // TODO: Check for scheduling conflicts in database
     // This would involve checking:
@@ -617,21 +630,21 @@ export class MedicalDataValidator {
   }
 
   private static async validatePatientAvailability(
-    appointmentData: any,
-    result: ValidationResult,
+    _appointmentData: any,
+    _result: ValidationResult,
   ): Promise<void> {
     // TODO: Check if patient has conflicting appointments
   }
 
   private static async validateProfessionalAvailability(
-    appointmentData: any,
-    result: ValidationResult,
+    _appointmentData: any,
+    _result: ValidationResult,
   ): Promise<void> {
     // TODO: Check professional schedule and availability
   }
 
   private static async validateDrugInteractions(
-    treatmentData: any,
+    _treatmentData: any,
     patientData: Patient,
     result: ValidationResult,
   ): Promise<void> {
@@ -647,7 +660,7 @@ export class MedicalDataValidator {
   }
 
   private static async validateAllergies(
-    treatmentData: any,
+    _treatmentData: any,
     patientData: Patient,
     result: ValidationResult,
   ): Promise<void> {
@@ -663,7 +676,7 @@ export class MedicalDataValidator {
 
   private static async validateContraindications(
     treatmentData: any,
-    patientData: Patient,
+    _patientData: Patient,
     result: ValidationResult,
   ): Promise<void> {
     // Check treatment contraindications
@@ -681,12 +694,12 @@ export class MedicalDataValidator {
   }
 
   private static async validateDosage(
-    treatmentData: any,
+    _treatmentData: any,
     patientData: Patient,
     result: ValidationResult,
   ): Promise<void> {
     // Age-based dosage validation would go here
-    const age = this.calculateAge(patientData.personalData.birthDate);
+    const age = MedicalDataValidator.calculateAge(patientData.personalData.birthDate);
 
     // Example: Check for pediatric or geriatric dosage adjustments
     if (age < 18 || age > 65) {
@@ -704,7 +717,7 @@ export class MedicalDataValidator {
     patientData: Patient,
     result: ValidationResult,
   ): Promise<void> {
-    const age = this.calculateAge(patientData.personalData.birthDate);
+    const age = MedicalDataValidator.calculateAge(patientData.personalData.birthDate);
 
     // Some treatments may have age restrictions
     if (treatmentData.minAge && age < treatmentData.minAge) {
@@ -720,7 +733,7 @@ export class MedicalDataValidator {
   }
 
   private static async validateMedicalConditions(
-    treatmentData: any,
+    _treatmentData: any,
     patientData: Patient,
     result: ValidationResult,
   ): Promise<void> {

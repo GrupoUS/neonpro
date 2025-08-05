@@ -10,7 +10,6 @@
  * - Performance otimizada para uso intensivo
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ClinicalDashboardEnhanced = ClinicalDashboardEnhanced;
 var react_1 = require("react");
@@ -74,46 +73,38 @@ function ClinicalDashboardEnhanced(_a) {
     activeTab = _d[0],
     setActiveTab = _d[1];
   // Memoized calculations for performance
-  var calculatedMetrics = (0, react_1.useMemo)(
-    function () {
-      var occupancyRate = Math.round(
-        (metrics.completedTreatments / metrics.todayAppointments) * 100,
-      );
-      var satisfactionGrade =
-        metrics.patientSatisfaction >= 4.5
-          ? "Excelente"
-          : metrics.patientSatisfaction >= 4.0
-            ? "Bom"
-            : "Regular";
-      var revenueGrowth = "+12%"; // Mock data
-      return {
-        occupancyRate: occupancyRate,
-        satisfactionGrade: satisfactionGrade,
-        revenueGrowth: revenueGrowth,
-      };
-    },
-    [metrics],
-  );
+  var calculatedMetrics = (0, react_1.useMemo)(() => {
+    var occupancyRate = Math.round((metrics.completedTreatments / metrics.todayAppointments) * 100);
+    var satisfactionGrade =
+      metrics.patientSatisfaction >= 4.5
+        ? "Excelente"
+        : metrics.patientSatisfaction >= 4.0
+          ? "Bom"
+          : "Regular";
+    var revenueGrowth = "+12%"; // Mock data
+    return {
+      occupancyRate: occupancyRate,
+      satisfactionGrade: satisfactionGrade,
+      revenueGrowth: revenueGrowth,
+    };
+  }, [metrics]);
   // Announce important updates for screen readers
-  (0, react_1.useEffect)(
-    function () {
-      if (metrics.emergencyAlerts > 0) {
-        announceToScreenReader(
-          "Aten\u00E7\u00E3o: ".concat(
-            metrics.emergencyAlerts,
-            " alerta(s) m\u00E9dico(s) requer(em) aten\u00E7\u00E3o imediata",
-          ),
-          "assertive",
-        );
-      }
-    },
-    [metrics.emergencyAlerts, announceToScreenReader],
-  );
-  var handleTabChange = function (tab) {
+  (0, react_1.useEffect)(() => {
+    if (metrics.emergencyAlerts > 0) {
+      announceToScreenReader(
+        "Aten\u00E7\u00E3o: ".concat(
+          metrics.emergencyAlerts,
+          " alerta(s) m\u00E9dico(s) requer(em) aten\u00E7\u00E3o imediata",
+        ),
+        "assertive",
+      );
+    }
+  }, [metrics.emergencyAlerts, announceToScreenReader]);
+  var handleTabChange = (tab) => {
     setActiveTab(tab);
     announceToScreenReader("Navegou para aba ".concat(tab), "polite");
   };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
         return "bg-red-100 text-red-800 border-red-200";
@@ -125,7 +116,7 @@ function ClinicalDashboardEnhanced(_a) {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getPriorityIcon = function (priority) {
+  var getPriorityIcon = (priority) => {
     switch (priority) {
       case "high":
         return <lucide_react_1.AlertTriangle className="h-4 w-4" />;
@@ -252,32 +243,30 @@ function ClinicalDashboardEnhanced(_a) {
                 <card_1.CardDescription>Baseado em risco clínico e urgência</card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-3">
-                {priorityPatients.map(function (patient) {
-                  return (
-                    <div
-                      key={patient.id}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <badge_1.Badge
-                          variant="outline"
-                          className={(0, utils_1.cn)("text-xs", getPriorityColor(patient.priority))}
-                        >
-                          {getPriorityIcon(patient.priority)}
-                          <span className="ml-1 sr-only">Prioridade {patient.priority}</span>
-                        </badge_1.Badge>
-                        <div>
-                          <p className="font-medium text-sm">{patient.name}</p>
-                          <p className="text-xs text-muted-foreground">{patient.condition}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium">{patient.nextAppointment}</p>
-                        <p className="text-xs text-muted-foreground">Risco: {patient.riskScore}%</p>
+                {priorityPatients.map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50 transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <badge_1.Badge
+                        variant="outline"
+                        className={(0, utils_1.cn)("text-xs", getPriorityColor(patient.priority))}
+                      >
+                        {getPriorityIcon(patient.priority)}
+                        <span className="ml-1 sr-only">Prioridade {patient.priority}</span>
+                      </badge_1.Badge>
+                      <div>
+                        <p className="font-medium text-sm">{patient.name}</p>
+                        <p className="text-xs text-muted-foreground">{patient.condition}</p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <p className="text-sm font-medium">{patient.nextAppointment}</p>
+                      <p className="text-xs text-muted-foreground">Risco: {patient.riskScore}%</p>
+                    </div>
+                  </div>
+                ))}
                 <button_1.Button variant="outline" className="w-full" size="sm">
                   Ver Todos os Pacientes
                 </button_1.Button>

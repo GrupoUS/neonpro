@@ -14,11 +14,11 @@
 
 import type {
   ErrorCategory,
+  ErrorContext,
   ErrorSeverity,
   RecoveryStrategy,
+  SubscriptionError,
   SubscriptionErrorFactory,
-  type ErrorContext,
-  type SubscriptionError,
 } from "../types/subscription-errors";
 import type { enhancedSubscriptionCache } from "./subscription-cache-enhanced";
 import type { circuitBreakerRegistry } from "./subscription-circuit-breaker";
@@ -415,7 +415,7 @@ export class SubscriptionErrorHandler {
     }
 
     // Exponential backoff with jitter
-    const baseDelay = this.config.retryDelayMs * Math.pow(2, attempt - 1);
+    const baseDelay = this.config.retryDelayMs * 2 ** (attempt - 1);
     const jitter = Math.random() * 0.1 * baseDelay;
     return Math.min(baseDelay + jitter, 30000); // Max 30 seconds
   }

@@ -1,6 +1,6 @@
+import React from "react";
 import type { useAccessibility } from "@/contexts/accessibility-context";
 import type { cn } from "@/lib/utils";
-import React from "react";
 
 interface SkipLinkProps {
   href: string;

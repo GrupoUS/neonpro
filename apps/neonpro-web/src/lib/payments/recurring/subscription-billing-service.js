@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Subscription Billing Service
  * Story 6.1 - Task 2: Recurring Payment System
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,14 +149,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionBillingService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var stripe_1 = require("stripe");
 var date_fns_1 = require("date-fns");
 // Main Subscription Billing Service
-var SubscriptionBillingService = /** @class */ (function () {
+var SubscriptionBillingService = /** @class */ (() => {
   function SubscriptionBillingService() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -782,7 +779,7 @@ var SubscriptionBillingService = /** @class */ (function () {
     });
   };
   // Helper Methods
-  SubscriptionBillingService.prototype.getBillingInterval = function (cycle) {
+  SubscriptionBillingService.prototype.getBillingInterval = (cycle) => {
     switch (cycle) {
       case "monthly":
       case "quarterly":
@@ -793,7 +790,7 @@ var SubscriptionBillingService = /** @class */ (function () {
         return "month";
     }
   };
-  SubscriptionBillingService.prototype.getBillingIntervalCount = function (cycle) {
+  SubscriptionBillingService.prototype.getBillingIntervalCount = (cycle) => {
     switch (cycle) {
       case "monthly":
         return 1;
@@ -921,7 +918,7 @@ var SubscriptionBillingService = /** @class */ (function () {
     attemptCount,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for sending payment failure notifications
         // This would integrate with your notification system
         console.log(
@@ -935,7 +932,7 @@ var SubscriptionBillingService = /** @class */ (function () {
   };
   SubscriptionBillingService.prototype.sendFinalPaymentNotice = function (subscriptionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for sending final payment notice
         console.log("Sending final payment notice for subscription ".concat(subscriptionId));
         return [2 /*return*/];

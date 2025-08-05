@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -142,15 +139,11 @@ var zod_1 = require("zod");
 var ListAlertsSchema = zod_1.z.object({
   page: zod_1.z
     .string()
-    .transform(function (val) {
-      return parseInt(val) || 1;
-    })
+    .transform((val) => parseInt(val) || 1)
     .optional(),
   limit: zod_1.z
     .string()
-    .transform(function (val) {
-      return Math.min(parseInt(val) || 10, 50);
-    })
+    .transform((val) => Math.min(parseInt(val) || 10, 50))
     .optional(),
   alert_type: zod_1.z
     .enum([
@@ -199,7 +192,7 @@ function GET(request) {
       hasNextPage,
       hasPrevPage,
       error_1;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 7, , 8]);
@@ -351,7 +344,7 @@ function POST(request) {
       alert_1,
       error,
       error_2;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           _d.trys.push([0, 5, , 6]);

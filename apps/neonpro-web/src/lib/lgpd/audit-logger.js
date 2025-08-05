@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AUDIT_DATA_CATEGORIES =
   exports.AuditLogger =
@@ -146,7 +143,7 @@ var zod_1 = require("zod");
  */
 // Data processing activities that must be logged
 var DataProcessingActivity;
-(function (DataProcessingActivity) {
+((DataProcessingActivity) => {
   // Patient data operations
   DataProcessingActivity["PATIENT_CREATE"] = "patient_create";
   DataProcessingActivity["PATIENT_READ"] = "patient_read";
@@ -190,7 +187,7 @@ var DataProcessingActivity;
 })(DataProcessingActivity || (exports.DataProcessingActivity = DataProcessingActivity = {}));
 // Risk levels for audit events
 var RiskLevel;
-(function (RiskLevel) {
+((RiskLevel) => {
   RiskLevel["LOW"] = "low";
   RiskLevel["MEDIUM"] = "medium";
   RiskLevel["HIGH"] = "high";
@@ -226,9 +223,7 @@ exports.auditLogSchema = zod_1.z.object({
   ]),
   purpose: zod_1.z.string().min(10, "Finalidade deve ser específica"),
   // Technical metadata
-  timestamp: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  timestamp: zod_1.z.date().default(() => new Date()),
   source: zod_1.z.enum(["web", "mobile", "api", "system", "clinic_terminal"]),
   method: zod_1.z.enum(["GET", "POST", "PUT", "PATCH", "DELETE", "SYSTEM"]).optional(),
   endpoint: zod_1.z.string().optional(),
@@ -241,11 +236,9 @@ exports.auditLogSchema = zod_1.z.object({
   metadata: zod_1.z.record(zod_1.z.any()).optional(),
   // Retention information
   retentionPeriod: zod_1.z.number().optional(), // Days to retain this log
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
 });
-var AuditLogger = /** @class */ (function () {
+var AuditLogger = /** @class */ (() => {
   function AuditLogger() {}
   /**
    * Log a data processing activity
@@ -418,7 +411,7 @@ var AuditLogger = /** @class */ (function () {
    */
   AuditLogger.generateAuditReport = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Query audit database with filters
         // Placeholder implementation
         return [
@@ -447,7 +440,7 @@ var AuditLogger = /** @class */ (function () {
    */
   AuditLogger.searchLogs = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement database search
         // Placeholder implementation
         return [
@@ -462,7 +455,7 @@ var AuditLogger = /** @class */ (function () {
     });
   };
   // Private helper methods
-  AuditLogger.calculateRiskLevel = function (activity, success) {
+  AuditLogger.calculateRiskLevel = (activity, success) => {
     // High risk activities
     var highRiskActivities = [
       DataProcessingActivity.PATIENT_DELETE,
@@ -488,7 +481,7 @@ var AuditLogger = /** @class */ (function () {
     }
     return RiskLevel.LOW;
   };
-  AuditLogger.getRetentionPeriod = function (activity) {
+  AuditLogger.getRetentionPeriod = (activity) => {
     var _a;
     // Retention periods in days according to healthcare regulations
     var retentionPeriods =
@@ -513,7 +506,7 @@ var AuditLogger = /** @class */ (function () {
   };
   AuditLogger.alertSecurityTeam = function (auditEntry) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement security alert system
         console.log("Security alert triggered:", {
           activity: auditEntry.activity,

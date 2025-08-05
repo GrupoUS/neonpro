@@ -1,7 +1,4 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 // Schema de validaï¿½ï¿½o para configuraï¿½ï¿½o de automaï¿½ï¿½o
 const AutomationConfigSchema = z.object({
@@ -34,7 +31,7 @@ const AutomationConfigSchema = z.object({
   }),
 });
 // GET - Obter configuraï¿½ï¿½o atual
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const supabase = await createClient();
 

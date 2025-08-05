@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatusBadge = void 0;
 /**
@@ -9,7 +8,7 @@ var react_1 = require("react");
 var utils_1 = require("@/lib/utils");
 var badge_1 = require("@/components/ui/badge");
 var lucide_react_1 = require("lucide-react");
-var StatusBadge = function (_a) {
+var StatusBadge = (_a) => {
   var status = _a.status,
     _b = _a.size,
     size = _b === void 0 ? "md" : _b,
@@ -19,7 +18,7 @@ var StatusBadge = function (_a) {
     _d = _a.pulse,
     pulse = _d === void 0 ? false : _d,
     className = _a.className;
-  var getStatusConfig = function (status) {
+  var getStatusConfig = (status) => {
     var configs = {
       critical: {
         label: "Crítico",
@@ -72,7 +71,7 @@ var StatusBadge = function (_a) {
     };
     return configs[status];
   };
-  var getSizeClasses = function (size) {
+  var getSizeClasses = (size) => {
     var sizes = {
       sm: "px-2 py-0.5 text-xs",
       md: "px-2.5 py-1 text-xs",
@@ -80,7 +79,7 @@ var StatusBadge = function (_a) {
     };
     return sizes[size];
   };
-  var getIconSize = function (size) {
+  var getIconSize = (size) => {
     var iconSizes = {
       sm: "w-3 h-3",
       md: "w-3.5 h-3.5",

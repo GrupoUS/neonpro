@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Route Protection System
  *
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.routeProtector = exports.RouteProtector = void 0;
 exports.getSubscriptionTier = getSubscriptionTier;
@@ -367,7 +364,7 @@ var TIER_HIERARCHY = {
   enterprise: 3,
 };
 // Route protection class
-var RouteProtector = /** @class */ (function () {
+var RouteProtector = /** @class */ (() => {
   function RouteProtector() {
     this.accessLogs = [];
     this.rateLimitCache = new Map();
@@ -463,7 +460,7 @@ var RouteProtector = /** @class */ (function () {
   /**
    * Find matching route permission based on pattern matching
    */
-  RouteProtector.prototype.findRoutePermission = function (route) {
+  RouteProtector.prototype.findRoutePermission = (route) => {
     for (
       var _i = 0, ROUTE_PERMISSIONS_1 = ROUTE_PERMISSIONS;
       _i < ROUTE_PERMISSIONS_1.length;
@@ -532,9 +529,9 @@ var RouteProtector = /** @class */ (function () {
     }
     // Check required permissions
     if (permission.requiredPermissions) {
-      var hasRequiredPermissions = permission.requiredPermissions.every(function (required) {
-        return context.permissions.includes(required);
-      });
+      var hasRequiredPermissions = permission.requiredPermissions.every((required) =>
+        context.permissions.includes(required),
+      );
       if (!hasRequiredPermissions) {
         return this.createResult(
           false,
@@ -553,7 +550,7 @@ var RouteProtector = /** @class */ (function () {
     if (!permission.featureFlags) {
       return this.createResult(true, "No feature flags required", undefined, "NO_FLAGS");
     }
-    var missingFlags = permission.featureFlags.filter(function (flag) {
+    var missingFlags = permission.featureFlags.filter((flag) => {
       var globalEnabled = FEATURE_FLAGS[flag];
       var userEnabled = context.featureFlags[flag];
       return !globalEnabled || !userEnabled;
@@ -593,17 +590,15 @@ var RouteProtector = /** @class */ (function () {
   /**
    * Create validation result
    */
-  RouteProtector.prototype.createResult = function (allowed, reason, redirectTo, errorCode) {
-    return {
-      allowed: allowed,
-      reason: reason,
-      redirectTo: redirectTo,
-      errorCode: errorCode,
-      metadata: {
-        timestamp: new Date().toISOString(),
-      },
-    };
-  };
+  RouteProtector.prototype.createResult = (allowed, reason, redirectTo, errorCode) => ({
+    allowed: allowed,
+    reason: reason,
+    redirectTo: redirectTo,
+    errorCode: errorCode,
+    metadata: {
+      timestamp: new Date().toISOString(),
+    },
+  });
   /**
    * Log access attempt
    */
@@ -646,34 +641,24 @@ var RouteProtector = /** @class */ (function () {
     }
     var logs = this.accessLogs;
     if (userId) {
-      logs = logs.filter(function (log) {
-        return log.userId === userId;
-      });
+      logs = logs.filter((log) => log.userId === userId);
     }
-    return logs
-      .sort(function (a, b) {
-        return b.timestamp.getTime() - a.timestamp.getTime();
-      })
-      .slice(0, limit);
+    return logs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()).slice(0, limit);
   };
   /**
    * Get route permissions configuration
    */
-  RouteProtector.prototype.getRoutePermissions = function () {
-    return ROUTE_PERMISSIONS;
-  };
+  RouteProtector.prototype.getRoutePermissions = () => ROUTE_PERMISSIONS;
   /**
    * Update feature flags (for dynamic feature toggles)
    */
-  RouteProtector.prototype.updateFeatureFlag = function (flag, enabled) {
+  RouteProtector.prototype.updateFeatureFlag = (flag, enabled) => {
     FEATURE_FLAGS[flag] = enabled;
   };
   /**
    * Get current feature flags state
    */
-  RouteProtector.prototype.getFeatureFlags = function () {
-    return __assign({}, FEATURE_FLAGS);
-  };
+  RouteProtector.prototype.getFeatureFlags = () => __assign({}, FEATURE_FLAGS);
   return RouteProtector;
 })();
 exports.RouteProtector = RouteProtector;

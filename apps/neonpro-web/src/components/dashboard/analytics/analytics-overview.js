@@ -3,18 +3,17 @@
  * Real-time dashboard metrics with AI-powered insights
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalyticsOverview = AnalyticsOverview;
 var react_1 = require("react");
@@ -146,7 +143,6 @@ var button_1 = require("@/components/ui/button");
 var utils_1 = require("@/lib/utils");
 var lucide_react_1 = require("lucide-react");
 function AnalyticsOverview(_a) {
-  var _this = this;
   var className = _a.className,
     _b = _a.refreshInterval,
     refreshInterval = _b === void 0 ? 30000 : _b;
@@ -160,111 +156,103 @@ function AnalyticsOverview(_a) {
     lastUpdated = _e[0],
     setLastUpdated = _e[1];
   // Fetch metrics from our analytics service
-  (0, react_1.useEffect)(
-    function () {
-      var fetchMetrics = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var response, data, error_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                _a.trys.push([0, 3, 4, 5]);
-                setLoading(true);
-                return [4 /*yield*/, fetch("/api/analytics/dashboard-metrics")];
-              case 1:
-                response = _a.sent();
-                return [4 /*yield*/, response.json()];
-              case 2:
-                data = _a.sent();
-                setMetrics(data);
-                setLastUpdated(new Date());
-                return [3 /*break*/, 5];
-              case 3:
-                error_1 = _a.sent();
-                console.error("Failed to fetch analytics metrics:", error_1);
-                return [3 /*break*/, 5];
-              case 4:
-                setLoading(false);
-                return [7 /*endfinally*/];
-              case 5:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var fetchMetrics = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, error_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, 4, 5]);
+              setLoading(true);
+              return [4 /*yield*/, fetch("/api/analytics/dashboard-metrics")];
+            case 1:
+              response = _a.sent();
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              setMetrics(data);
+              setLastUpdated(new Date());
+              return [3 /*break*/, 5];
+            case 3:
+              error_1 = _a.sent();
+              console.error("Failed to fetch analytics metrics:", error_1);
+              return [3 /*break*/, 5];
+            case 4:
+              setLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      fetchMetrics();
-      var interval = setInterval(fetchMetrics, refreshInterval);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [refreshInterval],
-  );
+      });
+    fetchMetrics();
+    var interval = setInterval(fetchMetrics, refreshInterval);
+    return () => clearInterval(interval);
+  }, [refreshInterval]);
   // Generate KPI cards data based on fetched metrics
-  var generateKPIs = function (data) {
-    return [
-      {
-        id: "total-trials",
-        title: "Total Trials",
-        value: data.totalTrials.toLocaleString(),
-        change: 12.5,
-        changeType: "increase",
-        icon: lucide_react_1.Users,
-        description: "Total users in trial period",
-        trend: [65, 78, 82, 88, 95, 102, 115],
-      },
-      {
-        id: "active-trials",
-        title: "Active Trials",
-        value: data.activeTrials.toLocaleString(),
-        change: 8.2,
-        changeType: "increase",
-        icon: lucide_react_1.UserPlus,
-        description: "Currently active trial users",
-        trend: [45, 52, 48, 61, 55, 67, 72],
-      },
-      {
-        id: "conversion-rate",
-        title: "Conversion Rate",
-        value: "".concat(data.conversionRate.toFixed(1), "%"),
-        change: data.conversionRate >= 25 ? 5.3 : -2.1,
-        changeType: data.conversionRate >= 25 ? "increase" : "decrease",
-        icon: lucide_react_1.Target,
-        description: "Trial to paid conversion rate",
-        trend: [18, 22, 25, 23, 27, 29, 26],
-      },
-      {
-        id: "average-duration",
-        title: "Avg Trial Duration",
-        value: "".concat(data.averageTrialDuration, " days"),
-        change: -1.8,
-        changeType: "decrease",
-        icon: lucide_react_1.Clock,
-        description: "Average trial length before conversion",
-        trend: [12, 11, 13, 10, 9, 11, 8],
-      },
-      {
-        id: "predicted-conversions",
-        title: "AI Predictions",
-        value: data.aiPredictions.predictedConversions,
-        change: 15.7,
-        changeType: "increase",
-        icon: lucide_react_1.Zap,
-        description: "AI-predicted conversions this week",
-        trend: [8, 12, 15, 18, 22, 25, 28],
-      },
-      {
-        id: "high-risk-trials",
-        title: "High Risk Trials",
-        value: data.aiPredictions.highRiskTrials,
-        change: -8.5,
-        changeType: "decrease",
-        icon: lucide_react_1.AlertTriangle,
-        description: "Trials likely to churn without intervention",
-        trend: [15, 12, 8, 10, 6, 4, 3],
-      },
-    ];
-  };
+  var generateKPIs = (data) => [
+    {
+      id: "total-trials",
+      title: "Total Trials",
+      value: data.totalTrials.toLocaleString(),
+      change: 12.5,
+      changeType: "increase",
+      icon: lucide_react_1.Users,
+      description: "Total users in trial period",
+      trend: [65, 78, 82, 88, 95, 102, 115],
+    },
+    {
+      id: "active-trials",
+      title: "Active Trials",
+      value: data.activeTrials.toLocaleString(),
+      change: 8.2,
+      changeType: "increase",
+      icon: lucide_react_1.UserPlus,
+      description: "Currently active trial users",
+      trend: [45, 52, 48, 61, 55, 67, 72],
+    },
+    {
+      id: "conversion-rate",
+      title: "Conversion Rate",
+      value: "".concat(data.conversionRate.toFixed(1), "%"),
+      change: data.conversionRate >= 25 ? 5.3 : -2.1,
+      changeType: data.conversionRate >= 25 ? "increase" : "decrease",
+      icon: lucide_react_1.Target,
+      description: "Trial to paid conversion rate",
+      trend: [18, 22, 25, 23, 27, 29, 26],
+    },
+    {
+      id: "average-duration",
+      title: "Avg Trial Duration",
+      value: "".concat(data.averageTrialDuration, " days"),
+      change: -1.8,
+      changeType: "decrease",
+      icon: lucide_react_1.Clock,
+      description: "Average trial length before conversion",
+      trend: [12, 11, 13, 10, 9, 11, 8],
+    },
+    {
+      id: "predicted-conversions",
+      title: "AI Predictions",
+      value: data.aiPredictions.predictedConversions,
+      change: 15.7,
+      changeType: "increase",
+      icon: lucide_react_1.Zap,
+      description: "AI-predicted conversions this week",
+      trend: [8, 12, 15, 18, 22, 25, 28],
+    },
+    {
+      id: "high-risk-trials",
+      title: "High Risk Trials",
+      value: data.aiPredictions.highRiskTrials,
+      change: -8.5,
+      changeType: "decrease",
+      icon: lucide_react_1.AlertTriangle,
+      description: "Trials likely to churn without intervention",
+      trend: [15, 12, 8, 10, 6, 4, 3],
+    },
+  ];
   if (loading) {
     return (
       <div className={(0, utils_1.cn)("space-y-6", className)}>
@@ -275,20 +263,18 @@ function AnalyticsOverview(_a) {
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="animate-pulse">
-                <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <div className="h-4 w-24 bg-muted rounded"></div>
-                  <div className="h-4 w-4 bg-muted rounded"></div>
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="h-8 w-16 bg-muted rounded mb-2"></div>
-                  <div className="h-3 w-32 bg-muted rounded"></div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {Array.from({ length: 6 }).map((_, i) => (
+            <card_1.Card key={i} className="animate-pulse">
+              <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <div className="h-4 w-24 bg-muted rounded"></div>
+                <div className="h-4 w-4 bg-muted rounded"></div>
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="h-8 w-16 bg-muted rounded mb-2"></div>
+                <div className="h-3 w-32 bg-muted rounded"></div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -318,13 +304,7 @@ function AnalyticsOverview(_a) {
             <lucide_react_1.Activity className="mr-1 h-3 w-3" />
             Last updated: {lastUpdated.toLocaleTimeString()}
           </badge_1.Badge>
-          <button_1.Button
-            variant="outline"
-            size="sm"
-            onClick={function () {
-              return window.location.reload();
-            }}
-          >
+          <button_1.Button variant="outline" size="sm" onClick={() => window.location.reload()}>
             Refresh
           </button_1.Button>
         </div>
@@ -332,7 +312,7 @@ function AnalyticsOverview(_a) {
 
       {/* KPI Cards Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {kpis.map(function (kpi) {
+        {kpis.map((kpi) => {
           var Icon = kpi.icon;
           var isPositive = kpi.changeType === "increase";
           var isNegative = kpi.changeType === "decrease";

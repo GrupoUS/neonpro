@@ -1,5 +1,5 @@
-import type { equipmentMaintenanceService } from "@/app/lib/services/equipment-maintenance-service";
 import type { NextRequest, NextResponse } from "next/server";
+import type { equipmentMaintenanceService } from "@/app/lib/services/equipment-maintenance-service";
 
 export async function GET(request: NextRequest) {
   try {

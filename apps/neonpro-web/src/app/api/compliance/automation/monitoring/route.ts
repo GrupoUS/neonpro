@@ -1,7 +1,4 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 // Schema para filtros de monitoramento
 const MonitoringFiltersSchema = z.object({

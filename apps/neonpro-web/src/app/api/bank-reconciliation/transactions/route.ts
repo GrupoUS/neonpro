@@ -2,10 +2,7 @@
 // Story 6.1 - Task 4: Bank Reconciliation System
 // API endpoints for individual bank transaction management
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { z } from "zod";
-import type { createClient } from "@/lib/supabase/server";
-import type { BankReconciliationManager } from "@/lib/payments/reconciliation/bank-reconciliation-manager";
+import type { NextRequest } from "next/server";
 
 // Validation schemas
 const GetTransactionsQuerySchema = z.object({

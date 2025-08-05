@@ -1,17 +1,16 @@
-"use strict";
 // Concurrent Session Management System
 // Manages multiple active sessions per user with intelligent conflict resolution
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,13 +130,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConcurrentSessionManager = void 0;
 exports.getConcurrentSessionManager = getConcurrentSessionManager;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
-var ConcurrentSessionManager = /** @class */ (function () {
+var ConcurrentSessionManager = /** @class */ (() => {
   function ConcurrentSessionManager() {
     this.activeConflicts = new Map();
     this.sessionTransfers = new Map();
@@ -193,9 +190,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
               },
             ];
           case 3:
-            deviceSessions = existingSessions.filter(function (s) {
-              return s.deviceId === deviceId;
-            });
+            deviceSessions = existingSessions.filter((s) => s.deviceId === deviceId);
             if (!(deviceSessions.length > 0 && !concurrentConfig.allowMultipleDevices))
               return [3 /*break*/, 5];
             return [
@@ -593,7 +588,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
             transfer.completed = true;
             // Clean up transfer record after 24 hours
             setTimeout(
-              function () {
+              () => {
                 _this.sessionTransfers.delete(transferId);
               },
               24 * 60 * 60 * 1000,
@@ -654,7 +649,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
         this.activeConflicts.set(conflictId, conflict);
         // Auto-expire conflict after 10 minutes
         setTimeout(
-          function () {
+          () => {
             if (!conflict.resolved) {
               _this.activeConflicts.delete(conflictId);
             }
@@ -680,9 +675,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
           case 0:
             _a.trys.push([0, 6, , 7]);
             recentSessions = existingSessions.filter(
-              function (s) {
-                return Date.now() - new Date(s.lastActivity).getTime() < 30 * 60 * 1000;
-              }, // Last 30 minutes
+              (s) => Date.now() - new Date(s.lastActivity).getTime() < 30 * 60 * 1000, // Last 30 minutes
             );
             if (!(recentSessions.length > 0)) return [3 /*break*/, 5];
             return [4 /*yield*/, this.getDeviceInfo(deviceId)];
@@ -723,18 +716,15 @@ var ConcurrentSessionManager = /** @class */ (function () {
   /**
    * Utility functions
    */
-  ConcurrentSessionManager.prototype.findOldestSession = function (sessions) {
+  ConcurrentSessionManager.prototype.findOldestSession = (sessions) => {
     if (sessions.length === 0) return null;
-    return sessions.reduce(function (oldest, current) {
-      return new Date(current.createdAt) < new Date(oldest.createdAt) ? current : oldest;
-    });
+    return sessions.reduce((oldest, current) =>
+      new Date(current.createdAt) < new Date(oldest.createdAt) ? current : oldest,
+    );
   };
-  ConcurrentSessionManager.prototype.findLowestPrioritySession = function (
-    sessions,
-    priorityOrder,
-  ) {
+  ConcurrentSessionManager.prototype.findLowestPrioritySession = (sessions, priorityOrder) => {
     if (sessions.length === 0) return null;
-    return sessions.reduce(function (lowest, current) {
+    return sessions.reduce((lowest, current) => {
       var currentPriority = priorityOrder.indexOf(current.deviceType) || 999;
       var lowestPriority = priorityOrder.indexOf(lowest.deviceType) || 999;
       return currentPriority > lowestPriority ? current : lowest;
@@ -743,7 +733,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
   ConcurrentSessionManager.prototype.getUserActiveSessions = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, data, error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -770,7 +760,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
   ConcurrentSessionManager.prototype.createNewSession = function (userId, deviceId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -801,7 +791,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
   };
   ConcurrentSessionManager.prototype.terminateSession = function (sessionId, reason) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -840,7 +830,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
   };
   ConcurrentSessionManager.prototype.getSessionTransferData = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would typically fetch from session storage/database
         return [
           2 /*return*/,
@@ -855,14 +845,12 @@ var ConcurrentSessionManager = /** @class */ (function () {
   };
   ConcurrentSessionManager.prototype.applyTransferData = function (sessionId, transferData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ConcurrentSessionManager.prototype.getDeviceInfo = function (deviceId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would typically fetch device information
         return [
           2 /*return*/,
@@ -875,13 +863,13 @@ var ConcurrentSessionManager = /** @class */ (function () {
       });
     });
   };
-  ConcurrentSessionManager.prototype.detectDeviceSpoofing = function (device1, device2) {
+  ConcurrentSessionManager.prototype.detectDeviceSpoofing = (device1, device2) => {
     // Implement device spoofing detection logic
     return false;
   };
   ConcurrentSessionManager.prototype.notifySessionTerminations = function (userId, sessionIds) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Send notifications about terminated sessions
         console.log("Notifying user ".concat(userId, " about terminated sessions:"), sessionIds);
         return [2 /*return*/];
@@ -892,9 +880,9 @@ var ConcurrentSessionManager = /** @class */ (function () {
    * Get active conflicts for user
    */
   ConcurrentSessionManager.prototype.getActiveConflicts = function (userId) {
-    return Array.from(this.activeConflicts.values()).filter(function (conflict) {
-      return conflict.userId === userId && !conflict.resolved;
-    });
+    return Array.from(this.activeConflicts.values()).filter(
+      (conflict) => conflict.userId === userId && !conflict.resolved,
+    );
   };
   /**
    * Resolve conflict with user choice

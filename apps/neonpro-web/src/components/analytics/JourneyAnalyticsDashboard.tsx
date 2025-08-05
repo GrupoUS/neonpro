@@ -1,6 +1,59 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import type {
+  endOfMonth,
+  format,
+  isWithinInterval,
+  startOfMonth,
+  subDays,
+  subMonths,
+} from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  ArrowDownRight,
+  ArrowUpRight,
+  BarChart3,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  Download,
+  Eye,
+  Filter,
+  Globe,
+  Heart,
+  Info,
+  LineChart,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Monitor,
+  Phone,
+  PieChart,
+  RefreshCw,
+  Search,
+  Share,
+  Smartphone,
+  Star,
+  TabletSmartphone,
+  Target,
+  ThumbsDown,
+  ThumbsUp,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -8,11 +61,11 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -20,65 +73,13 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type {
-  Activity,
-  Users,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Target,
-  Filter,
-  Download,
-  Share,
-  RefreshCw,
-  BarChart3,
-  LineChart,
-  PieChart,
-  Calendar as CalendarIcon,
-  Search,
-  ChevronRight,
-  ArrowUpRight,
-  ArrowDownRight,
-  AlertCircle,
-  Info,
-  Zap,
-  Heart,
-  Star,
-  ThumbsUp,
-  ThumbsDown,
-  Eye,
-  MapPin,
-  Phone,
-  MessageSquare,
-  Mail,
-  Globe,
-  Smartphone,
-  Monitor,
-  TabletSmartphone,
-} from "lucide-react";
-import type {
-  format,
-  subDays,
-  subMonths,
-  startOfMonth,
-  endOfMonth,
-  isWithinInterval,
-} from "date-fns";
-import type { ptBR } from "date-fns/locale";
 import type { cn } from "@/lib/utils";
 
 // Type Definitions

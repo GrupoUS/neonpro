@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExecutiveDashboard = ExecutiveDashboard;
 var react_1 = require("react");
@@ -172,14 +169,12 @@ var DATE_PRESETS = [
   {
     label: "Today",
     value: "today",
-    getRange: function () {
-      return { from: new Date(), to: new Date() };
-    },
+    getRange: () => ({ from: new Date(), to: new Date() }),
   },
   {
     label: "Yesterday",
     value: "yesterday",
-    getRange: function () {
+    getRange: () => {
       var yesterday = (0, date_fns_1.subDays)(new Date(), 1);
       return { from: yesterday, to: yesterday };
     },
@@ -187,43 +182,33 @@ var DATE_PRESETS = [
   {
     label: "This Week",
     value: "thisWeek",
-    getRange: function () {
-      return {
-        from: (0, date_fns_1.startOfWeek)(new Date()),
-        to: (0, date_fns_1.endOfWeek)(new Date()),
-      };
-    },
+    getRange: () => ({
+      from: (0, date_fns_1.startOfWeek)(new Date()),
+      to: (0, date_fns_1.endOfWeek)(new Date()),
+    }),
   },
   {
     label: "This Month",
     value: "thisMonth",
-    getRange: function () {
-      return {
-        from: (0, date_fns_1.startOfMonth)(new Date()),
-        to: (0, date_fns_1.endOfMonth)(new Date()),
-      };
-    },
+    getRange: () => ({
+      from: (0, date_fns_1.startOfMonth)(new Date()),
+      to: (0, date_fns_1.endOfMonth)(new Date()),
+    }),
   },
   {
     label: "Last 7 Days",
     value: "last7Days",
-    getRange: function () {
-      return { from: (0, date_fns_1.subDays)(new Date(), 7), to: new Date() };
-    },
+    getRange: () => ({ from: (0, date_fns_1.subDays)(new Date(), 7), to: new Date() }),
   },
   {
     label: "Last 30 Days",
     value: "last30Days",
-    getRange: function () {
-      return { from: (0, date_fns_1.subDays)(new Date(), 30), to: new Date() };
-    },
+    getRange: () => ({ from: (0, date_fns_1.subDays)(new Date(), 30), to: new Date() }),
   },
   {
     label: "Last 90 Days",
     value: "last90Days",
-    getRange: function () {
-      return { from: (0, date_fns_1.subDays)(new Date(), 90), to: new Date() };
-    },
+    getRange: () => ({ from: (0, date_fns_1.subDays)(new Date(), 90), to: new Date() }),
   },
 ];
 var DASHBOARD_TABS = [
@@ -234,7 +219,6 @@ var DASHBOARD_TABS = [
   { id: "alerts", label: "Alerts", icon: lucide_react_1.AlertTriangle },
 ];
 function ExecutiveDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     userId = _a.userId,
     _b = _a.className,
@@ -289,24 +273,22 @@ function ExecutiveDashboard(_a) {
     ui = _k[0],
     setUI = _k[1];
   // Dashboard engine instance
-  var dashboardEngine = (0, react_1.useState)(function () {
-    return new executive_dashboard_engine_1.ExecutiveDashboardEngine();
-  })[0];
+  var dashboardEngine = (0, react_1.useState)(
+    () => new executive_dashboard_engine_1.ExecutiveDashboardEngine(),
+  )[0];
   // Real-time subscription
   var _l = (0, react_1.useState)(null),
     realtimeSubscription = _l[0],
     setRealtimeSubscription = _l[1];
   // Load dashboard data
   var loadDashboardData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var dashboardData, kpis, alerts, widgets, subscription, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
               _a.label = 1;
             case 1:
               _a.trys.push([1, 8, , 9]);
@@ -353,15 +335,15 @@ function ExecutiveDashboard(_a) {
               return [
                 4 /*yield*/,
                 dashboardEngine.setupRealTimeUpdates({
-                  onUpdate: function (updatedData) {
-                    setState(function (prev) {
-                      return __assign(__assign({}, prev), {
+                  onUpdate: (updatedData) => {
+                    setState((prev) =>
+                      __assign(__assign({}, prev), {
                         data: __assign(__assign({}, prev.data), updatedData),
                         lastUpdated: new Date(),
-                      });
-                    });
+                      }),
+                    );
                   },
-                  onError: function (error) {
+                  onError: (error) => {
                     console.error("Real-time update error:", error);
                   },
                 }),
@@ -375,68 +357,55 @@ function ExecutiveDashboard(_a) {
             case 8:
               error_1 = _a.sent();
               console.error("Failed to load dashboard data:", error_1);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   isLoading: false,
                   error:
                     error_1 instanceof Error ? error_1.message : "Failed to load dashboard data",
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 9];
             case 9:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId, userId, filters, ui.autoRefresh, ui.refreshInterval, dashboardEngine],
   );
   // Load data on mount and when dependencies change
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-      // Cleanup real-time subscription on unmount
-      return function () {
-        var _a;
-        if (realtimeSubscription) {
-          (_a = realtimeSubscription.unsubscribe) === null || _a === void 0
-            ? void 0
-            : _a.call(realtimeSubscription);
-        }
-      };
-    },
-    [loadDashboardData],
-  );
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+    // Cleanup real-time subscription on unmount
+    return () => {
+      var _a;
+      if (realtimeSubscription) {
+        (_a = realtimeSubscription.unsubscribe) === null || _a === void 0
+          ? void 0
+          : _a.call(realtimeSubscription);
+      }
+    };
+  }, [loadDashboardData]);
   // Auto-refresh interval
-  (0, react_1.useEffect)(
-    function () {
-      if (!ui.autoRefresh) return;
-      var interval = setInterval(function () {
-        loadDashboardData();
-      }, ui.refreshInterval);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [ui.autoRefresh, ui.refreshInterval, loadDashboardData],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!ui.autoRefresh) return;
+    var interval = setInterval(() => {
+      loadDashboardData();
+    }, ui.refreshInterval);
+    return () => clearInterval(interval);
+  }, [ui.autoRefresh, ui.refreshInterval, loadDashboardData]);
   // Handle filter changes
-  var handleFilterChange = (0, react_1.useCallback)(function (newFilters) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), newFilters);
-    });
+  var handleFilterChange = (0, react_1.useCallback)((newFilters) => {
+    setFilters((prev) => __assign(__assign({}, prev), newFilters));
   }, []);
   // Handle UI changes
-  var handleUIChange = (0, react_1.useCallback)(function (newUI) {
-    setUI(function (prev) {
-      return __assign(__assign({}, prev), newUI);
-    });
+  var handleUIChange = (0, react_1.useCallback)((newUI) => {
+    setUI((prev) => __assign(__assign({}, prev), newUI));
   }, []);
   // Handle manual refresh
   var handleRefresh = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, loadDashboardData()];
@@ -445,16 +414,13 @@ function ExecutiveDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadDashboardData],
   );
   // Handle date preset selection
   var handleDatePresetChange = (0, react_1.useCallback)(
-    function (presetValue) {
-      var preset = DATE_PRESETS.find(function (p) {
-        return p.value === presetValue;
-      });
+    (presetValue) => {
+      var preset = DATE_PRESETS.find((p) => p.value === presetValue);
       if (preset) {
         var range = preset.getRange();
         handleFilterChange({ dateRange: range });
@@ -464,10 +430,10 @@ function ExecutiveDashboard(_a) {
   );
   // Handle export
   var handleExport = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var exportData, dataStr, dataBlob, url, link;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           try {
             exportData = {
               dashboard: state.data,
@@ -495,31 +461,25 @@ function ExecutiveDashboard(_a) {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [state, filters, clinicId, userId],
   );
   // Toggle fullscreen
-  var toggleFullscreen = (0, react_1.useCallback)(
-    function () {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        handleUIChange({ isFullscreen: true });
-      } else {
-        document.exitFullscreen();
-        handleUIChange({ isFullscreen: false });
-      }
-    },
-    [handleUIChange],
-  );
+  var toggleFullscreen = (0, react_1.useCallback)(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+      handleUIChange({ isFullscreen: true });
+    } else {
+      document.exitFullscreen();
+      handleUIChange({ isFullscreen: false });
+    }
+  }, [handleUIChange]);
   // Get active alerts count
-  var activeAlertsCount = state.alerts.filter(function (alert) {
-    return !alert.acknowledged;
-  }).length;
+  var activeAlertsCount = state.alerts.filter((alert) => !alert.acknowledged).length;
   // Get critical alerts count
-  var criticalAlertsCount = state.alerts.filter(function (alert) {
-    return alert.severity === "critical" && !alert.acknowledged;
-  }).length;
+  var criticalAlertsCount = state.alerts.filter(
+    (alert) => alert.severity === "critical" && !alert.acknowledged,
+  ).length;
   if (state.isLoading && !state.data) {
     return (
       <div className={"min-h-screen bg-gray-50 ".concat(className)}>
@@ -583,13 +543,11 @@ function ExecutiveDashboard(_a) {
                     <select_1.SelectValue placeholder="Select period" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {DATE_PRESETS.map(function (preset) {
-                      return (
-                        <select_1.SelectItem key={preset.value} value={preset.value}>
-                          {preset.label}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {DATE_PRESETS.map((preset) => (
+                      <select_1.SelectItem key={preset.value} value={preset.value}>
+                        {preset.label}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -601,9 +559,7 @@ function ExecutiveDashboard(_a) {
                 <button_1.Button
                   variant="outline"
                   size="sm"
-                  onClick={function () {
-                    return handleUIChange({ activeTab: "alerts" });
-                  }}
+                  onClick={() => handleUIChange({ activeTab: "alerts" })}
                   className={
                     criticalAlertsCount > 0
                       ? "border-red-200 text-red-600"
@@ -624,9 +580,7 @@ function ExecutiveDashboard(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return handleUIChange({ autoRefresh: !ui.autoRefresh });
-                }}
+                onClick={() => handleUIChange({ autoRefresh: !ui.autoRefresh })}
                 className={ui.autoRefresh ? "bg-green-50 border-green-200 text-green-700" : ""}
               >
                 <lucide_react_1.RefreshCw
@@ -638,9 +592,7 @@ function ExecutiveDashboard(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return handleUIChange({ showFilters: !ui.showFilters });
-                }}
+                onClick={() => handleUIChange({ showFilters: !ui.showFilters })}
                 className={ui.showFilters ? "bg-blue-50 border-blue-200 text-blue-700" : ""}
               >
                 <lucide_react_1.Filter className="h-4 w-4" />
@@ -677,12 +629,10 @@ function ExecutiveDashboard(_a) {
       <div className="p-6">
         <tabs_1.Tabs
           value={ui.activeTab}
-          onValueChange={function (tab) {
-            return handleUIChange({ activeTab: tab });
-          }}
+          onValueChange={(tab) => handleUIChange({ activeTab: tab })}
         >
           <tabs_1.TabsList className="grid w-full grid-cols-5">
-            {DASHBOARD_TABS.map(function (tab) {
+            {DASHBOARD_TABS.map((tab) => {
               var Icon = tab.icon;
               return (
                 <tabs_1.TabsTrigger key={tab.id} value={tab.id} className="flex items-center gap-2">
@@ -710,27 +660,23 @@ function ExecutiveDashboard(_a) {
 
             {/* Key KPIs */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {state.kpis.slice(0, 4).map(function (kpi) {
-                return (
-                  <KPICard_1.KPICard
-                    key={kpi.id}
-                    metric={kpi}
-                    showTrend={true}
-                    showTarget={true}
-                    className=""
-                  />
-                );
-              })}
+              {state.kpis.slice(0, 4).map((kpi) => (
+                <KPICard_1.KPICard
+                  key={kpi.id}
+                  metric={kpi}
+                  showTrend={true}
+                  showTarget={true}
+                  className=""
+                />
+              ))}
             </div>
 
             {/* Dashboard Grid */}
             <DashboardGrid_1.DashboardGrid
               widgets={state.widgets}
-              onWidgetsChange={function (widgets) {
-                return setState(function (prev) {
-                  return __assign(__assign({}, prev), { widgets: widgets });
-                });
-              }}
+              onWidgetsChange={(widgets) =>
+                setState((prev) => __assign(__assign({}, prev), { widgets: widgets }))
+              }
               layout={ui.gridLayout}
               editable={true}
               className=""
@@ -801,11 +747,9 @@ function ExecutiveDashboard(_a) {
           <tabs_1.TabsContent value="alerts" className="space-y-6">
             <AlertPanel_1.AlertPanel
               alerts={state.alerts}
-              onAlertsChange={function (alerts) {
-                return setState(function (prev) {
-                  return __assign(__assign({}, prev), { alerts: alerts });
-                });
-              }}
+              onAlertsChange={(alerts) =>
+                setState((prev) => __assign(__assign({}, prev), { alerts: alerts }))
+              }
               autoRefresh={ui.autoRefresh}
               refreshInterval={ui.refreshInterval}
               className=""

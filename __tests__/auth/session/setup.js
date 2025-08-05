@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Management System - Test Setup
  *
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,7 +42,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,8 +71,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -94,9 +91,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -155,7 +152,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testConfig =
   exports.cleanup =
@@ -171,7 +168,7 @@ exports.testConfig =
   exports.createMockSession =
     void 0;
 var globals_1 = require("@jest/globals");
-var util_1 = require("util");
+var util_1 = require("node:util");
 require("whatwg-fetch");
 // Global test setup
 global.TextEncoder = util_1.TextEncoder;
@@ -182,7 +179,7 @@ process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
 // Mock crypto for Node.js environment
 if (typeof globalThis.crypto === "undefined") {
-  var webcrypto = require("crypto").webcrypto;
+  var webcrypto = require("node:crypto").webcrypto;
   globalThis.crypto = webcrypto;
 }
 // Mock localStorage
@@ -238,7 +235,7 @@ Object.defineProperty(window, "location", {
 // Mock fetch
 global.fetch = globals_1.jest.fn();
 // Test data factories
-var createMockSession = function (overrides) {
+var createMockSession = (overrides) => {
   if (overrides === void 0) {
     overrides = {};
   }
@@ -260,7 +257,7 @@ var createMockSession = function (overrides) {
   );
 };
 exports.createMockSession = createMockSession;
-var createMockDevice = function (overrides) {
+var createMockDevice = (overrides) => {
   if (overrides === void 0) {
     overrides = {};
   }
@@ -283,7 +280,7 @@ var createMockDevice = function (overrides) {
   );
 };
 exports.createMockDevice = createMockDevice;
-var createMockSecurityEvent = function (overrides) {
+var createMockSecurityEvent = (overrides) => {
   if (overrides === void 0) {
     overrides = {};
   }
@@ -312,7 +309,7 @@ var createMockSecurityEvent = function (overrides) {
   );
 };
 exports.createMockSecurityEvent = createMockSecurityEvent;
-var createMockNotification = function (overrides) {
+var createMockNotification = (overrides) => {
   if (overrides === void 0) {
     overrides = {};
   }
@@ -336,7 +333,7 @@ var createMockNotification = function (overrides) {
   );
 };
 exports.createMockNotification = createMockNotification;
-var createMockUser = function (overrides) {
+var createMockUser = (overrides) => {
   if (overrides === void 0) {
     overrides = {};
   }
@@ -357,36 +354,32 @@ var createMockUser = function (overrides) {
 };
 exports.createMockUser = createMockUser;
 // Test utilities
-var waitFor = function (ms) {
-  return new Promise(function (resolve) {
-    return setTimeout(resolve, ms);
-  });
-};
+var waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 exports.waitFor = waitFor;
-var mockConsole = function () {
+var mockConsole = () => {
   var originalConsole = __assign({}, console);
-  beforeEach(function () {
-    globals_1.jest.spyOn(console, "log").mockImplementation(function () {});
-    globals_1.jest.spyOn(console, "warn").mockImplementation(function () {});
-    globals_1.jest.spyOn(console, "error").mockImplementation(function () {});
+  beforeEach(() => {
+    globals_1.jest.spyOn(console, "log").mockImplementation(() => {});
+    globals_1.jest.spyOn(console, "warn").mockImplementation(() => {});
+    globals_1.jest.spyOn(console, "error").mockImplementation(() => {});
   });
-  afterEach(function () {
+  afterEach(() => {
     Object.assign(console, originalConsole);
   });
 };
 exports.mockConsole = mockConsole;
 // Mock timers utility
-var mockTimers = function () {
-  beforeEach(function () {
+var mockTimers = () => {
+  beforeEach(() => {
     globals_1.jest.useFakeTimers();
   });
-  afterEach(function () {
+  afterEach(() => {
     globals_1.jest.useRealTimers();
   });
 };
 exports.mockTimers = mockTimers;
 // Database test utilities
-var createTestDatabase = function () {
+var createTestDatabase = () => {
   var mockDb = {
     sessions: new Map(),
     devices: new Map(),
@@ -394,20 +387,16 @@ var createTestDatabase = function () {
     notifications: new Map(),
     users: new Map(),
   };
-  var generateId = function () {
-    return "test-".concat(Math.random().toString(36).substr(2, 9));
-  };
+  var generateId = () => "test-".concat(Math.random().toString(36).substr(2, 9));
   return {
     // Session operations
-    createSession: function (data) {
+    createSession: (data) => {
       var session = __assign({ id: generateId() }, data);
       mockDb.sessions.set(session.id, session);
       return session;
     },
-    getSession: function (id) {
-      return mockDb.sessions.get(id);
-    },
-    updateSession: function (id, updates) {
+    getSession: (id) => mockDb.sessions.get(id),
+    updateSession: (id, updates) => {
       var session = mockDb.sessions.get(id);
       if (session) {
         var updated = __assign(__assign({}, session), updates);
@@ -416,54 +405,43 @@ var createTestDatabase = function () {
       }
       return null;
     },
-    deleteSession: function (id) {
-      return mockDb.sessions.delete(id);
-    },
+    deleteSession: (id) => mockDb.sessions.delete(id),
     // Device operations
-    createDevice: function (data) {
+    createDevice: (data) => {
       var device = __assign({ id: generateId() }, data);
       mockDb.devices.set(device.id, device);
       return device;
     },
-    getDevice: function (id) {
-      return mockDb.devices.get(id);
-    },
-    getUserDevices: function (userId) {
-      return Array.from(mockDb.devices.values()).filter(function (device) {
-        return device.userId === userId;
-      });
-    },
+    getDevice: (id) => mockDb.devices.get(id),
+    getUserDevices: (userId) =>
+      Array.from(mockDb.devices.values()).filter((device) => device.userId === userId),
     // Security event operations
-    createSecurityEvent: function (data) {
+    createSecurityEvent: (data) => {
       var event = __assign({ id: generateId() }, data);
       mockDb.securityEvents.set(event.id, event);
       return event;
     },
-    getSecurityEvents: function (userId) {
-      return Array.from(mockDb.securityEvents.values()).filter(function (event) {
-        return event.userId === userId;
-      });
-    },
+    getSecurityEvents: (userId) =>
+      Array.from(mockDb.securityEvents.values()).filter((event) => event.userId === userId),
     // Notification operations
-    createNotification: function (data) {
+    createNotification: (data) => {
       var notification = __assign({ id: generateId() }, data);
       mockDb.notifications.set(notification.id, notification);
       return notification;
     },
-    getUserNotifications: function (userId) {
-      return Array.from(mockDb.notifications.values()).filter(function (notification) {
-        return notification.userId === userId;
-      });
-    },
+    getUserNotifications: (userId) =>
+      Array.from(mockDb.notifications.values()).filter(
+        (notification) => notification.userId === userId,
+      ),
     // Utility methods
-    clear: function () {
+    clear: () => {
       mockDb.sessions.clear();
       mockDb.devices.clear();
       mockDb.securityEvents.clear();
       mockDb.notifications.clear();
       mockDb.users.clear();
     },
-    seed: function () {
+    seed: () => {
       // Create test user
       var user = (0, exports.createMockUser)();
       mockDb.users.set(user.id, user);
@@ -495,10 +473,10 @@ var createTestDatabase = function () {
 };
 exports.createTestDatabase = createTestDatabase;
 // Performance testing utilities
-var measurePerformance = function (fn, name) {
-  return __awaiter(void 0, void 0, void 0, function () {
+var measurePerformance = (fn, name) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var start, result, end, duration;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           start = performance.now();
@@ -512,10 +490,9 @@ var measurePerformance = function (fn, name) {
       }
     });
   });
-};
 exports.measurePerformance = measurePerformance;
 // Cleanup function for tests
-var cleanup = function () {
+var cleanup = () => {
   // Clear all mocks
   globals_1.jest.clearAllMocks();
   // Clear localStorage
@@ -527,7 +504,7 @@ var cleanup = function () {
 };
 exports.cleanup = cleanup;
 // Global test cleanup
-afterEach(function () {
+afterEach(() => {
   (0, exports.cleanup)();
 });
 // Export test configuration

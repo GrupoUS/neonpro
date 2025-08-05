@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Device Tracking Manager
  * Story 1.4 - Task 3: Device-based session tracking and management
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeviceTrackingManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -204,7 +201,7 @@ var DEFAULT_DEVICE_POLICIES = {
     deviceRetentionDays: 30,
   },
 };
-var DeviceTrackingManager = /** @class */ (function () {
+var DeviceTrackingManager = /** @class */ (() => {
   function DeviceTrackingManager(supabaseUrl, supabaseKey, customPolicies) {
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
     this.auditLogger = new security_audit_logger_1.SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -215,26 +212,24 @@ var DeviceTrackingManager = /** @class */ (function () {
   /**
    * Generate device fingerprint from browser/client information
    */
-  DeviceTrackingManager.prototype.generateDeviceFingerprint = function (clientInfo) {
-    return {
-      userAgent: clientInfo.userAgent,
-      screenResolution: "".concat(clientInfo.screenWidth, "x").concat(clientInfo.screenHeight),
-      timezone: clientInfo.timezone,
-      language: clientInfo.language,
-      platform: clientInfo.platform,
-      cookieEnabled: clientInfo.cookieEnabled,
-      doNotTrack: clientInfo.doNotTrack,
-      plugins: clientInfo.plugins || [],
-      canvas: clientInfo.canvas,
-      webgl: clientInfo.webgl,
-      fonts: clientInfo.fonts,
-      audioContext: clientInfo.audioContext,
-    };
-  };
+  DeviceTrackingManager.prototype.generateDeviceFingerprint = (clientInfo) => ({
+    userAgent: clientInfo.userAgent,
+    screenResolution: "".concat(clientInfo.screenWidth, "x").concat(clientInfo.screenHeight),
+    timezone: clientInfo.timezone,
+    language: clientInfo.language,
+    platform: clientInfo.platform,
+    cookieEnabled: clientInfo.cookieEnabled,
+    doNotTrack: clientInfo.doNotTrack,
+    plugins: clientInfo.plugins || [],
+    canvas: clientInfo.canvas,
+    webgl: clientInfo.webgl,
+    fonts: clientInfo.fonts,
+    audioContext: clientInfo.audioContext,
+  });
   /**
    * Generate unique device ID from fingerprint
    */
-  DeviceTrackingManager.prototype.generateDeviceId = function (fingerprint) {
+  DeviceTrackingManager.prototype.generateDeviceId = (fingerprint) => {
     var fingerprintString = JSON.stringify({
       userAgent: fingerprint.userAgent,
       screenResolution: fingerprint.screenResolution,
@@ -863,9 +858,7 @@ var DeviceTrackingManager = /** @class */ (function () {
                 .delete()
                 .in(
                   "device_id",
-                  oldDevices.map(function (d) {
-                    return d.device_id;
-                  }),
+                  oldDevices.map((d) => d.device_id),
                 ),
             ];
           case 3:
@@ -896,9 +889,7 @@ var DeviceTrackingManager = /** @class */ (function () {
                 .delete()
                 .in(
                   "challenge_id",
-                  expiredChallenges.map(function (c) {
-                    return c.challenge_id;
-                  }),
+                  expiredChallenges.map((c) => c.challenge_id),
                 ),
             ];
           case 7:
@@ -961,7 +952,7 @@ var DeviceTrackingManager = /** @class */ (function () {
     }
   };
   // Private methods
-  DeviceTrackingManager.prototype.detectDeviceType = function (userAgent) {
+  DeviceTrackingManager.prototype.detectDeviceType = (userAgent) => {
     var ua = userAgent.toLowerCase();
     if (ua.includes("mobile") || ua.includes("android") || ua.includes("iphone")) {
       return "mobile";
@@ -1022,12 +1013,11 @@ var DeviceTrackingManager = /** @class */ (function () {
                   );
                   riskFactors.locationChange = distance > 1000; // More than 1000km
                 }
-                similarDevices = userDevices.filter(function (d) {
-                  return (
+                similarDevices = userDevices.filter(
+                  (d) =>
                     d.fingerprint.platform === fingerprint.platform &&
-                    d.fingerprint.userAgent.includes(fingerprint.userAgent.split("/")[0])
-                  );
-                });
+                    d.fingerprint.userAgent.includes(fingerprint.userAgent.split("/")[0]),
+                );
                 riskFactors.fingerprintMismatch = similarDevices.length === 0;
               }
               // Check for suspicious user agent
@@ -1052,7 +1042,7 @@ var DeviceTrackingManager = /** @class */ (function () {
       },
     );
   };
-  DeviceTrackingManager.prototype.calculateRiskScore = function (riskFactors) {
+  DeviceTrackingManager.prototype.calculateRiskScore = (riskFactors) => {
     var score = 0;
     if (riskFactors.isNewDevice) score += 0.2;
     if (riskFactors.locationChange) score += 0.3;
@@ -1079,10 +1069,8 @@ var DeviceTrackingManager = /** @class */ (function () {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
-  DeviceTrackingManager.prototype.toRadians = function (degrees) {
-    return degrees * (Math.PI / 180);
-  };
-  DeviceTrackingManager.prototype.isSuspiciousUserAgent = function (userAgent) {
+  DeviceTrackingManager.prototype.toRadians = (degrees) => degrees * (Math.PI / 180);
+  DeviceTrackingManager.prototype.isSuspiciousUserAgent = (userAgent) => {
     var suspiciousPatterns = [
       /bot/i,
       /crawler/i,
@@ -1093,13 +1081,11 @@ var DeviceTrackingManager = /** @class */ (function () {
       /python/i,
       /java/i,
     ];
-    return suspiciousPatterns.some(function (pattern) {
-      return pattern.test(userAgent);
-    });
+    return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
   };
   DeviceTrackingManager.prototype.checkVPN = function (ipAddress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified VPN detection - in production, use proper IP intelligence service
         try {
           // This would call an IP intelligence API
@@ -1113,7 +1099,7 @@ var DeviceTrackingManager = /** @class */ (function () {
   };
   DeviceTrackingManager.prototype.checkTor = function (ipAddress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified Tor detection - in production, use Tor exit node lists
         try {
           // This would check against Tor exit node lists
@@ -1127,7 +1113,7 @@ var DeviceTrackingManager = /** @class */ (function () {
   };
   DeviceTrackingManager.prototype.checkMaliciousIP = function (ipAddress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified malicious IP detection - in production, use threat intelligence
         try {
           // This would check against threat intelligence feeds
@@ -1139,7 +1125,7 @@ var DeviceTrackingManager = /** @class */ (function () {
       });
     });
   };
-  DeviceTrackingManager.prototype.generateVerificationCode = function (challengeType) {
+  DeviceTrackingManager.prototype.generateVerificationCode = (challengeType) => {
     switch (challengeType) {
       case "totp":
         return Math.floor(100000 + Math.random() * 900000).toString();
@@ -1179,7 +1165,7 @@ var DeviceTrackingManager = /** @class */ (function () {
   };
   DeviceTrackingManager.prototype.getUserRole = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would fetch the user's role from your user management system
         // For now, return a default role
         return [2 /*return*/, "staff"];
@@ -1236,29 +1222,26 @@ var DeviceTrackingManager = /** @class */ (function () {
       });
     });
   };
-  DeviceTrackingManager.prototype.mapDatabaseToDeviceInfo = function (data) {
-    return {
-      deviceId: data.device_id,
-      userId: data.user_id,
-      deviceName: data.device_name,
-      deviceType: data.device_type,
-      fingerprint: data.fingerprint,
-      ipAddress: data.ip_address,
-      location: data.location,
-      isTrusted: data.is_trusted,
-      isBlocked: data.is_blocked,
-      firstSeen: new Date(data.first_seen),
-      lastSeen: new Date(data.last_seen),
-      sessionCount: data.session_count,
-      riskScore: data.risk_score,
-      metadata: data.metadata,
-    };
-  };
+  DeviceTrackingManager.prototype.mapDatabaseToDeviceInfo = (data) => ({
+    deviceId: data.device_id,
+    userId: data.user_id,
+    deviceName: data.device_name,
+    deviceType: data.device_type,
+    fingerprint: data.fingerprint,
+    ipAddress: data.ip_address,
+    location: data.location,
+    isTrusted: data.is_trusted,
+    isBlocked: data.is_blocked,
+    firstSeen: new Date(data.first_seen),
+    lastSeen: new Date(data.last_seen),
+    sessionCount: data.session_count,
+    riskScore: data.risk_score,
+    metadata: data.metadata,
+  });
   DeviceTrackingManager.prototype.startCleanupInterval = function () {
-    var _this = this;
     this.cleanupInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_9;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -1276,8 +1259,7 @@ var DeviceTrackingManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       24 * 60 * 60 * 1000,
     ); // Daily cleanup
   };

@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { BaseOAuthHandler } from "../base-oauth-handler";
-import type { OAuthConfig, OAuthTokens, OAuthState, OAuthUserProfile } from "../types";
+import type { OAuthConfig, OAuthState, OAuthTokens, OAuthUserProfile } from "../types";
 
 /**
  * Instagram Graph API OAuth Handler for NeonPro

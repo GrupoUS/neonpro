@@ -8,23 +8,37 @@
  * with scenario analysis and accuracy metrics.
  */
 
-import React, { useState, useMemo, useCallback } from "react";
 import type {
-  ResponsiveContainer,
-  LineChart,
-  Line,
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  DollarSign,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import type {
   Area,
   AreaChart,
+  Bar,
+  Brush,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ComposedChart,
-  Bar,
-  ReferenceLine,
-  Brush,
 } from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -32,8 +46,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -42,19 +55,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Target,
-  DollarSign,
-  Users,
-  AlertTriangle,
-  BarChart3,
-  Activity,
-  Calendar,
-} from "lucide-react";
 
 // Types for forecasting data
 interface ForecastData {

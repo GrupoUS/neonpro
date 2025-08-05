@@ -3,11 +3,7 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
-import type { UnifiedSessionSystem } from "@/lib/auth/session";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 // =====================================================
 // VALIDATION SCHEMAS
@@ -108,7 +104,7 @@ async function getCurrentUser() {
 function parseDate(dateString?: string): Date | undefined {
   if (!dateString) return undefined;
   const date = new Date(dateString);
-  return isNaN(date.getTime()) ? undefined : date;
+  return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
 // =====================================================

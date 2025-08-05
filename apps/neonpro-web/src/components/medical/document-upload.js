@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentUpload = DocumentUpload;
 var react_1 = require("react");
@@ -291,7 +288,6 @@ var DEFAULT_ALLOWED_TYPES = [
 ];
 var MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 function DocumentUpload(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     clinicId = _a.clinicId,
     onDocumentUploaded = _a.onDocumentUploaded,
@@ -346,16 +342,13 @@ function DocumentUpload(_a) {
   var fileInputRef = (0, react_1.useRef)(null);
   var cameraInputRef = (0, react_1.useRef)(null);
   // Load documents
-  react_1.default.useEffect(
-    function () {
-      loadDocuments();
-    },
-    [patientId],
-  );
-  var loadDocuments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  react_1.default.useEffect(() => {
+    loadDocuments();
+  }, [patientId]);
+  var loadDocuments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockDocuments;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mockDocuments = [
             {
@@ -412,8 +405,7 @@ function DocumentUpload(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleDrag = (0, react_1.useCallback)(function (e) {
+  var handleDrag = (0, react_1.useCallback)((e) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -422,7 +414,7 @@ function DocumentUpload(_a) {
       setDragActive(false);
     }
   }, []);
-  var handleDrop = (0, react_1.useCallback)(function (e) {
+  var handleDrop = (0, react_1.useCallback)((e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -430,13 +422,13 @@ function DocumentUpload(_a) {
       handleFiles(Array.from(e.dataTransfer.files));
     }
   }, []);
-  var handleFileInput = function (e) {
+  var handleFileInput = (e) => {
     if (e.target.files) {
       handleFiles(Array.from(e.target.files));
     }
   };
-  var handleFiles = function (files) {
-    var validFiles = files.filter(function (file) {
+  var handleFiles = (files) => {
+    var validFiles = files.filter((file) => {
       if (!allowedTypes.includes(file.type)) {
         alert("Tipo de arquivo n\u00E3o permitido: ".concat(file.type));
         return false;
@@ -456,24 +448,24 @@ function DocumentUpload(_a) {
       setShowUploadDialog(true);
     }
   };
-  var uploadFiles = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var uploadFiles = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _loop_1, _i, uploadingFiles_1, file;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _loop_1 = function (file) {
               var uploadInterval_1, newDocument_1, error_1;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     _b.trys.push([0, 2, , 3]);
-                    setUploadProgress(function (prev) {
+                    setUploadProgress((prev) => {
                       var _a;
                       return __assign(__assign({}, prev), ((_a = {}), (_a[file.name] = 0), _a));
                     });
-                    uploadInterval_1 = setInterval(function () {
-                      setUploadProgress(function (prev) {
+                    uploadInterval_1 = setInterval(() => {
+                      setUploadProgress((prev) => {
                         var _a;
                         var currentProgress = prev[file.name] || 0;
                         if (currentProgress >= 100) {
@@ -487,12 +479,7 @@ function DocumentUpload(_a) {
                       });
                     }, 200);
                     // Simulate API call
-                    return [
-                      4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, 2000);
-                      }),
-                    ];
+                    return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
                   case 1:
                     // Simulate API call
                     _b.sent();
@@ -522,13 +509,13 @@ function DocumentUpload(_a) {
                       version: 1,
                       status: "active",
                     };
-                    setDocuments(function (prev) {
-                      return __spreadArray(__spreadArray([], prev, true), [newDocument_1], false);
-                    });
+                    setDocuments((prev) =>
+                      __spreadArray(__spreadArray([], prev, true), [newDocument_1], false),
+                    );
                     onDocumentUploaded === null || onDocumentUploaded === void 0
                       ? void 0
                       : onDocumentUploaded(newDocument_1);
-                    setUploadProgress(function (prev) {
+                    setUploadProgress((prev) => {
                       var _a;
                       return __assign(__assign({}, prev), ((_a = {}), (_a[file.name] = 100), _a));
                     });
@@ -536,7 +523,7 @@ function DocumentUpload(_a) {
                   case 2:
                     error_1 = _b.sent();
                     console.error("Erro ao fazer upload:", error_1);
-                    setUploadProgress(function (prev) {
+                    setUploadProgress((prev) => {
                       var _a;
                       return __assign(__assign({}, prev), ((_a = {}), (_a[file.name] = -1), _a));
                     });
@@ -560,7 +547,7 @@ function DocumentUpload(_a) {
             return [3 /*break*/, 1];
           case 4:
             // Reset after upload
-            setTimeout(function () {
+            setTimeout(() => {
               setUploadingFiles([]);
               setUploadProgress({});
               setShowUploadDialog(false);
@@ -578,49 +565,39 @@ function DocumentUpload(_a) {
         }
       });
     });
-  };
-  var addTag = function () {
+  var addTag = () => {
     if (tagInput.trim() && !newDocumentData.tags.includes(tagInput.trim())) {
-      setNewDocumentData(function (prev) {
-        return __assign(__assign({}, prev), {
+      setNewDocumentData((prev) =>
+        __assign(__assign({}, prev), {
           tags: __spreadArray(__spreadArray([], prev.tags, true), [tagInput.trim()], false),
-        });
-      });
+        }),
+      );
       setTagInput("");
     }
   };
-  var removeTag = function (tagToRemove) {
-    setNewDocumentData(function (prev) {
-      return __assign(__assign({}, prev), {
-        tags: prev.tags.filter(function (tag) {
-          return tag !== tagToRemove;
-        }),
-      });
-    });
+  var removeTag = (tagToRemove) => {
+    setNewDocumentData((prev) =>
+      __assign(__assign({}, prev), {
+        tags: prev.tags.filter((tag) => tag !== tagToRemove),
+      }),
+    );
   };
-  var formatFileSize = function (bytes) {
+  var formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     var k = 1024;
     var sizes = ["Bytes", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
-  var getFileIcon = function (fileType) {
-    return (
-      FILE_TYPES[fileType] || {
-        icon: <lucide_react_1.File className="w-4 h-4" />,
-        color: "text-gray-600",
-      }
-    );
-  };
-  var getCategoryInfo = function (categoryValue) {
-    return (
-      DOCUMENT_CATEGORIES.find(function (cat) {
-        return cat.value === categoryValue;
-      }) || DOCUMENT_CATEGORIES[DOCUMENT_CATEGORIES.length - 1]
-    );
-  };
-  var filteredDocuments = documents.filter(function (doc) {
+  var getFileIcon = (fileType) =>
+    FILE_TYPES[fileType] || {
+      icon: <lucide_react_1.File className="w-4 h-4" />,
+      color: "text-gray-600",
+    };
+  var getCategoryInfo = (categoryValue) =>
+    DOCUMENT_CATEGORIES.find((cat) => cat.value === categoryValue) ||
+    DOCUMENT_CATEGORIES[DOCUMENT_CATEGORIES.length - 1];
+  var filteredDocuments = documents.filter((doc) => {
     var _a;
     var matchesSearch =
       searchTerm === "" ||
@@ -628,9 +605,7 @@ function DocumentUpload(_a) {
       ((_a = doc.description) === null || _a === void 0
         ? void 0
         : _a.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      doc.tags.some(function (tag) {
-        return tag.toLowerCase().includes(searchTerm.toLowerCase());
-      });
+      doc.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     var matchesCategory = selectedCategory === "all" || doc.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -644,7 +619,7 @@ function DocumentUpload(_a) {
         <div className="flex items-center space-x-2">
           <button_1.Button
             variant="outline"
-            onClick={function () {
+            onClick={() => {
               var _a;
               return (_a = cameraInputRef.current) === null || _a === void 0 ? void 0 : _a.click();
             }}
@@ -653,7 +628,7 @@ function DocumentUpload(_a) {
             Câmera
           </button_1.Button>
           <button_1.Button
-            onClick={function () {
+            onClick={() => {
               var _a;
               return (_a = fileInputRef.current) === null || _a === void 0 ? void 0 : _a.click();
             }}
@@ -697,7 +672,7 @@ function DocumentUpload(_a) {
             <div className="space-y-2">
               <label_1.Label>Arquivos Selecionados</label_1.Label>
               <div className="space-y-2">
-                {uploadingFiles.map(function (file, index) {
+                {uploadingFiles.map((file, index) => {
                   var fileIcon = getFileIcon(file.type);
                   var progress = uploadProgress[file.name] || 0;
                   return (
@@ -726,26 +701,22 @@ function DocumentUpload(_a) {
                 <label_1.Label htmlFor="category">Categoria *</label_1.Label>
                 <select_1.Select
                   value={newDocumentData.category}
-                  onValueChange={function (value) {
-                    return setNewDocumentData(function (prev) {
-                      return __assign(__assign({}, prev), { category: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setNewDocumentData((prev) => __assign(__assign({}, prev), { category: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue placeholder="Selecione a categoria" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {DOCUMENT_CATEGORIES.map(function (category) {
-                      return (
-                        <select_1.SelectItem key={category.value} value={category.value}>
-                          <div className="flex items-center space-x-2">
-                            {category.icon}
-                            <span>{category.label}</span>
-                          </div>
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {DOCUMENT_CATEGORIES.map((category) => (
+                      <select_1.SelectItem key={category.value} value={category.value}>
+                        <div className="flex items-center space-x-2">
+                          {category.icon}
+                          <span>{category.label}</span>
+                        </div>
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -754,26 +725,24 @@ function DocumentUpload(_a) {
                 <label_1.Label htmlFor="accessLevel">Nível de Acesso</label_1.Label>
                 <select_1.Select
                   value={newDocumentData.accessLevel}
-                  onValueChange={function (value) {
-                    return setNewDocumentData(function (prev) {
-                      return __assign(__assign({}, prev), { accessLevel: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setNewDocumentData((prev) =>
+                      __assign(__assign({}, prev), { accessLevel: value }),
+                    )
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {ACCESS_LEVELS.map(function (level) {
-                      return (
-                        <select_1.SelectItem key={level.value} value={level.value}>
-                          <div>
-                            <div className="font-medium">{level.label}</div>
-                            <div className="text-xs text-gray-500">{level.description}</div>
-                          </div>
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {ACCESS_LEVELS.map((level) => (
+                      <select_1.SelectItem key={level.value} value={level.value}>
+                        <div>
+                          <div className="font-medium">{level.label}</div>
+                          <div className="text-xs text-gray-500">{level.description}</div>
+                        </div>
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -784,11 +753,11 @@ function DocumentUpload(_a) {
               <input_1.Input
                 id="subcategory"
                 value={newDocumentData.subcategory}
-                onChange={function (e) {
-                  return setNewDocumentData(function (prev) {
-                    return __assign(__assign({}, prev), { subcategory: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setNewDocumentData((prev) =>
+                    __assign(__assign({}, prev), { subcategory: e.target.value }),
+                  )
+                }
                 placeholder="Subcategoria específica"
               />
             </div>
@@ -798,11 +767,11 @@ function DocumentUpload(_a) {
               <textarea_1.Textarea
                 id="description"
                 value={newDocumentData.description}
-                onChange={function (e) {
-                  return setNewDocumentData(function (prev) {
-                    return __assign(__assign({}, prev), { description: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setNewDocumentData((prev) =>
+                    __assign(__assign({}, prev), { description: e.target.value }),
+                  )
+                }
                 placeholder="Descrição do documento"
                 rows={3}
               />
@@ -813,13 +782,9 @@ function DocumentUpload(_a) {
               <div className="flex items-center space-x-2">
                 <input_1.Input
                   value={tagInput}
-                  onChange={function (e) {
-                    return setTagInput(e.target.value);
-                  }}
+                  onChange={(e) => setTagInput(e.target.value)}
                   placeholder="Adicionar tag"
-                  onKeyPress={function (e) {
-                    return e.key === "Enter" && addTag();
-                  }}
+                  onKeyPress={(e) => e.key === "Enter" && addTag()}
                 />
                 <button_1.Button type="button" onClick={addTag} size="sm">
                   <lucide_react_1.Plus className="w-4 h-4" />
@@ -827,26 +792,22 @@ function DocumentUpload(_a) {
               </div>
               {newDocumentData.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">
-                  {newDocumentData.tags.map(function (tag, index) {
-                    return (
-                      <badge_1.Badge
-                        key={index}
-                        variant="secondary"
-                        className="flex items-center space-x-1"
+                  {newDocumentData.tags.map((tag, index) => (
+                    <badge_1.Badge
+                      key={index}
+                      variant="secondary"
+                      className="flex items-center space-x-1"
+                    >
+                      <span>{tag}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="ml-1 hover:text-red-500"
                       >
-                        <span>{tag}</span>
-                        <button
-                          type="button"
-                          onClick={function () {
-                            return removeTag(tag);
-                          }}
-                          className="ml-1 hover:text-red-500"
-                        >
-                          <lucide_react_1.X className="w-3 h-3" />
-                        </button>
-                      </badge_1.Badge>
-                    );
-                  })}
+                        <lucide_react_1.X className="w-3 h-3" />
+                      </button>
+                    </badge_1.Badge>
+                  ))}
                 </div>
               )}
             </div>
@@ -858,13 +819,13 @@ function DocumentUpload(_a) {
                   id="captureDate"
                   type="date"
                   value={(0, date_fns_1.format)(newDocumentData.captureDate, "yyyy-MM-dd")}
-                  onChange={function (e) {
-                    return setNewDocumentData(function (prev) {
-                      return __assign(__assign({}, prev), {
+                  onChange={(e) =>
+                    setNewDocumentData((prev) =>
+                      __assign(__assign({}, prev), {
                         captureDate: new Date(e.target.value),
-                      });
-                    });
-                  }}
+                      }),
+                    )
+                  }
                 />
               </div>
 
@@ -873,11 +834,11 @@ function DocumentUpload(_a) {
                   type="checkbox"
                   id="isEncrypted"
                   checked={newDocumentData.isEncrypted}
-                  onChange={function (e) {
-                    return setNewDocumentData(function (prev) {
-                      return __assign(__assign({}, prev), { isEncrypted: e.target.checked });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setNewDocumentData((prev) =>
+                      __assign(__assign({}, prev), { isEncrypted: e.target.checked }),
+                    )
+                  }
                   className="rounded"
                 />
                 <label_1.Label htmlFor="isEncrypted" className="flex items-center space-x-1">
@@ -891,7 +852,7 @@ function DocumentUpload(_a) {
               <button_1.Button
                 type="button"
                 variant="outline"
-                onClick={function () {
+                onClick={() => {
                   setShowUploadDialog(false);
                   setUploadingFiles([]);
                   setUploadProgress({});
@@ -932,7 +893,7 @@ function DocumentUpload(_a) {
             <div className="flex items-center justify-center space-x-4">
               <button_1.Button
                 variant="outline"
-                onClick={function () {
+                onClick={() => {
                   var _a;
                   return (_a = fileInputRef.current) === null || _a === void 0
                     ? void 0
@@ -944,7 +905,7 @@ function DocumentUpload(_a) {
               </button_1.Button>
               <button_1.Button
                 variant="outline"
-                onClick={function () {
+                onClick={() => {
                   var _a;
                   return (_a = cameraInputRef.current) === null || _a === void 0
                     ? void 0
@@ -969,9 +930,7 @@ function DocumentUpload(_a) {
                 <input_1.Input
                   placeholder="Buscar documentos..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -983,16 +942,14 @@ function DocumentUpload(_a) {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todas as categorias</select_1.SelectItem>
-                  {DOCUMENT_CATEGORIES.map(function (category) {
-                    return (
-                      <select_1.SelectItem key={category.value} value={category.value}>
-                        <div className="flex items-center space-x-2">
-                          {category.icon}
-                          <span>{category.label}</span>
-                        </div>
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {DOCUMENT_CATEGORIES.map((category) => (
+                    <select_1.SelectItem key={category.value} value={category.value}>
+                      <div className="flex items-center space-x-2">
+                        {category.icon}
+                        <span>{category.label}</span>
+                      </div>
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
 
@@ -1000,9 +957,7 @@ function DocumentUpload(_a) {
                 <button_1.Button
                   variant={viewMode === "grid" ? "default" : "ghost"}
                   size="sm"
-                  onClick={function () {
-                    return setViewMode("grid");
-                  }}
+                  onClick={() => setViewMode("grid")}
                   className="rounded-r-none"
                 >
                   <lucide_react_1.Grid className="w-4 h-4" />
@@ -1010,9 +965,7 @@ function DocumentUpload(_a) {
                 <button_1.Button
                   variant={viewMode === "list" ? "default" : "ghost"}
                   size="sm"
-                  onClick={function () {
-                    return setViewMode("list");
-                  }}
+                  onClick={() => setViewMode("list")}
                   className="rounded-l-none"
                 >
                   <lucide_react_1.List className="w-4 h-4" />
@@ -1042,7 +995,7 @@ function DocumentUpload(_a) {
                   </p>
                   {!searchTerm && selectedCategory === "all" && (
                     <button_1.Button
-                      onClick={function () {
+                      onClick={() => {
                         var _a;
                         return (_a = fileInputRef.current) === null || _a === void 0
                           ? void 0
@@ -1058,7 +1011,7 @@ function DocumentUpload(_a) {
             </card_1.Card>
           : viewMode === "grid"
             ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredDocuments.map(function (document) {
+                {filteredDocuments.map((document) => {
                   var categoryInfo = getCategoryInfo(document.category);
                   var fileIcon = getFileIcon(document.fileType);
                   return (
@@ -1095,13 +1048,11 @@ function DocumentUpload(_a) {
 
                           {document.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1">
-                              {document.tags.slice(0, 3).map(function (tag, index) {
-                                return (
-                                  <badge_1.Badge key={index} variant="outline" className="text-xs">
-                                    {tag}
-                                  </badge_1.Badge>
-                                );
-                              })}
+                              {document.tags.slice(0, 3).map((tag, index) => (
+                                <badge_1.Badge key={index} variant="outline" className="text-xs">
+                                  {tag}
+                                </badge_1.Badge>
+                              ))}
                               {document.tags.length > 3 && (
                                 <badge_1.Badge variant="outline" className="text-xs">
                                   +{document.tags.length - 3}
@@ -1134,7 +1085,7 @@ function DocumentUpload(_a) {
             : <card_1.Card>
                 <card_1.CardContent className="pt-6">
                   <div className="space-y-4">
-                    {filteredDocuments.map(function (document) {
+                    {filteredDocuments.map((document) => {
                       var categoryInfo = getCategoryInfo(document.category);
                       var fileIcon = getFileIcon(document.fileType);
                       return (
@@ -1214,31 +1165,19 @@ function DocumentUpload(_a) {
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  {
-                    filteredDocuments.filter(function (d) {
-                      return d.fileType.startsWith("image/");
-                    }).length
-                  }
+                  {filteredDocuments.filter((d) => d.fileType.startsWith("image/")).length}
                 </div>
                 <div className="text-sm text-gray-600">Imagens</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">
-                  {
-                    filteredDocuments.filter(function (d) {
-                      return d.fileType === "application/pdf";
-                    }).length
-                  }
+                  {filteredDocuments.filter((d) => d.fileType === "application/pdf").length}
                 </div>
                 <div className="text-sm text-gray-600">PDFs</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
-                  {
-                    filteredDocuments.filter(function (d) {
-                      return d.isEncrypted;
-                    }).length
-                  }
+                  {filteredDocuments.filter((d) => d.isEncrypted).length}
                 </div>
                 <div className="text-sm text-gray-600">Criptografados</div>
               </div>

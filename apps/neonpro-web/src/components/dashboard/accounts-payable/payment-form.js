@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PaymentForm;
 var badge_1 = require("@/components/ui/badge");
@@ -193,7 +190,6 @@ var paymentStatuses = [
   { value: "failed", label: "Falhou", color: "bg-red-100 text-red-800" },
 ];
 function PaymentForm(_a) {
-  var _this = this;
   var payable = _a.payable,
     open = _a.open,
     onOpenChange = _a.onOpenChange,
@@ -224,34 +220,27 @@ function PaymentForm(_a) {
     setFormData = _f[1];
   // Calculate remaining balance
   var totalPaid = previousPayments
-    .filter(function (p) {
-      return p.status === "completed";
-    })
-    .reduce(function (sum, p) {
-      return sum + p.amount_paid;
-    }, 0);
+    .filter((p) => p.status === "completed")
+    .reduce((sum, p) => sum + p.amount_paid, 0);
   var remainingBalance =
     ((payable === null || payable === void 0 ? void 0 : payable.net_amount) || 0) - totalPaid;
   var isOverpayment = formData.amount_paid > remainingBalance;
   var canMakePartialPayment = remainingBalance > 0;
-  (0, react_1.useEffect)(
-    function () {
-      if (payable && open) {
-        setFormData(function (prev) {
-          return __assign(__assign({}, prev), {
-            accounts_payable_id: payable.id,
-            amount_paid: remainingBalance > 0 ? remainingBalance : 0,
-          });
-        });
-        loadPreviousPayments();
-      }
-    },
-    [payable, open],
-  );
-  var loadPreviousPayments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (payable && open) {
+      setFormData((prev) =>
+        __assign(__assign({}, prev), {
+          accounts_payable_id: payable.id,
+          amount_paid: remainingBalance > 0 ? remainingBalance : 0,
+        }),
+      );
+      loadPreviousPayments();
+    }
+  }, [payable, open]);
+  var loadPreviousPayments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockPayments;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!(payable === null || payable === void 0 ? void 0 : payable.id)) return [2 /*return*/];
         setLoadingPayments(true);
         try {
@@ -286,11 +275,10 @@ function PaymentForm(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var paymentData, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
@@ -315,12 +303,7 @@ function PaymentForm(_a) {
             // In real implementation, this would call payment service
             console.log("Processing payment:", paymentData);
             // Simulate API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simulate API call
             _a.sent();
@@ -352,28 +335,24 @@ function PaymentForm(_a) {
         }
       });
     });
-  };
-  var updateField = function (field, value) {
-    setFormData(function (prev) {
+  var updateField = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
   };
-  var getPaymentMethodIcon = function (method) {
-    var methodConfig = paymentMethods.find(function (m) {
-      return m.value === method;
-    });
+  var getPaymentMethodIcon = (method) => {
+    var methodConfig = paymentMethods.find((m) => m.value === method);
     return (
       (methodConfig === null || methodConfig === void 0 ? void 0 : methodConfig.icon) ||
       lucide_react_1.DollarSign
     );
   };
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
   if (!payable) return null;
   return (
     <dialog_1.Dialog open={open} onOpenChange={onOpenChange}>
@@ -431,11 +410,9 @@ function PaymentForm(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-2">
-                  {previousPayments.map(function (payment) {
+                  {previousPayments.map((payment) => {
                     var IconComponent = getPaymentMethodIcon(payment.payment_method);
-                    var statusConfig = paymentStatuses.find(function (s) {
-                      return s.value === payment.status;
-                    });
+                    var statusConfig = paymentStatuses.find((s) => s.value === payment.status);
                     return (
                       <div
                         key={payment.id}
@@ -515,7 +492,7 @@ function PaymentForm(_a) {
                         <calendar_1.Calendar
                           mode="single"
                           selected={formData.payment_date}
-                          onSelect={function (date) {
+                          onSelect={(date) => {
                             if (date) {
                               updateField("payment_date", date);
                               setShowCalendar(false);
@@ -532,15 +509,13 @@ function PaymentForm(_a) {
                     <label_1.Label htmlFor="payment_method">Método de Pagamento *</label_1.Label>
                     <select_1.Select
                       value={formData.payment_method}
-                      onValueChange={function (value) {
-                        return updateField("payment_method", value);
-                      }}
+                      onValueChange={(value) => updateField("payment_method", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o método" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {paymentMethods.map(function (method) {
+                        {paymentMethods.map((method) => {
                           var IconComponent = method.icon;
                           return (
                             <select_1.SelectItem key={method.value} value={method.value}>
@@ -567,9 +542,9 @@ function PaymentForm(_a) {
                         type="number"
                         step="0.01"
                         value={formData.amount_paid || ""}
-                        onChange={function (e) {
-                          return updateField("amount_paid", parseFloat(e.target.value) || 0);
-                        }}
+                        onChange={(e) =>
+                          updateField("amount_paid", parseFloat(e.target.value) || 0)
+                        }
                         className={(0, utils_1.cn)(
                           "pl-9",
                           isOverpayment && "border-red-500 focus:border-red-500",
@@ -599,9 +574,7 @@ function PaymentForm(_a) {
                     <input_1.Input
                       id="reference_number"
                       value={formData.reference_number}
-                      onChange={function (e) {
-                        return updateField("reference_number", e.target.value);
-                      }}
+                      onChange={(e) => updateField("reference_number", e.target.value)}
                       placeholder="Número do documento, TED, etc."
                     />
                   </div>
@@ -615,9 +588,7 @@ function PaymentForm(_a) {
                     <input_1.Input
                       id="bank_account"
                       value={formData.bank_account}
-                      onChange={function (e) {
-                        return updateField("bank_account", e.target.value);
-                      }}
+                      onChange={(e) => updateField("bank_account", e.target.value)}
                       placeholder="Banco, agência, conta..."
                     />
                   </div>
@@ -629,9 +600,7 @@ function PaymentForm(_a) {
                   <textarea_1.Textarea
                     id="notes"
                     value={formData.notes}
-                    onChange={function (e) {
-                      return updateField("notes", e.target.value);
-                    }}
+                    onChange={(e) => updateField("notes", e.target.value)}
                     placeholder="Informações adicionais sobre o pagamento..."
                     rows={2}
                   />
@@ -643,9 +612,7 @@ function PaymentForm(_a) {
                     <checkbox_1.Checkbox
                       id="is_partial_payment"
                       checked={formData.is_partial_payment}
-                      onCheckedChange={function (checked) {
-                        return updateField("is_partial_payment", checked);
-                      }}
+                      onCheckedChange={(checked) => updateField("is_partial_payment", checked)}
                     />
                     <label_1.Label htmlFor="is_partial_payment" className="text-sm">
                       Este é um pagamento parcial
@@ -658,13 +625,7 @@ function PaymentForm(_a) {
         </div>
 
         <dialog_1.DialogFooter>
-          <button_1.Button
-            type="button"
-            variant="outline"
-            onClick={function () {
-              return onOpenChange(false);
-            }}
-          >
+          <button_1.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </button_1.Button>
           <button_1.Button

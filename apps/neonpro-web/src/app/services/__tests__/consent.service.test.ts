@@ -1,5 +1,5 @@
-import type { ConsentService } from "../consent.service";
 import type { createClient } from "@/lib/supabase/client";
+import type { ConsentService } from "../consent.service";
 
 // Mock do createClient - usando definição simples
 jest.mock("@/lib/supabase/client", () => ({

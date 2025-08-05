@@ -1,17 +1,16 @@
-"use strict";
 // useRBAC Hook Tests
 // Story 1.2: Role-Based Permissions Enhancement
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -21,7 +20,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -50,8 +49,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -72,9 +69,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var react_1 = require("@testing-library/react");
@@ -141,24 +138,18 @@ var use_rbac_1 = require("@/hooks/use-rbac");
 var permissions_1 = require("@/lib/auth/rbac/permissions");
 var use_user_1 = require("@/hooks/use-user");
 // Mock dependencies
-jest.mock("@/lib/auth/rbac/permissions", function () {
-  return {
-    RBACPermissionManager: jest.fn(function () {
-      return {
-        getUserRole: jest.fn(),
-        getUserPermissions: jest.fn(),
-        checkPermission: jest.fn(),
-        canManageUser: jest.fn(),
-        getRoleHierarchyLevel: jest.fn(),
-      };
-    }),
-  };
-});
-jest.mock("@/hooks/use-user", function () {
-  return {
-    useUser: jest.fn(),
-  };
-});
+jest.mock("@/lib/auth/rbac/permissions", () => ({
+  RBACPermissionManager: jest.fn(() => ({
+    getUserRole: jest.fn(),
+    getUserPermissions: jest.fn(),
+    checkPermission: jest.fn(),
+    canManageUser: jest.fn(),
+    getRoleHierarchyLevel: jest.fn(),
+  })),
+}));
+jest.mock("@/hooks/use-user", () => ({
+  useUser: jest.fn(),
+}));
 var mockUser = {
   id: "user-123",
   email: "test@example.com",
@@ -188,9 +179,9 @@ var mockStaffRole = {
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
 };
-(0, globals_1.describe)("useRBAC Hook", function () {
+(0, globals_1.describe)("useRBAC Hook", () => {
   var mockRBACManager;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     jest.clearAllMocks();
     mockRBACManager = {
       getUserRole: jest.fn(),
@@ -202,34 +193,30 @@ var mockStaffRole = {
     permissions_1.RBACPermissionManager.mockReturnValue(mockRBACManager);
     use_user_1.useUser.mockReturnValue({ user: mockUser });
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     jest.restoreAllMocks();
   });
-  (0, globals_1.describe)("Basic Hook Functionality", function () {
-    (0, globals_1.it)("should initialize with loading state", function () {
+  (0, globals_1.describe)("Basic Hook Functionality", () => {
+    (0, globals_1.it)("should initialize with loading state", () => {
       mockRBACManager.getUserRole.mockResolvedValue(mockOwnerRole);
       mockRBACManager.getUserPermissions.mockResolvedValue(mockOwnerRole.permissions);
-      var result = (0, react_1.renderHook)(function () {
-        return (0, use_rbac_1.useRBAC)(mockClinicId);
-      }).result;
+      var result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
       (0, globals_1.expect)(result.current.loading).toBe(true);
       (0, globals_1.expect)(result.current.role).toBeNull();
       (0, globals_1.expect)(result.current.permissions).toEqual([]);
     });
-    (0, globals_1.it)("should load user role and permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should load user role and permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.getUserRole.mockResolvedValue(mockOwnerRole);
               mockRBACManager.getUserPermissions.mockResolvedValue(mockOwnerRole.permissions);
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -248,25 +235,23 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var consoleErrorSpy, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(function () {});
+              consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
               mockRBACManager.getUserRole.mockRejectedValue(new Error("Failed to load role"));
               mockRBACManager.getUserPermissions.mockRejectedValue(
                 new Error("Failed to load permissions"),
               );
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -282,54 +267,48 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should not load data when user is not available", function () {
+      }),
+    );
+    (0, globals_1.it)("should not load data when user is not available", () => {
       use_user_1.useUser.mockReturnValue({ user: null });
-      var result = (0, react_1.renderHook)(function () {
-        return (0, use_rbac_1.useRBAC)(mockClinicId);
-      }).result;
+      var result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
       (0, globals_1.expect)(result.current.loading).toBe(false);
       (0, globals_1.expect)(result.current.role).toBeNull();
       (0, globals_1.expect)(result.current.permissions).toEqual([]);
       (0, globals_1.expect)(mockRBACManager.getUserRole).not.toHaveBeenCalled();
     });
-    (0, globals_1.it)("should not load data when clinic ID is not provided", function () {
-      var result = (0, react_1.renderHook)(function () {
-        return (0, use_rbac_1.useRBAC)(undefined);
-      }).result;
+    (0, globals_1.it)("should not load data when clinic ID is not provided", () => {
+      var result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(undefined)).result;
       (0, globals_1.expect)(result.current.loading).toBe(false);
       (0, globals_1.expect)(result.current.role).toBeNull();
       (0, globals_1.expect)(result.current.permissions).toEqual([]);
       (0, globals_1.expect)(mockRBACManager.getUserRole).not.toHaveBeenCalled();
     });
   });
-  (0, globals_1.describe)("Permission Checking", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Permission Checking", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           mockRBACManager.getUserRole.mockResolvedValue(mockOwnerRole);
           mockRBACManager.getUserPermissions.mockResolvedValue(mockOwnerRole.permissions);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should check single permission correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check single permission correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasPermission;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.checkPermission.mockResolvedValue({
                 granted: true,
                 reason: "Permission granted",
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -347,23 +326,21 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check multiple permissions correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check multiple permissions correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hasPermissions;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.checkPermission
                 .mockResolvedValueOnce({ granted: true, reason: "Permission granted" })
                 .mockResolvedValueOnce({ granted: false, reason: "Permission denied" });
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -382,21 +359,19 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check if user can manage another user", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check if user can manage another user", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, canManage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.canManageUser.mockResolvedValue(true);
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -414,32 +389,30 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Role Hierarchy", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Role Hierarchy", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           mockRBACManager.getUserRole.mockResolvedValue(mockOwnerRole);
           mockRBACManager.getUserPermissions.mockResolvedValue(mockOwnerRole.permissions);
           mockRBACManager.getRoleHierarchyLevel.mockReturnValue(mockOwnerRole.hierarchy);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should get role hierarchy level", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should get role hierarchy level", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, hierarchyLevel;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -453,39 +426,35 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should return null hierarchy level when no role", function () {
+      }),
+    );
+    (0, globals_1.it)("should return null hierarchy level when no role", () => {
       mockRBACManager.getUserRole.mockResolvedValue(null);
-      var result = (0, react_1.renderHook)(function () {
-        return (0, use_rbac_1.useRBAC)(mockClinicId);
-      }).result;
+      var result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
       var hierarchyLevel = result.current.getRoleHierarchyLevel();
       (0, globals_1.expect)(hierarchyLevel).toBeNull();
     });
   });
-  (0, globals_1.describe)("Role Checking", function () {
-    (0, globals_1.beforeEach)(function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Role Checking", () => {
+    (0, globals_1.beforeEach)(() =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           mockRBACManager.getUserRole.mockResolvedValue(mockOwnerRole);
           mockRBACManager.getUserPermissions.mockResolvedValue(mockOwnerRole.permissions);
           return [2 /*return*/];
         });
-      });
-    });
-    (0, globals_1.it)("should check if user is in specific role", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check if user is in specific role", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -496,20 +465,18 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should check if user is at minimum role level", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should check if user is at minimum role level", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -521,22 +488,20 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle role checking when no role is loaded", function () {
+      }),
+    );
+    (0, globals_1.it)("should handle role checking when no role is loaded", () => {
       mockRBACManager.getUserRole.mockResolvedValue(null);
-      var result = (0, react_1.renderHook)(function () {
-        return (0, use_rbac_1.useRBAC)(mockClinicId);
-      }).result;
+      var result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
       (0, globals_1.expect)(result.current.isInRole("owner")).toBe(false);
       (0, globals_1.expect)(result.current.isAtLeastRole("staff")).toBe(false);
     });
   });
-  (0, globals_1.describe)("Refresh Functionality", function () {
-    (0, globals_1.it)("should refresh role and permissions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Refresh Functionality", () => {
+    (0, globals_1.it)("should refresh role and permissions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.getUserRole
@@ -545,13 +510,11 @@ var mockStaffRole = {
               mockRBACManager.getUserPermissions
                 .mockResolvedValueOnce(mockStaffRole.permissions)
                 .mockResolvedValueOnce(mockOwnerRole.permissions);
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_rbac_1.useRBAC)(mockClinicId);
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_rbac_1.useRBAC)(mockClinicId)).result;
               // Wait for initial load
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(result.current.loading).toBe(false);
                 }),
               ];
@@ -562,9 +525,9 @@ var mockStaffRole = {
               // Refresh
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.refresh()];
@@ -573,8 +536,8 @@ var mockStaffRole = {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 2:
               // Refresh
@@ -585,13 +548,13 @@ var mockStaffRole = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });
-(0, globals_1.describe)("usePermissionCheck Hook", function () {
+(0, globals_1.describe)("usePermissionCheck Hook", () => {
   var mockRBACManager;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     jest.clearAllMocks();
     mockRBACManager = {
       checkPermission: jest.fn(),
@@ -599,23 +562,23 @@ var mockStaffRole = {
     permissions_1.RBACPermissionManager.mockReturnValue(mockRBACManager);
     use_user_1.useUser.mockReturnValue({ user: mockUser });
   });
-  (0, globals_1.it)("should check permission and return result", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("should check permission and return result", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockRBACManager.checkPermission.mockResolvedValue({
               granted: true,
               reason: "Permission granted",
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, use_rbac_1.usePermissionCheck)("view_users", mockClinicId);
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, use_rbac_1.usePermissionCheck)("view_users", mockClinicId),
+            ).result;
             (0, globals_1.expect)(result.current.loading).toBe(true);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -630,24 +593,24 @@ var mockStaffRole = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle permission denied", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle permission denied", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockRBACManager.checkPermission.mockResolvedValue({
               granted: false,
               reason: "Insufficient permissions",
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, use_rbac_1.usePermissionCheck)("manage_users", mockClinicId);
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, use_rbac_1.usePermissionCheck)("manage_users", mockClinicId),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -657,41 +620,37 @@ var mockStaffRole = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should not check when user or clinic ID is missing", function () {
+    }),
+  );
+  (0, globals_1.it)("should not check when user or clinic ID is missing", () => {
     use_user_1.useUser.mockReturnValue({ user: null });
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_rbac_1.usePermissionCheck)("view_users", mockClinicId);
-    }).result;
+    var result = (0, react_1.renderHook)(() =>
+      (0, use_rbac_1.usePermissionCheck)("view_users", mockClinicId),
+    ).result;
     (0, globals_1.expect)(result.current.loading).toBe(false);
     (0, globals_1.expect)(result.current.hasPermission).toBe(false);
     (0, globals_1.expect)(mockRBACManager.checkPermission).not.toHaveBeenCalled();
   });
 });
-(0, globals_1.describe)("useRoleGuard Hook", function () {
-  (0, globals_1.beforeEach)(function () {
+(0, globals_1.describe)("useRoleGuard Hook", () => {
+  (0, globals_1.beforeEach)(() => {
     jest.clearAllMocks();
     use_user_1.useUser.mockReturnValue({ user: mockUser });
   });
-  (0, globals_1.it)("should render children when user has required role", function () {
+  (0, globals_1.it)("should render children when user has required role", () => {
     var mockUseRBAC = {
       loading: false,
       role: mockOwnerRole,
       isInRole: jest.fn().mockReturnValue(true),
     };
-    jest.doMock("@/hooks/use-rbac", function () {
-      return {
-        useRBAC: function () {
-          return mockUseRBAC;
-        },
-      };
-    });
-    var TestComponent = function () {
+    jest.doMock("@/hooks/use-rbac", () => ({
+      useRBAC: () => mockUseRBAC,
+    }));
+    var _TestComponent = () => {
       var shouldRender = (0, use_rbac_1.useRoleGuard)("owner", mockClinicId).shouldRender;
       return shouldRender ? <div>Protected Content</div> : null;
     };
-    var container = (0, react_1.renderHook)(function () {
+    var _container = (0, react_1.renderHook)(() => {
       var shouldRender = (0, use_rbac_1.useRoleGuard)("owner", mockClinicId).shouldRender;
       return { shouldRender: shouldRender };
     }).container;
@@ -700,9 +659,9 @@ var mockStaffRole = {
     (0, globals_1.expect)(mockUseRBAC.isInRole).toHaveBeenCalledWith("owner");
   });
 });
-(0, globals_1.describe)("usePermissionGuard Hook", function () {
+(0, globals_1.describe)("usePermissionGuard Hook", () => {
   var mockRBACManager;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     jest.clearAllMocks();
     mockRBACManager = {
       checkPermission: jest.fn(),
@@ -710,22 +669,22 @@ var mockStaffRole = {
     permissions_1.RBACPermissionManager.mockReturnValue(mockRBACManager);
     use_user_1.useUser.mockReturnValue({ user: mockUser });
   });
-  (0, globals_1.it)("should render children when user has required permission", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.it)("should render children when user has required permission", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockRBACManager.checkPermission.mockResolvedValue({
               granted: true,
               reason: "Permission granted",
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, use_rbac_1.usePermissionGuard)("view_users", mockClinicId);
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, use_rbac_1.usePermissionGuard)("view_users", mockClinicId),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -735,24 +694,24 @@ var mockStaffRole = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should not render children when user lacks permission", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should not render children when user lacks permission", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockRBACManager.checkPermission.mockResolvedValue({
               granted: false,
               reason: "Permission denied",
             });
-            result = (0, react_1.renderHook)(function () {
-              return (0, use_rbac_1.usePermissionGuard)("manage_users", mockClinicId);
-            }).result;
+            result = (0, react_1.renderHook)(() =>
+              (0, use_rbac_1.usePermissionGuard)("manage_users", mockClinicId),
+            ).result;
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 (0, globals_1.expect)(result.current.loading).toBe(false);
               }),
             ];
@@ -762,19 +721,15 @@ var mockStaffRole = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should show loading state initially", function () {
-    mockRBACManager.checkPermission.mockImplementation(function () {
-      return new Promise(function (resolve) {
-        return setTimeout(function () {
-          return resolve({ granted: true });
-        }, 100);
-      });
-    });
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_rbac_1.usePermissionGuard)("view_users", mockClinicId);
-    }).result;
+    }),
+  );
+  (0, globals_1.it)("should show loading state initially", () => {
+    mockRBACManager.checkPermission.mockImplementation(
+      () => new Promise((resolve) => setTimeout(() => resolve({ granted: true }), 100)),
+    );
+    var result = (0, react_1.renderHook)(() =>
+      (0, use_rbac_1.usePermissionGuard)("view_users", mockClinicId),
+    ).result;
     (0, globals_1.expect)(result.current.loading).toBe(true);
     (0, globals_1.expect)(result.current.shouldRender).toBe(false);
   });

@@ -2,10 +2,10 @@
 // Story 6.1 - Task 2: Recurring Payment System
 // Webhook handler for Stripe recurring payment events
 
-import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { headers } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
 import { recurringPaymentProcessor } from "@/lib/payments/recurring/recurring-payment-processor";
 import { logger } from "@/lib/utils/logger";
 

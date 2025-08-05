@@ -1,9 +1,9 @@
 // Medical Knowledge Base Main API Endpoints
 // Story 9.5: API endpoints for medical knowledge base management
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { MedicalKnowledgeBaseService } from "@/app/lib/services/medical-knowledge-base";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 const service = new MedicalKnowledgeBaseService();
 
@@ -22,11 +22,12 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get("action");
 
     switch (action) {
-      case "dashboard":
+      case "dashboard": {
         const dashboard = await service.getKnowledgeBaseDashboard();
         return NextResponse.json({ success: true, data: dashboard });
+      }
 
-      case "sources":
+      case "sources": {
         const statusFilter = searchParams.get("status") || undefined;
         const typeFilter = searchParams.get("type") || undefined;
         const sources = await service.getKnowledgeSources({
@@ -34,8 +35,9 @@ export async function GET(request: NextRequest) {
           source_type: typeFilter,
         });
         return NextResponse.json({ success: true, data: sources });
+      }
 
-      case "knowledge":
+      case "knowledge": {
         const knowledgeId = searchParams.get("id");
         if (knowledgeId) {
           const knowledge = await service.getMedicalKnowledgeById(knowledgeId);
@@ -72,8 +74,9 @@ export async function GET(request: NextRequest) {
 
         const searchResults = await service.searchMedicalKnowledge(searchQuery);
         return NextResponse.json({ success: true, data: searchResults });
+      }
 
-      case "guidelines":
+      case "guidelines": {
         const specialty = searchParams.get("specialty") || undefined;
         const guidelineStatus = searchParams.get("status") || undefined;
         const conditions = searchParams.get("conditions")?.split(",") || undefined;
@@ -84,8 +87,9 @@ export async function GET(request: NextRequest) {
           conditions,
         });
         return NextResponse.json({ success: true, data: guidelines });
+      }
 
-      case "guideline":
+      case "guideline": {
         const guidelineId = searchParams.get("id");
         if (!guidelineId) {
           return NextResponse.json({ error: "Guideline ID required" }, { status: 400 });
@@ -96,20 +100,24 @@ export async function GET(request: NextRequest) {
           return NextResponse.json({ error: "Guideline not found" }, { status: 404 });
         }
         return NextResponse.json({ success: true, data: guideline });
+      }
 
-      case "evidence-levels":
+      case "evidence-levels": {
         const evidenceLevels = await service.getEvidenceLevels();
         return NextResponse.json({ success: true, data: evidenceLevels });
+      }
 
-      case "knowledge-types":
+      case "knowledge-types": {
         const knowledgeTypes = await service.getKnowledgeTypes();
         return NextResponse.json({ success: true, data: knowledgeTypes });
+      }
 
-      case "categories":
+      case "categories": {
         const categories = await service.getMedicalCategories();
         return NextResponse.json({ success: true, data: categories });
+      }
 
-      case "cache":
+      case "cache": {
         const cacheQuery = searchParams.get("query");
         const sourceId = searchParams.get("source_id") || undefined;
 
@@ -123,6 +131,7 @@ export async function GET(request: NextRequest) {
           data: cachedResults,
           cached: !!cachedResults,
         });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action parameter" }, { status: 400 });
@@ -154,23 +163,27 @@ export async function POST(request: NextRequest) {
     const { action, data } = body;
 
     switch (action) {
-      case "create-source":
+      case "create-source": {
         const source = await service.createKnowledgeSource(data);
         return NextResponse.json({ success: true, data: source }, { status: 201 });
+      }
 
-      case "create-knowledge":
+      case "create-knowledge": {
         const knowledge = await service.createMedicalKnowledge(data);
         return NextResponse.json({ success: true, data: knowledge }, { status: 201 });
+      }
 
-      case "validate-evidence":
+      case "validate-evidence": {
         const validationResult = await service.validateRecommendation(data);
         return NextResponse.json({ success: true, data: validationResult });
+      }
 
-      case "cache-results":
+      case "cache-results": {
         const cachedData = await service.cacheSearchResults(data);
         return NextResponse.json({ success: true, data: cachedData }, { status: 201 });
+      }
 
-      case "trigger-sync":
+      case "trigger-sync": {
         const { source_id, force_full } = data;
         if (!source_id) {
           return NextResponse.json({ error: "Source ID required" }, { status: 400 });
@@ -178,6 +191,7 @@ export async function POST(request: NextRequest) {
 
         await service.triggerSync(source_id, force_full || false);
         return NextResponse.json({ success: true, message: "Sync triggered successfully" });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -213,13 +227,15 @@ export async function PUT(request: NextRequest) {
     }
 
     switch (action) {
-      case "update-source":
+      case "update-source": {
         const updatedSource = await service.updateKnowledgeSource(id, data);
         return NextResponse.json({ success: true, data: updatedSource });
+      }
 
-      case "update-knowledge":
+      case "update-knowledge": {
         const updatedKnowledge = await service.updateMedicalKnowledge(id, data);
         return NextResponse.json({ success: true, data: updatedKnowledge });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });

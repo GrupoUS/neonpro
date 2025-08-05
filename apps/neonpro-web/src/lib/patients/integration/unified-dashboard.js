@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Unified Patient Dashboard System
  * Integrates all patient data for comprehensive 360° view
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,14 +133,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UnifiedPatientDashboard = void 0;
 var appointment_integration_1 = require("./appointment-integration");
 var treatment_integration_1 = require("./treatment-integration");
 var client_1 = require("@/lib/supabase/client");
 var logger_1 = require("@/lib/logger");
-var UnifiedPatientDashboard = /** @class */ (function () {
+var UnifiedPatientDashboard = /** @class */ (() => {
   function UnifiedPatientDashboard() {}
   /**
    * Get complete 360° patient profile
@@ -321,7 +318,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
         oldPatients,
         patientRetentionRate,
         error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 13, , 14]);
@@ -377,9 +374,8 @@ var UnifiedPatientDashboard = /** @class */ (function () {
             satisfactionData = _a.sent().data;
             avgSatisfaction =
               satisfactionData && satisfactionData.length > 0
-                ? satisfactionData.reduce(function (sum, p) {
-                    return sum + (p.satisfaction_score || 0);
-                  }, 0) / satisfactionData.length
+                ? satisfactionData.reduce((sum, p) => sum + (p.satisfaction_score || 0), 0) /
+                  satisfactionData.length
                 : 0;
             return [
               4 /*yield*/,
@@ -390,15 +386,14 @@ var UnifiedPatientDashboard = /** @class */ (function () {
             totalRevenue =
               (financialData === null || financialData === void 0
                 ? void 0
-                : financialData.reduce(function (sum, t) {
-                    return sum + (t.cost_paid || 0);
-                  }, 0)) || 0;
+                : financialData.reduce((sum, t) => sum + (t.cost_paid || 0), 0)) || 0;
             outstandingPayments =
               (financialData === null || financialData === void 0
                 ? void 0
-                : financialData.reduce(function (sum, t) {
-                    return sum + ((t.cost_total || 0) - (t.cost_paid || 0));
-                  }, 0)) || 0;
+                : financialData.reduce(
+                    (sum, t) => sum + ((t.cost_total || 0) - (t.cost_paid || 0)),
+                    0,
+                  )) || 0;
             thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             return [
@@ -526,21 +521,15 @@ var UnifiedPatientDashboard = /** @class */ (function () {
             totalBilled =
               (treatments === null || treatments === void 0
                 ? void 0
-                : treatments.reduce(function (sum, t) {
-                    return sum + (t.cost_total || 0);
-                  }, 0)) || 0;
+                : treatments.reduce((sum, t) => sum + (t.cost_total || 0), 0)) || 0;
             totalPaid =
               (treatments === null || treatments === void 0
                 ? void 0
-                : treatments.reduce(function (sum, t) {
-                    return sum + (t.cost_paid || 0);
-                  }, 0)) || 0;
+                : treatments.reduce((sum, t) => sum + (t.cost_paid || 0), 0)) || 0;
             insuranceCoverage =
               (treatments === null || treatments === void 0
                 ? void 0
-                : treatments.reduce(function (sum, t) {
-                    return sum + (t.insurance_covered || 0);
-                  }, 0)) || 0;
+                : treatments.reduce((sum, t) => sum + (t.insurance_covered || 0), 0)) || 0;
             return [
               2 /*return*/,
               {
@@ -587,7 +576,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
         responseRate,
         error_4;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -615,24 +604,21 @@ var UnifiedPatientDashboard = /** @class */ (function () {
             channelCounts_1 = {};
             communications === null || communications === void 0
               ? void 0
-              : communications.forEach(function (comm) {
+              : communications.forEach((comm) => {
                   channelCounts_1[comm.channel] = (channelCounts_1[comm.channel] || 0) + 1;
                 });
-            preferredChannel = Object.keys(channelCounts_1).reduce(function (a, b) {
-              return channelCounts_1[a] > channelCounts_1[b] ? a : b;
-            }, "email");
+            preferredChannel = Object.keys(channelCounts_1).reduce(
+              (a, b) => (channelCounts_1[a] > channelCounts_1[b] ? a : b),
+              "email",
+            );
             outboundComms =
               (communications === null || communications === void 0
                 ? void 0
-                : communications.filter(function (c) {
-                    return c.direction === "outbound";
-                  })) || [];
+                : communications.filter((c) => c.direction === "outbound")) || [];
             respondedComms =
               (communications === null || communications === void 0
                 ? void 0
-                : communications.filter(function (c) {
-                    return c.direction === "inbound";
-                  })) || [];
+                : communications.filter((c) => c.direction === "inbound")) || [];
             responseRate =
               outboundComms.length > 0 ? (respondedComms.length / outboundComms.length) * 100 : 0;
             return [
@@ -728,7 +714,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   UnifiedPatientDashboard.getVisualData = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var photos, profilePhotos, treatmentPhotos, progressPhotos, faceData, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -745,21 +731,15 @@ var UnifiedPatientDashboard = /** @class */ (function () {
             profilePhotos =
               (photos === null || photos === void 0
                 ? void 0
-                : photos.filter(function (p) {
-                    return p.photo_type === "profile";
-                  })) || [];
+                : photos.filter((p) => p.photo_type === "profile")) || [];
             treatmentPhotos =
               (photos === null || photos === void 0
                 ? void 0
-                : photos.filter(function (p) {
-                    return p.photo_type === "treatment";
-                  })) || [];
+                : photos.filter((p) => p.photo_type === "treatment")) || [];
             progressPhotos =
               (photos === null || photos === void 0
                 ? void 0
-                : photos.filter(function (p) {
-                    return p.photo_type === "progress";
-                  })) || [];
+                : photos.filter((p) => p.photo_type === "progress")) || [];
             return [
               4 /*yield*/,
               client_1.supabase
@@ -802,17 +782,15 @@ var UnifiedPatientDashboard = /** @class */ (function () {
    */
   UnifiedPatientDashboard.analyzePaymentPatterns = function (payments) {
     if (payments.length === 0) return {};
-    var avgPaymentAmount =
-      payments.reduce(function (sum, p) {
-        return sum + (p.amount || 0);
-      }, 0) / payments.length;
-    var paymentMethods = payments.reduce(function (methods, p) {
+    var avgPaymentAmount = payments.reduce((sum, p) => sum + (p.amount || 0), 0) / payments.length;
+    var paymentMethods = payments.reduce((methods, p) => {
       methods[p.payment_method] = (methods[p.payment_method] || 0) + 1;
       return methods;
     }, {});
-    var preferredMethod = Object.keys(paymentMethods).reduce(function (a, b) {
-      return paymentMethods[a] > paymentMethods[b] ? a : b;
-    }, "cash");
+    var preferredMethod = Object.keys(paymentMethods).reduce(
+      (a, b) => (paymentMethods[a] > paymentMethods[b] ? a : b),
+      "cash",
+    );
     return {
       avg_payment_amount: avgPaymentAmount,
       preferred_payment_method: preferredMethod,
@@ -823,7 +801,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   /**
    * Calculate churn risk score
    */
-  UnifiedPatientDashboard.calculateChurnRisk = function (data) {
+  UnifiedPatientDashboard.calculateChurnRisk = (data) => {
     var riskScore = 0;
     // No recent appointments
     var daysSinceLastAppointment =
@@ -857,7 +835,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   /**
    * Predict lifetime value
    */
-  UnifiedPatientDashboard.predictLifetimeValue = function (data) {
+  UnifiedPatientDashboard.predictLifetimeValue = (data) => {
     var avgMonthlySpend = data.treatmentInsights.total_investment / 12; // Assuming 1 year average
     var retentionMultiplier = Math.max(1, 5 - data.churnRiskScore / 20);
     var satisfactionMultiplier = 1 + (data.treatmentInsights.avg_satisfaction - 3) * 0.2;
@@ -869,7 +847,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   UnifiedPatientDashboard.generateServiceRecommendations = function (patientId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
         // Based on successful past treatments
         if (data.treatmentInsights.preferred_services.length > 0) {
@@ -890,7 +868,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   /**
    * Determine optimal contact time
    */
-  UnifiedPatientDashboard.determineOptimalContactTime = function (communicationHistory) {
+  UnifiedPatientDashboard.determineOptimalContactTime = (communicationHistory) => {
     // Analyze response times to determine best contact hours
     // Default to 10:00 AM for now
     return "10:00";
@@ -898,7 +876,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   /**
    * Generate personality profile
    */
-  UnifiedPatientDashboard.generatePersonalityProfile = function (data) {
+  UnifiedPatientDashboard.generatePersonalityProfile = (data) => {
     if (data.appointmentInsights.punctuality_score > 80) return "Punctual & Organized";
     if (data.treatmentInsights.adherence_score > 90) return "Highly Compliant";
     if (data.communicationHistory.response_rate > 80) return "Highly Responsive";
@@ -908,7 +886,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   /**
    * Calculate engagement score
    */
-  UnifiedPatientDashboard.calculateEngagementScore = function (data) {
+  UnifiedPatientDashboard.calculateEngagementScore = (data) => {
     var score = 0;
     // Appointment engagement
     score += Math.min(data.appointmentInsights.punctuality_score, 25);
@@ -923,11 +901,11 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   /**
    * Calculate payment frequency
    */
-  UnifiedPatientDashboard.calculatePaymentFrequency = function (payments) {
+  UnifiedPatientDashboard.calculatePaymentFrequency = (payments) => {
     if (payments.length < 2) return "Insufficient data";
-    var sortedPayments = payments.sort(function (a, b) {
-      return new Date(a.payment_date).getTime() - new Date(b.payment_date).getTime();
-    });
+    var sortedPayments = payments.sort(
+      (a, b) => new Date(a.payment_date).getTime() - new Date(b.payment_date).getTime(),
+    );
     var intervals = [];
     for (var i = 1; i < sortedPayments.length; i++) {
       var days = Math.floor(
@@ -937,10 +915,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
       );
       intervals.push(days);
     }
-    var avgInterval =
-      intervals.reduce(function (sum, interval) {
-        return sum + interval;
-      }, 0) / intervals.length;
+    var avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
     if (avgInterval <= 7) return "Weekly";
     if (avgInterval <= 30) return "Monthly";
     if (avgInterval <= 90) return "Quarterly";
@@ -949,10 +924,10 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   /**
    * Calculate on-time payment rate
    */
-  UnifiedPatientDashboard.calculateOnTimePaymentRate = function (payments) {
-    var onTimePayments = payments.filter(function (p) {
-      return new Date(p.payment_date) <= new Date(p.due_date);
-    }).length;
+  UnifiedPatientDashboard.calculateOnTimePaymentRate = (payments) => {
+    var onTimePayments = payments.filter(
+      (p) => new Date(p.payment_date) <= new Date(p.due_date),
+    ).length;
     return payments.length > 0 ? (onTimePayments / payments.length) * 100 : 0;
   };
   /**
@@ -988,7 +963,7 @@ var UnifiedPatientDashboard = /** @class */ (function () {
   /**
    * Convert profile to CSV format
    */
-  UnifiedPatientDashboard.convertToCSV = function (profile) {
+  UnifiedPatientDashboard.convertToCSV = (profile) => {
     var headers = [
       "Patient ID",
       "Name",

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Webhook & Event System Integration
  * Story 7.3: Webhook & Event System Implementation
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,7 +30,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,8 +59,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -82,9 +79,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -143,7 +140,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookManager = exports.EventSystem = exports.WebhookEventSystem = void 0;
 exports.createWebhookEventSystem = createWebhookEventSystem;
@@ -152,7 +149,7 @@ var event_system_1 = require("./event-system");
 exports.EventSystem = event_system_1.default;
 var webhook_manager_1 = require("./webhook-manager");
 exports.WebhookManager = webhook_manager_1.default;
-var WebhookEventSystem = /** @class */ (function () {
+var WebhookEventSystem = /** @class */ (() => {
   function WebhookEventSystem(config) {
     this.isInitialized = false;
     this.systemMetrics = {
@@ -194,7 +191,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3, , 4]);
+            _a.trys.push([0, 3, undefined, 4]);
             console.log("🚀 Initializing Webhook & Event System...");
             // Initialize event system
             return [
@@ -242,7 +239,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 4, , 5]);
+            _a.trys.push([0, 4, undefined, 5]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -300,7 +297,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -329,7 +326,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -357,7 +354,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -397,7 +394,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -433,7 +430,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -459,7 +456,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -479,7 +476,7 @@ var WebhookEventSystem = /** @class */ (function () {
   /**
    * Get delivery history for a webhook
    */
-  WebhookEventSystem.prototype.getDeliveryHistory = function (webhookId_1) {
+  WebhookEventSystem.prototype.getDeliveryHistory = function (_webhookId_1) {
     return __awaiter(this, arguments, void 0, function (webhookId, limit) {
       var error_9;
       if (limit === void 0) {
@@ -488,7 +485,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -508,7 +505,7 @@ var WebhookEventSystem = /** @class */ (function () {
   /**
    * Get delivery statistics for a webhook
    */
-  WebhookEventSystem.prototype.getDeliveryStats = function (webhookId_1) {
+  WebhookEventSystem.prototype.getDeliveryStats = function (_webhookId_1) {
     return __awaiter(this, arguments, void 0, function (webhookId, days) {
       var error_10;
       if (days === void 0) {
@@ -517,7 +514,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -552,7 +549,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -578,7 +575,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3, , 4]);
+            _a.trys.push([0, 3, undefined, 4]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -658,7 +655,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             if (!this.isInitialized) {
               throw new Error("System not initialized");
             }
@@ -702,7 +699,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 3, , 4]);
+            _a.trys.push([0, 3, undefined, 4]);
             console.log("🛑 Stopping Webhook & Event System...");
             // Stop health monitoring
             if (this.healthCheckInterval) {
@@ -737,16 +734,16 @@ var WebhookEventSystem = /** @class */ (function () {
     });
   };
   // Private Methods
-  WebhookEventSystem.prototype.setupEventWebhookIntegration = function () {
+  WebhookEventSystem.prototype.setupEventWebhookIntegration = () => {
     // This would set up automatic webhook delivery when events are published
     // For now, this is handled in the publishEvent method
     console.log("✅ Event-Webhook integration configured");
   };
   WebhookEventSystem.prototype.startHealthMonitoring = function () {
-    var _this = this;
-    this.healthCheckInterval = setInterval(function () {
-      return _this.performHealthCheck();
-    }, this.config.monitoring.healthCheckInterval);
+    this.healthCheckInterval = setInterval(
+      () => this.performHealthCheck(),
+      this.config.monitoring.healthCheckInterval,
+    );
     console.log("✅ Health monitoring started");
   };
   WebhookEventSystem.prototype.performHealthCheck = function () {
@@ -755,7 +752,7 @@ var WebhookEventSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [4 /*yield*/, this.getSystemHealth()];
           case 1:
             health = _a.sent();
@@ -781,7 +778,7 @@ var WebhookEventSystem = /** @class */ (function () {
   };
   WebhookEventSystem.prototype.checkEventSystemHealth = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would check the event system's internal health
           // For now, return basic metrics
@@ -793,7 +790,7 @@ var WebhookEventSystem = /** @class */ (function () {
               processingRate: 0, // Would calculate from metrics
             },
           ];
-        } catch (error) {
+        } catch (_error) {
           return [
             2 /*return*/,
             {
@@ -822,7 +819,7 @@ var WebhookEventSystem = /** @class */ (function () {
               averageResponseTime: this.systemMetrics.averageDeliveryTime,
             },
           ];
-        } catch (error) {
+        } catch (_error) {
           return [
             2 /*return*/,
             {

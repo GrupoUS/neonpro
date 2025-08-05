@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Communication Analytics Engine
  *
@@ -23,26 +22,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
           for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -62,13 +61,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -90,9 +89,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -164,10 +161,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -176,13 +173,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
 var _r, _s, _t;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createcommunicationAnalytics = exports.CommunicationAnalyticsEngine = void 0;
 var server_1 = require("@/lib/supabase/server");
-var CommunicationAnalyticsEngine = /** @class */ (function () {
+var CommunicationAnalyticsEngine = /** @class */ (() => {
   function CommunicationAnalyticsEngine() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -353,8 +350,8 @@ var CommunicationAnalyticsEngine = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                (data || []).map(function (channel) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                (data || []).map((channel) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var totalSent,
                       delivered,
                       opened,
@@ -412,8 +409,8 @@ var CommunicationAnalyticsEngine = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 2:
@@ -846,44 +843,16 @@ var CommunicationAnalyticsEngine = /** @class */ (function () {
               },
             };
             _c = {};
-            return [
-              4 /*yield*/,
-              this.detectTrend(
-                timeSeriesData.map(function (d) {
-                  return d.totalMessages;
-                }),
-              ),
-            ];
+            return [4 /*yield*/, this.detectTrend(timeSeriesData.map((d) => d.totalMessages))];
           case 5:
             _c.messageVolume = _d.sent();
-            return [
-              4 /*yield*/,
-              this.detectTrend(
-                timeSeriesData.map(function (d) {
-                  return d.engagementScore;
-                }),
-              ),
-            ];
+            return [4 /*yield*/, this.detectTrend(timeSeriesData.map((d) => d.engagementScore))];
           case 6:
             _c.engagement = _d.sent();
-            return [
-              4 /*yield*/,
-              this.detectTrend(
-                timeSeriesData.map(function (d) {
-                  return d.revenue;
-                }),
-              ),
-            ];
+            return [4 /*yield*/, this.detectTrend(timeSeriesData.map((d) => d.revenue))];
           case 7:
             _c.revenue = _d.sent();
-            return [
-              4 /*yield*/,
-              this.detectTrend(
-                timeSeriesData.map(function (d) {
-                  return d.cost;
-                }),
-              ),
-            ];
+            return [4 /*yield*/, this.detectTrend(timeSeriesData.map((d) => d.cost))];
           case 8:
             return [2 /*return*/, ((_b.trends = ((_c.cost = _d.sent()), _c)), _b)];
           case 9:
@@ -938,7 +907,7 @@ var CommunicationAnalyticsEngine = /** @class */ (function () {
             return [4 /*yield*/, this.getChannelPerformance(filter)];
           case 1:
             clinicMetrics = _a.sent();
-            comparisons = clinicMetrics.map(function (metric) {
+            comparisons = clinicMetrics.map((metric) => {
               var benchmark = industryBenchmarks_1[metric.channel];
               if (!benchmark) {
                 return {
@@ -968,7 +937,7 @@ var CommunicationAnalyticsEngine = /** @class */ (function () {
               2 /*return*/,
               {
                 industry: industryBenchmarks_1,
-                clinic: clinicMetrics.reduce(function (acc, metric) {
+                clinic: clinicMetrics.reduce((acc, metric) => {
                   acc[metric.channel] = {
                     deliveryRate: metric.deliveryRate,
                     openRate: metric.openRate,
@@ -1005,11 +974,11 @@ var CommunicationAnalyticsEngine = /** @class */ (function () {
   /**
    * Métodos auxiliares para cálculos específicos
    */
-  CommunicationAnalyticsEngine.prototype.calculateROI = function (revenue, cost) {
+  CommunicationAnalyticsEngine.prototype.calculateROI = (revenue, cost) => {
     if (cost === 0) return revenue > 0 ? 100 : 0;
     return ((revenue - cost) / cost) * 100;
   };
-  CommunicationAnalyticsEngine.prototype.calculateGrowthRate = function (previous, current) {
+  CommunicationAnalyticsEngine.prototype.calculateGrowthRate = (previous, current) => {
     if (previous === 0) return current > 0 ? 100 : 0;
     return ((current - previous) / previous) * 100;
   };
@@ -1035,9 +1004,9 @@ var CommunicationAnalyticsEngine = /** @class */ (function () {
             if (!(data === null || data === void 0 ? void 0 : data.length))
               return [2 /*return*/, 0];
             total = data.length;
-            conversions = data.filter(function (event) {
-              return event.revenue_attributed && event.revenue_attributed > 0;
-            }).length;
+            conversions = data.filter(
+              (event) => event.revenue_attributed && event.revenue_attributed > 0,
+            ).length;
             return [2 /*return*/, total > 0 ? (conversions / total) * 100 : 0];
           case 2:
             error_10 = _a.sent();
@@ -1103,17 +1072,13 @@ var CommunicationAnalyticsEngine = /** @class */ (function () {
   };
   // Continuar na próxima parte devido ao limite de tamanho...  /**
   CommunicationAnalyticsEngine.prototype.Métodos = function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/];
-    });
+    return __generator(this, (_a) => [2 /*return*/]);
   };
-  CommunicationAnalyticsEngine.prototype. = function () { return __generator(this, function (_a) {
-        return [2 /*return*/];
-    }); };
+  CommunicationAnalyticsEngine.prototype. = function () { return __generator(this, (_a) => [2 /*return*/]); };
   return CommunicationAnalyticsEngine;
 })();
 exports.CommunicationAnalyticsEngine = CommunicationAnalyticsEngine;
-/;;;
+/;;;;;;;;
 async;
 getTotalMessages(filter, analytics_1.AnalyticsFilter);
 Promise <
@@ -1134,9 +1099,7 @@ Promise <
           ? void 0
           : _r.count) || 0,
     },
-    catch: function (error) {
-      return 0;
-    },
+    catch: (error) => 0,
   };
 async;
 getTotalCost(filter, analytics_1.AnalyticsFilter);
@@ -1156,9 +1119,7 @@ Promise <
         _b),
       return: parseFloat(data === null || data === void 0 ? void 0 : data.sum) || 0,
     },
-    catch: function (error) {
-      return 0;
-    },
+    catch: (error) => 0,
   };
 async;
 getTotalRevenue(filter, analytics_1.AnalyticsFilter);
@@ -1178,9 +1139,7 @@ Promise <
         _c),
       return: parseFloat(data === null || data === void 0 ? void 0 : data.sum) || 0,
     },
-    catch: function (error) {
-      return 0;
-    },
+    catch: (error) => 0,
   };
 async;
 assessDataQuality(filter, analytics_1.AnalyticsFilter);
@@ -1202,7 +1161,7 @@ Promise <
           (data = _d.data),
           _d),
         const: (total = parseInt(data === null || data === void 0 ? void 0 : data.total) || 0),
-        if: function (total) {},
+        if: (total) => {},
       } === 0,
     return: 100,
     const: (withDelivery =
@@ -1214,11 +1173,11 @@ Promise <
     const: (deliveryScore = (withDelivery / total) * 100),
     const: (patientScore = (withPatient / total) * 100),
     const: (costScore = (withCost / total) * 100),
-    return: function (deliveryScore) {},
+    return: (deliveryScore) => {},
   } +
     patientScore +
     costScore;
-/ 3;;;
+/ 3;;;;;;;;
 try {
 } catch (error) {
   return 95; // Default score
@@ -1233,12 +1192,12 @@ Promise < number > {
         let: let,
         confidence: confidence, // Base confidence
         // Mais mensagens = maior confiança
-        if: function (totalMessages) { }
+        if: (totalMessages) => { }
     } > 1000,
     confidence: confidence,
     30: ,
     else: ,
-    if: function (totalMessages) { }
+    if: (totalMessages) => { }
 } > 100;
 confidence += 20;
 if (totalMessages > 10) confidence += 10;
@@ -1343,9 +1302,7 @@ Promise <
           ? void 0
           : _s.count) || 0,
     },
-    catch: function (error) {
-      return 0;
-    },
+    catch: (error) => 0,
   };
 async;
 getSeasonalAnalysis(filter, analytics_1.AnalyticsFilter);
@@ -1380,11 +1337,11 @@ getMonthlyPatterns(filter, analytics_1.AnalyticsFilter);
         .lte("sent_at", filter.dateRange.end.toISOString())
         .eq("clinic_id", filter.clinicId)
     ).data;
-    return (data || []).map(function (row) { return ({
+    return (data || []).map((row) => ({
             month: parseInt(row.month),
             avgEngagement: parseFloat(row.avg_engagement) || 0,
             avgRevenue: parseFloat(row.avg_revenue) || 0
-        }); });
+        }));
   } catch (error) {
     return [];
   }
@@ -1403,11 +1360,11 @@ getWeeklyPatterns(filter, analytics_1.AnalyticsFilter);
         .lte("sent_at", filter.dateRange.end.toISOString())
         .eq("clinic_id", filter.clinicId)
     ).data;
-    return (data || []).map(function (row) { return ({
+    return (data || []).map((row) => ({
             dayOfWeek: parseInt(row.day_of_week),
             avgEngagement: parseFloat(row.avg_engagement) || 0,
             avgRevenue: parseFloat(row.avg_revenue) || 0
-        }); });
+        }));
   } catch (error) {
     return [];
   }
@@ -1426,11 +1383,11 @@ getHourlyPatterns(filter, analytics_1.AnalyticsFilter);
         .lte("sent_at", filter.dateRange.end.toISOString())
         .eq("clinic_id", filter.clinicId)
     ).data;
-    return (data || []).map(function (row) { return ({
+    return (data || []).map((row) => ({
             hour: parseInt(row.hour),
             avgEngagement: parseFloat(row.avg_engagement) || 0,
             avgRevenue: parseFloat(row.avg_revenue) || 0
-        }); });
+        }));
   } catch (error) {
     return [];
   }
@@ -1444,25 +1401,11 @@ getForecastingData(filter, analytics_1.AnalyticsFilter, timeSeriesData, analytic
     }
     // Previsão simples baseada em média móvel e tendência linear
     var recentData = timeSeriesData.slice(-7); // Últimos 7 dias
-    var avgMessages_1 =
-      recentData.reduce(function (sum, d) {
-        return sum + d.totalMessages;
-      }, 0) / recentData.length;
-    var avgRevenue_1 =
-      recentData.reduce(function (sum, d) {
-        return sum + d.revenue;
-      }, 0) / recentData.length;
+    var avgMessages_1 = recentData.reduce((sum, d) => sum + d.totalMessages, 0) / recentData.length;
+    var avgRevenue_1 = recentData.reduce((sum, d) => sum + d.revenue, 0) / recentData.length;
     // Tendência (slope)
-    var messagesTrend_1 = this.calculateLinearTrend(
-      recentData.map(function (d) {
-        return d.totalMessages;
-      }),
-    );
-    var revenueTrend_1 = this.calculateLinearTrend(
-      recentData.map(function (d) {
-        return d.revenue;
-      }),
-    );
+    var messagesTrend_1 = this.calculateLinearTrend(recentData.map((d) => d.totalMessages));
+    var revenueTrend_1 = this.calculateLinearTrend(recentData.map((d) => d.revenue));
     // Próximo mês (30 dias)
     var nextMonth = [];
     for (var i = 1; i <= 30; i++) {
@@ -1475,22 +1418,17 @@ getForecastingData(filter, analytics_1.AnalyticsFilter, timeSeriesData, analytic
       });
     }
     // Próximo trimestre (agregado por mês)
-    var nextQuarter = [1, 2, 3].map(function (month) {
-      return {
-        month: month,
-        predictedMessages: Math.round((avgMessages_1 + messagesTrend_1 * month * 30) * 30),
-        predictedRevenue: Math.round((avgRevenue_1 + revenueTrend_1 * month * 30) * 30 * 100) / 100,
-      };
-    });
+    var nextQuarter = [1, 2, 3].map((month) => ({
+      month: month,
+      predictedMessages: Math.round((avgMessages_1 + messagesTrend_1 * month * 30) * 30),
+      predictedRevenue: Math.round((avgRevenue_1 + revenueTrend_1 * month * 30) * 30 * 100) / 100,
+    }));
     // Próximo ano (agregado por trimestre)
-    var nextYear = [1, 2, 3, 4].map(function (quarter) {
-      return {
-        quarter: quarter,
-        predictedMessages: Math.round((avgMessages_1 + messagesTrend_1 * quarter * 90) * 90),
-        predictedRevenue:
-          Math.round((avgRevenue_1 + revenueTrend_1 * quarter * 90) * 90 * 100) / 100,
-      };
-    });
+    var nextYear = [1, 2, 3, 4].map((quarter) => ({
+      quarter: quarter,
+      predictedMessages: Math.round((avgMessages_1 + messagesTrend_1 * quarter * 90) * 90),
+      predictedRevenue: Math.round((avgRevenue_1 + revenueTrend_1 * quarter * 90) * 90 * 100) / 100,
+    }));
     return { nextMonth: nextMonth, nextQuarter: nextQuarter, nextYear: nextYear };
   } catch (error) {
     return { nextMonth: [], nextQuarter: [], nextYear: [] };
@@ -1502,25 +1440,19 @@ number;
   if (data.length < 2) return 0;
   var n = data.length;
   var sumX = (n * (n - 1)) / 2; // 0 + 1 + 2 + ... + (n-1)
-  var sumY = data.reduce(function (sum, val) {
-    return sum + val;
-  }, 0);
-  var sumXY = data.reduce(function (sum, val, index) {
-    return sum + val * index;
-  }, 0);
-  var sumX2 = data.reduce(function (sum, _, index) {
-    return sum + index * index;
-  }, 0);
+  var sumY = data.reduce((sum, val) => sum + val, 0);
+  var sumXY = data.reduce((sum, val, index) => sum + val * index, 0);
+  var sumX2 = data.reduce((sum, _, index) => sum + index * index, 0);
   return (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
 }
 async;
 detectTrend(data, number[]);
 Promise < 'increasing' | 'decreasing' | 'stable' > {
-    if: function (data) { },
+    if: (data) => { },
     : .length < 3, return: 'stable',
     const: trend = this.calculateLinearTrend(data),
-    const: threshold = Math.abs(data.reduce(function (sum, val) { return sum + val; }, 0) / data.length) * 0.05, // 5% threshold
-    if: function (trend) { }
+    const: threshold = Math.abs(data.reduce((sum, val) => sum + val, 0) / data.length) * 0.05, // 5% threshold
+    if: (trend) => { }
 } > threshold;
 return 'increasing';
 if (trend < -threshold) return 'decreasing';
@@ -1538,9 +1470,7 @@ calculateOverallBenchmarkScore(comparisons, any[]);
 number;
 {
   if (!comparisons.length) return 0;
-  var totalScore = comparisons.reduce(function (sum, comp) {
-    return sum + comp.performanceScore;
-  }, 0);
+  var totalScore = comparisons.reduce((sum, comp) => sum + comp.performanceScore, 0);
   return totalScore / comparisons.length;
 }
 async;
@@ -1550,18 +1480,41 @@ Promise < string[] > (_g = {
         string: string
     },
     _g[] =  = [],
-    _g.for = function (, comp, of, comparisons) {
-        if (comp.deliveryRateDiff < -5) {
-            recommendations.push("Melhorar taxa de entrega do canal ".concat(comp.channel, " - considere validar listas e hor\u00E1rios"));
-        }
-        if (comp.openRateDiff < -10) {
-            recommendations.push("Otimizar taxa de abertura do canal ".concat(comp.channel, " - revisar t\u00EDtulos e timing"));
-        }
-        if (comp.responseRateDiff < -15) {
-            recommendations.push("Aumentar engajamento do canal ".concat(comp.channel, " - melhorar call-to-actions e personaliza\u00E7\u00E3o"));
-        }
-    },
-    _g.if = function (, recommendations) { },
+    _g.for = (, comp, of, comparisons)
+=>
+{
+  if (comp.deliveryRateDiff < -5) {
+    recommendations.push(
+      "Melhorar taxa de entrega do canal ".concat(
+        comp.channel,
+        " - considere validar listas e hor\u00E1rios",
+      ),
+    );
+  }
+  if (comp.openRateDiff < -10) {
+    recommendations.push(
+      "Otimizar taxa de abertura do canal ".concat(
+        comp.channel,
+        " - revisar t\u00EDtulos e timing",
+      ),
+    );
+  }
+  if (comp.responseRateDiff < -15) {
+    recommendations.push(
+      "Aumentar engajamento do canal ".concat(
+        comp.channel,
+        " - melhorar call-to-actions e personaliza\u00E7\u00E3o",
+      ),
+    );
+  }
+}
+,
+    _g.
+if
+= (, recommendations) =>
+{
+}
+,
     _g. =
 .length,
     _g)
@@ -1576,7 +1529,7 @@ calculateIndustryRanking(overallScore, number);
 Promise <
   string >
   {
-    if: function (overallScore) {},
+    if: (overallScore) => {},
   } >=
   120;
 return 'excellent';
@@ -1617,17 +1570,23 @@ function (error) {
     }
 }
 async
-checkAlerts(event, analytics_1.CommunicationEvent);
-Promise < void  > {
-    try: {
-        const: (_h = await this.supabase
-            .from('communication_alerts')
+checkAlerts(event, analytics_1.CommunicationEvent)
+Promise < void  >
+{
+  try
+  :
+  {
+    const: (_h = await this.supabase
+    .from('communication_alerts')
             .select('*')
             .eq('clinic_id', event.clinicId)
             .eq('is_active', true), alerts = _h.data, _h),
-        for: function (, alert, of, alerts) { }
-    } || []
-};
+    for
+    :
+    function (, alert, of, alerts) { }
+  }
+  || []
+}
 {
   var shouldTrigger = await this.evaluateAlertCondition(alert, event);
   if (shouldTrigger) {
@@ -1644,10 +1603,10 @@ Promise < boolean > {
     try: {
         // Implementar lógica de avaliação de condições
         // Exemplo: verificar se taxa de entrega caiu abaixo do threshold
-        for: function (, condition, of, alert) { },
+        for: (, condition, of, alert) => { },
         : .conditions
     }
-};
+}
 {
   var currentValue = await this.getMetricValue(condition.metric, event.clinicId);
   switch (condition.operator) {
@@ -1679,7 +1638,7 @@ Promise < number > {
         const: yesterday = new Date(today.getTime() - (24 * 60 * 60 * 1000)),
         const: filter,
         AnalyticsFilter: analytics_1.AnalyticsFilter,
-        switch: function (metric) {
+        switch: (metric) => {
         },
         case: 'delivery_rate',
         const: engagement = await this.getEngagementMetrics(filter),
@@ -1702,10 +1661,10 @@ async;
 triggerAlert(alert, any, event, analytics_1.CommunicationEvent);
 Promise < void  > {
     try: {
-        for: function (, action, of, alert) { },
+        for: (, action, of, alert) => { },
         : .actions
     }
-};
+}
 {
   switch (action.type) {
     case "email":
@@ -1761,9 +1720,7 @@ Promise <
           : _t.count) || 0),
       return: total > 0 ? (reachedPatients / total) * 100 : 0,
     },
-    catch: function (error) {
-      return 0;
-    },
+    catch: (error) => 0,
   };
 async;
 calculateFrequencyRate(filter, analytics_1.AnalyticsFilter);
@@ -1775,16 +1732,14 @@ Promise < number > {
             .gte('sent_at', filter.dateRange.start.toISOString())
             .lte('sent_at', filter.dateRange.end.toISOString())
             .eq('clinic_id', filter.clinicId), data = _l.data, _l),
-        if: function (, data, length) { },
+        if: (, data, length) => { },
         return: 0,
-        const: totalMessages = data.reduce(function (sum, patient) { return sum + parseInt(patient.message_count); }, 0),
+        const: totalMessages = data.reduce((sum, patient) => sum + parseInt(patient.message_count), 0),
         const: uniquePatients = data.length,
         return: uniquePatients > 0 ? totalMessages / uniquePatients : 0
     },
-    catch: function (error) {
-        return 0;
-    }
-};
+catch: (error) => 0
+}
 async;
 calculateRetentionRate(filter, analytics_1.AnalyticsFilter);
 Promise <
@@ -1817,24 +1772,14 @@ Promise <
           .eq("clinic_id", filter.clinicId)),
         (previousPeriod = _o.data),
         _o),
-      const: (currentPatients = new Set(
-        (currentPeriod || []).map(function (p) {
-          return p.patient_id;
-        }),
-      )),
-      const: (previousPatients = new Set(
-        (previousPeriod || []).map(function (p) {
-          return p.patient_id;
-        }),
-      )),
-      const: (retainedPatients = __spreadArray([], currentPatients, true).filter(function (id) {
-        return previousPatients.has(id);
-      }).length),
+      const: (currentPatients = new Set((currentPeriod || []).map((p) => p.patient_id))),
+      const: (previousPatients = new Set((previousPeriod || []).map((p) => p.patient_id))),
+      const: (retainedPatients = __spreadArray([], currentPatients, true).filter((id) =>
+        previousPatients.has(id),
+      ).length),
       return: previousPatients.size > 0 ? (retainedPatients / previousPatients.size) * 100 : 0,
     },
-    catch: function (error) {
-      return 0;
-    },
+    catch: (error) => 0,
   };
 async;
 calculateSatisfactionScore(filter, analytics_1.AnalyticsFilter);
@@ -1853,9 +1798,7 @@ Promise <
         Math.min(engagement.clickThroughRate * 2, 100) * 0.1),
       return: Math.min(satisfactionProxy, 100),
     },
-    catch: function (error) {
-      return 0;
-    },
+    catch: (error) => 0,
   };
 async;
 calculateBreakEvenPoint(filter, analytics_1.AnalyticsFilter);
@@ -1867,12 +1810,12 @@ Promise <
         const: (totalCost = await this.getTotalCost(filter)),
         const: (totalRevenue = await this.getTotalRevenue(filter)),
         const: (totalMessages = await this.getTotalMessages(filter)),
-        if: function (totalMessages) {},
+        if: (totalMessages) => {},
       } === 0 || totalRevenue <= totalCost,
     return: 0,
     const: (revenuePerMessage = totalRevenue / totalMessages),
     const: (costPerMessage = totalCost / totalMessages),
-    if: function (revenuePerMessage) {},
+    if: (revenuePerMessage) => {},
   } <=
   costPerMessage;
 return 0;
@@ -1895,7 +1838,7 @@ Promise <
           (filter.dateRange.end.getTime() - filter.dateRange.start.getTime()) /
             (1000 * 60 * 60 * 24),
         )),
-        if: function (totalRevenue) {},
+        if: (totalRevenue) => {},
       } <= totalCost || daysDiff === 0,
     return: 0,
     const: (dailyProfit = (totalRevenue - totalCost) / daysDiff),
@@ -1918,13 +1861,11 @@ Promise < analytics_1.AttributionModel > {
             .eq('clinic_id', filter.clinicId)
             .gt('revenue_attributed', 0)
             .order('sent_at'), data = _p.data, _p),
-        if: function (, data, length) {
-            return { firstTouch: 0, lastTouch: 0, linear: 0, timeDecay: 0 };
-        }
+        if: (, data, length) => ({ firstTouch: 0, lastTouch: 0, linear: 0, timeDecay: 0 })
         // Agrupar por paciente
         ,
         // Agrupar por paciente
-        const: patientJourneys = data.reduce(function (acc, event) {
+        const: patientJourneys = data.reduce((acc, event) => {
             if (!acc[event.patient_id])
                 acc[event.patient_id] = [];
             acc[event.patient_id].push(event);
@@ -1938,14 +1879,12 @@ Promise < analytics_1.AttributionModel > {
         linear: linear,
         let: let,
         timeDecay: timeDecay,
-        for: function (, journey, of, Object) { },
-        : .values(patientJourneys)
+        for: (, journey, of, Object) => { },
+: .values(patientJourneys)
     }
-};
+}
 {
-  var totalRevenue = journey.reduce(function (sum, event) {
-    return sum + event.revenue_attributed;
-  }, 0);
+  var totalRevenue = journey.reduce((sum, event) => sum + event.revenue_attributed, 0);
   // First touch
   firstTouch += totalRevenue;
   // Last touch
@@ -1953,12 +1892,11 @@ Promise < analytics_1.AttributionModel > {
   // Linear
   linear += totalRevenue / journey.length;
   // Time decay (mais recente tem mais peso)
-  var totalWeight_1 = journey.reduce(function (sum, _, index) {
-    return sum + (index + 1);
-  }, 0);
-  timeDecay += journey.reduce(function (sum, event, index) {
-    return sum + (event.revenue_attributed * (index + 1)) / totalWeight_1;
-  }, 0);
+  var totalWeight_1 = journey.reduce((sum, _, index) => sum + (index + 1), 0);
+  timeDecay += journey.reduce(
+    (sum, event, index) => sum + (event.revenue_attributed * (index + 1)) / totalWeight_1,
+    0,
+  );
 }
 return { firstTouch: firstTouch, lastTouch: lastTouch, linear: linear, timeDecay: timeDecay };
 try {
@@ -1975,9 +1913,7 @@ Promise <
       const: (totalRevenue = await this.getTotalRevenue(filter)),
       return: conversions > 0 ? totalRevenue / conversions : 0,
     },
-    catch: function (error) {
-      return 0;
-    },
+    catch: (error) => 0,
   };
 async;
 calculateLifetimeValue(filter, analytics_1.AnalyticsFilter);
@@ -1991,18 +1927,14 @@ Promise < number > {
             .lte('sent_at', filter.dateRange.end.toISOString())
             .eq('clinic_id', filter.clinicId)
             .gt('revenue_attributed', 0), data = _q.data, _q),
-        if: function (, data, length) { },
+        if: (, data, length) => { },
         return: 0,
-        const: totalRevenue = data.reduce(function (sum, patient) { return sum + parseFloat(patient.total_revenue); }, 0),
+        const: totalRevenue = data.reduce((sum, patient) => sum + parseFloat(patient.total_revenue), 0),
         const: uniquePatients = data.length,
         return: uniquePatients > 0 ? totalRevenue / uniquePatients : 0
     },
-    catch: function (error) {
-        return 0;
-    }
-};
+catch: (error) => 0
+}
 // Export singleton instance
-var createcommunicationAnalytics = function () {
-  return new CommunicationAnalyticsEngine();
-};
+var createcommunicationAnalytics = () => new CommunicationAnalyticsEngine();
 exports.createcommunicationAnalytics = createcommunicationAnalytics;

@@ -8,7 +8,6 @@
  * BMAD METHOD + VOIDBEAST V6.0 ENHANCED - Quality ≥9.8/10
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OutcomeAnalyticsPanel = OutcomeAnalyticsPanel;
 exports.PredictiveInsightsPanel = PredictiveInsightsPanel;

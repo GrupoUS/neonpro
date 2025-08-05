@@ -3,7 +3,25 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Edit,
+  Eye,
+  Filter,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Settings,
+  Shield,
+  Trash2,
+  Users,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,22 +29,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type { Checkbox } from "@/components/ui/checkbox";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Dialog,
   DialogContent,
@@ -37,14 +40,6 @@ import type {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -52,33 +47,38 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useToast } from "@/components/ui/use-toast";
 import type { useRBAC } from "@/hooks/use-rbac";
-import type { createClient } from "@/lib/supabase/client";
 import type { rbacManager } from "@/lib/auth/rbac/permissions";
+import type { createClient } from "@/lib/supabase/client";
 import type {
-  UserRole,
-  Permission,
-  RoleDefinition,
-  UserRoleAssignment,
   DEFAULT_ROLES,
   PERMISSION_GROUPS,
+  Permission,
+  RoleDefinition,
+  UserRole,
+  UserRoleAssignment,
 } from "@/types/rbac";
-import type {
-  Users,
-  Shield,
-  Settings,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  MoreHorizontal,
-  Search,
-  Filter,
-} from "lucide-react";
 
 interface RoleManagementProps {
   clinicId: string;

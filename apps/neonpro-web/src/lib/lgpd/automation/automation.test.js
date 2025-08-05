@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Automation System - Testes Automatizados
  *
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,88 +147,50 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testHelpers = void 0;
 var globals_1 = require("@jest/globals");
 var index_1 = require("./index");
 // Mock do Supabase para testes
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(function () {
-                return Promise.resolve({ data: {}, error: null });
-              }),
-            };
-          }),
-        };
-      }),
-      insert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(function () {
-                return Promise.resolve({ data: { id: "test-id" }, error: null });
-              }),
-            };
-          }),
-        };
-      }),
-      update: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return Promise.resolve({ data: {}, error: null });
-          }),
-        };
-      }),
-      delete: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return Promise.resolve({ data: {}, error: null });
-          }),
-        };
-      }),
-    };
-  }),
-  rpc: globals_1.jest.fn(function () {
-    return Promise.resolve({ data: {}, error: null });
-  }),
-  channel: globals_1.jest.fn(function () {
-    return {
-      on: globals_1.jest.fn(function () {
-        return {
-          subscribe: globals_1.jest.fn(),
-        };
-      }),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(() => Promise.resolve({ data: {}, error: null })),
+      })),
+    })),
+    insert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(() => Promise.resolve({ data: { id: "test-id" }, error: null })),
+      })),
+    })),
+    update: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => Promise.resolve({ data: {}, error: null })),
+    })),
+    delete: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => Promise.resolve({ data: {}, error: null })),
+    })),
+  })),
+  rpc: globals_1.jest.fn(() => Promise.resolve({ data: {}, error: null })),
+  channel: globals_1.jest.fn(() => ({
+    on: globals_1.jest.fn(() => ({
+      subscribe: globals_1.jest.fn(),
+    })),
+  })),
 };
 // Mock do LGPDComplianceManager
 var mockComplianceManager = {
-  logAuditEvent: globals_1.jest.fn(function () {
-    return Promise.resolve({ success: true });
-  }),
-  checkUserPermission: globals_1.jest.fn(function () {
-    return Promise.resolve(true);
-  }),
-  getDashboardMetrics: globals_1.jest.fn(function () {
-    return Promise.resolve({});
-  }),
-  getConsents: globals_1.jest.fn(function () {
-    return Promise.resolve({ consents: [] });
-  }),
-  createOrUpdateConsent: globals_1.jest.fn(function () {
-    return Promise.resolve({ consent_id: "test-consent" });
-  }),
+  logAuditEvent: globals_1.jest.fn(() => Promise.resolve({ success: true })),
+  checkUserPermission: globals_1.jest.fn(() => Promise.resolve(true)),
+  getDashboardMetrics: globals_1.jest.fn(() => Promise.resolve({})),
+  getConsents: globals_1.jest.fn(() => Promise.resolve({ consents: [] })),
+  createOrUpdateConsent: globals_1.jest.fn(() => Promise.resolve({ consent_id: "test-consent" })),
 };
-(0, globals_1.describe)("LGPD Automation System", function () {
+(0, globals_1.describe)("LGPD Automation System", () => {
   var orchestrator;
   var config;
-  (0, globals_1.beforeAll)(function () {
+  (0, globals_1.beforeAll)(() => {
     // Configuração de teste
     config = (0, index_1.getLGPDAutomationConfig)("development");
     // Inicializar orquestrador com mocks
@@ -241,9 +200,9 @@ var mockComplianceManager = {
       config,
     );
   });
-  (0, globals_1.afterAll)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, globals_1.afterAll)(() =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!orchestrator) return [3 /*break*/, 2];
@@ -255,18 +214,18 @@ var mockComplianceManager = {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.describe)("Orchestrator", function () {
-    (0, globals_1.test)("should initialize successfully", function () {
+    }),
+  );
+  (0, globals_1.describe)("Orchestrator", () => {
+    (0, globals_1.test)("should initialize successfully", () => {
       (0, globals_1.expect)(orchestrator).toBeDefined();
       (0, globals_1.expect)(typeof orchestrator.startAllAutomation).toBe("function");
       (0, globals_1.expect)(typeof orchestrator.stopAllAutomation).toBe("function");
     });
-    (0, globals_1.test)("should start all automation modules", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should start all automation modules", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, orchestrator.startAllAutomation()];
@@ -280,12 +239,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should stop all automation modules", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should stop all automation modules", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, orchestrator.stopAllAutomation()];
@@ -297,12 +256,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should get automation status", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should get automation status", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var status;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, orchestrator.getAutomationStatus()];
@@ -312,12 +271,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should get automation metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should get automation metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, orchestrator.getAutomationMetrics()];
@@ -327,12 +286,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should get unified dashboard", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should get unified dashboard", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var dashboard;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, orchestrator.getUnifiedDashboard()];
@@ -342,9 +301,9 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should get modules", function () {
+      }),
+    );
+    (0, globals_1.test)("should get modules", () => {
       var modules = orchestrator.getModules();
       (0, globals_1.expect)(modules).toHaveProperty("consentAutomation");
       (0, globals_1.expect)(modules).toHaveProperty("dataSubjectRights");
@@ -356,19 +315,19 @@ var mockComplianceManager = {
       (0, globals_1.expect)(modules).toHaveProperty("auditReporting");
     });
   });
-  (0, globals_1.describe)("Consent Automation Manager", function () {
+  (0, globals_1.describe)("Consent Automation Manager", () => {
     var consentManager;
-    (0, globals_1.beforeEach)(function () {
+    (0, globals_1.beforeEach)(() => {
       consentManager = new index_1.ConsentAutomationManager(
         mockSupabase,
         mockComplianceManager,
         config.consent_automation,
       );
     });
-    (0, globals_1.test)("should collect consent with tracking", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should collect consent with tracking", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var consentData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               consentData = {
@@ -392,12 +351,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should process consent renewal", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should process consent renewal", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var renewalData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renewalData = {
@@ -414,12 +373,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should withdraw consent", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should withdraw consent", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var withdrawalData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               withdrawalData = {
@@ -437,12 +396,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should get consent analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should get consent analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var filters, analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               filters = {
@@ -459,22 +418,22 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Data Subject Rights Automation", function () {
+  (0, globals_1.describe)("Data Subject Rights Automation", () => {
     var rightsManager;
-    (0, globals_1.beforeEach)(function () {
+    (0, globals_1.beforeEach)(() => {
       rightsManager = new index_1.DataSubjectRightsAutomation(
         mockSupabase,
         mockComplianceManager,
         config.data_subject_rights,
       );
     });
-    (0, globals_1.test)("should process access request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should process access request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestData = {
@@ -493,12 +452,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should process rectification request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should process rectification request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestData = {
@@ -521,12 +480,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should process deletion request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should process deletion request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestData = {
@@ -545,12 +504,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should process portability request", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should process portability request", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestData = {
@@ -569,22 +528,22 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Real-Time Compliance Monitor", function () {
+  (0, globals_1.describe)("Real-Time Compliance Monitor", () => {
     var complianceMonitor;
-    (0, globals_1.beforeEach)(function () {
+    (0, globals_1.beforeEach)(() => {
       complianceMonitor = new index_1.RealTimeComplianceMonitor(
         mockSupabase,
         mockComplianceManager,
         config.compliance_monitoring,
       );
     });
-    (0, globals_1.test)("should start monitoring", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should start monitoring", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, complianceMonitor.startMonitoring()];
@@ -594,12 +553,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should get compliance dashboard", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should get compliance dashboard", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var dashboard;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, complianceMonitor.getComplianceDashboard()];
@@ -610,12 +569,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should perform compliance check", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should perform compliance check", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, complianceMonitor.performComplianceCheck()];
@@ -626,22 +585,22 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Data Retention Automation", function () {
+  (0, globals_1.describe)("Data Retention Automation", () => {
     var retentionManager;
-    (0, globals_1.beforeEach)(function () {
+    (0, globals_1.beforeEach)(() => {
       retentionManager = new index_1.DataRetentionAutomation(
         mockSupabase,
         mockComplianceManager,
         config.data_retention,
       );
     });
-    (0, globals_1.test)("should create retention policy", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should create retention policy", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var policyData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               policyData = {
@@ -666,12 +625,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should schedule retention execution", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should schedule retention execution", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var scheduleData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               scheduleData = {
@@ -688,22 +647,22 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Breach Detection Automation", function () {
+  (0, globals_1.describe)("Breach Detection Automation", () => {
     var breachDetection;
-    (0, globals_1.beforeEach)(function () {
+    (0, globals_1.beforeEach)(() => {
       breachDetection = new index_1.BreachDetectionAutomation(
         mockSupabase,
         mockComplianceManager,
         config.breach_detection,
       );
     });
-    (0, globals_1.test)("should create detection rule", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should create detection rule", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var ruleData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               ruleData = {
@@ -727,12 +686,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should report incident", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should report incident", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var incidentData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               incidentData = {
@@ -753,22 +712,22 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Data Minimization Automation", function () {
+  (0, globals_1.describe)("Data Minimization Automation", () => {
     var dataMinimization;
-    (0, globals_1.beforeEach)(function () {
+    (0, globals_1.beforeEach)(() => {
       dataMinimization = new index_1.DataMinimizationAutomation(
         mockSupabase,
         mockComplianceManager,
         config.data_minimization,
       );
     });
-    (0, globals_1.test)("should create minimization rule", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should create minimization rule", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var ruleData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               ruleData = {
@@ -793,12 +752,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should get data inventory", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should get data inventory", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var filters, inventory;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               filters = {
@@ -815,22 +774,22 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Third Party Compliance Automation", function () {
+  (0, globals_1.describe)("Third Party Compliance Automation", () => {
     var thirdPartyCompliance;
-    (0, globals_1.beforeEach)(function () {
+    (0, globals_1.beforeEach)(() => {
       thirdPartyCompliance = new index_1.ThirdPartyComplianceAutomation(
         mockSupabase,
         mockComplianceManager,
         config.third_party_compliance,
       );
     });
-    (0, globals_1.test)("should register provider", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should register provider", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var providerData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               providerData = {
@@ -853,12 +812,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should create data sharing agreement", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should create data sharing agreement", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var agreementData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               agreementData = {
@@ -881,22 +840,22 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Audit Reporting Automation", function () {
+  (0, globals_1.describe)("Audit Reporting Automation", () => {
     var auditReporting;
-    (0, globals_1.beforeEach)(function () {
+    (0, globals_1.beforeEach)(() => {
       auditReporting = new index_1.AuditReportingAutomation(
         mockSupabase,
         mockComplianceManager,
         config.audit_reporting,
       );
     });
-    (0, globals_1.test)("should generate compliance report", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.test)("should generate compliance report", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var reportData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               reportData = {
@@ -916,12 +875,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should schedule report", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should schedule report", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var scheduleData, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               scheduleData = {
@@ -941,12 +900,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should get audit trail", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should get audit trail", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var filters, trail;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               filters = {
@@ -963,11 +922,11 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Configuration", function () {
-    (0, globals_1.test)("should get default configuration", function () {
+  (0, globals_1.describe)("Configuration", () => {
+    (0, globals_1.test)("should get default configuration", () => {
       var defaultConfig = (0, index_1.getLGPDAutomationConfig)("default");
       (0, globals_1.expect)(defaultConfig).toHaveProperty("consent_automation");
       (0, globals_1.expect)(defaultConfig).toHaveProperty("data_subject_rights");
@@ -979,13 +938,13 @@ var mockComplianceManager = {
       (0, globals_1.expect)(defaultConfig).toHaveProperty("audit_reporting");
       (0, globals_1.expect)(defaultConfig).toHaveProperty("global_settings");
     });
-    (0, globals_1.test)("should get development configuration", function () {
+    (0, globals_1.test)("should get development configuration", () => {
       var devConfig = (0, index_1.getLGPDAutomationConfig)("development");
       (0, globals_1.expect)(devConfig.consent_automation.processing_interval_minutes).toBe(5);
       (0, globals_1.expect)(devConfig.data_subject_rights.processing_interval_minutes).toBe(10);
       (0, globals_1.expect)(devConfig.compliance_monitoring.monitoring_interval_minutes).toBe(1);
     });
-    (0, globals_1.test)("should get production configuration", function () {
+    (0, globals_1.test)("should get production configuration", () => {
       var prodConfig = (0, index_1.getLGPDAutomationConfig)("production");
       (0, globals_1.expect)(
         prodConfig.compliance_monitoring.alert_thresholds.consent_compliance,
@@ -996,21 +955,19 @@ var mockComplianceManager = {
       (0, globals_1.expect)(prodConfig.data_retention.approval_required).toBe(true);
     });
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.test)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.test)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var errorSupabase, errorOrchestrator;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               errorSupabase = __assign(__assign({}, mockSupabase), {
-                from: globals_1.jest.fn(function () {
-                  return {
-                    select: globals_1.jest.fn(function () {
-                      return Promise.resolve({ data: null, error: { message: "Database error" } });
-                    }),
-                  };
-                }),
+                from: globals_1.jest.fn(() => ({
+                  select: globals_1.jest.fn(() =>
+                    Promise.resolve({ data: null, error: { message: "Database error" } }),
+                  ),
+                })),
               });
               errorOrchestrator = new index_1.LGPDAutomationOrchestrator(
                 errorSupabase,
@@ -1026,26 +983,26 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle invalid configuration", function () {
+      }),
+    );
+    (0, globals_1.test)("should handle invalid configuration", () => {
       var invalidConfig = __assign(__assign({}, config), { consent_automation: null });
-      (0, globals_1.expect)(function () {
+      (0, globals_1.expect)(() => {
         new index_1.LGPDAutomationOrchestrator(mockSupabase, mockComplianceManager, invalidConfig);
       }).toThrow();
     });
   });
-  (0, globals_1.describe)("Performance", function () {
-    (0, globals_1.test)("should handle batch operations efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Performance", () => {
+    (0, globals_1.test)("should handle batch operations efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var modules, batchSize, consentPromises, startTime, endTime, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               modules = orchestrator.getModules();
               batchSize = 100;
-              consentPromises = Array.from({ length: batchSize }, function (_, i) {
-                return modules.consentAutomation.collectConsentWithTracking({
+              consentPromises = Array.from({ length: batchSize }, (_, i) =>
+                modules.consentAutomation.collectConsentWithTracking({
                   user_id: "test-user-".concat(i),
                   purpose: "marketing",
                   consent_given: true,
@@ -1057,8 +1014,8 @@ var mockComplianceManager = {
                   data_categories: ["personal"],
                   retention_period_months: 24,
                   third_party_sharing: false,
-                });
-              });
+                }),
+              );
               startTime = Date.now();
               return [4 /*yield*/, Promise.all(consentPromises)];
             case 1:
@@ -1069,12 +1026,12 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle concurrent operations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle concurrent operations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var modules, operations, startTime, endTime, executionTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               modules = orchestrator.getModules();
@@ -1095,8 +1052,8 @@ var mockComplianceManager = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });
 // Helper functions for testing
@@ -1104,7 +1061,7 @@ exports.testHelpers = {
   /**
    * Create mock user data for testing
    */
-  createMockUser: function (id) {
+  createMockUser: (id) => {
     if (id === void 0) {
       id = "test-user";
     }
@@ -1118,7 +1075,7 @@ exports.testHelpers = {
   /**
    * Create mock consent data for testing
    */
-  createMockConsent: function (userId, purpose) {
+  createMockConsent: (userId, purpose) => {
     if (userId === void 0) {
       userId = "test-user";
     }
@@ -1142,7 +1099,7 @@ exports.testHelpers = {
   /**
    * Create mock data subject request for testing
    */
-  createMockDataSubjectRequest: function (userId, type) {
+  createMockDataSubjectRequest: (userId, type) => {
     if (userId === void 0) {
       userId = "test-user";
     }
@@ -1161,17 +1118,9 @@ exports.testHelpers = {
   /**
    * Wait for async operations to complete
    */
-  waitFor: function (ms) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, ms);
-    });
-  },
+  waitFor: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
   /**
    * Generate test data in bulk
    */
-  generateTestData: function (count, generator) {
-    return Array.from({ length: count }, function (_, i) {
-      return generator(i);
-    });
-  },
+  generateTestData: (count, generator) => Array.from({ length: count }, (_, i) => generator(i)),
 };

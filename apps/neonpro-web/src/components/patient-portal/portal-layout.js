@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PortalLayout = PortalLayout;
 var react_1 = require("react");
@@ -75,140 +74,133 @@ function PortalLayout(_a) {
   var _b = (0, react_1.useState)(false),
     isMobileMenuOpen = _b[0],
     setIsMobileMenuOpen = _b[1];
-  var isActive = function (href) {
+  var isActive = (href) => {
     if (href === "/patient-portal") {
       return pathname === href;
     }
     return pathname.startsWith(href);
   };
-  var NavigationContent = function () {
-    return (
-      <div className="space-y-6">
-        {/* User Info Card */}
-        <div className="p-4 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
-          <div className="flex items-center gap-3 mb-3">
-            <avatar_1.Avatar className="h-12 w-12">
-              <avatar_1.AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-              <avatar_1.AvatarFallback className="bg-primary text-primary-foreground">
-                {currentUser.initials}
-              </avatar_1.AvatarFallback>
-            </avatar_1.Avatar>
-            <div className="flex-1">
-              <h3 className="font-semibold text-gray-900">{currentUser.name}</h3>
-              <p className="text-sm text-gray-600">{currentUser.email}</p>
-            </div>
-            <badge_1.Badge variant="secondary" className="text-xs">
-              {currentUser.planType}
-            </badge_1.Badge>
+  var NavigationContent = () => (
+    <div className="space-y-6">
+      {/* User Info Card */}
+      <div className="p-4 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 border border-primary/20">
+        <div className="flex items-center gap-3 mb-3">
+          <avatar_1.Avatar className="h-12 w-12">
+            <avatar_1.AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+            <avatar_1.AvatarFallback className="bg-primary text-primary-foreground">
+              {currentUser.initials}
+            </avatar_1.AvatarFallback>
+          </avatar_1.Avatar>
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-900">{currentUser.name}</h3>
+            <p className="text-sm text-gray-600">{currentUser.email}</p>
           </div>
-
-          {/* Next Appointment */}
-          {currentUser.nextAppointment && (
-            <div className="pt-3 border-t border-primary/20">
-              <p className="text-xs font-medium text-primary mb-1">Próxima Consulta</p>
-              <p className="text-sm text-gray-700">
-                {new Date(currentUser.nextAppointment.date).toLocaleDateString("pt-BR")} às{" "}
-                {currentUser.nextAppointment.time}
-              </p>
-              <p className="text-xs text-gray-600">
-                {currentUser.nextAppointment.service} - {currentUser.nextAppointment.doctor}
-              </p>
-            </div>
-          )}
+          <badge_1.Badge variant="secondary" className="text-xs">
+            {currentUser.planType}
+          </badge_1.Badge>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="space-y-2">
-          {navigationItems.map(function (item) {
-            var IconComponent = item.icon;
-            var active = isActive(item.href);
-            return (
-              <link_1.default key={item.href} href={item.href}>
-                <div
+        {/* Next Appointment */}
+        {currentUser.nextAppointment && (
+          <div className="pt-3 border-t border-primary/20">
+            <p className="text-xs font-medium text-primary mb-1">Próxima Consulta</p>
+            <p className="text-sm text-gray-700">
+              {new Date(currentUser.nextAppointment.date).toLocaleDateString("pt-BR")} às{" "}
+              {currentUser.nextAppointment.time}
+            </p>
+            <p className="text-xs text-gray-600">
+              {currentUser.nextAppointment.service} - {currentUser.nextAppointment.doctor}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation Items */}
+      <nav className="space-y-2">
+        {navigationItems.map((item) => {
+          var IconComponent = item.icon;
+          var active = isActive(item.href);
+          return (
+            <link_1.default key={item.href} href={item.href}>
+              <div
+                className={(0, utils_1.cn)(
+                  "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group",
+                  active
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-primary",
+                )}
+              >
+                <IconComponent
                   className={(0, utils_1.cn)(
-                    "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group",
-                    active
-                      ? "bg-primary text-primary-foreground shadow-md"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-primary",
+                    "h-5 w-5 transition-colors",
+                    active ? "text-primary-foreground" : "text-gray-500 group-hover:text-primary",
                   )}
-                >
-                  <IconComponent
-                    className={(0, utils_1.cn)(
-                      "h-5 w-5 transition-colors",
-                      active ? "text-primary-foreground" : "text-gray-500 group-hover:text-primary",
-                    )}
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{item.title}</span>
-                      {item.badge && (
-                        <badge_1.Badge
-                          variant={active ? "secondary" : "outline"}
-                          className="text-xs"
-                        >
-                          {item.badge}
-                        </badge_1.Badge>
-                      )}
-                    </div>
-                    {item.description && (
-                      <p
-                        className={(0, utils_1.cn)(
-                          "text-xs mt-1",
-                          active ? "text-primary-foreground/80" : "text-gray-500",
-                        )}
-                      >
-                        {item.description}
-                      </p>
+                />
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{item.title}</span>
+                    {item.badge && (
+                      <badge_1.Badge variant={active ? "secondary" : "outline"} className="text-xs">
+                        {item.badge}
+                      </badge_1.Badge>
                     )}
                   </div>
+                  {item.description && (
+                    <p
+                      className={(0, utils_1.cn)(
+                        "text-xs mt-1",
+                        active ? "text-primary-foreground/80" : "text-gray-500",
+                      )}
+                    >
+                      {item.description}
+                    </p>
+                  )}
                 </div>
-              </link_1.default>
-            );
-          })}
-        </nav>
+              </div>
+            </link_1.default>
+          );
+        })}
+      </nav>
 
-        <separator_1.Separator />
+      <separator_1.Separator />
 
-        {/* Emergency Contact */}
-        <div className="p-4 rounded-lg bg-red-50 border border-red-200">
-          <div className="flex items-center gap-2 mb-2">
-            <lucide_react_1.Heart className="h-4 w-4 text-red-600" />
-            <h4 className="font-medium text-red-800">Emergência</h4>
-          </div>
-          <p className="text-sm text-red-700 mb-3">
-            Para emergências médicas, ligue imediatamente:
-          </p>
-          <div className="space-y-1">
-            <button_1.Button
-              variant="outline"
-              size="sm"
-              className="w-full justify-start text-left border-red-300 hover:bg-red-100"
-            >
-              <lucide_react_1.Phone className="h-4 w-4 mr-2" />
-              (11) 3333-4444
-            </button_1.Button>
-            <button_1.Button
-              variant="outline"
-              size="sm"
-              className="w-full justify-start text-left border-red-300 hover:bg-red-100"
-            >
-              <lucide_react_1.Mail className="h-4 w-4 mr-2" />
-              emergencia@neonpro.com.br
-            </button_1.Button>
-          </div>
+      {/* Emergency Contact */}
+      <div className="p-4 rounded-lg bg-red-50 border border-red-200">
+        <div className="flex items-center gap-2 mb-2">
+          <lucide_react_1.Heart className="h-4 w-4 text-red-600" />
+          <h4 className="font-medium text-red-800">Emergência</h4>
         </div>
-
-        {/* Support */}
-        <div className="text-center text-sm text-gray-500">
-          <p>Precisa de ajuda?</p>
-          <button_1.Button variant="link" className="p-0 h-auto text-primary">
-            <lucide_react_1.MessageSquare className="h-4 w-4 mr-1" />
-            Fale conosco
+        <p className="text-sm text-red-700 mb-3">Para emergências médicas, ligue imediatamente:</p>
+        <div className="space-y-1">
+          <button_1.Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start text-left border-red-300 hover:bg-red-100"
+          >
+            <lucide_react_1.Phone className="h-4 w-4 mr-2" />
+            (11) 3333-4444
+          </button_1.Button>
+          <button_1.Button
+            variant="outline"
+            size="sm"
+            className="w-full justify-start text-left border-red-300 hover:bg-red-100"
+          >
+            <lucide_react_1.Mail className="h-4 w-4 mr-2" />
+            emergencia@neonpro.com.br
           </button_1.Button>
         </div>
       </div>
-    );
-  };
+
+      {/* Support */}
+      <div className="text-center text-sm text-gray-500">
+        <p>Precisa de ajuda?</p>
+        <button_1.Button variant="link" className="p-0 h-auto text-primary">
+          <lucide_react_1.MessageSquare className="h-4 w-4 mr-1" />
+          Fale conosco
+        </button_1.Button>
+      </div>
+    </div>
+  );
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop Sidebar */}

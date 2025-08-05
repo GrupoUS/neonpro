@@ -5,6 +5,7 @@
  * Standards: Shadow validation + NFSe integration + Error handling
  */
 
+import type { createClient } from "@supabase/supabase-js";
 import type {
   CreateInvoiceInput,
   CreatePaymentInput,
@@ -31,7 +32,6 @@ import type {
   updateInvoiceSchema,
   updatePaymentSchema,
 } from "@/lib/validations/financial";
-import type { createClient } from "@supabase/supabase-js";
 
 // Get Supabase client
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
@@ -771,7 +771,7 @@ async function processPayment(payment: Payment): Promise<PaymentProcessingRespon
 }
 
 // Utility functions
-export { centavosToReais, formatCurrency, reaisToCentavos };
+export type { centavosToReais, formatCurrency, reaisToCentavos };
 
 /**
  * Generate PDF invoice

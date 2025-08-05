@@ -5,7 +5,9 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { Activity, AlertTriangle, CheckCircle, Database, XCircle, Zap } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type {
   Card,
   CardContent,
@@ -13,10 +15,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Activity, Database, Zap, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
 
 interface PerformanceMetrics {
   responseTime: number;

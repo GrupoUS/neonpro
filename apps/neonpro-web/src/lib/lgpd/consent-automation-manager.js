@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Consent Automation Manager
  * Story 1.5: LGPD Compliance Automation
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createconsentAutomationManager =
   exports.ConsentAutomationManager =
@@ -166,7 +163,7 @@ var logger_1 = require("@/lib/logger");
  * LGPD Data Types for consent management
  */
 var LGPDDataType;
-(function (LGPDDataType) {
+((LGPDDataType) => {
   LGPDDataType["AUTHENTICATION"] = "authentication";
   LGPDDataType["PROFILE"] = "profile";
   LGPDDataType["MEDICAL_RECORDS"] = "medical_records";
@@ -180,7 +177,7 @@ var LGPDDataType;
  * LGPD Processing Purposes
  */
 var LGPDPurpose;
-(function (LGPDPurpose) {
+((LGPDPurpose) => {
   LGPDPurpose["SERVICE_PROVISION"] = "service_provision";
   LGPDPurpose["LEGAL_OBLIGATION"] = "legal_obligation";
   LGPDPurpose["LEGITIMATE_INTEREST"] = "legitimate_interest";
@@ -192,7 +189,7 @@ var LGPDPurpose;
 /**
  * LGPD Consent Automation Manager
  */
-var ConsentAutomationManager = /** @class */ (function () {
+var ConsentAutomationManager = /** @class */ (() => {
   function ConsentAutomationManager() {
     this.currentVersion = "1.0.0";
     this.supabase = (0, client_1.createClient)();
@@ -666,48 +663,39 @@ var ConsentAutomationManager = /** @class */ (function () {
             activeConsents_1 =
               (allConsents === null || allConsents === void 0
                 ? void 0
-                : allConsents.filter(function (c) {
-                    return (
+                : allConsents.filter(
+                    (c) =>
                       c.consentGiven &&
                       !c.withdrawnAt &&
-                      (!c.expiresAt || new Date(c.expiresAt) > now_1)
-                    );
-                  })) || [];
+                      (!c.expiresAt || new Date(c.expiresAt) > now_1),
+                  )) || [];
             withdrawnConsents =
               (allConsents === null || allConsents === void 0
                 ? void 0
-                : allConsents.filter(function (c) {
-                    return c.withdrawnAt;
-                  })) || [];
+                : allConsents.filter((c) => c.withdrawnAt)) || [];
             expiredConsents =
               (allConsents === null || allConsents === void 0
                 ? void 0
-                : allConsents.filter(function (c) {
-                    return c.expiresAt && new Date(c.expiresAt) <= now_1;
-                  })) || [];
+                : allConsents.filter((c) => c.expiresAt && new Date(c.expiresAt) <= now_1)) || [];
             consentsByDataType_1 = {};
-            Object.values(LGPDDataType).forEach(function (type) {
-              consentsByDataType_1[type] = activeConsents_1.filter(function (c) {
-                return c.dataType === type;
-              }).length;
+            Object.values(LGPDDataType).forEach((type) => {
+              consentsByDataType_1[type] = activeConsents_1.filter(
+                (c) => c.dataType === type,
+              ).length;
             });
             consentsByPurpose_1 = {};
-            Object.values(LGPDPurpose).forEach(function (purpose) {
-              consentsByPurpose_1[purpose] = activeConsents_1.filter(function (c) {
-                return c.purpose === purpose;
-              }).length;
+            Object.values(LGPDPurpose).forEach((purpose) => {
+              consentsByPurpose_1[purpose] = activeConsents_1.filter(
+                (c) => c.purpose === purpose,
+              ).length;
             });
             thirtyDaysAgo_1 = new Date(now_1.getTime() - 30 * 24 * 60 * 60 * 1000);
             recentWithdrawals = withdrawnConsents
-              .filter(function (c) {
-                return c.withdrawnAt && new Date(c.withdrawnAt) > thirtyDaysAgo_1;
-              })
+              .filter((c) => c.withdrawnAt && new Date(c.withdrawnAt) > thirtyDaysAgo_1)
               .slice(0, 10);
             thirtyDaysFromNow_1 = new Date(now_1.getTime() + 30 * 24 * 60 * 60 * 1000);
             expiringConsents = activeConsents_1
-              .filter(function (c) {
-                return c.expiresAt && new Date(c.expiresAt) <= thirtyDaysFromNow_1;
-              })
+              .filter((c) => c.expiresAt && new Date(c.expiresAt) <= thirtyDaysFromNow_1)
               .slice(0, 10);
             return [
               2 /*return*/,
@@ -800,7 +788,7 @@ var ConsentAutomationManager = /** @class */ (function () {
   /**
    * Get legal basis for processing purpose
    */
-  ConsentAutomationManager.prototype.getLegalBasisForPurpose = function (purpose) {
+  ConsentAutomationManager.prototype.getLegalBasisForPurpose = (purpose) => {
     var _a;
     var legalBasisMap =
       ((_a = {}),
@@ -817,10 +805,7 @@ var ConsentAutomationManager = /** @class */ (function () {
   /**
    * Check if version change requires consent re-collection
    */
-  ConsentAutomationManager.prototype.versionRequiresRecollection = function (
-    oldVersion,
-    newVersion,
-  ) {
+  ConsentAutomationManager.prototype.versionRequiresRecollection = (oldVersion, newVersion) => {
     // Simple version comparison - in production, implement semantic versioning
     var oldParts = oldVersion.split(".").map(Number);
     var newParts = newVersion.split(".").map(Number);
@@ -891,7 +876,5 @@ var ConsentAutomationManager = /** @class */ (function () {
 })();
 exports.ConsentAutomationManager = ConsentAutomationManager;
 // Export singleton instance
-var createconsentAutomationManager = function () {
-  return new ConsentAutomationManager();
-};
+var createconsentAutomationManager = () => new ConsentAutomationManager();
 exports.createconsentAutomationManager = createconsentAutomationManager;

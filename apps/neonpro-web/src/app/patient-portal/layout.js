@@ -1,7 +1,6 @@
 // NeonPro - Patient Portal Layout
 // VIBECODE V1.0 - Healthcare PWA Pattern
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientPortalLayout;
 var react_1 = require("react");

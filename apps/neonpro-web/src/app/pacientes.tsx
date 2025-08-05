@@ -1,26 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
-import type { motion, AnimatePresence } from "framer-motion";
+import type { AnimatePresence, motion } from "framer-motion";
 import type {
-  Users,
-  Search,
+  Activity,
+  Calendar,
+  Edit,
+  Eye,
+  FileText,
   Filter,
-  Plus,
-  User,
-  Phone,
   Mail,
   MapPin,
-  Calendar,
-  FileText,
-  Edit,
+  Phone,
+  Plus,
+  Search,
   Trash2,
-  Eye,
+  User,
   UserPlus,
-  Activity,
+  Users,
 } from "lucide-react";
-import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
+import React, { useState } from "react";
 import type { CosmicGlowButton } from "@/components/ui/CosmicGlowButton";
+import type { NeonGradientCard } from "@/components/ui/NeonGradientCard";
 import type { formatDate } from "@/lib/utils";
 
 // Dados mock para pacientes

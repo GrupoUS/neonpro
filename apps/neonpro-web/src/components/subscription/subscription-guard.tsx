@@ -1,5 +1,8 @@
 "use client";
 
+import type { AlertCircle, Clock, Lock, Zap } from "lucide-react";
+import Link from "next/link";
+import type { ReactNode } from "react";
 import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -10,9 +13,6 @@ import type {
   CardTitle,
 } from "@/components/ui/card";
 import type { useSubscriptionStatus } from "@/hooks/use-subscription-status";
-import type { AlertCircle, Clock, Lock, Zap } from "lucide-react";
-import Link from "next/link";
-import type { ReactNode } from "react";
 
 interface SubscriptionGuardProps {
   children: ReactNode;

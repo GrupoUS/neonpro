@@ -1,6 +1,33 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Edit,
+  Eye,
+  Filter,
+  MoreVertical,
+  Plus,
+  RefreshCw,
+  Settings,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,19 +35,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type { DatePickerWithRange } from "@/components/ui/date-range-picker";
-import type { Skeleton } from "@/components/ui/skeleton";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
   Dialog,
   DialogContent,
@@ -36,30 +51,16 @@ import type {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type {
-  BarChart3,
-  TrendingUp,
-  TrendingDown,
-  Users,
-  DollarSign,
-  Calendar,
-  Clock,
-  AlertTriangle,
-  Download,
-  Settings,
-  RefreshCw,
-  Filter,
-  MoreVertical,
-  Eye,
-  Edit,
-  Trash2,
-  Plus,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Skeleton } from "@/components/ui/skeleton";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useToast } from "@/hooks/use-toast";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { cn } from "@/lib/utils";
 
 // Types from service layer
 interface KPIValue {

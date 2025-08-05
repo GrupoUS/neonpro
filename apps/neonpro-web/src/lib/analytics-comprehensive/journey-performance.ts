@@ -28,12 +28,12 @@
  * - Performance forecasting and predictive analytics
  */
 
-import type { type Database } from "@/lib/database.types";
+import type { Database } from "@/lib/database.types";
 import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/utils/logger";
-import type { type JourneyStage, type JourneyEvent } from "./journey-mapping-engine";
-import type { type TouchpointAnalysis } from "./touchpoint-analyzer";
-import type { type SatisfactionMetrics } from "./satisfaction-metrics";
+import type { JourneyEvent, JourneyStage } from "./journey-mapping-engine";
+import type { SatisfactionMetrics } from "./satisfaction-metrics";
+import type { TouchpointAnalysis } from "./touchpoint-analyzer";
 
 // ============================================================================
 // TYPES & INTERFACES

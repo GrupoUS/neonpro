@@ -9,32 +9,31 @@
  * @compliance WCAG 2.1 AA, LGPD
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,10 +153,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -168,7 +165,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationSender = NotificationSender;
@@ -217,7 +214,6 @@ var NotificationFormSchema = zod_2.z.object({
 // COMPONENT
 // ================================================================================
 function NotificationSender(_a) {
-  var _this = this;
   var onNotificationSent = _a.onNotificationSent;
   var _b = (0, react_1.useState)(false),
     loading = _b[0],
@@ -243,29 +239,24 @@ function NotificationSender(_a) {
   // ================================================================================
   // EFFECTS
   // ================================================================================
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadTemplates();
   }, []);
-  (0, react_1.useEffect)(
-    function () {
-      var subscription = form.watch(function (value) {
-        if (value.recipientType) {
-          calculateEstimatedReach(value);
-        }
-      });
-      return function () {
-        return subscription.unsubscribe();
-      };
-    },
-    [form],
-  );
+  (0, react_1.useEffect)(() => {
+    var subscription = form.watch((value) => {
+      if (value.recipientType) {
+        calculateEstimatedReach(value);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
   // ================================================================================
   // DATA LOADING
   // ================================================================================
-  var loadTemplates = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTemplates = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -289,11 +280,10 @@ function NotificationSender(_a) {
         }
       });
     });
-  };
-  var calculateEstimatedReach = function (formData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var calculateEstimatedReach = (formData) =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (formData.recipientType === "single") {
@@ -308,7 +298,7 @@ function NotificationSender(_a) {
                 { type: formData.recipientType },
                 formData.groupFilters &&
                   Object.fromEntries(
-                    Object.entries(formData.groupFilters).filter(function (_a) {
+                    Object.entries(formData.groupFilters).filter((_a) => {
                       var _ = _a[0],
                         value = _a[1];
                       return value != null;
@@ -336,14 +326,13 @@ function NotificationSender(_a) {
         }
       });
     });
-  };
   // ================================================================================
   // FORM HANDLERS
   // ================================================================================
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var payload, endpoint, response, result, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -411,29 +400,26 @@ function NotificationSender(_a) {
         }
       });
     });
-  };
   // ================================================================================
   // RENDER HELPERS
   // ================================================================================
-  var renderRecipientSelection = function () {
-    return <div className />;
-  };
+  var renderRecipientSelection = () => <div className />;
   "space-y-4\">
         < form_1.FormField
   control =
-  {
     form: form,
     : .control
-  }
-  name = ;
+  name =
   "recipientType\";
     render =
-  {
-  }
-  ({ field: field });
+  (
+    field: field
+  )
   <form_1.FormItem>
     <form_1.FormLabel>Destinatários</form_1.FormLabel>
-    <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
+    <select_1.Select onValueChange=
+    field.onChange
+  defaultValue={field.value}>
       <form_1.FormControl>
         <select_1.SelectTrigger>
           <select_1.SelectValue placeholder />
@@ -442,39 +428,39 @@ function NotificationSender(_a) {
       </form_1.FormControl>
       <select_1.SelectContent>
         <select_1.SelectItem value />
-        \"single\">Paciente Individual
+  \"single\">Paciente Individual
       </select_1.SelectItem>
       <select_1.SelectItem value />
       \"group\">Grupo de Pacientes
     </select_1.SelectItem>
     <select_1.SelectItem value />
     \"all\">Todos os Pacientes
-  </select_1.SelectItem>;
+  </select_1.SelectItem>
   select_1.SelectContent >
-    ;
-  select_1.Select > <form_1.FormMessage />;
+  select_1.Select > <form_1.FormMessage />
   form_1.FormItem >
-    ;
 }
-/;;>;
+/;;;;;;;;>;
 {
   form.watch("recipientType") === "single" && <form_1.FormField control={form.control} name />;
   "recipientId\";
     render =
-  {
-  }
-  ({ field: field });
+  (
+    field: field
+  )
   <form_1.FormItem>
     <form_1.FormLabel>Paciente</form_1.FormLabel>
     <form_1.FormControl>
       <input_1.Input placeholder />
       \"Buscar paciente...\" {...field} />
     </form_1.FormControl>
-    <form_1.FormDescription>Digite o nome ou CPF do paciente</form_1.FormDescription>
-    <form_1.FormMessage />
-  </form_1.FormItem>;
+    <form_1.FormDescription>Digite o nome ou CPF
+  do paciente
+  </form_1.FormDescription>
+  <form_1.FormMessage />
+  </form_1.FormItem>
 }
-/  ;;<>div;
+/ 2;;;;;;;;<>div{};
 className/>;
 "flex items-center space-x-2 text-sm text-muted-foreground\">
     < icons_1.Icons.Users
@@ -492,9 +478,7 @@ div >
 ;
 div >
 ;
-var renderChannelSelection = function () {
-  return <form_1.FormField control={form.control} name />;
-};
+var renderChannelSelection = () => <form_1.FormField control={form.control} name />;
 "channels\";
 render =
 {
@@ -518,7 +502,7 @@ div > <div className />;
         { id: 'whatsapp', label: 'WhatsApp', icon: icons_1.Icons.MessageCircle },
         { id: 'push', label: 'Push', icon: icons_1.Icons.Bell },
         { id: 'in_app', label: 'In-App', icon: icons_1.Icons.Smartphone },
-    ].map(function (channel) { return (<form_1.FormField key={channel.id} control={form.control} name/>); }, "channels\", render = {}({ field: field }), {
+    ].map((channel) => (<form_1.FormField key={channel.id} control={form.control} name/>), "channels\", render = {}({ field: field }), {
   const: Icon = channel.icon
 }
 >
@@ -529,7 +513,7 @@ div > <div className />;
 }
 onCheckedChange={function (checked) {
                     var updatedChannels = checked
-                        ? __spreadArray(__spreadArray([], (field.value || []), true), [channel.id], false) : (field.value || []).filter(function (value) { return value !== channel.id; });
+                        ? __spreadArray(__spreadArray([], (field.value || []), true), [channel.id], false) : (field.value || []).filter((value) => value !== channel.id);
                     field.onChange(updatedChannels);
                 }}/>
 </form_1.FormControl>
@@ -544,11 +528,9 @@ onCheckedChange={function (checked) {
 />
 div > <form_1.FormMessage />
 form_1.FormItem >
-;
-/;;>;
-var renderAdvancedOptions = function () {
-  return <div className />;
-};
+/
+>
+var renderAdvancedOptions = () => <div className />;
 "space-y-4\">
     < div
 className =
@@ -590,9 +572,13 @@ render =
 select_1.SelectContent >
 select_1.Select > <form_1.FormMessage />
 form_1.FormItem >
-;
-/  .1;<>FF_defilmmoorr;
-control = { form: form, : .control };
+/  .1
+<>FF_defilmmoorr
+control =
+{
+  form: form,
+  : .control
+}
 name = ;
 "scheduledFor\";
 render =
@@ -610,7 +596,7 @@ render =
   <form_1.FormDescription>Deixe vazio para enviar imediatamente</form_1.FormDescription>
   <form_1.FormMessage />
 </form_1.FormItem>;
-/;;>;
+/;;;;;;;>;
 div > <div className />;
 "space-y-3\">
     < form_1.FormField
@@ -636,16 +622,20 @@ className =
 Otimização
 Inteligente
 form_1.FormLabel >
-<form_1.FormDescription>Usar IA para otimizar horário e canal de envio</form_1.FormDescription>;
+<form_1.FormDescription>Usar IA para otimizar horário e canal de envio</form_1.FormDescription>
 div >
 (
   <form_1.FormControl>
-    <checkbox_1.Checkbox checked={field.value} onCheckedChange={field.onChange} />
-  </form_1.FormControl>
-);
+    <checkbox_1.Checkbox checked=
+{
+  field.value;
+}
+onCheckedChange={field.onChange} />
+</form_1.FormControl>
+)
 form_1.FormItem >
-;
-/  .1;<>FF_defilmmoorr;
+/  .1
+<>FF_defilmmoorr
 control = { form: form, : .control };
 name = ;
 "testMode\";
@@ -664,16 +654,20 @@ className =
 Modo
 Teste
 form_1.FormLabel >
-<form_1.FormDescription>Enviar apenas para administradores</form_1.FormDescription>;
+<form_1.FormDescription>Enviar apenas para administradores</form_1.FormDescription>
 div >
 (
   <form_1.FormControl>
-    <checkbox_1.Checkbox checked={field.value} onCheckedChange={field.onChange} />
-  </form_1.FormControl>
-);
+    <checkbox_1.Checkbox checked=
+{
+  field.value;
+}
+onCheckedChange={field.onChange} />
+</form_1.FormControl>
+)
 form_1.FormItem >
-;
-/;;>;
+/
+>
 div >
 ;
 div >
@@ -725,32 +719,45 @@ name/>\
 "type\"
                   render=
 {
-  function (_a) {
-                    var field = _a.field;
-                    return (<form_1.FormItem>
-                      <form_1.FormLabel>Tipo de Notificação</form_1.FormLabel>
-                      <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <form_1.FormControl>
-                          <select_1.SelectTrigger>
-                            <select_1.SelectValue />
-                          </select_1.SelectTrigger>
-                        </form_1.FormControl>
-                        <select_1.SelectContent>
-                          <select_1.SelectItem value/>\"appointment_reminder\">Lembrete de Consulta</select_1.SelectItem>
-                          <select_1.SelectItem value/>\"promotional\">Promocional</select_1.SelectItem>
-                          <select_1.SelectItem value/>\"informational\">Informativa</select_1.SelectItem>
-                        ,
-                            <select_1.SelectItem value/>);
-                }
+  (_a) => {
+    var field = _a.field;
+    return (
+      (
+        <form_1.FormItem>
+          <form_1.FormLabel>Tipo de Notificação</form_1.FormLabel>
+          <select_1.Select onValueChange={field.onChange} defaultValue={field.value}>
+            <form_1.FormControl>
+              <select_1.SelectTrigger>
+                <select_1.SelectValue />
+              </select_1.SelectTrigger>
+            </form_1.FormControl>
+            <select_1.SelectContent>
+              <select_1.SelectItem value />
+              \"appointment_reminder\">Lembrete de Consulta
+            </select_1.SelectItem>
+            <select_1.SelectItem value />
+            \"promotional\">Promocional
+          </select_1.SelectItem>
+          <select_1.SelectItem value />
+          \"informational\">Informativa
+        </select_1.SelectItem>
+      ),
+      (<select_1.SelectItem value />)
+    );
+  };
 }
 \"urgent\">Urgente</select_1.SelectItem>
                           <select_1.SelectItem value/>\"system\">Sistema</select_1.SelectItem>);
 select_1.SelectContent >
 select_1.Select > <form_1.FormMessage />
 form_1.FormItem >
-;
-/  .1;<>FF_defilmmoorr;
-control = { form: form, : .control };
+/  .1
+<>FF_defilmmoorr
+control =
+{
+  form: form,
+  : .control
+}
 name = ;
 "title\";
 render =
@@ -770,7 +777,7 @@ render =
   </form_1.FormDescription>
   <form_1.FormMessage />
 </form_1.FormItem>;
-/  .1;<>FF_defilmmoorr;
+/ .12;;;;<>FF_defilmmoorr{};
 control = { form: form, : .control };
 name = ;
 "content\";
@@ -791,7 +798,7 @@ render =
   </form_1.FormDescription>
   <form_1.FormMessage />
 </form_1.FormItem>;
-/;;>;
+/;;;;;>;
 div > <separator_1.Separator />;
 {
   /* Canais */
@@ -842,9 +849,7 @@ type />;
 {
   loading && <icons_1.Icons.Loader2 className />;
   "mr-2 h-4 w-4 animate-spin\" />};
-  {
-    loading ? "Enviando..." : "Enviar Notificação";
-  }
+    loading ? "Enviando..." : "Enviar Notificação"
   button_1.Button >
     ;
   div >

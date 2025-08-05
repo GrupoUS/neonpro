@@ -16,35 +16,35 @@
 // Re-export core types from main modules
 export {
   DemandForecast,
+  DemandPattern,
   ExternalFactor,
+  ForecastAlert,
+  ForecastingOptions,
   ForecastModel,
   ForecastValidationMetrics,
-  DemandPattern,
   ResourceAllocation,
-  ForecastAlert,
   ServiceDemandData,
-  ForecastingOptions,
 } from "./demand-forecasting";
 
 export {
-  ModelTrainingConfig,
-  ModelPerformanceMetrics,
-  ModelComparisonResult,
-  ModelTrainingJob,
   HyperparameterSpace,
+  ModelComparisonResult,
+  ModelPerformanceMetrics,
+  ModelTrainingConfig,
+  ModelTrainingJob,
 } from "./forecast-models";
 
 export {
-  StaffAllocation,
-  EquipmentAllocation,
-  RoomAllocation,
-  InventoryAllocation,
-  TimeWindow,
-  AllocationConstraint,
-  OptimizationObjective,
-  AllocationPlan,
   AllocationAlert,
+  AllocationConstraint,
   AllocationMetrics,
+  AllocationPlan,
+  EquipmentAllocation,
+  InventoryAllocation,
+  OptimizationObjective,
+  RoomAllocation,
+  StaffAllocation,
+  TimeWindow,
 } from "./resource-allocation";
 
 // Additional API and configuration types

@@ -1,29 +1,34 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Download,
+  Eye,
+  Filter,
+  Grid,
+  Heart,
+  List,
+  Mail,
+  MoreHorizontal,
+  Phone,
+  RefreshCw,
+  Search,
+  Settings,
+  Upload,
+  User,
+  UserPlus,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { createClient } from "@/app/utils/supabase/client";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -31,6 +36,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,30 +45,24 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
-  Search,
-  User,
-  Phone,
-  Mail,
-  Activity,
-  Eye,
-  RefreshCw,
-  Filter,
-  MoreHorizontal,
-  UserPlus,
-  Download,
-  Upload,
-  Settings,
-  Grid,
-  List,
-  ChevronLeft,
-  ChevronRight,
-  AlertTriangle,
-  Heart,
-  Calendar,
-  Clock,
-} from "lucide-react";
-import type { toast } from "sonner";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Patient {
   id: string;

@@ -1,7 +1,7 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { cookies } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import pushNotificationService from "@/lib/push-notification-service";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {

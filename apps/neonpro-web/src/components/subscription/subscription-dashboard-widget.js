@@ -8,7 +8,6 @@
  * @version 1.0.0
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionDashboardWidget = SubscriptionDashboardWidget;
 exports.CompactSubscriptionWidget = CompactSubscriptionWidget;
@@ -108,7 +107,7 @@ function SubscriptionDashboardWidget(_a) {
   };
   var config = statusConfig[status] || statusConfig.cancelled;
   // Calculate trial progress
-  var getTrialProgress = function () {
+  var getTrialProgress = () => {
     if (status !== "trialing" || !gracePeriodEnd) return null;
     var now = new Date();
     var end = new Date(gracePeriodEnd);
@@ -121,7 +120,7 @@ function SubscriptionDashboardWidget(_a) {
   };
   var trialInfo = getTrialProgress();
   // Get key metrics for detailed view
-  var getKeyMetrics = function () {
+  var getKeyMetrics = () => {
     if (!showMetrics || variant === "compact") return [];
     var keyMetrics = [
       {
@@ -191,19 +190,17 @@ function SubscriptionDashboardWidget(_a) {
         {/* Key Metrics */}
         {keyMetrics.length > 0 && (
           <div className="grid grid-cols-3 gap-2">
-            {keyMetrics.map(function (metric, index) {
-              return (
-                <div key={index} className="text-center">
-                  <div className={(0, utils_1.cn)("text-lg font-semibold", metric.color)}>
-                    {metric.value}
-                  </div>
-                  <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">
-                    {metric.icon}
-                    {metric.label}
-                  </div>
+            {keyMetrics.map((metric, index) => (
+              <div key={index} className="text-center">
+                <div className={(0, utils_1.cn)("text-lg font-semibold", metric.color)}>
+                  {metric.value}
                 </div>
-              );
-            })}
+                <div className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+                  {metric.icon}
+                  {metric.label}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

@@ -1,22 +1,21 @@
-"use strict";
 // Stock Management Types - Enhanced with QA Best Practices
 // Implementation of Story 11.4: Alertas e Relatórios de Estoque
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -105,7 +104,7 @@ exports.CustomStockReportSchema = zod_1.z.object({
 // ============================================================================
 // ERROR TYPES (QA Recommendation: Proper error handling)
 // ============================================================================
-var StockAlertError = /** @class */ (function (_super) {
+var StockAlertError = /** @class */ ((_super) => {
   __extends(StockAlertError, _super);
   function StockAlertError(message, code, context) {
     var _this = _super.call(this, message) || this;
@@ -117,7 +116,7 @@ var StockAlertError = /** @class */ (function (_super) {
   return StockAlertError;
 })(Error);
 exports.StockAlertError = StockAlertError;
-var StockReportError = /** @class */ (function (_super) {
+var StockReportError = /** @class */ ((_super) => {
   __extends(StockReportError, _super);
   function StockReportError(message, code, context) {
     var _this = _super.call(this, message) || this;

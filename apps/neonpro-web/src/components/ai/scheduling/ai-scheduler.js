@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AISchedulingOptimizer;
 var react_1 = require("react");
@@ -145,7 +142,6 @@ var badge_1 = require("@/components/ui/badge");
 var lucide_react_1 = require("lucide-react");
 var alert_1 = require("@/components/ui/alert");
 function AISchedulingOptimizer() {
-  var _this = this;
   var _a = (0, react_1.useState)(""),
     patientId = _a[0],
     setPatientId = _a[1];
@@ -182,10 +178,10 @@ function AISchedulingOptimizer() {
   var _m = (0, react_1.useState)([]),
     recommendations = _m[0],
     setRecommendations = _m[1];
-  var handleOptimizeScheduling = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleOptimizeScheduling = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!patientId || !treatmentType || !preferredDateStart || !preferredDateEnd) {
@@ -241,11 +237,8 @@ function AISchedulingOptimizer() {
         }
       });
     });
-  };
-  var formatTime = function (timeString) {
-    return new Date(timeString).toLocaleString();
-  };
-  var getConfidenceColor = function (score) {
+  var formatTime = (timeString) => new Date(timeString).toLocaleString();
+  var getConfidenceColor = (score) => {
     if (score >= 0.8) return "bg-green-100 text-green-800";
     if (score >= 0.6) return "bg-yellow-100 text-yellow-800";
     return "bg-red-100 text-red-800";
@@ -271,9 +264,7 @@ function AISchedulingOptimizer() {
               <input_1.Input
                 id="patient-id"
                 value={patientId}
-                onChange={function (e) {
-                  return setPatientId(e.target.value);
-                }}
+                onChange={(e) => setPatientId(e.target.value)}
                 placeholder="Enter patient ID"
               />
             </div>
@@ -304,9 +295,7 @@ function AISchedulingOptimizer() {
                 id="date-start"
                 type="datetime-local"
                 value={preferredDateStart}
-                onChange={function (e) {
-                  return setPreferredDateStart(e.target.value);
-                }}
+                onChange={(e) => setPreferredDateStart(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -315,9 +304,7 @@ function AISchedulingOptimizer() {
                 id="date-end"
                 type="datetime-local"
                 value={preferredDateEnd}
-                onChange={function (e) {
-                  return setPreferredDateEnd(e.target.value);
-                }}
+                onChange={(e) => setPreferredDateEnd(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -344,9 +331,7 @@ function AISchedulingOptimizer() {
               <input_1.Input
                 id="staff-preference"
                 value={staffPreference}
-                onChange={function (e) {
-                  return setStaffPreference(e.target.value);
-                }}
+                onChange={(e) => setStaffPreference(e.target.value)}
                 placeholder="Enter preferred staff ID"
               />
             </div>
@@ -425,77 +410,75 @@ function AISchedulingOptimizer() {
 
             {/* Optimized Slots */}
             <div className="space-y-3">
-              {optimizedSlots.map(function (slot, index) {
-                return (
-                  <card_1.Card key={slot.slot_id} className="border-l-4 border-l-blue-500">
-                    <card_1.CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-3">
-                        <div className="flex items-center gap-3">
-                          <badge_1.Badge
-                            className={"".concat(getConfidenceColor(slot.confidence_score))}
-                          >
-                            {Math.round(slot.confidence_score * 100)}% Confidence
+              {optimizedSlots.map((slot, index) => (
+                <card_1.Card key={slot.slot_id} className="border-l-4 border-l-blue-500">
+                  <card_1.CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center gap-3">
+                        <badge_1.Badge
+                          className={"".concat(getConfidenceColor(slot.confidence_score))}
+                        >
+                          {Math.round(slot.confidence_score * 100)}% Confidence
+                        </badge_1.Badge>
+                        {index === 0 && (
+                          <badge_1.Badge className="bg-blue-100 text-blue-800">
+                            AI Recommended
                           </badge_1.Badge>
-                          {index === 0 && (
-                            <badge_1.Badge className="bg-blue-100 text-blue-800">
-                              AI Recommended
-                            </badge_1.Badge>
-                          )}
-                        </div>
-                        <button_1.Button size="sm">Book Appointment</button_1.Button>
+                        )}
                       </div>
+                      <button_1.Button size="sm">Book Appointment</button_1.Button>
+                    </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
-                        <div className="flex items-center gap-2">
-                          <lucide_react_1.CalendarIcon className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm">{formatTime(slot.start_time)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <lucide_react_1.ClockIcon className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm">to {formatTime(slot.end_time)}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <lucide_react_1.UserIcon className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm">{slot.staff_name}</span>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                      <div className="flex items-center gap-2">
+                        <lucide_react_1.CalendarIcon className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm">{formatTime(slot.start_time)}</span>
                       </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-sm">
-                        <div>
-                          <span className="text-gray-600">Patient Score: </span>
-                          <span className="font-medium">
-                            {Math.round(slot.optimization_factors.patient_preference_score * 100)}%
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Staff Score: </span>
-                          <span className="font-medium">
-                            {Math.round(slot.optimization_factors.staff_efficiency_score * 100)}%
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Capacity Score: </span>
-                          <span className="font-medium">
-                            {Math.round(slot.optimization_factors.clinic_capacity_score * 100)}%
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-gray-600">Success Rate: </span>
-                          <span className="font-medium">
-                            {Math.round(slot.optimization_factors.historical_success_rate * 100)}%
-                          </span>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <lucide_react_1.ClockIcon className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm">to {formatTime(slot.end_time)}</span>
                       </div>
+                      <div className="flex items-center gap-2">
+                        <lucide_react_1.UserIcon className="h-4 w-4 text-gray-500" />
+                        <span className="text-sm">{slot.staff_name}</span>
+                      </div>
+                    </div>
 
-                      {slot.reasons.length > 0 && (
-                        <div className="text-sm text-gray-600">
-                          <strong>Why this slot:</strong> {slot.reasons.join(", ")}
-                        </div>
-                      )}
-                    </card_1.CardContent>
-                  </card_1.Card>
-                );
-              })}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3 text-sm">
+                      <div>
+                        <span className="text-gray-600">Patient Score: </span>
+                        <span className="font-medium">
+                          {Math.round(slot.optimization_factors.patient_preference_score * 100)}%
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Staff Score: </span>
+                        <span className="font-medium">
+                          {Math.round(slot.optimization_factors.staff_efficiency_score * 100)}%
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Capacity Score: </span>
+                        <span className="font-medium">
+                          {Math.round(slot.optimization_factors.clinic_capacity_score * 100)}%
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Success Rate: </span>
+                        <span className="font-medium">
+                          {Math.round(slot.optimization_factors.historical_success_rate * 100)}%
+                        </span>
+                      </div>
+                    </div>
+
+                    {slot.reasons.length > 0 && (
+                      <div className="text-sm text-gray-600">
+                        <strong>Why this slot:</strong> {slot.reasons.join(", ")}
+                      </div>
+                    )}
+                  </card_1.CardContent>
+                </card_1.Card>
+              ))}
             </div>
 
             {/* AI Recommendations */}
@@ -507,14 +490,12 @@ function AISchedulingOptimizer() {
                     AI Recommendations
                   </h4>
                   <ul className="text-sm space-y-1 text-blue-800">
-                    {recommendations.map(function (rec, index) {
-                      return (
-                        <li key={index} className="flex items-start gap-2">
-                          <span>•</span>
-                          <span>{rec}</span>
-                        </li>
-                      );
-                    })}
+                    {recommendations.map((rec, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span>•</span>
+                        <span>{rec}</span>
+                      </li>
+                    ))}
                   </ul>
                 </card_1.CardContent>
               </card_1.Card>

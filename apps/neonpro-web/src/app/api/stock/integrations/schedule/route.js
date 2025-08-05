@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
@@ -174,7 +171,7 @@ function POST(request) {
       alerts_1,
       dailyBreakdown,
       error_1;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 7, , 8]);
@@ -253,17 +250,17 @@ function POST(request) {
           dailyPredictions_1 = new Map();
           appointments === null || appointments === void 0
             ? void 0
-            : appointments.forEach(function (appointment) {
+            : appointments.forEach((appointment) => {
                 var appointmentDate = appointment.scheduled_date.split("T")[0];
                 var procedureType = appointment.procedure_type;
                 // Get materials for this procedure type
                 var requiredMaterials =
                   (materialTemplates_1 === null || materialTemplates_1 === void 0
                     ? void 0
-                    : materialTemplates_1.filter(function (template) {
-                        return template.procedure_type === procedureType;
-                      })) || [];
-                requiredMaterials.forEach(function (material) {
+                    : materialTemplates_1.filter(
+                        (template) => template.procedure_type === procedureType,
+                      )) || [];
+                requiredMaterials.forEach((material) => {
                   var _a, _b;
                   var productId = material.product_id;
                   var quantity = material.estimated_quantity || 1;
@@ -329,12 +326,12 @@ function POST(request) {
           stockMap_1 = new Map();
           currentStock === null || currentStock === void 0
             ? void 0
-            : currentStock.forEach(function (stock) {
+            : currentStock.forEach((stock) => {
                 stockMap_1.set(stock.product_id, stock);
               });
           recommendations_1 = [];
           alerts_1 = [];
-          Array.from(materialPredictions_1.values()).forEach(function (prediction) {
+          Array.from(materialPredictions_1.values()).forEach((prediction) => {
             var currentStockItem = stockMap_1.get(prediction.productId);
             var availableQuantity =
               (currentStockItem === null || currentStockItem === void 0
@@ -378,7 +375,7 @@ function POST(request) {
               });
             }
           });
-          dailyBreakdown = Array.from(dailyPredictions_1.values()).reduce(function (acc, item) {
+          dailyBreakdown = Array.from(dailyPredictions_1.values()).reduce((acc, item) => {
             if (!acc[item.date]) {
               acc[item.date] = {
                 date: item.date,
@@ -405,12 +402,10 @@ function POST(request) {
                       ? void 0
                       : appointments.length) || 0,
                   uniqueMaterials: materialPredictions_1.size,
-                  totalEstimatedCost: Array.from(materialPredictions_1.values()).reduce(function (
-                    sum,
-                    pred,
-                  ) {
-                    return sum + pred.totalQuantity * pred.unitCost;
-                  }, 0),
+                  totalEstimatedCost: Array.from(materialPredictions_1.values()).reduce(
+                    (sum, pred) => sum + pred.totalQuantity * pred.unitCost,
+                    0,
+                  ),
                   potentialShortages: alerts_1.length,
                 },
                 predictions: Array.from(materialPredictions_1.values()),

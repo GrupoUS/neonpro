@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Concurrent Session Manager
  * Story 1.4 - Task 2: Concurrent session control and management
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConcurrentSessionManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -196,7 +193,7 @@ var DEFAULT_SESSION_LIMITS = {
     notifyOnNewSession: false,
   },
 };
-var ConcurrentSessionManager = /** @class */ (function () {
+var ConcurrentSessionManager = /** @class */ (() => {
   function ConcurrentSessionManager(supabaseUrl, supabaseKey, customLimits) {
     this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
     this.auditLogger = new security_audit_logger_1.SecurityAuditLogger(supabaseUrl, supabaseKey);
@@ -453,9 +450,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
           case 1:
             activeSessions = _a.sent();
             sessionsToTerminate = excludeSessionId
-              ? activeSessions.filter(function (s) {
-                  return s.sessionId !== excludeSessionId;
-                })
+              ? activeSessions.filter((s) => s.sessionId !== excludeSessionId)
               : activeSessions;
             terminatedSessionIds = [];
             (_i = 0), (sessionsToTerminate_1 = sessionsToTerminate);
@@ -707,9 +702,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
                 })
                 .in(
                   "session_id",
-                  expiredSessions.map(function (s) {
-                    return s.session_id;
-                  }),
+                  expiredSessions.map((s) => s.session_id),
                 ),
             ];
           case 2:
@@ -752,9 +745,8 @@ var ConcurrentSessionManager = /** @class */ (function () {
     }
   };
   // Private methods
-  ConcurrentSessionManager.prototype.generateSessionId = function () {
-    return "sess_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  ConcurrentSessionManager.prototype.generateSessionId = () =>
+    "sess_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   ConcurrentSessionManager.prototype.enforceSessionLimits = function (
     userId,
     userRole,
@@ -782,10 +774,8 @@ var ConcurrentSessionManager = /** @class */ (function () {
         switch (_c.label) {
           case 0:
             terminatedSessions = [];
-            if (!!limits.allowMultipleDevices) return [3 /*break*/, 4];
-            otherDeviceSessions = activeSessions.filter(function (s) {
-              return s.deviceId !== deviceId;
-            });
+            if (limits.allowMultipleDevices) return [3 /*break*/, 4];
+            otherDeviceSessions = activeSessions.filter((s) => s.deviceId !== deviceId);
             (_i = 0), (otherDeviceSessions_1 = otherDeviceSessions);
             _c.label = 1;
           case 1:
@@ -806,14 +796,10 @@ var ConcurrentSessionManager = /** @class */ (function () {
             _i++;
             return [3 /*break*/, 1];
           case 4:
-            deviceSessions = activeSessions.filter(function (s) {
-              return s.deviceId === deviceId;
-            });
+            deviceSessions = activeSessions.filter((s) => s.deviceId === deviceId);
             if (!(deviceSessions.length >= limits.maxSessionsPerDevice)) return [3 /*break*/, 8];
             sessionsToTerminate = deviceSessions
-              .sort(function (a, b) {
-                return a.lastActivity.getTime() - b.lastActivity.getTime();
-              })
+              .sort((a, b) => a.lastActivity.getTime() - b.lastActivity.getTime())
               .slice(0, deviceSessions.length - limits.maxSessionsPerDevice + 1);
             (_a = 0), (sessionsToTerminate_2 = sessionsToTerminate);
             _c.label = 5;
@@ -835,15 +821,13 @@ var ConcurrentSessionManager = /** @class */ (function () {
             _a++;
             return [3 /*break*/, 5];
           case 8:
-            remainingSessions = activeSessions.filter(function (s) {
-              return !terminatedSessions.includes(s.sessionId);
-            });
+            remainingSessions = activeSessions.filter(
+              (s) => !terminatedSessions.includes(s.sessionId),
+            );
             if (!(remainingSessions.length >= limits.maxSessions)) return [3 /*break*/, 12];
             sessionsToTerminate = limits.forceLogoutOldest
               ? remainingSessions
-                  .sort(function (a, b) {
-                    return a.lastActivity.getTime() - b.lastActivity.getTime();
-                  })
+                  .sort((a, b) => a.lastActivity.getTime() - b.lastActivity.getTime())
                   .slice(0, remainingSessions.length - limits.maxSessions + 1)
               : remainingSessions.slice(-1);
             (_b = 0), (sessionsToTerminate_3 = sessionsToTerminate);
@@ -871,27 +855,24 @@ var ConcurrentSessionManager = /** @class */ (function () {
       });
     });
   };
-  ConcurrentSessionManager.prototype.mapDatabaseToSessionInfo = function (data) {
-    return {
-      sessionId: data.session_id,
-      userId: data.user_id,
-      deviceId: data.device_id,
-      deviceName: data.device_name,
-      deviceType: data.device_type,
-      ipAddress: data.ip_address,
-      userAgent: data.user_agent,
-      location: data.location,
-      createdAt: new Date(data.created_at),
-      lastActivity: new Date(data.last_activity),
-      isActive: data.is_active,
-      metadata: data.metadata,
-    };
-  };
+  ConcurrentSessionManager.prototype.mapDatabaseToSessionInfo = (data) => ({
+    sessionId: data.session_id,
+    userId: data.user_id,
+    deviceId: data.device_id,
+    deviceName: data.device_name,
+    deviceType: data.device_type,
+    ipAddress: data.ip_address,
+    userAgent: data.user_agent,
+    location: data.location,
+    createdAt: new Date(data.created_at),
+    lastActivity: new Date(data.last_activity),
+    isActive: data.is_active,
+    metadata: data.metadata,
+  });
   ConcurrentSessionManager.prototype.startCleanupInterval = function () {
-    var _this = this;
     this.cleanupInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_9;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -909,8 +890,7 @@ var ConcurrentSessionManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       5 * 60 * 1000,
     ); // Every 5 minutes
   };

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -175,7 +172,7 @@ var stepper_1 = require("@/components/ui/stepper");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var sonner_1 = require("sonner");
-var RecoveryWizard = function (_a) {
+var RecoveryWizard = (_a) => {
   var isOpen = _a.isOpen,
     onClose = _a.onClose,
     onSuccess = _a.onSuccess;
@@ -224,26 +221,20 @@ var RecoveryWizard = function (_a) {
       description: "Acompanhe o progresso da restauração",
     },
   ];
-  (0, react_1.useEffect)(
-    function () {
-      if (isOpen) {
-        loadAvailableBackups();
-      }
-    },
-    [isOpen],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedBackup && recoveryOptions.type === "PARTIAL_RESTORE") {
-        loadBackupFiles(selectedBackup.id);
-      }
-    },
-    [selectedBackup, recoveryOptions.type],
-  );
-  var loadAvailableBackups = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (isOpen) {
+      loadAvailableBackups();
+    }
+  }, [isOpen]);
+  (0, react_1.useEffect)(() => {
+    if (selectedBackup && recoveryOptions.type === "PARTIAL_RESTORE") {
+      loadBackupFiles(selectedBackup.id);
+    }
+  }, [selectedBackup, recoveryOptions.type]);
+  var loadAvailableBackups = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -275,11 +266,10 @@ var RecoveryWizard = function (_a) {
         }
       });
     });
-  };
-  var loadBackupFiles = function (backupId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadBackupFiles = (backupId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -303,12 +293,11 @@ var RecoveryWizard = function (_a) {
         }
       });
     });
-  };
-  var handleBackupSelect = function (backup) {
+  var handleBackupSelect = (backup) => {
     setSelectedBackup(backup);
     setRecoveryOptions(__assign(__assign({}, recoveryOptions), { backup_id: backup.id }));
   };
-  var handleRecoveryTypeChange = function (type) {
+  var handleRecoveryTypeChange = (type) => {
     setRecoveryOptions(
       __assign(__assign({}, recoveryOptions), {
         type: type,
@@ -317,7 +306,7 @@ var RecoveryWizard = function (_a) {
       }),
     );
   };
-  var handleFileToggle = function (file, checked) {
+  var handleFileToggle = (file, checked) => {
     var currentFiles = recoveryOptions.files_to_restore || [];
     if (checked) {
       setRecoveryOptions(
@@ -328,17 +317,15 @@ var RecoveryWizard = function (_a) {
     } else {
       setRecoveryOptions(
         __assign(__assign({}, recoveryOptions), {
-          files_to_restore: currentFiles.filter(function (f) {
-            return f !== file;
-          }),
+          files_to_restore: currentFiles.filter((f) => f !== file),
         }),
       );
     }
   };
-  var startRecovery = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var startRecovery = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, errorData, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
@@ -359,7 +346,7 @@ var RecoveryWizard = function (_a) {
             setCurrentStep(3);
             sonner_1.toast.success("Operação de recuperação iniciada com sucesso");
             // Simular progresso (em produção, seria uma chamada real à API)
-            setTimeout(function () {
+            setTimeout(() => {
               setRecoveryInProgress(false);
               sonner_1.toast.success("Recuperação concluída com sucesso");
               onSuccess === null || onSuccess === void 0 ? void 0 : onSuccess();
@@ -386,8 +373,7 @@ var RecoveryWizard = function (_a) {
         }
       });
     });
-  };
-  var handleClose = function () {
+  var handleClose = () => {
     setCurrentStep(0);
     setSelectedBackup(null);
     setRecoveryOptions({
@@ -400,7 +386,7 @@ var RecoveryWizard = function (_a) {
     setRecoveryInProgress(false);
     onClose();
   };
-  var canProceedToNext = function () {
+  var canProceedToNext = () => {
     var _a;
     switch (currentStep) {
       case 0:
@@ -420,7 +406,7 @@ var RecoveryWizard = function (_a) {
         return false;
     }
   };
-  var getRecoveryTypeIcon = function (type) {
+  var getRecoveryTypeIcon = (type) => {
     switch (type) {
       case "FULL_RESTORE":
         return <lucide_react_1.Database className="h-4 w-4" />;
@@ -434,7 +420,7 @@ var RecoveryWizard = function (_a) {
         return <lucide_react_1.HardDrive className="h-4 w-4" />;
     }
   };
-  var renderStepContent = function () {
+  var renderStepContent = () => {
     var _a, _b, _c;
     switch (currentStep) {
       case 0:
@@ -456,45 +442,41 @@ var RecoveryWizard = function (_a) {
                     </alert_1.AlertDescription>
                   </alert_1.Alert>
                 : <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {backups.map(function (backup) {
-                      return (
-                        <card_1.Card
-                          key={backup.id}
-                          className={"cursor-pointer transition-colors ".concat(
-                            (selectedBackup === null || selectedBackup === void 0
-                              ? void 0
-                              : selectedBackup.id) === backup.id
-                              ? "ring-2 ring-primary bg-accent"
-                              : "hover:bg-accent",
-                          )}
-                          onClick={function () {
-                            return handleBackupSelect(backup);
-                          }}
-                        >
-                          <card_1.CardContent className="p-4">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-3">
-                                {getRecoveryTypeIcon(backup.type)}
-                                <div>
-                                  <div className="font-medium">{backup.config_name}</div>
-                                  <div className="text-sm text-muted-foreground">
-                                    {(0, utils_1.formatDate)(new Date(backup.start_time))}
-                                  </div>
+                    {backups.map((backup) => (
+                      <card_1.Card
+                        key={backup.id}
+                        className={"cursor-pointer transition-colors ".concat(
+                          (selectedBackup === null || selectedBackup === void 0
+                            ? void 0
+                            : selectedBackup.id) === backup.id
+                            ? "ring-2 ring-primary bg-accent"
+                            : "hover:bg-accent",
+                        )}
+                        onClick={() => handleBackupSelect(backup)}
+                      >
+                        <card_1.CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                              {getRecoveryTypeIcon(backup.type)}
+                              <div>
+                                <div className="font-medium">{backup.config_name}</div>
+                                <div className="text-sm text-muted-foreground">
+                                  {(0, utils_1.formatDate)(new Date(backup.start_time))}
                                 </div>
                               </div>
-                              <div className="text-right">
-                                <badge_1.Badge variant="outline">{backup.type}</badge_1.Badge>
-                                {backup.size && (
-                                  <div className="text-sm text-muted-foreground mt-1">
-                                    {(0, utils_1.formatBytes)(backup.size)}
-                                  </div>
-                                )}
-                              </div>
                             </div>
-                          </card_1.CardContent>
-                        </card_1.Card>
-                      );
-                    })}
+                            <div className="text-right">
+                              <badge_1.Badge variant="outline">{backup.type}</badge_1.Badge>
+                              {backup.size && (
+                                <div className="text-sm text-muted-foreground mt-1">
+                                  {(0, utils_1.formatBytes)(backup.size)}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </card_1.CardContent>
+                      </card_1.Card>
+                    ))}
                   </div>}
           </div>
         );
@@ -548,22 +530,18 @@ var RecoveryWizard = function (_a) {
                         Carregando lista de arquivos...
                       </p>
                     : <div className="space-y-2">
-                        {availableFiles.map(function (file) {
-                          return (
-                            <div key={file} className="flex items-center space-x-2">
-                              <checkbox_1.Checkbox
-                                id={file}
-                                checked={(recoveryOptions.files_to_restore || []).includes(file)}
-                                onCheckedChange={function (checked) {
-                                  return handleFileToggle(file, checked);
-                                }}
-                              />
-                              <label_1.Label htmlFor={file} className="text-sm">
-                                {file}
-                              </label_1.Label>
-                            </div>
-                          );
-                        })}
+                        {availableFiles.map((file) => (
+                          <div key={file} className="flex items-center space-x-2">
+                            <checkbox_1.Checkbox
+                              id={file}
+                              checked={(recoveryOptions.files_to_restore || []).includes(file)}
+                              onCheckedChange={(checked) => handleFileToggle(file, checked)}
+                            />
+                            <label_1.Label htmlFor={file} className="text-sm">
+                              {file}
+                            </label_1.Label>
+                          </div>
+                        ))}
                       </div>}
                 </div>
               </div>
@@ -580,13 +558,13 @@ var RecoveryWizard = function (_a) {
                       ? void 0
                       : _a.split(".")[0]
                   }
-                  onChange={function (e) {
-                    return setRecoveryOptions(
+                  onChange={(e) =>
+                    setRecoveryOptions(
                       __assign(__assign({}, recoveryOptions), {
                         point_in_time: e.target.value + ".000Z",
                       }),
-                    );
-                  }}
+                    )
+                  }
                   className="mt-2"
                 />
               </div>
@@ -597,11 +575,11 @@ var RecoveryWizard = function (_a) {
                 <checkbox_1.Checkbox
                   id="overwrite"
                   checked={recoveryOptions.overwrite_existing}
-                  onCheckedChange={function (checked) {
-                    return setRecoveryOptions(
+                  onCheckedChange={(checked) =>
+                    setRecoveryOptions(
                       __assign(__assign({}, recoveryOptions), { overwrite_existing: checked }),
-                    );
-                  }}
+                    )
+                  }
                 />
                 <label_1.Label htmlFor="overwrite">Sobrescrever arquivos existentes</label_1.Label>
               </div>
@@ -610,11 +588,11 @@ var RecoveryWizard = function (_a) {
                 <checkbox_1.Checkbox
                   id="verify"
                   checked={recoveryOptions.verify_integrity}
-                  onCheckedChange={function (checked) {
-                    return setRecoveryOptions(
+                  onCheckedChange={(checked) =>
+                    setRecoveryOptions(
                       __assign(__assign({}, recoveryOptions), { verify_integrity: checked }),
-                    );
-                  }}
+                    )
+                  }
                 />
                 <label_1.Label htmlFor="verify">Verificar integridade dos dados</label_1.Label>
               </div>
@@ -626,11 +604,11 @@ var RecoveryWizard = function (_a) {
                 id="email"
                 type="email"
                 value={recoveryOptions.notification_email || ""}
-                onChange={function (e) {
-                  return setRecoveryOptions(
+                onChange={(e) =>
+                  setRecoveryOptions(
                     __assign(__assign({}, recoveryOptions), { notification_email: e.target.value }),
-                  );
-                }}
+                  )
+                }
                 placeholder="seu@email.com"
                 className="mt-2"
               />
@@ -688,13 +666,11 @@ var RecoveryWizard = function (_a) {
                   <div className="mt-1 max-h-32 overflow-y-auto">
                     {(_c = recoveryOptions.files_to_restore) === null || _c === void 0
                       ? void 0
-                      : _c.map(function (file) {
-                          return (
-                            <div key={file} className="text-sm text-muted-foreground">
-                              {file}
-                            </div>
-                          );
-                        })}
+                      : _c.map((file) => (
+                          <div key={file} className="text-sm text-muted-foreground">
+                            {file}
+                          </div>
+                        ))}
                   </div>
                 </div>
               )}
@@ -764,34 +740,27 @@ var RecoveryWizard = function (_a) {
 
         <div className="space-y-6">
           <stepper_1.Stepper value={currentStep} className="w-full">
-            {steps.map(function (step, index) {
-              return (
-                <stepper_1.StepperItem key={index} value={index}>
-                  <stepper_1.StepperTrigger>{step.title}</stepper_1.StepperTrigger>
-                  <stepper_1.StepperContent>
-                    <div className="space-y-4">
-                      <div>
-                        <h3 className="font-medium">{step.title}</h3>
-                        <p className="text-sm text-muted-foreground">{step.description}</p>
-                      </div>
-                      {renderStepContent()}
+            {steps.map((step, index) => (
+              <stepper_1.StepperItem key={index} value={index}>
+                <stepper_1.StepperTrigger>{step.title}</stepper_1.StepperTrigger>
+                <stepper_1.StepperContent>
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-medium">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground">{step.description}</p>
                     </div>
-                  </stepper_1.StepperContent>
-                  {index < steps.length - 1 && <stepper_1.StepperSeparator />}
-                </stepper_1.StepperItem>
-              );
-            })}
+                    {renderStepContent()}
+                  </div>
+                </stepper_1.StepperContent>
+                {index < steps.length - 1 && <stepper_1.StepperSeparator />}
+              </stepper_1.StepperItem>
+            ))}
           </stepper_1.Stepper>
         </div>
 
         <dialog_1.DialogFooter>
           {currentStep > 0 && currentStep < 3 && (
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setCurrentStep(currentStep - 1);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setCurrentStep(currentStep - 1)}>
               <lucide_react_1.ArrowLeft className="h-4 w-4 mr-2" />
               Anterior
             </button_1.Button>
@@ -799,9 +768,7 @@ var RecoveryWizard = function (_a) {
 
           {currentStep < 2 && (
             <button_1.Button
-              onClick={function () {
-                return setCurrentStep(currentStep + 1);
-              }}
+              onClick={() => setCurrentStep(currentStep + 1)}
               disabled={!canProceedToNext()}
             >
               Próximo

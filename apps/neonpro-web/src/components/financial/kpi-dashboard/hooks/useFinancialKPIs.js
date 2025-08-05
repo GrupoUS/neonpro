@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,39 +142,37 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useFinancialKPIs = useFinancialKPIs;
 var react_1 = require("react");
 var supabase_1 = require("@/lib/supabase");
 var date_fns_1 = require("date-fns");
 // Default filters
-var getDefaultFilters = function () {
-  return {
-    dateRange: {
-      start: (0, date_fns_1.startOfMonth)(new Date()),
-      end: (0, date_fns_1.endOfMonth)(new Date()),
-      preset: "current-month",
-    },
-    services: [],
-    providers: [],
-    locations: [],
-    patientSegments: [],
-  };
-};
+var getDefaultFilters = () => ({
+  dateRange: {
+    start: (0, date_fns_1.startOfMonth)(new Date()),
+    end: (0, date_fns_1.endOfMonth)(new Date()),
+    preset: "current-month",
+  },
+  services: [],
+  providers: [],
+  locations: [],
+  patientSegments: [],
+});
 // KPI calculation functions
-var calculateTrend = function (current, previous) {
+var calculateTrend = (current, previous) => {
   var threshold = 0.01; // 1% threshold for stability
   var change = (current - previous) / previous;
   if (Math.abs(change) < threshold) return "stable";
   return change > 0 ? "up" : "down";
 };
-var calculateChangePercentage = function (current, previous) {
+var calculateChangePercentage = (current, previous) => {
   if (previous === 0) return current > 0 ? 100 : 0;
   return ((current - previous) / previous) * 100;
 };
 // Generate alerts based on KPI values
-var generateKPIAlerts = function (kpi) {
+var generateKPIAlerts = (kpi) => {
   var alerts = [];
   // Target-based alerts
   if (kpi.target) {
@@ -235,7 +230,6 @@ var generateKPIAlerts = function (kpi) {
 };
 // Main hook
 function useFinancialKPIs(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     _b = _a.autoRefresh,
     autoRefresh = _b === void 0 ? true : _b,
@@ -273,8 +267,8 @@ function useFinancialKPIs(_a) {
     setCache = _p[1];
   // Fetch financial data from Supabase
   var fetchFinancialData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a,
           start,
           end,
@@ -294,7 +288,7 @@ function useFinancialKPIs(_a) {
           averageTicket,
           calculatedMetrics,
           err_1;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               (_a = filters.dateRange), (start = _a.start), (end = _a.end);
@@ -342,15 +336,11 @@ function useFinancialKPIs(_a) {
               totalRevenue =
                 (appointments === null || appointments === void 0
                   ? void 0
-                  : appointments.reduce(function (sum, apt) {
-                      return sum + (apt.total_amount || 0);
-                    }, 0)) || 0;
+                  : appointments.reduce((sum, apt) => sum + (apt.total_amount || 0), 0)) || 0;
               totalExpenses =
                 (expenses === null || expenses === void 0
                   ? void 0
-                  : expenses.reduce(function (sum, exp) {
-                      return sum + (exp.amount || 0);
-                    }, 0)) || 0;
+                  : expenses.reduce((sum, exp) => sum + (exp.amount || 0), 0)) || 0;
               netProfit = totalRevenue - totalExpenses;
               grossMargin =
                 totalRevenue > 0 ? ((totalRevenue - totalExpenses) / totalRevenue) * 100 : 0;
@@ -358,7 +348,7 @@ function useFinancialKPIs(_a) {
                 new Set(
                   appointments === null || appointments === void 0
                     ? void 0
-                    : appointments.map(function (apt) {
+                    : appointments.map((apt) => {
                         var _a;
                         return (_a = apt.patient) === null || _a === void 0 ? void 0 : _a.id;
                       }),
@@ -390,14 +380,13 @@ function useFinancialKPIs(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId, filters.dateRange, cache, cacheTimeout],
   );
   // Fetch comparison data for previous period
   var fetchComparisonData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a,
           start,
           end,
@@ -408,7 +397,7 @@ function useFinancialKPIs(_a) {
           originalFilters,
           comparisonMetrics,
           err_2;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = filters.dateRange), (start = _a.start), (end = _a.end);
@@ -439,132 +428,131 @@ function useFinancialKPIs(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [filters, fetchFinancialData],
   );
   // Generate KPIs from metrics
-  var generateKPIs = (0, react_1.useCallback)(function (currentMetrics, previousMetrics) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var kpiList;
-      return __generator(this, function (_a) {
-        kpiList = [
-          {
-            id: "revenue-total",
-            name: "Receita Total",
-            value: currentMetrics.totalRevenue,
-            previousValue: previousMetrics.totalRevenue,
-            target: currentMetrics.totalRevenue * 1.1, // 10% growth target
-            unit: "currency",
-            trend: calculateTrend(currentMetrics.totalRevenue, previousMetrics.totalRevenue),
-            changePercentage: calculateChangePercentage(
-              currentMetrics.totalRevenue,
-              previousMetrics.totalRevenue,
-            ),
-            category: "revenue",
-            description: "Receita total do período selecionado",
-            lastUpdated: new Date(),
-            confidence: 95,
-          },
-          {
-            id: "profit-margin",
-            name: "Margem de Lucro",
-            value: currentMetrics.grossMargin,
-            previousValue: previousMetrics.grossMargin,
-            target: 35,
-            unit: "percentage",
-            trend: calculateTrend(currentMetrics.grossMargin, previousMetrics.grossMargin),
-            changePercentage: calculateChangePercentage(
-              currentMetrics.grossMargin,
-              previousMetrics.grossMargin,
-            ),
-            category: "profitability",
-            description: "Margem de lucro bruto sobre receita",
-            lastUpdated: new Date(),
-            confidence: 92,
-          },
-          {
-            id: "ebitda",
-            name: "EBITDA",
-            value: currentMetrics.ebitda,
-            previousValue: previousMetrics.ebitda,
-            target: currentMetrics.ebitda * 1.15,
-            unit: "currency",
-            trend: calculateTrend(currentMetrics.ebitda, previousMetrics.ebitda),
-            changePercentage: calculateChangePercentage(
-              currentMetrics.ebitda,
-              previousMetrics.ebitda,
-            ),
-            category: "profitability",
-            description: "Lucro antes de juros, impostos, depreciação e amortização",
-            lastUpdated: new Date(),
-            confidence: 88,
-          },
-          {
-            id: "cash-flow",
-            name: "Fluxo de Caixa",
-            value: currentMetrics.cashFlow,
-            previousValue: previousMetrics.cashFlow,
-            target: currentMetrics.cashFlow * 1.2,
-            unit: "currency",
-            trend: calculateTrend(currentMetrics.cashFlow, previousMetrics.cashFlow),
-            changePercentage: calculateChangePercentage(
-              currentMetrics.cashFlow,
-              previousMetrics.cashFlow,
-            ),
-            category: "liquidity",
-            description: "Fluxo de caixa operacional do período",
-            lastUpdated: new Date(),
-            confidence: 90,
-          },
-          {
-            id: "roi",
-            name: "ROI",
-            value: currentMetrics.roi,
-            previousValue: previousMetrics.roi,
-            target: 20,
-            unit: "percentage",
-            trend: calculateTrend(currentMetrics.roi, previousMetrics.roi),
-            changePercentage: calculateChangePercentage(currentMetrics.roi, previousMetrics.roi),
-            category: "efficiency",
-            description: "Retorno sobre investimento",
-            lastUpdated: new Date(),
-            confidence: 85,
-          },
-          {
-            id: "patient-ltv",
-            name: "LTV do Paciente",
-            value: currentMetrics.patientLTV,
-            previousValue: previousMetrics.patientLTV,
-            target: 3000,
-            unit: "currency",
-            trend: calculateTrend(currentMetrics.patientLTV, previousMetrics.patientLTV),
-            changePercentage: calculateChangePercentage(
-              currentMetrics.patientLTV,
-              previousMetrics.patientLTV,
-            ),
-            category: "efficiency",
-            description: "Valor vitalício médio do paciente",
-            lastUpdated: new Date(),
-            confidence: 82,
-          },
-        ];
-        // Add alerts to each KPI
-        return [
-          2 /*return*/,
-          kpiList.map(function (kpi) {
-            return __assign(__assign({}, kpi), { alerts: generateKPIAlerts(kpi) });
-          }),
-        ];
-      });
-    });
-  }, []);
+  var generateKPIs = (0, react_1.useCallback)(
+    (currentMetrics, previousMetrics) =>
+      __awaiter(this, void 0, void 0, function () {
+        var kpiList;
+        return __generator(this, (_a) => {
+          kpiList = [
+            {
+              id: "revenue-total",
+              name: "Receita Total",
+              value: currentMetrics.totalRevenue,
+              previousValue: previousMetrics.totalRevenue,
+              target: currentMetrics.totalRevenue * 1.1, // 10% growth target
+              unit: "currency",
+              trend: calculateTrend(currentMetrics.totalRevenue, previousMetrics.totalRevenue),
+              changePercentage: calculateChangePercentage(
+                currentMetrics.totalRevenue,
+                previousMetrics.totalRevenue,
+              ),
+              category: "revenue",
+              description: "Receita total do período selecionado",
+              lastUpdated: new Date(),
+              confidence: 95,
+            },
+            {
+              id: "profit-margin",
+              name: "Margem de Lucro",
+              value: currentMetrics.grossMargin,
+              previousValue: previousMetrics.grossMargin,
+              target: 35,
+              unit: "percentage",
+              trend: calculateTrend(currentMetrics.grossMargin, previousMetrics.grossMargin),
+              changePercentage: calculateChangePercentage(
+                currentMetrics.grossMargin,
+                previousMetrics.grossMargin,
+              ),
+              category: "profitability",
+              description: "Margem de lucro bruto sobre receita",
+              lastUpdated: new Date(),
+              confidence: 92,
+            },
+            {
+              id: "ebitda",
+              name: "EBITDA",
+              value: currentMetrics.ebitda,
+              previousValue: previousMetrics.ebitda,
+              target: currentMetrics.ebitda * 1.15,
+              unit: "currency",
+              trend: calculateTrend(currentMetrics.ebitda, previousMetrics.ebitda),
+              changePercentage: calculateChangePercentage(
+                currentMetrics.ebitda,
+                previousMetrics.ebitda,
+              ),
+              category: "profitability",
+              description: "Lucro antes de juros, impostos, depreciação e amortização",
+              lastUpdated: new Date(),
+              confidence: 88,
+            },
+            {
+              id: "cash-flow",
+              name: "Fluxo de Caixa",
+              value: currentMetrics.cashFlow,
+              previousValue: previousMetrics.cashFlow,
+              target: currentMetrics.cashFlow * 1.2,
+              unit: "currency",
+              trend: calculateTrend(currentMetrics.cashFlow, previousMetrics.cashFlow),
+              changePercentage: calculateChangePercentage(
+                currentMetrics.cashFlow,
+                previousMetrics.cashFlow,
+              ),
+              category: "liquidity",
+              description: "Fluxo de caixa operacional do período",
+              lastUpdated: new Date(),
+              confidence: 90,
+            },
+            {
+              id: "roi",
+              name: "ROI",
+              value: currentMetrics.roi,
+              previousValue: previousMetrics.roi,
+              target: 20,
+              unit: "percentage",
+              trend: calculateTrend(currentMetrics.roi, previousMetrics.roi),
+              changePercentage: calculateChangePercentage(currentMetrics.roi, previousMetrics.roi),
+              category: "efficiency",
+              description: "Retorno sobre investimento",
+              lastUpdated: new Date(),
+              confidence: 85,
+            },
+            {
+              id: "patient-ltv",
+              name: "LTV do Paciente",
+              value: currentMetrics.patientLTV,
+              previousValue: previousMetrics.patientLTV,
+              target: 3000,
+              unit: "currency",
+              trend: calculateTrend(currentMetrics.patientLTV, previousMetrics.patientLTV),
+              changePercentage: calculateChangePercentage(
+                currentMetrics.patientLTV,
+                previousMetrics.patientLTV,
+              ),
+              category: "efficiency",
+              description: "Valor vitalício médio do paciente",
+              lastUpdated: new Date(),
+              confidence: 82,
+            },
+          ];
+          // Add alerts to each KPI
+          return [
+            2 /*return*/,
+            kpiList.map((kpi) => __assign(__assign({}, kpi), { alerts: generateKPIAlerts(kpi) })),
+          ];
+        });
+      }),
+    [],
+  );
   // Main data loading function
   var loadKPIData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, currentMetrics, previousMetrics, generatedKPIs, err_3;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               setIsLoading(true);
@@ -596,15 +584,14 @@ function useFinancialKPIs(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchFinancialData, fetchComparisonData, generateKPIs],
   );
   // Refresh function
   var refreshKPIs = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Clear cache for fresh data
@@ -615,163 +602,127 @@ function useFinancialKPIs(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadKPIData],
   );
   // Update filters
-  var updateFilters = (0, react_1.useCallback)(function (newFilters) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), newFilters);
-    });
+  var updateFilters = (0, react_1.useCallback)((newFilters) => {
+    setFilters((prev) => __assign(__assign({}, prev), newFilters));
   }, []);
   // Acknowledge alert
-  var acknowledgeAlert = (0, react_1.useCallback)(function (alertId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        setKpis(function (prev) {
-          return prev.map(function (kpi) {
-            var _a;
-            return __assign(__assign({}, kpi), {
-              alerts:
-                (_a = kpi.alerts) === null || _a === void 0
-                  ? void 0
-                  : _a.map(function (alert) {
-                      return alert.id === alertId
-                        ? __assign(__assign({}, alert), { acknowledged: true })
-                        : alert;
-                    }),
-            });
-          });
+  var acknowledgeAlert = (0, react_1.useCallback)(
+    (alertId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setKpis((prev) =>
+            prev.map((kpi) => {
+              var _a;
+              return __assign(__assign({}, kpi), {
+                alerts:
+                  (_a = kpi.alerts) === null || _a === void 0
+                    ? void 0
+                    : _a.map((alert) =>
+                        alert.id === alertId
+                          ? __assign(__assign({}, alert), { acknowledged: true })
+                          : alert,
+                      ),
+              });
+            }),
+          );
+          return [2 /*return*/];
         });
-        return [2 /*return*/];
-      });
-    });
-  }, []);
+      }),
+    [],
+  );
   // Export data
-  var exportData = (0, react_1.useCallback)(function (format) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        // Implementation would depend on export library
-        console.log("Exporting data in ".concat(format, " format"));
-        return [2 /*return*/];
-      });
-    });
-  }, []);
+  var exportData = (0, react_1.useCallback)(
+    (format) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          // Implementation would depend on export library
+          console.log("Exporting data in ".concat(format, " format"));
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
   // Get KPI history
-  var getKPIHistory = (0, react_1.useCallback)(function (kpiId, days) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        // Implementation would fetch historical data
-        return [2 /*return*/, []];
-      });
-    });
-  }, []);
+  var getKPIHistory = (0, react_1.useCallback)(
+    (kpiId, days) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          // Implementation would fetch historical data
+          return [2 /*return*/, []];
+        });
+      }),
+    [],
+  );
   // Computed values
   var getKPIsByCategory = (0, react_1.useCallback)(
-    function (category) {
-      return kpis.filter(function (kpi) {
-        return kpi.category === category;
-      });
-    },
+    (category) => kpis.filter((kpi) => kpi.category === category),
     [kpis],
   );
-  var getTrendAnalysis = (0, react_1.useCallback)(
-    function () {
-      var trends = {
-        improving: kpis.filter(function (kpi) {
-          return kpi.trend === "up";
-        }).length,
-        declining: kpis.filter(function (kpi) {
-          return kpi.trend === "down";
-        }).length,
-        stable: kpis.filter(function (kpi) {
-          return kpi.trend === "stable";
-        }).length,
-      };
-      return __assign(__assign({}, trends), {
-        total: kpis.length,
-        overallTrend:
-          trends.improving > trends.declining
-            ? "positive"
-            : trends.declining > trends.improving
-              ? "negative"
-              : "neutral",
-      });
-    },
-    [kpis],
-  );
-  var getPerformanceScore = (0, react_1.useCallback)(
-    function () {
-      if (kpis.length === 0) return 0;
-      var scores = kpis.map(function (kpi) {
-        if (!kpi.target) return 50; // Neutral score if no target
-        var achievement = (kpi.value / kpi.target) * 100;
-        return Math.min(100, Math.max(0, achievement));
-      });
-      return (
-        scores.reduce(function (sum, score) {
-          return sum + score;
-        }, 0) / scores.length
-      );
-    },
-    [kpis],
-  );
-  var getBenchmarkComparison = (0, react_1.useCallback)(
-    function () {
-      var benchmarkedKPIs = kpis.filter(function (kpi) {
-        return kpi.benchmarkData;
-      });
-      if (benchmarkedKPIs.length === 0) return null;
-      var avgPercentile =
-        benchmarkedKPIs.reduce(function (sum, kpi) {
-          var _a;
-          return (
-            sum +
-            (((_a = kpi.benchmarkData) === null || _a === void 0 ? void 0 : _a.percentile) || 50)
-          );
-        }, 0) / benchmarkedKPIs.length;
-      return {
-        averagePercentile: avgPercentile,
-        aboveIndustryAverage: benchmarkedKPIs.filter(function (kpi) {
-          var _a;
-          return (
-            kpi.value >
-            (((_a = kpi.benchmarkData) === null || _a === void 0 ? void 0 : _a.industryAverage) ||
-              0)
-          );
-        }).length,
-        totalBenchmarked: benchmarkedKPIs.length,
-      };
-    },
-    [kpis],
-  );
+  var getTrendAnalysis = (0, react_1.useCallback)(() => {
+    var trends = {
+      improving: kpis.filter((kpi) => kpi.trend === "up").length,
+      declining: kpis.filter((kpi) => kpi.trend === "down").length,
+      stable: kpis.filter((kpi) => kpi.trend === "stable").length,
+    };
+    return __assign(__assign({}, trends), {
+      total: kpis.length,
+      overallTrend:
+        trends.improving > trends.declining
+          ? "positive"
+          : trends.declining > trends.improving
+            ? "negative"
+            : "neutral",
+    });
+  }, [kpis]);
+  var getPerformanceScore = (0, react_1.useCallback)(() => {
+    if (kpis.length === 0) return 0;
+    var scores = kpis.map((kpi) => {
+      if (!kpi.target) return 50; // Neutral score if no target
+      var achievement = (kpi.value / kpi.target) * 100;
+      return Math.min(100, Math.max(0, achievement));
+    });
+    return scores.reduce((sum, score) => sum + score, 0) / scores.length;
+  }, [kpis]);
+  var getBenchmarkComparison = (0, react_1.useCallback)(() => {
+    var benchmarkedKPIs = kpis.filter((kpi) => kpi.benchmarkData);
+    if (benchmarkedKPIs.length === 0) return null;
+    var avgPercentile =
+      benchmarkedKPIs.reduce((sum, kpi) => {
+        var _a;
+        return (
+          sum +
+          (((_a = kpi.benchmarkData) === null || _a === void 0 ? void 0 : _a.percentile) || 50)
+        );
+      }, 0) / benchmarkedKPIs.length;
+    return {
+      averagePercentile: avgPercentile,
+      aboveIndustryAverage: benchmarkedKPIs.filter((kpi) => {
+        var _a;
+        return (
+          kpi.value >
+          (((_a = kpi.benchmarkData) === null || _a === void 0 ? void 0 : _a.industryAverage) || 0)
+        );
+      }).length,
+      totalBenchmarked: benchmarkedKPIs.length,
+    };
+  }, [kpis]);
   // Active alerts
   var activeAlerts = (0, react_1.useMemo)(
-    function () {
-      return kpis
-        .flatMap(function (kpi) {
-          return kpi.alerts || [];
-        })
-        .filter(function (alert) {
-          return !alert.acknowledged;
-        });
-    },
+    () => kpis.flatMap((kpi) => kpi.alerts || []).filter((alert) => !alert.acknowledged),
     [kpis],
   );
   // Auto-refresh effect
-  (0, react_1.useEffect)(
-    function () {
-      loadKPIData();
-      if (autoRefresh) {
-        var interval_1 = setInterval(loadKPIData, refreshInterval * 1000);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [loadKPIData, autoRefresh, refreshInterval, filters],
-  );
+  (0, react_1.useEffect)(() => {
+    loadKPIData();
+    if (autoRefresh) {
+      var interval_1 = setInterval(loadKPIData, refreshInterval * 1000);
+      return () => clearInterval(interval_1);
+    }
+  }, [loadKPIData, autoRefresh, refreshInterval, filters]);
   return {
     kpis: kpis,
     metrics: metrics,

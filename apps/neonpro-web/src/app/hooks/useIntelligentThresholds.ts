@@ -1,13 +1,13 @@
 // Custom Hook for Intelligent Threshold Management
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 
+import type { useCallback, useEffect, useState } from "react";
 import type {
   DemandForecast,
   ReorderAlert,
   ReorderThreshold,
   ThresholdOptimization,
 } from "@/app/types/reorder-alerts";
-import type { useCallback, useEffect, useState } from "react";
 
 interface ThresholdFilters {
   item_category?: string[];

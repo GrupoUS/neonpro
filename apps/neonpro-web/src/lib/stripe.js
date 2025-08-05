@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.fromStripeAmount =
   exports.toStripeAmount =
@@ -12,7 +11,7 @@ var stripe_js_1 = require("@stripe/stripe-js");
 var stripe_1 = require("stripe");
 // Client-side Stripe instance
 var stripePromise;
-var getStripe = function () {
+var getStripe = () => {
   if (!stripePromise) {
     stripePromise = (0, stripe_js_1.loadStripe)(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
   }
@@ -45,7 +44,7 @@ exports.STRIPE_CONFIG = {
 // Payment method types for Brazil
 exports.BRAZIL_PAYMENT_METHODS = ["card", "boleto", "pix"];
 // Currency formatter for Brazil
-var formatCurrency = function (amount) {
+var formatCurrency = (amount) => {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
@@ -53,13 +52,9 @@ var formatCurrency = function (amount) {
 };
 exports.formatCurrency = formatCurrency;
 // Convert amount to Stripe format (cents)
-var toStripeAmount = function (amount) {
-  return Math.round(amount * 100);
-};
+var toStripeAmount = (amount) => Math.round(amount * 100);
 exports.toStripeAmount = toStripeAmount;
 // Convert Stripe amount to display format
-var fromStripeAmount = function (amount) {
-  return amount / 100;
-};
+var fromStripeAmount = (amount) => amount / 100;
 exports.fromStripeAmount = fromStripeAmount;
 exports.default = exports.stripe;

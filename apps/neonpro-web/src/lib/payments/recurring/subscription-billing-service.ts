@@ -7,9 +7,9 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
-import Stripe from "stripe";
 import type { addDays, addMonths, addYears, differenceInDays, format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
+import Stripe from "stripe";
 
 // Types and Interfaces
 export interface SubscriptionPlan {

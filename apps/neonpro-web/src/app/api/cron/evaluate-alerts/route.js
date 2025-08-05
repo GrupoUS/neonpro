@@ -1,18 +1,17 @@
-"use strict";
 // Background Job: Alert Evaluation
 // Story 11.4: Alertas e Relatórios de Estoque
 // Cron job para avaliar e gerar alertas automaticamente
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -22,7 +21,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -51,8 +50,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -73,9 +70,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -134,10 +131,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -146,7 +143,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.GET = GET;
@@ -181,7 +178,7 @@ function validateCronRequest(request) {
 function getActiveClinics(supabase) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, clinics, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -208,9 +205,7 @@ function getActiveClinics(supabase) {
               new Set(
                 (clinics === null || clinics === void 0
                   ? void 0
-                  : clinics.map(function (c) {
-                      return c.clinic_id;
-                    })) || [],
+                  : clinics.map((c) => c.clinic_id)) || [],
               ),
               true,
             ),
@@ -225,7 +220,7 @@ function getActiveClinics(supabase) {
 function processBatch(clinicIds, supabase, startTime) {
   return __awaiter(this, void 0, void 0, function () {
     var result, _i, clinicIds_1, clinicId, error_1;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           result = {
@@ -247,7 +242,7 @@ function processBatch(clinicIds, supabase, startTime) {
           }
           _a.label = 2;
         case 2:
-          _a.trys.push([2, 4, , 5]);
+          _a.trys.push([2, 4, undefined, 5]);
           return [4 /*yield*/, processClinicAlerts(clinicId, supabase, result)];
         case 3:
           _a.sent();
@@ -278,18 +273,18 @@ function processBatch(clinicIds, supabase, startTime) {
  */
 function processClinicAlerts(clinicId, supabase, result) {
   return __awaiter(this, void 0, void 0, function () {
-    var alertService, attempts, alerts, error_2;
-    return __generator(this, function (_a) {
+    var _alertService, attempts, alerts, error_2;
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
-          alertService = new stock_alert_service_1.StockAlertService(supabase);
+          _alertService = new stock_alert_service_1.StockAlertService(supabase);
           attempts = 0;
           _a.label = 1;
         case 1:
           if (!(attempts < RETRY_ATTEMPTS)) return [3 /*break*/, 7];
           _a.label = 2;
         case 2:
-          _a.trys.push([2, 4, , 6]);
+          _a.trys.push([2, 4, undefined, 6]);
           return [4 /*yield*/, evaluateClinicAlerts(clinicId, supabase)];
         case 3:
           alerts = _a.sent();
@@ -306,12 +301,7 @@ function processClinicAlerts(clinicId, supabase, result) {
             throw error_2;
           }
           // Exponential backoff
-          return [
-            4 /*yield*/,
-            new Promise(function (resolve) {
-              return setTimeout(resolve, Math.pow(2, attempts) * 1000);
-            }),
-          ];
+          return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2 ** attempts * 1000))];
         case 5:
           // Exponential backoff
           _a.sent();
@@ -330,7 +320,7 @@ function processClinicAlerts(clinicId, supabase, result) {
 function evaluateClinicAlerts(clinicId, supabase) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, configs, configError, generatedAlerts, _i, configs_1, config, alert_1, error_3;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -363,7 +353,7 @@ function evaluateClinicAlerts(clinicId, supabase) {
           config = configs_1[_i];
           _b.label = 3;
         case 3:
-          _b.trys.push([3, 5, , 6]);
+          _b.trys.push([3, 5, undefined, 6]);
           return [4 /*yield*/, evaluateConfigCondition(config, supabase)];
         case 4:
           alert_1 = _b.sent();
@@ -393,7 +383,7 @@ function evaluateConfigCondition(config, supabase) {
       shouldAlert,
       currentValue,
       message,
-      daysUntilExpiration,
+      _daysUntilExpiration,
       daysUntilExpiration,
       maxStock,
       existingAlert,
@@ -401,7 +391,7 @@ function evaluateConfigCondition(config, supabase) {
       _a,
       newAlert,
       error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           product = config.product;
@@ -538,10 +528,10 @@ function evaluateConfigCondition(config, supabase) {
 function recordProcessingStats(supabase, result) {
   return __awaiter(this, void 0, void 0, function () {
     var error_4;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
-          _a.trys.push([0, 2, , 3]);
+          _a.trys.push([0, 2, undefined, 3]);
           return [
             4 /*yield*/,
             supabase.from("alert_processing_stats").insert({
@@ -579,20 +569,20 @@ function POST(request) {
       supabase,
       clinicIds,
       batches,
-      i,
+      _i,
       totalResult,
       i,
       batchResult,
       error_5,
       executionTime;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           startTime = Date.now();
           _b.label = 1;
         case 1:
-          _b.trys.push([1, 9, , 10]);
+          _b.trys.push([1, 9, undefined, 10]);
           // Validate cron request
           if (!validateCronRequest(request)) {
             return [
@@ -728,16 +718,14 @@ function POST(request) {
  */
 function GET() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        server_1.NextResponse.json({
-          status: "healthy",
-          service: "alert-evaluation-cron",
-          timestamp: new Date().toISOString(),
-          version: "1.0.0",
-        }),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      server_1.NextResponse.json({
+        status: "healthy",
+        service: "alert-evaluation-cron",
+        timestamp: new Date().toISOString(),
+        version: "1.0.0",
+      }),
+    ]);
   });
 }

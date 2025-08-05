@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExportModal = ExportModal;
 var badge_1 = require("@/components/ui/badge");
@@ -154,7 +151,6 @@ var dialog_1 = require("@/components/ui/dialog");
 var label_1 = require("@/components/ui/label");
 var react_1 = require("react");
 function ExportModal(_a) {
-  var _this = this;
   var open = _a.open,
     onClose = _a.onClose,
     data = _a.data;
@@ -177,34 +173,26 @@ function ExportModal(_a) {
     { id: "charts", label: "Gráficos e Visualizações" },
     { id: "summary", label: "Resumo Executivo" },
   ];
-  var handleFormatChange = function (format, checked) {
+  var handleFormatChange = (format, checked) => {
     if (checked) {
       setSelectedFormats(__spreadArray(__spreadArray([], selectedFormats, true), [format], false));
     } else {
-      setSelectedFormats(
-        selectedFormats.filter(function (f) {
-          return f !== format;
-        }),
-      );
+      setSelectedFormats(selectedFormats.filter((f) => f !== format));
     }
   };
-  var handleSectionChange = function (section, checked) {
+  var handleSectionChange = (section, checked) => {
     if (checked) {
       setSelectedSections(
         __spreadArray(__spreadArray([], selectedSections, true), [section], false),
       );
     } else {
-      setSelectedSections(
-        selectedSections.filter(function (s) {
-          return s !== section;
-        }),
-      );
+      setSelectedSections(selectedSections.filter((s) => s !== section));
     }
   };
-  var handleExport = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleExport = () =>
+    __awaiter(this, void 0, void 0, function () {
       var message, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (selectedFormats.length === 0 || selectedSections.length === 0) {
@@ -216,17 +204,12 @@ function ExportModal(_a) {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Simular processo de exportação
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simular processo de exportação
             _a.sent();
             // Exportação real para CSV
-            selectedFormats.forEach(function (format) {
+            selectedFormats.forEach((format) => {
               var fileName = "neonpro-analytics-"
                 .concat(new Date().toISOString().split("T")[0], ".")
                 .concat(format);
@@ -266,9 +249,8 @@ function ExportModal(_a) {
         }
       });
     });
-  };
   // Função para gerar dados CSV
-  var generateCSVData = function (data, sections) {
+  var generateCSVData = (data, sections) => {
     var csv = "NeonPro - Dashboard de Analytics\n";
     csv += "Data de Exporta\u00E7\u00E3o: ".concat(new Date().toLocaleDateString("pt-BR"), "\n\n");
     if (sections.includes("kpis")) {
@@ -302,7 +284,7 @@ function ExportModal(_a) {
     return csv;
   };
   // Função para baixar CSV
-  var downloadCSV = function (csvData, fileName) {
+  var downloadCSV = (csvData, fileName) => {
     var blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
     var link = document.createElement("a");
     if (link.download !== undefined) {
@@ -332,26 +314,22 @@ function ExportModal(_a) {
           <div className="space-y-3">
             <label_1.Label className="text-sm font-semibold">Formato de Exportação</label_1.Label>
             <div className="space-y-2">
-              {exportOptions.map(function (option) {
-                return (
-                  <div key={option.id} className="flex items-center space-x-2">
-                    <checkbox_1.Checkbox
-                      id={option.id}
-                      checked={selectedFormats.includes(option.id)}
-                      onCheckedChange={function (checked) {
-                        return handleFormatChange(option.id, checked);
-                      }}
-                    />
-                    <label_1.Label
-                      htmlFor={option.id}
-                      className="flex items-center space-x-2 cursor-pointer"
-                    >
-                      <span className="text-lg">{option.icon}</span>
-                      <span>{option.label}</span>
-                    </label_1.Label>
-                  </div>
-                );
-              })}
+              {exportOptions.map((option) => (
+                <div key={option.id} className="flex items-center space-x-2">
+                  <checkbox_1.Checkbox
+                    id={option.id}
+                    checked={selectedFormats.includes(option.id)}
+                    onCheckedChange={(checked) => handleFormatChange(option.id, checked)}
+                  />
+                  <label_1.Label
+                    htmlFor={option.id}
+                    className="flex items-center space-x-2 cursor-pointer"
+                  >
+                    <span className="text-lg">{option.icon}</span>
+                    <span>{option.label}</span>
+                  </label_1.Label>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -359,22 +337,18 @@ function ExportModal(_a) {
           <div className="space-y-3">
             <label_1.Label className="text-sm font-semibold">Seções a Incluir</label_1.Label>
             <div className="space-y-2">
-              {sectionOptions.map(function (option) {
-                return (
-                  <div key={option.id} className="flex items-center space-x-2">
-                    <checkbox_1.Checkbox
-                      id={option.id}
-                      checked={selectedSections.includes(option.id)}
-                      onCheckedChange={function (checked) {
-                        return handleSectionChange(option.id, checked);
-                      }}
-                    />
-                    <label_1.Label htmlFor={option.id} className="cursor-pointer">
-                      {option.label}
-                    </label_1.Label>
-                  </div>
-                );
-              })}
+              {sectionOptions.map((option) => (
+                <div key={option.id} className="flex items-center space-x-2">
+                  <checkbox_1.Checkbox
+                    id={option.id}
+                    checked={selectedSections.includes(option.id)}
+                    onCheckedChange={(checked) => handleSectionChange(option.id, checked)}
+                  />
+                  <label_1.Label htmlFor={option.id} className="cursor-pointer">
+                    {option.label}
+                  </label_1.Label>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -382,9 +356,9 @@ function ExportModal(_a) {
           <div className="space-y-2">
             <label_1.Label className="text-sm font-semibold">Visualização</label_1.Label>
             <div className="flex flex-wrap gap-2">
-              {selectedFormats.map(function (format) {
-                return <badge_1.Badge key={format}>{format.toUpperCase()}</badge_1.Badge>;
-              })}
+              {selectedFormats.map((format) => (
+                <badge_1.Badge key={format}>{format.toUpperCase()}</badge_1.Badge>
+              ))}
             </div>
             <p className="text-xs text-muted-foreground">
               {selectedSections.length} seção(ões) selecionada(s)

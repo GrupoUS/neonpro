@@ -6,9 +6,9 @@
  */
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { UserRole, Permission } from "@/types/rbac";
-import type { authenticateRequest, AuthUser } from "@/lib/middleware/auth";
-import type { hasPermission, hasAnyPermission, hasAllPermissions } from "./permissions";
+import type { AuthUser, authenticateRequest } from "@/lib/middleware/auth";
+import type { Permission, UserRole } from "@/types/rbac";
+import type { hasAllPermissions, hasAnyPermission, hasPermission } from "./permissions";
 
 /**
  * Authorization configuration for routes
@@ -330,8 +330,8 @@ export const AuthMiddlewares = {
  * Decorator for API route handlers with authorization
  */
 export function withAuthorization(config: AuthorizationConfig) {
-  return function (handler: (req: NextRequest, context: any) => Promise<NextResponse>) {
-    return async (req: NextRequest, context: any): Promise<NextResponse> => {
+  return (handler: (req: NextRequest, context: any) => Promise<NextResponse>) =>
+    async (req: NextRequest, context: any): Promise<NextResponse> => {
       const authResult = await authorize(req, config);
 
       if (!authResult.authorized) {
@@ -350,7 +350,6 @@ export function withAuthorization(config: AuthorizationConfig) {
 
       return handler(req, context);
     };
-  };
 }
 
 /**

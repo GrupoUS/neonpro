@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI Continuous Learning System
  * Implements machine learning model training, validation, and improvement
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,14 +166,14 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIContinuousLearningSystem = void 0;
 /**
  * AI Continuous Learning System
  * Core system for automated model improvement and validation
  */
-var AIContinuousLearningSystem = /** @class */ (function () {
+var AIContinuousLearningSystem = /** @class */ (() => {
   function AIContinuousLearningSystem(config) {
     this.config = config;
     this.models = new Map();
@@ -526,28 +523,22 @@ var AIContinuousLearningSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         try {
           allModels = Array.from(this.models.values());
-          productionModels = allModels.filter(function (m) {
-            return m.production_ready;
-          });
+          productionModels = allModels.filter((m) => m.production_ready);
           if (productionModels.length === 0) {
             throw new Error("No production models available");
           }
           avgAccuracy =
-            productionModels.reduce(function (sum, m) {
-              return sum + m.performance_metrics.accuracy;
-            }, 0) / productionModels.length;
+            productionModels.reduce((sum, m) => sum + m.performance_metrics.accuracy, 0) /
+            productionModels.length;
           avgPrecision =
-            productionModels.reduce(function (sum, m) {
-              return sum + m.performance_metrics.precision;
-            }, 0) / productionModels.length;
+            productionModels.reduce((sum, m) => sum + m.performance_metrics.precision, 0) /
+            productionModels.length;
           avgRecall =
-            productionModels.reduce(function (sum, m) {
-              return sum + m.performance_metrics.recall;
-            }, 0) / productionModels.length;
+            productionModels.reduce((sum, m) => sum + m.performance_metrics.recall, 0) /
+            productionModels.length;
           avgF1 =
-            productionModels.reduce(function (sum, m) {
-              return sum + m.performance_metrics.f1_score;
-            }, 0) / productionModels.length;
+            productionModels.reduce((sum, m) => sum + m.performance_metrics.f1_score, 0) /
+            productionModels.length;
           return [
             2 /*return*/,
             {
@@ -556,9 +547,8 @@ var AIContinuousLearningSystem = /** @class */ (function () {
               recall: avgRecall,
               f1_score: avgF1,
               auc_roc:
-                productionModels.reduce(function (sum, m) {
-                  return sum + m.performance_metrics.auc_roc;
-                }, 0) / productionModels.length,
+                productionModels.reduce((sum, m) => sum + m.performance_metrics.auc_roc, 0) /
+                productionModels.length,
               prediction_latency: 50, // ms
               throughput: 1000, // predictions per second
               error_rate: 0.02,
@@ -592,11 +582,11 @@ var AIContinuousLearningSystem = /** @class */ (function () {
       this.setupAutoRetraining();
     }
   };
-  AIContinuousLearningSystem.prototype.setupPerformanceMonitoring = function () {
+  AIContinuousLearningSystem.prototype.setupPerformanceMonitoring = () => {
     console.log("Setting up performance monitoring...");
     // Setup monitoring for production models
   };
-  AIContinuousLearningSystem.prototype.initializeDriftDetection = function () {
+  AIContinuousLearningSystem.prototype.initializeDriftDetection = () => {
     console.log("Initializing drift detection...");
     // Setup drift detection for each model type
   };
@@ -765,21 +755,22 @@ var AIContinuousLearningSystem = /** @class */ (function () {
     this.models.set(treatmentModel.model_id, treatmentModel);
   };
   AIContinuousLearningSystem.prototype.setupAutoRetraining = function () {
-    var _this = this;
     var interval = this.getRetrainingInterval();
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              return [4 /*yield*/, this.checkAndTriggerRetraining()];
-            case 1:
-              _a.sent();
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, interval);
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                return [4 /*yield*/, this.checkAndTriggerRetraining()];
+              case 1:
+                _a.sent();
+                return [2 /*return*/];
+            }
+          });
+        }),
+      interval,
+    );
   };
   AIContinuousLearningSystem.prototype.getRetrainingInterval = function () {
     switch (this.config.retrain_frequency) {
@@ -873,13 +864,13 @@ var AIContinuousLearningSystem = /** @class */ (function () {
   };
   AIContinuousLearningSystem.prototype.checkForDataDrift = function (modelId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified drift detection
         return [2 /*return*/, Math.random() < 0.1]; // 10% chance of drift detection
       });
     });
   };
-  AIContinuousLearningSystem.prototype.getDefaultHyperparameters = function (modelId) {
+  AIContinuousLearningSystem.prototype.getDefaultHyperparameters = (modelId) => {
     var defaults = {
       risk_assessment_v1: {
         learning_rate: 0.001,
@@ -912,7 +903,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         startTime = Date.now();
         epochs = session.hyperparameters.epochs || 50;
-        _loop_1 = function (epoch) {
+        _loop_1 = (epoch) => {
           // Simulate epoch training
           var loss = Math.max(0.1, 1.0 - (epoch / epochs) * 0.9 + Math.random() * 0.1);
           var accuracy = Math.min(0.95, (epoch / epochs) * 0.8 + 0.1 + Math.random() * 0.05);
@@ -924,9 +915,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
           // Early stopping check
           if (this_1.config.early_stopping && epoch > 10) {
             var recentLosses_1 = session.training_metrics.epoch_losses.slice(-5);
-            var isConverged = recentLosses_1.every(function (l, i) {
-              return i === 0 || l >= recentLosses_1[i - 1];
-            });
+            var isConverged = recentLosses_1.every((l, i) => i === 0 || l >= recentLosses_1[i - 1]);
             if (isConverged) {
               session.early_stopped = true;
               session.convergence_achieved = true;
@@ -983,7 +972,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
   AIContinuousLearningSystem.prototype.calculatePerformanceMetrics = function (model, testData) {
     return __awaiter(this, void 0, void 0, function () {
       var baseAccuracy, noise;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         baseAccuracy = model.performance_metrics.accuracy;
         noise = (Math.random() - 0.5) * 0.1;
         return [
@@ -1009,134 +998,127 @@ var AIContinuousLearningSystem = /** @class */ (function () {
   };
   AIContinuousLearningSystem.prototype.performStatisticalTests = function (model, testData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            {
-              test_name: "McNemar Test",
-              test_statistic: 2.45,
-              p_value: 0.03,
-              confidence_interval: [0.01, 0.05],
-              effect_size: 0.15,
-              interpretation: "Statistically significant improvement",
-            },
-            {
-              test_name: "Paired t-test",
-              test_statistic: 3.21,
-              p_value: 0.002,
-              confidence_interval: [0.001, 0.003],
-              effect_size: 0.22,
-              interpretation: "Highly significant performance difference",
-            },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          {
+            test_name: "McNemar Test",
+            test_statistic: 2.45,
+            p_value: 0.03,
+            confidence_interval: [0.01, 0.05],
+            effect_size: 0.15,
+            interpretation: "Statistically significant improvement",
+          },
+          {
+            test_name: "Paired t-test",
+            test_statistic: 3.21,
+            p_value: 0.002,
+            confidence_interval: [0.001, 0.003],
+            effect_size: 0.22,
+            interpretation: "Highly significant performance difference",
+          },
+        ],
+      ]);
     });
   };
   AIContinuousLearningSystem.prototype.performClinicalValidation = function (model, testData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            validation_protocol: "Retrospective cohort study",
-            patient_cohort_size: 1000,
-            control_group_size: 500,
-            primary_endpoints: ["Treatment success rate", "Time to recovery"],
-            secondary_endpoints: ["Patient satisfaction", "Cost effectiveness"],
-            safety_endpoints: ["Adverse events", "Serious adverse events"],
-            efficacy_results: [
-              {
-                endpoint: "Treatment success rate",
-                treatment_group_result: 0.85,
-                control_group_result: 0.75,
-                relative_improvement: 0.13,
-                statistical_significance: true,
-                clinical_significance: true,
-              },
-            ],
-            safety_results: [
-              {
-                adverse_event: "Minor side effects",
-                treatment_group_incidence: 0.12,
-                control_group_incidence: 0.15,
-                relative_risk: 0.8,
-                severity_distribution: { mild: 0.8, moderate: 0.2, severe: 0.0 },
-              },
-            ],
-            regulatory_approval: false,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          validation_protocol: "Retrospective cohort study",
+          patient_cohort_size: 1000,
+          control_group_size: 500,
+          primary_endpoints: ["Treatment success rate", "Time to recovery"],
+          secondary_endpoints: ["Patient satisfaction", "Cost effectiveness"],
+          safety_endpoints: ["Adverse events", "Serious adverse events"],
+          efficacy_results: [
+            {
+              endpoint: "Treatment success rate",
+              treatment_group_result: 0.85,
+              control_group_result: 0.75,
+              relative_improvement: 0.13,
+              statistical_significance: true,
+              clinical_significance: true,
+            },
+          ],
+          safety_results: [
+            {
+              adverse_event: "Minor side effects",
+              treatment_group_incidence: 0.12,
+              control_group_incidence: 0.15,
+              relative_risk: 0.8,
+              severity_distribution: { mild: 0.8, moderate: 0.2, severe: 0.0 },
+            },
+          ],
+          regulatory_approval: false,
+        },
+      ]);
     });
   };
   AIContinuousLearningSystem.prototype.analyzeBias = function (model, testData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            demographic_bias: [
-              {
-                demographic_group: "age_65_plus",
-                bias_score: 0.05,
-                performance_difference: 0.03,
-                sample_size: 200,
-                mitigation_applied: true,
-              },
-              {
-                demographic_group: "gender_female",
-                bias_score: 0.02,
-                performance_difference: 0.01,
-                sample_size: 500,
-                mitigation_applied: false,
-              },
-            ],
-            selection_bias: 0.03,
-            confirmation_bias: 0.01,
-            algorithmic_bias: 0.02,
-            data_bias: [
-              {
-                bias_type: "sampling_bias",
-                bias_score: 0.04,
-                affected_features: ["age", "gender"],
-                detection_method: "statistical_analysis",
-                correction_applied: true,
-              },
-            ],
-            mitigation_strategies: [
-              "Balanced sampling",
-              "Fairness constraints",
-              "Post-processing calibration",
-            ],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          demographic_bias: [
+            {
+              demographic_group: "age_65_plus",
+              bias_score: 0.05,
+              performance_difference: 0.03,
+              sample_size: 200,
+              mitigation_applied: true,
+            },
+            {
+              demographic_group: "gender_female",
+              bias_score: 0.02,
+              performance_difference: 0.01,
+              sample_size: 500,
+              mitigation_applied: false,
+            },
+          ],
+          selection_bias: 0.03,
+          confirmation_bias: 0.01,
+          algorithmic_bias: 0.02,
+          data_bias: [
+            {
+              bias_type: "sampling_bias",
+              bias_score: 0.04,
+              affected_features: ["age", "gender"],
+              detection_method: "statistical_analysis",
+              correction_applied: true,
+            },
+          ],
+          mitigation_strategies: [
+            "Balanced sampling",
+            "Fairness constraints",
+            "Post-processing calibration",
+          ],
+        },
+      ]);
     });
   };
   AIContinuousLearningSystem.prototype.calculateFairnessMetrics = function (model, testData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            demographic_parity: 0.95,
-            equalized_odds: 0.92,
-            equality_of_opportunity: 0.94,
-            calibration: 0.96,
-            individual_fairness: 0.93,
-            group_fairness: 0.94,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          demographic_parity: 0.95,
+          equalized_odds: 0.92,
+          equality_of_opportunity: 0.94,
+          calibration: 0.96,
+          individual_fairness: 0.93,
+          group_fairness: 0.94,
+        },
+      ]);
     });
   };
-  AIContinuousLearningSystem.prototype.determineValidationRecommendation = function (result) {
+  AIContinuousLearningSystem.prototype.determineValidationRecommendation = (result) => {
     var accuracy = result.performance_metrics.accuracy;
-    var biasScore = result.bias_analysis.demographic_bias.reduce(function (max, bias) {
-      return Math.max(max, bias.bias_score);
-    }, 0);
+    var biasScore = result.bias_analysis.demographic_bias.reduce(
+      (max, bias) => Math.max(max, bias.bias_score),
+      0,
+    );
     if (accuracy < 0.7) return "reject";
     if (accuracy < 0.8 || biasScore > 0.1) return "retrain";
     if (accuracy < 0.85) return "further_validation";
@@ -1144,7 +1126,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
   };
   AIContinuousLearningSystem.prototype.processImmediateFeedback = function (feedback) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Processing immediate feedback: ".concat(feedback.feedback_id));
         // For critical feedback, trigger immediate model review
         if (feedback.user_rating <= 2) {
@@ -1193,10 +1175,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
         );
         model = this.models.get(modelId);
         if (!model) return [2 /*return*/];
-        avgRating =
-          feedbackData.reduce(function (sum, f) {
-            return sum + f.user_rating;
-          }, 0) / feedbackData.length;
+        avgRating = feedbackData.reduce((sum, f) => sum + f.user_rating, 0) / feedbackData.length;
         performanceAdjustment = (avgRating - 3) * 0.01;
         model.performance_metrics.accuracy = Math.max(
           0,
@@ -1211,7 +1190,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
   AIContinuousLearningSystem.prototype.performDriftAnalysis = function (newData, referenceData) {
     return __awaiter(this, void 0, void 0, function () {
       var driftMagnitude;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         driftMagnitude = Math.random() * 0.3;
         return [
           2 /*return*/,
@@ -1233,7 +1212,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
       });
     });
   };
-  AIContinuousLearningSystem.prototype.getRecommendedDriftAction = function (driftAnalysis) {
+  AIContinuousLearningSystem.prototype.getRecommendedDriftAction = (driftAnalysis) => {
     if (driftAnalysis.drift_magnitude > 0.2) {
       return "immediate_retraining";
     } else if (driftAnalysis.drift_magnitude > 0.1) {
@@ -1244,7 +1223,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
   };
   AIContinuousLearningSystem.prototype.handleDataDrift = function (modelId, drift) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log(
           "Handling data drift for model ".concat(modelId, ": ").concat(drift.recommended_action),
         );
@@ -1266,7 +1245,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
       });
     });
   };
-  AIContinuousLearningSystem.prototype.shuffleArray = function (array) {
+  AIContinuousLearningSystem.prototype.shuffleArray = (array) => {
     var _a;
     var shuffled = __spreadArray([], array, true);
     for (var i = shuffled.length - 1; i > 0; i--) {
@@ -1281,7 +1260,7 @@ var AIContinuousLearningSystem = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var accuracyDiff, pValue;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         accuracyDiff = Math.abs(performanceA.accuracy - performanceB.accuracy);
         pValue = accuracyDiff > 0.05 ? 0.02 : 0.15;
         return [
@@ -1299,11 +1278,11 @@ var AIContinuousLearningSystem = /** @class */ (function () {
       });
     });
   };
-  AIContinuousLearningSystem.prototype.determineABTestWinner = function (
+  AIContinuousLearningSystem.prototype.determineABTestWinner = (
     performanceA,
     performanceB,
     significanceTest,
-  ) {
+  ) => {
     if (significanceTest.p_value >= 0.05) {
       return "no_difference";
     }
@@ -1315,44 +1294,45 @@ var AIContinuousLearningSystem = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var monitoringInterval;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("Starting production monitoring for model ".concat(modelId));
-        monitoringInterval = setInterval(function () {
-          return __awaiter(_this, void 0, void 0, function () {
-            var currentPerformance, model, alert_1;
-            return __generator(this, function (_a) {
-              switch (_a.label) {
-                case 0:
-                  return [4 /*yield*/, this.getCurrentModelPerformance(modelId)];
-                case 1:
-                  currentPerformance = _a.sent();
-                  model = this.models.get(modelId);
-                  if (
-                    model &&
-                    currentPerformance.accuracy < model.performance_metrics.accuracy * 0.9
-                  ) {
-                    alert_1 = {
-                      alert_id: "alert_".concat(Date.now()),
-                      alert_type: "performance_degradation",
-                      severity: "high",
-                      message: "Model ".concat(modelId, " performance degraded below threshold"),
-                      triggered_at: new Date(),
-                      auto_resolved: false,
-                      action_taken: "monitoring_increased",
-                    };
-                    deploymentStatus.monitoring_alerts.push(alert_1);
-                    deploymentStatus.performance_degradation = true;
-                    if (deploymentStatus.auto_rollback_enabled) {
-                      console.log("Auto-rollback triggered for model ".concat(modelId));
-                      // Implement rollback logic
+        monitoringInterval = setInterval(
+          () =>
+            __awaiter(this, void 0, void 0, function () {
+              var currentPerformance, model, alert_1;
+              return __generator(this, function (_a) {
+                switch (_a.label) {
+                  case 0:
+                    return [4 /*yield*/, this.getCurrentModelPerformance(modelId)];
+                  case 1:
+                    currentPerformance = _a.sent();
+                    model = this.models.get(modelId);
+                    if (
+                      model &&
+                      currentPerformance.accuracy < model.performance_metrics.accuracy * 0.9
+                    ) {
+                      alert_1 = {
+                        alert_id: "alert_".concat(Date.now()),
+                        alert_type: "performance_degradation",
+                        severity: "high",
+                        message: "Model ".concat(modelId, " performance degraded below threshold"),
+                        triggered_at: new Date(),
+                        auto_resolved: false,
+                        action_taken: "monitoring_increased",
+                      };
+                      deploymentStatus.monitoring_alerts.push(alert_1);
+                      deploymentStatus.performance_degradation = true;
+                      if (deploymentStatus.auto_rollback_enabled) {
+                        console.log("Auto-rollback triggered for model ".concat(modelId));
+                        // Implement rollback logic
+                      }
                     }
-                  }
-                  return [2 /*return*/];
-              }
-            });
-          });
-        }, 60000);
+                    return [2 /*return*/];
+                }
+              });
+            }),
+          60000,
+        );
         return [2 /*return*/];
       });
     });

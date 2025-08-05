@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = DocumentUpload;
 var badge_1 = require("@/components/ui/badge");
@@ -158,7 +155,6 @@ var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function DocumentUpload(_a) {
-  var _this = this;
   var entityType = _a.entityType,
     entityId = _a.entityId,
     _b = _a.existingDocuments,
@@ -184,25 +180,19 @@ function DocumentUpload(_a) {
     { value: "certificate", label: "Certificado" },
     { value: "other", label: "Outro" },
   ];
-  var handleFileSelect = function (e) {
+  var handleFileSelect = (e) => {
     if (e.target.files) {
       var newFiles_1 = Array.from(e.target.files);
-      setFiles(function (prev) {
-        return __spreadArray(__spreadArray([], prev, true), newFiles_1, true);
-      });
+      setFiles((prev) => __spreadArray(__spreadArray([], prev, true), newFiles_1, true));
     }
   };
-  var removeFile = function (index) {
-    setFiles(function (prev) {
-      return prev.filter(function (_, i) {
-        return i !== index;
-      });
-    });
+  var removeFile = (index) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
-  var handleUpload = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleUpload = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _i, files_1, file, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (files.length === 0 || !documentType) {
@@ -258,11 +248,10 @@ function DocumentUpload(_a) {
         }
       });
     });
-  };
-  var handleDownload = function (documentId, fileName) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDownload = (documentId, fileName) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -283,11 +272,10 @@ function DocumentUpload(_a) {
         }
       });
     });
-  };
-  var handleDelete = function (documentId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDelete = (documentId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -309,13 +297,12 @@ function DocumentUpload(_a) {
         }
       });
     });
-  };
-  var formatFileSize = function (bytes) {
+  var formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     var k = 1024;
     var sizes = ["Bytes", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
   return (
     <div className="space-y-6">
@@ -336,13 +323,11 @@ function DocumentUpload(_a) {
                   <select_1.SelectValue placeholder="Selecione o tipo" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {documentTypes.map(function (type) {
-                    return (
-                      <select_1.SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {documentTypes.map((type) => (
+                    <select_1.SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -364,31 +349,20 @@ function DocumentUpload(_a) {
             <div className="space-y-2">
               <label_1.Label>Arquivos Selecionados:</label_1.Label>
               <div className="space-y-2">
-                {files.map(function (file, index) {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-2 border rounded"
-                    >
-                      <div className="flex items-center gap-2">
-                        <lucide_react_1.FileText className="h-4 w-4" />
-                        <span className="text-sm">{file.name}</span>
-                        <badge_1.Badge variant="outline" className="text-xs">
-                          {formatFileSize(file.size)}
-                        </badge_1.Badge>
-                      </div>
-                      <button_1.Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={function () {
-                          return removeFile(index);
-                        }}
-                      >
-                        <lucide_react_1.Trash2 className="h-4 w-4" />
-                      </button_1.Button>
+                {files.map((file, index) => (
+                  <div key={index} className="flex items-center justify-between p-2 border rounded">
+                    <div className="flex items-center gap-2">
+                      <lucide_react_1.FileText className="h-4 w-4" />
+                      <span className="text-sm">{file.name}</span>
+                      <badge_1.Badge variant="outline" className="text-xs">
+                        {formatFileSize(file.size)}
+                      </badge_1.Badge>
                     </div>
-                  );
-                })}
+                    <button_1.Button variant="ghost" size="sm" onClick={() => removeFile(index)}>
+                      <lucide_react_1.Trash2 className="h-4 w-4" />
+                    </button_1.Button>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -414,7 +388,7 @@ function DocumentUpload(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-2">
-              {existingDocuments.map(function (doc) {
+              {existingDocuments.map((doc) => {
                 var _a;
                 return (
                   <div
@@ -427,9 +401,8 @@ function DocumentUpload(_a) {
                         <p className="font-medium">{doc.file_name}</p>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <badge_1.Badge variant="outline">
-                            {((_a = documentTypes.find(function (t) {
-                              return t.value === doc.document_type;
-                            })) === null || _a === void 0
+                            {((_a = documentTypes.find((t) => t.value === doc.document_type)) ===
+                              null || _a === void 0
                               ? void 0
                               : _a.label) || doc.document_type}
                           </badge_1.Badge>
@@ -443,18 +416,14 @@ function DocumentUpload(_a) {
                       <button_1.Button
                         variant="outline"
                         size="sm"
-                        onClick={function () {
-                          return handleDownload(doc.id, doc.file_name);
-                        }}
+                        onClick={() => handleDownload(doc.id, doc.file_name)}
                       >
                         <lucide_react_1.Download className="h-4 w-4" />
                       </button_1.Button>
                       <button_1.Button
                         variant="ghost"
                         size="sm"
-                        onClick={function () {
-                          return handleDelete(doc.id);
-                        }}
+                        onClick={() => handleDelete(doc.id)}
                       >
                         <lucide_react_1.Trash2 className="h-4 w-4" />
                       </button_1.Button>

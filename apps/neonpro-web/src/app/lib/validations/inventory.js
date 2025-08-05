@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // NeonPro Inventory Management System - Zod Validation Schemas
 // Epic 6: Real-time Stock Tracking with Barcode/QR Integration
@@ -160,24 +159,14 @@ exports.InventoryItemSchema = zod_1.z
     updated_at: zod_1.z.string().datetime(),
     created_by: exports.UuidSchema.optional(),
   })
-  .refine(
-    function (data) {
-      return data.min_stock <= data.reorder_level;
-    },
-    {
-      message: "Minimum stock must be less than or equal to reorder level",
-      path: ["min_stock"],
-    },
-  )
-  .refine(
-    function (data) {
-      return data.reorder_level <= data.max_stock;
-    },
-    {
-      message: "Reorder level must be less than or equal to maximum stock",
-      path: ["reorder_level"],
-    },
-  );
+  .refine((data) => data.min_stock <= data.reorder_level, {
+    message: "Minimum stock must be less than or equal to reorder level",
+    path: ["min_stock"],
+  })
+  .refine((data) => data.reorder_level <= data.max_stock, {
+    message: "Reorder level must be less than or equal to maximum stock",
+    path: ["reorder_level"],
+  });
 exports.InventoryLocationSchema = zod_1.z
   .object({
     id: exports.UuidSchema,
@@ -203,7 +192,7 @@ exports.InventoryLocationSchema = zod_1.z
     updated_at: zod_1.z.string().datetime(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.min_temperature !== undefined && data.max_temperature !== undefined) {
         return data.min_temperature <= data.max_temperature;
       }
@@ -239,17 +228,12 @@ exports.StockLevelSchema = zod_1.z
     last_updated: zod_1.z.string().datetime(),
     created_at: zod_1.z.string().datetime(),
   })
+  .refine((data) => data.reserved_quantity <= data.current_quantity, {
+    message: "Reserved quantity cannot exceed current quantity",
+    path: ["reserved_quantity"],
+  })
   .refine(
-    function (data) {
-      return data.reserved_quantity <= data.current_quantity;
-    },
-    {
-      message: "Reserved quantity cannot exceed current quantity",
-      path: ["reserved_quantity"],
-    },
-  )
-  .refine(
-    function (data) {
+    (data) => {
       if (data.manufacture_date && data.expiration_date) {
         return new Date(data.manufacture_date) <= new Date(data.expiration_date);
       }
@@ -294,15 +278,10 @@ exports.InventoryTransactionSchema = zod_1.z
     verified_by: exports.UuidSchema.optional(),
     verified_at: zod_1.z.string().datetime().optional(),
   })
-  .refine(
-    function (data) {
-      return data.quantity_before + data.quantity_change === data.quantity_after;
-    },
-    {
-      message: "Quantity calculation is incorrect: before + change must equal after",
-      path: ["quantity_after"],
-    },
-  );
+  .refine((data) => data.quantity_before + data.quantity_change === data.quantity_after, {
+    message: "Quantity calculation is incorrect: before + change must equal after",
+    path: ["quantity_after"],
+  });
 // =====================================================================================
 // ALERTS AND NOTIFICATIONS SCHEMAS
 // =====================================================================================
@@ -451,24 +430,14 @@ exports.CreateInventoryItemFormSchema = zod_1.z
     anvisa_code: zod_1.z.string().max(50).optional(),
     therapeutic_class: zod_1.z.string().max(100).optional(),
   })
-  .refine(
-    function (data) {
-      return data.min_stock <= data.reorder_level;
-    },
-    {
-      message: "Minimum stock must be less than or equal to reorder level",
-      path: ["min_stock"],
-    },
-  )
-  .refine(
-    function (data) {
-      return data.reorder_level <= data.max_stock;
-    },
-    {
-      message: "Reorder level must be less than or equal to maximum stock",
-      path: ["reorder_level"],
-    },
-  );
+  .refine((data) => data.min_stock <= data.reorder_level, {
+    message: "Minimum stock must be less than or equal to reorder level",
+    path: ["min_stock"],
+  })
+  .refine((data) => data.reorder_level <= data.max_stock, {
+    message: "Reorder level must be less than or equal to maximum stock",
+    path: ["reorder_level"],
+  });
 exports.CreateLocationFormSchema = zod_1.z
   .object({
     location_name: zod_1.z.string().min(1, "Location name is required").max(255),
@@ -484,7 +453,7 @@ exports.CreateLocationFormSchema = zod_1.z
     responsible_user_id: exports.UuidSchema.optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.min_temperature !== undefined && data.max_temperature !== undefined) {
         return data.min_temperature <= data.max_temperature;
       }
@@ -515,15 +484,10 @@ exports.TransferStockFormSchema = zod_1.z
     batch_number: zod_1.z.string().max(100).optional(),
     notes: zod_1.z.string().max(2000).optional(),
   })
-  .refine(
-    function (data) {
-      return data.source_location_id !== data.destination_location_id;
-    },
-    {
-      message: "Source and destination locations must be different",
-      path: ["destination_location_id"],
-    },
-  );
+  .refine((data) => data.source_location_id !== data.destination_location_id, {
+    message: "Source and destination locations must be different",
+    path: ["destination_location_id"],
+  });
 // =====================================================================================
 // BULK OPERATION SCHEMAS
 // =====================================================================================
@@ -590,25 +554,15 @@ exports.InventoryReportParamsSchema = zod_1.z.object({
 // =====================================================================================
 // VALIDATION HELPER FUNCTIONS
 // =====================================================================================
-var validateInventoryItem = function (data) {
-  return exports.InventoryItemSchema.safeParse(data);
-};
+var validateInventoryItem = (data) => exports.InventoryItemSchema.safeParse(data);
 exports.validateInventoryItem = validateInventoryItem;
-var validateStockUpdate = function (data) {
-  return exports.StockUpdateRequestSchema.safeParse(data);
-};
+var validateStockUpdate = (data) => exports.StockUpdateRequestSchema.safeParse(data);
 exports.validateStockUpdate = validateStockUpdate;
-var validateBarcodeScan = function (data) {
-  return exports.BarcodeScanRequestSchema.safeParse(data);
-};
+var validateBarcodeScan = (data) => exports.BarcodeScanRequestSchema.safeParse(data);
 exports.validateBarcodeScan = validateBarcodeScan;
-var validateCreateItemForm = function (data) {
-  return exports.CreateInventoryItemFormSchema.safeParse(data);
-};
+var validateCreateItemForm = (data) => exports.CreateInventoryItemFormSchema.safeParse(data);
 exports.validateCreateItemForm = validateCreateItemForm;
-var validateSearchParams = function (data) {
-  return exports.InventorySearchParamsSchema.safeParse(data);
-};
+var validateSearchParams = (data) => exports.InventorySearchParamsSchema.safeParse(data);
 exports.validateSearchParams = validateSearchParams;
 // =====================================================================================
 // DEFAULT EXPORTS

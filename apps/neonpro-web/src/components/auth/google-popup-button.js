@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SignInWithGooglePopupButton = SignInWithGooglePopupButton;
 var button_1 = require("@/components/ui/button");
@@ -155,7 +152,6 @@ var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function SignInWithGooglePopupButton(_a) {
-  var _this = this;
   var _b = _a.text,
     text = _b === void 0 ? "Entrar com Google" : _b,
     _c = _a.loadingText,
@@ -182,7 +178,7 @@ function SignInWithGooglePopupButton(_a) {
     setMetrics = _f[1];
   // Enhanced error handling with specific error types
   var handleOAuthError = (0, react_1.useCallback)(
-    function (error, context) {
+    (error, context) => {
       var _a, _b, _c, _d;
       console.error("\uD83D\uDD25 OAuth Error [".concat(context, "]:"), error);
       var userMessage = "Falha na autenticação com Google.";
@@ -220,8 +216,8 @@ function SignInWithGooglePopupButton(_a) {
   );
   // Optimized sign in with timeout and retry logic
   var handleSignIn = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var startTime,
           timeoutPromise,
           popupTime_1,
@@ -230,39 +226,33 @@ function SignInWithGooglePopupButton(_a) {
           totalTime_1,
           err_1,
           errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
-              setMetrics(function (prev) {
-                return __assign(__assign({}, prev), { startTime: startTime });
-              });
+              setMetrics((prev) => __assign(__assign({}, prev), { startTime: startTime }));
               setIsLoading(true);
               setAuthState("connecting");
               _a.label = 1;
             case 1:
               _a.trys.push([1, 3, 4, 5]);
-              timeoutPromise = new Promise(function (_, reject) {
-                setTimeout(function () {
-                  return reject(new Error("OAuth timeout after 4 seconds"));
-                }, 4000);
+              timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error("OAuth timeout after 4 seconds")), 4000);
               });
               setAuthState("authenticating");
               popupTime_1 = Date.now();
-              setMetrics(function (prev) {
-                return __assign(__assign({}, prev), { popupOpenTime: popupTime_1 });
-              });
+              setMetrics((prev) => __assign(__assign({}, prev), { popupOpenTime: popupTime_1 }));
               return [4 /*yield*/, Promise.race([signInWithGoogle(), timeoutPromise])];
             case 2:
               error = _a.sent().error;
               authCompleteTime_1 = Date.now();
               totalTime_1 = authCompleteTime_1 - startTime;
-              setMetrics(function (prev) {
-                return __assign(__assign({}, prev), {
+              setMetrics((prev) =>
+                __assign(__assign({}, prev), {
                   authCompleteTime: authCompleteTime_1,
                   totalTime: totalTime_1,
-                });
-              });
+                }),
+              );
               if (error) {
                 handleOAuthError(error, "signInWithGoogle");
                 return [2 /*return*/];
@@ -290,21 +280,18 @@ function SignInWithGooglePopupButton(_a) {
             case 4:
               setIsLoading(false);
               // Reset state after a delay
-              setTimeout(function () {
-                return setAuthState("idle");
-              }, 2000);
+              setTimeout(() => setAuthState("idle"), 2000);
               return [7 /*endfinally*/];
             case 5:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [signInWithGoogle, handleOAuthError, onSuccess],
   );
   // Keyboard accessibility
   var handleKeyDown = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         handleSignIn();
@@ -313,18 +300,18 @@ function SignInWithGooglePopupButton(_a) {
     [handleSignIn],
   );
   // Preload popup optimization
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Preload Google's OAuth endpoints for faster connection
     var preloadLink = document.createElement("link");
     preloadLink.rel = "dns-prefetch";
     preloadLink.href = "https://accounts.google.com";
     document.head.appendChild(preloadLink);
-    return function () {
+    return () => {
       document.head.removeChild(preloadLink);
     };
   }, []);
   // Dynamic button content based on state
-  var getButtonContent = function () {
+  var getButtonContent = () => {
     switch (authState) {
       case "connecting":
         return (

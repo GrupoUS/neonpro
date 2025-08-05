@@ -5,7 +5,32 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  Copy,
+  DollarSign,
+  Download,
+  Edit,
+  Eye,
+  Filter,
+  Grid3X3,
+  LineChart,
+  PieChart,
+  Plus,
+  RefreshCw,
+  Settings,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,17 +38,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Input } from "@/components/ui/input";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   Dialog,
   DialogContent,
@@ -32,37 +46,24 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Input } from "@/components/ui/input";
 import type {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  Calendar,
-  AlertTriangle,
-  Settings,
-  Download,
-  RefreshCw,
-  Filter,
-  BarChart3,
-  PieChart,
-  LineChart,
-  Eye,
-  Edit,
-  Copy,
-  Trash2,
-  Plus,
-  Grid3X3,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import type {
-  FinancialKPI,
-  KPIAlert,
+  DashboardFilters,
   DashboardLayout,
   DashboardWidget,
   DrillDownResult,
+  FinancialKPI,
+  KPIAlert,
   KPICalculationResult,
-  DashboardFilters,
 } from "@/lib/types/kpi-types";
 
 interface KPIDashboardProps {

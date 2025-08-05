@@ -4,7 +4,30 @@
 
 "use client";
 
-import React, { useState } from "react";
+import type {
+  AlertTriangle,
+  Bell,
+  Edit,
+  Filter,
+  MoreVertical,
+  Plus,
+  RefreshCw,
+  Trash2,
+} from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import type {
+  ALERT_TYPE_LABELS,
+  AlertType,
+  SEVERITY_LABELS,
+  SeverityLevel,
+  StockAlert,
+  StockAlertConfig,
+  StockAlertError,
+} from "@/app/lib/types/stock";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -12,35 +35,13 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Switch } from "@/components/ui/switch";
 import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type {
-  AlertTriangle,
-  Bell,
-  Edit,
-  Trash2,
-  MoreVertical,
-  Plus,
-  Filter,
-  RefreshCw,
-} from "lucide-react";
-import type {
-  StockAlertConfig,
-  StockAlert,
-  AlertType,
-  SeverityLevel,
-  ALERT_TYPE_LABELS,
-  SEVERITY_LABELS,
-  StockAlertError,
-} from "@/app/lib/types/stock";
+import type { Switch } from "@/components/ui/switch";
 
 // =====================================================
 // TYPES AND INTERFACES

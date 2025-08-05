@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = KPIFilters;
 var react_1 = require("react");
@@ -35,17 +34,15 @@ var datePresets = [
   {
     id: "today",
     label: "Hoje",
-    getValue: function () {
-      return {
-        start: new Date(),
-        end: new Date(),
-      };
-    },
+    getValue: () => ({
+      start: new Date(),
+      end: new Date(),
+    }),
   },
   {
     id: "yesterday",
     label: "Ontem",
-    getValue: function () {
+    getValue: () => {
       var yesterday = (0, date_fns_1.subDays)(new Date(), 1);
       return { start: yesterday, end: yesterday };
     },
@@ -53,37 +50,31 @@ var datePresets = [
   {
     id: "last-7-days",
     label: "Últimos 7 dias",
-    getValue: function () {
-      return {
-        start: (0, date_fns_1.subDays)(new Date(), 6),
-        end: new Date(),
-      };
-    },
+    getValue: () => ({
+      start: (0, date_fns_1.subDays)(new Date(), 6),
+      end: new Date(),
+    }),
   },
   {
     id: "last-30-days",
     label: "Últimos 30 dias",
-    getValue: function () {
-      return {
-        start: (0, date_fns_1.subDays)(new Date(), 29),
-        end: new Date(),
-      };
-    },
+    getValue: () => ({
+      start: (0, date_fns_1.subDays)(new Date(), 29),
+      end: new Date(),
+    }),
   },
   {
     id: "current-month",
     label: "Mês atual",
-    getValue: function () {
-      return {
-        start: (0, date_fns_1.startOfMonth)(new Date()),
-        end: (0, date_fns_1.endOfMonth)(new Date()),
-      };
-    },
+    getValue: () => ({
+      start: (0, date_fns_1.startOfMonth)(new Date()),
+      end: (0, date_fns_1.endOfMonth)(new Date()),
+    }),
   },
   {
     id: "last-month",
     label: "Mês passado",
-    getValue: function () {
+    getValue: () => {
       var lastMonth = (0, date_fns_1.subMonths)(new Date(), 1);
       return {
         start: (0, date_fns_1.startOfMonth)(lastMonth),
@@ -94,7 +85,7 @@ var datePresets = [
   {
     id: "current-quarter",
     label: "Trimestre atual",
-    getValue: function () {
+    getValue: () => {
       var now = new Date();
       var quarter = Math.floor(now.getMonth() / 3);
       var start = new Date(now.getFullYear(), quarter * 3, 1);
@@ -105,17 +96,15 @@ var datePresets = [
   {
     id: "current-year",
     label: "Ano atual",
-    getValue: function () {
-      return {
-        start: (0, date_fns_1.startOfYear)(new Date()),
-        end: (0, date_fns_1.endOfYear)(new Date()),
-      };
-    },
+    getValue: () => ({
+      start: (0, date_fns_1.startOfYear)(new Date()),
+      end: (0, date_fns_1.endOfYear)(new Date()),
+    }),
   },
   {
     id: "last-year",
     label: "Ano passado",
-    getValue: function () {
+    getValue: () => {
       var lastYear = (0, date_fns_1.subYears)(new Date(), 1);
       return {
         start: (0, date_fns_1.startOfYear)(lastYear),
@@ -193,10 +182,8 @@ function KPIFilters(_a) {
     showSavePreset = _l[0],
     setShowSavePreset = _l[1];
   // Handle date preset selection
-  var handleDatePreset = function (presetId) {
-    var preset = datePresets.find(function (p) {
-      return p.id === presetId;
-    });
+  var handleDatePreset = (presetId) => {
+    var preset = datePresets.find((p) => p.id === presetId);
     if (preset) {
       var _a = preset.getValue(),
         start = _a.start,
@@ -211,7 +198,7 @@ function KPIFilters(_a) {
     }
   };
   // Handle custom date range
-  var handleCustomDateRange = function (start, end) {
+  var handleCustomDateRange = (start, end) => {
     onFiltersChange({
       dateRange: {
         start: start,
@@ -221,18 +208,16 @@ function KPIFilters(_a) {
     });
   };
   // Handle filter selection
-  var handleFilterSelection = function (filterType, value, checked) {
+  var handleFilterSelection = (filterType, value, checked) => {
     var _a;
     var currentValues = filters[filterType];
     var newValues = checked
       ? __spreadArray(__spreadArray([], currentValues, true), [value], false)
-      : currentValues.filter(function (v) {
-          return v !== value;
-        });
+      : currentValues.filter((v) => v !== value);
     onFiltersChange(((_a = {}), (_a[filterType] = newValues), _a));
   };
   // Clear all filters
-  var clearAllFilters = function () {
+  var clearAllFilters = () => {
     onFiltersChange({
       dateRange: {
         start: (0, date_fns_1.startOfMonth)(new Date()),
@@ -246,7 +231,7 @@ function KPIFilters(_a) {
     });
   };
   // Save preset
-  var handleSavePreset = function () {
+  var handleSavePreset = () => {
     if (presetName.trim() && onSavePreset) {
       onSavePreset(presetName.trim(), filters);
       setPresetName("");
@@ -254,64 +239,53 @@ function KPIFilters(_a) {
     }
   };
   // Load preset
-  var handleLoadPreset = function (preset) {
+  var handleLoadPreset = (preset) => {
     onFiltersChange(preset.filters);
   };
   // Get active filter count
-  var getActiveFilterCount = function () {
-    return (
-      filters.services.length +
-      filters.providers.length +
-      filters.locations.length +
-      filters.patientSegments.length
-    );
-  };
+  var getActiveFilterCount = () =>
+    filters.services.length +
+    filters.providers.length +
+    filters.locations.length +
+    filters.patientSegments.length;
   // Render filter section
-  var renderFilterSection = function (title, icon, options, selectedValues, filterType) {
-    return (
-      <div className="space-y-3">
-        <div className="flex items-center space-x-2">
-          {icon}
-          <label_1.Label className="font-medium">{title}</label_1.Label>
-          {selectedValues.length > 0 && (
-            <badge_1.Badge variant="secondary" className="text-xs">
-              {selectedValues.length}
-            </badge_1.Badge>
-          )}
-        </div>
-        <div className="space-y-2 max-h-32 overflow-y-auto">
-          {options.map(function (option) {
-            return (
-              <div key={option.id} className="flex items-center space-x-2">
-                <checkbox_1.Checkbox
-                  id={option.id}
-                  checked={selectedValues.includes(option.value)}
-                  onCheckedChange={function (checked) {
-                    return handleFilterSelection(filterType, option.value, checked);
-                  }}
-                />
-                <label_1.Label htmlFor={option.id} className="text-sm flex-1 cursor-pointer">
-                  {option.label}
-                  {option.count && (
-                    <span className="text-muted-foreground ml-1">({option.count})</span>
-                  )}
-                </label_1.Label>
-              </div>
-            );
-          })}
-        </div>
+  var renderFilterSection = (title, icon, options, selectedValues, filterType) => (
+    <div className="space-y-3">
+      <div className="flex items-center space-x-2">
+        {icon}
+        <label_1.Label className="font-medium">{title}</label_1.Label>
+        {selectedValues.length > 0 && (
+          <badge_1.Badge variant="secondary" className="text-xs">
+            {selectedValues.length}
+          </badge_1.Badge>
+        )}
       </div>
-    );
-  };
+      <div className="space-y-2 max-h-32 overflow-y-auto">
+        {options.map((option) => (
+          <div key={option.id} className="flex items-center space-x-2">
+            <checkbox_1.Checkbox
+              id={option.id}
+              checked={selectedValues.includes(option.value)}
+              onCheckedChange={(checked) =>
+                handleFilterSelection(filterType, option.value, checked)
+              }
+            />
+            <label_1.Label htmlFor={option.id} className="text-sm flex-1 cursor-pointer">
+              {option.label}
+              {option.count && <span className="text-muted-foreground ml-1">({option.count})</span>}
+            </label_1.Label>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
   if (compact && !isExpanded) {
     return (
       <div className={(0, utils_1.cn)("flex items-center space-x-2", className)}>
         <button_1.Button
           variant="outline"
           size="sm"
-          onClick={function () {
-            return setIsExpanded(true);
-          }}
+          onClick={() => setIsExpanded(true)}
           className="flex items-center space-x-2"
         >
           <lucide_react_1.Filter className="h-4 w-4" />
@@ -329,13 +303,11 @@ function KPIFilters(_a) {
             <select_1.SelectValue />
           </select_1.SelectTrigger>
           <select_1.SelectContent>
-            {datePresets.map(function (preset) {
-              return (
-                <select_1.SelectItem key={preset.id} value={preset.id}>
-                  {preset.label}
-                </select_1.SelectItem>
-              );
-            })}
+            {datePresets.map((preset) => (
+              <select_1.SelectItem key={preset.id} value={preset.id}>
+                {preset.label}
+              </select_1.SelectItem>
+            ))}
           </select_1.SelectContent>
         </select_1.Select>
       </div>
@@ -357,13 +329,7 @@ function KPIFilters(_a) {
 
           <div className="flex items-center space-x-2">
             {compact && (
-              <button_1.Button
-                variant="ghost"
-                size="sm"
-                onClick={function () {
-                  return setIsExpanded(false);
-                }}
-              >
+              <button_1.Button variant="ghost" size="sm" onClick={() => setIsExpanded(false)}>
                 <lucide_react_1.X className="h-4 w-4" />
               </button_1.Button>
             )}
@@ -382,9 +348,7 @@ function KPIFilters(_a) {
               <button_1.Button
                 variant="ghost"
                 size="sm"
-                onClick={function () {
-                  return setShowSavePreset(true);
-                }}
+                onClick={() => setShowSavePreset(true)}
                 disabled={isLoading}
               >
                 <lucide_react_1.Save className="h-4 w-4 mr-2" />
@@ -408,21 +372,17 @@ function KPIFilters(_a) {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-            {datePresets.slice(0, 8).map(function (preset) {
-              return (
-                <button_1.Button
-                  key={preset.id}
-                  variant={filters.dateRange.preset === preset.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={function () {
-                    return handleDatePreset(preset.id);
-                  }}
-                  className="text-xs"
-                >
-                  {preset.label}
-                </button_1.Button>
-              );
-            })}
+            {datePresets.slice(0, 8).map((preset) => (
+              <button_1.Button
+                key={preset.id}
+                variant={filters.dateRange.preset === preset.id ? "default" : "outline"}
+                size="sm"
+                onClick={() => handleDatePreset(preset.id)}
+                className="text-xs"
+              >
+                {preset.label}
+              </button_1.Button>
+            ))}
           </div>
 
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -449,9 +409,9 @@ function KPIFilters(_a) {
                     <calendar_1.Calendar
                       mode="single"
                       selected={filters.dateRange.start}
-                      onSelect={function (date) {
-                        return date && handleCustomDateRange(date, filters.dateRange.end);
-                      }}
+                      onSelect={(date) =>
+                        date && handleCustomDateRange(date, filters.dateRange.end)
+                      }
                       locale={locale_1.ptBR}
                     />
                   </div>
@@ -460,9 +420,9 @@ function KPIFilters(_a) {
                     <calendar_1.Calendar
                       mode="single"
                       selected={filters.dateRange.end}
-                      onSelect={function (date) {
-                        return date && handleCustomDateRange(filters.dateRange.start, date);
-                      }}
+                      onSelect={(date) =>
+                        date && handleCustomDateRange(filters.dateRange.start, date)
+                      }
                       locale={locale_1.ptBR}
                     />
                   </div>
@@ -559,21 +519,17 @@ function KPIFilters(_a) {
           <div className="space-y-3">
             <label_1.Label className="font-medium">Filtros Salvos</label_1.Label>
             <div className="flex flex-wrap gap-2">
-              {savedPresets.map(function (preset) {
-                return (
-                  <button_1.Button
-                    key={preset.id}
-                    variant="outline"
-                    size="sm"
-                    onClick={function () {
-                      return handleLoadPreset(preset);
-                    }}
-                    className="text-xs"
-                  >
-                    {preset.name}
-                  </button_1.Button>
-                );
-              })}
+              {savedPresets.map((preset) => (
+                <button_1.Button
+                  key={preset.id}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleLoadPreset(preset)}
+                  className="text-xs"
+                >
+                  {preset.name}
+                </button_1.Button>
+              ))}
             </div>
           </div>
         )}
@@ -595,20 +551,13 @@ function KPIFilters(_a) {
                 <input_1.Input
                   id="preset-name"
                   value={presetName}
-                  onChange={function (e) {
-                    return setPresetName(e.target.value);
-                  }}
+                  onChange={(e) => setPresetName(e.target.value)}
                   placeholder="Ex: Relatório Mensal"
                 />
               </div>
 
               <div className="flex justify-end space-x-2">
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setShowSavePreset(false);
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setShowSavePreset(false)}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={handleSavePreset} disabled={!presetName.trim()}>

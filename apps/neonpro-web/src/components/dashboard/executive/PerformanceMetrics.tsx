@@ -1,11 +1,33 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { endOfMonth, format, startOfMonth, subDays } from "date-fns";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Filter,
+  LineChart,
+  Minus,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -14,29 +36,7 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type {
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Target,
-  Clock,
-  Users,
-  DollarSign,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  BarChart3,
-  PieChart,
-  LineChart,
-  RefreshCw,
-  Download,
-  Settings,
-  Calendar,
-  Filter,
-} from "lucide-react";
-import type { format, subDays, startOfMonth, endOfMonth } from "date-fns";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Types
 interface PerformanceMetric {
@@ -205,11 +205,12 @@ export function PerformanceMetrics({
           aValue = a.target;
           bValue = b.target;
           break;
-        case "status":
+        case "status": {
           const statusOrder = { critical: 0, warning: 1, good: 2, excellent: 3 };
           aValue = statusOrder[a.status];
           bValue = statusOrder[b.status];
           break;
+        }
         default:
           return 0;
       }
@@ -231,10 +232,11 @@ export function PerformanceMetrics({
         }).format(value);
       case "percentage":
         return `${value.toFixed(1)}%`;
-      case "duration":
+      case "duration": {
         const hours = Math.floor(value / 60);
         const minutes = value % 60;
         return `${hours}h ${minutes}m`;
+      }
       case "ratio":
         return `${value.toFixed(2)}:1`;
       default:

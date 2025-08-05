@@ -21,7 +21,7 @@
 
 "use client";
 
-import type { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import type { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // Types for enhanced type safety
 interface Patient {

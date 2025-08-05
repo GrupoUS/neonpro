@@ -80,7 +80,7 @@ async function testSupabaseMCP() {
       console.log("   ✅ Auth config: OK");
     }
 
-    console.log("\n" + "=".repeat(50));
+    console.log(`\n${"=".repeat(50)}`);
     console.log("🎉 SUPABASE MCP CONNECTION TEST COMPLETED");
     console.log("\n📋 Summary:");
     console.log("• Client initialization: ✅");

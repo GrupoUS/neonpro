@@ -1,19 +1,23 @@
 "use client";
 
-import type { useState } from "react";
 import type { format } from "date-fns";
 import type { pt } from "date-fns/locale";
 import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  Edit,
+  MessageCircle,
+  MoreHorizontal,
+  Phone,
+  Trash2,
+  UserCheck,
+  XCircle,
+} from "lucide-react";
+import type { useState } from "react";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type { Card, CardContent } from "@/components/ui/card";
 import type {
   DropdownMenu,
@@ -23,19 +27,15 @@ import type {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type {
-  MoreHorizontal,
-  Edit,
-  Trash2,
-  CheckCircle,
-  XCircle,
-  Clock,
-  UserCheck,
-  Phone,
-  MessageCircle,
-  Calendar as CalendarIcon,
-} from "lucide-react";
-import type { cn } from "@/lib/utils";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { Appointment } from "@/hooks/use-appointments-manager";
+import type { cn } from "@/lib/utils";
 
 interface AppointmentListViewProps {
   appointments: Appointment[];

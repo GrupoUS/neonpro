@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Custom React Hook for Multi-Factor Authentication
  *
@@ -22,26 +21,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -61,13 +60,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -89,9 +88,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -163,10 +160,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -175,7 +172,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useMFA = useMFA;
 exports.useMFAStatistics = useMFAStatistics;
@@ -192,7 +189,6 @@ var DEFAULT_OPTIONS = {
  * Custom hook for comprehensive MFA management
  */
 function useMFA(options) {
-  var _this = this;
   var opts = __assign(__assign({}, DEFAULT_OPTIONS), options);
   // State management
   var _a = (0, react_1.useState)(null),
@@ -211,75 +207,71 @@ function useMFA(options) {
   /**
    * Fetch MFA settings from the server
    */
-  var fetchMFASettings = (0, react_1.useCallback)(
-    function () {
-      var args_1 = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args_1[_i] = arguments[_i];
+  var fetchMFASettings = (0, react_1.useCallback)(() => {
+    var args_1 = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args_1[_i] = arguments[_i];
+    }
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (showLoading) {
+      var settings, err_1, error_1;
+      if (showLoading === void 0) {
+        showLoading = true;
       }
-      return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (showLoading) {
-        var settings, err_1, error_1;
-        if (showLoading === void 0) {
-          showLoading = true;
+      return __generator(this, (_a) => {
+        switch (_a.label) {
+          case 0:
+            if (!opts.userId) return [2 /*return*/];
+            _a.label = 1;
+          case 1:
+            _a.trys.push([1, 3, 4, 5]);
+            if (showLoading) setIsLoading(true);
+            setError(null);
+            // Cancel any ongoing requests
+            if (abortControllerRef.current) {
+              abortControllerRef.current.abort();
+            }
+            abortControllerRef.current = new AbortController();
+            return [4 /*yield*/, mfaServiceRef.current.getUserMFASettings(opts.userId)];
+          case 2:
+            settings = _a.sent();
+            setMfaSettings(settings);
+            // Emit event for analytics/monitoring
+            emitMFAEvent("mfa:settings:loaded", {
+              userId: opts.userId,
+              isEnabled:
+                (settings === null || settings === void 0 ? void 0 : settings.isEnabled) || false,
+              methodCount:
+                (settings === null || settings === void 0 ? void 0 : settings.methods.length) || 0,
+            });
+            return [3 /*break*/, 5];
+          case 3:
+            err_1 = _a.sent();
+            error_1 = err_1 instanceof Error ? err_1 : new Error("Failed to fetch MFA settings");
+            setError(error_1);
+            // Emit error event
+            emitMFAEvent("mfa:settings:error", {
+              userId: opts.userId,
+              error: error_1.message,
+            });
+            console.error("Failed to fetch MFA settings:", error_1);
+            return [3 /*break*/, 5];
+          case 4:
+            if (showLoading) setIsLoading(false);
+            return [7 /*endfinally*/];
+          case 5:
+            return [2 /*return*/];
         }
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!opts.userId) return [2 /*return*/];
-              _a.label = 1;
-            case 1:
-              _a.trys.push([1, 3, 4, 5]);
-              if (showLoading) setIsLoading(true);
-              setError(null);
-              // Cancel any ongoing requests
-              if (abortControllerRef.current) {
-                abortControllerRef.current.abort();
-              }
-              abortControllerRef.current = new AbortController();
-              return [4 /*yield*/, mfaServiceRef.current.getUserMFASettings(opts.userId)];
-            case 2:
-              settings = _a.sent();
-              setMfaSettings(settings);
-              // Emit event for analytics/monitoring
-              emitMFAEvent("mfa:settings:loaded", {
-                userId: opts.userId,
-                isEnabled:
-                  (settings === null || settings === void 0 ? void 0 : settings.isEnabled) || false,
-                methodCount:
-                  (settings === null || settings === void 0 ? void 0 : settings.methods.length) ||
-                  0,
-              });
-              return [3 /*break*/, 5];
-            case 3:
-              err_1 = _a.sent();
-              error_1 = err_1 instanceof Error ? err_1 : new Error("Failed to fetch MFA settings");
-              setError(error_1);
-              // Emit error event
-              emitMFAEvent("mfa:settings:error", {
-                userId: opts.userId,
-                error: error_1.message,
-              });
-              console.error("Failed to fetch MFA settings:", error_1);
-              return [3 /*break*/, 5];
-            case 4:
-              if (showLoading) setIsLoading(false);
-              return [7 /*endfinally*/];
-            case 5:
-              return [2 /*return*/];
-          }
-        });
       });
-    },
-    [opts.userId],
-  );
+    });
+  }, [opts.userId]);
   /**
    * Setup MFA for the user
    */
   var setupMFA = (0, react_1.useCallback)(
-    function (request) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (request) =>
+      __awaiter(this, void 0, void 0, function () {
         var deviceFingerprint, result, err_2, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!opts.userId) {
@@ -339,18 +331,17 @@ function useMFA(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [opts.userId, fetchMFASettings],
   );
   /**
    * Verify MFA token
    */
   var verifyMFA = (0, react_1.useCallback)(
-    function (request) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (request) =>
+      __awaiter(this, void 0, void 0, function () {
         var deviceFingerprint, _a, result, err_3, error_3;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!opts.userId) {
@@ -429,19 +420,18 @@ function useMFA(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [opts.userId, fetchMFASettings],
   );
   /**
    * Disable MFA for the user
    */
   var disableMFA = (0, react_1.useCallback)(
-    function (reason) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (reason) =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, _b, _c, err_4, error_4;
         var _d;
-        return __generator(this, function (_e) {
+        return __generator(this, (_e) => {
           switch (_e.label) {
             case 0:
               if (!opts.userId) {
@@ -486,19 +476,18 @@ function useMFA(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [opts.userId, fetchMFASettings],
   );
   /**
    * Generate new backup codes
    */
   var generateBackupCodes = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var backupCodes, _a, _b, _c, err_5, error_5;
         var _d;
-        return __generator(this, function (_e) {
+        return __generator(this, (_e) => {
           switch (_e.label) {
             case 0:
               if (!opts.userId) {
@@ -543,19 +532,18 @@ function useMFA(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [opts.userId, fetchMFASettings],
   );
   /**
    * Send SMS OTP
    */
   var sendSMSOTP = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var result, _a, _b, _c, err_6, error_6;
         var _d;
-        return __generator(this, function (_e) {
+        return __generator(this, (_e) => {
           switch (_e.label) {
             case 0:
               if (!opts.userId) {
@@ -594,17 +582,16 @@ function useMFA(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [opts.userId],
   );
   /**
    * Refresh MFA settings manually
    */
   var refresh = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetchMFASettings(true)];
@@ -613,42 +600,35 @@ function useMFA(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchMFASettings],
   );
   // Setup auto-refresh interval
-  (0, react_1.useEffect)(
-    function () {
-      if (opts.autoRefresh && opts.refreshInterval > 0) {
-        refreshIntervalRef.current = setInterval(function () {
-          fetchMFASettings(false);
-        }, opts.refreshInterval);
-        return function () {
-          if (refreshIntervalRef.current) {
-            clearInterval(refreshIntervalRef.current);
-          }
-        };
-      }
-    },
-    [opts.autoRefresh, opts.refreshInterval, fetchMFASettings],
-  );
-  // Initial fetch
-  (0, react_1.useEffect)(
-    function () {
-      fetchMFASettings(true);
-      // Cleanup on unmount
-      return function () {
+  (0, react_1.useEffect)(() => {
+    if (opts.autoRefresh && opts.refreshInterval > 0) {
+      refreshIntervalRef.current = setInterval(() => {
+        fetchMFASettings(false);
+      }, opts.refreshInterval);
+      return () => {
         if (refreshIntervalRef.current) {
           clearInterval(refreshIntervalRef.current);
         }
-        if (abortControllerRef.current) {
-          abortControllerRef.current.abort();
-        }
       };
-    },
-    [fetchMFASettings],
-  );
+    }
+  }, [opts.autoRefresh, opts.refreshInterval, fetchMFASettings]);
+  // Initial fetch
+  (0, react_1.useEffect)(() => {
+    fetchMFASettings(true);
+    // Cleanup on unmount
+    return () => {
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [fetchMFASettings]);
   return {
     mfaSettings: mfaSettings,
     isLoading: isLoading,
@@ -670,7 +650,7 @@ function useMFA(options) {
 function getDeviceFingerprint() {
   return __awaiter(this, void 0, void 0, function () {
     var fingerprint, encoder, data, hashBuffer, hashArray, hashHex;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           fingerprint = {
@@ -687,11 +667,7 @@ function getDeviceFingerprint() {
         case 1:
           hashBuffer = _a.sent();
           hashArray = Array.from(new Uint8Array(hashBuffer));
-          hashHex = hashArray
-            .map(function (b) {
-              return b.toString(16).padStart(2, "0");
-            })
-            .join("");
+          hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
           return [2 /*return*/, hashHex];
       }
     });
@@ -702,7 +678,7 @@ function getDeviceFingerprint() {
  */
 function getUserIpAddress() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         // In production, this would call your backend to get the real IP
         // For now, return a placeholder
@@ -737,7 +713,6 @@ function emitMFAEvent(type, data) {
  * Hook for MFA statistics (admin/monitoring use)
  */
 function useMFAStatistics() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     statistics = _a[0],
     setStatistics = _a[1];
@@ -747,41 +722,41 @@ function useMFAStatistics() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  var fetchStatistics = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var stats, err_7, error_7;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, 3, 4]);
-            setIsLoading(true);
-            setError(null);
-            return [4 /*yield*/, (0, mfa_1.getMFAService)().getMFAStatistics()];
-          case 1:
-            stats = _a.sent();
-            setStatistics(stats);
-            return [3 /*break*/, 4];
-          case 2:
-            err_7 = _a.sent();
-            error_7 = err_7 instanceof Error ? err_7 : new Error("Failed to fetch MFA statistics");
-            setError(error_7);
-            console.error("Failed to fetch MFA statistics:", error_7);
-            return [3 /*break*/, 4];
-          case 3:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  (0, react_1.useEffect)(
-    function () {
-      fetchStatistics();
-    },
-    [fetchStatistics],
+  var fetchStatistics = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var stats, err_7, error_7;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, 3, 4]);
+              setIsLoading(true);
+              setError(null);
+              return [4 /*yield*/, (0, mfa_1.getMFAService)().getMFAStatistics()];
+            case 1:
+              stats = _a.sent();
+              setStatistics(stats);
+              return [3 /*break*/, 4];
+            case 2:
+              err_7 = _a.sent();
+              error_7 =
+                err_7 instanceof Error ? err_7 : new Error("Failed to fetch MFA statistics");
+              setError(error_7);
+              console.error("Failed to fetch MFA statistics:", error_7);
+              return [3 /*break*/, 4];
+            case 3:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
   );
+  (0, react_1.useEffect)(() => {
+    fetchStatistics();
+  }, [fetchStatistics]);
   return {
     statistics: statistics,
     isLoading: isLoading,

@@ -2,19 +2,19 @@
 // API route for appointment details and updates
 // Story 1.1 Task 5 - Appointment Details Modal/Sidebar
 
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
-import {
+import { type NextRequest, NextResponse } from "next/server";
+import type {
   AppointmentDetailsResponse,
-  UpdateAppointmentResponse,
   UpdateAppointmentFormData,
+  UpdateAppointmentResponse,
 } from "@/app/lib/types/appointments";
+import { createClient } from "@/app/utils/supabase/server";
 
 /**
  * GET /api/appointments/[id]
  * Fetch detailed appointment information with related data
  */
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
 

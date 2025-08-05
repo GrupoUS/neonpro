@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Treatment Prediction Dashboard Component Tests
  * Story 9.1: AI-powered treatment success prediction
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,7 +30,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,8 +59,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -82,9 +79,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -143,28 +140,24 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 var user_event_1 = require("@testing-library/user-event");
 require("@testing-library/jest-dom");
 var treatment_prediction_dashboard_1 = require("@/components/dashboard/treatment-prediction-dashboard");
 // Mock the dependencies
-jest.mock("@/app/lib/services/treatment-prediction", function () {
-  return {
-    TreatmentPredictionService: jest.fn().mockImplementation(function () {
-      return {
-        generatePrediction: jest.fn(),
-        getBatchPredictions: jest.fn(),
-        getPatientFactors: jest.fn(),
-        upsertPatientFactors: jest.fn(),
-      };
-    }),
-  };
-});
+jest.mock("@/app/lib/services/treatment-prediction", () => ({
+  TreatmentPredictionService: jest.fn().mockImplementation(() => ({
+    generatePrediction: jest.fn(),
+    getBatchPredictions: jest.fn(),
+    getPatientFactors: jest.fn(),
+    upsertPatientFactors: jest.fn(),
+  })),
+}));
 // Mock prediction results that meet ≥85% accuracy requirement
-var mockHighAccuracyPredictions = [
+var _mockHighAccuracyPredictions = [
   {
     treatment: "Laser CO2 Fracionado",
     confidence: 92, // >85% accuracy requirement
@@ -194,7 +187,7 @@ var mockHighAccuracyPredictions = [
     },
   },
 ];
-var mockMediumAccuracyPredictions = [
+var _mockMediumAccuracyPredictions = [
   {
     treatment: "Peeling Químico Profundo",
     confidence: 73, // Below 85% threshold - should trigger warnings
@@ -209,13 +202,13 @@ var mockMediumAccuracyPredictions = [
     },
   },
 ];
-describe("TreatmentPredictionDashboard", function () {
+describe("TreatmentPredictionDashboard", () => {
   var user = user_event_1.default.setup();
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("Component Rendering", function () {
-    test("renders main dashboard elements", function () {
+  describe("Component Rendering", () => {
+    test("renders main dashboard elements", () => {
       (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
       expect(react_2.screen.getByText("Predição de Tratamentos com IA")).toBeInTheDocument();
       expect(react_2.screen.getByText("IA Avançada")).toBeInTheDocument();
@@ -224,7 +217,7 @@ describe("TreatmentPredictionDashboard", function () {
       expect(react_2.screen.getByRole("tab", { name: /predições/i })).toBeInTheDocument();
       expect(react_2.screen.getByRole("tab", { name: /insights/i })).toBeInTheDocument();
     });
-    test("displays patient profile form", function () {
+    test("displays patient profile form", () => {
       (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
       expect(react_2.screen.getByLabelText(/idade/i)).toBeInTheDocument();
       expect(react_2.screen.getByLabelText(/tipo de pele/i)).toBeInTheDocument();
@@ -234,11 +227,11 @@ describe("TreatmentPredictionDashboard", function () {
       ).toBeInTheDocument();
     });
   });
-  describe("Patient Data Input and Validation", function () {
-    test("handles patient age input", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Patient Data Input and Validation", () => {
+    test("handles patient age input", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var ageInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -250,12 +243,11 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("handles skin type selection", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("handles skin type selection", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var skinTypeSelect;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -266,7 +258,7 @@ describe("TreatmentPredictionDashboard", function () {
               // Should show skin type options
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText(/tipo i/i)).toBeInTheDocument();
                 }),
               ];
@@ -276,12 +268,11 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("validates required fields before analysis", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("validates required fields before analysis", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -296,14 +287,13 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("AI Prediction Generation", function () {
-    test("shows loading state during analysis", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("AI Prediction Generation", () => {
+    test("shows loading state during analysis", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -312,9 +302,9 @@ describe("TreatmentPredictionDashboard", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -323,8 +313,8 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -334,12 +324,11 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("generates predictions with high accuracy (≥85%)", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("generates predictions with high accuracy (≥85%)", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton, predictionsTab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -353,9 +342,9 @@ describe("TreatmentPredictionDashboard", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -364,8 +353,8 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 2:
               _a.sent();
@@ -373,7 +362,7 @@ describe("TreatmentPredictionDashboard", function () {
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_2.screen.queryByText(/analisando com ia/i),
                     ).not.toBeInTheDocument();
@@ -391,7 +380,7 @@ describe("TreatmentPredictionDashboard", function () {
               // Should display high accuracy predictions
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText(/laser co2 fracionado/i)).toBeInTheDocument();
                   expect(react_2.screen.getByText(/92% confiança/i)).toBeInTheDocument(); // ≥85% requirement
                   expect(
@@ -406,12 +395,11 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("displays accuracy warning for predictions below 85%", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("displays accuracy warning for predictions below 85%", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // This test simulates edge cases where predictions might be below target
@@ -421,9 +409,9 @@ describe("TreatmentPredictionDashboard", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -432,15 +420,15 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_2.screen.queryByText(/analisando com ia/i),
                     ).not.toBeInTheDocument();
@@ -457,14 +445,13 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Multi-factor Analysis Display", function () {
-    test("shows comprehensive patient factors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Multi-factor Analysis Display", () => {
+    test("shows comprehensive patient factors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton, insightsTab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -476,9 +463,9 @@ describe("TreatmentPredictionDashboard", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -487,15 +474,15 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 2:
               _a.sent();
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_2.screen.queryByText(/analisando com ia/i),
                     ).not.toBeInTheDocument();
@@ -514,14 +501,13 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Real-time Scoring Interface", function () {
-    test("displays confidence scores in real-time", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Real-time Scoring Interface", () => {
+    test("displays confidence scores in real-time", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton, predictionsTab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -530,9 +516,9 @@ describe("TreatmentPredictionDashboard", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -541,15 +527,15 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_2.screen.queryByText(/analisando com ia/i),
                     ).not.toBeInTheDocument();
@@ -566,7 +552,7 @@ describe("TreatmentPredictionDashboard", function () {
               // Should show real-time confidence scores
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText(/92% confiança/i)).toBeInTheDocument();
                   expect(react_2.screen.getByText(/88% confiança/i)).toBeInTheDocument();
                 }),
@@ -577,12 +563,11 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("shows risk assessment levels", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("shows risk assessment levels", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton, predictionsTab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -591,9 +576,9 @@ describe("TreatmentPredictionDashboard", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -602,15 +587,15 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_2.screen.queryByText(/analisando com ia/i),
                     ).not.toBeInTheDocument();
@@ -627,7 +612,7 @@ describe("TreatmentPredictionDashboard", function () {
               // Should display risk levels
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText(/baixo risco/i)).toBeInTheDocument();
                 }),
               ];
@@ -637,14 +622,13 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Medical-grade Validation", function () {
-    test("validates medical accuracy of predictions", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Medical-grade Validation", () => {
+    test("validates medical accuracy of predictions", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -653,9 +637,9 @@ describe("TreatmentPredictionDashboard", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -664,15 +648,15 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_2.screen.queryByText(/analisando com ia/i),
                     ).not.toBeInTheDocument();
@@ -687,12 +671,11 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("shows treatment contraindications", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("shows treatment contraindications", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton, predictionsTab;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -701,9 +684,9 @@ describe("TreatmentPredictionDashboard", function () {
               });
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -712,15 +695,15 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_2.screen.queryByText(/analisando com ia/i),
                     ).not.toBeInTheDocument();
@@ -737,7 +720,7 @@ describe("TreatmentPredictionDashboard", function () {
               // Should include medical safety information
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText(/resultados esperados/i)).toBeInTheDocument();
                 }),
               ];
@@ -747,21 +730,20 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance Monitoring", function () {
-    test("tracks dashboard performance metrics", function () {
+  describe("Performance Monitoring", () => {
+    test("tracks dashboard performance metrics", () => {
       var startTime = performance.now();
       (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
       var endTime = performance.now();
       // Dashboard should render quickly (performance requirement)
       expect(endTime - startTime).toBeLessThan(1000); // Less than 1 second
     });
-    test("monitors prediction generation time", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    test("monitors prediction generation time", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analyzeButton, startTime, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -771,9 +753,9 @@ describe("TreatmentPredictionDashboard", function () {
               startTime = performance.now();
               return [
                 4 /*yield*/,
-                (0, react_2.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_2.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, user.click(analyzeButton)];
@@ -782,15 +764,15 @@ describe("TreatmentPredictionDashboard", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(
                       react_2.screen.queryByText(/analisando com ia/i),
                     ).not.toBeInTheDocument();
@@ -806,19 +788,18 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Accessibility and UX", function () {
-    test("has proper ARIA labels", function () {
+  describe("Accessibility and UX", () => {
+    test("has proper ARIA labels", () => {
       (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
       expect(react_2.screen.getByLabelText(/idade/i)).toHaveAttribute("id", "age");
       expect(react_2.screen.getByRole("tab", { name: /análise do paciente/i })).toBeInTheDocument();
     });
-    test("supports keyboard navigation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    test("supports keyboard navigation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var ageInput;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_2.render)(<treatment_prediction_dashboard_1.default />);
@@ -834,7 +815,6 @@ describe("TreatmentPredictionDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

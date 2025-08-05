@@ -6,127 +6,121 @@
  * Complete AI system implementation with 6 core engines
  */
 
-// Core AI Engines
-export { AIRiskAssessmentEngine } from "./risk-assessment";
-export { AITreatmentRecommendationEngine } from "./treatment-recommendations";
-export { AIPredictiveAnalyticsEngine } from "./predictive-analytics";
-export { AIBehaviorAnalysisEngine } from "./behavior-analysis";
-export { AIHealthMonitoringEngine } from "./health-monitoring";
-export { AIContinuousLearningSystem } from "./continuous-learning";
-
-// Type exports for Risk Assessment
-export type {
-  RiskFactor,
-  RiskAssessment,
-  HealthPrediction,
-  SafetyAlert,
-  ModelMetrics,
-} from "./risk-assessment";
-
-// Type exports for Treatment Recommendations
-export type {
-  TreatmentRecommendation,
-  ExpectedOutcome,
-  TreatmentProtocol,
-  ProtocolStep,
-  ProtocolCustomization,
-  TreatmentCombination,
-  EvidenceSource,
-} from "./treatment-recommendations";
-
-// Type exports for Predictive Analytics
-export type {
-  OutcomePrediction,
-  PredictedOutcome,
-  RecoveryTimeline,
-  ComplicationPrediction,
-  ExpectedResult,
-  LongTermPrognosis,
-  PredictionFactor,
-  AlternativeScenario,
-  OutcomeChange,
-  PatientResponseModel,
-  ResponseProfile,
-  HistoricalPattern,
-  PredictiveIndicator,
-  ThresholdValue,
-  PersonalizationFactor,
-} from "./predictive-analytics";
-
 // Type exports for Behavior Analysis
 export type {
-  BehaviorAnalysis,
-  BehaviorProfile,
-  CommunicationStyle,
   AppointmentBehavior,
-  TreatmentCompliance,
+  BehaviorAnalysis,
+  BehaviorPrediction,
+  BehaviorProfile,
+  BehaviorRecommendation,
+  BehaviorRiskIndicator,
+  BehaviorTrigger,
+  CommunicationStyle,
+  ComplianceBarrier,
   DecisionMakingPattern,
   EngagementPattern,
-  BehaviorRiskIndicator,
-  BehaviorRecommendation,
-  TimePreference,
-  ComplianceBarrier,
   InfluenceFactor,
-  SatisfactionDriver,
-  BehaviorTrigger,
   PatientSegment,
-  BehaviorPrediction,
+  SatisfactionDriver,
+  TimePreference,
+  TreatmentCompliance,
 } from "./behavior-analysis";
-
-// Type exports for Health Monitoring
-export type {
-  HealthTrendAnalysis,
-  MonitoringPeriod,
-  HealthTrend,
-  VitalTrend,
-  TreatmentEffectiveness,
-  EarlyWarning,
-  HealthRecommendation,
-  WearableData,
-  HealthPrediction as HealthMonitoringPrediction,
-  HealthInsight,
-  TrendDirection,
-  AlertSeverity,
-  MonitoringFrequency,
-  DataQuality,
-  HealthScore,
-  ImprovementArea,
-  SuccessArea,
-  BehaviorHealthCorrelation,
-  PersonalizedGoal,
-  MotivationStrategy,
-} from "./health-monitoring";
-
+export { AIBehaviorAnalysisEngine } from "./behavior-analysis";
 // Type exports for Continuous Learning
 export type {
-  LearningSystem,
-  MLModel,
-  SystemPerformance,
-  LearningConfiguration,
-  TrainingSession,
-  ValidationResult,
-  DeploymentStatus,
-  ModelPerformance,
-  FeatureImportance,
-  ModelArtifacts,
-  ClinicalImpact,
-  TrainingMetrics,
-  ValidationMetrics,
-  StatisticalTest,
-  ClinicalValidation,
-  BiasAnalysis,
-  FairnessMetrics,
-  Alert,
-  ClassificationReport,
-  EfficacyResult,
-  SafetyResult,
-  DemographicBias,
-  DataBias,
-  MetricAverage,
-  FeedbackData,
   ABTestResult,
+  Alert,
+  BiasAnalysis,
+  ClassificationReport,
+  ClinicalImpact,
+  ClinicalValidation,
+  DataBias,
   DataDrift,
+  DemographicBias,
+  DeploymentStatus,
+  EfficacyResult,
+  FairnessMetrics,
+  FeatureImportance,
+  FeedbackData,
+  LearningConfiguration,
+  LearningSystem,
+  MetricAverage,
+  MLModel,
+  ModelArtifacts,
+  ModelPerformance,
+  SafetyResult,
+  StatisticalTest,
+  SystemPerformance,
+  TrainingMetrics,
+  TrainingSession,
+  ValidationMetrics,
+  ValidationResult,
 } from "./continuous-learning";
+export { AIContinuousLearningSystem } from "./continuous-learning";
+// Type exports for Health Monitoring
+export type {
+  AlertSeverity,
+  BehaviorHealthCorrelation,
+  DataQuality,
+  EarlyWarning,
+  HealthInsight,
+  HealthPrediction as HealthMonitoringPrediction,
+  HealthRecommendation,
+  HealthScore,
+  HealthTrend,
+  HealthTrendAnalysis,
+  ImprovementArea,
+  MonitoringFrequency,
+  MonitoringPeriod,
+  MotivationStrategy,
+  PersonalizedGoal,
+  SuccessArea,
+  TreatmentEffectiveness,
+  TrendDirection,
+  VitalTrend,
+  WearableData,
+} from "./health-monitoring";
+export { AIHealthMonitoringEngine } from "./health-monitoring";
+// Type exports for Predictive Analytics
+export type {
+  AlternativeScenario,
+  ComplicationPrediction,
+  ExpectedResult,
+  HistoricalPattern,
+  LongTermPrognosis,
+  OutcomeChange,
+  OutcomePrediction,
+  PatientResponseModel,
+  PersonalizationFactor,
+  PredictedOutcome,
+  PredictionFactor,
+  PredictiveIndicator,
+  RecoveryTimeline,
+  ResponseProfile,
+  ThresholdValue,
+} from "./predictive-analytics";
+export { AIPredictiveAnalyticsEngine } from "./predictive-analytics";
+// Type exports for Risk Assessment
+export type {
+  HealthPrediction,
+  ModelMetrics,
+  RiskAssessment,
+  RiskFactor,
+  SafetyAlert,
+} from "./risk-assessment";
+// Core AI Engines
+export { AIRiskAssessmentEngine } from "./risk-assessment";
+// Type exports for Treatment Recommendations
+export type {
+  EvidenceSource,
+  ExpectedOutcome,
+  ProtocolCustomization,
+  ProtocolStep,
+  TreatmentCombination,
+  TreatmentProtocol,
+  TreatmentRecommendation,
+} from "./treatment-recommendations";
+export { AITreatmentRecommendationEngine } from "./treatment-recommendations";
 
 /**
  * AI System Factory

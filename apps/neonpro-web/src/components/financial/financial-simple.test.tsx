@@ -3,7 +3,7 @@
  * Tests the basic functionality without complex setup
  */
 
-import type { describe, it, expect } from "@jest/globals";
+import type { describe, expect, it } from "@jest/globals";
 import type { validateAppointmentSlot } from "./utils";
 
 // Simple utility function tests

@@ -1,4 +1,3 @@
-"use strict";
 // Stock Notifications Service
 // Unified notification system for stock alerts (email, push, webhook)
 // Story 11.4: Enhanced Stock Alerts System
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,13 +146,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var server_1 = require("@/lib/supabase/server");
 var push_notification_service_1 = require("@/lib/push-notification-service");
 var resend_1 = require("resend");
 var axios_1 = require("axios");
-var StockNotificationsService = /** @class */ (function () {
+var StockNotificationsService = /** @class */ (() => {
   function StockNotificationsService() {
     this.supabase = (0, server_1.createClient)();
     this.resend = new resend_1.Resend(process.env.RESEND_API_KEY);
@@ -204,20 +201,17 @@ var StockNotificationsService = /** @class */ (function () {
       });
     });
   };
-  StockNotificationsService.prototype.replaceVariables = function (content, variables) {
+  StockNotificationsService.prototype.replaceVariables = (content, variables) => {
     var result = content;
-    Object.entries(variables).forEach(function (_a) {
+    Object.entries(variables).forEach((_a) => {
       var key = _a[0],
         value = _a[1];
       var regex = new RegExp("{{".concat(key, "}}"), "g");
       result = result.replace(regex, String(value || ""));
     });
     // Handle conditional blocks {{#if condition}}...{{/if}}
-    result = result.replace(
-      /\{\{#if\s+(\w+)\}\}(.*?)\{\{\/if\}\}/g,
-      function (match, condition, content) {
-        return variables[condition] ? content : "";
-      },
+    result = result.replace(/\{\{#if\s+(\w+)\}\}(.*?)\{\{\/if\}\}/g, (match, condition, content) =>
+      variables[condition] ? content : "",
     );
     return result;
   };
@@ -332,7 +326,7 @@ var StockNotificationsService = /** @class */ (function () {
             return [
               2 /*return*/,
               data
-                .filter(function (staff) {
+                .filter((staff) => {
                   var user = staff.users;
                   var prefs = user.notification_preferences || {};
                   // Check if user wants to receive notifications for this alert type and severity
@@ -343,16 +337,14 @@ var StockNotificationsService = /** @class */ (function () {
                     !prefs.alert_type_filter || prefs.alert_type_filter.includes(alertType);
                   return wantsAlerts && wantsSeverity && wantsType;
                 })
-                .map(function (staff) {
-                  return {
-                    user_id: staff.users.id,
-                    name: staff.users.name,
-                    email: staff.users.email,
-                    phone: staff.users.phone,
-                    role: staff.role,
-                    notification_preferences: staff.users.notification_preferences || {},
-                  };
-                }),
+                .map((staff) => ({
+                  user_id: staff.users.id,
+                  name: staff.users.name,
+                  email: staff.users.email,
+                  phone: staff.users.phone,
+                  role: staff.role,
+                  notification_preferences: staff.users.notification_preferences || {},
+                })),
             ];
           case 2:
             error_4 = _b.sent();
@@ -868,12 +860,8 @@ var StockNotificationsService = /** @class */ (function () {
               return [2 /*return*/, overallResults];
             }
             emailRecipients = recipients
-              .filter(function (r) {
-                return r.notification_preferences.email !== false;
-              })
-              .map(function (r) {
-                return r.email;
-              });
+              .filter((r) => r.notification_preferences.email !== false)
+              .map((r) => r.email);
             if (!(emailRecipients.length > 0)) return [3 /*break*/, 4];
             return [
               4 /*yield*/,
@@ -894,12 +882,8 @@ var StockNotificationsService = /** @class */ (function () {
             _a.label = 4;
           case 4:
             pushRecipients = recipients
-              .filter(function (r) {
-                return r.notification_preferences.push !== false;
-              })
-              .map(function (r) {
-                return r.user_id;
-              });
+              .filter((r) => r.notification_preferences.push !== false)
+              .map((r) => r.user_id);
             if (!(pushRecipients.length > 0)) return [3 /*break*/, 6];
             return [
               4 /*yield*/,
@@ -974,7 +958,7 @@ var StockNotificationsService = /** @class */ (function () {
   // ==========================================
   // UTILITY METHODS
   // ==========================================
-  StockNotificationsService.prototype.prepareTemplateVariables = function (data, templateType) {
+  StockNotificationsService.prototype.prepareTemplateVariables = (data, templateType) => {
     var baseVariables = {
       product_name: data.productName,
       product_id: data.productId,
@@ -1026,12 +1010,7 @@ var StockNotificationsService = /** @class */ (function () {
               console.error("Error fetching webhook URLs:", error);
               return [2 /*return*/, []];
             }
-            return [
-              2 /*return*/,
-              data.map(function (config) {
-                return config.webhook_url;
-              }),
-            ];
+            return [2 /*return*/, data.map((config) => config.webhook_url)];
           case 2:
             error_12 = _b.sent();
             console.error("Error in getClinicWebhookUrls:", error_12);
@@ -1103,7 +1082,7 @@ var StockNotificationsService = /** @class */ (function () {
             lastFailure = new Date(notification.failed_at);
             now = new Date();
             timeSinceFailure = now.getTime() - lastFailure.getTime();
-            if (timeSinceFailure < this.retryDelayMs * Math.pow(2, notification.retry_count)) {
+            if (timeSinceFailure < this.retryDelayMs * 2 ** notification.retry_count) {
               return [3 /*break*/, 22]; // Not ready to retry yet (exponential backoff)
             }
             // Mark as retrying

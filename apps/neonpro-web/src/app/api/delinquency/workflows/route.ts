@@ -1,6 +1,6 @@
+import type { createClient } from "@supabase/supabase-js";
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
-import type { createClient } from "@supabase/supabase-js";
 import type { DelinquencyManager } from "@/lib/payments/delinquency/delinquency-manager";
 
 // Validation schemas

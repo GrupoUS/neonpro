@@ -17,32 +17,31 @@
  * @since 2025-01-30
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -62,13 +61,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -90,9 +89,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -164,7 +161,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = NotificationDashboard;
 var react_1 = require("react");
@@ -186,7 +183,6 @@ var recharts_1 = require("recharts");
  * Dashboard principal de notificações
  */
 function NotificationDashboard() {
-  var _this = this;
   var _a = (0, react_1.useState)(true),
     loading = _a[0],
     setLoading = _a[1];
@@ -234,19 +230,16 @@ function NotificationDashboard() {
     setRefreshing = _q[1];
   var supabase = (0, client_1.createClient)();
   // Carregamento inicial dos dados
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-    },
-    [selectedPeriod],
-  );
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+  }, [selectedPeriod]);
   /**
    * Carrega todos os dados do dashboard
    */
-  var loadDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -279,15 +272,13 @@ function NotificationDashboard() {
         }
       });
     });
-  };
   /**
    * Carrega templates de notificação
    */
-  var loadTemplates = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTemplates = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, templatesWithStats;
-      var _this = this;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [
@@ -306,10 +297,10 @@ function NotificationDashboard() {
             return [
               4 /*yield*/,
               Promise.all(
-                data.map(function (template) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                data.map((template) =>
+                  __awaiter(this, void 0, void 0, function () {
                     var usageCount, successCount;
-                    return __generator(this, function (_a) {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -342,8 +333,8 @@ function NotificationDashboard() {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 2:
@@ -353,14 +344,13 @@ function NotificationDashboard() {
         }
       });
     });
-  };
   /**
    * Carrega regras de notificação
    */
-  var loadRules = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadRules = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [
@@ -381,14 +371,13 @@ function NotificationDashboard() {
         }
       });
     });
-  };
   /**
    * Carrega estatísticas gerais
    */
-  var loadStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var now, startDate, _a, data, error, aggregated;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             now = new Date();
@@ -417,7 +406,7 @@ function NotificationDashboard() {
               return [2 /*return*/];
             }
             aggregated = data.reduce(
-              function (acc, record) {
+              (acc, record) => {
                 acc.totalSent += record.total_sent;
                 acc.totalDelivered += record.total_delivered;
                 acc.totalRead += record.total_read;
@@ -464,7 +453,7 @@ function NotificationDashboard() {
             aggregated.responseRate =
               aggregated.totalSent > 0 ? (aggregated.totalReplied / aggregated.totalSent) * 100 : 0;
             // Calcula taxas por canal
-            Object.keys(aggregated.channels).forEach(function (channel) {
+            Object.keys(aggregated.channels).forEach((channel) => {
               var channelData = aggregated.channels[channel];
               channelData.rate =
                 channelData.sent > 0 ? (channelData.delivered / channelData.sent) * 100 : 0;
@@ -474,14 +463,13 @@ function NotificationDashboard() {
         }
       });
     });
-  };
   /**
    * Carrega métricas de performance temporal
    */
-  var loadPerformanceMetrics = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPerformanceMetrics = () =>
+    __awaiter(this, void 0, void 0, function () {
       var endDate, startDate, _a, data, error, metricsMap, metricsArray;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             endDate = new Date();
@@ -502,7 +490,7 @@ function NotificationDashboard() {
               console.error("Erro ao carregar métricas de performance:", error);
               return [2 /*return*/];
             }
-            metricsMap = data.reduce(function (acc, record) {
+            metricsMap = data.reduce((acc, record) => {
               var date = record.date;
               if (!acc[date]) {
                 acc[date] = {
@@ -525,24 +513,23 @@ function NotificationDashboard() {
               }
               return acc;
             }, {});
-            metricsArray = Object.values(metricsMap).map(function (metric) {
-              return __assign(__assign({}, metric), {
+            metricsArray = Object.values(metricsMap).map((metric) =>
+              __assign(__assign({}, metric), {
                 responseTime: metric.count > 0 ? metric.responseTime / metric.count : 0,
-              });
-            });
+              }),
+            );
             setMetrics(metricsArray);
             return [2 /*return*/];
         }
       });
     });
-  };
   /**
    * Carrega performance por canal
    */
-  var loadChannelPerformance = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadChannelPerformance = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, channelMap, channelArray;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [
@@ -561,7 +548,7 @@ function NotificationDashboard() {
               console.error("Erro ao carregar performance por canal:", error);
               return [2 /*return*/];
             }
-            channelMap = data.reduce(function (acc, record) {
+            channelMap = data.reduce((acc, record) => {
               var channel = record.channel;
               if (!acc[channel]) {
                 acc[channel] = {
@@ -584,26 +571,25 @@ function NotificationDashboard() {
               }
               return acc;
             }, {});
-            channelArray = Object.values(channelMap).map(function (channel) {
-              return __assign(__assign({}, channel), {
+            channelArray = Object.values(channelMap).map((channel) =>
+              __assign(__assign({}, channel), {
                 rate: channel.sent > 0 ? (channel.delivered / channel.sent) * 100 : 0,
                 avgDeliveryTime: channel.count > 0 ? channel.avgDeliveryTime / channel.count : 0,
                 cost: calculateChannelCost(channel.channel, channel.sent),
-              });
-            });
+              }),
+            );
             setChannelPerformance(channelArray);
             return [2 /*return*/];
         }
       });
     });
-  };
   /**
    * Carrega engajamento de pacientes
    */
-  var loadPatientEngagement = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPatientEngagement = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, engagement;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [
@@ -620,7 +606,7 @@ function NotificationDashboard() {
               console.error("Erro ao carregar engajamento de pacientes:", error);
               return [2 /*return*/];
             }
-            engagement = data.map(function (record) {
+            engagement = data.map((record) => {
               var _a;
               return {
                 patientId: record.patient_id,
@@ -639,14 +625,13 @@ function NotificationDashboard() {
         }
       });
     });
-  };
   /**
    * Carrega regras de escalação
    */
-  var loadEscalationRules = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadEscalationRules = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, rules;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [
@@ -662,7 +647,7 @@ function NotificationDashboard() {
               console.error("Erro ao carregar regras de escalação:", error);
               return [2 /*return*/];
             }
-            rules = data.map(function (rule) {
+            rules = data.map((rule) => {
               var _a;
               return __assign(__assign({}, rule), {
                 targetUserName:
@@ -674,11 +659,10 @@ function NotificationDashboard() {
         }
       });
     });
-  };
   /**
    * Calcula custo estimado por canal
    */
-  var calculateChannelCost = function (channel, sent) {
+  var calculateChannelCost = (channel, sent) => {
     var costs = {
       sms: 0.05, // R$ 0,05 por SMS
       whatsapp: 0.02, // R$ 0,02 por mensagem
@@ -690,9 +674,9 @@ function NotificationDashboard() {
   /**
    * Atualiza dados em tempo real
    */
-  var refreshData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var refreshData = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setRefreshing(true);
@@ -705,20 +689,18 @@ function NotificationDashboard() {
         }
       });
     });
-  };
   /**
    * Filtra templates baseado na busca e filtros
    */
   var filteredTemplates = (0, react_1.useMemo)(
-    function () {
-      return templates.filter(function (template) {
+    () =>
+      templates.filter((template) => {
         var matchesSearch =
           template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           template.type.toLowerCase().includes(searchQuery.toLowerCase());
         var matchesChannel = filterChannel === "all" || template.channel === filterChannel;
         return matchesSearch && matchesChannel;
-      });
-    },
+      }),
     [templates, searchQuery, filterChannel],
   );
   /**
@@ -735,7 +717,7 @@ function NotificationDashboard() {
   /**
    * Ícones por canal
    */
-  var getChannelIcon = function (channel) {
+  var getChannelIcon = (channel) => {
     switch (channel) {
       case "sms":
         return <lucide_react_1.Smartphone className="h-4 w-4" />;
@@ -752,17 +734,15 @@ function NotificationDashboard() {
   /**
    * Badge de status para templates
    */
-  var getStatusBadge = function (active) {
-    return (
-      <badge_1.Badge variant={active ? "default" : "secondary"}>
-        {active ? "Ativo" : "Inativo"}
-      </badge_1.Badge>
-    );
-  };
+  var getStatusBadge = (active) => (
+    <badge_1.Badge variant={active ? "default" : "secondary"}>
+      {active ? "Ativo" : "Inativo"}
+    </badge_1.Badge>
+  );
   /**
    * Badge de performance
    */
-  var getPerformanceBadge = function (rate) {
+  var getPerformanceBadge = (rate) => {
     if (rate >= 90)
       return (
         <badge_1.Badge variant="default" className="bg-green-500">
@@ -812,9 +792,7 @@ function NotificationDashboard() {
           </button_1.Button>
           <select_1.Select
             value={selectedPeriod}
-            onValueChange={function (value) {
-              return setSelectedPeriod(value);
-            }}
+            onValueChange={(value) => setSelectedPeriod(value)}
           >
             <select_1.SelectTrigger className="w-40">
               <select_1.SelectValue />
@@ -955,30 +933,28 @@ function NotificationDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {channelPerformance.map(function (channel) {
-                  return (
-                    <div
-                      key={channel.channel}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        {getChannelIcon(channel.channel)}
-                        <div>
-                          <p className="font-medium capitalize">{channel.channel}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {channel.sent.toLocaleString()} enviadas
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">{channel.rate.toFixed(1)}% entrega</p>
+                {channelPerformance.map((channel) => (
+                  <div
+                    key={channel.channel}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      {getChannelIcon(channel.channel)}
+                      <div>
+                        <p className="font-medium capitalize">{channel.channel}</p>
                         <p className="text-sm text-muted-foreground">
-                          R$ {channel.cost.toFixed(2)} custo
+                          {channel.sent.toLocaleString()} enviadas
                         </p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <p className="font-medium">{channel.rate.toFixed(1)}% entrega</p>
+                      <p className="text-sm text-muted-foreground">
+                        R$ {channel.cost.toFixed(2)} custo
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -994,9 +970,7 @@ function NotificationDashboard() {
                 <input_1.Input
                   placeholder="Buscar templates..."
                   value={searchQuery}
-                  onChange={function (e) {
-                    return setSearchQuery(e.target.value);
-                  }}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-8 w-64"
                 />
               </div>
@@ -1013,11 +987,7 @@ function NotificationDashboard() {
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
-            <button_1.Button
-              onClick={function () {
-                return setIsTemplateDialogOpen(true);
-              }}
-            >
+            <button_1.Button onClick={() => setIsTemplateDialogOpen(true)}>
               <lucide_react_1.Plus className="h-4 w-4 mr-2" />
               Novo Template
             </button_1.Button>
@@ -1025,7 +995,7 @@ function NotificationDashboard() {
 
           {/* Lista de Templates */}
           <div className="grid gap-4">
-            {filteredTemplates.map(function (template) {
+            {filteredTemplates.map((template) => {
               var _a;
               return (
                 <card_1.Card key={template.id}>
@@ -1061,13 +1031,11 @@ function NotificationDashboard() {
                         {template.content.substring(0, 150)}...
                       </p>
                       <div className="flex gap-2">
-                        {template.variables.map(function (variable) {
-                          return (
-                            <badge_1.Badge key={variable} variant="outline" className="text-xs">
-                              {variable}
-                            </badge_1.Badge>
-                          );
-                        })}
+                        {template.variables.map((variable) => (
+                          <badge_1.Badge key={variable} variant="outline" className="text-xs">
+                            {variable}
+                          </badge_1.Badge>
+                        ))}
                       </div>
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
@@ -1095,18 +1063,14 @@ function NotificationDashboard() {
         <tabs_1.TabsContent value="rules" className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-medium">Regras de Notificação</h3>
-            <button_1.Button
-              onClick={function () {
-                return setIsRuleDialogOpen(true);
-              }}
-            >
+            <button_1.Button onClick={() => setIsRuleDialogOpen(true)}>
               <lucide_react_1.Plus className="h-4 w-4 mr-2" />
               Nova Regra
             </button_1.Button>
           </div>
 
           <div className="grid gap-4">
-            {rules.map(function (rule) {
+            {rules.map((rule) => {
               var _a;
               return (
                 <card_1.Card key={rule.id}>
@@ -1205,22 +1169,20 @@ function NotificationDashboard() {
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="sent"
-                      label={function (_a) {
+                      label={(_a) => {
                         var channel = _a.channel,
                           sent = _a.sent;
                         return "".concat(channel, ": ").concat(sent);
                       }}
                     >
-                      {channelPerformance.map(function (entry, index) {
-                        return (
-                          <recharts_1.Cell
-                            key={"cell-".concat(index)}
-                            fill={
-                              Object.values(chartColors)[index % Object.values(chartColors).length]
-                            }
-                          />
-                        );
-                      })}
+                      {channelPerformance.map((entry, index) => (
+                        <recharts_1.Cell
+                          key={"cell-".concat(index)}
+                          fill={
+                            Object.values(chartColors)[index % Object.values(chartColors).length]
+                          }
+                        />
+                      ))}
                     </recharts_1.Pie>
                     <recharts_1.Tooltip />
                   </recharts_1.PieChart>
@@ -1252,22 +1214,20 @@ function NotificationDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {channelPerformance.map(function (channel) {
-                      return (
-                        <tr key={channel.channel} className="border-b">
-                          <td className="p-2 flex items-center gap-2">
-                            {getChannelIcon(channel.channel)}
-                            <span className="capitalize">{channel.channel}</span>
-                          </td>
-                          <td className="text-right p-2">{channel.sent.toLocaleString()}</td>
-                          <td className="text-right p-2">{channel.delivered.toLocaleString()}</td>
-                          <td className="text-right p-2">{channel.failed.toLocaleString()}</td>
-                          <td className="text-right p-2">{channel.rate.toFixed(1)}%</td>
-                          <td className="text-right p-2">{channel.avgDeliveryTime.toFixed(1)}s</td>
-                          <td className="text-right p-2">R$ {channel.cost.toFixed(2)}</td>
-                        </tr>
-                      );
-                    })}
+                    {channelPerformance.map((channel) => (
+                      <tr key={channel.channel} className="border-b">
+                        <td className="p-2 flex items-center gap-2">
+                          {getChannelIcon(channel.channel)}
+                          <span className="capitalize">{channel.channel}</span>
+                        </td>
+                        <td className="text-right p-2">{channel.sent.toLocaleString()}</td>
+                        <td className="text-right p-2">{channel.delivered.toLocaleString()}</td>
+                        <td className="text-right p-2">{channel.failed.toLocaleString()}</td>
+                        <td className="text-right p-2">{channel.rate.toFixed(1)}%</td>
+                        <td className="text-right p-2">{channel.avgDeliveryTime.toFixed(1)}s</td>
+                        <td className="text-right p-2">R$ {channel.cost.toFixed(2)}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -1286,33 +1246,31 @@ function NotificationDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {patientEngagement.map(function (patient) {
-                  return (
-                    <div
-                      key={patient.patientId}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div>
-                        <p className="font-medium">{patient.patientName}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Prefere: {patient.preferredChannel} • Última resposta:{" "}
-                          {patient.lastResponse}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 h-2 bg-gray-200 rounded-full">
-                            <div
-                              className="h-2 bg-blue-500 rounded-full"
-                              style={{ width: "".concat(patient.responseScore, "%") }}
-                            />
-                          </div>
-                          <span className="text-sm font-medium">{patient.responseScore}%</span>
+                {patientEngagement.map((patient) => (
+                  <div
+                    key={patient.patientId}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium">{patient.patientName}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Prefere: {patient.preferredChannel} • Última resposta:{" "}
+                        {patient.lastResponse}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-2 bg-gray-200 rounded-full">
+                          <div
+                            className="h-2 bg-blue-500 rounded-full"
+                            style={{ width: "".concat(patient.responseScore, "%") }}
+                          />
                         </div>
+                        <span className="text-sm font-medium">{patient.responseScore}%</span>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -1331,27 +1289,25 @@ function NotificationDashboard() {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {escalationRules.map(function (rule) {
-                    return (
-                      <div
-                        key={rule.id}
-                        className="flex items-center justify-between p-3 border rounded"
-                      >
-                        <div>
-                          <p className="font-medium">{rule.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {rule.triggerCondition} → {rule.targetUserName}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {getStatusBadge(rule.active)}
-                          <button_1.Button variant="outline" size="sm">
-                            <lucide_react_1.Edit className="h-4 w-4" />
-                          </button_1.Button>
-                        </div>
+                  {escalationRules.map((rule) => (
+                    <div
+                      key={rule.id}
+                      className="flex items-center justify-between p-3 border rounded"
+                    >
+                      <div>
+                        <p className="font-medium">{rule.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {rule.triggerCondition} → {rule.targetUserName}
+                        </p>
                       </div>
-                    );
-                  })}
+                      <div className="flex items-center gap-2">
+                        {getStatusBadge(rule.active)}
+                        <button_1.Button variant="outline" size="sm">
+                          <lucide_react_1.Edit className="h-4 w-4" />
+                        </button_1.Button>
+                      </div>
+                    </div>
+                  ))}
                   <button_1.Button variant="outline" className="w-full">
                     <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                     Nova Regra de Escalação
@@ -1460,19 +1416,10 @@ function NotificationDashboard() {
               />
             </div>
             <div className="flex justify-end gap-2">
-              <button_1.Button
-                variant="outline"
-                onClick={function () {
-                  return setIsTemplateDialogOpen(false);
-                }}
-              >
+              <button_1.Button variant="outline" onClick={() => setIsTemplateDialogOpen(false)}>
                 Cancelar
               </button_1.Button>
-              <button_1.Button
-                onClick={function () {
-                  return setIsTemplateDialogOpen(false);
-                }}
-              >
+              <button_1.Button onClick={() => setIsTemplateDialogOpen(false)}>
                 Criar Template
               </button_1.Button>
             </div>

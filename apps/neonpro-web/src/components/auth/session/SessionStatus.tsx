@@ -5,23 +5,23 @@
 
 "use client";
 
-import React from "react";
-import type { useSession, useSessionTimeout, useSecurityMonitoring } from "@/hooks/auth";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Progress } from "@/components/ui/progress";
-import type { Separator } from "@/components/ui/separator";
 import type {
-  Shield,
-  Clock,
   Activity,
   AlertTriangle,
   CheckCircle,
-  XCircle,
-  RefreshCw,
+  Clock,
   LogOut,
+  RefreshCw,
+  Shield,
+  XCircle,
 } from "lucide-react";
+import React from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type { useSecurityMonitoring, useSession, useSessionTimeout } from "@/hooks/auth";
 import type { cn } from "@/lib/utils";
 
 // =====================================================

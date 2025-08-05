@@ -9,28 +9,24 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type {
-  FileText,
-  Plus,
-  Search,
-  Calendar,
-  User,
-  Clock,
-  Edit,
-  Trash,
-  MoreHorizontal,
-} from "lucide-react";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
-
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
+import type {
+  Calendar,
+  Clock,
+  Edit,
+  FileText,
+  MoreHorizontal,
+  Plus,
+  Search,
+  Trash,
+  User,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -38,13 +34,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   Dialog,
   DialogContent,
@@ -69,22 +58,31 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useToast } from "@/hooks/use-toast";
-
+import type { searchPatients } from "@/lib/supabase/patients";
+import type {
+  createClinicalNote,
+  deleteClinicalNote,
+  searchClinicalNotes,
+  updateClinicalNote,
+} from "@/lib/supabase/treatments";
+import type { Patient } from "@/lib/types/fhir";
 import type {
   ClinicalNote,
   ClinicalNoteSearchFilters,
   CreateClinicalNoteData,
   createClinicalNoteSchema,
 } from "@/lib/types/treatment";
-import type { Patient } from "@/lib/types/fhir";
-import type {
-  searchClinicalNotes,
-  createClinicalNote,
-  updateClinicalNote,
-  deleteClinicalNote,
-} from "@/lib/supabase/treatments";
-import type { searchPatients } from "@/lib/supabase/patients";
 
 interface ClinicalNotesManagementProps {
   treatmentPlanId?: string;

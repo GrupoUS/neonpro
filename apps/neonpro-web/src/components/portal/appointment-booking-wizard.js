@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AppointmentBookingWizard;
 var react_1 = require("react");
@@ -166,7 +163,6 @@ var appointment_notes_1 = require("./appointment-notes");
 var booking_confirmation_1 = require("./booking-confirmation");
 var use_availability_manager_1 = require("@/hooks/use-availability-manager");
 function AppointmentBookingWizard(_a) {
-  var _this = this;
   var _b, _c, _d, _e, _f;
   var patientId = _a.patientId,
     onBookingComplete = _a.onBookingComplete,
@@ -192,122 +188,103 @@ function AppointmentBookingWizard(_a) {
     setSelectedRealtimeSlot = _j[1];
   // Define booking steps
   var steps = (0, react_1.useMemo)(
-    function () {
-      return [
-        {
-          id: 1,
-          title: t("booking.steps.service.title"),
-          description: t("booking.steps.service.description"),
-          isCompleted: !!state.selectedService,
-          isActive: state.currentStep === 1,
-        },
-        {
-          id: 2,
-          title: t("booking.steps.professional.title"),
-          description: t("booking.steps.professional.description"),
-          isCompleted: !!state.selectedProfessional,
-          isActive: state.currentStep === 2,
-        },
-        {
-          id: 3,
-          title: t("booking.steps.time.title"),
-          description: t("booking.steps.time.description"),
-          isCompleted: !!state.selectedTimeSlot,
-          isActive: state.currentStep === 3,
-        },
-        {
-          id: 4,
-          title: t("booking.steps.notes.title"),
-          description: t("booking.steps.notes.description"),
-          isCompleted: state.patientNotes.length >= 0,
-          isActive: state.currentStep === 4,
-        },
-        {
-          id: 5,
-          title: t("booking.steps.confirmation.title"),
-          description: t("booking.steps.confirmation.description"),
-          isCompleted: false,
-          isActive: state.currentStep === 5,
-        },
-      ];
-    },
+    () => [
+      {
+        id: 1,
+        title: t("booking.steps.service.title"),
+        description: t("booking.steps.service.description"),
+        isCompleted: !!state.selectedService,
+        isActive: state.currentStep === 1,
+      },
+      {
+        id: 2,
+        title: t("booking.steps.professional.title"),
+        description: t("booking.steps.professional.description"),
+        isCompleted: !!state.selectedProfessional,
+        isActive: state.currentStep === 2,
+      },
+      {
+        id: 3,
+        title: t("booking.steps.time.title"),
+        description: t("booking.steps.time.description"),
+        isCompleted: !!state.selectedTimeSlot,
+        isActive: state.currentStep === 3,
+      },
+      {
+        id: 4,
+        title: t("booking.steps.notes.title"),
+        description: t("booking.steps.notes.description"),
+        isCompleted: state.patientNotes.length >= 0,
+        isActive: state.currentStep === 4,
+      },
+      {
+        id: 5,
+        title: t("booking.steps.confirmation.title"),
+        description: t("booking.steps.confirmation.description"),
+        isCompleted: false,
+        isActive: state.currentStep === 5,
+      },
+    ],
     [state, t],
   );
   // Calculate progress percentage
-  var progressPercentage = (0, react_1.useMemo)(
-    function () {
-      var completedSteps = steps.filter(function (step) {
-        return step.isCompleted;
-      }).length;
-      return (completedSteps / steps.length) * 100;
-    },
-    [steps],
-  );
+  var progressPercentage = (0, react_1.useMemo)(() => {
+    var completedSteps = steps.filter((step) => step.isCompleted).length;
+    return (completedSteps / steps.length) * 100;
+  }, [steps]);
   // Navigation functions
-  var goToNextStep = (0, react_1.useCallback)(
-    function () {
-      if (state.currentStep < steps.length) {
-        setState(function (prev) {
-          return __assign(__assign({}, prev), { currentStep: prev.currentStep + 1 });
-        });
-      }
-    },
-    [state.currentStep, steps.length],
-  );
-  var goToPreviousStep = (0, react_1.useCallback)(
-    function () {
-      if (state.currentStep > 1) {
-        setState(function (prev) {
-          return __assign(__assign({}, prev), { currentStep: prev.currentStep - 1 });
-        });
-      }
-    },
-    [state.currentStep],
-  );
+  var goToNextStep = (0, react_1.useCallback)(() => {
+    if (state.currentStep < steps.length) {
+      setState((prev) => __assign(__assign({}, prev), { currentStep: prev.currentStep + 1 }));
+    }
+  }, [state.currentStep, steps.length]);
+  var goToPreviousStep = (0, react_1.useCallback)(() => {
+    if (state.currentStep > 1) {
+      setState((prev) => __assign(__assign({}, prev), { currentStep: prev.currentStep - 1 }));
+    }
+  }, [state.currentStep]);
   // Selection handlers
   var handleServiceSelection = (0, react_1.useCallback)(
-    function (service) {
-      setState(function (prev) {
-        return __assign(__assign({}, prev), {
+    (service) => {
+      setState((prev) =>
+        __assign(__assign({}, prev), {
           selectedService: service,
           selectedProfessional: undefined,
           selectedTimeSlot: undefined,
           error: undefined,
-        });
-      });
+        }),
+      );
       goToNextStep();
     },
     [goToNextStep],
   );
   var handleProfessionalSelection = (0, react_1.useCallback)(
-    function (professional) {
-      setState(function (prev) {
-        return __assign(__assign({}, prev), {
+    (professional) => {
+      setState((prev) =>
+        __assign(__assign({}, prev), {
           selectedProfessional: professional,
           selectedTimeSlot: undefined,
           error: undefined,
-        });
-      });
+        }),
+      );
       goToNextStep();
     },
     [goToNextStep],
   );
   var handleTimeSlotSelection = (0, react_1.useCallback)(
-    function (timeSlot) {
-      setState(function (prev) {
-        return __assign(__assign({}, prev), { selectedTimeSlot: timeSlot, error: undefined });
-      });
+    (timeSlot) => {
+      setState((prev) =>
+        __assign(__assign({}, prev), { selectedTimeSlot: timeSlot, error: undefined }),
+      );
       goToNextStep();
     },
     [goToNextStep],
   );
-  var handleNotesChange = (0, react_1.useCallback)(function (notes) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { patientNotes: notes });
-    });
+  var handleNotesChange = (0, react_1.useCallback)((notes) => {
+    setState((prev) => __assign(__assign({}, prev), { patientNotes: notes }));
   }, []);
   // Data validation utility
-  var validateBookingData = (0, react_1.useCallback)(function (bookingData) {
+  var validateBookingData = (0, react_1.useCallback)((bookingData) => {
     if (!bookingData.patient_id) return "ID do paciente é obrigatório";
     if (!bookingData.professional_id) return "Profissional é obrigatório";
     if (!bookingData.service_type_id) return "Tipo de serviço é obrigatório";
@@ -323,8 +300,8 @@ function AppointmentBookingWizard(_a) {
   // This function handles the complete booking flow with proper error handling,
   // validation, timeout handling, and authentication
   var handleBookingSubmit = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var startTime,
           endTime,
           bookingData,
@@ -335,7 +312,7 @@ function AppointmentBookingWizard(_a) {
           successResponse,
           error_1,
           errorMessage_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (
@@ -343,14 +320,14 @@ function AppointmentBookingWizard(_a) {
                 !state.selectedProfessional ||
                 !state.selectedTimeSlot
               ) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), { error: t("booking.errors.incomplete") });
-                });
+                setState((prev) =>
+                  __assign(__assign({}, prev), { error: t("booking.errors.incomplete") }),
+                );
                 return [2 /*return*/];
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: undefined });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { isLoading: true, error: undefined }),
+              );
               _a.label = 1;
             case 1:
               _a.trys.push([1, 6, 7, 8]);
@@ -369,9 +346,7 @@ function AppointmentBookingWizard(_a) {
               };
               validationError_1 = validateBookingData(bookingData);
               if (validationError_1) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), { error: validationError_1 });
-                });
+                setState((prev) => __assign(__assign({}, prev), { error: validationError_1 }));
                 return [2 /*return*/];
               }
               return [
@@ -388,13 +363,8 @@ function AppointmentBookingWizard(_a) {
               ];
             case 2:
               response = _a.sent();
-              if (!!response.ok) return [3 /*break*/, 4];
-              return [
-                4 /*yield*/,
-                response.json().catch(function () {
-                  return {};
-                }),
-              ];
+              if (response.ok) return [3 /*break*/, 4];
+              return [4 /*yield*/, response.json().catch(() => ({}))];
             case 3:
               errorData = _a.sent();
               if (response.status === 401) {
@@ -428,14 +398,14 @@ function AppointmentBookingWizard(_a) {
                   : onBookingComplete(successResponse);
               } else {
                 // API returned success: false
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     error:
                       result_1.error_message ||
                       result_1.error_details ||
                       t("booking.errors.generic"),
-                  });
-                });
+                  }),
+                );
               }
               return [3 /*break*/, 8];
             case 6:
@@ -454,43 +424,35 @@ function AppointmentBookingWizard(_a) {
               } else {
                 errorMessage_1 = t("booking.errors.generic") || "Erro inesperado ao agendar";
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { error: errorMessage_1 });
-              });
+              setState((prev) => __assign(__assign({}, prev), { error: errorMessage_1 }));
               return [3 /*break*/, 8];
             case 7:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: false });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: false }));
               return [7 /*endfinally*/];
             case 8:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state, patientId, onBookingComplete, t, validateBookingData],
   );
   // Check if current step can proceed
-  var canProceed = (0, react_1.useMemo)(
-    function () {
-      switch (state.currentStep) {
-        case 1:
-          return !!state.selectedService;
-        case 2:
-          return !!state.selectedProfessional;
-        case 3:
-          return !!state.selectedTimeSlot;
-        case 4:
-          return true; // Notes are optional
-        case 5:
-          return false; // Final step
-        default:
-          return false;
-      }
-    },
-    [state],
-  );
+  var canProceed = (0, react_1.useMemo)(() => {
+    switch (state.currentStep) {
+      case 1:
+        return !!state.selectedService;
+      case 2:
+        return !!state.selectedProfessional;
+      case 3:
+        return !!state.selectedTimeSlot;
+      case 4:
+        return true; // Notes are optional
+      case 5:
+        return false; // Final step
+      default:
+        return false;
+    }
+  }, [state]);
   return (
     <div className={"w-full max-w-4xl mx-auto space-y-6 ".concat(className)}>
       {/* Progress Header */}
@@ -607,21 +569,19 @@ function AppointmentBookingWizard(_a) {
             </button_1.Button>
 
             <div className="flex items-center gap-2">
-              {steps.map(function (step, index) {
-                return (
-                  <div
-                    key={step.id}
-                    className={"w-3 h-3 rounded-full transition-colors ".concat(
-                      step.isCompleted
-                        ? "bg-green-500"
-                        : step.isActive
-                          ? "bg-blue-500"
-                          : "bg-gray-300 dark:bg-gray-600",
-                    )}
-                    title={step.title}
-                  />
-                );
-              })}
+              {steps.map((step, index) => (
+                <div
+                  key={step.id}
+                  className={"w-3 h-3 rounded-full transition-colors ".concat(
+                    step.isCompleted
+                      ? "bg-green-500"
+                      : step.isActive
+                        ? "bg-blue-500"
+                        : "bg-gray-300 dark:bg-gray-600",
+                  )}
+                  title={step.title}
+                />
+              ))}
             </div>
 
             <button_1.Button

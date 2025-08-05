@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🎯 Healthcare Connection Retry Strategies
  * Task 1.3 - CONNECTION POOLING OPTIMIZATION
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -143,10 +140,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -155,11 +152,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.executeWithHealthcareRetry = exports.getRetryManager = void 0;
 var connection_pool_manager_1 = require("./connection-pool-manager");
-var HealthcareConnectionRetryManager = /** @class */ (function () {
+var HealthcareConnectionRetryManager = /** @class */ (() => {
   function HealthcareConnectionRetryManager() {
     this.circuitBreakers = new Map();
     // Healthcare-optimized retry configurations
@@ -207,7 +204,7 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
     };
     this.initializeCircuitBreakerMonitoring();
   }
-  HealthcareConnectionRetryManager.getInstance = function () {
+  HealthcareConnectionRetryManager.getInstance = () => {
     if (!HealthcareConnectionRetryManager.instance) {
       HealthcareConnectionRetryManager.instance = new HealthcareConnectionRetryManager();
     }
@@ -390,7 +387,7 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
   /**
    * Classify error for healthcare context
    */
-  HealthcareConnectionRetryManager.prototype.classifyHealthcareError = function (error) {
+  HealthcareConnectionRetryManager.prototype.classifyHealthcareError = (error) => {
     var message = error.message.toLowerCase();
     var code = error.code || "";
     // Connection errors
@@ -476,9 +473,9 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
   /**
    * Calculate retry delay with jitter
    */
-  HealthcareConnectionRetryManager.prototype.calculateDelay = function (attempt, config) {
+  HealthcareConnectionRetryManager.prototype.calculateDelay = (attempt, config) => {
     var exponentialDelay = Math.min(
-      config.baseDelay * Math.pow(config.backoffMultiplier, attempt - 1),
+      config.baseDelay * config.backoffMultiplier ** (attempt - 1),
       config.maxDelay,
     );
     if (config.jitter) {
@@ -491,7 +488,7 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
   /**
    * Get timeout based on priority
    */
-  HealthcareConnectionRetryManager.prototype.getTimeoutForPriority = function (priority) {
+  HealthcareConnectionRetryManager.prototype.getTimeoutForPriority = (priority) => {
     switch (priority) {
       case "emergency":
         return 5000; // 5 seconds for emergency
@@ -508,21 +505,19 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
    */
   HealthcareConnectionRetryManager.prototype.executeWithTimeout = function (promise, timeoutMs) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          Promise.race([
-            promise,
-            new Promise(function (_, reject) {
-              setTimeout(function () {
-                return reject(
-                  new Error("Healthcare operation timeout after ".concat(timeoutMs, "ms")),
-                );
-              }, timeoutMs);
-            }),
-          ]),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        Promise.race([
+          promise,
+          new Promise((_, reject) => {
+            setTimeout(
+              () =>
+                reject(new Error("Healthcare operation timeout after ".concat(timeoutMs, "ms"))),
+              timeoutMs,
+            );
+          }),
+        ]),
+      ]);
     });
   };
   /**
@@ -536,7 +531,7 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var errorLog;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errorLog = {
           timestamp: new Date().toISOString(),
           clinicId: options.clinicId,
@@ -579,7 +574,7 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
     classification,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.error("🚨 HEALTHCARE EMERGENCY ESCALATION:", {
           error: error.message,
           classification: classification,
@@ -641,7 +636,7 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
     classification,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.error("🛡️ PATIENT SAFETY PROTOCOLS ACTIVATED:", {
           error: error.message,
           clinicId: options.clinicId,
@@ -662,7 +657,7 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
     result,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Implement LGPD compliance validation
           if (options.patientId) {
@@ -730,9 +725,8 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
    * Initialize circuit breaker monitoring
    */
   HealthcareConnectionRetryManager.prototype.initializeCircuitBreakerMonitoring = function () {
-    var _this = this;
-    setInterval(function () {
-      _this.monitorCircuitBreakers();
+    setInterval(() => {
+      this.monitorCircuitBreakers();
     }, 60000); // Check every minute
   };
   /**
@@ -756,16 +750,13 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
   /**
    * Sleep utility
    */
-  HealthcareConnectionRetryManager.prototype.sleep = function (ms) {
-    return new Promise(function (resolve) {
-      return setTimeout(resolve, ms);
-    });
-  };
+  HealthcareConnectionRetryManager.prototype.sleep = (ms) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   /**
    * Get circuit breaker status
    */
   HealthcareConnectionRetryManager.prototype.getCircuitBreakerStatus = function () {
-    return Array.from(this.circuitBreakers.entries()).map(function (_a) {
+    return Array.from(this.circuitBreakers.entries()).map((_a) => {
       var key = _a[0],
         breaker = _a[1];
       return {
@@ -794,9 +785,9 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
    * Get retry statistics
    */
   HealthcareConnectionRetryManager.prototype.getRetryStatistics = function () {
-    var openBreakers = Array.from(this.circuitBreakers.values()).filter(function (b) {
-      return b.state === "open";
-    }).length;
+    var openBreakers = Array.from(this.circuitBreakers.values()).filter(
+      (b) => b.state === "open",
+    ).length;
     return {
       configurations: this.retryConfigs,
       circuitBreakers: this.circuitBreakers.size,
@@ -806,12 +797,10 @@ var HealthcareConnectionRetryManager = /** @class */ (function () {
   return HealthcareConnectionRetryManager;
 })();
 // Export singleton
-var getRetryManager = function () {
-  return HealthcareConnectionRetryManager.getInstance();
-};
+var getRetryManager = () => HealthcareConnectionRetryManager.getInstance();
 exports.getRetryManager = getRetryManager;
 // Helper function for quick retry execution
-var executeWithHealthcareRetry = function (operation_1, clinicId_1, operationType_1) {
+var executeWithHealthcareRetry = (operation_1, clinicId_1, operationType_1) => {
   var args_1 = [];
   for (var _i = 3; _i < arguments.length; _i++) {
     args_1[_i - 3] = arguments[_i];
@@ -825,7 +814,7 @@ var executeWithHealthcareRetry = function (operation_1, clinicId_1, operationTyp
       if (priority === void 0) {
         priority = "standard";
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         retryManager = (0, exports.getRetryManager)();
         return [
           2 /*return*/,

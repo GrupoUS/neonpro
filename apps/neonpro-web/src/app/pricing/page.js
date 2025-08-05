@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PricingPage;
 var badge_1 = require("@/components/ui/badge");
@@ -144,21 +141,19 @@ var navigation_1 = require("next/navigation");
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function PricingPage() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     loading = _a[0],
     setLoading = _a[1];
   var router = (0, navigation_1.useRouter)();
-  var formatPrice = function (price) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatPrice = (price) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(price / 100);
-  };
-  var handleSelectPlan = function (planId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSelectPlan = (planId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, url, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(planId);
@@ -206,7 +201,6 @@ function PricingPage() {
         }
       });
     });
-  };
   var plans = Object.entries(plans_1.NEONPRO_PLANS);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
@@ -222,7 +216,7 @@ function PricingPage() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {plans.map(function (_a, index) {
+          {plans.map((_a, index) => {
             var planId = _a[0],
               plan = _a[1];
             return (
@@ -255,14 +249,12 @@ function PricingPage() {
 
                 <card_1.CardContent className="space-y-4">
                   <ul className="space-y-3">
-                    {plan.features.map(function (feature, featureIndex) {
-                      return (
-                        <li key={featureIndex} className="flex items-center">
-                          <lucide_react_1.Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
-                          <span className="text-gray-700">{feature}</span>
-                        </li>
-                      );
-                    })}
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex} className="flex items-center">
+                        <lucide_react_1.Check className="h-5 w-5 text-green-500 mr-3 flex-shrink-0" />
+                        <span className="text-gray-700">{feature}</span>
+                      </li>
+                    ))}
                   </ul>
                 </card_1.CardContent>
 
@@ -273,9 +265,7 @@ function PricingPage() {
                         ? "bg-blue-600 hover:bg-blue-700"
                         : "bg-gray-900 hover:bg-gray-800",
                     )}
-                    onClick={function () {
-                      return handleSelectPlan(planId);
-                    }}
+                    onClick={() => handleSelectPlan(planId)}
                     disabled={loading !== null}
                   >
                     {loading === planId

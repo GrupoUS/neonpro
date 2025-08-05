@@ -3,21 +3,21 @@
  * Provides comprehensive session management with real-time updates and security monitoring
  */
 
-import type { useState, useEffect, useCallback, useRef } from "react";
 import type { useRouter } from "next/navigation";
+import type { useCallback, useEffect, useRef, useState } from "react";
+import type { toast } from "sonner";
+import type { SessionManager } from "@/lib/auth/session-manager";
 import type {
-  UserSession,
-  SessionSecurityEvent,
   DeviceRegistration,
   SecurityAlert,
-  SessionValidationResult,
-  UseSessionOptions,
-  UseSessionReturn,
   SecurityEventType,
   SecuritySeverity,
+  SessionSecurityEvent,
+  SessionValidationResult,
+  UserSession,
+  UseSessionOptions,
+  UseSessionReturn,
 } from "@/types/session";
-import type { SessionManager } from "@/lib/auth/session-manager";
-import type { toast } from "sonner";
 
 // Session API endpoints
 const SESSION_API = {

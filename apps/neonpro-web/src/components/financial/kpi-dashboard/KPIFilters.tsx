@@ -1,6 +1,37 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  endOfMonth,
+  endOfYear,
+  format,
+  startOfMonth,
+  startOfYear,
+  subDays,
+  subMonths,
+  subYears,
+} from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  BarChart3,
+  Calendar as CalendarIcon,
+  Clock,
+  Filter,
+  MapPin,
+  PieChart,
+  RotateCcw,
+  Save,
+  Settings,
+  Stethoscope,
+  Target,
+  TrendingUp,
+  Users,
+  X,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -8,10 +39,11 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Label } from "@/components/ui/label";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -19,39 +51,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Switch } from "@/components/ui/switch";
 import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { Calendar } from "@/components/ui/calendar";
-import type {
-  Filter,
-  Calendar as CalendarIcon,
-  X,
-  RotateCcw,
-  Save,
-  Settings,
-  Users,
-  MapPin,
-  Stethoscope,
-  Clock,
-  TrendingUp,
-  BarChart3,
-  PieChart,
-  Target,
-} from "lucide-react";
-import type {
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfYear,
-  endOfYear,
-  subDays,
-  subMonths,
-  subYears,
-} from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { Switch } from "@/components/ui/switch";
 import type { cn } from "@/lib/utils";
 import type { KPIFilter } from "./hooks/useFinancialKPIs";
 

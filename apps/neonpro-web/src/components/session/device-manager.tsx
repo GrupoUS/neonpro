@@ -1,10 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  AlertTriangle,
+  Clock,
+  Edit,
+  MapPin,
+  Monitor,
+  Plus,
+  Shield,
+  ShieldCheck,
+  Smartphone,
+  Tablet,
+  Trash2,
+} from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -16,19 +30,6 @@ import type {
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type { useDeviceManagement } from "@/hooks/use-session";
-import type {
-  Smartphone,
-  Monitor,
-  Tablet,
-  Shield,
-  ShieldCheck,
-  Trash2,
-  Edit,
-  MapPin,
-  Clock,
-  AlertTriangle,
-  Plus,
-} from "lucide-react";
 import type { DeviceInfo, DeviceType } from "@/types/session";
 
 interface DeviceManagerProps {

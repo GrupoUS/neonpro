@@ -1,4 +1,3 @@
-"use strict";
 // NFE Management API
 // Story 5.5: Specialized API for NFE operations
 // Author: VoidBeast V6.0 Master Orchestrator
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -182,7 +179,7 @@ var nfeConsultationSchema = zod_1.z.object({
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, searchParams, clinicId, action, _a, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 13, , 14]);
@@ -254,7 +251,7 @@ function GET(request) {
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, body, action, _a, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 13, , 14]);
@@ -317,7 +314,7 @@ function POST(request) {
 function listNFEDocuments(supabase, clinicId, searchParams) {
   return __awaiter(this, void 0, void 0, function () {
     var query, status, startDate, endDate, limit, offset, _a, data, error, count;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase.from("nfe_documents").select("*").eq("clinic_id", clinicId);
@@ -373,7 +370,7 @@ function getNFEStatus(supabase, searchParams) {
       nfeService,
       updatedStatus,
       error_3;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           nfeId = searchParams.get("nfe_id");
@@ -404,9 +401,7 @@ function getNFEStatus(supabase, searchParams) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/nfe-service");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/nfe-service")),
           ];
         case 2:
           NFEIntegrationService = _b.sent().NFEIntegrationService;
@@ -463,7 +458,7 @@ function downloadNFE(supabase, searchParams) {
       fileData,
       headers,
       error_4;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           nfeId = searchParams.get("nfe_id");
@@ -488,9 +483,7 @@ function downloadNFE(supabase, searchParams) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/nfe-service");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/nfe-service")),
           ];
         case 2:
           NFEIntegrationService = _b.sent().NFEIntegrationService;
@@ -524,7 +517,7 @@ function downloadNFE(supabase, searchParams) {
 function validateNFE(supabase, searchParams) {
   return __awaiter(this, void 0, void 0, function () {
     var nfeId, _a, nfe, error, NFEIntegrationService, nfeService, validation, error_5;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           nfeId = searchParams.get("nfe_id");
@@ -548,9 +541,7 @@ function validateNFE(supabase, searchParams) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/nfe-service");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/nfe-service")),
           ];
         case 2:
           NFEIntegrationService = _b.sent().NFEIntegrationService;
@@ -589,7 +580,7 @@ function validateNFE(supabase, searchParams) {
 function getNFEOverview(supabase, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, stats, statsError, summary;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -613,10 +604,8 @@ function getNFEOverview(supabase, clinicId) {
           }
           summary = {
             total_documents: stats.length,
-            total_value: stats.reduce(function (sum, doc) {
-              return sum + doc.valor_total;
-            }, 0),
-            by_status: stats.reduce(function (acc, doc) {
+            total_value: stats.reduce((sum, doc) => sum + doc.valor_total, 0),
+            by_status: stats.reduce((acc, doc) => {
               acc[doc.status] = (acc[doc.status] || 0) + 1;
               return acc;
             }, {}),
@@ -638,7 +627,7 @@ function getNFEOverview(supabase, clinicId) {
 function emitNFE(supabase, body) {
   return __awaiter(this, void 0, void 0, function () {
     var validatedData, _a, nfe, error, NFEIntegrationService, nfeService, emission, error_6;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           validatedData = nfeEmissionSchema.parse(body);
@@ -662,9 +651,7 @@ function emitNFE(supabase, body) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/nfe-service");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/nfe-service")),
           ];
         case 2:
           NFEIntegrationService = _b.sent().NFEIntegrationService;
@@ -738,7 +725,7 @@ function emitNFE(supabase, body) {
 function cancelNFE(supabase, body) {
   return __awaiter(this, void 0, void 0, function () {
     var validatedData, _a, nfe, error, NFEIntegrationService, nfeService, cancellation, error_7;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           validatedData = nfeCancellationSchema.parse(body);
@@ -765,9 +752,7 @@ function cancelNFE(supabase, body) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/nfe-service");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/nfe-service")),
           ];
         case 2:
           NFEIntegrationService = _b.sent().NFEIntegrationService;
@@ -825,7 +810,7 @@ function cancelNFE(supabase, body) {
 function reprocessNFE(supabase, body) {
   return __awaiter(this, void 0, void 0, function () {
     var nfe_id, _a, nfe, error, NFEIntegrationService, nfeService, reprocessed, error_8;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           nfe_id = body.nfe_id;
@@ -849,9 +834,7 @@ function reprocessNFE(supabase, body) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/nfe-service");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/nfe-service")),
           ];
         case 2:
           NFEIntegrationService = _b.sent().NFEIntegrationService;
@@ -903,7 +886,7 @@ function batchEmitNFE(supabase, body) {
       error_9,
       successful,
       failed;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           (nfe_ids = body.nfe_ids),
@@ -917,9 +900,7 @@ function batchEmitNFE(supabase, body) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/nfe-service");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/nfe-service")),
           ];
         case 1:
           NFEIntegrationService = _b.sent().NFEIntegrationService;
@@ -988,12 +969,8 @@ function batchEmitNFE(supabase, body) {
           _i++;
           return [3 /*break*/, 2];
         case 9:
-          successful = results.filter(function (r) {
-            return r.success;
-          }).length;
-          failed = results.filter(function (r) {
-            return !r.success;
-          }).length;
+          successful = results.filter((r) => r.success).length;
+          failed = results.filter((r) => !r.success).length;
           return [
             2 /*return*/,
             server_1.NextResponse.json({

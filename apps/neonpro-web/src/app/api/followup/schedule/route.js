@@ -1,18 +1,17 @@
-"use strict";
 // Auto-schedule Follow-ups API
 // Epic 7.3: Treatment Follow-up Automation
 // Author: VoidBeast Agent
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var treatment_followup_service_1 = require("@/app/lib/services/treatment-followup-service");
@@ -142,7 +139,7 @@ var server_1 = require("next/server");
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, patientId, treatmentId, protocolId, scheduledFollowups, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);
@@ -182,15 +179,13 @@ function POST(request) {
               data: {
                 scheduledFollowups: scheduledFollowups,
                 totalScheduled: scheduledFollowups.length,
-                scheduleDetails: scheduledFollowups.map(function (f) {
-                  return {
-                    id: f.id,
-                    type: f.followup_type,
-                    sequenceNumber: f.sequence_number,
-                    scheduledDate: f.scheduled_date,
-                    channel: f.preferred_channel,
-                  };
-                }),
+                scheduleDetails: scheduledFollowups.map((f) => ({
+                  id: f.id,
+                  type: f.followup_type,
+                  sequenceNumber: f.sequence_number,
+                  scheduledDate: f.scheduled_date,
+                  channel: f.preferred_channel,
+                })),
               },
               message: "".concat(scheduledFollowups.length, " follow-ups scheduled successfully"),
             }),

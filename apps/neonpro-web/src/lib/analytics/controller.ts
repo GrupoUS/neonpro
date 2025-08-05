@@ -3,9 +3,9 @@
 // Created: 2025-01-22
 
 import type { NextRequest, NextResponse } from "next/server";
+import type { z } from "zod";
 import type { AnalyticsService } from "./service";
 import type { AnalyticsQuerySchema, MetricPeriodSchema } from "./types";
-import type { z } from "zod";
 
 export class AnalyticsController {
   private service: AnalyticsService;

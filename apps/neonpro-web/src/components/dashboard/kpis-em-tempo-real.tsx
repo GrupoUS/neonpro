@@ -1,5 +1,5 @@
+import type { DollarSignIcon, TrendingUpIcon, UsersIcon } from "lucide-react";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { TrendingUpIcon, UsersIcon, DollarSignIcon } from "lucide-react";
 
 // Interface para o KPI
 interface Kpi {

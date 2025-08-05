@@ -1,7 +1,6 @@
 // Session Status Component
 // Story 1.4: Session Management & Security Implementation
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionStatus = SessionStatus;
 var react_1 = require("react");
@@ -35,23 +34,18 @@ function SessionStatus(_a) {
     currentTime = _j[0],
     setCurrentTime = _j[1];
   // Update time every second
-  (0, react_1.useEffect)(
-    function () {
-      var interval = setInterval(function () {
-        setCurrentTime(new Date());
-        setTimeUntilExpiry(getTimeUntilExpiry());
-      }, 1000);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [getTimeUntilExpiry],
-  );
+  (0, react_1.useEffect)(() => {
+    var interval = setInterval(() => {
+      setCurrentTime(new Date());
+      setTimeUntilExpiry(getTimeUntilExpiry());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [getTimeUntilExpiry]);
   // Get session status
   var sessionValid = isSessionValid();
   var riskLevel = utils_1.AuthUtils.Format.formatRiskScore(riskScore);
   // Get device icon
-  var getDeviceIcon = function () {
+  var getDeviceIcon = () => {
     if (!currentDevice) return <lucide_react_1.Monitor className="w-4 h-4" />;
     var deviceType = utils_1.AuthUtils.Device.detectDeviceType(currentDevice.user_agent);
     switch (deviceType) {
@@ -64,7 +58,7 @@ function SessionStatus(_a) {
     }
   };
   // Format time until expiry
-  var formatTimeUntilExpiry = function (ms) {
+  var formatTimeUntilExpiry = (ms) => {
     if (ms <= 0) return "Expired";
     var minutes = Math.floor(ms / (1000 * 60));
     var hours = Math.floor(minutes / 60);

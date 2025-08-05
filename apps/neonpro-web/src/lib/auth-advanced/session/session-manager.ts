@@ -6,31 +6,31 @@
  */
 
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
-import Redis from "ioredis";
 import type { EventEmitter } from "events";
+import Redis from "ioredis";
+import type { AuditLogger } from "./audit-logger";
+import type { DeviceManager } from "./device-manager";
+import type { SecurityMonitor } from "./security-monitor";
 import type {
-  UserSession,
   CreateSessionParams,
-  SessionValidationResult,
+  DeviceFingerprint,
+  LGPDSessionData,
+  PaginationParams,
+  SecurityEventType,
+  SecuritySeverity,
+  SessionAction,
+  SessionActivity,
+  SessionAuditLog,
   SessionConfig,
   SessionError,
   SessionErrorCode,
-  SessionMetadata,
-  DeviceFingerprint,
-  SessionSecurityEvent,
-  SecurityEventType,
-  SecuritySeverity,
-  SessionAuditLog,
-  SessionAction,
-  LGPDSessionData,
-  SessionActivity,
-  SessionPolicy,
   SessionFilter,
-  PaginationParams,
+  SessionMetadata,
+  SessionPolicy,
+  SessionSecurityEvent,
+  SessionValidationResult,
+  UserSession,
 } from "./types";
-import type { SecurityMonitor } from "./security-monitor";
-import type { DeviceManager } from "./device-manager";
-import type { AuditLogger } from "./audit-logger";
 
 export class SessionManager extends EventEmitter {
   private supabase: SupabaseClient;

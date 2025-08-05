@@ -1,4 +1,3 @@
-"use strict";
 // React Hooks for Session Management
 // Story 1.4: Session Management & Security Implementation
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,10 +144,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -159,7 +156,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSession = useSession;
 exports.useSessionSecurity = useSessionSecurity;
@@ -176,7 +173,7 @@ var sessionManager;
 var securityMonitor;
 var deviceManager;
 // Initialize services
-var initializeServices = function () {
+var initializeServices = () => {
   if (!sessionManager) {
     var supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -189,7 +186,6 @@ var initializeServices = function () {
 };
 // Main Session Hook
 function useSession() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     session = _a[0],
     setSession = _a[1];
@@ -205,53 +201,45 @@ function useSession() {
   var heartbeatRef = (0, react_1.useRef)(null);
   var activityRef = (0, react_1.useRef)(new Date());
   // Initialize services
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     initializeServices();
   }, []);
   // Load session on mount
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadSession();
   }, []);
   // Activity tracking
-  (0, react_1.useEffect)(
-    function () {
-      var trackActivity = function () {
-        activityRef.current = new Date();
-        if (session) {
-          updateActivity();
-        }
-      };
-      // Track user activity
-      var events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
-      events.forEach(function (event) {
-        document.addEventListener(event, trackActivity, true);
-      });
-      return function () {
-        events.forEach(function (event) {
-          document.removeEventListener(event, trackActivity, true);
-        });
-      };
-    },
-    [session],
-  );
-  // Session heartbeat
-  (0, react_1.useEffect)(
-    function () {
-      if (session && sessionState === "active") {
-        startHeartbeat();
-      } else {
-        stopHeartbeat();
+  (0, react_1.useEffect)(() => {
+    var trackActivity = () => {
+      activityRef.current = new Date();
+      if (session) {
+        updateActivity();
       }
-      return function () {
-        return stopHeartbeat();
-      };
-    },
-    [session, sessionState],
-  );
-  var loadSession = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+    };
+    // Track user activity
+    var events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
+    events.forEach((event) => {
+      document.addEventListener(event, trackActivity, true);
+    });
+    return () => {
+      events.forEach((event) => {
+        document.removeEventListener(event, trackActivity, true);
+      });
+    };
+  }, [session]);
+  // Session heartbeat
+  (0, react_1.useEffect)(() => {
+    if (session && sessionState === "active") {
+      startHeartbeat();
+    } else {
+      stopHeartbeat();
+    }
+    return () => stopHeartbeat();
+  }, [session, sessionState]);
+  var loadSession = () =>
+    __awaiter(this, void 0, void 0, function () {
       var currentSession, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -287,11 +275,10 @@ function useSession() {
         }
       });
     });
-  };
-  var createSession = function (userId, deviceInfo, location) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var createSession = (userId, deviceInfo, location) =>
+    __awaiter(this, void 0, void 0, function () {
       var newSession, err_2, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -328,11 +315,10 @@ function useSession() {
         }
       });
     });
-  };
-  var extendSession = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var extendSession = () =>
+    __awaiter(this, void 0, void 0, function () {
       var extendedSession, err_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!session) return [2 /*return*/];
@@ -354,11 +340,10 @@ function useSession() {
         }
       });
     });
-  };
-  var terminateSession = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var terminateSession = () =>
+    __awaiter(this, void 0, void 0, function () {
       var err_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!session) return [2 /*return*/];
@@ -389,11 +374,10 @@ function useSession() {
         }
       });
     });
-  };
-  var updateActivity = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateActivity = () =>
+    __awaiter(this, void 0, void 0, function () {
       var err_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!session) return [2 /*return*/];
@@ -404,9 +388,9 @@ function useSession() {
           case 2:
             _a.sent();
             // Update local session object
-            setSession(function (prev) {
-              return prev ? __assign(__assign({}, prev), { last_activity: new Date() }) : null;
-            });
+            setSession((prev) =>
+              prev ? __assign(__assign({}, prev), { last_activity: new Date() }) : null,
+            );
             return [3 /*break*/, 4];
           case 3:
             err_5 = _a.sent();
@@ -417,11 +401,10 @@ function useSession() {
         }
       });
     });
-  };
-  var validateSession = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var validateSession = () =>
+    __awaiter(this, void 0, void 0, function () {
       var isValid, err_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!session) return [2 /*return*/, false];
@@ -446,35 +429,36 @@ function useSession() {
         }
       });
     });
-  };
-  var startHeartbeat = function () {
+  var startHeartbeat = () => {
     stopHeartbeat(); // Clear any existing heartbeat
-    heartbeatRef.current = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var isValid, err_7;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, validateSession()];
-            case 1:
-              isValid = _a.sent();
-              if (!isValid) {
-                stopHeartbeat();
-              }
-              return [3 /*break*/, 3];
-            case 2:
-              err_7 = _a.sent();
-              console.error("Heartbeat error:", err_7);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 30000); // Check every 30 seconds
+    heartbeatRef.current = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var isValid, err_7;
+          return __generator(this, (_a) => {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, validateSession()];
+              case 1:
+                isValid = _a.sent();
+                if (!isValid) {
+                  stopHeartbeat();
+                }
+                return [3 /*break*/, 3];
+              case 2:
+                err_7 = _a.sent();
+                console.error("Heartbeat error:", err_7);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      30000,
+    ); // Check every 30 seconds
   };
-  var stopHeartbeat = function () {
+  var stopHeartbeat = () => {
     if (heartbeatRef.current) {
       clearInterval(heartbeatRef.current);
       heartbeatRef.current = null;
@@ -495,7 +479,6 @@ function useSession() {
 }
 // Session Security Hook
 function useSessionSecurity() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     securityEvents = _a[0],
     setSecurityEvents = _a[1];
@@ -514,44 +497,38 @@ function useSessionSecurity() {
   var _f = (0, react_1.useState)(null),
     error = _f[0],
     setError = _f[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     initializeServices();
     setupSecurityEventListeners();
-    return function () {
+    return () => {
       cleanupSecurityEventListeners();
     };
   }, []);
-  var setupSecurityEventListeners = function () {
+  var setupSecurityEventListeners = () => {
     securityMonitor.on("security_event", handleSecurityEvent);
-    securityMonitor.on("monitoring_started", function () {
-      return setIsMonitoring(true);
-    });
-    securityMonitor.on("monitoring_stopped", function () {
-      return setIsMonitoring(false);
-    });
+    securityMonitor.on("monitoring_started", () => setIsMonitoring(true));
+    securityMonitor.on("monitoring_stopped", () => setIsMonitoring(false));
   };
-  var cleanupSecurityEventListeners = function () {
+  var cleanupSecurityEventListeners = () => {
     securityMonitor.removeAllListeners();
   };
-  var handleSecurityEvent = function (alert) {
-    setAlerts(function (prev) {
-      return __spreadArray([alert], prev.slice(0, 49), true);
-    }); // Keep last 50 alerts
+  var handleSecurityEvent = (alert) => {
+    setAlerts((prev) => __spreadArray([alert], prev.slice(0, 49), true)); // Keep last 50 alerts
     if (alert.severity === "critical" || alert.severity === "high") {
       // Could trigger notifications here
       console.warn("High severity security event:", alert);
     }
   };
-  var getSecurityEvents = function () {
+  var getSecurityEvents = () => {
     var args_1 = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args_1[_i] = arguments[_i];
     }
-    return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (limit) {
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (limit) {
       if (limit === void 0) {
         limit = 50;
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           setIsLoading(true);
           setError(null);
@@ -567,10 +544,10 @@ function useSessionSecurity() {
       });
     });
   };
-  var calculateRiskScore = function (sessionId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var calculateRiskScore = (sessionId) =>
+    __awaiter(this, void 0, void 0, function () {
       var mockRiskScore;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           mockRiskScore = Math.floor(Math.random() * 100);
           setRiskScore(mockRiskScore);
@@ -580,11 +557,10 @@ function useSessionSecurity() {
         return [2 /*return*/];
       });
     });
-  };
-  var blockSession = function (sessionId, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var blockSession = (sessionId, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var event_1, err_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -617,8 +593,7 @@ function useSessionSecurity() {
         }
       });
     });
-  };
-  var clearAlerts = function () {
+  var clearAlerts = () => {
     setAlerts([]);
     setSecurityEvents([]);
   };
@@ -637,7 +612,6 @@ function useSessionSecurity() {
 }
 // Session Metrics Hook
 function useSessionMetrics() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     metrics = _a[0],
     setMetrics = _a[1];
@@ -651,26 +625,21 @@ function useSessionMetrics() {
     autoRefresh = _d[0],
     setAutoRefresh = _d[1];
   var refreshIntervalRef = (0, react_1.useRef)(null);
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     initializeServices();
   }, []);
-  (0, react_1.useEffect)(
-    function () {
-      if (autoRefresh) {
-        startAutoRefresh();
-      } else {
-        stopAutoRefresh();
-      }
-      return function () {
-        return stopAutoRefresh();
-      };
-    },
-    [autoRefresh],
-  );
-  var fetchMetrics = function (timeRange) {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (autoRefresh) {
+      startAutoRefresh();
+    } else {
+      stopAutoRefresh();
+    }
+    return () => stopAutoRefresh();
+  }, [autoRefresh]);
+  var fetchMetrics = (timeRange) =>
+    __awaiter(this, void 0, void 0, function () {
       var mockMetrics;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           setIsLoading(true);
           setError(null);
@@ -694,12 +663,10 @@ function useSessionMetrics() {
               Canada: Math.floor(Math.random() * 200),
               "United Kingdom": Math.floor(Math.random() * 150),
             },
-            peakHours: Array.from({ length: 24 }, function (_, i) {
-              return {
-                hour: i,
-                count: Math.floor(Math.random() * 50),
-              };
-            }),
+            peakHours: Array.from({ length: 24 }, (_, i) => ({
+              hour: i,
+              count: Math.floor(Math.random() * 50),
+            })),
           };
           setMetrics(mockMetrics);
         } catch (err) {
@@ -710,18 +677,17 @@ function useSessionMetrics() {
         return [2 /*return*/];
       });
     });
-  };
-  var exportMetrics = function () {
+  var exportMetrics = () => {
     var args_1 = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args_1[_i] = arguments[_i];
     }
-    return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (format) {
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (format) {
       var csvRows;
       if (format === void 0) {
         format = "json";
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!metrics) {
           throw new Error("No metrics available to export");
         }
@@ -746,22 +712,20 @@ function useSessionMetrics() {
       });
     });
   };
-  var startAutoRefresh = function () {
+  var startAutoRefresh = () => {
     stopAutoRefresh();
-    refreshIntervalRef.current = setInterval(function () {
+    refreshIntervalRef.current = setInterval(() => {
       fetchMetrics();
     }, 60000); // Refresh every minute
   };
-  var stopAutoRefresh = function () {
+  var stopAutoRefresh = () => {
     if (refreshIntervalRef.current) {
       clearInterval(refreshIntervalRef.current);
       refreshIntervalRef.current = null;
     }
   };
-  var toggleAutoRefresh = function () {
-    setAutoRefresh(function (prev) {
-      return !prev;
-    });
+  var toggleAutoRefresh = () => {
+    setAutoRefresh((prev) => !prev);
   };
   return {
     metrics: metrics,
@@ -771,14 +735,11 @@ function useSessionMetrics() {
     fetchMetrics: fetchMetrics,
     exportMetrics: exportMetrics,
     toggleAutoRefresh: toggleAutoRefresh,
-    refresh: function () {
-      return fetchMetrics();
-    },
+    refresh: () => fetchMetrics(),
   };
 }
 // Device Management Hook
 function useDeviceManagement() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     devices = _a[0],
     setDevices = _a[1];
@@ -788,13 +749,13 @@ function useDeviceManagement() {
   var _c = (0, react_1.useState)(null),
     error = _c[0],
     setError = _c[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     initializeServices();
   }, []);
-  var fetchUserDevices = function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchUserDevices = (userId) =>
+    __awaiter(this, void 0, void 0, function () {
       var userDevices, err_9;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -817,11 +778,10 @@ function useDeviceManagement() {
         }
       });
     });
-  };
-  var blockDevice = function (deviceId, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var blockDevice = (deviceId, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var err_10;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -830,13 +790,13 @@ function useDeviceManagement() {
           case 1:
             _a.sent();
             // Update local state
-            setDevices(function (prev) {
-              return prev.map(function (device) {
-                return device.id === deviceId
+            setDevices((prev) =>
+              prev.map((device) =>
+                device.id === deviceId
                   ? __assign(__assign({}, device), { is_blocked: true, is_trusted: false })
-                  : device;
-              });
-            });
+                  : device,
+              ),
+            );
             return [3 /*break*/, 4];
           case 2:
             err_10 = _a.sent();
@@ -850,11 +810,10 @@ function useDeviceManagement() {
         }
       });
     });
-  };
-  var unblockDevice = function (deviceId, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var unblockDevice = (deviceId, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var err_11;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -863,13 +822,13 @@ function useDeviceManagement() {
           case 1:
             _a.sent();
             // Update local state
-            setDevices(function (prev) {
-              return prev.map(function (device) {
-                return device.id === deviceId
+            setDevices((prev) =>
+              prev.map((device) =>
+                device.id === deviceId
                   ? __assign(__assign({}, device), { is_blocked: false })
-                  : device;
-              });
-            });
+                  : device,
+              ),
+            );
             return [3 /*break*/, 4];
           case 2:
             err_11 = _a.sent();
@@ -883,11 +842,10 @@ function useDeviceManagement() {
         }
       });
     });
-  };
-  var updateDeviceTrust = function (deviceId, trustScore, reason) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateDeviceTrust = (deviceId, trustScore, reason) =>
+    __awaiter(this, void 0, void 0, function () {
       var err_12;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -896,16 +854,16 @@ function useDeviceManagement() {
           case 1:
             _a.sent();
             // Update local state
-            setDevices(function (prev) {
-              return prev.map(function (device) {
-                return device.id === deviceId
+            setDevices((prev) =>
+              prev.map((device) =>
+                device.id === deviceId
                   ? __assign(__assign({}, device), {
                       trust_score: trustScore,
                       is_trusted: trustScore >= 60, // Assuming 60 is the threshold
                     })
-                  : device;
-              });
-            });
+                  : device,
+              ),
+            );
             return [3 /*break*/, 4];
           case 2:
             err_12 = _a.sent();
@@ -919,7 +877,6 @@ function useDeviceManagement() {
         }
       });
     });
-  };
   return {
     devices: devices,
     isLoading: isLoading,
@@ -928,9 +885,7 @@ function useDeviceManagement() {
     blockDevice: blockDevice,
     unblockDevice: unblockDevice,
     updateDeviceTrust: updateDeviceTrust,
-    refresh: function (userId) {
-      return fetchUserDevices(userId);
-    },
+    refresh: (userId) => fetchUserDevices(userId),
   };
 }
 // Session Context Hook (for providing session data throughout the app)

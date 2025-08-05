@@ -33,7 +33,7 @@ export class RateLimitLogic {
   static checkRateLimit(identifier: string, route: string, method: string): RateLimitResult {
     const key = `${identifier}:${route}:${method}`;
     const now = Date.now();
-    const limits = this.getAdaptiveLimits(route, method);
+    const limits = RateLimitLogic.getAdaptiveLimits(route, method);
 
     // Get or create entry
     let entry = rateLimitCache.get(key);

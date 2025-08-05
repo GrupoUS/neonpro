@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertCircle,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  MapPin,
+  Phone,
+  Video,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar } from "@/components/ui/calendar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import {
   Select,
   SelectContent,
@@ -25,18 +35,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import {
-  Calendar as CalendarIcon,
-  Clock,
-  User,
-  Phone,
-  Video,
-  MapPin,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
 
 // Helper function for type configuration
 function getTypeConfig(type: string) {
@@ -50,13 +48,13 @@ function getTypeConfig(type: string) {
 }
 
 // Status configuration
-const statusConfig = {
+const _statusConfig = {
   confirmado: { color: "success", icon: CheckCircle, label: "Confirmado" },
   pendente: { color: "warning", icon: AlertCircle, label: "Pendente" },
   cancelado: { color: "danger", icon: XCircle, label: "Cancelado" },
 };
 
-import { Plus, Search, Filter, Edit, Trash2 } from "lucide-react";
+import { Edit, Plus, Search, Trash2 } from "lucide-react";
 
 interface Appointment {
   id: string;
@@ -182,11 +180,11 @@ export default function AppointmentsPage() {
     return matchesSearch && matchesStatus && matchesType && matchesDate;
   });
 
-  const getTypeConfig = (type: string) => {
+  const _getTypeConfig = (type: string) => {
     return appointmentTypes.find((t) => t.value === type) || appointmentTypes[0];
   };
 
-  const StatusIcon = ({ status }: { status: string }) => {
+  const _StatusIcon = ({ status }: { status: string }) => {
     const config = statusConfig[status as keyof typeof statusConfig];
     const Icon = config?.icon || Clock;
     return <Icon className="w-4 h-4" />;

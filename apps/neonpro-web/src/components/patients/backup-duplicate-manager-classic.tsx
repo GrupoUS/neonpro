@@ -1,10 +1,10 @@
 "use client";
 
+import type { AlertTriangle, ArrowRight, Users } from "lucide-react";
+import React from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { AlertTriangle, ArrowRight, Users } from "lucide-react";
-import React from "react";
 
 interface Patient {
   id: string;

@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var duplicate_manager_hook_minimal_1 = require("@/components/patients/duplicate-manager-hook-minimal");
 var react_1 = require("@testing-library/react");
@@ -10,12 +9,12 @@ var mockDuplicates = [
     patient2: { id: "2", name: "Jon Doe", email: "jon@example.com" },
   },
 ];
-describe("DuplicateManagerHookMinimal", function () {
-  it("renders with hook state", function () {
+describe("DuplicateManagerHookMinimal", () => {
+  it("renders with hook state", () => {
     (0, react_1.render)(<duplicate_manager_hook_minimal_1.default duplicates={mockDuplicates} />);
     expect(react_1.screen.getByText("Hook Minimal Duplicate Manager")).toBeInTheDocument();
   });
-  it("handles hook state changes", function () {
+  it("handles hook state changes", () => {
     (0, react_1.render)(<duplicate_manager_hook_minimal_1.default duplicates={mockDuplicates} />);
     var selectButton = react_1.screen.getByText("Select");
     expect(selectButton).toBeInTheDocument();

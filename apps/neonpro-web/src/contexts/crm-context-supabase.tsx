@@ -1,8 +1,8 @@
 "use client";
 
-import type { createClient } from "@/app/utils/supabase/client";
 import type { createContext, ReactNode, useContext, useEffect, useReducer } from "react";
 import type { toast } from "sonner";
+import type { createClient } from "@/app/utils/supabase/client";
 
 // Types
 export interface Customer {

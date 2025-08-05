@@ -1,10 +1,10 @@
 ﻿// Endpoint for Universal AI Chat (Epic 4 - Story 4.1)
+
 // app/api/ai/universal-chat/route.ts
 
-import type { createNeonProAIChatEngine } from "@/app/lib/ai/chat-engine-v2";
+import type { NextRequest } from "next/server";
 import type { AIRequest, UniversalChatContext } from "@/app/lib/ai/types";
 import { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 /**
  * POST /api/ai/universal-chat
@@ -469,7 +469,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
   };
 }
 
-async function buildBusinessIntelligenceContext(supabase: any, clinicId: string) {
+async function buildBusinessIntelligenceContext(_supabase: any, _clinicId: string) {
   // Cross-epic analytics
   return {
     kpis: {

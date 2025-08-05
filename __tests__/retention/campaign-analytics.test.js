@@ -1,4 +1,3 @@
-"use strict";
 // RETENTION CAMPAIGN ANALYTICS TESTS
 // Epic 7.4: Patient Retention Analytics + Predictions - Task 5
 // Test suite for campaign analytics and A/B testing functionality
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,7 +36,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,8 +65,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -88,9 +85,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -149,22 +146,22 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_mocks_http_1 = require("node-mocks-http");
 var route_1 = require("@/app/api/retention-analytics/campaigns/analytics/route");
 // =====================================================================================
 // ANALYTICS TESTS
 // =====================================================================================
-describe("/api/retention-analytics/campaigns/analytics", function () {
-  beforeEach(function () {
+describe("/api/retention-analytics/campaigns/analytics", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  describe("GET - Campaign Analytics", function () {
-    it("should return campaign analytics with performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET - Campaign Analytics", () => {
+    it("should return campaign analytics with performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -185,12 +182,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should filter analytics by campaign IDs", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should filter analytics by campaign IDs", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var campaignIds, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               campaignIds =
@@ -209,19 +205,16 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               responseData = JSON.parse(res._getData());
               expect(responseData.data.analytics).toHaveLength(2);
               expect(
-                responseData.data.analytics.every(function (a) {
-                  return campaignIds.includes(a.campaignId);
-                }),
+                responseData.data.analytics.every((a) => campaignIds.includes(a.campaignId)),
               ).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should group analytics by intervention type", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should group analytics by intervention type", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -240,12 +233,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should include industry benchmarks when comparison is requested", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should include industry benchmarks when comparison is requested", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -265,12 +257,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should filter analytics by date range", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should filter analytics by date range", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startDate, endDate, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               startDate = "2024-01-01T00:00:00Z";
@@ -293,12 +284,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate required clinic_id parameter", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate required clinic_id parameter", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -316,12 +306,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate correct performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate correct performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData, analytics;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -344,14 +333,13 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("POST - A/B Test Results", function () {
-    it("should generate A/B test results for enabled campaigns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("POST - A/B Test Results", () => {
+    it("should generate A/B test results for enabled campaigns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var abTestData, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               abTestData = {
@@ -378,12 +366,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate statistical significance correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate statistical significance correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var abTestData, _a, req, res, responseData, analysis;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               abTestData = {
@@ -409,12 +396,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should provide actionable recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should provide actionable recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var abTestData, _a, req, res, responseData, conclusion;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               abTestData = {
@@ -440,12 +426,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle campaigns without A/B testing enabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle campaigns without A/B testing enabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSupabase, abTestData, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase = require("@/app/utils/supabase/server").createClient();
@@ -482,12 +467,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate campaign existence", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate campaign existence", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSupabase, abTestData, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase = require("@/app/utils/supabase/server").createClient();
@@ -519,12 +503,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate input parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate input parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidData, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               invalidData = {
@@ -547,14 +530,13 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Analytics Edge Cases", function () {
-    it("should handle campaigns with zero metrics gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Analytics Edge Cases", () => {
+    it("should handle campaigns with zero metrics gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSupabase, _a, req, res, responseData, analytics;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase = require("@/app/utils/supabase/server").createClient();
@@ -600,12 +582,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate aggregated metrics correctly for grouped analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate aggregated metrics correctly for grouped analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, req, res, responseData, groupedAnalytics;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               (_a = (0, node_mocks_http_1.createMocks)({
@@ -625,12 +606,11 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle missing campaign metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle missing campaign metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSupabase, _a, req, res, responseData;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               mockSupabase = require("@/app/utils/supabase/server").createClient();
@@ -663,7 +643,6 @@ describe("/api/retention-analytics/campaigns/analytics", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

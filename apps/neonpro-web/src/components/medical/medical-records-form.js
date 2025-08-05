@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MedicalRecordsForm = MedicalRecordsForm;
 var react_1 = require("react");
@@ -255,7 +252,6 @@ var PRIORITY_OPTIONS = [
   { value: 5, label: "Crítica", color: "bg-red-100 text-red-800" },
 ];
 function MedicalRecordsForm(_a) {
-  var _this = this;
   var _b, _c;
   var patientId = _a.patientId,
     clinicId = _a.clinicId,
@@ -307,7 +303,7 @@ function MedicalRecordsForm(_a) {
   var isReadOnly = mode === "view";
   var isEditing = mode === "edit";
   // Validation
-  var validateForm = function () {
+  var validateForm = () => {
     var _a;
     var newErrors = {};
     if (!((_a = record.title) === null || _a === void 0 ? void 0 : _a.trim())) {
@@ -323,10 +319,10 @@ function MedicalRecordsForm(_a) {
     return Object.keys(newErrors).length === 0;
   };
   // Handle form submission
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var recordData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         e.preventDefault();
         if (!validateForm()) {
           return [2 /*return*/];
@@ -366,47 +362,44 @@ function MedicalRecordsForm(_a) {
         return [2 /*return*/];
       });
     });
-  };
   // Handle tag addition
-  var handleAddTag = function () {
+  var handleAddTag = () => {
     var _a;
     if (
       newTag.trim() &&
       !((_a = record.tags) === null || _a === void 0 ? void 0 : _a.includes(newTag.trim()))
     ) {
-      setRecord(function (prev) {
-        return __assign(__assign({}, prev), {
+      setRecord((prev) =>
+        __assign(__assign({}, prev), {
           tags: __spreadArray(__spreadArray([], prev.tags || [], true), [newTag.trim()], false),
-        });
-      });
+        }),
+      );
       setNewTag("");
     }
   };
   // Handle tag removal
-  var handleRemoveTag = function (tagToRemove) {
-    setRecord(function (prev) {
+  var handleRemoveTag = (tagToRemove) => {
+    setRecord((prev) => {
       var _a;
       return __assign(__assign({}, prev), {
         tags:
           ((_a = prev.tags) === null || _a === void 0
             ? void 0
-            : _a.filter(function (tag) {
-                return tag !== tagToRemove;
-              })) || [],
+            : _a.filter((tag) => tag !== tagToRemove)) || [],
       });
     });
   };
   // Handle file upload
-  var handleFileUpload = function (files) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleFileUpload = (files) =>
+    __awaiter(this, void 0, void 0, function () {
       var _loop_1, i;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setUploadProgress(0);
             _loop_1 = function (i) {
               var file, progress, attachment;
-              return __generator(this, function (_b) {
+              return __generator(this, (_b) => {
                 switch (_b.label) {
                   case 0:
                     file = files[i];
@@ -415,12 +408,7 @@ function MedicalRecordsForm(_a) {
                   case 1:
                     if (!(progress <= 100)) return [3 /*break*/, 4];
                     setUploadProgress(progress);
-                    return [
-                      4 /*yield*/,
-                      new Promise(function (resolve) {
-                        return setTimeout(resolve, 100);
-                      }),
-                    ];
+                    return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 100))];
                   case 2:
                     _b.sent();
                     _b.label = 3;
@@ -450,9 +438,9 @@ function MedicalRecordsForm(_a) {
                       createdAt: new Date(),
                       updatedAt: new Date(),
                     };
-                    setAttachments(function (prev) {
-                      return __spreadArray(__spreadArray([], prev, true), [attachment], false);
-                    });
+                    setAttachments((prev) =>
+                      __spreadArray(__spreadArray([], prev, true), [attachment], false),
+                    );
                     return [2 /*return*/];
                 }
               });
@@ -474,11 +462,8 @@ function MedicalRecordsForm(_a) {
         }
       });
     });
-  };
-  var getStatusBadge = function (status) {
-    var statusOption = STATUS_OPTIONS.find(function (opt) {
-      return opt.value === status;
-    });
+  var getStatusBadge = (status) => {
+    var statusOption = STATUS_OPTIONS.find((opt) => opt.value === status);
     return (
       <badge_1.Badge
         className={statusOption === null || statusOption === void 0 ? void 0 : statusOption.color}
@@ -487,10 +472,8 @@ function MedicalRecordsForm(_a) {
       </badge_1.Badge>
     );
   };
-  var getPriorityBadge = function (priority) {
-    var priorityOption = PRIORITY_OPTIONS.find(function (opt) {
-      return opt.value === priority;
-    });
+  var getPriorityBadge = (priority) => {
+    var priorityOption = PRIORITY_OPTIONS.find((opt) => opt.value === priority);
     return (
       <badge_1.Badge
         className={
@@ -564,27 +547,23 @@ function MedicalRecordsForm(_a) {
                     <label_1.Label htmlFor="recordType">Tipo de Registro *</label_1.Label>
                     <select_1.Select
                       value={record.recordType}
-                      onValueChange={function (value) {
-                        return setRecord(function (prev) {
-                          return __assign(__assign({}, prev), { recordType: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setRecord((prev) => __assign(__assign({}, prev), { recordType: value }))
+                      }
                       disabled={isReadOnly}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o tipo" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {RECORD_TYPES.map(function (type) {
-                          return (
-                            <select_1.SelectItem key={type.value} value={type.value}>
-                              <div className="flex items-center space-x-2">
-                                {type.icon}
-                                <span>{type.label}</span>
-                              </div>
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {RECORD_TYPES.map((type) => (
+                          <select_1.SelectItem key={type.value} value={type.value}>
+                            <div className="flex items-center space-x-2">
+                              {type.icon}
+                              <span>{type.label}</span>
+                            </div>
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                     {errors.recordType && (
@@ -596,24 +575,20 @@ function MedicalRecordsForm(_a) {
                     <label_1.Label htmlFor="status">Status</label_1.Label>
                     <select_1.Select
                       value={record.status}
-                      onValueChange={function (value) {
-                        return setRecord(function (prev) {
-                          return __assign(__assign({}, prev), { status: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setRecord((prev) => __assign(__assign({}, prev), { status: value }))
+                      }
                       disabled={isReadOnly}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o status" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {STATUS_OPTIONS.map(function (status) {
-                          return (
-                            <select_1.SelectItem key={status.value} value={status.value}>
-                              {status.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {STATUS_OPTIONS.map((status) => (
+                          <select_1.SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -624,11 +599,9 @@ function MedicalRecordsForm(_a) {
                   <input_1.Input
                     id="title"
                     value={record.title || ""}
-                    onChange={function (e) {
-                      return setRecord(function (prev) {
-                        return __assign(__assign({}, prev), { title: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setRecord((prev) => __assign(__assign({}, prev), { title: e.target.value }))
+                    }
                     placeholder="Digite o título do registro"
                     disabled={isReadOnly}
                   />
@@ -640,11 +613,11 @@ function MedicalRecordsForm(_a) {
                   <textarea_1.Textarea
                     id="description"
                     value={record.description || ""}
-                    onChange={function (e) {
-                      return setRecord(function (prev) {
-                        return __assign(__assign({}, prev), { description: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setRecord((prev) =>
+                        __assign(__assign({}, prev), { description: e.target.value }),
+                      )
+                    }
                     placeholder="Digite uma descrição detalhada"
                     rows={3}
                     disabled={isReadOnly}
@@ -658,27 +631,25 @@ function MedicalRecordsForm(_a) {
                       value={
                         (_b = record.priority) === null || _b === void 0 ? void 0 : _b.toString()
                       }
-                      onValueChange={function (value) {
-                        return setRecord(function (prev) {
-                          return __assign(__assign({}, prev), { priority: parseInt(value) });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setRecord((prev) =>
+                          __assign(__assign({}, prev), { priority: parseInt(value) }),
+                        )
+                      }
                       disabled={isReadOnly}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {PRIORITY_OPTIONS.map(function (priority) {
-                          return (
-                            <select_1.SelectItem
-                              key={priority.value}
-                              value={priority.value.toString()}
-                            >
-                              {priority.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {PRIORITY_OPTIONS.map((priority) => (
+                          <select_1.SelectItem
+                            key={priority.value}
+                            value={priority.value.toString()}
+                          >
+                            {priority.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -687,11 +658,11 @@ function MedicalRecordsForm(_a) {
                     <checkbox_1.Checkbox
                       id="isConfidential"
                       checked={record.isConfidential}
-                      onCheckedChange={function (checked) {
-                        return setRecord(function (prev) {
-                          return __assign(__assign({}, prev), { isConfidential: !!checked });
-                        });
-                      }}
+                      onCheckedChange={(checked) =>
+                        setRecord((prev) =>
+                          __assign(__assign({}, prev), { isConfidential: !!checked }),
+                        )
+                      }
                       disabled={isReadOnly}
                     />
                     <label_1.Label htmlFor="isConfidential" className="flex items-center space-x-1">
@@ -704,11 +675,11 @@ function MedicalRecordsForm(_a) {
                     <checkbox_1.Checkbox
                       id="isEmergency"
                       checked={record.isEmergency}
-                      onCheckedChange={function (checked) {
-                        return setRecord(function (prev) {
-                          return __assign(__assign({}, prev), { isEmergency: !!checked });
-                        });
-                      }}
+                      onCheckedChange={(checked) =>
+                        setRecord((prev) =>
+                          __assign(__assign({}, prev), { isEmergency: !!checked }),
+                        )
+                      }
                       disabled={isReadOnly}
                     />
                     <label_1.Label htmlFor="isEmergency" className="flex items-center space-x-1">
@@ -725,41 +696,35 @@ function MedicalRecordsForm(_a) {
                   <div className="flex flex-wrap gap-2 mb-2">
                     {(_c = record.tags) === null || _c === void 0
                       ? void 0
-                      : _c.map(function (tag, index) {
-                          return (
-                            <badge_1.Badge
-                              key={index}
-                              variant="secondary"
-                              className="flex items-center space-x-1"
-                            >
-                              <lucide_react_1.Tag className="w-3 h-3" />
-                              <span>{tag}</span>
-                              {!isReadOnly && (
-                                <button
-                                  type="button"
-                                  onClick={function () {
-                                    return handleRemoveTag(tag);
-                                  }}
-                                  className="ml-1 hover:text-red-600"
-                                >
-                                  ×
-                                </button>
-                              )}
-                            </badge_1.Badge>
-                          );
-                        })}
+                      : _c.map((tag, index) => (
+                          <badge_1.Badge
+                            key={index}
+                            variant="secondary"
+                            className="flex items-center space-x-1"
+                          >
+                            <lucide_react_1.Tag className="w-3 h-3" />
+                            <span>{tag}</span>
+                            {!isReadOnly && (
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveTag(tag)}
+                                className="ml-1 hover:text-red-600"
+                              >
+                                ×
+                              </button>
+                            )}
+                          </badge_1.Badge>
+                        ))}
                   </div>
                   {!isReadOnly && (
                     <div className="flex space-x-2">
                       <input_1.Input
                         value={newTag}
-                        onChange={function (e) {
-                          return setNewTag(e.target.value);
-                        }}
+                        onChange={(e) => setNewTag(e.target.value)}
                         placeholder="Nova tag"
-                        onKeyPress={function (e) {
-                          return e.key === "Enter" && (e.preventDefault(), handleAddTag());
-                        }}
+                        onKeyPress={(e) =>
+                          e.key === "Enter" && (e.preventDefault(), handleAddTag())
+                        }
                       />
                       <button_1.Button type="button" onClick={handleAddTag} variant="outline">
                         <lucide_react_1.Plus className="w-4 h-4" />
@@ -785,12 +750,10 @@ function MedicalRecordsForm(_a) {
               <card_1.CardContent>
                 <textarea_1.Textarea
                   value={JSON.stringify(record.content, null, 2)}
-                  onChange={function (e) {
+                  onChange={(e) => {
                     try {
                       var content_1 = JSON.parse(e.target.value);
-                      setRecord(function (prev) {
-                        return __assign(__assign({}, prev), { content: content_1 });
-                      });
+                      setRecord((prev) => __assign(__assign({}, prev), { content: content_1 }));
                     } catch (_a) {
                       // Invalid JSON, keep as string for now
                     }
@@ -821,9 +784,7 @@ function MedicalRecordsForm(_a) {
                     <input
                       type="file"
                       multiple
-                      onChange={function (e) {
-                        return e.target.files && handleFileUpload(e.target.files);
-                      }}
+                      onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
                       className="hidden"
                       id="file-upload"
                     />
@@ -845,38 +806,36 @@ function MedicalRecordsForm(_a) {
                 )}
 
                 <div className="space-y-2">
-                  {attachments.map(function (attachment) {
-                    return (
-                      <div
-                        key={attachment.id}
-                        className="flex items-center justify-between p-3 border rounded-lg"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <lucide_react_1.FileText className="w-5 h-5 text-gray-400" />
-                          <div>
-                            <p className="font-medium">{attachment.originalName}</p>
-                            <p className="text-sm text-gray-600">
-                              {(attachment.fileSize / 1024 / 1024).toFixed(2)} MB •{" "}
-                              {attachment.mimeType}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <button_1.Button variant="outline" size="sm">
-                            <lucide_react_1.Eye className="w-4 h-4" />
-                          </button_1.Button>
-                          <button_1.Button variant="outline" size="sm">
-                            <lucide_react_1.Download className="w-4 h-4" />
-                          </button_1.Button>
-                          {!isReadOnly && (
-                            <button_1.Button variant="outline" size="sm" className="text-red-600">
-                              <lucide_react_1.Trash2 className="w-4 h-4" />
-                            </button_1.Button>
-                          )}
+                  {attachments.map((attachment) => (
+                    <div
+                      key={attachment.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <lucide_react_1.FileText className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="font-medium">{attachment.originalName}</p>
+                          <p className="text-sm text-gray-600">
+                            {(attachment.fileSize / 1024 / 1024).toFixed(2)} MB •{" "}
+                            {attachment.mimeType}
+                          </p>
                         </div>
                       </div>
-                    );
-                  })}
+                      <div className="flex items-center space-x-2">
+                        <button_1.Button variant="outline" size="sm">
+                          <lucide_react_1.Eye className="w-4 h-4" />
+                        </button_1.Button>
+                        <button_1.Button variant="outline" size="sm">
+                          <lucide_react_1.Download className="w-4 h-4" />
+                        </button_1.Button>
+                        {!isReadOnly && (
+                          <button_1.Button variant="outline" size="sm" className="text-red-600">
+                            <lucide_react_1.Trash2 className="w-4 h-4" />
+                          </button_1.Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -946,12 +905,10 @@ function MedicalRecordsForm(_a) {
                   <label_1.Label>Metadados (JSON)</label_1.Label>
                   <textarea_1.Textarea
                     value={JSON.stringify(record.metadata, null, 2)}
-                    onChange={function (e) {
+                    onChange={(e) => {
                       try {
                         var metadata_1 = JSON.parse(e.target.value);
-                        setRecord(function (prev) {
-                          return __assign(__assign({}, prev), { metadata: metadata_1 });
-                        });
+                        setRecord((prev) => __assign(__assign({}, prev), { metadata: metadata_1 }));
                       } catch (_a) {
                         // Invalid JSON, keep as string for now
                       }

@@ -1,6 +1,3 @@
-import type { createClient } from "@/lib/supabase/server";
-import type { NextResponse } from "next/server";
-
 export async function GET(request: Request) {
   try {
     const supabase = await createClient();

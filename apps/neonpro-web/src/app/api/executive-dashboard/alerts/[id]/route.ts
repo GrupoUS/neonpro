@@ -2,7 +2,7 @@
 // Story 7.1: Executive Dashboard Implementation
 // PUT /api/executive-dashboard/alerts/[id]
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { executiveDashboardService } from "@/lib/services/executive-dashboard";
 

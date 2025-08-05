@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Auth Module Entry Point
  * Clean exports for production-ready Clerk integration
@@ -39,189 +38,129 @@ exports.currentUser =
 var clerk_config_1 = require("./clerk-config");
 Object.defineProperty(exports, "clerkConfig", {
   enumerable: true,
-  get: function () {
-    return clerk_config_1.clerkConfig;
-  },
+  get: () => clerk_config_1.clerkConfig,
 });
 Object.defineProperty(exports, "healthcareAppearance", {
   enumerable: true,
-  get: function () {
-    return clerk_config_1.healthcareAppearance;
-  },
+  get: () => clerk_config_1.healthcareAppearance,
 });
 Object.defineProperty(exports, "validateClerkConfig", {
   enumerable: true,
-  get: function () {
-    return clerk_config_1.validateClerkConfig;
-  },
+  get: () => clerk_config_1.validateClerkConfig,
 });
 // Session Management
 var simple_session_manager_1 = require("./simple-session-manager");
 Object.defineProperty(exports, "sessionManager", {
   enumerable: true,
-  get: function () {
-    return simple_session_manager_1.sessionManager;
-  },
+  get: () => simple_session_manager_1.sessionManager,
 });
 Object.defineProperty(exports, "ClerkSessionManager", {
   enumerable: true,
-  get: function () {
-    return simple_session_manager_1.ClerkSessionManager;
-  },
+  get: () => simple_session_manager_1.ClerkSessionManager,
 });
 // Utilities and Helpers
 var utils_1 = require("./utils");
 Object.defineProperty(exports, "getAuth", {
   enumerable: true,
-  get: function () {
-    return utils_1.getAuth;
-  },
+  get: () => utils_1.getAuth,
 });
 Object.defineProperty(exports, "requireAuth", {
   enumerable: true,
-  get: function () {
-    return utils_1.requireAuth;
-  },
+  get: () => utils_1.requireAuth,
 });
 Object.defineProperty(exports, "hasPermission", {
   enumerable: true,
-  get: function () {
-    return utils_1.hasPermission;
-  },
+  get: () => utils_1.hasPermission,
 });
 Object.defineProperty(exports, "hasRole", {
   enumerable: true,
-  get: function () {
-    return utils_1.hasRole;
-  },
+  get: () => utils_1.hasRole,
 });
 Object.defineProperty(exports, "requirePermission", {
   enumerable: true,
-  get: function () {
-    return utils_1.requirePermission;
-  },
+  get: () => utils_1.requirePermission,
 });
 Object.defineProperty(exports, "requireRole", {
   enumerable: true,
-  get: function () {
-    return utils_1.requireRole;
-  },
+  get: () => utils_1.requireRole,
 });
 Object.defineProperty(exports, "getUserMetadata", {
   enumerable: true,
-  get: function () {
-    return utils_1.getUserMetadata;
-  },
+  get: () => utils_1.getUserMetadata,
 });
 Object.defineProperty(exports, "isProtectedRoute", {
   enumerable: true,
-  get: function () {
-    return utils_1.isProtectedRoute;
-  },
+  get: () => utils_1.isProtectedRoute,
 });
 Object.defineProperty(exports, "isPublicRoute", {
   enumerable: true,
-  get: function () {
-    return utils_1.isPublicRoute;
-  },
+  get: () => utils_1.isPublicRoute,
 });
 Object.defineProperty(exports, "HealthcareRoles", {
   enumerable: true,
-  get: function () {
-    return utils_1.HealthcareRoles;
-  },
+  get: () => utils_1.HealthcareRoles,
 });
 Object.defineProperty(exports, "HealthcarePermissions", {
   enumerable: true,
-  get: function () {
-    return utils_1.HealthcarePermissions;
-  },
+  get: () => utils_1.HealthcarePermissions,
 });
 // Re-export essential Clerk hooks and components for convenience
 var nextjs_1 = require("@clerk/nextjs");
 Object.defineProperty(exports, "useAuth", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.useAuth;
-  },
+  get: () => nextjs_1.useAuth,
 });
 Object.defineProperty(exports, "useUser", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.useUser;
-  },
+  get: () => nextjs_1.useUser,
 });
 Object.defineProperty(exports, "useSession", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.useSession;
-  },
+  get: () => nextjs_1.useSession,
 });
 Object.defineProperty(exports, "useClerk", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.useClerk;
-  },
+  get: () => nextjs_1.useClerk,
 });
 Object.defineProperty(exports, "SignIn", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.SignIn;
-  },
+  get: () => nextjs_1.SignIn,
 });
 Object.defineProperty(exports, "SignUp", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.SignUp;
-  },
+  get: () => nextjs_1.SignUp,
 });
 Object.defineProperty(exports, "SignOutButton", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.SignOutButton;
-  },
+  get: () => nextjs_1.SignOutButton,
 });
 Object.defineProperty(exports, "UserButton", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.UserButton;
-  },
+  get: () => nextjs_1.UserButton,
 });
 Object.defineProperty(exports, "SignedIn", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.SignedIn;
-  },
+  get: () => nextjs_1.SignedIn,
 });
 Object.defineProperty(exports, "SignedOut", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.SignedOut;
-  },
+  get: () => nextjs_1.SignedOut,
 });
 Object.defineProperty(exports, "RedirectToSignIn", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.RedirectToSignIn;
-  },
+  get: () => nextjs_1.RedirectToSignIn,
 });
 Object.defineProperty(exports, "RedirectToSignUp", {
   enumerable: true,
-  get: function () {
-    return nextjs_1.RedirectToSignUp;
-  },
+  get: () => nextjs_1.RedirectToSignUp,
 });
 // Re-export server utilities
 var server_1 = require("@clerk/nextjs/server");
 Object.defineProperty(exports, "auth", {
   enumerable: true,
-  get: function () {
-    return server_1.auth;
-  },
+  get: () => server_1.auth,
 });
 Object.defineProperty(exports, "currentUser", {
   enumerable: true,
-  get: function () {
-    return server_1.currentUser;
-  },
+  get: () => server_1.currentUser,
 });

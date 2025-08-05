@@ -1,7 +1,7 @@
+import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { PatientInsights } from "@/lib/ai/patient-insights";
 import { ProfileManager } from "@/lib/patients/profile-manager";
-import { NextRequest, NextResponse } from "next/server";
 
 // Initialize services
 const profileManager = new ProfileManager();

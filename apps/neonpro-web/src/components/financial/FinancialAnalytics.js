@@ -6,7 +6,6 @@
  * cash flow analysis, and automated reporting.
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialAnalytics = FinancialAnalytics;
 var react_1 = require("react");
@@ -44,16 +43,13 @@ function FinancialAnalytics(_a) {
     setActiveTab = _h[1];
   var toast = (0, use_toast_1.useToast)().toast;
   // Mock data generation - In production, this would fetch from APIs
-  (0, react_1.useEffect)(
-    function () {
-      generateMockData();
-    },
-    [selectedPeriod],
-  );
-  var generateMockData = function () {
+  (0, react_1.useEffect)(() => {
+    generateMockData();
+  }, [selectedPeriod]);
+  var generateMockData = () => {
     setIsLoading(true);
     // Simulate API call
-    setTimeout(function () {
+    setTimeout(() => {
       // Financial Metrics
       setMetrics([
         {
@@ -106,16 +102,14 @@ function FinancialAnalytics(_a) {
         },
       ]);
       // Cash Flow Data
-      var cashFlow = Array.from({ length: 30 }, function (_, i) {
-        return {
-          date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-          income: Math.random() * 8000 + 2000,
-          expenses: Math.random() * 4000 + 1000,
-          profit: 0,
-          projection: Math.random() * 6000 + 3000,
-        };
-      });
-      cashFlow.forEach(function (day) {
+      var cashFlow = Array.from({ length: 30 }, (_, i) => ({
+        date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+        income: Math.random() * 8000 + 2000,
+        expenses: Math.random() * 4000 + 1000,
+        profit: 0,
+        projection: Math.random() * 6000 + 3000,
+      }));
+      cashFlow.forEach((day) => {
         day.profit = day.income - day.expenses;
       });
       setCashFlowData(cashFlow);
@@ -198,16 +192,13 @@ function FinancialAnalytics(_a) {
       setIsLoading(false);
     }, 1500);
   };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(1), "%");
-  };
-  var getTrendIcon = function (trend) {
+  var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600" />;
@@ -217,7 +208,7 @@ function FinancialAnalytics(_a) {
         return <div className="h-4 w-4" />;
     }
   };
-  var getInsightIcon = function (type) {
+  var getInsightIcon = (type) => {
     switch (type) {
       case "opportunity":
         return <lucide_react_1.CheckCircle className="h-5 w-5 text-green-600" />;
@@ -237,12 +228,7 @@ function FinancialAnalytics(_a) {
             Dashboard com insights preditivos e métricas em tempo real
           </p>
         </div>
-        <select_1.Select
-          value={selectedPeriod}
-          onValueChange={function (value) {
-            return setSelectedPeriod(value);
-          }}
-        >
+        <select_1.Select value={selectedPeriod} onValueChange={(value) => setSelectedPeriod(value)}>
           <select_1.SelectTrigger className="w-[180px]">
             <select_1.SelectValue />
           </select_1.SelectTrigger>
@@ -266,60 +252,58 @@ function FinancialAnalytics(_a) {
         <tabs_1.TabsContent value="overview" className="space-y-6">
           {/* Financial Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {metrics.map(function (metric, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <card_1.CardTitle className="text-sm font-medium">
-                      {metric.label}
-                    </card_1.CardTitle>
-                    {getTrendIcon(metric.trend)}
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="text-2xl font-bold">
-                      {metric.unit === "currency" && formatCurrency(metric.value)}
-                      {metric.unit === "percentage" && formatPercentage(metric.value)}
-                      {metric.unit === "number" && metric.value.toLocaleString()}
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <p
-                        className={"text-xs ".concat(
-                          metric.change >= 0 ? "text-green-600" : "text-red-600",
-                        )}
-                      >
-                        {metric.change >= 0 ? "+" : ""}
-                        {metric.change}% vs período anterior
-                      </p>
-                      {metric.target && (
-                        <badge_1.Badge variant="outline" className="text-xs">
-                          Meta:{" "}
-                          {metric.unit === "currency"
-                            ? formatCurrency(metric.target)
-                            : metric.unit === "percentage"
-                              ? formatPercentage(metric.target)
-                              : metric.target.toLocaleString()}
-                        </badge_1.Badge>
+            {metrics.map((metric, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <card_1.CardTitle className="text-sm font-medium">
+                    {metric.label}
+                  </card_1.CardTitle>
+                  {getTrendIcon(metric.trend)}
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="text-2xl font-bold">
+                    {metric.unit === "currency" && formatCurrency(metric.value)}
+                    {metric.unit === "percentage" && formatPercentage(metric.value)}
+                    {metric.unit === "number" && metric.value.toLocaleString()}
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <p
+                      className={"text-xs ".concat(
+                        metric.change >= 0 ? "text-green-600" : "text-red-600",
                       )}
-                    </div>
+                    >
+                      {metric.change >= 0 ? "+" : ""}
+                      {metric.change}% vs período anterior
+                    </p>
                     {metric.target && (
-                      <div className="mt-2">
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="bg-blue-600 h-2 rounded-full"
-                            style={{
-                              width: "".concat(
-                                Math.min((metric.value / metric.target) * 100, 100),
-                                "%",
-                              ),
-                            }}
-                          />
-                        </div>
-                      </div>
+                      <badge_1.Badge variant="outline" className="text-xs">
+                        Meta:{" "}
+                        {metric.unit === "currency"
+                          ? formatCurrency(metric.target)
+                          : metric.unit === "percentage"
+                            ? formatPercentage(metric.target)
+                            : metric.target.toLocaleString()}
+                      </badge_1.Badge>
                     )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                  {metric.target && (
+                    <div className="mt-2">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full"
+                          style={{
+                            width: "".concat(
+                              Math.min((metric.value / metric.target) * 100, 100),
+                              "%",
+                            ),
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
 
           {/* Revenue Trend Chart */}
@@ -336,22 +320,14 @@ function FinancialAnalytics(_a) {
                   <recharts_1.CartesianGrid strokeDasharray="3 3" />
                   <recharts_1.XAxis
                     dataKey="date"
-                    tickFormatter={function (date) {
-                      return new Date(date).getDate().toString();
-                    }}
+                    tickFormatter={(date) => new Date(date).getDate().toString()}
                   />
                   <recharts_1.YAxis
-                    tickFormatter={function (value) {
-                      return "R$ ".concat((value / 1000).toFixed(0), "k");
-                    }}
+                    tickFormatter={(value) => "R$ ".concat((value / 1000).toFixed(0), "k")}
                   />
                   <recharts_1.Tooltip
-                    formatter={function (value, name) {
-                      return [formatCurrency(Number(value)), name];
-                    }}
-                    labelFormatter={function (date) {
-                      return new Date(date).toLocaleDateString("pt-BR");
-                    }}
+                    formatter={(value, name) => [formatCurrency(Number(value)), name]}
+                    labelFormatter={(date) => new Date(date).toLocaleDateString("pt-BR")}
                   />
                   <recharts_1.Area
                     type="monotone"
@@ -394,22 +370,14 @@ function FinancialAnalytics(_a) {
                     <recharts_1.CartesianGrid strokeDasharray="3 3" />
                     <recharts_1.XAxis
                       dataKey="date"
-                      tickFormatter={function (date) {
-                        return new Date(date).getDate().toString();
-                      }}
+                      tickFormatter={(date) => new Date(date).getDate().toString()}
                     />
                     <recharts_1.YAxis
-                      tickFormatter={function (value) {
-                        return "R$ ".concat((value / 1000).toFixed(0), "k");
-                      }}
+                      tickFormatter={(value) => "R$ ".concat((value / 1000).toFixed(0), "k")}
                     />
                     <recharts_1.Tooltip
-                      formatter={function (value, name) {
-                        return [formatCurrency(Number(value)), name];
-                      }}
-                      labelFormatter={function (date) {
-                        return new Date(date).toLocaleDateString("pt-BR");
-                      }}
+                      formatter={(value, name) => [formatCurrency(Number(value)), name]}
+                      labelFormatter={(date) => new Date(date).toLocaleDateString("pt-BR")}
                     />
                     <recharts_1.Line
                       type="monotone"
@@ -451,13 +419,9 @@ function FinancialAnalytics(_a) {
                 <card_1.CardTitle>Resumo do Período</card_1.CardTitle>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-4">
-                {(function () {
-                  var totalIncome = cashFlowData.reduce(function (sum, day) {
-                    return sum + day.income;
-                  }, 0);
-                  var totalExpenses = cashFlowData.reduce(function (sum, day) {
-                    return sum + day.expenses;
-                  }, 0);
+                {(() => {
+                  var totalIncome = cashFlowData.reduce((sum, day) => sum + day.income, 0);
+                  var totalExpenses = cashFlowData.reduce((sum, day) => sum + day.expenses, 0);
                   var totalProfit = totalIncome - totalExpenses;
                   var avgDailyProfit = totalProfit / cashFlowData.length;
                   return (
@@ -542,36 +506,32 @@ function FinancialAnalytics(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {servicePerformance.map(function (service, index) {
-                    return (
-                      <div
-                        key={index}
-                        className="flex items-center justify-between p-4 border rounded-lg"
-                      >
-                        <div className="flex-1">
-                          <h4 className="font-semibold">{service.service}</h4>
-                          <p className="text-sm text-gray-600">
-                            {service.count} procedimentos • {formatCurrency(service.avgValue)}{" "}
-                            ticket médio
-                          </p>
-                        </div>
-                        <div className="text-right space-y-1">
-                          <p className="font-semibold">{formatCurrency(service.revenue)}</p>
-                          <div className="flex items-center gap-2">
-                            <badge_1.Badge
-                              variant={service.growth >= 0 ? "default" : "destructive"}
-                            >
-                              {service.growth >= 0 ? "+" : ""}
-                              {service.growth.toFixed(1)}%
-                            </badge_1.Badge>
-                            <span className="text-sm text-gray-600">
-                              {formatPercentage(service.profitMargin)} margem
-                            </span>
-                          </div>
+                  {servicePerformance.map((service, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
+                      <div className="flex-1">
+                        <h4 className="font-semibold">{service.service}</h4>
+                        <p className="text-sm text-gray-600">
+                          {service.count} procedimentos • {formatCurrency(service.avgValue)} ticket
+                          médio
+                        </p>
+                      </div>
+                      <div className="text-right space-y-1">
+                        <p className="font-semibold">{formatCurrency(service.revenue)}</p>
+                        <div className="flex items-center gap-2">
+                          <badge_1.Badge variant={service.growth >= 0 ? "default" : "destructive"}>
+                            {service.growth >= 0 ? "+" : ""}
+                            {service.growth.toFixed(1)}%
+                          </badge_1.Badge>
+                          <span className="text-sm text-gray-600">
+                            {formatPercentage(service.profitMargin)} margem
+                          </span>
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -594,26 +554,20 @@ function FinancialAnalytics(_a) {
                       cx="50%"
                       cy="50%"
                       outerRadius={80}
-                      label={function (_a) {
+                      label={(_a) => {
                         var name = _a.name,
                           percent = _a.percent;
                         return "".concat(name, " ").concat((percent * 100).toFixed(1), "%");
                       }}
                     >
-                      {servicePerformance.map(function (entry, index) {
-                        return (
-                          <recharts_1.Cell
-                            key={"cell-".concat(index)}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        );
-                      })}
+                      {servicePerformance.map((entry, index) => (
+                        <recharts_1.Cell
+                          key={"cell-".concat(index)}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
                     </Pie>
-                    <recharts_1.Tooltip
-                      formatter={function (value) {
-                        return formatCurrency(Number(value));
-                      }}
-                    />
+                    <recharts_1.Tooltip formatter={(value) => formatCurrency(Number(value))} />
                   </recharts_1.PieChart>
                 </recharts_1.ResponsiveContainer>
               </card_1.CardContent>
@@ -630,15 +584,11 @@ function FinancialAnalytics(_a) {
                     <recharts_1.CartesianGrid strokeDasharray="3 3" />
                     <recharts_1.XAxis
                       type="number"
-                      tickFormatter={function (value) {
-                        return "".concat(value, "%");
-                      }}
+                      tickFormatter={(value) => "".concat(value, "%")}
                     />
                     <recharts_1.YAxis type="category" dataKey="service" width={100} />
                     <recharts_1.Tooltip
-                      formatter={function (value) {
-                        return ["".concat(value, "%"), "Crescimento"];
-                      }}
+                      formatter={(value) => ["".concat(value, "%"), "Crescimento"]}
                     />
                     <recharts_1.Bar dataKey="growth" fill="#8884d8" />
                   </recharts_1.BarChart>
@@ -650,78 +600,72 @@ function FinancialAnalytics(_a) {
 
         <tabs_1.TabsContent value="insights" className="space-y-6">
           <div className="grid grid-cols-1 gap-6">
-            {predictiveInsights.map(function (insight, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        {getInsightIcon(insight.type)}
-                        <div>
-                          <card_1.CardTitle className="text-lg">{insight.title}</card_1.CardTitle>
-                          <card_1.CardDescription className="mt-1">
-                            {insight.description}
-                          </card_1.CardDescription>
-                        </div>
-                      </div>
-                      <div className="text-right space-y-2">
-                        <badge_1.Badge
-                          variant={
-                            insight.impact === "high"
-                              ? "destructive"
-                              : insight.impact === "medium"
-                                ? "default"
-                                : "secondary"
-                          }
-                        >
-                          Impacto{" "}
-                          {insight.impact === "high"
-                            ? "Alto"
-                            : insight.impact === "medium"
-                              ? "Médio"
-                              : "Baixo"}
-                        </badge_1.Badge>
-                        <p className="text-sm text-gray-600">{insight.confidence}% confiança</p>
+            {predictiveInsights.map((insight, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      {getInsightIcon(insight.type)}
+                      <div>
+                        <card_1.CardTitle className="text-lg">{insight.title}</card_1.CardTitle>
+                        <card_1.CardDescription className="mt-1">
+                          {insight.description}
+                        </card_1.CardDescription>
                       </div>
                     </div>
-                  </card_1.CardHeader>
-                  {insight.actionItems && (
-                    <card_1.CardContent>
-                      <div className="space-y-2">
-                        <h4 className="font-semibold text-sm">Ações Recomendadas:</h4>
-                        <ul className="space-y-1">
-                          {insight.actionItems.map(function (action, actionIndex) {
-                            return (
-                              <li
-                                key={actionIndex}
-                                className="text-sm text-gray-600 flex items-start gap-2"
-                              >
-                                <span className="text-blue-600 mt-1">•</span>
-                                {action}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    </card_1.CardContent>
-                  )}
-                </card_1.Card>
-              );
-            })}
+                    <div className="text-right space-y-2">
+                      <badge_1.Badge
+                        variant={
+                          insight.impact === "high"
+                            ? "destructive"
+                            : insight.impact === "medium"
+                              ? "default"
+                              : "secondary"
+                        }
+                      >
+                        Impacto{" "}
+                        {insight.impact === "high"
+                          ? "Alto"
+                          : insight.impact === "medium"
+                            ? "Médio"
+                            : "Baixo"}
+                      </badge_1.Badge>
+                      <p className="text-sm text-gray-600">{insight.confidence}% confiança</p>
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                {insight.actionItems && (
+                  <card_1.CardContent>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">Ações Recomendadas:</h4>
+                      <ul className="space-y-1">
+                        {insight.actionItems.map((action, actionIndex) => (
+                          <li
+                            key={actionIndex}
+                            className="text-sm text-gray-600 flex items-start gap-2"
+                          >
+                            <span className="text-blue-600 mt-1">•</span>
+                            {action}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </card_1.CardContent>
+                )}
+              </card_1.Card>
+            ))}
           </div>
 
           {/* Generate New Insights Button */}
           <card_1.Card>
             <card_1.CardContent className="p-6 text-center">
               <button_1.Button
-                onClick={function () {
+                onClick={() => {
                   toast({
                     title: "Gerando Novos Insights",
                     description: "Analisando dados para identificar novas oportunidades...",
                   });
-                  setTimeout(function () {
-                    return generateMockData();
-                  }, 2000);
+                  setTimeout(() => generateMockData(), 2000);
                 }}
                 className="w-full sm:w-auto"
               >

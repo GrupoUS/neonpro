@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Security Monitor - Advanced Security Monitoring
  *
@@ -7,20 +6,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -32,15 +31,15 @@ var __extends =
   })();
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -60,13 +59,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -88,9 +87,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -162,10 +159,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -174,11 +171,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityMonitor = void 0;
 var events_1 = require("events");
-var SecurityMonitor = /** @class */ (function (_super) {
+var SecurityMonitor = /** @class */ ((_super) => {
   __extends(SecurityMonitor, _super);
   function SecurityMonitor(config, supabase) {
     var _this = _super.call(this) || this;
@@ -590,7 +587,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
             if (userLocations && userLocations.length > 0) {
               typicalCountries = new Set(
                 userLocations
-                  .map(function (s) {
+                  .map((s) => {
                     var _a;
                     return (_a = s.location) === null || _a === void 0 ? void 0 : _a.country;
                   })
@@ -666,9 +663,9 @@ var SecurityMonitor = /** @class */ (function (_super) {
           case 1:
             userDevices = _a.sent().data;
             if (userDevices && userDevices.length > 0) {
-              isKnownDevice = userDevices.some(function (device) {
-                return _this.compareDeviceFingerprints(device.device_fingerprint, fingerprint);
-              });
+              isKnownDevice = userDevices.some((device) =>
+                _this.compareDeviceFingerprints(device.device_fingerprint, fingerprint),
+              );
               if (!isKnownDevice) {
                 indicators.push("Unknown device");
                 riskScore += 10;
@@ -712,7 +709,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
             patterns = [];
             riskScore = 0;
             profile = this.userBehaviorProfiles.get(userId);
-            if (!!profile) return [3 /*break*/, 2];
+            if (profile) return [3 /*break*/, 2];
             return [4 /*yield*/, this.buildUserBehaviorProfile(userId)];
           case 1:
             profile = _a.sent();
@@ -805,11 +802,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
           case 2:
             sessionHistory = _a.sent().data;
             if (sessionHistory && sessionHistory.length > 1) {
-              uniqueIPs = new Set(
-                sessionHistory.map(function (h) {
-                  return h.ip_address;
-                }),
-              );
+              uniqueIPs = new Set(sessionHistory.map((h) => h.ip_address));
               if (uniqueIPs.size > 1) {
                 indicators.push("IP address changed during session");
                 confidence += 40;
@@ -827,11 +820,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
           case 3:
             userAgentHistory = _a.sent().data;
             if (userAgentHistory && userAgentHistory.length > 1) {
-              uniqueUserAgents = new Set(
-                userAgentHistory.map(function (h) {
-                  return h.user_agent;
-                }),
-              );
+              uniqueUserAgents = new Set(userAgentHistory.map((h) => h.user_agent));
               if (uniqueUserAgents.size > 1) {
                 indicators.push("User agent changed during session");
                 confidence += 30;
@@ -978,9 +967,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
           case 2:
             adminAttempts = _a.sent().data;
             if (adminAttempts && adminAttempts.length > 0) {
-              failedAttempts = adminAttempts.filter(function (a) {
-                return !a.success;
-              });
+              failedAttempts = adminAttempts.filter((a) => !a.success);
               if (failedAttempts.length > 2) {
                 attempts.push("Multiple failed admin access attempts");
                 riskLevel += 30;
@@ -1112,7 +1099,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
       });
     });
   };
-  SecurityMonitor.prototype.calculateSeverity = function (securityScore) {
+  SecurityMonitor.prototype.calculateSeverity = (securityScore) => {
     if (securityScore < 25) return "critical";
     if (securityScore < 50) return "high";
     if (securityScore < 75) return "medium";
@@ -1167,7 +1154,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
       });
     });
   };
-  SecurityMonitor.prototype.determineSecurityActions = function (severity) {
+  SecurityMonitor.prototype.determineSecurityActions = (severity) => {
     switch (severity) {
       case "critical":
         return ["terminate_session", "block_device", "notify_admin", "escalate_incident"];
@@ -1182,7 +1169,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
   };
   SecurityMonitor.prototype.queryExternalThreatIntel = function (ipAddress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for external threat intelligence integration
         // In a real implementation, this would query services like:
         // - VirusTotal
@@ -1238,10 +1225,8 @@ var SecurityMonitor = /** @class */ (function (_super) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
-  SecurityMonitor.prototype.toRadians = function (degrees) {
-    return degrees * (Math.PI / 180);
-  };
-  SecurityMonitor.prototype.isSuspiciousUserAgent = function (userAgent) {
+  SecurityMonitor.prototype.toRadians = (degrees) => degrees * (Math.PI / 180);
+  SecurityMonitor.prototype.isSuspiciousUserAgent = (userAgent) => {
     var suspiciousPatterns = [
       /bot/i,
       /crawler/i,
@@ -1252,11 +1237,9 @@ var SecurityMonitor = /** @class */ (function (_super) {
       /python/i,
       /java/i,
     ];
-    return suspiciousPatterns.some(function (pattern) {
-      return pattern.test(userAgent);
-    });
+    return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
   };
-  SecurityMonitor.prototype.hasAutomationIndicators = function (fingerprint) {
+  SecurityMonitor.prototype.hasAutomationIndicators = (fingerprint) => {
     // Check for automation indicators
     return (
       fingerprint.hardwareConcurrency > 16 || // Unusual CPU count
@@ -1265,7 +1248,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
       fingerprint.doNotTrack === true // DNT enabled (common in automation)
     );
   };
-  SecurityMonitor.prototype.compareDeviceFingerprints = function (stored, current) {
+  SecurityMonitor.prototype.compareDeviceFingerprints = (stored, current) => {
     // Simplified fingerprint comparison
     return (
       stored.userAgent === current.userAgent &&
@@ -1301,36 +1284,20 @@ var SecurityMonitor = /** @class */ (function (_super) {
               lastUpdated: new Date(),
             };
             if (sessions && sessions.length > 0) {
-              loginHours = sessions.map(function (s) {
-                return new Date(s.created_at).getHours();
-              });
+              loginHours = sessions.map((s) => new Date(s.created_at).getHours());
               profile_1.typicalLoginHours = __spreadArray([], new Set(loginHours), true);
               // Extract known IPs
-              sessions.forEach(function (s) {
-                return profile_1.knownIPs.add(s.ip_address);
-              });
+              sessions.forEach((s) => profile_1.knownIPs.add(s.ip_address));
               locations = sessions
-                .map(function (s) {
-                  return s.location;
-                })
+                .map((s) => s.location)
                 .filter(Boolean)
-                .map(function (l) {
-                  return "".concat(l.country, "-").concat(l.region);
-                });
+                .map((l) => "".concat(l.country, "-").concat(l.region));
               profile_1.typicalLocations = __spreadArray([], new Set(locations), true);
               durations = sessions
-                .filter(function (s) {
-                  return s.terminated_at;
-                })
-                .map(function (s) {
-                  return new Date(s.terminated_at).getTime() - new Date(s.created_at).getTime();
-                });
+                .filter((s) => s.terminated_at)
+                .map((s) => new Date(s.terminated_at).getTime() - new Date(s.created_at).getTime());
               profile_1.averageSessionDuration =
-                durations.length > 0
-                  ? durations.reduce(function (a, b) {
-                      return a + b;
-                    }, 0) / durations.length
-                  : 0;
+                durations.length > 0 ? durations.reduce((a, b) => a + b, 0) / durations.length : 0;
             }
             return [2 /*return*/, profile_1];
           case 2:
@@ -1353,7 +1320,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
       });
     });
   };
-  SecurityMonitor.prototype.isTypicalLocation = function (profile, location) {
+  SecurityMonitor.prototype.isTypicalLocation = (profile, location) => {
     var locationKey = "".concat(location.country, "-").concat(location.region);
     return profile.typicalLocations.includes(locationKey);
   };
@@ -1391,7 +1358,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
   };
   SecurityMonitor.prototype.analyzeActivityPattern = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for activity pattern analysis
         return [
           2 /*return*/,
@@ -1405,7 +1372,7 @@ var SecurityMonitor = /** @class */ (function (_super) {
   };
   SecurityMonitor.prototype.analyzeDataAccessPattern = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for data access pattern analysis
         return [
           2 /*return*/,
@@ -1429,17 +1396,13 @@ var SecurityMonitor = /** @class */ (function (_super) {
           case 1:
             blockedIPs = _a.sent().data;
             if (blockedIPs) {
-              blockedIPs.forEach(function (ip) {
-                return _this.blockedIPs.add(ip.ip_address);
-              });
+              blockedIPs.forEach((ip) => _this.blockedIPs.add(ip.ip_address));
             }
             return [4 /*yield*/, this.supabase.from("suspicious_ips").select("ip_address")];
           case 2:
             suspiciousIPs = _a.sent().data;
             if (suspiciousIPs) {
-              suspiciousIPs.forEach(function (ip) {
-                return _this.suspiciousIPs.add(ip.ip_address);
-              });
+              suspiciousIPs.forEach((ip) => _this.suspiciousIPs.add(ip.ip_address));
             }
             return [3 /*break*/, 4];
           case 3:

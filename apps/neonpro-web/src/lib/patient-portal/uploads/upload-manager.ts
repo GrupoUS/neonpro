@@ -1,8 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AuditLogger } from "../../audit/audit-logger";
 import type { LGPDManager } from "../../lgpd/lgpd-manager";
-import type { SessionManager } from "../auth/session-manager";
 import type { EncryptionService } from "../../security/encryption-service";
+import type { SessionManager } from "../auth/session-manager";
 
 /**
  * Configuration for upload manager
@@ -458,7 +458,7 @@ export class UploadManager {
     const sizes = ["Bytes", "KB", "MB", "GB"];
     if (bytes === 0) return "0 Bytes";
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i];
+    return Math.round((bytes / 1024 ** i) * 100) / 100 + " " + sizes[i];
   }
 
   /**

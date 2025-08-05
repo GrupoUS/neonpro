@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Compliance Manager
  *
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,7 +156,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createlgpdComplianceManager =
   exports.DataRetentionPeriod =
@@ -177,7 +174,7 @@ var client_1 = require("@/lib/supabase/client");
 var security_audit_logger_1 = require("../audit/security-audit-logger");
 // LGPD Data Subject Rights
 var LGPDRights;
-(function (LGPDRights) {
+((LGPDRights) => {
   LGPDRights["ACCESS"] = "access";
   LGPDRights["RECTIFICATION"] = "rectification";
   LGPDRights["DELETION"] = "deletion";
@@ -187,7 +184,7 @@ var LGPDRights;
   LGPDRights["INFORMATION"] = "information"; // Art. 9 - Direito de informação
 })(LGPDRights || (exports.LGPDRights = LGPDRights = {}));
 var ConsentType;
-(function (ConsentType) {
+((ConsentType) => {
   ConsentType["REGISTRATION"] = "registration";
   ConsentType["MEDICAL_DATA"] = "medical_data";
   ConsentType["MARKETING"] = "marketing";
@@ -197,7 +194,7 @@ var ConsentType;
   ConsentType["RESEARCH"] = "research";
 })(ConsentType || (exports.ConsentType = ConsentType = {}));
 var DataProcessingPurpose;
-(function (DataProcessingPurpose) {
+((DataProcessingPurpose) => {
   DataProcessingPurpose["HEALTHCARE_SERVICES"] = "healthcare_services";
   DataProcessingPurpose["APPOINTMENT_MANAGEMENT"] = "appointment_management";
   DataProcessingPurpose["MEDICAL_RECORDS"] = "medical_records";
@@ -208,7 +205,7 @@ var DataProcessingPurpose;
   DataProcessingPurpose["SYSTEM_SECURITY"] = "system_security";
 })(DataProcessingPurpose || (exports.DataProcessingPurpose = DataProcessingPurpose = {}));
 var DataRetentionPeriod;
-(function (DataRetentionPeriod) {
+((DataRetentionPeriod) => {
   DataRetentionPeriod[(DataRetentionPeriod["IMMEDIATE"] = 0)] = "IMMEDIATE";
   DataRetentionPeriod[(DataRetentionPeriod["ONE_MONTH"] = 30)] = "ONE_MONTH";
   DataRetentionPeriod[(DataRetentionPeriod["THREE_MONTHS"] = 90)] = "THREE_MONTHS";
@@ -275,7 +272,7 @@ var DATA_INVENTORY = [
     anonymizationPossible: true,
   },
 ];
-var LGPDComplianceManager = /** @class */ (function () {
+var LGPDComplianceManager = /** @class */ (() => {
   function LGPDComplianceManager() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -653,9 +650,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   /**
    * Get data retention schedule
    */
-  LGPDComplianceManager.prototype.getDataRetentionSchedule = function () {
-    return DATA_INVENTORY;
-  };
+  LGPDComplianceManager.prototype.getDataRetentionSchedule = () => DATA_INVENTORY;
   /**
    * Generate LGPD compliance report
    */
@@ -789,15 +784,13 @@ var LGPDComplianceManager = /** @class */ (function () {
       });
     });
   };
-  LGPDComplianceManager.prototype.generateConsentId = function () {
-    return "consent_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  LGPDComplianceManager.prototype.generateRequestId = function () {
-    return "lgpd_req_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  LGPDComplianceManager.prototype.generateConsentId = () =>
+    "consent_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  LGPDComplianceManager.prototype.generateRequestId = () =>
+    "lgpd_req_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   LGPDComplianceManager.prototype.getClientIP = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In production, get from server
         return [2 /*return*/, "client_ip"];
       });
@@ -805,13 +798,13 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.getUserEmail = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get from user profile
         return [2 /*return*/, "user@example.com"];
       });
     });
   };
-  LGPDComplianceManager.prototype.getDefaultPurpose = function (type) {
+  LGPDComplianceManager.prototype.getDefaultPurpose = (type) => {
     switch (type) {
       case ConsentType.MEDICAL_DATA:
         return DataProcessingPurpose.MEDICAL_RECORDS;
@@ -850,9 +843,7 @@ var LGPDComplianceManager = /** @class */ (function () {
       var requests, index;
       return __generator(this, function (_a) {
         requests = this.getStoredRequests();
-        index = requests.findIndex(function (r) {
-          return r.id === request.id;
-        });
+        index = requests.findIndex((r) => r.id === request.id);
         if (index >= 0) {
           requests[index] = request;
           localStorage.setItem("lgpd_requests", JSON.stringify(requests));
@@ -861,7 +852,7 @@ var LGPDComplianceManager = /** @class */ (function () {
       });
     });
   };
-  LGPDComplianceManager.prototype.getStoredConsents = function () {
+  LGPDComplianceManager.prototype.getStoredConsents = () => {
     try {
       var stored = localStorage.getItem("lgpd_consents");
       return stored ? JSON.parse(stored) : [];
@@ -869,7 +860,7 @@ var LGPDComplianceManager = /** @class */ (function () {
       return [];
     }
   };
-  LGPDComplianceManager.prototype.getStoredRequests = function () {
+  LGPDComplianceManager.prototype.getStoredRequests = () => {
     try {
       var stored = localStorage.getItem("lgpd_requests");
       return stored ? JSON.parse(stored) : [];
@@ -880,47 +871,46 @@ var LGPDComplianceManager = /** @class */ (function () {
   // Data retrieval methods (would connect to database in production)
   LGPDComplianceManager.prototype.getPersonalData = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { message: "Dados pessoais seriam recuperados do banco de dados" }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { message: "Dados pessoais seriam recuperados do banco de dados" },
+      ]);
     });
   };
   LGPDComplianceManager.prototype.getMedicalData = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { message: "Dados médicos seriam recuperados do banco de dados" }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { message: "Dados médicos seriam recuperados do banco de dados" },
+      ]);
     });
   };
   LGPDComplianceManager.prototype.getAppointments = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { message: "Consultas seriam recuperadas do banco de dados" }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { message: "Consultas seriam recuperadas do banco de dados" },
+      ]);
     });
   };
   LGPDComplianceManager.prototype.getConsentHistory = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          this.getStoredConsents().filter(function (c) {
-            return c.userId === userId;
-          }),
-        ];
+        return [2 /*return*/, this.getStoredConsents().filter((c) => c.userId === userId)];
       });
     });
   };
   LGPDComplianceManager.prototype.getUserAuditLog = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, { message: "Log de auditoria seria recuperado do sistema" }];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        { message: "Log de auditoria seria recuperado do sistema" },
+      ]);
     });
   };
   LGPDComplianceManager.prototype.anonymizePersonalData = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement data anonymization
         console.log("Anonymizing personal data for user:", userId);
         return [2 /*return*/];
@@ -929,7 +919,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.hardDeleteUserData = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement hard deletion
         console.log("Hard deleting all data for user:", userId);
         return [2 /*return*/];
@@ -939,7 +929,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   // Metrics methods
   LGPDComplianceManager.prototype.getTotalUsers = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, 0]; // Get from database
       });
     });
@@ -947,12 +937,7 @@ var LGPDComplianceManager = /** @class */ (function () {
   LGPDComplianceManager.prototype.getActiveConsents = function () {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          this.getStoredConsents().filter(function (c) {
-            return c.granted;
-          }).length,
-        ];
+        return [2 /*return*/, this.getStoredConsents().filter((c) => c.granted).length];
       });
     });
   };
@@ -961,16 +946,14 @@ var LGPDComplianceManager = /** @class */ (function () {
       return __generator(this, function (_a) {
         return [
           2 /*return*/,
-          this.getStoredRequests().filter(function (r) {
-            return r.status === "pending";
-          }).length,
+          this.getStoredRequests().filter((r) => r.status === "pending").length,
         ];
       });
     });
   };
   LGPDComplianceManager.prototype.checkRetentionCompliance = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, true]; // Check retention policies
       });
     });
@@ -984,12 +967,8 @@ var LGPDComplianceManager = /** @class */ (function () {
           2 /*return*/,
           {
             total: consents.length,
-            granted: consents.filter(function (c) {
-              return c.granted;
-            }).length,
-            withdrawn: consents.filter(function (c) {
-              return !c.granted;
-            }).length,
+            granted: consents.filter((c) => c.granted).length,
+            withdrawn: consents.filter((c) => !c.granted).length,
           },
         ];
       });
@@ -1004,15 +983,9 @@ var LGPDComplianceManager = /** @class */ (function () {
           2 /*return*/,
           {
             total: requests.length,
-            pending: requests.filter(function (r) {
-              return r.status === "pending";
-            }).length,
-            completed: requests.filter(function (r) {
-              return r.status === "completed";
-            }).length,
-            rejected: requests.filter(function (r) {
-              return r.status === "rejected";
-            }).length,
+            pending: requests.filter((r) => r.status === "pending").length,
+            completed: requests.filter((r) => r.status === "completed").length,
+            rejected: requests.filter((r) => r.status === "rejected").length,
           },
         ];
       });
@@ -1020,71 +993,64 @@ var LGPDComplianceManager = /** @class */ (function () {
   };
   LGPDComplianceManager.prototype.getRetentionComplianceReport = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            compliant: true,
-            itemsToReview: [],
-            itemsToDelete: [],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          compliant: true,
+          itemsToReview: [],
+          itemsToDelete: [],
+        },
+      ]);
     });
   };
   return LGPDComplianceManager;
 })();
 // Export singleton instance
-var createlgpdComplianceManager = function () {
-  return new LGPDComplianceManager();
-};
+var createlgpdComplianceManager = () => new LGPDComplianceManager();
 exports.createlgpdComplianceManager = createlgpdComplianceManager;
 // Export convenience functions
 function recordConsent(userId, type, purpose, granted) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, lgpdComplianceManager.recordConsent(userId, type, purpose, granted)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      lgpdComplianceManager.recordConsent(userId, type, purpose, granted),
+    ]);
   });
 }
 function requestDataAccess(userId) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        lgpdComplianceManager.processDataSubjectRequest(userId, LGPDRights.ACCESS),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      lgpdComplianceManager.processDataSubjectRequest(userId, LGPDRights.ACCESS),
+    ]);
   });
 }
 function requestDataDeletion(userId) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        lgpdComplianceManager.processDataSubjectRequest(userId, LGPDRights.DELETION),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      lgpdComplianceManager.processDataSubjectRequest(userId, LGPDRights.DELETION),
+    ]);
   });
 }
 function exportUserData(userId) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, lgpdComplianceManager.exportUserData(userId)];
-    });
+    return __generator(this, (_a) => [2 /*return*/, lgpdComplianceManager.exportUserData(userId)]);
   });
 }
 function getPrivacySettings(userId) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, lgpdComplianceManager.getPrivacySettings(userId)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      lgpdComplianceManager.getPrivacySettings(userId),
+    ]);
   });
 }
 function updatePrivacySettings(userId, settings) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, lgpdComplianceManager.updatePrivacySettings(userId, settings)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      lgpdComplianceManager.updatePrivacySettings(userId, settings),
+    ]);
   });
 }

@@ -3,9 +3,9 @@
 // Integration tests for marketing campaigns API endpoints
 // =====================================================================================
 
-import { createMocks } from "node-mocks-http";
 import { NextRequest } from "next/server";
-import { GET, POST, PUT, DELETE } from "@/app/api/campaigns/route";
+import { createMocks } from "node-mocks-http";
+import { DELETE, GET, POST, PUT } from "@/app/api/campaigns/route";
 
 // Mock Supabase client
 const mockSupabaseClient = {

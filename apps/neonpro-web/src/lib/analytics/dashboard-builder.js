@@ -1,4 +1,3 @@
-"use strict";
 // Customizable Dashboard Builder System
 // Description: Drag-and-drop dashboard builder with widget library and layout management
 // Author: Dev Agent
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -161,11 +158,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createDashboardBuilder = exports.DashboardBuilder = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var DashboardBuilder = /** @class */ (function () {
+var DashboardBuilder = /** @class */ (() => {
   function DashboardBuilder() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -351,9 +348,7 @@ var DashboardBuilder = /** @class */ (function () {
   };
   // Widget Management
   DashboardBuilder.prototype.addWidget = function (layout, widgetType, position, kpiIds, config) {
-    var widgetTemplate = this.widgetLibrary.find(function (w) {
-      return w.type === widgetType;
-    });
+    var widgetTemplate = this.widgetLibrary.find((w) => w.type === widgetType);
     if (!widgetTemplate) throw new Error("Widget type not found");
     var newWidget = {
       id: "widget_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9)),
@@ -371,24 +366,18 @@ var DashboardBuilder = /** @class */ (function () {
     });
     return updatedLayout;
   };
-  DashboardBuilder.prototype.removeWidget = function (layout, widgetId) {
-    return __assign(__assign({}, layout), {
-      widget_configuration: layout.widget_configuration.filter(function (w) {
-        return w.id !== widgetId;
-      }),
+  DashboardBuilder.prototype.removeWidget = (layout, widgetId) =>
+    __assign(__assign({}, layout), {
+      widget_configuration: layout.widget_configuration.filter((w) => w.id !== widgetId),
     });
-  };
-  DashboardBuilder.prototype.updateWidget = function (layout, widgetId, updates) {
-    return __assign(__assign({}, layout), {
-      widget_configuration: layout.widget_configuration.map(function (widget) {
-        return widget.id === widgetId ? __assign(__assign({}, widget), updates) : widget;
-      }),
+  DashboardBuilder.prototype.updateWidget = (layout, widgetId, updates) =>
+    __assign(__assign({}, layout), {
+      widget_configuration: layout.widget_configuration.map((widget) =>
+        widget.id === widgetId ? __assign(__assign({}, widget), updates) : widget,
+      ),
     });
-  };
-  DashboardBuilder.prototype.duplicateWidget = function (layout, widgetId) {
-    var widget = layout.widget_configuration.find(function (w) {
-      return w.id === widgetId;
-    });
+  DashboardBuilder.prototype.duplicateWidget = (layout, widgetId) => {
+    var widget = layout.widget_configuration.find((w) => w.id === widgetId);
     if (!widget) throw new Error("Widget not found");
     var duplicatedWidget = __assign(__assign({}, widget), {
       id: "widget_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9)),
@@ -409,23 +398,20 @@ var DashboardBuilder = /** @class */ (function () {
     });
   };
   // Grid Layout Management
-  DashboardBuilder.prototype.updateGridLayout = function (layout, gridUpdates) {
-    return __assign(__assign({}, layout), {
+  DashboardBuilder.prototype.updateGridLayout = (layout, gridUpdates) =>
+    __assign(__assign({}, layout), {
       grid_layout: __assign(__assign({}, layout.grid_layout), gridUpdates),
     });
-  };
-  DashboardBuilder.prototype.optimizeLayout = function (layout) {
+  DashboardBuilder.prototype.optimizeLayout = (layout) => {
     // Auto-arrange widgets to minimize gaps and overlaps
     var widgets = __spreadArray([], layout.widget_configuration, true);
     var grid = layout.grid_layout;
     // Sort widgets by y position, then x position
-    widgets.sort(function (a, b) {
-      return a.position.y - b.position.y || a.position.x - b.position.x;
-    });
+    widgets.sort((a, b) => a.position.y - b.position.y || a.position.x - b.position.x);
     var currentY = 0;
     var rowWidgets = [];
     // Group widgets by rows
-    widgets.forEach(function (widget) {
+    widgets.forEach((widget) => {
       if (widget.position.y >= currentY + 1) {
         rowWidgets.push([]);
         currentY = widget.position.y;
@@ -435,15 +421,13 @@ var DashboardBuilder = /** @class */ (function () {
     // Reposition widgets to eliminate gaps
     var y = 0;
     var optimizedWidgets = [];
-    rowWidgets.forEach(function (row) {
+    rowWidgets.forEach((row) => {
       var x = 0;
       var maxHeight = Math.max.apply(
         Math,
-        row.map(function (w) {
-          return w.position.h;
-        }),
+        row.map((w) => w.position.h),
       );
-      row.forEach(function (widget) {
+      row.forEach((widget) => {
         optimizedWidgets.push(
           __assign(__assign({}, widget), {
             position: __assign(__assign({}, widget.position), { x: x, y: y }),
@@ -491,12 +475,7 @@ var DashboardBuilder = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
         if (category) {
-          return [
-            2 /*return*/,
-            this.templates.filter(function (t) {
-              return t.category === category;
-            }),
-          ];
+          return [2 /*return*/, this.templates.filter((t) => t.category === category)];
         }
         return [2 /*return*/, this.templates];
       });
@@ -505,40 +484,26 @@ var DashboardBuilder = /** @class */ (function () {
   DashboardBuilder.prototype.getTemplate = function (templateId) {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          this.templates.find(function (t) {
-            return t.id === templateId;
-          }) || null,
-        ];
+        return [2 /*return*/, this.templates.find((t) => t.id === templateId) || null];
       });
     });
   };
   // Widget Library
   DashboardBuilder.prototype.getWidgetLibrary = function (category) {
     if (category) {
-      return this.widgetLibrary.filter(function (w) {
-        return w.category === category;
-      });
+      return this.widgetLibrary.filter((w) => w.category === category);
     }
     return this.widgetLibrary;
   };
   DashboardBuilder.prototype.getWidgetTemplate = function (type) {
-    return (
-      this.widgetLibrary.find(function (w) {
-        return w.type === type;
-      }) || null
-    );
+    return this.widgetLibrary.find((w) => w.type === type) || null;
   };
   // Validation and Compatibility
   DashboardBuilder.prototype.validateLayout = function (layout) {
-    var _this = this;
     var errors = [];
     var warnings = [];
     // Check for widget overlaps
-    var positions = layout.widget_configuration.map(function (w) {
-      return w.position;
-    });
+    var positions = layout.widget_configuration.map((w) => w.position);
     for (var i = 0; i < positions.length; i++) {
       for (var j = i + 1; j < positions.length; j++) {
         if (this.doWidgetsOverlap(positions[i], positions[j])) {
@@ -547,8 +512,8 @@ var DashboardBuilder = /** @class */ (function () {
       }
     }
     // Check widget sizes
-    layout.widget_configuration.forEach(function (widget, index) {
-      var template = _this.getWidgetTemplate(widget.type);
+    layout.widget_configuration.forEach((widget, index) => {
+      var template = this.getWidgetTemplate(widget.type);
       if (template) {
         var _a = widget.position,
           w = _a.w,
@@ -562,9 +527,9 @@ var DashboardBuilder = /** @class */ (function () {
       }
     });
     // Check for missing KPIs
-    layout.widget_configuration.forEach(function (widget, index) {
+    layout.widget_configuration.forEach((widget, index) => {
       var _a;
-      var template = _this.getWidgetTemplate(widget.type);
+      var template = this.getWidgetTemplate(widget.type);
       if (
         template &&
         template.requiredKpis.length > 0 &&
@@ -597,11 +562,7 @@ var DashboardBuilder = /** @class */ (function () {
             template = this.getWidgetTemplate(widgetType);
             if (!template) return [2 /*return*/, false];
             categories =
-              (kpis === null || kpis === void 0
-                ? void 0
-                : kpis.map(function (k) {
-                    return k.kpi_category;
-                  })) || [];
+              (kpis === null || kpis === void 0 ? void 0 : kpis.map((k) => k.kpi_category)) || [];
             return [2 /*return*/, this.areKPICategoriesCompatible(categories, widgetType)];
           case 2:
             error_6 = _a.sent();
@@ -614,14 +575,10 @@ var DashboardBuilder = /** @class */ (function () {
     });
   };
   // Performance Optimization
-  DashboardBuilder.prototype.calculateLayoutPerformance = function (layout) {
+  DashboardBuilder.prototype.calculateLayoutPerformance = (layout) => {
     var widgetCount = layout.widget_configuration.length;
-    var chartWidgets = layout.widget_configuration.filter(function (w) {
-      return w.type === "chart";
-    }).length;
-    var tableWidgets = layout.widget_configuration.filter(function (w) {
-      return w.type === "table";
-    }).length;
+    var chartWidgets = layout.widget_configuration.filter((w) => w.type === "chart").length;
+    var tableWidgets = layout.widget_configuration.filter((w) => w.type === "table").length;
     // Estimate load time based on widget types and count
     var estimatedLoadTime = 200; // Base load time
     estimatedLoadTime += widgetCount * 50;
@@ -648,15 +605,14 @@ var DashboardBuilder = /** @class */ (function () {
     };
   };
   // Helper Methods
-  DashboardBuilder.prototype.doWidgetsOverlap = function (pos1, pos2) {
-    return !(
+  DashboardBuilder.prototype.doWidgetsOverlap = (pos1, pos2) =>
+    !(
       pos1.x + pos1.w <= pos2.x ||
       pos2.x + pos2.w <= pos1.x ||
       pos1.y + pos1.h <= pos2.y ||
       pos2.y + pos2.h <= pos1.y
     );
-  };
-  DashboardBuilder.prototype.areKPICategoriesCompatible = function (categories, widgetType) {
+  DashboardBuilder.prototype.areKPICategoriesCompatible = (categories, widgetType) => {
     var compatibilityMap = {
       kpi_card: ["revenue", "profitability", "operational", "financial_health"],
       chart: ["revenue", "profitability", "operational"],
@@ -665,113 +621,103 @@ var DashboardBuilder = /** @class */ (function () {
       summary_stats: ["revenue", "profitability", "operational", "financial_health"],
     };
     var compatibleCategories = compatibilityMap[widgetType] || [];
-    return categories.every(function (category) {
-      return compatibleCategories.includes(category);
-    });
+    return categories.every((category) => compatibleCategories.includes(category));
   };
-  DashboardBuilder.prototype.getDefaultGridLayout = function () {
-    return {
-      cols: 12,
-      rows: 20,
-      row_height: 60,
-      margin: [10, 10],
-      container_padding: [10, 10],
-      breakpoints: {
-        lg: 1200,
-        md: 996,
-        sm: 768,
-        xs: 480,
-        xxs: 0,
+  DashboardBuilder.prototype.getDefaultGridLayout = () => ({
+    cols: 12,
+    rows: 20,
+    row_height: 60,
+    margin: [10, 10],
+    container_padding: [10, 10],
+    breakpoints: {
+      lg: 1200,
+      md: 996,
+      sm: 768,
+      xs: 480,
+      xxs: 0,
+    },
+    layouts: {},
+  });
+  DashboardBuilder.prototype.getDefaultFilters = () => ({
+    time_period: {
+      start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      end_date: new Date().toISOString().split("T")[0],
+      preset: "month",
+    },
+  });
+  DashboardBuilder.prototype.initializeWidgetLibrary = () => [
+    {
+      id: "kpi_card_revenue",
+      type: "kpi_card",
+      name: "Revenue KPI Card",
+      description: "Display key revenue metrics with trend indicators",
+      category: "revenue",
+      defaultConfig: {
+        display_format: "currency",
+        comparison_enabled: true,
+        chart_type: "sparkline",
       },
-      layouts: {},
-    };
-  };
-  DashboardBuilder.prototype.getDefaultFilters = function () {
-    return {
-      time_period: {
-        start_date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-        end_date: new Date().toISOString().split("T")[0],
-        preset: "month",
+      requiredKpis: [],
+      minSize: { w: 2, h: 2 },
+      maxSize: { w: 4, h: 3 },
+    },
+    {
+      id: "chart_revenue_trend",
+      type: "chart",
+      name: "Revenue Trend Chart",
+      description: "Line chart showing revenue trends over time",
+      category: "revenue",
+      defaultConfig: {
+        chart_type: "line",
+        time_range: "month",
+        drill_down_enabled: true,
       },
-    };
-  };
-  DashboardBuilder.prototype.initializeWidgetLibrary = function () {
-    return [
-      {
-        id: "kpi_card_revenue",
-        type: "kpi_card",
-        name: "Revenue KPI Card",
-        description: "Display key revenue metrics with trend indicators",
-        category: "revenue",
-        defaultConfig: {
-          display_format: "currency",
-          comparison_enabled: true,
-          chart_type: "sparkline",
-        },
-        requiredKpis: [],
-        minSize: { w: 2, h: 2 },
-        maxSize: { w: 4, h: 3 },
+      requiredKpis: [],
+      minSize: { w: 4, h: 3 },
+      maxSize: { w: 8, h: 6 },
+    },
+    {
+      id: "table_kpi_summary",
+      type: "table",
+      name: "KPI Summary Table",
+      description: "Tabular view of multiple KPIs with sorting and filtering",
+      category: "overview",
+      defaultConfig: {
+        comparison_enabled: true,
+        drill_down_enabled: true,
       },
-      {
-        id: "chart_revenue_trend",
-        type: "chart",
-        name: "Revenue Trend Chart",
-        description: "Line chart showing revenue trends over time",
-        category: "revenue",
-        defaultConfig: {
-          chart_type: "line",
-          time_range: "month",
-          drill_down_enabled: true,
-        },
-        requiredKpis: [],
-        minSize: { w: 4, h: 3 },
-        maxSize: { w: 8, h: 6 },
+      requiredKpis: [],
+      minSize: { w: 6, h: 4 },
+      maxSize: { w: 12, h: 8 },
+    },
+    {
+      id: "alert_panel",
+      type: "alert_panel",
+      name: "KPI Alerts Panel",
+      description: "Display active alerts and threshold breaches",
+      category: "overview",
+      defaultConfig: {},
+      requiredKpis: [],
+      minSize: { w: 3, h: 3 },
+      maxSize: { w: 6, h: 6 },
+    },
+    {
+      id: "summary_stats",
+      type: "summary_stats",
+      name: "Summary Statistics",
+      description: "High-level summary with key performance indicators",
+      category: "overview",
+      defaultConfig: {
+        display_format: "number",
       },
-      {
-        id: "table_kpi_summary",
-        type: "table",
-        name: "KPI Summary Table",
-        description: "Tabular view of multiple KPIs with sorting and filtering",
-        category: "overview",
-        defaultConfig: {
-          comparison_enabled: true,
-          drill_down_enabled: true,
-        },
-        requiredKpis: [],
-        minSize: { w: 6, h: 4 },
-        maxSize: { w: 12, h: 8 },
-      },
-      {
-        id: "alert_panel",
-        type: "alert_panel",
-        name: "KPI Alerts Panel",
-        description: "Display active alerts and threshold breaches",
-        category: "overview",
-        defaultConfig: {},
-        requiredKpis: [],
-        minSize: { w: 3, h: 3 },
-        maxSize: { w: 6, h: 6 },
-      },
-      {
-        id: "summary_stats",
-        type: "summary_stats",
-        name: "Summary Statistics",
-        description: "High-level summary with key performance indicators",
-        category: "overview",
-        defaultConfig: {
-          display_format: "number",
-        },
-        requiredKpis: [],
-        minSize: { w: 4, h: 2 },
-        maxSize: { w: 8, h: 4 },
-      },
-    ];
-  };
+      requiredKpis: [],
+      minSize: { w: 4, h: 2 },
+      maxSize: { w: 8, h: 4 },
+    },
+  ];
   return DashboardBuilder;
 })();
 exports.DashboardBuilder = DashboardBuilder;
 // Export factory function instead of singleton to avoid global initialization
-var createDashboardBuilder = function () {
-  return new DashboardBuilder();
-};
+var createDashboardBuilder = () => new DashboardBuilder();
 exports.createDashboardBuilder = createDashboardBuilder;

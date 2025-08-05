@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================
 // Session Components Index - Export All Session Components
 // Story 1.4: Session Management & Security
@@ -20,30 +19,22 @@ exports.riskLevels =
 var SessionStatus_1 = require("./SessionStatus");
 Object.defineProperty(exports, "SessionStatus", {
   enumerable: true,
-  get: function () {
-    return SessionStatus_1.default;
-  },
+  get: () => SessionStatus_1.default,
 });
 var SessionWarning_1 = require("./SessionWarning");
 Object.defineProperty(exports, "SessionWarning", {
   enumerable: true,
-  get: function () {
-    return SessionWarning_1.default;
-  },
+  get: () => SessionWarning_1.default,
 });
 var DeviceManagement_1 = require("./DeviceManagement");
 Object.defineProperty(exports, "DeviceManagement", {
   enumerable: true,
-  get: function () {
-    return DeviceManagement_1.default;
-  },
+  get: () => DeviceManagement_1.default,
 });
 var SecurityDashboard_1 = require("./SecurityDashboard");
 Object.defineProperty(exports, "SecurityDashboard", {
   enumerable: true,
-  get: function () {
-    return SecurityDashboard_1.default;
-  },
+  get: () => SecurityDashboard_1.default,
 });
 // =====================================================
 // COMPONENT COLLECTIONS

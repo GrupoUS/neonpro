@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,20 +142,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -262,7 +258,7 @@ function GET(request_1, _a) {
       maxEffectiveness_1,
       error_1;
     var params = _b.params;
-    return __generator(this, function (_h) {
+    return __generator(this, (_h) => {
       switch (_h.label) {
         case 0:
           _h.trys.push([0, 15, , 16]);
@@ -346,9 +342,7 @@ function GET(request_1, _a) {
           totalCollected =
             (stats === null || stats === void 0
               ? void 0
-              : stats.reduce(function (sum, activity) {
-                  return sum + (activity.amount_collected || 0);
-                }, 0)) || 0;
+              : stats.reduce((sum, activity) => sum + (activity.amount_collected || 0), 0)) || 0;
           return [
             2 /*return*/,
             server_1.NextResponse.json({
@@ -448,7 +442,7 @@ function GET(request_1, _a) {
             });
             // Add action history
             if (workflow.action_history) {
-              workflow.action_history.forEach(function (action) {
+              workflow.action_history.forEach((action) => {
                 timeline_1.push({
                   type: "workflow_action",
                   date: action.date,
@@ -462,7 +456,7 @@ function GET(request_1, _a) {
           // Add activities
           activities === null || activities === void 0
             ? void 0
-            : activities.forEach(function (activity) {
+            : activities.forEach((activity) => {
                 timeline_1.push({
                   type: "activity",
                   date: activity.created_at,
@@ -474,9 +468,7 @@ function GET(request_1, _a) {
                 });
               });
           // Sort timeline by date
-          timeline_1.sort(function (a, b) {
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
-          });
+          timeline_1.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
           return [2 /*return*/, server_1.NextResponse.json({ data: timeline_1 })];
         case 11:
           return [
@@ -497,7 +489,7 @@ function GET(request_1, _a) {
           if (activities && activities.length > 0) {
             typeGroups_1 = {};
             totalCollected_1 = 0;
-            activities.forEach(function (activity) {
+            activities.forEach((activity) => {
               var type = activity.activity_type;
               if (!typeGroups_1[type]) {
                 typeGroups_1[type] = [];
@@ -506,11 +498,12 @@ function GET(request_1, _a) {
               totalCollected_1 += activity.amount_collected || 0;
             });
             // Calculate statistics by type
-            Object.keys(typeGroups_1).forEach(function (type) {
+            Object.keys(typeGroups_1).forEach((type) => {
               var typeActivities = typeGroups_1[type];
-              var typeCollected = typeActivities.reduce(function (sum, a) {
-                return sum + (a.amount_collected || 0);
-              }, 0);
+              var typeCollected = typeActivities.reduce(
+                (sum, a) => sum + (a.amount_collected || 0),
+                0,
+              );
               stats_1.activitiesByType[type] = {
                 count: typeActivities.length,
                 totalCollected: typeCollected,
@@ -521,7 +514,7 @@ function GET(request_1, _a) {
             stats_1.averageCollectionPerActivity = totalCollected_1 / activities.length;
             stats_1.lastActivityDate = activities[activities.length - 1].created_at;
             maxEffectiveness_1 = 0;
-            Object.keys(stats_1.activitiesByType).forEach(function (type) {
+            Object.keys(stats_1.activitiesByType).forEach((type) => {
               var typeStats = stats_1.activitiesByType[type];
               if (typeStats.averageCollected > maxEffectiveness_1) {
                 maxEffectiveness_1 = typeStats.averageCollected;
@@ -596,7 +589,7 @@ function POST(request_1, _a) {
       error,
       error_2;
     var params = _b.params;
-    return __generator(this, function (_m) {
+    return __generator(this, (_m) => {
       switch (_m.label) {
         case 0:
           _m.trys.push([0, 20, , 21]);
@@ -802,9 +795,10 @@ function POST(request_1, _a) {
           total =
             (totalCollected === null || totalCollected === void 0
               ? void 0
-              : totalCollected.reduce(function (sum, activity) {
-                  return sum + (activity.amount_collected || 0);
-                }, 0)) || 0;
+              : totalCollected.reduce(
+                  (sum, activity) => sum + (activity.amount_collected || 0),
+                  0,
+                )) || 0;
           if (!(total >= amount)) return [3 /*break*/, 14];
           return [
             4 /*yield*/,
@@ -928,7 +922,7 @@ function PUT(request_1, _a) {
       error,
       error_3;
     var params = _b.params;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 4, , 5]);
@@ -1042,7 +1036,7 @@ function DELETE(request_1, _a) {
       error,
       error_4;
     var params = _b.params;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 4, , 5]);

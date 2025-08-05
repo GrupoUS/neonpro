@@ -3,7 +3,9 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,17 +13,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Icons } from "@/components/ui/icons";
-import type { useToast } from "@/hooks/use-toast";
 import type {
   Dialog,
   DialogContent,
@@ -30,9 +21,18 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Icons } from "@/components/ui/icons";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Textarea } from "@/components/ui/textarea";
+import type { useToast } from "@/hooks/use-toast";
 
 interface Intervention {
   id: string;

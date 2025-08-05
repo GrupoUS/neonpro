@@ -1,8 +1,8 @@
 "use client";
 
-import type { createClient } from "@/lib/supabase/client";
 import type { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
+import type { createClient } from "@/lib/supabase/client";
 
 /**
  * Patient Appointments Management Hook for NeonPro

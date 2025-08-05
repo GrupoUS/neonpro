@@ -2,7 +2,6 @@
 // Keyboard shortcuts help dialog
 // Story 1.1 Task 8 - Accessibility and Keyboard Navigation
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = KeyboardShortcutsHelp;
 var badge_1 = require("@/components/ui/badge");
@@ -31,16 +30,14 @@ function KeyboardShortcutsHelp(_a) {
 
         <div className="space-y-4">
           <div className="grid gap-3">
-            {shortcuts.map(function (shortcut, index) {
-              return (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="text-sm">{shortcut.description}</span>
-                  <badge_1.Badge variant="secondary" className="font-mono">
-                    {formatShortcut(shortcut)}
-                  </badge_1.Badge>
-                </div>
-              );
-            })}
+            {shortcuts.map((shortcut, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <span className="text-sm">{shortcut.description}</span>
+                <badge_1.Badge variant="secondary" className="font-mono">
+                  {formatShortcut(shortcut)}
+                </badge_1.Badge>
+              </div>
+            ))}
           </div>
 
           <separator_1.Separator />

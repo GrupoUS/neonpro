@@ -1,5 +1,26 @@
 "use client";
 
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  FileText,
+  Filter,
+  Package,
+  PieChart,
+  Plus,
+  RefreshCw,
+  Settings,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type {
   ConsumptionTrend,
   CustomStockReport,
@@ -39,27 +60,6 @@ import type {
 } from "@/components/ui/table";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useToast } from "@/hooks/use-toast";
-import type { format } from "date-fns";
-import type { pt } from "date-fns/locale";
-import type {
-  AlertTriangle,
-  BarChart3,
-  Calendar,
-  Clock,
-  DollarSign,
-  Download,
-  Eye,
-  FileText,
-  Filter,
-  Package,
-  PieChart,
-  Plus,
-  RefreshCw,
-  Settings,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface StockReportsProps {
   className?: string;

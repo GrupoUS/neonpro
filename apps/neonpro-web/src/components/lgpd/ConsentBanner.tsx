@@ -1,9 +1,31 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type {
+  BarChart3,
+  Check,
+  Cookie,
+  ExternalLink,
+  Eye,
+  FileText,
+  Globe,
+  Info,
+  Lock,
+  Mail,
+  Settings,
+  Shield,
+  Users,
+  X,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
 import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Dialog,
@@ -13,28 +35,6 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import type {
-  Shield,
-  Cookie,
-  Eye,
-  Settings,
-  X,
-  Check,
-  Info,
-  ExternalLink,
-  FileText,
-  Lock,
-  Users,
-  BarChart3,
-  Mail,
-  Globe,
-} from "lucide-react";
 import type { useConsentBanner } from "@/hooks/useLGPD";
 import type { ConsentPurpose } from "@/types/lgpd";
 

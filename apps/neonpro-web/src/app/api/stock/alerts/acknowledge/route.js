@@ -1,18 +1,17 @@
-"use strict";
 // Stock Alerts Acknowledge API - Enhanced with QA Best Practices
 // Implementation of Story 11.4: Alert Acknowledgment with Service Layer
 // Following Senior Developer patterns and audit trail
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.OPTIONS = OPTIONS;
@@ -155,15 +152,10 @@ var AcknowledgeAlertRequestSchema = zod_1.z.object({
 function getClinicIdFromSession() {
   return __awaiter(this, void 0, void 0, function () {
     var createClient, supabase, _a, session, sessionError, userId, _b, profile, profileError;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
-          return [
-            4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/supabase/server");
-            }),
-          ];
+          return [4 /*yield*/, Promise.resolve().then(() => require("@/lib/supabase/server"))];
         case 1:
           createClient = _c.sent().createClient;
           return [4 /*yield*/, createClient()];
@@ -282,7 +274,7 @@ function POST(request) {
       acknowledgedAlert,
       duration,
       error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           startTime = Date.now();
@@ -354,20 +346,18 @@ function POST(request) {
 // ============================================================================
 function OPTIONS() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        new server_1.NextResponse(null, {
-          status: 200,
-          headers: {
-            "Access-Control-Allow-Origin":
-              process.env.NODE_ENV === "production" ? "https://neonpro.app" : "*",
-            "Access-Control-Allow-Methods": "POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            "Access-Control-Max-Age": "86400",
-          },
-        }),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      new server_1.NextResponse(null, {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin":
+            process.env.NODE_ENV === "production" ? "https://neonpro.app" : "*",
+          "Access-Control-Allow-Methods": "POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          "Access-Control-Max-Age": "86400",
+        },
+      }),
+    ]);
   });
 }

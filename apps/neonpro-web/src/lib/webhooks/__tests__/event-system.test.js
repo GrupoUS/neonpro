@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Event System Tests
  * Story 7.3: Webhook & Event System Implementation
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,7 +30,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,8 +59,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -82,9 +79,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -143,43 +140,35 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var vitest_1 = require("vitest");
 var event_system_1 = require("../event-system");
 var utils_1 = require("../utils");
 // Mock Supabase
 var mockSupabase = {
-  from: vitest_1.vi.fn(function () {
-    return {
-      insert: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
-      select: vitest_1.vi.fn().mockReturnThis(),
-      eq: vitest_1.vi.fn().mockReturnThis(),
-      order: vitest_1.vi.fn().mockReturnThis(),
-      limit: vitest_1.vi.fn().mockResolvedValue({ data: [], error: null }),
-      update: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
-      delete: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
-    };
-  }),
-  channel: vitest_1.vi.fn(function () {
-    return {
-      on: vitest_1.vi.fn().mockReturnThis(),
-      subscribe: vitest_1.vi.fn().mockResolvedValue({ error: null }),
-    };
-  }),
+  from: vitest_1.vi.fn(() => ({
+    insert: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
+    select: vitest_1.vi.fn().mockReturnThis(),
+    eq: vitest_1.vi.fn().mockReturnThis(),
+    order: vitest_1.vi.fn().mockReturnThis(),
+    limit: vitest_1.vi.fn().mockResolvedValue({ data: [], error: null }),
+    update: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
+    delete: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  channel: vitest_1.vi.fn(() => ({
+    on: vitest_1.vi.fn().mockReturnThis(),
+    subscribe: vitest_1.vi.fn().mockResolvedValue({ error: null }),
+  })),
 };
 // Mock crypto for consistent IDs in tests
-vitest_1.vi.mock("crypto", function () {
-  return {
-    randomUUID: vitest_1.vi.fn(function () {
-      return "test-uuid-123";
-    }),
-  };
-});
-(0, vitest_1.describe)("EventSystem", function () {
+vitest_1.vi.mock("crypto", () => ({
+  randomUUID: vitest_1.vi.fn(() => "test-uuid-123"),
+}));
+(0, vitest_1.describe)("EventSystem", () => {
   var eventSystem;
   var mockConfig;
-  (0, vitest_1.beforeEach)(function () {
+  (0, vitest_1.beforeEach)(() => {
     vitest_1.vi.clearAllMocks();
     mockConfig = {
       supabase: mockSupabase,
@@ -194,14 +183,14 @@ vitest_1.vi.mock("crypto", function () {
     };
     eventSystem = new event_system_1.EventSystem(mockConfig);
   });
-  (0, vitest_1.afterEach)(function () {
+  (0, vitest_1.afterEach)(() => {
     vitest_1.vi.restoreAllMocks();
   });
-  (0, vitest_1.describe)("Event Creation and Validation", function () {
-    (0, vitest_1.it)("should create a valid event with all required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Event Creation and Validation", () => {
+    (0, vitest_1.it)("should create a valid event with all required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var eventData, event;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               eventData = {
@@ -226,12 +215,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should validate event data and reject invalid events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should validate event data and reject invalid events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidEventData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidEventData = {
@@ -251,12 +240,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should set default values for optional fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should set default values for optional fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var minimalEventData, event;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               minimalEventData = {
@@ -274,12 +263,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should generate unique fingerprints for different events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should generate unique fingerprints for different events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var event1Data, event2Data, event1, event2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               event1Data = {
@@ -304,14 +293,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Event Publishing", function () {
-    (0, vitest_1.it)("should publish event and add to queue", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Event Publishing", () => {
+    (0, vitest_1.it)("should publish event and add to queue", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var eventData, eventId;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               eventData = {
@@ -328,12 +317,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle high priority events immediately", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle high priority events immediately", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var urgentEventData, eventId;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               urgentEventData = {
@@ -350,12 +339,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should prevent duplicate events using fingerprints", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should prevent duplicate events using fingerprints", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var eventData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               eventData = {
@@ -384,14 +373,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Event Subscriptions", function () {
-    (0, vitest_1.it)("should create event subscription with filters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Event Subscriptions", () => {
+    (0, vitest_1.it)("should create event subscription with filters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var subscription, subscriptionId;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               subscription = {
@@ -412,12 +401,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should update existing subscription", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should update existing subscription", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updates;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updates = {
@@ -433,11 +422,11 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should delete subscription", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, vitest_1.it)("should delete subscription", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, eventSystem.deleteSubscription("sub-123")];
@@ -450,11 +439,11 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Event Filtering", function () {
-    (0, vitest_1.it)("should filter events by type", function () {
+  (0, vitest_1.describe)("Event Filtering", () => {
+    (0, vitest_1.it)("should filter events by type", () => {
       var event = {
         id: "event-123",
         type: "patient.created",
@@ -473,7 +462,7 @@ vitest_1.vi.mock("crypto", function () {
       var matches = eventSystem.matchesFilter(event, filter);
       (0, vitest_1.expect)(matches).toBe(true);
     });
-    (0, vitest_1.it)("should filter events by clinic ID", function () {
+    (0, vitest_1.it)("should filter events by clinic ID", () => {
       var event = {
         id: "event-123",
         type: "patient.created",
@@ -492,7 +481,7 @@ vitest_1.vi.mock("crypto", function () {
       var matches = eventSystem.matchesFilter(event, filter);
       (0, vitest_1.expect)(matches).toBe(false);
     });
-    (0, vitest_1.it)("should filter events by priority", function () {
+    (0, vitest_1.it)("should filter events by priority", () => {
       var event = {
         id: "event-123",
         type: "patient.created",
@@ -511,7 +500,7 @@ vitest_1.vi.mock("crypto", function () {
       var matches = eventSystem.matchesFilter(event, filter);
       (0, vitest_1.expect)(matches).toBe(true);
     });
-    (0, vitest_1.it)("should filter events by custom data fields", function () {
+    (0, vitest_1.it)("should filter events by custom data fields", () => {
       var event = {
         id: "event-123",
         type: "patient.created",
@@ -533,11 +522,11 @@ vitest_1.vi.mock("crypto", function () {
       (0, vitest_1.expect)(matches).toBe(true);
     });
   });
-  (0, vitest_1.describe)("Event Queue Management", function () {
-    (0, vitest_1.it)("should add events to queue", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Event Queue Management", () => {
+    (0, vitest_1.it)("should add events to queue", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var event, queueSize;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               event = {
@@ -562,12 +551,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should process queue in batches", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should process queue in batches", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var i, event_1, queueSize;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               i = 0;
@@ -608,29 +597,27 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle queue overflow", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var largeQueue, event;
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, vitest_1.it)("should handle queue overflow", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _largeQueue, event;
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              largeQueue = Array.from({ length: 1001 }, function (_, i) {
-                return {
-                  id: "event-".concat(i),
-                  type: "patient.created",
-                  source: "patient-service",
-                  data: { patientId: "".concat(i) },
-                  metadata: { clinicId: "clinic-123" },
-                  priority: "normal",
-                  version: "1.0.0",
-                  timestamp: new Date(),
-                  fingerprint: "fp-".concat(i),
-                  context: {},
-                  addedAt: new Date(),
-                };
-              });
+              _largeQueue = Array.from({ length: 1001 }, (_, i) => ({
+                id: "event-".concat(i),
+                type: "patient.created",
+                source: "patient-service",
+                data: { patientId: "".concat(i) },
+                metadata: { clinicId: "clinic-123" },
+                priority: "normal",
+                version: "1.0.0",
+                timestamp: new Date(),
+                fingerprint: "fp-".concat(i),
+                context: {},
+                addedAt: new Date(),
+              }));
               event = {
                 id: "overflow-event",
                 type: "patient.created",
@@ -654,13 +641,13 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Real-time Streaming", function () {
-    (0, vitest_1.it)("should start real-time streaming", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, vitest_1.describe)("Real-time Streaming", () => {
+    (0, vitest_1.it)("should start real-time streaming", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, eventSystem.startRealTimeStreaming()];
@@ -670,11 +657,11 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should stop real-time streaming", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, vitest_1.it)("should stop real-time streaming", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, eventSystem.startRealTimeStreaming()];
@@ -692,12 +679,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle real-time event notifications", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle real-time event notifications", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockHandler, realtimeEvent;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockHandler = vitest_1.vi.fn();
@@ -722,14 +709,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Analytics and Monitoring", function () {
-    (0, vitest_1.it)("should get event analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Analytics and Monitoring", () => {
+    (0, vitest_1.it)("should get event analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startDate, endDate, analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startDate = new Date("2024-01-01");
@@ -760,12 +747,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should get system health metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should get system health metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var health;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, eventSystem.getSystemHealth()];
@@ -781,12 +768,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should track event processing metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should track event processing metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var event, metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               event = {
@@ -823,14 +810,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Error Handling", function () {
-    (0, vitest_1.it)("should handle database connection errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Error Handling", () => {
+    (0, vitest_1.it)("should handle database connection errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var eventData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase
@@ -853,12 +840,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle invalid event data gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle invalid event data gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidEventData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidEventData = {
@@ -878,12 +865,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle queue processing errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle queue processing errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var originalProcessQueue;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               originalProcessQueue = eventSystem.processQueue;
@@ -906,14 +893,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Event Utilities Integration", function () {
-    (0, vitest_1.it)("should use EventUtils for validation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Event Utilities Integration", () => {
+    (0, vitest_1.it)("should use EventUtils for validation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var validateEventSpy, eventData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               validateEventSpy = vitest_1.vi.spyOn(utils_1.EventUtils, "validateEvent");
@@ -930,12 +917,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should use EventUtils for fingerprint generation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should use EventUtils for fingerprint generation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var generateFingerprintSpy, eventData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               generateFingerprintSpy = vitest_1.vi.spyOn(
@@ -955,14 +942,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Performance Tests", function () {
-    (0, vitest_1.it)("should handle high volume of events", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Performance Tests", () => {
+    (0, vitest_1.it)("should handle high volume of events", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, eventPromises, i, eventData, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -986,12 +973,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should maintain performance under load", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should maintain performance under load", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var iterations, times, i, startTime, averageTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               iterations = 50;
@@ -1018,16 +1005,13 @@ vitest_1.vi.mock("crypto", function () {
               i++;
               return [3 /*break*/, 1];
             case 4:
-              averageTime =
-                times.reduce(function (sum, time) {
-                  return sum + time;
-                }, 0) / times.length;
+              averageTime = times.reduce((sum, time) => sum + time, 0) / times.length;
               // Average processing time should be reasonable
               (0, vitest_1.expect)(averageTime).toBeLessThan(100); // 100ms average
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

@@ -4,8 +4,8 @@
 // Created: 2025-01-26
 // =====================================================================================
 
+import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
 
 // =====================================================================================
 // MARK ALERT AS READ

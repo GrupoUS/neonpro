@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Sistema de Analytics para Notificações - NeonPro
  *
@@ -21,26 +20,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -60,13 +59,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -88,9 +87,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -162,7 +159,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationAnalytics = void 0;
 exports.createNotificationAnalytics = createNotificationAnalytics;
@@ -188,7 +185,7 @@ var MetricsConfigSchema = zod_1.z.object({
 // ================================================================================
 // NOTIFICATION ANALYTICS ENGINE
 // ================================================================================
-var NotificationAnalytics = /** @class */ (function () {
+var NotificationAnalytics = /** @class */ (() => {
   function NotificationAnalytics(config) {
     if (config === void 0) {
       config = {};
@@ -203,13 +200,8 @@ var NotificationAnalytics = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            if (!!this.supabase) return [3 /*break*/, 3];
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("@/lib/supabase/server");
-              }),
-            ];
+            if (this.supabase) return [3 /*break*/, 3];
+            return [4 /*yield*/, Promise.resolve().then(() => require("@/lib/supabase/server"))];
           case 1:
             createClient = _b.sent().createClient;
             _a = this;
@@ -275,26 +267,16 @@ var NotificationAnalytics = /** @class */ (function () {
    */
   NotificationAnalytics.prototype.calculateMetrics = function (data) {
     var totalSent = data.length;
-    var delivered = data.filter(function (n) {
-      return n.status === "delivered";
-    }).length;
-    var failed = data.filter(function (n) {
-      return n.status === "failed";
-    }).length;
-    var pending = data.filter(function (n) {
-      return n.status === "pending";
-    }).length;
-    var opened = data.filter(function (n) {
-      return n.opened_at;
-    }).length;
-    var clicked = data.filter(function (n) {
-      return n.clicked_at;
-    }).length;
-    var converted = data.filter(function (n) {
+    var delivered = data.filter((n) => n.status === "delivered").length;
+    var failed = data.filter((n) => n.status === "failed").length;
+    var pending = data.filter((n) => n.status === "pending").length;
+    var opened = data.filter((n) => n.opened_at).length;
+    var clicked = data.filter((n) => n.clicked_at).length;
+    var converted = data.filter((n) => {
       var _a;
       return (_a = n.metadata) === null || _a === void 0 ? void 0 : _a.converted;
     }).length;
-    var unsubscribed = data.filter(function (n) {
+    var unsubscribed = data.filter((n) => {
       var _a;
       return (_a = n.metadata) === null || _a === void 0 ? void 0 : _a.unsubscribed;
     }).length;
@@ -304,12 +286,10 @@ var NotificationAnalytics = /** @class */ (function () {
     var conversionRate = clicked > 0 ? (converted / clicked) * 100 : 0;
     var unsubscribeRate = delivered > 0 ? (unsubscribed / delivered) * 100 : 0;
     // Métricas de tempo
-    var deliveredNotifications = data.filter(function (n) {
-      return n.delivered_at && n.sent_at;
-    });
+    var deliveredNotifications = data.filter((n) => n.delivered_at && n.sent_at);
     var avgDeliveryTime =
       deliveredNotifications.length > 0
-        ? deliveredNotifications.reduce(function (acc, n) {
+        ? deliveredNotifications.reduce((acc, n) => {
             var delivery = new Date(n.delivered_at).getTime();
             var sent = new Date(n.sent_at).getTime();
             return acc + (delivery - sent);
@@ -317,12 +297,10 @@ var NotificationAnalytics = /** @class */ (function () {
           deliveredNotifications.length /
           1000
         : 0;
-    var respondedNotifications = data.filter(function (n) {
-      return n.opened_at && n.delivered_at;
-    });
+    var respondedNotifications = data.filter((n) => n.opened_at && n.delivered_at);
     var avgResponseTime =
       respondedNotifications.length > 0
-        ? respondedNotifications.reduce(function (acc, n) {
+        ? respondedNotifications.reduce((acc, n) => {
             var opened = new Date(n.opened_at).getTime();
             var delivered = new Date(n.delivered_at).getTime();
             return acc + (opened - delivered);
@@ -333,9 +311,7 @@ var NotificationAnalytics = /** @class */ (function () {
     // Breakdown por canal
     var channelBreakdown = this.calculateChannelBreakdown(data);
     // Métricas de custo
-    var totalCost = data.reduce(function (acc, n) {
-      return acc + (n.cost || 0);
-    }, 0);
+    var totalCost = data.reduce((acc, n) => acc + (n.cost || 0), 0);
     var costPerDelivery = delivered > 0 ? totalCost / delivered : 0;
     var roi = this.calculateROI(data);
     return {
@@ -363,29 +339,18 @@ var NotificationAnalytics = /** @class */ (function () {
   /**
    * Calcula breakdown de métricas por canal
    */
-  NotificationAnalytics.prototype.calculateChannelBreakdown = function (data) {
+  NotificationAnalytics.prototype.calculateChannelBreakdown = (data) => {
     var channels = Object.values(types_1.NotificationChannel);
     var breakdown = {};
-    channels.forEach(function (channel) {
-      var channelData = data.filter(function (n) {
-        return n.channel === channel;
-      });
+    channels.forEach((channel) => {
+      var channelData = data.filter((n) => n.channel === channel);
       var sent = channelData.length;
-      var delivered = channelData.filter(function (n) {
-        return n.status === "delivered";
-      }).length;
-      var failed = channelData.filter(function (n) {
-        return n.status === "failed";
-      }).length;
-      var engaged = channelData.filter(function (n) {
-        return n.opened_at || n.clicked_at;
-      }).length;
+      var delivered = channelData.filter((n) => n.status === "delivered").length;
+      var failed = channelData.filter((n) => n.status === "failed").length;
+      var engaged = channelData.filter((n) => n.opened_at || n.clicked_at).length;
       var engagementRate = delivered > 0 ? (engaged / delivered) * 100 : 0;
       var reliability = sent > 0 ? (delivered / sent) * 100 : 0;
-      var avgCost =
-        channelData.reduce(function (acc, n) {
-          return acc + (n.cost || 0);
-        }, 0) / sent || 0;
+      var avgCost = channelData.reduce((acc, n) => acc + (n.cost || 0), 0) / sent || 0;
       breakdown[channel] = {
         sent: sent,
         delivered: delivered,
@@ -472,20 +437,20 @@ var NotificationAnalytics = /** @class */ (function () {
    * Gera dados de série temporal
    */
   NotificationAnalytics.prototype.generateTimeSeriesData = function (data, groupBy) {
-    var _this = this;
     var grouped = new Map();
-    data.forEach(function (notification) {
+    data.forEach((notification) => {
       var date = new Date(notification.sent_at);
       var key;
       switch (groupBy) {
         case "day":
           key = date.toISOString().split("T")[0];
           break;
-        case "week":
+        case "week": {
           var weekStart = new Date(date);
           weekStart.setDate(date.getDate() - date.getDay());
           key = weekStart.toISOString().split("T")[0];
           break;
+        }
         case "month":
           key = ""
             .concat(date.getFullYear(), "-")
@@ -506,8 +471,8 @@ var NotificationAnalytics = /** @class */ (function () {
       grouped.get(key).push(notification);
     });
     var result = [];
-    grouped.forEach(function (notifications, key) {
-      var metrics = _this.calculateMetrics(notifications);
+    grouped.forEach((notifications, key) => {
+      var metrics = this.calculateMetrics(notifications);
       result.push(
         {
           timestamp: new Date(key),
@@ -531,9 +496,7 @@ var NotificationAnalytics = /** @class */ (function () {
         },
       );
     });
-    return result.sort(function (a, b) {
-      return a.timestamp.getTime() - b.timestamp.getTime();
-    });
+    return result.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   };
   // ================================================================================
   // PREDICTIVE ANALYTICS
@@ -575,9 +538,9 @@ var NotificationAnalytics = /** @class */ (function () {
       });
     });
   };
-  NotificationAnalytics.prototype.calculateBestSendTime = function (data) {
+  NotificationAnalytics.prototype.calculateBestSendTime = (data) => {
     var hourlyEngagement = new Map();
-    data.forEach(function (notification) {
+    data.forEach((notification) => {
       if (notification.opened_at || notification.clicked_at) {
         var hour = new Date(notification.sent_at).getHours();
         var current = hourlyEngagement.get(hour) || { sent: 0, engaged: 0 };
@@ -590,7 +553,7 @@ var NotificationAnalytics = /** @class */ (function () {
     });
     var bestHour = 10;
     var bestRate = 0;
-    hourlyEngagement.forEach(function (_a, hour) {
+    hourlyEngagement.forEach((_a, hour) => {
       var sent = _a.sent,
         engaged = _a.engaged;
       var rate = sent > 0 ? engaged / sent : 0;
@@ -601,24 +564,18 @@ var NotificationAnalytics = /** @class */ (function () {
     });
     return "".concat(String(bestHour).padStart(2, "0"), ":00");
   };
-  NotificationAnalytics.prototype.calculatePreferredChannel = function (data) {
+  NotificationAnalytics.prototype.calculatePreferredChannel = (data) => {
     var channelPerformance = new Map();
-    Object.values(types_1.NotificationChannel).forEach(function (channel) {
-      var channelData = data.filter(function (n) {
-        return n.channel === channel;
-      });
-      var delivered = channelData.filter(function (n) {
-        return n.status === "delivered";
-      }).length;
-      var engaged = channelData.filter(function (n) {
-        return n.opened_at || n.clicked_at;
-      }).length;
+    Object.values(types_1.NotificationChannel).forEach((channel) => {
+      var channelData = data.filter((n) => n.channel === channel);
+      var delivered = channelData.filter((n) => n.status === "delivered").length;
+      var engaged = channelData.filter((n) => n.opened_at || n.clicked_at).length;
       var engagementRate = delivered > 0 ? engaged / delivered : 0;
       channelPerformance.set(channel, engagementRate);
     });
     var bestChannel = types_1.NotificationChannel.EMAIL;
     var bestRate = 0;
-    channelPerformance.forEach(function (rate, channel) {
+    channelPerformance.forEach((rate, channel) => {
       if (rate > bestRate) {
         bestRate = rate;
         bestChannel = channel;
@@ -626,39 +583,31 @@ var NotificationAnalytics = /** @class */ (function () {
     });
     return bestChannel;
   };
-  NotificationAnalytics.prototype.calculateEngagementProbability = function (data) {
-    var recentData = data.filter(function (n) {
+  NotificationAnalytics.prototype.calculateEngagementProbability = (data) => {
+    var recentData = data.filter((n) => {
       var sentDate = new Date(n.sent_at);
       var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       return sentDate >= thirtyDaysAgo;
     });
     if (recentData.length === 0) return 0.5;
-    var delivered = recentData.filter(function (n) {
-      return n.status === "delivered";
-    }).length;
-    var engaged = recentData.filter(function (n) {
-      return n.opened_at || n.clicked_at;
-    }).length;
+    var delivered = recentData.filter((n) => n.status === "delivered").length;
+    var engaged = recentData.filter((n) => n.opened_at || n.clicked_at).length;
     return delivered > 0 ? Math.min(engaged / delivered, 1) : 0.5;
   };
-  NotificationAnalytics.prototype.calculateChurnRisk = function (data) {
-    var last30Days = data.filter(function (n) {
+  NotificationAnalytics.prototype.calculateChurnRisk = (data) => {
+    var last30Days = data.filter((n) => {
       var sentDate = new Date(n.sent_at);
       var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       return sentDate >= thirtyDaysAgo;
     });
-    var last60Days = data.filter(function (n) {
+    var last60Days = data.filter((n) => {
       var sentDate = new Date(n.sent_at);
       var sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000);
       var thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       return sentDate >= sixtyDaysAgo && sentDate < thirtyDaysAgo;
     });
-    var recent = last30Days.filter(function (n) {
-      return n.opened_at || n.clicked_at;
-    }).length;
-    var previous = last60Days.filter(function (n) {
-      return n.opened_at || n.clicked_at;
-    }).length;
+    var recent = last30Days.filter((n) => n.opened_at || n.clicked_at).length;
+    var previous = last60Days.filter((n) => n.opened_at || n.clicked_at).length;
     if (previous === 0) return 0.5;
     var engagementChange = (recent - previous) / previous;
     return Math.max(0, Math.min(1, -engagementChange));
@@ -685,7 +634,7 @@ var NotificationAnalytics = /** @class */ (function () {
   /**
    * Gera recomendações baseadas nas métricas e tendências
    */
-  NotificationAnalytics.prototype.generateRecommendations = function (metrics, trends) {
+  NotificationAnalytics.prototype.generateRecommendations = (metrics, trends) => {
     var recommendations = [];
     // Análise de performance geral
     if (metrics.deliveryRate < 90) {
@@ -713,7 +662,7 @@ var NotificationAnalytics = /** @class */ (function () {
       );
     }
     // Análise de canais
-    Object.entries(metrics.channelBreakdown).forEach(function (_a) {
+    Object.entries(metrics.channelBreakdown).forEach((_a) => {
       var channel = _a[0],
         channelMetrics = _a[1];
       if (channelMetrics.reliability < 85) {
@@ -747,9 +696,7 @@ var NotificationAnalytics = /** @class */ (function () {
     }
     // Análise de tendências
     var recentTrends = trends.slice(-7); // Últimos 7 pontos
-    var deliveryTrend = recentTrends.filter(function (t) {
-      return t.metric === "delivery_rate";
-    });
+    var deliveryTrend = recentTrends.filter((t) => t.metric === "delivery_rate");
     if (deliveryTrend.length >= 2) {
       var isDecreasing = deliveryTrend[deliveryTrend.length - 1].value < deliveryTrend[0].value;
       if (isDecreasing) {
@@ -774,11 +721,9 @@ var NotificationAnalytics = /** @class */ (function () {
   /**
    * Calcula ROI das notificações
    */
-  NotificationAnalytics.prototype.calculateROI = function (data) {
-    var totalCost = data.reduce(function (acc, n) {
-      return acc + (n.cost || 0);
-    }, 0);
-    var totalRevenue = data.reduce(function (acc, n) {
+  NotificationAnalytics.prototype.calculateROI = (data) => {
+    var totalCost = data.reduce((acc, n) => acc + (n.cost || 0), 0);
+    var totalRevenue = data.reduce((acc, n) => {
       var _a;
       return acc + (((_a = n.metadata) === null || _a === void 0 ? void 0 : _a.revenue) || 0);
     }, 0);

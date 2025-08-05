@@ -1,4 +1,3 @@
-"use strict";
 // Analytics Core Types - STORY-SUB-002 Task 2
 // Created: 2025-01-22
 // High-performance TypeScript interfaces for analytics service layer

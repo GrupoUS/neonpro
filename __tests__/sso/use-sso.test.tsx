@@ -1,9 +1,9 @@
 // useSSO Hook Tests
 // Story 1.3: SSO Integration - React Hook Testing
 
-import { renderHook, act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { useSSO } from "@/hooks/use-sso";
-import { SSOProvider } from "@/types/sso";
+import type { SSOProvider } from "@/types/sso";
 
 // Mock fetch
 global.fetch = jest.fn();

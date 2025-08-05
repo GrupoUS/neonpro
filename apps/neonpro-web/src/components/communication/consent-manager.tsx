@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Check, X, AlertCircle, Clock, Shield } from "lucide-react";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertCircle, Check, Clock, Shield, X } from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Switch } from "@/components/ui/switch";
-import type { Separator } from "@/components/ui/separator";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
   Dialog,
   DialogContent,
@@ -17,12 +18,12 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { CommunicationConsent } from "@/types/communication";
-import type { createClient } from "@/lib/supabase/client";
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
 import type { useToast } from "@/hooks/use-toast";
-import type { formatDistanceToNow } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { createClient } from "@/lib/supabase/client";
 import type { cn } from "@/lib/utils";
+import type { CommunicationConsent } from "@/types/communication";
 
 export interface ConsentManagerProps {
   patientId: string;

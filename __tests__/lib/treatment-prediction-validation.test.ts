@@ -9,19 +9,17 @@
  * - Feature engineering and explainability data
  */
 
-import { describe, test, expect } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 import {
-  PredictionModelSchema,
-  TreatmentPredictionSchema,
-  TreatmentCharacteristicsSchema,
-  ModelPerformanceMetricsSchema,
-  ConfidenceIntervalSchema,
-  ExplainabilityDataSchema,
-  PredictionRequestSchema,
   BatchPredictionRequestSchema,
-  PredictionFeedbackSchema,
-  PredictionFeaturesSchema,
+  ExplainabilityDataSchema,
   MedicalHistorySchema,
+  PredictionFeaturesSchema,
+  PredictionFeedbackSchema,
+  PredictionModelSchema,
+  PredictionRequestSchema,
+  TreatmentCharacteristicsSchema,
+  TreatmentPredictionSchema,
 } from "@/app/lib/validations/treatment-prediction";
 
 describe("Treatment Prediction Validation Schemas", () => {

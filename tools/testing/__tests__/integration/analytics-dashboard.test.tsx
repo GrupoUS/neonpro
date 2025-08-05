@@ -1,15 +1,15 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { setupServer } from "msw/node";
 import { rest } from "msw";
+import { setupServer } from "msw/node";
+import { mockAnalyticsData } from "@/../../__tests__/utils/mockData";
 import AnalyticsDashboard from "@/components/dashboard/AnalyticsDashboard";
-import { mockAnalyticsData, mockExportData } from "@/../../__tests__/utils/mockData";
 
 // MSW server setup for API mocking
 const server = setupServer(
   // Mock analytics data endpoint
-  rest.get("/api/analytics/data", (req, res, ctx) => {
+  rest.get("/api/analytics/data", (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json(mockAnalyticsData));
   }),
 
@@ -48,7 +48,7 @@ const server = setupServer(
   }),
 
   // Mock error scenarios
-  rest.get("/api/analytics/data-error", (req, res, ctx) => {
+  rest.get("/api/analytics/data-error", (_req, res, ctx) => {
     return res(ctx.status(500), ctx.json({ error: "Database connection failed" }));
   }),
 );
@@ -109,7 +109,7 @@ describe("Analytics Dashboard Integration", () => {
     server.use(
       rest.get("/api/analytics/data", (req, res, ctx) => {
         const startDate = req.url.searchParams.get("startDate");
-        const endDate = req.url.searchParams.get("endDate");
+        const _endDate = req.url.searchParams.get("endDate");
 
         // Return different data based on date range
         const filteredData = {
@@ -151,7 +151,7 @@ describe("Analytics Dashboard Integration", () => {
   it("should handle API errors gracefully", async () => {
     // Mock API error
     server.use(
-      rest.get("/api/analytics/data", (req, res, ctx) => {
+      rest.get("/api/analytics/data", (_req, res, ctx) => {
         return res(ctx.status(500), ctx.json({ error: "Database connection failed" }));
       }),
     );
@@ -173,7 +173,7 @@ describe("Analytics Dashboard Integration", () => {
 
     // Mock export error
     server.use(
-      rest.post("/api/analytics/export", (req, res, ctx) => {
+      rest.post("/api/analytics/export", (_req, res, ctx) => {
         return res(ctx.status(500), ctx.json({ error: "Export service unavailable" }));
       }),
     );
@@ -251,7 +251,7 @@ describe("Analytics Dashboard Integration", () => {
 
     // Mock API with changing data
     server.use(
-      rest.get("/api/analytics/data", (req, res, ctx) => {
+      rest.get("/api/analytics/data", (_req, res, ctx) => {
         callCount++;
         const data = {
           ...mockAnalyticsData,
@@ -281,7 +281,7 @@ describe("Analytics Dashboard Integration", () => {
   it("should handle offline/network errors", async () => {
     // Mock network error
     server.use(
-      rest.get("/api/analytics/data", (req, res, ctx) => {
+      rest.get("/api/analytics/data", (_req, res, _ctx) => {
         return res.networkError("Network connection failed");
       }),
     );

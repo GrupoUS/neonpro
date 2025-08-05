@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { RegulatoryDocumentsList } from "@/components/regulatory-documents/regulatory-documents-list";
 import { useRegulatoryDocuments } from "@/hooks/use-regulatory-documents";
 

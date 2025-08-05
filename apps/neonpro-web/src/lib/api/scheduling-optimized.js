@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Optimized Scheduling API Layer - PERF-02 Implementation
  * Healthcare-compliant conflict resolution with ≥50% API call reduction
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useConflictStream =
   exports.useOptimizedConflicts =
@@ -159,7 +156,7 @@ exports.useConflictStream =
     void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 // Optimized Cache Manager with TTL and invalidation
-var OptimizedCacheManager = /** @class */ (function () {
+var OptimizedCacheManager = /** @class */ (() => {
   function OptimizedCacheManager() {
     this.cache = new Map();
     this.maxSize = 1000; // Maximum cache entries
@@ -214,7 +211,7 @@ var OptimizedCacheManager = /** @class */ (function () {
   return OptimizedCacheManager;
 })();
 // Request Batch Manager
-var BatchRequestManager = /** @class */ (function () {
+var BatchRequestManager = /** @class */ (() => {
   function BatchRequestManager() {
     this.batchQueue = [];
     this.batchTimer = null;
@@ -222,15 +219,14 @@ var BatchRequestManager = /** @class */ (function () {
     this.batchDelay = 100; // 100ms batch window
   }
   BatchRequestManager.prototype.addToBatch = function (request) {
-    var _this = this;
-    return new Promise(function (resolve, reject) {
-      _this.batchQueue.push(__assign(__assign({}, request), { resolve: resolve, reject: reject }));
-      if (_this.batchTimer) {
-        clearTimeout(_this.batchTimer);
+    return new Promise((resolve, reject) => {
+      this.batchQueue.push(__assign(__assign({}, request), { resolve: resolve, reject: reject }));
+      if (this.batchTimer) {
+        clearTimeout(this.batchTimer);
       }
-      _this.batchTimer = setTimeout(function () {
-        _this.processBatch();
-      }, _this.batchDelay);
+      this.batchTimer = setTimeout(() => {
+        this.processBatch();
+      }, this.batchDelay);
     });
   };
   BatchRequestManager.prototype.processBatch = function () {
@@ -247,7 +243,7 @@ var BatchRequestManager = /** @class */ (function () {
             return [4 /*yield*/, this.executeBatchRequest(batch)];
           case 2:
             batchResults_1 = _a.sent();
-            batch.forEach(function (request, index) {
+            batch.forEach((request, index) => {
               if (batchResults_1[index]) {
                 request.resolve(batchResults_1[index]);
               } else {
@@ -257,7 +253,7 @@ var BatchRequestManager = /** @class */ (function () {
             return [3 /*break*/, 4];
           case 3:
             error_1 = _a.sent();
-            batch.forEach(function (request) {
+            batch.forEach((request) => {
               request.reject(error_1);
             });
             return [3 /*break*/, 4];
@@ -287,7 +283,7 @@ var BatchRequestManager = /** @class */ (function () {
               process.env.NEXT_PUBLIC_SUPABASE_URL,
               process.env.SUPABASE_SERVICE_ROLE_KEY,
             );
-            groupedRequests = batch.reduce(function (acc, req) {
+            groupedRequests = batch.reduce((acc, req) => {
               if (!acc[req.type]) acc[req.type] = [];
               acc[req.type].push(req);
               return acc;
@@ -321,9 +317,7 @@ var BatchRequestManager = /** @class */ (function () {
           case 6:
             results.push.apply(
               results,
-              requests.map(function () {
-                return null;
-              }),
+              requests.map(() => null),
             );
             _d.label = 7;
           case 7:
@@ -338,12 +332,10 @@ var BatchRequestManager = /** @class */ (function () {
   BatchRequestManager.prototype.batchConflictCheck = function (supabase, requests) {
     return __awaiter(this, void 0, void 0, function () {
       var appointmentIds, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
-            appointmentIds = requests.map(function (req) {
-              return req.params.appointmentId;
-            });
+            appointmentIds = requests.map((req) => req.params.appointmentId);
             return [
               4 /*yield*/,
               supabase
@@ -359,13 +351,11 @@ var BatchRequestManager = /** @class */ (function () {
             if (error) throw error;
             return [
               2 /*return*/,
-              requests.map(function (req) {
-                return (
-                  data.find(function (conflict) {
-                    return conflict.appointment_id === req.params.appointmentId;
-                  }) || null
-                );
-              }),
+              requests.map(
+                (req) =>
+                  data.find((conflict) => conflict.appointment_id === req.params.appointmentId) ||
+                  null,
+              ),
             ];
         }
       });
@@ -374,12 +364,10 @@ var BatchRequestManager = /** @class */ (function () {
   BatchRequestManager.prototype.batchResolutionValidation = function (supabase, requests) {
     return __awaiter(this, void 0, void 0, function () {
       var conflictIds, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
-            conflictIds = requests.map(function (req) {
-              return req.params.conflictId;
-            });
+            conflictIds = requests.map((req) => req.params.conflictId);
             return [
               4 /*yield*/,
               supabase
@@ -393,13 +381,11 @@ var BatchRequestManager = /** @class */ (function () {
             if (error) throw error;
             return [
               2 /*return*/,
-              requests.map(function (req) {
-                return (
-                  data.find(function (resolution) {
-                    return resolution.conflict_id === req.params.conflictId;
-                  }) || null
-                );
-              }),
+              requests.map(
+                (req) =>
+                  data.find((resolution) => resolution.conflict_id === req.params.conflictId) ||
+                  null,
+              ),
             ];
         }
       });
@@ -408,7 +394,7 @@ var BatchRequestManager = /** @class */ (function () {
   return BatchRequestManager;
 })();
 // Request Deduplication Manager
-var RequestDeduplicationManager = /** @class */ (function () {
+var RequestDeduplicationManager = /** @class */ (() => {
   function RequestDeduplicationManager() {
     this.activeRequests = new Map();
   }
@@ -420,7 +406,7 @@ var RequestDeduplicationManager = /** @class */ (function () {
         if (this.activeRequests.has(key)) {
           return [2 /*return*/, this.activeRequests.get(key)];
         }
-        promise = requestFn().finally(function () {
+        promise = requestFn().finally(() => {
           _this.activeRequests.delete(key);
         });
         this.activeRequests.set(key, promise);
@@ -433,7 +419,7 @@ var RequestDeduplicationManager = /** @class */ (function () {
   };
   return RequestDeduplicationManager;
 })(); // Main Optimized Scheduling API Class
-var OptimizedSchedulingAPI = /** @class */ (function () {
+var OptimizedSchedulingAPI = /** @class */ (() => {
   function OptimizedSchedulingAPI() {
     this.cache = new OptimizedCacheManager();
     this.batchManager = new BatchRequestManager();
@@ -485,8 +471,8 @@ var OptimizedSchedulingAPI = /** @class */ (function () {
             requestKey = "get-conflicts-".concat(cacheKey);
             return [
               4 /*yield*/,
-              this.deduplicationManager.deduplicate(requestKey, function () {
-                return __awaiter(_this, void 0, void 0, function () {
+              this.deduplicationManager.deduplicate(requestKey, () =>
+                __awaiter(_this, void 0, void 0, function () {
                   var query, now, startDate, _a, data, error, transformedData;
                   return __generator(this, function (_b) {
                     switch (_b.label) {
@@ -548,38 +534,34 @@ var OptimizedSchedulingAPI = /** @class */ (function () {
                         if (error) {
                           throw new Error("Database error: ".concat(error.message));
                         }
-                        transformedData = data.map(function (conflict) {
-                          return {
-                            id: conflict.id,
-                            type: conflict.type,
-                            severity: conflict.severity,
-                            appointmentId: conflict.appointment_id,
-                            patientId: conflict.appointments.patients.id,
-                            professionalId: conflict.appointments.professionals.id,
-                            conflictTime: conflict.conflict_time,
-                            description: conflict.description,
-                            suggestedResolutions: conflict.conflict_resolutions.map(function (res) {
-                              return {
-                                id: res.id,
-                                type: res.resolution_type,
-                                description: res.description,
-                                impact: res.impact_description,
-                                estimatedTime: res.estimated_time_minutes,
-                                complianceImpact: res.compliance_impact,
-                              };
-                            }),
-                            metadata: {
-                              lgpdConsent: conflict.lgpd_consent || false,
-                              clinicalPriority: conflict.clinical_priority || 0,
-                              emergencyFlag: conflict.emergency_flag || false,
-                            },
-                          };
-                        });
+                        transformedData = data.map((conflict) => ({
+                          id: conflict.id,
+                          type: conflict.type,
+                          severity: conflict.severity,
+                          appointmentId: conflict.appointment_id,
+                          patientId: conflict.appointments.patients.id,
+                          professionalId: conflict.appointments.professionals.id,
+                          conflictTime: conflict.conflict_time,
+                          description: conflict.description,
+                          suggestedResolutions: conflict.conflict_resolutions.map((res) => ({
+                            id: res.id,
+                            type: res.resolution_type,
+                            description: res.description,
+                            impact: res.impact_description,
+                            estimatedTime: res.estimated_time_minutes,
+                            complianceImpact: res.compliance_impact,
+                          })),
+                          metadata: {
+                            lgpdConsent: conflict.lgpd_consent || false,
+                            clinicalPriority: conflict.clinical_priority || 0,
+                            emergencyFlag: conflict.emergency_flag || false,
+                          },
+                        }));
                         return [2 /*return*/, transformedData];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 1:
             data = _a.sent();
@@ -741,7 +723,6 @@ var OptimizedSchedulingAPI = /** @class */ (function () {
   };
   // Real-time conflict monitoring with optimized updates
   OptimizedSchedulingAPI.prototype.createConflictStream = function (filters, onConflict, onError) {
-    var _this = this;
     if (filters === void 0) {
       filters = {};
     }
@@ -755,7 +736,7 @@ var OptimizedSchedulingAPI = /** @class */ (function () {
           table: "schedule_conflicts",
           filter: "status=eq.active",
         },
-        function (payload) {
+        (payload) => {
           // Transform and emit new conflicts
           var conflict = {
             id: payload.new.id,
@@ -774,12 +755,12 @@ var OptimizedSchedulingAPI = /** @class */ (function () {
             },
           };
           // Invalidate relevant caches
-          _this.cache.invalidate("conflicts");
-          _this.cache.invalidate("conflict-check-".concat(conflict.appointmentId));
+          this.cache.invalidate("conflicts");
+          this.cache.invalidate("conflict-check-".concat(conflict.appointmentId));
           onConflict(conflict);
         },
       )
-      .subscribe(function (status) {
+      .subscribe((status) => {
         if (status === "SUBSCRIBED") {
           console.log("Conflict stream connected");
         } else if (status === "CHANNEL_ERROR") {
@@ -787,8 +768,8 @@ var OptimizedSchedulingAPI = /** @class */ (function () {
         }
       });
     // Return cleanup function
-    return function () {
-      _this.supabase.removeChannel(channel);
+    return () => {
+      this.supabase.removeChannel(channel);
     };
   };
   // Performance metrics and cache statistics
@@ -864,14 +845,14 @@ exports.OptimizedSchedulingAPI = OptimizedSchedulingAPI;
 // Singleton instance for global use
 exports.optimizedSchedulingAPI = new OptimizedSchedulingAPI();
 // Utility functions for React hooks
-var useOptimizedConflicts = function (filters) {
+var useOptimizedConflicts = (filters) => {
   if (filters === void 0) {
     filters = {};
   }
   return exports.optimizedSchedulingAPI.getConflicts(filters);
 };
 exports.useOptimizedConflicts = useOptimizedConflicts;
-var useConflictStream = function (filters, onConflict, onError) {
+var useConflictStream = (filters, onConflict, onError) => {
   if (filters === void 0) {
     filters = {};
   }

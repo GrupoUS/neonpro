@@ -1,7 +1,5 @@
 "use client";
 
-import type { useEffect, useCallback, useRef, useState } from "react";
-
 // =====================================================================================
 // MEMORY MONITORING SYSTEM
 // Real-time memory leak detection and optimization
@@ -116,7 +114,7 @@ export class MemoryMonitor {
       if (!this.listenerRegistry.has(this)) {
         this.listenerRegistry.set(this, new Set());
       }
-      this.listenerRegistry.get(this)!.add(type);
+      this.listenerRegistry.get(this)?.add(type);
       return originalAddEventListener.call(this, type, listener, options);
     }.bind(this);
 
@@ -205,7 +203,7 @@ export class MemoryMonitor {
     return "stable";
   }
 
-  private detectMemoryLeak(currentUsage: number): boolean {
+  private detectMemoryLeak(_currentUsage: number): boolean {
     if (this.snapshots.length < 5) return false;
 
     const windowStart = Date.now() - this.config.leakDetectionWindow;
@@ -442,7 +440,7 @@ export class MemoryMonitor {
 
     // Calculate stability (coefficient of variation)
     const variance =
-      usages.reduce((sum, val) => sum + Math.pow(val - averageUsage, 2), 0) / usages.length;
+      usages.reduce((sum, val) => sum + (val - averageUsage) ** 2, 0) / usages.length;
     const standardDeviation = Math.sqrt(variance);
     const coefficientOfVariation = standardDeviation / averageUsage;
 
@@ -613,7 +611,7 @@ export function formatBytes(bytes: number): string {
   const k = 1024;
   const sizes = ["B", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
 }
 
 export function createMemoryProfiler() {

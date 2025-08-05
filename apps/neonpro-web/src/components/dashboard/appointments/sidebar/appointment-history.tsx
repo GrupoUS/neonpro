@@ -4,25 +4,25 @@
 
 "use client";
 
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type {
-  History,
-  Plus,
-  Edit,
-  X,
-  CheckCircle,
-  Calendar,
-  Clock,
-  User,
-  FileText,
-  Loader2,
-} from "lucide-react";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
+import type {
+  Calendar,
+  CheckCircle,
+  Clock,
+  Edit,
+  FileText,
+  History,
+  Loader2,
+  Plus,
+  User,
+  X,
+} from "lucide-react";
 import type { AppointmentHistoryEntry } from "@/app/lib/types/appointments";
+import type { Badge } from "@/components/ui/badge";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
 
 // Action configuration with icons and colors
 const actionConfig = {

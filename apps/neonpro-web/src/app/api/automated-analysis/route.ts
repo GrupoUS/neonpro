@@ -1,11 +1,7 @@
 // app/api/automated-analysis/route.ts
 // Main API endpoints for Story 10.1: Automated Before/After Analysis
 
-import type { createautomatedBeforeAfterAnalysisService } from "@/app/lib/services/automated-before-after-analysis";
-import type { validationSchemas } from "@/app/lib/validations/automated-before-after-analysis";
-import type { cookies } from "next/headers";
-import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // GET /api/automated-analysis - Get analysis sessions with filters
 export async function GET(request: NextRequest) {

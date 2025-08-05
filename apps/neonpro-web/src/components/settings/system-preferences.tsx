@@ -1,9 +1,12 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type { Bell, CheckCircle2, Globe, Loader2, Palette, Save, Settings } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import * as z from "zod";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -21,8 +24,6 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Button } from "@/components/ui/button";
-import type { Switch } from "@/components/ui/switch";
 import type {
   Select,
   SelectContent,
@@ -30,8 +31,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Settings, Bell, Palette, Globe, Save, Loader2, CheckCircle2 } from "lucide-react";
-import type { toast } from "sonner";
+import type { Switch } from "@/components/ui/switch";
 
 const systemPreferencesSchema = z.object({
   // UI Preferences

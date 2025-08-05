@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { pixIntegration } from "@/lib/payments/gateways/pix-integration";
 import { createClient } from "@/lib/supabase/server";
 

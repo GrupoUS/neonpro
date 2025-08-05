@@ -1,12 +1,13 @@
 "use client";
 
-import type { useState } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type { Shield, Download, Eye, EyeOff, Check, X, AlertTriangle } from "lucide-react";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
-
+import type { AlertTriangle, Check, Download, Eye, EyeOff, Shield, X } from "lucide-react";
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -15,8 +16,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Form,
   FormControl,
@@ -26,6 +25,7 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
 import type {
   Select,
   SelectContent,
@@ -33,10 +33,9 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { consentSchema, type ConsentFormData } from "@/lib/healthcare/schemas";
+import type { Textarea } from "@/components/ui/textarea";
+import type { ConsentFormData, consentSchema } from "@/lib/healthcare/schemas";
 import type { formatCpf } from "@/lib/utils";
-import type { toast } from "sonner";
 
 interface ConsentRecord {
   id: string;

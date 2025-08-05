@@ -257,7 +257,7 @@ class BaselineManager {
 
     // Calculate confidence level based on sample size and variance
     const variance =
-      measurements.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / measurements.length;
+      measurements.reduce((sum, val) => sum + (val - mean) ** 2, 0) / measurements.length;
     const standardDeviation = Math.sqrt(variance);
     const coefficientOfVariation = standardDeviation / mean;
 

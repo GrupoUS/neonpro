@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,28 +142,22 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var globals_1 = require("@jest/globals");
 var ProfessionalPerformanceDashboard_1 = require("@/components/dashboard/ProfessionalPerformanceDashboard");
 var professionals_1 = require("@/lib/supabase/professionals");
 // Mock the dependencies
-globals_1.jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: globals_1.jest.fn(),
-        back: globals_1.jest.fn(),
-      };
-    },
-  };
-});
-globals_1.jest.mock("@/lib/supabase/professionals", function () {
-  return {
-    getProfessionalPerformanceMetrics: globals_1.jest.fn(),
-  };
-});
+globals_1.jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: globals_1.jest.fn(),
+    back: globals_1.jest.fn(),
+  }),
+}));
+globals_1.jest.mock("@/lib/supabase/professionals", () => ({
+  getProfessionalPerformanceMetrics: globals_1.jest.fn(),
+}));
 // Mock data
 var mockPerformanceMetrics = [
   {
@@ -224,15 +215,15 @@ var mockProfessional = {
   family_name: "Silva",
   qualification: "Dermatologista",
 };
-describe("ProfessionalPerformanceDashboard", function () {
-  beforeEach(function () {
+describe("ProfessionalPerformanceDashboard", () => {
+  beforeEach(() => {
     globals_1.jest.clearAllMocks();
     professionals_1.getProfessionalPerformanceMetrics.mockResolvedValue(mockPerformanceMetrics);
   });
-  describe("Component Rendering", function () {
-    it("should render dashboard header", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Component Rendering", () => {
+    it("should render dashboard header", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           (0, react_1.render)(
             <ProfessionalPerformanceDashboard_1.default professional={mockProfessional} />,
           );
@@ -242,18 +233,17 @@ describe("ProfessionalPerformanceDashboard", function () {
           ).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    it("should render time period selector", function () {
+      }));
+    it("should render time period selector", () => {
       (0, react_1.render)(
         <ProfessionalPerformanceDashboard_1.default professional={mockProfessional} />,
       );
       expect(react_1.screen.getByText("Período:")).toBeInTheDocument();
       expect(react_1.screen.getByRole("combobox")).toBeInTheDocument();
     });
-    it("should render performance overview cards", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    it("should render performance overview cards", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -261,7 +251,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Satisfação do Paciente")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Taxa de Conclusão")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Receita Gerada")).toBeInTheDocument();
@@ -273,11 +263,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should render charts section", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should render charts section", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -285,7 +274,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Tendências de Performance")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Distribuição de Métricas")).toBeInTheDocument();
                 }),
@@ -295,11 +284,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should render metrics table", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should render metrics table", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -307,7 +295,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Histórico de Métricas")).toBeInTheDocument();
                   expect(react_1.screen.getByRole("table")).toBeInTheDocument();
                 }),
@@ -317,13 +305,12 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Data Loading", function () {
-    it("should load performance metrics on mount", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Data Loading", () => {
+    it("should load performance metrics on mount", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -331,7 +318,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionalPerformanceMetrics).toHaveBeenCalledWith(
                     "1",
                   );
@@ -342,11 +329,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle loading error", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle loading error", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.getProfessionalPerformanceMetrics.mockRejectedValue(
@@ -357,7 +343,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByText("Erro ao carregar métricas de performance"),
                   ).toBeInTheDocument();
@@ -368,24 +354,21 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display loading state", function () {
-      professionals_1.getProfessionalPerformanceMetrics.mockImplementation(function () {
-        return new Promise(function (resolve) {
-          return setTimeout(resolve, 1000);
-        });
-      });
+      }));
+    it("should display loading state", () => {
+      professionals_1.getProfessionalPerformanceMetrics.mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 1000)),
+      );
       (0, react_1.render)(
         <ProfessionalPerformanceDashboard_1.default professional={mockProfessional} />,
       );
       expect(react_1.screen.getByText("Carregando métricas...")).toBeInTheDocument();
     });
   });
-  describe("Performance Metrics Display", function () {
-    it("should display patient satisfaction metric correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Performance Metrics Display", () => {
+    it("should display patient satisfaction metric correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -393,7 +376,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("4.8")).toBeInTheDocument();
                   expect(react_1.screen.getByText("/5.0")).toBeInTheDocument();
                 }),
@@ -403,11 +386,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display completion rate as percentage", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should display completion rate as percentage", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -415,7 +397,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("95.5%")).toBeInTheDocument();
                 }),
               ];
@@ -424,11 +406,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display revenue with currency formatting", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should display revenue with currency formatting", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -436,7 +417,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("R$ 45.000,00")).toBeInTheDocument();
                 }),
               ];
@@ -445,11 +426,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display development hours", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should display development hours", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -457,7 +437,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("40")).toBeInTheDocument();
                   expect(react_1.screen.getByText("horas")).toBeInTheDocument();
                 }),
@@ -467,11 +447,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should show trend indicators", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should show trend indicators", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -479,7 +458,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   // Look for trend icons (up/down arrows)
                   var trendIcons = react_1.screen.getAllByTestId(/trend-icon/);
                   expect(trendIcons.length).toBeGreaterThan(0);
@@ -490,13 +469,12 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Time Period Filtering", function () {
-    it("should filter metrics by monthly period", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Time Period Filtering", () => {
+    it("should filter metrics by monthly period", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -504,7 +482,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Última Semana")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Último Mês")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Último Trimestre")).toBeInTheDocument();
@@ -516,12 +494,11 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should update metrics when period changes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should update metrics when period changes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var periodSelector, quarterOption;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -529,7 +506,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionalPerformanceMetrics).toHaveBeenCalledTimes(
                     1,
                   );
@@ -544,7 +521,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               react_1.fireEvent.click(quarterOption);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionalPerformanceMetrics).toHaveBeenCalledTimes(
                     2,
                   );
@@ -555,11 +532,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display correct date ranges for periods", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should display correct date ranges for periods", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -567,7 +543,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   // Should show formatted date ranges
                   expect(react_1.screen.getByText("01/01/2024 - 31/01/2024")).toBeInTheDocument();
                 }),
@@ -577,13 +553,12 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Charts and Visualizations", function () {
-    it("should render performance trend chart", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Charts and Visualizations", () => {
+    it("should render performance trend chart", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -591,7 +566,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Tendências de Performance")).toBeInTheDocument();
                   // Chart would be rendered by Recharts library
                   expect(document.querySelector(".recharts-wrapper")).toBeInTheDocument();
@@ -602,11 +577,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should render metrics distribution chart", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should render metrics distribution chart", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -614,7 +588,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Distribuição de Métricas")).toBeInTheDocument();
                   // Pie chart would be rendered by Recharts library
                   expect(document.querySelector(".recharts-pie")).toBeInTheDocument();
@@ -625,11 +599,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle empty chart data gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle empty chart data gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.getProfessionalPerformanceMetrics.mockResolvedValue([]);
@@ -638,7 +611,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByText("Nenhum dado disponível para o período selecionado"),
                   ).toBeInTheDocument();
@@ -649,11 +622,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display chart tooltips correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should display chart tooltips correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -661,7 +633,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   // Chart tooltips would be handled by Recharts
                   var chartContainer = document.querySelector(".recharts-wrapper");
                   expect(chartContainer).toBeInTheDocument();
@@ -672,13 +644,12 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Metrics Table", function () {
-    it("should display all metrics in table", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Metrics Table", () => {
+    it("should display all metrics in table", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -686,7 +657,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Satisfação do Paciente")).toBeInTheDocument();
                   expect(
                     react_1.screen.getByText("Taxa de Conclusão de Consultas"),
@@ -702,11 +673,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should show metric values with correct formatting", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should show metric values with correct formatting", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -714,7 +684,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("4.8/5.0")).toBeInTheDocument();
                   expect(react_1.screen.getByText("95.5%")).toBeInTheDocument();
                   expect(react_1.screen.getByText("R$ 45.000,00")).toBeInTheDocument();
@@ -726,11 +696,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display measurement periods correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should display measurement periods correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -738,7 +707,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Mensal")).toBeInTheDocument();
                   expect(react_1.screen.getByText("Trimestral")).toBeInTheDocument();
                 }),
@@ -748,11 +717,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should show notes when available", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should show notes when available", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -760,7 +728,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByText("Excelente avaliação dos pacientes"),
                   ).toBeInTheDocument();
@@ -774,11 +742,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should sort table by different columns", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should sort table by different columns", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -786,7 +753,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   var metricTypeHeader = react_1.screen.getByText("Tipo de Métrica");
                   expect(metricTypeHeader).toBeInTheDocument();
                   // Click to sort
@@ -799,7 +766,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               // Should re-order table rows
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByRole("table")).toBeInTheDocument();
                 }),
               ];
@@ -809,13 +776,12 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance Insights", function () {
-    it("should display performance summary", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Performance Insights", () => {
+    it("should display performance summary", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -823,7 +789,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Resumo de Performance")).toBeInTheDocument();
                 }),
               ];
@@ -832,12 +798,11 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should show recommendations when performance is below target", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should show recommendations when performance is below target", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var lowPerformanceMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               lowPerformanceMetrics = [
@@ -853,7 +818,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Recomendações")).toBeInTheDocument();
                   expect(
                     react_1.screen.getByText("Considere melhorar a comunicação com pacientes"),
@@ -865,12 +830,11 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should highlight exceptional performance", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should highlight exceptional performance", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var highPerformanceMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               highPerformanceMetrics = [
@@ -886,7 +850,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Performance Excepcional")).toBeInTheDocument();
                 }),
               ];
@@ -895,13 +859,12 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Export and Actions", function () {
-    it("should provide export options", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Export and Actions", () => {
+    it("should provide export options", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -909,7 +872,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByRole("button", { name: "Exportar Relatório" }),
                   ).toBeInTheDocument();
@@ -920,11 +883,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should allow printing dashboard", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should allow printing dashboard", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -932,7 +894,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByRole("button", { name: "Imprimir" }),
                   ).toBeInTheDocument();
@@ -943,12 +905,11 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should refresh data when refresh button is clicked", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should refresh data when refresh button is clicked", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var refreshButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -956,7 +917,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionalPerformanceMetrics).toHaveBeenCalledTimes(
                     1,
                   );
@@ -968,7 +929,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               react_1.fireEvent.click(refreshButton);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(professionals_1.getProfessionalPerformanceMetrics).toHaveBeenCalledTimes(
                     2,
                   );
@@ -979,11 +940,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Responsive Design", function () {
-    it("should adapt layout for mobile screens", function () {
+  describe("Responsive Design", () => {
+    it("should adapt layout for mobile screens", () => {
       // Mock window.innerWidth
       Object.defineProperty(window, "innerWidth", {
         writable: true,
@@ -996,7 +956,7 @@ describe("ProfessionalPerformanceDashboard", function () {
       // Should render mobile-friendly layout
       expect(react_1.screen.getByText("Performance - Dr. Ana Silva")).toBeInTheDocument();
     });
-    it("should stack cards vertically on small screens", function () {
+    it("should stack cards vertically on small screens", () => {
       (0, react_1.render)(
         <ProfessionalPerformanceDashboard_1.default professional={mockProfessional} />,
       );
@@ -1005,10 +965,10 @@ describe("ProfessionalPerformanceDashboard", function () {
       expect(cards.length).toBeGreaterThan(0);
     });
   });
-  describe("Error Handling", function () {
-    it("should handle network errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Error Handling", () => {
+    it("should handle network errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.getProfessionalPerformanceMetrics.mockRejectedValue(
@@ -1019,7 +979,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByText("Erro ao carregar métricas de performance"),
                   ).toBeInTheDocument();
@@ -1033,12 +993,11 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should retry loading when retry button is clicked", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should retry loading when retry button is clicked", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var retryButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               professionals_1.getProfessionalPerformanceMetrics
@@ -1049,7 +1008,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(
                     react_1.screen.getByText("Erro ao carregar métricas de performance"),
                   ).toBeInTheDocument();
@@ -1061,7 +1020,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               react_1.fireEvent.click(retryButton);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Satisfação do Paciente")).toBeInTheDocument();
                 }),
               ];
@@ -1070,17 +1029,16 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle missing professional data", function () {
+      }));
+    it("should handle missing professional data", () => {
       (0, react_1.render)(<ProfessionalPerformanceDashboard_1.default professional={null} />);
       expect(react_1.screen.getByText("Profissional não encontrado")).toBeInTheDocument();
     });
   });
-  describe("Accessibility", function () {
-    it("should have proper ARIA labels", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Accessibility", () => {
+    it("should have proper ARIA labels", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -1088,7 +1046,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByRole("main")).toBeInTheDocument();
                   expect(react_1.screen.getByRole("table")).toBeInTheDocument();
                   expect(react_1.screen.getByRole("combobox")).toBeInTheDocument();
@@ -1099,9 +1057,8 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should support keyboard navigation", function () {
+      }));
+    it("should support keyboard navigation", () => {
       (0, react_1.render)(
         <ProfessionalPerformanceDashboard_1.default professional={mockProfessional} />,
       );
@@ -1110,9 +1067,9 @@ describe("ProfessionalPerformanceDashboard", function () {
       react_1.fireEvent.focus(periodSelector);
       expect(document.activeElement).toBe(periodSelector);
     });
-    it("should have proper color contrast for charts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    it("should have proper color contrast for charts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -1120,7 +1077,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   // Chart colors should meet accessibility standards
                   var chartContainer = document.querySelector(".recharts-wrapper");
                   expect(chartContainer).toBeInTheDocument();
@@ -1131,14 +1088,13 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Data Validation", function () {
-    it("should handle malformed metric data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Data Validation", () => {
+    it("should handle malformed metric data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var malformedMetrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               malformedMetrics = [
@@ -1150,7 +1106,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(react_1.screen.getByText("Dados inválidos")).toBeInTheDocument();
                 }),
               ];
@@ -1159,11 +1115,10 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate date ranges", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should validate date ranges", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(
@@ -1171,7 +1126,7 @@ describe("ProfessionalPerformanceDashboard", function () {
               );
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   // Should format dates correctly
                   expect(react_1.screen.getByText("01/01/2024 - 31/01/2024")).toBeInTheDocument();
                 }),
@@ -1181,7 +1136,6 @@ describe("ProfessionalPerformanceDashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

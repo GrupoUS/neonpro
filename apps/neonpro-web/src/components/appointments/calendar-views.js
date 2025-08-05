@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalendarViews = CalendarViews;
 exports.MobileCalendarViews = MobileCalendarViews;
@@ -43,19 +42,19 @@ function CalendarViews(_a) {
     currentDate = _a.currentDate,
     onDateChange = _a.onDateChange;
   // Navigation handlers
-  var handlePrevious = function () {
+  var handlePrevious = () => {
     var newDate = (0, moment_1.default)(currentDate).subtract(1, getNavigationUnit()).toDate();
     onDateChange(newDate);
   };
-  var handleNext = function () {
+  var handleNext = () => {
     var newDate = (0, moment_1.default)(currentDate).add(1, getNavigationUnit()).toDate();
     onDateChange(newDate);
   };
-  var handleToday = function () {
+  var handleToday = () => {
     onDateChange(new Date());
   };
   // Get navigation unit based on current view
-  var getNavigationUnit = function () {
+  var getNavigationUnit = () => {
     switch (currentView) {
       case "month":
         return "month";
@@ -70,12 +69,12 @@ function CalendarViews(_a) {
     }
   };
   // Get formatted date label
-  var getDateLabel = function () {
+  var getDateLabel = () => {
     var momentDate = (0, moment_1.default)(currentDate);
     switch (currentView) {
       case "month":
         return momentDate.format("MMMM YYYY");
-      case "week":
+      case "week": {
         var weekStart = momentDate.startOf("week");
         var weekEnd = momentDate.endOf("week");
         if (weekStart.month() === weekEnd.month()) {
@@ -86,6 +85,7 @@ function CalendarViews(_a) {
         } else {
           return "".concat(weekStart.format("DD MMM"), " - ").concat(weekEnd.format("DD MMM YYYY"));
         }
+      }
       case "day":
         return momentDate.format("dddd, DD [de] MMMM [de] YYYY");
       case "agenda":
@@ -95,67 +95,62 @@ function CalendarViews(_a) {
     }
   };
   // Keyboard shortcuts handler
-  react_1.default.useEffect(
-    function () {
-      var handleKeyDown = function (event) {
-        var _a, _b;
-        // Only handle if no input is focused
-        if (
-          ((_a = document.activeElement) === null || _a === void 0 ? void 0 : _a.tagName) ===
-            "INPUT" ||
-          ((_b = document.activeElement) === null || _b === void 0 ? void 0 : _b.tagName) ===
-            "TEXTAREA"
-        ) {
-          return;
-        }
-        // View shortcuts
-        if (event.ctrlKey || event.metaKey) {
-          switch (event.key.toLowerCase()) {
-            case "m":
-              event.preventDefault();
-              onViewChange("month");
-              break;
-            case "s":
-              event.preventDefault();
-              onViewChange("week");
-              break;
-            case "d":
-              event.preventDefault();
-              onViewChange("day");
-              break;
-            case "a":
-              event.preventDefault();
-              onViewChange("agenda");
-              break;
-          }
-        }
-        // Navigation shortcuts
-        switch (event.key) {
-          case "ArrowLeft":
-            if (event.shiftKey) {
-              event.preventDefault();
-              handlePrevious();
-            }
-            break;
-          case "ArrowRight":
-            if (event.shiftKey) {
-              event.preventDefault();
-              handleNext();
-            }
-            break;
-          case "Home":
+  react_1.default.useEffect(() => {
+    var handleKeyDown = (event) => {
+      var _a, _b;
+      // Only handle if no input is focused
+      if (
+        ((_a = document.activeElement) === null || _a === void 0 ? void 0 : _a.tagName) ===
+          "INPUT" ||
+        ((_b = document.activeElement) === null || _b === void 0 ? void 0 : _b.tagName) ===
+          "TEXTAREA"
+      ) {
+        return;
+      }
+      // View shortcuts
+      if (event.ctrlKey || event.metaKey) {
+        switch (event.key.toLowerCase()) {
+          case "m":
             event.preventDefault();
-            handleToday();
+            onViewChange("month");
+            break;
+          case "s":
+            event.preventDefault();
+            onViewChange("week");
+            break;
+          case "d":
+            event.preventDefault();
+            onViewChange("day");
+            break;
+          case "a":
+            event.preventDefault();
+            onViewChange("agenda");
             break;
         }
-      };
-      document.addEventListener("keydown", handleKeyDown);
-      return function () {
-        return document.removeEventListener("keydown", handleKeyDown);
-      };
-    },
-    [currentView, currentDate, onViewChange, onDateChange],
-  );
+      }
+      // Navigation shortcuts
+      switch (event.key) {
+        case "ArrowLeft":
+          if (event.shiftKey) {
+            event.preventDefault();
+            handlePrevious();
+          }
+          break;
+        case "ArrowRight":
+          if (event.shiftKey) {
+            event.preventDefault();
+            handleNext();
+          }
+          break;
+        case "Home":
+          event.preventDefault();
+          handleToday();
+          break;
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [currentView, currentDate, onViewChange, onDateChange]);
   return (
     <div className="flex items-center justify-between w-full">
       {/* Navigation Controls */}
@@ -204,7 +199,7 @@ function CalendarViews(_a) {
 
       {/* View Toggle Buttons */}
       <div className="flex items-center space-x-1 bg-muted rounded-lg p-1">
-        {viewConfig.map(function (_a) {
+        {viewConfig.map((_a) => {
           var key = _a.key,
             label = _a.label,
             Icon = _a.icon,
@@ -214,9 +209,7 @@ function CalendarViews(_a) {
               key={key}
               variant={currentView === key ? "secondary" : "ghost"}
               size="sm"
-              onClick={function () {
-                return onViewChange(key);
-              }}
+              onClick={() => onViewChange(key)}
               className={(0, utils_1.cn)(
                 "h-8 px-3 text-xs font-medium transition-all",
                 currentView === key ? "bg-background shadow-sm" : "hover:bg-background/50",
@@ -238,17 +231,17 @@ function MobileCalendarViews(_a) {
     onViewChange = _a.onViewChange,
     currentDate = _a.currentDate,
     onDateChange = _a.onDateChange;
-  var handlePrevious = function () {
+  var handlePrevious = () => {
     var unit = currentView === "month" ? "month" : currentView === "week" ? "week" : "day";
     var newDate = (0, moment_1.default)(currentDate).subtract(1, unit).toDate();
     onDateChange(newDate);
   };
-  var handleNext = function () {
+  var handleNext = () => {
     var unit = currentView === "month" ? "month" : currentView === "week" ? "week" : "day";
     var newDate = (0, moment_1.default)(currentDate).add(1, unit).toDate();
     onDateChange(newDate);
   };
-  var getShortDateLabel = function () {
+  var getShortDateLabel = () => {
     var momentDate = (0, moment_1.default)(currentDate);
     switch (currentView) {
       case "month":
@@ -282,7 +275,7 @@ function MobileCalendarViews(_a) {
 
       {/* View Toggle */}
       <div className="grid grid-cols-4 gap-1 bg-muted rounded-lg p-1">
-        {viewConfig.map(function (_a) {
+        {viewConfig.map((_a) => {
           var key = _a.key,
             label = _a.label,
             Icon = _a.icon;
@@ -291,9 +284,7 @@ function MobileCalendarViews(_a) {
               key={key}
               variant={currentView === key ? "secondary" : "ghost"}
               size="sm"
-              onClick={function () {
-                return onViewChange(key);
-              }}
+              onClick={() => onViewChange(key)}
               className={(0, utils_1.cn)(
                 "h-8 text-xs",
                 currentView === key && "bg-background shadow-sm",

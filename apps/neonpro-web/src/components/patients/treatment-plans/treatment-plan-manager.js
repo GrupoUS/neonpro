@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = TreatmentPlanManager;
 var react_1 = require("react");
@@ -178,7 +175,6 @@ var sonner_1 = require("sonner");
 var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 function TreatmentPlanManager(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     _b = _a.readOnly,
     readOnly = _b === void 0 ? false : _b,
@@ -221,15 +217,12 @@ function TreatmentPlanManager(_a) {
   var _p = (0, react_1.useState)(null),
     editingProtocol = _p[0],
     setEditingProtocol = _p[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadTreatmentPlans();
-    },
-    [patientId],
-  );
-  var loadTreatmentPlans = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    loadTreatmentPlans();
+  }, [patientId]);
+  var loadTreatmentPlans = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           setLoading(true);
           // TODO: Replace with actual Supabase queries
@@ -257,11 +250,10 @@ function TreatmentPlanManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleCreatePlan = function (planData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreatePlan = (planData) =>
+    __awaiter(this, void 0, void 0, function () {
       var newPlan_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           newPlan_1 = __assign(
             __assign({ id: "plan_".concat(Date.now()), patient_id: patientId }, planData),
@@ -280,9 +272,7 @@ function TreatmentPlanManager(_a) {
               ).toISOString(), // 7 years
             },
           );
-          setTreatmentPlans(function (prev) {
-            return __spreadArray([newPlan_1], prev, true);
-          });
+          setTreatmentPlans((prev) => __spreadArray([newPlan_1], prev, true));
           setSelectedPlan(newPlan_1);
           setShowPlanDialog(false);
           sonner_1.toast.success("Plano de tratamento criado com sucesso");
@@ -294,11 +284,10 @@ function TreatmentPlanManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleAddProtocol = function (protocolData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAddProtocol = (protocolData) =>
+    __awaiter(this, void 0, void 0, function () {
       var newProtocol, updatedPlan_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!selectedPlan) return [2 /*return*/];
         try {
           newProtocol = __assign(
@@ -321,11 +310,9 @@ function TreatmentPlanManager(_a) {
             ),
           });
           setSelectedPlan(updatedPlan_1);
-          setTreatmentPlans(function (prev) {
-            return prev.map(function (plan) {
-              return plan.id === selectedPlan.id ? updatedPlan_1 : plan;
-            });
-          });
+          setTreatmentPlans((prev) =>
+            prev.map((plan) => (plan.id === selectedPlan.id ? updatedPlan_1 : plan)),
+          );
           setShowProtocolDialog(false);
           sonner_1.toast.success("Protocolo adicionado com sucesso");
           onPlanUpdate === null || onPlanUpdate === void 0 ? void 0 : onPlanUpdate();
@@ -336,28 +323,25 @@ function TreatmentPlanManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleStartProtocol = function (protocolId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleStartProtocol = (protocolId) =>
+    __awaiter(this, void 0, void 0, function () {
       var updatedProtocols, updatedPlan_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!selectedPlan) return [2 /*return*/];
         try {
-          updatedProtocols = selectedPlan.protocols.map(function (protocol) {
-            return protocol.id === protocolId
+          updatedProtocols = selectedPlan.protocols.map((protocol) =>
+            protocol.id === protocolId
               ? __assign(__assign({}, protocol), {
                   status: "in_progress",
                   scheduled_date: new Date().toISOString(),
                 })
-              : protocol;
-          });
+              : protocol,
+          );
           updatedPlan_2 = __assign(__assign({}, selectedPlan), { protocols: updatedProtocols });
           setSelectedPlan(updatedPlan_2);
-          setTreatmentPlans(function (prev) {
-            return prev.map(function (plan) {
-              return plan.id === selectedPlan.id ? updatedPlan_2 : plan;
-            });
-          });
+          setTreatmentPlans((prev) =>
+            prev.map((plan) => (plan.id === selectedPlan.id ? updatedPlan_2 : plan)),
+          );
           sonner_1.toast.success("Protocolo iniciado");
           onPlanUpdate === null || onPlanUpdate === void 0 ? void 0 : onPlanUpdate();
         } catch (error) {
@@ -367,35 +351,30 @@ function TreatmentPlanManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleCompleteProtocol = function (protocolId, notes) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCompleteProtocol = (protocolId, notes) =>
+    __awaiter(this, void 0, void 0, function () {
       var updatedProtocols, completedCount, updatedPlan_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (!selectedPlan) return [2 /*return*/];
         try {
-          updatedProtocols = selectedPlan.protocols.map(function (protocol) {
-            return protocol.id === protocolId
+          updatedProtocols = selectedPlan.protocols.map((protocol) =>
+            protocol.id === protocolId
               ? __assign(__assign({}, protocol), {
                   status: "completed",
                   completed_date: new Date().toISOString(),
                   notes: notes || protocol.notes,
                 })
-              : protocol;
-          });
-          completedCount = updatedProtocols.filter(function (p) {
-            return p.status === "completed";
-          }).length;
+              : protocol,
+          );
+          completedCount = updatedProtocols.filter((p) => p.status === "completed").length;
           updatedPlan_3 = __assign(__assign({}, selectedPlan), {
             protocols: updatedProtocols,
             completed_sessions: completedCount,
           });
           setSelectedPlan(updatedPlan_3);
-          setTreatmentPlans(function (prev) {
-            return prev.map(function (plan) {
-              return plan.id === selectedPlan.id ? updatedPlan_3 : plan;
-            });
-          });
+          setTreatmentPlans((prev) =>
+            prev.map((plan) => (plan.id === selectedPlan.id ? updatedPlan_3 : plan)),
+          );
           sonner_1.toast.success("Protocolo concluído");
           onPlanUpdate === null || onPlanUpdate === void 0 ? void 0 : onPlanUpdate();
         } catch (error) {
@@ -405,12 +384,11 @@ function TreatmentPlanManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var calculatePlanProgress = function (plan) {
+  var calculatePlanProgress = (plan) => {
     if (plan.total_sessions === 0) return 0;
     return Math.round((plan.completed_sessions / plan.total_sessions) * 100);
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "draft":
         return "bg-gray-100 text-gray-800";
@@ -436,7 +414,7 @@ function TreatmentPlanManager(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     switch (priority) {
       case "low":
         return "bg-green-100 text-green-800";
@@ -450,7 +428,7 @@ function TreatmentPlanManager(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getTypeIcon = function (type) {
+  var getTypeIcon = (type) => {
     switch (type) {
       case "orthodontics":
         return <lucide_react_1.Target className="h-4 w-4" />;
@@ -486,7 +464,7 @@ function TreatmentPlanManager(_a) {
         <div className="flex items-center space-x-2">
           <button_1.Button
             variant="outline"
-            onClick={function () {
+            onClick={() => {
               // Export treatment plans with LGPD compliance
               console.log("Exporting treatment plans");
               sonner_1.toast.success("Planos exportados com conformidade LGPD");
@@ -513,9 +491,7 @@ function TreatmentPlanManager(_a) {
                 </dialog_1.DialogHeader>
                 <TreatmentPlanForm
                   onSubmit={handleCreatePlan}
-                  onCancel={function () {
-                    return setShowPlanDialog(false);
-                  }}
+                  onCancel={() => setShowPlanDialog(false)}
                 />
               </dialog_1.DialogContent>
             </dialog_1.Dialog>
@@ -530,9 +506,7 @@ function TreatmentPlanManager(_a) {
           <input_1.Input
             placeholder="Buscar planos de tratamento..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -566,7 +540,7 @@ function TreatmentPlanManager(_a) {
         <div className="lg:col-span-1 space-y-4">
           <h3 className="text-lg font-semibold">Planos Ativos</h3>
           <div className="space-y-3">
-            {treatmentPlans.map(function (plan) {
+            {treatmentPlans.map((plan) => {
               var progress = calculatePlanProgress(plan);
               var isSelected =
                 (selectedPlan === null || selectedPlan === void 0 ? void 0 : selectedPlan.id) ===
@@ -577,9 +551,7 @@ function TreatmentPlanManager(_a) {
                   className={"cursor-pointer transition-colors ".concat(
                     isSelected ? "ring-2 ring-primary" : "hover:bg-muted/50",
                   )}
-                  onClick={function () {
-                    return setSelectedPlan(plan);
-                  }}
+                  onClick={() => setSelectedPlan(plan)}
                 >
                   <card_1.CardContent className="p-4">
                     <div className="space-y-3">
@@ -746,14 +718,12 @@ function TreatmentPlanManager(_a) {
                           <div>
                             <h4 className="font-semibold mb-2">Objetivos</h4>
                             <div className="space-y-1">
-                              {selectedPlan.objectives.map(function (objective, index) {
-                                return (
-                                  <div key={index} className="flex items-center space-x-2 text-sm">
-                                    <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
-                                    <span>{objective}</span>
-                                  </div>
-                                );
-                              })}
+                              {selectedPlan.objectives.map((objective, index) => (
+                                <div key={index} className="flex items-center space-x-2 text-sm">
+                                  <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
+                                  <span>{objective}</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         </div>
@@ -767,19 +737,15 @@ function TreatmentPlanManager(_a) {
                               <span>Contraindicações</span>
                             </h4>
                             <div className="space-y-1">
-                              {selectedPlan.contraindications.map(
-                                function (contraindication, index) {
-                                  return (
-                                    <div
-                                      key={index}
-                                      className="flex items-center space-x-2 text-sm text-orange-700"
-                                    >
-                                      <lucide_react_1.AlertCircle className="h-3 w-3" />
-                                      <span>{contraindication}</span>
-                                    </div>
-                                  );
-                                },
-                              )}
+                              {selectedPlan.contraindications.map((contraindication, index) => (
+                                <div
+                                  key={index}
+                                  className="flex items-center space-x-2 text-sm text-orange-700"
+                                >
+                                  <lucide_react_1.AlertCircle className="h-3 w-3" />
+                                  <span>{contraindication}</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         )}
@@ -811,9 +777,7 @@ function TreatmentPlanManager(_a) {
                           </dialog_1.DialogHeader>
                           <ProtocolForm
                             onSubmit={handleAddProtocol}
-                            onCancel={function () {
-                              return setShowProtocolDialog(false);
-                            }}
+                            onCancel={() => setShowProtocolDialog(false)}
                           />
                         </dialog_1.DialogContent>
                       </dialog_1.Dialog>
@@ -822,138 +786,126 @@ function TreatmentPlanManager(_a) {
 
                   <div className="space-y-4">
                     {selectedPlan.protocols
-                      .sort(function (a, b) {
-                        return a.sequence_order - b.sequence_order;
-                      })
-                      .map(function (protocol) {
-                        return (
-                          <card_1.Card key={protocol.id}>
-                            <card_1.CardContent className="p-4">
-                              <div className="flex items-start justify-between">
-                                <div className="space-y-2 flex-1">
-                                  <div className="flex items-center space-x-2">
-                                    <badge_1.Badge variant="outline">
-                                      #{protocol.sequence_order}
-                                    </badge_1.Badge>
-                                    <h4 className="font-semibold">{protocol.protocol_name}</h4>
-                                    <badge_1.Badge className={getStatusColor(protocol.status)}>
-                                      {protocol.status}
-                                    </badge_1.Badge>
-                                  </div>
-
-                                  <div className="grid gap-2 md:grid-cols-3 text-sm">
-                                    <div>
-                                      <span className="text-muted-foreground">Categoria: </span>
-                                      <span>{protocol.category}</span>
-                                    </div>
-                                    <div>
-                                      <span className="text-muted-foreground">Duração: </span>
-                                      <span>{protocol.estimated_duration} min</span>
-                                    </div>
-                                    <div>
-                                      <span className="text-muted-foreground">Etapas: </span>
-                                      <span>{protocol.steps.length}</span>
-                                    </div>
-                                  </div>
-
-                                  {protocol.scheduled_date && (
-                                    <div className="text-sm">
-                                      <span className="text-muted-foreground">Agendado para: </span>
-                                      <span>
-                                        {(0, date_fns_1.format)(
-                                          new Date(protocol.scheduled_date),
-                                          "dd/MM/yyyy HH:mm",
-                                          { locale: locale_1.ptBR },
-                                        )}
-                                      </span>
-                                    </div>
-                                  )}
-
-                                  {protocol.notes && (
-                                    <p className="text-sm text-muted-foreground">
-                                      {protocol.notes}
-                                    </p>
-                                  )}
+                      .sort((a, b) => a.sequence_order - b.sequence_order)
+                      .map((protocol) => (
+                        <card_1.Card key={protocol.id}>
+                          <card_1.CardContent className="p-4">
+                            <div className="flex items-start justify-between">
+                              <div className="space-y-2 flex-1">
+                                <div className="flex items-center space-x-2">
+                                  <badge_1.Badge variant="outline">
+                                    #{protocol.sequence_order}
+                                  </badge_1.Badge>
+                                  <h4 className="font-semibold">{protocol.protocol_name}</h4>
+                                  <badge_1.Badge className={getStatusColor(protocol.status)}>
+                                    {protocol.status}
+                                  </badge_1.Badge>
                                 </div>
 
-                                {!readOnly && (
-                                  <div className="flex items-center space-x-2">
-                                    {protocol.status === "pending" && (
-                                      <button_1.Button
-                                        size="sm"
-                                        onClick={function () {
-                                          return handleStartProtocol(protocol.id);
-                                        }}
-                                      >
-                                        <lucide_react_1.Play className="mr-1 h-3 w-3" />
-                                        Iniciar
-                                      </button_1.Button>
-                                    )}
-                                    {protocol.status === "in_progress" && (
-                                      <button_1.Button
-                                        size="sm"
-                                        onClick={function () {
-                                          return handleCompleteProtocol(protocol.id);
-                                        }}
-                                      >
-                                        <lucide_react_1.CheckCircle className="mr-1 h-3 w-3" />
-                                        Concluir
-                                      </button_1.Button>
-                                    )}
-                                    <button_1.Button variant="ghost" size="sm">
-                                      <lucide_react_1.Edit className="h-3 w-3" />
-                                    </button_1.Button>
+                                <div className="grid gap-2 md:grid-cols-3 text-sm">
+                                  <div>
+                                    <span className="text-muted-foreground">Categoria: </span>
+                                    <span>{protocol.category}</span>
                                   </div>
+                                  <div>
+                                    <span className="text-muted-foreground">Duração: </span>
+                                    <span>{protocol.estimated_duration} min</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-muted-foreground">Etapas: </span>
+                                    <span>{protocol.steps.length}</span>
+                                  </div>
+                                </div>
+
+                                {protocol.scheduled_date && (
+                                  <div className="text-sm">
+                                    <span className="text-muted-foreground">Agendado para: </span>
+                                    <span>
+                                      {(0, date_fns_1.format)(
+                                        new Date(protocol.scheduled_date),
+                                        "dd/MM/yyyy HH:mm",
+                                        { locale: locale_1.ptBR },
+                                      )}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {protocol.notes && (
+                                  <p className="text-sm text-muted-foreground">{protocol.notes}</p>
                                 )}
                               </div>
 
-                              {/* Protocol Steps */}
-                              {protocol.steps.length > 0 && (
-                                <div className="mt-4 pt-4 border-t">
-                                  <h5 className="font-medium mb-2">Etapas do Protocolo</h5>
-                                  <div className="space-y-2">
-                                    {protocol.steps.map(function (step) {
-                                      return (
-                                        <div
-                                          key={step.id}
-                                          className="flex items-center space-x-3 text-sm"
-                                        >
-                                          <badge_1.Badge
-                                            variant="outline"
-                                            className="w-8 h-6 flex items-center justify-center"
-                                          >
-                                            {step.step_number}
-                                          </badge_1.Badge>
-                                          <div className="flex-1">
-                                            <span
-                                              className={
-                                                step.status === "completed"
-                                                  ? "line-through text-muted-foreground"
-                                                  : ""
-                                              }
-                                            >
-                                              {step.title}
-                                            </span>
-                                            <span className="text-muted-foreground ml-2">
-                                              ({step.estimated_time} min)
-                                            </span>
-                                          </div>
-                                          <badge_1.Badge
-                                            className={getStatusColor(step.status)}
-                                            variant="secondary"
-                                          >
-                                            {step.status}
-                                          </badge_1.Badge>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
+                              {!readOnly && (
+                                <div className="flex items-center space-x-2">
+                                  {protocol.status === "pending" && (
+                                    <button_1.Button
+                                      size="sm"
+                                      onClick={() => handleStartProtocol(protocol.id)}
+                                    >
+                                      <lucide_react_1.Play className="mr-1 h-3 w-3" />
+                                      Iniciar
+                                    </button_1.Button>
+                                  )}
+                                  {protocol.status === "in_progress" && (
+                                    <button_1.Button
+                                      size="sm"
+                                      onClick={() => handleCompleteProtocol(protocol.id)}
+                                    >
+                                      <lucide_react_1.CheckCircle className="mr-1 h-3 w-3" />
+                                      Concluir
+                                    </button_1.Button>
+                                  )}
+                                  <button_1.Button variant="ghost" size="sm">
+                                    <lucide_react_1.Edit className="h-3 w-3" />
+                                  </button_1.Button>
                                 </div>
                               )}
-                            </card_1.CardContent>
-                          </card_1.Card>
-                        );
-                      })}
+                            </div>
+
+                            {/* Protocol Steps */}
+                            {protocol.steps.length > 0 && (
+                              <div className="mt-4 pt-4 border-t">
+                                <h5 className="font-medium mb-2">Etapas do Protocolo</h5>
+                                <div className="space-y-2">
+                                  {protocol.steps.map((step) => (
+                                    <div
+                                      key={step.id}
+                                      className="flex items-center space-x-3 text-sm"
+                                    >
+                                      <badge_1.Badge
+                                        variant="outline"
+                                        className="w-8 h-6 flex items-center justify-center"
+                                      >
+                                        {step.step_number}
+                                      </badge_1.Badge>
+                                      <div className="flex-1">
+                                        <span
+                                          className={
+                                            step.status === "completed"
+                                              ? "line-through text-muted-foreground"
+                                              : ""
+                                          }
+                                        >
+                                          {step.title}
+                                        </span>
+                                        <span className="text-muted-foreground ml-2">
+                                          ({step.estimated_time} min)
+                                        </span>
+                                      </div>
+                                      <badge_1.Badge
+                                        className={getStatusColor(step.status)}
+                                        variant="secondary"
+                                      >
+                                        {step.status}
+                                      </badge_1.Badge>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </card_1.CardContent>
+                        </card_1.Card>
+                      ))}
                   </div>
                 </tabs_1.TabsContent>
 
@@ -980,14 +932,12 @@ function TreatmentPlanManager(_a) {
                             </dialog_1.DialogDescription>
                           </dialog_1.DialogHeader>
                           <ProgressNoteForm
-                            onSubmit={function (data) {
+                            onSubmit={(data) => {
                               // Handle progress note submission
                               setShowProgressDialog(false);
                               sonner_1.toast.success("Nota de progresso adicionada");
                             }}
-                            onCancel={function () {
-                              return setShowProgressDialog(false);
-                            }}
+                            onCancel={() => setShowProgressDialog(false)}
                           />
                         </dialog_1.DialogContent>
                       </dialog_1.Dialog>
@@ -995,33 +945,31 @@ function TreatmentPlanManager(_a) {
                   </div>
 
                   <div className="space-y-4">
-                    {selectedPlan.progress_notes.map(function (note) {
-                      return (
-                        <card_1.Card key={note.id}>
-                          <card_1.CardContent className="p-4">
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-2">
-                                  <h4 className="font-semibold">{note.title}</h4>
-                                  <badge_1.Badge variant="outline">{note.note_type}</badge_1.Badge>
-                                </div>
-                                <span className="text-sm text-muted-foreground">
-                                  {(0, date_fns_1.format)(
-                                    new Date(note.created_at),
-                                    "dd/MM/yyyy HH:mm",
-                                    { locale: locale_1.ptBR },
-                                  )}
-                                </span>
+                    {selectedPlan.progress_notes.map((note) => (
+                      <card_1.Card key={note.id}>
+                        <card_1.CardContent className="p-4">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <h4 className="font-semibold">{note.title}</h4>
+                                <badge_1.Badge variant="outline">{note.note_type}</badge_1.Badge>
                               </div>
-                              <p className="text-sm">{note.content}</p>
-                              <div className="text-xs text-muted-foreground">
-                                Por: {note.created_by}
-                              </div>
+                              <span className="text-sm text-muted-foreground">
+                                {(0, date_fns_1.format)(
+                                  new Date(note.created_at),
+                                  "dd/MM/yyyy HH:mm",
+                                  { locale: locale_1.ptBR },
+                                )}
+                              </span>
                             </div>
-                          </card_1.CardContent>
-                        </card_1.Card>
-                      );
-                    })}
+                            <p className="text-sm">{note.content}</p>
+                            <div className="text-xs text-muted-foreground">
+                              Por: {note.created_by}
+                            </div>
+                          </div>
+                        </card_1.CardContent>
+                      </card_1.Card>
+                    ))}
                   </div>
                 </tabs_1.TabsContent>
 
@@ -1030,43 +978,37 @@ function TreatmentPlanManager(_a) {
                   <h3 className="text-lg font-semibold">Equipe Responsável</h3>
 
                   <div className="grid gap-4 md:grid-cols-2">
-                    {selectedPlan.assigned_professionals.map(function (assignment) {
-                      return (
-                        <card_1.Card key={assignment.id}>
-                          <card_1.CardContent className="p-4">
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <h4 className="font-semibold">{assignment.professional_name}</h4>
-                                <badge_1.Badge variant="outline">{assignment.role}</badge_1.Badge>
-                              </div>
-                              {assignment.specialization && (
-                                <p className="text-sm text-muted-foreground">
-                                  {assignment.specialization}
-                                </p>
-                              )}
-                              <div className="text-xs text-muted-foreground">
-                                CRO: {assignment.license_number}
-                              </div>
-                              <div className="space-y-1">
-                                <h5 className="text-sm font-medium">Responsabilidades:</h5>
-                                <ul className="text-xs space-y-1">
-                                  {assignment.responsibilities.map(
-                                    function (responsibility, index) {
-                                      return (
-                                        <li key={index} className="flex items-center space-x-1">
-                                          <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
-                                          <span>{responsibility}</span>
-                                        </li>
-                                      );
-                                    },
-                                  )}
-                                </ul>
-                              </div>
+                    {selectedPlan.assigned_professionals.map((assignment) => (
+                      <card_1.Card key={assignment.id}>
+                        <card_1.CardContent className="p-4">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-semibold">{assignment.professional_name}</h4>
+                              <badge_1.Badge variant="outline">{assignment.role}</badge_1.Badge>
                             </div>
-                          </card_1.CardContent>
-                        </card_1.Card>
-                      );
-                    })}
+                            {assignment.specialization && (
+                              <p className="text-sm text-muted-foreground">
+                                {assignment.specialization}
+                              </p>
+                            )}
+                            <div className="text-xs text-muted-foreground">
+                              CRO: {assignment.license_number}
+                            </div>
+                            <div className="space-y-1">
+                              <h5 className="text-sm font-medium">Responsabilidades:</h5>
+                              <ul className="text-xs space-y-1">
+                                {assignment.responsibilities.map((responsibility, index) => (
+                                  <li key={index} className="flex items-center space-x-1">
+                                    <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
+                                    <span>{responsibility}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </card_1.CardContent>
+                      </card_1.Card>
+                    ))}
                   </div>
                 </tabs_1.TabsContent>
               </tabs_1.Tabs>
@@ -1105,7 +1047,7 @@ function TreatmentPlanForm(_a) {
     setFormData = _b[1];
   return (
     <form
-      onSubmit={function (e) {
+      onSubmit={(e) => {
         e.preventDefault();
         onSubmit(formData);
       }}
@@ -1117,11 +1059,9 @@ function TreatmentPlanForm(_a) {
           <input_1.Input
             id="plan_name"
             value={formData.plan_name}
-            onChange={function (e) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { plan_name: e.target.value });
-              });
-            }}
+            onChange={(e) =>
+              setFormData((prev) => __assign(__assign({}, prev), { plan_name: e.target.value }))
+            }
             required
           />
         </div>
@@ -1129,11 +1069,9 @@ function TreatmentPlanForm(_a) {
           <label_1.Label htmlFor="plan_type">Tipo de Tratamento</label_1.Label>
           <select_1.Select
             value={formData.plan_type}
-            onValueChange={function (value) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { plan_type: value });
-              });
-            }}
+            onValueChange={(value) =>
+              setFormData((prev) => __assign(__assign({}, prev), { plan_type: value }))
+            }
           >
             <select_1.SelectTrigger>
               <select_1.SelectValue />
@@ -1156,11 +1094,9 @@ function TreatmentPlanForm(_a) {
           <label_1.Label htmlFor="priority">Prioridade</label_1.Label>
           <select_1.Select
             value={formData.priority}
-            onValueChange={function (value) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { priority: value });
-              });
-            }}
+            onValueChange={(value) =>
+              setFormData((prev) => __assign(__assign({}, prev), { priority: value }))
+            }
           >
             <select_1.SelectTrigger>
               <select_1.SelectValue />
@@ -1179,11 +1115,9 @@ function TreatmentPlanForm(_a) {
             id="start_date"
             type="date"
             value={formData.start_date}
-            onChange={function (e) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { start_date: e.target.value });
-              });
-            }}
+            onChange={(e) =>
+              setFormData((prev) => __assign(__assign({}, prev), { start_date: e.target.value }))
+            }
           />
         </div>
         <div>
@@ -1192,11 +1126,11 @@ function TreatmentPlanForm(_a) {
             id="estimated_end_date"
             type="date"
             value={formData.estimated_end_date}
-            onChange={function (e) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { estimated_end_date: e.target.value });
-              });
-            }}
+            onChange={(e) =>
+              setFormData((prev) =>
+                __assign(__assign({}, prev), { estimated_end_date: e.target.value }),
+              )
+            }
           />
         </div>
       </div>
@@ -1209,13 +1143,13 @@ function TreatmentPlanForm(_a) {
             type="number"
             min="1"
             value={formData.total_sessions}
-            onChange={function (e) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), {
+            onChange={(e) =>
+              setFormData((prev) =>
+                __assign(__assign({}, prev), {
                   total_sessions: parseInt(e.target.value) || 1,
-                });
-              });
-            }}
+                }),
+              )
+            }
           />
         </div>
         <div>
@@ -1226,13 +1160,13 @@ function TreatmentPlanForm(_a) {
             min="0"
             step="0.01"
             value={formData.estimated_cost}
-            onChange={function (e) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), {
+            onChange={(e) =>
+              setFormData((prev) =>
+                __assign(__assign({}, prev), {
                   estimated_cost: parseFloat(e.target.value) || 0,
-                });
-              });
-            }}
+                }),
+              )
+            }
           />
         </div>
       </div>
@@ -1242,11 +1176,9 @@ function TreatmentPlanForm(_a) {
         <textarea_1.Textarea
           id="description"
           value={formData.description}
-          onChange={function (e) {
-            return setFormData(function (prev) {
-              return __assign(__assign({}, prev), { description: e.target.value });
-            });
-          }}
+          onChange={(e) =>
+            setFormData((prev) => __assign(__assign({}, prev), { description: e.target.value }))
+          }
           rows={3}
         />
       </div>

@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateFormat = validateFormat;
 exports.validateType = validateType;
@@ -65,10 +64,10 @@ function validateOptions(options) {
       } else {
         var startDate = new Date(options.dateRange.start);
         var endDate = new Date(options.dateRange.end);
-        if (isNaN(startDate.getTime())) {
+        if (Number.isNaN(startDate.getTime())) {
           errors.push("Invalid start date format");
         }
-        if (isNaN(endDate.getTime())) {
+        if (Number.isNaN(endDate.getTime())) {
           errors.push("Invalid end date format");
         }
         if (startDate > endDate) {
@@ -82,7 +81,7 @@ function validateOptions(options) {
     }
     // Validate boolean options
     var booleanOptions = ["includeCharts", "includeHeader", "includeFooter", "compression"];
-    booleanOptions.forEach(function (option) {
+    booleanOptions.forEach((option) => {
       if (options[option] !== undefined && typeof options[option] !== "boolean") {
         errors.push("".concat(option, " must be a boolean value"));
       }
@@ -130,7 +129,7 @@ function validateCohortData(data) {
   if (!data.metrics || !Array.isArray(data.metrics)) {
     errors.push("Cohort data must include a metrics array");
   } else {
-    data.metrics.forEach(function (metric, index) {
+    data.metrics.forEach((metric, index) => {
       if (!metric.cohortId) {
         errors.push("Metric ".concat(index, ": cohortId is required"));
       }
@@ -171,12 +170,12 @@ function validateForecastData(data) {
   if (!data.predictions || !Array.isArray(data.predictions)) {
     errors.push("Forecast data must include a predictions array");
   } else {
-    data.predictions.forEach(function (prediction, index) {
+    data.predictions.forEach((prediction, index) => {
       if (!prediction.date) {
         errors.push("Prediction ".concat(index, ": date is required"));
       } else {
         var date = new Date(prediction.date);
-        if (isNaN(date.getTime())) {
+        if (Number.isNaN(date.getTime())) {
           errors.push("Prediction ".concat(index, ": invalid date format"));
         }
       }
@@ -207,7 +206,7 @@ function validateInsightsData(data) {
   if (data.correlations && !Array.isArray(data.correlations)) {
     errors.push("Correlations must be an array");
   } else if (data.correlations) {
-    data.correlations.forEach(function (corr, index) {
+    data.correlations.forEach((corr, index) => {
       if (!corr.metric1 || !corr.metric2) {
         errors.push("Correlation ".concat(index, ": both metric1 and metric2 are required"));
       }
@@ -221,7 +220,7 @@ function validateInsightsData(data) {
   if (data.anomalies && !Array.isArray(data.anomalies)) {
     errors.push("Anomalies must be an array");
   } else if (data.anomalies) {
-    data.anomalies.forEach(function (anomaly, index) {
+    data.anomalies.forEach((anomaly, index) => {
       if (!anomaly.metric) {
         errors.push("Anomaly ".concat(index, ": metric is required"));
       }
@@ -266,7 +265,7 @@ function validateDashboardData(data) {
       "averageRevenuePerUser",
       "customerLifetimeValue",
     ];
-    numericKPIs.forEach(function (kpi) {
+    numericKPIs.forEach((kpi) => {
       if (data.kpis[kpi] !== undefined && typeof data.kpis[kpi] !== "number") {
         errors.push("KPI ".concat(kpi, " must be a number"));
       }
@@ -299,13 +298,13 @@ function validateRealtimeData(data) {
       "newSignups",
       "timestamp",
     ];
-    requiredMetrics.forEach(function (metric) {
+    requiredMetrics.forEach((metric) => {
       if (metric === "timestamp") {
         if (!data.metrics[metric]) {
           errors.push("Metric ".concat(metric, " is required"));
         } else {
           var date = new Date(data.metrics[metric]);
-          if (isNaN(date.getTime())) {
+          if (Number.isNaN(date.getTime())) {
             errors.push("Metric ".concat(metric, " must be a valid date"));
           }
         }
@@ -399,16 +398,12 @@ function validateFileSize(data, maxSize) {
 /**
  * Validates export rate limits
  */
-function validateRateLimit(userId, exportHistory, limits) {
+function validateRateLimit(_userId, exportHistory, limits) {
   var now = new Date();
   var oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
   var oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  var recentExports = exportHistory.filter(function (export_) {
-    return new Date(export_.createdAt) > oneHourAgo;
-  });
-  var dailyExports = exportHistory.filter(function (export_) {
-    return new Date(export_.createdAt) > oneDayAgo;
-  });
+  var recentExports = exportHistory.filter((export_) => new Date(export_.createdAt) > oneHourAgo);
+  var dailyExports = exportHistory.filter((export_) => new Date(export_.createdAt) > oneDayAgo);
   if (recentExports.length >= limits.maxExportsPerHour) {
     return {
       valid: false,

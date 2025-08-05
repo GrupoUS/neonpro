@@ -1,19 +1,18 @@
-"use strict";
 /**
  * A/B Testing Engine
  * NeonPro - Sistema Completo de Testes A/B para Comunicação
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,10 +132,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -147,11 +144,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.abTestingEngine = exports.ABTestingEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var ABTestingEngine = /** @class */ (function () {
+var ABTestingEngine = /** @class */ (() => {
   function ABTestingEngine() {
     this.cache = new Map();
     this.eventBuffer = [];
@@ -454,22 +451,20 @@ var ABTestingEngine = /** @class */ (function () {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
-            variationsToInsert = variations.map(function (variation) {
-              return {
-                id: variation.id || _this.generateId(),
-                test_id: testId,
-                name: variation.name,
-                description: variation.description,
-                status: variation.status || "active",
-                traffic_percentage: variation.trafficPercentage,
-                content: variation.content,
-                impressions: 0,
-                conversions: 0,
-                conversion_rate: 0,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-              };
-            });
+            variationsToInsert = variations.map((variation) => ({
+              id: variation.id || _this.generateId(),
+              test_id: testId,
+              name: variation.name,
+              description: variation.description,
+              status: variation.status || "active",
+              traffic_percentage: variation.trafficPercentage,
+              content: variation.content,
+              impressions: 0,
+              conversions: 0,
+              conversion_rate: 0,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            }));
             return [
               4 /*yield*/,
               this.supabase.from("ab_test_variations").insert(variationsToInsert).select(),
@@ -826,12 +821,12 @@ var ABTestingEngine = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                test.variations.map(function (variation) {
-                  return _this.calculateVariationResults(
+                test.variations.map((variation) =>
+                  _this.calculateVariationResults(
                     variation,
                     eventsByVariation_1[variation.id] || [],
-                  );
-                }),
+                  ),
+                ),
               ),
             ];
           case 3:
@@ -844,12 +839,8 @@ var ABTestingEngine = /** @class */ (function () {
             _a = {
               testId: testId,
               status: test.status === "completed" ? "completed" : "ongoing",
-              totalImpressions: events.filter(function (e) {
-                return e.type === "impression";
-              }).length,
-              totalConversions: events.filter(function (e) {
-                return e.type === "conversion";
-              }).length,
+              totalImpressions: events.filter((e) => e.type === "impression").length,
+              totalConversions: events.filter((e) => e.type === "conversion").length,
               overallConversionRate: this.calculateOverallConversionRate(events),
               statisticalSignificance: statisticalAnalysis.significance,
               confidenceLevel: test.confidenceLevel,
@@ -952,7 +943,7 @@ var ABTestingEngine = /** @class */ (function () {
   /**
    * Função de erro
    */
-  ABTestingEngine.prototype.erf = function (x) {
+  ABTestingEngine.prototype.erf = (x) => {
     // Aproximação para função de erro
     var a1 = 0.254829592;
     var a2 = -0.284496736;
@@ -974,7 +965,7 @@ var ABTestingEngine = /** @class */ (function () {
   /**
    * Validar configuração de teste
    */
-  ABTestingEngine.prototype.validateTestConfig = function (config) {
+  ABTestingEngine.prototype.validateTestConfig = (config) => {
     if (!config.clinicId) throw new Error("Clinic ID is required");
     if (!config.name) throw new Error("Test name is required");
     if (!config.type) throw new Error("Test type is required");
@@ -994,13 +985,11 @@ var ABTestingEngine = /** @class */ (function () {
   /**
    * Validar teste antes de iniciar
    */
-  ABTestingEngine.prototype.validateTestForStart = function (test) {
+  ABTestingEngine.prototype.validateTestForStart = (test) => {
     if (test.variations.length < 2) {
       throw new Error("Test must have at least 2 variations");
     }
-    var totalTraffic = test.variations.reduce(function (sum, v) {
-      return sum + v.trafficPercentage;
-    }, 0);
+    var totalTraffic = test.variations.reduce((sum, v) => sum + v.trafficPercentage, 0);
     if (Math.abs(totalTraffic - 100) > 0.01) {
       throw new Error("Variation traffic percentages must sum to 100");
     }
@@ -1017,18 +1006,17 @@ var ABTestingEngine = /** @class */ (function () {
     var p1 = 0.1; // Assumed baseline conversion rate
     var p2 = p1 * (1 + effect / 100);
     var pooled = (p1 + p2) / 2;
-    var numerator = Math.pow(
-      zAlpha * Math.sqrt(2 * pooled * (1 - pooled)) +
-        zBeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)),
-      2,
-    );
-    var denominator = Math.pow(p2 - p1, 2);
+    var numerator =
+      (zAlpha * Math.sqrt(2 * pooled * (1 - pooled)) +
+        zBeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) **
+      2;
+    var denominator = (p2 - p1) ** 2;
     return Math.ceil(numerator / denominator);
   };
   /**
    * Obter Z-score para confiança
    */
-  ABTestingEngine.prototype.getZScore = function (confidence) {
+  ABTestingEngine.prototype.getZScore = (confidence) => {
     if (confidence >= 0.995) return 2.576;
     if (confidence >= 0.975) return 1.96;
     if (confidence >= 0.95) return 1.645;
@@ -1084,10 +1072,8 @@ var ABTestingEngine = /** @class */ (function () {
   /**
    * Selecionar variação baseada no peso
    */
-  ABTestingEngine.prototype.selectVariationByWeight = function (variations) {
-    var activeVariations = variations.filter(function (v) {
-      return v.status === "active";
-    });
+  ABTestingEngine.prototype.selectVariationByWeight = (variations) => {
+    var activeVariations = variations.filter((v) => v.status === "active");
     if (!activeVariations.length) return null;
     var random = Math.random() * 100;
     var cumulative = 0;
@@ -1116,24 +1102,22 @@ var ABTestingEngine = /** @class */ (function () {
             _b.trys.push([1, 4, , 5]);
             events = __spreadArray([], this.eventBuffer, true);
             this.eventBuffer = [];
-            eventsToInsert = events.map(function (event) {
-              return {
-                id: event.id,
-                test_id: event.testId,
-                variation_id: event.variationId,
-                patient_id: event.patientId,
-                type: event.type,
-                goal_id: event.goalId,
-                timestamp: event.timestamp.toISOString(),
-                session_id: event.sessionId,
-                device_info: event.deviceInfo,
-                event_data: event.eventData,
-                monetary_value: event.monetaryValue,
-                ip_address: event.ipAddress,
-                user_agent: event.userAgent,
-                referrer: event.referrer,
-              };
-            });
+            eventsToInsert = events.map((event) => ({
+              id: event.id,
+              test_id: event.testId,
+              variation_id: event.variationId,
+              patient_id: event.patientId,
+              type: event.type,
+              goal_id: event.goalId,
+              timestamp: event.timestamp.toISOString(),
+              session_id: event.sessionId,
+              device_info: event.deviceInfo,
+              event_data: event.eventData,
+              monetary_value: event.monetaryValue,
+              ip_address: event.ipAddress,
+              user_agent: event.userAgent,
+              referrer: event.referrer,
+            }));
             return [4 /*yield*/, this.supabase.from("ab_test_events").insert(eventsToInsert)];
           case 2:
             _b.sent();
@@ -1164,7 +1148,7 @@ var ABTestingEngine = /** @class */ (function () {
       return __generator(this, function (_c) {
         switch (_c.label) {
           case 0:
-            metricsByVariation = events.reduce(function (acc, event) {
+            metricsByVariation = events.reduce((acc, event) => {
               if (!acc[event.variationId]) {
                 acc[event.variationId] = { impressions: 0, conversions: 0 };
               }
@@ -1209,15 +1193,14 @@ var ABTestingEngine = /** @class */ (function () {
    * Inicializar processador de eventos
    */
   ABTestingEngine.prototype.initializeEventProcessor = function () {
-    var _this = this;
     // Processar buffer periodicamente
-    setInterval(function () {
-      _this.flushEventBuffer();
+    setInterval(() => {
+      this.flushEventBuffer();
     }, this.flushInterval);
     // Processar ao fechar/sair
     if (typeof window !== "undefined") {
-      window.addEventListener("beforeunload", function () {
-        _this.flushEventBuffer();
+      window.addEventListener("beforeunload", () => {
+        this.flushEventBuffer();
       });
     }
   };
@@ -1254,35 +1237,32 @@ var ABTestingEngine = /** @class */ (function () {
   /**
    * Mapear variação do banco de dados
    */
-  ABTestingEngine.prototype.mapVariationFromDB = function (data) {
-    return {
-      id: data.id,
-      testId: data.test_id,
-      name: data.name,
-      description: data.description,
-      status: data.status,
-      trafficPercentage: data.traffic_percentage,
-      content: data.content,
-      impressions: data.impressions || 0,
-      conversions: data.conversions || 0,
-      conversionRate: data.conversion_rate || 0,
-      confidence: data.confidence,
-      significance: data.significance,
-      pValue: data.p_value,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
-    };
-  };
+  ABTestingEngine.prototype.mapVariationFromDB = (data) => ({
+    id: data.id,
+    testId: data.test_id,
+    name: data.name,
+    description: data.description,
+    status: data.status,
+    trafficPercentage: data.traffic_percentage,
+    content: data.content,
+    impressions: data.impressions || 0,
+    conversions: data.conversions || 0,
+    conversionRate: data.conversion_rate || 0,
+    confidence: data.confidence,
+    significance: data.significance,
+    pValue: data.p_value,
+    createdAt: new Date(data.created_at),
+    updatedAt: new Date(data.updated_at),
+  });
   /**
    * Gerar ID único
    */
-  ABTestingEngine.prototype.generateId = function () {
-    return "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
-  };
+  ABTestingEngine.prototype.generateId = () =>
+    "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Calcular idade
    */
-  ABTestingEngine.prototype.calculateAge = function (birthDate) {
+  ABTestingEngine.prototype.calculateAge = (birthDate) => {
     var today = new Date();
     var age = today.getFullYear() - birthDate.getFullYear();
     var monthDiff = today.getMonth() - birthDate.getMonth();
@@ -1323,28 +1303,21 @@ var ABTestingEngine = /** @class */ (function () {
   // Placeholder methods for completion
   ABTestingEngine.prototype.calculateAggregations = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, {}];
-      });
+      return __generator(this, (_a) => [2 /*return*/, {}]);
     });
   };
-  ABTestingEngine.prototype.groupEventsByVariation = function (events) {
-    return events.reduce(function (acc, event) {
+  ABTestingEngine.prototype.groupEventsByVariation = (events) =>
+    events.reduce((acc, event) => {
       if (!acc[event.variation_id]) acc[event.variation_id] = [];
       acc[event.variation_id].push(event);
       return acc;
     }, {});
-  };
   ABTestingEngine.prototype.calculateVariationResults = function (variation, events) {
     return __awaiter(this, void 0, void 0, function () {
       var impressions, conversions;
-      return __generator(this, function (_a) {
-        impressions = events.filter(function (e) {
-          return e.type === "impression";
-        }).length;
-        conversions = events.filter(function (e) {
-          return e.type === "conversion";
-        }).length;
+      return __generator(this, (_a) => {
+        impressions = events.filter((e) => e.type === "impression").length;
+        conversions = events.filter((e) => e.type === "conversion").length;
         return [
           2 /*return*/,
           {
@@ -1365,37 +1338,31 @@ var ABTestingEngine = /** @class */ (function () {
       });
     });
   };
-  ABTestingEngine.prototype.createEmptyResults = function (testId) {
-    return {
-      testId: testId,
-      status: "ongoing",
-      totalImpressions: 0,
-      totalConversions: 0,
-      overallConversionRate: 0,
-      statisticalSignificance: "not_significant",
-      confidenceLevel: 95,
-      pValue: 1,
-      powerAchieved: 0,
-      variationResults: [],
-      insights: [],
-      recommendations: [],
-      calculatedAt: new Date(),
-    };
-  };
-  ABTestingEngine.prototype.calculateOverallConversionRate = function (events) {
-    var impressions = events.filter(function (e) {
-      return e.type === "impression";
-    }).length;
-    var conversions = events.filter(function (e) {
-      return e.type === "conversion";
-    }).length;
+  ABTestingEngine.prototype.createEmptyResults = (testId) => ({
+    testId: testId,
+    status: "ongoing",
+    totalImpressions: 0,
+    totalConversions: 0,
+    overallConversionRate: 0,
+    statisticalSignificance: "not_significant",
+    confidenceLevel: 95,
+    pValue: 1,
+    powerAchieved: 0,
+    variationResults: [],
+    insights: [],
+    recommendations: [],
+    calculatedAt: new Date(),
+  });
+  ABTestingEngine.prototype.calculateOverallConversionRate = (events) => {
+    var impressions = events.filter((e) => e.type === "impression").length;
+    var conversions = events.filter((e) => e.type === "conversion").length;
     return impressions > 0 ? (conversions / impressions) * 100 : 0;
   };
-  ABTestingEngine.prototype.determineWinner = function (variations, confidenceLevel) {
+  ABTestingEngine.prototype.determineWinner = (variations, confidenceLevel) => {
     if (variations.length < 2) return {};
-    var bestVariation = variations.reduce(function (best, current) {
-      return current.conversionRate > best.conversionRate ? current : best;
-    });
+    var bestVariation = variations.reduce((best, current) =>
+      current.conversionRate > best.conversionRate ? current : best,
+    );
     var control = variations[0];
     var lift =
       control.conversionRate > 0
@@ -1409,23 +1376,20 @@ var ABTestingEngine = /** @class */ (function () {
   };
   ABTestingEngine.prototype.calculateDailyResults = function (testId, events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   ABTestingEngine.prototype.generateTestInsights = function (test, variations, events) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   ABTestingEngine.prototype.generateRecommendations = function (test, variations, insights) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, ["Continue test to reach statistical significance"]];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        ["Continue test to reach statistical significance"],
+      ]);
     });
   };
   ABTestingEngine.prototype.saveTestResults = function (testId, results) {

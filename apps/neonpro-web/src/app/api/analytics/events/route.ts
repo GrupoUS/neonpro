@@ -4,10 +4,9 @@
  * GET /api/analytics/events - Retrieve analytics events
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/middleware/auth";
+import { type NextRequest, NextResponse } from "next/server";
 import { analyticsService } from "@/lib/analytics";
-import type { z } from "zod";
+import { requireAuth } from "@/lib/middleware/auth";
 
 // Validation schema for event tracking
 const EventSchema = z.object({

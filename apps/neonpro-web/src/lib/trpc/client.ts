@@ -1,7 +1,5 @@
-import type { createTRPCReact } from "@trpc/react-query";
-import type { httpBatchLink, loggerLink } from "@trpc/client";
-import type { type AppRouter } from "@/server/trpc/router";
 import superjson from "superjson";
+import type { AppRouter } from "@/server/trpc/router";
 
 /**
  * tRPC React Client for NeonPro Healthcare

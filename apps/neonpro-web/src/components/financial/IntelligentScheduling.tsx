@@ -8,7 +8,14 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { addDays, endOfWeek, format, isWithinInterval, startOfWeek } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type { AlertTriangle, Brain, CalendarIcon, CheckCircle, Clock, Users } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -16,9 +23,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
   Select,
   SelectContent,
@@ -26,14 +33,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type { CalendarIcon, Clock, Users, AlertTriangle, CheckCircle, Brain } from "lucide-react";
-import type { format, addDays, startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
-import type { pt } from "date-fns/locale";
 import type { useToast } from "@/components/ui/use-toast";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface TimeSlot {
   id: string;

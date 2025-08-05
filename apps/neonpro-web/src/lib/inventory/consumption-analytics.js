@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Story 11.3: Consumption Analytics and Cost Control System
  * Advanced analytics for consumption patterns and cost optimization
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,14 +132,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.consumptionAnalyzer = exports.ConsumptionAnalyzer = void 0;
 /**
  * Consumption Analytics System
  * Advanced analytics for consumption patterns and cost optimization
  */
-var ConsumptionAnalyzer = /** @class */ (function () {
+var ConsumptionAnalyzer = /** @class */ (() => {
   function ConsumptionAnalyzer() {
     this.supabase = createClient(ComponentClient());
   }
@@ -197,17 +194,9 @@ var ConsumptionAnalyzer = /** @class */ (function () {
                 },
               ];
             }
-            totalQuantity = consumptions.reduce(function (sum, c) {
-              return sum + c.quantidade;
-            }, 0);
-            totalValue = consumptions.reduce(function (sum, c) {
-              return sum + c.valor_total;
-            }, 0);
-            uniqueProducts = new Set(
-              consumptions.map(function (c) {
-                return c.produto_id;
-              }),
-            ).size;
+            totalQuantity = consumptions.reduce((sum, c) => sum + c.quantidade, 0);
+            totalValue = consumptions.reduce((sum, c) => sum + c.valor_total, 0);
+            uniqueProducts = new Set(consumptions.map((c) => c.produto_id)).size;
             totalDays = Math.ceil(
               (dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24),
             );
@@ -326,7 +315,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
                 },
               ];
             }
-            productGroups = historicalData.reduce(function (acc, consumption) {
+            productGroups = historicalData.reduce((acc, consumption) => {
               var productId = consumption.produto_id;
               if (!acc[productId]) {
                 acc[productId] = [];
@@ -334,7 +323,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
               acc[productId].push(consumption);
               return acc;
             }, {});
-            forecasts = Object.entries(productGroups).map(function (_a) {
+            forecasts = Object.entries(productGroups).map((_a) => {
               var productId = _a[0],
                 consumptions = _a[1];
               return _this.calculateProductForecast(productId, consumptions, diasPrevisao);
@@ -405,7 +394,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
                 },
               ];
             }
-            productGroups = consumptions.reduce(function (acc, consumption) {
+            productGroups = consumptions.reduce((acc, consumption) => {
               var productId = consumption.produto_id;
               if (!acc[productId]) {
                 acc[productId] = [];
@@ -413,7 +402,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
               acc[productId].push(consumption);
               return acc;
             }, {});
-            patterns = Object.entries(productGroups).map(function (_a) {
+            patterns = Object.entries(productGroups).map((_a) => {
               var productId = _a[0],
                 productConsumptions = _a[1];
               return _this.analyzeProductPattern(centroCustoId, productId, productConsumptions);
@@ -500,9 +489,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
             substitutionOpportunities = _a.sent();
             opportunities.push.apply(opportunities, substitutionOpportunities);
             // Sort by potential savings
-            opportunities.sort(function (a, b) {
-              return b.economia_estimada - a.economia_estimada;
-            });
+            opportunities.sort((a, b) => b.economia_estimada - a.economia_estimada);
             return [
               2 /*return*/,
               {
@@ -532,8 +519,8 @@ var ConsumptionAnalyzer = /** @class */ (function () {
   ConsumptionAnalyzer.prototype.calculateProductConsumptions = function (consumptions, totalValue) {
     return __awaiter(this, void 0, void 0, function () {
       var productGroups;
-      return __generator(this, function (_a) {
-        productGroups = consumptions.reduce(function (acc, consumption) {
+      return __generator(this, (_a) => {
+        productGroups = consumptions.reduce((acc, consumption) => {
           var _a, _b;
           var productId = consumption.produto_id;
           if (!acc[productId]) {
@@ -560,11 +547,10 @@ var ConsumptionAnalyzer = /** @class */ (function () {
         return [
           2 /*return*/,
           Object.values(productGroups)
-            .map(function (group) {
+            .map((group) => {
               var custoMedio =
-                group.valores_unitarios.reduce(function (sum, val) {
-                  return sum + val;
-                }, 0) / group.valores_unitarios.length;
+                group.valores_unitarios.reduce((sum, val) => sum + val, 0) /
+                group.valores_unitarios.length;
               var percentualConsumo = (group.valor_consumido / totalValue) * 100;
               return {
                 produto_id: group.produto_id,
@@ -579,9 +565,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
                 variacao_percentual: 0, // Would be calculated with historical data
               };
             })
-            .sort(function (a, b) {
-              return b.valor_consumido - a.valor_consumido;
-            }),
+            .sort((a, b) => b.valor_consumido - a.valor_consumido),
         ];
       });
     });
@@ -633,12 +617,8 @@ var ConsumptionAnalyzer = /** @class */ (function () {
           case 2:
             weekConsumptions = _a.sent().data;
             if (weekConsumptions) {
-              totalQuantity = weekConsumptions.reduce(function (sum, c) {
-                return sum + c.quantidade;
-              }, 0);
-              totalValue = weekConsumptions.reduce(function (sum, c) {
-                return sum + c.valor_total;
-              }, 0);
+              totalQuantity = weekConsumptions.reduce((sum, c) => sum + c.quantidade, 0);
+              totalValue = weekConsumptions.reduce((sum, c) => sum + c.valor_total, 0);
               trends.push({
                 periodo: "Semana ".concat(week + 1),
                 quantidade_consumida: totalQuantity,
@@ -681,12 +661,8 @@ var ConsumptionAnalyzer = /** @class */ (function () {
         identifiedWaste,
         opportunities;
       return __generator(this, function (_a) {
-        totalValue = consumptions.reduce(function (sum, c) {
-          return sum + c.valor_total;
-        }, 0);
-        totalQuantity = consumptions.reduce(function (sum, c) {
-          return sum + c.quantidade;
-        }, 0);
+        totalValue = consumptions.reduce((sum, c) => sum + c.valor_total, 0);
+        totalQuantity = consumptions.reduce((sum, c) => sum + c.quantidade, 0);
         avgCostPerUnit = totalValue / totalQuantity;
         efficiencyScore = this.calculateEfficiencyScore(totalQuantity, totalValue);
         potentialSavings = totalValue * 0.15;
@@ -739,10 +715,10 @@ var ConsumptionAnalyzer = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var alerts;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         alerts = [];
         // Alert for high-cost products
-        productConsumptions.forEach(function (product, index) {
+        productConsumptions.forEach((product, index) => {
           if (product.percentual_consumo_total > 20) {
             alerts.push({
               id: "alert-high-cost-".concat(index),
@@ -795,13 +771,9 @@ var ConsumptionAnalyzer = /** @class */ (function () {
         avgUnitCost,
         forecastValue;
       var _a, _b;
-      return __generator(this, function (_c) {
-        totalQuantity = consumptions.reduce(function (sum, c) {
-          return sum + c.quantidade;
-        }, 0);
-        totalValue = consumptions.reduce(function (sum, c) {
-          return sum + c.valor_total;
-        }, 0);
+      return __generator(this, (_c) => {
+        totalQuantity = consumptions.reduce((sum, c) => sum + c.quantidade, 0);
+        totalValue = consumptions.reduce((sum, c) => sum + c.valor_total, 0);
         avgDailyConsumption = totalQuantity / 180;
         forecastQuantity = avgDailyConsumption * diasPrevisao;
         avgUnitCost = totalValue / totalQuantity;
@@ -849,16 +821,9 @@ var ConsumptionAnalyzer = /** @class */ (function () {
         patternType;
       return __generator(this, function (_a) {
         monthlyConsumption = consumptions.length / 6;
-        avgQuantity =
-          consumptions.reduce(function (sum, c) {
-            return sum + c.quantidade;
-          }, 0) / consumptions.length;
-        hourPatterns = consumptions.map(function (c) {
-          return new Date(c.data_saida).getHours();
-        });
-        dayPatterns = consumptions.map(function (c) {
-          return new Date(c.data_saida).getDay();
-        });
+        avgQuantity = consumptions.reduce((sum, c) => sum + c.quantidade, 0) / consumptions.length;
+        hourPatterns = consumptions.map((c) => new Date(c.data_saida).getHours());
+        dayPatterns = consumptions.map((c) => new Date(c.data_saida).getDay());
         peakHours = this.findPeakHours(hourPatterns);
         peakDays = this.findPeakDays(dayPatterns);
         patternType = "regular";
@@ -883,19 +848,19 @@ var ConsumptionAnalyzer = /** @class */ (function () {
   /**
    * Find peak hours from hour patterns
    */
-  ConsumptionAnalyzer.prototype.findPeakHours = function (hours) {
-    var hourCounts = hours.reduce(function (acc, hour) {
+  ConsumptionAnalyzer.prototype.findPeakHours = (hours) => {
+    var hourCounts = hours.reduce((acc, hour) => {
       acc[hour] = (acc[hour] || 0) + 1;
       return acc;
     }, {});
     var sortedHours = Object.entries(hourCounts)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
       .slice(0, 3)
-      .map(function (_a) {
+      .map((_a) => {
         var hour = _a[0];
         return "".concat(hour, ":00");
       });
@@ -904,19 +869,19 @@ var ConsumptionAnalyzer = /** @class */ (function () {
   /**
    * Find peak days from day patterns
    */
-  ConsumptionAnalyzer.prototype.findPeakDays = function (days) {
-    var dayCounts = days.reduce(function (acc, day) {
+  ConsumptionAnalyzer.prototype.findPeakDays = (days) => {
+    var dayCounts = days.reduce((acc, day) => {
       acc[day] = (acc[day] || 0) + 1;
       return acc;
     }, {});
     return Object.entries(dayCounts)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
       .slice(0, 3)
-      .map(function (_a) {
+      .map((_a) => {
         var day = _a[0];
         return parseInt(day);
       });
@@ -924,7 +889,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
   /**
    * Calculate efficiency score
    */
-  ConsumptionAnalyzer.prototype.calculateEfficiencyScore = function (quantity, value) {
+  ConsumptionAnalyzer.prototype.calculateEfficiencyScore = (quantity, value) => {
     // Simplified efficiency calculation
     var costPerUnit = value / quantity;
     var benchmarkCost = 10; // Benchmark cost per unit
@@ -940,10 +905,8 @@ var ConsumptionAnalyzer = /** @class */ (function () {
   ConsumptionAnalyzer.prototype.analyzeSupplierConsolidation = function (products) {
     return __awaiter(this, void 0, void 0, function () {
       var highValueProducts;
-      return __generator(this, function (_a) {
-        highValueProducts = products.filter(function (p) {
-          return p.valor_consumido > 1000;
-        });
+      return __generator(this, (_a) => {
+        highValueProducts = products.filter((p) => p.valor_consumido > 1000);
         if (highValueProducts.length > 5) {
           return [
             2 /*return*/,
@@ -955,9 +918,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
                   " produtos de alto valor com fornecedores preferenciais",
                 ),
                 economia_estimada:
-                  highValueProducts.reduce(function (sum, p) {
-                    return sum + p.valor_consumido;
-                  }, 0) * 0.08,
+                  highValueProducts.reduce((sum, p) => sum + p.valor_consumido, 0) * 0.08,
                 complexidade: "media",
                 prazo_implementacao: 45,
                 impacto_operacional: "moderado",
@@ -975,9 +936,9 @@ var ConsumptionAnalyzer = /** @class */ (function () {
   ConsumptionAnalyzer.prototype.analyzeBatchOptimization = function (products) {
     return __awaiter(this, void 0, void 0, function () {
       var opportunities;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         opportunities = [];
-        products.forEach(function (product) {
+        products.forEach((product) => {
           if (product.numero_movimentacoes > 10 && product.valor_consumido > 500) {
             opportunities.push({
               tipo: "otimizacao_lote",
@@ -1004,7 +965,7 @@ var ConsumptionAnalyzer = /** @class */ (function () {
     dataFim,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified waste analysis - would involve complex waste detection
         return [
           2 /*return*/,
@@ -1028,24 +989,20 @@ var ConsumptionAnalyzer = /** @class */ (function () {
   ConsumptionAnalyzer.prototype.analyzeProductSubstitution = function (products) {
     return __awaiter(this, void 0, void 0, function () {
       var expensiveProducts;
-      return __generator(this, function (_a) {
-        expensiveProducts = products.filter(function (p) {
-          return p.custo_medio_unitario > 50;
-        });
+      return __generator(this, (_a) => {
+        expensiveProducts = products.filter((p) => p.custo_medio_unitario > 50);
         return [
           2 /*return*/,
-          expensiveProducts.slice(0, 3).map(function (product) {
-            return {
-              tipo: "substituicao_produto",
-              descricao: "Avaliar substitutos para "
-                .concat(product.nome_produto, " (R$ ")
-                .concat(product.custo_medio_unitario.toFixed(2), "/unidade)"),
-              economia_estimada: product.valor_consumido * 0.15,
-              complexidade: "alta",
-              prazo_implementacao: 90,
-              impacto_operacional: "significativo",
-            };
-          }),
+          expensiveProducts.slice(0, 3).map((product) => ({
+            tipo: "substituicao_produto",
+            descricao: "Avaliar substitutos para "
+              .concat(product.nome_produto, " (R$ ")
+              .concat(product.custo_medio_unitario.toFixed(2), "/unidade)"),
+            economia_estimada: product.valor_consumido * 0.15,
+            complexidade: "alta",
+            prazo_implementacao: 90,
+            impacto_operacional: "significativo",
+          })),
         ];
       });
     });

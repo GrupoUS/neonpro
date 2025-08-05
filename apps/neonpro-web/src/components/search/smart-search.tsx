@@ -6,12 +6,13 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import type { Search, Mic, Filter, Clock, TrendingUp, X, Loader2 } from "lucide-react";
-import type { Input } from "@/components/ui/input";
-import type { Button } from "@/components/ui/button";
+import type { Clock, Filter, Loader2, Mic, Search, TrendingUp, X } from "lucide-react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
 import type { Separator } from "@/components/ui/separator";
 import type { useDebounce } from "@/hooks/use-debounce";
 import type { cn } from "@/lib/utils";

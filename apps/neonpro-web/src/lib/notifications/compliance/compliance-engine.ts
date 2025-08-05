@@ -17,9 +17,9 @@
  * @compliance LGPD, ANVISA, CFM, ISO 27001
  */
 
+import type { createCipheriv, createDecipheriv, createHash, randomBytes } from "crypto";
 import type { z } from "zod";
 import type { createClient } from "@/lib/supabase/server";
-import type { createHash, randomBytes, createCipheriv, createDecipheriv } from "crypto";
 import type { NotificationChannel, NotificationType } from "../types";
 
 // ================================================================================

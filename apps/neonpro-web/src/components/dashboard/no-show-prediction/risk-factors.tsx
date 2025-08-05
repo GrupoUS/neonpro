@@ -3,7 +3,9 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,8 +13,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
+import type { Icons } from "@/components/ui/icons";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -20,8 +22,6 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Progress } from "@/components/ui/progress";
-import type { Icons } from "@/components/ui/icons";
 import type { useToast } from "@/hooks/use-toast";
 
 interface RiskFactor {

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Multi-Factor Authentication (MFA) System for NeonPro Healthcare Platform
  *
@@ -21,26 +20,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -60,13 +59,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -88,9 +87,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -162,7 +159,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MFAUtils =
@@ -212,7 +209,7 @@ var DEFAULT_MFA_CONFIG = {
 /**
  * Comprehensive MFA Service for Healthcare Platform
  */
-var MFAService = /** @class */ (function () {
+var MFAService = /** @class */ (() => {
   function MFAService(supabaseUrl, supabaseKey, config, MFAConfig, , gt) {
         this.supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
         this.config = __assign(__assign({}, DEFAULT_MFA_CONFIG), config);
@@ -320,7 +317,7 @@ Promise < MFAVerificationResult > {
         }),
         // Check rate limiting
         const: rateLimitResult = await this.checkRateLimit(userId, options.ipAddress),
-        if: function (rateLimitResult) { },
+        if: (rateLimitResult) => { },
         : .isLocked
     }
 };
@@ -357,11 +354,12 @@ var isValid = false;
 var delta;
 // Verify token based on method
 switch (method) {
-  case "totp":
+  case "totp": {
     var totpResult = await this.verifyTOTP(userId, token);
     isValid = totpResult.isValid;
     delta = totpResult.delta;
     break;
+  }
   case "sms":
     isValid = await this.verifySMS(userId, token);
     break;
@@ -433,7 +431,7 @@ Promise <
       (mfaData = _a.data),
       (error = _a.error),
       _a),
-    if: function (error) {},
+    if: (error) => {},
   } || !mfaData;
 {
   throw new Error("TOTP not configured for this user");
@@ -471,7 +469,7 @@ Promise <
       (smsData = _b.data),
       (error = _b.error),
       _b),
-    if: function (error) {},
+    if: (error) => {},
   } || !smsData;
 {
   return false;
@@ -505,7 +503,7 @@ Promise <
       (mfaData = _c.data),
       (error = _c.error),
       _c),
-    if: function (error) {},
+    if: (error) => {},
   } || !mfaData;
 {
   return false;
@@ -516,9 +514,7 @@ var hashedCode = await this.hashBackupCode(code);
 var isValid = mfaData.backup_codes.includes(hashedCode);
 if (isValid) {
   // Remove used backup code and increment usage counter
-  var updatedBackupCodes = mfaData.backup_codes.filter(function (storedCode) {
-    return storedCode !== hashedCode;
-  });
+  var updatedBackupCodes = mfaData.backup_codes.filter((storedCode) => storedCode !== hashedCode);
   await this.supabase
     .from("user_mfa_settings")
     .update({
@@ -545,7 +541,7 @@ Promise < MFAVerificationResult > {
         .eq('user_id', userId)
         .eq('emergency_bypass', true)
         .gte('timestamp', todayStart.toISOString()), bypassCount = _d.data, _d),
-    if: function (bypassCount) { }
+    if: (bypassCount) => { }
 } && bypassCount.length >= RATE_LIMIT_CONFIG.emergencyBypassMaxPerDay;
 {
   throw new Error("Daily emergency bypass limit exceeded");
@@ -585,43 +581,47 @@ Promise < { success: boolean, expiresIn: number } > {
     try: {
         // Get user's phone number
         const: mfaSettings = await this.getUserMFASettings(userId),
-        const: smsMethod = mfaSettings === null || mfaSettings === void 0 ? void 0 : mfaSettings.methods.find(function (m) { return m.type === 'sms' && m.isEnabled; }),
-        if: function (, smsMethod, phoneNumber) {
+        const: smsMethod = mfaSettings === null || mfaSettings === void 0 ? void 0 : mfaSettings.methods.find((m) => m.type === 'sms' && m.isEnabled),
+        if: (, smsMethod, phoneNumber) => {
             throw new Error('SMS MFA not configured for this user');
-        }
+}
         // Generate 6-digit OTP
         ,
-        // Generate 6-digit OTP
-        const: otp = Math.floor(100000 + Math.random() * 900000).toString(),
-        const: expiresAt = new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+// Generate 6-digit OTP
+const: otp = Math.floor(100000 + Math.random() * 900000).toString(),
+const: expiresAt = new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
         // Store OTP in database
         await: await,
-        this: .supabase
+this;
+: .supabase
             .from('user_mfa_sms_tokens')
-            .insert({
-            user_id: userId,
-            token: otp,
+            .insert(
+{
+  user_id: userId, token;
+  : otp,
             expires_at: expiresAt.toISOString(),
             used: false,
-        }),
+}
+),
         // Send SMS via Supabase (or your SMS provider)
         // This would integrate with your SMS service
         await: await,
         this: .sendSMS(smsMethod.phoneNumber, otp),
         // Create audit log
         await: await,
-        this: .createAuditLog({
-            userId: userId,
-            action: 'verify',
+        this: .createAuditLog(
+{
+  userId: userId, action;
+  : 'verify',
             method: 'sms',
             result: 'success',
             ipAddress: options.ipAddress,
             userAgent: options.userAgent,
-            metadata: {
-                phoneNumber: '***' + smsMethod.phoneNumber.slice(-4),
-                expiresAt: expiresAt.toISOString(),
-            },
-        }
+            metadata:
+    phoneNumber: "***" + smsMethod.phoneNumber.slice(-4), expiresAt
+  : expiresAt.toISOString(),
+  ,
+}
 ),
 return
 :
@@ -650,19 +650,31 @@ function (error) {
  * Disable MFA for a user (with proper authorization)
  */
 async
-disableMFA(userId, string, options, {
-  adminUserId: string,
-  reason: string,
+disableMFA(userId, string, options,
+{
+  adminUserId: string, reason;
+  : string,
   userAgent: string,
   ipAddress: string,
-});
-Promise < { success: boolean } > {
-    try: {
-        // Verify admin authorization if provided
-        if: function (options) { },
+}
+)
+Promise <
+{
+  success: boolean;
+}
+>
+{
+  try
+  :
+  {
+    // Verify admin authorization if provided
+    if
+    :
+    function (options) { }
+    ,
         : .adminUserId
-    }
-};
+  }
+}
 {
   await this.verifyAdminAuthorization(options.adminUserId, "disable_mfa");
 }
@@ -724,7 +736,7 @@ getUserMFASettings(userId, string);
         (data = _e.data),
         (error = _e.error),
         _e),
-      if: function (error) {},
+      if: (error) => {},
     }) || !data;
 {
   return null;
@@ -771,14 +783,15 @@ Promise < string[] > (_f = {
     _f
 )
 async
-hashBackupCode(code, string);
+hashBackupCode(code, string)
 Promise <
   string >
-  {
-    return: crypto_1.default
+{
+  return
+  : crypto_1.default
       .pbkdf2Sync(code, "neonpro-mfa-salt", 100000, 64, "sha512")
       .toString("hex"),
-  };
+}
 async;
 hashRecoveryToken(token, string);
 Promise <
@@ -811,7 +824,7 @@ Promise < void  > {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
     }), settingsError = _g.error, _g),
-    if: function (settingsError) {
+    if: (settingsError) => {
         throw new Error("Failed to store MFA settings: ".concat(settingsError.message));
     }
     // Store MFA method
@@ -828,7 +841,7 @@ Promise < void  > {
         phone_number: config.phoneNumber,
         created_at: new Date().toISOString(),
     }), methodError = _h.error, _h),
-    if: function (methodError) {
+    if: (methodError) => {
         throw new Error("Failed to store MFA method: ".concat(methodError.message));
     }
 };
@@ -847,16 +860,16 @@ Promise < {
         .eq('action', 'verify')
         .gte('timestamp', windowStart.toISOString())
         .order('timestamp', { ascending: false }), attempts = _j.data, _j),
-    if: function (, attempts) {
-        return { isLocked: false, remainingAttempts: RATE_LIMIT_CONFIG.maxAttempts };
-    },
-    const: failedAttempts = attempts.filter(function (attempt) { return attempt.result === 'failure'; }).length,
-    if: function (failedAttempts) { }
-} >= RATE_LIMIT_CONFIG.maxAttempts;
+    if: (, attempts) => ({ isLocked: false, remainingAttempts: RATE_LIMIT_CONFIG.maxAttempts }
+),
+const: failedAttempts = attempts.filter((attempt) => attempt.result === 'failure').length,
+if
+: (failedAttempts) =>
 {
-  var lastFailure = attempts.find(function (attempt) {
-    return attempt.result === "failure";
-  });
+}
+} >= RATE_LIMIT_CONFIG.maxAttempts
+{
+  var lastFailure = attempts.find((attempt) => attempt.result === "failure");
   var lockedUntil = new Date(
     new Date(lastFailure.timestamp).getTime() + RATE_LIMIT_CONFIG.lockoutMinutes * 60 * 1000,
   );
@@ -899,7 +912,7 @@ Promise <
       (data = _k.data),
       (error = _k.error),
       _k),
-    if: function (error) {
+    if: (error) => {
       console.error("Failed to create audit log:", error);
       return "";
     },
@@ -925,31 +938,30 @@ Promise < void  > {
     })
 }
 async
-updateLastVerified(userId, string, method, string);
-Promise < void  > {
-    await: await,
+updateLastVerified(userId, string, method, string)
+Promise < void  >
+{
+  await
+  : await,
     this: .supabase
         .from('user_mfa_settings')
-        .update({
+        .update(
         last_verified: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-    })
+        updated_at: new Date().toISOString(),)
         .eq('user_id', userId),
     await
 : await,
     this: .supabase
         .from('user_mfa_methods')
         .update(
-{
   last_used: new Date().toISOString(),
-}
 )
         .eq('user_id', userId)
         .eq('type', method)
 } /**
  * Send SMS via integrated SMS service
  */
-async
+async;
 sendSMS(phoneNumber, string, otp, string);
 Promise < void  > {
     // This would integrate with your SMS service (Twilio, AWS SNS, etc.)
@@ -972,74 +984,83 @@ Promise < void  > {
         .select('email, full_name')
         .eq('id', userId)
         .single(), user = _l.data, _l),
-    if: function (, user) { },
-    return: ,
-    // Send notification to user and security team
-    const: notification = {
+    if: (, user) => { },
+return
+: ,
+// Send notification to user and security team
+const: notification = {
         to: user.email,
         subject: 'Alerta de Segurança: Bypass de MFA Utilizado',
-        body: "\n        Ol\u00E1 ".concat(user.full_name, ",\n        \n        Um bypass de emerg\u00EAncia foi utilizado em sua conta NeonPro Healthcare.\n        \n        Detalhes:\n        - Data/Hora: ").concat(new Date().toLocaleString('pt-BR'), "\n        - IP: ").concat(options.ipAddress, "\n        - Navegador: ").concat(options.userAgent, "\n        - Motivo: ").concat(options.emergencyReason || 'Emergência clínica', "\n        \n        Se voc\u00EA n\u00E3o realizou esta a\u00E7\u00E3o, entre em contato com o suporte imediatamente.\n        \n        Equipe NeonPro Security\n      "),
+        body: "\n        Ol\u00E1 ".concat(user.full_name, ",\n        \n        Um bypass de emerg\u00EAncia foi utilizado em sua conta NeonPro Healthcare.\n        \n        Detalhes:\n        - Data/Hora: "
+).concat(new Date().toLocaleString('pt-BR'), "\n        - IP: ").concat(options.ipAddress, "\n        - Navegador: ").concat(options.userAgent, "\n        - Motivo: ").concat(options.emergencyReason || 'Emergência clínica', "\n        \n        Se voc\u00EA n\u00E3o realizou esta a\u00E7\u00E3o, entre em contato com o suporte imediatamente.\n        \n        Equipe NeonPro Security\n      "),
     },
     // In production, send actual email notification
     console: console,
     : .log('Emergency bypass notification:', notification)
-};
-async;
-verifyAdminAuthorization(adminUserId, string, operation, string);
-Promise < void  > {
-    const: (_m = await this.supabase
-        .from('user_roles')
+}
+async
+verifyAdminAuthorization(adminUserId, string, operation, string)
+Promise < void  >
+{
+  const: (_m = await this.supabase
+  .from('user_roles')
         .select('role')
         .eq('user_id', adminUserId)
         .in('role', ['admin', 'security_officer'])
         .single(), admin = _m.data, _m),
-    if: function (, admin) {
-        throw new Error('Insufficient permissions for this operation');
-    }
-};
+  if
+  : (, admin) =>
+  throw new Error("Insufficient permissions for this operation");
+}
 /**
  * Generate MFA recovery codes
  */
 async;
-generateNewBackupCodes(userId, string, options, {
-  userAgent: string,
-  ipAddress: string,
-});
+generateNewBackupCodes(userId, string, options,
+{
+  userAgent: string, ipAddress;
+  : string,
+}
+)
 Promise < string[] > {
     try: {
         // Verify MFA is enabled
         const: mfaSettings = await this.getUserMFASettings(userId),
-        if: function (, mfaSettings, isEnabled) {
+        if: (, mfaSettings, isEnabled) => {
             throw new Error('MFA not enabled for this user');
-        }
+}
         // Generate new backup codes
         ,
-        // Generate new backup codes
-        const: newBackupCodes = this.generateBackupCodes(8),
-        const: hashedCodes = await this.hashBackupCodes(newBackupCodes),
+// Generate new backup codes
+const: newBackupCodes = this.generateBackupCodes(8),
+const: hashedCodes = await this.hashBackupCodes(newBackupCodes),
         // Update database
         await: await,
-        this: .supabase
+this;
+: .supabase
             .from('user_mfa_settings')
-            .update({
-            backup_codes: hashedCodes,
-            backup_codes_used: 0,
+            .update(
+{
+  backup_codes: hashedCodes, backup_codes_used;
+  : 0,
             updated_at: new Date().toISOString(),
-        })
+}
+)
             .eq('user_id', userId),
         // Create audit log
         await: await,
-        this: .createAuditLog({
-            userId: userId,
-            action: 'recover',
+        this: .createAuditLog(
+{
+  userId: userId, action;
+  : 'recover',
             method: 'backup',
             result: 'success',
             ipAddress: options.ipAddress,
             userAgent: options.userAgent,
-            metadata: {
-                codesGenerated: newBackupCodes.length,
-            },
-        }
+            metadata:
+    codesGenerated: newBackupCodes.length,
+  ,
+}
 ),
 return
 : newBackupCodes
@@ -1064,21 +1085,24 @@ function (error) {
  * Get MFA statistics for dashboard/monitoring
  */
 async
-getMFAStatistics(userId ?  : string);
-Promise < {
-    totalUsers: number,
-    enabledUsers: number,
+getMFAStatistics(userId ?  : string)
+Promise <
+{
+  totalUsers: number, enabledUsers;
+  : number,
     totpUsers: number,
     smsUsers: number,
     emergencyBypassesToday: number,
     failedAttemptsToday: number
-} > {
-    const: todayStart = new Date(),
+}
+>
+{
+  const: todayStart = new Date(),
     todayStart: todayStart,
-    : .setHours(0, 0, 0, 0),
-    const: queries = await Promise.all([
-        // Total users
-        this.supabase.from('users').select('id', { count: 'exact', head: true }),
+  : .setHours(0, 0, 0, 0),
+  const: queries = await Promise.all([
+  // Total users
+  this.supabase.from('users').select('id', { count: 'exact', head: true }),
         // Enabled MFA users
         this.supabase
             .from('user_mfa_settings')
@@ -1109,16 +1133,16 @@ Promise < {
             .eq('action', 'verify')
             .eq('result', 'failure')
             .gte('timestamp', todayStart.toISOString()),
-    ]),
-    return: {
+  ]),
+  return
+  : 
         totalUsers: queries[0].count || 0,
         enabledUsers: queries[1].count || 0,
         totpUsers: queries[2].count || 0,
         smsUsers: queries[3].count || 0,
         emergencyBypassesToday: queries[4].count || 0,
         failedAttemptsToday: queries[5].count || 0,
-    }
-};
+}
 // Default MFA service instance
 var mfaServiceInstance = null;
 /**
@@ -1137,27 +1161,22 @@ exports.MFAUtils = {
   /**
    * Generate QR code data URL for display
    */
-  generateQRCodeDataURL: function (uri) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  generateQRCodeDataURL: (uri) =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         // This would use a QR code library like 'qrcode'
         // For now, return the URI - implement QR generation in the component
         return [2 /*return*/, uri];
       });
-    });
-  },
+    }),
   /**
    * Format backup codes for display
    */
-  formatBackupCodes: function (codes) {
-    return codes.map(function (code) {
-      return code.replace(/(.{4})(.{4})(.{2})/, "$1-$2-$3");
-    });
-  },
+  formatBackupCodes: (codes) => codes.map((code) => code.replace(/(.{4})(.{4})(.{2})/, "$1-$2-$3")),
   /**
    * Validate token format
    */
-  validateToken: function (token, method) {
+  validateToken: (token, method) => {
     switch (method) {
       case "totp":
         return /^\d{6}$/.test(token);

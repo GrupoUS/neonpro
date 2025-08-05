@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Native React Testing - No External Libraries
@@ -7,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var server_1 = require("react-dom/server");
 var duplicate_manager_hook_minimal_1 = require("../../../components/patients/duplicate-manager-hook-minimal");
-describe("DuplicateManagerHookMinimal - Native React Testing", function () {
+describe("DuplicateManagerHookMinimal - Native React Testing", () => {
   var mockDuplicates = [
     {
       id: "1",
@@ -16,7 +15,7 @@ describe("DuplicateManagerHookMinimal - Native React Testing", function () {
       patient2: { id: "p2", name: "J. Doe", email: "j.doe@test.com" },
     },
   ];
-  test("renders without crashing using server-side rendering", function () {
+  test("renders without crashing using server-side rendering", () => {
     // This uses React's server-side rendering which doesn't depend on hooks execution
     var html = (0, server_1.renderToString)(
       react_1.default.createElement(duplicate_manager_hook_minimal_1.default, {
@@ -26,7 +25,7 @@ describe("DuplicateManagerHookMinimal - Native React Testing", function () {
     expect(html).toContain("John Doe");
     expect(html).toContain("J. Doe");
   });
-  test("component structure is valid", function () {
+  test("component structure is valid", () => {
     // Test that the component at least creates a valid React element
     var element = react_1.default.createElement(duplicate_manager_hook_minimal_1.default, {
       duplicates: mockDuplicates,

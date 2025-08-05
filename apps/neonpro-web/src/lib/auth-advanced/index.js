@@ -1,4 +1,3 @@
-"use strict";
 // 🔐 Sistema de Autenticação e Segurança Avançado
 // Story 1.4: Session Management & Security Implementation
 // Main entry point for the authentication system
@@ -7,53 +6,50 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -73,13 +69,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -101,9 +97,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -175,7 +169,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SYSTEM_INFO =
   exports.performHealthCheck =
@@ -231,254 +225,174 @@ __exportStar(require("./core"), exports);
 var core_1 = require("./core");
 Object.defineProperty(exports, "SessionManager", {
   enumerable: true,
-  get: function () {
-    return core_1.SessionManager;
-  },
+  get: () => core_1.SessionManager,
 });
 Object.defineProperty(exports, "SecurityMonitor", {
   enumerable: true,
-  get: function () {
-    return core_1.SecurityMonitor;
-  },
+  get: () => core_1.SecurityMonitor,
 });
 Object.defineProperty(exports, "DeviceManager", {
   enumerable: true,
-  get: function () {
-    return core_1.DeviceManager;
-  },
+  get: () => core_1.DeviceManager,
 });
 // React components
 __exportStar(require("./components"), exports);
 var components_1 = require("./components");
 Object.defineProperty(exports, "SessionStatus", {
   enumerable: true,
-  get: function () {
-    return components_1.SessionStatus;
-  },
+  get: () => components_1.SessionStatus,
 });
 Object.defineProperty(exports, "SecurityAlerts", {
   enumerable: true,
-  get: function () {
-    return components_1.SecurityAlerts;
-  },
+  get: () => components_1.SecurityAlerts,
 });
 Object.defineProperty(exports, "DeviceManagerComponent", {
   enumerable: true,
-  get: function () {
-    return components_1.DeviceManager;
-  },
+  get: () => components_1.DeviceManager,
 });
 Object.defineProperty(exports, "SessionMetricsComponent", {
   enumerable: true,
-  get: function () {
-    return components_1.SessionMetrics;
-  },
+  get: () => components_1.SessionMetrics,
 });
 // Middlewares
 __exportStar(require("./middleware"), exports);
 var middleware_1 = require("./middleware");
 Object.defineProperty(exports, "createAuthMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.createAuthMiddleware;
-  },
+  get: () => middleware_1.createAuthMiddleware,
 });
 Object.defineProperty(exports, "createSecurityMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.createSecurityMiddleware;
-  },
+  get: () => middleware_1.createSecurityMiddleware,
 });
 Object.defineProperty(exports, "createCombinedMiddleware", {
   enumerable: true,
-  get: function () {
-    return middleware_1.createCombinedMiddleware;
-  },
+  get: () => middleware_1.createCombinedMiddleware,
 });
 Object.defineProperty(exports, "extractClientIP", {
   enumerable: true,
-  get: function () {
-    return middleware_1.extractClientIP;
-  },
+  get: () => middleware_1.extractClientIP,
 });
 Object.defineProperty(exports, "extractSessionToken", {
   enumerable: true,
-  get: function () {
-    return middleware_1.extractSessionToken;
-  },
+  get: () => middleware_1.extractSessionToken,
 });
 Object.defineProperty(exports, "isAPIRoute", {
   enumerable: true,
-  get: function () {
-    return middleware_1.isAPIRoute;
-  },
+  get: () => middleware_1.isAPIRoute,
 });
 Object.defineProperty(exports, "isStaticRoute", {
   enumerable: true,
-  get: function () {
-    return middleware_1.isStaticRoute;
-  },
+  get: () => middleware_1.isStaticRoute,
 });
 Object.defineProperty(exports, "isPublicRoute", {
   enumerable: true,
-  get: function () {
-    return middleware_1.isPublicRoute;
-  },
+  get: () => middleware_1.isPublicRoute,
 });
 Object.defineProperty(exports, "HIGH_SECURITY_CONFIG", {
   enumerable: true,
-  get: function () {
-    return middleware_1.HIGH_SECURITY_CONFIG;
-  },
+  get: () => middleware_1.HIGH_SECURITY_CONFIG,
 });
 Object.defineProperty(exports, "DEFAULT_CONFIG", {
   enumerable: true,
-  get: function () {
-    return middleware_1.DEFAULT_CONFIG;
-  },
+  get: () => middleware_1.DEFAULT_CONFIG,
 });
 Object.defineProperty(exports, "DEVELOPMENT_CONFIG", {
   enumerable: true,
-  get: function () {
-    return middleware_1.DEVELOPMENT_CONFIG;
-  },
+  get: () => middleware_1.DEVELOPMENT_CONFIG,
 });
 // API routes
 __exportStar(require("./api"), exports);
 var api_1 = require("./api");
 Object.defineProperty(exports, "createSessionRoutes", {
   enumerable: true,
-  get: function () {
-    return api_1.createSessionRoutes;
-  },
+  get: () => api_1.createSessionRoutes,
 });
 Object.defineProperty(exports, "createSecurityRoutes", {
   enumerable: true,
-  get: function () {
-    return api_1.createSecurityRoutes;
-  },
+  get: () => api_1.createSecurityRoutes,
 });
 Object.defineProperty(exports, "createDeviceRoutes", {
   enumerable: true,
-  get: function () {
-    return api_1.createDeviceRoutes;
-  },
+  get: () => api_1.createDeviceRoutes,
 });
 Object.defineProperty(exports, "createAuthAPIRoutes", {
   enumerable: true,
-  get: function () {
-    return api_1.createAuthAPIRoutes;
-  },
+  get: () => api_1.createAuthAPIRoutes,
 });
 Object.defineProperty(exports, "apiExtractClientIP", {
   enumerable: true,
-  get: function () {
-    return api_1.extractClientIP;
-  },
+  get: () => api_1.extractClientIP,
 });
 Object.defineProperty(exports, "apiExtractSessionToken", {
   enumerable: true,
-  get: function () {
-    return api_1.extractSessionToken;
-  },
+  get: () => api_1.extractSessionToken,
 });
 Object.defineProperty(exports, "createErrorResponse", {
   enumerable: true,
-  get: function () {
-    return api_1.createErrorResponse;
-  },
+  get: () => api_1.createErrorResponse,
 });
 Object.defineProperty(exports, "createSuccessResponse", {
   enumerable: true,
-  get: function () {
-    return api_1.createSuccessResponse;
-  },
+  get: () => api_1.createSuccessResponse,
 });
 Object.defineProperty(exports, "validateRequestBody", {
   enumerable: true,
-  get: function () {
-    return api_1.validateRequestBody;
-  },
+  get: () => api_1.validateRequestBody,
 });
 Object.defineProperty(exports, "parseQueryParams", {
   enumerable: true,
-  get: function () {
-    return api_1.parseQueryParams;
-  },
+  get: () => api_1.parseQueryParams,
 });
 Object.defineProperty(exports, "addSecurityHeaders", {
   enumerable: true,
-  get: function () {
-    return api_1.addSecurityHeaders;
-  },
+  get: () => api_1.addSecurityHeaders,
 });
 Object.defineProperty(exports, "API_ROUTE_PATTERNS", {
   enumerable: true,
-  get: function () {
-    return api_1.API_ROUTE_PATTERNS;
-  },
+  get: () => api_1.API_ROUTE_PATTERNS,
 });
 Object.defineProperty(exports, "HTTP_METHODS", {
   enumerable: true,
-  get: function () {
-    return api_1.HTTP_METHODS;
-  },
+  get: () => api_1.HTTP_METHODS,
 });
 Object.defineProperty(exports, "STATUS_CODES", {
   enumerable: true,
-  get: function () {
-    return api_1.STATUS_CODES;
-  },
+  get: () => api_1.STATUS_CODES,
 });
 Object.defineProperty(exports, "ERROR_MESSAGES", {
   enumerable: true,
-  get: function () {
-    return api_1.ERROR_MESSAGES;
-  },
+  get: () => api_1.ERROR_MESSAGES,
 });
 Object.defineProperty(exports, "SUCCESS_MESSAGES", {
   enumerable: true,
-  get: function () {
-    return api_1.SUCCESS_MESSAGES;
-  },
+  get: () => api_1.SUCCESS_MESSAGES,
 });
 // Test utilities (for development and testing)
 var tests_1 = require("./tests");
 Object.defineProperty(exports, "TestUtils", {
   enumerable: true,
-  get: function () {
-    return tests_1.TestUtils;
-  },
+  get: () => tests_1.TestUtils,
 });
 Object.defineProperty(exports, "PerformanceTestUtils", {
   enumerable: true,
-  get: function () {
-    return tests_1.PerformanceTestUtils;
-  },
+  get: () => tests_1.PerformanceTestUtils,
 });
 Object.defineProperty(exports, "IntegrationTestUtils", {
   enumerable: true,
-  get: function () {
-    return tests_1.IntegrationTestUtils;
-  },
+  get: () => tests_1.IntegrationTestUtils,
 });
 Object.defineProperty(exports, "TEST_CONFIG", {
   enumerable: true,
-  get: function () {
-    return tests_1.TEST_CONFIG;
-  },
+  get: () => tests_1.TEST_CONFIG,
 });
 Object.defineProperty(exports, "setupTestEnvironment", {
   enumerable: true,
-  get: function () {
-    return tests_1.setupTestEnvironment;
-  },
+  get: () => tests_1.setupTestEnvironment,
 });
 Object.defineProperty(exports, "runTestSuite", {
   enumerable: true,
-  get: function () {
-    return tests_1.runTestSuite;
-  },
+  get: () => tests_1.runTestSuite,
 });
 // System configuration and utilities
 exports.AUTH_SYSTEM_VERSION = "1.4.0";
@@ -538,7 +452,7 @@ exports.DEFAULT_SYSTEM_CONFIG = {
 /**
  * System initialization function
  */
-var initializeAuthSystem = function (config) {
+var initializeAuthSystem = (config) => {
   var finalConfig = __assign(__assign(__assign({}, exports.DEFAULT_SYSTEM_CONFIG), config), {
     session: __assign(
       __assign({}, exports.DEFAULT_SYSTEM_CONFIG.session),
@@ -576,8 +490,8 @@ exports.AuthSystemPresets = {
   /**
    * High security preset for production environments
    */
-  highSecurity: function () {
-    return (0, exports.initializeAuthSystem)({
+  highSecurity: () =>
+    (0, exports.initializeAuthSystem)({
       session: {
         maxSessions: 3,
         sessionTimeout: 15 * 60 * 1000, // 15 minutes
@@ -603,19 +517,16 @@ exports.AuthSystemPresets = {
         maxDevicesPerUser: 5,
         requireDeviceVerification: true,
       },
-    });
-  },
+    }),
   /**
    * Standard preset for most applications
    */
-  standard: function () {
-    return (0, exports.initializeAuthSystem)();
-  },
+  standard: () => (0, exports.initializeAuthSystem)(),
   /**
    * Development preset with relaxed security
    */
-  development: function () {
-    return (0, exports.initializeAuthSystem)({
+  development: () =>
+    (0, exports.initializeAuthSystem)({
       session: {
         sessionTimeout: 60 * 60 * 1000, // 1 hour
         requireMFA: false,
@@ -639,13 +550,12 @@ exports.AuthSystemPresets = {
         maxDevicesPerUser: 20,
         requireDeviceVerification: false,
       },
-    });
-  },
+    }),
   /**
    * Enterprise preset with advanced features
    */
-  enterprise: function () {
-    return (0, exports.initializeAuthSystem)({
+  enterprise: () =>
+    (0, exports.initializeAuthSystem)({
       session: {
         maxSessions: 10,
         sessionTimeout: 45 * 60 * 1000, // 45 minutes
@@ -675,8 +585,7 @@ exports.AuthSystemPresets = {
         requireDeviceVerification: true,
         enableBehaviorAnalysis: true,
       },
-    });
-  },
+    }),
 };
 /**
  * Utility functions for common operations
@@ -685,15 +594,14 @@ exports.AuthUtils = {
   /**
    * Generate secure session ID
    */
-  generateSessionId: function () {
-    return crypto.randomUUID
+  generateSessionId: () =>
+    crypto.randomUUID
       ? crypto.randomUUID()
-      : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  },
+      : Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
   /**
    * Generate device fingerprint
    */
-  generateDeviceFingerprint: function (userAgent, additionalData) {
+  generateDeviceFingerprint: (userAgent, additionalData) => {
     var data = __assign(__assign({ userAgent: userAgent }, additionalData), {
       timestamp: Date.now(),
     });
@@ -710,7 +618,7 @@ exports.AuthUtils = {
   /**
    * Calculate risk score based on various factors
    */
-  calculateRiskScore: function (factors) {
+  calculateRiskScore: (factors) => {
     var score = 0;
     if (factors.isNewDevice) score += 0.3;
     if (factors.isNewLocation) score += 0.4;
@@ -728,13 +636,11 @@ exports.AuthUtils = {
   /**
    * Validate session token format
    */
-  isValidSessionToken: function (token) {
-    return typeof token === "string" && token.length > 10;
-  },
+  isValidSessionToken: (token) => typeof token === "string" && token.length > 10,
   /**
    * Extract IP address from various sources
    */
-  extractIPAddress: function (request) {
+  extractIPAddress: (request) => {
     var _a, _b, _c, _d, _e;
     return (
       ((_b = (_a = request.headers) === null || _a === void 0 ? void 0 : _a["x-forwarded-for"]) ===
@@ -750,7 +656,7 @@ exports.AuthUtils = {
   /**
    * Format duration in human-readable format
    */
-  formatDuration: function (ms) {
+  formatDuration: (ms) => {
     var seconds = Math.floor(ms / 1000);
     var minutes = Math.floor(seconds / 60);
     var hours = Math.floor(minutes / 60);
@@ -764,8 +670,8 @@ exports.AuthUtils = {
 /**
  * System health check
  */
-var performHealthCheck = function (authSystem) {
-  return __awaiter(void 0, void 0, void 0, function () {
+var performHealthCheck = (authSystem) =>
+  __awaiter(void 0, void 0, void 0, function () {
     var results,
       sessionMetrics,
       error_1,
@@ -774,7 +680,7 @@ var performHealthCheck = function (authSystem) {
       deviceAnalytics,
       error_3,
       healthyChecks;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           results = {
@@ -843,7 +749,6 @@ var performHealthCheck = function (authSystem) {
       }
     });
   });
-};
 exports.performHealthCheck = performHealthCheck;
 // Export system information
 exports.SYSTEM_INFO = {

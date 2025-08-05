@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,14 +155,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useComplianceAssessment = useComplianceAssessment;
 var react_1 = require("react");
 var LGPDComplianceManager_1 = require("@/lib/lgpd/LGPDComplianceManager");
 var use_toast_1 = require("@/hooks/use-toast");
 function useComplianceAssessment() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     assessments = _a[0],
     setAssessments = _a[1];
@@ -209,10 +205,10 @@ function useComplianceAssessment() {
   var toast = (0, use_toast_1.useToast)().toast;
   var complianceManager = new LGPDComplianceManager_1.LGPDComplianceManager();
   var loadAssessments = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, completed, pending, averageScore, err_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -229,17 +225,11 @@ function useComplianceAssessment() {
               response = _a.sent();
               setAssessments(response.data);
               setTotalCount(response.total);
-              completed = response.data.filter(function (a) {
-                return a.status === "completed";
-              });
-              pending = response.data.filter(function (a) {
-                return a.status === "pending";
-              });
+              completed = response.data.filter((a) => a.status === "completed");
+              pending = response.data.filter((a) => a.status === "pending");
               averageScore =
                 completed.length > 0
-                  ? completed.reduce(function (sum, a) {
-                      return sum + (a.score || 0);
-                    }, 0) / completed.length
+                  ? completed.reduce((sum, a) => sum + (a.score || 0), 0) / completed.length
                   : 0;
               setStatistics({
                 total: response.total,
@@ -266,15 +256,14 @@ function useComplianceAssessment() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [filters, currentPage, complianceManager, toast],
   );
   var createAssessment = (0, react_1.useCallback)(
-    function (assessment) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (assessment) =>
+      __awaiter(this, void 0, void 0, function () {
         var newAssessment_1, err_2, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsCreating(true);
@@ -286,19 +275,15 @@ function useComplianceAssessment() {
             case 2:
               newAssessment_1 = _a.sent();
               // Update local state
-              setAssessments(function (prev) {
-                return __spreadArray([newAssessment_1], prev, true);
-              });
-              setTotalCount(function (prev) {
-                return prev + 1;
-              });
+              setAssessments((prev) => __spreadArray([newAssessment_1], prev, true));
+              setTotalCount((prev) => prev + 1);
               // Update statistics
-              setStatistics(function (prev) {
-                return __assign(__assign({}, prev), {
+              setStatistics((prev) =>
+                __assign(__assign({}, prev), {
                   total: prev.total + 1,
                   pending: prev.pending + 1,
-                });
-              });
+                }),
+              );
               toast({
                 title: "Avaliação criada",
                 description: 'Avalia\u00E7\u00E3o "'.concat(
@@ -324,15 +309,14 @@ function useComplianceAssessment() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [complianceManager, toast],
   );
   var runAutomatedAssessment = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var automatedAssessment, newAssessment_2, result_1, err_3, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsRunning(true);
@@ -362,14 +346,14 @@ function useComplianceAssessment() {
             case 3:
               result_1 = _a.sent();
               // Update local state with results
-              setAssessments(function (prev) {
-                return prev.map(function (assessment) {
-                  return assessment.id === newAssessment_2.id ? result_1 : assessment;
-                });
-              });
+              setAssessments((prev) =>
+                prev.map((assessment) =>
+                  assessment.id === newAssessment_2.id ? result_1 : assessment,
+                ),
+              );
               // Update statistics
-              setStatistics(function (prev) {
-                return __assign(__assign({}, prev), {
+              setStatistics((prev) =>
+                __assign(__assign({}, prev), {
                   completed: prev.completed + 1,
                   pending: Math.max(0, prev.pending - 1),
                   averageScore:
@@ -377,8 +361,8 @@ function useComplianceAssessment() {
                       ? (prev.averageScore * (prev.completed - 1) + (result_1.score || 0)) /
                         prev.completed
                       : result_1.score || 0,
-                });
-              });
+                }),
+              );
               // Update latest assessment
               setLatestAssessment(result_1);
               toast({
@@ -408,15 +392,14 @@ function useComplianceAssessment() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [complianceManager, toast],
   );
   var exportAssessments = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var csvHeaders, csvRows, csvContent, blob, link, url, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           try {
             setError(null);
             csvHeaders = [
@@ -430,7 +413,7 @@ function useComplianceAssessment() {
               "Data de Atualização",
               "Descrição",
             ];
-            csvRows = assessments.map(function (assessment) {
+            csvRows = assessments.map((assessment) => {
               var _a;
               return [
                 assessment.id,
@@ -445,13 +428,7 @@ function useComplianceAssessment() {
               ];
             });
             csvContent = __spreadArray([csvHeaders], csvRows, true)
-              .map(function (row) {
-                return row
-                  .map(function (cell) {
-                    return '"'.concat(cell, '"');
-                  })
-                  .join(",");
-              })
+              .map((row) => row.map((cell) => '"'.concat(cell, '"')).join(","))
               .join("\n");
             blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
             link = document.createElement("a");
@@ -480,35 +457,30 @@ function useComplianceAssessment() {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [assessments, toast],
   );
-  var goToPage = (0, react_1.useCallback)(function (page) {
+  var goToPage = (0, react_1.useCallback)((page) => {
     setCurrentPage(page);
   }, []);
   // Load data on mount and when filters change
-  (0, react_1.useEffect)(
-    function () {
-      var loadData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                setIsLoading(true);
-                return [4 /*yield*/, loadAssessments()];
-              case 1:
-                _a.sent();
-                setIsLoading(false);
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var loadData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setIsLoading(true);
+              return [4 /*yield*/, loadAssessments()];
+            case 1:
+              _a.sent();
+              setIsLoading(false);
+              return [2 /*return*/];
+          }
         });
-      };
-      loadData();
-    },
-    [loadAssessments],
-  );
+      });
+    loadData();
+  }, [loadAssessments]);
   return {
     // Data
     assessments: assessments,

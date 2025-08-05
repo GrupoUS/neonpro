@@ -1,6 +1,6 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { withRoleValidation } from "@/lib/middleware/role-validation";
+import type { createClient } from "@/lib/supabase/server";
 
 export const GET = withRoleValidation(
   async (request: NextRequest, validation) => {

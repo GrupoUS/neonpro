@@ -1,3 +1,8 @@
+import type { differenceInHours, format, isAfter } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { AlertTriangle, Calendar, Clock, Loader2, Stethoscope, User } from "lucide-react";
+import type { useState } from "react";
+import type { toast } from "sonner";
 import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
@@ -11,11 +16,6 @@ import type {
 } from "@/components/ui/dialog";
 import type { Label } from "@/components/ui/label";
 import type { Textarea } from "@/components/ui/textarea";
-import type { differenceInHours, format, isAfter } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { AlertTriangle, Calendar, Clock, Loader2, Stethoscope, User } from "lucide-react";
-import type { useState } from "react";
-import type { toast } from "sonner";
 
 interface DeleteAppointmentDialogProps {
   appointment: AppointmentWithRelations | null;

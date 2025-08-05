@@ -1,5 +1,8 @@
 "use client";
 
+import type { Clock, DollarSign, Edit, Package, Plus, Search, Trash2 } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type {
   AlertDialog,
   AlertDialogAction,
@@ -40,11 +43,7 @@ import type { Separator } from "@/components/ui/separator";
 import type { Switch } from "@/components/ui/switch";
 import type { Textarea } from "@/components/ui/textarea";
 import type { useBilling } from "@/hooks/use-billing";
-import type { CreateServiceData, Service, ServiceFilters } from "@/types/billing";
-import type { SERVICE_TYPES } from "@/types/billing";
-import type { Clock, DollarSign, Edit, Package, Plus, Search, Trash2 } from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
+import type { CreateServiceData, SERVICE_TYPES, Service, ServiceFilters } from "@/types/billing";
 
 interface ServiceFormData {
   name: string;

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Notification System - Configuration
  * Story 1.7: Sistema de Notificações
@@ -11,13 +10,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var _a;
@@ -205,14 +204,15 @@ function isChannelEnabled(config, channel) {
   switch (channel) {
     case types_1.NotificationChannel.EMAIL:
       return !!channelConfig.apiKey || config.development.mockProviders;
-    case types_1.NotificationChannel.SMS:
+    case types_1.NotificationChannel.SMS: {
       var smsConfig = channelConfig;
       return (
         (smsConfig.provider === "twilio" && !!(smsConfig.accountSid && smsConfig.authToken)) ||
         (smsConfig.provider === "vonage" && !!(smsConfig.apiKey && smsConfig.apiSecret)) ||
         config.development.mockProviders
       );
-    case types_1.NotificationChannel.PUSH:
+    }
+    case types_1.NotificationChannel.PUSH: {
       var pushConfig = channelConfig;
       return (
         (pushConfig.provider === "fcm" && !!pushConfig.projectId) ||
@@ -220,6 +220,7 @@ function isChannelEnabled(config, channel) {
         (pushConfig.provider === "expo" && !!pushConfig.accessToken) ||
         config.development.mockProviders
       );
+    }
     case types_1.NotificationChannel.IN_APP:
       return true; // Sempre habilitado
     default:
@@ -275,15 +276,11 @@ exports.WEBHOOK_EVENTS = {
 var types_2 = require("./types");
 Object.defineProperty(exports, "NotificationChannel", {
   enumerable: true,
-  get: function () {
-    return types_2.NotificationChannel;
-  },
+  get: () => types_2.NotificationChannel,
 });
 Object.defineProperty(exports, "NotificationPriority", {
   enumerable: true,
-  get: function () {
-    return types_2.NotificationPriority;
-  },
+  get: () => types_2.NotificationPriority,
 });
 exports.config = createNotificationConfig();
 exports.default = exports.config;

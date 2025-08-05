@@ -1,8 +1,7 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from "@jest/globals";
-import type { jest as JestType } from "@jest/globals";
-import { AnalyticsService } from "@/lib/analytics/service";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { AnalyticsRepository } from "@/lib/analytics/repository";
-import type { SubscriptionMetrics, TrialMetrics, CohortAnalysis } from "@/lib/analytics/types";
+import { AnalyticsService } from "@/lib/analytics/service";
+import type { CohortAnalysis, SubscriptionMetrics, TrialMetrics } from "@/lib/analytics/types";
 
 // Mock the repository
 jest.mock("@/lib/analytics/repository");

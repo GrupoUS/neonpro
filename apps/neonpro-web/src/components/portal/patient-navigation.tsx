@@ -4,25 +4,25 @@
 
 "use client";
 
-import * as React from "react";
-import Link from "next/link";
-import type { usePathname } from "next/navigation";
 import type {
   Calendar,
-  User,
-  History,
   CreditCard,
-  Home,
-  Phone,
   FileText,
+  History,
+  Home,
   LogOut,
   Menu,
+  Phone,
+  User,
   X,
 } from "lucide-react";
-import type { cn } from "@/lib/utils";
+import Link from "next/link";
+import type { usePathname } from "next/navigation";
+import * as React from "react";
+import type { PatientProfile } from "@/app/lib/auth/patient-auth";
 import type { Button } from "@/components/ui/button";
 import type { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import type { PatientProfile } from "@/app/lib/auth/patient-auth";
+import type { cn } from "@/lib/utils";
 
 interface PatientNavigationProps {
   patient?: PatientProfile | null;

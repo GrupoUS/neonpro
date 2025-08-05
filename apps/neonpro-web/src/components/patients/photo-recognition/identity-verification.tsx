@@ -7,12 +7,15 @@
  * @author APEX Master Developer
  */
 
-import React, { useState, useRef, useCallback } from "react";
-import type { Camera, Shield, AlertTriangle, CheckCircle, X, Loader2, Eye } from "lucide-react";
+import type { AlertTriangle, Camera, CheckCircle, Eye, Loader2, Shield, X } from "lucide-react";
+import type React from "react";
+import { useCallback, useRef, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Badge } from "@/components/ui/badge";
+import type { Label } from "@/components/ui/label";
 import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
@@ -21,9 +24,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Label } from "@/components/ui/label";
 import type { useToast } from "@/components/ui/use-toast";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface IdentityVerificationProps {
   patientId: string;

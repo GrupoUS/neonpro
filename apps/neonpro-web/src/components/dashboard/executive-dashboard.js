@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExecutiveDashboard = void 0;
 var react_1 = require("react");
@@ -175,7 +172,7 @@ var utils_1 = require("@/lib/utils");
 var use_toast_1 = require("@/hooks/use-toast");
 var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
-var ExecutiveDashboard = function (_a) {
+var ExecutiveDashboard = (_a) => {
   var clinicId = _a.clinicId,
     userId = _a.userId;
   var toast = (0, use_toast_1.useToast)().toast;
@@ -200,10 +197,10 @@ var ExecutiveDashboard = function (_a) {
     setAlertsExpanded = _g[1];
   // Fetch dashboard data
   var fetchDashboardData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var response, result, err_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, 4, 5]);
@@ -247,15 +244,14 @@ var ExecutiveDashboard = function (_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId, periodType, toast],
   );
   // Refresh data
   var refreshData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setRefreshing(true);
@@ -270,15 +266,14 @@ var ExecutiveDashboard = function (_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [fetchDashboardData, toast],
   );
   // Handle alert actions
-  var handleAlertAction = function (alertId, action) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleAlertAction = (alertId, action) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, result_1, updatedAlerts, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -305,9 +300,9 @@ var ExecutiveDashboard = function (_a) {
             }
             // Update local state
             if (dashboardData) {
-              updatedAlerts = dashboardData.alerts.map(function (alert) {
-                return alert.id === alertId ? result_1.data : alert;
-              });
+              updatedAlerts = dashboardData.alerts.map((alert) =>
+                alert.id === alertId ? result_1.data : alert,
+              );
               setDashboardData(__assign(__assign({}, dashboardData), { alerts: updatedAlerts }));
             }
             toast({
@@ -332,9 +327,8 @@ var ExecutiveDashboard = function (_a) {
         }
       });
     });
-  };
   // Generate report
-  var generateReport = function (reportName_1, reportType_1) {
+  var generateReport = (reportName_1, reportType_1) => {
     var args_1 = [];
     for (var _i = 2; _i < arguments.length; _i++) {
       args_1[_i - 2] = arguments[_i];
@@ -348,7 +342,7 @@ var ExecutiveDashboard = function (_a) {
         if (format === void 0) {
           format = "pdf";
         }
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -409,22 +403,20 @@ var ExecutiveDashboard = function (_a) {
     );
   };
   // Format currency
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   // Format percentage
-  var formatPercentage = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatPercentage = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "percent",
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,
     }).format(value / 100);
-  };
   // Get trend icon and color
-  var getTrendDisplay = function (trend, changePercent) {
+  var getTrendDisplay = (trend, changePercent) => {
     if (trend === "up") {
       return {
         icon: <lucide_react_1.TrendingUp className="h-4 w-4" />,
@@ -446,7 +438,7 @@ var ExecutiveDashboard = function (_a) {
     }
   };
   // Get severity color
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "bg-red-100 text-red-800 border-red-200";
@@ -461,12 +453,9 @@ var ExecutiveDashboard = function (_a) {
     }
   };
   // Effect to fetch data on component mount and period change
-  (0, react_1.useEffect)(
-    function () {
-      fetchDashboardData();
-    },
-    [fetchDashboardData],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
   if (loading) {
     return (
       <div className="space-y-6">
@@ -479,20 +468,18 @@ var ExecutiveDashboard = function (_a) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {__spreadArray([], Array(4), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <skeleton_1.Skeleton className="h-4 w-24" />
-                  <skeleton_1.Skeleton className="h-4 w-4" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <skeleton_1.Skeleton className="h-8 w-20 mb-2" />
-                  <skeleton_1.Skeleton className="h-4 w-16" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(4), true).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <skeleton_1.Skeleton className="h-4 w-24" />
+                <skeleton_1.Skeleton className="h-4 w-4" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <skeleton_1.Skeleton className="h-8 w-20 mb-2" />
+                <skeleton_1.Skeleton className="h-4 w-16" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -531,17 +518,13 @@ var ExecutiveDashboard = function (_a) {
       name: "total_appointments",
       label: "Consultas Totais",
       icon: lucide_react_1.Calendar,
-      formatter: function (value) {
-        return value.toString();
-      },
+      formatter: (value) => value.toString(),
     },
     {
       name: "new_patients",
       label: "Novos Pacientes",
       icon: lucide_react_1.Users,
-      formatter: function (value) {
-        return value.toString();
-      },
+      formatter: (value) => value.toString(),
     },
     {
       name: "patient_satisfaction",
@@ -551,15 +534,9 @@ var ExecutiveDashboard = function (_a) {
     },
   ];
   // Active alerts count by severity
-  var activeAlerts = alerts.filter(function (alert) {
-    return alert.is_active;
-  });
-  var criticalAlerts = activeAlerts.filter(function (alert) {
-    return alert.severity === "critical";
-  });
-  var highAlerts = activeAlerts.filter(function (alert) {
-    return alert.severity === "high";
-  });
+  var activeAlerts = alerts.filter((alert) => alert.is_active);
+  var criticalAlerts = activeAlerts.filter((alert) => alert.severity === "critical");
+  var highAlerts = activeAlerts.filter((alert) => alert.severity === "high");
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -607,25 +584,19 @@ var ExecutiveDashboard = function (_a) {
             </dropdown_menu_1.DropdownMenuTrigger>
             <dropdown_menu_1.DropdownMenuContent>
               <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return generateReport("Resumo Executivo", "executive_summary", "pdf");
-                }}
+                onClick={() => generateReport("Resumo Executivo", "executive_summary", "pdf")}
               >
                 <lucide_react_1.Download className="h-4 w-4 mr-2" />
                 Resumo Executivo (PDF)
               </dropdown_menu_1.DropdownMenuItem>
               <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return generateReport("Análise de KPIs", "kpi_analysis", "excel");
-                }}
+                onClick={() => generateReport("Análise de KPIs", "kpi_analysis", "excel")}
               >
                 <lucide_react_1.BarChart3 className="h-4 w-4 mr-2" />
                 Análise de KPIs (Excel)
               </dropdown_menu_1.DropdownMenuItem>
               <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return generateReport("Análise de Tendências", "trend_analysis", "pdf");
-                }}
+                onClick={() => generateReport("Análise de Tendências", "trend_analysis", "pdf")}
               >
                 <lucide_react_1.TrendingUp className="h-4 w-4 mr-2" />
                 Análise de Tendências (PDF)
@@ -672,9 +643,7 @@ var ExecutiveDashboard = function (_a) {
               <button_1.Button
                 variant="ghost"
                 size="sm"
-                onClick={function () {
-                  return setAlertsExpanded(!alertsExpanded);
-                }}
+                onClick={() => setAlertsExpanded(!alertsExpanded)}
               >
                 {alertsExpanded ? "Ocultar" : "Ver todos"}
               </button_1.Button>
@@ -685,7 +654,7 @@ var ExecutiveDashboard = function (_a) {
 
       {/* KPIs Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {keyKPIs.map(function (kpi) {
+        {keyKPIs.map((kpi) => {
           var comparison = periodComparisons[kpi.name];
           var trendDisplay = getTrendDisplay(comparison.trend, comparison.changePercent);
           return (
@@ -787,38 +756,32 @@ var ExecutiveDashboard = function (_a) {
             <card_1.CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {kpis
-                  .filter(function (kpi) {
-                    return !keyKPIs.some(function (k) {
-                      return k.name === kpi.kpi_name;
-                    });
-                  })
-                  .map(function (kpi) {
-                    return (
-                      <div
-                        key={kpi.id}
-                        className="flex items-center justify-between p-4 border rounded-lg"
-                      >
-                        <div>
-                          <p className="text-sm font-medium">
-                            {kpi.kpi_name.replace(/_/g, " ").toUpperCase()}
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {kpi.kpi_value}
-                            {kpi.unit}
-                          </p>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {(0, date_fns_1.format)(new Date(kpi.period_start), "dd/MM", {
-                            locale: locale_1.ptBR,
-                          })}{" "}
-                          -{" "}
-                          {(0, date_fns_1.format)(new Date(kpi.period_end), "dd/MM", {
-                            locale: locale_1.ptBR,
-                          })}
-                        </div>
+                  .filter((kpi) => !keyKPIs.some((k) => k.name === kpi.kpi_name))
+                  .map((kpi) => (
+                    <div
+                      key={kpi.id}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
+                      <div>
+                        <p className="text-sm font-medium">
+                          {kpi.kpi_name.replace(/_/g, " ").toUpperCase()}
+                        </p>
+                        <p className="text-2xl font-bold">
+                          {kpi.kpi_value}
+                          {kpi.unit}
+                        </p>
                       </div>
-                    );
-                  })}
+                      <div className="text-xs text-muted-foreground">
+                        {(0, date_fns_1.format)(new Date(kpi.period_start), "dd/MM", {
+                          locale: locale_1.ptBR,
+                        })}{" "}
+                        -{" "}
+                        {(0, date_fns_1.format)(new Date(kpi.period_end), "dd/MM", {
+                          locale: locale_1.ptBR,
+                        })}
+                      </div>
+                    </div>
+                  ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -839,75 +802,67 @@ var ExecutiveDashboard = function (_a) {
                     </div>
                   </card_1.CardContent>
                 </card_1.Card>
-              : activeAlerts.map(function (alert) {
-                  return (
-                    <card_1.Card
-                      key={alert.id}
-                      className={(0, utils_1.cn)("border-l-4", {
-                        "border-l-red-500": alert.severity === "critical",
-                        "border-l-orange-500": alert.severity === "high",
-                        "border-l-yellow-500": alert.severity === "medium",
-                        "border-l-blue-500": alert.severity === "low",
-                      })}
-                    >
-                      <card_1.CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <card_1.CardTitle className="text-lg">{alert.title}</card_1.CardTitle>
-                              <badge_1.Badge className={getSeverityColor(alert.severity)}>
-                                {alert.severity.toUpperCase()}
-                              </badge_1.Badge>
-                            </div>
-                            <card_1.CardDescription>{alert.message}</card_1.CardDescription>
+              : activeAlerts.map((alert) => (
+                  <card_1.Card
+                    key={alert.id}
+                    className={(0, utils_1.cn)("border-l-4", {
+                      "border-l-red-500": alert.severity === "critical",
+                      "border-l-orange-500": alert.severity === "high",
+                      "border-l-yellow-500": alert.severity === "medium",
+                      "border-l-blue-500": alert.severity === "low",
+                    })}
+                  >
+                    <card_1.CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <card_1.CardTitle className="text-lg">{alert.title}</card_1.CardTitle>
+                            <badge_1.Badge className={getSeverityColor(alert.severity)}>
+                              {alert.severity.toUpperCase()}
+                            </badge_1.Badge>
                           </div>
-                          <dropdown_menu_1.DropdownMenu>
-                            <dropdown_menu_1.DropdownMenuTrigger asChild>
-                              <button_1.Button variant="ghost" size="sm">
-                                <lucide_react_1.MoreVertical className="h-4 w-4" />
-                              </button_1.Button>
-                            </dropdown_menu_1.DropdownMenuTrigger>
-                            <dropdown_menu_1.DropdownMenuContent>
-                              {!alert.acknowledged_at && (
-                                <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleAlertAction(alert.id, "acknowledge");
-                                  }}
-                                >
-                                  <lucide_react_1.Eye className="h-4 w-4 mr-2" />
-                                  Reconhecer
-                                </dropdown_menu_1.DropdownMenuItem>
-                              )}
+                          <card_1.CardDescription>{alert.message}</card_1.CardDescription>
+                        </div>
+                        <dropdown_menu_1.DropdownMenu>
+                          <dropdown_menu_1.DropdownMenuTrigger asChild>
+                            <button_1.Button variant="ghost" size="sm">
+                              <lucide_react_1.MoreVertical className="h-4 w-4" />
+                            </button_1.Button>
+                          </dropdown_menu_1.DropdownMenuTrigger>
+                          <dropdown_menu_1.DropdownMenuContent>
+                            {!alert.acknowledged_at && (
                               <dropdown_menu_1.DropdownMenuItem
-                                onClick={function () {
-                                  return handleAlertAction(alert.id, "resolve");
-                                }}
+                                onClick={() => handleAlertAction(alert.id, "acknowledge")}
                               >
-                                <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
-                                Resolver
+                                <lucide_react_1.Eye className="h-4 w-4 mr-2" />
+                                Reconhecer
                               </dropdown_menu_1.DropdownMenuItem>
-                            </dropdown_menu_1.DropdownMenuContent>
-                          </dropdown_menu_1.DropdownMenu>
-                        </div>
-                      </card_1.CardHeader>
-                      <card_1.CardContent>
-                        <div className="flex items-center justify-between text-sm text-muted-foreground">
-                          <span>
-                            Criado em{" "}
-                            {(0, date_fns_1.format)(
-                              new Date(alert.created_at),
-                              "dd/MM/yyyy HH:mm",
-                              { locale: locale_1.ptBR },
                             )}
-                          </span>
-                          {alert.acknowledged_at && (
-                            <span className="text-blue-600">Reconhecido</span>
-                          )}
-                        </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                            <dropdown_menu_1.DropdownMenuItem
+                              onClick={() => handleAlertAction(alert.id, "resolve")}
+                            >
+                              <lucide_react_1.CheckCircle className="h-4 w-4 mr-2" />
+                              Resolver
+                            </dropdown_menu_1.DropdownMenuItem>
+                          </dropdown_menu_1.DropdownMenuContent>
+                        </dropdown_menu_1.DropdownMenu>
+                      </div>
+                    </card_1.CardHeader>
+                    <card_1.CardContent>
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <span>
+                          Criado em{" "}
+                          {(0, date_fns_1.format)(new Date(alert.created_at), "dd/MM/yyyy HH:mm", {
+                            locale: locale_1.ptBR,
+                          })}
+                        </span>
+                        {alert.acknowledged_at && (
+                          <span className="text-blue-600">Reconhecido</span>
+                        )}
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -917,9 +872,7 @@ var ExecutiveDashboard = function (_a) {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Relatórios Recentes</h3>
               <button_1.Button
-                onClick={function () {
-                  return generateReport("Relatório Personalizado", "custom", "pdf");
-                }}
+                onClick={() => generateReport("Relatório Personalizado", "custom", "pdf")}
               >
                 <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                 Gerar Novo Relatório
@@ -938,68 +891,66 @@ var ExecutiveDashboard = function (_a) {
                     </div>
                   </card_1.CardContent>
                 </card_1.Card>
-              : reports.map(function (report) {
-                  return (
-                    <card_1.Card key={report.id}>
-                      <card_1.CardHeader>
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <card_1.CardTitle className="text-lg">
-                              {report.report_name}
-                            </card_1.CardTitle>
-                            <card_1.CardDescription>
-                              {report.report_type} • {report.format.toUpperCase()} •
-                              {(0, date_fns_1.format)(
-                                new Date(report.created_at),
-                                "dd/MM/yyyy HH:mm",
-                                { locale: locale_1.ptBR },
-                              )}
-                            </card_1.CardDescription>
-                          </div>
-                          <badge_1.Badge
-                            variant={
-                              report.status === "completed"
-                                ? "default"
-                                : report.status === "generating"
-                                  ? "secondary"
-                                  : report.status === "failed"
-                                    ? "destructive"
-                                    : "outline"
-                            }
-                          >
-                            {report.status === "completed"
-                              ? "Concluído"
+              : reports.map((report) => (
+                  <card_1.Card key={report.id}>
+                    <card_1.CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <card_1.CardTitle className="text-lg">
+                            {report.report_name}
+                          </card_1.CardTitle>
+                          <card_1.CardDescription>
+                            {report.report_type} • {report.format.toUpperCase()} •
+                            {(0, date_fns_1.format)(
+                              new Date(report.created_at),
+                              "dd/MM/yyyy HH:mm",
+                              { locale: locale_1.ptBR },
+                            )}
+                          </card_1.CardDescription>
+                        </div>
+                        <badge_1.Badge
+                          variant={
+                            report.status === "completed"
+                              ? "default"
                               : report.status === "generating"
-                                ? "Gerando..."
+                                ? "secondary"
                                 : report.status === "failed"
-                                  ? "Falhou"
-                                  : "Pendente"}
-                          </badge_1.Badge>
-                        </div>
-                      </card_1.CardHeader>
-                      <card_1.CardContent>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">
-                            Período:{" "}
-                            {(0, date_fns_1.format)(new Date(report.period_start), "dd/MM/yyyy", {
-                              locale: locale_1.ptBR,
-                            })}{" "}
-                            -{" "}
-                            {(0, date_fns_1.format)(new Date(report.period_end), "dd/MM/yyyy", {
-                              locale: locale_1.ptBR,
-                            })}
-                          </span>
-                          {report.status === "completed" && report.file_path && (
-                            <button_1.Button variant="outline" size="sm">
-                              <lucide_react_1.Download className="h-4 w-4 mr-2" />
-                              Download
-                            </button_1.Button>
-                          )}
-                        </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                                  ? "destructive"
+                                  : "outline"
+                          }
+                        >
+                          {report.status === "completed"
+                            ? "Concluído"
+                            : report.status === "generating"
+                              ? "Gerando..."
+                              : report.status === "failed"
+                                ? "Falhou"
+                                : "Pendente"}
+                        </badge_1.Badge>
+                      </div>
+                    </card_1.CardHeader>
+                    <card_1.CardContent>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">
+                          Período:{" "}
+                          {(0, date_fns_1.format)(new Date(report.period_start), "dd/MM/yyyy", {
+                            locale: locale_1.ptBR,
+                          })}{" "}
+                          -{" "}
+                          {(0, date_fns_1.format)(new Date(report.period_end), "dd/MM/yyyy", {
+                            locale: locale_1.ptBR,
+                          })}
+                        </span>
+                        {report.status === "completed" && report.file_path && (
+                          <button_1.Button variant="outline" size="sm">
+                            <lucide_react_1.Download className="h-4 w-4 mr-2" />
+                            Download
+                          </button_1.Button>
+                        )}
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
           </div>
         </tabs_1.TabsContent>
 

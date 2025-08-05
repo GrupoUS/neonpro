@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = FinancialReportsPage;
 var badge_1 = require("@/components/ui/badge");
@@ -143,7 +140,6 @@ var financial_reports_service_1 = require("@/lib/services/financial-reports-serv
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function FinancialReportsPage(_a) {
-  var _this = this;
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)(false),
     loading = _b[0],
@@ -171,10 +167,10 @@ function FinancialReportsPage(_a) {
   var _j = (0, react_1.useState)("current-month"),
     selectedPeriod = _j[0],
     setSelectedPeriod = _j[1];
-  var loadReportsData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadReportsData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, summaryData, agingReport, performanceData, categoryData, budgetData, error_1;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, 3, 4]);
@@ -225,18 +221,14 @@ function FinancialReportsPage(_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      loadReportsData();
-    },
-    [clinicId, selectedPeriod],
-  );
-  var handleExportReport = function (reportType) {
+  (0, react_1.useEffect)(() => {
+    loadReportsData();
+  }, [clinicId, selectedPeriod]);
+  var handleExportReport = (reportType) => {
     console.log("Exporting ".concat(reportType, " report..."));
     // Implementar exportação
   };
-  var handleRefreshData = function () {
+  var handleRefreshData = () => {
     loadReportsData();
   };
   return (
@@ -356,25 +348,23 @@ function FinancialReportsPage(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {agingData.map(function (item) {
-                    return (
-                      <div key={item.vendor_id} className="flex items-center justify-between">
-                        <span className="text-sm">{item.vendor_name}</span>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              item.total_amount,
-                            )}
-                          </span>
-                          {item.overdue_count > 0 && (
-                            <badge_1.Badge variant="destructive" className="text-xs">
-                              {item.overdue_count} em atraso
-                            </badge_1.Badge>
+                  {agingData.map((item) => (
+                    <div key={item.vendor_id} className="flex items-center justify-between">
+                      <span className="text-sm">{item.vendor_name}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            item.total_amount,
                           )}
-                        </div>
+                        </span>
+                        {item.overdue_count > 0 && (
+                          <badge_1.Badge variant="destructive" className="text-xs">
+                            {item.overdue_count} em atraso
+                          </badge_1.Badge>
+                        )}
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -386,33 +376,31 @@ function FinancialReportsPage(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {categoryExpenses.slice(0, 5).map(function (category) {
-                    return (
-                      <div key={category.category_id} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm">{category.category_name}</span>
-                          <span className="text-lg">
-                            {financial_reports_service_1.financialReportsService.getTrendIcon(
-                              category.trend,
-                            )}
-                          </span>
+                  {categoryExpenses.slice(0, 5).map((category) => (
+                    <div key={category.category_id} className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm">{category.category_name}</span>
+                        <span className="text-lg">
+                          {financial_reports_service_1.financialReportsService.getTrendIcon(
+                            category.trend,
+                          )}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            category.current_month,
+                          )}
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              category.current_month,
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {financial_reports_service_1.financialReportsService.formatPercentage(
-                              category.budget_used_percentage,
-                            )}{" "}
-                            do orçamento
-                          </div>
+                        <div className="text-xs text-muted-foreground">
+                          {financial_reports_service_1.financialReportsService.formatPercentage(
+                            category.budget_used_percentage,
+                          )}{" "}
+                          do orçamento
                         </div>
                       </div>
-                    );
-                  })}
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -426,9 +414,7 @@ function FinancialReportsPage(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return handleExportReport("aging");
-                }}
+                onClick={() => handleExportReport("aging")}
               >
                 <lucide_react_1.Download className="h-4 w-4 mr-2" />
                 Exportar
@@ -463,56 +449,54 @@ function FinancialReportsPage(_a) {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {agingData.map(function (item) {
-                      return (
-                        <tr key={item.vendor_id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {item.vendor_name}
-                              </div>
-                              <div className="text-sm text-gray-500">{item.vendor_document}</div>
+                    {agingData.map((item) => (
+                      <tr key={item.vendor_id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {item.vendor_name}
                             </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              item.total_amount,
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              item.current,
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              item.days_31_60,
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              item.days_61_90,
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              item.days_over_90,
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {item.overdue_count > 0
-                              ? <badge_1.Badge variant="destructive">
-                                  <lucide_react_1.AlertTriangle className="w-3 h-3 mr-1" />
-                                  {item.overdue_count} em atraso
-                                </badge_1.Badge>
-                              : <badge_1.Badge variant="secondary">
-                                  <lucide_react_1.CheckCircle className="w-3 h-3 mr-1" />
-                                  Em dia
-                                </badge_1.Badge>}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            <div className="text-sm text-gray-500">{item.vendor_document}</div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            item.total_amount,
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            item.current,
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            item.days_31_60,
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            item.days_61_90,
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            item.days_over_90,
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {item.overdue_count > 0
+                            ? <badge_1.Badge variant="destructive">
+                                <lucide_react_1.AlertTriangle className="w-3 h-3 mr-1" />
+                                {item.overdue_count} em atraso
+                              </badge_1.Badge>
+                            : <badge_1.Badge variant="secondary">
+                                <lucide_react_1.CheckCircle className="w-3 h-3 mr-1" />
+                                Em dia
+                              </badge_1.Badge>}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -527,9 +511,7 @@ function FinancialReportsPage(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return handleExportReport("vendors");
-                }}
+                onClick={() => handleExportReport("vendors")}
               >
                 <lucide_react_1.Download className="h-4 w-4 mr-2" />
                 Exportar
@@ -537,60 +519,58 @@ function FinancialReportsPage(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {vendorPerformance.map(function (vendor) {
-                  return (
-                    <div key={vendor.vendor_id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <h3 className="font-semibold">{vendor.vendor_name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {vendor.total_invoices} faturas •{" "}
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              vendor.total_amount,
-                            )}
-                          </p>
-                        </div>
-                        <badge_1.Badge
-                          variant={financial_reports_service_1.financialReportsService.getRiskColor(
-                            vendor.risk_score,
+                {vendorPerformance.map((vendor) => (
+                  <div key={vendor.vendor_id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold">{vendor.vendor_name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {vendor.total_invoices} faturas •{" "}
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            vendor.total_amount,
                           )}
-                          className="text-sm"
-                        >
-                          Risco: {vendor.risk_score}/10
-                        </badge_1.Badge>
+                        </p>
                       </div>
+                      <badge_1.Badge
+                        variant={financial_reports_service_1.financialReportsService.getRiskColor(
+                          vendor.risk_score,
+                        )}
+                        className="text-sm"
+                      >
+                        Risco: {vendor.risk_score}/10
+                      </badge_1.Badge>
+                    </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Prazo Médio:</span>
-                          <p className="font-medium">{vendor.avg_payment_time.toFixed(1)} dias</p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Pontualidade:</span>
-                          <p className="font-medium">
-                            {financial_reports_service_1.financialReportsService.formatPercentage(
-                              vendor.on_time_percentage,
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Descontos:</span>
-                          <p className="font-medium text-green-600">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              vendor.total_discounts_taken,
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Último Pagamento:</span>
-                          <p className="font-medium">
-                            {new Date(vendor.last_payment_date).toLocaleDateString("pt-BR")}
-                          </p>
-                        </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Prazo Médio:</span>
+                        <p className="font-medium">{vendor.avg_payment_time.toFixed(1)} dias</p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Pontualidade:</span>
+                        <p className="font-medium">
+                          {financial_reports_service_1.financialReportsService.formatPercentage(
+                            vendor.on_time_percentage,
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Descontos:</span>
+                        <p className="font-medium text-green-600">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            vendor.total_discounts_taken,
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Último Pagamento:</span>
+                        <p className="font-medium">
+                          {new Date(vendor.last_payment_date).toLocaleDateString("pt-BR")}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -603,9 +583,7 @@ function FinancialReportsPage(_a) {
               <button_1.Button
                 variant="outline"
                 size="sm"
-                onClick={function () {
-                  return handleExportReport("categories");
-                }}
+                onClick={() => handleExportReport("categories")}
               >
                 <lucide_react_1.Download className="h-4 w-4 mr-2" />
                 Exportar
@@ -613,68 +591,66 @@ function FinancialReportsPage(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {categoryExpenses.map(function (category) {
-                  return (
-                    <div key={category.category_id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-2">
-                          <h3 className="font-semibold">{category.category_name}</h3>
-                          <span className="text-lg">
-                            {financial_reports_service_1.financialReportsService.getTrendIcon(
-                              category.trend,
-                            )}
-                          </span>
-                        </div>
-                        <badge_1.Badge
-                          variant={financial_reports_service_1.financialReportsService.getBudgetHealthColor(
-                            category.budget_used_percentage,
+                {categoryExpenses.map((category) => (
+                  <div key={category.category_id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-semibold">{category.category_name}</h3>
+                        <span className="text-lg">
+                          {financial_reports_service_1.financialReportsService.getTrendIcon(
+                            category.trend,
                           )}
-                        >
-                          {financial_reports_service_1.financialReportsService.formatPercentage(
-                            category.budget_used_percentage,
-                          )}{" "}
-                          do orçamento
-                        </badge_1.Badge>
+                        </span>
                       </div>
+                      <badge_1.Badge
+                        variant={financial_reports_service_1.financialReportsService.getBudgetHealthColor(
+                          category.budget_used_percentage,
+                        )}
+                      >
+                        {financial_reports_service_1.financialReportsService.formatPercentage(
+                          category.budget_used_percentage,
+                        )}{" "}
+                        do orçamento
+                      </badge_1.Badge>
+                    </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Mês Atual:</span>
-                          <p className="font-medium">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              category.current_month,
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Mês Anterior:</span>
-                          <p className="font-medium">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              category.previous_month,
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Ano até agora:</span>
-                          <p className="font-medium">
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              category.year_to_date,
-                            )}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Faturas:</span>
-                          <p className="font-medium">
-                            {category.invoice_count} • Média:{" "}
-                            {financial_reports_service_1.financialReportsService.formatCurrency(
-                              category.avg_invoice_amount,
-                            )}
-                          </p>
-                        </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Mês Atual:</span>
+                        <p className="font-medium">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            category.current_month,
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Mês Anterior:</span>
+                        <p className="font-medium">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            category.previous_month,
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Ano até agora:</span>
+                        <p className="font-medium">
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            category.year_to_date,
+                          )}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Faturas:</span>
+                        <p className="font-medium">
+                          {category.invoice_count} • Média:{" "}
+                          {financial_reports_service_1.financialReportsService.formatCurrency(
+                            category.avg_invoice_amount,
+                          )}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -694,26 +670,24 @@ function FinancialReportsPage(_a) {
                   </card_1.CardHeader>
                   <card_1.CardContent>
                     <div className="space-y-3">
-                      {budgetTracking.alerts.map(function (alert, index) {
-                        return (
-                          <div
-                            key={index}
-                            className="flex items-start space-x-3 p-3 border rounded-lg"
-                          >
-                            <lucide_react_1.AlertTriangle className="h-5 w-5 mt-0.5 text-yellow-600" />
-                            <div>
-                              <p className="font-medium">{alert.category}</p>
-                              <p className="text-sm text-muted-foreground">{alert.message}</p>
-                              <p className="text-sm font-medium text-red-600">
-                                Valor:{" "}
-                                {financial_reports_service_1.financialReportsService.formatCurrency(
-                                  alert.amount,
-                                )}
-                              </p>
-                            </div>
+                      {budgetTracking.alerts.map((alert, index) => (
+                        <div
+                          key={index}
+                          className="flex items-start space-x-3 p-3 border rounded-lg"
+                        >
+                          <lucide_react_1.AlertTriangle className="h-5 w-5 mt-0.5 text-yellow-600" />
+                          <div>
+                            <p className="font-medium">{alert.category}</p>
+                            <p className="text-sm text-muted-foreground">{alert.message}</p>
+                            <p className="text-sm font-medium text-red-600">
+                              Valor:{" "}
+                              {financial_reports_service_1.financialReportsService.formatCurrency(
+                                alert.amount,
+                              )}
+                            </p>
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                     </div>
                   </card_1.CardContent>
                 </card_1.Card>
@@ -765,54 +739,52 @@ function FinancialReportsPage(_a) {
                   </div>
 
                   <div className="space-y-4">
-                    {budgetTracking.categories.map(function (category, index) {
-                      return (
-                        <div key={index} className="border rounded-lg p-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <h4 className="font-semibold">{category.category_name}</h4>
-                            <badge_1.Badge
-                              variant={financial_reports_service_1.financialReportsService.getBudgetHealthColor(
-                                category.utilization_percentage,
+                    {budgetTracking.categories.map((category, index) => (
+                      <div key={index} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold">{category.category_name}</h4>
+                          <badge_1.Badge
+                            variant={financial_reports_service_1.financialReportsService.getBudgetHealthColor(
+                              category.utilization_percentage,
+                            )}
+                          >
+                            {financial_reports_service_1.financialReportsService.formatPercentage(
+                              category.utilization_percentage,
+                            )}
+                          </badge_1.Badge>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">Orçado:</span>
+                            <p className="font-medium">
+                              {financial_reports_service_1.financialReportsService.formatCurrency(
+                                category.budgeted,
+                              )}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Gasto:</span>
+                            <p className="font-medium">
+                              {financial_reports_service_1.financialReportsService.formatCurrency(
+                                category.spent,
+                              )}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-muted-foreground">Disponível:</span>
+                            <p
+                              className={"font-medium ".concat(
+                                category.remaining < 0 ? "text-red-600" : "text-green-600",
                               )}
                             >
-                              {financial_reports_service_1.financialReportsService.formatPercentage(
-                                category.utilization_percentage,
+                              {financial_reports_service_1.financialReportsService.formatCurrency(
+                                category.remaining,
                               )}
-                            </badge_1.Badge>
-                          </div>
-                          <div className="grid grid-cols-3 gap-4 text-sm">
-                            <div>
-                              <span className="text-muted-foreground">Orçado:</span>
-                              <p className="font-medium">
-                                {financial_reports_service_1.financialReportsService.formatCurrency(
-                                  category.budgeted,
-                                )}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Gasto:</span>
-                              <p className="font-medium">
-                                {financial_reports_service_1.financialReportsService.formatCurrency(
-                                  category.spent,
-                                )}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Disponível:</span>
-                              <p
-                                className={"font-medium ".concat(
-                                  category.remaining < 0 ? "text-red-600" : "text-green-600",
-                                )}
-                              >
-                                {financial_reports_service_1.financialReportsService.formatCurrency(
-                                  category.remaining,
-                                )}
-                              </p>
-                            </div>
+                            </p>
                           </div>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>

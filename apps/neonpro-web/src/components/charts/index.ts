@@ -1,7 +1,6 @@
-export { KPICard } from "./KPICard";
-export { InteractiveLineChart } from "./InteractiveLineChart";
+export type { BarChartData, InteractiveBarChartProps } from "./InteractiveBarChart";
 export { InteractiveBarChart } from "./InteractiveBarChart";
-
-export type { KPICardProps } from "./KPICard";
 export type { InteractiveLineChartProps, LineChartData } from "./InteractiveLineChart";
-export type { InteractiveBarChartProps, BarChartData } from "./InteractiveBarChart";
+export { InteractiveLineChart } from "./InteractiveLineChart";
+export type { KPICardProps } from "./KPICard";
+export { KPICard } from "./KPICard";

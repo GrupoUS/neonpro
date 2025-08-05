@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var resource_optimizer_1 = require("../resource-optimizer");
 var types_1 = require("../types");
@@ -153,48 +150,28 @@ var supabase_js_1 = require("@supabase/supabase-js");
 // Mock Supabase
 jest.mock("@supabase/supabase-js");
 var mockSupabase = {
-  from: jest.fn(function () {
-    return {
-      select: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              gte: jest.fn(function () {
-                return {
-                  lte: jest.fn(function () {
-                    return {
-                      order: jest.fn(function () {
-                        return Promise.resolve({ data: [], error: null });
-                      }),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      update: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return Promise.resolve({ data: [], error: null });
-          }),
-        };
-      }),
-      insert: jest.fn(function () {
-        return Promise.resolve({ data: [], error: null });
-      }),
-    };
-  }),
-  rpc: jest.fn(function () {
-    return Promise.resolve({ data: null, error: null });
-  }),
+  from: jest.fn(() => ({
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        gte: jest.fn(() => ({
+          lte: jest.fn(() => ({
+            order: jest.fn(() => Promise.resolve({ data: [], error: null })),
+          })),
+        })),
+      })),
+    })),
+    update: jest.fn(() => ({
+      eq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    })),
+    insert: jest.fn(() => Promise.resolve({ data: [], error: null })),
+  })),
+  rpc: jest.fn(() => Promise.resolve({ data: null, error: null })),
 };
 supabase_js_1.createClient.mockReturnValue(mockSupabase);
-describe("ResourceOptimizer", function () {
+describe("ResourceOptimizer", () => {
   var optimizer;
   var mockConfig;
-  beforeEach(function () {
+  beforeEach(() => {
     mockConfig = {
       enabledOptimizations: [
         types_1.OptimizationType.STAFF_BALANCING,
@@ -221,15 +198,15 @@ describe("ResourceOptimizer", function () {
     optimizer = new resource_optimizer_1.ResourceOptimizer(mockConfig);
     jest.clearAllMocks();
   });
-  describe("Initialization", function () {
-    it("should initialize with default config", function () {
+  describe("Initialization", () => {
+    it("should initialize with default config", () => {
       var defaultOptimizer = new resource_optimizer_1.ResourceOptimizer();
       expect(defaultOptimizer).toBeInstanceOf(resource_optimizer_1.ResourceOptimizer);
     });
-    it("should initialize with custom config", function () {
+    it("should initialize with custom config", () => {
       expect(optimizer).toBeInstanceOf(resource_optimizer_1.ResourceOptimizer);
     });
-    it("should validate config on initialization", function () {
+    it("should validate config on initialization", () => {
       var invalidConfig = __assign(__assign({}, mockConfig), {
         workloadThresholds: {
           underutilized: 0.8,
@@ -237,20 +214,18 @@ describe("ResourceOptimizer", function () {
           overloaded: 0.6,
         },
       });
-      expect(function () {
-        return new resource_optimizer_1.ResourceOptimizer(invalidConfig);
-      }).toThrow();
+      expect(() => new resource_optimizer_1.ResourceOptimizer(invalidConfig)).toThrow();
     });
   });
-  describe("optimizeResources", function () {
+  describe("optimizeResources", () => {
     var mockDateRange = {
       startDate: new Date("2024-01-15T00:00:00Z"),
       endDate: new Date("2024-01-15T23:59:59Z"),
     };
-    it("should optimize resources for given date range", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should optimize resources for given date range", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAppointments, mockStaff, mockRooms, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAppointments = [
@@ -307,53 +282,45 @@ describe("ResourceOptimizer", function () {
                   availability: "09:00-17:00",
                 },
               ];
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
-                    select: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                eq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: mockAppointments,
-                                    error: null,
-                                  });
-                                }),
-                              };
+                    select: jest.fn(() => ({
+                      gte: jest.fn(() => ({
+                        lte: jest.fn(() => ({
+                          eq: jest.fn(() =>
+                            Promise.resolve({
+                              data: mockAppointments,
+                              error: null,
                             }),
-                          };
-                        }),
-                      };
-                    }),
+                          ),
+                        })),
+                      })),
+                    })),
                   };
                 }
                 if (table === "staff") {
                   return {
-                    select: jest.fn(function () {
-                      return Promise.resolve({
+                    select: jest.fn(() =>
+                      Promise.resolve({
                         data: mockStaff,
                         error: null,
-                      });
-                    }),
+                      }),
+                    ),
                   };
                 }
                 if (table === "rooms") {
                   return {
-                    select: jest.fn(function () {
-                      return Promise.resolve({
+                    select: jest.fn(() =>
+                      Promise.resolve({
                         data: mockRooms,
                         error: null,
-                      });
-                    }),
+                      }),
+                    ),
                   };
                 }
                 return {
-                  select: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
+                  select: jest.fn(() => Promise.resolve({ data: [], error: null })),
                 };
               });
               return [4 /*yield*/, optimizer.optimizeResources(mockDateRange)];
@@ -367,12 +334,11 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle empty date range", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle empty date range", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var emptyDateRange;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               emptyDateRange = {
@@ -388,12 +354,11 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should respect staff availability constraints", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should respect staff availability constraints", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAppointments, mockStaff, result, availabilityRecommendations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAppointments = [
@@ -417,43 +382,35 @@ describe("ResourceOptimizer", function () {
                   skills: ["massage"],
                 },
               ];
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
-                    select: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                eq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: mockAppointments,
-                                    error: null,
-                                  });
-                                }),
-                              };
+                    select: jest.fn(() => ({
+                      gte: jest.fn(() => ({
+                        lte: jest.fn(() => ({
+                          eq: jest.fn(() =>
+                            Promise.resolve({
+                              data: mockAppointments,
+                              error: null,
                             }),
-                          };
-                        }),
-                      };
-                    }),
+                          ),
+                        })),
+                      })),
+                    })),
                   };
                 }
                 if (table === "staff") {
                   return {
-                    select: jest.fn(function () {
-                      return Promise.resolve({
+                    select: jest.fn(() =>
+                      Promise.resolve({
                         data: mockStaff,
                         error: null,
-                      });
-                    }),
+                      }),
+                    ),
                   };
                 }
                 return {
-                  select: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
+                  select: jest.fn(() => Promise.resolve({ data: [], error: null })),
                 };
               });
               return [4 /*yield*/, optimizer.optimizeResources(mockDateRange)];
@@ -461,21 +418,20 @@ describe("ResourceOptimizer", function () {
               result = _a.sent();
               // Should generate recommendations to fix availability conflicts
               expect(result.recommendations.length).toBeGreaterThan(0);
-              availabilityRecommendations = result.recommendations.filter(function (rec) {
-                return rec.description.includes("availability");
-              });
+              availabilityRecommendations = result.recommendations.filter((rec) =>
+                rec.description.includes("availability"),
+              );
               expect(availabilityRecommendations.length).toBeGreaterThan(0);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("balanceWorkload", function () {
-    it("should balance workload across staff members", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("balanceWorkload", () => {
+    it("should balance workload across staff members", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockStaffWorkload, mockAppointments, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockStaffWorkload = [
@@ -506,33 +462,25 @@ describe("ResourceOptimizer", function () {
                   status: "scheduled",
                 },
               ];
-              mockSupabase.from.mockImplementation(function (table) {
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
-                    select: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                eq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: mockAppointments,
-                                    error: null,
-                                  });
-                                }),
-                              };
+                    select: jest.fn(() => ({
+                      gte: jest.fn(() => ({
+                        lte: jest.fn(() => ({
+                          eq: jest.fn(() =>
+                            Promise.resolve({
+                              data: mockAppointments,
+                              error: null,
                             }),
-                          };
-                        }),
-                      };
-                    }),
+                          ),
+                        })),
+                      })),
+                    })),
                   };
                 }
                 return {
-                  select: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
+                  select: jest.fn(() => Promise.resolve({ data: [], error: null })),
                 };
               });
               return [4 /*yield*/, optimizer.balanceWorkload(mockStaffWorkload)];
@@ -545,12 +493,11 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should identify overloaded staff", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should identify overloaded staff", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var overloadedWorkload, result, overloadRecommendations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               overloadedWorkload = [
@@ -563,41 +510,35 @@ describe("ResourceOptimizer", function () {
                 },
               ];
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return Promise.resolve({
-                                data: [],
-                                error: null,
-                              });
-                            }),
-                          };
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
+                          data: [],
+                          error: null,
                         }),
-                      };
-                    }),
-                  };
-                }),
+                      ),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, optimizer.balanceWorkload(overloadedWorkload)];
             case 1:
               result = _a.sent();
-              overloadRecommendations = result.recommendations.filter(function (rec) {
-                return rec.description.includes("overloaded") || rec.description.includes("reduce");
-              });
+              overloadRecommendations = result.recommendations.filter(
+                (rec) =>
+                  rec.description.includes("overloaded") || rec.description.includes("reduce"),
+              );
               expect(overloadRecommendations.length).toBeGreaterThan(0);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should identify underutilized staff", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should identify underutilized staff", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var underutilizedWorkload, result, underutilizedRecommendations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               underutilizedWorkload = [
@@ -610,43 +551,35 @@ describe("ResourceOptimizer", function () {
                 },
               ];
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return Promise.resolve({
-                                data: [],
-                                error: null,
-                              });
-                            }),
-                          };
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
+                          data: [],
+                          error: null,
                         }),
-                      };
-                    }),
-                  };
-                }),
+                      ),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, optimizer.balanceWorkload(underutilizedWorkload)];
             case 1:
               result = _a.sent();
-              underutilizedRecommendations = result.recommendations.filter(function (rec) {
-                return (
-                  rec.description.includes("underutilized") || rec.description.includes("increase")
-                );
-              });
+              underutilizedRecommendations = result.recommendations.filter(
+                (rec) =>
+                  rec.description.includes("underutilized") || rec.description.includes("increase"),
+              );
               expect(underutilizedRecommendations.length).toBeGreaterThan(0);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("applyOptimizations", function () {
+  describe("applyOptimizations", () => {
     var mockRecommendations;
-    beforeEach(function () {
+    beforeEach(() => {
       mockRecommendations = [
         {
           id: "rec-1",
@@ -692,23 +625,21 @@ describe("ResourceOptimizer", function () {
         },
       ];
     });
-    it("should apply optimization recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should apply optimization recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [{ id: "appointment-1" }],
-                        error: null,
-                      });
+                update: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [{ id: "appointment-1" }],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, optimizer.applyOptimizations(mockRecommendations)];
             case 1:
@@ -719,34 +650,31 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle partial application failures", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle partial application failures", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var callCount, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               callCount = 0;
               mockSupabase.from.mockReturnValue({
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      callCount++;
-                      if (callCount === 1) {
-                        return Promise.resolve({
-                          data: [{ id: "appointment-1" }],
-                          error: null,
-                        });
-                      } else {
-                        return Promise.resolve({
-                          data: null,
-                          error: { message: "Update failed" },
-                        });
-                      }
-                    }),
-                  };
-                }),
+                update: jest.fn(() => ({
+                  eq: jest.fn(() => {
+                    callCount++;
+                    if (callCount === 1) {
+                      return Promise.resolve({
+                        data: [{ id: "appointment-1" }],
+                        error: null,
+                      });
+                    } else {
+                      return Promise.resolve({
+                        data: null,
+                        error: { message: "Update failed" },
+                      });
+                    }
+                  }),
+                })),
               });
               return [4 /*yield*/, optimizer.applyOptimizations(mockRecommendations)];
             case 1:
@@ -757,12 +685,11 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate recommendations before applying", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate recommendations before applying", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidRecommendations, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidRecommendations = [
@@ -783,22 +710,17 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database transaction failures", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle database transaction failures", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.reject(new Error("Transaction failed"));
-                    }),
-                  };
-                }),
+                update: jest.fn(() => ({
+                  eq: jest.fn(() => Promise.reject(new Error("Transaction failed"))),
+                })),
               });
               return [4 /*yield*/, optimizer.applyOptimizations(mockRecommendations)];
             case 1:
@@ -808,18 +730,17 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("calculateResourceMetrics", function () {
+  describe("calculateResourceMetrics", () => {
     var mockDateRange = {
       startDate: new Date("2024-01-15T00:00:00Z"),
       endDate: new Date("2024-01-15T23:59:59Z"),
     };
-    it("should calculate comprehensive resource metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should calculate comprehensive resource metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockData, metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockData = {
@@ -847,24 +768,18 @@ describe("ResourceOptimizer", function () {
                   },
                 ],
               };
-              mockSupabase.from.mockImplementation(function (table) {
-                return {
-                  select: jest.fn(function () {
-                    return {
-                      gte: jest.fn(function () {
-                        return {
-                          lte: jest.fn(function () {
-                            return Promise.resolve({
-                              data: mockData[table] || [],
-                              error: null,
-                            });
-                          }),
-                        };
+              mockSupabase.from.mockImplementation((table) => ({
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() =>
+                      Promise.resolve({
+                        data: mockData[table] || [],
+                        error: null,
                       }),
-                    };
-                  }),
-                };
-              });
+                    ),
+                  })),
+                })),
+              }));
               return [4 /*yield*/, optimizer.calculateResourceMetrics(mockDateRange)];
             case 1:
               metrics = _a.sent();
@@ -877,29 +792,24 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle empty data gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle empty data gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return Promise.resolve({
-                            data: [],
-                            error: null,
-                          });
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() =>
+                      Promise.resolve({
+                        data: [],
+                        error: null,
+                      }),
+                    ),
+                  })),
+                })),
               });
               return [4 /*yield*/, optimizer.calculateResourceMetrics(mockDateRange)];
             case 1:
@@ -909,14 +819,13 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("generateRecommendations", function () {
-    it("should generate staff balancing recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("generateRecommendations", () => {
+    it("should generate staff balancing recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics, mockWorkload, recommendations, staffRecommendations;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -954,16 +863,14 @@ describe("ResourceOptimizer", function () {
                 timeSlots: {},
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [],
-                        error: null,
-                      });
+                select: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, optimizer.generateRecommendations(mockMetrics, mockWorkload)];
             case 1:
@@ -971,19 +878,18 @@ describe("ResourceOptimizer", function () {
               expect(recommendations).toBeDefined();
               expect(Array.isArray(recommendations)).toBe(true);
               expect(recommendations.length).toBeGreaterThan(0);
-              staffRecommendations = recommendations.filter(function (rec) {
-                return rec.type === types_1.OptimizationType.STAFF_BALANCING;
-              });
+              staffRecommendations = recommendations.filter(
+                (rec) => rec.type === types_1.OptimizationType.STAFF_BALANCING,
+              );
               expect(staffRecommendations.length).toBeGreaterThan(0);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should prioritize recommendations correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should prioritize recommendations correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockMetrics, mockWorkload, recommendations, highPriorityRecs, staffRecs;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockMetrics = {
@@ -1012,40 +918,35 @@ describe("ResourceOptimizer", function () {
                 timeSlots: {},
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [],
-                        error: null,
-                      });
+                select: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, optimizer.generateRecommendations(mockMetrics, mockWorkload)];
             case 1:
               recommendations = _a.sent();
-              highPriorityRecs = recommendations.filter(function (rec) {
-                return rec.priority === "high";
-              });
-              staffRecs = highPriorityRecs.filter(function (rec) {
-                return rec.type === types_1.OptimizationType.STAFF_BALANCING;
-              });
+              highPriorityRecs = recommendations.filter((rec) => rec.priority === "high");
+              staffRecs = highPriorityRecs.filter(
+                (rec) => rec.type === types_1.OptimizationType.STAFF_BALANCING,
+              );
               expect(staffRecs.length).toBeGreaterThan(0);
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Configuration and Updates", function () {
-    it("should update configuration", function () {
+  describe("Configuration and Updates", () => {
+    it("should update configuration", () => {
       var newConfig = __assign(__assign({}, mockConfig), { autoApplyOptimizations: true });
       optimizer.updateConfig(newConfig);
       // Configuration should be updated (no direct way to test, but method should not throw)
     });
-    it("should validate new configuration", function () {
+    it("should validate new configuration", () => {
       var invalidConfig = __assign(__assign({}, mockConfig), {
         workloadThresholds: {
           underutilized: 0.9,
@@ -1053,61 +954,49 @@ describe("ResourceOptimizer", function () {
           overloaded: 0.5,
         },
       });
-      expect(function () {
-        return optimizer.updateConfig(invalidConfig);
-      }).toThrow();
+      expect(() => optimizer.updateConfig(invalidConfig)).toThrow();
     });
   });
-  describe("Performance and Scalability", function () {
-    it("should handle large datasets efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance and Scalability", () => {
+    it("should handle large datasets efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var largeDataRange, largeAppointmentSet, startTime, result, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               largeDataRange = {
                 startDate: new Date("2024-01-01T00:00:00Z"),
                 endDate: new Date("2024-01-31T23:59:59Z"),
               };
-              largeAppointmentSet = Array.from({ length: 1000 }, function (_, i) {
-                return {
-                  id: "appointment-".concat(i),
-                  start_time: "2024-01-15T10:00:00Z",
-                  end_time: "2024-01-15T11:00:00Z",
-                  staff_id: "staff-".concat(i % 10),
-                  room_id: "room-".concat(i % 5),
-                  client_id: "client-".concat(i),
-                  service_id: "service-".concat(i % 3),
-                  status: "scheduled",
-                };
-              });
-              mockSupabase.from.mockImplementation(function (table) {
+              largeAppointmentSet = Array.from({ length: 1000 }, (_, i) => ({
+                id: "appointment-".concat(i),
+                start_time: "2024-01-15T10:00:00Z",
+                end_time: "2024-01-15T11:00:00Z",
+                staff_id: "staff-".concat(i % 10),
+                room_id: "room-".concat(i % 5),
+                client_id: "client-".concat(i),
+                service_id: "service-".concat(i % 3),
+                status: "scheduled",
+              }));
+              mockSupabase.from.mockImplementation((table) => {
                 if (table === "appointments") {
                   return {
-                    select: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                eq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: largeAppointmentSet,
-                                    error: null,
-                                  });
-                                }),
-                              };
+                    select: jest.fn(() => ({
+                      gte: jest.fn(() => ({
+                        lte: jest.fn(() => ({
+                          eq: jest.fn(() =>
+                            Promise.resolve({
+                              data: largeAppointmentSet,
+                              error: null,
                             }),
-                          };
-                        }),
-                      };
-                    }),
+                          ),
+                        })),
+                      })),
+                    })),
                   };
                 }
                 return {
-                  select: jest.fn(function () {
-                    return Promise.resolve({ data: [], error: null });
-                  }),
+                  select: jest.fn(() => Promise.resolve({ data: [], error: null })),
                 };
               });
               startTime = Date.now();
@@ -1121,12 +1010,11 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should cache optimization results", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should cache optimization results", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var dateRange, startTime, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               dateRange = {
@@ -1134,24 +1022,18 @@ describe("ResourceOptimizer", function () {
                 endDate: new Date("2024-01-15T23:59:59Z"),
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return Promise.resolve({
-                                data: [],
-                                error: null,
-                              });
-                            }),
-                          };
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() =>
+                        Promise.resolve({
+                          data: [],
+                          error: null,
                         }),
-                      };
-                    }),
-                  };
-                }),
+                      ),
+                    })),
+                  })),
+                })),
               });
               // First call
               return [4 /*yield*/, optimizer.optimizeResources(dateRange)];
@@ -1167,14 +1049,13 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling", function () {
-    it("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling", () => {
+    it("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var dateRange;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               dateRange = {
@@ -1182,21 +1063,13 @@ describe("ResourceOptimizer", function () {
                 endDate: new Date("2024-01-15T23:59:59Z"),
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return Promise.reject(new Error("Database connection failed"));
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(() => Promise.reject(new Error("Database connection failed"))),
+                    })),
+                  })),
+                })),
               });
               return [
                 4 /*yield*/,
@@ -1209,12 +1082,11 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle invalid date ranges", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle invalid date ranges", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidDateRange;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidDateRange = {
@@ -1230,12 +1102,11 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle network timeouts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle network timeouts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var dateRange;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               dateRange = {
@@ -1243,25 +1114,18 @@ describe("ResourceOptimizer", function () {
                 endDate: new Date("2024-01-15T23:59:59Z"),
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    gte: jest.fn(function () {
-                      return {
-                        lte: jest.fn(function () {
-                          return {
-                            eq: jest.fn(function () {
-                              return new Promise(function (_, reject) {
-                                setTimeout(function () {
-                                  return reject(new Error("Network timeout"));
-                                }, 100);
-                              });
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  gte: jest.fn(() => ({
+                    lte: jest.fn(() => ({
+                      eq: jest.fn(
+                        () =>
+                          new Promise((_, reject) => {
+                            setTimeout(() => reject(new Error("Network timeout")), 100);
+                          }),
+                      ),
+                    })),
+                  })),
+                })),
               });
               return [
                 4 /*yield*/,
@@ -1272,7 +1136,6 @@ describe("ResourceOptimizer", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

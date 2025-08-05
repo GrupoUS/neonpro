@@ -1,29 +1,29 @@
 // components/auth/patient-login.tsx
 "use client";
 
-import type { useState } from "react";
-import type { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  Heart,
+  AlertCircle,
+  Calendar,
+  CheckCircle,
   CreditCard,
-  Smartphone,
-  Lock,
+  ExternalLink,
   Eye,
   EyeOff,
+  Heart,
+  Lock,
   Shield,
-  AlertCircle,
-  CheckCircle,
-  ExternalLink,
+  Smartphone,
   User,
-  Calendar,
 } from "lucide-react";
+import type { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface PatientLoginModalProps {
   open: boolean;

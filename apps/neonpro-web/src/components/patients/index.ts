@@ -1,55 +1,51 @@
 // Patient Management Components Export
 // Epic 5 Story 5.1: Advanced Patient Profile Management System
 
-// Main Patient Profile Manager
-export { default as PatientProfileManager } from "./patient-profile-manager";
+// Re-export types for external use
+export type {
+  Allergy,
+  ClinicalNote,
+  FamilyHistory,
+  ImagingStudy,
+  LabResult,
+  // Medical History Types
+  MedicalCondition,
+  Medication,
+  SocialHistory,
+  VitalSigns,
+} from "./medical-history/medical-history-manager";
 
 // Medical History Management
 export { default as MedicalHistoryManager } from "./medical-history/medical-history-manager";
-
-// Treatment Plans Management
-export { default as TreatmentPlanManager } from "./treatment-plans/treatment-plan-manager";
-
+// Main Patient Profile Manager
+export { default as PatientProfileManager } from "./patient-profile-manager";
+export type {
+  ProgressAnnotation,
+  ProgressAttachment,
+  ProgressComparison,
+  // Progress Tracking Types
+  ProgressEntry,
+  ProgressMeasurement,
+  ProgressReport,
+} from "./progress-tracking/progress-tracking-manager";
 // Progress Tracking Management
 export { default as ProgressTrackingManager } from "./progress-tracking/progress-tracking-manager";
 
-// Re-export types for external use
 export type {
-  // Medical History Types
-  MedicalCondition,
-  Allergy,
-  Medication,
-  FamilyHistory,
-  SocialHistory,
-  VitalSigns,
-  LabResult,
-  ImagingStudy,
-  ClinicalNote,
-} from "./medical-history/medical-history-manager";
-
-export type {
+  Attachment,
+  Equipment,
+  FollowUpRequirement,
+  Material,
+  ProfessionalAssignment,
+  ProgressNote,
+  ProtocolStep,
+  QualityMetric,
   // Treatment Plan Types
   TreatmentPlan,
   TreatmentProtocol,
-  ProtocolStep,
-  Material,
-  Equipment,
-  ProfessionalAssignment,
-  ProgressNote,
-  Attachment,
-  FollowUpRequirement,
-  QualityMetric,
 } from "./treatment-plans/treatment-plan-manager";
-
-export type {
-  // Progress Tracking Types
-  ProgressEntry,
-  ProgressAttachment,
-  ProgressAnnotation,
-  ProgressMeasurement,
-  ProgressComparison,
-  ProgressReport,
-} from "./progress-tracking/progress-tracking-manager";
+// Treatment Plans Management
+export { default as TreatmentPlanManager } from "./treatment-plans/treatment-plan-manager";
 
 // Component configuration and utilities
 export const PATIENT_MANAGEMENT_CONFIG = {

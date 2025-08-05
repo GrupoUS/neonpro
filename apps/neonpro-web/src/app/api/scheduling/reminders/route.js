@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 exports.GET = GET;
@@ -191,7 +188,7 @@ function POST(request) {
       workflowError_1,
       error_1;
     var _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 11, , 12]);
@@ -248,22 +245,18 @@ function POST(request) {
           ];
         case 7:
           workflows = _c.sent();
-          reminderWorkflows = workflows.filter(function (w) {
-            return w.workflowType === "reminder";
-          });
+          reminderWorkflows = workflows.filter((w) => w.workflowType === "reminder");
           return [
             2 /*return*/,
             server_1.NextResponse.json({
               success: true,
               method: "workflow",
-              workflows: reminderWorkflows.map(function (w) {
-                return {
-                  id: w.id,
-                  timing: w.metadata.timing,
-                  scheduledAt: w.scheduledAt,
-                  status: w.status,
-                };
-              }),
+              workflows: reminderWorkflows.map((w) => ({
+                id: w.id,
+                timing: w.metadata.timing,
+                scheduledAt: w.scheduledAt,
+                status: w.status,
+              })),
               message: "Scheduled ".concat(reminderWorkflows.length, " reminder workflows"),
             }),
           ];
@@ -313,7 +306,7 @@ function handleImmediateReminder(supabase, data, user) {
       template,
       variables,
       result;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           communicationService = new communication_service_1.CommunicationService();
@@ -335,7 +328,7 @@ function handleImmediateReminder(supabase, data, user) {
               server_1.NextResponse.json({ error: "Appointment not found" }, { status: 404 }),
             ];
           }
-          if (!!data.force) return [3 /*break*/, 3];
+          if (data.force) return [3 /*break*/, 3];
           return [
             4 /*yield*/,
             supabase
@@ -361,7 +354,7 @@ function handleImmediateReminder(supabase, data, user) {
         case 3:
           channel = data.channel || "whatsapp";
           message = data.customMessage;
-          if (!!message) return [3 /*break*/, 5];
+          if (message) return [3 /*break*/, 5];
           template = scheduling_templates_1.schedulingTemplateEngine.selectBestTemplate(
             "reminder",
             appointment,
@@ -468,7 +461,7 @@ function handleLegacyReminders(supabase, data, user) {
       _c,
       insertedReminders,
       insertError;
-    return __generator(this, function (_d) {
+    return __generator(this, (_d) => {
       switch (_d.label) {
         case 0:
           return [
@@ -588,7 +581,7 @@ function GET(request) {
       workflowData,
       error_3,
       error_4;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 12, , 13]);
@@ -746,7 +739,7 @@ function PUT(request) {
       reminderData,
       error_5,
       error_6;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 14, , 15]);

@@ -1,6 +1,24 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  MessageCircle,
+  Phone,
+  Plus,
+  RotateCcw,
+  TrendingUp,
+  UserCheck,
+  Users,
+  UserX,
+  XCircle,
+} from "lucide-react";
 import type { useState } from "react";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,8 +26,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type {
   Dialog,
   DialogContent,
@@ -18,6 +34,7 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Label } from "@/components/ui/label";
 import type {
   Select,
   SelectContent,
@@ -26,25 +43,8 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Textarea } from "@/components/ui/textarea";
-import type { Label } from "@/components/ui/label";
-import type {
-  Calendar,
-  Clock,
-  Users,
-  UserCheck,
-  UserX,
-  CheckCircle,
-  XCircle,
-  RotateCcw,
-  MessageCircle,
-  Phone,
-  Plus,
-  TrendingUp,
-  AlertTriangle,
-} from "lucide-react";
-import type { toast } from "sonner";
-import type { cn } from "@/lib/utils";
 import type { Appointment } from "@/hooks/use-appointments-manager";
+import type { cn } from "@/lib/utils";
 
 interface QuickActionsProps {
   appointments: Appointment[];

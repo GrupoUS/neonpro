@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,10 +128,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -143,14 +140,14 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createsystemIntegrationManager = void 0;
 var client_1 = require("@/lib/supabase/client");
 var audit_logger_1 = require("@/lib/audit/audit-logger");
 var lgpd_manager_1 = require("@/lib/lgpd/lgpd-manager");
 var patient_insights_1 = require("@/lib/ai/patient-insights");
-var createsystemIntegrationManager = /** @class */ (function () {
+var createsystemIntegrationManager = /** @class */ (() => {
   function createsystemIntegrationManager() {
     this.supabase = (0, client_1.createClient)();
     this.auditLogger = new audit_logger_1.AuditLogger();
@@ -250,8 +247,8 @@ var createsystemIntegrationManager = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                (patients || []).map(function (patient) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                (patients || []).map((patient) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     return __generator(this, function (_a) {
                       switch (_a.label) {
                         case 0:
@@ -260,8 +257,8 @@ var createsystemIntegrationManager = /** @class */ (function () {
                           return [2 /*return*/, _a.sent()];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 4:
@@ -364,9 +361,7 @@ var createsystemIntegrationManager = /** @class */ (function () {
             totalSpent =
               (treatments === null || treatments === void 0
                 ? void 0
-                : treatments.reduce(function (sum, treatment) {
-                    return sum + (treatment.cost || 0);
-                  }, 0)) || 0;
+                : treatments.reduce((sum, treatment) => sum + (treatment.cost || 0), 0)) || 0;
             lastActivity = this.getLastActivity(appointments || [], treatments || []);
             loyaltyScore = this.calculateLoyaltyScore(appointments || [], treatments || []);
             communicationHistory = [];
@@ -434,7 +429,7 @@ var createsystemIntegrationManager = /** @class */ (function () {
             patientSuggestions = _a.sent().data;
             patientSuggestions === null || patientSuggestions === void 0
               ? void 0
-              : patientSuggestions.forEach(function (patient) {
+              : patientSuggestions.forEach((patient) => {
                   suggestions.push({
                     type: "patient",
                     id: patient.id,
@@ -456,7 +451,7 @@ var createsystemIntegrationManager = /** @class */ (function () {
             treatmentSuggestions = _a.sent().data;
             treatmentSuggestions === null || treatmentSuggestions === void 0
               ? void 0
-              : treatmentSuggestions.forEach(function (treatment) {
+              : treatmentSuggestions.forEach((treatment) => {
                   var _a;
                   suggestions.push({
                     type: "treatment",
@@ -470,9 +465,7 @@ var createsystemIntegrationManager = /** @class */ (function () {
                   });
                 });
             // Sort by relevance
-            suggestions.sort(function (a, b) {
-              return b.relevanceScore - a.relevanceScore;
-            });
+            suggestions.sort((a, b) => b.relevanceScore - a.relevanceScore);
             return [2 /*return*/, suggestions.slice(0, 8)];
           case 4:
             error_3 = _a.sent();
@@ -566,7 +559,7 @@ var createsystemIntegrationManager = /** @class */ (function () {
             seenPatients_1 = new Set();
             recentAppointments === null || recentAppointments === void 0
               ? void 0
-              : recentAppointments.forEach(function (appointment) {
+              : recentAppointments.forEach((appointment) => {
                   var _a;
                   if (!seenPatients_1.has(appointment.patient_id)) {
                     seenPatients_1.add(appointment.patient_id);
@@ -628,16 +621,14 @@ var createsystemIntegrationManager = /** @class */ (function () {
             communicationHistory =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.map(function (appointment) {
-                    return {
-                      id: appointment.id,
-                      type: "appointment",
-                      date: appointment.appointment_date,
-                      subject: "Consulta - ".concat(appointment.service_type),
-                      status: appointment.status,
-                      notes: appointment.notes,
-                    };
-                  })) || [];
+                : appointments.map((appointment) => ({
+                    id: appointment.id,
+                    type: "appointment",
+                    date: appointment.appointment_date,
+                    subject: "Consulta - ".concat(appointment.service_type),
+                    status: appointment.status,
+                    notes: appointment.notes,
+                  }))) || [];
             return [2 /*return*/, communicationHistory];
           case 3:
             error_6 = _a.sent();
@@ -652,47 +643,36 @@ var createsystemIntegrationManager = /** @class */ (function () {
   /**
    * Helper methods
    */
-  createsystemIntegrationManager.prototype.getLastActivity = function (appointments, treatments) {
+  createsystemIntegrationManager.prototype.getLastActivity = (appointments, treatments) => {
     var allDates = __spreadArray(
       __spreadArray(
         [],
-        appointments.map(function (a) {
-          return new Date(a.appointment_date);
-        }),
+        appointments.map((a) => new Date(a.appointment_date)),
         true,
       ),
-      treatments.map(function (t) {
-        return new Date(t.created_at);
-      }),
+      treatments.map((t) => new Date(t.created_at)),
       true,
     );
     return allDates.length > 0
       ? new Date(
           Math.max.apply(
             Math,
-            allDates.map(function (d) {
-              return d.getTime();
-            }),
+            allDates.map((d) => d.getTime()),
           ),
         )
       : new Date();
   };
-  createsystemIntegrationManager.prototype.calculateLoyaltyScore = function (
-    appointments,
-    treatments,
-  ) {
+  createsystemIntegrationManager.prototype.calculateLoyaltyScore = (appointments, treatments) => {
     var appointmentCount = appointments.length;
     var treatmentCount = treatments.length;
-    var completedAppointments = appointments.filter(function (a) {
-      return a.status === "completed";
-    }).length;
+    var completedAppointments = appointments.filter((a) => a.status === "completed").length;
     // Simple loyalty calculation
     var baseScore = Math.min(appointmentCount * 10, 100);
     var completionBonus = (completedAppointments / Math.max(appointmentCount, 1)) * 20;
     var treatmentBonus = Math.min(treatmentCount * 5, 30);
     return Math.round(baseScore + completionBonus + treatmentBonus);
   };
-  createsystemIntegrationManager.prototype.calculateRelevanceScore = function (query, text) {
+  createsystemIntegrationManager.prototype.calculateRelevanceScore = (query, text) => {
     var queryLower = query.toLowerCase();
     var textLower = text.toLowerCase();
     if (textLower === queryLower) return 100;

@@ -3,9 +3,9 @@
  * Detects and prevents session hijacking attempts
  */
 
+import type { createHash } from "crypto";
 import type { NextRequest } from "next/server";
 import type { createClient } from "@/lib/supabase/client";
-import type { createHash } from "crypto";
 
 export interface SessionFingerprint {
   userAgent: string;
@@ -49,7 +49,7 @@ export class SessionHijackingProtection {
   static generateFingerprint(request: NextRequest): SessionFingerprint {
     return {
       userAgent: request.headers.get("user-agent") || "",
-      ipAddress: this.getClientIP(request),
+      ipAddress: SessionHijackingProtection.getClientIP(request),
       acceptLanguage: request.headers.get("accept-language") || "",
       acceptEncoding: request.headers.get("accept-encoding") || "",
       // Additional fingerprint data can be added via client-side JS
@@ -74,7 +74,7 @@ export class SessionHijackingProtection {
   ): Promise<boolean> {
     try {
       const supabase = await createClient();
-      const fingerprintHash = this.createFingerprintHash(fingerprint);
+      const fingerprintHash = SessionHijackingProtection.createFingerprintHash(fingerprint);
 
       const { error } = await supabase.from("session_fingerprints").upsert({
         session_id: sessionId,
@@ -158,21 +158,23 @@ export class SessionHijackingProtection {
       let action: "allow" | "challenge" | "block" | "terminate" = "allow";
       let requiresReauth = false;
 
-      if (riskScore >= this.BLOCK_THRESHOLD) {
+      if (riskScore >= SessionHijackingProtection.BLOCK_THRESHOLD) {
         action = "terminate";
         requiresReauth = true;
-      } else if (riskScore >= this.CHALLENGE_THRESHOLD) {
+      } else if (riskScore >= SessionHijackingProtection.CHALLENGE_THRESHOLD) {
         action = "challenge";
         requiresReauth = true;
       }
 
       // Log security event if suspicious
       if (riskScore > 0) {
-        await this.logSecurityEvent({
+        await SessionHijackingProtection.logSecurityEvent({
           sessionId,
           userId: storedSession.user_id,
           eventType:
-            riskScore >= this.CHALLENGE_THRESHOLD ? "hijack_attempt" : "suspicious_activity",
+            riskScore >= SessionHijackingProtection.CHALLENGE_THRESHOLD
+              ? "hijack_attempt"
+              : "suspicious_activity",
           riskScore,
           fingerprint: currentFingerprint,
           timestamp: Date.now(),
@@ -249,7 +251,7 @@ export class SessionHijackingProtection {
           .map((s) => s.session_id);
 
         // Log concurrent session event
-        await this.logSecurityEvent({
+        await SessionHijackingProtection.logSecurityEvent({
           sessionId: currentSessionId,
           userId,
           eventType: "concurrent_session",
@@ -293,7 +295,7 @@ export class SessionHijackingProtection {
         try {
           // This would integrate with your session management system
           // For Supabase, you might need to call their admin API
-          await this.invalidateSession(sessionId);
+          await SessionHijackingProtection.invalidateSession(sessionId);
         } catch (error) {
           console.error(`Failed to invalidate session ${sessionId}:`, error);
         }

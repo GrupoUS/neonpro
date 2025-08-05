@@ -4,7 +4,26 @@
 // NeonPro - Sistema de Automação de Compliance LGPD
 // Quality Standard: ≥9.5/10 (BMad Enhanced)
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Download,
+  Edit,
+  Eye,
+  FileText,
+  History,
+  Info,
+  Lock,
+  Settings,
+  Shield,
+  Trash2,
+  Unlock,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -12,30 +31,11 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Switch } from "@/components/ui/switch";
-import type { Separator } from "@/components/ui/separator";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ScrollArea } from "@/components/ui/scroll-area";
-import type {
-  Shield,
-  Eye,
-  Download,
-  Edit,
-  Trash2,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Info,
-  Settings,
-  History,
-  FileText,
-  Lock,
-  Unlock,
-} from "lucide-react";
+import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Types
 interface ConsentDashboardProps {

@@ -1,11 +1,10 @@
-"use strict";
 // ============================================================================
 // Session Management System - Utilities
 // NeonPro - Session Management & Security
 // ============================================================================
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -14,7 +13,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RateLimiter = void 0;
 exports.generateSessionToken = generateSessionToken;
@@ -134,9 +133,7 @@ function compareFingerprintSimilarity(fp1, fp2) {
   // Plugins (partial match)
   total++;
   if (fp1.plugins && fp2.plugins) {
-    var intersection = fp1.plugins.filter(function (p) {
-      return fp2.plugins.includes(p);
-    });
+    var intersection = fp1.plugins.filter((p) => fp2.plugins.includes(p));
     var union = __spreadArray(
       [],
       new Set(__spreadArray(__spreadArray([], fp1.plugins, true), fp2.plugins, true)),
@@ -204,9 +201,9 @@ function isLocationSuspicious(
   if (!currentLocation.latitude || !currentLocation.longitude) {
     return false;
   }
-  var recentLocations = previousLocations.filter(function (loc) {
-    return Date.now() - new Date(loc.timestamp).getTime() < timeWindow;
-  });
+  var recentLocations = previousLocations.filter(
+    (loc) => Date.now() - new Date(loc.timestamp).getTime() < timeWindow,
+  );
   if (recentLocations.length === 0) {
     return false;
   }
@@ -244,9 +241,7 @@ function isPrivateIP(ip) {
     /^fc00:/,
     /^fe80:/,
   ];
-  return privateRanges.some(function (range) {
-    return range.test(ip);
-  });
+  return privateRanges.some((range) => range.test(ip));
 }
 /**
  * Extract country from IP (simplified - in production use GeoIP service)
@@ -266,9 +261,7 @@ function extractCountryFromIP(ip) {
 function isSuspiciousIP(ip) {
   // Known suspicious patterns (simplified)
   var suspiciousPatterns = [/^0\./, /^255\./, /^224\./];
-  return suspiciousPatterns.some(function (pattern) {
-    return pattern.test(ip);
-  });
+  return suspiciousPatterns.some((pattern) => pattern.test(ip));
 }
 // ============================================================================
 // SESSION UTILITIES
@@ -513,7 +506,7 @@ function isBusinessHours(date) {
 /**
  * Simple in-memory rate limiter
  */
-var RateLimiter = /** @class */ (function () {
+var RateLimiter = /** @class */ (() => {
   function RateLimiter(maxAttempts, windowMs) {
     this.maxAttempts = maxAttempts;
     this.windowMs = windowMs;

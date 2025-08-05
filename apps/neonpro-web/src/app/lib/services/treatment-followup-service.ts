@@ -3,23 +3,23 @@
 // Epic 7.3: Comprehensive service layer for follow-up automation
 // =====================================================================================
 
-import type { createClient } from "@/lib/supabase/client";
 import type {
-  TreatmentFollowup,
-  FollowupTemplate,
-  TreatmentProtocol,
+  BulkFollowupOperation,
   CreateFollowupData,
   CreateFollowupTemplateData,
   CreateTreatmentProtocolData,
-  FollowupFilters,
-  TemplateFilters,
-  ProtocolFilters,
-  FollowupResponse,
   FollowupAnalytics,
   FollowupDashboardSummary,
-  BulkFollowupOperation,
+  FollowupFilters,
+  FollowupResponse,
+  FollowupTemplate,
+  ProtocolFilters,
+  TemplateFilters,
+  TreatmentFollowup,
   TreatmentOutcome,
+  TreatmentProtocol,
 } from "@/app/types/treatment-followups";
+import type { createClient } from "@/lib/supabase/client";
 
 class TreatmentFollowupService {
   // Supabase client created per method for proper request context

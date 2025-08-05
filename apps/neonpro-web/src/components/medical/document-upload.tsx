@@ -1,6 +1,43 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  Archive,
+  Calendar,
+  Camera,
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
+  File,
+  FileAudio,
+  FileImage,
+  FilePdf,
+  FileSpreadsheet,
+  FileText,
+  FileVideo,
+  Filter,
+  Grid,
+  Image,
+  List,
+  Lock,
+  MoreVertical,
+  Plus,
+  Scan,
+  Search,
+  Shield,
+  Tag,
+  Trash2,
+  Upload,
+  User,
+  X,
+} from "lucide-react";
+import React, { useCallback, useRef, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,20 +45,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
   Dialog,
   DialogContent,
@@ -30,40 +53,17 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
-  Upload,
-  File,
-  Image,
-  FileText,
-  X,
-  Eye,
-  Download,
-  Trash2,
-  Camera,
-  Scan,
-  Shield,
-  Lock,
-  CheckCircle,
-  AlertTriangle,
-  Clock,
-  Tag,
-  Calendar,
-  User,
-  FileImage,
-  FilePdf,
-  FileSpreadsheet,
-  FileVideo,
-  FileAudio,
-  Archive,
-  Plus,
-  Search,
-  Filter,
-  Grid,
-  List,
-  MoreVertical,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Types
 interface MedicalDocument {
@@ -451,7 +451,7 @@ export function DocumentUpload({
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   const getFileIcon = (fileType: string) => {

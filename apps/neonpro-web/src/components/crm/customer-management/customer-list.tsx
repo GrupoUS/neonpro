@@ -1,5 +1,7 @@
 "use client";
 
+import type { Download, MoreHorizontal, Plus, Search } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,8 +31,6 @@ import type {
 } from "@/components/ui/table";
 import type { Customer, useCRM } from "@/contexts/crm-context";
 import type { formatCurrency, formatDate } from "@/lib/utils";
-import type { Download, MoreHorizontal, Plus, Search } from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface CustomerListProps {
   onCustomerSelect?: (customer: Customer) => void;

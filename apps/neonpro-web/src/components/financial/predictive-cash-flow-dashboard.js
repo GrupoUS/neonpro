@@ -21,32 +21,31 @@
  * =====================================================================================
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -66,13 +65,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -94,9 +93,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -168,7 +165,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PredictiveCashFlowDashboard = PredictiveCashFlowDashboard;
 var react_1 = require("react");
@@ -185,10 +182,6 @@ var recharts_1 = require("recharts");
 var use_toast_1 = require("@/hooks/use-toast");
 var utils_1 = require("@/lib/utils");
 function PredictiveCashFlowDashboard(_a) {
-  // =====================================================================================
-  // STATE MANAGEMENT
-  // =====================================================================================
-  var _this = this;
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)(true),
     loading = _b[0],
@@ -224,8 +217,8 @@ function PredictiveCashFlowDashboard(_a) {
   // DATA LOADING
   // =====================================================================================
   var loadData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a,
           predictionsRes,
           scenariosRes,
@@ -236,7 +229,7 @@ function PredictiveCashFlowDashboard(_a) {
           bestModel,
           error_1;
         var _b, _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               _d.trys.push([0, 8, 9, 10]);
@@ -281,9 +274,8 @@ function PredictiveCashFlowDashboard(_a) {
               bestModel =
                 ((_b = modelsData.models) === null || _b === void 0
                   ? void 0
-                  : _b.find(function (m) {
-                      return m.is_production_ready;
-                    })) || ((_c = modelsData.models) === null || _c === void 0 ? void 0 : _c[0]);
+                  : _b.find((m) => m.is_production_ready)) ||
+                ((_c = modelsData.models) === null || _c === void 0 ? void 0 : _c[0]);
               if (bestModel) {
                 setSelectedModel(bestModel.id);
               }
@@ -306,23 +298,19 @@ function PredictiveCashFlowDashboard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [clinicId],
   );
-  (0, react_1.useEffect)(
-    function () {
-      loadData();
-    },
-    [loadData],
-  );
+  (0, react_1.useEffect)(() => {
+    loadData();
+  }, [loadData]);
   // =====================================================================================
   // PREDICTION GENERATION
   // =====================================================================================
-  var generatePrediction = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generatePrediction = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedModel) {
@@ -390,38 +378,30 @@ function PredictiveCashFlowDashboard(_a) {
         }
       });
     });
-  };
   // =====================================================================================
   // CHART DATA PREPARATION
   // =====================================================================================
-  var prepareChartData = function () {
-    return predictions
-      .filter(function (p) {
-        return new Date(p.start_date) >= new Date(forecastRange.startDate);
-      })
-      .sort(function (a, b) {
-        return new Date(a.start_date).getTime() - new Date(b.start_date).getTime();
-      })
-      .map(function (prediction) {
-        return {
-          date: new Date(prediction.start_date).toLocaleDateString("pt-BR", {
-            month: "short",
-            year: "2-digit",
-          }),
-          predicted: prediction.predicted_net_amount / 100, // Convert from cents
-          inflow: prediction.predicted_inflow_amount / 100,
-          outflow: -(prediction.predicted_outflow_amount / 100),
-          confidence: prediction.confidence_score,
-          confidenceLower: prediction.confidence_interval_lower / 100,
-          confidenceUpper: prediction.confidence_interval_upper / 100,
-        };
-      });
-  };
+  var prepareChartData = () =>
+    predictions
+      .filter((p) => new Date(p.start_date) >= new Date(forecastRange.startDate))
+      .sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime())
+      .map((prediction) => ({
+        date: new Date(prediction.start_date).toLocaleDateString("pt-BR", {
+          month: "short",
+          year: "2-digit",
+        }),
+        predicted: prediction.predicted_net_amount / 100, // Convert from cents
+        inflow: prediction.predicted_inflow_amount / 100,
+        outflow: -(prediction.predicted_outflow_amount / 100),
+        confidence: prediction.confidence_score,
+        confidenceLower: prediction.confidence_interval_lower / 100,
+        confidenceUpper: prediction.confidence_interval_upper / 100,
+      }));
   var chartData = prepareChartData();
   // =====================================================================================
   // METRICS CALCULATION
   // =====================================================================================
-  var calculateMetrics = function () {
+  var calculateMetrics = () => {
     var recentPredictions = predictions.slice(0, 12); // Last 12 predictions
     if (recentPredictions.length === 0) {
       return {
@@ -434,29 +414,22 @@ function PredictiveCashFlowDashboard(_a) {
       };
     }
     var avgConfidence =
-      recentPredictions.reduce(function (sum, p) {
-        return sum + p.confidence_score;
-      }, 0) / recentPredictions.length;
-    var totalPredictedInflow = recentPredictions.reduce(function (sum, p) {
-      return sum + p.predicted_inflow_amount;
-    }, 0);
-    var totalPredictedOutflow = recentPredictions.reduce(function (sum, p) {
-      return sum + p.predicted_outflow_amount;
-    }, 0);
-    var totalPredictedNet = recentPredictions.reduce(function (sum, p) {
-      return sum + p.predicted_net_amount;
-    }, 0);
+      recentPredictions.reduce((sum, p) => sum + p.confidence_score, 0) / recentPredictions.length;
+    var totalPredictedInflow = recentPredictions.reduce(
+      (sum, p) => sum + p.predicted_inflow_amount,
+      0,
+    );
+    var totalPredictedOutflow = recentPredictions.reduce(
+      (sum, p) => sum + p.predicted_outflow_amount,
+      0,
+    );
+    var totalPredictedNet = recentPredictions.reduce((sum, p) => sum + p.predicted_net_amount, 0);
     // Calculate trend
     var firstHalf = recentPredictions.slice(recentPredictions.length / 2);
     var secondHalf = recentPredictions.slice(0, recentPredictions.length / 2);
-    var firstAvg =
-      firstHalf.reduce(function (sum, p) {
-        return sum + p.predicted_net_amount;
-      }, 0) / firstHalf.length;
+    var firstAvg = firstHalf.reduce((sum, p) => sum + p.predicted_net_amount, 0) / firstHalf.length;
     var secondAvg =
-      secondHalf.reduce(function (sum, p) {
-        return sum + p.predicted_net_amount;
-      }, 0) / secondHalf.length;
+      secondHalf.reduce((sum, p) => sum + p.predicted_net_amount, 0) / secondHalf.length;
     var trendPercentage = firstAvg !== 0 ? ((secondAvg - firstAvg) / Math.abs(firstAvg)) * 100 : 0;
     var trend = trendPercentage > 5 ? "up" : trendPercentage < -5 ? "down" : "stable";
     return {
@@ -615,7 +588,7 @@ function PredictiveCashFlowDashboard(_a) {
                       <select_1.SelectValue placeholder="Selecionar modelo" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {models.map(function (model) {
+                      {models.map((model) => {
                         var _a;
                         return (
                           <select_1.SelectItem key={model.id} value={model.id}>
@@ -635,9 +608,7 @@ function PredictiveCashFlowDashboard(_a) {
                   <label_1.Label htmlFor="period-select">Período</label_1.Label>
                   <select_1.Select
                     value={selectedPeriod}
-                    onValueChange={function (value) {
-                      return setSelectedPeriod(value);
-                    }}
+                    onValueChange={(value) => setSelectedPeriod(value)}
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -656,11 +627,11 @@ function PredictiveCashFlowDashboard(_a) {
                     id="start-date"
                     type="date"
                     value={forecastRange.startDate}
-                    onChange={function (e) {
-                      return setForecastRange(function (prev) {
-                        return __assign(__assign({}, prev), { startDate: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setForecastRange((prev) =>
+                        __assign(__assign({}, prev), { startDate: e.target.value }),
+                      )
+                    }
                   />
                 </div>
 
@@ -670,11 +641,11 @@ function PredictiveCashFlowDashboard(_a) {
                     id="end-date"
                     type="date"
                     value={forecastRange.endDate}
-                    onChange={function (e) {
-                      return setForecastRange(function (prev) {
-                        return __assign(__assign({}, prev), { endDate: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setForecastRange((prev) =>
+                        __assign(__assign({}, prev), { endDate: e.target.value }),
+                      )
+                    }
                   />
                 </div>
               </div>
@@ -696,26 +667,20 @@ function PredictiveCashFlowDashboard(_a) {
                     <recharts_1.CartesianGrid strokeDasharray="3 3" />
                     <recharts_1.XAxis dataKey="date" />
                     <recharts_1.YAxis
-                      tickFormatter={function (value) {
-                        return (0, utils_1.formatCurrency)(value * 100, true);
-                      }}
+                      tickFormatter={(value) => (0, utils_1.formatCurrency)(value * 100, true)}
                     />
                     <recharts_1.Tooltip
-                      formatter={function (value, name) {
-                        return [
-                          (0, utils_1.formatCurrency)(value * 100),
-                          name === "predicted"
-                            ? "Previsto"
-                            : name === "inflow"
-                              ? "Entrada"
-                              : name === "outflow"
-                                ? "Saída"
-                                : name,
-                        ];
-                      }}
-                      labelFormatter={function (label) {
-                        return "Per\u00EDodo: ".concat(label);
-                      }}
+                      formatter={(value, name) => [
+                        (0, utils_1.formatCurrency)(value * 100),
+                        name === "predicted"
+                          ? "Previsto"
+                          : name === "inflow"
+                            ? "Entrada"
+                            : name === "outflow"
+                              ? "Saída"
+                              : name,
+                      ]}
+                      labelFormatter={(label) => "Per\u00EDodo: ".concat(label)}
                     />
                     <recharts_1.Legend />
 
@@ -764,47 +729,42 @@ function PredictiveCashFlowDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {predictions.slice(0, 5).map(function (prediction) {
-                  return (
-                    <div
-                      key={prediction.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <lucide_react_1.Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">
-                            {new Date(prediction.start_date).toLocaleDateString("pt-BR")} -{" "}
-                            {new Date(prediction.end_date).toLocaleDateString("pt-BR")}
-                          </span>
-                          <badge_1.Badge variant="outline">{prediction.period_type}</badge_1.Badge>
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          Entrada: {(0, utils_1.formatCurrency)(prediction.predicted_inflow_amount)}{" "}
-                          | Saída:{" "}
-                          {(0, utils_1.formatCurrency)(prediction.predicted_outflow_amount)}
-                        </div>
+                {predictions.slice(0, 5).map((prediction) => (
+                  <div
+                    key={prediction.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <lucide_react_1.Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">
+                          {new Date(prediction.start_date).toLocaleDateString("pt-BR")} -{" "}
+                          {new Date(prediction.end_date).toLocaleDateString("pt-BR")}
+                        </span>
+                        <badge_1.Badge variant="outline">{prediction.period_type}</badge_1.Badge>
                       </div>
-                      <div className="text-right space-y-1">
-                        <div
-                          className={"text-lg font-bold ".concat(
-                            prediction.predicted_net_amount >= 0
-                              ? "text-green-600"
-                              : "text-red-600",
-                          )}
-                        >
-                          {(0, utils_1.formatCurrency)(prediction.predicted_net_amount)}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <lucide_react_1.Target className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground">
-                            {prediction.confidence_score.toFixed(1)}% confiança
-                          </span>
-                        </div>
+                      <div className="text-sm text-muted-foreground">
+                        Entrada: {(0, utils_1.formatCurrency)(prediction.predicted_inflow_amount)} |
+                        Saída: {(0, utils_1.formatCurrency)(prediction.predicted_outflow_amount)}
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="text-right space-y-1">
+                      <div
+                        className={"text-lg font-bold ".concat(
+                          prediction.predicted_net_amount >= 0 ? "text-green-600" : "text-red-600",
+                        )}
+                      >
+                        {(0, utils_1.formatCurrency)(prediction.predicted_net_amount)}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <lucide_react_1.Target className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">
+                          {prediction.confidence_score.toFixed(1)}% confiança
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
 
                 {predictions.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
@@ -848,7 +808,7 @@ function PredictiveCashFlowDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {models.map(function (model) {
+                {models.map((model) => {
                   var _a;
                   return (
                     <div key={model.id} className="p-4 border rounded-lg">

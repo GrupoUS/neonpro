@@ -12,10 +12,14 @@
  * - Performance optimized with caching
  */
 
+import { type CookieOptions, createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { HealthcareRBACEngine, PermissionCheckResult, UserRoleContext } from "@/lib/auth/rbac";
-import { HealthcareRole, MedicalSpecialty } from "@/lib/auth/permissions";
+import type { HealthcareRole, MedicalSpecialty } from "@/lib/auth/permissions";
+import {
+  HealthcareRBACEngine,
+  type PermissionCheckResult,
+  type UserRoleContext,
+} from "@/lib/auth/rbac";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -92,9 +96,9 @@ export class HealthcareRBACMiddleware {
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
         cookies: {
-          get: (name: string) => undefined,
-          set: (name: string, value: string, options: CookieOptions) => {},
-          remove: (name: string, options: CookieOptions) => {},
+          get: (_name: string) => undefined,
+          set: (_name: string, _value: string, _options: CookieOptions) => {},
+          remove: (_name: string, _options: CookieOptions) => {},
         },
       },
     );
@@ -106,7 +110,7 @@ export class HealthcareRBACMiddleware {
    * Create RBAC middleware for API route protection
    */
   protect(options: RBACMiddlewareOptions) {
-    return async (request: NextRequest): Promise<NextResponse | void> => {
+    return async (request: NextRequest): Promise<NextResponse | undefined> => {
       try {
         // Extract authentication token
         const authResult = await this.extractAuthentication(request);

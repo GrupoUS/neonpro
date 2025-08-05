@@ -6,8 +6,13 @@
 
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
-import type { Calendar, dayjsLocalizer, View, NavigateAction } from "react-big-calendar";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import type { Calendar as CalendarIcon, Clock, Star, TrendingUp, Zap } from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import type { Calendar, dayjsLocalizer, NavigateAction, View } from "react-big-calendar";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -15,8 +20,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type {
   Dialog,
   DialogContent,
@@ -25,17 +28,14 @@ import type {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Calendar as CalendarIcon, Clock, Star, Zap, TrendingUp } from "lucide-react";
 import type { cn } from "@/lib/utils";
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // Import our enhanced alternative slots system
 import type {
-  useAlternativeSlots,
   AlternativeSlot,
   AlternativeSlotsRequest,
+  useAlternativeSlots,
 } from "@/hooks/appointments/use-alternative-slots";
 import AlternativeSlotsDisplay from "./alternative-slots-display";
 

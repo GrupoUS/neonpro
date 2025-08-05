@@ -1,6 +1,5 @@
 // Progressive Disclosure Error Dialog Component
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorDialog = ErrorDialog;
 var react_1 = require("react");
@@ -105,14 +104,12 @@ function ErrorDialog(_a) {
             </card_1.CardHeader>
             <card_1.CardContent className="pt-0">
               <ul className="space-y-2">
-                {error.suggestedActions.map(function (action, index) {
-                  return (
-                    <li key={index} className="flex items-start gap-2 text-sm">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0" />
-                      {action}
-                    </li>
-                  );
-                })}
+                {error.suggestedActions.map((action, index) => (
+                  <li key={index} className="flex items-start gap-2 text-sm">
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0" />
+                    {action}
+                  </li>
+                ))}
               </ul>
             </card_1.CardContent>
           </card_1.Card>
@@ -228,9 +225,7 @@ function ErrorDialog(_a) {
                     variant="outline"
                     size="sm"
                     className="text-green-700 border-green-300 hover:bg-green-100"
-                    onClick={function () {
-                      return window.open(error.helpUrl, "_blank");
-                    }}
+                    onClick={() => window.open(error.helpUrl, "_blank")}
                   >
                     <lucide_react_1.ExternalLink className="w-3 h-3 mr-1" />
                     Ver Guia
@@ -246,7 +241,7 @@ function ErrorDialog(_a) {
             {/* Retry Button */}
             {error.canRetry && onRetry && (
               <button_1.Button
-                onClick={function () {
+                onClick={() => {
                   onRetry();
                   onOpenChange(false);
                 }}
@@ -262,7 +257,7 @@ function ErrorDialog(_a) {
             {error.requiresSupport && onContactSupport && (
               <button_1.Button
                 variant="outline"
-                onClick={function () {
+                onClick={() => {
                   onContactSupport();
                   onOpenChange(false);
                 }}
@@ -276,9 +271,7 @@ function ErrorDialog(_a) {
           {/* Close Button */}
           <button_1.Button
             variant="ghost"
-            onClick={function () {
-              return onOpenChange(false);
-            }}
+            onClick={() => onOpenChange(false)}
             className="w-full sm:w-auto"
           >
             Fechar

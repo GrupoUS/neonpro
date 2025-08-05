@@ -11,36 +11,26 @@
  */
 
 import {
-  ForecastingModel,
-  DemandPrediction,
-  ForecastAccuracy,
-  DemandAlert,
-  ForecastingSettings,
-  ModelTrainingHistory,
-  PredictionRequest,
-  TrainingRequest,
-  AlertUpdateRequest,
-} from "@/app/types/predictive-analytics";
-
-import {
-  forecastingModelSchema,
-  demandPredictionSchema,
-  forecastAccuracySchema,
-  demandAlertSchema,
-  forecastingSettingsSchema,
-  modelTrainingHistorySchema,
-  predictionRequestSchema,
-  trainingRequestSchema,
-  alertUpdateRequestSchema,
-} from "@/app/lib/validations/predictive-analytics";
-
-import {
-  PredictiveAnalyticsService,
-  generateDemandPrediction,
   calculateAccuracyMetrics,
   createDemandAlert,
+  generateDemandPrediction,
   optimizeResourceAllocation,
+  PredictiveAnalyticsService,
 } from "@/app/lib/services/predictive-analytics";
+
+import {
+  alertUpdateRequestSchema,
+  demandPredictionSchema,
+  forecastingModelSchema,
+  predictionRequestSchema,
+  trainingRequestSchema,
+} from "@/app/lib/validations/predictive-analytics";
+import type {
+  DemandAlert,
+  DemandPrediction,
+  ForecastAccuracy,
+  ForecastingModel,
+} from "@/app/types/predictive-analytics";
 
 describe("Predictive Analytics Types and Validations", () => {
   describe("TypeScript Interfaces", () => {

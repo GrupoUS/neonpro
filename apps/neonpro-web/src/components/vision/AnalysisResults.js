@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AnalysisResults = AnalysisResults;
 var react_1 = require("react");
@@ -21,21 +20,21 @@ function AnalysisResults(_a) {
   var _c = (0, react_1.useState)("split"),
     imageComparison = _c[0],
     setImageComparison = _c[1];
-  var formatProcessingTime = function (timeMs) {
+  var formatProcessingTime = (timeMs) => {
     if (timeMs < 1000) return "".concat(timeMs, "ms");
     return "".concat((timeMs / 1000).toFixed(1), "s");
   };
-  var getAccuracyColor = function (accuracy) {
+  var getAccuracyColor = (accuracy) => {
     if (accuracy >= 0.95) return "text-green-600";
     if (accuracy >= 0.9) return "text-yellow-600";
     return "text-red-600";
   };
-  var getImprovementColor = function (improvement) {
+  var getImprovementColor = (improvement) => {
     if (improvement >= 30) return "text-green-600";
     if (improvement >= 15) return "text-yellow-600";
     return "text-red-600";
   };
-  var renderMetricCard = function (label, value, unit) {
+  var renderMetricCard = (label, value, unit) => {
     if (unit === void 0) {
       unit = "%";
     }
@@ -219,27 +218,21 @@ function AnalysisResults(_a) {
                 <button_1.Button
                   variant={imageComparison === "before" ? "default" : "outline"}
                   size="sm"
-                  onClick={function () {
-                    return setImageComparison("before");
-                  }}
+                  onClick={() => setImageComparison("before")}
                 >
                   Antes
                 </button_1.Button>
                 <button_1.Button
                   variant={imageComparison === "after" ? "default" : "outline"}
                   size="sm"
-                  onClick={function () {
-                    return setImageComparison("after");
-                  }}
+                  onClick={() => setImageComparison("after")}
                 >
                   Depois
                 </button_1.Button>
                 <button_1.Button
                   variant={imageComparison === "split" ? "default" : "outline"}
                   size="sm"
-                  onClick={function () {
-                    return setImageComparison("split");
-                  }}
+                  onClick={() => setImageComparison("split")}
                 >
                   Dividido
                 </button_1.Button>
@@ -293,47 +286,43 @@ function AnalysisResults(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {analysisResult.annotations.map(function (annotation) {
-                  return (
-                    <div
-                      key={annotation.id}
-                      className={(0, utils_1.cn)(
-                        "p-3 border rounded-lg cursor-pointer transition-colors",
-                        (selectedAnnotation === null || selectedAnnotation === void 0
-                          ? void 0
-                          : selectedAnnotation.id) === annotation.id
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 hover:border-gray-300",
-                      )}
-                      onClick={function () {
-                        return setSelectedAnnotation(annotation);
-                      }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <badge_1.Badge variant="outline">
-                            {annotation.type === "measurement" && "Medição"}
-                            {annotation.type === "highlight" && "Destaque"}
-                            {annotation.type === "comparison" && "Comparação"}
-                            {annotation.type === "annotation" && "Anotação"}
-                          </badge_1.Badge>
-                          <span className="font-medium">{annotation.description}</span>
-                        </div>
-                        <div className="text-right">
-                          {annotation.value && (
-                            <span className="text-lg font-bold">
-                              {annotation.value.toFixed(1)}
-                              {annotation.unit}
-                            </span>
-                          )}
-                          <p className="text-xs text-gray-500">
-                            Confiança: {(annotation.confidence * 100).toFixed(1)}%
-                          </p>
-                        </div>
+                {analysisResult.annotations.map((annotation) => (
+                  <div
+                    key={annotation.id}
+                    className={(0, utils_1.cn)(
+                      "p-3 border rounded-lg cursor-pointer transition-colors",
+                      (selectedAnnotation === null || selectedAnnotation === void 0
+                        ? void 0
+                        : selectedAnnotation.id) === annotation.id
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 hover:border-gray-300",
+                    )}
+                    onClick={() => setSelectedAnnotation(annotation)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <badge_1.Badge variant="outline">
+                          {annotation.type === "measurement" && "Medição"}
+                          {annotation.type === "highlight" && "Destaque"}
+                          {annotation.type === "comparison" && "Comparação"}
+                          {annotation.type === "annotation" && "Anotação"}
+                        </badge_1.Badge>
+                        <span className="font-medium">{annotation.description}</span>
+                      </div>
+                      <div className="text-right">
+                        {annotation.value && (
+                          <span className="text-lg font-bold">
+                            {annotation.value.toFixed(1)}
+                            {annotation.unit}
+                          </span>
+                        )}
+                        <p className="text-xs text-gray-500">
+                          Confiança: {(annotation.confidence * 100).toFixed(1)}%
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

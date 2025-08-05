@@ -13,76 +13,72 @@
  * @version 1.0.0
  */
 
+// Appointment management
+export {
+  AppointmentConfig,
+  AppointmentManager,
+  BookingRequest,
+  BookingResult,
+  CancellationRequest,
+  RescheduleRequest,
+  TimeSlot,
+} from "./appointments/appointment-manager";
+
+// Authentication and session management
+export {
+  DeviceFingerprint,
+  SessionActivity,
+  SessionConfig,
+  SessionData,
+  SessionManager,
+  SessionValidationResult,
+} from "./auth/session-manager";
+// Communication system
+export {
+  CommunicationConfig,
+  CommunicationManager,
+  CommunicationStats,
+  Conversation,
+  Message,
+  MessageActivity,
+  MessageAttachment,
+  NotificationPreferences,
+  SendMessageRequest,
+  SendMessageResult,
+} from "./communication/communication-manager";
+// Dashboard functionality
+export {
+  AppointmentSummary,
+  DashboardConfig,
+  DashboardStats,
+  DashboardWidget,
+  NotificationSummary,
+  PatientDashboardData,
+  PatientPreferences,
+  PortalDashboard,
+  TaskSummary,
+  TreatmentProgressSummary,
+  UploadSummary,
+} from "./dashboard/portal-dashboard";
 // Main portal class
 export {
   PatientPortal,
   PatientPortalConfig,
-  PortalInitResult,
   PortalHealthCheck,
+  PortalInitResult,
 } from "./patient-portal";
-
-// Authentication and session management
-export {
-  SessionManager,
-  SessionConfig,
-  SessionData,
-  SessionValidationResult,
-  DeviceFingerprint,
-  SessionActivity,
-} from "./auth/session-manager";
-
-// Dashboard functionality
-export {
-  PortalDashboard,
-  DashboardConfig,
-  PatientDashboardData,
-  AppointmentSummary,
-  TreatmentProgressSummary,
-  UploadSummary,
-  TaskSummary,
-  NotificationSummary,
-  DashboardStats,
-  PatientPreferences,
-  DashboardWidget,
-} from "./dashboard/portal-dashboard";
-
-// Appointment management
-export {
-  AppointmentManager,
-  AppointmentConfig,
-  TimeSlot,
-  BookingRequest,
-  BookingResult,
-  RescheduleRequest,
-  CancellationRequest,
-} from "./appointments/appointment-manager";
-
 // Upload management
 export {
-  UploadManager,
+  ProcessingStatus,
+  UploadActivity,
   UploadConfig,
+  UploadError,
+  UploadedFile,
+  UploadManager,
   UploadRequest,
   UploadResult,
-  UploadedFile,
-  UploadError,
-  ProcessingStatus,
   UploadStats,
-  UploadActivity,
 } from "./uploads/upload-manager";
-
-// Communication system
-export {
-  CommunicationManager,
-  CommunicationConfig,
-  Message,
-  MessageAttachment,
-  Conversation,
-  SendMessageRequest,
-  SendMessageResult,
-  NotificationPreferences,
-  CommunicationStats,
-  MessageActivity,
-} from "./communication/communication-manager";
 
 /**
  * Default configuration factory

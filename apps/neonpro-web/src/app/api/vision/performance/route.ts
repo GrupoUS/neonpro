@@ -7,9 +7,9 @@
  */
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
 import type { withErrorMonitoring } from "@/lib/monitoring";
+import type { createClient } from "@/lib/supabase/server";
 
 // Query parameters validation
 const performanceQuerySchema = z.object({
@@ -118,11 +118,12 @@ export const GET = withErrorMonitoring(async (request: NextRequest) => {
           case "day":
             groupKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
             break;
-          case "week":
+          case "week": {
             const weekStart = new Date(date);
             weekStart.setDate(date.getDate() - date.getDay());
             groupKey = `${weekStart.getFullYear()}-W${Math.ceil(weekStart.getDate() / 7)}`;
             break;
+          }
           default:
             groupKey = date.toISOString().split("T")[0];
         }

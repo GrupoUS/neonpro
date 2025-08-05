@@ -2,17 +2,17 @@
 // Data access layer for analytics with optimized queries and caching
 // Created: 2025-01-22
 
+import type { cache } from "react";
 import type { createClient } from "@/lib/supabase/server";
 import type {
   AnalyticsQuery,
-  MetricType,
-  RevenueMetric,
   ConversionMetric,
-  TrialMetric,
   MetricAggregation,
+  MetricType,
   RealTimeMetric,
+  RevenueMetric,
+  TrialMetric,
 } from "./types";
-import type { cache } from "react";
 
 export class AnalyticsRepository {
   private supabase: ReturnType<typeof createClient>;

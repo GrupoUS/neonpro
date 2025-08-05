@@ -3,10 +3,10 @@
  * Main router combining all healthcare modules
  */
 
-import { createTRPCRouter } from "./trpc";
-import { patientsRouter } from "./routers/patients";
 import { appointmentsRouter } from "./routers/appointments";
 import { doctorsRouter } from "./routers/doctors";
+import { patientsRouter } from "./routers/patients";
+import { createTRPCRouter } from "./trpc";
 
 /**
  * Main tRPC router for NeonPro Healthcare

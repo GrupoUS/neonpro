@@ -146,7 +146,7 @@ export class ConsentManager {
   static async hasValidConsent(userId: string, consentType: ConsentType): Promise<boolean> {
     // TODO: Query database for latest consent record
     // This is a placeholder implementation
-    const consentRecord = await this.getLatestConsent(userId, consentType);
+    const consentRecord = await ConsentManager.getLatestConsent(userId, consentType);
 
     if (!consentRecord) return false;
 
@@ -155,7 +155,7 @@ export class ConsentManager {
 
     if (consentRecord.expiresAt && consentRecord.expiresAt < new Date()) {
       // Mark as expired
-      await this.expireConsent(consentRecord.id!);
+      await ConsentManager.expireConsent(consentRecord.id!);
       return false;
     }
 
@@ -172,7 +172,10 @@ export class ConsentManager {
     ipAddress: string;
     userAgent: string;
   }): Promise<ConsentRecord> {
-    const existingConsent = await this.getLatestConsent(params.userId, params.consentType);
+    const existingConsent = await ConsentManager.getLatestConsent(
+      params.userId,
+      params.consentType,
+    );
 
     if (!existingConsent) {
       throw new Error("No consent found to revoke");
@@ -189,7 +192,7 @@ export class ConsentManager {
     console.log("Consent revoked:", updatedConsent);
 
     // Audit log for revocation
-    await this.logConsentEvent({
+    await ConsentManager.logConsentEvent({
       userId: params.userId,
       action: "revoke",
       consentType: params.consentType,
@@ -237,7 +240,7 @@ export class ConsentManager {
       consentStatus: ConsentStatus;
     }>;
   }> {
-    const consents = await this.getConsentHistory(userId);
+    const consents = await ConsentManager.getConsentHistory(userId);
 
     return {
       userId,

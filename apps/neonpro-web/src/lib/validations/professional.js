@@ -1,4 +1,3 @@
-"use strict";
 // Professional Management Validation Schemas
 // FHIR-compliant validation with LGPD compliance and modern healthcare standards
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -37,7 +36,7 @@ var zod_1 = require("zod");
 var npiSchema = zod_1.z
   .string()
   .regex(/^\d{10}$/, "NPI must be exactly 10 digits")
-  .refine(function (npi) {
+  .refine((npi) => {
     // Luhn algorithm validation for NPI
     var digits = npi.split("").map(Number);
     var sum = 0;
@@ -79,17 +78,11 @@ var suffixSchema = zod_1.z
 var dateSchema = zod_1.z
   .string()
   .datetime()
-  .or(
-    zod_1.z.date().transform(function (d) {
-      return d.toISOString();
-    }),
-  );
+  .or(zod_1.z.date().transform((d) => d.toISOString()));
 var futureDateSchema = zod_1.z
   .string()
   .datetime()
-  .refine(function (date) {
-    return new Date(date) > new Date();
-  }, "Date must be in the future");
+  .refine((date) => new Date(date) > new Date(), "Date must be in the future");
 // ============================================
 // ENUM VALIDATIONS
 // ============================================
@@ -283,7 +276,7 @@ exports.professionalCredentialCreateSchema = zod_1.z.object({
     .string()
     .datetime()
     .optional()
-    .refine(function (date, ctx) {
+    .refine((date, ctx) => {
       if (date && new Date(date) <= new Date(ctx.parent.issue_date)) {
         ctx.addIssue({
           code: zod_1.z.ZodIssueCode.custom,
@@ -378,7 +371,7 @@ exports.performanceMetricCreateSchema = zod_1.z.object({
   target_value: zod_1.z.number().finite().optional(),
   // Time period
   measurement_period_start: dateSchema,
-  measurement_period_end: dateSchema.refine(function (endDate, ctx) {
+  measurement_period_end: dateSchema.refine((endDate, ctx) => {
     if (new Date(endDate) <= new Date(ctx.parent.measurement_period_start)) {
       ctx.addIssue({
         code: zod_1.z.ZodIssueCode.custom,
@@ -432,7 +425,7 @@ exports.professionalDevelopmentCreateSchema = zod_1.z.object({
     .string()
     .datetime()
     .optional()
-    .refine(function (endDate, ctx) {
+    .refine((endDate, ctx) => {
       if (endDate && new Date(endDate) < new Date(ctx.parent.start_date)) {
         ctx.addIssue({
           code: zod_1.z.ZodIssueCode.custom,

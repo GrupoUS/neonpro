@@ -1,14 +1,14 @@
 "use client";
 
 import type {
-  LineChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
 } from "recharts";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Analytics Index
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -140,7 +137,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyticsService =
   exports.AnalyticsService =
@@ -159,75 +156,55 @@ exports.analyticsService =
 var vision_analytics_1 = require("./vision-analytics");
 Object.defineProperty(exports, "VisionAnalyticsEngine", {
   enumerable: true,
-  get: function () {
-    return vision_analytics_1.VisionAnalyticsEngine;
-  },
+  get: () => vision_analytics_1.VisionAnalyticsEngine,
 });
 Object.defineProperty(exports, "visionAnalyticsEngine", {
   enumerable: true,
-  get: function () {
-    return vision_analytics_1.visionAnalyticsEngine;
-  },
+  get: () => vision_analytics_1.visionAnalyticsEngine,
 });
 Object.defineProperty(exports, "VisionMetricSchema", {
   enumerable: true,
-  get: function () {
-    return vision_analytics_1.VisionMetricSchema;
-  },
+  get: () => vision_analytics_1.VisionMetricSchema,
 });
 var performance_monitoring_1 = require("./performance-monitoring");
 Object.defineProperty(exports, "PerformanceMonitoringEngine", {
   enumerable: true,
-  get: function () {
-    return performance_monitoring_1.PerformanceMonitoringEngine;
-  },
+  get: () => performance_monitoring_1.PerformanceMonitoringEngine,
 });
 Object.defineProperty(exports, "performanceMonitoringEngine", {
   enumerable: true,
-  get: function () {
-    return performance_monitoring_1.performanceMonitoringEngine;
-  },
+  get: () => performance_monitoring_1.performanceMonitoringEngine,
 });
 Object.defineProperty(exports, "SystemMetricsSchema", {
   enumerable: true,
-  get: function () {
-    return performance_monitoring_1.SystemMetricsSchema;
-  },
+  get: () => performance_monitoring_1.SystemMetricsSchema,
 });
 var predictive_analytics_1 = require("./predictive-analytics");
 Object.defineProperty(exports, "PredictiveAnalyticsEngine", {
   enumerable: true,
-  get: function () {
-    return predictive_analytics_1.PredictiveAnalyticsEngine;
-  },
+  get: () => predictive_analytics_1.PredictiveAnalyticsEngine,
 });
 Object.defineProperty(exports, "predictiveAnalyticsEngine", {
   enumerable: true,
-  get: function () {
-    return predictive_analytics_1.predictiveAnalyticsEngine;
-  },
+  get: () => predictive_analytics_1.predictiveAnalyticsEngine,
 });
 Object.defineProperty(exports, "PredictionRequestSchema", {
   enumerable: true,
-  get: function () {
-    return predictive_analytics_1.PredictionRequestSchema;
-  },
+  get: () => predictive_analytics_1.PredictionRequestSchema,
 });
 Object.defineProperty(exports, "ForecastRequestSchema", {
   enumerable: true,
-  get: function () {
-    return predictive_analytics_1.ForecastRequestSchema;
-  },
+  get: () => predictive_analytics_1.ForecastRequestSchema,
 });
 // Analytics Service - Main service interface
-var AnalyticsService = /** @class */ (function () {
+var AnalyticsService = /** @class */ (() => {
   function AnalyticsService() {}
   /**
    * Track analytics event
    */
   AnalyticsService.prototype.trackEvent = function (eventData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Mock implementation for now
         console.log("Analytics event tracked:", eventData);
         return [
@@ -246,7 +223,7 @@ var AnalyticsService = /** @class */ (function () {
    */
   AnalyticsService.prototype.getDashboardOverview = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Mock implementation for now
         return [
           2 /*return*/,
@@ -273,16 +250,14 @@ var AnalyticsService = /** @class */ (function () {
    */
   AnalyticsService.prototype.getEvents = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            events: [],
-            total: 0,
-            hasMore: false,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          events: [],
+          total: 0,
+          hasMore: false,
+        },
+      ]);
     });
   };
   return AnalyticsService;

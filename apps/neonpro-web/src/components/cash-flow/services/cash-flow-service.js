@@ -1,4 +1,3 @@
-"use strict";
 // Cash Flow Service - Supabase operations for cash flow management
 // Following financial dashboard patterns from Context7 research
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,11 +144,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createcashFlowService = exports.CashFlowService = void 0;
 var client_1 = require("@/lib/supabase/client");
-var CashFlowService = /** @class */ (function () {
+var CashFlowService = /** @class */ (() => {
   function CashFlowService() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -464,19 +461,11 @@ var CashFlowService = /** @class */ (function () {
     var incomeTypes = ["receipt", "opening_balance"];
     var expenseTypes = ["payment", "closing_balance"];
     var totalIncome = entries
-      .filter(function (e) {
-        return incomeTypes.includes(e.transaction_type);
-      })
-      .reduce(function (sum, e) {
-        return sum + e.amount;
-      }, 0);
+      .filter((e) => incomeTypes.includes(e.transaction_type))
+      .reduce((sum, e) => sum + e.amount, 0);
     var totalExpenses = entries
-      .filter(function (e) {
-        return expenseTypes.includes(e.transaction_type);
-      })
-      .reduce(function (sum, e) {
-        return sum + e.amount;
-      }, 0);
+      .filter((e) => expenseTypes.includes(e.transaction_type))
+      .reduce((sum, e) => sum + e.amount, 0);
     return {
       totalIncome: totalIncome,
       totalExpenses: totalExpenses,
@@ -489,15 +478,13 @@ var CashFlowService = /** @class */ (function () {
       registers: [], // Will be populated by separate query
     };
   };
-  CashFlowService.prototype.groupByCategory = function (entries) {
-    var total = entries.reduce(function (sum, e) {
-      return sum + e.amount;
-    }, 0);
-    var grouped = entries.reduce(function (acc, entry) {
+  CashFlowService.prototype.groupByCategory = (entries) => {
+    var total = entries.reduce((sum, e) => sum + e.amount, 0);
+    var grouped = entries.reduce((acc, entry) => {
       acc[entry.category] = (acc[entry.category] || 0) + entry.amount;
       return acc;
     }, {});
-    return Object.entries(grouped).map(function (_a) {
+    return Object.entries(grouped).map((_a) => {
       var category = _a[0],
         amount = _a[1];
       return {
@@ -507,8 +494,8 @@ var CashFlowService = /** @class */ (function () {
       };
     });
   };
-  CashFlowService.prototype.groupByPaymentMethod = function (entries) {
-    var grouped = entries.reduce(function (acc, entry) {
+  CashFlowService.prototype.groupByPaymentMethod = (entries) => {
+    var grouped = entries.reduce((acc, entry) => {
       var key = entry.payment_method;
       if (!acc[key]) {
         acc[key] = { amount: 0, count: 0 };
@@ -517,7 +504,7 @@ var CashFlowService = /** @class */ (function () {
       acc[key].count += 1;
       return acc;
     }, {});
-    return Object.entries(grouped).map(function (_a) {
+    return Object.entries(grouped).map((_a) => {
       var method = _a[0],
         data = _a[1];
       return {
@@ -527,29 +514,19 @@ var CashFlowService = /** @class */ (function () {
       };
     });
   };
-  CashFlowService.prototype.groupByDay = function (entries, periodStart, periodEnd) {
+  CashFlowService.prototype.groupByDay = (entries, periodStart, periodEnd) => {
     var start = new Date(periodStart);
     var end = new Date(periodEnd);
     var days = [];
-    var _loop_1 = function (d) {
+    var _loop_1 = (d) => {
       var dateStr = d.toISOString().split("T")[0];
-      var dayEntries = entries.filter(function (e) {
-        return e.created_at.startsWith(dateStr);
-      });
+      var dayEntries = entries.filter((e) => e.created_at.startsWith(dateStr));
       var income = dayEntries
-        .filter(function (e) {
-          return ["receipt", "opening_balance"].includes(e.transaction_type);
-        })
-        .reduce(function (sum, e) {
-          return sum + e.amount;
-        }, 0);
+        .filter((e) => ["receipt", "opening_balance"].includes(e.transaction_type))
+        .reduce((sum, e) => sum + e.amount, 0);
       var expenses = dayEntries
-        .filter(function (e) {
-          return ["payment", "closing_balance"].includes(e.transaction_type);
-        })
-        .reduce(function (sum, e) {
-          return sum + e.amount;
-        }, 0);
+        .filter((e) => ["payment", "closing_balance"].includes(e.transaction_type))
+        .reduce((sum, e) => sum + e.amount, 0);
       days.push({
         date: dateStr,
         income: income,
@@ -595,7 +572,5 @@ var CashFlowService = /** @class */ (function () {
   return CashFlowService;
 })();
 exports.CashFlowService = CashFlowService;
-var createcashFlowService = function () {
-  return new CashFlowService();
-};
+var createcashFlowService = () => new CashFlowService();
 exports.createcashFlowService = createcashFlowService;

@@ -1,4 +1,3 @@
-"use strict";
 // RBAC Types for NeonPro Authentication System
 // Story 1.2: Role-Based Permissions Enhancement
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TestimonialsSection = TestimonialsSection;
 var card_1 = require("@/components/ui/card");
@@ -180,107 +179,97 @@ function TestimonialsSection() {
 
       {/* Overall Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-        {overallStats.map(function (stat, index) {
-          return (
-            <card_1.Card
-              key={index}
-              className="text-center bg-white border-slate-200 hover:border-[#6366f1]/30 transition-colors"
-            >
-              <card_1.CardContent className="p-6">
-                <div className="flex justify-center mb-3">
-                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6366f1] to-purple-600 flex items-center justify-center">
-                    <stat.icon className="h-6 w-6 text-white" />
-                  </div>
+        {overallStats.map((stat, index) => (
+          <card_1.Card
+            key={index}
+            className="text-center bg-white border-slate-200 hover:border-[#6366f1]/30 transition-colors"
+          >
+            <card_1.CardContent className="p-6">
+              <div className="flex justify-center mb-3">
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-[#6366f1] to-purple-600 flex items-center justify-center">
+                  <stat.icon className="h-6 w-6 text-white" />
                 </div>
-                <div className="text-3xl font-bold text-slate-900 mb-2">{stat.value}</div>
-                <div className="font-semibold text-slate-800 mb-1">{stat.label}</div>
-                <div className="text-sm text-slate-600">{stat.description}</div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+              </div>
+              <div className="text-3xl font-bold text-slate-900 mb-2">{stat.value}</div>
+              <div className="font-semibold text-slate-800 mb-1">{stat.label}</div>
+              <div className="text-sm text-slate-600">{stat.description}</div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
 
       {/* Testimonials Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-        {testimonials.map(function (testimonial) {
-          return (
-            <card_1.Card
-              key={testimonial.id}
-              className="group hover:shadow-xl transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30"
-            >
-              <card_1.CardContent className="p-6 space-y-6">
-                {/* Header */}
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <avatar_1.Avatar className="h-12 w-12 border-2 border-[#6366f1]/20">
-                      <avatar_1.AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                      <avatar_1.AvatarFallback className="bg-gradient-to-br from-[#6366f1] to-purple-600 text-white font-semibold">
-                        {testimonial.name
-                          .split(" ")
-                          .map(function (n) {
-                            return n[0];
-                          })
-                          .join("")}
-                      </avatar_1.AvatarFallback>
-                    </avatar_1.Avatar>
-                    <div>
-                      <h4 className="font-semibold text-slate-900">{testimonial.name}</h4>
-                      <p className="text-sm text-slate-600">{testimonial.role}</p>
-                      <p className="text-xs text-slate-500">{testimonial.location}</p>
-                    </div>
+        {testimonials.map((testimonial) => (
+          <card_1.Card
+            key={testimonial.id}
+            className="group hover:shadow-xl transition-all duration-300 border-slate-200 hover:border-[#6366f1]/30"
+          >
+            <card_1.CardContent className="p-6 space-y-6">
+              {/* Header */}
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-3">
+                  <avatar_1.Avatar className="h-12 w-12 border-2 border-[#6366f1]/20">
+                    <avatar_1.AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                    <avatar_1.AvatarFallback className="bg-gradient-to-br from-[#6366f1] to-purple-600 text-white font-semibold">
+                      {testimonial.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </avatar_1.AvatarFallback>
+                  </avatar_1.Avatar>
+                  <div>
+                    <h4 className="font-semibold text-slate-900">{testimonial.name}</h4>
+                    <p className="text-sm text-slate-600">{testimonial.role}</p>
+                    <p className="text-xs text-slate-500">{testimonial.location}</p>
                   </div>
-                  <badge_1.Badge variant="secondary" className="text-xs">
-                    {testimonial.category}
-                  </badge_1.Badge>
                 </div>
+                <badge_1.Badge variant="secondary" className="text-xs">
+                  {testimonial.category}
+                </badge_1.Badge>
+              </div>
 
-                {/* Rating */}
-                <div className="flex items-center space-x-1">
-                  {__spreadArray([], Array(testimonial.rating), true).map(function (_, i) {
-                    return (
-                      <lucide_react_1.Star
-                        key={i}
-                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                      />
-                    );
-                  })}
-                  <span className="text-sm text-slate-600 ml-2">{testimonial.rating}.0</span>
-                </div>
+              {/* Rating */}
+              <div className="flex items-center space-x-1">
+                {__spreadArray([], Array(testimonial.rating), true).map((_, i) => (
+                  <lucide_react_1.Star
+                    key={i}
+                    className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                  />
+                ))}
+                <span className="text-sm text-slate-600 ml-2">{testimonial.rating}.0</span>
+              </div>
 
-                {/* Quote */}
-                <div className="relative">
-                  <lucide_react_1.Quote className="h-8 w-8 text-[#6366f1]/20 absolute -top-2 -left-1" />
-                  <p className="text-slate-700 leading-relaxed pl-6 italic">
-                    "{testimonial.quote}"
-                  </p>
-                </div>
+              {/* Quote */}
+              <div className="relative">
+                <lucide_react_1.Quote className="h-8 w-8 text-[#6366f1]/20 absolute -top-2 -left-1" />
+                <p className="text-slate-700 leading-relaxed pl-6 italic">"{testimonial.quote}"</p>
+              </div>
 
-                {/* Metrics */}
-                <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-100">
-                  {Object.entries(testimonial.metrics).map(function (_a, index) {
-                    var key = _a[0],
-                      value = _a[1];
-                    return (
-                      <div key={index} className="text-center">
-                        <div className="text-lg font-bold text-[#6366f1]">{value}</div>
-                        <div className="text-xs text-slate-600 capitalize">
-                          {key.replace(/([A-Z])/g, " $1").trim()}
-                        </div>
+              {/* Metrics */}
+              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-100">
+                {Object.entries(testimonial.metrics).map((_a, index) => {
+                  var key = _a[0],
+                    value = _a[1];
+                  return (
+                    <div key={index} className="text-center">
+                      <div className="text-lg font-bold text-[#6366f1]">{value}</div>
+                      <div className="text-xs text-slate-600 capitalize">
+                        {key.replace(/([A-Z])/g, " $1").trim()}
                       </div>
-                    );
-                  })}
-                </div>
+                    </div>
+                  );
+                })}
+              </div>
 
-                {/* Clinic Info */}
-                <div className="text-center pt-2">
-                  <p className="text-sm font-medium text-slate-800">{testimonial.clinic}</p>
-                  <p className="text-xs text-slate-600">Especialidade: {testimonial.specialty}</p>
-                </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+              {/* Clinic Info */}
+              <div className="text-center pt-2">
+                <p className="text-sm font-medium text-slate-800">{testimonial.clinic}</p>
+                <p className="text-xs text-slate-600">Especialidade: {testimonial.specialty}</p>
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
 
       {/* Success Metrics Summary */}

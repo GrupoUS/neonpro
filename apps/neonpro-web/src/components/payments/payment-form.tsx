@@ -1,7 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
-import type { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
+import type { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import type { AlertTriangle, CheckCircle, CreditCard, Loader2 } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -11,9 +15,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Loader2, CreditCard, CheckCircle, AlertTriangle } from "lucide-react";
-import type { toast } from "sonner";
 
 interface PaymentFormProps {
   invoiceId: string;

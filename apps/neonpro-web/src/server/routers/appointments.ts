@@ -3,9 +3,9 @@
  * Healthcare appointment management with conflict detection
  */
 
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { TRPCError } from "@trpc/server";
 
 const appointmentSchema = z.object({
   patient_id: z.string().uuid(),

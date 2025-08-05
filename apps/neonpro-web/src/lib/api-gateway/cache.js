@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - API Gateway Cache System
  * High-performance caching system for API responses and data
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheMiddleware =
   exports.ApiGatewayCacheFactory =
@@ -165,7 +162,7 @@ exports.CacheMiddleware =
  * Memory Cache Implementation
  * In-memory cache with LRU eviction policy
  */
-var MemoryApiGatewayCache = /** @class */ (function () {
+var MemoryApiGatewayCache = /** @class */ (() => {
   function MemoryApiGatewayCache(
     maxSize,
     defaultTtl, // 5 minutes
@@ -177,7 +174,6 @@ var MemoryApiGatewayCache = /** @class */ (function () {
     if (defaultTtl === void 0) {
       defaultTtl = 300000;
     }
-    var _this = this;
     this.cache = new Map();
     this.stats = {
       hits: 0,
@@ -190,9 +186,7 @@ var MemoryApiGatewayCache = /** @class */ (function () {
     this.defaultTtl = defaultTtl;
     this.logger = logger;
     // Cleanup expired entries every minute
-    setInterval(function () {
-      return _this.cleanup();
-    }, 60000);
+    setInterval(() => this.cleanup(), 60000);
   }
   /**
    * Get value from cache
@@ -368,7 +362,7 @@ exports.MemoryApiGatewayCache = MemoryApiGatewayCache;
  * Redis Cache Implementation
  * Distributed cache using Redis
  */
-var RedisApiGatewayCache = /** @class */ (function () {
+var RedisApiGatewayCache = /** @class */ (() => {
   function RedisApiGatewayCache(
     redisClient,
     defaultTtl, // 5 minutes in seconds
@@ -606,7 +600,7 @@ exports.RedisApiGatewayCache = RedisApiGatewayCache;
  * Supabase Cache Implementation
  * Database-backed cache with memory layer
  */
-var SupabaseApiGatewayCache = /** @class */ (function () {
+var SupabaseApiGatewayCache = /** @class */ (() => {
   function SupabaseApiGatewayCache(supabaseClient, tableName, memoryMaxSize, logger) {
     if (tableName === void 0) {
       tableName = "api_cache";
@@ -614,7 +608,6 @@ var SupabaseApiGatewayCache = /** @class */ (function () {
     if (memoryMaxSize === void 0) {
       memoryMaxSize = 500;
     }
-    var _this = this;
     this.stats = {
       hits: 0,
       misses: 0,
@@ -629,9 +622,7 @@ var SupabaseApiGatewayCache = /** @class */ (function () {
     this.memoryCache = new MemoryApiGatewayCache(memoryMaxSize, 300000, logger);
     this.logger = logger;
     // Cleanup expired entries every 5 minutes
-    setInterval(function () {
-      return _this.cleanupExpired();
-    }, 300000);
+    setInterval(() => this.cleanupExpired(), 300000);
   }
   /**
    * Get value from cache (memory first, then database)
@@ -941,12 +932,12 @@ exports.SupabaseApiGatewayCache = SupabaseApiGatewayCache;
  * Cache Factory
  * Factory for creating cache instances
  */
-var ApiGatewayCacheFactory = /** @class */ (function () {
+var ApiGatewayCacheFactory = /** @class */ (() => {
   function ApiGatewayCacheFactory() {}
   /**
    * Create memory cache
    */
-  ApiGatewayCacheFactory.createMemoryCache = function (maxSize, defaultTtl, logger) {
+  ApiGatewayCacheFactory.createMemoryCache = (maxSize, defaultTtl, logger) => {
     if (maxSize === void 0) {
       maxSize = 1000;
     }
@@ -958,7 +949,7 @@ var ApiGatewayCacheFactory = /** @class */ (function () {
   /**
    * Create Redis cache
    */
-  ApiGatewayCacheFactory.createRedisCache = function (redisClient, defaultTtl, keyPrefix, logger) {
+  ApiGatewayCacheFactory.createRedisCache = (redisClient, defaultTtl, keyPrefix, logger) => {
     if (defaultTtl === void 0) {
       defaultTtl = 300;
     }
@@ -970,12 +961,12 @@ var ApiGatewayCacheFactory = /** @class */ (function () {
   /**
    * Create Supabase cache
    */
-  ApiGatewayCacheFactory.createSupabaseCache = function (
+  ApiGatewayCacheFactory.createSupabaseCache = (
     supabaseClient,
     tableName,
     memoryMaxSize,
     logger,
-  ) {
+  ) => {
     if (tableName === void 0) {
       tableName = "api_cache";
     }
@@ -987,7 +978,7 @@ var ApiGatewayCacheFactory = /** @class */ (function () {
   /**
    * Create cache based on configuration
    */
-  ApiGatewayCacheFactory.createCache = function (type, config, logger) {
+  ApiGatewayCacheFactory.createCache = (type, config, logger) => {
     switch (type) {
       case "memory":
         return ApiGatewayCacheFactory.createMemoryCache(config.maxSize, config.defaultTtl, logger);
@@ -1016,23 +1007,22 @@ exports.ApiGatewayCacheFactory = ApiGatewayCacheFactory;
  * Cache Middleware
  * Middleware for caching API responses
  */
-var CacheMiddleware = /** @class */ (function () {
+var CacheMiddleware = /** @class */ (() => {
   function CacheMiddleware() {}
   CacheMiddleware.create = function (config) {
-    var _this = this;
     return {
       name: "cache",
       order: 10,
       enabled: true,
       config: config,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var method, cacheKey, cachedResponse;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 method = context.method.toUpperCase();
-                if (!!config.cacheableMethods.includes(method)) return [3 /*break*/, 2];
+                if (config.cacheableMethods.includes(method)) return [3 /*break*/, 2];
                 return [4 /*yield*/, next()];
               case 1:
                 _a.sent();
@@ -1070,22 +1060,19 @@ var CacheMiddleware = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     };
   };
   /**
    * Generate default cache key
    */
-  CacheMiddleware.generateDefaultKey = function (context) {
+  CacheMiddleware.generateDefaultKey = (context) => {
     var parts = [context.method, context.path, context.clientId || "anonymous"];
     // Include query parameters in key
     if (context.query && Object.keys(context.query).length > 0) {
       var sortedQuery = Object.keys(context.query)
         .sort()
-        .map(function (key) {
-          return "".concat(key, "=").concat(context.query[key]);
-        })
+        .map((key) => "".concat(key, "=").concat(context.query[key]))
         .join("&");
       parts.push(sortedQuery);
     }
@@ -1094,7 +1081,7 @@ var CacheMiddleware = /** @class */ (function () {
   /**
    * Check if response should be cached
    */
-  CacheMiddleware.shouldCacheResponse = function (context, config) {
+  CacheMiddleware.shouldCacheResponse = (context, config) => {
     // Custom cache condition
     if (config.shouldCache && !config.shouldCache(context)) {
       return false;

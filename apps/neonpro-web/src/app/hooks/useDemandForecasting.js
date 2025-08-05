@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,13 +154,12 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useDemandForecasting = useDemandForecasting;
 var react_1 = require("react");
 var sonner_1 = require("sonner");
 function useDemandForecasting() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -183,107 +179,111 @@ function useDemandForecasting() {
     capabilities = _f[0],
     setCapabilities = _f[1];
   // Generate single item forecast
-  var generateForecast = (0, react_1.useCallback)(function (request) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, result, error_1, message;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            setIsLoading(true);
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 4, 5, 6]);
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/forecasting/demand", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(request),
-              }),
-            ];
-          case 2:
-            response = _a.sent();
-            return [4 /*yield*/, response.json()];
-          case 3:
-            result = _a.sent();
-            if (!response.ok) {
-              throw new Error(result.error || "Failed to generate forecast");
-            }
-            setForecast(result.data);
-            sonner_1.toast.success("Demand forecast generated successfully");
-            return [2 /*return*/, result.data];
-          case 4:
-            error_1 = _a.sent();
-            message = error_1 instanceof Error ? error_1.message : "Failed to generate forecast";
-            sonner_1.toast.error(message);
-            throw error_1;
-          case 5:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 6:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var generateForecast = (0, react_1.useCallback)(
+    (request) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, result, error_1, message;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setIsLoading(true);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 4, 5, 6]);
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/forecasting/demand", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(request),
+                }),
+              ];
+            case 2:
+              response = _a.sent();
+              return [4 /*yield*/, response.json()];
+            case 3:
+              result = _a.sent();
+              if (!response.ok) {
+                throw new Error(result.error || "Failed to generate forecast");
+              }
+              setForecast(result.data);
+              sonner_1.toast.success("Demand forecast generated successfully");
+              return [2 /*return*/, result.data];
+            case 4:
+              error_1 = _a.sent();
+              message = error_1 instanceof Error ? error_1.message : "Failed to generate forecast";
+              sonner_1.toast.error(message);
+              throw error_1;
+            case 5:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 6:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Generate bulk forecasts
-  var generateBulkForecast = (0, react_1.useCallback)(function (request) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, result, _a, successful, failed, error_2, message;
-      return __generator(this, function (_b) {
-        switch (_b.label) {
-          case 0:
-            setIsLoading(true);
-            _b.label = 1;
-          case 1:
-            _b.trys.push([1, 4, 5, 6]);
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/forecasting/demand", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(request),
-              }),
-            ];
-          case 2:
-            response = _b.sent();
-            return [4 /*yield*/, response.json()];
-          case 3:
-            result = _b.sent();
-            if (!response.ok) {
-              throw new Error(result.error || "Failed to generate bulk forecasts");
-            }
-            setBulkForecasts(result.data.forecasts);
-            (_a = result.data.summary), (successful = _a.successful), (failed = _a.failed);
-            sonner_1.toast.success(
-              "Generated "
-                .concat(successful, " forecasts successfully")
-                .concat(failed > 0 ? " (".concat(failed, " failed)") : ""),
-            );
-            return [2 /*return*/, result.data];
-          case 4:
-            error_2 = _b.sent();
-            message =
-              error_2 instanceof Error ? error_2.message : "Failed to generate bulk forecasts";
-            sonner_1.toast.error(message);
-            throw error_2;
-          case 5:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 6:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var generateBulkForecast = (0, react_1.useCallback)(
+    (request) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, result, _a, successful, failed, error_2, message;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              setIsLoading(true);
+              _b.label = 1;
+            case 1:
+              _b.trys.push([1, 4, 5, 6]);
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/forecasting/demand", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(request),
+                }),
+              ];
+            case 2:
+              response = _b.sent();
+              return [4 /*yield*/, response.json()];
+            case 3:
+              result = _b.sent();
+              if (!response.ok) {
+                throw new Error(result.error || "Failed to generate bulk forecasts");
+              }
+              setBulkForecasts(result.data.forecasts);
+              (_a = result.data.summary), (successful = _a.successful), (failed = _a.failed);
+              sonner_1.toast.success(
+                "Generated "
+                  .concat(successful, " forecasts successfully")
+                  .concat(failed > 0 ? " (".concat(failed, " failed)") : ""),
+              );
+              return [2 /*return*/, result.data];
+            case 4:
+              error_2 = _b.sent();
+              message =
+                error_2 instanceof Error ? error_2.message : "Failed to generate bulk forecasts";
+              sonner_1.toast.error(message);
+              throw error_2;
+            case 5:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 6:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Analyze seasonal patterns
-  var analyzeSeasonalPatterns = (0, react_1.useCallback)(function (itemId_1, clinicId_1) {
+  var analyzeSeasonalPatterns = (0, react_1.useCallback)((itemId_1, clinicId_1) => {
     var args_1 = [];
     for (var _i = 2; _i < arguments.length; _i++) {
       args_1[_i - 2] = arguments[_i];
     }
     return __awaiter(
-      _this,
+      this,
       __spreadArray([itemId_1, clinicId_1], args_1, true),
       void 0,
       function (itemId, clinicId, analysisPeriod) {
@@ -291,7 +291,7 @@ function useDemandForecasting() {
         if (analysisPeriod === void 0) {
           analysisPeriod = 365;
         }
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsLoading(true);
@@ -338,13 +338,13 @@ function useDemandForecasting() {
     );
   }, []);
   // Get forecast accuracy analysis
-  var getAccuracyAnalysis = (0, react_1.useCallback)(function (clinicId_1, itemId_1) {
+  var getAccuracyAnalysis = (0, react_1.useCallback)((clinicId_1, itemId_1) => {
     var args_1 = [];
     for (var _i = 2; _i < arguments.length; _i++) {
       args_1[_i - 2] = arguments[_i];
     }
     return __awaiter(
-      _this,
+      this,
       __spreadArray([clinicId_1, itemId_1], args_1, true),
       void 0,
       function (clinicId, itemId, period, modelType) {
@@ -352,7 +352,7 @@ function useDemandForecasting() {
         if (period === void 0) {
           period = "30d";
         }
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsLoading(true);
@@ -393,90 +393,94 @@ function useDemandForecasting() {
     );
   }, []);
   // Log forecast accuracy
-  var logForecastAccuracy = (0, react_1.useCallback)(function (accuracyData) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, result, error_5;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, , 4]);
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/forecasting/accuracy", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(accuracyData),
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            return [4 /*yield*/, response.json()];
-          case 2:
-            result = _a.sent();
-            if (!response.ok) {
-              throw new Error(result.error || "Failed to log accuracy data");
-            }
-            return [2 /*return*/, result.data];
-          case 3:
-            error_5 = _a.sent();
-            console.error("Failed to log forecast accuracy:", error_5);
-            throw error_5;
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var logForecastAccuracy = (0, react_1.useCallback)(
+    (accuracyData) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, result, error_5;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, , 4]);
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/forecasting/accuracy", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(accuracyData),
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              return [4 /*yield*/, response.json()];
+            case 2:
+              result = _a.sent();
+              if (!response.ok) {
+                throw new Error(result.error || "Failed to log accuracy data");
+              }
+              return [2 /*return*/, result.data];
+            case 3:
+              error_5 = _a.sent();
+              console.error("Failed to log forecast accuracy:", error_5);
+              throw error_5;
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Get forecasting capabilities
-  var getCapabilities = (0, react_1.useCallback)(function (clinicId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, result, error_6;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 3, , 4]);
-            return [
-              4 /*yield*/,
-              fetch("/api/inventory/forecasting/demand?clinicId=".concat(clinicId)),
-            ];
-          case 1:
-            response = _a.sent();
-            return [4 /*yield*/, response.json()];
-          case 2:
-            result = _a.sent();
-            if (!response.ok) {
-              throw new Error(result.error || "Failed to get capabilities");
-            }
-            setCapabilities(result.data);
-            return [2 /*return*/, result.data];
-          case 3:
-            error_6 = _a.sent();
-            console.error("Failed to get forecasting capabilities:", error_6);
-            throw error_6;
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var getCapabilities = (0, react_1.useCallback)(
+    (clinicId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, result, error_6;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 3, , 4]);
+              return [
+                4 /*yield*/,
+                fetch("/api/inventory/forecasting/demand?clinicId=".concat(clinicId)),
+              ];
+            case 1:
+              response = _a.sent();
+              return [4 /*yield*/, response.json()];
+            case 2:
+              result = _a.sent();
+              if (!response.ok) {
+                throw new Error(result.error || "Failed to get capabilities");
+              }
+              setCapabilities(result.data);
+              return [2 /*return*/, result.data];
+            case 3:
+              error_6 = _a.sent();
+              console.error("Failed to get forecasting capabilities:", error_6);
+              throw error_6;
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Clear current forecast
-  var clearForecast = (0, react_1.useCallback)(function () {
+  var clearForecast = (0, react_1.useCallback)(() => {
     setForecast(null);
   }, []);
   // Clear bulk forecasts
-  var clearBulkForecasts = (0, react_1.useCallback)(function () {
+  var clearBulkForecasts = (0, react_1.useCallback)(() => {
     setBulkForecasts([]);
   }, []);
   // Clear seasonal analysis
-  var clearSeasonalAnalysis = (0, react_1.useCallback)(function () {
+  var clearSeasonalAnalysis = (0, react_1.useCallback)(() => {
     setSeasonalAnalysis(null);
   }, []);
   // Clear accuracy analysis
-  var clearAccuracyAnalysis = (0, react_1.useCallback)(function () {
+  var clearAccuracyAnalysis = (0, react_1.useCallback)(() => {
     setAccuracyAnalysis(null);
   }, []);
   // Calculate forecast confidence score
-  var calculateConfidenceScore = (0, react_1.useCallback)(function (forecastResult) {
+  var calculateConfidenceScore = (0, react_1.useCallback)((forecastResult) => {
     var accuracy = forecastResult.accuracy,
       modelUsed = forecastResult.modelUsed;
     // Base score from model accuracy
@@ -496,12 +500,10 @@ function useDemandForecasting() {
   }, []);
   // Get forecast recommendations
   var getForecastRecommendations = (0, react_1.useCallback)(
-    function (forecastResult, seasonalData) {
+    (forecastResult, seasonalData) => {
       var recommendations = __spreadArray([], forecastResult.recommendations, true);
       if (seasonalData) {
-        var strongPatterns = seasonalData.seasonalPatterns.filter(function (p) {
-          return p.strength > 0.5;
-        });
+        var strongPatterns = seasonalData.seasonalPatterns.filter((p) => p.strength > 0.5);
         if (strongPatterns.length > 0) {
           recommendations.push(
             "Strong seasonal patterns detected - consider seasonal inventory adjustments",

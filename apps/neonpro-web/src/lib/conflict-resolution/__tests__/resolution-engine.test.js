@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var resolution_engine_1 = require("../resolution-engine");
 var types_1 = require("../types");
@@ -153,49 +150,29 @@ var supabase_js_1 = require("@supabase/supabase-js");
 // Mock Supabase
 jest.mock("@supabase/supabase-js");
 var mockSupabase = {
-  from: jest.fn(function () {
-    return {
-      select: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return {
-              gte: jest.fn(function () {
-                return {
-                  lte: jest.fn(function () {
-                    return {
-                      neq: jest.fn(function () {
-                        return Promise.resolve({ data: [], error: null });
-                      }),
-                    };
-                  }),
-                };
-              }),
-            };
-          }),
-        };
-      }),
-      update: jest.fn(function () {
-        return {
-          eq: jest.fn(function () {
-            return Promise.resolve({ data: [], error: null });
-          }),
-        };
-      }),
-      insert: jest.fn(function () {
-        return Promise.resolve({ data: [], error: null });
-      }),
-    };
-  }),
-  rpc: jest.fn(function () {
-    return Promise.resolve({ data: null, error: null });
-  }),
+  from: jest.fn(() => ({
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        gte: jest.fn(() => ({
+          lte: jest.fn(() => ({
+            neq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+          })),
+        })),
+      })),
+    })),
+    update: jest.fn(() => ({
+      eq: jest.fn(() => Promise.resolve({ data: [], error: null })),
+    })),
+    insert: jest.fn(() => Promise.resolve({ data: [], error: null })),
+  })),
+  rpc: jest.fn(() => Promise.resolve({ data: null, error: null })),
 };
 supabase_js_1.createClient.mockReturnValue(mockSupabase);
-describe("ResolutionEngine", function () {
+describe("ResolutionEngine", () => {
   var engine;
   var mockConfig;
   var mockConflict;
-  beforeEach(function () {
+  beforeEach(() => {
     mockConfig = {
       enabledStrategies: [
         types_1.ResolutionStrategy.RESCHEDULE_LATER,
@@ -226,26 +203,24 @@ describe("ResolutionEngine", function () {
     engine = new resolution_engine_1.ResolutionEngine(mockConfig);
     jest.clearAllMocks();
   });
-  describe("Initialization", function () {
-    it("should initialize with default config", function () {
+  describe("Initialization", () => {
+    it("should initialize with default config", () => {
       var defaultEngine = new resolution_engine_1.ResolutionEngine();
       expect(defaultEngine).toBeInstanceOf(resolution_engine_1.ResolutionEngine);
     });
-    it("should initialize with custom config", function () {
+    it("should initialize with custom config", () => {
       expect(engine).toBeInstanceOf(resolution_engine_1.ResolutionEngine);
     });
-    it("should validate config on initialization", function () {
+    it("should validate config on initialization", () => {
       var invalidConfig = __assign(__assign({}, mockConfig), { maxResolutionOptions: -1 });
-      expect(function () {
-        return new resolution_engine_1.ResolutionEngine(invalidConfig);
-      }).toThrow();
+      expect(() => new resolution_engine_1.ResolutionEngine(invalidConfig)).toThrow();
     });
   });
-  describe("generateResolutions", function () {
-    it("should generate resolution options for time overlap conflict", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("generateResolutions", () => {
+    it("should generate resolution options for time overlap conflict", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAppointment, resolutions;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAppointment = {
@@ -260,28 +235,20 @@ describe("ResolutionEngine", function () {
               };
               // Mock available slots
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    gte: jest.fn(() => ({
+                      lte: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, engine.generateResolutions(mockConflict, mockAppointment)];
             case 1:
@@ -293,10 +260,9 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should generate different strategies for different conflict types", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should generate different strategies for different conflict types", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var staffConflict,
           roomConflict,
           mockAppointment,
@@ -304,7 +270,7 @@ describe("ResolutionEngine", function () {
           roomResolutions,
           staffStrategies,
           roomStrategies;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               staffConflict = __assign(__assign({}, mockConflict), {
@@ -324,28 +290,20 @@ describe("ResolutionEngine", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    gte: jest.fn(() => ({
+                      lte: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, engine.generateResolutions(staffConflict, mockAppointment)];
             case 1:
@@ -355,23 +313,18 @@ describe("ResolutionEngine", function () {
               roomResolutions = _a.sent();
               expect(staffResolutions).toBeDefined();
               expect(roomResolutions).toBeDefined();
-              staffStrategies = staffResolutions.map(function (r) {
-                return r.strategy;
-              });
-              roomStrategies = roomResolutions.map(function (r) {
-                return r.strategy;
-              });
+              staffStrategies = staffResolutions.map((r) => r.strategy);
+              roomStrategies = roomResolutions.map((r) => r.strategy);
               expect(staffStrategies).toContain(types_1.ResolutionStrategy.CHANGE_STAFF);
               expect(roomStrategies).toContain(types_1.ResolutionStrategy.CHANGE_ROOM);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should rank resolutions by score", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should rank resolutions by score", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAppointment, resolutions, i;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAppointment = {
@@ -385,28 +338,20 @@ describe("ResolutionEngine", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    gte: jest.fn(() => ({
+                      lte: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, engine.generateResolutions(mockConflict, mockAppointment)];
             case 1:
@@ -418,12 +363,11 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle equipment conflicts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle equipment conflicts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var equipmentConflict, mockAppointment, resolutions;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               equipmentConflict = __assign(__assign({}, mockConflict), {
@@ -440,28 +384,20 @@ describe("ResolutionEngine", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    gte: jest.fn(() => ({
+                      lte: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [4 /*yield*/, engine.generateResolutions(equipmentConflict, mockAppointment)];
             case 1:
@@ -471,12 +407,11 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("applyResolution", function () {
+  describe("applyResolution", () => {
     var mockResolution;
-    beforeEach(function () {
+    beforeEach(() => {
       mockResolution = {
         id: "resolution-1",
         strategy: types_1.ResolutionStrategy.RESCHEDULE_LATER,
@@ -497,23 +432,21 @@ describe("ResolutionEngine", function () {
         estimatedDuration: 5,
       };
     });
-    it("should apply resolution successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    it("should apply resolution successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [{ id: "appointment-1" }],
-                        error: null,
-                      });
+                update: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [{ id: "appointment-1" }],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, engine.applyResolution(mockResolution)];
             case 1:
@@ -524,12 +457,11 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle validation errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle validation errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidResolution, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidResolution = __assign(__assign({}, mockResolution), {
@@ -547,25 +479,22 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle database errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle database errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from.mockReturnValue({
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: null,
-                        error: { message: "Database error" },
-                      });
+                update: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: null,
+                      error: { message: "Database error" },
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, engine.applyResolution(mockResolution)];
             case 1:
@@ -575,33 +504,30 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should create rollback point when enabled", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should create rollback point when enabled", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var configWithRollback, engineWithRollback, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               configWithRollback = __assign(__assign({}, mockConfig), { rollbackEnabled: true });
               engineWithRollback = new resolution_engine_1.ResolutionEngine(configWithRollback);
               mockSupabase.from.mockReturnValue({
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [{ id: "appointment-1" }],
-                        error: null,
-                      });
+                update: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [{ id: "appointment-1" }],
+                      error: null,
                     }),
-                  };
-                }),
-                insert: jest.fn(function () {
-                  return Promise.resolve({
+                  ),
+                })),
+                insert: jest.fn(() =>
+                  Promise.resolve({
                     data: [{ id: "rollback-1" }],
                     error: null,
-                  });
-                }),
+                  }),
+                ),
               });
               return [4 /*yield*/, engineWithRollback.applyResolution(mockResolution)];
             case 1:
@@ -611,12 +537,11 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle staff changes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle staff changes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var staffChangeResolution, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               staffChangeResolution = __assign(__assign({}, mockResolution), {
@@ -627,16 +552,14 @@ describe("ResolutionEngine", function () {
                 },
               });
               mockSupabase.from.mockReturnValue({
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [{ id: "appointment-1" }],
-                        error: null,
-                      });
+                update: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [{ id: "appointment-1" }],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, engine.applyResolution(staffChangeResolution)];
             case 1:
@@ -645,12 +568,11 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle room changes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle room changes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var roomChangeResolution, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               roomChangeResolution = __assign(__assign({}, mockResolution), {
@@ -661,16 +583,14 @@ describe("ResolutionEngine", function () {
                 },
               });
               mockSupabase.from.mockReturnValue({
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [{ id: "appointment-1" }],
-                        error: null,
-                      });
+                update: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [{ id: "appointment-1" }],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, engine.applyResolution(roomChangeResolution)];
             case 1:
@@ -679,47 +599,42 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("rollbackResolution", function () {
-    it("should rollback resolution successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("rollbackResolution", () => {
+    it("should rollback resolution successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var rollbackId, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               rollbackId = "rollback-1";
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [
-                          {
-                            id: rollbackId,
-                            original_data: {
-                              appointment_id: "appointment-1",
-                              start_time: "2024-01-15T10:00:00Z",
-                              end_time: "2024-01-15T11:00:00Z",
-                            },
+                select: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [
+                        {
+                          id: rollbackId,
+                          original_data: {
+                            appointment_id: "appointment-1",
+                            start_time: "2024-01-15T10:00:00Z",
+                            end_time: "2024-01-15T11:00:00Z",
                           },
-                        ],
-                        error: null,
-                      });
+                        },
+                      ],
+                      error: null,
                     }),
-                  };
-                }),
-                update: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [{ id: "appointment-1" }],
-                        error: null,
-                      });
+                  ),
+                })),
+                update: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [{ id: "appointment-1" }],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, engine.rollbackResolution(rollbackId)];
             case 1:
@@ -728,26 +643,23 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle rollback not found", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle rollback not found", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var rollbackId, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               rollbackId = "nonexistent-rollback";
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [],
-                        error: null,
-                      });
+                select: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, engine.rollbackResolution(rollbackId)];
             case 1:
@@ -757,34 +669,31 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle expired rollback", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle expired rollback", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var rollbackId, expiredDate, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               rollbackId = "expired-rollback";
               expiredDate = new Date();
               expiredDate.setDate(expiredDate.getDate() - 10); // 10 days ago
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return Promise.resolve({
-                        data: [
-                          {
-                            id: rollbackId,
-                            created_at: expiredDate.toISOString(),
-                            original_data: {},
-                          },
-                        ],
-                        error: null,
-                      });
+                select: jest.fn(() => ({
+                  eq: jest.fn(() =>
+                    Promise.resolve({
+                      data: [
+                        {
+                          id: rollbackId,
+                          created_at: expiredDate.toISOString(),
+                          original_data: {},
+                        },
+                      ],
+                      error: null,
                     }),
-                  };
-                }),
+                  ),
+                })),
               });
               return [4 /*yield*/, engine.rollbackResolution(rollbackId)];
             case 1:
@@ -794,35 +703,32 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Configuration Updates", function () {
-    it("should update configuration", function () {
+  describe("Configuration Updates", () => {
+    it("should update configuration", () => {
       var newConfig = __assign(__assign({}, mockConfig), { autoApplyThreshold: 0.95 });
       engine.updateConfig(newConfig);
       // Configuration should be updated (no direct way to test, but method should not throw)
     });
-    it("should validate new configuration", function () {
+    it("should validate new configuration", () => {
       var invalidConfig = __assign(__assign({}, mockConfig), { maxResolutionOptions: -5 });
-      expect(function () {
-        return engine.updateConfig(invalidConfig);
-      }).toThrow();
+      expect(() => engine.updateConfig(invalidConfig)).toThrow();
     });
   });
-  describe("Performance and Optimization", function () {
-    it("should handle multiple resolutions efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance and Optimization", () => {
+    it("should handle multiple resolutions efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var conflicts, mockAppointment, startTime, resolutionPromises, results, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              conflicts = Array.from({ length: 10 }, function (_, i) {
-                return __assign(__assign({}, mockConflict), {
+              conflicts = Array.from({ length: 10 }, (_, i) =>
+                __assign(__assign({}, mockConflict), {
                   id: "conflict-".concat(i),
                   appointmentId: "appointment-".concat(i),
-                });
-              });
+                }),
+              );
               mockAppointment = {
                 id: "appointment-1",
                 start_time: "2024-01-15T10:00:00Z",
@@ -834,51 +740,42 @@ describe("ResolutionEngine", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    gte: jest.fn(() => ({
+                      lte: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               startTime = Date.now();
-              resolutionPromises = conflicts.map(function (conflict) {
-                return engine.generateResolutions(conflict, mockAppointment);
-              });
+              resolutionPromises = conflicts.map((conflict) =>
+                engine.generateResolutions(conflict, mockAppointment),
+              );
               return [4 /*yield*/, Promise.all(resolutionPromises)];
             case 1:
               results = _a.sent();
               endTime = Date.now();
               expect(endTime - startTime).toBeLessThan(10000); // Should complete within 10 seconds
               expect(results).toHaveLength(10);
-              results.forEach(function (resolutions) {
+              results.forEach((resolutions) => {
                 expect(Array.isArray(resolutions)).toBe(true);
               });
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should cache resolution strategies", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should cache resolution strategies", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAppointment, startTime, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAppointment = {
@@ -892,28 +789,20 @@ describe("ResolutionEngine", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: [],
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    gte: jest.fn(() => ({
+                      lte: jest.fn(() => ({
+                        neq: jest.fn(() =>
+                          Promise.resolve({
+                            data: [],
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               // First call
               return [4 /*yield*/, engine.generateResolutions(mockConflict, mockAppointment)];
@@ -929,14 +818,13 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling", function () {
-    it("should handle invalid conflict data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling", () => {
+    it("should handle invalid conflict data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidConflict, mockAppointment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidConflict = __assign(__assign({}, mockConflict), { type: "INVALID_TYPE" });
@@ -961,12 +849,11 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle network failures gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle network failures gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAppointment;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAppointment = {
@@ -980,25 +867,15 @@ describe("ResolutionEngine", function () {
                 status: "scheduled",
               };
               mockSupabase.from.mockReturnValue({
-                select: jest.fn(function () {
-                  return {
-                    eq: jest.fn(function () {
-                      return {
-                        gte: jest.fn(function () {
-                          return {
-                            lte: jest.fn(function () {
-                              return {
-                                neq: jest.fn(function () {
-                                  return Promise.reject(new Error("Network error"));
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: jest.fn(() => ({
+                  eq: jest.fn(() => ({
+                    gte: jest.fn(() => ({
+                      lte: jest.fn(() => ({
+                        neq: jest.fn(() => Promise.reject(new Error("Network error"))),
+                      })),
+                    })),
+                  })),
+                })),
               });
               return [
                 4 /*yield*/,
@@ -1011,7 +888,6 @@ describe("ResolutionEngine", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

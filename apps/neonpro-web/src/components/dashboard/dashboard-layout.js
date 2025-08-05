@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardLayout = DashboardLayout;
 var react_1 = require("react");
@@ -17,9 +16,7 @@ function DashboardLayout(_a) {
     <div className="min-h-screen bg-background">
       {/* Sidebar */}
       <error_boundary_1.ErrorBoundary
-        onError={function (error) {
-          return console.error("Dashboard Sidebar Error:", error);
-        }}
+        onError={(error) => console.error("Dashboard Sidebar Error:", error)}
         fallback={
           <div className="w-64 h-screen bg-muted flex items-center justify-center">
             <p className="text-sm text-muted-foreground">Erro no menu lateral</p>
@@ -42,9 +39,7 @@ function DashboardLayout(_a) {
       >
         {/* Header */}
         <error_boundary_1.ErrorBoundary
-          onError={function (error) {
-            return console.error("Dashboard Header Error:", error);
-          }}
+          onError={(error) => console.error("Dashboard Header Error:", error)}
           fallback={
             <div className="h-16 bg-muted border-b flex items-center px-6">
               <p className="text-sm text-muted-foreground">Erro no cabeçalho</p>
@@ -52,18 +47,14 @@ function DashboardLayout(_a) {
           }
         >
           <dashboard_header_1.DashboardHeader
-            onMenuClick={function () {
-              return setSidebarOpen(true);
-            }}
+            onMenuClick={() => setSidebarOpen(true)}
             user={user}
           />
         </error_boundary_1.ErrorBoundary>
 
         {/* Page content */}
         <error_boundary_1.ErrorBoundary
-          onError={function (error) {
-            return console.error("Dashboard Content Error:", error);
-          }}
+          onError={(error) => console.error("Dashboard Content Error:", error)}
           className="m-6"
           showDetails={process.env.NODE_ENV === "development"}
         >
@@ -75,9 +66,7 @@ function DashboardLayout(_a) {
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={function () {
-            return setSidebarOpen(false);
-          }}
+          onClick={() => setSidebarOpen(false)}
         />
       )}
     </div>

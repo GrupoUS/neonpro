@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Vision Analysis Configuration Hook for NeonPro
  *
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,7 +155,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useVisionConfig = useVisionConfig;
 var react_1 = require("react");
@@ -200,7 +197,6 @@ var DEFAULT_CONFIG = {
   },
 };
 function useVisionConfig() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       config: null,
       isLoading: false,
@@ -215,61 +211,61 @@ function useVisionConfig() {
   /**
    * Load configuration from API
    */
-  var loadConfig = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data, config_1, error_1, errorMessage_1;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: true, error: null });
-            });
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 4, , 5]);
-            return [4 /*yield*/, fetch("/api/vision/config")];
-          case 2:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to load configuration");
-            }
-            return [4 /*yield*/, response.json()];
-          case 3:
-            data = _a.sent();
-            config_1 = data.config || DEFAULT_CONFIG;
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                config: config_1,
-                isLoading: false,
-                hasUnsavedChanges: false,
-              });
-            });
-            setOriginalConfig(config_1);
-            return [3 /*break*/, 5];
-          case 4:
-            error_1 = _a.sent();
-            errorMessage_1 =
-              error_1 instanceof Error ? error_1.message : "Failed to load configuration";
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { error: errorMessage_1, isLoading: false });
-            });
-            console.error("Config load error:", error_1);
-            sonner_1.toast.error("Failed to load configuration");
-            return [3 /*break*/, 5];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var loadConfig = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, config_1, error_1, errorMessage_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 4, , 5]);
+              return [4 /*yield*/, fetch("/api/vision/config")];
+            case 2:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to load configuration");
+              }
+              return [4 /*yield*/, response.json()];
+            case 3:
+              data = _a.sent();
+              config_1 = data.config || DEFAULT_CONFIG;
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  config: config_1,
+                  isLoading: false,
+                  hasUnsavedChanges: false,
+                }),
+              );
+              setOriginalConfig(config_1);
+              return [3 /*break*/, 5];
+            case 4:
+              error_1 = _a.sent();
+              errorMessage_1 =
+                error_1 instanceof Error ? error_1.message : "Failed to load configuration";
+              setState((prev) =>
+                __assign(__assign({}, prev), { error: errorMessage_1, isLoading: false }),
+              );
+              console.error("Config load error:", error_1);
+              sonner_1.toast.error("Failed to load configuration");
+              return [3 /*break*/, 5];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   /**
    * Update configuration (local state only)
    */
   var updateConfig = (0, react_1.useCallback)(
-    function (updates) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          setState(function (prev) {
+    (updates) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setState((prev) => {
             if (!prev.config) return prev;
             var newConfig = __assign(__assign({}, prev.config), updates);
             var hasChanges = JSON.stringify(newConfig) !== JSON.stringify(originalConfig);
@@ -280,27 +276,24 @@ function useVisionConfig() {
           });
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [originalConfig],
   );
   /**
    * Save configuration to API
    */
   var saveConfig = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, error_2, errorMessage_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!state.config) {
                 sonner_1.toast.error("No configuration to save");
                 return [2 /*return*/];
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
               _a.label = 1;
             case 1:
               _a.trys.push([1, 3, , 4]);
@@ -319,9 +312,9 @@ function useVisionConfig() {
               if (!response.ok) {
                 throw new Error("Failed to save configuration");
               }
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: false, hasUnsavedChanges: false });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { isLoading: false, hasUnsavedChanges: false }),
+              );
               setOriginalConfig(state.config);
               sonner_1.toast.success("Configuration saved successfully");
               return [3 /*break*/, 4];
@@ -329,9 +322,9 @@ function useVisionConfig() {
               error_2 = _a.sent();
               errorMessage_2 =
                 error_2 instanceof Error ? error_2.message : "Failed to save configuration";
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { error: errorMessage_2, isLoading: false });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { error: errorMessage_2, isLoading: false }),
+              );
               console.error("Config save error:", error_2);
               sonner_1.toast.error("Failed to save configuration");
               return [3 /*break*/, 4];
@@ -339,91 +332,84 @@ function useVisionConfig() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state.config],
   );
   /**
    * Reset configuration to defaults
    */
-  var resetToDefaults = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data, config_2, error_3, errorMessage_3;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: true, error: null });
-            });
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 4, , 5]);
-            return [
-              4 /*yield*/,
-              fetch("/api/vision/config", {
-                method: "POST",
-              }),
-            ];
-          case 2:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("Failed to reset configuration");
-            }
-            return [4 /*yield*/, response.json()];
-          case 3:
-            data = _a.sent();
-            config_2 = data.config || DEFAULT_CONFIG;
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                config: config_2,
-                isLoading: false,
-                hasUnsavedChanges: false,
-              });
-            });
-            setOriginalConfig(config_2);
-            sonner_1.toast.success("Configuration reset to defaults");
-            return [3 /*break*/, 5];
-          case 4:
-            error_3 = _a.sent();
-            errorMessage_3 =
-              error_3 instanceof Error ? error_3.message : "Failed to reset configuration";
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { error: errorMessage_3, isLoading: false });
-            });
-            console.error("Config reset error:", error_3);
-            sonner_1.toast.error("Failed to reset configuration");
-            return [3 /*break*/, 5];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var resetToDefaults = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, config_2, error_3, errorMessage_3;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 4, , 5]);
+              return [
+                4 /*yield*/,
+                fetch("/api/vision/config", {
+                  method: "POST",
+                }),
+              ];
+            case 2:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("Failed to reset configuration");
+              }
+              return [4 /*yield*/, response.json()];
+            case 3:
+              data = _a.sent();
+              config_2 = data.config || DEFAULT_CONFIG;
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  config: config_2,
+                  isLoading: false,
+                  hasUnsavedChanges: false,
+                }),
+              );
+              setOriginalConfig(config_2);
+              sonner_1.toast.success("Configuration reset to defaults");
+              return [3 /*break*/, 5];
+            case 4:
+              error_3 = _a.sent();
+              errorMessage_3 =
+                error_3 instanceof Error ? error_3.message : "Failed to reset configuration";
+              setState((prev) =>
+                __assign(__assign({}, prev), { error: errorMessage_3, isLoading: false }),
+              );
+              console.error("Config reset error:", error_3);
+              sonner_1.toast.error("Failed to reset configuration");
+              return [3 /*break*/, 5];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   /**
    * Discard unsaved changes
    */
-  var discardChanges = (0, react_1.useCallback)(
-    function () {
-      if (originalConfig) {
-        setState(function (prev) {
-          return __assign(__assign({}, prev), {
-            config: originalConfig,
-            hasUnsavedChanges: false,
-            error: null,
-          });
-        });
-        sonner_1.toast.success("Changes discarded");
-      }
-    },
-    [originalConfig],
-  );
+  var discardChanges = (0, react_1.useCallback)(() => {
+    if (originalConfig) {
+      setState((prev) =>
+        __assign(__assign({}, prev), {
+          config: originalConfig,
+          hasUnsavedChanges: false,
+          error: null,
+        }),
+      );
+      sonner_1.toast.success("Changes discarded");
+    }
+  }, [originalConfig]);
   // Load configuration on mount
-  (0, react_1.useEffect)(
-    function () {
-      loadConfig();
-    },
-    [loadConfig],
-  );
+  (0, react_1.useEffect)(() => {
+    loadConfig();
+  }, [loadConfig]);
   return __assign(__assign({}, state), {
     loadConfig: loadConfig,
     updateConfig: updateConfig,

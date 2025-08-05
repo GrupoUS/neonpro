@@ -9,21 +9,20 @@
  */
 
 import type {
-  generateRegistrationOptions,
-  verifyRegistrationResponse,
+  AuthenticationResponseJSON,
+  GenerateAuthenticationOptionsOpts,
+  GenerateRegistrationOptionsOpts,
   generateAuthenticationOptions,
+  generateRegistrationOptions,
+  RegistrationResponseJSON,
+  VerifyAuthenticationResponseOpts,
+  VerifyRegistrationResponseOpts,
   verifyAuthenticationResponse,
-  type GenerateRegistrationOptionsOpts,
-  type GenerateAuthenticationOptionsOpts,
-  type VerifyRegistrationResponseOpts,
-  type VerifyAuthenticationResponseOpts,
-  type RegistrationResponseJSON,
-  type AuthenticationResponseJSON,
+  verifyRegistrationResponse,
 } from "@simplewebauthn/server";
-
+import type { logAnalyticsEvent } from "@/lib/monitoring/analytics";
 import type { createClient } from "../../app/utils/supabase/server";
 import type { trackMFAVerification } from "./performance-tracker";
-import type { logAnalyticsEvent } from "@/lib/monitoring/analytics";
 
 export interface WebAuthnCredential {
   id: string;

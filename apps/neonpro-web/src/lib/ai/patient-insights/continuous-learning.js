@@ -1,4 +1,3 @@
-"use strict";
 // AI-Powered Continuous Learning System
 // Story 3.2: Task 6 - Continuous Learning System
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,11 +144,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContinuousLearningSystem = void 0;
 var client_1 = require("@/lib/supabase/client");
-var ContinuousLearningSystem = /** @class */ (function () {
+var ContinuousLearningSystem = /** @class */ (() => {
   function ContinuousLearningSystem() {
     this.supabase = (0, client_1.createClient)();
     this.models = new Map();
@@ -682,9 +679,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (record) {
-                    return _this.transformToTrainingData(record);
-                  })) || [],
+                : data.map((record) => _this.transformToTrainingData(record))) || [],
             ];
         }
       });
@@ -710,9 +705,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (record) {
-                    return _this.transformToFeatureData(record);
-                  })) || [],
+                : data.map((record) => _this.transformToFeatureData(record))) || [],
             ];
         }
       });
@@ -825,7 +818,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
   };
   ContinuousLearningSystem.prototype.evaluateRetrainedModel = function (model, testData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simulate evaluation of retrained model
         return [
           2 /*return*/,
@@ -843,7 +836,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
     });
   };
   // Learning analysis methods
-  ContinuousLearningSystem.prototype.identifyLearningOpportunities = function (accuracy, outcome) {
+  ContinuousLearningSystem.prototype.identifyLearningOpportunities = (accuracy, outcome) => {
     var opportunities = [];
     if (accuracy.accuracyScore < 0.8) {
       opportunities.push({
@@ -863,11 +856,11 @@ var ContinuousLearningSystem = /** @class */ (function () {
     }
     return opportunities;
   };
-  ContinuousLearningSystem.prototype.generateLearningInsights = function (
+  ContinuousLearningSystem.prototype.generateLearningInsights = (
     accuracy,
     opportunities,
     outcome,
-  ) {
+  ) => {
     var insights = [];
     if (accuracy.hasPrediction) {
       insights.push({
@@ -879,7 +872,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
           accuracy.accuracyScore < 0.8 ? "Consider model retraining" : "Model performing well",
       });
     }
-    opportunities.forEach(function (opportunity) {
+    opportunities.forEach((opportunity) => {
       insights.push({
         type: opportunity.type,
         description: opportunity.description,
@@ -891,9 +884,8 @@ var ContinuousLearningSystem = /** @class */ (function () {
     return insights;
   };
   // Utility methods
-  ContinuousLearningSystem.prototype.shouldTriggerModelUpdate = function (accuracy) {
-    return accuracy.hasPrediction && accuracy.accuracyScore < 0.7;
-  };
+  ContinuousLearningSystem.prototype.shouldTriggerModelUpdate = (accuracy) =>
+    accuracy.hasPrediction && accuracy.accuracyScore < 0.7;
   ContinuousLearningSystem.prototype.queueModelUpdate = function (treatmentId, outcome, accuracy) {
     return __awaiter(this, void 0, void 0, function () {
       var task;
@@ -924,7 +916,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
         model = this.models.get(modelId);
         if (model && model.featureImportance) {
           adjustmentFactor_1 = accuracy.accuracyScore;
-          Object.keys(model.featureImportance).forEach(function (feature) {
+          Object.keys(model.featureImportance).forEach((feature) => {
             model.featureImportance[feature] *= adjustmentFactor_1;
           });
         }
@@ -932,7 +924,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
       });
     });
   };
-  ContinuousLearningSystem.prototype.calculatePerformanceImprovement = function (current, new_) {
+  ContinuousLearningSystem.prototype.calculatePerformanceImprovement = (current, new_) => {
     var accuracyImprovement = new_.accuracy - current.accuracy;
     var precisionImprovement = new_.precision - current.precision;
     var recallImprovement = new_.recall - current.recall;
@@ -991,7 +983,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
       });
     });
   };
-  ContinuousLearningSystem.prototype.identifySpecificImprovements = function (previous, current) {
+  ContinuousLearningSystem.prototype.identifySpecificImprovements = (previous, current) => {
     var improvements = [];
     if (current.accuracy > previous.accuracy + 0.01) {
       improvements.push(
@@ -1017,33 +1009,29 @@ var ContinuousLearningSystem = /** @class */ (function () {
     return improvements;
   };
   // Additional utility methods (simplified implementations)
-  ContinuousLearningSystem.prototype.calculateAccuracyScore = function (predicted, actual) {
+  ContinuousLearningSystem.prototype.calculateAccuracyScore = (predicted, actual) => {
     // Simplified accuracy calculation
     return 0.85 + Math.random() * 0.1;
   };
-  ContinuousLearningSystem.prototype.calculatePredictionError = function (predicted, actual) {
+  ContinuousLearningSystem.prototype.calculatePredictionError = (predicted, actual) => {
     // Simplified error calculation
     return Math.random() * 0.2;
   };
-  ContinuousLearningSystem.prototype.calculatePredictionBias = function (predicted, actual) {
+  ContinuousLearningSystem.prototype.calculatePredictionBias = (predicted, actual) => {
     // Simplified bias calculation
     return (Math.random() - 0.5) * 0.2;
   };
-  ContinuousLearningSystem.prototype.transformToTrainingData = function (record) {
-    return {
-      id: record.id,
-      features: record.patients,
-      target: record.outcome_data,
-      weight: 1.0,
-    };
-  };
-  ContinuousLearningSystem.prototype.transformToFeatureData = function (record) {
-    return {
-      id: record.id,
-      features: record.patients,
-      target: record.outcome_data,
-    };
-  };
+  ContinuousLearningSystem.prototype.transformToTrainingData = (record) => ({
+    id: record.id,
+    features: record.patients,
+    target: record.outcome_data,
+    weight: 1.0,
+  });
+  ContinuousLearningSystem.prototype.transformToFeatureData = (record) => ({
+    id: record.id,
+    features: record.patients,
+    target: record.outcome_data,
+  });
   ContinuousLearningSystem.prototype.initializeLearningModels = function () {
     // Initialize basic models
     var riskAssessmentModel = {
@@ -1072,10 +1060,9 @@ var ContinuousLearningSystem = /** @class */ (function () {
     this.models.set("risk_assessment", riskAssessmentModel);
   };
   ContinuousLearningSystem.prototype.startLearningCycle = function () {
-    var _this = this;
     // Start background learning process
-    setInterval(function () {
-      _this.processLearningQueue();
+    setInterval(() => {
+      this.processLearningQueue();
     }, 60000); // Process every minute
   };
   ContinuousLearningSystem.prototype.processLearningQueue = function () {
@@ -1110,7 +1097,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
     });
   };
   // Additional methods for comprehensive learning system (simplified)
-  ContinuousLearningSystem.prototype.calculateReportPeriod = function (timeframe) {
+  ContinuousLearningSystem.prototype.calculateReportPeriod = (timeframe) => {
     var end = new Date();
     var start = new Date();
     switch (timeframe) {
@@ -1128,53 +1115,47 @@ var ContinuousLearningSystem = /** @class */ (function () {
   };
   ContinuousLearningSystem.prototype.analyzePerformanceTrends = function (period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.identifyLearnedPatterns = function (period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.calculateLearningMetrics = function (period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            modelsUpdated: 3,
-            accuracyImprovement: 0.05,
-            dataPointsProcessed: 150,
-            newPatternsIdentified: 8,
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          modelsUpdated: 3,
+          accuracyImprovement: 0.05,
+          dataPointsProcessed: 150,
+          newPatternsIdentified: 8,
+        },
+      ]);
     });
   };
-  ContinuousLearningSystem.prototype.identifyImprovementAreas = function (
-    trends,
-    patterns,
-    metrics,
-  ) {
+  ContinuousLearningSystem.prototype.identifyImprovementAreas = (trends, patterns, metrics) => {
     return []; // Simplified implementation
   };
-  ContinuousLearningSystem.prototype.generateLearningRecommendations = function (trends, areas) {
+  ContinuousLearningSystem.prototype.generateLearningRecommendations = (trends, areas) => {
     return ["Continue current learning approach"]; // Simplified implementation
   };
   ContinuousLearningSystem.prototype.getModelUpdatesInPeriod = function (period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.analyzeDataQuality = function (period) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
@@ -1182,20 +1163,20 @@ var ContinuousLearningSystem = /** @class */ (function () {
   // Parameter optimization methods (simplified)
   ContinuousLearningSystem.prototype.getCurrentModelParameters = function (modelId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, {}]; // Simplified implementation
       });
     });
   };
-  ContinuousLearningSystem.prototype.defineParameterSearchSpace = function (modelId) {
+  ContinuousLearningSystem.prototype.defineParameterSearchSpace = (modelId) => {
     return {}; // Simplified implementation
   };
-  ContinuousLearningSystem.prototype.generateParameterCombinations = function (space, count) {
+  ContinuousLearningSystem.prototype.generateParameterCombinations = (space, count) => {
     return []; // Simplified implementation
   };
   ContinuousLearningSystem.prototype.testParameterCombination = function (modelId, params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [
           2 /*return*/,
           {
@@ -1207,12 +1188,12 @@ var ContinuousLearningSystem = /** @class */ (function () {
       });
     });
   };
-  ContinuousLearningSystem.prototype.findBestParameters = function (results) {
+  ContinuousLearningSystem.prototype.findBestParameters = (results) => {
     return {}; // Simplified implementation
   };
   ContinuousLearningSystem.prototype.validateParameters = function (modelId, params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [
           2 /*return*/,
           {
@@ -1225,7 +1206,7 @@ var ContinuousLearningSystem = /** @class */ (function () {
   };
   ContinuousLearningSystem.prototype.updateModelParameters = function (modelId, params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, "updated"]; // Simplified implementation
       });
     });
@@ -1233,82 +1214,82 @@ var ContinuousLearningSystem = /** @class */ (function () {
   // Feature importance methods (simplified)
   ContinuousLearningSystem.prototype.calculatePermutationImportance = function (model, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, {}]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.calculateShapValues = function (model, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, {}]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.analyzeFeatureCorrelations = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, {}]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.calculateGainImportance = function (model, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, {}]; // Simplified implementation
       });
     });
   };
-  ContinuousLearningSystem.prototype.combineImportanceScores = function (
+  ContinuousLearningSystem.prototype.combineImportanceScores = (
     permutation,
     shap,
     correlation,
     gain,
-  ) {
+  ) => {
     return {}; // Simplified implementation
   };
-  ContinuousLearningSystem.prototype.identifyTopFeatures = function (importance, count) {
+  ContinuousLearningSystem.prototype.identifyTopFeatures = (importance, count) => {
     return []; // Simplified implementation
   };
   ContinuousLearningSystem.prototype.analyzeFeatureInteractions = function (features, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
-  ContinuousLearningSystem.prototype.generateFeatureRecommendations = function (
+  ContinuousLearningSystem.prototype.generateFeatureRecommendations = (
     features,
     interactions,
     correlations,
-  ) {
+  ) => {
     return []; // Simplified implementation
   };
   // Data drift methods (simplified)
   ContinuousLearningSystem.prototype.getBaselineData = function (modelId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.getRecentProductionData = function (modelId, days) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.analyzeFeatureDrift = function (baseline, recent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
   ContinuousLearningSystem.prototype.analyzeTargetDrift = function (baseline, recent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [
           2 /*return*/,
           {
@@ -1320,26 +1301,20 @@ var ContinuousLearningSystem = /** @class */ (function () {
       });
     });
   };
-  ContinuousLearningSystem.prototype.calculateOverallDriftScore = function (
-    featureDrift,
-    targetDrift,
-  ) {
+  ContinuousLearningSystem.prototype.calculateOverallDriftScore = (featureDrift, targetDrift) => {
     return 0.05; // Simplified implementation
   };
-  ContinuousLearningSystem.prototype.identifyDriftedFeatures = function (drift, threshold) {
+  ContinuousLearningSystem.prototype.identifyDriftedFeatures = (drift, threshold) => {
     return []; // Simplified implementation
   };
-  ContinuousLearningSystem.prototype.generateDriftAlerts = function (
-    overallScore,
-    driftedFeatures,
-  ) {
+  ContinuousLearningSystem.prototype.generateDriftAlerts = (overallScore, driftedFeatures) => {
     return []; // Simplified implementation
   };
-  ContinuousLearningSystem.prototype.generateDriftRecommendations = function (
+  ContinuousLearningSystem.prototype.generateDriftRecommendations = (
     overallScore,
     driftedFeatures,
     targetDrift,
-  ) {
+  ) => {
     return []; // Simplified implementation
   };
   return ContinuousLearningSystem;

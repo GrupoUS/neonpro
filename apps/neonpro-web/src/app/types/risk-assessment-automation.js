@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Risk Assessment Automation Types
  * Story 9.4: Comprehensive automated risk assessment with medical validation

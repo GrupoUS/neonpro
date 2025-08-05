@@ -3,7 +3,7 @@
  * Comprehensive test suite for mobile cache functionality
  */
 
-import type { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import type { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import type { CacheManager } from "../cache-manager";
 import type { CacheConfig, CacheStrategy } from "../types";
 

@@ -1,5 +1,5 @@
 import type { createClient } from "@/lib/supabase/client";
-import type { PerformanceMetrics, PerformanceAlert } from "./performance-calculator";
+import type { PerformanceAlert, PerformanceMetrics } from "./performance-calculator";
 import type { SchedulingMetrics } from "./scheduling-analytics";
 
 type SupabaseClient = ReturnType<typeof createClient>;

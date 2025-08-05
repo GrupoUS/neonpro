@@ -1,7 +1,7 @@
-import type { createClient } from "@/lib/supabase/client";
+import type { PatientInsights } from "@/lib/ai/patient-insights";
 import type { AuditLogger } from "@/lib/audit/audit-logger";
 import type { LGPDManager } from "@/lib/lgpd/lgpd-manager";
-import type { PatientInsights } from "@/lib/ai/patient-insights";
+import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/supabase";
 
 type Patient = Database["public"]["Tables"]["patients"]["Row"];

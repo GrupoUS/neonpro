@@ -1,4 +1,3 @@
-"use strict";
 // NeonProAIChatEngine - Core AI Chat Processing Engine
 // Implementation of Story 4.1: Universal AI Chat Assistant
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NeonProAIChatEngine = void 0;
 exports.createNeonProAIChatEngine = createNeonProAIChatEngine;
@@ -161,7 +158,7 @@ var openai = new openai_1.default({
  * NeonProAIChatEngine - Core AI Chat Processing Engine
  * Integrates OpenAI GPT-4 with NeonPro clinic data for intelligent assistance
  */
-var NeonProAIChatEngine = /** @class */ (function () {
+var NeonProAIChatEngine = /** @class */ (() => {
   function NeonProAIChatEngine(supabaseClient) {
     this.supabase = supabaseClient;
   }
@@ -436,18 +433,17 @@ var NeonProAIChatEngine = /** @class */ (function () {
   /**
    * Build classification prompt for OpenAI
    */
-  NeonProAIChatEngine.prototype.buildClassificationPrompt = function (message, context) {
-    return "You are a clinical management AI assistant. Classify the following user query and respond with JSON.\n\nContext:\n- Clinic: "
+  NeonProAIChatEngine.prototype.buildClassificationPrompt = (message, context) =>
+    "You are a clinical management AI assistant. Classify the following user query and respond with JSON.\n\nContext:\n- Clinic: "
       .concat(context.clinic.name, "\n- User Role: ")
       .concat(
         context.user.role,
         '\n- Available Systems: appointments, financial, clinical, business intelligence\n\nClassifications:\n- appointment_query: scheduling, calendar, availability\n- financial_query: billing, payments, revenue, expenses\n- patient_query: patient data, medical records (LGPD compliant)\n- clinical_query: medical procedures, treatments\n- analytics_query: reports, KPIs, business intelligence\n- compliance_query: regulations, audits, LGPD\n- general_query: help, information, navigation\n\nRequired JSON format:\n{\n  "category": "classification_type",\n  "confidence": 0.0-1.0,\n  "permissions": ["required_permission_array"],\n  "actions": ["suggested_action_array"],\n  "systems": ["affected_system_array"]\n}',
       );
-  };
   /**
    * Build system prompt for response generation
    */
-  NeonProAIChatEngine.prototype.buildSystemPrompt = function (context, classification) {
+  NeonProAIChatEngine.prototype.buildSystemPrompt = (context, classification) => {
     var clinicInfo = "Clinic: ".concat(context.clinic.name, " (").concat(context.clinic.id, ")");
     var userInfo = "User: ".concat(context.user.name, " (").concat(context.user.role, ")");
     var systemsInfo = "Systems: ".concat(classification.affectedSystems.join(", "));
@@ -509,22 +505,14 @@ var NeonProAIChatEngine = /** @class */ (function () {
                   (data === null || data === void 0
                     ? void 0
                     : data
-                        .filter(function (t) {
-                          return t.type === "income";
-                        })
-                        .reduce(function (sum, t) {
-                          return sum + t.amount;
-                        }, 0)) || 0,
+                        .filter((t) => t.type === "income")
+                        .reduce((sum, t) => sum + t.amount, 0)) || 0,
                 totalExpenses:
                   (data === null || data === void 0
                     ? void 0
                     : data
-                        .filter(function (t) {
-                          return t.type === "expense";
-                        })
-                        .reduce(function (sum, t) {
-                          return sum + t.amount;
-                        }, 0)) || 0,
+                        .filter((t) => t.type === "expense")
+                        .reduce((sum, t) => sum + t.amount, 0)) || 0,
                 transactionCount: (data === null || data === void 0 ? void 0 : data.length) || 0,
               },
             ];
@@ -551,11 +539,10 @@ var NeonProAIChatEngine = /** @class */ (function () {
                 newPatientsThisMonth:
                   (data === null || data === void 0
                     ? void 0
-                    : data.filter(function (p) {
-                        return (
-                          new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-                        );
-                      }).length) || 0,
+                    : data.filter(
+                        (p) =>
+                          new Date(p.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+                      ).length) || 0,
               },
             ];
         }
@@ -564,7 +551,7 @@ var NeonProAIChatEngine = /** @class */ (function () {
   };
   NeonProAIChatEngine.prototype.getAnalyticsSummary = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would integrate with Epic 3 business intelligence
         return [
           2 /*return*/,
@@ -611,18 +598,16 @@ var NeonProAIChatEngine = /** @class */ (function () {
       });
     });
   };
-  NeonProAIChatEngine.prototype.validateLGPDCompliance = function (message) {
+  NeonProAIChatEngine.prototype.validateLGPDCompliance = (message) => {
     // Check for potential LGPD violations
     var sensitivePatterns = [
       /cpf\s*:?\s*\d{3}\.?\d{3}\.?\d{3}-?\d{2}/i,
       /rg\s*:?\s*\d+/i,
       /telefone\s*:?\s*\(\d{2}\)\s*\d{4,5}-?\d{4}/i,
     ];
-    return !sensitivePatterns.some(function (pattern) {
-      return pattern.test(message);
-    });
+    return !sensitivePatterns.some((pattern) => pattern.test(message));
   };
-  NeonProAIChatEngine.prototype.extractSources = function (context) {
+  NeonProAIChatEngine.prototype.extractSources = (context) => {
     var _a, _b, _c, _d;
     var sources = ["neonpro_database"];
     if ((_a = context.relevantData) === null || _a === void 0 ? void 0 : _a.recentAppointments)
@@ -635,7 +620,7 @@ var NeonProAIChatEngine = /** @class */ (function () {
       sources.push("business_intelligence");
     return sources;
   };
-  NeonProAIChatEngine.prototype.suggestVisualizations = function (classification) {
+  NeonProAIChatEngine.prototype.suggestVisualizations = (classification) => {
     var visualizations = [];
     switch (classification.category) {
       case "financial_query":
@@ -650,15 +635,13 @@ var NeonProAIChatEngine = /** @class */ (function () {
     }
     return visualizations;
   };
-  NeonProAIChatEngine.prototype.createErrorResponse = function (error) {
-    return {
-      message:
-        "Desculpe, encontrei um problema ao processar sua solicitação. Tente novamente em alguns instantes.",
-      sources: ["error_handler"],
-      visualizations: [],
-      actions: ["retry", "contact_support"],
-    };
-  };
+  NeonProAIChatEngine.prototype.createErrorResponse = (error) => ({
+    message:
+      "Desculpe, encontrei um problema ao processar sua solicitação. Tente novamente em alguns instantes.",
+    sources: ["error_handler"],
+    visualizations: [],
+    actions: ["retry", "contact_support"],
+  });
   return NeonProAIChatEngine;
 })();
 exports.NeonProAIChatEngine = NeonProAIChatEngine;
@@ -668,7 +651,7 @@ exports.NeonProAIChatEngine = NeonProAIChatEngine;
 function createNeonProAIChatEngine() {
   return __awaiter(this, void 0, void 0, function () {
     var supabase;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, (0, server_1.createClient)()];

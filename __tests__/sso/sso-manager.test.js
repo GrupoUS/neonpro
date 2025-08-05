@@ -1,17 +1,16 @@
-"use strict";
 // SSO Manager Tests
 // Story 1.3: SSO Integration - Core Manager Testing
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -21,7 +20,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -50,8 +49,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -72,9 +69,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -133,31 +130,27 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var sso_manager_1 = require("@/lib/auth/sso/sso-manager");
 var supabase_js_1 = require("@supabase/supabase-js");
 // Mock Supabase
-jest.mock("@supabase/supabase-js", function () {
-  return {
-    createClient: jest.fn(),
-  };
-});
+jest.mock("@supabase/supabase-js", () => ({
+  createClient: jest.fn(),
+}));
 // Mock logger
-jest.mock("@/lib/logger", function () {
-  return {
-    logger: {
-      info: jest.fn(),
-      warn: jest.fn(),
-      error: jest.fn(),
-      debug: jest.fn(),
-    },
-  };
-});
-describe("SSOManager", function () {
+jest.mock("@/lib/logger", () => ({
+  logger: {
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
+describe("SSOManager", () => {
   var ssoManager;
   var mockSupabase;
-  beforeEach(function () {
+  beforeEach(() => {
     // Reset all mocks
     jest.clearAllMocks();
     // Mock Supabase client
@@ -180,31 +173,29 @@ describe("SSOManager", function () {
     // Create SSO manager instance
     ssoManager = new sso_manager_1.SSOManager("https://test.supabase.co", "test-key");
   });
-  describe("initialization", function () {
-    it("should initialize with default providers", function () {
+  describe("initialization", () => {
+    it("should initialize with default providers", () => {
       var providers = ssoManager.getAvailableProviders();
       expect(providers.length).toBeGreaterThan(0);
       // Check if Google provider exists
-      var googleProvider = providers.find(function (p) {
-        return p.id === "google";
-      });
+      var googleProvider = providers.find((p) => p.id === "google");
       expect(googleProvider).toBeDefined();
       expect(
         googleProvider === null || googleProvider === void 0 ? void 0 : googleProvider.enabled,
       ).toBe(true);
     });
-    it("should get configuration", function () {
+    it("should get configuration", () => {
       var config = ssoManager.getConfiguration();
       expect(config).toBeDefined();
       expect(config.providers).toBeDefined();
       expect(config.globalSettings).toBeDefined();
     });
   });
-  describe("generateAuthUrl", function () {
-    it("should generate auth URL for valid provider", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("generateAuthUrl", () => {
+    it("should generate auth URL for valid provider", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock fetch for storing auth request
@@ -227,11 +218,10 @@ describe("SSOManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should throw error for invalid provider", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should throw error for invalid provider", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -246,24 +236,23 @@ describe("SSOManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getDomainProvider", function () {
-    it("should return null for unknown domain", function () {
+  describe("getDomainProvider", () => {
+    it("should return null for unknown domain", () => {
       var provider = ssoManager.getDomainProvider("user@unknown.com");
       expect(provider).toBeNull();
     });
-    it("should handle invalid email", function () {
+    it("should handle invalid email", () => {
       var provider = ssoManager.getDomainProvider("invalid-email");
       expect(provider).toBeNull();
     });
   });
-  describe("validateSession", function () {
-    it("should return null for non-existent session", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("validateSession", () => {
+    it("should return null for non-existent session", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var session;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.single.mockResolvedValue({ data: null, error: new Error("Not found") });
@@ -274,12 +263,11 @@ describe("SSOManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should update last used timestamp for valid session", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should update last used timestamp for valid session", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSession, session;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSession = {
@@ -298,14 +286,13 @@ describe("SSOManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("logout", function () {
-    it("should delete session successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("logout", () => {
+    it("should delete session successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockSession;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSession = {
@@ -324,11 +311,10 @@ describe("SSOManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle non-existent session gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should handle non-existent session gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.single.mockResolvedValue({ data: null, error: new Error("Not found") });
@@ -341,15 +327,14 @@ describe("SSOManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("updateConfiguration", function () {
-    it("should update configuration successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("updateConfiguration", () => {
+    it("should update configuration successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var newConfig, config;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               mockSupabase.insert.mockResolvedValue({ data: null, error: null }); // For audit log
@@ -375,7 +360,6 @@ describe("SSOManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

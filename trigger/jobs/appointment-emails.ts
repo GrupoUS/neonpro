@@ -1,7 +1,7 @@
-import { createClient } from "@/app/utils/supabase/server";
 import { logger, task } from "@trigger.dev/sdk/v3";
 import { Resend } from "resend";
-import { JOB_IDS, type AppointmentJobPayload } from "../client";
+import { createClient } from "@/app/utils/supabase/server";
+import { type AppointmentJobPayload, JOB_IDS } from "../client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Complication Detection System - Main Export
  * Epic 10 - Story 10.3: Automated Complication Detection + Alerts (≥90% Accuracy)
@@ -10,15 +9,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -28,7 +27,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -38,13 +37,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,8 +56,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -66,9 +65,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -79,9 +76,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -140,7 +137,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Emergency =
   exports.COMPLICATION_DETECTION_CONSTANTS =
@@ -179,172 +176,118 @@ exports.generateComplicationStatistics = generateComplicationStatistics;
 var complication_detector_1 = require("./complication-detector");
 Object.defineProperty(exports, "ComplicationDetector", {
   enumerable: true,
-  get: function () {
-    return complication_detector_1.ComplicationDetector;
-  },
+  get: () => complication_detector_1.ComplicationDetector,
 });
 var alert_system_1 = require("./alert-system");
 Object.defineProperty(exports, "ComplicationAlertSystem", {
   enumerable: true,
-  get: function () {
-    return alert_system_1.ComplicationAlertSystem;
-  },
+  get: () => alert_system_1.ComplicationAlertSystem,
 });
 Object.defineProperty(exports, "complicationAlertSystem", {
   enumerable: true,
-  get: function () {
-    return alert_system_1.complicationAlertSystem;
-  },
+  get: () => alert_system_1.complicationAlertSystem,
 });
 // Configuration
 var config_1 = require("./config");
 Object.defineProperty(exports, "COMPLICATION_DETECTION_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.COMPLICATION_DETECTION_CONFIG;
-  },
+  get: () => config_1.COMPLICATION_DETECTION_CONFIG,
 });
 Object.defineProperty(exports, "DETECTION_MODELS", {
   enumerable: true,
-  get: function () {
-    return config_1.DETECTION_MODELS;
-  },
+  get: () => config_1.DETECTION_MODELS,
 });
 Object.defineProperty(exports, "EMERGENCY_CONTACTS", {
   enumerable: true,
-  get: function () {
-    return config_1.EMERGENCY_CONTACTS;
-  },
+  get: () => config_1.EMERGENCY_CONTACTS,
 });
 Object.defineProperty(exports, "ALERT_THRESHOLDS", {
   enumerable: true,
-  get: function () {
-    return config_1.ALERT_THRESHOLDS;
-  },
+  get: () => config_1.ALERT_THRESHOLDS,
 });
 Object.defineProperty(exports, "NOTIFICATION_PRIORITY", {
   enumerable: true,
-  get: function () {
-    return config_1.NOTIFICATION_PRIORITY;
-  },
+  get: () => config_1.NOTIFICATION_PRIORITY,
 });
 Object.defineProperty(exports, "COMPLICATION_RISK_WEIGHTS", {
   enumerable: true,
-  get: function () {
-    return config_1.COMPLICATION_RISK_WEIGHTS;
-  },
+  get: () => config_1.COMPLICATION_RISK_WEIGHTS,
 });
 Object.defineProperty(exports, "PROCESSING_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.PROCESSING_CONFIG;
-  },
+  get: () => config_1.PROCESSING_CONFIG,
 });
 Object.defineProperty(exports, "QUALITY_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.QUALITY_CONFIG;
-  },
+  get: () => config_1.QUALITY_CONFIG,
 });
 Object.defineProperty(exports, "ALERT_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.ALERT_CONFIG;
-  },
+  get: () => config_1.ALERT_CONFIG,
 });
 Object.defineProperty(exports, "PERFORMANCE_BENCHMARKS", {
   enumerable: true,
-  get: function () {
-    return config_1.PERFORMANCE_BENCHMARKS;
-  },
+  get: () => config_1.PERFORMANCE_BENCHMARKS,
 });
 Object.defineProperty(exports, "SECURITY_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.SECURITY_CONFIG;
-  },
+  get: () => config_1.SECURITY_CONFIG,
 });
 Object.defineProperty(exports, "validateConfiguration", {
   enumerable: true,
-  get: function () {
-    return config_1.validateConfiguration;
-  },
+  get: () => config_1.validateConfiguration,
 });
 Object.defineProperty(exports, "getModelByType", {
   enumerable: true,
-  get: function () {
-    return config_1.getModelByType;
-  },
+  get: () => config_1.getModelByType,
 });
 Object.defineProperty(exports, "getAlertLevelForRiskScore", {
   enumerable: true,
-  get: function () {
-    return config_1.getAlertLevelForRiskScore;
-  },
+  get: () => config_1.getAlertLevelForRiskScore,
 });
 Object.defineProperty(exports, "getNotificationTargetsForAlert", {
   enumerable: true,
-  get: function () {
-    return config_1.getNotificationTargetsForAlert;
-  },
+  get: () => config_1.getNotificationTargetsForAlert,
 });
 Object.defineProperty(exports, "calculateComplicationRiskScore", {
   enumerable: true,
-  get: function () {
-    return config_1.calculateComplicationRiskScore;
-  },
+  get: () => config_1.calculateComplicationRiskScore,
 });
 Object.defineProperty(exports, "updateModelConfig", {
   enumerable: true,
-  get: function () {
-    return config_1.updateModelConfig;
-  },
+  get: () => config_1.updateModelConfig,
 });
 Object.defineProperty(exports, "enableModel", {
   enumerable: true,
-  get: function () {
-    return config_1.enableModel;
-  },
+  get: () => config_1.enableModel,
 });
 Object.defineProperty(exports, "disableModel", {
   enumerable: true,
-  get: function () {
-    return config_1.disableModel;
-  },
+  get: () => config_1.disableModel,
 });
 Object.defineProperty(exports, "getEnabledModels", {
   enumerable: true,
-  get: function () {
-    return config_1.getEnabledModels;
-  },
+  get: () => config_1.getEnabledModels,
 });
 // Validation Schemas
 var types_1 = require("./types");
 Object.defineProperty(exports, "ComplicationDetectionRequestSchema", {
   enumerable: true,
-  get: function () {
-    return types_1.ComplicationDetectionRequestSchema;
-  },
+  get: () => types_1.ComplicationDetectionRequestSchema,
 });
 Object.defineProperty(exports, "ValidationRequestSchema", {
   enumerable: true,
-  get: function () {
-    return types_1.ValidationRequestSchema;
-  },
+  get: () => types_1.ValidationRequestSchema,
 });
 Object.defineProperty(exports, "AlertAcknowledgmentSchema", {
   enumerable: true,
-  get: function () {
-    return types_1.AlertAcknowledgmentSchema;
-  },
+  get: () => types_1.AlertAcknowledgmentSchema,
 });
 // Constants
 var types_2 = require("./types");
 Object.defineProperty(exports, "COMPLICATION_DETECTION_CONSTANTS", {
   enumerable: true,
-  get: function () {
-    return types_2.COMPLICATION_DETECTION_CONSTANTS;
-  },
+  get: () => types_2.COMPLICATION_DETECTION_CONSTANTS,
 });
 // Utility Functions
 var complication_detector_2 = require("./complication-detector");
@@ -357,10 +300,10 @@ var logger_1 = require("@/lib/utils/logger");
 function initializeComplicationDetectionSystem() {
   return __awaiter(this, void 0, void 0, function () {
     var configValidation, detector, alertSystem, isHealthy, error_1;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
-          _a.trys.push([0, 3, , 4]);
+          _a.trys.push([0, 3, undefined, 4]);
           logger_1.logger.info("Initializing Complication Detection System...");
           configValidation = (0, config_2.validateConfiguration)();
           if (!configValidation.isValid) {
@@ -405,7 +348,7 @@ function initializeComplicationDetectionSystem() {
 function processComplicationDetection(request) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, detector, alertSystem, result, alerts, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, initializeComplicationDetectionSystem()];
@@ -413,7 +356,7 @@ function processComplicationDetection(request) {
           (_a = _b.sent()), (detector = _a.detector), (alertSystem = _a.alertSystem);
           _b.label = 2;
         case 2:
-          _b.trys.push([2, 5, , 6]);
+          _b.trys.push([2, 5, undefined, 6]);
           return [4 /*yield*/, detector.detectComplications(request)];
         case 3:
           result = _b.sent();
@@ -445,11 +388,11 @@ function processComplicationDetection(request) {
  */
 function getSystemHealth() {
   return __awaiter(this, void 0, void 0, function () {
-    var _a, detector, alertSystem, isHealthy, detectorHealth, activeAlerts, error_3;
-    return __generator(this, function (_b) {
+    var _a, detector, alertSystem, isHealthy, detectorHealth, _activeAlerts, error_3;
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
-          _b.trys.push([0, 4, , 5]);
+          _b.trys.push([0, 4, undefined, 5]);
           return [4 /*yield*/, initializeComplicationDetectionSystem()];
         case 1:
           (_a = _b.sent()),
@@ -461,7 +404,7 @@ function getSystemHealth() {
           detectorHealth = _b.sent();
           return [4 /*yield*/, alertSystem.getActiveAlerts()];
         case 3:
-          activeAlerts = _b.sent();
+          _activeAlerts = _b.sent();
           return [
             2 /*return*/,
             {
@@ -541,7 +484,7 @@ function generateComplicationStatistics() {
     if (timeframe === void 0) {
       timeframe = "7_days";
     }
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         // This would typically query the database for actual statistics
         // For now, returning mock data that demonstrates the structure
@@ -640,18 +583,18 @@ exports.Emergency = {
   /**
    * Immediately alert all emergency contacts
    */
-  alertAllEmergencyContacts: function (patientId_1, message_1) {
+  alertAllEmergencyContacts: function (_patientId_1, _message_1) {
     return __awaiter(this, arguments, void 0, function (patientId, message, severity) {
-      var alertSystem, emergencyAlert, error_4;
+      var alertSystem, _emergencyAlert, error_4;
       if (severity === void 0) {
         severity = "critical";
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             alertSystem = alert_system_2.complicationAlertSystem;
-            emergencyAlert = {
+            _emergencyAlert = {
               id: "emergency_".concat(patientId, "_").concat(Date.now()),
               detectionResultId: "manual_emergency",
               patientId: patientId,
@@ -729,19 +672,17 @@ exports.Emergency = {
   /**
    * Get emergency contact information
    */
-  getEmergencyContacts: function () {
-    return EMERGENCY_CONTACTS;
-  },
+  getEmergencyContacts: () => EMERGENCY_CONTACTS,
   /**
    * Test emergency alert system
    */
   testEmergencySystem: function () {
     return __awaiter(this, void 0, void 0, function () {
       var configValidation, isHealthy, systemHealthy, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             logger_1.logger.info("Testing emergency alert system...");
             configValidation = (0, config_2.validateConfiguration)();
             return [4 /*yield*/, initializeComplicationDetectionSystem()];

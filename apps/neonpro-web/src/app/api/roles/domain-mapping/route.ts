@@ -1,6 +1,6 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/database.types";
+import type { createClient } from "@/lib/supabase/server";
 
 type RoleDomainMapping = Database["public"]["Tables"]["role_domain_mappings"]["Row"];
 

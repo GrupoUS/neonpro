@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AutomatedProtocolOptimization;
 var badge_1 = require("@/components/ui/badge");

@@ -5,8 +5,8 @@
  * Verifica conectividade com Supabase e URLs de callback
  */
 
-const https = require("https");
-const fs = require("fs");
+const https = require("node:https");
+const fs = require("node:fs");
 
 console.log("🧪 TESTE DE CONFIGURAÇÃO DE PRODUÇÃO");
 console.log("=".repeat(50));

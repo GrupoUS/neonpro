@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialInsights = FinancialInsights;
 var react_1 = require("react");
@@ -230,11 +229,9 @@ function FinancialInsights(_a) {
   var filteredInsights =
     selectedCategory === "all"
       ? mockInsights
-      : mockInsights.filter(function (insight) {
-          return insight.category === selectedCategory;
-        });
+      : mockInsights.filter((insight) => insight.category === selectedCategory);
   // Get priority color
-  var getPriorityColor = function (priority) {
+  var getPriorityColor = (priority) => {
     var colors = {
       low: "text-green-600 bg-green-50 border-green-200",
       medium: "text-yellow-600 bg-yellow-50 border-yellow-200",
@@ -244,7 +241,7 @@ function FinancialInsights(_a) {
     return colors[priority] || colors.medium;
   };
   // Get insight icon
-  var getInsightIcon = function (type) {
+  var getInsightIcon = (type) => {
     var icons = {
       opportunity: lucide_react_1.Lightbulb,
       risk: lucide_react_1.AlertTriangle,
@@ -255,7 +252,7 @@ function FinancialInsights(_a) {
     return icons[type] || lucide_react_1.Info;
   };
   // Get trend icon and color
-  var getTrendDisplay = function (direction, change) {
+  var getTrendDisplay = (direction, change) => {
     if (direction === "up") {
       return {
         icon: lucide_react_1.TrendingUp,
@@ -277,27 +274,23 @@ function FinancialInsights(_a) {
     }
   };
   // Format percentage
-  var formatPercentage = function (value) {
-    return "".concat(value > 0 ? "+" : "").concat(value.toFixed(1), "%");
-  };
+  var formatPercentage = (value) => "".concat(value > 0 ? "+" : "").concat(value.toFixed(1), "%");
   // Render loading state
   if (loading) {
     return (
       <div className={"space-y-6 ".concat(className)}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {__spreadArray([], Array(6), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardHeader>
-                  <skeleton_1.Skeleton className="h-6 w-32" />
-                  <skeleton_1.Skeleton className="h-4 w-48" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <skeleton_1.Skeleton className="h-20 w-full" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(6), true).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardHeader>
+                <skeleton_1.Skeleton className="h-6 w-32" />
+                <skeleton_1.Skeleton className="h-4 w-48" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <skeleton_1.Skeleton className="h-20 w-full" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -376,12 +369,7 @@ function FinancialInsights(_a) {
       </div>
 
       {/* Tabs */}
-      <tabs_1.Tabs
-        value={activeTab}
-        onValueChange={function (value) {
-          return setActiveTab(value);
-        }}
-      >
+      <tabs_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
         <tabs_1.TabsList>
           <tabs_1.TabsTrigger value="overview">Visão Geral</tabs_1.TabsTrigger>
           <tabs_1.TabsTrigger value="trends">Tendências</tabs_1.TabsTrigger>
@@ -399,10 +387,8 @@ function FinancialInsights(_a) {
             </h3>
 
             {mockInsights
-              .filter(function (insight) {
-                return insight.priority === "critical";
-              })
-              .map(function (insight) {
+              .filter((insight) => insight.priority === "critical")
+              .map((insight) => {
                 var Icon = getInsightIcon(insight.type);
                 return (
                   <alert_1.Alert key={insight.id} className="border-red-200 bg-red-50">
@@ -416,13 +402,11 @@ function FinancialInsights(_a) {
                         <div className="mt-2">
                           <strong>Ações recomendadas:</strong>
                           <ul className="list-disc list-inside mt-1">
-                            {insight.actions.slice(0, 2).map(function (action, index) {
-                              return (
-                                <li key={index} className="text-sm">
-                                  {action}
-                                </li>
-                              );
-                            })}
+                            {insight.actions.slice(0, 2).map((action, index) => (
+                              <li key={index} className="text-sm">
+                                {action}
+                              </li>
+                            ))}
                           </ul>
                         </div>
                       )}
@@ -438,11 +422,9 @@ function FinancialInsights(_a) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {mockInsights
-                .filter(function (insight) {
-                  return insight.priority !== "critical";
-                })
+                .filter((insight) => insight.priority !== "critical")
                 .slice(0, 4)
-                .map(function (insight) {
+                .map((insight) => {
                   var Icon = getInsightIcon(insight.type);
                   return (
                     <card_1.Card key={insight.id} className="hover:shadow-md transition-shadow">
@@ -492,7 +474,7 @@ function FinancialInsights(_a) {
         {/* Trends */}
         <tabs_1.TabsContent value="trends" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {mockTrends.map(function (trend) {
+            {mockTrends.map((trend) => {
               var _a = getTrendDisplay(trend.direction, trend.change),
                 TrendIcon = _a.icon,
                 color = _a.color,
@@ -547,63 +529,61 @@ function FinancialInsights(_a) {
         {/* Recommendations */}
         <tabs_1.TabsContent value="recommendations" className="space-y-6">
           <div className="space-y-6">
-            {mockRecommendations.map(function (rec) {
-              return (
-                <card_1.Card key={rec.id}>
-                  <card_1.CardHeader>
-                    <div className="flex items-start justify-between">
+            {mockRecommendations.map((rec) => (
+              <card_1.Card key={rec.id}>
+                <card_1.CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <card_1.CardTitle className="flex items-center gap-2">
+                        <lucide_react_1.Target className="h-5 w-5" />
+                        {rec.title}
+                      </card_1.CardTitle>
+                      <card_1.CardDescription>{rec.description}</card_1.CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <badge_1.Badge variant="outline">{rec.category}</badge_1.Badge>
+                      <badge_1.Badge className={getPriorityColor(rec.priority)}>
+                        {rec.priority}
+                      </badge_1.Badge>
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-3 gap-4 text-sm">
                       <div>
-                        <card_1.CardTitle className="flex items-center gap-2">
-                          <lucide_react_1.Target className="h-5 w-5" />
-                          {rec.title}
-                        </card_1.CardTitle>
-                        <card_1.CardDescription>{rec.description}</card_1.CardDescription>
+                        <div className="font-medium">Esforço</div>
+                        <div className="text-muted-foreground">{rec.effort}</div>
                       </div>
-                      <div className="flex gap-2">
-                        <badge_1.Badge variant="outline">{rec.category}</badge_1.Badge>
-                        <badge_1.Badge className={getPriorityColor(rec.priority)}>
-                          {rec.priority}
-                        </badge_1.Badge>
+                      <div>
+                        <div className="font-medium">Impacto</div>
+                        <div className="text-muted-foreground">{rec.impact}</div>
+                      </div>
+                      <div>
+                        <div className="font-medium">Timeline</div>
+                        <div className="text-muted-foreground">{rec.timeline}</div>
                       </div>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <div className="font-medium">Esforço</div>
-                          <div className="text-muted-foreground">{rec.effort}</div>
-                        </div>
-                        <div>
-                          <div className="font-medium">Impacto</div>
-                          <div className="text-muted-foreground">{rec.impact}</div>
-                        </div>
-                        <div>
-                          <div className="font-medium">Timeline</div>
-                          <div className="text-muted-foreground">{rec.timeline}</div>
-                        </div>
-                      </div>
 
-                      <div>
-                        <div className="font-medium mb-2">Passos de implementação:</div>
-                        <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
-                          {rec.steps.map(function (step, index) {
-                            return <li key={index}>{step}</li>;
-                          })}
-                        </ol>
-                      </div>
-
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                        <div className="font-medium text-green-800 mb-1">Resultado esperado:</div>
-                        <div className="text-green-700 text-sm">{rec.expectedOutcome}</div>
-                      </div>
-
-                      <button_1.Button className="w-full">Implementar Recomendação</button_1.Button>
+                    <div>
+                      <div className="font-medium mb-2">Passos de implementação:</div>
+                      <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+                        {rec.steps.map((step, index) => (
+                          <li key={index}>{step}</li>
+                        ))}
+                      </ol>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <div className="font-medium text-green-800 mb-1">Resultado esperado:</div>
+                      <div className="text-green-700 text-sm">{rec.expectedOutcome}</div>
+                    </div>
+
+                    <button_1.Button className="w-full">Implementar Recomendação</button_1.Button>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -611,10 +591,8 @@ function FinancialInsights(_a) {
         <tabs_1.TabsContent value="alerts" className="space-y-6">
           <div className="space-y-4">
             {mockInsights
-              .filter(function (insight) {
-                return insight.type === "alert" || insight.priority === "critical";
-              })
-              .map(function (insight) {
+              .filter((insight) => insight.type === "alert" || insight.priority === "critical")
+              .map((insight) => {
                 var Icon = getInsightIcon(insight.type);
                 return (
                   <alert_1.Alert
@@ -635,7 +613,7 @@ function FinancialInsights(_a) {
 
                         {insight.metrics && (
                           <div className="grid grid-cols-2 gap-4 text-sm">
-                            {Object.entries(insight.metrics).map(function (_a) {
+                            {Object.entries(insight.metrics).map((_a) => {
                               var key = _a[0],
                                 value = _a[1];
                               return (
@@ -654,13 +632,11 @@ function FinancialInsights(_a) {
                           <div>
                             <div className="font-medium mb-2">Ações recomendadas:</div>
                             <ul className="list-disc list-inside space-y-1">
-                              {insight.actions.map(function (action, index) {
-                                return (
-                                  <li key={index} className="text-sm">
-                                    {action}
-                                  </li>
-                                );
-                              })}
+                              {insight.actions.map((action, index) => (
+                                <li key={index} className="text-sm">
+                                  {action}
+                                </li>
+                              ))}
                             </ul>
                           </div>
                         )}

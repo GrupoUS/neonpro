@@ -5,18 +5,17 @@
  * Includes real-time monitoring, resource allocation, and performance tracking
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,10 +135,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -150,7 +147,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ForecastingDashboard;
 var react_1 = require("react");
@@ -168,7 +165,6 @@ var date_fns_1 = require("date-fns");
 var sonner_1 = require("sonner");
 var demand_forecasting_1 = require("@/types/demand-forecasting");
 function ForecastingDashboard(_a) {
-  var _this = this;
   var _b, _c, _d, _e;
   var className = _a.className;
   var _f = (0, react_1.useState)("overview"),
@@ -187,11 +183,11 @@ function ForecastingDashboard(_a) {
   // Query for current forecasts
   var _h = (0, react_query_1.useQuery)({
       queryKey: ["demand-forecasts", forecastParams],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var params, response, result;
           var _a;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 params = new URLSearchParams({
@@ -219,8 +215,7 @@ function ForecastingDashboard(_a) {
                 return [2 /*return*/, result.data];
             }
           });
-        });
-      },
+        }),
       refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
       staleTime: 2 * 60 * 1000, // Consider data stale after 2 minutes
     }),
@@ -230,10 +225,10 @@ function ForecastingDashboard(_a) {
   // Query for active alerts
   var _j = (0, react_query_1.useQuery)({
       queryKey: ["demand-alerts"],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [4 /*yield*/, fetch("/api/forecasting/alerts")];
@@ -248,8 +243,7 @@ function ForecastingDashboard(_a) {
                 return [2 /*return*/, result.success ? result.data : []];
             }
           });
-        });
-      },
+        }),
       refetchInterval: 30 * 1000, // Refresh every 30 seconds for alerts
     }),
     alerts = _j.data,
@@ -260,11 +254,11 @@ function ForecastingDashboard(_a) {
         "resource-allocations",
         forecasts === null || forecasts === void 0 ? void 0 : forecasts.forecasts,
       ],
-      queryFn: function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      queryFn: () =>
+        __awaiter(this, void 0, void 0, function () {
           var forecastIds, response, result;
           var _a;
-          return __generator(this, function (_b) {
+          return __generator(this, (_b) => {
             switch (_b.label) {
               case 0:
                 if (
@@ -275,9 +269,7 @@ function ForecastingDashboard(_a) {
                     : _a.length)
                 )
                   return [2 /*return*/, []];
-                forecastIds = forecasts.forecasts.map(function (f) {
-                  return f.id;
-                });
+                forecastIds = forecasts.forecasts.map((f) => f.id);
                 return [
                   4 /*yield*/,
                   fetch("/api/forecasting/resource-allocation", {
@@ -300,8 +292,7 @@ function ForecastingDashboard(_a) {
                 return [2 /*return*/, result.success ? result.data : null];
             }
           });
-        });
-      },
+        }),
       enabled: !!((_b =
         forecasts === null || forecasts === void 0 ? void 0 : forecasts.forecasts) === null ||
       _b === void 0
@@ -312,11 +303,11 @@ function ForecastingDashboard(_a) {
     resourceLoading = _k.isLoading;
   // Mutation for generating new forecasts
   var generateForecastMutation = (0, react_query_1.useMutation)({
-    mutationFn: function (params) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (params) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, result;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               return [
@@ -345,95 +336,79 @@ function ForecastingDashboard(_a) {
               return [2 /*return*/, result.data];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["demand-forecasts"] });
       sonner_1.toast.success("Demand forecast generated successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       sonner_1.toast.error("Failed to generate forecast: ".concat(error.message));
     },
   });
   // Calculate metrics
-  var metrics = react_1.default.useMemo(
-    function () {
-      var _a, _b;
-      if (!forecasts) {
-        return {
-          overall_accuracy: 0,
-          total_forecasts: 0,
-          active_alerts: 0,
-          confidence_average: 0,
-          trend_direction: "stable",
-        };
-      }
-      var activeAlerts =
-        (alerts === null || alerts === void 0
-          ? void 0
-          : alerts.filter(function (alert) {
-              return alert.status === "active";
-            }).length) || 0;
-      var confidenceAvg =
-        ((_a = forecasts.forecasts) === null || _a === void 0 ? void 0 : _a.length) > 0
-          ? forecasts.forecasts.reduce(function (sum, f) {
-              return sum + f.confidence_level;
-            }, 0) / forecasts.forecasts.length
-          : 0;
+  var metrics = react_1.default.useMemo(() => {
+    var _a, _b;
+    if (!forecasts) {
       return {
-        overall_accuracy: forecasts.accuracy || 0,
-        total_forecasts:
-          ((_b = forecasts.forecasts) === null || _b === void 0 ? void 0 : _b.length) || 0,
-        active_alerts: activeAlerts,
-        confidence_average: confidenceAvg,
-        trend_direction:
-          forecasts.accuracy >= demand_forecasting_1.FORECASTING_CONSTANTS.MIN_ACCURACY_THRESHOLD
-            ? "up"
-            : "down",
+        overall_accuracy: 0,
+        total_forecasts: 0,
+        active_alerts: 0,
+        confidence_average: 0,
+        trend_direction: "stable",
       };
-    },
-    [forecasts, alerts],
-  );
+    }
+    var activeAlerts =
+      (alerts === null || alerts === void 0
+        ? void 0
+        : alerts.filter((alert) => alert.status === "active").length) || 0;
+    var confidenceAvg =
+      ((_a = forecasts.forecasts) === null || _a === void 0 ? void 0 : _a.length) > 0
+        ? forecasts.forecasts.reduce((sum, f) => sum + f.confidence_level, 0) /
+          forecasts.forecasts.length
+        : 0;
+    return {
+      overall_accuracy: forecasts.accuracy || 0,
+      total_forecasts:
+        ((_b = forecasts.forecasts) === null || _b === void 0 ? void 0 : _b.length) || 0,
+      active_alerts: activeAlerts,
+      confidence_average: confidenceAvg,
+      trend_direction:
+        forecasts.accuracy >= demand_forecasting_1.FORECASTING_CONSTANTS.MIN_ACCURACY_THRESHOLD
+          ? "up"
+          : "down",
+    };
+  }, [forecasts, alerts]);
   // Transform data for charts
-  var chartData = react_1.default.useMemo(
-    function () {
-      if (!(forecasts === null || forecasts === void 0 ? void 0 : forecasts.forecasts)) return [];
-      return forecasts.forecasts.map(function (forecast) {
-        return {
-          date: (0, date_fns_1.format)((0, date_fns_1.parseISO)(forecast.period_start), "MMM dd"),
-          predicted_demand: forecast.predicted_demand,
-          confidence: Math.round(forecast.confidence_level * 100),
-          period: forecast.period_start,
-        };
-      });
-    },
-    [forecasts],
-  );
-  var handleRegenerateForecast = function () {
+  var chartData = react_1.default.useMemo(() => {
+    if (!(forecasts === null || forecasts === void 0 ? void 0 : forecasts.forecasts)) return [];
+    return forecasts.forecasts.map((forecast) => ({
+      date: (0, date_fns_1.format)((0, date_fns_1.parseISO)(forecast.period_start), "MMM dd"),
+      predicted_demand: forecast.predicted_demand,
+      confidence: Math.round(forecast.confidence_level * 100),
+      period: forecast.period_start,
+    }));
+  }, [forecasts]);
+  var handleRegenerateForecast = () => {
     generateForecastMutation.mutate(forecastParams);
   };
-  var handleExportData = function () {
+  var handleExportData = () => {
     if (!(forecasts === null || forecasts === void 0 ? void 0 : forecasts.forecasts)) {
       sonner_1.toast.error("No forecast data to export");
       return;
     }
-    var csvData = forecasts.forecasts.map(function (f) {
-      return {
-        ID: f.id,
-        Type: f.forecast_type,
-        "Service ID": f.service_id || "All Services",
-        "Period Start": f.period_start,
-        "Period End": f.period_end,
-        "Predicted Demand": f.predicted_demand,
-        "Confidence Level": Math.round(f.confidence_level * 100) + "%",
-        "Created At": f.created_at,
-      };
-    });
+    var csvData = forecasts.forecasts.map((f) => ({
+      ID: f.id,
+      Type: f.forecast_type,
+      "Service ID": f.service_id || "All Services",
+      "Period Start": f.period_start,
+      "Period End": f.period_end,
+      "Predicted Demand": f.predicted_demand,
+      "Confidence Level": Math.round(f.confidence_level * 100) + "%",
+      "Created At": f.created_at,
+    }));
     var csv = __spreadArray(
       [Object.keys(csvData[0]).join(",")],
-      csvData.map(function (row) {
-        return Object.values(row).join(",");
-      }),
+      csvData.map((row) => Object.values(row).join(",")),
       true,
     ).join("\n");
     var blob = new Blob([csv], { type: "text/csv" });
@@ -669,9 +644,9 @@ function ForecastingDashboard(_a) {
             <card_1.CardContent>
               {forecastsLoading
                 ? <div className="space-y-2">
-                    {__spreadArray([], Array(5), true).map(function (_, i) {
-                      return <skeleton_1.Skeleton key={i} className="h-12 w-full" />;
-                    })}
+                    {__spreadArray([], Array(5), true).map((_, i) => (
+                      <skeleton_1.Skeleton key={i} className="h-12 w-full" />
+                    ))}
                   </div>
                 : ((_d =
                       forecasts === null || forecasts === void 0 ? void 0 : forecasts.forecasts) ===
@@ -679,39 +654,37 @@ function ForecastingDashboard(_a) {
                       ? void 0
                       : _d.length) > 0
                   ? <div className="space-y-2">
-                      {forecasts.forecasts.map(function (forecast) {
-                        return (
-                          <div
-                            key={forecast.id}
-                            className="flex items-center justify-between p-3 border rounded-lg"
-                          >
-                            <div className="space-y-1">
-                              <p className="text-sm font-medium">
-                                {forecast.forecast_type.replace("_", " ").toUpperCase()}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {(0, date_fns_1.format)(
-                                  (0, date_fns_1.parseISO)(forecast.period_start),
-                                  "MMM dd, yyyy",
-                                )}{" "}
-                                -
-                                {(0, date_fns_1.format)(
-                                  (0, date_fns_1.parseISO)(forecast.period_end),
-                                  "MMM dd, yyyy",
-                                )}
-                              </p>
-                            </div>
-                            <div className="text-right space-y-1">
-                              <p className="text-sm font-bold">
-                                {forecast.predicted_demand} appointments
-                              </p>
-                              <badge_1.Badge variant="outline">
-                                {Math.round(forecast.confidence_level * 100)}% confidence
-                              </badge_1.Badge>
-                            </div>
+                      {forecasts.forecasts.map((forecast) => (
+                        <div
+                          key={forecast.id}
+                          className="flex items-center justify-between p-3 border rounded-lg"
+                        >
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium">
+                              {forecast.forecast_type.replace("_", " ").toUpperCase()}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {(0, date_fns_1.format)(
+                                (0, date_fns_1.parseISO)(forecast.period_start),
+                                "MMM dd, yyyy",
+                              )}{" "}
+                              -
+                              {(0, date_fns_1.format)(
+                                (0, date_fns_1.parseISO)(forecast.period_end),
+                                "MMM dd, yyyy",
+                              )}
+                            </p>
                           </div>
-                        );
-                      })}
+                          <div className="text-right space-y-1">
+                            <p className="text-sm font-bold">
+                              {forecast.predicted_demand} appointments
+                            </p>
+                            <badge_1.Badge variant="outline">
+                              {Math.round(forecast.confidence_level * 100)}% confidence
+                            </badge_1.Badge>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   : <div className="text-center py-6">
                       <p className="text-muted-foreground">No forecasts available</p>
@@ -738,9 +711,9 @@ function ForecastingDashboard(_a) {
             <card_1.CardContent>
               {resourceLoading
                 ? <div className="space-y-2">
-                    {__spreadArray([], Array(3), true).map(function (_, i) {
-                      return <skeleton_1.Skeleton key={i} className="h-16 w-full" />;
-                    })}
+                    {__spreadArray([], Array(3), true).map((_, i) => (
+                      <skeleton_1.Skeleton key={i} className="h-16 w-full" />
+                    ))}
                   </div>
                 : ((_e =
                       resourceAllocations === null || resourceAllocations === void 0
@@ -749,7 +722,7 @@ function ForecastingDashboard(_a) {
                       ? void 0
                       : _e.length) > 0
                   ? <div className="space-y-3">
-                      {resourceAllocations.recommendations.map(function (allocation) {
+                      {resourceAllocations.recommendations.map((allocation) => {
                         var _a;
                         return (
                           <div
@@ -807,26 +780,24 @@ function ForecastingDashboard(_a) {
             <card_1.CardContent>
               {alertsLoading
                 ? <div className="space-y-2">
-                    {__spreadArray([], Array(3), true).map(function (_, i) {
-                      return <skeleton_1.Skeleton key={i} className="h-12 w-full" />;
-                    })}
+                    {__spreadArray([], Array(3), true).map((_, i) => (
+                      <skeleton_1.Skeleton key={i} className="h-12 w-full" />
+                    ))}
                   </div>
                 : (alerts === null || alerts === void 0 ? void 0 : alerts.length) > 0
                   ? <div className="space-y-2">
-                      {alerts.map(function (alert) {
-                        return (
-                          <alert_1.Alert
-                            key={alert.id}
-                            variant={alert.severity === "critical" ? "destructive" : "default"}
-                          >
-                            <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                            <alert_1.AlertTitle className="capitalize">
-                              {alert.alert_type.replace("_", " ")} - {alert.severity}
-                            </alert_1.AlertTitle>
-                            <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
-                          </alert_1.Alert>
-                        );
-                      })}
+                      {alerts.map((alert) => (
+                        <alert_1.Alert
+                          key={alert.id}
+                          variant={alert.severity === "critical" ? "destructive" : "default"}
+                        >
+                          <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                          <alert_1.AlertTitle className="capitalize">
+                            {alert.alert_type.replace("_", " ")} - {alert.severity}
+                          </alert_1.AlertTitle>
+                          <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
+                        </alert_1.Alert>
+                      ))}
                     </div>
                   : <div className="text-center py-6">
                       <lucide_react_1.CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-2" />

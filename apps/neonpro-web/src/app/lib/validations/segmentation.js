@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // PATIENT SEGMENTATION VALIDATION SCHEMAS
 // Epic 7 - Story 7.1: Zod validation schemas for patient segmentation and AI insights
@@ -122,13 +121,13 @@ exports.RuleConditionSchema = zod_1.z.object({
   value: zod_1.z.any(),
   weight: zod_1.z.number().min(0).max(1).optional(),
 });
-exports.RuleLogicSchema = zod_1.z.lazy(function () {
-  return zod_1.z.object({
+exports.RuleLogicSchema = zod_1.z.lazy(() =>
+  zod_1.z.object({
     conditions: zod_1.z.array(exports.RuleConditionSchema),
     operator: zod_1.z.enum(["AND", "OR"]),
     nested_rules: zod_1.z.array(exports.RuleLogicSchema).optional(),
-  });
-});
+  }),
+);
 // =====================================================================================
 // PATIENT SEGMENT SCHEMAS
 // =====================================================================================
@@ -321,15 +320,10 @@ exports.SegmentPerformanceSchema = zod_1.z
     // Metadata
     calculated_at: zod_1.z.string().datetime(),
   })
-  .refine(
-    function (data) {
-      return new Date(data.period_start) < new Date(data.period_end);
-    },
-    {
-      message: "Period start must be before period end",
-      path: ["period_end"],
-    },
-  );
+  .refine((data) => new Date(data.period_start) < new Date(data.period_end), {
+    message: "Period start must be before period end",
+    path: ["period_end"],
+  });
 // =====================================================================================
 // AI MODEL SCHEMAS
 // =====================================================================================

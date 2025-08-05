@@ -5,15 +5,32 @@
 
 "use client";
 
+import type {
+  AlertTriangle,
+  Brain,
+  CheckCircle,
+  Clock,
+  Download,
+  Info,
+  Pause,
+  Play,
+  RotateCcw,
+  Save,
+  Settings,
+  Shield,
+  Target,
+  Upload,
+  Users,
+  Zap,
+} from "lucide-react";
 import React, { useState } from "react";
-import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Switch } from "@/components/ui/switch";
-import type { Slider } from "@/components/ui/slider";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -21,27 +38,10 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { Slider } from "@/components/ui/slider";
+import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Progress } from "@/components/ui/progress";
-import type {
-  Settings,
-  Brain,
-  Target,
-  Zap,
-  Shield,
-  Clock,
-  Users,
-  AlertTriangle,
-  CheckCircle,
-  Info,
-  Save,
-  RotateCcw,
-  Play,
-  Pause,
-  Upload,
-  Download,
-} from "lucide-react";
+import type { Textarea } from "@/components/ui/textarea";
 
 interface ModelConfiguration {
   id: string;

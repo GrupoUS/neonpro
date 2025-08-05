@@ -9,26 +9,22 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type { CalendarIcon, Plus, X, Save, ArrowLeft } from "lucide-react";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
-
+import type { ArrowLeft, CalendarIcon, Plus, Save, X } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
 import type { Calendar } from "@/components/ui/calendar";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import type {
   Form,
   FormControl,
@@ -38,28 +34,30 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Separator } from "@/components/ui/separator";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useToast } from "@/hooks/use-toast";
-
-import type {
-  TreatmentPlan,
-  TreatmentPlanStatus,
-  TreatmentPlanIntent,
-  TreatmentPlanActivity,
-  createTreatmentPlanSchema,
-  CreateTreatmentPlanData,
-} from "@/lib/types/treatment";
-import type { Patient } from "@/lib/types/fhir";
-import type { createTreatmentPlan, updateTreatmentPlan } from "@/lib/supabase/treatments";
 import type { searchPatients } from "@/lib/supabase/patients";
+import type { createTreatmentPlan, updateTreatmentPlan } from "@/lib/supabase/treatments";
+import type { Patient } from "@/lib/types/fhir";
+import type {
+  CreateTreatmentPlanData,
+  createTreatmentPlanSchema,
+  TreatmentPlan,
+  TreatmentPlanActivity,
+  TreatmentPlanIntent,
+  TreatmentPlanStatus,
+} from "@/lib/types/treatment";
 import type { cn } from "@/lib/utils";
 
 interface TreatmentPlanFormProps {

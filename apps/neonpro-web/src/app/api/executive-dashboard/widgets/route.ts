@@ -3,8 +3,8 @@
 // GET/PUT /api/executive-dashboard/widgets
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { executiveDashboardService } from "@/lib/services/executive-dashboard";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {

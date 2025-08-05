@@ -1,5 +1,20 @@
 "use client";
 
+import type {
+  Calendar,
+  Clock,
+  FileText,
+  Filter,
+  Mail,
+  MessageCircle,
+  Phone,
+  Plus,
+  Search,
+  User,
+  Video,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -21,21 +36,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Calendar,
-  Clock,
-  FileText,
-  Filter,
-  Mail,
-  MessageCircle,
-  Phone,
-  Plus,
-  Search,
-  User,
-  Video,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 
 interface CommunicationLog {
   id: string;

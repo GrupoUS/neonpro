@@ -1,17 +1,16 @@
-"use strict";
 // AI-Powered Health Trend Monitoring Engine
 // Story 3.2: Task 5 - Health Trend Monitoring Engine
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,10 +130,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -145,11 +142,11 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthTrendMonitor = void 0;
 var client_1 = require("@/lib/supabase/client");
-var HealthTrendMonitor = /** @class */ (function () {
+var HealthTrendMonitor = /** @class */ (() => {
   function HealthTrendMonitor() {
     this.supabase = (0, client_1.createClient)();
     this.trendCache = new Map();
@@ -296,12 +293,8 @@ var HealthTrendMonitor = /** @class */ (function () {
             recentTrends = _a.sent(); // Last 30 days
             anomalies = this.analyzeDataPointAnomalies(newHealthData, recentTrends);
             alerts = anomalies
-              .filter(function (anomaly) {
-                return anomaly.severity >= _this.alertThresholds.minimumSeverity;
-              })
-              .map(function (anomaly) {
-                return _this.createTrendAlert(patientId, anomaly, newHealthData);
-              });
+              .filter((anomaly) => anomaly.severity >= _this.alertThresholds.minimumSeverity)
+              .map((anomaly) => _this.createTrendAlert(patientId, anomaly, newHealthData));
             // Update trend cache
             this.updateTrendCache(patientId, newHealthData);
             return [2 /*return*/, alerts];
@@ -339,20 +332,12 @@ var HealthTrendMonitor = /** @class */ (function () {
               executiveSummary: this.generateExecutiveSummary(trends),
               keyMetrics: this.calculateKeyMetrics(trends),
               trendAnalysis: {
-                improving: trends.vitalSignsTrends.filter(function (t) {
-                  return t.direction === "improving";
-                }),
-                stable: trends.vitalSignsTrends.filter(function (t) {
-                  return t.direction === "stable";
-                }),
-                concerning: trends.vitalSignsTrends.filter(function (t) {
-                  return t.direction === "deteriorating";
-                }),
+                improving: trends.vitalSignsTrends.filter((t) => t.direction === "improving"),
+                stable: trends.vitalSignsTrends.filter((t) => t.direction === "stable"),
+                concerning: trends.vitalSignsTrends.filter((t) => t.direction === "deteriorating"),
               },
               riskAssessment: this.assessTrendBasedRisks(trends),
-              recommendations: trends.insights.map(function (insight) {
-                return insight.recommendation;
-              }),
+              recommendations: trends.insights.map((insight) => insight.recommendation),
               nextReviewDate: this.calculateNextReviewDate(trends.healthTrajectoryScore),
               reportGeneratedDate: new Date(),
             };
@@ -509,9 +494,7 @@ var HealthTrendMonitor = /** @class */ (function () {
               cutoffDate_1 = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
               return [
                 2 /*return*/,
-                cached.filter(function (trend) {
-                  return new Date(trend.lastUpdated) >= cutoffDate_1;
-                }),
+                cached.filter((trend) => new Date(trend.lastUpdated) >= cutoffDate_1),
               ];
             }
             return [4 /*yield*/, this.getPatientHealthData(patientId)];
@@ -574,7 +557,7 @@ var HealthTrendMonitor = /** @class */ (function () {
         trends = [];
         symptomGroups = this.groupSymptomsByType(symptoms);
         // Analyze each symptom type for trends
-        Object.entries(symptomGroups).forEach(function (_a) {
+        Object.entries(symptomGroups).forEach((_a) => {
           var symptomType = _a[0],
             symptomData = _a[1];
           var trend = _this.analyzeSymptomTypeTrend(symptomType, symptomData);
@@ -645,30 +628,16 @@ var HealthTrendMonitor = /** @class */ (function () {
   // Specific trend analysis methods
   HealthTrendMonitor.prototype.analyzeBPTrend = function (vitalSigns) {
     var bpReadings = vitalSigns
-      .filter(function (vs) {
-        return vs.systolic && vs.diastolic;
-      })
-      .map(function (vs) {
-        return {
-          date: new Date(vs.created_at),
-          systolic: vs.systolic,
-          diastolic: vs.diastolic,
-        };
-      })
-      .sort(function (a, b) {
-        return a.date.getTime() - b.date.getTime();
-      });
+      .filter((vs) => vs.systolic && vs.diastolic)
+      .map((vs) => ({
+        date: new Date(vs.created_at),
+        systolic: vs.systolic,
+        diastolic: vs.diastolic,
+      }))
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
     if (bpReadings.length < 3) return null;
-    var systolicTrend = this.calculateLinearTrend(
-      bpReadings.map(function (r) {
-        return r.systolic;
-      }),
-    );
-    var diastolicTrend = this.calculateLinearTrend(
-      bpReadings.map(function (r) {
-        return r.diastolic;
-      }),
-    );
+    var systolicTrend = this.calculateLinearTrend(bpReadings.map((r) => r.systolic));
+    var diastolicTrend = this.calculateLinearTrend(bpReadings.map((r) => r.diastolic));
     var direction = this.determineTrendDirection(systolicTrend.slope, diastolicTrend.slope);
     var significance = this.calculateTrendSignificance(
       systolicTrend.rSquared,
@@ -693,24 +662,14 @@ var HealthTrendMonitor = /** @class */ (function () {
   };
   HealthTrendMonitor.prototype.analyzeHRTrend = function (vitalSigns) {
     var hrReadings = vitalSigns
-      .filter(function (vs) {
-        return vs.heart_rate;
-      })
-      .map(function (vs) {
-        return {
-          date: new Date(vs.created_at),
-          heartRate: vs.heart_rate,
-        };
-      })
-      .sort(function (a, b) {
-        return a.date.getTime() - b.date.getTime();
-      });
+      .filter((vs) => vs.heart_rate)
+      .map((vs) => ({
+        date: new Date(vs.created_at),
+        heartRate: vs.heart_rate,
+      }))
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
     if (hrReadings.length < 3) return null;
-    var trend = this.calculateLinearTrend(
-      hrReadings.map(function (r) {
-        return r.heartRate;
-      }),
-    );
+    var trend = this.calculateLinearTrend(hrReadings.map((r) => r.heartRate));
     var direction = this.determineTrendDirection(trend.slope);
     var significance = this.calculateTrendSignificance(trend.rSquared);
     return {
@@ -732,24 +691,14 @@ var HealthTrendMonitor = /** @class */ (function () {
   };
   HealthTrendMonitor.prototype.analyzeWeightTrend = function (vitalSigns) {
     var weightReadings = vitalSigns
-      .filter(function (vs) {
-        return vs.weight;
-      })
-      .map(function (vs) {
-        return {
-          date: new Date(vs.created_at),
-          weight: vs.weight,
-        };
-      })
-      .sort(function (a, b) {
-        return a.date.getTime() - b.date.getTime();
-      });
+      .filter((vs) => vs.weight)
+      .map((vs) => ({
+        date: new Date(vs.created_at),
+        weight: vs.weight,
+      }))
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
     if (weightReadings.length < 3) return null;
-    var trend = this.calculateLinearTrend(
-      weightReadings.map(function (r) {
-        return r.weight;
-      }),
-    );
+    var trend = this.calculateLinearTrend(weightReadings.map((r) => r.weight));
     var direction = this.determineTrendDirection(trend.slope);
     var significance = this.calculateTrendSignificance(trend.rSquared);
     return {
@@ -771,24 +720,14 @@ var HealthTrendMonitor = /** @class */ (function () {
   };
   HealthTrendMonitor.prototype.analyzeBMITrend = function (vitalSigns) {
     var bmiReadings = vitalSigns
-      .filter(function (vs) {
-        return vs.weight && vs.height;
-      })
-      .map(function (vs) {
-        return {
-          date: new Date(vs.created_at),
-          bmi: vs.weight / Math.pow(vs.height / 100, 2),
-        };
-      })
-      .sort(function (a, b) {
-        return a.date.getTime() - b.date.getTime();
-      });
+      .filter((vs) => vs.weight && vs.height)
+      .map((vs) => ({
+        date: new Date(vs.created_at),
+        bmi: vs.weight / (vs.height / 100) ** 2,
+      }))
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
     if (bmiReadings.length < 3) return null;
-    var trend = this.calculateLinearTrend(
-      bmiReadings.map(function (r) {
-        return r.bmi;
-      }),
-    );
+    var trend = this.calculateLinearTrend(bmiReadings.map((r) => r.bmi));
     var direction = this.determineTrendDirection(trend.slope);
     var significance = this.calculateTrendSignificance(trend.rSquared);
     return {
@@ -809,59 +748,44 @@ var HealthTrendMonitor = /** @class */ (function () {
     };
   };
   // Utility methods
-  HealthTrendMonitor.prototype.calculateLinearTrend = function (values) {
+  HealthTrendMonitor.prototype.calculateLinearTrend = (values) => {
     var n = values.length;
-    var x = Array.from({ length: n }, function (_, i) {
-      return i;
-    });
-    var sumX = x.reduce(function (sum, val) {
-      return sum + val;
-    }, 0);
-    var sumY = values.reduce(function (sum, val) {
-      return sum + val;
-    }, 0);
-    var sumXY = x.reduce(function (sum, val, i) {
-      return sum + val * values[i];
-    }, 0);
-    var sumXX = x.reduce(function (sum, val) {
-      return sum + val * val;
-    }, 0);
-    var sumYY = values.reduce(function (sum, val) {
-      return sum + val * val;
-    }, 0);
+    var x = Array.from({ length: n }, (_, i) => i);
+    var sumX = x.reduce((sum, val) => sum + val, 0);
+    var sumY = values.reduce((sum, val) => sum + val, 0);
+    var sumXY = x.reduce((sum, val, i) => sum + val * values[i], 0);
+    var sumXX = x.reduce((sum, val) => sum + val * val, 0);
+    var sumYY = values.reduce((sum, val) => sum + val * val, 0);
     var slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     var intercept = (sumY - slope * sumX) / n;
     // Calculate R-squared
     var meanY = sumY / n;
-    var ssTotal = values.reduce(function (sum, val) {
-      return sum + Math.pow(val - meanY, 2);
-    }, 0);
-    var ssResidual = values.reduce(function (sum, val, i) {
+    var ssTotal = values.reduce((sum, val) => sum + (val - meanY) ** 2, 0);
+    var ssResidual = values.reduce((sum, val, i) => {
       var predicted = slope * i + intercept;
-      return sum + Math.pow(val - predicted, 2);
+      return sum + (val - predicted) ** 2;
     }, 0);
     var rSquared = 1 - ssResidual / ssTotal;
     return { slope: slope, intercept: intercept, rSquared: rSquared };
   };
-  HealthTrendMonitor.prototype.determineTrendDirection = function (slope, slope2) {
+  HealthTrendMonitor.prototype.determineTrendDirection = (slope, slope2) => {
     var avgSlope = slope2 !== undefined ? (slope + slope2) / 2 : slope;
     if (Math.abs(avgSlope) < 0.01) return "stable";
     return avgSlope > 0 ? "improving" : "deteriorating";
   };
-  HealthTrendMonitor.prototype.calculateTrendSignificance = function (rSquared, rSquared2) {
+  HealthTrendMonitor.prototype.calculateTrendSignificance = (rSquared, rSquared2) => {
     var avgRSquared = rSquared2 !== undefined ? (rSquared + rSquared2) / 2 : rSquared;
     if (avgRSquared > 0.7) return "high";
     if (avgRSquared > 0.4) return "medium";
     return "low";
   };
-  HealthTrendMonitor.prototype.calculateTimeframe = function (startDate, endDate) {
-    return Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-  };
-  HealthTrendMonitor.prototype.generateBPTrendDescription = function (
+  HealthTrendMonitor.prototype.calculateTimeframe = (startDate, endDate) =>
+    Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+  HealthTrendMonitor.prototype.generateBPTrendDescription = (
     direction,
     systolicTrend,
     diastolicTrend,
-  ) {
+  ) => {
     if (direction === "stable") {
       return "Blood pressure readings remain stable within normal range";
     }
@@ -894,100 +818,96 @@ var HealthTrendMonitor = /** @class */ (function () {
     return "none";
   };
   // Additional helper methods (simplified implementations)
-  HealthTrendMonitor.prototype.generateHRTrendDescription = function (direction, trend) {
+  HealthTrendMonitor.prototype.generateHRTrendDescription = (direction, trend) => {
     return "Heart rate showing ".concat(direction, " trend"); // Simplified
   };
-  HealthTrendMonitor.prototype.calculateHRAlertLevel = function (direction, trend) {
+  HealthTrendMonitor.prototype.calculateHRAlertLevel = (direction, trend) => {
     return "none"; // Simplified
   };
-  HealthTrendMonitor.prototype.generateWeightTrendDescription = function (direction, trend) {
+  HealthTrendMonitor.prototype.generateWeightTrendDescription = (direction, trend) => {
     return "Weight showing ".concat(direction, " trend"); // Simplified
   };
-  HealthTrendMonitor.prototype.calculateWeightAlertLevel = function (direction, trend) {
+  HealthTrendMonitor.prototype.calculateWeightAlertLevel = (direction, trend) => {
     return "none"; // Simplified
   };
-  HealthTrendMonitor.prototype.generateBMITrendDescription = function (direction, trend) {
+  HealthTrendMonitor.prototype.generateBMITrendDescription = (direction, trend) => {
     return "BMI showing ".concat(direction, " trend"); // Simplified
   };
-  HealthTrendMonitor.prototype.calculateBMIAlertLevel = function (direction, trend) {
+  HealthTrendMonitor.prototype.calculateBMIAlertLevel = (direction, trend) => {
     return "none"; // Simplified
   };
-  HealthTrendMonitor.prototype.groupSymptomsByType = function (symptoms) {
-    return symptoms.reduce(function (groups, symptom) {
+  HealthTrendMonitor.prototype.groupSymptomsByType = (symptoms) =>
+    symptoms.reduce((groups, symptom) => {
       var type = symptom.type || "general";
       if (!groups[type]) groups[type] = [];
       groups[type].push(symptom);
       return groups;
     }, {});
-  };
-  HealthTrendMonitor.prototype.analyzeSymptomTypeTrend = function (symptomType, symptoms) {
+  HealthTrendMonitor.prototype.analyzeSymptomTypeTrend = (symptomType, symptoms) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeTreatmentEffectiveness = function (treatmentSessions) {
+  HealthTrendMonitor.prototype.analyzeTreatmentEffectiveness = (treatmentSessions) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeSideEffectsTrend = function (treatmentSessions) {
+  HealthTrendMonitor.prototype.analyzeSideEffectsTrend = (treatmentSessions) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeRecoveryTimeTrend = function (treatmentSessions) {
+  HealthTrendMonitor.prototype.analyzeRecoveryTimeTrend = (treatmentSessions) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeOverallRecovery = function (
-    treatmentSessions,
-    healthAssessments,
-  ) {
+  HealthTrendMonitor.prototype.analyzeOverallRecovery = (treatmentSessions, healthAssessments) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeHealingRate = function (treatmentSessions) {
+  HealthTrendMonitor.prototype.analyzeHealingRate = (treatmentSessions) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeOverallSatisfactionTrend = function (satisfactionScores) {
+  HealthTrendMonitor.prototype.analyzeOverallSatisfactionTrend = (satisfactionScores) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeSatisfactionDimensionTrends = function (satisfactionScores) {
+  HealthTrendMonitor.prototype.analyzeSatisfactionDimensionTrends = (satisfactionScores) => {
     return []; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeComplianceTrend = function (healthData) {
+  HealthTrendMonitor.prototype.analyzeComplianceTrend = (healthData) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.analyzeLifestyleTrend = function (healthData) {
+  HealthTrendMonitor.prototype.analyzeLifestyleTrend = (healthData) => {
     return null; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.identifyTrendAnomalies = function (trends) {
+  HealthTrendMonitor.prototype.identifyTrendAnomalies = (trends) => {
     return []; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.generateTrendAlerts = function (anomalies, patientId) {
+  HealthTrendMonitor.prototype.generateTrendAlerts = (anomalies, patientId) => {
     return []; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.calculateHealthTrajectoryScore = function (
+  HealthTrendMonitor.prototype.calculateHealthTrajectoryScore = (
     vitalSignsTrends,
     symptomTrends,
     treatmentResponseTrends,
     recoveryTrends,
-  ) {
+  ) => {
     return 7.5; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.generateTrendInsights = function (
+  HealthTrendMonitor.prototype.generateTrendInsights = (
     vitalSignsTrends,
     symptomTrends,
     treatmentResponseTrends,
     recoveryTrends,
     satisfactionTrends,
     behavioralHealthTrends,
-  ) {
+  ) => {
     return []; // Simplified implementation
   };
   HealthTrendMonitor.prototype.predictFutureTrends = function (healthData, currentTrends) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
-  HealthTrendMonitor.prototype.generateMonitoringRecommendations = function (alerts, insights) {
+  HealthTrendMonitor.prototype.generateMonitoringRecommendations = (alerts, insights) => {
     return ["Continue regular monitoring"]; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.calculateTimeWindow = function (timeframe) {
+  HealthTrendMonitor.prototype.calculateTimeWindow = (timeframe) => {
     var end = new Date();
     var start = new Date();
     switch (timeframe) {
@@ -1014,63 +934,53 @@ var HealthTrendMonitor = /** @class */ (function () {
     // Add logic to update trends with new data
     this.trendCache.set(patientId, trends);
   };
-  HealthTrendMonitor.prototype.analyzeDataPointAnomalies = function (newData, recentTrends) {
+  HealthTrendMonitor.prototype.analyzeDataPointAnomalies = (newData, recentTrends) => {
     return []; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.createTrendAlert = function (patientId, anomaly, data) {
-    return {
-      id: "alert_".concat(Date.now()),
-      patientId: patientId,
-      type: "trend_anomaly",
-      severity: anomaly.severity,
-      title: "Health trend anomaly detected",
-      description: anomaly.description,
-      dataPoint: data,
-      createdAt: new Date(),
-      acknowledged: false,
-    };
-  };
-  HealthTrendMonitor.prototype.initializeAlertThresholds = function () {
-    return {
-      minimumSeverity: 0.7,
-      vitalSigns: {
-        bloodPressure: { systolic: { min: 90, max: 140 }, diastolic: { min: 60, max: 90 } },
-        heartRate: { min: 60, max: 100 },
-        weight: { changeThreshold: 5 }, // kg per month
-        bmi: { changeThreshold: 1 }, // units per month
-      },
-      symptoms: {
-        severityThreshold: 7, // 1-10 scale
-        frequencyThreshold: 3, // occurrences per week
-      },
-      treatment: {
-        effectivenessThreshold: 0.7,
-        sideEffectThreshold: 0.3,
-      },
-    };
-  };
+  HealthTrendMonitor.prototype.createTrendAlert = (patientId, anomaly, data) => ({
+    id: "alert_".concat(Date.now()),
+    patientId: patientId,
+    type: "trend_anomaly",
+    severity: anomaly.severity,
+    title: "Health trend anomaly detected",
+    description: anomaly.description,
+    dataPoint: data,
+    createdAt: new Date(),
+    acknowledged: false,
+  });
+  HealthTrendMonitor.prototype.initializeAlertThresholds = () => ({
+    minimumSeverity: 0.7,
+    vitalSigns: {
+      bloodPressure: { systolic: { min: 90, max: 140 }, diastolic: { min: 60, max: 90 } },
+      heartRate: { min: 60, max: 100 },
+      weight: { changeThreshold: 5 }, // kg per month
+      bmi: { changeThreshold: 1 }, // units per month
+    },
+    symptoms: {
+      severityThreshold: 7, // 1-10 scale
+      frequencyThreshold: 3, // occurrences per week
+    },
+    treatment: {
+      effectivenessThreshold: 0.7,
+      sideEffectThreshold: 0.3,
+    },
+  });
   // Additional methods for report generation and predictions (simplified)
   HealthTrendMonitor.prototype.calculateReportPeriod = function (timeframe) {
     return this.calculateTimeWindow(timeframe);
   };
-  HealthTrendMonitor.prototype.generateExecutiveSummary = function (trends) {
+  HealthTrendMonitor.prototype.generateExecutiveSummary = (trends) => {
     return "Overall health trends are stable with some areas for improvement."; // Simplified
   };
-  HealthTrendMonitor.prototype.calculateKeyMetrics = function (trends) {
-    return {
-      overallScore: trends.healthTrajectoryScore,
-      improvingTrends: trends.vitalSignsTrends.filter(function (t) {
-        return t.direction === "improving";
-      }).length,
-      concerningTrends: trends.vitalSignsTrends.filter(function (t) {
-        return t.direction === "deteriorating";
-      }).length,
-    };
-  };
-  HealthTrendMonitor.prototype.assessTrendBasedRisks = function (trends) {
+  HealthTrendMonitor.prototype.calculateKeyMetrics = (trends) => ({
+    overallScore: trends.healthTrajectoryScore,
+    improvingTrends: trends.vitalSignsTrends.filter((t) => t.direction === "improving").length,
+    concerningTrends: trends.vitalSignsTrends.filter((t) => t.direction === "deteriorating").length,
+  });
+  HealthTrendMonitor.prototype.assessTrendBasedRisks = (trends) => {
     return ["Monitor blood pressure trends"]; // Simplified
   };
-  HealthTrendMonitor.prototype.calculateNextReviewDate = function (healthScore) {
+  HealthTrendMonitor.prototype.calculateNextReviewDate = (healthScore) => {
     var reviewDate = new Date();
     reviewDate.setDate(reviewDate.getDate() + (healthScore > 8 ? 30 : 14));
     return reviewDate;
@@ -1082,24 +992,24 @@ var HealthTrendMonitor = /** @class */ (function () {
     timeHorizon,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         return [2 /*return*/, []]; // Simplified implementation
       });
     });
   };
-  HealthTrendMonitor.prototype.calculateConfidenceIntervals = function (predictions) {
+  HealthTrendMonitor.prototype.calculateConfidenceIntervals = (predictions) => {
     return []; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.identifyInfluencingFactors = function (trends, treatmentPlan) {
+  HealthTrendMonitor.prototype.identifyInfluencingFactors = (trends, treatmentPlan) => {
     return []; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.generateScenarioAnalysis = function (predictions, factors) {
+  HealthTrendMonitor.prototype.generateScenarioAnalysis = (predictions, factors) => {
     return []; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.identifyRecommendedInterventions = function (predictions) {
+  HealthTrendMonitor.prototype.identifyRecommendedInterventions = (predictions) => {
     return ["Continue current treatment plan"]; // Simplified implementation
   };
-  HealthTrendMonitor.prototype.identifyMonitoringPriorities = function (predictions) {
+  HealthTrendMonitor.prototype.identifyMonitoringPriorities = (predictions) => {
     return ["Vital signs", "Symptom tracking"]; // Simplified implementation
   };
   return HealthTrendMonitor;

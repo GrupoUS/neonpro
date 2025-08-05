@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TASK-003: Business Logic Enhancement
  * Financial Module Index
@@ -21,26 +20,20 @@ exports.AI_CONFIG =
 var IntelligentInvoicing_tsx_1 = require("./IntelligentInvoicing.tsx");
 Object.defineProperty(exports, "IntelligentInvoicing", {
   enumerable: true,
-  get: function () {
-    return IntelligentInvoicing_tsx_1.IntelligentInvoicing;
-  },
+  get: () => IntelligentInvoicing_tsx_1.IntelligentInvoicing,
 });
 var IntelligentScheduling_tsx_1 = require("./IntelligentScheduling.tsx");
 Object.defineProperty(exports, "IntelligentScheduling", {
   enumerable: true,
-  get: function () {
-    return IntelligentScheduling_tsx_1.IntelligentScheduling;
-  },
+  get: () => IntelligentScheduling_tsx_1.IntelligentScheduling,
 });
 var FinancialAnalytics_tsx_1 = require("./FinancialAnalytics.tsx");
 Object.defineProperty(exports, "FinancialAnalytics", {
   enumerable: true,
-  get: function () {
-    return FinancialAnalytics_tsx_1.FinancialAnalytics;
-  },
+  get: () => FinancialAnalytics_tsx_1.FinancialAnalytics,
 });
 // Utility Functions
-var formatCurrency = function (value, currency) {
+var formatCurrency = (value, currency) => {
   if (currency === void 0) {
     currency = "BRL";
   }
@@ -50,18 +43,15 @@ var formatCurrency = function (value, currency) {
   }).format(value);
 };
 exports.formatCurrency = formatCurrency;
-var formatPercentage = function (value) {
-  return "".concat(value.toFixed(1), "%");
-};
+var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
 exports.formatPercentage = formatPercentage;
-var calculateTotals = function (items) {
-  var subtotal = items.reduce(function (sum, item) {
-    return sum + item.total;
-  }, 0);
-  var totalDiscount = items.reduce(function (sum, item) {
-    return sum + (item.unitPrice * item.quantity * item.discount) / 100;
-  }, 0);
-  var totalTax = items.reduce(function (sum, item) {
+var calculateTotals = (items) => {
+  var subtotal = items.reduce((sum, item) => sum + item.total, 0);
+  var totalDiscount = items.reduce(
+    (sum, item) => sum + (item.unitPrice * item.quantity * item.discount) / 100,
+    0,
+  );
+  var totalTax = items.reduce((sum, item) => {
     var itemTotal = item.unitPrice * item.quantity;
     var discountedTotal = itemTotal - (itemTotal * item.discount) / 100;
     return sum + (discountedTotal * item.taxRate) / 100;
@@ -76,7 +66,7 @@ var calculateTotals = function (items) {
 };
 exports.calculateTotals = calculateTotals;
 // Appointment validation functions
-var validateAppointmentSlot = function (datetime, durationMinutes) {
+var validateAppointmentSlot = (datetime, durationMinutes) => {
   try {
     // Check if datetime is in the future
     var appointmentDate = new Date(datetime);

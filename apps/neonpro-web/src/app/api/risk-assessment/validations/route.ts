@@ -8,10 +8,10 @@
  * - Retrieving validation history
  */
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { RiskAssessmentService } from "@/app/lib/services/risk-assessment-automation";
 import type { ValidationSchema } from "@/app/lib/validations/risk-assessment-automation";
 import type { CreateValidationRequest } from "@/app/types/risk-assessment-automation";
-import type { NextRequest, NextResponse } from "next/server";
 
 const riskAssessmentService = new RiskAssessmentService();
 

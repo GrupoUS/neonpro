@@ -19,27 +19,27 @@
 
 "use client";
 
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { AlertCircle, Filter, RefreshCw, Search, UserPlus } from "lucide-react";
 import React, {
-  useState,
+  type ChangeEvent,
+  type FC,
+  type KeyboardEvent,
+  useCallback,
   useEffect,
   useMemo,
-  useCallback,
   useRef,
-  type FC,
-  type ChangeEvent,
-  type KeyboardEvent,
+  useState,
 } from "react";
-import type { Search, Filter, RefreshCw, UserPlus, AlertCircle } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Skeleton } from "@/components/ui/skeleton";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Input } from "@/components/ui/input";
 import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { useToast } from "@/hooks/use-toast";
+import type { Skeleton } from "@/components/ui/skeleton";
 import type { usePatientSearch } from "@/hooks/use-patient-search";
+import type { useToast } from "@/hooks/use-toast";
 import type { cn } from "@/lib/utils";
 import type { Database } from "@/types/supabase";
 

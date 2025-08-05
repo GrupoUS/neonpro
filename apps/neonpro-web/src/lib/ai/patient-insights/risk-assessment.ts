@@ -3,12 +3,12 @@
 
 import type { createClient } from "@/lib/supabase/client";
 import type {
-  PatientRiskAssessment,
-  RiskFactor,
-  HealthPrediction,
-  SafetyAlert,
   AIModelPerformance,
+  HealthPrediction,
+  PatientRiskAssessment,
   RiskAssessmentResponse,
+  RiskFactor,
+  SafetyAlert,
 } from "./types";
 
 export class RiskAssessmentEngine {

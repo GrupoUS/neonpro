@@ -1,19 +1,18 @@
-"use strict";
 /**
  * NeonPro AI-Powered Patient Insights Engine
  * Comprehensive AI system for patient risk assessment, behavior analysis, and personalized care recommendations
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,10 +132,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -147,7 +144,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientInsightsIntegration =
   exports.patientInsights =
@@ -158,7 +155,7 @@ exports.PatientInsightsIntegration =
  * Advanced AI-Powered Patient Insights Engine
  * Provides comprehensive patient analysis, risk assessment, and personalized care recommendations
  */
-var PatientInsightsEngine = /** @class */ (function () {
+var PatientInsightsEngine = /** @class */ (() => {
   function PatientInsightsEngine() {
     this.supabase = null;
   }
@@ -168,13 +165,8 @@ var PatientInsightsEngine = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            if (!!this.supabase) return [3 /*break*/, 3];
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("@/lib/supabase/server");
-              }),
-            ];
+            if (this.supabase) return [3 /*break*/, 3];
+            return [4 /*yield*/, Promise.resolve().then(() => require("@/lib/supabase/server"))];
           case 1:
             createClient = _b.sent().createClient;
             _a = this;
@@ -329,9 +321,9 @@ var PatientInsightsEngine = /** @class */ (function () {
           case 3:
             communicationHistory = _a.sent();
             totalAppointments = appointmentHistory.length;
-            attendedAppointments = appointmentHistory.filter(function (apt) {
-              return apt.status === "completed";
-            }).length;
+            attendedAppointments = appointmentHistory.filter(
+              (apt) => apt.status === "completed",
+            ).length;
             attendanceRate = totalAppointments > 0 ? attendedAppointments / totalAppointments : 0;
             treatmentCompliance = this.calculateTreatmentCompliance(treatmentHistory);
             engagementScore = this.calculateEngagementScore(
@@ -423,12 +415,7 @@ var PatientInsightsEngine = /** @class */ (function () {
                 behaviorAnalysis,
               ),
             });
-            return [
-              2 /*return*/,
-              pathways.sort(function (a, b) {
-                return b.suitabilityScore - a.suitabilityScore;
-              }),
-            ];
+            return [2 /*return*/, pathways.sort((a, b) => b.suitabilityScore - a.suitabilityScore)];
           case 4:
             error_4 = _a.sent();
             console.error("Error generating care pathway:", error_4);
@@ -498,7 +485,7 @@ var PatientInsightsEngine = /** @class */ (function () {
   // Private helper methods
   PatientInsightsEngine.prototype.getPatientData = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Mock implementation - would fetch from Supabase
         return [
           2 /*return*/,
@@ -517,81 +504,67 @@ var PatientInsightsEngine = /** @class */ (function () {
   };
   PatientInsightsEngine.prototype.getPatientMedicalHistory = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            { condition: "hypertension", diagnosedDate: "2020-01-15", severity: "moderate" },
-            { condition: "diabetes", diagnosedDate: "2021-06-10", severity: "mild" },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          { condition: "hypertension", diagnosedDate: "2020-01-15", severity: "moderate" },
+          { condition: "diabetes", diagnosedDate: "2021-06-10", severity: "mild" },
+        ],
+      ]);
     });
   };
   PatientInsightsEngine.prototype.getPatientBiometrics = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            weight: 75,
-            height: 165,
-            bmi: 27.5,
-            bloodPressure: { systolic: 145, diastolic: 95 },
-            heartRate: 78,
-            lastUpdated: new Date("2024-12-20"),
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          weight: 75,
+          height: 165,
+          bmi: 27.5,
+          bloodPressure: { systolic: 145, diastolic: 95 },
+          heartRate: 78,
+          lastUpdated: new Date("2024-12-20"),
+        },
+      ]);
     });
   };
   PatientInsightsEngine.prototype.getPatientAppointmentHistory = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            { date: "2024-12-01", status: "completed", type: "consultation" },
-            { date: "2024-11-15", status: "completed", type: "follow-up" },
-            { date: "2024-11-01", status: "missed", type: "consultation" },
-            { date: "2024-10-15", status: "completed", type: "treatment" },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          { date: "2024-12-01", status: "completed", type: "consultation" },
+          { date: "2024-11-15", status: "completed", type: "follow-up" },
+          { date: "2024-11-01", status: "missed", type: "consultation" },
+          { date: "2024-10-15", status: "completed", type: "treatment" },
+        ],
+      ]);
     });
   };
   PatientInsightsEngine.prototype.getPatientTreatmentHistory = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            { treatment: "medication", compliance: 0.8, outcome: "improved" },
-            { treatment: "lifestyle", compliance: 0.6, outcome: "partial" },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          { treatment: "medication", compliance: 0.8, outcome: "improved" },
+          { treatment: "lifestyle", compliance: 0.6, outcome: "partial" },
+        ],
+      ]);
     });
   };
   PatientInsightsEngine.prototype.getPatientCommunicationHistory = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            { type: "email", date: "2024-12-01", response: true },
-            { type: "whatsapp", date: "2024-11-28", response: true },
-            { type: "phone", date: "2024-11-25", response: false },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          { type: "email", date: "2024-12-01", response: true },
+          { type: "whatsapp", date: "2024-11-28", response: true },
+          { type: "phone", date: "2024-11-25", response: false },
+        ],
+      ]);
     });
   };
-  PatientInsightsEngine.prototype.analyzeRiskFactors = function (
-    patient,
-    medicalHistory,
-    biometrics,
-  ) {
+  PatientInsightsEngine.prototype.analyzeRiskFactors = (patient, medicalHistory, biometrics) => {
     var _a;
     var factors = [];
     // Age-based risk
@@ -617,7 +590,7 @@ var PatientInsightsEngine = /** @class */ (function () {
     // Condition-based risks
     (_a = patient.conditions) === null || _a === void 0
       ? void 0
-      : _a.forEach(function (condition) {
+      : _a.forEach((condition) => {
           var impact = 20;
           if (condition === "diabetes") impact = 25;
           if (condition === "hypertension") impact = 20;
@@ -631,158 +604,138 @@ var PatientInsightsEngine = /** @class */ (function () {
         });
     return factors;
   };
-  PatientInsightsEngine.prototype.calculateOverallRisk = function (riskFactors) {
-    var totalImpact = riskFactors.reduce(function (sum, factor) {
-      return sum + factor.impact;
-    }, 0);
+  PatientInsightsEngine.prototype.calculateOverallRisk = (riskFactors) => {
+    var totalImpact = riskFactors.reduce((sum, factor) => sum + factor.impact, 0);
     return Math.min(totalImpact, 100);
   };
-  PatientInsightsEngine.prototype.determineRiskLevel = function (riskScore) {
+  PatientInsightsEngine.prototype.determineRiskLevel = (riskScore) => {
     if (riskScore >= 80) return "critical";
     if (riskScore >= 60) return "high";
     if (riskScore >= 30) return "medium";
     return "low";
   };
-  PatientInsightsEngine.prototype.generateRiskRecommendations = function (riskFactors, riskLevel) {
+  PatientInsightsEngine.prototype.generateRiskRecommendations = (riskFactors, riskLevel) => {
     var recommendations = [];
     if (riskLevel === "critical" || riskLevel === "high") {
       recommendations.push("Schedule immediate comprehensive health assessment");
       recommendations.push("Consider specialist consultation");
       recommendations.push("Implement intensive monitoring protocol");
     }
-    riskFactors.forEach(function (factor) {
+    riskFactors.forEach((factor) => {
       if (factor.mitigation) {
         recommendations.push(factor.mitigation);
       }
     });
     return __spreadArray([], new Set(recommendations), true);
   };
-  PatientInsightsEngine.prototype.generateIntensiveCareSteps = function () {
-    return [
-      {
-        stepNumber: 1,
-        description: "Initial comprehensive assessment",
-        duration: "1 week",
-        requirements: ["Complete medical history", "Laboratory tests", "Specialist consultation"],
-        expectedOutcome: "Detailed health status and risk profile",
-        successCriteria: [
-          "All tests completed",
-          "Risk factors identified",
-          "Treatment plan approved",
-        ],
-      },
-      {
-        stepNumber: 2,
-        description: "Treatment initiation and monitoring",
-        duration: "2-4 weeks",
-        requirements: ["Treatment plan implementation", "Weekly check-ins", "Progress monitoring"],
-        expectedOutcome: "Treatment response and initial results",
-        successCriteria: [
-          "Treatment tolerance confirmed",
-          "Initial improvements noted",
-          "No adverse effects",
-        ],
-      },
-      {
-        stepNumber: 3,
-        description: "Ongoing care and adjustment",
-        duration: "3-6 months",
-        requirements: ["Regular monitoring", "Treatment adjustments", "Lifestyle modifications"],
-        expectedOutcome: "Sustained improvement and risk reduction",
-        successCriteria: ["Risk level reduction", "Patient satisfaction", "Treatment goals met"],
-      },
-    ];
-  };
-  PatientInsightsEngine.prototype.generateStandardCareSteps = function () {
-    return [
-      {
-        stepNumber: 1,
-        description: "Initial consultation and assessment",
-        duration: "1-2 days",
-        requirements: ["Medical history review", "Basic health screening"],
-        expectedOutcome: "Health status baseline and care plan",
-        successCriteria: ["Assessment completed", "Care plan agreed", "Follow-up scheduled"],
-      },
-      {
-        stepNumber: 2,
-        description: "Treatment implementation",
-        duration: "2-6 weeks",
-        requirements: ["Treatment plan execution", "Regular check-ins"],
-        expectedOutcome: "Treatment progress and initial results",
-        successCriteria: [
-          "Treatment compliance",
-          "Progress indicators met",
-          "Patient satisfaction",
-        ],
-      },
-      {
-        stepNumber: 3,
-        description: "Maintenance and follow-up",
-        duration: "3-12 months",
-        requirements: ["Periodic monitoring", "Preventive care", "Health maintenance"],
-        expectedOutcome: "Sustained health improvement",
-        successCriteria: [
-          "Health goals maintained",
-          "Risk factors controlled",
-          "Patient engagement",
-        ],
-      },
-    ];
-  };
-  PatientInsightsEngine.prototype.calculateTreatmentCompliance = function (treatmentHistory) {
+  PatientInsightsEngine.prototype.generateIntensiveCareSteps = () => [
+    {
+      stepNumber: 1,
+      description: "Initial comprehensive assessment",
+      duration: "1 week",
+      requirements: ["Complete medical history", "Laboratory tests", "Specialist consultation"],
+      expectedOutcome: "Detailed health status and risk profile",
+      successCriteria: [
+        "All tests completed",
+        "Risk factors identified",
+        "Treatment plan approved",
+      ],
+    },
+    {
+      stepNumber: 2,
+      description: "Treatment initiation and monitoring",
+      duration: "2-4 weeks",
+      requirements: ["Treatment plan implementation", "Weekly check-ins", "Progress monitoring"],
+      expectedOutcome: "Treatment response and initial results",
+      successCriteria: [
+        "Treatment tolerance confirmed",
+        "Initial improvements noted",
+        "No adverse effects",
+      ],
+    },
+    {
+      stepNumber: 3,
+      description: "Ongoing care and adjustment",
+      duration: "3-6 months",
+      requirements: ["Regular monitoring", "Treatment adjustments", "Lifestyle modifications"],
+      expectedOutcome: "Sustained improvement and risk reduction",
+      successCriteria: ["Risk level reduction", "Patient satisfaction", "Treatment goals met"],
+    },
+  ];
+  PatientInsightsEngine.prototype.generateStandardCareSteps = () => [
+    {
+      stepNumber: 1,
+      description: "Initial consultation and assessment",
+      duration: "1-2 days",
+      requirements: ["Medical history review", "Basic health screening"],
+      expectedOutcome: "Health status baseline and care plan",
+      successCriteria: ["Assessment completed", "Care plan agreed", "Follow-up scheduled"],
+    },
+    {
+      stepNumber: 2,
+      description: "Treatment implementation",
+      duration: "2-6 weeks",
+      requirements: ["Treatment plan execution", "Regular check-ins"],
+      expectedOutcome: "Treatment progress and initial results",
+      successCriteria: ["Treatment compliance", "Progress indicators met", "Patient satisfaction"],
+    },
+    {
+      stepNumber: 3,
+      description: "Maintenance and follow-up",
+      duration: "3-12 months",
+      requirements: ["Periodic monitoring", "Preventive care", "Health maintenance"],
+      expectedOutcome: "Sustained health improvement",
+      successCriteria: ["Health goals maintained", "Risk factors controlled", "Patient engagement"],
+    },
+  ];
+  PatientInsightsEngine.prototype.calculateTreatmentCompliance = (treatmentHistory) => {
     if (treatmentHistory.length === 0) return 0;
-    var totalCompliance = treatmentHistory.reduce(function (sum, treatment) {
-      return sum + treatment.compliance;
-    }, 0);
+    var totalCompliance = treatmentHistory.reduce(
+      (sum, treatment) => sum + treatment.compliance,
+      0,
+    );
     return totalCompliance / treatmentHistory.length;
   };
-  PatientInsightsEngine.prototype.calculateEngagementScore = function (
+  PatientInsightsEngine.prototype.calculateEngagementScore = (
     appointmentHistory,
     communicationHistory,
-  ) {
+  ) => {
     if (appointmentHistory.length === 0 && communicationHistory.length === 0) return 0;
     var attendanceScore =
       appointmentHistory.length > 0
-        ? (appointmentHistory.filter(function (apt) {
-            return apt.status === "completed";
-          }).length /
+        ? (appointmentHistory.filter((apt) => apt.status === "completed").length /
             appointmentHistory.length) *
           50
         : 0;
     var responseRate =
       communicationHistory.length > 0
-        ? communicationHistory.filter(function (comm) {
-            return comm.response;
-          }).length / communicationHistory.length
+        ? communicationHistory.filter((comm) => comm.response).length / communicationHistory.length
         : 0;
     var communicationScore = responseRate * 50;
     return Math.round(attendanceScore + communicationScore);
   };
-  PatientInsightsEngine.prototype.determineCommunicationPreference = function (
-    communicationHistory,
-  ) {
+  PatientInsightsEngine.prototype.determineCommunicationPreference = (communicationHistory) => {
     if (communicationHistory.length === 0) return "email";
-    var preferences = communicationHistory.reduce(function (acc, comm) {
+    var preferences = communicationHistory.reduce((acc, comm) => {
       acc[comm.type] = (acc[comm.type] || 0) + 1;
       return acc;
     }, {});
-    var mostUsed = Object.entries(preferences).sort(function (_a, _b) {
+    var mostUsed = Object.entries(preferences).sort((_a, _b) => {
       var a = _a[1];
       var b = _b[1];
       return b - a;
     })[0];
     return mostUsed ? mostUsed[0] : "email";
   };
-  PatientInsightsEngine.prototype.identifyBehaviorPatterns = function (
+  PatientInsightsEngine.prototype.identifyBehaviorPatterns = (
     appointmentHistory,
     treatmentHistory,
-  ) {
+  ) => {
     var patterns = [];
     if (appointmentHistory.length > 0) {
       var attendanceRate =
-        appointmentHistory.filter(function (apt) {
-          return apt.status === "completed";
-        }).length / appointmentHistory.length;
+        appointmentHistory.filter((apt) => apt.status === "completed").length /
+        appointmentHistory.length;
       if (attendanceRate > 0.8) {
         patterns.push({
           pattern: "Consistent Appointment Attendance",
@@ -805,35 +758,33 @@ var PatientInsightsEngine = /** @class */ (function () {
   };
   PatientInsightsEngine.prototype.analyzeHealthTrends = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            {
-              metric: "Blood Pressure",
-              direction: "improving",
-              rate: -2.5,
-              significance: 0.7,
-              prediction: "Expected to reach target range within 3 months with current treatment",
-            },
-            {
-              metric: "Weight",
-              direction: "stable",
-              rate: 0.1,
-              significance: 0.3,
-              prediction:
-                "Weight remains stable, consider lifestyle modifications for further improvement",
-            },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          {
+            metric: "Blood Pressure",
+            direction: "improving",
+            rate: -2.5,
+            significance: 0.7,
+            prediction: "Expected to reach target range within 3 months with current treatment",
+          },
+          {
+            metric: "Weight",
+            direction: "stable",
+            rate: 0.1,
+            significance: 0.3,
+            prediction:
+              "Weight remains stable, consider lifestyle modifications for further improvement",
+          },
+        ],
+      ]);
     });
   };
-  PatientInsightsEngine.prototype.calculatePathwaySuitability = function (
+  PatientInsightsEngine.prototype.calculatePathwaySuitability = (
     patient,
     riskAssessment,
     behaviorAnalysis,
-  ) {
+  ) => {
     var score = 50;
     score += behaviorAnalysis.engagementScore * 0.3;
     score += behaviorAnalysis.treatmentCompliance * 20;
@@ -842,10 +793,7 @@ var PatientInsightsEngine = /** @class */ (function () {
     }
     return Math.round(Math.max(0, Math.min(100, score)));
   };
-  PatientInsightsEngine.prototype.generatePersonalizedAdjustments = function (
-    patient,
-    behaviorAnalysis,
-  ) {
+  PatientInsightsEngine.prototype.generatePersonalizedAdjustments = (patient, behaviorAnalysis) => {
     var adjustments = [];
     if (behaviorAnalysis.communicationPreference === "whatsapp") {
       adjustments.push("Use WhatsApp for appointment reminders and check-ins");
@@ -858,7 +806,7 @@ var PatientInsightsEngine = /** @class */ (function () {
     }
     return adjustments;
   };
-  PatientInsightsEngine.prototype.calculateExpectedTimeline = function (patient, behaviorAnalysis) {
+  PatientInsightsEngine.prototype.calculateExpectedTimeline = (patient, behaviorAnalysis) => {
     var baseTimeline = 12; // weeks
     if (behaviorAnalysis.treatmentCompliance > 0.8) {
       baseTimeline *= 0.8;
@@ -883,7 +831,7 @@ exports.patientInsights = {
   generatePatientInsights: function (patientData) {
     return __awaiter(this, void 0, void 0, function () {
       var engine;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         engine = new PatientInsightsEngine();
         // Mock implementation for test compatibility
         return [
@@ -956,7 +904,7 @@ exports.patientInsights = {
    */
   updateInsights: function (patientId, updateData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           console.log("Updating insights for patient ".concat(patientId), updateData);
           return [2 /*return*/, true];
@@ -974,40 +922,38 @@ exports.patientInsights = {
    */
   getTrendingInsights: function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            {
-              trend: "increased_consultation_frequency",
-              patient_count: 25,
-              percentage_change: 15.5,
-              time_period: "30_days",
-              confidence_score: 0.85,
-              description:
-                "Patient consultation frequency has increased by 15.5% over the last 30 days, indicating improved engagement with healthcare services.",
-            },
-            {
-              trend: "improved_treatment_compliance",
-              patient_count: 18,
-              percentage_change: 22.3,
-              time_period: "30_days",
-              confidence_score: 0.78,
-              description:
-                "Treatment compliance rates have improved by 22.3% among 18 patients, showing better adherence to prescribed care plans.",
-            },
-            {
-              trend: "reduced_missed_appointments",
-              patient_count: 32,
-              percentage_change: -18.7,
-              time_period: "30_days",
-              confidence_score: 0.91,
-              description:
-                "Missed appointment rates have decreased by 18.7% across 32 patients, demonstrating improved appointment management and patient engagement.",
-            },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          {
+            trend: "increased_consultation_frequency",
+            patient_count: 25,
+            percentage_change: 15.5,
+            time_period: "30_days",
+            confidence_score: 0.85,
+            description:
+              "Patient consultation frequency has increased by 15.5% over the last 30 days, indicating improved engagement with healthcare services.",
+          },
+          {
+            trend: "improved_treatment_compliance",
+            patient_count: 18,
+            percentage_change: 22.3,
+            time_period: "30_days",
+            confidence_score: 0.78,
+            description:
+              "Treatment compliance rates have improved by 22.3% among 18 patients, showing better adherence to prescribed care plans.",
+          },
+          {
+            trend: "reduced_missed_appointments",
+            patient_count: 32,
+            percentage_change: -18.7,
+            time_period: "30_days",
+            confidence_score: 0.91,
+            description:
+              "Missed appointment rates have decreased by 18.7% across 32 patients, demonstrating improved appointment management and patient engagement.",
+          },
+        ],
+      ]);
     });
   },
 };
@@ -1015,7 +961,7 @@ exports.patientInsights = {
  * Main Patient Insights Integration Class
  * Provides comprehensive AI-powered patient insights and analysis
  */
-var PatientInsightsIntegration = /** @class */ (function () {
+var PatientInsightsIntegration = /** @class */ (() => {
   function PatientInsightsIntegration() {}
   /**
    * Generate comprehensive insights for a patient
@@ -1070,27 +1016,25 @@ var PatientInsightsIntegration = /** @class */ (function () {
    */
   PatientInsightsIntegration.prototype.generateRiskAssessment = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            overallRiskScore: 65,
-            riskLevel: "medium",
-            riskFactors: [
-              {
-                factor: "Chronic condition history",
-                impact: 75,
-                category: "medical",
-                description: "Patient has multiple chronic conditions requiring ongoing management",
-                mitigation: "Regular monitoring and preventive care",
-              },
-            ],
-            recommendations: ["Regular check-ups", "Lifestyle modifications"],
-            confidence: 0.85,
-            lastAssessment: new Date(),
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          overallRiskScore: 65,
+          riskLevel: "medium",
+          riskFactors: [
+            {
+              factor: "Chronic condition history",
+              impact: 75,
+              category: "medical",
+              description: "Patient has multiple chronic conditions requiring ongoing management",
+              mitigation: "Regular monitoring and preventive care",
+            },
+          ],
+          recommendations: ["Regular check-ups", "Lifestyle modifications"],
+          confidence: 0.85,
+          lastAssessment: new Date(),
+        },
+      ]);
     });
   };
   /**
@@ -1100,24 +1044,22 @@ var PatientInsightsIntegration = /** @class */ (function () {
    */
   PatientInsightsIntegration.prototype.generateTreatmentRecommendations = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            {
-              id: "1",
-              treatmentType: "Preventive care",
-              priority: "medium",
-              confidence: 0.85,
-              expectedOutcome: "Improved health outcomes",
-              timeframe: "3-6 months",
-              prerequisites: ["Patient consent"],
-              contraindications: [],
-              alternativeOptions: ["Alternative treatment approaches"],
-            },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          {
+            id: "1",
+            treatmentType: "Preventive care",
+            priority: "medium",
+            confidence: 0.85,
+            expectedOutcome: "Improved health outcomes",
+            timeframe: "3-6 months",
+            prerequisites: ["Patient consent"],
+            contraindications: [],
+            alternativeOptions: ["Alternative treatment approaches"],
+          },
+        ],
+      ]);
     });
   };
   /**
@@ -1127,33 +1069,31 @@ var PatientInsightsIntegration = /** @class */ (function () {
    */
   PatientInsightsIntegration.prototype.analyzeBehavior = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            attendanceRate: 85,
-            treatmentCompliance: 90,
-            engagementScore: 75,
-            communicationPreference: "email",
-            behaviorPatterns: [
-              {
-                pattern: "Regular appointment attendance",
-                frequency: 0.85,
-                impact: "positive",
-              },
-            ],
-            trends: [
-              {
-                metric: "Appointment adherence",
-                trend: "improving",
-                value: 85,
-                changePercent: 10,
-                timeframe: "3_months",
-              },
-            ],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          attendanceRate: 85,
+          treatmentCompliance: 90,
+          engagementScore: 75,
+          communicationPreference: "email",
+          behaviorPatterns: [
+            {
+              pattern: "Regular appointment attendance",
+              frequency: 0.85,
+              impact: "positive",
+            },
+          ],
+          trends: [
+            {
+              metric: "Appointment adherence",
+              trend: "improving",
+              value: 85,
+              changePercent: 10,
+              timeframe: "3_months",
+            },
+          ],
+        },
+      ]);
     });
   };
   /**
@@ -1163,20 +1103,18 @@ var PatientInsightsIntegration = /** @class */ (function () {
    */
   PatientInsightsIntegration.prototype.analyzeHealthTrends = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            {
-              metric: "Overall health score",
-              trend: "stable",
-              value: 75,
-              changePercent: 2,
-              timeframe: "6_months",
-            },
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          {
+            metric: "Overall health score",
+            trend: "stable",
+            value: 75,
+            changePercent: 2,
+            timeframe: "6_months",
+          },
+        ],
+      ]);
     });
   };
   return PatientInsightsIntegration;

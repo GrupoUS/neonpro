@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Error Analysis System - VIBECODE V1.0 Intelligence
  * Advanced error pattern recognition and categorization
@@ -52,7 +51,7 @@ var KNOWN_ERROR_PATTERNS = [
 ];
 // Cache for error pattern frequency tracking
 var errorPatternsCache = new Map();
-var ErrorAnalysisSystem = /** @class */ (function () {
+var ErrorAnalysisSystem = /** @class */ (() => {
   function ErrorAnalysisSystem() {
     this.errorHistory = [];
     this.patternStats = new Map();
@@ -147,7 +146,7 @@ var ErrorAnalysisSystem = /** @class */ (function () {
   /**
    * 🆔 Generate unique error ID for deduplication
    */
-  ErrorAnalysisSystem.prototype.generateErrorId = function (message, route) {
+  ErrorAnalysisSystem.prototype.generateErrorId = (message, route) => {
     var baseString = "".concat(message, "_").concat(route || "unknown");
     // Simple hash function for error ID
     var hash = 0;
@@ -164,9 +163,7 @@ var ErrorAnalysisSystem = /** @class */ (function () {
   ErrorAnalysisSystem.prototype.getErrorTrends = function () {
     var now = Date.now();
     var oneHour = 60 * 60 * 1000;
-    var recentErrors = this.errorHistory.filter(function (error) {
-      return now - error.timestamp < oneHour;
-    });
+    var recentErrors = this.errorHistory.filter((error) => now - error.timestamp < oneHour);
     var categoryBreakdown = new Map();
     var severityBreakdown = new Map();
     for (var _i = 0, recentErrors_1 = recentErrors; _i < recentErrors_1.length; _i++) {
@@ -188,11 +185,11 @@ var ErrorAnalysisSystem = /** @class */ (function () {
   ErrorAnalysisSystem.prototype.generateAnalysisReport = function () {
     var _a;
     var trends = this.getErrorTrends();
-    var criticalErrors = this.errorHistory.filter(function (error) {
-      return error.severity === "critical" && Date.now() - error.timestamp < 3600000;
-    });
+    var criticalErrors = this.errorHistory.filter(
+      (error) => error.severity === "critical" && Date.now() - error.timestamp < 3600000,
+    );
     var topPatterns = Array.from(this.patternStats.entries())
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
@@ -214,7 +211,7 @@ var ErrorAnalysisSystem = /** @class */ (function () {
   /**
    * Generate recommendations based on error patterns
    */
-  ErrorAnalysisSystem.prototype.generateRecommendations = function (trends) {
+  ErrorAnalysisSystem.prototype.generateRecommendations = (trends) => {
     var recommendations = [];
     if (trends.categoryBreakdown.network > 5) {
       recommendations.push("Consider implementing circuit breaker pattern for network calls");
@@ -236,17 +233,13 @@ var ErrorAnalysisSystem = /** @class */ (function () {
   ErrorAnalysisSystem.prototype.cleanOldHistory = function () {
     var maxAge = 24 * 60 * 60 * 1000; // 24 hours
     var cutoff = Date.now() - maxAge;
-    this.errorHistory = this.errorHistory.filter(function (error) {
-      return error.timestamp > cutoff;
-    });
+    this.errorHistory = this.errorHistory.filter((error) => error.timestamp > cutoff);
   };
   /**
    * Get error by ID
    */
   ErrorAnalysisSystem.prototype.getErrorById = function (errorId) {
-    return this.errorHistory.find(function (error) {
-      return error.errorId === errorId;
-    });
+    return this.errorHistory.find((error) => error.errorId === errorId);
   };
   /**
    * Clear all error history

@@ -1,5 +1,7 @@
 "use client";
 
+import type { Brain, Edit, Plus, Trash2, User } from "lucide-react";
+import type { useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -29,8 +31,6 @@ import type {
 import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Textarea } from "@/components/ui/textarea";
-import type { Brain, Edit, Plus, Trash2, User } from "lucide-react";
-import type { useState } from "react";
 
 interface PersonalizationProfile {
   id: string;

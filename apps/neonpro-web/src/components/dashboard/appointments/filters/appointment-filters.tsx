@@ -4,6 +4,10 @@
 
 "use client";
 
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { Briefcase, CalendarIcon, ChevronDown, RotateCcw, User, X } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type {
   AppointmentFilters as AppointmentFiltersType,
   AppointmentStatus,
@@ -24,10 +28,6 @@ import type {
 import type { Separator } from "@/components/ui/separator";
 import type { useAppointmentFilters } from "@/hooks/appointments/use-appointment-filters";
 import type { cn } from "@/lib/utils";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { Briefcase, CalendarIcon, ChevronDown, RotateCcw, User, X } from "lucide-react";
-import type { useEffect, useState } from "react";
 import AppointmentSearch from "./appointment-search";
 
 // Status options with colors

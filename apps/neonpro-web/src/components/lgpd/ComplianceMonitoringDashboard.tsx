@@ -7,7 +7,45 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  Bell,
+  CheckCircle,
+  CheckCircle2,
+  Clock,
+  Database,
+  Eye,
+  FileText,
+  Info,
+  Lightbulb,
+  Lock,
+  Play,
+  RefreshCw,
+  Shield,
+  Square,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type {
+  ComplianceCategory,
+  ComplianceViolation,
+  ViolationType,
+} from "@/app/lib/lgpd/monitoring/compliance-monitoring";
+import type {
+  useComplianceAlerts,
+  useComplianceMetrics,
+  useComplianceMonitoring,
+  useComplianceRecommendations,
+  useComplianceViolations,
+} from "@/app/lib/lgpd/monitoring/use-compliance-monitoring";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -15,11 +53,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Progress } from "@/components/ui/progress";
 import type {
   Dialog,
   DialogContent,
@@ -29,9 +62,9 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
 import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -39,41 +72,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  useComplianceMonitoring,
-  useComplianceMetrics,
-  useComplianceViolations,
-  useComplianceAlerts,
-  useComplianceRecommendations,
-} from "@/app/lib/lgpd/monitoring/use-compliance-monitoring";
-import type {
-  ComplianceViolation,
-  ViolationType,
-  ComplianceCategory,
-} from "@/app/lib/lgpd/monitoring/compliance-monitoring";
-import type {
-  Shield,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Activity,
-  Eye,
-  FileText,
-  Users,
-  Database,
-  Lock,
-  Bell,
-  TrendingUp,
-  TrendingDown,
-  RefreshCw,
-  Play,
-  Square,
-  AlertCircle,
-  Info,
-  CheckCircle2,
-  XCircle,
-  Lightbulb,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 
 interface ComplianceMonitoringDashboardProps {
   className?: string;

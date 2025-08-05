@@ -11,8 +11,8 @@
  * - Security and validation helpers
  */
 
-import crypto from "crypto";
-import type { BaseEvent, WebhookEndpoint, EventType, EventPriority, RetryStrategy } from "./types";
+import crypto from "node:crypto";
+import type { BaseEvent, EventPriority, EventType, RetryStrategy, WebhookEndpoint } from "./types";
 
 /**
  * Event Utilities
@@ -89,7 +89,7 @@ export class EventUtils {
   /**
    * Sanitize event data for webhook delivery
    */
-  static sanitizeEventForWebhook(event: BaseEvent, webhook: WebhookEndpoint): any {
+  static sanitizeEventForWebhook(event: BaseEvent, _webhook: WebhookEndpoint): any {
     const sanitized = {
       id: event.id,
       type: event.type,
@@ -97,7 +97,7 @@ export class EventUtils {
       timestamp: event.timestamp.toISOString(),
       source: event.source,
       priority: event.priority,
-      data: this.sanitizeEventData(event.data),
+      data: EventUtils.sanitizeEventData(event.data),
       metadata: {
         ...event.metadata,
         // Remove sensitive metadata if needed
@@ -143,7 +143,7 @@ export class EventUtils {
     // Recursively sanitize nested objects
     for (const [key, value] of Object.entries(sanitized)) {
       if (value && typeof value === "object") {
-        sanitized[key] = this.sanitizeEventData(value);
+        sanitized[key] = EventUtils.sanitizeEventData(value);
       }
     }
 
@@ -154,7 +154,7 @@ export class EventUtils {
    * Transform event for specific webhook requirements
    */
   static transformEventForWebhook(event: BaseEvent, webhook: WebhookEndpoint): any {
-    const basePayload = this.sanitizeEventForWebhook(event, webhook);
+    const basePayload = EventUtils.sanitizeEventForWebhook(event, webhook);
 
     // Add webhook-specific metadata
     return {
@@ -207,14 +207,14 @@ export class WebhookUtils {
     algorithm: string = "sha256",
   ): boolean {
     try {
-      const expectedSignature = this.generateSignature(payload, secret, algorithm);
+      const expectedSignature = WebhookUtils.generateSignature(payload, secret, algorithm);
 
       // Use timing-safe comparison to prevent timing attacks
       return crypto.timingSafeEqual(
         Buffer.from(signature, "hex"),
         Buffer.from(expectedSignature, "hex"),
       );
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -251,7 +251,7 @@ export class WebhookUtils {
       if (parsedUrl.port && (parseInt(parsedUrl.port) < 1 || parseInt(parsedUrl.port) > 65535)) {
         errors.push("Invalid port number");
       }
-    } catch (error) {
+    } catch (_error) {
       errors.push("Invalid URL format");
     }
 
@@ -284,7 +284,8 @@ export class WebhookUtils {
 
     // Add signature if enabled
     if (enableSignature && webhook.secret) {
-      headers["X-Webhook-Signature"] = `sha256=${this.generateSignature(payload, webhook.secret)}`;
+      headers["X-Webhook-Signature"] =
+        `sha256=${WebhookUtils.generateSignature(payload, webhook.secret)}`;
     }
 
     return headers;
@@ -306,7 +307,7 @@ export class WebhookUtils {
         algorithm: parts[0],
         signature: parts[1],
       };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -336,7 +337,7 @@ export class RateLimitUtils {
     burstLimit?: number,
   ): { allowed: boolean; remaining: number; resetTime: number } {
     const now = Date.now();
-    const limiter = this.rateLimiters.get(identifier);
+    const limiter = RateLimitUtils.rateLimiters.get(identifier);
 
     if (!limiter || now > limiter.resetTime) {
       // Initialize or reset rate limiter
@@ -347,7 +348,7 @@ export class RateLimitUtils {
         lastRefill: now,
       };
 
-      this.rateLimiters.set(identifier, newLimiter);
+      RateLimitUtils.rateLimiters.set(identifier, newLimiter);
 
       return {
         allowed: true,
@@ -388,7 +389,7 @@ export class RateLimitUtils {
    * Reset rate limiter for identifier
    */
   static resetRateLimit(identifier: string): void {
-    this.rateLimiters.delete(identifier);
+    RateLimitUtils.rateLimiters.delete(identifier);
   }
 
   /**
@@ -399,7 +400,7 @@ export class RateLimitUtils {
     remaining: number;
     resetTime: number;
   } | null {
-    const limiter = this.rateLimiters.get(identifier);
+    const limiter = RateLimitUtils.rateLimiters.get(identifier);
     if (!limiter) {
       return null;
     }
@@ -422,21 +423,19 @@ export class RetryUtils {
   static calculateRetryDelay(
     attempt: number,
     strategy: RetryStrategy,
-    baseDelayMs: number = 1000,
+    _baseDelayMs: number = 1000,
   ): number {
     const maxDelay = 300000; // 5 minutes max
     let delay: number;
 
     switch (strategy.strategy) {
       case "exponential":
-        delay = Math.min(strategy.delayMs * Math.pow(2, attempt - 1), maxDelay);
+        delay = Math.min(strategy.delayMs * 2 ** (attempt - 1), maxDelay);
         break;
 
       case "linear":
         delay = Math.min(strategy.delayMs * attempt, maxDelay);
         break;
-
-      case "fixed":
       default:
         delay = strategy.delayMs;
         break;
@@ -493,12 +492,12 @@ export class RetryUtils {
         }
 
         // Check if error is retryable
-        if (!this.isRetryableError(error)) {
+        if (!RetryUtils.isRetryableError(error)) {
           break;
         }
 
         // Calculate delay and wait
-        const delay = this.calculateRetryDelay(attempt, strategy);
+        const delay = RetryUtils.calculateRetryDelay(attempt, strategy);
 
         if (onRetry) {
           onRetry(attempt, error);
@@ -667,10 +666,10 @@ export class MonitoringUtils {
       totalDeliveries: total,
       successfulDeliveries: successful,
       failedDeliveries: failed,
-      successRate: this.calculateSuccessRate(successful, total),
-      averageResponseTime: this.calculateAverageResponseTime(responseTimes),
-      p95ResponseTime: this.calculatePercentileResponseTime(responseTimes, 95),
-      p99ResponseTime: this.calculatePercentileResponseTime(responseTimes, 99),
+      successRate: MonitoringUtils.calculateSuccessRate(successful, total),
+      averageResponseTime: MonitoringUtils.calculateAverageResponseTime(responseTimes),
+      p95ResponseTime: MonitoringUtils.calculatePercentileResponseTime(responseTimes, 95),
+      p99ResponseTime: MonitoringUtils.calculatePercentileResponseTime(responseTimes, 99),
     };
   }
 }

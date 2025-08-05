@@ -1,7 +1,7 @@
 // SMS Send Message API for NeonPro
 // Send individual SMS messages
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { smsService } from "@/app/lib/services/sms-service";
 import { SendSMSSchema } from "@/app/types/sms";

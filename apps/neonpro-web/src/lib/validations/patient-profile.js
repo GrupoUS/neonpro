@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LgpdAuditSchema =
   exports.PatientProfileUpdateSchema =
@@ -17,29 +16,22 @@ exports.PatientProfileSchema = zod_1.z.object({
   dateOfBirth: zod_1.z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Data deve estar no formato AAAA-MM-DD")
-    .refine(function (date) {
+    .refine((date) => {
       var birthDate = new Date(date);
       var today = new Date();
       var age = today.getFullYear() - birthDate.getFullYear();
       return age >= 0 && age <= 120;
     }, "Data de nascimento inválida"),
   gender: zod_1.z.enum(["male", "female", "other", "prefer_not_to_say"], {
-    errorMap: function () {
-      return { message: "Selecione um gênero válido" };
-    },
+    errorMap: () => ({ message: "Selecione um gênero válido" }),
   }),
   cpf: zod_1.z
     .string()
     .regex(/^\d{11}$/, "CPF deve conter apenas 11 dígitos")
-    .refine(function (cpf) {
+    .refine((cpf) => {
       // Basic CPF validation (simplified for demo)
       var digits = cpf.split("").map(Number);
-      return (
-        digits.length === 11 &&
-        !digits.every(function (d) {
-          return d === digits[0];
-        })
-      );
+      return digits.length === 11 && !digits.every((d) => d === digits[0]);
     }, "CPF inválido"),
   rg: zod_1.z
     .string()
@@ -97,17 +89,13 @@ exports.PatientProfileSchema = zod_1.z.object({
     // Preferred communication method
     preferredMethod: zod_1.z
       .enum(["email", "sms", "whatsapp", "phone"], {
-        errorMap: function () {
-          return { message: "Selecione um método de comunicação preferido" };
-        },
+        errorMap: () => ({ message: "Selecione um método de comunicação preferido" }),
       })
       .optional(),
     // Best time to contact
     bestTimeToContact: zod_1.z
       .enum(["morning", "afternoon", "evening", "anytime"], {
-        errorMap: function () {
-          return { message: "Selecione o melhor horário para contato" };
-        },
+        errorMap: () => ({ message: "Selecione o melhor horário para contato" }),
       })
       .default("anytime"),
   }),
@@ -137,16 +125,16 @@ exports.PatientProfileSchema = zod_1.z.object({
     .max(3, "Máximo de 3 contatos de emergência permitidos"),
   // LGPD Consent Management
   lgpdConsent: zod_1.z.object({
-    dataProcessingConsent: zod_1.z.boolean().refine(function (val) {
-      return val === true;
-    }, "Consentimento para processamento de dados é obrigatório"),
-    sensitiveDataConsent: zod_1.z.boolean().refine(function (val) {
-      return val === true;
-    }, "Consentimento para dados sensíveis de saúde é obrigatório"),
+    dataProcessingConsent: zod_1.z
+      .boolean()
+      .refine((val) => val === true, "Consentimento para processamento de dados é obrigatório"),
+    sensitiveDataConsent: zod_1.z
+      .boolean()
+      .refine((val) => val === true, "Consentimento para dados sensíveis de saúde é obrigatório"),
     marketingConsent: zod_1.z.boolean().default(false),
-    dataRetentionAcknowledgment: zod_1.z.boolean().refine(function (val) {
-      return val === true;
-    }, "Reconhecimento sobre retenção de dados é obrigatório"),
+    dataRetentionAcknowledgment: zod_1.z
+      .boolean()
+      .refine((val) => val === true, "Reconhecimento sobre retenção de dados é obrigatório"),
     consentDate: zod_1.z.string().optional(),
     consentVersion: zod_1.z.string().default("1.0"),
   }),

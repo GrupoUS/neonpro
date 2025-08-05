@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 📊 NeonPro Patient Satisfaction Metrics Engine
  *
@@ -30,26 +29,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -69,13 +68,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -97,9 +96,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -171,7 +168,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientSatisfactionMetricsEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -183,7 +180,7 @@ var logger_1 = require("@/lib/utils/logger");
  * Patient Satisfaction Metrics Engine
  * Sistema completo para análise de satisfação de pacientes
  */
-var PatientSatisfactionMetricsEngine = /** @class */ (function () {
+var PatientSatisfactionMetricsEngine = /** @class */ (() => {
   function PatientSatisfactionMetricsEngine() {
     this.supabase = (0, client_1.createClient)();
     this.config = new Map();
@@ -685,7 +682,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
   // ============================================================================
   // HELPER METHODS
   // ============================================================================
-  PatientSatisfactionMetricsEngine.prototype.initializeDefaultConfig = function () {
+  PatientSatisfactionMetricsEngine.prototype.initializeDefaultConfig = () => {
     // Initialize with default industry benchmarks for aesthetic clinics
     // These would typically come from industry research or competitive analysis
   };
@@ -735,7 +732,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
   };
   PatientSatisfactionMetricsEngine.prototype.sendEmailSurvey = function (survey) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Email survey implementation
         logger_1.logger.debug("Email survey sent", { survey_id: survey.id });
         return [2 /*return*/];
@@ -744,7 +741,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
   };
   PatientSatisfactionMetricsEngine.prototype.sendWhatsAppSurvey = function (survey) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // WhatsApp survey implementation
         logger_1.logger.debug("WhatsApp survey sent", { survey_id: survey.id });
         return [2 /*return*/];
@@ -753,7 +750,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
   };
   PatientSatisfactionMetricsEngine.prototype.sendSMSSurvey = function (survey) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // SMS survey implementation
         logger_1.logger.debug("SMS survey sent", { survey_id: survey.id });
         return [2 /*return*/];
@@ -765,14 +762,14 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     reminderConfig,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Schedule reminder notifications
         logger_1.logger.debug("Reminders scheduled", { survey_id: surveyId });
         return [2 /*return*/];
       });
     });
   };
-  PatientSatisfactionMetricsEngine.prototype.processResponses = function (responses) {
+  PatientSatisfactionMetricsEngine.prototype.processResponses = (responses) => {
     var processedScores = {
       overall: 0,
       service_quality: 0,
@@ -788,7 +785,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
       complaint_resolution: 0,
     };
     // Process provided responses
-    Object.keys(responses).forEach(function (key) {
+    Object.keys(responses).forEach((key) => {
       var dimension = key;
       if (responses[dimension] !== undefined) {
         processedScores[dimension] = responses[dimension];
@@ -802,14 +799,10 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
         processedScores.staff_professionalism,
         processedScores.treatment_effectiveness,
         processedScores.communication,
-      ].filter(function (score) {
-        return score > 0;
-      });
+      ].filter((score) => score > 0);
       if (relevantScores.length > 0) {
         processedScores.overall =
-          relevantScores.reduce(function (sum, score) {
-            return sum + score;
-          }, 0) / relevantScores.length;
+          relevantScores.reduce((sum, score) => sum + score, 0) / relevantScores.length;
       }
     }
     return processedScores;
@@ -817,7 +810,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
   PatientSatisfactionMetricsEngine.prototype.analyzeFeedbackSentiment = function (feedbackText) {
     return __awaiter(this, void 0, void 0, function () {
       var positiveKeywords, negativeKeywords, text, sentiment;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         positiveKeywords = [
           "excellent",
           "great",
@@ -838,10 +831,10 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
         ];
         text = feedbackText.toLowerCase();
         sentiment = 0;
-        positiveKeywords.forEach(function (keyword) {
+        positiveKeywords.forEach((keyword) => {
           if (text.includes(keyword)) sentiment += 0.2;
         });
-        negativeKeywords.forEach(function (keyword) {
+        negativeKeywords.forEach((keyword) => {
           if (text.includes(keyword)) sentiment -= 0.2;
         });
         return [2 /*return*/, Math.max(-1, Math.min(1, sentiment))];
@@ -850,9 +843,9 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
   };
   PatientSatisfactionMetricsEngine.prototype.calculateCompletionRate = function (responses) {
     var totalQuestions = Object.keys(this.industryBenchmarks).length;
-    var answeredQuestions = Object.values(responses).filter(function (value) {
-      return value !== undefined && value > 0;
-    }).length;
+    var answeredQuestions = Object.values(responses).filter(
+      (value) => value !== undefined && value > 0,
+    ).length;
     return answeredQuestions / totalQuestions;
   };
   PatientSatisfactionMetricsEngine.prototype.checkForImmediateActions = function (
@@ -866,9 +859,9 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             criticalThreshold = 2.0;
-            criticalDimensions = Object.keys(scores).filter(function (key) {
-              return scores[key] < criticalThreshold;
-            });
+            criticalDimensions = Object.keys(scores).filter(
+              (key) => scores[key] < criticalThreshold,
+            );
             if (!(criticalDimensions.length > 0 || (sentiment && sentiment < -0.5)))
               return [3 /*break*/, 2];
             logger_1.logger.warn("Critical satisfaction issue detected", {
@@ -897,7 +890,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     sentiment,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would trigger alerts, create tasks, etc.
         logger_1.logger.info("Immediate action triggered for satisfaction issue", {
           patient_id: patientId,
@@ -912,7 +905,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     metrics,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Update patient profile with latest satisfaction metrics
         logger_1.logger.debug("Patient satisfaction profile updated", {
           patient_id: patientId,
@@ -922,7 +915,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
       });
     });
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateAverageScores = function (surveys) {
+  PatientSatisfactionMetricsEngine.prototype.calculateAverageScores = (surveys) => {
     var averages = {
       overall: 0,
       service_quality: 0,
@@ -938,7 +931,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
       complaint_resolution: 0,
     };
     if (surveys.length === 0) return averages;
-    surveys.forEach(function (survey) {
+    surveys.forEach((survey) => {
       averages.overall += survey.overall_score;
       averages.service_quality += survey.service_score;
       averages.facility_environment += survey.facility_score;
@@ -949,7 +942,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
       averages.recommendation_likelihood += survey.recommendation_score;
       // Handle satisfaction_scores JSON field
       if (survey.satisfaction_scores) {
-        Object.keys(survey.satisfaction_scores).forEach(function (key) {
+        Object.keys(survey.satisfaction_scores).forEach((key) => {
           var dimension = key;
           if (averages[dimension] !== undefined) {
             averages[dimension] += survey.satisfaction_scores[key] || 0;
@@ -958,13 +951,13 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
       }
     });
     // Calculate averages
-    Object.keys(averages).forEach(function (key) {
+    Object.keys(averages).forEach((key) => {
       var dimension = key;
       averages[dimension] = Math.round((averages[dimension] / surveys.length) * 100) / 100;
     });
     return averages;
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateScoreTrends = function (surveys) {
+  PatientSatisfactionMetricsEngine.prototype.calculateScoreTrends = (surveys) => {
     // Calculate trends over time for each dimension
     var trends = {
       overall: [],
@@ -980,7 +973,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
       loyalty_intention: [],
       complaint_resolution: [],
     };
-    surveys.forEach(function (survey) {
+    surveys.forEach((survey) => {
       trends.overall.push(survey.overall_score);
       trends.service_quality.push(survey.service_score);
       trends.facility_environment.push(survey.facility_score);
@@ -992,72 +985,41 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     });
     return trends;
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateNPS = function (surveys) {
+  PatientSatisfactionMetricsEngine.prototype.calculateNPS = (surveys) => {
     var npsScores = surveys
-      .map(function (s) {
-        return s.recommendation_score;
-      })
-      .filter(function (score) {
-        return score >= 0 && score <= 10;
-      });
+      .map((s) => s.recommendation_score)
+      .filter((score) => score >= 0 && score <= 10);
     if (npsScores.length === 0) return 0;
-    var promoters = npsScores.filter(function (score) {
-      return score >= 9;
-    }).length;
-    var detractors = npsScores.filter(function (score) {
-      return score <= 6;
-    }).length;
+    var promoters = npsScores.filter((score) => score >= 9).length;
+    var detractors = npsScores.filter((score) => score <= 6).length;
     return Math.round(((promoters - detractors) / npsScores.length) * 100);
   };
-  PatientSatisfactionMetricsEngine.prototype.getNPSCategory = function (npsScore) {
+  PatientSatisfactionMetricsEngine.prototype.getNPSCategory = (npsScore) => {
     if (npsScore <= 6) return "detractor";
     if (npsScore <= 8) return "passive";
     return "promoter";
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateCES = function (surveys) {
-    var cesScores = surveys
-      .map(function (s) {
-        return s.effort_score;
-      })
-      .filter(function (score) {
-        return score > 0;
-      });
+  PatientSatisfactionMetricsEngine.prototype.calculateCES = (surveys) => {
+    var cesScores = surveys.map((s) => s.effort_score).filter((score) => score > 0);
     return cesScores.length > 0
-      ? Math.round(
-          (cesScores.reduce(function (sum, score) {
-            return sum + score;
-          }, 0) /
-            cesScores.length) *
-            100,
-        ) / 100
+      ? Math.round((cesScores.reduce((sum, score) => sum + score, 0) / cesScores.length) * 100) /
+          100
       : 0;
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateCSAT = function (surveys) {
-    var csatScores = surveys
-      .map(function (s) {
-        return s.overall_score;
-      })
-      .filter(function (score) {
-        return score > 0;
-      });
+  PatientSatisfactionMetricsEngine.prototype.calculateCSAT = (surveys) => {
+    var csatScores = surveys.map((s) => s.overall_score).filter((score) => score > 0);
     return csatScores.length > 0
-      ? Math.round(
-          (csatScores.reduce(function (sum, score) {
-            return sum + score;
-          }, 0) /
-            csatScores.length) *
-            100,
-        ) / 100
+      ? Math.round((csatScores.reduce((sum, score) => sum + score, 0) / csatScores.length) * 100) /
+          100
       : 0;
   };
   PatientSatisfactionMetricsEngine.prototype.calculateBenchmarkComparison = function (
     averageScores,
   ) {
-    var _this = this;
     var variance = {};
-    Object.keys(averageScores).forEach(function (key) {
+    Object.keys(averageScores).forEach((key) => {
       var dimension = key;
-      var industryAvg = _this.industryBenchmarks[dimension] || 3.0;
+      var industryAvg = this.industryBenchmarks[dimension] || 3.0;
       var patientScore = averageScores[dimension];
       variance[dimension] = Math.round((patientScore - industryAvg) * 100) / 100;
     });
@@ -1068,14 +1030,12 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
       ranking_position: this.calculateRankingPosition(averageScores.overall),
     };
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateSatisfactionPercentile = function (
-    overallScore,
-  ) {
+  PatientSatisfactionMetricsEngine.prototype.calculateSatisfactionPercentile = (overallScore) => {
     // Simplified percentile calculation - would use actual distribution data in production
     var maxScore = 5.0;
     return Math.round((overallScore / maxScore) * 100);
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateRankingPosition = function (overallScore) {
+  PatientSatisfactionMetricsEngine.prototype.calculateRankingPosition = (overallScore) => {
     // Simplified ranking - would use actual market data in production
     if (overallScore >= 4.5) return 1; // Top 10%
     if (overallScore >= 4.0) return 2; // Top 25%
@@ -1087,12 +1047,11 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     averageScores,
     benchmarkComparison,
   ) {
-    var _this = this;
     var opportunities = [];
-    Object.keys(averageScores).forEach(function (key) {
+    Object.keys(averageScores).forEach((key) => {
       var dimension = key;
       var currentScore = averageScores[dimension];
-      var benchmarkScore = _this.industryBenchmarks[dimension] || 3.0;
+      var benchmarkScore = this.industryBenchmarks[dimension] || 3.0;
       var variance = benchmarkComparison.variance_from_benchmark[dimension];
       if (variance < -0.5) {
         // Significantly below benchmark
@@ -1101,25 +1060,20 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
           current_score: currentScore,
           target_score: benchmarkScore + 0.2, // Aim slightly above benchmark
           improvement_potential: Math.abs(variance),
-          priority_level: _this.getPriorityLevel(variance, currentScore),
-          recommended_actions: _this.getRecommendedActions(dimension, currentScore),
+          priority_level: this.getPriorityLevel(variance, currentScore),
+          recommended_actions: this.getRecommendedActions(dimension, currentScore),
         });
       }
     });
-    return opportunities.sort(function (a, b) {
-      return b.improvement_potential - a.improvement_potential;
-    });
+    return opportunities.sort((a, b) => b.improvement_potential - a.improvement_potential);
   };
-  PatientSatisfactionMetricsEngine.prototype.getPriorityLevel = function (variance, currentScore) {
+  PatientSatisfactionMetricsEngine.prototype.getPriorityLevel = (variance, currentScore) => {
     if (currentScore < 2.0 || variance < -1.0) return "critical";
     if (currentScore < 3.0 || variance < -0.7) return "high";
     if (variance < -0.5) return "medium";
     return "low";
   };
-  PatientSatisfactionMetricsEngine.prototype.getRecommendedActions = function (
-    dimension,
-    currentScore,
-  ) {
+  PatientSatisfactionMetricsEngine.prototype.getRecommendedActions = (dimension, currentScore) => {
     var actions = {
       overall: [
         "Implementar programa de melhoria contínua",
@@ -1148,13 +1102,13 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     };
     return actions[dimension] || ["Análise específica necessária"];
   };
-  PatientSatisfactionMetricsEngine.prototype.generatePredictedTrends = function (scoreTrends) {
+  PatientSatisfactionMetricsEngine.prototype.generatePredictedTrends = (scoreTrends) => {
     var predictions = {
       next_month_prediction: {},
       confidence_interval: {},
       trend_direction: {},
     };
-    Object.keys(scoreTrends).forEach(function (key) {
+    Object.keys(scoreTrends).forEach((key) => {
       var dimension = key;
       var trend = scoreTrends[dimension];
       if (trend.length >= 2) {
@@ -1179,21 +1133,13 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     });
     return predictions;
   };
-  PatientSatisfactionMetricsEngine.prototype.analyzeTrendData = function (surveys) {
+  PatientSatisfactionMetricsEngine.prototype.analyzeTrendData = (surveys) => {
     // Analyze trend patterns, correlations, etc.
-    var scores = surveys.map(function (s) {
-      return s.overall_score;
-    });
+    var scores = surveys.map((s) => s.overall_score);
     var firstHalf = scores.slice(0, Math.floor(scores.length / 2));
     var secondHalf = scores.slice(Math.floor(scores.length / 2));
-    var firstAvg =
-      firstHalf.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / firstHalf.length;
-    var secondAvg =
-      secondHalf.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / secondHalf.length;
+    var firstAvg = firstHalf.reduce((sum, score) => sum + score, 0) / firstHalf.length;
+    var secondAvg = secondHalf.reduce((sum, score) => sum + score, 0) / secondHalf.length;
     var overallTrend = "stable";
     var trendStrength = 0;
     if (secondAvg > firstAvg + 0.2) {
@@ -1229,10 +1175,9 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     };
   };
   PatientSatisfactionMetricsEngine.prototype.calculateBenchmarkingInsights = function (surveys) {
-    var _this = this;
     var latestSurvey = surveys[surveys.length - 1];
     var performanceVsIndustry = {};
-    Object.keys(this.industryBenchmarks).forEach(function (key) {
+    Object.keys(this.industryBenchmarks).forEach((key) => {
       var _a;
       var dimension = key;
       var patientScore =
@@ -1242,7 +1187,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
             : latestSurvey.satisfaction_scores) === null || _a === void 0
           ? void 0
           : _a[dimension]) || 0;
-      var industryScore = _this.industryBenchmarks[dimension];
+      var industryScore = this.industryBenchmarks[dimension];
       if (patientScore > industryScore + 0.2) {
         performanceVsIndustry[dimension] = "above";
       } else if (patientScore < industryScore - 0.2) {
@@ -1253,10 +1198,8 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     });
     // Priority ranking based on impact and improvement potential
     var improvementPriorityRanking = Object.keys(performanceVsIndustry)
-      .filter(function (key) {
-        return performanceVsIndustry[key] === "below";
-      })
-      .sort(function (a, b) {
+      .filter((key) => performanceVsIndustry[key] === "below")
+      .sort((a, b) => {
         var _a, _b;
         var scoreA =
           ((_a =
@@ -1283,7 +1226,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
       ),
     };
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateChurnRisk = function (surveys) {
+  PatientSatisfactionMetricsEngine.prototype.calculateChurnRisk = (surveys) => {
     if (surveys.length === 0) return 0.5;
     var latestSurvey = surveys[surveys.length - 1];
     var riskScore = 0;
@@ -1302,17 +1245,17 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     }
     return Math.min(1.0, riskScore);
   };
-  PatientSatisfactionMetricsEngine.prototype.calculateOptimalSurveyTiming = function (surveys) {
+  PatientSatisfactionMetricsEngine.prototype.calculateOptimalSurveyTiming = (surveys) => {
     // Calculate optimal timing for next survey based on response patterns
     var avgResponseInterval = 90; // Default 90 days
     var nextSurveyDate = new Date();
     nextSurveyDate.setDate(nextSurveyDate.getDate() + avgResponseInterval);
     return nextSurveyDate;
   };
-  PatientSatisfactionMetricsEngine.prototype.generateInterventionRecommendations = function (
+  PatientSatisfactionMetricsEngine.prototype.generateInterventionRecommendations = (
     churnRisk,
     loyaltyScore,
-  ) {
+  ) => {
     var recommendations = [];
     if (churnRisk > 0.7) {
       recommendations.push("Contato imediato do customer success");
@@ -1327,7 +1270,7 @@ var PatientSatisfactionMetricsEngine = /** @class */ (function () {
     }
     return recommendations;
   };
-  PatientSatisfactionMetricsEngine.prototype.getCompetitivePositioning = function (overallScore) {
+  PatientSatisfactionMetricsEngine.prototype.getCompetitivePositioning = (overallScore) => {
     if (overallScore >= 4.5) return "Líder de mercado";
     if (overallScore >= 4.0) return "Acima da média";
     if (overallScore >= 3.5) return "Na média do mercado";

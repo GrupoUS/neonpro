@@ -38,7 +38,7 @@ export class ErrorRecoverySystem {
       condition: (error) =>
         error.errorType.includes("network") || error.errorType.includes("timeout"),
       action: async (error) => {
-        await this.delay(Math.pow(2, this.getRetryCount(error.errorId)) * 1000);
+        await this.delay(2 ** this.getRetryCount(error.errorId) * 1000);
         return true;
       },
       maxRetries: 3,
@@ -159,7 +159,7 @@ export class ErrorRecoverySystem {
     const maxRetries = 3;
 
     if (retryCount < maxRetries) {
-      const backoffMs = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+      const backoffMs = 2 ** retryCount * 1000; // 1s, 2s, 4s
 
       setTimeout(() => {
         console.log(`🔄 Auto-retry attempt ${retryCount + 1} for error ${errorContext.errorId}`);

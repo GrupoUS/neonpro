@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientDashboard = PatientDashboard;
 var react_1 = require("react");
@@ -114,19 +113,19 @@ function PatientDashboard() {
       icon: lucide_react_1.MessageCircle,
     },
   ];
-  var getGreeting = function () {
+  var getGreeting = () => {
     var hour = new Date().getHours();
     if (hour < 12) return "Bom dia";
     if (hour < 18) return "Boa tarde";
     return "Boa noite";
   };
-  var formatAppointmentDate = function (dateStr) {
+  var formatAppointmentDate = (dateStr) => {
     var date = (0, date_fns_1.parseISO)(dateStr);
     if ((0, date_fns_1.isToday)(date)) return "Hoje";
     if ((0, date_fns_1.isTomorrow)(date)) return "Amanhã";
     return (0, date_fns_1.format)(date, "d 'de' MMMM", { locale: locale_1.ptBR });
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var badges = {
       confirmed: { label: "Confirmado", variant: "default" },
       pending: { label: "Pendente", variant: "secondary" },
@@ -140,9 +139,9 @@ function PatientDashboard() {
         <div className="animate-pulse space-y-4">
           <div className="h-8 bg-muted rounded-lg w-1/3"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {__spreadArray([], Array(6), true).map(function (_, i) {
-              return <div key={i} className="h-32 bg-muted rounded-lg"></div>;
-            })}
+            {__spreadArray([], Array(6), true).map((_, i) => (
+              <div key={i} className="h-32 bg-muted rounded-lg"></div>
+            ))}
           </div>
         </div>
       </div>
@@ -165,9 +164,7 @@ function PatientDashboard() {
                   ? void 0
                   : _a
                       .split(" ")
-                      .map(function (n) {
-                        return n[0];
-                      })
+                      .map((n) => n[0])
                       .join("")
                       .slice(0, 2)
                       .toUpperCase()}
@@ -277,45 +274,43 @@ function PatientDashboard() {
           </card_1.CardHeader>
           <card_1.CardContent className="space-y-4">
             {upcomingAppointments.length > 0
-              ? upcomingAppointments.map(function (appointment) {
-                  return (
-                    <div
-                      key={appointment.id}
-                      className="flex items-start gap-4 p-4 rounded-lg border bg-card/50"
-                    >
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                          <lucide_react_1.Calendar className="w-5 h-5 text-primary" />
-                        </div>
+              ? upcomingAppointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="flex items-start gap-4 p-4 rounded-lg border bg-card/50"
+                  >
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                        <lucide_react_1.Calendar className="w-5 h-5 text-primary" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <h4 className="font-semibold text-sm">{appointment.service}</h4>
-                            <p className="text-sm text-muted-foreground">
-                              {appointment.professional}
-                            </p>
-                          </div>
-                          <badge_1.Badge {...getStatusBadge(appointment.status)}>
-                            {getStatusBadge(appointment.status).label}
-                          </badge_1.Badge>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h4 className="font-semibold text-sm">{appointment.service}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {appointment.professional}
+                          </p>
                         </div>
-                        <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <lucide_react_1.Clock className="w-3 h-3" />
-                            <span>
-                              {formatAppointmentDate(appointment.date)} às {appointment.time}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <lucide_react_1.MapPin className="w-3 h-3" />
-                            <span>{appointment.location}</span>
-                          </div>
+                        <badge_1.Badge {...getStatusBadge(appointment.status)}>
+                          {getStatusBadge(appointment.status).label}
+                        </badge_1.Badge>
+                      </div>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <lucide_react_1.Clock className="w-3 h-3" />
+                          <span>
+                            {formatAppointmentDate(appointment.date)} às {appointment.time}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <lucide_react_1.MapPin className="w-3 h-3" />
+                          <span>{appointment.location}</span>
                         </div>
                       </div>
                     </div>
-                  );
-                })
+                  </div>
+                ))
               : <div className="text-center py-8 text-muted-foreground">
                   <lucide_react_1.Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>Nenhuma consulta agendada</p>
@@ -338,39 +333,34 @@ function PatientDashboard() {
             <card_1.CardDescription>Acompanhe seu progresso nos tratamentos</card_1.CardDescription>
           </card_1.CardHeader>
           <card_1.CardContent className="space-y-6">
-            {wellnessMetrics.map(function (metric) {
-              return (
-                <div key={metric.id} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">{metric.label}</span>
-                    <span className={"text-sm font-semibold ".concat(metric.color)}>
-                      {metric.value}
-                      {metric.unit}
+            {wellnessMetrics.map((metric) => (
+              <div key={metric.id} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">{metric.label}</span>
+                  <span className={"text-sm font-semibold ".concat(metric.color)}>
+                    {metric.value}
+                    {metric.unit}
+                  </span>
+                </div>
+                <progress_1.Progress value={(metric.value / metric.target) * 100} className="h-2" />
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>
+                    Meta: {metric.target}
+                    {metric.unit}
+                  </span>
+                  <div className="flex items-center gap-1">
+                    <lucide_react_1.TrendingUp className={"w-3 h-3 ".concat(metric.color)} />
+                    <span className={metric.color}>
+                      {metric.trend === "up"
+                        ? "Melhorando"
+                        : metric.trend === "down"
+                          ? "Atenção"
+                          : "Estável"}
                     </span>
-                  </div>
-                  <progress_1.Progress
-                    value={(metric.value / metric.target) * 100}
-                    className="h-2"
-                  />
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>
-                      Meta: {metric.target}
-                      {metric.unit}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <lucide_react_1.TrendingUp className={"w-3 h-3 ".concat(metric.color)} />
-                      <span className={metric.color}>
-                        {metric.trend === "up"
-                          ? "Melhorando"
-                          : metric.trend === "down"
-                            ? "Atenção"
-                            : "Estável"}
-                      </span>
-                    </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </card_1.CardContent>
         </card_1.Card>
       </div>
@@ -387,7 +377,7 @@ function PatientDashboard() {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="space-y-4">
-            {recentActivities.map(function (activity, index) {
+            {recentActivities.map((activity, index) => {
               var Icon = activity.icon;
               return (
                 <div key={activity.id}>

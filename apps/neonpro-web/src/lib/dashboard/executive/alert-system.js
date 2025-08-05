@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createalertSystem =
   exports.AlertSystem =
@@ -250,7 +247,7 @@ exports.AlertNotificationSchema = zod_1.z.object({
   maxRetries: zod_1.z.number().default(3),
 });
 // Alert System Service
-var AlertSystem = /** @class */ (function () {
+var AlertSystem = /** @class */ (() => {
   function AlertSystem() {
     this.supabase = (0, client_1.createClient)();
     this.evaluationTimers = new Map();
@@ -494,26 +491,24 @@ var AlertSystem = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              data.map(function (alert) {
-                return {
-                  id: alert.id,
-                  ruleId: alert.rule_id,
-                  clinicId: alert.clinic_id,
-                  title: alert.title,
-                  message: alert.message,
-                  severity: alert.severity,
-                  status: alert.status,
-                  data: alert.data,
-                  triggeredAt: alert.triggered_at,
-                  acknowledgedAt: alert.acknowledged_at,
-                  acknowledgedBy: alert.acknowledged_by,
-                  resolvedAt: alert.resolved_at,
-                  resolvedBy: alert.resolved_by,
-                  dismissedAt: alert.dismissed_at,
-                  dismissedBy: alert.dismissed_by,
-                  metadata: alert.metadata,
-                };
-              }),
+              data.map((alert) => ({
+                id: alert.id,
+                ruleId: alert.rule_id,
+                clinicId: alert.clinic_id,
+                title: alert.title,
+                message: alert.message,
+                severity: alert.severity,
+                status: alert.status,
+                data: alert.data,
+                triggeredAt: alert.triggered_at,
+                acknowledgedAt: alert.acknowledged_at,
+                acknowledgedBy: alert.acknowledged_by,
+                resolvedAt: alert.resolved_at,
+                resolvedBy: alert.resolved_by,
+                dismissedAt: alert.dismissed_at,
+                dismissedBy: alert.dismissed_by,
+                metadata: alert.metadata,
+              })),
             ];
           case 2:
             error_4 = _b.sent();
@@ -693,31 +688,32 @@ var AlertSystem = /** @class */ (function () {
    * Start evaluation for a specific rule
    */
   AlertSystem.prototype.startRuleEvaluation = function (rule) {
-    var _this = this;
     if (this.evaluationTimers.has(rule.id)) {
       return; // Already running
     }
-    var timer = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_9;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.evaluateRule(rule)];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_9 = _a.sent();
-              logger_1.logger.error("Error evaluating rule ".concat(rule.id, ":"), error_9);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.EVALUATION_INTERVAL);
+    var timer = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_9;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.evaluateRule(rule)];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_9 = _a.sent();
+                logger_1.logger.error("Error evaluating rule ".concat(rule.id, ":"), error_9);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.EVALUATION_INTERVAL,
+    );
     this.evaluationTimers.set(rule.id, timer);
   };
   /**
@@ -752,9 +748,7 @@ var AlertSystem = /** @class */ (function () {
             ];
           case 1:
             kpiResults = _a.sent();
-            targetKPI = kpiResults.find(function (kpi) {
-              return kpi.kpi.id === rule.conditions.kpiId;
-            });
+            targetKPI = kpiResults.find((kpi) => kpi.kpi.id === rule.conditions.kpiId);
             if (!targetKPI) {
               return [2 /*return*/]; // KPI not found
             }
@@ -801,7 +795,7 @@ var AlertSystem = /** @class */ (function () {
   /**
    * Check if rule should be evaluated now based on schedule
    */
-  AlertSystem.prototype.shouldEvaluateNow = function (rule) {
+  AlertSystem.prototype.shouldEvaluateNow = (rule) => {
     var _a;
     if (!((_a = rule.schedule) === null || _a === void 0 ? void 0 : _a.enabled)) {
       return true;
@@ -827,7 +821,7 @@ var AlertSystem = /** @class */ (function () {
   /**
    * Evaluate if a condition is violated
    */
-  AlertSystem.prototype.evaluateCondition = function (value, conditions) {
+  AlertSystem.prototype.evaluateCondition = (value, conditions) => {
     var operator = conditions.operator,
       threshold = conditions.threshold,
       secondaryThreshold = conditions.secondaryThreshold;
@@ -983,7 +977,7 @@ var AlertSystem = /** @class */ (function () {
   /**
    * Generate alert message
    */
-  AlertSystem.prototype.generateAlertMessage = function (rule, kpiResult) {
+  AlertSystem.prototype.generateAlertMessage = (rule, kpiResult) => {
     var kpiName = kpiResult.kpi.name;
     var currentValue = kpiResult.formattedValue;
     var threshold = rule.conditions.threshold;
@@ -1137,7 +1131,7 @@ var AlertSystem = /** @class */ (function () {
    */
   AlertSystem.prototype.sendEmailNotification = function (alert, email) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would depend on email service (SendGrid, AWS SES, etc.)
         logger_1.logger.info(
           "Sending email notification to ".concat(email, " for alert ").concat(alert.id),
@@ -1151,7 +1145,7 @@ var AlertSystem = /** @class */ (function () {
    */
   AlertSystem.prototype.sendSMSNotification = function (alert, phone) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would depend on SMS service (Twilio, AWS SNS, etc.)
         logger_1.logger.info(
           "Sending SMS notification to ".concat(phone, " for alert ").concat(alert.id),
@@ -1165,7 +1159,7 @@ var AlertSystem = /** @class */ (function () {
    */
   AlertSystem.prototype.sendPushNotification = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would depend on push service (Firebase, OneSignal, etc.)
         logger_1.logger.info("Sending push notification for alert ".concat(alert.id));
         return [2 /*return*/];
@@ -1176,10 +1170,9 @@ var AlertSystem = /** @class */ (function () {
    * Start periodic cleanup of old alerts
    */
   AlertSystem.prototype.startPeriodicCleanup = function () {
-    var _this = this;
     setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_16;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -1197,8 +1190,7 @@ var AlertSystem = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       24 * 60 * 60 * 1000,
     ); // Daily cleanup
   };
@@ -1265,21 +1257,11 @@ var AlertSystem = /** @class */ (function () {
             }
             stats = {
               total: data.length,
-              active: data.filter(function (a) {
-                return a.status === "active";
-              }).length,
-              critical: data.filter(function (a) {
-                return a.severity === "critical";
-              }).length,
-              high: data.filter(function (a) {
-                return a.severity === "high";
-              }).length,
-              medium: data.filter(function (a) {
-                return a.severity === "medium";
-              }).length,
-              low: data.filter(function (a) {
-                return a.severity === "low";
-              }).length,
+              active: data.filter((a) => a.status === "active").length,
+              critical: data.filter((a) => a.severity === "critical").length,
+              high: data.filter((a) => a.severity === "high").length,
+              medium: data.filter((a) => a.severity === "medium").length,
+              low: data.filter((a) => a.severity === "low").length,
             };
             return [2 /*return*/, stats];
           case 2:
@@ -1296,7 +1278,5 @@ var AlertSystem = /** @class */ (function () {
 })();
 exports.AlertSystem = AlertSystem;
 // Export singleton instance
-var createalertSystem = function () {
-  return new AlertSystem();
-};
+var createalertSystem = () => new AlertSystem();
 exports.createalertSystem = createalertSystem;

@@ -5,8 +5,6 @@
  * Standards: Brazilian NFSe compliance + Shadow validation
  */
 
-import type { z } from "zod";
-
 // Constants for validation
 const MAX_AMOUNT = 999999999; // 9.999.999,99 BRL in centavos
 const MIN_AMOUNT = 0;
@@ -87,8 +85,8 @@ const paymentProcessingStatusSchema = z.enum([
   "cancelled",
   "refunded",
 ]);
-const installmentStatusSchema = z.enum(["pending", "paid", "overdue", "cancelled"]);
-const shadowValidationStatusSchema = z.enum(["pending", "validated", "failed"]);
+const _installmentStatusSchema = z.enum(["pending", "paid", "overdue", "cancelled"]);
+const _shadowValidationStatusSchema = z.enum(["pending", "validated", "failed"]);
 const shadowOperationTypeSchema = z.enum([
   "invoice_calculation",
   "payment_processing",
@@ -97,7 +95,7 @@ const shadowOperationTypeSchema = z.enum([
 ]);
 const reminderTypeSchema = z.enum(["pre_due", "due", "overdue", "final_notice"]);
 const deliveryMethodSchema = z.enum(["email", "sms", "whatsapp", "phone"]);
-const reminderStatusSchema = z.enum(["pending", "sent", "delivered", "failed", "cancelled"]);
+const _reminderStatusSchema = z.enum(["pending", "sent", "delivered", "failed", "cancelled"]);
 
 // Address validation
 const addressSchema = z.object({
@@ -502,15 +500,15 @@ export const paymentQuerySchema = z
   .merge(paginationSchema);
 
 // Utility validation functions
-export const validateAmount = (amount: number, fieldName: string = "amount") => {
+export const validateAmount = (amount: number, _fieldName: string = "amount") => {
   return amountSchema.parse(amount);
 };
 
-export const validatePositiveAmount = (amount: number, fieldName: string = "amount") => {
+export const validatePositiveAmount = (amount: number, _fieldName: string = "amount") => {
   return positiveAmountSchema.parse(amount);
 };
 
-export const validateUuid = (id: string, fieldName: string = "id") => {
+export const validateUuid = (id: string, _fieldName: string = "id") => {
   return uuidSchema.parse(id);
 };
 
@@ -548,7 +546,7 @@ export const parseCurrencyToCentavos = (currencyString: string): number => {
   // Remove currency symbols and convert to number
   const cleaned = currencyString.replace(/[R$\s.]/g, "").replace(",", ".");
   const reais = parseFloat(cleaned);
-  if (isNaN(reais)) {
+  if (Number.isNaN(reais)) {
     throw new Error("Invalid currency format");
   }
   return reaisToCentavos(reais);

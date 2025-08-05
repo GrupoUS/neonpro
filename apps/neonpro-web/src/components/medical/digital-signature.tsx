@@ -1,6 +1,42 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Copy,
+  CreditCard,
+  Download,
+  Eye,
+  FileText,
+  Filter,
+  Fingerprint,
+  Hash,
+  Info,
+  Key,
+  Lock,
+  MoreVertical,
+  PenTool,
+  Plus,
+  RefreshCw,
+  Search,
+  Send,
+  Shield,
+  Smartphone,
+  Unlock,
+  User,
+  UserCheck,
+  X,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,19 +44,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
   Dialog,
   DialogContent,
@@ -29,39 +52,17 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
-  PenTool,
-  Shield,
-  CheckCircle,
-  AlertTriangle,
-  Clock,
-  User,
-  FileText,
-  Key,
-  Lock,
-  Unlock,
-  Eye,
-  Download,
-  Send,
-  UserCheck,
-  Calendar,
-  Hash,
-  Fingerprint,
-  Smartphone,
-  CreditCard,
-  X,
-  Plus,
-  Search,
-  Filter,
-  MoreVertical,
-  Copy,
-  RefreshCw,
-  AlertCircle,
-  Info,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Types
 interface DigitalSignature {

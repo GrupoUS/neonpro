@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccordionContent =
   exports.AccordionTrigger =
@@ -25,7 +23,7 @@ var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var Accordion = AccordionPrimitive.Root;
 exports.Accordion = Accordion;
-var AccordionItem = React.forwardRef(function (_a, ref) {
+var AccordionItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -38,7 +36,7 @@ var AccordionItem = React.forwardRef(function (_a, ref) {
 });
 exports.AccordionItem = AccordionItem;
 AccordionItem.displayName = "AccordionItem";
-var AccordionTrigger = React.forwardRef(function (_a, ref) {
+var AccordionTrigger = React.forwardRef((_a, ref) => {
   var className = _a.className,
     children = _a.children,
     props = __rest(_a, ["className", "children"]);
@@ -60,7 +58,7 @@ var AccordionTrigger = React.forwardRef(function (_a, ref) {
 });
 exports.AccordionTrigger = AccordionTrigger;
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
-var AccordionContent = React.forwardRef(function (_a, ref) {
+var AccordionContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     children = _a.children,
     props = __rest(_a, ["className", "children"]);

@@ -1,24 +1,24 @@
 "use client";
 
 import type {
+  Activity,
+  Calendar,
+  CalendarPlus,
+  Clock,
+  DollarSign,
+  TrendingUp,
+  UserPlus,
+  Users,
+} from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type {
-  Users,
-  Calendar,
-  DollarSign,
-  Activity,
-  TrendingUp,
-  Clock,
-  UserPlus,
-  CalendarPlus,
-} from "lucide-react";
 
 interface DashboardContentProps {
   user: any;

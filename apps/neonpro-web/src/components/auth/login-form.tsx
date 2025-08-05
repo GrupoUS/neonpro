@@ -1,8 +1,11 @@
 "use client";
 
-import type { useState } from "react";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { Eye, EyeOff, Heart, Lock, Mail, User, X } from "lucide-react";
 import type { useRouter } from "next/navigation";
-import type { useAuth } from "@/contexts/auth-context";
+import type { useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { z } from "zod";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
@@ -15,10 +18,7 @@ import type {
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
 import type { Separator } from "@/components/ui/separator";
-import type { useForm } from "react-hook-form";
-import type { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
-import type { Eye, EyeOff, Lock, Mail, User, X, Heart } from "lucide-react";
+import type { useAuth } from "@/contexts/auth-context";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email é obrigatório").email("Email inválido"),

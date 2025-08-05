@@ -1,12 +1,12 @@
+import type { createClient } from "@supabase/supabase-js";
 import type { ResourceOptimizer } from "../resource-optimizer";
 import type {
-  ResourceOptimizationConfig,
   OptimizationRecommendation,
-  WorkloadDistribution,
-  ResourceMetrics,
   OptimizationType,
+  ResourceMetrics,
+  ResourceOptimizationConfig,
+  WorkloadDistribution,
 } from "../types";
-import type { createClient } from "@supabase/supabase-js";
 
 // Mock Supabase
 jest.mock("@supabase/supabase-js");

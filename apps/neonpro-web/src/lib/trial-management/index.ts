@@ -2,52 +2,50 @@
 // AI-powered trial management with conversion optimization
 // Created: 2025-01-22
 
-// Core Types and Interfaces
-export type {
-  TrialStage,
-  ConversionStrategy,
-  UserSegment,
-  EngagementLevel,
-  Trial,
-  TrialMetadata,
-  EmailEngagementData,
-  ConversionPrediction,
-  ConversionFactor,
-  ConversionRecommendation,
-  UserJourney,
-  JourneyEvent,
-  JourneyMilestone,
-  StageTransition,
-  TrialCampaign,
-  CampaignTarget,
-  CampaignContent,
-  CallToAction,
-  PersonalizationRules,
-  CampaignSchedule,
-  TimeWindow,
-  CampaignTrigger,
-  CampaignMetrics,
-  ABTestConfig,
-  ABTestVariant,
-  VariantChange,
-  ABTestMetric,
-  FeatureRecommendation,
-  RecommendedFeature,
-  TrialFactory,
-} from "./types";
-
-// Validation Schemas
-export {
-  TrialStageSchema,
-  ConversionStrategySchema,
-  UserSegmentSchema,
-  EngagementLevelSchema,
-  TrialSchema,
-} from "./types";
-
+export { CampaignManager } from "./campaigns";
 // Core System Components
 export { TrialManagementEngine } from "./engine";
-export { CampaignManager } from "./campaigns";
+// Core Types and Interfaces
+export type {
+  ABTestConfig,
+  ABTestMetric,
+  ABTestVariant,
+  CallToAction,
+  CampaignContent,
+  CampaignMetrics,
+  CampaignSchedule,
+  CampaignTarget,
+  CampaignTrigger,
+  ConversionFactor,
+  ConversionPrediction,
+  ConversionRecommendation,
+  ConversionStrategy,
+  EmailEngagementData,
+  EngagementLevel,
+  FeatureRecommendation,
+  JourneyEvent,
+  JourneyMilestone,
+  PersonalizationRules,
+  RecommendedFeature,
+  StageTransition,
+  TimeWindow,
+  Trial,
+  TrialCampaign,
+  TrialFactory,
+  TrialMetadata,
+  TrialStage,
+  UserJourney,
+  UserSegment,
+  VariantChange,
+} from "./types";
+// Validation Schemas
+export {
+  ConversionStrategySchema,
+  EngagementLevelSchema,
+  TrialSchema,
+  TrialStageSchema,
+  UserSegmentSchema,
+} from "./types";
 
 // Main Trial Management Class
 export class TrialManager {

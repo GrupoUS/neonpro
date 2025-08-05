@@ -1,10 +1,7 @@
 import type { z } from "zod";
-import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/logger";
-import type {
-  createkpiCalculationService,
-  type KPICalculationResult,
-} from "./kpi-calculation-service";
+import type { createClient } from "@/lib/supabase/client";
+import type { createkpiCalculationService, KPICalculationResult } from "./kpi-calculation-service";
 
 // Alert Types and Schemas
 export const AlertSeveritySchema = z.enum(["low", "medium", "high", "critical"]);

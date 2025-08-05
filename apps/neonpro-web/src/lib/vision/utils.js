@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Vision Analysis System Utilities
  * Helper functions and utilities for NeonPro Computer Vision System
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -26,7 +25,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -55,8 +54,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -77,9 +74,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VisionUtils =
   exports.ErrorUtils =
@@ -154,12 +151,12 @@ var config_1 = require("./config");
 /**
  * Image Processing Utilities
  */
-var ImageUtils = /** @class */ (function () {
+var ImageUtils = /** @class */ (() => {
   function ImageUtils() {}
   /**
    * Validate image file format and size
    */
-  ImageUtils.validateImageFile = function (file) {
+  ImageUtils.validateImageFile = (file) => {
     var _a;
     var errors = [];
     var warnings = [];
@@ -210,44 +207,41 @@ var ImageUtils = /** @class */ (function () {
    */
   ImageUtils.extractImageMetadata = function (file) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          new Promise(function (resolve) {
-            var img = new Image();
-            var canvas = document.createElement("canvas");
-            var ctx = canvas.getContext("2d");
-            img.onload = function () {
-              canvas.width = img.width;
-              canvas.height = img.height;
-              if (ctx) {
-                ctx.drawImage(img, 0, 0);
-                var metadata = {
-                  // Basic metadata that can be extracted in browser
-                  colorProfile: "sRGB", // Default assumption
-                  quality: _this.estimateImageQuality(ctx, img.width, img.height),
-                };
-                resolve(metadata);
-              } else {
-                resolve({});
-              }
-              URL.revokeObjectURL(img.src);
-            };
-            img.onerror = function () {
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        new Promise((resolve) => {
+          var img = new Image();
+          var canvas = document.createElement("canvas");
+          var ctx = canvas.getContext("2d");
+          img.onload = () => {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            if (ctx) {
+              ctx.drawImage(img, 0, 0);
+              var metadata = {
+                // Basic metadata that can be extracted in browser
+                colorProfile: "sRGB", // Default assumption
+                quality: this.estimateImageQuality(ctx, img.width, img.height),
+              };
+              resolve(metadata);
+            } else {
               resolve({});
-              URL.revokeObjectURL(img.src);
-            };
-            img.src = URL.createObjectURL(file);
-          }),
-        ];
-      });
+            }
+            URL.revokeObjectURL(img.src);
+          };
+          img.onerror = () => {
+            resolve({});
+            URL.revokeObjectURL(img.src);
+          };
+          img.src = URL.createObjectURL(file);
+        }),
+      ]);
     });
   };
   /**
    * Estimate image quality based on various factors
    */
-  ImageUtils.estimateImageQuality = function (ctx, width, height) {
+  ImageUtils.estimateImageQuality = (ctx, width, height) => {
     try {
       var imageData = ctx.getImageData(0, 0, Math.min(width, 100), Math.min(height, 100));
       var data = imageData.data;
@@ -278,71 +272,63 @@ var ImageUtils = /** @class */ (function () {
   /**
    * Generate thumbnail from image file
    */
-  ImageUtils.generateThumbnail = function (file_1) {
+  ImageUtils.generateThumbnail = function (_file_1) {
     return __awaiter(this, arguments, void 0, function (file, maxWidth, maxHeight) {
-      var _this = this;
       if (maxWidth === void 0) {
         maxWidth = 200;
       }
       if (maxHeight === void 0) {
         maxHeight = 200;
       }
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          new Promise(function (resolve, reject) {
-            var img = new Image();
-            var canvas = document.createElement("canvas");
-            var ctx = canvas.getContext("2d");
-            img.onload = function () {
-              // Calculate thumbnail dimensions
-              var _a = _this.calculateThumbnailDimensions(
-                  img.width,
-                  img.height,
-                  maxWidth,
-                  maxHeight,
-                ),
-                width = _a.width,
-                height = _a.height;
-              canvas.width = width;
-              canvas.height = height;
-              if (ctx) {
-                ctx.drawImage(img, 0, 0, width, height);
-                canvas.toBlob(
-                  function (blob) {
-                    if (blob) {
-                      resolve(blob);
-                    } else {
-                      reject(new Error("Failed to generate thumbnail"));
-                    }
-                  },
-                  "image/jpeg",
-                  0.8,
-                );
-              } else {
-                reject(new Error("Failed to get canvas context"));
-              }
-              URL.revokeObjectURL(img.src);
-            };
-            img.onerror = function () {
-              reject(new Error("Failed to load image"));
-              URL.revokeObjectURL(img.src);
-            };
-            img.src = URL.createObjectURL(file);
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        new Promise((resolve, reject) => {
+          var img = new Image();
+          var canvas = document.createElement("canvas");
+          var ctx = canvas.getContext("2d");
+          img.onload = () => {
+            // Calculate thumbnail dimensions
+            var _a = this.calculateThumbnailDimensions(img.width, img.height, maxWidth, maxHeight),
+              width = _a.width,
+              height = _a.height;
+            canvas.width = width;
+            canvas.height = height;
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              canvas.toBlob(
+                (blob) => {
+                  if (blob) {
+                    resolve(blob);
+                  } else {
+                    reject(new Error("Failed to generate thumbnail"));
+                  }
+                },
+                "image/jpeg",
+                0.8,
+              );
+            } else {
+              reject(new Error("Failed to get canvas context"));
+            }
+            URL.revokeObjectURL(img.src);
+          };
+          img.onerror = () => {
+            reject(new Error("Failed to load image"));
+            URL.revokeObjectURL(img.src);
+          };
+          img.src = URL.createObjectURL(file);
+        }),
+      ]);
     });
   };
   /**
    * Calculate thumbnail dimensions maintaining aspect ratio
    */
-  ImageUtils.calculateThumbnailDimensions = function (
+  ImageUtils.calculateThumbnailDimensions = (
     originalWidth,
     originalHeight,
     maxWidth,
     maxHeight,
-  ) {
+  ) => {
     var aspectRatio = originalWidth / originalHeight;
     var width = maxWidth;
     var height = maxHeight;
@@ -369,26 +355,24 @@ exports.ImageUtils = ImageUtils;
 /**
  * Analysis Utilities
  */
-var AnalysisUtils = /** @class */ (function () {
+var AnalysisUtils = /** @class */ (() => {
   function AnalysisUtils() {}
   /**
    * Calculate overall improvement score from change metrics
    */
-  AnalysisUtils.calculateOverallImprovement = function (changeMetrics) {
-    var values = Object.values(changeMetrics).filter(function (v) {
-      return typeof v === "number" && !isNaN(v);
-    });
+  AnalysisUtils.calculateOverallImprovement = (changeMetrics) => {
+    var values = Object.values(changeMetrics).filter(
+      (v) => typeof v === "number" && !Number.isNaN(v),
+    );
     if (values.length === 0) return 0;
     // Calculate weighted average (can be customized based on treatment type)
-    var sum = values.reduce(function (acc, val) {
-      return acc + val;
-    }, 0);
+    var sum = values.reduce((acc, val) => acc + val, 0);
     return Math.max(0, Math.min(100, sum / values.length));
   };
   /**
    * Determine quality level based on score
    */
-  AnalysisUtils.getQualityLevel = function (score) {
+  AnalysisUtils.getQualityLevel = (score) => {
     if (score >= config_1.QUALITY_THRESHOLDS.EXCELLENT) return "Excelente";
     if (score >= config_1.QUALITY_THRESHOLDS.GOOD) return "Bom";
     if (score >= config_1.QUALITY_THRESHOLDS.FAIR) return "Regular";
@@ -397,7 +381,7 @@ var AnalysisUtils = /** @class */ (function () {
   /**
    * Format processing time for display
    */
-  AnalysisUtils.formatProcessingTime = function (timeMs) {
+  AnalysisUtils.formatProcessingTime = (timeMs) => {
     if (timeMs < 1000) {
       return "".concat(Math.round(timeMs), "ms");
     } else if (timeMs < 60000) {
@@ -411,7 +395,7 @@ var AnalysisUtils = /** @class */ (function () {
   /**
    * Format percentage with appropriate precision
    */
-  AnalysisUtils.formatPercentage = function (value, precision) {
+  AnalysisUtils.formatPercentage = (value, precision) => {
     if (precision === void 0) {
       precision = 1;
     }
@@ -420,7 +404,7 @@ var AnalysisUtils = /** @class */ (function () {
   /**
    * Format measurement value with unit
    */
-  AnalysisUtils.formatMeasurement = function (value, unit, precision) {
+  AnalysisUtils.formatMeasurement = (value, unit, precision) => {
     if (precision === void 0) {
       precision = 2;
     }
@@ -429,7 +413,7 @@ var AnalysisUtils = /** @class */ (function () {
   /**
    * Calculate confidence color for UI display
    */
-  AnalysisUtils.getConfidenceColor = function (confidence) {
+  AnalysisUtils.getConfidenceColor = (confidence) => {
     if (confidence >= 0.9) return "#10B981"; // Green
     if (confidence >= 0.7) return "#F59E0B"; // Yellow
     if (confidence >= 0.5) return "#EF4444"; // Red
@@ -438,7 +422,7 @@ var AnalysisUtils = /** @class */ (function () {
   /**
    * Calculate accuracy color for UI display
    */
-  AnalysisUtils.getAccuracyColor = function (accuracy) {
+  AnalysisUtils.getAccuracyColor = (accuracy) => {
     if (accuracy >= config_1.VISION_CONFIG.PERFORMANCE.TARGET_ACCURACY) return "#10B981"; // Green
     if (accuracy >= config_1.VISION_CONFIG.PERFORMANCE.MIN_ACCURACY_THRESHOLD) return "#F59E0B"; // Yellow
     return "#EF4444"; // Red
@@ -509,12 +493,12 @@ exports.AnalysisUtils = AnalysisUtils;
 /**
  * Measurement Utilities
  */
-var MeasurementUtils = /** @class */ (function () {
+var MeasurementUtils = /** @class */ (() => {
   function MeasurementUtils() {}
   /**
    * Calculate distance between two points
    */
-  MeasurementUtils.calculateDistance = function (point1, point2) {
+  MeasurementUtils.calculateDistance = (point1, point2) => {
     var dx = point2.x - point1.x;
     var dy = point2.y - point1.y;
     return Math.sqrt(dx * dx + dy * dy);
@@ -522,7 +506,7 @@ var MeasurementUtils = /** @class */ (function () {
   /**
    * Calculate area of a polygon
    */
-  MeasurementUtils.calculatePolygonArea = function (points) {
+  MeasurementUtils.calculatePolygonArea = (points) => {
     if (points.length < 3) return 0;
     var area = 0;
     for (var i = 0; i < points.length; i++) {
@@ -547,7 +531,7 @@ var MeasurementUtils = /** @class */ (function () {
   /**
    * Calculate angle between three points
    */
-  MeasurementUtils.calculateAngle = function (point1, vertex, point2) {
+  MeasurementUtils.calculateAngle = (point1, vertex, point2) => {
     var vector1 = { x: point1.x - vertex.x, y: point1.y - vertex.y };
     var vector2 = { x: point2.x - vertex.x, y: point2.y - vertex.y };
     var dot = vector1.x * vector2.x + vector1.y * vector2.y;
@@ -560,26 +544,22 @@ var MeasurementUtils = /** @class */ (function () {
   /**
    * Convert pixels to millimeters using calibration
    */
-  MeasurementUtils.pixelsToMm = function (pixels, pixelToMmRatio) {
-    return pixels * pixelToMmRatio;
-  };
+  MeasurementUtils.pixelsToMm = (pixels, pixelToMmRatio) => pixels * pixelToMmRatio;
   /**
    * Convert millimeters to pixels using calibration
    */
-  MeasurementUtils.mmToPixels = function (mm, pixelToMmRatio) {
-    return mm / pixelToMmRatio;
-  };
+  MeasurementUtils.mmToPixels = (mm, pixelToMmRatio) => mm / pixelToMmRatio;
   /**
    * Calculate measurement change percentage
    */
-  MeasurementUtils.calculateChangePercentage = function (beforeValue, afterValue) {
+  MeasurementUtils.calculateChangePercentage = (beforeValue, afterValue) => {
     if (beforeValue === 0) return afterValue > 0 ? 100 : 0;
     return ((afterValue - beforeValue) / beforeValue) * 100;
   };
   /**
    * Determine clinical significance of measurement change
    */
-  MeasurementUtils.determineClinicalSignificance = function (changePercentage, measurementType) {
+  MeasurementUtils.determineClinicalSignificance = (changePercentage, measurementType) => {
     var absChange = Math.abs(changePercentage);
     // Different thresholds for different measurement types
     var thresholds = {
@@ -604,55 +584,43 @@ exports.MeasurementUtils = MeasurementUtils;
 /**
  * Annotation Utilities
  */
-var AnnotationUtils = /** @class */ (function () {
+var AnnotationUtils = /** @class */ (() => {
   function AnnotationUtils() {}
   /**
    * Generate unique annotation ID
    */
-  AnnotationUtils.generateAnnotationId = function () {
-    return "annotation_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
+  AnnotationUtils.generateAnnotationId = () =>
+    "annotation_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Validate annotation coordinates
    */
-  AnnotationUtils.validateCoordinates = function (coordinates, imageWidth, imageHeight) {
-    return (
-      coordinates.x >= 0 &&
-      coordinates.x <= imageWidth &&
-      coordinates.y >= 0 &&
-      coordinates.y <= imageHeight
-    );
-  };
+  AnnotationUtils.validateCoordinates = (coordinates, imageWidth, imageHeight) =>
+    coordinates.x >= 0 &&
+    coordinates.x <= imageWidth &&
+    coordinates.y >= 0 &&
+    coordinates.y <= imageHeight;
   /**
    * Calculate annotation bounding box
    */
-  AnnotationUtils.calculateBoundingBox = function (coordinates) {
+  AnnotationUtils.calculateBoundingBox = (coordinates) => {
     if (coordinates.length === 0) {
       return { x: 0, y: 0, width: 0, height: 0 };
     }
     var minX = Math.min.apply(
       Math,
-      coordinates.map(function (c) {
-        return c.x;
-      }),
+      coordinates.map((c) => c.x),
     );
     var maxX = Math.max.apply(
       Math,
-      coordinates.map(function (c) {
-        return c.x;
-      }),
+      coordinates.map((c) => c.x),
     );
     var minY = Math.min.apply(
       Math,
-      coordinates.map(function (c) {
-        return c.y;
-      }),
+      coordinates.map((c) => c.y),
     );
     var maxY = Math.max.apply(
       Math,
-      coordinates.map(function (c) {
-        return c.y;
-      }),
+      coordinates.map((c) => c.y),
     );
     return {
       x: minX,
@@ -666,7 +634,7 @@ var AnnotationUtils = /** @class */ (function () {
    */
   AnnotationUtils.isPointInRegion = function (point, region) {
     switch (region.type) {
-      case "rectangle":
+      case "rectangle": {
         var rect = region.coordinates[0];
         return (
           point.x >= rect.x &&
@@ -674,11 +642,13 @@ var AnnotationUtils = /** @class */ (function () {
           point.y >= rect.y &&
           point.y <= rect.y + (rect.height || 0)
         );
-      case "circle":
+      }
+      case "circle": {
         var center = region.coordinates[0];
         var radius = center.radius || 0;
         var distance = MeasurementUtils.calculateDistance(point, center);
         return distance <= radius;
+      }
       case "polygon":
         return this.isPointInPolygon(point, region.coordinates);
       default:
@@ -688,7 +658,7 @@ var AnnotationUtils = /** @class */ (function () {
   /**
    * Check if point is inside polygon using ray casting algorithm
    */
-  AnnotationUtils.isPointInPolygon = function (point, polygon) {
+  AnnotationUtils.isPointInPolygon = (point, polygon) => {
     var inside = false;
     for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
       var xi = polygon[i].x;
@@ -710,31 +680,29 @@ exports.AnnotationUtils = AnnotationUtils;
 /**
  * Performance Utilities
  */
-var PerformanceUtils = /** @class */ (function () {
+var PerformanceUtils = /** @class */ (() => {
   function PerformanceUtils() {}
   /**
    * Create performance timer
    */
-  PerformanceUtils.createTimer = function () {
+  PerformanceUtils.createTimer = () => {
     var startTime = 0;
     var endTime = 0;
     return {
-      start: function () {
+      start: () => {
         startTime = performance.now();
       },
-      stop: function () {
+      stop: () => {
         endTime = performance.now();
         return endTime - startTime;
       },
-      elapsed: function () {
-        return (endTime || performance.now()) - startTime;
-      },
+      elapsed: () => (endTime || performance.now()) - startTime,
     };
   };
   /**
    * Monitor memory usage (if available)
    */
-  PerformanceUtils.getMemoryUsage = function () {
+  PerformanceUtils.getMemoryUsage = () => {
     if ("memory" in performance) {
       var memory = performance.memory;
       return {
@@ -747,10 +715,10 @@ var PerformanceUtils = /** @class */ (function () {
   /**
    * Throttle function execution
    */
-  PerformanceUtils.throttle = function (func, delay) {
+  PerformanceUtils.throttle = (func, delay) => {
     var timeoutId = null;
     var lastExecTime = 0;
-    return function () {
+    return () => {
       var args = [];
       for (var _i = 0; _i < arguments.length; _i++) {
         args[_i] = arguments[_i];
@@ -762,7 +730,7 @@ var PerformanceUtils = /** @class */ (function () {
       } else {
         if (timeoutId) clearTimeout(timeoutId);
         timeoutId = setTimeout(
-          function () {
+          () => {
             func.apply(void 0, args);
             lastExecTime = Date.now();
           },
@@ -774,17 +742,15 @@ var PerformanceUtils = /** @class */ (function () {
   /**
    * Debounce function execution
    */
-  PerformanceUtils.debounce = function (func, delay) {
+  PerformanceUtils.debounce = (func, delay) => {
     var timeoutId = null;
-    return function () {
+    return () => {
       var args = [];
       for (var _i = 0; _i < arguments.length; _i++) {
         args[_i] = arguments[_i];
       }
       if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(function () {
-        return func.apply(void 0, args);
-      }, delay);
+      timeoutId = setTimeout(() => func.apply(void 0, args), delay);
     };
   };
   return PerformanceUtils;
@@ -793,19 +759,19 @@ exports.PerformanceUtils = PerformanceUtils;
 /**
  * Export Utilities
  */
-var ExportUtils = /** @class */ (function () {
+var ExportUtils = /** @class */ (() => {
   function ExportUtils() {}
   /**
    * Generate export filename with timestamp
    */
-  ExportUtils.generateExportFilename = function (prefix, format) {
+  ExportUtils.generateExportFilename = (prefix, format) => {
     var timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, -5);
     return "".concat(prefix, "-").concat(timestamp, ".").concat(format);
   };
   /**
    * Format file size for display
    */
-  ExportUtils.formatFileSize = function (bytes) {
+  ExportUtils.formatFileSize = (bytes) => {
     var units = ["B", "KB", "MB", "GB"];
     var size = bytes;
     var unitIndex = 0;
@@ -818,7 +784,7 @@ var ExportUtils = /** @class */ (function () {
   /**
    * Validate export options
    */
-  ExportUtils.validateExportOptions = function (options) {
+  ExportUtils.validateExportOptions = (options) => {
     var errors = [];
     var warnings = [];
     if (!options.format) {
@@ -851,19 +817,19 @@ exports.ExportUtils = ExportUtils;
 /**
  * Date and Time Utilities
  */
-var DateUtils = /** @class */ (function () {
+var DateUtils = /** @class */ (() => {
   function DateUtils() {}
   /**
    * Format date for Brazilian locale
    */
-  DateUtils.formatDate = function (date) {
+  DateUtils.formatDate = (date) => {
     var d = typeof date === "string" ? new Date(date) : date;
     return d.toLocaleDateString("pt-BR");
   };
   /**
    * Format date and time for Brazilian locale
    */
-  DateUtils.formatDateTime = function (date) {
+  DateUtils.formatDateTime = (date) => {
     var d = typeof date === "string" ? new Date(date) : date;
     return d.toLocaleString("pt-BR");
   };
@@ -889,7 +855,7 @@ var DateUtils = /** @class */ (function () {
   /**
    * Check if date is within range
    */
-  DateUtils.isDateInRange = function (date, startDate, endDate) {
+  DateUtils.isDateInRange = (date, startDate, endDate) => {
     var d = typeof date === "string" ? new Date(date) : date;
     var start = typeof startDate === "string" ? new Date(startDate) : startDate;
     var end = typeof endDate === "string" ? new Date(endDate) : endDate;
@@ -901,12 +867,12 @@ exports.DateUtils = DateUtils;
 /**
  * Error Handling Utilities
  */
-var ErrorUtils = /** @class */ (function () {
+var ErrorUtils = /** @class */ (() => {
   function ErrorUtils() {}
   /**
    * Create standardized error object
    */
-  ErrorUtils.createError = function (code, message, details) {
+  ErrorUtils.createError = (code, message, details) => {
     var error = new Error(message);
     error.code = code;
     error.details = details;
@@ -916,14 +882,14 @@ var ErrorUtils = /** @class */ (function () {
   /**
    * Check if error is recoverable
    */
-  ErrorUtils.isRecoverableError = function (error) {
+  ErrorUtils.isRecoverableError = (error) => {
     var recoverableCodes = ["PROCESSING_TIMEOUT", "MODEL_LOAD_FAILED", "STORAGE_ERROR"];
     return recoverableCodes.includes(error.code);
   };
   /**
    * Get user-friendly error message
    */
-  ErrorUtils.getUserFriendlyMessage = function (error) {
+  ErrorUtils.getUserFriendlyMessage = (error) => {
     var errorMessages = {
       INVALID_IMAGE_FORMAT: "Formato de imagem não suportado",
       IMAGE_TOO_LARGE: "Imagem muito grande",

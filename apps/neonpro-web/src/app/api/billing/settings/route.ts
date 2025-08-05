@@ -1,7 +1,3 @@
-import type { createClient } from "@/lib/supabase/server";
-import type { NextResponse } from "next/server";
-import type { z } from "zod";
-
 // Validation schema for financial settings
 const UpdateFinancialSettingsSchema = z.object({
   company_name: z.string().min(1, "Nome da empresa é obrigatório").optional(),
@@ -39,7 +35,7 @@ const UpdateFinancialSettingsSchema = z.object({
     .optional(),
 });
 
-export async function GET(request: Request) {
+export async function GET(_request: Request) {
   try {
     const supabase = await createClient();
 

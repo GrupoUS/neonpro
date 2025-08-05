@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomReportBuilder = CustomReportBuilder;
 var react_1 = require("react");
@@ -317,7 +314,6 @@ var REPORT_TEMPLATES = [
   },
 ];
 function CustomReportBuilder() {
-  var _this = this;
   var _a = (0, react_1.useState)(AVAILABLE_SECTIONS),
     sections = _a[0],
     setSections = _a[1];
@@ -346,69 +342,55 @@ function CustomReportBuilder() {
     generateCustomReport = _j.generateCustomReport,
     exportReport = _j.exportReport,
     isGenerating = _j.isGenerating;
-  var handleSectionToggle = (0, react_1.useCallback)(function (sectionId) {
-    setSections(function (prev) {
-      return prev.map(function (section) {
-        return section.id === sectionId
+  var handleSectionToggle = (0, react_1.useCallback)((sectionId) => {
+    setSections((prev) =>
+      prev.map((section) =>
+        section.id === sectionId
           ? __assign(__assign({}, section), { enabled: !section.enabled })
-          : section;
-      });
-    });
+          : section,
+      ),
+    );
   }, []);
-  var handleMetricToggle = (0, react_1.useCallback)(function (metricId) {
-    setMetrics(function (prev) {
-      return prev.map(function (metric) {
-        return metric.id === metricId
+  var handleMetricToggle = (0, react_1.useCallback)((metricId) => {
+    setMetrics((prev) =>
+      prev.map((metric) =>
+        metric.id === metricId
           ? __assign(__assign({}, metric), { enabled: !metric.enabled })
-          : metric;
-      });
-    });
+          : metric,
+      ),
+    );
   }, []);
-  var handleTemplateSelect = (0, react_1.useCallback)(function (templateId) {
-    var template = REPORT_TEMPLATES.find(function (t) {
-      return t.id === templateId;
-    });
+  var handleTemplateSelect = (0, react_1.useCallback)((templateId) => {
+    var template = REPORT_TEMPLATES.find((t) => t.id === templateId);
     if (!template) return;
     setSelectedTemplate(templateId);
     setGroupBy(template.groupBy);
     setFormat(template.format);
     // Update sections
-    setSections(function (prev) {
-      return prev.map(function (section) {
-        return __assign(__assign({}, section), { enabled: template.sections.includes(section.id) });
-      });
-    });
+    setSections((prev) =>
+      prev.map((section) =>
+        __assign(__assign({}, section), { enabled: template.sections.includes(section.id) }),
+      ),
+    );
     // Update metrics
-    setMetrics(function (prev) {
-      return prev.map(function (metric) {
-        return __assign(__assign({}, metric), { enabled: template.metrics.includes(metric.id) });
-      });
-    });
+    setMetrics((prev) =>
+      prev.map((metric) =>
+        __assign(__assign({}, metric), { enabled: template.metrics.includes(metric.id) }),
+      ),
+    );
     setReportTitle(template.name);
     setReportDescription(template.description);
     react_hot_toast_1.toast.success('Template "'.concat(template.name, '" aplicado!'));
   }, []);
   var handleGenerateReport = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var enabledSections, enabledMetrics, reportData, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              enabledSections = sections
-                .filter(function (s) {
-                  return s.enabled;
-                })
-                .map(function (s) {
-                  return s.id;
-                });
-              enabledMetrics = metrics
-                .filter(function (m) {
-                  return m.enabled;
-                })
-                .map(function (m) {
-                  return m.id;
-                });
+              enabledSections = sections.filter((s) => s.enabled).map((s) => s.id);
+              enabledMetrics = metrics.filter((m) => m.enabled).map((m) => m.id);
               if (enabledSections.length === 0) {
                 react_hot_toast_1.toast.error("Selecione pelo menos uma seção para o relatório");
                 return [2 /*return*/];
@@ -452,16 +434,11 @@ function CustomReportBuilder() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [sections, metrics, dateRange, groupBy, format, generateCustomReport, exportReport],
   );
-  var enabledSectionsCount = sections.filter(function (s) {
-    return s.enabled;
-  }).length;
-  var enabledMetricsCount = metrics.filter(function (m) {
-    return m.enabled;
-  }).length;
+  var enabledSectionsCount = sections.filter((s) => s.enabled).length;
+  var enabledMetricsCount = metrics.filter((m) => m.enabled).length;
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -500,34 +477,30 @@ function CustomReportBuilder() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {REPORT_TEMPLATES.map(function (template) {
-                  return (
-                    <card_1.Card
-                      key={template.id}
-                      className={"cursor-pointer transition-colors hover:bg-accent ".concat(
-                        selectedTemplate === template.id ? "ring-2 ring-primary" : "",
-                      )}
-                      onClick={function () {
-                        return handleTemplateSelect(template.id);
-                      }}
-                    >
-                      <card_1.CardHeader className="pb-3">
-                        <card_1.CardTitle className="text-base">{template.name}</card_1.CardTitle>
-                        <card_1.CardDescription className="text-sm">
-                          {template.description}
-                        </card_1.CardDescription>
-                      </card_1.CardHeader>
-                      <card_1.CardContent className="pt-0">
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>{template.sections.length} seções</span>
-                          <badge_1.Badge variant="outline">
-                            {template.format.toUpperCase()}
-                          </badge_1.Badge>
-                        </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                {REPORT_TEMPLATES.map((template) => (
+                  <card_1.Card
+                    key={template.id}
+                    className={"cursor-pointer transition-colors hover:bg-accent ".concat(
+                      selectedTemplate === template.id ? "ring-2 ring-primary" : "",
+                    )}
+                    onClick={() => handleTemplateSelect(template.id)}
+                  >
+                    <card_1.CardHeader className="pb-3">
+                      <card_1.CardTitle className="text-base">{template.name}</card_1.CardTitle>
+                      <card_1.CardDescription className="text-sm">
+                        {template.description}
+                      </card_1.CardDescription>
+                    </card_1.CardHeader>
+                    <card_1.CardContent className="pt-0">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{template.sections.length} seções</span>
+                        <badge_1.Badge variant="outline">
+                          {template.format.toUpperCase()}
+                        </badge_1.Badge>
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -543,21 +516,14 @@ function CustomReportBuilder() {
                   <input_1.Input
                     id="report-title"
                     value={reportTitle}
-                    onChange={function (e) {
-                      return setReportTitle(e.target.value);
-                    }}
+                    onChange={(e) => setReportTitle(e.target.value)}
                     placeholder="Digite o título do relatório"
                   />
                 </div>
 
                 <div>
                   <label_1.Label htmlFor="format">Formato de Exportação</label_1.Label>
-                  <select_1.Select
-                    value={format}
-                    onValueChange={function (value) {
-                      return setFormat(value);
-                    }}
-                  >
+                  <select_1.Select value={format} onValueChange={(value) => setFormat(value)}>
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
                     </select_1.SelectTrigger>
@@ -575,9 +541,7 @@ function CustomReportBuilder() {
                 <textarea_1.Textarea
                   id="report-description"
                   value={reportDescription}
-                  onChange={function (e) {
-                    return setReportDescription(e.target.value);
-                  }}
+                  onChange={(e) => setReportDescription(e.target.value)}
                   placeholder="Descrição opcional do relatório"
                   rows={2}
                 />
@@ -595,12 +559,7 @@ function CustomReportBuilder() {
 
                 <div>
                   <label_1.Label htmlFor="group-by">Agrupar Por</label_1.Label>
-                  <select_1.Select
-                    value={groupBy}
-                    onValueChange={function (value) {
-                      return setGroupBy(value);
-                    }}
-                  >
+                  <select_1.Select value={groupBy} onValueChange={(value) => setGroupBy(value)}>
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
                     </select_1.SelectTrigger>
@@ -629,16 +588,14 @@ function CustomReportBuilder() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {sections.map(function (section) {
+                {sections.map((section) => {
                   var Icon = section.icon;
                   return (
                     <div key={section.id} className="flex items-center space-x-3">
                       <checkbox_1.Checkbox
                         id={section.id}
                         checked={section.enabled}
-                        onCheckedChange={function () {
-                          return handleSectionToggle(section.id);
-                        }}
+                        onCheckedChange={() => handleSectionToggle(section.id)}
                       />
                       <div className="flex items-center space-x-2 flex-1">
                         <Icon className="h-4 w-4 text-muted-foreground" />
@@ -676,33 +633,29 @@ function CustomReportBuilder() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {metrics.map(function (metric) {
-                  return (
-                    <div key={metric.id} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <checkbox_1.Checkbox
-                          id={metric.id}
-                          checked={metric.enabled}
-                          onCheckedChange={function () {
-                            return handleMetricToggle(metric.id);
-                          }}
-                        />
-                        <div>
-                          <label_1.Label
-                            htmlFor={metric.id}
-                            className="text-sm font-medium cursor-pointer"
-                          >
-                            {metric.name}
-                          </label_1.Label>
-                          <p className="text-xs text-muted-foreground">{metric.description}</p>
-                        </div>
+                {metrics.map((metric) => (
+                  <div key={metric.id} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <checkbox_1.Checkbox
+                        id={metric.id}
+                        checked={metric.enabled}
+                        onCheckedChange={() => handleMetricToggle(metric.id)}
+                      />
+                      <div>
+                        <label_1.Label
+                          htmlFor={metric.id}
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          {metric.name}
+                        </label_1.Label>
+                        <p className="text-xs text-muted-foreground">{metric.description}</p>
                       </div>
-                      <badge_1.Badge variant="outline" className="text-xs">
-                        {metric.category}
-                      </badge_1.Badge>
                     </div>
-                  );
-                })}
+                    <badge_1.Badge variant="outline" className="text-xs">
+                      {metric.category}
+                    </badge_1.Badge>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -749,17 +702,13 @@ function CustomReportBuilder() {
                 <h4 className="font-medium text-sm mb-2">Seções Incluídas</h4>
                 <div className="space-y-1">
                   {sections
-                    .filter(function (s) {
-                      return s.enabled;
-                    })
-                    .map(function (section) {
-                      return (
-                        <div key={section.id} className="flex items-center space-x-2">
-                          <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
-                          <span className="text-xs">{section.title}</span>
-                        </div>
-                      );
-                    })}
+                    .filter((s) => s.enabled)
+                    .map((section) => (
+                      <div key={section.id} className="flex items-center space-x-2">
+                        <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
+                        <span className="text-xs">{section.title}</span>
+                      </div>
+                    ))}
                   {enabledSectionsCount === 0 && (
                     <p className="text-xs text-muted-foreground">Nenhuma seção selecionada</p>
                   )}
@@ -772,17 +721,13 @@ function CustomReportBuilder() {
                 <h4 className="font-medium text-sm mb-2">Métricas Incluídas</h4>
                 <div className="space-y-1">
                   {metrics
-                    .filter(function (m) {
-                      return m.enabled;
-                    })
-                    .map(function (metric) {
-                      return (
-                        <div key={metric.id} className="flex items-center space-x-2">
-                          <lucide_react_1.CheckCircle className="h-3 w-3 text-blue-500" />
-                          <span className="text-xs">{metric.name}</span>
-                        </div>
-                      );
-                    })}
+                    .filter((m) => m.enabled)
+                    .map((metric) => (
+                      <div key={metric.id} className="flex items-center space-x-2">
+                        <lucide_react_1.CheckCircle className="h-3 w-3 text-blue-500" />
+                        <span className="text-xs">{metric.name}</span>
+                      </div>
+                    ))}
                   {enabledMetricsCount === 0 && (
                     <p className="text-xs text-muted-foreground">Nenhuma métrica selecionada</p>
                   )}

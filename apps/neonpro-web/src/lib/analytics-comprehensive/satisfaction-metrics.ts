@@ -25,10 +25,10 @@
  * - Automated satisfaction surveys and collection
  */
 
-import type { type Database } from "@/lib/database.types";
+import type { Database } from "@/lib/database.types";
 import type { createClient } from "@/lib/supabase/client";
 import type { logger } from "@/lib/utils/logger";
-import type { type TouchpointType, type InteractionOutcome } from "./touchpoint-analyzer";
+import type { InteractionOutcome, TouchpointType } from "./touchpoint-analyzer";
 
 // ============================================================================
 // TYPES & INTERFACES

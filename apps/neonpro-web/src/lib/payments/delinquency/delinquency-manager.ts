@@ -1,8 +1,8 @@
-import type { z } from "zod";
 import type { createClient } from "@supabase/supabase-js";
 import type { addDays, differenceInDays, format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import nodemailer from "nodemailer";
+import type { z } from "zod";
 
 // Validation Schemas
 const CustomerRiskProfileSchema = z.object({

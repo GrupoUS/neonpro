@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Revenue Optimization Dashboard Tests
  *
@@ -11,15 +10,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,7 +28,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -39,13 +38,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,8 +57,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -67,9 +66,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -80,9 +77,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -141,72 +138,56 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 var react_query_1 = require("@tanstack/react-query");
 var sonner_1 = require("sonner");
 var page_1 = require("@/app/dashboard/revenue-optimization/page");
 // Mock Next.js modules
-jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: jest.fn(),
-        back: jest.fn(),
-        forward: jest.fn(),
-        refresh: jest.fn(),
-      };
-    },
-    useSearchParams: function () {
-      return {
-        get: function () {
-          return "clinic-123";
-        },
-      };
-    },
-  };
-});
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+  }),
+  useSearchParams: () => ({
+    get: () => "clinic-123",
+  }),
+}));
 // Mock Supabase auth
-jest.mock("@/app/utils/supabase/client", function () {
-  return {
-    createClient: function () {
-      return {
-        auth: {
-          getUser: function () {
-            return Promise.resolve({
-              data: { user: { id: "user-123" } },
-              error: null,
-            });
-          },
-          getSession: function () {
-            return Promise.resolve({
-              data: { session: { user: { id: "user-123" } } },
-              error: null,
-            });
-          },
-        },
-      };
+jest.mock("@/app/utils/supabase/client", () => ({
+  createClient: () => ({
+    auth: {
+      getUser: () =>
+        Promise.resolve({
+          data: { user: { id: "user-123" } },
+          error: null,
+        }),
+      getSession: () =>
+        Promise.resolve({
+          data: { session: { user: { id: "user-123" } } },
+          error: null,
+        }),
     },
-  };
-});
+  }),
+}));
 // Mock API calls
 global.fetch = jest.fn();
 // Mock toast notifications
-jest.mock("sonner", function () {
-  return {
-    toast: {
-      success: jest.fn(),
-      error: jest.fn(),
-      loading: jest.fn(),
-      dismiss: jest.fn(),
-    },
-  };
-});
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    loading: jest.fn(),
+    dismiss: jest.fn(),
+  },
+}));
 var mockFetch = global.fetch;
-var createTestQueryClient = function () {
-  return new react_query_1.QueryClient({
+var createTestQueryClient = () =>
+  new react_query_1.QueryClient({
     defaultOptions: {
       queries: {
         retry: false,
@@ -214,8 +195,7 @@ var createTestQueryClient = function () {
       },
     },
   });
-};
-var renderWithQueryClient = function (component) {
+var renderWithQueryClient = (component) => {
   var queryClient = createTestQueryClient();
   return (0, react_2.render)(
     <react_query_1.QueryClientProvider client={queryClient}>
@@ -269,20 +249,18 @@ var mockOptimizationData = {
     recommendations: ["Monitor competitive pricing"],
   },
 };
-describe("🔥 Revenue Optimization Dashboard", function () {
-  beforeEach(function () {
+describe("🔥 Revenue Optimization Dashboard", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     mockFetch.mockResolvedValue({
       ok: true,
-      json: function () {
-        return Promise.resolve(mockOptimizationData);
-      },
+      json: () => Promise.resolve(mockOptimizationData),
     });
   });
-  describe("🔥 Component Rendering", function () {
-    test("should render dashboard layout and title", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Component Rendering", () => {
+    test("should render dashboard layout and title", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           renderWithQueryClient(<page_1.default />);
           expect(react_2.screen.getByText("Revenue Optimization")).toBeInTheDocument();
           expect(
@@ -290,17 +268,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
           ).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    test("should render all optimization sections", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should render all optimization sections", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Optimization Overview")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Pricing Optimization")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Service Mix Analysis")).toBeInTheDocument();
@@ -315,17 +292,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should render summary cards with correct data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should render summary cards with correct data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("5")).toBeInTheDocument(); // totalOptimizations
                   expect(react_2.screen.getByText("3")).toBeInTheDocument(); // activeOptimizations
                   expect(react_2.screen.getByText("12.5%")).toBeInTheDocument(); // averageImprovement
@@ -337,17 +313,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should render action buttons", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should render action buttons", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByRole("button", { name: /New Optimization/i }),
                   ).toBeInTheDocument();
@@ -364,19 +339,18 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Data Fetching", function () {
-    test("should fetch optimization data on mount", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Data Fetching", () => {
+    test("should fetch optimization data on mount", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(mockFetch).toHaveBeenCalledWith(
                     "/api/revenue-optimization?clinicId=clinic-123",
                   );
@@ -387,22 +361,21 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should display loading state while fetching", function () {
+      }));
+    test("should display loading state while fetching", () => {
       renderWithQueryClient(<page_1.default />);
       expect(react_2.screen.getByTestId("revenue-optimization-loading")).toBeInTheDocument();
     });
-    test("should handle fetch errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    test("should handle fetch errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockRejectedValueOnce(new Error("API Error"));
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByText(/Failed to load optimization data/),
                   ).toBeInTheDocument();
@@ -413,19 +386,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should retry failed requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should retry failed requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var retryButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockRejectedValueOnce(new Error("Network error")).mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return Promise.resolve(mockOptimizationData);
-                },
+                json: () => Promise.resolve(mockOptimizationData),
               });
               renderWithQueryClient(<page_1.default />);
               return [4 /*yield*/, react_2.screen.findByRole("button", { name: /Retry/i })];
@@ -434,7 +404,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               react_2.fireEvent.click(retryButton);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Optimization Overview")).toBeInTheDocument();
                 }),
               ];
@@ -443,19 +413,18 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Pricing Optimization Section", function () {
-    test("should display current pricing strategy", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Pricing Optimization Section", () => {
+    test("should display current pricing strategy", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Dynamic Pricing")).toBeInTheDocument();
                 }),
               ];
@@ -464,17 +433,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should show pricing recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should show pricing recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByText("Increase service A pricing by 10%"),
                   ).toBeInTheDocument();
@@ -485,17 +453,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should display projected increase percentage", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should display projected increase percentage", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("8.5%")).toBeInTheDocument();
                 }),
               ];
@@ -504,26 +471,24 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle create pricing optimization", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle create pricing optimization", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return Promise.resolve({
+                json: () =>
+                  Promise.resolve({
                     optimization: { id: "new-opt" },
                     message: "Optimization created",
-                  });
-                },
+                  }),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var createButton = react_2.screen.getByRole("button", {
                     name: /Create Pricing Optimization/i,
                   });
@@ -534,7 +499,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(mockFetch).toHaveBeenCalledWith("/api/revenue-optimization", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -555,19 +520,18 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Service Mix Analysis", function () {
-    test("should display profitability gain", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Service Mix Analysis", () => {
+    test("should display profitability gain", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("12.3%")).toBeInTheDocument();
                 }),
               ];
@@ -576,17 +540,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should show service mix recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should show service mix recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByText("Focus on high-margin services"),
                   ).toBeInTheDocument();
@@ -597,26 +560,24 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle service mix optimization creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle service mix optimization creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return Promise.resolve({
+                json: () =>
+                  Promise.resolve({
                     optimization: { id: "new-opt" },
                     message: "Service mix optimization created",
-                  });
-                },
+                  }),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var createButton = react_2.screen.getByRole("button", {
                     name: /Optimize Service Mix/i,
                   });
@@ -627,7 +588,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(mockFetch).toHaveBeenCalledWith("/api/revenue-optimization", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -648,19 +609,18 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Customer Lifetime Value", function () {
-    test("should display CLV projected increase", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Customer Lifetime Value", () => {
+    test("should display CLV projected increase", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("15.7%")).toBeInTheDocument();
                 }),
               ];
@@ -669,17 +629,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should show enhancement strategies", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should show enhancement strategies", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Implement loyalty program")).toBeInTheDocument();
                 }),
               ];
@@ -688,26 +647,24 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle CLV optimization creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle CLV optimization creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return Promise.resolve({
+                json: () =>
+                  Promise.resolve({
                     optimization: { id: "new-opt" },
                     message: "CLV optimization created",
-                  });
-                },
+                  }),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var createButton = react_2.screen.getByRole("button", { name: /Enhance CLV/i });
                   react_2.fireEvent.click(createButton);
                 }),
@@ -716,7 +673,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(mockFetch).toHaveBeenCalledWith("/api/revenue-optimization", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -737,19 +694,18 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Automated Recommendations", function () {
-    test("should display recommendation cards", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Automated Recommendations", () => {
+    test("should display recommendation cards", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByText("Optimize pricing for peak hours"),
                   ).toBeInTheDocument();
@@ -764,17 +720,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should show total projected increase", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should show total projected increase", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("25.5%")).toBeInTheDocument();
                 }),
               ];
@@ -783,17 +738,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should display implementation plan", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should display implementation plan", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Phase 1: Analysis")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Phase 2: Implementation")).toBeInTheDocument();
                 }),
@@ -803,26 +757,24 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle generate recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle generate recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return Promise.resolve({
+                json: () =>
+                  Promise.resolve({
                     optimization: { id: "new-opt" },
                     message: "Recommendations generated",
-                  });
-                },
+                  }),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var generateButton = react_2.screen.getByRole("button", {
                     name: /Generate New Recommendations/i,
                   });
@@ -833,7 +785,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(mockFetch).toHaveBeenCalledWith("/api/revenue-optimization", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -854,19 +806,18 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Competitive Analysis", function () {
-    test("should display market position", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Competitive Analysis", () => {
+    test("should display market position", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Strong")).toBeInTheDocument();
                 }),
               ];
@@ -875,17 +826,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should show opportunity areas", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should show opportunity areas", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Expand premium services")).toBeInTheDocument();
                 }),
               ];
@@ -894,26 +844,24 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle competitive analysis update", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle competitive analysis update", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return Promise.resolve({
+                json: () =>
+                  Promise.resolve({
                     optimization: { id: "new-opt" },
                     message: "Competitive analysis updated",
-                  });
-                },
+                  }),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var updateButton = react_2.screen.getByRole("button", {
                     name: /Update Analysis/i,
                   });
@@ -924,7 +872,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(mockFetch).toHaveBeenCalledWith("/api/revenue-optimization", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -945,19 +893,18 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Performance Tracking", function () {
-    test("should display performance indicators", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Performance Tracking", () => {
+    test("should display performance indicators", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("1.2")).toBeInTheDocument(); // overallROI
                   expect(react_2.screen.getByText("80%")).toBeInTheDocument(); // successRate
                 }),
@@ -967,17 +914,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should show trend analysis", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should show trend analysis", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("2 Improving")).toBeInTheDocument();
                   expect(react_2.screen.getByText("1 Declining")).toBeInTheDocument();
                   expect(react_2.screen.getByText("3 Stable")).toBeInTheDocument();
@@ -988,17 +934,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should display performance recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should display performance recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByText("Monitor competitive pricing"),
                   ).toBeInTheDocument();
@@ -1009,19 +954,18 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 User Interactions", function () {
-    test("should handle new optimization creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 User Interactions", () => {
+    test("should handle new optimization creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var newOptButton = react_2.screen.getByRole("button", {
                     name: /New Optimization/i,
                   });
@@ -1035,23 +979,20 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle report generation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle report generation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: true,
-                blob: function () {
-                  return Promise.resolve(new Blob(["report data"], { type: "application/pdf" }));
-                },
+                blob: () => Promise.resolve(new Blob(["report data"], { type: "application/pdf" })),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var reportButton = react_2.screen.getByRole("button", {
                     name: /Generate Report/i,
                   });
@@ -1062,7 +1003,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(sonner_1.toast.success).toHaveBeenCalledWith(
                     "Report generated successfully!",
                   );
@@ -1073,23 +1014,20 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle data export", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle data export", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: true,
-                blob: function () {
-                  return Promise.resolve(new Blob(["csv data"], { type: "text/csv" }));
-                },
+                blob: () => Promise.resolve(new Blob(["csv data"], { type: "text/csv" })),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var exportButton = react_2.screen.getByRole("button", { name: /Export Data/i });
                   react_2.fireEvent.click(exportButton);
                 }),
@@ -1098,7 +1036,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(sonner_1.toast.success).toHaveBeenCalledWith(
                     "Data exported successfully!",
                   );
@@ -1109,17 +1047,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle refresh data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle refresh data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var refreshButton = react_2.screen.getByRole("button", { name: /Refresh/i });
                   react_2.fireEvent.click(refreshButton);
                 }),
@@ -1131,26 +1068,23 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Error Handling", function () {
-    test("should handle API errors during optimization creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Error Handling", () => {
+    test("should handle API errors during optimization creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
-                json: function () {
-                  return Promise.resolve({ error: "Server error" });
-                },
+                json: () => Promise.resolve({ error: "Server error" }),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var createButton = react_2.screen.getByRole("button", {
                     name: /Create Pricing Optimization/i,
                   });
@@ -1161,7 +1095,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(sonner_1.toast.error).toHaveBeenCalledWith(
                     "Failed to create optimization. Please try again.",
                   );
@@ -1172,18 +1106,17 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle network errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle network errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockRejectedValueOnce(new Error("Network error"));
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByText(/Failed to load optimization data/),
                   ).toBeInTheDocument();
@@ -1194,24 +1127,21 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle unauthorized access", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should handle unauthorized access", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
                 ok: false,
                 status: 401,
-                json: function () {
-                  return Promise.resolve({ error: "Unauthorized" });
-                },
+                json: () => Promise.resolve({ error: "Unauthorized" }),
               });
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText(/Authentication required/)).toBeInTheDocument();
                 }),
               ];
@@ -1220,11 +1150,10 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("🔥 Responsive Design", function () {
-    test("should be responsive on mobile devices", function () {
+  describe("🔥 Responsive Design", () => {
+    test("should be responsive on mobile devices", () => {
       // Mock mobile viewport
       Object.defineProperty(window, "innerWidth", {
         writable: true,
@@ -1235,7 +1164,7 @@ describe("🔥 Revenue Optimization Dashboard", function () {
       var container = react_2.screen.getByTestId("revenue-optimization-container");
       expect(container).toHaveClass("responsive-layout");
     });
-    test("should stack cards vertically on small screens", function () {
+    test("should stack cards vertically on small screens", () => {
       Object.defineProperty(window, "innerWidth", {
         writable: true,
         configurable: true,
@@ -1246,16 +1175,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
       expect(cardsContainer).toHaveClass("flex-col", "sm:flex-row");
     });
   });
-  describe("🔥 Accessibility", function () {
-    test("should have proper ARIA labels", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("🔥 Accessibility", () => {
+    test("should have proper ARIA labels", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(
                     react_2.screen.getByLabelText("Revenue optimization overview"),
                   ).toBeInTheDocument();
@@ -1272,17 +1201,16 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should support keyboard navigation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    test("should support keyboard navigation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderWithQueryClient(<page_1.default />);
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var firstButton = react_2.screen.getByRole("button", {
                     name: /New Optimization/i,
                   });
@@ -1301,12 +1229,11 @@ describe("🔥 Revenue Optimization Dashboard", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should have sufficient color contrast", function () {
+      }));
+    test("should have sufficient color contrast", () => {
       renderWithQueryClient(<page_1.default />);
       var headings = react_2.screen.getAllByRole("heading");
-      headings.forEach(function (heading) {
+      headings.forEach((heading) => {
         var styles = window.getComputedStyle(heading);
         // Basic contrast check (implementation would need actual color analysis)
         expect(styles.color).not.toBe(styles.backgroundColor);

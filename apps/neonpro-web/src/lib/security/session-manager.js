@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthcareSessionManager =
@@ -151,7 +148,7 @@ var zod_1 = require("zod");
  */
 // User roles in healthcare system
 var UserRole;
-(function (UserRole) {
+((UserRole) => {
   UserRole["ADMIN"] = "admin";
   UserRole["DOCTOR"] = "doctor";
   UserRole["NURSE"] = "nurse";
@@ -161,7 +158,7 @@ var UserRole;
 })(UserRole || (exports.UserRole = UserRole = {}));
 // Session status
 var SessionStatus;
-(function (SessionStatus) {
+((SessionStatus) => {
   SessionStatus["ACTIVE"] = "active";
   SessionStatus["EXPIRED"] = "expired";
   SessionStatus["TERMINATED"] = "terminated";
@@ -169,7 +166,7 @@ var SessionStatus;
 })(SessionStatus || (exports.SessionStatus = SessionStatus = {}));
 // MFA methods
 var MFAMethod;
-(function (MFAMethod) {
+((MFAMethod) => {
   MFAMethod["SMS"] = "sms";
   MFAMethod["EMAIL"] = "email";
   MFAMethod["TOTP"] = "totp";
@@ -208,7 +205,7 @@ exports.sessionSchema = zod_1.z.object({
   terminatedBy: zod_1.z.string().optional(),
   terminationReason: zod_1.z.string().optional(),
 });
-var HealthcareSessionManager = /** @class */ (function () {
+var HealthcareSessionManager = /** @class */ (() => {
   function HealthcareSessionManager() {}
   /**
    * Create a new session with healthcare security requirements
@@ -476,7 +473,7 @@ var HealthcareSessionManager = /** @class */ (function () {
    */
   HealthcareSessionManager.getUserSessions = function (userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Query all active sessions for user
         return [2 /*return*/, []];
       });
@@ -528,7 +525,7 @@ var HealthcareSessionManager = /** @class */ (function () {
    */
   HealthcareSessionManager.monitorSuspiciousActivity = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement comprehensive monitoring
         return [2 /*return*/, []];
       });
@@ -537,7 +534,7 @@ var HealthcareSessionManager = /** @class */ (function () {
   // Private helper methods
   HealthcareSessionManager.storeSession = function (session) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Store in Redis or secure session store
         console.log("Session stored:", session.id);
         return [2 /*return*/];
@@ -546,7 +543,7 @@ var HealthcareSessionManager = /** @class */ (function () {
   };
   HealthcareSessionManager.getSession = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Retrieve from session store
         return [2 /*return*/, null];
       });
@@ -554,7 +551,7 @@ var HealthcareSessionManager = /** @class */ (function () {
   };
   HealthcareSessionManager.updateSession = function (session) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Update session in store
         console.log("Session updated:", session.id);
         return [2 /*return*/];
@@ -563,7 +560,7 @@ var HealthcareSessionManager = /** @class */ (function () {
   };
   HealthcareSessionManager.removeSessionFromCache = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Remove from session store
         console.log("Session removed:", sessionId);
         return [2 /*return*/];
@@ -574,7 +571,7 @@ var HealthcareSessionManager = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var riskScore, roleRisk, methodRisk;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         riskScore = 0;
         roleRisk =
           ((_a = {}),
@@ -606,7 +603,7 @@ var HealthcareSessionManager = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var permissions;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         permissions =
           ((_a = {}),
           (_a[UserRole.ADMIN] = ["all"]),
@@ -631,13 +628,13 @@ var HealthcareSessionManager = /** @class */ (function () {
       });
     });
   };
-  HealthcareSessionManager.requiresMFA = function (role) {
+  HealthcareSessionManager.requiresMFA = (role) => {
     // Require MFA for high-privilege roles
     return [UserRole.ADMIN, UserRole.DOCTOR].includes(role);
   };
   HealthcareSessionManager.initiateMFA = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Initiate MFA process
         console.log("MFA initiated for session:", sessionId);
         return [2 /*return*/];
@@ -646,7 +643,7 @@ var HealthcareSessionManager = /** @class */ (function () {
   };
   HealthcareSessionManager.verifyMFACode = function (userId, method, code) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement MFA verification
         return [2 /*return*/, true]; // Placeholder
       });
@@ -654,7 +651,7 @@ var HealthcareSessionManager = /** @class */ (function () {
   };
   HealthcareSessionManager.logSessionEvent = function (sessionId, event, metadata) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Log to audit system
         console.log("Session event:", { sessionId: sessionId, event: event, metadata: metadata });
         return [2 /*return*/];
@@ -663,7 +660,7 @@ var HealthcareSessionManager = /** @class */ (function () {
   };
   HealthcareSessionManager.flagSuspiciousActivity = function (sessionId, type, details) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Flag for security review
         console.log("Suspicious activity flagged:", {
           sessionId: sessionId,

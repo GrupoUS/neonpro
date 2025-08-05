@@ -1,5 +1,19 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  Bot,
+  Calculator,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  FileText,
+  Package,
+  ShoppingCart,
+  TrendingUp,
+  Truck,
+} from "lucide-react";
+import type { useMemo, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -35,20 +49,6 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  AlertTriangle,
-  Bot,
-  Calculator,
-  CheckCircle,
-  Clock,
-  DollarSign,
-  FileText,
-  Package,
-  ShoppingCart,
-  TrendingUp,
-  Truck,
-} from "lucide-react";
-import type { useMemo, useState } from "react";
 
 interface ReorderSuggestion {
   productId: string;

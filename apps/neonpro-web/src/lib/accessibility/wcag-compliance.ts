@@ -29,8 +29,8 @@ export class FocusManager {
   private static trapStack: HTMLElement[] = [];
 
   static trapFocus(element: HTMLElement) {
-    this.trapStack.push(element);
-    const focusableElements = this.getFocusableElements(element);
+    FocusManager.trapStack.push(element);
+    const focusableElements = FocusManager.getFocusableElements(element);
 
     if (focusableElements.length === 0) return;
 
@@ -53,7 +53,7 @@ export class FocusManager {
       }
 
       if (e.key === "Escape") {
-        this.releaseFocus();
+        FocusManager.releaseFocus();
       }
     });
 
@@ -61,8 +61,8 @@ export class FocusManager {
   }
 
   static releaseFocus() {
-    if (this.trapStack.length > 0) {
-      this.trapStack.pop();
+    if (FocusManager.trapStack.length > 0) {
+      FocusManager.trapStack.pop();
     }
   }
 
@@ -101,19 +101,19 @@ export class ContrastChecker {
   static calculateLuminance(r: number, g: number, b: number): number {
     const [rs, gs, bs] = [r, g, b].map((c) => {
       c = c / 255;
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
     });
     return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
   }
 
   static calculateContrastRatio(color1: string, color2: string): number {
-    const rgb1 = this.hexToRgb(color1);
-    const rgb2 = this.hexToRgb(color2);
+    const rgb1 = ContrastChecker.hexToRgb(color1);
+    const rgb2 = ContrastChecker.hexToRgb(color2);
 
     if (!rgb1 || !rgb2) return 0;
 
-    const lum1 = this.calculateLuminance(rgb1.r, rgb1.g, rgb1.b);
-    const lum2 = this.calculateLuminance(rgb2.r, rgb2.g, rgb2.b);
+    const lum1 = ContrastChecker.calculateLuminance(rgb1.r, rgb1.g, rgb1.b);
+    const lum2 = ContrastChecker.calculateLuminance(rgb2.r, rgb2.g, rgb2.b);
 
     const lighter = Math.max(lum1, lum2);
     const darker = Math.min(lum1, lum2);
@@ -137,7 +137,7 @@ export class ContrastChecker {
     background: string,
     isLargeText: boolean = false,
   ): boolean {
-    const ratio = this.calculateContrastRatio(foreground, background);
+    const ratio = ContrastChecker.calculateContrastRatio(foreground, background);
     const required = isLargeText ? CONTRAST_RATIOS.AA_LARGE : CONTRAST_RATIOS.AA_NORMAL;
     return ratio >= required;
   }
@@ -192,7 +192,7 @@ export class KeyboardNavigation {
     // Handle keyboard navigation
     container.addEventListener("keydown", (event) => {
       if (["ArrowDown", "ArrowUp", "ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) {
-        currentIndex = this.handleArrowNavigation(event, items, currentIndex);
+        currentIndex = KeyboardNavigation.handleArrowNavigation(event, items, currentIndex);
 
         // Update tab indexes
         items.forEach((item, index) => {

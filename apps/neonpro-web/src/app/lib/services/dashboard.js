@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,16 +142,16 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardService = void 0;
 var server_1 = require("@/lib/supabase/server");
-var DashboardService = /** @class */ (function () {
+var DashboardService = /** @class */ (() => {
   function DashboardService() {}
   DashboardService.prototype.getSupabase = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -232,7 +229,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.recordMetric = function (userId, metric, value, metadata) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -262,7 +259,7 @@ var DashboardService = /** @class */ (function () {
       });
     });
   };
-  DashboardService.prototype.parsePeriodToDays = function (period) {
+  DashboardService.prototype.parsePeriodToDays = (period) => {
     var periodMap = {
       "7d": 7,
       "30d": 30,
@@ -274,7 +271,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.createDashboardConfig = function (userId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, config, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -304,7 +301,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.getDashboardConfig = function (userId, configId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -331,7 +328,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.updateDashboardConfig = function (configId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, config, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -357,7 +354,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.deleteDashboardConfig = function (configId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -379,7 +376,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.createWidget = function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, widget, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -409,7 +406,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.getWidgets = function (configId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -435,7 +432,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.updateWidget = function (widgetId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, widget, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -461,7 +458,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.deleteWidget = function (widgetId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -537,7 +534,7 @@ var DashboardService = /** @class */ (function () {
         averageTransaction,
         serviceRevenue,
         revenueByService;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -559,9 +556,7 @@ var DashboardService = /** @class */ (function () {
             totalRevenue =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (sum, apt) {
-                    return sum + (apt.paid_amount || 0);
-                  }, 0)) || 0;
+                : appointments.reduce((sum, apt) => sum + (apt.paid_amount || 0), 0)) || 0;
             averageTransaction = (
               appointments === null || appointments === void 0
                 ? void 0
@@ -572,7 +567,7 @@ var DashboardService = /** @class */ (function () {
             serviceRevenue =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (acc, apt) {
+                : appointments.reduce((acc, apt) => {
                     if (apt.services) {
                       var serviceName = apt.services.name;
                       if (!acc[serviceName]) {
@@ -583,7 +578,7 @@ var DashboardService = /** @class */ (function () {
                     }
                     return acc;
                   }, {})) || {};
-            revenueByService = Object.entries(serviceRevenue).map(function (_a) {
+            revenueByService = Object.entries(serviceRevenue).map((_a) => {
               var service = _a[0],
                 data = _a[1];
               return {
@@ -613,7 +608,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.calculatePatientMetrics = function (clinicId, startDate, endDate) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, patients, error, totalPatients, newPatients;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -631,9 +626,8 @@ var DashboardService = /** @class */ (function () {
             newPatients =
               (patients === null || patients === void 0
                 ? void 0
-                : patients.filter(function (p) {
-                    return new Date(p.created_at) >= (startDate || new Date(0));
-                  }).length) || 0;
+                : patients.filter((p) => new Date(p.created_at) >= (startDate || new Date(0)))
+                    .length) || 0;
             return [
               2 /*return*/,
               {
@@ -665,7 +659,7 @@ var DashboardService = /** @class */ (function () {
         bookingRate,
         cancellationRate,
         noShowRate;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -685,21 +679,15 @@ var DashboardService = /** @class */ (function () {
             completedAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "completed";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "completed").length) || 0;
             cancelledAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "cancelled";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "cancelled").length) || 0;
             noShowAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "no_show";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "no_show").length) || 0;
             bookingRate =
               totalAppointments > 0 ? (completedAppointments / totalAppointments) * 100 : 0;
             cancellationRate =
@@ -725,7 +713,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.calculateEfficiencyMetrics = function (clinicId, startDate, endDate) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -753,7 +741,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.createAlert = function (userId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, alert, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -785,7 +773,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.getAlerts = function (userId, clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -805,7 +793,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.updateAlert = function (alertId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, alert, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -831,7 +819,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.deleteAlert = function (alertId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -850,7 +838,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.logPerformance = function (userId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, log, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -882,7 +870,7 @@ var DashboardService = /** @class */ (function () {
       if (limit === void 0) {
         limit = 100;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -909,7 +897,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.getCachedData = function (cacheKey, clinicId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, query, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -940,7 +928,7 @@ var DashboardService = /** @class */ (function () {
         if (expiresInMinutes === void 0) {
           expiresInMinutes = 30;
         }
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, (0, server_1.createClient)()];
@@ -968,7 +956,7 @@ var DashboardService = /** @class */ (function () {
     );
   };
   // Utility Methods
-  DashboardService.prototype.getDateRange = function (date, period) {
+  DashboardService.prototype.getDateRange = (date, period) => {
     var start = new Date(date);
     var end = new Date(date);
     switch (period) {
@@ -976,13 +964,14 @@ var DashboardService = /** @class */ (function () {
         start.setHours(0, 0, 0, 0);
         end.setHours(23, 59, 59, 999);
         break;
-      case "weekly":
+      case "weekly": {
         var day = start.getDay();
         start.setDate(start.getDate() - day);
         start.setHours(0, 0, 0, 0);
         end.setDate(start.getDate() + 6);
         end.setHours(23, 59, 59, 999);
         break;
+      }
       case "monthly":
         start.setDate(1);
         start.setHours(0, 0, 0, 0);
@@ -1031,9 +1020,7 @@ var DashboardService = /** @class */ (function () {
               alert_count:
                 (alerts === null || alerts === void 0
                   ? void 0
-                  : alerts.filter(function (a) {
-                      return a.is_active;
-                    }).length) || 0,
+                  : alerts.filter((a) => a.is_active).length) || 0,
               last_updated: new Date().toISOString(),
               performance_score: 100, // TODO: Calculate performance score
             };
@@ -1124,7 +1111,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.getRevenueData = function (config, query) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1146,7 +1133,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.getPatientData = function (config, query) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -1169,7 +1156,7 @@ var DashboardService = /** @class */ (function () {
   DashboardService.prototype.getAppointmentData = function (config, query) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];

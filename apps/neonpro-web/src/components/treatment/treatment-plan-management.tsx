@@ -9,11 +9,10 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { Plus, Search, Filter, Calendar, User, FileText, MoreHorizontal } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
+import type { Calendar, FileText, Filter, MoreHorizontal, Plus, Search, User } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -22,14 +21,6 @@ import type {
   CardTitle,
 } from "@/components/ui/card";
 import type {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -37,6 +28,7 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { Input } from "@/components/ui/input";
 import type {
   Select,
   SelectContent,
@@ -44,21 +36,29 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { useToast } from "@/hooks/use-toast";
 import type {
-  TreatmentPlan,
-  TreatmentPlanStatus,
-  TreatmentPlanIntent,
-  TreatmentPlanSearchFilters,
-  TreatmentStatistics,
-} from "@/lib/types/treatment";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { useToast } from "@/hooks/use-toast";
+import type { searchPatients } from "@/lib/supabase/patients";
+import type {
+  deleteTreatmentPlan,
+  getTreatmentStatistics,
+  searchTreatmentPlans,
+} from "@/lib/supabase/treatments";
 import type { Patient } from "@/lib/types/fhir";
 import type {
-  searchTreatmentPlans,
-  getTreatmentStatistics,
-  deleteTreatmentPlan,
-} from "@/lib/supabase/treatments";
-import type { searchPatients } from "@/lib/supabase/patients";
+  TreatmentPlan,
+  TreatmentPlanIntent,
+  TreatmentPlanSearchFilters,
+  TreatmentPlanStatus,
+  TreatmentStatistics,
+} from "@/lib/types/treatment";
 
 interface TreatmentPlanManagementProps {
   onSelectTreatmentPlan?: (treatmentPlan: TreatmentPlan) => void;

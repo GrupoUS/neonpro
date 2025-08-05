@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Complication Detection Configuration
  * Epic 10 - Story 10.3: Automated Complication Detection + Alerts (≥90% Accuracy)
@@ -13,13 +12,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -309,7 +308,7 @@ exports.COMPLICATION_DETECTION_CONFIG = {
 function validateConfiguration() {
   var errors = [];
   // Validate model configuration
-  Object.entries(DETECTION_MODELS).forEach(function (_a) {
+  Object.entries(DETECTION_MODELS).forEach((_a) => {
     var key = _a[0],
       model = _a[1];
     if (model.accuracy < PERFORMANCE_BENCHMARKS.minimumAccuracy) {
@@ -340,7 +339,7 @@ function validateConfiguration() {
   if (EMERGENCY_CONTACTS.length === 0) {
     errors.push("At least one emergency contact must be configured");
   }
-  EMERGENCY_CONTACTS.forEach(function (contact, index) {
+  EMERGENCY_CONTACTS.forEach((contact, index) => {
     if (!contact.name || !contact.phone || !contact.role) {
       errors.push("Emergency contact ".concat(index, " missing required fields"));
     }
@@ -384,7 +383,7 @@ function getNotificationTargetsForAlert(alertLevel) {
 }
 function calculateComplicationRiskScore(complications) {
   if (complications.length === 0) return 0;
-  var weightedScores = complications.map(function (comp) {
+  var weightedScores = complications.map((comp) => {
     var weight = COMPLICATION_RISK_WEIGHTS[comp.type] || 0.5;
     return comp.confidence * weight;
   });
@@ -405,7 +404,7 @@ function disableModel(modelKey) {
 }
 function getEnabledModels() {
   return Object.fromEntries(
-    Object.entries(DETECTION_MODELS).filter(function (_a) {
+    Object.entries(DETECTION_MODELS).filter((_a) => {
       var model = _a[1];
       return model.enabled;
     }),

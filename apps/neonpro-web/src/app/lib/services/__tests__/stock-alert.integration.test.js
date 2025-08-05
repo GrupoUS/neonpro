@@ -1,4 +1,3 @@
-"use strict";
 // Stock Alert Integration Tests
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests for complete stock alert workflow
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var stock_alert_service_1 = require("../stock-alert.service");
@@ -189,10 +186,10 @@ var mockProduct = {
 // =====================================================
 // TEST SUITE
 // =====================================================
-(0, globals_1.describe)("Stock Alert Integration Tests", function () {
+(0, globals_1.describe)("Stock Alert Integration Tests", () => {
   var service;
   var mockQuery;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     // Reset all mocks
     globals_1.jest.clearAllMocks();
     // Setup mock query chain
@@ -216,17 +213,17 @@ var mockProduct = {
     // Initialize service with mock client
     service = new stock_alert_service_1.StockAlertService(mockSupabaseClient);
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.restoreAllMocks();
   });
   // =====================================================
   // ALERT CONFIGURATION TESTS
   // =====================================================
-  (0, globals_1.describe)("Alert Configuration Management", function () {
-    (0, globals_1.it)("should create alert configuration successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Alert Configuration Management", () => {
+    (0, globals_1.it)("should create alert configuration successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expectedConfig, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               expectedConfig = __assign(
@@ -253,12 +250,12 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle configuration creation errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle configuration creation errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               errorMessage = "Duplicate configuration";
@@ -279,12 +276,12 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should update alert configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should update alert configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var configId, updateData, updatedConfig, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               configId = "123e4567-e89b-12d3-a456-426614174003";
@@ -307,12 +304,12 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should delete alert configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should delete alert configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var configId;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               configId = "123e4567-e89b-12d3-a456-426614174003";
@@ -328,17 +325,17 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // =====================================================
   // ALERT EVALUATION TESTS
   // =====================================================
-  (0, globals_1.describe)("Alert Evaluation and Generation", function () {
-    (0, globals_1.it)("should evaluate and generate low stock alerts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Alert Evaluation and Generation", () => {
+    (0, globals_1.it)("should evaluate and generate low stock alerts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockConfigs, mockProducts, expectedAlert, alerts;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockConfigs = [
@@ -389,12 +386,12 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should not generate alerts for inactive configurations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should not generate alerts for inactive configurations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var inactiveConfig, alerts;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               inactiveConfig = __assign(__assign({}, mockAlertConfig), { is_active: false });
@@ -407,12 +404,12 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle multiple alert types correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle multiple alert types correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var multipleConfigs, mockProductWithExpiration, alerts;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               multipleConfigs = [
@@ -456,17 +453,17 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // =====================================================
   // ALERT ACKNOWLEDGMENT TESTS
   // =====================================================
-  (0, globals_1.describe)("Alert Acknowledgment", function () {
-    (0, globals_1.it)("should acknowledge alert successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Alert Acknowledgment", () => {
+    (0, globals_1.it)("should acknowledge alert successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var alertId, request, acknowledgedAlert, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               alertId = "123e4567-e89b-12d3-a456-426614174004";
@@ -509,12 +506,12 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle acknowledgment of non-existent alert", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle acknowledgment of non-existent alert", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = {
@@ -537,31 +534,29 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // =====================================================
   // PERFORMANCE AND EDGE CASE TESTS
   // =====================================================
-  (0, globals_1.describe)("Performance and Edge Cases", function () {
-    (0, globals_1.it)("should handle large number of configurations efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Performance and Edge Cases", () => {
+    (0, globals_1.it)("should handle large number of configurations efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var manyConfigs, startTime, duration;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              manyConfigs = Array.from({ length: 1000 }, function (_, i) {
-                return {
-                  id: "config-".concat(i),
-                  clinic_id: mockClinicId,
-                  alert_type: "low_stock",
-                  threshold_value: 10,
-                  threshold_unit: "quantity",
-                  severity_level: "medium",
-                  is_active: true,
-                  product_id: "product-".concat(i),
-                };
-              });
+              manyConfigs = Array.from({ length: 1000 }, (_, i) => ({
+                id: "config-".concat(i),
+                clinic_id: mockClinicId,
+                alert_type: "low_stock",
+                threshold_value: 10,
+                threshold_unit: "quantity",
+                severity_level: "medium",
+                is_active: true,
+                product_id: "product-".concat(i),
+              }));
               mockQuery.single.mockResolvedValue({ data: manyConfigs, error: null });
               startTime = Date.now();
               return [4 /*yield*/, service.evaluateAndGenerateAlerts()];
@@ -573,11 +568,11 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle database connection errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should handle database connection errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Arrange
@@ -595,12 +590,12 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle malformed data gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle malformed data gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var malformedConfig;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               malformedConfig = {
@@ -626,17 +621,17 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // =====================================================
   // EVENT SOURCING TESTS
   // =====================================================
-  (0, globals_1.describe)("Event Sourcing and Audit Trail", function () {
-    (0, globals_1.it)("should create event log for alert configuration creation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Event Sourcing and Audit Trail", () => {
+    (0, globals_1.it)("should create event log for alert configuration creation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var expectedConfig;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               expectedConfig = __assign(
@@ -671,12 +666,12 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should create event log for alert acknowledgment", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should create event log for alert acknowledgment", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var alertId, request, acknowledgedAlert;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               alertId = "123e4567-e89b-12d3-a456-426614174004";
@@ -718,17 +713,17 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
   // =====================================================
   // INTEGRATION WITH OTHER SYSTEMS
   // =====================================================
-  (0, globals_1.describe)("Integration with Other Systems", function () {
-    (0, globals_1.it)("should trigger notification service when alert is generated", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Integration with Other Systems", () => {
+    (0, globals_1.it)("should trigger notification service when alert is generated", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockNotificationService, mockConfigs;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockNotificationService = {
@@ -764,7 +759,7 @@ var mockProduct = {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

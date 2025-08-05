@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalendarNavigation = CalendarNavigation;
 var react_1 = require("react");
@@ -16,7 +15,7 @@ function CalendarNavigation(_a) {
     onViewChange = _a.onViewChange,
     onToday = _a.onToday,
     className = _a.className;
-  var navigatePrevious = function () {
+  var navigatePrevious = () => {
     switch (view) {
       case "day":
         onDateChange((0, date_fns_1.subDays)(currentDate, 1));
@@ -29,7 +28,7 @@ function CalendarNavigation(_a) {
         break;
     }
   };
-  var navigateNext = function () {
+  var navigateNext = () => {
     switch (view) {
       case "day":
         onDateChange((0, date_fns_1.addDays)(currentDate, 1));
@@ -42,7 +41,7 @@ function CalendarNavigation(_a) {
         break;
     }
   };
-  var getDateRangeText = function () {
+  var getDateRangeText = () => {
     switch (view) {
       case "day":
         return (0, date_fns_1.format)(currentDate, "EEEE, d 'de' MMMM 'de' yyyy", {
@@ -117,17 +116,12 @@ function CalendarNavigation(_a) {
 
       {/* Right side - View selection */}
       <div className="flex items-center gap-2">
-        <select_1.Select
-          value={view}
-          onValueChange={function (value) {
-            return onViewChange(value);
-          }}
-        >
+        <select_1.Select value={view} onValueChange={(value) => onViewChange(value)}>
           <select_1.SelectTrigger className="h-9 w-[120px]">
             <select_1.SelectValue />
           </select_1.SelectTrigger>
           <select_1.SelectContent>
-            {Object.entries(viewLabels).map(function (_a) {
+            {Object.entries(viewLabels).map((_a) => {
               var key = _a[0],
                 label = _a[1];
               var IconComponent = viewIcons[key];
@@ -145,7 +139,7 @@ function CalendarNavigation(_a) {
 
         {/* Quick view toggle buttons */}
         <div className="hidden md:flex items-center gap-1 border rounded-md p-1">
-          {Object.entries(viewLabels).map(function (_a) {
+          {Object.entries(viewLabels).map((_a) => {
             var key = _a[0],
               label = _a[1];
             var IconComponent = viewIcons[key];
@@ -154,9 +148,7 @@ function CalendarNavigation(_a) {
                 key={key}
                 variant={view === key ? "secondary" : "ghost"}
                 size="sm"
-                onClick={function () {
-                  return onViewChange(key);
-                }}
+                onClick={() => onViewChange(key)}
                 className="h-7 px-2"
                 title={label}
               >

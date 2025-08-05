@@ -1,7 +1,7 @@
+import type { NextRequest, NextResponse } from "next/server";
 import type { createpatientSegmentationService } from "@/app/lib/services/patient-segmentation-service";
 import type { CreateRuleSchema } from "@/app/lib/validations/segmentation";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {

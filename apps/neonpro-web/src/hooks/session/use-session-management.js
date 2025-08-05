@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSessionManagement = useSessionManagement;
 var react_1 = require("react");
@@ -166,7 +163,6 @@ var auth_helpers_nextjs_1 = require("@supabase/auth-helpers-nextjs");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
 var session_config_1 = require("@/lib/auth/config/session-config");
 function useSessionManagement() {
-  var _this = this;
   var _a;
   var supabase = (0, auth_helpers_nextjs_1.createClientComponentClient)();
   var _b = (0, react_1.useState)({
@@ -181,26 +177,22 @@ function useSessionManagement() {
     state = _b[0],
     setState = _b[1];
   // Initialize session management
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     initializeSession();
     // Set up periodic session validation
-    var interval = setInterval(function () {
+    var interval = setInterval(() => {
       validateSession();
     }, session_config_1.SessionConfig.security.sessionValidationInterval);
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
   var initializeSession = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var session, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
               _a.label = 1;
             case 1:
               _a.trys.push([1, 5, 6, 7]);
@@ -227,30 +219,27 @@ function useSessionManagement() {
               return [3 /*break*/, 7];
             case 5:
               error_1 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   error:
                     error_1 instanceof Error ? error_1.message : "Failed to initialize session",
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 7];
             case 6:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: false });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: false }));
               return [7 /*endfinally*/];
             case 7:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
-  var loadCurrentSession = function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadCurrentSession = (userId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data_1, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -267,9 +256,7 @@ function useSessionManagement() {
             return [4 /*yield*/, response.json()];
           case 2:
             data_1 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { currentSession: data_1.session });
-            });
+            setState((prev) => __assign(__assign({}, prev), { currentSession: data_1.session }));
             _a.label = 3;
           case 3:
             return [3 /*break*/, 5];
@@ -282,11 +269,10 @@ function useSessionManagement() {
         }
       });
     });
-  };
-  var loadDevices = function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDevices = (userId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data_2, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -303,9 +289,7 @@ function useSessionManagement() {
             return [4 /*yield*/, response.json()];
           case 2:
             data_2 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { devices: data_2.devices || [] });
-            });
+            setState((prev) => __assign(__assign({}, prev), { devices: data_2.devices || [] }));
             _a.label = 3;
           case 3:
             return [3 /*break*/, 5];
@@ -318,11 +302,10 @@ function useSessionManagement() {
         }
       });
     });
-  };
-  var loadSecurityEvents = function (userId, filters) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadSecurityEvents = (userId, filters) =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data_3, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -352,12 +335,12 @@ function useSessionManagement() {
             return [4 /*yield*/, response.json()];
           case 2:
             data_3 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
                 securityEvents: data_3.events || [],
                 suspiciousActivities: data_3.suspiciousActivities || [],
-              });
-            });
+              }),
+            );
             _a.label = 3;
           case 3:
             return [3 /*break*/, 5];
@@ -370,14 +353,13 @@ function useSessionManagement() {
         }
       });
     });
-  };
-  var loadAnalytics = function (userId_1) {
+  var loadAnalytics = (userId_1) => {
     var args_1 = [];
     for (var _i = 1; _i < arguments.length; _i++) {
       args_1[_i - 1] = arguments[_i];
     }
     return __awaiter(
-      _this,
+      this,
       __spreadArray([userId_1], args_1, true),
       void 0,
       function (userId, timeframe) {
@@ -385,7 +367,7 @@ function useSessionManagement() {
         if (timeframe === void 0) {
           timeframe = "7d";
         }
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -402,9 +384,7 @@ function useSessionManagement() {
               return [4 /*yield*/, response.json()];
             case 2:
               data_4 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { analytics: data_4.analytics });
-              });
+              setState((prev) => __assign(__assign({}, prev), { analytics: data_4.analytics }));
               _a.label = 3;
             case 3:
               return [3 /*break*/, 5];
@@ -420,103 +400,99 @@ function useSessionManagement() {
     );
   };
   // Session operations
-  var refreshSession = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data_5, error_6;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: true, error: null });
-            });
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 6, 7, 8]);
-            return [
-              4 /*yield*/,
-              fetch("/api/auth/session/refresh", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-              }),
-            ];
-          case 2:
-            response = _a.sent();
-            if (!response.ok) return [3 /*break*/, 4];
-            return [4 /*yield*/, response.json()];
-          case 3:
-            data_5 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { currentSession: data_5.session });
-            });
-            // Update local storage
-            session_utils_1.SessionStorage.updateSession(data_5.session);
-            return [3 /*break*/, 5];
-          case 4:
-            throw new Error("Failed to refresh session");
-          case 5:
-            return [3 /*break*/, 8];
-          case 6:
-            error_6 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                error: error_6 instanceof Error ? error_6.message : "Failed to refresh session",
-              });
-            });
-            return [3 /*break*/, 8];
-          case 7:
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: false });
-            });
-            return [7 /*endfinally*/];
-          case 8:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var extendSession = (0, react_1.useCallback)(function (minutes) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data_6, error_7;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 4, , 5]);
-            return [
-              4 /*yield*/,
-              fetch("/api/auth/session/extend", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ extendMinutes: minutes }),
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) return [3 /*break*/, 3];
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data_6 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { currentSession: data_6.session });
-            });
-            return [2 /*return*/, true];
-          case 3:
-            return [2 /*return*/, false];
-          case 4:
-            error_7 = _a.sent();
-            console.error("Failed to extend session:", error_7);
-            return [2 /*return*/, false];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var refreshSession = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data_5, error_6;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 6, 7, 8]);
+              return [
+                4 /*yield*/,
+                fetch("/api/auth/session/refresh", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                }),
+              ];
+            case 2:
+              response = _a.sent();
+              if (!response.ok) return [3 /*break*/, 4];
+              return [4 /*yield*/, response.json()];
+            case 3:
+              data_5 = _a.sent();
+              setState((prev) => __assign(__assign({}, prev), { currentSession: data_5.session }));
+              // Update local storage
+              session_utils_1.SessionStorage.updateSession(data_5.session);
+              return [3 /*break*/, 5];
+            case 4:
+              throw new Error("Failed to refresh session");
+            case 5:
+              return [3 /*break*/, 8];
+            case 6:
+              error_6 = _a.sent();
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  error: error_6 instanceof Error ? error_6.message : "Failed to refresh session",
+                }),
+              );
+              return [3 /*break*/, 8];
+            case 7:
+              setState((prev) => __assign(__assign({}, prev), { isLoading: false }));
+              return [7 /*endfinally*/];
+            case 8:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var extendSession = (0, react_1.useCallback)(
+    (minutes) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data_6, error_7;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 4, , 5]);
+              return [
+                4 /*yield*/,
+                fetch("/api/auth/session/extend", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ extendMinutes: minutes }),
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) return [3 /*break*/, 3];
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data_6 = _a.sent();
+              setState((prev) => __assign(__assign({}, prev), { currentSession: data_6.session }));
+              return [2 /*return*/, true];
+            case 3:
+              return [2 /*return*/, false];
+            case 4:
+              error_7 = _a.sent();
+              console.error("Failed to extend session:", error_7);
+              return [2 /*return*/, false];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var terminateSession = (0, react_1.useCallback)(
-    function (sessionId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (sessionId) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, error_8;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 2, , 3]);
@@ -536,9 +512,7 @@ function useSessionManagement() {
                   sessionId ===
                     ((_a = state.currentSession) === null || _a === void 0 ? void 0 : _a.id)
                 ) {
-                  setState(function (prev) {
-                    return __assign(__assign({}, prev), { currentSession: null });
-                  });
+                  setState((prev) => __assign(__assign({}, prev), { currentSession: null }));
                   session_utils_1.SessionStorage.clearSession();
                 }
                 return [2 /*return*/, true];
@@ -552,204 +526,209 @@ function useSessionManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [(_a = state.currentSession) === null || _a === void 0 ? void 0 : _a.id],
   );
-  var validateSession = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data, error_9;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 4, , 5]);
-            return [
-              4 /*yield*/,
-              fetch("/api/auth/session/validate", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) return [3 /*break*/, 3];
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data = _a.sent();
-            return [2 /*return*/, data.valid];
-          case 3:
-            return [2 /*return*/, false];
-          case 4:
-            error_9 = _a.sent();
-            console.error("Failed to validate session:", error_9);
-            return [2 /*return*/, false];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  // Device operations
-  var registerDevice = (0, react_1.useCallback)(function (deviceInfo) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var deviceFingerprint, deviceData, _a, response, data_7, error_10;
-      var _b;
-      return __generator(this, function (_c) {
-        switch (_c.label) {
-          case 0:
-            _c.trys.push([0, 5, , 6]);
-            deviceFingerprint = session_utils_1.SessionUtils.generateDeviceFingerprint();
-            _a = [__assign({}, deviceInfo)];
-            _b = {
-              fingerprint: deviceFingerprint,
-              deviceType: session_utils_1.SessionUtils.getDeviceType(),
-              deviceName: session_utils_1.SessionUtils.getDeviceName(),
-              userAgent: navigator.userAgent,
-            };
-            return [4 /*yield*/, session_utils_1.SessionUtils.getClientIP()];
-          case 1:
-            deviceData = __assign.apply(void 0, _a.concat([((_b.ipAddress = _c.sent()), _b)]));
-            return [
-              4 /*yield*/,
-              fetch("/api/auth/session/devices", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(deviceData),
-              }),
-            ];
-          case 2:
-            response = _c.sent();
-            if (!response.ok) return [3 /*break*/, 4];
-            return [4 /*yield*/, response.json()];
-          case 3:
-            data_7 = _c.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                devices: __spreadArray(
-                  __spreadArray([], prev.devices, true),
-                  [data_7.device],
-                  false,
-                ),
-              });
-            });
-            return [2 /*return*/, true];
-          case 4:
-            return [2 /*return*/, false];
-          case 5:
-            error_10 = _c.sent();
-            console.error("Failed to register device:", error_10);
-            return [2 /*return*/, false];
-          case 6:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var updateDevice = (0, react_1.useCallback)(function (deviceId, updates) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data_8, error_11;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 4, , 5]);
-            return [
-              4 /*yield*/,
-              fetch("/api/auth/session/devices", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(__assign({ deviceId: deviceId }, updates)),
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (!response.ok) return [3 /*break*/, 3];
-            return [4 /*yield*/, response.json()];
-          case 2:
-            data_8 = _a.sent();
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                devices: prev.devices.map(function (device) {
-                  return device.id === deviceId ? data_8.device : device;
+  var validateSession = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, error_9;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 4, , 5]);
+              return [
+                4 /*yield*/,
+                fetch("/api/auth/session/validate", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
                 }),
-              });
-            });
-            return [2 /*return*/, true];
-          case 3:
-            return [2 /*return*/, false];
-          case 4:
-            error_11 = _a.sent();
-            console.error("Failed to update device:", error_11);
-            return [2 /*return*/, false];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var removeDevice = (0, react_1.useCallback)(function (deviceId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, error_12;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              fetch("/api/auth/session/devices", {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ deviceId: deviceId }),
-              }),
-            ];
-          case 1:
-            response = _a.sent();
-            if (response.ok) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
-                  devices: prev.devices.filter(function (device) {
-                    return device.id !== deviceId;
-                  }),
-                });
-              });
-              return [2 /*return*/, true];
-            }
-            return [2 /*return*/, false];
-          case 2:
-            error_12 = _a.sent();
-            console.error("Failed to remove device:", error_12);
-            return [2 /*return*/, false];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var trustDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          return [2 /*return*/, updateDevice(deviceId, { isTrusted: true })];
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) return [3 /*break*/, 3];
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data = _a.sent();
+              return [2 /*return*/, data.valid];
+            case 3:
+              return [2 /*return*/, false];
+            case 4:
+              error_9 = _a.sent();
+              console.error("Failed to validate session:", error_9);
+              return [2 /*return*/, false];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      });
-    },
+      }),
+    [],
+  );
+  // Device operations
+  var registerDevice = (0, react_1.useCallback)(
+    (deviceInfo) =>
+      __awaiter(this, void 0, void 0, function () {
+        var deviceFingerprint, deviceData, _a, response, data_7, error_10;
+        var _b;
+        return __generator(this, (_c) => {
+          switch (_c.label) {
+            case 0:
+              _c.trys.push([0, 5, , 6]);
+              deviceFingerprint = session_utils_1.SessionUtils.generateDeviceFingerprint();
+              _a = [__assign({}, deviceInfo)];
+              _b = {
+                fingerprint: deviceFingerprint,
+                deviceType: session_utils_1.SessionUtils.getDeviceType(),
+                deviceName: session_utils_1.SessionUtils.getDeviceName(),
+                userAgent: navigator.userAgent,
+              };
+              return [4 /*yield*/, session_utils_1.SessionUtils.getClientIP()];
+            case 1:
+              deviceData = __assign.apply(void 0, _a.concat([((_b.ipAddress = _c.sent()), _b)]));
+              return [
+                4 /*yield*/,
+                fetch("/api/auth/session/devices", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(deviceData),
+                }),
+              ];
+            case 2:
+              response = _c.sent();
+              if (!response.ok) return [3 /*break*/, 4];
+              return [4 /*yield*/, response.json()];
+            case 3:
+              data_7 = _c.sent();
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  devices: __spreadArray(
+                    __spreadArray([], prev.devices, true),
+                    [data_7.device],
+                    false,
+                  ),
+                }),
+              );
+              return [2 /*return*/, true];
+            case 4:
+              return [2 /*return*/, false];
+            case 5:
+              error_10 = _c.sent();
+              console.error("Failed to register device:", error_10);
+              return [2 /*return*/, false];
+            case 6:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var updateDevice = (0, react_1.useCallback)(
+    (deviceId, updates) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data_8, error_11;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 4, , 5]);
+              return [
+                4 /*yield*/,
+                fetch("/api/auth/session/devices", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(__assign({ deviceId: deviceId }, updates)),
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (!response.ok) return [3 /*break*/, 3];
+              return [4 /*yield*/, response.json()];
+            case 2:
+              data_8 = _a.sent();
+              setState((prev) =>
+                __assign(__assign({}, prev), {
+                  devices: prev.devices.map((device) =>
+                    device.id === deviceId ? data_8.device : device,
+                  ),
+                }),
+              );
+              return [2 /*return*/, true];
+            case 3:
+              return [2 /*return*/, false];
+            case 4:
+              error_11 = _a.sent();
+              console.error("Failed to update device:", error_11);
+              return [2 /*return*/, false];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var removeDevice = (0, react_1.useCallback)(
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, error_12;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                fetch("/api/auth/session/devices", {
+                  method: "DELETE",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ deviceId: deviceId }),
+                }),
+              ];
+            case 1:
+              response = _a.sent();
+              if (response.ok) {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
+                    devices: prev.devices.filter((device) => device.id !== deviceId),
+                  }),
+                );
+                return [2 /*return*/, true];
+              }
+              return [2 /*return*/, false];
+            case 2:
+              error_12 = _a.sent();
+              console.error("Failed to remove device:", error_12);
+              return [2 /*return*/, false];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var trustDevice = (0, react_1.useCallback)(
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [
+          2 /*return*/,
+          updateDevice(deviceId, { isTrusted: true }),
+        ]);
+      }),
     [updateDevice],
   );
   var untrustDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          return [2 /*return*/, updateDevice(deviceId, { isTrusted: false })];
-        });
-      });
-    },
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [
+          2 /*return*/,
+          updateDevice(deviceId, { isTrusted: false }),
+        ]);
+      }),
     [updateDevice],
   );
   // Security operations
   var getSecurityEvents = (0, react_1.useCallback)(
-    function (filters) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
         var user;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, supabase.auth.getUser()];
@@ -764,15 +743,14 @@ function useSessionManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   var createSecurityEvent = (0, react_1.useCallback)(
-    function (event) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (event) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, error_13;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -803,68 +781,64 @@ function useSessionManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [getSecurityEvents],
   );
-  var dismissAlert = (0, react_1.useCallback)(function (eventId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        try {
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              securityEvents: prev.securityEvents.map(function (event) {
-                return event.id === eventId
-                  ? __assign(__assign({}, event), { dismissed: true })
-                  : event;
+  var dismissAlert = (0, react_1.useCallback)(
+    (eventId) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          try {
+            setState((prev) =>
+              __assign(__assign({}, prev), {
+                securityEvents: prev.securityEvents.map((event) =>
+                  event.id === eventId ? __assign(__assign({}, event), { dismissed: true }) : event,
+                ),
               }),
-            });
-          });
-          return [2 /*return*/, true];
-        } catch (error) {
-          console.error("Failed to dismiss alert:", error);
-          return [2 /*return*/, false];
+            );
+            return [2 /*return*/, true];
+          } catch (error) {
+            console.error("Failed to dismiss alert:", error);
+            return [2 /*return*/, false];
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
+  // Analytics operations
+  var getAnalytics = (0, react_1.useCallback)(() => {
+    var args_1 = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args_1[_i] = arguments[_i];
+    }
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (timeframe) {
+      var user;
+      if (timeframe === void 0) {
+        timeframe = "7d";
+      }
+      return __generator(this, (_a) => {
+        switch (_a.label) {
+          case 0:
+            return [4 /*yield*/, supabase.auth.getUser()];
+          case 1:
+            user = _a.sent().data.user;
+            if (!user) return [3 /*break*/, 3];
+            return [4 /*yield*/, loadAnalytics(user.id, timeframe)];
+          case 2:
+            _a.sent();
+            _a.label = 3;
+          case 3:
+            return [2 /*return*/];
         }
-        return [2 /*return*/];
       });
     });
-  }, []);
-  // Analytics operations
-  var getAnalytics = (0, react_1.useCallback)(
-    function () {
-      var args_1 = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args_1[_i] = arguments[_i];
-      }
-      return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (timeframe) {
-        var user;
-        if (timeframe === void 0) {
-          timeframe = "7d";
-        }
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              return [4 /*yield*/, supabase.auth.getUser()];
-            case 1:
-              user = _a.sent().data.user;
-              if (!user) return [3 /*break*/, 3];
-              return [4 /*yield*/, loadAnalytics(user.id, timeframe)];
-            case 2:
-              _a.sent();
-              _a.label = 3;
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    },
-    [supabase],
-  );
+  }, [supabase]);
   var getSessionStatus = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var user, response, data_9, error_14;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -886,9 +860,7 @@ function useSessionManagement() {
               return [4 /*yield*/, response.json()];
             case 3:
               data_9 = _a.sent();
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { analytics: data_9.status });
-              });
+              setState((prev) => __assign(__assign({}, prev), { analytics: data_9.status }));
               _a.label = 4;
             case 4:
               return [3 /*break*/, 6];
@@ -900,20 +872,17 @@ function useSessionManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [supabase],
   );
   // Utility operations
-  var clearError = (0, react_1.useCallback)(function () {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { error: null });
-    });
+  var clearError = (0, react_1.useCallback)(() => {
+    setState((prev) => __assign(__assign({}, prev), { error: null }));
   }, []);
   var refreshAll = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, initializeSession()];
@@ -922,8 +891,7 @@ function useSessionManagement() {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [initializeSession],
   );
   return __assign(__assign({}, state), {

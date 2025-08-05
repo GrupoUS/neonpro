@@ -1,9 +1,10 @@
 // Bulk Order Optimization API Endpoint
 // POST /api/inventory/purchase-orders/optimize - Get bulk order optimization recommendations
-import type { purchaseOrderService } from "@/app/lib/services/purchase-order-service";
-import type { createClient } from "@/lib/supabase/server";
+
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
+import type { purchaseOrderService } from "@/app/lib/services/purchase-order-service";
+import type { createClient } from "@/lib/supabase/server";
 
 const optimizeBulkOrderSchema = z.object({
   clinic_id: z.string().min(1, "Clinic ID is required"),

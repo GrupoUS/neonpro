@@ -1,16 +1,15 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -50,37 +49,29 @@ exports.trpcClient = exports.trpc.createClient({
   links: [
     // Logger for development
     (0, client_1.loggerLink)({
-      enabled: function (opts) {
-        return (
-          process.env.NODE_ENV === "development" ||
-          (opts.direction === "down" && opts.result instanceof Error)
-        );
-      },
+      enabled: (opts) =>
+        process.env.NODE_ENV === "development" ||
+        (opts.direction === "down" && opts.result instanceof Error),
     }),
     // HTTP batch link for performance
     (0, client_1.httpBatchLink)({
       url: "".concat(getBaseUrl(), "/api/trpc"),
       // Healthcare-specific headers
-      headers: function () {
-        return {
-          "Content-Type": "application/json",
-          "X-Healthcare-Client": "neonpro-web",
-          "X-API-Version": "1.0",
-        };
-      },
+      headers: () => ({
+        "Content-Type": "application/json",
+        "X-Healthcare-Client": "neonpro-web",
+        "X-API-Version": "1.0",
+      }),
       // Error handling for healthcare compliance
-      fetch: function (url, options) {
-        return fetch(url, __assign(__assign({}, options), { credentials: "include" })).catch(
-          function (error) {
-            console.error("tRPC Healthcare API Request Failed:", {
-              url: url,
-              error: error.message,
-              timestamp: new Date().toISOString(),
-            });
-            throw error;
-          },
-        );
-      },
+      fetch: (url, options) =>
+        fetch(url, __assign(__assign({}, options), { credentials: "include" })).catch((error) => {
+          console.error("tRPC Healthcare API Request Failed:", {
+            url: url,
+            error: error.message,
+            timestamp: new Date().toISOString(),
+          });
+          throw error;
+        }),
     }),
   ],
 });

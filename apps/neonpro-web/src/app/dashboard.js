@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Dashboard;
 var react_1 = require("react");
@@ -26,7 +25,7 @@ var dashboardData = {
     { id: 2, message: "2 pacientes em atraso", type: "danger" },
   ],
 };
-var MetricCard = function (_a) {
+var MetricCard = (_a) => {
   var Icon = _a.icon,
     title = _a.title,
     value = _a.value,
@@ -120,31 +119,29 @@ function Dashboard() {
                 </CosmicGlowButton_1.CosmicGlowButton>
               </div>
               <div className="space-y-4">
-                {dashboardData.recentAppointments.map(function (appointment, index) {
-                  return (
-                    <framer_motion_1.motion.div
-                      key={appointment.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                          <lucide_react_1.Users className="h-5 w-5 text-accent" />
-                        </div>
-                        <div>
-                          <p className="text-white font-medium">{appointment.patient}</p>
-                          <p className="text-gray-400 text-sm">{appointment.type}</p>
-                        </div>
+                {dashboardData.recentAppointments.map((appointment, index) => (
+                  <framer_motion_1.motion.div
+                    key={appointment.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                        <lucide_react_1.Users className="h-5 w-5 text-accent" />
                       </div>
-                      <div className="text-right">
-                        <p className="text-accent font-semibold">{appointment.time}</p>
-                        <p className="text-gray-400 text-sm">Hoje</p>
+                      <div>
+                        <p className="text-white font-medium">{appointment.patient}</p>
+                        <p className="text-gray-400 text-sm">{appointment.type}</p>
                       </div>
-                    </framer_motion_1.motion.div>
-                  );
-                })}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-accent font-semibold">{appointment.time}</p>
+                      <p className="text-gray-400 text-sm">Hoje</p>
+                    </div>
+                  </framer_motion_1.motion.div>
+                ))}
               </div>
             </NeonGradientCard_1.NeonGradientCard>
           </div>
@@ -157,23 +154,21 @@ function Dashboard() {
                 Alertas Importantes
               </h3>
               <div className="space-y-3">
-                {dashboardData.alerts.map(function (alert, index) {
-                  return (
-                    <framer_motion_1.motion.div
-                      key={alert.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.1 }}
-                      className={"p-3 rounded-lg border ".concat(
-                        alert.type === "warning"
-                          ? "bg-warning/10 border-warning/30 text-warning"
-                          : "bg-danger/10 border-danger/30 text-danger",
-                      )}
-                    >
-                      <p className="text-sm font-medium">{alert.message}</p>
-                    </framer_motion_1.motion.div>
-                  );
-                })}
+                {dashboardData.alerts.map((alert, index) => (
+                  <framer_motion_1.motion.div
+                    key={alert.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={"p-3 rounded-lg border ".concat(
+                      alert.type === "warning"
+                        ? "bg-warning/10 border-warning/30 text-warning"
+                        : "bg-danger/10 border-danger/30 text-danger",
+                    )}
+                  >
+                    <p className="text-sm font-medium">{alert.message}</p>
+                  </framer_motion_1.motion.div>
+                ))}
               </div>
             </NeonGradientCard_1.NeonGradientCard>
 

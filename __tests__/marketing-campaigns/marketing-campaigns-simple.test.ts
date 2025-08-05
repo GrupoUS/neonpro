@@ -3,8 +3,6 @@
 // Simplified tests for marketing campaigns dashboard
 // =====================================================================================
 
-import { render } from "@testing-library/react";
-
 // Mock Next.js components
 jest.mock("next/navigation", () => ({
   useRouter: () => ({

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,33 +128,27 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var revenue_analytics_engine_1 = require("../../../lib/financial/revenue-analytics-engine");
 // Mock Supabase client
 var mockSupabaseClient = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn().mockReturnThis(),
-      eq: globals_1.jest.fn().mockReturnThis(),
-      gte: globals_1.jest.fn().mockReturnThis(),
-      lte: globals_1.jest.fn().mockReturnThis(),
-      order: globals_1.jest.fn().mockReturnThis(),
-      returns: globals_1.jest.fn(),
-    };
-  }),
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn().mockReturnThis(),
+    eq: globals_1.jest.fn().mockReturnThis(),
+    gte: globals_1.jest.fn().mockReturnThis(),
+    lte: globals_1.jest.fn().mockReturnThis(),
+    order: globals_1.jest.fn().mockReturnThis(),
+    returns: globals_1.jest.fn(),
+  })),
 };
-globals_1.jest.mock("../../../lib/supabase-browser", function () {
-  return {
-    createBrowserClient: function () {
-      return mockSupabaseClient;
-    },
-  };
-});
-(0, globals_1.describe)("RevenueAnalyticsEngine", function () {
+globals_1.jest.mock("../../../lib/supabase-browser", () => ({
+  createBrowserClient: () => mockSupabaseClient,
+}));
+(0, globals_1.describe)("RevenueAnalyticsEngine", () => {
   var analytics;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     analytics = new revenue_analytics_engine_1.RevenueAnalyticsEngine();
     // Mock current date
     globals_1.jest.useFakeTimers();
@@ -165,25 +156,25 @@ globals_1.jest.mock("../../../lib/supabase-browser", function () {
     // Reset mocks
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     globals_1.jest.useRealTimers();
     globals_1.jest.clearAllMocks();
   });
-  (0, globals_1.describe)("Revenue Analysis Basic Tests", function () {
-    (0, globals_1.it)("should create analytics engine instance", function () {
+  (0, globals_1.describe)("Revenue Analysis Basic Tests", () => {
+    (0, globals_1.it)("should create analytics engine instance", () => {
       (0, globals_1.expect)(analytics).toBeInstanceOf(
         revenue_analytics_engine_1.RevenueAnalyticsEngine,
       );
     });
-    (0, globals_1.it)("should have required methods", function () {
+    (0, globals_1.it)("should have required methods", () => {
       (0, globals_1.expect)(typeof analytics.analyzeRevenueByService).toBe("function");
       (0, globals_1.expect)(typeof analytics.analyzeProviderPerformance).toBe("function");
       (0, globals_1.expect)(typeof analytics.generateRevenueReport).toBe("function");
     });
-    (0, globals_1.it)("should handle empty date ranges gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.it)("should handle empty date ranges gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock empty result
@@ -205,24 +196,22 @@ globals_1.jest.mock("../../../lib/supabase-browser", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Performance Tests", function () {
-    (0, globals_1.it)("should complete analysis within performance targets", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Performance Tests", () => {
+    (0, globals_1.it)("should complete analysis within performance targets", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockData, startTime, duration;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockData = Array.from({ length: 100 }, function (_, i) {
-                return {
-                  service_type: "service".concat(i % 10),
-                  revenue: Math.random() * 1000,
-                  count: Math.floor(Math.random() * 50),
-                  month: "2024-01",
-                };
-              });
+              mockData = Array.from({ length: 100 }, (_, i) => ({
+                service_type: "service".concat(i % 10),
+                revenue: Math.random() * 1000,
+                count: Math.floor(Math.random() * 50),
+                month: "2024-01",
+              }));
               mockSupabaseClient.from().returns({
                 data: mockData,
                 error: null,
@@ -242,7 +231,7 @@ globals_1.jest.mock("../../../lib/supabase-browser", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

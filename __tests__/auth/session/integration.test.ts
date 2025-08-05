@@ -9,27 +9,20 @@
  * @created 2024
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
-import { UnifiedSessionSystem } from "../../../lib/auth/session/UnifiedSessionSystem";
-import { SessionManager } from "../../../lib/auth/session/SessionManager";
+import { afterEach, beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { DeviceManager } from "../../../lib/auth/session/DeviceManager";
 import { SecurityEventLogger } from "../../../lib/auth/session/SecurityEventLogger";
+import { SessionManager } from "../../../lib/auth/session/SessionManager";
+import type { DeviceConfig, SecurityConfig, SessionConfig } from "../../../lib/auth/session/types";
+import { UnifiedSessionSystem } from "../../../lib/auth/session/UnifiedSessionSystem";
 import {
-  createMockSession,
+  cleanup,
   createMockDevice,
   createMockSecurityEvent,
-  createMockUser,
+  createMockSession,
+  type createMockUser,
   createTestDatabase,
-  cleanup,
-  waitFor,
 } from "./setup";
-import type {
-  SessionConfig,
-  DeviceConfig,
-  SecurityConfig,
-  SessionData,
-  DeviceData,
-} from "../../../lib/auth/session/types";
 
 // Mock Supabase with comprehensive responses
 const mockSupabase = {
@@ -89,9 +82,9 @@ jest.mock("@supabase/supabase-js", () => ({
 
 describe("Session Management System - Integration Tests", () => {
   let unifiedSystem: UnifiedSessionSystem;
-  let sessionManager: SessionManager;
-  let deviceManager: DeviceManager;
-  let securityLogger: SecurityEventLogger;
+  let _sessionManager: SessionManager;
+  let _deviceManager: DeviceManager;
+  let _securityLogger: SecurityEventLogger;
   let testDb: ReturnType<typeof createTestDatabase>;
   let testUser: ReturnType<typeof createMockUser>;
 
@@ -148,9 +141,9 @@ describe("Session Management System - Integration Tests", () => {
       },
     };
 
-    sessionManager = new SessionManager(sessionConfig);
-    deviceManager = new DeviceManager(deviceConfig);
-    securityLogger = new SecurityEventLogger(securityConfig);
+    _sessionManager = new SessionManager(sessionConfig);
+    _deviceManager = new DeviceManager(deviceConfig);
+    _securityLogger = new SecurityEventLogger(securityConfig);
 
     unifiedSystem = new UnifiedSessionSystem({
       session: sessionConfig,
@@ -592,7 +585,7 @@ describe("Session Management System - Integration Tests", () => {
       };
 
       // Mock threat detection
-      const threatEvents = Array.from({ length: 10 }, (_, i) =>
+      const threatEvents = Array.from({ length: 10 }, (_, _i) =>
         createMockSecurityEvent({
           userId: threatData.userId,
           type: "unauthorized_access",

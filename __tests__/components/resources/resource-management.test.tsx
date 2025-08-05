@@ -3,12 +3,12 @@
 // Story 2.4: Smart Resource Management - Test Suite
 // =====================================================
 
-import { describe, expect, it, beforeEach, afterEach, jest } from "@jest/globals";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { toast } from "sonner";
-import ResourceManagement from "@/components/resources/resource-management";
 import ResourceAllocationForm from "@/components/resources/resource-allocation-form";
+import ResourceManagement from "@/components/resources/resource-management";
 import ResourceOptimization from "@/components/resources/resource-optimization";
 
 // =====================================================
@@ -45,7 +45,7 @@ const mockResources = [
   },
 ];
 
-const mockAllocations = [
+const _mockAllocations = [
   {
     id: "allocation-1",
     resource_id: "resource-1",
@@ -312,7 +312,7 @@ describe("ResourceAllocationForm Component", () => {
     const resourceSelect = screen.getByText("Select a resource");
     await user.click(resourceSelect);
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const resourceOption = screen.getByText(/Treatment Room A/);
       await user.click(resourceOption);
     });
@@ -477,7 +477,7 @@ describe("ResourceOptimization Component", () => {
 
 describe("Resource Management Integration", () => {
   it("integrates resource management components correctly", async () => {
-    const user = userEvent.setup();
+    const _user = userEvent.setup();
 
     // Mock all required API responses
     mockFetch.mockResolvedValueOnce({

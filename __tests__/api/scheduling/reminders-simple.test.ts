@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { POST, GET } from "../../../app/api/scheduling/reminders/route";
+import { GET, POST } from "../../../app/api/scheduling/reminders/route";
 
 // Mock the workflow module
 jest.mock("../../../lib/communication/scheduling-workflow", () => ({

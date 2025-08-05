@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Webhook Manager
  * Webhook management system for third-party integrations
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebhookSignatureUtils = exports.NeonProWebhookManager = void 0;
 var crypto_1 = require("crypto");
@@ -162,7 +159,7 @@ var supabase_js_1 = require("@supabase/supabase-js");
  * Webhook Manager Implementation
  * Handles webhook registration, processing, and retry logic
  */
-var NeonProWebhookManager = /** @class */ (function () {
+var NeonProWebhookManager = /** @class */ (() => {
   function NeonProWebhookManager(supabaseUrl, supabaseKey, queue) {
     this.webhooks = new Map();
     this.retryJobs = new Map();
@@ -655,7 +652,7 @@ var NeonProWebhookManager = /** @class */ (function () {
   /**
    * Validate webhook configuration
    */
-  NeonProWebhookManager.prototype.validateWebhookConfig = function (config) {
+  NeonProWebhookManager.prototype.validateWebhookConfig = (config) => {
     if (!config.id) {
       throw new Error("Webhook ID is required");
     }
@@ -680,19 +677,17 @@ var NeonProWebhookManager = /** @class */ (function () {
   /**
    * Hash webhook secret
    */
-  NeonProWebhookManager.prototype.hashSecret = function (secret) {
-    return crypto_1.default.createHash("sha256").update(secret).digest("hex");
-  };
+  NeonProWebhookManager.prototype.hashSecret = (secret) =>
+    crypto_1.default.createHash("sha256").update(secret).digest("hex");
   /**
    * Generate webhook signature
    */
-  NeonProWebhookManager.prototype.generateSignature = function (payload, secret) {
-    return "sha256=" + crypto_1.default.createHmac("sha256", secret).update(payload).digest("hex");
-  };
+  NeonProWebhookManager.prototype.generateSignature = (payload, secret) =>
+    "sha256=" + crypto_1.default.createHmac("sha256", secret).update(payload).digest("hex");
   /**
    * Extract event type from payload
    */
-  NeonProWebhookManager.prototype.extractEventType = function (payload, headers) {
+  NeonProWebhookManager.prototype.extractEventType = (payload, headers) => {
     // Try common event type fields
     if (payload.event_type) return payload.event_type;
     if (payload.type) return payload.type;
@@ -723,11 +718,13 @@ var NeonProWebhookManager = /** @class */ (function () {
   /**
    * Get nested value from object using dot notation
    */
-  NeonProWebhookManager.prototype.getNestedValue = function (obj, path) {
-    return path.split(".").reduce(function (current, key) {
-      return current && current[key] !== undefined ? current[key] : undefined;
-    }, obj);
-  };
+  NeonProWebhookManager.prototype.getNestedValue = (obj, path) =>
+    path
+      .split(".")
+      .reduce(
+        (current, key) => (current && current[key] !== undefined ? current[key] : undefined),
+        obj,
+      );
   /**
    * Schedule webhook retry
    */
@@ -737,49 +734,51 @@ var NeonProWebhookManager = /** @class */ (function () {
       var _this = this;
       return __generator(this, function (_a) {
         delay = this.calculateRetryDelay(delivery.attempts, retryPolicy);
-        timeoutId = setTimeout(function () {
-          return __awaiter(_this, void 0, void 0, function () {
-            var job, error_9;
-            return __generator(this, function (_a) {
-              switch (_a.label) {
-                case 0:
-                  _a.trys.push([0, 2, , 3]);
-                  job = {
-                    id: crypto_1.default.randomUUID(),
-                    type: "webhook",
-                    integrationId: delivery.webhook_id,
-                    payload: {
-                      webhookId: delivery.webhook_id,
-                      eventType: delivery.event_type,
-                      payload: delivery.payload,
-                      headers: delivery.headers,
-                      timestamp: new Date(),
-                      isRetry: true,
-                      originalDeliveryId: delivery.id,
-                    },
-                    priority: 1,
-                    attempts: delivery.attempts,
-                    maxAttempts: retryPolicy.maxRetries + 1,
-                    delay: 0,
-                    status: "pending",
-                    createdAt: new Date(),
-                  };
-                  return [4 /*yield*/, this.queue.enqueue(job)];
-                case 1:
-                  _a.sent();
-                  // Remove from retry jobs map
-                  this.retryJobs.delete(delivery.id);
-                  return [3 /*break*/, 3];
-                case 2:
-                  error_9 = _a.sent();
-                  console.error("Failed to schedule retry:", error_9);
-                  return [3 /*break*/, 3];
-                case 3:
-                  return [2 /*return*/];
-              }
-            });
-          });
-        }, delay);
+        timeoutId = setTimeout(
+          () =>
+            __awaiter(_this, void 0, void 0, function () {
+              var job, error_9;
+              return __generator(this, function (_a) {
+                switch (_a.label) {
+                  case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    job = {
+                      id: crypto_1.default.randomUUID(),
+                      type: "webhook",
+                      integrationId: delivery.webhook_id,
+                      payload: {
+                        webhookId: delivery.webhook_id,
+                        eventType: delivery.event_type,
+                        payload: delivery.payload,
+                        headers: delivery.headers,
+                        timestamp: new Date(),
+                        isRetry: true,
+                        originalDeliveryId: delivery.id,
+                      },
+                      priority: 1,
+                      attempts: delivery.attempts,
+                      maxAttempts: retryPolicy.maxRetries + 1,
+                      delay: 0,
+                      status: "pending",
+                      createdAt: new Date(),
+                    };
+                    return [4 /*yield*/, this.queue.enqueue(job)];
+                  case 1:
+                    _a.sent();
+                    // Remove from retry jobs map
+                    this.retryJobs.delete(delivery.id);
+                    return [3 /*break*/, 3];
+                  case 2:
+                    error_9 = _a.sent();
+                    console.error("Failed to schedule retry:", error_9);
+                    return [3 /*break*/, 3];
+                  case 3:
+                    return [2 /*return*/];
+                }
+              });
+            }),
+          delay,
+        );
         this.retryJobs.set(delivery.id, timeoutId);
         return [2 /*return*/];
       });
@@ -788,11 +787,11 @@ var NeonProWebhookManager = /** @class */ (function () {
   /**
    * Calculate retry delay based on strategy
    */
-  NeonProWebhookManager.prototype.calculateRetryDelay = function (attempts, retryPolicy) {
+  NeonProWebhookManager.prototype.calculateRetryDelay = (attempts, retryPolicy) => {
     var delay = retryPolicy.initialDelay;
     switch (retryPolicy.backoffStrategy) {
       case "exponential":
-        delay = retryPolicy.initialDelay * Math.pow(2, attempts);
+        delay = retryPolicy.initialDelay * 2 ** attempts;
         break;
       case "linear":
         delay = retryPolicy.initialDelay * (attempts + 1);
@@ -857,12 +856,12 @@ exports.NeonProWebhookManager = NeonProWebhookManager;
 /**
  * Webhook signature utilities
  */
-var WebhookSignatureUtils = /** @class */ (function () {
+var WebhookSignatureUtils = /** @class */ (() => {
   function WebhookSignatureUtils() {}
   /**
    * Generate HMAC signature for webhook payload
    */
-  WebhookSignatureUtils.generateSignature = function (payload, secret, algorithm) {
+  WebhookSignatureUtils.generateSignature = (payload, secret, algorithm) => {
     if (algorithm === void 0) {
       algorithm = "sha256";
     }
@@ -889,7 +888,7 @@ var WebhookSignatureUtils = /** @class */ (function () {
   /**
    * Generate webhook secret
    */
-  WebhookSignatureUtils.generateSecret = function (length) {
+  WebhookSignatureUtils.generateSecret = (length) => {
     if (length === void 0) {
       length = 32;
     }

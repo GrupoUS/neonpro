@@ -5,10 +5,13 @@
  * Provides AI-powered appointment duration predictions with A/B testing support
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import {
+  AIABTestingService,
+  AIDurationPredictionService,
+  type PredictionFeatures,
+} from "@/lib/ai/duration-prediction";
 import { createClient } from "@/lib/supabase/server";
-import { AIDurationPredictionService, AIABTestingService } from "@/lib/ai/duration-prediction";
-import { PredictionFeatures } from "@/lib/ai/duration-prediction";
 
 // Request/Response types
 interface PredictDurationRequest {
@@ -93,7 +96,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Check A/B test assignment
     const shouldUseAI = await abTestService.shouldUseAIPredictions(user.id);
-    const testGroup = shouldUseAI ? "ai_prediction" : "control";
+    const _testGroup = shouldUseAI ? "ai_prediction" : "control";
 
     // Prepare prediction features
     const features: PredictionFeatures = {
@@ -193,7 +196,7 @@ function getFallbackDuration(treatmentType: string): number {
     follow_up: 25,
   };
 
-  return fallbackDurations[treatmentType] || fallbackDurations["consultation"];
+  return fallbackDurations[treatmentType] || fallbackDurations.consultation;
 }
 
 // Handle unsupported HTTP methods

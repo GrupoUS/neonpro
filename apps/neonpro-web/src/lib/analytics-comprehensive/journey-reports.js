@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 📊 NeonPro Journey Reports Engine
  *
@@ -30,15 +29,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -58,13 +57,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -86,9 +85,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -160,7 +157,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportUtils =
   exports.ReportBuilder =
@@ -214,7 +211,7 @@ exports.CHART_COLOR_PALETTES = {
  *
  * Sistema principal de geração de relatórios da jornada do paciente
  */
-var JourneyReportsEngine = /** @class */ (function () {
+var JourneyReportsEngine = /** @class */ (() => {
   function JourneyReportsEngine() {
     this.supabase = (0, client_1.createClient)();
     logger_1.logger.info("JourneyReportsEngine: Initialized");
@@ -332,9 +329,7 @@ var JourneyReportsEngine = /** @class */ (function () {
   /**
    * Create Custom Report Builder - Cria builder customizado
    */
-  JourneyReportsEngine.prototype.createCustomReportBuilder = function () {
-    return new ReportBuilder();
-  };
+  JourneyReportsEngine.prototype.createCustomReportBuilder = () => new ReportBuilder();
   /**
    * Export Report - Exporta relatório em formato específico
    */
@@ -426,7 +421,7 @@ var JourneyReportsEngine = /** @class */ (function () {
   /**
    * Validate Report Configuration - Valida configuração do relatório
    */
-  JourneyReportsEngine.prototype.validateReportConfig = function (config) {
+  JourneyReportsEngine.prototype.validateReportConfig = (config) => {
     if (!config.id || !config.type || !config.clinicId) {
       throw new Error("Invalid report configuration: missing required fields");
     }
@@ -525,7 +520,7 @@ var JourneyReportsEngine = /** @class */ (function () {
   JourneyReportsEngine.prototype.generateAutomatedInsights = function (config, data) {
     return __awaiter(this, void 0, void 0, function () {
       var insights;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         insights = [];
         // This would use AI/ML to generate insights
         // For now, returning empty array - would be implemented with actual AI logic
@@ -539,7 +534,7 @@ var JourneyReportsEngine = /** @class */ (function () {
   JourneyReportsEngine.prototype.generateRecommendations = function (config, data, insights) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
         // This would analyze data and insights to generate actionable recommendations
         // For now, returning empty array - would be implemented with actual analysis logic
@@ -556,7 +551,7 @@ exports.JourneyReportsEngine = JourneyReportsEngine;
 /**
  * Report Builder - Builder para criação de relatórios customizados
  */
-var ReportBuilder = /** @class */ (function () {
+var ReportBuilder = /** @class */ (() => {
   function ReportBuilder() {
     this.config = {};
   }
@@ -663,22 +658,17 @@ exports.ReportUtils = {
   /**
    * Get Default Template for Report Type
    */
-  getDefaultTemplate: function (type) {
-    return (
-      exports.DEFAULT_REPORT_TEMPLATES[type] ||
-      exports.DEFAULT_REPORT_TEMPLATES.operational_overview
-    );
-  },
+  getDefaultTemplate: (type) =>
+    exports.DEFAULT_REPORT_TEMPLATES[type] || exports.DEFAULT_REPORT_TEMPLATES.operational_overview,
   /**
    * Get Color Palette
    */
-  getColorPalette: function (palette) {
-    return exports.CHART_COLOR_PALETTES[palette] || exports.CHART_COLOR_PALETTES.professional;
-  },
+  getColorPalette: (palette) =>
+    exports.CHART_COLOR_PALETTES[palette] || exports.CHART_COLOR_PALETTES.professional,
   /**
    * Format Report Filename
    */
-  formatFilename: function (config, format) {
+  formatFilename: (config, format) => {
     var date = new Date().toISOString().split("T")[0];
     var cleanTitle = config.title.replace(/[^a-zA-Z0-9]/g, "_");
     return "".concat(cleanTitle, "_").concat(date, ".").concat(format);
@@ -686,7 +676,5 @@ exports.ReportUtils = {
   /**
    * Validate Date Range
    */
-  validateDateRange: function (startDate, endDate) {
-    return startDate < endDate && endDate <= new Date();
-  },
+  validateDateRange: (startDate, endDate) => startDate < endDate && endDate <= new Date(),
 };

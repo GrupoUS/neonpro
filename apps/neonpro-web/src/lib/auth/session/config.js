@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🔐 Configurações do Sistema de Gerenciamento de Sessões
  *
@@ -11,13 +10,13 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -345,11 +344,7 @@ function validateDeviceConfig(config) {
   }
   // Validar fatores de risco
   var factors = Object.values(config.risk.factors);
-  if (
-    factors.some(function (f) {
-      return f < 0 || f > 1;
-    })
-  ) {
+  if (factors.some((f) => f < 0 || f > 1)) {
     errors.push("Fatores de risco devem estar entre 0 e 1");
   }
   // Validar thresholds

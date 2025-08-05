@@ -6,19 +6,19 @@
  * Suporte a triggers, condições e ações automatizadas
  */
 
-import type {
-  NotificationType,
-  NotificationChannel,
-  NotificationPriority,
-  AutomationRule,
-  AutomationTrigger,
-  AutomationCondition,
-  AutomationAction,
-  NotificationContext,
-  NotificationRecipient,
-} from "../types";
 import type { NotificationManager } from "../notification-manager";
 import type { TemplateEngine } from "../template-engine";
+import type {
+  AutomationAction,
+  AutomationCondition,
+  AutomationRule,
+  AutomationTrigger,
+  NotificationChannel,
+  NotificationContext,
+  NotificationPriority,
+  NotificationRecipient,
+  NotificationType,
+} from "../types";
 
 // ============================================================================
 // INTERFACES

@@ -261,18 +261,18 @@ export class SessionConfig {
     switch (role.toLowerCase()) {
       case "admin":
       case "administrator":
-        return this.DEFAULT_POLICIES.admin;
+        return SessionConfig.DEFAULT_POLICIES.admin;
 
       case "premium":
       case "pro":
-        return this.DEFAULT_POLICIES.premium;
+        return SessionConfig.DEFAULT_POLICIES.premium;
 
       case "high_security":
       case "secure":
-        return this.DEFAULT_POLICIES.high_security;
+        return SessionConfig.DEFAULT_POLICIES.high_security;
 
       default:
-        return this.DEFAULT_POLICIES.standard;
+        return SessionConfig.DEFAULT_POLICIES.standard;
     }
   }
 
@@ -324,8 +324,8 @@ export class SessionConfig {
       }
 
       // Validate policy configurations
-      for (const [name, policy] of Object.entries(this.DEFAULT_POLICIES)) {
-        if (!this.validatePolicy(policy)) {
+      for (const [name, policy] of Object.entries(SessionConfig.DEFAULT_POLICIES)) {
+        if (!SessionConfig.validatePolicy(policy)) {
           console.error(`Invalid policy configuration: ${name}`);
           return false;
         }
@@ -358,17 +358,17 @@ export class SessionConfig {
     const env = environment || process.env.NODE_ENV || "development";
 
     return {
-      ...this.DEFAULT_POLICIES,
-      ...this.SECURITY_THRESHOLDS,
-      ...this.CLEANUP_INTERVALS,
-      ...this.COOKIE_CONFIG,
-      ...this.RATE_LIMITS,
-      ...this.ENCRYPTION,
-      ...this.DATABASE,
-      ...this.MONITORING,
-      ...this.FEATURES,
-      ...this.API_ENDPOINTS,
-      ...this.getEnvironmentConfig(),
+      ...SessionConfig.DEFAULT_POLICIES,
+      ...SessionConfig.SECURITY_THRESHOLDS,
+      ...SessionConfig.CLEANUP_INTERVALS,
+      ...SessionConfig.COOKIE_CONFIG,
+      ...SessionConfig.RATE_LIMITS,
+      ...SessionConfig.ENCRYPTION,
+      ...SessionConfig.DATABASE,
+      ...SessionConfig.MONITORING,
+      ...SessionConfig.FEATURES,
+      ...SessionConfig.API_ENDPOINTS,
+      ...SessionConfig.getEnvironmentConfig(),
       ENVIRONMENT: env,
     };
   }

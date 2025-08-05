@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Healthcare Security Framework
  *
@@ -39,26 +38,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -78,13 +77,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -106,9 +105,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -180,7 +177,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityMiddleware =
   exports.HealthcareSecurity =
@@ -207,121 +204,85 @@ exports.SecurityMiddleware =
 var session_manager_1 = require("./session-manager");
 Object.defineProperty(exports, "HealthcareSessionManager", {
   enumerable: true,
-  get: function () {
-    return session_manager_1.HealthcareSessionManager;
-  },
+  get: () => session_manager_1.HealthcareSessionManager,
 });
 Object.defineProperty(exports, "UserRole", {
   enumerable: true,
-  get: function () {
-    return session_manager_1.UserRole;
-  },
+  get: () => session_manager_1.UserRole,
 });
 Object.defineProperty(exports, "SessionStatus", {
   enumerable: true,
-  get: function () {
-    return session_manager_1.SessionStatus;
-  },
+  get: () => session_manager_1.SessionStatus,
 });
 Object.defineProperty(exports, "MFAMethod", {
   enumerable: true,
-  get: function () {
-    return session_manager_1.MFAMethod;
-  },
+  get: () => session_manager_1.MFAMethod,
 });
 Object.defineProperty(exports, "sessionSchema", {
   enumerable: true,
-  get: function () {
-    return session_manager_1.sessionSchema;
-  },
+  get: () => session_manager_1.sessionSchema,
 });
 // Encryption
 var encryption_1 = require("./encryption");
 Object.defineProperty(exports, "HealthcareEncryption", {
   enumerable: true,
-  get: function () {
-    return encryption_1.HealthcareEncryption;
-  },
+  get: () => encryption_1.HealthcareEncryption,
 });
 Object.defineProperty(exports, "EncryptionUtils", {
   enumerable: true,
-  get: function () {
-    return encryption_1.EncryptionUtils;
-  },
+  get: () => encryption_1.EncryptionUtils,
 });
 Object.defineProperty(exports, "EncryptionAlgorithm", {
   enumerable: true,
-  get: function () {
-    return encryption_1.EncryptionAlgorithm;
-  },
+  get: () => encryption_1.EncryptionAlgorithm,
 });
 Object.defineProperty(exports, "DataClassification", {
   enumerable: true,
-  get: function () {
-    return encryption_1.DataClassification;
-  },
+  get: () => encryption_1.DataClassification,
 });
 Object.defineProperty(exports, "encryptedDataSchema", {
   enumerable: true,
-  get: function () {
-    return encryption_1.encryptedDataSchema;
-  },
+  get: () => encryption_1.encryptedDataSchema,
 });
 Object.defineProperty(exports, "keyInfoSchema", {
   enumerable: true,
-  get: function () {
-    return encryption_1.keyInfoSchema;
-  },
+  get: () => encryption_1.keyInfoSchema,
 });
 // Role-Based Access Control
 var rbac_1 = require("./rbac");
 Object.defineProperty(exports, "HealthcareRBAC", {
   enumerable: true,
-  get: function () {
-    return rbac_1.HealthcareRBAC;
-  },
+  get: () => rbac_1.HealthcareRBAC,
 });
 Object.defineProperty(exports, "Role", {
   enumerable: true,
-  get: function () {
-    return rbac_1.Role;
-  },
+  get: () => rbac_1.Role,
 });
 Object.defineProperty(exports, "Permission", {
   enumerable: true,
-  get: function () {
-    return rbac_1.Permission;
-  },
+  get: () => rbac_1.Permission,
 });
 Object.defineProperty(exports, "AccessContext", {
   enumerable: true,
-  get: function () {
-    return rbac_1.AccessContext;
-  },
+  get: () => rbac_1.AccessContext,
 });
 Object.defineProperty(exports, "permissionSchema", {
   enumerable: true,
-  get: function () {
-    return rbac_1.permissionSchema;
-  },
+  get: () => rbac_1.permissionSchema,
 });
 Object.defineProperty(exports, "roleSchema", {
   enumerable: true,
-  get: function () {
-    return rbac_1.roleSchema;
-  },
+  get: () => rbac_1.roleSchema,
 });
 Object.defineProperty(exports, "userRoleSchema", {
   enumerable: true,
-  get: function () {
-    return rbac_1.userRoleSchema;
-  },
+  get: () => rbac_1.userRoleSchema,
 });
 /**
  * Unified Healthcare Security Manager
  * High-level interface for all security operations
  */
-var HealthcareSecurity = /** @class */ (function () {
+var HealthcareSecurity = /** @class */ (() => {
   function HealthcareSecurity() {}
   /**
    * Create authenticated session with security validation
@@ -329,7 +290,7 @@ var HealthcareSecurity = /** @class */ (function () {
   HealthcareSecurity.createSession = function (params) {
     return __awaiter(this, void 0, void 0, function () {
       var session, requiresMFA, securityWarnings;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -376,7 +337,7 @@ var HealthcareSecurity = /** @class */ (function () {
   HealthcareSecurity.validateSessionAndPermission = function (params) {
     return __awaiter(this, void 0, void 0, function () {
       var sessionResult, permissionResult;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -425,7 +386,7 @@ var HealthcareSecurity = /** @class */ (function () {
    */
   HealthcareSecurity.encryptPatientData = function (patientData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, HealthcareEncryption.encryptPatientRecord(patientData)];
@@ -440,7 +401,7 @@ var HealthcareSecurity = /** @class */ (function () {
    */
   HealthcareSecurity.decryptPatientData = function (encryptedData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, HealthcareEncryption.decryptPatientRecord(encryptedData)];
@@ -466,7 +427,7 @@ var HealthcareSecurity = /** @class */ (function () {
             ];
           case 1:
             sessionResult = _b.sent();
-            if (!!sessionResult.valid) return [3 /*break*/, 3];
+            if (sessionResult.valid) return [3 /*break*/, 3];
             _a = {
               granted: false,
             };
@@ -517,7 +478,7 @@ var HealthcareSecurity = /** @class */ (function () {
    */
   HealthcareSecurity.securityHealthCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement comprehensive security health check
         // This would aggregate data from all security components
         return [
@@ -559,7 +520,7 @@ var HealthcareSecurity = /** @class */ (function () {
   HealthcareSecurity.generateComplianceReport = function (params) {
     return __awaiter(this, void 0, void 0, function () {
       var nextReviewDate;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         nextReviewDate = new Date(params.endDate);
         nextReviewDate.setMonth(nextReviewDate.getMonth() + 3); // Quarterly reviews
         return [
@@ -617,7 +578,7 @@ var HealthcareSecurity = /** @class */ (function () {
   HealthcareSecurity.createAuditRecord = function (eventType, details) {
     return __awaiter(this, void 0, void 0, function () {
       var auditId;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         auditId = crypto.randomUUID();
         // TODO: Store comprehensive audit record
         console.log("Security audit record created:", {
@@ -636,7 +597,7 @@ exports.HealthcareSecurity = HealthcareSecurity;
 /**
  * Security middleware for API endpoints
  */
-var SecurityMiddleware = /** @class */ (function () {
+var SecurityMiddleware = /** @class */ (() => {
   function SecurityMiddleware() {}
   /**
    * Validate session and permissions for API requests
@@ -672,7 +633,7 @@ var SecurityMiddleware = /** @class */ (function () {
    */
   SecurityMiddleware.checkRateLimit = function (params) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Implement rate limiting
         return [
           2 /*return*/,
@@ -688,7 +649,7 @@ var SecurityMiddleware = /** @class */ (function () {
   // Private methods
   SecurityMiddleware.validateApiKey = function (apiKey, requiredPermission) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Validate API key
         return [
           2 /*return*/,
@@ -704,10 +665,10 @@ var SecurityMiddleware = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var result_1, result;
       var _a, _b, _c, _d;
-      return __generator(this, function (_e) {
+      return __generator(this, (_e) => {
         switch (_e.label) {
           case 0:
-            if (!!params.requiredPermission) return [3 /*break*/, 2];
+            if (params.requiredPermission) return [3 /*break*/, 2];
             return [
               4 /*yield*/,
               HealthcareSessionManager.validateSession(params.sessionId, params.ipAddress),

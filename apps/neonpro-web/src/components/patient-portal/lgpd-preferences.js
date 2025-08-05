@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LgpdPreferences = LgpdPreferences;
 var react_1 = require("react");
@@ -145,14 +144,14 @@ function LgpdPreferences() {
   var _e = (0, react_1.useState)(""),
     deleteReason = _e[0],
     setDeleteReason = _e[1];
-  var handlePreferenceChange = function (id, enabled) {
-    setPreferences(function (prev) {
-      return prev.map(function (pref) {
-        return pref.id === id ? __assign(__assign({}, pref), { enabled: enabled }) : pref;
-      });
-    });
+  var handlePreferenceChange = (id, enabled) => {
+    setPreferences((prev) =>
+      prev.map((pref) =>
+        pref.id === id ? __assign(__assign({}, pref), { enabled: enabled }) : pref,
+      ),
+    );
   };
-  var handleDataRequest = function (type) {
+  var handleDataRequest = (type) => {
     var newRequest = {
       id: Date.now().toString(),
       type: type,
@@ -160,11 +159,9 @@ function LgpdPreferences() {
       requestDate: new Date().toISOString().split("T")[0],
       description: getRequestDescription(type),
     };
-    setDataRequests(function (prev) {
-      return __spreadArray([newRequest], prev, true);
-    });
+    setDataRequests((prev) => __spreadArray([newRequest], prev, true));
   };
-  var getRequestDescription = function (type) {
+  var getRequestDescription = (type) => {
     switch (type) {
       case "access":
         return "Solicitação de acesso aos dados pessoais";
@@ -178,7 +175,7 @@ function LgpdPreferences() {
         return "Solicitação de dados";
     }
   };
-  var getCategoryIcon = function (category) {
+  var getCategoryIcon = (category) => {
     switch (category) {
       case "essential":
         return lucide_react_1.Shield;
@@ -192,7 +189,7 @@ function LgpdPreferences() {
         return lucide_react_1.User;
     }
   };
-  var getCategoryColor = function (category) {
+  var getCategoryColor = (category) => {
     switch (category) {
       case "essential":
         return "bg-red-100 text-red-800 border-red-200";
@@ -206,7 +203,7 @@ function LgpdPreferences() {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "completed":
         return "bg-green-100 text-green-800 border-green-200";
@@ -218,7 +215,7 @@ function LgpdPreferences() {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getRequestIcon = function (type) {
+  var getRequestIcon = (type) => {
     switch (type) {
       case "access":
         return lucide_react_1.Eye;
@@ -260,12 +257,12 @@ function LgpdPreferences() {
         <card_1.CardContent>
           <div className="space-y-6">
             {Object.entries(
-              preferences.reduce(function (acc, pref) {
+              preferences.reduce((acc, pref) => {
                 if (!acc[pref.category]) acc[pref.category] = [];
                 acc[pref.category].push(pref);
                 return acc;
               }, {}),
-            ).map(function (_a) {
+            ).map((_a) => {
               var category = _a[0],
                 prefs = _a[1];
               var IconComponent = getCategoryIcon(category);
@@ -275,44 +272,35 @@ function LgpdPreferences() {
                     <IconComponent className="h-5 w-5 text-primary" />
                     <h3 className="font-semibold text-gray-900">{categoryLabels[category]}</h3>
                     <badge_1.Badge className={getCategoryColor(category)}>
-                      {
-                        prefs.filter(function (p) {
-                          return p.enabled;
-                        }).length
-                      }
-                      /{prefs.length}
+                      {prefs.filter((p) => p.enabled).length}/{prefs.length}
                     </badge_1.Badge>
                   </div>
                   <div className="space-y-3 ml-7">
-                    {prefs.map(function (pref) {
-                      return (
-                        <div
-                          key={pref.id}
-                          className="flex items-start justify-between p-4 rounded-lg border bg-card"
-                        >
-                          <div className="space-y-2 flex-1">
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-medium text-gray-900">{pref.title}</h4>
-                              {pref.required && (
-                                <badge_1.Badge variant="secondary" className="text-xs">
-                                  Obrigatório
-                                </badge_1.Badge>
-                              )}
-                            </div>
-                            <p className="text-sm text-gray-600">{pref.description}</p>
+                    {prefs.map((pref) => (
+                      <div
+                        key={pref.id}
+                        className="flex items-start justify-between p-4 rounded-lg border bg-card"
+                      >
+                        <div className="space-y-2 flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-medium text-gray-900">{pref.title}</h4>
+                            {pref.required && (
+                              <badge_1.Badge variant="secondary" className="text-xs">
+                                Obrigatório
+                              </badge_1.Badge>
+                            )}
                           </div>
-                          <div className="ml-4">
-                            <switch_1.Switch
-                              checked={pref.enabled}
-                              onCheckedChange={function (enabled) {
-                                return handlePreferenceChange(pref.id, enabled);
-                              }}
-                              disabled={pref.required}
-                            />
-                          </div>
+                          <p className="text-sm text-gray-600">{pref.description}</p>
                         </div>
-                      );
-                    })}
+                        <div className="ml-4">
+                          <switch_1.Switch
+                            checked={pref.enabled}
+                            onCheckedChange={(enabled) => handlePreferenceChange(pref.id, enabled)}
+                            disabled={pref.required}
+                          />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                   <separator_1.Separator />
                 </div>
@@ -341,9 +329,7 @@ function LgpdPreferences() {
             <button_1.Button
               variant="outline"
               className="h-auto p-4 flex flex-col items-center gap-2"
-              onClick={function () {
-                return handleDataRequest("access");
-              }}
+              onClick={() => handleDataRequest("access")}
             >
               <lucide_react_1.Eye className="h-6 w-6 text-primary" />
               <span className="font-medium">Acessar Dados</span>
@@ -376,9 +362,7 @@ function LgpdPreferences() {
                     </alert_1.AlertDescription>
                   </alert_1.Alert>
                   <button_1.Button
-                    onClick={function () {
-                      return handleDataRequest("portability");
-                    }}
+                    onClick={() => handleDataRequest("portability")}
                     className="w-full"
                   >
                     Solicitar Exportação
@@ -390,9 +374,7 @@ function LgpdPreferences() {
             <button_1.Button
               variant="outline"
               className="h-auto p-4 flex flex-col items-center gap-2"
-              onClick={function () {
-                return handleDataRequest("correction");
-              }}
+              onClick={() => handleDataRequest("correction")}
             >
               <lucide_react_1.User className="h-6 w-6 text-green-600" />
               <span className="font-medium">Corrigir Dados</span>
@@ -435,17 +417,13 @@ function LgpdPreferences() {
                       id="delete-reason"
                       placeholder="Conte-nos o motivo para nos ajudar a melhorar nossos serviços..."
                       value={deleteReason}
-                      onChange={function (e) {
-                        return setDeleteReason(e.target.value);
-                      }}
+                      onChange={(e) => setDeleteReason(e.target.value)}
                     />
                   </div>
                   <div className="flex gap-2">
                     <button_1.Button
                       variant="destructive"
-                      onClick={function () {
-                        return handleDataRequest("deletion");
-                      }}
+                      onClick={() => handleDataRequest("deletion")}
                       className="flex-1"
                     >
                       Confirmar Exclusão
@@ -475,7 +453,7 @@ function LgpdPreferences() {
                   <p className="text-gray-500">Nenhuma solicitação encontrada</p>
                   <p className="text-sm text-gray-400">Suas solicitações LGPD aparecerão aqui</p>
                 </div>
-              : dataRequests.map(function (request) {
+              : dataRequests.map((request) => {
                   var IconComponent = getRequestIcon(request.type);
                   return (
                     <div

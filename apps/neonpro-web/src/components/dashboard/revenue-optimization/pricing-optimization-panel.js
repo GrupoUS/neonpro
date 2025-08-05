@@ -4,7 +4,6 @@
  * Displays pricing strategies and optimization recommendations
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PricingOptimizationPanel = PricingOptimizationPanel;
 exports.ServiceMixChart = ServiceMixChart;
@@ -78,14 +77,12 @@ function PricingOptimizationPanel(_a) {
             </div>
 
             <div className="space-y-2">
-              {pricingData.recommendations.map(function (recommendation, index) {
-                return (
-                  <div key={index} className="flex items-start gap-2 p-2 bg-gray-50 rounded-lg">
-                    <lucide_react_1.Lightbulb className="h-4 w-4 mt-0.5 text-yellow-500 flex-shrink-0" />
-                    <span className="text-sm">{recommendation}</span>
-                  </div>
-                );
-              })}
+              {pricingData.recommendations.map((recommendation, index) => (
+                <div key={index} className="flex items-start gap-2 p-2 bg-gray-50 rounded-lg">
+                  <lucide_react_1.Lightbulb className="h-4 w-4 mt-0.5 text-yellow-500 flex-shrink-0" />
+                  <span className="text-sm">{recommendation}</span>
+                </div>
+              ))}
             </div>
 
             <button_1.Button className="w-full mt-4" size="sm">
@@ -115,13 +112,11 @@ function ServiceMixChart(_a) {
             Profitability Gain: +{serviceMixData.profitabilityGain.toFixed(1)}%
           </p>
           <div className="mt-4 space-y-2">
-            {serviceMixData.recommendations.map(function (rec, index) {
-              return (
-                <div key={index} className="text-sm p-2 bg-gray-50 rounded">
-                  {rec}
-                </div>
-              );
-            })}
+            {serviceMixData.recommendations.map((rec, index) => (
+              <div key={index} className="text-sm p-2 bg-gray-50 rounded">
+                {rec}
+              </div>
+            ))}
           </div>
         </div>
       </card_1.CardContent>
@@ -145,13 +140,11 @@ function CLVEnhancementPanel(_a) {
             Projected CLV Increase: +{clvData.projectedIncrease.toFixed(1)}%
           </p>
           <div className="mt-4 space-y-2">
-            {clvData.enhancementStrategies.map(function (strategy, index) {
-              return (
-                <div key={index} className="text-sm p-2 bg-gray-50 rounded">
-                  {strategy}
-                </div>
-              );
-            })}
+            {clvData.enhancementStrategies.map((strategy, index) => (
+              <div key={index} className="text-sm p-2 bg-gray-50 rounded">
+                {strategy}
+              </div>
+            ))}
           </div>
         </div>
       </card_1.CardContent>
@@ -175,13 +168,11 @@ function CompetitiveAnalysisChart(_a) {
             Market Position: {competitiveData.marketPosition}
           </p>
           <div className="space-y-2">
-            {competitiveData.opportunityAreas.map(function (area, index) {
-              return (
-                <div key={index} className="text-sm p-2 bg-gray-50 rounded">
-                  {area}
-                </div>
-              );
-            })}
+            {competitiveData.opportunityAreas.map((area, index) => (
+              <div key={index} className="text-sm p-2 bg-gray-50 rounded">
+                {area}
+              </div>
+            ))}
           </div>
         </div>
       </card_1.CardContent>
@@ -223,13 +214,11 @@ function ROITrackingPanel(_a) {
           </div>
 
           <div className="space-y-2">
-            {performanceData.recommendations.map(function (rec, index) {
-              return (
-                <div key={index} className="text-sm p-2 bg-gray-50 rounded">
-                  {rec}
-                </div>
-              );
-            })}
+            {performanceData.recommendations.map((rec, index) => (
+              <div key={index} className="text-sm p-2 bg-gray-50 rounded">
+                {rec}
+              </div>
+            ))}
           </div>
         </div>
       </card_1.CardContent>

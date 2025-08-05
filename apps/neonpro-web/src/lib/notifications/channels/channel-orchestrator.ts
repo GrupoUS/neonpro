@@ -1,6 +1,6 @@
 import type { EmailProvider } from "./email-provider";
-import type { SMSProvider } from "./sms-provider";
 import type { PushProvider } from "./push-provider";
+import type { SMSProvider } from "./sms-provider";
 import type { WhatsAppProvider } from "./whatsapp-provider";
 
 export class ChannelOrchestrator {

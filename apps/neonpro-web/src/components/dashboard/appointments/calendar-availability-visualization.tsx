@@ -5,16 +5,6 @@
 // Story 1.2: Heat map availability display
 // =============================================
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card } from "@/components/ui/card";
-import type {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { cn } from "@/lib/utils";
 import type {
   addDays,
   endOfDay,
@@ -37,6 +27,16 @@ import type {
   XCircle,
 } from "lucide-react";
 import type { useEffect, useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card } from "@/components/ui/card";
+import type {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { cn } from "@/lib/utils";
 
 interface AvailabilitySlot {
   time: string;

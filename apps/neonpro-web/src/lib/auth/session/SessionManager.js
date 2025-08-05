@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Manager - Core Session Operations
  *
@@ -11,15 +10,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,13 +38,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -67,9 +66,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -141,7 +138,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sessionManager = exports.SessionManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -157,7 +154,7 @@ var utils_1 = require("./utils");
  * - Concurrent session management
  * - Session metrics and analytics
  */
-var SessionManager = /** @class */ (function () {
+var SessionManager = /** @class */ (() => {
   function SessionManager(config) {
     this.config = config;
     this.supabase = (0, supabase_js_1.createClient)(
@@ -828,24 +825,22 @@ var SessionManager = /** @class */ (function () {
                 },
               ];
             }
-            sessions = data.map(function (row) {
-              return {
-                id: row.id,
-                userId: row.user_id,
-                deviceId: row.device_id,
-                token: row.token,
-                ipAddress: row.ip_address,
-                userAgent: row.user_agent,
-                location: row.location ? JSON.parse(row.location) : undefined,
-                expiresAt: row.expires_at,
-                lastActivity: row.last_activity,
-                metadata: row.metadata ? JSON.parse(row.metadata) : undefined,
-                createdAt: row.created_at,
-                updatedAt: row.updated_at,
-                terminatedAt: row.terminated_at,
-                terminationReason: row.termination_reason,
-              };
-            });
+            sessions = data.map((row) => ({
+              id: row.id,
+              userId: row.user_id,
+              deviceId: row.device_id,
+              token: row.token,
+              ipAddress: row.ip_address,
+              userAgent: row.user_agent,
+              location: row.location ? JSON.parse(row.location) : undefined,
+              expiresAt: row.expires_at,
+              lastActivity: row.last_activity,
+              metadata: row.metadata ? JSON.parse(row.metadata) : undefined,
+              createdAt: row.created_at,
+              updatedAt: row.updated_at,
+              terminatedAt: row.terminated_at,
+              terminationReason: row.termination_reason,
+            }));
             return [
               2 /*return*/,
               {
@@ -1103,26 +1098,22 @@ var SessionManager = /** @class */ (function () {
               throw new Error("Failed to fetch sessions: ".concat(error.message));
             }
             now_1 = new Date();
-            activeSessions = allSessions.filter(function (s) {
-              return !s.terminated_at && new Date(s.expires_at) > now_1;
-            });
-            expiredSessions = allSessions.filter(function (s) {
-              return !s.terminated_at && new Date(s.expires_at) <= now_1;
-            });
-            terminatedSessions = allSessions.filter(function (s) {
-              return s.terminated_at;
-            });
-            completedSessions = terminatedSessions.filter(function (s) {
-              return s.terminated_at;
-            });
-            totalDuration = completedSessions.reduce(function (sum, session) {
+            activeSessions = allSessions.filter(
+              (s) => !s.terminated_at && new Date(s.expires_at) > now_1,
+            );
+            expiredSessions = allSessions.filter(
+              (s) => !s.terminated_at && new Date(s.expires_at) <= now_1,
+            );
+            terminatedSessions = allSessions.filter((s) => s.terminated_at);
+            completedSessions = terminatedSessions.filter((s) => s.terminated_at);
+            totalDuration = completedSessions.reduce((sum, session) => {
               var start = new Date(session.created_at).getTime();
               var end = new Date(session.terminated_at).getTime();
               return sum + (end - start);
             }, 0);
             averageDuration =
               completedSessions.length > 0 ? totalDuration / completedSessions.length : 0;
-            terminationReasons = terminatedSessions.reduce(function (acc, session) {
+            terminationReasons = terminatedSessions.reduce((acc, session) => {
               var reason = session.termination_reason || "unknown";
               acc[reason] = (acc[reason] || 0) + 1;
               return acc;

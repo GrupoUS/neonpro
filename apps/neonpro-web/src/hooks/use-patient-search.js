@@ -19,10 +19,9 @@
  * - Maintains audit trail for search operations
  */
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -31,14 +30,14 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usePatientSearch = void 0;
 var react_1 = require("react");
 /**
  * Optimized patient search hook with proper cleanup and performance enhancements
  */
-var usePatientSearch = function (patients, options) {
+var usePatientSearch = (patients, options) => {
   if (options === void 0) {
     options = {};
   }
@@ -68,47 +67,44 @@ var usePatientSearch = function (patients, options) {
   /**
    * Debounced search term update with proper cleanup
    */
-  (0, react_1.useEffect)(
-    function () {
-      // Clear existing timeout
+  (0, react_1.useEffect)(() => {
+    // Clear existing timeout
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    // Start search timing
+    searchStartTimeRef.current = Date.now();
+    // Set new timeout for debounced search
+    debounceTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      // Calculate and store search time for performance monitoring
+      var searchDuration = Date.now() - searchStartTimeRef.current;
+      setSearchTime(searchDuration);
+      // LGPD audit log for search operations
+      if (searchTerm.length >= minSearchLength) {
+        console.log(
+          '[LGPD Audit] Patient search performed: "'
+            .concat(
+              searchTerm.length > 3 ? searchTerm.substring(0, 3) + "***" : "***",
+              '" - Duration: ',
+            )
+            .concat(searchDuration, "ms"),
+        );
+      }
+    }, debounceMs);
+    // Cleanup function - critical for preventing memory leaks
+    return () => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);
+        debounceTimeoutRef.current = null;
       }
-      // Start search timing
-      searchStartTimeRef.current = Date.now();
-      // Set new timeout for debounced search
-      debounceTimeoutRef.current = setTimeout(function () {
-        setDebouncedSearchTerm(searchTerm);
-        // Calculate and store search time for performance monitoring
-        var searchDuration = Date.now() - searchStartTimeRef.current;
-        setSearchTime(searchDuration);
-        // LGPD audit log for search operations
-        if (searchTerm.length >= minSearchLength) {
-          console.log(
-            '[LGPD Audit] Patient search performed: "'
-              .concat(
-                searchTerm.length > 3 ? searchTerm.substring(0, 3) + "***" : "***",
-                '" - Duration: ',
-              )
-              .concat(searchDuration, "ms"),
-          );
-        }
-      }, debounceMs);
-      // Cleanup function - critical for preventing memory leaks
-      return function () {
-        if (debounceTimeoutRef.current) {
-          clearTimeout(debounceTimeoutRef.current);
-          debounceTimeoutRef.current = null;
-        }
-      };
-    },
-    [searchTerm, debounceMs, minSearchLength],
-  );
+    };
+  }, [searchTerm, debounceMs, minSearchLength]);
   /**
    * Fuzzy search implementation for better UX
    */
   var fuzzyMatch = (0, react_1.useCallback)(
-    function (text, searchTerm) {
+    (text, searchTerm) => {
       if (!enableFuzzySearch) {
         return caseSensitive
           ? text.includes(searchTerm)
@@ -133,12 +129,10 @@ var usePatientSearch = function (patients, options) {
   /**
    * Levenshtein distance for fuzzy matching
    */
-  var levenshteinDistance = (0, react_1.useCallback)(function (a, b) {
+  var levenshteinDistance = (0, react_1.useCallback)((a, b) => {
     var matrix = Array(b.length + 1)
       .fill(null)
-      .map(function () {
-        return Array(a.length + 1).fill(null);
-      });
+      .map(() => Array(a.length + 1).fill(null));
     for (var i = 0; i <= a.length; i++) matrix[0][i] = i;
     for (var j = 0; j <= b.length; j++) matrix[j][0] = j;
     for (var j = 1; j <= b.length; j++) {
@@ -156,61 +150,54 @@ var usePatientSearch = function (patients, options) {
   /**
    * Enhanced patient filtering with healthcare-specific search logic
    */
-  var filteredPatients = (0, react_1.useMemo)(
-    function () {
-      // Return all patients if search term is too short
-      if (!debouncedSearchTerm || debouncedSearchTerm.length < minSearchLength) {
-        return patients.slice(0, maxResults);
-      }
-      var startTime = Date.now();
-      var filtered = patients
-        .filter(function (patient) {
-          // Basic patient information search
-          var basicFields = [
-            patient.name,
-            patient.email,
-            patient.phone,
-            patient.cpf,
-            patient.health_plan || "",
-          ];
-          // Check basic fields
-          var basicMatch = basicFields.some(function (field) {
-            return fuzzyMatch(field, debouncedSearchTerm);
-          });
-          if (basicMatch) return true;
-          // Healthcare-specific search (medical conditions, allergies, medications)
-          var medicalFields = __spreadArray(
-            __spreadArray(
-              __spreadArray([], patient.medical_conditions || [], true),
-              patient.allergies || [],
-              true,
-            ),
-            patient.medications || [],
+  var filteredPatients = (0, react_1.useMemo)(() => {
+    // Return all patients if search term is too short
+    if (!debouncedSearchTerm || debouncedSearchTerm.length < minSearchLength) {
+      return patients.slice(0, maxResults);
+    }
+    var startTime = Date.now();
+    var filtered = patients
+      .filter((patient) => {
+        // Basic patient information search
+        var basicFields = [
+          patient.name,
+          patient.email,
+          patient.phone,
+          patient.cpf,
+          patient.health_plan || "",
+        ];
+        // Check basic fields
+        var basicMatch = basicFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+        if (basicMatch) return true;
+        // Healthcare-specific search (medical conditions, allergies, medications)
+        var medicalFields = __spreadArray(
+          __spreadArray(
+            __spreadArray([], patient.medical_conditions || [], true),
+            patient.allergies || [],
             true,
-          );
-          var medicalMatch = medicalFields.some(function (field) {
-            return fuzzyMatch(field, debouncedSearchTerm);
-          });
-          return medicalMatch;
-        })
-        .slice(0, maxResults);
-      // Log performance for monitoring
-      var filteringTime = Date.now() - startTime;
-      if (filteringTime > 100) {
-        console.warn(
-          "[Performance] Patient search took "
-            .concat(filteringTime, "ms for ")
-            .concat(patients.length, " patients"),
+          ),
+          patient.medications || [],
+          true,
         );
-      }
-      return filtered;
-    },
-    [patients, debouncedSearchTerm, minSearchLength, maxResults, fuzzyMatch],
-  );
+        var medicalMatch = medicalFields.some((field) => fuzzyMatch(field, debouncedSearchTerm));
+        return medicalMatch;
+      })
+      .slice(0, maxResults);
+    // Log performance for monitoring
+    var filteringTime = Date.now() - startTime;
+    if (filteringTime > 100) {
+      console.warn(
+        "[Performance] Patient search took "
+          .concat(filteringTime, "ms for ")
+          .concat(patients.length, " patients"),
+      );
+    }
+    return filtered;
+  }, [patients, debouncedSearchTerm, minSearchLength, maxResults, fuzzyMatch]);
   /**
    * Clear search function
    */
-  var clearSearch = (0, react_1.useCallback)(function () {
+  var clearSearch = (0, react_1.useCallback)(() => {
     setSearchTerm("");
     setDebouncedSearchTerm("");
     setSearchTime(0);
@@ -219,13 +206,11 @@ var usePatientSearch = function (patients, options) {
    * Search statistics for analytics
    */
   var searchStats = (0, react_1.useMemo)(
-    function () {
-      return {
-        totalPatients: patients.length,
-        filteredCount: filteredPatients.length,
-        searchTime: searchTime,
-      };
-    },
+    () => ({
+      totalPatients: patients.length,
+      filteredCount: filteredPatients.length,
+      searchTime: searchTime,
+    }),
     [patients.length, filteredPatients.length, searchTime],
   );
   return {

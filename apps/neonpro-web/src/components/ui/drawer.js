@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DrawerDescription =
   exports.DrawerTitle =
@@ -28,7 +26,7 @@ exports.DrawerDescription =
 var React = require("react");
 var vaul_1 = require("vaul");
 var utils_1 = require("@/lib/utils");
-var Drawer = function (_a) {
+var Drawer = (_a) => {
   var _b = _a.shouldScaleBackground,
     shouldScaleBackground = _b === void 0 ? true : _b,
     props = __rest(_a, ["shouldScaleBackground"]);
@@ -42,7 +40,7 @@ var DrawerPortal = vaul_1.Drawer.Portal;
 exports.DrawerPortal = DrawerPortal;
 var DrawerClose = vaul_1.Drawer.Close;
 exports.DrawerClose = DrawerClose;
-var DrawerOverlay = React.forwardRef(function (_a, ref) {
+var DrawerOverlay = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -55,7 +53,7 @@ var DrawerOverlay = React.forwardRef(function (_a, ref) {
 });
 exports.DrawerOverlay = DrawerOverlay;
 DrawerOverlay.displayName = vaul_1.Drawer.Overlay.displayName;
-var DrawerContent = React.forwardRef(function (_a, ref) {
+var DrawerContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     children = _a.children,
     props = __rest(_a, ["className", "children"]);
@@ -78,7 +76,7 @@ var DrawerContent = React.forwardRef(function (_a, ref) {
 });
 exports.DrawerContent = DrawerContent;
 DrawerContent.displayName = "DrawerContent";
-var DrawerHeader = function (_a) {
+var DrawerHeader = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -90,7 +88,7 @@ var DrawerHeader = function (_a) {
 };
 exports.DrawerHeader = DrawerHeader;
 DrawerHeader.displayName = "DrawerHeader";
-var DrawerFooter = function (_a) {
+var DrawerFooter = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -99,7 +97,7 @@ var DrawerFooter = function (_a) {
 };
 exports.DrawerFooter = DrawerFooter;
 DrawerFooter.displayName = "DrawerFooter";
-var DrawerTitle = React.forwardRef(function (_a, ref) {
+var DrawerTitle = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -112,7 +110,7 @@ var DrawerTitle = React.forwardRef(function (_a, ref) {
 });
 exports.DrawerTitle = DrawerTitle;
 DrawerTitle.displayName = vaul_1.Drawer.Title.displayName;
-var DrawerDescription = React.forwardRef(function (_a, ref) {
+var DrawerDescription = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

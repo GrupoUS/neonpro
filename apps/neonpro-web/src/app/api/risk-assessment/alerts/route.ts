@@ -9,10 +9,10 @@
  * - Emergency protocol activation
  */
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { RiskAssessmentService } from "@/app/lib/services/risk-assessment-automation";
 import type { AlertSchema } from "@/app/lib/validations/risk-assessment-automation";
 import type { CreateAlertRequest } from "@/app/types/risk-assessment-automation";
-import type { NextRequest, NextResponse } from "next/server";
 
 const riskAssessmentService = new RiskAssessmentService();
 

@@ -8,21 +8,21 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { EventEmitter } from "events";
 import type {
-  UserSession,
+  BehaviorRisk,
+  DeviceFingerprint,
+  DeviceRisk,
+  GeoRisk,
+  IPReputation,
+  SecurityAction,
   SecurityConfig,
-  SessionSecurityEvent,
   SecurityEventType,
   SecuritySeverity,
-  SecurityAction,
+  SessionError,
+  SessionLocation,
+  SessionSecurityEvent,
   SuspiciousActivityDetection,
   ThreatIntelligence,
-  IPReputation,
-  GeoRisk,
-  DeviceRisk,
-  BehaviorRisk,
-  SessionLocation,
-  DeviceFingerprint,
-  SessionError,
+  UserSession,
 } from "./types";
 
 interface SecurityValidationParams {

@@ -2,9 +2,9 @@
 // Story 5.5: Cancel authorized NFe documents
 
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/app/utils/supabase/server";
 import { nfeService } from "@/lib/services/tax/nfe-service";
-import { z } from "zod";
 
 const cancelRequestSchema = z.object({
   reason: z

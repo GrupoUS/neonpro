@@ -1,4 +1,3 @@
-"use strict";
 // Authentication Middleware
 // Story 1.4: Session Management & Security Implementation
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createAuthMiddleware = createAuthMiddleware;
 exports.recordSuspiciousActivity = recordSuspiciousActivity;
@@ -195,7 +192,7 @@ function createAuthMiddleware(config) {
         locationCheck,
         requestHeaders,
         error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 24, , 26]);
@@ -208,7 +205,7 @@ function createAuthMiddleware(config) {
             locationInfo = _a.sent();
             if (!finalConfig.rateLimitRequests) return [3 /*break*/, 3];
             rateLimitResult = checkRateLimit(clientIP);
-            if (!!rateLimitResult.allowed) return [3 /*break*/, 3];
+            if (rateLimitResult.allowed) return [3 /*break*/, 3];
             return [
               4 /*yield*/,
               logSecurityEvent(
@@ -271,7 +268,7 @@ function createAuthMiddleware(config) {
             return [4 /*yield*/, sessionManager.getSession(sessionToken)];
           case 6:
             session = _a.sent();
-            if (!!session) return [3 /*break*/, 8];
+            if (session) return [3 /*break*/, 8];
             return [
               4 /*yield*/,
               logSecurityEvent(
@@ -352,7 +349,7 @@ function createAuthMiddleware(config) {
             return [4 /*yield*/, checkDeviceTrust(session, deviceInfo, deviceManager)];
           case 14:
             deviceCheck = _a.sent();
-            if (!!deviceCheck.trusted) return [3 /*break*/, 16];
+            if (deviceCheck.trusted) return [3 /*break*/, 16];
             return [
               4 /*yield*/,
               logSecurityEvent(
@@ -476,7 +473,7 @@ function createAuthMiddleware(config) {
                   },
                 },
                 securityMonitor,
-              ).catch(function () {}),
+              ).catch(() => {}),
             ];
           case 25:
             // Log security event for middleware errors
@@ -541,7 +538,7 @@ function extractDeviceInfo(request) {
 function extractLocationInfo(request) {
   return __awaiter(this, void 0, void 0, function () {
     var clientIP;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       clientIP = getClientIP(request);
       if (clientIP === "unknown" || clientIP.startsWith("192.168.") || clientIP.startsWith("10.")) {
         return [2 /*return*/, null];
@@ -617,7 +614,7 @@ function checkSuspiciousActivity(clientIP) {
 function checkDeviceTrust(session, deviceInfo, deviceManager) {
   return __awaiter(this, void 0, void 0, function () {
     var fingerprint, device, trustScore, error_2;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           fingerprint = utils_1.AuthUtils.Device.generateFingerprint(deviceInfo);
@@ -674,7 +671,7 @@ function checkDeviceTrust(session, deviceInfo, deviceManager) {
 function checkLocationAnomaly(session, currentLocation, securityMonitor) {
   return __awaiter(this, void 0, void 0, function () {
     var distance, timeElapsed, maxSpeed, possibleDistance;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       if (!currentLocation || !session.last_location) {
         return [2 /*return*/, { suspicious: false }];
       }
@@ -711,7 +708,7 @@ function checkLocationAnomaly(session, currentLocation, securityMonitor) {
 function logSecurityEvent(event, securityMonitor) {
   return __awaiter(this, void 0, void 0, function () {
     var error_3;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);

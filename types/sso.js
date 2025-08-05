@@ -1,4 +1,3 @@
-"use strict";
 // SSO Integration Types for NeonPro
 // Story 1.3: SSO Integration Implementation
 Object.defineProperty(exports, "__esModule", { value: true });

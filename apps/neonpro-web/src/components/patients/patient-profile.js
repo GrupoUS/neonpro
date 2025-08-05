@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientProfile;
 var react_1 = require("react");
@@ -143,7 +140,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var progress_1 = require("@/components/ui/progress");
 var lucide_react_1 = require("lucide-react");
 function PatientProfile(_a) {
-  var _this = this;
   var _b, _c, _d, _e, _f, _g, _h, _j, _k;
   var selectedPatient = _a.selectedPatient;
   var _l = (0, react_1.useState)(false),
@@ -153,7 +149,7 @@ function PatientProfile(_a) {
     insights = _m[0],
     setInsights = _m[1];
   var patient = selectedPatient;
-  var calculateAge = function (dateOfBirth) {
+  var calculateAge = (dateOfBirth) => {
     var today = new Date();
     var birthDate = new Date(dateOfBirth);
     var age = today.getFullYear() - birthDate.getFullYear();
@@ -163,23 +159,21 @@ function PatientProfile(_a) {
     }
     return age;
   };
-  var formatDate = function (dateString) {
-    return new Date(dateString).toLocaleDateString("pt-BR");
-  };
-  var getCompletenessColor = function (score) {
+  var formatDate = (dateString) => new Date(dateString).toLocaleDateString("pt-BR");
+  var getCompletenessColor = (score) => {
     if (score >= 80) return "text-green-600";
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
   };
-  var getCompletenessStatus = function (score) {
+  var getCompletenessStatus = (score) => {
     if (score >= 80) return "Completo";
     if (score >= 60) return "Parcial";
     return "Incompleto";
   };
-  var loadPatientInsights = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPatientInsights = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!patient) return [2 /*return*/];
@@ -213,15 +207,11 @@ function PatientProfile(_a) {
         }
       });
     });
-  };
-  react_1.default.useEffect(
-    function () {
-      if (patient) {
-        loadPatientInsights();
-      }
-    },
-    [patient],
-  );
+  react_1.default.useEffect(() => {
+    if (patient) {
+      loadPatientInsights();
+    }
+  }, [patient]);
   if (!patient) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -402,13 +392,11 @@ function PatientProfile(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {patient.medical_history.conditions.map(function (condition, index) {
-                      return (
-                        <badge_1.Badge key={index} variant="outline">
-                          {condition}
-                        </badge_1.Badge>
-                      );
-                    })}
+                    {patient.medical_history.conditions.map((condition, index) => (
+                      <badge_1.Badge key={index} variant="outline">
+                        {condition}
+                      </badge_1.Badge>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -426,13 +414,11 @@ function PatientProfile(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {patient.medical_history.allergies.map(function (allergy, index) {
-                      return (
-                        <badge_1.Badge key={index} variant="destructive">
-                          {allergy}
-                        </badge_1.Badge>
-                      );
-                    })}
+                    {patient.medical_history.allergies.map((allergy, index) => (
+                      <badge_1.Badge key={index} variant="destructive">
+                        {allergy}
+                      </badge_1.Badge>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -452,13 +438,11 @@ function PatientProfile(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {patient.medical_history.current_medications.map(function (medication, index) {
-                      return (
-                        <badge_1.Badge key={index} variant="secondary">
-                          {medication}
-                        </badge_1.Badge>
-                      );
-                    })}
+                    {patient.medical_history.current_medications.map((medication, index) => (
+                      <badge_1.Badge key={index} variant="secondary">
+                        {medication}
+                      </badge_1.Badge>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -493,14 +477,12 @@ function PatientProfile(_a) {
                     </card_1.CardHeader>
                     <card_1.CardContent>
                       <ul className="space-y-2">
-                        {insights.risk_factors.map(function (factor, index) {
-                          return (
-                            <li key={index} className="flex items-start gap-2">
-                              <lucide_react_1.AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm">{factor}</span>
-                            </li>
-                          );
-                        })}
+                        {insights.risk_factors.map((factor, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <lucide_react_1.AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm">{factor}</span>
+                          </li>
+                        ))}
                       </ul>
                     </card_1.CardContent>
                   </card_1.Card>
@@ -517,14 +499,12 @@ function PatientProfile(_a) {
                     </card_1.CardHeader>
                     <card_1.CardContent>
                       <ul className="space-y-2">
-                        {insights.recommendations.map(function (recommendation, index) {
-                          return (
-                            <li key={index} className="flex items-start gap-2">
-                              <lucide_react_1.Star className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm">{recommendation}</span>
-                            </li>
-                          );
-                        })}
+                        {insights.recommendations.map((recommendation, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <lucide_react_1.Star className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm">{recommendation}</span>
+                          </li>
+                        ))}
                       </ul>
                     </card_1.CardContent>
                   </card_1.Card>

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SegmentBuilder;
 var alert_1 = require("@/components/ui/alert");
@@ -190,7 +187,6 @@ var CreateSegmentSchema = zod_1.z.object({
   }),
 });
 function SegmentBuilder() {
-  var _this = this;
   var _a = (0, react_1.useState)(""),
     segmentName = _a[0],
     setSegmentName = _a[1];
@@ -270,7 +266,7 @@ function SegmentBuilder() {
       { value: "not_equals", label: "Not equals" },
     ],
   };
-  var addCriteria = function () {
+  var addCriteria = () => {
     var newCriteria = {
       id: Date.now().toString(),
       field: "",
@@ -280,22 +276,18 @@ function SegmentBuilder() {
     };
     setCriteria(__spreadArray(__spreadArray([], criteria, true), [newCriteria], false));
   };
-  var removeCriteria = function (id) {
-    setCriteria(
-      criteria.filter(function (c) {
-        return c.id !== id;
-      }),
-    );
+  var removeCriteria = (id) => {
+    setCriteria(criteria.filter((c) => c.id !== id));
   };
-  var updateCriteria = function (id, field, value) {
+  var updateCriteria = (id, field, value) => {
     setCriteria(
-      criteria.map(function (c) {
+      criteria.map((c) => {
         var _a;
         return c.id === id ? __assign(__assign({}, c), ((_a = {}), (_a[field] = value), _a)) : c;
       }),
     );
   };
-  var validateSegment = function () {
+  var validateSegment = () => {
     var errors = [];
     if (!segmentName.trim()) {
       errors.push("Segment name is required");
@@ -303,7 +295,7 @@ function SegmentBuilder() {
     if (criteria.length === 0) {
       errors.push("At least one criteria is required");
     }
-    criteria.forEach(function (criterion, index) {
+    criteria.forEach((criterion, index) => {
       if (!criterion.field) {
         errors.push("Criteria ".concat(index + 1, ": Field is required"));
       }
@@ -317,10 +309,10 @@ function SegmentBuilder() {
     setValidationErrors(errors);
     return errors.length === 0;
   };
-  var generatePreview = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generatePreview = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockPreview, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!validateSegment()) return [2 /*return*/];
@@ -329,12 +321,7 @@ function SegmentBuilder() {
           case 1:
             _a.trys.push([1, 3, 4, 5]);
             // Simulate API call for segment preview
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1500);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
           case 2:
             // Simulate API call for segment preview
             _a.sent();
@@ -375,11 +362,10 @@ function SegmentBuilder() {
         }
       });
     });
-  };
-  var saveSegment = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveSegment = () =>
+    __awaiter(this, void 0, void 0, function () {
       var segmentData, validatedData, response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!validateSegment()) return [2 /*return*/];
@@ -389,9 +375,7 @@ function SegmentBuilder() {
             segmentData = {
               name: segmentName,
               description: segmentDescription,
-              criteria: criteria.filter(function (c) {
-                return c.field && c.operator && c.value;
-              }),
+              criteria: criteria.filter((c) => c.field && c.operator && c.value),
               ai_model_config: {
                 model_type: "demographic_clustering",
                 confidence_threshold: 0.8,
@@ -428,8 +412,7 @@ function SegmentBuilder() {
         }
       });
     });
-  };
-  var exportSegment = function () {
+  var exportSegment = () => {
     var exportData = {
       name: segmentName,
       description: segmentDescription,
@@ -466,9 +449,7 @@ function SegmentBuilder() {
               <input_1.Input
                 id="segment-name"
                 value={segmentName}
-                onChange={function (e) {
-                  return setSegmentName(e.target.value);
-                }}
+                onChange={(e) => setSegmentName(e.target.value)}
                 placeholder="e.g., High-Value Customers"
               />
             </div>
@@ -477,9 +458,7 @@ function SegmentBuilder() {
               <textarea_1.Textarea
                 id="segment-description"
                 value={segmentDescription}
-                onChange={function (e) {
-                  return setSegmentDescription(e.target.value);
-                }}
+                onChange={(e) => setSegmentDescription(e.target.value)}
                 placeholder="Describe this segment..."
                 rows={3}
               />
@@ -497,7 +476,7 @@ function SegmentBuilder() {
           </card_1.CardDescription>
         </card_1.CardHeader>
         <card_1.CardContent className="space-y-4">
-          {criteria.map(function (criterion, index) {
+          {criteria.map((criterion, index) => {
             var _a;
             return (
               <div key={criterion.id} className="border rounded-lg p-4 space-y-4">
@@ -505,9 +484,9 @@ function SegmentBuilder() {
                   <div className="flex items-center gap-2">
                     <select_1.Select
                       value={criterion.logicalOperator || "AND"}
-                      onValueChange={function (value) {
-                        return updateCriteria(criterion.id, "logicalOperator", value);
-                      }}
+                      onValueChange={(value) =>
+                        updateCriteria(criterion.id, "logicalOperator", value)
+                      }
                     >
                       <select_1.SelectTrigger className="w-20">
                         <select_1.SelectValue />
@@ -525,21 +504,17 @@ function SegmentBuilder() {
                     <label_1.Label>Field</label_1.Label>
                     <select_1.Select
                       value={criterion.field}
-                      onValueChange={function (value) {
-                        return updateCriteria(criterion.id, "field", value);
-                      }}
+                      onValueChange={(value) => updateCriteria(criterion.id, "field", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Select field" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {fieldOptions.map(function (option) {
-                          return (
-                            <select_1.SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {fieldOptions.map((option) => (
+                          <select_1.SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -548,9 +523,7 @@ function SegmentBuilder() {
                     <label_1.Label>Operator</label_1.Label>
                     <select_1.Select
                       value={criterion.operator}
-                      onValueChange={function (value) {
-                        return updateCriteria(criterion.id, "operator", value);
-                      }}
+                      onValueChange={(value) => updateCriteria(criterion.id, "operator", value)}
                       disabled={!criterion.field}
                     >
                       <select_1.SelectTrigger>
@@ -560,13 +533,11 @@ function SegmentBuilder() {
                         {criterion.field &&
                           ((_a = operatorOptions[criterion.field]) === null || _a === void 0
                             ? void 0
-                            : _a.map(function (option) {
-                                return (
-                                  <select_1.SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </select_1.SelectItem>
-                                );
-                              }))}
+                            : _a.map((option) => (
+                                <select_1.SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </select_1.SelectItem>
+                              )))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -575,9 +546,7 @@ function SegmentBuilder() {
                     <label_1.Label>Value</label_1.Label>
                     <input_1.Input
                       value={criterion.value}
-                      onChange={function (e) {
-                        return updateCriteria(criterion.id, "value", e.target.value);
-                      }}
+                      onChange={(e) => updateCriteria(criterion.id, "value", e.target.value)}
                       placeholder="Enter value"
                     />
                   </div>
@@ -586,9 +555,7 @@ function SegmentBuilder() {
                     <button_1.Button
                       variant="outline"
                       size="sm"
-                      onClick={function () {
-                        return removeCriteria(criterion.id);
-                      }}
+                      onClick={() => removeCriteria(criterion.id)}
                       disabled={criteria.length === 1}
                     >
                       <lucide_react_1.Trash2 className="h-4 w-4" />
@@ -612,9 +579,9 @@ function SegmentBuilder() {
           <lucide_react_1.AlertCircle className="h-4 w-4" />
           <alert_1.AlertDescription>
             <ul className="list-disc list-inside">
-              {validationErrors.map(function (error, index) {
-                return <li key={index}>{error}</li>;
-              })}
+              {validationErrors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
             </ul>
           </alert_1.AlertDescription>
         </alert_1.Alert>
@@ -675,7 +642,7 @@ function SegmentBuilder() {
                     <div className="space-y-1">
                       {Object.entries(preview.characteristics.servicePreferences)
                         .slice(0, 2)
-                        .map(function (_a) {
+                        .map((_a) => {
                           var service = _a[0],
                             percentage = _a[1];
                           return (

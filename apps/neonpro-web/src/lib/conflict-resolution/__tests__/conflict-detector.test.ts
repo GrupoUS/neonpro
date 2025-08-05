@@ -1,6 +1,6 @@
-import type { ConflictDetector } from "../conflict-detector";
-import type { ConflictType, ConflictSeverity, ConflictDetectionConfig } from "../types";
 import type { createClient } from "@supabase/supabase-js";
+import type { ConflictDetector } from "../conflict-detector";
+import type { ConflictDetectionConfig, ConflictSeverity, ConflictType } from "../types";
 
 // Mock Supabase
 jest.mock("@supabase/supabase-js");

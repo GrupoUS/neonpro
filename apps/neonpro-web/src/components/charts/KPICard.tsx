@@ -1,7 +1,7 @@
 "use client";
 
+import type { Minus, TrendingDown, TrendingUp } from "lucide-react";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { cn } from "@/lib/utils";
 
 export interface KPICardProps {

@@ -1,4 +1,3 @@
-"use strict";
 // Zod validation schemas for Automated Reorder Alerts
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -59,7 +58,7 @@ exports.reorderThresholdSchema = zod_1.z
     updated_at: zod_1.z.string().datetime(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Ensure reorder_point >= safety_stock
       return data.reorder_point >= data.safety_stock;
     },
@@ -69,7 +68,7 @@ exports.reorderThresholdSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // Ensure maximum_stock > reorder_point
       if (data.maximum_stock) {
         return data.maximum_stock > data.reorder_point;
@@ -82,7 +81,7 @@ exports.reorderThresholdSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // Ensure threshold percentages are in correct order
       var warning = data.warning_threshold_percentage || 120;
       var critical = data.critical_threshold_percentage || 150;
@@ -217,7 +216,7 @@ exports.purchaseOrderSchema = zod_1.z
     updated_at: zod_1.z.string().datetime(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Ensure total_amount is correctly calculated
       var calculatedTotal =
         (data.subtotal || 0) +
@@ -232,7 +231,7 @@ exports.purchaseOrderSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // Ensure date logic is correct
       if (data.requested_delivery_date && data.order_date) {
         return new Date(data.requested_delivery_date) >= new Date(data.order_date);
@@ -270,7 +269,7 @@ exports.purchaseOrderItemSchema = zod_1.z
     updated_at: zod_1.z.string().datetime(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Ensure total_price = quantity * unit_price
       return Math.abs(data.total_price - data.quantity * data.unit_price) < 0.01;
     },
@@ -280,7 +279,7 @@ exports.purchaseOrderItemSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // Ensure quantity_received <= quantity
       if (data.quantity_received !== undefined) {
         return data.quantity_received <= data.quantity;
@@ -330,7 +329,7 @@ exports.supplierLeadTimeSchema = zod_1.z
     updated_at: zod_1.z.string().datetime(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Ensure lead time logic is correct
       return (
         data.minimum_lead_time_days <= data.average_lead_time_days &&
@@ -356,15 +355,10 @@ exports.createReorderThresholdSchema = zod_1.z
     budget_approval_required: zod_1.z.boolean().optional(),
     budget_threshold_amount: zod_1.z.number().min(0).optional(),
   })
-  .refine(
-    function (data) {
-      return data.reorder_point >= data.safety_stock;
-    },
-    {
-      message: "Reorder point must be greater than or equal to safety stock",
-      path: ["reorder_point"],
-    },
-  );
+  .refine((data) => data.reorder_point >= data.safety_stock, {
+    message: "Reorder point must be greater than or equal to safety stock",
+    path: ["reorder_point"],
+  });
 exports.updateReorderThresholdSchema = zod_1.z.object({
   id: zod_1.z.string().uuid(),
   item_id: zod_1.z.string().uuid().optional(),

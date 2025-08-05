@@ -11,16 +11,16 @@
  * Integrates with CohortAnalyzer service and provides UI-ready data formats.
  */
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { createClient } from "@/lib/supabase/client";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 import type {
+  CohortAnalysisConfig,
   CohortDefinition,
   CohortMetrics,
-  CohortAnalysisConfig,
-  createCohortAnalyzer,
   cohortUtils,
+  createCohortAnalyzer,
 } from "@/lib/analytics/advanced/cohort-analyzer";
+import type { createClient } from "@/lib/supabase/client";
 
 // Types for hook configuration and state
 export interface CohortAnalysisHookConfig {

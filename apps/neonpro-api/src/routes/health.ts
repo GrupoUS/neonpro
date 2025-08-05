@@ -20,7 +20,7 @@ const healthRoutes: FastifyPluginAsync = async (fastify) => {
         },
       },
     },
-    async (request, reply) => {
+    async (_request, _reply) => {
       return {
         status: "healthy" as const,
         timestamp: new Date().toISOString(),
@@ -66,9 +66,12 @@ const healthRoutes: FastifyPluginAsync = async (fastify) => {
         },
       },
     },
-    async (request, reply) => {
+    async (_request, _reply) => {
       // Check database health
-      const databaseHealth = await fastify.checkDatabaseHealth();
+      const databaseHealth = (await fastify.checkDatabaseHealth?.()) || {
+        status: "unknown",
+        details: "Database health check not available",
+      };
 
       // Check Redis health if available
       let redisHealth: "healthy" | "unhealthy" | undefined;
@@ -76,7 +79,7 @@ const healthRoutes: FastifyPluginAsync = async (fastify) => {
         try {
           await fastify.redis.ping();
           redisHealth = "healthy";
-        } catch (error) {
+        } catch (_error) {
           redisHealth = "unhealthy";
         }
       }
@@ -88,7 +91,8 @@ const healthRoutes: FastifyPluginAsync = async (fastify) => {
 
       // Determine overall status
       const allHealthy =
-        databaseHealth === "healthy" && (redisHealth === undefined || redisHealth === "healthy");
+        databaseHealth.status === "healthy" &&
+        (redisHealth === undefined || redisHealth === "healthy");
 
       const healthStatus = {
         status: allHealthy ? ("healthy" as const) : ("degraded" as const),
@@ -97,7 +101,7 @@ const healthRoutes: FastifyPluginAsync = async (fastify) => {
         service: "neonpro-healthcare-api",
         uptime: process.uptime(),
         dependencies: {
-          database: databaseHealth,
+          database: databaseHealth.status,
           supabase: databaseHealth, // Same as database for Supabase
           ...(redisHealth && { redis: redisHealth }),
         },
@@ -140,12 +144,15 @@ const healthRoutes: FastifyPluginAsync = async (fastify) => {
         },
       },
     },
-    async (request, reply) => {
+    async (_request, reply) => {
       try {
         // Check if database is accessible
-        const databaseHealth = await fastify.checkDatabaseHealth();
+        const databaseHealth = (await fastify.checkDatabaseHealth?.()) || {
+          status: "unknown",
+          details: "Database health check not available",
+        };
 
-        if (databaseHealth === "unhealthy") {
+        if (databaseHealth.status === "unhealthy") {
           reply.code(503);
           return {
             status: "not-ready" as const,
@@ -184,7 +191,7 @@ const healthRoutes: FastifyPluginAsync = async (fastify) => {
         },
       },
     },
-    async (request, reply) => {
+    async (_request, _reply) => {
       return {
         status: "alive" as const,
         timestamp: new Date().toISOString(),

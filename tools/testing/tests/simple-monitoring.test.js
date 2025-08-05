@@ -1,11 +1,10 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs_1 = require("fs");
-var path_1 = require("path");
-describe("TASK-001 Foundation Setup Verification", function () {
+var fs_1 = require("node:fs");
+var path_1 = require("node:path");
+describe("TASK-001 Foundation Setup Verification", () => {
   var rootDir = path_1.default.join(__dirname, "../../");
-  describe("Monitoring Utilities", function () {
-    test("should have all required monitoring utility files", function () {
+  describe("Monitoring Utilities", () => {
+    test("should have all required monitoring utility files", () => {
       var monitoringDir = path_1.default.join(rootDir, "lib/monitoring");
       var requiredFiles = [
         "analytics.ts",
@@ -17,27 +16,27 @@ describe("TASK-001 Foundation Setup Verification", function () {
         "index.ts",
         "performance-monitor.ts",
       ];
-      requiredFiles.forEach(function (file) {
+      requiredFiles.forEach((file) => {
         var filePath = path_1.default.join(monitoringDir, file);
         expect(fs_1.default.existsSync(filePath)).toBe(true);
       });
     });
-    test("should have monitoring components", function () {
+    test("should have monitoring components", () => {
       var componentsDir = path_1.default.join(rootDir, "components/monitoring");
       var requiredComponents = [
         "FeatureFlagManager.tsx",
         "SystemHealthWidget.tsx",
         "performance-dashboard.tsx",
       ];
-      requiredComponents.forEach(function (component) {
+      requiredComponents.forEach((component) => {
         var componentPath = path_1.default.join(componentsDir, component);
         expect(fs_1.default.existsSync(componentPath)).toBe(true);
       });
     });
-    test("should have monitoring API endpoints", function () {
+    test("should have monitoring API endpoints", () => {
       var apiDir = path_1.default.join(rootDir, "app/api/monitoring");
       var requiredEndpoints = ["health", "feature-flags", "metrics"];
-      requiredEndpoints.forEach(function (endpoint) {
+      requiredEndpoints.forEach((endpoint) => {
         var endpointPath = path_1.default.join(apiDir, endpoint, "route.ts");
         expect(fs_1.default.existsSync(endpointPath)).toBe(true);
       });

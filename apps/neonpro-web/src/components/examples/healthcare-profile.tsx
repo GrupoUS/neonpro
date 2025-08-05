@@ -1,6 +1,8 @@
 "use client";
 
-import type { useHealthcareAuth, useLGPDConsent } from "@/lib/trpc/hooks";
+import type { AlertCircle, CheckCircle, Shield, User } from "lucide-react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -9,9 +11,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { AlertCircle, CheckCircle, Shield, User } from "lucide-react";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { useHealthcareAuth, useLGPDConsent } from "@/lib/trpc/hooks";
 
 /**
  * Healthcare Profile Component Example

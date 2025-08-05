@@ -6,11 +6,7 @@
  * Requires owner/manager permissions for role modifications
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { authenticateRequest } from "@/lib/middleware/auth";
-import type { hasPermission } from "@/lib/auth/rbac/permissions";
-import type { createClient } from "@/lib/supabase/server";
-import type { z } from "zod";
+import type { NextRequest } from "next/server";
 
 /**
  * Request validation schemas
@@ -152,7 +148,7 @@ export async function PUT(request: NextRequest) {
     let requestBody;
     try {
       requestBody = await request.json();
-    } catch (error) {
+    } catch (_error) {
       return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
     }
 
@@ -314,7 +310,7 @@ export async function PUT(request: NextRequest) {
 /**
  * OPTIONS handler for CORS preflight requests
  */
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

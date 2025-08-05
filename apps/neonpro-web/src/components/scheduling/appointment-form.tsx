@@ -8,7 +8,36 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { addMinutes, endOfDay, format, isAfter, isBefore, startOfDay } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  Briefcase,
+  CalendarIcon,
+  Calendar as CalendarSchedule,
+  CheckCircle,
+  Clock,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  Search,
+  User,
+  Users,
+  X,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { z } from "zod";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -17,22 +46,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Separator } from "@/components/ui/separator";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
   Form,
   FormControl,
@@ -42,30 +55,18 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
-  CalendarIcon,
-  Clock,
-  User,
-  Briefcase,
-  AlertTriangle,
-  CheckCircle,
-  Loader2,
-  Users,
-  MapPin,
-  Phone,
-  Mail,
-  Calendar as CalendarSchedule,
-  Plus,
-  Search,
-  X,
-} from "lucide-react";
-import type { format, addMinutes, isBefore, isAfter, startOfDay, endOfDay } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import type { useForm } from "react-hook-form";
-import type { zodResolver } from "@hookform/resolvers/zod";
-import type { z } from "zod";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Textarea } from "@/components/ui/textarea";
 import type { cn } from "@/lib/utils";
 import ConflictDetection from "./conflict-detection";
 

@@ -17,7 +17,27 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertCircle,
+  AlertTriangle,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
+  FileText,
+  Filter,
+  Globe,
+  RefreshCw,
+  Shield,
+  User,
+  XCircle,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -25,8 +45,14 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Button } from "@/components/ui/button";
+import type {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
 import type {
@@ -36,7 +62,6 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
 import type {
   Table,
   TableBody,
@@ -45,40 +70,15 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { AuditEventType, AuditQueryFilters, AuditSeverity } from "../audit-system";
 import type {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import type {
-  AlertTriangle,
-  Shield,
-  FileText,
-  BarChart3,
-  Download,
-  Filter,
-  RefreshCw,
-  Eye,
-  Clock,
-  User,
-  Globe,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
-import type {
+  useAuditLogger,
   useAuditLogs,
-  useSecurityAlerts,
   useAuditReports,
   useAuditStatistics,
-  useAuditLogger,
+  useSecurityAlerts,
 } from "../hooks/useAuditSystem";
-import type { AuditEventType, AuditSeverity, AuditQueryFilters } from "../audit-system";
-import type { formatDistanceToNow } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 
 // =====================================================
 // TYPES E INTERFACES

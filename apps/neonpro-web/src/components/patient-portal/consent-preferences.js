@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConsentPreferences = ConsentPreferences;
 var react_1 = require("react");
@@ -163,7 +160,6 @@ var label_1 = require("@/components/ui/label");
 var sonner_1 = require("sonner");
 var use_patient_auth_1 = require("@/lib/hooks/use-patient-auth");
 function ConsentPreferences() {
-  var _this = this;
   var _a = (0, use_patient_auth_1.usePatientAuth)(),
     patient = _a.patient,
     updatePatient = _a.updatePatient;
@@ -307,10 +303,10 @@ function ConsentPreferences() {
       icon: lucide_react_1.History,
     },
   ];
-  var handleConsentToggle = function (consentId, granted) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleConsentToggle = (consentId, granted) =>
+    __awaiter(this, void 0, void 0, function () {
       var consent, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (isUpdating) return [2 /*return*/];
@@ -318,9 +314,7 @@ function ConsentPreferences() {
             _a.label = 1;
           case 1:
             _a.trys.push([1, 3, 4, 5]);
-            consent = consents.find(function (c) {
-              return c.id === consentId;
-            });
+            consent = consents.find((c) => c.id === consentId);
             if (!consent) return [2 /*return*/];
             // Can't revoke required consents
             if (consent.required && !granted) {
@@ -328,24 +322,19 @@ function ConsentPreferences() {
               return [2 /*return*/];
             }
             // Update local state optimistically
-            setConsents(function (prev) {
-              return prev.map(function (c) {
-                return c.id === consentId
+            setConsents((prev) =>
+              prev.map((c) =>
+                c.id === consentId
                   ? __assign(__assign({}, c), {
                       granted: granted,
                       granted_at: granted ? new Date().toISOString() : c.granted_at,
                       revoked_at: !granted ? new Date().toISOString() : undefined,
                     })
-                  : c;
-              });
-            });
+                  : c,
+              ),
+            );
             // TODO: Call API to update consent
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 2:
             // TODO: Call API to update consent
             _a.sent();
@@ -358,11 +347,11 @@ function ConsentPreferences() {
           case 3:
             error_1 = _a.sent();
             // Revert optimistic update on error
-            setConsents(function (prev) {
-              return prev.map(function (c) {
-                return c.id === consentId ? __assign(__assign({}, c), { granted: !granted }) : c;
-              });
-            });
+            setConsents((prev) =>
+              prev.map((c) =>
+                c.id === consentId ? __assign(__assign({}, c), { granted: !granted }) : c,
+              ),
+            );
             sonner_1.toast.error("Erro ao atualizar consentimento");
             return [3 /*break*/, 5];
           case 4:
@@ -373,21 +362,15 @@ function ConsentPreferences() {
         }
       });
     });
-  };
-  var handleDataRightRequest = function (rightId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDataRightRequest = (rightId) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             // TODO: Call API to process data right request
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 1:
             // TODO: Call API to process data right request
             _a.sent();
@@ -404,8 +387,7 @@ function ConsentPreferences() {
         }
       });
     });
-  };
-  var getConsentStatus = function (consent) {
+  var getConsentStatus = (consent) => {
     if (consent.granted) {
       return {
         label: "Ativo",
@@ -467,7 +449,7 @@ function ConsentPreferences() {
           </card_1.CardDescription>
         </card_1.CardHeader>
         <card_1.CardContent className="space-y-6">
-          {consents.map(function (consent) {
+          {consents.map((consent) => {
             var Icon = consent.icon;
             var status = getConsentStatus(consent);
             return (
@@ -535,14 +517,12 @@ function ConsentPreferences() {
                             <div>
                               <h4 className="font-semibold mb-2">Finalidades do Tratamento</h4>
                               <ul className="text-sm text-muted-foreground space-y-1">
-                                {consent.purposes.map(function (purpose, index) {
-                                  return (
-                                    <li key={index} className="flex items-start gap-2">
-                                      <span className="text-primary mt-1.5">•</span>
-                                      <span>{purpose}</span>
-                                    </li>
-                                  );
-                                })}
+                                {consent.purposes.map((purpose, index) => (
+                                  <li key={index} className="flex items-start gap-2">
+                                    <span className="text-primary mt-1.5">•</span>
+                                    <span>{purpose}</span>
+                                  </li>
+                                ))}
                               </ul>
                             </div>
                           </div>
@@ -556,9 +536,7 @@ function ConsentPreferences() {
                         <switch_1.Switch
                           id={"consent-".concat(consent.id)}
                           checked={consent.granted}
-                          onCheckedChange={function (checked) {
-                            return handleConsentToggle(consent.id, checked);
-                          }}
+                          onCheckedChange={(checked) => handleConsentToggle(consent.id, checked)}
                           disabled={consent.required || isUpdating}
                         />
                       </div>
@@ -584,7 +562,7 @@ function ConsentPreferences() {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {dataRights.map(function (right) {
+            {dataRights.map((right) => {
               var Icon = right.icon;
               return (
                 <div key={right.id} className="flex items-start gap-4 p-4 border rounded-lg">
@@ -600,9 +578,7 @@ function ConsentPreferences() {
                     <button_1.Button
                       variant="outline"
                       size="sm"
-                      onClick={function () {
-                        return handleDataRightRequest(right.id);
-                      }}
+                      onClick={() => handleDataRightRequest(right.id)}
                     >
                       {right.action}
                     </button_1.Button>
@@ -630,13 +606,13 @@ function ConsentPreferences() {
 
           <div className="flex gap-3">
             <button_1.Button variant="outline" asChild>
-              <a href="/privacy-policy" target="_blank">
+              <a href="/privacy-policy" target="_blank" rel="noopener">
                 <lucide_react_1.FileText className="w-4 h-4 mr-2" />
                 Ler Política Completa
               </a>
             </button_1.Button>
             <button_1.Button variant="outline" asChild>
-              <a href="/privacy-policy.pdf" target="_blank">
+              <a href="/privacy-policy.pdf" target="_blank" rel="noopener">
                 <lucide_react_1.Download className="w-4 h-4 mr-2" />
                 Download PDF
               </a>

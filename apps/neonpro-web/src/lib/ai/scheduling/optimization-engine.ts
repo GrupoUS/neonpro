@@ -9,12 +9,12 @@
  * - Predictive scheduling adjustments
  */
 
+import type { createClient } from "@/lib/supabase/client";
 import type {
   AISchedulingCore,
   SchedulingCriteria,
   SchedulingRecommendation,
 } from "./ai-scheduling-core";
-import type { createClient } from "@/lib/supabase/client";
 
 // Optimization Constraints
 interface OptimizationConstraints {

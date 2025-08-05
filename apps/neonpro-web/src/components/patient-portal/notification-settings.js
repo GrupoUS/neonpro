@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = NotificationSettings;
 var badge_1 = require("@/components/ui/badge");
@@ -263,7 +260,6 @@ var mockPreferences = {
   emergencyOnly: false,
 };
 function NotificationSettings() {
-  var _this = this;
   var _a = (0, react_1.useState)(mockPreferences),
     preferences = _a[0],
     setPreferences = _a[1];
@@ -275,19 +271,14 @@ function NotificationSettings() {
     setSaving = _c[1];
   var toast = (0, use_toast_1.useToast)().toast;
   // Simular salvamento das preferências
-  var handleSavePreferences = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleSavePreferences = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setSaving(true);
             // Simular API call
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 1:
             // Simular API call
             _a.sent();
@@ -300,37 +291,36 @@ function NotificationSettings() {
         }
       });
     });
-  };
   // Atualizar canal de notificação
-  var updateChannel = function (channelId, enabled) {
-    setPreferences(function (prev) {
-      return __assign(__assign({}, prev), {
-        channels: prev.channels.map(function (channel) {
-          return channel.id === channelId
+  var updateChannel = (channelId, enabled) => {
+    setPreferences((prev) =>
+      __assign(__assign({}, prev), {
+        channels: prev.channels.map((channel) =>
+          channel.id === channelId
             ? __assign(__assign({}, channel), { enabled: enabled })
-            : channel;
-        }),
-      });
-    });
+            : channel,
+        ),
+      }),
+    );
   };
   // Atualizar categoria de notificação
-  var updateCategory = function (categoryId, field, value) {
-    setPreferences(function (prev) {
-      return __assign(__assign({}, prev), {
-        categories: prev.categories.map(function (category) {
+  var updateCategory = (categoryId, field, value) => {
+    setPreferences((prev) =>
+      __assign(__assign({}, prev), {
+        categories: prev.categories.map((category) => {
           var _a;
           return category.id === categoryId
             ? __assign(__assign({}, category), ((_a = {}), (_a[field] = value), _a))
             : category;
         }),
-      });
-    });
+      }),
+    );
   };
   // Atualizar configuração específica de categoria
-  var updateCategorySetting = function (categoryId, channel, enabled) {
-    setPreferences(function (prev) {
-      return __assign(__assign({}, prev), {
-        categories: prev.categories.map(function (category) {
+  var updateCategorySetting = (categoryId, channel, enabled) => {
+    setPreferences((prev) =>
+      __assign(__assign({}, prev), {
+        categories: prev.categories.map((category) => {
           var _a;
           return category.id === categoryId
             ? __assign(__assign({}, category), {
@@ -341,35 +331,30 @@ function NotificationSettings() {
               })
             : category;
         }),
-      });
-    });
+      }),
+    );
   };
   // Verificar canal de comunicação
-  var verifyChannel = function (channelId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var verifyChannel = (channelId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
             // Simular processo de verificação
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 3000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 3000))];
           case 1:
             // Simular processo de verificação
             _a.sent();
-            setPreferences(function (prev) {
-              return __assign(__assign({}, prev), {
-                channels: prev.channels.map(function (channel) {
-                  return channel.id === channelId
+            setPreferences((prev) =>
+              __assign(__assign({}, prev), {
+                channels: prev.channels.map((channel) =>
+                  channel.id === channelId
                     ? __assign(__assign({}, channel), { verified: true })
-                    : channel;
-                }),
-              });
-            });
+                    : channel,
+                ),
+              }),
+            );
             setLoading(false);
             toast({
               title: "Canal verificado",
@@ -379,7 +364,6 @@ function NotificationSettings() {
         }
       });
     });
-  };
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -413,11 +397,9 @@ function NotificationSettings() {
             </div>
             <switch_1.Switch
               checked={!preferences.doNotDisturb}
-              onCheckedChange={function (checked) {
-                return setPreferences(function (prev) {
-                  return __assign(__assign({}, prev), { doNotDisturb: !checked });
-                });
-              }}
+              onCheckedChange={(checked) =>
+                setPreferences((prev) => __assign(__assign({}, prev), { doNotDisturb: !checked }))
+              }
             />
           </div>
         </div>
@@ -436,60 +418,54 @@ function NotificationSettings() {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="space-y-4">
-            {preferences.channels.map(function (channel) {
-              return (
-                <div
-                  key={channel.id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div className="flex items-center gap-3">
-                    {channel.icon}
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-900">{channel.name}</span>
-                        {channel.verified
-                          ? <badge_1.Badge
-                              variant="outline"
-                              className="text-green-700 border-green-300"
-                            >
-                              <lucide_react_1.CheckCircle className="h-3 w-3 mr-1" />
-                              Verificado
-                            </badge_1.Badge>
-                          : <badge_1.Badge
-                              variant="outline"
-                              className="text-orange-700 border-orange-300"
-                            >
-                              <lucide_react_1.AlertCircle className="h-3 w-3 mr-1" />
-                              Não Verificado
-                            </badge_1.Badge>}
-                      </div>
-                      <p className="text-sm text-gray-600">{channel.contact}</p>
+            {preferences.channels.map((channel) => (
+              <div
+                key={channel.id}
+                className="flex items-center justify-between p-4 border rounded-lg"
+              >
+                <div className="flex items-center gap-3">
+                  {channel.icon}
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-900">{channel.name}</span>
+                      {channel.verified
+                        ? <badge_1.Badge
+                            variant="outline"
+                            className="text-green-700 border-green-300"
+                          >
+                            <lucide_react_1.CheckCircle className="h-3 w-3 mr-1" />
+                            Verificado
+                          </badge_1.Badge>
+                        : <badge_1.Badge
+                            variant="outline"
+                            className="text-orange-700 border-orange-300"
+                          >
+                            <lucide_react_1.AlertCircle className="h-3 w-3 mr-1" />
+                            Não Verificado
+                          </badge_1.Badge>}
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {!channel.verified && (
-                      <button_1.Button
-                        variant="outline"
-                        size="sm"
-                        onClick={function () {
-                          return verifyChannel(channel.id);
-                        }}
-                        disabled={loading}
-                      >
-                        {loading ? <loading_spinner_1.default size="sm" /> : "Verificar"}
-                      </button_1.Button>
-                    )}
-                    <switch_1.Switch
-                      checked={channel.enabled}
-                      onCheckedChange={function (checked) {
-                        return updateChannel(channel.id, checked);
-                      }}
-                      disabled={!channel.verified}
-                    />
+                    <p className="text-sm text-gray-600">{channel.contact}</p>
                   </div>
                 </div>
-              );
-            })}
+                <div className="flex items-center gap-3">
+                  {!channel.verified && (
+                    <button_1.Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => verifyChannel(channel.id)}
+                      disabled={loading}
+                    >
+                      {loading ? <loading_spinner_1.default size="sm" /> : "Verificar"}
+                    </button_1.Button>
+                  )}
+                  <switch_1.Switch
+                    checked={channel.enabled}
+                    onCheckedChange={(checked) => updateChannel(channel.id, checked)}
+                    disabled={!channel.verified}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>{" "}
@@ -504,152 +480,144 @@ function NotificationSettings() {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="space-y-6">
-            {preferences.categories.map(function (category) {
-              return (
-                <div key={category.id} className="border rounded-lg">
-                  <div className="p-4 border-b bg-gray-50">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-3">
-                        {category.icon}
-                        <div>
-                          <h3 className="font-semibold text-gray-900">{category.name}</h3>
-                          <p className="text-sm text-gray-600 mt-1">{category.description}</p>
-                          <div className="flex items-center gap-4 mt-3">
-                            {category.lgpdConsent && (
-                              <badge_1.Badge
-                                variant="outline"
-                                className="text-blue-700 border-blue-300"
-                              >
-                                <lucide_react_1.Shield className="h-3 w-3 mr-1" />
-                                LGPD Autorizado
-                              </badge_1.Badge>
-                            )}
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <lucide_react_1.Clock className="h-4 w-4" />
-                              <span>
-                                Frequência:{" "}
-                                {category.frequency === "immediate"
-                                  ? "Imediata"
-                                  : category.frequency === "daily"
-                                    ? "Diária"
-                                    : category.frequency === "weekly"
-                                      ? "Semanal"
-                                      : "Mensal"}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-4">
-                    {/* Configurações por Canal */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                      {Object.entries(category.settings).map(function (_a) {
-                        var channelKey = _a[0],
-                          enabled = _a[1];
-                        var channel = preferences.channels.find(function (c) {
-                          return c.type === channelKey;
-                        });
-                        if (!channel || !channel.enabled) return null;
-                        return (
-                          <div
-                            key={channelKey}
-                            className="flex items-center justify-between p-3 border rounded-lg"
-                          >
-                            <div className="flex items-center gap-2">
-                              {channel.icon}
-                              <span className="text-sm font-medium">{channel.name}</span>
-                            </div>
-                            <switch_1.Switch
-                              checked={enabled && category.lgpdConsent}
-                              onCheckedChange={function (checked) {
-                                return updateCategorySetting(category.id, channelKey, checked);
-                              }}
-                              disabled={!category.lgpdConsent}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Configurações Avançadas */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {preferences.categories.map((category) => (
+              <div key={category.id} className="border rounded-lg">
+                <div className="p-4 border-b bg-gray-50">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-3">
+                      {category.icon}
                       <div>
-                        <label_1.Label
-                          htmlFor={"frequency-".concat(category.id)}
-                          className="text-sm font-medium"
-                        >
-                          Frequência de Notificação
-                        </label_1.Label>
-                        <select_1.Select
-                          value={category.frequency}
-                          onValueChange={function (value) {
-                            return updateCategory(category.id, "frequency", value);
-                          }}
-                        >
-                          <select_1.SelectTrigger className="mt-1">
-                            <select_1.SelectValue />
-                          </select_1.SelectTrigger>
-                          <select_1.SelectContent>
-                            <select_1.SelectItem value="immediate">Imediata</select_1.SelectItem>
-                            <select_1.SelectItem value="daily">Diária</select_1.SelectItem>
-                            <select_1.SelectItem value="weekly">Semanal</select_1.SelectItem>
-                            <select_1.SelectItem value="monthly">Mensal</select_1.SelectItem>
-                          </select_1.SelectContent>
-                        </select_1.Select>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-6">
-                        <div>
-                          <label_1.Label className="text-sm font-medium">
-                            Respeitar horário de silêncio
-                          </label_1.Label>
-                          <p className="text-xs text-gray-600 mt-1">
-                            Não enviar notificações durante as horas de silêncio
-                          </p>
-                        </div>
-                        <switch_1.Switch
-                          checked={category.quietHours}
-                          onCheckedChange={function (checked) {
-                            return updateCategory(category.id, "quietHours", checked);
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* LGPD Consent */}
-                    {!category.lgpdConsent && category.id === "marketing" && (
-                      <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                        <div className="flex items-start gap-3">
-                          <lucide_react_1.AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                          <div className="text-sm">
-                            <p className="font-medium text-yellow-800 mb-1">
-                              Consentimento LGPD Necessário
-                            </p>
-                            <p className="text-yellow-700 mb-3">
-                              Para receber notificações de marketing, você precisa autorizar o uso
-                              de seus dados para fins promocionais conforme a LGPD.
-                            </p>
-                            <button_1.Button
-                              size="sm"
+                        <h3 className="font-semibold text-gray-900">{category.name}</h3>
+                        <p className="text-sm text-gray-600 mt-1">{category.description}</p>
+                        <div className="flex items-center gap-4 mt-3">
+                          {category.lgpdConsent && (
+                            <badge_1.Badge
                               variant="outline"
-                              onClick={function () {
-                                return updateCategory(category.id, "lgpdConsent", true);
-                              }}
-                              className="border-yellow-300 text-yellow-800 hover:bg-yellow-100"
+                              className="text-blue-700 border-blue-300"
                             >
-                              Autorizar Uso para Marketing
-                            </button_1.Button>
+                              <lucide_react_1.Shield className="h-3 w-3 mr-1" />
+                              LGPD Autorizado
+                            </badge_1.Badge>
+                          )}
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <lucide_react_1.Clock className="h-4 w-4" />
+                            <span>
+                              Frequência:{" "}
+                              {category.frequency === "immediate"
+                                ? "Imediata"
+                                : category.frequency === "daily"
+                                  ? "Diária"
+                                  : category.frequency === "weekly"
+                                    ? "Semanal"
+                                    : "Mensal"}
+                            </span>
                           </div>
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
-              );
-            })}
+
+                <div className="p-4">
+                  {/* Configurações por Canal */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    {Object.entries(category.settings).map((_a) => {
+                      var channelKey = _a[0],
+                        enabled = _a[1];
+                      var channel = preferences.channels.find((c) => c.type === channelKey);
+                      if (!channel || !channel.enabled) return null;
+                      return (
+                        <div
+                          key={channelKey}
+                          className="flex items-center justify-between p-3 border rounded-lg"
+                        >
+                          <div className="flex items-center gap-2">
+                            {channel.icon}
+                            <span className="text-sm font-medium">{channel.name}</span>
+                          </div>
+                          <switch_1.Switch
+                            checked={enabled && category.lgpdConsent}
+                            onCheckedChange={(checked) =>
+                              updateCategorySetting(category.id, channelKey, checked)
+                            }
+                            disabled={!category.lgpdConsent}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Configurações Avançadas */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label_1.Label
+                        htmlFor={"frequency-".concat(category.id)}
+                        className="text-sm font-medium"
+                      >
+                        Frequência de Notificação
+                      </label_1.Label>
+                      <select_1.Select
+                        value={category.frequency}
+                        onValueChange={(value) => updateCategory(category.id, "frequency", value)}
+                      >
+                        <select_1.SelectTrigger className="mt-1">
+                          <select_1.SelectValue />
+                        </select_1.SelectTrigger>
+                        <select_1.SelectContent>
+                          <select_1.SelectItem value="immediate">Imediata</select_1.SelectItem>
+                          <select_1.SelectItem value="daily">Diária</select_1.SelectItem>
+                          <select_1.SelectItem value="weekly">Semanal</select_1.SelectItem>
+                          <select_1.SelectItem value="monthly">Mensal</select_1.SelectItem>
+                        </select_1.SelectContent>
+                      </select_1.Select>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-6">
+                      <div>
+                        <label_1.Label className="text-sm font-medium">
+                          Respeitar horário de silêncio
+                        </label_1.Label>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Não enviar notificações durante as horas de silêncio
+                        </p>
+                      </div>
+                      <switch_1.Switch
+                        checked={category.quietHours}
+                        onCheckedChange={(checked) =>
+                          updateCategory(category.id, "quietHours", checked)
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  {/* LGPD Consent */}
+                  {!category.lgpdConsent && category.id === "marketing" && (
+                    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <div className="flex items-start gap-3">
+                        <lucide_react_1.AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                        <div className="text-sm">
+                          <p className="font-medium text-yellow-800 mb-1">
+                            Consentimento LGPD Necessário
+                          </p>
+                          <p className="text-yellow-700 mb-3">
+                            Para receber notificações de marketing, você precisa autorizar o uso de
+                            seus dados para fins promocionais conforme a LGPD.
+                          </p>
+                          <button_1.Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateCategory(category.id, "lgpdConsent", true)}
+                            className="border-yellow-300 text-yellow-800 hover:bg-yellow-100"
+                          >
+                            Autorizar Uso para Marketing
+                          </button_1.Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>{" "}
@@ -677,13 +645,13 @@ function NotificationSettings() {
               </div>
               <switch_1.Switch
                 checked={preferences.quietHours.enabled}
-                onCheckedChange={function (checked) {
-                  return setPreferences(function (prev) {
-                    return __assign(__assign({}, prev), {
+                onCheckedChange={(checked) =>
+                  setPreferences((prev) =>
+                    __assign(__assign({}, prev), {
                       quietHours: __assign(__assign({}, prev.quietHours), { enabled: checked }),
-                    });
-                  });
-                }}
+                    }),
+                  )
+                }
               />
             </div>
 
@@ -697,15 +665,15 @@ function NotificationSettings() {
                     id="quiet-start"
                     type="time"
                     value={preferences.quietHours.start}
-                    onChange={function (e) {
-                      return setPreferences(function (prev) {
-                        return __assign(__assign({}, prev), {
+                    onChange={(e) =>
+                      setPreferences((prev) =>
+                        __assign(__assign({}, prev), {
                           quietHours: __assign(__assign({}, prev.quietHours), {
                             start: e.target.value,
                           }),
-                        });
-                      });
-                    }}
+                        }),
+                      )
+                    }
                     className="mt-1"
                   />
                 </div>
@@ -717,15 +685,15 @@ function NotificationSettings() {
                     id="quiet-end"
                     type="time"
                     value={preferences.quietHours.end}
-                    onChange={function (e) {
-                      return setPreferences(function (prev) {
-                        return __assign(__assign({}, prev), {
+                    onChange={(e) =>
+                      setPreferences((prev) =>
+                        __assign(__assign({}, prev), {
                           quietHours: __assign(__assign({}, prev.quietHours), {
                             end: e.target.value,
                           }),
-                        });
-                      });
-                    }}
+                        }),
+                      )
+                    }
                     className="mt-1"
                   />
                 </div>
@@ -750,11 +718,9 @@ function NotificationSettings() {
               </label_1.Label>
               <select_1.Select
                 value={preferences.language}
-                onValueChange={function (value) {
-                  return setPreferences(function (prev) {
-                    return __assign(__assign({}, prev), { language: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setPreferences((prev) => __assign(__assign({}, prev), { language: value }))
+                }
               >
                 <select_1.SelectTrigger className="mt-1">
                   <select_1.SelectValue />
@@ -773,11 +739,9 @@ function NotificationSettings() {
               </label_1.Label>
               <select_1.Select
                 value={preferences.timezone}
-                onValueChange={function (value) {
-                  return setPreferences(function (prev) {
-                    return __assign(__assign({}, prev), { timezone: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setPreferences((prev) => __assign(__assign({}, prev), { timezone: value }))
+                }
               >
                 <select_1.SelectTrigger className="mt-1">
                   <select_1.SelectValue />
@@ -805,11 +769,9 @@ function NotificationSettings() {
               </div>
               <switch_1.Switch
                 checked={preferences.emergencyOnly}
-                onCheckedChange={function (checked) {
-                  return setPreferences(function (prev) {
-                    return __assign(__assign({}, prev), { emergencyOnly: checked });
-                  });
-                }}
+                onCheckedChange={(checked) =>
+                  setPreferences((prev) => __assign(__assign({}, prev), { emergencyOnly: checked }))
+                }
               />
             </div>
           </div>
@@ -835,9 +797,7 @@ function NotificationSettings() {
 
         <button_1.Button
           variant="outline"
-          onClick={function () {
-            return setPreferences(mockPreferences);
-          }}
+          onClick={() => setPreferences(mockPreferences)}
           disabled={saving}
         >
           Restaurar Padrões
@@ -845,7 +805,7 @@ function NotificationSettings() {
 
         <button_1.Button
           variant="outline"
-          onClick={function () {
+          onClick={() => {
             // Em implementação real, abrir modal de teste de notificação
             toast({
               title: "Notificação de teste enviada",

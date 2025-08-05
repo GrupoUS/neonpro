@@ -13,7 +13,30 @@
 
 "use client";
 
+import type {
+  Activity,
+  AlertCircle,
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 import React, { useMemo } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
 import type {
   Card,
   CardContent,
@@ -22,30 +45,7 @@ import type {
   CardTitle,
 } from "@/components/ui/card";
 import type { Progress } from "@/components/ui/progress";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  Target,
-  TrendingUp,
-  TrendingDown,
-  AlertCircle,
-  CheckCircle,
-  Brain,
-  BarChart3,
-  Activity,
-} from "lucide-react";
-import type {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
 
 import type { DemandForecast } from "@/lib/forecasting";
 

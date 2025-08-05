@@ -4,9 +4,9 @@
 // Created: 2025-01-26
 // =====================================================================================
 
-import type { createClient } from "@/lib/supabase/server";
 import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
 
 // =====================================================================================
 // VALIDATION SCHEMAS

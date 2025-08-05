@@ -3,11 +3,9 @@
 // Author: Dev Agent
 // Date: 2025-01-26
 
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { DrillDownSystem } from "@/lib/analytics/drill-down";
-import { drillDownRequestSchema } from "@/lib/validations/kpi-validations";
 import { createClient } from "@/lib/supabase/server";
-import type { z } from "zod";
 
 const requestSchema = z.object({
   kpi_id: z.string(),

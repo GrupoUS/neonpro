@@ -5,10 +5,9 @@
 // sorting, and bulk operations for NeonPro clinic management
 // ============================================================================
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -17,7 +16,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SupplierList = SupplierList;
 var react_1 = require("react");
@@ -39,7 +38,7 @@ var utils_1 = require("@/lib/utils");
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
-var getStatusColor = function (status) {
+var getStatusColor = (status) => {
   switch (status) {
     case supplier_1.SupplierStatus.ACTIVE:
       return "bg-green-100 text-green-800 border-green-200";
@@ -55,7 +54,7 @@ var getStatusColor = function (status) {
       return "bg-gray-100 text-gray-800 border-gray-200";
   }
 };
-var getStatusIcon = function (status) {
+var getStatusIcon = (status) => {
   switch (status) {
     case supplier_1.SupplierStatus.ACTIVE:
       return <lucide_react_1.CheckCircle className="h-3 w-3" />;
@@ -71,7 +70,7 @@ var getStatusIcon = function (status) {
       return <lucide_react_1.Minus className="h-3 w-3" />;
   }
 };
-var getRiskColor = function (riskLevel) {
+var getRiskColor = (riskLevel) => {
   switch (riskLevel) {
     case supplier_1.RiskLevel.LOW:
       return "bg-green-100 text-green-800";
@@ -85,7 +84,7 @@ var getRiskColor = function (riskLevel) {
       return "bg-gray-100 text-gray-800";
   }
 };
-var getCategoryIcon = function (category) {
+var getCategoryIcon = (category) => {
   switch (category) {
     case supplier_1.SupplierCategory.MEDICAL_EQUIPMENT:
       return "🏥";
@@ -107,7 +106,7 @@ var getCategoryIcon = function (category) {
       return "📦";
   }
 };
-var getPerformanceTrend = function (score, previousScore) {
+var getPerformanceTrend = (score, previousScore) => {
   if (!previousScore)
     return { icon: <lucide_react_1.Minus className="h-3 w-3" />, color: "text-gray-500" };
   var difference = score - previousScore;
@@ -176,80 +175,69 @@ function SupplierList(_a) {
   // COMPUTED VALUES
   // ============================================================================
   // Sorted and filtered suppliers
-  var sortedSuppliers = (0, react_1.useMemo)(
-    function () {
-      if (!(suppliers === null || suppliers === void 0 ? void 0 : suppliers.length)) return [];
-      var sorted = __spreadArray([], suppliers, true).sort(function (a, b) {
-        var aValue, bValue;
-        switch (sortBy) {
-          case "name":
-            aValue = a.name.toLowerCase();
-            bValue = b.name.toLowerCase();
-            break;
-          case "performance":
-            aValue = a.performance_score || 0;
-            bValue = b.performance_score || 0;
-            break;
-          case "category":
-            aValue = a.category;
-            bValue = b.category;
-            break;
-          case "status":
-            aValue = a.status;
-            bValue = b.status;
-            break;
-          case "risk":
-            aValue = a.risk_level;
-            bValue = b.risk_level;
-            break;
-          default:
-            return 0;
-        }
-        if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
-        if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
-        return 0;
-      });
-      return sorted;
-    },
-    [suppliers, sortBy, sortOrder],
-  );
+  var sortedSuppliers = (0, react_1.useMemo)(() => {
+    if (!(suppliers === null || suppliers === void 0 ? void 0 : suppliers.length)) return [];
+    var sorted = __spreadArray([], suppliers, true).sort((a, b) => {
+      var aValue, bValue;
+      switch (sortBy) {
+        case "name":
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case "performance":
+          aValue = a.performance_score || 0;
+          bValue = b.performance_score || 0;
+          break;
+        case "category":
+          aValue = a.category;
+          bValue = b.category;
+          break;
+        case "status":
+          aValue = a.status;
+          bValue = b.status;
+          break;
+        case "risk":
+          aValue = a.risk_level;
+          bValue = b.risk_level;
+          break;
+        default:
+          return 0;
+      }
+      if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [suppliers, sortBy, sortOrder]);
   // Statistics
-  var statistics = (0, react_1.useMemo)(
-    function () {
-      if (!(suppliers === null || suppliers === void 0 ? void 0 : suppliers.length))
-        return {
-          total: 0,
-          active: 0,
-          averagePerformance: 0,
-          highRisk: 0,
-        };
-      var total = suppliers.length;
-      var active = suppliers.filter(function (s) {
-        return s.status === supplier_1.SupplierStatus.ACTIVE;
-      }).length;
-      var averagePerformance =
-        suppliers.reduce(function (sum, s) {
-          return sum + (s.performance_score || 0);
-        }, 0) / total;
-      var highRisk = suppliers.filter(function (s) {
-        return (
-          s.risk_level === supplier_1.RiskLevel.HIGH ||
-          s.risk_level === supplier_1.RiskLevel.CRITICAL
-        );
-      }).length;
+  var statistics = (0, react_1.useMemo)(() => {
+    if (!(suppliers === null || suppliers === void 0 ? void 0 : suppliers.length))
       return {
-        total: total,
-        active: active,
-        averagePerformance: averagePerformance,
-        highRisk: highRisk,
+        total: 0,
+        active: 0,
+        averagePerformance: 0,
+        highRisk: 0,
       };
-    },
-    [suppliers],
-  );
+    var total = suppliers.length;
+    var active = suppliers.filter((s) => s.status === supplier_1.SupplierStatus.ACTIVE).length;
+    var averagePerformance =
+      suppliers.reduce((sum, s) => sum + (s.performance_score || 0), 0) / total;
+    var highRisk = suppliers.filter(
+      (s) =>
+        s.risk_level === supplier_1.RiskLevel.HIGH ||
+        s.risk_level === supplier_1.RiskLevel.CRITICAL,
+    ).length;
+    return {
+      total: total,
+      active: active,
+      averagePerformance: averagePerformance,
+      highRisk: highRisk,
+    };
+  }, [suppliers]);
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
-  var handleSort = function (column) {
+  var handleSort = (column) => {
     if (sortBy === column) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
@@ -257,36 +245,30 @@ function SupplierList(_a) {
       setSortOrder("asc");
     }
   };
-  var handleSelectSupplier = function (supplierId) {
+  var handleSelectSupplier = (supplierId) => {
     if (!selectable) return;
-    setSelectedSuppliers(function (prev) {
-      return prev.includes(supplierId)
-        ? prev.filter(function (id) {
-            return id !== supplierId;
-          })
-        : __spreadArray(__spreadArray([], prev, true), [supplierId], false);
-    });
+    setSelectedSuppliers((prev) =>
+      prev.includes(supplierId)
+        ? prev.filter((id) => id !== supplierId)
+        : __spreadArray(__spreadArray([], prev, true), [supplierId], false),
+    );
   };
-  var handleSelectAll = function () {
+  var handleSelectAll = () => {
     if (!selectable) return;
     if (selectedSuppliers.length === sortedSuppliers.length) {
       setSelectedSuppliers([]);
     } else {
-      setSelectedSuppliers(
-        sortedSuppliers.map(function (s) {
-          return s.id;
-        }),
-      );
+      setSelectedSuppliers(sortedSuppliers.map((s) => s.id));
     }
   };
-  var handleBulkAction = function (action) {
+  var handleBulkAction = (action) => {
     // Implementation for bulk actions
     console.log("Bulk ".concat(action, " for:"), selectedSuppliers);
   };
   // ============================================================================
   // RENDER HELPERS
   // ============================================================================
-  var renderSupplierCard = function (supplier) {
+  var renderSupplierCard = (supplier) => {
     var _a;
     return (
       <card_1.Card
@@ -295,11 +277,11 @@ function SupplierList(_a) {
           "transition-all hover:shadow-md cursor-pointer",
           selectedSuppliers.includes(supplier.id) && "ring-2 ring-blue-500",
         )}
-        onClick={function () {
-          return onSupplierSelect === null || onSupplierSelect === void 0
+        onClick={() =>
+          onSupplierSelect === null || onSupplierSelect === void 0
             ? void 0
-            : onSupplierSelect(supplier);
-        }}
+            : onSupplierSelect(supplier)
+        }
       >
         <card_1.CardContent className="p-4">
           <div className="flex items-start justify-between">
@@ -340,32 +322,32 @@ function SupplierList(_a) {
               </dropdown_menu_1.DropdownMenuTrigger>
               <dropdown_menu_1.DropdownMenuContent align="end">
                 <dropdown_menu_1.DropdownMenuItem
-                  onClick={function () {
-                    return onSupplierSelect === null || onSupplierSelect === void 0
+                  onClick={() =>
+                    onSupplierSelect === null || onSupplierSelect === void 0
                       ? void 0
-                      : onSupplierSelect(supplier);
-                  }}
+                      : onSupplierSelect(supplier)
+                  }
                 >
                   <lucide_react_1.Eye className="h-4 w-4 mr-2" />
                   Visualizar
                 </dropdown_menu_1.DropdownMenuItem>
                 <dropdown_menu_1.DropdownMenuItem
-                  onClick={function () {
-                    return onSupplierEdit === null || onSupplierEdit === void 0
+                  onClick={() =>
+                    onSupplierEdit === null || onSupplierEdit === void 0
                       ? void 0
-                      : onSupplierEdit(supplier);
-                  }}
+                      : onSupplierEdit(supplier)
+                  }
                 >
                   <lucide_react_1.Edit className="h-4 w-4 mr-2" />
                   Editar
                 </dropdown_menu_1.DropdownMenuItem>
                 <dropdown_menu_1.DropdownMenuSeparator />
                 <dropdown_menu_1.DropdownMenuItem
-                  onClick={function () {
-                    return onSupplierDelete === null || onSupplierDelete === void 0
+                  onClick={() =>
+                    onSupplierDelete === null || onSupplierDelete === void 0
                       ? void 0
-                      : onSupplierDelete(supplier);
-                  }}
+                      : onSupplierDelete(supplier)
+                  }
                   className="text-red-600"
                 >
                   <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
@@ -404,7 +386,7 @@ function SupplierList(_a) {
       </card_1.Card>
     );
   };
-  var renderSupplierRow = function (supplier) {
+  var renderSupplierRow = (supplier) => {
     var _a, _b;
     return (
       <table_1.TableRow
@@ -413,22 +395,18 @@ function SupplierList(_a) {
           "cursor-pointer hover:bg-gray-50",
           selectedSuppliers.includes(supplier.id) && "bg-blue-50",
         )}
-        onClick={function () {
-          return onSupplierSelect === null || onSupplierSelect === void 0
+        onClick={() =>
+          onSupplierSelect === null || onSupplierSelect === void 0
             ? void 0
-            : onSupplierSelect(supplier);
-        }}
+            : onSupplierSelect(supplier)
+        }
       >
         {selectable && (
           <table_1.TableCell>
             <checkbox_1.Checkbox
               checked={selectedSuppliers.includes(supplier.id)}
-              onCheckedChange={function () {
-                return handleSelectSupplier(supplier.id);
-              }}
-              onClick={function (e) {
-                return e.stopPropagation();
-              }}
+              onCheckedChange={() => handleSelectSupplier(supplier.id)}
+              onClick={(e) => e.stopPropagation()}
             />
           </table_1.TableCell>
         )}
@@ -509,44 +487,39 @@ function SupplierList(_a) {
 
         <table_1.TableCell>
           <dropdown_menu_1.DropdownMenu>
-            <dropdown_menu_1.DropdownMenuTrigger
-              asChild
-              onClick={function (e) {
-                return e.stopPropagation();
-              }}
-            >
+            <dropdown_menu_1.DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
               <button_1.Button variant="ghost" size="sm">
                 <lucide_react_1.MoreVertical className="h-4 w-4" />
               </button_1.Button>
             </dropdown_menu_1.DropdownMenuTrigger>
             <dropdown_menu_1.DropdownMenuContent align="end">
               <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return onSupplierSelect === null || onSupplierSelect === void 0
+                onClick={() =>
+                  onSupplierSelect === null || onSupplierSelect === void 0
                     ? void 0
-                    : onSupplierSelect(supplier);
-                }}
+                    : onSupplierSelect(supplier)
+                }
               >
                 <lucide_react_1.Eye className="h-4 w-4 mr-2" />
                 Visualizar
               </dropdown_menu_1.DropdownMenuItem>
               <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return onSupplierEdit === null || onSupplierEdit === void 0
+                onClick={() =>
+                  onSupplierEdit === null || onSupplierEdit === void 0
                     ? void 0
-                    : onSupplierEdit(supplier);
-                }}
+                    : onSupplierEdit(supplier)
+                }
               >
                 <lucide_react_1.Edit className="h-4 w-4 mr-2" />
                 Editar
               </dropdown_menu_1.DropdownMenuItem>
               <dropdown_menu_1.DropdownMenuSeparator />
               <dropdown_menu_1.DropdownMenuItem
-                onClick={function () {
-                  return onSupplierDelete === null || onSupplierDelete === void 0
+                onClick={() =>
+                  onSupplierDelete === null || onSupplierDelete === void 0
                     ? void 0
-                    : onSupplierDelete(supplier);
-                }}
+                    : onSupplierDelete(supplier)
+                }
                 className="text-red-600"
               >
                 <lucide_react_1.Trash2 className="h-4 w-4 mr-2" />
@@ -569,32 +542,30 @@ function SupplierList(_a) {
           <skeleton_1.Skeleton className="h-10 w-32" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardContent className="p-4">
-                  <div className="flex items-start space-x-3">
-                    <skeleton_1.Skeleton className="h-10 w-10 rounded-full" />
-                    <div className="flex-1 space-y-2">
-                      <skeleton_1.Skeleton className="h-4 w-32" />
-                      <skeleton_1.Skeleton className="h-3 w-24" />
-                      <div className="flex gap-2">
-                        <skeleton_1.Skeleton className="h-5 w-16" />
-                        <skeleton_1.Skeleton className="h-5 w-12" />
-                      </div>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <skeleton_1.Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <skeleton_1.Skeleton className="h-4 w-32" />
+                    <skeleton_1.Skeleton className="h-3 w-24" />
+                    <div className="flex gap-2">
+                      <skeleton_1.Skeleton className="h-5 w-16" />
+                      <skeleton_1.Skeleton className="h-5 w-12" />
                     </div>
                   </div>
-                  <div className="mt-3 space-y-2">
-                    <skeleton_1.Skeleton className="h-2 w-full" />
-                    <div className="flex justify-between">
-                      <skeleton_1.Skeleton className="h-3 w-16" />
-                      <skeleton_1.Skeleton className="h-3 w-16" />
-                    </div>
+                </div>
+                <div className="mt-3 space-y-2">
+                  <skeleton_1.Skeleton className="h-2 w-full" />
+                  <div className="flex justify-between">
+                    <skeleton_1.Skeleton className="h-3 w-16" />
+                    <skeleton_1.Skeleton className="h-3 w-16" />
                   </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -611,12 +582,7 @@ function SupplierList(_a) {
           <p className="text-gray-500 mb-4">
             Ocorreu um erro ao carregar a lista de fornecedores. Tente novamente.
           </p>
-          <button_1.Button
-            onClick={function () {
-              return refetch();
-            }}
-            variant="outline"
-          >
+          <button_1.Button onClick={() => refetch()} variant="outline">
             <lucide_react_1.RefreshCw className="h-4 w-4 mr-2" />
             Tentar novamente
           </button_1.Button>
@@ -690,9 +656,7 @@ function SupplierList(_a) {
               <input_1.Input
                 placeholder="Buscar fornecedores..."
                 value={searchTerm}
-                onChange={function (e) {
-                  return setSearchTerm(e.target.value);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -701,64 +665,52 @@ function SupplierList(_a) {
             <div className="flex gap-2">
               <select_1.Select
                 value={selectedCategories[0] || "all"}
-                onValueChange={function (value) {
-                  return setSelectedCategories(value === "all" ? [] : [value]);
-                }}
+                onValueChange={(value) => setSelectedCategories(value === "all" ? [] : [value])}
               >
                 <select_1.SelectTrigger className="w-40">
                   <select_1.SelectValue placeholder="Categoria" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todas</select_1.SelectItem>
-                  {Object.values(supplier_1.SupplierCategory).map(function (category) {
-                    return (
-                      <select_1.SelectItem key={category} value={category}>
-                        {getCategoryIcon(category)} {category}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {Object.values(supplier_1.SupplierCategory).map((category) => (
+                    <select_1.SelectItem key={category} value={category}>
+                      {getCategoryIcon(category)} {category}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
 
               <select_1.Select
                 value={selectedStatuses[0] || "all"}
-                onValueChange={function (value) {
-                  return setSelectedStatuses(value === "all" ? [] : [value]);
-                }}
+                onValueChange={(value) => setSelectedStatuses(value === "all" ? [] : [value])}
               >
                 <select_1.SelectTrigger className="w-32">
                   <select_1.SelectValue placeholder="Status" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todos</select_1.SelectItem>
-                  {Object.values(supplier_1.SupplierStatus).map(function (status) {
-                    return (
-                      <select_1.SelectItem key={status} value={status}>
-                        {getStatusIcon(status)} {status}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {Object.values(supplier_1.SupplierStatus).map((status) => (
+                    <select_1.SelectItem key={status} value={status}>
+                      {getStatusIcon(status)} {status}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
 
               <select_1.Select
                 value={selectedRiskLevels[0] || "all"}
-                onValueChange={function (value) {
-                  return setSelectedRiskLevels(value === "all" ? [] : [value]);
-                }}
+                onValueChange={(value) => setSelectedRiskLevels(value === "all" ? [] : [value])}
               >
                 <select_1.SelectTrigger className="w-32">
                   <select_1.SelectValue placeholder="Risco" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todos</select_1.SelectItem>
-                  {Object.values(supplier_1.RiskLevel).map(function (risk) {
-                    return (
-                      <select_1.SelectItem key={risk} value={risk}>
-                        {risk}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {Object.values(supplier_1.RiskLevel).map((risk) => (
+                    <select_1.SelectItem key={risk} value={risk}>
+                      {risk}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
 
@@ -771,13 +723,7 @@ function SupplierList(_a) {
 
             {/* Actions */}
             <div className="flex gap-2">
-              <button_1.Button
-                onClick={function () {
-                  return refetch();
-                }}
-                variant="outline"
-                size="sm"
-              >
+              <button_1.Button onClick={() => refetch()} variant="outline" size="sm">
                 <lucide_react_1.RefreshCw className="h-4 w-4 mr-2" />
                 Atualizar
               </button_1.Button>
@@ -802,27 +748,21 @@ function SupplierList(_a) {
                   <button_1.Button
                     size="sm"
                     variant="outline"
-                    onClick={function () {
-                      return handleBulkAction("activate");
-                    }}
+                    onClick={() => handleBulkAction("activate")}
                   >
                     Ativar
                   </button_1.Button>
                   <button_1.Button
                     size="sm"
                     variant="outline"
-                    onClick={function () {
-                      return handleBulkAction("deactivate");
-                    }}
+                    onClick={() => handleBulkAction("deactivate")}
                   >
                     Desativar
                   </button_1.Button>
                   <button_1.Button
                     size="sm"
                     variant="outline"
-                    onClick={function () {
-                      return handleBulkAction("delete");
-                    }}
+                    onClick={() => handleBulkAction("delete")}
                     className="text-red-600 hover:text-red-700"
                   >
                     Excluir
@@ -856,9 +796,7 @@ function SupplierList(_a) {
                   )}
                   <table_1.TableHead
                     className="cursor-pointer hover:bg-gray-50"
-                    onClick={function () {
-                      return handleSort("name");
-                    }}
+                    onClick={() => handleSort("name")}
                   >
                     <div className="flex items-center gap-1">
                       Fornecedor
@@ -867,9 +805,7 @@ function SupplierList(_a) {
                   </table_1.TableHead>
                   <table_1.TableHead
                     className="cursor-pointer hover:bg-gray-50"
-                    onClick={function () {
-                      return handleSort("status");
-                    }}
+                    onClick={() => handleSort("status")}
                   >
                     <div className="flex items-center gap-1">
                       Status
@@ -878,9 +814,7 @@ function SupplierList(_a) {
                   </table_1.TableHead>
                   <table_1.TableHead
                     className="cursor-pointer hover:bg-gray-50"
-                    onClick={function () {
-                      return handleSort("risk");
-                    }}
+                    onClick={() => handleSort("risk")}
                   >
                     <div className="flex items-center gap-1">
                       Risco
@@ -889,9 +823,7 @@ function SupplierList(_a) {
                   </table_1.TableHead>
                   <table_1.TableHead
                     className="cursor-pointer hover:bg-gray-50"
-                    onClick={function () {
-                      return handleSort("performance");
-                    }}
+                    onClick={() => handleSort("performance")}
                   >
                     <div className="flex items-center gap-1">
                       Performance

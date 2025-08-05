@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // NeonPro Inventory Management System - TypeScript Types
 // Epic 6: Real-time Stock Tracking with Barcode/QR Integration

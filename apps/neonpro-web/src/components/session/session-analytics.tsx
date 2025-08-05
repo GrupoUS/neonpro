@@ -1,10 +1,39 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  PieChart as PieChartIcon,
+  RefreshCw,
+  Shield,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Select,
   SelectContent,
@@ -13,35 +42,7 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { useSessionAnalytics } from "@/hooks/use-session";
-import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
-import type {
-  Activity,
-  Users,
-  Shield,
-  Clock,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle,
-  BarChart3,
-  PieChart as PieChartIcon,
-  Calendar,
-  RefreshCw,
-} from "lucide-react";
-import type { SessionAnalytics, SecurityEventType, DeviceType } from "@/types/session";
+import type { DeviceType, SecurityEventType, SessionAnalytics } from "@/types/session";
 
 interface SessionAnalyticsProps {
   userId?: string;

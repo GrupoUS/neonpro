@@ -14,7 +14,46 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type { format, subDays } from "date-fns";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Brain,
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  LineChart as LineChartIcon,
+  RefreshCw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type React from "react";
+import { useMemo, useState } from "react";
+import type {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar,
+  RadarChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -22,11 +61,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Separator } from "@/components/ui/separator";
 import type {
   Select,
   SelectContent,
@@ -34,42 +69,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  Brain,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle,
-  Activity,
-  Clock,
-  Zap,
-  Target,
-  Database,
-  BarChart3,
-  LineChart as LineChartIcon,
-  Download,
-  RefreshCw,
-} from "lucide-react";
-import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-} from "recharts";
-import type { format, subDays } from "date-fns";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import type { ModelPerformanceMetrics } from "@/lib/forecasting";
 

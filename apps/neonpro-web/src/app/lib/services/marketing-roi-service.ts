@@ -12,34 +12,34 @@
  * - Executive dashboard analytics and reporting
  */
 
-import type { createClient } from "@/lib/supabase/server";
 import type {
-  MarketingCampaign,
-  TreatmentROI,
+  AlertType,
+  CampaignStatus,
+  CampaignType,
+  CreateMarketingCampaignRequest,
+  CreateOptimizationRecommendationRequest,
+  CreateROIAlertRequest,
   CustomerAcquisitionCost,
   CustomerLifetimeValue,
-  ROIAlert,
-  ROIMonitoringRule,
-  OptimizationRecommendation,
-  ROIDashboardMetrics,
-  ROITrendData,
-  ROIComparison,
-  ROIForecast,
+  MarketingCampaign,
   MarketingChannel,
-  CampaignType,
-  CampaignStatus,
-  AlertType,
-  OptimizationArea,
-  ROIMetricType,
-  CreateMarketingCampaignRequest,
-  UpdateCampaignMetricsRequest,
-  CreateROIAlertRequest,
-  CreateOptimizationRecommendationRequest,
   MarketingROIFilters,
-  TreatmentROIFilters,
-  ROIMetric,
+  OptimizationArea,
+  OptimizationRecommendation,
+  ROIAlert,
+  ROIComparison,
+  ROIDashboardMetrics,
+  ROIForecast,
   ROIInsight,
+  ROIMetric,
+  ROIMetricType,
+  ROIMonitoringRule,
+  ROITrendData,
+  TreatmentROI,
+  TreatmentROIFilters,
+  UpdateCampaignMetricsRequest,
 } from "@/app/types/marketing-roi";
+import type { createClient } from "@/lib/supabase/server";
 
 export class MarketingROIService {
   // Supabase client created per method for proper request context

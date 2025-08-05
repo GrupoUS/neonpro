@@ -1,17 +1,16 @@
-"use strict";
 // useSSO Hook Tests
 // Story 1.3: SSO Integration - React Hook Testing
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -21,7 +20,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -50,8 +49,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -72,9 +69,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var use_sso_1 = require("@/hooks/use-sso");
@@ -147,7 +144,7 @@ Object.defineProperty(window, "location", {
   },
   writable: true,
 });
-describe("useSSO", function () {
+describe("useSSO", () => {
   var mockProviders = [
     {
       id: "google",
@@ -174,37 +171,32 @@ describe("useSSO", function () {
       },
     },
   ];
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     fetch.mockClear();
   });
-  describe("getProviders", function () {
-    it("should fetch and set providers", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getProviders", () => {
+    it("should fetch and set providers", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [2 /*return*/, { providers: mockProviders }];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [2 /*return*/, { providers: mockProviders }]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_sso_1.useSSO)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_sso_1.useSSO)()).result;
               expect(result.current.isLoading).toBe(false);
               expect(result.current.providers).toEqual([]);
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.getProviders()];
@@ -213,8 +205,8 @@ describe("useSSO", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -224,23 +216,20 @@ describe("useSSO", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle fetch error", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle fetch error", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockRejectedValueOnce(new Error("Network error"));
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_sso_1.useSSO)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_sso_1.useSSO)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.getProviders()];
@@ -249,8 +238,8 @@ describe("useSSO", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -259,35 +248,29 @@ describe("useSSO", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("login", function () {
-    it("should redirect to authorization URL", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("login", () => {
+    it("should redirect to authorization URL", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockAuthUrl, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockAuthUrl = "https://accounts.google.com/oauth/authorize?...";
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [2 /*return*/, { authUrl: mockAuthUrl }];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [2 /*return*/, { authUrl: mockAuthUrl }]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_sso_1.useSSO)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_sso_1.useSSO)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.login("google")];
@@ -296,8 +279,8 @@ describe("useSSO", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -308,40 +291,34 @@ describe("useSSO", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("logout", function () {
-    it("should logout and redirect", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("logout", () => {
+    it("should logout and redirect", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: true,
-                          redirectUrl: "/auth/login?logout=success",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: true,
+                        redirectUrl: "/auth/login?logout=success",
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_sso_1.useSSO)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_sso_1.useSSO)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.logout()];
@@ -350,8 +327,8 @@ describe("useSSO", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -364,23 +341,20 @@ describe("useSSO", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle logout error", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle logout error", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockRejectedValueOnce(new Error("Logout failed"));
-              result = (0, react_1.renderHook)(function () {
-                return (0, use_sso_1.useSSO)();
-              }).result;
+              result = (0, react_1.renderHook)(() => (0, use_sso_1.useSSO)()).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.logout()];
@@ -389,8 +363,8 @@ describe("useSSO", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -398,18 +372,15 @@ describe("useSSO", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("session management", function () {
-    it("should update session state", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("session management", () => {
+    it("should update session state", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
-          result = (0, react_1.renderHook)(function () {
-            return (0, use_sso_1.useSSO)();
-          }).result;
-          (0, react_1.act)(function () {
+        return __generator(this, (_a) => {
+          result = (0, react_1.renderHook)(() => (0, use_sso_1.useSSO)()).result;
+          (0, react_1.act)(() => {
             result.current.updateSession({
               id: "session_123",
               userId: "user_123",
@@ -427,7 +398,6 @@ describe("useSSO", function () {
           expect(result.current.isAuthenticated).toBe(true);
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
 });

@@ -7,10 +7,21 @@
  * Features: Create, edit, view, manage invoices with NFSe integration
  */
 
+// Icons
+import type {
+  AlertCircle,
+  CheckCircle,
+  DollarSign,
+  Download,
+  Edit,
+  FileText,
+  Plus,
+  Search,
+  Send,
+} from "lucide-react";
 import type { useRouter } from "next/navigation";
 import type { useEffect, useState } from "react";
 import type { toast } from "sonner";
-
 // UI Components
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -26,28 +37,6 @@ import type { Label } from "@/components/ui/label";
 import type { Separator } from "@/components/ui/separator";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Textarea } from "@/components/ui/textarea";
-
-// Icons
-import type {
-  AlertCircle,
-  CheckCircle,
-  DollarSign,
-  Download,
-  Edit,
-  FileText,
-  Plus,
-  Search,
-  Send,
-} from "lucide-react";
-
-// Types
-import type {
-  CreateInvoiceInput,
-  FinancialSummary,
-  Invoice,
-  InvoiceStatus,
-} from "@/lib/types/financial";
-
 // Services
 import type {
   createInvoice,
@@ -56,6 +45,13 @@ import type {
   listInvoices,
   updateInvoice,
 } from "@/lib/supabase/financial";
+// Types
+import type {
+  CreateInvoiceInput,
+  FinancialSummary,
+  Invoice,
+  InvoiceStatus,
+} from "@/lib/types/financial";
 
 interface InvoiceManagerProps {
   clinicId: string;

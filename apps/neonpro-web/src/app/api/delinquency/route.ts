@@ -1,7 +1,4 @@
-import type { NextRequest, NextResponse } from "next/server";
-import type { z } from "zod";
-import type { createClient } from "@supabase/supabase-js";
-import type { DelinquencyManager } from "@/lib/payments/delinquency/delinquency-manager";
+import type { NextRequest } from "next/server";
 
 // Validation schemas
 const GetDelinquencyQuerySchema = z.object({
@@ -209,13 +206,13 @@ export async function POST(request: NextRequest) {
 
           if (validatedData.customerIds) {
             filteredPayments = filteredPayments.filter((p) =>
-              validatedData.customerIds!.includes(p.customerId),
+              validatedData.customerIds?.includes(p.customerId),
             );
           }
 
           if (validatedData.riskLevels) {
             filteredPayments = filteredPayments.filter((p) =>
-              validatedData.riskLevels!.includes(p.riskLevel),
+              validatedData.riskLevels?.includes(p.riskLevel),
             );
           }
 

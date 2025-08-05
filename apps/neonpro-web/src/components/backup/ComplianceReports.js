@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -174,7 +171,7 @@ var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var sonner_1 = require("sonner");
-var ComplianceReports = function () {
+var ComplianceReports = () => {
   var _a = (0, react_1.useState)([]),
     reports = _a[0],
     setReports = _a[1];
@@ -218,19 +215,16 @@ var ComplianceReports = function () {
     }),
     newReport = _k[0],
     setNewReport = _k[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadData();
   }, []);
-  (0, react_1.useEffect)(
-    function () {
-      applyFilters();
-    },
-    [reports, filters],
-  );
-  var loadData = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    applyFilters();
+  }, [reports, filters]);
+  var loadData = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -252,11 +246,10 @@ var ComplianceReports = function () {
         }
       });
     });
-  };
-  var loadReports = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadReports = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/backup/compliance/reports")];
@@ -273,11 +266,10 @@ var ComplianceReports = function () {
         }
       });
     });
-  };
-  var loadTemplates = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadTemplates = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/backup/compliance/templates")];
@@ -294,11 +286,10 @@ var ComplianceReports = function () {
         }
       });
     });
-  };
-  var loadMetrics = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadMetrics = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/backup/compliance/metrics")];
@@ -315,45 +306,35 @@ var ComplianceReports = function () {
         }
       });
     });
-  };
-  var applyFilters = function () {
+  var applyFilters = () => {
     var filtered = __spreadArray([], reports, true);
     if (filters.type) {
-      filtered = filtered.filter(function (report) {
-        return report.type === filters.type;
-      });
+      filtered = filtered.filter((report) => report.type === filters.type);
     }
     if (filters.status) {
-      filtered = filtered.filter(function (report) {
-        return report.status === filters.status;
-      });
+      filtered = filtered.filter((report) => report.status === filters.status);
     }
     if (filters.dateFrom) {
       var fromDate_1 = new Date(filters.dateFrom);
-      filtered = filtered.filter(function (report) {
-        return new Date(report.created_at) >= fromDate_1;
-      });
+      filtered = filtered.filter((report) => new Date(report.created_at) >= fromDate_1);
     }
     if (filters.dateTo) {
       var toDate_1 = new Date(filters.dateTo);
-      filtered = filtered.filter(function (report) {
-        return new Date(report.created_at) <= toDate_1;
-      });
+      filtered = filtered.filter((report) => new Date(report.created_at) <= toDate_1);
     }
     if (filters.searchTerm) {
       var term_1 = filters.searchTerm.toLowerCase();
-      filtered = filtered.filter(function (report) {
-        return (
-          report.title.toLowerCase().includes(term_1) || report.id.toLowerCase().includes(term_1)
-        );
-      });
+      filtered = filtered.filter(
+        (report) =>
+          report.title.toLowerCase().includes(term_1) || report.id.toLowerCase().includes(term_1),
+      );
     }
     setFilteredReports(filtered);
   };
-  var handleCreateReport = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleCreateReport = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -395,11 +376,10 @@ var ComplianceReports = function () {
         }
       });
     });
-  };
-  var handleGenerateReport = function (reportId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleGenerateReport = (reportId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -429,8 +409,7 @@ var ComplianceReports = function () {
         }
       });
     });
-  };
-  var handleDownloadReport = function (reportId_1) {
+  var handleDownloadReport = (reportId_1) => {
     var args_1 = [];
     for (var _i = 1; _i < arguments.length; _i++) {
       args_1[_i - 1] = arguments[_i];
@@ -444,7 +423,7 @@ var ComplianceReports = function () {
         if (format === void 0) {
           format = "PDF";
         }
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 5, , 6]);
@@ -489,7 +468,7 @@ var ComplianceReports = function () {
       },
     );
   };
-  var getTypeIcon = function (type) {
+  var getTypeIcon = (type) => {
     switch (type) {
       case "LGPD":
         return <lucide_react_1.Shield className="h-4 w-4" />;
@@ -503,7 +482,7 @@ var ComplianceReports = function () {
         return <lucide_react_1.FileText className="h-4 w-4" />;
     }
   };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "APPROVED":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -517,7 +496,7 @@ var ComplianceReports = function () {
         return <lucide_react_1.Clock className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "APPROVED":
         return "default";
@@ -531,7 +510,7 @@ var ComplianceReports = function () {
         return "outline";
     }
   };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "CRITICAL":
         return "text-red-600 bg-red-50";
@@ -545,7 +524,7 @@ var ComplianceReports = function () {
         return "text-gray-600 bg-gray-50";
     }
   };
-  var getComplianceScoreColor = function (score) {
+  var getComplianceScoreColor = (score) => {
     if (score >= 90) return "text-green-600";
     if (score >= 70) return "text-yellow-600";
     return "text-red-600";
@@ -582,11 +561,9 @@ var ComplianceReports = function () {
                   <input_1.Input
                     id="title"
                     value={newReport.title}
-                    onChange={function (e) {
-                      return setNewReport(
-                        __assign(__assign({}, newReport), { title: e.target.value }),
-                      );
-                    }}
+                    onChange={(e) =>
+                      setNewReport(__assign(__assign({}, newReport), { title: e.target.value }))
+                    }
                     placeholder="Ex: Relatório LGPD Mensal"
                   />
                 </div>
@@ -595,9 +572,9 @@ var ComplianceReports = function () {
                   <label_1.Label>Tipo de Compliance</label_1.Label>
                   <select_1.Select
                     value={newReport.type}
-                    onValueChange={function (value) {
-                      return setNewReport(__assign(__assign({}, newReport), { type: value }));
-                    }}
+                    onValueChange={(value) =>
+                      setNewReport(__assign(__assign({}, newReport), { type: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -619,11 +596,11 @@ var ComplianceReports = function () {
                       id="periodStart"
                       type="date"
                       value={newReport.period_start}
-                      onChange={function (e) {
-                        return setNewReport(
+                      onChange={(e) =>
+                        setNewReport(
                           __assign(__assign({}, newReport), { period_start: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                   <div className="space-y-2">
@@ -632,11 +609,11 @@ var ComplianceReports = function () {
                       id="periodEnd"
                       type="date"
                       value={newReport.period_end}
-                      onChange={function (e) {
-                        return setNewReport(
+                      onChange={(e) =>
+                        setNewReport(
                           __assign(__assign({}, newReport), { period_end: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -645,23 +622,19 @@ var ComplianceReports = function () {
                   <label_1.Label>Template (Opcional)</label_1.Label>
                   <select_1.Select
                     value={newReport.template_id}
-                    onValueChange={function (value) {
-                      return setNewReport(
-                        __assign(__assign({}, newReport), { template_id: value }),
-                      );
-                    }}
+                    onValueChange={(value) =>
+                      setNewReport(__assign(__assign({}, newReport), { template_id: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Selecione um template" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {templates.map(function (template) {
-                        return (
-                          <select_1.SelectItem key={template.id} value={template.id}>
-                            {template.name}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {templates.map((template) => (
+                        <select_1.SelectItem key={template.id} value={template.id}>
+                          {template.name}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -671,23 +644,18 @@ var ComplianceReports = function () {
                   <textarea_1.Textarea
                     id="description"
                     value={newReport.description}
-                    onChange={function (e) {
-                      return setNewReport(
+                    onChange={(e) =>
+                      setNewReport(
                         __assign(__assign({}, newReport), { description: e.target.value }),
-                      );
-                    }}
+                      )
+                    }
                     placeholder="Descrição do relatório..."
                     rows={3}
                   />
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setShowCreateDialog(false);
-                    }}
-                  >
+                  <button_1.Button variant="outline" onClick={() => setShowCreateDialog(false)}>
                     Cancelar
                   </button_1.Button>
                   <button_1.Button onClick={handleCreateReport}>Criar Relatório</button_1.Button>
@@ -775,11 +743,9 @@ var ComplianceReports = function () {
                   id="search"
                   placeholder="Título ou ID..."
                   value={filters.searchTerm}
-                  onChange={function (e) {
-                    return setFilters(
-                      __assign(__assign({}, filters), { searchTerm: e.target.value }),
-                    );
-                  }}
+                  onChange={(e) =>
+                    setFilters(__assign(__assign({}, filters), { searchTerm: e.target.value }))
+                  }
                   className="pl-9"
                 />
               </div>
@@ -789,9 +755,9 @@ var ComplianceReports = function () {
               <label_1.Label>Tipo</label_1.Label>
               <select_1.Select
                 value={filters.type}
-                onValueChange={function (value) {
-                  return setFilters(__assign(__assign({}, filters), { type: value }));
-                }}
+                onValueChange={(value) =>
+                  setFilters(__assign(__assign({}, filters), { type: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Todos" />
@@ -811,9 +777,9 @@ var ComplianceReports = function () {
               <label_1.Label>Status</label_1.Label>
               <select_1.Select
                 value={filters.status}
-                onValueChange={function (value) {
-                  return setFilters(__assign(__assign({}, filters), { status: value }));
-                }}
+                onValueChange={(value) =>
+                  setFilters(__assign(__assign({}, filters), { status: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Todos" />
@@ -834,9 +800,9 @@ var ComplianceReports = function () {
                 id="dateFrom"
                 type="date"
                 value={filters.dateFrom}
-                onChange={function (e) {
-                  return setFilters(__assign(__assign({}, filters), { dateFrom: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFilters(__assign(__assign({}, filters), { dateFrom: e.target.value }))
+                }
               />
             </div>
 
@@ -846,9 +812,9 @@ var ComplianceReports = function () {
                 id="dateTo"
                 type="date"
                 value={filters.dateTo}
-                onChange={function (e) {
-                  return setFilters(__assign(__assign({}, filters), { dateTo: e.target.value }));
-                }}
+                onChange={(e) =>
+                  setFilters(__assign(__assign({}, filters), { dateTo: e.target.value }))
+                }
               />
             </div>
           </div>
@@ -884,88 +850,82 @@ var ComplianceReports = function () {
                     </table_1.TableRow>
                   </table_1.TableHeader>
                   <table_1.TableBody>
-                    {filteredReports.map(function (report) {
-                      return (
-                        <table_1.TableRow key={report.id}>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-2">
-                              {getTypeIcon(report.type)}
-                              <div>
-                                <div className="font-medium">{report.title}</div>
-                                <div className="text-sm text-muted-foreground">
-                                  {report.id.slice(0, 8)}...
-                                </div>
+                    {filteredReports.map((report) => (
+                      <table_1.TableRow key={report.id}>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getTypeIcon(report.type)}
+                            <div>
+                              <div className="font-medium">{report.title}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {report.id.slice(0, 8)}...
                               </div>
                             </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <badge_1.Badge variant="outline">{report.type}</badge_1.Badge>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-2">
-                              {getStatusIcon(report.status)}
-                              <badge_1.Badge variant={getStatusColor(report.status)}>
-                                {report.status}
-                              </badge_1.Badge>
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="text-sm">
-                              {(0, utils_1.formatDate)(new Date(report.period_start))} -{" "}
-                              {(0, utils_1.formatDate)(new Date(report.period_end))}
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <span
-                              className={"font-medium ".concat(
-                                getComplianceScoreColor(report.metrics.compliance_score),
-                              )}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <badge_1.Badge variant="outline">{report.type}</badge_1.Badge>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            {getStatusIcon(report.status)}
+                            <badge_1.Badge variant={getStatusColor(report.status)}>
+                              {report.status}
+                            </badge_1.Badge>
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">
+                            {(0, utils_1.formatDate)(new Date(report.period_start))} -{" "}
+                            {(0, utils_1.formatDate)(new Date(report.period_end))}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <span
+                            className={"font-medium ".concat(
+                              getComplianceScoreColor(report.metrics.compliance_score),
+                            )}
+                          >
+                            {report.metrics.compliance_score}%
+                          </span>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="text-sm">
+                            {(0, utils_1.formatDate)(new Date(report.created_at))}
+                          </div>
+                        </table_1.TableCell>
+                        <table_1.TableCell>
+                          <div className="flex items-center space-x-2">
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedReport(report);
+                                setShowDetailsDialog(true);
+                              }}
                             >
-                              {report.metrics.compliance_score}%
-                            </span>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="text-sm">
-                              {(0, utils_1.formatDate)(new Date(report.created_at))}
-                            </div>
-                          </table_1.TableCell>
-                          <table_1.TableCell>
-                            <div className="flex items-center space-x-2">
+                              <lucide_react_1.Eye className="h-4 w-4" />
+                            </button_1.Button>
+                            <button_1.Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDownloadReport(report.id)}
+                            >
+                              <lucide_react_1.Download className="h-4 w-4" />
+                            </button_1.Button>
+                            {report.status === "DRAFT" && (
                               <button_1.Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={function () {
-                                  setSelectedReport(report);
-                                  setShowDetailsDialog(true);
-                                }}
+                                onClick={() => handleGenerateReport(report.id)}
                               >
-                                <lucide_react_1.Eye className="h-4 w-4" />
+                                <lucide_react_1.RefreshCw className="h-4 w-4" />
                               </button_1.Button>
-                              <button_1.Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={function () {
-                                  return handleDownloadReport(report.id);
-                                }}
-                              >
-                                <lucide_react_1.Download className="h-4 w-4" />
-                              </button_1.Button>
-                              {report.status === "DRAFT" && (
-                                <button_1.Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={function () {
-                                    return handleGenerateReport(report.id);
-                                  }}
-                                >
-                                  <lucide_react_1.RefreshCw className="h-4 w-4" />
-                                </button_1.Button>
-                              )}
-                            </div>
-                          </table_1.TableCell>
-                        </table_1.TableRow>
-                      );
-                    })}
+                            )}
+                          </div>
+                        </table_1.TableCell>
+                      </table_1.TableRow>
+                    ))}
                   </table_1.TableBody>
                 </table_1.Table>}
         </card_1.CardContent>
@@ -1050,28 +1010,26 @@ var ComplianceReports = function () {
                 <div>
                   <label_1.Label className="text-sm font-medium">Achados</label_1.Label>
                   <div className="space-y-2 mt-2">
-                    {selectedReport.findings.map(function (finding, index) {
-                      return (
-                        <alert_1.Alert key={index} className={getSeverityColor(finding.severity)}>
-                          <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                          <alert_1.AlertDescription>
-                            <div className="flex justify-between items-start">
-                              <div className="flex-1">
-                                <strong>{finding.category}:</strong> {finding.description}
-                                {finding.recommendation && (
-                                  <div className="mt-1 text-sm">
-                                    <strong>Recomendação:</strong> {finding.recommendation}
-                                  </div>
-                                )}
-                              </div>
-                              <badge_1.Badge variant="outline" className="ml-2">
-                                {finding.severity}
-                              </badge_1.Badge>
+                    {selectedReport.findings.map((finding, index) => (
+                      <alert_1.Alert key={index} className={getSeverityColor(finding.severity)}>
+                        <lucide_react_1.AlertTriangle className="h-4 w-4" />
+                        <alert_1.AlertDescription>
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <strong>{finding.category}:</strong> {finding.description}
+                              {finding.recommendation && (
+                                <div className="mt-1 text-sm">
+                                  <strong>Recomendação:</strong> {finding.recommendation}
+                                </div>
+                              )}
                             </div>
-                          </alert_1.AlertDescription>
-                        </alert_1.Alert>
-                      );
-                    })}
+                            <badge_1.Badge variant="outline" className="ml-2">
+                              {finding.severity}
+                            </badge_1.Badge>
+                          </div>
+                        </alert_1.AlertDescription>
+                      </alert_1.Alert>
+                    ))}
                   </div>
                 </div>
               )}

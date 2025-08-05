@@ -4,11 +4,11 @@
 // API endpoints for churn prediction generation and management
 // =====================================================================================
 
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
-import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
-import { ChurnRiskLevel, ChurnModelType } from "@/app/types/retention-analytics";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { RetentionAnalyticsService } from "@/app/lib/services/retention-analytics-service";
+import { ChurnModelType, ChurnRiskLevel } from "@/app/types/retention-analytics";
+import { createClient } from "@/app/utils/supabase/server";
 
 // =====================================================================================
 // VALIDATION SCHEMAS
@@ -148,11 +148,12 @@ export async function GET(request: NextRequest, { params }: { params: { clinicId
           valueA = a.churn_probability;
           valueB = b.churn_probability;
           break;
-        case "risk_level":
+        case "risk_level": {
           const riskOrder = { low: 1, medium: 2, high: 3, critical: 4 };
           valueA = riskOrder[a.risk_level];
           valueB = riskOrder[b.risk_level];
           break;
+        }
         default:
           valueA = a.prediction_date;
           valueB = b.prediction_date;

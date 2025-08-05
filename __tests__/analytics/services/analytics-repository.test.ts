@@ -1,7 +1,7 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { AnalyticsRepository } from "@/lib/analytics/repository";
 import { createClient } from "@/utils/supabase/server";
-import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Mock Supabase client
 jest.mock("@/utils/supabase/server");

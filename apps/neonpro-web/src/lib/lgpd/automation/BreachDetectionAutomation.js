@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,10 +154,10 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BreachDetectionAutomation = void 0;
-var BreachDetectionAutomation = /** @class */ (function () {
+var BreachDetectionAutomation = /** @class */ (() => {
   function BreachDetectionAutomation(supabase, complianceManager, config) {
     this.monitoringInterval = null;
     this.detectionCallbacks = [];
@@ -196,8 +193,8 @@ var BreachDetectionAutomation = /** @class */ (function () {
             _a.sent();
             if (!this.config.real_time_monitoring) return [3 /*break*/, 3];
             this.monitoringInterval = setInterval(
-              function () {
-                return __awaiter(_this, void 0, void 0, function () {
+              () =>
+                __awaiter(_this, void 0, void 0, function () {
                   var error_2;
                   return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -215,8 +212,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
                         return [2 /*return*/];
                     }
                   });
-                });
-              },
+                }),
               intervalMinutes * 60 * 1000,
             );
             // Set up database change listeners for critical events
@@ -998,7 +994,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
   BreachDetectionAutomation.prototype.validateDetectionRule = function (rule) {
     return __awaiter(this, void 0, void 0, function () {
       var errors;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errors = [];
         if (!rule.name || rule.name.trim().length === 0) {
           errors.push("Rule name is required");
@@ -1195,8 +1191,8 @@ var BreachDetectionAutomation = /** @class */ (function () {
               schema: "public",
               table: "auth.users",
             },
-            function (payload) {
-              return __awaiter(_this, void 0, void 0, function () {
+            (payload) =>
+              __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                   switch (_a.label) {
                     case 0:
@@ -1206,8 +1202,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
                       return [2 /*return*/];
                   }
                 });
-              });
-            },
+              }),
           )
           .on(
             "postgres_changes",
@@ -1216,8 +1211,8 @@ var BreachDetectionAutomation = /** @class */ (function () {
               schema: "public",
               table: "lgpd_audit_events",
             },
-            function (payload) {
-              return __awaiter(_this, void 0, void 0, function () {
+            (payload) =>
+              __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
                   switch (_a.label) {
                     case 0:
@@ -1227,8 +1222,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
                       return [2 /*return*/];
                   }
                 });
-              });
-            },
+              }),
           )
           .subscribe();
         return [2 /*return*/];
@@ -1269,7 +1263,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
       });
     });
   };
-  BreachDetectionAutomation.prototype.mapRuleTypeToIncidentType = function (ruleType) {
+  BreachDetectionAutomation.prototype.mapRuleTypeToIncidentType = (ruleType) => {
     var mapping = {
       anomaly: "unauthorized_access",
       threshold: "data_exfiltration",
@@ -1280,17 +1274,11 @@ var BreachDetectionAutomation = /** @class */ (function () {
     };
     return mapping[ruleType] || "unauthorized_access";
   };
-  BreachDetectionAutomation.prototype.requiresANPDNotification = function (
-    severity,
-    detectionResult,
-  ) {
+  BreachDetectionAutomation.prototype.requiresANPDNotification = (severity, detectionResult) => {
     // ANPD notification required for high/critical incidents or when personal data is involved
     return severity === "high" || severity === "critical" || detectionResult.personal_data_involved;
   };
-  BreachDetectionAutomation.prototype.requiresUserNotification = function (
-    severity,
-    detectionResult,
-  ) {
+  BreachDetectionAutomation.prototype.requiresUserNotification = (severity, detectionResult) => {
     // User notification required when their personal data is compromised
     return (
       detectionResult.personal_data_involved && (severity === "high" || severity === "critical")
@@ -1298,7 +1286,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
   };
   BreachDetectionAutomation.prototype.generateANPDNotificationContent = function (incident) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate ANPD-compliant notification content
         return [
           2 /*return*/,
@@ -1324,7 +1312,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
   };
   BreachDetectionAutomation.prototype.generateUserNotificationContent = function (incident) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate user-friendly notification content
         return [
           2 /*return*/,
@@ -1363,7 +1351,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
       });
     });
   };
-  BreachDetectionAutomation.prototype.getAutomatedContainmentActions = function (incidentData) {
+  BreachDetectionAutomation.prototype.getAutomatedContainmentActions = (incidentData) => {
     // Define automated containment actions based on incident type
     var actions = [];
     if (incidentData.incident_type === "unauthorized_access") {
@@ -1381,7 +1369,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
   };
   BreachDetectionAutomation.prototype.executeContainmentAction = function (incidentId, action) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Execute specific containment action
         console.log(
           "Executing containment action: ".concat(action.type, " for incident ").concat(incidentId),
@@ -1392,7 +1380,7 @@ var BreachDetectionAutomation = /** @class */ (function () {
   };
   BreachDetectionAutomation.prototype.sendInternalNotification = function (incidentId, channel) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Send internal notifications via specified channel
         console.log(
           "Sending internal notification via ".concat(channel, " for incident ").concat(incidentId),
@@ -1403,16 +1391,12 @@ var BreachDetectionAutomation = /** @class */ (function () {
   };
   BreachDetectionAutomation.prototype.analyzeLoginPattern = function (authEvent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   BreachDetectionAutomation.prototype.analyzeAuditPattern = function (auditEvent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   return BreachDetectionAutomation;

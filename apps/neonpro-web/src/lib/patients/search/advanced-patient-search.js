@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Advanced Patient Search System with AI
  * Implements intelligent search, filtering, and segmentation
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,12 +133,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdvancedPatientSearch = void 0;
 var client_1 = require("@/lib/supabase/client");
 var logger_1 = require("@/lib/logger");
-var AdvancedPatientSearch = /** @class */ (function () {
+var AdvancedPatientSearch = /** @class */ (() => {
   function AdvancedPatientSearch() {}
   /**
    * Perform intelligent patient search with AI suggestions
@@ -229,7 +226,7 @@ var AdvancedPatientSearch = /** @class */ (function () {
   AdvancedPatientSearch.quickPatientLookup = function (query) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, patients, error, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -395,18 +392,16 @@ var AdvancedPatientSearch = /** @class */ (function () {
   /**
    * Process search query for AI-powered matching
    */
-  AdvancedPatientSearch.processSearchQuery = function (query) {
+  AdvancedPatientSearch.processSearchQuery = (query) => {
     // Remove special characters and split into terms
     var cleanQuery = query.replace(/[^a-zA-Z0-9\s]/g, " ");
     var terms = cleanQuery
       .toLowerCase()
       .split(/\s+/)
-      .filter(function (term) {
-        return term.length > 1;
-      });
+      .filter((term) => term.length > 1);
     // Add fuzzy matching variations
     var expandedTerms = [];
-    terms.forEach(function (term) {
+    terms.forEach((term) => {
       expandedTerms.push(term);
       // Add partial matches for names
       if (term.length > 3) {
@@ -419,22 +414,22 @@ var AdvancedPatientSearch = /** @class */ (function () {
   /**
    * Apply text search to query
    */
-  AdvancedPatientSearch.applyTextSearch = function (query, searchTerms) {
+  AdvancedPatientSearch.applyTextSearch = (query, searchTerms) => {
     if (searchTerms.length === 0) return query;
     var searchConditions = searchTerms
-      .map(function (term) {
-        return "name.ilike.%"
+      .map((term) =>
+        "name.ilike.%"
           .concat(term, "%,email.ilike.%")
           .concat(term, "%,phone.ilike.%")
-          .concat(term, "%");
-      })
+          .concat(term, "%"),
+      )
       .join(",");
     return query.or(searchConditions);
   };
   /**
    * Apply filters to search query
    */
-  AdvancedPatientSearch.applyFilters = function (query, filters) {
+  AdvancedPatientSearch.applyFilters = (query, filters) => {
     if (filters.name) {
       query = query.ilike("name", "%".concat(filters.name, "%"));
     }
@@ -478,7 +473,7 @@ var AdvancedPatientSearch = /** @class */ (function () {
   AdvancedPatientSearch.generateSearchSuggestions = function (query, filters) {
     return __awaiter(this, void 0, void 0, function () {
       var suggestions, popularNames, services, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             suggestions = [];
@@ -497,7 +492,7 @@ var AdvancedPatientSearch = /** @class */ (function () {
             popularNames = _a.sent().data;
             popularNames === null || popularNames === void 0
               ? void 0
-              : popularNames.forEach(function (patient) {
+              : popularNames.forEach((patient) => {
                   suggestions.push({
                     type: "patient",
                     value: patient.name,
@@ -518,7 +513,7 @@ var AdvancedPatientSearch = /** @class */ (function () {
             services = _a.sent().data;
             services === null || services === void 0
               ? void 0
-              : services.forEach(function (service) {
+              : services.forEach((service) => {
                   suggestions.push({
                     type: "service",
                     value: service.id,
@@ -535,9 +530,7 @@ var AdvancedPatientSearch = /** @class */ (function () {
           case 5:
             return [
               2 /*return*/,
-              suggestions.sort(function (a, b) {
-                return b.relevance_score - a.relevance_score;
-              }),
+              suggestions.sort((a, b) => b.relevance_score - a.relevance_score),
             ];
         }
       });
@@ -549,7 +542,7 @@ var AdvancedPatientSearch = /** @class */ (function () {
   AdvancedPatientSearch.calculateSegmentStats = function (criteria) {
     return __awaiter(this, void 0, void 0, function () {
       var stats, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);

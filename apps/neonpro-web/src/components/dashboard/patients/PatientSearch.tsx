@@ -1,14 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
-import type { Search, Filter, Users, Clock, TrendingUp, Calendar } from "lucide-react";
-import type { Input } from "@/components/ui/input";
+import type { debounce } from "lodash";
+import type { Calendar, Clock, Filter, Search, TrendingUp, Users } from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   Card,
   CardContent,
@@ -16,10 +10,16 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
+import type { Input } from "@/components/ui/input";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { getPatientStats, searchPatients } from "@/lib/supabase/patients";
 import type { PatientTable } from "./PatientTable";
-import type { searchPatients, getPatientStats } from "@/lib/supabase/patients";
-import type { debounce } from "lodash";
 
 interface PatientRecord {
   id: number;

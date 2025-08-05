@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Integration Queue System
  * Asynchronous job processing system for third-party integrations
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueueFactory = exports.SupabaseIntegrationQueue = exports.MemoryIntegrationQueue = void 0;
 var crypto_1 = require("crypto");
@@ -162,7 +159,7 @@ var supabase_js_1 = require("@supabase/supabase-js");
  * Memory Queue Implementation
  * In-memory job queue for development and single-instance deployments
  */
-var MemoryIntegrationQueue = /** @class */ (function () {
+var MemoryIntegrationQueue = /** @class */ (() => {
   function MemoryIntegrationQueue(config) {
     this.jobs = new Map();
     this.pendingJobs = [];
@@ -245,9 +242,7 @@ var MemoryIntegrationQueue = /** @class */ (function () {
         }
         // Remove from jobs map
         this.jobs.delete(id);
-        pendingIndex = this.pendingJobs.findIndex(function (j) {
-          return j.id === id;
-        });
+        pendingIndex = this.pendingJobs.findIndex((j) => j.id === id);
         if (pendingIndex > -1) {
           this.pendingJobs.splice(pendingIndex, 1);
         }
@@ -282,12 +277,7 @@ var MemoryIntegrationQueue = /** @class */ (function () {
       var jobs;
       return __generator(this, function (_a) {
         jobs = this.pendingJobs.slice(0, limit);
-        return [
-          2 /*return*/,
-          jobs.map(function (job) {
-            return __assign({}, job);
-          }),
-        ];
+        return [2 /*return*/, jobs.map((job) => __assign({}, job))];
       });
     });
   };
@@ -356,10 +346,9 @@ var MemoryIntegrationQueue = /** @class */ (function () {
    * Start processing loop
    */
   MemoryIntegrationQueue.prototype.startProcessing = function () {
-    var _this = this;
-    setInterval(function () {
-      if (_this.isProcessing) {
-        _this.processJobs();
+    setInterval(() => {
+      if (this.isProcessing) {
+        this.processJobs();
       }
     }, this.config.processInterval);
   };
@@ -444,7 +433,7 @@ var MemoryIntegrationQueue = /** @class */ (function () {
       var _this = this;
       return __generator(this, function (_a) {
         delay = this.calculateRetryDelay(job.attempts);
-        setTimeout(function () {
+        setTimeout(() => {
           job.status = "pending";
           job.scheduledAt = new Date();
           _this.insertJobByPriority(job);
@@ -460,7 +449,7 @@ var MemoryIntegrationQueue = /** @class */ (function () {
    */
   MemoryIntegrationQueue.prototype.calculateRetryDelay = function (attempts) {
     // Exponential backoff: delay * 2^(attempts-1)
-    return this.config.retryDelay * Math.pow(2, attempts - 1);
+    return this.config.retryDelay * 2 ** (attempts - 1);
   };
   /**
    * Update queue statistics
@@ -485,7 +474,7 @@ exports.MemoryIntegrationQueue = MemoryIntegrationQueue;
  * Supabase Queue Implementation
  * Database-backed job queue using Supabase for persistence
  */
-var SupabaseIntegrationQueue = /** @class */ (function () {
+var SupabaseIntegrationQueue = /** @class */ (() => {
   function SupabaseIntegrationQueue(supabaseUrl, supabaseKey, config) {
     this.processors = new Map();
     this.isProcessing = false;
@@ -839,11 +828,10 @@ var SupabaseIntegrationQueue = /** @class */ (function () {
    * Start processing loop
    */
   SupabaseIntegrationQueue.prototype.startProcessing = function () {
-    var _this = this;
     this.isProcessing = true;
-    setInterval(function () {
-      if (_this.isProcessing) {
-        _this.processJobs();
+    setInterval(() => {
+      if (this.isProcessing) {
+        this.processJobs();
       }
     }, this.config.processInterval);
   };
@@ -984,32 +972,30 @@ var SupabaseIntegrationQueue = /** @class */ (function () {
    */
   SupabaseIntegrationQueue.prototype.calculateRetryDelay = function (attempts) {
     // Exponential backoff: delay * 2^(attempts-1)
-    return this.config.retryDelay * Math.pow(2, attempts - 1);
+    return this.config.retryDelay * 2 ** (attempts - 1);
   };
   /**
    * Map database record to job object
    */
-  SupabaseIntegrationQueue.prototype.mapDatabaseToJob = function (data) {
-    return {
-      id: data.id,
-      type: data.type,
-      integrationId: data.integration_id,
-      payload: data.payload,
-      priority: data.priority,
-      attempts: data.attempts,
-      maxAttempts: data.max_attempts,
-      delay: data.delay,
-      status: data.status,
-      result: data.result,
-      error: data.error,
-      createdAt: new Date(data.created_at),
-      updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
-      startedAt: data.started_at ? new Date(data.started_at) : undefined,
-      completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
-      failedAt: data.failed_at ? new Date(data.failed_at) : undefined,
-      scheduledAt: data.scheduled_at ? new Date(data.scheduled_at) : undefined,
-    };
-  };
+  SupabaseIntegrationQueue.prototype.mapDatabaseToJob = (data) => ({
+    id: data.id,
+    type: data.type,
+    integrationId: data.integration_id,
+    payload: data.payload,
+    priority: data.priority,
+    attempts: data.attempts,
+    maxAttempts: data.max_attempts,
+    delay: data.delay,
+    status: data.status,
+    result: data.result,
+    error: data.error,
+    createdAt: new Date(data.created_at),
+    updatedAt: data.updated_at ? new Date(data.updated_at) : undefined,
+    startedAt: data.started_at ? new Date(data.started_at) : undefined,
+    completedAt: data.completed_at ? new Date(data.completed_at) : undefined,
+    failedAt: data.failed_at ? new Date(data.failed_at) : undefined,
+    scheduledAt: data.scheduled_at ? new Date(data.scheduled_at) : undefined,
+  });
   return SupabaseIntegrationQueue;
 })();
 exports.SupabaseIntegrationQueue = SupabaseIntegrationQueue;
@@ -1017,12 +1003,12 @@ exports.SupabaseIntegrationQueue = SupabaseIntegrationQueue;
  * Queue Factory
  * Creates appropriate queue implementation based on configuration
  */
-var QueueFactory = /** @class */ (function () {
+var QueueFactory = /** @class */ (() => {
   function QueueFactory() {}
   /**
    * Create queue instance based on type
    */
-  QueueFactory.createQueue = function (type, config, options) {
+  QueueFactory.createQueue = (type, config, options) => {
     switch (type) {
       case "memory":
         return new MemoryIntegrationQueue(config);

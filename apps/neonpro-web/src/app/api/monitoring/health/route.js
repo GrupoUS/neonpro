@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TASK-001: Foundation Setup & Baseline
  * Health Check API
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var server_1 = require("next/server");
@@ -147,7 +144,7 @@ function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var startTime, healthData, componentStatuses, componentErrorRates, error_1;
     var _a, _b;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           startTime = Date.now();
@@ -186,29 +183,15 @@ function GET(request) {
             _a);
           // Calculate overall response time
           healthData.response_time_avg = Date.now() - startTime;
-          componentStatuses = Object.values(healthData.components).map(function (c) {
-            return c.status;
-          });
-          if (
-            componentStatuses.some(function (status) {
-              return status === "unhealthy";
-            })
-          ) {
+          componentStatuses = Object.values(healthData.components).map((c) => c.status);
+          if (componentStatuses.some((status) => status === "unhealthy")) {
             healthData.overall_status = "unhealthy";
-          } else if (
-            componentStatuses.some(function (status) {
-              return status === "degraded";
-            })
-          ) {
+          } else if (componentStatuses.some((status) => status === "degraded")) {
             healthData.overall_status = "degraded";
           }
-          componentErrorRates = Object.values(healthData.components).map(function (c) {
-            return c.error_rate;
-          });
+          componentErrorRates = Object.values(healthData.components).map((c) => c.error_rate);
           healthData.error_rate =
-            componentErrorRates.reduce(function (sum, rate) {
-              return sum + rate;
-            }, 0) / componentErrorRates.length;
+            componentErrorRates.reduce((sum, rate) => sum + rate, 0) / componentErrorRates.length;
           return [
             2 /*return*/,
             server_1.NextResponse.json({
@@ -282,7 +265,7 @@ function GET(request) {
 function checkDatabaseHealth() {
   return __awaiter(this, void 0, void 0, function () {
     var startTime, supabase, _a, data, error, responseTime, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           startTime = Date.now();
@@ -338,7 +321,7 @@ function checkDatabaseHealth() {
 function checkApiHealth() {
   return __awaiter(this, void 0, void 0, function () {
     var startTime, response, responseTime, error_3;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           startTime = Date.now();
@@ -402,23 +385,21 @@ function checkApiHealth() {
 }
 function checkFrontendHealth() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        {
-          status: "healthy",
-          response_time: Math.random() * 100 + 50,
-          error_rate: 0.2,
-          uptime_percentage: 99.7,
-        },
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      {
+        status: "healthy",
+        response_time: Math.random() * 100 + 50,
+        error_rate: 0.2,
+        uptime_percentage: 99.7,
+      },
+    ]);
   });
 }
 function checkAuthHealth() {
   return __awaiter(this, void 0, void 0, function () {
     var startTime, supabase, session, responseTime, error_4;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           startTime = Date.now();
@@ -461,16 +442,14 @@ function checkAuthHealth() {
 }
 function checkMonitoringHealth() {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        {
-          status: "healthy",
-          response_time: Math.random() * 50 + 25,
-          error_rate: 0.1,
-          uptime_percentage: 99.9,
-        },
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      {
+        status: "healthy",
+        response_time: Math.random() * 50 + 25,
+        error_rate: 0.1,
+        uptime_percentage: 99.9,
+      },
+    ]);
   });
 }

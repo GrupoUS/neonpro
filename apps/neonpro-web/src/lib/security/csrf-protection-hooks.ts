@@ -4,7 +4,7 @@
  * Client-side CSRF hooks for React components
  */
 
-import type { useState, useEffect } from "react";
+import type { useEffect, useState } from "react";
 
 /**
  * React hook for CSRF protection

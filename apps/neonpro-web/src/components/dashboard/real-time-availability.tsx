@@ -1,6 +1,21 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type {
+  Activity,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Users,
+  Wifi,
+  WifiOff,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,25 +23,10 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type { Skeleton } from "@/components/ui/skeleton";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Clock,
-  Wifi,
-  WifiOff,
-  Calendar,
-  CheckCircle,
-  XCircle,
-  Users,
-  Activity,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { pt } from "date-fns/locale";
-import type { cn } from "@/lib/utils";
 import type { useAvailabilityManager } from "@/hooks/use-availability-manager";
 import type { TimeSlot } from "@/hooks/use-realtime-availability";
+import type { cn } from "@/lib/utils";
 
 interface RealTimeAvailabilityProps {
   professionalId?: string;

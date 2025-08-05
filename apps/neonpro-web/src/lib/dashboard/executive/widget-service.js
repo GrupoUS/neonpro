@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createwidgetService =
   exports.WidgetService =
@@ -213,7 +210,7 @@ exports.WidgetDataSchema = zod_1.z.object({
   cacheExpiry: zod_1.z.string().datetime().optional(),
 });
 // Widget Service
-var WidgetService = /** @class */ (function () {
+var WidgetService = /** @class */ (() => {
   function WidgetService() {
     this.supabase = (0, client_1.createClient)();
     this.dataCache = new Map();
@@ -247,22 +244,20 @@ var WidgetService = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              data.map(function (widget) {
-                return {
-                  id: widget.id,
-                  dashboardId: widget.dashboard_id,
-                  clinicId: widget.clinic_id,
-                  title: widget.title,
-                  type: widget.type,
-                  dataSource: widget.data_source,
-                  position: widget.position,
-                  styling: widget.styling,
-                  chartOptions: widget.chart_options,
-                  isVisible: widget.is_visible,
-                  createdAt: widget.created_at,
-                  updatedAt: widget.updated_at,
-                };
-              }),
+              data.map((widget) => ({
+                id: widget.id,
+                dashboardId: widget.dashboard_id,
+                clinicId: widget.clinic_id,
+                title: widget.title,
+                type: widget.type,
+                dataSource: widget.data_source,
+                position: widget.position,
+                styling: widget.styling,
+                chartOptions: widget.chart_options,
+                isVisible: widget.is_visible,
+                createdAt: widget.created_at,
+                updatedAt: widget.updated_at,
+              })),
             ];
           case 2:
             error_1 = _b.sent();
@@ -561,7 +556,7 @@ var WidgetService = /** @class */ (function () {
   WidgetService.prototype.fetchKPIData = function (clinicId, kpiSource, parameters) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, allKPIs, operationalKPIs, patientKPIs, staffKPIs, specificKPIs;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _a = kpiSource;
@@ -602,12 +597,7 @@ var WidgetService = /** @class */ (function () {
             ];
           case 4:
             allKPIs = _b.sent();
-            return [
-              2 /*return*/,
-              allKPIs.filter(function (kpi) {
-                return kpi.kpi.category === "financial";
-              }),
-            ];
+            return [2 /*return*/, allKPIs.filter((kpi) => kpi.kpi.category === "financial")];
           case 5:
             return [
               4 /*yield*/,
@@ -619,9 +609,7 @@ var WidgetService = /** @class */ (function () {
             operationalKPIs = _b.sent();
             return [
               2 /*return*/,
-              operationalKPIs.filter(function (kpi) {
-                return kpi.kpi.category === "operational";
-              }),
+              operationalKPIs.filter((kpi) => kpi.kpi.category === "operational"),
             ];
           case 7:
             return [
@@ -632,12 +620,7 @@ var WidgetService = /** @class */ (function () {
             ];
           case 8:
             patientKPIs = _b.sent();
-            return [
-              2 /*return*/,
-              patientKPIs.filter(function (kpi) {
-                return kpi.kpi.category === "patient";
-              }),
-            ];
+            return [2 /*return*/, patientKPIs.filter((kpi) => kpi.kpi.category === "patient")];
           case 9:
             return [
               4 /*yield*/,
@@ -647,12 +630,7 @@ var WidgetService = /** @class */ (function () {
             ];
           case 10:
             staffKPIs = _b.sent();
-            return [
-              2 /*return*/,
-              staffKPIs.filter(function (kpi) {
-                return kpi.kpi.category === "staff";
-              }),
-            ];
+            return [2 /*return*/, staffKPIs.filter((kpi) => kpi.kpi.category === "staff")];
           case 11:
             return [
               4 /*yield*/,
@@ -662,12 +640,7 @@ var WidgetService = /** @class */ (function () {
             ];
           case 12:
             specificKPIs = _b.sent();
-            return [
-              2 /*return*/,
-              specificKPIs.find(function (kpi) {
-                return kpi.kpi.name === kpiSource;
-              }) || null,
-            ];
+            return [2 /*return*/, specificKPIs.find((kpi) => kpi.kpi.name === kpiSource) || null];
         }
       });
     });
@@ -722,7 +695,7 @@ var WidgetService = /** @class */ (function () {
   WidgetService.prototype.fetchAPIData = function (apiEndpoint, parameters) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -757,7 +730,7 @@ var WidgetService = /** @class */ (function () {
   /**
    * Fetch static data
    */
-  WidgetService.prototype.fetchStaticData = function (dataSource) {
+  WidgetService.prototype.fetchStaticData = (dataSource) => {
     var staticData = {
       sample_chart_data: [
         { name: "Jan", value: 400 },
@@ -779,31 +752,32 @@ var WidgetService = /** @class */ (function () {
    * Start automatic data refresh for a widget
    */
   WidgetService.prototype.startWidgetDataRefresh = function (widget) {
-    var _this = this;
     if (!widget.dataSource.refreshInterval || widget.dataSource.refreshInterval <= 0) {
       return;
     }
-    var timer = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_8;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.getWidgetData(widget.id, true)];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_8 = _a.sent();
-              logger_1.logger.error("Error refreshing widget ".concat(widget.id, ":"), error_8);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, widget.dataSource.refreshInterval * 1000);
+    var timer = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_8;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.getWidgetData(widget.id, true)];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_8 = _a.sent();
+                logger_1.logger.error("Error refreshing widget ".concat(widget.id, ":"), error_8);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      widget.dataSource.refreshInterval * 1000,
+    );
     this.refreshTimers.set(widget.id, timer);
   };
   /**
@@ -863,98 +837,94 @@ var WidgetService = /** @class */ (function () {
   /**
    * Get widget templates for quick setup
    */
-  WidgetService.prototype.getWidgetTemplates = function () {
-    return [
-      {
-        title: "Receita Mensal",
-        type: "kpi_card",
-        dataSource: {
-          type: "kpi",
-          source: "financial.monthly_revenue",
-          refreshInterval: 300,
-          cacheEnabled: true,
-        },
-        position: { x: 0, y: 0, width: 3, height: 2 },
-        styling: {
-          backgroundColor: "#10b981",
-          textColor: "#ffffff",
-        },
-        isVisible: true,
+  WidgetService.prototype.getWidgetTemplates = () => [
+    {
+      title: "Receita Mensal",
+      type: "kpi_card",
+      dataSource: {
+        type: "kpi",
+        source: "financial.monthly_revenue",
+        refreshInterval: 300,
+        cacheEnabled: true,
       },
-      {
-        title: "Novos Pacientes",
-        type: "kpi_card",
-        dataSource: {
-          type: "kpi",
-          source: "patients.new_patients",
-          refreshInterval: 300,
-          cacheEnabled: true,
-        },
-        position: { x: 3, y: 0, width: 3, height: 2 },
-        styling: {
-          backgroundColor: "#3b82f6",
-          textColor: "#ffffff",
-        },
-        isVisible: true,
+      position: { x: 0, y: 0, width: 3, height: 2 },
+      styling: {
+        backgroundColor: "#10b981",
+        textColor: "#ffffff",
       },
-      {
-        title: "Taxa de Ocupação",
-        type: "gauge_chart",
-        dataSource: {
-          type: "kpi",
-          source: "operations.occupancy_rate",
-          refreshInterval: 300,
-          cacheEnabled: true,
-        },
-        position: { x: 6, y: 0, width: 3, height: 4 },
-        chartOptions: {
-          showLegend: false,
-          showGrid: false,
-          colors: ["#10b981", "#f59e0b", "#ef4444"],
-        },
-        isVisible: true,
+      isVisible: true,
+    },
+    {
+      title: "Novos Pacientes",
+      type: "kpi_card",
+      dataSource: {
+        type: "kpi",
+        source: "patients.new_patients",
+        refreshInterval: 300,
+        cacheEnabled: true,
       },
-      {
-        title: "Tendência de Receita",
-        type: "line_chart",
-        dataSource: {
-          type: "query",
-          source: "monthly_revenue_trend",
-          refreshInterval: 600,
-          cacheEnabled: true,
-        },
-        position: { x: 0, y: 2, width: 6, height: 4 },
-        chartOptions: {
-          showLegend: true,
-          showGrid: true,
-          colors: ["#10b981"],
-          animation: true,
-        },
-        isVisible: true,
+      position: { x: 3, y: 0, width: 3, height: 2 },
+      styling: {
+        backgroundColor: "#3b82f6",
+        textColor: "#ffffff",
       },
-      {
-        title: "Status dos Agendamentos",
-        type: "pie_chart",
-        dataSource: {
-          type: "query",
-          source: "appointment_status_distribution",
-          refreshInterval: 300,
-          cacheEnabled: true,
-        },
-        position: { x: 9, y: 0, width: 3, height: 4 },
-        chartOptions: {
-          showLegend: true,
-          colors: ["#10b981", "#f59e0b", "#ef4444", "#6b7280"],
-        },
-        isVisible: true,
+      isVisible: true,
+    },
+    {
+      title: "Taxa de Ocupação",
+      type: "gauge_chart",
+      dataSource: {
+        type: "kpi",
+        source: "operations.occupancy_rate",
+        refreshInterval: 300,
+        cacheEnabled: true,
       },
-    ];
-  };
+      position: { x: 6, y: 0, width: 3, height: 4 },
+      chartOptions: {
+        showLegend: false,
+        showGrid: false,
+        colors: ["#10b981", "#f59e0b", "#ef4444"],
+      },
+      isVisible: true,
+    },
+    {
+      title: "Tendência de Receita",
+      type: "line_chart",
+      dataSource: {
+        type: "query",
+        source: "monthly_revenue_trend",
+        refreshInterval: 600,
+        cacheEnabled: true,
+      },
+      position: { x: 0, y: 2, width: 6, height: 4 },
+      chartOptions: {
+        showLegend: true,
+        showGrid: true,
+        colors: ["#10b981"],
+        animation: true,
+      },
+      isVisible: true,
+    },
+    {
+      title: "Status dos Agendamentos",
+      type: "pie_chart",
+      dataSource: {
+        type: "query",
+        source: "appointment_status_distribution",
+        refreshInterval: 300,
+        cacheEnabled: true,
+      },
+      position: { x: 9, y: 0, width: 3, height: 4 },
+      chartOptions: {
+        showLegend: true,
+        colors: ["#10b981", "#f59e0b", "#ef4444", "#6b7280"],
+      },
+      isVisible: true,
+    },
+  ];
   return WidgetService;
 })();
 exports.WidgetService = WidgetService;
 // Export singleton instance
-var createwidgetService = function () {
-  return new WidgetService();
-};
+var createwidgetService = () => new WidgetService();
 exports.createwidgetService = createwidgetService;

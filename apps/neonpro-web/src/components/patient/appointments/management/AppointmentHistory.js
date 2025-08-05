@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentHistory = AppointmentHistory;
 var badge_1 = require("@/components/ui/badge");
@@ -25,7 +24,7 @@ function AppointmentHistory(_a) {
     setSortOrder = _d[1];
   // Filter and sort appointments
   var filteredAppointments = appointments
-    .filter(function (appointment) {
+    .filter((appointment) => {
       var _a, _b;
       // Search filter
       var matchesSearch =
@@ -41,14 +40,14 @@ function AppointmentHistory(_a) {
       var matchesStatus = statusFilter === "all" || appointment.status === statusFilter;
       return matchesSearch && matchesStatus;
     })
-    .sort(function (a, b) {
+    .sort((a, b) => {
       var dateA = new Date("".concat(a.appointment_date, "T").concat(a.appointment_time));
       var dateB = new Date("".concat(b.appointment_date, "T").concat(b.appointment_time));
       return sortOrder === "desc"
         ? dateB.getTime() - dateA.getTime()
         : dateA.getTime() - dateB.getTime();
     });
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var statusConfig = {
       completed: {
         variant: "default",
@@ -89,7 +88,7 @@ function AppointmentHistory(_a) {
       </badge_1.Badge>
     );
   };
-  var formatAppointmentDateTime = function (date, time) {
+  var formatAppointmentDateTime = (date, time) => {
     try {
       var dateTime = (0, date_fns_1.parseISO)("".concat(date, "T").concat(time));
       return {
@@ -104,15 +103,9 @@ function AppointmentHistory(_a) {
   // Statistics
   var stats = {
     total: appointments.length,
-    completed: appointments.filter(function (a) {
-      return a.status === "completed";
-    }).length,
-    cancelled: appointments.filter(function (a) {
-      return a.status === "cancelled";
-    }).length,
-    noShow: appointments.filter(function (a) {
-      return a.status === "no_show";
-    }).length,
+    completed: appointments.filter((a) => a.status === "completed").length,
+    cancelled: appointments.filter((a) => a.status === "cancelled").length,
+    noShow: appointments.filter((a) => a.status === "no_show").length,
   };
   if (appointments.length === 0) {
     return (
@@ -164,19 +157,12 @@ function AppointmentHistory(_a) {
           <input_1.Input
             placeholder="Buscar por serviço, profissional ou observações..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"
           />
         </div>
 
-        <select_1.Select
-          value={statusFilter}
-          onValueChange={function (value) {
-            return setStatusFilter(value);
-          }}
-        >
+        <select_1.Select value={statusFilter} onValueChange={(value) => setStatusFilter(value)}>
           <select_1.SelectTrigger className="w-full sm:w-48">
             <lucide_react_1.Filter className="h-4 w-4 mr-2" />
             <select_1.SelectValue placeholder="Filtrar por status" />
@@ -189,12 +175,7 @@ function AppointmentHistory(_a) {
           </select_1.SelectContent>
         </select_1.Select>
 
-        <select_1.Select
-          value={sortOrder}
-          onValueChange={function (value) {
-            return setSortOrder(value);
-          }}
-        >
+        <select_1.Select value={sortOrder} onValueChange={(value) => setSortOrder(value)}>
           <select_1.SelectTrigger className="w-full sm:w-48">
             <select_1.SelectValue placeholder="Ordenar por data" />
           </select_1.SelectTrigger>
@@ -219,7 +200,7 @@ function AppointmentHistory(_a) {
             </p>
           </div>
         : <div className="space-y-3">
-            {filteredAppointments.map(function (appointment) {
+            {filteredAppointments.map((appointment) => {
               var _a = formatAppointmentDateTime(
                   appointment.appointment_date,
                   appointment.appointment_time,
@@ -290,9 +271,7 @@ function AppointmentHistory(_a) {
                         <button_1.Button
                           variant="outline"
                           size="sm"
-                          onClick={function () {
-                            return onView(appointment.id);
-                          }}
+                          onClick={() => onView(appointment.id)}
                           className="text-xs"
                         >
                           Ver detalhes

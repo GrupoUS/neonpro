@@ -15,8 +15,8 @@
 
 import type {
   ForecastingSystemConfig,
-  ResourceOptimizationConfig,
   ModelTrainingDefaults,
+  ResourceOptimizationConfig,
 } from "./types";
 
 /**

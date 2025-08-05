@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportBuilderMain = ReportBuilderMain;
 var lucide_react_1 = require("lucide-react");
@@ -96,27 +95,22 @@ var quickActions = [
     description: "Receitas, pagamentos e faturamento",
     icon: lucide_react_1.TrendingUp,
     color: "bg-green-100 text-green-700",
-    action: function () {
-      return window.open("/dashboard/report-builder/new?template=financial-summary", "_blank");
-    },
+    action: () => window.open("/dashboard/report-builder/new?template=financial-summary", "_blank"),
   },
   {
     title: "Análise de Pacientes",
     description: "Demografia e histórico de consultas",
     icon: lucide_react_1.BarChart3,
     color: "bg-blue-100 text-blue-700",
-    action: function () {
-      return window.open("/dashboard/report-builder/new?template=patient-demographics", "_blank");
-    },
+    action: () =>
+      window.open("/dashboard/report-builder/new?template=patient-demographics", "_blank"),
   },
   {
     title: "Dashboard Executivo",
     description: "Visão geral dos KPIs principais",
     icon: lucide_react_1.FileText,
     color: "bg-gray-100 text-gray-700",
-    action: function () {
-      return window.open("/dashboard/report-builder/new", "_blank");
-    },
+    action: () => window.open("/dashboard/report-builder/new", "_blank"),
   },
 ];
 function getStatusBadge(status) {
@@ -165,7 +159,7 @@ function ReportBuilderMain() {
   var _c = (0, react_1.useState)("all"),
     filterStatus = _c[0],
     setFilterStatus = _c[1];
-  var filteredReports = recentReports.filter(function (report) {
+  var filteredReports = recentReports.filter((report) => {
     var matchesSearch =
       report.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       report.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -173,7 +167,7 @@ function ReportBuilderMain() {
     var matchesStatus = filterStatus === "all" || report.status === filterStatus;
     return matchesSearch && matchesType && matchesStatus;
   });
-  var handleCreateReport = (0, react_1.useCallback)(function (templateId) {
+  var handleCreateReport = (0, react_1.useCallback)((templateId) => {
     var url = templateId
       ? "/dashboard/report-builder/new?template=".concat(templateId)
       : "/dashboard/report-builder/new";
@@ -197,11 +191,7 @@ function ReportBuilderMain() {
               Analytics
             </link_1.default>
           </button_1.Button>
-          <button_1.Button
-            onClick={function () {
-              return handleCreateReport();
-            }}
-          >
+          <button_1.Button onClick={() => handleCreateReport()}>
             <lucide_react_1.Plus className="w-4 h-4 mr-2" />
             Novo Relatório
           </button_1.Button>
@@ -210,7 +200,7 @@ function ReportBuilderMain() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {quickActions.map(function (action, index) {
+        {quickActions.map((action, index) => {
           var IconComponent = action.icon;
           return (
             <card_1.Card
@@ -249,9 +239,7 @@ function ReportBuilderMain() {
               <input_1.Input
                 placeholder="Buscar relatórios..."
                 value={searchQuery}
-                onChange={function (e) {
-                  return setSearchQuery(e.target.value);
-                }}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="max-w-sm"
               />
             </div>
@@ -284,91 +272,87 @@ function ReportBuilderMain() {
 
           {/* Reports Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredReports.map(function (report) {
-              return (
-                <card_1.Card key={report.id} className="hover:shadow-md transition-shadow">
-                  <card_1.CardHeader className="pb-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2">
-                        {getTypeIcon(report.type)}
-                        <card_1.CardTitle className="text-base">{report.name}</card_1.CardTitle>
-                      </div>
-                      <dropdown_menu_1.DropdownMenu>
-                        <dropdown_menu_1.DropdownMenuTrigger asChild>
-                          <button_1.Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <span className="sr-only">Abrir menu</span>
-                            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
-                              <circle cx="12" cy="12" r="1" fill="currentColor" />
-                              <circle cx="12" cy="5" r="1" fill="currentColor" />
-                              <circle cx="12" cy="19" r="1" fill="currentColor" />
-                            </svg>
-                          </button_1.Button>
-                        </dropdown_menu_1.DropdownMenuTrigger>
-                        <dropdown_menu_1.DropdownMenuContent align="end">
-                          <dropdown_menu_1.DropdownMenuItem asChild>
-                            <link_1.default href={"/dashboard/report-builder/".concat(report.id)}>
-                              <lucide_react_1.Edit className="w-4 h-4 mr-2" />
-                              Editar
-                            </link_1.default>
-                          </dropdown_menu_1.DropdownMenuItem>
-                          <dropdown_menu_1.DropdownMenuItem>
-                            <lucide_react_1.Copy className="w-4 h-4 mr-2" />
-                            Duplicar
-                          </dropdown_menu_1.DropdownMenuItem>
-                          <dropdown_menu_1.DropdownMenuItem>
-                            <lucide_react_1.Download className="w-4 h-4 mr-2" />
-                            Exportar
-                          </dropdown_menu_1.DropdownMenuItem>
-                          <dropdown_menu_1.DropdownMenuItem>
-                            <lucide_react_1.Share className="w-4 h-4 mr-2" />
-                            Compartilhar
-                          </dropdown_menu_1.DropdownMenuItem>
-                          <dropdown_menu_1.DropdownMenuSeparator />
-                          <dropdown_menu_1.DropdownMenuItem className="text-destructive">
-                            <lucide_react_1.Trash2 className="w-4 h-4 mr-2" />
-                            Excluir
-                          </dropdown_menu_1.DropdownMenuItem>
-                        </dropdown_menu_1.DropdownMenuContent>
-                      </dropdown_menu_1.DropdownMenu>
+            {filteredReports.map((report) => (
+              <card_1.Card key={report.id} className="hover:shadow-md transition-shadow">
+                <card_1.CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2">
+                      {getTypeIcon(report.type)}
+                      <card_1.CardTitle className="text-base">{report.name}</card_1.CardTitle>
                     </div>
-                    <card_1.CardDescription className="text-xs">
-                      {report.description}
-                    </card_1.CardDescription>
-                  </card_1.CardHeader>
+                    <dropdown_menu_1.DropdownMenu>
+                      <dropdown_menu_1.DropdownMenuTrigger asChild>
+                        <button_1.Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <span className="sr-only">Abrir menu</span>
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="1" fill="currentColor" />
+                            <circle cx="12" cy="5" r="1" fill="currentColor" />
+                            <circle cx="12" cy="19" r="1" fill="currentColor" />
+                          </svg>
+                        </button_1.Button>
+                      </dropdown_menu_1.DropdownMenuTrigger>
+                      <dropdown_menu_1.DropdownMenuContent align="end">
+                        <dropdown_menu_1.DropdownMenuItem asChild>
+                          <link_1.default href={"/dashboard/report-builder/".concat(report.id)}>
+                            <lucide_react_1.Edit className="w-4 h-4 mr-2" />
+                            Editar
+                          </link_1.default>
+                        </dropdown_menu_1.DropdownMenuItem>
+                        <dropdown_menu_1.DropdownMenuItem>
+                          <lucide_react_1.Copy className="w-4 h-4 mr-2" />
+                          Duplicar
+                        </dropdown_menu_1.DropdownMenuItem>
+                        <dropdown_menu_1.DropdownMenuItem>
+                          <lucide_react_1.Download className="w-4 h-4 mr-2" />
+                          Exportar
+                        </dropdown_menu_1.DropdownMenuItem>
+                        <dropdown_menu_1.DropdownMenuItem>
+                          <lucide_react_1.Share className="w-4 h-4 mr-2" />
+                          Compartilhar
+                        </dropdown_menu_1.DropdownMenuItem>
+                        <dropdown_menu_1.DropdownMenuSeparator />
+                        <dropdown_menu_1.DropdownMenuItem className="text-destructive">
+                          <lucide_react_1.Trash2 className="w-4 h-4 mr-2" />
+                          Excluir
+                        </dropdown_menu_1.DropdownMenuItem>
+                      </dropdown_menu_1.DropdownMenuContent>
+                    </dropdown_menu_1.DropdownMenu>
+                  </div>
+                  <card_1.CardDescription className="text-xs">
+                    {report.description}
+                  </card_1.CardDescription>
+                </card_1.CardHeader>
 
-                  <card_1.CardContent className="pb-3">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <avatar_1.Avatar className="h-5 w-5">
-                          <avatar_1.AvatarImage src={report.avatar} />
-                          <avatar_1.AvatarFallback>
-                            {report.createdBy
-                              .split(" ")
-                              .map(function (n) {
-                                return n[0];
-                              })
-                              .join("")}
-                          </avatar_1.AvatarFallback>
-                        </avatar_1.Avatar>
-                        <span>{report.createdBy}</span>
-                      </div>
-                      {getStatusBadge(report.status)}
+                <card_1.CardContent className="pb-3">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <avatar_1.Avatar className="h-5 w-5">
+                        <avatar_1.AvatarImage src={report.avatar} />
+                        <avatar_1.AvatarFallback>
+                          {report.createdBy
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </avatar_1.AvatarFallback>
+                      </avatar_1.Avatar>
+                      <span>{report.createdBy}</span>
                     </div>
-                  </card_1.CardContent>
+                    {getStatusBadge(report.status)}
+                  </div>
+                </card_1.CardContent>
 
-                  <card_1.CardFooter className="pt-0 pb-3">
-                    <div className="flex items-center justify-between w-full text-xs text-muted-foreground">
-                      <span>Modificado: {formatDate(report.lastModified)}</span>
-                      <button_1.Button variant="ghost" size="sm" asChild>
-                        <link_1.default href={"/dashboard/report-builder/".concat(report.id)}>
-                          <lucide_react_1.ExternalLink className="w-3 h-3" />
-                        </link_1.default>
-                      </button_1.Button>
-                    </div>
-                  </card_1.CardFooter>
-                </card_1.Card>
-              );
-            })}
+                <card_1.CardFooter className="pt-0 pb-3">
+                  <div className="flex items-center justify-between w-full text-xs text-muted-foreground">
+                    <span>Modificado: {formatDate(report.lastModified)}</span>
+                    <button_1.Button variant="ghost" size="sm" asChild>
+                      <link_1.default href={"/dashboard/report-builder/".concat(report.id)}>
+                        <lucide_react_1.ExternalLink className="w-3 h-3" />
+                      </link_1.default>
+                    </button_1.Button>
+                  </div>
+                </card_1.CardFooter>
+              </card_1.Card>
+            ))}
           </div>
 
           {filteredReports.length === 0 && (
@@ -380,11 +364,7 @@ function ReportBuilderMain() {
                   ? "Tente ajustar os filtros de busca"
                   : "Comece criando seu primeiro relatório"}
               </p>
-              <button_1.Button
-                onClick={function () {
-                  return handleCreateReport();
-                }}
-              >
+              <button_1.Button onClick={() => handleCreateReport()}>
                 <lucide_react_1.Plus className="w-4 h-4 mr-2" />
                 Criar Relatório
               </button_1.Button>
@@ -394,15 +374,13 @@ function ReportBuilderMain() {
 
         <tabs_1.TabsContent value="templates" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {reportTemplates.map(function (template) {
+            {reportTemplates.map((template) => {
               var IconComponent = template.icon;
               return (
                 <card_1.Card
                   key={template.id}
                   className="cursor-pointer hover:shadow-md transition-shadow"
-                  onClick={function () {
-                    return handleCreateReport(template.id);
-                  }}
+                  onClick={() => handleCreateReport(template.id)}
                 >
                   <card_1.CardHeader>
                     <div className="flex items-center gap-3">

@@ -1,17 +1,16 @@
-"use strict";
 // API Routes for Reorder Alert Management
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var intelligent_threshold_service_1 = require("@/app/lib/services/intelligent-threshold-service");
@@ -150,20 +147,16 @@ var alertStatsSchema = zod_1.z.object({
   start_date: zod_1.z
     .string()
     .optional()
-    .transform(function (str) {
-      return str ? new Date(str) : undefined;
-    }),
+    .transform((str) => (str ? new Date(str) : undefined)),
   end_date: zod_1.z
     .string()
     .optional()
-    .transform(function (str) {
-      return str ? new Date(str) : undefined;
-    }),
+    .transform((str) => (str ? new Date(str) : undefined)),
 });
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var url, params, _a, clinic_id, start_date, end_date, dateRange, stats, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var react_2 = require("@testing-library/react");
@@ -140,7 +137,7 @@ var useExportData_1 = require("@/hooks/analytics/useExportData");
 var mockData_1 = require("@/../../__tests__/utils/mockData");
 // Mock fetch for API calls
 global.fetch = jest.fn();
-var createWrapper = function () {
+var createWrapper = () => {
   var queryClient = new react_query_1.QueryClient({
     defaultOptions: {
       queries: {
@@ -148,7 +145,7 @@ var createWrapper = function () {
       },
     },
   });
-  return function (_a) {
+  return (_a) => {
     var children = _a.children;
     return react_1.default.createElement(
       react_query_1.QueryClientProvider,
@@ -157,36 +154,29 @@ var createWrapper = function () {
     );
   };
 };
-describe("useExportData", function () {
-  beforeEach(function () {
+describe("useExportData", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
-  it("should export data to PDF successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("should export data to PDF successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockFetch, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockFetch = fetch;
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              blob: function () {
-                return Promise.resolve(new Blob(["PDF content"], { type: "application/pdf" }));
-              },
+              blob: () => Promise.resolve(new Blob(["PDF content"], { type: "application/pdf" })),
             });
-            result = (0, react_2.renderHook)(
-              function () {
-                return (0, useExportData_1.useExportData)();
-              },
-              {
-                wrapper: createWrapper(),
-              },
-            ).result;
+            result = (0, react_2.renderHook)(() => (0, useExportData_1.useExportData)(), {
+              wrapper: createWrapper(),
+            }).result;
             return [
               4 /*yield*/,
-              (0, react_2.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_2.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [4 /*yield*/, result.current.exportToPDF(mockData_1.mockExportData)];
@@ -195,8 +185,8 @@ describe("useExportData", function () {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 1:
             _a.sent();
@@ -215,38 +205,31 @@ describe("useExportData", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should export data to Excel successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should export data to Excel successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockFetch, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockFetch = fetch;
             mockFetch.mockResolvedValueOnce({
               ok: true,
-              blob: function () {
-                return Promise.resolve(
+              blob: () =>
+                Promise.resolve(
                   new Blob(["Excel content"], {
                     type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                   }),
-                );
-              },
+                ),
             });
-            result = (0, react_2.renderHook)(
-              function () {
-                return (0, useExportData_1.useExportData)();
-              },
-              {
-                wrapper: createWrapper(),
-              },
-            ).result;
+            result = (0, react_2.renderHook)(() => (0, useExportData_1.useExportData)(), {
+              wrapper: createWrapper(),
+            }).result;
             return [
               4 /*yield*/,
-              (0, react_2.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_2.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [
@@ -258,8 +241,8 @@ describe("useExportData", function () {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 1:
             _a.sent();
@@ -278,30 +261,24 @@ describe("useExportData", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle export errors gracefully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle export errors gracefully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockFetch, result;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             mockFetch = fetch;
             mockFetch.mockRejectedValueOnce(new Error("Export failed"));
-            result = (0, react_2.renderHook)(
-              function () {
-                return (0, useExportData_1.useExportData)();
-              },
-              {
-                wrapper: createWrapper(),
-              },
-            ).result;
+            result = (0, react_2.renderHook)(() => (0, useExportData_1.useExportData)(), {
+              wrapper: createWrapper(),
+            }).result;
             return [
               4 /*yield*/,
-              (0, react_2.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_2.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [4 /*yield*/, result.current.exportToPDF(mockData_1.mockExportData)];
@@ -310,8 +287,8 @@ describe("useExportData", function () {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
             ];
           case 1:
             _b.sent();
@@ -323,46 +300,38 @@ describe("useExportData", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should show loading state during export", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should show loading state during export", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockFetch, resolvePromise, promise, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockFetch = fetch;
-            promise = new Promise(function (resolve) {
+            promise = new Promise((resolve) => {
               resolvePromise = resolve;
             });
             mockFetch.mockReturnValueOnce(promise);
-            result = (0, react_2.renderHook)(
-              function () {
-                return (0, useExportData_1.useExportData)();
-              },
-              {
-                wrapper: createWrapper(),
-              },
-            ).result;
+            result = (0, react_2.renderHook)(() => (0, useExportData_1.useExportData)(), {
+              wrapper: createWrapper(),
+            }).result;
             // Start export
-            (0, react_2.act)(function () {
+            (0, react_2.act)(() => {
               result.current.exportToPDF(mockData_1.mockExportData);
             });
             // Should be loading
             expect(result.current.isExporting).toBe(true);
             expect(result.current.exportError).toBeNull();
             // Resolve the promise
-            (0, react_2.act)(function () {
+            (0, react_2.act)(() => {
               resolvePromise({
                 ok: true,
-                blob: function () {
-                  return Promise.resolve(new Blob(["PDF content"], { type: "application/pdf" }));
-                },
+                blob: () => Promise.resolve(new Blob(["PDF content"], { type: "application/pdf" })),
               });
             });
             return [
               4 /*yield*/,
-              (0, react_2.waitFor)(function () {
+              (0, react_2.waitFor)(() => {
                 expect(result.current.isExporting).toBe(false);
               }),
             ];
@@ -371,35 +340,27 @@ describe("useExportData", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should handle multiple simultaneous exports", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle multiple simultaneous exports", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockFetch, result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockFetch = fetch;
             mockFetch.mockResolvedValue({
               ok: true,
-              blob: function () {
-                return Promise.resolve(new Blob(["content"], { type: "application/pdf" }));
-              },
+              blob: () => Promise.resolve(new Blob(["content"], { type: "application/pdf" })),
             });
-            result = (0, react_2.renderHook)(
-              function () {
-                return (0, useExportData_1.useExportData)();
-              },
-              {
-                wrapper: createWrapper(),
-              },
-            ).result;
+            result = (0, react_2.renderHook)(() => (0, useExportData_1.useExportData)(), {
+              wrapper: createWrapper(),
+            }).result;
             // Start multiple exports
             return [
               4 /*yield*/,
-              (0, react_2.act)(function () {
-                return __awaiter(void 0, void 0, void 0, function () {
-                  return __generator(this, function (_a) {
+              (0, react_2.act)(() =>
+                __awaiter(void 0, void 0, void 0, function () {
+                  return __generator(this, (_a) => {
                     switch (_a.label) {
                       case 0:
                         return [
@@ -415,8 +376,8 @@ describe("useExportData", function () {
                         return [2 /*return*/];
                     }
                   });
-                });
-              }),
+                }),
+              ),
               // Should handle all exports successfully
             ];
           case 1:
@@ -429,6 +390,5 @@ describe("useExportData", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

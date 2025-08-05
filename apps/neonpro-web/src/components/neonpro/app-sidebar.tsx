@@ -4,21 +4,21 @@
  */
 "use client";
 
-import React from "react";
-import Link from "next/link";
-import type { usePathname } from "next/navigation";
-import type { cn } from "@/lib/utils";
 import type {
+  Activity,
   Calendar,
-  Users,
   DollarSign,
   LayoutDashboard,
-  Settings,
   LogOut,
   Menu,
+  Settings,
+  Users,
   X,
-  Activity,
 } from "lucide-react";
+import Link from "next/link";
+import type { usePathname } from "next/navigation";
+import type React from "react";
+import type { cn } from "@/lib/utils";
 
 interface SidebarItem {
   id: string;

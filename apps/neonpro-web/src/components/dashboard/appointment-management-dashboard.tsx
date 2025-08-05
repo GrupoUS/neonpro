@@ -1,6 +1,24 @@
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { format } from "date-fns";
+import type { pt } from "date-fns/locale";
+import type {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  List,
+  RefreshCw,
+  Settings,
+  TrendingUp,
+  Trophy,
+  Users,
+  XCircle,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,37 +26,18 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Calendar,
-  List,
-  Users,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Trophy,
-  TrendingUp,
-  Settings,
-  RefreshCw,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { pt } from "date-fns/locale";
-import type { toast } from "sonner";
-import type { useAppointmentsManager } from "@/hooks/use-appointments-manager";
+import type { Appointment, useAppointmentsManager } from "@/hooks/use-appointments-manager";
+import type { AppointmentCalendarView } from "./appointment-calendar-view";
 import type { AppointmentFilters } from "./appointment-filters";
 import type { AppointmentListView } from "./appointment-list-view";
-import type { AppointmentCalendarView } from "./appointment-calendar-view";
-import type { QuickActions } from "./quick-actions";
 import type {
-  EditAppointmentDialog,
-  RescheduleAppointmentDialog,
   ContactPatientDialog,
   CreateAppointmentDialog,
+  EditAppointmentDialog,
+  RescheduleAppointmentDialog,
 } from "./appointments/modals";
-import type { Appointment } from "@/hooks/use-appointments-manager";
+import type { QuickActions } from "./quick-actions";
 
 interface AppointmentManagementDashboardProps {
   userId: string;

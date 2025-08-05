@@ -1,4 +1,3 @@
-"use strict";
 /**
  * CRM Business Logic Utilities
  * Pure functions for Customer Relationship Management operations
@@ -6,7 +5,7 @@
  */
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -15,7 +14,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.calculateLeadScore = calculateLeadScore;
 exports.categorizeLeadPriority = categorizeLeadPriority;
@@ -276,16 +275,12 @@ function calculateCustomerLifetimeValue(appointments) {
     return 0;
   }
   // Only count completed appointments
-  var completedAppointments = appointments.filter(function (apt) {
-    return apt.status === "completed";
-  });
+  var completedAppointments = appointments.filter((apt) => apt.status === "completed");
   if (completedAppointments.length === 0) {
     return 0;
   }
   // Sum all completed appointment costs
-  var totalValue = completedAppointments.reduce(function (sum, apt) {
-    return sum + (apt.cost || 0);
-  }, 0);
+  var totalValue = completedAppointments.reduce((sum, apt) => sum + (apt.cost || 0), 0);
   return Math.round(totalValue * 100) / 100; // Round to 2 decimal places
 }
 /**
@@ -297,15 +292,11 @@ function calculateAverageAppointmentValue(appointments) {
   if (!appointments || appointments.length === 0) {
     return 0;
   }
-  var completedAppointments = appointments.filter(function (apt) {
-    return apt.status === "completed";
-  });
+  var completedAppointments = appointments.filter((apt) => apt.status === "completed");
   if (completedAppointments.length === 0) {
     return 0;
   }
-  var totalValue = completedAppointments.reduce(function (sum, apt) {
-    return sum + (apt.cost || 0);
-  }, 0);
+  var totalValue = completedAppointments.reduce((sum, apt) => sum + (apt.cost || 0), 0);
   var averageValue = totalValue / completedAppointments.length;
   return Math.round(averageValue * 100) / 100; // Round to 2 decimal places
 }
@@ -318,9 +309,9 @@ function rankCustomersByValue(customers) {
   if (!customers || customers.length === 0) {
     return [];
   }
-  return __spreadArray([], customers, true).sort(function (a, b) {
-    return (b.totalSpent || 0) - (a.totalSpent || 0);
-  });
+  return __spreadArray([], customers, true).sort(
+    (a, b) => (b.totalSpent || 0) - (a.totalSpent || 0),
+  );
 }
 // ============================================================================
 // Follow-up Management Functions
@@ -414,9 +405,7 @@ function segmentCustomers(customers, criteria) {
   var segments = [];
   // High Value Customers
   if (criteria.minTotalSpent) {
-    var highValueCustomers = customers.filter(function (c) {
-      return c.totalSpent >= criteria.minTotalSpent;
-    });
+    var highValueCustomers = customers.filter((c) => c.totalSpent >= criteria.minTotalSpent);
     if (highValueCustomers.length > 0) {
       segments.push({
         name: "High Value Customers",
@@ -428,9 +417,7 @@ function segmentCustomers(customers, criteria) {
   }
   // Frequent Customers
   if (criteria.minAppointments) {
-    var frequentCustomers = customers.filter(function (c) {
-      return c.appointmentCount >= criteria.minAppointments;
-    });
+    var frequentCustomers = customers.filter((c) => c.appointmentCount >= criteria.minAppointments);
     if (frequentCustomers.length > 0) {
       segments.push({
         name: "Frequent Customers",
@@ -442,7 +429,7 @@ function segmentCustomers(customers, criteria) {
   }
   // At-Risk Customers
   if (criteria.daysSinceLastVisit) {
-    var atRiskCustomers = customers.filter(function (c) {
+    var atRiskCustomers = customers.filter((c) => {
       if (!c.lastVisitDate) return false;
       var daysSince = calculateDaysSinceLastVisit(c.lastVisitDate);
       return daysSince >= criteria.daysSinceLastVisit;
@@ -458,9 +445,9 @@ function segmentCustomers(customers, criteria) {
   }
   // Satisfied Customers
   if (criteria.satisfactionThreshold) {
-    var satisfiedCustomers = customers.filter(function (c) {
-      return c.satisfactionRating && c.satisfactionRating >= criteria.satisfactionThreshold;
-    });
+    var satisfiedCustomers = customers.filter(
+      (c) => c.satisfactionRating && c.satisfactionRating >= criteria.satisfactionThreshold,
+    );
     if (satisfiedCustomers.length > 0) {
       segments.push({
         name: "Highly Satisfied Customers",
@@ -492,24 +479,24 @@ function calculateRetentionRate(customers, periodMonths) {
   var now = Date.now();
   var periodStart = now - periodMonths * 30 * 24 * 60 * 60 * 1000;
   // Customers who were active at the start of the period
-  var eligibleCustomers = customers.filter(function (c) {
+  var eligibleCustomers = customers.filter((c) => {
     var registrationDate = Date.parse(c.registrationDate);
     return registrationDate <= periodStart;
   });
   // Customers still active (visited within last 60 days)
-  var activeCustomers = eligibleCustomers.filter(function (c) {
+  var activeCustomers = eligibleCustomers.filter((c) => {
     if (!c.lastVisitDate) return false;
     var daysSince = calculateDaysSinceLastVisit(c.lastVisitDate);
     return daysSince <= 60;
   });
   // Churned customers
-  var churnedCustomers = eligibleCustomers.filter(function (c) {
+  var churnedCustomers = eligibleCustomers.filter((c) => {
     if (!c.lastVisitDate) return true;
     var daysSince = calculateDaysSinceLastVisit(c.lastVisitDate);
     return daysSince > 120;
   });
   // At-risk customers (60-120 days since last visit)
-  var riskCustomers = eligibleCustomers.filter(function (c) {
+  var riskCustomers = eligibleCustomers.filter((c) => {
     if (!c.lastVisitDate) return false;
     var daysSince = calculateDaysSinceLastVisit(c.lastVisitDate);
     return daysSince > 60 && daysSince <= 120;
@@ -518,9 +505,7 @@ function calculateRetentionRate(customers, periodMonths) {
     eligibleCustomers.length > 0 ? (activeCustomers.length / eligibleCustomers.length) * 100 : 0;
   var averageLifetimeValue =
     customers.length > 0
-      ? customers.reduce(function (sum, c) {
-          return sum + c.totalSpent;
-        }, 0) / customers.length
+      ? customers.reduce((sum, c) => sum + c.totalSpent, 0) / customers.length
       : 0;
   return {
     totalCustomers: eligibleCustomers.length,

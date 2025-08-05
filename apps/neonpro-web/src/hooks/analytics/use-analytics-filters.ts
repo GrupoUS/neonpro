@@ -11,8 +11,8 @@
  * Provides consistent filtering interface for all analytics hooks.
  */
 
-import type { useState, useCallback, useMemo, useEffect } from "react";
 import type { useSearchParams } from "next/navigation";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 
 // Types for filter configuration
 export interface DateRangeFilter {

@@ -5,9 +5,9 @@
  */
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { barcodeService } from "@/app/lib/services/barcode-service";
 import type { z } from "zod";
+import type { barcodeService } from "@/app/lib/services/barcode-service";
+import type { createClient } from "@/lib/supabase/server";
 
 const processBulkScanSchema = z.object({
   operation_id: z.string().uuid("ID da operação deve ser um UUID válido"),

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Compliance Automation System
  * Sistema completo de automação de compliance LGPD para NeonPro
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LGPDAutoAnonymizationService =
   exports.LGPDAutoReportingService =
@@ -170,7 +167,7 @@ var encryption_1 = require("./encryption");
 // ============================================================================
 // AUTOMATIC CONSENT MANAGEMENT
 // ============================================================================
-var LGPDAutoConsentService = /** @class */ (function () {
+var LGPDAutoConsentService = /** @class */ (() => {
   function LGPDAutoConsentService() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -318,9 +315,7 @@ var LGPDAutoConsentService = /** @class */ (function () {
                 .update({ status: lgpd_1.ConsentStatus.EXPIRED })
                 .in(
                   "id",
-                  expired.map(function (c) {
-                    return c.id;
-                  }),
+                  expired.map((c) => c.id),
                 ),
             ];
           case 3:
@@ -378,17 +373,19 @@ var LGPDAutoConsentService = /** @class */ (function () {
   /**
    * Obtém valor aninhado de um objeto
    */
-  LGPDAutoConsentService.prototype.getNestedValue = function (obj, path) {
-    return path.split(".").reduce(function (current, key) {
-      return current === null || current === void 0 ? void 0 : current[key];
-    }, obj);
-  };
+  LGPDAutoConsentService.prototype.getNestedValue = (obj, path) =>
+    path
+      .split(".")
+      .reduce(
+        (current, key) => (current === null || current === void 0 ? void 0 : current[key]),
+        obj,
+      );
   /**
    * Envia notificação de expiração de consentimento
    */
   LGPDAutoConsentService.prototype.sendConsentExpirationNotification = function (consent) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar notificação (email, Slack, etc.)
         console.log("Consent expiring: ".concat(consent.id, " for user ").concat(consent.userId));
         return [2 /*return*/];
@@ -401,7 +398,7 @@ exports.LGPDAutoConsentService = LGPDAutoConsentService;
 // ============================================================================
 // AUTOMATIC DATA SUBJECT RIGHTS MANAGEMENT
 // ============================================================================
-var LGPDAutoDataSubjectRightsService = /** @class */ (function () {
+var LGPDAutoDataSubjectRightsService = /** @class */ (() => {
   function LGPDAutoDataSubjectRightsService() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -708,7 +705,7 @@ var LGPDAutoDataSubjectRightsService = /** @class */ (function () {
    */
   LGPDAutoDataSubjectRightsService.prototype.automateRectificationRequest = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar lógica de retificação automática
         // Por enquanto, apenas marcar como processada
         console.log("Auto-rectification for request ".concat(request.id));
@@ -753,7 +750,7 @@ var LGPDAutoDataSubjectRightsService = /** @class */ (function () {
   /**
    * Verifica se é uma retificação simples
    */
-  LGPDAutoDataSubjectRightsService.prototype.isSimpleRectification = function (request) {
+  LGPDAutoDataSubjectRightsService.prototype.isSimpleRectification = (request) => {
     // Implementar lógica para determinar se é uma correção simples
     return false; // Por segurança, sempre requer revisão manual
   };
@@ -782,9 +779,9 @@ var LGPDAutoDataSubjectRightsService = /** @class */ (function () {
             ) {
               fiveYearsAgo_1 = new Date();
               fiveYearsAgo_1.setFullYear(fiveYearsAgo_1.getFullYear() - 5);
-              recentRecords = medicalRecords.filter(function (record) {
-                return new Date(record.created_at) > fiveYearsAgo_1;
-              });
+              recentRecords = medicalRecords.filter(
+                (record) => new Date(record.created_at) > fiveYearsAgo_1,
+              );
               return [2 /*return*/, recentRecords.length === 0];
             }
             return [2 /*return*/, true];
@@ -797,7 +794,7 @@ var LGPDAutoDataSubjectRightsService = /** @class */ (function () {
    */
   LGPDAutoDataSubjectRightsService.prototype.sendAccessReport = function (request, report) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar envio de email com relatório
         console.log("Sending access report for request ".concat(request.id));
         return [2 /*return*/];
@@ -809,7 +806,7 @@ var LGPDAutoDataSubjectRightsService = /** @class */ (function () {
    */
   LGPDAutoDataSubjectRightsService.prototype.sendPortabilityData = function (request, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar envio de dados de portabilidade
         console.log("Sending portability data for request ".concat(request.id));
         return [2 /*return*/];
@@ -821,7 +818,7 @@ var LGPDAutoDataSubjectRightsService = /** @class */ (function () {
    */
   LGPDAutoDataSubjectRightsService.prototype.notifyComplianceTeam = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar notificação para equipe
         console.log("Manual review required for request ".concat(request.id));
         return [2 /*return*/];
@@ -833,7 +830,7 @@ var LGPDAutoDataSubjectRightsService = /** @class */ (function () {
 exports.LGPDAutoDataSubjectRightsService = LGPDAutoDataSubjectRightsService;
 // AUTOMATIC COMPLIANCE AUDITING
 // ============================================================================
-var LGPDAutoAuditService = /** @class */ (function () {
+var LGPDAutoAuditService = /** @class */ (() => {
   function LGPDAutoAuditService() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -1289,9 +1286,8 @@ var LGPDAutoAuditService = /** @class */ (function () {
             overdueRequests =
               (pendingRequests === null || pendingRequests === void 0
                 ? void 0
-                : pendingRequests.filter(function (req) {
-                    return new Date(req.requestedAt) < fifteenDaysAgo;
-                  })) || [];
+                : pendingRequests.filter((req) => new Date(req.requestedAt) < fifteenDaysAgo)) ||
+              [];
             overdueCount = overdueRequests.length;
             if (pendingCount > 0) {
               score -= Math.min(30, pendingCount * 3);
@@ -1321,11 +1317,11 @@ var LGPDAutoAuditService = /** @class */ (function () {
   /**
    * Gera itens de ação baseados na auditoria
    */
-  LGPDAutoAuditService.prototype.generateActionItems = function (checks) {
+  LGPDAutoAuditService.prototype.generateActionItems = (checks) => {
     var actionItems = [];
     var now = new Date();
     // Itens críticos (score < 50)
-    Object.entries(checks).forEach(function (_a) {
+    Object.entries(checks).forEach((_a) => {
       var checkName = _a[0],
         check = _a[1];
       if (check.score < 50) {
@@ -1414,7 +1410,7 @@ var LGPDAutoAuditService = /** @class */ (function () {
   /**
    * Verifica se um campo está criptografado
    */
-  LGPDAutoAuditService.prototype.isFieldEncrypted = function (value) {
+  LGPDAutoAuditService.prototype.isFieldEncrypted = (value) => {
     if (typeof value !== "string") return false;
     // Verificação simples - em produção seria mais robusta
     return value.includes(":") && value.length > 50;
@@ -1424,7 +1420,7 @@ var LGPDAutoAuditService = /** @class */ (function () {
    */
   LGPDAutoAuditService.prototype.sendComplianceAlert = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar envio de notificações
         console.log("Compliance alert: ".concat(alert.title));
         return [2 /*return*/];
@@ -1436,7 +1432,7 @@ var LGPDAutoAuditService = /** @class */ (function () {
 exports.LGPDAutoAuditService = LGPDAutoAuditService;
 // AUTOMATIC COMPLIANCE REPORTING
 // ============================================================================
-var LGPDAutoReportingService = /** @class */ (function () {
+var LGPDAutoReportingService = /** @class */ (() => {
   function LGPDAutoReportingService() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -1791,12 +1787,10 @@ var LGPDAutoReportingService = /** @class */ (function () {
                 inventory: inventory,
                 summary: {
                   totalDataTypes: inventory.length,
-                  totalRecords: inventory.reduce(function (sum, item) {
-                    return sum + item.recordCount;
-                  }, 0),
-                  sensitiveDataTypes: inventory.filter(function (item) {
-                    return item.dataClassification === "sensitive";
-                  }).length,
+                  totalRecords: inventory.reduce((sum, item) => sum + item.recordCount, 0),
+                  sensitiveDataTypes: inventory.filter(
+                    (item) => item.dataClassification === "sensitive",
+                  ).length,
                 },
               },
             ];
@@ -1872,48 +1866,43 @@ var LGPDAutoReportingService = /** @class */ (function () {
     });
   };
   // Métodos auxiliares
-  LGPDAutoReportingService.prototype.groupBy = function (array, key) {
-    return array.reduce(function (result, item) {
+  LGPDAutoReportingService.prototype.groupBy = (array, key) =>
+    array.reduce((result, item) => {
       var group = item[key];
       result[group] = (result[group] || 0) + 1;
       return result;
     }, {});
-  };
-  LGPDAutoReportingService.prototype.calculateExpirationRate = function (statusStats) {
-    var total = Object.values(statusStats).reduce(function (sum, count) {
-      return sum + count;
-    }, 0);
+  LGPDAutoReportingService.prototype.calculateExpirationRate = (statusStats) => {
+    var total = Object.values(statusStats).reduce((sum, count) => sum + count, 0);
     var expired = statusStats[lgpd_1.ConsentStatus.EXPIRED] || 0;
     return total > 0 ? Math.round((expired / total) * 100) : 0;
   };
-  LGPDAutoReportingService.prototype.calculateAuditCoverage = function (events) {
+  LGPDAutoReportingService.prototype.calculateAuditCoverage = (events) => {
     // Simplificado - em produção seria mais complexo
     return events.length > 100 ? 95 : Math.max(50, events.length);
   };
-  LGPDAutoReportingService.prototype.assessProcessingRisk = function (eventStats) {
+  LGPDAutoReportingService.prototype.assessProcessingRisk = (eventStats) => {
     var deletions = eventStats[lgpd_1.AuditEventType.DATA_DELETION] || 0;
     var modifications = eventStats[lgpd_1.AuditEventType.DATA_MODIFICATION] || 0;
     if (deletions > 50 || modifications > 200) return "high";
     if (deletions > 20 || modifications > 100) return "medium";
     return "low";
   };
-  LGPDAutoReportingService.prototype.countSecurityIncidents = function (events) {
-    return events.filter(function (event) {
-      return (
+  LGPDAutoReportingService.prototype.countSecurityIncidents = (events) =>
+    events.filter(
+      (event) =>
         event.eventType === lgpd_1.AuditEventType.UNAUTHORIZED_ACCESS ||
-        event.eventType === lgpd_1.AuditEventType.DATA_BREACH
-      );
-    }).length;
-  };
-  LGPDAutoReportingService.prototype.calculateAuditCompleteness = function (events) {
+        event.eventType === lgpd_1.AuditEventType.DATA_BREACH,
+    ).length;
+  LGPDAutoReportingService.prototype.calculateAuditCompleteness = (events) => {
     // Simplificado
     return events.length > 1000 ? 100 : Math.max(70, Math.floor(events.length / 10));
   };
-  LGPDAutoReportingService.prototype.classifyDataType = function (tableName) {
+  LGPDAutoReportingService.prototype.classifyDataType = (tableName) => {
     var sensitiveTypes = ["medical_records", "prescriptions"];
     return sensitiveTypes.includes(tableName) ? "sensitive" : "personal";
   };
-  LGPDAutoReportingService.prototype.getRetentionPeriod = function (tableName) {
+  LGPDAutoReportingService.prototype.getRetentionPeriod = (tableName) => {
     var periods = {
       medical_records: "20 anos",
       prescriptions: "5 anos",
@@ -1922,24 +1911,21 @@ var LGPDAutoReportingService = /** @class */ (function () {
     };
     return periods[tableName] || "2 anos";
   };
-  LGPDAutoReportingService.prototype.calculateRiskScore = function (factors) {
+  LGPDAutoReportingService.prototype.calculateRiskScore = (factors) => {
     var score = 0;
     score += factors.highRiskEvents * 10;
     score += factors.accessViolations * 20;
     return Math.min(100, score);
   };
-  LGPDAutoReportingService.prototype.getRiskLevel = function (score) {
+  LGPDAutoReportingService.prototype.getRiskLevel = (score) => {
     if (score >= 80) return "critical";
     if (score >= 60) return "high";
     if (score >= 40) return "medium";
     return "low";
   };
-  LGPDAutoReportingService.prototype.countConsentViolations = function (events) {
-    return events.filter(function (event) {
-      return event.eventType === lgpd_1.AuditEventType.CONSENT_WITHDRAWN;
-    }).length;
-  };
-  LGPDAutoReportingService.prototype.generateRiskRecommendations = function (score) {
+  LGPDAutoReportingService.prototype.countConsentViolations = (events) =>
+    events.filter((event) => event.eventType === lgpd_1.AuditEventType.CONSENT_WITHDRAWN).length;
+  LGPDAutoReportingService.prototype.generateRiskRecommendations = (score) => {
     var recommendations = [];
     if (score >= 80) {
       recommendations.push("Revisar imediatamente políticas de segurança");
@@ -1959,7 +1945,7 @@ var LGPDAutoReportingService = /** @class */ (function () {
   return LGPDAutoReportingService;
 })(); // ============================================================================
 exports.LGPDAutoReportingService = LGPDAutoReportingService;
-var LGPDAutoAnonymizationService = /** @class */ (function () {
+var LGPDAutoAnonymizationService = /** @class */ (() => {
   function LGPDAutoAnonymizationService() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -2104,9 +2090,7 @@ var LGPDAutoAnonymizationService = /** @class */ (function () {
             userIds =
               (withdrawnConsents === null || withdrawnConsents === void 0
                 ? void 0
-                : withdrawnConsents.map(function (c) {
-                    return c.userId;
-                  })) || [];
+                : withdrawnConsents.map((c) => c.userId)) || [];
             if (userIds.length > 0) {
               query = query.in("user_id", userIds);
             } else {
@@ -2214,7 +2198,7 @@ var LGPDAutoAnonymizationService = /** @class */ (function () {
   LGPDAutoAnonymizationService.prototype.hashValue = function (value) {
     return __awaiter(this, void 0, void 0, function () {
       var encoder, data, hashBuffer, hashArray;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             encoder = new TextEncoder();
@@ -2223,14 +2207,7 @@ var LGPDAutoAnonymizationService = /** @class */ (function () {
           case 1:
             hashBuffer = _a.sent();
             hashArray = Array.from(new Uint8Array(hashBuffer));
-            return [
-              2 /*return*/,
-              hashArray
-                .map(function (b) {
-                  return b.toString(16).padStart(2, "0");
-                })
-                .join(""),
-            ];
+            return [2 /*return*/, hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")];
         }
       });
     });
@@ -2238,7 +2215,7 @@ var LGPDAutoAnonymizationService = /** @class */ (function () {
   /**
    * Mascara valor preservando formato
    */
-  LGPDAutoAnonymizationService.prototype.maskValue = function (value, pattern) {
+  LGPDAutoAnonymizationService.prototype.maskValue = (value, pattern) => {
     if (pattern) {
       return pattern.replace(/X/g, "*");
     }
@@ -2281,7 +2258,7 @@ var LGPDAutoAnonymizationService = /** @class */ (function () {
   /**
    * Generaliza valor reduzindo precisão
    */
-  LGPDAutoAnonymizationService.prototype.generalizeValue = function (value, fieldName) {
+  LGPDAutoAnonymizationService.prototype.generalizeValue = (value, fieldName) => {
     // Data de nascimento -> apenas ano
     if (fieldName.includes("birth") || fieldName.includes("nascimento")) {
       var date = new Date(value);
@@ -2307,7 +2284,7 @@ var LGPDAutoAnonymizationService = /** @class */ (function () {
   /**
    * Calcula data limite para retenção
    */
-  LGPDAutoAnonymizationService.prototype.calculateRetentionDate = function (tableName) {
+  LGPDAutoAnonymizationService.prototype.calculateRetentionDate = (tableName) => {
     var now = new Date();
     var retentionPeriods = {
       users: 5 * 365, // 5 anos

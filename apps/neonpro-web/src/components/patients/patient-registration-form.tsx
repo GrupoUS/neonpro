@@ -1,21 +1,33 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { createClient } from "@/app/utils/supabase/client";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
+import type { zodResolver } from "@hookform/resolvers/zod";
 import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Checkbox } from "@/components/ui/checkbox";
+  AlertTriangle,
+  Calendar,
+  Camera,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  FileText,
+  Heart,
+  Mail,
+  MapPin,
+  Phone,
+  Shield,
+  Stethoscope,
+  Upload,
+  User,
+  UserPlus,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
+import * as z from "zod";
+import type { createClient } from "@/app/utils/supabase/client";
 import type { Badge } from "@/components/ui/badge";
-import type { Progress } from "@/components/ui/progress";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -23,6 +35,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Dialog,
   DialogContent,
@@ -40,30 +53,17 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Progress } from "@/components/ui/progress";
 import type {
-  User,
-  FileText,
-  Shield,
-  Camera,
-  ChevronLeft,
-  ChevronRight,
-  Check,
-  AlertTriangle,
-  Heart,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  Stethoscope,
-  UserPlus,
-  Upload,
-  Eye,
-  EyeOff,
-} from "lucide-react";
-import type { useForm } from "react-hook-form";
-import type { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import type { toast } from "sonner";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Validation schemas for each step
 const personalInfoSchema = z.object({

@@ -11,32 +11,31 @@
  * - Real-time permission updates
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,20 +155,19 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PermissionGuard = PermissionGuard;
 exports.ClinicalPermissionGuard = ClinicalPermissionGuard;
@@ -194,7 +190,6 @@ var utils_1 = require("@/lib/utils");
  * Permission Guard Component with Healthcare Context
  */
 function PermissionGuard(_a) {
-  var _this = this;
   var permissions = _a.permissions,
     children = _a.children,
     fallback = _a.fallback,
@@ -237,10 +232,10 @@ function PermissionGuard(_a) {
     setIsCheckingPermissions = _l[1];
   // Check permissions on mount and when dependencies change
   var checkPermissionsAsync = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var results, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!permissionArray.length) {
@@ -271,33 +266,22 @@ function PermissionGuard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [permissionArray, context, checkPermissions, onPermissionCheck],
   );
-  (0, react_1.useEffect)(
-    function () {
-      checkPermissionsAsync();
-    },
-    [checkPermissionsAsync],
-  );
+  (0, react_1.useEffect)(() => {
+    checkPermissionsAsync();
+  }, [checkPermissionsAsync]);
   // Determine if access is granted
-  var isAccessGranted = (0, react_1.useCallback)(
-    function () {
-      if (permissionResults.length === 0) return false;
-      return requireAll
-        ? permissionResults.every(function (result) {
-            return result.granted;
-          })
-        : permissionResults.some(function (result) {
-            return result.granted;
-          });
-    },
-    [permissionResults, requireAll],
-  );
+  var isAccessGranted = (0, react_1.useCallback)(() => {
+    if (permissionResults.length === 0) return false;
+    return requireAll
+      ? permissionResults.every((result) => result.granted)
+      : permissionResults.some((result) => result.granted);
+  }, [permissionResults, requireAll]);
   // Handle emergency override request
   var handleEmergencyOverrideRequest = (0, react_1.useCallback)(
-    function (permission) {
+    (permission) => {
       if (!allowEmergencyOverride || !hasEmergencyOverride) return;
       setEmergencyPermission(permission);
       setShowEmergencyDialog(true);
@@ -306,10 +290,10 @@ function PermissionGuard(_a) {
   );
   // Handle emergency override confirmation
   var handleEmergencyOverrideConfirm = (0, react_1.useCallback)(
-    function (reason) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (reason) =>
+      __awaiter(this, void 0, void 0, function () {
         var error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -335,8 +319,7 @@ function PermissionGuard(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [emergencyPermission, requestEmergencyOverride, onEmergencyOverride, checkPermissionsAsync],
   );
   // Loading state
@@ -365,18 +348,10 @@ function PermissionGuard(_a) {
     );
   }
   // Permission denied - show fallback or default error
-  var deniedResults = permissionResults.filter(function (result) {
-    return !result.granted;
-  });
-  var hasLicenseIssue = deniedResults.some(function (result) {
-    return !result.license_valid;
-  });
-  var hasSpecialtyIssue = deniedResults.some(function (result) {
-    return !result.specialty_match;
-  });
-  var hasCFMIssue = deniedResults.some(function (result) {
-    return !result.cfm_compliant;
-  });
+  var deniedResults = permissionResults.filter((result) => !result.granted);
+  var hasLicenseIssue = deniedResults.some((result) => !result.license_valid);
+  var hasSpecialtyIssue = deniedResults.some((result) => !result.specialty_match);
+  var hasCFMIssue = deniedResults.some((result) => !result.cfm_compliant);
   // Custom fallback provided
   if (fallback) {
     return (
@@ -435,13 +410,11 @@ function PermissionGuard(_a) {
           <div className="space-y-2">
             <p className="text-sm font-medium">Permissões necessárias:</p>
             <div className="flex flex-wrap gap-1">
-              {deniedResults.map(function (result, index) {
-                return (
-                  <badge_1.Badge key={index} variant="destructive" className="text-xs">
-                    {result.permission}
-                  </badge_1.Badge>
-                );
-              })}
+              {deniedResults.map((result, index) => (
+                <badge_1.Badge key={index} variant="destructive" className="text-xs">
+                  {result.permission}
+                </badge_1.Badge>
+              ))}
             </div>
           </div>
 
@@ -458,9 +431,7 @@ function PermissionGuard(_a) {
                   <button_1.Button
                     variant="outline"
                     size="sm"
-                    onClick={function () {
-                      return handleEmergencyOverrideRequest(permissionArray[0]);
-                    }}
+                    onClick={() => handleEmergencyOverrideRequest(permissionArray[0])}
                     className="w-full"
                   >
                     <lucide_react_1.Clock className="w-4 h-4 mr-2" />
@@ -479,9 +450,7 @@ function PermissionGuard(_a) {
       {/* Emergency Override Dialog */}
       <EmergencyOverrideDialog
         isOpen={showEmergencyDialog}
-        onClose={function () {
-          return setShowEmergencyDialog(false);
-        }}
+        onClose={() => setShowEmergencyDialog(false)}
         onConfirm={handleEmergencyOverrideConfirm}
         permission={emergencyPermission}
         userRole={userRole}
@@ -493,7 +462,6 @@ function PermissionGuard(_a) {
 // EMERGENCY OVERRIDE DIALOG
 // ============================================================================
 function EmergencyOverrideDialog(_a) {
-  var _this = this;
   var isOpen = _a.isOpen,
     onClose = _a.onClose,
     onConfirm = _a.onConfirm,
@@ -505,9 +473,9 @@ function EmergencyOverrideDialog(_a) {
   var _c = (0, react_1.useState)(false),
     isConfirming = _c[0],
     setIsConfirming = _c[1];
-  var handleConfirm = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleConfirm = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!reason.trim()) return [2 /*return*/];
@@ -528,7 +496,6 @@ function EmergencyOverrideDialog(_a) {
         }
       });
     });
-  };
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
@@ -551,9 +518,7 @@ function EmergencyOverrideDialog(_a) {
             <textarea
               id="emergency-reason"
               value={reason}
-              onChange={function (e) {
-                return setReason(e.target.value);
-              }}
+              onChange={(e) => setReason(e.target.value)}
               placeholder="Descreva a situação de emergência que justifica este acesso..."
               className="w-full min-h-[100px] p-3 border rounded-md resize-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
@@ -608,47 +573,45 @@ function PermissionDetails(_a) {
         </div>
 
         <div className="space-y-2">
-          {results.map(function (result, index) {
-            return (
-              <div key={index} className="border rounded p-2 text-xs space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{result.permission}</span>
-                  <badge_1.Badge variant={result.granted ? "success" : "destructive"}>
-                    {result.granted ? "Concedida" : "Negada"}
-                  </badge_1.Badge>
-                </div>
-
-                <p className="text-muted-foreground">{result.reason}</p>
-
-                <div className="flex gap-2 flex-wrap">
-                  <badge_1.Badge
-                    variant={result.license_valid ? "success" : "destructive"}
-                    className="text-xs"
-                  >
-                    Licença: {result.license_valid ? "Válida" : "Inválida"}
-                  </badge_1.Badge>
-                  <badge_1.Badge
-                    variant={result.specialty_match ? "success" : "destructive"}
-                    className="text-xs"
-                  >
-                    Especialidade: {result.specialty_match ? "OK" : "Incompatível"}
-                  </badge_1.Badge>
-                  <badge_1.Badge
-                    variant={result.cfm_compliant ? "success" : "destructive"}
-                    className="text-xs"
-                  >
-                    CFM: {result.cfm_compliant ? "Conforme" : "Não conforme"}
-                  </badge_1.Badge>
-                </div>
-
-                {result.emergency_override && (
-                  <badge_1.Badge variant="warning" className="text-xs">
-                    Acesso de Emergência Ativo
-                  </badge_1.Badge>
-                )}
+          {results.map((result, index) => (
+            <div key={index} className="border rounded p-2 text-xs space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">{result.permission}</span>
+                <badge_1.Badge variant={result.granted ? "success" : "destructive"}>
+                  {result.granted ? "Concedida" : "Negada"}
+                </badge_1.Badge>
               </div>
-            );
-          })}
+
+              <p className="text-muted-foreground">{result.reason}</p>
+
+              <div className="flex gap-2 flex-wrap">
+                <badge_1.Badge
+                  variant={result.license_valid ? "success" : "destructive"}
+                  className="text-xs"
+                >
+                  Licença: {result.license_valid ? "Válida" : "Inválida"}
+                </badge_1.Badge>
+                <badge_1.Badge
+                  variant={result.specialty_match ? "success" : "destructive"}
+                  className="text-xs"
+                >
+                  Especialidade: {result.specialty_match ? "OK" : "Incompatível"}
+                </badge_1.Badge>
+                <badge_1.Badge
+                  variant={result.cfm_compliant ? "success" : "destructive"}
+                  className="text-xs"
+                >
+                  CFM: {result.cfm_compliant ? "Conforme" : "Não conforme"}
+                </badge_1.Badge>
+              </div>
+
+              {result.emergency_override && (
+                <badge_1.Badge variant="warning" className="text-xs">
+                  Acesso de Emergência Ativo
+                </badge_1.Badge>
+              )}
+            </div>
+          ))}
         </div>
       </card_1.CardContent>
     </card_1.Card>

@@ -1,13 +1,13 @@
 // Communication Components
-export { StaffChat } from "./staff-chat";
-export { ConsentManager } from "./consent-manager";
-export { TemplateManager } from "./template-manager";
-export { CommunicationDashboard } from "./communication-dashboard";
 
+export { CommunicationDashboard } from "./communication-dashboard";
+export { ConsentManager } from "./consent-manager";
 // Types
 export type {
-  StaffChatProps,
-  ConsentManagerProps,
-  TemplateManagerProps,
   CommunicationDashboardProps,
+  ConsentManagerProps,
+  StaffChatProps,
+  TemplateManagerProps,
 } from "./staff-chat";
+export { StaffChat } from "./staff-chat";
+export { TemplateManager } from "./template-manager";

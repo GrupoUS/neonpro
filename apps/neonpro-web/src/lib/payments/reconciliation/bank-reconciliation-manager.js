@@ -1,4 +1,3 @@
-"use strict";
 // NeonPro - Bank Reconciliation Manager
 // Story 6.1 - Task 4: Bank Reconciliation System
 // Comprehensive bank reconciliation service for automated transaction matching
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BankReconciliationManager = void 0;
 exports.getBankReconciliationManager = getBankReconciliationManager;
@@ -229,7 +226,7 @@ var DiscrepancySchema = zod_1.z.object({
  * Bank Reconciliation Manager
  * Handles bank statement imports, transaction matching, and discrepancy detection
  */
-var BankReconciliationManager = /** @class */ (function () {
+var BankReconciliationManager = /** @class */ (() => {
   function BankReconciliationManager() {
     this.supabase = (0, client_1.createClient)();
   }
@@ -284,7 +281,7 @@ var BankReconciliationManager = /** @class */ (function () {
             _c.label = 3;
           case 3:
             _c.trys.push([3, 5, , 6]);
-            validatedTransactions = batch.map(function (transaction) {
+            validatedTransactions = batch.map((transaction) => {
               var validated = BankTransactionSchema.parse(
                 __assign(__assign({}, transaction), { statement_id: statement_1.id }),
               );
@@ -575,7 +572,7 @@ var BankReconciliationManager = /** @class */ (function () {
   /**
    * Calculate string similarity using Levenshtein distance
    */
-  BankReconciliationManager.prototype.calculateStringSimilarity = function (str1, str2) {
+  BankReconciliationManager.prototype.calculateStringSimilarity = (str1, str2) => {
     var matrix = [];
     var len1 = str1.length;
     var len2 = str2.length;
@@ -647,7 +644,7 @@ var BankReconciliationManager = /** @class */ (function () {
             if (transError) {
               throw new Error("Failed to fetch transactions: ".concat(transError.message));
             }
-            calculatedBalance = transactions.reduce(function (balance, trans) {
+            calculatedBalance = transactions.reduce((balance, trans) => {
               var credit = trans.credit_amount || 0;
               var debit = trans.debit_amount || 0;
               return balance + credit - debit;
@@ -662,9 +659,9 @@ var BankReconciliationManager = /** @class */ (function () {
                 severity: "high",
               });
             }
-            unmatchedTransactions = transactions.filter(function (trans) {
-              return trans.reconciliation_status === "unmatched";
-            });
+            unmatchedTransactions = transactions.filter(
+              (trans) => trans.reconciliation_status === "unmatched",
+            );
             for (
               _i = 0, unmatchedTransactions_1 = unmatchedTransactions;
               _i < unmatchedTransactions_1.length;
@@ -721,7 +718,7 @@ var BankReconciliationManager = /** @class */ (function () {
   /**
    * Find duplicate transactions
    */
-  BankReconciliationManager.prototype.findDuplicateTransactions = function (transactions) {
+  BankReconciliationManager.prototype.findDuplicateTransactions = (transactions) => {
     var duplicates = [];
     var seen = new Map();
     for (var _i = 0, transactions_2 = transactions; _i < transactions_2.length; _i++) {
@@ -771,15 +768,9 @@ var BankReconciliationManager = /** @class */ (function () {
               throw new Error("Failed to fetch transactions: ".concat(error.message));
             }
             total = transactions.length;
-            matched = transactions.filter(function (t) {
-              return t.reconciliation_status === "matched";
-            }).length;
-            unmatched = transactions.filter(function (t) {
-              return t.reconciliation_status === "unmatched";
-            }).length;
-            disputed = transactions.filter(function (t) {
-              return t.reconciliation_status === "disputed";
-            }).length;
+            matched = transactions.filter((t) => t.reconciliation_status === "matched").length;
+            unmatched = transactions.filter((t) => t.reconciliation_status === "unmatched").length;
+            disputed = transactions.filter((t) => t.reconciliation_status === "disputed").length;
             return [
               4 /*yield*/,
               this.supabase

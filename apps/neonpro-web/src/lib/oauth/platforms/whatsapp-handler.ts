@@ -1,7 +1,7 @@
-import type { BaseOAuthHandler } from "../base-oauth-handler";
-import type { OAuthProviderConfig, OAuthTokenResponse } from "../types";
-import type { EncryptedToken } from "../token-encryption";
 import type { logger } from "@/lib/logger";
+import type { BaseOAuthHandler } from "../base-oauth-handler";
+import type { EncryptedToken } from "../token-encryption";
+import type { OAuthProviderConfig, OAuthTokenResponse } from "../types";
 
 export class WhatsAppOAuthHandler extends BaseOAuthHandler {
   protected readonly config: OAuthProviderConfig;

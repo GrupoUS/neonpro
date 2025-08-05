@@ -5,36 +5,33 @@
  * for the executive dashboard with multiple formats and templates.
  */
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Separator } from "@/components/ui/separator";
 import type {
-  FileText,
-  Download,
+  AlertCircle,
   Calendar,
+  CheckCircle,
   Clock,
-  Mail,
-  Settings,
-  Play,
-  Pause,
-  Trash2,
   Copy,
+  Download,
+  Edit,
   Eye,
   FileSpreadsheet,
+  FileText,
   Image,
-  Share,
-  Plus,
-  Edit,
-  CheckCircle,
-  AlertCircle,
   Loader2,
+  Mail,
+  Pause,
+  Play,
+  Plus,
+  Settings,
+  Share,
+  Trash2,
 } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Dialog,
   DialogContent,
@@ -44,6 +41,9 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
   Select,
   SelectContent,
@@ -51,12 +51,12 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Checkbox } from "@/components/ui/checkbox";
+import type { Separator } from "@/components/ui/separator";
 import type { Switch } from "@/components/ui/switch";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 
-import type { DashboardReport, ReportTemplate, ReportSchedule } from "@/lib/dashboard/types";
+import type { DashboardReport, ReportSchedule, ReportTemplate } from "@/lib/dashboard/types";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -171,7 +171,7 @@ const formatFileSize = (bytes: number): string => {
   const k = 1024;
   const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
 };
 
 const getNextRunTime = (schedule: ReportSchedule): string => {
@@ -182,10 +182,11 @@ const getNextRunTime = (schedule: ReportSchedule): string => {
     case "daily":
       nextRun.setDate(now.getDate() + 1);
       break;
-    case "weekly":
+    case "weekly": {
       const daysUntilNext = (schedule.dayOfWeek! - now.getDay() + 7) % 7;
       nextRun.setDate(now.getDate() + (daysUntilNext || 7));
       break;
+    }
     case "monthly":
       nextRun.setMonth(now.getMonth() + 1);
       nextRun.setDate(schedule.dayOfMonth!);

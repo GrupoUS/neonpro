@@ -3,9 +3,9 @@
 // POST /api/stock/alerts/resolve - Resolve an alert
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { resolveAlertSchema, ResolveAlert, AlertStatus } from "@/app/lib/types/stock-alerts";
 import type { z } from "zod";
+import type { AlertStatus, ResolveAlert, resolveAlertSchema } from "@/app/lib/types/stock-alerts";
+import type { createClient } from "@/lib/supabase/server";
 
 // =====================================================
 // UTILITY FUNCTIONS

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ErrorMessagesDisplay;
 var badge_1 = require("@/components/ui/badge");
@@ -144,7 +141,7 @@ var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
-var getMessageIcon = function (type) {
+var getMessageIcon = (type) => {
   switch (type) {
     case "error":
       return <lucide_react_1.AlertCircle className="h-4 w-4 text-red-500" />;
@@ -158,7 +155,7 @@ var getMessageIcon = function (type) {
       return <lucide_react_1.AlertCircle className="h-4 w-4 text-gray-500" />;
   }
 };
-var getMessageVariant = function (type) {
+var getMessageVariant = (type) => {
   switch (type) {
     case "error":
       return "destructive";
@@ -172,7 +169,7 @@ var getMessageVariant = function (type) {
       return "default";
   }
 };
-var getMessageColors = function (type) {
+var getMessageColors = (type) => {
   switch (type) {
     case "error":
       return "border-red-200 bg-red-50 text-red-800";
@@ -186,7 +183,7 @@ var getMessageColors = function (type) {
       return "border-gray-200 bg-gray-50 text-gray-800";
   }
 };
-var MessageCard = function (_a) {
+var MessageCard = (_a) => {
   var _b, _c, _d, _e;
   var message = _a.message,
     onRemove = _a.onRemove,
@@ -198,11 +195,11 @@ var MessageCard = function (_a) {
   var _g = (0, react_1.useState)(null),
     isExecutingAction = _g[0],
     setIsExecutingAction = _g[1];
-  var handleActionClick = function (actionIndex) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleActionClick = (actionIndex) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var action, error_1;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             action = (_a = message.actions) === null || _a === void 0 ? void 0 : _a[actionIndex];
@@ -227,7 +224,6 @@ var MessageCard = function (_a) {
         }
       });
     });
-  };
   var hasExpandableContent =
     message.details ||
     message.context ||
@@ -324,7 +320,7 @@ var MessageCard = function (_a) {
               {/* Actions */}
               {message.actions && message.actions.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-3">
-                  {message.actions.map(function (action, index) {
+                  {message.actions.map((action, index) => {
                     var isLoading =
                       isExecutingAction === "action-".concat(index) ||
                       (isRetrying && action.label.includes("Tentar"));
@@ -339,9 +335,7 @@ var MessageCard = function (_a) {
                               ? "destructive"
                               : "outline"
                         }
-                        onClick={function () {
-                          return handleActionClick(index);
-                        }}
+                        onClick={() => handleActionClick(index)}
                         disabled={isLoading || Boolean(isExecutingAction)}
                         className="h-7 text-xs"
                       >
@@ -362,9 +356,7 @@ var MessageCard = function (_a) {
             <button_1.Button
               variant="ghost"
               size="sm"
-              onClick={function () {
-                return onRemove(message.id);
-              }}
+              onClick={() => onRemove(message.id)}
               className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600 ml-2"
             >
               <lucide_react_1.X className="h-3 w-3" />
@@ -386,18 +378,10 @@ function ErrorMessagesDisplay(_a) {
     _d = _a.maxHeight,
     maxHeight = _d === void 0 ? "400px" : _d;
   if (messages.length === 0) return null;
-  var errorCount = messages.filter(function (m) {
-    return m.type === "error";
-  }).length;
-  var warningCount = messages.filter(function (m) {
-    return m.type === "warning";
-  }).length;
-  var infoCount = messages.filter(function (m) {
-    return m.type === "info";
-  }).length;
-  var successCount = messages.filter(function (m) {
-    return m.type === "success";
-  }).length;
+  var errorCount = messages.filter((m) => m.type === "error").length;
+  var warningCount = messages.filter((m) => m.type === "warning").length;
+  var infoCount = messages.filter((m) => m.type === "info").length;
+  var successCount = messages.filter((m) => m.type === "success").length;
   return (
     <div className="w-full">
       {/* Header */}
@@ -442,38 +426,33 @@ function ErrorMessagesDisplay(_a) {
       {/* Messages */}
       <scroll_area_1.ScrollArea style={{ maxHeight: maxHeight }}>
         <div className="space-y-0">
-          {messages.map(function (message) {
-            return (
-              <MessageCard
-                key={message.id}
-                message={message}
-                onRemove={onRemoveMessage}
-                showProgressiveDisclosure={showProgressiveDisclosure}
-                isRetrying={isRetrying}
-              />
-            );
-          })}
+          {messages.map((message) => (
+            <MessageCard
+              key={message.id}
+              message={message}
+              onRemove={onRemoveMessage}
+              showProgressiveDisclosure={showProgressiveDisclosure}
+              isRetrying={isRetrying}
+            />
+          ))}
         </div>
       </scroll_area_1.ScrollArea>
 
       {/* Help Footer */}
-      {showProgressiveDisclosure &&
-        messages.some(function (m) {
-          return m.type === "error";
-        }) && (
-          <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-start gap-2">
-              <lucide_react_1.HelpCircle className="h-4 w-4 text-blue-600 mt-0.5" />
-              <div className="text-sm text-blue-800">
-                <p className="font-medium mb-1">Precisa de Ajuda?</p>
-                <p className="text-xs">
-                  Se os problemas persistirem, entre em contato com o suporte técnico ou consulte
-                  nossa documentação de ajuda.
-                </p>
-              </div>
+      {showProgressiveDisclosure && messages.some((m) => m.type === "error") && (
+        <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-start gap-2">
+            <lucide_react_1.HelpCircle className="h-4 w-4 text-blue-600 mt-0.5" />
+            <div className="text-sm text-blue-800">
+              <p className="font-medium mb-1">Precisa de Ajuda?</p>
+              <p className="text-xs">
+                Se os problemas persistirem, entre em contato com o suporte técnico ou consulte
+                nossa documentação de ajuda.
+              </p>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

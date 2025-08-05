@@ -1,16 +1,15 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -19,7 +18,7 @@ exports.SessionConfig = void 0;
  * Session Management Configuration
  * Central configuration for all session-related settings
  */
-var SessionConfig = /** @class */ (function () {
+var SessionConfig = /** @class */ (() => {
   function SessionConfig() {}
   /**
    * Get policy by user role
@@ -42,7 +41,7 @@ var SessionConfig = /** @class */ (function () {
   /**
    * Get environment-specific configuration
    */
-  SessionConfig.getEnvironmentConfig = function () {
+  SessionConfig.getEnvironmentConfig = () => {
     var isDevelopment = process.env.NODE_ENV === "development";
     var isProduction = process.env.NODE_ENV === "production";
     return __assign(
@@ -102,15 +101,12 @@ var SessionConfig = /** @class */ (function () {
   /**
    * Validate individual policy
    */
-  SessionConfig.validatePolicy = function (policy) {
-    return (
-      policy.max_session_duration > 0 &&
-      policy.idle_timeout > 0 &&
-      policy.max_concurrent_sessions > 0 &&
-      policy.session_refresh_threshold > 0 &&
-      policy.security_check_interval > 0
-    );
-  };
+  SessionConfig.validatePolicy = (policy) =>
+    policy.max_session_duration > 0 &&
+    policy.idle_timeout > 0 &&
+    policy.max_concurrent_sessions > 0 &&
+    policy.session_refresh_threshold > 0 &&
+    policy.security_check_interval > 0;
   /**
    * Get configuration for specific environment
    */

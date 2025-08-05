@@ -14,7 +14,7 @@ export interface HealthcareUser {
 
 const authPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   // Multi-tenant authentication decorator
-  fastify.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.decorate("authenticate", async (request: FastifyRequest, _reply: FastifyReply) => {
     try {
       // Verify JWT token
       await request.jwtVerify();
@@ -58,30 +58,30 @@ const authPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 
       fastify.log.info(
         {
-          userId: request.user.id,
+          userId: (request.user as HealthcareUser).id,
           tenantId: request.tenantId,
-          role: request.user.role,
+          role: (request.user as HealthcareUser).role,
         },
         "User authenticated successfully",
       );
     } catch (error) {
-      fastify.log.warn({ error: error.message }, "Authentication failed");
+      fastify.log.warn({ error: (error as Error).message }, "Authentication failed");
       throw new Error("Authentication required");
     }
   });
 
   // Role-based authorization decorator
   fastify.decorate("requireRole", (allowedRoles: string[]) => {
-    return async (request: FastifyRequest, reply: FastifyReply) => {
+    return async (request: FastifyRequest, _reply: FastifyReply) => {
       if (!request.user) {
         throw new Error("Authentication required");
       }
 
-      if (!allowedRoles.includes(request.user.role)) {
+      if (!allowedRoles.includes((request.user as HealthcareUser).role)) {
         fastify.log.warn(
           {
-            userId: request.user.id,
-            userRole: request.user.role,
+            userId: (request.user as HealthcareUser).id,
+            userRole: (request.user as HealthcareUser).role,
             requiredRoles: allowedRoles,
           },
           "Insufficient permissions",
@@ -93,16 +93,16 @@ const authPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 
   // Permission-based authorization decorator
   fastify.decorate("requirePermission", (requiredPermission: string) => {
-    return async (request: FastifyRequest, reply: FastifyReply) => {
+    return async (request: FastifyRequest, _reply: FastifyReply) => {
       if (!request.user) {
         throw new Error("Authentication required");
       }
 
-      if (!request.user.permissions.includes(requiredPermission)) {
+      if (!(request.user as HealthcareUser).permissions?.includes(requiredPermission)) {
         fastify.log.warn(
           {
-            userId: request.user.id,
-            userPermissions: request.user.permissions,
+            userId: (request.user as HealthcareUser).id,
+            userPermissions: (request.user as HealthcareUser).permissions,
             requiredPermission,
           },
           "Missing required permission",
@@ -114,20 +114,23 @@ const authPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 
   // Healthcare professional license validation
   fastify.decorate("requireLicense", (requiredLicenseType?: string) => {
-    return async (request: FastifyRequest, reply: FastifyReply) => {
+    return async (request: FastifyRequest, _reply: FastifyReply) => {
       if (!request.user) {
         throw new Error("Authentication required");
       }
 
-      if (!request.user.licenseNumber) {
+      if (!(request.user as HealthcareUser).licenseNumber) {
         throw new Error("Healthcare license required");
       }
 
-      if (requiredLicenseType && !request.user.certifications.includes(requiredLicenseType)) {
+      if (
+        requiredLicenseType &&
+        !(request.user as HealthcareUser).certifications?.includes(requiredLicenseType)
+      ) {
         fastify.log.warn(
           {
-            userId: request.user.id,
-            userCertifications: request.user.certifications,
+            userId: (request.user as HealthcareUser).id,
+            userCertifications: (request.user as HealthcareUser).certifications,
             requiredLicenseType,
           },
           "Required healthcare certification missing",

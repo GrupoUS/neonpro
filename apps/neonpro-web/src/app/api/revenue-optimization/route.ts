@@ -11,9 +11,9 @@
  */
 
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
-import type { createrevenueOptimizationEngine } from "@/lib/financial/revenue-optimization-engine";
 import type { z } from "zod";
+import type { createrevenueOptimizationEngine } from "@/lib/financial/revenue-optimization-engine";
+import type { createClient } from "@/lib/supabase/server";
 
 // 🔥 Request Schemas
 const PricingOptimizationRequestSchema = z.object({
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
     let result;
 
     switch (optimizationType) {
-      case "pricing":
+      case "pricing": {
         const pricingRequest = PricingOptimizationRequestSchema.parse({
           clinicId,
           ...optimizationData,
@@ -196,43 +196,49 @@ export async function POST(request: NextRequest) {
           pricingRequest.serviceId,
         );
         break;
+      }
 
-      case "service_mix":
+      case "service_mix": {
         const serviceMixRequest = ServiceMixRequestSchema.parse({ clinicId });
         result = await createrevenueOptimizationEngine().optimizeServiceMix(
           serviceMixRequest.clinicId,
         );
         break;
+      }
 
-      case "clv":
+      case "clv": {
         const clvRequest = CLVRequestSchema.parse({ clinicId, ...optimizationData });
         result = await createrevenueOptimizationEngine().enhanceCLV(
           clvRequest.clinicId,
           clvRequest.patientId,
         );
         break;
+      }
 
-      case "automated":
+      case "automated": {
         const automatedRequest = AutomatedRecommendationsRequestSchema.parse({ clinicId });
         result = await createrevenueOptimizationEngine().generateAutomatedRecommendations(
           automatedRequest.clinicId,
         );
         break;
+      }
 
-      case "competitive":
+      case "competitive": {
         const competitiveRequest = CompetitiveAnalysisRequestSchema.parse({ clinicId });
         result = await createrevenueOptimizationEngine().getCompetitiveAnalysis(
           competitiveRequest.clinicId,
         );
         break;
+      }
 
-      case "roi_tracking":
+      case "roi_tracking": {
         const roiRequest = ROITrackingRequestSchema.parse({ clinicId, ...optimizationData });
         result = await createrevenueOptimizationEngine().trackROI(
           roiRequest.clinicId,
           roiRequest.optimizationId,
         );
         break;
+      }
 
       default:
         return NextResponse.json({ error: "Invalid optimization type" }, { status: 400 });

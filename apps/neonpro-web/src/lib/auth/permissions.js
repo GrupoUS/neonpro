@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Healthcare RBAC - Core Permissions System
  * AUTH-02 Implementation - Healthcare-Specific Role-Based Access Control
@@ -55,18 +54,14 @@ exports.PermissionSchema = zod_1.z.object({
   lgpd_sensitive: zod_1.z.boolean().default(false),
   anvisa_controlled: zod_1.z.boolean().default(false),
   emergency_override: zod_1.z.boolean().default(false),
-  created_at: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updated_at: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  created_at: zod_1.z.date().default(() => new Date()),
+  updated_at: zod_1.z.date().default(() => new Date()),
 });
 /**
  * Healthcare Role Types with CFM Compliance
  */
 var HealthcareRole;
-(function (HealthcareRole) {
+((HealthcareRole) => {
   // System Roles
   HealthcareRole["SUPER_ADMIN"] = "super_admin";
   HealthcareRole["SYSTEM_ADMIN"] = "system_admin";
@@ -110,7 +105,7 @@ var HealthcareRole;
  * Medical Specialties for CFM Compliance
  */
 var MedicalSpecialty;
-(function (MedicalSpecialty) {
+((MedicalSpecialty) => {
   // Clinical Specialties
   MedicalSpecialty["CARDIOLOGY"] = "cardiology";
   MedicalSpecialty["DERMATOLOGY"] = "dermatology";
@@ -546,49 +541,49 @@ function getPermission(permissionId) {
  * Get permissions by category
  */
 function getPermissionsByCategory(category) {
-  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(function (permission) {
-    return permission.category === category;
-  });
+  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(
+    (permission) => permission.category === category,
+  );
 }
 /**
  * Get permissions requiring medical license
  */
 function getLicenseRequiredPermissions() {
-  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(function (permission) {
-    return permission.requires_license;
-  });
+  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(
+    (permission) => permission.requires_license,
+  );
 }
 /**
  * Get CFM compliance permissions
  */
 function getCFMCompliancePermissions() {
-  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(function (permission) {
-    return permission.cfm_compliance;
-  });
+  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(
+    (permission) => permission.cfm_compliance,
+  );
 }
 /**
  * Get LGPD sensitive permissions
  */
 function getLGPDSensitivePermissions() {
-  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(function (permission) {
-    return permission.lgpd_sensitive;
-  });
+  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(
+    (permission) => permission.lgpd_sensitive,
+  );
 }
 /**
  * Get ANVISA controlled permissions
  */
 function getANVISAControlledPermissions() {
-  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(function (permission) {
-    return permission.anvisa_controlled;
-  });
+  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(
+    (permission) => permission.anvisa_controlled,
+  );
 }
 /**
  * Get emergency override permissions
  */
 function getEmergencyOverridePermissions() {
-  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(function (permission) {
-    return permission.emergency_override;
-  });
+  return Object.values(exports.HEALTHCARE_PERMISSIONS).filter(
+    (permission) => permission.emergency_override,
+  );
 }
 /**
  * Check if permission requires specific specialty
@@ -608,12 +603,7 @@ function permissionRequiresSpecialty(permissionId, specialty) {
  */
 function validatePermissionFormat(permission) {
   var parts = permission.split(".");
-  return (
-    parts.length === 3 &&
-    parts.every(function (part) {
-      return part.length > 0;
-    })
-  );
+  return parts.length === 3 && parts.every((part) => part.length > 0);
 }
 /**
  * Parse permission string
@@ -639,7 +629,7 @@ function getAllPermissionIds() {
  */
 function getPermissionsCountByCategory() {
   var counts = {};
-  Object.values(exports.HEALTHCARE_PERMISSIONS).forEach(function (permission) {
+  Object.values(exports.HEALTHCARE_PERMISSIONS).forEach((permission) => {
     counts[permission.category] = (counts[permission.category] || 0) + 1;
   });
   return counts;

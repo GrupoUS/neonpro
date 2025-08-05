@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Data Cleanup Service - Automated Data Maintenance and Cleanup
  *
@@ -11,15 +10,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,13 +38,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -67,9 +66,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -141,7 +138,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataCleanupService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -156,7 +153,7 @@ var supabase_js_1 = require("@supabase/supabase-js");
  * - Automated scheduling and monitoring
  * - Performance optimization
  */
-var DataCleanupService = /** @class */ (function () {
+var DataCleanupService = /** @class */ (() => {
   function DataCleanupService(config) {
     this.scheduledTasks = new Map();
     this.isRunning = false;
@@ -253,15 +250,9 @@ var DataCleanupService = /** @class */ (function () {
           case 7:
             endTime = Date.now();
             totalDuration = endTime - startTime;
-            totalDeleted = results.reduce(function (sum, r) {
-              return sum + r.itemsDeleted;
-            }, 0);
-            totalProcessed = results.reduce(function (sum, r) {
-              return sum + r.itemsProcessed;
-            }, 0);
-            successfulTasks = results.filter(function (r) {
-              return r.success;
-            }).length;
+            totalDeleted = results.reduce((sum, r) => sum + r.itemsDeleted, 0);
+            totalProcessed = results.reduce((sum, r) => sum + r.itemsProcessed, 0);
+            successfulTasks = results.filter((r) => r.success).length;
             // Log cleanup summary
             return [
               4 /*yield*/,
@@ -899,7 +890,6 @@ var DataCleanupService = /** @class */ (function () {
    * Schedule cleanup task
    */
   DataCleanupService.prototype.scheduleCleanup = function (schedule) {
-    var _this = this;
     // Clear existing schedule if any
     var existingTimeout = this.scheduledTasks.get(schedule.name);
     if (existingTimeout) {
@@ -910,40 +900,43 @@ var DataCleanupService = /** @class */ (function () {
     var nextRun = this.calculateNextRun(schedule.cron, now);
     var delay = nextRun - now;
     // Schedule the task
-    var timeout = setTimeout(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_8;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.runCleanup(schedule.tasks)];
-            case 1:
-              _a.sent();
-              // Reschedule for next run
-              this.scheduleCleanup(schedule);
-              return [3 /*break*/, 3];
-            case 2:
-              error_8 = _a.sent();
-              console.error("Error running scheduled cleanup ".concat(schedule.name, ":"), error_8);
-              // Reschedule even if there was an error
-              this.scheduleCleanup(schedule);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, delay);
+    var timeout = setTimeout(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_8;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.runCleanup(schedule.tasks)];
+              case 1:
+                _a.sent();
+                // Reschedule for next run
+                this.scheduleCleanup(schedule);
+                return [3 /*break*/, 3];
+              case 2:
+                error_8 = _a.sent();
+                console.error(
+                  "Error running scheduled cleanup ".concat(schedule.name, ":"),
+                  error_8,
+                );
+                // Reschedule even if there was an error
+                this.scheduleCleanup(schedule);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      delay,
+    );
     this.scheduledTasks.set(schedule.name, timeout);
   };
   /**
    * Stop all scheduled tasks
    */
   DataCleanupService.prototype.stopScheduledTasks = function () {
-    this.scheduledTasks.forEach(function (timeout) {
-      return clearTimeout(timeout);
-    });
+    this.scheduledTasks.forEach((timeout) => clearTimeout(timeout));
     this.scheduledTasks.clear();
   };
   /**
@@ -1101,16 +1094,14 @@ var DataCleanupService = /** @class */ (function () {
       });
     });
   };
-  DataCleanupService.prototype.calculateNextRun = function (cron, fromTime) {
+  DataCleanupService.prototype.calculateNextRun = (cron, fromTime) => {
     // Simple cron parser for basic schedules
     // Format: "minute hour day month dayOfWeek"
     var parts = cron.split(" ");
     if (parts.length !== 5) {
       throw new Error("Invalid cron format");
     }
-    var _a = parts.map(function (p) {
-        return parseInt(p);
-      }),
+    var _a = parts.map((p) => parseInt(p)),
       minute = _a[0],
       hour = _a[1],
       day = _a[2],
@@ -1138,7 +1129,7 @@ var DataCleanupService = /** @class */ (function () {
   };
   DataCleanupService.prototype.getNextScheduledRun = function () {
     var nextRun = null;
-    this.scheduledTasks.forEach(function (timeout) {
+    this.scheduledTasks.forEach((timeout) => {
       // This is a simplified approach - in a real implementation,
       // you'd track the actual scheduled times
       var scheduledTime = Date.now() + 24 * 60 * 60 * 1000; // Next day

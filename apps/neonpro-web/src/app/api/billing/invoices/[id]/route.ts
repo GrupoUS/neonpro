@@ -1,6 +1,6 @@
-import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { createClient } from "@/app/utils/supabase/server";
 
 const UpdateInvoiceSchema = z.object({
   status: z.enum(["draft", "pending", "paid", "overdue", "cancelled"]).optional(),
@@ -9,7 +9,7 @@ const UpdateInvoiceSchema = z.object({
   payment_terms: z.string().optional(),
 });
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
 
@@ -138,7 +138,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const supabase = await createClient();
 

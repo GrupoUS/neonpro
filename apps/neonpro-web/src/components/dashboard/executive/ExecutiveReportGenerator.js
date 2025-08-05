@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Executive Report Generator Component
  *
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,10 +149,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -164,7 +161,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExecutiveReportGenerator = void 0;
 var react_1 = require("react");
@@ -176,7 +173,7 @@ var utils_1 = require("@/lib/dashboard/utils");
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
-var ExecutiveReportGenerator = function (_a) {
+var ExecutiveReportGenerator = (_a) => {
   // ============================================================================
   // STATE MANAGEMENT
   // ============================================================================
@@ -261,210 +258,205 @@ var ExecutiveReportGenerator = function (_a) {
   // ============================================================================
   // EFFECTS
   // ============================================================================
-  (0, react_1.useEffect)(
-    function () {
-      loadReportTemplates();
-      loadReportSchedules();
-      loadReportHistory();
-    },
-    [clinicId],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      if (reportTemplates.length > 0 && !config.template) {
-        setConfig(function (prev) {
-          return __assign(__assign({}, prev), {
-            template:
-              reportTemplates.find(function (t) {
-                return t.category === "executive";
-              }) || reportTemplates[0],
-          });
-        });
-      }
-    },
-    [reportTemplates],
-  );
+  (0, react_1.useEffect)(() => {
+    loadReportTemplates();
+    loadReportSchedules();
+    loadReportHistory();
+  }, [clinicId]);
+  (0, react_1.useEffect)(() => {
+    if (reportTemplates.length > 0 && !config.template) {
+      setConfig((prev) =>
+        __assign(__assign({}, prev), {
+          template: reportTemplates.find((t) => t.category === "executive") || reportTemplates[0],
+        }),
+      );
+    }
+  }, [reportTemplates]);
   // ============================================================================
   // DATA LOADING
   // ============================================================================
-  var loadReportTemplates = (0, react_1.useCallback)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var templates;
-      return __generator(this, function (_a) {
-        try {
-          templates = [
-            {
-              id: "exec-summary",
-              name: "Executive Summary",
-              description:
-                "Comprehensive executive dashboard summary with key metrics and insights",
-              category: "executive",
-              sections: [
-                {
-                  id: "summary",
-                  title: "Executive Summary",
-                  type: "summary",
-                  required: true,
-                  order: 1,
-                  config: {},
-                },
-                {
-                  id: "kpis",
-                  title: "Key Performance Indicators",
-                  type: "kpis",
-                  required: true,
-                  order: 2,
-                  config: {},
-                },
-                {
-                  id: "charts",
-                  title: "Performance Charts",
-                  type: "charts",
-                  required: false,
-                  order: 3,
-                  config: {},
-                },
-                {
-                  id: "alerts",
-                  title: "Active Alerts",
-                  type: "alerts",
-                  required: false,
-                  order: 4,
-                  config: {},
-                },
-                {
-                  id: "recommendations",
-                  title: "Recommendations",
-                  type: "recommendations",
-                  required: false,
-                  order: 5,
-                  config: {},
-                },
-              ],
-              defaultFormat: "pdf",
-              isCustom: false,
-              createdBy: "system",
-              createdAt: new Date(),
-            },
-            {
-              id: "financial-report",
-              name: "Financial Performance Report",
-              description:
-                "Detailed financial analysis with revenue, costs, and profitability metrics",
-              category: "financial",
-              sections: [
-                {
-                  id: "financial-summary",
-                  title: "Financial Summary",
-                  type: "summary",
-                  required: true,
-                  order: 1,
-                  config: {},
-                },
-                {
-                  id: "revenue-kpis",
-                  title: "Revenue Metrics",
-                  type: "kpis",
-                  required: true,
-                  order: 2,
-                  config: { category: "financial" },
-                },
-                {
-                  id: "financial-charts",
-                  title: "Financial Charts",
-                  type: "charts",
-                  required: true,
-                  order: 3,
-                  config: {},
-                },
-              ],
-              defaultFormat: "excel",
-              isCustom: false,
-              createdBy: "system",
-              createdAt: new Date(),
-            },
-            {
-              id: "operational-report",
-              name: "Operational Efficiency Report",
-              description:
-                "Operational metrics including utilization, productivity, and efficiency",
-              category: "operational",
-              sections: [
-                {
-                  id: "operational-summary",
-                  title: "Operational Overview",
-                  type: "summary",
-                  required: true,
-                  order: 1,
-                  config: {},
-                },
-                {
-                  id: "operational-kpis",
-                  title: "Operational KPIs",
-                  type: "kpis",
-                  required: true,
-                  order: 2,
-                  config: { category: "operational" },
-                },
-                {
-                  id: "efficiency-charts",
-                  title: "Efficiency Trends",
-                  type: "charts",
-                  required: false,
-                  order: 3,
-                  config: {},
-                },
-              ],
-              defaultFormat: "pdf",
-              isCustom: false,
-              createdBy: "system",
-              createdAt: new Date(),
-            },
-          ];
-          setReportTemplates(templates);
-        } catch (error) {
-          console.error("Failed to load report templates:", error);
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  var loadReportSchedules = (0, react_1.useCallback)(function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var schedules;
-      return __generator(this, function (_a) {
-        try {
-          schedules = [
-            {
-              id: "weekly-exec",
-              name: "Weekly Executive Summary",
-              frequency: "weekly",
-              template: "exec-summary",
-              recipients: ["ceo@clinic.com", "cfo@clinic.com"],
-              enabled: true,
-            },
-            {
-              id: "monthly-financial",
-              name: "Monthly Financial Report",
-              frequency: "monthly",
-              template: "financial-report",
-              recipients: ["finance@clinic.com"],
-              enabled: true,
-            },
-          ];
-          setReportSchedules(schedules);
-        } catch (error) {
-          console.error("Failed to load report schedules:", error);
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
+  var loadReportTemplates = (0, react_1.useCallback)(
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var templates;
+        return __generator(this, (_a) => {
+          try {
+            templates = [
+              {
+                id: "exec-summary",
+                name: "Executive Summary",
+                description:
+                  "Comprehensive executive dashboard summary with key metrics and insights",
+                category: "executive",
+                sections: [
+                  {
+                    id: "summary",
+                    title: "Executive Summary",
+                    type: "summary",
+                    required: true,
+                    order: 1,
+                    config: {},
+                  },
+                  {
+                    id: "kpis",
+                    title: "Key Performance Indicators",
+                    type: "kpis",
+                    required: true,
+                    order: 2,
+                    config: {},
+                  },
+                  {
+                    id: "charts",
+                    title: "Performance Charts",
+                    type: "charts",
+                    required: false,
+                    order: 3,
+                    config: {},
+                  },
+                  {
+                    id: "alerts",
+                    title: "Active Alerts",
+                    type: "alerts",
+                    required: false,
+                    order: 4,
+                    config: {},
+                  },
+                  {
+                    id: "recommendations",
+                    title: "Recommendations",
+                    type: "recommendations",
+                    required: false,
+                    order: 5,
+                    config: {},
+                  },
+                ],
+                defaultFormat: "pdf",
+                isCustom: false,
+                createdBy: "system",
+                createdAt: new Date(),
+              },
+              {
+                id: "financial-report",
+                name: "Financial Performance Report",
+                description:
+                  "Detailed financial analysis with revenue, costs, and profitability metrics",
+                category: "financial",
+                sections: [
+                  {
+                    id: "financial-summary",
+                    title: "Financial Summary",
+                    type: "summary",
+                    required: true,
+                    order: 1,
+                    config: {},
+                  },
+                  {
+                    id: "revenue-kpis",
+                    title: "Revenue Metrics",
+                    type: "kpis",
+                    required: true,
+                    order: 2,
+                    config: { category: "financial" },
+                  },
+                  {
+                    id: "financial-charts",
+                    title: "Financial Charts",
+                    type: "charts",
+                    required: true,
+                    order: 3,
+                    config: {},
+                  },
+                ],
+                defaultFormat: "excel",
+                isCustom: false,
+                createdBy: "system",
+                createdAt: new Date(),
+              },
+              {
+                id: "operational-report",
+                name: "Operational Efficiency Report",
+                description:
+                  "Operational metrics including utilization, productivity, and efficiency",
+                category: "operational",
+                sections: [
+                  {
+                    id: "operational-summary",
+                    title: "Operational Overview",
+                    type: "summary",
+                    required: true,
+                    order: 1,
+                    config: {},
+                  },
+                  {
+                    id: "operational-kpis",
+                    title: "Operational KPIs",
+                    type: "kpis",
+                    required: true,
+                    order: 2,
+                    config: { category: "operational" },
+                  },
+                  {
+                    id: "efficiency-charts",
+                    title: "Efficiency Trends",
+                    type: "charts",
+                    required: false,
+                    order: 3,
+                    config: {},
+                  },
+                ],
+                defaultFormat: "pdf",
+                isCustom: false,
+                createdBy: "system",
+                createdAt: new Date(),
+              },
+            ];
+            setReportTemplates(templates);
+          } catch (error) {
+            console.error("Failed to load report templates:", error);
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
+  var loadReportSchedules = (0, react_1.useCallback)(
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var schedules;
+        return __generator(this, (_a) => {
+          try {
+            schedules = [
+              {
+                id: "weekly-exec",
+                name: "Weekly Executive Summary",
+                frequency: "weekly",
+                template: "exec-summary",
+                recipients: ["ceo@clinic.com", "cfo@clinic.com"],
+                enabled: true,
+              },
+              {
+                id: "monthly-financial",
+                name: "Monthly Financial Report",
+                frequency: "monthly",
+                template: "financial-report",
+                recipients: ["finance@clinic.com"],
+                enabled: true,
+              },
+            ];
+            setReportSchedules(schedules);
+          } catch (error) {
+            console.error("Failed to load report schedules:", error);
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
   var loadReportHistory = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var reports;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           try {
             reports = [
               {
@@ -496,18 +488,17 @@ var ExecutiveReportGenerator = function (_a) {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [reportTemplates],
   );
   // ============================================================================
   // REPORT GENERATION
   // ============================================================================
   var generateReport = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var progressSteps, _i, progressSteps_1, _a, step, progress, newReport_1, error_1;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!config.template) {
@@ -531,12 +522,7 @@ var ExecutiveReportGenerator = function (_a) {
             case 2:
               if (!(_i < progressSteps_1.length)) return [3 /*break*/, 5];
               (_a = progressSteps_1[_i]), (step = _a.step), (progress = _a.progress);
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 1000);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
             case 3:
               _b.sent();
               setGenerationProgress(progress);
@@ -555,9 +541,7 @@ var ExecutiveReportGenerator = function (_a) {
                 data: {
                   kpis:
                     config.includeKPIs.length > 0
-                      ? kpis.filter(function (kpi) {
-                          return config.includeKPIs.includes(kpi.id);
-                        })
+                      ? kpis.filter((kpi) => config.includeKPIs.includes(kpi.id))
                       : kpis,
                   alerts: config.includeAlerts ? alerts : [],
                   summary: config.includeSummary ? summary : null,
@@ -572,9 +556,7 @@ var ExecutiveReportGenerator = function (_a) {
                   .concat(config.format),
                 status: "completed",
               };
-              setGeneratedReports(function (prev) {
-                return __spreadArray([newReport_1], prev, true);
-              });
+              setGeneratedReports((prev) => __spreadArray([newReport_1], prev, true));
               onReportGenerated === null || onReportGenerated === void 0
                 ? void 0
                 : onReportGenerated(newReport_1);
@@ -598,25 +580,19 @@ var ExecutiveReportGenerator = function (_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [config, kpis, alerts, summary, onReportGenerated],
   );
-  var sendReportEmail = function (report, recipients) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var sendReportEmail = (report, recipients) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
             // Mock email sending - in real implementation, this would call an API
             console.log("Sending report ".concat(report.name, " to:"), recipients);
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 1:
             _a.sent();
             return [3 /*break*/, 3];
@@ -629,15 +605,14 @@ var ExecutiveReportGenerator = function (_a) {
         }
       });
     });
-  };
   // ============================================================================
   // TEMPLATE MANAGEMENT
   // ============================================================================
   var createTemplate = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var newTemplate_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (!templateForm.name || !templateForm.description) {
             alert("Please fill in all required fields");
             return [2 /*return*/];
@@ -654,9 +629,9 @@ var ExecutiveReportGenerator = function (_a) {
               createdBy: userId,
               createdAt: new Date(),
             };
-            setReportTemplates(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [newTemplate_1], false);
-            });
+            setReportTemplates((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [newTemplate_1], false),
+            );
             setTemplateForm({});
             setShowTemplateDialog(false);
           } catch (error) {
@@ -665,18 +640,17 @@ var ExecutiveReportGenerator = function (_a) {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [templateForm, userId],
   );
   // ============================================================================
   // SCHEDULE MANAGEMENT
   // ============================================================================
   var createSchedule = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var newSchedule_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           if (!scheduleForm.name || !scheduleForm.template || !scheduleForm.frequency) {
             alert("Please fill in all required fields");
             return [2 /*return*/];
@@ -690,9 +664,9 @@ var ExecutiveReportGenerator = function (_a) {
               recipients: scheduleForm.recipients || [],
               enabled: scheduleForm.enabled !== false,
             };
-            setReportSchedules(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [newSchedule_1], false);
-            });
+            setReportSchedules((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [newSchedule_1], false),
+            );
             setScheduleForm({});
             setShowScheduleDialog(false);
             onScheduleCreated === null || onScheduleCreated === void 0
@@ -704,39 +678,40 @@ var ExecutiveReportGenerator = function (_a) {
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [scheduleForm, onScheduleCreated],
   );
-  var toggleSchedule = (0, react_1.useCallback)(function (scheduleId) {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        try {
-          setReportSchedules(function (prev) {
-            return prev.map(function (schedule) {
-              return schedule.id === scheduleId
-                ? __assign(__assign({}, schedule), { enabled: !schedule.enabled })
-                : schedule;
-            });
-          });
-        } catch (error) {
-          console.error("Failed to toggle schedule:", error);
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
+  var toggleSchedule = (0, react_1.useCallback)(
+    (scheduleId) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          try {
+            setReportSchedules((prev) =>
+              prev.map((schedule) =>
+                schedule.id === scheduleId
+                  ? __assign(__assign({}, schedule), { enabled: !schedule.enabled })
+                  : schedule,
+              ),
+            );
+          } catch (error) {
+            console.error("Failed to toggle schedule:", error);
+          }
+          return [2 /*return*/];
+        });
+      }),
+    [],
+  );
   // ============================================================================
   // UTILITY FUNCTIONS
   // ============================================================================
-  var formatFileSize = function (bytes) {
+  var formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     var k = 1024;
     var sizes = ["Bytes", "KB", "MB", "GB"];
     var i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "completed":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -748,7 +723,7 @@ var ExecutiveReportGenerator = function (_a) {
         return <lucide_react_1.Clock className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getFrequencyBadge = function (frequency) {
+  var getFrequencyBadge = (frequency) => {
     var colors = {
       daily: "bg-blue-100 text-blue-800",
       weekly: "bg-green-100 text-green-800",
@@ -765,23 +740,17 @@ var ExecutiveReportGenerator = function (_a) {
   // MEMOIZED VALUES
   // ============================================================================
   var availableKPIs = (0, react_1.useMemo)(
-    function () {
-      return kpis.map(function (kpi) {
-        return {
-          id: kpi.id,
-          name: kpi.name,
-          category: kpi.category,
-        };
-      });
-    },
+    () =>
+      kpis.map((kpi) => ({
+        id: kpi.id,
+        name: kpi.name,
+        category: kpi.category,
+      })),
     [kpis],
   );
   var filteredTemplates = (0, react_1.useMemo)(
-    function () {
-      return reportTemplates.filter(function (template) {
-        return template.category === "executive" || template.isCustom;
-      });
-    },
+    () =>
+      reportTemplates.filter((template) => template.category === "executive" || template.isCustom),
     [reportTemplates],
   );
   // ============================================================================
@@ -831,12 +800,7 @@ var ExecutiveReportGenerator = function (_a) {
         </card_1.Card>
       )}
 
-      <ui_1.Tabs
-        value={activeTab}
-        onValueChange={function (value) {
-          return setActiveTab(value);
-        }}
-      >
+      <ui_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
         <ui_1.TabsList className="grid w-full grid-cols-4">
           <ui_1.TabsTrigger value="generate">Generate</ui_1.TabsTrigger>
           <ui_1.TabsTrigger value="templates">Templates</ui_1.TabsTrigger>
@@ -863,14 +827,10 @@ var ExecutiveReportGenerator = function (_a) {
                     value={
                       ((_b = config.template) === null || _b === void 0 ? void 0 : _b.id) || ""
                     }
-                    onValueChange={function (value) {
-                      var template = reportTemplates.find(function (t) {
-                        return t.id === value;
-                      });
+                    onValueChange={(value) => {
+                      var template = reportTemplates.find((t) => t.id === value);
                       if (template) {
-                        setConfig(function (prev) {
-                          return __assign(__assign({}, prev), { template: template });
-                        });
+                        setConfig((prev) => __assign(__assign({}, prev), { template: template }));
                       }
                     }}
                   >
@@ -878,20 +838,18 @@ var ExecutiveReportGenerator = function (_a) {
                       <ui_1.SelectValue placeholder="Select a template" />
                     </ui_1.SelectTrigger>
                     <ui_1.SelectContent>
-                      {filteredTemplates.map(function (template) {
-                        return (
-                          <ui_1.SelectItem key={template.id} value={template.id}>
-                            <div className="flex items-center space-x-2">
-                              <span>{template.name}</span>
-                              {template.isCustom && (
-                                <ui_1.Badge variant="outline" className="text-xs">
-                                  Custom
-                                </ui_1.Badge>
-                              )}
-                            </div>
-                          </ui_1.SelectItem>
-                        );
-                      })}
+                      {filteredTemplates.map((template) => (
+                        <ui_1.SelectItem key={template.id} value={template.id}>
+                          <div className="flex items-center space-x-2">
+                            <span>{template.name}</span>
+                            {template.isCustom && (
+                              <ui_1.Badge variant="outline" className="text-xs">
+                                Custom
+                              </ui_1.Badge>
+                            )}
+                          </div>
+                        </ui_1.SelectItem>
+                      ))}
                     </ui_1.SelectContent>
                   </ui_1.Select>
                 </div>
@@ -901,11 +859,9 @@ var ExecutiveReportGenerator = function (_a) {
                   <ui_1.Label>Export Format</ui_1.Label>
                   <ui_1.Select
                     value={config.format}
-                    onValueChange={function (value) {
-                      return setConfig(function (prev) {
-                        return __assign(__assign({}, prev), { format: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setConfig((prev) => __assign(__assign({}, prev), { format: value }))
+                    }
                   >
                     <ui_1.SelectTrigger>
                       <ui_1.SelectValue />
@@ -926,25 +882,25 @@ var ExecutiveReportGenerator = function (_a) {
                     <ui_1.Input
                       type="date"
                       value={config.dateRange.start.toISOString().split("T")[0]}
-                      onChange={function (e) {
+                      onChange={(e) => {
                         var date = new Date(e.target.value);
-                        setConfig(function (prev) {
-                          return __assign(__assign({}, prev), {
+                        setConfig((prev) =>
+                          __assign(__assign({}, prev), {
                             dateRange: __assign(__assign({}, prev.dateRange), { start: date }),
-                          });
-                        });
+                          }),
+                        );
                       }}
                     />
                     <ui_1.Input
                       type="date"
                       value={config.dateRange.end.toISOString().split("T")[0]}
-                      onChange={function (e) {
+                      onChange={(e) => {
                         var date = new Date(e.target.value);
-                        setConfig(function (prev) {
-                          return __assign(__assign({}, prev), {
+                        setConfig((prev) =>
+                          __assign(__assign({}, prev), {
                             dateRange: __assign(__assign({}, prev.dateRange), { end: date }),
-                          });
-                        });
+                          }),
+                        );
                       }}
                     />
                   </div>
@@ -961,11 +917,11 @@ var ExecutiveReportGenerator = function (_a) {
                       <ui_1.Switch
                         id="include-charts"
                         checked={config.includeCharts}
-                        onCheckedChange={function (checked) {
-                          return setConfig(function (prev) {
-                            return __assign(__assign({}, prev), { includeCharts: checked });
-                          });
-                        }}
+                        onCheckedChange={(checked) =>
+                          setConfig((prev) =>
+                            __assign(__assign({}, prev), { includeCharts: checked }),
+                          )
+                        }
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -975,11 +931,11 @@ var ExecutiveReportGenerator = function (_a) {
                       <ui_1.Switch
                         id="include-alerts"
                         checked={config.includeAlerts}
-                        onCheckedChange={function (checked) {
-                          return setConfig(function (prev) {
-                            return __assign(__assign({}, prev), { includeAlerts: checked });
-                          });
-                        }}
+                        onCheckedChange={(checked) =>
+                          setConfig((prev) =>
+                            __assign(__assign({}, prev), { includeAlerts: checked }),
+                          )
+                        }
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -989,11 +945,11 @@ var ExecutiveReportGenerator = function (_a) {
                       <ui_1.Switch
                         id="include-summary"
                         checked={config.includeSummary}
-                        onCheckedChange={function (checked) {
-                          return setConfig(function (prev) {
-                            return __assign(__assign({}, prev), { includeSummary: checked });
-                          });
-                        }}
+                        onCheckedChange={(checked) =>
+                          setConfig((prev) =>
+                            __assign(__assign({}, prev), { includeSummary: checked }),
+                          )
+                        }
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -1003,13 +959,13 @@ var ExecutiveReportGenerator = function (_a) {
                       <ui_1.Switch
                         id="include-recommendations"
                         checked={config.includeRecommendations}
-                        onCheckedChange={function (checked) {
-                          return setConfig(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onCheckedChange={(checked) =>
+                          setConfig((prev) =>
+                            __assign(__assign({}, prev), {
                               includeRecommendations: checked,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -1021,18 +977,12 @@ var ExecutiveReportGenerator = function (_a) {
                   <ui_1.Textarea
                     placeholder="Enter email addresses separated by commas"
                     value={config.recipients.join(", ")}
-                    onChange={function (e) {
+                    onChange={(e) => {
                       var emails = e.target.value
                         .split(",")
-                        .map(function (email) {
-                          return email.trim();
-                        })
-                        .filter(function (email) {
-                          return email.length > 0;
-                        });
-                      setConfig(function (prev) {
-                        return __assign(__assign({}, prev), { recipients: emails });
-                      });
+                        .map((email) => email.trim())
+                        .filter((email) => email.length > 0);
+                      setConfig((prev) => __assign(__assign({}, prev), { recipients: emails }));
                     }}
                     rows={2}
                   />
@@ -1060,19 +1010,17 @@ var ExecutiveReportGenerator = function (_a) {
                           <div className="text-sm">
                             <span className="font-medium">Sections:</span>
                             <ul className="mt-1 space-y-1">
-                              {config.template.sections.map(function (section) {
-                                return (
-                                  <li key={section.id} className="flex items-center space-x-2">
-                                    <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
-                                    <span className="text-xs">{section.title}</span>
-                                    {section.required && (
-                                      <ui_1.Badge variant="outline" className="text-xs">
-                                        Required
-                                      </ui_1.Badge>
-                                    )}
-                                  </li>
-                                );
-                              })}
+                              {config.template.sections.map((section) => (
+                                <li key={section.id} className="flex items-center space-x-2">
+                                  <lucide_react_1.CheckCircle className="h-3 w-3 text-green-500" />
+                                  <span className="text-xs">{section.title}</span>
+                                  {section.required && (
+                                    <ui_1.Badge variant="outline" className="text-xs">
+                                      Required
+                                    </ui_1.Badge>
+                                  )}
+                                </li>
+                              ))}
                             </ul>
                           </div>
                         </div>
@@ -1139,22 +1087,22 @@ var ExecutiveReportGenerator = function (_a) {
                       <ui_1.Input
                         placeholder="Enter template name"
                         value={templateForm.name || ""}
-                        onChange={function (e) {
-                          return setTemplateForm(function (prev) {
-                            return __assign(__assign({}, prev), { name: e.target.value });
-                          });
-                        }}
+                        onChange={(e) =>
+                          setTemplateForm((prev) =>
+                            __assign(__assign({}, prev), { name: e.target.value }),
+                          )
+                        }
                       />
                     </div>
                     <div className="space-y-2">
                       <ui_1.Label>Category</ui_1.Label>
                       <ui_1.Select
                         value={templateForm.category || "executive"}
-                        onValueChange={function (value) {
-                          return setTemplateForm(function (prev) {
-                            return __assign(__assign({}, prev), { category: value });
-                          });
-                        }}
+                        onValueChange={(value) =>
+                          setTemplateForm((prev) =>
+                            __assign(__assign({}, prev), { category: value }),
+                          )
+                        }
                       >
                         <ui_1.SelectTrigger>
                           <ui_1.SelectValue />
@@ -1173,22 +1121,17 @@ var ExecutiveReportGenerator = function (_a) {
                     <ui_1.Textarea
                       placeholder="Describe the purpose and content of this template"
                       value={templateForm.description || ""}
-                      onChange={function (e) {
-                        return setTemplateForm(function (prev) {
-                          return __assign(__assign({}, prev), { description: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setTemplateForm((prev) =>
+                          __assign(__assign({}, prev), { description: e.target.value }),
+                        )
+                      }
                       rows={3}
                     />
                   </div>
                 </div>
                 <ui_1.DialogFooter>
-                  <ui_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setShowTemplateDialog(false);
-                    }}
-                  >
+                  <ui_1.Button variant="outline" onClick={() => setShowTemplateDialog(false)}>
                     Cancel
                   </ui_1.Button>
                   <ui_1.Button onClick={createTemplate}>Create Template</ui_1.Button>
@@ -1198,73 +1141,71 @@ var ExecutiveReportGenerator = function (_a) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {reportTemplates.map(function (template) {
-              return (
-                <card_1.Card key={template.id} className="hover:shadow-md transition-shadow">
-                  <card_1.CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <card_1.CardTitle className="text-base">{template.name}</card_1.CardTitle>
-                        <card_1.CardDescription className="text-sm">
-                          {template.description}
-                        </card_1.CardDescription>
-                      </div>
-                      <dropdown_menu_1.DropdownMenu>
-                        <dropdown_menu_1.DropdownMenuTrigger asChild>
-                          <ui_1.Button variant="ghost" size="sm">
-                            <lucide_react_1.Settings className="h-4 w-4" />
-                          </ui_1.Button>
-                        </dropdown_menu_1.DropdownMenuTrigger>
-                        <dropdown_menu_1.DropdownMenuContent align="end">
-                          <dropdown_menu_1.DropdownMenuItem>
-                            <lucide_react_1.Eye className="mr-2 h-4 w-4" />
-                            Preview
-                          </dropdown_menu_1.DropdownMenuItem>
-                          <dropdown_menu_1.DropdownMenuItem>
-                            <lucide_react_1.Copy className="mr-2 h-4 w-4" />
-                            Duplicate
-                          </dropdown_menu_1.DropdownMenuItem>
-                          {template.isCustom && (
-                            <>
-                              <dropdown_menu_1.DropdownMenuItem>
-                                <lucide_react_1.Edit className="mr-2 h-4 w-4" />
-                                Edit
-                              </dropdown_menu_1.DropdownMenuItem>
-                              <dropdown_menu_1.DropdownMenuSeparator />
-                              <dropdown_menu_1.DropdownMenuItem className="text-red-600">
-                                <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </dropdown_menu_1.DropdownMenuItem>
-                            </>
-                          )}
-                        </dropdown_menu_1.DropdownMenuContent>
-                      </dropdown_menu_1.DropdownMenu>
+            {reportTemplates.map((template) => (
+              <card_1.Card key={template.id} className="hover:shadow-md transition-shadow">
+                <card_1.CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <card_1.CardTitle className="text-base">{template.name}</card_1.CardTitle>
+                      <card_1.CardDescription className="text-sm">
+                        {template.description}
+                      </card_1.CardDescription>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Category:</span>
-                        <ui_1.Badge variant="outline">
-                          {template.category.charAt(0).toUpperCase() + template.category.slice(1)}
-                        </ui_1.Badge>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Sections:</span>
-                        <span>{template.sections.length}</span>
-                      </div>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">Default Format:</span>
-                        <span className="uppercase">{template.defaultFormat}</span>
-                      </div>
-                      {template.isCustom && (
-                        <ui_1.Badge className="w-full justify-center">Custom Template</ui_1.Badge>
-                      )}
+                    <dropdown_menu_1.DropdownMenu>
+                      <dropdown_menu_1.DropdownMenuTrigger asChild>
+                        <ui_1.Button variant="ghost" size="sm">
+                          <lucide_react_1.Settings className="h-4 w-4" />
+                        </ui_1.Button>
+                      </dropdown_menu_1.DropdownMenuTrigger>
+                      <dropdown_menu_1.DropdownMenuContent align="end">
+                        <dropdown_menu_1.DropdownMenuItem>
+                          <lucide_react_1.Eye className="mr-2 h-4 w-4" />
+                          Preview
+                        </dropdown_menu_1.DropdownMenuItem>
+                        <dropdown_menu_1.DropdownMenuItem>
+                          <lucide_react_1.Copy className="mr-2 h-4 w-4" />
+                          Duplicate
+                        </dropdown_menu_1.DropdownMenuItem>
+                        {template.isCustom && (
+                          <>
+                            <dropdown_menu_1.DropdownMenuItem>
+                              <lucide_react_1.Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </dropdown_menu_1.DropdownMenuItem>
+                            <dropdown_menu_1.DropdownMenuSeparator />
+                            <dropdown_menu_1.DropdownMenuItem className="text-red-600">
+                              <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </dropdown_menu_1.DropdownMenuItem>
+                          </>
+                        )}
+                      </dropdown_menu_1.DropdownMenuContent>
+                    </dropdown_menu_1.DropdownMenu>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Category:</span>
+                      <ui_1.Badge variant="outline">
+                        {template.category.charAt(0).toUpperCase() + template.category.slice(1)}
+                      </ui_1.Badge>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Sections:</span>
+                      <span>{template.sections.length}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Default Format:</span>
+                      <span className="uppercase">{template.defaultFormat}</span>
+                    </div>
+                    {template.isCustom && (
+                      <ui_1.Badge className="w-full justify-center">Custom Template</ui_1.Badge>
+                    )}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </ui_1.TabsContent>
 
@@ -1297,11 +1238,11 @@ var ExecutiveReportGenerator = function (_a) {
                     <ui_1.Input
                       placeholder="Enter schedule name"
                       value={scheduleForm.name || ""}
-                      onChange={function (e) {
-                        return setScheduleForm(function (prev) {
-                          return __assign(__assign({}, prev), { name: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setScheduleForm((prev) =>
+                          __assign(__assign({}, prev), { name: e.target.value }),
+                        )
+                      }
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -1309,23 +1250,21 @@ var ExecutiveReportGenerator = function (_a) {
                       <ui_1.Label>Template</ui_1.Label>
                       <ui_1.Select
                         value={scheduleForm.template || ""}
-                        onValueChange={function (value) {
-                          return setScheduleForm(function (prev) {
-                            return __assign(__assign({}, prev), { template: value });
-                          });
-                        }}
+                        onValueChange={(value) =>
+                          setScheduleForm((prev) =>
+                            __assign(__assign({}, prev), { template: value }),
+                          )
+                        }
                       >
                         <ui_1.SelectTrigger>
                           <ui_1.SelectValue placeholder="Select template" />
                         </ui_1.SelectTrigger>
                         <ui_1.SelectContent>
-                          {reportTemplates.map(function (template) {
-                            return (
-                              <ui_1.SelectItem key={template.id} value={template.id}>
-                                {template.name}
-                              </ui_1.SelectItem>
-                            );
-                          })}
+                          {reportTemplates.map((template) => (
+                            <ui_1.SelectItem key={template.id} value={template.id}>
+                              {template.name}
+                            </ui_1.SelectItem>
+                          ))}
                         </ui_1.SelectContent>
                       </ui_1.Select>
                     </div>
@@ -1333,11 +1272,11 @@ var ExecutiveReportGenerator = function (_a) {
                       <ui_1.Label>Frequency</ui_1.Label>
                       <ui_1.Select
                         value={scheduleForm.frequency || ""}
-                        onValueChange={function (value) {
-                          return setScheduleForm(function (prev) {
-                            return __assign(__assign({}, prev), { frequency: value });
-                          });
-                        }}
+                        onValueChange={(value) =>
+                          setScheduleForm((prev) =>
+                            __assign(__assign({}, prev), { frequency: value }),
+                          )
+                        }
                       >
                         <ui_1.SelectTrigger>
                           <ui_1.SelectValue placeholder="Select frequency" />
@@ -1360,18 +1299,14 @@ var ExecutiveReportGenerator = function (_a) {
                           ? void 0
                           : _c.join(", ")) || ""
                       }
-                      onChange={function (e) {
+                      onChange={(e) => {
                         var emails = e.target.value
                           .split(",")
-                          .map(function (email) {
-                            return email.trim();
-                          })
-                          .filter(function (email) {
-                            return email.length > 0;
-                          });
-                        setScheduleForm(function (prev) {
-                          return __assign(__assign({}, prev), { recipients: emails });
-                        });
+                          .map((email) => email.trim())
+                          .filter((email) => email.length > 0);
+                        setScheduleForm((prev) =>
+                          __assign(__assign({}, prev), { recipients: emails }),
+                        );
                       }}
                       rows={2}
                     />
@@ -1380,22 +1315,17 @@ var ExecutiveReportGenerator = function (_a) {
                     <ui_1.Switch
                       id="schedule-enabled"
                       checked={scheduleForm.enabled !== false}
-                      onCheckedChange={function (checked) {
-                        return setScheduleForm(function (prev) {
-                          return __assign(__assign({}, prev), { enabled: checked });
-                        });
-                      }}
+                      onCheckedChange={(checked) =>
+                        setScheduleForm((prev) =>
+                          __assign(__assign({}, prev), { enabled: checked }),
+                        )
+                      }
                     />
                     <ui_1.Label htmlFor="schedule-enabled">Enable schedule</ui_1.Label>
                   </div>
                 </div>
                 <ui_1.DialogFooter>
-                  <ui_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setShowScheduleDialog(false);
-                    }}
-                  >
+                  <ui_1.Button variant="outline" onClick={() => setShowScheduleDialog(false)}>
                     Cancel
                   </ui_1.Button>
                   <ui_1.Button onClick={createSchedule}>Create Schedule</ui_1.Button>
@@ -1405,7 +1335,7 @@ var ExecutiveReportGenerator = function (_a) {
           </div>
 
           <div className="space-y-4">
-            {reportSchedules.map(function (schedule) {
+            {reportSchedules.map((schedule) => {
               var _a;
               return (
                 <card_1.Card key={schedule.id}>
@@ -1425,9 +1355,8 @@ var ExecutiveReportGenerator = function (_a) {
                         <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                           <span>
                             Template:{" "}
-                            {(_a = reportTemplates.find(function (t) {
-                              return t.id === schedule.template;
-                            })) === null || _a === void 0
+                            {(_a = reportTemplates.find((t) => t.id === schedule.template)) ===
+                              null || _a === void 0
                               ? void 0
                               : _a.name}
                           </span>
@@ -1438,9 +1367,7 @@ var ExecutiveReportGenerator = function (_a) {
                         <ui_1.Button
                           variant="outline"
                           size="sm"
-                          onClick={function () {
-                            return toggleSchedule(schedule.id);
-                          }}
+                          onClick={() => toggleSchedule(schedule.id)}
                         >
                           {schedule.enabled
                             ? <>
@@ -1505,60 +1432,58 @@ var ExecutiveReportGenerator = function (_a) {
           </div>
 
           <div className="space-y-4">
-            {generatedReports.map(function (report) {
-              return (
-                <card_1.Card key={report.id}>
-                  <card_1.CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <div className="flex items-center space-x-2">
-                          {getStatusIcon(report.status)}
-                          <h4 className="font-semibold">{report.name}</h4>
-                          <ui_1.Badge variant="outline">{report.format.toUpperCase()}</ui_1.Badge>
-                        </div>
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                          <span>Generated: {utils_1.formatters.dateTime(report.generatedAt)}</span>
-                          <span>Size: {formatFileSize(report.size)}</span>
-                          <span>Template: {report.template.name}</span>
-                        </div>
-                      </div>
+            {generatedReports.map((report) => (
+              <card_1.Card key={report.id}>
+                <card_1.CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
                       <div className="flex items-center space-x-2">
-                        <ui_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Eye className="mr-2 h-4 w-4" />
-                          Preview
-                        </ui_1.Button>
-                        <ui_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Download className="mr-2 h-4 w-4" />
-                          Download
-                        </ui_1.Button>
-                        <ui_1.Button variant="outline" size="sm">
-                          <lucide_react_1.Send className="mr-2 h-4 w-4" />
-                          Share
-                        </ui_1.Button>
-                        <dropdown_menu_1.DropdownMenu>
-                          <dropdown_menu_1.DropdownMenuTrigger asChild>
-                            <ui_1.Button variant="ghost" size="sm">
-                              <lucide_react_1.Settings className="h-4 w-4" />
-                            </ui_1.Button>
-                          </dropdown_menu_1.DropdownMenuTrigger>
-                          <dropdown_menu_1.DropdownMenuContent align="end">
-                            <dropdown_menu_1.DropdownMenuItem>
-                              <lucide_react_1.Copy className="mr-2 h-4 w-4" />
-                              Duplicate
-                            </dropdown_menu_1.DropdownMenuItem>
-                            <dropdown_menu_1.DropdownMenuSeparator />
-                            <dropdown_menu_1.DropdownMenuItem className="text-red-600">
-                              <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </dropdown_menu_1.DropdownMenuItem>
-                          </dropdown_menu_1.DropdownMenuContent>
-                        </dropdown_menu_1.DropdownMenu>
+                        {getStatusIcon(report.status)}
+                        <h4 className="font-semibold">{report.name}</h4>
+                        <ui_1.Badge variant="outline">{report.format.toUpperCase()}</ui_1.Badge>
+                      </div>
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <span>Generated: {utils_1.formatters.dateTime(report.generatedAt)}</span>
+                        <span>Size: {formatFileSize(report.size)}</span>
+                        <span>Template: {report.template.name}</span>
                       </div>
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    <div className="flex items-center space-x-2">
+                      <ui_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Eye className="mr-2 h-4 w-4" />
+                        Preview
+                      </ui_1.Button>
+                      <ui_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Download className="mr-2 h-4 w-4" />
+                        Download
+                      </ui_1.Button>
+                      <ui_1.Button variant="outline" size="sm">
+                        <lucide_react_1.Send className="mr-2 h-4 w-4" />
+                        Share
+                      </ui_1.Button>
+                      <dropdown_menu_1.DropdownMenu>
+                        <dropdown_menu_1.DropdownMenuTrigger asChild>
+                          <ui_1.Button variant="ghost" size="sm">
+                            <lucide_react_1.Settings className="h-4 w-4" />
+                          </ui_1.Button>
+                        </dropdown_menu_1.DropdownMenuTrigger>
+                        <dropdown_menu_1.DropdownMenuContent align="end">
+                          <dropdown_menu_1.DropdownMenuItem>
+                            <lucide_react_1.Copy className="mr-2 h-4 w-4" />
+                            Duplicate
+                          </dropdown_menu_1.DropdownMenuItem>
+                          <dropdown_menu_1.DropdownMenuSeparator />
+                          <dropdown_menu_1.DropdownMenuItem className="text-red-600">
+                            <lucide_react_1.Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </dropdown_menu_1.DropdownMenuItem>
+                        </dropdown_menu_1.DropdownMenuContent>
+                      </dropdown_menu_1.DropdownMenu>
+                    </div>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </ui_1.TabsContent>
       </ui_1.Tabs>

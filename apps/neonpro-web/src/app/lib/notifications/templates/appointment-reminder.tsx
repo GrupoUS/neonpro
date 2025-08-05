@@ -15,8 +15,8 @@ import type {
   Link,
   Preview,
   Section,
-  Text,
   Tailwind,
+  Text,
 } from "@react-email/components";
 
 interface AppointmentReminderEmailProps {

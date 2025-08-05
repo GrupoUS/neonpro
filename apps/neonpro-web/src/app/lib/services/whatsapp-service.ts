@@ -2,20 +2,20 @@
 // Integrates with Meta's WhatsApp Cloud API for NeonPro
 // Uses official whatsapp library with TypeScript support
 
-import type { createClient } from "@/lib/supabase/client";
 import type {
-  WhatsAppConfig,
-  WhatsAppMessage,
-  WhatsAppTemplate,
-  WhatsAppOptIn,
-  WhatsAppAnalytics,
+  PatientWhatsAppNotification,
   SendMessageRequest,
   SendMessageResponse,
-  WhatsAppMessageType,
+  WhatsAppAnalytics,
+  WhatsAppConfig,
+  WhatsAppMessage,
   WhatsAppMessageStatus,
-  PatientWhatsAppNotification,
+  WhatsAppMessageType,
+  WhatsAppOptIn,
+  WhatsAppTemplate,
   WhatsAppWebhookPayload,
 } from "@/app/types/whatsapp";
+import type { createClient } from "@/lib/supabase/client";
 
 // WhatsApp Cloud API configuration
 const WHATSAPP_API_BASE = "https://graph.facebook.com/v18.0";

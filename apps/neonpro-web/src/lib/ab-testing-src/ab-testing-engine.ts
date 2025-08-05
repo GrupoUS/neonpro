@@ -3,23 +3,23 @@
  * NeonPro - Sistema Completo de Testes A/B para Comunicação
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { createClient } from "@/lib/supabase/client";
 import type {
   ABTestConfig,
-  TestVariation,
-  TestResults,
   ABTestEvent,
   AudienceFilter,
+  AutomationRule,
   ConversionGoal,
+  ExperimentAnalytics,
+  StatisticalSignificance,
   TestQueryFilter,
   TestQueryResult,
-  VariationResults,
-  StatisticalSignificance,
-  TestTemplate,
-  AutomationRule,
-  ExperimentAnalytics,
   TestReport,
+  TestResults,
+  TestTemplate,
+  TestVariation,
+  VariationResults,
 } from "./types/ab-testing";
 
 export class ABTestingEngine {
@@ -742,12 +742,11 @@ export class ABTestingEngine {
     const p2 = p1 * (1 + effect / 100);
 
     const pooled = (p1 + p2) / 2;
-    const numerator = Math.pow(
-      zAlpha * Math.sqrt(2 * pooled * (1 - pooled)) +
-        zBeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2)),
-      2,
-    );
-    const denominator = Math.pow(p2 - p1, 2);
+    const numerator =
+      (zAlpha * Math.sqrt(2 * pooled * (1 - pooled)) +
+        zBeta * Math.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) **
+      2;
+    const denominator = (p2 - p1) ** 2;
 
     return Math.ceil(numerator / denominator);
   }

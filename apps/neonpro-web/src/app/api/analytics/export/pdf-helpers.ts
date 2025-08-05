@@ -426,7 +426,7 @@ export function generateDashboardPDF(data: any, options: PDFOptions = {}): jsPDF
 
       if (section.key === "insights") {
         doc.setFontSize(10);
-        data[section.key].slice(0, section.maxRows).forEach((insight: any, index: number) => {
+        data[section.key].slice(0, section.maxRows).forEach((insight: any, _index: number) => {
           const text = typeof insight === "string" ? insight : insight.text || "";
           const lines = doc.splitTextToSize(`• ${text}`, 260);
           doc.text(lines, 14, yPosition);

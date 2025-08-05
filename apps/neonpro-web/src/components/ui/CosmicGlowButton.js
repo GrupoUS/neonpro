@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CosmicGlowButton = void 0;
 var react_1 = require("react");
@@ -48,7 +47,7 @@ var sizeClasses = {
   md: "px-6 py-3 text-base",
   lg: "px-8 py-4 text-lg",
 };
-var CosmicGlowButton = function (_a) {
+var CosmicGlowButton = (_a) => {
   var children = _a.children,
     onClick = _a.onClick,
     _b = _a.variant,

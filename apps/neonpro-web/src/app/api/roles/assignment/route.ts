@@ -1,6 +1,6 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { Database } from "@/database.types";
+import type { createClient } from "@/lib/supabase/server";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 

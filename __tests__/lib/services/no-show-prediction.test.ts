@@ -10,7 +10,7 @@ jest.mock("@/app/utils/supabase/server", () => ({
 }));
 
 // Mock data
-const mockPatient = {
+const _mockPatient = {
   id: "patient-123",
   name: "João Silva",
   email: "joao@example.com",

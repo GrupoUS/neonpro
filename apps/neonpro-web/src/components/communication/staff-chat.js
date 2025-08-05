@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StaffChat = StaffChat;
 var react_1 = require("react");
@@ -150,7 +147,6 @@ var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 var utils_1 = require("@/lib/utils");
 function StaffChat(_a) {
-  var _this = this;
   var conversationId = _a.conversationId,
     userId = _a.userId,
     patientContext = _a.patientContext,
@@ -178,17 +174,14 @@ function StaffChat(_a) {
     markAsRead = _d.markAsRead,
     broadcastTyping = _d.broadcastTyping;
   // Auto scroll para a última mensagem
-  (0, react_1.useEffect)(
-    function () {
-      var _a;
-      (_a = messagesEndRef.current) === null || _a === void 0
-        ? void 0
-        : _a.scrollIntoView({ behavior: "smooth" });
-    },
-    [messages],
-  );
+  (0, react_1.useEffect)(() => {
+    var _a;
+    (_a = messagesEndRef.current) === null || _a === void 0
+      ? void 0
+      : _a.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
   // Gerenciar status de digitação
-  var handleTyping = function () {
+  var handleTyping = () => {
     if (!isTyping) {
       setIsTyping(true);
       broadcastTyping(true);
@@ -198,17 +191,17 @@ function StaffChat(_a) {
       clearTimeout(typingTimeoutRef.current);
     }
     // Definir novo timeout
-    typingTimeoutRef.current = setTimeout(function () {
+    typingTimeoutRef.current = setTimeout(() => {
       setIsTyping(false);
       broadcastTyping(false);
     }, 1000);
   };
   // Enviar mensagem
-  var handleSendMessage = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSendMessage = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var content;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             e.preventDefault();
@@ -229,9 +222,8 @@ function StaffChat(_a) {
         }
       });
     });
-  };
   // Renderizar mensagem
-  var renderMessage = function (message, index) {
+  var renderMessage = (message, index) => {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
     var isCurrentUser = message.sender_id === userId;
     var showAvatar =
@@ -314,14 +306,12 @@ function StaffChat(_a) {
 
             {message.attachments && message.attachments.length > 0 && (
               <div className="mt-2 space-y-1">
-                {message.attachments.map(function (attachment) {
-                  return (
-                    <div key={attachment.id} className="flex items-center gap-2 text-xs">
-                      <lucide_react_1.Paperclip className="w-3 h-3" />
-                      <span>{attachment.filename}</span>
-                    </div>
-                  );
-                })}
+                {message.attachments.map((attachment) => (
+                  <div key={attachment.id} className="flex items-center gap-2 text-xs">
+                    <lucide_react_1.Paperclip className="w-3 h-3" />
+                    <span>{attachment.filename}</span>
+                  </div>
+                ))}
               </div>
             )}
           </div>
@@ -402,9 +392,7 @@ function StaffChat(_a) {
                 variant="outline"
                 size="sm"
                 className="mt-2"
-                onClick={function () {
-                  return window.location.reload();
-                }}
+                onClick={() => window.location.reload()}
               >
                 Tentar novamente
               </button_1.Button>
@@ -418,9 +406,7 @@ function StaffChat(_a) {
             </div>
           )}
 
-          {messages.map(function (message, index) {
-            return renderMessage(message, index);
-          })}
+          {messages.map((message, index) => renderMessage(message, index))}
 
           {/* Indicador de digitação */}
           {typingUsers.length > 0 && (
@@ -453,7 +439,7 @@ function StaffChat(_a) {
             <input_1.Input
               ref={inputRef}
               value={messageInput}
-              onChange={function (e) {
+              onChange={(e) => {
                 setMessageInput(e.target.value);
                 handleTyping();
               }}

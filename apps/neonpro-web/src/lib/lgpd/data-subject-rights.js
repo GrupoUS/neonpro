@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.STANDARD_RESPONSE_TIMES =
@@ -148,7 +145,7 @@ var audit_logger_1 = require("./audit-logger");
  */
 // Types of rights requests under LGPD
 var DataSubjectRight;
-(function (DataSubjectRight) {
+((DataSubjectRight) => {
   DataSubjectRight["ACCESS"] = "access";
   DataSubjectRight["RECTIFICATION"] = "rectification";
   DataSubjectRight["ERASURE"] = "erasure";
@@ -160,7 +157,7 @@ var DataSubjectRight;
 })(DataSubjectRight || (exports.DataSubjectRight = DataSubjectRight = {}));
 // Status of rights requests
 var RequestStatus;
-(function (RequestStatus) {
+((RequestStatus) => {
   RequestStatus["SUBMITTED"] = "submitted";
   RequestStatus["IN_PROGRESS"] = "in_progress";
   RequestStatus["COMPLETED"] = "completed";
@@ -184,9 +181,7 @@ exports.dataSubjectRequestSchema = zod_1.z.object({
   legalBasis: zod_1.z.string().optional(),
   urgency: zod_1.z.enum(["normal", "urgent"]).default("normal"),
   // Processing information
-  submittedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  submittedAt: zod_1.z.date().default(() => new Date()),
   processedAt: zod_1.z.date().optional(),
   completedAt: zod_1.z.date().optional(),
   deadline: zod_1.z.date(), // LGPD requires response within reasonable time
@@ -238,14 +233,10 @@ exports.dataSubjectRequestSchema = zod_1.z.object({
     .optional(),
   userAgent: zod_1.z.string().optional(),
   source: zod_1.z.enum(["web", "email", "phone", "letter", "in_person"]).default("web"),
-  createdAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
-  updatedAt: zod_1.z.date().default(function () {
-    return new Date();
-  }),
+  createdAt: zod_1.z.date().default(() => new Date()),
+  updatedAt: zod_1.z.date().default(() => new Date()),
 });
-var DataSubjectRightsManager = /** @class */ (function () {
+var DataSubjectRightsManager = /** @class */ (() => {
   function DataSubjectRightsManager() {}
   /**
    * Submit a new data subject rights request
@@ -580,7 +571,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
    */
   DataSubjectRightsManager.getOverdueRequests = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Query database for overdue requests
         return [2 /*return*/, []];
       });
@@ -591,7 +582,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
    */
   DataSubjectRightsManager.generateComplianceReport = function (month) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Generate comprehensive compliance report
         return [
           2 /*return*/,
@@ -611,7 +602,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   // Private helper methods
   DataSubjectRightsManager.getRequest = function (requestId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Query database
         return [2 /*return*/, null];
       });
@@ -619,7 +610,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.getPersonalData = function (requestId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Compile all personal data for the subject
         return [2 /*return*/, {}];
       });
@@ -627,7 +618,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.getProcessingActivities = function (requestId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Get all processing activities
         return [2 /*return*/, []];
       });
@@ -635,7 +626,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.getConsentStatus = function (requestId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Get current consent status
         return [2 /*return*/, {}];
       });
@@ -643,7 +634,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.getAuditTrail = function (requestId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Get relevant audit trail
         return [2 /*return*/, []];
       });
@@ -651,7 +642,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.updateRequestStatus = function (requestId, status, processorId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Update request in database
         console.log(
           "Request ".concat(requestId, " updated to ").concat(status, " by ").concat(processorId),
@@ -662,7 +653,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.analyzeErasureRequest = function (dataSubjectId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Analyze what data can be erased vs retained
         return [2 /*return*/, { canErase: [], mustRetain: [] }];
       });
@@ -670,7 +661,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.eraseDataItem = function (id, type) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Safely erase data item
         console.log("Erasing ".concat(type, " item ").concat(id));
         return [2 /*return*/];
@@ -679,7 +670,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.extractPortableData = function (dataSubjectId, format) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Extract data in portable format
         return [2 /*return*/, { fileSize: 0, recordsIncluded: 0, data: {} }];
       });
@@ -687,7 +678,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.generateSecureDownloadLink = function (data, expiresAt) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Generate secure, temporary download link
         return [2 /*return*/, "https://secure.clinic.com/download/".concat(crypto.randomUUID())];
       });
@@ -695,7 +686,7 @@ var DataSubjectRightsManager = /** @class */ (function () {
   };
   DataSubjectRightsManager.sendConfirmationEmail = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Send confirmation email to data subject
         console.log("Confirmation email sent for request ".concat(request.id));
         return [2 /*return*/];

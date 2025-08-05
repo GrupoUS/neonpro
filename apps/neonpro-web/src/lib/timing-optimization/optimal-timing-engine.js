@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Optimal Timing Analysis Engine
  * NeonPro - Machine Learning para análise de horários ótimos de comunicação
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,11 +146,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createoptimalTimingEngine = exports.OptimalTimingEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
-var OptimalTimingEngine = /** @class */ (function () {
+var OptimalTimingEngine = /** @class */ (() => {
   function OptimalTimingEngine() {
     this.cache = new Map();
     this.mlModels = new Map();
@@ -183,7 +180,7 @@ var OptimalTimingEngine = /** @class */ (function () {
           case 1:
             models = _a.sent().data;
             if (models) {
-              models.forEach(function (model) {
+              models.forEach((model) => {
                 _this.mlModels.set(model.id, {
                   id: model.id,
                   name: model.name,
@@ -220,8 +217,7 @@ var OptimalTimingEngine = /** @class */ (function () {
   OptimalTimingEngine.prototype.initializeDefaultModels = function () {
     return __awaiter(this, void 0, void 0, function () {
       var defaultModels;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         defaultModels = [
           {
             id: "timing-gb-v1",
@@ -246,8 +242,8 @@ var OptimalTimingEngine = /** @class */ (function () {
             predictions: { responseRate: 0, openRate: 0, clickRate: 0, conversionRate: 0 },
           },
         ];
-        defaultModels.forEach(function (model) {
-          _this.mlModels.set(model.id, model);
+        defaultModels.forEach((model) => {
+          this.mlModels.set(model.id, model);
         });
         return [2 /*return*/];
       });
@@ -286,51 +282,49 @@ var OptimalTimingEngine = /** @class */ (function () {
       });
     });
   };
-  OptimalTimingEngine.prototype.getDefaultConfig = function () {
-    return {
-      clinicId: "",
-      globalSettings: {
-        defaultTimezone: "America/Sao_Paulo",
-        businessHours: {
-          startHour: 8,
-          startMinute: 0,
-          endHour: 18,
-          endMinute: 0,
-        },
-        blackoutPeriods: [],
-        minimumSampleSize: 30,
-        minimumConfidence: 0.7,
-        enableMLPredictions: true,
-        enableSeasonalAdjustments: true,
-        enableWeatherFactors: false,
-        enableHolidayFactors: true,
+  OptimalTimingEngine.prototype.getDefaultConfig = () => ({
+    clinicId: "",
+    globalSettings: {
+      defaultTimezone: "America/Sao_Paulo",
+      businessHours: {
+        startHour: 8,
+        startMinute: 0,
+        endHour: 18,
+        endMinute: 0,
       },
-      channelSettings: {
-        email: {
-          enabled: true,
-          priority: 1,
-          optimalFrequency: { daily: 2, weekly: 10, monthly: 30 },
-          cooldownPeriod: 240,
-          retryLogic: { maxAttempts: 3, backoffMultiplier: 2 },
-        },
-        sms: {
-          enabled: true,
-          priority: 2,
-          optimalFrequency: { daily: 1, weekly: 5, monthly: 15 },
-          cooldownPeriod: 480,
-          retryLogic: { maxAttempts: 2, backoffMultiplier: 3 },
-        },
-        whatsapp: {
-          enabled: true,
-          priority: 3,
-          optimalFrequency: { daily: 1, weekly: 7, monthly: 20 },
-          cooldownPeriod: 360,
-          retryLogic: { maxAttempts: 2, backoffMultiplier: 2 },
-        },
+      blackoutPeriods: [],
+      minimumSampleSize: 30,
+      minimumConfidence: 0.7,
+      enableMLPredictions: true,
+      enableSeasonalAdjustments: true,
+      enableWeatherFactors: false,
+      enableHolidayFactors: true,
+    },
+    channelSettings: {
+      email: {
+        enabled: true,
+        priority: 1,
+        optimalFrequency: { daily: 2, weekly: 10, monthly: 30 },
+        cooldownPeriod: 240,
+        retryLogic: { maxAttempts: 3, backoffMultiplier: 2 },
       },
-      audienceSegments: [],
-    };
-  };
+      sms: {
+        enabled: true,
+        priority: 2,
+        optimalFrequency: { daily: 1, weekly: 5, monthly: 15 },
+        cooldownPeriod: 480,
+        retryLogic: { maxAttempts: 2, backoffMultiplier: 3 },
+      },
+      whatsapp: {
+        enabled: true,
+        priority: 3,
+        optimalFrequency: { daily: 1, weekly: 7, monthly: 20 },
+        cooldownPeriod: 360,
+        retryLogic: { maxAttempts: 2, backoffMultiplier: 2 },
+      },
+    },
+    audienceSegments: [],
+  });
   /**
    * ====================================================================
    * PATTERN ANALYSIS
@@ -488,15 +482,9 @@ var OptimalTimingEngine = /** @class */ (function () {
           pattern = patterns.get(key);
           pattern.sampleSize++;
           events = communication.communication_events || [];
-          hasOpen = events.some(function (e) {
-            return e.type === "open";
-          });
-          hasClick = events.some(function (e) {
-            return e.type === "click";
-          });
-          hasResponse = events.some(function (e) {
-            return e.type === "response";
-          });
+          hasOpen = events.some((e) => e.type === "open");
+          hasClick = events.some((e) => e.type === "click");
+          hasResponse = events.some((e) => e.type === "response");
           if (hasOpen)
             pattern.openRate =
               (pattern.openRate * (pattern.sampleSize - 1) + 1) / pattern.sampleSize;
@@ -510,14 +498,14 @@ var OptimalTimingEngine = /** @class */ (function () {
         // Converter para array e calcular confiança
         return [
           2 /*return*/,
-          Array.from(patterns.values()).map(function (pattern) {
-            return __assign(__assign({}, pattern), {
+          Array.from(patterns.values()).map((pattern) =>
+            __assign(__assign({}, pattern), {
               confidence: _this.calculatePatternConfidence(pattern.sampleSize),
               responseRate: pattern.responseRate * 100,
               openRate: (pattern.openRate || 0) * 100,
               clickRate: (pattern.clickRate || 0) * 100,
-            });
-          }),
+            }),
+          ),
         ];
       });
     });
@@ -790,9 +778,9 @@ var OptimalTimingEngine = /** @class */ (function () {
             return [4 /*yield*/, this.simulateMLPrediction(features, model)];
           case 1:
             predictions = _b.sent();
-            bestPrediction = predictions.reduce(function (best, current) {
-              return current.probability > best.probability ? current : best;
-            });
+            bestPrediction = predictions.reduce((best, current) =>
+              current.probability > best.probability ? current : best,
+            );
             return [
               2 /*return*/,
               {
@@ -819,7 +807,7 @@ var OptimalTimingEngine = /** @class */ (function () {
   OptimalTimingEngine.prototype.simulateMLPrediction = function (features, model) {
     return __awaiter(this, void 0, void 0, function () {
       var predictions, hour, day, probability;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         predictions = [];
         for (hour = 6; hour <= 22; hour++) {
           for (day = 0; day <= 6; day++) {
@@ -847,12 +835,7 @@ var OptimalTimingEngine = /** @class */ (function () {
             });
           }
         }
-        return [
-          2 /*return*/,
-          predictions.sort(function (a, b) {
-            return b.probability - a.probability;
-          }),
-        ];
+        return [2 /*return*/, predictions.sort((a, b) => b.probability - a.probability)];
       });
     });
   };
@@ -867,13 +850,11 @@ var OptimalTimingEngine = /** @class */ (function () {
     var age = this.calculateAge(new Date(patient.birth_date));
     var avgResponseRate =
       patterns.length > 0
-        ? patterns.reduce(function (sum, p) {
-            return sum + p.responseRate;
-          }, 0) / patterns.length
+        ? patterns.reduce((sum, p) => sum + p.responseRate, 0) / patterns.length
         : 0;
-    var recentEngagement = patterns.filter(function (p) {
-      return p.lastUpdated > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    }).length;
+    var recentEngagement = patterns.filter(
+      (p) => p.lastUpdated > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    ).length;
     return {
       patientAge: age,
       patientGender: patient.gender,
@@ -916,33 +897,33 @@ var OptimalTimingEngine = /** @class */ (function () {
             if (patterns.length < 5) {
               return [2 /*return*/, null]; // Dados insuficientes
             }
-            hourCounts = patterns.reduce(function (acc, pattern) {
+            hourCounts = patterns.reduce((acc, pattern) => {
               acc[pattern.hour] = (acc[pattern.hour] || 0) + pattern.responseRate;
               return acc;
             }, {});
             preferredHours = Object.entries(hourCounts)
-              .sort(function (_a, _b) {
+              .sort((_a, _b) => {
                 var a = _a[1];
                 var b = _b[1];
                 return b - a;
               })
               .slice(0, 4)
-              .map(function (_a) {
+              .map((_a) => {
                 var hour = _a[0];
                 return parseInt(hour);
               });
-            dayCounts = patterns.reduce(function (acc, pattern) {
+            dayCounts = patterns.reduce((acc, pattern) => {
               acc[pattern.dayOfWeek] = (acc[pattern.dayOfWeek] || 0) + pattern.responseRate;
               return acc;
             }, {});
             preferredDays = Object.entries(dayCounts)
-              .sort(function (_a, _b) {
+              .sort((_a, _b) => {
                 var a = _a[1];
                 var b = _b[1];
                 return b - a;
               })
               .slice(0, 3)
-              .map(function (_a) {
+              .map((_a) => {
                 var day = _a[0];
                 return parseInt(day);
               });
@@ -981,19 +962,11 @@ var OptimalTimingEngine = /** @class */ (function () {
   /**
    * Classificar padrão de comportamento
    */
-  OptimalTimingEngine.prototype.classifyBehaviorPattern = function (preferredHours, preferredDays) {
-    var morningHours = preferredHours.filter(function (h) {
-      return h >= 6 && h <= 10;
-    }).length;
-    var eveningHours = preferredHours.filter(function (h) {
-      return h >= 18 && h <= 22;
-    }).length;
-    var businessHours = preferredHours.filter(function (h) {
-      return h >= 9 && h <= 17;
-    }).length;
-    var weekendDays = preferredDays.filter(function (d) {
-      return d === 0 || d === 6;
-    }).length;
+  OptimalTimingEngine.prototype.classifyBehaviorPattern = (preferredHours, preferredDays) => {
+    var morningHours = preferredHours.filter((h) => h >= 6 && h <= 10).length;
+    var eveningHours = preferredHours.filter((h) => h >= 18 && h <= 22).length;
+    var businessHours = preferredHours.filter((h) => h >= 9 && h <= 17).length;
+    var weekendDays = preferredDays.filter((d) => d === 0 || d === 6).length;
     if (morningHours >= 2) return "early_bird";
     if (eveningHours >= 2) return "night_owl";
     if (businessHours >= 2) return "business_hours";
@@ -1203,13 +1176,13 @@ var OptimalTimingEngine = /** @class */ (function () {
             ) {
               return [2 /*return*/, this.getEmptyPerformanceMetrics(period)];
             }
-            optimized = communications.filter(function (c) {
+            optimized = communications.filter((c) => {
               var _a;
               return (
                 ((_a = c.send_time_optimization) === null || _a === void 0 ? void 0 : _a.length) > 0
               );
             });
-            baseline = communications.filter(function (c) {
+            baseline = communications.filter((c) => {
               var _a;
               return !((_a = c.send_time_optimization) === null || _a === void 0
                 ? void 0
@@ -1277,7 +1250,7 @@ var OptimalTimingEngine = /** @class */ (function () {
   /**
    * Calcular confiança de um padrão baseado no tamanho da amostra
    */
-  OptimalTimingEngine.prototype.calculatePatternConfidence = function (sampleSize) {
+  OptimalTimingEngine.prototype.calculatePatternConfidence = (sampleSize) => {
     if (sampleSize < 10) return 0.1;
     if (sampleSize < 30) return 0.5;
     if (sampleSize < 50) return 0.7;
@@ -1288,11 +1261,10 @@ var OptimalTimingEngine = /** @class */ (function () {
    * Segmentar dados por idade
    */
   OptimalTimingEngine.prototype.segmentByAge = function (data) {
-    var _this = this;
-    return data.reduce(function (acc, item) {
+    return data.reduce((acc, item) => {
       var _a;
       if (!((_a = item.patient) === null || _a === void 0 ? void 0 : _a.birth_date)) return acc;
-      var age = _this.calculateAge(new Date(item.patient.birth_date));
+      var age = this.calculateAge(new Date(item.patient.birth_date));
       var segment = "unknown";
       if (age < 25) segment = "18-24";
       else if (age < 35) segment = "25-34";
@@ -1308,8 +1280,8 @@ var OptimalTimingEngine = /** @class */ (function () {
   /**
    * Segmentar dados por gênero
    */
-  OptimalTimingEngine.prototype.segmentByGender = function (data) {
-    return data.reduce(function (acc, item) {
+  OptimalTimingEngine.prototype.segmentByGender = (data) =>
+    data.reduce((acc, item) => {
       var _a;
       var gender =
         ((_a = item.patient) === null || _a === void 0 ? void 0 : _a.gender) || "unknown";
@@ -1317,22 +1289,20 @@ var OptimalTimingEngine = /** @class */ (function () {
       acc[gender].push(item);
       return acc;
     }, {});
-  };
   /**
    * Segmentar dados por tipo de comunicação
    */
-  OptimalTimingEngine.prototype.segmentByType = function (data) {
-    return data.reduce(function (acc, item) {
+  OptimalTimingEngine.prototype.segmentByType = (data) =>
+    data.reduce((acc, item) => {
       var type = item.type || "unknown";
       if (!acc[type]) acc[type] = [];
       acc[type].push(item);
       return acc;
     }, {});
-  };
   /**
    * Calcular idade baseada na data de nascimento
    */
-  OptimalTimingEngine.prototype.calculateAge = function (birthDate) {
+  OptimalTimingEngine.prototype.calculateAge = (birthDate) => {
     var today = new Date();
     var age = today.getFullYear() - birthDate.getFullYear();
     var monthDiff = today.getMonth() - birthDate.getMonth();
@@ -1344,30 +1314,27 @@ var OptimalTimingEngine = /** @class */ (function () {
   /**
    * Mapear padrão de timing do banco de dados
    */
-  OptimalTimingEngine.prototype.mapTimingPatternFromDB = function (data) {
-    return {
-      id: data.id,
-      clinicId: data.clinic_id,
-      patientId: data.patient_id,
-      communicationType: data.communication_type,
-      dayOfWeek: data.day_of_week,
-      hour: data.hour,
-      responseRate: data.response_rate,
-      openRate: data.open_rate,
-      clickRate: data.click_rate,
-      conversionRate: data.conversion_rate,
-      sampleSize: data.sample_size,
-      confidence: data.confidence,
-      lastUpdated: new Date(data.last_updated),
-      timezone: data.timezone,
-    };
-  };
+  OptimalTimingEngine.prototype.mapTimingPatternFromDB = (data) => ({
+    id: data.id,
+    clinicId: data.clinic_id,
+    patientId: data.patient_id,
+    communicationType: data.communication_type,
+    dayOfWeek: data.day_of_week,
+    hour: data.hour,
+    responseRate: data.response_rate,
+    openRate: data.open_rate,
+    clickRate: data.click_rate,
+    conversionRate: data.conversion_rate,
+    sampleSize: data.sample_size,
+    confidence: data.confidence,
+    lastUpdated: new Date(data.last_updated),
+    timezone: data.timezone,
+  });
   /**
    * Gerar ID único
    */
-  OptimalTimingEngine.prototype.generateId = function () {
-    return "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
-  };
+  OptimalTimingEngine.prototype.generateId = () =>
+    "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
   // Placeholder methods for completion
   OptimalTimingEngine.prototype.generateGeneralRecommendations = function (
     globalPatterns,
@@ -1375,9 +1342,7 @@ var OptimalTimingEngine = /** @class */ (function () {
     request,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
   OptimalTimingEngine.prototype.generateTimingInsights = function (
@@ -1386,24 +1351,18 @@ var OptimalTimingEngine = /** @class */ (function () {
     data,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  OptimalTimingEngine.prototype.calculatePerformanceMetrics = function (data) {
-    return {
-      totalCommunications: data.length,
-      averageResponseRate: 0,
-      optimizedCommunications: 0,
-      improvementRate: 0,
-    };
-  };
+  OptimalTimingEngine.prototype.calculatePerformanceMetrics = (data) => ({
+    totalCommunications: data.length,
+    averageResponseRate: 0,
+    optimizedCommunications: 0,
+    improvementRate: 0,
+  });
   OptimalTimingEngine.prototype.saveAnalysisResult = function (result) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   OptimalTimingEngine.prototype.determinePatientSegments = function (patient) {
@@ -1421,25 +1380,17 @@ var OptimalTimingEngine = /** @class */ (function () {
     globalPatterns,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, []];
-      });
+      return __generator(this, (_a) => [2 /*return*/, []]);
     });
   };
-  OptimalTimingEngine.prototype.determineAvoidTimes = function (patient, patterns) {
-    return [];
-  };
-  OptimalTimingEngine.prototype.generateRecommendationReasoning = function (
+  OptimalTimingEngine.prototype.determineAvoidTimes = (patient, patterns) => [];
+  OptimalTimingEngine.prototype.generateRecommendationReasoning = (
     optimalTime,
     patterns,
     segments,
     globalPatterns,
-  ) {
-    return ["Based on historical engagement patterns"];
-  };
-  OptimalTimingEngine.prototype.calculateSeasonalAdjustments = function () {
-    return [];
-  };
+  ) => ["Based on historical engagement patterns"];
+  OptimalTimingEngine.prototype.calculateSeasonalAdjustments = () => [];
   OptimalTimingEngine.prototype.generateStatisticalOptimalTime = function (
     patient,
     communicationType,
@@ -1448,12 +1399,8 @@ var OptimalTimingEngine = /** @class */ (function () {
     var _a;
     // Fallback simples baseado em padrões estatísticos
     var bestPattern = patterns
-      .filter(function (p) {
-        return p.communicationType === communicationType;
-      })
-      .sort(function (a, b) {
-        return b.responseRate - a.responseRate;
-      })[0];
+      .filter((p) => p.communicationType === communicationType)
+      .sort((a, b) => b.responseRate - a.responseRate)[0];
     if (bestPattern) {
       return {
         hour: bestPattern.hour,
@@ -1477,17 +1424,17 @@ var OptimalTimingEngine = /** @class */ (function () {
       expectedResponseRate: 15,
     };
   };
-  OptimalTimingEngine.prototype.calculateDaysSinceLastCommunication = function (patientId) {
+  OptimalTimingEngine.prototype.calculateDaysSinceLastCommunication = (patientId) => {
     // Implementar busca da última comunicação
     return 7; // placeholder
   };
-  OptimalTimingEngine.prototype.calculateEngagementWindow = function (patterns) {
+  OptimalTimingEngine.prototype.calculateEngagementWindow = (patterns) => {
     // Calcular janela de engajamento em minutos
     return 120; // placeholder
   };
   OptimalTimingEngine.prototype.calculateAverageResponseLatency = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementar cálculo de latência média de resposta
         return [2 /*return*/, 30]; // placeholder em minutos
       });
@@ -1495,7 +1442,7 @@ var OptimalTimingEngine = /** @class */ (function () {
   };
   OptimalTimingEngine.prototype.getPatientRecommendation = function (patientId, communicationType) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Buscar recomendação existente no cache ou banco
         return [2 /*return*/, null];
       });
@@ -1503,34 +1450,30 @@ var OptimalTimingEngine = /** @class */ (function () {
   };
   OptimalTimingEngine.prototype.getRealTimeFactors = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Buscar fatores em tempo real
         return [2 /*return*/, null];
       });
     });
   };
-  OptimalTimingEngine.prototype.calculateExpectedImprovement = function (
+  OptimalTimingEngine.prototype.calculateExpectedImprovement = (
     originalTime,
     optimizedTime,
     recommendation,
-  ) {
+  ) => {
     // Calcular melhoria esperada em %
     return 0;
   };
-  OptimalTimingEngine.prototype.generateOptimizationReason = function (
+  OptimalTimingEngine.prototype.generateOptimizationReason = (
     originalTime,
     optimizedTime,
     recommendation,
-  ) {
-    return "Optimized based on timing analysis";
-  };
-  OptimalTimingEngine.prototype.extractOptimizationFactors = function (
+  ) => "Optimized based on timing analysis";
+  OptimalTimingEngine.prototype.extractOptimizationFactors = (
     realTimeFactors,
     recommendation,
-  ) {
-    return [];
-  };
-  OptimalTimingEngine.prototype.isTimeInWindow = function (time, window) {
+  ) => [];
+  OptimalTimingEngine.prototype.isTimeInWindow = (time, window) => {
     var hour = time.getHours();
     var minute = time.getMinutes();
     var totalMinutes = hour * 60 + minute;
@@ -1538,33 +1481,31 @@ var OptimalTimingEngine = /** @class */ (function () {
     var endMinutes = window.endHour * 60 + (window.endMinute || 0);
     return totalMinutes >= startMinutes && totalMinutes <= endMinutes;
   };
-  OptimalTimingEngine.prototype.getEmptyPerformanceMetrics = function (period) {
-    return {
-      period: period,
-      baseline: {
-        totalCommunications: 0,
-        averageResponseRate: 0,
-        averageOpenRate: 0,
-        averageClickRate: 0,
-        averageConversionRate: 0,
-      },
-      optimized: {
-        totalCommunications: 0,
-        averageResponseRate: 0,
-        averageOpenRate: 0,
-        averageClickRate: 0,
-        averageConversionRate: 0,
-      },
-      improvement: {
-        responseRate: 0,
-        openRate: 0,
-        clickRate: 0,
-        conversionRate: 0,
-      },
-      segments: {},
-    };
-  };
-  OptimalTimingEngine.prototype.calculateGroupMetrics = function (communications) {
+  OptimalTimingEngine.prototype.getEmptyPerformanceMetrics = (period) => ({
+    period: period,
+    baseline: {
+      totalCommunications: 0,
+      averageResponseRate: 0,
+      averageOpenRate: 0,
+      averageClickRate: 0,
+      averageConversionRate: 0,
+    },
+    optimized: {
+      totalCommunications: 0,
+      averageResponseRate: 0,
+      averageOpenRate: 0,
+      averageClickRate: 0,
+      averageConversionRate: 0,
+    },
+    improvement: {
+      responseRate: 0,
+      openRate: 0,
+      clickRate: 0,
+      conversionRate: 0,
+    },
+    segments: {},
+  });
+  OptimalTimingEngine.prototype.calculateGroupMetrics = (communications) => {
     if (!communications.length) {
       return {
         totalCommunications: 0,
@@ -1578,32 +1519,12 @@ var OptimalTimingEngine = /** @class */ (function () {
     var totalOpens = 0;
     var totalClicks = 0;
     var totalConversions = 0;
-    communications.forEach(function (comm) {
+    communications.forEach((comm) => {
       var events = comm.communication_events || [];
-      if (
-        events.some(function (e) {
-          return e.type === "response";
-        })
-      )
-        totalResponses++;
-      if (
-        events.some(function (e) {
-          return e.type === "open";
-        })
-      )
-        totalOpens++;
-      if (
-        events.some(function (e) {
-          return e.type === "click";
-        })
-      )
-        totalClicks++;
-      if (
-        events.some(function (e) {
-          return e.type === "conversion";
-        })
-      )
-        totalConversions++;
+      if (events.some((e) => e.type === "response")) totalResponses++;
+      if (events.some((e) => e.type === "open")) totalOpens++;
+      if (events.some((e) => e.type === "click")) totalClicks++;
+      if (events.some((e) => e.type === "conversion")) totalConversions++;
     });
     return {
       totalCommunications: communications.length,
@@ -1617,7 +1538,5 @@ var OptimalTimingEngine = /** @class */ (function () {
 })();
 exports.OptimalTimingEngine = OptimalTimingEngine;
 // Export singleton instance
-var createoptimalTimingEngine = function () {
-  return new OptimalTimingEngine();
-};
+var createoptimalTimingEngine = () => new OptimalTimingEngine();
 exports.createoptimalTimingEngine = createoptimalTimingEngine;

@@ -1,25 +1,25 @@
 // components/auth/login-modal.tsx
 "use client";
 
-import type { useState } from "react";
-import type { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
 import type {
-  Stethoscope,
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  Shield,
   AlertCircle,
   CheckCircle,
   ExternalLink,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  Shield,
+  Stethoscope,
 } from "lucide-react";
+import type { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Separator } from "@/components/ui/separator";
 
 interface LoginModalProps {
   open: boolean;

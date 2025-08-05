@@ -52,7 +52,7 @@ export class SessionTimeoutManager {
     userId: string,
     config: Partial<SessionTimeoutConfig> = {},
   ): Promise<void> {
-    const fullConfig = { ...this.DEFAULT_CONFIG, ...config };
+    const fullConfig = { ...SessionTimeoutManager.DEFAULT_CONFIG, ...config };
 
     try {
       const supabase = await createClient();
@@ -71,10 +71,10 @@ export class SessionTimeoutManager {
       });
 
       // Set up warning timers
-      this.setupWarningTimers(sessionId, fullConfig);
+      SessionTimeoutManager.setupWarningTimers(sessionId, fullConfig);
 
       // Set up activity monitoring
-      this.setupActivityMonitoring(sessionId, userId, fullConfig);
+      SessionTimeoutManager.setupActivityMonitoring(sessionId, userId, fullConfig);
     } catch (error) {
       console.error("Failed to initialize session timeout:", error);
     }
@@ -129,8 +129,8 @@ export class SessionTimeoutManager {
 
       // Reset warning timers if activity extends session
       if (config.extendOnActivity) {
-        this.clearWarningTimers(sessionId);
-        this.setupWarningTimers(sessionId, config);
+        SessionTimeoutManager.clearWarningTimers(sessionId);
+        SessionTimeoutManager.setupWarningTimers(sessionId, config);
       }
     } catch (error) {
       console.error("Failed to update session activity:", error);
@@ -217,8 +217,8 @@ export class SessionTimeoutManager {
 
       if (!error) {
         // Reset warning timers
-        this.clearWarningTimers(sessionId);
-        this.setupWarningTimers(sessionId, config);
+        SessionTimeoutManager.clearWarningTimers(sessionId);
+        SessionTimeoutManager.setupWarningTimers(sessionId, config);
       }
 
       return !error;
@@ -245,8 +245,8 @@ export class SessionTimeoutManager {
         .eq("session_id", sessionId);
 
       // Clear timers
-      this.clearWarningTimers(sessionId);
-      this.clearActivityListener(sessionId);
+      SessionTimeoutManager.clearWarningTimers(sessionId);
+      SessionTimeoutManager.clearActivityListener(sessionId);
 
       return !error;
     } catch (error) {
@@ -294,7 +294,7 @@ export class SessionTimeoutManager {
 
       if (warningTime > 0) {
         const timer = setTimeout(() => {
-          this.sendTimeoutWarning(sessionId, warningMinutes);
+          SessionTimeoutManager.sendTimeoutWarning(sessionId, warningMinutes);
         }, warningTime);
 
         timers.push(timer);
@@ -304,23 +304,23 @@ export class SessionTimeoutManager {
     // Set final timeout
     const timeoutTimer = setTimeout(
       () => {
-        this.forceTimeout(sessionId);
+        SessionTimeoutManager.forceTimeout(sessionId);
       },
       config.maxInactivityMinutes * 60 * 1000,
     );
 
     timers.push(timeoutTimer);
-    this.warningTimers.set(sessionId, timers);
+    SessionTimeoutManager.warningTimers.set(sessionId, timers);
   }
 
   /**
    * Clear warning timers
    */
   private static clearWarningTimers(sessionId: string): void {
-    const timers = this.warningTimers.get(sessionId);
+    const timers = SessionTimeoutManager.warningTimers.get(sessionId);
     if (timers) {
       timers.forEach((timer) => clearTimeout(timer));
-      this.warningTimers.delete(sessionId);
+      SessionTimeoutManager.warningTimers.delete(sessionId);
     }
   }
 
@@ -340,10 +340,10 @@ export class SessionTimeoutManager {
    * Clear activity listener
    */
   private static clearActivityListener(sessionId: string): void {
-    const listener = this.activityListeners.get(sessionId);
+    const listener = SessionTimeoutManager.activityListeners.get(sessionId);
     if (listener) {
       clearTimeout(listener);
-      this.activityListeners.delete(sessionId);
+      SessionTimeoutManager.activityListeners.delete(sessionId);
     }
   }
 

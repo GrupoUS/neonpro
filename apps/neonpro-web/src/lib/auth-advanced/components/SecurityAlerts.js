@@ -1,10 +1,9 @@
 // Security Alerts Component
 // Story 1.4: Session Management & Security Implementation
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -13,7 +12,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityAlerts = SecurityAlerts;
 var react_1 = require("react");
@@ -43,12 +42,10 @@ function SecurityAlerts(_a) {
     setShowAll = _j[1];
   // Filter alerts based on settings
   var filteredAlerts = securityAlerts
-    .filter(function (alert) {
-      return showDismissed || !dismissedAlerts.has(alert.id);
-    })
+    .filter((alert) => showDismissed || !dismissedAlerts.has(alert.id))
     .slice(0, showAll ? undefined : maxAlerts);
   // Get icon for security event type
-  var getEventIcon = function (eventType) {
+  var getEventIcon = (eventType) => {
     var iconMap = {
       login_success: <lucide_react_1.User className="w-4 h-4 text-green-500" />,
       login_failure: <lucide_react_1.User className="w-4 h-4 text-red-500" />,
@@ -71,7 +68,7 @@ function SecurityAlerts(_a) {
     return iconMap[eventType] || <lucide_react_1.AlertTriangle className="w-4 h-4 text-gray-500" />;
   };
   // Get alert priority color
-  var getAlertColor = function (event) {
+  var getAlertColor = (event) => {
     var severity = utils_1.AuthUtils.SecurityEvent.classifyEventSeverity(event.event_type);
     var colorMap = {
       low: "border-blue-200 bg-blue-50",
@@ -82,7 +79,7 @@ function SecurityAlerts(_a) {
     return colorMap[severity];
   };
   // Get text color for severity
-  var getTextColor = function (event) {
+  var getTextColor = (event) => {
     var severity = utils_1.AuthUtils.SecurityEvent.classifyEventSeverity(event.event_type);
     var colorMap = {
       low: "text-blue-800",
@@ -93,18 +90,18 @@ function SecurityAlerts(_a) {
     return colorMap[severity];
   };
   // Dismiss alert
-  var dismissAlert = function (alertId) {
-    setDismissedAlerts(function (prev) {
-      return new Set(__spreadArray(__spreadArray([], prev, true), [alertId], false));
-    });
+  var dismissAlert = (alertId) => {
+    setDismissedAlerts(
+      (prev) => new Set(__spreadArray(__spreadArray([], prev, true), [alertId], false)),
+    );
   };
   // Clear all alerts
-  var handleClearAll = function () {
+  var handleClearAll = () => {
     clearSecurityAlerts();
     setDismissedAlerts(new Set());
   };
   // Format event metadata
-  var formatMetadata = function (metadata) {
+  var formatMetadata = (metadata) => {
     var items = [];
     if (metadata.ip_address) {
       items.push("IP: ".concat(metadata.ip_address));
@@ -136,7 +133,7 @@ function SecurityAlerts(_a) {
   if (compact) {
     return (
       <div className={"space-y-2 ".concat(className)}>
-        {filteredAlerts.slice(0, 3).map(function (alert) {
+        {filteredAlerts.slice(0, 3).map((alert) => {
           var severity = utils_1.AuthUtils.SecurityEvent.classifyEventSeverity(alert.event_type);
           var isDismissed = dismissedAlerts.has(alert.id);
           return (
@@ -157,9 +154,7 @@ function SecurityAlerts(_a) {
               </div>
 
               <button
-                onClick={function () {
-                  return dismissAlert(alert.id);
-                }}
+                onClick={() => dismissAlert(alert.id)}
                 className="flex-shrink-0 p-1 hover:bg-white/50 rounded"
                 title="Dismiss alert"
               >
@@ -171,9 +166,7 @@ function SecurityAlerts(_a) {
 
         {filteredAlerts.length > 3 && (
           <button
-            onClick={function () {
-              return setShowAll(!showAll);
-            }}
+            onClick={() => setShowAll(!showAll)}
             className="text-xs text-blue-600 hover:text-blue-800 font-medium"
           >
             {showAll ? "Show less" : "Show ".concat(filteredAlerts.length - 3, " more alerts")}
@@ -198,9 +191,7 @@ function SecurityAlerts(_a) {
 
         <div className="flex items-center space-x-2">
           <button
-            onClick={function () {
-              return setShowDismissed(!showDismissed);
-            }}
+            onClick={() => setShowDismissed(!showDismissed)}
             className="p-2 text-gray-400 hover:text-gray-600 rounded"
             title={showDismissed ? "Hide dismissed" : "Show dismissed"}
           >
@@ -223,7 +214,7 @@ function SecurityAlerts(_a) {
 
       {/* Alerts List */}
       <div className="divide-y">
-        {filteredAlerts.map(function (alert) {
+        {filteredAlerts.map((alert) => {
           var severity = utils_1.AuthUtils.SecurityEvent.classifyEventSeverity(alert.event_type);
           var riskScore = utils_1.AuthUtils.SecurityEvent.calculateEventRiskScore(
             alert.event_type,
@@ -302,9 +293,7 @@ function SecurityAlerts(_a) {
 
                 <div className="flex items-center space-x-2 ml-4">
                   <button
-                    onClick={function () {
-                      return dismissAlert(alert.id);
-                    }}
+                    onClick={() => dismissAlert(alert.id)}
                     className="p-1 text-gray-400 hover:text-gray-600 rounded"
                     title="Dismiss alert"
                   >
@@ -321,9 +310,7 @@ function SecurityAlerts(_a) {
       {securityAlerts.length > maxAlerts && !showAll && (
         <div className="p-4 border-t bg-gray-50">
           <button
-            onClick={function () {
-              return setShowAll(true);
-            }}
+            onClick={() => setShowAll(true)}
             className="text-sm text-blue-600 hover:text-blue-800 font-medium"
           >
             Show {securityAlerts.length - maxAlerts} more alerts
@@ -334,9 +321,7 @@ function SecurityAlerts(_a) {
       {showAll && securityAlerts.length > maxAlerts && (
         <div className="p-4 border-t bg-gray-50">
           <button
-            onClick={function () {
-              return setShowAll(false);
-            }}
+            onClick={() => setShowAll(false)}
             className="text-sm text-blue-600 hover:text-blue-800 font-medium"
           >
             Show less

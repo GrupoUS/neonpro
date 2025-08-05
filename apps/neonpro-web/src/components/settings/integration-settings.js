@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = IntegrationSettings;
 var react_1 = require("react");
@@ -225,7 +222,6 @@ var integrationSettingsSchema = z.object({
   }),
 });
 function IntegrationSettings() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -301,34 +297,30 @@ function IntegrationSettings() {
     },
   });
   // Load existing settings
-  (0, react_1.useEffect)(
-    function () {
-      var loadIntegrationSettings = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          return __generator(this, function (_a) {
-            setIsLoading(true);
-            try {
-              // TODO: Replace with actual API call
-              // const response = await fetch("/api/settings/integrations");
-              // const data = await response.json();
-              // form.reset(data);
-            } catch (error) {
-              console.error("Erro ao carregar integrações:", error);
-              sonner_1.toast.error("Erro ao carregar configurações de integração");
-            } finally {
-              setIsLoading(false);
-            }
-            return [2 /*return*/];
-          });
+  (0, react_1.useEffect)(() => {
+    var loadIntegrationSettings = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
+          setIsLoading(true);
+          try {
+            // TODO: Replace with actual API call
+            // const response = await fetch("/api/settings/integrations");
+            // const data = await response.json();
+            // form.reset(data);
+          } catch (error) {
+            console.error("Erro ao carregar integrações:", error);
+            sonner_1.toast.error("Erro ao carregar configurações de integração");
+          } finally {
+            setIsLoading(false);
+          }
+          return [2 /*return*/];
         });
-      };
-      loadIntegrationSettings();
-    },
-    [form],
-  );
-  var onSubmit = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      });
+    loadIntegrationSettings();
+  }, [form]);
+  var onSubmit = (data) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsSaving(true);
         try {
           // TODO: Replace with actual API call
@@ -348,12 +340,11 @@ function IntegrationSettings() {
         return [2 /*return*/];
       });
     });
-  };
-  var testConnection = function (service) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var testConnection = (service) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
-          setConnectionStatus(function (prev) {
+          setConnectionStatus((prev) => {
             var _a;
             return __assign(__assign({}, prev), ((_a = {}), (_a[service] = false), _a));
           });
@@ -364,15 +355,15 @@ function IntegrationSettings() {
           //   body: JSON.stringify(form.getValues()),
           // });
           // Mock success for demo
-          setTimeout(function () {
-            setConnectionStatus(function (prev) {
+          setTimeout(() => {
+            setConnectionStatus((prev) => {
               var _a;
               return __assign(__assign({}, prev), ((_a = {}), (_a[service] = true), _a));
             });
             sonner_1.toast.success("Conex\u00E3o com ".concat(service, " testada com sucesso!"));
           }, 2000);
         } catch (error) {
-          setConnectionStatus(function (prev) {
+          setConnectionStatus((prev) => {
             var _a;
             return __assign(__assign({}, prev), ((_a = {}), (_a[service] = false), _a));
           });
@@ -381,7 +372,6 @@ function IntegrationSettings() {
         return [2 /*return*/];
       });
     });
-  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -459,9 +449,7 @@ function IntegrationSettings() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={function () {
-                          return testConnection("whatsapp");
-                        }}
+                        onClick={() => testConnection("whatsapp")}
                         disabled={!form.watch("whatsapp.enabled")}
                       >
                         <lucide_react_1.TestTube className="h-4 w-4 mr-2" />
@@ -474,7 +462,7 @@ function IntegrationSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="whatsapp.enabled"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -503,7 +491,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="whatsapp.phoneNumber"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -523,7 +511,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="whatsapp.businessAccountId"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -544,7 +532,7 @@ function IntegrationSettings() {
                       <form_1.FormField
                         control={form.control}
                         name="whatsapp.accessToken"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -568,7 +556,7 @@ function IntegrationSettings() {
                       <form_1.FormField
                         control={form.control}
                         name="whatsapp.webhookUrl"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -594,7 +582,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="whatsapp.enableAppointmentReminders"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
@@ -618,7 +606,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="whatsapp.enableConfirmations"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
@@ -642,7 +630,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="whatsapp.enableStatusUpdates"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
@@ -687,9 +675,7 @@ function IntegrationSettings() {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={function () {
-                        return testConnection("email");
-                      }}
+                      onClick={() => testConnection("email")}
                       disabled={!form.watch("email.enabled")}
                     >
                       <lucide_react_1.TestTube className="h-4 w-4 mr-2" />
@@ -701,7 +687,7 @@ function IntegrationSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="email.enabled"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -730,7 +716,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="email.fromName"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -747,7 +733,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="email.fromEmail"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -770,7 +756,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="email.smtpHost"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -787,7 +773,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="email.smtpPort"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -797,9 +783,9 @@ function IntegrationSettings() {
                                     type="number"
                                     placeholder="587"
                                     {...field}
-                                    onChange={function (e) {
-                                      return field.onChange(parseInt(e.target.value) || 587);
-                                    }}
+                                    onChange={(e) =>
+                                      field.onChange(parseInt(e.target.value) || 587)
+                                    }
                                   />
                                 </form_1.FormControl>
                                 <form_1.FormMessage />
@@ -813,7 +799,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="email.smtpUser"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -830,7 +816,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="email.smtpPassword"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -870,7 +856,7 @@ function IntegrationSettings() {
                   <form_1.FormField
                     control={form.control}
                     name="sms.enabled"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -896,7 +882,7 @@ function IntegrationSettings() {
                       <form_1.FormField
                         control={form.control}
                         name="sms.provider"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -925,7 +911,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="sms.accountSid"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -942,7 +928,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="sms.authToken"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -982,7 +968,7 @@ function IntegrationSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="paymentGateways.mercadoPagoAccessToken"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -1002,7 +988,7 @@ function IntegrationSettings() {
                     <form_1.FormField
                       control={form.control}
                       name="paymentGateways.pixApiKey"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -1031,7 +1017,7 @@ function IntegrationSettings() {
                       <form_1.FormField
                         control={form.control}
                         name="calendar.googleCalendar.enabled"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormControl>
@@ -1050,7 +1036,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="calendar.googleCalendar.clientId"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -1070,7 +1056,7 @@ function IntegrationSettings() {
                         <form_1.FormField
                           control={form.control}
                           name="calendar.googleCalendar.clientSecret"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>

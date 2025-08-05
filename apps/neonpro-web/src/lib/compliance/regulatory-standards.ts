@@ -9,8 +9,8 @@
  */
 
 import type { z } from "zod";
-import type { logger } from "@/lib/utils/logger";
 import type { createClient } from "@/lib/supabase/client";
+import type { logger } from "@/lib/utils/logger";
 
 // Core Compliance Types
 export type RegulatoryStandard = "FDA" | "CE" | "ANVISA" | "ISO_14971" | "ISO_13485" | "IEC_62304";

@@ -5,32 +5,31 @@
  * with violations, alerts, metrics, and recommendations management.
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ComplianceMonitoringDashboard = ComplianceMonitoringDashboard;
 var react_1 = require("react");
@@ -171,7 +168,6 @@ var use_compliance_monitoring_1 = require("@/app/lib/lgpd/monitoring/use-complia
 var compliance_monitoring_1 = require("@/app/lib/lgpd/monitoring/compliance-monitoring");
 var lucide_react_1 = require("lucide-react");
 function ComplianceMonitoringDashboard(_a) {
-  var _this = this;
   var className = _a.className;
   var _b = (0, use_compliance_monitoring_1.useComplianceMonitoring)(),
     status = _b.status,
@@ -232,18 +228,15 @@ function ComplianceMonitoringDashboard(_a) {
     resolutionForm = _l[0],
     setResolutionForm = _l[1];
   // Start monitoring on component mount
-  (0, react_1.useEffect)(
-    function () {
-      if (!isMonitoring && !isLoading) {
-        startMonitoring();
-      }
-    },
-    [isMonitoring, isLoading, startMonitoring],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!isMonitoring && !isLoading) {
+      startMonitoring();
+    }
+  }, [isMonitoring, isLoading, startMonitoring]);
   // Handle violation reporting
-  var handleReportViolation = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleReportViolation = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!violationForm.type || !violationForm.category || !violationForm.description) {
@@ -275,11 +268,10 @@ function ComplianceMonitoringDashboard(_a) {
         }
       });
     });
-  };
   // Handle violation resolution
-  var handleResolveViolation = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleResolveViolation = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedViolation || !resolutionForm.resolution || !resolutionForm.responsible) {
@@ -302,7 +294,6 @@ function ComplianceMonitoringDashboard(_a) {
         }
       });
     });
-  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -536,46 +527,42 @@ function ComplianceMonitoringDashboard(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-3">
-                  {violations.slice(0, 3).map(function (violation) {
-                    return (
-                      <div key={violation.id} className="flex items-start space-x-3">
-                        <lucide_react_1.AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">
-                            {getViolationTypeText(violation.type)}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(violation.detectedAt).toLocaleString()}
-                          </p>
-                        </div>
-                        <badge_1.Badge
-                          variant="outline"
-                          className={getSeverityColor(violation.severity)}
-                        >
-                          {violation.severity}
-                        </badge_1.Badge>
+                  {violations.slice(0, 3).map((violation) => (
+                    <div key={violation.id} className="flex items-start space-x-3">
+                      <lucide_react_1.AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {getViolationTypeText(violation.type)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(violation.detectedAt).toLocaleString()}
+                        </p>
                       </div>
-                    );
-                  })}
-                  {alerts.slice(0, 2).map(function (alert) {
-                    return (
-                      <div key={alert.id} className="flex items-start space-x-3">
-                        <lucide_react_1.Bell className="h-4 w-4 text-blue-500 mt-0.5" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">{alert.title}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(alert.timestamp).toLocaleString()}
-                          </p>
-                        </div>
-                        <badge_1.Badge
-                          variant="outline"
-                          className={getAlertSeverityColor(alert.severity)}
-                        >
-                          {alert.severity}
-                        </badge_1.Badge>
+                      <badge_1.Badge
+                        variant="outline"
+                        className={getSeverityColor(violation.severity)}
+                      >
+                        {violation.severity}
+                      </badge_1.Badge>
+                    </div>
+                  ))}
+                  {alerts.slice(0, 2).map((alert) => (
+                    <div key={alert.id} className="flex items-start space-x-3">
+                      <lucide_react_1.Bell className="h-4 w-4 text-blue-500 mt-0.5" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{alert.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(alert.timestamp).toLocaleString()}
+                        </p>
                       </div>
-                    );
-                  })}
+                      <badge_1.Badge
+                        variant="outline"
+                        className={getAlertSeverityColor(alert.severity)}
+                      >
+                        {alert.severity}
+                      </badge_1.Badge>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -604,11 +591,9 @@ function ComplianceMonitoringDashboard(_a) {
                     <label_1.Label htmlFor="violation-type">Tipo de Violação</label_1.Label>
                     <select_1.Select
                       value={violationForm.type}
-                      onValueChange={function (value) {
-                        return setViolationForm(function (prev) {
-                          return __assign(__assign({}, prev), { type: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setViolationForm((prev) => __assign(__assign({}, prev), { type: value }))
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o tipo" />
@@ -656,11 +641,11 @@ function ComplianceMonitoringDashboard(_a) {
                     <label_1.Label htmlFor="violation-category">Categoria</label_1.Label>
                     <select_1.Select
                       value={violationForm.category}
-                      onValueChange={function (value) {
-                        return setViolationForm(function (prev) {
-                          return __assign(__assign({}, prev), { category: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setViolationForm((prev) =>
+                          __assign(__assign({}, prev), { category: value }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione a categoria" />
@@ -708,11 +693,11 @@ function ComplianceMonitoringDashboard(_a) {
                     <label_1.Label htmlFor="violation-severity">Severidade</label_1.Label>
                     <select_1.Select
                       value={violationForm.severity}
-                      onValueChange={function (value) {
-                        return setViolationForm(function (prev) {
-                          return __assign(__assign({}, prev), { severity: value });
-                        });
-                      }}
+                      onValueChange={(value) =>
+                        setViolationForm((prev) =>
+                          __assign(__assign({}, prev), { severity: value }),
+                        )
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -731,11 +716,11 @@ function ComplianceMonitoringDashboard(_a) {
                       id="violation-description"
                       placeholder="Descreva a violação..."
                       value={violationForm.description}
-                      onChange={function (e) {
-                        return setViolationForm(function (prev) {
-                          return __assign(__assign({}, prev), { description: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setViolationForm((prev) =>
+                          __assign(__assign({}, prev), { description: e.target.value }),
+                        )
+                      }
                     />
                   </div>
                   <div className="grid gap-2">
@@ -744,11 +729,11 @@ function ComplianceMonitoringDashboard(_a) {
                       id="affected-data"
                       placeholder="Quais dados foram afetados..."
                       value={violationForm.affectedData}
-                      onChange={function (e) {
-                        return setViolationForm(function (prev) {
-                          return __assign(__assign({}, prev), { affectedData: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setViolationForm((prev) =>
+                          __assign(__assign({}, prev), { affectedData: e.target.value }),
+                        )
+                      }
                     />
                   </div>
                   <div className="grid gap-2">
@@ -757,11 +742,11 @@ function ComplianceMonitoringDashboard(_a) {
                       id="potential-impact"
                       placeholder="Descreva o impacto potencial..."
                       value={violationForm.potentialImpact}
-                      onChange={function (e) {
-                        return setViolationForm(function (prev) {
-                          return __assign(__assign({}, prev), { potentialImpact: e.target.value });
-                        });
-                      }}
+                      onChange={(e) =>
+                        setViolationForm((prev) =>
+                          __assign(__assign({}, prev), { potentialImpact: e.target.value }),
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -781,77 +766,75 @@ function ComplianceMonitoringDashboard(_a) {
           </div>
 
           <div className="grid gap-4">
-            {violations.map(function (violation) {
-              return (
-                <card_1.Card key={violation.id} className="relative">
-                  <card_1.CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <card_1.CardTitle className="text-base">
-                          {getViolationTypeText(violation.type)}
-                        </card_1.CardTitle>
-                        <card_1.CardDescription>
-                          Detectada em {new Date(violation.detectedAt).toLocaleString()}
-                        </card_1.CardDescription>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <badge_1.Badge className={getSeverityColor(violation.severity)}>
-                          {violation.severity}
-                        </badge_1.Badge>
-                        <badge_1.Badge variant="outline">{violation.status}</badge_1.Badge>
-                      </div>
+            {violations.map((violation) => (
+              <card_1.Card key={violation.id} className="relative">
+                <card_1.CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <card_1.CardTitle className="text-base">
+                        {getViolationTypeText(violation.type)}
+                      </card_1.CardTitle>
+                      <card_1.CardDescription>
+                        Detectada em {new Date(violation.detectedAt).toLocaleString()}
+                      </card_1.CardDescription>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <p className="text-sm text-muted-foreground mb-3">{violation.description}</p>
-                    {violation.affectedData && (
-                      <div className="mb-2">
-                        <span className="text-sm font-medium">Dados Afetados: </span>
-                        <span className="text-sm">{violation.affectedData}</span>
-                      </div>
-                    )}
-                    {violation.potentialImpact && (
-                      <div className="mb-3">
-                        <span className="text-sm font-medium">Impacto Potencial: </span>
-                        <span className="text-sm">{violation.potentialImpact}</span>
-                      </div>
-                    )}
-                    {violation.status === "pending" && (
-                      <div className="flex justify-end">
-                        <button_1.Button
-                          size="sm"
-                          onClick={function () {
-                            setSelectedViolation(violation);
-                            setResolveDialogOpen(true);
-                          }}
-                        >
-                          <lucide_react_1.CheckCircle2 className="h-4 w-4 mr-2" />
-                          Resolver
-                        </button_1.Button>
-                      </div>
-                    )}
-                    {violation.status === "resolved" && violation.resolution && (
-                      <div className="bg-green-50 p-3 rounded-md mt-3">
-                        <div className="flex items-start space-x-2">
-                          <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
-                          <div>
-                            <p className="text-sm font-medium text-green-800">Resolução:</p>
-                            <p className="text-sm text-green-700">{violation.resolution}</p>
-                            {violation.resolvedBy && (
-                              <p className="text-xs text-green-600 mt-1">
-                                Resolvido por: {violation.resolvedBy} em{" "}
-                                {violation.resolvedAt &&
-                                  new Date(violation.resolvedAt).toLocaleString()}
-                              </p>
-                            )}
-                          </div>
+                    <div className="flex items-center space-x-2">
+                      <badge_1.Badge className={getSeverityColor(violation.severity)}>
+                        {violation.severity}
+                      </badge_1.Badge>
+                      <badge_1.Badge variant="outline">{violation.status}</badge_1.Badge>
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <p className="text-sm text-muted-foreground mb-3">{violation.description}</p>
+                  {violation.affectedData && (
+                    <div className="mb-2">
+                      <span className="text-sm font-medium">Dados Afetados: </span>
+                      <span className="text-sm">{violation.affectedData}</span>
+                    </div>
+                  )}
+                  {violation.potentialImpact && (
+                    <div className="mb-3">
+                      <span className="text-sm font-medium">Impacto Potencial: </span>
+                      <span className="text-sm">{violation.potentialImpact}</span>
+                    </div>
+                  )}
+                  {violation.status === "pending" && (
+                    <div className="flex justify-end">
+                      <button_1.Button
+                        size="sm"
+                        onClick={() => {
+                          setSelectedViolation(violation);
+                          setResolveDialogOpen(true);
+                        }}
+                      >
+                        <lucide_react_1.CheckCircle2 className="h-4 w-4 mr-2" />
+                        Resolver
+                      </button_1.Button>
+                    </div>
+                  )}
+                  {violation.status === "resolved" && violation.resolution && (
+                    <div className="bg-green-50 p-3 rounded-md mt-3">
+                      <div className="flex items-start space-x-2">
+                        <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium text-green-800">Resolução:</p>
+                          <p className="text-sm text-green-700">{violation.resolution}</p>
+                          {violation.resolvedBy && (
+                            <p className="text-xs text-green-600 mt-1">
+                              Resolvido por: {violation.resolvedBy} em{" "}
+                              {violation.resolvedAt &&
+                                new Date(violation.resolvedAt).toLocaleString()}
+                            </p>
+                          )}
                         </div>
                       </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
         {/* Alerts Tab */}
@@ -861,95 +844,91 @@ function ComplianceMonitoringDashboard(_a) {
           </div>
 
           <div className="grid gap-4">
-            {alerts.map(function (alert) {
-              return (
-                <card_1.Card key={alert.id} className="relative">
-                  <card_1.CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3">
-                        {alert.severity === "critical" && (
-                          <lucide_react_1.AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
-                        )}
-                        {alert.severity === "error" && (
-                          <lucide_react_1.XCircle className="h-5 w-5 text-orange-500 mt-0.5" />
-                        )}
-                        {alert.severity === "warning" && (
-                          <lucide_react_1.AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />
-                        )}
-                        {alert.severity === "info" && (
-                          <lucide_react_1.Info className="h-5 w-5 text-blue-500 mt-0.5" />
-                        )}
-                        <div>
-                          <card_1.CardTitle className="text-base">{alert.title}</card_1.CardTitle>
-                          <card_1.CardDescription>
-                            {new Date(alert.timestamp).toLocaleString()}
-                          </card_1.CardDescription>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <badge_1.Badge className={getAlertSeverityColor(alert.severity)}>
-                          {alert.severity}
-                        </badge_1.Badge>
-                        {alert.acknowledged && (
-                          <badge_1.Badge variant="outline">Confirmado</badge_1.Badge>
-                        )}
+            {alerts.map((alert) => (
+              <card_1.Card key={alert.id} className="relative">
+                <card_1.CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3">
+                      {alert.severity === "critical" && (
+                        <lucide_react_1.AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+                      )}
+                      {alert.severity === "error" && (
+                        <lucide_react_1.XCircle className="h-5 w-5 text-orange-500 mt-0.5" />
+                      )}
+                      {alert.severity === "warning" && (
+                        <lucide_react_1.AlertTriangle className="h-5 w-5 text-yellow-500 mt-0.5" />
+                      )}
+                      {alert.severity === "info" && (
+                        <lucide_react_1.Info className="h-5 w-5 text-blue-500 mt-0.5" />
+                      )}
+                      <div>
+                        <card_1.CardTitle className="text-base">{alert.title}</card_1.CardTitle>
+                        <card_1.CardDescription>
+                          {new Date(alert.timestamp).toLocaleString()}
+                        </card_1.CardDescription>
                       </div>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <p className="text-sm text-muted-foreground mb-3">{alert.message}</p>
-                    {alert.metadata && Object.keys(alert.metadata).length > 0 && (
-                      <div className="bg-gray-50 p-3 rounded-md mb-3">
-                        <p className="text-sm font-medium mb-2">Detalhes:</p>
-                        <div className="space-y-1">
-                          {Object.entries(alert.metadata).map(function (_a) {
-                            var key = _a[0],
-                              value = _a[1];
-                            return (
-                              <div key={key} className="flex justify-between text-sm">
-                                <span className="text-gray-600">{key}:</span>
-                                <span className="font-mono">{String(value)}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
+                    <div className="flex items-center space-x-2">
+                      <badge_1.Badge className={getAlertSeverityColor(alert.severity)}>
+                        {alert.severity}
+                      </badge_1.Badge>
+                      {alert.acknowledged && (
+                        <badge_1.Badge variant="outline">Confirmado</badge_1.Badge>
+                      )}
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <p className="text-sm text-muted-foreground mb-3">{alert.message}</p>
+                  {alert.metadata && Object.keys(alert.metadata).length > 0 && (
+                    <div className="bg-gray-50 p-3 rounded-md mb-3">
+                      <p className="text-sm font-medium mb-2">Detalhes:</p>
+                      <div className="space-y-1">
+                        {Object.entries(alert.metadata).map((_a) => {
+                          var key = _a[0],
+                            value = _a[1];
+                          return (
+                            <div key={key} className="flex justify-between text-sm">
+                              <span className="text-gray-600">{key}:</span>
+                              <span className="font-mono">{String(value)}</span>
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
-                    {!alert.acknowledged && (
-                      <div className="flex justify-end">
-                        <button_1.Button
-                          size="sm"
-                          variant="outline"
-                          onClick={function () {
-                            return acknowledgeAlert(alert.id, "Admin");
-                          }}
-                        >
-                          <lucide_react_1.CheckCircle2 className="h-4 w-4 mr-2" />
-                          Confirmar
-                        </button_1.Button>
-                      </div>
-                    )}
-                    {alert.acknowledged && (
-                      <div className="bg-blue-50 p-3 rounded-md">
-                        <div className="flex items-start space-x-2">
-                          <lucide_react_1.CheckCircle className="h-4 w-4 text-blue-600 mt-0.5" />
-                          <div>
-                            <p className="text-sm font-medium text-blue-800">
-                              Alerta confirmado por: {alert.acknowledgedBy}
+                    </div>
+                  )}
+                  {!alert.acknowledged && (
+                    <div className="flex justify-end">
+                      <button_1.Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => acknowledgeAlert(alert.id, "Admin")}
+                      >
+                        <lucide_react_1.CheckCircle2 className="h-4 w-4 mr-2" />
+                        Confirmar
+                      </button_1.Button>
+                    </div>
+                  )}
+                  {alert.acknowledged && (
+                    <div className="bg-blue-50 p-3 rounded-md">
+                      <div className="flex items-start space-x-2">
+                        <lucide_react_1.CheckCircle className="h-4 w-4 text-blue-600 mt-0.5" />
+                        <div>
+                          <p className="text-sm font-medium text-blue-800">
+                            Alerta confirmado por: {alert.acknowledgedBy}
+                          </p>
+                          {alert.acknowledgedAt && (
+                            <p className="text-xs text-blue-600">
+                              {new Date(alert.acknowledgedAt).toLocaleString()}
                             </p>
-                            {alert.acknowledgedAt && (
-                              <p className="text-xs text-blue-600">
-                                {new Date(alert.acknowledgedAt).toLocaleString()}
-                              </p>
-                            )}
-                          </div>
+                          )}
                         </div>
                       </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>{" "}
         {/* Metrics Tab */}
@@ -1061,60 +1040,52 @@ function ComplianceMonitoringDashboard(_a) {
           </div>
 
           <div className="grid gap-4">
-            {recommendations.map(function (recommendation) {
-              return (
-                <card_1.Card key={recommendation.id} className="relative">
-                  <card_1.CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3">
-                        <lucide_react_1.Lightbulb className="h-5 w-5 text-yellow-500 mt-0.5" />
-                        <div>
-                          <card_1.CardTitle className="text-base">
-                            {recommendation.title}
-                          </card_1.CardTitle>
-                          <card_1.CardDescription>
-                            Categoria: {recommendation.category}
-                          </card_1.CardDescription>
-                        </div>
+            {recommendations.map((recommendation) => (
+              <card_1.Card key={recommendation.id} className="relative">
+                <card_1.CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3">
+                      <lucide_react_1.Lightbulb className="h-5 w-5 text-yellow-500 mt-0.5" />
+                      <div>
+                        <card_1.CardTitle className="text-base">
+                          {recommendation.title}
+                        </card_1.CardTitle>
+                        <card_1.CardDescription>
+                          Categoria: {recommendation.category}
+                        </card_1.CardDescription>
                       </div>
-                      <badge_1.Badge className={getPriorityColor(recommendation.priority)}>
-                        {recommendation.priority}
-                      </badge_1.Badge>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      {recommendation.description}
-                    </p>
-                    {recommendation.actionItems.length > 0 && (
-                      <div className="bg-blue-50 p-3 rounded-md">
-                        <p className="text-sm font-medium text-blue-800 mb-2">
-                          Ações Recomendadas:
-                        </p>
-                        <ul className="text-sm text-blue-700 space-y-1">
-                          {recommendation.actionItems.map(function (action, index) {
-                            return (
-                              <li key={index} className="flex items-start space-x-2">
-                                <span className="text-blue-500">•</span>
-                                <span>{action}</span>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    )}
-                    {recommendation.estimatedImpact && (
-                      <div className="mt-3 pt-3 border-t">
-                        <p className="text-sm">
-                          <span className="font-medium">Impacto Estimado: </span>
-                          {recommendation.estimatedImpact}
-                        </p>
-                      </div>
-                    )}
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                    <badge_1.Badge className={getPriorityColor(recommendation.priority)}>
+                      {recommendation.priority}
+                    </badge_1.Badge>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <p className="text-sm text-muted-foreground mb-3">{recommendation.description}</p>
+                  {recommendation.actionItems.length > 0 && (
+                    <div className="bg-blue-50 p-3 rounded-md">
+                      <p className="text-sm font-medium text-blue-800 mb-2">Ações Recomendadas:</p>
+                      <ul className="text-sm text-blue-700 space-y-1">
+                        {recommendation.actionItems.map((action, index) => (
+                          <li key={index} className="flex items-start space-x-2">
+                            <span className="text-blue-500">•</span>
+                            <span>{action}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {recommendation.estimatedImpact && (
+                    <div className="mt-3 pt-3 border-t">
+                      <p className="text-sm">
+                        <span className="font-medium">Impacto Estimado: </span>
+                        {recommendation.estimatedImpact}
+                      </p>
+                    </div>
+                  )}
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
       </tabs_1.Tabs>
@@ -1135,11 +1106,11 @@ function ComplianceMonitoringDashboard(_a) {
                 id="resolution-description"
                 placeholder="Descreva como a violação foi resolvida..."
                 value={resolutionForm.resolution}
-                onChange={function (e) {
-                  return setResolutionForm(function (prev) {
-                    return __assign(__assign({}, prev), { resolution: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setResolutionForm((prev) =>
+                    __assign(__assign({}, prev), { resolution: e.target.value }),
+                  )
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -1148,21 +1119,16 @@ function ComplianceMonitoringDashboard(_a) {
                 id="responsible-person"
                 placeholder="Nome do responsável pela resolução"
                 value={resolutionForm.responsible}
-                onChange={function (e) {
-                  return setResolutionForm(function (prev) {
-                    return __assign(__assign({}, prev), { responsible: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setResolutionForm((prev) =>
+                    __assign(__assign({}, prev), { responsible: e.target.value }),
+                  )
+                }
               />
             </div>
           </div>
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setResolveDialogOpen(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setResolveDialogOpen(false)}>
               Cancelar
             </button_1.Button>
             <button_1.Button

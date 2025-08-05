@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MedicalHistoryManager = MedicalHistoryManager;
 var react_1 = require("react");
@@ -317,7 +314,6 @@ var STATUS_OPTIONS = [
   },
 ];
 function MedicalHistoryManager(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     clinicId = _a.clinicId,
     onHistoryUpdate = _a.onHistoryUpdate;
@@ -359,46 +355,36 @@ function MedicalHistoryManager(_a) {
     newHistory = _k[0],
     setNewHistory = _k[1];
   // Load medical history
-  (0, react_1.useEffect)(
-    function () {
-      loadMedicalHistory();
-    },
-    [patientId],
-  );
+  (0, react_1.useEffect)(() => {
+    loadMedicalHistory();
+  }, [patientId]);
   // Filter histories
-  (0, react_1.useEffect)(
-    function () {
-      var filtered = histories;
-      if (searchTerm) {
-        filtered = filtered.filter(function (history) {
-          var _a;
-          return (
-            history.conditionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            ((_a = history.description) === null || _a === void 0
-              ? void 0
-              : _a.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            history.category.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        });
-      }
-      if (selectedCategory !== "all") {
-        filtered = filtered.filter(function (history) {
-          return history.category === selectedCategory;
-        });
-      }
-      if (selectedStatus !== "all") {
-        filtered = filtered.filter(function (history) {
-          return history.status === selectedStatus;
-        });
-      }
-      setFilteredHistories(filtered);
-    },
-    [histories, searchTerm, selectedCategory, selectedStatus],
-  );
-  var loadMedicalHistory = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var filtered = histories;
+    if (searchTerm) {
+      filtered = filtered.filter((history) => {
+        var _a;
+        return (
+          history.conditionName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ((_a = history.description) === null || _a === void 0
+            ? void 0
+            : _a.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          history.category.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+    }
+    if (selectedCategory !== "all") {
+      filtered = filtered.filter((history) => history.category === selectedCategory);
+    }
+    if (selectedStatus !== "all") {
+      filtered = filtered.filter((history) => history.status === selectedStatus);
+    }
+    setFilteredHistories(filtered);
+  }, [histories, searchTerm, selectedCategory, selectedStatus]);
+  var loadMedicalHistory = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockHistories;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         setIsLoading(true);
         try {
           mockHistories = [
@@ -473,11 +459,10 @@ function MedicalHistoryManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleSaveHistory = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSaveHistory = () =>
+    __awaiter(this, void 0, void 0, function () {
       var historyData_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           historyData_1 = {
             id:
@@ -509,15 +494,13 @@ function MedicalHistoryManager(_a) {
             updatedAt: new Date(),
           };
           if (editingHistory) {
-            setHistories(function (prev) {
-              return prev.map(function (h) {
-                return h.id === editingHistory.id ? historyData_1 : h;
-              });
-            });
+            setHistories((prev) =>
+              prev.map((h) => (h.id === editingHistory.id ? historyData_1 : h)),
+            );
           } else {
-            setHistories(function (prev) {
-              return __spreadArray(__spreadArray([], prev, true), [historyData_1], false);
-            });
+            setHistories((prev) =>
+              __spreadArray(__spreadArray([], prev, true), [historyData_1], false),
+            );
           }
           setShowAddDialog(false);
           setEditingHistory(null);
@@ -538,38 +521,26 @@ function MedicalHistoryManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleEditHistory = function (history) {
+  var handleEditHistory = (history) => {
     setEditingHistory(history);
     setNewHistory(history);
     setShowAddDialog(true);
   };
-  var handleDeleteHistory = function (historyId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDeleteHistory = (historyId) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         if (confirm("Tem certeza que deseja excluir este item do histórico médico?")) {
-          setHistories(function (prev) {
-            return prev.filter(function (h) {
-              return h.id !== historyId;
-            });
-          });
+          setHistories((prev) => prev.filter((h) => h.id !== historyId));
         }
         return [2 /*return*/];
       });
     });
-  };
-  var getCategoryInfo = function (category) {
-    return (
-      MEDICAL_CATEGORIES.find(function (cat) {
-        return cat.value === category;
-      }) || MEDICAL_CATEGORIES[MEDICAL_CATEGORIES.length - 1]
-    );
-  };
-  var getSeverityBadge = function (severity) {
+  var getCategoryInfo = (category) =>
+    MEDICAL_CATEGORIES.find((cat) => cat.value === category) ||
+    MEDICAL_CATEGORIES[MEDICAL_CATEGORIES.length - 1];
+  var getSeverityBadge = (severity) => {
     if (!severity) return null;
-    var severityOption = SEVERITY_OPTIONS.find(function (opt) {
-      return opt.value === severity;
-    });
+    var severityOption = SEVERITY_OPTIONS.find((opt) => opt.value === severity);
     return (
       <badge_1.Badge
         className={
@@ -580,10 +551,8 @@ function MedicalHistoryManager(_a) {
       </badge_1.Badge>
     );
   };
-  var getStatusBadge = function (status) {
-    var statusOption = STATUS_OPTIONS.find(function (opt) {
-      return opt.value === status;
-    });
+  var getStatusBadge = (status) => {
+    var statusOption = STATUS_OPTIONS.find((opt) => opt.value === status);
     return (
       <badge_1.Badge
         className={statusOption === null || statusOption === void 0 ? void 0 : statusOption.color}
@@ -597,7 +566,7 @@ function MedicalHistoryManager(_a) {
       </badge_1.Badge>
     );
   };
-  var getTimelineBadge = function (history) {
+  var getTimelineBadge = (history) => {
     if (history.status === "resolved" && history.resolutionDate) {
       return (
         <badge_1.Badge variant="outline" className="text-xs">
@@ -650,26 +619,22 @@ function MedicalHistoryManager(_a) {
                   <label_1.Label htmlFor="category">Categoria *</label_1.Label>
                   <select_1.Select
                     value={newHistory.category}
-                    onValueChange={function (value) {
-                      return setNewHistory(function (prev) {
-                        return __assign(__assign({}, prev), { category: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setNewHistory((prev) => __assign(__assign({}, prev), { category: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Selecione a categoria" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {MEDICAL_CATEGORIES.map(function (category) {
-                        return (
-                          <select_1.SelectItem key={category.value} value={category.value}>
-                            <div className="flex items-center space-x-2">
-                              {category.icon}
-                              <span>{category.label}</span>
-                            </div>
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {MEDICAL_CATEGORIES.map((category) => (
+                        <select_1.SelectItem key={category.value} value={category.value}>
+                          <div className="flex items-center space-x-2">
+                            {category.icon}
+                            <span>{category.label}</span>
+                          </div>
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -678,26 +643,22 @@ function MedicalHistoryManager(_a) {
                   <label_1.Label htmlFor="status">Status *</label_1.Label>
                   <select_1.Select
                     value={newHistory.status}
-                    onValueChange={function (value) {
-                      return setNewHistory(function (prev) {
-                        return __assign(__assign({}, prev), { status: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setNewHistory((prev) => __assign(__assign({}, prev), { status: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Selecione o status" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {STATUS_OPTIONS.map(function (status) {
-                        return (
-                          <select_1.SelectItem key={status.value} value={status.value}>
-                            <div className="flex items-center space-x-2">
-                              {status.icon}
-                              <span>{status.label}</span>
-                            </div>
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {STATUS_OPTIONS.map((status) => (
+                        <select_1.SelectItem key={status.value} value={status.value}>
+                          <div className="flex items-center space-x-2">
+                            {status.icon}
+                            <span>{status.label}</span>
+                          </div>
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -708,11 +669,11 @@ function MedicalHistoryManager(_a) {
                 <input_1.Input
                   id="conditionName"
                   value={newHistory.conditionName || ""}
-                  onChange={function (e) {
-                    return setNewHistory(function (prev) {
-                      return __assign(__assign({}, prev), { conditionName: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setNewHistory((prev) =>
+                      __assign(__assign({}, prev), { conditionName: e.target.value }),
+                    )
+                  }
                   placeholder="Ex: Hipertensão Arterial, Diabetes Tipo 2"
                 />
               </div>
@@ -722,11 +683,11 @@ function MedicalHistoryManager(_a) {
                 <textarea_1.Textarea
                   id="description"
                   value={newHistory.description || ""}
-                  onChange={function (e) {
-                    return setNewHistory(function (prev) {
-                      return __assign(__assign({}, prev), { description: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setNewHistory((prev) =>
+                      __assign(__assign({}, prev), { description: e.target.value }),
+                    )
+                  }
                   placeholder="Descrição detalhada da condição"
                   rows={3}
                 />
@@ -737,23 +698,19 @@ function MedicalHistoryManager(_a) {
                   <label_1.Label htmlFor="severity">Gravidade</label_1.Label>
                   <select_1.Select
                     value={newHistory.severity || ""}
-                    onValueChange={function (value) {
-                      return setNewHistory(function (prev) {
-                        return __assign(__assign({}, prev), { severity: value });
-                      });
-                    }}
+                    onValueChange={(value) =>
+                      setNewHistory((prev) => __assign(__assign({}, prev), { severity: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue placeholder="Selecione a gravidade" />
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
-                      {SEVERITY_OPTIONS.map(function (severity) {
-                        return (
-                          <select_1.SelectItem key={severity.value} value={severity.value}>
-                            {severity.label}
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {SEVERITY_OPTIONS.map((severity) => (
+                        <select_1.SelectItem key={severity.value} value={severity.value}>
+                          {severity.label}
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
@@ -763,11 +720,11 @@ function MedicalHistoryManager(_a) {
                   <input_1.Input
                     id="subcategory"
                     value={newHistory.subcategory || ""}
-                    onChange={function (e) {
-                      return setNewHistory(function (prev) {
-                        return __assign(__assign({}, prev), { subcategory: e.target.value });
-                      });
-                    }}
+                    onChange={(e) =>
+                      setNewHistory((prev) =>
+                        __assign(__assign({}, prev), { subcategory: e.target.value }),
+                      )
+                    }
                     placeholder="Subcategoria específica"
                   />
                 </div>
@@ -784,13 +741,13 @@ function MedicalHistoryManager(_a) {
                         ? (0, date_fns_1.format)(newHistory.onsetDate, "yyyy-MM-dd")
                         : ""
                     }
-                    onChange={function (e) {
-                      return setNewHistory(function (prev) {
-                        return __assign(__assign({}, prev), {
+                    onChange={(e) =>
+                      setNewHistory((prev) =>
+                        __assign(__assign({}, prev), {
                           onsetDate: e.target.value ? new Date(e.target.value) : undefined,
-                        });
-                      });
-                    }}
+                        }),
+                      )
+                    }
                   />
                 </div>
 
@@ -804,13 +761,13 @@ function MedicalHistoryManager(_a) {
                         ? (0, date_fns_1.format)(newHistory.resolutionDate, "yyyy-MM-dd")
                         : ""
                     }
-                    onChange={function (e) {
-                      return setNewHistory(function (prev) {
-                        return __assign(__assign({}, prev), {
+                    onChange={(e) =>
+                      setNewHistory((prev) =>
+                        __assign(__assign({}, prev), {
                           resolutionDate: e.target.value ? new Date(e.target.value) : undefined,
-                        });
-                      });
-                    }}
+                        }),
+                      )
+                    }
                     disabled={newHistory.status !== "resolved"}
                   />
                 </div>
@@ -821,11 +778,11 @@ function MedicalHistoryManager(_a) {
                   <checkbox_1.Checkbox
                     id="isChronic"
                     checked={newHistory.isChronic}
-                    onCheckedChange={function (checked) {
-                      return setNewHistory(function (prev) {
-                        return __assign(__assign({}, prev), { isChronic: !!checked });
-                      });
-                    }}
+                    onCheckedChange={(checked) =>
+                      setNewHistory((prev) =>
+                        __assign(__assign({}, prev), { isChronic: !!checked }),
+                      )
+                    }
                   />
                   <label_1.Label htmlFor="isChronic" className="flex items-center space-x-1">
                     <lucide_react_1.Clock className="w-4 h-4" />
@@ -837,11 +794,11 @@ function MedicalHistoryManager(_a) {
                   <checkbox_1.Checkbox
                     id="isHereditary"
                     checked={newHistory.isHereditary}
-                    onCheckedChange={function (checked) {
-                      return setNewHistory(function (prev) {
-                        return __assign(__assign({}, prev), { isHereditary: !!checked });
-                      });
-                    }}
+                    onCheckedChange={(checked) =>
+                      setNewHistory((prev) =>
+                        __assign(__assign({}, prev), { isHereditary: !!checked }),
+                      )
+                    }
                   />
                   <label_1.Label htmlFor="isHereditary" className="flex items-center space-x-1">
                     <lucide_react_1.History className="w-4 h-4" />
@@ -855,11 +812,9 @@ function MedicalHistoryManager(_a) {
                 <textarea_1.Textarea
                   id="notes"
                   value={newHistory.notes || ""}
-                  onChange={function (e) {
-                    return setNewHistory(function (prev) {
-                      return __assign(__assign({}, prev), { notes: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setNewHistory((prev) => __assign(__assign({}, prev), { notes: e.target.value }))
+                  }
                   placeholder="Observações adicionais, medicamentos, tratamentos..."
                   rows={3}
                 />
@@ -869,7 +824,7 @@ function MedicalHistoryManager(_a) {
                 <button_1.Button
                   type="button"
                   variant="outline"
-                  onClick={function () {
+                  onClick={() => {
                     setShowAddDialog(false);
                     setEditingHistory(null);
                     setNewHistory({
@@ -909,9 +864,7 @@ function MedicalHistoryManager(_a) {
                 <input_1.Input
                   placeholder="Buscar por condição, descrição ou categoria..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -923,16 +876,14 @@ function MedicalHistoryManager(_a) {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todas as categorias</select_1.SelectItem>
-                  {MEDICAL_CATEGORIES.map(function (category) {
-                    return (
-                      <select_1.SelectItem key={category.value} value={category.value}>
-                        <div className="flex items-center space-x-2">
-                          {category.icon}
-                          <span>{category.label}</span>
-                        </div>
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {MEDICAL_CATEGORIES.map((category) => (
+                    <select_1.SelectItem key={category.value} value={category.value}>
+                      <div className="flex items-center space-x-2">
+                        {category.icon}
+                        <span>{category.label}</span>
+                      </div>
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
 
@@ -942,16 +893,14 @@ function MedicalHistoryManager(_a) {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todos os status</select_1.SelectItem>
-                  {STATUS_OPTIONS.map(function (status) {
-                    return (
-                      <select_1.SelectItem key={status.value} value={status.value}>
-                        <div className="flex items-center space-x-2">
-                          {status.icon}
-                          <span>{status.label}</span>
-                        </div>
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {STATUS_OPTIONS.map((status) => (
+                    <select_1.SelectItem key={status.value} value={status.value}>
+                      <div className="flex items-center space-x-2">
+                        {status.icon}
+                        <span>{status.label}</span>
+                      </div>
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -986,11 +935,7 @@ function MedicalHistoryManager(_a) {
                         : "Adicione condições médicas, alergias e outros itens do histórico"}
                     </p>
                     {!searchTerm && selectedCategory === "all" && selectedStatus === "all" && (
-                      <button_1.Button
-                        onClick={function () {
-                          return setShowAddDialog(true);
-                        }}
-                      >
+                      <button_1.Button onClick={() => setShowAddDialog(true)}>
                         <lucide_react_1.Plus className="w-4 h-4 mr-2" />
                         Adicionar Primeiro Histórico
                       </button_1.Button>
@@ -998,7 +943,7 @@ function MedicalHistoryManager(_a) {
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
-            : filteredHistories.map(function (history) {
+            : filteredHistories.map((history) => {
                 var categoryInfo = getCategoryInfo(history.category);
                 return (
                   <card_1.Card key={history.id} className="hover:shadow-md transition-shadow">
@@ -1075,18 +1020,14 @@ function MedicalHistoryManager(_a) {
                           <button_1.Button
                             variant="outline"
                             size="sm"
-                            onClick={function () {
-                              return handleEditHistory(history);
-                            }}
+                            onClick={() => handleEditHistory(history)}
                           >
                             <lucide_react_1.Edit className="w-4 h-4" />
                           </button_1.Button>
                           <button_1.Button
                             variant="outline"
                             size="sm"
-                            onClick={function () {
-                              return handleDeleteHistory(history.id);
-                            }}
+                            onClick={() => handleDeleteHistory(history.id)}
                             className="text-red-600 hover:text-red-700"
                           >
                             <lucide_react_1.Trash2 className="w-4 h-4" />
@@ -1116,31 +1057,19 @@ function MedicalHistoryManager(_a) {
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">
-                  {
-                    filteredHistories.filter(function (h) {
-                      return h.status === "active";
-                    }).length
-                  }
+                  {filteredHistories.filter((h) => h.status === "active").length}
                 </div>
                 <div className="text-sm text-gray-600">Condições Ativas</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-600">
-                  {
-                    filteredHistories.filter(function (h) {
-                      return h.isChronic;
-                    }).length
-                  }
+                  {filteredHistories.filter((h) => h.isChronic).length}
                 </div>
                 <div className="text-sm text-gray-600">Condições Crônicas</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-600">
-                  {
-                    filteredHistories.filter(function (h) {
-                      return h.category === "allergies";
-                    }).length
-                  }
+                  {filteredHistories.filter((h) => h.category === "allergies").length}
                 </div>
                 <div className="text-sm text-gray-600">Alergias</div>
               </div>

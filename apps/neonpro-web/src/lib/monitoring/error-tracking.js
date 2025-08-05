@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TASK-001: Foundation Setup & Baseline
  * Error Tracking and Monitoring System
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,10 +149,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -164,13 +161,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createerrorTracker = void 0;
 exports.trackError = trackError;
 exports.useErrorTracking = useErrorTracking;
 var client_1 = require("@/lib/supabase/client");
-var ErrorTracker = /** @class */ (function () {
+var ErrorTracker = /** @class */ (() => {
   function ErrorTracker() {
     this.supabase = (0, client_1.createClient)();
     this.errorQueue = [];
@@ -246,7 +243,7 @@ var ErrorTracker = /** @class */ (function () {
   /**
    * Determine error severity automatically
    */
-  ErrorTracker.prototype.determineSeverity = function (errorType, error) {
+  ErrorTracker.prototype.determineSeverity = (errorType, error) => {
     var message = error instanceof Error ? error.message : error;
     var lowerMessage = message.toLowerCase();
     // Critical severity indicators
@@ -284,10 +281,9 @@ var ErrorTracker = /** @class */ (function () {
    * Setup global error handlers
    */
   ErrorTracker.prototype.setupGlobalErrorHandlers = function () {
-    var _this = this;
     // JavaScript errors
-    window.addEventListener("error", function (event) {
-      _this.trackError("javascript", event.error || event.message, {
+    window.addEventListener("error", (event) => {
+      this.trackError("javascript", event.error || event.message, {
         route_path: window.location.pathname,
         metadata: {
           filename: event.filename,
@@ -297,8 +293,8 @@ var ErrorTracker = /** @class */ (function () {
       });
     });
     // Promise rejections
-    window.addEventListener("unhandledrejection", function (event) {
-      _this.trackError("javascript", event.reason, {
+    window.addEventListener("unhandledrejection", (event) => {
+      this.trackError("javascript", event.reason, {
         route_path: window.location.pathname,
         severity: "high",
         metadata: {
@@ -313,14 +309,13 @@ var ErrorTracker = /** @class */ (function () {
    * Intercept fetch errors for API monitoring
    */
   ErrorTracker.prototype.interceptFetchErrors = function () {
-    var _this = this;
     var originalFetch = window.fetch;
-    window.fetch = function () {
+    window.fetch = () => {
       var args = [];
       for (var _i = 0; _i < arguments.length; _i++) {
         args[_i] = arguments[_i];
       }
-      return __awaiter(_this, void 0, void 0, function () {
+      return __awaiter(this, void 0, void 0, function () {
         var response, url, error_1, url;
         return __generator(this, function (_a) {
           switch (_a.label) {
@@ -370,9 +365,8 @@ var ErrorTracker = /** @class */ (function () {
   /**
    * Get current session ID
    */
-  ErrorTracker.prototype.getSessionId = function () {
-    return localStorage.getItem("neonpro_session_id") || "anonymous";
-  };
+  ErrorTracker.prototype.getSessionId = () =>
+    localStorage.getItem("neonpro_session_id") || "anonymous";
   /**
    * Check error thresholds and trigger alerts
    */
@@ -382,9 +376,7 @@ var ErrorTracker = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            threshold = this.thresholds.find(function (t) {
-              return t.error_type === errorEvent.error_type;
-            });
+            threshold = this.thresholds.find((t) => t.error_type === errorEvent.error_type);
             if (!threshold || !threshold.alert_enabled) return [2 /*return*/];
             _b.label = 1;
           case 1:
@@ -532,7 +524,7 @@ var ErrorTracker = /** @class */ (function () {
               return [2 /*return*/, []];
             }
             summaryMap_1 = {};
-            data.forEach(function (record) {
+            data.forEach((record) => {
               var errorType = record.metric_name;
               if (!summaryMap_1[errorType]) {
                 summaryMap_1[errorType] = {
@@ -594,7 +586,7 @@ var ErrorTracker = /** @class */ (function () {
               return [2 /*return*/, {}];
             }
             baseline_1 = {};
-            data.forEach(function (record) {
+            data.forEach((record) => {
               var errorType = record.metric_name;
               if (!baseline_1[errorType]) {
                 baseline_1[errorType] = {
@@ -634,27 +626,25 @@ var ErrorTracker = /** @class */ (function () {
             _c.label = 1;
           case 1:
             _c.trys.push([1, 3, , 4]);
-            metrics = errorsToFlush.map(function (error) {
-              return {
-                metric_type: "error_event",
-                metric_name: error.error_type,
-                metric_value: 1,
-                metric_unit: "count",
-                metadata: __assign(
-                  {
-                    error_message: error.error_message,
-                    error_stack: error.error_stack,
-                    error_code: error.error_code,
-                    route_path: error.route_path,
-                    user_id: error.user_id,
-                    session_id: error.session_id,
-                    severity: error.severity,
-                    timestamp: error.timestamp,
-                  },
-                  error.metadata,
-                ),
-              };
-            });
+            metrics = errorsToFlush.map((error) => ({
+              metric_type: "error_event",
+              metric_name: error.error_type,
+              metric_value: 1,
+              metric_unit: "count",
+              metadata: __assign(
+                {
+                  error_message: error.error_message,
+                  error_stack: error.error_stack,
+                  error_code: error.error_code,
+                  route_path: error.route_path,
+                  user_id: error.user_id,
+                  session_id: error.session_id,
+                  severity: error.severity,
+                  timestamp: error.timestamp,
+                },
+                error.metadata,
+              ),
+            }));
             return [4 /*yield*/, this.supabase.from("system_metrics").insert(metrics)];
           case 2:
             error = _c.sent().error;
@@ -679,9 +669,8 @@ var ErrorTracker = /** @class */ (function () {
    * Start periodic error flushing
    */
   ErrorTracker.prototype.startErrorFlushing = function () {
-    var _this = this;
-    this.flushInterval = setInterval(function () {
-      _this.flushErrors();
+    this.flushInterval = setInterval(() => {
+      this.flushErrors();
     }, 5000); // Flush every 5 seconds
   };
   /**
@@ -696,16 +685,15 @@ var ErrorTracker = /** @class */ (function () {
   return ErrorTracker;
 })();
 // Export singleton instance
-var createerrorTracker = function () {
-  return new ErrorTracker();
-};
+var createerrorTracker = () => new ErrorTracker();
 exports.createerrorTracker = createerrorTracker;
 // Utility function for manual error tracking
 function trackError(errorType, error, context) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, errorTracker.trackError(errorType, error, context)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      errorTracker.trackError(errorType, error, context),
+    ]);
   });
 }
 // React Hook for error boundary integration

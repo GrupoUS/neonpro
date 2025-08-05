@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccountsPayableForm = AccountsPayableForm;
 var button_1 = require("@/components/ui/button");
@@ -191,7 +188,6 @@ var priorityOptions = [
   { value: "urgent", label: "Urgente" },
 ];
 function AccountsPayableForm(_a) {
-  var _this = this;
   var accountsPayable = _a.accountsPayable,
     open = _a.open,
     onOpenChange = _a.onOpenChange,
@@ -239,10 +235,10 @@ function AccountsPayableForm(_a) {
     }),
     showCalendar = _j[0],
     setShowCalendar = _j[1];
-  var loadDocuments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadDocuments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var payableDocuments, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (
@@ -276,140 +272,119 @@ function AccountsPayableForm(_a) {
         }
       });
     });
-  };
   // Load options (vendors and categories)
-  (0, react_1.useEffect)(
-    function () {
-      var loadOptions = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var _a, vendorsData, categoriesData, error_2;
-          return __generator(this, function (_b) {
-            switch (_b.label) {
-              case 0:
-                _b.trys.push([0, 2, 3, 4]);
-                setLoadingOptions(true);
-                return [
-                  4 /*yield*/,
-                  Promise.all([
-                    vendors_1.VendorService.getActiveVendorsForSelection(),
-                    expense_categories_1.ExpenseCategoryService.getActiveCategoriesForSelection(),
-                  ]),
-                ];
-              case 1:
-                (_a = _b.sent()), (vendorsData = _a[0]), (categoriesData = _a[1]);
-                setVendors(vendorsData);
-                setCategories(categoriesData);
-                return [3 /*break*/, 4];
-              case 2:
-                error_2 = _b.sent();
-                console.error("Error loading options:", error_2);
-                sonner_1.toast.error("Erro ao carregar opções");
-                return [3 /*break*/, 4];
-              case 3:
-                setLoadingOptions(false);
-                return [7 /*endfinally*/];
-              case 4:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    var loadOptions = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var _a, vendorsData, categoriesData, error_2;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              _b.trys.push([0, 2, 3, 4]);
+              setLoadingOptions(true);
+              return [
+                4 /*yield*/,
+                Promise.all([
+                  vendors_1.VendorService.getActiveVendorsForSelection(),
+                  expense_categories_1.ExpenseCategoryService.getActiveCategoriesForSelection(),
+                ]),
+              ];
+            case 1:
+              (_a = _b.sent()), (vendorsData = _a[0]), (categoriesData = _a[1]);
+              setVendors(vendorsData);
+              setCategories(categoriesData);
+              return [3 /*break*/, 4];
+            case 2:
+              error_2 = _b.sent();
+              console.error("Error loading options:", error_2);
+              sonner_1.toast.error("Erro ao carregar opções");
+              return [3 /*break*/, 4];
+            case 3:
+              setLoadingOptions(false);
+              return [7 /*endfinally*/];
+            case 4:
+              return [2 /*return*/];
+          }
         });
-      };
-      if (open) {
-        loadOptions();
-      }
-    },
-    [open],
-  );
+      });
+    if (open) {
+      loadOptions();
+    }
+  }, [open]);
   // Populate form when editing existing AP
-  (0, react_1.useEffect)(
-    function () {
-      if (accountsPayable && open) {
-        setFormData({
-          vendor_id: accountsPayable.vendor_id,
-          expense_category_id: accountsPayable.expense_category_id,
-          invoice_number: accountsPayable.invoice_number || "",
-          invoice_date: accountsPayable.invoice_date || undefined,
-          due_date: accountsPayable.due_date,
-          gross_amount: accountsPayable.gross_amount,
-          tax_amount: accountsPayable.tax_amount,
-          discount_amount: accountsPayable.discount_amount,
-          net_amount: accountsPayable.net_amount,
-          payment_terms_days: accountsPayable.payment_terms_days,
-          payment_method: accountsPayable.payment_method,
-          status: accountsPayable.status,
-          priority: accountsPayable.priority,
-          description: accountsPayable.description || "",
-          notes: accountsPayable.notes || "",
-        });
-      } else if (open && !accountsPayable) {
-        // Reset form for new AP
-        setFormData({
-          vendor_id: "",
-          expense_category_id: "",
-          invoice_number: "",
-          invoice_date: undefined,
-          due_date: "",
-          gross_amount: 0,
-          tax_amount: 0,
-          discount_amount: 0,
-          net_amount: 0,
-          payment_terms_days: 30,
-          payment_method: "pix",
-          status: "draft",
-          priority: "normal",
-          description: "",
-          notes: "",
-        });
-      }
-    },
-    [accountsPayable, open],
-  );
+  (0, react_1.useEffect)(() => {
+    if (accountsPayable && open) {
+      setFormData({
+        vendor_id: accountsPayable.vendor_id,
+        expense_category_id: accountsPayable.expense_category_id,
+        invoice_number: accountsPayable.invoice_number || "",
+        invoice_date: accountsPayable.invoice_date || undefined,
+        due_date: accountsPayable.due_date,
+        gross_amount: accountsPayable.gross_amount,
+        tax_amount: accountsPayable.tax_amount,
+        discount_amount: accountsPayable.discount_amount,
+        net_amount: accountsPayable.net_amount,
+        payment_terms_days: accountsPayable.payment_terms_days,
+        payment_method: accountsPayable.payment_method,
+        status: accountsPayable.status,
+        priority: accountsPayable.priority,
+        description: accountsPayable.description || "",
+        notes: accountsPayable.notes || "",
+      });
+    } else if (open && !accountsPayable) {
+      // Reset form for new AP
+      setFormData({
+        vendor_id: "",
+        expense_category_id: "",
+        invoice_number: "",
+        invoice_date: undefined,
+        due_date: "",
+        gross_amount: 0,
+        tax_amount: 0,
+        discount_amount: 0,
+        net_amount: 0,
+        payment_terms_days: 30,
+        payment_method: "pix",
+        status: "draft",
+        priority: "normal",
+        description: "",
+        notes: "",
+      });
+    }
+  }, [accountsPayable, open]);
   // Load documents when AP changes or dialog opens
-  (0, react_1.useEffect)(
-    function () {
-      if (
-        open &&
-        (accountsPayable === null || accountsPayable === void 0 ? void 0 : accountsPayable.id)
-      ) {
-        loadDocuments();
-      }
-    },
-    [open, accountsPayable === null || accountsPayable === void 0 ? void 0 : accountsPayable.id],
-  );
+  (0, react_1.useEffect)(() => {
+    if (
+      open &&
+      (accountsPayable === null || accountsPayable === void 0 ? void 0 : accountsPayable.id)
+    ) {
+      loadDocuments();
+    }
+  }, [open, accountsPayable === null || accountsPayable === void 0 ? void 0 : accountsPayable.id]);
   // Calculate net amount when gross, tax, or discount changes
-  (0, react_1.useEffect)(
-    function () {
-      var netAmount =
-        (formData.gross_amount || 0) + (formData.tax_amount || 0) - (formData.discount_amount || 0);
-      if (netAmount !== formData.net_amount) {
-        setFormData(function (prev) {
-          return __assign(__assign({}, prev), { net_amount: netAmount });
-        });
-      }
-    },
-    [formData.gross_amount, formData.tax_amount, formData.discount_amount],
-  );
+  (0, react_1.useEffect)(() => {
+    var netAmount =
+      (formData.gross_amount || 0) + (formData.tax_amount || 0) - (formData.discount_amount || 0);
+    if (netAmount !== formData.net_amount) {
+      setFormData((prev) => __assign(__assign({}, prev), { net_amount: netAmount }));
+    }
+  }, [formData.gross_amount, formData.tax_amount, formData.discount_amount]);
   // Auto-calculate due date when invoice date and payment terms change
-  (0, react_1.useEffect)(
-    function () {
-      if (formData.invoice_date && formData.payment_terms_days) {
-        var invoiceDate = new Date(formData.invoice_date);
-        var dueDate = new Date(invoiceDate);
-        dueDate.setDate(dueDate.getDate() + formData.payment_terms_days);
-        var dueDateString_1 = dueDate.toISOString().split("T")[0];
-        if (dueDateString_1 !== formData.due_date) {
-          setFormData(function (prev) {
-            return __assign(__assign({}, prev), { due_date: dueDateString_1 });
-          });
-        }
+  (0, react_1.useEffect)(() => {
+    if (formData.invoice_date && formData.payment_terms_days) {
+      var invoiceDate = new Date(formData.invoice_date);
+      var dueDate = new Date(invoiceDate);
+      dueDate.setDate(dueDate.getDate() + formData.payment_terms_days);
+      var dueDateString_1 = dueDate.toISOString().split("T")[0];
+      if (dueDateString_1 !== formData.due_date) {
+        setFormData((prev) => __assign(__assign({}, prev), { due_date: dueDateString_1 }));
       }
-    },
-    [formData.invoice_date, formData.payment_terms_days],
-  );
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+    }
+  }, [formData.invoice_date, formData.payment_terms_days]);
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
@@ -465,19 +440,18 @@ function AccountsPayableForm(_a) {
         }
       });
     });
-  };
-  var updateField = function (field, value) {
-    setFormData(function (prev) {
+  var updateField = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
   };
-  var handleDateSelect = function (date, field) {
+  var handleDateSelect = (date, field) => {
     if (date) {
       var dateString = date.toISOString().split("T")[0];
       updateField(field, dateString);
     }
-    setShowCalendar(function (prev) {
+    setShowCalendar((prev) => {
       var _a;
       return __assign(
         __assign({}, prev),
@@ -485,12 +459,11 @@ function AccountsPayableForm(_a) {
       );
     });
   };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
   if (loadingOptions) {
     return (
       <dialog_1.Dialog open={open} onOpenChange={onOpenChange}>
@@ -549,21 +522,17 @@ function AccountsPayableForm(_a) {
                     <label_1.Label htmlFor="vendor_id">Fornecedor *</label_1.Label>
                     <select_1.Select
                       value={formData.vendor_id}
-                      onValueChange={function (value) {
-                        return updateField("vendor_id", value);
-                      }}
+                      onValueChange={(value) => updateField("vendor_id", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione o fornecedor" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {vendors.map(function (vendor) {
-                          return (
-                            <select_1.SelectItem key={vendor.id} value={vendor.value}>
-                              {vendor.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {vendors.map((vendor) => (
+                          <select_1.SelectItem key={vendor.id} value={vendor.value}>
+                            {vendor.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -574,21 +543,17 @@ function AccountsPayableForm(_a) {
                     </label_1.Label>
                     <select_1.Select
                       value={formData.expense_category_id}
-                      onValueChange={function (value) {
-                        return updateField("expense_category_id", value);
-                      }}
+                      onValueChange={(value) => updateField("expense_category_id", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue placeholder="Selecione a categoria" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {categories.map(function (category) {
-                          return (
-                            <select_1.SelectItem key={category.id} value={category.value}>
-                              {category.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {categories.map((category) => (
+                          <select_1.SelectItem key={category.id} value={category.value}>
+                            {category.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -598,9 +563,7 @@ function AccountsPayableForm(_a) {
                     <input_1.Input
                       id="invoice_number"
                       value={formData.invoice_number}
-                      onChange={function (e) {
-                        return updateField("invoice_number", e.target.value);
-                      }}
+                      onChange={(e) => updateField("invoice_number", e.target.value)}
                       placeholder="NF-001234"
                     />
                   </div>
@@ -609,21 +572,17 @@ function AccountsPayableForm(_a) {
                     <label_1.Label htmlFor="status">Status</label_1.Label>
                     <select_1.Select
                       value={formData.status}
-                      onValueChange={function (value) {
-                        return updateField("status", value);
-                      }}
+                      onValueChange={(value) => updateField("status", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {statusOptions.map(function (status) {
-                          return (
-                            <select_1.SelectItem key={status.value} value={status.value}>
-                              {status.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {statusOptions.map((status) => (
+                          <select_1.SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -640,11 +599,9 @@ function AccountsPayableForm(_a) {
                     <label_1.Label htmlFor="invoice_date">Data da Fatura</label_1.Label>
                     <popover_1.Popover
                       open={showCalendar.invoice}
-                      onOpenChange={function (open) {
-                        return setShowCalendar(function (prev) {
-                          return __assign(__assign({}, prev), { invoice: open });
-                        });
-                      }}
+                      onOpenChange={(open) =>
+                        setShowCalendar((prev) => __assign(__assign({}, prev), { invoice: open }))
+                      }
                     >
                       <popover_1.PopoverTrigger asChild>
                         <button_1.Button
@@ -668,9 +625,7 @@ function AccountsPayableForm(_a) {
                           selected={
                             formData.invoice_date ? new Date(formData.invoice_date) : undefined
                           }
-                          onSelect={function (date) {
-                            return handleDateSelect(date, "invoice_date");
-                          }}
+                          onSelect={(date) => handleDateSelect(date, "invoice_date")}
                           initialFocus
                         />
                       </popover_1.PopoverContent>
@@ -685,9 +640,9 @@ function AccountsPayableForm(_a) {
                       id="payment_terms_days"
                       type="number"
                       value={formData.payment_terms_days}
-                      onChange={function (e) {
-                        return updateField("payment_terms_days", parseInt(e.target.value) || 30);
-                      }}
+                      onChange={(e) =>
+                        updateField("payment_terms_days", parseInt(e.target.value) || 30)
+                      }
                       min="0"
                       max="365"
                     />
@@ -697,11 +652,9 @@ function AccountsPayableForm(_a) {
                     <label_1.Label htmlFor="due_date">Data de Vencimento *</label_1.Label>
                     <popover_1.Popover
                       open={showCalendar.due}
-                      onOpenChange={function (open) {
-                        return setShowCalendar(function (prev) {
-                          return __assign(__assign({}, prev), { due: open });
-                        });
-                      }}
+                      onOpenChange={(open) =>
+                        setShowCalendar((prev) => __assign(__assign({}, prev), { due: open }))
+                      }
                     >
                       <popover_1.PopoverTrigger asChild>
                         <button_1.Button
@@ -723,9 +676,7 @@ function AccountsPayableForm(_a) {
                         <calendar_1.Calendar
                           mode="single"
                           selected={formData.due_date ? new Date(formData.due_date) : undefined}
-                          onSelect={function (date) {
-                            return handleDateSelect(date, "due_date");
-                          }}
+                          onSelect={(date) => handleDateSelect(date, "due_date")}
                           initialFocus
                         />
                       </popover_1.PopoverContent>
@@ -750,9 +701,9 @@ function AccountsPayableForm(_a) {
                         id="gross_amount"
                         type="number"
                         value={formData.gross_amount}
-                        onChange={function (e) {
-                          return updateField("gross_amount", parseFloat(e.target.value) || 0);
-                        }}
+                        onChange={(e) =>
+                          updateField("gross_amount", parseFloat(e.target.value) || 0)
+                        }
                         placeholder="0.00"
                         step="0.01"
                         min="0"
@@ -765,9 +716,7 @@ function AccountsPayableForm(_a) {
                         id="tax_amount"
                         type="number"
                         value={formData.tax_amount}
-                        onChange={function (e) {
-                          return updateField("tax_amount", parseFloat(e.target.value) || 0);
-                        }}
+                        onChange={(e) => updateField("tax_amount", parseFloat(e.target.value) || 0)}
                         placeholder="0.00"
                         step="0.01"
                         min="0"
@@ -780,9 +729,9 @@ function AccountsPayableForm(_a) {
                         id="discount_amount"
                         type="number"
                         value={formData.discount_amount}
-                        onChange={function (e) {
-                          return updateField("discount_amount", parseFloat(e.target.value) || 0);
-                        }}
+                        onChange={(e) =>
+                          updateField("discount_amount", parseFloat(e.target.value) || 0)
+                        }
                         placeholder="0.00"
                         step="0.01"
                         min="0"
@@ -809,21 +758,17 @@ function AccountsPayableForm(_a) {
                     <label_1.Label htmlFor="payment_method">Método de Pagamento</label_1.Label>
                     <select_1.Select
                       value={formData.payment_method}
-                      onValueChange={function (value) {
-                        return updateField("payment_method", value);
-                      }}
+                      onValueChange={(value) => updateField("payment_method", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {paymentMethods.map(function (method) {
-                          return (
-                            <select_1.SelectItem key={method.value} value={method.value}>
-                              {method.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {paymentMethods.map((method) => (
+                          <select_1.SelectItem key={method.value} value={method.value}>
+                            {method.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -832,21 +777,17 @@ function AccountsPayableForm(_a) {
                     <label_1.Label htmlFor="priority">Prioridade</label_1.Label>
                     <select_1.Select
                       value={formData.priority}
-                      onValueChange={function (value) {
-                        return updateField("priority", value);
-                      }}
+                      onValueChange={(value) => updateField("priority", value)}
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {priorityOptions.map(function (priority) {
-                          return (
-                            <select_1.SelectItem key={priority.value} value={priority.value}>
-                              {priority.label}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {priorityOptions.map((priority) => (
+                          <select_1.SelectItem key={priority.value} value={priority.value}>
+                            {priority.label}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -864,9 +805,7 @@ function AccountsPayableForm(_a) {
                     <textarea_1.Textarea
                       id="description"
                       value={formData.description}
-                      onChange={function (e) {
-                        return updateField("description", e.target.value);
-                      }}
+                      onChange={(e) => updateField("description", e.target.value)}
                       placeholder="Descrição da despesa..."
                       rows={3}
                     />
@@ -877,9 +816,7 @@ function AccountsPayableForm(_a) {
                     <textarea_1.Textarea
                       id="notes"
                       value={formData.notes}
-                      onChange={function (e) {
-                        return updateField("notes", e.target.value);
-                      }}
+                      onChange={(e) => updateField("notes", e.target.value)}
                       placeholder="Observações internas..."
                       rows={2}
                     />
@@ -904,13 +841,7 @@ function AccountsPayableForm(_a) {
         </tabs_1.Tabs>
 
         <dialog_1.DialogFooter>
-          <button_1.Button
-            type="button"
-            variant="outline"
-            onClick={function () {
-              return onOpenChange(false);
-            }}
-          >
+          <button_1.Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </button_1.Button>
           <button_1.Button type="submit" onClick={handleSubmit} disabled={loading}>

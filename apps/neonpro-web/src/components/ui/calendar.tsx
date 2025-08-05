@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChevronLeft, ChevronRight } from "lucide-react";
-import * as React from "react";
+import type * as React from "react";
 import type { DayPicker } from "react-day-picker";
 
 import type { buttonVariants } from "@/components/ui/button";

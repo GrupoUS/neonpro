@@ -1,4 +1,3 @@
-"use strict";
 // Device Manager Tests
 // Story 1.4: Session Management & Security Implementation
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,23 +144,23 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var vitest_1 = require("vitest");
 var device_manager_1 = require("../device-manager");
-(0, vitest_1.describe)("DeviceManager", function () {
+(0, vitest_1.describe)("DeviceManager", () => {
   var deviceManager;
-  (0, vitest_1.beforeEach)(function () {
+  (0, vitest_1.beforeEach)(() => {
     deviceManager = new device_manager_1.DeviceManager();
   });
-  (0, vitest_1.afterEach)(function () {
+  (0, vitest_1.afterEach)(() => {
     vitest_1.vi.clearAllMocks();
   });
-  (0, vitest_1.describe)("registerDevice", function () {
-    (0, vitest_1.it)("should register a new device successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("registerDevice", () => {
+    (0, vitest_1.it)("should register a new device successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration, deviceId;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration = {
@@ -192,12 +189,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should reject duplicate device fingerprints for same user", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should reject duplicate device fingerprints for same user", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration = {
@@ -235,12 +232,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should allow same fingerprint for different users", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should allow same fingerprint for different users", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration1, deviceRegistration2, deviceId1, deviceId2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration1 = {
@@ -275,14 +272,14 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("getDevice", function () {
-    (0, vitest_1.it)("should retrieve an existing device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("getDevice", () => {
+    (0, vitest_1.it)("should retrieve an existing device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration, deviceId, device;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration = {
@@ -327,12 +324,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should return null for non-existent device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should return null for non-existent device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var device;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, deviceManager.getDevice("non-existent")];
@@ -342,14 +339,14 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("getUserDevices", function () {
-    (0, vitest_1.it)("should return all devices for a user", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("getUserDevices", () => {
+    (0, vitest_1.it)("should return all devices for a user", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var userId, device1, device2, devices;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               userId = "user123";
@@ -397,20 +394,16 @@ var device_manager_1 = require("../device-manager");
             case 3:
               devices = _a.sent();
               (0, vitest_1.expect)(devices).toHaveLength(2);
-              (0, vitest_1.expect)(
-                devices.every(function (d) {
-                  return d.userId === userId;
-                }),
-              ).toBe(true);
+              (0, vitest_1.expect)(devices.every((d) => d.userId === userId)).toBe(true);
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should return empty array for user with no devices", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should return empty array for user with no devices", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var devices;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, deviceManager.getUserDevices("user-no-devices")];
@@ -420,14 +413,14 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("validateDevice", function () {
-    (0, vitest_1.it)("should validate device with correct fingerprint", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("validateDevice", () => {
+    (0, vitest_1.it)("should validate device with correct fingerprint", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration, deviceId, isValid;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration = {
@@ -457,12 +450,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should reject device with incorrect fingerprint", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should reject device with incorrect fingerprint", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration, deviceId, isValid;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration = {
@@ -492,12 +485,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should reject validation for non-existent device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should reject validation for non-existent device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var isValid;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, deviceManager.validateDevice("non-existent", "any-fingerprint")];
@@ -507,14 +500,14 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("updateDeviceTrust", function () {
-    (0, vitest_1.it)("should update device trust status", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("updateDeviceTrust", () => {
+    (0, vitest_1.it)("should update device trust status", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration, deviceId, device, success;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration = {
@@ -560,12 +553,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should return false for non-existent device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should return false for non-existent device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var success;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, deviceManager.updateDeviceTrust("non-existent", true, "Test")];
@@ -575,14 +568,14 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("blockDevice", function () {
-    (0, vitest_1.it)("should block and unblock device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("blockDevice", () => {
+    (0, vitest_1.it)("should block and unblock device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration, deviceId, device, success;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration = {
@@ -640,12 +633,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should return false for non-existent device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should return false for non-existent device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var success;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, deviceManager.blockDevice("non-existent", true, "Test")];
@@ -655,14 +648,14 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("removeDevice", function () {
-    (0, vitest_1.it)("should remove device successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("removeDevice", () => {
+    (0, vitest_1.it)("should remove device successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var deviceRegistration, deviceId, device, success;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               deviceRegistration = {
@@ -701,12 +694,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should return false for non-existent device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should return false for non-existent device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var success;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, deviceManager.removeDevice("non-existent")];
@@ -716,14 +709,14 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("calculateTrustScore", function () {
-    (0, vitest_1.it)("should calculate trust score for new device", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("calculateTrustScore", () => {
+    (0, vitest_1.it)("should calculate trust score for new device", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var device, trustScore;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               device = {
@@ -757,12 +750,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should give higher trust score to established devices", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should give higher trust score to established devices", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var newDevice, establishedDevice, newScore, establishedScore;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               newDevice = {
@@ -806,12 +799,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should give lower trust score to blocked devices", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should give lower trust score to blocked devices", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var normalDevice, blockedDevice, normalScore, blockedScore;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               normalDevice = {
@@ -853,11 +846,11 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("generateFingerprint", function () {
-    (0, vitest_1.it)("should generate consistent fingerprints for same input", function () {
+  (0, vitest_1.describe)("generateFingerprint", () => {
+    (0, vitest_1.it)("should generate consistent fingerprints for same input", () => {
       var deviceInfo = {
         userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
         screen: { width: 1920, height: 1080 },
@@ -873,7 +866,7 @@ var device_manager_1 = require("../device-manager");
       (0, vitest_1.expect)(typeof fingerprint1).toBe("string");
       (0, vitest_1.expect)(fingerprint1.length).toBeGreaterThan(0);
     });
-    (0, vitest_1.it)("should generate different fingerprints for different inputs", function () {
+    (0, vitest_1.it)("should generate different fingerprints for different inputs", () => {
       var deviceInfo1 = {
         userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
         screen: { width: 1920, height: 1080 },
@@ -895,11 +888,11 @@ var device_manager_1 = require("../device-manager");
       (0, vitest_1.expect)(fingerprint1).not.toBe(fingerprint2);
     });
   });
-  (0, vitest_1.describe)("getDeviceAnalytics", function () {
-    (0, vitest_1.it)("should return device analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("getDeviceAnalytics", () => {
+    (0, vitest_1.it)("should return device analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -923,12 +916,12 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should filter analytics by user when specified", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should filter analytics by user when specified", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var device1, device2, user1Analytics, allAnalytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               device1 = {
@@ -994,7 +987,7 @@ var device_manager_1 = require("../device-manager");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

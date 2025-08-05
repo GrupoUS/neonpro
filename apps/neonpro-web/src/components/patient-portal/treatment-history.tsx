@@ -1,28 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
   Activity,
   Calendar,
-  Star,
-  Image,
-  FileText,
-  Heart,
-  TrendingUp,
-  Clock,
-  User,
   ChevronRight,
+  Clock,
   Download,
   Eye,
+  FileText,
+  Heart,
+  Image,
+  Star,
+  TrendingUp,
+  User,
 } from "lucide-react";
-
+import React, { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import {
   Dialog,
   DialogContent,
@@ -31,6 +29,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { usePatientData } from "@/lib/hooks/use-patient-data";
 
 interface TreatmentPhotoGallery {

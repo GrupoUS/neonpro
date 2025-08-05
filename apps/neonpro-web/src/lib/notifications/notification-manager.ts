@@ -7,31 +7,31 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
-import type {
-  BaseNotification,
-  DeliveryNotification,
-  NotificationRecipient,
-  NotificationTemplate,
-  NotificationChannel,
-  NotificationType,
-  NotificationStatus,
-  NotificationPriority,
-  NotificationCategory,
-  DeliveryResult,
-  NotificationContext,
-  NotificationFilters,
-  PaginationOptions,
-  PaginatedResult,
-  NotificationSystemConfig,
-  ChannelConfig,
-  NotificationMetrics,
-  NotificationEvent,
-} from "./types";
-import type { TemplateEngine } from "./template-engine";
-import type { ChannelOrchestrator } from "./channels/channel-orchestrator";
 // import type { RuleEngine } from "./rule-engine";
 // import type { MetricsCollector } from "./metrics-collector";
 import type { auditLogger } from "../auth/audit/audit-logger";
+import type { ChannelOrchestrator } from "./channels/channel-orchestrator";
+import type { TemplateEngine } from "./template-engine";
+import type {
+  BaseNotification,
+  ChannelConfig,
+  DeliveryNotification,
+  DeliveryResult,
+  NotificationCategory,
+  NotificationChannel,
+  NotificationContext,
+  NotificationEvent,
+  NotificationFilters,
+  NotificationMetrics,
+  NotificationPriority,
+  NotificationRecipient,
+  NotificationStatus,
+  NotificationSystemConfig,
+  NotificationTemplate,
+  NotificationType,
+  PaginatedResult,
+  PaginationOptions,
+} from "./types";
 
 // ============================================================================
 // NOTIFICATION MANAGER CLASS

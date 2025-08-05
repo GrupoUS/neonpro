@@ -8,14 +8,14 @@
  * @created 2025-07-22
  */
 
-import { describe, it, expect, jest, beforeEach } from "@jest/globals";
-import { renderHook, waitFor, act } from "@testing-library/react";
-import { QueryClient } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
+import type { QueryClient } from "@tanstack/react-query";
+import { act, renderHook } from "@testing-library/react";
 import {
   AllTheProviders,
-  createTestQueryClient,
   createMockSubscription,
   createMockSubscriptionHook,
+  createTestQueryClient,
 } from "../utils/testUtils";
 
 // Mock the subscription hooks (to be imported when they exist)

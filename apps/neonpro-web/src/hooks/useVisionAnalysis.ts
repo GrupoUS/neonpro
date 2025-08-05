@@ -1,11 +1,11 @@
 "use client";
 
-import type { useState, useCallback, useEffect } from "react";
+import type { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
 import type {
-  visionAnalysisEngine,
   AnalysisResult,
   ChangeMetrics,
+  visionAnalysisEngine,
 } from "@/lib/vision/analysis-engine";
 
 export interface VisionAnalysisState {

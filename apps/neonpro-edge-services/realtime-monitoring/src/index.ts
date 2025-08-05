@@ -1,13 +1,13 @@
+import { validator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { jwt } from "hono/jwt";
-import { validator } from "@hono/zod-validator";
-import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
-import type { Env, MonitoringSession, VitalSigns, SystemAlert, NotificationEvent } from "./types";
-import { MonitoringSessionManager } from "./session-manager";
+import { z } from "zod";
 import { AlertProcessor } from "./alert-processor";
 import { NotificationManager } from "./notification-manager";
+import { MonitoringSessionManager } from "./session-manager";
+import type { Env, VitalSigns } from "./types";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -70,7 +70,7 @@ app.get("/api/v1/ws/monitor/:sessionId", async (c) => {
   try {
     // Get or create monitoring session
     const sessionManager = new MonitoringSessionManager(c.env);
-    const session = await sessionManager.getOrCreateSession(sessionId, {
+    const _session = await sessionManager.getOrCreateSession(sessionId, {
       tenantId,
       userId: payload.sub,
       userRole: payload.role,
@@ -176,11 +176,11 @@ app.get("/api/v1/sse/monitor/:type", async (c) => {
               })}\n\n`,
             ),
           );
-        } catch (error) {
+        } catch (_error) {
           clearInterval(heartbeatInterval);
         }
       }, 30000); // 30 seconds
-    } catch (error) {
+    } catch (_error) {
       await writer.write(
         new TextEncoder().encode(
           `data: ${JSON.stringify({
@@ -335,7 +335,7 @@ app.post("/api/v1/vital-signs", validator("json", VitalSignsSchema), async (c) =
 app.get("/api/v1/vital-signs/:patientId/realtime", async (c) => {
   const patientId = c.req.param("patientId");
   const tenantId = c.req.header("X-Tenant-ID");
-  const payload = c.get("jwtPayload");
+  const _payload = c.get("jwtPayload");
 
   if (!tenantId) {
     return c.json({ error: "Tenant ID required" }, 400);

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useEmailTemplates = useEmailTemplates;
 exports.useEmailTemplate = useEmailTemplate;
@@ -163,13 +160,12 @@ var use_toast_1 = require("@/components/ui/use-toast");
 // EMAIL TEMPLATE HOOKS
 // =======================================
 function useEmailTemplates(filters) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-templates", filters],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams();
@@ -190,18 +186,16 @@ function useEmailTemplates(filters) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
   });
 }
 function useEmailTemplate(id) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-template", id],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/email/templates/".concat(id))];
@@ -214,20 +208,18 @@ function useEmailTemplate(id) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!id,
   });
 }
 function useCreateEmailTemplate() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (template) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (template) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -246,16 +238,15 @@ function useCreateEmailTemplate() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (template) {
+      }),
+    onSuccess: (template) => {
       queryClient.invalidateQueries({ queryKey: ["email-templates"] });
       toast({
         title: "Template criado",
         description: 'Template "'.concat(template.name, '" foi criado com sucesso.'),
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao criar template",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -265,16 +256,15 @@ function useCreateEmailTemplate() {
   });
 }
 function useUpdateEmailTemplate() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response;
         var id = _b.id,
           updates = _b.updates;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -293,9 +283,8 @@ function useUpdateEmailTemplate() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (template) {
+      }),
+    onSuccess: (template) => {
       queryClient.invalidateQueries({ queryKey: ["email-templates"] });
       queryClient.invalidateQueries({ queryKey: ["email-template", template.id] });
       toast({
@@ -303,7 +292,7 @@ function useUpdateEmailTemplate() {
         description: 'Template "'.concat(template.name, '" foi atualizado com sucesso.'),
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao atualizar template",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -313,14 +302,13 @@ function useUpdateEmailTemplate() {
   });
 }
 function useDeleteEmailTemplate() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (id) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (id) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -337,16 +325,15 @@ function useDeleteEmailTemplate() {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["email-templates"] });
       toast({
         title: "Template excluído",
         description: "Template foi excluído com sucesso.",
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao excluir template",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -359,13 +346,12 @@ function useDeleteEmailTemplate() {
 // EMAIL SENDING HOOKS
 // =======================================
 function useSendEmail() {
-  var _this = this;
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (message) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (message) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -384,9 +370,8 @@ function useSendEmail() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (result) {
+      }),
+    onSuccess: (result) => {
       if (result.success) {
         toast({
           title: "Email enviado",
@@ -400,7 +385,7 @@ function useSendEmail() {
         });
       }
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao enviar email",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -410,16 +395,15 @@ function useSendEmail() {
   });
 }
 function useSendBulkEmail() {
-  var _this = this;
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response;
         var messages = _b.messages,
           _c = _b.batchSize,
           batchSize = _c === void 0 ? 10 : _c;
-        return __generator(this, function (_d) {
+        return __generator(this, (_d) => {
           switch (_d.label) {
             case 0:
               return [
@@ -438,9 +422,8 @@ function useSendBulkEmail() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (result) {
+      }),
+    onSuccess: (result) => {
       if (result.success) {
         toast({
           title: "Emails enviados",
@@ -456,7 +439,7 @@ function useSendBulkEmail() {
         });
       }
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao enviar emails em lote",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -469,14 +452,13 @@ function useSendBulkEmail() {
 // EMAIL PREVIEW & VALIDATION HOOKS
 // =======================================
 function useEmailPreview() {
-  var _this = this;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response;
         var templateId = _b.templateId,
           variables = _b.variables;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -495,17 +477,15 @@ function useEmailPreview() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
   });
 }
 function useValidateEmail() {
-  var _this = this;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (email) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (email) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -524,21 +504,19 @@ function useValidateEmail() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
   });
 }
 // =======================================
 // EMAIL ANALYTICS HOOKS
 // =======================================
 function useEmailAnalytics(filters) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-analytics", filters],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams();
@@ -559,18 +537,16 @@ function useEmailAnalytics(filters) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
   });
 }
 function useEmailDeliveryReport(messageId) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-delivery-report", messageId],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/email/delivery/".concat(messageId))];
@@ -583,19 +559,17 @@ function useEmailDeliveryReport(messageId) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     enabled: !!messageId,
   });
 }
 function useEmailEvents(filters) {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-events", filters],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var params, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               params = new URLSearchParams();
@@ -616,21 +590,19 @@ function useEmailEvents(filters) {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
   });
 }
 // =======================================
 // EMAIL SETTINGS HOOKS
 // =======================================
 function useEmailSettings() {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-settings"],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/email/settings")];
@@ -643,19 +615,17 @@ function useEmailSettings() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
   });
 }
 function useUpdateEmailSettings() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (settings) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (settings) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -674,16 +644,15 @@ function useUpdateEmailSettings() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["email-settings"] });
       toast({
         title: "Configurações atualizadas",
         description: "Configurações de email foram atualizadas com sucesso.",
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao atualizar configurações",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -696,13 +665,12 @@ function useUpdateEmailSettings() {
 // EMAIL PROVIDER HOOKS
 // =======================================
 function useEmailProviders() {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-providers"],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/email/providers")];
@@ -714,19 +682,17 @@ function useEmailProviders() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
   });
 }
 function useCreateEmailProvider() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (provider) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (provider) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -745,16 +711,15 @@ function useCreateEmailProvider() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (provider) {
+      }),
+    onSuccess: (provider) => {
       queryClient.invalidateQueries({ queryKey: ["email-providers"] });
       toast({
         title: "Provedor criado",
         description: 'Provedor "'.concat(provider.name, '" foi criado com sucesso.'),
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao criar provedor",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -764,16 +729,15 @@ function useCreateEmailProvider() {
   });
 }
 function useUpdateEmailProvider() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response;
         var id = _b.id,
           updates = _b.updates;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -792,16 +756,15 @@ function useUpdateEmailProvider() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (provider) {
+      }),
+    onSuccess: (provider) => {
       queryClient.invalidateQueries({ queryKey: ["email-providers"] });
       toast({
         title: "Provedor atualizado",
         description: 'Provedor "'.concat(provider.name, '" foi atualizado com sucesso.'),
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao atualizar provedor",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -811,14 +774,13 @@ function useUpdateEmailProvider() {
   });
 }
 function useDeleteEmailProvider() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (id) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (id) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -835,16 +797,15 @@ function useDeleteEmailProvider() {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["email-providers"] });
       toast({
         title: "Provedor excluído",
         description: "Provedor foi excluído com sucesso.",
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao excluir provedor",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -854,13 +815,12 @@ function useDeleteEmailProvider() {
   });
 }
 function useTestEmailProvider() {
-  var _this = this;
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (id) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (id) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -877,9 +837,8 @@ function useTestEmailProvider() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function (result) {
+      }),
+    onSuccess: (result) => {
       if (result.success) {
         toast({
           title: "Teste bem-sucedido",
@@ -893,7 +852,7 @@ function useTestEmailProvider() {
         });
       }
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao testar provedor",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -906,13 +865,12 @@ function useTestEmailProvider() {
 // EMAIL SUPPRESSION HOOKS
 // =======================================
 function useEmailSuppressions() {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-suppressions"],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/email/suppressions")];
@@ -924,21 +882,19 @@ function useEmailSuppressions() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
   });
 }
 function useAddEmailSuppression() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
-      return __awaiter(_this, [_a], void 0, function (_b) {
+    mutationFn: (_a) =>
+      __awaiter(this, [_a], void 0, function (_b) {
         var response;
         var email = _b.email,
           reason = _b.reason;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               return [
@@ -957,16 +913,15 @@ function useAddEmailSuppression() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["email-suppressions"] });
       toast({
         title: "Email suprimido",
         description: "Email foi adicionado à lista de supressão.",
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao suprimir email",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -976,14 +931,13 @@ function useAddEmailSuppression() {
   });
 }
 function useRemoveEmailSuppression() {
-  var _this = this;
   var queryClient = (0, react_query_1.useQueryClient)();
   var toast = (0, use_toast_1.useToast)().toast;
   return (0, react_query_1.useMutation)({
-    mutationFn: function (email) {
-      return __awaiter(_this, void 0, void 0, function () {
+    mutationFn: (email) =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -1000,16 +954,15 @@ function useRemoveEmailSuppression() {
               return [2 /*return*/];
           }
         });
-      });
-    },
-    onSuccess: function () {
+      }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["email-suppressions"] });
       toast({
         title: "Supressão removida",
         description: "Email foi removido da lista de supressão.",
       });
     },
-    onError: function (error) {
+    onError: (error) => {
       toast({
         title: "Erro ao remover supressão",
         description: error instanceof Error ? error.message : "Erro desconhecido",
@@ -1022,13 +975,12 @@ function useRemoveEmailSuppression() {
 // UTILITY HOOKS
 // =======================================
 function useEmailQuota() {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-quota"],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/email/quota")];
@@ -1040,19 +992,17 @@ function useEmailQuota() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
   });
 }
 function useEmailHealth() {
-  var _this = this;
   return (0, react_query_1.useQuery)({
     queryKey: ["email-health"],
-    queryFn: function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    queryFn: () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, fetch("/api/email/health")];
@@ -1064,8 +1014,7 @@ function useEmailHealth() {
               return [2 /*return*/, response.json()];
           }
         });
-      });
-    },
+      }),
     refetchInterval: 2 * 60 * 1000, // Refetch every 2 minutes
   });
 }

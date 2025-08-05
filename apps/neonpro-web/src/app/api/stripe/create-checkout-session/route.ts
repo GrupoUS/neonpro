@@ -1,6 +1,6 @@
-import type { createClient } from "@/lib/supabase/server";
-import type { SubscriptionService } from "@/lib/services/subscription-service";
 import type { NextRequest, NextResponse } from "next/server";
+import type { SubscriptionService } from "@/lib/services/subscription-service";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
   try {

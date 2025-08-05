@@ -5,8 +5,19 @@
 
 "use client";
 
+import type {
+  BarChart3,
+  Bell,
+  Download,
+  Filter,
+  RefreshCw,
+  Settings,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import type { useState } from "react";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,18 +25,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  BarChart3,
-  Users,
-  TrendingUp,
-  Settings,
-  RefreshCw,
-  Bell,
-  Download,
-  Filter,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { cn } from "@/lib/utils";
 import type { AnalyticsOverview } from "./analytics/analytics-overview";
 import type { ConversionCharts } from "./analytics/conversion-charts";

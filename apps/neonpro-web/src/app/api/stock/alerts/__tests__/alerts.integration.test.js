@@ -1,4 +1,3 @@
-"use strict";
 // Stock Alerts API Integration Tests
 // Story 11.4: Alertas e Relatórios de Estoque
 // Integration tests for stock alerts API endpoints
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
@@ -158,32 +155,26 @@ var route_2 = require("../acknowledge/route");
 // TEST SETUP AND MOCKS
 // =====================================================
 // Mock Supabase
-globals_1.jest.mock("@supabase/auth-helpers-nextjs", function () {
-  return {
-    createRouteHandlerClient: globals_1.jest.fn(function () {
-      return {
-        auth: {
-          getSession: globals_1.jest.fn(),
-        },
-        from: globals_1.jest.fn(),
-      };
-    }),
-  };
-});
+globals_1.jest.mock("@supabase/auth-helpers-nextjs", () => ({
+  createRouteHandlerClient: globals_1.jest.fn(() => ({
+    auth: {
+      getSession: globals_1.jest.fn(),
+    },
+    from: globals_1.jest.fn(),
+  })),
+}));
 // Mock cookies
-globals_1.jest.mock("next/headers", function () {
-  return {
-    cookies: globals_1.jest.fn(),
-  };
-});
+globals_1.jest.mock("next/headers", () => ({
+  cookies: globals_1.jest.fn(),
+}));
 // Mock console to avoid noise in tests
 var originalConsoleError = console.error;
 var originalConsoleLog = console.log;
-(0, globals_1.beforeEach)(function () {
+(0, globals_1.beforeEach)(() => {
   console.error = globals_1.jest.fn();
   console.log = globals_1.jest.fn();
 });
-(0, globals_1.afterEach)(function () {
+(0, globals_1.afterEach)(() => {
   console.error = originalConsoleError;
   console.log = originalConsoleLog;
   globals_1.jest.clearAllMocks();
@@ -276,11 +267,11 @@ function createMockSupabaseClient(mockData) {
 // =====================================================
 // GET ENDPOINT TESTS
 // =====================================================
-(0, globals_1.describe)("GET /api/stock/alerts", function () {
-  (0, globals_1.it)("should return paginated alert configurations", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("GET /api/stock/alerts", () => {
+  (0, globals_1.it)("should return paginated alert configurations", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a, mockSupabase, mockQuery, createRouteHandlerClient, request, response, data;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             (_a = createMockSupabaseClient()),
@@ -332,12 +323,12 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle authentication errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle authentication errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var createRouteHandlerClient, request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             createRouteHandlerClient =
@@ -365,12 +356,12 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle query parameter validation", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle query parameter validation", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockSupabase, createRouteHandlerClient, request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSupabase = createMockSupabaseClient().mockSupabase;
@@ -393,15 +384,15 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // POST ENDPOINT TESTS
 // =====================================================
-(0, globals_1.describe)("POST /api/stock/alerts", function () {
-  (0, globals_1.it)("should create new alert configuration", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("POST /api/stock/alerts", () => {
+  (0, globals_1.it)("should create new alert configuration", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a,
         mockSupabase,
         mockQuery,
@@ -410,7 +401,7 @@ function createMockSupabaseClient(mockData) {
         request,
         response,
         data;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             (_a = createMockSupabaseClient()),
@@ -468,12 +459,12 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should validate request body", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should validate request body", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockSupabase, createRouteHandlerClient, invalidRequestBody, request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockSupabase = createMockSupabaseClient().mockSupabase;
@@ -503,10 +494,10 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should handle database errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should handle database errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a,
         mockSupabase,
         mockQuery,
@@ -515,7 +506,7 @@ function createMockSupabaseClient(mockData) {
         request,
         response,
         data;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             (_a = createMockSupabaseClient()),
@@ -568,15 +559,15 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // PUT ENDPOINT TESTS
 // =====================================================
-(0, globals_1.describe)("PUT /api/stock/alerts/[id]", function () {
-  (0, globals_1.it)("should update alert configuration", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("PUT /api/stock/alerts/[id]", () => {
+  (0, globals_1.it)("should update alert configuration", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a,
         mockSupabase,
         mockQuery,
@@ -586,7 +577,7 @@ function createMockSupabaseClient(mockData) {
         request,
         response,
         data;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             (_a = createMockSupabaseClient()),
@@ -637,17 +628,17 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // DELETE ENDPOINT TESTS
 // =====================================================
-(0, globals_1.describe)("DELETE /api/stock/alerts/[id]", function () {
-  (0, globals_1.it)("should delete alert configuration", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("DELETE /api/stock/alerts/[id]", () => {
+  (0, globals_1.it)("should delete alert configuration", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a, mockSupabase, mockQuery, createRouteHandlerClient, request, response, data;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             (_a = createMockSupabaseClient()),
@@ -693,15 +684,15 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // ACKNOWLEDGE ENDPOINT TESTS
 // =====================================================
-(0, globals_1.describe)("POST /api/stock/alerts/acknowledge", function () {
-  (0, globals_1.it)("should acknowledge alert successfully", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("POST /api/stock/alerts/acknowledge", () => {
+  (0, globals_1.it)("should acknowledge alert successfully", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a,
         mockSupabase,
         mockQuery,
@@ -711,7 +702,7 @@ function createMockSupabaseClient(mockData) {
         request,
         response,
         data;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             (_a = createMockSupabaseClient()),
@@ -764,12 +755,12 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  (0, globals_1.it)("should validate acknowledgment request", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.it)("should validate acknowledgment request", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var invalidRequestBody, request, response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             invalidRequestBody = {
@@ -794,15 +785,15 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // =====================================================
 // END-TO-END WORKFLOW TESTS
 // =====================================================
-(0, globals_1.describe)("End-to-End Alert Workflow", function () {
-  (0, globals_1.it)("should complete full alert lifecycle", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("End-to-End Alert Workflow", () => {
+  (0, globals_1.it)("should complete full alert lifecycle", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var _a,
         mockSupabase,
         mockQuery,
@@ -814,7 +805,7 @@ function createMockSupabaseClient(mockData) {
         ackRequest,
         ackResponse,
         ackData;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             (_a = createMockSupabaseClient()),
@@ -897,6 +888,6 @@ function createMockSupabaseClient(mockData) {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

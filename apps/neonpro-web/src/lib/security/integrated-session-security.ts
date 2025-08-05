@@ -4,14 +4,14 @@
  */
 
 import type { NextRequest, NextResponse } from "next/server";
+import type { createClient } from "@/lib/supabase/client";
+import type { SessionManager } from "../auth/session-manager";
 import type { CSRFProtection } from "./csrf-protection";
 import type {
-  SessionHijackingProtection,
   SessionFingerprint,
+  SessionHijackingProtection,
 } from "./session-hijacking-protection";
 import type { SessionTimeoutManager } from "./session-timeout-manager";
-import type { SessionManager } from "../auth/session-manager";
-import type { createClient } from "@/lib/supabase/client";
 
 export interface SecurityConfig {
   csrf: {
@@ -103,7 +103,7 @@ export class IntegratedSessionSecurity {
     config: Partial<SecurityConfig> = {},
   ): Promise<boolean> {
     try {
-      const fullConfig = { ...this.DEFAULT_CONFIG, ...config };
+      const fullConfig = { ...IntegratedSessionSecurity.DEFAULT_CONFIG, ...config };
       const fingerprint = SessionHijackingProtection.generateFingerprint(request);
 
       // Store session fingerprint
@@ -136,7 +136,7 @@ export class IntegratedSessionSecurity {
       }
 
       // Store security configuration
-      await this.storeSecurityConfig(sessionId, fullConfig);
+      await IntegratedSessionSecurity.storeSecurityConfig(sessionId, fullConfig);
 
       return true;
     } catch (error) {
@@ -159,7 +159,9 @@ export class IntegratedSessionSecurity {
       let csrfToken: string | undefined;
 
       // Get security configuration
-      const config = sessionId ? await this.getSecurityConfig(sessionId) : this.DEFAULT_CONFIG;
+      const config = sessionId
+        ? await IntegratedSessionSecurity.getSecurityConfig(sessionId)
+        : IntegratedSessionSecurity.DEFAULT_CONFIG;
 
       // 1. CSRF Protection Check
       if (config.csrf.enabled && !["GET", "HEAD", "OPTIONS"].includes(request.method)) {
@@ -281,7 +283,10 @@ export class IntegratedSessionSecurity {
         request.cookies.get("session-id")?.value || request.headers.get("X-Session-ID");
 
       // Perform security check
-      const securityResult = await this.performSecurityCheck(request, sessionId);
+      const securityResult = await IntegratedSessionSecurity.performSecurityCheck(
+        request,
+        sessionId,
+      );
 
       // Handle security decision
       if (!securityResult.allowed) {
@@ -407,10 +412,10 @@ export class IntegratedSessionSecurity {
         .eq("session_id", sessionId)
         .single();
 
-      return data?.config || this.DEFAULT_CONFIG;
+      return data?.config || IntegratedSessionSecurity.DEFAULT_CONFIG;
     } catch (error) {
       console.error("Failed to get security config:", error);
-      return this.DEFAULT_CONFIG;
+      return IntegratedSessionSecurity.DEFAULT_CONFIG;
     }
   }
 

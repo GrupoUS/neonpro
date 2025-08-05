@@ -1,9 +1,9 @@
 ﻿"use client";
 
+import type { User } from "@supabase/supabase-js";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
-import { User } from "@supabase/supabase-js";
 import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
 
 interface Patient {
   id: string;

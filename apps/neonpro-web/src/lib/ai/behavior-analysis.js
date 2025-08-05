@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI-powered Behavior Pattern Analysis Engine
  * Analyzes patient behavior patterns to optimize treatment outcomes and engagement
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -143,14 +140,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIBehaviorAnalysisEngine = void 0;
 /**
  * AI Behavior Pattern Analysis Engine
  * Core system for analyzing and predicting patient behavior patterns
  */
-var AIBehaviorAnalysisEngine = /** @class */ (function () {
+var AIBehaviorAnalysisEngine = /** @class */ (() => {
   function AIBehaviorAnalysisEngine() {
     this.behaviorModels = new Map();
     this.segmentationModels = new Map();
@@ -437,33 +434,26 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
       return this.getDefaultCommunicationStyle();
     }
     // Analyze preferred channels
-    var channelCounts = communications.reduce(function (acc, comm) {
+    var channelCounts = communications.reduce((acc, comm) => {
       acc[comm.channel] = (acc[comm.channel] || 0) + 1;
       return acc;
     }, {});
     var preferredChannels = Object.entries(channelCounts)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
       .slice(0, 3)
-      .map(function (_a) {
+      .map((_a) => {
         var channel = _a[0];
         return channel;
       });
     // Analyze response time pattern
     var responseTimes = communications
-      .filter(function (comm) {
-        return comm.response_time;
-      })
-      .map(function (comm) {
-        return comm.response_time;
-      });
-    var avgResponseTime =
-      responseTimes.reduce(function (sum, time) {
-        return sum + time;
-      }, 0) / responseTimes.length;
+      .filter((comm) => comm.response_time)
+      .map((comm) => comm.response_time);
+    var avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
     var responseTimePattern = this.categorizeResponseTime(avgResponseTime);
     // Analyze communication frequency
     var communicationFrequency = this.categorizeCommunicationFrequency(communications.length);
@@ -485,32 +475,24 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
       return this.getDefaultAppointmentBehavior();
     }
     // Analyze scheduling patterns
-    var schedulingAdvance = appointments.map(function (apt) {
+    var schedulingAdvance = appointments.map((apt) => {
       var scheduled = new Date(apt.created_at);
       var appointment = new Date(apt.date);
       return (appointment.getTime() - scheduled.getTime()) / (1000 * 60 * 60 * 24); // days
     });
     var avgAdvance =
-      schedulingAdvance.reduce(function (sum, days) {
-        return sum + days;
-      }, 0) / schedulingAdvance.length;
+      schedulingAdvance.reduce((sum, days) => sum + days, 0) / schedulingAdvance.length;
     var schedulingPattern = this.categorizeSchedulingPattern(avgAdvance);
     // Analyze cancellation and rescheduling
-    var cancellations = appointments.filter(function (apt) {
-      return apt.status === "cancelled";
-    }).length;
-    var reschedules = appointments.filter(function (apt) {
-      return apt.status === "rescheduled";
-    }).length;
+    var cancellations = appointments.filter((apt) => apt.status === "cancelled").length;
+    var reschedules = appointments.filter((apt) => apt.status === "rescheduled").length;
     var total = appointments.length;
     var cancellationTendency = this.categorizeCancellationTendency(cancellations / total);
     var reschedulingPattern = this.categorizeReschedulingPattern(reschedules / total);
     // Analyze punctuality (simplified)
     var punctuality = this.analyzePunctuality(appointments);
     // Calculate no-show risk
-    var noShows = appointments.filter(function (apt) {
-      return apt.status === "no_show";
-    }).length;
+    var noShows = appointments.filter((apt) => apt.status === "no_show").length;
     var noShowRisk = this.categorizeNoShowRisk(noShows / total);
     // Analyze preferred times
     var preferredTimes = this.analyzePreferredTimes(appointments);
@@ -528,9 +510,7 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
       return this.getDefaultTreatmentCompliance();
     }
     // Analyze adherence levels
-    var completedTreatments = treatments.filter(function (t) {
-      return t.status === "completed";
-    }).length;
+    var completedTreatments = treatments.filter((t) => t.status === "completed").length;
     var adherenceLevel = this.categorizeAdherence(completedTreatments / treatments.length);
     // Analyze follow-up compliance
     var followUpCompliance = this.analyzeFollowUpCompliance(treatments);
@@ -568,7 +548,7 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
     if (communicationPattern) patterns.push(communicationPattern);
     return patterns;
   };
-  AIBehaviorAnalysisEngine.prototype.assessBehaviorRisks = function (profile, patterns, patient) {
+  AIBehaviorAnalysisEngine.prototype.assessBehaviorRisks = (profile, patterns, patient) => {
     var risks = [];
     // Assess no-show risk
     if (
@@ -622,11 +602,11 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
     }
     return risks;
   };
-  AIBehaviorAnalysisEngine.prototype.generateBehaviorRecommendations = function (
+  AIBehaviorAnalysisEngine.prototype.generateBehaviorRecommendations = (
     profile,
     risks,
     patient,
-  ) {
+  ) => {
     var recommendations = [];
     // Communication recommendations
     if (profile.communication_style.response_time_pattern === "delayed") {
@@ -679,52 +659,52 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
     return recommendations;
   };
   // Utility methods for categorization and analysis
-  AIBehaviorAnalysisEngine.prototype.categorizeResponseTime = function (avgHours) {
+  AIBehaviorAnalysisEngine.prototype.categorizeResponseTime = (avgHours) => {
     if (avgHours <= 1) return "immediate";
     if (avgHours <= 24) return "same_day";
     if (avgHours <= 72) return "delayed";
     return "inconsistent";
   };
-  AIBehaviorAnalysisEngine.prototype.categorizeCommunicationFrequency = function (count) {
+  AIBehaviorAnalysisEngine.prototype.categorizeCommunicationFrequency = (count) => {
     if (count <= 5) return "minimal";
     if (count <= 15) return "moderate";
     if (count <= 30) return "frequent";
     return "excessive";
   };
-  AIBehaviorAnalysisEngine.prototype.categorizeSchedulingPattern = function (avgDays) {
+  AIBehaviorAnalysisEngine.prototype.categorizeSchedulingPattern = (avgDays) => {
     if (avgDays >= 14) return "advance_planner";
     if (avgDays <= 3) return "last_minute";
     if (avgDays >= 7) return "flexible";
     return "rigid";
   };
-  AIBehaviorAnalysisEngine.prototype.categorizeCancellationTendency = function (rate) {
+  AIBehaviorAnalysisEngine.prototype.categorizeCancellationTendency = (rate) => {
     if (rate <= 0.1) return "rare";
     if (rate <= 0.25) return "occasional";
     if (rate <= 0.5) return "frequent";
     return "chronic";
   };
-  AIBehaviorAnalysisEngine.prototype.categorizeReschedulingPattern = function (rate) {
+  AIBehaviorAnalysisEngine.prototype.categorizeReschedulingPattern = (rate) => {
     if (rate <= 0.15) return "minimal";
     if (rate <= 0.35) return "moderate";
     return "frequent";
   };
-  AIBehaviorAnalysisEngine.prototype.categorizeNoShowRisk = function (rate) {
+  AIBehaviorAnalysisEngine.prototype.categorizeNoShowRisk = (rate) => {
     if (rate <= 0.05) return "low";
     if (rate <= 0.15) return "moderate";
     if (rate <= 0.3) return "high";
     return "critical";
   };
-  AIBehaviorAnalysisEngine.prototype.categorizeAdherence = function (rate) {
+  AIBehaviorAnalysisEngine.prototype.categorizeAdherence = (rate) => {
     if (rate <= 0.5) return "poor";
     if (rate <= 0.7) return "fair";
     if (rate <= 0.9) return "good";
     return "excellent";
   };
-  AIBehaviorAnalysisEngine.prototype.calculateOverallEngagement = function (
+  AIBehaviorAnalysisEngine.prototype.calculateOverallEngagement = (
     communication,
     appointment,
     treatment,
-  ) {
+  ) => {
     // Simplified engagement calculation
     var score = 0;
     // Communication engagement
@@ -745,7 +725,7 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
     return "low";
   };
   // Mock implementations for demonstration
-  AIBehaviorAnalysisEngine.prototype.initializeBehaviorModels = function () {
+  AIBehaviorAnalysisEngine.prototype.initializeBehaviorModels = () => {
     console.log("Initializing behavior analysis models...");
   };
   AIBehaviorAnalysisEngine.prototype.loadPatientSegments = function () {
@@ -779,126 +759,110 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
       success_metrics: ["Engagement improvement", "Compliance increase"],
     });
   };
-  AIBehaviorAnalysisEngine.prototype.setupEngagementStrategies = function () {
+  AIBehaviorAnalysisEngine.prototype.setupEngagementStrategies = () => {
     console.log("Setting up engagement strategies...");
   };
   // Additional helper methods with simplified implementations
-  AIBehaviorAnalysisEngine.prototype.getDefaultCommunicationStyle = function () {
-    return {
-      preferred_channels: ["email"],
-      response_time_pattern: "same_day",
-      communication_frequency: "moderate",
-      tone_preference: "formal",
-      information_depth: "detailed",
-      question_asking_tendency: "moderate",
-    };
-  };
-  AIBehaviorAnalysisEngine.prototype.getDefaultAppointmentBehavior = function () {
-    return {
-      scheduling_pattern: "flexible",
-      cancellation_tendency: "occasional",
-      rescheduling_pattern: "minimal",
-      punctuality: "on_time",
-      no_show_risk: "moderate",
-      preferred_times: [],
-    };
-  };
-  AIBehaviorAnalysisEngine.prototype.getDefaultTreatmentCompliance = function () {
-    return {
-      adherence_level: "good",
-      follow_up_compliance: "good",
-      aftercare_adherence: "good",
-      medication_compliance: "good",
-      lifestyle_modification: "cooperative",
-      compliance_barriers: [],
-    };
-  };
+  AIBehaviorAnalysisEngine.prototype.getDefaultCommunicationStyle = () => ({
+    preferred_channels: ["email"],
+    response_time_pattern: "same_day",
+    communication_frequency: "moderate",
+    tone_preference: "formal",
+    information_depth: "detailed",
+    question_asking_tendency: "moderate",
+  });
+  AIBehaviorAnalysisEngine.prototype.getDefaultAppointmentBehavior = () => ({
+    scheduling_pattern: "flexible",
+    cancellation_tendency: "occasional",
+    rescheduling_pattern: "minimal",
+    punctuality: "on_time",
+    no_show_risk: "moderate",
+    preferred_times: [],
+  });
+  AIBehaviorAnalysisEngine.prototype.getDefaultTreatmentCompliance = () => ({
+    adherence_level: "good",
+    follow_up_compliance: "good",
+    aftercare_adherence: "good",
+    medication_compliance: "good",
+    lifestyle_modification: "cooperative",
+    compliance_barriers: [],
+  });
   AIBehaviorAnalysisEngine.prototype.getDefaultSegment = function () {
     return this.segmentationModels.get("moderate_engagement");
   };
   // Simplified implementations for complex analysis methods
-  AIBehaviorAnalysisEngine.prototype.analyzeTonePreference = function (communications) {
+  AIBehaviorAnalysisEngine.prototype.analyzeTonePreference = (communications) => {
     return "formal"; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeInformationDepth = function (communications) {
+  AIBehaviorAnalysisEngine.prototype.analyzeInformationDepth = (communications) => {
     return "detailed"; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeQuestionTendency = function (communications) {
+  AIBehaviorAnalysisEngine.prototype.analyzeQuestionTendency = (communications) => {
     return "moderate"; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzePunctuality = function (appointments) {
+  AIBehaviorAnalysisEngine.prototype.analyzePunctuality = (appointments) => {
     return "on_time"; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzePreferredTimes = function (appointments) {
+  AIBehaviorAnalysisEngine.prototype.analyzePreferredTimes = (appointments) => {
     return []; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeFollowUpCompliance = function (treatments) {
+  AIBehaviorAnalysisEngine.prototype.analyzeFollowUpCompliance = (treatments) => {
     return "good"; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeAftercareAdherence = function (treatments) {
+  AIBehaviorAnalysisEngine.prototype.analyzeAftercareAdherence = (treatments) => {
     return "good"; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeMedicationCompliance = function (treatments) {
+  AIBehaviorAnalysisEngine.prototype.analyzeMedicationCompliance = (treatments) => {
     return "good"; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeLifestyleModification = function (treatments) {
+  AIBehaviorAnalysisEngine.prototype.analyzeLifestyleModification = (treatments) => {
     return "cooperative"; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.identifyComplianceBarriers = function (treatments) {
+  AIBehaviorAnalysisEngine.prototype.identifyComplianceBarriers = (treatments) => {
     return []; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeDecisionMaking = function (
+  AIBehaviorAnalysisEngine.prototype.analyzeDecisionMaking = (
     patient,
     appointments,
     treatments,
-  ) {
-    return {
-      decision_speed: "deliberate",
-      research_tendency: "moderate",
-      consultation_seeking: "moderate",
-      price_sensitivity: "moderate",
-      risk_tolerance: "moderate",
-      influence_factors: [],
-    };
-  };
-  AIBehaviorAnalysisEngine.prototype.identifySatisfactionDrivers = function (
+  ) => ({
+    decision_speed: "deliberate",
+    research_tendency: "moderate",
+    consultation_seeking: "moderate",
+    price_sensitivity: "moderate",
+    risk_tolerance: "moderate",
+    influence_factors: [],
+  });
+  AIBehaviorAnalysisEngine.prototype.identifySatisfactionDrivers = (
     treatments,
     communications,
-  ) {
-    return [];
-  };
-  AIBehaviorAnalysisEngine.prototype.identifyBehavioralTriggers = function (
+  ) => [];
+  AIBehaviorAnalysisEngine.prototype.identifyBehavioralTriggers = (
     appointments,
     communications,
-  ) {
-    return [];
-  };
-  AIBehaviorAnalysisEngine.prototype.analyzeAppointmentEngagementPattern = function (appointments) {
+  ) => [];
+  AIBehaviorAnalysisEngine.prototype.analyzeAppointmentEngagementPattern = (appointments) => {
     return null; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeTreatmentEngagementPattern = function (treatments) {
+  AIBehaviorAnalysisEngine.prototype.analyzeTreatmentEngagementPattern = (treatments) => {
     return null; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.analyzeCommunicationEngagementPattern = function (
-    communications,
-  ) {
+  AIBehaviorAnalysisEngine.prototype.analyzeCommunicationEngagementPattern = (communications) => {
     return null; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.calculateAnalysisConfidence = function (
+  AIBehaviorAnalysisEngine.prototype.calculateAnalysisConfidence = (
     appointments,
     treatments,
     communications,
-  ) {
+  ) => {
     // Calculate confidence based on data availability
     var dataPoints = appointments.length + treatments.length + communications.length;
     return Math.min(0.95, 0.5 + dataPoints * 0.02);
   };
-  AIBehaviorAnalysisEngine.prototype.calculateNextAnalysisDate = function (profile, risks) {
+  AIBehaviorAnalysisEngine.prototype.calculateNextAnalysisDate = (profile, risks) => {
     var nextDate = new Date();
     // Determine analysis frequency based on risk level
-    var highRisks = risks.filter(function (r) {
-      return r.severity === "high" || r.severity === "critical";
-    }).length;
+    var highRisks = risks.filter((r) => r.severity === "high" || r.severity === "critical").length;
     if (highRisks > 0) {
       nextDate.setMonth(nextDate.getMonth() + 1); // Monthly for high risk
     } else if (profile.engagement_level === "low") {
@@ -920,74 +884,66 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
   // Additional prediction methods (simplified implementations)
   AIBehaviorAnalysisEngine.prototype.predictAppointmentBehavior = function (analysis, context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            prediction_type: "appointment_adherence",
-            probability: 0.8,
-            timeframe: "30 days",
-            confidence_level: 0.85,
-            influencing_factors: ["Historical patterns", "Current engagement"],
-            prevention_strategies: ["Confirmation calls", "Flexible scheduling"],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          prediction_type: "appointment_adherence",
+          probability: 0.8,
+          timeframe: "30 days",
+          confidence_level: 0.85,
+          influencing_factors: ["Historical patterns", "Current engagement"],
+          prevention_strategies: ["Confirmation calls", "Flexible scheduling"],
+        },
+      ]);
     });
   };
   AIBehaviorAnalysisEngine.prototype.predictTreatmentCompliance = function (analysis, context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            prediction_type: "treatment_compliance",
-            probability: 0.75,
-            timeframe: "60 days",
-            confidence_level: 0.8,
-            influencing_factors: ["Compliance history", "Treatment complexity"],
-            prevention_strategies: ["Enhanced education", "Support programs"],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          prediction_type: "treatment_compliance",
+          probability: 0.75,
+          timeframe: "60 days",
+          confidence_level: 0.8,
+          influencing_factors: ["Compliance history", "Treatment complexity"],
+          prevention_strategies: ["Enhanced education", "Support programs"],
+        },
+      ]);
     });
   };
   AIBehaviorAnalysisEngine.prototype.predictCommunicationBehavior = function (analysis, context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            prediction_type: "communication_responsiveness",
-            probability: 0.7,
-            timeframe: "14 days",
-            confidence_level: 0.75,
-            influencing_factors: ["Communication style", "Channel preferences"],
-            prevention_strategies: ["Multi-channel approach", "Personalized messaging"],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          prediction_type: "communication_responsiveness",
+          probability: 0.7,
+          timeframe: "14 days",
+          confidence_level: 0.75,
+          influencing_factors: ["Communication style", "Channel preferences"],
+          prevention_strategies: ["Multi-channel approach", "Personalized messaging"],
+        },
+      ]);
     });
   };
   AIBehaviorAnalysisEngine.prototype.predictSatisfactionBehavior = function (analysis, context) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            prediction_type: "satisfaction_outcome",
-            probability: 0.85,
-            timeframe: "90 days",
-            confidence_level: 0.9,
-            influencing_factors: ["Satisfaction drivers", "Treatment outcomes"],
-            prevention_strategies: ["Proactive communication", "Expectation management"],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          prediction_type: "satisfaction_outcome",
+          probability: 0.85,
+          timeframe: "90 days",
+          confidence_level: 0.9,
+          influencing_factors: ["Satisfaction drivers", "Treatment outcomes"],
+          prevention_strategies: ["Proactive communication", "Expectation management"],
+        },
+      ]);
     });
   };
   // Scoring methods
-  AIBehaviorAnalysisEngine.prototype.calculateEngagementScore = function (profile) {
+  AIBehaviorAnalysisEngine.prototype.calculateEngagementScore = (profile) => {
     var scores = {
       low: 0.25,
       moderate: 0.5,
@@ -996,7 +952,7 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
     };
     return scores[profile.engagement_level];
   };
-  AIBehaviorAnalysisEngine.prototype.calculateComplianceScore = function (profile) {
+  AIBehaviorAnalysisEngine.prototype.calculateComplianceScore = (profile) => {
     var scores = {
       poor: 0.25,
       fair: 0.5,
@@ -1005,7 +961,7 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
     };
     return scores[profile.treatment_compliance.adherence_level];
   };
-  AIBehaviorAnalysisEngine.prototype.calculateCommunicationScore = function (profile) {
+  AIBehaviorAnalysisEngine.prototype.calculateCommunicationScore = (profile) => {
     var scores = {
       delayed: 0.25,
       inconsistent: 0.25,
@@ -1014,125 +970,104 @@ var AIBehaviorAnalysisEngine = /** @class */ (function () {
     };
     return scores[profile.communication_style.response_time_pattern] || 0.5;
   };
-  AIBehaviorAnalysisEngine.prototype.calculateBehaviorRiskScore = function (risks) {
+  AIBehaviorAnalysisEngine.prototype.calculateBehaviorRiskScore = (risks) => {
     if (risks.length === 0) return 0;
-    var totalRisk = risks.reduce(function (sum, risk) {
+    var totalRisk = risks.reduce((sum, risk) => {
       var severityScores = { low: 0.25, moderate: 0.5, high: 0.75, critical: 1.0 };
       return sum + severityScores[risk.severity] * risk.probability;
     }, 0);
     return totalRisk / risks.length;
   };
-  AIBehaviorAnalysisEngine.prototype.determineSegment = function (
+  AIBehaviorAnalysisEngine.prototype.determineSegment = (
     engagement,
     compliance,
     communication,
     risk,
-  ) {
+  ) => {
     var overallScore = (engagement + compliance + communication - risk) / 3;
     if (overallScore >= 0.75) return "high_engagement";
     if (overallScore >= 0.5) return "moderate_engagement";
     return "low_engagement";
   };
   // Strategy building methods (simplified)
-  AIBehaviorAnalysisEngine.prototype.buildCommunicationStrategy = function (style) {
-    return {
-      channels: style.preferred_channels,
-      frequency: style.communication_frequency,
-      tone: style.tone_preference,
-      timing: "optimal_based_on_response_pattern",
-    };
-  };
-  AIBehaviorAnalysisEngine.prototype.buildAppointmentStrategy = function (behavior) {
-    return {
-      scheduling_approach: behavior.scheduling_pattern,
-      reminder_frequency: behavior.no_show_risk === "high" ? "intensive" : "standard",
-      flexibility_level: "high",
-    };
-  };
-  AIBehaviorAnalysisEngine.prototype.buildTreatmentStrategy = function (compliance) {
-    return {
-      education_level: compliance.adherence_level === "poor" ? "comprehensive" : "standard",
-      support_intensity: compliance.adherence_level === "poor" ? "high" : "moderate",
-      monitoring_frequency: "based_on_compliance_level",
-    };
-  };
-  AIBehaviorAnalysisEngine.prototype.selectEngagementTactics = function (segment, profile) {
-    return segment.engagement_strategies;
-  };
-  AIBehaviorAnalysisEngine.prototype.createMonitoringPlan = function (risks) {
-    return {
-      frequency: risks.length > 0 ? "weekly" : "monthly",
-      metrics: ["engagement_level", "compliance_rate", "satisfaction_score"],
-      alerts: risks.map(function (r) {
-        return r.risk_type;
-      }),
-    };
-  };
-  AIBehaviorAnalysisEngine.prototype.defineSuccessMetrics = function (segment, profile) {
-    return segment.success_metrics;
-  };
+  AIBehaviorAnalysisEngine.prototype.buildCommunicationStrategy = (style) => ({
+    channels: style.preferred_channels,
+    frequency: style.communication_frequency,
+    tone: style.tone_preference,
+    timing: "optimal_based_on_response_pattern",
+  });
+  AIBehaviorAnalysisEngine.prototype.buildAppointmentStrategy = (behavior) => ({
+    scheduling_approach: behavior.scheduling_pattern,
+    reminder_frequency: behavior.no_show_risk === "high" ? "intensive" : "standard",
+    flexibility_level: "high",
+  });
+  AIBehaviorAnalysisEngine.prototype.buildTreatmentStrategy = (compliance) => ({
+    education_level: compliance.adherence_level === "poor" ? "comprehensive" : "standard",
+    support_intensity: compliance.adherence_level === "poor" ? "high" : "moderate",
+    monitoring_frequency: "based_on_compliance_level",
+  });
+  AIBehaviorAnalysisEngine.prototype.selectEngagementTactics = (segment, profile) =>
+    segment.engagement_strategies;
+  AIBehaviorAnalysisEngine.prototype.createMonitoringPlan = (risks) => ({
+    frequency: risks.length > 0 ? "weekly" : "monthly",
+    metrics: ["engagement_level", "compliance_rate", "satisfaction_score"],
+    alerts: risks.map((r) => r.risk_type),
+  });
+  AIBehaviorAnalysisEngine.prototype.defineSuccessMetrics = (segment, profile) =>
+    segment.success_metrics;
   // Analysis methods for communication effectiveness
-  AIBehaviorAnalysisEngine.prototype.calculateResponseRates = function (communications) {
-    return { overall_rate: 0.8, by_channel: {} };
-  };
-  AIBehaviorAnalysisEngine.prototype.calculateEngagementMetrics = function (communications) {
-    return { engagement_score: 0.75, interaction_frequency: "moderate" };
-  };
-  AIBehaviorAnalysisEngine.prototype.analyzeChannelEffectiveness = function (
-    communications,
-    outcomes,
-  ) {
-    return { most_effective: "email", least_effective: "sms" };
-  };
-  AIBehaviorAnalysisEngine.prototype.analyzeOptimalTiming = function (communications) {
-    return { best_time: "10:00 AM", best_day: "Tuesday" };
-  };
-  AIBehaviorAnalysisEngine.prototype.analyzeContentEffectiveness = function (
-    communications,
-    outcomes,
-  ) {
-    return { effective_content_types: ["educational", "reminder"] };
-  };
-  AIBehaviorAnalysisEngine.prototype.generateCommunicationRecommendations = function (
-    communications,
-  ) {
-    return ["Use preferred channels", "Optimize timing", "Personalize content"];
-  };
+  AIBehaviorAnalysisEngine.prototype.calculateResponseRates = (communications) => ({
+    overall_rate: 0.8,
+    by_channel: {},
+  });
+  AIBehaviorAnalysisEngine.prototype.calculateEngagementMetrics = (communications) => ({
+    engagement_score: 0.75,
+    interaction_frequency: "moderate",
+  });
+  AIBehaviorAnalysisEngine.prototype.analyzeChannelEffectiveness = (communications, outcomes) => ({
+    most_effective: "email",
+    least_effective: "sms",
+  });
+  AIBehaviorAnalysisEngine.prototype.analyzeOptimalTiming = (communications) => ({
+    best_time: "10:00 AM",
+    best_day: "Tuesday",
+  });
+  AIBehaviorAnalysisEngine.prototype.analyzeContentEffectiveness = (communications, outcomes) => ({
+    effective_content_types: ["educational", "reminder"],
+  });
+  AIBehaviorAnalysisEngine.prototype.generateCommunicationRecommendations = (communications) => [
+    "Use preferred channels",
+    "Optimize timing",
+    "Personalize content",
+  ];
   // Anomaly detection methods
-  AIBehaviorAnalysisEngine.prototype.calculateBaselineEngagement = function (history) {
+  AIBehaviorAnalysisEngine.prototype.calculateBaselineEngagement = (history) => {
     if (history.length === 0) return 0.5;
-    var scores = history.map(function (h) {
+    var scores = history.map((h) => {
       var scores = { low: 0.25, moderate: 0.5, high: 0.75, very_high: 1.0 };
       return scores[h.behavior_profile.engagement_level];
     });
-    return (
-      scores.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / scores.length
-    );
+    return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   };
-  AIBehaviorAnalysisEngine.prototype.calculateCurrentEngagement = function (recentBehavior) {
+  AIBehaviorAnalysisEngine.prototype.calculateCurrentEngagement = (recentBehavior) => {
     return 0.6; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.calculateAnomalySeverity = function (current, baseline) {
+  AIBehaviorAnalysisEngine.prototype.calculateAnomalySeverity = (current, baseline) => {
     var deviation = Math.abs(current - baseline);
     if (deviation > 0.4) return "high";
     if (deviation > 0.2) return "moderate";
     return "low";
   };
-  AIBehaviorAnalysisEngine.prototype.getEngagementAnomalyRecommendations = function (
-    current,
-    baseline,
-  ) {
+  AIBehaviorAnalysisEngine.prototype.getEngagementAnomalyRecommendations = (current, baseline) => {
     if (current < baseline) {
       return ["Increase engagement efforts", "Investigate causes", "Implement intervention"];
     }
     return ["Maintain current approach", "Monitor for sustainability"];
   };
-  AIBehaviorAnalysisEngine.prototype.detectAppointmentAnomalies = function (recent, history) {
+  AIBehaviorAnalysisEngine.prototype.detectAppointmentAnomalies = (recent, history) => {
     return []; // Simplified
   };
-  AIBehaviorAnalysisEngine.prototype.detectCommunicationAnomalies = function (recent, history) {
+  AIBehaviorAnalysisEngine.prototype.detectCommunicationAnomalies = (recent, history) => {
     return []; // Simplified
   };
   return AIBehaviorAnalysisEngine;

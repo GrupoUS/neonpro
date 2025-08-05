@@ -5,8 +5,6 @@
  * Simplified test to validate the basic functionality works
  */
 
-import type { ExecutiveDashboardService } from "../../lib/services/executive-dashboard";
-
 // Mock the Supabase client
 jest.mock("../../app/utils/supabase/server", () => ({
   createClient: jest.fn(() => ({

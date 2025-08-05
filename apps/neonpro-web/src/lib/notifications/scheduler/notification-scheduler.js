@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Sistema de Agendamento Inteligente de Notificações - NeonPro
  *
@@ -21,26 +20,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -60,13 +59,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -88,9 +87,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -162,7 +159,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createnotificationScheduler = exports.NotificationScheduler = void 0;
 var zod_1 = require("zod");
@@ -255,7 +252,7 @@ var ScheduleConfigSchema = zod_1.z.object({
 // ================================================================================
 // NOTIFICATION SCHEDULER
 // ================================================================================
-var NotificationScheduler = /** @class */ (function () {
+var NotificationScheduler = /** @class */ (() => {
   function NotificationScheduler() {
     this.isProcessing = false;
     this.processingInterval = null;
@@ -437,27 +434,28 @@ var NotificationScheduler = /** @class */ (function () {
    * Inicia o processador de agendamentos
    */
   NotificationScheduler.prototype.startScheduleProcessor = function () {
-    var _this = this;
     if (this.processingInterval) {
       clearInterval(this.processingInterval);
     }
     // Processar a cada minuto
-    this.processingInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!!this.isProcessing) return [3 /*break*/, 2];
-              return [4 /*yield*/, this.processScheduledNotifications()];
-            case 1:
-              _a.sent();
-              _a.label = 2;
-            case 2:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 60 * 1000);
+    this.processingInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                if (this.isProcessing) return [3 /*break*/, 2];
+                return [4 /*yield*/, this.processScheduledNotifications()];
+              case 1:
+                _a.sent();
+                _a.label = 2;
+              case 2:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      60 * 1000,
+    );
     console.log("📅 Processador de agendamentos iniciado");
   };
   /**
@@ -511,7 +509,7 @@ var NotificationScheduler = /** @class */ (function () {
               ),
             );
             groupedBySchedule_1 = new Map();
-            notifications.forEach(function (notification) {
+            notifications.forEach((notification) => {
               var scheduleId = notification.schedule_id;
               if (!groupedBySchedule_1.has(scheduleId)) {
                 groupedBySchedule_1.set(scheduleId, []);
@@ -521,7 +519,7 @@ var NotificationScheduler = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.allSettled(
-                Array.from(groupedBySchedule_1.entries()).map(function (_a) {
+                Array.from(groupedBySchedule_1.entries()).map((_a) => {
                   var scheduleId = _a[0],
                     notifications = _a[1];
                   return _this.processBatch(scheduleId, notifications);
@@ -531,7 +529,7 @@ var NotificationScheduler = /** @class */ (function () {
           case 3:
             results = _b.sent();
             // Log resultados
-            results.forEach(function (result, index) {
+            results.forEach((result, index) => {
               if (result.status === "rejected") {
                 console.error("Erro ao processar lote ".concat(index, ":"), result.reason);
               }
@@ -710,7 +708,7 @@ var NotificationScheduler = /** @class */ (function () {
                 ? void 0
                 : _d.maxRetriesPerChannel) || 3;
             if (!(notification.attempt < maxRetries)) return [3 /*break*/, 14];
-            retryDelay = Math.pow(2, notification.attempt) * 5;
+            retryDelay = 2 ** notification.attempt * 5;
             retryTime = new Date(Date.now() + retryDelay * 60 * 1000);
             return [
               4 /*yield*/,
@@ -806,7 +804,7 @@ var NotificationScheduler = /** @class */ (function () {
               ];
             }
             hourlyEngagement_1 = new Map();
-            history_1.forEach(function (notification) {
+            history_1.forEach((notification) => {
               var sentHour = new Date(notification.sent_at).getHours();
               var openedAt = notification.opened_at ? new Date(notification.opened_at) : null;
               var sentAt = new Date(notification.sent_at);
@@ -822,7 +820,7 @@ var NotificationScheduler = /** @class */ (function () {
             bestHour_1 = scheduledTime.getHours();
             bestScore_1 = 0;
             factors = [];
-            hourlyEngagement_1.forEach(function (_a, hour) {
+            hourlyEngagement_1.forEach((_a, hour) => {
               var count = _a.count,
                 avgResponseTime = _a.avgResponseTime;
               if (count < 2) return; // Dados insuficientes para essa hora
@@ -909,7 +907,7 @@ var NotificationScheduler = /** @class */ (function () {
   /**
    * Verifica se o horário está dentro do quiet hour
    */
-  NotificationScheduler.prototype.isInQuietHours = function (time, quietHours) {
+  NotificationScheduler.prototype.isInQuietHours = (time, quietHours) => {
     if (!quietHours) return false;
     var hour = time.getHours();
     var minute = time.getMinutes();
@@ -991,26 +989,24 @@ var NotificationScheduler = /** @class */ (function () {
             ];
           case 2:
             audience_1 = _b.sent();
-            notifications = executions.flatMap(function (executionTime) {
-              return audience_1.map(function (userId) {
-                return {
-                  id: crypto.randomUUID(),
-                  schedule_id: scheduleId,
-                  user_id: userId,
-                  channel: schedule_1.channels[0], // Para múltiplos canais, criar uma entrada por canal
-                  status: "pending",
-                  scheduled_for: executionTime.toISOString(),
-                  attempt: 0,
-                  content: schedule_1.template_config.content,
-                  metadata: {
-                    templateId: schedule_1.template_config.templateId,
-                    variables: schedule_1.template_config.variables,
-                  },
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString(),
-                };
-              });
-            });
+            notifications = executions.flatMap((executionTime) =>
+              audience_1.map((userId) => ({
+                id: crypto.randomUUID(),
+                schedule_id: scheduleId,
+                user_id: userId,
+                channel: schedule_1.channels[0], // Para múltiplos canais, criar uma entrada por canal
+                status: "pending",
+                scheduled_for: executionTime.toISOString(),
+                attempt: 0,
+                content: schedule_1.template_config.content,
+                metadata: {
+                  templateId: schedule_1.template_config.templateId,
+                  variables: schedule_1.template_config.variables,
+                },
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              })),
+            );
             if (!(notifications.length > 0)) return [3 /*break*/, 4];
             return [
               4 /*yield*/,
@@ -1043,13 +1039,13 @@ var NotificationScheduler = /** @class */ (function () {
   /**
    * Calcula próximas execuções baseadas na configuração de recorrência
    */
-  NotificationScheduler.prototype.calculateNextExecutions = function (config, limit) {
+  NotificationScheduler.prototype.calculateNextExecutions = (config, limit) => {
     var executions = [];
     var now = new Date();
     var recurrence = config.recurrence;
     var current = new Date(now);
     current.setSeconds(0, 0); // Zerar segundos e milissegundos
-    var _loop_1 = function (i) {
+    var _loop_1 = (i) => {
       var next = void 0;
       switch (recurrence.frequency) {
         case "daily":
@@ -1065,13 +1061,11 @@ var NotificationScheduler = /** @class */ (function () {
             if (!recurrence.daysOfWeek.includes(dayOfWeek_1)) {
               // Encontrar próximo dia da semana válido
               var nextValidDay = recurrence.daysOfWeek
-                .map(function (day) {
+                .map((day) => {
                   var diff = (day - dayOfWeek_1 + 7) % 7;
                   return diff === 0 ? 7 : diff;
                 })
-                .sort(function (a, b) {
-                  return a - b;
-                })[0];
+                .sort((a, b) => a - b)[0];
               next.setDate(next.getDate() + nextValidDay);
             }
           }
@@ -1143,11 +1137,7 @@ var NotificationScheduler = /** @class */ (function () {
             allUsers = _b.sent().data;
             return [
               2 /*return*/,
-              (allUsers === null || allUsers === void 0
-                ? void 0
-                : allUsers.map(function (u) {
-                    return u.id;
-                  })) || [],
+              (allUsers === null || allUsers === void 0 ? void 0 : allUsers.map((u) => u.id)) || [],
             ];
           case 3:
             return [2 /*return*/, audienceConfig.userIds || []];
@@ -1164,11 +1154,7 @@ var NotificationScheduler = /** @class */ (function () {
             patients = _b.sent().data;
             return [
               2 /*return*/,
-              (patients === null || patients === void 0
-                ? void 0
-                : patients.map(function (p) {
-                    return p.id;
-                  })) || [],
+              (patients === null || patients === void 0 ? void 0 : patients.map((p) => p.id)) || [],
             ];
           case 6:
             return [
@@ -1183,11 +1169,7 @@ var NotificationScheduler = /** @class */ (function () {
             staff = _b.sent().data;
             return [
               2 /*return*/,
-              (staff === null || staff === void 0
-                ? void 0
-                : staff.map(function (s) {
-                    return s.id;
-                  })) || [],
+              (staff === null || staff === void 0 ? void 0 : staff.map((s) => s.id)) || [],
             ];
           case 8:
             return [4 /*yield*/, this.resolveCustomAudience(audienceConfig.filters, clinicId)];
@@ -1223,7 +1205,7 @@ var NotificationScheduler = /** @class */ (function () {
             _a.trys.push([1, 3, , 4]);
             query_1 = this.supabase.from("profiles").select("id").eq("clinic_id", clinicId);
             // Aplicar filtros
-            filters.forEach(function (filter) {
+            filters.forEach((filter) => {
               switch (filter.operator) {
                 case "equals":
                   query_1 = query_1.eq(filter.field, filter.value);
@@ -1247,11 +1229,7 @@ var NotificationScheduler = /** @class */ (function () {
             data = _a.sent().data;
             return [
               2 /*return*/,
-              (data === null || data === void 0
-                ? void 0
-                : data.map(function (u) {
-                    return u.id;
-                  })) || [],
+              (data === null || data === void 0 ? void 0 : data.map((u) => u.id)) || [],
             ];
           case 3:
             error_10 = _a.sent();
@@ -1292,24 +1270,22 @@ var NotificationScheduler = /** @class */ (function () {
             ];
           case 2:
             audience = _b.sent();
-            notifications = audience.flatMap(function (userId) {
-              return schedule_2.channels.map(function (channel) {
-                return {
-                  id: crypto.randomUUID(),
-                  schedule_id: scheduleId,
-                  user_id: userId,
-                  channel: channel,
-                  status: "pending",
-                  scheduled_for: new Date().toISOString(),
-                  attempt: 0,
-                  content: schedule_2.template_config.content,
-                  metadata: {
-                    templateId: schedule_2.template_config.templateId,
-                    variables: schedule_2.template_config.variables,
-                  },
-                };
-              });
-            });
+            notifications = audience.flatMap((userId) =>
+              schedule_2.channels.map((channel) => ({
+                id: crypto.randomUUID(),
+                schedule_id: scheduleId,
+                user_id: userId,
+                channel: channel,
+                status: "pending",
+                scheduled_for: new Date().toISOString(),
+                attempt: 0,
+                content: schedule_2.template_config.content,
+                metadata: {
+                  templateId: schedule_2.template_config.templateId,
+                  variables: schedule_2.template_config.variables,
+                },
+              })),
+            );
             return [4 /*yield*/, this.processBatch(scheduleId, notifications)];
           case 3:
             // Processar em lote
@@ -1330,7 +1306,5 @@ exports.NotificationScheduler = NotificationScheduler;
 // ================================================================================
 // EXPORT
 // ================================================================================
-var createnotificationScheduler = function () {
-  return new NotificationScheduler();
-};
+var createnotificationScheduler = () => new NotificationScheduler();
 exports.createnotificationScheduler = createnotificationScheduler;

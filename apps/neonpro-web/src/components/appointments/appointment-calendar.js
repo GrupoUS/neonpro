@@ -1,17 +1,16 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -63,14 +62,12 @@ var messages = {
   today: "Hoje",
   agenda: "Agenda",
   noEventsInRange: "Não há consultas neste período.",
-  showMore: function (total) {
-    return "+".concat(total, " mais");
-  },
+  showMore: (total) => "+".concat(total, " mais"),
 };
 // Brazilian date formats
 var formats = {
   dayFormat: "dddd",
-  dayRangeHeaderFormat: function (_a) {
+  dayRangeHeaderFormat: (_a) => {
     var start = _a.start,
       end = _a.end;
     return ""
@@ -81,7 +78,7 @@ var formats = {
   monthHeaderFormat: "MMMM YYYY",
   agendaDateFormat: "DD/MM/YYYY",
   agendaTimeFormat: "HH:mm",
-  agendaTimeRangeFormat: function (_a) {
+  agendaTimeRangeFormat: (_a) => {
     var start = _a.start,
       end = _a.end;
     return ""
@@ -89,7 +86,7 @@ var formats = {
       .concat((0, moment_1.default)(end).format("HH:mm"));
   },
   timeGutterFormat: "HH:mm",
-  selectRangeFormat: function (_a) {
+  selectRangeFormat: (_a) => {
     var start = _a.start,
       end = _a.end;
     return ""
@@ -110,27 +107,23 @@ function AppointmentCalendar(_a) {
     onSlotSelect = _a.onSlotSelect;
   // Convert appointments to calendar events
   var calendarEvents = (0, react_1.useMemo)(
-    function () {
-      return appointments.map(function (appointment) {
-        return __assign(__assign({}, appointment), { resource: appointment.professionalId });
-      });
-    },
+    () =>
+      appointments.map((appointment) =>
+        __assign(__assign({}, appointment), { resource: appointment.professionalId }),
+      ),
     [appointments],
   );
   // Professional resources for resource view
   var resources = (0, react_1.useMemo)(
-    function () {
-      return professionals.map(function (prof) {
-        return {
-          resourceId: prof.id,
-          resourceTitle: prof.name,
-        };
-      });
-    },
+    () =>
+      professionals.map((prof) => ({
+        resourceId: prof.id,
+        resourceTitle: prof.name,
+      })),
     [professionals],
   );
   // Event style getter for color coding
-  var eventStyleGetter = (0, react_1.useCallback)(function (event) {
+  var eventStyleGetter = (0, react_1.useCallback)((event) => {
     var baseColor = serviceColors[event.serviceType] || "#6B7280";
     var statusStyle = statusStyles[event.status] || {};
     return {
@@ -149,7 +142,7 @@ function AppointmentCalendar(_a) {
     };
   }, []);
   // Slot style getter for time slots
-  var slotStyleGetter = (0, react_1.useCallback)(function (date) {
+  var slotStyleGetter = (0, react_1.useCallback)((date) => {
     var hour = date.getHours();
     var isBusinessHours = hour >= 8 && hour < 18;
     var isLunchTime = hour >= 12 && hour < 14;
@@ -163,7 +156,7 @@ function AppointmentCalendar(_a) {
     return { style: style };
   }, []);
   // Day prop getter for date cells
-  var dayPropGetter = (0, react_1.useCallback)(function (date) {
+  var dayPropGetter = (0, react_1.useCallback)((date) => {
     var isWeekend = date.getDay() === 0 || date.getDay() === 6;
     var isToday = (0, moment_1.default)(date).isSame((0, moment_1.default)(), "day");
     var className = "";
@@ -181,7 +174,7 @@ function AppointmentCalendar(_a) {
   }, []);
   // Handle event drop (drag and drop)
   var handleEventDrop = (0, react_1.useCallback)(
-    function (_a) {
+    (_a) => {
       var event = _a.event,
         start = _a.start,
         end = _a.end;
@@ -191,7 +184,7 @@ function AppointmentCalendar(_a) {
   );
   // Handle event resize
   var handleEventResize = (0, react_1.useCallback)(
-    function (_a) {
+    (_a) => {
       var event = _a.event,
         start = _a.start,
         end = _a.end;
@@ -201,14 +194,14 @@ function AppointmentCalendar(_a) {
   );
   // Handle event selection
   var handleSelectEvent = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       onAppointmentSelect(event);
     },
     [onAppointmentSelect],
   );
   // Handle slot selection
   var handleSelectSlot = (0, react_1.useCallback)(
-    function (slotInfo) {
+    (slotInfo) => {
       // Only allow booking during business hours
       var hour = slotInfo.start.getHours();
       var isBusinessHours = hour >= 8 && hour < 18;
@@ -219,73 +212,64 @@ function AppointmentCalendar(_a) {
     [onSlotSelect],
   );
   // Custom components
-  var components = (0, react_1.useMemo)(function () {
-    return {
+  var components = (0, react_1.useMemo)(
+    () => ({
       event: appointment_slot_1.AppointmentSlot,
-      toolbar: function (props) {
-        return (
-          <div className="flex items-center justify-between mb-4 p-4 bg-muted/50 rounded-lg">
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={function () {
-                  return props.onNavigate("PREV");
-                }}
-                className="px-3 py-1 text-sm bg-background hover:bg-muted rounded border"
-              >
-                ← {messages.previous}
-              </button>
-              <button
-                onClick={function () {
-                  return props.onNavigate("TODAY");
-                }}
-                className="px-3 py-1 text-sm bg-primary text-primary-foreground hover:bg-primary/90 rounded"
-              >
-                {messages.today}
-              </button>
-              <button
-                onClick={function () {
-                  return props.onNavigate("NEXT");
-                }}
-                className="px-3 py-1 text-sm bg-background hover:bg-muted rounded border"
-              >
-                {messages.next} →
-              </button>
-            </div>
-
-            <h3 className="text-lg font-semibold">{props.label}</h3>
-
-            <div className="flex items-center space-x-1">
-              {[
-                { key: "month", label: messages.month },
-                { key: "week", label: messages.week },
-                { key: "day", label: messages.day },
-                { key: "agenda", label: messages.agenda },
-              ].map(function (_a) {
-                var key = _a.key,
-                  label = _a.label;
-                return (
-                  <button
-                    key={key}
-                    onClick={function () {
-                      return props.onView(key);
-                    }}
-                    className={(0, utils_1.cn)(
-                      "px-3 py-1 text-sm rounded border",
-                      props.view === key
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-background hover:bg-muted",
-                    )}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
+      toolbar: (props) => (
+        <div className="flex items-center justify-between mb-4 p-4 bg-muted/50 rounded-lg">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => props.onNavigate("PREV")}
+              className="px-3 py-1 text-sm bg-background hover:bg-muted rounded border"
+            >
+              ← {messages.previous}
+            </button>
+            <button
+              onClick={() => props.onNavigate("TODAY")}
+              className="px-3 py-1 text-sm bg-primary text-primary-foreground hover:bg-primary/90 rounded"
+            >
+              {messages.today}
+            </button>
+            <button
+              onClick={() => props.onNavigate("NEXT")}
+              className="px-3 py-1 text-sm bg-background hover:bg-muted rounded border"
+            >
+              {messages.next} →
+            </button>
           </div>
-        );
-      },
-    };
-  }, []);
+
+          <h3 className="text-lg font-semibold">{props.label}</h3>
+
+          <div className="flex items-center space-x-1">
+            {[
+              { key: "month", label: messages.month },
+              { key: "week", label: messages.week },
+              { key: "day", label: messages.day },
+              { key: "agenda", label: messages.agenda },
+            ].map((_a) => {
+              var key = _a.key,
+                label = _a.label;
+              return (
+                <button
+                  key={key}
+                  onClick={() => props.onView(key)}
+                  className={(0, utils_1.cn)(
+                    "px-3 py-1 text-sm rounded border",
+                    props.view === key
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background hover:bg-muted",
+                  )}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ),
+    }),
+    [],
+  );
   return (
     <div className="h-[600px] w-full">
       <style jsx global>
@@ -305,9 +289,7 @@ function AppointmentCalendar(_a) {
         titleAccessor="title"
         view={view}
         date={date}
-        onView={function (newView) {
-          return onViewChange(newView);
-        }}
+        onView={(newView) => onViewChange(newView)}
         onNavigate={onDateChange}
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
@@ -315,9 +297,7 @@ function AppointmentCalendar(_a) {
         onSelectSlot={handleSelectSlot}
         selectable
         resizable
-        draggableAccessor={function () {
-          return true;
-        }}
+        draggableAccessor={() => true}
         eventPropGetter={eventStyleGetter}
         slotPropGetter={slotStyleGetter}
         dayPropGetter={dayPropGetter}

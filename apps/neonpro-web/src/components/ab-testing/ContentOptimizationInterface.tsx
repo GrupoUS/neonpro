@@ -5,7 +5,47 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  Copy,
+  Download,
+  Edit,
+  Eye,
+  Filter,
+  Flag,
+  LineChart,
+  Mail,
+  MessageSquare,
+  Pause,
+  PieChart,
+  Play,
+  RefreshCw,
+  Settings,
+  Square,
+  Star,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Trophy,
+  Upload,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useEffect, useMemo, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -13,22 +53,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Switch } from "@/components/ui/switch";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type {
   Dialog,
   DialogContent,
@@ -37,63 +61,39 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { Progress } from "@/components/ui/progress";
 import type { ScrollArea } from "@/components/ui/scroll-area";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Separator } from "@/components/ui/separator";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { Calendar } from "@/components/ui/calendar";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import type {
-  Play,
-  Pause,
-  Square,
-  Eye,
-  BarChart3,
-  Settings,
-  Users,
-  Target,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Copy,
-  Edit,
-  Trash2,
-  Download,
-  Upload,
-  RefreshCw,
-  Filter,
-  Calendar as CalendarIcon,
-  PieChart,
-  LineChart,
-  Activity,
-  Zap,
-  Trophy,
-  Star,
-  Flag,
-  Mail,
-  MessageSquare,
-  Bell,
-} from "lucide-react";
-import type { toast } from "sonner";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
-import type { cn } from "@/lib/utils";
 import type { abTestingEngine } from "@/lib/ab-testing/ab-testing-engine";
 import type {
   ABTestConfig,
-  TestVariation,
-  TestResults,
-  TestTemplate,
   AudienceFilter,
   ConversionGoal,
   TestQueryFilter,
+  TestResults,
+  TestTemplate,
+  TestVariation,
 } from "@/lib/ab-testing/types/ab-testing";
+import type { cn } from "@/lib/utils";
 
 interface ContentOptimizationProps {
   clinicId: string;

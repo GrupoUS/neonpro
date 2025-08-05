@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🗺️ NeonPro Patient Journey Mapping Engine
  *
@@ -30,26 +29,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -69,13 +68,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -97,9 +96,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -171,7 +168,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PatientJourneyMappingEngine = exports.JourneyStateMachine = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -182,7 +179,7 @@ var logger_1 = require("@/lib/utils/logger");
 /**
  * Journey State Machine - Define valid state transitions
  */
-var JourneyStateMachine = /** @class */ (function () {
+var JourneyStateMachine = /** @class */ (() => {
   function JourneyStateMachine() {}
   /**
    * Validate if state transition is allowed
@@ -200,7 +197,7 @@ var JourneyStateMachine = /** @class */ (function () {
   /**
    * Get state order/priority for progression tracking
    */
-  JourneyStateMachine.getStateOrder = function (state) {
+  JourneyStateMachine.getStateOrder = (state) => {
     var stateOrder = {
       lead_generated: 1,
       initial_contact: 2,
@@ -261,7 +258,7 @@ exports.JourneyStateMachine = JourneyStateMachine;
  * Patient Journey Mapping Engine
  * Core engine para análise e mapeamento de jornada de pacientes
  */
-var PatientJourneyMappingEngine = /** @class */ (function () {
+var PatientJourneyMappingEngine = /** @class */ (() => {
   function PatientJourneyMappingEngine() {
     this.supabase = (0, client_1.createClient)();
     this.config = new Map();
@@ -656,9 +653,7 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
             ];
           case 2:
             events = _b.sent().data;
-            currentStage = stages.find(function (s) {
-              return s.status === "active";
-            });
+            currentStage = stages.find((s) => s.status === "active");
             currentState =
               (currentStage === null || currentStage === void 0
                 ? void 0
@@ -670,18 +665,12 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
               (new Date().getTime() - journeyStart.getTime()) / (1000 * 60 * 60 * 24),
             );
             totalTouchpoints = (events === null || events === void 0 ? void 0 : events.length) || 0;
-            completedStages = stages.filter(function (s) {
-              return s.status === "completed";
-            }).length;
+            completedStages = stages.filter((s) => s.status === "completed").length;
             totalPossibleStages = 13; // Total journey states
             completionScore = (completedStages / totalPossibleStages) * 100;
             satisfactionScores = stages
-              .filter(function (s) {
-                return s.satisfaction_score !== null;
-              })
-              .map(function (s) {
-                return s.satisfaction_score;
-              });
+              .filter((s) => s.satisfaction_score !== null)
+              .map((s) => s.satisfaction_score);
             conversionProbability = this.calculateConversionProbability(currentState, stages);
             return [
               4 /*yield*/,
@@ -698,21 +687,19 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
               current_state: currentState,
               journey_duration_days: journeyDuration,
               total_touchpoints: totalTouchpoints,
-              stage_progression: stages.map(function (stage) {
-                return {
-                  id: stage.id,
-                  patient_id: stage.patient_id,
-                  stage_name: stage.stage_name,
-                  stage_order: stage.stage_order,
-                  started_at: new Date(stage.started_at),
-                  completed_at: stage.completed_at ? new Date(stage.completed_at) : undefined,
-                  status: stage.status,
-                  duration_minutes: stage.duration_minutes,
-                  satisfaction_score: stage.satisfaction_score,
-                  metadata: stage.metadata || {},
-                  created_at: new Date(stage.created_at),
-                };
-              }),
+              stage_progression: stages.map((stage) => ({
+                id: stage.id,
+                patient_id: stage.patient_id,
+                stage_name: stage.stage_name,
+                stage_order: stage.stage_order,
+                started_at: new Date(stage.started_at),
+                completed_at: stage.completed_at ? new Date(stage.completed_at) : undefined,
+                status: stage.status,
+                duration_minutes: stage.duration_minutes,
+                satisfaction_score: stage.satisfaction_score,
+                metadata: stage.metadata || {},
+                created_at: new Date(stage.created_at),
+              })),
               completion_score: Math.round(completionScore * 100) / 100,
               satisfaction_trend: satisfactionScores,
               conversion_probability: Math.round(conversionProbability * 100) / 100,
@@ -798,10 +785,7 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
   /**
    * Calculate conversion probability based on current state and journey data
    */
-  PatientJourneyMappingEngine.prototype.calculateConversionProbability = function (
-    currentState,
-    stages,
-  ) {
+  PatientJourneyMappingEngine.prototype.calculateConversionProbability = (currentState, stages) => {
     // Base probabilities by stage (these would be updated with real data)
     var baseProbabilities = {
       lead_generated: 0.15,
@@ -825,9 +809,7 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
     var probability = baseProbabilities[currentState] || 0.15;
     // Adjust based on journey progression speed
     var averageDuration =
-      stages.reduce(function (sum, stage) {
-        return sum + (stage.duration_minutes || 0);
-      }, 0) / stages.length;
+      stages.reduce((sum, stage) => sum + (stage.duration_minutes || 0), 0) / stages.length;
     if (averageDuration < 1440) {
       // Less than 24 hours average
       probability *= 1.2; // Faster progression increases probability
@@ -837,16 +819,8 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
     }
     // Adjust based on satisfaction scores
     var avgSatisfaction =
-      stages
-        .filter(function (s) {
-          return s.satisfaction_score;
-        })
-        .reduce(function (sum, s) {
-          return sum + s.satisfaction_score;
-        }, 0) /
-      stages.filter(function (s) {
-        return s.satisfaction_score;
-      }).length;
+      stages.filter((s) => s.satisfaction_score).reduce((sum, s) => sum + s.satisfaction_score, 0) /
+      stages.filter((s) => s.satisfaction_score).length;
     if (avgSatisfaction > 4.0) {
       probability *= 1.1;
     } else if (avgSatisfaction < 3.0) {
@@ -870,7 +844,7 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
         currentStage,
         latestSatisfaction;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         riskScore = 0;
         lastEvent = events[events.length - 1];
         if (lastEvent) {
@@ -884,30 +858,23 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
             riskScore += 0.2;
           }
         }
-        negativeEvents = events.filter(function (e) {
-          return (
+        negativeEvents = events.filter(
+          (e) =>
             e.event_type === "appointment_cancelled" ||
             e.event_type === "consultation_no_show" ||
             e.event_type === "complaint_made" ||
-            e.metadata.sentiment === "negative"
-          );
-        });
+            e.metadata.sentiment === "negative",
+        );
         if (negativeEvents.length > 0) {
           riskScore += Math.min(0.3, negativeEvents.length * 0.1);
         }
-        currentStage = stages.find(function (s) {
-          return s.status === "active";
-        });
+        currentStage = stages.find((s) => s.status === "active");
         if (currentStage && currentStage.duration_minutes > 20160) {
           // More than 14 days in current stage
           riskScore += 0.2;
         }
         latestSatisfaction =
-          (_a = stages
-            .filter(function (s) {
-              return s.satisfaction_score;
-            })
-            .pop()) === null || _a === void 0
+          (_a = stages.filter((s) => s.satisfaction_score).pop()) === null || _a === void 0
             ? void 0
             : _a.satisfaction_score;
         if (latestSatisfaction && latestSatisfaction < 3.0) {
@@ -920,7 +887,7 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
   /**
    * Identify journey bottlenecks
    */
-  PatientJourneyMappingEngine.prototype.identifyJourneyBottlenecks = function (stages) {
+  PatientJourneyMappingEngine.prototype.identifyJourneyBottlenecks = (stages) => {
     // This would typically analyze historical data across all patients
     // For now, return example bottlenecks based on current journey
     return [
@@ -941,11 +908,11 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
   /**
    * Generate actionable recommendations
    */
-  PatientJourneyMappingEngine.prototype.generateRecommendations = function (
+  PatientJourneyMappingEngine.prototype.generateRecommendations = (
     currentState,
     stages,
     events,
-  ) {
+  ) => {
     var recommendations = [];
     // State-specific recommendations
     switch (currentState) {
@@ -981,34 +948,27 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
   /**
    * Generate key insights from journey data
    */
-  PatientJourneyMappingEngine.prototype.generateKeyInsights = function (stages, events) {
+  PatientJourneyMappingEngine.prototype.generateKeyInsights = (stages, events) => {
     var insights = [];
     // Journey progression insights
-    var completedStages = stages.filter(function (s) {
-      return s.status === "completed";
-    }).length;
+    var completedStages = stages.filter((s) => s.status === "completed").length;
     if (completedStages >= 5) {
       insights.push("Paciente demonstra alto engajamento com progressão consistente");
     }
     // Channel preference insights
-    var channelCounts = events.reduce(function (acc, event) {
+    var channelCounts = events.reduce((acc, event) => {
       acc[event.channel] = (acc[event.channel] || 0) + 1;
       return acc;
     }, {});
-    var preferredChannel = Object.keys(channelCounts).reduce(function (a, b) {
-      return channelCounts[a] > channelCounts[b] ? a : b;
-    });
+    var preferredChannel = Object.keys(channelCounts).reduce((a, b) =>
+      channelCounts[a] > channelCounts[b] ? a : b,
+    );
     if (preferredChannel) {
       insights.push("Canal de comunica\u00E7\u00E3o preferido: ".concat(preferredChannel));
     }
     // Timing insights
-    var eventTimes = events.map(function (e) {
-      return new Date(e.timestamp).getHours();
-    });
-    var avgTime =
-      eventTimes.reduce(function (sum, time) {
-        return sum + time;
-      }, 0) / eventTimes.length;
+    var eventTimes = events.map((e) => new Date(e.timestamp).getHours());
+    var avgTime = eventTimes.reduce((sum, time) => sum + time, 0) / eventTimes.length;
     if (avgTime > 17) {
       insights.push("Paciente mais ativo no período noturno - considerar comunicação após 17h");
     } else if (avgTime < 10) {
@@ -1019,38 +979,24 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
   /**
    * Identify success factors in the journey
    */
-  PatientJourneyMappingEngine.prototype.identifySuccessFactors = function (stages, events) {
+  PatientJourneyMappingEngine.prototype.identifySuccessFactors = (stages, events) => {
     var successFactors = [];
     // Quick progression
     var avgStageDuration =
-      stages.reduce(function (sum, stage) {
-        return sum + (stage.duration_minutes || 0);
-      }, 0) / stages.length;
+      stages.reduce((sum, stage) => sum + (stage.duration_minutes || 0), 0) / stages.length;
     if (avgStageDuration < 2880) {
       // Less than 2 days average
       successFactors.push("Progressão rápida entre etapas");
     }
     // High satisfaction
     var avgSatisfaction =
-      stages
-        .filter(function (s) {
-          return s.satisfaction_score;
-        })
-        .reduce(function (sum, s) {
-          return sum + s.satisfaction_score;
-        }, 0) /
-      stages.filter(function (s) {
-        return s.satisfaction_score;
-      }).length;
+      stages.filter((s) => s.satisfaction_score).reduce((sum, s) => sum + s.satisfaction_score, 0) /
+      stages.filter((s) => s.satisfaction_score).length;
     if (avgSatisfaction > 4.0) {
       successFactors.push("Alta satisfação durante jornada");
     }
     // Multi-channel engagement
-    var uniqueChannels = new Set(
-      events.map(function (e) {
-        return e.channel;
-      }),
-    ).size;
+    var uniqueChannels = new Set(events.map((e) => e.channel)).size;
     if (uniqueChannels >= 3) {
       successFactors.push("Engajamento multi-canal");
     }
@@ -1070,13 +1016,10 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
   /**
    * Identify optimization opportunities
    */
-  PatientJourneyMappingEngine.prototype.identifyOptimizationOpportunities = function (
-    stages,
-    events,
-  ) {
+  PatientJourneyMappingEngine.prototype.identifyOptimizationOpportunities = (stages, events) => {
     var opportunities = [];
     // Long duration in specific stages
-    stages.forEach(function (stage) {
+    stages.forEach((stage) => {
       if (stage.duration_minutes > 10080) {
         // More than 7 days
         opportunities.push("Otimizar dura\u00E7\u00E3o na etapa: ".concat(stage.stage_name));
@@ -1087,18 +1030,12 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
       opportunities.push("Aumentar pontos de contato e engajamento");
     }
     // Missing satisfaction data
-    var stagesWithoutSatisfaction = stages.filter(function (s) {
-      return !s.satisfaction_score;
-    }).length;
+    var stagesWithoutSatisfaction = stages.filter((s) => !s.satisfaction_score).length;
     if (stagesWithoutSatisfaction > 0) {
       opportunities.push("Implementar coleta de satisfação em todas as etapas");
     }
     // Channel diversification
-    var uniqueChannels = new Set(
-      events.map(function (e) {
-        return e.channel;
-      }),
-    ).size;
+    var uniqueChannels = new Set(events.map((e) => e.channel)).size;
     if (uniqueChannels < 2) {
       opportunities.push("Diversificar canais de comunicação");
     }
@@ -1109,7 +1046,7 @@ var PatientJourneyMappingEngine = /** @class */ (function () {
    */
   PatientJourneyMappingEngine.prototype.triggerRealTimeUpdate = function (patientId, eventId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // This would typically trigger a real-time notification
           // using Supabase real-time or WebSocket connections

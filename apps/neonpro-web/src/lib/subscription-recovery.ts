@@ -13,9 +13,9 @@
  */
 
 import type {
-  SubscriptionError,
   ErrorContext,
   RecoveryStrategy,
+  SubscriptionError,
 } from "../types/subscription-errors";
 import type { enhancedSubscriptionCache } from "./subscription-cache-enhanced";
 import type { circuitBreakerRegistry } from "./subscription-circuit-breaker";
@@ -206,7 +206,7 @@ export class SubscriptionRecoveryManager {
       return this.config.baseRetryDelay;
     }
 
-    let delay = this.config.baseRetryDelay * Math.pow(2, attempt - 1);
+    let delay = this.config.baseRetryDelay * 2 ** (attempt - 1);
     delay = Math.min(delay, this.config.maxRetryDelay);
 
     if (this.config.jitterEnabled) {

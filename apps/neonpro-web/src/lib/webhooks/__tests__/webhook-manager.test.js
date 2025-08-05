@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Webhook Manager Tests
  * Story 7.3: Webhook & Event System Implementation
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,7 +44,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,8 +73,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -96,9 +93,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var vitest_1 = require("vitest");
 var webhook_manager_1 = require("../webhook-manager");
@@ -166,44 +163,32 @@ var utils_1 = require("../utils");
 global.fetch = vitest_1.vi.fn();
 // Mock Supabase
 var mockSupabase = {
-  from: vitest_1.vi.fn(function () {
-    return {
-      insert: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
-      select: vitest_1.vi.fn().mockReturnThis(),
-      eq: vitest_1.vi.fn().mockReturnThis(),
-      order: vitest_1.vi.fn().mockReturnThis(),
-      limit: vitest_1.vi.fn().mockResolvedValue({ data: [], error: null }),
-      update: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
-      delete: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
-      gte: vitest_1.vi.fn().mockReturnThis(),
-      lte: vitest_1.vi.fn().mockReturnThis(),
-    };
-  }),
+  from: vitest_1.vi.fn(() => ({
+    insert: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
+    select: vitest_1.vi.fn().mockReturnThis(),
+    eq: vitest_1.vi.fn().mockReturnThis(),
+    order: vitest_1.vi.fn().mockReturnThis(),
+    limit: vitest_1.vi.fn().mockResolvedValue({ data: [], error: null }),
+    update: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
+    delete: vitest_1.vi.fn().mockResolvedValue({ data: null, error: null }),
+    gte: vitest_1.vi.fn().mockReturnThis(),
+    lte: vitest_1.vi.fn().mockReturnThis(),
+  })),
 };
 // Mock crypto for consistent IDs
-vitest_1.vi.mock("crypto", function () {
-  return {
-    randomUUID: vitest_1.vi.fn(function () {
-      return "test-uuid-123";
-    }),
-    createHmac: vitest_1.vi.fn(function () {
-      return {
-        update: vitest_1.vi.fn().mockReturnThis(),
-        digest: vitest_1.vi.fn(function () {
-          return "test-signature";
-        }),
-      };
-    }),
-    timingSafeEqual: vitest_1.vi.fn(function () {
-      return true;
-    }),
-  };
-});
-(0, vitest_1.describe)("WebhookManager", function () {
+vitest_1.vi.mock("crypto", () => ({
+  randomUUID: vitest_1.vi.fn(() => "test-uuid-123"),
+  createHmac: vitest_1.vi.fn(() => ({
+    update: vitest_1.vi.fn().mockReturnThis(),
+    digest: vitest_1.vi.fn(() => "test-signature"),
+  })),
+  timingSafeEqual: vitest_1.vi.fn(() => true),
+}));
+(0, vitest_1.describe)("WebhookManager", () => {
   var webhookManager;
   var mockConfig;
   var mockFetch;
-  (0, vitest_1.beforeEach)(function () {
+  (0, vitest_1.beforeEach)(() => {
     vitest_1.vi.clearAllMocks();
     mockFetch = fetch;
     mockConfig = {
@@ -220,14 +205,14 @@ vitest_1.vi.mock("crypto", function () {
     };
     webhookManager = new webhook_manager_1.WebhookManager(mockConfig);
   });
-  (0, vitest_1.afterEach)(function () {
+  (0, vitest_1.afterEach)(() => {
     vitest_1.vi.restoreAllMocks();
   });
-  (0, vitest_1.describe)("Webhook Registration", function () {
-    (0, vitest_1.it)("should register a new webhook endpoint", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Webhook Registration", () => {
+    (0, vitest_1.it)("should register a new webhook endpoint", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var webhookData, webhookId;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               webhookData = {
@@ -257,12 +242,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should validate webhook configuration before registration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should validate webhook configuration before registration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidWebhookData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidWebhookData = {
@@ -283,12 +268,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should update existing webhook", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should update existing webhook", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updates;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updates = {
@@ -305,11 +290,11 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should delete webhook", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, vitest_1.it)("should delete webhook", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, webhookManager.deleteWebhook("webhook-123")];
@@ -322,12 +307,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should get webhook by ID", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should get webhook by ID", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWebhook, webhook;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockWebhook = {
@@ -350,12 +335,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should list webhooks for clinic", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should list webhooks for clinic", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWebhooks, webhooks;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockWebhooks = [
@@ -373,10 +358,10 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Event Delivery", function () {
+  (0, vitest_1.describe)("Event Delivery", () => {
     var mockEvent = {
       id: "event-123",
       type: "patient.created",
@@ -407,10 +392,10 @@ vitest_1.vi.mock("crypto", function () {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    (0, vitest_1.it)("should deliver event to webhook successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.it)("should deliver event to webhook successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var delivery;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
@@ -418,9 +403,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 200,
                 statusText: "OK",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("OK");
-                },
+                text: () => Promise.resolve("OK"),
               });
               return [4 /*yield*/, webhookManager.deliverEvent(mockEvent, mockWebhook)];
             case 1:
@@ -442,12 +425,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle delivery failure and retry", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle delivery failure and retry", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var delivery;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch
@@ -458,9 +441,7 @@ vitest_1.vi.mock("crypto", function () {
                   status: 200,
                   statusText: "OK",
                   headers: new Headers(),
-                  text: function () {
-                    return Promise.resolve("OK");
-                  },
+                  text: () => Promise.resolve("OK"),
                 });
               return [4 /*yield*/, webhookManager.deliverEvent(mockEvent, mockWebhook)];
             case 1:
@@ -471,12 +452,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should fail after max retry attempts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should fail after max retry attempts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var delivery;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockRejectedValue(new Error("Persistent network error"));
@@ -489,12 +470,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle HTTP error responses", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle HTTP error responses", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var delivery;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
@@ -502,9 +483,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 500,
                 statusText: "Internal Server Error",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("Server Error");
-                },
+                text: () => Promise.resolve("Server Error"),
               });
               return [4 /*yield*/, webhookManager.deliverEvent(mockEvent, mockWebhook)];
             case 1:
@@ -514,23 +493,21 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should respect timeout configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should respect timeout configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var slowWebhook, delivery;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               slowWebhook = __assign(__assign({}, mockWebhook), {
                 timeoutMs: 1000, // 1 second timeout
               });
               // Mock a slow response
-              mockFetch.mockImplementationOnce(function () {
-                return new Promise(function (resolve) {
-                  return setTimeout(resolve, 2000);
-                });
-              });
+              mockFetch.mockImplementationOnce(
+                () => new Promise((resolve) => setTimeout(resolve, 2000)),
+              );
               return [4 /*yield*/, webhookManager.deliverEvent(mockEvent, slowWebhook)];
             case 1:
               delivery = _a.sent();
@@ -539,11 +516,11 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should include proper headers and signature", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, vitest_1.it)("should include proper headers and signature", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockFetch.mockResolvedValueOnce({
@@ -551,9 +528,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 200,
                 statusText: "OK",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("OK");
-                },
+                text: () => Promise.resolve("OK"),
               });
               return [4 /*yield*/, webhookManager.deliverEvent(mockEvent, mockWebhook)];
             case 1:
@@ -569,10 +544,10 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Bulk Event Delivery", function () {
+  (0, vitest_1.describe)("Bulk Event Delivery", () => {
     var mockEvents = [
       {
         id: "event-1",
@@ -599,10 +574,10 @@ vitest_1.vi.mock("crypto", function () {
         context: {},
       },
     ];
-    (0, vitest_1.it)("should deliver multiple events to matching webhooks", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.it)("should deliver multiple events to matching webhooks", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWebhooks, results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockWebhooks = [
@@ -630,9 +605,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 200,
                 statusText: "OK",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("OK");
-                },
+                text: () => Promise.resolve("OK"),
               });
               return [4 /*yield*/, webhookManager.deliverEvents(mockEvents)];
             case 1:
@@ -642,12 +615,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should filter events by webhook event types", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should filter events by webhook event types", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWebhooks, results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockWebhooks = [
@@ -675,9 +648,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 200,
                 statusText: "OK",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("OK");
-                },
+                text: () => Promise.resolve("OK"),
               });
               return [4 /*yield*/, webhookManager.deliverEvents(mockEvents)];
             case 1:
@@ -687,30 +658,28 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle concurrent deliveries", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle concurrent deliveries", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWebhooks, startTime, results, endTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockWebhooks = Array.from({ length: 5 }, function (_, i) {
-                return {
-                  id: "webhook-".concat(i),
-                  name: "Webhook ".concat(i),
-                  url: "https://api.example.com/webhook".concat(i),
-                  clinicId: "clinic-123",
-                  eventTypes: ["patient.created", "patient.updated"],
-                  isActive: true,
-                  secret: "secret".concat(i),
-                  headers: {},
-                  timeoutMs: 10000,
-                  retryStrategy: { strategy: "exponential", maxAttempts: 3, delayMs: 1000 },
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                };
-              });
+              mockWebhooks = Array.from({ length: 5 }, (_, i) => ({
+                id: "webhook-".concat(i),
+                name: "Webhook ".concat(i),
+                url: "https://api.example.com/webhook".concat(i),
+                clinicId: "clinic-123",
+                eventTypes: ["patient.created", "patient.updated"],
+                isActive: true,
+                secret: "secret".concat(i),
+                headers: {},
+                timeoutMs: 10000,
+                retryStrategy: { strategy: "exponential", maxAttempts: 3, delayMs: 1000 },
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              }));
               mockSupabase.from().select().eq().mockResolvedValueOnce({
                 data: mockWebhooks,
                 error: null,
@@ -720,9 +689,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 200,
                 statusText: "OK",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("OK");
-                },
+                text: () => Promise.resolve("OK"),
               });
               startTime = Date.now();
               return [4 /*yield*/, webhookManager.deliverEvents(mockEvents)];
@@ -735,14 +702,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Rate Limiting", function () {
-    (0, vitest_1.it)("should enforce rate limits per webhook", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Rate Limiting", () => {
+    (0, vitest_1.it)("should enforce rate limits per webhook", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockWebhook, mockEvent, delivery1, delivery2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockWebhook = {
@@ -778,9 +745,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 200,
                 statusText: "OK",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("OK");
-                },
+                text: () => Promise.resolve("OK"),
               });
               return [4 /*yield*/, webhookManager.deliverEvent(mockEvent, mockWebhook)];
             case 1:
@@ -793,24 +758,24 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should reset rate limits after time window", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, vitest_1.it)("should reset rate limits after time window", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           // This would require mocking time or using a shorter window for testing
           // Implementation depends on the specific rate limiting strategy
           (0, vitest_1.expect)(true).toBe(true); // Placeholder
           return [2 /*return*/];
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Analytics and Monitoring", function () {
-    (0, vitest_1.it)("should track delivery analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Analytics and Monitoring", () => {
+    (0, vitest_1.it)("should track delivery analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startDate, endDate, analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startDate = new Date("2024-01-01");
@@ -841,12 +806,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should get webhook health status", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should get webhook health status", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var health;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase
@@ -872,12 +837,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should get system-wide analytics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should get system-wide analytics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var analytics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, webhookManager.getSystemAnalytics()];
@@ -892,28 +857,28 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Security and Validation", function () {
-    (0, vitest_1.it)("should validate webhook signatures", function () {
+  (0, vitest_1.describe)("Security and Validation", () => {
+    (0, vitest_1.it)("should validate webhook signatures", () => {
       var payload = JSON.stringify({ test: "data" });
       var secret = "webhook-secret";
       var signature = utils_1.WebhookUtils.generateSignature(payload, secret);
       var isValid = utils_1.WebhookUtils.verifySignature(payload, signature, secret);
       (0, vitest_1.expect)(isValid).toBe(true);
     });
-    (0, vitest_1.it)("should reject invalid signatures", function () {
+    (0, vitest_1.it)("should reject invalid signatures", () => {
       var payload = JSON.stringify({ test: "data" });
       var secret = "webhook-secret";
       var invalidSignature = "invalid-signature";
       var isValid = utils_1.WebhookUtils.verifySignature(payload, invalidSignature, secret);
       (0, vitest_1.expect)(isValid).toBe(false);
     });
-    (0, vitest_1.it)("should sanitize sensitive data in payloads", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (0, vitest_1.it)("should sanitize sensitive data in payloads", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var eventWithSensitiveData, mockWebhook, callArgs, payload;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               eventWithSensitiveData = {
@@ -952,9 +917,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 200,
                 statusText: "OK",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("OK");
-                },
+                text: () => Promise.resolve("OK"),
               });
               return [
                 4 /*yield*/,
@@ -970,14 +933,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Error Handling", function () {
-    (0, vitest_1.it)("should handle database errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Error Handling", () => {
+    (0, vitest_1.it)("should handle database errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var webhookData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabase.from().insert.mockRejectedValueOnce(new Error("Database error"));
@@ -999,12 +962,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle network timeouts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle network timeouts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockEvent, mockWebhook, delivery;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockEvent = {
@@ -1031,13 +994,12 @@ vitest_1.vi.mock("crypto", function () {
                 createdAt: new Date(),
                 updatedAt: new Date(),
               };
-              mockFetch.mockImplementationOnce(function () {
-                return new Promise(function (_, reject) {
-                  return setTimeout(function () {
-                    return reject(new Error("Request timeout"));
-                  }, 2000);
-                });
-              });
+              mockFetch.mockImplementationOnce(
+                () =>
+                  new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error("Request timeout")), 2000),
+                  ),
+              );
               return [4 /*yield*/, webhookManager.deliverEvent(mockEvent, mockWebhook)];
             case 1:
               delivery = _a.sent();
@@ -1046,12 +1008,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should handle malformed webhook URLs", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should handle malformed webhook URLs", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidWebhookData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidWebhookData = {
@@ -1072,14 +1034,14 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, vitest_1.describe)("Integration with Utilities", function () {
-    (0, vitest_1.it)("should use WebhookUtils for validation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, vitest_1.describe)("Integration with Utilities", () => {
+    (0, vitest_1.it)("should use WebhookUtils for validation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var validateWebhookConfigSpy, webhookData;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               validateWebhookConfigSpy = vitest_1.vi.spyOn(
@@ -1100,12 +1062,12 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, vitest_1.it)("should use RetryUtils for retry logic", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, vitest_1.it)("should use RetryUtils for retry logic", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var executeWithRetrySpy, mockEvent, mockWebhook;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               executeWithRetrySpy = vitest_1.vi.spyOn(utils_1.RetryUtils, "executeWithRetry");
@@ -1138,9 +1100,7 @@ vitest_1.vi.mock("crypto", function () {
                 status: 200,
                 statusText: "OK",
                 headers: new Headers(),
-                text: function () {
-                  return Promise.resolve("OK");
-                },
+                text: () => Promise.resolve("OK"),
               });
               return [4 /*yield*/, webhookManager.deliverEvent(mockEvent, mockWebhook)];
             case 1:
@@ -1149,7 +1109,7 @@ vitest_1.vi.mock("crypto", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

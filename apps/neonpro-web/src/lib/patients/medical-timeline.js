@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Medical History Timeline Service
  * Manages patient medical history with visual timeline representation
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,15 +146,15 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createmedicalTimelineService = void 0;
 var server_1 = require("@/lib/supabase/server");
-var createmedicalTimelineService = /** @class */ (function () {
+var createmedicalTimelineService = /** @class */ (() => {
   function createmedicalTimelineService() {}
   createmedicalTimelineService.prototype.getSupabase = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, server_1.createClient)()];
@@ -558,12 +555,9 @@ var createmedicalTimelineService = /** @class */ (function () {
   };
   // Private helper methods
   createmedicalTimelineService.prototype.transformTimelineData = function (data) {
-    var _this = this;
-    return data.map(function (item) {
-      return _this.transformTimelineEvent(item);
-    });
+    return data.map((item) => this.transformTimelineEvent(item));
   };
-  createmedicalTimelineService.prototype.transformTimelineEvent = function (data) {
+  createmedicalTimelineService.prototype.transformTimelineEvent = (data) => {
     var _a;
     return {
       id: data.id,
@@ -584,32 +578,28 @@ var createmedicalTimelineService = /** @class */ (function () {
       metadata: data.metadata || {},
     };
   };
-  createmedicalTimelineService.prototype.transformMilestone = function (data) {
-    return {
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      targetDate: new Date(data.target_date),
-      completedDate: data.completed_date ? new Date(data.completed_date) : undefined,
-      status: data.status,
-      criteria: data.criteria || [],
-      completedCriteria: data.completed_criteria || [],
-      progress: data.progress,
-      notes: data.notes,
-    };
-  };
-  createmedicalTimelineService.prototype.groupByEventType = function (events) {
-    return events.reduce(function (acc, event) {
+  createmedicalTimelineService.prototype.transformMilestone = (data) => ({
+    id: data.id,
+    title: data.title,
+    description: data.description,
+    targetDate: new Date(data.target_date),
+    completedDate: data.completed_date ? new Date(data.completed_date) : undefined,
+    status: data.status,
+    criteria: data.criteria || [],
+    completedCriteria: data.completed_criteria || [],
+    progress: data.progress,
+    notes: data.notes,
+  });
+  createmedicalTimelineService.prototype.groupByEventType = (events) =>
+    events.reduce((acc, event) => {
       acc[event.eventType] = (acc[event.eventType] || 0) + 1;
       return acc;
     }, {});
-  };
-  createmedicalTimelineService.prototype.groupByCategory = function (events) {
-    return events.reduce(function (acc, event) {
+  createmedicalTimelineService.prototype.groupByCategory = (events) =>
+    events.reduce((acc, event) => {
       acc[event.category] = (acc[event.category] || 0) + 1;
       return acc;
     }, {});
-  };
   createmedicalTimelineService.prototype.generateTimelineInsights = function (events) {
     return {
       mostActiveMonth: this.getMostActiveMonth(events),
@@ -618,15 +608,15 @@ var createmedicalTimelineService = /** @class */ (function () {
       professionalDistribution: this.getProfessionalDistribution(events),
     };
   };
-  createmedicalTimelineService.prototype.getMostActiveMonth = function (events) {
+  createmedicalTimelineService.prototype.getMostActiveMonth = (events) => {
     var _a;
-    var monthCounts = events.reduce(function (acc, event) {
+    var monthCounts = events.reduce((acc, event) => {
       var month = event.date.toISOString().substring(0, 7);
       acc[month] = (acc[month] || 0) + 1;
       return acc;
     }, {});
     return (
-      ((_a = Object.entries(monthCounts).sort(function (_a, _b) {
+      ((_a = Object.entries(monthCounts).sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
@@ -635,38 +625,29 @@ var createmedicalTimelineService = /** @class */ (function () {
         : _a[0]) || ""
     );
   };
-  createmedicalTimelineService.prototype.calculateTreatmentFrequency = function (events) {
-    var treatmentEvents = events.filter(function (e) {
-      return e.eventType === "treatment" || e.eventType === "procedure";
-    });
+  createmedicalTimelineService.prototype.calculateTreatmentFrequency = (events) => {
+    var treatmentEvents = events.filter(
+      (e) => e.eventType === "treatment" || e.eventType === "procedure",
+    );
     if (treatmentEvents.length < 2) return 0;
-    var dates = treatmentEvents
-      .map(function (e) {
-        return e.date.getTime();
-      })
-      .sort();
+    var dates = treatmentEvents.map((e) => e.date.getTime()).sort();
     var intervals = [];
     for (var i = 1; i < dates.length; i++) {
       intervals.push(dates[i] - dates[i - 1]);
     }
-    var avgInterval =
-      intervals.reduce(function (sum, interval) {
-        return sum + interval;
-      }, 0) / intervals.length;
+    var avgInterval = intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
     return Math.round(avgInterval / (1000 * 60 * 60 * 24)); // Days
   };
-  createmedicalTimelineService.prototype.analyzeOutcomePatterns = function (events) {
-    var eventsWithOutcomes = events.filter(function (e) {
-      return e.outcome;
-    });
+  createmedicalTimelineService.prototype.analyzeOutcomePatterns = (events) => {
+    var eventsWithOutcomes = events.filter((e) => e.outcome);
     var totalOutcomes = eventsWithOutcomes.length;
     if (totalOutcomes === 0) return { successRate: 0, avgSatisfaction: 0 };
-    var successfulOutcomes = eventsWithOutcomes.filter(function (e) {
+    var successfulOutcomes = eventsWithOutcomes.filter((e) => {
       var _a;
       return (_a = e.outcome) === null || _a === void 0 ? void 0 : _a.success;
     }).length;
     var avgSatisfaction =
-      eventsWithOutcomes.reduce(function (sum, e) {
+      eventsWithOutcomes.reduce((sum, e) => {
         var _a;
         return (
           sum + (((_a = e.outcome) === null || _a === void 0 ? void 0 : _a.satisfactionScore) || 0)
@@ -677,150 +658,145 @@ var createmedicalTimelineService = /** @class */ (function () {
       avgSatisfaction: Math.round(avgSatisfaction * 10) / 10,
     };
   };
-  createmedicalTimelineService.prototype.getProfessionalDistribution = function (events) {
-    return events.reduce(function (acc, event) {
+  createmedicalTimelineService.prototype.getProfessionalDistribution = (events) =>
+    events.reduce((acc, event) => {
       if (event.professionalName) {
         acc[event.professionalName] = (acc[event.professionalName] || 0) + 1;
       }
       return acc;
     }, {});
-  };
   // Mock data for development
-  createmedicalTimelineService.prototype.getMockTimelineData = function (patientId) {
-    return [
-      {
-        id: "event_1",
-        patientId: patientId,
-        eventType: "appointment",
-        title: "Consulta Inicial",
-        description: "Primeira consulta para avaliação estética",
-        date: new Date("2024-12-15"),
-        category: "aesthetic",
-        severity: "low",
-        professionalId: "prof_1",
-        professionalName: "Dr. Ana Silva",
-        attachments: [],
-        beforeAfterPhotos: [],
-        notes: [
-          {
-            id: "note_1",
-            note: "Paciente interessada em procedimento de harmonização facial",
-            date: new Date("2024-12-15"),
-            author: "Dr. Ana Silva",
-            type: "observation",
-            visibility: "professional",
-          },
-        ],
-        metadata: { duration: 60, cost: 200 },
-      },
-      {
-        id: "event_2",
-        patientId: patientId,
-        eventType: "procedure",
-        title: "Aplicação de Botox",
-        description: "Procedimento de harmonização facial com toxina botulínica",
-        date: new Date("2025-01-05"),
-        category: "aesthetic",
-        severity: "medium",
-        professionalId: "prof_1",
-        professionalName: "Dr. Ana Silva",
-        attachments: [],
-        beforeAfterPhotos: [
-          {
-            id: "photo_1",
-            eventId: "event_2",
-            comparisonType: "treatment",
-            notes: "Aplicação focada em rugas de expressão",
-            quality: 95,
-            beforePhoto: {
-              id: "before_1",
-              url: "/images/before_1.jpg",
-              thumbnailUrl: "/images/before_1_thumb.jpg",
-              uploadedAt: new Date("2025-01-05"),
-              metadata: { width: 1920, height: 1080, quality: 95 },
-            },
-            afterPhoto: {
-              id: "after_1",
-              url: "/images/after_1.jpg",
-              thumbnailUrl: "/images/after_1_thumb.jpg",
-              uploadedAt: new Date("2025-01-26"),
-              metadata: { width: 1920, height: 1080, quality: 95 },
-            },
-          },
-        ],
-        outcome: {
-          id: "outcome_1",
-          success: true,
-          satisfactionScore: 9,
-          complications: [],
-          followUpRequired: true,
-          nextSteps: ["Retorno em 15 dias", "Avaliação de resultados"],
-          patientFeedback: "Muito satisfeita com o resultado",
-          professionalAssessment: "Resultado excelente, paciente respondeu muito bem",
-          healingProgress: "excellent",
+  createmedicalTimelineService.prototype.getMockTimelineData = (patientId) => [
+    {
+      id: "event_1",
+      patientId: patientId,
+      eventType: "appointment",
+      title: "Consulta Inicial",
+      description: "Primeira consulta para avaliação estética",
+      date: new Date("2024-12-15"),
+      category: "aesthetic",
+      severity: "low",
+      professionalId: "prof_1",
+      professionalName: "Dr. Ana Silva",
+      attachments: [],
+      beforeAfterPhotos: [],
+      notes: [
+        {
+          id: "note_1",
+          note: "Paciente interessada em procedimento de harmonização facial",
+          date: new Date("2024-12-15"),
+          author: "Dr. Ana Silva",
+          type: "observation",
+          visibility: "professional",
         },
-        notes: [
-          {
-            id: "note_2",
-            note: "Aplicação realizada sem intercorrências",
-            date: new Date("2025-01-05"),
-            author: "Dr. Ana Silva",
-            type: "observation",
-            visibility: "professional",
+      ],
+      metadata: { duration: 60, cost: 200 },
+    },
+    {
+      id: "event_2",
+      patientId: patientId,
+      eventType: "procedure",
+      title: "Aplicação de Botox",
+      description: "Procedimento de harmonização facial com toxina botulínica",
+      date: new Date("2025-01-05"),
+      category: "aesthetic",
+      severity: "medium",
+      professionalId: "prof_1",
+      professionalName: "Dr. Ana Silva",
+      attachments: [],
+      beforeAfterPhotos: [
+        {
+          id: "photo_1",
+          eventId: "event_2",
+          comparisonType: "treatment",
+          notes: "Aplicação focada em rugas de expressão",
+          quality: 95,
+          beforePhoto: {
+            id: "before_1",
+            url: "/images/before_1.jpg",
+            thumbnailUrl: "/images/before_1_thumb.jpg",
+            uploadedAt: new Date("2025-01-05"),
+            metadata: { width: 1920, height: 1080, quality: 95 },
           },
-        ],
-        metadata: { units: 20, cost: 800 },
+          afterPhoto: {
+            id: "after_1",
+            url: "/images/after_1.jpg",
+            thumbnailUrl: "/images/after_1_thumb.jpg",
+            uploadedAt: new Date("2025-01-26"),
+            metadata: { width: 1920, height: 1080, quality: 95 },
+          },
+        },
+      ],
+      outcome: {
+        id: "outcome_1",
+        success: true,
+        satisfactionScore: 9,
+        complications: [],
+        followUpRequired: true,
+        nextSteps: ["Retorno em 15 dias", "Avaliação de resultados"],
+        patientFeedback: "Muito satisfeita com o resultado",
+        professionalAssessment: "Resultado excelente, paciente respondeu muito bem",
+        healingProgress: "excellent",
       },
-    ];
-  };
-  createmedicalTimelineService.prototype.getMockMilestones = function (patientId) {
-    return [
-      {
-        id: "milestone_tracking_1",
-        patientId: patientId,
-        treatmentPlan: "Harmonização Facial Completa",
-        overallProgress: 65,
-        estimatedCompletion: new Date("2025-06-01"),
-        milestones: [
-          {
-            id: "milestone_1",
-            title: "Consulta Inicial",
-            description: "Avaliação e planejamento do tratamento",
-            targetDate: new Date("2024-12-15"),
-            completedDate: new Date("2024-12-15"),
-            status: "completed",
-            criteria: ["Análise facial", "Expectativas alinhadas", "Plano definido"],
-            completedCriteria: ["Análise facial", "Expectativas alinhadas", "Plano definido"],
-            progress: 100,
-            notes: "Consulta realizada com sucesso",
-          },
-          {
-            id: "milestone_2",
-            title: "Primeira Aplicação",
-            description: "Aplicação inicial de toxina botulínica",
-            targetDate: new Date("2025-01-05"),
-            completedDate: new Date("2025-01-05"),
-            status: "completed",
-            criteria: ["Aplicação segura", "Resultado imediato", "Sem complicações"],
-            completedCriteria: ["Aplicação segura", "Resultado imediato", "Sem complicações"],
-            progress: 100,
-            notes: "Procedimento realizado conforme planejado",
-          },
-          {
-            id: "milestone_3",
-            title: "Avaliação de Resultados",
-            description: "Avaliação dos resultados após 3 semanas",
-            targetDate: new Date("2025-01-26"),
-            status: "in_progress",
-            criteria: ["Redução de rugas", "Satisfação da paciente", "Necessidade de retoques"],
-            completedCriteria: ["Redução de rugas", "Satisfação da paciente"],
-            progress: 75,
-            notes: "Resultados muito positivos, paciente satisfeita",
-          },
-        ],
-      },
-    ];
-  };
+      notes: [
+        {
+          id: "note_2",
+          note: "Aplicação realizada sem intercorrências",
+          date: new Date("2025-01-05"),
+          author: "Dr. Ana Silva",
+          type: "observation",
+          visibility: "professional",
+        },
+      ],
+      metadata: { units: 20, cost: 800 },
+    },
+  ];
+  createmedicalTimelineService.prototype.getMockMilestones = (patientId) => [
+    {
+      id: "milestone_tracking_1",
+      patientId: patientId,
+      treatmentPlan: "Harmonização Facial Completa",
+      overallProgress: 65,
+      estimatedCompletion: new Date("2025-06-01"),
+      milestones: [
+        {
+          id: "milestone_1",
+          title: "Consulta Inicial",
+          description: "Avaliação e planejamento do tratamento",
+          targetDate: new Date("2024-12-15"),
+          completedDate: new Date("2024-12-15"),
+          status: "completed",
+          criteria: ["Análise facial", "Expectativas alinhadas", "Plano definido"],
+          completedCriteria: ["Análise facial", "Expectativas alinhadas", "Plano definido"],
+          progress: 100,
+          notes: "Consulta realizada com sucesso",
+        },
+        {
+          id: "milestone_2",
+          title: "Primeira Aplicação",
+          description: "Aplicação inicial de toxina botulínica",
+          targetDate: new Date("2025-01-05"),
+          completedDate: new Date("2025-01-05"),
+          status: "completed",
+          criteria: ["Aplicação segura", "Resultado imediato", "Sem complicações"],
+          completedCriteria: ["Aplicação segura", "Resultado imediato", "Sem complicações"],
+          progress: 100,
+          notes: "Procedimento realizado conforme planejado",
+        },
+        {
+          id: "milestone_3",
+          title: "Avaliação de Resultados",
+          description: "Avaliação dos resultados após 3 semanas",
+          targetDate: new Date("2025-01-26"),
+          status: "in_progress",
+          criteria: ["Redução de rugas", "Satisfação da paciente", "Necessidade de retoques"],
+          completedCriteria: ["Redução de rugas", "Satisfação da paciente"],
+          progress: 75,
+          notes: "Resultados muito positivos, paciente satisfeita",
+        },
+      ],
+    },
+  ];
   return createmedicalTimelineService;
 })();
 exports.createmedicalTimelineService = createmedicalTimelineService;

@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,12 +128,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createaiInsightsEngine = exports.AIInsightsEngine = void 0;
 // lib/ai/insights-engine.ts
 var server_1 = require("@/lib/supabase/server");
-var AIInsightsEngine = /** @class */ (function () {
+var AIInsightsEngine = /** @class */ (() => {
   function AIInsightsEngine() {
     this.supabase = (0, server_1.createClient)();
   }
@@ -146,7 +143,7 @@ var AIInsightsEngine = /** @class */ (function () {
   AIInsightsEngine.prototype.generatePatientInsights = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var insights;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           insights = [
             {
@@ -216,7 +213,7 @@ var AIInsightsEngine = /** @class */ (function () {
   AIInsightsEngine.prototype.assessPatientRisk = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var riskAssessment;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           riskAssessment = {
             overall: 0.68,
@@ -247,7 +244,7 @@ var AIInsightsEngine = /** @class */ (function () {
   AIInsightsEngine.prototype.generateClinicalRecommendations = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           recommendations = [
             {
@@ -300,7 +297,7 @@ var AIInsightsEngine = /** @class */ (function () {
       if (timeframe === void 0) {
         timeframe = "6months";
       }
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           trends = {
             vitals: {
@@ -358,7 +355,7 @@ var AIInsightsEngine = /** @class */ (function () {
   AIInsightsEngine.prototype.detectAnomalies = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var anomalies;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           anomalies = [
             {
@@ -428,21 +425,19 @@ var AIInsightsEngine = /** @class */ (function () {
                 anomalies: anomalies,
                 summary: {
                   totalInsights: insights.length,
-                  highPriorityInsights: insights.filter(function (i) {
-                    return i.priority === "high" || i.priority === "critical";
-                  }).length,
+                  highPriorityInsights: insights.filter(
+                    (i) => i.priority === "high" || i.priority === "critical",
+                  ).length,
                   overallRiskLevel:
                     riskAssessment.overall > 0.7
                       ? "high"
                       : riskAssessment.overall > 0.4
                         ? "medium"
                         : "low",
-                  urgentRecommendations: recommendations.filter(function (r) {
-                    return r.urgency === "urgent" || r.urgency === "immediate";
-                  }).length,
-                  activeAnomalies: anomalies.filter(function (a) {
-                    return a.severity !== "low";
-                  }).length,
+                  urgentRecommendations: recommendations.filter(
+                    (r) => r.urgency === "urgent" || r.urgency === "immediate",
+                  ).length,
+                  activeAnomalies: anomalies.filter((a) => a.severity !== "low").length,
                 },
               },
             ];
@@ -459,7 +454,5 @@ var AIInsightsEngine = /** @class */ (function () {
   return AIInsightsEngine;
 })();
 exports.AIInsightsEngine = AIInsightsEngine;
-var createaiInsightsEngine = function () {
-  return new AIInsightsEngine();
-};
+var createaiInsightsEngine = () => new AIInsightsEngine();
 exports.createaiInsightsEngine = createaiInsightsEngine;

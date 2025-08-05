@@ -1,5 +1,7 @@
 "use client";
 
+import type { MapPin, Star, User } from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { createClient } from "@/app/utils/supabase/client";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -7,8 +9,6 @@ import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent } from "@/components/ui/card";
 import type { LoadingSpinner } from "@/components/ui/loading-spinner";
-import type { MapPin, Star, User } from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface Professional {
   id: string;

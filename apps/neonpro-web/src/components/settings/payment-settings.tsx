@@ -1,9 +1,13 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
+import type { Banknote, CheckCircle2, CreditCard, Loader2, Save, Smartphone } from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { useForm } from "react-hook-form";
+import type { toast } from "sonner";
 import * as z from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -21,11 +25,7 @@ import type {
   FormMessage,
 } from "@/components/ui/form";
 import type { Input } from "@/components/ui/input";
-import type { Button } from "@/components/ui/button";
 import type { Switch } from "@/components/ui/switch";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { CreditCard, Banknote, Smartphone, Save, Loader2, CheckCircle2 } from "lucide-react";
-import type { toast } from "sonner";
 
 const paymentSettingsSchema = z.object({
   // PIX Configuration

@@ -1,9 +1,9 @@
 // Drug Search and Interaction API Endpoints
 // Story 9.5: API endpoints for drug information and interaction checking
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { MedicalKnowledgeBaseService } from "@/app/lib/services/medical-knowledge-base";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 const service = new MedicalKnowledgeBaseService();
 
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const action = searchParams.get("action");
 
     switch (action) {
-      case "search":
+      case "search": {
         const searchQuery = {
           drug_name: searchParams.get("drug_name") || undefined,
           generic_name: searchParams.get("generic_name") || undefined,
@@ -33,8 +33,9 @@ export async function GET(request: NextRequest) {
 
         const searchResults = await service.searchDrugs(searchQuery);
         return NextResponse.json({ success: true, data: searchResults });
+      }
 
-      case "drug":
+      case "drug": {
         const drugId = searchParams.get("id");
         if (!drugId) {
           return NextResponse.json({ error: "Drug ID required" }, { status: 400 });
@@ -45,8 +46,9 @@ export async function GET(request: NextRequest) {
           return NextResponse.json({ error: "Drug not found" }, { status: 404 });
         }
         return NextResponse.json({ success: true, data: drug });
+      }
 
-      case "interactions":
+      case "interactions": {
         const drugIds = searchParams.get("drug_ids")?.split(",");
         if (!drugIds || drugIds.length < 2) {
           return NextResponse.json(
@@ -59,6 +61,7 @@ export async function GET(request: NextRequest) {
 
         const interactions = await service.checkDrugInteractions(drugIds);
         return NextResponse.json({ success: true, data: interactions });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action parameter" }, { status: 400 });
@@ -90,7 +93,7 @@ export async function POST(request: NextRequest) {
     const { action, data } = body;
 
     switch (action) {
-      case "batch-search":
+      case "batch-search": {
         // Allow searching for multiple drugs at once
         const { queries } = data;
         if (!Array.isArray(queries)) {
@@ -100,8 +103,9 @@ export async function POST(request: NextRequest) {
         const batchResults = await Promise.all(queries.map((query) => service.searchDrugs(query)));
 
         return NextResponse.json({ success: true, data: batchResults });
+      }
 
-      case "complex-interaction-check":
+      case "complex-interaction-check": {
         // Check interactions for complex drug combinations
         const { drug_combinations, patient_factors } = data;
 
@@ -140,6 +144,7 @@ export async function POST(request: NextRequest) {
             },
           },
         });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action" }, { status: 400 });

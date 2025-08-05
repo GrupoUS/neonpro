@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientProfileView;
 var react_1 = require("react");
@@ -143,7 +140,6 @@ var tabs_1 = require("@/components/ui/tabs");
 var avatar_1 = require("@/components/ui/avatar");
 var lucide_react_1 = require("lucide-react");
 function PatientProfileView(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     onProfileUpdate = _a.onProfileUpdate;
   var _b = (0, react_1.useState)(null),
@@ -155,16 +151,13 @@ function PatientProfileView(_a) {
   var _d = (0, react_1.useState)(null),
     error = _d[0],
     setError = _d[1];
-  (0, react_1.useEffect)(
-    function () {
-      fetchPatientProfile();
-    },
-    [patientId],
-  );
-  var fetchPatientProfile = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    fetchPatientProfile();
+  }, [patientId]);
+  var fetchPatientProfile = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -193,8 +186,7 @@ function PatientProfileView(_a) {
         }
       });
     });
-  };
-  var getRiskBadgeColor = function (riskLevel) {
+  var getRiskBadgeColor = (riskLevel) => {
     switch (riskLevel) {
       case "low":
         return "bg-green-100 text-green-800";
@@ -208,7 +200,7 @@ function PatientProfileView(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var calculateAge = function (dateOfBirth) {
+  var calculateAge = (dateOfBirth) => {
     var today = new Date();
     var birthDate = new Date(dateOfBirth);
     var age = today.getFullYear() - birthDate.getFullYear();
@@ -260,9 +252,7 @@ function PatientProfileView(_a) {
                 <avatar_1.AvatarFallback className="text-lg">
                   {profile.demographics.name
                     .split(" ")
-                    .map(function (n) {
-                      return n[0];
-                    })
+                    .map((n) => n[0])
                     .join("")
                     .toUpperCase()}
                 </avatar_1.AvatarFallback>
@@ -359,13 +349,11 @@ function PatientProfileView(_a) {
               <card_1.CardContent>
                 <div className="space-y-2">
                   {profile.chronic_conditions.length > 0
-                    ? profile.chronic_conditions.map(function (condition, index) {
-                        return (
-                          <badge_1.Badge key={index} variant="outline" className="text-xs">
-                            {condition}
-                          </badge_1.Badge>
-                        );
-                      })
+                    ? profile.chronic_conditions.map((condition, index) => (
+                        <badge_1.Badge key={index} variant="outline" className="text-xs">
+                          {condition}
+                        </badge_1.Badge>
+                      ))
                     : <p className="text-sm text-gray-500">No chronic conditions recorded</p>}
                 </div>
               </card_1.CardContent>
@@ -380,13 +368,11 @@ function PatientProfileView(_a) {
               <card_1.CardContent>
                 <div className="space-y-2">
                   {profile.allergies.length > 0
-                    ? profile.allergies.map(function (allergy, index) {
-                        return (
-                          <badge_1.Badge key={index} variant="destructive" className="text-xs">
-                            {allergy}
-                          </badge_1.Badge>
-                        );
-                      })
+                    ? profile.allergies.map((allergy, index) => (
+                        <badge_1.Badge key={index} variant="destructive" className="text-xs">
+                          {allergy}
+                        </badge_1.Badge>
+                      ))
                     : <p className="text-sm text-gray-500">No known allergies</p>}
                 </div>
               </card_1.CardContent>
@@ -404,13 +390,11 @@ function PatientProfileView(_a) {
             <card_1.CardContent>
               <div className="space-y-3">
                 {profile.medical_history.length > 0
-                  ? profile.medical_history.map(function (event, index) {
-                      return (
-                        <div key={index} className="p-3 border rounded-lg">
-                          <p className="text-sm">{event}</p>
-                        </div>
-                      );
-                    })
+                  ? profile.medical_history.map((event, index) => (
+                      <div key={index} className="p-3 border rounded-lg">
+                        <p className="text-sm">{event}</p>
+                      </div>
+                    ))
                   : <p className="text-gray-500">No medical history recorded</p>}
               </div>
             </card_1.CardContent>
@@ -427,21 +411,19 @@ function PatientProfileView(_a) {
             <card_1.CardContent>
               <div className="space-y-3">
                 {profile.current_medications.length > 0
-                  ? profile.current_medications.map(function (medication, index) {
-                      return (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center p-3 border rounded-lg"
-                        >
-                          <div>
-                            <p className="font-medium">{medication.name}</p>
-                            <p className="text-sm text-gray-600">
-                              {medication.dosage} • {medication.frequency}
-                            </p>
-                          </div>
+                  ? profile.current_medications.map((medication, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center p-3 border rounded-lg"
+                      >
+                        <div>
+                          <p className="font-medium">{medication.name}</p>
+                          <p className="text-sm text-gray-600">
+                            {medication.dosage} • {medication.frequency}
+                          </p>
                         </div>
-                      );
-                    })
+                      </div>
+                    ))
                   : <p className="text-gray-500">No current medications</p>}
               </div>
             </card_1.CardContent>
@@ -460,22 +442,20 @@ function PatientProfileView(_a) {
             <card_1.CardContent>
               <div className="space-y-3">
                 {profile.emergency_contacts && profile.emergency_contacts.length > 0
-                  ? profile.emergency_contacts.map(function (contact, index) {
-                      return (
-                        <div key={index} className="p-3 border rounded-lg">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <p className="font-medium">{contact.name}</p>
-                              <p className="text-sm text-gray-600">{contact.relationship}</p>
-                            </div>
-                            <div className="text-right text-sm">
-                              <p>{contact.phone}</p>
-                              {contact.email && <p>{contact.email}</p>}
-                            </div>
+                  ? profile.emergency_contacts.map((contact, index) => (
+                      <div key={index} className="p-3 border rounded-lg">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-medium">{contact.name}</p>
+                            <p className="text-sm text-gray-600">{contact.relationship}</p>
+                          </div>
+                          <div className="text-right text-sm">
+                            <p>{contact.phone}</p>
+                            {contact.email && <p>{contact.email}</p>}
                           </div>
                         </div>
-                      );
-                    })
+                      </div>
+                    ))
                   : <p className="text-gray-500">No emergency contacts recorded</p>}
               </div>
             </card_1.CardContent>
@@ -496,12 +476,9 @@ function PatientProfileView(_a) {
                 ? <div className="space-y-4">
                     <div className="text-center">
                       <button_1.Button
-                        onClick={function () {
-                          return (window.location.href = "/patients/".concat(
-                            patientId,
-                            "/insights",
-                          ));
-                        }}
+                        onClick={() =>
+                          (window.location.href = "/patients/".concat(patientId, "/insights"))
+                        }
                       >
                         View Full AI Analysis
                       </button_1.Button>
@@ -512,11 +489,11 @@ function PatientProfileView(_a) {
                     <p>AI insights not yet generated</p>
                     <button_1.Button
                       className="mt-4"
-                      onClick={function () {
+                      onClick={() => {
                         // Generate insights
-                        fetch("/api/patients/".concat(patientId, "/insights")).then(function () {
-                          return fetchPatientProfile();
-                        });
+                        fetch("/api/patients/".concat(patientId, "/insights")).then(() =>
+                          fetchPatientProfile(),
+                        );
                       }}
                     >
                       Generate AI Insights

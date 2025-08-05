@@ -1,9 +1,10 @@
 ﻿// Universal AI Chat Endpoint for NeonPro (Epic 4 - Story 4.1)
+
 // app/api/ai/universal-chat/route.ts
 
+import { type NextRequest, NextResponse } from "next/server";
 import type { UniversalChatContext } from "@/app/lib/ai/types";
 import { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
 
 // Rate limiting and security imports (to be implemented)
 // import type { rateLimit } from "@/app/lib/rate-limit"
@@ -481,7 +482,7 @@ async function buildClinicalContext(supabase: any, clinicId: string) {
   };
 }
 
-async function buildBusinessIntelligenceContext(supabase: any, clinicId: string) {
+async function buildBusinessIntelligenceContext(_supabase: any, _clinicId: string) {
   // Cross-epic analytics
   return {
     kpis: {
@@ -517,7 +518,7 @@ function generateSessionId(): string {
 }
 
 // OPTIONS handler for CORS
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   return new NextResponse(null, {
     status: 200,
     headers: {

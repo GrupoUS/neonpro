@@ -1,9 +1,9 @@
 // Report Templates API Route
 // Story 8.2: Custom Report Builder (Drag-Drop Interface)
 
+import { type NextRequest, NextResponse } from "next/server";
 import { ReportBuilderService } from "@/app/lib/services/report-builder";
 import { CreateReportTemplateRequest } from "@/app/lib/validations/report-builder";
-import { NextRequest, NextResponse } from "next/server";
 
 const reportService = new ReportBuilderService();
 

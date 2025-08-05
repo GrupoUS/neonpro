@@ -14,7 +14,7 @@
  */
 
 import type { createClient } from "@/lib/supabase/client";
-import type { securityAuditLogger, AuditEventType } from "../audit/security-audit-logger";
+import type { AuditEventType, securityAuditLogger } from "../audit/security-audit-logger";
 
 // System roles with hierarchical permissions
 export enum SystemRole {

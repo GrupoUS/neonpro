@@ -1,13 +1,14 @@
 // components/auth/mfa/sms-mfa-setup.tsx
 "use client";
 
+import type { zodResolver } from "@hookform/resolvers/zod";
+import type { Loader2, MessageSquare, Phone } from "lucide-react";
 import type { useState } from "react";
 import type { useForm } from "react-hook-form";
-import type { zodResolver } from "@hookform/resolvers/zod";
+import type { toast } from "sonner";
 import type { z } from "zod";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
 import type {
   Card,
   CardContent,
@@ -15,10 +16,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Loader2, Phone, MessageSquare } from "lucide-react";
-import type { SMSMFAService, formatPhoneNumber, validatePhoneNumber } from "@/lib/auth/mfa";
-import type { toast } from "sonner";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { formatPhoneNumber, SMSMFAService, validatePhoneNumber } from "@/lib/auth/mfa";
 
 const phoneSchema = z.object({
   phoneNumber: z

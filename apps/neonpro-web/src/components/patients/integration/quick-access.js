@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuickAccess = QuickAccess;
 var react_1 = require("react");
@@ -160,7 +157,6 @@ var sonner_1 = require("sonner");
 var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 function QuickAccess(_a) {
-  var _this = this;
   var onPatientSelect = _a.onPatientSelect;
   var _b = (0, react_1.useState)("recent"),
     activeTab = _b[0],
@@ -172,10 +168,10 @@ function QuickAccess(_a) {
     isLoading = _d[0],
     setIsLoading = _d[1];
   // Load quick access data
-  var loadQuickAccessData = function (type) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadQuickAccessData = (type) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result_1, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (data[type]) return [2 /*return*/]; // Already loaded
@@ -193,7 +189,7 @@ function QuickAccess(_a) {
           case 3:
             result_1 = _a.sent();
             if (result_1.success) {
-              setData(function (prev) {
+              setData((prev) => {
                 var _a;
                 return __assign(__assign({}, prev), ((_a = {}), (_a[type] = result_1.data), _a));
               });
@@ -214,12 +210,11 @@ function QuickAccess(_a) {
         }
       });
     });
-  };
   // Toggle favorite status
-  var toggleFavorite = function (patientId, currentStatus) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var toggleFavorite = (patientId, currentStatus) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -243,18 +238,18 @@ function QuickAccess(_a) {
             result = _a.sent();
             if (result.success) {
               // Update local state
-              setData(function (prev) {
+              setData((prev) => {
                 var updated = __assign({}, prev);
-                Object.keys(updated).forEach(function (key) {
+                Object.keys(updated).forEach((key) => {
                   var _a;
                   var listType = key;
                   if ((_a = updated[listType]) === null || _a === void 0 ? void 0 : _a.patients) {
                     updated[listType] = __assign(__assign({}, updated[listType]), {
-                      patients: updated[listType].patients.map(function (p) {
-                        return p.id === patientId
+                      patients: updated[listType].patients.map((p) =>
+                        p.id === patientId
                           ? __assign(__assign({}, p), { isFavorite: !currentStatus })
-                          : p;
-                      }),
+                          : p,
+                      ),
                     });
                   }
                 });
@@ -279,19 +274,15 @@ function QuickAccess(_a) {
         }
       });
     });
-  };
   // Load data when tab changes
-  (0, react_1.useEffect)(
-    function () {
-      loadQuickAccessData(activeTab);
-    },
-    [activeTab],
-  );
+  (0, react_1.useEffect)(() => {
+    loadQuickAccessData(activeTab);
+  }, [activeTab]);
   // Initial load
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadQuickAccessData("recent");
   }, []);
-  var getRiskLevelColor = function (level) {
+  var getRiskLevelColor = (level) => {
     switch (level) {
       case "high":
         return "bg-red-100 text-red-800";
@@ -303,7 +294,7 @@ function QuickAccess(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getVerificationStatusColor = function (status) {
+  var getVerificationStatusColor = (status) => {
     switch (status) {
       case "verified":
         return "bg-green-100 text-green-800";
@@ -315,7 +306,7 @@ function QuickAccess(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getTabIcon = function (type) {
+  var getTabIcon = (type) => {
     switch (type) {
       case "recent":
         return <lucide_react_1.Clock className="h-4 w-4" />;
@@ -333,7 +324,7 @@ function QuickAccess(_a) {
         return null;
     }
   };
-  var getTabLabel = function (type) {
+  var getTabLabel = (type) => {
     switch (type) {
       case "recent":
         return "Recentes";
@@ -351,130 +342,123 @@ function QuickAccess(_a) {
         return type;
     }
   };
-  var renderPatientCard = function (patient) {
-    return (
-      <card_1.Card key={patient.id} className="hover:shadow-md transition-shadow cursor-pointer">
-        <card_1.CardContent className="p-4">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start space-x-3">
-              <avatar_1.Avatar className="h-10 w-10">
-                <avatar_1.AvatarImage src={patient.photoUrl} alt={patient.name} />
-                <avatar_1.AvatarFallback>
-                  {patient.name
-                    .split(" ")
-                    .map(function (n) {
-                      return n[0];
-                    })
-                    .join("")
-                    .toUpperCase()}
-                </avatar_1.AvatarFallback>
-              </avatar_1.Avatar>
+  var renderPatientCard = (patient) => (
+    <card_1.Card key={patient.id} className="hover:shadow-md transition-shadow cursor-pointer">
+      <card_1.CardContent className="p-4">
+        <div className="flex items-start justify-between">
+          <div className="flex items-start space-x-3">
+            <avatar_1.Avatar className="h-10 w-10">
+              <avatar_1.AvatarImage src={patient.photoUrl} alt={patient.name} />
+              <avatar_1.AvatarFallback>
+                {patient.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()}
+              </avatar_1.AvatarFallback>
+            </avatar_1.Avatar>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <h3 className="font-medium text-sm truncate">{patient.name}</h3>
-                  <button_1.Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0"
-                    onClick={function (e) {
-                      e.stopPropagation();
-                      toggleFavorite(patient.id, patient.isFavorite);
-                    }}
-                  >
-                    <lucide_react_1.Star
-                      className={"h-3 w-3 ".concat(
-                        patient.isFavorite ? "fill-yellow-400 text-yellow-400" : "text-gray-400",
-                      )}
-                    />
-                  </button_1.Button>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2">
+                <h3 className="font-medium text-sm truncate">{patient.name}</h3>
+                <button_1.Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleFavorite(patient.id, patient.isFavorite);
+                  }}
+                >
+                  <lucide_react_1.Star
+                    className={"h-3 w-3 ".concat(
+                      patient.isFavorite ? "fill-yellow-400 text-yellow-400" : "text-gray-400",
+                    )}
+                  />
+                </button_1.Button>
+              </div>
+
+              <div className="text-xs text-gray-500 space-y-1">
+                <div>
+                  {patient.age} anos • {patient.gender === "male" ? "M" : "F"}
                 </div>
+                <div className="truncate">{patient.email}</div>
+                <div>{patient.phone}</div>
+              </div>
 
-                <div className="text-xs text-gray-500 space-y-1">
-                  <div>
-                    {patient.age} anos • {patient.gender === "male" ? "M" : "F"}
-                  </div>
-                  <div className="truncate">{patient.email}</div>
-                  <div>{patient.phone}</div>
-                </div>
+              <div className="flex items-center space-x-2 mt-2">
+                <badge_1.Badge className={getRiskLevelColor(patient.riskLevel)} variant="secondary">
+                  {patient.riskLevel === "high"
+                    ? "Alto"
+                    : patient.riskLevel === "medium"
+                      ? "Médio"
+                      : "Baixo"}
+                </badge_1.Badge>
 
-                <div className="flex items-center space-x-2 mt-2">
+                {activeTab === "pending-verification" && (
                   <badge_1.Badge
-                    className={getRiskLevelColor(patient.riskLevel)}
+                    className={getVerificationStatusColor(patient.verificationStatus)}
                     variant="secondary"
                   >
-                    {patient.riskLevel === "high"
-                      ? "Alto"
-                      : patient.riskLevel === "medium"
-                        ? "Médio"
-                        : "Baixo"}
+                    {patient.verificationStatus === "verified"
+                      ? "Verificado"
+                      : patient.verificationStatus === "pending"
+                        ? "Pendente"
+                        : "Falhou"}
                   </badge_1.Badge>
-
-                  {activeTab === "pending-verification" && (
-                    <badge_1.Badge
-                      className={getVerificationStatusColor(patient.verificationStatus)}
-                      variant="secondary"
-                    >
-                      {patient.verificationStatus === "verified"
-                        ? "Verificado"
-                        : patient.verificationStatus === "pending"
-                          ? "Pendente"
-                          : "Falhou"}
-                    </badge_1.Badge>
-                  )}
-
-                  {patient.hasPhotos && (
-                    <badge_1.Badge variant="outline" className="text-xs">
-                      📸
-                    </badge_1.Badge>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            <div className="text-right">
-              <div className="text-xs text-gray-500">
-                {activeTab === "recent" && (
-                  <span>
-                    Última visita:{" "}
-                    {(0, date_fns_1.formatDistanceToNow)(new Date(patient.lastVisit), {
-                      addSuffix: true,
-                      locale: locale_1.ptBR,
-                    })}
-                  </span>
                 )}
 
-                {activeTab === "upcoming-appointments" && patient.nextAppointment && (
-                  <span>
-                    Próxima:{" "}
-                    {(0, date_fns_1.formatDistanceToNow)(new Date(patient.nextAppointment), {
-                      addSuffix: true,
-                      locale: locale_1.ptBR,
-                    })}
-                  </span>
+                {patient.hasPhotos && (
+                  <badge_1.Badge variant="outline" className="text-xs">
+                    📸
+                  </badge_1.Badge>
                 )}
-
-                {activeTab === "frequent" && <span>{patient.visitCount} visitas</span>}
               </div>
-
-              <button_1.Button
-                variant="outline"
-                size="sm"
-                className="mt-2"
-                onClick={function () {
-                  return onPatientSelect === null || onPatientSelect === void 0
-                    ? void 0
-                    : onPatientSelect(patient);
-                }}
-              >
-                Ver Perfil
-              </button_1.Button>
             </div>
           </div>
-        </card_1.CardContent>
-      </card_1.Card>
-    );
-  };
+
+          <div className="text-right">
+            <div className="text-xs text-gray-500">
+              {activeTab === "recent" && (
+                <span>
+                  Última visita:{" "}
+                  {(0, date_fns_1.formatDistanceToNow)(new Date(patient.lastVisit), {
+                    addSuffix: true,
+                    locale: locale_1.ptBR,
+                  })}
+                </span>
+              )}
+
+              {activeTab === "upcoming-appointments" && patient.nextAppointment && (
+                <span>
+                  Próxima:{" "}
+                  {(0, date_fns_1.formatDistanceToNow)(new Date(patient.nextAppointment), {
+                    addSuffix: true,
+                    locale: locale_1.ptBR,
+                  })}
+                </span>
+              )}
+
+              {activeTab === "frequent" && <span>{patient.visitCount} visitas</span>}
+            </div>
+
+            <button_1.Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={() =>
+                onPatientSelect === null || onPatientSelect === void 0
+                  ? void 0
+                  : onPatientSelect(patient)
+              }
+            >
+              Ver Perfil
+            </button_1.Button>
+          </div>
+        </div>
+      </card_1.CardContent>
+    </card_1.Card>
+  );
   var currentData = data[activeTab];
   return (
     <div className="space-y-6">
@@ -485,12 +469,7 @@ function QuickAccess(_a) {
       </div>
 
       {/* Quick Access Tabs */}
-      <tabs_1.Tabs
-        value={activeTab}
-        onValueChange={function (value) {
-          return setActiveTab(value);
-        }}
-      >
+      <tabs_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
         <tabs_1.TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
           <tabs_1.TabsTrigger value="recent" className="flex items-center space-x-1">
             {getTabIcon("recent")}
@@ -526,58 +505,54 @@ function QuickAccess(_a) {
           "upcoming-appointments",
           "pending-verification",
           "frequent",
-        ].map(function (type) {
-          return (
-            <tabs_1.TabsContent key={type} value={type} className="space-y-4">
-              {isLoading && !currentData
-                ? <div className="text-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-2 text-gray-500">Carregando pacientes...</p>
-                  </div>
-                : (currentData === null || currentData === void 0
-                      ? void 0
-                      : currentData.patients.length) > 0
-                  ? <>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-500">
-                          {currentData.totalCount} pacientes • Atualizado{" "}
-                          {(0, date_fns_1.formatDistanceToNow)(new Date(currentData.lastUpdated), {
-                            addSuffix: true,
-                            locale: locale_1.ptBR,
-                          })}
-                        </span>
-                        <button_1.Button
-                          variant="outline"
-                          size="sm"
-                          onClick={function () {
-                            delete data[type];
-                            loadQuickAccessData(type);
-                          }}
-                        >
-                          Atualizar
-                        </button_1.Button>
-                      </div>
+        ].map((type) => (
+          <tabs_1.TabsContent key={type} value={type} className="space-y-4">
+            {isLoading && !currentData
+              ? <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="mt-2 text-gray-500">Carregando pacientes...</p>
+                </div>
+              : (currentData === null || currentData === void 0
+                    ? void 0
+                    : currentData.patients.length) > 0
+                ? <>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-500">
+                        {currentData.totalCount} pacientes • Atualizado{" "}
+                        {(0, date_fns_1.formatDistanceToNow)(new Date(currentData.lastUpdated), {
+                          addSuffix: true,
+                          locale: locale_1.ptBR,
+                        })}
+                      </span>
+                      <button_1.Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          delete data[type];
+                          loadQuickAccessData(type);
+                        }}
+                      >
+                        Atualizar
+                      </button_1.Button>
+                    </div>
 
-                      <div className="grid gap-3">
-                        {currentData.patients.map(renderPatientCard)}
-                      </div>
-                    </>
-                  : <div className="text-center py-8">
-                      <div className="text-gray-400 mb-4">{getTabIcon(type)}</div>
-                      <p className="text-gray-500">Nenhum paciente encontrado</p>
-                      <p className="text-sm text-gray-400 mt-1">
-                        {type === "favorites" &&
-                          "Adicione pacientes aos favoritos para acesso rápido"}
-                        {type === "high-risk" && "Nenhum paciente de alto risco no momento"}
-                        {type === "upcoming-appointments" && "Nenhuma consulta agendada"}
-                        {type === "pending-verification" && "Todas as verificações estão em dia"}
-                        {type === "frequent" && "Nenhum paciente frequente identificado"}
-                        {type === "recent" && "Nenhuma atividade recente"}
-                      </p>
-                    </div>}
-            </tabs_1.TabsContent>
-          );
-        })}
+                    <div className="grid gap-3">{currentData.patients.map(renderPatientCard)}</div>
+                  </>
+                : <div className="text-center py-8">
+                    <div className="text-gray-400 mb-4">{getTabIcon(type)}</div>
+                    <p className="text-gray-500">Nenhum paciente encontrado</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {type === "favorites" &&
+                        "Adicione pacientes aos favoritos para acesso rápido"}
+                      {type === "high-risk" && "Nenhum paciente de alto risco no momento"}
+                      {type === "upcoming-appointments" && "Nenhuma consulta agendada"}
+                      {type === "pending-verification" && "Todas as verificações estão em dia"}
+                      {type === "frequent" && "Nenhum paciente frequente identificado"}
+                      {type === "recent" && "Nenhuma atividade recente"}
+                    </p>
+                  </div>}
+          </tabs_1.TabsContent>
+        ))}
       </tabs_1.Tabs>
     </div>
   );

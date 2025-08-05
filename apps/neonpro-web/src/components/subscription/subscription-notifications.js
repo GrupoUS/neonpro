@@ -8,24 +8,23 @@
  * @version 1.0.0
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -34,7 +33,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionNotificationProvider = SubscriptionNotificationProvider;
 exports.SubscriptionAlert = SubscriptionAlert;
@@ -59,12 +58,12 @@ function SubscriptionNotificationProvider(_a) {
     showProgress = _e === void 0 ? true : _e;
   var toast = (0, use_toast_1.useToast)().toast;
   var _f = (0, use_subscription_status_1.useSubscriptionStatus)({
-      onStatusChange: function (newStatus, previousStatus) {
+      onStatusChange: (newStatus, previousStatus) => {
         if (previousStatus && newStatus !== previousStatus) {
           handleStatusChange(newStatus, previousStatus);
         }
       },
-      onError: function (errorMessage) {
+      onError: (errorMessage) => {
         toast({
           title: "Erro na Assinatura",
           description: errorMessage,
@@ -83,7 +82,7 @@ function SubscriptionNotificationProvider(_a) {
     notifications = _g[0],
     setNotifications = _g[1];
   // Handle status changes
-  var handleStatusChange = function (newStatus, previousStatus) {
+  var handleStatusChange = (newStatus, previousStatus) => {
     var statusMessages = {
       active: {
         type: "success",
@@ -101,9 +100,7 @@ function SubscriptionNotificationProvider(_a) {
         description: "Atualize sua forma de pagamento para manter o acesso.",
         action: {
           label: "Atualizar Pagamento",
-          onClick: function () {
-            return console.log("Navigate to billing");
-          },
+          onClick: () => console.log("Navigate to billing"),
         },
       },
       cancelled: {
@@ -112,9 +109,7 @@ function SubscriptionNotificationProvider(_a) {
         description: "Suas funcionalidades premium foram desabilitadas.",
         action: {
           label: "Reativar",
-          onClick: function () {
-            return console.log("Navigate to reactivate");
-          },
+          onClick: () => console.log("Navigate to reactivate"),
         },
       },
       incomplete: {
@@ -123,9 +118,7 @@ function SubscriptionNotificationProvider(_a) {
         description: "Complete seu pagamento para ativar sua assinatura.",
         action: {
           label: "Completar Pagamento",
-          onClick: function () {
-            return console.log("Navigate to complete payment");
-          },
+          onClick: () => console.log("Navigate to complete payment"),
         },
       },
     };
@@ -146,79 +139,68 @@ function SubscriptionNotificationProvider(_a) {
     }
   };
   // Add notification to queue
-  var addNotification = function (notification) {
+  var addNotification = (notification) => {
     var newNotification = __assign(__assign({}, notification), {
       id: Math.random().toString(36).substr(2, 9),
       timestamp: new Date(),
     });
-    setNotifications(function (prev) {
-      return __spreadArray([newNotification], prev.slice(0, 4), true);
-    }); // Keep max 5 notifications
+    setNotifications((prev) => __spreadArray([newNotification], prev.slice(0, 4), true)); // Keep max 5 notifications
     if (autoHide) {
-      setTimeout(function () {
+      setTimeout(() => {
         dismissNotification(newNotification.id);
       }, hideAfter);
     }
   };
   // Dismiss notification
-  var dismissNotification = function (id) {
-    setNotifications(function (prev) {
-      return prev.map(function (notification) {
-        return notification.id === id
+  var dismissNotification = (id) => {
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === id
           ? __assign(__assign({}, notification), { dismissed: true })
-          : notification;
-      });
-    });
+          : notification,
+      ),
+    );
     // Remove after animation
-    setTimeout(function () {
-      setNotifications(function (prev) {
-        return prev.filter(function (n) {
-          return n.id !== id;
-        });
-      });
+    setTimeout(() => {
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
     }, 300);
   };
   // Check for upcoming renewals/expirations
-  (0, react_1.useEffect)(
-    function () {
-      if (status === "trialing" && gracePeriodEnd) {
-        var daysUntilExpiration = Math.ceil(
-          (new Date(gracePeriodEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
-        );
-        if (daysUntilExpiration <= 3 && daysUntilExpiration > 0) {
-          addNotification({
-            type: "warning",
-            title: "Período de Teste Expirando",
-            description: "Seu per\u00EDodo de teste expira em "
-              .concat(daysUntilExpiration, " ")
-              .concat(daysUntilExpiration === 1 ? "dia" : "dias", "."),
-            action: {
-              label: "Assinar Agora",
-              onClick: function () {
-                return console.log("Navigate to subscription");
-              },
-            },
-          });
-        }
+  (0, react_1.useEffect)(() => {
+    if (status === "trialing" && gracePeriodEnd) {
+      var daysUntilExpiration = Math.ceil(
+        (new Date(gracePeriodEnd).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+      );
+      if (daysUntilExpiration <= 3 && daysUntilExpiration > 0) {
+        addNotification({
+          type: "warning",
+          title: "Período de Teste Expirando",
+          description: "Seu per\u00EDodo de teste expira em "
+            .concat(daysUntilExpiration, " ")
+            .concat(daysUntilExpiration === 1 ? "dia" : "dias", "."),
+          action: {
+            label: "Assinar Agora",
+            onClick: () => console.log("Navigate to subscription"),
+          },
+        });
       }
-      if (status === "active" && nextBilling) {
-        var daysUntilBilling = Math.ceil(
-          (new Date(nextBilling).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
-        );
-        if (daysUntilBilling <= 7 && daysUntilBilling > 0) {
-          addNotification({
-            type: "info",
-            title: "Cobrança Próxima",
-            description: "Sua pr\u00F3xima cobran\u00E7a ser\u00E1 em "
-              .concat(daysUntilBilling, " ")
-              .concat(daysUntilBilling === 1 ? "dia" : "dias", "."),
-          });
-        }
+    }
+    if (status === "active" && nextBilling) {
+      var daysUntilBilling = Math.ceil(
+        (new Date(nextBilling).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
+      );
+      if (daysUntilBilling <= 7 && daysUntilBilling > 0) {
+        addNotification({
+          type: "info",
+          title: "Cobrança Próxima",
+          description: "Sua pr\u00F3xima cobran\u00E7a ser\u00E1 em "
+            .concat(daysUntilBilling, " ")
+            .concat(daysUntilBilling === 1 ? "dia" : "dias", "."),
+        });
       }
-    },
-    [status, gracePeriodEnd, nextBilling],
-  );
-  var getNotificationIcon = function (type) {
+    }
+  }, [status, gracePeriodEnd, nextBilling]);
+  var getNotificationIcon = (type) => {
     switch (type) {
       case "success":
         return <lucide_react_1.CheckCircle2 className="h-5 w-5 text-green-600" />;
@@ -232,7 +214,7 @@ function SubscriptionNotificationProvider(_a) {
         return <lucide_react_1.Bell className="h-5 w-5 text-gray-600" />;
     }
   };
-  var getNotificationStyles = function (type) {
+  var getNotificationStyles = (type) => {
     switch (type) {
       case "success":
         return "border-green-200 bg-green-50";
@@ -255,83 +237,77 @@ function SubscriptionNotificationProvider(_a) {
       )}
     >
       {notifications
-        .filter(function (notification) {
-          return !notification.dismissed;
-        })
-        .map(function (notification) {
-          return (
-            <div
-              key={notification.id}
+        .filter((notification) => !notification.dismissed)
+        .map((notification) => (
+          <div
+            key={notification.id}
+            className={(0, utils_1.cn)(
+              "transform transition-all duration-300 ease-in-out",
+              "translate-x-0 opacity-100",
+              notification.dismissed && "translate-x-full opacity-0",
+            )}
+          >
+            <alert_1.Alert
               className={(0, utils_1.cn)(
-                "transform transition-all duration-300 ease-in-out",
-                "translate-x-0 opacity-100",
-                notification.dismissed && "translate-x-full opacity-0",
+                "shadow-lg border-l-4",
+                getNotificationStyles(notification.type),
               )}
             >
-              <alert_1.Alert
-                className={(0, utils_1.cn)(
-                  "shadow-lg border-l-4",
-                  getNotificationStyles(notification.type),
-                )}
-              >
-                <div className="flex items-start gap-3">
-                  {getNotificationIcon(notification.type)}
-                  <div className="flex-1 min-w-0">
-                    <alert_1.AlertTitle className="text-sm font-medium">
-                      {notification.title}
-                    </alert_1.AlertTitle>
-                    <alert_1.AlertDescription className="text-sm text-muted-foreground mt-1">
-                      {notification.description}
-                    </alert_1.AlertDescription>
+              <div className="flex items-start gap-3">
+                {getNotificationIcon(notification.type)}
+                <div className="flex-1 min-w-0">
+                  <alert_1.AlertTitle className="text-sm font-medium">
+                    {notification.title}
+                  </alert_1.AlertTitle>
+                  <alert_1.AlertDescription className="text-sm text-muted-foreground mt-1">
+                    {notification.description}
+                  </alert_1.AlertDescription>
 
-                    {notification.action && (
-                      <button_1.Button
-                        variant="outline"
-                        size="sm"
-                        className="mt-2"
-                        onClick={notification.action.onClick}
-                      >
-                        {notification.action.label}
-                      </button_1.Button>
-                    )}
+                  {notification.action && (
+                    <button_1.Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                      onClick={notification.action.onClick}
+                    >
+                      {notification.action.label}
+                    </button_1.Button>
+                  )}
 
-                    <div className="text-xs text-muted-foreground mt-2">
-                      {(0, date_fns_1.formatDistanceToNow)(notification.timestamp, {
-                        addSuffix: true,
-                        locale: locale_1.ptBR,
-                      })}
-                    </div>
+                  <div className="text-xs text-muted-foreground mt-2">
+                    {(0, date_fns_1.formatDistanceToNow)(notification.timestamp, {
+                      addSuffix: true,
+                      locale: locale_1.ptBR,
+                    })}
                   </div>
-
-                  <button_1.Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 p-0 hover:bg-transparent"
-                    onClick={function () {
-                      return dismissNotification(notification.id);
-                    }}
-                  >
-                    <lucide_react_1.X className="h-4 w-4" />
-                  </button_1.Button>
                 </div>
 
-                {showProgress && autoHide && (
-                  <div className="mt-3">
-                    <div className="w-full bg-gray-200 rounded-full h-1">
-                      <div
-                        className="bg-current h-1 rounded-full transition-all animate-pulse"
-                        style={{
-                          width: "100%",
-                          animation: "shrink ".concat(hideAfter, "ms linear"),
-                        }}
-                      />
-                    </div>
+                <button_1.Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 hover:bg-transparent"
+                  onClick={() => dismissNotification(notification.id)}
+                >
+                  <lucide_react_1.X className="h-4 w-4" />
+                </button_1.Button>
+              </div>
+
+              {showProgress && autoHide && (
+                <div className="mt-3">
+                  <div className="w-full bg-gray-200 rounded-full h-1">
+                    <div
+                      className="bg-current h-1 rounded-full transition-all animate-pulse"
+                      style={{
+                        width: "100%",
+                        animation: "shrink ".concat(hideAfter, "ms linear"),
+                      }}
+                    />
                   </div>
-                )}
-              </alert_1.Alert>
-            </div>
-          );
-        })}
+                </div>
+              )}
+            </alert_1.Alert>
+          </div>
+        ))}
     </div>
   );
 }
@@ -344,7 +320,7 @@ function SubscriptionAlert() {
   if (isLoading || status === "active") {
     return null;
   }
-  var getAlertContent = function () {
+  var getAlertContent = () => {
     switch (status) {
       case "past_due":
         return {

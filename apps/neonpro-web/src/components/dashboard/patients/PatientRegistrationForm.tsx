@@ -8,24 +8,13 @@
  * data protection requirements.
  */
 
-import type { useState } from "react";
-import type { useForm, useFieldArray } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type { Loader2, Plus, Trash2, Shield, FileText, AlertCircle } from "lucide-react";
+import type { AlertCircle, FileText, Loader2, Plus, Shield, Trash2 } from "lucide-react";
+import type { useState } from "react";
+import type { useFieldArray, useForm } from "react-hook-form";
 import type { toast } from "sonner";
-
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type {
   Card,
   CardContent,
@@ -33,8 +22,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Separator } from "@/components/ui/separator";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type {
   Form,
   FormControl,
@@ -44,13 +32,20 @@ import type {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
-  PatientRegistrationSchema,
-  type PatientRegistrationData,
-} from "@/lib/validations/patient";
-import type { createPatient } from "@/lib/supabase/patients";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useAuth } from "@/contexts/auth-context";
+import type { createPatient } from "@/lib/supabase/patients";
+import type { PatientRegistrationData, PatientRegistrationSchema } from "@/lib/validations/patient";
 
 interface PatientRegistrationFormProps {
   onSuccess?: (patientId: string) => void;

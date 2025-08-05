@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Mobile API System - Core Implementation
  * Story 7.4: Mobile App API Support
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,7 +154,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mobileApiSystem = exports.MobileApiSystemImpl = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -166,7 +163,7 @@ var offline_sync_1 = require("./offline-sync");
 var push_manager_1 = require("./push-manager");
 var compression_utils_1 = require("./compression-utils");
 var security_utils_1 = require("./security-utils");
-var MobileApiSystemImpl = /** @class */ (function () {
+var MobileApiSystemImpl = /** @class */ (() => {
   function MobileApiSystemImpl() {
     this.eventHandlers = {};
     this.networkStatus = "online";
@@ -249,68 +246,66 @@ var MobileApiSystemImpl = /** @class */ (function () {
       });
     });
   };
-  MobileApiSystemImpl.prototype.getDefaultConfig = function () {
-    return {
-      baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
-      version: "2.0",
-      timeout: 30000,
-      retryAttempts: 3,
-      retryDelay: 1000,
-      compression: {
-        level: "medium",
-        algorithm: "gzip",
-        threshold: 1024,
-        mimeTypes: ["application/json", "text/plain"],
-        excludePatterns: ["image/*", "video/*"],
-      },
-      cache: {
-        strategy: "cache-first",
-        ttl: 300,
-        maxSize: 50 * 1024 * 1024,
-        maxEntries: 10000,
-        compression: true,
-        encryption: false,
-        persistToDisk: true,
-        syncOnReconnect: true,
-      },
-      offline: {
-        enabled: true,
-        maxStorageSize: 100 * 1024 * 1024,
-        syncInterval: 60,
-        conflictResolution: "timestamp",
-        autoSync: true,
-        syncOnReconnect: true,
-        backgroundSync: true,
-        maxRetries: 5,
-        retryDelay: 5,
-      },
-      push: {
-        enabled: true,
-        maxNotifications: 100,
-        grouping: true,
-        persistence: true,
-      },
-      security: {
-        encryption: true,
-        tokenRefreshThreshold: 300,
-        biometricTimeout: 300,
-        maxFailedAttempts: 5,
-        lockoutDuration: 900,
-        certificatePinning: false,
-        allowInsecureConnections: false,
-      },
-      performance: {
-        imageOptimization: true,
-        lazyLoading: true,
-        prefetching: true,
-        bundleCompression: true,
-        minificationLevel: "basic",
-        cachePreloading: true,
-        backgroundProcessing: true,
-        memoryManagement: true,
-      },
-    };
-  };
+  MobileApiSystemImpl.prototype.getDefaultConfig = () => ({
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api",
+    version: "2.0",
+    timeout: 30000,
+    retryAttempts: 3,
+    retryDelay: 1000,
+    compression: {
+      level: "medium",
+      algorithm: "gzip",
+      threshold: 1024,
+      mimeTypes: ["application/json", "text/plain"],
+      excludePatterns: ["image/*", "video/*"],
+    },
+    cache: {
+      strategy: "cache-first",
+      ttl: 300,
+      maxSize: 50 * 1024 * 1024,
+      maxEntries: 10000,
+      compression: true,
+      encryption: false,
+      persistToDisk: true,
+      syncOnReconnect: true,
+    },
+    offline: {
+      enabled: true,
+      maxStorageSize: 100 * 1024 * 1024,
+      syncInterval: 60,
+      conflictResolution: "timestamp",
+      autoSync: true,
+      syncOnReconnect: true,
+      backgroundSync: true,
+      maxRetries: 5,
+      retryDelay: 5,
+    },
+    push: {
+      enabled: true,
+      maxNotifications: 100,
+      grouping: true,
+      persistence: true,
+    },
+    security: {
+      encryption: true,
+      tokenRefreshThreshold: 300,
+      biometricTimeout: 300,
+      maxFailedAttempts: 5,
+      lockoutDuration: 900,
+      certificatePinning: false,
+      allowInsecureConnections: false,
+    },
+    performance: {
+      imageOptimization: true,
+      lazyLoading: true,
+      prefetching: true,
+      bundleCompression: true,
+      minificationLevel: "basic",
+      cachePreloading: true,
+      backgroundProcessing: true,
+      memoryManagement: true,
+    },
+  });
   // ============================================================================
   // AUTHENTICATION
   // ============================================================================
@@ -433,7 +428,7 @@ var MobileApiSystemImpl = /** @class */ (function () {
   };
   MobileApiSystemImpl.prototype.phoneAuthentication = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement phone authentication logic
         throw new Error("Phone authentication not implemented yet");
       });
@@ -1044,63 +1039,60 @@ var MobileApiSystemImpl = /** @class */ (function () {
   // PRIVATE HELPER METHODS
   // ============================================================================
   MobileApiSystemImpl.prototype.initializeNetworkMonitoring = function () {
-    var _this = this;
     if (typeof window !== "undefined") {
-      window.addEventListener("online", function () {
-        _this.networkStatus = "online";
-        _this.emitEvent("onNetworkChange", "online");
+      window.addEventListener("online", () => {
+        this.networkStatus = "online";
+        this.emitEvent("onNetworkChange", "online");
         // Trigger sync when coming back online
-        if (_this.config.offline.syncOnReconnect && _this.currentUser) {
-          _this.sync({ priority: "high" }).catch(console.error);
+        if (this.config.offline.syncOnReconnect && this.currentUser) {
+          this.sync({ priority: "high" }).catch(console.error);
         }
       });
-      window.addEventListener("offline", function () {
-        _this.networkStatus = "offline";
-        _this.emitEvent("onNetworkChange", "offline");
+      window.addEventListener("offline", () => {
+        this.networkStatus = "offline";
+        this.emitEvent("onNetworkChange", "offline");
       });
       // Initial status
       this.networkStatus = navigator.onLine ? "online" : "offline";
     }
   };
   MobileApiSystemImpl.prototype.setupEventListeners = function () {
-    var _this = this;
     // Setup internal event listeners for subsystems
-    this.offlineSync.on("syncProgress", function (progress, operation) {
-      _this.emitEvent("onSyncProgress", progress, operation);
+    this.offlineSync.on("syncProgress", (progress, operation) => {
+      this.emitEvent("onSyncProgress", progress, operation);
     });
-    this.offlineSync.on("syncConflict", function (conflict) {
-      _this.emitEvent("onSyncConflict", conflict);
+    this.offlineSync.on("syncConflict", (conflict) => {
+      this.emitEvent("onSyncConflict", conflict);
     });
-    this.cache.on("cacheUpdate", function (key, entry) {
-      _this.emitEvent("onCacheUpdate", key, entry);
+    this.cache.on("cacheUpdate", (key, entry) => {
+      this.emitEvent("onCacheUpdate", key, entry);
     });
-    this.pushManager.on("pushReceived", function (notification) {
-      _this.emitEvent("onPushReceived", notification);
+    this.pushManager.on("pushReceived", (notification) => {
+      this.emitEvent("onPushReceived", notification);
     });
   };
   MobileApiSystemImpl.prototype.startBackgroundProcesses = function () {
-    var _this = this;
     // Start periodic sync if enabled
     if (this.config.offline.autoSync) {
-      setInterval(function () {
-        if (_this.networkStatus === "online" && _this.currentUser) {
-          _this.sync({ priority: "low" }).catch(console.error);
+      setInterval(() => {
+        if (this.networkStatus === "online" && this.currentUser) {
+          this.sync({ priority: "low" }).catch(console.error);
         }
       }, this.config.offline.syncInterval * 1000);
     }
     // Start cache cleanup
     setInterval(
-      function () {
-        _this.cache.cleanup().catch(console.error);
+      () => {
+        this.cache.cleanup().catch(console.error);
       },
       5 * 60 * 1000,
     ); // Every 5 minutes
     // Start token refresh monitoring
-    setInterval(function () {
-      _this.checkTokenExpiry().catch(console.error);
+    setInterval(() => {
+      this.checkTokenExpiry().catch(console.error);
     }, 60 * 1000); // Every minute
   };
-  MobileApiSystemImpl.prototype.stopBackgroundProcesses = function () {
+  MobileApiSystemImpl.prototype.stopBackgroundProcesses = () => {
     // Background processes are handled by intervals, which will be cleared when the object is destroyed
   };
   MobileApiSystemImpl.prototype.ensureAuthenticated = function () {
@@ -1182,33 +1174,31 @@ var MobileApiSystemImpl = /** @class */ (function () {
       });
     });
   };
-  MobileApiSystemImpl.prototype.validateDeviceInfo = function (deviceInfo) {
+  MobileApiSystemImpl.prototype.validateDeviceInfo = (deviceInfo) => {
     if (!deviceInfo.id || !deviceInfo.platform) {
       throw new Error("Invalid device info: id and platform are required");
     }
   };
-  MobileApiSystemImpl.prototype.buildUserPreferences = function (profile) {
-    return {
-      language: profile.language || "pt-BR",
-      timezone: profile.timezone || "America/Sao_Paulo",
-      notifications: profile.notification_preferences || {
-        appointments: true,
-        reminders: true,
-        payments: true,
-        system: true,
-        marketing: false,
-        sound: true,
-        vibration: true,
-        badge: true,
-      },
-      theme: profile.theme || "auto",
-      dataUsage: profile.data_usage || "standard",
-      offlineMode: profile.offline_mode || true,
-      autoSync: profile.auto_sync || true,
-      compressionLevel: profile.compression_level || "medium",
-    };
-  };
-  MobileApiSystemImpl.prototype.getCurrentDeviceInfo = function () {
+  MobileApiSystemImpl.prototype.buildUserPreferences = (profile) => ({
+    language: profile.language || "pt-BR",
+    timezone: profile.timezone || "America/Sao_Paulo",
+    notifications: profile.notification_preferences || {
+      appointments: true,
+      reminders: true,
+      payments: true,
+      system: true,
+      marketing: false,
+      sound: true,
+      vibration: true,
+      badge: true,
+    },
+    theme: profile.theme || "auto",
+    dataUsage: profile.data_usage || "standard",
+    offlineMode: profile.offline_mode || true,
+    autoSync: profile.auto_sync || true,
+    compressionLevel: profile.compression_level || "medium",
+  });
+  MobileApiSystemImpl.prototype.getCurrentDeviceInfo = () => {
     // This should be provided by the client application
     return {
       id: "unknown",
@@ -1233,25 +1223,22 @@ var MobileApiSystemImpl = /** @class */ (function () {
     var strategy = request.cacheStrategy || this.config.cache.strategy;
     return ["cache-first", "cache-only"].includes(strategy) && request.method === "GET";
   };
-  MobileApiSystemImpl.prototype.shouldCacheResponse = function (request, response) {
-    return request.method === "GET" && response.success && response.data;
-  };
+  MobileApiSystemImpl.prototype.shouldCacheResponse = (request, response) =>
+    request.method === "GET" && response.success && response.data;
   MobileApiSystemImpl.prototype.shouldCompressRequest = function (request) {
     if (!request.body) return false;
     var bodySize = JSON.stringify(request.body).length;
     return bodySize >= this.config.compression.threshold;
   };
-  MobileApiSystemImpl.prototype.buildCacheKey = function (request) {
+  MobileApiSystemImpl.prototype.buildCacheKey = (request) => {
     var params = request.params ? JSON.stringify(request.params) : "";
     return "".concat(request.method, ":").concat(request.endpoint, ":").concat(params);
   };
-  MobileApiSystemImpl.prototype.buildResponse = function (data, metadata) {
-    return {
-      success: true,
-      data: data,
-      metadata: metadata,
-    };
-  };
+  MobileApiSystemImpl.prototype.buildResponse = (data, metadata) => ({
+    success: true,
+    data: data,
+    metadata: metadata,
+  });
   MobileApiSystemImpl.prototype.createApiError = function (code, message, retryable) {
     return {
       code: code,
@@ -1260,10 +1247,9 @@ var MobileApiSystemImpl = /** @class */ (function () {
       retryAfter: retryable ? this.config.retryDelay / 1000 : undefined,
     };
   };
-  MobileApiSystemImpl.prototype.generateRequestId = function () {
-    return "req_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
-  };
-  MobileApiSystemImpl.prototype.mapMethodToOperationType = function (method) {
+  MobileApiSystemImpl.prototype.generateRequestId = () =>
+    "req_".concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
+  MobileApiSystemImpl.prototype.mapMethodToOperationType = (method) => {
     switch (method) {
       case "POST":
         return "create";
@@ -1276,17 +1262,17 @@ var MobileApiSystemImpl = /** @class */ (function () {
         return "update";
     }
   };
-  MobileApiSystemImpl.prototype.extractEntityFromEndpoint = function (endpoint) {
+  MobileApiSystemImpl.prototype.extractEntityFromEndpoint = (endpoint) => {
     var parts = endpoint.split("/").filter(Boolean);
     return parts[0] || "unknown";
   };
-  MobileApiSystemImpl.prototype.extractEntityIdFromRequest = function (request) {
+  MobileApiSystemImpl.prototype.extractEntityIdFromRequest = (request) => {
     var parts = request.endpoint.split("/").filter(Boolean);
     return parts[1] || "unknown";
   };
   MobileApiSystemImpl.prototype.getStorageUsage = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement storage usage calculation
         return [
           2 /*return*/,
@@ -1309,7 +1295,7 @@ var MobileApiSystemImpl = /** @class */ (function () {
   };
   MobileApiSystemImpl.prototype.getPerformanceMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement performance metrics calculation
         return [
           2 /*return*/,

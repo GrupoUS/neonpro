@@ -12,8 +12,8 @@
  * Target: +15% revenue increase through intelligent optimization
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/client";
 
 // 🔥 Core Types and Schemas
 export const RevenueOptimizationSchema = z.object({

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Search Suggestions Engine
  * Story 3.4: Smart Search + NLP Integration - Task 4
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,10 +133,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -148,7 +145,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createsearchSuggestions = exports.SearchSuggestions = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -158,7 +155,7 @@ var search_indexer_1 = require("./search-indexer");
  * Search Suggestions Engine
  * Provides intelligent autocomplete and query suggestions
  */
-var SearchSuggestions = /** @class */ (function () {
+var SearchSuggestions = /** @class */ (() => {
   function SearchSuggestions() {
     this.supabase = (0, client_1.createClient)();
     this.suggestionCache = new Map();
@@ -263,7 +260,7 @@ var SearchSuggestions = /** @class */ (function () {
               (personalized = _a[4]),
               (semantic = _a[5]);
             // Convert completions to suggestions
-            completions.forEach(function (completion) {
+            completions.forEach((completion) => {
               suggestions_1.push({
                 id: "completion_".concat(Date.now(), "_").concat(Math.random()),
                 text: completion.completion,
@@ -292,12 +289,11 @@ var SearchSuggestions = /** @class */ (function () {
                 false,
               ),
             );
-            filteredSuggestions = suggestions_1.filter(function (s) {
-              return (
+            filteredSuggestions = suggestions_1.filter(
+              (s) =>
                 s.confidence >= options.minConfidence &&
-                (!options.categories || options.categories.includes(s.category))
-              );
-            });
+                (!options.categories || options.categories.includes(s.category)),
+            );
             // Rank and deduplicate suggestions
             filteredSuggestions = this.rankSuggestions(filteredSuggestions, query, context);
             filteredSuggestions = this.deduplicateSuggestions(filteredSuggestions);
@@ -351,11 +347,7 @@ var SearchSuggestions = /** @class */ (function () {
             // Sort by confidence
             return [
               2 /*return*/,
-              completions
-                .sort(function (a, b) {
-                  return b.confidence - a.confidence;
-                })
-                .slice(0, 5),
+              completions.sort((a, b) => b.confidence - a.confidence).slice(0, 5),
             ];
           case 4:
             error_3 = _a.sent();
@@ -413,7 +405,7 @@ var SearchSuggestions = /** @class */ (function () {
           case 2:
             patients = _a.sent().data;
             if (patients) {
-              patients.forEach(function (patient) {
+              patients.forEach((patient) => {
                 if (patient.name.toLowerCase().includes(query.toLowerCase())) {
                   completions.push({
                     completion: patient.name,
@@ -444,7 +436,7 @@ var SearchSuggestions = /** @class */ (function () {
           case 3:
             providers = _a.sent().data;
             if (providers) {
-              providers.forEach(function (provider) {
+              providers.forEach((provider) => {
                 if (provider.name.toLowerCase().includes(query.toLowerCase())) {
                   completions.push({
                     completion: provider.name,
@@ -469,7 +461,7 @@ var SearchSuggestions = /** @class */ (function () {
   /**
    * Get template completions
    */
-  SearchSuggestions.prototype.getTemplateCompletions = function (query, context) {
+  SearchSuggestions.prototype.getTemplateCompletions = (query, context) => {
     var templates = [
       "pacientes com diabetes",
       "consultas de hoje",
@@ -482,7 +474,7 @@ var SearchSuggestions = /** @class */ (function () {
     ];
     var completions = [];
     var lowerQuery = query.toLowerCase();
-    templates.forEach(function (template) {
+    templates.forEach((template) => {
       if (template.includes(lowerQuery) && template !== query) {
         var confidence = lowerQuery.length / template.length;
         completions.push({
@@ -501,7 +493,7 @@ var SearchSuggestions = /** @class */ (function () {
   SearchSuggestions.prototype.getSemanticCompletions = function (query, context) {
     return __awaiter(this, void 0, void 0, function () {
       var nlpResult, completions_1, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -514,7 +506,7 @@ var SearchSuggestions = /** @class */ (function () {
             completions_1 = [];
             // Generate completions based on detected entities and intents
             if (nlpResult.entities.length > 0) {
-              nlpResult.entities.forEach(function (entity) {
+              nlpResult.entities.forEach((entity) => {
                 if (entity.type === "CONDITION" && entity.confidence > 0.7) {
                   completions_1.push({
                     completion: "pacientes com ".concat(entity.value),
@@ -581,7 +573,7 @@ var SearchSuggestions = /** @class */ (function () {
           case 2:
             history_1 = _a.sent().data;
             if (history_1) {
-              history_1.forEach(function (item) {
+              history_1.forEach((item) => {
                 var similarity = _this.calculateSimilarity(query, item.query);
                 if (similarity > 0.3) {
                   suggestions.push({
@@ -635,7 +627,7 @@ var SearchSuggestions = /** @class */ (function () {
           case 2:
             popular = _a.sent().data;
             if (popular) {
-              popular.forEach(function (item) {
+              popular.forEach((item) => {
                 var similarity = _this.calculateSimilarity(query, item.query);
                 if (similarity > 0.4) {
                   suggestions.push({
@@ -672,7 +664,7 @@ var SearchSuggestions = /** @class */ (function () {
         suggestions = [];
         try {
           contextualQueries = this.getContextualQueries(context.sessionContext.currentPage);
-          contextualQueries.forEach(function (contextQuery) {
+          contextualQueries.forEach((contextQuery) => {
             if (contextQuery.toLowerCase().includes(query.toLowerCase())) {
               suggestions.push({
                 id: "contextual_".concat(contextQuery),
@@ -687,7 +679,7 @@ var SearchSuggestions = /** @class */ (function () {
             }
           });
           // Suggestions based on recent searches in session
-          context.sessionContext.previousSearches.forEach(function (prevSearch) {
+          context.sessionContext.previousSearches.forEach((prevSearch) => {
             if (prevSearch.toLowerCase().includes(query.toLowerCase()) && prevSearch !== query) {
               suggestions.push({
                 id: "session_".concat(prevSearch),
@@ -714,17 +706,16 @@ var SearchSuggestions = /** @class */ (function () {
   SearchSuggestions.prototype.getPersonalizedSuggestions = function (query, context) {
     return __awaiter(this, void 0, void 0, function () {
       var suggestions;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         suggestions = [];
         if (!context.userPreferences.personalizedSuggestions) {
           return [2 /*return*/, suggestions];
         }
         try {
           // Suggestions based on user's preferred data types
-          context.userPreferences.preferredDataTypes.forEach(function (dataType) {
-            var typeQueries = _this.getDataTypeQueries(dataType, query);
-            typeQueries.forEach(function (typeQuery) {
+          context.userPreferences.preferredDataTypes.forEach((dataType) => {
+            var typeQueries = this.getDataTypeQueries(dataType, query);
+            typeQueries.forEach((typeQuery) => {
               suggestions.push({
                 id: "personalized_".concat(dataType, "_").concat(typeQuery),
                 text: typeQuery,
@@ -738,7 +729,7 @@ var SearchSuggestions = /** @class */ (function () {
             });
           });
           // Suggestions based on search patterns
-          context.userPreferences.searchPatterns.forEach(function (pattern) {
+          context.userPreferences.searchPatterns.forEach((pattern) => {
             if (pattern.toLowerCase().includes(query.toLowerCase())) {
               suggestions.push({
                 id: "pattern_".concat(pattern),
@@ -765,7 +756,7 @@ var SearchSuggestions = /** @class */ (function () {
   SearchSuggestions.prototype.getSemanticSuggestions = function (query, context) {
     return __awaiter(this, void 0, void 0, function () {
       var suggestions, similarContent, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             suggestions = [];
@@ -781,7 +772,7 @@ var SearchSuggestions = /** @class */ (function () {
             ];
           case 2:
             similarContent = _a.sent();
-            similarContent.forEach(function (content) {
+            similarContent.forEach((content) => {
               suggestions.push({
                 id: "semantic_".concat(content),
                 text: content,
@@ -808,11 +799,10 @@ var SearchSuggestions = /** @class */ (function () {
    * Rank suggestions by relevance
    */
   SearchSuggestions.prototype.rankSuggestions = function (suggestions, query, context) {
-    var _this = this;
-    return suggestions.sort(function (a, b) {
+    return suggestions.sort((a, b) => {
       // Calculate ranking score
-      var scoreA = _this.calculateRankingScore(a, query, context);
-      var scoreB = _this.calculateRankingScore(b, query, context);
+      var scoreA = this.calculateRankingScore(a, query, context);
+      var scoreB = this.calculateRankingScore(b, query, context);
       return scoreB - scoreA;
     });
   };
@@ -846,9 +836,9 @@ var SearchSuggestions = /** @class */ (function () {
   /**
    * Remove duplicate suggestions
    */
-  SearchSuggestions.prototype.deduplicateSuggestions = function (suggestions) {
+  SearchSuggestions.prototype.deduplicateSuggestions = (suggestions) => {
     var seen = new Set();
-    return suggestions.filter(function (suggestion) {
+    return suggestions.filter((suggestion) => {
       var key = suggestion.text.toLowerCase();
       if (seen.has(key)) {
         return false;
@@ -860,9 +850,9 @@ var SearchSuggestions = /** @class */ (function () {
   /**
    * Highlight matching text in suggestions
    */
-  SearchSuggestions.prototype.highlightSuggestions = function (suggestions, query) {
+  SearchSuggestions.prototype.highlightSuggestions = (suggestions, query) => {
     var queryLower = query.toLowerCase();
-    return suggestions.map(function (suggestion) {
+    return suggestions.map((suggestion) => {
       var text = suggestion.text;
       var textLower = text.toLowerCase();
       var index = textLower.indexOf(queryLower);
@@ -978,17 +968,14 @@ var SearchSuggestions = /** @class */ (function () {
    */
   SearchSuggestions.prototype.updateUserPreferences = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
    * Helper methods
    */
-  SearchSuggestions.prototype.generateCacheKey = function (query, context, options) {
-    return "".concat(query, "_").concat(context.userId, "_").concat(JSON.stringify(options));
-  };
+  SearchSuggestions.prototype.generateCacheKey = (query, context, options) =>
+    "".concat(query, "_").concat(context.userId, "_").concat(JSON.stringify(options));
   SearchSuggestions.prototype.calculateSimilarity = function (str1, str2) {
     var longer = str1.length > str2.length ? str1 : str2;
     var shorter = str1.length > str2.length ? str2 : str1;
@@ -996,7 +983,7 @@ var SearchSuggestions = /** @class */ (function () {
     var editDistance = this.levenshteinDistance(longer, shorter);
     return (longer.length - editDistance) / longer.length;
   };
-  SearchSuggestions.prototype.levenshteinDistance = function (str1, str2) {
+  SearchSuggestions.prototype.levenshteinDistance = (str1, str2) => {
     var matrix = [];
     for (var i = 0; i <= str2.length; i++) {
       matrix[i] = [i];
@@ -1039,7 +1026,7 @@ var SearchSuggestions = /** @class */ (function () {
             data = _a.sent().data;
             if (data) {
               this.popularQueries.clear();
-              data.forEach(function (item) {
+              data.forEach((item) => {
                 _this.popularQueries.set(item.query, item.frequency);
               });
             }
@@ -1056,19 +1043,15 @@ var SearchSuggestions = /** @class */ (function () {
   };
   SearchSuggestions.prototype.loadEntitySuggestions = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   SearchSuggestions.prototype.loadCommonFilters = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  SearchSuggestions.prototype.getContextualQueries = function (currentPage) {
+  SearchSuggestions.prototype.getContextualQueries = (currentPage) => {
     var contextMap = {
       patients: ["buscar paciente", "pacientes ativos", "novos pacientes"],
       appointments: ["consultas hoje", "próximas consultas", "consultas canceladas"],
@@ -1077,7 +1060,7 @@ var SearchSuggestions = /** @class */ (function () {
     };
     return contextMap[currentPage] || [];
   };
-  SearchSuggestions.prototype.getDataTypeQueries = function (dataType, query) {
+  SearchSuggestions.prototype.getDataTypeQueries = (dataType, query) => {
     var typeMap = {
       patient: ["pacientes ".concat(query), "buscar paciente ".concat(query)],
       appointment: ["consultas ".concat(query), "agendamentos ".concat(query)],
@@ -1105,7 +1088,5 @@ var SearchSuggestions = /** @class */ (function () {
 })();
 exports.SearchSuggestions = SearchSuggestions;
 // Export singleton instance
-var createsearchSuggestions = function () {
-  return new SearchSuggestions();
-};
+var createsearchSuggestions = () => new SearchSuggestions();
 exports.createsearchSuggestions = createsearchSuggestions;

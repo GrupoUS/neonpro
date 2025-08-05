@@ -1,7 +1,8 @@
 // app/api/search/route.ts
-import type { createClient } from "@/lib/supabase/server";
-import type { SearchQuery, createunifiedSearchSystem } from "@/lib/search/unified-search";
+
 import type { NextRequest, NextResponse } from "next/server";
+import type { createunifiedSearchSystem, SearchQuery } from "@/lib/search/unified-search";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {
@@ -119,14 +120,15 @@ export async function POST(request: NextRequest) {
     const { action, ...data } = body;
 
     switch (action) {
-      case "advanced_search":
+      case "advanced_search": {
         const response = await createunifiedSearchSystem().advancedSearch(data.criteria);
         return NextResponse.json({
           success: true,
           data: response,
         });
+      }
 
-      case "save_search":
+      case "save_search": {
         const savedId = await createunifiedSearchSystem().saveSearch(
           data.name,
           data.query,
@@ -136,13 +138,15 @@ export async function POST(request: NextRequest) {
           success: true,
           data: { id: savedId },
         });
+      }
 
-      case "get_statistics":
+      case "get_statistics": {
         const stats = await createunifiedSearchSystem().getSearchStatistics(data.timeframe);
         return NextResponse.json({
           success: true,
           data: stats,
         });
+      }
 
       default:
         return NextResponse.json(

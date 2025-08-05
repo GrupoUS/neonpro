@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InventoryMetrics = InventoryMetrics;
 /**
@@ -164,7 +161,6 @@ var table_1 = require("@/components/ui/table");
 var inventory_1 = require("@/lib/inventory");
 var use_toast_1 = require("@/hooks/use-toast");
 function InventoryMetrics(_a) {
-  var _this = this;
   var onRefresh = _a.onRefresh,
     className = _a.className;
   var _b = (0, react_1.useState)(null),
@@ -186,14 +182,11 @@ function InventoryMetrics(_a) {
   var stockOutputManager = new inventory_1.StockOutputManager();
   var consumptionAnalyzer = new inventory_1.ConsumptionAnalyzer();
   var fifoManager = new inventory_1.FIFOManager();
-  (0, react_1.useEffect)(
-    function () {
-      loadMetrics();
-    },
-    [filters],
-  );
-  var loadMetrics = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadMetrics();
+  }, [filters]);
+  var loadMetrics = () =>
+    __awaiter(this, void 0, void 0, function () {
       var endDate,
         startDate,
         _a,
@@ -205,7 +198,7 @@ function InventoryMetrics(_a) {
         error_1,
         errorMessage;
       var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
-      return __generator(this, function (_p) {
+      return __generator(this, (_p) => {
         switch (_p.label) {
           case 0:
             _p.trys.push([0, 3, 4, 5]);
@@ -287,21 +280,20 @@ function InventoryMetrics(_a) {
                 ((_g =
                   fifoStatus === null || fifoStatus === void 0
                     ? void 0
-                    : fifoStatus.filter(function (item) {
-                        return (
+                    : fifoStatus.filter(
+                        (item) =>
                           item.status_validade === "proximoVencimento" ||
-                          item.status_validade === "vencido"
-                        );
-                      })) === null || _g === void 0
+                          item.status_validade === "vencido",
+                      )) === null || _g === void 0
                   ? void 0
                   : _g.length) || 0,
               low_stock_alerts:
                 ((_h =
                   fifoStatus === null || fifoStatus === void 0
                     ? void 0
-                    : fifoStatus.filter(function (item) {
-                        return item.quantidade_atual <= (item.estoque_minimo || 0);
-                      })) === null || _h === void 0
+                    : fifoStatus.filter(
+                        (item) => item.quantidade_atual <= (item.estoque_minimo || 0),
+                      )) === null || _h === void 0
                   ? void 0
                   : _h.length) || 0,
               transfer_requests: 0, // Will be calculated separately
@@ -310,7 +302,7 @@ function InventoryMetrics(_a) {
                   ((_j =
                     fifoStatus === null || fifoStatus === void 0
                       ? void 0
-                      : fifoStatus.filter(function (item) {
+                      : fifoStatus.filter((item) => {
                           var daysToExpiry = Math.ceil(
                             (new Date(item.data_validade).getTime() - Date.now()) /
                               (1000 * 60 * 60 * 24),
@@ -323,7 +315,7 @@ function InventoryMetrics(_a) {
                   ((_k =
                     fifoStatus === null || fifoStatus === void 0
                       ? void 0
-                      : fifoStatus.filter(function (item) {
+                      : fifoStatus.filter((item) => {
                           var daysToExpiry = Math.ceil(
                             (new Date(item.data_validade).getTime() - Date.now()) /
                               (1000 * 60 * 60 * 24),
@@ -336,7 +328,7 @@ function InventoryMetrics(_a) {
                   ((_l =
                     fifoStatus === null || fifoStatus === void 0
                       ? void 0
-                      : fifoStatus.filter(function (item) {
+                      : fifoStatus.filter((item) => {
                           var daysToExpiry = Math.ceil(
                             (new Date(item.data_validade).getTime() - Date.now()) /
                               (1000 * 60 * 60 * 24),
@@ -349,9 +341,8 @@ function InventoryMetrics(_a) {
                   ((_m =
                     fifoStatus === null || fifoStatus === void 0
                       ? void 0
-                      : fifoStatus.filter(function (item) {
-                          return new Date(item.data_validade) < new Date();
-                        })) === null || _m === void 0
+                      : fifoStatus.filter((item) => new Date(item.data_validade) < new Date())) ===
+                    null || _m === void 0
                     ? void 0
                     : _m.length) || 0,
               },
@@ -439,17 +430,13 @@ function InventoryMetrics(_a) {
         }
       });
     });
-  };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(1), "%");
-  };
-  var getSeverityColor = function (severity) {
+  var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
+  var getSeverityColor = (severity) => {
     var colors = {
       baixa: "bg-blue-100 text-blue-800",
       media: "bg-yellow-100 text-yellow-800",
@@ -457,12 +444,12 @@ function InventoryMetrics(_a) {
     };
     return colors[severity] || "bg-gray-100 text-gray-800";
   };
-  var getEfficiencyColor = function (score) {
+  var getEfficiencyColor = (score) => {
     if (score >= 90) return "text-green-600";
     if (score >= 70) return "text-yellow-600";
     return "text-red-600";
   };
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     if (!(trend === null || trend === void 0 ? void 0 : trend.variacao_valor))
       return <icons_1.Icons.Minus className="h-4 w-4 text-gray-500" />;
     return trend.variacao_valor >= 0
@@ -480,15 +467,13 @@ function InventoryMetrics(_a) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map(function (i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardContent className="p-6">
-                  <div className="h-20 bg-gray-200 rounded animate-pulse" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {[1, 2, 3, 4].map((i) => (
+            <card_1.Card key={i}>
+              <card_1.CardContent className="p-6">
+                <div className="h-20 bg-gray-200 rounded animate-pulse" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -518,11 +503,9 @@ function InventoryMetrics(_a) {
               <label className="text-sm font-medium">Centro de Custo</label>
               <select_1.Select
                 value={filters.centro_custo}
-                onValueChange={function (value) {
-                  return setFilters(function (prev) {
-                    return __assign(__assign({}, prev), { centro_custo: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFilters((prev) => __assign(__assign({}, prev), { centro_custo: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
@@ -542,11 +525,9 @@ function InventoryMetrics(_a) {
               <label className="text-sm font-medium">Período</label>
               <select_1.Select
                 value={filters.periodo}
-                onValueChange={function (value) {
-                  return setFilters(function (prev) {
-                    return __assign(__assign({}, prev), { periodo: value });
-                  });
-                }}
+                onValueChange={(value) =>
+                  setFilters((prev) => __assign(__assign({}, prev), { periodo: value }))
+                }
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue />
@@ -740,33 +721,29 @@ function InventoryMetrics(_a) {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {metrics.top_consumers.map(function (product, index) {
-                  return (
-                    <table_1.TableRow key={index}>
-                      <table_1.TableCell className="font-medium">
-                        {product.nome_produto}
-                      </table_1.TableCell>
-                      <table_1.TableCell>{product.categoria}</table_1.TableCell>
-                      <table_1.TableCell>{product.quantidade_consumida}</table_1.TableCell>
-                      <table_1.TableCell>
-                        {formatCurrency(product.valor_consumido)}
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <badge_1.Badge variant="outline">
-                          {formatPercentage(product.percentual_consumo_total)}
-                        </badge_1.Badge>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <div className="flex items-center gap-2">
-                          {getTrendIcon(product)}
-                          <span className="text-sm">
-                            {formatPercentage(Math.abs(product.variacao_percentual || 0))}
-                          </span>
-                        </div>
-                      </table_1.TableCell>
-                    </table_1.TableRow>
-                  );
-                })}
+                {metrics.top_consumers.map((product, index) => (
+                  <table_1.TableRow key={index}>
+                    <table_1.TableCell className="font-medium">
+                      {product.nome_produto}
+                    </table_1.TableCell>
+                    <table_1.TableCell>{product.categoria}</table_1.TableCell>
+                    <table_1.TableCell>{product.quantidade_consumida}</table_1.TableCell>
+                    <table_1.TableCell>{formatCurrency(product.valor_consumido)}</table_1.TableCell>
+                    <table_1.TableCell>
+                      <badge_1.Badge variant="outline">
+                        {formatPercentage(product.percentual_consumo_total)}
+                      </badge_1.Badge>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      <div className="flex items-center gap-2">
+                        {getTrendIcon(product)}
+                        <span className="text-sm">
+                          {formatPercentage(Math.abs(product.variacao_percentual || 0))}
+                        </span>
+                      </div>
+                    </table_1.TableCell>
+                  </table_1.TableRow>
+                ))}
               </table_1.TableBody>
             </table_1.Table>
           </card_1.CardContent>
@@ -787,32 +764,30 @@ function InventoryMetrics(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-3">
-              {alerts.map(function (alert) {
-                return (
-                  <div
-                    key={alert.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <icons_1.Icons.AlertCircle className="h-5 w-5 text-orange-500" />
-                      <div>
-                        <p className="font-medium">{alert.title}</p>
-                        <p className="text-sm text-muted-foreground">{alert.message}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <badge_1.Badge className={getSeverityColor(alert.severity)}>
-                        {alert.severity}
-                      </badge_1.Badge>
-                      {alert.threshold_value && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Limite: {alert.threshold_value}
-                        </p>
-                      )}
+              {alerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <icons_1.Icons.AlertCircle className="h-5 w-5 text-orange-500" />
+                    <div>
+                      <p className="font-medium">{alert.title}</p>
+                      <p className="text-sm text-muted-foreground">{alert.message}</p>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="text-right">
+                    <badge_1.Badge className={getSeverityColor(alert.severity)}>
+                      {alert.severity}
+                    </badge_1.Badge>
+                    {alert.threshold_value && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Limite: {alert.threshold_value}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>

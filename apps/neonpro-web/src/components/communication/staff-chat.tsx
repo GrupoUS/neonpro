@@ -1,25 +1,26 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import type { Send, Paperclip, Phone, Video, MoreHorizontal } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type { MoreHorizontal, Paperclip, Phone, Send, Video } from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import type { Input } from "@/components/ui/input";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { Separator } from "@/components/ui/separator";
 import type { useCommunicationRealtime } from "@/hooks/use-communication-realtime";
-import type { Message } from "@/types/communication";
-import type { formatDistanceToNow } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 import type { cn } from "@/lib/utils";
+import type { Message } from "@/types/communication";
 
 export interface StaffChatProps {
   conversationId: string;

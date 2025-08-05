@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // RETENTION STRATEGIES API ENDPOINTS
 // Epic 7.4: Patient Retention Analytics + Predictions
@@ -9,26 +8,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,7 +147,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -222,7 +219,7 @@ function GET(request_1, _a) {
       summary,
       error_1;
     var params = _b.params;
-    return __generator(this, function (_f) {
+    return __generator(this, (_f) => {
       switch (_f.label) {
         case 0:
           _f.trys.push([0, 5, , 6]);
@@ -311,17 +308,15 @@ function GET(request_1, _a) {
           strategies = _f.sent();
           filteredStrategies_1 = strategies;
           if (strategyType_1) {
-            filteredStrategies_1 = filteredStrategies_1.filter(function (s) {
-              return s.strategy_type === strategyType_1;
-            });
+            filteredStrategies_1 = filteredStrategies_1.filter(
+              (s) => s.strategy_type === strategyType_1,
+            );
           }
           if (status_1) {
-            filteredStrategies_1 = filteredStrategies_1.filter(function (s) {
-              return s.status === status_1;
-            });
+            filteredStrategies_1 = filteredStrategies_1.filter((s) => s.status === status_1);
           }
           // Apply sorting
-          filteredStrategies_1.sort(function (a, b) {
+          filteredStrategies_1.sort((a, b) => {
             var valueA, valueB;
             switch (sortBy_1) {
               case "created_at":
@@ -353,29 +348,21 @@ function GET(request_1, _a) {
           paginatedStrategies = filteredStrategies_1.slice(offset, offset + limit);
           summary = {
             total_strategies: filteredStrategies_1.length,
-            active_strategies: filteredStrategies_1.filter(function (s) {
-              return s.is_active;
-            }).length,
+            active_strategies: filteredStrategies_1.filter((s) => s.is_active).length,
             strategy_types: Object.values(retention_analytics_1.RetentionStrategyType).map(
-              function (type) {
-                return {
-                  type: type,
-                  count: filteredStrategies_1.filter(function (s) {
-                    return s.strategy_type === type;
-                  }).length,
-                };
-              },
+              (type) => ({
+                type: type,
+                count: filteredStrategies_1.filter((s) => s.strategy_type === type).length,
+              }),
             ),
             average_success_rate:
-              filteredStrategies_1.reduce(function (sum, s) {
-                return sum + (s.success_rate || 0);
-              }, 0) / filteredStrategies_1.length || 0,
-            total_executions: filteredStrategies_1.reduce(function (sum, s) {
-              return sum + s.execution_count;
-            }, 0),
-            successful_executions: filteredStrategies_1.reduce(function (sum, s) {
-              return sum + s.successful_executions;
-            }, 0),
+              filteredStrategies_1.reduce((sum, s) => sum + (s.success_rate || 0), 0) /
+                filteredStrategies_1.length || 0,
+            total_executions: filteredStrategies_1.reduce((sum, s) => sum + s.execution_count, 0),
+            successful_executions: filteredStrategies_1.reduce(
+              (sum, s) => sum + s.successful_executions,
+              0,
+            ),
           };
           return [
             2 /*return*/,
@@ -443,7 +430,7 @@ function POST(request_1, _a) {
       strategy,
       error_2;
     var params = _b.params;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 6, , 7]);

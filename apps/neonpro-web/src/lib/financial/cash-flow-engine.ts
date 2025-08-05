@@ -12,8 +12,8 @@
  * - Cash flow trend analysis and indicators
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/database.types";
+import type { createClient } from "@/lib/supabase/client";
 
 // Cash Flow Types
 export interface CashFlowData {
@@ -431,7 +431,7 @@ export class CashFlowEngine {
       const dailyChanges = balances.slice(1).map((balance, i) => balance - balances[i]);
       const avgDailyChange = dailyChanges.reduce((sum, val) => sum + val, 0) / dailyChanges.length;
       const variance =
-        dailyChanges.reduce((sum, val) => sum + Math.pow(val - avgDailyChange, 2), 0) /
+        dailyChanges.reduce((sum, val) => sum + (val - avgDailyChange) ** 2, 0) /
         dailyChanges.length;
       const weeklyVolatility = Math.sqrt(variance) * Math.sqrt(7); // Annualized to weekly
 

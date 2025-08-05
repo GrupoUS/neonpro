@@ -1,32 +1,31 @@
 // Session Context Provider
 // Story 1.4: Session Management & Security Implementation
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,10 +145,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -160,7 +157,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionContext = void 0;
 exports.SessionProvider = SessionProvider;
@@ -229,7 +226,6 @@ var SessionContext = (0, react_1.createContext)(undefined);
 exports.SessionContext = SessionContext;
 // Session Provider Component
 function SessionProvider(_a) {
-  var _this = this;
   var _b, _c;
   var children = _a.children,
     customConfig = _a.config,
@@ -254,69 +250,73 @@ function SessionProvider(_a) {
     heartbeatInterval = _f[0],
     setHeartbeatInterval = _f[1];
   // Session methods
-  var createSession = (0, react_1.useCallback)(function (userId, deviceInfo) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var session, device, error_1;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            dispatch({ type: "SET_LOADING", payload: true });
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 4, 5, 6]);
-            return [4 /*yield*/, sessionManager.createSession(userId, deviceInfo)];
-          case 2:
-            session = _a.sent();
-            dispatch({ type: "SET_CURRENT_SESSION", payload: session });
-            return [4 /*yield*/, deviceManager.registerDevice(userId, deviceInfo)];
-          case 3:
-            device = _a.sent();
-            dispatch({ type: "SET_CURRENT_DEVICE", payload: device });
-            // Start monitoring
-            startHeartbeat();
-            connectWebSocket();
-            return [2 /*return*/, session];
-          case 4:
-            error_1 = _a.sent();
-            console.error("Failed to create session:", error_1);
-            throw error_1;
-          case 5:
-            dispatch({ type: "SET_LOADING", payload: false });
-            return [7 /*endfinally*/];
-          case 6:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  var extendSession = (0, react_1.useCallback)(function (sessionId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var extendedSession, error_2;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, sessionManager.extendSession(sessionId)];
-          case 1:
-            extendedSession = _a.sent();
-            dispatch({ type: "SET_CURRENT_SESSION", payload: extendedSession });
-            return [3 /*break*/, 3];
-          case 2:
-            error_2 = _a.sent();
-            console.error("Failed to extend session:", error_2);
-            throw error_2;
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var createSession = (0, react_1.useCallback)(
+    (userId, deviceInfo) =>
+      __awaiter(this, void 0, void 0, function () {
+        var session, device, error_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              dispatch({ type: "SET_LOADING", payload: true });
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 4, 5, 6]);
+              return [4 /*yield*/, sessionManager.createSession(userId, deviceInfo)];
+            case 2:
+              session = _a.sent();
+              dispatch({ type: "SET_CURRENT_SESSION", payload: session });
+              return [4 /*yield*/, deviceManager.registerDevice(userId, deviceInfo)];
+            case 3:
+              device = _a.sent();
+              dispatch({ type: "SET_CURRENT_DEVICE", payload: device });
+              // Start monitoring
+              startHeartbeat();
+              connectWebSocket();
+              return [2 /*return*/, session];
+            case 4:
+              error_1 = _a.sent();
+              console.error("Failed to create session:", error_1);
+              throw error_1;
+            case 5:
+              dispatch({ type: "SET_LOADING", payload: false });
+              return [7 /*endfinally*/];
+            case 6:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  var extendSession = (0, react_1.useCallback)(
+    (sessionId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var extendedSession, error_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, sessionManager.extendSession(sessionId)];
+            case 1:
+              extendedSession = _a.sent();
+              dispatch({ type: "SET_CURRENT_SESSION", payload: extendedSession });
+              return [3 /*break*/, 3];
+            case 2:
+              error_2 = _a.sent();
+              console.error("Failed to extend session:", error_2);
+              throw error_2;
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var terminateSession = (0, react_1.useCallback)(
-    function (sessionId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (sessionId) =>
+      __awaiter(this, void 0, void 0, function () {
         var activeSessions, error_3;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 4, , 5]);
@@ -347,40 +347,41 @@ function SessionProvider(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [(_b = state.currentSession) === null || _b === void 0 ? void 0 : _b.id, userId],
   );
-  var terminateAllSessions = (0, react_1.useCallback)(function (userId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var error_4;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, sessionManager.terminateAllSessions(userId)];
-          case 1:
-            _a.sent();
-            dispatch({ type: "SET_CURRENT_SESSION", payload: null });
-            dispatch({ type: "SET_ACTIVE_SESSIONS", payload: [] });
-            stopHeartbeat();
-            disconnectWebSocket();
-            return [3 /*break*/, 3];
-          case 2:
-            error_4 = _a.sent();
-            console.error("Failed to terminate all sessions:", error_4);
-            throw error_4;
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var terminateAllSessions = (0, react_1.useCallback)(
+    (userId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var error_4;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, sessionManager.terminateAllSessions(userId)];
+            case 1:
+              _a.sent();
+              dispatch({ type: "SET_CURRENT_SESSION", payload: null });
+              dispatch({ type: "SET_ACTIVE_SESSIONS", payload: [] });
+              stopHeartbeat();
+              disconnectWebSocket();
+              return [3 /*break*/, 3];
+            case 2:
+              error_4 = _a.sent();
+              console.error("Failed to terminate all sessions:", error_4);
+              throw error_4;
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var refreshSession = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var session, error_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!state.currentSession) return [2 /*return*/];
@@ -407,16 +408,15 @@ function SessionProvider(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state.currentSession],
   );
   // Security methods
   var reportSecurityEvent = (0, react_1.useCallback)(
-    function (event) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (event) =>
+      __awaiter(this, void 0, void 0, function () {
         var securityEvent, severity, error_6;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -445,18 +445,17 @@ function SessionProvider(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state.securityAlerts],
   );
-  var clearSecurityAlerts = (0, react_1.useCallback)(function () {
+  var clearSecurityAlerts = (0, react_1.useCallback)(() => {
     dispatch({ type: "SET_SECURITY_ALERTS", payload: [] });
   }, []);
   var updateRiskScore = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var riskScore, error_7;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!state.currentSession) return [2 /*return*/];
@@ -482,16 +481,15 @@ function SessionProvider(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [state.currentSession],
   );
   // Device methods
   var registerDevice = (0, react_1.useCallback)(
-    function (deviceInfo) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceInfo) =>
+      __awaiter(this, void 0, void 0, function () {
         var device, devices, error_8;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!userId) throw new Error("User ID is required");
@@ -515,15 +513,14 @@ function SessionProvider(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   var trustDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var devices, error_9;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -546,15 +543,14 @@ function SessionProvider(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   var blockDevice = (0, react_1.useCallback)(
-    function (deviceId) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (deviceId) =>
+      __awaiter(this, void 0, void 0, function () {
         var devices, error_10;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 4, , 5]);
@@ -577,105 +573,89 @@ function SessionProvider(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [userId],
   );
   // Activity methods
-  var updateActivity = (0, react_1.useCallback)(
-    function () {
-      var now = new Date();
-      dispatch({ type: "UPDATE_ACTIVITY", payload: now });
-      // Update session activity if session exists
-      if (state.currentSession) {
-        sessionManager.updateActivity(state.currentSession.id).catch(function (error) {
-          console.error("Failed to update session activity:", error);
-        });
-      }
-    },
-    [state.currentSession],
-  );
-  var startHeartbeat = (0, react_1.useCallback)(
-    function () {
-      if (heartbeatInterval) return;
-      var interval = setInterval(function () {
-        updateActivity();
-      }, state.config.heartbeatInterval);
-      setHeartbeatInterval(interval);
-    },
-    [heartbeatInterval, state.config.heartbeatInterval, updateActivity],
-  );
-  var stopHeartbeat = (0, react_1.useCallback)(
-    function () {
-      if (heartbeatInterval) {
-        clearInterval(heartbeatInterval);
-        setHeartbeatInterval(null);
-      }
-    },
-    [heartbeatInterval],
-  );
+  var updateActivity = (0, react_1.useCallback)(() => {
+    var now = new Date();
+    dispatch({ type: "UPDATE_ACTIVITY", payload: now });
+    // Update session activity if session exists
+    if (state.currentSession) {
+      sessionManager.updateActivity(state.currentSession.id).catch((error) => {
+        console.error("Failed to update session activity:", error);
+      });
+    }
+  }, [state.currentSession]);
+  var startHeartbeat = (0, react_1.useCallback)(() => {
+    if (heartbeatInterval) return;
+    var interval = setInterval(() => {
+      updateActivity();
+    }, state.config.heartbeatInterval);
+    setHeartbeatInterval(interval);
+  }, [heartbeatInterval, state.config.heartbeatInterval, updateActivity]);
+  var stopHeartbeat = (0, react_1.useCallback)(() => {
+    if (heartbeatInterval) {
+      clearInterval(heartbeatInterval);
+      setHeartbeatInterval(null);
+    }
+  }, [heartbeatInterval]);
   // WebSocket methods
-  var connectWebSocket = (0, react_1.useCallback)(
-    function () {
-      if (ws || !state.config.realTime.enabled) return;
-      try {
-        var websocket_1 = new WebSocket(state.config.realTime.websocketUrl);
-        websocket_1.onopen = function () {
-          console.log("WebSocket connected");
-          dispatch({ type: "SET_CONNECTED", payload: true });
-          // Subscribe to session events
-          if (state.currentSession) {
-            websocket_1.send(
-              JSON.stringify({
-                type: "subscribe",
-                sessionId: state.currentSession.id,
-                userId: state.currentSession.user_id,
-              }),
-            );
-          }
-        };
-        websocket_1.onmessage = function (event) {
-          try {
-            var data = JSON.parse(event.data);
-            handleWebSocketEvent(data);
-          } catch (error) {
-            console.error("Failed to parse WebSocket message:", error);
-          }
-        };
-        websocket_1.onclose = function () {
-          console.log("WebSocket disconnected");
-          dispatch({ type: "SET_CONNECTED", payload: false });
-          setWs(null);
-          // Attempt to reconnect after delay
-          setTimeout(function () {
-            if (state.currentSession) {
-              connectWebSocket();
-            }
-          }, 5000);
-        };
-        websocket_1.onerror = function (error) {
-          console.error("WebSocket error:", error);
-        };
-        setWs(websocket_1);
-      } catch (error) {
-        console.error("Failed to connect WebSocket:", error);
-      }
-    },
-    [ws, state.config.realTime, state.currentSession],
-  );
-  var disconnectWebSocket = (0, react_1.useCallback)(
-    function () {
-      if (ws) {
-        ws.close();
-        setWs(null);
+  var connectWebSocket = (0, react_1.useCallback)(() => {
+    if (ws || !state.config.realTime.enabled) return;
+    try {
+      var websocket_1 = new WebSocket(state.config.realTime.websocketUrl);
+      websocket_1.onopen = () => {
+        console.log("WebSocket connected");
+        dispatch({ type: "SET_CONNECTED", payload: true });
+        // Subscribe to session events
+        if (state.currentSession) {
+          websocket_1.send(
+            JSON.stringify({
+              type: "subscribe",
+              sessionId: state.currentSession.id,
+              userId: state.currentSession.user_id,
+            }),
+          );
+        }
+      };
+      websocket_1.onmessage = (event) => {
+        try {
+          var data = JSON.parse(event.data);
+          handleWebSocketEvent(data);
+        } catch (error) {
+          console.error("Failed to parse WebSocket message:", error);
+        }
+      };
+      websocket_1.onclose = () => {
+        console.log("WebSocket disconnected");
         dispatch({ type: "SET_CONNECTED", payload: false });
-      }
-    },
-    [ws],
-  );
+        setWs(null);
+        // Attempt to reconnect after delay
+        setTimeout(() => {
+          if (state.currentSession) {
+            connectWebSocket();
+          }
+        }, 5000);
+      };
+      websocket_1.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+      setWs(websocket_1);
+    } catch (error) {
+      console.error("Failed to connect WebSocket:", error);
+    }
+  }, [ws, state.config.realTime, state.currentSession]);
+  var disconnectWebSocket = (0, react_1.useCallback)(() => {
+    if (ws) {
+      ws.close();
+      setWs(null);
+      dispatch({ type: "SET_CONNECTED", payload: false });
+    }
+  }, [ws]);
   // Handle WebSocket events
   var handleWebSocketEvent = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       var _a, _b;
       switch (event.type) {
         case "session_updated":
@@ -723,72 +703,61 @@ function SessionProvider(_a) {
     [state.currentSession, state.currentDevice, state.securityAlerts, terminateSession],
   );
   // Utility methods
-  var isSessionValid = (0, react_1.useCallback)(
-    function () {
-      if (!state.currentSession) return false;
-      return utils_1.AuthUtils.Session.isSessionValid(state.currentSession);
-    },
-    [state.currentSession],
-  );
-  var getTimeUntilExpiry = (0, react_1.useCallback)(
-    function () {
-      if (!state.currentSession) return 0;
-      return utils_1.AuthUtils.Session.getTimeUntilExpiry(state.currentSession);
-    },
-    [state.currentSession],
-  );
-  var formatSessionDuration = (0, react_1.useCallback)(
-    function () {
-      if (!state.currentSession) return "0s";
-      var duration = utils_1.AuthUtils.Session.getSessionDuration(state.currentSession);
-      return utils_1.AuthUtils.Format.formatDuration(duration);
-    },
-    [state.currentSession],
-  );
+  var isSessionValid = (0, react_1.useCallback)(() => {
+    if (!state.currentSession) return false;
+    return utils_1.AuthUtils.Session.isSessionValid(state.currentSession);
+  }, [state.currentSession]);
+  var getTimeUntilExpiry = (0, react_1.useCallback)(() => {
+    if (!state.currentSession) return 0;
+    return utils_1.AuthUtils.Session.getTimeUntilExpiry(state.currentSession);
+  }, [state.currentSession]);
+  var formatSessionDuration = (0, react_1.useCallback)(() => {
+    if (!state.currentSession) return "0s";
+    var duration = utils_1.AuthUtils.Session.getSessionDuration(state.currentSession);
+    return utils_1.AuthUtils.Format.formatDuration(duration);
+  }, [state.currentSession]);
   // Initialize session data on mount
-  (0, react_1.useEffect)(
-    function () {
-      if (userId && state.currentSession) {
-        // Load active sessions
-        sessionManager
-          .getActiveSessions(userId)
-          .then(function (sessions) {
-            dispatch({ type: "SET_ACTIVE_SESSIONS", payload: sessions });
-          })
-          .catch(function (error) {
-            console.error("Failed to load active sessions:", error);
-          });
-        // Load registered devices
-        deviceManager
-          .getUserDevices(userId)
-          .then(function (devices) {
-            dispatch({ type: "SET_REGISTERED_DEVICES", payload: devices });
-          })
-          .catch(function (error) {
-            console.error("Failed to load registered devices:", error);
-          });
-        // Load security events
-        securityMonitor
-          .getSecurityEvents(userId, { limit: 50 })
-          .then(function (events) {
-            dispatch({ type: "SET_SECURITY_EVENTS", payload: events });
-          })
-          .catch(function (error) {
-            console.error("Failed to load security events:", error);
-          });
-        // Update risk score
-        updateRiskScore();
-      }
-    },
-    [userId, (_c = state.currentSession) === null || _c === void 0 ? void 0 : _c.id],
-  );
+  (0, react_1.useEffect)(() => {
+    if (userId && state.currentSession) {
+      // Load active sessions
+      sessionManager
+        .getActiveSessions(userId)
+        .then((sessions) => {
+          dispatch({ type: "SET_ACTIVE_SESSIONS", payload: sessions });
+        })
+        .catch((error) => {
+          console.error("Failed to load active sessions:", error);
+        });
+      // Load registered devices
+      deviceManager
+        .getUserDevices(userId)
+        .then((devices) => {
+          dispatch({ type: "SET_REGISTERED_DEVICES", payload: devices });
+        })
+        .catch((error) => {
+          console.error("Failed to load registered devices:", error);
+        });
+      // Load security events
+      securityMonitor
+        .getSecurityEvents(userId, { limit: 50 })
+        .then((events) => {
+          dispatch({ type: "SET_SECURITY_EVENTS", payload: events });
+        })
+        .catch((error) => {
+          console.error("Failed to load security events:", error);
+        });
+      // Update risk score
+      updateRiskScore();
+    }
+  }, [userId, (_c = state.currentSession) === null || _c === void 0 ? void 0 : _c.id]);
   // Cleanup on unmount
-  (0, react_1.useEffect)(function () {
-    return function () {
+  (0, react_1.useEffect)(
+    () => () => {
       stopHeartbeat();
       disconnectWebSocket();
-    };
-  }, []);
+    },
+    [],
+  );
   // Context value
   var contextValue = __assign(__assign({}, state), {
     createSession: createSession,

@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { personalDataSchema, medicalInfoSchema, consentSchema } from "./medical";
+import type { consentSchema, medicalInfoSchema, personalDataSchema } from "./medical";
 
 // Schema completo para paciente
 export const patientSchema = z.object({

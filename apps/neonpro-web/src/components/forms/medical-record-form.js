@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MedicalRecordForm = MedicalRecordForm;
 var react_1 = require("react");
@@ -149,7 +146,6 @@ var form_1 = require("@/components/ui/form");
 var schemas_1 = require("@/lib/healthcare/schemas");
 var sonner_1 = require("sonner");
 function MedicalRecordForm(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     appointmentId = _a.appointmentId,
     patientName = _a.patientName,
@@ -187,10 +183,10 @@ function MedicalRecordForm(_a) {
     medicationFields = _d.fields,
     addMedication = _d.append,
     removeMedication = _d.remove;
-  var handleSubmitForm = function (data) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmitForm = (data) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -214,18 +210,17 @@ function MedicalRecordForm(_a) {
         }
       });
     });
-  };
-  var nextSection = function () {
+  var nextSection = () => {
     if (currentSection < totalSections) {
       setCurrentSection(currentSection + 1);
     }
   };
-  var prevSection = function () {
+  var prevSection = () => {
     if (currentSection > 1) {
       setCurrentSection(currentSection - 1);
     }
   };
-  var addNewMedication = function () {
+  var addNewMedication = () => {
     addMedication({
       medication_name: "",
       dosage: "",
@@ -252,16 +247,14 @@ function MedicalRecordForm(_a) {
 
         {/* Progress indicator */}
         <div className="flex items-center gap-2">
-          {Array.from({ length: totalSections }, function (_, i) {
-            return (
-              <div
-                key={i}
-                className={"flex-1 h-2 rounded-full transition-colors ".concat(
-                  i + 1 <= currentSection ? "bg-primary" : "bg-muted",
-                )}
-              />
-            );
-          })}
+          {Array.from({ length: totalSections }, (_, i) => (
+            <div
+              key={i}
+              className={"flex-1 h-2 rounded-full transition-colors ".concat(
+                i + 1 <= currentSection ? "bg-primary" : "bg-muted",
+              )}
+            />
+          ))}
         </div>
         <div className="text-sm text-muted-foreground text-center">
           Seção {currentSection} de {totalSections}
@@ -295,7 +288,7 @@ function MedicalRecordForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="chief_complaint"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -319,7 +312,7 @@ function MedicalRecordForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="diagnosis"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -358,7 +351,7 @@ function MedicalRecordForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="treatment_plan"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -388,7 +381,7 @@ function MedicalRecordForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="vital_signs.blood_pressure"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -409,7 +402,7 @@ function MedicalRecordForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="vital_signs.weight"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -420,11 +413,11 @@ function MedicalRecordForm(_a) {
                                 step="0.1"
                                 placeholder="70.5"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(
+                                onChange={(e) =>
+                                  field.onChange(
                                     e.target.value ? parseFloat(e.target.value) : undefined,
-                                  );
-                                }}
+                                  )
+                                }
                                 className="bg-background"
                               />
                             </form_1.FormControl>
@@ -437,7 +430,7 @@ function MedicalRecordForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="vital_signs.height"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -448,11 +441,11 @@ function MedicalRecordForm(_a) {
                                 step="0.1"
                                 placeholder="170"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(
+                                onChange={(e) =>
+                                  field.onChange(
                                     e.target.value ? parseFloat(e.target.value) : undefined,
-                                  );
-                                }}
+                                  )
+                                }
                                 className="bg-background"
                               />
                             </form_1.FormControl>
@@ -465,7 +458,7 @@ function MedicalRecordForm(_a) {
                     <form_1.FormField
                       control={form.control}
                       name="vital_signs.temperature"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -476,11 +469,11 @@ function MedicalRecordForm(_a) {
                                 step="0.1"
                                 placeholder="36.5"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(
+                                onChange={(e) =>
+                                  field.onChange(
                                     e.target.value ? parseFloat(e.target.value) : undefined,
-                                  );
-                                }}
+                                  )
+                                }
                                 className="bg-background"
                               />
                             </form_1.FormControl>
@@ -537,124 +530,35 @@ function MedicalRecordForm(_a) {
                     </div>
                   )}
 
-                  {medicationFields.map(function (field, index) {
-                    return (
-                      <card_1.Card key={field.id} className="p-4 bg-muted/30">
-                        <div className="flex items-center justify-between mb-4">
-                          <h5 className="font-medium">Medicamento {index + 1}</h5>
-                          <button_1.Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={function () {
-                              return removeMedication(index);
-                            }}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <lucide_react_1.Trash2 className="w-4 h-4" />
-                          </button_1.Button>
-                        </div>
+                  {medicationFields.map((field, index) => (
+                    <card_1.Card key={field.id} className="p-4 bg-muted/30">
+                      <div className="flex items-center justify-between mb-4">
+                        <h5 className="font-medium">Medicamento {index + 1}</h5>
+                        <button_1.Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => removeMedication(index)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <lucide_react_1.Trash2 className="w-4 h-4" />
+                        </button_1.Button>
+                      </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <form_1.FormField
-                            control={form.control}
-                            name={"medications_prescribed.".concat(index, ".medication_name")}
-                            render={function (_a) {
-                              var field = _a.field;
-                              return (
-                                <form_1.FormItem>
-                                  <form_1.FormLabel>Nome do Medicamento *</form_1.FormLabel>
-                                  <form_1.FormControl>
-                                    <input_1.Input
-                                      placeholder="Ex: Dipirona"
-                                      {...field}
-                                      className="bg-background"
-                                    />
-                                  </form_1.FormControl>
-                                  <form_1.FormMessage />
-                                </form_1.FormItem>
-                              );
-                            }}
-                          />
-
-                          <form_1.FormField
-                            control={form.control}
-                            name={"medications_prescribed.".concat(index, ".dosage")}
-                            render={function (_a) {
-                              var field = _a.field;
-                              return (
-                                <form_1.FormItem>
-                                  <form_1.FormLabel>Dosagem *</form_1.FormLabel>
-                                  <form_1.FormControl>
-                                    <input_1.Input
-                                      placeholder="Ex: 500mg"
-                                      {...field}
-                                      className="bg-background"
-                                    />
-                                  </form_1.FormControl>
-                                  <form_1.FormMessage />
-                                </form_1.FormItem>
-                              );
-                            }}
-                          />
-
-                          <form_1.FormField
-                            control={form.control}
-                            name={"medications_prescribed.".concat(index, ".frequency")}
-                            render={function (_a) {
-                              var field = _a.field;
-                              return (
-                                <form_1.FormItem>
-                                  <form_1.FormLabel>Frequência *</form_1.FormLabel>
-                                  <form_1.FormControl>
-                                    <input_1.Input
-                                      placeholder="Ex: 8/8 horas"
-                                      {...field}
-                                      className="bg-background"
-                                    />
-                                  </form_1.FormControl>
-                                  <form_1.FormMessage />
-                                </form_1.FormItem>
-                              );
-                            }}
-                          />
-
-                          <form_1.FormField
-                            control={form.control}
-                            name={"medications_prescribed.".concat(index, ".duration")}
-                            render={function (_a) {
-                              var field = _a.field;
-                              return (
-                                <form_1.FormItem>
-                                  <form_1.FormLabel>Duração *</form_1.FormLabel>
-                                  <form_1.FormControl>
-                                    <input_1.Input
-                                      placeholder="Ex: 7 dias"
-                                      {...field}
-                                      className="bg-background"
-                                    />
-                                  </form_1.FormControl>
-                                  <form_1.FormMessage />
-                                </form_1.FormItem>
-                              );
-                            }}
-                          />
-                        </div>
-
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <form_1.FormField
                           control={form.control}
-                          name={"medications_prescribed.".concat(index, ".instructions")}
-                          render={function (_a) {
+                          name={"medications_prescribed.".concat(index, ".medication_name")}
+                          render={(_a) => {
                             var field = _a.field;
                             return (
-                              <form_1.FormItem className="mt-4">
-                                <form_1.FormLabel>Instruções de Uso *</form_1.FormLabel>
+                              <form_1.FormItem>
+                                <form_1.FormLabel>Nome do Medicamento *</form_1.FormLabel>
                                 <form_1.FormControl>
-                                  <textarea_1.Textarea
-                                    placeholder="Instruções detalhadas para o paciente..."
+                                  <input_1.Input
+                                    placeholder="Ex: Dipirona"
                                     {...field}
                                     className="bg-background"
-                                    rows={2}
                                   />
                                 </form_1.FormControl>
                                 <form_1.FormMessage />
@@ -662,9 +566,94 @@ function MedicalRecordForm(_a) {
                             );
                           }}
                         />
-                      </card_1.Card>
-                    );
-                  })}
+
+                        <form_1.FormField
+                          control={form.control}
+                          name={"medications_prescribed.".concat(index, ".dosage")}
+                          render={(_a) => {
+                            var field = _a.field;
+                            return (
+                              <form_1.FormItem>
+                                <form_1.FormLabel>Dosagem *</form_1.FormLabel>
+                                <form_1.FormControl>
+                                  <input_1.Input
+                                    placeholder="Ex: 500mg"
+                                    {...field}
+                                    className="bg-background"
+                                  />
+                                </form_1.FormControl>
+                                <form_1.FormMessage />
+                              </form_1.FormItem>
+                            );
+                          }}
+                        />
+
+                        <form_1.FormField
+                          control={form.control}
+                          name={"medications_prescribed.".concat(index, ".frequency")}
+                          render={(_a) => {
+                            var field = _a.field;
+                            return (
+                              <form_1.FormItem>
+                                <form_1.FormLabel>Frequência *</form_1.FormLabel>
+                                <form_1.FormControl>
+                                  <input_1.Input
+                                    placeholder="Ex: 8/8 horas"
+                                    {...field}
+                                    className="bg-background"
+                                  />
+                                </form_1.FormControl>
+                                <form_1.FormMessage />
+                              </form_1.FormItem>
+                            );
+                          }}
+                        />
+
+                        <form_1.FormField
+                          control={form.control}
+                          name={"medications_prescribed.".concat(index, ".duration")}
+                          render={(_a) => {
+                            var field = _a.field;
+                            return (
+                              <form_1.FormItem>
+                                <form_1.FormLabel>Duração *</form_1.FormLabel>
+                                <form_1.FormControl>
+                                  <input_1.Input
+                                    placeholder="Ex: 7 dias"
+                                    {...field}
+                                    className="bg-background"
+                                  />
+                                </form_1.FormControl>
+                                <form_1.FormMessage />
+                              </form_1.FormItem>
+                            );
+                          }}
+                        />
+                      </div>
+
+                      <form_1.FormField
+                        control={form.control}
+                        name={"medications_prescribed.".concat(index, ".instructions")}
+                        render={(_a) => {
+                          var field = _a.field;
+                          return (
+                            <form_1.FormItem className="mt-4">
+                              <form_1.FormLabel>Instruções de Uso *</form_1.FormLabel>
+                              <form_1.FormControl>
+                                <textarea_1.Textarea
+                                  placeholder="Instruções detalhadas para o paciente..."
+                                  {...field}
+                                  className="bg-background"
+                                  rows={2}
+                                />
+                              </form_1.FormControl>
+                              <form_1.FormMessage />
+                            </form_1.FormItem>
+                          );
+                        }}
+                      />
+                    </card_1.Card>
+                  ))}
                 </div>
 
                 <div className="flex justify-between">
@@ -690,7 +679,7 @@ function MedicalRecordForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="follow_up_date"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -702,7 +691,7 @@ function MedicalRecordForm(_a) {
                             value={
                               field.value ? (0, date_fns_1.format)(field.value, "yyyy-MM-dd") : ""
                             }
-                            onChange={function (e) {
+                            onChange={(e) => {
                               var date = e.target.value ? new Date(e.target.value) : undefined;
                               field.onChange(date);
                             }}
@@ -721,7 +710,7 @@ function MedicalRecordForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="follow_up_instructions"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>
@@ -745,7 +734,7 @@ function MedicalRecordForm(_a) {
                 <form_1.FormField
                   control={form.control}
                   name="notes"
-                  render={function (_a) {
+                  render={(_a) => {
                     var field = _a.field;
                     return (
                       <form_1.FormItem>

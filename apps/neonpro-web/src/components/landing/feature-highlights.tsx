@@ -1,23 +1,23 @@
 // components/landing/feature-highlights.tsx
 "use client";
 
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
 import type {
-  ShieldCheck,
-  Zap,
+  Award,
   Brain,
-  FileCheck,
-  Users,
-  TrendingUp,
   Clock,
+  Database,
+  FileCheck,
   Heart,
   Shield,
-  Award,
-  Database,
+  ShieldCheck,
   Smartphone,
+  TrendingUp,
+  Users,
+  Zap,
 } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Separator } from "@/components/ui/separator";
 
 export function FeatureHighlights() {
   const complianceFeatures = [

@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,23 +142,21 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionStorage = exports.SessionUtils = void 0;
 /**
  * Session utility functions
  */
-var SessionUtils = /** @class */ (function () {
+var SessionUtils = /** @class */ (() => {
   function SessionUtils() {}
   /**
    * Generate a secure session token
    */
-  SessionUtils.generateSessionToken = function () {
+  SessionUtils.generateSessionToken = () => {
     var array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(array, function (byte) {
-      return byte.toString(16).padStart(2, "0");
-    }).join("");
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join("");
   };
   /**
    * Generate device fingerprint
@@ -190,7 +185,7 @@ var SessionUtils = /** @class */ (function () {
   SessionUtils.hashString = function (str) {
     return __awaiter(this, void 0, void 0, function () {
       var encoder, data, hashBuffer, hashArray;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             encoder = new TextEncoder();
@@ -199,14 +194,7 @@ var SessionUtils = /** @class */ (function () {
           case 1:
             hashBuffer = _a.sent();
             hashArray = Array.from(new Uint8Array(hashBuffer));
-            return [
-              2 /*return*/,
-              hashArray
-                .map(function (b) {
-                  return b.toString(16).padStart(2, "0");
-                })
-                .join(""),
-            ];
+            return [2 /*return*/, hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")];
         }
       });
     });
@@ -214,7 +202,7 @@ var SessionUtils = /** @class */ (function () {
   /**
    * Synchronous hash for immediate use
    */
-  SessionUtils.hashString = function (str) {
+  SessionUtils.hashString = (str) => {
     var hash = 0;
     if (str.length === 0) return hash.toString();
     for (var i = 0; i < str.length; i++) {
@@ -227,7 +215,7 @@ var SessionUtils = /** @class */ (function () {
   /**
    * Detect device type from user agent
    */
-  SessionUtils.detectDeviceType = function (userAgent) {
+  SessionUtils.detectDeviceType = (userAgent) => {
     var ua = userAgent.toLowerCase();
     if (/mobile|android|iphone|ipod|blackberry|windows phone/.test(ua)) {
       return "MOBILE";
@@ -240,7 +228,7 @@ var SessionUtils = /** @class */ (function () {
   /**
    * Get device name from user agent
    */
-  SessionUtils.getDeviceName = function (userAgent) {
+  SessionUtils.getDeviceName = (userAgent) => {
     var ua = userAgent.toLowerCase();
     // Mobile devices
     if (ua.includes("iphone")) return "iPhone";
@@ -263,19 +251,15 @@ var SessionUtils = /** @class */ (function () {
   /**
    * Validate session token format
    */
-  SessionUtils.isValidSessionToken = function (token) {
-    return /^[a-f0-9]{64}$/.test(token);
-  };
+  SessionUtils.isValidSessionToken = (token) => /^[a-f0-9]{64}$/.test(token);
   /**
    * Check if session is expired
    */
-  SessionUtils.isSessionExpired = function (expiresAt) {
-    return new Date(expiresAt) <= new Date();
-  };
+  SessionUtils.isSessionExpired = (expiresAt) => new Date(expiresAt) <= new Date();
   /**
    * Calculate session duration in minutes
    */
-  SessionUtils.calculateSessionDuration = function (startTime, endTime) {
+  SessionUtils.calculateSessionDuration = (startTime, endTime) => {
     var start = new Date(startTime);
     var end = endTime ? new Date(endTime) : new Date();
     return Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
@@ -283,7 +267,7 @@ var SessionUtils = /** @class */ (function () {
   /**
    * Format session duration for display
    */
-  SessionUtils.formatDuration = function (minutes) {
+  SessionUtils.formatDuration = (minutes) => {
     if (minutes < 60) {
       return "".concat(minutes, "m");
     }
@@ -306,7 +290,7 @@ var SessionUtils = /** @class */ (function () {
   SessionUtils.getClientIP = function () {
     return __awaiter(this, void 0, void 0, function () {
       var response, data, _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -329,7 +313,7 @@ var SessionUtils = /** @class */ (function () {
   /**
    * Check if two IP addresses are from the same network
    */
-  SessionUtils.isSameNetwork = function (ip1, ip2) {
+  SessionUtils.isSameNetwork = (ip1, ip2) => {
     // Simple check for same /24 subnet
     var parts1 = ip1.split(".");
     var parts2 = ip2.split(".");
@@ -344,12 +328,12 @@ var SessionUtils = /** @class */ (function () {
   SessionUtils.calculateSecurityScore = function (session, events) {
     var score = 100;
     // Deduct points for security events
-    var recentEvents = events.filter(function (event) {
+    var recentEvents = events.filter((event) => {
       var eventTime = new Date(event.timestamp);
       var oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
       return eventTime > oneDayAgo;
     });
-    recentEvents.forEach(function (event) {
+    recentEvents.forEach((event) => {
       switch (event.severity) {
         case "CRITICAL":
           score -= 30;
@@ -380,13 +364,13 @@ var SessionUtils = /** @class */ (function () {
   /**
    * Sanitize user input for security events
    */
-  SessionUtils.sanitizeInput = function (input) {
+  SessionUtils.sanitizeInput = (input) => {
     return input.replace(/[<>"'&]/g, "").substring(0, 1000); // Limit length
   };
   /**
    * Check if user agent indicates a bot
    */
-  SessionUtils.isBotUserAgent = function (userAgent) {
+  SessionUtils.isBotUserAgent = (userAgent) => {
     var botPatterns = [
       /bot/i,
       /crawler/i,
@@ -398,14 +382,12 @@ var SessionUtils = /** @class */ (function () {
       /java/i,
       /go-http-client/i,
     ];
-    return botPatterns.some(function (pattern) {
-      return pattern.test(userAgent);
-    });
+    return botPatterns.some((pattern) => pattern.test(userAgent));
   };
   /**
    * Generate session policy based on user role and security level
    */
-  SessionUtils.generateSessionPolicy = function (userRole, securityLevel) {
+  SessionUtils.generateSessionPolicy = (userRole, securityLevel) => {
     if (securityLevel === void 0) {
       securityLevel = "MEDIUM";
     }
@@ -446,7 +428,7 @@ var SessionUtils = /** @class */ (function () {
   SessionUtils.encryptData = function (data, key) {
     return __awaiter(this, void 0, void 0, function () {
       var encoder, keyData, iv, encrypted, combined;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             encoder = new TextEncoder();
@@ -483,7 +465,7 @@ var SessionUtils = /** @class */ (function () {
   SessionUtils.decryptData = function (encryptedData, key) {
     return __awaiter(this, void 0, void 0, function () {
       var decoder, encoder, combined, iv, encrypted, keyData, decrypted;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             decoder = new TextDecoder();
@@ -491,9 +473,7 @@ var SessionUtils = /** @class */ (function () {
             combined = new Uint8Array(
               atob(encryptedData)
                 .split("")
-                .map(function (char) {
-                  return char.charCodeAt(0);
-                }),
+                .map((char) => char.charCodeAt(0)),
             );
             iv = combined.slice(0, 12);
             encrypted = combined.slice(12);
@@ -523,7 +503,7 @@ var SessionUtils = /** @class */ (function () {
   /**
    * Validate session configuration
    */
-  SessionUtils.validateSessionConfig = function (config) {
+  SessionUtils.validateSessionConfig = (config) => {
     if (config.max_session_duration && config.max_session_duration < 5) {
       return false; // Minimum 5 minutes
     }
@@ -542,7 +522,7 @@ exports.SessionUtils = SessionUtils;
 /**
  * Session storage utilities for client-side
  */
-var SessionStorage = /** @class */ (function () {
+var SessionStorage = /** @class */ (() => {
   function SessionStorage() {}
   /**
    * Store session data in localStorage

@@ -1,9 +1,9 @@
 // Comprehensive Error Handling System with LGPD Compliance
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
-import type { createClient } from "@/lib/supabase/client";
+import type { useCallback, useEffect, useState } from "react";
 import type { useToast } from "@/hooks/use-toast";
+import type { createClient } from "@/lib/supabase/client";
 
 // LGPD-compliant error types that don't expose sensitive data
 export type ErrorCategory =

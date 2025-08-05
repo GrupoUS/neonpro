@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // EQUIPMENT MAINTENANCE VALIDATION SCHEMAS
 // Epic 6 - Story 6.4: Zod validation schemas for equipment maintenance
@@ -255,7 +254,7 @@ exports.createMaintenanceScheduleSchema = zod_1.z
       .default([]),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Validate frequency type requirements
       if (data.frequency_type === "fixed_interval" && !data.frequency_days) {
         return false;
@@ -463,7 +462,7 @@ exports.createUsageLogSchema = zod_1.z
     anomalies_detected: zod_1.z.record(zod_1.z.any()).optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // If session_end is provided, it should be after session_start
       if (data.session_end && data.session_start) {
         return new Date(data.session_end) > new Date(data.session_start);
@@ -568,7 +567,7 @@ exports.createVendorServiceContractSchema = zod_1.z
     terms_and_conditions_url: zod_1.z.string().url("URL dos termos deve ser válida").optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // End date should be after start date
       return new Date(data.end_date) > new Date(data.start_date);
     },
@@ -702,38 +701,22 @@ exports.analyticsQuerySchema = zod_1.z
     equipment_types: zod_1.z.array(exports.equipmentTypeSchema).optional(),
     departments: zod_1.z.array(zod_1.z.string()).optional(),
   })
-  .refine(
-    function (data) {
-      return new Date(data.period_end) > new Date(data.period_start);
-    },
-    {
-      message: "Data de fim deve ser posterior à data de início",
-    },
-  );
+  .refine((data) => new Date(data.period_end) > new Date(data.period_start), {
+    message: "Data de fim deve ser posterior à data de início",
+  });
 // =====================================================================================
 // EXPORT VALIDATION FUNCTIONS
 // =====================================================================================
-var validateEquipmentCreation = function (data) {
-  return exports.createEquipmentSchema.parse(data);
-};
+var validateEquipmentCreation = (data) => exports.createEquipmentSchema.parse(data);
 exports.validateEquipmentCreation = validateEquipmentCreation;
-var validateEquipmentUpdate = function (data) {
-  return exports.updateEquipmentSchema.parse(data);
-};
+var validateEquipmentUpdate = (data) => exports.updateEquipmentSchema.parse(data);
 exports.validateEquipmentUpdate = validateEquipmentUpdate;
-var validateMaintenanceScheduleCreation = function (data) {
-  return exports.createMaintenanceScheduleSchema.parse(data);
-};
+var validateMaintenanceScheduleCreation = (data) =>
+  exports.createMaintenanceScheduleSchema.parse(data);
 exports.validateMaintenanceScheduleCreation = validateMaintenanceScheduleCreation;
-var validateWorkOrderCreation = function (data) {
-  return exports.createWorkOrderSchema.parse(data);
-};
+var validateWorkOrderCreation = (data) => exports.createWorkOrderSchema.parse(data);
 exports.validateWorkOrderCreation = validateWorkOrderCreation;
-var validateUsageLogCreation = function (data) {
-  return exports.createUsageLogSchema.parse(data);
-};
+var validateUsageLogCreation = (data) => exports.createUsageLogSchema.parse(data);
 exports.validateUsageLogCreation = validateUsageLogCreation;
-var validateComplianceRecordCreation = function (data) {
-  return exports.createComplianceRecordSchema.parse(data);
-};
+var validateComplianceRecordCreation = (data) => exports.createComplianceRecordSchema.parse(data);
 exports.validateComplianceRecordCreation = validateComplianceRecordCreation;

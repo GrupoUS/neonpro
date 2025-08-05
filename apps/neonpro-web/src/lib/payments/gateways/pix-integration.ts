@@ -3,8 +3,8 @@
  * Implements PIX payment processing with QR code generation and real-time status tracking
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import crypto from "crypto";
+import type { createClient } from "@/lib/supabase/client";
 
 // PIX Payment Types
 export interface PixPaymentData {

@@ -2,7 +2,7 @@
 // Testing NFE generation, emission, and management functionality
 // Author: VoidBeast V6.0 Master Orchestrator
 
-import { describe, it, expect, beforeAll, afterAll, jest } from "@jest/globals";
+import { afterAll, beforeAll, describe, expect, it, jest } from "@jest/globals";
 import { NextRequest } from "next/server";
 
 // Mock Supabase client for NFE operations
@@ -125,10 +125,10 @@ jest.mock("@/app/utils/supabase/server", () => ({
 
 // Import NFE API handlers
 import {
+  DELETE as nfeDELETE,
   GET as nfeGET,
   POST as nfePOST,
   PUT as nfePUT,
-  DELETE as nfeDELETE,
 } from "@/app/api/tax/nfe/route";
 
 describe("NFE API - Story 5.5 AC1: Automated NFSe Generation and Submission", () => {

@@ -1,17 +1,16 @@
-"use strict";
 // 🧪 **Revenue Optimization API Route Tests**
 // Comprehensive test suite for revenue optimization endpoints
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -21,7 +20,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -50,8 +49,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -72,9 +69,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -133,48 +130,42 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
 // Mock Supabase FIRST
-globals_1.jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: globals_1.jest.fn(),
-  };
-});
+globals_1.jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: globals_1.jest.fn(),
+}));
 // Mock revenue optimization engine with proper ES module pattern
-globals_1.jest.mock("@/lib/financial/revenue-optimization-engine", function () {
-  return {
-    RevenueOptimizationEngine: globals_1.jest.fn().mockImplementation(function () {
-      return {
-        optimizePricing: globals_1.jest.fn(),
-        optimizeServiceMix: globals_1.jest.fn(),
-        enhanceCLV: globals_1.jest.fn(),
-        generateAutomatedRecommendations: globals_1.jest.fn(),
-        performCompetitiveAnalysis: globals_1.jest.fn(),
-        trackROI: globals_1.jest.fn(),
-      };
-    }),
-    revenueOptimizationEngine: {
-      optimizePricing: globals_1.jest.fn(),
-      optimizeServiceMix: globals_1.jest.fn(),
-      enhanceCLV: globals_1.jest.fn(),
-      generateAutomatedRecommendations: globals_1.jest.fn(),
-      performCompetitiveAnalysis: globals_1.jest.fn(),
-      trackROI: globals_1.jest.fn(),
-    },
-  };
-});
+globals_1.jest.mock("@/lib/financial/revenue-optimization-engine", () => ({
+  RevenueOptimizationEngine: globals_1.jest.fn().mockImplementation(() => ({
+    optimizePricing: globals_1.jest.fn(),
+    optimizeServiceMix: globals_1.jest.fn(),
+    enhanceCLV: globals_1.jest.fn(),
+    generateAutomatedRecommendations: globals_1.jest.fn(),
+    performCompetitiveAnalysis: globals_1.jest.fn(),
+    trackROI: globals_1.jest.fn(),
+  })),
+  revenueOptimizationEngine: {
+    optimizePricing: globals_1.jest.fn(),
+    optimizeServiceMix: globals_1.jest.fn(),
+    enhanceCLV: globals_1.jest.fn(),
+    generateAutomatedRecommendations: globals_1.jest.fn(),
+    performCompetitiveAnalysis: globals_1.jest.fn(),
+    trackROI: globals_1.jest.fn(),
+  },
+}));
 // Import AFTER mocks are defined
 var route_1 = require("@/app/api/revenue-optimization/route");
 var server_2 = require("@/app/utils/supabase/server");
-(0, globals_1.describe)("Revenue Optimization API", function () {
+(0, globals_1.describe)("Revenue Optimization API", () => {
   var mockSupabaseClient;
   var validUserId = "550e8400-e29b-41d4-a716-446655440001";
   var validClinicId = "550e8400-e29b-41d4-a716-446655440002";
   var validOptId = "550e8400-e29b-41d4-a716-446655440003";
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     globals_1.jest.clearAllMocks();
     // Import mocked engine using require pattern
     var revenueOptimizationEngine =
@@ -188,87 +179,61 @@ var server_2 = require("@/app/utils/supabase/server");
         }),
       },
       from: globals_1.jest.fn().mockReturnValue({
-        select: globals_1.jest.fn(function () {
-          return {
-            eq: globals_1.jest.fn(function () {
-              return {
-                eq: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        single: globals_1.jest.fn(function () {
-                          return Promise.resolve({
-                            data: { clinic_id: validClinicId },
-                            error: null,
-                          });
-                        }),
-                      };
-                    }),
-                  };
-                }),
-              };
-            }),
-          };
-        }),
-        insert: globals_1.jest.fn(function () {
-          return {
-            select: globals_1.jest.fn(function () {
-              return {
-                single: globals_1.jest.fn(function () {
-                  return Promise.resolve({
-                    data: { id: validOptId, title: "Test Optimization" },
+        select: globals_1.jest.fn(() => ({
+          eq: globals_1.jest.fn(() => ({
+            eq: globals_1.jest.fn(() => ({
+              eq: globals_1.jest.fn(() => ({
+                single: globals_1.jest.fn(() =>
+                  Promise.resolve({
+                    data: { clinic_id: validClinicId },
                     error: null,
-                  });
-                }),
-              };
-            }),
-          };
-        }),
-        update: globals_1.jest.fn(function () {
-          return {
-            eq: globals_1.jest.fn(function () {
-              return {
-                eq: globals_1.jest.fn(function () {
-                  return {
-                    select: globals_1.jest.fn(function () {
-                      return {
-                        single: globals_1.jest.fn(function () {
-                          return Promise.resolve({
-                            data: { id: validOptId, title: "Updated Title" },
-                            error: null,
-                          });
-                        }),
-                      };
-                    }),
-                  };
-                }),
-              };
-            }),
-          };
-        }),
-        delete: globals_1.jest.fn(function () {
-          return {
-            eq: globals_1.jest.fn(function () {
-              return {
-                eq: globals_1.jest.fn(function () {
-                  return Promise.resolve({
-                    error: null,
-                  });
-                }),
-              };
-            }),
-          };
-        }),
-        order: globals_1.jest.fn(function () {
-          return {
-            limit: globals_1.jest.fn(function () {
-              return Promise.resolve({
-                data: [],
+                  }),
+                ),
+              })),
+            })),
+          })),
+        })),
+        insert: globals_1.jest.fn(() => ({
+          select: globals_1.jest.fn(() => ({
+            single: globals_1.jest.fn(() =>
+              Promise.resolve({
+                data: { id: validOptId, title: "Test Optimization" },
                 error: null,
-              });
+              }),
+            ),
+          })),
+        })),
+        update: globals_1.jest.fn(() => ({
+          eq: globals_1.jest.fn(() => ({
+            eq: globals_1.jest.fn(() => ({
+              select: globals_1.jest.fn(() => ({
+                single: globals_1.jest.fn(() =>
+                  Promise.resolve({
+                    data: { id: validOptId, title: "Updated Title" },
+                    error: null,
+                  }),
+                ),
+              })),
+            })),
+          })),
+        })),
+        delete: globals_1.jest.fn(() => ({
+          eq: globals_1.jest.fn(() => ({
+            eq: globals_1.jest.fn(() =>
+              Promise.resolve({
+                error: null,
+              }),
+            ),
+          })),
+        })),
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(() =>
+            Promise.resolve({
+              data: [],
+              error: null,
             }),
-          };
-        }),
+          ),
+        })),
       }),
     };
     // createClient returns a Promise that resolves to the client
@@ -311,11 +276,11 @@ var server_2 = require("@/app/utils/supabase/server");
       metrics: { investment: 1000, returns: 1150 },
     });
   });
-  (0, globals_1.describe)("🔥 GET /api/revenue-optimization", function () {
-    (0, globals_1.test)("should return comprehensive revenue optimization overview", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("🔥 GET /api/revenue-optimization", () => {
+    (0, globals_1.test)("should return comprehensive revenue optimization overview", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, errorData, data, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -323,7 +288,7 @@ var server_2 = require("@/app/utils/supabase/server");
               );
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 6, , 7]);
+              _a.trys.push([1, 6, undefined, 7]);
               return [4 /*yield*/, (0, route_1.GET)(request)];
             case 2:
               response = _a.sent();
@@ -353,34 +318,26 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should validate clinic access", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should validate clinic access", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.from.mockReturnValueOnce({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return {
-                            eq: globals_1.jest.fn(function () {
-                              return {
-                                single: globals_1.jest.fn(function () {
-                                  return Promise.resolve({ data: null, error: null });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() => ({
+                      eq: globals_1.jest.fn(() => ({
+                        single: globals_1.jest.fn(() =>
+                          Promise.resolve({ data: null, error: null }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               request = new server_1.NextRequest(
                 "http://localhost:3000/api/revenue-optimization?clinicId=".concat(validClinicId),
@@ -392,12 +349,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should require clinic ID", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should require clinic ID", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost:3000/api/revenue-optimization");
@@ -408,12 +365,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle authentication errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle authentication errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.auth.getUser.mockResolvedValueOnce({
@@ -430,12 +387,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should call all optimization engines", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should call all optimization engines", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var revenueOptimizationEngine, request;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               revenueOptimizationEngine =
@@ -470,12 +427,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle engine errors gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle engine errors gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var revenueOptimizationEngine, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               revenueOptimizationEngine =
@@ -493,14 +450,14 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("🔥 POST /api/revenue-optimization", function () {
-    (0, globals_1.test)("should create pricing optimization", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("🔥 POST /api/revenue-optimization", () => {
+    (0, globals_1.test)("should create pricing optimization", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -524,12 +481,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should create service mix optimization", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should create service mix optimization", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -549,12 +506,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should create CLV optimization", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should create CLV optimization", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -578,12 +535,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should create automated recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should create automated recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -605,12 +562,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should create competitive analysis", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should create competitive analysis", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -632,12 +589,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should create ROI tracking", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should create ROI tracking", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -658,12 +615,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should validate required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should validate required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -681,12 +638,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should reject invalid optimization type", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should reject invalid optimization type", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -705,55 +662,43 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle Supabase insert errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle Supabase insert errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock professional verification (success)
               mockSupabaseClient.from.mockReturnValueOnce({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return {
-                            eq: globals_1.jest.fn(function () {
-                              return {
-                                single: globals_1.jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: { clinic_id: validClinicId },
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() => ({
+                      eq: globals_1.jest.fn(() => ({
+                        single: globals_1.jest.fn(() =>
+                          Promise.resolve({
+                            data: { clinic_id: validClinicId },
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               // Mock optimization insert (error)
               mockSupabaseClient.from.mockReturnValueOnce({
-                insert: globals_1.jest.fn(function () {
-                  return {
-                    select: globals_1.jest.fn(function () {
-                      return {
-                        single: globals_1.jest.fn(function () {
-                          return Promise.resolve({
-                            data: null,
-                            error: { message: "Insert failed", code: "INSERT_ERROR" },
-                          });
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                insert: globals_1.jest.fn(() => ({
+                  select: globals_1.jest.fn(() => ({
+                    single: globals_1.jest.fn(() =>
+                      Promise.resolve({
+                        data: null,
+                        error: { message: "Insert failed", code: "INSERT_ERROR" },
+                      }),
+                    ),
+                  })),
+                })),
               });
               requestBody = {
                 optimizationType: "pricing",
@@ -771,14 +716,14 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("🔥 PUT /api/revenue-optimization", function () {
-    (0, globals_1.test)("should update optimization successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("🔥 PUT /api/revenue-optimization", () => {
+    (0, globals_1.test)("should update optimization successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -798,12 +743,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should validate required fields for update", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should validate required fields for update", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -822,63 +767,47 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle update errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle update errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock professional verification (success)
               mockSupabaseClient.from.mockReturnValueOnce({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return {
-                            eq: globals_1.jest.fn(function () {
-                              return {
-                                single: globals_1.jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: { clinic_id: validClinicId },
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() => ({
+                      eq: globals_1.jest.fn(() => ({
+                        single: globals_1.jest.fn(() =>
+                          Promise.resolve({
+                            data: { clinic_id: validClinicId },
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               // Mock optimization update (error)
               mockSupabaseClient.from.mockReturnValueOnce({
-                update: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return {
-                            select: globals_1.jest.fn(function () {
-                              return {
-                                single: globals_1.jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: null,
-                                    error: { message: "Update failed", code: "UPDATE_ERROR" },
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                update: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() => ({
+                      select: globals_1.jest.fn(() => ({
+                        single: globals_1.jest.fn(() =>
+                          Promise.resolve({
+                            data: null,
+                            error: { message: "Update failed", code: "UPDATE_ERROR" },
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               requestBody = {
                 id: validOptId,
@@ -896,14 +825,14 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("🔥 DELETE /api/revenue-optimization", function () {
-    (0, globals_1.test)("should delete optimization successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("🔥 DELETE /api/revenue-optimization", () => {
+    (0, globals_1.test)("should delete optimization successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -919,12 +848,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should validate required parameters for delete", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should validate required parameters for delete", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -941,54 +870,42 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle delete errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle delete errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock professional verification (success)
               mockSupabaseClient.from.mockReturnValueOnce({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return {
-                            eq: globals_1.jest.fn(function () {
-                              return {
-                                single: globals_1.jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: { clinic_id: validClinicId },
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() => ({
+                      eq: globals_1.jest.fn(() => ({
+                        single: globals_1.jest.fn(() =>
+                          Promise.resolve({
+                            data: { clinic_id: validClinicId },
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               // Mock optimization delete (error)
               mockSupabaseClient.from.mockReturnValueOnce({
-                delete: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return Promise.resolve({
-                            error: { message: "Delete failed", code: "DELETE_ERROR" },
-                          });
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                delete: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() =>
+                      Promise.resolve({
+                        error: { message: "Delete failed", code: "DELETE_ERROR" },
+                      }),
+                    ),
+                  })),
+                })),
               });
               request = new server_1.NextRequest(
                 "http://localhost:3000/api/revenue-optimization?id=opt-1&clinicId=clinic-123",
@@ -1003,14 +920,14 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("🔥 Authorization and Security", function () {
-    (0, globals_1.test)("should require authentication for all endpoints", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("🔥 Authorization and Security", () => {
+    (0, globals_1.test)("should require authentication for all endpoints", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var getRequest, postRequest, getResponse, postResponse;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.auth.getUser.mockResolvedValue({
@@ -1038,12 +955,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should verify clinic access for all endpoints", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should verify clinic access for all endpoints", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock authenticated user but without access to the specific clinic
@@ -1053,25 +970,17 @@ var server_2 = require("@/app/utils/supabase/server");
               });
               // Mock professional verification (no access - returns null)
               mockSupabaseClient.from.mockReturnValueOnce({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return {
-                            eq: globals_1.jest.fn(function () {
-                              return {
-                                single: globals_1.jest.fn(function () {
-                                  return Promise.resolve({ data: null, error: null });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() => ({
+                      eq: globals_1.jest.fn(() => ({
+                        single: globals_1.jest.fn(() =>
+                          Promise.resolve({ data: null, error: null }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               request = new server_1.NextRequest(
                 "http://localhost:3000/api/revenue-optimization?clinicId=unauthorized-clinic",
@@ -1083,14 +992,14 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("🔥 Performance and Error Handling", function () {
-    (0, globals_1.test)("should handle concurrent optimization requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("🔥 Performance and Error Handling", () => {
+    (0, globals_1.test)("should handle concurrent optimization requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requests, responses;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock authenticated user for concurrent requests
@@ -1100,56 +1009,45 @@ var server_2 = require("@/app/utils/supabase/server");
               });
               // Mock professional verification (success for all)
               mockSupabaseClient.from.mockReturnValue({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return {
-                            eq: globals_1.jest.fn(function () {
-                              return {
-                                single: globals_1.jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: { clinic_id: validClinicId },
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() => ({
+                      eq: globals_1.jest.fn(() => ({
+                        single: globals_1.jest.fn(() =>
+                          Promise.resolve({
+                            data: { clinic_id: validClinicId },
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
-              requests = Array.from({ length: 5 }, function (_, i) {
-                return new server_1.NextRequest(
-                  "http://localhost:3000/api/revenue-optimization?clinicId=".concat(validClinicId),
-                );
-              });
-              return [
-                4 /*yield*/,
-                Promise.all(
-                  requests.map(function (req) {
-                    return (0, route_1.GET)(req);
-                  }),
-                ),
-              ];
+              requests = Array.from(
+                { length: 5 },
+                (_, _i) =>
+                  new server_1.NextRequest(
+                    "http://localhost:3000/api/revenue-optimization?clinicId=".concat(
+                      validClinicId,
+                    ),
+                  ),
+              );
+              return [4 /*yield*/, Promise.all(requests.map((req) => (0, route_1.GET)(req)))];
             case 1:
               responses = _a.sent();
-              responses.forEach(function (response) {
+              responses.forEach((response) => {
                 (0, globals_1.expect)(response.status).toBe(200);
               });
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should handle malformed JSON in POST requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should handle malformed JSON in POST requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock authenticated user
@@ -1168,12 +1066,12 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.test)("should timeout gracefully on slow operations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.test)("should timeout gracefully on slow operations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, timeoutPromise, error_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock authenticated user
@@ -1183,40 +1081,30 @@ var server_2 = require("@/app/utils/supabase/server");
               });
               // Mock professional verification (success)
               mockSupabaseClient.from.mockReturnValueOnce({
-                select: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        eq: globals_1.jest.fn(function () {
-                          return {
-                            eq: globals_1.jest.fn(function () {
-                              return {
-                                single: globals_1.jest.fn(function () {
-                                  return Promise.resolve({
-                                    data: { clinic_id: validClinicId },
-                                    error: null,
-                                  });
-                                }),
-                              };
-                            }),
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
+                select: globals_1.jest.fn(() => ({
+                  eq: globals_1.jest.fn(() => ({
+                    eq: globals_1.jest.fn(() => ({
+                      eq: globals_1.jest.fn(() => ({
+                        single: globals_1.jest.fn(() =>
+                          Promise.resolve({
+                            data: { clinic_id: validClinicId },
+                            error: null,
+                          }),
+                        ),
+                      })),
+                    })),
+                  })),
+                })),
               });
               request = new server_1.NextRequest(
                 "http://localhost:3000/api/revenue-optimization?clinicId=".concat(validClinicId),
               );
-              timeoutPromise = new Promise(function (_, reject) {
-                return setTimeout(function () {
-                  return reject(new Error("Test timeout"));
-                }, 1000);
-              });
+              timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Test timeout")), 1000),
+              );
               _a.label = 1;
             case 1:
-              _a.trys.push([1, 3, , 4]);
+              _a.trys.push([1, 3, undefined, 4]);
               return [4 /*yield*/, Promise.race([(0, route_1.GET)(request), timeoutPromise])];
             case 2:
               _a.sent();
@@ -1229,7 +1117,7 @@ var server_2 = require("@/app/utils/supabase/server");
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

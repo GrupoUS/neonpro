@@ -1,7 +1,7 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { pixIntegration, PixPaymentData } from "@/lib/payments/gateways/pix-integration";
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
+import type { PixPaymentData, pixIntegration } from "@/lib/payments/gateways/pix-integration";
+import type { createClient } from "@/lib/supabase/server";
 
 // Validation schema for PIX payment creation
 const pixPaymentSchema = z.object({

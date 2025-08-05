@@ -11,16 +11,7 @@
  * - Security and validation helpers
  */
 
-import type { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import type {
-  EventUtils,
-  WebhookUtils,
-  RateLimitUtils,
-  RetryUtils,
-  ValidationUtils,
-  MonitoringUtils,
-} from "../utils";
-import type { BaseEvent, WebhookEndpoint, EventType, EventPriority, RetryStrategy } from "../types";
+import type { BaseEvent, EventPriority, EventType, RetryStrategy, WebhookEndpoint } from "../types";
 
 // Mock crypto for consistent results
 vi.mock("crypto", () => ({
@@ -205,7 +196,7 @@ describe("EventUtils", () => {
       };
 
       // Mock different hash for different data
-      const mockCreateHash = vi.mocked(require("crypto").createHash);
+      const mockCreateHash = vi.mocked(require("node:crypto").createHash);
       mockCreateHash
         .mockReturnValueOnce({
           update: vi.fn().mockReturnThis(),
@@ -241,7 +232,7 @@ describe("WebhookUtils", () => {
       const secret = "webhook-secret";
 
       // Mock different signatures
-      const mockCreateHmac = vi.mocked(require("crypto").createHmac);
+      const mockCreateHmac = vi.mocked(require("node:crypto").createHmac);
       mockCreateHmac
         .mockReturnValueOnce({
           update: vi.fn().mockReturnThis(),
@@ -276,7 +267,7 @@ describe("WebhookUtils", () => {
       const signature = "invalid-signature";
 
       // Mock timingSafeEqual to return false
-      const mockTimingSafeEqual = vi.mocked(require("crypto").timingSafeEqual);
+      const mockTimingSafeEqual = vi.mocked(require("node:crypto").timingSafeEqual);
       mockTimingSafeEqual.mockReturnValueOnce(false);
 
       const isValid = WebhookUtils.verifySignature(payload, signature, secret);
@@ -290,7 +281,7 @@ describe("WebhookUtils", () => {
       const signature = "malformed-signature";
 
       // Mock error in verification
-      const mockTimingSafeEqual = vi.mocked(require("crypto").timingSafeEqual);
+      const mockTimingSafeEqual = vi.mocked(require("node:crypto").timingSafeEqual);
       mockTimingSafeEqual.mockImplementationOnce(() => {
         throw new Error("Invalid signature format");
       });

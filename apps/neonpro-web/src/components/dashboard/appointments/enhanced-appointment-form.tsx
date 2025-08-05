@@ -5,25 +5,6 @@
 // Story 1.2: Client-side conflict prevention integration
 // =============================================
 
-import type { AlternativeSlot } from "@/app/lib/types/conflict-prevention";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { withErrorBoundary } from "@/components/ui/error-boundary";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Textarea } from "@/components/ui/textarea";
-import type { useConflictPrevention } from "@/hooks/appointments/use-conflict-prevention";
-import type { useAlternativeSlots } from "@/hooks/appointments/use-alternative-slots";
-import AlternativeSlotsDisplay from "@/components/dashboard/appointments/alternative-slots-display";
 import type { zodResolver } from "@hookform/resolvers/zod";
 import type { addMinutes, format, parseISO } from "date-fns";
 import type { ptBR } from "date-fns/locale";
@@ -41,6 +22,25 @@ import type { useEffect, useState } from "react";
 import type { Controller, useForm } from "react-hook-form";
 import type { toast } from "sonner";
 import type { z } from "zod";
+import type { AlternativeSlot } from "@/app/lib/types/conflict-prevention";
+import AlternativeSlotsDisplay from "@/components/dashboard/appointments/alternative-slots-display";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { withErrorBoundary } from "@/components/ui/error-boundary";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Textarea } from "@/components/ui/textarea";
+import type { useAlternativeSlots } from "@/hooks/appointments/use-alternative-slots";
+import type { useConflictPrevention } from "@/hooks/appointments/use-conflict-prevention";
 
 // Form validation schema
 const appointmentFormSchema = z.object({

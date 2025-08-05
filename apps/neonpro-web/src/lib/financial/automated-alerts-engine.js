@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Automated Financial Alerts Engine
  * Story 4.2: Financial Analytics & Business Intelligence
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,13 +155,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AutomatedAlertsEngine = void 0;
 var client_1 = require("@/lib/supabase/client");
 var communication_1 = require("@/lib/communication");
 var cash_flow_engine_1 = require("./cash-flow-engine");
-var AutomatedAlertsEngine = /** @class */ (function () {
+var AutomatedAlertsEngine = /** @class */ (() => {
   function AutomatedAlertsEngine() {
     this.supabase = (0, client_1.createClient)();
     this.communicationService = new communication_1.CommunicationService();
@@ -680,9 +677,7 @@ var AutomatedAlertsEngine = /** @class */ (function () {
             alert.metadata.recommended_actions.length > 0
               ? "\n            <h3>Recommended Actions:</h3>\n            <ul>\n              ".concat(
                   alert.metadata.recommended_actions
-                    .map(function (action) {
-                      return "<li>".concat(action, "</li>");
-                    })
+                    .map((action) => "<li>".concat(action, "</li>"))
                     .join(""),
                   "\n            </ul>\n          ",
                 )
@@ -707,7 +702,7 @@ var AutomatedAlertsEngine = /** @class */ (function () {
   /**
    * Get severity emoji
    */
-  AutomatedAlertsEngine.prototype.getSeverityEmoji = function (severity) {
+  AutomatedAlertsEngine.prototype.getSeverityEmoji = (severity) => {
     switch (severity) {
       case "info":
         return "ℹ️";
@@ -820,7 +815,7 @@ var AutomatedAlertsEngine = /** @class */ (function () {
    */
   AutomatedAlertsEngine.prototype.isFrequencyLimitExceeded = function (clinicId, rule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for frequency limit checking
         return [2 /*return*/, false]; // Simplified for now
       });
@@ -852,31 +847,31 @@ var AutomatedAlertsEngine = /** @class */ (function () {
   };
   AutomatedAlertsEngine.prototype.evaluateConditions = function (conditions, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified condition evaluation
         return [2 /*return*/, { met: true, values: data, threshold: 0, current: 0 }];
       });
     });
   };
-  AutomatedAlertsEngine.prototype.generateAlertTitle = function (alertType, values) {
+  AutomatedAlertsEngine.prototype.generateAlertTitle = (alertType, values) => {
     // Generate appropriate alert titles
     return "Financial Alert: ".concat(alertType.replace("_", " ").toUpperCase());
   };
-  AutomatedAlertsEngine.prototype.generateAlertMessage = function (rule, values) {
+  AutomatedAlertsEngine.prototype.generateAlertMessage = (rule, values) => {
     // Generate detailed alert messages
     return "Alert triggered for rule: ".concat(rule.name);
   };
-  AutomatedAlertsEngine.prototype.getRecommendedActions = function (alertType, values) {
+  AutomatedAlertsEngine.prototype.getRecommendedActions = (alertType, values) => {
     // Return recommended actions based on alert type
     return ["Review financial position", "Contact financial advisor"];
   };
-  AutomatedAlertsEngine.prototype.detectCashFlowAnomalies = function (data) {
+  AutomatedAlertsEngine.prototype.detectCashFlowAnomalies = (data) => {
     // Implement anomaly detection algorithm
     return [];
   };
   AutomatedAlertsEngine.prototype.checkDuplicateAlert = function (alert) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Check for duplicate alerts
         return [2 /*return*/, false];
       });
@@ -884,7 +879,7 @@ var AutomatedAlertsEngine = /** @class */ (function () {
   };
   AutomatedAlertsEngine.prototype.getAlertRecipients = function (clinicId, recipients) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Get recipient details from database
         return [2 /*return*/, []];
       });
@@ -892,14 +887,12 @@ var AutomatedAlertsEngine = /** @class */ (function () {
   };
   AutomatedAlertsEngine.prototype.scheduleEscalation = function (alert, escalationRule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   AutomatedAlertsEngine.prototype.startRealTimeMonitoring = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Start real-time monitoring processes
         console.log("Real-time monitoring started for clinic: ".concat(clinicId));
         return [2 /*return*/];

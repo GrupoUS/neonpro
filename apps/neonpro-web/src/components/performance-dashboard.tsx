@@ -1,11 +1,5 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
   Activity,
   AlertTriangle,
@@ -19,8 +13,15 @@ import type {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import type { usePerformanceMonitor } from "@/utils/performance-monitor";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Progress } from "@/components/ui/progress";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { cn } from "@/lib/utils";
+import type { usePerformanceMonitor } from "@/utils/performance-monitor";
 
 // =====================================================================================
 // PERFORMANCE DASHBOARD

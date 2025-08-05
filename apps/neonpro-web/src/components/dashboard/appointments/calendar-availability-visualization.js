@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalendarAvailabilityVisualization = CalendarAvailabilityVisualization;
 // =============================================
@@ -163,7 +160,6 @@ var locale_1 = require("date-fns/locale");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function CalendarAvailabilityVisualization(_a) {
-  var _this = this;
   var professionalId = _a.professionalId,
     clinicId = _a.clinicId,
     _b = _a.selectedDate,
@@ -187,48 +183,42 @@ function CalendarAvailabilityVisualization(_a) {
     hoveredSlot = _h[0],
     setHoveredSlot = _h[1];
   // Calculate date range based on view
-  var dateRange = (0, react_1.useMemo)(
-    function () {
-      switch (view) {
-        case "day":
-          return {
-            start: (0, date_fns_1.startOfDay)(selectedDate),
-            end: (0, date_fns_1.endOfDay)(selectedDate),
-          };
-        case "week":
-          return {
-            start: (0, date_fns_1.startOfWeek)(selectedDate, { weekStartsOn: 1 }), // Monday
-            end: (0, date_fns_1.endOfWeek)(selectedDate, { weekStartsOn: 1 }),
-          };
-        case "month":
-          return {
-            start: (0, date_fns_1.startOfWeek)(
-              (0, date_fns_1.startOfDay)(
-                new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
-              ),
+  var dateRange = (0, react_1.useMemo)(() => {
+    switch (view) {
+      case "day":
+        return {
+          start: (0, date_fns_1.startOfDay)(selectedDate),
+          end: (0, date_fns_1.endOfDay)(selectedDate),
+        };
+      case "week":
+        return {
+          start: (0, date_fns_1.startOfWeek)(selectedDate, { weekStartsOn: 1 }), // Monday
+          end: (0, date_fns_1.endOfWeek)(selectedDate, { weekStartsOn: 1 }),
+        };
+      case "month":
+        return {
+          start: (0, date_fns_1.startOfWeek)(
+            (0, date_fns_1.startOfDay)(
+              new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
             ),
-            end: (0, date_fns_1.endOfWeek)(
-              (0, date_fns_1.endOfDay)(
-                new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0),
-              ),
+          ),
+          end: (0, date_fns_1.endOfWeek)(
+            (0, date_fns_1.endOfDay)(
+              new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0),
             ),
-          };
-      }
-    },
-    [selectedDate, view],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      if (professionalId && clinicId) {
-        loadAvailabilityData();
-      }
-    },
-    [professionalId, clinicId, dateRange.start, dateRange.end, serviceTypeId],
-  );
-  var loadAvailabilityData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+          ),
+        };
+    }
+  }, [selectedDate, view]);
+  (0, react_1.useEffect)(() => {
+    if (professionalId && clinicId) {
+      loadAvailabilityData();
+    }
+  }, [professionalId, clinicId, dateRange.start, dateRange.end, serviceTypeId]);
+  var loadAvailabilityData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
@@ -272,23 +262,18 @@ function CalendarAvailabilityVisualization(_a) {
         }
       });
     });
-  };
-  var getAvailabilityLevel = function (slot) {
+  var getAvailabilityLevel = (slot) => {
     if (!slot.available) return "blocked";
-    var hasErrors = slot.conflicts.some(function (c) {
-      return c.severity === "error";
-    });
+    var hasErrors = slot.conflicts.some((c) => c.severity === "error");
     if (hasErrors) return "blocked";
-    var hasWarnings = slot.conflicts.some(function (c) {
-      return c.severity === "warning";
-    });
+    var hasWarnings = slot.conflicts.some((c) => c.severity === "warning");
     if (hasWarnings) return "low";
     var capacityRatio = slot.capacity.used / slot.capacity.maximum;
     if (capacityRatio >= 0.8) return "low";
     if (capacityRatio >= 0.5) return "medium";
     return "high";
   };
-  var getAvailabilityColor = function (level) {
+  var getAvailabilityColor = (level) => {
     switch (level) {
       case "high":
         return "bg-green-200 hover:bg-green-300 border-green-300";
@@ -302,7 +287,7 @@ function CalendarAvailabilityVisualization(_a) {
         return "bg-gray-100 hover:bg-gray-200 border-gray-200";
     }
   };
-  var getAvailabilityIcon = function (level) {
+  var getAvailabilityIcon = (level) => {
     switch (level) {
       case "high":
         return <lucide_react_1.CheckCircle className="h-3 w-3 text-green-600" />;
@@ -316,7 +301,7 @@ function CalendarAvailabilityVisualization(_a) {
         return <div className="h-3 w-3 bg-gray-400 rounded-full" />;
     }
   };
-  var getSlotTooltipContent = function (slot) {
+  var getSlotTooltipContent = (slot) => {
     var level = getAvailabilityLevel(slot);
     var time = (0, date_fns_1.format)((0, date_fns_1.parseISO)(slot.time), "HH:mm");
     var content = "".concat(time, "\n");
@@ -334,25 +319,13 @@ function CalendarAvailabilityVisualization(_a) {
           .concat(slot.capacity.used, "/")
           .concat(slot.capacity.maximum, ")");
         if (slot.conflicts.length > 0) {
-          content +=
-            "\nAvisos: " +
-            slot.conflicts
-              .map(function (c) {
-                return c.message;
-              })
-              .join(", ");
+          content += "\nAvisos: " + slot.conflicts.map((c) => c.message).join(", ");
         }
         break;
       case "blocked":
         content += "Indisponível";
         if (slot.conflicts.length > 0) {
-          content +=
-            "\nMotivo: " +
-            slot.conflicts
-              .map(function (c) {
-                return c.message;
-              })
-              .join(", ");
+          content += "\nMotivo: " + slot.conflicts.map((c) => c.message).join(", ");
         }
         break;
       case "none":
@@ -361,7 +334,7 @@ function CalendarAvailabilityVisualization(_a) {
     }
     return content;
   };
-  var getDaySummary = function (day) {
+  var getDaySummary = (day) => {
     var availablePercent = Math.round(
       (day.summary.available_slots / day.summary.total_slots) * 100,
     );
@@ -372,10 +345,10 @@ function CalendarAvailabilityVisualization(_a) {
     else level = "blocked";
     return { percent: availablePercent, level: level };
   };
-  var renderDayView = function () {
-    var dayData = availability.find(function (d) {
-      return (0, date_fns_1.isSameDay)((0, date_fns_1.parseISO)(d.date), selectedDate);
-    });
+  var renderDayView = () => {
+    var dayData = availability.find((d) =>
+      (0, date_fns_1.isSameDay)((0, date_fns_1.parseISO)(d.date), selectedDate),
+    );
     if (!dayData) return null;
     return (
       <div className="space-y-2">
@@ -389,7 +362,7 @@ function CalendarAvailabilityVisualization(_a) {
         </div>
 
         <div className="grid grid-cols-12 gap-1">
-          {dayData.slots.map(function (slot, index) {
+          {dayData.slots.map((slot, index) => {
             var level = getAvailabilityLevel(slot);
             return (
               <tooltip_1.TooltipProvider key={index}>
@@ -400,17 +373,11 @@ function CalendarAvailabilityVisualization(_a) {
                         "h-8 rounded border cursor-pointer transition-all",
                         getAvailabilityColor(level),
                       )}
-                      onClick={function () {
-                        return onSlotClick === null || onSlotClick === void 0
-                          ? void 0
-                          : onSlotClick(slot);
-                      }}
-                      onMouseEnter={function () {
-                        return setHoveredSlot(slot);
-                      }}
-                      onMouseLeave={function () {
-                        return setHoveredSlot(null);
-                      }}
+                      onClick={() =>
+                        onSlotClick === null || onSlotClick === void 0 ? void 0 : onSlotClick(slot)
+                      }
+                      onMouseEnter={() => setHoveredSlot(slot)}
+                      onMouseLeave={() => setHoveredSlot(null)}
                     >
                       <div className="flex items-center justify-center h-full">
                         {showDetails && getAvailabilityIcon(level)}
@@ -429,27 +396,23 @@ function CalendarAvailabilityVisualization(_a) {
         {/* Time labels */}
         <div className="grid grid-cols-12 gap-1 text-xs text-muted-foreground">
           {dayData.slots
-            .filter(function (_, i) {
-              return i % 2 === 0;
-            })
-            .map(function (slot, index) {
-              return (
-                <div key={index} className="col-span-2 text-center">
-                  {(0, date_fns_1.format)((0, date_fns_1.parseISO)(slot.time), "HH:mm")}
-                </div>
-              );
-            })}
+            .filter((_, i) => i % 2 === 0)
+            .map((slot, index) => (
+              <div key={index} className="col-span-2 text-center">
+                {(0, date_fns_1.format)((0, date_fns_1.parseISO)(slot.time), "HH:mm")}
+              </div>
+            ))}
         </div>
       </div>
     );
   };
-  var renderWeekView = function () {
+  var renderWeekView = () => {
     var weekDays = [];
-    var _loop_1 = function (i) {
+    var _loop_1 = (i) => {
       var day = (0, date_fns_1.addDays)(dateRange.start, i);
-      var dayData = availability.find(function (d) {
-        return (0, date_fns_1.isSameDay)((0, date_fns_1.parseISO)(d.date), day);
-      });
+      var dayData = availability.find((d) =>
+        (0, date_fns_1.isSameDay)((0, date_fns_1.parseISO)(d.date), day),
+      );
       weekDays.push({ date: day, data: dayData });
     };
     for (var i = 0; i < 7; i++) {
@@ -458,7 +421,7 @@ function CalendarAvailabilityVisualization(_a) {
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-7 gap-2">
-          {weekDays.map(function (_a, dayIndex) {
+          {weekDays.map((_a, dayIndex) => {
             var date = _a.date,
               data = _a.data;
             var summary = data ? getDaySummary(data) : { percent: 0, level: "none" };
@@ -478,7 +441,7 @@ function CalendarAvailabilityVisualization(_a) {
 
                 {showHeatMap && data && (
                   <div className="space-y-1">
-                    {data.slots.map(function (slot, slotIndex) {
+                    {data.slots.map((slot, slotIndex) => {
                       var level = getAvailabilityLevel(slot);
                       return (
                         <tooltip_1.TooltipProvider key={slotIndex}>
@@ -489,11 +452,11 @@ function CalendarAvailabilityVisualization(_a) {
                                   "h-4 rounded border cursor-pointer transition-all",
                                   getAvailabilityColor(level),
                                 )}
-                                onClick={function () {
-                                  return onSlotClick === null || onSlotClick === void 0
+                                onClick={() =>
+                                  onSlotClick === null || onSlotClick === void 0
                                     ? void 0
-                                    : onSlotClick(slot);
-                                }}
+                                    : onSlotClick(slot)
+                                }
                               />
                             </tooltip_1.TooltipTrigger>
                             <tooltip_1.TooltipContent>
@@ -514,14 +477,14 @@ function CalendarAvailabilityVisualization(_a) {
       </div>
     );
   };
-  var renderMonthView = function () {
+  var renderMonthView = () => {
     // Group days by week
     var weeks = [];
     var currentWeek = [];
-    var _loop_2 = function (day) {
-      var dayData = availability.find(function (d) {
-        return (0, date_fns_1.isSameDay)((0, date_fns_1.parseISO)(d.date), day);
-      });
+    var _loop_2 = (day) => {
+      var dayData = availability.find((d) =>
+        (0, date_fns_1.isSameDay)((0, date_fns_1.parseISO)(d.date), day),
+      );
       currentWeek.push({ date: new Date(day), data: dayData });
       if (currentWeek.length === 7) {
         weeks.push(currentWeek);
@@ -540,74 +503,70 @@ function CalendarAvailabilityVisualization(_a) {
     }
     return (
       <div className="space-y-2">
-        {weeks.map(function (week, weekIndex) {
-          return (
-            <div key={weekIndex} className="grid grid-cols-7 gap-1">
-              {week.map(function (_a, dayIndex) {
-                var date = _a.date,
-                  data = _a.data;
-                var summary = data ? getDaySummary(data) : { percent: 0, level: "none" };
-                var isCurrentMonth = date.getMonth() === selectedDate.getMonth();
-                return (
-                  <tooltip_1.TooltipProvider key={dayIndex}>
-                    <tooltip_1.Tooltip>
-                      <tooltip_1.TooltipTrigger asChild>
-                        <div
-                          className={(0, utils_1.cn)(
-                            "h-12 rounded border flex flex-col items-center justify-center cursor-pointer transition-all",
-                            getAvailabilityColor(summary.level),
-                            !isCurrentMonth && "opacity-50",
-                          )}
-                        >
-                          <div className="text-xs font-medium">
-                            {(0, date_fns_1.format)(date, "d")}
-                          </div>
-                          {showDetails && <div className="text-xs">{summary.percent}%</div>}
+        {weeks.map((week, weekIndex) => (
+          <div key={weekIndex} className="grid grid-cols-7 gap-1">
+            {week.map((_a, dayIndex) => {
+              var date = _a.date,
+                data = _a.data;
+              var summary = data ? getDaySummary(data) : { percent: 0, level: "none" };
+              var isCurrentMonth = date.getMonth() === selectedDate.getMonth();
+              return (
+                <tooltip_1.TooltipProvider key={dayIndex}>
+                  <tooltip_1.Tooltip>
+                    <tooltip_1.TooltipTrigger asChild>
+                      <div
+                        className={(0, utils_1.cn)(
+                          "h-12 rounded border flex flex-col items-center justify-center cursor-pointer transition-all",
+                          getAvailabilityColor(summary.level),
+                          !isCurrentMonth && "opacity-50",
+                        )}
+                      >
+                        <div className="text-xs font-medium">
+                          {(0, date_fns_1.format)(date, "d")}
                         </div>
-                      </tooltip_1.TooltipTrigger>
-                      <tooltip_1.TooltipContent>
-                        <div className="text-xs">
-                          {(0, date_fns_1.format)(date, "dd/MM/yyyy", { locale: locale_1.ptBR })}
-                          <br />
-                          {data
-                            ? ""
-                                .concat(data.summary.available_slots, "/")
-                                .concat(data.summary.total_slots, " slots dispon\u00EDveis")
-                            : "Sem dados"}
-                        </div>
-                      </tooltip_1.TooltipContent>
-                    </tooltip_1.Tooltip>
-                  </tooltip_1.TooltipProvider>
-                );
-              })}
-            </div>
-          );
-        })}
+                        {showDetails && <div className="text-xs">{summary.percent}%</div>}
+                      </div>
+                    </tooltip_1.TooltipTrigger>
+                    <tooltip_1.TooltipContent>
+                      <div className="text-xs">
+                        {(0, date_fns_1.format)(date, "dd/MM/yyyy", { locale: locale_1.ptBR })}
+                        <br />
+                        {data
+                          ? ""
+                              .concat(data.summary.available_slots, "/")
+                              .concat(data.summary.total_slots, " slots dispon\u00EDveis")
+                          : "Sem dados"}
+                      </div>
+                    </tooltip_1.TooltipContent>
+                  </tooltip_1.Tooltip>
+                </tooltip_1.TooltipProvider>
+              );
+            })}
+          </div>
+        ))}
       </div>
     );
   };
-  var renderLegend = function () {
-    return (
-      <div className="flex items-center gap-4 text-xs">
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-green-200 rounded border" />
-          <span>Alta disponibilidade</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-yellow-200 rounded border" />
-          <span>Média disponibilidade</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-orange-200 rounded border" />
-          <span>Baixa disponibilidade</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-red-200 rounded border" />
-          <span>Indisponível</span>
-        </div>
+  var renderLegend = () => (
+    <div className="flex items-center gap-4 text-xs">
+      <div className="flex items-center gap-1">
+        <div className="w-3 h-3 bg-green-200 rounded border" />
+        <span>Alta disponibilidade</span>
       </div>
-    );
-  };
+      <div className="flex items-center gap-1">
+        <div className="w-3 h-3 bg-yellow-200 rounded border" />
+        <span>Média disponibilidade</span>
+      </div>
+      <div className="flex items-center gap-1">
+        <div className="w-3 h-3 bg-orange-200 rounded border" />
+        <span>Baixa disponibilidade</span>
+      </div>
+      <div className="flex items-center gap-1">
+        <div className="w-3 h-3 bg-red-200 rounded border" />
+        <span>Indisponível</span>
+      </div>
+    </div>
+  );
   if (isLoading) {
     return (
       <card_1.Card className="p-6">
@@ -628,13 +587,7 @@ function CalendarAvailabilityVisualization(_a) {
             <h3 className="font-medium">Mapa de Disponibilidade</h3>
           </div>
           <div className="flex items-center gap-2">
-            <button_1.Button
-              variant="ghost"
-              size="sm"
-              onClick={function () {
-                return setShowDetails(!showDetails);
-              }}
-            >
+            <button_1.Button variant="ghost" size="sm" onClick={() => setShowDetails(!showDetails)}>
               {showDetails
                 ? <lucide_react_1.Eye className="h-4 w-4" />
                 : <lucide_react_1.EyeOff className="h-4 w-4" />}
@@ -667,11 +620,7 @@ function CalendarAvailabilityVisualization(_a) {
                 <>
                   <br />
                   <strong>Conflitos:</strong>{" "}
-                  {hoveredSlot.conflicts
-                    .map(function (c) {
-                      return c.message;
-                    })
-                    .join(", ")}
+                  {hoveredSlot.conflicts.map((c) => c.message).join(", ")}
                 </>
               )}
             </div>

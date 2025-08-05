@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Web Vitals Performance Monitoring
  *
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PerformanceUtils = exports.PERFORMANCE_THRESHOLDS = void 0;
 exports.getPerformanceGrade = getPerformanceGrade;
@@ -187,7 +184,7 @@ var ANALYTICS_ENDPOINT = "/api/analytics/performance";
 function sendToAnalytics(metric) {
   return __awaiter(this, void 0, void 0, function () {
     var body, blob;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         body = {
           name: metric.name,
@@ -212,7 +209,7 @@ function sendToAnalytics(metric) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
             keepalive: true,
-          }).catch(function () {
+          }).catch(() => {
             // Silently fail - don't impact user experience
           });
         }
@@ -236,7 +233,7 @@ function reportWebVitals() {
     // Additional performance observations
     if ("PerformanceObserver" in window) {
       // Long Tasks API - detect blocking main thread
-      var longTaskObserver = new PerformanceObserver(function (list) {
+      var longTaskObserver = new PerformanceObserver((list) => {
         for (var _i = 0, _a = list.getEntries(); _i < _a.length; _i++) {
           var entry = _a[_i];
           sendToAnalytics({
@@ -252,11 +249,11 @@ function reportWebVitals() {
       });
       try {
         longTaskObserver.observe({ entryTypes: ["longtask"] });
-      } catch (e) {
+      } catch (_e) {
         // Long Tasks API not supported
       }
       // Navigation Timing API - detailed navigation metrics
-      var navigationObserver = new PerformanceObserver(function (list) {
+      var navigationObserver = new PerformanceObserver((list) => {
         for (var _i = 0, _a = list.getEntries(); _i < _a.length; _i++) {
           var entry = _a[_i];
           var navEntry = entry;
@@ -290,7 +287,7 @@ function reportWebVitals() {
       });
       try {
         navigationObserver.observe({ entryTypes: ["navigation"] });
-      } catch (e) {
+      } catch (_e) {
         // Navigation Timing API not supported
       }
     }
@@ -303,7 +300,7 @@ function usePerformanceMonitoring() {
   var startTime = performance.now();
   return {
     // Mark component render time
-    markRender: function (componentName) {
+    markRender: (componentName) => {
       var renderTime = performance.now() - startTime;
       sendToAnalytics({
         name: "COMPONENT_RENDER",
@@ -316,7 +313,7 @@ function usePerformanceMonitoring() {
       });
     },
     // Mark interaction response time
-    markInteraction: function (interactionName, startTime) {
+    markInteraction: (interactionName, startTime) => {
       var responseTime = performance.now() - startTime;
       sendToAnalytics({
         name: "INTERACTION_RESPONSE",
@@ -333,10 +330,10 @@ function usePerformanceMonitoring() {
 // Advanced performance utilities
 exports.PerformanceUtils = {
   // Measure function execution time
-  measureFunction: function (name, fn) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  measureFunction: (name, fn) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var start, result, duration;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             start = performance.now();
@@ -356,12 +353,11 @@ exports.PerformanceUtils = {
             return [2 /*return*/, result];
         }
       });
-    });
-  },
+    }),
   // Monitor resource loading performance
-  observeResourceTiming: function () {
+  observeResourceTiming: () => {
     if ("PerformanceObserver" in window) {
-      var resourceObserver = new PerformanceObserver(function (list) {
+      var resourceObserver = new PerformanceObserver((list) => {
         for (var _i = 0, _a = list.getEntries(); _i < _a.length; _i++) {
           var entry = _a[_i];
           var resource = entry;
@@ -382,7 +378,7 @@ exports.PerformanceUtils = {
       });
       try {
         resourceObserver.observe({ entryTypes: ["resource"] });
-      } catch (e) {
+      } catch (_e) {
         // Resource Timing API not supported
       }
     }

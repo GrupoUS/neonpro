@@ -11,8 +11,8 @@
  * Uses statistical functions from SQL backend and provides UI-ready insights.
  */
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
-import type { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 import type { createClient } from "@/lib/supabase/client";
 
 // Types for statistical analysis

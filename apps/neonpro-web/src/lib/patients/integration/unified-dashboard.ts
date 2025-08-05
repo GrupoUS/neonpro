@@ -4,12 +4,12 @@
  * Part of Story 3.1 - Task 6: System Integration & Search
  */
 
+import type { logger } from "@/lib/logger";
+import type { supabase } from "@/lib/supabase/client";
 import type { Patient } from "@/types/patient";
+import type { AdvancedPatientSearch } from "../search/advanced-patient-search";
 import type { PatientAppointmentIntegration } from "./appointment-integration";
 import type { PatientTreatmentIntegration } from "./treatment-integration";
-import type { AdvancedPatientSearch } from "../search/advanced-patient-search";
-import type { supabase } from "@/lib/supabase/client";
-import type { logger } from "@/lib/logger";
 
 export interface UnifiedPatientProfile {
   // Core patient data
@@ -139,20 +139,20 @@ export class UnifiedPatientDashboard {
         await PatientTreatmentIntegration.generateTreatmentInsights(patientId);
 
       // Get financial summary
-      const financialSummary = await this.getFinancialSummary(patientId);
+      const financialSummary = await UnifiedPatientDashboard.getFinancialSummary(patientId);
 
       // Get communication history
-      const communicationHistory = await this.getCommunicationHistory(patientId);
+      const communicationHistory = await UnifiedPatientDashboard.getCommunicationHistory(patientId);
 
       // Generate AI insights
-      const aiInsights = await this.generateAIInsights(patientId, {
+      const aiInsights = await UnifiedPatientDashboard.generateAIInsights(patientId, {
         appointmentInsights,
         treatmentInsights,
         financialSummary,
       });
 
       // Get visual data
-      const visualData = await this.getVisualData(patientId);
+      const visualData = await UnifiedPatientDashboard.getVisualData(patientId);
 
       const unifiedProfile: UnifiedPatientProfile = {
         patient,
@@ -370,7 +370,7 @@ export class UnifiedPatientDashboard {
         outstanding_balance: totalBilled - totalPaid,
         insurance_coverage: insuranceCoverage,
         payment_history: payments || [],
-        payment_patterns: this.analyzePaymentPatterns(payments || []),
+        payment_patterns: UnifiedPatientDashboard.analyzePaymentPatterns(payments || []),
       };
     } catch (error) {
       logger.error("Error getting financial summary:", error);
@@ -441,22 +441,25 @@ export class UnifiedPatientDashboard {
   private static async generateAIInsights(patientId: string, data: any) {
     try {
       // Calculate churn risk score
-      const churnRiskScore = this.calculateChurnRisk(data);
+      const churnRiskScore = UnifiedPatientDashboard.calculateChurnRisk(data);
 
       // Predict lifetime value
-      const lifetimeValuePrediction = this.predictLifetimeValue(data);
+      const lifetimeValuePrediction = UnifiedPatientDashboard.predictLifetimeValue(data);
 
       // Generate service recommendations
-      const nextServiceRecommendations = await this.generateServiceRecommendations(patientId, data);
+      const nextServiceRecommendations =
+        await UnifiedPatientDashboard.generateServiceRecommendations(patientId, data);
 
       // Determine optimal contact time
-      const optimalContactTime = this.determineOptimalContactTime(data.communicationHistory);
+      const optimalContactTime = UnifiedPatientDashboard.determineOptimalContactTime(
+        data.communicationHistory,
+      );
 
       // Generate personality profile
-      const personalityProfile = this.generatePersonalityProfile(data);
+      const personalityProfile = UnifiedPatientDashboard.generatePersonalityProfile(data);
 
       // Calculate engagement score
-      const engagementScore = this.calculateEngagementScore(data);
+      const engagementScore = UnifiedPatientDashboard.calculateEngagementScore(data);
 
       return {
         churn_risk_score: churnRiskScore,
@@ -542,8 +545,8 @@ export class UnifiedPatientDashboard {
     return {
       avg_payment_amount: avgPaymentAmount,
       preferred_payment_method: preferredMethod,
-      payment_frequency: this.calculatePaymentFrequency(payments),
-      on_time_payment_rate: this.calculateOnTimePaymentRate(payments),
+      payment_frequency: UnifiedPatientDashboard.calculatePaymentFrequency(payments),
+      on_time_payment_rate: UnifiedPatientDashboard.calculateOnTimePaymentRate(payments),
     };
   }
 
@@ -712,10 +715,10 @@ export class UnifiedPatientDashboard {
    */
   static async exportPatientData(patientId: string, format: "json" | "csv" = "json") {
     try {
-      const profile = await this.getUnifiedPatientProfile(patientId);
+      const profile = await UnifiedPatientDashboard.getUnifiedPatientProfile(patientId);
 
       if (format === "csv") {
-        return this.convertToCSV(profile);
+        return UnifiedPatientDashboard.convertToCSV(profile);
       }
 
       return JSON.stringify(profile, null, 2);

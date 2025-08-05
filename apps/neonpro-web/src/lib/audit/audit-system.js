@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Audit Trail System
  *
@@ -21,26 +20,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -60,13 +59,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -88,9 +87,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -162,7 +159,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAuditStatistics =
   exports.generateAuditReport =
@@ -177,7 +174,7 @@ var client_1 = require("@/lib/supabase/client");
 var crypto_1 = require("crypto");
 // Tipos de eventos de auditoria
 var AuditEventType;
-(function (AuditEventType) {
+((AuditEventType) => {
   // Autenticação e Autorização
   AuditEventType["LOGIN"] = "auth.login";
   AuditEventType["LOGOUT"] = "auth.logout";
@@ -235,7 +232,7 @@ var AuditEventType;
 })(AuditEventType || (exports.AuditEventType = AuditEventType = {}));
 // Níveis de severidade
 var AuditSeverity;
-(function (AuditSeverity) {
+((AuditSeverity) => {
   AuditSeverity["LOW"] = "low";
   AuditSeverity["MEDIUM"] = "medium";
   AuditSeverity["HIGH"] = "high";
@@ -244,7 +241,7 @@ var AuditSeverity;
 /**
  * Sistema principal de auditoria
  */
-var createauditSystem = /** @class */ (function () {
+var createauditSystem = /** @class */ (() => {
   function createauditSystem() {
     this.supabase = (0, client_1.createClient)();
     this.encryptionKey = process.env.AUDIT_ENCRYPTION_KEY || "default-key-change-in-production";
@@ -362,16 +359,16 @@ var createauditSystem = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (event) {
-                    return __assign(__assign({}, event), {
+                : data.map((event) =>
+                    __assign(__assign({}, event), {
                       old_values: event.old_values
                         ? _this.decryptSensitiveData(event.old_values)
                         : undefined,
                       new_values: event.new_values
                         ? _this.decryptSensitiveData(event.new_values)
                         : undefined,
-                    });
-                  })) || [],
+                    }),
+                  )) || [],
             ];
           case 2:
             error_2 = _d.sent();
@@ -460,7 +457,7 @@ var createauditSystem = /** @class */ (function () {
               },
             };
             // Processa estatísticas
-            events.forEach(function (event) {
+            events.forEach((event) => {
               // Por tipo
               stats_1.events_by_type[event.event_type] =
                 (stats_1.events_by_type[event.event_type] || 0) + 1;
@@ -582,7 +579,7 @@ var createauditSystem = /** @class */ (function () {
             errors_1 = [];
             logs === null || logs === void 0
               ? void 0
-              : logs.forEach(function (log) {
+              : logs.forEach((log) => {
                   var expectedChecksum = _this.generateChecksum({
                     event_type: log.event_type,
                     severity: log.severity,
@@ -630,16 +627,11 @@ var createauditSystem = /** @class */ (function () {
    * Criptografa dados sensíveis
    */
   createauditSystem.prototype.encryptSensitiveData = function (data) {
-    var _this = this;
     var sensitiveFields = ["cpf", "email", "phone", "address", "medical_data"];
     var encrypted = __assign({}, data);
-    Object.keys(encrypted).forEach(function (key) {
-      if (
-        sensitiveFields.some(function (field) {
-          return key.toLowerCase().includes(field);
-        })
-      ) {
-        var cipher = crypto_1.default.createCipher("aes-256-cbc", _this.encryptionKey);
+    Object.keys(encrypted).forEach((key) => {
+      if (sensitiveFields.some((field) => key.toLowerCase().includes(field))) {
+        var cipher = crypto_1.default.createCipher("aes-256-cbc", this.encryptionKey);
         var encryptedValue = cipher.update(JSON.stringify(encrypted[key]), "utf8", "hex");
         encryptedValue += cipher.final("hex");
         encrypted[key] = "encrypted:".concat(encryptedValue);
@@ -651,13 +643,12 @@ var createauditSystem = /** @class */ (function () {
    * Descriptografa dados sensíveis
    */
   createauditSystem.prototype.decryptSensitiveData = function (data) {
-    var _this = this;
     var decrypted = __assign({}, data);
-    Object.keys(decrypted).forEach(function (key) {
+    Object.keys(decrypted).forEach((key) => {
       if (typeof decrypted[key] === "string" && decrypted[key].startsWith("encrypted:")) {
         try {
           var encryptedValue = decrypted[key].replace("encrypted:", "");
-          var decipher = crypto_1.default.createDecipher("aes-256-cbc", _this.encryptionKey);
+          var decipher = crypto_1.default.createDecipher("aes-256-cbc", this.encryptionKey);
           var decryptedValue = decipher.update(encryptedValue, "hex", "utf8");
           decryptedValue += decipher.final("utf8");
           decrypted[key] = JSON.parse(decryptedValue);
@@ -672,7 +663,7 @@ var createauditSystem = /** @class */ (function () {
   /**
    * Verifica se é uma atividade suspeita
    */
-  createauditSystem.prototype.isSuspiciousActivity = function (event) {
+  createauditSystem.prototype.isSuspiciousActivity = (event) => {
     var suspiciousPatterns = [
       AuditEventType.SECURITY_VIOLATION,
       AuditEventType.SUSPICIOUS_ACTIVITY,
@@ -730,24 +721,14 @@ var createauditSystem = /** @class */ (function () {
   createauditSystem.prototype.saveToLocalFile = function (event) {
     return __awaiter(this, void 0, void 0, function () {
       var fs, path, logDir, logFile, logEntry, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, , 6]);
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("fs/promises");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("fs/promises"))];
           case 1:
             fs = _a.sent();
-            return [
-              4 /*yield*/,
-              Promise.resolve().then(function () {
-                return require("path");
-              }),
-            ];
+            return [4 /*yield*/, Promise.resolve().then(() => require("path"))];
           case 2:
             path = _a.sent();
             logDir = path.join(process.cwd(), "logs", "audit");
@@ -785,24 +766,15 @@ var createauditSystem = /** @class */ (function () {
 })();
 exports.createauditSystem = createauditSystem;
 // Instância singleton
-var createAuditSystem = function () {
-  return new createauditSystem();
-};
+var createAuditSystem = () => new createauditSystem();
 exports.createAuditSystem = createAuditSystem;
 // Helper functions para uso fácil
-var logAuditEvent = function (event) {
-  return (0, exports.createAuditSystem)().logEvent(event);
-};
+var logAuditEvent = (event) => (0, exports.createAuditSystem)().logEvent(event);
 exports.logAuditEvent = logAuditEvent;
-var queryAuditEvents = function (filters) {
-  return (0, exports.createAuditSystem)().queryEvents(filters);
-};
+var queryAuditEvents = (filters) => (0, exports.createAuditSystem)().queryEvents(filters);
 exports.queryAuditEvents = queryAuditEvents;
-var generateAuditReport = function (title, description, filters, generatedBy) {
-  return (0, exports.createAuditSystem)().generateReport(title, description, filters, generatedBy);
-};
+var generateAuditReport = (title, description, filters, generatedBy) =>
+  (0, exports.createAuditSystem)().generateReport(title, description, filters, generatedBy);
 exports.generateAuditReport = generateAuditReport;
-var getAuditStatistics = function (filters) {
-  return (0, exports.createAuditSystem)().getStatistics(filters);
-};
+var getAuditStatistics = (filters) => (0, exports.createAuditSystem)().getStatistics(filters);
 exports.getAuditStatistics = getAuditStatistics;

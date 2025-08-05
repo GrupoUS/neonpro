@@ -1,5 +1,17 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  CheckCircle,
+  Download,
+  Eye,
+  FileText,
+  Settings,
+  Shield,
+  Upload,
+  UserCheck,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -22,18 +34,6 @@ import type {
 } from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  AlertTriangle,
-  CheckCircle,
-  Download,
-  Eye,
-  FileText,
-  Settings,
-  Shield,
-  Upload,
-  UserCheck,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface ComplianceRule {
   id: string;

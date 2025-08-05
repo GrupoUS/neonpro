@@ -1,5 +1,5 @@
 // Type validation test file
-import type { User, Patient, Appointment, ButtonProps, CardProps } from "./types";
+import type { Appointment, ButtonProps, CardProps, Patient, User } from "./types";
 
 // Test type assignments
 const testUser: User = {

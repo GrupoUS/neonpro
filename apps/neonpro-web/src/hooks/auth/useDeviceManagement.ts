@@ -3,15 +3,15 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-import type { useState, useEffect, useCallback, useRef } from "react";
+import type { useCallback, useEffect, useRef, useState } from "react";
+import type { toast } from "sonner";
 import type { useSupabase } from "@/hooks/useSupabase";
 import type {
-  DeviceManager,
   DeviceInfo,
+  DeviceManager,
   DeviceValidation,
   TrustedDevice,
 } from "@/lib/auth/session";
-import type { toast } from "sonner";
 
 // =====================================================
 // TYPES & INTERFACES

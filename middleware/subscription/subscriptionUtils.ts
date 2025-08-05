@@ -5,8 +5,8 @@
  */
 
 import { createServerClient } from "@supabase/ssr";
+import type { NextRequest } from "next/server";
 import type { Database } from "@/types/database";
-import { NextRequest } from "next/server";
 
 type SubscriptionPlan = Database["public"]["Tables"]["subscription_plans"]["Row"];
 type UserSubscription = Database["public"]["Tables"]["user_subscriptions"]["Row"];
@@ -124,15 +124,16 @@ async function getCurrentUsage(
 ): Promise<number> {
   try {
     switch (feature) {
-      case "max_patients":
+      case "max_patients": {
         const { count: patientCount } = await supabase
           .from("patients")
           .select("*", { count: "exact", head: true })
           .eq("clinic_id", subscription.clinic_id)
           .eq("is_active", true);
         return patientCount || 0;
+      }
 
-      case "max_appointments_per_month":
+      case "max_appointments_per_month": {
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
@@ -143,17 +144,19 @@ async function getCurrentUsage(
           .eq("clinic_id", subscription.clinic_id)
           .gte("appointment_date", startOfMonth.toISOString());
         return appointmentCount || 0;
+      }
 
-      case "max_users":
+      case "max_users": {
         const { count: userCount } = await supabase
           .from("user_clinics")
           .select("*", { count: "exact", head: true })
           .eq("clinic_id", subscription.clinic_id)
           .eq("is_active", true);
         return userCount || 0;
+      }
 
       case "sms_notifications":
-      case "email_notifications":
+      case "email_notifications": {
         const { data: usage } = await supabase
           .from("subscription_usage")
           .select("usage_count")
@@ -162,12 +165,13 @@ async function getCurrentUsage(
           .gte("usage_period_start", getUsagePeriodStart("monthly"))
           .single();
         return usage?.usage_count || 0;
+      }
 
       case "storage_gb":
         // Calculate storage usage (placeholder - implement based on actual storage calculation)
         return 0;
 
-      case "api_requests_per_month":
+      case "api_requests_per_month": {
         const { data: apiUsage } = await supabase
           .from("subscription_usage")
           .select("usage_count")
@@ -176,6 +180,7 @@ async function getCurrentUsage(
           .gte("usage_period_start", getUsagePeriodStart("monthly"))
           .single();
         return apiUsage?.usage_count || 0;
+      }
 
       default:
         return 0;
@@ -233,11 +238,12 @@ function getUsagePeriodStart(frequency: "daily" | "weekly" | "monthly" | "yearly
     case "daily":
       return new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
 
-    case "weekly":
+    case "weekly": {
       const weekStart = new Date(now);
       weekStart.setDate(now.getDate() - now.getDay());
       weekStart.setHours(0, 0, 0, 0);
       return weekStart.toISOString();
+    }
 
     case "monthly":
       return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();

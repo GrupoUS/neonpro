@@ -1,18 +1,16 @@
 "use client";
-"use strict";
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MenubarShortcut =
   exports.MenubarSub =
@@ -45,7 +43,7 @@ var MenubarSub = MenubarPrimitive.Sub;
 exports.MenubarSub = MenubarSub;
 var MenubarRadioGroup = MenubarPrimitive.RadioGroup;
 exports.MenubarRadioGroup = MenubarRadioGroup;
-var Menubar = React.forwardRef(function (_a, ref) {
+var Menubar = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -61,7 +59,7 @@ var Menubar = React.forwardRef(function (_a, ref) {
 });
 exports.Menubar = Menubar;
 Menubar.displayName = MenubarPrimitive.Root.displayName;
-var MenubarTrigger = React.forwardRef(function (_a, ref) {
+var MenubarTrigger = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -77,7 +75,7 @@ var MenubarTrigger = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarTrigger = MenubarTrigger;
 MenubarTrigger.displayName = MenubarPrimitive.Trigger.displayName;
-var MenubarSubTrigger = React.forwardRef(function (_a, ref) {
+var MenubarSubTrigger = React.forwardRef((_a, ref) => {
   var className = _a.className,
     inset = _a.inset,
     children = _a.children,
@@ -99,7 +97,7 @@ var MenubarSubTrigger = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarSubTrigger = MenubarSubTrigger;
 MenubarSubTrigger.displayName = MenubarPrimitive.SubTrigger.displayName;
-var MenubarSubContent = React.forwardRef(function (_a, ref) {
+var MenubarSubContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -115,7 +113,7 @@ var MenubarSubContent = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarSubContent = MenubarSubContent;
 MenubarSubContent.displayName = MenubarPrimitive.SubContent.displayName;
-var MenubarContent = React.forwardRef(function (_a, ref) {
+var MenubarContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     _b = _a.align,
     align = _b === void 0 ? "start" : _b,
@@ -142,7 +140,7 @@ var MenubarContent = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarContent = MenubarContent;
 MenubarContent.displayName = MenubarPrimitive.Content.displayName;
-var MenubarItem = React.forwardRef(function (_a, ref) {
+var MenubarItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     inset = _a.inset,
     props = __rest(_a, ["className", "inset"]);
@@ -160,7 +158,7 @@ var MenubarItem = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarItem = MenubarItem;
 MenubarItem.displayName = MenubarPrimitive.Item.displayName;
-var MenubarCheckboxItem = React.forwardRef(function (_a, ref) {
+var MenubarCheckboxItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     children = _a.children,
     checked = _a.checked,
@@ -186,7 +184,7 @@ var MenubarCheckboxItem = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarCheckboxItem = MenubarCheckboxItem;
 MenubarCheckboxItem.displayName = MenubarPrimitive.CheckboxItem.displayName;
-var MenubarRadioItem = React.forwardRef(function (_a, ref) {
+var MenubarRadioItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     children = _a.children,
     props = __rest(_a, ["className", "children"]);
@@ -210,7 +208,7 @@ var MenubarRadioItem = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarRadioItem = MenubarRadioItem;
 MenubarRadioItem.displayName = MenubarPrimitive.RadioItem.displayName;
-var MenubarLabel = React.forwardRef(function (_a, ref) {
+var MenubarLabel = React.forwardRef((_a, ref) => {
   var className = _a.className,
     inset = _a.inset,
     props = __rest(_a, ["className", "inset"]);
@@ -224,7 +222,7 @@ var MenubarLabel = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarLabel = MenubarLabel;
 MenubarLabel.displayName = MenubarPrimitive.Label.displayName;
-var MenubarSeparator = React.forwardRef(function (_a, ref) {
+var MenubarSeparator = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -237,7 +235,7 @@ var MenubarSeparator = React.forwardRef(function (_a, ref) {
 });
 exports.MenubarSeparator = MenubarSeparator;
 MenubarSeparator.displayName = MenubarPrimitive.Separator.displayName;
-var MenubarShortcut = function (_a) {
+var MenubarShortcut = (_a) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (

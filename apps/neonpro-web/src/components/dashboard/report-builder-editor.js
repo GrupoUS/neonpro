@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReportBuilderEditor = ReportBuilderEditor;
 var lucide_react_1 = require("lucide-react");
@@ -245,7 +242,6 @@ var dataSources = [
   },
 ];
 function ReportBuilderEditor(_a) {
-  var _this = this;
   var reportId = _a.reportId;
   var _b = (0, react_1.useState)("Novo Relatório"),
     reportName = _b[0],
@@ -272,50 +268,47 @@ function ReportBuilderEditor(_a) {
     sidebarCollapsed = _j[0],
     setSidebarCollapsed = _j[1];
   // Mock report data if editing existing report
-  react_1.default.useEffect(
-    function () {
-      if (reportId && reportId !== "new") {
-        // Load existing report data
-        setReportName("Relatório de Receita Mensal");
-        setReportDescription("Análise detalhada da receita por mês e procedimento");
-        setSelectedDataSource("financial");
-        // Mock components
-        setComponents([
-          {
-            id: "1",
-            type: "kpi",
-            x: 50,
-            y: 50,
-            width: 200,
-            height: 100,
-            config: {
-              title: "Receita Total",
-              value: "R$ 45.750,00",
-              change: "+8.2%",
-            },
+  react_1.default.useEffect(() => {
+    if (reportId && reportId !== "new") {
+      // Load existing report data
+      setReportName("Relatório de Receita Mensal");
+      setReportDescription("Análise detalhada da receita por mês e procedimento");
+      setSelectedDataSource("financial");
+      // Mock components
+      setComponents([
+        {
+          id: "1",
+          type: "kpi",
+          x: 50,
+          y: 50,
+          width: 200,
+          height: 100,
+          config: {
+            title: "Receita Total",
+            value: "R$ 45.750,00",
+            change: "+8.2%",
           },
-          {
-            id: "2",
-            type: "chart",
-            x: 300,
-            y: 50,
-            width: 400,
-            height: 250,
-            config: {
-              type: "line",
-              title: "Receita por Mês",
-              dataSource: "financial",
-              xAxis: "month",
-              yAxis: "revenue",
-            },
+        },
+        {
+          id: "2",
+          type: "chart",
+          x: 300,
+          y: 50,
+          width: 400,
+          height: 250,
+          config: {
+            type: "line",
+            title: "Receita por Mês",
+            dataSource: "financial",
+            xAxis: "month",
+            yAxis: "revenue",
           },
-        ]);
-      }
-    },
-    [reportId],
-  );
+        },
+      ]);
+    }
+  }, [reportId]);
   var handleAddComponent = (0, react_1.useCallback)(
-    function (type, variant) {
+    (type, variant) => {
       var newComponent = {
         id: Date.now().toString(),
         type: type,
@@ -329,40 +322,32 @@ function ReportBuilderEditor(_a) {
           dataSource: selectedDataSource,
         },
       };
-      setComponents(function (prev) {
-        return __spreadArray(__spreadArray([], prev, true), [newComponent], false);
-      });
+      setComponents((prev) => __spreadArray(__spreadArray([], prev, true), [newComponent], false));
       setSelectedComponent(newComponent.id);
     },
     [selectedDataSource],
   );
-  var handleComponentSelect = (0, react_1.useCallback)(function (id) {
+  var handleComponentSelect = (0, react_1.useCallback)((id) => {
     setSelectedComponent(id);
   }, []);
   var handleComponentDelete = (0, react_1.useCallback)(
-    function (id) {
-      setComponents(function (prev) {
-        return prev.filter(function (comp) {
-          return comp.id !== id;
-        });
-      });
+    (id) => {
+      setComponents((prev) => prev.filter((comp) => comp.id !== id));
       if (selectedComponent === id) {
         setSelectedComponent(null);
       }
     },
     [selectedComponent],
   );
-  var handleComponentUpdate = (0, react_1.useCallback)(function (id, updates) {
-    setComponents(function (prev) {
-      return prev.map(function (comp) {
-        return comp.id === id ? __assign(__assign({}, comp), updates) : comp;
-      });
-    });
+  var handleComponentUpdate = (0, react_1.useCallback)((id, updates) => {
+    setComponents((prev) =>
+      prev.map((comp) => (comp.id === id ? __assign(__assign({}, comp), updates) : comp)),
+    );
   }, []);
   var handleSave = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           // Implement save logic
           console.log("Saving report:", {
             name: reportName,
@@ -372,16 +357,11 @@ function ReportBuilderEditor(_a) {
           });
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [reportName, reportDescription, selectedDataSource, components],
   );
   var selectedComponentData = (0, react_1.useMemo)(
-    function () {
-      return components.find(function (comp) {
-        return comp.id === selectedComponent;
-      });
-    },
+    () => components.find((comp) => comp.id === selectedComponent),
     [components, selectedComponent],
   );
   return (
@@ -393,17 +373,13 @@ function ReportBuilderEditor(_a) {
             <div className="flex flex-col">
               <input_1.Input
                 value={reportName}
-                onChange={function (e) {
-                  return setReportName(e.target.value);
-                }}
+                onChange={(e) => setReportName(e.target.value)}
                 className="text-lg font-semibold border-none p-0 h-auto"
                 placeholder="Nome do relatório"
               />
               <input_1.Input
                 value={reportDescription}
-                onChange={function (e) {
-                  return setReportDescription(e.target.value);
-                }}
+                onChange={(e) => setReportDescription(e.target.value)}
                 className="text-sm text-muted-foreground border-none p-0 h-auto mt-1"
                 placeholder="Descrição do relatório"
               />
@@ -414,9 +390,7 @@ function ReportBuilderEditor(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setShowPreview(!showPreview);
-              }}
+              onClick={() => setShowPreview(!showPreview)}
             >
               <lucide_react_1.Eye className="w-4 h-4 mr-2" />
               {showPreview ? "Editor" : "Preview"}
@@ -457,9 +431,7 @@ function ReportBuilderEditor(_a) {
               variant="ghost"
               size="sm"
               className="w-full justify-start mb-4"
-              onClick={function () {
-                return setSidebarCollapsed(!sidebarCollapsed);
-              }}
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             >
               {sidebarCollapsed
                 ? <lucide_react_1.ChevronRight className="w-4 h-4" />
@@ -478,15 +450,13 @@ function ReportBuilderEditor(_a) {
                   <div>
                     <h3 className="text-sm font-medium mb-3">Biblioteca de Componentes</h3>
                     <div className="space-y-2">
-                      {componentLibrary.map(function (component) {
+                      {componentLibrary.map((component) => {
                         var IconComponent = component.icon;
                         return (
                           <card_1.Card
                             key={component.type}
                             className="cursor-pointer hover:bg-muted/50 transition-colors"
-                            onClick={function () {
-                              return handleAddComponent(component.type);
-                            }}
+                            onClick={() => handleAddComponent(component.type)}
                           >
                             <card_1.CardContent className="p-3">
                               <div className="flex items-center gap-2">
@@ -502,7 +472,7 @@ function ReportBuilderEditor(_a) {
 
                               {component.variants && (
                                 <div className="mt-2 flex gap-1">
-                                  {component.variants.map(function (variant) {
+                                  {component.variants.map((variant) => {
                                     var VariantIcon = variant.icon;
                                     return (
                                       <button_1.Button
@@ -510,7 +480,7 @@ function ReportBuilderEditor(_a) {
                                         variant="ghost"
                                         size="sm"
                                         className="h-6 px-2"
-                                        onClick={function (e) {
+                                        onClick={(e) => {
                                           e.stopPropagation();
                                           handleAddComponent(component.type, variant.id);
                                         }}
@@ -533,7 +503,7 @@ function ReportBuilderEditor(_a) {
                   <div>
                     <h3 className="text-sm font-medium mb-3">Fontes de Dados</h3>
                     <div className="space-y-2">
-                      {dataSources.map(function (source) {
+                      {dataSources.map((source) => {
                         var IconComponent = source.icon;
                         return (
                           <card_1.Card
@@ -543,9 +513,7 @@ function ReportBuilderEditor(_a) {
                                 ? "ring-2 ring-primary bg-primary/5"
                                 : "hover:bg-muted/50",
                             )}
-                            onClick={function () {
-                              return setSelectedDataSource(source.id);
-                            }}
+                            onClick={() => setSelectedDataSource(source.id)}
                           >
                             <card_1.CardContent className="p-3">
                               <div className="flex items-center gap-2">
@@ -559,17 +527,15 @@ function ReportBuilderEditor(_a) {
                               </div>
 
                               <div className="mt-2 flex flex-wrap gap-1">
-                                {source.tables.map(function (table) {
-                                  return (
-                                    <badge_1.Badge
-                                      key={table}
-                                      variant="secondary"
-                                      className="text-xs"
-                                    >
-                                      {table}
-                                    </badge_1.Badge>
-                                  );
-                                })}
+                                {source.tables.map((table) => (
+                                  <badge_1.Badge
+                                    key={table}
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    {table}
+                                  </badge_1.Badge>
+                                ))}
                               </div>
                             </card_1.CardContent>
                           </card_1.Card>
@@ -596,70 +562,66 @@ function ReportBuilderEditor(_a) {
             />
 
             {/* Components */}
-            {components.map(function (component) {
-              return (
-                <div
-                  key={component.id}
-                  className={"absolute border-2 rounded-lg bg-white shadow-sm cursor-move transition-all ".concat(
-                    selectedComponent === component.id
-                      ? "border-primary ring-2 ring-primary/20"
-                      : "border-border hover:border-primary/50",
-                  )}
-                  style={{
-                    left: component.x,
-                    top: component.y,
-                    width: component.width,
-                    height: component.height,
-                  }}
-                  onClick={function () {
-                    return handleComponentSelect(component.id);
-                  }}
-                >
-                  <div className="p-4 h-full flex flex-col">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-sm font-medium">
-                        {component.config.title || "".concat(component.type, " Component")}
-                      </h4>
-                      <button_1.Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
-                        onClick={function (e) {
-                          e.stopPropagation();
-                          handleComponentDelete(component.id);
-                        }}
-                      >
-                        <lucide_react_1.Trash2 className="w-3 h-3" />
-                      </button_1.Button>
-                    </div>
+            {components.map((component) => (
+              <div
+                key={component.id}
+                className={"absolute border-2 rounded-lg bg-white shadow-sm cursor-move transition-all ".concat(
+                  selectedComponent === component.id
+                    ? "border-primary ring-2 ring-primary/20"
+                    : "border-border hover:border-primary/50",
+                )}
+                style={{
+                  left: component.x,
+                  top: component.y,
+                  width: component.width,
+                  height: component.height,
+                }}
+                onClick={() => handleComponentSelect(component.id)}
+              >
+                <div className="p-4 h-full flex flex-col">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-medium">
+                      {component.config.title || "".concat(component.type, " Component")}
+                    </h4>
+                    <button_1.Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleComponentDelete(component.id);
+                      }}
+                    >
+                      <lucide_react_1.Trash2 className="w-3 h-3" />
+                    </button_1.Button>
+                  </div>
 
-                    <div className="flex-1 bg-muted/30 rounded flex items-center justify-center">
-                      <div className="text-center text-muted-foreground">
-                        {component.type === "chart" && (
-                          <lucide_react_1.BarChart3 className="w-8 h-8 mx-auto mb-2" />
-                        )}
-                        {component.type === "table" && (
-                          <lucide_react_1.Table className="w-8 h-8 mx-auto mb-2" />
-                        )}
-                        {component.type === "kpi" && (
-                          <lucide_react_1.Grid3X3 className="w-8 h-8 mx-auto mb-2" />
-                        )}
-                        {component.type === "filter" && (
-                          <lucide_react_1.Filter className="w-8 h-8 mx-auto mb-2" />
-                        )}
-                        {component.type === "text" && (
-                          <lucide_react_1.Type className="w-8 h-8 mx-auto mb-2" />
-                        )}
-                        {component.type === "image" && (
-                          <lucide_react_1.Image className="w-8 h-8 mx-auto mb-2" />
-                        )}
-                        <p className="text-xs capitalize">{component.type}</p>
-                      </div>
+                  <div className="flex-1 bg-muted/30 rounded flex items-center justify-center">
+                    <div className="text-center text-muted-foreground">
+                      {component.type === "chart" && (
+                        <lucide_react_1.BarChart3 className="w-8 h-8 mx-auto mb-2" />
+                      )}
+                      {component.type === "table" && (
+                        <lucide_react_1.Table className="w-8 h-8 mx-auto mb-2" />
+                      )}
+                      {component.type === "kpi" && (
+                        <lucide_react_1.Grid3X3 className="w-8 h-8 mx-auto mb-2" />
+                      )}
+                      {component.type === "filter" && (
+                        <lucide_react_1.Filter className="w-8 h-8 mx-auto mb-2" />
+                      )}
+                      {component.type === "text" && (
+                        <lucide_react_1.Type className="w-8 h-8 mx-auto mb-2" />
+                      )}
+                      {component.type === "image" && (
+                        <lucide_react_1.Image className="w-8 h-8 mx-auto mb-2" />
+                      )}
+                      <p className="text-xs capitalize">{component.type}</p>
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
 
             {/* Empty State */}
             {components.length === 0 && (
@@ -668,12 +630,7 @@ function ReportBuilderEditor(_a) {
                   <lucide_react_1.BarChart3 className="w-12 h-12 mx-auto mb-4" />
                   <h3 className="text-lg font-medium mb-2">Comece criando seu relatório</h3>
                   <p className="text-sm mb-4">Arraste componentes da barra lateral para começar</p>
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return handleAddComponent("chart");
-                    }}
-                  >
+                  <button_1.Button variant="outline" onClick={() => handleAddComponent("chart")}>
                     <lucide_react_1.Plus className="w-4 h-4 mr-2" />
                     Adicionar Primeiro Componente
                   </button_1.Button>
@@ -698,13 +655,13 @@ function ReportBuilderEditor(_a) {
                     <input_1.Input
                       id="component-title"
                       value={selectedComponentData.config.title || ""}
-                      onChange={function (e) {
-                        return handleComponentUpdate(selectedComponentData.id, {
+                      onChange={(e) =>
+                        handleComponentUpdate(selectedComponentData.id, {
                           config: __assign(__assign({}, selectedComponentData.config), {
                             title: e.target.value,
                           }),
-                        });
-                      }}
+                        })
+                      }
                       className="mt-1"
                     />
                   </div>
@@ -718,11 +675,11 @@ function ReportBuilderEditor(_a) {
                         id="component-width"
                         type="number"
                         value={selectedComponentData.width}
-                        onChange={function (e) {
-                          return handleComponentUpdate(selectedComponentData.id, {
+                        onChange={(e) =>
+                          handleComponentUpdate(selectedComponentData.id, {
                             width: parseInt(e.target.value) || 0,
-                          });
-                        }}
+                          })
+                        }
                         className="mt-1"
                       />
                     </div>
@@ -734,11 +691,11 @@ function ReportBuilderEditor(_a) {
                         id="component-height"
                         type="number"
                         value={selectedComponentData.height}
-                        onChange={function (e) {
-                          return handleComponentUpdate(selectedComponentData.id, {
+                        onChange={(e) =>
+                          handleComponentUpdate(selectedComponentData.id, {
                             height: parseInt(e.target.value) || 0,
-                          });
-                        }}
+                          })
+                        }
                         className="mt-1"
                       />
                     </div>
@@ -751,13 +708,13 @@ function ReportBuilderEditor(_a) {
                       </label_1.Label>
                       <select_1.Select
                         value={selectedComponentData.config.variant || "line"}
-                        onValueChange={function (value) {
-                          return handleComponentUpdate(selectedComponentData.id, {
+                        onValueChange={(value) =>
+                          handleComponentUpdate(selectedComponentData.id, {
                             config: __assign(__assign({}, selectedComponentData.config), {
                               variant: value,
                             }),
-                          });
-                        }}
+                          })
+                        }
                       >
                         <select_1.SelectTrigger className="mt-1">
                           <select_1.SelectValue />
@@ -778,25 +735,23 @@ function ReportBuilderEditor(_a) {
                     </label_1.Label>
                     <select_1.Select
                       value={selectedComponentData.config.dataSource || ""}
-                      onValueChange={function (value) {
-                        return handleComponentUpdate(selectedComponentData.id, {
+                      onValueChange={(value) =>
+                        handleComponentUpdate(selectedComponentData.id, {
                           config: __assign(__assign({}, selectedComponentData.config), {
                             dataSource: value,
                           }),
-                        });
-                      }}
+                        })
+                      }
                     >
                       <select_1.SelectTrigger className="mt-1">
                         <select_1.SelectValue placeholder="Selecionar fonte" />
                       </select_1.SelectTrigger>
                       <select_1.SelectContent>
-                        {dataSources.map(function (source) {
-                          return (
-                            <select_1.SelectItem key={source.id} value={source.id}>
-                              {source.name}
-                            </select_1.SelectItem>
-                          );
-                        })}
+                        {dataSources.map((source) => (
+                          <select_1.SelectItem key={source.id} value={source.id}>
+                            {source.name}
+                          </select_1.SelectItem>
+                        ))}
                       </select_1.SelectContent>
                     </select_1.Select>
                   </div>
@@ -820,9 +775,7 @@ function ReportBuilderEditor(_a) {
                     variant="destructive"
                     size="sm"
                     className="w-full justify-start"
-                    onClick={function () {
-                      return handleComponentDelete(selectedComponentData.id);
-                    }}
+                    onClick={() => handleComponentDelete(selectedComponentData.id)}
                   >
                     <lucide_react_1.Trash2 className="w-4 h-4 mr-2" />
                     Remover

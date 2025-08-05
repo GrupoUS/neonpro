@@ -1,5 +1,6 @@
 "use client";
 
+import type { Brain, Calendar, TrendingUp, Users } from "lucide-react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -9,7 +10,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Brain, Calendar, TrendingUp, Users } from "lucide-react";
 
 interface Recommendation {
   id: string;

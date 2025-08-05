@@ -1,4 +1,3 @@
-"use strict";
 /**
  * =====================================================================================
  * PREDICTIVE CASH FLOW VALIDATION SCHEMAS
@@ -132,7 +131,7 @@ exports.CreatePredictionModelSchema = zod_1.z
     training_period_end: DateStringSchema.optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.training_period_start && data.training_period_end) {
         return new Date(data.training_period_start) <= new Date(data.training_period_end);
       }
@@ -178,7 +177,7 @@ exports.UpdatePredictionModelSchema = zod_1.z
     next_training_due: TimestampSchema.optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Ensure production-ready models have minimum accuracy requirements
       if (data.is_production_ready && data.accuracy_rate !== undefined) {
         return data.accuracy_rate >= 75; // Minimum 75% accuracy for production
@@ -222,26 +221,16 @@ exports.CreateCashFlowPredictionSchema = zod_1.z
     input_features: JSONObjectSchema.optional().default({}),
     scenario_id: UUIDSchema.optional(),
   })
+  .refine((data) => new Date(data.start_date) <= new Date(data.end_date), {
+    message: "End date must be after start date",
+    path: ["end_date"],
+  })
+  .refine((data) => data.confidence_interval_lower <= data.confidence_interval_upper, {
+    message: "Confidence interval upper bound must be greater than or equal to lower bound",
+    path: ["confidence_interval_upper"],
+  })
   .refine(
-    function (data) {
-      return new Date(data.start_date) <= new Date(data.end_date);
-    },
-    {
-      message: "End date must be after start date",
-      path: ["end_date"],
-    },
-  )
-  .refine(
-    function (data) {
-      return data.confidence_interval_lower <= data.confidence_interval_upper;
-    },
-    {
-      message: "Confidence interval upper bound must be greater than or equal to lower bound",
-      path: ["confidence_interval_upper"],
-    },
-  )
-  .refine(
-    function (data) {
+    (data) => {
       // Net amount should be inflow minus outflow (with some tolerance for rounding)
       var calculated_net = data.predicted_inflow_amount - data.predicted_outflow_amount;
       var tolerance = Math.abs(calculated_net * 0.01); // 1% tolerance
@@ -253,7 +242,7 @@ exports.CreateCashFlowPredictionSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // Confidence score should align with confidence interval width
       var interval_width = data.confidence_interval_upper - data.confidence_interval_lower;
       var predicted_amount = Math.abs(data.predicted_net_amount);
@@ -283,7 +272,7 @@ exports.UpdateCashFlowPredictionSchema = zod_1.z
     validation_date: TimestampSchema.optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (
         data.confidence_interval_lower !== undefined &&
         data.confidence_interval_upper !== undefined
@@ -316,17 +305,12 @@ exports.CreateForecastingScenarioSchema = zod_1.z
     clinic_id: UUIDSchema,
     is_baseline: zod_1.z.boolean().optional().default(false),
   })
+  .refine((data) => new Date(data.forecast_start_date) <= new Date(data.forecast_end_date), {
+    message: "Forecast end date must be after start date",
+    path: ["forecast_end_date"],
+  })
   .refine(
-    function (data) {
-      return new Date(data.forecast_start_date) <= new Date(data.forecast_end_date);
-    },
-    {
-      message: "Forecast end date must be after start date",
-      path: ["forecast_end_date"],
-    },
-  )
-  .refine(
-    function (data) {
+    (data) => {
       // Forecast period should be reasonable (not more than 5 years)
       var start = new Date(data.forecast_start_date);
       var end = new Date(data.forecast_end_date);
@@ -360,7 +344,7 @@ exports.UpdateForecastingScenarioSchema = zod_1.z
     is_baseline: zod_1.z.boolean().optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.forecast_start_date && data.forecast_end_date) {
         return new Date(data.forecast_start_date) <= new Date(data.forecast_end_date);
       }
@@ -372,7 +356,7 @@ exports.UpdateForecastingScenarioSchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       if (
         data.total_predicted_revenue !== undefined &&
         data.total_predicted_expenses !== undefined &&
@@ -411,7 +395,7 @@ exports.CreatePredictionAccuracySchema = zod_1.z
     is_outlier: zod_1.z.boolean().optional().default(false),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Net amount should be inflow minus outflow
       var calculated_net = data.actual_inflow_amount - data.actual_outflow_amount;
       var tolerance = Math.abs(calculated_net * 0.01); // 1% tolerance
@@ -423,7 +407,7 @@ exports.CreatePredictionAccuracySchema = zod_1.z
     },
   )
   .refine(
-    function (data) {
+    (data) => {
       // Validate error magnitude matches accuracy percentage
       if (data.error_magnitude) {
         var accuracy = data.accuracy_percentage;
@@ -477,7 +461,7 @@ exports.CreatePredictionAlertSchema = zod_1.z
       .default([]),
   })
   .refine(
-    function (data) {
+    (data) => {
       // Ensure at least one threshold is provided for threshold-based alerts
       if (data.alert_type === "threshold_breach") {
         return data.threshold_amount !== undefined || data.threshold_percentage !== undefined;
@@ -502,7 +486,7 @@ exports.UpdatePredictionAlertSchema = zod_1.z
       .optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       // If status is acknowledged, acknowledged_at should be provided
       if (data.status === "acknowledged" && !data.acknowledged_at) {
         return false;
@@ -533,7 +517,7 @@ exports.PredictionFiltersSchema = zod_1.z
     scenario_id: UUIDSchema.optional(),
   })
   .refine(
-    function (data) {
+    (data) => {
       if (data.start_date && data.end_date) {
         return new Date(data.start_date) <= new Date(data.end_date);
       }
@@ -562,15 +546,10 @@ exports.ScenarioFiltersSchema = zod_1.z.object({
       start: DateStringSchema,
       end: DateStringSchema,
     })
-    .refine(
-      function (data) {
-        return new Date(data.start) <= new Date(data.end);
-      },
-      {
-        message: "End date must be after start date",
-        path: ["end"],
-      },
-    )
+    .refine((data) => new Date(data.start) <= new Date(data.end), {
+      message: "End date must be after start date",
+      path: ["end"],
+    })
     .optional(),
 });
 exports.AlertFiltersSchema = zod_1.z.object({
@@ -584,15 +563,10 @@ exports.AlertFiltersSchema = zod_1.z.object({
       start: DateStringSchema,
       end: DateStringSchema,
     })
-    .refine(
-      function (data) {
-        return new Date(data.start) <= new Date(data.end);
-      },
-      {
-        message: "End date must be after start date",
-        path: ["end"],
-      },
-    )
+    .refine((data) => new Date(data.start) <= new Date(data.end), {
+      message: "End date must be after start date",
+      path: ["end"],
+    })
     .optional(),
 });
 // =====================================================================================
@@ -615,43 +589,28 @@ exports.DateRangeSchema = zod_1.z
     start_date: DateStringSchema,
     end_date: DateStringSchema,
   })
-  .refine(
-    function (data) {
-      return new Date(data.start_date) <= new Date(data.end_date);
-    },
-    {
-      message: "End date must be after start date",
-      path: ["end_date"],
-    },
-  );
+  .refine((data) => new Date(data.start_date) <= new Date(data.end_date), {
+    message: "End date must be after start date",
+    path: ["end_date"],
+  });
 exports.AmountRangeSchema = zod_1.z
   .object({
     min_amount: AmountInCentavosSchema,
     max_amount: AmountInCentavosSchema,
   })
-  .refine(
-    function (data) {
-      return data.min_amount <= data.max_amount;
-    },
-    {
-      message: "Maximum amount must be greater than or equal to minimum amount",
-      path: ["max_amount"],
-    },
-  );
+  .refine((data) => data.min_amount <= data.max_amount, {
+    message: "Maximum amount must be greater than or equal to minimum amount",
+    path: ["max_amount"],
+  });
 exports.ConfidenceRangeSchema = zod_1.z
   .object({
     min_confidence: ConfidenceScoreSchema,
     max_confidence: ConfidenceScoreSchema,
   })
-  .refine(
-    function (data) {
-      return data.min_confidence <= data.max_confidence;
-    },
-    {
-      message: "Maximum confidence must be greater than or equal to minimum confidence",
-      path: ["max_confidence"],
-    },
-  );
+  .refine((data) => data.min_confidence <= data.max_confidence, {
+    message: "Maximum confidence must be greater than or equal to minimum confidence",
+    path: ["max_confidence"],
+  });
 // =====================================================================================
 // EXPORTS WITH CORRECT SCHEMA REFERENCES
 // =====================================================================================

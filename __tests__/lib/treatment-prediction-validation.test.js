@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Treatment Prediction Validation Tests
  * Story 9.1: AI-powered treatment success prediction
@@ -12,9 +11,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction");
-(0, globals_1.describe)("Treatment Prediction Validation Schemas", function () {
-  (0, globals_1.describe)("PredictionModelSchema", function () {
-    (0, globals_1.test)("validates model with ≥85% accuracy requirement", function () {
+(0, globals_1.describe)("Treatment Prediction Validation Schemas", () => {
+  (0, globals_1.describe)("PredictionModelSchema", () => {
+    (0, globals_1.test)("validates model with ≥85% accuracy requirement", () => {
       var _a;
       var validModel = {
         name: "Advanced Treatment Predictor",
@@ -45,7 +44,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         ).toBeGreaterThanOrEqual(0.85);
       }
     });
-    (0, globals_1.test)("rejects model with accuracy below 85%", function () {
+    (0, globals_1.test)("rejects model with accuracy below 85%", () => {
       var lowAccuracyModel = {
         name: "Low Accuracy Model",
         version: "1.0.0",
@@ -60,13 +59,13 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
       if (!result.success) {
         (0, globals_1.expect)(
-          result.error.issues.some(function (issue) {
-            return issue.path.includes("accuracy") && issue.message.includes("0.85");
-          }),
+          result.error.issues.some(
+            (issue) => issue.path.includes("accuracy") && issue.message.includes("0.85"),
+          ),
         ).toBe(true);
       }
     });
-    (0, globals_1.test)("validates required algorithm types", function () {
+    (0, globals_1.test)("validates required algorithm types", () => {
       var invalidAlgorithm = {
         name: "Test Model",
         version: "1.0.0",
@@ -80,7 +79,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       var result = treatment_prediction_1.PredictionModelSchema.safeParse(invalidAlgorithm);
       (0, globals_1.expect)(result.success).toBe(false);
     });
-    (0, globals_1.test)("validates performance metrics structure", function () {
+    (0, globals_1.test)("validates performance metrics structure", () => {
       var modelWithInvalidMetrics = {
         name: "Test Model",
         version: "1.0.0",
@@ -101,8 +100,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("TreatmentPredictionSchema", function () {
-    (0, globals_1.test)("validates prediction with high confidence", function () {
+  (0, globals_1.describe)("TreatmentPredictionSchema", () => {
+    (0, globals_1.test)("validates prediction with high confidence", () => {
       var validPrediction = {
         patient_id: "123e4567-e89b-12d3-a456-426614174000",
         treatment_type: "laser_resurfacing",
@@ -144,7 +143,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         );
       }
     });
-    (0, globals_1.test)("validates prediction score range", function () {
+    (0, globals_1.test)("validates prediction score range", () => {
       var invalidScorePrediction = {
         patient_id: "123e4567-e89b-12d3-a456-426614174000",
         treatment_type: "chemical_peel",
@@ -159,7 +158,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         treatment_prediction_1.TreatmentPredictionSchema.safeParse(invalidScorePrediction);
       (0, globals_1.expect)(result.success).toBe(false);
     });
-    (0, globals_1.test)("validates confidence interval consistency", function () {
+    (0, globals_1.test)("validates confidence interval consistency", () => {
       var invalidIntervalPrediction = {
         patient_id: "123e4567-e89b-12d3-a456-426614174000",
         treatment_type: "microneedling",
@@ -179,8 +178,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("PatientFactorsSchema", function () {
-    (0, globals_1.test)("validates basic patient data via PredictionFeaturesSchema", function () {
+  (0, globals_1.describe)("PatientFactorsSchema", () => {
+    (0, globals_1.test)("validates basic patient data via PredictionFeaturesSchema", () => {
       var validPatientFeatures = {
         age: 32,
         gender: "female",
@@ -210,7 +209,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         (0, globals_1.expect)(result.data.compliance_history).toBeLessThanOrEqual(1);
       }
     });
-    (0, globals_1.test)("validates age range constraints", function () {
+    (0, globals_1.test)("validates age range constraints", () => {
       var invalidAgeFeatures = {
         age: 200, // Invalid age
         gender: "male",
@@ -233,7 +232,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       var result = treatment_prediction_1.PredictionFeaturesSchema.safeParse(invalidAgeFeatures);
       (0, globals_1.expect)(result.success).toBe(false);
     });
-    (0, globals_1.test)("validates BMI range", function () {
+    (0, globals_1.test)("validates BMI range", () => {
       var invalidBmiFeatures = {
         age: 25,
         gender: "female",
@@ -257,7 +256,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       var result = treatment_prediction_1.PredictionFeaturesSchema.safeParse(invalidBmiFeatures);
       (0, globals_1.expect)(result.success).toBe(false);
     });
-    (0, globals_1.test)("validates psychological factors ranges", function () {
+    (0, globals_1.test)("validates psychological factors ranges", () => {
       var invalidPsychFeatures = {
         age: 30,
         gender: "male",
@@ -281,8 +280,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("MedicalHistorySchema", function () {
-    (0, globals_1.test)("validates medical history structure", function () {
+  (0, globals_1.describe)("MedicalHistorySchema", () => {
+    (0, globals_1.test)("validates medical history structure", () => {
       var validMedicalHistory = {
         conditions: ["hypertension", "allergic_rhinitis"],
         medications: ["lisinopril", "antihistamine"],
@@ -294,7 +293,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       var result = treatment_prediction_1.MedicalHistorySchema.safeParse(validMedicalHistory);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.test)("requires array format for all fields", function () {
+    (0, globals_1.test)("requires array format for all fields", () => {
       var invalidMedicalHistory = {
         conditions: "hypertension", // Should be array
         medications: ["lisinopril"],
@@ -307,8 +306,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("PredictionFeaturesSchema (Lifestyle Factors)", function () {
-    (0, globals_1.test)("validates lifestyle factors with enum constraints", function () {
+  (0, globals_1.describe)("PredictionFeaturesSchema (Lifestyle Factors)", () => {
+    (0, globals_1.test)("validates lifestyle factors with enum constraints", () => {
       var validLifestyle = {
         age: 25,
         gender: "female",
@@ -331,7 +330,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       var result = treatment_prediction_1.PredictionFeaturesSchema.safeParse(validLifestyle);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.test)("rejects invalid enum values", function () {
+    (0, globals_1.test)("rejects invalid enum values", () => {
       var invalidLifestyle = {
         age: 30,
         gender: "male",
@@ -355,8 +354,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("TreatmentCharacteristicsSchema", function () {
-    (0, globals_1.test)("validates treatment characteristics", function () {
+  (0, globals_1.describe)("TreatmentCharacteristicsSchema", () => {
+    (0, globals_1.test)("validates treatment characteristics", () => {
       var validTreatment = {
         treatment_type: "laser_resurfacing",
         complexity_level: 4, // 1-5 scale
@@ -383,7 +382,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         (0, globals_1.expect)(result.data.complexity_level).toBeLessThanOrEqual(5);
       }
     });
-    (0, globals_1.test)("validates cost range structure", function () {
+    (0, globals_1.test)("validates cost range structure", () => {
       var invalidCostRange = {
         treatment_type: "chemical_peel",
         complexity_level: 3,
@@ -400,8 +399,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("ExplainabilityDataSchema", function () {
-    (0, globals_1.test)("validates explainability data structure", function () {
+  (0, globals_1.describe)("ExplainabilityDataSchema", () => {
+    (0, globals_1.test)("validates explainability data structure", () => {
       var validExplainability = {
         feature_importance: {
           age: 0.2,
@@ -432,7 +431,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         (0, globals_1.expect)(result.data.similar_cases.length).toBeGreaterThanOrEqual(3);
       }
     });
-    (0, globals_1.test)("validates feature importance as numbers", function () {
+    (0, globals_1.test)("validates feature importance as numbers", () => {
       var invalidFeatureImportance = {
         feature_importance: {
           age: "high", // Should be number
@@ -448,8 +447,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("PredictionRequestSchema", function () {
-    (0, globals_1.test)("validates prediction request structure", function () {
+  (0, globals_1.describe)("PredictionRequestSchema", () => {
+    (0, globals_1.test)("validates prediction request structure", () => {
       var validRequest = {
         patient_id: "123e4567-e89b-12d3-a456-426614174000",
         treatment_type: "microneedling",
@@ -465,7 +464,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       var result = treatment_prediction_1.PredictionRequestSchema.safeParse(validRequest);
       (0, globals_1.expect)(result.success).toBe(true);
     });
-    (0, globals_1.test)("requires valid UUID for patient_id", function () {
+    (0, globals_1.test)("requires valid UUID for patient_id", () => {
       var invalidRequest = {
         patient_id: "invalid-uuid",
         treatment_type: "laser_treatment",
@@ -474,8 +473,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("BatchPredictionRequestSchema", function () {
-    (0, globals_1.test)("validates batch prediction request", function () {
+  (0, globals_1.describe)("BatchPredictionRequestSchema", () => {
+    (0, globals_1.test)("validates batch prediction request", () => {
       var validBatchRequest = {
         predictions: [
           {
@@ -495,7 +494,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         (0, globals_1.expect)(result.data.predictions.length).toBeGreaterThan(0);
       }
     });
-    (0, globals_1.test)("accepts large batch requests (no limit in schema)", function () {
+    (0, globals_1.test)("accepts large batch requests (no limit in schema)", () => {
       var largeBatchRequest = {
         predictions: Array(150).fill({
           patient_id: "123e4567-e89b-12d3-a456-426614174000",
@@ -508,8 +507,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(true);
     });
   });
-  (0, globals_1.describe)("PredictionFeedbackSchema", function () {
-    (0, globals_1.test)("validates medical professional feedback", function () {
+  (0, globals_1.describe)("PredictionFeedbackSchema", () => {
+    (0, globals_1.test)("validates medical professional feedback", () => {
       var validFeedback = {
         prediction_id: "123e4567-e89b-12d3-a456-426614174000",
         provider_id: "123e4567-e89b-12d3-a456-426614174001",
@@ -528,7 +527,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         (0, globals_1.expect)(result.data.original_prediction).toBeLessThanOrEqual(1);
       }
     });
-    (0, globals_1.test)("validates confidence level range", function () {
+    (0, globals_1.test)("validates confidence level range", () => {
       var invalidFeedback = {
         prediction_id: "123e4567-e89b-12d3-a456-426614174000",
         provider_id: "123e4567-e89b-12d3-a456-426614174001",
@@ -541,8 +540,8 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
       (0, globals_1.expect)(result.success).toBe(false);
     });
   });
-  (0, globals_1.describe)("Medical-grade Validation Requirements", function () {
-    (0, globals_1.test)("enforces medical safety constraints via features", function () {
+  (0, globals_1.describe)("Medical-grade Validation Requirements", () => {
+    (0, globals_1.test)("enforces medical safety constraints via features", () => {
       var _a, _b, _c;
       var medicalConstraints = {
         age: 28,
@@ -580,7 +579,7 @@ var treatment_prediction_1 = require("@/app/lib/validations/treatment-prediction
         (0, globals_1.expect)(hasContraindications).toBe(true);
       }
     });
-    (0, globals_1.test)("validates compliance with medical standards", function () {
+    (0, globals_1.test)("validates compliance with medical standards", () => {
       var medicalStandards = {
         age: 16, // Minor - requires special consideration
         gender: "male",

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TASK-001: Foundation Setup & Baseline
  * Baseline Metrics System
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,10 +149,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -164,14 +161,14 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createbaselineManager = void 0;
 exports.establishBaseline = establishBaseline;
 exports.compareToBaseline = compareToBaseline;
 exports.generateBaselineReport = generateBaselineReport;
 var client_1 = require("@/lib/supabase/client");
-var BaselineManager = /** @class */ (function () {
+var BaselineManager = /** @class */ (() => {
   function BaselineManager() {
     this.supabase = (0, client_1.createClient)();
     this.baselineMetrics = new Map();
@@ -265,14 +262,14 @@ var BaselineManager = /** @class */ (function () {
             latestBaselines_1 = new Map();
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (record) {
+              : data.forEach((record) => {
                   var metricName = record.metric_name;
                   if (!latestBaselines_1.has(metricName)) {
                     latestBaselines_1.set(metricName, record);
                   }
                 });
             // Convert to BaselineMetric format
-            latestBaselines_1.forEach(function (record, metricName) {
+            latestBaselines_1.forEach((record, metricName) => {
               var _a, _b, _c;
               var baseline = {
                 metric_name: metricName,
@@ -320,7 +317,7 @@ var BaselineManager = /** @class */ (function () {
           case 1:
             if (!(_i < _a.length)) return [3 /*break*/, 4];
             metric = _a[_i];
-            if (!!this.baselineMetrics.has(metric.name)) return [3 /*break*/, 3];
+            if (this.baselineMetrics.has(metric.name)) return [3 /*break*/, 3];
             return [4 /*yield*/, this.establishBaseline(metric.name, metric.unit)];
           case 2:
             _b.sent();
@@ -423,13 +420,7 @@ var BaselineManager = /** @class */ (function () {
             }
             return [
               2 /*return*/,
-              data
-                .map(function (record) {
-                  return record.metric_value;
-                })
-                .filter(function (val) {
-                  return val !== null;
-                }),
+              data.map((record) => record.metric_value).filter((val) => val !== null),
             ];
           case 2:
             error_4 = _b.sent();
@@ -444,20 +435,15 @@ var BaselineManager = /** @class */ (function () {
   /**
    * Calculate baseline statistics from measurements
    */
-  BaselineManager.prototype.calculateBaselineStatistics = function (
+  BaselineManager.prototype.calculateBaselineStatistics = (
     metricName,
     metricUnit,
     measurementPeriod,
     measurements,
-  ) {
+  ) => {
     // Calculate statistical measures
-    var sorted = __spreadArray([], measurements, true).sort(function (a, b) {
-      return a - b;
-    });
-    var mean =
-      measurements.reduce(function (sum, val) {
-        return sum + val;
-      }, 0) / measurements.length;
+    var sorted = __spreadArray([], measurements, true).sort((a, b) => a - b);
+    var mean = measurements.reduce((sum, val) => sum + val, 0) / measurements.length;
     var median =
       sorted.length % 2 === 0
         ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
@@ -466,9 +452,7 @@ var BaselineManager = /** @class */ (function () {
     var baselineValue = median;
     // Calculate confidence level based on sample size and variance
     var variance =
-      measurements.reduce(function (sum, val) {
-        return sum + Math.pow(val - mean, 2);
-      }, 0) / measurements.length;
+      measurements.reduce((sum, val) => sum + (val - mean) ** 2, 0) / measurements.length;
     var standardDeviation = Math.sqrt(variance);
     var coefficientOfVariation = standardDeviation / mean;
     // Higher confidence for larger samples and lower variance
@@ -646,7 +630,7 @@ var BaselineManager = /** @class */ (function () {
   /**
    * Determine if change is improvement or regression
    */
-  BaselineManager.prototype.determineChangeDirection = function (metricName, changePercentage) {
+  BaselineManager.prototype.determineChangeDirection = (metricName, changePercentage) => {
     // Define metrics where lower values are better
     var lowerIsBetter = [
       "page_load_time",
@@ -676,10 +660,10 @@ var BaselineManager = /** @class */ (function () {
   /**
    * Determine significance level of change
    */
-  BaselineManager.prototype.determineSignificanceLevel = function (
+  BaselineManager.prototype.determineSignificanceLevel = (
     absoluteChangePercentage,
     confidenceLevel,
-  ) {
+  ) => {
     // Adjust significance thresholds based on confidence level
     var confidenceMultiplier = Math.max(0.5, confidenceLevel);
     var highThreshold = 20 * confidenceMultiplier;
@@ -787,18 +771,10 @@ var BaselineManager = /** @class */ (function () {
             _i++;
             return [3 /*break*/, 1];
           case 5:
-            significantChanges = comparisons.filter(function (c) {
-              return c.significance_level === "high";
-            }).length;
-            regressions = comparisons.filter(function (c) {
-              return c.change_direction === "regression";
-            }).length;
-            improvements = comparisons.filter(function (c) {
-              return c.change_direction === "improvement";
-            }).length;
-            neutralChanges = comparisons.filter(function (c) {
-              return c.change_direction === "neutral";
-            }).length;
+            significantChanges = comparisons.filter((c) => c.significance_level === "high").length;
+            regressions = comparisons.filter((c) => c.change_direction === "regression").length;
+            improvements = comparisons.filter((c) => c.change_direction === "improvement").length;
+            neutralChanges = comparisons.filter((c) => c.change_direction === "neutral").length;
             report = {
               report_date: new Date().toISOString(),
               measurement_period: measurementPeriod,
@@ -866,7 +842,7 @@ var BaselineManager = /** @class */ (function () {
   /**
    * Generate recommendation for regression
    */
-  BaselineManager.prototype.generateRecommendation = function (comparison) {
+  BaselineManager.prototype.generateRecommendation = (comparison) => {
     var metricName = comparison.metric_name;
     var changePercentage = comparison.change_percentage;
     var recommendations = {
@@ -935,11 +911,10 @@ var BaselineManager = /** @class */ (function () {
    * Start periodic baseline measurement
    */
   BaselineManager.prototype.startPeriodicMeasurement = function () {
-    var _this = this;
     // Run baseline comparison every hour
     this.measurementInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_10;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -957,8 +932,7 @@ var BaselineManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       60 * 60 * 1000,
     ); // Every hour
   };
@@ -1002,7 +976,7 @@ var BaselineManager = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var metrics, sessionStart, sessionDuration;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         metrics = {};
         try {
           // Get performance metrics (simplified for now)
@@ -1072,32 +1046,30 @@ var BaselineManager = /** @class */ (function () {
   return BaselineManager;
 })();
 // Export singleton instance
-var createbaselineManager = function () {
-  return new BaselineManager();
-};
+var createbaselineManager = () => new BaselineManager();
 exports.createbaselineManager = createbaselineManager;
 // Utility functions
 function establishBaseline(metricName, metricUnit, measurementPeriod) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [
-        2 /*return*/,
-        baselineManager.establishBaseline(metricName, metricUnit, measurementPeriod),
-      ];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      baselineManager.establishBaseline(metricName, metricUnit, measurementPeriod),
+    ]);
   });
 }
 function compareToBaseline(metricName, currentValue) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, baselineManager.compareToBaseline(metricName, currentValue)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      baselineManager.compareToBaseline(metricName, currentValue),
+    ]);
   });
 }
 function generateBaselineReport(measurementPeriod) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, baselineManager.generateBaselineReport(measurementPeriod)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      baselineManager.generateBaselineReport(measurementPeriod),
+    ]);
   });
 }

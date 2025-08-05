@@ -3,7 +3,7 @@
 // Database query optimization and performance monitoring
 
 import type { createClient } from "@supabase/supabase-js";
-import type { stockAlertCache, cacheMetrics } from "./cache";
+import type { cacheMetrics, stockAlertCache } from "./cache";
 
 // =====================================================
 // CONFIGURATION

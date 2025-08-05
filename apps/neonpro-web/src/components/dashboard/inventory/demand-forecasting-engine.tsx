@@ -1,5 +1,17 @@
 "use client";
 
+import type {
+  Activity,
+  BarChart3,
+  Brain,
+  Calendar,
+  CheckCircle,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { useDemandForecasting } from "@/app/hooks/useDemandForecasting";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
@@ -15,18 +27,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Activity,
-  BarChart3,
-  Brain,
-  Calendar,
-  CheckCircle,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Zap,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface DemandForecastingEngineProps {
   clinicId: string;

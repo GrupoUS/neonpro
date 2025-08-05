@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccountsPayableList = AccountsPayableList;
 var badge_1 = require("@/components/ui/badge");
@@ -168,7 +165,6 @@ var react_1 = require("react");
 var sonner_1 = require("sonner");
 var accounts_payable_form_1 = require("./accounts-payable-form");
 function AccountsPayableList() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     accountsPayable = _a[0],
     setAccountsPayable = _a[1];
@@ -218,17 +214,14 @@ function AccountsPayableList() {
     }),
     filters = _m[0],
     setFilters = _m[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadAccountsPayable();
-      loadFilterOptions();
-    },
-    [filters, currentPage],
-  );
-  var loadAccountsPayable = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadAccountsPayable();
+    loadFilterOptions();
+  }, [filters, currentPage]);
+  var loadAccountsPayable = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -259,11 +252,10 @@ function AccountsPayableList() {
         }
       });
     });
-  };
-  var loadFilterOptions = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadFilterOptions = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, vendorsData, categoriesData, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -288,28 +280,25 @@ function AccountsPayableList() {
         }
       });
     });
-  };
-  var handleSearch = function (search) {
-    setFilters(function (prev) {
-      return __assign(__assign({}, prev), { search: search });
-    });
+  var handleSearch = (search) => {
+    setFilters((prev) => __assign(__assign({}, prev), { search: search }));
     setCurrentPage(1);
   };
-  var handleFilterChange = function (key, value) {
-    setFilters(function (prev) {
+  var handleFilterChange = (key, value) => {
+    setFilters((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[key] = value), _a));
     });
     setCurrentPage(1);
   };
-  var handleEdit = function (ap) {
+  var handleEdit = (ap) => {
     setSelectedAP(ap);
     setShowForm(true);
   };
-  var handleDelete = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleDelete = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!apToDelete) return [2 /*return*/];
@@ -344,11 +333,10 @@ function AccountsPayableList() {
         }
       });
     });
-  };
-  var handleStatusUpdate = function (ap, newStatus) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleStatusUpdate = (ap, newStatus) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -371,21 +359,18 @@ function AccountsPayableList() {
         }
       });
     });
-  };
-  var handleFormSuccess = function () {
+  var handleFormSuccess = () => {
     loadAccountsPayable();
     setSelectedAP(undefined);
   };
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-  var formatDate = function (date) {
-    return (0, date_fns_1.format)(new Date(date), "dd/MM/yyyy", { locale: locale_1.ptBR });
-  };
-  var getStatusBadge = function (status) {
+  var formatDate = (date) =>
+    (0, date_fns_1.format)(new Date(date), "dd/MM/yyyy", { locale: locale_1.ptBR });
+  var getStatusBadge = (status) => {
     var statusMap = {
       draft: {
         label: "Rascunho",
@@ -439,7 +424,7 @@ function AccountsPayableList() {
       </badge_1.Badge>
     );
   };
-  var getPriorityBadge = function (priority) {
+  var getPriorityBadge = (priority) => {
     var priorityMap = {
       low: { label: "Baixa", variant: "outline" },
       normal: { label: "Normal", variant: "secondary" },
@@ -449,7 +434,7 @@ function AccountsPayableList() {
     var priorityInfo = priorityMap[priority] || priorityMap.normal;
     return <badge_1.Badge variant={priorityInfo.variant}>{priorityInfo.label}</badge_1.Badge>;
   };
-  var isOverdue = function (dueDate, status) {
+  var isOverdue = (dueDate, status) => {
     var today = new Date();
     var due = new Date(dueDate);
     return due < today && ["pending", "approved", "scheduled"].includes(status);
@@ -463,11 +448,7 @@ function AccountsPayableList() {
           <h2 className="text-2xl font-bold tracking-tight">Contas a Pagar</h2>
           <p className="text-muted-foreground">Gerencie todas as contas a pagar</p>
         </div>
-        <button_1.Button
-          onClick={function () {
-            return setShowForm(true);
-          }}
-        >
+        <button_1.Button onClick={() => setShowForm(true)}>
           <lucide_react_1.Plus className="mr-2 h-4 w-4" />
           Nova Conta a Pagar
         </button_1.Button>
@@ -483,9 +464,7 @@ function AccountsPayableList() {
                 <input_1.Input
                   placeholder="Buscar por número AP, fatura ou descrição..."
                   value={filters.search || ""}
-                  onChange={function (e) {
-                    return handleSearch(e.target.value);
-                  }}
+                  onChange={(e) => handleSearch(e.target.value)}
                   className="pl-8"
                 />
               </div>
@@ -494,30 +473,28 @@ function AccountsPayableList() {
             <div className="flex flex-wrap gap-2">
               <select_1.Select
                 value={filters.vendor_id || "all"}
-                onValueChange={function (value) {
-                  return handleFilterChange("vendor_id", value === "all" ? undefined : value);
-                }}
+                onValueChange={(value) =>
+                  handleFilterChange("vendor_id", value === "all" ? undefined : value)
+                }
               >
                 <select_1.SelectTrigger className="w-[180px]">
                   <select_1.SelectValue placeholder="Fornecedor" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todos os fornecedores</select_1.SelectItem>
-                  {vendors.map(function (vendor) {
-                    return (
-                      <select_1.SelectItem key={vendor.id} value={vendor.value}>
-                        {vendor.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {vendors.map((vendor) => (
+                    <select_1.SelectItem key={vendor.id} value={vendor.value}>
+                      {vendor.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
 
               <select_1.Select
                 value={filters.status || "all"}
-                onValueChange={function (value) {
-                  return handleFilterChange("status", value === "all" ? undefined : value);
-                }}
+                onValueChange={(value) =>
+                  handleFilterChange("status", value === "all" ? undefined : value)
+                }
               >
                 <select_1.SelectTrigger className="w-[140px]">
                   <select_1.SelectValue placeholder="Status" />
@@ -535,9 +512,9 @@ function AccountsPayableList() {
 
               <select_1.Select
                 value={filters.priority || "all"}
-                onValueChange={function (value) {
-                  return handleFilterChange("priority", value === "all" ? undefined : value);
-                }}
+                onValueChange={(value) =>
+                  handleFilterChange("priority", value === "all" ? undefined : value)
+                }
               >
                 <select_1.SelectTrigger className="w-[120px]">
                   <select_1.SelectValue placeholder="Prioridade" />
@@ -553,25 +530,20 @@ function AccountsPayableList() {
 
               <select_1.Select
                 value={filters.expense_category_id || "all"}
-                onValueChange={function (value) {
-                  return handleFilterChange(
-                    "expense_category_id",
-                    value === "all" ? undefined : value,
-                  );
-                }}
+                onValueChange={(value) =>
+                  handleFilterChange("expense_category_id", value === "all" ? undefined : value)
+                }
               >
                 <select_1.SelectTrigger className="w-[160px]">
                   <select_1.SelectValue placeholder="Categoria" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todas as categorias</select_1.SelectItem>
-                  {categories.map(function (category) {
-                    return (
-                      <select_1.SelectItem key={category.id} value={category.value}>
-                        {category.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {categories.map((category) => (
+                    <select_1.SelectItem key={category.id} value={category.value}>
+                      {category.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -609,15 +581,13 @@ function AccountsPayableList() {
                       <table_1.TableCell colSpan={7} className="text-center py-8">
                         <lucide_react_1.FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                         <p className="text-sm text-muted-foreground">
-                          {Object.values(filters).some(function (v) {
-                            return v !== undefined && v !== "";
-                          })
+                          {Object.values(filters).some((v) => v !== undefined && v !== "")
                             ? "Nenhuma conta a pagar encontrada com os filtros aplicados"
                             : "Nenhuma conta a pagar cadastrada"}
                         </p>
                       </table_1.TableCell>
                     </table_1.TableRow>
-                  : accountsPayable.map(function (ap) {
+                  : accountsPayable.map((ap) => {
                       var _a, _b;
                       return (
                         <table_1.TableRow key={ap.id}>
@@ -687,20 +657,14 @@ function AccountsPayableList() {
                                 </button_1.Button>
                               </dropdown_menu_1.DropdownMenuTrigger>
                               <dropdown_menu_1.DropdownMenuContent align="end">
-                                <dropdown_menu_1.DropdownMenuItem
-                                  onClick={function () {
-                                    return handleEdit(ap);
-                                  }}
-                                >
+                                <dropdown_menu_1.DropdownMenuItem onClick={() => handleEdit(ap)}>
                                   <lucide_react_1.Pencil className="mr-2 h-4 w-4" />
                                   Editar
                                 </dropdown_menu_1.DropdownMenuItem>
 
                                 {ap.status === "pending" && (
                                   <dropdown_menu_1.DropdownMenuItem
-                                    onClick={function () {
-                                      return handleStatusUpdate(ap, "approved");
-                                    }}
+                                    onClick={() => handleStatusUpdate(ap, "approved")}
                                   >
                                     <lucide_react_1.CheckCircle className="mr-2 h-4 w-4" />
                                     Aprovar
@@ -709,7 +673,7 @@ function AccountsPayableList() {
 
                                 <dropdown_menu_1.DropdownMenuItem
                                   className="text-destructive"
-                                  onClick={function () {
+                                  onClick={() => {
                                     setApToDelete(ap);
                                     setShowDeleteDialog(true);
                                   }}
@@ -739,26 +703,20 @@ function AccountsPayableList() {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setCurrentPage(function (prev) {
-                  return Math.max(1, prev - 1);
-                });
-              }}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
             >
               Anterior
             </button_1.Button>
             <div className="flex items-center gap-1">
-              {Array.from({ length: Math.min(5, totalPages) }, function (_, i) {
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 var pageNum = Math.max(1, Math.min(totalPages, currentPage - 2 + i));
                 return (
                   <button_1.Button
                     key={pageNum}
                     variant={currentPage === pageNum ? "default" : "outline"}
                     size="sm"
-                    onClick={function () {
-                      return setCurrentPage(pageNum);
-                    }}
+                    onClick={() => setCurrentPage(pageNum)}
                   >
                     {pageNum}
                   </button_1.Button>
@@ -768,11 +726,7 @@ function AccountsPayableList() {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return setCurrentPage(function (prev) {
-                  return Math.min(totalPages, prev + 1);
-                });
-              }}
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
             >
               Próximo
@@ -785,7 +739,7 @@ function AccountsPayableList() {
       <accounts_payable_form_1.AccountsPayableForm
         accountsPayable={selectedAP}
         open={showForm}
-        onOpenChange={function (open) {
+        onOpenChange={(open) => {
           setShowForm(open);
           if (!open) setSelectedAP(undefined);
         }}
@@ -804,12 +758,7 @@ function AccountsPayableList() {
             </dialog_1.DialogDescription>
           </dialog_1.DialogHeader>
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowDeleteDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
               Cancelar
             </button_1.Button>
             <button_1.Button variant="destructive" onClick={handleDelete} disabled={deleteLoading}>

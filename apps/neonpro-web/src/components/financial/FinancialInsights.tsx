@@ -1,6 +1,29 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  ArrowRight,
+  BarChart3,
+  Brain,
+  Calendar,
+  CheckCircle,
+  DollarSign,
+  Info,
+  Lightbulb,
+  LineChart,
+  PieChart,
+  Star,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,32 +31,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Skeleton } from "@/components/ui/skeleton";
-import type {
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle,
-  Info,
-  Target,
-  Zap,
-  Brain,
-  BarChart3,
-  DollarSign,
-  Users,
-  Calendar,
-  ArrowRight,
-  Lightbulb,
-  Star,
-  Activity,
-  PieChart,
-  LineChart,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface FinancialInsightsProps {
   insights?: any;

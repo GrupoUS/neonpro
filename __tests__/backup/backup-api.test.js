@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,52 +128,42 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
 var route_1 = require("@/app/api/backup/configs/route");
 var route_2 = require("@/app/api/backup/configs/[id]/route");
 // Mock Supabase
-globals_1.jest.mock("@/lib/supabase", function () {
-  return {
-    createServiceRoleClient: globals_1.jest.fn(function () {
-      return {
-        from: globals_1.jest.fn(function () {
-          return {
-            select: globals_1.jest.fn().mockReturnThis(),
-            insert: globals_1.jest.fn().mockReturnThis(),
-            update: globals_1.jest.fn().mockReturnThis(),
-            delete: globals_1.jest.fn().mockReturnThis(),
-            eq: globals_1.jest.fn().mockReturnThis(),
-            single: globals_1.jest.fn(function () {
-              return Promise.resolve({ data: null, error: null });
-            }),
-            order: globals_1.jest.fn().mockReturnThis(),
-          };
-        }),
-      };
-    }),
-  };
-});
+globals_1.jest.mock("@/lib/supabase", () => ({
+  createServiceRoleClient: globals_1.jest.fn(() => ({
+    from: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn().mockReturnThis(),
+      insert: globals_1.jest.fn().mockReturnThis(),
+      update: globals_1.jest.fn().mockReturnThis(),
+      delete: globals_1.jest.fn().mockReturnThis(),
+      eq: globals_1.jest.fn().mockReturnThis(),
+      single: globals_1.jest.fn(() => Promise.resolve({ data: null, error: null })),
+      order: globals_1.jest.fn().mockReturnThis(),
+    })),
+  })),
+}));
 // Mock authentication
-globals_1.jest.mock("@/lib/auth", function () {
-  return {
-    getCurrentUser: globals_1.jest.fn(function () {
-      return Promise.resolve({
-        id: "user-1",
-        email: "test@test.com",
-        role: "admin",
-      });
+globals_1.jest.mock("@/lib/auth", () => ({
+  getCurrentUser: globals_1.jest.fn(() =>
+    Promise.resolve({
+      id: "user-1",
+      email: "test@test.com",
+      role: "admin",
     }),
-  };
-});
-describe("/api/backup/configs", function () {
-  describe("GET /api/backup/configs", function () {
-    it("should return list of backup configurations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  ),
+}));
+describe("/api/backup/configs", () => {
+  describe("GET /api/backup/configs", () => {
+    it("should return list of backup configurations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost:3000/api/backup/configs");
@@ -192,12 +179,11 @@ describe("/api/backup/configs", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle pagination parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle pagination parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -215,14 +201,13 @@ describe("/api/backup/configs", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("POST /api/backup/configs", function () {
-    it("should create a new backup configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("POST /api/backup/configs", () => {
+    it("should create a new backup configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var configData, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               configData = {
@@ -270,12 +255,11 @@ describe("/api/backup/configs", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate required fields", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate required fields", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var invalidData, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               invalidData = {
@@ -300,17 +284,16 @@ describe("/api/backup/configs", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });
-describe("/api/backup/configs/[id]", function () {
+describe("/api/backup/configs/[id]", () => {
   var configId = "test-config-1";
-  describe("GET /api/backup/configs/[id]", function () {
-    it("should return a specific backup configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET /api/backup/configs/[id]", () => {
+    it("should return a specific backup configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -328,12 +311,11 @@ describe("/api/backup/configs/[id]", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should return 404 for non-existent configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should return 404 for non-existent configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -346,14 +328,13 @@ describe("/api/backup/configs/[id]", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("PUT /api/backup/configs/[id]", function () {
-    it("should update a backup configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("PUT /api/backup/configs/[id]", () => {
+    it("should update a backup configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updateData, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               updateData = {
@@ -382,14 +363,13 @@ describe("/api/backup/configs/[id]", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("DELETE /api/backup/configs/[id]", function () {
-    it("should delete a backup configuration", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("DELETE /api/backup/configs/[id]", () => {
+    it("should delete a backup configuration", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -405,30 +385,29 @@ describe("/api/backup/configs/[id]", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });
-describe("/api/backup/jobs", function () {
-  beforeEach(function () {
+describe("/api/backup/jobs", () => {
+  beforeEach(() => {
     globals_1.jest.clearAllMocks();
   });
-  it("should start a backup job", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var jobData, request, mockJobResponse;
-      return __generator(this, function (_a) {
+  it("should start a backup job", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var jobData, _request, _mockJobResponse;
+      return __generator(this, (_a) => {
         jobData = {
           config_id: "config-1",
           type: "MANUAL",
         };
-        request = new server_1.NextRequest("http://localhost:3000/api/backup/jobs", {
+        _request = new server_1.NextRequest("http://localhost:3000/api/backup/jobs", {
           method: "POST",
           body: JSON.stringify(jobData),
           headers: {
             "Content-Type": "application/json",
           },
         });
-        mockJobResponse = {
+        _mockJobResponse = {
           id: "job-1",
           config_id: jobData.config_id,
           status: "PENDING",
@@ -439,14 +418,13 @@ describe("/api/backup/jobs", function () {
         expect(jobData.type).toBe("MANUAL");
         return [2 /*return*/];
       });
-    });
-  });
-  it("should get backup job status", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var jobId, request, mockStatus;
-      return __generator(this, function (_a) {
+    }));
+  it("should get backup job status", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var jobId, _request, mockStatus;
+      return __generator(this, (_a) => {
         jobId = "job-1";
-        request = new server_1.NextRequest("http://localhost:3000/api/backup/jobs/".concat(jobId));
+        _request = new server_1.NextRequest("http://localhost:3000/api/backup/jobs/".concat(jobId));
         mockStatus = {
           id: jobId,
           status: "RUNNING",
@@ -458,14 +436,13 @@ describe("/api/backup/jobs", function () {
         expect(mockStatus.progress).toBe(45);
         return [2 /*return*/];
       });
-    });
-  });
-  it("should cancel a running backup job", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var jobId, request, mockCancelResponse;
-      return __generator(this, function (_a) {
+    }));
+  it("should cancel a running backup job", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var jobId, _request, mockCancelResponse;
+      return __generator(this, (_a) => {
         jobId = "job-1";
-        request = new server_1.NextRequest(
+        _request = new server_1.NextRequest(
           "http://localhost:3000/api/backup/jobs/".concat(jobId, "/cancel"),
           {
             method: "POST",
@@ -479,21 +456,20 @@ describe("/api/backup/jobs", function () {
         expect(mockCancelResponse.status).toBe("CANCELLED");
         return [2 /*return*/];
       });
-    });
-  });
+    }));
 });
-describe("/api/backup/recovery", function () {
-  it("should start a recovery operation", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var recoveryData, request, mockRecoveryResponse;
-      return __generator(this, function (_a) {
+describe("/api/backup/recovery", () => {
+  it("should start a recovery operation", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var recoveryData, _request, mockRecoveryResponse;
+      return __generator(this, (_a) => {
         recoveryData = {
           backup_id: "backup-1",
           target_location: "/tmp/restore",
           overwrite_existing: true,
           verify_integrity: true,
         };
-        request = new server_1.NextRequest("http://localhost:3000/api/backup/recovery", {
+        _request = new server_1.NextRequest("http://localhost:3000/api/backup/recovery", {
           method: "POST",
           body: JSON.stringify(recoveryData),
           headers: {
@@ -511,17 +487,16 @@ describe("/api/backup/recovery", function () {
         expect(mockRecoveryResponse.status).toBe("PENDING");
         return [2 /*return*/];
       });
-    });
-  });
-  it("should validate recovery parameters", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var invalidData, request;
-      return __generator(this, function (_a) {
+    }));
+  it("should validate recovery parameters", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var invalidData, _request;
+      return __generator(this, (_a) => {
         invalidData = {
           // Missing required backup_id
           target_location: "/tmp/restore",
         };
-        request = new server_1.NextRequest("http://localhost:3000/api/backup/recovery", {
+        _request = new server_1.NextRequest("http://localhost:3000/api/backup/recovery", {
           method: "POST",
           body: JSON.stringify(invalidData),
           headers: {
@@ -532,15 +507,14 @@ describe("/api/backup/recovery", function () {
         expect(invalidData.target_location).toBe("/tmp/restore");
         return [2 /*return*/];
       });
-    });
-  });
+    }));
 });
-describe("/api/backup/status", function () {
-  it("should return overall backup system status", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var request, mockStatus;
-      return __generator(this, function (_a) {
-        request = new server_1.NextRequest("http://localhost:3000/api/backup/status");
+describe("/api/backup/status", () => {
+  it("should return overall backup system status", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var _request, mockStatus;
+      return __generator(this, (_a) => {
+        _request = new server_1.NextRequest("http://localhost:3000/api/backup/status");
         mockStatus = {
           system_health: "HEALTHY",
           active_jobs: 2,
@@ -557,15 +531,14 @@ describe("/api/backup/status", function () {
         expect(mockStatus.total_configs).toBe(5);
         return [2 /*return*/];
       });
-    });
-  });
+    }));
 });
-describe("/api/backup/metrics", function () {
-  it("should return backup metrics", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var request, mockMetrics;
-      return __generator(this, function (_a) {
-        request = new server_1.NextRequest("http://localhost:3000/api/backup/metrics");
+describe("/api/backup/metrics", () => {
+  it("should return backup metrics", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var _request, mockMetrics;
+      return __generator(this, (_a) => {
+        _request = new server_1.NextRequest("http://localhost:3000/api/backup/metrics");
         mockMetrics = {
           total_backups: 150,
           successful_backups: 142,
@@ -580,15 +553,14 @@ describe("/api/backup/metrics", function () {
         expect(mockMetrics.compression_ratio).toBe(0.65);
         return [2 /*return*/];
       });
-    });
-  });
-  it("should filter metrics by date range", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var startDate, endDate, request, mockFilteredMetrics;
-      return __generator(this, function (_a) {
+    }));
+  it("should filter metrics by date range", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var startDate, endDate, _request, mockFilteredMetrics;
+      return __generator(this, (_a) => {
         startDate = "2024-01-01";
         endDate = "2024-01-31";
-        request = new server_1.NextRequest(
+        _request = new server_1.NextRequest(
           "http://localhost:3000/api/backup/metrics?start_date="
             .concat(startDate, "&end_date=")
             .concat(endDate),
@@ -607,26 +579,24 @@ describe("/api/backup/metrics", function () {
         expect(mockFilteredMetrics.total_backups).toBe(31);
         return [2 /*return*/];
       });
-    });
-  });
+    }));
 });
-describe("API Error Handling", function () {
-  it("should handle database connection errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+describe("API Error Handling", () => {
+  it("should handle database connection errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockError;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         mockError = new Error("Database connection failed");
         // This would test actual error handling in routes
         expect(mockError.message).toBe("Database connection failed");
         return [2 /*return*/];
       });
-    });
-  });
-  it("should handle validation errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var invalidData, mockValidationError;
-      return __generator(this, function (_a) {
-        invalidData = {
+    }));
+  it("should handle validation errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      var _invalidData, mockValidationError;
+      return __generator(this, (_a) => {
+        _invalidData = {
           name: "", // Empty name
           type: "INVALID_TYPE", // Invalid type
         };
@@ -638,12 +608,11 @@ describe("API Error Handling", function () {
         expect(mockValidationError.details).toContain("Name is required");
         return [2 /*return*/];
       });
-    });
-  });
-  it("should handle authentication errors", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should handle authentication errors", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockAuthError;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         mockAuthError = {
           error: "Authentication required",
           status: 401,
@@ -652,30 +621,24 @@ describe("API Error Handling", function () {
         expect(mockAuthError.error).toBe("Authentication required");
         return [2 /*return*/];
       });
-    });
-  });
+    }));
 });
-describe("API Performance Tests", function () {
-  it("should handle concurrent requests", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+describe("API Performance Tests", () => {
+  it("should handle concurrent requests", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var requests, startTime, endTime;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
-            requests = Array.from({ length: 10 }, function (_, i) {
-              return new server_1.NextRequest(
-                "http://localhost:3000/api/backup/configs?page=".concat(i + 1),
-              );
-            });
+            requests = Array.from(
+              { length: 10 },
+              (_, i) =>
+                new server_1.NextRequest(
+                  "http://localhost:3000/api/backup/configs?page=".concat(i + 1),
+                ),
+            );
             startTime = Date.now();
-            return [
-              4 /*yield*/,
-              Promise.all(
-                requests.map(function () {
-                  return Promise.resolve();
-                }),
-              ),
-            ];
+            return [4 /*yield*/, Promise.all(requests.map(() => Promise.resolve()))];
           case 1:
             _a.sent();
             endTime = Date.now();
@@ -683,19 +646,18 @@ describe("API Performance Tests", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  it("should implement rate limiting", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  it("should implement rate limiting", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var requests;
-      return __generator(this, function (_a) {
-        requests = Array.from({ length: 100 }, function () {
-          return new server_1.NextRequest("http://localhost:3000/api/backup/configs");
-        });
+      return __generator(this, (_a) => {
+        requests = Array.from(
+          { length: 100 },
+          () => new server_1.NextRequest("http://localhost:3000/api/backup/configs"),
+        );
         // In a real test, some requests should be rate limited
         expect(requests.length).toBe(100);
         return [2 /*return*/];
       });
-    });
-  });
+    }));
 });

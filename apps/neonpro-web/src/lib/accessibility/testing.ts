@@ -31,10 +31,10 @@ export class AccessibilityTester {
   private results: AccessibilityTestResult[] = [];
 
   static getInstance(): AccessibilityTester {
-    if (!this.instance) {
-      this.instance = new AccessibilityTester();
+    if (!AccessibilityTester.instance) {
+      AccessibilityTester.instance = new AccessibilityTester();
     }
-    return this.instance;
+    return AccessibilityTester.instance;
   }
 
   // Test color contrast ratios

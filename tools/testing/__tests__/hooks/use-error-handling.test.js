@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,32 +128,28 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var use_error_handling_1 = require("@/hooks/use-error-handling");
-describe("useErrorHandling", function () {
-  beforeEach(function () {
+describe("useErrorHandling", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Mock console methods to avoid noise in tests
-    jest.spyOn(console, "error").mockImplementation(function () {});
-    jest.spyOn(console, "warn").mockImplementation(function () {});
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "warn").mockImplementation(() => {});
   });
-  afterEach(function () {
+  afterEach(() => {
     jest.restoreAllMocks();
   });
-  it("initializes with empty errors array", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
+  it("initializes with empty errors array", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
     expect(result.current.errors).toEqual([]);
     expect(result.current.hasErrors).toBe(false);
   });
-  it("adds error message correctly", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
-    (0, react_1.act)(function () {
+  it("adds error message correctly", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Test Error",
@@ -173,11 +166,9 @@ describe("useErrorHandling", function () {
     expect(result.current.errors[0].id).toBeDefined();
     expect(result.current.errors[0].timestamp).toBeInstanceOf(Date);
   });
-  it("adds multiple error types", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
-    (0, react_1.act)(function () {
+  it("adds multiple error types", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Error",
@@ -200,18 +191,17 @@ describe("useErrorHandling", function () {
       });
     });
     expect(result.current.errors).toHaveLength(4);
-    expect(
-      result.current.errors.map(function (e) {
-        return e.type;
-      }),
-    ).toEqual(["error", "warning", "info", "success"]);
+    expect(result.current.errors.map((e) => e.type)).toEqual([
+      "error",
+      "warning",
+      "info",
+      "success",
+    ]);
   });
-  it("removes error by id", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
+  it("removes error by id", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
     var errorId;
-    (0, react_1.act)(function () {
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Test Error",
@@ -220,17 +210,15 @@ describe("useErrorHandling", function () {
       errorId = result.current.errors[0].id;
     });
     expect(result.current.errors).toHaveLength(1);
-    (0, react_1.act)(function () {
+    (0, react_1.act)(() => {
       result.current.removeError(errorId);
     });
     expect(result.current.errors).toHaveLength(0);
     expect(result.current.hasErrors).toBe(false);
   });
-  it("clears all errors", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
-    (0, react_1.act)(function () {
+  it("clears all errors", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Error 1",
@@ -243,16 +231,14 @@ describe("useErrorHandling", function () {
       });
     });
     expect(result.current.errors).toHaveLength(2);
-    (0, react_1.act)(function () {
+    (0, react_1.act)(() => {
       result.current.clearErrors();
     });
     expect(result.current.errors).toHaveLength(0);
     expect(result.current.hasErrors).toBe(false);
   });
-  it("adds error context information", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
+  it("adds error context information", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
     var context = {
       component: "TestComponent",
       operation: "testOperation",
@@ -263,7 +249,7 @@ describe("useErrorHandling", function () {
         timestamp: new Date().toISOString(),
       },
     };
-    (0, react_1.act)(function () {
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Context Error",
@@ -273,10 +259,8 @@ describe("useErrorHandling", function () {
     });
     expect(result.current.errors[0].context).toEqual(context);
   });
-  it("handles error with actions", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
+  it("handles error with actions", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
     var mockAction = jest.fn();
     var actions = [
       {
@@ -285,7 +269,7 @@ describe("useErrorHandling", function () {
         variant: "primary",
       },
     ];
-    (0, react_1.act)(function () {
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Actionable Error",
@@ -297,15 +281,13 @@ describe("useErrorHandling", function () {
     expect(result.current.errors[0].actions).toEqual(actions);
     expect(result.current.errors[0].actionable).toBe(true);
   });
-  it("handles auto-hide functionality", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  it("handles auto-hide functionality", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var result;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         jest.useFakeTimers();
-        result = (0, react_1.renderHook)(function () {
-          return (0, use_error_handling_1.useErrorHandling)();
-        }).result;
-        (0, react_1.act)(function () {
+        result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
+        (0, react_1.act)(() => {
           result.current.addError({
             type: "success",
             title: "Auto Hide",
@@ -316,20 +298,17 @@ describe("useErrorHandling", function () {
         });
         expect(result.current.errors).toHaveLength(1);
         // Fast forward time
-        (0, react_1.act)(function () {
+        (0, react_1.act)(() => {
           jest.advanceTimersByTime(1000);
         });
         expect(result.current.errors).toHaveLength(0);
         jest.useRealTimers();
         return [2 /*return*/];
       });
-    });
-  });
-  it("filters errors by type", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
-    (0, react_1.act)(function () {
+    }));
+  it("filters errors by type", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Error 1",
@@ -350,22 +329,12 @@ describe("useErrorHandling", function () {
     var warningMessages = result.current.getErrorsByType("warning");
     expect(errorMessages).toHaveLength(2);
     expect(warningMessages).toHaveLength(1);
-    expect(
-      errorMessages.every(function (e) {
-        return e.type === "error";
-      }),
-    ).toBe(true);
-    expect(
-      warningMessages.every(function (e) {
-        return e.type === "warning";
-      }),
-    ).toBe(true);
+    expect(errorMessages.every((e) => e.type === "error")).toBe(true);
+    expect(warningMessages.every((e) => e.type === "warning")).toBe(true);
   });
-  it("generates unique error IDs", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
-    (0, react_1.act)(function () {
+  it("generates unique error IDs", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Error 1",
@@ -377,21 +346,13 @@ describe("useErrorHandling", function () {
         message: "Message 2",
       });
     });
-    var ids = result.current.errors.map(function (e) {
-      return e.id;
-    });
+    var ids = result.current.errors.map((e) => e.id);
     expect(new Set(ids).size).toBe(2); // All IDs should be unique
-    expect(
-      ids.every(function (id) {
-        return typeof id === "string" && id.length > 0;
-      }),
-    ).toBe(true);
+    expect(ids.every((id) => typeof id === "string" && id.length > 0)).toBe(true);
   });
-  it("handles dismissible errors", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
-    (0, react_1.act)(function () {
+  it("handles dismissible errors", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "info",
         title: "Dismissible Info",
@@ -408,12 +369,10 @@ describe("useErrorHandling", function () {
     expect(result.current.errors[0].dismissible).toBe(true);
     expect(result.current.errors[1].dismissible).toBe(false);
   });
-  it("handles error with technical details", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)();
-    }).result;
+  it("handles error with technical details", () => {
+    var result = (0, react_1.renderHook)(() => (0, use_error_handling_1.useErrorHandling)()).result;
     var technicalDetails = "Stack trace or technical information";
-    (0, react_1.act)(function () {
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Technical Error",
@@ -423,14 +382,14 @@ describe("useErrorHandling", function () {
     });
     expect(result.current.errors[0].details).toBe(technicalDetails);
   });
-  it("respects LGPD compliance in error handling", function () {
+  it("respects LGPD compliance in error handling", () => {
     var _a;
-    var result = (0, react_1.renderHook)(function () {
-      return (0, use_error_handling_1.useErrorHandling)({
+    var result = (0, react_1.renderHook)(() =>
+      (0, use_error_handling_1.useErrorHandling)({
         lgpdCompliant: true,
-      });
-    }).result;
-    (0, react_1.act)(function () {
+      }),
+    ).result;
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Privacy Error",
@@ -449,9 +408,9 @@ describe("useErrorHandling", function () {
     ).toBeDefined();
     // Implementation would filter sensitive metadata in LGPD mode
   });
-  it("handles configuration changes", function () {
+  it("handles configuration changes", () => {
     var _a = (0, react_1.renderHook)(
-        function (_a) {
+        (_a) => {
           var config = _a.config;
           return (0, use_error_handling_1.useErrorHandling)(config);
         },
@@ -467,7 +426,7 @@ describe("useErrorHandling", function () {
       result = _a.result,
       rerender = _a.rerender;
     // Test with initial config
-    (0, react_1.act)(function () {
+    (0, react_1.act)(() => {
       result.current.addError({
         type: "error",
         title: "Config Test",

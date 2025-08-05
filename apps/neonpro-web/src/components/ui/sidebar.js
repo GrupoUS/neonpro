@@ -1,32 +1,30 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SidebarTrigger =
   exports.SidebarSeparator =
@@ -79,7 +77,7 @@ function useSidebar() {
   }
   return context;
 }
-var SidebarProvider = React.forwardRef(function (_a, ref) {
+var SidebarProvider = React.forwardRef((_a, ref) => {
   var _b = _a.defaultOpen,
     defaultOpen = _b === void 0 ? true : _b,
     openProp = _a.open,
@@ -99,7 +97,7 @@ var SidebarProvider = React.forwardRef(function (_a, ref) {
     _setOpen = _d[1];
   var open = openProp !== null && openProp !== void 0 ? openProp : _open;
   var setOpen = React.useCallback(
-    function (value) {
+    (value) => {
       var openState = typeof value === "function" ? value(open) : value;
       if (setOpenProp) {
         setOpenProp(openState);
@@ -116,48 +114,33 @@ var SidebarProvider = React.forwardRef(function (_a, ref) {
   );
   // Helper to toggle the sidebar.
   var toggleSidebar = React.useCallback(
-    function () {
-      return isMobile
-        ? setOpenMobile(function (open) {
-            return !open;
-          })
-        : setOpen(function (open) {
-            return !open;
-          });
-    },
+    () => (isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)),
     [isMobile, setOpen, setOpenMobile],
   );
   // Adds a keyboard shortcut to toggle the sidebar.
-  React.useEffect(
-    function () {
-      var handleKeyDown = function (event) {
-        if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
-          event.preventDefault();
-          toggleSidebar();
-        }
-      };
-      window.addEventListener("keydown", handleKeyDown);
-      return function () {
-        return window.removeEventListener("keydown", handleKeyDown);
-      };
-    },
-    [toggleSidebar],
-  );
+  React.useEffect(() => {
+    var handleKeyDown = (event) => {
+      if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        toggleSidebar();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [toggleSidebar]);
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
   var state = open ? "expanded" : "collapsed";
   var contextValue = React.useMemo(
-    function () {
-      return {
-        state: state,
-        open: open,
-        setOpen: setOpen,
-        isMobile: isMobile,
-        openMobile: openMobile,
-        setOpenMobile: setOpenMobile,
-        toggleSidebar: toggleSidebar,
-      };
-    },
+    () => ({
+      state: state,
+      open: open,
+      setOpen: setOpen,
+      isMobile: isMobile,
+      openMobile: openMobile,
+      setOpenMobile: setOpenMobile,
+      toggleSidebar: toggleSidebar,
+    }),
     [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
   );
   return (
@@ -183,7 +166,7 @@ var SidebarProvider = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarProvider = SidebarProvider;
 SidebarProvider.displayName = "SidebarProvider";
-var Sidebar = React.forwardRef(function (_a, ref) {
+var Sidebar = React.forwardRef((_a, ref) => {
   var _b = _a.side,
     side = _b === void 0 ? "left" : _b,
     _c = _a.variant,
@@ -275,7 +258,7 @@ var Sidebar = React.forwardRef(function (_a, ref) {
 });
 exports.Sidebar = Sidebar;
 Sidebar.displayName = "Sidebar";
-var SidebarTrigger = React.forwardRef(function (_a, ref) {
+var SidebarTrigger = React.forwardRef((_a, ref) => {
   var className = _a.className,
     onClick = _a.onClick,
     props = __rest(_a, ["className", "onClick"]);
@@ -287,7 +270,7 @@ var SidebarTrigger = React.forwardRef(function (_a, ref) {
       variant="ghost"
       size="icon"
       className={(0, utils_1.cn)("h-7 w-7", className)}
-      onClick={function (event) {
+      onClick={(event) => {
         onClick === null || onClick === void 0 ? void 0 : onClick(event);
         toggleSidebar();
       }}
@@ -300,7 +283,7 @@ var SidebarTrigger = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarTrigger = SidebarTrigger;
 SidebarTrigger.displayName = "SidebarTrigger";
-var SidebarRail = React.forwardRef(function (_a, ref) {
+var SidebarRail = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   var toggleSidebar = useSidebar().toggleSidebar;
@@ -327,7 +310,7 @@ var SidebarRail = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarRail = SidebarRail;
 SidebarRail.displayName = "SidebarRail";
-var SidebarInset = React.forwardRef(function (_a, ref) {
+var SidebarInset = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -344,7 +327,7 @@ var SidebarInset = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarInset = SidebarInset;
 SidebarInset.displayName = "SidebarInset";
-var SidebarInput = React.forwardRef(function (_a, ref) {
+var SidebarInput = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -361,7 +344,7 @@ var SidebarInput = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarInput = SidebarInput;
 SidebarInput.displayName = "SidebarInput";
-var SidebarHeader = React.forwardRef(function (_a, ref) {
+var SidebarHeader = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -375,7 +358,7 @@ var SidebarHeader = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarHeader = SidebarHeader;
 SidebarHeader.displayName = "SidebarHeader";
-var SidebarFooter = React.forwardRef(function (_a, ref) {
+var SidebarFooter = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -389,7 +372,7 @@ var SidebarFooter = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarFooter = SidebarFooter;
 SidebarFooter.displayName = "SidebarFooter";
-var SidebarSeparator = React.forwardRef(function (_a, ref) {
+var SidebarSeparator = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -403,7 +386,7 @@ var SidebarSeparator = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarSeparator = SidebarSeparator;
 SidebarSeparator.displayName = "SidebarSeparator";
-var SidebarContent = React.forwardRef(function (_a, ref) {
+var SidebarContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -420,7 +403,7 @@ var SidebarContent = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarContent = SidebarContent;
 SidebarContent.displayName = "SidebarContent";
-var SidebarGroup = React.forwardRef(function (_a, ref) {
+var SidebarGroup = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -434,7 +417,7 @@ var SidebarGroup = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarGroup = SidebarGroup;
 SidebarGroup.displayName = "SidebarGroup";
-var SidebarGroupLabel = React.forwardRef(function (_a, ref) {
+var SidebarGroupLabel = React.forwardRef((_a, ref) => {
   var className = _a.className,
     _b = _a.asChild,
     asChild = _b === void 0 ? false : _b,
@@ -455,7 +438,7 @@ var SidebarGroupLabel = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarGroupLabel = SidebarGroupLabel;
 SidebarGroupLabel.displayName = "SidebarGroupLabel";
-var SidebarGroupAction = React.forwardRef(function (_a, ref) {
+var SidebarGroupAction = React.forwardRef((_a, ref) => {
   var className = _a.className,
     _b = _a.asChild,
     asChild = _b === void 0 ? false : _b,
@@ -478,7 +461,7 @@ var SidebarGroupAction = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarGroupAction = SidebarGroupAction;
 SidebarGroupAction.displayName = "SidebarGroupAction";
-var SidebarGroupContent = React.forwardRef(function (_a, ref) {
+var SidebarGroupContent = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -492,7 +475,7 @@ var SidebarGroupContent = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarGroupContent = SidebarGroupContent;
 SidebarGroupContent.displayName = "SidebarGroupContent";
-var SidebarMenu = React.forwardRef(function (_a, ref) {
+var SidebarMenu = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -506,7 +489,7 @@ var SidebarMenu = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarMenu = SidebarMenu;
 SidebarMenu.displayName = "SidebarMenu";
-var SidebarMenuItem = React.forwardRef(function (_a, ref) {
+var SidebarMenuItem = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -541,7 +524,7 @@ var sidebarMenuButtonVariants = (0, class_variance_authority_1.cva)(
     },
   },
 );
-var SidebarMenuButton = React.forwardRef(function (_a, ref) {
+var SidebarMenuButton = React.forwardRef((_a, ref) => {
   var _b = _a.asChild,
     asChild = _b === void 0 ? false : _b,
     _c = _a.isActive,
@@ -592,7 +575,7 @@ var SidebarMenuButton = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarMenuButton = SidebarMenuButton;
 SidebarMenuButton.displayName = "SidebarMenuButton";
-var SidebarMenuAction = React.forwardRef(function (_a, ref) {
+var SidebarMenuAction = React.forwardRef((_a, ref) => {
   var className = _a.className,
     _b = _a.asChild,
     asChild = _b === void 0 ? false : _b,
@@ -622,7 +605,7 @@ var SidebarMenuAction = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarMenuAction = SidebarMenuAction;
 SidebarMenuAction.displayName = "SidebarMenuAction";
-var SidebarMenuBadge = React.forwardRef(function (_a, ref) {
+var SidebarMenuBadge = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -644,15 +627,13 @@ var SidebarMenuBadge = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarMenuBadge = SidebarMenuBadge;
 SidebarMenuBadge.displayName = "SidebarMenuBadge";
-var SidebarMenuSkeleton = React.forwardRef(function (_a, ref) {
+var SidebarMenuSkeleton = React.forwardRef((_a, ref) => {
   var className = _a.className,
     _b = _a.showIcon,
     showIcon = _b === void 0 ? false : _b,
     props = __rest(_a, ["className", "showIcon"]);
   // Random width between 50 to 90%.
-  var width = React.useMemo(function () {
-    return "".concat(Math.floor(Math.random() * 40) + 50, "%");
-  }, []);
+  var width = React.useMemo(() => "".concat(Math.floor(Math.random() * 40) + 50, "%"), []);
   return (
     <div
       ref={ref}
@@ -675,7 +656,7 @@ var SidebarMenuSkeleton = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarMenuSkeleton = SidebarMenuSkeleton;
 SidebarMenuSkeleton.displayName = "SidebarMenuSkeleton";
-var SidebarMenuSub = React.forwardRef(function (_a, ref) {
+var SidebarMenuSub = React.forwardRef((_a, ref) => {
   var className = _a.className,
     props = __rest(_a, ["className"]);
   return (
@@ -693,13 +674,13 @@ var SidebarMenuSub = React.forwardRef(function (_a, ref) {
 });
 exports.SidebarMenuSub = SidebarMenuSub;
 SidebarMenuSub.displayName = "SidebarMenuSub";
-var SidebarMenuSubItem = React.forwardRef(function (_a, ref) {
+var SidebarMenuSubItem = React.forwardRef((_a, ref) => {
   var props = __rest(_a, []);
   return <li ref={ref} {...props} />;
 });
 exports.SidebarMenuSubItem = SidebarMenuSubItem;
 SidebarMenuSubItem.displayName = "SidebarMenuSubItem";
-var SidebarMenuSubButton = React.forwardRef(function (_a, ref) {
+var SidebarMenuSubButton = React.forwardRef((_a, ref) => {
   var _b = _a.asChild,
     asChild = _b === void 0 ? false : _b,
     _c = _a.size,

@@ -532,8 +532,3 @@ export interface DataRetentionPolicy {
   legal_basis: string;
   exceptions: string[];
 }
-
-// Export all types for easy importing
-export type {
-  // Add any additional type aliases here if needed
-};

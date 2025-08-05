@@ -1,6 +1,6 @@
+import type { Metadata } from "next";
 import React from "react";
 import SessionSecurityDemo from "@/components/security/SessionSecurityDemo";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Session Security Demo - NeonPro",

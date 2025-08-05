@@ -1,18 +1,17 @@
-"use strict";
 // Trial Management Engine - STORY-SUB-002 Task 3
 // Core engine for AI-powered trial management and conversion optimization
 // Created: 2025-01-22
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -22,7 +21,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -51,8 +50,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -73,9 +70,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -134,12 +131,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TrialManagementEngine = void 0;
 var server_1 = require("@/lib/supabase/server");
 var analytics_1 = require("../analytics");
-var TrialManagementEngine = /** @class */ (function () {
+var TrialManagementEngine = /** @class */ (() => {
   function TrialManagementEngine() {
     this.supabase = (0, server_1.createClient)();
     this.analytics = analytics_1.Analytics;
@@ -147,7 +144,7 @@ var TrialManagementEngine = /** @class */ (function () {
   // ========================================================================
   // TRIAL LIFECYCLE MANAGEMENT
   // ========================================================================
-  TrialManagementEngine.prototype.createTrial = function (userId_1) {
+  TrialManagementEngine.prototype.createTrial = function (_userId_1) {
     return __awaiter(this, arguments, void 0, function (userId, signupSource) {
       var now, endDate, _a, trialData, error;
       if (signupSource === void 0) {
@@ -194,7 +191,7 @@ var TrialManagementEngine = /** @class */ (function () {
       });
     });
   };
-  TrialManagementEngine.prototype.updateTrialStage = function (trialId_1, newStage_1) {
+  TrialManagementEngine.prototype.updateTrialStage = function (_trialId_1, _newStage_1) {
     return __awaiter(this, arguments, void 0, function (trialId, newStage, trigger) {
       var _a,
         currentTrial,
@@ -374,32 +371,25 @@ var TrialManagementEngine = /** @class */ (function () {
             factors = _e.sent();
             probability = 0.1; // base probability
             engagementScore =
-              ((_a = factors.find(function (f) {
-                return f.name === "engagement";
-              })) === null || _a === void 0
+              ((_a = factors.find((f) => f.name === "engagement")) === null || _a === void 0
                 ? void 0
                 : _a.value) || 0;
             probability += (engagementScore / 100) * 0.4;
             timeUrgency = Math.max(0, 1 - trial.daysRemaining / 14);
             probability += timeUrgency * 0.2;
             featureAdoption =
-              ((_b = factors.find(function (f) {
-                return f.name === "feature_adoption";
-              })) === null || _b === void 0
+              ((_b = factors.find((f) => f.name === "feature_adoption")) === null || _b === void 0
                 ? void 0
                 : _b.value) || 0;
             probability += (featureAdoption / 100) * 0.25;
             supportInteraction =
-              ((_c = factors.find(function (f) {
-                return f.name === "support_interaction";
-              })) === null || _c === void 0
+              ((_c = factors.find((f) => f.name === "support_interaction")) === null ||
+              _c === void 0
                 ? void 0
                 : _c.value) || 0;
             probability += (supportInteraction / 100) * 0.1;
             emailEngagement =
-              ((_d = factors.find(function (f) {
-                return f.name === "email_engagement";
-              })) === null || _d === void 0
+              ((_d = factors.find((f) => f.name === "email_engagement")) === null || _d === void 0
                 ? void 0
                 : _d.value) || 0;
             probability += (emailEngagement / 100) * 0.05;
@@ -424,11 +414,9 @@ var TrialManagementEngine = /** @class */ (function () {
         supportScore,
         emailEvents,
         emailScore;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         factors = [];
-        engagementEvents = journey.events.filter(function (e) {
-          return e.type === "feature_usage";
-        });
+        engagementEvents = journey.events.filter((e) => e.type === "feature_usage");
         engagementScore = Math.min(engagementEvents.length * 10, 100);
         factors.push({
           name: "engagement",
@@ -438,13 +426,7 @@ var TrialManagementEngine = /** @class */ (function () {
           description: "User has ".concat(engagementEvents.length, " feature usage events"),
         });
         uniqueFeatures = new Set(
-          journey.events
-            .filter(function (e) {
-              return e.type === "feature_usage";
-            })
-            .map(function (e) {
-              return e.data.featureId;
-            }),
+          journey.events.filter((e) => e.type === "feature_usage").map((e) => e.data.featureId),
         ).size;
         featureAdoptionScore = Math.min(uniqueFeatures * 20, 100);
         factors.push({
@@ -467,9 +449,7 @@ var TrialManagementEngine = /** @class */ (function () {
                 : "negative",
           description: "".concat(trial.daysRemaining, " days remaining in trial"),
         });
-        supportEvents = journey.events.filter(function (e) {
-          return e.type === "support_contact";
-        });
+        supportEvents = journey.events.filter((e) => e.type === "support_contact");
         supportScore = Math.min(supportEvents.length * 25, 100);
         factors.push({
           name: "support_interaction",
@@ -478,9 +458,7 @@ var TrialManagementEngine = /** @class */ (function () {
           impact: supportEvents.length > 0 ? "positive" : "neutral",
           description: "".concat(supportEvents.length, " support interactions"),
         });
-        emailEvents = journey.events.filter(function (e) {
-          return e.type === "email_interaction";
-        });
+        emailEvents = journey.events.filter((e) => e.type === "email_interaction");
         emailScore = Math.min(emailEvents.length * 15, 100);
         factors.push({
           name: "email_engagement",
@@ -497,17 +475,11 @@ var TrialManagementEngine = /** @class */ (function () {
   TrialManagementEngine.prototype.generateConversionRecommendations = function (trial, factors) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations, engagementFactor, featureFactor, timeFactor;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
-        engagementFactor = factors.find(function (f) {
-          return f.name === "engagement";
-        });
-        featureFactor = factors.find(function (f) {
-          return f.name === "feature_adoption";
-        });
-        timeFactor = factors.find(function (f) {
-          return f.name === "time_urgency";
-        });
+        engagementFactor = factors.find((f) => f.name === "engagement");
+        featureFactor = factors.find((f) => f.name === "feature_adoption");
+        timeFactor = factors.find((f) => f.name === "time_urgency");
         // Low engagement recommendations
         if (engagementFactor && engagementFactor.value < 40) {
           recommendations.push({
@@ -578,7 +550,7 @@ var TrialManagementEngine = /** @class */ (function () {
         }
         return [
           2 /*return*/,
-          recommendations.sort(function (a, b) {
+          recommendations.sort((a, b) => {
             var priorityOrder = { high: 3, medium: 2, low: 1 };
             return priorityOrder[b.priority] - priorityOrder[a.priority];
           }),
@@ -586,18 +558,14 @@ var TrialManagementEngine = /** @class */ (function () {
       });
     });
   };
-  TrialManagementEngine.prototype.determineOptimalStrategy = function (trial, factors) {
+  TrialManagementEngine.prototype.determineOptimalStrategy = (trial, factors) => {
     var _a, _b;
     var engagementValue =
-      ((_a = factors.find(function (f) {
-        return f.name === "engagement";
-      })) === null || _a === void 0
+      ((_a = factors.find((f) => f.name === "engagement")) === null || _a === void 0
         ? void 0
         : _a.value) || 0;
     var featureValue =
-      ((_b = factors.find(function (f) {
-        return f.name === "feature_adoption";
-      })) === null || _b === void 0
+      ((_b = factors.find((f) => f.name === "feature_adoption")) === null || _b === void 0
         ? void 0
         : _b.value) || 0;
     var timeUrgency = trial.daysRemaining <= 3;
@@ -615,37 +583,29 @@ var TrialManagementEngine = /** @class */ (function () {
   };
   TrialManagementEngine.prototype.calculatePredictionConfidence = function (factors) {
     // Confidence based on data availability and factor consistency
-    var totalDataPoints = factors.reduce(function (sum, f) {
-      return sum + f.value;
-    }, 0);
+    var totalDataPoints = factors.reduce((sum, f) => sum + f.value, 0);
     var consistencyScore = this.calculateFactorConsistency(factors);
     var confidence = 0.6; // base confidence
     confidence += (totalDataPoints / 500) * 0.3; // more data = higher confidence
     confidence += consistencyScore * 0.1; // consistent factors = higher confidence
     return Math.min(confidence, 0.95);
   };
-  TrialManagementEngine.prototype.calculateFactorConsistency = function (factors) {
-    var positiveFactors = factors.filter(function (f) {
-      return f.impact === "positive";
-    }).length;
-    var negativeFactors = factors.filter(function (f) {
-      return f.impact === "negative";
-    }).length;
-    var neutralFactors = factors.filter(function (f) {
-      return f.impact === "neutral";
-    }).length;
+  TrialManagementEngine.prototype.calculateFactorConsistency = (factors) => {
+    var positiveFactors = factors.filter((f) => f.impact === "positive").length;
+    var negativeFactors = factors.filter((f) => f.impact === "negative").length;
+    var _neutralFactors = factors.filter((f) => f.impact === "neutral").length;
     // Higher consistency when factors point in same direction
     if (positiveFactors >= negativeFactors * 2) return 1.0;
     if (negativeFactors >= positiveFactors * 2) return 0.8;
     return 0.6; // mixed signals = lower consistency
   };
-  TrialManagementEngine.prototype.estimateTimeToConversion = function (probability, daysRemaining) {
+  TrialManagementEngine.prototype.estimateTimeToConversion = (probability, daysRemaining) => {
     if (probability > 0.8) return Math.min(2, daysRemaining);
     if (probability > 0.6) return Math.min(5, daysRemaining);
     if (probability > 0.4) return Math.min(8, daysRemaining);
     return daysRemaining;
   };
-  TrialManagementEngine.prototype.assessRiskLevel = function (probability, daysRemaining) {
+  TrialManagementEngine.prototype.assessRiskLevel = (probability, daysRemaining) => {
     if (probability > 0.7) return "low";
     if (probability > 0.4 && daysRemaining > 3) return "medium";
     return "high";
@@ -664,9 +624,8 @@ var TrialManagementEngine = /** @class */ (function () {
             similarUsers = _a.sent().data;
             if (!similarUsers || similarUsers.length === 0) return [2 /*return*/, 0];
             avgConversionRate =
-              similarUsers.reduce(function (sum, user) {
-                return sum + (user.converted ? 1 : 0);
-              }, 0) / similarUsers.length;
+              similarUsers.reduce((sum, user) => sum + (user.converted ? 1 : 0), 0) /
+              similarUsers.length;
             return [2 /*return*/, Math.min(avgConversionRate * 0.2, 0.1)]; // max 10% boost
         }
       });
@@ -674,7 +633,7 @@ var TrialManagementEngine = /** @class */ (function () {
   }; // ========================================================================
   // USER JOURNEY TRACKING
   // ========================================================================
-  TrialManagementEngine.prototype.trackEvent = function (trialId_1, eventType_1, data_1) {
+  TrialManagementEngine.prototype.trackEvent = function (_trialId_1, _eventType_1, _data_1) {
     return __awaiter(this, arguments, void 0, function (trialId, eventType, data, source) {
       var event;
       if (source === void 0) {
@@ -727,7 +686,7 @@ var TrialManagementEngine = /** @class */ (function () {
       });
     });
   };
-  TrialManagementEngine.prototype.calculateEventScore = function (eventType, data) {
+  TrialManagementEngine.prototype.calculateEventScore = (eventType, data) => {
     var scoreMap = {
       feature_usage: 10,
       page_view: 1,
@@ -769,7 +728,7 @@ var TrialManagementEngine = /** @class */ (function () {
             now = Date.now();
             totalScore = 0;
             weightSum = 0;
-            events.forEach(function (event) {
+            events.forEach((event) => {
               var ageHours = (now - new Date(event.created_at).getTime()) / (1000 * 60 * 60);
               var weight = Math.exp(-ageHours / 24); // exponential decay over 24 hours
               totalScore += event.score * weight;
@@ -820,19 +779,11 @@ var TrialManagementEngine = /** @class */ (function () {
       });
     });
   };
-  TrialManagementEngine.prototype.determineTrialStage = function (trial, journey) {
+  TrialManagementEngine.prototype.determineTrialStage = (trial, journey) => {
     var eventCount = journey.events.length;
-    var featureUsageEvents = journey.events.filter(function (e) {
-      return e.type === "feature_usage";
-    }).length;
+    var featureUsageEvents = journey.events.filter((e) => e.type === "feature_usage").length;
     var uniqueFeatures = new Set(
-      journey.events
-        .filter(function (e) {
-          return e.type === "feature_usage";
-        })
-        .map(function (e) {
-          return e.data.featureId;
-        }),
+      journey.events.filter((e) => e.type === "feature_usage").map((e) => e.data.featureId),
     ).size;
     // Stage determination logic
     if (trial.status === "signup" && eventCount >= 3) {
@@ -878,16 +829,14 @@ var TrialManagementEngine = /** @class */ (function () {
             mappedEvents =
               (events === null || events === void 0
                 ? void 0
-                : events.map(function (event) {
-                    return {
-                      id: event.id,
-                      type: event.event_type,
-                      timestamp: new Date(event.created_at),
-                      data: event.event_data || {},
-                      score: event.score || 0,
-                      source: event.source || "unknown",
-                    };
-                  })) || [];
+                : events.map((event) => ({
+                    id: event.id,
+                    type: event.event_type,
+                    timestamp: new Date(event.created_at),
+                    data: event.event_data || {},
+                    score: event.score || 0,
+                    source: event.source || "unknown",
+                  }))) || [];
             milestones = this.generateJourneyMilestones(mappedEvents);
             progressScore = this.calculateProgressScore(mappedEvents, milestones);
             _b = {
@@ -907,7 +856,7 @@ var TrialManagementEngine = /** @class */ (function () {
   }; // ========================================================================
   // UTILITY METHODS
   // ========================================================================
-  TrialManagementEngine.prototype.initializeUserJourney = function (trialId, userId) {
+  TrialManagementEngine.prototype.initializeUserJourney = function (trialId, _userId) {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
@@ -963,7 +912,7 @@ var TrialManagementEngine = /** @class */ (function () {
   TrialManagementEngine.prototype.triggerAutomatedCampaign = function (trial, newStage) {
     return __awaiter(this, void 0, void 0, function () {
       var campaignTriggers, campaignType;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         campaignTriggers = {
           onboarding: "welcome_sequence",
           active: "feature_highlight",
@@ -979,19 +928,16 @@ var TrialManagementEngine = /** @class */ (function () {
       });
     });
   };
-  TrialManagementEngine.prototype.generateJourneyMilestones = function (events) {
+  TrialManagementEngine.prototype.generateJourneyMilestones = (events) => {
     var _a, _b, _c, _d;
     var milestones = [
       {
         name: "First Login",
         description: "User logged in for the first time",
-        completed: events.some(function (e) {
-          return e.type === "page_view" && e.data.page === "dashboard";
-        }),
+        completed: events.some((e) => e.type === "page_view" && e.data.page === "dashboard"),
         completedAt:
-          (_a = events.find(function (e) {
-            return e.type === "page_view" && e.data.page === "dashboard";
-          })) === null || _a === void 0
+          (_a = events.find((e) => e.type === "page_view" && e.data.page === "dashboard")) ===
+            null || _a === void 0
             ? void 0
             : _a.timestamp,
         importance: 0.8,
@@ -1000,13 +946,9 @@ var TrialManagementEngine = /** @class */ (function () {
       {
         name: "First Feature Used",
         description: "User used their first core feature",
-        completed: events.some(function (e) {
-          return e.type === "feature_usage";
-        }),
+        completed: events.some((e) => e.type === "feature_usage"),
         completedAt:
-          (_b = events.find(function (e) {
-            return e.type === "feature_usage";
-          })) === null || _b === void 0
+          (_b = events.find((e) => e.type === "feature_usage")) === null || _b === void 0
             ? void 0
             : _b.timestamp,
         importance: 0.9,
@@ -1016,22 +958,11 @@ var TrialManagementEngine = /** @class */ (function () {
         name: "Multiple Features Explored",
         description: "User explored 3+ different features",
         completed:
-          new Set(
-            events
-              .filter(function (e) {
-                return e.type === "feature_usage";
-              })
-              .map(function (e) {
-                return e.data.featureId;
-              }),
-          ).size >= 3,
+          new Set(events.filter((e) => e.type === "feature_usage").map((e) => e.data.featureId))
+            .size >= 3,
         completedAt:
-          events.filter(function (e) {
-            return e.type === "feature_usage";
-          }).length >= 3
-            ? (_c = events.filter(function (e) {
-                return e.type === "feature_usage";
-              })[2]) === null || _c === void 0
+          events.filter((e) => e.type === "feature_usage").length >= 3
+            ? (_c = events.filter((e) => e.type === "feature_usage")[2]) === null || _c === void 0
               ? void 0
               : _c.timestamp
             : undefined,
@@ -1041,13 +972,9 @@ var TrialManagementEngine = /** @class */ (function () {
       {
         name: "Support Interaction",
         description: "User contacted support for help",
-        completed: events.some(function (e) {
-          return e.type === "support_contact";
-        }),
+        completed: events.some((e) => e.type === "support_contact"),
         completedAt:
-          (_d = events.find(function (e) {
-            return e.type === "support_contact";
-          })) === null || _d === void 0
+          (_d = events.find((e) => e.type === "support_contact")) === null || _d === void 0
             ? void 0
             : _d.timestamp,
         importance: 0.7,
@@ -1056,16 +983,10 @@ var TrialManagementEngine = /** @class */ (function () {
     ];
     return milestones;
   };
-  TrialManagementEngine.prototype.calculateProgressScore = function (events, milestones) {
-    var completedMilestones = milestones.filter(function (m) {
-      return m.completed;
-    });
-    var totalImportance = milestones.reduce(function (sum, m) {
-      return sum + m.importance;
-    }, 0);
-    var completedImportance = completedMilestones.reduce(function (sum, m) {
-      return sum + m.importance;
-    }, 0);
+  TrialManagementEngine.prototype.calculateProgressScore = (_events, milestones) => {
+    var completedMilestones = milestones.filter((m) => m.completed);
+    var totalImportance = milestones.reduce((sum, m) => sum + m.importance, 0);
+    var completedImportance = completedMilestones.reduce((sum, m) => sum + m.importance, 0);
     return totalImportance > 0 ? (completedImportance / totalImportance) * 100 : 0;
   };
   TrialManagementEngine.prototype.getStageHistory = function (trialId) {
@@ -1088,39 +1009,35 @@ var TrialManagementEngine = /** @class */ (function () {
               2 /*return*/,
               (transitions === null || transitions === void 0
                 ? void 0
-                : transitions.map(function (t) {
-                    return {
-                      fromStage: t.from_stage,
-                      toStage: t.to_stage,
-                      timestamp: new Date(t.created_at),
-                      trigger: t.trigger,
-                      automated: t.trigger === "automated",
-                      conversionProbabilityChange: 0, // Would be calculated from historical data
-                    };
-                  })) || [],
+                : transitions.map((t) => ({
+                    fromStage: t.from_stage,
+                    toStage: t.to_stage,
+                    timestamp: new Date(t.created_at),
+                    trigger: t.trigger,
+                    automated: t.trigger === "automated",
+                    conversionProbabilityChange: 0, // Would be calculated from historical data
+                  }))) || [],
             ];
         }
       });
     });
   };
-  TrialManagementEngine.prototype.mapDatabaseToTrial = function (data) {
-    return {
-      id: data.id,
-      userId: data.user_id,
-      status: data.trial_status,
-      startDate: new Date(data.start_date),
-      endDate: new Date(data.end_date),
-      daysRemaining: Math.max(
-        0,
-        Math.ceil((new Date(data.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
-      ),
-      conversionProbability: data.conversion_probability || 0.1,
-      engagementScore: data.engagement_score || 0,
-      userSegment: data.user_segment || "casual_user",
-      currentStrategy: data.current_strategy || "engagement_boost",
-      metadata: data.metadata || {},
-    };
-  };
+  TrialManagementEngine.prototype.mapDatabaseToTrial = (data) => ({
+    id: data.id,
+    userId: data.user_id,
+    status: data.trial_status,
+    startDate: new Date(data.start_date),
+    endDate: new Date(data.end_date),
+    daysRemaining: Math.max(
+      0,
+      Math.ceil((new Date(data.end_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
+    ),
+    conversionProbability: data.conversion_probability || 0.1,
+    engagementScore: data.engagement_score || 0,
+    userSegment: data.user_segment || "casual_user",
+    currentStrategy: data.current_strategy || "engagement_boost",
+    metadata: data.metadata || {},
+  });
   return TrialManagementEngine;
 })();
 exports.TrialManagementEngine = TrialManagementEngine;

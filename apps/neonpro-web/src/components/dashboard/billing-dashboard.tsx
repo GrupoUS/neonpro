@@ -1,5 +1,7 @@
 "use client";
 
+import type { CreditCard, DollarSign, FileText, Package, TrendingUp, Users } from "lucide-react";
+import type { useState } from "react";
 import type {
   Card,
   CardContent,
@@ -9,8 +11,6 @@ import type {
 } from "@/components/ui/card";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useBilling } from "@/hooks/use-billing";
-import type { CreditCard, DollarSign, FileText, Package, TrendingUp, Users } from "lucide-react";
-import type { useState } from "react";
 import type { InvoicesManagement } from "./invoices-management";
 import type { PaymentsManagement } from "./payments-management";
 import type { ServicesManagement } from "./services-management";

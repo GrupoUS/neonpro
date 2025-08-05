@@ -7,38 +7,18 @@
  * @author APEX Master Developer
  */
 
-import React, { useState, useEffect } from "react";
 import type {
+  Calendar,
+  Download,
   Eye,
   EyeOff,
-  Download,
-  Trash2,
-  Shield,
-  Calendar,
   Filter,
   Grid,
   List,
+  Shield,
+  Trash2,
 } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Switch } from "@/components/ui/switch";
-import type { Label } from "@/components/ui/label";
-import type { useToast } from "@/components/ui/use-toast";
-import type {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import React, { useEffect, useState } from "react";
 import type {
   AlertDialog,
   AlertDialogAction,
@@ -50,6 +30,26 @@ import type {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { useToast } from "@/components/ui/use-toast";
 
 interface PhotoGalleryProps {
   patientId: string;
@@ -276,7 +276,7 @@ export function PhotoGallery({
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   const formatDate = (dateString: string) => {

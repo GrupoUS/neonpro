@@ -1,4 +1,3 @@
-"use strict";
 /**
  * useVisionAnalysis Hook Tests
  *
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,25 +134,21 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("@testing-library/react");
 var useVisionAnalysis_1 = require("@/hooks/useVisionAnalysis");
 var sonner_1 = require("sonner");
 // Mock dependencies
-jest.mock("sonner", function () {
-  return {
-    toast: {
-      success: jest.fn(),
-      error: jest.fn(),
-      info: jest.fn(),
-      loading: jest.fn(function () {
-        return "toast-id";
-      }),
-      dismiss: jest.fn(),
-    },
-  };
-});
+jest.mock("sonner", () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+    info: jest.fn(),
+    loading: jest.fn(() => "toast-id"),
+    dismiss: jest.fn(),
+  },
+}));
 // Mock fetch
 global.fetch = jest.fn();
 // Mock clipboard API
@@ -165,9 +158,7 @@ Object.assign(navigator, {
   },
 });
 // Mock URL.createObjectURL
-global.URL.createObjectURL = jest.fn(function () {
-  return "blob:mock-url";
-});
+global.URL.createObjectURL = jest.fn(() => "blob:mock-url");
 global.URL.revokeObjectURL = jest.fn();
 // Mock document.createElement for download
 var mockAnchorElement = {
@@ -176,18 +167,14 @@ var mockAnchorElement = {
   click: jest.fn(),
   style: {},
 };
-jest.spyOn(document, "createElement").mockImplementation(function (tagName) {
+jest.spyOn(document, "createElement").mockImplementation((tagName) => {
   if (tagName === "a") {
     return mockAnchorElement;
   }
   return document.createElement(tagName);
 });
-jest.spyOn(document.body, "appendChild").mockImplementation(function () {
-  return mockAnchorElement;
-});
-jest.spyOn(document.body, "removeChild").mockImplementation(function () {
-  return mockAnchorElement;
-});
+jest.spyOn(document.body, "appendChild").mockImplementation(() => mockAnchorElement);
+jest.spyOn(document.body, "removeChild").mockImplementation(() => mockAnchorElement);
 var mockAnalysisResult = {
   id: "analysis-123",
   patientId: "patient-456",
@@ -213,15 +200,13 @@ var mockAnalysisResult = {
   createdAt: "2024-01-15T10:30:00Z",
   updatedAt: "2024-01-15T10:30:00Z",
 };
-describe("useVisionAnalysis", function () {
-  beforeEach(function () {
+describe("useVisionAnalysis", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     fetch.mockClear();
   });
-  it("should initialize with default state", function () {
-    var result = (0, react_1.renderHook)(function () {
-      return (0, useVisionAnalysis_1.useVisionAnalysis)();
-    }).result;
+  it("should initialize with default state", () => {
+    var result = (0, react_1.renderHook)(() => (0, useVisionAnalysis_1.useVisionAnalysis)()).result;
     expect(result.current.currentAnalysis).toBeNull();
     expect(result.current.analysisHistory).toEqual([]);
     expect(result.current.isAnalyzing).toBe(false);
@@ -237,41 +222,38 @@ describe("useVisionAnalysis", function () {
       totalAnalyses: 0,
     });
   });
-  describe("startAnalysis", function () {
-    it("should start analysis successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("startAnalysis", () => {
+    it("should start analysis successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: true,
-                          analysis: mockAnalysisResult,
-                          performance: {
-                            accuracyScore: 0.96,
-                            processingTime: 15000,
-                          },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: true,
+                        analysis: mockAnalysisResult,
+                        performance: {
+                          accuracyScore: 0.96,
+                          processingTime: 15000,
                         },
-                      ];
-                    });
-                  });
-                },
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -288,8 +270,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -302,22 +284,21 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate input parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should validate input parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -334,8 +315,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -344,37 +325,33 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle API errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle API errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: false,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Analysis failed",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Analysis failed",
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -391,8 +368,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -402,40 +379,39 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should simulate progress during analysis", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should simulate progress during analysis", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              fetch.mockImplementation(function () {
-                return new Promise(function (resolve) {
-                  return setTimeout(function () {
-                    return resolve({
-                      ok: true,
-                      json: function () {
-                        return __awaiter(void 0, void 0, void 0, function () {
-                          return __generator(this, function (_a) {
-                            return [
-                              2 /*return*/,
-                              {
-                                success: true,
-                                analysis: mockAnalysisResult,
-                              },
-                            ];
-                          });
-                        });
-                      },
-                    });
-                  }, 100);
-                });
-              });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
-              (0, react_1.act)(function () {
+              fetch.mockImplementation(
+                () =>
+                  new Promise((resolve) =>
+                    setTimeout(
+                      () =>
+                        resolve({
+                          ok: true,
+                          json: () =>
+                            __awaiter(void 0, void 0, void 0, function () {
+                              return __generator(this, (_a) => [
+                                2 /*return*/,
+                                {
+                                  success: true,
+                                  analysis: mockAnalysisResult,
+                                },
+                              ]);
+                            }),
+                        }),
+                      100,
+                    ),
+                  ),
+              );
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
+              (0, react_1.act)(() => {
                 result.current.startAnalysis({
                   patientId: "patient-456",
                   treatmentId: "treatment-789",
@@ -447,7 +423,7 @@ describe("useVisionAnalysis", function () {
               expect(result.current.progress).toBeGreaterThan(0);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   expect(result.current.isAnalyzing).toBe(false);
                 }),
               ];
@@ -456,41 +432,37 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("loadAnalysisHistory", function () {
-    it("should load analysis history successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("loadAnalysisHistory", () => {
+    it("should load analysis history successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockHistory, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockHistory = [mockAnalysisResult];
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          analyses: mockHistory,
-                          total: 1,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        analyses: mockHistory,
+                        total: 1,
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.loadAnalysisHistory("patient-456")];
@@ -499,8 +471,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -509,23 +481,22 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle loading errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle loading errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockRejectedValueOnce(new Error("Network error"));
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [4 /*yield*/, result.current.loadAnalysisHistory("patient-456")];
@@ -534,8 +505,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -544,28 +515,24 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("exportAnalysis", function () {
-    it("should export analysis as PDF successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("exportAnalysis", () => {
+    it("should export analysis as PDF successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var mockBlob, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockBlob = new Blob(["pdf content"], { type: "application/pdf" });
               fetch.mockResolvedValueOnce({
                 ok: true,
-                blob: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [2 /*return*/, mockBlob];
-                    });
-                  });
-                },
+                blob: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [2 /*return*/, mockBlob]);
+                  }),
                 headers: {
-                  get: function (name) {
+                  get: (name) => {
                     if (name === "content-disposition") {
                       return 'attachment; filename="analysis-report.pdf"';
                     }
@@ -573,14 +540,14 @@ describe("useVisionAnalysis", function () {
                   },
                 },
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -596,8 +563,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -609,37 +576,33 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle export errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle export errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: false,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Export failed",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Export failed",
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -653,8 +616,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -663,41 +626,37 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("shareAnalysis", function () {
-    it("should share analysis successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("shareAnalysis", () => {
+    it("should share analysis successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: true,
-                          shareUrl: "https://app.com/share/abc123",
-                          shareId: "share-123",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: true,
+                        shareUrl: "https://app.com/share/abc123",
+                        shareId: "share-123",
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -713,8 +672,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -728,37 +687,33 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle share errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle share errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: false,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Share failed",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Share failed",
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -772,8 +727,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -782,72 +737,68 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("utility functions", function () {
-    it("should clear current analysis", function () {
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionAnalysis_1.useVisionAnalysis)();
-      }).result;
+  describe("utility functions", () => {
+    it("should clear current analysis", () => {
+      var result = (0, react_1.renderHook)(() =>
+        (0, useVisionAnalysis_1.useVisionAnalysis)(),
+      ).result;
       // Set some analysis first
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.currentAnalysis = mockAnalysisResult;
       });
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.clearCurrentAnalysis();
       });
       expect(result.current.currentAnalysis).toBeNull();
     });
-    it("should clear errors", function () {
-      var result = (0, react_1.renderHook)(function () {
-        return (0, useVisionAnalysis_1.useVisionAnalysis)();
-      }).result;
+    it("should clear errors", () => {
+      var result = (0, react_1.renderHook)(() =>
+        (0, useVisionAnalysis_1.useVisionAnalysis)(),
+      ).result;
       // Set an error first
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.error = "Test error";
       });
-      (0, react_1.act)(function () {
+      (0, react_1.act)(() => {
         result.current.clearError();
       });
       expect(result.current.error).toBeNull();
     });
   });
-  describe("performance metrics", function () {
-    it("should update performance metrics after successful analysis", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("performance metrics", () => {
+    it("should update performance metrics after successful analysis", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          success: true,
-                          analysis: mockAnalysisResult,
-                          performance: {
-                            accuracyScore: 0.96,
-                            processingTime: 15000,
-                          },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        success: true,
+                        analysis: mockAnalysisResult,
+                        performance: {
+                          accuracyScore: 0.96,
+                          processingTime: 15000,
                         },
-                      ];
-                    });
-                  });
-                },
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -864,8 +815,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -876,37 +827,33 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle failed analyses in performance metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle failed analyses in performance metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               fetch.mockResolvedValueOnce({
                 ok: false,
-                json: function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Analysis failed",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Analysis failed",
+                      },
+                    ]);
+                  }),
               });
-              result = (0, react_1.renderHook)(function () {
-                return (0, useVisionAnalysis_1.useVisionAnalysis)();
-              }).result;
+              result = (0, react_1.renderHook)(() =>
+                (0, useVisionAnalysis_1.useVisionAnalysis)(),
+              ).result;
               return [
                 4 /*yield*/,
-                (0, react_1.act)(function () {
-                  return __awaiter(void 0, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
+                (0, react_1.act)(() =>
+                  __awaiter(void 0, void 0, void 0, function () {
+                    return __generator(this, (_a) => {
                       switch (_a.label) {
                         case 0:
                           return [
@@ -923,8 +870,8 @@ describe("useVisionAnalysis", function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ];
             case 1:
               _a.sent();
@@ -933,7 +880,6 @@ describe("useVisionAnalysis", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

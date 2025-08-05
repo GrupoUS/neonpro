@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = exports.sessionAuthMiddleware = exports.SessionAuthMiddleware = void 0;
 exports.middleware = middleware;
@@ -143,7 +140,7 @@ var session_1 = require("@/types/session");
  * Session Authentication Middleware
  * Validates and manages user sessions across the application
  */
-var SessionAuthMiddleware = /** @class */ (function () {
+var SessionAuthMiddleware = /** @class */ (() => {
   function SessionAuthMiddleware() {
     this.sessionManager = new session_manager_1.SessionManager();
   }
@@ -152,7 +149,7 @@ var SessionAuthMiddleware = /** @class */ (function () {
    */
   SessionAuthMiddleware.prototype.handle = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      var response, pathname, supabase, sessionToken, sessionValidation, refreshResult, error_1;
+      var response, pathname, _supabase, sessionToken, sessionValidation, refreshResult, error_1;
       var _a;
       return __generator(this, function (_b) {
         switch (_b.label) {
@@ -169,22 +166,22 @@ var SessionAuthMiddleware = /** @class */ (function () {
             }
             _b.label = 1;
           case 1:
-            _b.trys.push([1, 8, , 10]);
-            supabase = (0, ssr_1.createServerClient)(
+            _b.trys.push([1, 8, undefined, 10]);
+            _supabase = (0, ssr_1.createServerClient)(
               process.env.NEXT_PUBLIC_SUPABASE_URL,
               process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
               {
                 cookies: {
-                  get: function (name) {
+                  get: (name) => {
                     var _a;
                     return (_a = request.cookies.get(name)) === null || _a === void 0
                       ? void 0
                       : _a.value;
                   },
-                  set: function (name, value, options) {
+                  set: (name, value, options) => {
                     response.cookies.set(name, value, options);
                   },
-                  remove: function (name, options) {
+                  remove: (name, _options) => {
                     response.cookies.delete(name);
                   },
                 },
@@ -207,7 +204,7 @@ var SessionAuthMiddleware = /** @class */ (function () {
             ];
           case 2:
             sessionValidation = _b.sent();
-            if (!!sessionValidation.isValid) return [3 /*break*/, 4];
+            if (sessionValidation.isValid) return [3 /*break*/, 4];
             // Log security event
             return [
               4 /*yield*/,
@@ -288,7 +285,7 @@ var SessionAuthMiddleware = /** @class */ (function () {
   /**
    * Check if the route is public and doesn't require authentication
    */
-  SessionAuthMiddleware.prototype.isPublicRoute = function (pathname) {
+  SessionAuthMiddleware.prototype.isPublicRoute = (pathname) => {
     var publicRoutes = [
       "/login",
       "/register",
@@ -302,14 +299,14 @@ var SessionAuthMiddleware = /** @class */ (function () {
       "/",
       "/public",
     ];
-    return publicRoutes.some(function (route) {
-      return pathname === route || pathname.startsWith("".concat(route, "/"));
-    });
+    return publicRoutes.some(
+      (route) => pathname === route || pathname.startsWith("".concat(route, "/")),
+    );
   };
   /**
    * Check if the API route is public
    */
-  SessionAuthMiddleware.prototype.isPublicApiRoute = function (pathname) {
+  SessionAuthMiddleware.prototype.isPublicApiRoute = (pathname) => {
     var publicApiRoutes = [
       "/api/auth/login",
       "/api/auth/register",
@@ -319,14 +316,14 @@ var SessionAuthMiddleware = /** @class */ (function () {
       "/api/health",
       "/api/public",
     ];
-    return publicApiRoutes.some(function (route) {
-      return pathname === route || pathname.startsWith("".concat(route, "/"));
-    });
+    return publicApiRoutes.some(
+      (route) => pathname === route || pathname.startsWith("".concat(route, "/")),
+    );
   };
   /**
    * Get client IP address from request
    */
-  SessionAuthMiddleware.prototype.getClientIP = function (request) {
+  SessionAuthMiddleware.prototype.getClientIP = (request) => {
     var forwarded = request.headers.get("x-forwarded-for");
     var realIP = request.headers.get("x-real-ip");
     var remoteAddr = request.headers.get("x-remote-addr");
@@ -338,7 +335,7 @@ var SessionAuthMiddleware = /** @class */ (function () {
   /**
    * Redirect to login page
    */
-  SessionAuthMiddleware.prototype.redirectToLogin = function (request) {
+  SessionAuthMiddleware.prototype.redirectToLogin = (request) => {
     var loginUrl = new URL("/login", request.url);
     // Add return URL for redirect after login
     if (request.nextUrl.pathname !== "/login") {
@@ -355,7 +352,7 @@ var SessionAuthMiddleware = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.sessionManager.logSecurityEvent({
@@ -382,7 +379,7 @@ var SessionAuthMiddleware = /** @class */ (function () {
   /**
    * Get event severity based on type
    */
-  SessionAuthMiddleware.prototype.getEventSeverity = function (eventType) {
+  SessionAuthMiddleware.prototype.getEventSeverity = (eventType) => {
     switch (eventType) {
       case session_1.SecurityEventType.FAILED_LOGIN:
       case session_1.SecurityEventType.SESSION_VALIDATION_FAILED:
@@ -406,7 +403,7 @@ var SessionAuthMiddleware = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 9, , 10]);
+            _a.trys.push([0, 9, undefined, 10]);
             ipAddress = this.getClientIP(request);
             userAgent = request.headers.get("user-agent") || "Unknown";
             return [4 /*yield*/, this.getRecentRequests(ipAddress)];
@@ -470,9 +467,9 @@ var SessionAuthMiddleware = /** @class */ (function () {
   /**
    * Get recent request count for IP (simplified implementation)
    */
-  SessionAuthMiddleware.prototype.getRecentRequests = function (ipAddress) {
+  SessionAuthMiddleware.prototype.getRecentRequests = function (_ipAddress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would check a cache/database
         // For now, return 0 to avoid false positives
         return [2 /*return*/, 0];
@@ -482,7 +479,7 @@ var SessionAuthMiddleware = /** @class */ (function () {
   /**
    * Check if user agent is unusual
    */
-  SessionAuthMiddleware.prototype.isUnusualUserAgent = function (userAgent) {
+  SessionAuthMiddleware.prototype.isUnusualUserAgent = (userAgent) => {
     var suspiciousPatterns = [
       /bot/i,
       /crawler/i,
@@ -493,16 +490,14 @@ var SessionAuthMiddleware = /** @class */ (function () {
       /python/i,
       /java/i,
     ];
-    return suspiciousPatterns.some(function (pattern) {
-      return pattern.test(userAgent);
-    });
+    return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
   };
   /**
    * Check for unusual geographic location (simplified)
    */
-  SessionAuthMiddleware.prototype.checkUnusualLocation = function (userId, ipAddress) {
+  SessionAuthMiddleware.prototype.checkUnusualLocation = function (_userId, _ipAddress) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would:
         // 1. Get IP geolocation
         // 2. Compare with user's typical locations
@@ -537,8 +532,6 @@ exports.config = {
  */
 function middleware(request) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, exports.sessionAuthMiddleware.handle(request)];
-    });
+    return __generator(this, (_a) => [2 /*return*/, exports.sessionAuthMiddleware.handle(request)]);
   });
 }

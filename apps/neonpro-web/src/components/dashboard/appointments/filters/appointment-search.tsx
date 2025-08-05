@@ -4,10 +4,10 @@
 
 "use client";
 
-import type { useState, useEffect, useCallback } from "react";
-import type { Input } from "@/components/ui/input";
-import type { Search, X, Loader2 } from "lucide-react";
+import type { Loader2, Search, X } from "lucide-react";
+import type { useCallback, useEffect, useState } from "react";
 import type { Button } from "@/components/ui/button";
+import type { Input } from "@/components/ui/input";
 
 interface AppointmentSearchProps {
   value: string;

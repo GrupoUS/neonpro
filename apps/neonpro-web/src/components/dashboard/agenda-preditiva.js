@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgendaPreditiva = AgendaPreditiva;
 var badge_1 = require("@/components/ui/badge");
@@ -86,35 +85,29 @@ function AgendaPreditiva() {
       </card_1.CardHeader>
       <card_1.CardContent>
         <div className="space-y-4">
-          {mockAppointments.map(function (appointment, index) {
-            return (
-              <div
-                key={index}
-                className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
-              >
-                <div className="flex items-center space-x-4">
-                  <div className="text-sm font-mono font-medium text-primary">
-                    {appointment.time}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className={"w-2 h-2 rounded-full ".concat(
-                        getRiskColor(appointment.noShowRisk),
-                      )}
-                      title={"Risco de no-show: ".concat(appointment.noShowRisk)}
-                    />
-                    <div>
-                      <p className="font-medium text-sm">{appointment.patientName}</p>
-                      <p className="text-xs text-muted-foreground">{appointment.serviceName}</p>
-                    </div>
+          {mockAppointments.map((appointment, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+            >
+              <div className="flex items-center space-x-4">
+                <div className="text-sm font-mono font-medium text-primary">{appointment.time}</div>
+                <div className="flex items-center space-x-2">
+                  <div
+                    className={"w-2 h-2 rounded-full ".concat(getRiskColor(appointment.noShowRisk))}
+                    title={"Risco de no-show: ".concat(appointment.noShowRisk)}
+                  />
+                  <div>
+                    <p className="font-medium text-sm">{appointment.patientName}</p>
+                    <p className="text-xs text-muted-foreground">{appointment.serviceName}</p>
                   </div>
                 </div>
-                <badge_1.Badge variant={getStatusVariant(appointment.status)}>
-                  {appointment.status}
-                </badge_1.Badge>
               </div>
-            );
-          })}
+              <badge_1.Badge variant={getStatusVariant(appointment.status)}>
+                {appointment.status}
+              </badge_1.Badge>
+            </div>
+          ))}
         </div>
 
         {mockAppointments.length === 0 && (

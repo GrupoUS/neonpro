@@ -1,4 +1,3 @@
-"use strict";
 // hooks/useLGPDCompliance.ts
 // React hooks for LGPD compliance in NeonPro frontend
 // Provides easy-to-use hooks for audit logging, consent management, and data subject rights
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,10 +145,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -160,7 +157,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useLGPDComplianceStatus =
   exports.withLGPDProtection =
@@ -173,7 +170,7 @@ var lgpd_compliance_1 = require("@/lib/supabase/lgpd-compliance");
 var navigation_1 = require("next/navigation");
 var react_1 = require("react");
 // Main LGPD audit logging hook
-var useLGPDAudit = function () {
+var useLGPDAudit = () => {
   var _a = (0, react_1.useState)(false),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -183,10 +180,10 @@ var useLGPDAudit = function () {
   var supabase = yield (0, client_1.createClient)();
   var compliance = new lgpd_compliance_1.LGPDComplianceManager();
   var logEvent = (0, react_1.useCallback)(
-    function (eventType, details) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (eventType, details) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, result, err_1, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, 4, 5]);
@@ -231,12 +228,11 @@ var useLGPDAudit = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [compliance, supabase],
   );
   var logPatientAccess = (0, react_1.useCallback)(
-    function (patientId_1, clinicId_1, action_1) {
+    (patientId_1, clinicId_1, action_1) => {
       var args_1 = [];
       for (var _i = 3; _i < arguments.length; _i++) {
         args_1[_i - 3] = arguments[_i];
@@ -249,7 +245,7 @@ var useLGPDAudit = function () {
           if (tableName === void 0) {
             tableName = "patients";
           }
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -274,10 +270,10 @@ var useLGPDAudit = function () {
     [logEvent],
   );
   var logSensitiveAccess = (0, react_1.useCallback)(
-    function (patientId, clinicId, dataType, action, recordId) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (patientId, clinicId, dataType, action, recordId) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, err_2, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, 4, 5]);
@@ -316,8 +312,7 @@ var useLGPDAudit = function () {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [compliance, supabase],
   );
   return {
@@ -330,7 +325,7 @@ var useLGPDAudit = function () {
 };
 exports.useLGPDAudit = useLGPDAudit;
 // Consent management hook
-var useConsentManagement = function (patientId, clinicId) {
+var useConsentManagement = (patientId, clinicId) => {
   var _a = (0, react_1.useState)([]),
     consents = _a[0],
     setConsents = _a[1];
@@ -343,10 +338,10 @@ var useConsentManagement = function (patientId, clinicId) {
   var supabase = yield (0, client_1.createClient)();
   var compliance = new lgpd_compliance_1.LGPDComplianceManager();
   var refreshConsents = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, data, fetchError, err_3, errorMessage;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!patientId || !clinicId) return [2 /*return*/];
@@ -384,32 +379,22 @@ var useConsentManagement = function (patientId, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [patientId, clinicId, supabase],
   );
-  (0, react_1.useEffect)(
-    function () {
-      refreshConsents();
-    },
-    [refreshConsents],
-  );
-  var activeConsents = consents.filter(function (consent) {
-    return consent.consent_status === "active";
-  });
+  (0, react_1.useEffect)(() => {
+    refreshConsents();
+  }, [refreshConsents]);
+  var activeConsents = consents.filter((consent) => consent.consent_status === "active");
   var checkConsent = (0, react_1.useCallback)(
-    function (consentType) {
-      return activeConsents.some(function (consent) {
-        return consent.consent_type === consentType;
-      });
-    },
+    (consentType) => activeConsents.some((consent) => consent.consent_type === consentType),
     [activeConsents],
   );
   var grantConsent = (0, react_1.useCallback)(
-    function (consentType, purpose, details) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (consentType, purpose, details) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, consentData, insertError, err_4, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!patientId || !clinicId) {
@@ -481,15 +466,14 @@ var useConsentManagement = function (patientId, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [patientId, clinicId, supabase, compliance, refreshConsents],
   );
   var revokeConsent = (0, react_1.useCallback)(
-    function (consentId, reason) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (consentId, reason) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var updateError, consent, err_5, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!patientId || !clinicId) {
@@ -517,9 +501,7 @@ var useConsentManagement = function (patientId, clinicId) {
               if (updateError) {
                 throw new Error(updateError.message);
               }
-              consent = consents.find(function (c) {
-                return c.id === consentId;
-              });
+              consent = consents.find((c) => c.id === consentId);
               if (!consent) return [3 /*break*/, 4];
               return [
                 4 /*yield*/,
@@ -549,8 +531,7 @@ var useConsentManagement = function (patientId, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [patientId, clinicId, supabase, compliance, consents, refreshConsents],
   );
   return {
@@ -566,7 +547,7 @@ var useConsentManagement = function (patientId, clinicId) {
 };
 exports.useConsentManagement = useConsentManagement;
 // Data subject rights hook
-var useDataSubjectRights = function (patientId, clinicId) {
+var useDataSubjectRights = (patientId, clinicId) => {
   var _a = (0, react_1.useState)([]),
     requests = _a[0],
     setRequests = _a[1];
@@ -580,10 +561,10 @@ var useDataSubjectRights = function (patientId, clinicId) {
   var compliance = new lgpd_compliance_1.LGPDComplianceManager();
   var router = (0, navigation_1.useRouter)();
   var refreshRequests = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var _a, data, fetchError, err_6;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!patientId || !clinicId) return [2 /*return*/];
@@ -616,21 +597,17 @@ var useDataSubjectRights = function (patientId, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [patientId, clinicId, supabase],
   );
-  (0, react_1.useEffect)(
-    function () {
-      refreshRequests();
-    },
-    [refreshRequests],
-  );
+  (0, react_1.useEffect)(() => {
+    refreshRequests();
+  }, [refreshRequests]);
   var submitRequest = (0, react_1.useCallback)(
-    function (requestType, description, details) {
-      return __awaiter(void 0, void 0, void 0, function () {
+    (requestType, description, details) =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, _a, data, insertError, err_7, errorMessage;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               if (!patientId || !clinicId) {
@@ -701,25 +678,18 @@ var useDataSubjectRights = function (patientId, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [patientId, clinicId, supabase, compliance, refreshRequests],
   );
   var trackRequest = (0, react_1.useCallback)(
-    function (requestId) {
-      return (
-        requests.find(function (req) {
-          return req.id === requestId;
-        }) || null
-      );
-    },
+    (requestId) => requests.find((req) => req.id === requestId) || null,
     [requests],
   );
   var downloadData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+    () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var result, blob, url, link, err_8, errorMessage;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!patientId || !clinicId) {
@@ -765,14 +735,13 @@ var useDataSubjectRights = function (patientId, clinicId) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [patientId, clinicId, compliance],
   );
   var requestDeletion = (0, react_1.useCallback)(
-    function (reason) {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    (reason) =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -787,8 +756,7 @@ var useDataSubjectRights = function (patientId, clinicId) {
               return [2 /*return*/, _a.sent()];
           }
         });
-      });
-    },
+      }),
     [submitRequest],
   );
   return {
@@ -803,7 +771,7 @@ var useDataSubjectRights = function (patientId, clinicId) {
 };
 exports.useDataSubjectRights = useDataSubjectRights;
 // Higher-order component for LGPD-protected components
-var withLGPDProtection = function (Component, config) {
+var withLGPDProtection = (Component, config) => {
   if (config === void 0) {
     config = {};
   }
@@ -812,25 +780,22 @@ var withLGPDProtection = function (Component, config) {
     var _a = (0, react_1.useState)(false),
       accessLogged = _a[0],
       setAccessLogged = _a[1];
-    (0, react_1.useEffect)(
-      function () {
-        if (config.logAccess && !accessLogged) {
-          logEvent("data_access", {
-            tableName: "component_access",
-            action: "view",
-            purpose: "Component access logging",
-          });
-          setAccessLogged(true);
-        }
-      },
-      [logEvent, accessLogged],
-    );
+    (0, react_1.useEffect)(() => {
+      if (config.logAccess && !accessLogged) {
+        logEvent("data_access", {
+          tableName: "component_access",
+          action: "view",
+          purpose: "Component access logging",
+        });
+        setAccessLogged(true);
+      }
+    }, [logEvent, accessLogged]);
     return react_1.default.createElement(Component, props);
   };
 };
 exports.withLGPDProtection = withLGPDProtection;
 // Utility hook for LGPD compliance status
-var useLGPDComplianceStatus = function (patientId, clinicId) {
+var useLGPDComplianceStatus = (patientId, clinicId) => {
   var _a = (0, react_1.useState)({
       hasActiveConsents: false,
       pendingRequests: 0,
@@ -841,56 +806,52 @@ var useLGPDComplianceStatus = function (patientId, clinicId) {
     complianceStatus = _a[0],
     setComplianceStatus = _a[1];
   var supabase = yield (0, client_1.createClient)();
-  (0, react_1.useEffect)(
-    function () {
-      if (!patientId || !clinicId) return;
-      var fetchComplianceStatus = function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          var data, error_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [
-                  4 /*yield*/,
-                  supabase
-                    .from("lgpd_compliance_summary")
-                    .select("*")
-                    .eq("patient_id", patientId)
-                    .eq("clinic_id", clinicId)
-                    .single(),
-                ];
-              case 1:
-                data = _a.sent().data;
-                if (data) {
-                  setComplianceStatus({
-                    hasActiveConsents: data.active_consents > 0,
-                    pendingRequests: data.total_requests - data.completed_requests,
-                    recentAuditEntries: data.recent_audit_entries,
-                    lastAccess: data.last_record_access,
-                    complianceScore: calculateComplianceScore(data),
-                  });
-                }
-                return [3 /*break*/, 3];
-              case 2:
-                error_1 = _a.sent();
-                console.error("Failed to fetch compliance status:", error_1);
-                return [3 /*break*/, 3];
-              case 3:
-                return [2 /*return*/];
-            }
-          });
+  (0, react_1.useEffect)(() => {
+    if (!patientId || !clinicId) return;
+    var fetchComplianceStatus = () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var data, error_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                supabase
+                  .from("lgpd_compliance_summary")
+                  .select("*")
+                  .eq("patient_id", patientId)
+                  .eq("clinic_id", clinicId)
+                  .single(),
+              ];
+            case 1:
+              data = _a.sent().data;
+              if (data) {
+                setComplianceStatus({
+                  hasActiveConsents: data.active_consents > 0,
+                  pendingRequests: data.total_requests - data.completed_requests,
+                  recentAuditEntries: data.recent_audit_entries,
+                  lastAccess: data.last_record_access,
+                  complianceScore: calculateComplianceScore(data),
+                });
+              }
+              return [3 /*break*/, 3];
+            case 2:
+              error_1 = _a.sent();
+              console.error("Failed to fetch compliance status:", error_1);
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
         });
-      };
-      fetchComplianceStatus();
-    },
-    [patientId, clinicId, supabase],
-  );
+      });
+    fetchComplianceStatus();
+  }, [patientId, clinicId, supabase]);
   return complianceStatus;
 };
 exports.useLGPDComplianceStatus = useLGPDComplianceStatus;
 // Helper function to calculate compliance score
-var calculateComplianceScore = function (data) {
+var calculateComplianceScore = (data) => {
   var score = 0;
   // Has active consents
   if (data.active_consents > 0) score += 30;

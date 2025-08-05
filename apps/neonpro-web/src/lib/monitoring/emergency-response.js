@@ -1,4 +1,3 @@
-"use strict";
 /**
  * TASK-001: Foundation Setup & Baseline
  * Emergency Response System
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,10 +135,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -150,7 +147,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createemergencyResponse = void 0;
 exports.addEmergencyRule = addEmergencyRule;
@@ -158,7 +155,7 @@ exports.takeEmergencySnapshot = takeEmergencySnapshot;
 exports.resolveEmergencyAlert = resolveEmergencyAlert;
 exports.getEmergencyStatus = getEmergencyStatus;
 var client_1 = require("@/lib/supabase/client");
-var EmergencyResponseSystem = /** @class */ (function () {
+var EmergencyResponseSystem = /** @class */ (() => {
   function EmergencyResponseSystem() {
     this.supabase = (0, client_1.createClient)();
     this.rules = new Map();
@@ -313,7 +310,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
             }
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (record) {
+              : data.forEach((record) => {
                   if (record.metadata && record.metadata.rule_data) {
                     var rule = record.metadata.rule_data;
                     _this.rules.set(rule.rule_id, rule);
@@ -430,7 +427,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
             }
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (record) {
+              : data.forEach((record) => {
                   if (record.metadata && record.metadata.alert_data) {
                     var alert_1 = record.metadata.alert_data;
                     _this.activeAlerts.set(alert_1.alert_id, alert_1);
@@ -452,29 +449,30 @@ var EmergencyResponseSystem = /** @class */ (function () {
    * Start monitoring for emergency conditions
    */
   EmergencyResponseSystem.prototype.startMonitoring = function () {
-    var _this = this;
     // Monitor every 30 seconds
-    this.monitoringInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var error_5;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, , 3]);
-              return [4 /*yield*/, this.checkEmergencyConditions()];
-            case 1:
-              _a.sent();
-              return [3 /*break*/, 3];
-            case 2:
-              error_5 = _a.sent();
-              console.error("Error in emergency monitoring:", error_5);
-              return [3 /*break*/, 3];
-            case 3:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 30000);
+    this.monitoringInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var error_5;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, this.checkEmergencyConditions()];
+              case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+              case 2:
+                error_5 = _a.sent();
+                console.error("Error in emergency monitoring:", error_5);
+                return [3 /*break*/, 3];
+              case 3:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      30000,
+    );
     console.log("🔄 Emergency monitoring started");
   };
   /**
@@ -527,9 +525,9 @@ var EmergencyResponseSystem = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            lastAlert = Array.from(this.activeAlerts.values()).find(function (alert) {
-              return alert.rule_id === rule.rule_id;
-            });
+            lastAlert = Array.from(this.activeAlerts.values()).find(
+              (alert) => alert.rule_id === rule.rule_id,
+            );
             if (lastAlert) {
               timeSinceLastAlert = Date.now() - new Date(lastAlert.trigger_time).getTime();
               cooldownMs = rule.cooldown_minutes * 60 * 1000;
@@ -595,10 +593,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
             if (error || !data || data.length === 0) {
               return [2 /*return*/, false];
             }
-            avgValue =
-              data.reduce(function (sum, record) {
-                return sum + record.metric_value;
-              }, 0) / data.length;
+            avgValue = data.reduce((sum, record) => sum + record.metric_value, 0) / data.length;
             // Check threshold
             switch (rule.threshold_operator) {
               case "gt":
@@ -630,7 +625,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
    */
   EmergencyResponseSystem.prototype.evaluateErrorRate = function (rule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would integrate with error tracking system
         // For now, return false
         return [2 /*return*/, false];
@@ -717,9 +712,9 @@ var EmergencyResponseSystem = /** @class */ (function () {
               actions_taken: [],
               resolved: false,
             };
-            sortedActions = __spreadArray([], rule.actions, true).sort(function (a, b) {
-              return a.priority - b.priority;
-            });
+            sortedActions = __spreadArray([], rule.actions, true).sort(
+              (a, b) => a.priority - b.priority,
+            );
             (_i = 0), (sortedActions_1 = sortedActions);
             _a.label = 1;
           case 1:
@@ -831,7 +826,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
    */
   EmergencyResponseSystem.prototype.sendAlert = function (alert, parameters) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("\uD83D\uDEA8 EMERGENCY ALERT: ".concat(alert.alert_message));
         // Log alert to console (in production, this would integrate with alerting systems)
         console.error(
@@ -894,7 +889,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
   EmergencyResponseSystem.prototype.clearCache = function (cacheType, parameters) {
     return __awaiter(this, void 0, void 0, function () {
       var cacheNames;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             console.log("\uD83D\uDDD1\uFE0F Clearing cache: ".concat(cacheType || "all"));
@@ -902,14 +897,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
             return [4 /*yield*/, caches.keys()];
           case 1:
             cacheNames = _a.sent();
-            return [
-              4 /*yield*/,
-              Promise.all(
-                cacheNames.map(function (name) {
-                  return caches.delete(name);
-                }),
-              ),
-            ];
+            return [4 /*yield*/, Promise.all(cacheNames.map((name) => caches.delete(name)))];
           case 2:
             _a.sent();
             _a.label = 3;
@@ -973,9 +961,9 @@ var EmergencyResponseSystem = /** @class */ (function () {
         switch (_c.label) {
           case 0:
             console.log("↩️ Emergency rollback initiated");
-            preEmergencySnapshot = this.snapshots.find(function (s) {
-              return s.system_state.system_health === "healthy";
-            });
+            preEmergencySnapshot = this.snapshots.find(
+              (s) => s.system_state.system_health === "healthy",
+            );
             if (!preEmergencySnapshot) {
               console.error("No healthy snapshot found for rollback");
               return [2 /*return*/];
@@ -1020,7 +1008,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
   EmergencyResponseSystem.prototype.sendNotification = function (alert, parameters) {
     return __awaiter(this, void 0, void 0, function () {
       var message, recipients;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         console.log("\uD83D\uDCE2 Sending emergency notification");
         message =
           (parameters === null || parameters === void 0 ? void 0 : parameters.message) ||
@@ -1146,12 +1134,12 @@ var EmergencyResponseSystem = /** @class */ (function () {
    * Determine current system health
    */
   EmergencyResponseSystem.prototype.determineSystemHealth = function () {
-    var criticalAlerts = Array.from(this.activeAlerts.values()).filter(function (alert) {
-      return !alert.resolved && alert.severity === "critical";
-    });
-    var highAlerts = Array.from(this.activeAlerts.values()).filter(function (alert) {
-      return !alert.resolved && alert.severity === "high";
-    });
+    var criticalAlerts = Array.from(this.activeAlerts.values()).filter(
+      (alert) => !alert.resolved && alert.severity === "critical",
+    );
+    var highAlerts = Array.from(this.activeAlerts.values()).filter(
+      (alert) => !alert.resolved && alert.severity === "high",
+    );
     if (criticalAlerts.length > 0) {
       return "critical";
     } else if (highAlerts.length > 2) {
@@ -1212,9 +1200,7 @@ var EmergencyResponseSystem = /** @class */ (function () {
     return {
       health: this.determineSystemHealth(),
       active_alerts: this.activeAlerts.size,
-      active_rules: Array.from(this.rules.values()).filter(function (r) {
-        return r.enabled;
-      }).length,
+      active_rules: Array.from(this.rules.values()).filter((r) => r.enabled).length,
       recent_snapshots: this.snapshots.length,
       last_snapshot:
         this.snapshots.length > 0 ? this.snapshots[this.snapshots.length - 1].snapshot_time : null,
@@ -1231,30 +1217,25 @@ var EmergencyResponseSystem = /** @class */ (function () {
   return EmergencyResponseSystem;
 })();
 // Export singleton instance
-var createemergencyResponse = function () {
-  return new EmergencyResponseSystem();
-};
+var createemergencyResponse = () => new EmergencyResponseSystem();
 exports.createemergencyResponse = createemergencyResponse;
 // Utility functions
 function addEmergencyRule(rule) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, emergencyResponse.addRule(rule)];
-    });
+    return __generator(this, (_a) => [2 /*return*/, emergencyResponse.addRule(rule)]);
   });
 }
 function takeEmergencySnapshot(reason) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, emergencyResponse.takeSystemSnapshot(reason)];
-    });
+    return __generator(this, (_a) => [2 /*return*/, emergencyResponse.takeSystemSnapshot(reason)]);
   });
 }
 function resolveEmergencyAlert(alertId, method) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-      return [2 /*return*/, emergencyResponse.resolveAlert(alertId, method)];
-    });
+    return __generator(this, (_a) => [
+      2 /*return*/,
+      emergencyResponse.resolveAlert(alertId, method),
+    ]);
   });
 }
 function getEmergencyStatus() {

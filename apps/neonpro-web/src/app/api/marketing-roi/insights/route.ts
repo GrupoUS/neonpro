@@ -1,12 +1,12 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { createmarketingROIService } from "@/app/lib/services/marketing-roi-service";
 import type {
+  MarketingInsightCategory,
   MarketingInsightsRequest,
   MarketingInsightsResponse,
   MarketingInsightType,
-  MarketingInsightCategory,
 } from "@/app/types/marketing-roi";
+import type { createClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
   try {

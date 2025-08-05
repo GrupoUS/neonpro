@@ -1,12 +1,25 @@
 // components/landing/demo-request.tsx
 "use client";
 
+import type {
+  Award,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Phone,
+  Users,
+  Zap,
+} from "lucide-react";
 import type { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
 import type {
   Select,
   SelectContent,
@@ -14,20 +27,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type {
-  Calendar,
-  Phone,
-  Mail,
-  MapPin,
-  Users,
-  Zap,
-  CheckCircle,
-  Clock,
-  Award,
-  MessageSquare,
-} from "lucide-react";
+import type { Textarea } from "@/components/ui/textarea";
 
 export function DemoRequest() {
   const [formData, setFormData] = useState({

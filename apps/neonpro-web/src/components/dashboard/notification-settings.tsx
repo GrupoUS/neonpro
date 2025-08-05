@@ -1,6 +1,22 @@
 "use client";
 
+import type {
+  AlertTriangle,
+  Bell,
+  Calendar,
+  Clock,
+  Mail,
+  RefreshCw,
+  Save,
+  Settings,
+  Smartphone,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import type { useState } from "react";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,9 +24,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Label } from "@/components/ui/label";
-import type { Switch } from "@/components/ui/switch";
 import type {
   Select,
   SelectContent,
@@ -19,21 +33,7 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Separator } from "@/components/ui/separator";
-import type { Badge } from "@/components/ui/badge";
-import type {
-  Bell,
-  Mail,
-  Smartphone,
-  Calendar,
-  AlertTriangle,
-  Clock,
-  Volume2,
-  VolumeX,
-  Settings,
-  Save,
-  RefreshCw,
-} from "lucide-react";
-import type { toast } from "sonner";
+import type { Switch } from "@/components/ui/switch";
 import type { useNotificationContext } from "@/contexts/notification-context";
 import type { NotificationPreferences } from "@/hooks/use-notifications";
 

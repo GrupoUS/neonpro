@@ -4,11 +4,11 @@
  * @since 2024-12-01
  */
 
-import { describe, it, expect, beforeEach, vi, Mock } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, type Mock, vi } from "vitest";
 import { SessionDashboard } from "@/components/admin/sessions/SessionDashboard";
-import { useSession, useSecurityEvents, useDeviceManagement } from "@/hooks/useSession";
-import type { SessionData, SecurityEvent } from "@/types/session";
+import { useDeviceManagement, useSecurityEvents, useSession } from "@/hooks/useSession";
+import type { SecurityEvent, SessionData } from "@/types/session";
 
 // Mock hooks
 vi.mock("@/hooks/useSession");

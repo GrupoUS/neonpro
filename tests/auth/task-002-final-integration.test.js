@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,110 +128,82 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var session_manager_1 = require("@/lib/auth/session-manager");
 var security_audit_framework_1 = require("@/lib/auth/security-audit-framework");
 // Mock Supabase client
-globals_1.jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createServerClient: globals_1.jest.fn(function () {
-      return {
-        auth: {
-          getSession: globals_1.jest.fn(function () {
-            return {
-              data: {
-                session: {
-                  user: { id: "test-user-id" },
-                  expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-                },
-              },
-            };
-          }),
-          refreshSession: globals_1.jest.fn(function () {
-            return { error: null };
-          }),
+globals_1.jest.mock("@/app/utils/supabase/server", () => ({
+  createServerClient: globals_1.jest.fn(() => ({
+    auth: {
+      getSession: globals_1.jest.fn(() => ({
+        data: {
+          session: {
+            user: { id: "test-user-id" },
+            expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+          },
         },
-        from: globals_1.jest.fn(function () {
-          return {
-            select: globals_1.jest.fn(function () {
-              return {
-                eq: globals_1.jest.fn(function () {
-                  return {
-                    eq: globals_1.jest.fn(function () {
-                      return {
-                        gte: globals_1.jest.fn(function () {
-                          return {
-                            data: [],
-                            error: null,
-                          };
-                        }),
-                      };
-                    }),
-                  };
-                }),
-              };
-            }),
-            insert: globals_1.jest.fn(function () {
-              return {
-                error: null,
-              };
-            }),
-            update: globals_1.jest.fn(function () {
-              return {
-                eq: globals_1.jest.fn(function () {
-                  return {
-                    error: null,
-                  };
-                }),
-              };
-            }),
-            single: globals_1.jest.fn(function () {
-              return {
-                data: {
-                  session_id: "test-session-id",
-                  user_id: "test-user-id",
-                  device_info: {
-                    userAgent: "test-agent",
-                    ip: "127.0.0.1",
-                    deviceType: "desktop",
-                    browser: "chrome",
-                  },
-                  created_at: new Date().toISOString(),
-                  last_activity: new Date().toISOString(),
-                  expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-                  is_active: true,
-                  risk_score: 0,
-                },
-                error: null,
-              };
-            }),
-          };
-        }),
-      };
-    }),
-  };
-});
-// Mock performance tracker
-globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
-  return {
-    performanceTracker: {
-      recordMetric: globals_1.jest.fn(),
+      })),
+      refreshSession: globals_1.jest.fn(() => ({ error: null })),
     },
-  };
-});
+    from: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        eq: globals_1.jest.fn(() => ({
+          eq: globals_1.jest.fn(() => ({
+            gte: globals_1.jest.fn(() => ({
+              data: [],
+              error: null,
+            })),
+          })),
+        })),
+      })),
+      insert: globals_1.jest.fn(() => ({
+        error: null,
+      })),
+      update: globals_1.jest.fn(() => ({
+        eq: globals_1.jest.fn(() => ({
+          error: null,
+        })),
+      })),
+      single: globals_1.jest.fn(() => ({
+        data: {
+          session_id: "test-session-id",
+          user_id: "test-user-id",
+          device_info: {
+            userAgent: "test-agent",
+            ip: "127.0.0.1",
+            deviceType: "desktop",
+            browser: "chrome",
+          },
+          created_at: new Date().toISOString(),
+          last_activity: new Date().toISOString(),
+          expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+          is_active: true,
+          risk_score: 0,
+        },
+        error: null,
+      })),
+    })),
+  })),
+}));
+// Mock performance tracker
+globals_1.jest.mock("@/lib/auth/performance-tracker", () => ({
+  performanceTracker: {
+    recordMetric: globals_1.jest.fn(),
+  },
+}));
 (0, globals_1.describe)(
   "TASK-002 Final Integration Tests - Advanced Authentication Features",
-  function () {
-    (0, globals_1.beforeEach)(function () {
+  () => {
+    (0, globals_1.beforeEach)(() => {
       globals_1.jest.clearAllMocks();
     });
-    (0, globals_1.describe)("Advanced Session Management", function () {
-      (0, globals_1.test)("should extend session when within threshold", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.describe)("Advanced Session Management", () => {
+      (0, globals_1.test)("should extend session when within threshold", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -247,12 +216,12 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.test)("should validate session security and detect risks", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.test)("should validate session security and detect risks", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var validation;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -270,11 +239,11 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.test)("should manage concurrent sessions", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+        }),
+      );
+      (0, globals_1.test)("should manage concurrent sessions", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -291,12 +260,12 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.test)("should check reauth requirements for sensitive operations", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.test)("should check reauth requirements for sensitive operations", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var requiresReauth;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -312,11 +281,11 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.test)("should update session activity", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+        }),
+      );
+      (0, globals_1.test)("should update session activity", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -334,13 +303,13 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)("Security Audit Framework", function () {
-      (0, globals_1.test)("should log security events successfully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+    (0, globals_1.describe)("Security Audit Framework", () => {
+      (0, globals_1.test)("should log security events successfully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -365,12 +334,12 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.test)("should generate compliance reports", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.test)("should generate compliance reports", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var period, report;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 period = {
@@ -404,10 +373,10 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.test)("should handle different security event types", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.test)("should handle different security event types", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var eventTypes,
             severities,
             outcomes,
@@ -420,7 +389,7 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
             _b,
             outcomes_1,
             outcome;
-          return __generator(this, function (_c) {
+          return __generator(this, (_c) => {
             switch (_c.label) {
               case 0:
                 eventTypes = [
@@ -479,104 +448,98 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)(
-      "Integration Between Session Management and Security Audit",
-      function () {
-        (0, globals_1.test)(
-          "should integrate session validation with security logging",
-          function () {
-            return __awaiter(void 0, void 0, void 0, function () {
-              var validation;
-              return __generator(this, function (_a) {
-                switch (_a.label) {
-                  case 0:
-                    return [
-                      4 /*yield*/,
-                      session_manager_1.sessionManager.validateSessionSecurity("test-session-id", {
-                        userAgent: "suspicious-agent",
-                        ip: "192.168.1.100",
-                      }),
-                    ];
-                  case 1:
-                    validation = _a.sent();
-                    // Validate that security event would be logged appropriately
-                    (0, globals_1.expect)(validation).toHaveProperty("isValid");
-                    (0, globals_1.expect)(validation).toHaveProperty("riskLevel");
-                    // Test security event logging for session validation
-                    return [
-                      4 /*yield*/,
-                      (0, globals_1.expect)(
-                        security_audit_framework_1.securityAuditFramework.logSecurityEvent({
-                          eventType: "authentication",
-                          severity: validation.riskLevel === "high" ? "high" : "low",
-                          userId: "test-user-id",
-                          sessionId: "test-session-id",
-                          resource: "session",
-                          action: "security_validation",
-                          outcome: validation.isValid ? "success" : "blocked",
-                          metadata: { riskLevel: validation.riskLevel },
-                          ipAddress: "192.168.1.100",
-                          userAgent: "suspicious-agent",
-                        }),
-                      ).resolves.not.toThrow(),
-                    ];
-                  case 2:
-                    // Test security event logging for session validation
-                    _a.sent();
-                    return [2 /*return*/];
-                }
-              });
-            });
-          },
-        );
-        (0, globals_1.test)("should integrate session extension with audit logging", function () {
-          return __awaiter(void 0, void 0, void 0, function () {
-            var extended;
-            return __generator(this, function (_a) {
-              switch (_a.label) {
-                case 0:
-                  return [
-                    4 /*yield*/,
-                    session_manager_1.sessionManager.extendSessionIfNeeded("test-session-id"),
-                  ];
-                case 1:
-                  extended = _a.sent();
-                  // Test corresponding audit log
-                  return [
-                    4 /*yield*/,
-                    (0, globals_1.expect)(
-                      security_audit_framework_1.securityAuditFramework.logSecurityEvent({
-                        eventType: "authentication",
-                        severity: "low",
-                        userId: "test-user-id",
-                        sessionId: "test-session-id",
-                        resource: "session",
-                        action: "extend_attempt",
-                        outcome: extended ? "success" : "failure",
-                        metadata: { extended: extended },
-                        ipAddress: "127.0.0.1",
-                        userAgent: "test-agent",
-                      }),
-                    ).resolves.not.toThrow(),
-                  ];
-                case 2:
-                  // Test corresponding audit log
-                  _a.sent();
-                  return [2 /*return*/];
-              }
-            });
+    (0, globals_1.describe)("Integration Between Session Management and Security Audit", () => {
+      (0, globals_1.test)("should integrate session validation with security logging", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          var validation;
+          return __generator(this, (_a) => {
+            switch (_a.label) {
+              case 0:
+                return [
+                  4 /*yield*/,
+                  session_manager_1.sessionManager.validateSessionSecurity("test-session-id", {
+                    userAgent: "suspicious-agent",
+                    ip: "192.168.1.100",
+                  }),
+                ];
+              case 1:
+                validation = _a.sent();
+                // Validate that security event would be logged appropriately
+                (0, globals_1.expect)(validation).toHaveProperty("isValid");
+                (0, globals_1.expect)(validation).toHaveProperty("riskLevel");
+                // Test security event logging for session validation
+                return [
+                  4 /*yield*/,
+                  (0, globals_1.expect)(
+                    security_audit_framework_1.securityAuditFramework.logSecurityEvent({
+                      eventType: "authentication",
+                      severity: validation.riskLevel === "high" ? "high" : "low",
+                      userId: "test-user-id",
+                      sessionId: "test-session-id",
+                      resource: "session",
+                      action: "security_validation",
+                      outcome: validation.isValid ? "success" : "blocked",
+                      metadata: { riskLevel: validation.riskLevel },
+                      ipAddress: "192.168.1.100",
+                      userAgent: "suspicious-agent",
+                    }),
+                  ).resolves.not.toThrow(),
+                ];
+              case 2:
+                // Test security event logging for session validation
+                _a.sent();
+                return [2 /*return*/];
+            }
           });
-        });
-      },
-    );
-    (0, globals_1.describe)("Performance and Quality Validation", function () {
-      (0, globals_1.test)("should maintain performance targets", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.test)("should integrate session extension with audit logging", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          var extended;
+          return __generator(this, (_a) => {
+            switch (_a.label) {
+              case 0:
+                return [
+                  4 /*yield*/,
+                  session_manager_1.sessionManager.extendSessionIfNeeded("test-session-id"),
+                ];
+              case 1:
+                extended = _a.sent();
+                // Test corresponding audit log
+                return [
+                  4 /*yield*/,
+                  (0, globals_1.expect)(
+                    security_audit_framework_1.securityAuditFramework.logSecurityEvent({
+                      eventType: "authentication",
+                      severity: "low",
+                      userId: "test-user-id",
+                      sessionId: "test-session-id",
+                      resource: "session",
+                      action: "extend_attempt",
+                      outcome: extended ? "success" : "failure",
+                      metadata: { extended: extended },
+                      ipAddress: "127.0.0.1",
+                      userAgent: "test-agent",
+                    }),
+                  ).resolves.not.toThrow(),
+                ];
+              case 2:
+                // Test corresponding audit log
+                _a.sent();
+                return [2 /*return*/];
+            }
+          });
+        }),
+      );
+    });
+    (0, globals_1.describe)("Performance and Quality Validation", () => {
+      (0, globals_1.test)("should maintain performance targets", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var start, sessionTime, auditStart, auditTime;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 start = Date.now();
@@ -623,12 +586,12 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.test)("should handle error scenarios gracefully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.test)("should handle error scenarios gracefully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var validation;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 return [
@@ -655,13 +618,13 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)("LGPD Compliance Validation", function () {
-      (0, globals_1.test)("should support LGPD data subject rights", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
-          return __generator(this, function (_a) {
+    (0, globals_1.describe)("LGPD Compliance Validation", () => {
+      (0, globals_1.test)("should support LGPD data subject rights", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 // Test data access request logging
@@ -715,12 +678,12 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.test)("should generate LGPD compliance metrics", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.test)("should generate LGPD compliance metrics", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var period, report;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 period = {
@@ -752,16 +715,16 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
   },
 );
-(0, globals_1.describe)("TASK-002 Completion Validation", function () {
-  (0, globals_1.test)("should confirm all TASK-002 components are operational", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("TASK-002 Completion Validation", () => {
+  (0, globals_1.test)("should confirm all TASK-002 components are operational", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var components;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         components = {
           sessionManager: session_manager_1.sessionManager,
           securityAuditFramework: security_audit_framework_1.securityAuditFramework,
@@ -792,12 +755,12 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
         ).toBe("function");
         return [2 /*return*/];
       });
-    });
-  });
-  (0, globals_1.test)("should validate TASK-002 quality standards", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }),
+  );
+  (0, globals_1.test)("should validate TASK-002 quality standards", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var period, report;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // Test error handling
@@ -831,15 +794,15 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });
 // Performance benchmark test
-(0, globals_1.describe)("TASK-002 Performance Benchmarks", function () {
-  (0, globals_1.test)("should meet authentication performance targets", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+(0, globals_1.describe)("TASK-002 Performance Benchmarks", () => {
+  (0, globals_1.test)("should meet authentication performance targets", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var iterations, times, i, start, averageTime, maxTime;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             iterations = 10;
@@ -886,10 +849,7 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
             i++;
             return [3 /*break*/, 1];
           case 6:
-            averageTime =
-              times.reduce(function (a, b) {
-                return a + b;
-              }, 0) / times.length;
+            averageTime = times.reduce((a, b) => a + b, 0) / times.length;
             maxTime = Math.max.apply(Math, times);
             // Performance targets from TASK-002 requirements
             (0, globals_1.expect)(averageTime).toBeLessThan(350); // Average should be under 350ms
@@ -906,6 +866,6 @@ globals_1.jest.mock("@/lib/auth/performance-tracker", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }),
+  );
 });

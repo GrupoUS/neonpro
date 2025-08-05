@@ -1,8 +1,7 @@
 "use client";
-"use strict";
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -11,7 +10,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FinancialCharts = FinancialCharts;
 var react_1 = require("react");
@@ -52,20 +51,17 @@ function FinancialCharts(_a) {
     teal: "#14b8a6",
   };
   // Format currency values
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
-  };
   // Format percentage values
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(1), "%");
-  };
+  var formatPercentage = (value) => "".concat(value.toFixed(1), "%");
   // Generate mock data for demonstration
-  var generateMockData = function (type, days) {
+  var generateMockData = (type, days) => {
     if (days === void 0) {
       days = 30;
     }
@@ -97,50 +93,48 @@ function FinancialCharts(_a) {
   };
   // Chart configurations
   var chartConfigs = (0, react_1.useMemo)(
-    function () {
-      return {
-        revenue: {
-          title: "Receita Diária",
-          description: "Evolução da receita ao longo do tempo",
-          type: "area",
-          data: generateMockData("revenue", parseInt(dateRange)),
-          xKey: "name",
-          yKey: "value",
-          color: colors.primary,
-          format: "currency",
-        },
-        patients: {
-          title: "Pacientes por Dia",
-          description: "Número de pacientes atendidos diariamente",
-          type: "bar",
-          data: generateMockData("patients", parseInt(dateRange)),
-          xKey: "name",
-          yKey: "value",
-          color: colors.secondary,
-          format: "number",
-        },
-        treatments: {
-          title: "Tratamentos Realizados",
-          description: "Quantidade de tratamentos por dia",
-          type: "line",
-          data: generateMockData("treatments", parseInt(dateRange)),
-          xKey: "name",
-          yKey: "value",
-          color: colors.accent,
-          format: "number",
-        },
-        satisfaction: {
-          title: "Satisfação do Paciente",
-          description: "Avaliação média diária dos pacientes",
-          type: "line",
-          data: generateMockData("satisfaction", parseInt(dateRange)),
-          xKey: "name",
-          yKey: "value",
-          color: colors.purple,
-          format: "number",
-        },
-      };
-    },
+    () => ({
+      revenue: {
+        title: "Receita Diária",
+        description: "Evolução da receita ao longo do tempo",
+        type: "area",
+        data: generateMockData("revenue", parseInt(dateRange)),
+        xKey: "name",
+        yKey: "value",
+        color: colors.primary,
+        format: "currency",
+      },
+      patients: {
+        title: "Pacientes por Dia",
+        description: "Número de pacientes atendidos diariamente",
+        type: "bar",
+        data: generateMockData("patients", parseInt(dateRange)),
+        xKey: "name",
+        yKey: "value",
+        color: colors.secondary,
+        format: "number",
+      },
+      treatments: {
+        title: "Tratamentos Realizados",
+        description: "Quantidade de tratamentos por dia",
+        type: "line",
+        data: generateMockData("treatments", parseInt(dateRange)),
+        xKey: "name",
+        yKey: "value",
+        color: colors.accent,
+        format: "number",
+      },
+      satisfaction: {
+        title: "Satisfação do Paciente",
+        description: "Avaliação média diária dos pacientes",
+        type: "line",
+        data: generateMockData("satisfaction", parseInt(dateRange)),
+        xKey: "name",
+        yKey: "value",
+        color: colors.purple,
+        format: "number",
+      },
+    }),
     [dateRange],
   );
   // Treatment distribution data for pie chart
@@ -160,7 +154,7 @@ function FinancialCharts(_a) {
     { name: "Outros", value: 10000, percentage: 8 },
   ];
   // Custom tooltip component
-  var CustomTooltip = function (_a) {
+  var CustomTooltip = (_a) => {
     var active = _a.active,
       payload = _a.payload,
       label = _a.label,
@@ -187,19 +181,17 @@ function FinancialCharts(_a) {
     return (
       <div className={"space-y-6 ".concat(className)}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {__spreadArray([], Array(4), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardHeader>
-                  <skeleton_1.Skeleton className="h-6 w-32" />
-                  <skeleton_1.Skeleton className="h-4 w-48" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <skeleton_1.Skeleton className="h-64 w-full" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {__spreadArray([], Array(4), true).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardHeader>
+                <skeleton_1.Skeleton className="h-6 w-32" />
+                <skeleton_1.Skeleton className="h-4 w-48" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <skeleton_1.Skeleton className="h-64 w-full" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -228,12 +220,7 @@ function FinancialCharts(_a) {
           {detailed && (
             <div className="flex items-center gap-2">
               <label className="text-sm font-medium">Visualização:</label>
-              <select_1.Select
-                value={chartView}
-                onValueChange={function (value) {
-                  return setChartView(value);
-                }}
-              >
+              <select_1.Select value={chartView} onValueChange={(value) => setChartView(value)}>
                 <select_1.SelectTrigger className="w-32">
                   <select_1.SelectValue />
                 </select_1.SelectTrigger>
@@ -274,11 +261,7 @@ function FinancialCharts(_a) {
               <recharts_1.AreaChart data={chartConfigs.revenue.data}>
                 <recharts_1.CartesianGrid strokeDasharray="3 3" />
                 <recharts_1.XAxis dataKey={chartConfigs.revenue.xKey} />
-                <recharts_1.YAxis
-                  tickFormatter={function (value) {
-                    return formatCurrency(value);
-                  }}
-                />
+                <recharts_1.YAxis tickFormatter={(value) => formatCurrency(value)} />
                 <recharts_1.Tooltip
                   content={<CustomTooltip format={chartConfigs.revenue.format} />}
                 />
@@ -338,7 +321,7 @@ function FinancialCharts(_a) {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={function (_a) {
+                  label={(_a) => {
                     var name = _a.name,
                       value = _a.value;
                     return "".concat(name, ": ").concat(value, "%");
@@ -347,9 +330,9 @@ function FinancialCharts(_a) {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {treatmentDistribution.map(function (entry, index) {
-                    return <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />;
-                  })}
+                  {treatmentDistribution.map((entry, index) => (
+                    <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />
+                  ))}
                 </recharts_1.Pie>
                 <recharts_1.Tooltip />
               </recharts_1.PieChart>
@@ -408,26 +391,24 @@ function FinancialCharts(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {revenueByTreatment.map(function (item, index) {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-4 h-4 rounded-full"
-                          style={{ backgroundColor: Object.values(colors)[index] }}
-                        />
-                        <span className="font-medium">{item.name}</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold">{formatCurrency(item.value)}</div>
-                        <div className="text-sm text-muted-foreground">{item.percentage}%</div>
-                      </div>
+                {revenueByTreatment.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: Object.values(colors)[index] }}
+                      />
+                      <span className="font-medium">{item.name}</span>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <div className="font-semibold">{formatCurrency(item.value)}</div>
+                      <div className="text-sm text-muted-foreground">{item.percentage}%</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = AIInsightsDashboard;
 var react_1 = require("react");
@@ -143,7 +140,6 @@ var progress_1 = require("@/components/ui/progress");
 var tabs_1 = require("@/components/ui/tabs");
 var lucide_react_1 = require("lucide-react");
 function AIInsightsDashboard(_a) {
-  var _this = this;
   var patientId = _a.patientId;
   var _b = (0, react_1.useState)(null),
     insights = _b[0],
@@ -157,16 +153,13 @@ function AIInsightsDashboard(_a) {
   var _e = (0, react_1.useState)(false),
     generating = _e[0],
     setGenerating = _e[1];
-  (0, react_1.useEffect)(
-    function () {
-      fetchInsights();
-    },
-    [patientId],
-  );
-  var fetchInsights = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    fetchInsights();
+  }, [patientId]);
+  var fetchInsights = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -195,11 +188,10 @@ function AIInsightsDashboard(_a) {
         }
       });
     });
-  };
-  var generateNewInsights = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var generateNewInsights = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -234,8 +226,7 @@ function AIInsightsDashboard(_a) {
         }
       });
     });
-  };
-  var getRiskBadgeColor = function (riskLevel) {
+  var getRiskBadgeColor = (riskLevel) => {
     switch (riskLevel) {
       case "low":
         return "bg-green-100 text-green-800 border-green-200";
@@ -249,7 +240,7 @@ function AIInsightsDashboard(_a) {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getSeverityBadgeColor = function (severity) {
+  var getSeverityBadgeColor = (severity) => {
     switch (severity) {
       case "low":
         return "bg-green-100 text-green-700";
@@ -261,7 +252,7 @@ function AIInsightsDashboard(_a) {
         return "bg-gray-100 text-gray-700";
     }
   };
-  var getTrendIcon = function (trend) {
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "improving":
         return <lucide_react_1.TrendingUp className="h-4 w-4 text-green-600" />;
@@ -273,7 +264,7 @@ function AIInsightsDashboard(_a) {
         return <lucide_react_1.Minus className="h-4 w-4 text-gray-600" />;
     }
   };
-  var getEffortColor = function (effort) {
+  var getEffortColor = (effort) => {
     switch (effort) {
       case "low":
         return "text-green-600";
@@ -381,14 +372,12 @@ function AIInsightsDashboard(_a) {
               <div>
                 <h4 className="font-medium mb-2">Key Recommendations</h4>
                 <ul className="space-y-1">
-                  {insights.risk_assessment.recommendations.map(function (rec, index) {
-                    return (
-                      <li key={index} className="text-sm text-gray-700 flex items-start">
-                        <span className="mr-2">•</span>
-                        {rec}
-                      </li>
-                    );
-                  })}
+                  {insights.risk_assessment.recommendations.map((rec, index) => (
+                    <li key={index} className="text-sm text-gray-700 flex items-start">
+                      <span className="mr-2">•</span>
+                      {rec}
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -408,224 +397,207 @@ function AIInsightsDashboard(_a) {
         {/* Risk Factors Tab */}
         <tabs_1.TabsContent value="risk-factors" className="space-y-4">
           <div className="grid gap-4">
-            {insights.risk_assessment.risk_factors.map(function (factor, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <card_1.CardTitle className="text-lg">
-                        {factor.factor.replace("_", " ").toUpperCase()}
-                      </card_1.CardTitle>
-                      <badge_1.Badge className={getSeverityBadgeColor(factor.severity)}>
-                        {factor.severity.toUpperCase()}
-                      </badge_1.Badge>
-                    </div>
-                    <card_1.CardDescription>{factor.description}</card_1.CardDescription>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-sm font-medium">Impact Score</span>
-                          <span className="text-sm font-bold">
-                            {Math.round(factor.impact_score * 100)}%
-                          </span>
-                        </div>
-                        <progress_1.Progress value={factor.impact_score * 100} className="h-2" />
+            {insights.risk_assessment.risk_factors.map((factor, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <card_1.CardTitle className="text-lg">
+                      {factor.factor.replace("_", " ").toUpperCase()}
+                    </card_1.CardTitle>
+                    <badge_1.Badge className={getSeverityBadgeColor(factor.severity)}>
+                      {factor.severity.toUpperCase()}
+                    </badge_1.Badge>
+                  </div>
+                  <card_1.CardDescription>{factor.description}</card_1.CardDescription>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm font-medium">Impact Score</span>
+                        <span className="text-sm font-bold">
+                          {Math.round(factor.impact_score * 100)}%
+                        </span>
                       </div>
-
-                      {factor.mitigation_strategies.length > 0 && (
-                        <div>
-                          <h5 className="font-medium mb-2">Mitigation Strategies</h5>
-                          <ul className="space-y-1">
-                            {factor.mitigation_strategies.map(function (strategy, idx) {
-                              return (
-                                <li key={idx} className="text-sm text-gray-700 flex items-start">
-                                  <span className="mr-2">•</span>
-                                  {strategy}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      )}
+                      <progress_1.Progress value={factor.impact_score * 100} className="h-2" />
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+
+                    {factor.mitigation_strategies.length > 0 && (
+                      <div>
+                        <h5 className="font-medium mb-2">Mitigation Strategies</h5>
+                        <ul className="space-y-1">
+                          {factor.mitigation_strategies.map((strategy, idx) => (
+                            <li key={idx} className="text-sm text-gray-700 flex items-start">
+                              <span className="mr-2">•</span>
+                              {strategy}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
         {/* Health Trends Tab */}
         <tabs_1.TabsContent value="trends" className="space-y-4">
           <div className="grid gap-4">
-            {insights.health_trends.map(function (trend, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader>
-                    <div className="flex items-center justify-between">
-                      <card_1.CardTitle className="flex items-center space-x-2">
-                        <lucide_react_1.BarChart3 className="h-5 w-5" />
-                        <span>{trend.metric.replace("_", " ").toUpperCase()}</span>
-                      </card_1.CardTitle>
-                      <div className="flex items-center space-x-2">
-                        {getTrendIcon(trend.trend)}
-                        <span className="text-sm font-medium capitalize">{trend.trend}</span>
+            {insights.health_trends.map((trend, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader>
+                  <div className="flex items-center justify-between">
+                    <card_1.CardTitle className="flex items-center space-x-2">
+                      <lucide_react_1.BarChart3 className="h-5 w-5" />
+                      <span>{trend.metric.replace("_", " ").toUpperCase()}</span>
+                    </card_1.CardTitle>
+                    <div className="flex items-center space-x-2">
+                      {getTrendIcon(trend.trend)}
+                      <span className="text-sm font-medium capitalize">{trend.trend}</span>
+                    </div>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium">Change Rate:</span>
+                        <span className="ml-2">{trend.change_rate.toFixed(3)}/month</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">Period:</span>
+                        <span className="ml-2">{trend.period_months} months</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">Confidence:</span>
+                        <span className="ml-2">{Math.round(trend.confidence * 100)}%</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">Data Points:</span>
+                        <span className="ml-2">{trend.data_points.length}</span>
                       </div>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="font-medium">Change Rate:</span>
-                          <span className="ml-2">{trend.change_rate.toFixed(3)}/month</span>
-                        </div>
-                        <div>
-                          <span className="font-medium">Period:</span>
-                          <span className="ml-2">{trend.period_months} months</span>
-                        </div>
-                        <div>
-                          <span className="font-medium">Confidence:</span>
-                          <span className="ml-2">{Math.round(trend.confidence * 100)}%</span>
-                        </div>
-                        <div>
-                          <span className="font-medium">Data Points:</span>
-                          <span className="ml-2">{trend.data_points.length}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
         {/* Treatment Predictions Tab */}
         <tabs_1.TabsContent value="predictions" className="space-y-4">
           <div className="grid gap-4">
-            {insights.treatment_predictions.map(function (prediction, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader>
-                    <card_1.CardTitle className="flex items-center space-x-2">
-                      <lucide_react_1.Target className="h-5 w-5" />
-                      <span>{prediction.treatment_type}</span>
-                    </card_1.CardTitle>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium">Success Probability</span>
-                          <span className="text-sm font-bold">
-                            {Math.round(prediction.success_probability * 100)}%
-                          </span>
-                        </div>
-                        <progress_1.Progress
-                          value={prediction.success_probability * 100}
-                          className="h-2"
-                        />
+            {insights.treatment_predictions.map((prediction, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader>
+                  <card_1.CardTitle className="flex items-center space-x-2">
+                    <lucide_react_1.Target className="h-5 w-5" />
+                    <span>{prediction.treatment_type}</span>
+                  </card_1.CardTitle>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium">Success Probability</span>
+                        <span className="text-sm font-bold">
+                          {Math.round(prediction.success_probability * 100)}%
+                        </span>
                       </div>
-
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="font-medium">Expected Duration:</span>
-                          <span className="ml-2">{prediction.expected_duration}</span>
-                        </div>
-                        <div>
-                          <span className="font-medium">Optimal Frequency:</span>
-                          <span className="ml-2">{prediction.optimal_frequency}</span>
-                        </div>
-                      </div>
-
-                      {prediction.supporting_factors.length > 0 && (
-                        <div>
-                          <h5 className="font-medium mb-2 text-green-700">Supporting Factors</h5>
-                          <ul className="space-y-1">
-                            {prediction.supporting_factors.map(function (factor, idx) {
-                              return (
-                                <li key={idx} className="text-sm text-green-600 flex items-start">
-                                  <span className="mr-2">✓</span>
-                                  {factor}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      )}
-
-                      {prediction.contraindications.length > 0 && (
-                        <div>
-                          <h5 className="font-medium mb-2 text-red-700">Contraindications</h5>
-                          <ul className="space-y-1">
-                            {prediction.contraindications.map(function (contra, idx) {
-                              return (
-                                <li key={idx} className="text-sm text-red-600 flex items-start">
-                                  <span className="mr-2">⚠</span>
-                                  {contra}
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      )}
+                      <progress_1.Progress
+                        value={prediction.success_probability * 100}
+                        className="h-2"
+                      />
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium">Expected Duration:</span>
+                        <span className="ml-2">{prediction.expected_duration}</span>
+                      </div>
+                      <div>
+                        <span className="font-medium">Optimal Frequency:</span>
+                        <span className="ml-2">{prediction.optimal_frequency}</span>
+                      </div>
+                    </div>
+
+                    {prediction.supporting_factors.length > 0 && (
+                      <div>
+                        <h5 className="font-medium mb-2 text-green-700">Supporting Factors</h5>
+                        <ul className="space-y-1">
+                          {prediction.supporting_factors.map((factor, idx) => (
+                            <li key={idx} className="text-sm text-green-600 flex items-start">
+                              <span className="mr-2">✓</span>
+                              {factor}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {prediction.contraindications.length > 0 && (
+                      <div>
+                        <h5 className="font-medium mb-2 text-red-700">Contraindications</h5>
+                        <ul className="space-y-1">
+                          {prediction.contraindications.map((contra, idx) => (
+                            <li key={idx} className="text-sm text-red-600 flex items-start">
+                              <span className="mr-2">⚠</span>
+                              {contra}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
         {/* Optimization Suggestions Tab */}
         <tabs_1.TabsContent value="optimization" className="space-y-4">
           <div className="grid gap-4">
-            {insights.optimization_suggestions.map(function (suggestion, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader>
-                    <div className="flex items-center justify-between">
-                      <card_1.CardTitle className="flex items-center space-x-2">
-                        <lucide_react_1.Lightbulb className="h-5 w-5" />
-                        <span className="capitalize">{suggestion.category} Optimization</span>
-                      </card_1.CardTitle>
-                      <badge_1.Badge
-                        variant="outline"
-                        className={getEffortColor(suggestion.implementation_effort)}
-                      >
-                        {suggestion.implementation_effort.toUpperCase()} EFFORT
-                      </badge_1.Badge>
-                    </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="space-y-3">
-                      <p className="text-sm">{suggestion.suggestion}</p>
+            {insights.optimization_suggestions.map((suggestion, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader>
+                  <div className="flex items-center justify-between">
+                    <card_1.CardTitle className="flex items-center space-x-2">
+                      <lucide_react_1.Lightbulb className="h-5 w-5" />
+                      <span className="capitalize">{suggestion.category} Optimization</span>
+                    </card_1.CardTitle>
+                    <badge_1.Badge
+                      variant="outline"
+                      className={getEffortColor(suggestion.implementation_effort)}
+                    >
+                      {suggestion.implementation_effort.toUpperCase()} EFFORT
+                    </badge_1.Badge>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="space-y-3">
+                    <p className="text-sm">{suggestion.suggestion}</p>
 
-                      <div>
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium">Expected Impact</span>
-                          <span className="text-sm font-bold">
-                            {Math.round(suggestion.impact_score * 100)}%
-                          </span>
-                        </div>
-                        <progress_1.Progress
-                          value={suggestion.impact_score * 100}
-                          className="h-2"
-                        />
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium">Expected Impact</span>
+                        <span className="text-sm font-bold">
+                          {Math.round(suggestion.impact_score * 100)}%
+                        </span>
                       </div>
-
-                      <div className="p-3 bg-blue-50 rounded-lg">
-                        <h5 className="font-medium mb-1 text-blue-800">Expected Outcome</h5>
-                        <p className="text-sm text-blue-700">{suggestion.expected_outcome}</p>
-                      </div>
+                      <progress_1.Progress value={suggestion.impact_score * 100} className="h-2" />
                     </div>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+
+                    <div className="p-3 bg-blue-50 rounded-lg">
+                      <h5 className="font-medium mb-1 text-blue-800">Expected Outcome</h5>
+                      <p className="text-sm text-blue-700">{suggestion.expected_outcome}</p>
+                    </div>
+                  </div>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
       </tabs_1.Tabs>

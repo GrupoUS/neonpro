@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var zod_1 = require("@hookform/resolvers/zod");
@@ -232,7 +229,7 @@ var backupConfigSchema = z.object({
   verify_integrity: z.boolean().default(true),
   test_restore: z.boolean().default(false),
 });
-var BackupConfigForm = function (_a) {
+var BackupConfigForm = (_a) => {
   var initialData = _a.initialData,
     onSubmit = _a.onSubmit,
     onCancel = _a.onCancel,
@@ -284,10 +281,10 @@ var BackupConfigForm = function (_a) {
   });
   var watchedValues = form.watch();
   // Handle form submission
-  var handleSubmit = function (data) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleSubmit = (data) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -308,12 +305,11 @@ var BackupConfigForm = function (_a) {
         }
       });
     });
-  };
   // Test storage connection
-  var handleTestConnection = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleTestConnection = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setTestConnection("testing");
@@ -321,55 +317,48 @@ var BackupConfigForm = function (_a) {
           case 1:
             _a.trys.push([1, 3, , 4]);
             // Simulate connection test
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 2000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 2000))];
           case 2:
             // Simulate connection test
             _a.sent();
             setTestConnection("success");
-            setTimeout(function () {
-              return setTestConnection("idle");
-            }, 3000);
+            setTimeout(() => setTestConnection("idle"), 3000);
             return [3 /*break*/, 4];
           case 3:
             error_2 = _a.sent();
             setTestConnection("error");
-            setTimeout(function () {
-              return setTestConnection("idle");
-            }, 3000);
+            setTimeout(() => setTestConnection("idle"), 3000);
             return [3 /*break*/, 4];
           case 4:
             return [2 /*return*/];
         }
       });
     });
-  };
   // Generate cron expression based on frequency
-  var generateCronExpression = function (frequency, config) {
+  var generateCronExpression = (frequency, config) => {
     switch (frequency) {
       case "HOURLY":
         return "0 * * * *";
-      case "DAILY":
+      case "DAILY": {
         var hour = config.time_of_day
           ? new Date("2000-01-01T".concat(config.time_of_day)).getHours()
           : 2;
         return "0 ".concat(hour, " * * *");
-      case "WEEKLY":
+      }
+      case "WEEKLY": {
         var weekHour = config.time_of_day
           ? new Date("2000-01-01T".concat(config.time_of_day)).getHours()
           : 2;
         var dayOfWeek = config.day_of_week || 0;
         return "0 ".concat(weekHour, " * * ").concat(dayOfWeek);
-      case "MONTHLY":
+      }
+      case "MONTHLY": {
         var monthHour = config.time_of_day
           ? new Date("2000-01-01T".concat(config.time_of_day)).getHours()
           : 2;
         var dayOfMonth = config.day_of_month || 1;
         return "0 ".concat(monthHour, " ").concat(dayOfMonth, " * *");
+      }
       default:
         return config.cron_expression || "0 2 * * *";
     }
@@ -423,7 +412,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="name"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -443,7 +432,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="type"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -484,7 +473,7 @@ var BackupConfigForm = function (_a) {
                   <form_1.FormField
                     control={form.control}
                     name="description"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -507,7 +496,7 @@ var BackupConfigForm = function (_a) {
                   <form_1.FormField
                     control={form.control}
                     name="enabled"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -545,7 +534,7 @@ var BackupConfigForm = function (_a) {
                   <form_1.FormField
                     control={form.control}
                     name="source_type"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -580,7 +569,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="source_config.database_url"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -606,7 +595,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="source_config.directory_path"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -673,7 +662,7 @@ var BackupConfigForm = function (_a) {
                   <form_1.FormField
                     control={form.control}
                     name="schedule_frequency"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -708,7 +697,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="schedule_config.time_of_day"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -730,16 +719,14 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="schedule_config.day_of_week"
-                      render={function (_a) {
+                      render={(_a) => {
                         var _b;
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
                             <form_1.FormLabel>Day of Week</form_1.FormLabel>
                             <select_1.Select
-                              onValueChange={function (value) {
-                                return field.onChange(parseInt(value));
-                              }}
+                              onValueChange={(value) => field.onChange(parseInt(value))}
                               defaultValue={
                                 (_b = field.value) === null || _b === void 0
                                   ? void 0
@@ -772,7 +759,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="schedule_config.day_of_month"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -783,9 +770,7 @@ var BackupConfigForm = function (_a) {
                                 min="1"
                                 max="31"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value));
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -802,7 +787,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="schedule_config.cron_expression"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -823,7 +808,7 @@ var BackupConfigForm = function (_a) {
                   <form_1.FormField
                     control={form.control}
                     name="schedule_config.timezone"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -895,7 +880,7 @@ var BackupConfigForm = function (_a) {
                   <form_1.FormField
                     control={form.control}
                     name="storage_provider"
-                    render={function (_a) {
+                    render={(_a) => {
                       var field = _a.field;
                       return (
                         <form_1.FormItem>
@@ -931,7 +916,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="storage_config.local_path"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -956,7 +941,7 @@ var BackupConfigForm = function (_a) {
                         <form_1.FormField
                           control={form.control}
                           name="storage_config.s3_bucket"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -972,7 +957,7 @@ var BackupConfigForm = function (_a) {
                         <form_1.FormField
                           control={form.control}
                           name="storage_config.s3_region"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -990,7 +975,7 @@ var BackupConfigForm = function (_a) {
                         <form_1.FormField
                           control={form.control}
                           name="storage_config.s3_access_key"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -1006,7 +991,7 @@ var BackupConfigForm = function (_a) {
                         <form_1.FormField
                           control={form.control}
                           name="storage_config.s3_secret_key"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -1034,7 +1019,7 @@ var BackupConfigForm = function (_a) {
                         <form_1.FormField
                           control={form.control}
                           name="storage_config.gcs_bucket"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -1050,7 +1035,7 @@ var BackupConfigForm = function (_a) {
                         <form_1.FormField
                           control={form.control}
                           name="storage_config.gcs_project_id"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -1067,7 +1052,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="storage_config.gcs_key_file"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -1093,7 +1078,7 @@ var BackupConfigForm = function (_a) {
                         <form_1.FormField
                           control={form.control}
                           name="storage_config.azure_container"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -1109,7 +1094,7 @@ var BackupConfigForm = function (_a) {
                         <form_1.FormField
                           control={form.control}
                           name="storage_config.azure_account"
-                          render={function (_a) {
+                          render={(_a) => {
                             var field = _a.field;
                             return (
                               <form_1.FormItem>
@@ -1126,7 +1111,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="storage_config.azure_key"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -1187,7 +1172,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="retention_policy.daily"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -1198,9 +1183,7 @@ var BackupConfigForm = function (_a) {
                                 min="1"
                                 max="365"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value));
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -1214,7 +1197,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="retention_policy.weekly"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -1225,9 +1208,7 @@ var BackupConfigForm = function (_a) {
                                 min="0"
                                 max="52"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value));
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -1243,7 +1224,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="retention_policy.monthly"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -1254,9 +1235,7 @@ var BackupConfigForm = function (_a) {
                                 min="0"
                                 max="12"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value));
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -1270,7 +1249,7 @@ var BackupConfigForm = function (_a) {
                     <form_1.FormField
                       control={form.control}
                       name="retention_policy.yearly"
-                      render={function (_a) {
+                      render={(_a) => {
                         var field = _a.field;
                         return (
                           <form_1.FormItem>
@@ -1281,9 +1260,7 @@ var BackupConfigForm = function (_a) {
                                 min="0"
                                 max="10"
                                 {...field}
-                                onChange={function (e) {
-                                  return field.onChange(parseInt(e.target.value));
-                                }}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
                               />
                             </form_1.FormControl>
                             <form_1.FormDescription>
@@ -1319,7 +1296,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="compression_enabled"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1344,7 +1321,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="encryption_enabled"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1371,7 +1348,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="compression_level"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -1382,9 +1359,7 @@ var BackupConfigForm = function (_a) {
                                   min="1"
                                   max="9"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseInt(e.target.value));
-                                  }}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -1400,7 +1375,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="encryption_key"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -1430,7 +1405,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="parallel_uploads"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -1441,9 +1416,7 @@ var BackupConfigForm = function (_a) {
                                   min="1"
                                   max="10"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseInt(e.target.value));
-                                  }}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -1457,7 +1430,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="chunk_size_mb"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem>
@@ -1468,9 +1441,7 @@ var BackupConfigForm = function (_a) {
                                   min="1"
                                   max="1024"
                                   {...field}
-                                  onChange={function (e) {
-                                    return field.onChange(parseInt(e.target.value));
-                                  }}
+                                  onChange={(e) => field.onChange(parseInt(e.target.value))}
                                 />
                               </form_1.FormControl>
                               <form_1.FormDescription>
@@ -1491,7 +1462,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="verify_integrity"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1516,7 +1487,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="test_restore"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1548,7 +1519,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="notification_config.on_success"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -1573,7 +1544,7 @@ var BackupConfigForm = function (_a) {
                       <form_1.FormField
                         control={form.control}
                         name="notification_config.on_failure"
-                        render={function (_a) {
+                        render={(_a) => {
                           var field = _a.field;
                           return (
                             <form_1.FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExecutiveSummary = ExecutiveSummary;
 var react_1 = require("react");
@@ -185,7 +182,6 @@ var STATUS_CONFIG = {
   critical: { color: "text-red-600", icon: lucide_react_1.XCircle, label: "Critical" },
 };
 function ExecutiveSummary(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     dateRange = _a.dateRange,
     _b = _a.className,
@@ -209,79 +205,64 @@ function ExecutiveSummary(_a) {
     lastRefresh = _j[0],
     setLastRefresh = _j[1];
   // Load executive summary data
-  (0, react_1.useEffect)(
-    function () {
-      var loadSummaryData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var mockData, err_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                setIsLoading(true);
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                // Simulate API call - replace with actual implementation
-                return [
-                  4 /*yield*/,
-                  new Promise(function (resolve) {
-                    return setTimeout(resolve, 1500);
-                  }),
-                ];
-              case 2:
-                // Simulate API call - replace with actual implementation
-                _a.sent();
-                mockData = generateMockSummaryData(clinicId, dateRange);
-                setSummaryData(mockData);
-                setLastRefresh(new Date());
-                return [3 /*break*/, 5];
-              case 3:
-                err_1 = _a.sent();
-                console.error("Failed to load executive summary:", err_1);
-                return [3 /*break*/, 5];
-              case 4:
-                setIsLoading(false);
-                return [7 /*endfinally*/];
-              case 5:
-                return [2 /*return*/];
+  (0, react_1.useEffect)(() => {
+    var loadSummaryData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var mockData, err_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setIsLoading(true);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              // Simulate API call - replace with actual implementation
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
+            case 2:
+              // Simulate API call - replace with actual implementation
+              _a.sent();
+              mockData = generateMockSummaryData(clinicId, dateRange);
+              setSummaryData(mockData);
+              setLastRefresh(new Date());
+              return [3 /*break*/, 5];
+            case 3:
+              err_1 = _a.sent();
+              console.error("Failed to load executive summary:", err_1);
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      });
+    loadSummaryData();
+  }, [clinicId, dateRange]);
+  // Auto-refresh
+  (0, react_1.useEffect)(() => {
+    if (!autoRefresh) return;
+    var interval = setInterval(() => {
+      var refreshData = () =>
+        __awaiter(this, void 0, void 0, function () {
+          var mockData;
+          return __generator(this, (_a) => {
+            try {
+              mockData = generateMockSummaryData(clinicId, dateRange);
+              setSummaryData(mockData);
+              setLastRefresh(new Date());
+            } catch (err) {
+              console.error("Failed to refresh summary:", err);
             }
+            return [2 /*return*/];
           });
         });
-      };
-      loadSummaryData();
-    },
-    [clinicId, dateRange],
-  );
-  // Auto-refresh
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoRefresh) return;
-      var interval = setInterval(function () {
-        var refreshData = function () {
-          return __awaiter(_this, void 0, void 0, function () {
-            var mockData;
-            return __generator(this, function (_a) {
-              try {
-                mockData = generateMockSummaryData(clinicId, dateRange);
-                setSummaryData(mockData);
-                setLastRefresh(new Date());
-              } catch (err) {
-                console.error("Failed to refresh summary:", err);
-              }
-              return [2 /*return*/];
-            });
-          });
-        };
-        refreshData();
-      }, refreshInterval);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [autoRefresh, refreshInterval, clinicId, dateRange],
-  );
+      refreshData();
+    }, refreshInterval);
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, clinicId, dateRange]);
   // Format value based on unit
-  var formatValue = function (value, unit) {
+  var formatValue = (value, unit) => {
     switch (unit) {
       case "currency":
         return new Intl.NumberFormat("pt-BR", {
@@ -290,16 +271,17 @@ function ExecutiveSummary(_a) {
         }).format(value);
       case "percentage":
         return "".concat(value.toFixed(1), "%");
-      case "duration":
+      case "duration": {
         var hours = Math.floor(value / 60);
         var minutes = value % 60;
         return "".concat(hours, "h ").concat(minutes, "m");
+      }
       default:
         return value.toLocaleString("pt-BR");
     }
   };
   // Get trend icon
-  var getTrendIcon = function (trend, size) {
+  var getTrendIcon = (trend, size) => {
     if (size === void 0) {
       size = "h-4 w-4";
     }
@@ -313,7 +295,7 @@ function ExecutiveSummary(_a) {
     }
   };
   // Calculate score change
-  var getScoreChange = function (current, previous) {
+  var getScoreChange = (current, previous) => {
     var change = current - previous;
     var percentage = (change / previous) * 100;
     return {
@@ -323,22 +305,17 @@ function ExecutiveSummary(_a) {
     };
   };
   // Handle manual refresh
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockData, err_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
             _a.label = 1;
           case 1:
             _a.trys.push([1, 3, 4, 5]);
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 2:
             _a.sent();
             mockData = generateMockSummaryData(clinicId, dateRange);
@@ -357,9 +334,8 @@ function ExecutiveSummary(_a) {
         }
       });
     });
-  };
   // Export summary
-  var handleExport = function () {
+  var handleExport = () => {
     if (!summaryData) return;
     var exportData = __assign(__assign({}, summaryData), { exportedAt: new Date().toISOString() });
     var dataStr = JSON.stringify(exportData, null, 2);
@@ -488,12 +464,7 @@ function ExecutiveSummary(_a) {
           </card_1.Card>
         </div>
 
-        <tabs_1.Tabs
-          value={selectedTab}
-          onValueChange={function (value) {
-            return setSelectedTab(value);
-          }}
-        >
+        <tabs_1.Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value)}>
           <tabs_1.TabsList className="grid w-full grid-cols-4">
             <tabs_1.TabsTrigger value="overview">Overview</tabs_1.TabsTrigger>
             <tabs_1.TabsTrigger value="insights">Insights</tabs_1.TabsTrigger>
@@ -509,7 +480,7 @@ function ExecutiveSummary(_a) {
                 Key Metrics
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {summaryData.keyMetrics.slice(0, 4).map(function (metric) {
+                {summaryData.keyMetrics.slice(0, 4).map((metric) => {
                   var statusConfig = STATUS_CONFIG[metric.status];
                   var StatusIcon = statusConfig.icon;
                   var change = ((metric.value - metric.previousValue) / metric.previousValue) * 100;
@@ -658,30 +629,28 @@ function ExecutiveSummary(_a) {
                 Recent Achievements
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {summaryData.achievements.slice(0, 4).map(function (achievement) {
-                  return (
-                    <card_1.Card key={achievement.id} className="border-green-200 bg-green-50">
-                      <card_1.CardContent className="p-4">
-                        <div className="flex items-start gap-3">
-                          <lucide_react_1.CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                          <div className="flex-1">
-                            <h4 className="font-medium text-green-900 mb-1">{achievement.title}</h4>
-                            <p className="text-sm text-green-700 mb-2">{achievement.description}</p>
-                            <div className="flex items-center gap-2 text-xs text-green-600">
-                              <badge_1.Badge
-                                variant="secondary"
-                                className="bg-green-100 text-green-800"
-                              >
-                                {achievement.category}
-                              </badge_1.Badge>
-                              <span>{(0, date_fns_1.format)(achievement.date, "MMM dd")}</span>
-                            </div>
+                {summaryData.achievements.slice(0, 4).map((achievement) => (
+                  <card_1.Card key={achievement.id} className="border-green-200 bg-green-50">
+                    <card_1.CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <lucide_react_1.CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                        <div className="flex-1">
+                          <h4 className="font-medium text-green-900 mb-1">{achievement.title}</h4>
+                          <p className="text-sm text-green-700 mb-2">{achievement.description}</p>
+                          <div className="flex items-center gap-2 text-xs text-green-600">
+                            <badge_1.Badge
+                              variant="secondary"
+                              className="bg-green-100 text-green-800"
+                            >
+                              {achievement.category}
+                            </badge_1.Badge>
+                            <span>{(0, date_fns_1.format)(achievement.date, "MMM dd")}</span>
                           </div>
                         </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             </div>
           </tabs_1.TabsContent>
@@ -693,7 +662,7 @@ function ExecutiveSummary(_a) {
                 Key Insights
               </h3>
               <div className="space-y-4">
-                {summaryData.insights.map(function (insight) {
+                {summaryData.insights.map((insight) => {
                   var priorityConfig = PRIORITY_CONFIG[insight.priority];
                   return (
                     <card_1.Card
@@ -736,13 +705,11 @@ function ExecutiveSummary(_a) {
                         {insight.relatedMetrics.length > 0 && (
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span>Related metrics:</span>
-                            {insight.relatedMetrics.map(function (metric, index) {
-                              return (
-                                <badge_1.Badge key={index} variant="outline" className="text-xs">
-                                  {metric}
-                                </badge_1.Badge>
-                              );
-                            })}
+                            {insight.relatedMetrics.map((metric, index) => (
+                              <badge_1.Badge key={index} variant="outline" className="text-xs">
+                                {metric}
+                              </badge_1.Badge>
+                            ))}
                           </div>
                         )}
                       </card_1.CardContent>
@@ -760,7 +727,7 @@ function ExecutiveSummary(_a) {
                 Strategic Recommendations
               </h3>
               <div className="space-y-4">
-                {summaryData.recommendations.map(function (recommendation) {
+                {summaryData.recommendations.map((recommendation) => {
                   var priorityConfig = PRIORITY_CONFIG[recommendation.priority];
                   return (
                     <card_1.Card key={recommendation.id}>
@@ -806,13 +773,11 @@ function ExecutiveSummary(_a) {
                         {recommendation.resources.length > 0 && (
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span>Resources needed:</span>
-                            {recommendation.resources.map(function (resource, index) {
-                              return (
-                                <badge_1.Badge key={index} variant="outline" className="text-xs">
-                                  {resource}
-                                </badge_1.Badge>
-                              );
-                            })}
+                            {recommendation.resources.map((resource, index) => (
+                              <badge_1.Badge key={index} variant="outline" className="text-xs">
+                                {resource}
+                              </badge_1.Badge>
+                            ))}
                           </div>
                         )}
                       </card_1.CardContent>
@@ -831,28 +796,26 @@ function ExecutiveSummary(_a) {
                 Key Trends
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {summaryData.trends.map(function (trend) {
-                  return (
-                    <card_1.Card key={trend.id}>
-                      <card_1.CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium">{trend.metric}</h4>
-                          <div className="flex items-center gap-1">
-                            {getTrendIcon(trend.direction)}
-                            <badge_1.Badge variant="outline" className="text-xs">
-                              {trend.significance}
-                            </badge_1.Badge>
-                          </div>
+                {summaryData.trends.map((trend) => (
+                  <card_1.Card key={trend.id}>
+                    <card_1.CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">{trend.metric}</h4>
+                        <div className="flex items-center gap-1">
+                          {getTrendIcon(trend.direction)}
+                          <badge_1.Badge variant="outline" className="text-xs">
+                            {trend.significance}
+                          </badge_1.Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">{trend.description}</p>
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>Duration: {trend.duration}</span>
-                          <span>Magnitude: {trend.magnitude.toFixed(1)}%</span>
-                        </div>
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-2">{trend.description}</p>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Duration: {trend.duration}</span>
+                        <span>Magnitude: {trend.magnitude.toFixed(1)}%</span>
+                      </div>
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>
             </div>
 
@@ -864,49 +827,45 @@ function ExecutiveSummary(_a) {
               </h3>
               <div className="space-y-2">
                 {summaryData.alerts
-                  .filter(function (alert) {
-                    return !alert.acknowledged;
-                  })
-                  .map(function (alert) {
-                    return (
-                      <card_1.Card
-                        key={alert.id}
-                        className={"".concat(
-                          alert.severity === "critical"
-                            ? "border-red-200 bg-red-50"
-                            : alert.severity === "warning"
-                              ? "border-yellow-200 bg-yellow-50"
-                              : "border-blue-200 bg-blue-50",
-                        )}
-                      >
-                        <card_1.CardContent className="p-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h4 className="font-medium">{alert.title}</h4>
-                                <badge_1.Badge
-                                  variant="outline"
-                                  className={"text-xs ".concat(
-                                    alert.severity === "critical"
-                                      ? "text-red-600"
-                                      : alert.severity === "warning"
-                                        ? "text-yellow-600"
-                                        : "text-blue-600",
-                                  )}
-                                >
-                                  {alert.severity}
-                                </badge_1.Badge>
-                              </div>
-                              <p className="text-sm text-muted-foreground">{alert.message}</p>
+                  .filter((alert) => !alert.acknowledged)
+                  .map((alert) => (
+                    <card_1.Card
+                      key={alert.id}
+                      className={"".concat(
+                        alert.severity === "critical"
+                          ? "border-red-200 bg-red-50"
+                          : alert.severity === "warning"
+                            ? "border-yellow-200 bg-yellow-50"
+                            : "border-blue-200 bg-blue-50",
+                      )}
+                    >
+                      <card_1.CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-medium">{alert.title}</h4>
+                              <badge_1.Badge
+                                variant="outline"
+                                className={"text-xs ".concat(
+                                  alert.severity === "critical"
+                                    ? "text-red-600"
+                                    : alert.severity === "warning"
+                                      ? "text-yellow-600"
+                                      : "text-blue-600",
+                                )}
+                              >
+                                {alert.severity}
+                              </badge_1.Badge>
                             </div>
-                            <div className="text-xs text-muted-foreground">
-                              {(0, date_fns_1.format)(alert.timestamp, "HH:mm")}
-                            </div>
+                            <p className="text-sm text-muted-foreground">{alert.message}</p>
                           </div>
-                        </card_1.CardContent>
-                      </card_1.Card>
-                    );
-                  })}
+                          <div className="text-xs text-muted-foreground">
+                            {(0, date_fns_1.format)(alert.timestamp, "HH:mm")}
+                          </div>
+                        </div>
+                      </card_1.CardContent>
+                    </card_1.Card>
+                  ))}
               </div>
             </div>
           </tabs_1.TabsContent>

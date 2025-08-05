@@ -3,7 +3,10 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type { addDays } from "date-fns";
+import type { useEffect, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -11,7 +14,8 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { DatePickerWithRange } from "@/components/ui/date-picker";
+import type { Icons } from "@/components/ui/icons";
 import type {
   Select,
   SelectContent,
@@ -19,11 +23,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { DatePickerWithRange } from "@/components/ui/date-picker";
-import type { Icons } from "@/components/ui/icons";
 import type { useToast } from "@/hooks/use-toast";
-import type { DateRange } from "react-day-picker";
-import type { addDays } from "date-fns";
 
 interface AnalyticsData {
   accuracy_trends: Array<{

@@ -3,7 +3,7 @@
  * Simplified tests to verify monitoring infrastructure components exist
  */
 
-import { describe, it, expect } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 
 describe("TASK-001 Infrastructure Verification", () => {
   describe("Component Exports Verification", () => {
@@ -109,24 +109,24 @@ describe("TASK-001 Infrastructure Verification", () => {
 
   describe("API Endpoints Structure Verification", () => {
     it("should have monitoring health API route file", () => {
-      const fs = require("fs");
-      const path = require("path");
+      const fs = require("node:fs");
+      const path = require("node:path");
 
       const routePath = path.join(process.cwd(), "app/api/monitoring/health/route.ts");
       expect(fs.existsSync(routePath)).toBe(true);
     });
 
     it("should have monitoring metrics API route file", () => {
-      const fs = require("fs");
-      const path = require("path");
+      const fs = require("node:fs");
+      const path = require("node:path");
 
       const routePath = path.join(process.cwd(), "app/api/monitoring/metrics/route.ts");
       expect(fs.existsSync(routePath)).toBe(true);
     });
 
     it("should have monitoring feature-flags API route file", () => {
-      const fs = require("fs");
-      const path = require("path");
+      const fs = require("node:fs");
+      const path = require("node:path");
 
       const routePath = path.join(process.cwd(), "app/api/monitoring/feature-flags/route.ts");
       expect(fs.existsSync(routePath)).toBe(true);

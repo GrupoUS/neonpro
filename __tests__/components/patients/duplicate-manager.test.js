@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -19,7 +18,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -48,8 +47,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -70,9 +67,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -131,246 +128,229 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __rest =
   (this && this.__rest) ||
-  function (s, e) {
+  ((s, e) => {
     var t = {};
-    for (var p in s)
-      if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0) t[p] = s[p];
+    for (var p in s) if (Object.hasOwn(s, p) && e.indexOf(p) < 0) t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
       for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
         if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
           t[p[i]] = s[p[i]];
       }
     return t;
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var duplicate_manager_1 = require("@/components/patients/duplicate-manager");
 var duplicate_detection_1 = require("@/lib/patients/duplicate-detection");
 var react_1 = require("@testing-library/react");
 var user_event_1 = require("@testing-library/user-event");
 // Mock do sistema de detecção de duplicatas
-jest.mock("@/lib/patients/duplicate-detection", function () {
-  return {
-    duplicateDetectionSystem: {
-      detectDuplicates: jest.fn(),
-      comparePatients: jest.fn(),
-      confirmDuplicate: jest.fn(),
-      rejectDuplicate: jest.fn(),
-      previewMerge: jest.fn(),
-      mergePatients: jest.fn(),
-    },
-  };
-});
+jest.mock("@/lib/patients/duplicate-detection", () => ({
+  duplicateDetectionSystem: {
+    detectDuplicates: jest.fn(),
+    comparePatients: jest.fn(),
+    confirmDuplicate: jest.fn(),
+    rejectDuplicate: jest.fn(),
+    previewMerge: jest.fn(),
+    mergePatients: jest.fn(),
+  },
+}));
 // Mock dos componentes UI
-jest.mock("@/components/ui/card", function () {
-  return {
-    Card: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="card" {...props}>
+jest.mock("@/components/ui/card", () => ({
+  Card: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="card" {...props}>
+        {children}
+      </div>
+    );
+  },
+  CardHeader: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="card-header" {...props}>
+        {children}
+      </div>
+    );
+  },
+  CardContent: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="card-content" {...props}>
+        {children}
+      </div>
+    );
+  },
+  CardTitle: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <h2 data-testid="card-title" {...props}>
+        {children}
+      </h2>
+    );
+  },
+}));
+jest.mock("@/components/ui/button", () => ({
+  Button: (_a) => {
+    var children = _a.children,
+      onClick = _a.onClick,
+      props = __rest(_a, ["children", "onClick"]);
+    return (
+      <button data-testid="button" onClick={onClick} {...props}>
+        {children}
+      </button>
+    );
+  },
+}));
+jest.mock("@/components/ui/badge", () => ({
+  Badge: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <span data-testid="badge" {...props}>
+        {children}
+      </span>
+    );
+  },
+}));
+jest.mock("@/components/ui/alert", () => ({
+  Alert: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="alert" {...props}>
+        {children}
+      </div>
+    );
+  },
+  AlertDescription: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <p data-testid="alert-description" {...props}>
+        {children}
+      </p>
+    );
+  },
+}));
+jest.mock("@/components/ui/progress", () => ({
+  Progress: (_a) => {
+    var value = _a.value,
+      props = __rest(_a, ["value"]);
+    return <div data-testid="progress" data-value={value} {...props} />;
+  },
+}));
+jest.mock("@/components/ui/dialog", () => ({
+  Dialog: (_a) => {
+    var children = _a.children,
+      open = _a.open,
+      _onOpenChange = _a.onOpenChange,
+      props = __rest(_a, ["children", "open", "onOpenChange"]);
+    return open
+      ? <div data-testid="dialog" {...props}>
           {children}
         </div>
-      );
-    },
-    CardHeader: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="card-header" {...props}>
-          {children}
-        </div>
-      );
-    },
-    CardContent: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="card-content" {...props}>
-          {children}
-        </div>
-      );
-    },
-    CardTitle: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <h2 data-testid="card-title" {...props}>
-          {children}
-        </h2>
-      );
-    },
-  };
-});
-jest.mock("@/components/ui/button", function () {
-  return {
-    Button: function (_a) {
-      var children = _a.children,
-        onClick = _a.onClick,
-        props = __rest(_a, ["children", "onClick"]);
-      return (
-        <button data-testid="button" onClick={onClick} {...props}>
-          {children}
-        </button>
-      );
-    },
-  };
-});
-jest.mock("@/components/ui/badge", function () {
-  return {
-    Badge: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <span data-testid="badge" {...props}>
-          {children}
-        </span>
-      );
-    },
-  };
-});
-jest.mock("@/components/ui/alert", function () {
-  return {
-    Alert: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="alert" {...props}>
-          {children}
-        </div>
-      );
-    },
-    AlertDescription: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <p data-testid="alert-description" {...props}>
-          {children}
-        </p>
-      );
-    },
-  };
-});
-jest.mock("@/components/ui/progress", function () {
-  return {
-    Progress: function (_a) {
-      var value = _a.value,
-        props = __rest(_a, ["value"]);
-      return <div data-testid="progress" data-value={value} {...props} />;
-    },
-  };
-});
-jest.mock("@/components/ui/dialog", function () {
-  return {
-    Dialog: function (_a) {
-      var children = _a.children,
-        open = _a.open,
-        onOpenChange = _a.onOpenChange,
-        props = __rest(_a, ["children", "open", "onOpenChange"]);
-      return open
-        ? <div data-testid="dialog" {...props}>
-            {children}
-          </div>
-        : null;
-    },
-    DialogContent: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="dialog-content" {...props}>
-          {children}
-        </div>
-      );
-    },
-    DialogDescription: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <p data-testid="dialog-description" {...props}>
-          {children}
-        </p>
-      );
-    },
-    DialogFooter: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="dialog-footer" {...props}>
-          {children}
-        </div>
-      );
-    },
-    DialogHeader: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="dialog-header" {...props}>
-          {children}
-        </div>
-      );
-    },
-    DialogTitle: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <h3 data-testid="dialog-title" {...props}>
-          {children}
-        </h3>
-      );
-    },
-    DialogTrigger: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="dialog-trigger" {...props}>
-          {children}
-        </div>
-      );
-    },
-  };
-});
-jest.mock("@/components/ui/tooltip", function () {
-  return {
-    TooltipProvider: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="tooltip-provider" {...props}>
-          {children}
-        </div>
-      );
-    },
-    Tooltip: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="tooltip" {...props}>
-          {children}
-        </div>
-      );
-    },
-    TooltipContent: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="tooltip-content" {...props}>
-          {children}
-        </div>
-      );
-    },
-    TooltipTrigger: function (_a) {
-      var children = _a.children,
-        props = __rest(_a, ["children"]);
-      return (
-        <div data-testid="tooltip-trigger" {...props}>
-          {children}
-        </div>
-      );
-    },
-  };
-});
+      : null;
+  },
+  DialogContent: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="dialog-content" {...props}>
+        {children}
+      </div>
+    );
+  },
+  DialogDescription: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <p data-testid="dialog-description" {...props}>
+        {children}
+      </p>
+    );
+  },
+  DialogFooter: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="dialog-footer" {...props}>
+        {children}
+      </div>
+    );
+  },
+  DialogHeader: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="dialog-header" {...props}>
+        {children}
+      </div>
+    );
+  },
+  DialogTitle: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <h3 data-testid="dialog-title" {...props}>
+        {children}
+      </h3>
+    );
+  },
+  DialogTrigger: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="dialog-trigger" {...props}>
+        {children}
+      </div>
+    );
+  },
+}));
+jest.mock("@/components/ui/tooltip", () => ({
+  TooltipProvider: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="tooltip-provider" {...props}>
+        {children}
+      </div>
+    );
+  },
+  Tooltip: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="tooltip" {...props}>
+        {children}
+      </div>
+    );
+  },
+  TooltipContent: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="tooltip-content" {...props}>
+        {children}
+      </div>
+    );
+  },
+  TooltipTrigger: (_a) => {
+    var children = _a.children,
+      props = __rest(_a, ["children"]);
+    return (
+      <div data-testid="tooltip-trigger" {...props}>
+        {children}
+      </div>
+    );
+  },
+}));
 var mockDuplicates = [
   {
     id: "dup-1",
@@ -424,23 +404,23 @@ var mockMergePreview = {
   potentialConflicts: ["Different birthdates"],
   recommendations: ["Review birthdate manually before merge"],
 };
-describe("DuplicateManager", function () {
+describe("DuplicateManager", () => {
   var user = user_event_1.default.setup();
-  beforeEach(function () {
+  beforeEach(() => {
     jest.clearAllMocks();
     duplicate_detection_1.duplicateDetectionSystem.detectDuplicates.mockResolvedValue(
       mockDuplicates,
     );
   });
-  test("renderiza componente corretamente", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  test("renderiza componente corretamente", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   react_1.screen.getByText("Duplicatas Pendentes de Revisão"),
                 ).toBeInTheDocument();
@@ -456,17 +436,16 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("carrega duplicatas no mount", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  test("carrega duplicatas no mount", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   duplicate_detection_1.duplicateDetectionSystem.detectDuplicates,
                 ).toHaveBeenCalled();
@@ -478,26 +457,25 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("exibe estado de loading", function () {
+    }));
+  test("exibe estado de loading", () => {
     duplicate_detection_1.duplicateDetectionSystem.detectDuplicates.mockReturnValue(
-      new Promise(function () {}), // Promise que nunca resolve para simular loading
+      new Promise(() => {}), // Promise que nunca resolve para simular loading
     );
     (0, react_1.render)(<duplicate_manager_1.default />);
     expect(react_1.screen.getByText("Carregando duplicatas...")).toBeInTheDocument();
     expect(react_1.screen.getByTestId("progress")).toBeInTheDocument();
   });
-  test("exibe alerta quando não há duplicatas pendentes", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  test("exibe alerta quando não há duplicatas pendentes", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             duplicate_detection_1.duplicateDetectionSystem.detectDuplicates.mockResolvedValue([]);
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   react_1.screen.getByText("Nenhuma duplicata pendente encontrada!"),
                 ).toBeInTheDocument();
@@ -508,12 +486,11 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("abre dialog de comparação", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  test("abre dialog de comparação", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var compareButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             duplicate_detection_1.duplicateDetectionSystem.comparePatients.mockResolvedValue(
@@ -522,7 +499,7 @@ describe("DuplicateManager", function () {
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Possível Duplicata #dup-1")).toBeInTheDocument();
               }),
             ];
@@ -534,7 +511,7 @@ describe("DuplicateManager", function () {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   duplicate_detection_1.duplicateDetectionSystem.comparePatients,
                 ).toHaveBeenCalledWith("patient-1", "patient-2");
@@ -546,12 +523,11 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("confirma duplicata", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  test("confirma duplicata", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var confirmButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             duplicate_detection_1.duplicateDetectionSystem.confirmDuplicate.mockResolvedValue({});
@@ -561,7 +537,7 @@ describe("DuplicateManager", function () {
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Possível Duplicata #dup-1")).toBeInTheDocument();
               }),
             ];
@@ -573,7 +549,7 @@ describe("DuplicateManager", function () {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   duplicate_detection_1.duplicateDetectionSystem.confirmDuplicate,
                 ).toHaveBeenCalledWith("dup-1", "current_user");
@@ -587,12 +563,11 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("rejeita duplicata", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  test("rejeita duplicata", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var rejectButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             duplicate_detection_1.duplicateDetectionSystem.rejectDuplicate.mockResolvedValue({});
@@ -602,7 +577,7 @@ describe("DuplicateManager", function () {
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Possível Duplicata #dup-1")).toBeInTheDocument();
               }),
             ];
@@ -614,7 +589,7 @@ describe("DuplicateManager", function () {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   duplicate_detection_1.duplicateDetectionSystem.rejectDuplicate,
                 ).toHaveBeenCalledWith("dup-1", "current_user", "Não são o mesmo paciente");
@@ -628,12 +603,11 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("abre preview de merge", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  test("abre preview de merge", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mergePreviewButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             duplicate_detection_1.duplicateDetectionSystem.previewMerge.mockResolvedValue(
@@ -642,7 +616,7 @@ describe("DuplicateManager", function () {
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Possível Duplicata #dup-1")).toBeInTheDocument();
               }),
             ];
@@ -654,7 +628,7 @@ describe("DuplicateManager", function () {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   duplicate_detection_1.duplicateDetectionSystem.previewMerge,
                 ).toHaveBeenCalledWith("patient-1", "patient-2", {
@@ -672,12 +646,11 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("executa merge", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  test("executa merge", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var mockOnMergeComplete, mergePreviewButton, executeMergeButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             mockOnMergeComplete = jest.fn();
@@ -695,7 +668,7 @@ describe("DuplicateManager", function () {
             );
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Possível Duplicata #dup-1")).toBeInTheDocument();
               }),
             ];
@@ -707,7 +680,7 @@ describe("DuplicateManager", function () {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Preview do Merge")).toBeInTheDocument();
               }),
             ];
@@ -719,7 +692,7 @@ describe("DuplicateManager", function () {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(
                   duplicate_detection_1.duplicateDetectionSystem.mergePatients,
                 ).toHaveBeenCalledWith(
@@ -742,17 +715,16 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("exibe badges de confiança corretas", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  test("exibe badges de confiança corretas", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("95%")).toBeInTheDocument(); // Alta confiança
                 expect(react_1.screen.getByText("75%")).toBeInTheDocument(); // Média confiança
               }),
@@ -762,17 +734,16 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("calcula estatísticas corretamente", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+    }));
+  test("calcula estatísticas corretamente", () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("1")).toBeInTheDocument(); // 1 pendente
                 expect(react_1.screen.getByText("1")).toBeInTheDocument(); // 1 confirmada
                 expect(react_1.screen.getByText("0")).toBeInTheDocument(); // 0 mescladas
@@ -784,12 +755,11 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("trata erros ao carregar duplicatas", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  test("trata erros ao carregar duplicatas", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var consoleSpy;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             consoleSpy = jest.spyOn(console, "error").mockImplementation();
@@ -799,7 +769,7 @@ describe("DuplicateManager", function () {
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(consoleSpy).toHaveBeenCalledWith(
                   "Erro ao carregar duplicatas:",
                   expect.any(Error),
@@ -812,12 +782,11 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
-  test("trata erros na comparação de pacientes", function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+    }));
+  test("trata erros na comparação de pacientes", () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var consoleSpy, compareButton;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             consoleSpy = jest.spyOn(console, "error").mockImplementation();
@@ -827,7 +796,7 @@ describe("DuplicateManager", function () {
             (0, react_1.render)(<duplicate_manager_1.default />);
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(react_1.screen.getByText("Possível Duplicata #dup-1")).toBeInTheDocument();
               }),
             ];
@@ -839,7 +808,7 @@ describe("DuplicateManager", function () {
             _a.sent();
             return [
               4 /*yield*/,
-              (0, react_1.waitFor)(function () {
+              (0, react_1.waitFor)(() => {
                 expect(consoleSpy).toHaveBeenCalledWith(
                   "Erro ao comparar pacientes:",
                   expect.any(Error),
@@ -852,6 +821,5 @@ describe("DuplicateManager", function () {
             return [2 /*return*/];
         }
       });
-    });
-  });
+    }));
 });

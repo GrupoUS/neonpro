@@ -1,4 +1,3 @@
-"use strict";
 // Patient Communication Service
 // NeonPro - Epic 6 Story 6.2 Task 1: Patient Communication Center
 // Comprehensive service for healthcare communication management
@@ -7,26 +6,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,11 +145,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createcommunicationService = exports.CommunicationService = void 0;
 var client_1 = require("@/utils/supabase/client");
-var CommunicationService = /** @class */ (function () {
+var CommunicationService = /** @class */ (() => {
   function CommunicationService() {}
   // Supabase client created per method for proper request context
   // ============================================================================
@@ -194,7 +191,7 @@ var CommunicationService = /** @class */ (function () {
             _b.label = 2;
           case 2:
             threadId = request.thread_id;
-            if (!!threadId) return [3 /*break*/, 4];
+            if (threadId) return [3 /*break*/, 4];
             return [4 /*yield*/, this.createMessageThread(request.patient_id, request.subject)];
           case 3:
             threadId = _b.sent();
@@ -243,7 +240,7 @@ var CommunicationService = /** @class */ (function () {
           case 7:
             (_a = _b.sent()), (message = _a.data), (error = _a.error);
             if (error) throw error;
-            if (!!request.scheduled_at) return [3 /*break*/, 9];
+            if (request.scheduled_at) return [3 /*break*/, 9];
             return [4 /*yield*/, this.deliverMessage(message.id, request.channel)];
           case 8:
             _b.sent();
@@ -289,7 +286,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getMessages = function (request) {
     return __awaiter(this, void 0, void 0, function () {
       var query, sortBy, sortOrder, page, limit, offset, _a, messages, error, count, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -364,11 +361,10 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getMessageThreads = function (patientId_1) {
     return __awaiter(this, arguments, void 0, function (patientId, includeArchived) {
       var query, _a, threads, error, threadsWithUnread, error_3;
-      var _this = this;
       if (includeArchived === void 0) {
         includeArchived = false;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -391,8 +387,8 @@ var CommunicationService = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                (threads || []).map(function (thread) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                (threads || []).map((thread) =>
+                  __awaiter(this, void 0, void 0, function () {
                     var unreadCount;
                     return __generator(this, function (_a) {
                       switch (_a.label) {
@@ -406,8 +402,8 @@ var CommunicationService = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 2:
@@ -432,7 +428,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getMessageTemplates = function (category, channel) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, templates, error, error_4;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -468,7 +464,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.createMessageTemplate = function (template) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, error_5;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -503,7 +499,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.updateMessageTemplate = function (id, updates) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, error_6;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -542,7 +538,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getCommunicationCampaigns = function (status) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, campaigns, error, error_7;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -695,7 +691,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.checkPatientConsent = function (patientId, channel) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, consent, error, error_10;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -737,7 +733,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.updatePatientConsent = function (consent) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error, error_11;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -775,7 +771,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getPatientPreferences = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, preferences, error, error_12;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 3, , 4]);
@@ -927,7 +923,7 @@ var CommunicationService = /** @class */ (function () {
   // ============================================================================
   // HELPER METHODS
   // ============================================================================
-  CommunicationService.prototype.requiresConsent = function (channel, type) {
+  CommunicationService.prototype.requiresConsent = (channel, type) => {
     // Marketing messages always require consent
     if (type === "alert" && channel !== "portal") return true;
     // SMS and WhatsApp require consent for non-emergency communications
@@ -937,7 +933,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.createMessageThread = function (patientId, subject) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -968,7 +964,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getMessageTemplate = function (templateId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -986,9 +982,9 @@ var CommunicationService = /** @class */ (function () {
       });
     });
   };
-  CommunicationService.prototype.processTemplate = function (template, variables) {
+  CommunicationService.prototype.processTemplate = (template, variables) => {
     var processed = template;
-    Object.entries(variables).forEach(function (_a) {
+    Object.entries(variables).forEach((_a) => {
       var key = _a[0],
         value = _a[1];
       var regex = new RegExp("{{\\s*".concat(key, "\\s*}}"), "g");
@@ -999,7 +995,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.deliverMessage = function (messageId, channel) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1025,7 +1021,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.updateThreadLastMessage = function (threadId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1047,7 +1043,7 @@ var CommunicationService = /** @class */ (function () {
       });
     });
   };
-  CommunicationService.prototype.calculateDeliveryTime = function (channel) {
+  CommunicationService.prototype.calculateDeliveryTime = (channel) => {
     var baseTime = new Date();
     switch (channel) {
       case "sms":
@@ -1065,7 +1061,7 @@ var CommunicationService = /** @class */ (function () {
     }
     return baseTime.toISOString();
   };
-  CommunicationService.prototype.calculateMessageCost = function (channel, contentLength) {
+  CommunicationService.prototype.calculateMessageCost = (channel, contentLength) => {
     // Simplified cost calculation
     var baseCosts = {
       sms: 0.05,
@@ -1080,7 +1076,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getUnreadMessageCount = function (threadId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, count, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [
@@ -1101,7 +1097,7 @@ var CommunicationService = /** @class */ (function () {
   };
   CommunicationService.prototype.estimateAudienceSize = function (audience) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified audience estimation
         return [2 /*return*/, 100]; // In real implementation, would query based on criteria
       });
@@ -1110,7 +1106,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getCampaign = function (campaignId) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1130,14 +1126,12 @@ var CommunicationService = /** @class */ (function () {
   };
   CommunicationService.prototype.getTestRecipients = function (testIds) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/, testIds];
-      });
+      return __generator(this, (_a) => [2 /*return*/, testIds]);
     });
   };
   CommunicationService.prototype.getCampaignRecipients = function (audience) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In real implementation, would query patients based on audience criteria
         return [2 /*return*/, []];
       });
@@ -1146,7 +1140,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.updateCampaignStatus = function (campaignId, status) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1172,7 +1166,7 @@ var CommunicationService = /** @class */ (function () {
     executionId,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In real implementation, would queue messages for batch processing
         return [2 /*return*/, []];
       });
@@ -1181,7 +1175,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.calculateCampaignCost = function (channel, messageCount) {
     return this.calculateMessageCost(channel, 160) * messageCount;
   };
-  CommunicationService.prototype.getDateRange = function (period) {
+  CommunicationService.prototype.getDateRange = (period) => {
     var now = new Date();
     var from = new Date();
     switch (period) {
@@ -1206,7 +1200,7 @@ var CommunicationService = /** @class */ (function () {
       to: now.toISOString(),
     };
   };
-  CommunicationService.prototype.groupByChannel = function (messages) {
+  CommunicationService.prototype.groupByChannel = (messages) => {
     var groups = {
       sms: 0,
       email: 0,
@@ -1214,12 +1208,12 @@ var CommunicationService = /** @class */ (function () {
       whatsapp: 0,
       internal: 0,
     };
-    messages.forEach(function (message) {
+    messages.forEach((message) => {
       groups[message.channel] = (groups[message.channel] || 0) + 1;
     });
     return groups;
   };
-  CommunicationService.prototype.groupByType = function (messages) {
+  CommunicationService.prototype.groupByType = (messages) => {
     var groups = {
       text: 0,
       appointment: 0,
@@ -1229,14 +1223,14 @@ var CommunicationService = /** @class */ (function () {
       image: 0,
       form: 0,
     };
-    messages.forEach(function (message) {
+    messages.forEach((message) => {
       groups[message.type] = (groups[message.type] || 0) + 1;
     });
     return groups;
   };
   CommunicationService.prototype.calculateAverageResponseTime = function (dateRange) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified calculation - would be more complex in real implementation
         return [2 /*return*/, 45]; // 45 minutes average
       });
@@ -1244,7 +1238,7 @@ var CommunicationService = /** @class */ (function () {
   };
   CommunicationService.prototype.calculateAutomationSuccessRate = function (dateRange) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified calculation
         return [2 /*return*/, 0.95]; // 95% success rate
       });
@@ -1253,7 +1247,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getTopTemplates = function (dateRange) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1268,7 +1262,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getPeakHours = function (dateRange) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1283,7 +1277,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getStaffPerformance = function (dateRange) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1298,7 +1292,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getRecentMessages = function (limit) {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1323,7 +1317,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getPendingApprovals = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1348,7 +1342,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getFailedMessages = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase, _a, data, error;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1374,7 +1368,7 @@ var CommunicationService = /** @class */ (function () {
   CommunicationService.prototype.getTopPerformers = function () {
     return __awaiter(this, void 0, void 0, function () {
       var supabase;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, (0, client_1.createClient)()];
@@ -1390,7 +1384,5 @@ var CommunicationService = /** @class */ (function () {
 })();
 exports.CommunicationService = CommunicationService;
 // Export singleton instance
-var createcommunicationService = function () {
-  return new CommunicationService();
-};
+var createcommunicationService = () => new CommunicationService();
 exports.createcommunicationService = createcommunicationService;

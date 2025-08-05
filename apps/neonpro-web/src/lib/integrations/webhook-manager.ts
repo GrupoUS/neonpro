@@ -7,15 +7,15 @@
  * @created 2025-01-27
  */
 
-import crypto from "crypto";
 import type { createClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 import type {
-  WebhookManager,
-  WebhookConfig,
-  IntegrationLog,
-  RetryPolicy,
-  IntegrationQueue,
   IntegrationJob,
+  IntegrationLog,
+  IntegrationQueue,
+  RetryPolicy,
+  WebhookConfig,
+  WebhookManager,
 } from "./types";
 
 /**
@@ -534,7 +534,7 @@ export class NeonProWebhookManager implements WebhookManager {
 
     switch (retryPolicy.backoffStrategy) {
       case "exponential":
-        delay = retryPolicy.initialDelay * Math.pow(2, attempts);
+        delay = retryPolicy.initialDelay * 2 ** attempts;
         break;
       case "linear":
         delay = retryPolicy.initialDelay * (attempts + 1);
@@ -607,7 +607,7 @@ export class WebhookSignatureUtils {
     algorithm: string = "sha256",
   ): boolean {
     try {
-      const expectedSignature = this.generateSignature(payload, secret, algorithm);
+      const expectedSignature = WebhookSignatureUtils.generateSignature(payload, secret, algorithm);
       const cleanSignature = signature.replace(/^(sha256=|sha1=)/, "");
 
       return crypto.timingSafeEqual(

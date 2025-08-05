@@ -1,17 +1,16 @@
-"use strict";
 // Role Management Component Tests
 // Story 1.2: Role-Based Permissions Enhancement
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -21,7 +20,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -50,8 +49,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -72,9 +69,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -133,10 +130,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -145,7 +142,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var react_1 = require("@testing-library/react");
@@ -154,170 +151,138 @@ var role_management_1 = require("@/components/admin/role-management");
 var use_rbac_1 = require("@/hooks/use-rbac");
 var permissions_1 = require("@/lib/auth/rbac/permissions");
 // Mock dependencies
-jest.mock("@/hooks/use-rbac", function () {
-  return {
-    useRBAC: jest.fn(),
-  };
-});
-jest.mock("@/lib/auth/rbac/permissions", function () {
-  return {
-    RBACPermissionManager: jest.fn(function () {
-      return {
-        assignRole: jest.fn(),
-        removeRole: jest.fn(),
-        getUserRole: jest.fn(),
-        getAllUsers: jest.fn(),
-        getAllRoles: jest.fn(),
-      };
-    }),
-  };
-});
+jest.mock("@/hooks/use-rbac", () => ({
+  useRBAC: jest.fn(),
+}));
+jest.mock("@/lib/auth/rbac/permissions", () => ({
+  RBACPermissionManager: jest.fn(() => ({
+    assignRole: jest.fn(),
+    removeRole: jest.fn(),
+    getUserRole: jest.fn(),
+    getAllUsers: jest.fn(),
+    getAllRoles: jest.fn(),
+  })),
+}));
 // Mock UI components
-jest.mock("@/components/ui/card", function () {
-  return {
-    Card: function (_a) {
-      var children = _a.children,
-        className = _a.className;
-      return <div className={className}>{children}</div>;
-    },
-    CardContent: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-    CardDescription: function (_a) {
-      var children = _a.children;
-      return <p>{children}</p>;
-    },
-    CardHeader: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-    CardTitle: function (_a) {
-      var children = _a.children;
-      return <h3>{children}</h3>;
-    },
-  };
-});
-jest.mock("@/components/ui/button", function () {
-  return {
-    Button: function (_a) {
-      var children = _a.children,
-        onClick = _a.onClick,
-        disabled = _a.disabled,
-        variant = _a.variant;
-      return (
-        <button onClick={onClick} disabled={disabled} data-variant={variant}>
-          {children}
-        </button>
-      );
-    },
-  };
-});
-jest.mock("@/components/ui/select", function () {
-  return {
-    Select: function (_a) {
-      var children = _a.children,
-        onValueChange = _a.onValueChange;
-      return (
-        <div
-          data-testid="select"
-          onClick={function () {
-            return onValueChange === null || onValueChange === void 0
-              ? void 0
-              : onValueChange("test-value");
-          }}
-        >
-          {children}
-        </div>
-      );
-    },
-    SelectContent: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-    SelectItem: function (_a) {
-      var children = _a.children,
-        value = _a.value;
-      return <option value={value}>{children}</option>;
-    },
-    SelectTrigger: function (_a) {
-      var children = _a.children;
-      return <div>{children}</div>;
-    },
-    SelectValue: function (_a) {
-      var placeholder = _a.placeholder;
-      return <span>{placeholder}</span>;
-    },
-  };
-});
-jest.mock("@/components/ui/table", function () {
-  return {
-    Table: function (_a) {
-      var children = _a.children;
-      return <table>{children}</table>;
-    },
-    TableBody: function (_a) {
-      var children = _a.children;
-      return <tbody>{children}</tbody>;
-    },
-    TableCell: function (_a) {
-      var children = _a.children;
-      return <td>{children}</td>;
-    },
-    TableHead: function (_a) {
-      var children = _a.children;
-      return <th>{children}</th>;
-    },
-    TableHeader: function (_a) {
-      var children = _a.children;
-      return <thead>{children}</thead>;
-    },
-    TableRow: function (_a) {
-      var children = _a.children;
-      return <tr>{children}</tr>;
-    },
-  };
-});
-jest.mock("@/components/ui/badge", function () {
-  return {
-    Badge: function (_a) {
-      var children = _a.children,
-        variant = _a.variant;
-      return <span data-variant={variant}>{children}</span>;
-    },
-  };
-});
-jest.mock("@/components/ui/alert", function () {
-  return {
-    Alert: function (_a) {
-      var children = _a.children;
-      return <div role="alert">{children}</div>;
-    },
-    AlertDescription: function (_a) {
-      var children = _a.children;
-      return <p>{children}</p>;
-    },
-  };
-});
-jest.mock("lucide-react", function () {
-  return {
-    Users: function () {
-      return <span data-testid="users-icon">Users</span>;
-    },
-    Shield: function () {
-      return <span data-testid="shield-icon">Shield</span>;
-    },
-    UserCheck: function () {
-      return <span data-testid="user-check-icon">UserCheck</span>;
-    },
-    AlertCircle: function () {
-      return <span data-testid="alert-circle-icon">AlertCircle</span>;
-    },
-    Loader2: function () {
-      return <span data-testid="loader-icon">Loading</span>;
-    },
-  };
-});
+jest.mock("@/components/ui/card", () => ({
+  Card: (_a) => {
+    var children = _a.children,
+      className = _a.className;
+    return <div className={className}>{children}</div>;
+  },
+  CardContent: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+  CardDescription: (_a) => {
+    var children = _a.children;
+    return <p>{children}</p>;
+  },
+  CardHeader: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+  CardTitle: (_a) => {
+    var children = _a.children;
+    return <h3>{children}</h3>;
+  },
+}));
+jest.mock("@/components/ui/button", () => ({
+  Button: (_a) => {
+    var children = _a.children,
+      onClick = _a.onClick,
+      disabled = _a.disabled,
+      variant = _a.variant;
+    return (
+      <button onClick={onClick} disabled={disabled} data-variant={variant}>
+        {children}
+      </button>
+    );
+  },
+}));
+jest.mock("@/components/ui/select", () => ({
+  Select: (_a) => {
+    var children = _a.children,
+      onValueChange = _a.onValueChange;
+    return (
+      <div
+        data-testid="select"
+        onClick={() =>
+          onValueChange === null || onValueChange === void 0 ? void 0 : onValueChange("test-value")
+        }
+      >
+        {children}
+      </div>
+    );
+  },
+  SelectContent: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+  SelectItem: (_a) => {
+    var children = _a.children,
+      value = _a.value;
+    return <option value={value}>{children}</option>;
+  },
+  SelectTrigger: (_a) => {
+    var children = _a.children;
+    return <div>{children}</div>;
+  },
+  SelectValue: (_a) => {
+    var placeholder = _a.placeholder;
+    return <span>{placeholder}</span>;
+  },
+}));
+jest.mock("@/components/ui/table", () => ({
+  Table: (_a) => {
+    var children = _a.children;
+    return <table>{children}</table>;
+  },
+  TableBody: (_a) => {
+    var children = _a.children;
+    return <tbody>{children}</tbody>;
+  },
+  TableCell: (_a) => {
+    var children = _a.children;
+    return <td>{children}</td>;
+  },
+  TableHead: (_a) => {
+    var children = _a.children;
+    return <th>{children}</th>;
+  },
+  TableHeader: (_a) => {
+    var children = _a.children;
+    return <thead>{children}</thead>;
+  },
+  TableRow: (_a) => {
+    var children = _a.children;
+    return <tr>{children}</tr>;
+  },
+}));
+jest.mock("@/components/ui/badge", () => ({
+  Badge: (_a) => {
+    var children = _a.children,
+      variant = _a.variant;
+    return <span data-variant={variant}>{children}</span>;
+  },
+}));
+jest.mock("@/components/ui/alert", () => ({
+  Alert: (_a) => {
+    var children = _a.children;
+    return <div role="alert">{children}</div>;
+  },
+  AlertDescription: (_a) => {
+    var children = _a.children;
+    return <p>{children}</p>;
+  },
+}));
+jest.mock("lucide-react", () => ({
+  Users: () => <span data-testid="users-icon">Users</span>,
+  Shield: () => <span data-testid="shield-icon">Shield</span>,
+  UserCheck: () => <span data-testid="user-check-icon">UserCheck</span>,
+  AlertCircle: () => <span data-testid="alert-circle-icon">AlertCircle</span>,
+  Loader2: () => <span data-testid="loader-icon">Loading</span>,
+}));
 var mockClinicId = "clinic-123";
 var mockOwnerRole = {
   id: "role-owner",
@@ -376,10 +341,10 @@ var mockUsers = [
   },
 ];
 var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
-(0, globals_1.describe)("RoleManagement Component", function () {
+(0, globals_1.describe)("RoleManagement Component", () => {
   var mockRBACManager;
   var mockUseRBAC;
-  (0, globals_1.beforeEach)(function () {
+  (0, globals_1.beforeEach)(() => {
     jest.clearAllMocks();
     mockRBACManager = {
       assignRole: jest.fn(),
@@ -403,13 +368,13 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
     mockRBACManager.getAllUsers.mockResolvedValue(mockUsers);
     mockRBACManager.getAllRoles.mockResolvedValue(mockRoles);
   });
-  (0, globals_1.afterEach)(function () {
+  (0, globals_1.afterEach)(() => {
     jest.restoreAllMocks();
   });
-  (0, globals_1.describe)("Component Rendering", function () {
-    (0, globals_1.it)("should render role management interface", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Component Rendering", () => {
+    (0, globals_1.it)("should render role management interface", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
@@ -422,7 +387,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               // Wait for data to load
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Owner User")).toBeInTheDocument();
                 }),
               ];
@@ -432,9 +397,9 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should show loading state initially", function () {
+      }),
+    );
+    (0, globals_1.it)("should show loading state initially", () => {
       mockUseRBAC.loading = true;
       (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
       (0, globals_1.expect)(react_1.screen.getByTestId("loader-icon")).toBeInTheDocument();
@@ -442,7 +407,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
         react_1.screen.getByText("Carregando dados de função..."),
       ).toBeInTheDocument();
     });
-    (0, globals_1.it)("should show access denied when user lacks permissions", function () {
+    (0, globals_1.it)("should show access denied when user lacks permissions", () => {
       mockUseRBAC.checkPermission.mockResolvedValue(false);
       mockUseRBAC.isAtLeastRole.mockReturnValue(false);
       (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
@@ -452,16 +417,16 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
       ).toBeInTheDocument();
     });
   });
-  (0, globals_1.describe)("User List Display", function () {
-    (0, globals_1.it)("should display list of users with their roles", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("User List Display", () => {
+    (0, globals_1.it)("should display list of users with their roles", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Owner User")).toBeInTheDocument();
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Manager User"),
@@ -486,17 +451,17 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should show role hierarchy levels", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should show role hierarchy levels", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Nível 1")).toBeInTheDocument();
                   (0, globals_1.expect)(react_1.screen.getByText("Nível 2")).toBeInTheDocument();
                   (0, globals_1.expect)(react_1.screen.getByText("Nível 3")).toBeInTheDocument();
@@ -507,18 +472,18 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle empty user list", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }),
+    );
+    (0, globals_1.it)("should handle empty user list", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.getAllUsers.mockResolvedValue([]);
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Nenhum usuário encontrado"),
                   ).toBeInTheDocument();
@@ -529,21 +494,21 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Role Assignment", function () {
-    (0, globals_1.it)("should allow role assignment for manageable users", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Role Assignment", () => {
+    (0, globals_1.it)("should allow role assignment for manageable users", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, assignButtons;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Staff User")).toBeInTheDocument();
                 }),
               ];
@@ -560,21 +525,21 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should disable role assignment for non-manageable users", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should disable role assignment for non-manageable users", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var buttons;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              mockUseRBAC.canManageUser.mockImplementation(function (userId) {
+              mockUseRBAC.canManageUser.mockImplementation((userId) => {
                 return userId !== "user-1"; // Cannot manage owner
               });
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Owner User")).toBeInTheDocument();
                 }),
               ];
@@ -585,12 +550,12 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should successfully assign new role", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should successfully assign new role", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, assignButtons, selectElement, confirmButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -598,7 +563,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Staff User")).toBeInTheDocument();
                 }),
               ];
@@ -625,12 +590,12 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle role assignment errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle role assignment errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, assignButtons, selectElement, confirmButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -638,7 +603,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Staff User")).toBeInTheDocument();
                 }),
               ];
@@ -658,7 +623,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Erro ao alterar função"),
                   ).toBeInTheDocument();
@@ -669,21 +634,21 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Role Removal", function () {
-    (0, globals_1.it)("should allow role removal for manageable users", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Role Removal", () => {
+    (0, globals_1.it)("should allow role removal for manageable users", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, removeButtons;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Staff User")).toBeInTheDocument();
                 }),
               ];
@@ -699,12 +664,12 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should successfully remove role", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should successfully remove role", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, removeButtons, confirmButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -712,7 +677,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Staff User")).toBeInTheDocument();
                 }),
               ];
@@ -733,12 +698,12 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should handle role removal errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should handle role removal errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, removeButtons, confirmButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -746,7 +711,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Staff User")).toBeInTheDocument();
                 }),
               ];
@@ -762,7 +727,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Erro ao remover função"),
                   ).toBeInTheDocument();
@@ -773,21 +738,21 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Permission Display", function () {
-    (0, globals_1.it)("should show role permissions when expanded", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  (0, globals_1.describe)("Permission Display", () => {
+    (0, globals_1.it)("should show role permissions when expanded", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, expandButtons;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Owner User")).toBeInTheDocument();
                 }),
               ];
@@ -803,19 +768,19 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should hide permissions when collapsed", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should hide permissions when collapsed", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, expandButtons, collapseButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Owner User")).toBeInTheDocument();
                 }),
               ];
@@ -836,19 +801,19 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Statistics Display", function () {
-    (0, globals_1.it)("should show role statistics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Statistics Display", () => {
+    (0, globals_1.it)("should show role statistics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("3")).toBeInTheDocument(); // Total users
                 }),
               ];
@@ -861,12 +826,12 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should update statistics when data changes", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should update statistics when data changes", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var rerender;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               rerender = (0, react_1.render)(
@@ -874,7 +839,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               ).rerender;
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("3")).toBeInTheDocument();
                 }),
               ];
@@ -898,7 +863,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               rerender(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("4")).toBeInTheDocument();
                 }),
               ];
@@ -907,20 +872,20 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Error Handling", function () {
-    (0, globals_1.it)("should handle data loading errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Error Handling", () => {
+    (0, globals_1.it)("should handle data loading errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockRBACManager.getAllUsers.mockRejectedValue(new Error("Failed to load users"));
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Erro ao carregar dados"),
                   ).toBeInTheDocument();
@@ -931,12 +896,12 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should show retry option on error", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should show retry option on error", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, retryButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
@@ -944,7 +909,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(
                     react_1.screen.getByText("Tentar Novamente"),
                   ).toBeInTheDocument();
@@ -960,7 +925,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               _a.sent();
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Owner User")).toBeInTheDocument();
                 }),
               ];
@@ -969,19 +934,19 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
-  (0, globals_1.describe)("Accessibility", function () {
-    (0, globals_1.it)("should have proper ARIA labels", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, globals_1.describe)("Accessibility", () => {
+    (0, globals_1.it)("should have proper ARIA labels", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByRole("table")).toBeInTheDocument();
                 }),
               ];
@@ -994,19 +959,19 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
-    (0, globals_1.it)("should support keyboard navigation", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }),
+    );
+    (0, globals_1.it)("should support keyboard navigation", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var user, buttons, _i, buttons_1, button;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               user = user_event_1.default.setup();
               (0, react_1.render)(<role_management_1.RoleManagement clinicId={mockClinicId} />);
               return [
                 4 /*yield*/,
-                (0, react_1.waitFor)(function () {
+                (0, react_1.waitFor)(() => {
                   (0, globals_1.expect)(react_1.screen.getByText("Owner User")).toBeInTheDocument();
                 }),
               ];
@@ -1033,7 +998,7 @@ var mockRoles = [mockOwnerRole, mockManagerRole, mockStaffRole];
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }),
+    );
   });
 });

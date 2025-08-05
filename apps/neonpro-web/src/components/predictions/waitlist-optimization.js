@@ -3,7 +3,6 @@
  * Intelligent waitlist management with demand forecasting and slot optimization
  */
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WaitlistOptimization = WaitlistOptimization;
 var react_1 = require("react");
@@ -55,207 +54,190 @@ function WaitlistOptimization(_a) {
   /**
    * Calculate waitlist analytics
    */
-  var analytics = (0, react_1.useMemo)(
-    function () {
-      var activeEntries = waitlistEntries.filter(function (e) {
-        return e.status === "WAITING" || e.status === "CONTACTED";
-      });
-      // Basic metrics
-      var averageWaitTime =
-        activeEntries.reduce(function (sum, entry) {
-          return sum + entry.estimatedWaitTime;
-        }, 0) / activeEntries.length || 0;
-      var totalWaiting = activeEntries.length;
-      // Priority distribution
-      var priorityGroups = activeEntries.reduce(function (acc, entry) {
-        if (!acc[entry.priority]) {
-          acc[entry.priority] = [];
-        }
-        acc[entry.priority].push(entry);
-        return acc;
-      }, {});
-      var priorityDistribution = Object.entries(priorityGroups).map(function (_a) {
-        var priority = _a[0],
-          entries = _a[1];
-        return {
-          priority: PRIORITY_LABELS[priority],
-          count: entries.length,
-          avgWait:
-            entries.reduce(function (sum, e) {
-              return sum + e.estimatedWaitTime;
-            }, 0) / entries.length,
-          color: PRIORITY_COLORS[priority],
-        };
-      });
-      // Specialty breakdown
-      var specialtyGroups = activeEntries.reduce(function (acc, entry) {
-        if (!acc[entry.specialty]) {
-          acc[entry.specialty] = [];
-        }
-        acc[entry.specialty].push(entry);
-        return acc;
-      }, {});
-      var specialtyBreakdown = Object.entries(specialtyGroups).map(function (_a) {
-        var specialty = _a[0],
-          entries = _a[1];
-        return {
-          specialty: specialty,
-          waiting: entries.length,
-          avgWait:
-            entries.reduce(function (sum, e) {
-              return sum + e.estimatedWaitTime;
-            }, 0) / entries.length,
-          capacity: 100, // Mock capacity
-        };
-      });
-      // Wait time projection (mock data for demo)
-      var waitTimeProjection = Array.from({ length: 30 }, function (_, i) {
-        var date = new Date();
-        date.setDate(date.getDate() + i);
-        return {
-          date: date.toISOString().split("T")[0],
-          projected: Math.max(0, averageWaitTime - i * 0.5 + Math.random() * 2),
-          historical: Math.max(0, averageWaitTime + Math.random() * 3),
-          optimized: Math.max(0, averageWaitTime - i * 0.8 + Math.random() * 1),
-        };
-      });
-      // Conversion rates
-      var conversionRates = [
-        { stage: "Waitlist Entry", rate: 100, count: totalWaiting },
-        { stage: "First Contact", rate: 85, count: Math.round(totalWaiting * 0.85) },
-        { stage: "Response", rate: 68, count: Math.round(totalWaiting * 0.68) },
-        { stage: "Scheduled", rate: 78, count: Math.round(totalWaiting * 0.78) },
-        { stage: "Attended", rate: 82, count: Math.round(totalWaiting * 0.82) },
-      ];
+  var analytics = (0, react_1.useMemo)(() => {
+    var activeEntries = waitlistEntries.filter(
+      (e) => e.status === "WAITING" || e.status === "CONTACTED",
+    );
+    // Basic metrics
+    var averageWaitTime =
+      activeEntries.reduce((sum, entry) => sum + entry.estimatedWaitTime, 0) /
+        activeEntries.length || 0;
+    var totalWaiting = activeEntries.length;
+    // Priority distribution
+    var priorityGroups = activeEntries.reduce((acc, entry) => {
+      if (!acc[entry.priority]) {
+        acc[entry.priority] = [];
+      }
+      acc[entry.priority].push(entry);
+      return acc;
+    }, {});
+    var priorityDistribution = Object.entries(priorityGroups).map((_a) => {
+      var priority = _a[0],
+        entries = _a[1];
       return {
-        averageWaitTime: averageWaitTime,
-        totalWaiting: totalWaiting,
-        dailyThroughput: 15, // Mock
-        utilizationRate: 78, // Mock
-        priorityDistribution: priorityDistribution,
-        specialtyBreakdown: specialtyBreakdown,
-        waitTimeProjection: waitTimeProjection,
-        conversionRates: conversionRates,
+        priority: PRIORITY_LABELS[priority],
+        count: entries.length,
+        avgWait: entries.reduce((sum, e) => sum + e.estimatedWaitTime, 0) / entries.length,
+        color: PRIORITY_COLORS[priority],
       };
-    },
-    [waitlistEntries],
-  );
+    });
+    // Specialty breakdown
+    var specialtyGroups = activeEntries.reduce((acc, entry) => {
+      if (!acc[entry.specialty]) {
+        acc[entry.specialty] = [];
+      }
+      acc[entry.specialty].push(entry);
+      return acc;
+    }, {});
+    var specialtyBreakdown = Object.entries(specialtyGroups).map((_a) => {
+      var specialty = _a[0],
+        entries = _a[1];
+      return {
+        specialty: specialty,
+        waiting: entries.length,
+        avgWait: entries.reduce((sum, e) => sum + e.estimatedWaitTime, 0) / entries.length,
+        capacity: 100, // Mock capacity
+      };
+    });
+    // Wait time projection (mock data for demo)
+    var waitTimeProjection = Array.from({ length: 30 }, (_, i) => {
+      var date = new Date();
+      date.setDate(date.getDate() + i);
+      return {
+        date: date.toISOString().split("T")[0],
+        projected: Math.max(0, averageWaitTime - i * 0.5 + Math.random() * 2),
+        historical: Math.max(0, averageWaitTime + Math.random() * 3),
+        optimized: Math.max(0, averageWaitTime - i * 0.8 + Math.random() * 1),
+      };
+    });
+    // Conversion rates
+    var conversionRates = [
+      { stage: "Waitlist Entry", rate: 100, count: totalWaiting },
+      { stage: "First Contact", rate: 85, count: Math.round(totalWaiting * 0.85) },
+      { stage: "Response", rate: 68, count: Math.round(totalWaiting * 0.68) },
+      { stage: "Scheduled", rate: 78, count: Math.round(totalWaiting * 0.78) },
+      { stage: "Attended", rate: 82, count: Math.round(totalWaiting * 0.82) },
+    ];
+    return {
+      averageWaitTime: averageWaitTime,
+      totalWaiting: totalWaiting,
+      dailyThroughput: 15, // Mock
+      utilizationRate: 78, // Mock
+      priorityDistribution: priorityDistribution,
+      specialtyBreakdown: specialtyBreakdown,
+      waitTimeProjection: waitTimeProjection,
+      conversionRates: conversionRates,
+    };
+  }, [waitlistEntries]);
   /**
    * Generate optimization suggestions
    */
-  var optimizationSuggestions = (0, react_1.useMemo)(
-    function () {
-      var suggestions = [];
-      // High-risk patients that need immediate attention
-      var highRiskPatients = waitlistEntries.filter(function (e) {
-        return e.noShowRisk > 70 && e.status === "WAITING";
+  var optimizationSuggestions = (0, react_1.useMemo)(() => {
+    var suggestions = [];
+    // High-risk patients that need immediate attention
+    var highRiskPatients = waitlistEntries.filter(
+      (e) => e.noShowRisk > 70 && e.status === "WAITING",
+    );
+    if (highRiskPatients.length > 0) {
+      suggestions.push({
+        type: "PROACTIVE_CONTACT",
+        description: "".concat(
+          highRiskPatients.length,
+          " high-risk patients need immediate contact to prevent dropout",
+        ),
+        impact: "HIGH",
+        estimatedReduction: 3,
+        affectedPatients: highRiskPatients.length,
+        confidence: 85,
+        actionRequired: "Contact high-risk patients within 24 hours",
       });
-      if (highRiskPatients.length > 0) {
-        suggestions.push({
-          type: "PROACTIVE_CONTACT",
-          description: "".concat(
-            highRiskPatients.length,
-            " high-risk patients need immediate contact to prevent dropout",
-          ),
-          impact: "HIGH",
-          estimatedReduction: 3,
-          affectedPatients: highRiskPatients.length,
-          confidence: 85,
-          actionRequired: "Contact high-risk patients within 24 hours",
-        });
-      }
-      // Long-waiting urgent patients
-      var urgentLongWait = waitlistEntries.filter(function (e) {
-        return e.priority === "URGENT" && e.estimatedWaitTime > 7;
+    }
+    // Long-waiting urgent patients
+    var urgentLongWait = waitlistEntries.filter(
+      (e) => e.priority === "URGENT" && e.estimatedWaitTime > 7,
+    );
+    if (urgentLongWait.length > 0) {
+      suggestions.push({
+        type: "PRIORITY_ADJUSTMENT",
+        description: "".concat(urgentLongWait.length, " urgent patients waiting over 7 days"),
+        impact: "HIGH",
+        estimatedReduction: 5,
+        affectedPatients: urgentLongWait.length,
+        confidence: 92,
+        actionRequired: "Reallocate urgent slots or add emergency capacity",
       });
-      if (urgentLongWait.length > 0) {
-        suggestions.push({
-          type: "PRIORITY_ADJUSTMENT",
-          description: "".concat(urgentLongWait.length, " urgent patients waiting over 7 days"),
-          impact: "HIGH",
-          estimatedReduction: 5,
-          affectedPatients: urgentLongWait.length,
-          confidence: 92,
-          actionRequired: "Reallocate urgent slots or add emergency capacity",
-        });
-      }
-      // Slot reallocation opportunities
-      var overCapacitySpecialties = analytics.specialtyBreakdown.filter(function (s) {
-        return s.waiting > s.capacity * 0.8;
+    }
+    // Slot reallocation opportunities
+    var overCapacitySpecialties = analytics.specialtyBreakdown.filter(
+      (s) => s.waiting > s.capacity * 0.8,
+    );
+    if (overCapacitySpecialties.length > 0) {
+      suggestions.push({
+        type: "SLOT_REALLOCATION",
+        description: "Rebalance capacity for ".concat(
+          overCapacitySpecialties.length,
+          " over-capacity specialties",
+        ),
+        impact: "MEDIUM",
+        estimatedReduction: 2,
+        affectedPatients: overCapacitySpecialties.reduce((sum, s) => sum + s.waiting, 0),
+        confidence: 78,
+        actionRequired: "Review and redistribute appointment slots",
       });
-      if (overCapacitySpecialties.length > 0) {
-        suggestions.push({
-          type: "SLOT_REALLOCATION",
-          description: "Rebalance capacity for ".concat(
-            overCapacitySpecialties.length,
-            " over-capacity specialties",
-          ),
-          impact: "MEDIUM",
-          estimatedReduction: 2,
-          affectedPatients: overCapacitySpecialties.reduce(function (sum, s) {
-            return sum + s.waiting;
-          }, 0),
-          confidence: 78,
-          actionRequired: "Review and redistribute appointment slots",
-        });
-      }
-      // Potential cancellations based on patterns
-      var likelyCancellations = waitlistEntries.filter(function (e) {
-        return e.contactAttempts > 2 && !e.lastContact && e.estimatedWaitTime > 14;
+    }
+    // Potential cancellations based on patterns
+    var likelyCancellations = waitlistEntries.filter(
+      (e) => e.contactAttempts > 2 && !e.lastContact && e.estimatedWaitTime > 14,
+    );
+    if (likelyCancellations.length > 0) {
+      suggestions.push({
+        type: "CANCELLATION_PREDICTION",
+        description: "".concat(
+          likelyCancellations.length,
+          " patients likely to cancel based on engagement patterns",
+        ),
+        impact: "MEDIUM",
+        estimatedReduction: 1,
+        affectedPatients: likelyCancellations.length,
+        confidence: 65,
+        actionRequired: "Follow up with disengaged patients or mark for removal",
       });
-      if (likelyCancellations.length > 0) {
-        suggestions.push({
-          type: "CANCELLATION_PREDICTION",
-          description: "".concat(
-            likelyCancellations.length,
-            " patients likely to cancel based on engagement patterns",
-          ),
-          impact: "MEDIUM",
-          estimatedReduction: 1,
-          affectedPatients: likelyCancellations.length,
-          confidence: 65,
-          actionRequired: "Follow up with disengaged patients or mark for removal",
-        });
-      }
-      return suggestions.sort(function (a, b) {
-        var impactOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
-        return impactOrder[b.impact] - impactOrder[a.impact];
-      });
-    },
-    [waitlistEntries, analytics],
-  );
+    }
+    return suggestions.sort((a, b) => {
+      var impactOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+      return impactOrder[b.impact] - impactOrder[a.impact];
+    });
+  }, [waitlistEntries, analytics]);
   /**
    * Filter and sort waitlist entries
    */
-  var filteredEntries = (0, react_1.useMemo)(
-    function () {
-      var filtered = waitlistEntries.filter(function (entry) {
-        if (priorityFilter !== "ALL" && entry.priority !== priorityFilter) return false;
-        if (specialtyFilter !== "ALL" && entry.specialty !== specialtyFilter) return false;
-        return true;
-      });
-      return filtered.sort(function (a, b) {
-        switch (sortBy) {
-          case "waitTime":
-            return b.estimatedWaitTime - a.estimatedWaitTime;
-          case "priority":
-            var priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
-            return priorityOrder[b.priority] - priorityOrder[a.priority];
-          case "risk":
-            return b.noShowRisk - a.noShowRisk;
-          case "date":
-            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-          default:
-            return 0;
+  var filteredEntries = (0, react_1.useMemo)(() => {
+    var filtered = waitlistEntries.filter((entry) => {
+      if (priorityFilter !== "ALL" && entry.priority !== priorityFilter) return false;
+      if (specialtyFilter !== "ALL" && entry.specialty !== specialtyFilter) return false;
+      return true;
+    });
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "waitTime":
+          return b.estimatedWaitTime - a.estimatedWaitTime;
+        case "priority": {
+          var priorityOrder = { URGENT: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
+          return priorityOrder[b.priority] - priorityOrder[a.priority];
         }
-      });
-    },
-    [waitlistEntries, priorityFilter, specialtyFilter, sortBy],
-  );
+        case "risk":
+          return b.noShowRisk - a.noShowRisk;
+        case "date":
+          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        default:
+          return 0;
+      }
+    });
+  }, [waitlistEntries, priorityFilter, specialtyFilter, sortBy]);
   /**
    * Get priority badge variant
    */
-  var getPriorityVariant = function (priority) {
+  var getPriorityVariant = (priority) => {
     switch (priority) {
       case "URGENT":
         return "destructive";
@@ -272,7 +254,7 @@ function WaitlistOptimization(_a) {
   /**
    * Get wait time color
    */
-  var getWaitTimeColor = function (days) {
+  var getWaitTimeColor = (days) => {
     if (days <= 3) return "text-green-600";
     if (days <= 7) return "text-yellow-600";
     if (days <= 14) return "text-orange-600";
@@ -281,7 +263,7 @@ function WaitlistOptimization(_a) {
   /**
    * Format days to readable format
    */
-  var formatWaitTime = function (days) {
+  var formatWaitTime = (days) => {
     if (days < 1) return "Same day";
     if (days === 1) return "1 day";
     if (days < 7) return "".concat(Math.round(days), " days");
@@ -291,7 +273,7 @@ function WaitlistOptimization(_a) {
   /**
    * Handle contact patient
    */
-  var handleContactPatient = function (entry, method) {
+  var handleContactPatient = (entry, method) => {
     onContactPatient(entry.patientId, method);
     onUpdateEntry(entry.id, {
       contactAttempts: entry.contactAttempts + 1,
@@ -312,9 +294,7 @@ function WaitlistOptimization(_a) {
         <div className="flex items-center gap-3">
           <button_1.Button
             variant="outline"
-            onClick={function () {
-              return setShowOptimizations(!showOptimizations);
-            }}
+            onClick={() => setShowOptimizations(!showOptimizations)}
           >
             <lucide_react_1.Target className="h-4 w-4 mr-2" />
             {showOptimizations ? "Hide" : "Show"} Optimizations
@@ -333,48 +313,46 @@ function WaitlistOptimization(_a) {
       {/* Optimization Alerts */}
       {showOptimizations && optimizationSuggestions.length > 0 && (
         <div className="space-y-3">
-          {optimizationSuggestions.slice(0, 3).map(function (suggestion, index) {
-            return (
-              <alert_1.Alert
-                key={index}
-                className={
-                  suggestion.impact === "HIGH"
-                    ? "border-red-200 bg-red-50"
-                    : suggestion.impact === "MEDIUM"
-                      ? "border-yellow-200 bg-yellow-50"
-                      : "border-blue-200 bg-blue-50"
-                }
-              >
-                <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                <alert_1.AlertDescription>
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="font-medium">{suggestion.description}</div>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        {suggestion.actionRequired}
-                      </div>
-                    </div>
-                    <div className="text-right ml-4">
-                      <badge_1.Badge
-                        variant={
-                          suggestion.impact === "HIGH"
-                            ? "destructive"
-                            : suggestion.impact === "MEDIUM"
-                              ? "default"
-                              : "secondary"
-                        }
-                      >
-                        {suggestion.impact} Impact
-                      </badge_1.Badge>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        -{suggestion.estimatedReduction} days • {suggestion.confidence}% confidence
-                      </div>
+          {optimizationSuggestions.slice(0, 3).map((suggestion, index) => (
+            <alert_1.Alert
+              key={index}
+              className={
+                suggestion.impact === "HIGH"
+                  ? "border-red-200 bg-red-50"
+                  : suggestion.impact === "MEDIUM"
+                    ? "border-yellow-200 bg-yellow-50"
+                    : "border-blue-200 bg-blue-50"
+              }
+            >
+              <lucide_react_1.AlertTriangle className="h-4 w-4" />
+              <alert_1.AlertDescription>
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="font-medium">{suggestion.description}</div>
+                    <div className="text-sm text-muted-foreground mt-1">
+                      {suggestion.actionRequired}
                     </div>
                   </div>
-                </alert_1.AlertDescription>
-              </alert_1.Alert>
-            );
-          })}
+                  <div className="text-right ml-4">
+                    <badge_1.Badge
+                      variant={
+                        suggestion.impact === "HIGH"
+                          ? "destructive"
+                          : suggestion.impact === "MEDIUM"
+                            ? "default"
+                            : "secondary"
+                      }
+                    >
+                      {suggestion.impact} Impact
+                    </badge_1.Badge>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      -{suggestion.estimatedReduction} days • {suggestion.confidence}% confidence
+                    </div>
+                  </div>
+                </div>
+              </alert_1.AlertDescription>
+            </alert_1.Alert>
+          ))}
         </div>
       )}
 
@@ -438,12 +416,7 @@ function WaitlistOptimization(_a) {
       </div>
 
       {/* Main Content Tabs */}
-      <tabs_1.Tabs
-        value={activeTab}
-        onValueChange={function (value) {
-          return setActiveTab(value);
-        }}
-      >
+      <tabs_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
         <tabs_1.TabsList className="grid w-full grid-cols-4">
           <tabs_1.TabsTrigger value="overview">Overview</tabs_1.TabsTrigger>
           <tabs_1.TabsTrigger value="optimization">Optimization</tabs_1.TabsTrigger>
@@ -480,28 +453,18 @@ function WaitlistOptimization(_a) {
                     </select_1.SelectTrigger>
                     <select_1.SelectContent>
                       <select_1.SelectItem value="ALL">All Specialties</select_1.SelectItem>
-                      {analytics.specialtyBreakdown.map(function (specialty) {
-                        return (
-                          <select_1.SelectItem
-                            key={specialty.specialty}
-                            value={specialty.specialty}
-                          >
-                            {specialty.specialty} ({specialty.waiting})
-                          </select_1.SelectItem>
-                        );
-                      })}
+                      {analytics.specialtyBreakdown.map((specialty) => (
+                        <select_1.SelectItem key={specialty.specialty} value={specialty.specialty}>
+                          {specialty.specialty} ({specialty.waiting})
+                        </select_1.SelectItem>
+                      ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <label className="text-sm font-medium">Sort by:</label>
-                  <select_1.Select
-                    value={sortBy}
-                    onValueChange={function (value) {
-                      return setSortBy(value);
-                    }}
-                  >
+                  <select_1.Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
                     <select_1.SelectTrigger className="w-32">
                       <select_1.SelectValue />
                     </select_1.SelectTrigger>
@@ -535,120 +498,114 @@ function WaitlistOptimization(_a) {
                   ? <div className="text-center py-8 text-muted-foreground">
                       No waitlist entries match the current filters.
                     </div>
-                  : filteredEntries.map(function (entry) {
-                      return (
-                        <card_1.Card
-                          key={entry.id}
-                          className="cursor-pointer hover:bg-muted/50"
-                          onClick={function () {
-                            return setSelectedEntry(entry);
-                          }}
-                        >
-                          <card_1.CardContent className="pt-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center gap-3">
-                                <badge_1.Badge variant={getPriorityVariant(entry.priority)}>
-                                  {PRIORITY_LABELS[entry.priority]}
-                                </badge_1.Badge>
-                                <span className="font-medium">{entry.patientName}</span>
-                                <badge_1.Badge variant="outline">{entry.specialty}</badge_1.Badge>
-                              </div>
-                              <div className="text-right">
-                                <div
-                                  className={"font-bold ".concat(
-                                    getWaitTimeColor(entry.estimatedWaitTime),
-                                  )}
-                                >
-                                  {formatWaitTime(entry.estimatedWaitTime)}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                  {entry.noShowRisk}% risk
-                                </div>
-                              </div>
+                  : filteredEntries.map((entry) => (
+                      <card_1.Card
+                        key={entry.id}
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => setSelectedEntry(entry)}
+                      >
+                        <card_1.CardContent className="pt-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <badge_1.Badge variant={getPriorityVariant(entry.priority)}>
+                                {PRIORITY_LABELS[entry.priority]}
+                              </badge_1.Badge>
+                              <span className="font-medium">{entry.patientName}</span>
+                              <badge_1.Badge variant="outline">{entry.specialty}</badge_1.Badge>
                             </div>
-
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
-                              <div>
-                                <div className="text-xs text-muted-foreground">Doctor</div>
-                                <div className="text-sm font-medium">{entry.doctor}</div>
-                              </div>
-                              <div>
-                                <div className="text-xs text-muted-foreground">Requested Date</div>
-                                <div className="text-sm font-medium">
-                                  {entry.requestedDate.toLocaleDateString()}
-                                </div>
-                              </div>
-                              <div>
-                                <div className="text-xs text-muted-foreground">Status</div>
-                                <badge_1.Badge
-                                  variant={
-                                    entry.status === "WAITING"
-                                      ? "default"
-                                      : entry.status === "CONTACTED"
-                                        ? "secondary"
-                                        : entry.status === "SCHEDULED"
-                                          ? "outline"
-                                          : "destructive"
-                                  }
-                                >
-                                  {entry.status.toLowerCase()}
-                                </badge_1.Badge>
-                              </div>
-                              <div>
-                                <div className="text-xs text-muted-foreground">
-                                  Contact Attempts
-                                </div>
-                                <div className="text-sm font-medium">{entry.contactAttempts}</div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <div className="text-xs text-muted-foreground">
-                                Added: {entry.createdAt.toLocaleDateString()}
-                                {entry.lastContact && (
-                                  <span>
-                                    {" "}
-                                    • Last contact: {entry.lastContact.toLocaleDateString()}
-                                  </span>
+                            <div className="text-right">
+                              <div
+                                className={"font-bold ".concat(
+                                  getWaitTimeColor(entry.estimatedWaitTime),
                                 )}
+                              >
+                                {formatWaitTime(entry.estimatedWaitTime)}
                               </div>
-                              <div className="flex gap-2">
-                                <button_1.Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={function (e) {
-                                    e.stopPropagation();
-                                    handleContactPatient(entry, "SMS");
-                                  }}
-                                >
-                                  <lucide_react_1.MessageSquare className="h-4 w-4" />
-                                </button_1.Button>
-                                <button_1.Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={function (e) {
-                                    e.stopPropagation();
-                                    handleContactPatient(entry, "PHONE");
-                                  }}
-                                >
-                                  <lucide_react_1.Phone className="h-4 w-4" />
-                                </button_1.Button>
-                                <button_1.Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={function (e) {
-                                    e.stopPropagation();
-                                    setSelectedEntry(entry);
-                                  }}
-                                >
-                                  <lucide_react_1.Eye className="h-4 w-4" />
-                                </button_1.Button>
+                              <div className="text-xs text-muted-foreground">
+                                {entry.noShowRisk}% risk
                               </div>
                             </div>
-                          </card_1.CardContent>
-                        </card_1.Card>
-                      );
-                    })}
+                          </div>
+
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                            <div>
+                              <div className="text-xs text-muted-foreground">Doctor</div>
+                              <div className="text-sm font-medium">{entry.doctor}</div>
+                            </div>
+                            <div>
+                              <div className="text-xs text-muted-foreground">Requested Date</div>
+                              <div className="text-sm font-medium">
+                                {entry.requestedDate.toLocaleDateString()}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-xs text-muted-foreground">Status</div>
+                              <badge_1.Badge
+                                variant={
+                                  entry.status === "WAITING"
+                                    ? "default"
+                                    : entry.status === "CONTACTED"
+                                      ? "secondary"
+                                      : entry.status === "SCHEDULED"
+                                        ? "outline"
+                                        : "destructive"
+                                }
+                              >
+                                {entry.status.toLowerCase()}
+                              </badge_1.Badge>
+                            </div>
+                            <div>
+                              <div className="text-xs text-muted-foreground">Contact Attempts</div>
+                              <div className="text-sm font-medium">{entry.contactAttempts}</div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="text-xs text-muted-foreground">
+                              Added: {entry.createdAt.toLocaleDateString()}
+                              {entry.lastContact && (
+                                <span>
+                                  {" "}
+                                  • Last contact: {entry.lastContact.toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex gap-2">
+                              <button_1.Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleContactPatient(entry, "SMS");
+                                }}
+                              >
+                                <lucide_react_1.MessageSquare className="h-4 w-4" />
+                              </button_1.Button>
+                              <button_1.Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleContactPatient(entry, "PHONE");
+                                }}
+                              >
+                                <lucide_react_1.Phone className="h-4 w-4" />
+                              </button_1.Button>
+                              <button_1.Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedEntry(entry);
+                                }}
+                              >
+                                <lucide_react_1.Eye className="h-4 w-4" />
+                              </button_1.Button>
+                            </div>
+                          </div>
+                        </card_1.CardContent>
+                      </card_1.Card>
+                    ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -669,50 +626,48 @@ function WaitlistOptimization(_a) {
                   ? <div className="text-center py-8 text-muted-foreground">
                       No optimization suggestions at the moment. Your waitlist is well-managed!
                     </div>
-                  : optimizationSuggestions.map(function (suggestion, index) {
-                      return (
-                        <card_1.Card key={index} className="p-4">
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <badge_1.Badge
-                                  variant={
-                                    suggestion.impact === "HIGH"
-                                      ? "destructive"
-                                      : suggestion.impact === "MEDIUM"
-                                        ? "default"
-                                        : "secondary"
-                                  }
-                                >
-                                  {suggestion.impact} Impact
-                                </badge_1.Badge>
-                                <span className="text-sm text-muted-foreground">
-                                  {suggestion.confidence}% confidence
-                                </span>
-                              </div>
-                              <h4 className="font-medium mb-1">{suggestion.description}</h4>
-                              <p className="text-sm text-muted-foreground">
-                                {suggestion.actionRequired}
-                              </p>
+                  : optimizationSuggestions.map((suggestion, index) => (
+                      <card_1.Card key={index} className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <badge_1.Badge
+                                variant={
+                                  suggestion.impact === "HIGH"
+                                    ? "destructive"
+                                    : suggestion.impact === "MEDIUM"
+                                      ? "default"
+                                      : "secondary"
+                                }
+                              >
+                                {suggestion.impact} Impact
+                              </badge_1.Badge>
+                              <span className="text-sm text-muted-foreground">
+                                {suggestion.confidence}% confidence
+                              </span>
                             </div>
-                            <div className="text-right ml-4">
-                              <div className="text-lg font-bold text-green-600">
-                                -{suggestion.estimatedReduction} days
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                {suggestion.affectedPatients} patients
-                              </div>
+                            <h4 className="font-medium mb-1">{suggestion.description}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {suggestion.actionRequired}
+                            </p>
+                          </div>
+                          <div className="text-right ml-4">
+                            <div className="text-lg font-bold text-green-600">
+                              -{suggestion.estimatedReduction} days
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {suggestion.affectedPatients} patients
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <button_1.Button size="sm">Apply Suggestion</button_1.Button>
-                            <button_1.Button variant="outline" size="sm">
-                              View Details
-                            </button_1.Button>
-                          </div>
-                        </card_1.Card>
-                      );
-                    })}
+                        </div>
+                        <div className="flex gap-2">
+                          <button_1.Button size="sm">Apply Suggestion</button_1.Button>
+                          <button_1.Button variant="outline" size="sm">
+                            View Details
+                          </button_1.Button>
+                        </div>
+                      </card_1.Card>
+                    ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -725,7 +680,7 @@ function WaitlistOptimization(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {analytics.specialtyBreakdown.map(function (specialty, index) {
+                  {analytics.specialtyBreakdown.map((specialty, index) => {
                     var utilizationRate = (specialty.waiting / specialty.capacity) * 100;
                     return (
                       <div key={specialty.specialty} className="space-y-2">
@@ -770,28 +725,24 @@ function WaitlistOptimization(_a) {
                     <recharts_1.CartesianGrid strokeDasharray="3 3" />
                     <recharts_1.XAxis
                       dataKey="date"
-                      tickFormatter={function (date) {
-                        return new Date(date).toLocaleDateString("pt-BR", {
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("pt-BR", {
                           month: "short",
                           day: "numeric",
-                        });
-                      }}
+                        })
+                      }
                     />
                     <recharts_1.YAxis />
                     <recharts_1.Tooltip
-                      labelFormatter={function (date) {
-                        return new Date(date).toLocaleDateString("pt-BR");
-                      }}
-                      formatter={function (value, name) {
-                        return [
-                          "".concat(value.toFixed(1), " days"),
-                          name === "projected"
-                            ? "Current Trend"
-                            : name === "historical"
-                              ? "Historical"
-                              : "Optimized",
-                        ];
-                      }}
+                      labelFormatter={(date) => new Date(date).toLocaleDateString("pt-BR")}
+                      formatter={(value, name) => [
+                        "".concat(value.toFixed(1), " days"),
+                        name === "projected"
+                          ? "Current Trend"
+                          : name === "historical"
+                            ? "Historical"
+                            : "Optimized",
+                      ]}
                     />
                     <recharts_1.Line
                       type="monotone"
@@ -836,9 +787,9 @@ function WaitlistOptimization(_a) {
                     <recharts_1.YAxis />
                     <recharts_1.Tooltip />
                     <recharts_1.Bar dataKey="count" name="Count">
-                      {analytics.priorityDistribution.map(function (entry, index) {
-                        return <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />;
-                      })}
+                      {analytics.priorityDistribution.map((entry, index) => (
+                        <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />
+                      ))}
                     </recharts_1.Bar>
                   </recharts_1.BarChart>
                 </recharts_1.ResponsiveContainer>
@@ -851,22 +802,20 @@ function WaitlistOptimization(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {analytics.conversionRates.map(function (stage, index) {
-                    return (
-                      <div key={stage.stage} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{stage.stage}</span>
-                          <div className="text-right">
-                            <span className="font-bold">{stage.rate}%</span>
-                            <div className="text-xs text-muted-foreground">
-                              {stage.count} patients
-                            </div>
+                  {analytics.conversionRates.map((stage, index) => (
+                    <div key={stage.stage} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">{stage.stage}</span>
+                        <div className="text-right">
+                          <span className="font-bold">{stage.rate}%</span>
+                          <div className="text-xs text-muted-foreground">
+                            {stage.count} patients
                           </div>
                         </div>
-                        <progress_1.Progress value={stage.rate} className="h-2" />
                       </div>
-                    );
-                  })}
+                      <progress_1.Progress value={stage.rate} className="h-2" />
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>
@@ -883,28 +832,24 @@ function WaitlistOptimization(_a) {
                   <recharts_1.CartesianGrid strokeDasharray="3 3" />
                   <recharts_1.XAxis
                     dataKey="date"
-                    tickFormatter={function (date) {
-                      return new Date(date).toLocaleDateString("pt-BR", {
+                    tickFormatter={(date) =>
+                      new Date(date).toLocaleDateString("pt-BR", {
                         month: "short",
                         day: "numeric",
-                      });
-                    }}
+                      })
+                    }
                   />
                   <recharts_1.YAxis />
                   <recharts_1.Tooltip
-                    labelFormatter={function (date) {
-                      return new Date(date).toLocaleDateString("pt-BR");
-                    }}
-                    formatter={function (value, name) {
-                      return [
-                        "".concat(value.toFixed(1), " days"),
-                        name === "projected"
-                          ? "Projected"
-                          : name === "historical"
-                            ? "Historical"
-                            : "Optimized",
-                      ];
-                    }}
+                    labelFormatter={(date) => new Date(date).toLocaleDateString("pt-BR")}
+                    formatter={(value, name) => [
+                      "".concat(value.toFixed(1), " days"),
+                      name === "projected"
+                        ? "Projected"
+                        : name === "historical"
+                          ? "Historical"
+                          : "Optimized",
+                    ]}
                   />
                   <recharts_1.Area
                     type="monotone"
@@ -952,12 +897,7 @@ function WaitlistOptimization(_a) {
 
       {/* Selected Entry Detail Modal */}
       {selectedEntry && (
-        <dialog_1.Dialog
-          open={!!selectedEntry}
-          onOpenChange={function () {
-            return setSelectedEntry(null);
-          }}
-        >
+        <dialog_1.Dialog open={!!selectedEntry} onOpenChange={() => setSelectedEntry(null)}>
           <dialog_1.DialogContent className="max-w-2xl">
             <dialog_1.DialogHeader>
               <dialog_1.DialogTitle className="flex items-center gap-2">
@@ -1059,13 +999,11 @@ function WaitlistOptimization(_a) {
               <div>
                 <h4 className="font-medium mb-3">Preferred Time Slots</h4>
                 <div className="flex flex-wrap gap-2">
-                  {selectedEntry.preferredTimeSlots.map(function (slot, index) {
-                    return (
-                      <badge_1.Badge key={index} variant="outline">
-                        {slot}
-                      </badge_1.Badge>
-                    );
-                  })}
+                  {selectedEntry.preferredTimeSlots.map((slot, index) => (
+                    <badge_1.Badge key={index} variant="outline">
+                      {slot}
+                    </badge_1.Badge>
+                  ))}
                 </div>
               </div>
 
@@ -1074,39 +1012,28 @@ function WaitlistOptimization(_a) {
                 <div className="flex gap-2">
                   <button_1.Button
                     variant="outline"
-                    onClick={function () {
-                      return handleContactPatient(selectedEntry, "SMS");
-                    }}
+                    onClick={() => handleContactPatient(selectedEntry, "SMS")}
                   >
                     <lucide_react_1.MessageSquare className="h-4 w-4 mr-2" />
                     Send SMS
                   </button_1.Button>
                   <button_1.Button
                     variant="outline"
-                    onClick={function () {
-                      return handleContactPatient(selectedEntry, "PHONE");
-                    }}
+                    onClick={() => handleContactPatient(selectedEntry, "PHONE")}
                   >
                     <lucide_react_1.Phone className="h-4 w-4 mr-2" />
                     Call
                   </button_1.Button>
                   <button_1.Button
                     variant="outline"
-                    onClick={function () {
-                      return handleContactPatient(selectedEntry, "EMAIL");
-                    }}
+                    onClick={() => handleContactPatient(selectedEntry, "EMAIL")}
                   >
                     <lucide_react_1.Mail className="h-4 w-4 mr-2" />
                     Email
                   </button_1.Button>
                 </div>
                 <div className="flex gap-2">
-                  <button_1.Button
-                    variant="outline"
-                    onClick={function () {
-                      return setSelectedEntry(null);
-                    }}
-                  >
+                  <button_1.Button variant="outline" onClick={() => setSelectedEntry(null)}>
                     Close
                   </button_1.Button>
                   <button_1.Button>

@@ -5,9 +5,9 @@
  * Applies the corrected subscriptions table migration and validates system
  */
 
-const { exec } = require("child_process");
-const path = require("path");
-const fs = require("fs");
+const { exec } = require("node:child_process");
+const _path = require("node:path");
+const fs = require("node:fs");
 
 const COLORS = {
   GREEN: "\x1b[32m",
@@ -39,14 +39,14 @@ async function checkSupabaseCLI() {
     await execPromise("npx supabase --version");
     log("✅ Supabase CLI disponível", COLORS.GREEN);
     return true;
-  } catch (error) {
+  } catch (_error) {
     log("❌ Supabase CLI não encontrado", COLORS.RED);
     log("🔧 Instalando Supabase CLI...", COLORS.YELLOW);
     try {
       await execPromise("npm install -g supabase");
       log("✅ Supabase CLI instalado com sucesso", COLORS.GREEN);
       return true;
-    } catch (installError) {
+    } catch (_installError) {
       log("❌ Falha ao instalar Supabase CLI", COLORS.RED);
       return false;
     }
@@ -91,12 +91,12 @@ async function applyMigration() {
     // Check if connected to Supabase
     await execPromise("npx supabase status");
     log("✅ Conectado ao Supabase", COLORS.GREEN);
-  } catch (error) {
+  } catch (_error) {
     log("⚠️  Não conectado ao Supabase, tentando conectar...", COLORS.YELLOW);
     try {
       await execPromise("npx supabase login");
       await execPromise("npx supabase link");
-    } catch (linkError) {
+    } catch (_linkError) {
       log("❌ Falha ao conectar com Supabase", COLORS.RED);
       log("💡 Execute manualmente: npx supabase login && npx supabase link", COLORS.YELLOW);
       return false;

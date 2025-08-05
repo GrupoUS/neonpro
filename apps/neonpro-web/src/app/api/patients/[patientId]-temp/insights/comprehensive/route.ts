@@ -1,9 +1,10 @@
 // Story 3.2: API Endpoint - Comprehensive Patient Insights
-import { NextRequest, NextResponse } from "next/server";
+
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { PatientInsightsIntegration } from "@/lib/ai/patient-insights";
-import { PatientInsightRequest } from "@/lib/ai/patient-insights/types";
+import type { PatientInsightRequest } from "@/lib/ai/patient-insights/types";
 
 const patientInsights = new PatientInsightsIntegration();
 

@@ -1,18 +1,18 @@
 import type { createClient, SupabaseClient } from "@supabase/supabase-js";
 import type {
-  ResourceOptimization,
-  WorkloadBalance,
-  ResourceAllocation,
-  OptimizationStrategy,
+  Appointment,
+  Equipment,
+  LoadBalancingResult,
   OptimizationConfig,
   OptimizationConstraints,
   OptimizationResult,
+  OptimizationStrategy,
+  ResourceAllocation,
   ResourceMetrics,
-  LoadBalancingResult,
-  Appointment,
-  Staff,
+  ResourceOptimization,
   Room,
-  Equipment,
+  Staff,
+  WorkloadBalance,
 } from "./types";
 
 /**

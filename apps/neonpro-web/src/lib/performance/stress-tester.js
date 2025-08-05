@@ -1,19 +1,18 @@
-"use strict";
 /**
  * Stress Testing Suite - VIBECODE V1.0 Resilience Testing
  * Chaos engineering and stress testing for subscription middleware
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,10 +132,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -147,12 +144,12 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StressTester = void 0;
 var load_tester_1 = require("./load-tester");
 var monitor_1 = require("./monitor");
-var StressTester = /** @class */ (function () {
+var StressTester = /** @class */ (() => {
   function StressTester() {
     this.activeTests = new Map();
     this.reports = [];
@@ -179,7 +176,7 @@ var StressTester = /** @class */ (function () {
             baselineMetrics = monitor_1.performanceMonitor.generateReport();
             // Schedule chaos actions
             if (scenario.chaosActions) {
-              scenario.chaosActions.forEach(function (action) {
+              scenario.chaosActions.forEach((action) => {
                 _this.scheduleChaosAction(action, scenario.name);
               });
             }
@@ -220,12 +217,11 @@ var StressTester = /** @class */ (function () {
    * Schedule chaos action
    */
   StressTester.prototype.scheduleChaosAction = function (action, testId) {
-    var _this = this;
-    var timeoutId = setTimeout(function () {
-      _this.executeChaosAction(action);
+    var timeoutId = setTimeout(() => {
+      this.executeChaosAction(action);
       // Schedule cleanup
-      setTimeout(function () {
-        _this.cleanupChaosAction(action);
+      setTimeout(() => {
+        this.cleanupChaosAction(action);
       }, action.duration);
     }, action.delay);
     this.activeTests.set("".concat(testId, "-").concat(action.type), timeoutId);
@@ -256,14 +252,14 @@ var StressTester = /** @class */ (function () {
   }; /**
    * Simulate network delay
    */
-  StressTester.prototype.simulateNetworkDelay = function (delayMs) {
+  StressTester.prototype.simulateNetworkDelay = (delayMs) => {
     // Implementation would depend on testing environment
     console.log("\uD83C\uDF10 Simulating ".concat(delayMs, "ms network delay"));
   };
   /**
    * Simulate memory pressure
    */
-  StressTester.prototype.simulateMemoryPressure = function (intensity) {
+  StressTester.prototype.simulateMemoryPressure = (intensity) => {
     // Create memory pressure by allocating large arrays
     var arrays = [];
     var arrayCount = intensity * 10;
@@ -272,18 +268,18 @@ var StressTester = /** @class */ (function () {
     }
     console.log("\uD83E\uDDE0 Created memory pressure with ".concat(arrayCount, " large arrays"));
     // Keep reference to prevent GC
-    setTimeout(function () {
+    setTimeout(() => {
       arrays.length = 0; // Release memory
     }, 5000);
   };
   /**
    * Simulate CPU spike
    */
-  StressTester.prototype.simulateCpuSpike = function (intensity) {
+  StressTester.prototype.simulateCpuSpike = (intensity) => {
     var duration = intensity * 1000; // ms
     var startTime = Date.now();
     console.log("\u26A1 Simulating CPU spike for ".concat(duration, "ms"));
-    var cpuBurn = function () {
+    var cpuBurn = () => {
       var elapsed = Date.now() - startTime;
       if (elapsed < duration) {
         // Perform CPU-intensive operation
@@ -296,14 +292,14 @@ var StressTester = /** @class */ (function () {
   /**
    * Simulate connection drop
    */
-  StressTester.prototype.simulateConnectionDrop = function (intensity) {
+  StressTester.prototype.simulateConnectionDrop = (intensity) => {
     console.log("\uD83D\uDD0C Simulating connection drops (intensity: ".concat(intensity, ")"));
     // Implementation would mock network failures
   };
   /**
    * Cleanup chaos action
    */
-  StressTester.prototype.cleanupChaosAction = function (action) {
+  StressTester.prototype.cleanupChaosAction = (action) => {
     console.log("\uD83E\uDDF9 Cleaning up chaos action: ".concat(action.type));
     // Cleanup implementation would depend on action type
   };
@@ -313,7 +309,7 @@ var StressTester = /** @class */ (function () {
   StressTester.prototype.waitForSystemRecovery = function (testFn) {
     return __awaiter(this, void 0, void 0, function () {
       var maxWaitTime, checkInterval, startTime, isHealthy, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             maxWaitTime = 30000;
@@ -337,12 +333,7 @@ var StressTester = /** @class */ (function () {
             error_1 = _a.sent();
             return [3 /*break*/, 5];
           case 5:
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, checkInterval);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, checkInterval))];
           case 6:
             _a.sent();
             return [3 /*break*/, 1];
@@ -370,7 +361,7 @@ var StressTester = /** @class */ (function () {
   /**
    * Calculate system stability score
    */
-  StressTester.prototype.calculateStabilityScore = function (loadResult) {
+  StressTester.prototype.calculateStabilityScore = (loadResult) => {
     if (!loadResult.totalRequests) return 0;
     var successRate =
       (loadResult.totalRequests - loadResult.failedRequests) / loadResult.totalRequests;
@@ -380,7 +371,7 @@ var StressTester = /** @class */ (function () {
   /**
    * Calculate performance degradation
    */
-  StressTester.prototype.calculatePerformanceDegradation = function (baseline, current) {
+  StressTester.prototype.calculatePerformanceDegradation = (baseline, current) => {
     if (!baseline || !current) return 0;
     var baselineScore = baseline.overallScore || 100;
     var currentScore = current.overallScore || 100;
@@ -412,16 +403,10 @@ var StressTester = /** @class */ (function () {
     }
     var totalTests = this.reports.length;
     var averageStability =
-      this.reports.reduce(function (sum, report) {
-        return sum + report.systemStability;
-      }, 0) / totalTests;
+      this.reports.reduce((sum, report) => sum + report.systemStability, 0) / totalTests;
     var averageRecoveryTime =
-      this.reports.reduce(function (sum, report) {
-        return sum + report.recoveryTime;
-      }, 0) / totalTests;
-    var totalFailures = this.reports.reduce(function (sum, report) {
-      return sum + report.criticalFailures;
-    }, 0);
+      this.reports.reduce((sum, report) => sum + report.recoveryTime, 0) / totalTests;
+    var totalFailures = this.reports.reduce((sum, report) => sum + report.criticalFailures, 0);
     return {
       summary: "Executed ".concat(totalTests, " stress tests"),
       totalTests: totalTests,

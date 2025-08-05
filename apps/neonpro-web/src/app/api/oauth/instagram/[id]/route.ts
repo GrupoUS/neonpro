@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/app/utils/supabase/server";
 import { InstagramOAuthHandler } from "@/lib/oauth/platforms/instagram-handler";
 import { TokenEncryptionService } from "@/lib/oauth/token-encryption";
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Handle different actions
     switch (action) {
-      case "profile":
+      case "profile": {
         const profile = await instagramHandler.getUserProfile(accessToken);
         return NextResponse.json({
           success: true,
@@ -64,8 +64,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             lastSync: account.last_sync_at,
           },
         });
+      }
 
-      case "media":
+      case "media": {
         const limit = parseInt(searchParams.get("limit") || "25");
         const media = await instagramHandler.getUserMedia(accessToken, limit);
         return NextResponse.json({
@@ -73,8 +74,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           media,
           count: media.length,
         });
+      }
 
-      case "insights":
+      case "insights": {
         const period = (searchParams.get("period") as "day" | "week" | "days_28") || "day";
         const insights = await instagramHandler.getAccountInsights(accessToken, period);
         return NextResponse.json({
@@ -82,8 +84,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           insights,
           period,
         });
+      }
 
-      case "validate":
+      case "validate": {
         const isValid = await instagramHandler.validateTokens({
           accessToken,
           tokenType: "Bearer",
@@ -95,6 +98,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           isValid,
           expiresAt: account.token_expires_at,
         });
+      }
 
       default:
         return NextResponse.json({ error: "Invalid action specified" }, { status: 400 });

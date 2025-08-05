@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var card_1 = require("@/components/ui/card");
@@ -144,7 +141,7 @@ var select_1 = require("@/components/ui/select");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 var sonner_1 = require("sonner");
-var StorageMonitor = function () {
+var StorageMonitor = () => {
   var _a = (0, react_1.useState)([]),
     providers = _a[0],
     setProviders = _a[1];
@@ -166,13 +163,13 @@ var StorageMonitor = function () {
   var _g = (0, react_1.useState)(false),
     refreshing = _g[0],
     setRefreshing = _g[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadStorageData();
   }, []);
-  var loadStorageData = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadStorageData = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -197,11 +194,10 @@ var StorageMonitor = function () {
         }
       });
     });
-  };
-  var loadProviders = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadProviders = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/backup/storage/providers")];
@@ -218,11 +214,10 @@ var StorageMonitor = function () {
         }
       });
     });
-  };
-  var loadMetrics = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadMetrics = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/backup/metrics/storage")];
@@ -239,11 +234,10 @@ var StorageMonitor = function () {
         }
       });
     });
-  };
-  var loadHealth = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadHealth = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/backup/storage/health")];
@@ -260,11 +254,10 @@ var StorageMonitor = function () {
         }
       });
     });
-  };
-  var loadDistribution = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var loadDistribution = () =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, data;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/backup/metrics/distribution")];
@@ -281,10 +274,9 @@ var StorageMonitor = function () {
         }
       });
     });
-  };
-  var handleRefresh = function () {
-    return __awaiter(void 0, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleRefresh = () =>
+    __awaiter(void 0, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setRefreshing(true);
@@ -297,11 +289,10 @@ var StorageMonitor = function () {
         }
       });
     });
-  };
-  var handleTestConnection = function (providerId) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleTestConnection = (providerId) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -330,8 +321,7 @@ var StorageMonitor = function () {
         }
       });
     });
-  };
-  var getProviderIcon = function (type) {
+  var getProviderIcon = (type) => {
     switch (type) {
       case "LOCAL":
         return <lucide_react_1.HardDrive className="h-5 w-5" />;
@@ -345,7 +335,7 @@ var StorageMonitor = function () {
         return <lucide_react_1.Archive className="h-5 w-5" />;
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "ACTIVE":
       case "CONNECTED":
@@ -362,7 +352,7 @@ var StorageMonitor = function () {
         return "text-gray-500";
     }
   };
-  var getSeverityIcon = function (severity) {
+  var getSeverityIcon = (severity) => {
     switch (severity) {
       case "CRITICAL":
       case "HIGH":
@@ -376,9 +366,7 @@ var StorageMonitor = function () {
     }
   };
   var filteredProviders = selectedProvider
-    ? providers.filter(function (p) {
-        return p.id === selectedProvider;
-      })
+    ? providers.filter((p) => p.id === selectedProvider)
     : providers;
   if (loading) {
     return (
@@ -406,13 +394,11 @@ var StorageMonitor = function () {
             </select_1.SelectTrigger>
             <select_1.SelectContent>
               <select_1.SelectItem value="">Todos os provedores</select_1.SelectItem>
-              {providers.map(function (provider) {
-                return (
-                  <select_1.SelectItem key={provider.id} value={provider.id}>
-                    {provider.name}
-                  </select_1.SelectItem>
-                );
-              })}
+              {providers.map((provider) => (
+                <select_1.SelectItem key={provider.id} value={provider.id}>
+                  {provider.name}
+                </select_1.SelectItem>
+              ))}
             </select_1.SelectContent>
           </select_1.Select>
           <button_1.Button onClick={handleRefresh} disabled={refreshing}>
@@ -460,34 +446,32 @@ var StorageMonitor = function () {
 
             {health.issues.length > 0 && (
               <div className="space-y-2">
-                {health.issues.map(function (issue, index) {
-                  return (
-                    <alert_1.Alert
-                      key={index}
-                      className={
-                        issue.severity === "CRITICAL" || issue.severity === "HIGH"
-                          ? "border-red-200 bg-red-50"
-                          : issue.severity === "MEDIUM"
-                            ? "border-yellow-200 bg-yellow-50"
-                            : "border-blue-200 bg-blue-50"
-                      }
-                    >
-                      <div className="flex items-start space-x-2">
-                        {getSeverityIcon(issue.severity)}
-                        <div className="flex-1">
-                          <alert_1.AlertDescription>
-                            <strong>{issue.type}:</strong> {issue.message}
-                            {issue.recommendation && (
-                              <div className="mt-1 text-sm">
-                                <strong>Recomendação:</strong> {issue.recommendation}
-                              </div>
-                            )}
-                          </alert_1.AlertDescription>
-                        </div>
+                {health.issues.map((issue, index) => (
+                  <alert_1.Alert
+                    key={index}
+                    className={
+                      issue.severity === "CRITICAL" || issue.severity === "HIGH"
+                        ? "border-red-200 bg-red-50"
+                        : issue.severity === "MEDIUM"
+                          ? "border-yellow-200 bg-yellow-50"
+                          : "border-blue-200 bg-blue-50"
+                    }
+                  >
+                    <div className="flex items-start space-x-2">
+                      {getSeverityIcon(issue.severity)}
+                      <div className="flex-1">
+                        <alert_1.AlertDescription>
+                          <strong>{issue.type}:</strong> {issue.message}
+                          {issue.recommendation && (
+                            <div className="mt-1 text-sm">
+                              <strong>Recomendação:</strong> {issue.recommendation}
+                            </div>
+                          )}
+                        </alert_1.AlertDescription>
                       </div>
-                    </alert_1.Alert>
-                  );
-                })}
+                    </div>
+                  </alert_1.Alert>
+                ))}
               </div>
             )}
           </card_1.CardContent>
@@ -567,22 +551,20 @@ var StorageMonitor = function () {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {distribution.map(function (item) {
-                return (
-                  <div key={item.provider_id} className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{item.provider_name}</span>
-                      <div className="text-sm text-muted-foreground">
-                        {item.backup_count} backups • {(0, utils_1.formatBytes)(item.total_size)}
-                      </div>
-                    </div>
-                    <progress_1.Progress value={item.percentage} className="h-2" />
-                    <div className="text-xs text-muted-foreground">
-                      {item.percentage.toFixed(1)}% do total
+              {distribution.map((item) => (
+                <div key={item.provider_id} className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">{item.provider_name}</span>
+                    <div className="text-sm text-muted-foreground">
+                      {item.backup_count} backups • {(0, utils_1.formatBytes)(item.total_size)}
                     </div>
                   </div>
-                );
-              })}
+                  <progress_1.Progress value={item.percentage} className="h-2" />
+                  <div className="text-xs text-muted-foreground">
+                    {item.percentage.toFixed(1)}% do total
+                  </div>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -590,99 +572,95 @@ var StorageMonitor = function () {
 
       {/* Provedores */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredProviders.map(function (provider) {
-          return (
-            <card_1.Card key={provider.id}>
-              <card_1.CardHeader>
-                <card_1.CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    {getProviderIcon(provider.type)}
-                    <span>{provider.name}</span>
-                    <badge_1.Badge variant="outline">{provider.type}</badge_1.Badge>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className={"h-2 w-2 rounded-full ".concat(getStatusColor(provider.status))}
+        {filteredProviders.map((provider) => (
+          <card_1.Card key={provider.id}>
+            <card_1.CardHeader>
+              <card_1.CardTitle className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  {getProviderIcon(provider.type)}
+                  <span>{provider.name}</span>
+                  <badge_1.Badge variant="outline">{provider.type}</badge_1.Badge>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div
+                    className={"h-2 w-2 rounded-full ".concat(getStatusColor(provider.status))}
+                  />
+                  <span className={"text-sm ".concat(getStatusColor(provider.status))}>
+                    {provider.status}
+                  </span>
+                </div>
+              </card_1.CardTitle>
+              <card_1.CardDescription>
+                {provider.connection_status === "CONNECTED"
+                  ? <span className="text-green-600 flex items-center">
+                      <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
+                      Conectado
+                    </span>
+                  : provider.connection_status === "ERROR"
+                    ? <span className="text-red-600 flex items-center">
+                        <lucide_react_1.AlertTriangle className="h-4 w-4 mr-1" />
+                        Erro de conexão
+                      </span>
+                    : <span className="text-gray-600 flex items-center">
+                        <lucide_react_1.Clock className="h-4 w-4 mr-1" />
+                        Desconectado
+                      </span>}
+              </card_1.CardDescription>
+            </card_1.CardHeader>
+            <card_1.CardContent>
+              <div className="space-y-4">
+                {/* Capacidade */}
+                {provider.total_capacity && (
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>Capacidade</span>
+                      <span>
+                        {(0, utils_1.formatBytes)(provider.used_capacity || 0)} /{" "}
+                        {(0, utils_1.formatBytes)(provider.total_capacity)}
+                      </span>
+                    </div>
+                    <progress_1.Progress
+                      value={((provider.used_capacity || 0) / provider.total_capacity) * 100}
+                      className="h-2"
                     />
-                    <span className={"text-sm ".concat(getStatusColor(provider.status))}>
-                      {provider.status}
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {(0, utils_1.formatBytes)(provider.available_capacity || 0)} disponível
+                    </div>
+                  </div>
+                )}
+
+                {/* Última sincronização */}
+                {provider.last_sync && (
+                  <div className="flex justify-between text-sm">
+                    <span>Última sync:</span>
+                    <span className="text-muted-foreground">
+                      {(0, utils_1.formatDate)(new Date(provider.last_sync))}
                     </span>
                   </div>
-                </card_1.CardTitle>
-                <card_1.CardDescription>
-                  {provider.connection_status === "CONNECTED"
-                    ? <span className="text-green-600 flex items-center">
-                        <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
-                        Conectado
-                      </span>
-                    : provider.connection_status === "ERROR"
-                      ? <span className="text-red-600 flex items-center">
-                          <lucide_react_1.AlertTriangle className="h-4 w-4 mr-1" />
-                          Erro de conexão
-                        </span>
-                      : <span className="text-gray-600 flex items-center">
-                          <lucide_react_1.Clock className="h-4 w-4 mr-1" />
-                          Desconectado
-                        </span>}
-                </card_1.CardDescription>
-              </card_1.CardHeader>
-              <card_1.CardContent>
-                <div className="space-y-4">
-                  {/* Capacidade */}
-                  {provider.total_capacity && (
-                    <div>
-                      <div className="flex justify-between text-sm mb-2">
-                        <span>Capacidade</span>
-                        <span>
-                          {(0, utils_1.formatBytes)(provider.used_capacity || 0)} /{" "}
-                          {(0, utils_1.formatBytes)(provider.total_capacity)}
-                        </span>
-                      </div>
-                      <progress_1.Progress
-                        value={((provider.used_capacity || 0) / provider.total_capacity) * 100}
-                        className="h-2"
-                      />
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {(0, utils_1.formatBytes)(provider.available_capacity || 0)} disponível
-                      </div>
-                    </div>
-                  )}
+                )}
 
-                  {/* Última sincronização */}
-                  {provider.last_sync && (
-                    <div className="flex justify-between text-sm">
-                      <span>Última sync:</span>
-                      <span className="text-muted-foreground">
-                        {(0, utils_1.formatDate)(new Date(provider.last_sync))}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Ações */}
-                  <div className="flex space-x-2">
-                    <button_1.Button
-                      variant="outline"
-                      size="sm"
-                      onClick={function () {
-                        return handleTestConnection(provider.id);
-                      }}
-                      className="flex-1"
-                    >
-                      <lucide_react_1.Zap className="h-4 w-4 mr-2" />
-                      Testar Conexão
+                {/* Ações */}
+                <div className="flex space-x-2">
+                  <button_1.Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleTestConnection(provider.id)}
+                    className="flex-1"
+                  >
+                    <lucide_react_1.Zap className="h-4 w-4 mr-2" />
+                    Testar Conexão
+                  </button_1.Button>
+                  {provider.config && (
+                    <button_1.Button variant="outline" size="sm">
+                      <lucide_react_1.Shield className="h-4 w-4 mr-2" />
+                      Configurar
                     </button_1.Button>
-                    {provider.config && (
-                      <button_1.Button variant="outline" size="sm">
-                        <lucide_react_1.Shield className="h-4 w-4 mr-2" />
-                        Configurar
-                      </button_1.Button>
-                    )}
-                  </div>
+                  )}
                 </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
 
       {providers.length === 0 && (

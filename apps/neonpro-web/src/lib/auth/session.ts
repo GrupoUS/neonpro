@@ -8,32 +8,32 @@
 
 import type { createClient } from "@/lib/supabase/client";
 import type {
-  UserSession,
-  SessionSecurityEvent,
   DeviceRegistration,
-  SessionAuditLog,
-  SessionPolicy,
   SecurityEventType,
   SecuritySeverity,
+  SessionAuditLog,
+  SessionPolicy,
+  SessionSecurityEvent,
+  UserSession,
 } from "@/types/session";
 
 // Re-export types that are needed elsewhere
 export {
-  SessionAction,
   DeviceType,
   SecurityLevel,
+  SessionAction,
 } from "@/types/session";
 
+import type { logger } from "@/lib/logger";
 import type {
   CreateSessionRequest,
-  UpdateSessionRequest,
-  SessionFilter,
-  SessionSort,
+  SecurityThresholds,
   SessionAnalytics,
   SessionConfig,
-  SecurityThresholds,
+  SessionFilter,
+  SessionSort,
+  UpdateSessionRequest,
 } from "@/types/session";
-import type { logger } from "@/lib/logger";
 
 // ============================================================================
 // SESSION MANAGEMENT CLASS

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Sign Up Page
  * Healthcare-focused registration with LGPD compliance

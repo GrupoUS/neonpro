@@ -1,28 +1,27 @@
 import type { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 import type { LGPDComplianceManager } from "../LGPDComplianceManager";
-
+import type { AuditConfig, AuditReportingAutomation } from "./AuditReportingAutomation";
+import type { BreachDetectionAutomation, BreachDetectionConfig } from "./BreachDetectionAutomation";
 // Import all automation modules
-import type { ConsentAutomationManager, ConsentAutomationConfig } from "./ConsentAutomationManager";
+import type { ConsentAutomationConfig, ConsentAutomationManager } from "./ConsentAutomationManager";
+import type {
+  DataMinimizationAutomation,
+  DataMinimizationConfig,
+} from "./DataMinimizationAutomation";
+import type { DataRetentionAutomation, RetentionConfig } from "./DataRetentionAutomation";
 import type {
   DataSubjectRightsAutomation,
   DataSubjectRightsConfig,
 } from "./DataSubjectRightsAutomation";
 import type {
-  RealTimeComplianceMonitor,
   ComplianceMonitorConfig,
+  RealTimeComplianceMonitor,
 } from "./RealTimeComplianceMonitor";
-import type { DataRetentionAutomation, RetentionConfig } from "./DataRetentionAutomation";
-import type { BreachDetectionAutomation, BreachDetectionConfig } from "./BreachDetectionAutomation";
-import type {
-  DataMinimizationAutomation,
-  DataMinimizationConfig,
-} from "./DataMinimizationAutomation";
 import type {
   ThirdPartyComplianceAutomation,
   ThirdPartyConfig,
 } from "./ThirdPartyComplianceAutomation";
-import type { AuditReportingAutomation, AuditConfig } from "./AuditReportingAutomation";
 
 type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
@@ -694,7 +693,7 @@ export class LGPDAutomationOrchestrator {
 }
 
 // Export all automation classes for individual use
-export {
+export type {
   ConsentAutomationManager,
   DataSubjectRightsAutomation,
   RealTimeComplianceMonitor,

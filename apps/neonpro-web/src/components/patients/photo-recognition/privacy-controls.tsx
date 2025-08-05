@@ -7,40 +7,18 @@
  * @author APEX Master Developer
  */
 
-import React, { useState, useEffect } from "react";
 import type {
-  Shield,
-  Eye,
-  EyeOff,
-  Clock,
-  Users,
-  Lock,
   AlertTriangle,
   Check,
+  Clock,
+  Eye,
+  EyeOff,
+  Lock,
+  Shield,
+  Users,
   X,
 } from "lucide-react";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Switch } from "@/components/ui/switch";
-import type { Label } from "@/components/ui/label";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import type { Input } from "@/components/ui/input";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Badge } from "@/components/ui/badge";
-import type { useToast } from "@/components/ui/use-toast";
-import type {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import React, { useEffect, useState } from "react";
 import type {
   AlertDialog,
   AlertDialogAction,
@@ -52,6 +30,28 @@ import type {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Switch } from "@/components/ui/switch";
+import type { Textarea } from "@/components/ui/textarea";
+import type { useToast } from "@/components/ui/use-toast";
 
 interface PrivacyControlsProps {
   patientId: string;

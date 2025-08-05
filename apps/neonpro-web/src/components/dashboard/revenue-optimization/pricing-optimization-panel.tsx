@@ -6,6 +6,9 @@
 
 "use client";
 
+import type { DollarSign, Lightbulb, Settings, TrendingUp } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,9 +16,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { DollarSign, TrendingUp, Settings, Lightbulb } from "lucide-react";
 
 interface PricingOptimizationPanelProps {
   pricingData: {

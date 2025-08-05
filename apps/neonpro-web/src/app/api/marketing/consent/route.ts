@@ -2,10 +2,10 @@
 // Epic 7.2: Automated Marketing Campaigns + Personalization (LGPD Compliance)
 // Author: VoidBeast Agent
 
+import type { NextRequest, NextResponse } from "next/server";
 import type { MarketingCampaignService } from "@/app/lib/services/marketing-campaign-service";
 import type { MarketingConsentSchema } from "@/app/lib/validations/campaigns";
 import type { createClient } from "@/lib/supabase/server";
-import type { NextRequest, NextResponse } from "next/server";
 
 const campaignService = new MarketingCampaignService();
 

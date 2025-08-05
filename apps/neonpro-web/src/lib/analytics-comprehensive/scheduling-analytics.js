@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,7 +142,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SchedulingAnalytics = void 0;
 var client_1 = require("@/lib/supabase/client");
@@ -154,7 +151,7 @@ var client_1 = require("@/lib/supabase/client");
  * Provides comprehensive analytics, insights, and predictive capabilities
  * for clinic scheduling optimization and business intelligence
  */
-var SchedulingAnalytics = /** @class */ (function () {
+var SchedulingAnalytics = /** @class */ (() => {
   function SchedulingAnalytics() {
     this.CACHE_TTL = 5 * 60 * 1000; // 5 minutes
     this.supabase = (0, client_1.createClient)();
@@ -213,40 +210,36 @@ var SchedulingAnalytics = /** @class */ (function () {
             completedAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "completed";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "completed").length) || 0;
             cancelledAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "cancelled";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "cancelled").length) || 0;
             noShowAppointments =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.filter(function (a) {
-                    return a.status === "no_show";
-                  }).length) || 0;
+                : appointments.filter((a) => a.status === "no_show").length) || 0;
             avgDuration =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (sum, a) {
-                    return sum + (a.actual_duration || a.scheduled_duration || 0);
-                  }, 0)) / totalAppointments || 0;
+                : appointments.reduce(
+                    (sum, a) => sum + (a.actual_duration || a.scheduled_duration || 0),
+                    0,
+                  )) / totalAppointments || 0;
             totalScheduledHours = this.calculateTotalScheduledHours(filter);
             totalUsedHours =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (sum, a) {
-                    return sum + (a.actual_duration || a.scheduled_duration || 0) / 60;
-                  }, 0)) || 0;
+                : appointments.reduce(
+                    (sum, a) => sum + (a.actual_duration || a.scheduled_duration || 0) / 60,
+                    0,
+                  )) || 0;
             utilizationRate =
               totalScheduledHours > 0 ? (totalUsedHours / totalScheduledHours) * 100 : 0;
             revenueGenerated =
               (appointments === null || appointments === void 0
                 ? void 0
-                : appointments.reduce(function (sum, a) {
+                : appointments.reduce((sum, a) => {
                     var _a;
                     return (
                       sum + (((_a = a.services) === null || _a === void 0 ? void 0 : _a.price) || 0)
@@ -325,7 +318,7 @@ var SchedulingAnalytics = /** @class */ (function () {
             patterns_1 = new Map();
             appointments === null || appointments === void 0
               ? void 0
-              : appointments.forEach(function (appointment) {
+              : appointments.forEach((appointment) => {
                   var _a;
                   var date = new Date(appointment.scheduled_at);
                   var dayOfWeek = date.toLocaleDateString("en-US", { weekday: "long" });
@@ -350,7 +343,7 @@ var SchedulingAnalytics = /** @class */ (function () {
                     ((_a = appointment.services) === null || _a === void 0 ? void 0 : _a.price) ||
                     0;
                 });
-            result = Array.from(patterns_1.entries()).map(function (_a) {
+            result = Array.from(patterns_1.entries()).map((_a) => {
               var _b;
               var key = _a[0],
                 data = _a[1];
@@ -417,7 +410,7 @@ var SchedulingAnalytics = /** @class */ (function () {
             (_a = _b.sent()), (appointments = _a.data), (error = _a.error);
             if (error) throw error;
             trends_1 = this.groupByPeriod(appointments || [], filter.granularity);
-            result = trends_1.map(function (trend, index) {
+            result = trends_1.map((trend, index) => {
               var previousTrend = index > 0 ? trends_1[index - 1] : null;
               var growthRate = previousTrend
                 ? ((trend.appointmentVolume - previousTrend.appointmentVolume) /
@@ -426,9 +419,7 @@ var SchedulingAnalytics = /** @class */ (function () {
                 : 0;
               // Calculate seasonal index (current period vs average)
               var averageVolume =
-                trends_1.reduce(function (sum, t) {
-                  return sum + t.appointmentVolume;
-                }, 0) / trends_1.length;
+                trends_1.reduce((sum, t) => sum + t.appointmentVolume, 0) / trends_1.length;
               var seasonalIndex = averageVolume > 0 ? trend.appointmentVolume / averageVolume : 1;
               return __assign(__assign({}, trend), {
                 growthRate: growthRate,
@@ -477,8 +468,8 @@ var SchedulingAnalytics = /** @class */ (function () {
             return [
               4 /*yield*/,
               Promise.all(
-                (staffData || []).map(function (staff) {
-                  return __awaiter(_this, void 0, void 0, function () {
+                (staffData || []).map((staff) =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var appointments,
                       completedAppointments,
                       totalDuration,
@@ -497,19 +488,20 @@ var SchedulingAnalytics = /** @class */ (function () {
                           appointments =
                             ((_a = staff.appointments) === null || _a === void 0
                               ? void 0
-                              : _a.filter(function (a) {
+                              : _a.filter((a) => {
                                   var appointmentDate = new Date(a.scheduled_at);
                                   return (
                                     appointmentDate >= filter.startDate &&
                                     appointmentDate <= filter.endDate
                                   );
                                 })) || [];
-                          completedAppointments = appointments.filter(function (a) {
-                            return a.status === "completed";
-                          });
-                          totalDuration = appointments.reduce(function (sum, a) {
-                            return sum + (a.actual_duration || a.scheduled_duration || 0);
-                          }, 0);
+                          completedAppointments = appointments.filter(
+                            (a) => a.status === "completed",
+                          );
+                          totalDuration = appointments.reduce(
+                            (sum, a) => sum + (a.actual_duration || a.scheduled_duration || 0),
+                            0,
+                          );
                           avgDuration =
                             appointments.length > 0 ? totalDuration / appointments.length : 0;
                           return [
@@ -519,23 +511,19 @@ var SchedulingAnalytics = /** @class */ (function () {
                           ];
                         case 1:
                           utilizationRate = _b.sent();
-                          ratings = appointments.flatMap(function (a) {
+                          ratings = appointments.flatMap((a) => {
                             var _a;
                             return (
                               ((_a = a.patient_feedback) === null || _a === void 0
                                 ? void 0
-                                : _a.map(function (f) {
-                                    return f.rating;
-                                  })) || []
+                                : _a.map((f) => f.rating)) || []
                             );
                           });
                           avgRating =
                             ratings.length > 0
-                              ? ratings.reduce(function (sum, r) {
-                                  return sum + r;
-                                }, 0) / ratings.length
+                              ? ratings.reduce((sum, r) => sum + r, 0) / ratings.length
                               : 0;
-                          revenueGenerated = appointments.reduce(function (sum, a) {
+                          revenueGenerated = appointments.reduce((sum, a) => {
                             var _a;
                             return (
                               sum +
@@ -570,8 +558,8 @@ var SchedulingAnalytics = /** @class */ (function () {
                           ];
                       }
                     });
-                  });
-                }),
+                  }),
+                ),
               ),
             ];
           case 3:
@@ -641,7 +629,7 @@ var SchedulingAnalytics = /** @class */ (function () {
             totalRevenue =
               (appointments_1 === null || appointments_1 === void 0
                 ? void 0
-                : appointments_1.reduce(function (sum, a) {
+                : appointments_1.reduce((sum, a) => {
                     var _a;
                     return (
                       sum + (((_a = a.services) === null || _a === void 0 ? void 0 : _a.price) || 0)
@@ -650,7 +638,7 @@ var SchedulingAnalytics = /** @class */ (function () {
             totalCost =
               (appointments_1 === null || appointments_1 === void 0
                 ? void 0
-                : appointments_1.reduce(function (sum, a) {
+                : appointments_1.reduce((sum, a) => {
                     var _a;
                     return (
                       sum + (((_a = a.services) === null || _a === void 0 ? void 0 : _a.cost) || 0)
@@ -666,9 +654,7 @@ var SchedulingAnalytics = /** @class */ (function () {
             uniqueStaff = new Set(
               appointments_1 === null || appointments_1 === void 0
                 ? void 0
-                : appointments_1.map(function (a) {
-                    return a.staff_id;
-                  }),
+                : appointments_1.map((a) => a.staff_id),
             ).size;
             revenuePerStaff = uniqueStaff > 0 ? totalRevenue / uniqueStaff : 0;
             profitMargin = totalRevenue > 0 ? ((totalRevenue - totalCost) / totalRevenue) * 100 : 0;
@@ -679,11 +665,11 @@ var SchedulingAnalytics = /** @class */ (function () {
               { range: "$500-$1000", min: 500, max: 1000 },
               { range: "$1000+", min: 1000, max: Infinity },
             ];
-            appointmentValueDistribution = valueRanges.map(function (range) {
+            appointmentValueDistribution = valueRanges.map((range) => {
               var appointmentsInRange =
                 (appointments_1 === null || appointments_1 === void 0
                   ? void 0
-                  : appointments_1.filter(function (a) {
+                  : appointments_1.filter((a) => {
                       var _a;
                       var price =
                         ((_a = a.services) === null || _a === void 0 ? void 0 : _a.price) || 0;
@@ -692,7 +678,7 @@ var SchedulingAnalytics = /** @class */ (function () {
               return {
                 range: range.range,
                 count: appointmentsInRange.length,
-                revenue: appointmentsInRange.reduce(function (sum, a) {
+                revenue: appointmentsInRange.reduce((sum, a) => {
                   var _a;
                   return (
                     sum + (((_a = a.services) === null || _a === void 0 ? void 0 : _a.price) || 0)
@@ -703,7 +689,7 @@ var SchedulingAnalytics = /** @class */ (function () {
             treatmentRevenue_1 = new Map();
             appointments_1 === null || appointments_1 === void 0
               ? void 0
-              : appointments_1.forEach(function (appointment) {
+              : appointments_1.forEach((appointment) => {
                   var _a, _b;
                   var serviceName =
                     ((_a = appointment.services) === null || _a === void 0 ? void 0 : _a.name) ||
@@ -718,7 +704,7 @@ var SchedulingAnalytics = /** @class */ (function () {
                   current.revenue += price;
                   current.count += 1;
                 });
-            treatmentTypeRevenue = Array.from(treatmentRevenue_1.entries()).map(function (_a) {
+            treatmentTypeRevenue = Array.from(treatmentRevenue_1.entries()).map((_a) => {
               var type = _a[0],
                 data = _a[1];
               return {
@@ -773,7 +759,7 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.calculateTotalScheduledHours = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for calculating total scheduled hours
         // This would involve getting staff schedules and calculating available hours
         return [2 /*return*/, 0]; // Placeholder
@@ -782,7 +768,7 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.calculatePatientSatisfaction = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for calculating patient satisfaction score
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -790,7 +776,7 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.calculateStaffEfficiency = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for calculating staff efficiency score
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -798,7 +784,7 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.identifyPeakHours = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for identifying peak hours
         return [2 /*return*/, []]; // Placeholder
       });
@@ -806,7 +792,7 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.identifyBottlenecks = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for identifying bottlenecks
         return [2 /*return*/, []]; // Placeholder
       });
@@ -818,19 +804,19 @@ var SchedulingAnalytics = /** @class */ (function () {
     filter,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for calculating hourly staff utilization
         return [2 /*return*/, 0]; // Placeholder
       });
     });
   };
-  SchedulingAnalytics.prototype.groupByPeriod = function (appointments, granularity) {
+  SchedulingAnalytics.prototype.groupByPeriod = (appointments, granularity) => {
     // Implementation for grouping appointments by period
     return []; // Placeholder
   };
   SchedulingAnalytics.prototype.calculateStaffUtilization = function (staffId, filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for calculating staff utilization
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -838,7 +824,7 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.calculateSkillUtilization = function (staffId, filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for calculating skill utilization
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -846,13 +832,13 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.calculateWorkloadBalance = function (staffId, filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for calculating workload balance
         return [2 /*return*/, 0]; // Placeholder
       });
     });
   };
-  SchedulingAnalytics.prototype.calculateTotalHours = function (filter) {
+  SchedulingAnalytics.prototype.calculateTotalHours = (filter) => {
     // Implementation for calculating total hours in period
     var diffTime = Math.abs(filter.endDate.getTime() - filter.startDate.getTime());
     var diffHours = Math.ceil(diffTime / (1000 * 60 * 60));
@@ -860,7 +846,7 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.calculatePatientLifetimeValue = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for calculating patient lifetime value
         return [2 /*return*/, 0]; // Placeholder
       });
@@ -868,7 +854,7 @@ var SchedulingAnalytics = /** @class */ (function () {
   };
   SchedulingAnalytics.prototype.forecastRevenue = function (filter) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for revenue forecasting
         return [2 /*return*/, 0]; // Placeholder
       });

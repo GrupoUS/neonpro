@@ -1,8 +1,8 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
+import type { z } from "zod";
 import EmailService from "@/app/lib/services/email-service";
 import type { EmailMessageSchema } from "@/app/types/email";
-import type { z } from "zod";
+import type { createClient } from "@/lib/supabase/server";
 
 const BulkEmailSchema = z.object({
   messages: z.array(EmailMessageSchema).min(1, "At least one message is required"),

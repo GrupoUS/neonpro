@@ -1,21 +1,24 @@
 "use client";
 
-import type { useState, useEffect } from "react";
-import type { useForm, useFieldArray, Controller } from "react-hook-form";
 import type { zodResolver } from "@hookform/resolvers/zod";
-import type { toast } from "sonner";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type { Checkbox } from "@/components/ui/checkbox";
 import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  AlertCircle,
+  Heart,
+  Mail,
+  MapPin,
+  Phone,
+  Plus,
+  RefreshCw,
+  Save,
+  Shield,
+  Trash2,
+  User,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Controller, useFieldArray, useForm } from "react-hook-form";
+import type { toast } from "sonner";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -23,24 +26,21 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
+import type { Checkbox } from "@/components/ui/checkbox";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
 import type {
-  AlertCircle,
-  Shield,
-  User,
-  Phone,
-  Mail,
-  MapPin,
-  Heart,
-  Plus,
-  Trash2,
-  Save,
-  RefreshCw,
-} from "lucide-react";
-import type { PatientProfileSchema, PatientProfile } from "@/lib/validations/patient-profile";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 import type { useLgpdConsent } from "@/hooks/use-lgpd-consent";
+import type { PatientProfile, PatientProfileSchema } from "@/lib/validations/patient-profile";
 
 interface PatientProfileEditFormProps {
   patientId: string;

@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // Financial Reporting API - Advanced Analytics Endpoint
 // Epic 5, Story 5.1: Advanced Financial Reporting + Real-time Insights
@@ -7,15 +6,15 @@
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -137,7 +134,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -156,7 +153,7 @@ var analyticsCore = new analytics_core_1.FinancialAnalyticsCore();
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, searchParams, clinicId, reportType, action, _a, user, authError, _b, error_1;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 15, , 16]);
@@ -245,7 +242,7 @@ function GET(request) {
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, body, action, clinic_id, parameters, options, _a, user, authError, _b, error_2;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           _c.trys.push([0, 16, , 17]);
@@ -340,7 +337,7 @@ function POST(request) {
 function handleDashboardRequest(clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var dashboardData, error_3;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -377,7 +374,7 @@ function handleDashboardRequest(clinicId) {
 function handleKPIRequest(clinicId, searchParams) {
   return __awaiter(this, void 0, void 0, function () {
     var periodStart, periodEnd, now, parameters_1, kpis_1, parameters, validation, kpis, error_4;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 4, , 5]);
@@ -444,7 +441,7 @@ function handleKPIRequest(clinicId, searchParams) {
 function handleReportsListRequest(clinicId, searchParams) {
   return __awaiter(this, void 0, void 0, function () {
     var reportType, status_1, page, limit, filters, reports, error_5;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -493,7 +490,7 @@ function handleReportsListRequest(clinicId, searchParams) {
 function handleReportGenerationRequest(clinicId, reportType, searchParams) {
   return __awaiter(this, void 0, void 0, function () {
     var periodStart, periodEnd, parameters, validation, reportData, _a, savedReport, error_6;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 10, , 11]);
@@ -607,7 +604,7 @@ function handleReportGenerationRequest(clinicId, reportType, searchParams) {
 function handlePerformanceRequest(clinicId, searchParams) {
   return __awaiter(this, void 0, void 0, function () {
     var periodStart, periodEnd, parameters, validation, performance_1, error_7;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -666,7 +663,7 @@ function handlePerformanceRequest(clinicId, searchParams) {
 function handleProfitLossGeneration(clinicId, parameters) {
   return __awaiter(this, void 0, void 0, function () {
     var validation, profitLoss, savedReport, error_8;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 3, , 4]);
@@ -730,7 +727,7 @@ function handleProfitLossGeneration(clinicId, parameters) {
 function handleBalanceSheetGeneration(clinicId, parameters) {
   return __awaiter(this, void 0, void 0, function () {
     var balanceSheet, savedReport, error_9;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 3, , 4]);
@@ -796,7 +793,7 @@ function handleBalanceSheetGeneration(clinicId, parameters) {
 function handleCashFlowGeneration(clinicId, parameters) {
   return __awaiter(this, void 0, void 0, function () {
     var validation, cashFlow, savedReport, error_10;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 3, , 4]);
@@ -859,7 +856,7 @@ function handleCashFlowGeneration(clinicId, parameters) {
  */
 function handleReportExport(clinicId, parameters, options) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         // TODO: Implement report export functionality (PDF, Excel, CSV)
         return [
@@ -890,7 +887,7 @@ function handleReportExport(clinicId, parameters, options) {
  */
 function handleReportScheduling(clinicId, parameters, options) {
   return __awaiter(this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       try {
         // TODO: Implement report scheduling functionality
         return [

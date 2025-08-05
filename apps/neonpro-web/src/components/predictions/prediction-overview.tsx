@@ -5,11 +5,43 @@
 
 "use client";
 
-import React, { useState, useMemo } from "react";
-import type { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type {
+  Activity,
+  AlertTriangle,
+  Calendar,
+  Clock,
+  Filter,
+  MessageSquare,
+  Phone,
+  Search,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  User,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Input } from "@/components/ui/input";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -25,47 +57,13 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  Area,
-  AreaChart,
-} from "recharts";
-import type {
-  Search,
-  Filter,
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  Clock,
-  Calendar,
-  User,
-  Phone,
-  MessageSquare,
-  Target,
-  Activity,
-} from "lucide-react";
-import type {
+  formatRiskScore,
+  getRiskBadgeColor,
+  getRiskColor,
   NoShowPrediction,
   PatientRiskProfile,
   RiskFactor,
-} from "@/lib/analytics/no-show-prediction";
-import type {
-  formatRiskScore,
-  getRiskColor,
-  getRiskBadgeColor,
 } from "@/lib/analytics/no-show-prediction";
 
 interface PredictionOverviewProps {

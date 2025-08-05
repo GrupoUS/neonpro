@@ -3,17 +3,17 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 
-// Main session components
-export { default as SessionStatus } from "./SessionStatus";
-export { default as SessionWarning } from "./SessionWarning";
+export type { DeviceManagementProps } from "./DeviceManagement";
 export { default as DeviceManagement } from "./DeviceManagement";
+export type { SecurityDashboardProps } from "./SecurityDashboard";
 export { default as SecurityDashboard } from "./SecurityDashboard";
 
 // Re-export component types for convenience
 export type { SessionStatusProps } from "./SessionStatus";
+// Main session components
+export { default as SessionStatus } from "./SessionStatus";
 export type { SessionWarningProps } from "./SessionWarning";
-export type { DeviceManagementProps } from "./DeviceManagement";
-export type { SecurityDashboardProps } from "./SecurityDashboard";
+export { default as SessionWarning } from "./SessionWarning";
 
 // =====================================================
 // COMPONENT COLLECTIONS

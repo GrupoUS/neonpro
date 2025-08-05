@@ -7,30 +7,30 @@
  */
 
 import type { createClient } from "@supabase/supabase-js";
-import type {
-  BackupConfig,
-  BackupRecord,
-  BackupProgress,
-  BackupStatus,
-  BackupType,
-  RecoveryRequest,
-  RecoveryProgress,
-  BackupMetrics,
-  BackupAlert,
-  BackupFilter,
-  PaginatedResult,
-  PaginationOptions,
-  ApiResponse,
-  BackupEvent,
-  DataType,
-  StorageType,
-  BackupPriority,
-} from "./types";
-import type { StorageProvider } from "./storage";
-import type { SchedulerService } from "./scheduler";
-import type { MonitoringService } from "./monitoring";
 // import type { SecurityService } from "./security";
 import type { auditLogger } from "../auth/audit/audit-logger";
+import type { MonitoringService } from "./monitoring";
+import type { SchedulerService } from "./scheduler";
+import type { StorageProvider } from "./storage";
+import type {
+  ApiResponse,
+  BackupAlert,
+  BackupConfig,
+  BackupEvent,
+  BackupFilter,
+  BackupMetrics,
+  BackupPriority,
+  BackupProgress,
+  BackupRecord,
+  BackupStatus,
+  BackupType,
+  DataType,
+  PaginatedResult,
+  PaginationOptions,
+  RecoveryProgress,
+  RecoveryRequest,
+  StorageType,
+} from "./types";
 
 /**
  * Gerenciador principal do sistema de backup
@@ -388,41 +388,47 @@ export class BackupManager {
 
     for (const dataType of config.dataTypes) {
       switch (dataType) {
-        case DataType.DATABASE:
+        case DataType.DATABASE: {
           const dbResult = await this.backupDatabase(config, progress);
           results.size += dbResult.size;
           results.filesCount += dbResult.filesCount;
           break;
+        }
 
-        case DataType.FILES:
+        case DataType.FILES: {
           const filesResult = await this.backupFiles(config, progress);
           results.size += filesResult.size;
           results.filesCount += filesResult.filesCount;
           break;
+        }
 
-        case DataType.LOGS:
+        case DataType.LOGS: {
           const logsResult = await this.backupLogs(config, progress);
           results.size += logsResult.size;
           results.filesCount += logsResult.filesCount;
           break;
+        }
 
-        case DataType.CONFIG:
+        case DataType.CONFIG: {
           const configResult = await this.backupConfig(config, progress);
           results.size += configResult.size;
           results.filesCount += configResult.filesCount;
           break;
+        }
 
-        case DataType.MEDIA:
+        case DataType.MEDIA: {
           const mediaResult = await this.backupMedia(config, progress);
           results.size += mediaResult.size;
           results.filesCount += mediaResult.filesCount;
           break;
+        }
 
-        case DataType.DOCUMENTS:
+        case DataType.DOCUMENTS: {
           const docsResult = await this.backupDocuments(config, progress);
           results.size += docsResult.size;
           results.filesCount += docsResult.filesCount;
           break;
+        }
       }
     }
 

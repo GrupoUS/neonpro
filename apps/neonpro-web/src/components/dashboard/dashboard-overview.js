@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardOverview = DashboardOverview;
 var lucide_react_1 = require("lucide-react");
@@ -119,7 +118,7 @@ function DashboardOverview() {
       is_new_patient: false,
     },
   ];
-  var getActivityIcon = function (type, status) {
+  var getActivityIcon = (type, status) => {
     switch (type) {
       case "appointment":
         return status === "completed" ? lucide_react_1.CheckCircle2 : lucide_react_1.Calendar;
@@ -133,7 +132,7 @@ function DashboardOverview() {
         return lucide_react_1.Activity;
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "confirmed":
         return (
@@ -288,7 +287,7 @@ function DashboardOverview() {
               </button_1.Button>
             </card_1.CardHeader>
             <card_1.CardContent className="space-y-4">
-              {recentActivities.map(function (activity) {
+              {recentActivities.map((activity) => {
                 var IconComponent = getActivityIcon(activity.type, activity.status);
                 return (
                   <div
@@ -331,31 +330,29 @@ function DashboardOverview() {
               </button_1.Button>
             </card_1.CardHeader>
             <card_1.CardContent className="space-y-4">
-              {upcomingAppointments.map(function (appointment) {
-                return (
-                  <div
-                    key={appointment.id}
-                    className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/30 transition-colors"
-                  >
-                    <div className="w-2 h-8 bg-primary rounded-full" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-medium text-foreground">
-                          {appointment.patient_name}
-                        </p>
-                        {appointment.is_new_patient && (
-                          <badge_1.Badge variant="secondary" className="text-xs">
-                            Novo
-                          </badge_1.Badge>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground">{appointment.service}</p>
-                      <p className="text-xs text-muted-foreground">{appointment.time}</p>
+              {upcomingAppointments.map((appointment) => (
+                <div
+                  key={appointment.id}
+                  className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/30 transition-colors"
+                >
+                  <div className="w-2 h-8 bg-primary rounded-full" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-foreground">
+                        {appointment.patient_name}
+                      </p>
+                      {appointment.is_new_patient && (
+                        <badge_1.Badge variant="secondary" className="text-xs">
+                          Novo
+                        </badge_1.Badge>
+                      )}
                     </div>
-                    <div className="flex-shrink-0">{getStatusBadge(appointment.status)}</div>
+                    <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                    <p className="text-xs text-muted-foreground">{appointment.time}</p>
                   </div>
-                );
-              })}
+                  <div className="flex-shrink-0">{getStatusBadge(appointment.status)}</div>
+                </div>
+              ))}
 
               <div className="pt-4 border-t">
                 <button_1.Button variant="outline" className="w-full" size="sm">

@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChartWidget = ChartWidget;
 var react_1 = require("react");
@@ -207,7 +204,6 @@ var AGGREGATIONS = {
   month: { label: "Monthly", format: "MMM yyyy" },
 };
 function ChartWidget(_a) {
-  var _this = this;
   var widget = _a.widget,
     isEditing = _a.isEditing,
     onUpdate = _a.onUpdate;
@@ -247,159 +243,122 @@ function ChartWidget(_a) {
     widget.config,
   );
   // Fetch chart data
-  (0, react_1.useEffect)(
-    function () {
-      var fetchData = function () {
-        return __awaiter(_this, void 0, void 0, function () {
-          var mockData, err_1;
-          return __generator(this, function (_a) {
-            switch (_a.label) {
-              case 0:
-                if (!widget.dataSource) {
-                  setError("No data source configured");
-                  setIsLoading(false);
-                  return [2 /*return*/];
-                }
-                _a.label = 1;
-              case 1:
-                _a.trys.push([1, 3, 4, 5]);
-                setIsLoading(true);
-                setError(null);
-                // Simulate API call - replace with actual implementation
-                return [
-                  4 /*yield*/,
-                  new Promise(function (resolve) {
-                    return setTimeout(resolve, 1500);
-                  }),
-                ];
-              case 2:
-                // Simulate API call - replace with actual implementation
-                _a.sent();
-                mockData = generateMockChartData(
-                  selectedTimeRange,
-                  selectedAggregation,
-                  config.type,
-                );
-                setData(mockData);
-                return [3 /*break*/, 5];
-              case 3:
-                err_1 = _a.sent();
-                setError(err_1 instanceof Error ? err_1.message : "Failed to load chart data");
-                return [3 /*break*/, 5];
-              case 4:
+  (0, react_1.useEffect)(() => {
+    var fetchData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        var mockData, err_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (!widget.dataSource) {
+                setError("No data source configured");
                 setIsLoading(false);
-                return [7 /*endfinally*/];
-              case 5:
                 return [2 /*return*/];
-            }
-          });
+              }
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, 4, 5]);
+              setIsLoading(true);
+              setError(null);
+              // Simulate API call - replace with actual implementation
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
+            case 2:
+              // Simulate API call - replace with actual implementation
+              _a.sent();
+              mockData = generateMockChartData(selectedTimeRange, selectedAggregation, config.type);
+              setData(mockData);
+              return [3 /*break*/, 5];
+            case 3:
+              err_1 = _a.sent();
+              setError(err_1 instanceof Error ? err_1.message : "Failed to load chart data");
+              return [3 /*break*/, 5];
+            case 4:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 5:
+              return [2 /*return*/];
+          }
         });
-      };
-      fetchData();
-      // Set up auto-refresh
-      if (widget.refreshInterval && widget.refreshInterval > 0) {
-        var interval_1 = setInterval(fetchData, widget.refreshInterval * 1000);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [
-      widget.dataSource,
-      widget.refreshInterval,
-      selectedTimeRange,
-      selectedAggregation,
-      config.type,
-    ],
-  );
-  // Process data for different chart types
-  var processedData = (0, react_1.useMemo)(
-    function () {
-      if (!data.length) return [];
-      switch (config.type) {
-        case "pie":
-          // Aggregate data for pie chart
-          var pieData = data.reduce(function (acc, item) {
-            var category = item.category || "Other";
-            var existing = acc.find(function (d) {
-              return d.name === category;
-            });
-            if (existing) {
-              existing.value += item.value;
-            } else {
-              acc.push({ name: category, value: item.value });
-            }
-            return acc;
-          }, []);
-          return pieData;
-        default:
-          return data.map(function (item) {
-            return __assign(__assign({}, item), {
-              timestamp: formatTimestamp(item.timestamp, selectedAggregation),
-            });
-          });
-      }
-    },
-    [data, config.type, selectedAggregation],
-  );
-  // Calculate summary statistics
-  var stats = (0, react_1.useMemo)(
-    function () {
-      if (!data.length) return null;
-      var values = data.map(function (d) {
-        return d.value;
       });
-      var total = values.reduce(function (sum, val) {
-        return sum + val;
-      }, 0);
-      var average = total / values.length;
-      var min = Math.min.apply(Math, values);
-      var max = Math.max.apply(Math, values);
-      // Calculate trend
-      var firstHalf = values.slice(0, Math.floor(values.length / 2));
-      var secondHalf = values.slice(Math.floor(values.length / 2));
-      var firstAvg =
-        firstHalf.reduce(function (sum, val) {
-          return sum + val;
-        }, 0) / firstHalf.length;
-      var secondAvg =
-        secondHalf.reduce(function (sum, val) {
-          return sum + val;
-        }, 0) / secondHalf.length;
-      var trend = secondAvg > firstAvg ? "up" : secondAvg < firstAvg ? "down" : "stable";
-      var trendPercentage = firstAvg !== 0 ? ((secondAvg - firstAvg) / firstAvg) * 100 : 0;
-      return {
-        total: total,
-        average: average,
-        min: min,
-        max: max,
-        trend: trend,
-        trendPercentage: Math.abs(trendPercentage),
-        count: values.length,
-      };
-    },
-    [data],
-  );
+    fetchData();
+    // Set up auto-refresh
+    if (widget.refreshInterval && widget.refreshInterval > 0) {
+      var interval_1 = setInterval(fetchData, widget.refreshInterval * 1000);
+      return () => clearInterval(interval_1);
+    }
+  }, [
+    widget.dataSource,
+    widget.refreshInterval,
+    selectedTimeRange,
+    selectedAggregation,
+    config.type,
+  ]);
+  // Process data for different chart types
+  var processedData = (0, react_1.useMemo)(() => {
+    if (!data.length) return [];
+    switch (config.type) {
+      case "pie": {
+        // Aggregate data for pie chart
+        var pieData = data.reduce((acc, item) => {
+          var category = item.category || "Other";
+          var existing = acc.find((d) => d.name === category);
+          if (existing) {
+            existing.value += item.value;
+          } else {
+            acc.push({ name: category, value: item.value });
+          }
+          return acc;
+        }, []);
+        return pieData;
+      }
+      default:
+        return data.map((item) =>
+          __assign(__assign({}, item), {
+            timestamp: formatTimestamp(item.timestamp, selectedAggregation),
+          }),
+        );
+    }
+  }, [data, config.type, selectedAggregation]);
+  // Calculate summary statistics
+  var stats = (0, react_1.useMemo)(() => {
+    if (!data.length) return null;
+    var values = data.map((d) => d.value);
+    var total = values.reduce((sum, val) => sum + val, 0);
+    var average = total / values.length;
+    var min = Math.min.apply(Math, values);
+    var max = Math.max.apply(Math, values);
+    // Calculate trend
+    var firstHalf = values.slice(0, Math.floor(values.length / 2));
+    var secondHalf = values.slice(Math.floor(values.length / 2));
+    var firstAvg = firstHalf.reduce((sum, val) => sum + val, 0) / firstHalf.length;
+    var secondAvg = secondHalf.reduce((sum, val) => sum + val, 0) / secondHalf.length;
+    var trend = secondAvg > firstAvg ? "up" : secondAvg < firstAvg ? "down" : "stable";
+    var trendPercentage = firstAvg !== 0 ? ((secondAvg - firstAvg) / firstAvg) * 100 : 0;
+    return {
+      total: total,
+      average: average,
+      min: min,
+      max: max,
+      trend: trend,
+      trendPercentage: Math.abs(trendPercentage),
+      count: values.length,
+    };
+  }, [data]);
   // Handle refresh
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         setIsLoading(true);
         // Trigger data refresh
-        setTimeout(function () {
+        setTimeout(() => {
           setIsLoading(false);
         }, 1000);
         return [2 /*return*/];
       });
     });
-  };
   // Handle export
-  var handleExport = function () {
-    var csvContent = data
-      .map(function (row) {
-        return Object.values(row).join(",");
-      })
-      .join("\n");
+  var handleExport = () => {
+    var csvContent = data.map((row) => Object.values(row).join(",")).join("\n");
     var blob = new Blob([csvContent], { type: "text/csv" });
     var url = window.URL.createObjectURL(blob);
     var a = document.createElement("a");
@@ -411,7 +370,7 @@ function ChartWidget(_a) {
     window.URL.revokeObjectURL(url);
   };
   // Render chart based on type
-  var renderChart = function () {
+  var renderChart = () => {
     if (!processedData.length) {
       return (
         <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -547,21 +506,19 @@ function ChartWidget(_a) {
                 outerRadius={Math.min(chartHeight * 0.35, 120)}
                 fill="#8884d8"
                 dataKey="value"
-                label={function (_a) {
+                label={(_a) => {
                   var name = _a.name,
                     percent = _a.percent;
                   return "".concat(name, " ").concat((percent * 100).toFixed(0), "%");
                 }}
                 animationDuration={config.animation ? 1000 : 0}
               >
-                {processedData.map(function (entry, index) {
-                  return (
-                    <recharts_1.Cell
-                      key={"cell-".concat(index)}
-                      fill={config.colors[index % config.colors.length]}
-                    />
-                  );
-                })}
+                {processedData.map((entry, index) => (
+                  <recharts_1.Cell
+                    key={"cell-".concat(index)}
+                    fill={config.colors[index % config.colors.length]}
+                  />
+                ))}
               </recharts_1.Pie>
               {config.showTooltip && (
                 <tooltip_1.Tooltip
@@ -652,9 +609,7 @@ function ChartWidget(_a) {
               size="sm"
               variant="ghost"
               className="h-6 w-6 p-0"
-              onClick={function () {
-                return setIsExpanded(!isExpanded);
-              }}
+              onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded
                 ? <lucide_react_1.Minimize2 className="h-3 w-3" />
@@ -698,7 +653,7 @@ function ChartWidget(_a) {
               <select_1.SelectValue />
             </select_1.SelectTrigger>
             <select_1.SelectContent>
-              {Object.entries(TIME_RANGES).map(function (_a) {
+              {Object.entries(TIME_RANGES).map((_a) => {
                 var key = _a[0],
                   range = _a[1];
                 return (
@@ -715,7 +670,7 @@ function ChartWidget(_a) {
               <select_1.SelectValue />
             </select_1.SelectTrigger>
             <select_1.SelectContent>
-              {Object.entries(AGGREGATIONS).map(function (_a) {
+              {Object.entries(AGGREGATIONS).map((_a) => {
                 var key = _a[0],
                   agg = _a[1];
                 return (

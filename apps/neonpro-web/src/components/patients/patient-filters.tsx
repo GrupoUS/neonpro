@@ -1,8 +1,10 @@
 "use client";
 
+import type { AlertTriangle, Calendar, Clock, Filter, UserCheck, X } from "lucide-react";
 import React from "react";
-import type { Filter, X, UserCheck, AlertTriangle, Calendar, Clock } from "lucide-react";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
+import type { Checkbox } from "@/components/ui/checkbox";
 import type { Label } from "@/components/ui/label";
 import type {
   Select,
@@ -11,8 +13,6 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Checkbox } from "@/components/ui/checkbox";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
 
 interface PatientFiltersProps {

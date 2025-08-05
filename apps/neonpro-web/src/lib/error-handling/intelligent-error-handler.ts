@@ -5,8 +5,8 @@
  * com recuperação inteligente e prevenção proativa
  */
 
-import React from "react";
 import type { LRUCache } from "lru-cache";
+import React from "react";
 import type { performanceMonitor } from "@/lib/monitoring/performance-monitor";
 import type { KNOWN_ERROR_PATTERNS } from "./error-patterns";
 
@@ -303,7 +303,7 @@ export class IntelligentErrorHandler {
     const maxRetries = 3;
 
     if (retryCount < maxRetries) {
-      const backoffMs = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s
+      const backoffMs = 2 ** retryCount * 1000; // 1s, 2s, 4s
 
       setTimeout(() => {
         console.log(`🔄 Auto-retry attempt ${retryCount + 1} for error ${errorContext.errorId}`);

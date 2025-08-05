@@ -1,7 +1,7 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { InstagramOAuthHandler } from "@/lib/oauth/platforms/instagram-handler";
 import type { OAuthAuthorizationCodeRequest } from "@/lib/oauth/types";
+import type { createClient } from "@/lib/supabase/server";
 
 /**
  * Instagram OAuth Callback Endpoint

@@ -120,7 +120,7 @@ class HealthcareCacheManager {
     try {
       const decompressed = Buffer.from(data, "base64").toString("utf-8");
       return decompressed;
-    } catch (error) {
+    } catch (_error) {
       // If decompression fails, assume it's uncompressed data
       return data;
     }
@@ -348,7 +348,7 @@ class HealthcareCacheManager {
     try {
       const key = this.generateKey({ type: "session", tenantId, identifier: sessionId });
       const result = await this.client.expire(key, ttl);
-      return result;
+      return result === 1;
     } catch (error) {
       console.error("Session extend error:", error);
       this.stats.errors++;
@@ -376,9 +376,11 @@ class HealthcareCacheManager {
       const result: Record<string, any> = {};
 
       for (let i = 0; i < keys.length; i++) {
-        if (values[i] !== null) {
-          const decompressed = await this.decompressData(values[i]!);
-          result[keys[i]] = JSON.parse(decompressed);
+        const key = keys[i];
+        const value = values[i];
+        if (key && value !== null) {
+          const decompressed = await this.decompressData(value!);
+          result[key] = JSON.parse(decompressed);
           this.stats.hits++;
         } else {
           this.stats.misses++;
@@ -396,8 +398,14 @@ class HealthcareCacheManager {
   // Health and monitoring
   async getHealth(): Promise<{
     connected: boolean;
-    stats: typeof this.stats;
-    memory: any;
+    stats: {
+      hits: number;
+      misses: number;
+      sets: number;
+      errors: number;
+      hitRate: number;
+    };
+    memory: Record<string, unknown> | null;
     keyCount: number;
   }> {
     try {
@@ -406,14 +414,26 @@ class HealthcareCacheManager {
 
       return {
         connected: this.connected,
-        stats: { ...this.stats },
-        memory: info,
+        stats: {
+          ...this.stats,
+          hitRate:
+            this.stats.hits + this.stats.misses > 0
+              ? (this.stats.hits / (this.stats.hits + this.stats.misses)) * 100
+              : 0,
+        },
+        memory: info as Record<string, unknown> | null,
         keyCount,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         connected: false,
-        stats: { ...this.stats },
+        stats: {
+          ...this.stats,
+          hitRate:
+            this.stats.hits + this.stats.misses > 0
+              ? (this.stats.hits / (this.stats.hits + this.stats.misses)) * 100
+              : 0,
+        },
         memory: null,
         keyCount: 0,
       };
@@ -487,7 +507,7 @@ async function redisCachePlugin(fastify: FastifyInstance) {
     {
       preHandler: [fastify.authenticate, fastify.requireRole(["admin"])],
     },
-    async (request, reply) => {
+    async (_request, reply) => {
       const health = await cacheManager.getHealth();
 
       reply.send({
@@ -504,7 +524,7 @@ async function redisCachePlugin(fastify: FastifyInstance) {
     {
       preHandler: [fastify.authenticate, fastify.requireRole(["admin"])],
     },
-    async (request, reply) => {
+    async (_request, reply) => {
       const stats = cacheManager.getStats();
       const health = await cacheManager.getHealth();
 

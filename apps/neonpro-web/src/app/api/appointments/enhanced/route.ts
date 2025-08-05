@@ -1,7 +1,5 @@
-﻿import type { BookingResponse, CreateAppointmentFormData } from "@/app/lib/types/appointments";
-import type { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
-import type { NeonProAutomation } from "@/lib/automation/trigger-jobs";
+﻿import { NextResponse } from "next/server";
+import type { BookingResponse, CreateAppointmentFormData } from "@/app/lib/types/appointments";
 
 /**
  * ðŸš€ ENHANCED APPOINTMENTS API with Background Jobs

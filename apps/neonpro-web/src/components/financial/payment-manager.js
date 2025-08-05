@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentManager = PaymentManager;
 /**
@@ -172,7 +169,6 @@ var lucide_react_1 = require("lucide-react");
 // Services
 var financial_1 = require("@/lib/supabase/financial");
 function PaymentManager(_a) {
-  var _this = this;
   var invoiceId = _a.invoiceId,
     _b = _a.defaultView,
     defaultView = _b === void 0 ? "list" : _b,
@@ -205,26 +201,20 @@ function PaymentManager(_a) {
     formData = _h[0],
     setFormData = _h[1];
   // Load Data
-  (0, react_1.useEffect)(
-    function () {
-      if (invoiceId) {
-        loadPayments();
-      }
-    },
-    [invoiceId],
-  );
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedPaymentId && activeTab === "edit") {
-        loadPaymentDetails(selectedPaymentId);
-      }
-    },
-    [selectedPaymentId, activeTab],
-  );
-  var loadPayments = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (invoiceId) {
+      loadPayments();
+    }
+  }, [invoiceId]);
+  (0, react_1.useEffect)(() => {
+    if (selectedPaymentId && activeTab === "edit") {
+      loadPaymentDetails(selectedPaymentId);
+    }
+  }, [selectedPaymentId, activeTab]);
+  var loadPayments = () =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!invoiceId) return [2 /*return*/];
@@ -250,11 +240,10 @@ function PaymentManager(_a) {
         }
       });
     });
-  };
-  var loadPaymentDetails = function (paymentId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPaymentDetails = (paymentId) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -285,12 +274,11 @@ function PaymentManager(_a) {
         }
       });
     });
-  };
   // Handlers
-  var handleCreatePayment = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleCreatePayment = () =>
+    __awaiter(this, void 0, void 0, function () {
       var paymentData, result, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
@@ -325,11 +313,10 @@ function PaymentManager(_a) {
         }
       });
     });
-  };
-  var handleUpdatePayment = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleUpdatePayment = () =>
+    __awaiter(this, void 0, void 0, function () {
       var updateData, result, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedPayment) return [2 /*return*/];
@@ -362,11 +349,10 @@ function PaymentManager(_a) {
         }
       });
     });
-  };
-  var handleUpdateStatus = function (paymentId, status) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleUpdateStatus = (paymentId, status) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -386,9 +372,8 @@ function PaymentManager(_a) {
         }
       });
     });
-  };
   // Filter payments by search term
-  var filteredPayments = payments.filter(function (payment) {
+  var filteredPayments = payments.filter((payment) => {
     var _a, _b;
     return (
       ((_a = payment.external_transaction_id) === null || _a === void 0
@@ -401,7 +386,7 @@ function PaymentManager(_a) {
     );
   });
   // Status badge color mapping
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "completed":
         return "bg-green-500";
@@ -419,7 +404,7 @@ function PaymentManager(_a) {
         return "bg-gray-500";
     }
   };
-  var getStatusText = function (status) {
+  var getStatusText = (status) => {
     switch (status) {
       case "completed":
         return "Concluído";
@@ -437,7 +422,7 @@ function PaymentManager(_a) {
         return "Desconhecido";
     }
   };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "completed":
         return <lucide_react_1.CheckCircle className="h-4 w-4" />;
@@ -455,7 +440,7 @@ function PaymentManager(_a) {
         return <lucide_react_1.AlertCircle className="h-4 w-4" />;
     }
   };
-  var getMethodText = function (method) {
+  var getMethodText = (method) => {
     switch (method) {
       case "credit_card":
         return "Cartão de Crédito";
@@ -486,12 +471,7 @@ function PaymentManager(_a) {
           </card_1.CardDescription>
         </card_1.CardHeader>
         <card_1.CardContent>
-          <tabs_1.Tabs
-            value={activeTab}
-            onValueChange={function (value) {
-              return setActiveTab(value);
-            }}
-          >
+          <tabs_1.Tabs value={activeTab} onValueChange={(value) => setActiveTab(value)}>
             <tabs_1.TabsList className="grid w-full grid-cols-3">
               <tabs_1.TabsTrigger value="list">Lista de Pagamentos</tabs_1.TabsTrigger>
               <tabs_1.TabsTrigger value="create">Criar Pagamento</tabs_1.TabsTrigger>
@@ -508,17 +488,11 @@ function PaymentManager(_a) {
                   <input_1.Input
                     placeholder="Buscar pagamentos..."
                     value={searchTerm}
-                    onChange={function (e) {
-                      return setSearchTerm(e.target.value);
-                    }}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-8"
                   />
                 </div>
-                <button_1.Button
-                  onClick={function () {
-                    return setActiveTab("create");
-                  }}
-                >
+                <button_1.Button onClick={() => setActiveTab("create")}>
                   <lucide_react_1.Plus className="h-4 w-4 mr-2" />
                   Novo Pagamento
                 </button_1.Button>
@@ -531,77 +505,71 @@ function PaymentManager(_a) {
                     ? <div className="text-center py-8 text-muted-foreground">
                         Nenhum pagamento encontrado
                       </div>
-                    : filteredPayments.map(function (payment) {
-                        return (
-                          <card_1.Card key={payment.id} className="p-4">
-                            <div className="flex items-center justify-between">
-                              <div className="space-y-1">
-                                <div className="flex items-center space-x-2">
-                                  {getStatusIcon(payment.status)}
-                                  <badge_1.Badge className={getStatusColor(payment.status)}>
-                                    {getStatusText(payment.status)}
-                                  </badge_1.Badge>
-                                  <span className="text-sm text-muted-foreground">
-                                    {getMethodText(payment.payment_method)}
-                                  </span>
-                                </div>
-                                <div className="text-sm text-muted-foreground">
-                                  Valor: R$ {(payment.amount / 100).toFixed(2)}
-                                </div>
-                                {payment.external_transaction_id && (
-                                  <div className="text-sm text-muted-foreground">
-                                    ID: {payment.external_transaction_id}
-                                  </div>
-                                )}
-                                {payment.processed_at && (
-                                  <div className="text-sm text-muted-foreground">
-                                    Processado:{" "}
-                                    {new Date(payment.processed_at).toLocaleDateString("pt-BR")}
-                                  </div>
-                                )}
-                              </div>
-
+                    : filteredPayments.map((payment) => (
+                        <card_1.Card key={payment.id} className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="space-y-1">
                               <div className="flex items-center space-x-2">
-                                {payment.status === "pending" && (
-                                  <>
-                                    <button_1.Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={function () {
-                                        return handleUpdateStatus(payment.id, "completed");
-                                      }}
-                                    >
-                                      <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
-                                      Confirmar
-                                    </button_1.Button>
-                                    <button_1.Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={function () {
-                                        return handleUpdateStatus(payment.id, "failed");
-                                      }}
-                                    >
-                                      <lucide_react_1.XCircle className="h-4 w-4 mr-1" />
-                                      Falhar
-                                    </button_1.Button>
-                                  </>
-                                )}
-
-                                <button_1.Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={function () {
-                                    setSelectedPayment(payment);
-                                    setActiveTab("edit");
-                                  }}
-                                >
-                                  <lucide_react_1.Edit className="h-4 w-4" />
-                                </button_1.Button>
+                                {getStatusIcon(payment.status)}
+                                <badge_1.Badge className={getStatusColor(payment.status)}>
+                                  {getStatusText(payment.status)}
+                                </badge_1.Badge>
+                                <span className="text-sm text-muted-foreground">
+                                  {getMethodText(payment.payment_method)}
+                                </span>
                               </div>
+                              <div className="text-sm text-muted-foreground">
+                                Valor: R$ {(payment.amount / 100).toFixed(2)}
+                              </div>
+                              {payment.external_transaction_id && (
+                                <div className="text-sm text-muted-foreground">
+                                  ID: {payment.external_transaction_id}
+                                </div>
+                              )}
+                              {payment.processed_at && (
+                                <div className="text-sm text-muted-foreground">
+                                  Processado:{" "}
+                                  {new Date(payment.processed_at).toLocaleDateString("pt-BR")}
+                                </div>
+                              )}
                             </div>
-                          </card_1.Card>
-                        );
-                      })}
+
+                            <div className="flex items-center space-x-2">
+                              {payment.status === "pending" && (
+                                <>
+                                  <button_1.Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleUpdateStatus(payment.id, "completed")}
+                                  >
+                                    <lucide_react_1.CheckCircle className="h-4 w-4 mr-1" />
+                                    Confirmar
+                                  </button_1.Button>
+                                  <button_1.Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleUpdateStatus(payment.id, "failed")}
+                                  >
+                                    <lucide_react_1.XCircle className="h-4 w-4 mr-1" />
+                                    Falhar
+                                  </button_1.Button>
+                                </>
+                              )}
+
+                              <button_1.Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedPayment(payment);
+                                  setActiveTab("edit");
+                                }}
+                              >
+                                <lucide_react_1.Edit className="h-4 w-4" />
+                              </button_1.Button>
+                            </div>
+                          </div>
+                        </card_1.Card>
+                      ))}
               </div>
             </tabs_1.TabsContent>
 
@@ -614,11 +582,9 @@ function PaymentManager(_a) {
                     id="invoice_id"
                     placeholder="ID da fatura"
                     value={formData.invoice_id || ""}
-                    onChange={function (e) {
-                      return setFormData(
-                        __assign(__assign({}, formData), { invoice_id: e.target.value }),
-                      );
-                    }}
+                    onChange={(e) =>
+                      setFormData(__assign(__assign({}, formData), { invoice_id: e.target.value }))
+                    }
                     disabled={!!invoiceId}
                   />
                 </div>
@@ -627,11 +593,9 @@ function PaymentManager(_a) {
                   <label_1.Label htmlFor="payment_method">Método de Pagamento</label_1.Label>
                   <select_1.Select
                     value={formData.payment_method}
-                    onValueChange={function (value) {
-                      return setFormData(
-                        __assign(__assign({}, formData), { payment_method: value }),
-                      );
-                    }}
+                    onValueChange={(value) =>
+                      setFormData(__assign(__assign({}, formData), { payment_method: value }))
+                    }
                   >
                     <select_1.SelectTrigger>
                       <select_1.SelectValue />
@@ -660,13 +624,13 @@ function PaymentManager(_a) {
                     step="0.01"
                     placeholder="0.00"
                     value={formData.amount || ""}
-                    onChange={function (e) {
-                      return setFormData(
+                    onChange={(e) =>
+                      setFormData(
                         __assign(__assign({}, formData), {
                           amount: parseFloat(e.target.value) || 0,
                         }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
 
@@ -678,13 +642,13 @@ function PaymentManager(_a) {
                     id="external_transaction_id"
                     placeholder="ID da transação do processador"
                     value={formData.external_transaction_id || ""}
-                    onChange={function (e) {
-                      return setFormData(
+                    onChange={(e) =>
+                      setFormData(
                         __assign(__assign({}, formData), {
                           external_transaction_id: e.target.value,
                         }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
 
@@ -694,11 +658,11 @@ function PaymentManager(_a) {
                     id="authorization_code"
                     placeholder="Código de autorização"
                     value={formData.authorization_code || ""}
-                    onChange={function (e) {
-                      return setFormData(
+                    onChange={(e) =>
+                      setFormData(
                         __assign(__assign({}, formData), { authorization_code: e.target.value }),
-                      );
-                    }}
+                      )
+                    }
                   />
                 </div>
               </div>
@@ -706,12 +670,7 @@ function PaymentManager(_a) {
               <separator_1.Separator />
 
               <div className="flex justify-end space-x-2">
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setActiveTab("list");
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setActiveTab("list")}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={handleCreatePayment} disabled={loading}>
@@ -733,9 +692,9 @@ function PaymentManager(_a) {
                     <label_1.Label htmlFor="edit_status">Status</label_1.Label>
                     <select_1.Select
                       value={formData.status}
-                      onValueChange={function (value) {
-                        return setFormData(__assign(__assign({}, formData), { status: value }));
-                      }}
+                      onValueChange={(value) =>
+                        setFormData(__assign(__assign({}, formData), { status: value }))
+                      }
                     >
                       <select_1.SelectTrigger>
                         <select_1.SelectValue />
@@ -758,13 +717,13 @@ function PaymentManager(_a) {
                     <input_1.Input
                       id="edit_external_transaction_id"
                       value={formData.external_transaction_id || ""}
-                      onChange={function (e) {
-                        return setFormData(
+                      onChange={(e) =>
+                        setFormData(
                           __assign(__assign({}, formData), {
                             external_transaction_id: e.target.value,
                           }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
 
@@ -775,11 +734,11 @@ function PaymentManager(_a) {
                     <input_1.Input
                       id="edit_authorization_code"
                       value={formData.authorization_code || ""}
-                      onChange={function (e) {
-                        return setFormData(
+                      onChange={(e) =>
+                        setFormData(
                           __assign(__assign({}, formData), { authorization_code: e.target.value }),
-                        );
-                      }}
+                        )
+                      }
                     />
                   </div>
                 </div>
@@ -788,12 +747,7 @@ function PaymentManager(_a) {
               <separator_1.Separator />
 
               <div className="flex justify-end space-x-2">
-                <button_1.Button
-                  variant="outline"
-                  onClick={function () {
-                    return setActiveTab("list");
-                  }}
-                >
+                <button_1.Button variant="outline" onClick={() => setActiveTab("list")}>
                   Cancelar
                 </button_1.Button>
                 <button_1.Button onClick={handleUpdatePayment} disabled={loading}>

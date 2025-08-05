@@ -5,8 +5,8 @@
  * Verifies the MCP configuration and connectivity
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
 
 console.log("🔍 SUPABASE MCP SERVER VERIFICATION");
 console.log("=".repeat(50));
@@ -20,7 +20,7 @@ try {
   if (fs.existsSync(mcpConfigPath)) {
     const mcpConfig = JSON.parse(fs.readFileSync(mcpConfigPath, "utf8"));
 
-    if (mcpConfig.mcpServers && mcpConfig.mcpServers["supabase-mcp"]) {
+    if (mcpConfig.mcpServers?.["supabase-mcp"]) {
       const supabaseMcp = mcpConfig.mcpServers["supabase-mcp"];
 
       console.log("   ✅ MCP configuration found");
@@ -101,7 +101,7 @@ docsFiles.forEach((file) => {
   }
 });
 
-console.log("\n" + "=".repeat(50));
+console.log(`\n${"=".repeat(50)}`);
 console.log("🎉 VERIFICATION COMPLETE");
 
 console.log("\n✅ Summary:");

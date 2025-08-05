@@ -4,32 +4,31 @@
 // Research-based implementation with react-big-calendar + alternative slots
 // =============================================
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = IntegratedCalendarView;
 var react_1 = require("react");
@@ -174,7 +171,6 @@ dayjs_1.default.extend(duration_1.default);
 // Create the localizer with dayjs (performance optimized)
 var localizer = (0, react_big_calendar_1.dayjsLocalizer)(dayjs_1.default);
 function IntegratedCalendarView(_a) {
-  var _this = this;
   var events = _a.events,
     onEventClick = _a.onEventClick,
     onSlotSelect = _a.onSlotSelect,
@@ -213,9 +209,9 @@ function IntegratedCalendarView(_a) {
   var alternativeSlots = (0, use_alternative_slots_1.useAlternativeSlots)();
   // Performance-optimized event processing (research-based)
   var processedEvents = (0, react_1.useMemo)(
-    function () {
-      return events.map(function (event) {
-        return __assign(__assign({}, event), {
+    () =>
+      events.map((event) =>
+        __assign(__assign({}, event), {
           // Enhanced rendering for alternative slots
           style: event.isAlternativeSlot
             ? {
@@ -224,19 +220,18 @@ function IntegratedCalendarView(_a) {
                 opacity: 0.8,
               }
             : undefined,
-        });
-      });
-    },
+        }),
+      ),
     [events],
   );
   // Conflict detection with real-time validation
   var detectConflict = (0, react_1.useCallback)(
-    function (slotInfo) {
+    (slotInfo) => {
       if (!conflictDetection) return null;
       var start = slotInfo.start,
         end = slotInfo.end;
       return (
-        events.find(function (event) {
+        events.find((event) => {
           var eventStart = (0, dayjs_1.default)(event.start);
           var eventEnd = (0, dayjs_1.default)(event.end);
           var slotStart = (0, dayjs_1.default)(start);
@@ -253,10 +248,10 @@ function IntegratedCalendarView(_a) {
     [events, conflictDetection],
   ); // Enhanced slot selection with conflict handling
   var handleSlotSelect = (0, react_1.useCallback)(
-    function (slotInfo) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (slotInfo) =>
+      __awaiter(this, void 0, void 0, function () {
         var enhancedSlotInfo, conflict, alternativeRequest;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               enhancedSlotInfo = __assign(__assign({}, slotInfo), {
@@ -301,8 +296,7 @@ function IntegratedCalendarView(_a) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       detectConflict,
       enableAlternativeSlots,
@@ -314,7 +308,7 @@ function IntegratedCalendarView(_a) {
   );
   // Enhanced event styling with research-based visual indicators
   var eventStyleGetter = (0, react_1.useCallback)(
-    function (event) {
+    (event) => {
       var _a;
       var backgroundColor = "#3174ad"; // Default blue
       var borderColor = "#265985";
@@ -348,24 +342,21 @@ function IntegratedCalendarView(_a) {
     [selectedProfessionalId],
   );
   // Research-based mobile optimization
-  var mobileProps = (0, react_1.useMemo)(
-    function () {
-      if (!mobileOptimized) return {};
-      return {
-        popup: true,
-        popupOffset: { x: 10, y: 10 },
-        step: 30, // 30-minute increments for mobile
-        timeslots: 2, // Show 2 time slots per hour
-        showMultiDayTimes: false,
-      };
-    },
-    [mobileOptimized],
-  );
-  // Custom components for enhanced UX
-  var components = (0, react_1.useMemo)(function () {
+  var mobileProps = (0, react_1.useMemo)(() => {
+    if (!mobileOptimized) return {};
     return {
+      popup: true,
+      popupOffset: { x: 10, y: 10 },
+      step: 30, // 30-minute increments for mobile
+      timeslots: 2, // Show 2 time slots per hour
+      showMultiDayTimes: false,
+    };
+  }, [mobileOptimized]);
+  // Custom components for enhanced UX
+  var components = (0, react_1.useMemo)(
+    () => ({
       // Custom event component with alternative slot indicators
-      event: function (_a) {
+      event: (_a) => {
         var event = _a.event;
         return (
           <div className="flex items-center gap-1 truncate">
@@ -379,8 +370,9 @@ function IntegratedCalendarView(_a) {
           </div>
         );
       },
-    };
-  }, []);
+    }),
+    [],
+  );
   return (
     <div className={(0, utils_1.cn)("space-y-4", className)}>
       {/* Performance metrics display (research-based) */}
@@ -442,11 +434,9 @@ function IntegratedCalendarView(_a) {
               date={currentDate}
               onView={setCurrentView}
               onNavigate={setCurrentDate}
-              onSelectEvent={function (event) {
-                return onEventClick === null || onEventClick === void 0
-                  ? void 0
-                  : onEventClick(event);
-              }}
+              onSelectEvent={(event) =>
+                onEventClick === null || onEventClick === void 0 ? void 0 : onEventClick(event)
+              }
               onSelectSlot={handleSlotSelect}
               eventPropGetter={eventStyleGetter}
               components={components}
@@ -458,7 +448,7 @@ function IntegratedCalendarView(_a) {
               max={(0, dayjs_1.default)().hour(22).minute(0).toDate()} // 10:00 PM
               formats={{
                 timeGutterFormat: "HH:mm",
-                eventTimeRangeFormat: function (_a) {
+                eventTimeRangeFormat: (_a) => {
                   var start = _a.start,
                     end = _a.end;
                   return ""
@@ -481,9 +471,7 @@ function IntegratedCalendarView(_a) {
                 time: "Hora",
                 event: "Agendamento",
                 noEventsInRange: "Nenhum agendamento neste período.",
-                showMore: function (total) {
-                  return "+".concat(total, " mais");
-                },
+                showMore: (total) => "+".concat(total, " mais"),
               }}
               {...mobileProps}
             />
@@ -567,7 +555,7 @@ function IntegratedCalendarView(_a) {
             <tabs_1.TabsContent value="alternatives">
               <alternative_slots_display_1.default
                 alternativeSlots={alternativeSlots}
-                onSelectSlot={function (slot) {
+                onSelectSlot={(slot) => {
                   // Convert alternative slot to calendar event
                   var alternativeEvent = {
                     id: "alt-".concat(slot.start_time),
@@ -591,16 +579,11 @@ function IntegratedCalendarView(_a) {
           </tabs_1.Tabs>
 
           <div className="flex justify-end gap-2 pt-4 border-t">
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowAlternativesDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowAlternativesDialog(false)}>
               Cancelar
             </button_1.Button>
             <button_1.Button
-              onClick={function () {
+              onClick={() => {
                 // Handle force booking despite conflict
                 if (selectedSlot) {
                   onSlotSelect === null || onSlotSelect === void 0

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Subscription UI Components Demo Page
  *
@@ -15,10 +14,10 @@ var badge_1 = require("@/components/ui/badge");
 var card_1 = require("@/components/ui/card");
 var separator_1 = require("@/components/ui/separator");
 function SubscriptionUIDemo() {
-  var handleUpgrade = function () {
+  var handleUpgrade = () => {
     console.log("Navigate to upgrade page");
   };
-  var handleManage = function () {
+  var handleManage = () => {
     console.log("Navigate to billing management");
   };
   return (

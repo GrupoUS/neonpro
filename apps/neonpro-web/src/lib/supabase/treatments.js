@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Treatment & Procedure Data Access Layer
  * Supabase functions for HL7 FHIR R4 compliant treatment documentation
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createTreatmentPlan = createTreatmentPlan;
 exports.updateTreatmentPlan = updateTreatmentPlan;
@@ -182,7 +179,7 @@ var supabase = await (0, client_1.createClient)();
 function createTreatmentPlan(data) {
   return __awaiter(this, void 0, void 0, function () {
     var user, fhir_id, treatmentPlan, _a, result, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -196,25 +193,19 @@ function createTreatmentPlan(data) {
             fhir_id: fhir_id,
             status: data.status,
             intent: data.intent,
-            category: data.category.map(function (cat) {
-              return {
-                coding: [{ code: cat, display: cat }],
-              };
-            }),
+            category: data.category.map((cat) => ({
+              coding: [{ code: cat, display: cat }],
+            })),
             title: data.title,
             description: data.description,
             subject_reference: "Patient/".concat(data.patient_id),
             period_start: data.period_start,
             period_end: data.period_end,
             care_team: [],
-            goals: data.goals.map(function (goal) {
-              return { reference: "Goal/".concat(goal) };
-            }),
+            goals: data.goals.map((goal) => ({ reference: "Goal/".concat(goal) })),
             activities: [],
             supporting_info: [],
-            addresses: data.addresses.map(function (addr) {
-              return { reference: "Condition/".concat(addr) };
-            }),
+            addresses: data.addresses.map((addr) => ({ reference: "Condition/".concat(addr) })),
             fhir_meta: {
               versionId: "1",
               lastUpdated: new Date().toISOString(),
@@ -254,7 +245,7 @@ function createTreatmentPlan(data) {
 function updateTreatmentPlan(id, data) {
   return __awaiter(this, void 0, void 0, function () {
     var user, updateData, _a, result, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -286,7 +277,7 @@ function updateTreatmentPlan(id, data) {
 function getTreatmentPlan(id) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -322,7 +313,7 @@ function searchTreatmentPlans(filters_1) {
     if (perPage === void 0) {
       perPage = 10;
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -385,7 +376,7 @@ function searchTreatmentPlans(filters_1) {
 function createProcedure(data) {
   return __awaiter(this, void 0, void 0, function () {
     var user, fhir_id, procedure, _a, result, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -418,17 +409,13 @@ function createProcedure(data) {
                 actor: "Practitioner/".concat(user.id),
               },
             ],
-            reason_code: data.reason_code.map(function (code) {
-              return {
-                coding: [{ code: code, display: code }],
-              };
-            }),
+            reason_code: data.reason_code.map((code) => ({
+              coding: [{ code: code, display: code }],
+            })),
             reason_reference: [],
-            body_site: data.body_site.map(function (site) {
-              return {
-                coding: [{ code: site, display: site }],
-              };
-            }),
+            body_site: data.body_site.map((site) => ({
+              coding: [{ code: site, display: site }],
+            })),
             outcome: data.outcome
               ? {
                   coding: [{ code: data.outcome, display: data.outcome }],
@@ -473,7 +460,7 @@ function createProcedure(data) {
 function updateProcedure(id, data) {
   return __awaiter(this, void 0, void 0, function () {
     var user, updateData, _a, result, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -504,7 +491,7 @@ function updateProcedure(id, data) {
 function getProcedure(id) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -540,7 +527,7 @@ function searchProcedures(filters_1) {
     if (perPage === void 0) {
       perPage = 10;
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -605,7 +592,7 @@ function searchProcedures(filters_1) {
 function createClinicalNote(data) {
   return __awaiter(this, void 0, void 0, function () {
     var user, fhir_id, clinicalNote, _a, result, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -677,7 +664,7 @@ function createClinicalNote(data) {
 function updateClinicalNote(id, data) {
   return __awaiter(this, void 0, void 0, function () {
     var user, updateData, _a, result, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -708,7 +695,7 @@ function updateClinicalNote(id, data) {
 function getClinicalNote(id) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -744,7 +731,7 @@ function searchClinicalNotes(filters_1) {
     if (perPage === void 0) {
       perPage = 10;
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase
@@ -825,7 +812,7 @@ function getTreatmentStatistics() {
       mostCommonProcedures,
       completedPlans,
       avgDuration;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -869,7 +856,7 @@ function getTreatmentStatistics() {
           ];
         case 5:
           outcomes = _a.sent().data;
-          procedureCounts = (proceduresStats || []).reduce(function (acc, proc) {
+          procedureCounts = (proceduresStats || []).reduce((acc, proc) => {
             var _a, _b, _c, _d, _e, _f;
             var code =
               ((_c =
@@ -894,16 +881,14 @@ function getTreatmentStatistics() {
             return acc;
           }, {});
           mostCommonProcedures = Object.values(procedureCounts)
-            .sort(function (a, b) {
-              return b.count - a.count;
-            })
+            .sort((a, b) => b.count - a.count)
             .slice(0, 5);
-          completedPlans = (treatmentPlansStats || []).filter(function (plan) {
-            return plan.status === "completed";
-          });
+          completedPlans = (treatmentPlansStats || []).filter(
+            (plan) => plan.status === "completed",
+          );
           avgDuration =
             completedPlans.length > 0
-              ? completedPlans.reduce(function (acc, plan) {
+              ? completedPlans.reduce((acc, plan) => {
                   // This would need period_start and period_end to calculate properly
                   return acc + 30; // Placeholder: 30 days average
                 }, 0) / completedPlans.length
@@ -918,15 +903,11 @@ function getTreatmentStatistics() {
               active_treatment_plans:
                 (treatmentPlansStats === null || treatmentPlansStats === void 0
                   ? void 0
-                  : treatmentPlansStats.filter(function (p) {
-                      return p.status === "active";
-                    }).length) || 0,
+                  : treatmentPlansStats.filter((p) => p.status === "active").length) || 0,
               completed_treatment_plans:
                 (treatmentPlansStats === null || treatmentPlansStats === void 0
                   ? void 0
-                  : treatmentPlansStats.filter(function (p) {
-                      return p.status === "completed";
-                    }).length) || 0,
+                  : treatmentPlansStats.filter((p) => p.status === "completed").length) || 0,
               total_procedures:
                 (proceduresStats === null || proceduresStats === void 0
                   ? void 0
@@ -941,7 +922,7 @@ function getTreatmentStatistics() {
                 successful:
                   (outcomes === null || outcomes === void 0
                     ? void 0
-                    : outcomes.filter(function (o) {
+                    : outcomes.filter((o) => {
                         var _a, _b, _c;
                         return (
                           ((_c =
@@ -957,7 +938,7 @@ function getTreatmentStatistics() {
                 partial:
                   (outcomes === null || outcomes === void 0
                     ? void 0
-                    : outcomes.filter(function (o) {
+                    : outcomes.filter((o) => {
                         var _a, _b, _c;
                         return (
                           ((_c =
@@ -973,7 +954,7 @@ function getTreatmentStatistics() {
                 unsuccessful:
                   (outcomes === null || outcomes === void 0
                     ? void 0
-                    : outcomes.filter(function (o) {
+                    : outcomes.filter((o) => {
                         var _a, _b, _c;
                         return (
                           ((_c =
@@ -999,7 +980,7 @@ function getTreatmentStatistics() {
 function deleteTreatmentPlan(id) {
   return __awaiter(this, void 0, void 0, function () {
     var user, error;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -1030,7 +1011,7 @@ function deleteTreatmentPlan(id) {
 function deleteProcedure(id) {
   return __awaiter(this, void 0, void 0, function () {
     var user, error;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];
@@ -1061,7 +1042,7 @@ function deleteProcedure(id) {
 function deleteClinicalNote(id) {
   return __awaiter(this, void 0, void 0, function () {
     var user, error;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           return [4 /*yield*/, supabase.auth.getUser()];

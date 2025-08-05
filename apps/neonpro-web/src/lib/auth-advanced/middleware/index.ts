@@ -1,30 +1,29 @@
 // Auth Middleware Export
 // Story 1.4: Session Management & Security Implementation
 
+export type { AuthMiddlewareConfig } from "./auth-middleware";
 // Authentication Middleware
 export {
+  clearSuspiciousActivity,
   createAuthMiddleware,
   recordSuspiciousActivity,
-  clearSuspiciousActivity,
 } from "./auth-middleware";
-export type { AuthMiddlewareConfig } from "./auth-middleware";
-
+export type { SecurityMiddlewareConfig } from "./security-middleware";
 // Security Middleware
 export {
+  blockIP,
+  clearBlockedIP,
   createSecurityMiddleware,
   getMonitoringStats,
-  clearBlockedIP,
-  blockIP,
 } from "./security-middleware";
-export type { SecurityMiddlewareConfig } from "./security-middleware";
 
 // Combined Middleware Factory
 import type { NextRequest, NextResponse } from "next/server";
-import type { createAuthMiddleware, AuthMiddlewareConfig } from "./auth-middleware";
-import type { createSecurityMiddleware, SecurityMiddlewareConfig } from "./security-middleware";
-import type { SessionManager } from "../session-manager";
-import type { SecurityMonitor } from "../security-monitor";
 import type { DeviceManager } from "../device-manager";
+import type { SecurityMonitor } from "../security-monitor";
+import type { SessionManager } from "../session-manager";
+import type { AuthMiddlewareConfig, createAuthMiddleware } from "./auth-middleware";
+import type { createSecurityMiddleware, SecurityMiddlewareConfig } from "./security-middleware";
 
 /**
  * Combined middleware configuration

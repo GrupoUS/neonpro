@@ -1,17 +1,17 @@
 // Componentes LGPD para administração
-export { LGPDDashboard } from "./LGPDDashboard";
-export { ConsentManagementPanel } from "./ConsentManagementPanel";
-export { DataSubjectRightsPanel } from "./DataSubjectRightsPanel";
-export { ComplianceAssessmentPanel } from "./ComplianceAssessmentPanel";
-export { BreachManagementPanel } from "./BreachManagementPanel";
-export { AuditTrailPanel } from "./AuditTrailPanel";
 
 // Re-exportar tipos relacionados
 export type {
-  LGPDMetrics,
+  AuditEvent,
+  BreachIncident,
+  ComplianceAssessment,
   ConsentRecord,
   DataSubjectRequest,
-  BreachIncident,
-  AuditEvent,
-  ComplianceAssessment,
+  LGPDMetrics,
 } from "@/types/lgpd";
+export { AuditTrailPanel } from "./AuditTrailPanel";
+export { BreachManagementPanel } from "./BreachManagementPanel";
+export { ComplianceAssessmentPanel } from "./ComplianceAssessmentPanel";
+export { ConsentManagementPanel } from "./ConsentManagementPanel";
+export { DataSubjectRightsPanel } from "./DataSubjectRightsPanel";
+export { LGPDDashboard } from "./LGPDDashboard";

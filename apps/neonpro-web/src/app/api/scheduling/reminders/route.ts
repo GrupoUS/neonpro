@@ -1,9 +1,9 @@
 import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { z } from "zod";
+import type { CommunicationService } from "@/lib/communication/communication-service";
 import type { schedulingTemplateEngine } from "@/lib/communication/scheduling-templates";
 import type { SchedulingCommunicationWorkflow } from "@/lib/communication/scheduling-workflow";
-import type { CommunicationService } from "@/lib/communication/communication-service";
+import type { createClient } from "@/lib/supabase/server";
 
 // Schema validation for reminder requests
 const ReminderConfigSchema = z.object({

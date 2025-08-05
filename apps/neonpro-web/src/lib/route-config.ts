@@ -8,11 +8,7 @@
  * @version 1.0.0
  */
 
-import type {
-  type RoutePermission,
-  type SubscriptionTier,
-  type UserRole,
-} from "./route-protection";
+import type { RoutePermission, SubscriptionTier, UserRole } from "./route-protection";
 
 // Route configuration presets
 export const ROUTE_PRESETS = {
@@ -323,7 +319,7 @@ export class ConfigValidator {
     let hasErrors = false;
 
     routes.forEach((route, index) => {
-      const validation = this.validateRoute(route);
+      const validation = ConfigValidator.validateRoute(route);
       if (!validation.valid) {
         errors[`route_${index}_${route.name || "unnamed"}`] = validation.errors;
         hasErrors = true;

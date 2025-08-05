@@ -5,12 +5,12 @@
 
 import { createClient } from "@supabase/supabase-js";
 import type {
-  DashboardLayout,
-  DashboardWidget,
-  DashboardTemplate,
-  GridLayout,
   DashboardFilters,
+  DashboardLayout,
+  DashboardTemplate,
+  DashboardWidget,
   FinancialKPI,
+  GridLayout,
 } from "@/lib/types/kpi-types";
 
 export interface WidgetLibraryItem {

@@ -12,19 +12,25 @@
  */
 
 import type { createClient } from "@/lib/supabase/client";
-import type { MLRiskAssessmentEngine } from "./ml-risk-models";
-import type { RiskScoringAlgorithm } from "./risk-scoring-algorithm";
-import type { SafetyAlertsSystem } from "./safety-alerts";
-import type { PredictiveInsightsEngine } from "./predictive-insights";
 import type {
+  MLRiskAssessmentEngine,
   RiskAssessmentInput,
   RiskAssessmentResult,
   RiskCategory,
   RiskSeverity,
 } from "./ml-risk-models";
-import type { RiskScoreResult, RiskScoreConfig } from "./risk-scoring-algorithm";
-import type { SafetyAlert, AlertSeverity, AlertType } from "./safety-alerts";
-import type { PredictiveInsight, InsightType, InsightPriority } from "./predictive-insights";
+import type {
+  InsightPriority,
+  InsightType,
+  PredictiveInsight,
+  PredictiveInsightsEngine,
+} from "./predictive-insights";
+import type {
+  RiskScoreConfig,
+  RiskScoreResult,
+  RiskScoringAlgorithm,
+} from "./risk-scoring-algorithm";
+import type { AlertSeverity, AlertType, SafetyAlert, SafetyAlertsSystem } from "./safety-alerts";
 
 // System Configuration
 interface AIRiskAssessmentConfig {
@@ -1126,6 +1132,6 @@ export {
 };
 
 export * from "./ml-risk-models";
+export * from "./predictive-insights";
 export * from "./risk-scoring-algorithm";
 export * from "./safety-alerts";
-export * from "./predictive-insights";

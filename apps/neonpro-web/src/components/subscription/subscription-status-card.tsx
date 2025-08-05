@@ -10,7 +10,6 @@
 
 "use client";
 
-import type { cn } from "@/lib/utils";
 import type { formatDistanceToNow } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
@@ -24,6 +23,7 @@ import type {
   TrendingUp,
   Zap,
 } from "lucide-react";
+import type { cn } from "@/lib/utils";
 import type { useSubscriptionStatus } from "../../hooks/use-subscription-status";
 import type { Badge } from "../ui/badge";
 import type { Button } from "../ui/button";

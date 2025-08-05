@@ -1,4 +1,3 @@
-"use strict";
 // Hook para gerenciar dados KPI com cache e refresh automático
 // Integra com o KPI Engine para dados reais do Supabase
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,14 +144,13 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useKPIData = useKPIData;
 exports.useDrillDownData = useDrillDownData;
 exports.useProfessionalMetrics = useProfessionalMetrics;
 var react_1 = require("react");
 function useKPIData(options) {
-  var _this = this;
   var _a = (0, react_1.useState)({
       kpis: [],
       loading: true,
@@ -169,7 +165,7 @@ function useKPIData(options) {
     _c = options.refreshInterval,
     refreshInterval = _c === void 0 ? 30000 : _c,
     filters = options.filters;
-  var calculateDateRange = (0, react_1.useCallback)(function (range) {
+  var calculateDateRange = (0, react_1.useCallback)((range) => {
     var end = new Date();
     var start = new Date();
     switch (range) {
@@ -197,15 +193,13 @@ function useKPIData(options) {
     };
   }, []);
   var fetchKPIData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var timePeriod, request, response, data, error_1;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { loading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { loading: true, error: null }));
               _a.label = 1;
             case 1:
               _a.trys.push([1, 4, , 5]);
@@ -243,104 +237,93 @@ function useKPIData(options) {
             case 4:
               error_1 = _a.sent();
               console.error("Error fetching KPI data:", error_1);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   loading: false,
                   error: error_1 instanceof Error ? error_1.message : "Erro ao carregar dados KPI",
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 5];
             case 5:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [dateRange, filters, calculateDateRange],
   );
   // Refresh manual
-  var refresh = (0, react_1.useCallback)(
-    function () {
-      fetchKPIData();
-    },
-    [fetchKPIData],
-  );
+  var refresh = (0, react_1.useCallback)(() => {
+    fetchKPIData();
+  }, [fetchKPIData]);
   // Fetch inicial e quando dependências mudam
-  (0, react_1.useEffect)(
-    function () {
-      fetchKPIData();
-    },
-    [fetchKPIData],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchKPIData();
+  }, [fetchKPIData]);
   // Auto-refresh
-  (0, react_1.useEffect)(
-    function () {
-      if (!autoRefresh) return;
-      var interval = setInterval(function () {
-        fetchKPIData();
-      }, refreshInterval);
-      return function () {
-        return clearInterval(interval);
-      };
-    },
-    [autoRefresh, refreshInterval, fetchKPIData],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!autoRefresh) return;
+    var interval = setInterval(() => {
+      fetchKPIData();
+    }, refreshInterval);
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, fetchKPIData]);
   return __assign(__assign({}, state), { refresh: refresh });
 }
 // Hook para dados de drill-down
 function useDrillDownData() {
-  var _this = this;
   var _a = (0, react_1.useState)(false),
     loading = _a[0],
     setLoading = _a[1];
   var _b = (0, react_1.useState)(null),
     error = _b[0],
     setError = _b[1];
-  var getDrillDownData = (0, react_1.useCallback)(function (request) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, data, error_2;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            setLoading(true);
-            setError(null);
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 4, , 5]);
-            return [
-              4 /*yield*/,
-              fetch("/api/analytics/drill-down", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(request),
-              }),
-            ];
-          case 2:
-            response = _a.sent();
-            if (!response.ok) {
-              throw new Error("HTTP error! status: ".concat(response.status));
-            }
-            return [4 /*yield*/, response.json()];
-          case 3:
-            data = _a.sent();
-            setLoading(false);
-            return [2 /*return*/, data];
-          case 4:
-            error_2 = _a.sent();
-            console.error("Error fetching drill-down data:", error_2);
-            setError(
-              error_2 instanceof Error ? error_2.message : "Erro ao carregar análise detalhada",
-            );
-            setLoading(false);
-            return [2 /*return*/, null];
-          case 5:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var getDrillDownData = (0, react_1.useCallback)(
+    (request) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, data, error_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              setLoading(true);
+              setError(null);
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 4, , 5]);
+              return [
+                4 /*yield*/,
+                fetch("/api/analytics/drill-down", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(request),
+                }),
+              ];
+            case 2:
+              response = _a.sent();
+              if (!response.ok) {
+                throw new Error("HTTP error! status: ".concat(response.status));
+              }
+              return [4 /*yield*/, response.json()];
+            case 3:
+              data = _a.sent();
+              setLoading(false);
+              return [2 /*return*/, data];
+            case 4:
+              error_2 = _a.sent();
+              console.error("Error fetching drill-down data:", error_2);
+              setError(
+                error_2 instanceof Error ? error_2.message : "Erro ao carregar análise detalhada",
+              );
+              setLoading(false);
+              return [2 /*return*/, null];
+            case 5:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   return {
     getDrillDownData: getDrillDownData,
     loading: loading,
@@ -349,7 +332,6 @@ function useDrillDownData() {
 }
 // Hook para métricas profissionais
 function useProfessionalMetrics(dateRange) {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     metrics = _a[0],
     setMetrics = _a[1];
@@ -360,10 +342,10 @@ function useProfessionalMetrics(dateRange) {
     error = _c[0],
     setError = _c[1];
   var fetchProfessionalMetrics = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var timePeriod, response, data, error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setLoading(true);
@@ -407,17 +389,13 @@ function useProfessionalMetrics(dateRange) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [dateRange],
   );
-  (0, react_1.useEffect)(
-    function () {
-      fetchProfessionalMetrics();
-    },
-    [fetchProfessionalMetrics],
-  );
-  var calculateDateRange = (0, react_1.useCallback)(function (range) {
+  (0, react_1.useEffect)(() => {
+    fetchProfessionalMetrics();
+  }, [fetchProfessionalMetrics]);
+  var calculateDateRange = (0, react_1.useCallback)((range) => {
     var end = new Date();
     var start = new Date();
     switch (range) {

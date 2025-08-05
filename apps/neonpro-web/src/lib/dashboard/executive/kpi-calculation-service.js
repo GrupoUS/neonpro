@@ -1,15 +1,14 @@
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -29,13 +28,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -57,9 +56,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -131,7 +128,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createkpiCalculationService =
   exports.KPICalculationResultSchema =
@@ -182,7 +179,7 @@ exports.KPICalculationResultSchema = zod_1.z.object({
   calculatedAt: zod_1.z.string().datetime(),
 });
 // KPI Calculation Service
-var createkpiCalculationService = /** @class */ (function () {
+var createkpiCalculationService = /** @class */ (() => {
   function createkpiCalculationService() {
     this.supabase = (0, client_1.createClient)();
     this.cache = new Map();
@@ -498,12 +495,7 @@ var createkpiCalculationService = /** @class */ (function () {
               logger_1.logger.error("Error calculating monthly revenue:", error);
               return [2 /*return*/, 0];
             }
-            return [
-              2 /*return*/,
-              data.reduce(function (sum, payment) {
-                return sum + (payment.amount || 0);
-              }, 0),
-            ];
+            return [2 /*return*/, data.reduce((sum, payment) => sum + (payment.amount || 0), 0)];
         }
       });
     });
@@ -533,9 +525,7 @@ var createkpiCalculationService = /** @class */ (function () {
             if (error || !data.length) {
               return [2 /*return*/, 0];
             }
-            total = data.reduce(function (sum, payment) {
-              return sum + (payment.amount || 0);
-            }, 0);
+            total = data.reduce((sum, payment) => sum + (payment.amount || 0), 0);
             return [2 /*return*/, total / data.length];
         }
       });
@@ -637,19 +627,11 @@ var createkpiCalculationService = /** @class */ (function () {
             if (currentError || previousError || !previousPatients.length) {
               return [2 /*return*/, 0];
             }
-            currentPatientIds = new Set(
-              currentPatients.map(function (p) {
-                return p.patient_id;
-              }),
-            );
-            previousPatientIds = new Set(
-              previousPatients.map(function (p) {
-                return p.patient_id;
-              }),
-            );
-            retainedPatients = Array.from(previousPatientIds).filter(function (id) {
-              return currentPatientIds.has(id);
-            }).length;
+            currentPatientIds = new Set(currentPatients.map((p) => p.patient_id));
+            previousPatientIds = new Set(previousPatients.map((p) => p.patient_id));
+            retainedPatients = Array.from(previousPatientIds).filter((id) =>
+              currentPatientIds.has(id),
+            ).length;
             return [2 /*return*/, (retainedPatients / previousPatientIds.size) * 100];
         }
       });
@@ -679,9 +661,7 @@ var createkpiCalculationService = /** @class */ (function () {
             if (error || !appointments.length) {
               return [2 /*return*/, 0];
             }
-            completedAppointments = appointments.filter(function (a) {
-              return a.status === "completed";
-            }).length;
+            completedAppointments = appointments.filter((a) => a.status === "completed").length;
             completionRate = (completedAppointments / appointments.length) * 100;
             // Convert completion rate to satisfaction score (simplified)
             return [2 /*return*/, Math.min(completionRate * 0.05, 5)]; // Scale to 0-5
@@ -715,9 +695,9 @@ var createkpiCalculationService = /** @class */ (function () {
               return [2 /*return*/, 0];
             }
             totalSlots = appointments.length;
-            bookedSlots = appointments.filter(function (a) {
-              return ["scheduled", "confirmed", "completed"].includes(a.status);
-            }).length;
+            bookedSlots = appointments.filter((a) =>
+              ["scheduled", "confirmed", "completed"].includes(a.status),
+            ).length;
             return [2 /*return*/, totalSlots > 0 ? (bookedSlots / totalSlots) * 100 : 0];
         }
       });
@@ -747,9 +727,7 @@ var createkpiCalculationService = /** @class */ (function () {
             if (error || !appointments.length) {
               return [2 /*return*/, 0];
             }
-            noShows = appointments.filter(function (a) {
-              return a.status === "no_show";
-            }).length;
+            noShows = appointments.filter((a) => a.status === "no_show").length;
             return [2 /*return*/, (noShows / appointments.length) * 100];
         }
       });
@@ -830,16 +808,14 @@ var createkpiCalculationService = /** @class */ (function () {
             if (error || !appointments.length) {
               return [2 /*return*/, 0];
             }
-            completedAppointments = appointments.filter(function (a) {
-              return a.status === "completed";
-            }).length;
+            completedAppointments = appointments.filter((a) => a.status === "completed").length;
             return [2 /*return*/, (completedAppointments / appointments.length) * 100];
         }
       });
     });
   };
   // Helper methods
-  createkpiCalculationService.prototype.normalizePeriod = function (start, end) {
+  createkpiCalculationService.prototype.normalizePeriod = (start, end) => {
     var now = new Date();
     var defaultStart = new Date(now.getFullYear(), now.getMonth(), 1);
     var defaultEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
@@ -848,20 +824,20 @@ var createkpiCalculationService = /** @class */ (function () {
       end: end || defaultEnd,
     };
   };
-  createkpiCalculationService.prototype.getPreviousPeriod = function (start, end) {
+  createkpiCalculationService.prototype.getPreviousPeriod = (start, end) => {
     var duration = end.getTime() - start.getTime();
     return {
       start: new Date(start.getTime() - duration),
       end: new Date(start.getTime() - 1),
     };
   };
-  createkpiCalculationService.prototype.calculateTrend = function (current, previous) {
+  createkpiCalculationService.prototype.calculateTrend = (current, previous) => {
     if (previous === null) return "stable";
     if (current > previous) return "up";
     if (current < previous) return "down";
     return "stable";
   };
-  createkpiCalculationService.prototype.calculateStatus = function (value, kpiDefinition) {
+  createkpiCalculationService.prototype.calculateStatus = (value, kpiDefinition) => {
     if (kpiDefinition.critical_threshold !== null) {
       if (value <= kpiDefinition.critical_threshold) return "critical";
     }
@@ -870,7 +846,7 @@ var createkpiCalculationService = /** @class */ (function () {
     }
     return "normal";
   };
-  createkpiCalculationService.prototype.formatKPIValue = function (value, unit) {
+  createkpiCalculationService.prototype.formatKPIValue = (value, unit) => {
     switch (unit) {
       case "currency":
       case "R$":

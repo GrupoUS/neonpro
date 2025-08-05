@@ -1,4 +1,3 @@
-"use strict";
 // Story 9.2: Personalized Treatment Recommendations - Zod Validation Schemas
 // Comprehensive validation schemas for AI-powered personalized treatment recommendations
 Object.defineProperty(exports, "__esModule", { value: true });

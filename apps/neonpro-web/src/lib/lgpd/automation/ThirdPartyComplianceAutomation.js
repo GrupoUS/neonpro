@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,10 +154,10 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ThirdPartyComplianceAutomation = void 0;
-var ThirdPartyComplianceAutomation = /** @class */ (function () {
+var ThirdPartyComplianceAutomation = /** @class */ (() => {
   function ThirdPartyComplianceAutomation(supabase, complianceManager, config) {
     this.monitoringInterval = null;
     this.complianceCallbacks = [];
@@ -194,8 +191,8 @@ var ThirdPartyComplianceAutomation = /** @class */ (function () {
             // Set up continuous monitoring
             if (this.config.continuous_monitoring_enabled) {
               this.monitoringInterval = setInterval(
-                function () {
-                  return __awaiter(_this, void 0, void 0, function () {
+                () =>
+                  __awaiter(_this, void 0, void 0, function () {
                     var error_2;
                     return __generator(this, function (_a) {
                       switch (_a.label) {
@@ -219,8 +216,7 @@ var ThirdPartyComplianceAutomation = /** @class */ (function () {
                           return [2 /*return*/];
                       }
                     });
-                  });
-                },
+                  }),
                 this.config.monitoring_frequency_hours * 60 * 60 * 1000,
               );
             }
@@ -1039,7 +1035,7 @@ var ThirdPartyComplianceAutomation = /** @class */ (function () {
   ThirdPartyComplianceAutomation.prototype.validateAgreementData = function (agreementData) {
     return __awaiter(this, void 0, void 0, function () {
       var errors, startDate, endDate;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         errors = [];
         if (!agreementData.provider_id) {
           errors.push("Provider ID is required");
@@ -1226,7 +1222,7 @@ var ThirdPartyComplianceAutomation = /** @class */ (function () {
     assessmentType,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would schedule an assessment task
         console.log(
           "Scheduling ".concat(assessmentType, " assessment for provider ").concat(providerId),
@@ -1237,7 +1233,7 @@ var ThirdPartyComplianceAutomation = /** @class */ (function () {
   };
   ThirdPartyComplianceAutomation.prototype.performAutomatedAssessment = function (provider, scope) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would perform automated compliance assessment
         return [
           2 /*return*/,
@@ -1258,7 +1254,7 @@ var ThirdPartyComplianceAutomation = /** @class */ (function () {
     agreement,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would send notifications via configured channels
         console.log("Sending transfer notifications for transfer ".concat(transferId));
         return [2 /*return*/];
@@ -1267,45 +1263,37 @@ var ThirdPartyComplianceAutomation = /** @class */ (function () {
   };
   ThirdPartyComplianceAutomation.prototype.checkExpiredCertifications = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ThirdPartyComplianceAutomation.prototype.monitorActiveTransfers = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ThirdPartyComplianceAutomation.prototype.updateComplianceScores = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ThirdPartyComplianceAutomation.prototype.validateTransferCompliance = function (transfer) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   ThirdPartyComplianceAutomation.prototype.assessCountryRisk = function (country) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would assess country-specific risks
         return [2 /*return*/, { penalty: 0, factors: 0 }];
       });
     });
   };
-  ThirdPartyComplianceAutomation.prototype.isValidEmail = function (email) {
+  ThirdPartyComplianceAutomation.prototype.isValidEmail = (email) => {
     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  ThirdPartyComplianceAutomation.prototype.isValidUrl = function (url) {
+  ThirdPartyComplianceAutomation.prototype.isValidUrl = (url) => {
     try {
       new URL(url);
       return true;

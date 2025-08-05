@@ -1,6 +1,6 @@
+import type { NextRequest, NextResponse } from "next/server";
 import type { equipmentMaintenanceService } from "@/app/lib/services/equipment-maintenance-service";
 import type { createEquipmentSchema } from "@/app/lib/validations/maintenance";
-import type { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {

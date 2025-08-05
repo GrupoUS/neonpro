@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Third-party Integrations Framework
  * Main export file for the integrations system
@@ -10,41 +9,38 @@
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -64,13 +60,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -92,9 +88,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -166,7 +160,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IntegrationFrameworkFactory =
   exports.StripeUtils =
@@ -192,119 +186,83 @@ exports.IntegrationFrameworkFactory =
 var framework_1 = require("./framework");
 Object.defineProperty(exports, "NeonProIntegrationFramework", {
   enumerable: true,
-  get: function () {
-    return framework_1.NeonProIntegrationFramework;
-  },
+  get: () => framework_1.NeonProIntegrationFramework,
 });
 var webhook_manager_1 = require("./webhook-manager");
 Object.defineProperty(exports, "NeonProWebhookManager", {
   enumerable: true,
-  get: function () {
-    return webhook_manager_1.NeonProWebhookManager;
-  },
+  get: () => webhook_manager_1.NeonProWebhookManager,
 });
 Object.defineProperty(exports, "WebhookSignatureUtils", {
   enumerable: true,
-  get: function () {
-    return webhook_manager_1.WebhookSignatureUtils;
-  },
+  get: () => webhook_manager_1.WebhookSignatureUtils,
 });
 var rate_limiter_1 = require("./rate-limiter");
 Object.defineProperty(exports, "SupabaseRateLimiter", {
   enumerable: true,
-  get: function () {
-    return rate_limiter_1.SupabaseRateLimiter;
-  },
+  get: () => rate_limiter_1.SupabaseRateLimiter,
 });
 Object.defineProperty(exports, "MemoryRateLimiter", {
   enumerable: true,
-  get: function () {
-    return rate_limiter_1.MemoryRateLimiter;
-  },
+  get: () => rate_limiter_1.MemoryRateLimiter,
 });
 var cache_1 = require("./cache");
 Object.defineProperty(exports, "MemoryIntegrationCache", {
   enumerable: true,
-  get: function () {
-    return cache_1.MemoryIntegrationCache;
-  },
+  get: () => cache_1.MemoryIntegrationCache,
 });
 Object.defineProperty(exports, "RedisIntegrationCache", {
   enumerable: true,
-  get: function () {
-    return cache_1.RedisIntegrationCache;
-  },
+  get: () => cache_1.RedisIntegrationCache,
 });
 Object.defineProperty(exports, "SupabaseIntegrationCache", {
   enumerable: true,
-  get: function () {
-    return cache_1.SupabaseIntegrationCache;
-  },
+  get: () => cache_1.SupabaseIntegrationCache,
 });
 Object.defineProperty(exports, "CacheFactory", {
   enumerable: true,
-  get: function () {
-    return cache_1.CacheFactory;
-  },
+  get: () => cache_1.CacheFactory,
 });
 var queue_1 = require("./queue");
 Object.defineProperty(exports, "MemoryIntegrationQueue", {
   enumerable: true,
-  get: function () {
-    return queue_1.MemoryIntegrationQueue;
-  },
+  get: () => queue_1.MemoryIntegrationQueue,
 });
 Object.defineProperty(exports, "SupabaseIntegrationQueue", {
   enumerable: true,
-  get: function () {
-    return queue_1.SupabaseIntegrationQueue;
-  },
+  get: () => queue_1.SupabaseIntegrationQueue,
 });
 Object.defineProperty(exports, "QueueFactory", {
   enumerable: true,
-  get: function () {
-    return queue_1.QueueFactory;
-  },
+  get: () => queue_1.QueueFactory,
 });
 // Connectors
 var whatsapp_1 = require("./connectors/whatsapp");
 Object.defineProperty(exports, "WhatsAppConnector", {
   enumerable: true,
-  get: function () {
-    return whatsapp_1.WhatsAppConnector;
-  },
+  get: () => whatsapp_1.WhatsAppConnector,
 });
 Object.defineProperty(exports, "WhatsAppUtils", {
   enumerable: true,
-  get: function () {
-    return whatsapp_1.WhatsAppUtils;
-  },
+  get: () => whatsapp_1.WhatsAppUtils,
 });
 var google_calendar_1 = require("./connectors/google-calendar");
 Object.defineProperty(exports, "GoogleCalendarConnector", {
   enumerable: true,
-  get: function () {
-    return google_calendar_1.GoogleCalendarConnector;
-  },
+  get: () => google_calendar_1.GoogleCalendarConnector,
 });
 Object.defineProperty(exports, "GoogleCalendarUtils", {
   enumerable: true,
-  get: function () {
-    return google_calendar_1.GoogleCalendarUtils;
-  },
+  get: () => google_calendar_1.GoogleCalendarUtils,
 });
 var stripe_1 = require("./connectors/stripe");
 Object.defineProperty(exports, "StripeConnector", {
   enumerable: true,
-  get: function () {
-    return stripe_1.StripeConnector;
-  },
+  get: () => stripe_1.StripeConnector,
 });
 Object.defineProperty(exports, "StripeUtils", {
   enumerable: true,
-  get: function () {
-    return stripe_1.StripeUtils;
-  },
+  get: () => stripe_1.StripeUtils,
 });
 // Types
 __exportStar(require("./types"), exports);
@@ -312,7 +270,7 @@ __exportStar(require("./types"), exports);
  * Integration Framework Factory
  * Provides easy setup for the complete integration system
  */
-var IntegrationFrameworkFactory = /** @class */ (function () {
+var IntegrationFrameworkFactory = /** @class */ (() => {
   function IntegrationFrameworkFactory() {}
   /**
    * Create a complete integration framework instance
@@ -332,7 +290,7 @@ var IntegrationFrameworkFactory = /** @class */ (function () {
       if (config === void 0) {
         config = {};
       }
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         (_a = config.cacheType),
           (cacheType = _a === void 0 ? "memory" : _a),
           (_b = config.queueType),
@@ -373,8 +331,8 @@ var IntegrationFrameworkFactory = /** @class */ (function () {
   /**
    * Create WhatsApp connector with default configuration
    */
-  IntegrationFrameworkFactory.createWhatsAppConnector = function (config) {
-    return new WhatsAppConnector({
+  IntegrationFrameworkFactory.createWhatsAppConnector = (config) =>
+    new WhatsAppConnector({
       id: "whatsapp-business",
       name: "WhatsApp Business",
       type: "messaging",
@@ -395,12 +353,11 @@ var IntegrationFrameworkFactory = /** @class */ (function () {
         requestsPerHour: 36000,
       },
     });
-  };
   /**
    * Create Google Calendar connector with default configuration
    */
-  IntegrationFrameworkFactory.createGoogleCalendarConnector = function (config) {
-    return new GoogleCalendarConnector({
+  IntegrationFrameworkFactory.createGoogleCalendarConnector = (config) =>
+    new GoogleCalendarConnector({
       clientId: config.clientId,
       clientSecret: config.clientSecret,
       refreshToken: config.refreshToken,
@@ -408,12 +365,11 @@ var IntegrationFrameworkFactory = /** @class */ (function () {
       timeZone: config.timeZone || "America/Sao_Paulo",
       webhookUrl: config.webhookUrl,
     });
-  };
   /**
    * Create Stripe connector with default configuration
    */
-  IntegrationFrameworkFactory.createStripeConnector = function (config) {
-    return new StripeConnector({
+  IntegrationFrameworkFactory.createStripeConnector = (config) =>
+    new StripeConnector({
       secretKey: config.secretKey,
       publishableKey: config.publishableKey,
       webhookSecret: config.webhookSecret,
@@ -421,7 +377,6 @@ var IntegrationFrameworkFactory = /** @class */ (function () {
       country: config.country || "BR",
       webhookUrl: config.webhookUrl,
     });
-  };
   return IntegrationFrameworkFactory;
 })();
 exports.IntegrationFrameworkFactory = IntegrationFrameworkFactory;

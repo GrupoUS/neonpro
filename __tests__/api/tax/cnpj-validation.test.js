@@ -1,18 +1,17 @@
-"use strict";
 // CNPJ Validation API Tests - Story 5.5 AC2
 // Testing real-time CNPJ validation and customer verification
 // Author: VoidBeast V6.0 Master Orchestrator
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -22,7 +21,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -51,8 +50,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -73,9 +70,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -134,208 +131,182 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var server_1 = require("next/server");
 // Mock Supabase client for CNPJ operations
 var mockSupabase = {
-  from: globals_1.jest.fn(function () {
-    return {
-      select: globals_1.jest.fn(function () {
-        return {
-          eq: globals_1.jest.fn(function () {
-            return {
-              order: globals_1.jest.fn(function () {
-                return {
-                  limit: globals_1.jest.fn(function () {
-                    return Promise.resolve({
-                      data: [
-                        {
-                          id: "test-validation-id",
-                          cnpj: "12345678000190",
-                          formatted_cnpj: "12.345.678/0001-90",
-                          valid: true,
-                          company_data: {
-                            cnpj: "12345678000190",
-                            razao_social: "CLINICA TESTE LTDA",
-                            nome_fantasia: "Clínica Teste",
-                            situacao: "ATIVA",
-                          },
-                          validated_at: new Date().toISOString(),
-                        },
-                      ],
-                      error: null,
-                    });
-                  }),
-                };
-              }),
-              single: globals_1.jest.fn(function () {
-                return Promise.resolve({
-                  data: {
-                    id: "test-validation-id",
+  from: globals_1.jest.fn(() => ({
+    select: globals_1.jest.fn(() => ({
+      eq: globals_1.jest.fn(() => ({
+        order: globals_1.jest.fn(() => ({
+          limit: globals_1.jest.fn(() =>
+            Promise.resolve({
+              data: [
+                {
+                  id: "test-validation-id",
+                  cnpj: "12345678000190",
+                  formatted_cnpj: "12.345.678/0001-90",
+                  valid: true,
+                  company_data: {
                     cnpj: "12345678000190",
-                    formatted_cnpj: "12.345.678/0001-90",
-                    valid: true,
-                    company_data: {
-                      cnpj: "12345678000190",
-                      razao_social: "CLINICA TESTE LTDA",
-                      nome_fantasia: "Clínica Teste",
-                      situacao: "ATIVA",
-                    },
-                    validated_at: new Date().toISOString(),
+                    razao_social: "CLINICA TESTE LTDA",
+                    nome_fantasia: "Clínica Teste",
+                    situacao: "ATIVA",
                   },
-                  error: null,
-                });
-              }),
-            };
+                  validated_at: new Date().toISOString(),
+                },
+              ],
+              error: null,
+            }),
+          ),
+        })),
+        single: globals_1.jest.fn(() =>
+          Promise.resolve({
+            data: {
+              id: "test-validation-id",
+              cnpj: "12345678000190",
+              formatted_cnpj: "12.345.678/0001-90",
+              valid: true,
+              company_data: {
+                cnpj: "12345678000190",
+                razao_social: "CLINICA TESTE LTDA",
+                nome_fantasia: "Clínica Teste",
+                situacao: "ATIVA",
+              },
+              validated_at: new Date().toISOString(),
+            },
+            error: null,
           }),
-        };
-      }),
-      insert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(function () {
-                return Promise.resolve({
-                  data: { id: "test-insert-id" },
-                  error: null,
-                });
-              }),
-            };
+        ),
+      })),
+    })),
+    insert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(() =>
+          Promise.resolve({
+            data: { id: "test-insert-id" },
+            error: null,
           }),
-        };
-      }),
-      upsert: globals_1.jest.fn(function () {
-        return {
-          select: globals_1.jest.fn(function () {
-            return {
-              single: globals_1.jest.fn(function () {
-                return Promise.resolve({
-                  data: { id: "test-upsert-id" },
-                  error: null,
-                });
-              }),
-            };
+        ),
+      })),
+    })),
+    upsert: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn(() => ({
+        single: globals_1.jest.fn(() =>
+          Promise.resolve({
+            data: { id: "test-upsert-id" },
+            error: null,
           }),
-        };
-      }),
-    };
-  }),
+        ),
+      })),
+    })),
+  })),
 };
 // Mock CNPJ Validator Service
-globals_1.jest.mock("@/lib/services/brazilian-tax/cnpj-validator", function () {
-  return {
-    CNPJValidator: globals_1.jest.fn().mockImplementation(function () {
-      return {
-        validateCNPJ: globals_1.jest.fn().mockResolvedValue({
+globals_1.jest.mock("@/lib/services/brazilian-tax/cnpj-validator", () => ({
+  CNPJValidator: globals_1.jest.fn().mockImplementation(() => ({
+    validateCNPJ: globals_1.jest.fn().mockResolvedValue({
+      valid: true,
+      formatted: "12.345.678/0001-90",
+      cnpj_clean: "12345678000190",
+      check_digit_valid: true,
+      format_valid: true,
+      companyData: {
+        cnpj: "12345678000190",
+        razao_social: "CLINICA TESTE LTDA",
+        nome_fantasia: "Clínica Teste",
+        situacao: "ATIVA",
+        data_situacao: "2020-01-01",
+        tipo: "MATRIZ",
+        porte: "MICRO EMPRESA",
+        natureza_juridica: "206-2 - SOCIEDADE EMPRESARIA LIMITADA",
+        atividade_principal: {
+          code: "8630-5/01",
+          text: "Atividade médica ambulatorial com recursos para procedimentos cirúrgicos",
+        },
+        atividades_secundarias: [],
+        capital_social: 50000.0,
+        endereco: {
+          logradouro: "RUA TESTE",
+          numero: "123",
+          complemento: "SALA 101",
+          bairro: "CENTRO",
+          municipio: "SAO PAULO",
+          uf: "SP",
+          cep: "01000-000",
+        },
+        telefones: ["(11) 9999-9999"],
+        email: "contato@clinicateste.com.br",
+        data_abertura: "2020-01-01",
+        ultima_atualizacao: new Date().toISOString(),
+      },
+      validation_source: "receita_federal",
+      cached: false,
+      response_time_ms: 450,
+    }),
+    validateCNPJBatch: globals_1.jest.fn().mockResolvedValue({
+      batch_id: "batch-12345",
+      total_processed: 3,
+      total_valid: 2,
+      total_invalid: 1,
+      processing_time_ms: 1200,
+      results: [
+        {
+          cnpj_input: "12345678000190",
           valid: true,
           formatted: "12.345.678/0001-90",
-          cnpj_clean: "12345678000190",
-          check_digit_valid: true,
-          format_valid: true,
-          companyData: {
-            cnpj: "12345678000190",
-            razao_social: "CLINICA TESTE LTDA",
-            nome_fantasia: "Clínica Teste",
+          company_data: {
+            razao_social: "EMPRESA TESTE 1 LTDA",
             situacao: "ATIVA",
-            data_situacao: "2020-01-01",
-            tipo: "MATRIZ",
-            porte: "MICRO EMPRESA",
-            natureza_juridica: "206-2 - SOCIEDADE EMPRESARIA LIMITADA",
-            atividade_principal: {
-              code: "8630-5/01",
-              text: "Atividade médica ambulatorial com recursos para procedimentos cirúrgicos",
-            },
-            atividades_secundarias: [],
-            capital_social: 50000.0,
-            endereco: {
-              logradouro: "RUA TESTE",
-              numero: "123",
-              complemento: "SALA 101",
-              bairro: "CENTRO",
-              municipio: "SAO PAULO",
-              uf: "SP",
-              cep: "01000-000",
-            },
-            telefones: ["(11) 9999-9999"],
-            email: "contato@clinicateste.com.br",
-            data_abertura: "2020-01-01",
-            ultima_atualizacao: new Date().toISOString(),
           },
-          validation_source: "receita_federal",
-          cached: false,
-          response_time_ms: 450,
-        }),
-        validateCNPJBatch: globals_1.jest.fn().mockResolvedValue({
-          batch_id: "batch-12345",
-          total_processed: 3,
-          total_valid: 2,
-          total_invalid: 1,
-          processing_time_ms: 1200,
-          results: [
-            {
-              cnpj_input: "12345678000190",
-              valid: true,
-              formatted: "12.345.678/0001-90",
-              company_data: {
-                razao_social: "EMPRESA TESTE 1 LTDA",
-                situacao: "ATIVA",
-              },
-            },
-            {
-              cnpj_input: "98765432000111",
-              valid: true,
-              formatted: "98.765.432/0001-11",
-              company_data: {
-                razao_social: "EMPRESA TESTE 2 LTDA",
-                situacao: "ATIVA",
-              },
-            },
-            {
-              cnpj_input: "11111111111111",
-              valid: false,
-              errors: ["Invalid CNPJ format", "Check digit validation failed"],
-            },
-          ],
-        }),
-        formatCNPJ: globals_1.jest.fn().mockImplementation(function (cnpj) {
-          if (cnpj === "12345678000190") return "12.345.678/0001-90";
-          return cnpj;
-        }),
-        cleanCNPJ: globals_1.jest.fn().mockImplementation(function (cnpj) {
-          return cnpj.replace(/[^\d]/g, "");
-        }),
-      };
+        },
+        {
+          cnpj_input: "98765432000111",
+          valid: true,
+          formatted: "98.765.432/0001-11",
+          company_data: {
+            razao_social: "EMPRESA TESTE 2 LTDA",
+            situacao: "ATIVA",
+          },
+        },
+        {
+          cnpj_input: "11111111111111",
+          valid: false,
+          errors: ["Invalid CNPJ format", "Check digit validation failed"],
+        },
+      ],
     }),
-  };
-});
-globals_1.jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createClient: function () {
-      return mockSupabase;
-    },
-  };
-});
+    formatCNPJ: globals_1.jest.fn().mockImplementation((cnpj) => {
+      if (cnpj === "12345678000190") return "12.345.678/0001-90";
+      return cnpj;
+    }),
+    cleanCNPJ: globals_1.jest.fn().mockImplementation((cnpj) => cnpj.replace(/[^\d]/g, "")),
+  })),
+}));
+globals_1.jest.mock("@/app/utils/supabase/server", () => ({
+  createClient: () => mockSupabase,
+}));
 // Import CNPJ API handlers
 var route_1 = require("@/app/api/tax/cnpj/route");
 (0, globals_1.describe)(
   "CNPJ Validation API - Story 5.5 AC2: Real-time CNPJ Validation and Customer Verification",
-  function () {
+  () => {
     var validCNPJ = "12345678000190";
     var invalidCNPJ = "11111111111111";
     var formattedCNPJ = "12.345.678/0001-90";
-    (0, globals_1.beforeAll)(function () {
+    (0, globals_1.beforeAll)(() => {
       process.env.NODE_ENV = "test";
     });
-    (0, globals_1.afterAll)(function () {
+    (0, globals_1.afterAll)(() => {
       globals_1.jest.clearAllMocks();
     });
-    (0, globals_1.describe)("GET /api/tax/cnpj - CNPJ Validation and Lookup", function () {
-      (0, globals_1.it)("should validate CNPJ format and check digit", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.describe)("GET /api/tax/cnpj - CNPJ Validation and Lookup", () => {
+      (0, globals_1.it)("should validate CNPJ format and check digit", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -355,12 +326,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should retrieve company data from Receita Federal", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should retrieve company data from Receita Federal", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -389,12 +360,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should validate company status (active/inactive)", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should validate company status (active/inactive)", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -416,12 +387,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should check cached validation results", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should check cached validation results", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -442,12 +413,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should retrieve validation history for a CNPJ", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should retrieve validation history for a CNPJ", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -467,12 +438,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should search companies by partial name", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should search companies by partial name", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -491,12 +462,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should filter by business activity code", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should filter by business activity code", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -514,28 +485,26 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should handle invalid CNPJ gracefully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should handle invalid CNPJ gracefully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 // Mock invalid CNPJ response
                 globals_1.jest
                   .mocked(require("@/lib/services/brazilian-tax/cnpj-validator").CNPJValidator)
-                  .mockImplementationOnce(function () {
-                    return {
-                      validateCNPJ: globals_1.jest.fn().mockResolvedValue({
-                        valid: false,
-                        formatted: null,
-                        errors: ["Invalid CNPJ format", "Check digit validation failed"],
-                        validation_source: "local",
-                        response_time_ms: 50,
-                      }),
-                    };
-                  });
+                  .mockImplementationOnce(() => ({
+                    validateCNPJ: globals_1.jest.fn().mockResolvedValue({
+                      valid: false,
+                      formatted: null,
+                      errors: ["Invalid CNPJ format", "Check digit validation failed"],
+                      validation_source: "local",
+                      response_time_ms: 50,
+                    }),
+                  }));
                 request = new server_1.NextRequest(
                   "http://localhost/api/tax/cnpj?action=validate&cnpj=".concat(invalidCNPJ),
                 );
@@ -556,14 +525,14 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)("POST /api/tax/cnpj - Advanced CNPJ Operations", function () {
-      (0, globals_1.it)("should validate CNPJ with full company data retrieval", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.describe)("POST /api/tax/cnpj - Advanced CNPJ Operations", () => {
+      (0, globals_1.it)("should validate CNPJ with full company data retrieval", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -594,12 +563,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should perform batch CNPJ validation", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should perform batch CNPJ validation", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -627,12 +596,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should update company information cache", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should update company information cache", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -659,12 +628,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should validate CNPJ against blacklist", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should validate CNPJ against blacklist", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -689,12 +658,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should validate business relationship eligibility", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should validate business relationship eligibility", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -720,12 +689,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should format and clean CNPJ input", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should format and clean CNPJ input", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -749,12 +718,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should generate validation report", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should generate validation report", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -782,14 +751,14 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)("Error Handling and Edge Cases", function () {
-      (0, globals_1.it)("should handle missing CNPJ parameter", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.describe)("Error Handling and Edge Cases", () => {
+      (0, globals_1.it)("should handle missing CNPJ parameter", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj?action=validate");
@@ -804,12 +773,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should handle invalid action parameter", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should handle invalid action parameter", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest(
@@ -826,24 +795,22 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should handle Receita Federal API unavailability", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should handle Receita Federal API unavailability", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 // Mock API unavailability
                 globals_1.jest
                   .mocked(require("@/lib/services/brazilian-tax/cnpj-validator").CNPJValidator)
-                  .mockImplementationOnce(function () {
-                    return {
-                      validateCNPJ: globals_1.jest
-                        .fn()
-                        .mockRejectedValue(new Error("Receita Federal API unavailable")),
-                    };
-                  });
+                  .mockImplementationOnce(() => ({
+                    validateCNPJ: globals_1.jest
+                      .fn()
+                      .mockRejectedValue(new Error("Receita Federal API unavailable")),
+                  }));
                 request = new server_1.NextRequest(
                   "http://localhost/api/tax/cnpj?action=validate&cnpj=".concat(
                     validCNPJ,
@@ -862,30 +829,26 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should handle database errors gracefully", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should handle database errors gracefully", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 // Mock database error
                 mockSupabase.from.mockReturnValueOnce({
-                  insert: globals_1.jest.fn(function () {
-                    return {
-                      select: globals_1.jest.fn(function () {
-                        return {
-                          single: globals_1.jest.fn(function () {
-                            return Promise.resolve({
-                              data: null,
-                              error: { message: "Database connection failed" },
-                            });
-                          }),
-                        };
-                      }),
-                    };
-                  }),
+                  insert: globals_1.jest.fn(() => ({
+                    select: globals_1.jest.fn(() => ({
+                      single: globals_1.jest.fn(() =>
+                        Promise.resolve({
+                          data: null,
+                          error: { message: "Database connection failed" },
+                        }),
+                      ),
+                    })),
+                  })),
                 });
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
                   method: "POST",
@@ -906,12 +869,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should handle malformed CNPJ input", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should handle malformed CNPJ input", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var malformedCNPJ, request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 malformedCNPJ = "abc123def456";
@@ -921,16 +884,14 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 // Mock malformed input response
                 globals_1.jest
                   .mocked(require("@/lib/services/brazilian-tax/cnpj-validator").CNPJValidator)
-                  .mockImplementationOnce(function () {
-                    return {
-                      validateCNPJ: globals_1.jest.fn().mockResolvedValue({
-                        valid: false,
-                        errors: ["CNPJ must contain only numbers"],
-                        validation_source: "local",
-                        response_time_ms: 10,
-                      }),
-                    };
-                  });
+                  .mockImplementationOnce(() => ({
+                    validateCNPJ: globals_1.jest.fn().mockResolvedValue({
+                      valid: false,
+                      errors: ["CNPJ must contain only numbers"],
+                      validation_source: "local",
+                      response_time_ms: 10,
+                    }),
+                  }));
                 return [4 /*yield*/, (0, route_1.GET)(request)];
               case 1:
                 response = _a.sent();
@@ -945,12 +906,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should handle empty batch validation request", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should handle empty batch validation request", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -971,17 +932,17 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should handle batch validation with too many CNPJs", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should handle batch validation with too many CNPJs", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var largeBatch, request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
-                largeBatch = Array.from({ length: 101 }, function (_, i) {
-                  return "1234567800019".concat(i.toString().padStart(1, "0"));
-                });
+                largeBatch = Array.from({ length: 101 }, (_, i) =>
+                  "1234567800019".concat(i.toString().padStart(1, "0")),
+                );
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
                   method: "POST",
                   body: JSON.stringify({
@@ -1002,14 +963,14 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)("Performance Requirements - AC2", function () {
-      (0, globals_1.it)("should complete CNPJ validation within 1 second", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.describe)("Performance Requirements - AC2", () => {
+      (0, globals_1.it)("should complete CNPJ validation within 1 second", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var startTime, request, response, endTime;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 startTime = Date.now();
@@ -1025,12 +986,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should complete company data retrieval within 2 seconds", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should complete company data retrieval within 2 seconds", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var startTime, request, response, endTime;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 startTime = Date.now();
@@ -1049,69 +1010,59 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)(
-        "should handle high-frequency validation requests efficiently",
-        function () {
-          return __awaiter(void 0, void 0, void 0, function () {
-            var concurrentRequests, startTime, responses, endTime;
-            return __generator(this, function (_a) {
-              switch (_a.label) {
-                case 0:
-                  concurrentRequests = Array.from({ length: 10 }, function () {
-                    return (0, route_1.GET)(
-                      new server_1.NextRequest(
-                        "http://localhost/api/tax/cnpj?action=validate&cnpj=".concat(validCNPJ),
-                      ),
-                    );
-                  });
-                  startTime = Date.now();
-                  return [4 /*yield*/, Promise.all(concurrentRequests)];
-                case 1:
-                  responses = _a.sent();
-                  endTime = Date.now();
-                  // All requests should succeed
-                  responses.forEach(function (response) {
-                    (0, globals_1.expect)(response.status).toBe(200);
-                  });
-                  // Total time should be reasonable for concurrent processing
-                  (0, globals_1.expect)(endTime - startTime).toBeLessThan(3000); // 3 seconds for 10 concurrent requests
-                  return [2 /*return*/];
-              }
-            });
-          });
-        },
+        }),
       );
-      (0, globals_1.it)("should maintain accuracy under load testing", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+      (0, globals_1.it)("should handle high-frequency validation requests efficiently", () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          var concurrentRequests, startTime, responses, endTime;
+          return __generator(this, (_a) => {
+            switch (_a.label) {
+              case 0:
+                concurrentRequests = Array.from({ length: 10 }, () =>
+                  (0, route_1.GET)(
+                    new server_1.NextRequest(
+                      "http://localhost/api/tax/cnpj?action=validate&cnpj=".concat(validCNPJ),
+                    ),
+                  ),
+                );
+                startTime = Date.now();
+                return [4 /*yield*/, Promise.all(concurrentRequests)];
+              case 1:
+                responses = _a.sent();
+                endTime = Date.now();
+                // All requests should succeed
+                responses.forEach((response) => {
+                  (0, globals_1.expect)(response.status).toBe(200);
+                });
+                // Total time should be reasonable for concurrent processing
+                (0, globals_1.expect)(endTime - startTime).toBeLessThan(3000); // 3 seconds for 10 concurrent requests
+                return [2 /*return*/];
+            }
+          });
+        }),
+      );
+      (0, globals_1.it)("should maintain accuracy under load testing", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var testCNPJs, validationPromises, responses, results;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 testCNPJs = [validCNPJ, "98765432000111", "11223344000155"];
-                validationPromises = testCNPJs.map(function (cnpj) {
-                  return (0, route_1.GET)(
+                validationPromises = testCNPJs.map((cnpj) =>
+                  (0, route_1.GET)(
                     new server_1.NextRequest(
                       "http://localhost/api/tax/cnpj?action=validate&cnpj=".concat(cnpj),
                     ),
-                  );
-                });
+                  ),
+                );
                 return [4 /*yield*/, Promise.all(validationPromises)];
               case 1:
                 responses = _a.sent();
-                return [
-                  4 /*yield*/,
-                  Promise.all(
-                    responses.map(function (r) {
-                      return r.json();
-                    }),
-                  ),
-                ];
+                return [4 /*yield*/, Promise.all(responses.map((r) => r.json()))];
               case 2:
                 results = _a.sent();
                 // All requests should return valid results
-                results.forEach(function (result, index) {
+                results.forEach((result, _index) => {
                   (0, globals_1.expect)(result.data).toHaveProperty("valid");
                   (0, globals_1.expect)(
                     result.data.cnpj || result.data.validation_errors,
@@ -1120,10 +1071,10 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should cache validation results efficiently", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should cache validation results efficiently", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var firstRequest,
             firstStartTime,
             firstResponse,
@@ -1134,7 +1085,7 @@ var route_1 = require("@/app/api/tax/cnpj/route");
             secondEndTime,
             firstDuration,
             secondDuration;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 firstRequest = new server_1.NextRequest(
@@ -1167,14 +1118,14 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
-    (0, globals_1.describe)("Integration with Brazilian Tax Ecosystem", function () {
-      (0, globals_1.it)("should validate healthcare business eligibility", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+    (0, globals_1.describe)("Integration with Brazilian Tax Ecosystem", () => {
+      (0, globals_1.it)("should validate healthcare business eligibility", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -1201,12 +1152,12 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
-      (0, globals_1.it)("should validate aesthetic clinic certification", function () {
-        return __awaiter(void 0, void 0, void 0, function () {
+        }),
+      );
+      (0, globals_1.it)("should validate aesthetic clinic certification", () =>
+        __awaiter(void 0, void 0, void 0, function () {
           var request, response, result;
-          return __generator(this, function (_a) {
+          return __generator(this, (_a) => {
             switch (_a.label) {
               case 0:
                 request = new server_1.NextRequest("http://localhost/api/tax/cnpj", {
@@ -1236,8 +1187,8 @@ var route_1 = require("@/app/api/tax/cnpj/route");
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
   },
 );

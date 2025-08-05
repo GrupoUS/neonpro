@@ -1,7 +1,7 @@
-import type { BaseOAuthHandler } from "../base-oauth-handler";
-import type { OAuthProviderConfig, OAuthTokenResponse } from "../types.js";
-import type { EncryptedToken } from "../token-encryption.js";
 import type { logger } from "@/lib/logger";
+import type { BaseOAuthHandler } from "../base-oauth-handler";
+import type { EncryptedToken } from "../token-encryption.js";
+import type { OAuthProviderConfig, OAuthTokenResponse } from "../types.js";
 
 export class HubSpotOAuthHandler extends BaseOAuthHandler {
   protected readonly config: OAuthProviderConfig;

@@ -1,6 +1,48 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  Activity,
+  AlertTriangle,
+  ArrowDown,
+  ArrowUp,
+  BarChart3,
+  Calendar as CalendarIcon,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Filter,
+  Minus,
+  Package,
+  RefreshCw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { DateRange } from "react-day-picker";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ComposedChart,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Calendar, DatePickerWithRange } from "@/components/ui/calendar";
 import type {
   Card,
   CardContent,
@@ -8,10 +50,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
 import type {
   Select,
   SelectContent,
@@ -19,47 +58,8 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Calendar, DatePickerWithRange } from "@/components/ui/calendar";
-import type { Progress } from "@/components/ui/progress";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
-  ComposedChart,
-} from "recharts";
-import type {
-  TrendingUp,
-  TrendingDown,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  DollarSign,
-  Package,
-  BarChart3,
-  Target,
-  Activity,
-  RefreshCw,
-  Download,
-  Filter,
-  Calendar as CalendarIcon,
-  ArrowUp,
-  ArrowDown,
-  Minus,
-} from "lucide-react";
-import type { DateRange } from "react-day-picker";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface StockKPI {
   key: string;

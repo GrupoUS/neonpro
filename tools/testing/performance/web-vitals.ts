@@ -5,7 +5,7 @@
  * Based on latest 2025 performance optimization patterns
  */
 
-import { getCLS, getFID, getFCP, getLCP, getTTFB, type Metric } from "web-vitals";
+import { getCLS, getFCP, getFID, getLCP, getTTFB, type Metric } from "web-vitals";
 
 // Performance thresholds based on Core Web Vitals 2025 standards
 export const PERFORMANCE_THRESHOLDS = {
@@ -119,7 +119,7 @@ export function reportWebVitals() {
 
       try {
         longTaskObserver.observe({ entryTypes: ["longtask"] });
-      } catch (e) {
+      } catch (_e) {
         // Long Tasks API not supported
       }
 
@@ -160,7 +160,7 @@ export function reportWebVitals() {
 
       try {
         navigationObserver.observe({ entryTypes: ["navigation"] });
-      } catch (e) {
+      } catch (_e) {
         // Navigation Timing API not supported
       }
     }
@@ -252,7 +252,7 @@ export const PerformanceUtils = {
 
       try {
         resourceObserver.observe({ entryTypes: ["resource"] });
-      } catch (e) {
+      } catch (_e) {
         // Resource Timing API not supported
       }
     }

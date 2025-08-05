@@ -2,7 +2,7 @@
 // Story 3.2: Task 5 - Health Trend Monitoring Engine
 
 import type { createClient } from "@/lib/supabase/client";
-import type { HealthTrend, TrendAlert, HealthTrendAnalysis } from "./types";
+import type { HealthTrend, HealthTrendAnalysis, TrendAlert } from "./types";
 
 export class HealthTrendMonitor {
   private supabase = createClient();
@@ -489,7 +489,7 @@ export class HealthTrendMonitor {
       .filter((vs) => vs.weight && vs.height)
       .map((vs) => ({
         date: new Date(vs.created_at),
-        bmi: vs.weight / Math.pow(vs.height / 100, 2),
+        bmi: vs.weight / (vs.height / 100) ** 2,
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime());
 
@@ -534,10 +534,10 @@ export class HealthTrendMonitor {
 
     // Calculate R-squared
     const meanY = sumY / n;
-    const ssTotal = values.reduce((sum, val) => sum + Math.pow(val - meanY, 2), 0);
+    const ssTotal = values.reduce((sum, val) => sum + (val - meanY) ** 2, 0);
     const ssResidual = values.reduce((sum, val, i) => {
       const predicted = slope * i + intercept;
-      return sum + Math.pow(val - predicted, 2);
+      return sum + (val - predicted) ** 2;
     }, 0);
     const rSquared = 1 - ssResidual / ssTotal;
 

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatisticalInsights = StatisticalInsights;
 /**
@@ -19,7 +18,7 @@ var progress_1 = require("@/components/ui/progress");
 var alert_1 = require("@/components/ui/alert");
 var lucide_react_1 = require("lucide-react");
 // Utility functions
-var getCorrelationStrength = function (correlation) {
+var getCorrelationStrength = (correlation) => {
   var abs = Math.abs(correlation);
   if (abs >= 0.8) return { strength: "Very Strong", color: "text-red-600" };
   if (abs >= 0.6) return { strength: "Strong", color: "text-orange-600" };
@@ -27,7 +26,7 @@ var getCorrelationStrength = function (correlation) {
   if (abs >= 0.2) return { strength: "Weak", color: "text-blue-600" };
   return { strength: "Very Weak", color: "text-gray-600" };
 };
-var getSignificanceLevel = function (pValue) {
+var getSignificanceLevel = (pValue) => {
   if (pValue < 0.001)
     return { level: "***", color: "text-green-600", description: "Highly Significant" };
   if (pValue < 0.01)
@@ -37,34 +36,20 @@ var getSignificanceLevel = function (pValue) {
     return { level: "†", color: "text-yellow-500", description: "Marginally Significant" };
   return { level: "ns", color: "text-gray-500", description: "Not Significant" };
 };
-var getQualityColor = function (score) {
+var getQualityColor = (score) => {
   if (score >= 90) return "text-green-600";
   if (score >= 75) return "text-blue-600";
   if (score >= 60) return "text-yellow-600";
   return "text-red-600";
 };
-var calculateCorrelationMatrix = function (data) {
+var calculateCorrelationMatrix = (data) => {
   if (data.length === 0) return [];
-  var keys = Object.keys(data[0]).filter(function (key) {
-    return typeof data[0][key] === "number";
-  });
+  var keys = Object.keys(data[0]).filter((key) => typeof data[0][key] === "number");
   var matrix = [];
-  keys.forEach(function (key1) {
-    keys.forEach(function (key2) {
-      var values1 = data
-        .map(function (d) {
-          return d[key1];
-        })
-        .filter(function (v) {
-          return !isNaN(v);
-        });
-      var values2 = data
-        .map(function (d) {
-          return d[key2];
-        })
-        .filter(function (v) {
-          return !isNaN(v);
-        });
+  keys.forEach((key1) => {
+    keys.forEach((key2) => {
+      var values1 = data.map((d) => d[key1]).filter((v) => !isNaN(v));
+      var values2 = data.map((d) => d[key2]).filter((v) => !isNaN(v));
       if (values1.length > 1 && values2.length > 1) {
         var correlation = calculatePearsonCorrelation(values1, values2);
         matrix.push({ x: key1, y: key2, value: correlation });
@@ -73,24 +58,14 @@ var calculateCorrelationMatrix = function (data) {
   });
   return matrix;
 };
-var calculatePearsonCorrelation = function (x, y) {
+var calculatePearsonCorrelation = (x, y) => {
   var n = Math.min(x.length, y.length);
   if (n < 2) return 0;
-  var sumX = x.slice(0, n).reduce(function (sum, val) {
-    return sum + val;
-  }, 0);
-  var sumY = y.slice(0, n).reduce(function (sum, val) {
-    return sum + val;
-  }, 0);
-  var sumXY = x.slice(0, n).reduce(function (sum, val, i) {
-    return sum + val * y[i];
-  }, 0);
-  var sumX2 = x.slice(0, n).reduce(function (sum, val) {
-    return sum + val * val;
-  }, 0);
-  var sumY2 = y.slice(0, n).reduce(function (sum, val) {
-    return sum + val * val;
-  }, 0);
+  var sumX = x.slice(0, n).reduce((sum, val) => sum + val, 0);
+  var sumY = y.slice(0, n).reduce((sum, val) => sum + val, 0);
+  var sumXY = x.slice(0, n).reduce((sum, val, i) => sum + val * y[i], 0);
+  var sumX2 = x.slice(0, n).reduce((sum, val) => sum + val * val, 0);
+  var sumY2 = y.slice(0, n).reduce((sum, val) => sum + val * val, 0);
   var numerator = n * sumXY - sumX * sumY;
   var denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
   return denominator === 0 ? 0 : numerator / denominator;
@@ -124,59 +99,45 @@ function StatisticalInsights(_a) {
     setShowOnlySignificant = _j[1];
   // Calculate correlation matrix from raw data
   var correlationMatrix = (0, react_1.useMemo)(
-    function () {
-      return calculateCorrelationMatrix(rawData);
-    },
+    () => calculateCorrelationMatrix(rawData),
     [rawData],
   );
   // Filter significant correlations
   var significantCorrelations = (0, react_1.useMemo)(
-    function () {
-      return correlations
-        .filter(function (c) {
-          return !showOnlySignificant || c.significance !== "none";
-        })
-        .sort(function (a, b) {
-          return Math.abs(b.correlation) - Math.abs(a.correlation);
-        });
-    },
+    () =>
+      correlations
+        .filter((c) => !showOnlySignificant || c.significance !== "none")
+        .sort((a, b) => Math.abs(b.correlation) - Math.abs(a.correlation)),
     [correlations, showOnlySignificant],
   );
   // Calculate overall statistics
-  var statisticalSummary = (0, react_1.useMemo)(
-    function () {
-      var strongCorrelations = correlations.filter(function (c) {
-        return Math.abs(c.correlation) >= 0.6;
-      }).length;
-      var significantTests = statisticalTests.filter(function (t) {
-        return t.result === "reject";
-      }).length;
-      var overallDataQuality =
-        (dataQuality.completeness +
-          dataQuality.accuracy +
-          dataQuality.consistency +
-          dataQuality.validity +
-          dataQuality.uniqueness) /
-        5;
-      var bestModel = predictiveModels.reduce(function (best, model) {
-        return model.accuracy > ((best === null || best === void 0 ? void 0 : best.accuracy) || 0)
+  var statisticalSummary = (0, react_1.useMemo)(() => {
+    var strongCorrelations = correlations.filter((c) => Math.abs(c.correlation) >= 0.6).length;
+    var significantTests = statisticalTests.filter((t) => t.result === "reject").length;
+    var overallDataQuality =
+      (dataQuality.completeness +
+        dataQuality.accuracy +
+        dataQuality.consistency +
+        dataQuality.validity +
+        dataQuality.uniqueness) /
+      5;
+    var bestModel = predictiveModels.reduce(
+      (best, model) =>
+        model.accuracy > ((best === null || best === void 0 ? void 0 : best.accuracy) || 0)
           ? model
-          : best;
-      }, predictiveModels[0]);
-      return {
-        strongCorrelations: strongCorrelations,
-        significantTests: significantTests,
-        overallDataQuality: overallDataQuality,
-        bestModel: bestModel,
-        totalOutliers: dataQuality.outliers.filter(function (o) {
-          return o.isOutlier;
-        }).length,
-      };
-    },
-    [correlations, statisticalTests, dataQuality, predictiveModels],
-  );
+          : best,
+      predictiveModels[0],
+    );
+    return {
+      strongCorrelations: strongCorrelations,
+      significantTests: significantTests,
+      overallDataQuality: overallDataQuality,
+      bestModel: bestModel,
+      totalOutliers: dataQuality.outliers.filter((o) => o.isOutlier).length,
+    };
+  }, [correlations, statisticalTests, dataQuality, predictiveModels]);
   // Custom tooltip for correlation heatmap
-  var CorrelationTooltip = function (_a) {
+  var CorrelationTooltip = (_a) => {
     var active = _a.active,
       payload = _a.payload;
     if (!active || !payload || !payload.length) return null;
@@ -204,19 +165,17 @@ function StatisticalInsights(_a) {
     return (
       <div className={"w-full space-y-6 ".concat(className)}>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="animate-pulse">
-                <card_1.CardHeader className="pb-2">
-                  <div className="h-4 bg-gray-200 rounded" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="h-8 bg-gray-200 rounded mb-2" />
-                  <div className="h-3 bg-gray-100 rounded" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {Array.from({ length: 4 }).map((_, i) => (
+            <card_1.Card key={i} className="animate-pulse">
+              <card_1.CardHeader className="pb-2">
+                <div className="h-4 bg-gray-200 rounded" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="h-8 bg-gray-200 rounded mb-2" />
+                <div className="h-3 bg-gray-100 rounded" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
         <card_1.Card className="animate-pulse">
           <card_1.CardContent className="p-6">
@@ -298,12 +257,7 @@ function StatisticalInsights(_a) {
       </div>
 
       {/* Main Statistical Analysis Tabs */}
-      <tabs_1.Tabs
-        value={selectedView}
-        onValueChange={function (value) {
-          return setSelectedView(value);
-        }}
-      >
+      <tabs_1.Tabs value={selectedView} onValueChange={(value) => setSelectedView(value)}>
         <div className="flex items-center justify-between">
           <tabs_1.TabsList className="grid w-fit grid-cols-5">
             <tabs_1.TabsTrigger value="correlations">Correlations</tabs_1.TabsTrigger>
@@ -317,9 +271,7 @@ function StatisticalInsights(_a) {
             <button_1.Button
               variant={showOnlySignificant ? "default" : "outline"}
               size="sm"
-              onClick={function () {
-                return setShowOnlySignificant(!showOnlySignificant);
-              }}
+              onClick={() => setShowOnlySignificant(!showOnlySignificant)}
             >
               <lucide_react_1.Filter className="h-4 w-4 mr-1" />
               Significant Only
@@ -330,11 +282,11 @@ function StatisticalInsights(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function () {
-                return onExportResults === null || onExportResults === void 0
+              onClick={() =>
+                onExportResults === null || onExportResults === void 0
                   ? void 0
-                  : onExportResults("csv");
-              }}
+                  : onExportResults("csv")
+              }
             >
               <lucide_react_1.Download className="h-4 w-4" />
             </button_1.Button>
@@ -363,18 +315,16 @@ function StatisticalInsights(_a) {
                       <recharts_1.YAxis type="category" dataKey="y" />
                       <recharts_1.Tooltip content={<CorrelationTooltip />} />
                       <recharts_1.Scatter data={correlationMatrix} fill="#8884d8">
-                        {correlationMatrix.map(function (entry, index) {
-                          return (
-                            <recharts_1.Cell
-                              key={index}
-                              fill={
-                                entry.value > 0
-                                  ? "rgba(34, 197, 94, ".concat(Math.abs(entry.value), ")")
-                                  : "rgba(239, 68, 68, ".concat(Math.abs(entry.value), ")")
-                              }
-                            />
-                          );
-                        })}
+                        {correlationMatrix.map((entry, index) => (
+                          <recharts_1.Cell
+                            key={index}
+                            fill={
+                              entry.value > 0
+                                ? "rgba(34, 197, 94, ".concat(Math.abs(entry.value), ")")
+                                : "rgba(239, 68, 68, ".concat(Math.abs(entry.value), ")")
+                            }
+                          />
+                        ))}
                       </recharts_1.Scatter>
                     </recharts_1.ScatterChart>
                   </recharts_1.ResponsiveContainer>
@@ -392,21 +342,21 @@ function StatisticalInsights(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {significantCorrelations.map(function (correlation, index) {
+                  {significantCorrelations.map((correlation, index) => {
                     var strength = getCorrelationStrength(correlation.correlation);
                     var significance = getSignificanceLevel(correlation.pValue);
                     return (
                       <div
                         key={"".concat(correlation.variable1, "-").concat(correlation.variable2)}
                         className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
-                        onClick={function () {
-                          return setSelectedCorrelation(
+                        onClick={() =>
+                          setSelectedCorrelation(
                             selectedCorrelation ===
                               "".concat(correlation.variable1, "-").concat(correlation.variable2)
                               ? null
                               : "".concat(correlation.variable1, "-").concat(correlation.variable2),
-                          );
-                        }}
+                          )
+                        }
                       >
                         <div className="flex items-center justify-between">
                           <div className="space-y-1">
@@ -500,11 +450,7 @@ function StatisticalInsights(_a) {
                           </span>
                         </div>
                         <p className="text-2xl font-bold text-green-900 mt-1">
-                          {
-                            regressionResults.coefficients.filter(function (c) {
-                              return c.significance;
-                            }).length
-                          }
+                          {regressionResults.coefficients.filter((c) => c.significance).length}
                         </p>
                         <p className="text-xs text-green-700 mt-1">
                           of {regressionResults.coefficients.length} total
@@ -540,7 +486,7 @@ function StatisticalInsights(_a) {
                   </card_1.CardHeader>
                   <card_1.CardContent>
                     <div className="space-y-3">
-                      {regressionResults.coefficients.map(function (coeff, index) {
+                      {regressionResults.coefficients.map((coeff, index) => {
                         var significance = getSignificanceLevel(coeff.pValue);
                         return (
                           <div
@@ -599,12 +545,10 @@ function StatisticalInsights(_a) {
                             label={{ value: "Residuals", angle: -90, position: "insideLeft" }}
                           />
                           <recharts_1.Tooltip
-                            formatter={function (value, name) {
-                              return [
-                                value.toFixed(3),
-                                name === "residual" ? "Residual" : "Predicted",
-                              ];
-                            }}
+                            formatter={(value, name) => [
+                              value.toFixed(3),
+                              name === "residual" ? "Residual" : "Predicted",
+                            ]}
                           />
                           <recharts_1.ReferenceLine y={0} stroke="#666" strokeDasharray="2 2" />
                           <recharts_1.Scatter dataKey="residual" fill="#3b82f6" />
@@ -629,53 +573,51 @@ function StatisticalInsights(_a) {
 
         <tabs_1.TabsContent value="tests" className="mt-6">
           <div className="space-y-6">
-            {statisticalTests.map(function (test, index) {
-              return (
-                <card_1.Card key={index}>
-                  <card_1.CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <card_1.CardTitle className="text-lg">{test.testName}</card_1.CardTitle>
-                        <card_1.CardDescription>{test.hypothesis}</card_1.CardDescription>
-                      </div>
-                      <badge_1.Badge
-                        variant={test.result === "reject" ? "default" : "secondary"}
-                        className={test.result === "reject" ? "text-green-600" : "text-gray-600"}
-                      >
-                        {test.result === "reject" ? "Significant" : "Not Significant"}
-                      </badge_1.Badge>
+            {statisticalTests.map((test, index) => (
+              <card_1.Card key={index}>
+                <card_1.CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <card_1.CardTitle className="text-lg">{test.testName}</card_1.CardTitle>
+                      <card_1.CardDescription>{test.hypothesis}</card_1.CardDescription>
                     </div>
-                  </card_1.CardHeader>
-                  <card_1.CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                      <div className="text-center">
-                        <p className="text-sm text-gray-600">Test Statistic</p>
-                        <p className="text-xl font-bold">{test.testStatistic.toFixed(3)}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm text-gray-600">P-Value</p>
-                        <p className="text-xl font-bold">{test.pValue.toFixed(4)}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm text-gray-600">Critical Value</p>
-                        <p className="text-xl font-bold">{test.criticalValue.toFixed(3)}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm text-gray-600">Confidence Level</p>
-                        <p className="text-xl font-bold">{test.confidenceLevel}%</p>
-                      </div>
+                    <badge_1.Badge
+                      variant={test.result === "reject" ? "default" : "secondary"}
+                      className={test.result === "reject" ? "text-green-600" : "text-gray-600"}
+                    >
+                      {test.result === "reject" ? "Significant" : "Not Significant"}
+                    </badge_1.Badge>
+                  </div>
+                </card_1.CardHeader>
+                <card_1.CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600">Test Statistic</p>
+                      <p className="text-xl font-bold">{test.testStatistic.toFixed(3)}</p>
                     </div>
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600">P-Value</p>
+                      <p className="text-xl font-bold">{test.pValue.toFixed(4)}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600">Critical Value</p>
+                      <p className="text-xl font-bold">{test.criticalValue.toFixed(3)}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-gray-600">Confidence Level</p>
+                      <p className="text-xl font-bold">{test.confidenceLevel}%</p>
+                    </div>
+                  </div>
 
-                    <alert_1.Alert>
-                      <lucide_react_1.Info className="h-4 w-4" />
-                      <alert_1.AlertDescription>
-                        <strong>Interpretation:</strong> {test.interpretation}
-                      </alert_1.AlertDescription>
-                    </alert_1.Alert>
-                  </card_1.CardContent>
-                </card_1.Card>
-              );
-            })}
+                  <alert_1.Alert>
+                    <lucide_react_1.Info className="h-4 w-4" />
+                    <alert_1.AlertDescription>
+                      <strong>Interpretation:</strong> {test.interpretation}
+                    </alert_1.AlertDescription>
+                  </alert_1.Alert>
+                </card_1.CardContent>
+              </card_1.Card>
+            ))}
 
             {statisticalTests.length === 0 && (
               <card_1.Card>
@@ -711,7 +653,7 @@ function StatisticalInsights(_a) {
                 },
                 { name: "Validity", value: dataQuality.validity, icon: Shield },
                 { name: "Uniqueness", value: dataQuality.uniqueness, icon: lucide_react_1.Zap },
-              ].map(function (metric) {
+              ].map((metric) => {
                 var Icon = metric.icon;
                 return (
                   <card_1.Card key={metric.name}>
@@ -747,29 +689,25 @@ function StatisticalInsights(_a) {
                 {dataQuality.outliers.length > 0
                   ? <div className="space-y-3">
                       {dataQuality.outliers
-                        .filter(function (outlier) {
-                          return outlier.isOutlier;
-                        })
-                        .map(function (outlier, index) {
-                          return (
-                            <div
-                              key={index}
-                              className="flex items-center justify-between p-3 border rounded"
-                            >
-                              <div>
-                                <h4 className="font-medium">{outlier.metric}</h4>
-                                <p className="text-sm text-gray-600">
-                                  Value: {outlier.value.toLocaleString()}
-                                </p>
-                              </div>
-                              <div className="text-right">
-                                <badge_1.Badge variant="destructive">
-                                  Z-Score: {outlier.zScore.toFixed(2)}
-                                </badge_1.Badge>
-                              </div>
+                        .filter((outlier) => outlier.isOutlier)
+                        .map((outlier, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-3 border rounded"
+                          >
+                            <div>
+                              <h4 className="font-medium">{outlier.metric}</h4>
+                              <p className="text-sm text-gray-600">
+                                Value: {outlier.value.toLocaleString()}
+                              </p>
                             </div>
-                          );
-                        })}
+                            <div className="text-right">
+                              <badge_1.Badge variant="destructive">
+                                Z-Score: {outlier.zScore.toFixed(2)}
+                              </badge_1.Badge>
+                            </div>
+                          </div>
+                        ))}
                     </div>
                   : <div className="text-center py-8">
                       <lucide_react_1.CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
@@ -800,75 +738,69 @@ function StatisticalInsights(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {predictiveModels.map(function (model, index) {
-                    return (
-                      <div key={index} className="p-4 border rounded-lg">
-                        <div className="flex items-center justify-between mb-3">
-                          <div>
-                            <h4 className="font-medium capitalize">{model.modelType} Model</h4>
-                            <p className="text-sm text-gray-600">
-                              Features: {model.features.join(", ")}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <badge_1.Badge variant={model.accuracy >= 80 ? "default" : "secondary"}>
-                              {model.accuracy.toFixed(1)}% Accuracy
-                            </badge_1.Badge>
-                            <p className="text-xs text-gray-600 mt-1">
-                              CV Score: {model.crossValidationScore.toFixed(3)}
-                            </p>
-                          </div>
+                  {predictiveModels.map((model, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h4 className="font-medium capitalize">{model.modelType} Model</h4>
+                          <p className="text-sm text-gray-600">
+                            Features: {model.features.join(", ")}
+                          </p>
                         </div>
-
-                        <div className="mb-3">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-sm text-gray-600">Model Performance</span>
-                            <span className="text-sm font-medium">
-                              {model.accuracy.toFixed(1)}%
-                            </span>
-                          </div>
-                          <progress_1.Progress value={model.accuracy} className="h-2" />
-                        </div>
-
-                        {/* Feature Importance */}
-                        <div className="space-y-2">
-                          <h5 className="text-sm font-medium text-gray-700">Feature Importance</h5>
-                          {model.featureImportance.slice(0, 3).map(function (feature, idx) {
-                            return (
-                              <div key={idx} className="flex justify-between items-center text-sm">
-                                <span className="text-gray-600">{feature.feature}</span>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-20 h-2 bg-gray-200 rounded">
-                                    <div
-                                      className="h-full bg-blue-500 rounded"
-                                      style={{ width: "".concat(feature.importance * 100, "%") }}
-                                    />
-                                  </div>
-                                  <span className="font-medium">
-                                    {(feature.importance * 100).toFixed(0)}%
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-
-                        <div className="mt-3 flex gap-2">
-                          <button_1.Button
-                            size="sm"
-                            variant="outline"
-                            onClick={function () {
-                              return onModelRetrain === null || onModelRetrain === void 0
-                                ? void 0
-                                : onModelRetrain(model.modelType);
-                            }}
-                          >
-                            Retrain Model
-                          </button_1.Button>
+                        <div className="text-right">
+                          <badge_1.Badge variant={model.accuracy >= 80 ? "default" : "secondary"}>
+                            {model.accuracy.toFixed(1)}% Accuracy
+                          </badge_1.Badge>
+                          <p className="text-xs text-gray-600 mt-1">
+                            CV Score: {model.crossValidationScore.toFixed(3)}
+                          </p>
                         </div>
                       </div>
-                    );
-                  })}
+
+                      <div className="mb-3">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-sm text-gray-600">Model Performance</span>
+                          <span className="text-sm font-medium">{model.accuracy.toFixed(1)}%</span>
+                        </div>
+                        <progress_1.Progress value={model.accuracy} className="h-2" />
+                      </div>
+
+                      {/* Feature Importance */}
+                      <div className="space-y-2">
+                        <h5 className="text-sm font-medium text-gray-700">Feature Importance</h5>
+                        {model.featureImportance.slice(0, 3).map((feature, idx) => (
+                          <div key={idx} className="flex justify-between items-center text-sm">
+                            <span className="text-gray-600">{feature.feature}</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-20 h-2 bg-gray-200 rounded">
+                                <div
+                                  className="h-full bg-blue-500 rounded"
+                                  style={{ width: "".concat(feature.importance * 100, "%") }}
+                                />
+                              </div>
+                              <span className="font-medium">
+                                {(feature.importance * 100).toFixed(0)}%
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="mt-3 flex gap-2">
+                        <button_1.Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() =>
+                            onModelRetrain === null || onModelRetrain === void 0
+                              ? void 0
+                              : onModelRetrain(model.modelType)
+                          }
+                        >
+                          Retrain Model
+                        </button_1.Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>

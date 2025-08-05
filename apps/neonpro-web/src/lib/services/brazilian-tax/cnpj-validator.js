@@ -1,4 +1,3 @@
-"use strict";
 /**
  * CNPJ Validation Service
  * Comprehensive CNPJ validation with Brasil API integration
@@ -96,23 +95,18 @@ function validateHealthcareCNAE(cnae) {
     "4771-7", // Comércio varejista de produtos farmacêuticos
     "4772-5", // Comércio varejista de cosméticos
   ];
-  return healthcareCNAEs.some(function (code) {
-    return cnae.startsWith(code.replace("-", ""));
-  });
+  return healthcareCNAEs.some((code) => cnae.startsWith(code.replace("-", "")));
 }
 /**
  * Rate limiting for CNPJ consultations
  */
-var CNPJRateLimiter = /** @class */ (function () {
+var CNPJRateLimiter = /** @class */ (() => {
   function CNPJRateLimiter() {}
   CNPJRateLimiter.canMakeRequest = function (ip) {
-    var _this = this;
     var now = Date.now();
     var requests = this.requests.get(ip) || [];
     // Remove old requests outside the window
-    var validRequests = requests.filter(function (timestamp) {
-      return now - timestamp < _this.WINDOW_MS;
-    });
+    var validRequests = requests.filter((timestamp) => now - timestamp < this.WINDOW_MS);
     if (validRequests.length >= this.MAX_REQUESTS_PER_MINUTE) {
       return false;
     }
@@ -122,12 +116,9 @@ var CNPJRateLimiter = /** @class */ (function () {
     return true;
   };
   CNPJRateLimiter.getRemainingRequests = function (ip) {
-    var _this = this;
     var now = Date.now();
     var requests = this.requests.get(ip) || [];
-    var validRequests = requests.filter(function (timestamp) {
-      return now - timestamp < _this.WINDOW_MS;
-    });
+    var validRequests = requests.filter((timestamp) => now - timestamp < this.WINDOW_MS);
     return Math.max(0, this.MAX_REQUESTS_PER_MINUTE - validRequests.length);
   };
   CNPJRateLimiter.getResetTime = function (ip) {
@@ -145,7 +136,7 @@ exports.CNPJRateLimiter = CNPJRateLimiter;
 /**
  * Cache manager for CNPJ data
  */
-var CNPJCache = /** @class */ (function () {
+var CNPJCache = /** @class */ (() => {
   function CNPJCache() {}
   CNPJCache.get = function (cnpj) {
     var clean = cleanCNPJ(cnpj);

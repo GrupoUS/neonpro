@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = MedicalHistoryManager;
 var react_1 = require("react");
@@ -177,7 +174,6 @@ var sonner_1 = require("sonner");
 var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 function MedicalHistoryManager(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     _b = _a.readOnly,
     readOnly = _b === void 0 ? false : _b,
@@ -229,15 +225,12 @@ function MedicalHistoryManager(_a) {
   var _s = (0, react_1.useState)(null),
     editingItem = _s[0],
     setEditingItem = _s[1];
-  (0, react_1.useEffect)(
-    function () {
-      loadMedicalHistory();
-    },
-    [patientId],
-  );
-  var loadMedicalHistory = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    loadMedicalHistory();
+  }, [patientId]);
+  var loadMedicalHistory = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           setLoading(true);
           // TODO: Replace with actual Supabase queries
@@ -261,11 +254,10 @@ function MedicalHistoryManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleAddCondition = function (conditionData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAddCondition = (conditionData) =>
+    __awaiter(this, void 0, void 0, function () {
       var newCondition_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           newCondition_1 = __assign(
             __assign({ id: "condition_".concat(Date.now()), patient_id: patientId }, conditionData),
@@ -280,9 +272,7 @@ function MedicalHistoryManager(_a) {
               ).toISOString(), // 7 years
             },
           );
-          setConditions(function (prev) {
-            return __spreadArray([newCondition_1], prev, true);
-          });
+          setConditions((prev) => __spreadArray([newCondition_1], prev, true));
           setShowConditionDialog(false);
           sonner_1.toast.success("Condição médica adicionada com sucesso");
           onHistoryUpdate === null || onHistoryUpdate === void 0 ? void 0 : onHistoryUpdate();
@@ -293,11 +283,10 @@ function MedicalHistoryManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleAddAllergy = function (allergyData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAddAllergy = (allergyData) =>
+    __awaiter(this, void 0, void 0, function () {
       var newAllergy_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           newAllergy_1 = __assign(
             __assign({ id: "allergy_".concat(Date.now()), patient_id: patientId }, allergyData),
@@ -307,9 +296,7 @@ function MedicalHistoryManager(_a) {
               lgpd_consent: true,
             },
           );
-          setAllergies(function (prev) {
-            return __spreadArray([newAllergy_1], prev, true);
-          });
+          setAllergies((prev) => __spreadArray([newAllergy_1], prev, true));
           setShowAllergyDialog(false);
           sonner_1.toast.success("Alergia adicionada com sucesso");
           onHistoryUpdate === null || onHistoryUpdate === void 0 ? void 0 : onHistoryUpdate();
@@ -320,11 +307,10 @@ function MedicalHistoryManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleAddMedication = function (medicationData) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleAddMedication = (medicationData) =>
+    __awaiter(this, void 0, void 0, function () {
       var newMedication_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           newMedication_1 = __assign(
             __assign(
@@ -337,9 +323,7 @@ function MedicalHistoryManager(_a) {
               lgpd_consent: true,
             },
           );
-          setMedications(function (prev) {
-            return __spreadArray([newMedication_1], prev, true);
-          });
+          setMedications((prev) => __spreadArray([newMedication_1], prev, true));
           setShowMedicationDialog(false);
           sonner_1.toast.success("Medicação adicionada com sucesso");
           onHistoryUpdate === null || onHistoryUpdate === void 0 ? void 0 : onHistoryUpdate();
@@ -350,8 +334,7 @@ function MedicalHistoryManager(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var handleExportHistory = function () {
+  var handleExportHistory = () => {
     // LGPD-compliant export with audit logging
     var exportData = {
       patient_id: patientId,
@@ -372,7 +355,7 @@ function MedicalHistoryManager(_a) {
     console.log("Exporting medical history:", exportData);
     sonner_1.toast.success("Histórico médico exportado com conformidade LGPD");
   };
-  var getSeverityColor = function (severity) {
+  var getSeverityColor = (severity) => {
     switch (severity) {
       case "mild":
         return "bg-green-100 text-green-800";
@@ -387,7 +370,7 @@ function MedicalHistoryManager(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "active":
         return "bg-red-100 text-red-800";
@@ -430,11 +413,7 @@ function MedicalHistoryManager(_a) {
             Exportar
           </button_1.Button>
           {!readOnly && (
-            <button_1.Button
-              onClick={function () {
-                return loadMedicalHistory();
-              }}
-            >
+            <button_1.Button onClick={() => loadMedicalHistory()}>
               <lucide_react_1.Activity className="mr-2 h-4 w-4" />
               Atualizar
             </button_1.Button>
@@ -449,9 +428,7 @@ function MedicalHistoryManager(_a) {
           <input_1.Input
             placeholder="Buscar no histórico médico..."
             value={searchTerm}
-            onChange={function (e) {
-              return setSearchTerm(e.target.value);
-            }}
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
@@ -514,9 +491,7 @@ function MedicalHistoryManager(_a) {
                   </dialog_1.DialogHeader>
                   <ConditionForm
                     onSubmit={handleAddCondition}
-                    onCancel={function () {
-                      return setShowConditionDialog(false);
-                    }}
+                    onCancel={() => setShowConditionDialog(false)}
                   />
                 </dialog_1.DialogContent>
               </dialog_1.Dialog>
@@ -524,57 +499,55 @@ function MedicalHistoryManager(_a) {
           </div>
 
           <div className="grid gap-4">
-            {conditions.map(function (condition) {
-              return (
-                <card_1.Card key={condition.id} className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <h4 className="font-semibold">{condition.condition_name}</h4>
-                        {condition.icd_10_code && (
-                          <badge_1.Badge variant="outline">{condition.icd_10_code}</badge_1.Badge>
-                        )}
-                        <badge_1.Badge className={getSeverityColor(condition.severity)}>
-                          {condition.severity}
-                        </badge_1.Badge>
-                        <badge_1.Badge className={getStatusColor(condition.status)}>
-                          {condition.status}
-                        </badge_1.Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{condition.description}</p>
-                      <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                        <span>
-                          Início:{" "}
-                          {(0, date_fns_1.format)(new Date(condition.onset_date), "dd/MM/yyyy", {
-                            locale: locale_1.ptBR,
-                          })}
-                        </span>
-                        {condition.resolution_date && (
-                          <span>
-                            Resolução:{" "}
-                            {(0, date_fns_1.format)(
-                              new Date(condition.resolution_date),
-                              "dd/MM/yyyy",
-                              { locale: locale_1.ptBR },
-                            )}
-                          </span>
-                        )}
-                      </div>
+            {conditions.map((condition) => (
+              <card_1.Card key={condition.id} className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="font-semibold">{condition.condition_name}</h4>
+                      {condition.icd_10_code && (
+                        <badge_1.Badge variant="outline">{condition.icd_10_code}</badge_1.Badge>
+                      )}
+                      <badge_1.Badge className={getSeverityColor(condition.severity)}>
+                        {condition.severity}
+                      </badge_1.Badge>
+                      <badge_1.Badge className={getStatusColor(condition.status)}>
+                        {condition.status}
+                      </badge_1.Badge>
                     </div>
-                    {!readOnly && (
-                      <div className="flex items-center space-x-2">
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Edit className="h-4 w-4" />
-                        </button_1.Button>
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Trash2 className="h-4 w-4" />
-                        </button_1.Button>
-                      </div>
-                    )}
+                    <p className="text-sm text-muted-foreground">{condition.description}</p>
+                    <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                      <span>
+                        Início:{" "}
+                        {(0, date_fns_1.format)(new Date(condition.onset_date), "dd/MM/yyyy", {
+                          locale: locale_1.ptBR,
+                        })}
+                      </span>
+                      {condition.resolution_date && (
+                        <span>
+                          Resolução:{" "}
+                          {(0, date_fns_1.format)(
+                            new Date(condition.resolution_date),
+                            "dd/MM/yyyy",
+                            { locale: locale_1.ptBR },
+                          )}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </card_1.Card>
-              );
-            })}
+                  {!readOnly && (
+                    <div className="flex items-center space-x-2">
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Edit className="h-4 w-4" />
+                      </button_1.Button>
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Trash2 className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+                  )}
+                </div>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -599,9 +572,7 @@ function MedicalHistoryManager(_a) {
                   </dialog_1.DialogHeader>
                   <AllergyForm
                     onSubmit={handleAddAllergy}
-                    onCancel={function () {
-                      return setShowAllergyDialog(false);
-                    }}
+                    onCancel={() => setShowAllergyDialog(false)}
                   />
                 </dialog_1.DialogContent>
               </dialog_1.Dialog>
@@ -609,43 +580,39 @@ function MedicalHistoryManager(_a) {
           </div>
 
           <div className="grid gap-4">
-            {allergies.map(function (allergy) {
-              return (
-                <card_1.Card key={allergy.id} className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <h4 className="font-semibold">{allergy.allergen}</h4>
-                        <badge_1.Badge variant="outline">{allergy.allergen_type}</badge_1.Badge>
-                        <badge_1.Badge className={getSeverityColor(allergy.severity)}>
-                          {allergy.severity}
-                        </badge_1.Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{allergy.notes}</p>
-                      <div className="flex flex-wrap gap-1">
-                        {allergy.symptoms.map(function (symptom, index) {
-                          return (
-                            <badge_1.Badge key={index} variant="secondary" className="text-xs">
-                              {symptom}
-                            </badge_1.Badge>
-                          );
-                        })}
-                      </div>
+            {allergies.map((allergy) => (
+              <card_1.Card key={allergy.id} className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="font-semibold">{allergy.allergen}</h4>
+                      <badge_1.Badge variant="outline">{allergy.allergen_type}</badge_1.Badge>
+                      <badge_1.Badge className={getSeverityColor(allergy.severity)}>
+                        {allergy.severity}
+                      </badge_1.Badge>
                     </div>
-                    {!readOnly && (
-                      <div className="flex items-center space-x-2">
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Edit className="h-4 w-4" />
-                        </button_1.Button>
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Trash2 className="h-4 w-4" />
-                        </button_1.Button>
-                      </div>
-                    )}
+                    <p className="text-sm text-muted-foreground">{allergy.notes}</p>
+                    <div className="flex flex-wrap gap-1">
+                      {allergy.symptoms.map((symptom, index) => (
+                        <badge_1.Badge key={index} variant="secondary" className="text-xs">
+                          {symptom}
+                        </badge_1.Badge>
+                      ))}
+                    </div>
                   </div>
-                </card_1.Card>
-              );
-            })}
+                  {!readOnly && (
+                    <div className="flex items-center space-x-2">
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Edit className="h-4 w-4" />
+                      </button_1.Button>
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Trash2 className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+                  )}
+                </div>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -670,9 +637,7 @@ function MedicalHistoryManager(_a) {
                   </dialog_1.DialogHeader>
                   <MedicationForm
                     onSubmit={handleAddMedication}
-                    onCancel={function () {
-                      return setShowMedicationDialog(false);
-                    }}
+                    onCancel={() => setShowMedicationDialog(false)}
                   />
                 </dialog_1.DialogContent>
               </dialog_1.Dialog>
@@ -680,65 +645,63 @@ function MedicalHistoryManager(_a) {
           </div>
 
           <div className="grid gap-4">
-            {medications.map(function (medication) {
-              return (
-                <card_1.Card key={medication.id} className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <h4 className="font-semibold">{medication.medication_name}</h4>
-                        {medication.generic_name && (
-                          <badge_1.Badge variant="outline">{medication.generic_name}</badge_1.Badge>
-                        )}
-                        <badge_1.Badge className={getStatusColor(medication.status)}>
-                          {medication.status}
-                        </badge_1.Badge>
-                      </div>
-                      <div className="text-sm space-y-1">
-                        <p>
-                          <strong>Dosagem:</strong> {medication.dosage}
-                        </p>
-                        <p>
-                          <strong>Frequência:</strong> {medication.frequency}
-                        </p>
-                        <p>
-                          <strong>Via:</strong> {medication.route}
-                        </p>
-                        <p>
-                          <strong>Indicação:</strong> {medication.indication}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+            {medications.map((medication) => (
+              <card_1.Card key={medication.id} className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="font-semibold">{medication.medication_name}</h4>
+                      {medication.generic_name && (
+                        <badge_1.Badge variant="outline">{medication.generic_name}</badge_1.Badge>
+                      )}
+                      <badge_1.Badge className={getStatusColor(medication.status)}>
+                        {medication.status}
+                      </badge_1.Badge>
+                    </div>
+                    <div className="text-sm space-y-1">
+                      <p>
+                        <strong>Dosagem:</strong> {medication.dosage}
+                      </p>
+                      <p>
+                        <strong>Frequência:</strong> {medication.frequency}
+                      </p>
+                      <p>
+                        <strong>Via:</strong> {medication.route}
+                      </p>
+                      <p>
+                        <strong>Indicação:</strong> {medication.indication}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                      <span>
+                        Início:{" "}
+                        {(0, date_fns_1.format)(new Date(medication.start_date), "dd/MM/yyyy", {
+                          locale: locale_1.ptBR,
+                        })}
+                      </span>
+                      {medication.end_date && (
                         <span>
-                          Início:{" "}
-                          {(0, date_fns_1.format)(new Date(medication.start_date), "dd/MM/yyyy", {
+                          Fim:{" "}
+                          {(0, date_fns_1.format)(new Date(medication.end_date), "dd/MM/yyyy", {
                             locale: locale_1.ptBR,
                           })}
                         </span>
-                        {medication.end_date && (
-                          <span>
-                            Fim:{" "}
-                            {(0, date_fns_1.format)(new Date(medication.end_date), "dd/MM/yyyy", {
-                              locale: locale_1.ptBR,
-                            })}
-                          </span>
-                        )}
-                      </div>
+                      )}
                     </div>
-                    {!readOnly && (
-                      <div className="flex items-center space-x-2">
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Edit className="h-4 w-4" />
-                        </button_1.Button>
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Trash2 className="h-4 w-4" />
-                        </button_1.Button>
-                      </div>
-                    )}
                   </div>
-                </card_1.Card>
-              );
-            })}
+                  {!readOnly && (
+                    <div className="flex items-center space-x-2">
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Edit className="h-4 w-4" />
+                      </button_1.Button>
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Trash2 className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+                  )}
+                </div>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -762,14 +725,12 @@ function MedicalHistoryManager(_a) {
                     </dialog_1.DialogDescription>
                   </dialog_1.DialogHeader>
                   <FamilyHistoryForm
-                    onSubmit={function (data) {
+                    onSubmit={(data) => {
                       // Handle family history submission
                       setShowFamilyDialog(false);
                       sonner_1.toast.success("Histórico familiar adicionado");
                     }}
-                    onCancel={function () {
-                      return setShowFamilyDialog(false);
-                    }}
+                    onCancel={() => setShowFamilyDialog(false)}
                   />
                 </dialog_1.DialogContent>
               </dialog_1.Dialog>
@@ -777,39 +738,37 @@ function MedicalHistoryManager(_a) {
           </div>
 
           <div className="grid gap-4">
-            {familyHistory.map(function (history) {
-              return (
-                <card_1.Card key={history.id} className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center space-x-2">
-                        <h4 className="font-semibold">{history.condition}</h4>
-                        <badge_1.Badge variant="outline">{history.relationship}</badge_1.Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{history.notes}</p>
-                      <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                        {history.age_of_onset && (
-                          <span>Idade de início: {history.age_of_onset} anos</span>
-                        )}
-                        {history.age_of_death && (
-                          <span>Idade do óbito: {history.age_of_death} anos</span>
-                        )}
-                      </div>
+            {familyHistory.map((history) => (
+              <card_1.Card key={history.id} className="p-4">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="font-semibold">{history.condition}</h4>
+                      <badge_1.Badge variant="outline">{history.relationship}</badge_1.Badge>
                     </div>
-                    {!readOnly && (
-                      <div className="flex items-center space-x-2">
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Edit className="h-4 w-4" />
-                        </button_1.Button>
-                        <button_1.Button variant="ghost" size="sm">
-                          <lucide_react_1.Trash2 className="h-4 w-4" />
-                        </button_1.Button>
-                      </div>
-                    )}
+                    <p className="text-sm text-muted-foreground">{history.notes}</p>
+                    <div className="flex items-center space-x-4 text-xs text-muted-foreground">
+                      {history.age_of_onset && (
+                        <span>Idade de início: {history.age_of_onset} anos</span>
+                      )}
+                      {history.age_of_death && (
+                        <span>Idade do óbito: {history.age_of_death} anos</span>
+                      )}
+                    </div>
                   </div>
-                </card_1.Card>
-              );
-            })}
+                  {!readOnly && (
+                    <div className="flex items-center space-x-2">
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Edit className="h-4 w-4" />
+                      </button_1.Button>
+                      <button_1.Button variant="ghost" size="sm">
+                        <lucide_react_1.Trash2 className="h-4 w-4" />
+                      </button_1.Button>
+                    </div>
+                  )}
+                </div>
+              </card_1.Card>
+            ))}
           </div>
         </tabs_1.TabsContent>
 
@@ -834,14 +793,12 @@ function MedicalHistoryManager(_a) {
                   </dialog_1.DialogHeader>
                   <SocialHistoryForm
                     initialData={socialHistory}
-                    onSubmit={function (data) {
+                    onSubmit={(data) => {
                       setSocialHistory(data);
                       setShowSocialDialog(false);
                       sonner_1.toast.success("Histórico social atualizado");
                     }}
-                    onCancel={function () {
-                      return setShowSocialDialog(false);
-                    }}
+                    onCancel={() => setShowSocialDialog(false)}
                   />
                 </dialog_1.DialogContent>
               </dialog_1.Dialog>
@@ -909,13 +866,11 @@ function MedicalHistoryManager(_a) {
                         <div className="mt-1">
                           <p className="text-xs text-muted-foreground">Riscos ocupacionais:</p>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {socialHistory.occupational_hazards.map(function (hazard, index) {
-                              return (
-                                <badge_1.Badge key={index} variant="secondary" className="text-xs">
-                                  {hazard}
-                                </badge_1.Badge>
-                              );
-                            })}
+                            {socialHistory.occupational_hazards.map((hazard, index) => (
+                              <badge_1.Badge key={index} variant="secondary" className="text-xs">
+                                {hazard}
+                              </badge_1.Badge>
+                            ))}
                           </div>
                         </div>
                       )}
@@ -972,7 +927,7 @@ function ConditionForm(_a) {
     setFormData = _b[1];
   return (
     <form
-      onSubmit={function (e) {
+      onSubmit={(e) => {
         e.preventDefault();
         onSubmit(formData);
       }}
@@ -984,11 +939,11 @@ function ConditionForm(_a) {
           <input_1.Input
             id="condition_name"
             value={formData.condition_name}
-            onChange={function (e) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { condition_name: e.target.value });
-              });
-            }}
+            onChange={(e) =>
+              setFormData((prev) =>
+                __assign(__assign({}, prev), { condition_name: e.target.value }),
+              )
+            }
             required
           />
         </div>
@@ -997,11 +952,9 @@ function ConditionForm(_a) {
           <input_1.Input
             id="icd_10_code"
             value={formData.icd_10_code}
-            onChange={function (e) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { icd_10_code: e.target.value });
-              });
-            }}
+            onChange={(e) =>
+              setFormData((prev) => __assign(__assign({}, prev), { icd_10_code: e.target.value }))
+            }
           />
         </div>
       </div>
@@ -1011,11 +964,9 @@ function ConditionForm(_a) {
           <label_1.Label htmlFor="severity">Severidade</label_1.Label>
           <select_1.Select
             value={formData.severity}
-            onValueChange={function (value) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { severity: value });
-              });
-            }}
+            onValueChange={(value) =>
+              setFormData((prev) => __assign(__assign({}, prev), { severity: value }))
+            }
           >
             <select_1.SelectTrigger>
               <select_1.SelectValue />
@@ -1032,11 +983,9 @@ function ConditionForm(_a) {
           <label_1.Label htmlFor="status">Status</label_1.Label>
           <select_1.Select
             value={formData.status}
-            onValueChange={function (value) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { status: value });
-              });
-            }}
+            onValueChange={(value) =>
+              setFormData((prev) => __assign(__assign({}, prev), { status: value }))
+            }
           >
             <select_1.SelectTrigger>
               <select_1.SelectValue />
@@ -1055,11 +1004,9 @@ function ConditionForm(_a) {
             id="onset_date"
             type="date"
             value={formData.onset_date}
-            onChange={function (e) {
-              return setFormData(function (prev) {
-                return __assign(__assign({}, prev), { onset_date: e.target.value });
-              });
-            }}
+            onChange={(e) =>
+              setFormData((prev) => __assign(__assign({}, prev), { onset_date: e.target.value }))
+            }
           />
         </div>
       </div>
@@ -1069,11 +1016,9 @@ function ConditionForm(_a) {
         <textarea_1.Textarea
           id="description"
           value={formData.description}
-          onChange={function (e) {
-            return setFormData(function (prev) {
-              return __assign(__assign({}, prev), { description: e.target.value });
-            });
-          }}
+          onChange={(e) =>
+            setFormData((prev) => __assign(__assign({}, prev), { description: e.target.value }))
+          }
           rows={3}
         />
       </div>
@@ -1083,11 +1028,9 @@ function ConditionForm(_a) {
         <textarea_1.Textarea
           id="treatment_notes"
           value={formData.treatment_notes}
-          onChange={function (e) {
-            return setFormData(function (prev) {
-              return __assign(__assign({}, prev), { treatment_notes: e.target.value });
-            });
-          }}
+          onChange={(e) =>
+            setFormData((prev) => __assign(__assign({}, prev), { treatment_notes: e.target.value }))
+          }
           rows={3}
         />
       </div>

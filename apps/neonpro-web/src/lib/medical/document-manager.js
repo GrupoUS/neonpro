@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro Medical Document Manager
  * Story 2.2: Medical History & Records - Document Management
@@ -15,26 +14,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -54,13 +53,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -82,9 +81,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -156,7 +153,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.medicalDocumentManager =
   exports.MedicalDocumentManager =
@@ -170,7 +167,7 @@ var audit_logger_1 = require("../audit/audit-logger");
 var lgpd_manager_1 = require("../auth/lgpd/lgpd-manager");
 // Enums
 var DocumentType;
-(function (DocumentType) {
+((DocumentType) => {
   DocumentType["IMAGE"] = "image";
   DocumentType["PDF"] = "pdf";
   DocumentType["DOCUMENT"] = "document";
@@ -180,7 +177,7 @@ var DocumentType;
   DocumentType["OTHER"] = "other";
 })(DocumentType || (exports.DocumentType = DocumentType = {}));
 var DocumentCategory;
-(function (DocumentCategory) {
+((DocumentCategory) => {
   DocumentCategory["CONSENT_FORM"] = "consent_form";
   DocumentCategory["MEDICAL_REPORT"] = "medical_report";
   DocumentCategory["LAB_RESULT"] = "lab_result";
@@ -196,7 +193,7 @@ var DocumentCategory;
   DocumentCategory["OTHER"] = "other";
 })(DocumentCategory || (exports.DocumentCategory = DocumentCategory = {}));
 var AccessLevel;
-(function (AccessLevel) {
+((AccessLevel) => {
   AccessLevel["PUBLIC"] = "public";
   AccessLevel["CLINIC_STAFF"] = "clinic_staff";
   AccessLevel["DOCTOR_ONLY"] = "doctor_only";
@@ -206,7 +203,7 @@ var AccessLevel;
 // ============================================================================
 // MEDICAL DOCUMENT MANAGER
 // ============================================================================
-var MedicalDocumentManager = /** @class */ (function () {
+var MedicalDocumentManager = /** @class */ (() => {
   function MedicalDocumentManager() {
     this.STORAGE_BUCKET = "medical-documents";
     this.MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
@@ -1107,7 +1104,7 @@ var MedicalDocumentManager = /** @class */ (function () {
   MedicalDocumentManager.prototype.calculateChecksum = function (file) {
     return __awaiter(this, void 0, void 0, function () {
       var buffer, hash;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, file.arrayBuffer()];
@@ -1157,7 +1154,7 @@ var MedicalDocumentManager = /** @class */ (function () {
       });
     });
   };
-  MedicalDocumentManager.prototype.getDocumentType = function (mimeType) {
+  MedicalDocumentManager.prototype.getDocumentType = (mimeType) => {
     if (mimeType.startsWith("image/")) return DocumentType.IMAGE;
     if (mimeType === "application/pdf") return DocumentType.PDF;
     if (mimeType.startsWith("video/")) return DocumentType.VIDEO;
@@ -1169,7 +1166,7 @@ var MedicalDocumentManager = /** @class */ (function () {
   MedicalDocumentManager.prototype.extractMetadata = function (file) {
     return __awaiter(this, void 0, void 0, function () {
       var metadata;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         metadata = {};
         if (file.type.startsWith("image/")) {
           // For images, we would typically use a library like exif-js
@@ -1198,7 +1195,7 @@ var MedicalDocumentManager = /** @class */ (function () {
   };
   MedicalDocumentManager.prototype.processImage = function (documentId, filePath) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Image processing tasks:
           // - Resize for web display
@@ -1252,7 +1249,7 @@ var MedicalDocumentManager = /** @class */ (function () {
   };
   MedicalDocumentManager.prototype.checkDocumentAccess = function (document, userId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           // Simplified access control
           // In production, implement proper RBAC integration
@@ -1410,7 +1407,7 @@ var MedicalDocumentManager = /** @class */ (function () {
             };
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (doc) {
+              : data.forEach((doc) => {
                   stats_1.total_size += doc.file_size;
                   // Count by type
                   stats_1.by_type[doc.document_type] =

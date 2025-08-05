@@ -8,22 +8,25 @@
  * with advanced features like tooltips, animations, and filtering.
  */
 
-import React, { useState, useMemo, useCallback } from "react";
+import type { Calendar, DollarSign, Target, TrendingDown, TrendingUp, Users } from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
 import type {
-  ResponsiveContainer,
-  AreaChart,
   Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  Cell,
 } from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -31,8 +34,6 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
 import type {
   Select,
   SelectContent,
@@ -41,7 +42,6 @@ import type {
   SelectValue,
 } from "@/components/ui/select";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { TrendingUp, TrendingDown, Users, Calendar, DollarSign, Target } from "lucide-react";
 
 // Types for cohort data
 interface CohortData {

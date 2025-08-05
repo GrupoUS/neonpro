@@ -1,6 +1,28 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Database,
+  Download,
+  Edit,
+  Eye,
+  FileText,
+  Info,
+  Lock,
+  Shield,
+  Trash2,
+  Unlock,
+  UserCheck,
+  XCircle,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,38 +30,16 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  Shield,
-  FileText,
-  Download,
-  Eye,
-  Trash2,
-  Edit,
-  CheckCircle,
-  XCircle,
-  Clock,
-  AlertTriangle,
-  Info,
-  Lock,
-  Unlock,
-  UserCheck,
-  Database,
-  BarChart3,
-  Calendar,
-} from "lucide-react";
-import type {
-  ConsentRecord,
-  DataSubjectRequest,
   ComplianceReport,
-  LGPDConfig,
+  ConsentRecord,
   ConsentStatus,
-  RequestStatus,
+  DataSubjectRequest,
   DataSubjectRight,
+  LGPDConfig,
+  RequestStatus,
 } from "@/types/lgpd";
 
 interface LGPDTransparencyPortalProps {

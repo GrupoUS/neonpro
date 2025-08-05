@@ -1,4 +1,3 @@
-"use strict";
 // Brazilian Tax Declarations API
 // Story 5.5: API for DEFIS, ECF, DMED and other fiscal declarations
 // Author: VoidBeast V6.0 Master Orchestrator
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 exports.POST = POST;
@@ -178,7 +175,7 @@ var declarationValidationSchema = zod_1.z.object({
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, searchParams, clinicId, action, _a, error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 15, , 16]);
@@ -256,7 +253,7 @@ function GET(request) {
 function POST(request) {
   return __awaiter(this, void 0, void 0, function () {
     var supabase, body, action, _a, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 13, , 14]);
@@ -319,7 +316,7 @@ function POST(request) {
 function listDeclarations(supabase, clinicId, searchParams) {
   return __awaiter(this, void 0, void 0, function () {
     var query, type, year, status, limit, offset, _a, data, error, count;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           query = supabase.from("tax_declarations").select("*").eq("clinic_id", clinicId);
@@ -376,7 +373,7 @@ function getDeclarationStatus(supabase, searchParams) {
       declarationService,
       updatedStatus,
       error_3;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           declarationId = searchParams.get("declaration_id");
@@ -407,9 +404,7 @@ function getDeclarationStatus(supabase, searchParams) {
           _b.trys.push([2, 7, , 8]);
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/tax-declarations");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/tax-declarations")),
           ];
         case 3:
           TaxDeclarationService = _b.sent().TaxDeclarationService;
@@ -466,7 +461,7 @@ function downloadDeclaration(supabase, searchParams) {
       fileData,
       headers,
       error_4;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           declarationId = searchParams.get("declaration_id");
@@ -497,9 +492,7 @@ function downloadDeclaration(supabase, searchParams) {
           _b.trys.push([2, 5, , 6]);
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/tax-declarations");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/tax-declarations")),
           ];
         case 3:
           TaxDeclarationService = _b.sent().TaxDeclarationService;
@@ -536,7 +529,7 @@ function downloadDeclaration(supabase, searchParams) {
 function getDeclarationCalendar(supabase, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var currentYear, config, TaxDeclarationService, declarationService, calendar, error_5;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           currentYear = new Date().getFullYear();
@@ -559,9 +552,7 @@ function getDeclarationCalendar(supabase, clinicId) {
           }
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/tax-declarations");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/tax-declarations")),
           ];
         case 2:
           TaxDeclarationService = _a.sent().TaxDeclarationService;
@@ -611,7 +602,7 @@ function getComplianceStatus(supabase, clinicId) {
       declarationService,
       compliance,
       error_6;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           currentYear = new Date().getFullYear();
@@ -647,9 +638,7 @@ function getComplianceStatus(supabase, clinicId) {
           _a.trys.push([3, 6, , 7]);
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/tax-declarations");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/tax-declarations")),
           ];
         case 4:
           TaxDeclarationService = _a.sent().TaxDeclarationService;
@@ -694,7 +683,7 @@ function getComplianceStatus(supabase, clinicId) {
 function getDeclarationsOverview(supabase, clinicId) {
   return __awaiter(this, void 0, void 0, function () {
     var currentYear, stats, summary;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           currentYear = new Date().getFullYear();
@@ -713,14 +702,14 @@ function getDeclarationsOverview(supabase, clinicId) {
             by_type:
               (stats === null || stats === void 0
                 ? void 0
-                : stats.reduce(function (acc, decl) {
+                : stats.reduce((acc, decl) => {
                     acc[decl.declaration_type] = (acc[decl.declaration_type] || 0) + 1;
                     return acc;
                   }, {})) || {},
             by_status:
               (stats === null || stats === void 0
                 ? void 0
-                : stats.reduce(function (acc, decl) {
+                : stats.reduce((acc, decl) => {
                     acc[decl.status] = (acc[decl.status] || 0) + 1;
                     return acc;
                   }, {})) || {},
@@ -752,7 +741,7 @@ function generateDeclaration(supabase, body) {
       submission,
       submissionError_1,
       error_7;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           validatedData = declarationGenerationSchema.parse(body);
@@ -761,9 +750,7 @@ function generateDeclaration(supabase, body) {
           _b.trys.push([1, 10, , 11]);
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/tax-declarations");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/tax-declarations")),
           ];
         case 2:
           TaxDeclarationService = _b.sent().TaxDeclarationService;
@@ -876,7 +863,7 @@ function validateDeclaration(supabase, body) {
       declarationService,
       validation,
       error_8;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           validatedData = declarationValidationSchema.parse(body);
@@ -901,9 +888,7 @@ function validateDeclaration(supabase, body) {
           _b.trys.push([2, 6, , 7]);
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/tax-declarations");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/tax-declarations")),
           ];
         case 3:
           TaxDeclarationService = _b.sent().TaxDeclarationService;
@@ -974,7 +959,7 @@ function submitDeclaration(supabase, body) {
       declarationService,
       submission,
       error_9;
-    return __generator(this, function (_c) {
+    return __generator(this, (_c) => {
       switch (_c.label) {
         case 0:
           (declaration_id = body.declaration_id),
@@ -1012,9 +997,7 @@ function submitDeclaration(supabase, body) {
           _c.trys.push([2, 6, , 8]);
           return [
             4 /*yield*/,
-            Promise.resolve().then(function () {
-              return require("@/lib/services/tax/tax-declarations");
-            }),
+            Promise.resolve().then(() => require("@/lib/services/tax/tax-declarations")),
           ];
         case 3:
           TaxDeclarationService = _c.sent().TaxDeclarationService;
@@ -1084,7 +1067,7 @@ function submitDeclaration(supabase, body) {
 function scheduleDeclaration(supabase, body) {
   return __awaiter(this, void 0, void 0, function () {
     var clinic_id, declaration_type, period, schedule_date, _a, data, error, error_10;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           (clinic_id = body.clinic_id),

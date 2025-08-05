@@ -1,4 +1,3 @@
-"use strict";
 /**
  * RLS Optimization Utilities
  * Performance optimizations for Row Level Security policies
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,12 +133,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RLSOptimizationManager = void 0;
 exports.createRLSOptimizationManager = createRLSOptimizationManager;
 exports.useRLSPerformance = useRLSPerformance;
-var RLSOptimizationManager = /** @class */ (function () {
+var RLSOptimizationManager = /** @class */ (() => {
   function RLSOptimizationManager(supabaseClient) {
     this.supabase = supabaseClient;
   }
@@ -392,21 +389,17 @@ var RLSOptimizationManager = /** @class */ (function () {
             ];
           case 2:
             healthChecks = _b.sent();
-            criticalIssues = healthChecks.filter(function (check) {
-              return check.status === "CRITICAL";
-            });
-            warningIssues = healthChecks.filter(function (check) {
-              return check.status === "WARNING";
-            });
+            criticalIssues = healthChecks.filter((check) => check.status === "CRITICAL");
+            warningIssues = healthChecks.filter((check) => check.status === "WARNING");
             healthStatus = "OK";
             if (criticalIssues.length > 0) {
               healthStatus = "CRITICAL";
             } else if (warningIssues.length > 0) {
               healthStatus = "WARNING";
             }
-            responseTimeCheck = healthChecks.find(function (check) {
-              return check.check_name === "response_time_target";
-            });
+            responseTimeCheck = healthChecks.find(
+              (check) => check.check_name === "response_time_target",
+            );
             avgResponseTime = responseTimeCheck
               ? parseFloat(
                   ((_a = responseTimeCheck.details.match(/(\d+\.?\d*) ms/)) === null ||

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @file Business Dashboard Component Tests
  * @description Tests for Story 8.1 - Real-time Business Dashboard (<1s Load)
@@ -7,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -25,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -35,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -54,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -63,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -76,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -137,60 +134,44 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = require("react");
+var _react_1 = require("react");
 var react_2 = require("@testing-library/react");
 require("@testing-library/jest-dom");
 var react_query_1 = require("@tanstack/react-query");
 // Mock Next.js router
-jest.mock("next/navigation", function () {
-  return {
-    useRouter: function () {
-      return {
-        push: jest.fn(),
-        replace: jest.fn(),
-        prefetch: jest.fn(),
-        back: jest.fn(),
-      };
-    },
-    useSearchParams: function () {
-      return {
-        get: jest.fn(),
-      };
-    },
-  };
-});
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    back: jest.fn(),
+  }),
+  useSearchParams: () => ({
+    get: jest.fn(),
+  }),
+}));
 // Mock Supabase auth
-jest.mock("app/utils/supabase/client", function () {
-  return {
-    createClient: function () {
-      return {
-        auth: {
-          getSession: jest.fn().mockResolvedValue({
-            data: { session: { user: { id: "test-user", email: "test@example.com" } } },
-          }),
-          getUser: jest.fn().mockResolvedValue({
-            data: { user: { id: "test-user", email: "test@example.com" } },
-          }),
-        },
-        from: jest.fn(function () {
-          return {
-            select: jest.fn(function () {
-              return {
-                eq: jest.fn(function () {
-                  return {
-                    single: jest.fn(),
-                  };
-                }),
-              };
-            }),
-          };
-        }),
-      };
+jest.mock("app/utils/supabase/client", () => ({
+  createClient: () => ({
+    auth: {
+      getSession: jest.fn().mockResolvedValue({
+        data: { session: { user: { id: "test-user", email: "test@example.com" } } },
+      }),
+      getUser: jest.fn().mockResolvedValue({
+        data: { user: { id: "test-user", email: "test@example.com" } },
+      }),
     },
-  };
-});
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          single: jest.fn(),
+        })),
+      })),
+    })),
+  }),
+}));
 // Mock dashboard API calls
 global.fetch = jest.fn();
 var mockDashboardData = {
@@ -238,68 +219,66 @@ var mockDashboardData = {
   },
 };
 // Mock the business dashboard component since we need to check if it exists first
-var MockBusinessDashboard = function () {
-  return (
-    <div
-      data-testid="business-dashboard"
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-    >
-      <div data-testid="kpi-receita">
-        <h2>Receita Total</h2>
-        <span>R$ 125.000,00</span>
-        <span>+8,7%</span>
-      </div>
-      <div data-testid="kpi-consultas">
-        <h2>Total de Consultas</h2>
-        <span>850</span>
-        <span>+3,7%</span>
-      </div>
-      <div data-testid="kpi-conversao">
-        <h2>Taxa de Conversão</h2>
-        <span>28,75%</span>
-        <span>-8,7%</span>
-      </div>
-      <div data-testid="kpi-pacientes">
-        <h2>Novos Pacientes</h2>
-        <span data-testid="novos-pacientes-count">120</span>
-      </div>
-
-      <div data-testid="charts-container" className="flex-col">
-        <div data-testid="revenue-chart">
-          <h3>Evolução da Receita</h3>
-        </div>
-        <div data-testid="conversion-funnel">
-          <h3>Funil de Conversão</h3>
-          <span>2.500</span>
-          <span data-testid="conversao-final">120</span>
-        </div>
-        <div data-testid="procedure-chart">
-          <h3>Distribuição de Procedimentos</h3>
-        </div>
-      </div>
-
-      <div data-testid="alerts-section">
-        <h3>Meta de conversão</h3>
-        <p>A taxa de conversão está 5% abaixo da meta mensal</p>
-        <button>Dispensar</button>
-      </div>
-
-      <button>Atualizar</button>
-      <button>Exportar</button>
-      <button>Gráfico</button>
-      <button>Layout</button>
-      <select name="período" aria-label="Período">
-        <option value="3months">Últimos 3 meses</option>
-      </select>
-
-      <div data-testid="trend-up">↑</div>
-      <div data-testid="trend-down">↓</div>
+var MockBusinessDashboard = () => (
+  <div
+    data-testid="business-dashboard"
+    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+  >
+    <div data-testid="kpi-receita">
+      <h2>Receita Total</h2>
+      <span>R$ 125.000,00</span>
+      <span>+8,7%</span>
     </div>
-  );
-};
-describe("Business Dashboard - Story 8.1", function () {
+    <div data-testid="kpi-consultas">
+      <h2>Total de Consultas</h2>
+      <span>850</span>
+      <span>+3,7%</span>
+    </div>
+    <div data-testid="kpi-conversao">
+      <h2>Taxa de Conversão</h2>
+      <span>28,75%</span>
+      <span>-8,7%</span>
+    </div>
+    <div data-testid="kpi-pacientes">
+      <h2>Novos Pacientes</h2>
+      <span data-testid="novos-pacientes-count">120</span>
+    </div>
+
+    <div data-testid="charts-container" className="flex-col">
+      <div data-testid="revenue-chart">
+        <h3>Evolução da Receita</h3>
+      </div>
+      <div data-testid="conversion-funnel">
+        <h3>Funil de Conversão</h3>
+        <span>2.500</span>
+        <span data-testid="conversao-final">120</span>
+      </div>
+      <div data-testid="procedure-chart">
+        <h3>Distribuição de Procedimentos</h3>
+      </div>
+    </div>
+
+    <div data-testid="alerts-section">
+      <h3>Meta de conversão</h3>
+      <p>A taxa de conversão está 5% abaixo da meta mensal</p>
+      <button>Dispensar</button>
+    </div>
+
+    <button>Atualizar</button>
+    <button>Exportar</button>
+    <button>Gráfico</button>
+    <button>Layout</button>
+    <select name="período" aria-label="Período">
+      <option value="3months">Últimos 3 meses</option>
+    </select>
+
+    <div data-testid="trend-up">↑</div>
+    <div data-testid="trend-down">↓</div>
+  </div>
+);
+describe("Business Dashboard - Story 8.1", () => {
   var queryClient;
-  beforeEach(function () {
+  beforeEach(() => {
     queryClient = new react_query_1.QueryClient({
       defaultOptions: {
         queries: { retry: false },
@@ -308,31 +287,23 @@ describe("Business Dashboard - Story 8.1", function () {
     });
     global.fetch.mockResolvedValue({
       ok: true,
-      json: function () {
-        return Promise.resolve(mockDashboardData);
-      },
+      json: () => Promise.resolve(mockDashboardData),
       headers: new Headers({ "content-type": "application/json" }),
     });
     // Mock localStorage
     Object.defineProperty(window, "localStorage", {
       value: {
-        getItem: jest.fn(function () {
-          return null;
-        }),
-        setItem: jest.fn(function () {
-          return null;
-        }),
-        removeItem: jest.fn(function () {
-          return null;
-        }),
+        getItem: jest.fn(() => null),
+        setItem: jest.fn(() => null),
+        removeItem: jest.fn(() => null),
       },
       writable: true,
     });
   });
-  afterEach(function () {
+  afterEach(() => {
     jest.clearAllMocks();
   });
-  var renderBusinessDashboard = function (props) {
+  var renderBusinessDashboard = (props) => {
     if (props === void 0) {
       props = {};
     }
@@ -342,11 +313,11 @@ describe("Business Dashboard - Story 8.1", function () {
       </react_query_1.QueryClientProvider>,
     );
   };
-  describe("Loading Performance (<1s)", function () {
-    it("should load initial state quickly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Loading Performance (<1s)", () => {
+    it("should load initial state quickly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, loadTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           startTime = performance.now();
           renderBusinessDashboard();
           // Should show core elements immediately
@@ -355,18 +326,17 @@ describe("Business Dashboard - Story 8.1", function () {
           expect(loadTime).toBeLessThan(1000); // <1s requirement
           return [2 /*return*/];
         });
-      });
-    });
-    it("should render core KPIs within performance budget", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should render core KPIs within performance budget", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
                 (0, react_2.waitFor)(
-                  function () {
+                  () => {
                     expect(react_2.screen.getByText(/receita total/i)).toBeInTheDocument();
                     expect(react_2.screen.getByText(/total de consultas/i)).toBeInTheDocument();
                     expect(
@@ -382,19 +352,18 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("KPI Display", function () {
-    it("should display comprehensive KPIs correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("KPI Display", () => {
+    it("should display comprehensive KPIs correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   // Revenue KPI
                   expect(react_2.screen.getByText("R$ 125.000,00")).toBeInTheDocument();
                   // Appointments KPI
@@ -412,17 +381,16 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should show KPI trends and comparisons", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should show KPI trends and comparisons", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   // Should show percentage changes
                   expect(react_2.screen.getByText("+8,7%")).toBeInTheDocument();
                   expect(react_2.screen.getByText("+3,7%")).toBeInTheDocument();
@@ -434,19 +402,18 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Interactive Charts", function () {
-    it("should render revenue chart with data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Interactive Charts", () => {
+    it("should render revenue chart with data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByTestId("revenue-chart")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Evolução da Receita")).toBeInTheDocument();
                 }),
@@ -456,17 +423,16 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should render conversion funnel", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should render conversion funnel", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByTestId("conversion-funnel")).toBeInTheDocument();
                   expect(react_2.screen.getByText("Funil de Conversão")).toBeInTheDocument();
                   expect(react_2.screen.getByText("2.500")).toBeInTheDocument(); // Visitantes
@@ -478,17 +444,16 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should render procedure distribution chart", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should render procedure distribution chart", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByTestId("procedure-chart")).toBeInTheDocument();
                   expect(
                     react_2.screen.getByText("Distribuição de Procedimentos"),
@@ -500,21 +465,20 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Live Updates", function () {
-    it("should handle real-time data updates", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Live Updates", () => {
+    it("should handle real-time data updates", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var refreshButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               // Initial render
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("R$ 125.000,00")).toBeInTheDocument();
                 }),
                 // Trigger refresh
@@ -529,24 +493,23 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Mobile Responsiveness", function () {
-    it("should render mobile-friendly layout", function () {
+  describe("Mobile Responsiveness", () => {
+    it("should render mobile-friendly layout", () => {
       renderBusinessDashboard();
       var container = react_2.screen.getByTestId("business-dashboard");
       expect(container).toHaveClass("grid", "grid-cols-1", "md:grid-cols-2", "lg:grid-cols-4");
     });
-    it("should stack charts vertically on mobile", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    it("should stack charts vertically on mobile", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   var chartsContainer = react_2.screen.getByTestId("charts-container");
                   expect(chartsContainer).toHaveClass("flex-col");
                 }),
@@ -556,14 +519,13 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Customizable Layout", function () {
-    it("should allow chart type switching", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Customizable Layout", () => {
+    it("should allow chart type switching", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var chartToggle;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           renderBusinessDashboard();
           chartToggle = react_2.screen.getByRole("button", { name: /gráfico/i });
           react_2.fireEvent.click(chartToggle);
@@ -571,12 +533,11 @@ describe("Business Dashboard - Story 8.1", function () {
           expect(chartToggle).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
-    it("should persist layout preferences", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should persist layout preferences", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var layoutButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           renderBusinessDashboard();
           layoutButton = react_2.screen.getByRole("button", { name: /layout/i });
           react_2.fireEvent.click(layoutButton);
@@ -584,19 +545,18 @@ describe("Business Dashboard - Story 8.1", function () {
           expect(layoutButton).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
-  describe("Alerts System", function () {
-    it("should display business alerts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  describe("Alerts System", () => {
+    it("should display business alerts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText("Meta de conversão")).toBeInTheDocument();
                   expect(
                     react_2.screen.getByText(/taxa de conversão está 5% abaixo/i),
@@ -608,12 +568,11 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should allow alert dismissal", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should allow alert dismissal", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var dismissButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           renderBusinessDashboard();
           dismissButton = react_2.screen.getByRole("button", { name: /dispensar/i });
           react_2.fireEvent.click(dismissButton);
@@ -621,14 +580,13 @@ describe("Business Dashboard - Story 8.1", function () {
           expect(dismissButton).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
-  describe("Data Export", function () {
-    it("should export dashboard data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Data Export", () => {
+    it("should export dashboard data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var exportButton;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           renderBusinessDashboard();
           exportButton = react_2.screen.getByRole("button", { name: /exportar/i });
           react_2.fireEvent.click(exportButton);
@@ -636,14 +594,13 @@ describe("Business Dashboard - Story 8.1", function () {
           expect(exportButton).toBeInTheDocument();
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
-  describe("Historical Comparison", function () {
-    it("should show period comparison", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Historical Comparison", () => {
+    it("should show period comparison", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var periodSelect;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
@@ -651,7 +608,7 @@ describe("Business Dashboard - Story 8.1", function () {
               react_2.fireEvent.change(periodSelect, { target: { value: "3months" } });
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(periodSelect).toHaveValue("3months");
                 }),
               ];
@@ -660,17 +617,16 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should display trend indicators", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+      }));
+    it("should display trend indicators", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   // Should show trend arrows
                   expect(react_2.screen.getByTestId("trend-up")).toBeInTheDocument();
                   expect(react_2.screen.getByTestId("trend-down")).toBeInTheDocument();
@@ -681,21 +637,20 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Performance Monitoring", function () {
-    it("should track load times", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Performance Monitoring", () => {
+    it("should track load times", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, loadTime;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = performance.now();
               renderBusinessDashboard();
               return [
                 4 /*yield*/,
-                (0, react_2.waitFor)(function () {
+                (0, react_2.waitFor)(() => {
                   expect(react_2.screen.getByText(/receita total/i)).toBeInTheDocument();
                 }),
               ];
@@ -707,7 +662,6 @@ describe("Business Dashboard - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

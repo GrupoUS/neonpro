@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PersonalizedRecommendationsOverview = PersonalizedRecommendationsOverview;
 var badge_1 = require("@/components/ui/badge");
@@ -108,37 +107,32 @@ function PersonalizedRecommendationsOverview() {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="space-y-4">
-            {mockRecommendations.map(function (rec) {
-              return (
-                <div
-                  key={rec.id}
-                  className="flex items-start justify-between p-4 border rounded-lg"
-                >
-                  <div className="space-y-2 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{rec.title}</h3>
-                      <badge_1.Badge className={typeColors[rec.type]}>
-                        {rec.type.charAt(0).toUpperCase() + rec.type.slice(1)}
-                      </badge_1.Badge>
-                      <badge_1.Badge className={priorityColors[rec.priority]}>
-                        {rec.priority.charAt(0).toUpperCase() + rec.priority.slice(1)}
-                      </badge_1.Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{rec.description}</p>
-                    <div className="flex items-center gap-4 text-sm">
-                      <span className="font-medium text-green-600">{rec.impact}</span>
-                      <span className="text-muted-foreground">Confiança: {rec.confidence}%</span>
-                    </div>
+            {mockRecommendations.map((rec) => (
+              <div key={rec.id} className="flex items-start justify-between p-4 border rounded-lg">
+                <div className="space-y-2 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">{rec.title}</h3>
+                    <badge_1.Badge className={typeColors[rec.type]}>
+                      {rec.type.charAt(0).toUpperCase() + rec.type.slice(1)}
+                    </badge_1.Badge>
+                    <badge_1.Badge className={priorityColors[rec.priority]}>
+                      {rec.priority.charAt(0).toUpperCase() + rec.priority.slice(1)}
+                    </badge_1.Badge>
                   </div>
-                  <div className="space-x-2">
-                    <button_1.Button variant="outline" size="sm">
-                      Ver Detalhes
-                    </button_1.Button>
-                    <button_1.Button size="sm">Implementar</button_1.Button>
+                  <p className="text-sm text-muted-foreground">{rec.description}</p>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="font-medium text-green-600">{rec.impact}</span>
+                    <span className="text-muted-foreground">Confiança: {rec.confidence}%</span>
                   </div>
                 </div>
-              );
-            })}
+                <div className="space-x-2">
+                  <button_1.Button variant="outline" size="sm">
+                    Ver Detalhes
+                  </button_1.Button>
+                  <button_1.Button size="sm">Implementar</button_1.Button>
+                </div>
+              </div>
+            ))}
           </div>
         </card_1.CardContent>
       </card_1.Card>

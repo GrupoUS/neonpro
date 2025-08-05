@@ -1,4 +1,3 @@
-"use strict";
 // No-Show Prediction Validation Schemas
 // Generated to fix missing validation exports
 Object.defineProperty(exports, "__esModule", { value: true });

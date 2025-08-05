@@ -8,121 +8,117 @@
 
 // Configuration
 export {
-  VISION_CONFIG,
-  TREATMENT_TYPES,
   ANALYSIS_STATUS,
   ERROR_CODES,
-  QUALITY_THRESHOLDS,
-  validateVoidBeastCompliance,
   getEnvironmentConfig,
+  QUALITY_THRESHOLDS,
+  TREATMENT_TYPES,
+  VISION_CONFIG,
+  validateVoidBeastCompliance,
 } from "./config";
-
+// Hooks
+// Re-export default hooks object
+export {
+  default as VisionHooks,
+  useAnalysisExport,
+  useAnalysisHistory,
+  useAnnotations,
+  useDebounce,
+  useImageUpload,
+  useIntersectionObserver,
+  useLocalStorage,
+  useMeasurements,
+  usePerformanceMonitoring,
+  useVisionAnalysis,
+} from "./hooks";
 // Types
 export type {
-  // Base Types
-  TreatmentType,
-  AnalysisStatus,
-  ErrorCode,
-  // Image Types
-  ImageData,
-  ImageMetadata,
-  ImageProcessingOptions,
+  AnalysisError,
+  // Event Types
+  AnalysisEvent,
+  AnalysisOptions,
+  AnalysisProgress,
+  AnalysisQualityMetrics,
+  // API Types
+  AnalysisRequest,
+  AnalysisResponse,
   // Analysis Types
   AnalysisResult,
-  VisionAnalysisData,
-  ChangeMetrics,
-  OverallAssessment,
-  TreatmentSpecificMetrics,
-  // Measurement Types
-  MeasurementData,
-  MeasurementType,
-  ObjectiveMeasurement,
-  CalibrationData,
-  StandardizedMetrics,
-  MetricSet,
-  NormalizedScores,
-  MeasurementQualityAssurance,
+  AnalysisStatus,
   // Annotation Types
   AnnotationData,
   AnnotationType,
+  BoundingBox,
+  CalibrationData,
+  ChangeMetrics,
   Coordinates,
-  RegionOfInterest,
-  // Performance Types
-  ProcessingMetrics,
-  QualityMetrics,
+  ErrorCode,
+  ExportMetadata,
+  // Export Types
+  ExportOptions,
+  ExportResult,
+  FilterOptions,
+  // Image Types
+  ImageData,
+  ImageMetadata,
+  ImageProcessingConfig,
+  ImageProcessingOptions,
   ImageQualityMetrics,
-  AnalysisQualityMetrics,
+  // Measurement Types
+  MeasurementData,
+  MeasurementQualityAssurance,
   MeasurementQualityMetrics,
-  VoidBeastCompliance,
+  MeasurementType,
+  MetricSet,
+  ModelConfig,
   // Model Types
   ModelConfiguration,
   ModelMetadata,
   ModelPrediction,
-  BoundingBox,
-  // Export Types
-  ExportOptions,
-  ExportResult,
-  ExportMetadata,
-  // API Types
-  AnalysisRequest,
-  AnalysisOptions,
-  AnalysisResponse,
-  AnalysisProgress,
-  AnalysisError,
+  MonitoringConfig,
+  NormalizedScores,
+  ObjectiveMeasurement,
+  OverallAssessment,
+  PaginatedResponse,
+  // Utility Types
+  PaginationOptions,
+  PerformanceConfig,
+  // Performance Types
+  ProcessingMetrics,
+  QualityMetrics,
+  RegionOfInterest,
+  SecurityConfig,
+  SortOptions,
+  StandardizedMetrics,
+  StorageConfig,
+  // Configuration Types
+  SystemConfiguration,
+  TreatmentSpecificMetrics,
+  // Base Types
+  TreatmentType,
+  ValidationError,
+  // Validation Types
+  ValidationResult,
+  ValidationWarning,
+  VisionAnalysisData,
   // Database Types
   VisionAnalysisTable,
   VisionExportLogsTable,
   VisionPerformanceLogsTable,
-  // Utility Types
-  PaginationOptions,
-  PaginatedResponse,
-  FilterOptions,
-  SortOptions,
-  // Event Types
-  AnalysisEvent,
-  // Validation Types
-  ValidationResult,
-  ValidationError,
-  ValidationWarning,
-  // Configuration Types
-  SystemConfiguration,
-  PerformanceConfig,
-  ImageProcessingConfig,
-  ModelConfig,
-  StorageConfig,
-  SecurityConfig,
-  MonitoringConfig,
+  VoidBeastCompliance,
 } from "./types";
-
 // Utilities
 export {
-  VisionUtils,
-  ImageUtils,
   AnalysisUtils,
-  MeasurementUtils,
   AnnotationUtils,
-  PerformanceUtils,
-  ExportUtils,
   DateUtils,
   ErrorUtils,
+  ExportUtils,
+  ImageUtils,
+  MeasurementUtils,
+  PerformanceUtils,
+  VisionUtils,
 } from "./utils";
-
-// Hooks
-export {
-  useVisionAnalysis,
-  useImageUpload,
-  useAnalysisExport,
-  useAnnotations,
-  useMeasurements,
-  useAnalysisHistory,
-  usePerformanceMonitoring,
-  useLocalStorage,
-  useDebounce,
-  useIntersectionObserver,
-} from "./hooks";
-
-// Re-export default hooks object
-export { default as VisionHooks } from "./hooks";
 
 /**
  * Main Vision System Class
@@ -190,7 +186,7 @@ export class VisionSystem {
           if (!response.ok && response.status !== 405) {
             issues.push(`Endpoint ${endpoint} not responding`);
           }
-        } catch (error) {
+        } catch (_error) {
           issues.push(`Endpoint ${endpoint} unreachable`);
         }
       }

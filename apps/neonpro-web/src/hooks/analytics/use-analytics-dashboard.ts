@@ -10,17 +10,17 @@
  * This hook serves as the primary interface for the advanced analytics hub.
  */
 
-import type { useState, useEffect, useCallback, useMemo } from "react";
 import type { useQueryClient } from "@tanstack/react-query";
+import type { useCallback, useEffect, useMemo, useState } from "react";
 import type {
+  CohortAnalysisHookConfig,
+  ForecastingHookConfig,
+  RealTimeConfig,
+  StatisticalInsightsConfig,
   useCohortAnalysis,
   useForecasting,
   useRealTimeAnalytics,
   useStatisticalInsights,
-  type CohortAnalysisHookConfig,
-  type ForecastingHookConfig,
-  type RealTimeConfig,
-  type StatisticalInsightsConfig,
 } from "./index";
 
 // Types for dashboard configuration

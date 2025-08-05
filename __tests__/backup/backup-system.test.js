@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,7 +32,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,8 +61,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -84,9 +81,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -145,42 +142,36 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var globals_1 = require("@jest/globals");
 var backup_manager_1 = require("@/lib/backup/backup-manager");
 var scheduler_1 = require("@/lib/backup/scheduler");
 var monitoring_1 = require("@/lib/backup/monitoring");
 // Mock do Supabase
-globals_1.jest.mock("@/app/utils/supabase/client", function () {
-  return {
-    createClient: globals_1.jest.fn(function () {
-      return {
-        from: globals_1.jest.fn(function () {
-          return {
-            select: globals_1.jest.fn().mockReturnThis(),
-            insert: globals_1.jest.fn().mockReturnThis(),
-            update: globals_1.jest.fn().mockReturnThis(),
-            delete: globals_1.jest.fn().mockReturnThis(),
-            eq: globals_1.jest.fn().mockReturnThis(),
-            single: globals_1.jest.fn(),
-          };
-        }),
-      };
-    }),
-  };
-});
-describe("BackupManager", function () {
+globals_1.jest.mock("@/app/utils/supabase/client", () => ({
+  createClient: globals_1.jest.fn(() => ({
+    from: globals_1.jest.fn(() => ({
+      select: globals_1.jest.fn().mockReturnThis(),
+      insert: globals_1.jest.fn().mockReturnThis(),
+      update: globals_1.jest.fn().mockReturnThis(),
+      delete: globals_1.jest.fn().mockReturnThis(),
+      eq: globals_1.jest.fn().mockReturnThis(),
+      single: globals_1.jest.fn(),
+    })),
+  })),
+}));
+describe("BackupManager", () => {
   var backupManager;
-  beforeEach(function () {
+  beforeEach(() => {
     backupManager = new backup_manager_1.BackupManager();
     globals_1.jest.clearAllMocks();
   });
-  describe("executeBackup", function () {
-    it("should execute a full backup successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("executeBackup", () => {
+    it("should execute a full backup successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               config = {
@@ -220,12 +211,11 @@ describe("BackupManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle backup failures gracefully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle backup failures gracefully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               config = {
@@ -261,50 +251,47 @@ describe("BackupManager", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("recovery", function () {
-    it.skip("should restore a backup successfully", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var backupId, options;
-        return __generator(this, function (_a) {
-          backupId = "test-backup-1";
-          options = {
+  describe("recovery", () => {
+    it.skip("should restore a backup successfully", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _backupId, _options;
+        return __generator(this, (_a) => {
+          _backupId = "test-backup-1";
+          _options = {
             target_location: "/tmp/restore",
             overwrite_existing: true,
             verify_integrity: true,
           };
           return [2 /*return*/];
         });
-      });
-    });
-    it.skip("should validate backup integrity before restore", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var backupId, options;
-        return __generator(this, function (_a) {
-          backupId = "test-backup-corrupted";
-          options = {
+      }));
+    it.skip("should validate backup integrity before restore", () =>
+      __awaiter(void 0, void 0, void 0, function () {
+        var _backupId, _options;
+        return __generator(this, (_a) => {
+          _backupId = "test-backup-corrupted";
+          _options = {
             target_location: "/tmp/restore",
             verify_integrity: true,
           };
           return [2 /*return*/];
         });
-      });
-    });
+      }));
   });
 });
-describe("SchedulerService", function () {
+describe("SchedulerService", () => {
   var scheduler;
-  beforeEach(function () {
+  beforeEach(() => {
     scheduler = new scheduler_1.SchedulerService({}); // Mock BackupManager
     globals_1.jest.clearAllMocks();
   });
-  describe("scheduleBackup", function () {
-    it("should schedule a daily backup correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("scheduleBackup", () => {
+    it("should schedule a daily backup correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               config = {
@@ -343,12 +330,11 @@ describe("SchedulerService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle scheduling conflicts", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should handle scheduling conflicts", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var config1, config2, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               config1 = {
@@ -383,14 +369,13 @@ describe("SchedulerService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("cancelSchedule", function () {
-    it("should cancel a scheduled backup", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("cancelSchedule", () => {
+    it("should cancel a scheduled backup", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var configId, config, result;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               configId = "schedule-test-4";
@@ -422,21 +407,20 @@ describe("SchedulerService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });
-describe("MonitoringService", function () {
+describe("MonitoringService", () => {
   var monitoring;
-  beforeEach(function () {
+  beforeEach(() => {
     monitoring = new monitoring_1.MonitoringService({}); // Mock BackupManager
     globals_1.jest.clearAllMocks();
   });
-  describe("getMetrics", function () {
-    it("should return backup metrics", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getMetrics", () => {
+    it("should return backup metrics", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, monitoring.getMetrics()];
@@ -451,12 +435,11 @@ describe("MonitoringService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should calculate metrics correctly", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    it("should calculate metrics correctly", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var metrics;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, monitoring.getMetrics()];
@@ -471,14 +454,13 @@ describe("MonitoringService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("getSystemHealth", function () {
-    it("should return system health status", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("getSystemHealth", () => {
+    it("should return system health status", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var health;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, monitoring.getSystemHealth()];
@@ -493,14 +475,13 @@ describe("MonitoringService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("alerting", function () {
-    it("should detect and report issues", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("alerting", () => {
+    it("should detect and report issues", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var issues, issue;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, monitoring.checkForIssues()];
@@ -517,68 +498,70 @@ describe("MonitoringService", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });
-describe("Backup Integration Tests", function () {
-  describe("End-to-End Backup Flow", function () {
-    it.skip("should complete a full backup and recovery cycle", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
-        var backupManager, config, backupResult, metrics, restoreResult;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              backupManager = new backup_manager_1.BackupManager();
-              config = {
-                id: "integration-test-1",
-                name: "Integration Test Backup",
-                type: "FULL",
-                storage_provider: "local",
-                schedule: {
-                  enabled: false,
-                  frequency: "MANUAL",
-                },
-                retention: {
-                  daily: 7,
-                  weekly: 4,
-                  monthly: 12,
-                },
-                data_sources: ["database"],
-                encryption: {
-                  enabled: true,
-                  algorithm: "AES-256",
-                },
-                compression: {
-                  enabled: true,
-                  algorithm: "gzip",
-                  level: 6,
-                },
-                created_at: new Date(),
-                updated_at: new Date(),
-              };
-              return [4 /*yield*/, backupManager.executeBackup(config)];
-            case 1:
-              backupResult = _a.sent();
-              expect(backupResult.status).toBe("COMPLETED");
-              return [4 /*yield*/, monitoring.getMetrics()];
-            case 2:
-              metrics = _a.sent();
-              expect(metrics.total_backups).toBeGreaterThan(0);
-              return [
-                4 /*yield*/,
-                backupManager.restoreBackup(backupResult.id, {
-                  target_location: "/tmp/test-restore",
-                  verify_integrity: true,
-                }),
-              ];
-            case 3:
-              restoreResult = _a.sent();
-              expect(restoreResult.status).toBe("COMPLETED");
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 30000); // 30 second timeout for integration test
+describe("Backup Integration Tests", () => {
+  describe("End-to-End Backup Flow", () => {
+    it.skip(
+      "should complete a full backup and recovery cycle",
+      () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          var backupManager, config, backupResult, metrics, restoreResult;
+          return __generator(this, (_a) => {
+            switch (_a.label) {
+              case 0:
+                backupManager = new backup_manager_1.BackupManager();
+                config = {
+                  id: "integration-test-1",
+                  name: "Integration Test Backup",
+                  type: "FULL",
+                  storage_provider: "local",
+                  schedule: {
+                    enabled: false,
+                    frequency: "MANUAL",
+                  },
+                  retention: {
+                    daily: 7,
+                    weekly: 4,
+                    monthly: 12,
+                  },
+                  data_sources: ["database"],
+                  encryption: {
+                    enabled: true,
+                    algorithm: "AES-256",
+                  },
+                  compression: {
+                    enabled: true,
+                    algorithm: "gzip",
+                    level: 6,
+                  },
+                  created_at: new Date(),
+                  updated_at: new Date(),
+                };
+                return [4 /*yield*/, backupManager.executeBackup(config)];
+              case 1:
+                backupResult = _a.sent();
+                expect(backupResult.status).toBe("COMPLETED");
+                return [4 /*yield*/, monitoring.getMetrics()];
+              case 2:
+                metrics = _a.sent();
+                expect(metrics.total_backups).toBeGreaterThan(0);
+                return [
+                  4 /*yield*/,
+                  backupManager.restoreBackup(backupResult.id, {
+                    target_location: "/tmp/test-restore",
+                    verify_integrity: true,
+                  }),
+                ];
+              case 3:
+                restoreResult = _a.sent();
+                expect(restoreResult.status).toBe("COMPLETED");
+                return [2 /*return*/];
+            }
+          });
+        }),
+      30000,
+    ); // 30 second timeout for integration test
   });
 });

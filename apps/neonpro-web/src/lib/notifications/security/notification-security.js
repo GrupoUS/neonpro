@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,14 +142,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationSecurity = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
 var audit_logger_1 = require("../../auth/audit/audit-logger");
 var lgpd_manager_1 = require("../../lgpd/lgpd-manager");
 var encryption_service_1 = require("../../security/encryption-service");
-var NotificationSecurity = /** @class */ (function () {
+var NotificationSecurity = /** @class */ (() => {
   function NotificationSecurity(config) {
     this.rateLimitCache = new Map();
     this.supabase = (0, supabase_js_1.createClient)(
@@ -242,9 +239,8 @@ var NotificationSecurity = /** @class */ (function () {
             violations.push.apply(violations, retentionViolations);
             riskScore += retentionViolations.length * 15;
             isValid =
-              violations.filter(function (v) {
-                return v.severity === "critical" || v.severity === "high";
-              }).length === 0;
+              violations.filter((v) => v.severity === "critical" || v.severity === "high")
+                .length === 0;
             recommendations = this.generateSecurityRecommendations(violations);
             if (!this.securityConfig.audit_enabled) return [3 /*break*/, 8];
             return [
@@ -472,7 +468,7 @@ var NotificationSecurity = /** @class */ (function () {
             now = new Date();
             cacheKey = "rate_limit_".concat(userId);
             status_1 = this.rateLimitCache.get(cacheKey);
-            if (!!status_1) return [3 /*break*/, 3];
+            if (status_1) return [3 /*break*/, 3];
             return [
               4 /*yield*/,
               this.supabase
@@ -776,33 +772,25 @@ var NotificationSecurity = /** @class */ (function () {
             blockedNotifications =
               (auditLogs === null || auditLogs === void 0
                 ? void 0
-                : auditLogs.filter(function (log) {
-                    return log.action_taken === "blocked";
-                  }).length) || 0;
+                : auditLogs.filter((log) => log.action_taken === "blocked").length) || 0;
             allViolations =
               (auditLogs === null || auditLogs === void 0
                 ? void 0
-                : auditLogs.flatMap(function (log) {
-                    return log.security_violations || [];
-                  })) || [];
+                : auditLogs.flatMap((log) => log.security_violations || [])) || [];
             totalViolations = allViolations.length;
             averageRiskScore = (
               auditLogs === null || auditLogs === void 0
                 ? void 0
                 : auditLogs.length
             )
-              ? auditLogs.reduce(function (sum, log) {
-                  return sum + (log.risk_score || 0);
-                }, 0) / auditLogs.length
+              ? auditLogs.reduce((sum, log) => sum + (log.risk_score || 0), 0) / auditLogs.length
               : 0;
-            violationsByType = allViolations.reduce(function (counts, violation) {
+            violationsByType = allViolations.reduce((counts, violation) => {
               counts[violation.type] = (counts[violation.type] || 0) + 1;
               return counts;
             }, {});
             topViolations = allViolations
-              .filter(function (v) {
-                return v.severity === "high" || v.severity === "critical";
-              })
+              .filter((v) => v.severity === "high" || v.severity === "critical")
               .slice(0, 10);
             return [
               4 /*yield*/,
@@ -816,13 +804,12 @@ var NotificationSecurity = /** @class */ (function () {
             usersLimited =
               (rateLimitData === null || rateLimitData === void 0
                 ? void 0
-                : rateLimitData.filter(function (rl) {
-                    return (
+                : rateLimitData.filter(
+                    (rl) =>
                       rl.current_minute >= _this.securityConfig.rate_limiting.max_per_minute ||
                       rl.current_hour >= _this.securityConfig.rate_limiting.max_per_hour ||
-                      rl.current_day >= _this.securityConfig.rate_limiting.max_per_day
-                    );
-                  }).length) || 0;
+                      rl.current_day >= _this.securityConfig.rate_limiting.max_per_day,
+                  ).length) || 0;
             recommendations = this.generateSecurityRecommendations(allViolations);
             return [
               2 /*return*/,
@@ -1092,9 +1079,9 @@ var NotificationSecurity = /** @class */ (function () {
       return __generator(this, function (_a) {
         issues = [];
         urlRegex =
-          /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+          /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g;
         urls = content.match(urlRegex) || [];
-        _loop_1 = function (url) {
+        _loop_1 = (url) => {
           // Verificar padrões suspeitos
           for (var _b = 0, _c = this_1.suspiciousPatterns; _b < _c.length; _b++) {
             var pattern = _c[_b];
@@ -1111,11 +1098,7 @@ var NotificationSecurity = /** @class */ (function () {
           // Verificar domínios suspeitos (implementação simplificada)
           var suspiciousDomains = ["bit.ly", "tinyurl.com", "short.link"];
           var domain = new URL(url).hostname;
-          if (
-            suspiciousDomains.some(function (d) {
-              return domain.includes(d);
-            })
-          ) {
+          if (suspiciousDomains.some((d) => domain.includes(d))) {
             issues.push({
               type: "malicious_link",
               confidence: 0.6,
@@ -1149,28 +1132,22 @@ var NotificationSecurity = /** @class */ (function () {
     }
     return sanitized;
   };
-  NotificationSecurity.prototype.generateSecurityRecommendations = function (violations) {
+  NotificationSecurity.prototype.generateSecurityRecommendations = (violations) => {
     var recommendations = new Set();
     for (var _i = 0, violations_1 = violations; _i < violations_1.length; _i++) {
       var violation = violations_1[_i];
       recommendations.add(violation.recommendation);
     }
     // Recomendações gerais baseadas no padrão de violações
-    var criticalCount = violations.filter(function (v) {
-      return v.severity === "critical";
-    }).length;
-    var highCount = violations.filter(function (v) {
-      return v.severity === "high";
-    }).length;
+    var criticalCount = violations.filter((v) => v.severity === "critical").length;
+    var highCount = violations.filter((v) => v.severity === "high").length;
     if (criticalCount > 0) {
       recommendations.add("Revisar urgentemente as políticas de segurança");
     }
     if (highCount > 3) {
       recommendations.add("Implementar treinamento de segurança para equipe");
     }
-    var piiCount = violations.filter(function (v) {
-      return v.type === "pii_detected";
-    }).length;
+    var piiCount = violations.filter((v) => v.type === "pii_detected").length;
     if (piiCount > 0) {
       recommendations.add("Implementar validação automática de PII");
     }

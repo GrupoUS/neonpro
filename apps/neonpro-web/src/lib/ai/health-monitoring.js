@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI-powered Health Trend Monitoring Engine
  * Monitors and analyzes patient health trends for early intervention and optimization
@@ -13,15 +12,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -41,13 +40,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -69,9 +68,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -143,14 +140,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AIHealthMonitoringEngine = void 0;
 /**
  * AI Health Trend Monitoring Engine
  * Core system for monitoring and analyzing patient health trends
  */
-var AIHealthMonitoringEngine = /** @class */ (function () {
+var AIHealthMonitoringEngine = /** @class */ (() => {
   function AIHealthMonitoringEngine() {
     this.trendModels = new Map();
     this.baselineData = new Map();
@@ -559,9 +556,7 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
           case 5:
             if (!(_c < vitalTrends_1.length)) return [3 /*break*/, 8];
             vitalTrend = vitalTrends_1[_c];
-            criticalAlerts = vitalTrend.alerts.filter(function (a) {
-              return a.severity === "critical";
-            });
+            criticalAlerts = vitalTrend.alerts.filter((a) => a.severity === "critical");
             if (!(criticalAlerts.length > 0)) return [3 /*break*/, 7];
             _e = (_d = warnings).push;
             return [4 /*yield*/, this.createVitalSignWarning(patient, vitalTrend, criticalAlerts)];
@@ -656,7 +651,7 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       });
     });
   };
-  AIHealthMonitoringEngine.prototype.groupHealthDataByMetric = function (healthData) {
+  AIHealthMonitoringEngine.prototype.groupHealthDataByMetric = (healthData) => {
     var groups = new Map();
     for (var _i = 0, healthData_1 = healthData; _i < healthData_1.length; _i++) {
       var metric = healthData_1[_i];
@@ -732,9 +727,7 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       var sortedData, trendAnalysis, trendDirection, baselineValue, currentValue, changePercentage;
       return __generator(this, function (_a) {
         if (dataPoints.length < 3) return [2 /*return*/, null];
-        sortedData = dataPoints.sort(function (a, b) {
-          return a.timestamp.getTime() - b.timestamp.getTime();
-        });
+        sortedData = dataPoints.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
         trendAnalysis = this.performTrendAnalysis(sortedData);
         trendDirection = this.determineTrendDirection(trendAnalysis.slope);
         baselineValue = sortedData[0].value;
@@ -769,24 +762,22 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       var sortedMeasurements, dataPoints, trendAnalysis, normalRange, alerts, recommendations;
       return __generator(this, function (_a) {
         if (measurements.length < 3) return [2 /*return*/, null];
-        sortedMeasurements = measurements.sort(function (a, b) {
-          return a.timestamp.getTime() - b.timestamp.getTime();
-        });
-        dataPoints = sortedMeasurements.map(function (m) {
-          return {
-            timestamp: m.timestamp,
-            value: m.value,
-            source: "clinical",
-            quality_score: 0.95,
-            context: {
-              activity_level: "normal",
-              stress_level: "normal",
-              medication_timing: "as_prescribed",
-              environmental_factors: [],
-              notes: "",
-            },
-          };
-        });
+        sortedMeasurements = measurements.sort(
+          (a, b) => a.timestamp.getTime() - b.timestamp.getTime(),
+        );
+        dataPoints = sortedMeasurements.map((m) => ({
+          timestamp: m.timestamp,
+          value: m.value,
+          source: "clinical",
+          quality_score: 0.95,
+          context: {
+            activity_level: "normal",
+            stress_level: "normal",
+            medication_timing: "as_prescribed",
+            environmental_factors: [],
+            notes: "",
+          },
+        }));
         trendAnalysis = this.performTrendAnalysis(dataPoints);
         normalRange = this.getNormalRange(patient, vitalType);
         alerts = this.generateVitalAlerts(sortedMeasurements, normalRange, trendAnalysis);
@@ -805,40 +796,24 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       });
     });
   };
-  AIHealthMonitoringEngine.prototype.performTrendAnalysis = function (dataPoints) {
+  AIHealthMonitoringEngine.prototype.performTrendAnalysis = (dataPoints) => {
     // Simple linear regression for trend analysis
     var n = dataPoints.length;
-    var x = dataPoints.map(function (_, i) {
-      return i;
-    });
-    var y = dataPoints.map(function (dp) {
-      return dp.value;
-    });
-    var sumX = x.reduce(function (sum, val) {
-      return sum + val;
-    }, 0);
-    var sumY = y.reduce(function (sum, val) {
-      return sum + val;
-    }, 0);
-    var sumXY = x.reduce(function (sum, val, i) {
-      return sum + val * y[i];
-    }, 0);
-    var sumXX = x.reduce(function (sum, val) {
-      return sum + val * val;
-    }, 0);
-    var sumYY = y.reduce(function (sum, val) {
-      return sum + val * val;
-    }, 0);
+    var x = dataPoints.map((_, i) => i);
+    var y = dataPoints.map((dp) => dp.value);
+    var sumX = x.reduce((sum, val) => sum + val, 0);
+    var sumY = y.reduce((sum, val) => sum + val, 0);
+    var sumXY = x.reduce((sum, val, i) => sum + val * y[i], 0);
+    var sumXX = x.reduce((sum, val) => sum + val * val, 0);
+    var sumYY = y.reduce((sum, val) => sum + val * val, 0);
     var slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
     var intercept = (sumY - slope * sumX) / n;
     // Calculate R-squared
     var yMean = sumY / n;
-    var ssTotal = y.reduce(function (sum, val) {
-      return sum + Math.pow(val - yMean, 2);
-    }, 0);
-    var ssResidual = y.reduce(function (sum, val, i) {
+    var ssTotal = y.reduce((sum, val) => sum + (val - yMean) ** 2, 0);
+    var ssResidual = y.reduce((sum, val, i) => {
       var predicted = slope * x[i] + intercept;
-      return sum + Math.pow(val - predicted, 2);
+      return sum + (val - predicted) ** 2;
     }, 0);
     var rSquared = 1 - ssResidual / ssTotal;
     // Simplified p-value calculation
@@ -853,48 +828,23 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       prediction_accuracy: rSquared,
     };
   };
-  AIHealthMonitoringEngine.prototype.determineTrendDirection = function (slope) {
+  AIHealthMonitoringEngine.prototype.determineTrendDirection = (slope) => {
     if (Math.abs(slope) < 0.1) return "stable";
     if (slope > 0.1) return "improving";
     if (slope < -0.1) return "declining";
     return "fluctuating";
   };
-  AIHealthMonitoringEngine.prototype.getMetricType = function (metricName) {
+  AIHealthMonitoringEngine.prototype.getMetricType = (metricName) => {
     var vitalSigns = ["blood_pressure", "heart_rate", "temperature", "weight", "height"];
     var symptoms = ["pain_level", "fatigue", "nausea", "dizziness"];
     var biomarkers = ["cholesterol", "glucose", "hemoglobin", "creatinine"];
     var functional = ["mobility", "strength", "endurance", "flexibility"];
     var psychological = ["mood", "anxiety", "depression", "stress"];
-    if (
-      vitalSigns.some(function (vs) {
-        return metricName.includes(vs);
-      })
-    )
-      return "vital_sign";
-    if (
-      symptoms.some(function (s) {
-        return metricName.includes(s);
-      })
-    )
-      return "symptom";
-    if (
-      biomarkers.some(function (b) {
-        return metricName.includes(b);
-      })
-    )
-      return "biomarker";
-    if (
-      functional.some(function (f) {
-        return metricName.includes(f);
-      })
-    )
-      return "functional";
-    if (
-      psychological.some(function (p) {
-        return metricName.includes(p);
-      })
-    )
-      return "psychological";
+    if (vitalSigns.some((vs) => metricName.includes(vs))) return "vital_sign";
+    if (symptoms.some((s) => metricName.includes(s))) return "symptom";
+    if (biomarkers.some((b) => metricName.includes(b))) return "biomarker";
+    if (functional.some((f) => metricName.includes(f))) return "functional";
+    if (psychological.some((p) => metricName.includes(p))) return "psychological";
     return "biomarker"; // default
   };
   AIHealthMonitoringEngine.prototype.getNormalRange = function (patient, vitalType) {
@@ -954,11 +904,11 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       }
     );
   };
-  AIHealthMonitoringEngine.prototype.generateVitalAlerts = function (
+  AIHealthMonitoringEngine.prototype.generateVitalAlerts = (
     measurements,
     normalRange,
     trendAnalysis,
-  ) {
+  ) => {
     var alerts = [];
     // Check latest measurement against normal range
     var latestMeasurement = measurements[measurements.length - 1];
@@ -991,32 +941,24 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     }
     return alerts;
   };
-  AIHealthMonitoringEngine.prototype.generateVitalRecommendations = function (
+  AIHealthMonitoringEngine.prototype.generateVitalRecommendations = (
     vitalType,
     trendAnalysis,
     alerts,
-  ) {
+  ) => {
     var recommendations = [];
-    if (
-      alerts.some(function (a) {
-        return a.alert_type === "out_of_range";
-      })
-    ) {
+    if (alerts.some((a) => a.alert_type === "out_of_range")) {
       recommendations.push("Monitor more frequently");
       recommendations.push("Consult healthcare provider");
     }
-    if (
-      alerts.some(function (a) {
-        return a.alert_type === "trend_concern";
-      })
-    ) {
+    if (alerts.some((a) => a.alert_type === "trend_concern")) {
       recommendations.push("Investigate underlying causes");
       recommendations.push("Consider lifestyle modifications");
     }
     return recommendations;
   };
   // Additional helper methods
-  AIHealthMonitoringEngine.prototype.calculateAge = function (birthDate) {
+  AIHealthMonitoringEngine.prototype.calculateAge = (birthDate) => {
     var birth = new Date(birthDate);
     var today = new Date();
     var age = today.getFullYear() - birth.getFullYear();
@@ -1026,7 +968,7 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     }
     return age;
   };
-  AIHealthMonitoringEngine.prototype.getVitalSignUnit = function (vitalType) {
+  AIHealthMonitoringEngine.prototype.getVitalSignUnit = (vitalType) => {
     var units = {
       blood_pressure_systolic: "mmHg",
       blood_pressure_diastolic: "mmHg",
@@ -1036,14 +978,14 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     };
     return units[vitalType] || "unit";
   };
-  AIHealthMonitoringEngine.prototype.getTimeOfDay = function (date) {
+  AIHealthMonitoringEngine.prototype.getTimeOfDay = (date) => {
     var hour = date.getHours();
     if (hour < 12) return "morning";
     if (hour < 18) return "afternoon";
     return "evening";
   };
   // Mock implementations for complex methods
-  AIHealthMonitoringEngine.prototype.initializeMonitoringModels = function () {
+  AIHealthMonitoringEngine.prototype.initializeMonitoringModels = () => {
     console;
   }; // Mock implementations for complex methods
   AIHealthMonitoringEngine.prototype.initializeMonitoringModels = function () {
@@ -1068,7 +1010,7 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     this.alertThresholds.set("heart_rate", { critical: 120, warning: 100, normal: 80 });
     this.alertThresholds.set("temperature", { critical: 39.0, warning: 38.0, normal: 37.0 });
   };
-  AIHealthMonitoringEngine.prototype.loadBaselineData = function () {
+  AIHealthMonitoringEngine.prototype.loadBaselineData = () => {
     console.log("Loading baseline health data...");
     // Load population baseline data for comparison
   };
@@ -1090,14 +1032,11 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         treatmentStart = new Date(treatment.start_date);
         treatmentEnd = treatment.end_date ? new Date(treatment.end_date) : new Date();
-        preTreatmentData = healthData.filter(function (hd) {
-          return new Date(hd.recorded_at) < treatmentStart;
-        });
-        postTreatmentData = healthData.filter(function (hd) {
-          return (
-            new Date(hd.recorded_at) >= treatmentStart && new Date(hd.recorded_at) <= treatmentEnd
-          );
-        });
+        preTreatmentData = healthData.filter((hd) => new Date(hd.recorded_at) < treatmentStart);
+        postTreatmentData = healthData.filter(
+          (hd) =>
+            new Date(hd.recorded_at) >= treatmentStart && new Date(hd.recorded_at) <= treatmentEnd,
+        );
         effectivenessScore = this.calculateEffectivenessScore(
           preTreatmentData,
           postTreatmentData,
@@ -1162,26 +1101,18 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
         preValues = _b[1];
       var postValues = postMetrics.get(metricName);
       if (postValues && postValues.length > 0) {
-        var preAvg =
-          preValues.reduce(function (sum, v) {
-            return sum + v.value;
-          }, 0) / preValues.length;
-        var postAvg =
-          postValues.reduce(function (sum, v) {
-            return sum + v.value;
-          }, 0) / postValues.length;
+        var preAvg = preValues.reduce((sum, v) => sum + v.value, 0) / preValues.length;
+        var postAvg = postValues.reduce((sum, v) => sum + v.value, 0) / postValues.length;
         // Calculate improvement (assuming higher values are better)
         var improvement = (postAvg - preAvg) / preAvg;
         improvements.push(Math.max(0, Math.min(1, improvement + 0.5))); // Normalize to 0-1
       }
     }
     return improvements.length > 0
-      ? improvements.reduce(function (sum, imp) {
-          return sum + imp;
-        }, 0) / improvements.length
+      ? improvements.reduce((sum, imp) => sum + imp, 0) / improvements.length
       : 0.5;
   };
-  AIHealthMonitoringEngine.prototype.groupMetricsByName = function (metrics) {
+  AIHealthMonitoringEngine.prototype.groupMetricsByName = (metrics) => {
     var groups = new Map();
     for (var _i = 0, metrics_1 = metrics; _i < metrics_1.length; _i++) {
       var metric = metrics_1[_i];
@@ -1194,34 +1125,32 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
   };
   AIHealthMonitoringEngine.prototype.createHealthDeclineWarning = function (patient, trend) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            warning_id: "health_decline_".concat(Date.now()),
-            warning_type: "health_decline",
-            severity: trend.trend_strength > 0.8 ? "high" : "moderate",
-            probability: Math.abs(trend.trend_strength),
-            trigger_metrics: [trend.metric_name],
-            detection_date: new Date(),
-            predicted_timeline: "2-4 weeks",
-            intervention_window: "1-2 weeks",
-            recommended_actions: [
-              "Schedule immediate consultation",
-              "Increase monitoring frequency",
-              "Review current treatment plan",
-              "Consider intervention adjustments",
-            ],
-            escalation_protocol: {
-              immediate_actions: ["Notify primary care physician", "Schedule urgent appointment"],
-              notification_list: ["Primary physician", "Care coordinator"],
-              escalation_timeline: "24-48 hours",
-              emergency_contacts: ["Emergency services if critical"],
-              documentation_requirements: ["Trend analysis report", "Patient notification"],
-            },
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          warning_id: "health_decline_".concat(Date.now()),
+          warning_type: "health_decline",
+          severity: trend.trend_strength > 0.8 ? "high" : "moderate",
+          probability: Math.abs(trend.trend_strength),
+          trigger_metrics: [trend.metric_name],
+          detection_date: new Date(),
+          predicted_timeline: "2-4 weeks",
+          intervention_window: "1-2 weeks",
+          recommended_actions: [
+            "Schedule immediate consultation",
+            "Increase monitoring frequency",
+            "Review current treatment plan",
+            "Consider intervention adjustments",
+          ],
+          escalation_protocol: {
+            immediate_actions: ["Notify primary care physician", "Schedule urgent appointment"],
+            notification_list: ["Primary physician", "Care coordinator"],
+            escalation_timeline: "24-48 hours",
+            emergency_contacts: ["Emergency services if critical"],
+            documentation_requirements: ["Trend analysis report", "Patient notification"],
           },
-        ];
-      });
+        },
+      ]);
     });
   };
   AIHealthMonitoringEngine.prototype.createVitalSignWarning = function (
@@ -1230,109 +1159,100 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     alerts,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            warning_id: "vital_sign_".concat(Date.now()),
-            warning_type: "risk_elevation",
-            severity: "high",
-            probability: 0.8,
-            trigger_metrics: [vitalTrend.vital_type],
-            detection_date: new Date(),
-            predicted_timeline: "Immediate",
-            intervention_window: "Immediate",
-            recommended_actions: [
-              "Immediate medical attention",
-              "Continuous monitoring",
-              "Emergency protocol activation",
-            ],
-            escalation_protocol: {
-              immediate_actions: ["Emergency response", "Continuous monitoring"],
-              notification_list: ["Emergency team", "Primary physician"],
-              escalation_timeline: "Immediate",
-              emergency_contacts: ["911", "Emergency department"],
-              documentation_requirements: ["Vital sign log", "Emergency response log"],
-            },
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          warning_id: "vital_sign_".concat(Date.now()),
+          warning_type: "risk_elevation",
+          severity: "high",
+          probability: 0.8,
+          trigger_metrics: [vitalTrend.vital_type],
+          detection_date: new Date(),
+          predicted_timeline: "Immediate",
+          intervention_window: "Immediate",
+          recommended_actions: [
+            "Immediate medical attention",
+            "Continuous monitoring",
+            "Emergency protocol activation",
+          ],
+          escalation_protocol: {
+            immediate_actions: ["Emergency response", "Continuous monitoring"],
+            notification_list: ["Emergency team", "Primary physician"],
+            escalation_timeline: "Immediate",
+            emergency_contacts: ["911", "Emergency department"],
+            documentation_requirements: ["Vital sign log", "Emergency response log"],
           },
-        ];
-      });
+        },
+      ]);
     });
   };
   AIHealthMonitoringEngine.prototype.createTreatmentFailureWarning = function (patient, treatment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            warning_id: "treatment_failure_".concat(Date.now()),
-            warning_type: "treatment_failure",
-            severity: "moderate",
-            probability: 1 - treatment.effectiveness_score,
-            trigger_metrics: ["treatment_effectiveness"],
-            detection_date: new Date(),
-            predicted_timeline: "1-2 weeks",
-            intervention_window: "3-5 days",
-            recommended_actions: [
-              "Review treatment protocol",
-              "Consider alternative treatments",
-              "Assess patient compliance",
-              "Evaluate dosage adjustments",
-            ],
-            escalation_protocol: {
-              immediate_actions: ["Treatment review", "Patient consultation"],
-              notification_list: ["Treating physician", "Care team"],
-              escalation_timeline: "48-72 hours",
-              emergency_contacts: ["Treating physician"],
-              documentation_requirements: [
-                "Treatment review report",
-                "Alternative options analysis",
-              ],
-            },
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          warning_id: "treatment_failure_".concat(Date.now()),
+          warning_type: "treatment_failure",
+          severity: "moderate",
+          probability: 1 - treatment.effectiveness_score,
+          trigger_metrics: ["treatment_effectiveness"],
+          detection_date: new Date(),
+          predicted_timeline: "1-2 weeks",
+          intervention_window: "3-5 days",
+          recommended_actions: [
+            "Review treatment protocol",
+            "Consider alternative treatments",
+            "Assess patient compliance",
+            "Evaluate dosage adjustments",
+          ],
+          escalation_protocol: {
+            immediate_actions: ["Treatment review", "Patient consultation"],
+            notification_list: ["Treating physician", "Care team"],
+            escalation_timeline: "48-72 hours",
+            emergency_contacts: ["Treating physician"],
+            documentation_requirements: ["Treatment review report", "Alternative options analysis"],
           },
-        ];
-      });
+        },
+      ]);
     });
   };
   AIHealthMonitoringEngine.prototype.createTrendBasedRecommendation = function (patient, trend) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            recommendation_id: "trend_rec_".concat(Date.now()),
-            category: "intervention",
-            priority: trend.trend_strength > 0.7 ? "high" : "medium",
-            title: "Address declining ".concat(trend.metric_name),
-            description: "Your ".concat(
-              trend.metric_name,
-              " has shown a declining trend over the monitoring period.",
-            ),
-            rationale: "Trend analysis shows ".concat(
-              Math.abs(trend.change_percentage).toFixed(1),
-              "% decline with high statistical significance.",
-            ),
-            implementation_steps: [
-              "Schedule consultation with healthcare provider",
-              "Review current lifestyle factors",
-              "Consider treatment adjustments",
-              "Increase monitoring frequency",
-            ],
-            expected_outcomes: [
-              "Stabilization of declining trend",
-              "Improvement in target metrics",
-              "Better overall health outcomes",
-            ],
-            timeline: "2-4 weeks",
-            success_metrics: [
-              "Trend reversal or stabilization",
-              "Improved metric values",
-              "Patient satisfaction",
-            ],
-            contraindications: [],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          recommendation_id: "trend_rec_".concat(Date.now()),
+          category: "intervention",
+          priority: trend.trend_strength > 0.7 ? "high" : "medium",
+          title: "Address declining ".concat(trend.metric_name),
+          description: "Your ".concat(
+            trend.metric_name,
+            " has shown a declining trend over the monitoring period.",
+          ),
+          rationale: "Trend analysis shows ".concat(
+            Math.abs(trend.change_percentage).toFixed(1),
+            "% decline with high statistical significance.",
+          ),
+          implementation_steps: [
+            "Schedule consultation with healthcare provider",
+            "Review current lifestyle factors",
+            "Consider treatment adjustments",
+            "Increase monitoring frequency",
+          ],
+          expected_outcomes: [
+            "Stabilization of declining trend",
+            "Improvement in target metrics",
+            "Better overall health outcomes",
+          ],
+          timeline: "2-4 weeks",
+          success_metrics: [
+            "Trend reversal or stabilization",
+            "Improved metric values",
+            "Patient satisfaction",
+          ],
+          contraindications: [],
+        },
+      ]);
     });
   };
   AIHealthMonitoringEngine.prototype.createWarningBasedRecommendation = function (
@@ -1340,34 +1260,32 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     warning,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          {
-            recommendation_id: "warning_rec_".concat(Date.now()),
-            category: "intervention",
-            priority: warning.severity === "critical" ? "urgent" : "high",
-            title: "Address ".concat(warning.warning_type),
-            description: "Early warning detected for ".concat(
-              warning.warning_type,
-              " requiring immediate attention.",
-            ),
-            rationale: "Warning triggered with ".concat(
-              (warning.probability * 100).toFixed(1),
-              "% probability.",
-            ),
-            implementation_steps: warning.recommended_actions,
-            expected_outcomes: [
-              "Risk mitigation",
-              "Prevention of complications",
-              "Improved safety profile",
-            ],
-            timeline: warning.intervention_window,
-            success_metrics: ["Warning resolution", "Risk reduction", "Stable health metrics"],
-            contraindications: [],
-          },
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        {
+          recommendation_id: "warning_rec_".concat(Date.now()),
+          category: "intervention",
+          priority: warning.severity === "critical" ? "urgent" : "high",
+          title: "Address ".concat(warning.warning_type),
+          description: "Early warning detected for ".concat(
+            warning.warning_type,
+            " requiring immediate attention.",
+          ),
+          rationale: "Warning triggered with ".concat(
+            (warning.probability * 100).toFixed(1),
+            "% probability.",
+          ),
+          implementation_steps: warning.recommended_actions,
+          expected_outcomes: [
+            "Risk mitigation",
+            "Prevention of complications",
+            "Improved safety profile",
+          ],
+          timeline: warning.intervention_window,
+          success_metrics: ["Warning resolution", "Risk reduction", "Stable health metrics"],
+          contraindications: [],
+        },
+      ]);
     });
   };
   AIHealthMonitoringEngine.prototype.generatePreventiveRecommendations = function (
@@ -1377,7 +1295,7 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var recommendations;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recommendations = [];
         // General preventive recommendations
         recommendations.push({
@@ -1410,11 +1328,11 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       });
     });
   };
-  AIHealthMonitoringEngine.prototype.calculateAnalysisConfidence = function (
+  AIHealthMonitoringEngine.prototype.calculateAnalysisConfidence = (
     healthData,
     vitalSigns,
     period,
-  ) {
+  ) => {
     // Calculate confidence based on data quality and quantity
     var dataPoints = healthData.length + vitalSigns.length;
     var expectedDataPoints = period.duration_days * 2; // Assuming 2 measurements per day
@@ -1422,26 +1340,14 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     var timeSpanAdequacy = period.duration_days >= 7 ? 1 : period.duration_days / 7;
     return (dataCompleteness * 0.6 + timeSpanAdequacy * 0.4) * 0.95; // Max 95% confidence
   };
-  AIHealthMonitoringEngine.prototype.calculateNextMonitoringDate = function (
-    patient,
-    warnings,
-    trends,
-  ) {
+  AIHealthMonitoringEngine.prototype.calculateNextMonitoringDate = (patient, warnings, trends) => {
     var now = new Date();
     // If there are critical warnings, monitor daily
-    if (
-      warnings.some(function (w) {
-        return w.severity === "critical";
-      })
-    ) {
+    if (warnings.some((w) => w.severity === "critical")) {
       return new Date(now.getTime() + 24 * 60 * 60 * 1000); // 1 day
     }
     // If there are concerning trends, monitor weekly
-    if (
-      trends.some(function (t) {
-        return t.trend_direction === "declining" && t.trend_strength > 0.5;
-      })
-    ) {
+    if (trends.some((t) => t.trend_direction === "declining" && t.trend_strength > 0.5)) {
       return new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 1 week
     }
     // Otherwise, monitor monthly
@@ -1473,7 +1379,7 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
   };
   AIHealthMonitoringEngine.prototype.checkRapidChanges = function (patient, dataPoint) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Check for rapid changes compared to recent values
         // This would require access to recent historical data
         return [2 /*return*/, null]; // Simplified implementation
@@ -1482,14 +1388,14 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
   };
   AIHealthMonitoringEngine.prototype.checkTrendConcerns = function (patient, dataPoint) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Check if this data point indicates a concerning trend
         // This would require trend analysis of recent data
         return [2 /*return*/, null]; // Simplified implementation
       });
     });
   };
-  AIHealthMonitoringEngine.prototype.checkMissingData = function (patient, realtimeData) {
+  AIHealthMonitoringEngine.prototype.checkMissingData = (patient, realtimeData) => {
     var alerts = [];
     var now = new Date();
     var expectedInterval = 24 * 60 * 60 * 1000; // 24 hours
@@ -1532,7 +1438,7 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       });
     });
   };
-  AIHealthMonitoringEngine.prototype.parseTimeHorizon = function (timeHorizon) {
+  AIHealthMonitoringEngine.prototype.parseTimeHorizon = (timeHorizon) => {
     // Parse time horizon string to days
     if (timeHorizon.includes("week")) return 7;
     if (timeHorizon.includes("month")) return 30;
@@ -1572,15 +1478,12 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
       });
     });
   };
-  AIHealthMonitoringEngine.prototype.validateDataQuality = function (dataPoint) {
-    return (
-      dataPoint.quality_score > 0.7 &&
-      dataPoint.value !== null &&
-      dataPoint.value !== undefined &&
-      !isNaN(dataPoint.value)
-    );
-  };
-  AIHealthMonitoringEngine.prototype.assessDataQuality = function (data, deviceInfo) {
+  AIHealthMonitoringEngine.prototype.validateDataQuality = (dataPoint) =>
+    dataPoint.quality_score > 0.7 &&
+    dataPoint.value !== null &&
+    dataPoint.value !== undefined &&
+    !isNaN(dataPoint.value);
+  AIHealthMonitoringEngine.prototype.assessDataQuality = (data, deviceInfo) => {
     var quality = 0.8; // Base quality for device data
     // Adjust based on device type
     if (deviceInfo.device_type === "medical_grade") quality += 0.15;
@@ -1590,49 +1493,34 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     return Math.max(0, Math.min(1, quality));
   };
   // Health insights methods
-  AIHealthMonitoringEngine.prototype.calculateOverallHealthScore = function (analysis) {
-    var trendScores = analysis.health_trends.map(function (t) {
+  AIHealthMonitoringEngine.prototype.calculateOverallHealthScore = (analysis) => {
+    var trendScores = analysis.health_trends.map((t) => {
       if (t.trend_direction === "improving") return 0.8 + t.trend_strength * 0.2;
       if (t.trend_direction === "stable") return 0.7;
       if (t.trend_direction === "declining") return 0.3 - t.trend_strength * 0.2;
       return 0.5; // fluctuating
     });
     var warningPenalty = analysis.early_warnings.length * 0.1;
-    var baseScore =
-      trendScores.reduce(function (sum, score) {
-        return sum + score;
-      }, 0) / trendScores.length;
+    var baseScore = trendScores.reduce((sum, score) => sum + score, 0) / trendScores.length;
     return Math.max(0, Math.min(1, baseScore - warningPenalty));
   };
-  AIHealthMonitoringEngine.prototype.identifyImprovementAreas = function (analysis) {
-    return analysis.health_trends
-      .filter(function (t) {
-        return t.trend_direction === "declining";
-      })
-      .map(function (t) {
-        return t.metric_name;
-      });
-  };
-  AIHealthMonitoringEngine.prototype.identifySuccessAreas = function (analysis) {
-    return analysis.health_trends
-      .filter(function (t) {
-        return t.trend_direction === "improving";
-      })
-      .map(function (t) {
-        return t.metric_name;
-      });
-  };
-  AIHealthMonitoringEngine.prototype.analyzeBehaviorHealthCorrelations = function (
+  AIHealthMonitoringEngine.prototype.identifyImprovementAreas = (analysis) =>
+    analysis.health_trends
+      .filter((t) => t.trend_direction === "declining")
+      .map((t) => t.metric_name);
+  AIHealthMonitoringEngine.prototype.identifySuccessAreas = (analysis) =>
+    analysis.health_trends
+      .filter((t) => t.trend_direction === "improving")
+      .map((t) => t.metric_name);
+  AIHealthMonitoringEngine.prototype.analyzeBehaviorHealthCorrelations = (
     trendAnalysis,
     behaviorAnalysis,
-  ) {
-    return {
-      appointment_adherence_impact: "High adherence correlates with better health outcomes",
-      communication_effectiveness: "Regular communication improves treatment compliance",
-      lifestyle_factors: "Lifestyle modifications show positive health impact",
-    };
-  };
-  AIHealthMonitoringEngine.prototype.generatePersonalizedGoals = function (patient, analysis) {
+  ) => ({
+    appointment_adherence_impact: "High adherence correlates with better health outcomes",
+    communication_effectiveness: "Regular communication improves treatment compliance",
+    lifestyle_factors: "Lifestyle modifications show positive health impact",
+  });
+  AIHealthMonitoringEngine.prototype.generatePersonalizedGoals = (patient, analysis) => {
     var goals = [];
     for (var _i = 0, _a = analysis.health_trends; _i < _a.length; _i++) {
       var trend = _a[_i];
@@ -1647,28 +1535,23 @@ var AIHealthMonitoringEngine = /** @class */ (function () {
     }
     return goals;
   };
-  AIHealthMonitoringEngine.prototype.generateMotivationStrategies = function (
-    patient,
-    behaviorAnalysis,
-  ) {
-    return [
-      {
-        strategy: "Progress visualization",
-        description: "Show visual progress charts and achievements",
-        effectiveness: "High for visual learners",
-      },
-      {
-        strategy: "Goal setting",
-        description: "Set achievable short-term and long-term goals",
-        effectiveness: "High for goal-oriented individuals",
-      },
-      {
-        strategy: "Social support",
-        description: "Encourage family involvement and peer support",
-        effectiveness: "High for socially motivated individuals",
-      },
-    ];
-  };
+  AIHealthMonitoringEngine.prototype.generateMotivationStrategies = (patient, behaviorAnalysis) => [
+    {
+      strategy: "Progress visualization",
+      description: "Show visual progress charts and achievements",
+      effectiveness: "High for visual learners",
+    },
+    {
+      strategy: "Goal setting",
+      description: "Set achievable short-term and long-term goals",
+      effectiveness: "High for goal-oriented individuals",
+    },
+    {
+      strategy: "Social support",
+      description: "Encourage family involvement and peer support",
+      effectiveness: "High for socially motivated individuals",
+    },
+  ];
   return AIHealthMonitoringEngine;
 })();
 exports.AIHealthMonitoringEngine = AIHealthMonitoringEngine;

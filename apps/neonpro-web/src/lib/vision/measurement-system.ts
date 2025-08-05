@@ -5,7 +5,6 @@
  */
 
 import * as tf from "@tensorflow/tfjs";
-import type { createClient } from "@supabase/supabase-js";
 
 // Measurement interfaces
 export interface MeasurementResult {
@@ -176,7 +175,7 @@ export class ObjectiveMeasurementSystem {
     patientId: string,
     analysisId: string,
     treatmentType: string,
-    options: MeasurementOptions = {},
+    _options: MeasurementOptions = {},
   ): Promise<MeasurementResult> {
     try {
       // Get measurement protocol for treatment type
@@ -251,7 +250,7 @@ export class ObjectiveMeasurementSystem {
   private async extractMeasurements(
     image: tf.Tensor3D,
     protocol: MeasurementProtocol,
-    phase: "before" | "after",
+    _phase: "before" | "after",
   ): Promise<RawMeasurement[]> {
     const measurements: RawMeasurement[] = [];
 
@@ -398,9 +397,7 @@ export class ObjectiveMeasurementSystem {
     const point1 = landmarks[0];
     const point2 = landmarks[1];
 
-    const pixelDistance = Math.sqrt(
-      Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2),
-    );
+    const pixelDistance = Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
 
     const pixelSize = this.getPixelSize(spec.region);
     const realDistance = pixelDistance * pixelSize;
@@ -582,13 +579,13 @@ export class ObjectiveMeasurementSystem {
     ) as tf.Tensor3D;
   }
 
-  private getPixelSize(region: BoundingBox): number {
+  private getPixelSize(_region: BoundingBox): number {
     // This would be calibrated based on known reference objects
     // For now, using a default value
     return 0.1; // mm per pixel
   }
 
-  private calculateMeasurementConfidence(tensor: tf.Tensor, spec: MeasurementSpec): number {
+  private calculateMeasurementConfidence(tensor: tf.Tensor, _spec: MeasurementSpec): number {
     // Calculate confidence based on measurement quality
     const variance = tf.moments(tensor).variance.dataSync()[0];
     const mean = tf.mean(tensor).dataSync()[0];
@@ -609,7 +606,7 @@ export class ObjectiveMeasurementSystem {
     }) as tf.Tensor2D;
   }
 
-  private detectLandmarks(image: tf.Tensor3D, spec: MeasurementSpec): Landmark[] {
+  private detectLandmarks(_image: tf.Tensor3D, spec: MeasurementSpec): Landmark[] {
     // Simplified landmark detection
     // In production, this would use advanced computer vision algorithms
     const landmarks: Landmark[] = [];
@@ -691,7 +688,7 @@ export class ObjectiveMeasurementSystem {
   }
 
   private getMeasurementCategory(
-    type: MeasurementType,
+    _type: MeasurementType,
     protocol: MeasurementProtocol,
   ): MeasurementCategory {
     // Map measurement types to categories based on protocol
@@ -1086,8 +1083,8 @@ export class ObjectiveMeasurementSystem {
   }
 
   private async ensureCalibration(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
   ): Promise<void> {
     // Verify calibration is still valid
     const calibration = this.calibrationData.get("default");
@@ -1216,8 +1213,8 @@ class QualityController {
       details: "Images meet quality standards for accurate measurement",
     });
 
-    const passedChecks = validationChecks.filter((check) => check.passed).length;
-    const totalChecks = validationChecks.length;
+    const _passedChecks = validationChecks.filter((check) => check.passed).length;
+    const _totalChecks = validationChecks.length;
 
     return {
       measurementAccuracy: 0.96,
@@ -1233,7 +1230,7 @@ class QualityController {
     return measurements.every((m) => m.confidence > 0.8);
   }
 
-  private checkImageQuality(beforeImage: tf.Tensor3D, afterImage: tf.Tensor3D): boolean {
+  private checkImageQuality(_beforeImage: tf.Tensor3D, _afterImage: tf.Tensor3D): boolean {
     // Check image quality metrics
     return true; // Simplified for now
   }
@@ -1262,7 +1259,7 @@ class StatisticalAnalyzer {
 class ClinicalValidator {
   async assessSignificance(
     measurements: ObjectiveMeasurement[],
-    treatmentType: string,
+    _treatmentType: string,
   ): Promise<ClinicalSignificance> {
     const progressIndicators: ProgressIndicator[] = measurements.map((m) => ({
       metric: `${m.type}_change`,
@@ -1291,8 +1288,8 @@ class ClinicalValidator {
   }
 
   async validateMeasurements(
-    measurementId: string,
-    groundTruth: ObjectiveMeasurement[],
+    _measurementId: string,
+    _groundTruth: ObjectiveMeasurement[],
   ): Promise<ValidationResult> {
     // Validate measurements against ground truth
     return {

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Audit Trail System
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Audit Trail)
@@ -10,20 +9,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -38,26 +37,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -77,13 +76,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -105,9 +104,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -179,10 +176,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -191,7 +188,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createauditTrailManager =
   exports.AuditEventType =
@@ -205,7 +202,7 @@ var logger_1 = require("@/lib/utils/logger");
 var client_1 = require("@/lib/supabase/client");
 var events_1 = require("events");
 // Main Audit Trail Manager Class
-var AuditTrailManager = /** @class */ (function (_super) {
+var AuditTrailManager = /** @class */ ((_super) => {
   __extends(AuditTrailManager, _super);
   function AuditTrailManager() {
     var _this = _super.call(this) || this;
@@ -392,9 +389,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
             entries =
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (row) {
-                    return _this.mapRowToAuditEntry(row);
-                  })) || [];
+                : data.map((row) => _this.mapRowToAuditEntry(row))) || [];
             totalCount = count || 0;
             hasMore = totalCount > offset + limit;
             return [
@@ -503,39 +498,32 @@ var AuditTrailManager = /** @class */ (function (_super) {
             return [4 /*yield*/, this.queryAuditTrail(query)];
           case 1:
             entries = _b.sent().entries;
-            validationResults = entries.flatMap(function (entry) {
-              return entry.complianceContext.validationResults || [];
-            });
+            validationResults = entries.flatMap(
+              (entry) => entry.complianceContext.validationResults || [],
+            );
             filteredResults = regulations
-              ? validationResults.filter(function (result) {
-                  return regulations.some(function (reg) {
-                    return result.ruleName.includes(reg);
-                  });
-                })
+              ? validationResults.filter((result) =>
+                  regulations.some((reg) => result.ruleName.includes(reg)),
+                )
               : validationResults;
             _a = {
               totalValidations: filteredResults.length,
-              passedValidations: filteredResults.filter(function (r) {
-                return r.validationStatus === "passed";
-              }).length,
-              failedValidations: filteredResults.filter(function (r) {
-                return r.validationStatus === "failed";
-              }).length,
-              warningValidations: filteredResults.filter(function (r) {
-                return r.validationStatus === "warning";
-              }).length,
+              passedValidations: filteredResults.filter((r) => r.validationStatus === "passed")
+                .length,
+              failedValidations: filteredResults.filter((r) => r.validationStatus === "failed")
+                .length,
+              warningValidations: filteredResults.filter((r) => r.validationStatus === "warning")
+                .length,
               complianceRate:
                 filteredResults.length > 0
-                  ? (filteredResults.filter(function (r) {
-                      return r.validationStatus === "passed";
-                    }).length /
+                  ? (filteredResults.filter((r) => r.validationStatus === "passed").length /
                       filteredResults.length) *
                     100
                   : 0,
               validationsByRegulation: this.groupValidationsByRegulation(filteredResults),
-              criticalFailures: filteredResults.filter(function (r) {
-                return r.validationStatus === "failed" && r.severity === "critical";
-              }).length,
+              criticalFailures: filteredResults.filter(
+                (r) => r.validationStatus === "failed" && r.severity === "critical",
+              ).length,
             };
             return [4 /*yield*/, this.generateComplianceRecommendations(filteredResults)];
           case 2:
@@ -558,8 +546,8 @@ var AuditTrailManager = /** @class */ (function (_super) {
     return __awaiter(this, void 0, void 0, function () {
       var _this = this;
       return __generator(this, function (_a) {
-        this.on("auditEvent", function (entry) {
-          return __awaiter(_this, void 0, void 0, function () {
+        this.on("auditEvent", (entry) =>
+          __awaiter(_this, void 0, void 0, function () {
             var violations;
             return __generator(this, function (_a) {
               switch (_a.label) {
@@ -585,8 +573,8 @@ var AuditTrailManager = /** @class */ (function (_super) {
                   return [2 /*return*/];
               }
             });
-          });
-        });
+          }),
+        );
         return [2 /*return*/];
       });
     });
@@ -605,22 +593,16 @@ var AuditTrailManager = /** @class */ (function (_super) {
           case 1:
             validationResults = _a.sent();
             violatedRules = validationResults
-              .filter(function (r) {
-                return r.validationStatus === "failed";
-              })
-              .map(function (r) {
-                return r.ruleId;
-              });
+              .filter((r) => r.validationStatus === "failed")
+              .map((r) => r.ruleId);
             return [
               2 /*return*/,
               {
                 applicableRegulations: applicableRegulations,
                 complianceStatus: violatedRules.length > 0 ? "non_compliant" : "compliant",
-                complianceRules: complianceRules.map(function (r) {
-                  return r.id;
-                }),
+                complianceRules: complianceRules.map((r) => r.id),
                 violatedRules: violatedRules,
-                reviewRequired: violatedRules.some(function (ruleId) {
+                reviewRequired: violatedRules.some((ruleId) => {
                   var rule = _this.complianceRules.get(ruleId);
                   return (rule === null || rule === void 0 ? void 0 : rule.requiresReview) || false;
                 }),
@@ -679,7 +661,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
           case 0:
             if (!(entry.complianceContext.complianceStatus === "non_compliant"))
               return [3 /*break*/, 2];
-            criticalViolations = entry.complianceContext.violatedRules.filter(function (ruleId) {
+            criticalViolations = entry.complianceContext.violatedRules.filter((ruleId) => {
               var rule = _this.complianceRules.get(ruleId);
               return (rule === null || rule === void 0 ? void 0 : rule.severity) === "critical";
             });
@@ -710,11 +692,9 @@ var AuditTrailManager = /** @class */ (function (_super) {
             this.auditBuffer = [];
             return [
               4 /*yield*/,
-              this.supabase.from("audit_trail").insert(
-                entries.map(function (entry) {
-                  return _this.mapAuditEntryToRow(entry);
-                }),
-              ),
+              this.supabase
+                .from("audit_trail")
+                .insert(entries.map((entry) => _this.mapAuditEntryToRow(entry))),
             ];
           case 2:
             error = _b.sent().error;
@@ -736,28 +716,26 @@ var AuditTrailManager = /** @class */ (function (_super) {
     });
   };
   AuditTrailManager.prototype.startBufferFlush = function () {
-    var _this = this;
-    setInterval(function () {
-      _this.flushBuffer();
+    setInterval(() => {
+      this.flushBuffer();
     }, this.flushInterval);
   };
   AuditTrailManager.prototype.startRealTimeMonitoring = function () {
-    var _this = this;
     // Real-time monitoring implementation
-    setInterval(function () {
-      _this.performPeriodicChecks();
+    setInterval(() => {
+      this.performPeriodicChecks();
     }, 60000); // Every minute
   };
   AuditTrailManager.prototype.performPeriodicChecks = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement periodic compliance and risk checks
         logger_1.logger.info("Performing periodic audit checks...");
         return [2 /*return*/];
       });
     });
   };
-  AuditTrailManager.prototype.getApplicableRegulations = function (eventData) {
+  AuditTrailManager.prototype.getApplicableRegulations = (eventData) => {
     var regulations = ["LGPD", "CFM_1821_2007"];
     if (eventData.category === "patient_data") {
       regulations.push("ANVISA_RDC_44_2009");
@@ -768,12 +746,11 @@ var AuditTrailManager = /** @class */ (function (_super) {
     return regulations;
   };
   AuditTrailManager.prototype.getComplianceRules = function (eventData) {
-    return Array.from(this.complianceRules.values()).filter(function (rule) {
-      return (
+    return Array.from(this.complianceRules.values()).filter(
+      (rule) =>
         rule.applicableCategories.includes(eventData.category || "system_security") &&
-        rule.applicableEventTypes.includes(eventData.eventType || "system_event")
-      );
-    });
+        rule.applicableEventTypes.includes(eventData.eventType || "system_event"),
+    );
   };
   AuditTrailManager.prototype.validateCompliance = function (eventData, rules) {
     return __awaiter(this, void 0, void 0, function () {
@@ -828,14 +805,14 @@ var AuditTrailManager = /** @class */ (function (_super) {
   };
   AuditTrailManager.prototype.executeRuleValidation = function (eventData, rule) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement actual rule validation logic
         // This is a simplified version
         return [2 /*return*/, true]; // Default to compliant for now
       });
     });
   };
-  AuditTrailManager.prototype.identifyRiskFactors = function (eventData) {
+  AuditTrailManager.prototype.identifyRiskFactors = (eventData) => {
     var factors = [];
     if (eventData.eventType === "access" && eventData.category === "patient_data") {
       factors.push("Patient data access");
@@ -848,7 +825,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
     }
     return factors;
   };
-  AuditTrailManager.prototype.calculateRiskScore = function (eventData, riskFactors) {
+  AuditTrailManager.prototype.calculateRiskScore = (eventData, riskFactors) => {
     var score = 0;
     // Base score by event type
     var eventTypeScores = {
@@ -875,13 +852,13 @@ var AuditTrailManager = /** @class */ (function (_super) {
     score *= severityMultipliers[eventData.severity || "info"];
     return Math.min(score, 100); // Cap at 100
   };
-  AuditTrailManager.prototype.getRiskLevel = function (riskScore) {
+  AuditTrailManager.prototype.getRiskLevel = (riskScore) => {
     if (riskScore >= 80) return "critical";
     if (riskScore >= 60) return "high";
     if (riskScore >= 30) return "medium";
     return "low";
   };
-  AuditTrailManager.prototype.getRiskCategory = function (eventData) {
+  AuditTrailManager.prototype.getRiskCategory = (eventData) => {
     if (eventData.category === "patient_data" || eventData.category === "medical_records") {
       return "privacy";
     }
@@ -893,7 +870,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
     }
     return "operational";
   };
-  AuditTrailManager.prototype.getImmediateActions = function (riskLevel, eventData) {
+  AuditTrailManager.prototype.getImmediateActions = (riskLevel, eventData) => {
     var actions = [];
     if (riskLevel === "critical") {
       actions.push("Immediate security team notification");
@@ -906,7 +883,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
     }
     return actions;
   };
-  AuditTrailManager.prototype.getLongTermActions = function (riskLevel, eventData) {
+  AuditTrailManager.prototype.getLongTermActions = (riskLevel, eventData) => {
     var actions = [];
     if (riskLevel === "critical" || riskLevel === "high") {
       actions.push("Review and update security policies");
@@ -915,7 +892,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
     }
     return actions;
   };
-  AuditTrailManager.prototype.assessImpact = function (eventData, riskLevel) {
+  AuditTrailManager.prototype.assessImpact = (eventData, riskLevel) => {
     var baseImpact = riskLevel === "critical" ? "high" : riskLevel === "high" ? "medium" : "low";
     return {
       patientSafety: eventData.category === "medical_records" ? baseImpact : "none",
@@ -926,7 +903,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
       reputationalRisk: riskLevel === "critical" ? "high" : "low",
     };
   };
-  AuditTrailManager.prototype.getRetentionPeriod = function (category, eventType) {
+  AuditTrailManager.prototype.getRetentionPeriod = (category, eventType) => {
     // Retention periods in days
     var categoryRetention = {
       patient_data: 365 * 20, // 20 years
@@ -941,8 +918,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
   AuditTrailManager.prototype.loadComplianceRules = function () {
     return __awaiter(this, void 0, void 0, function () {
       var defaultRules;
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         defaultRules = [
           {
             id: "lgpd_data_access",
@@ -965,8 +941,8 @@ var AuditTrailManager = /** @class */ (function (_super) {
             recommendedAction: "Verify retention policy compliance",
           },
         ];
-        defaultRules.forEach(function (rule) {
-          _this.complianceRules.set(rule.id, rule);
+        defaultRules.forEach((rule) => {
+          this.complianceRules.set(rule.id, rule);
         });
         return [2 /*return*/];
       });
@@ -995,7 +971,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
   };
   AuditTrailManager.prototype.handleComplianceViolation = function (entry, violations) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Handle compliance violations
         logger_1.logger.warning("Compliance violation detected: ".concat(violations.join(", ")));
         return [2 /*return*/];
@@ -1004,7 +980,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
   };
   AuditTrailManager.prototype.handleCriticalRisk = function (entry) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Handle critical risk events
         logger_1.logger.error("Critical risk event detected: ".concat(entry.id));
         return [2 /*return*/];
@@ -1013,69 +989,61 @@ var AuditTrailManager = /** @class */ (function (_super) {
   };
   AuditTrailManager.prototype.updateRealTimeMetrics = function (entry) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
-  AuditTrailManager.prototype.mapRowToAuditEntry = function (row) {
-    return {
-      id: row.id,
-      timestamp: row.timestamp,
-      eventType: row.event_type,
-      category: row.category,
-      severity: row.severity,
-      userId: row.user_id,
-      userRole: row.user_role,
-      sessionId: row.session_id,
-      ipAddress: row.ip_address,
-      userAgent: row.user_agent,
-      resourceId: row.resource_id,
-      resourceType: row.resource_type,
-      action: row.action,
-      description: row.description,
-      beforeState: row.before_state,
-      afterState: row.after_state,
-      metadata: row.metadata,
-      complianceContext: row.compliance_context,
-      riskAssessment: row.risk_assessment,
-      retention: row.retention,
-    };
-  };
-  AuditTrailManager.prototype.mapAuditEntryToRow = function (entry) {
-    return {
-      id: entry.id,
-      timestamp: entry.timestamp,
-      event_type: entry.eventType,
-      category: entry.category,
-      severity: entry.severity,
-      user_id: entry.userId,
-      user_role: entry.userRole,
-      session_id: entry.sessionId,
-      ip_address: entry.ipAddress,
-      user_agent: entry.userAgent,
-      resource_id: entry.resourceId,
-      resource_type: entry.resourceType,
-      action: entry.action,
-      description: entry.description,
-      before_state: entry.beforeState,
-      after_state: entry.afterState,
-      metadata: entry.metadata,
-      compliance_context: entry.complianceContext,
-      risk_assessment: entry.riskAssessment,
-      retention: entry.retention,
-    };
-  };
-  AuditTrailManager.prototype.getAuditCategories = function () {
-    return [
-      "patient_data",
-      "medical_records",
-      "system_security",
-      "user_activity",
-      "compliance_validation",
-      "data_processing",
-    ];
-  };
+  AuditTrailManager.prototype.mapRowToAuditEntry = (row) => ({
+    id: row.id,
+    timestamp: row.timestamp,
+    eventType: row.event_type,
+    category: row.category,
+    severity: row.severity,
+    userId: row.user_id,
+    userRole: row.user_role,
+    sessionId: row.session_id,
+    ipAddress: row.ip_address,
+    userAgent: row.user_agent,
+    resourceId: row.resource_id,
+    resourceType: row.resource_type,
+    action: row.action,
+    description: row.description,
+    beforeState: row.before_state,
+    afterState: row.after_state,
+    metadata: row.metadata,
+    complianceContext: row.compliance_context,
+    riskAssessment: row.risk_assessment,
+    retention: row.retention,
+  });
+  AuditTrailManager.prototype.mapAuditEntryToRow = (entry) => ({
+    id: entry.id,
+    timestamp: entry.timestamp,
+    event_type: entry.eventType,
+    category: entry.category,
+    severity: entry.severity,
+    user_id: entry.userId,
+    user_role: entry.userRole,
+    session_id: entry.sessionId,
+    ip_address: entry.ipAddress,
+    user_agent: entry.userAgent,
+    resource_id: entry.resourceId,
+    resource_type: entry.resourceType,
+    action: entry.action,
+    description: entry.description,
+    before_state: entry.beforeState,
+    after_state: entry.afterState,
+    metadata: entry.metadata,
+    compliance_context: entry.complianceContext,
+    risk_assessment: entry.riskAssessment,
+    retention: entry.retention,
+  });
+  AuditTrailManager.prototype.getAuditCategories = () => [
+    "patient_data",
+    "medical_records",
+    "system_security",
+    "user_activity",
+    "compliance_validation",
+    "data_processing",
+  ];
   AuditTrailManager.prototype.generateAuditSummary = function (entries) {
     return {
       totalEvents: entries.length,
@@ -1091,11 +1059,11 @@ var AuditTrailManager = /** @class */ (function (_super) {
   AuditTrailManager.prototype.generateAuditFindings = function (entries) {
     return __awaiter(this, void 0, void 0, function () {
       var findings, nonCompliantEvents;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         findings = [];
-        nonCompliantEvents = entries.filter(function (e) {
-          return e.complianceContext.complianceStatus === "non_compliant";
-        });
+        nonCompliantEvents = entries.filter(
+          (e) => e.complianceContext.complianceStatus === "non_compliant",
+        );
         if (nonCompliantEvents.length > 0) {
           findings.push({
             id: "finding_compliance_".concat(Date.now()),
@@ -1103,12 +1071,8 @@ var AuditTrailManager = /** @class */ (function (_super) {
             severity: "warning",
             title: "Compliance Violations Detected",
             description: "".concat(nonCompliantEvents.length, " compliance violations found"),
-            evidence: nonCompliantEvents.map(function (e) {
-              return e.id;
-            }),
-            relatedEvents: nonCompliantEvents.map(function (e) {
-              return e.id;
-            }),
+            evidence: nonCompliantEvents.map((e) => e.id),
+            relatedEvents: nonCompliantEvents.map((e) => e.id),
             impactAssessment: {
               patientSafety: "low",
               dataPrivacy: "medium",
@@ -1130,7 +1094,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
   };
   AuditTrailManager.prototype.generateAuditRecommendations = function (entries) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate recommendations based on audit analysis
         return [
           2 /*return*/,
@@ -1176,19 +1140,15 @@ var AuditTrailManager = /** @class */ (function (_super) {
       riskByCategory: this.calculateRiskByCategory(entries),
       riskByUser: this.calculateRiskByUser(entries),
       riskByResource: this.calculateRiskByResource(entries),
-      highRiskEvents: entries.filter(function (e) {
-        return e.riskAssessment.riskLevel === "high";
-      }).length,
-      criticalRiskEvents: entries.filter(function (e) {
-        return e.riskAssessment.riskLevel === "critical";
-      }).length,
+      highRiskEvents: entries.filter((e) => e.riskAssessment.riskLevel === "high").length,
+      criticalRiskEvents: entries.filter((e) => e.riskAssessment.riskLevel === "critical").length,
       riskTrends: this.calculateRiskTrends(entries),
       riskMitigationStatus: this.calculateRiskMitigationStatus(entries),
     };
   };
   AuditTrailManager.prototype.generateAuditTrends = function (entries, timeRange) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate trend analysis
         return [
           2 /*return*/,
@@ -1231,31 +1191,28 @@ var AuditTrailManager = /** @class */ (function (_super) {
     });
   };
   // Additional helper methods for calculations
-  AuditTrailManager.prototype.groupByField = function (items, field) {
-    return items.reduce(function (acc, item) {
+  AuditTrailManager.prototype.groupByField = (items, field) =>
+    items.reduce((acc, item) => {
       var key = item[field];
       acc[key] = (acc[key] || 0) + 1;
       return acc;
     }, {});
-  };
-  AuditTrailManager.prototype.calculateComplianceRate = function (entries) {
+  AuditTrailManager.prototype.calculateComplianceRate = (entries) => {
     if (entries.length === 0) return 100;
-    var compliantEntries = entries.filter(function (e) {
-      return e.complianceContext.complianceStatus === "compliant";
-    });
+    var compliantEntries = entries.filter(
+      (e) => e.complianceContext.complianceStatus === "compliant",
+    );
     return (compliantEntries.length / entries.length) * 100;
   };
   AuditTrailManager.prototype.calculateRiskDistribution = function (entries) {
     return this.groupByField(
-      entries.map(function (e) {
-        return { riskLevel: e.riskAssessment.riskLevel };
-      }),
+      entries.map((e) => ({ riskLevel: e.riskAssessment.riskLevel })),
       "riskLevel",
     );
   };
-  AuditTrailManager.prototype.getTopUsers = function (entries) {
+  AuditTrailManager.prototype.getTopUsers = (entries) => {
     var userActivity = new Map();
-    entries.forEach(function (entry) {
+    entries.forEach((entry) => {
       var existing = userActivity.get(entry.userId) || {
         count: 0,
         riskScore: 0,
@@ -1268,7 +1225,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
           entry.timestamp > existing.lastActivity ? entry.timestamp : existing.lastActivity,
       });
     });
-    return Array.from(userActivity.entries()).map(function (_a) {
+    return Array.from(userActivity.entries()).map((_a) => {
       var userId = _a[0],
         activity = _a[1];
       return {
@@ -1281,9 +1238,9 @@ var AuditTrailManager = /** @class */ (function (_super) {
       };
     });
   };
-  AuditTrailManager.prototype.getTopResources = function (entries) {
+  AuditTrailManager.prototype.getTopResources = (entries) => {
     var resourceActivity = new Map();
-    entries.forEach(function (entry) {
+    entries.forEach((entry) => {
       if (!entry.resourceId) return;
       var existing = resourceActivity.get(entry.resourceId) || {
         accessCount: 0,
@@ -1300,7 +1257,7 @@ var AuditTrailManager = /** @class */ (function (_super) {
           entry.timestamp > existing.lastAccessed ? entry.timestamp : existing.lastAccessed,
       });
     });
-    return Array.from(resourceActivity.entries()).map(function (_a) {
+    return Array.from(resourceActivity.entries()).map((_a) => {
       var resourceId = _a[0],
         activity = _a[1];
       return {
@@ -1313,26 +1270,26 @@ var AuditTrailManager = /** @class */ (function (_super) {
       };
     });
   };
-  AuditTrailManager.prototype.calculateComplianceByRegulation = function (entries) {
+  AuditTrailManager.prototype.calculateComplianceByRegulation = (entries) => {
     // Implementation for compliance calculation by regulation
     return {};
   };
-  AuditTrailManager.prototype.calculateComplianceByCategory = function (entries) {
+  AuditTrailManager.prototype.calculateComplianceByCategory = (entries) => {
     // Implementation for compliance calculation by category
     return {};
   };
-  AuditTrailManager.prototype.calculateComplianceByUser = function (entries) {
+  AuditTrailManager.prototype.calculateComplianceByUser = (entries) => {
     // Implementation for compliance calculation by user
     return {};
   };
-  AuditTrailManager.prototype.calculateComplianceTrends = function (entries) {
+  AuditTrailManager.prototype.calculateComplianceTrends = (entries) => {
     // Implementation for compliance trends calculation
     return [];
   };
   AuditTrailManager.prototype.calculateViolationsSummary = function (entries) {
-    var violations = entries.filter(function (e) {
-      return e.complianceContext.complianceStatus === "non_compliant";
-    });
+    var violations = entries.filter(
+      (e) => e.complianceContext.complianceStatus === "non_compliant",
+    );
     return {
       totalViolations: violations.length,
       violationsByType: this.groupByField(violations, "eventType"),
@@ -1342,30 +1299,28 @@ var AuditTrailManager = /** @class */ (function (_super) {
       avgResolutionTime: 0, // Would calculate actual resolution time
     };
   };
-  AuditTrailManager.prototype.calculateOverallRiskScore = function (entries) {
+  AuditTrailManager.prototype.calculateOverallRiskScore = (entries) => {
     if (entries.length === 0) return 0;
-    var totalRisk = entries.reduce(function (sum, entry) {
-      return sum + entry.riskAssessment.riskScore;
-    }, 0);
+    var totalRisk = entries.reduce((sum, entry) => sum + entry.riskAssessment.riskScore, 0);
     return totalRisk / entries.length;
   };
-  AuditTrailManager.prototype.calculateRiskByCategory = function (entries) {
+  AuditTrailManager.prototype.calculateRiskByCategory = (entries) => {
     // Implementation for risk calculation by category
     return {};
   };
-  AuditTrailManager.prototype.calculateRiskByUser = function (entries) {
+  AuditTrailManager.prototype.calculateRiskByUser = (entries) => {
     // Implementation for risk calculation by user
     return {};
   };
-  AuditTrailManager.prototype.calculateRiskByResource = function (entries) {
+  AuditTrailManager.prototype.calculateRiskByResource = (entries) => {
     // Implementation for risk calculation by resource
     return {};
   };
-  AuditTrailManager.prototype.calculateRiskTrends = function (entries) {
+  AuditTrailManager.prototype.calculateRiskTrends = (entries) => {
     // Implementation for risk trends calculation
     return [];
   };
-  AuditTrailManager.prototype.calculateRiskMitigationStatus = function (entries) {
+  AuditTrailManager.prototype.calculateRiskMitigationStatus = (entries) => {
     // Implementation for risk mitigation status calculation
     return {
       totalMitigations: 0,
@@ -1375,13 +1330,13 @@ var AuditTrailManager = /** @class */ (function (_super) {
       avgMitigationTime: 0,
     };
   };
-  AuditTrailManager.prototype.groupValidationsByRegulation = function (results) {
+  AuditTrailManager.prototype.groupValidationsByRegulation = (results) => {
     // Implementation for grouping validations by regulation
     return {};
   };
   AuditTrailManager.prototype.generateComplianceRecommendations = function (results) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for generating compliance recommendations
         return [
           2 /*return*/,
@@ -1428,12 +1383,8 @@ exports.AuditEventValidationSchema = zod_1.z.object({
 var lgpd_1 = require("../../types/lgpd");
 Object.defineProperty(exports, "AuditEventType", {
   enumerable: true,
-  get: function () {
-    return lgpd_1.AuditEventType;
-  },
+  get: () => lgpd_1.AuditEventType,
 });
 // Export singleton instance
-var createauditTrailManager = function () {
-  return new AuditTrailManager();
-};
+var createauditTrailManager = () => new AuditTrailManager();
 exports.createauditTrailManager = createauditTrailManager;

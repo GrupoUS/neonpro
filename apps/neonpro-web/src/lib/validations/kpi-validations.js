@@ -1,4 +1,3 @@
-"use strict";
 // KPI Dashboard Validation Schemas
 // Description: Zod validation schemas for KPI dashboard types and API requests
 // Author: Dev Agent

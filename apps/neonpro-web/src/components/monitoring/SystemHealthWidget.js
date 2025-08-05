@@ -6,18 +6,17 @@
  * error rates, and resource monitoring for all epic functionality.
  */
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,13 +36,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -65,9 +64,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -139,7 +136,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SystemHealthWidget = SystemHealthWidget;
 var react_1 = require("react");
@@ -150,7 +147,6 @@ var button_1 = require("@/components/ui/button");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 function SystemHealthWidget() {
-  var _this = this;
   var _a = (0, react_1.useState)(null),
     healthData = _a[0],
     setHealthData = _a[1];
@@ -160,18 +156,16 @@ function SystemHealthWidget() {
   var _c = (0, react_1.useState)(new Date()),
     lastRefresh = _c[0],
     setLastRefresh = _c[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadHealthData();
     // Auto-refresh every 30 seconds
     var interval = setInterval(loadHealthData, 30000);
-    return function () {
-      return clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, []);
-  var loadHealthData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadHealthData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -202,12 +196,11 @@ function SystemHealthWidget() {
         }
       });
     });
-  };
-  var refreshHealth = function () {
+  var refreshHealth = () => {
     setLoading(true);
     loadHealthData();
   };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "healthy":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-500" />;
@@ -219,7 +212,7 @@ function SystemHealthWidget() {
         return <lucide_react_1.AlertTriangle className="h-4 w-4 text-gray-500" />;
     }
   };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     var variants = {
       healthy: { variant: "default", text: "Healthy", color: "text-green-500" },
       degraded: { variant: "secondary", text: "Degraded", color: "text-yellow-500" },
@@ -324,7 +317,7 @@ function SystemHealthWidget() {
         <div>
           <h4 className="text-sm font-medium mb-3">Component Status</h4>
           <div className="space-y-3">
-            {Object.entries(healthData.components).map(function (_a) {
+            {Object.entries(healthData.components).map((_a) => {
               var name = _a[0],
                 component = _a[1];
               return (
@@ -382,18 +375,14 @@ function SystemHealthWidget() {
           <button_1.Button
             size="sm"
             variant="outline"
-            onClick={function () {
-              return window.open("/dashboard/monitoring", "_blank");
-            }}
+            onClick={() => window.open("/dashboard/monitoring", "_blank")}
           >
             Full Dashboard
           </button_1.Button>
           <button_1.Button
             size="sm"
             variant="outline"
-            onClick={function () {
-              return window.open("/api/monitoring/logs", "_blank");
-            }}
+            onClick={() => window.open("/api/monitoring/logs", "_blank")}
           >
             View Logs
           </button_1.Button>

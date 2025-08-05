@@ -1,7 +1,7 @@
 // 🛡️ NEONPRO LINT-STAGED CONFIGURATION
 // Executes quality checks only on staged files for optimal performance
 
-const path = require("path");
+const _path = require("node:path");
 
 module.exports = {
   // TypeScript and TypeScript React files

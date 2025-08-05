@@ -1,9 +1,10 @@
 ﻿// NeonPro - Stripe Installments Webhook
+
 // Story 6.1 - Task 3: Installment Management System
 // Webhook handler for Stripe installment payment events
 
-import type { NextRequest, NextResponse } from "next/server";
 import type { headers } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import type { getInstallmentProcessor } from "@/lib/payments/installments/installment-processor";
 

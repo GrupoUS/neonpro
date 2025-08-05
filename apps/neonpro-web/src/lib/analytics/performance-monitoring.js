@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Performance Monitoring Engine
  * Epic 10 - Story 10.5: Vision Analytics Dashboard (Real-time Insights)
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.performanceMonitoringEngine =
   exports.PerformanceMonitoringEngine =
@@ -165,7 +162,7 @@ var zod_1 = require("zod");
 var logger_1 = require("@/lib/utils/logger");
 var client_1 = require("@/lib/supabase/client");
 // Main Performance Monitoring Engine
-var createperformanceMonitoringEngine = /** @class */ (function () {
+var createperformanceMonitoringEngine = /** @class */ (() => {
   function createperformanceMonitoringEngine() {
     this.supabase = (0, client_1.createClient)();
     this.metrics = new Map();
@@ -493,13 +490,9 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
               (_b.overallHealth = 0),
               (_b.recommendations = []),
               _b);
-            modelScores = Object.values(performance_1.models).map(function (m) {
-              return m.healthScore;
-            });
+            modelScores = Object.values(performance_1.models).map((m) => m.healthScore);
             performance_1.overallHealth =
-              modelScores.reduce(function (sum, score) {
-                return sum + score;
-              }, 0) / modelScores.length;
+              modelScores.reduce((sum, score) => sum + score, 0) / modelScores.length;
             // Generate recommendations
             _a = performance_1;
             return [4 /*yield*/, this.generateAIRecommendations(performance_1)];
@@ -682,56 +675,55 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   };
   createperformanceMonitoringEngine.prototype.loadBaselines = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createperformanceMonitoringEngine.prototype.startMonitoring = function () {
-    var _this = this;
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var clinics, _i, clinics_1, clinicId, error_9;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 7, , 8]);
-              return [4 /*yield*/, this.getActiveClinics()];
-            case 1:
-              clinics = _a.sent();
-              (_i = 0), (clinics_1 = clinics);
-              _a.label = 2;
-            case 2:
-              if (!(_i < clinics_1.length)) return [3 /*break*/, 5];
-              clinicId = clinics_1[_i];
-              return [4 /*yield*/, this.collectMetrics(clinicId)];
-            case 3:
-              _a.sent();
-              _a.label = 4;
-            case 4:
-              _i++;
-              return [3 /*break*/, 2];
-            case 5:
-              // Clean up old data
-              return [4 /*yield*/, this.cleanupOldData()];
-            case 6:
-              // Clean up old data
-              _a.sent();
-              return [3 /*break*/, 8];
-            case 7:
-              error_9 = _a.sent();
-              logger_1.logger.error("Monitoring cycle error:", error_9);
-              return [3 /*break*/, 8];
-            case 8:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.monitoringInterval);
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var clinics, _i, clinics_1, clinicId, error_9;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 7, , 8]);
+                return [4 /*yield*/, this.getActiveClinics()];
+              case 1:
+                clinics = _a.sent();
+                (_i = 0), (clinics_1 = clinics);
+                _a.label = 2;
+              case 2:
+                if (!(_i < clinics_1.length)) return [3 /*break*/, 5];
+                clinicId = clinics_1[_i];
+                return [4 /*yield*/, this.collectMetrics(clinicId)];
+              case 3:
+                _a.sent();
+                _a.label = 4;
+              case 4:
+                _i++;
+                return [3 /*break*/, 2];
+              case 5:
+                // Clean up old data
+                return [4 /*yield*/, this.cleanupOldData()];
+              case 6:
+                // Clean up old data
+                _a.sent();
+                return [3 /*break*/, 8];
+              case 7:
+                error_9 = _a.sent();
+                logger_1.logger.error("Monitoring cycle error:", error_9);
+                return [3 /*break*/, 8];
+              case 8:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.monitoringInterval,
+    );
   };
   createperformanceMonitoringEngine.prototype.collectCPUMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simulate CPU metrics collection
         return [
           2 /*return*/,
@@ -749,7 +741,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   createperformanceMonitoringEngine.prototype.collectMemoryMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
       var total, used;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         total = 8 * 1024 * 1024 * 1024;
         used = total * (0.3 + Math.random() * 0.4);
         return [
@@ -775,7 +767,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   createperformanceMonitoringEngine.prototype.collectStorageMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
       var totalSpace, usedSpace;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         totalSpace = 500 * 1024 * 1024 * 1024;
         usedSpace = totalSpace * (0.2 + Math.random() * 0.3);
         return [
@@ -812,7 +804,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   };
   createperformanceMonitoringEngine.prototype.collectNetworkMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simulate network metrics collection
         return [
           2 /*return*/,
@@ -852,7 +844,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   };
   createperformanceMonitoringEngine.prototype.collectDatabaseMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simulate database metrics collection
         return [
           2 /*return*/,
@@ -896,7 +888,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   };
   createperformanceMonitoringEngine.prototype.collectApplicationMetrics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simulate application metrics collection
         return [
           2 /*return*/,
@@ -988,20 +980,20 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
       database: 0.15,
       application: 0.15,
     };
-    return Object.entries(scores).reduce(function (total, _a) {
+    return Object.entries(scores).reduce((total, _a) => {
       var key = _a[0],
         score = _a[1];
       return total + score * weights[key];
     }, 0);
   };
-  createperformanceMonitoringEngine.prototype.calculateCPUScore = function (cpu) {
+  createperformanceMonitoringEngine.prototype.calculateCPUScore = (cpu) => {
     if (cpu.usage > 90) return 20;
     if (cpu.usage > 80) return 40;
     if (cpu.usage > 70) return 60;
     if (cpu.usage > 50) return 80;
     return 100;
   };
-  createperformanceMonitoringEngine.prototype.calculateMemoryScore = function (memory) {
+  createperformanceMonitoringEngine.prototype.calculateMemoryScore = (memory) => {
     var usage = (memory.used / memory.total) * 100;
     if (usage > 95) return 20;
     if (usage > 85) return 40;
@@ -1009,7 +1001,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
     if (usage > 60) return 80;
     return 100;
   };
-  createperformanceMonitoringEngine.prototype.calculateStorageScore = function (storage) {
+  createperformanceMonitoringEngine.prototype.calculateStorageScore = (storage) => {
     var usage = (storage.usedSpace / storage.totalSpace) * 100;
     if (usage > 95) return 20;
     if (usage > 85) return 40;
@@ -1017,7 +1009,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
     if (usage > 60) return 80;
     return 100;
   };
-  createperformanceMonitoringEngine.prototype.calculateNetworkScore = function (network) {
+  createperformanceMonitoringEngine.prototype.calculateNetworkScore = (network) => {
     var usage = (network.usedBandwidth / network.totalBandwidth) * 100;
     var score = 100;
     if (usage > 80) score -= 20;
@@ -1026,7 +1018,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
     if (network.requests.failed / network.requests.total > 0.05) score -= 30;
     return Math.max(0, score);
   };
-  createperformanceMonitoringEngine.prototype.calculateDatabaseScore = function (database) {
+  createperformanceMonitoringEngine.prototype.calculateDatabaseScore = (database) => {
     var score = 100;
     if (database.connections.active / database.connections.max > 0.8) score -= 20;
     if (database.queries.avgDuration > 1000) score -= 20;
@@ -1036,14 +1028,14 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
     if (database.queries.failed / database.queries.total > 0.01) score -= 15;
     return Math.max(0, score);
   };
-  createperformanceMonitoringEngine.prototype.calculateApplicationScore = function (application) {
+  createperformanceMonitoringEngine.prototype.calculateApplicationScore = (application) => {
     var score = 100;
     if (application.requests.avgResponseTime > 2000) score -= 20;
     if (application.requests.failed / application.requests.total > 0.05) score -= 20;
     if (application.errors.rate > 5) score -= 20;
     if (application.caching.hitRate < 70) score -= 15;
     // Check feature performance
-    var featureScores = Object.values(application.features).map(function (feature) {
+    var featureScores = Object.values(application.features).map((feature) => {
       var featureScore = 100;
       if (feature.accuracy < 90) featureScore -= 30;
       if (feature.avgProcessingTime > 1000) featureScore -= 20;
@@ -1051,14 +1043,11 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
       if (feature.confidence < 0.8) featureScore -= 25;
       return Math.max(0, featureScore);
     });
-    var avgFeatureScore =
-      featureScores.reduce(function (sum, s) {
-        return sum + s;
-      }, 0) / featureScores.length;
+    var avgFeatureScore = featureScores.reduce((sum, s) => sum + s, 0) / featureScores.length;
     score = score * 0.7 + avgFeatureScore * 0.3;
     return Math.max(0, score);
   };
-  createperformanceMonitoringEngine.prototype.determineStatus = function (healthScore) {
+  createperformanceMonitoringEngine.prototype.determineStatus = (healthScore) => {
     if (healthScore >= 90) return "optimal";
     if (healthScore >= 75) return "good";
     if (healthScore >= 50) return "degraded";
@@ -1148,10 +1137,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
       resolved: false,
     };
   };
-  createperformanceMonitoringEngine.prototype.generateAlertRecommendations = function (
-    threshold,
-    value,
-  ) {
+  createperformanceMonitoringEngine.prototype.generateAlertRecommendations = (threshold, value) => {
     var recommendations = [];
     if (threshold.component === "cpu" && threshold.metric === "usage") {
       recommendations.push("Check for high CPU processes and optimize or scale resources");
@@ -1167,28 +1153,22 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   // Placeholder methods that would be fully implemented
   createperformanceMonitoringEngine.prototype.saveMetrics = function (metrics) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createperformanceMonitoringEngine.prototype.processAlerts = function (alerts) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createperformanceMonitoringEngine.prototype.generateOptimizations = function (metrics) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createperformanceMonitoringEngine.prototype.getActiveClinics = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch active clinic IDs
         return [2 /*return*/, ["clinic_1", "clinic_2"]];
       });
@@ -1196,14 +1176,12 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   };
   createperformanceMonitoringEngine.prototype.cleanupOldData = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   createperformanceMonitoringEngine.prototype.getActiveAlerts = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch active alerts
         return [2 /*return*/, []];
       });
@@ -1211,7 +1189,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   };
   createperformanceMonitoringEngine.prototype.getActiveOptimizations = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch active optimizations
         return [2 /*return*/, []];
       });
@@ -1219,7 +1197,7 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   };
   createperformanceMonitoringEngine.prototype.getPerformanceSummary = function (clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would generate performance summary
         return [
           2 /*return*/,
@@ -1240,13 +1218,13 @@ var createperformanceMonitoringEngine = /** @class */ (function () {
   };
   createperformanceMonitoringEngine.prototype.getCategoryData = function (category, clinicId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch category-specific data
         return [2 /*return*/, {}];
       });
     });
   };
-  createperformanceMonitoringEngine.prototype.calculateOverallHealth = function (categories) {
+  createperformanceMonitoringEngine.prototype.calculateOverallHealth = (categories) => {
     // Implementation would calculate overall health score
     return 85;
   };

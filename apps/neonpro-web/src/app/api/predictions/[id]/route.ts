@@ -1,11 +1,11 @@
 // Story 10.2: Progress Tracking through Computer Vision - Individual Prediction API
 // API endpoint for individual prediction operations
 
-import { progressTrackingService } from "@/app/lib/services/progress-tracking";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { progressTrackingService } from "@/app/lib/services/progress-tracking";
 
 const verifyPredictionSchema = z.object({
   actual_outcome: z.record(z.any()),

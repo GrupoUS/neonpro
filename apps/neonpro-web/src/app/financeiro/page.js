@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = FinancialPage;
 var react_1 = require("react");
@@ -146,7 +143,6 @@ var progress_1 = require("@/components/ui/progress");
 var loading_spinner_1 = require("@/components/ui/loading-spinner");
 var lucide_react_1 = require("lucide-react");
 function FinancialPage() {
-  var _this = this;
   var _a = (0, react_1.useState)(true),
     isLoading = _a[0],
     setIsLoading = _a[1];
@@ -183,20 +179,15 @@ function FinancialPage() {
   var _h = (0, react_1.useState)("all"),
     typeFilter = _h[0],
     setTypeFilter = _h[1];
-  (0, react_1.useEffect)(function () {
-    var loadFinancialData = function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+  (0, react_1.useEffect)(() => {
+    var loadFinancialData = () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               setIsLoading(true);
               // Simulate API call
-              return [
-                4 /*yield*/,
-                new Promise(function (resolve) {
-                  return setTimeout(resolve, 1500);
-                }),
-              ];
+              return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1500))];
             case 1:
               // Simulate API call
               _a.sent();
@@ -317,10 +308,9 @@ function FinancialPage() {
           }
         });
       });
-    };
     loadFinancialData();
   }, []);
-  var filteredTransactions = transactions.filter(function (transaction) {
+  var filteredTransactions = transactions.filter((transaction) => {
     var matchesSearch =
       transaction.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       transaction.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -328,7 +318,7 @@ function FinancialPage() {
     var matchesType = typeFilter === "all" || transaction.type === typeFilter;
     return matchesSearch && matchesStatus && matchesType;
   });
-  var getStatusColor = function (status) {
+  var getStatusColor = (status) => {
     switch (status) {
       case "pago":
         return "bg-green-100 text-green-800 border-green-200";
@@ -342,7 +332,7 @@ function FinancialPage() {
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
-  var getPaymentMethodIcon = function (method) {
+  var getPaymentMethodIcon = (method) => {
     switch (method) {
       case "cartao":
         return <lucide_react_1.CreditCard className="w-4 h-4" />;
@@ -358,12 +348,11 @@ function FinancialPage() {
         return <lucide_react_1.DollarSign className="w-4 h-4" />;
     }
   };
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -531,18 +520,16 @@ function FinancialPage() {
                     Gráfico de Receita vs Despesas
                   </p>
                   <div className="mt-4 space-y-2">
-                    {monthlyData.map(function (data, index) {
-                      return (
-                        <div key={index} className="flex justify-between text-sm">
-                          <span>{data.month}</span>
-                          <span className="text-green-600">{formatCurrency(data.revenue)}</span>
-                          <span className="text-red-600">{formatCurrency(data.expenses)}</span>
-                          <span className="text-blue-600 font-medium">
-                            {formatCurrency(data.profit)}
-                          </span>
-                        </div>
-                      );
-                    })}
+                    {monthlyData.map((data, index) => (
+                      <div key={index} className="flex justify-between text-sm">
+                        <span>{data.month}</span>
+                        <span className="text-green-600">{formatCurrency(data.revenue)}</span>
+                        <span className="text-red-600">{formatCurrency(data.expenses)}</span>
+                        <span className="text-blue-600 font-medium">
+                          {formatCurrency(data.profit)}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -569,9 +556,7 @@ function FinancialPage() {
                 <input_1.Input
                   placeholder="Buscar transação..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 w-[200px]"
                 />
               </div>
@@ -617,92 +602,90 @@ function FinancialPage() {
                 </table_1.TableRow>
               </table_1.TableHeader>
               <table_1.TableBody>
-                {filteredTransactions.map(function (transaction) {
-                  return (
-                    <table_1.TableRow key={transaction.id} className="hover:bg-muted/50">
-                      <table_1.TableCell>
-                        {new Date(transaction.date).toLocaleDateString("pt-BR")}
-                      </table_1.TableCell>
-                      <table_1.TableCell className="font-medium">
-                        {transaction.patientName}
-                      </table_1.TableCell>
-                      <table_1.TableCell>{transaction.description}</table_1.TableCell>
-                      <table_1.TableCell>
-                        <badge_1.Badge
-                          variant="outline"
-                          className={
-                            transaction.type === "receita"
-                              ? "bg-green-50 text-green-700 border-green-200"
-                              : "bg-red-50 text-red-700 border-red-200"
-                          }
-                        >
-                          {transaction.type === "receita"
-                            ? <lucide_react_1.ArrowUpRight className="w-3 h-3 mr-1" />
-                            : <lucide_react_1.ArrowDownRight className="w-3 h-3 mr-1" />}
-                          {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
-                        </badge_1.Badge>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <div className="flex items-center">
-                          {getPaymentMethodIcon(transaction.paymentMethod)}
-                          <span className="ml-2 capitalize">
-                            {transaction.paymentMethod.replace("-", " ")}
-                          </span>
-                        </div>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <span
-                          className={
-                            transaction.type === "receita"
-                              ? "font-medium text-green-600"
-                              : "font-medium text-red-600"
-                          }
-                        >
-                          {transaction.type === "receita" ? "+" : "-"}
-                          {formatCurrency(transaction.amount)}
+                {filteredTransactions.map((transaction) => (
+                  <table_1.TableRow key={transaction.id} className="hover:bg-muted/50">
+                    <table_1.TableCell>
+                      {new Date(transaction.date).toLocaleDateString("pt-BR")}
+                    </table_1.TableCell>
+                    <table_1.TableCell className="font-medium">
+                      {transaction.patientName}
+                    </table_1.TableCell>
+                    <table_1.TableCell>{transaction.description}</table_1.TableCell>
+                    <table_1.TableCell>
+                      <badge_1.Badge
+                        variant="outline"
+                        className={
+                          transaction.type === "receita"
+                            ? "bg-green-50 text-green-700 border-green-200"
+                            : "bg-red-50 text-red-700 border-red-200"
+                        }
+                      >
+                        {transaction.type === "receita"
+                          ? <lucide_react_1.ArrowUpRight className="w-3 h-3 mr-1" />
+                          : <lucide_react_1.ArrowDownRight className="w-3 h-3 mr-1" />}
+                        {transaction.type.charAt(0).toUpperCase() + transaction.type.slice(1)}
+                      </badge_1.Badge>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      <div className="flex items-center">
+                        {getPaymentMethodIcon(transaction.paymentMethod)}
+                        <span className="ml-2 capitalize">
+                          {transaction.paymentMethod.replace("-", " ")}
                         </span>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <badge_1.Badge
-                          variant="outline"
-                          className={getStatusColor(transaction.status)}
+                      </div>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      <span
+                        className={
+                          transaction.type === "receita"
+                            ? "font-medium text-green-600"
+                            : "font-medium text-red-600"
+                        }
+                      >
+                        {transaction.type === "receita" ? "+" : "-"}
+                        {formatCurrency(transaction.amount)}
+                      </span>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      <badge_1.Badge
+                        variant="outline"
+                        className={getStatusColor(transaction.status)}
+                      >
+                        {transaction.status === "pago" && (
+                          <lucide_react_1.CheckCircle className="w-3 h-3 mr-1" />
+                        )}
+                        {transaction.status === "pendente" && (
+                          <lucide_react_1.Clock className="w-3 h-3 mr-1" />
+                        )}
+                        {transaction.status === "vencido" && (
+                          <lucide_react_1.AlertTriangle className="w-3 h-3 mr-1" />
+                        )}
+                        {transaction.status === "cancelado" && (
+                          <lucide_react_1.XCircle className="w-3 h-3 mr-1" />
+                        )}
+                        {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                      </badge_1.Badge>
+                    </table_1.TableCell>
+                    <table_1.TableCell>
+                      <div className="flex items-center space-x-2">
+                        <button_1.Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-neon-600 hover:bg-neon-50"
                         >
-                          {transaction.status === "pago" && (
-                            <lucide_react_1.CheckCircle className="w-3 h-3 mr-1" />
-                          )}
-                          {transaction.status === "pendente" && (
-                            <lucide_react_1.Clock className="w-3 h-3 mr-1" />
-                          )}
-                          {transaction.status === "vencido" && (
-                            <lucide_react_1.AlertTriangle className="w-3 h-3 mr-1" />
-                          )}
-                          {transaction.status === "cancelado" && (
-                            <lucide_react_1.XCircle className="w-3 h-3 mr-1" />
-                          )}
-                          {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                        </badge_1.Badge>
-                      </table_1.TableCell>
-                      <table_1.TableCell>
-                        <div className="flex items-center space-x-2">
-                          <button_1.Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-neon-600 hover:bg-neon-50"
-                          >
-                            <lucide_react_1.FileText className="w-4 h-4" />
-                          </button_1.Button>
-                          <button_1.Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-blue-600 hover:bg-blue-50"
-                          >
-                            <lucide_react_1.Download className="w-4 h-4" />
-                          </button_1.Button>
-                        </div>
-                      </table_1.TableCell>
-                    </table_1.TableRow>
-                  );
-                })}
+                          <lucide_react_1.FileText className="w-4 h-4" />
+                        </button_1.Button>
+                        <button_1.Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-blue-600 hover:bg-blue-50"
+                        >
+                          <lucide_react_1.Download className="w-4 h-4" />
+                        </button_1.Button>
+                      </div>
+                    </table_1.TableCell>
+                  </table_1.TableRow>
+                ))}
               </table_1.TableBody>
             </table_1.Table>
           </div>

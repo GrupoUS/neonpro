@@ -1,6 +1,38 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  Activity,
+  AlertTriangle,
+  Bone,
+  Brain,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Ear,
+  Edit,
+  Eye,
+  FileText,
+  Filter,
+  Heart,
+  History,
+  Lungs,
+  Minus,
+  Pill,
+  Plus,
+  Search,
+  Shield,
+  Siren,
+  Stethoscope,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,23 +40,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Input } from "@/components/ui/input";
-import type { Label } from "@/components/ui/label";
-import type { Textarea } from "@/components/ui/textarea";
-import type {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import type { Checkbox } from "@/components/ui/checkbox";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Separator } from "@/components/ui/separator";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type {
   Dialog,
   DialogContent,
@@ -33,35 +49,19 @@ import type {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import type { Input } from "@/components/ui/input";
+import type { Label } from "@/components/ui/label";
+import type { ScrollArea } from "@/components/ui/scroll-area";
 import type {
-  Plus,
-  Search,
-  Filter,
-  Calendar,
-  Heart,
-  Brain,
-  Bone,
-  Eye,
-  Ear,
-  Lungs,
-  Activity,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Edit,
-  Trash2,
-  History,
-  FileText,
-  Stethoscope,
-  Pill,
-  Siren,
-  Shield,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Textarea } from "@/components/ui/textarea";
 
 // Types
 interface MedicalHistory {

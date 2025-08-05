@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StockPerformanceDashboard = StockPerformanceDashboard;
 var react_1 = require("react");
@@ -175,7 +172,6 @@ var ALERT_COLORS = {
   overstock: "#6366f1",
 };
 function StockPerformanceDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId,
     _b = _a.refreshInterval,
     refreshInterval = _b === void 0 ? 30000 : _b;
@@ -210,8 +206,8 @@ function StockPerformanceDashboard(_a) {
     autoRefresh = _l[0],
     setAutoRefresh = _l[1];
   // Fetch dashboard data
-  var fetchDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var fetchDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params,
         _a,
         kpisRes,
@@ -224,7 +220,7 @@ function StockPerformanceDashboard(_a) {
         alertsData,
         metricsData,
         err_1;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 3, 4, 5]);
@@ -294,22 +290,16 @@ function StockPerformanceDashboard(_a) {
         }
       });
     });
-  };
   // Auto refresh effect
-  (0, react_1.useEffect)(
-    function () {
-      fetchDashboardData();
-      if (autoRefresh && refreshInterval > 0) {
-        var interval_1 = setInterval(fetchDashboardData, refreshInterval);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [clinicId, selectedPeriod, selectedDateRange, autoRefresh, refreshInterval],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchDashboardData();
+    if (autoRefresh && refreshInterval > 0) {
+      var interval_1 = setInterval(fetchDashboardData, refreshInterval);
+      return () => clearInterval(interval_1);
+    }
+  }, [clinicId, selectedPeriod, selectedDateRange, autoRefresh, refreshInterval]);
   // Render KPI card
-  var renderKPICard = function (kpi) {
+  var renderKPICard = (kpi) => {
     var TrendIcon =
       kpi.trend === "up"
         ? lucide_react_1.ArrowUp
@@ -384,49 +374,41 @@ function StockPerformanceDashboard(_a) {
     );
   };
   // Render top products chart
-  var renderTopProductsChart = function () {
-    return (
-      <recharts_1.ResponsiveContainer width="100%" height={300}>
-        <recharts_1.BarChart data={topProducts.slice(0, 10)}>
-          <recharts_1.CartesianGrid strokeDasharray="3 3" />
-          <recharts_1.XAxis
-            dataKey="name"
-            angle={-45}
-            textAnchor="end"
-            height={100}
-            interval={0}
-            fontSize={12}
-          />
-          <recharts_1.YAxis />
-          <recharts_1.Tooltip
-            labelFormatter={function (label) {
-              return "Produto: ".concat(label);
-            }}
-            formatter={function (value, name) {
-              return [
-                name === "consumption"
-                  ? "".concat(value, " un.")
-                  : "R$ ".concat(value.toLocaleString("pt-BR")),
-                name === "consumption" ? "Consumo" : "Valor",
-              ];
-            }}
-          />
-          <recharts_1.Legend />
-          <recharts_1.Bar dataKey="consumption" fill={COLORS.primary} name="Consumo" />
-          <recharts_1.Bar dataKey="value" fill={COLORS.success} name="Valor (R$)" />
-        </recharts_1.BarChart>
-      </recharts_1.ResponsiveContainer>
-    );
-  };
+  var renderTopProductsChart = () => (
+    <recharts_1.ResponsiveContainer width="100%" height={300}>
+      <recharts_1.BarChart data={topProducts.slice(0, 10)}>
+        <recharts_1.CartesianGrid strokeDasharray="3 3" />
+        <recharts_1.XAxis
+          dataKey="name"
+          angle={-45}
+          textAnchor="end"
+          height={100}
+          interval={0}
+          fontSize={12}
+        />
+        <recharts_1.YAxis />
+        <recharts_1.Tooltip
+          labelFormatter={(label) => "Produto: ".concat(label)}
+          formatter={(value, name) => [
+            name === "consumption"
+              ? "".concat(value, " un.")
+              : "R$ ".concat(value.toLocaleString("pt-BR")),
+            name === "consumption" ? "Consumo" : "Valor",
+          ]}
+        />
+        <recharts_1.Legend />
+        <recharts_1.Bar dataKey="consumption" fill={COLORS.primary} name="Consumo" />
+        <recharts_1.Bar dataKey="value" fill={COLORS.success} name="Valor (R$)" />
+      </recharts_1.BarChart>
+    </recharts_1.ResponsiveContainer>
+  );
   // Render alerts summary chart
-  var renderAlertsSummaryChart = function () {
-    var alertsData = alertsSummary.map(function (alert) {
-      return {
-        name: alert.type.replace("_", " ").toUpperCase(),
-        value: alert.count,
-        color: ALERT_COLORS[alert.type],
-      };
-    });
+  var renderAlertsSummaryChart = () => {
+    var alertsData = alertsSummary.map((alert) => ({
+      name: alert.type.replace("_", " ").toUpperCase(),
+      value: alert.count,
+      color: ALERT_COLORS[alert.type],
+    }));
     return (
       <recharts_1.ResponsiveContainer width="100%" height={300}>
         <recharts_1.PieChart>
@@ -435,7 +417,7 @@ function StockPerformanceDashboard(_a) {
             cx="50%"
             cy="50%"
             labelLine={false}
-            label={function (_a) {
+            label={(_a) => {
               var name = _a.name,
                 percent = _a.percent;
               return "".concat(name, " ").concat((percent * 100).toFixed(0), "%");
@@ -444,82 +426,74 @@ function StockPerformanceDashboard(_a) {
             fill="#8884d8"
             dataKey="value"
           >
-            {alertsData.map(function (entry, index) {
-              return <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />;
-            })}
+            {alertsData.map((entry, index) => (
+              <recharts_1.Cell key={"cell-".concat(index)} fill={entry.color} />
+            ))}
           </recharts_1.Pie>
-          <recharts_1.Tooltip
-            formatter={function (value) {
-              return ["".concat(value, " alertas"), "Quantidade"];
-            }}
-          />
+          <recharts_1.Tooltip formatter={(value) => ["".concat(value, " alertas"), "Quantidade"]} />
         </recharts_1.PieChart>
       </recharts_1.ResponsiveContainer>
     );
   };
   // Render performance trends chart
-  var renderPerformanceTrendsChart = function () {
-    return (
-      <recharts_1.ResponsiveContainer width="100%" height={400}>
-        <recharts_1.ComposedChart data={performanceData}>
-          <recharts_1.CartesianGrid strokeDasharray="3 3" />
-          <recharts_1.XAxis dataKey="date" />
-          <recharts_1.YAxis yAxisId="left" />
-          <recharts_1.YAxis yAxisId="right" orientation="right" />
-          <recharts_1.Tooltip
-            labelFormatter={function (label) {
-              return "Data: ".concat(label);
-            }}
-            formatter={function (value, name) {
-              switch (name) {
-                case "turnoverRate":
-                  return ["".concat(value, "x"), "Giro de Estoque"];
-                case "accuracy":
-                  return ["".concat(value, "%"), "Acuracidade"];
-                case "wastePercentage":
-                  return ["".concat(value, "%"), "Desperdício"];
-                case "daysCoverage":
-                  return ["".concat(value, " dias"), "Cobertura"];
-                default:
-                  return [value, name];
-              }
-            }}
-          />
-          <recharts_1.Legend />
-          <recharts_1.Line
-            yAxisId="left"
-            type="monotone"
-            dataKey="turnoverRate"
-            stroke={COLORS.primary}
-            name="Giro"
-          />
-          <recharts_1.Line
-            yAxisId="left"
-            type="monotone"
-            dataKey="accuracy"
-            stroke={COLORS.success}
-            name="Acuracidade"
-          />
-          <recharts_1.Area
-            yAxisId="right"
-            type="monotone"
-            dataKey="wastePercentage"
-            fill={COLORS.danger}
-            fillOpacity={0.3}
-            stroke={COLORS.danger}
-            name="Desperdício"
-          />
-          <recharts_1.Bar
-            yAxisId="right"
-            dataKey="daysCoverage"
-            fill={COLORS.warning}
-            fillOpacity={0.7}
-            name="Cobertura"
-          />
-        </recharts_1.ComposedChart>
-      </recharts_1.ResponsiveContainer>
-    );
-  };
+  var renderPerformanceTrendsChart = () => (
+    <recharts_1.ResponsiveContainer width="100%" height={400}>
+      <recharts_1.ComposedChart data={performanceData}>
+        <recharts_1.CartesianGrid strokeDasharray="3 3" />
+        <recharts_1.XAxis dataKey="date" />
+        <recharts_1.YAxis yAxisId="left" />
+        <recharts_1.YAxis yAxisId="right" orientation="right" />
+        <recharts_1.Tooltip
+          labelFormatter={(label) => "Data: ".concat(label)}
+          formatter={(value, name) => {
+            switch (name) {
+              case "turnoverRate":
+                return ["".concat(value, "x"), "Giro de Estoque"];
+              case "accuracy":
+                return ["".concat(value, "%"), "Acuracidade"];
+              case "wastePercentage":
+                return ["".concat(value, "%"), "Desperdício"];
+              case "daysCoverage":
+                return ["".concat(value, " dias"), "Cobertura"];
+              default:
+                return [value, name];
+            }
+          }}
+        />
+        <recharts_1.Legend />
+        <recharts_1.Line
+          yAxisId="left"
+          type="monotone"
+          dataKey="turnoverRate"
+          stroke={COLORS.primary}
+          name="Giro"
+        />
+        <recharts_1.Line
+          yAxisId="left"
+          type="monotone"
+          dataKey="accuracy"
+          stroke={COLORS.success}
+          name="Acuracidade"
+        />
+        <recharts_1.Area
+          yAxisId="right"
+          type="monotone"
+          dataKey="wastePercentage"
+          fill={COLORS.danger}
+          fillOpacity={0.3}
+          stroke={COLORS.danger}
+          name="Desperdício"
+        />
+        <recharts_1.Bar
+          yAxisId="right"
+          dataKey="daysCoverage"
+          fill={COLORS.warning}
+          fillOpacity={0.7}
+          name="Cobertura"
+        />
+      </recharts_1.ComposedChart>
+    </recharts_1.ResponsiveContainer>
+  );
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -564,9 +538,7 @@ function StockPerformanceDashboard(_a) {
           <button_1.Button
             variant="outline"
             size="sm"
-            onClick={function () {
-              return setAutoRefresh(!autoRefresh);
-            }}
+            onClick={() => setAutoRefresh(!autoRefresh)}
             className={autoRefresh ? "text-green-600" : "text-gray-600"}
           >
             <lucide_react_1.Activity size={16} className="mr-1" />
@@ -626,48 +598,46 @@ function StockPerformanceDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {topProducts.slice(0, 5).map(function (product, index) {
-                  return (
-                    <div
-                      key={product.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold">
-                          {index + 1}
-                        </div>
-                        <div>
-                          <p className="font-medium">{product.name}</p>
-                          <p className="text-sm text-gray-500">
-                            {product.consumption} un. • R$ {product.value.toLocaleString("pt-BR")}
-                          </p>
-                        </div>
+                {topProducts.slice(0, 5).map((product, index) => (
+                  <div
+                    key={product.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white text-sm font-bold">
+                        {index + 1}
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <badge_1.Badge
-                          variant={
-                            product.impact === "high"
-                              ? "destructive"
-                              : product.impact === "medium"
-                                ? "secondary"
-                                : "outline"
-                          }
-                        >
-                          {product.impact === "high"
-                            ? "Alto Impacto"
-                            : product.impact === "medium"
-                              ? "Médio Impacto"
-                              : "Baixo Impacto"}
-                        </badge_1.Badge>
-                        {product.trend === "up"
-                          ? <lucide_react_1.TrendingUp size={16} className="text-green-600" />
-                          : product.trend === "down"
-                            ? <lucide_react_1.TrendingDown size={16} className="text-red-600" />
-                            : <lucide_react_1.Minus size={16} className="text-gray-600" />}
+                      <div>
+                        <p className="font-medium">{product.name}</p>
+                        <p className="text-sm text-gray-500">
+                          {product.consumption} un. • R$ {product.value.toLocaleString("pt-BR")}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center space-x-2">
+                      <badge_1.Badge
+                        variant={
+                          product.impact === "high"
+                            ? "destructive"
+                            : product.impact === "medium"
+                              ? "secondary"
+                              : "outline"
+                        }
+                      >
+                        {product.impact === "high"
+                          ? "Alto Impacto"
+                          : product.impact === "medium"
+                            ? "Médio Impacto"
+                            : "Baixo Impacto"}
+                      </badge_1.Badge>
+                      {product.trend === "up"
+                        ? <lucide_react_1.TrendingUp size={16} className="text-green-600" />
+                        : product.trend === "down"
+                          ? <lucide_react_1.TrendingDown size={16} className="text-red-600" />
+                          : <lucide_react_1.Minus size={16} className="text-gray-600" />}
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -694,42 +664,40 @@ function StockPerformanceDashboard(_a) {
               </card_1.CardHeader>
               <card_1.CardContent>
                 <div className="space-y-4">
-                  {alertsSummary.map(function (alert) {
-                    return (
-                      <div
-                        key={alert.type}
-                        className="flex items-center justify-between p-3 border rounded"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div
-                            className="w-4 h-4 rounded-full"
-                            style={{ backgroundColor: ALERT_COLORS[alert.type] }}
-                          />
-                          <span className="font-medium capitalize">
-                            {alert.type.replace("_", " ")}
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <badge_1.Badge
-                            variant={
-                              alert.severity === "critical"
-                                ? "destructive"
-                                : alert.severity === "high"
-                                  ? "secondary"
-                                  : "outline"
-                            }
-                          >
-                            {alert.count} alertas
-                          </badge_1.Badge>
-                          {alert.trend === "up"
-                            ? <lucide_react_1.TrendingUp size={16} className="text-red-600" />
-                            : alert.trend === "down"
-                              ? <lucide_react_1.TrendingDown size={16} className="text-green-600" />
-                              : <lucide_react_1.Minus size={16} className="text-gray-600" />}
-                        </div>
+                  {alertsSummary.map((alert) => (
+                    <div
+                      key={alert.type}
+                      className="flex items-center justify-between p-3 border rounded"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div
+                          className="w-4 h-4 rounded-full"
+                          style={{ backgroundColor: ALERT_COLORS[alert.type] }}
+                        />
+                        <span className="font-medium capitalize">
+                          {alert.type.replace("_", " ")}
+                        </span>
                       </div>
-                    );
-                  })}
+                      <div className="flex items-center space-x-2">
+                        <badge_1.Badge
+                          variant={
+                            alert.severity === "critical"
+                              ? "destructive"
+                              : alert.severity === "high"
+                                ? "secondary"
+                                : "outline"
+                          }
+                        >
+                          {alert.count} alertas
+                        </badge_1.Badge>
+                        {alert.trend === "up"
+                          ? <lucide_react_1.TrendingUp size={16} className="text-red-600" />
+                          : alert.trend === "down"
+                            ? <lucide_react_1.TrendingDown size={16} className="text-green-600" />
+                            : <lucide_react_1.Minus size={16} className="text-gray-600" />}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </card_1.CardContent>
             </card_1.Card>

@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Demand Forecasting API Tests - Story 11.1
  * Test coverage for demand forecasting endpoints with ≥80% accuracy requirement
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -37,7 +36,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -66,8 +65,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -88,9 +85,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -149,32 +146,25 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var route_1 = require("@/src/app/api/forecasting/route");
 var route_2 = require("@/src/app/api/forecasting/resource-allocation/route");
 var server_1 = require("next/server");
 // Mock NextResponse for Jest compatibility with Next.js 15
-jest.mock("next/server", function () {
-  return {
-    NextRequest: jest.requireActual("next/server").NextRequest,
-    NextResponse: {
-      json: jest.fn(function (data, init) {
-        return {
-          json: function () {
-            return __awaiter(void 0, void 0, void 0, function () {
-              return __generator(this, function (_a) {
-                return [2 /*return*/, data];
-              });
-            });
-          },
-          status: (init === null || init === void 0 ? void 0 : init.status) || 200,
-          headers: new Map(),
-        };
-      }),
-    },
-  };
-});
+jest.mock("next/server", () => ({
+  NextRequest: jest.requireActual("next/server").NextRequest,
+  NextResponse: {
+    json: jest.fn((data, init) => ({
+      json: () =>
+        __awaiter(void 0, void 0, void 0, function () {
+          return __generator(this, (_a) => [2 /*return*/, data]);
+        }),
+      status: (init === null || init === void 0 ? void 0 : init.status) || 200,
+      headers: new Map(),
+    })),
+  },
+}));
 // Mock Supabase client
 var mockSupabaseClient = {
   from: jest.fn().mockReturnThis(),
@@ -188,59 +178,51 @@ var mockSupabaseClient = {
   data: [],
   error: null,
 };
-jest.mock("@/app/utils/supabase/server", function () {
-  return {
-    createServerSupabaseClient: jest.fn(function () {
-      return mockSupabaseClient;
-    }),
-  };
-});
+jest.mock("@/app/utils/supabase/server", () => ({
+  createServerSupabaseClient: jest.fn(() => mockSupabaseClient),
+}));
 // Mock demand forecasting engine
-jest.mock("@/src/lib/analytics/demand-forecasting", function () {
-  return {
-    DemandForecastingEngine: jest.fn().mockImplementation(function () {
-      return {
-        generateForecast: jest.fn().mockResolvedValue({
+jest.mock("@/src/lib/analytics/demand-forecasting", () => ({
+  DemandForecastingEngine: jest.fn().mockImplementation(() => ({
+    generateForecast: jest.fn().mockResolvedValue({
+      id: "123e4567-e89b-12d3-a456-426614174000",
+      accuracy: 0.85,
+      predictions: [
+        {
           id: "123e4567-e89b-12d3-a456-426614174000",
-          accuracy: 0.85,
-          predictions: [
-            {
-              id: "123e4567-e89b-12d3-a456-426614174000",
-              service_id: "123e4567-e89b-12d3-a456-426614174001",
-              demand_value: 150,
-              confidence_level: 0.85,
-              forecast_period: {
-                start_date: "2024-01-01",
-                end_date: "2024-01-31",
-              },
-              seasonal_factors: { summer: 1.2, winter: 0.8 },
-              external_factors: { promotion: 1.1, weather: 0.95 },
-            },
-          ],
-          metadata: {
-            service_id: "123e4567-e89b-12d3-a456-426614174001",
-            forecast_period: {
-              start_date: "2024-01-01",
-              end_date: "2024-01-31",
-            },
+          service_id: "123e4567-e89b-12d3-a456-426614174001",
+          demand_value: 150,
+          confidence_level: 0.85,
+          forecast_period: {
+            start_date: "2024-01-01",
+            end_date: "2024-01-31",
           },
-        }),
-        generateResourceAllocation: jest.fn().mockResolvedValue({
-          recommendations: [
-            {
-              resource_type: "staff",
-              recommended_quantity: 5,
-              current_quantity: 4,
-              optimization_score: 0.85,
-            },
-          ],
-          optimization_type: "balanced",
-          expected_efficiency: 0.88,
-        }),
-      };
+          seasonal_factors: { summer: 1.2, winter: 0.8 },
+          external_factors: { promotion: 1.1, weather: 0.95 },
+        },
+      ],
+      metadata: {
+        service_id: "123e4567-e89b-12d3-a456-426614174001",
+        forecast_period: {
+          start_date: "2024-01-01",
+          end_date: "2024-01-31",
+        },
+      },
     }),
-  };
-});
+    generateResourceAllocation: jest.fn().mockResolvedValue({
+      recommendations: [
+        {
+          resource_type: "staff",
+          recommended_quantity: 5,
+          current_quantity: 4,
+          optimization_score: 0.85,
+        },
+      ],
+      optimization_type: "balanced",
+      expected_efficiency: 0.88,
+    }),
+  })),
+}));
 // Valid test data with proper UUIDs
 var validServiceId = "123e4567-e89b-12d3-a456-426614174001";
 var validForecastId = "123e4567-e89b-12d3-a456-426614174000";
@@ -265,36 +247,34 @@ var mockAppointments = [
     duration_minutes: 60,
   },
 ];
-describe("/api/forecasting - Demand Forecasting API", function () {
-  beforeEach(function () {
+describe("/api/forecasting - Demand Forecasting API", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Reset engine mock to default working state
     var DemandForecastingEngine =
       require("@/src/lib/analytics/demand-forecasting").DemandForecastingEngine;
-    DemandForecastingEngine.mockImplementation(function () {
-      return {
-        generateForecast: jest.fn().mockResolvedValue({
-          id: "123e4567-e89b-12d3-a456-426614174000",
-          accuracy: 0.85,
-          predictions: [mockForecast],
-        }),
-        generateResourceAllocationRecommendations: jest.fn().mockResolvedValue([
-          {
-            resource_type: "staff",
-            recommended_quantity: 5,
-            priority: "high",
-            estimated_cost: 5000,
-            time_period: "2024-02-01 to 2024-02-07",
-            cost_optimization: {
-              total_cost_impact: 5000,
-              efficiency_gains: 0.95,
-            },
+    DemandForecastingEngine.mockImplementation(() => ({
+      generateForecast: jest.fn().mockResolvedValue({
+        id: "123e4567-e89b-12d3-a456-426614174000",
+        accuracy: 0.85,
+        predictions: [mockForecast],
+      }),
+      generateResourceAllocationRecommendations: jest.fn().mockResolvedValue([
+        {
+          resource_type: "staff",
+          recommended_quantity: 5,
+          priority: "high",
+          estimated_cost: 5000,
+          time_period: "2024-02-01 to 2024-02-07",
+          cost_optimization: {
+            total_cost_impact: 5000,
+            efficiency_gains: 0.95,
           },
-        ]),
-      };
-    });
+        },
+      ]),
+    }));
     // Setup different return values for different operations
-    mockSupabaseClient.from.mockImplementation(function (table) {
+    mockSupabaseClient.from.mockImplementation((table) => {
       if (table === "appointments") {
         return __assign(__assign({}, mockSupabaseClient), { data: mockAppointments, error: null });
       } else if (table === "demand_forecasts") {
@@ -313,11 +293,11 @@ describe("/api/forecasting - Demand Forecasting API", function () {
     mockSupabaseClient.data = mockAppointments;
     mockSupabaseClient.error = null;
   });
-  describe("GET /api/forecasting", function () {
-    test("should generate demand forecast with default parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET /api/forecasting", () => {
+    test("should generate demand forecast with default parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost:3000/api/forecasting");
@@ -336,12 +316,11 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should generate forecast with custom parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should generate forecast with custom parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var url, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               url = new URL("http://localhost:3000/api/forecasting");
@@ -362,12 +341,11 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should filter by service ID when provided", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should filter by service ID when provided", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var url, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               url = new URL("http://localhost:3000/api/forecasting");
@@ -386,12 +364,11 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should validate accuracy threshold requirement", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should validate accuracy threshold requirement", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest("http://localhost:3000/api/forecasting");
@@ -407,12 +384,11 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle missing appointment data", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle missing appointment data", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.data = [];
@@ -428,12 +404,11 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle authentication errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle authentication errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.error = { message: "Authentication required" };
@@ -449,12 +424,11 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should validate parameter ranges", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should validate parameter ranges", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var url, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               url = new URL("http://localhost:3000/api/forecasting");
@@ -469,14 +443,13 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Forecast Generation Performance", function () {
-    test("should complete forecast generation within time limits", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Forecast Generation Performance", () => {
+    test("should complete forecast generation within time limits", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var startTime, request, response, endTime, duration;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = Date.now();
@@ -491,36 +464,32 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle concurrent forecast requests", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle concurrent forecast requests", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requests, responses;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
-              requests = Array.from({ length: 3 }, function () {
-                return (0, route_1.GET)(
-                  new server_1.NextRequest("http://localhost:3000/api/forecasting"),
-                );
-              });
+              requests = Array.from({ length: 3 }, () =>
+                (0, route_1.GET)(new server_1.NextRequest("http://localhost:3000/api/forecasting")),
+              );
               return [4 /*yield*/, Promise.all(requests)];
             case 1:
               responses = _a.sent();
-              responses.forEach(function (response) {
+              responses.forEach((response) => {
                 expect(response.status).toBe(200);
               });
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Error Handling", function () {
-    test("should handle database connection errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Error Handling", () => {
+    test("should handle database connection errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.error = new Error("Database connection failed");
@@ -532,21 +501,18 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle forecasting engine errors", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle forecasting engine errors", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var DemandForecastingEngine, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               DemandForecastingEngine =
                 require("@/src/lib/analytics/demand-forecasting").DemandForecastingEngine;
-              DemandForecastingEngine.mockImplementation(function () {
-                return {
-                  generateForecast: jest.fn().mockRejectedValue(new Error("Engine error")),
-                };
-              });
+              DemandForecastingEngine.mockImplementation(() => ({
+                generateForecast: jest.fn().mockRejectedValue(new Error("Engine error")),
+              }));
               request = new server_1.NextRequest("http://localhost:3000/api/forecasting");
               return [4 /*yield*/, (0, route_1.GET)(request)];
             case 1:
@@ -555,40 +521,37 @@ describe("/api/forecasting - Demand Forecasting API", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });
-describe("/api/forecasting/resource-allocation - Resource Allocation API", function () {
-  beforeEach(function () {
+describe("/api/forecasting/resource-allocation - Resource Allocation API", () => {
+  beforeEach(() => {
     jest.clearAllMocks();
     // Setup engine mock for resource allocation
     var DemandForecastingEngine =
       require("@/src/lib/analytics/demand-forecasting").DemandForecastingEngine;
-    DemandForecastingEngine.mockImplementation(function () {
-      return {
-        generateForecast: jest.fn().mockResolvedValue({
-          id: "123e4567-e89b-12d3-a456-426614174000",
-          accuracy: 0.85,
-          predictions: [mockForecast],
-        }),
-        generateResourceAllocationRecommendations: jest.fn().mockResolvedValue([
-          {
-            resource_type: "staff",
-            recommended_quantity: 5,
-            priority: "high",
-            estimated_cost: 5000,
-            time_period: "2024-02-01 to 2024-02-07",
-            cost_optimization: {
-              total_cost_impact: 5000,
-              efficiency_gains: 0.95,
-            },
+    DemandForecastingEngine.mockImplementation(() => ({
+      generateForecast: jest.fn().mockResolvedValue({
+        id: "123e4567-e89b-12d3-a456-426614174000",
+        accuracy: 0.85,
+        predictions: [mockForecast],
+      }),
+      generateResourceAllocationRecommendations: jest.fn().mockResolvedValue([
+        {
+          resource_type: "staff",
+          recommended_quantity: 5,
+          priority: "high",
+          estimated_cost: 5000,
+          time_period: "2024-02-01 to 2024-02-07",
+          cost_optimization: {
+            total_cost_impact: 5000,
+            efficiency_gains: 0.95,
           },
-        ]),
-      };
-    });
+        },
+      ]),
+    }));
     // Setup mock for resource allocation queries
-    mockSupabaseClient.from.mockImplementation(function (table) {
+    mockSupabaseClient.from.mockImplementation((table) => {
       if (table === "demand_forecasts") {
         return __assign(__assign({}, mockSupabaseClient), {
           select: jest.fn().mockReturnThis(),
@@ -603,11 +566,11 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
     mockSupabaseClient.data = [mockForecast];
     mockSupabaseClient.error = null;
   });
-  describe("POST /api/forecasting/resource-allocation", function () {
-    test("should generate resource allocation recommendations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("POST /api/forecasting/resource-allocation", () => {
+    test("should generate resource allocation recommendations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -639,12 +602,11 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle different optimization strategies", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle different optimization strategies", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var strategies, _i, strategies_1, strategy, requestBody, request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               strategies = ["cost", "efficiency", "quality", "balanced"];
@@ -682,12 +644,11 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should validate required request parameters", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should validate required request parameters", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -709,12 +670,11 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle empty forecast IDs array", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle empty forecast IDs array", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -736,12 +696,11 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should validate optimization type parameter", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should validate optimization type parameter", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -763,14 +722,13 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("GET /api/forecasting/resource-allocation", function () {
-    test("should return current resource allocation status", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("GET /api/forecasting/resource-allocation", () => {
+    test("should return current resource allocation status", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -789,12 +747,11 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should return error for missing forecastId", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should return error for missing forecastId", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               request = new server_1.NextRequest(
@@ -813,12 +770,11 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle no existing allocations", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle no existing allocations", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var request, response, data;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               mockSupabaseClient.data = [];
@@ -838,14 +794,13 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("Resource Allocation Performance", function () {
-    test("should optimize resource allocation within time constraints", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+  describe("Resource Allocation Performance", () => {
+    test("should optimize resource allocation within time constraints", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var requestBody, startTime, request, response, endTime, duration;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               requestBody = {
@@ -871,12 +826,11 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
-    test("should handle large numbers of forecasts efficiently", function () {
-      return __awaiter(void 0, void 0, void 0, function () {
+      }));
+    test("should handle large numbers of forecasts efficiently", () =>
+      __awaiter(void 0, void 0, void 0, function () {
         var largeArray, requestBody, request, response;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               largeArray = Array(50).fill(validForecastId);
@@ -899,7 +853,6 @@ describe("/api/forecasting/resource-allocation - Resource Allocation API", funct
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

@@ -6,7 +6,23 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type {
+  AlertTriangle,
+  Building,
+  Calendar,
+  DollarSign,
+  Download,
+  PieChart,
+  RefreshCw,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Truck,
+} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -14,11 +30,7 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
 import type { Progress } from "@/components/ui/progress";
-import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type {
   Select,
   SelectContent,
@@ -26,19 +38,7 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type {
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  PieChart,
-  Target,
-  DollarSign,
-  Calendar,
-  Truck,
-  Building,
-  RefreshCw,
-  Download,
-} from "lucide-react";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ExpenseBudgetEngine } from "@/lib/financial/expense-budget-engine";
 
 interface ExpenseCategory {
@@ -130,12 +130,13 @@ export default function ExpenseBudgetDashboard() {
           start: new Date(now.getFullYear(), now.getMonth(), 1),
           end: new Date(now.getFullYear(), now.getMonth() + 1, 0),
         };
-      case "current_quarter":
+      case "current_quarter": {
         const quarterStart = Math.floor(now.getMonth() / 3) * 3;
         return {
           start: new Date(now.getFullYear(), quarterStart, 1),
           end: new Date(now.getFullYear(), quarterStart + 3, 0),
         };
+      }
       case "current_year":
         return {
           start: new Date(now.getFullYear(), 0, 1),

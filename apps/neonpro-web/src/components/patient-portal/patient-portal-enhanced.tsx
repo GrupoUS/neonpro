@@ -13,35 +13,36 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
+  Activity,
+  AlertCircle,
+  Award,
+  Bell,
+  BookOpen,
   Calendar,
+  Camera,
+  CheckCircle2,
   Clock,
   Heart,
-  Star,
-  CheckCircle2,
-  AlertCircle,
-  Phone,
   MessageCircle,
-  Camera,
-  TrendingUp,
-  Award,
-  Smile,
-  BookOpen,
-  Bell,
+  Phone,
   Settings,
-  User,
   Shield,
-  Activity,
+  Smile,
+  Star,
+  TrendingUp,
+  User,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAccessibility } from "@/contexts/accessibility-context";
+import { cn } from "@/lib/utils";
 
 interface Patient {
   id: string;

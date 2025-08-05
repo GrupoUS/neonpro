@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Financial Management Supabase Functions
  * Created: January 27, 2025
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,7 +148,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reaisToCentavos = exports.formatCurrency = exports.centavosToReais = void 0;
 exports.createInvoice = createInvoice;
@@ -170,21 +167,15 @@ exports.generateInvoicePDF = generateInvoicePDF;
 var financial_1 = require("@/lib/validations/financial");
 Object.defineProperty(exports, "centavosToReais", {
   enumerable: true,
-  get: function () {
-    return financial_1.centavosToReais;
-  },
+  get: () => financial_1.centavosToReais,
 });
 Object.defineProperty(exports, "formatCurrency", {
   enumerable: true,
-  get: function () {
-    return financial_1.formatCurrency;
-  },
+  get: () => financial_1.formatCurrency,
 });
 Object.defineProperty(exports, "reaisToCentavos", {
   enumerable: true,
-  get: function () {
-    return financial_1.reaisToCentavos;
-  },
+  get: () => financial_1.reaisToCentavos,
 });
 var supabase_js_1 = require("@supabase/supabase-js");
 // Get Supabase client
@@ -212,26 +203,23 @@ function createInvoice(input) {
       itemsWithInvoiceId,
       itemsError,
       error_1;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 7, , 8]);
           validatedInput = financial_1.createInvoiceSchema.parse(input);
-          items = validatedInput.items.map(function (item) {
-            return __assign(__assign({}, item), {
+          items = validatedInput.items.map((item) =>
+            __assign(__assign({}, item), {
               unit_price: (0, financial_1.reaisToCentavos)(item.unit_price),
               discount_amount: (0, financial_1.reaisToCentavos)(item.discount_amount || 0),
-            });
-          });
-          subtotal = items.reduce(function (sum, item) {
-            return sum + item.unit_price * item.quantity;
-          }, 0);
-          discount = items.reduce(function (sum, item) {
-            return sum + item.discount_amount;
-          }, 0);
-          tax = items.reduce(function (sum, item) {
-            return sum + Math.round(item.unit_price * item.quantity * item.tax_rate);
-          }, 0);
+            }),
+          );
+          subtotal = items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+          discount = items.reduce((sum, item) => sum + item.discount_amount, 0);
+          tax = items.reduce(
+            (sum, item) => sum + Math.round(item.unit_price * item.quantity * item.tax_rate),
+            0,
+          );
           total = subtotal - discount + tax;
           return [
             4 /*yield*/,
@@ -275,16 +263,16 @@ function createInvoice(input) {
         case 3:
           (_a = _b.sent()), (invoice_1 = _a.data), (invoiceError = _a.error);
           if (invoiceError) throw invoiceError;
-          itemsWithInvoiceId = items.map(function (item) {
-            return __assign(__assign({}, item), {
+          itemsWithInvoiceId = items.map((item) =>
+            __assign(__assign({}, item), {
               invoice_id: invoice_1.id,
               total_amount:
                 item.unit_price * item.quantity -
                 item.discount_amount +
                 Math.round(item.unit_price * item.quantity * item.tax_rate),
               tax_amount: Math.round(item.unit_price * item.quantity * item.tax_rate),
-            });
-          });
+            }),
+          );
           return [4 /*yield*/, supabase.from("invoice_items").insert(itemsWithInvoiceId)];
         case 4:
           itemsError = _b.sent().error;
@@ -325,7 +313,7 @@ function createInvoice(input) {
 function getInvoiceById(id) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, error_2;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -371,7 +359,7 @@ function listInvoices() {
     if (limit === void 0) {
       limit = 20;
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);
@@ -454,7 +442,7 @@ function listInvoices() {
 function updateInvoice(id, input) {
   return __awaiter(this, void 0, void 0, function () {
     var validatedInput, _a, data, error, error_4;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);
@@ -495,7 +483,7 @@ function updateInvoice(id, input) {
 function issueInvoice(id) {
   return __awaiter(this, void 0, void 0, function () {
     var error, invoice, error_5;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 5, , 6]);
@@ -539,7 +527,7 @@ function issueInvoice(id) {
 function cancelInvoice(id) {
   return __awaiter(this, void 0, void 0, function () {
     var error, invoice, error_6;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 6, , 7]);
@@ -596,7 +584,7 @@ function createPayment(input) {
       installments,
       installmentsError,
       error_7;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 6, , 7]);
@@ -625,17 +613,15 @@ function createPayment(input) {
           if (paymentError) throw paymentError;
           if (!(validatedInput_1.installments && validatedInput_1.installments.length > 0))
             return [3 /*break*/, 3];
-          installments = validatedInput_1.installments.map(function (inst) {
-            return {
-              payment_id: payment_1.id,
-              invoice_id: validatedInput_1.invoice_id,
-              installment_number: inst.installment_number,
-              total_installments: inst.total_installments,
-              amount: (0, financial_1.reaisToCentavos)(inst.amount),
-              due_date: inst.due_date,
-              status: "pending",
-            };
-          });
+          installments = validatedInput_1.installments.map((inst) => ({
+            payment_id: payment_1.id,
+            invoice_id: validatedInput_1.invoice_id,
+            installment_number: inst.installment_number,
+            total_installments: inst.total_installments,
+            amount: (0, financial_1.reaisToCentavos)(inst.amount),
+            due_date: inst.due_date,
+            status: "pending",
+          }));
           return [4 /*yield*/, supabase.from("payment_installments").insert(installments)];
         case 2:
           installmentsError = _b.sent().error;
@@ -668,7 +654,7 @@ function createPayment(input) {
 function getPaymentById(id) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, error_8;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -703,7 +689,7 @@ function getPaymentById(id) {
 function updatePayment(id, input) {
   return __awaiter(this, void 0, void 0, function () {
     var validatedInput, updateData, _a, data, error, error_9;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);
@@ -751,7 +737,7 @@ function updatePayment(id, input) {
 function listPaymentsByInvoice(invoiceId) {
   return __awaiter(this, void 0, void 0, function () {
     var _a, data, error, error_10;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);
@@ -788,7 +774,7 @@ function listPaymentsByInvoice(invoiceId) {
 function performShadowValidation(operationType, referenceId, calculationData) {
   return __awaiter(this, void 0, void 0, function () {
     var shadowResult, _a, data, error, error_11;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 5, , 6]);
@@ -853,7 +839,7 @@ function performShadowValidation(operationType, referenceId, calculationData) {
 function performShadowCalculation(operationType, data) {
   return __awaiter(this, void 0, void 0, function () {
     var original, shadow, variance, variancePercentage, tolerance, tolerancePercentage;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (operationType) {
         case "invoice_calculation":
           original = {
@@ -864,15 +850,9 @@ function performShadowCalculation(operationType, data) {
           };
           // Alternative calculation method for shadow validation
           shadow = {
-            subtotal: data.items.reduce(function (sum, item) {
-              return sum + item.unit_price * item.quantity;
-            }, 0),
-            discount: data.items.reduce(function (sum, item) {
-              return sum + item.discount_amount;
-            }, 0),
-            tax: data.items.reduce(function (sum, item) {
-              return sum + item.tax_amount;
-            }, 0),
+            subtotal: data.items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0),
+            discount: data.items.reduce((sum, item) => sum + item.discount_amount, 0),
+            tax: data.items.reduce((sum, item) => sum + item.tax_amount, 0),
             total: 0,
           };
           shadow.total = shadow.subtotal - shadow.discount + shadow.tax;
@@ -920,7 +900,7 @@ function getFinancialSummary() {
     if (filters === void 0) {
       filters = {};
     }
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);
@@ -944,32 +924,18 @@ function getFinancialSummary() {
             by_status: {},
           };
           if (invoices) {
-            summary_1.total_amount = invoices.reduce(function (sum, inv) {
-              return sum + inv.total_amount;
-            }, 0);
+            summary_1.total_amount = invoices.reduce((sum, inv) => sum + inv.total_amount, 0);
             summary_1.total_paid = invoices
-              .filter(function (inv) {
-                return inv.payment_status === "paid";
-              })
-              .reduce(function (sum, inv) {
-                return sum + inv.total_amount;
-              }, 0);
+              .filter((inv) => inv.payment_status === "paid")
+              .reduce((sum, inv) => sum + inv.total_amount, 0);
             summary_1.total_pending = invoices
-              .filter(function (inv) {
-                return inv.payment_status === "pending";
-              })
-              .reduce(function (sum, inv) {
-                return sum + inv.total_amount;
-              }, 0);
+              .filter((inv) => inv.payment_status === "pending")
+              .reduce((sum, inv) => sum + inv.total_amount, 0);
             summary_1.total_overdue = invoices
-              .filter(function (inv) {
-                return inv.payment_status === "overdue";
-              })
-              .reduce(function (sum, inv) {
-                return sum + inv.total_amount;
-              }, 0);
+              .filter((inv) => inv.payment_status === "overdue")
+              .reduce((sum, inv) => sum + inv.total_amount, 0);
             // Group by status
-            invoices.forEach(function (invoice) {
+            invoices.forEach((invoice) => {
               var status = invoice.status;
               if (!summary_1.by_status[status]) {
                 summary_1.by_status[status] = { count: 0, amount: 0 };
@@ -985,7 +951,7 @@ function getFinancialSummary() {
         case 2:
           payments = _b.sent().data;
           if (payments) {
-            payments.forEach(function (payment) {
+            payments.forEach((payment) => {
               var method = payment.payment_method;
               if (!summary_1.payment_methods[method]) {
                 summary_1.payment_methods[method] = { count: 0, amount: 0 };
@@ -1016,7 +982,7 @@ function getFinancialSummary() {
 function generateNFSe(invoice) {
   return __awaiter(this, void 0, void 0, function () {
     var mockResponse, error_13;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -1062,7 +1028,7 @@ function generateNFSe(invoice) {
 function cancelNFSe(invoice) {
   return __awaiter(this, void 0, void 0, function () {
     var error_14;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -1101,7 +1067,7 @@ function cancelNFSe(invoice) {
 function processPayment(payment) {
   return __awaiter(this, void 0, void 0, function () {
     var mockResponse, error_15;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -1158,7 +1124,7 @@ function generateInvoicePDF(invoiceId) {
   return __awaiter(this, void 0, void 0, function () {
     var invoice, mockPDFContent, blob, error_16;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 2, , 3]);

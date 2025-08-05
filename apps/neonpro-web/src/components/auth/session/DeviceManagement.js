@@ -3,18 +3,17 @@
 // Story 1.4: Session Management & Security
 // =====================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeviceManagement = DeviceManagement;
 var react_1 = require("react");
@@ -152,7 +149,6 @@ var utils_1 = require("@/lib/utils");
 // MAIN COMPONENT
 // =====================================================
 function DeviceManagement(_a) {
-  var _this = this;
   var className = _a.className,
     _b = _a.showAddDevice,
     showAddDevice = _b === void 0 ? true : _b,
@@ -182,11 +178,11 @@ function DeviceManagement(_a) {
   var _j = (0, react_1.useState)(false),
     isRegistering = _j[0],
     setIsRegistering = _j[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     refreshDevices();
   }, []);
   // Device type icon mapping
-  var getDeviceIcon = function (type) {
+  var getDeviceIcon = (type) => {
     switch (type) {
       case "desktop":
         return lucide_react_1.Monitor;
@@ -201,7 +197,7 @@ function DeviceManagement(_a) {
     }
   };
   // Risk level colors
-  var getRiskColor = function (level) {
+  var getRiskColor = (level) => {
     switch (level) {
       case "low":
         return "text-green-600";
@@ -214,7 +210,7 @@ function DeviceManagement(_a) {
     }
   };
   // Risk level badge variant
-  var getRiskBadgeVariant = function (level) {
+  var getRiskBadgeVariant = (level) => {
     switch (level) {
       case "low":
         return "default";
@@ -227,10 +223,10 @@ function DeviceManagement(_a) {
     }
   };
   // Handle device registration
-  var handleRegisterDevice = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRegisterDevice = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsRegistering(true);
@@ -256,12 +252,11 @@ function DeviceManagement(_a) {
         }
       });
     });
-  };
   // Handle device trust toggle
-  var handleTrustToggle = function (device) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleTrustToggle = (device) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 6, , 7]);
@@ -290,12 +285,11 @@ function DeviceManagement(_a) {
         }
       });
     });
-  };
   // Handle device removal
-  var handleRemoveDevice = function (device) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRemoveDevice = (device) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -317,12 +311,11 @@ function DeviceManagement(_a) {
         }
       });
     });
-  };
   // Handle suspicious device report
-  var handleReportSuspicious = function (device) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleReportSuspicious = (device) =>
+    __awaiter(this, void 0, void 0, function () {
       var error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, , 4]);
@@ -342,7 +335,6 @@ function DeviceManagement(_a) {
         }
       });
     });
-  };
   if (isLoading) {
     return (
       <card_1.Card className={(0, utils_1.cn)("w-full", className)}>
@@ -395,7 +387,7 @@ function DeviceManagement(_a) {
 
           {/* Device List */}
           <div className="space-y-3">
-            {devices.map(function (device) {
+            {devices.map((device) => {
               var DeviceIcon = getDeviceIcon(device.type);
               return (
                 <div
@@ -471,7 +463,7 @@ function DeviceManagement(_a) {
                     <button_1.Button
                       size="sm"
                       variant="outline"
-                      onClick={function () {
+                      onClick={() => {
                         setSelectedDevice(device);
                         setShowTrustDialog(true);
                       }}
@@ -484,9 +476,7 @@ function DeviceManagement(_a) {
                         <button_1.Button
                           size="sm"
                           variant="outline"
-                          onClick={function () {
-                            return handleReportSuspicious(device);
-                          }}
+                          onClick={() => handleReportSuspicious(device)}
                         >
                           <lucide_react_1.AlertTriangle className="h-3 w-3 mr-1" />
                           Report
@@ -496,7 +486,7 @@ function DeviceManagement(_a) {
                           <button_1.Button
                             size="sm"
                             variant="destructive"
-                            onClick={function () {
+                            onClick={() => {
                               setSelectedDevice(device);
                               setShowRemoveDialog(true);
                             }}
@@ -557,19 +547,10 @@ function DeviceManagement(_a) {
             </dialog_1.DialogDescription>
           </dialog_1.DialogHeader>
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowTrustDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowTrustDialog(false)}>
               Cancel
             </button_1.Button>
-            <button_1.Button
-              onClick={function () {
-                return selectedDevice && handleTrustToggle(selectedDevice);
-              }}
-            >
+            <button_1.Button onClick={() => selectedDevice && handleTrustToggle(selectedDevice)}>
               {(
                 selectedDevice === null || selectedDevice === void 0
                   ? void 0
@@ -598,19 +579,12 @@ function DeviceManagement(_a) {
             </dialog_1.DialogDescription>
           </dialog_1.DialogHeader>
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowRemoveDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowRemoveDialog(false)}>
               Cancel
             </button_1.Button>
             <button_1.Button
               variant="destructive"
-              onClick={function () {
-                return selectedDevice && handleRemoveDevice(selectedDevice);
-              }}
+              onClick={() => selectedDevice && handleRemoveDevice(selectedDevice)}
             >
               Remove Device
             </button_1.Button>

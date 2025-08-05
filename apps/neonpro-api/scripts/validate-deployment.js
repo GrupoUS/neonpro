@@ -5,8 +5,8 @@
  * Validates Vercel deployment with healthcare compliance checks
  */
 
-const https = require("https");
-const { performance } = require("perf_hooks");
+const https = require("node:https");
+const { performance } = require("node:perf_hooks");
 
 // Configuration
 const ENVIRONMENTS = {
@@ -295,7 +295,7 @@ function generateReport(environment, results) {
   let totalChecks = 0;
   let passedChecks = 0;
 
-  Object.entries(results).forEach(([category, categoryResults]) => {
+  Object.entries(results).forEach(([_category, categoryResults]) => {
     if (Array.isArray(categoryResults)) {
       categoryResults.forEach((result) => {
         totalChecks++;
@@ -354,7 +354,7 @@ async function validateDeployment(environment) {
     const report = generateReport(environment, results);
 
     // Save report to file
-    const fs = require("fs");
+    const fs = require("node:fs");
     const reportPath = `./validation-report-${environment}-${Date.now()}.json`;
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
     console.log(`\n📄 Report saved to: ${reportPath}`);

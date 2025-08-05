@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,10 +129,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -144,7 +141,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommunicationDashboard = CommunicationDashboard;
 var react_1 = require("react");
@@ -161,7 +158,6 @@ var client_1 = require("@/lib/supabase/client");
 var use_toast_1 = require("@/hooks/use-toast");
 var utils_1 = require("@/lib/utils");
 function CommunicationDashboard(_a) {
-  var _this = this;
   var _b;
   var userId = _a.userId,
     clinicId = _a.clinicId,
@@ -203,41 +199,34 @@ function CommunicationDashboard(_a) {
   var toast = (0, use_toast_1.useToast)().toast;
   var supabase = (0, client_1.createClient)();
   // Carregar dados do dashboard
-  (0, react_1.useEffect)(
-    function () {
-      loadDashboardData();
-      // Configurar updates em tempo real
-      var conversationChannel = supabase
-        .channel("dashboard-conversations")
-        .on(
-          "postgres_changes",
-          { event: "*", schema: "public", table: "communication_conversations" },
-          function () {
-            return loadConversations();
-          },
-        )
-        .subscribe();
-      var messageChannel = supabase
-        .channel("dashboard-messages")
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "communication_messages" },
-          function () {
-            return loadStats();
-          },
-        )
-        .subscribe();
-      return function () {
-        supabase.removeChannel(conversationChannel);
-        supabase.removeChannel(messageChannel);
-      };
-    },
-    [clinicId],
-  );
-  var loadDashboardData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadDashboardData();
+    // Configurar updates em tempo real
+    var conversationChannel = supabase
+      .channel("dashboard-conversations")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "communication_conversations" },
+        () => loadConversations(),
+      )
+      .subscribe();
+    var messageChannel = supabase
+      .channel("dashboard-messages")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "communication_messages" },
+        () => loadStats(),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(conversationChannel);
+      supabase.removeChannel(messageChannel);
+    };
+  }, [clinicId]);
+  var loadDashboardData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -273,9 +262,8 @@ function CommunicationDashboard(_a) {
         }
       });
     });
-  };
-  var loadStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var today,
         _a,
         conversationsData,
@@ -295,7 +283,7 @@ function CommunicationDashboard(_a) {
         consentedCount,
         consentRate,
         error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -339,29 +327,17 @@ function CommunicationDashboard(_a) {
             messages = messagesData.data || [];
             notifications_1 = notificationsData.data || [];
             consents_1 = consentsData.data || [];
-            messagesSent = messages.filter(function (m) {
-              return m.sender_id === userId;
-            }).length;
+            messagesSent = messages.filter((m) => m.sender_id === userId).length;
             messagesReceived = messages.length - messagesSent;
-            emailsToday = notifications_1.filter(function (n) {
-              return n.type === "email" && n.sent_at;
-            }).length;
-            smsToday = notifications_1.filter(function (n) {
-              return n.type === "sms" && n.sent_at;
-            }).length;
-            pushToday = notifications_1.filter(function (n) {
-              return n.type === "push" && n.sent_at;
-            }).length;
+            emailsToday = notifications_1.filter((n) => n.type === "email" && n.sent_at).length;
+            smsToday = notifications_1.filter((n) => n.type === "sms" && n.sent_at).length;
+            pushToday = notifications_1.filter((n) => n.type === "push" && n.sent_at).length;
             totalConsents = consents_1.length;
-            consentedCount = consents_1.filter(function (c) {
-              return c.consented;
-            }).length;
+            consentedCount = consents_1.filter((c) => c.consented).length;
             consentRate = totalConsents > 0 ? (consentedCount / totalConsents) * 100 : 0;
             setStats({
               totalConversations: conversations_1.length,
-              activeConversations: conversations_1.filter(function (c) {
-                return c.status === "active";
-              }).length,
+              activeConversations: conversations_1.filter((c) => c.status === "active").length,
               messagesSentToday: messagesSent,
               messagesReceivedToday: messagesReceived,
               emailsToday: emailsToday,
@@ -380,11 +356,10 @@ function CommunicationDashboard(_a) {
         }
       });
     });
-  };
-  var loadConversations = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadConversations = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_3;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -413,11 +388,10 @@ function CommunicationDashboard(_a) {
         }
       });
     });
-  };
-  var loadTemplates = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadTemplates = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_4;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -443,11 +417,10 @@ function CommunicationDashboard(_a) {
         }
       });
     });
-  };
-  var loadConsents = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadConsents = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_5;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -472,11 +445,10 @@ function CommunicationDashboard(_a) {
         }
       });
     });
-  };
-  var loadNotifications = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadNotifications = () =>
+    __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_6;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -503,9 +475,8 @@ function CommunicationDashboard(_a) {
         }
       });
     });
-  };
   // Renderizar cards de estatísticas
-  var StatCard = function (_a) {
+  var StatCard = (_a) => {
     var title = _a.title,
       value = _a.value,
       icon = _a.icon,
@@ -653,7 +624,7 @@ function CommunicationDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {conversations.slice(0, 5).map(function (conversation) {
+                {conversations.slice(0, 5).map((conversation) => {
                   var _a, _b, _c;
                   return (
                     <div
@@ -707,16 +678,14 @@ function CommunicationDashboard(_a) {
                 <card_1.CardTitle>Conversas Ativas</card_1.CardTitle>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-2">
-                {conversations.map(function (conversation) {
+                {conversations.map((conversation) => {
                   var _a, _b;
                   return (
                     <button_1.Button
                       key={conversation.id}
                       variant={selectedConversation === conversation.id ? "default" : "ghost"}
                       className="w-full justify-start h-auto p-3"
-                      onClick={function () {
-                        return setSelectedConversation(conversation.id);
-                      }}
+                      onClick={() => setSelectedConversation(conversation.id)}
                     >
                       <div className="text-left">
                         <p className="font-medium">
@@ -743,9 +712,8 @@ function CommunicationDashboard(_a) {
                     conversationId={selectedConversation}
                     userId={userId}
                     patientContext={
-                      (_b = conversations.find(function (c) {
-                        return c.id === selectedConversation;
-                      })) === null || _b === void 0
+                      (_b = conversations.find((c) => c.id === selectedConversation)) === null ||
+                      _b === void 0
                         ? void 0
                         : _b.patient
                     }
@@ -763,11 +731,9 @@ function CommunicationDashboard(_a) {
         <tabs_1.TabsContent value="templates">
           <template_manager_1.TemplateManager
             templates={templates}
-            onTemplateUpdate={function (template) {
-              setTemplates(function (prev) {
-                var index = prev.findIndex(function (t) {
-                  return t.id === template.id;
-                });
+            onTemplateUpdate={(template) => {
+              setTemplates((prev) => {
+                var index = prev.findIndex((t) => t.id === template.id);
                 if (index >= 0) {
                   var updated = __spreadArray([], prev, true);
                   updated[index] = template;
@@ -777,12 +743,8 @@ function CommunicationDashboard(_a) {
                 }
               });
             }}
-            onTemplateDelete={function (templateId) {
-              setTemplates(function (prev) {
-                return prev.filter(function (t) {
-                  return t.id !== templateId;
-                });
-              });
+            onTemplateDelete={(templateId) => {
+              setTemplates((prev) => prev.filter((t) => t.id !== templateId));
             }}
           />
         </tabs_1.TabsContent>
@@ -791,11 +753,9 @@ function CommunicationDashboard(_a) {
           <consent_manager_1.ConsentManager
             patientId={userId} // TODO: Implementar seleção de paciente
             consents={consents}
-            onConsentUpdate={function (consent) {
-              setConsents(function (prev) {
-                var index = prev.findIndex(function (c) {
-                  return c.id === consent.id;
-                });
+            onConsentUpdate={(consent) => {
+              setConsents((prev) => {
+                var index = prev.findIndex((c) => c.id === consent.id);
                 if (index >= 0) {
                   var updated = __spreadArray([], prev, true);
                   updated[index] = consent;

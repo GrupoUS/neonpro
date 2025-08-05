@@ -7,13 +7,50 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type {
+  Activity,
+  AlertTriangle,
+  Award,
+  BarChart3,
+  Building2,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Copy,
+  DollarSign,
+  Download,
+  Edit,
+  ExternalLink,
+  Eye,
+  FileText,
+  Filter,
+  Globe,
+  LineChart,
+  Mail,
+  MapPin,
+  MoreHorizontal,
+  Package,
+  Phone,
+  PieChart,
+  RefreshCw,
+  Search,
+  Shield,
+  Star,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  User,
+  XCircle,
+} from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Badge } from "@/components/ui/badge";
-import type { Separator } from "@/components/ui/separator";
-import type { Progress } from "@/components/ui/progress";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Dialog,
   DialogContent,
@@ -30,68 +67,31 @@ import type {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { toast } from "sonner";
+import type { Progress } from "@/components/ui/progress";
+import type { Separator } from "@/components/ui/separator";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type {
-  Building2,
-  User,
-  MapPin,
-  Phone,
-  Mail,
-  Globe,
-  Shield,
-  TrendingUp,
-  TrendingDown,
-  Star,
-  Clock,
-  DollarSign,
-  Package,
-  FileText,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-  MoreHorizontal,
-  Edit,
-  Trash2,
-  Download,
-  Upload,
-  Calendar,
-  Target,
-  Award,
-  Activity,
-  BarChart3,
-  PieChart,
-  LineChart,
-  Eye,
-  ExternalLink,
-  Copy,
-  Filter,
-  Search,
-  RefreshCw,
-} from "lucide-react";
-
-import type {
-  Supplier,
-  SupplierStatus,
-  SupplierCategory,
-  PaymentTerms,
-  RiskLevel,
-  PerformanceMetrics,
-  QualityMetrics,
-  ProcurementHistory,
-  Contract,
-  Communication,
-} from "@/lib/types/supplier";
-import type {
-  useSuppliers,
+  useSupplierCommunications,
+  useSupplierContracts,
   useSupplierPerformance,
   useSupplierProcurement,
   useSupplierQuality,
-  useSupplierContracts,
-  useSupplierCommunications,
+  useSuppliers,
 } from "@/lib/hooks/use-supplier";
-import type { SupplierForm } from "./supplier-form";
+import type {
+  Communication,
+  Contract,
+  PaymentTerms,
+  PerformanceMetrics,
+  ProcurementHistory,
+  QualityMetrics,
+  RiskLevel,
+  Supplier,
+  SupplierCategory,
+  SupplierStatus,
+} from "@/lib/types/supplier";
 import type { cn, formatCurrency, formatDate, formatPercentage } from "@/lib/utils";
+import type { SupplierForm } from "./supplier-form";
 
 // ============================================================================
 // TYPES & INTERFACES

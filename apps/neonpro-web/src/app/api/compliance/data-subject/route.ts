@@ -7,20 +7,7 @@
  * @compliance LGPD Art. 18 (Direitos do Titular)
  */
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/client";
-import type { cookies } from "next/headers";
-import type { z } from "zod";
-import type {
-  LGPDCore,
-  DataSubjectRequestType,
-  DataSubjectRequestStatus,
-} from "@/lib/compliance/lgpd-core";
-import type { withRateLimit } from "@/lib/security/rate-limit";
-import type { auditLog } from "@/lib/audit/audit-logger";
-import type { validateCSRF } from "@/lib/security/csrf";
-import type { generateDataExport } from "@/lib/compliance/data-export";
-import type { scheduleDataDeletion } from "@/lib/compliance/data-deletion";
+import type { NextRequest } from "next/server";
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -80,8 +67,8 @@ async function validateUserAccess(
 }
 
 async function validateDataOwnership(
-  supabase: any,
-  userId: string,
+  _supabase: any,
+  _userId: string,
   dataField: string,
 ): Promise<boolean> {
   // Validate that user owns the data they want to modify/access
@@ -294,11 +281,12 @@ export async function POST(request: NextRequest) {
     let additionalData = {};
 
     switch (requestType) {
-      case DataSubjectRequestType.ACCESS:
+      case DataSubjectRequestType.ACCESS: {
         // Generate data export for access requests
         const exportData = await generateDataExport(supabase, user.id, clinicId, specificData);
         additionalData = { exportData };
         break;
+      }
 
       case DataSubjectRequestType.DELETION:
         // Schedule data deletion (with grace period)
@@ -308,7 +296,7 @@ export async function POST(request: NextRequest) {
         });
         break;
 
-      case DataSubjectRequestType.PORTABILITY:
+      case DataSubjectRequestType.PORTABILITY: {
         // Generate portable data export
         const portableData = await generateDataExport(supabase, user.id, clinicId, specificData, {
           format: "json",
@@ -316,6 +304,7 @@ export async function POST(request: NextRequest) {
         });
         additionalData = { portableData };
         break;
+      }
     }
 
     // Audit log

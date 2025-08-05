@@ -3,7 +3,7 @@
 // Cash Registers Hook - React hook for cash register operations
 // Following financial dashboard patterns from Context7 research
 
-import type { useState, useEffect, useCallback } from "react";
+import type { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
 import type { cashFlowService } from "../services/cash-flow-service";
 import type { CashRegister } from "../types";

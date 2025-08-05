@@ -2,33 +2,35 @@
 // FHIR-compliant healthcare professional data management with modern automation
 
 import type { createClient } from "@/lib/supabase/client";
+
 const supabase = await createClient();
-import type { Database } from "@/types/supabase";
+
 import type {
-  Professional,
-  MedicalSpecialty,
-  ProfessionalSpecialty,
-  ProfessionalCredential,
-  ProfessionalService,
-  PerformanceMetric,
-  ProfessionalDevelopment,
-  CredentialingWorkflow,
   CredentialingAlert,
+  CredentialingWorkflow,
+  MedicalSpecialty,
+  PerformanceMetric,
+  Professional,
+  ProfessionalCredential,
+  ProfessionalDevelopment,
+  ProfessionalService,
+  ProfessionalSpecialty,
 } from "@/lib/types/professional";
 import type {
-  ProfessionalCreateInput,
-  ProfessionalUpdateInput,
-  ProfessionalSearchInput,
+  AlertCreateInput,
   CredentialCreateInput,
-  CredentialUpdateInput,
   CredentialSearchInput,
+  CredentialUpdateInput,
+  DevelopmentCreateInput,
+  MetricCreateInput,
+  ProfessionalCreateInput,
+  ProfessionalSearchInput,
+  ProfessionalUpdateInput,
   ServiceCreateInput,
   ServiceUpdateInput,
-  MetricCreateInput,
-  DevelopmentCreateInput,
   WorkflowCreateInput,
-  AlertCreateInput,
 } from "@/lib/validations/professional";
+import type { Database } from "@/types/supabase";
 
 // ============================================
 // PROFESSIONAL MANAGEMENT

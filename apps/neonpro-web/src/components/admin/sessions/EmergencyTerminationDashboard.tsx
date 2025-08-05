@@ -13,15 +13,37 @@
 
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import type { format, formatDistanceToNow } from "date-fns";
+import type { ptBR } from "date-fns/locale";
 import type {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  Ban,
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
+  Lock,
+  Monitor,
+  Pause,
+  Play,
+  RefreshCw,
+  Settings,
+  Shield,
+  Stop,
+  Unlock,
+  Users,
+  XCircle,
+  Zap,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Badge,
   Button,
   Dialog,
   DialogContent,
@@ -32,64 +54,42 @@ import type {
   DialogTrigger,
   Input,
   Label,
+  Progress,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Textarea,
-  Badge,
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
+  Separator,
+  Switch,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Switch,
-  Progress,
-  Separator,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Textarea,
 } from "@/components/ui";
 import type {
-  AlertTriangle,
-  Shield,
-  Users,
-  Monitor,
-  Clock,
-  Activity,
-  Ban,
-  CheckCircle,
-  XCircle,
-  Eye,
-  Settings,
-  Download,
-  RefreshCw,
-  Zap,
-  Lock,
-  Unlock,
-  AlertCircle,
-  Play,
-  Pause,
-  Stop,
-} from "lucide-react";
-import type { toast } from "sonner";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import type {
+  EmergencyConfig,
+  EmergencyProtocol,
   EmergencyTermination,
   EmergencyTerminationRequest,
-  TerminationResult,
-  EmergencyProtocol,
   TerminationAuditLog,
-  EmergencyConfig,
+  TerminationResult,
 } from "@/lib/auth/emergency-termination";
 import type { UserRole } from "@/types/auth";
-import type { formatDistanceToNow, format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
 
 interface ActiveSession {
   sessionId: string;

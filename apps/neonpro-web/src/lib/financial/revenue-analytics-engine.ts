@@ -6,14 +6,14 @@
 
 import type { createClient } from "@/lib/supabase/client";
 import type {
-  RevenueAnalytics,
-  ServiceProfitability,
-  ProviderPerformance,
   PatientLifetimeValue,
-  RevenueForecast,
-  TimeSeriesData,
-  SeasonalAnalysis,
   ProfitabilityMetrics,
+  ProviderPerformance,
+  RevenueAnalytics,
+  RevenueForecast,
+  SeasonalAnalysis,
+  ServiceProfitability,
+  TimeSeriesData,
 } from "@/lib/types/financial-reporting";
 
 export interface RevenueAnalysisFilters {

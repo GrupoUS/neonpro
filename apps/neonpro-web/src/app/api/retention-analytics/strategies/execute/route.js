@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================================================
 // STRATEGY EXECUTION API ENDPOINT
 // Epic 7.4: Patient Retention Analytics + Predictions
@@ -6,15 +5,15 @@
 // =====================================================================================
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.POST = POST;
 var server_1 = require("next/server");
@@ -191,7 +188,7 @@ function POST(request) {
       executionResult,
       logError,
       error_1;
-    return __generator(this, function (_e) {
+    return __generator(this, (_e) => {
       switch (_e.label) {
         case 0:
           _e.trys.push([0, 9, , 10]);
@@ -266,9 +263,7 @@ function POST(request) {
           return [4 /*yield*/, retentionService.getRetentionStrategies(clinicId)];
         case 5:
           strategies = _e.sent();
-          strategy_1 = strategies.find(function (s) {
-            return s.id === strategyId_1;
-          });
+          strategy_1 = strategies.find((s) => s.id === strategyId_1);
           if (!strategy_1) {
             return [
               2 /*return*/,
@@ -301,11 +296,7 @@ function POST(request) {
             throw new Error("Failed to validate patients: ".concat(validationError.message));
           }
           if (validPatients_1.length !== patientIds.length) {
-            invalidIds = patientIds.filter(function (id) {
-              return !validPatients_1.some(function (p) {
-                return p.id === id;
-              });
-            });
+            invalidIds = patientIds.filter((id) => !validPatients_1.some((p) => p.id === id));
             return [
               2 /*return*/,
               server_1.NextResponse.json(
@@ -340,28 +331,25 @@ function POST(request) {
                 type: strategy_1.strategy_type,
                 description: strategy_1.description,
               },
-              targets: validPatients_1.map(function (p) {
-                return {
-                  patientId: p.id,
-                  patientName: p.name,
-                  actions: strategy_1.action_sequence.map(function (action) {
-                    return {
-                      type: action.type,
-                      description: action.description || "".concat(action.type, " action"),
-                      channel: action.channel,
-                      estimated_execution_time: action.delay_minutes
-                        ? "".concat(action.delay_minutes, " minutes")
-                        : "Immediate",
-                    };
-                  }),
-                };
-              }),
+              targets: validPatients_1.map((p) => ({
+                patientId: p.id,
+                patientName: p.name,
+                actions: strategy_1.action_sequence.map((action) => ({
+                  type: action.type,
+                  description: action.description || "".concat(action.type, " action"),
+                  channel: action.channel,
+                  estimated_execution_time: action.delay_minutes
+                    ? "".concat(action.delay_minutes, " minutes")
+                    : "Immediate",
+                })),
+              })),
               execution_plan: {
                 total_patients: validPatients_1.length,
                 total_actions: strategy_1.action_sequence.length * validPatients_1.length,
-                estimated_duration: strategy_1.action_sequence.reduce(function (sum, action) {
-                  return sum + (action.delay_minutes || 0);
-                }, 0),
+                estimated_duration: strategy_1.action_sequence.reduce(
+                  (sum, action) => sum + (action.delay_minutes || 0),
+                  0,
+                ),
                 scheduled_for: scheduledAt || (executeImmediately ? "Immediate" : "Not scheduled"),
                 execution_type: "Simulation (Dry Run)",
               },

@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,11 +142,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentManager = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
-var AppointmentManager = /** @class */ (function () {
+var AppointmentManager = /** @class */ (() => {
   function AppointmentManager(
     supabaseUrl,
     supabaseKey,
@@ -275,14 +272,14 @@ var AppointmentManager = /** @class */ (function () {
             if (appointmentsError) throw appointmentsError;
             availableSlots = [];
             currentDate = new Date(startDate);
-            _loop_1 = function () {
+            _loop_1 = () => {
               var dayOfWeek = currentDate.getDay();
               // Check each staff member's availability for this day
               for (var _i = 0, _f = availableStaff || []; _i < _f.length; _i++) {
                 var staff = _f[_i];
-                var dayAvailability = staff.staff_availability.find(function (avail) {
-                  return avail.day_of_week === dayOfWeek;
-                });
+                var dayAvailability = staff.staff_availability.find(
+                  (avail) => avail.day_of_week === dayOfWeek,
+                );
                 if (dayAvailability) {
                   var slots = this_1.generateTimeSlots(
                     currentDate,
@@ -321,9 +318,7 @@ var AppointmentManager = /** @class */ (function () {
             _e.sent();
             return [
               2 /*return*/,
-              availableSlots.sort(function (a, b) {
-                return a.date.getTime() - b.date.getTime();
-              }),
+              availableSlots.sort((a, b) => a.date.getTime() - b.date.getTime()),
             ];
           case 6:
             error_1 = _e.sent();
@@ -372,12 +367,12 @@ var AppointmentManager = /** @class */ (function () {
     var minBookingTime = new Date(
       now.getTime() + this.config.minAdvanceBookingHours * 60 * 60 * 1000,
     );
-    var _loop_2 = function () {
+    var _loop_2 = () => {
       var slotEndTime = new Date(slotStart.getTime() + serviceDuration * 60 * 1000);
       // Check if slot is in the future with minimum advance booking time
       if (slotStart >= minBookingTime) {
         // Check for conflicts with existing appointments
-        var hasConflict = existingAppointments.some(function (apt) {
+        var hasConflict = existingAppointments.some((apt) => {
           if (apt.staff_id !== staff.id) return false;
           var aptDate = new Date("".concat(apt.appointment_date, "T").concat(apt.appointment_time));
           var aptEndTime = new Date(aptDate.getTime() + apt.estimated_duration * 60 * 1000);

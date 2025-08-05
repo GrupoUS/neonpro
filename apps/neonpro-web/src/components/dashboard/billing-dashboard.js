@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BillingDashboard = BillingDashboard;
 var card_1 = require("@/components/ui/card");
@@ -20,41 +19,26 @@ function BillingDashboard() {
     invoices = _b.invoices,
     payments = _b.payments,
     services = _b.services;
-  var formatCurrency = function (amount) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (amount) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(amount);
-  };
   // Calculate overview metrics
   var totalRevenue =
     (financialSummary === null || financialSummary === void 0
       ? void 0
       : financialSummary.total_revenue) || 0;
   var pendingAmount = invoices
-    .filter(function (inv) {
-      return ["pending", "overdue"].includes(inv.status);
-    })
-    .reduce(function (sum, inv) {
-      return sum + inv.total_amount;
-    }, 0);
-  var completedPayments = payments.filter(function (p) {
-    return p.status === "completed";
-  }).length;
-  var activeServices = services.filter(function (s) {
-    return s.is_active;
-  }).length;
+    .filter((inv) => ["pending", "overdue"].includes(inv.status))
+    .reduce((sum, inv) => sum + inv.total_amount, 0);
+  var completedPayments = payments.filter((p) => p.status === "completed").length;
+  var activeServices = services.filter((s) => s.is_active).length;
   // Calculate monthly growth (placeholder - would need historical data)
   var monthlyGrowth = 15.2; // This would come from comparing current month vs previous
   var conversionRate =
     invoices.length > 0
-      ? Math.round(
-          (invoices.filter(function (inv) {
-            return inv.status === "paid";
-          }).length /
-            invoices.length) *
-            100,
-        )
+      ? Math.round((invoices.filter((inv) => inv.status === "paid").length / invoices.length) * 100)
       : 0;
   return (
     <div className="space-y-6">
@@ -100,11 +84,7 @@ function BillingDashboard() {
               <card_1.CardContent>
                 <div className="text-2xl font-bold">{formatCurrency(pendingAmount)}</div>
                 <p className="text-xs text-muted-foreground">
-                  {
-                    invoices.filter(function (inv) {
-                      return ["pending", "overdue"].includes(inv.status);
-                    }).length
-                  }{" "}
+                  {invoices.filter((inv) => ["pending", "overdue"].includes(inv.status)).length}{" "}
                   faturas pendentes
                 </p>
               </card_1.CardContent>
@@ -122,12 +102,8 @@ function BillingDashboard() {
                 <p className="text-xs text-muted-foreground">
                   {formatCurrency(
                     payments
-                      .filter(function (p) {
-                        return p.status === "completed";
-                      })
-                      .reduce(function (sum, p) {
-                        return sum + p.amount;
-                      }, 0),
+                      .filter((p) => p.status === "completed")
+                      .reduce((sum, p) => sum + p.amount, 0),
                   )}{" "}
                   recebidos
                 </p>
@@ -169,10 +145,7 @@ function BillingDashboard() {
                 <div className="text-2xl font-bold">
                   {invoices.length > 0
                     ? formatCurrency(
-                        totalRevenue /
-                          invoices.filter(function (inv) {
-                            return inv.status === "paid";
-                          }).length || 1,
+                        totalRevenue / invoices.filter((inv) => inv.status === "paid").length || 1,
                       )
                     : formatCurrency(0)}
                 </div>
@@ -191,28 +164,26 @@ function BillingDashboard() {
                 </card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-4">
-                {invoices.slice(0, 5).map(function (invoice) {
-                  return (
-                    <div key={invoice.id} className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">#{invoice.invoice_number}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(invoice.issue_date).toLocaleDateString("pt-BR")}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">{formatCurrency(invoice.total_amount)}</p>
-                        <p className="text-sm text-muted-foreground capitalize">
-                          {invoice.status === "paid" && "Pago"}
-                          {invoice.status === "pending" && "Pendente"}
-                          {invoice.status === "draft" && "Rascunho"}
-                          {invoice.status === "overdue" && "Vencido"}
-                          {invoice.status === "cancelled" && "Cancelado"}
-                        </p>
-                      </div>
+                {invoices.slice(0, 5).map((invoice) => (
+                  <div key={invoice.id} className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">#{invoice.invoice_number}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(invoice.issue_date).toLocaleDateString("pt-BR")}
+                      </p>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <p className="font-medium">{formatCurrency(invoice.total_amount)}</p>
+                      <p className="text-sm text-muted-foreground capitalize">
+                        {invoice.status === "paid" && "Pago"}
+                        {invoice.status === "pending" && "Pendente"}
+                        {invoice.status === "draft" && "Rascunho"}
+                        {invoice.status === "overdue" && "Vencido"}
+                        {invoice.status === "cancelled" && "Cancelado"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
                 {invoices.length === 0 && (
                   <p className="text-center text-muted-foreground py-4">
                     Nenhuma fatura encontrada
@@ -227,28 +198,26 @@ function BillingDashboard() {
                 <card_1.CardDescription>Últimos pagamentos recebidos</card_1.CardDescription>
               </card_1.CardHeader>
               <card_1.CardContent className="space-y-4">
-                {payments.slice(0, 5).map(function (payment) {
-                  return (
-                    <div key={payment.id} className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">#{payment.payment_number}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(payment.payment_date).toLocaleDateString("pt-BR")}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">{formatCurrency(payment.amount)}</p>
-                        <p className="text-sm text-muted-foreground capitalize">
-                          {payment.status === "completed" && "Concluído"}
-                          {payment.status === "processing" && "Processando"}
-                          {payment.status === "pending" && "Pendente"}
-                          {payment.status === "failed" && "Falhou"}
-                          {payment.status === "cancelled" && "Cancelado"}
-                        </p>
-                      </div>
+                {payments.slice(0, 5).map((payment) => (
+                  <div key={payment.id} className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">#{payment.payment_number}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(payment.payment_date).toLocaleDateString("pt-BR")}
+                      </p>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <p className="font-medium">{formatCurrency(payment.amount)}</p>
+                      <p className="text-sm text-muted-foreground capitalize">
+                        {payment.status === "completed" && "Concluído"}
+                        {payment.status === "processing" && "Processando"}
+                        {payment.status === "pending" && "Pendente"}
+                        {payment.status === "failed" && "Falhou"}
+                        {payment.status === "cancelled" && "Cancelado"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
                 {payments.length === 0 && (
                   <p className="text-center text-muted-foreground py-4">
                     Nenhum pagamento encontrado
@@ -266,31 +235,29 @@ function BillingDashboard() {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {services.slice(0, 5).map(function (service, index) {
-                  return (
-                    <div key={service.id} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-sm font-medium">{index + 1}</span>
-                        </div>
-                        <div>
-                          <p className="font-medium">{service.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {service.category || "Sem categoria"}
-                          </p>
-                        </div>
+                {services.slice(0, 5).map((service, index) => (
+                  <div key={service.id} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-sm font-medium">{index + 1}</span>
                       </div>
-                      <div className="text-right">
-                        <p className="font-medium">{formatCurrency(service.base_price)}</p>
+                      <div>
+                        <p className="font-medium">{service.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {service.duration_minutes
-                            ? "".concat(service.duration_minutes, "min")
-                            : "Duração flexível"}
+                          {service.category || "Sem categoria"}
                         </p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <p className="font-medium">{formatCurrency(service.base_price)}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {service.duration_minutes
+                          ? "".concat(service.duration_minutes, "min")
+                          : "Duração flexível"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
                 {services.length === 0 && (
                   <p className="text-center text-muted-foreground py-4">
                     Nenhum serviço cadastrado

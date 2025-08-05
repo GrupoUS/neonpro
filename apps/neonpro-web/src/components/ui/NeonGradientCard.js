@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NeonGradientCard = void 0;
 var react_1 = require("react");
@@ -21,7 +20,7 @@ var borderGradients = {
   warning: "from-warning via-warning/70 to-warning/40",
   danger: "from-danger via-danger/70 to-danger/40",
 };
-var NeonGradientCard = function (_a) {
+var NeonGradientCard = (_a) => {
   var children = _a.children,
     className = _a.className,
     _b = _a.gradient,

@@ -6,9 +6,9 @@
  * POST /api/subscription/payment/create-checkout - Create payment checkout session
  */
 
+import type { cookies } from "next/headers";
 import type { NextRequest, NextResponse } from "next/server";
 import type { createClient } from "@/lib/supabase/server";
-import type { cookies } from "next/headers";
 import type { Database } from "@/types/database";
 
 // Note: Stripe/MercadoPago integration to be implemented in next phase

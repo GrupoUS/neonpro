@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Production Deployment Optimization Scripts
  *
@@ -10,26 +9,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -39,7 +38,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -68,8 +67,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -90,9 +87,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -151,10 +148,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -163,7 +160,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeploymentAutomation =
   exports.ProductionHealthCheck =
@@ -171,9 +168,9 @@ exports.DeploymentAutomation =
   exports.PreBuildOptimizer =
   exports.DEPLOYMENT_CONFIG =
     void 0;
-var fs_1 = require("fs");
-var path_1 = require("path");
-var child_process_1 = require("child_process");
+var fs_1 = require("node:fs");
+var path_1 = require("node:path");
+var child_process_1 = require("node:child_process");
 // Deployment configuration
 exports.DEPLOYMENT_CONFIG = {
   NODE_ENV: "production",
@@ -205,7 +202,7 @@ exports.DEPLOYMENT_CONFIG = {
   },
 };
 // Pre-build optimization tasks
-var PreBuildOptimizer = /** @class */ (function () {
+var PreBuildOptimizer = /** @class */ (() => {
   function PreBuildOptimizer() {}
   PreBuildOptimizer.optimizeAssets = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -216,7 +213,7 @@ var PreBuildOptimizer = /** @class */ (function () {
             console.log("🎨 Optimizing assets...");
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 5, , 6]);
+            _a.trys.push([1, 5, undefined, 6]);
             // Optimize images in public directory
             return [
               4 /*yield*/,
@@ -261,7 +258,7 @@ var PreBuildOptimizer = /** @class */ (function () {
             publicDir = path_1.default.join(process.cwd(), "public");
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 7, , 8]);
+            _a.trys.push([1, 7, undefined, 8]);
             return [4 /*yield*/, this.getAllFiles(publicDir, [".png", ".jpg", ".jpeg"])];
           case 2:
             files = _a.sent();
@@ -311,7 +308,7 @@ var PreBuildOptimizer = /** @class */ (function () {
             fullPath = path_1.default.join(process.cwd(), dir);
             _b.label = 2;
           case 2:
-            _b.trys.push([2, 5, , 6]);
+            _b.trys.push([2, 5, undefined, 6]);
             return [
               4 /*yield*/,
               fs_1.promises.access(fullPath),
@@ -339,15 +336,13 @@ var PreBuildOptimizer = /** @class */ (function () {
   PreBuildOptimizer.validateEnvironment = function () {
     return __awaiter(this, void 0, void 0, function () {
       var requiredVars, missing;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         requiredVars = [
           "NEXT_PUBLIC_SUPABASE_URL",
           "NEXT_PUBLIC_SUPABASE_ANON_KEY",
           "DATABASE_URL",
         ];
-        missing = requiredVars.filter(function (varName) {
-          return !process.env[varName];
-        });
+        missing = requiredVars.filter((varName) => !process.env[varName]);
         if (missing.length > 0) {
           throw new Error("Missing required environment variables: ".concat(missing.join(", ")));
         }
@@ -358,20 +353,20 @@ var PreBuildOptimizer = /** @class */ (function () {
   };
   PreBuildOptimizer.getAllFiles = function (dir, extensions) {
     return __awaiter(this, void 0, void 0, function () {
-      var files, items, _loop_1, this_1, _i, items_1, item, error_3;
+      var files, items, _loop_1, this_1, _i, items_1, item, _error_3;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
             files = [];
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 7, , 8]);
+            _a.trys.push([1, 7, undefined, 8]);
             return [4 /*yield*/, fs_1.promises.readdir(dir, { withFileTypes: true })];
           case 2:
             items = _a.sent();
             _loop_1 = function (item) {
               var fullPath, _b, _c, _d;
-              return __generator(this, function (_e) {
+              return __generator(this, (_e) => {
                 switch (_e.label) {
                   case 0:
                     fullPath = path_1.default.join(dir, item.name);
@@ -383,11 +378,7 @@ var PreBuildOptimizer = /** @class */ (function () {
                     _c.apply(_b, _d.concat([_e.sent()]));
                     return [3 /*break*/, 3];
                   case 2:
-                    if (
-                      extensions.some(function (ext) {
-                        return item.name.toLowerCase().endsWith(ext);
-                      })
-                    ) {
+                    if (extensions.some((ext) => item.name.toLowerCase().endsWith(ext))) {
                       files.push(fullPath);
                     }
                     _e.label = 3;
@@ -412,7 +403,7 @@ var PreBuildOptimizer = /** @class */ (function () {
           case 6:
             return [3 /*break*/, 8];
           case 7:
-            error_3 = _a.sent();
+            _error_3 = _a.sent();
             return [3 /*break*/, 8];
           case 8:
             return [2 /*return*/, files];
@@ -422,14 +413,14 @@ var PreBuildOptimizer = /** @class */ (function () {
   };
   PreBuildOptimizer.getDirectorySize = function (dirPath) {
     return __awaiter(this, void 0, void 0, function () {
-      var totalSize, items, _i, items_2, item, fullPath, _a, stats, error_4;
+      var totalSize, items, _i, items_2, item, fullPath, _a, stats, _error_4;
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
             totalSize = 0;
             _b.label = 1;
           case 1:
-            _b.trys.push([1, 9, , 10]);
+            _b.trys.push([1, 9, undefined, 10]);
             return [4 /*yield*/, fs_1.promises.readdir(dirPath, { withFileTypes: true })];
           case 2:
             items = _b.sent();
@@ -457,7 +448,7 @@ var PreBuildOptimizer = /** @class */ (function () {
           case 8:
             return [3 /*break*/, 10];
           case 9:
-            error_4 = _b.sent();
+            _error_4 = _b.sent();
             return [3 /*break*/, 10];
           case 10:
             return [2 /*return*/, totalSize];
@@ -465,17 +456,17 @@ var PreBuildOptimizer = /** @class */ (function () {
       });
     });
   };
-  PreBuildOptimizer.formatBytes = function (bytes) {
+  PreBuildOptimizer.formatBytes = (bytes) => {
     var sizes = ["B", "KB", "MB", "GB"];
     if (bytes === 0) return "0 B";
     var i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return "".concat((bytes / Math.pow(1024, i)).toFixed(1), " ").concat(sizes[i]);
+    return "".concat((bytes / 1024 ** i).toFixed(1), " ").concat(sizes[i]);
   };
   return PreBuildOptimizer;
 })();
 exports.PreBuildOptimizer = PreBuildOptimizer;
 // Build optimization
-var BuildOptimizer = /** @class */ (function () {
+var BuildOptimizer = /** @class */ (() => {
   function BuildOptimizer() {}
   BuildOptimizer.optimizedBuild = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -487,7 +478,7 @@ var BuildOptimizer = /** @class */ (function () {
             startTime = Date.now();
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 5, , 6]);
+            _a.trys.push([1, 5, undefined, 6]);
             // Pre-build optimizations
             return [
               4 /*yield*/,
@@ -529,7 +520,7 @@ var BuildOptimizer = /** @class */ (function () {
       });
     });
   };
-  BuildOptimizer.configureBuildEnvironment = function () {
+  BuildOptimizer.configureBuildEnvironment = () => {
     // Set optimal Node.js flags for build
     process.env.NODE_OPTIONS = [
       "--max-old-space-size=4096", // Increase memory limit
@@ -545,7 +536,7 @@ var BuildOptimizer = /** @class */ (function () {
   BuildOptimizer.runBuild = function () {
     return __awaiter(this, void 0, void 0, function () {
       var buildCommand;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         buildCommand = __spreadArray(
           ["next", "build", exports.DEPLOYMENT_CONFIG.TURBOPACK ? "--turbopack" : ""],
           exports.DEPLOYMENT_CONFIG.BUILD_FLAGS,
@@ -569,13 +560,13 @@ var BuildOptimizer = /** @class */ (function () {
   BuildOptimizer.analyzeBuild = function () {
     return __awaiter(this, void 0, void 0, function () {
       var buildDir, buildSize, criticalFiles, _i, criticalFiles_1, file, filePath, _a, error_6;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             buildDir = path_1.default.join(process.cwd(), ".next");
             _b.label = 1;
           case 1:
-            _b.trys.push([1, 10, , 11]);
+            _b.trys.push([1, 10, undefined, 11]);
             // Check if build directory exists
             return [
               4 /*yield*/,
@@ -585,11 +576,11 @@ var BuildOptimizer = /** @class */ (function () {
           case 2:
             // Check if build directory exists
             _b.sent();
-            return [4 /*yield*/, PreBuildOptimizer["getDirectorySize"](buildDir)];
+            return [4 /*yield*/, PreBuildOptimizer.getDirectorySize(buildDir)];
           case 3:
             buildSize = _b.sent();
             console.log(
-              "\uD83D\uDCE6 Build size: ".concat(PreBuildOptimizer["formatBytes"](buildSize)),
+              "\uD83D\uDCE6 Build size: ".concat(PreBuildOptimizer.formatBytes(buildSize)),
             );
             criticalFiles = [".next/static", ".next/server", ".next/standalone"];
             (_i = 0), (criticalFiles_1 = criticalFiles);
@@ -600,7 +591,7 @@ var BuildOptimizer = /** @class */ (function () {
             filePath = path_1.default.join(process.cwd(), file);
             _b.label = 5;
           case 5:
-            _b.trys.push([5, 7, , 8]);
+            _b.trys.push([5, 7, undefined, 8]);
             return [4 /*yield*/, fs_1.promises.access(filePath)];
           case 6:
             _b.sent();
@@ -629,7 +620,7 @@ var BuildOptimizer = /** @class */ (function () {
 })();
 exports.BuildOptimizer = BuildOptimizer;
 // Production health checks
-var ProductionHealthCheck = /** @class */ (function () {
+var ProductionHealthCheck = /** @class */ (() => {
   function ProductionHealthCheck() {}
   ProductionHealthCheck.runHealthChecks = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -645,22 +636,13 @@ var ProductionHealthCheck = /** @class */ (function () {
               this.checkSecurityHeaders,
               this.checkPerformanceConfig,
             ];
-            return [
-              4 /*yield*/,
-              Promise.allSettled(
-                checks.map(function (check) {
-                  return check();
-                }),
-              ),
-            ];
+            return [4 /*yield*/, Promise.allSettled(checks.map((check) => check()))];
           case 1:
             results = _a.sent();
-            failed = results.filter(function (result) {
-              return result.status === "rejected";
-            });
+            failed = results.filter((result) => result.status === "rejected");
             if (failed.length > 0) {
               console.error("\u274C ".concat(failed.length, " health checks failed:"));
-              failed.forEach(function (result, index) {
+              failed.forEach((result, index) => {
                 if (result.status === "rejected") {
                   console.error("  ".concat(index + 1, ". ").concat(result.reason));
                 }
@@ -676,7 +658,7 @@ var ProductionHealthCheck = /** @class */ (function () {
   ProductionHealthCheck.checkBuildArtifacts = function () {
     return __awaiter(this, void 0, void 0, function () {
       var requiredFiles, _i, requiredFiles_1, file, fullPath, _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             requiredFiles = [".next/BUILD_ID", ".next/static", ".next/server/app"];
@@ -688,7 +670,7 @@ var ProductionHealthCheck = /** @class */ (function () {
             fullPath = path_1.default.join(process.cwd(), file);
             _b.label = 2;
           case 2:
-            _b.trys.push([2, 4, , 5]);
+            _b.trys.push([2, 4, undefined, 5]);
             return [4 /*yield*/, fs_1.promises.access(fullPath)];
           case 3:
             _b.sent();
@@ -708,7 +690,7 @@ var ProductionHealthCheck = /** @class */ (function () {
   ProductionHealthCheck.checkEnvironmentVariables = function () {
     return __awaiter(this, void 0, void 0, function () {
       var prodVars, _i, prodVars_1, varName;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         prodVars = ["NODE_ENV", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"];
         for (_i = 0, prodVars_1 = prodVars; _i < prodVars_1.length; _i++) {
           varName = prodVars_1[_i];
@@ -735,13 +717,13 @@ var ProductionHealthCheck = /** @class */ (function () {
         requiredDeps_1,
         dep,
         error_7;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             packageJsonPath = path_1.default.join(process.cwd(), "package.json");
             _c.label = 1;
           case 1:
-            _c.trys.push([1, 3, , 4]);
+            _c.trys.push([1, 3, undefined, 4]);
             _b = (_a = JSON).parse;
             return [4 /*yield*/, fs_1.promises.readFile(packageJsonPath, "utf-8")];
           case 2:
@@ -767,13 +749,13 @@ var ProductionHealthCheck = /** @class */ (function () {
   ProductionHealthCheck.checkSecurityHeaders = function () {
     return __awaiter(this, void 0, void 0, function () {
       var nextConfigPath, configContent, requiredHeaders, _i, requiredHeaders_1, header, error_8;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             nextConfigPath = path_1.default.join(process.cwd(), "next.config.mjs");
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 3, , 4]);
+            _a.trys.push([1, 3, undefined, 4]);
             return [
               4 /*yield*/,
               fs_1.promises.readFile(nextConfigPath, "utf-8"),
@@ -802,13 +784,13 @@ var ProductionHealthCheck = /** @class */ (function () {
   ProductionHealthCheck.checkPerformanceConfig = function () {
     return __awaiter(this, void 0, void 0, function () {
       var nextConfigPath, configContent, optimizations, _i, optimizations_1, opt, error_9;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             nextConfigPath = path_1.default.join(process.cwd(), "next.config.mjs");
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 3, , 4]);
+            _a.trys.push([1, 3, undefined, 4]);
             return [
               4 /*yield*/,
               fs_1.promises.readFile(nextConfigPath, "utf-8"),
@@ -838,7 +820,7 @@ var ProductionHealthCheck = /** @class */ (function () {
 })();
 exports.ProductionHealthCheck = ProductionHealthCheck;
 // Deployment automation
-var DeploymentAutomation = /** @class */ (function () {
+var DeploymentAutomation = /** @class */ (() => {
   function DeploymentAutomation() {}
   DeploymentAutomation.deploy = function () {
     return __awaiter(this, arguments, void 0, function (environment) {
@@ -852,7 +834,7 @@ var DeploymentAutomation = /** @class */ (function () {
             console.log("\uD83D\uDE80 Starting deployment to ".concat(environment, "..."));
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 5, , 6]);
+            _a.trys.push([1, 5, undefined, 6]);
             return [4 /*yield*/, ProductionHealthCheck.runHealthChecks()];
           case 2:
             healthChecksPassed = _a.sent();
@@ -891,7 +873,7 @@ var DeploymentAutomation = /** @class */ (function () {
   DeploymentAutomation.deployToEnvironment = function (environment) {
     return __awaiter(this, void 0, void 0, function () {
       var deploymentSteps, _i, deploymentSteps_1, step;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             // This would typically integrate with your deployment platform
@@ -912,12 +894,7 @@ var DeploymentAutomation = /** @class */ (function () {
             step = deploymentSteps_1[_i];
             console.log("  ".concat(step, "..."));
             // Simulate deployment step
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 1000);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 1000))];
           case 2:
             // Simulate deployment step
             _a.sent();
@@ -942,14 +919,13 @@ if (require.main === module) {
       BuildOptimizer.optimizedBuild();
       break;
     case "health-check":
-      ProductionHealthCheck.runHealthChecks().then(function (passed) {
-        return process.exit(passed ? 0 : 1);
-      });
+      ProductionHealthCheck.runHealthChecks().then((passed) => process.exit(passed ? 0 : 1));
       break;
-    case "deploy":
+    case "deploy": {
       var env = process.argv[3] || "production";
       DeploymentAutomation.deploy(env);
       break;
+    }
     default:
       console.log(
         "\nUsage: node deployment.js <command>\n\nCommands:\n  build        Run optimized production build\n  health-check Run production health checks  \n  deploy       Deploy to production (or staging)\n\nExamples:\n  node deployment.js build\n  node deployment.js health-check\n  node deployment.js deploy staging\n  node deployment.js deploy production\n      ",

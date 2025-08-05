@@ -1,8 +1,8 @@
 "use client";
 
 import type { useEffect, useRef, useState } from "react";
-import type { createClient } from "@/lib/supabase/client";
 import type { useToast } from "@/hooks/use-toast";
+import type { createClient } from "@/lib/supabase/client";
 
 export interface TimeSlot {
   id: string;

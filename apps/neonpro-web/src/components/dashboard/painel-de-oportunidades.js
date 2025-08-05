@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PainelDeOportunidades = PainelDeOportunidades;
 var button_1 = require("@/components/ui/button");
@@ -48,29 +47,27 @@ function PainelDeOportunidades() {
       </card_1.CardHeader>
       <card_1.CardContent>
         <div className="space-y-3">
-          {mockOpportunities.map(function (opportunity, index) {
-            return (
-              <div
-                key={index}
-                className={"flex items-start space-x-3 p-3 rounded-lg border-l-2 bg-muted/30 ".concat(
-                  getPriorityColor(opportunity.priority),
-                )}
-              >
-                <div className="flex-shrink-0 mt-0.5">{opportunity.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-muted-foreground mb-2">{opportunity.description}</p>
-                  <button_1.Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-auto p-0 font-medium text-primary hover:text-primary/80"
-                  >
-                    {opportunity.actionText}
-                    <lucide_react_1.ChevronRightIcon className="h-3 w-3 ml-1" />
-                  </button_1.Button>
-                </div>
+          {mockOpportunities.map((opportunity, index) => (
+            <div
+              key={index}
+              className={"flex items-start space-x-3 p-3 rounded-lg border-l-2 bg-muted/30 ".concat(
+                getPriorityColor(opportunity.priority),
+              )}
+            >
+              <div className="flex-shrink-0 mt-0.5">{opportunity.icon}</div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-muted-foreground mb-2">{opportunity.description}</p>
+                <button_1.Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-medium text-primary hover:text-primary/80"
+                >
+                  {opportunity.actionText}
+                  <lucide_react_1.ChevronRightIcon className="h-3 w-3 ml-1" />
+                </button_1.Button>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
 
         {mockOpportunities.length === 0 && (

@@ -1,5 +1,4 @@
 "use client";
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppointmentCard = AppointmentCard;
 var badge_1 = require("@/components/ui/badge");
@@ -11,7 +10,7 @@ var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
-var getStatusInfo = function (status) {
+var getStatusInfo = (status) => {
   var statusMap = {
     scheduled: { label: "Agendado", color: "bg-blue-500 text-white" },
     confirmed: { label: "Confirmado", color: "bg-green-500 text-white" },
@@ -65,12 +64,12 @@ function AppointmentCard(_a) {
     .filter(Boolean)
     .join(", ");
   var duration = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
-  var handleCardClick = function (e) {
+  var handleCardClick = (e) => {
     if (onClick && !e.defaultPrevented) {
       onClick();
     }
   };
-  var handleActionClick = function (e, action) {
+  var handleActionClick = (e, action) => {
     e.preventDefault();
     e.stopPropagation();
     action();
@@ -86,7 +85,7 @@ function AppointmentCard(_a) {
           status.color.replace("bg-", "border-l-").replace("text-white", ""),
         )}
         onClick={handleCardClick}
-        onKeyDown={function (e) {
+        onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             handleCardClick(e);
@@ -135,7 +134,7 @@ function AppointmentCard(_a) {
         tabIndex={0}
         aria-label={ariaLabel}
         onClick={handleCardClick}
-        onKeyDown={function (e) {
+        onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             handleCardClick(e);
@@ -187,37 +186,27 @@ function AppointmentCard(_a) {
                 </dropdown_menu_1.DropdownMenuTrigger>
                 <dropdown_menu_1.DropdownMenuContent>
                   {onEdit && (
-                    <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onEdit);
-                      }}
-                    >
+                    <dropdown_menu_1.DropdownMenuItem onClick={(e) => handleActionClick(e, onEdit)}>
                       Editar
                     </dropdown_menu_1.DropdownMenuItem>
                   )}
                   {onConfirm && appointment.status === "scheduled" && (
                     <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onConfirm);
-                      }}
+                      onClick={(e) => handleActionClick(e, onConfirm)}
                     >
                       Confirmar
                     </dropdown_menu_1.DropdownMenuItem>
                   )}
                   {onComplete && appointment.status === "confirmed" && (
                     <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onComplete);
-                      }}
+                      onClick={(e) => handleActionClick(e, onComplete)}
                     >
                       Concluir
                     </dropdown_menu_1.DropdownMenuItem>
                   )}
                   {onDelete && (
                     <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onDelete);
-                      }}
+                      onClick={(e) => handleActionClick(e, onDelete)}
                       className="text-red-600"
                     >
                       Excluir
@@ -225,9 +214,7 @@ function AppointmentCard(_a) {
                   )}
                   {onCancel && appointment.status !== "cancelled" && (
                     <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onCancel);
-                      }}
+                      onClick={(e) => handleActionClick(e, onCancel)}
                       className="text-red-600"
                     >
                       Cancelar
@@ -251,7 +238,7 @@ function AppointmentCard(_a) {
       tabIndex={0}
       aria-label={ariaLabel}
       onClick={handleCardClick}
-      onKeyDown={function (e) {
+      onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           handleCardClick(e);
@@ -289,37 +276,27 @@ function AppointmentCard(_a) {
                 </dropdown_menu_1.DropdownMenuTrigger>
                 <dropdown_menu_1.DropdownMenuContent>
                   {onEdit && (
-                    <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onEdit);
-                      }}
-                    >
+                    <dropdown_menu_1.DropdownMenuItem onClick={(e) => handleActionClick(e, onEdit)}>
                       Editar
                     </dropdown_menu_1.DropdownMenuItem>
                   )}
                   {onConfirm && appointment.status === "scheduled" && (
                     <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onConfirm);
-                      }}
+                      onClick={(e) => handleActionClick(e, onConfirm)}
                     >
                       Confirmar
                     </dropdown_menu_1.DropdownMenuItem>
                   )}
                   {onComplete && appointment.status === "confirmed" && (
                     <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onComplete);
-                      }}
+                      onClick={(e) => handleActionClick(e, onComplete)}
                     >
                       Concluir
                     </dropdown_menu_1.DropdownMenuItem>
                   )}
                   {onDelete && (
                     <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onDelete);
-                      }}
+                      onClick={(e) => handleActionClick(e, onDelete)}
                       className="text-red-600"
                     >
                       Excluir
@@ -327,9 +304,7 @@ function AppointmentCard(_a) {
                   )}
                   {onCancel && appointment.status !== "cancelled" && (
                     <dropdown_menu_1.DropdownMenuItem
-                      onClick={function (e) {
-                        return handleActionClick(e, onCancel);
-                      }}
+                      onClick={(e) => handleActionClick(e, onCancel)}
                       className="text-red-600"
                     >
                       Cancelar

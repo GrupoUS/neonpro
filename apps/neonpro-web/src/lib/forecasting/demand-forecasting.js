@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Demand Forecasting Engine
  * Epic 11 - Story 11.1: Demand Forecasting Engine (≥80% Accuracy)
@@ -18,26 +17,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -57,13 +56,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -85,9 +84,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -159,10 +156,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -171,7 +168,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.demandForecastingEngine =
   exports.ForecastingUtils =
@@ -183,7 +180,7 @@ var date_fns_1 = require("date-fns");
  * Demand Forecasting Engine Class
  * Core engine for all demand forecasting operations
  */
-var DemandForecastingEngine = /** @class */ (function () {
+var DemandForecastingEngine = /** @class */ (() => {
   function DemandForecastingEngine() {
     this.models = new Map();
     this.externalFactors = [];
@@ -544,7 +541,7 @@ var DemandForecastingEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var query, _a, data, error, error_7;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -604,14 +601,14 @@ var DemandForecastingEngine = /** @class */ (function () {
   /**
    * Calculate daily demand patterns
    */
-  DemandForecastingEngine.prototype.calculateDailyPattern = function (data) {
+  DemandForecastingEngine.prototype.calculateDailyPattern = (data) => {
     var hourlyCount = {};
     // Initialize hours
     for (var hour = 0; hour < 24; hour++) {
       hourlyCount[hour.toString()] = 0;
     }
     // Count appointments by hour
-    data.forEach(function (appointment) {
+    data.forEach((appointment) => {
       var hour = new Date(appointment.scheduled_at).getHours();
       hourlyCount[hour.toString()]++;
     });
@@ -629,7 +626,7 @@ var DemandForecastingEngine = /** @class */ (function () {
   /**
    * Calculate weekly demand patterns
    */
-  DemandForecastingEngine.prototype.calculateWeeklyPattern = function (data) {
+  DemandForecastingEngine.prototype.calculateWeeklyPattern = (data) => {
     var weekdayCount = {
       0: 0,
       1: 0,
@@ -639,7 +636,7 @@ var DemandForecastingEngine = /** @class */ (function () {
       5: 0,
       6: 0,
     };
-    data.forEach(function (appointment) {
+    data.forEach((appointment) => {
       var weekday = new Date(appointment.scheduled_at).getDay();
       weekdayCount[weekday.toString()]++;
     });
@@ -655,12 +652,12 @@ var DemandForecastingEngine = /** @class */ (function () {
   /**
    * Calculate monthly demand patterns
    */
-  DemandForecastingEngine.prototype.calculateMonthlyPattern = function (data) {
+  DemandForecastingEngine.prototype.calculateMonthlyPattern = (data) => {
     var monthlyCount = {};
     for (var month = 1; month <= 12; month++) {
       monthlyCount[month.toString()] = 0;
     }
-    data.forEach(function (appointment) {
+    data.forEach((appointment) => {
       var month = new Date(appointment.scheduled_at).getMonth() + 1;
       monthlyCount[month.toString()]++;
     });
@@ -676,14 +673,14 @@ var DemandForecastingEngine = /** @class */ (function () {
   /**
    * Calculate seasonal demand patterns
    */
-  DemandForecastingEngine.prototype.calculateSeasonalPattern = function (data) {
+  DemandForecastingEngine.prototype.calculateSeasonalPattern = (data) => {
     var seasonalCount = {
       spring: 0,
       summer: 0,
       autumn: 0,
       winter: 0,
     };
-    data.forEach(function (appointment) {
+    data.forEach((appointment) => {
       var month = new Date(appointment.scheduled_at).getMonth() + 1;
       var season;
       if (month >= 3 && month <= 5) season = "spring";
@@ -712,16 +709,16 @@ var DemandForecastingEngine = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var availableModels, bestModel;
       return __generator(this, function (_a) {
-        availableModels = Array.from(this.models.values()).filter(function (model) {
-          return model.status === "active";
-        });
+        availableModels = Array.from(this.models.values()).filter(
+          (model) => model.status === "active",
+        );
         if (availableModels.length === 0) {
           // Return default model
           return [2 /*return*/, this.getDefaultModel(forecastType)];
         }
-        bestModel = availableModels.reduce(function (best, current) {
-          return current.accuracy_score > best.accuracy_score ? current : best;
-        });
+        bestModel = availableModels.reduce((best, current) =>
+          current.accuracy_score > best.accuracy_score ? current : best,
+        );
         return [2 /*return*/, bestModel];
       });
     });
@@ -737,7 +734,7 @@ var DemandForecastingEngine = /** @class */ (function () {
   ) {
     return __awaiter(this, void 0, void 0, function () {
       var dailyAverage, forecastDays, adjustment, predictedValue, confidence;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           dailyAverage =
             data.length /
@@ -791,7 +788,7 @@ var DemandForecastingEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         applicableFactors = this.getApplicableExternalFactors(startDate, endDate);
         adjustedData = __spreadArray([], data, true);
-        applicableFactors.forEach(function (factor) {
+        applicableFactors.forEach((factor) => {
           var impactMultiplier = 1 + factor.impact_weight * 0.1;
           // This is simplified - in production would apply sophisticated factor modeling
         });
@@ -803,7 +800,7 @@ var DemandForecastingEngine = /** @class */ (function () {
    * Get applicable external factors for period
    */
   DemandForecastingEngine.prototype.getApplicableExternalFactors = function (startDate, endDate) {
-    return this.externalFactors.filter(function (factor) {
+    return this.externalFactors.filter((factor) => {
       var factorStart = new Date(factor.start_date);
       var factorEnd = factor.end_date ? new Date(factor.end_date) : factorStart;
       return factorStart <= endDate && factorEnd >= startDate;
@@ -836,9 +833,7 @@ var DemandForecastingEngine = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             activeModels = Array.from(this.models.values())
-              .filter(function (model) {
-                return model.status === "active";
-              })
+              .filter((model) => model.status === "active")
               .slice(0, 3);
             if (activeModels.length <= 1) {
               return [2 /*return*/, baseForecast];
@@ -870,7 +865,7 @@ var DemandForecastingEngine = /** @class */ (function () {
             }
             totalWeight = 0;
             weightedSum = 0;
-            predictions.forEach(function (pred) {
+            predictions.forEach((pred) => {
               var weight = pred.confidence;
               totalWeight += weight;
               weightedSum += pred.value * weight;
@@ -897,9 +892,7 @@ var DemandForecastingEngine = /** @class */ (function () {
       return __generator(this, function (_a) {
         confidence = model.accuracy_score;
         avgPatternConfidence =
-          patterns.reduce(function (sum, pattern) {
-            return sum + pattern.confidence;
-          }, 0) / patterns.length;
+          patterns.reduce((sum, pattern) => sum + pattern.confidence, 0) / patterns.length;
         confidence = (confidence + avgPatternConfidence) / 2;
         // Ensure minimum accuracy threshold
         return [2 /*return*/, Math.max(confidence, this.ACCURACY_THRESHOLD)];
@@ -912,7 +905,7 @@ var DemandForecastingEngine = /** @class */ (function () {
   DemandForecastingEngine.prototype.storeForecast = function (forecast) {
     return __awaiter(this, void 0, void 0, function () {
       var error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, supabase_1.supabase.from("demand_forecasts").insert(forecast)];
@@ -1018,7 +1011,7 @@ var DemandForecastingEngine = /** @class */ (function () {
             this.models.clear();
             models === null || models === void 0
               ? void 0
-              : models.forEach(function (model) {
+              : models.forEach((model) => {
                   _this.models.set(model.id, model);
                 });
             if (!(this.models.size === 0)) return [3 /*break*/, 3];
@@ -1206,7 +1199,7 @@ var DemandForecastingEngine = /** @class */ (function () {
   DemandForecastingEngine.prototype.calculateAdjustmentFactor = function (forecast, currentData) {
     return __awaiter(this, void 0, void 0, function () {
       var recentTrend;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         recentTrend = currentData.length > 0 ? 1.02 : 0.98;
         return [2 /*return*/, Math.max(0.5, Math.min(2.0, recentTrend))];
       });
@@ -1233,11 +1226,9 @@ var DemandForecastingEngine = /** @class */ (function () {
   DemandForecastingEngine.prototype.calculateStaffAllocations = function (clinicId, forecasts) {
     return __awaiter(this, void 0, void 0, function () {
       var allocations, totalDemand;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         allocations = [];
-        totalDemand = forecasts.reduce(function (sum, forecast) {
-          return sum + forecast.predicted_demand;
-        }, 0);
+        totalDemand = forecasts.reduce((sum, forecast) => sum + forecast.predicted_demand, 0);
         allocations.push({
           resource_type: "staff",
           resource_id: "general-staff",
@@ -1256,7 +1247,7 @@ var DemandForecastingEngine = /** @class */ (function () {
    */
   DemandForecastingEngine.prototype.calculateEquipmentAllocations = function (clinicId, forecasts) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified implementation
         return [2 /*return*/, []];
       });
@@ -1267,7 +1258,7 @@ var DemandForecastingEngine = /** @class */ (function () {
    */
   DemandForecastingEngine.prototype.calculateRoomAllocations = function (clinicId, forecasts) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simplified implementation
         return [2 /*return*/, []];
       });
@@ -1278,7 +1269,7 @@ var DemandForecastingEngine = /** @class */ (function () {
    */
   DemandForecastingEngine.prototype.scheduleModelRetraining = function (modelId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would trigger a background job to retrain the model
         console.log("Scheduling retraining for model ".concat(modelId));
         return [2 /*return*/];
@@ -1293,7 +1284,7 @@ exports.ForecastingUtils = {
   /**
    * Calculate forecast accuracy metrics
    */
-  calculateAccuracyMetrics: function (predicted, actual) {
+  calculateAccuracyMetrics: (predicted, actual) => {
     if (predicted.length !== actual.length) {
       throw new Error("Predicted and actual arrays must have same length");
     }
@@ -1308,7 +1299,7 @@ exports.ForecastingUtils = {
       var percentError = actual[i] !== 0 ? (error / Math.abs(actual[i])) * 100 : 0;
       mapeSum += percentError;
       maeSum += error;
-      mseSum += Math.pow(error, 2);
+      mseSum += error ** 2;
       totalActual += actual[i];
       totalPredicted += predicted[i];
     }
@@ -1320,8 +1311,8 @@ exports.ForecastingUtils = {
     var totalSumSquares = 0;
     var residualSumSquares = 0;
     for (var i = 0; i < n; i++) {
-      totalSumSquares += Math.pow(actual[i] - actualMean, 2);
-      residualSumSquares += Math.pow(actual[i] - predicted[i], 2);
+      totalSumSquares += (actual[i] - actualMean) ** 2;
+      residualSumSquares += (actual[i] - predicted[i]) ** 2;
     }
     var r2Score = 1 - residualSumSquares / totalSumSquares;
     var accuracyPercentage = Math.max(0, 100 - mape);
@@ -1336,7 +1327,7 @@ exports.ForecastingUtils = {
   /**
    * Format forecast period for display
    */
-  formatForecastPeriod: function (startDate, endDate) {
+  formatForecastPeriod: (startDate, endDate) => {
     var start = new Date(startDate);
     var end = new Date(endDate);
     return ""
@@ -1346,7 +1337,7 @@ exports.ForecastingUtils = {
   /**
    * Get confidence level description
    */
-  getConfidenceDescription: function (confidence) {
+  getConfidenceDescription: (confidence) => {
     if (confidence >= 0.95) return "Very High";
     if (confidence >= 0.85) return "High";
     if (confidence >= 0.75) return "Medium";
@@ -1356,17 +1347,15 @@ exports.ForecastingUtils = {
   /**
    * Calculate forecast horizon options
    */
-  getForecastHorizons: function () {
-    return [
-      { value: 7, label: "1 Week" },
-      { value: 14, label: "2 Weeks" },
-      { value: 30, label: "1 Month" },
-      { value: 60, label: "2 Months" },
-      { value: 90, label: "3 Months" },
-      { value: 180, label: "6 Months" },
-      { value: 365, label: "1 Year" },
-    ];
-  },
+  getForecastHorizons: () => [
+    { value: 7, label: "1 Week" },
+    { value: 14, label: "2 Weeks" },
+    { value: 30, label: "1 Month" },
+    { value: 60, label: "2 Months" },
+    { value: 90, label: "3 Months" },
+    { value: 180, label: "6 Months" },
+    { value: 365, label: "1 Year" },
+  ],
 };
 // Export singleton instance
 exports.demandForecastingEngine = new DemandForecastingEngine();

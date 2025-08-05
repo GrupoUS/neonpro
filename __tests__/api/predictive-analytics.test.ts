@@ -11,20 +11,19 @@
  * - Performance monitoring
  */
 
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { createMocks } from "node-mocks-http";
-
+import { GET as accuracyGET } from "@/app/api/predictive-analytics/accuracy/route";
+import {
+  GET as alertsGET,
+  PATCH as alertsPATCH,
+} from "@/app/api/predictive-analytics/alerts/route";
 // API Route Handlers
 import { GET as modelsGET, POST as modelsPOST } from "@/app/api/predictive-analytics/models/route";
 import {
   GET as predictionsGET,
   POST as predictionsPOST,
 } from "@/app/api/predictive-analytics/predictions/route";
-import { GET as accuracyGET } from "@/app/api/predictive-analytics/accuracy/route";
-import {
-  GET as alertsGET,
-  PATCH as alertsPATCH,
-} from "@/app/api/predictive-analytics/alerts/route";
 import { GET as recommendationsGET } from "@/app/api/predictive-analytics/recommendations/route";
 
 // Mock Supabase

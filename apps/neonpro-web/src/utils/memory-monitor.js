@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.globalMemoryMonitor = exports.MemoryMonitor = void 0;
 exports.useMemoryMonitor = useMemoryMonitor;
@@ -36,7 +35,7 @@ var react_1 = require("react");
 // =====================================================================================
 // MEMORY MONITOR CLASS
 // =====================================================================================
-var MemoryMonitor = /** @class */ (function () {
+var MemoryMonitor = /** @class */ (() => {
   function MemoryMonitor(config) {
     if (config === void 0) {
       config = {};
@@ -64,7 +63,6 @@ var MemoryMonitor = /** @class */ (function () {
     this.setupMemoryTracking();
   }
   MemoryMonitor.prototype.setupMemoryTracking = function () {
-    var _this = this;
     if (typeof window === "undefined") return;
     // Track component mounts/unmounts
     if (this.config.enableDetailedTracking) {
@@ -73,22 +71,21 @@ var MemoryMonitor = /** @class */ (function () {
       this.setupDOMNodeTracking();
     }
     // Setup cleanup on page unload
-    window.addEventListener("beforeunload", function () {
-      _this.cleanup();
+    window.addEventListener("beforeunload", () => {
+      this.cleanup();
     });
   };
   MemoryMonitor.prototype.setupComponentTracking = function () {
-    var _this = this;
     // Monkey patch React DevTools if available
     if (typeof window !== "undefined" && window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
       var hook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
       var originalOnCommitFiberRoot_1 = hook.onCommitFiberRoot;
-      hook.onCommitFiberRoot = function () {
+      hook.onCommitFiberRoot = () => {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
           args[_i] = arguments[_i];
         }
-        _this.trackComponentMount();
+        this.trackComponentMount();
         return originalOnCommitFiberRoot_1 === null || originalOnCommitFiberRoot_1 === void 0
           ? void 0
           : originalOnCommitFiberRoot_1.apply(void 0, args);
@@ -117,14 +114,13 @@ var MemoryMonitor = /** @class */ (function () {
     }.bind(this);
   };
   MemoryMonitor.prototype.setupDOMNodeTracking = function () {
-    var _this = this;
     // Track DOM mutations
     if ("MutationObserver" in window) {
-      var observer_1 = new MutationObserver(function (mutations) {
-        mutations.forEach(function (mutation) {
+      var observer_1 = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
           if (mutation.type === "childList") {
             // Track added/removed nodes
-            _this.trackDOMChanges(mutation.addedNodes.length, mutation.removedNodes.length);
+            this.trackDOMChanges(mutation.addedNodes.length, mutation.removedNodes.length);
           }
         });
       });
@@ -132,9 +128,7 @@ var MemoryMonitor = /** @class */ (function () {
         childList: true,
         subtree: true,
       });
-      this.cleanupTasks.add(function () {
-        return observer_1.disconnect();
-      });
+      this.cleanupTasks.add(() => observer_1.disconnect());
     }
   };
   MemoryMonitor.prototype.trackComponentMount = function () {
@@ -168,29 +162,20 @@ var MemoryMonitor = /** @class */ (function () {
   };
   MemoryMonitor.prototype.calculateTrend = function (currentUsage) {
     if (this.snapshots.length < 3) return "stable";
-    var recent = this.snapshots.slice(-3).map(function (s) {
-      return s.metrics.usedJSHeapSize;
-    });
-    var avgRecent =
-      recent.reduce(function (sum, val) {
-        return sum + val;
-      }, 0) / recent.length;
+    var recent = this.snapshots.slice(-3).map((s) => s.metrics.usedJSHeapSize);
+    var avgRecent = recent.reduce((sum, val) => sum + val, 0) / recent.length;
     var threshold = currentUsage * 0.05; // 5% threshold
     if (currentUsage > avgRecent + threshold) return "increasing";
     if (currentUsage < avgRecent - threshold) return "decreasing";
     return "stable";
   };
-  MemoryMonitor.prototype.detectMemoryLeak = function (currentUsage) {
+  MemoryMonitor.prototype.detectMemoryLeak = function (_currentUsage) {
     if (this.snapshots.length < 5) return false;
     var windowStart = Date.now() - this.config.leakDetectionWindow;
-    var recentSnapshots = this.snapshots.filter(function (s) {
-      return s.timestamp > windowStart;
-    });
+    var recentSnapshots = this.snapshots.filter((s) => s.timestamp > windowStart);
     if (recentSnapshots.length < 3) return false;
     // Check for consistent memory growth
-    var usages = recentSnapshots.map(function (s) {
-      return s.metrics.usedJSHeapSize;
-    });
+    var usages = recentSnapshots.map((s) => s.metrics.usedJSHeapSize);
     var growthRate = (usages[usages.length - 1] - usages[0]) / usages[0];
     // Leak suspected if memory grew by more than 50% in the detection window
     return growthRate > 0.5;
@@ -216,13 +201,12 @@ var MemoryMonitor = /** @class */ (function () {
     }
     return snapshot;
   };
-  MemoryMonitor.prototype.getTotalEventListeners = function () {
+  MemoryMonitor.prototype.getTotalEventListeners = () => {
     var total = 0;
     // This is an approximation since we can't accurately count all listeners
     return total;
   };
   MemoryMonitor.prototype.checkForAlerts = function (metrics) {
-    var _this = this;
     var alerts = [];
     // High memory usage alert
     if (metrics.memoryUsagePercent > this.config.alertThreshold) {
@@ -278,11 +262,9 @@ var MemoryMonitor = /** @class */ (function () {
         });
       }
     }
-    alerts.forEach(function (alert) {
-      _this.alerts.push(alert);
-      _this.alertObservers.forEach(function (observer) {
-        return observer(alert);
-      });
+    alerts.forEach((alert) => {
+      this.alerts.push(alert);
+      this.alertObservers.forEach((observer) => observer(alert));
     });
     // Limit alerts to prevent memory issues
     if (this.alerts.length > 50) {
@@ -293,18 +275,15 @@ var MemoryMonitor = /** @class */ (function () {
   // PUBLIC API
   // =====================================================================================
   MemoryMonitor.prototype.startMonitoring = function () {
-    var _this = this;
     if (this.isMonitoring) return;
     this.isMonitoring = true;
-    this.intervalId = window.setInterval(function () {
-      var snapshot = _this.createSnapshot();
+    this.intervalId = window.setInterval(() => {
+      var snapshot = this.createSnapshot();
       if (snapshot) {
-        _this.checkForAlerts(snapshot.metrics);
-        _this.observers.forEach(function (observer) {
-          return observer(snapshot.metrics);
-        });
-        if (_this.config.enableAutoCleanup) {
-          _this.performAutoCleanup(snapshot.metrics);
+        this.checkForAlerts(snapshot.metrics);
+        this.observers.forEach((observer) => observer(snapshot.metrics));
+        if (this.config.enableAutoCleanup) {
+          this.performAutoCleanup(snapshot.metrics);
         }
       }
     }, this.config.samplingInterval);
@@ -330,20 +309,14 @@ var MemoryMonitor = /** @class */ (function () {
     return this.getCurrentMemoryMetrics();
   };
   MemoryMonitor.prototype.subscribe = function (observer) {
-    var _this = this;
     this.observers.add(observer);
-    return function () {
-      return _this.observers.delete(observer);
-    };
+    return () => this.observers.delete(observer);
   };
   MemoryMonitor.prototype.subscribeToAlerts = function (observer) {
-    var _this = this;
     this.alertObservers.add(observer);
-    return function () {
-      return _this.alertObservers.delete(observer);
-    };
+    return () => this.alertObservers.delete(observer);
   };
-  MemoryMonitor.prototype.forceGarbageCollection = function () {
+  MemoryMonitor.prototype.forceGarbageCollection = () => {
     if (window.gc) {
       window.gc();
     } else {
@@ -391,20 +364,12 @@ var MemoryMonitor = /** @class */ (function () {
         stability: "unknown",
       };
     }
-    var usages = this.snapshots.map(function (s) {
-      return s.metrics.usedJSHeapSize;
-    });
-    var averageUsage =
-      usages.reduce(function (sum, val) {
-        return sum + val;
-      }, 0) / usages.length;
+    var usages = this.snapshots.map((s) => s.metrics.usedJSHeapSize);
+    var averageUsage = usages.reduce((sum, val) => sum + val, 0) / usages.length;
     var peakUsage = Math.max.apply(Math, usages);
     var growthRate = (usages[usages.length - 1] - usages[0]) / usages[0];
     // Calculate stability (coefficient of variation)
-    var variance =
-      usages.reduce(function (sum, val) {
-        return sum + Math.pow(val - averageUsage, 2);
-      }, 0) / usages.length;
+    var variance = usages.reduce((sum, val) => sum + (val - averageUsage) ** 2, 0) / usages.length;
     var standardDeviation = Math.sqrt(variance);
     var coefficientOfVariation = standardDeviation / averageUsage;
     var stability;
@@ -438,20 +403,14 @@ var MemoryMonitor = /** @class */ (function () {
         "Potential memory leak detected. Review event listeners and component cleanup.",
       );
     }
-    if (
-      this.alerts.filter(function (a) {
-        return a.type === "critical";
-      }).length > 0
-    ) {
+    if (this.alerts.filter((a) => a.type === "critical").length > 0) {
       recommendations.push("Critical memory alerts detected. Immediate action required.");
     }
     return recommendations;
   };
   MemoryMonitor.prototype.cleanup = function () {
     this.stopMonitoring();
-    this.cleanupTasks.forEach(function (task) {
-      return task();
-    });
+    this.cleanupTasks.forEach((task) => task());
     this.cleanupTasks.clear();
     this.observers.clear();
     this.alertObservers.clear();
@@ -465,9 +424,7 @@ exports.MemoryMonitor = MemoryMonitor;
 // REACT HOOKS
 // =====================================================================================
 function useMemoryMonitor(config) {
-  var monitor = (0, react_1.useState)(function () {
-    return new MemoryMonitor(config);
-  })[0];
+  var monitor = (0, react_1.useState)(() => new MemoryMonitor(config))[0];
   var _a = (0, react_1.useState)(null),
     metrics = _a[0],
     setMetrics = _a[1];
@@ -477,54 +434,33 @@ function useMemoryMonitor(config) {
   var _c = (0, react_1.useState)(false),
     isMonitoring = _c[0],
     setIsMonitoring = _c[1];
-  (0, react_1.useEffect)(
-    function () {
-      var unsubscribeMetrics = monitor.subscribe(setMetrics);
-      var unsubscribeAlerts = monitor.subscribeToAlerts(function (alert) {
-        setAlerts(function (prev) {
-          return __spreadArray(__spreadArray([], prev, true), [alert], false).slice(-10);
-        }); // Keep last 10 alerts
-      });
-      return function () {
-        unsubscribeMetrics();
-        unsubscribeAlerts();
-        monitor.cleanup();
-      };
-    },
-    [monitor],
-  );
-  var startMonitoring = (0, react_1.useCallback)(
-    function () {
-      monitor.startMonitoring();
-      setIsMonitoring(true);
-    },
-    [monitor],
-  );
-  var stopMonitoring = (0, react_1.useCallback)(
-    function () {
-      monitor.stopMonitoring();
-      setIsMonitoring(false);
-    },
-    [monitor],
-  );
+  (0, react_1.useEffect)(() => {
+    var unsubscribeMetrics = monitor.subscribe(setMetrics);
+    var unsubscribeAlerts = monitor.subscribeToAlerts((alert) => {
+      setAlerts((prev) => __spreadArray(__spreadArray([], prev, true), [alert], false).slice(-10)); // Keep last 10 alerts
+    });
+    return () => {
+      unsubscribeMetrics();
+      unsubscribeAlerts();
+      monitor.cleanup();
+    };
+  }, [monitor]);
+  var startMonitoring = (0, react_1.useCallback)(() => {
+    monitor.startMonitoring();
+    setIsMonitoring(true);
+  }, [monitor]);
+  var stopMonitoring = (0, react_1.useCallback)(() => {
+    monitor.stopMonitoring();
+    setIsMonitoring(false);
+  }, [monitor]);
   var takeSnapshot = (0, react_1.useCallback)(
-    function (context) {
-      return monitor.takeSnapshot(context);
-    },
+    (context) => monitor.takeSnapshot(context),
     [monitor],
   );
-  var generateReport = (0, react_1.useCallback)(
-    function () {
-      return monitor.generateReport();
-    },
-    [monitor],
-  );
-  var forceGC = (0, react_1.useCallback)(
-    function () {
-      monitor.forceGarbageCollection();
-    },
-    [monitor],
-  );
+  var generateReport = (0, react_1.useCallback)(() => monitor.generateReport(), [monitor]);
+  var forceGC = (0, react_1.useCallback)(() => {
+    monitor.forceGarbageCollection();
+  }, [monitor]);
   return {
     metrics: metrics,
     alerts: alerts,
@@ -545,19 +481,16 @@ function useMemoryAlert(threshold) {
     alert = _a[0],
     setAlert = _a[1];
   var monitor = (0, react_1.useRef)(null);
-  (0, react_1.useEffect)(
-    function () {
-      monitor.current = new MemoryMonitor({ alertThreshold: threshold });
-      var unsubscribe = monitor.current.subscribeToAlerts(setAlert);
-      monitor.current.startMonitoring();
-      return function () {
-        var _a;
-        unsubscribe();
-        (_a = monitor.current) === null || _a === void 0 ? void 0 : _a.cleanup();
-      };
-    },
-    [threshold],
-  );
+  (0, react_1.useEffect)(() => {
+    monitor.current = new MemoryMonitor({ alertThreshold: threshold });
+    var unsubscribe = monitor.current.subscribeToAlerts(setAlert);
+    monitor.current.startMonitoring();
+    return () => {
+      var _a;
+      unsubscribe();
+      (_a = monitor.current) === null || _a === void 0 ? void 0 : _a.cleanup();
+    };
+  }, [threshold]);
   return alert;
 }
 // =====================================================================================
@@ -568,12 +501,12 @@ function formatBytes(bytes) {
   var k = 1024;
   var sizes = ["B", "KB", "MB", "GB"];
   var i = Math.floor(Math.log(bytes) / Math.log(k));
-  return "".concat(parseFloat((bytes / Math.pow(k, i)).toFixed(1)), " ").concat(sizes[i]);
+  return "".concat(parseFloat((bytes / k ** i).toFixed(1)), " ").concat(sizes[i]);
 }
 function createMemoryProfiler() {
   var profiles = [];
   return {
-    start: function (name) {
+    start: (name) => {
       var memory = performance.memory;
       profiles.push({
         name: name,
@@ -581,10 +514,8 @@ function createMemoryProfiler() {
         memory: memory ? __assign({}, memory) : null,
       });
     },
-    end: function (name) {
-      var profile = profiles.find(function (p) {
-        return p.name === name && !p.end;
-      });
+    end: (name) => {
+      var profile = profiles.find((p) => p.name === name && !p.end);
       if (profile) {
         profile.end = performance.now();
         var currentMemory = performance.memory;
@@ -598,9 +529,7 @@ function createMemoryProfiler() {
         }
       }
     },
-    getProfiles: function () {
-      return __spreadArray([], profiles, true);
-    },
+    getProfiles: () => __spreadArray([], profiles, true),
   };
 }
 // Global instance

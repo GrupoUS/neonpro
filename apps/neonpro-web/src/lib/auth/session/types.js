@@ -1,4 +1,3 @@
-"use strict";
 /**
  * 🔐 Tipos e Interfaces do Sistema de Gerenciamento de Sessões
  *

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/app/utils/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
 import EmailService from "@/app/lib/services/email-service";
+import { createClient } from "@/app/utils/supabase/server";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {

@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import type { toast } from "sonner";
-import type { CalendarNavigation, type CalendarView } from "./calendar-navigation";
-import type { DayView } from "./day-view";
-import type { WeekView } from "./week-view";
-import type { MonthView } from "./month-view";
 import type { AppointmentWithRelations } from "@/app/lib/types/appointments";
+import type { CalendarNavigation, CalendarView } from "./calendar-navigation";
+import type { DayView } from "./day-view";
+import type { MonthView } from "./month-view";
+import type { WeekView } from "./week-view";
 
 interface CalendarViewProps {
   appointments: AppointmentWithRelations[];

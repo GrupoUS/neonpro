@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import type {
-  useSessionSecurity,
-  useSessionTimeout,
-} from "@/lib/security/hooks/useSessionSecurity";
-import type { useCSRFToken } from "@/lib/security/csrf-protection-hooks";
+import type { AlertTriangle, CheckCircle, Clock, Shield, XCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,10 +12,11 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type { Shield, Clock, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import type { useCSRFToken } from "@/lib/security/csrf-protection-hooks";
+import type {
+  useSessionSecurity,
+  useSessionTimeout,
+} from "@/lib/security/hooks/useSessionSecurity";
 
 /**
  * SessionSecurityDemo Component

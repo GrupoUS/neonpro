@@ -5,7 +5,12 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import type { AlertTriangle, Clock, RotateCcw, Save, Settings, Shield, Users } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import type { toast } from "sonner";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -13,18 +18,13 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Switch } from "@/components/ui/switch";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Separator } from "@/components/ui/separator";
-import type { Clock, Shield, Users, Settings, Save, RotateCcw, AlertTriangle } from "lucide-react";
-import type { UserRole } from "@/types/auth";
+import type { Switch } from "@/components/ui/switch";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { SessionTimeoutConfig } from "@/lib/auth/intelligent-session-timeout";
-import type { toast } from "sonner";
+import type { UserRole } from "@/types/auth";
 
 interface SessionTimeoutConfigProps {
   onConfigUpdate?: (role: UserRole, config: SessionTimeoutConfig) => void;

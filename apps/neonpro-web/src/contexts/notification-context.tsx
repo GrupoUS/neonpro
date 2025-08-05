@@ -1,9 +1,13 @@
 "use client";
 
-import React, { createContext, useContext, useEffect } from "react";
+import type React from "react";
+import { createContext, useContext, useEffect } from "react";
 import type { toast } from "sonner";
-import type { useNotifications } from "@/hooks/use-notifications";
-import type { Notification, NotificationPreferences } from "@/hooks/use-notifications";
+import type {
+  Notification,
+  NotificationPreferences,
+  useNotifications,
+} from "@/hooks/use-notifications";
 
 interface NotificationContextValue {
   // State from hook

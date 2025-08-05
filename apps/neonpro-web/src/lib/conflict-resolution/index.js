@@ -1,56 +1,52 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -70,13 +66,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -98,9 +94,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -172,7 +166,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResourceOptimizer =
   exports.ResolutionEngine =
@@ -190,7 +184,7 @@ var types_1 = require("./types");
  * This system provides comprehensive conflict detection, resolution, and resource optimization
  * for healthcare scheduling and resource management.
  */
-var IntelligentConflictResolutionSystem = /** @class */ (function () {
+var IntelligentConflictResolutionSystem = /** @class */ (() => {
   function IntelligentConflictResolutionSystem(
     supabaseUrl,
     supabaseKey,
@@ -669,11 +663,10 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
    * Start automated conflict detection
    */
   IntelligentConflictResolutionSystem.prototype.startAutomatedConflictDetection = function () {
-    var _this = this;
     // Run every 30 minutes
     setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_4;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -698,15 +691,14 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       30 * 60 * 1000,
     );
   };
   /**
    * Stop automated conflict detection
    */
-  IntelligentConflictResolutionSystem.prototype.stopAutomatedConflictDetection = function () {
+  IntelligentConflictResolutionSystem.prototype.stopAutomatedConflictDetection = () => {
     // Implementation would clear the interval
     // This is a simplified version
   };
@@ -786,7 +778,7 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
   /**
    * Calculate average resolution time
    */
-  IntelligentConflictResolutionSystem.prototype.calculateAverageResolutionTime = function () {
+  IntelligentConflictResolutionSystem.prototype.calculateAverageResolutionTime = () => {
     // Simplified implementation
     return 15; // minutes
   };
@@ -805,7 +797,7 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
     endDate,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze conflict patterns, types, frequencies, etc.
         return [
           2 /*return*/,
@@ -829,7 +821,7 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
     endDate,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze resolution effectiveness, strategies used, etc.
         return [
           2 /*return*/,
@@ -853,7 +845,7 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
     endDate,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze optimization impact, ROI, etc.
         return [
           2 /*return*/,
@@ -877,7 +869,7 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
     endDate,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use historical data to predict future conflicts and resource needs
         return [
           2 /*return*/,
@@ -896,7 +888,7 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
    */
   IntelligentConflictResolutionSystem.prototype.calculateTrends = function (startDate, endDate) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze trends in conflicts, resolutions, and optimizations
         return [
           2 /*return*/,
@@ -916,7 +908,7 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
    */
   IntelligentConflictResolutionSystem.prototype.generateSystemRecommendations = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would analyze system performance and suggest improvements
         return [2 /*return*/, []];
       });
@@ -927,7 +919,7 @@ var IntelligentConflictResolutionSystem = /** @class */ (function () {
    */
   IntelligentConflictResolutionSystem.prototype.getConflictById = function (conflictId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would fetch from database
         return [2 /*return*/, null];
       });
@@ -1003,23 +995,17 @@ __exportStar(require("./types"), exports);
 var conflict_detector_2 = require("./conflict-detector");
 Object.defineProperty(exports, "ConflictDetector", {
   enumerable: true,
-  get: function () {
-    return conflict_detector_2.ConflictDetector;
-  },
+  get: () => conflict_detector_2.ConflictDetector,
 });
 var resolution_engine_2 = require("./resolution-engine");
 Object.defineProperty(exports, "ResolutionEngine", {
   enumerable: true,
-  get: function () {
-    return resolution_engine_2.ResolutionEngine;
-  },
+  get: () => resolution_engine_2.ResolutionEngine,
 });
 var resource_optimizer_2 = require("./resource-optimizer");
 Object.defineProperty(exports, "ResourceOptimizer", {
   enumerable: true,
-  get: function () {
-    return resource_optimizer_2.ResourceOptimizer;
-  },
+  get: () => resource_optimizer_2.ResourceOptimizer,
 });
 // Default export
 exports.default = IntelligentConflictResolutionSystem;

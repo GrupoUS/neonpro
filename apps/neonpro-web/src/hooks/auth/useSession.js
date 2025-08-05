@@ -1,4 +1,3 @@
-"use strict";
 // =====================================================
 // useSession Hook - React Session Management
 // Story 1.4: Session Management & Security
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useSession = useSession;
 var react_1 = require("react");
@@ -161,7 +158,6 @@ var sonner_1 = require("sonner");
 // MAIN HOOK
 // =====================================================
 function useSession(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -202,44 +198,39 @@ function useSession(options) {
   // =====================================================
   // INITIALIZATION
   // =====================================================
-  (0, react_1.useEffect)(
-    function () {
-      if (!supabase) return;
-      // Initialize session system
-      sessionSystemRef.current = new session_1.UnifiedSessionSystem(supabase);
-      sessionSystemRef.current.initialize().then(function () {
-        // Check for existing session
-        checkExistingSession();
-      });
-      return function () {
-        // Cleanup intervals
-        if (refreshIntervalRef.current) {
-          clearInterval(refreshIntervalRef.current);
-        }
-        if (expiryTimerRef.current) {
-          clearTimeout(expiryTimerRef.current);
-        }
-      };
-    },
-    [supabase],
-  );
+  (0, react_1.useEffect)(() => {
+    if (!supabase) return;
+    // Initialize session system
+    sessionSystemRef.current = new session_1.UnifiedSessionSystem(supabase);
+    sessionSystemRef.current.initialize().then(() => {
+      // Check for existing session
+      checkExistingSession();
+    });
+    return () => {
+      // Cleanup intervals
+      if (refreshIntervalRef.current) {
+        clearInterval(refreshIntervalRef.current);
+      }
+      if (expiryTimerRef.current) {
+        clearTimeout(expiryTimerRef.current);
+      }
+    };
+  }, [supabase]);
   // =====================================================
   // SESSION MANAGEMENT
   // =====================================================
   var checkExistingSession = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var sessionId, deviceInfo, validation, error_1;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, , 4]);
               sessionId = localStorage.getItem("session_id");
               if (!sessionId) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), { isLoading: false });
-                });
+                setState((prev) => __assign(__assign({}, prev), { isLoading: false }));
                 return [2 /*return*/];
               }
               return [4 /*yield*/, getDeviceInfo()];
@@ -276,9 +267,7 @@ function useSession(options) {
               } else {
                 // Invalid session, clear storage
                 localStorage.removeItem("session_id");
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), { isLoading: false });
-                });
+                setState((prev) => __assign(__assign({}, prev), { isLoading: false }));
               }
               return [3 /*break*/, 4];
             case 3:
@@ -296,22 +285,19 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [autoRefresh],
   );
   var login = (0, react_1.useCallback)(
-    function (credentials, deviceInfo) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (credentials, deviceInfo) =>
+      __awaiter(this, void 0, void 0, function () {
         var result_1, error_2, errorMessage_1;
         var _a, _b;
-        return __generator(this, function (_c) {
+        return __generator(this, (_c) => {
           switch (_c.label) {
             case 0:
               _c.trys.push([0, 2, , 3]);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: true, error: null });
-              });
+              setState((prev) => __assign(__assign({}, prev), { isLoading: true, error: null }));
               return [
                 4 /*yield*/,
                 (_a = sessionSystemRef.current) === null || _a === void 0
@@ -357,14 +343,14 @@ function useSession(options) {
                 }
                 return [2 /*return*/, true];
               } else {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     isLoading: false,
                     error:
                       (result_1 === null || result_1 === void 0 ? void 0 : result_1.error) ||
                       "Login failed",
-                  });
-                });
+                  }),
+                );
                 if (showWarnings) {
                   sonner_1.toast.error(
                     (result_1 === null || result_1 === void 0 ? void 0 : result_1.error) ||
@@ -377,9 +363,9 @@ function useSession(options) {
             case 2:
               error_2 = _c.sent();
               errorMessage_1 = error_2 instanceof Error ? error_2.message : "Login failed";
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { isLoading: false, error: errorMessage_1 });
-              });
+              setState((prev) =>
+                __assign(__assign({}, prev), { isLoading: false, error: errorMessage_1 }),
+              );
               if (showWarnings) {
                 sonner_1.toast.error(errorMessage_1);
               }
@@ -388,15 +374,14 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [autoRefresh, showWarnings],
   );
   var logout = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var sessionId, error_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 3, , 4]);
@@ -447,16 +432,15 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [router, redirectOnExpiry, showWarnings],
   );
   var refreshSession = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var sessionId, deviceInfo, validation_1, error_4;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 6, , 7]);
@@ -481,13 +465,13 @@ function useSession(options) {
                 )
               )
                 return [3 /*break*/, 3];
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   session: validation_1.session,
                   securityScore: validation_1.securityScore,
                   error: null,
-                });
-              });
+                }),
+              );
               // Update expiry timer
               startExpiryTimer(validation_1.session.expiresAt);
               // Update session stats
@@ -505,25 +489,24 @@ function useSession(options) {
             case 6:
               error_4 = _b.sent();
               console.error("Session refresh error:", error_4);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   error: error_4 instanceof Error ? error_4.message : "Session refresh failed",
-                });
-              });
+                }),
+              );
               return [3 /*break*/, 7];
             case 7:
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [logout],
   );
   var extendSession = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var sessionId, result_2, error_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -536,13 +519,13 @@ function useSession(options) {
             case 1:
               result_2 = _a.sent();
               if (result_2.success && result_2.newExpiresAt) {
-                setState(function (prev) {
-                  return __assign(__assign({}, prev), {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
                     session: prev.session
                       ? __assign(__assign({}, prev.session), { expiresAt: result_2.newExpiresAt })
                       : null,
-                  });
-                });
+                  }),
+                );
                 // Update expiry timer
                 startExpiryTimer(result_2.newExpiresAt);
                 if (showWarnings) {
@@ -561,50 +544,52 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [showWarnings],
   );
-  var validateSession = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var sessionId, deviceInfo, validation, error_6;
-      var _a;
-      return __generator(this, function (_b) {
-        switch (_b.label) {
-          case 0:
-            _b.trys.push([0, 3, , 4]);
-            sessionId = localStorage.getItem("session_id");
-            if (!sessionId) return [2 /*return*/, false];
-            return [4 /*yield*/, getDeviceInfo()];
-          case 1:
-            deviceInfo = _b.sent();
-            return [
-              4 /*yield*/,
-              (_a = sessionSystemRef.current) === null || _a === void 0
-                ? void 0
-                : _a.validateSession(sessionId, deviceInfo.ipAddress, deviceInfo.userAgent),
-            ];
-          case 2:
-            validation = _b.sent();
-            return [
-              2 /*return*/,
-              (validation === null || validation === void 0 ? void 0 : validation.isValid) || false,
-            ];
-          case 3:
-            error_6 = _b.sent();
-            console.error("Session validation error:", error_6);
-            return [2 /*return*/, false];
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var validateSession = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var sessionId, deviceInfo, validation, error_6;
+        var _a;
+        return __generator(this, (_b) => {
+          switch (_b.label) {
+            case 0:
+              _b.trys.push([0, 3, , 4]);
+              sessionId = localStorage.getItem("session_id");
+              if (!sessionId) return [2 /*return*/, false];
+              return [4 /*yield*/, getDeviceInfo()];
+            case 1:
+              deviceInfo = _b.sent();
+              return [
+                4 /*yield*/,
+                (_a = sessionSystemRef.current) === null || _a === void 0
+                  ? void 0
+                  : _a.validateSession(sessionId, deviceInfo.ipAddress, deviceInfo.userAgent),
+              ];
+            case 2:
+              validation = _b.sent();
+              return [
+                2 /*return*/,
+                (validation === null || validation === void 0 ? void 0 : validation.isValid) ||
+                  false,
+              ];
+            case 3:
+              error_6 = _b.sent();
+              console.error("Session validation error:", error_6);
+              return [2 /*return*/, false];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var updateActivity = (0, react_1.useCallback)(
-    function (activityType, metadata) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (activityType, metadata) =>
+      __awaiter(this, void 0, void 0, function () {
         var sessionId, error_7;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 2, , 3]);
@@ -635,30 +620,26 @@ function useSession(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [trackActivity, state.session],
   );
   // =====================================================
   // HELPER FUNCTIONS
   // =====================================================
-  var startAutoRefresh = (0, react_1.useCallback)(
-    function () {
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
-      refreshIntervalRef.current = setInterval(function () {
-        refreshSession();
-      }, refreshInterval);
-    },
-    [refreshSession, refreshInterval],
-  );
+  var startAutoRefresh = (0, react_1.useCallback)(() => {
+    if (refreshIntervalRef.current) {
+      clearInterval(refreshIntervalRef.current);
+    }
+    refreshIntervalRef.current = setInterval(() => {
+      refreshSession();
+    }, refreshInterval);
+  }, [refreshSession, refreshInterval]);
   var startExpiryTimer = (0, react_1.useCallback)(
-    function (expiresAt) {
+    (expiresAt) => {
       if (expiryTimerRef.current) {
         clearTimeout(expiryTimerRef.current);
       }
-      var updateTimer = function () {
+      var updateTimer = () => {
         var now = Date.now();
         var expiry = expiresAt.getTime();
         var timeLeft = expiry - now;
@@ -686,7 +667,7 @@ function useSession(options) {
     },
     [logout, extendSession, showWarnings],
   );
-  var updateSessionStats = (0, react_1.useCallback)(function (session) {
+  var updateSessionStats = (0, react_1.useCallback)((session) => {
     var now = Date.now();
     var duration = now - session.createdAt.getTime();
     setSessionStats({
@@ -733,7 +714,7 @@ function getDeviceInfo() {
   return __awaiter(this, void 0, void 0, function () {
     var fingerprint, ipAddress;
     var _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           return [
@@ -764,7 +745,7 @@ function getDeviceInfo() {
 function generateDeviceFingerprint() {
   return __awaiter(this, void 0, void 0, function () {
     var canvas, ctx, fingerprint, hash, i, char;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       canvas = document.createElement("canvas");
       ctx = canvas.getContext("2d");
       ctx === null || ctx === void 0 ? void 0 : ctx.fillText("Device fingerprint", 10, 10);
@@ -791,7 +772,7 @@ function generateDeviceFingerprint() {
 function getClientIP() {
   return __awaiter(this, void 0, void 0, function () {
     var response, data, _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);
@@ -817,7 +798,7 @@ function getClientIP() {
 function getLocation() {
   return __awaiter(this, void 0, void 0, function () {
     var response, data, _a;
-    return __generator(this, function (_b) {
+    return __generator(this, (_b) => {
       switch (_b.label) {
         case 0:
           _b.trys.push([0, 3, , 4]);

@@ -9,19 +9,19 @@
 
 import type { createClient, RealtimeChannel } from "@supabase/supabase-js";
 import type {
-  SchedulingConflict,
   ConflictDetectionConfig,
-  ConflictDetectionResponse,
-  ConflictDetectionEvent,
-  RealtimeNotification,
-  SystemStatus,
   ConflictDetectionError,
-  EnhancedAppointment,
+  ConflictDetectionEvent,
+  ConflictDetectionResponse,
   ConflictType,
-  SeverityLevel,
+  EnhancedAppointment,
   NotificationType,
+  RealtimeNotification,
   ResolutionRecommendation,
+  SchedulingConflict,
+  SeverityLevel,
   StrategyType,
+  SystemStatus,
 } from "./conflict-types";
 
 /**

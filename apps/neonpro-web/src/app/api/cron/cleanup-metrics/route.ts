@@ -1,7 +1,3 @@
-import type { NextResponse } from "next/server";
-import type { performanceMonitor } from "@/lib/monitoring/performance-monitor";
-import type { intelligentErrorHandler } from "@/lib/error-handling/intelligent-error-handler";
-
 /**
  * 🧹 Metrics Cleanup Cron Job
  *

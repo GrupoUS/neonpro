@@ -1,5 +1,20 @@
 "use client";
 
+import type {
+  Building,
+  Loader2,
+  Mail,
+  MoreHorizontal,
+  Pencil,
+  Phone,
+  Plus,
+  Search,
+  ToggleLeft,
+  ToggleRight,
+  Trash2,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { toast } from "sonner";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type { Card, CardContent } from "@/components/ui/card";
@@ -35,21 +50,6 @@ import type {
 } from "@/components/ui/table";
 import type { VendorService } from "@/lib/services/vendors";
 import type { Vendor, VendorFilters } from "@/lib/types/accounts-payable";
-import type {
-  Building,
-  Loader2,
-  Mail,
-  MoreHorizontal,
-  Pencil,
-  Phone,
-  Plus,
-  Search,
-  ToggleLeft,
-  ToggleRight,
-  Trash2,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
-import type { toast } from "sonner";
 import type { VendorForm } from "./vendor-form";
 
 export function VendorList() {

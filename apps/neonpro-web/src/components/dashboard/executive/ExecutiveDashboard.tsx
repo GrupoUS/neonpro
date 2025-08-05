@@ -1,9 +1,38 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { endOfMonth, endOfWeek, format, startOfMonth, startOfWeek, subDays } from "date-fns";
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  Bell,
+  Brain,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  EyeOff,
+  Filter,
+  Grid3X3,
+  LayoutDashboard,
+  LineChart,
+  List,
+  Maximize2,
+  Minimize2,
+  PieChart,
+  RefreshCw,
+  Settings,
+  Share,
+  Target,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Select,
   SelectContent,
@@ -11,51 +40,20 @@ import type {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { Badge } from "@/components/ui/badge";
 import type { Separator } from "@/components/ui/separator";
-import type {
-  LayoutDashboard,
-  Settings,
-  RefreshCw,
-  Download,
-  Share,
-  Bell,
-  Calendar,
-  Filter,
-  Maximize2,
-  Minimize2,
-  Eye,
-  EyeOff,
-  Grid3X3,
-  List,
-  BarChart3,
-  PieChart,
-  LineChart,
-  TrendingUp,
-  Users,
-  DollarSign,
-  Activity,
-  Clock,
-  Target,
-  AlertTriangle,
-  CheckCircle,
-  Brain,
-} from "lucide-react";
-import type { format, subDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from "date-fns";
-
-// Import dashboard components
-import type { ExecutiveSummary } from "./ExecutiveSummary";
-import type { PerformanceMetrics } from "./PerformanceMetrics";
-import type { DashboardGrid } from "./DashboardGrid";
-import type { MetricWidget } from "./MetricWidget";
-import type { ChartWidget } from "./ChartWidget";
-import type { AlertPanel } from "./AlertPanel";
-import type { FilterPanel } from "./FilterPanel";
-import type { ExecutiveReportGenerator } from "./ExecutiveReportGenerator";
-import type { KPICard } from "./KPICard";
-
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Import dashboard engine
 import type { ExecutiveDashboardEngine } from "@/lib/dashboard/executive-dashboard-engine";
+import type { AlertPanel } from "./AlertPanel";
+import type { ChartWidget } from "./ChartWidget";
+import type { DashboardGrid } from "./DashboardGrid";
+import type { ExecutiveReportGenerator } from "./ExecutiveReportGenerator";
+// Import dashboard components
+import type { ExecutiveSummary } from "./ExecutiveSummary";
+import type { FilterPanel } from "./FilterPanel";
+import type { KPICard } from "./KPICard";
+import type { MetricWidget } from "./MetricWidget";
+import type { PerformanceMetrics } from "./PerformanceMetrics";
 
 // Types
 interface DashboardState {

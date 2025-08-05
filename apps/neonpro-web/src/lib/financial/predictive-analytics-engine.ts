@@ -13,8 +13,8 @@
  * - Treatment demand forecasting
  */
 
-import type { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/database.types";
+import type { createClient } from "@/lib/supabase/client";
 
 // Prediction Types and Interfaces
 export interface PredictionModel {
@@ -449,21 +449,23 @@ export class createpredictiveAnalyticsEngine {
   private async getHistoricalData(clinicId: string, forecastType: ModelType): Promise<any[]> {
     // Get relevant historical data based on forecast type
     switch (forecastType) {
-      case "revenue_forecast":
+      case "revenue_forecast": {
         const { data: revenueData } = await this.supabase
           .from("cash_flow_daily")
           .select("date, total_inflows")
           .eq("clinic_id", clinicId)
           .order("date", { ascending: true });
         return revenueData || [];
+      }
 
-      case "cash_flow_prediction":
+      case "cash_flow_prediction": {
         const { data: cashFlowData } = await this.supabase
           .from("cash_flow_daily")
           .select("*")
           .eq("clinic_id", clinicId)
           .order("date", { ascending: true });
         return cashFlowData || [];
+      }
 
       default:
         return [];

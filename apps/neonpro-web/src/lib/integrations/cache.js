@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - Integration Cache System
  * High-performance caching system for third-party integrations
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheFactory =
   exports.SupabaseIntegrationCache =
@@ -166,9 +163,8 @@ var supabase_js_1 = require("@supabase/supabase-js");
  * Memory Cache Implementation
  * Fast in-memory cache with LRU eviction
  */
-var MemoryIntegrationCache = /** @class */ (function () {
+var MemoryIntegrationCache = /** @class */ (() => {
   function MemoryIntegrationCache(config) {
-    var _this = this;
     this.cache = new Map();
     this.accessOrder = [];
     this.stats = {
@@ -183,9 +179,7 @@ var MemoryIntegrationCache = /** @class */ (function () {
     this.config = __assign({ maxSize: 1000, defaultTtl: 300000, cleanupInterval: 60000 }, config);
     // Start cleanup interval
     if (this.config.cleanupInterval > 0) {
-      setInterval(function () {
-        return _this.cleanup();
-      }, this.config.cleanupInterval);
+      setInterval(() => this.cleanup(), this.config.cleanupInterval);
     }
   }
   /**
@@ -339,12 +333,7 @@ var MemoryIntegrationCache = /** @class */ (function () {
           return [2 /*return*/, keys];
         }
         regex = new RegExp(pattern.replace(/\*/g, ".*"));
-        return [
-          2 /*return*/,
-          keys.filter(function (key) {
-            return regex.test(key);
-          }),
-        ];
+        return [2 /*return*/, keys.filter((key) => regex.test(key))];
       });
     });
   };
@@ -352,7 +341,7 @@ var MemoryIntegrationCache = /** @class */ (function () {
   /**
    * Serialize cache key to string
    */
-  MemoryIntegrationCache.prototype.serializeKey = function (key) {
+  MemoryIntegrationCache.prototype.serializeKey = (key) => {
     if (typeof key === "string") {
       return key;
     }
@@ -439,7 +428,7 @@ exports.MemoryIntegrationCache = MemoryIntegrationCache;
  * Redis Cache Implementation
  * Distributed cache using Redis for multi-instance deployments
  */
-var RedisIntegrationCache = /** @class */ (function () {
+var RedisIntegrationCache = /** @class */ (() => {
   function RedisIntegrationCache(redisClient, config) {
     this.stats = {
       hits: 0,
@@ -681,12 +670,7 @@ var RedisIntegrationCache = /** @class */ (function () {
           case 1:
             keys = _a.sent();
             // Remove prefix from keys
-            return [
-              2 /*return*/,
-              keys.map(function (key) {
-                return key.replace(_this.config.keyPrefix, "");
-              }),
-            ];
+            return [2 /*return*/, keys.map((key) => key.replace(_this.config.keyPrefix, ""))];
           case 2:
             error_8 = _a.sent();
             console.error("Redis cache keys error:", error_8);
@@ -708,7 +692,7 @@ var RedisIntegrationCache = /** @class */ (function () {
   /**
    * Serialize cache key to string
    */
-  RedisIntegrationCache.prototype.serializeKey = function (key) {
+  RedisIntegrationCache.prototype.serializeKey = (key) => {
     if (typeof key === "string") {
       return key;
     }
@@ -736,9 +720,8 @@ exports.RedisIntegrationCache = RedisIntegrationCache;
  * Supabase Cache Implementation
  * Database-backed cache using Supabase for persistence
  */
-var SupabaseIntegrationCache = /** @class */ (function () {
+var SupabaseIntegrationCache = /** @class */ (() => {
   function SupabaseIntegrationCache(supabaseUrl, supabaseKey, config) {
-    var _this = this;
     this.stats = {
       hits: 0,
       misses: 0,
@@ -759,9 +742,7 @@ var SupabaseIntegrationCache = /** @class */ (function () {
       });
     }
     // Start cleanup interval
-    setInterval(function () {
-      return _this.cleanup();
-    }, 300000); // 5 minutes
+    setInterval(() => this.cleanup(), 300000); // 5 minutes
   }
   /**
    * Get value from cache (L1 memory + L2 database)
@@ -1106,12 +1087,7 @@ var SupabaseIntegrationCache = /** @class */ (function () {
             if (error) {
               throw new Error("Failed to get keys: ".concat(error.message));
             }
-            return [
-              2 /*return*/,
-              (data || []).map(function (item) {
-                return item.key;
-              }),
-            ];
+            return [2 /*return*/, (data || []).map((item) => item.key)];
           case 2:
             error_16 = _b.sent();
             console.error("Supabase cache keys error:", error_16);
@@ -1126,7 +1102,7 @@ var SupabaseIntegrationCache = /** @class */ (function () {
   /**
    * Serialize cache key to string
    */
-  SupabaseIntegrationCache.prototype.serializeKey = function (key) {
+  SupabaseIntegrationCache.prototype.serializeKey = (key) => {
     if (typeof key === "string") {
       return key;
     }
@@ -1187,12 +1163,12 @@ exports.SupabaseIntegrationCache = SupabaseIntegrationCache;
  * Cache Factory
  * Creates appropriate cache implementation based on configuration
  */
-var CacheFactory = /** @class */ (function () {
+var CacheFactory = /** @class */ (() => {
   function CacheFactory() {}
   /**
    * Create cache instance based on type
    */
-  CacheFactory.createCache = function (type, config, options) {
+  CacheFactory.createCache = (type, config, options) => {
     switch (type) {
       case "memory":
         return new MemoryIntegrationCache(config);

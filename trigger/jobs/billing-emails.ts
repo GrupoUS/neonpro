@@ -1,7 +1,7 @@
-import { createClient } from "@/app/utils/supabase/server";
 import { logger, task } from "@trigger.dev/sdk/v3";
 import { Resend } from "resend";
-import { JOB_IDS, type InvoiceJobPayload } from "../client";
+import { createClient } from "@/app/utils/supabase/server";
+import { type InvoiceJobPayload, JOB_IDS } from "../client";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -59,7 +59,7 @@ export const invoiceEmailDelivery = task({
 
       // Calcular informações da fatura
       const services = invoice.billing_services || [];
-      const subtotal = services.reduce((sum, service) => sum + service.total_price, 0);
+      const _subtotal = services.reduce((sum, service) => sum + service.total_price, 0);
       const dueDate = new Date(invoice.due_date).toLocaleDateString("pt-BR");
       const invoiceDate = new Date(invoice.created_at).toLocaleDateString("pt-BR");
 

@@ -1,4 +1,3 @@
-"use strict";
 // Session Preservation System
 // Maintains session state during reconnections and network failures
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,12 +144,12 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionPreservationManager = void 0;
 var session_config_1 = require("@/lib/auth/config/session-config");
 var session_utils_1 = require("@/lib/auth/utils/session-utils");
-var SessionPreservationManager = /** @class */ (function () {
+var SessionPreservationManager = /** @class */ (() => {
   function SessionPreservationManager(config) {
     this.snapshots = new Map();
     this.currentState = new Map();
@@ -366,7 +363,7 @@ var SessionPreservationManager = /** @class */ (function () {
   SessionPreservationManager.prototype.captureAuthenticationState = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -406,7 +403,7 @@ var SessionPreservationManager = /** @class */ (function () {
   SessionPreservationManager.prototype.captureUserPreferences = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -472,15 +469,14 @@ var SessionPreservationManager = /** @class */ (function () {
    * Capture form states
    */
   SessionPreservationManager.prototype.captureFormStates = function () {
-    var _this = this;
     var forms = [];
     var formElements = document.querySelectorAll("form[data-preserve]");
-    formElements.forEach(function (form) {
+    formElements.forEach((form) => {
       var formId = form.getAttribute("data-preserve") || form.id;
       if (formId) {
         var formData = new FormData(form);
         var fields_1 = {};
-        formData.forEach(function (value, key) {
+        formData.forEach((value, key) => {
           fields_1[key] = value;
         });
         forms.push({
@@ -488,7 +484,7 @@ var SessionPreservationManager = /** @class */ (function () {
           fields: fields_1,
           isDirty: form.classList.contains("dirty"),
           isValid: form.classList.contains("valid"),
-          errors: _this.getFormErrors(form),
+          errors: this.getFormErrors(form),
           lastModified: Date.now(),
         });
       }
@@ -498,7 +494,7 @@ var SessionPreservationManager = /** @class */ (function () {
   /**
    * Capture cache state
    */
-  SessionPreservationManager.prototype.captureCacheState = function () {
+  SessionPreservationManager.prototype.captureCacheState = () => {
     var cache = {};
     var totalSize = 0;
     // Capture localStorage items
@@ -526,7 +522,7 @@ var SessionPreservationManager = /** @class */ (function () {
   SessionPreservationManager.prototype.capturePermissionState = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -563,7 +559,7 @@ var SessionPreservationManager = /** @class */ (function () {
   SessionPreservationManager.prototype.captureActivityState = function (sessionId) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_7;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -774,12 +770,7 @@ var SessionPreservationManager = /** @class */ (function () {
         if (!sessionSnapshots) {
           return [2 /*return*/, null];
         }
-        return [
-          2 /*return*/,
-          sessionSnapshots.find(function (s) {
-            return s.id === snapshotId;
-          }) || null,
-        ];
+        return [2 /*return*/, sessionSnapshots.find((s) => s.id === snapshotId) || null];
       });
     });
   };
@@ -793,7 +784,7 @@ var SessionPreservationManager = /** @class */ (function () {
   /**
    * Calculate checksum
    */
-  SessionPreservationManager.prototype.calculateChecksum = function (data) {
+  SessionPreservationManager.prototype.calculateChecksum = (data) => {
     var str = JSON.stringify(data);
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
@@ -813,35 +804,33 @@ var SessionPreservationManager = /** @class */ (function () {
     }
     var latestVersion = Math.max.apply(
       Math,
-      sessionSnapshots.map(function (s) {
-        return s.version;
-      }),
+      sessionSnapshots.map((s) => s.version),
     );
     return latestVersion + 1;
   };
   /**
    * Utility methods for capturing state
    */
-  SessionPreservationManager.prototype.getNavigationHistory = function () {
+  SessionPreservationManager.prototype.getNavigationHistory = () => {
     // Implementation depends on router used
     return [];
   };
-  SessionPreservationManager.prototype.getBreadcrumbs = function () {
+  SessionPreservationManager.prototype.getBreadcrumbs = () => {
     // Implementation depends on breadcrumb system
     return [];
   };
-  SessionPreservationManager.prototype.getTabStates = function () {
+  SessionPreservationManager.prototype.getTabStates = () => {
     // Implementation depends on tab system
     return [];
   };
-  SessionPreservationManager.prototype.getModalStates = function () {
+  SessionPreservationManager.prototype.getModalStates = () => {
     // Implementation depends on modal system
     return [];
   };
-  SessionPreservationManager.prototype.getFormErrors = function (form) {
+  SessionPreservationManager.prototype.getFormErrors = (form) => {
     var errors = {};
     var errorElements = form.querySelectorAll("[data-error]");
-    errorElements.forEach(function (element) {
+    errorElements.forEach((element) => {
       var field = element.getAttribute("data-field");
       var error = element.textContent;
       if (field && error) {
@@ -873,7 +862,7 @@ var SessionPreservationManager = /** @class */ (function () {
   SessionPreservationManager.prototype.getNetworkInfo = function () {
     return __awaiter(this, void 0, void 0, function () {
       var connection;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         connection = navigator.connection;
         return [
           2 /*return*/,
@@ -903,7 +892,7 @@ var SessionPreservationManager = /** @class */ (function () {
   };
   SessionPreservationManager.prototype.getLocationInfo = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Basic location info - in production, use proper geolocation service
         return [
           2 /*return*/,
@@ -917,7 +906,7 @@ var SessionPreservationManager = /** @class */ (function () {
       });
     });
   };
-  SessionPreservationManager.prototype.getPerformanceInfo = function () {
+  SessionPreservationManager.prototype.getPerformanceInfo = () => {
     var _a;
     var navigation = performance.getEntriesByType("navigation")[0];
     return {
@@ -940,7 +929,7 @@ var SessionPreservationManager = /** @class */ (function () {
   /**
    * Helper methods
    */
-  SessionPreservationManager.prototype.getDeviceType = function () {
+  SessionPreservationManager.prototype.getDeviceType = () => {
     var userAgent = navigator.userAgent;
     if (/tablet|ipad|playbook|silk/i.test(userAgent)) {
       return "tablet";
@@ -954,7 +943,7 @@ var SessionPreservationManager = /** @class */ (function () {
     }
     return "desktop";
   };
-  SessionPreservationManager.prototype.getOperatingSystem = function () {
+  SessionPreservationManager.prototype.getOperatingSystem = () => {
     var userAgent = navigator.userAgent;
     if (userAgent.indexOf("Win") !== -1) return "Windows";
     if (userAgent.indexOf("Mac") !== -1) return "macOS";
@@ -963,7 +952,7 @@ var SessionPreservationManager = /** @class */ (function () {
     if (userAgent.indexOf("iOS") !== -1) return "iOS";
     return "Unknown";
   };
-  SessionPreservationManager.prototype.getBrowserName = function () {
+  SessionPreservationManager.prototype.getBrowserName = () => {
     var userAgent = navigator.userAgent;
     if (userAgent.indexOf("Chrome") !== -1) return "Chrome";
     if (userAgent.indexOf("Firefox") !== -1) return "Firefox";
@@ -971,7 +960,7 @@ var SessionPreservationManager = /** @class */ (function () {
     if (userAgent.indexOf("Edge") !== -1) return "Edge";
     return "Unknown";
   };
-  SessionPreservationManager.prototype.getBrowserVersion = function () {
+  SessionPreservationManager.prototype.getBrowserVersion = () => {
     var _a;
     // Simplified version detection
     return (
@@ -979,7 +968,7 @@ var SessionPreservationManager = /** @class */ (function () {
       "Unknown"
     );
   };
-  SessionPreservationManager.prototype.isLocalStorageEnabled = function () {
+  SessionPreservationManager.prototype.isLocalStorageEnabled = () => {
     try {
       localStorage.setItem("test", "test");
       localStorage.removeItem("test");
@@ -994,7 +983,7 @@ var SessionPreservationManager = /** @class */ (function () {
   SessionPreservationManager.prototype.storeInLocalStorage = function (sessionId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var key;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         key = "neonpro_snapshot_".concat(sessionId);
         localStorage.setItem(key, JSON.stringify(data));
         return [2 /*return*/];
@@ -1003,28 +992,22 @@ var SessionPreservationManager = /** @class */ (function () {
   };
   SessionPreservationManager.prototype.storeInIndexedDB = function (sessionId, data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // IndexedDB implementation
         return [
           2 /*return*/,
-          new Promise(function (resolve, reject) {
+          new Promise((resolve, reject) => {
             var request = indexedDB.open("NeonProSnapshots", 1);
-            request.onerror = function () {
-              return reject(request.error);
-            };
-            request.onsuccess = function () {
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
               var db = request.result;
               var transaction = db.transaction(["snapshots"], "readwrite");
               var store = transaction.objectStore("snapshots");
               var putRequest = store.put(data, sessionId);
-              putRequest.onsuccess = function () {
-                return resolve();
-              };
-              putRequest.onerror = function () {
-                return reject(putRequest.error);
-              };
+              putRequest.onsuccess = () => resolve();
+              putRequest.onerror = () => reject(putRequest.error);
             };
-            request.onupgradeneeded = function () {
+            request.onupgradeneeded = () => {
               var db = request.result;
               if (!db.objectStoreNames.contains("snapshots")) {
                 db.createObjectStore("snapshots");
@@ -1038,14 +1021,14 @@ var SessionPreservationManager = /** @class */ (function () {
   SessionPreservationManager.prototype.storeInSessionStorage = function (sessionId, data) {
     return __awaiter(this, void 0, void 0, function () {
       var key;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         key = "neonpro_snapshot_".concat(sessionId);
         sessionStorage.setItem(key, JSON.stringify(data));
         return [2 /*return*/];
       });
     });
   };
-  SessionPreservationManager.prototype.storeInMemory = function (sessionId, data) {
+  SessionPreservationManager.prototype.storeInMemory = (sessionId, data) => {
     // Already stored in this.snapshots map
   };
   /**
@@ -1069,7 +1052,7 @@ var SessionPreservationManager = /** @class */ (function () {
   };
   SessionPreservationManager.prototype.encryptSnapshot = function (snapshot) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Simple encryption simulation
         return [
           2 /*return*/,
@@ -1083,7 +1066,7 @@ var SessionPreservationManager = /** @class */ (function () {
    */
   SessionPreservationManager.prototype.applyAuthenticationState = function (sessionId, auth) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -1103,7 +1086,7 @@ var SessionPreservationManager = /** @class */ (function () {
   };
   SessionPreservationManager.prototype.applyUserPreferences = function (sessionId, prefs) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -1121,18 +1104,18 @@ var SessionPreservationManager = /** @class */ (function () {
       });
     });
   };
-  SessionPreservationManager.prototype.applyNavigationState = function (nav) {
+  SessionPreservationManager.prototype.applyNavigationState = (nav) => {
     // Apply navigation state to current page
     if (nav.currentPath !== window.location.pathname) {
       // Navigate to preserved path if different
       window.history.pushState({}, "", nav.currentPath);
     }
   };
-  SessionPreservationManager.prototype.applyFormStates = function (forms) {
-    forms.forEach(function (formState) {
+  SessionPreservationManager.prototype.applyFormStates = (forms) => {
+    forms.forEach((formState) => {
       var form = document.querySelector('form[data-preserve="'.concat(formState.formId, '"]'));
       if (form) {
-        Object.entries(formState.fields).forEach(function (_a) {
+        Object.entries(formState.fields).forEach((_a) => {
           var name = _a[0],
             value = _a[1];
           var field = form.querySelector('[name="'.concat(name, '"]'));
@@ -1143,8 +1126,8 @@ var SessionPreservationManager = /** @class */ (function () {
       }
     });
   };
-  SessionPreservationManager.prototype.applyCacheState = function (cache) {
-    Object.entries(cache.data).forEach(function (_a) {
+  SessionPreservationManager.prototype.applyCacheState = (cache) => {
+    Object.entries(cache.data).forEach((_a) => {
       var key = _a[0],
         item = _a[1];
       if (item.expiry > Date.now()) {
@@ -1154,7 +1137,7 @@ var SessionPreservationManager = /** @class */ (function () {
   };
   SessionPreservationManager.prototype.applyPermissionState = function (sessionId, perms) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -1199,14 +1182,10 @@ var SessionPreservationManager = /** @class */ (function () {
           case 1:
             if (!(_i < _a.length)) return [3 /*break*/, 6];
             (_b = _a[_i]), (sessionId = _b[0]), (snapshots = _b[1]);
-            validSnapshots = snapshots.filter(function (s) {
-              return s.timestamp > cutoff;
-            });
+            validSnapshots = snapshots.filter((s) => s.timestamp > cutoff);
             if (!(validSnapshots.length !== snapshots.length)) return [3 /*break*/, 5];
             this.snapshots.set(sessionId, validSnapshots);
-            removedSnapshots = snapshots.filter(function (s) {
-              return s.timestamp <= cutoff;
-            });
+            removedSnapshots = snapshots.filter((s) => s.timestamp <= cutoff);
             (_c = 0), (removedSnapshots_1 = removedSnapshots);
             _d.label = 2;
           case 2:
@@ -1256,15 +1235,11 @@ var SessionPreservationManager = /** @class */ (function () {
         if (this.preservationConfig.storageType === "indexedDB") {
           return [
             2 /*return*/,
-            new Promise(function (resolve, reject) {
+            new Promise((resolve, reject) => {
               var request = indexedDB.open("NeonProSnapshots", 1);
-              request.onerror = function () {
-                return reject(request.error);
-              };
-              request.onsuccess = function () {
-                return resolve();
-              };
-              request.onupgradeneeded = function () {
+              request.onerror = () => reject(request.error);
+              request.onsuccess = () => resolve();
+              request.onupgradeneeded = () => {
                 var db = request.result;
                 if (!db.objectStoreNames.contains("snapshots")) {
                   db.createObjectStore("snapshots");
@@ -1334,37 +1309,30 @@ var SessionPreservationManager = /** @class */ (function () {
   };
   SessionPreservationManager.prototype.loadFromIndexedDB = function () {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          new Promise(function (resolve, reject) {
-            var request = indexedDB.open("NeonProSnapshots", 1);
-            request.onerror = function () {
-              return reject(request.error);
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        new Promise((resolve, reject) => {
+          var request = indexedDB.open("NeonProSnapshots", 1);
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => {
+            var db = request.result;
+            var transaction = db.transaction(["snapshots"], "readonly");
+            var store = transaction.objectStore("snapshots");
+            var getAllRequest = store.getAll();
+            getAllRequest.onsuccess = () => {
+              var snapshots = getAllRequest.result;
+              snapshots.forEach((snapshot) => {
+                if (!this.snapshots.has(snapshot.sessionId)) {
+                  this.snapshots.set(snapshot.sessionId, []);
+                }
+                this.snapshots.get(snapshot.sessionId).push(snapshot);
+              });
+              resolve();
             };
-            request.onsuccess = function () {
-              var db = request.result;
-              var transaction = db.transaction(["snapshots"], "readonly");
-              var store = transaction.objectStore("snapshots");
-              var getAllRequest = store.getAll();
-              getAllRequest.onsuccess = function () {
-                var snapshots = getAllRequest.result;
-                snapshots.forEach(function (snapshot) {
-                  if (!_this.snapshots.has(snapshot.sessionId)) {
-                    _this.snapshots.set(snapshot.sessionId, []);
-                  }
-                  _this.snapshots.get(snapshot.sessionId).push(snapshot);
-                });
-                resolve();
-              };
-              getAllRequest.onerror = function () {
-                return reject(getAllRequest.error);
-              };
-            };
-          }),
-        ];
-      });
+            getAllRequest.onerror = () => reject(getAllRequest.error);
+          };
+        }),
+      ]);
     });
   };
   SessionPreservationManager.prototype.loadFromSessionStorage = function () {
@@ -1385,11 +1353,10 @@ var SessionPreservationManager = /** @class */ (function () {
     }
   };
   SessionPreservationManager.prototype.startAutomaticSnapshots = function () {
-    var _this = this;
-    this.snapshotInterval = setInterval(function () {
+    this.snapshotInterval = setInterval(() => {
       // Create snapshots for all active sessions
-      _this.currentState.forEach(function (state, sessionId) {
-        return __awaiter(_this, void 0, void 0, function () {
+      this.currentState.forEach((state, sessionId) =>
+        __awaiter(this, void 0, void 0, function () {
           var response, session, error_10;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -1422,16 +1389,15 @@ var SessionPreservationManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     }, this.preservationConfig.snapshotInterval);
   };
   SessionPreservationManager.prototype.setupEventListeners = function () {
-    var _this = this;
     // Listen for page unload to create final snapshot
-    window.addEventListener("beforeunload", function () {
-      _this.currentState.forEach(function (state, sessionId) {
-        return __awaiter(_this, void 0, void 0, function () {
+    window.addEventListener("beforeunload", () => {
+      this.currentState.forEach((state, sessionId) =>
+        __awaiter(this, void 0, void 0, function () {
           var response, session, error_11;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -1464,15 +1430,15 @@ var SessionPreservationManager = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      });
+        }),
+      );
     });
     // Listen for online/offline events
-    window.addEventListener("online", function () {
-      _this.emit("network_restored", {});
+    window.addEventListener("online", () => {
+      this.emit("network_restored", {});
     });
-    window.addEventListener("offline", function () {
-      _this.emit("network_lost", {});
+    window.addEventListener("offline", () => {
+      this.emit("network_lost", {});
     });
   };
   /**
@@ -1496,7 +1462,7 @@ var SessionPreservationManager = /** @class */ (function () {
   SessionPreservationManager.prototype.emit = function (event, data) {
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (callback) {
+      listeners.forEach((callback) => {
         try {
           callback(data);
         } catch (error) {
@@ -1585,8 +1551,8 @@ var SessionPreservationManager = /** @class */ (function () {
         }
         break;
       case "memory":
-        this.snapshots.forEach(function (snapshots) {
-          snapshots.forEach(function (snapshot) {
+        this.snapshots.forEach((snapshots) => {
+          snapshots.forEach((snapshot) => {
             used += JSON.stringify(snapshot).length;
           });
         });

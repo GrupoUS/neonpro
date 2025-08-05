@@ -1,6 +1,4 @@
-import type { createClient } from "@supabase/supabase-js";
 import * as tf from "@tensorflow/tfjs";
-import cv from "opencv-ts";
 
 // Types for computer vision analysis
 export interface AnalysisResult {
@@ -248,8 +246,8 @@ export class VisionAnalysisEngine {
    * Generate visual annotations for analysis results
    */
   private async generateAnnotations(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
     changeMetrics: ChangeMetrics,
   ): Promise<AnnotationData[]> {
     const annotations: AnnotationData[] = [];
@@ -347,8 +345,8 @@ export class VisionAnalysisEngine {
 
   // Helper methods for specific analysis types
   private async calculateSkinTextureImprovement(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement skin texture analysis using computer vision
     // This would use advanced algorithms to detect texture changes
@@ -356,48 +354,48 @@ export class VisionAnalysisEngine {
   }
 
   private async calculateWrinkleReduction(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement wrinkle detection and comparison
     return Math.random() * 25 + 15; // Placeholder: 15-40% reduction
   }
 
   private async calculatePigmentationImprovement(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement pigmentation analysis
     return Math.random() * 20 + 20; // Placeholder: 20-40% improvement
   }
 
   private async calculateLesionHealing(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement lesion detection and healing analysis
     return Math.random() * 35 + 25; // Placeholder: 25-60% healing
   }
 
   private async calculateScarReduction(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement scar analysis
     return Math.random() * 30 + 20; // Placeholder: 20-50% reduction
   }
 
   private async calculateVolumeChange(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement volume measurement and comparison
     return Math.random() * 15 + 5; // Placeholder: 5-20% change
   }
 
   private async calculateSymmetryImprovement(
-    beforeImage: tf.Tensor3D,
-    afterImage: tf.Tensor3D,
+    _beforeImage: tf.Tensor3D,
+    _afterImage: tf.Tensor3D,
   ): Promise<number> {
     // Implement symmetry analysis
     return Math.random() * 25 + 10; // Placeholder: 10-35% improvement

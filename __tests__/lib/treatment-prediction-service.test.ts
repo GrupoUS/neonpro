@@ -33,17 +33,16 @@ jest.mock("@/app/utils/supabase/server", () => ({
   createClient: () => mockSupabaseClient,
 }));
 
-import { describe, test, expect, beforeEach, jest } from "@jest/globals";
+import { beforeEach, describe, expect, jest, test } from "@jest/globals";
 
 import { TreatmentPredictionService } from "@/app/lib/services/treatment-prediction";
-import {
-  PredictionModel,
-  TreatmentPrediction,
-  PatientFactors,
-  TreatmentCharacteristics,
-  PredictionRequest,
+import type {
   ModelPerformance,
-  PredictionFeedback,
+  PatientFactors,
+  PredictionModel,
+  PredictionRequest,
+  TreatmentCharacteristics,
+  TreatmentPrediction,
 } from "@/app/types/treatment-prediction";
 
 describe("TreatmentPredictionService", () => {
@@ -149,7 +148,7 @@ describe("TreatmentPredictionService", () => {
 
   describe("Treatment Prediction Generation", () => {
     test("generates prediction with multi-factor analysis", async () => {
-      const mockPatientFactors: PatientFactors = {
+      const _mockPatientFactors: PatientFactors = {
         id: "pf-123",
         patient_id: "patient-456",
         age: 32,
@@ -185,7 +184,7 @@ describe("TreatmentPredictionService", () => {
         updated_at: new Date().toISOString(),
       };
 
-      const mockTreatmentChar: TreatmentCharacteristics = {
+      const _mockTreatmentChar: TreatmentCharacteristics = {
         id: "tc-789",
         treatment_type: "laser_resurfacing",
         complexity_level: "medium",

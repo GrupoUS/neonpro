@@ -5,19 +5,19 @@
  * Test suite for middleware authorization functions and route protection
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from "@jest/globals";
+import { beforeEach, describe, expect, it, jest } from "@jest/globals";
 import { NextRequest, NextResponse } from "next/server";
 import {
-  requireRole,
-  requirePermission,
-  requireOwner,
-  requireManagerOrAbove,
-  patientManage,
-  billingAccess,
   appointmentManage,
+  billingAccess,
+  patientManage,
+  requireManagerOrAbove,
+  requireOwner,
+  requirePermission,
+  requireRole,
 } from "@/lib/auth/rbac/middleware";
-import { UserRole } from "@/types/rbac";
-import { AuthUser } from "@/lib/middleware/auth";
+import type { AuthUser } from "@/lib/middleware/auth";
+import type { UserRole } from "@/types/rbac";
 
 // Mock the auth middleware
 jest.mock("@/lib/middleware/auth", () => ({
@@ -472,7 +472,7 @@ describe("RBAC Authorization Middleware", () => {
     it("should not perform unnecessary permission checks for public endpoints", async () => {
       // This would be handled by route configuration, but we test the middleware behavior
       const user = createMockUser("patient");
-      const request = createMockRequest("http://localhost:3000/api/public/health");
+      const _request = createMockRequest("http://localhost:3000/api/public/health");
 
       mockSuccessfulAuth(user);
 

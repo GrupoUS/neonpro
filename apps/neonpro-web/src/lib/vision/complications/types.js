@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Complication Detection Types
  * Epic 10 - Story 10.3: Automated Complication Detection + Alerts (≥90% Accuracy)

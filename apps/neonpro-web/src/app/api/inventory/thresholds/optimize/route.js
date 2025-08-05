@@ -1,17 +1,16 @@
-"use strict";
 // API Routes for Threshold Optimization Analysis
 // Story 6.2: Automated Reorder Alerts + Threshold Management
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GET = GET;
 var intelligent_threshold_service_1 = require("@/app/lib/services/intelligent-threshold-service");
@@ -146,7 +143,7 @@ var queryParamsSchema = zod_1.z.object({
 function GET(request) {
   return __awaiter(this, void 0, void 0, function () {
     var url, params, clinic_id, optimizations, error_1;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           _a.trys.push([0, 2, , 3]);
@@ -164,17 +161,17 @@ function GET(request) {
               count: optimizations.length,
               summary: {
                 total_items_analyzed: optimizations.length,
-                potential_savings: optimizations.reduce(function (sum, opt) {
-                  return sum + opt.potential_savings;
-                }, 0),
-                high_priority_items: optimizations.filter(function (opt) {
-                  return opt.implementation_priority === "high";
-                }).length,
+                potential_savings: optimizations.reduce(
+                  (sum, opt) => sum + opt.potential_savings,
+                  0,
+                ),
+                high_priority_items: optimizations.filter(
+                  (opt) => opt.implementation_priority === "high",
+                ).length,
                 average_confidence:
                   optimizations.length > 0
-                    ? optimizations.reduce(function (sum, opt) {
-                        return sum + opt.confidence_score;
-                      }, 0) / optimizations.length
+                    ? optimizations.reduce((sum, opt) => sum + opt.confidence_score, 0) /
+                      optimizations.length
                     : 0,
               },
             }),

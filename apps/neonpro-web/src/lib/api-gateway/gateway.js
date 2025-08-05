@@ -1,4 +1,3 @@
-"use strict";
 /**
  * NeonPro - API Gateway Core
  * Main API Gateway implementation with routing, authentication, and monitoring
@@ -12,26 +11,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,14 +150,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NeonProApiGateway = void 0;
 /**
  * NeonPro API Gateway
  * Central gateway for all API requests with authentication, rate limiting, and monitoring
  */
-var NeonProApiGateway = /** @class */ (function () {
+var NeonProApiGateway = /** @class */ (() => {
   function NeonProApiGateway(config, cache, logger) {
     this.routes = new Map();
     this.clients = new Map();
@@ -177,33 +174,30 @@ var NeonProApiGateway = /** @class */ (function () {
   /**
    * Initialize default metrics
    */
-  NeonProApiGateway.prototype.initializeMetrics = function () {
-    return {
-      requestCount: 0,
-      errorCount: 0,
-      averageResponseTime: 0,
-      p95ResponseTime: 0,
-      p99ResponseTime: 0,
-      throughput: 0,
-      errorRate: 0,
-      uptime: 0,
-      timestamp: new Date(),
-      period: "1h",
-    };
-  };
+  NeonProApiGateway.prototype.initializeMetrics = () => ({
+    requestCount: 0,
+    errorCount: 0,
+    averageResponseTime: 0,
+    p95ResponseTime: 0,
+    p99ResponseTime: 0,
+    throughput: 0,
+    errorRate: 0,
+    uptime: 0,
+    timestamp: new Date(),
+    period: "1h",
+  });
   /**
    * Setup default middleware
    */
   NeonProApiGateway.prototype.setupDefaultMiddleware = function () {
-    var _this = this;
     // CORS middleware
     this.registerMiddleware({
       name: "cors",
       order: 1,
       enabled: true,
       config: this.config.cors,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -221,8 +215,7 @@ var NeonProApiGateway = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     });
     // Request logging middleware
     this.registerMiddleware({
@@ -230,8 +223,8 @@ var NeonProApiGateway = /** @class */ (function () {
       order: 2,
       enabled: this.config.logging.enabled,
       config: this.config.logging,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var startTime, duration;
           var _a, _b;
           return __generator(this, function (_c) {
@@ -270,8 +263,7 @@ var NeonProApiGateway = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     });
     // Rate limiting middleware
     this.registerMiddleware({
@@ -279,8 +271,8 @@ var NeonProApiGateway = /** @class */ (function () {
       order: 3,
       enabled: true,
       config: this.config.rateLimit,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var allowed;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -297,8 +289,7 @@ var NeonProApiGateway = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     });
     // Authentication middleware
     this.registerMiddleware({
@@ -306,8 +297,8 @@ var NeonProApiGateway = /** @class */ (function () {
       order: 4,
       enabled: this.config.authentication.required,
       config: this.config.authentication,
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var authenticated;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -327,8 +318,7 @@ var NeonProApiGateway = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     });
     // Authorization middleware
     this.registerMiddleware({
@@ -336,8 +326,8 @@ var NeonProApiGateway = /** @class */ (function () {
       order: 5,
       enabled: true,
       config: {},
-      handler: function (context, next) {
-        return __awaiter(_this, void 0, void 0, function () {
+      handler: (context, next) =>
+        __awaiter(this, void 0, void 0, function () {
           var authorized;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -357,8 +347,7 @@ var NeonProApiGateway = /** @class */ (function () {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
     });
   };
   // Route Management
@@ -438,7 +427,7 @@ var NeonProApiGateway = /** @class */ (function () {
   /**
    * Match route path with request path
    */
-  NeonProApiGateway.prototype.matchRoute = function (routePath, requestPath) {
+  NeonProApiGateway.prototype.matchRoute = (routePath, requestPath) => {
     // Simple path matching - can be enhanced with parameter extraction
     var routeSegments = routePath.split("/");
     var requestSegments = requestPath.split("/");
@@ -605,9 +594,7 @@ var NeonProApiGateway = /** @class */ (function () {
             if (route.authentication.roles && route.authentication.roles.length > 0) {
               if (
                 !context.userRoles ||
-                !route.authentication.roles.some(function (role) {
-                  return context.userRoles.includes(role);
-                })
+                !route.authentication.roles.some((role) => context.userRoles.includes(role))
               ) {
                 return [2 /*return*/, false];
               }
@@ -616,9 +603,9 @@ var NeonProApiGateway = /** @class */ (function () {
             if (route.authentication.permissions && route.authentication.permissions.length > 0) {
               if (
                 !context.userPermissions ||
-                !route.authentication.permissions.some(function (perm) {
-                  return context.userPermissions.includes(perm);
-                })
+                !route.authentication.permissions.some((perm) =>
+                  context.userPermissions.includes(perm),
+                )
               ) {
                 return [2 /*return*/, false];
               }
@@ -829,7 +816,7 @@ var NeonProApiGateway = /** @class */ (function () {
   NeonProApiGateway.prototype.checkDatabaseHealth = function () {
     return __awaiter(this, void 0, void 0, function () {
       var startTime, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             startTime = Date.now();
@@ -837,12 +824,7 @@ var NeonProApiGateway = /** @class */ (function () {
           case 1:
             _a.trys.push([1, 3, , 4]);
             // Simulate database check
-            return [
-              4 /*yield*/,
-              new Promise(function (resolve) {
-                return setTimeout(resolve, 10);
-              }),
-            ];
+            return [4 /*yield*/, new Promise((resolve) => setTimeout(resolve, 10))];
           case 2:
             // Simulate database check
             _a.sent();
@@ -919,7 +901,7 @@ var NeonProApiGateway = /** @class */ (function () {
    */
   NeonProApiGateway.prototype.checkIntegrationsHealth = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Placeholder for integration health checks
         return [
           2 /*return*/,
@@ -947,17 +929,11 @@ var NeonProApiGateway = /** @class */ (function () {
   /**
    * Determine overall health status
    */
-  NeonProApiGateway.prototype.determineOverallHealth = function (
-    dbCheck,
-    cacheCheck,
-    integrationChecks,
-  ) {
+  NeonProApiGateway.prototype.determineOverallHealth = (dbCheck, cacheCheck, integrationChecks) => {
     if (dbCheck.status === "down") {
       return "unhealthy";
     }
-    var downIntegrations = integrationChecks.filter(function (check) {
-      return check.status === "down";
-    });
+    var downIntegrations = integrationChecks.filter((check) => check.status === "down");
     if (downIntegrations.length > integrationChecks.length / 2) {
       return "unhealthy";
     }
@@ -1010,12 +986,8 @@ var NeonProApiGateway = /** @class */ (function () {
                 responses: this.formatResponses(route.documentation.responses),
                 security: route.authentication.required ? [{ ApiKeyAuth: [] }] : [],
               };
-              _loop_1 = function (tag) {
-                if (
-                  !tags.find(function (t) {
-                    return t.name === tag;
-                  })
-                ) {
+              _loop_1 = (tag) => {
+                if (!tags.find((t) => t.name === tag)) {
                   tags.push({ name: tag, description: "".concat(tag, " operations") });
                 }
               };
@@ -1074,7 +1046,7 @@ var NeonProApiGateway = /** @class */ (function () {
   /**
    * Format responses for OpenAPI
    */
-  NeonProApiGateway.prototype.formatResponses = function (responses) {
+  NeonProApiGateway.prototype.formatResponses = (responses) => {
     var formatted = {};
     for (var _i = 0, responses_1 = responses; _i < responses_1.length; _i++) {
       var response = responses_1[_i];
@@ -1204,17 +1176,13 @@ var NeonProApiGateway = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             middlewares = Array.from(this.middleware.values())
-              .filter(function (m) {
-                return m.enabled;
-              })
-              .sort(function (a, b) {
-                return a.order - b.order;
-              });
+              .filter((m) => m.enabled)
+              .sort((a, b) => a.order - b.order);
             index = 0;
-            next = function () {
-              return __awaiter(_this, void 0, void 0, function () {
+            next = () =>
+              __awaiter(_this, void 0, void 0, function () {
                 var middleware;
-                return __generator(this, function (_a) {
+                return __generator(this, (_a) => {
                   switch (_a.label) {
                     case 0:
                       if (!(index < middlewares.length)) return [3 /*break*/, 2];
@@ -1228,7 +1196,6 @@ var NeonProApiGateway = /** @class */ (function () {
                   }
                 });
               });
-            };
             return [4 /*yield*/, next()];
           case 1:
             _a.sent();
@@ -1263,15 +1230,14 @@ var NeonProApiGateway = /** @class */ (function () {
    * Emit event
    */
   NeonProApiGateway.prototype.emit = function (event, data) {
-    var _this = this;
     var listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(function (listener) {
+      listeners.forEach((listener) => {
         var _a;
         try {
           listener(data);
         } catch (error) {
-          (_a = _this.logger) === null || _a === void 0
+          (_a = this.logger) === null || _a === void 0
             ? void 0
             : _a.error("Event listener error", error, { event: event });
         }
@@ -1282,13 +1248,12 @@ var NeonProApiGateway = /** @class */ (function () {
   /**
    * Generate unique ID
    */
-  NeonProApiGateway.prototype.generateId = function () {
-    return "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
-  };
+  NeonProApiGateway.prototype.generateId = () =>
+    "".concat(Date.now(), "-").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Generate secure token
    */
-  NeonProApiGateway.prototype.generateSecureToken = function () {
+  NeonProApiGateway.prototype.generateSecureToken = () => {
     var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     var result = "";
     for (var i = 0; i < 32; i++) {

@@ -1,32 +1,32 @@
 // Contextual Help System for Error Resolution
 "use client";
 
+import type {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  CreditCard,
+  ExternalLink,
+  HelpCircle,
+  Info,
+  Mail,
+  MessageSquare,
+  Phone,
+  Settings,
+  Shield,
+  Users,
+} from "lucide-react";
 import React, { useState } from "react";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import type {
-  HelpCircle,
-  ChevronDown,
-  ChevronRight,
-  Users,
-  Calendar,
-  CreditCard,
-  Settings,
-  Shield,
-  Phone,
-  Mail,
-  MessageSquare,
-  ExternalLink,
-  CheckCircle,
-  AlertTriangle,
-  Info,
-} from "lucide-react";
 import type { ErrorCategory } from "@/hooks/use-error-handling";
 
 interface ContextualHelpProps {

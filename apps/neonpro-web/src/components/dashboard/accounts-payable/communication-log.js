@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = CommunicationLog;
 var avatar_1 = require("@/components/ui/avatar");
@@ -205,7 +202,6 @@ var priorityOptions = [
   { value: "urgent", label: "Urgente", color: "bg-red-100 text-red-800" },
 ];
 function CommunicationLog(_a) {
-  var _this = this;
   var vendorId = _a.vendorId,
     vendorName = _a.vendorName;
   var _b = (0, react_1.useState)([]),
@@ -289,43 +285,35 @@ function CommunicationLog(_a) {
       due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
     },
   ];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Simulate API call
-    setTimeout(function () {
+    setTimeout(() => {
       setLogs(mockLogs);
       setLoading(false);
     }, 1000);
   }, []);
-  (0, react_1.useEffect)(
-    function () {
-      var filtered = logs;
-      if (searchTerm) {
-        filtered = filtered.filter(function (log) {
-          return (
-            log.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            log.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            log.user_name.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        });
-      }
-      if (typeFilter !== "all") {
-        filtered = filtered.filter(function (log) {
-          return log.communication_type === typeFilter;
-        });
-      }
-      if (statusFilter !== "all") {
-        filtered = filtered.filter(function (log) {
-          return log.status === statusFilter;
-        });
-      }
-      setFilteredLogs(filtered);
-    },
-    [logs, searchTerm, typeFilter, statusFilter],
-  );
-  var handleNewLogSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    var filtered = logs;
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (log) =>
+          log.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          log.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          log.user_name.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+    }
+    if (typeFilter !== "all") {
+      filtered = filtered.filter((log) => log.communication_type === typeFilter);
+    }
+    if (statusFilter !== "all") {
+      filtered = filtered.filter((log) => log.status === statusFilter);
+    }
+    setFilteredLogs(filtered);
+  }, [logs, searchTerm, typeFilter, statusFilter]);
+  var handleNewLogSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var newLogEntry_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         e.preventDefault();
         try {
           newLogEntry_1 = __assign(__assign({ id: Date.now().toString() }, newLog), {
@@ -338,9 +326,7 @@ function CommunicationLog(_a) {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           });
-          setLogs(function (prev) {
-            return __spreadArray([newLogEntry_1], prev, true);
-          });
+          setLogs((prev) => __spreadArray([newLogEntry_1], prev, true));
           setShowNewLogDialog(false);
           setNewLog({
             vendor_id: vendorId || "",
@@ -359,50 +345,40 @@ function CommunicationLog(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var getTypeIcon = function (type) {
-    var typeConfig = communicationTypes.find(function (t) {
-      return t.value === type;
-    });
+  var getTypeIcon = (type) => {
+    var typeConfig = communicationTypes.find((t) => t.value === type);
     return typeConfig ? typeConfig.icon : lucide_react_1.MessageCircle;
   };
-  var getStatusBadge = function (status) {
-    var statusConfig = statusOptions.find(function (s) {
-      return s.value === status;
-    });
+  var getStatusBadge = (status) => {
+    var statusConfig = statusOptions.find((s) => s.value === status);
     return statusConfig || statusOptions[0];
   };
-  var getPriorityBadge = function (priority) {
-    var priorityConfig = priorityOptions.find(function (p) {
-      return p.value === priority;
-    });
+  var getPriorityBadge = (priority) => {
+    var priorityConfig = priorityOptions.find((p) => p.value === priority);
     return priorityConfig || priorityOptions[0];
   };
-  var formatDateTime = function (dateString) {
-    return new Date(dateString).toLocaleString("pt-BR", {
+  var formatDateTime = (dateString) =>
+    new Date(dateString).toLocaleString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
   if (loading) {
     return (
       <div className="space-y-4">
-        {[1, 2, 3].map(function (i) {
-          return (
-            <card_1.Card key={i}>
-              <card_1.CardContent className="p-4">
-                <div className="animate-pulse space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-full"></div>
-                </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+        {[1, 2, 3].map((i) => (
+          <card_1.Card key={i}>
+            <card_1.CardContent className="p-4">
+              <div className="animate-pulse space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-3 bg-gray-200 rounded w-full"></div>
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
     );
   }
@@ -419,11 +395,7 @@ function CommunicationLog(_a) {
           </p>
         </div>
 
-        <button_1.Button
-          onClick={function () {
-            return setShowNewLogDialog(true);
-          }}
-        >
+        <button_1.Button onClick={() => setShowNewLogDialog(true)}>
           <lucide_react_1.Plus className="h-4 w-4 mr-2" />
           Nova Comunicação
         </button_1.Button>
@@ -440,9 +412,7 @@ function CommunicationLog(_a) {
                 <input_1.Input
                   placeholder="Buscar comunicações..."
                   value={searchTerm}
-                  onChange={function (e) {
-                    return setSearchTerm(e.target.value);
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9"
                 />
               </div>
@@ -456,13 +426,11 @@ function CommunicationLog(_a) {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todos os tipos</select_1.SelectItem>
-                  {communicationTypes.map(function (type) {
-                    return (
-                      <select_1.SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {communicationTypes.map((type) => (
+                    <select_1.SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -475,13 +443,11 @@ function CommunicationLog(_a) {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="all">Todos os status</select_1.SelectItem>
-                  {statusOptions.map(function (status) {
-                    return (
-                      <select_1.SelectItem key={status.value} value={status.value}>
-                        {status.label}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {statusOptions.map((status) => (
+                    <select_1.SelectItem key={status.value} value={status.value}>
+                      {status.label}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -506,7 +472,7 @@ function CommunicationLog(_a) {
                 <p className="text-muted-foreground">Nenhuma comunicação encontrada.</p>
               </card_1.CardContent>
             </card_1.Card>
-          : filteredLogs.map(function (log) {
+          : filteredLogs.map((log) => {
               var IconComponent = getTypeIcon(log.communication_type);
               var statusBadge = getStatusBadge(log.status);
               var priorityBadge = getPriorityBadge(log.priority);
@@ -591,23 +557,19 @@ function CommunicationLog(_a) {
                 <label_1.Label htmlFor="communication_type">Tipo de Comunicação</label_1.Label>
                 <select_1.Select
                   value={newLog.communication_type}
-                  onValueChange={function (value) {
-                    return setNewLog(function (prev) {
-                      return __assign(__assign({}, prev), { communication_type: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setNewLog((prev) => __assign(__assign({}, prev), { communication_type: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {communicationTypes.map(function (type) {
-                      return (
-                        <select_1.SelectItem key={type.value} value={type.value}>
-                          {type.label}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {communicationTypes.map((type) => (
+                      <select_1.SelectItem key={type.value} value={type.value}>
+                        {type.label}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -616,23 +578,19 @@ function CommunicationLog(_a) {
                 <label_1.Label htmlFor="priority">Prioridade</label_1.Label>
                 <select_1.Select
                   value={newLog.priority}
-                  onValueChange={function (value) {
-                    return setNewLog(function (prev) {
-                      return __assign(__assign({}, prev), { priority: value });
-                    });
-                  }}
+                  onValueChange={(value) =>
+                    setNewLog((prev) => __assign(__assign({}, prev), { priority: value }))
+                  }
                 >
                   <select_1.SelectTrigger>
                     <select_1.SelectValue />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {priorityOptions.map(function (priority) {
-                      return (
-                        <select_1.SelectItem key={priority.value} value={priority.value}>
-                          {priority.label}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {priorityOptions.map((priority) => (
+                      <select_1.SelectItem key={priority.value} value={priority.value}>
+                        {priority.label}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
               </div>
@@ -643,11 +601,9 @@ function CommunicationLog(_a) {
               <input_1.Input
                 id="subject"
                 value={newLog.subject}
-                onChange={function (e) {
-                  return setNewLog(function (prev) {
-                    return __assign(__assign({}, prev), { subject: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setNewLog((prev) => __assign(__assign({}, prev), { subject: e.target.value }))
+                }
                 placeholder="Assunto da comunicação"
                 required
               />
@@ -658,11 +614,9 @@ function CommunicationLog(_a) {
               <textarea_1.Textarea
                 id="content"
                 value={newLog.content}
-                onChange={function (e) {
-                  return setNewLog(function (prev) {
-                    return __assign(__assign({}, prev), { content: e.target.value });
-                  });
-                }}
+                onChange={(e) =>
+                  setNewLog((prev) => __assign(__assign({}, prev), { content: e.target.value }))
+                }
                 placeholder="Descreva o conteúdo da comunicação..."
                 rows={4}
                 required
@@ -676,11 +630,9 @@ function CommunicationLog(_a) {
                   id="due_date"
                   type="datetime-local"
                   value={newLog.due_date}
-                  onChange={function (e) {
-                    return setNewLog(function (prev) {
-                      return __assign(__assign({}, prev), { due_date: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setNewLog((prev) => __assign(__assign({}, prev), { due_date: e.target.value }))
+                  }
                 />
               </div>
 
@@ -690,11 +642,11 @@ function CommunicationLog(_a) {
                   id="follow_up_date"
                   type="datetime-local"
                   value={newLog.follow_up_date}
-                  onChange={function (e) {
-                    return setNewLog(function (prev) {
-                      return __assign(__assign({}, prev), { follow_up_date: e.target.value });
-                    });
-                  }}
+                  onChange={(e) =>
+                    setNewLog((prev) =>
+                      __assign(__assign({}, prev), { follow_up_date: e.target.value }),
+                    )
+                  }
                 />
               </div>
             </div>
@@ -704,9 +656,7 @@ function CommunicationLog(_a) {
             <button_1.Button
               type="button"
               variant="outline"
-              onClick={function () {
-                return setShowNewLogDialog(false);
-              }}
+              onClick={() => setShowNewLogDialog(false)}
             >
               Cancelar
             </button_1.Button>

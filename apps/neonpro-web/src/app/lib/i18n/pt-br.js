@@ -1,4 +1,3 @@
-"use strict";
 // Portuguese (Brazil) Localization Constants
 // Story 1.3, Task 2: PT-BR localization for patient portal
 // Created: Complete Portuguese localization for healthcare portal

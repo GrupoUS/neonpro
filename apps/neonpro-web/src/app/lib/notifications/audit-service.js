@@ -1,19 +1,18 @@
-"use strict";
 /**
  * NeonPro - Audit Service for HIPAA Compliance
  * Comprehensive logging for notification activities and compliance tracking
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,11 +132,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuditService = void 0;
 var client_1 = require("@/lib/supabase/client");
-var AuditService = /** @class */ (function () {
+var AuditService = /** @class */ (() => {
   function AuditService() {}
   /**
    * Log notification activity for HIPAA compliance
@@ -148,7 +145,7 @@ var AuditService = /** @class */ (function () {
     return __awaiter(this, void 0, void 0, function () {
       var auditData, error, error_1;
       var _a, _b;
-      return __generator(this, function (_c) {
+      return __generator(this, (_c) => {
         switch (_c.label) {
           case 0:
             _c.trys.push([0, 2, , 3]);
@@ -360,7 +357,7 @@ var AuditService = /** @class */ (function () {
   AuditService.prototype.getNotificationAuditTrail = function (notificationId) {
     return __awaiter(this, void 0, void 0, function () {
       var _a, data, error, error_2;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -398,7 +395,7 @@ var AuditService = /** @class */ (function () {
       if (limit === void 0) {
         limit = 100;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -466,29 +463,21 @@ var AuditService = /** @class */ (function () {
               return [2 /*return*/, this.getEmptyReport()];
             }
             logs = data || [];
-            sent = logs.filter(function (l) {
-              return l.action === "notification_sent";
-            });
-            successful = sent.filter(function (l) {
-              return l.success === true;
-            }).length;
-            failed = sent.filter(function (l) {
-              return l.success === false;
-            }).length;
-            cancelled = logs.filter(function (l) {
-              return l.action === "notification_cancelled";
-            }).length;
-            consentChanges = logs.filter(function (l) {
-              return l.action === "consent_granted" || l.action === "consent_revoked";
-            }).length;
+            sent = logs.filter((l) => l.action === "notification_sent");
+            successful = sent.filter((l) => l.success === true).length;
+            failed = sent.filter((l) => l.success === false).length;
+            cancelled = logs.filter((l) => l.action === "notification_cancelled").length;
+            consentChanges = logs.filter(
+              (l) => l.action === "consent_granted" || l.action === "consent_revoked",
+            ).length;
             channelBreakdown_1 = {};
-            sent.forEach(function (log) {
+            sent.forEach((log) => {
               if (log.channel) {
                 channelBreakdown_1[log.channel] = (channelBreakdown_1[log.channel] || 0) + 1;
               }
             });
             typeBreakdown_1 = {};
-            sent.forEach(function (log) {
+            sent.forEach((log) => {
               if (log.notification_type) {
                 typeBreakdown_1[log.notification_type] =
                   (typeBreakdown_1[log.notification_type] || 0) + 1;
@@ -526,7 +515,7 @@ var AuditService = /** @class */ (function () {
       if (olderThanYears === void 0) {
         olderThanYears = 7;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -579,7 +568,7 @@ var AuditService = /** @class */ (function () {
       if (days === void 0) {
         days = 30;
       }
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -603,7 +592,7 @@ var AuditService = /** @class */ (function () {
             logs = data || [];
             dailyGroups_1 = {};
             channelGroups_1 = {};
-            logs.forEach(function (log) {
+            logs.forEach((log) => {
               var date = new Date(log.timestamp).toISOString().split("T")[0];
               // Daily stats
               if (!dailyGroups_1[date]) dailyGroups_1[date] = [];
@@ -614,27 +603,21 @@ var AuditService = /** @class */ (function () {
                 channelGroups_1[log.channel].push(log);
               }
             });
-            dailyStats = Object.entries(dailyGroups_1).map(function (_a) {
+            dailyStats = Object.entries(dailyGroups_1).map((_a) => {
               var date = _a[0],
                 logs = _a[1];
               return {
                 date: date,
                 sent: logs.length,
-                delivered: logs.filter(function (l) {
-                  return l.success === true;
-                }).length,
-                failed: logs.filter(function (l) {
-                  return l.success === false;
-                }).length,
+                delivered: logs.filter((l) => l.success === true).length,
+                failed: logs.filter((l) => l.success === false).length,
               };
             });
             channelStats_1 = {};
-            Object.entries(channelGroups_1).forEach(function (_a) {
+            Object.entries(channelGroups_1).forEach((_a) => {
               var channel = _a[0],
                 logs = _a[1];
-              var delivered = logs.filter(function (l) {
-                return l.success === true;
-              }).length;
+              var delivered = logs.filter((l) => l.success === true).length;
               channelStats_1[channel] = {
                 sent: logs.length,
                 delivered: delivered,
@@ -652,18 +635,16 @@ var AuditService = /** @class */ (function () {
       });
     });
   };
-  AuditService.prototype.getEmptyReport = function () {
-    return {
-      totalNotifications: 0,
-      successfulDeliveries: 0,
-      failedDeliveries: 0,
-      cancelledNotifications: 0,
-      consentChanges: 0,
-      deliveryRate: 0,
-      channelBreakdown: {},
-      typeBreakdown: {},
-    };
-  };
+  AuditService.prototype.getEmptyReport = () => ({
+    totalNotifications: 0,
+    successfulDeliveries: 0,
+    failedDeliveries: 0,
+    cancelledNotifications: 0,
+    consentChanges: 0,
+    deliveryRate: 0,
+    channelBreakdown: {},
+    typeBreakdown: {},
+  });
   return AuditService;
 })();
 exports.AuditService = AuditService;

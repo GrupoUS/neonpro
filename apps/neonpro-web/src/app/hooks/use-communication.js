@@ -1,29 +1,28 @@
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -43,13 +42,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -71,9 +70,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -145,10 +142,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -157,7 +154,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.communicationKeys = void 0;
 exports.useMessages = useMessages;
@@ -188,110 +185,75 @@ var react_hot_toast_1 = require("react-hot-toast");
 exports.communicationKeys = {
   all: ["communication"],
   // Messages
-  messages: function () {
-    return __spreadArray(
-      __spreadArray([], exports.communicationKeys.all, true),
-      ["messages"],
-      false,
-    );
-  },
-  messagesList: function (filters) {
-    return __spreadArray(
+  messages: () =>
+    __spreadArray(__spreadArray([], exports.communicationKeys.all, true), ["messages"], false),
+  messagesList: (filters) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.messages(), true),
       ["list", filters],
       false,
-    );
-  },
-  message: function (id) {
-    return __spreadArray(
+    ),
+  message: (id) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.messages(), true),
       ["detail", id],
       false,
-    );
-  },
-  messagesByThread: function (threadId) {
-    return __spreadArray(
+    ),
+  messagesByThread: (threadId) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.messages(), true),
       ["thread", threadId],
       false,
-    );
-  },
+    ),
   // Threads
-  threads: function () {
-    return __spreadArray(
-      __spreadArray([], exports.communicationKeys.all, true),
-      ["threads"],
-      false,
-    );
-  },
-  threadsList: function (filters) {
-    return __spreadArray(
+  threads: () =>
+    __spreadArray(__spreadArray([], exports.communicationKeys.all, true), ["threads"], false),
+  threadsList: (filters) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.threads(), true),
       ["list", filters],
       false,
-    );
-  },
-  thread: function (id) {
-    return __spreadArray(
+    ),
+  thread: (id) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.threads(), true),
       ["detail", id],
       false,
-    );
-  },
-  threadsStats: function () {
-    return __spreadArray(
-      __spreadArray([], exports.communicationKeys.threads(), true),
-      ["stats"],
-      false,
-    );
-  },
+    ),
+  threadsStats: () =>
+    __spreadArray(__spreadArray([], exports.communicationKeys.threads(), true), ["stats"], false),
   // Templates
-  templates: function () {
-    return __spreadArray(
-      __spreadArray([], exports.communicationKeys.all, true),
-      ["templates"],
-      false,
-    );
-  },
-  templatesList: function (filters) {
-    return __spreadArray(
+  templates: () =>
+    __spreadArray(__spreadArray([], exports.communicationKeys.all, true), ["templates"], false),
+  templatesList: (filters) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.templates(), true),
       ["list", filters],
       false,
-    );
-  },
-  template: function (id) {
-    return __spreadArray(
+    ),
+  template: (id) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.templates(), true),
       ["detail", id],
       false,
-    );
-  },
-  templatesByCategory: function (category) {
-    return __spreadArray(
+    ),
+  templatesByCategory: (category) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.templates(), true),
       ["category", category],
       false,
-    );
-  },
+    ),
   // Stats
-  stats: function () {
-    return __spreadArray(__spreadArray([], exports.communicationKeys.all, true), ["stats"], false);
-  },
-  statsOverview: function () {
-    return __spreadArray(
-      __spreadArray([], exports.communicationKeys.stats(), true),
-      ["overview"],
-      false,
-    );
-  },
-  statsMessages: function (period) {
-    return __spreadArray(
+  stats: () =>
+    __spreadArray(__spreadArray([], exports.communicationKeys.all, true), ["stats"], false),
+  statsOverview: () =>
+    __spreadArray(__spreadArray([], exports.communicationKeys.stats(), true), ["overview"], false),
+  statsMessages: (period) =>
+    __spreadArray(
       __spreadArray([], exports.communicationKeys.stats(), true),
       ["messages", period],
       false,
-    );
-  },
+    ),
 };
 // API functions
 var api = {
@@ -299,12 +261,12 @@ var api = {
   getMessages: function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var params, response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             params = new URLSearchParams();
             if (filters) {
-              Object.entries(filters).forEach(function (_a) {
+              Object.entries(filters).forEach((_a) => {
                 var key = _a[0],
                   value = _a[1];
                 if (value !== undefined && value !== null) {
@@ -315,7 +277,7 @@ var api = {
             return [4 /*yield*/, fetch("/api/communication/messages?".concat(params))];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -329,13 +291,13 @@ var api = {
   getMessage: function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/communication/messages/".concat(id))];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -349,7 +311,7 @@ var api = {
   sendMessage: function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -362,7 +324,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -376,7 +338,7 @@ var api = {
   markMessageAsRead: function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -387,7 +349,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -401,7 +363,7 @@ var api = {
   deleteMessage: function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -412,7 +374,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -427,12 +389,12 @@ var api = {
   getThreads: function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var params, response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             params = new URLSearchParams();
             if (filters) {
-              Object.entries(filters).forEach(function (_a) {
+              Object.entries(filters).forEach((_a) => {
                 var key = _a[0],
                   value = _a[1];
                 if (value !== undefined && value !== null) {
@@ -443,7 +405,7 @@ var api = {
             return [4 /*yield*/, fetch("/api/communication/threads?".concat(params))];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -457,13 +419,13 @@ var api = {
   getThread: function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/communication/threads/".concat(id))];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -477,7 +439,7 @@ var api = {
   createThread: function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -490,7 +452,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -504,7 +466,7 @@ var api = {
   updateThread: function (id, data) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -517,7 +479,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -531,7 +493,7 @@ var api = {
   archiveThread: function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -542,7 +504,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -557,12 +519,12 @@ var api = {
   getTemplates: function (filters) {
     return __awaiter(this, void 0, void 0, function () {
       var params, response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             params = new URLSearchParams();
             if (filters) {
-              Object.entries(filters).forEach(function (_a) {
+              Object.entries(filters).forEach((_a) => {
                 var key = _a[0],
                   value = _a[1];
                 if (value !== undefined && value !== null) {
@@ -573,7 +535,7 @@ var api = {
             return [4 /*yield*/, fetch("/api/communication/templates?".concat(params))];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -587,13 +549,13 @@ var api = {
   getTemplate: function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/communication/templates/".concat(id))];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -607,7 +569,7 @@ var api = {
   createTemplate: function (data) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -620,7 +582,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -634,7 +596,7 @@ var api = {
   updateTemplate: function (id, data) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -647,7 +609,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -661,7 +623,7 @@ var api = {
   deleteTemplate: function (id) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -672,7 +634,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -686,7 +648,7 @@ var api = {
   duplicateTemplate: function (id, name) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [
@@ -699,7 +661,7 @@ var api = {
             ];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -714,13 +676,13 @@ var api = {
   getCommunicationStats: function () {
     return __awaiter(this, void 0, void 0, function () {
       var response, error;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             return [4 /*yield*/, fetch("/api/communication/stats")];
           case 1:
             response = _a.sent();
-            if (!!response.ok) return [3 /*break*/, 3];
+            if (response.ok) return [3 /*break*/, 3];
             return [4 /*yield*/, response.json()];
           case 2:
             error = _a.sent();
@@ -736,9 +698,7 @@ var api = {
 function useMessages(filters) {
   return (0, react_query_1.useQuery)({
     queryKey: exports.communicationKeys.messagesList(filters),
-    queryFn: function () {
-      return api.getMessages(filters);
-    },
+    queryFn: () => api.getMessages(filters),
     staleTime: 30000, // 30 seconds
     refetchOnWindowFocus: false,
   });
@@ -749,9 +709,7 @@ function useMessage(id, enabled) {
   }
   return (0, react_query_1.useQuery)({
     queryKey: exports.communicationKeys.message(id),
-    queryFn: function () {
-      return api.getMessage(id);
-    },
+    queryFn: () => api.getMessage(id),
     enabled: enabled && !!id,
     staleTime: 60000, // 1 minute
   });
@@ -760,14 +718,14 @@ function useSendMessage() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
     mutationFn: api.sendMessage,
-    onSuccess: function (data) {
+    onSuccess: (data) => {
       // Invalidate messages list to show new message
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.messages() });
       // Also invalidate threads if this message is part of a thread
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.threads() });
       react_hot_toast_1.toast.success("Message sent successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to send message");
     },
   });
@@ -776,7 +734,7 @@ function useMarkMessageAsRead() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
     mutationFn: api.markMessageAsRead,
-    onSuccess: function (data, messageId) {
+    onSuccess: (data, messageId) => {
       // Update the specific message in cache
       queryClient.setQueryData(exports.communicationKeys.message(messageId), {
         data: { message: data.data.message },
@@ -784,7 +742,7 @@ function useMarkMessageAsRead() {
       // Invalidate messages list to update read status
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.messages() });
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to mark message as read");
     },
   });
@@ -793,12 +751,12 @@ function useDeleteMessage() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
     mutationFn: api.deleteMessage,
-    onSuccess: function () {
+    onSuccess: () => {
       // Invalidate messages list
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.messages() });
       react_hot_toast_1.toast.success("Message deleted successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to delete message");
     },
   });
@@ -806,9 +764,7 @@ function useDeleteMessage() {
 function useThreads(filters) {
   return (0, react_query_1.useQuery)({
     queryKey: exports.communicationKeys.threadsList(filters),
-    queryFn: function () {
-      return api.getThreads(filters);
-    },
+    queryFn: () => api.getThreads(filters),
     staleTime: 30000, // 30 seconds
     refetchOnWindowFocus: false,
   });
@@ -819,9 +775,7 @@ function useThread(id, enabled) {
   }
   return (0, react_query_1.useQuery)({
     queryKey: exports.communicationKeys.thread(id),
-    queryFn: function () {
-      return api.getThread(id);
-    },
+    queryFn: () => api.getThread(id),
     enabled: enabled && !!id,
     staleTime: 60000, // 1 minute
   });
@@ -830,12 +784,12 @@ function useCreateThread() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
     mutationFn: api.createThread,
-    onSuccess: function () {
+    onSuccess: () => {
       // Invalidate threads list
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.threads() });
       react_hot_toast_1.toast.success("Thread created successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to create thread");
     },
   });
@@ -843,12 +797,12 @@ function useCreateThread() {
 function useUpdateThread() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
+    mutationFn: (_a) => {
       var id = _a.id,
         data = _a.data;
       return api.updateThread(id, data);
     },
-    onSuccess: function (data, _a) {
+    onSuccess: (data, _a) => {
       var id = _a.id;
       // Update the specific thread in cache
       queryClient.setQueryData(exports.communicationKeys.thread(id), {
@@ -858,7 +812,7 @@ function useUpdateThread() {
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.threads() });
       react_hot_toast_1.toast.success("Thread updated successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to update thread");
     },
   });
@@ -867,7 +821,7 @@ function useArchiveThread() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
     mutationFn: api.archiveThread,
-    onSuccess: function (data, threadId) {
+    onSuccess: (data, threadId) => {
       // Update the specific thread in cache
       queryClient.setQueryData(exports.communicationKeys.thread(threadId), {
         data: { thread: data.data.thread },
@@ -876,7 +830,7 @@ function useArchiveThread() {
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.threads() });
       react_hot_toast_1.toast.success("Thread archived successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to archive thread");
     },
   });
@@ -885,9 +839,7 @@ function useArchiveThread() {
 function useTemplates(filters) {
   return (0, react_query_1.useQuery)({
     queryKey: exports.communicationKeys.templatesList(filters),
-    queryFn: function () {
-      return api.getTemplates(filters);
-    },
+    queryFn: () => api.getTemplates(filters),
     staleTime: 60000, // 1 minute - templates change less frequently
     refetchOnWindowFocus: false,
   });
@@ -898,9 +850,7 @@ function useTemplate(id, enabled) {
   }
   return (0, react_query_1.useQuery)({
     queryKey: exports.communicationKeys.template(id),
-    queryFn: function () {
-      return api.getTemplate(id);
-    },
+    queryFn: () => api.getTemplate(id),
     enabled: enabled && !!id,
     staleTime: 300000, // 5 minutes - templates are fairly static
   });
@@ -909,12 +859,12 @@ function useCreateTemplate() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
     mutationFn: api.createTemplate,
-    onSuccess: function () {
+    onSuccess: () => {
       // Invalidate templates list
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.templates() });
       react_hot_toast_1.toast.success("Template created successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to create template");
     },
   });
@@ -922,12 +872,12 @@ function useCreateTemplate() {
 function useUpdateTemplate() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
+    mutationFn: (_a) => {
       var id = _a.id,
         data = _a.data;
       return api.updateTemplate(id, data);
     },
-    onSuccess: function (data, _a) {
+    onSuccess: (data, _a) => {
       var id = _a.id;
       // Update the specific template in cache
       queryClient.setQueryData(exports.communicationKeys.template(id), {
@@ -937,7 +887,7 @@ function useUpdateTemplate() {
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.templates() });
       react_hot_toast_1.toast.success("Template updated successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to update template");
     },
   });
@@ -946,12 +896,12 @@ function useDeleteTemplate() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
     mutationFn: api.deleteTemplate,
-    onSuccess: function () {
+    onSuccess: () => {
       // Invalidate templates list
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.templates() });
       react_hot_toast_1.toast.success("Template deleted successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to delete template");
     },
   });
@@ -959,17 +909,17 @@ function useDeleteTemplate() {
 function useDuplicateTemplate() {
   var queryClient = (0, react_query_1.useQueryClient)();
   return (0, react_query_1.useMutation)({
-    mutationFn: function (_a) {
+    mutationFn: (_a) => {
       var id = _a.id,
         name = _a.name;
       return api.duplicateTemplate(id, name);
     },
-    onSuccess: function () {
+    onSuccess: () => {
       // Invalidate templates list to show new template
       queryClient.invalidateQueries({ queryKey: exports.communicationKeys.templates() });
       react_hot_toast_1.toast.success("Template duplicated successfully");
     },
-    onError: function (error) {
+    onError: (error) => {
       react_hot_toast_1.toast.error(error.message || "Failed to duplicate template");
     },
   });
@@ -993,7 +943,7 @@ function useInbox(filters) {
   );
   var markAsRead = useMarkMessageAsRead();
   var handleSelectMessage = (0, react_1.useCallback)(
-    function (messageId) {
+    (messageId) => {
       setSelectedMessage(messageId);
       // Auto-mark as read when selected
       markAsRead.mutate(messageId);
@@ -1007,7 +957,6 @@ function useInbox(filters) {
   });
 }
 function usePatientCommunication(patientId) {
-  var _this = this;
   var threadsQuery = useThreads({
     patient_id: patientId,
     sort: "updated_at",
@@ -1021,48 +970,43 @@ function usePatientCommunication(patientId) {
   var createThread = useCreateThread();
   var sendMessage = useSendMessage();
   var startConversation = (0, react_1.useCallback)(
-    function (subject) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          return [
-            2 /*return*/,
-            createThread.mutateAsync({
-              patient_id: patientId,
-              subject: subject,
-              priority: "normal",
-            }),
-          ];
-        });
-      });
-    },
+    (subject) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [
+          2 /*return*/,
+          createThread.mutateAsync({
+            patient_id: patientId,
+            subject: subject,
+            priority: "normal",
+          }),
+        ]);
+      }),
     [createThread, patientId],
   );
   var sendQuickMessage = (0, react_1.useCallback)(
-    function (content_1) {
+    (content_1) => {
       var args_1 = [];
       for (var _i = 1; _i < arguments.length; _i++) {
         args_1[_i - 1] = arguments[_i];
       }
       return __awaiter(
-        _this,
+        this,
         __spreadArray([content_1], args_1, true),
         void 0,
         function (content, channel) {
           if (channel === void 0) {
             channel = "sms";
           }
-          return __generator(this, function (_a) {
-            return [
-              2 /*return*/,
-              sendMessage.mutateAsync({
-                recipient_id: patientId,
-                recipient_type: "patient",
-                content: content,
-                channel: channel,
-                priority: "normal",
-              }),
-            ];
-          });
+          return __generator(this, (_a) => [
+            2 /*return*/,
+            sendMessage.mutateAsync({
+              recipient_id: patientId,
+              recipient_type: "patient",
+              content: content,
+              channel: channel,
+              priority: "normal",
+            }),
+          ]);
         },
       );
     },
@@ -1092,13 +1036,10 @@ function useRealtimeCommunication() {
   // This would integrate with WebSocket or Supabase real-time subscriptions
   // For now, we'll use polling as a fallback
   var stats = useCommunicationStats().data;
-  var refreshInbox = (0, react_1.useCallback)(
-    function () {
-      queryClient.invalidateQueries({ queryKey: exports.communicationKeys.messages() });
-      queryClient.invalidateQueries({ queryKey: exports.communicationKeys.threads() });
-    },
-    [queryClient],
-  );
+  var refreshInbox = (0, react_1.useCallback)(() => {
+    queryClient.invalidateQueries({ queryKey: exports.communicationKeys.messages() });
+    queryClient.invalidateQueries({ queryKey: exports.communicationKeys.threads() });
+  }, [queryClient]);
   return {
     stats: stats,
     refreshInbox: refreshInbox,

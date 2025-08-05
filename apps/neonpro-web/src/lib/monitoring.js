@@ -1,4 +1,3 @@
-"use strict";
 // Sentry monitoring utilities for NeonPro
 // Provides centralized error handling and monitoring functions
 var __assign =
@@ -6,26 +5,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -45,13 +44,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -73,9 +72,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -147,7 +144,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.withErrorMonitoring = withErrorMonitoring;
 exports.reportError = reportError;
@@ -163,16 +160,15 @@ var server_1 = require("next/server");
  * Automatically captures errors and sends them to Sentry
  */
 function withErrorMonitoring(handler) {
-  var _this = this;
-  return function () {
+  return () => {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
       args[_i] = arguments[_i];
     }
-    return __awaiter(_this, void 0, void 0, function () {
+    return __awaiter(this, void 0, void 0, function () {
       var error_1, request, requestInfo_1;
       var _a;
-      return __generator(this, function (_b) {
+      return __generator(this, (_b) => {
         switch (_b.label) {
           case 0:
             _b.trys.push([0, 2, , 3]);
@@ -193,7 +189,7 @@ function withErrorMonitoring(handler) {
               timestamp: new Date().toISOString(),
             };
             // Report to Sentry
-            Sentry.withScope(function (scope) {
+            Sentry.withScope((scope) => {
               scope.setTag("type", "api-error");
               scope.setContext("request", requestInfo_1);
               if (error_1 instanceof Error) {
@@ -229,7 +225,7 @@ function withErrorMonitoring(handler) {
  * Use this to manually report errors with custom context
  */
 function reportError(error, context) {
-  Sentry.withScope(function (scope) {
+  Sentry.withScope((scope) => {
     // Set user context
     if (context === null || context === void 0 ? void 0 : context.user) {
       scope.setUser({
@@ -240,7 +236,7 @@ function reportError(error, context) {
     }
     // Set custom tags
     if (context === null || context === void 0 ? void 0 : context.tags) {
-      Object.entries(context.tags).forEach(function (_a) {
+      Object.entries(context.tags).forEach((_a) => {
         var key = _a[0],
           value = _a[1];
         scope.setTag(key, value);
@@ -248,7 +244,7 @@ function reportError(error, context) {
     }
     // Set extra context
     if (context === null || context === void 0 ? void 0 : context.extra) {
-      Object.entries(context.extra).forEach(function (_a) {
+      Object.entries(context.extra).forEach((_a) => {
         var key = _a[0],
           value = _a[1];
         scope.setContext(key, value);
@@ -274,16 +270,16 @@ function withPerformanceMonitoring(name, operation) {
   });
   Sentry.getCurrentScope().setSpan(transaction);
   return operation()
-    .then(function (result) {
+    .then((result) => {
       transaction.setStatus("ok");
       return result;
     })
-    .catch(function (error) {
+    .catch((error) => {
       transaction.setStatus("internal_error");
       Sentry.captureException(error);
       throw error;
     })
-    .finally(function () {
+    .finally(() => {
       transaction.end();
     });
 }
@@ -292,7 +288,7 @@ function withPerformanceMonitoring(name, operation) {
  * Tracks slow queries and database errors
  */
 function monitorDatabaseOperation(operation, query) {
-  return function (target, propertyKey, descriptor) {
+  return (target, propertyKey, descriptor) => {
     var originalMethod = descriptor.value;
     descriptor.value = function () {
       var args = [];
@@ -331,7 +327,7 @@ function monitorDatabaseOperation(operation, query) {
             case 3:
               error_2 = _a.sent();
               transaction.setStatus("internal_error");
-              Sentry.withScope(function (scope) {
+              Sentry.withScope((scope) => {
                 scope.setTag("operation", operation);
                 scope.setContext("database", {
                   query: query || "unknown",
@@ -375,7 +371,7 @@ function trackBusinessMetric(metric, value, tags) {
  * Auth error handler specifically for authentication issues
  */
 function reportAuthError(error, context) {
-  Sentry.withScope(function (scope) {
+  Sentry.withScope((scope) => {
     scope.setTag("errorType", "authentication");
     scope.setTag("provider", context.provider || "unknown");
     scope.setTag("operation", context.operation || "unknown");

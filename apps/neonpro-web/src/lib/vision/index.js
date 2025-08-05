@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Vision Analysis System - Main Export Index
  * Centralized exports for NeonPro Computer Vision System
@@ -8,15 +7,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -26,7 +25,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -55,8 +54,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -77,9 +74,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -138,7 +135,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.monitorVisionPerformance =
   exports.handleVisionSystemError =
@@ -181,181 +178,127 @@ exports.monitorVisionPerformance =
 var config_1 = require("./config");
 Object.defineProperty(exports, "VISION_CONFIG", {
   enumerable: true,
-  get: function () {
-    return config_1.VISION_CONFIG;
-  },
+  get: () => config_1.VISION_CONFIG,
 });
 Object.defineProperty(exports, "TREATMENT_TYPES", {
   enumerable: true,
-  get: function () {
-    return config_1.TREATMENT_TYPES;
-  },
+  get: () => config_1.TREATMENT_TYPES,
 });
 Object.defineProperty(exports, "ANALYSIS_STATUS", {
   enumerable: true,
-  get: function () {
-    return config_1.ANALYSIS_STATUS;
-  },
+  get: () => config_1.ANALYSIS_STATUS,
 });
 Object.defineProperty(exports, "ERROR_CODES", {
   enumerable: true,
-  get: function () {
-    return config_1.ERROR_CODES;
-  },
+  get: () => config_1.ERROR_CODES,
 });
 Object.defineProperty(exports, "QUALITY_THRESHOLDS", {
   enumerable: true,
-  get: function () {
-    return config_1.QUALITY_THRESHOLDS;
-  },
+  get: () => config_1.QUALITY_THRESHOLDS,
 });
 Object.defineProperty(exports, "validateVoidBeastCompliance", {
   enumerable: true,
-  get: function () {
-    return config_1.validateVoidBeastCompliance;
-  },
+  get: () => config_1.validateVoidBeastCompliance,
 });
 Object.defineProperty(exports, "getEnvironmentConfig", {
   enumerable: true,
-  get: function () {
-    return config_1.getEnvironmentConfig;
-  },
+  get: () => config_1.getEnvironmentConfig,
 });
 // Utilities
 var utils_1 = require("./utils");
 Object.defineProperty(exports, "VisionUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.VisionUtils;
-  },
+  get: () => utils_1.VisionUtils,
 });
 Object.defineProperty(exports, "ImageUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.ImageUtils;
-  },
+  get: () => utils_1.ImageUtils,
 });
 Object.defineProperty(exports, "AnalysisUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.AnalysisUtils;
-  },
+  get: () => utils_1.AnalysisUtils,
 });
 Object.defineProperty(exports, "MeasurementUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.MeasurementUtils;
-  },
+  get: () => utils_1.MeasurementUtils,
 });
 Object.defineProperty(exports, "AnnotationUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.AnnotationUtils;
-  },
+  get: () => utils_1.AnnotationUtils,
 });
 Object.defineProperty(exports, "PerformanceUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.PerformanceUtils;
-  },
+  get: () => utils_1.PerformanceUtils,
 });
 Object.defineProperty(exports, "ExportUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.ExportUtils;
-  },
+  get: () => utils_1.ExportUtils,
 });
 Object.defineProperty(exports, "DateUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.DateUtils;
-  },
+  get: () => utils_1.DateUtils,
 });
 Object.defineProperty(exports, "ErrorUtils", {
   enumerable: true,
-  get: function () {
-    return utils_1.ErrorUtils;
-  },
+  get: () => utils_1.ErrorUtils,
 });
 // Hooks
 var hooks_1 = require("./hooks");
 Object.defineProperty(exports, "useVisionAnalysis", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useVisionAnalysis;
-  },
+  get: () => hooks_1.useVisionAnalysis,
 });
 Object.defineProperty(exports, "useImageUpload", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useImageUpload;
-  },
+  get: () => hooks_1.useImageUpload,
 });
 Object.defineProperty(exports, "useAnalysisExport", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useAnalysisExport;
-  },
+  get: () => hooks_1.useAnalysisExport,
 });
 Object.defineProperty(exports, "useAnnotations", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useAnnotations;
-  },
+  get: () => hooks_1.useAnnotations,
 });
 Object.defineProperty(exports, "useMeasurements", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useMeasurements;
-  },
+  get: () => hooks_1.useMeasurements,
 });
 Object.defineProperty(exports, "useAnalysisHistory", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useAnalysisHistory;
-  },
+  get: () => hooks_1.useAnalysisHistory,
 });
 Object.defineProperty(exports, "usePerformanceMonitoring", {
   enumerable: true,
-  get: function () {
-    return hooks_1.usePerformanceMonitoring;
-  },
+  get: () => hooks_1.usePerformanceMonitoring,
 });
 Object.defineProperty(exports, "useLocalStorage", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useLocalStorage;
-  },
+  get: () => hooks_1.useLocalStorage,
 });
 Object.defineProperty(exports, "useDebounce", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useDebounce;
-  },
+  get: () => hooks_1.useDebounce,
 });
 Object.defineProperty(exports, "useIntersectionObserver", {
   enumerable: true,
-  get: function () {
-    return hooks_1.useIntersectionObserver;
-  },
+  get: () => hooks_1.useIntersectionObserver,
 });
 // Re-export default hooks object
 var hooks_2 = require("./hooks");
 Object.defineProperty(exports, "VisionHooks", {
   enumerable: true,
-  get: function () {
-    return hooks_2.default;
-  },
+  get: () => hooks_2.default,
 });
 /**
  * Main Vision System Class
  * Provides a unified interface for all vision analysis operations
  */
-var VisionSystem = /** @class */ (function () {
+var VisionSystem = /** @class */ (() => {
   function VisionSystem() {
     this.config = VISION_CONFIG;
   }
-  VisionSystem.getInstance = function () {
+  VisionSystem.getInstance = () => {
     if (!VisionSystem.instance) {
       VisionSystem.instance = new VisionSystem();
     }
@@ -395,14 +338,14 @@ var VisionSystem = /** @class */ (function () {
    */
   VisionSystem.prototype.validateHealth = function () {
     return __awaiter(this, void 0, void 0, function () {
-      var issues, endpoints, _i, endpoints_1, endpoint, response, error_1, memoryInfo, error_2;
-      return __generator(this, function (_a) {
+      var issues, endpoints, _i, endpoints_1, endpoint, response, _error_1, memoryInfo, error_2;
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             issues = [];
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 8, , 9]);
+            _a.trys.push([1, 8, undefined, 9]);
             endpoints = ["/api/vision/analyze", "/api/vision/upload", "/api/vision/export"];
             (_i = 0), (endpoints_1 = endpoints);
             _a.label = 2;
@@ -411,7 +354,7 @@ var VisionSystem = /** @class */ (function () {
             endpoint = endpoints_1[_i];
             _a.label = 3;
           case 3:
-            _a.trys.push([3, 5, , 6]);
+            _a.trys.push([3, 5, undefined, 6]);
             return [4 /*yield*/, fetch(endpoint, { method: "HEAD" })];
           case 4:
             response = _a.sent();
@@ -420,7 +363,7 @@ var VisionSystem = /** @class */ (function () {
             }
             return [3 /*break*/, 6];
           case 5:
-            error_1 = _a.sent();
+            _error_1 = _a.sent();
             issues.push("Endpoint ".concat(endpoint, " unreachable"));
             return [3 /*break*/, 6];
           case 6:
@@ -498,17 +441,15 @@ exports.VisionSystem = VisionSystem;
 /**
  * Convenience function to get the vision system instance
  */
-var getVisionSystem = function () {
-  return VisionSystem.getInstance();
-};
+var getVisionSystem = () => VisionSystem.getInstance();
 exports.getVisionSystem = getVisionSystem;
 /**
  * Initialize the vision system (call this in your app initialization)
  */
-var initializeVisionSystem = function () {
-  return __awaiter(void 0, void 0, void 0, function () {
+var initializeVisionSystem = () =>
+  __awaiter(void 0, void 0, void 0, function () {
     var system;
-    return __generator(this, function (_a) {
+    return __generator(this, (_a) => {
       switch (_a.label) {
         case 0:
           system = (0, exports.getVisionSystem)();
@@ -519,7 +460,6 @@ var initializeVisionSystem = function () {
       }
     });
   });
-};
 exports.initializeVisionSystem = initializeVisionSystem;
 /**
  * Default export - Vision System instance
@@ -582,7 +522,7 @@ exports.SYSTEM_EVENTS = {
 /**
  * Global error handler for vision system
  */
-var handleVisionSystemError = function (error, context) {
+var handleVisionSystemError = (error, context) => {
   var errorMessage = VisionUtils.Error.getUserFriendlyMessage(error);
   var isRecoverable = VisionUtils.Error.isRecoverableError(error);
   console.error("Vision System Error".concat(context ? " (".concat(context, ")") : "", ":"), {
@@ -617,11 +557,11 @@ exports.handleVisionSystemError = handleVisionSystemError;
 /**
  * Performance monitoring helper
  */
-var monitorVisionPerformance = function (operation) {
+var monitorVisionPerformance = (operation) => {
   var timer = VisionUtils.Performance.createTimer();
   timer.start();
   return {
-    end: function () {
+    end: () => {
       var duration = timer.stop();
       var memoryUsage = VisionUtils.Performance.getMemoryUsage();
       var metrics = {

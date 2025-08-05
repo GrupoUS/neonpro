@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Legal Documentation Automation System
  * Implements automated generation and management of legal documentation for LGPD compliance
@@ -18,20 +17,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -46,26 +45,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -85,13 +84,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -113,9 +112,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -187,10 +184,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -199,7 +196,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.legalDocumentationManager =
   exports.LegalDocumentationManager =
@@ -216,7 +213,7 @@ var events_1 = require("events");
  * Document Types
  */
 var DocumentType;
-(function (DocumentType) {
+((DocumentType) => {
   DocumentType["PRIVACY_POLICY"] = "privacy_policy";
   DocumentType["COOKIE_POLICY"] = "cookie_policy";
   DocumentType["TERMS_OF_SERVICE"] = "terms_of_service";
@@ -234,7 +231,7 @@ var DocumentType;
  * Document Status
  */
 var DocumentStatus;
-(function (DocumentStatus) {
+((DocumentStatus) => {
   DocumentStatus["DRAFT"] = "draft";
   DocumentStatus["UNDER_REVIEW"] = "under_review";
   DocumentStatus["APPROVED"] = "approved";
@@ -246,7 +243,7 @@ var DocumentStatus;
  * Document Language
  */
 var DocumentLanguage;
-(function (DocumentLanguage) {
+((DocumentLanguage) => {
   DocumentLanguage["PT_BR"] = "pt-BR";
   DocumentLanguage["EN_US"] = "en-US";
   DocumentLanguage["ES_ES"] = "es-ES";
@@ -256,7 +253,7 @@ var DocumentLanguage;
  * Legal Framework
  */
 var LegalFramework;
-(function (LegalFramework) {
+((LegalFramework) => {
   LegalFramework["LGPD"] = "LGPD";
   LegalFramework["GDPR"] = "GDPR";
   LegalFramework["CCPA"] = "CCPA";
@@ -276,7 +273,7 @@ var LegalFramework;
  * - Approval workflows
  * - Automated updates and notifications
  */
-var LegalDocumentationManager = /** @class */ (function (_super) {
+var LegalDocumentationManager = /** @class */ ((_super) => {
   __extends(LegalDocumentationManager, _super);
   function LegalDocumentationManager(config) {
     if (config === void 0) {
@@ -358,7 +355,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -398,7 +395,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -512,10 +509,10 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
               html += tocHtml;
               markdown += this.htmlToMarkdown(tocHtml);
             }
-            _loop_1 = function (section) {
-              var sectionContent = template.content.sections.find(function (s) {
-                return s.sectionId === section.id;
-              });
+            _loop_1 = (section) => {
+              var sectionContent = template.content.sections.find(
+                (s) => s.sectionId === section.id,
+              );
               if (!sectionContent) return "continue";
               // Process main section content
               var sectionHtml = '<section id="'
@@ -558,10 +555,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
             this_1 = this;
             // Process sections
             for (
-              _i = 0,
-                _a = template.structure.sections.sort(function (a, b) {
-                  return a.order - b.order;
-                });
+              _i = 0, _a = template.structure.sections.sort((a, b) => a.order - b.order);
               _i < _a.length;
               _i++
             ) {
@@ -616,7 +610,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Process template with variables
    */
-  LegalDocumentationManager.prototype.processTemplate = function (template, variables, context) {
+  LegalDocumentationManager.prototype.processTemplate = (template, variables, context) => {
     var processed = template;
     // Replace simple variables
     for (var _i = 0, _a = Object.entries(variables); _i < _a.length; _i++) {
@@ -653,11 +647,9 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
     // Replace processing activities if available
     if (context.processingActivities) {
       var activitiesList = context.processingActivities
-        .map(function (activity) {
-          return "<li><strong>"
-            .concat(activity.name, "</strong>: ")
-            .concat(activity.purpose, "</li>");
-        })
+        .map((activity) =>
+          "<li><strong>".concat(activity.name, "</strong>: ").concat(activity.purpose, "</li>"),
+        )
         .join("\n");
       processed = processed.replace(
         /{{\s*processingActivities\s*}}/g,
@@ -673,7 +665,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Evaluate conditional expression
    */
-  LegalDocumentationManager.prototype.evaluateCondition = function (condition, variables, context) {
+  LegalDocumentationManager.prototype.evaluateCondition = (condition, variables, context) => {
     var _a;
     try {
       // Create safe evaluation context
@@ -703,21 +695,15 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Generate table of contents
    */
-  LegalDocumentationManager.prototype.generateTableOfContents = function (template) {
+  LegalDocumentationManager.prototype.generateTableOfContents = (template) => {
     var sections = template.structure.sections
-      .sort(function (a, b) {
-        return a.order - b.order;
-      })
-      .map(function (section) {
+      .sort((a, b) => a.order - b.order)
+      .map((section) => {
         var html = '<li><a href="#'.concat(section.id, '">').concat(section.title, "</a>");
         if (section.subsections && section.subsections.length > 0) {
           var subsections = section.subsections
-            .sort(function (a, b) {
-              return a.order - b.order;
-            })
-            .map(function (sub) {
-              return '<li><a href="#'.concat(sub.id, '">').concat(sub.title, "</a></li>");
-            })
+            .sort((a, b) => a.order - b.order)
+            .map((sub) => '<li><a href="#'.concat(sub.id, '">').concat(sub.title, "</a></li>"))
             .join("\n");
           html += "\n<ul>\n".concat(subsections, "\n</ul>");
         }
@@ -733,7 +719,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Generate signature section
    */
-  LegalDocumentationManager.prototype.generateSignatureSection = function (document) {
+  LegalDocumentationManager.prototype.generateSignatureSection = (document) => {
     var orgInfo = document.data.organizationInfo;
     var currentDate = new Date().toLocaleDateString("pt-BR");
     return '\n<div class="signature-section">\n<h3>Assinatura e Aprova\u00E7\u00E3o</h3>\n<p>Este documento foi aprovado e \u00E9 v\u00E1lido a partir de '
@@ -754,7 +740,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Add watermark to HTML
    */
-  LegalDocumentationManager.prototype.addWatermark = function (html, watermark) {
+  LegalDocumentationManager.prototype.addWatermark = (html, watermark) => {
     var watermarkStyle =
       "\n<style>\n.watermark {\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%) rotate(-45deg);\n  font-size: 72px;\n  color: rgba(0, 0, 0, 0.1);\n  z-index: -1;\n  pointer-events: none;\n}\n</style>\n";
     var watermarkDiv = '<div class="watermark">'.concat(watermark, "</div>");
@@ -763,8 +749,8 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Convert HTML to Markdown (simplified)
    */
-  LegalDocumentationManager.prototype.htmlToMarkdown = function (html) {
-    return html
+  LegalDocumentationManager.prototype.htmlToMarkdown = (html) =>
+    html
       .replace(/<h1[^>]*>(.*?)<\/h1>/gi, "# $1\n\n")
       .replace(/<h2[^>]*>(.*?)<\/h2>/gi, "## $1\n\n")
       .replace(/<h3[^>]*>(.*?)<\/h3>/gi, "### $1\n\n")
@@ -779,13 +765,12 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
       .replace(/<[^>]*>/g, "") // Remove remaining HTML tags
       .replace(/\n\s*\n\s*\n/g, "\n\n") // Clean up extra newlines
       .trim();
-  };
   /**
    * Generate PDF from HTML
    */
   LegalDocumentationManager.prototype.generatePdf = function (html) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In a real implementation, this would use a PDF generation library like Puppeteer
         // For now, return a placeholder
         return [
@@ -798,7 +783,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Generate compliance requirements
    */
-  LegalDocumentationManager.prototype.generateComplianceRequirements = function (framework) {
+  LegalDocumentationManager.prototype.generateComplianceRequirements = (framework) => {
     var _a;
     var requirements =
       ((_a = {}),
@@ -871,7 +856,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Get default reviewers for document type
    */
-  LegalDocumentationManager.prototype.getDefaultReviewers = function (type) {
+  LegalDocumentationManager.prototype.getDefaultReviewers = (type) => {
     var _a;
     var reviewerMap =
       ((_a = {}),
@@ -931,7 +916,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            if (!!this.isInitialized) return [3 /*break*/, 2];
+            if (this.isInitialized) return [3 /*break*/, 2];
             return [4 /*yield*/, this.initialize()];
           case 1:
             _a.sent();
@@ -970,10 +955,10 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
         switch (_a.label) {
           case 0:
             existingTemplates = Array.from(this.templates.values());
-            hasPrivacyPolicy = existingTemplates.some(function (t) {
-              return t.type === DocumentType.PRIVACY_POLICY;
-            });
-            if (!!hasPrivacyPolicy) return [3 /*break*/, 2];
+            hasPrivacyPolicy = existingTemplates.some(
+              (t) => t.type === DocumentType.PRIVACY_POLICY,
+            );
+            if (hasPrivacyPolicy) return [3 /*break*/, 2];
             return [4 /*yield*/, this.createDefaultPrivacyPolicyTemplate()];
           case 1:
             _a.sent();
@@ -1121,7 +1106,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Validate template
    */
-  LegalDocumentationManager.prototype.validateTemplate = function (template) {
+  LegalDocumentationManager.prototype.validateTemplate = (template) => {
     if (!template.name || template.name.trim().length === 0) {
       throw new Error("Template name is required");
     }
@@ -1135,7 +1120,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
   /**
    * Validate generation request
    */
-  LegalDocumentationManager.prototype.validateGenerationRequest = function (request, template) {
+  LegalDocumentationManager.prototype.validateGenerationRequest = (request, template) => {
     // Check required variables
     for (var _i = 0, _a = template.structure.variables; _i < _a.length; _i++) {
       var variable = _a[_i];
@@ -1155,10 +1140,9 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
    * Start review monitoring
    */
   LegalDocumentationManager.prototype.startReviewMonitoring = function () {
-    var _this = this;
     this.reviewCheckInterval = setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           return __generator(this, function (_a) {
             switch (_a.label) {
               case 0:
@@ -1168,8 +1152,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       24 * 60 * 60 * 1000,
     ); // Daily check
   };
@@ -1222,29 +1205,19 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
     var documents = Array.from(this.documents.values());
     if (filters) {
       if (filters.type) {
-        documents = documents.filter(function (d) {
-          return d.type === filters.type;
-        });
+        documents = documents.filter((d) => d.type === filters.type);
       }
       if (filters.status) {
-        documents = documents.filter(function (d) {
-          return d.status === filters.status;
-        });
+        documents = documents.filter((d) => d.status === filters.status);
       }
       if (filters.language) {
-        documents = documents.filter(function (d) {
-          return d.language === filters.language;
-        });
+        documents = documents.filter((d) => d.language === filters.language);
       }
       if (filters.framework) {
-        documents = documents.filter(function (d) {
-          return d.compliance.framework === filters.framework;
-        });
+        documents = documents.filter((d) => d.compliance.framework === filters.framework);
       }
     }
-    return documents.sort(function (a, b) {
-      return b.updatedAt.getTime() - a.updatedAt.getTime();
-    });
+    return documents.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   };
   /**
    * Get templates with filtering
@@ -1253,24 +1226,16 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
     var templates = Array.from(this.templates.values());
     if (filters) {
       if (filters.type) {
-        templates = templates.filter(function (t) {
-          return t.type === filters.type;
-        });
+        templates = templates.filter((t) => t.type === filters.type);
       }
       if (filters.framework) {
-        templates = templates.filter(function (t) {
-          return t.framework === filters.framework;
-        });
+        templates = templates.filter((t) => t.framework === filters.framework);
       }
       if (filters.language) {
-        templates = templates.filter(function (t) {
-          return t.language === filters.language;
-        });
+        templates = templates.filter((t) => t.language === filters.language);
       }
     }
-    return templates.sort(function (a, b) {
-      return b.updatedAt.getTime() - a.updatedAt.getTime();
-    });
+    return templates.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   };
   /**
    * Get reports with filtering
@@ -1279,42 +1244,30 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
     var reports = Array.from(this.reports.values());
     if (filters) {
       if (filters.type) {
-        reports = reports.filter(function (r) {
-          return r.type === filters.type;
-        });
+        reports = reports.filter((r) => r.type === filters.type);
       }
       if (filters.framework) {
-        reports = reports.filter(function (r) {
-          return r.framework === filters.framework;
-        });
+        reports = reports.filter((r) => r.framework === filters.framework);
       }
       if (filters.dateRange) {
-        reports = reports.filter(function (r) {
-          return r.generatedAt >= filters.dateRange.start && r.generatedAt <= filters.dateRange.end;
-        });
+        reports = reports.filter(
+          (r) => r.generatedAt >= filters.dateRange.start && r.generatedAt <= filters.dateRange.end,
+        );
       }
     }
-    return reports.sort(function (a, b) {
-      return b.generatedAt.getTime() - a.generatedAt.getTime();
-    });
+    return reports.sort((a, b) => b.generatedAt.getTime() - a.generatedAt.getTime());
   };
   /**
    * Generate ID
    */
-  LegalDocumentationManager.prototype.generateId = function (prefix) {
-    return ""
-      .concat(prefix, "_")
-      .concat(Date.now(), "_")
-      .concat(Math.random().toString(36).substr(2, 9));
-  };
+  LegalDocumentationManager.prototype.generateId = (prefix) =>
+    "".concat(prefix, "_").concat(Date.now(), "_").concat(Math.random().toString(36).substr(2, 9));
   /**
    * Load templates
    */
   LegalDocumentationManager.prototype.loadTemplates = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1322,9 +1275,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
    */
   LegalDocumentationManager.prototype.loadDocuments = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1332,9 +1283,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
    */
   LegalDocumentationManager.prototype.loadReports = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1342,9 +1291,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
    */
   LegalDocumentationManager.prototype.saveTemplate = function (template) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1352,9 +1299,7 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
    */
   LegalDocumentationManager.prototype.saveDocument = function (document) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
@@ -1362,15 +1307,13 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
    */
   LegalDocumentationManager.prototype.saveReport = function (report) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   /**
    * Log activity
    */
-  LegalDocumentationManager.prototype.logActivity = function (actor, action, details) {
+  LegalDocumentationManager.prototype.logActivity = (actor, action, details) => {
     // In a real implementation, this would log to audit trail
     console.log("[LegalDocumentation] ".concat(actor, " - ").concat(action, ":"), details);
   };
@@ -1404,9 +1347,9 @@ var LegalDocumentationManager = /** @class */ (function (_super) {
     if (!this.reviewCheckInterval) {
       issues.push("Review monitoring not running");
     }
-    var dueReviews = Array.from(this.documents.values()).filter(function (d) {
-      return d.compliance.nextReview <= new Date() && d.status === DocumentStatus.PUBLISHED;
-    });
+    var dueReviews = Array.from(this.documents.values()).filter(
+      (d) => d.compliance.nextReview <= new Date() && d.status === DocumentStatus.PUBLISHED,
+    );
     if (dueReviews.length > 0) {
       issues.push("".concat(dueReviews.length, " documents require review"));
     }

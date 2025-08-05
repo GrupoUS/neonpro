@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubscriptionManagement = SubscriptionManagement;
 var alert_1 = require("@/components/ui/alert");
@@ -197,7 +194,6 @@ var plans = [
   },
 ];
 function SubscriptionManagement() {
-  var _this = this;
   var _a = (0, use_subscription_1.useSubscription)(),
     subscription = _a.subscription,
     refreshSubscription = _a.refreshSubscription;
@@ -213,10 +209,10 @@ function SubscriptionManagement() {
   var _c = (0, react_1.useState)(false),
     isLoading = _c[0],
     setIsLoading = _c[1];
-  var handleSubscribe = function (priceId) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubscribe = (priceId) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, url, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!priceId) {
@@ -271,11 +267,10 @@ function SubscriptionManagement() {
         }
       });
     });
-  };
-  var handleManageBilling = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleManageBilling = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, url, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setIsLoading(true);
@@ -318,20 +313,14 @@ function SubscriptionManagement() {
         }
       });
     });
-  };
   // Check for success/cancel parameters
-  (0, react_1.useEffect)(
-    function () {
-      var urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get("success")) {
-        refreshSubscription();
-      }
-    },
-    [refreshSubscription],
-  );
-  var currentPlan = plans.find(function (plan) {
-    return plan.priceId === subscription.priceId;
-  });
+  (0, react_1.useEffect)(() => {
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("success")) {
+      refreshSubscription();
+    }
+  }, [refreshSubscription]);
+  var currentPlan = plans.find((plan) => plan.priceId === subscription.priceId);
   return (
     <div className="space-y-6">
       {/* Current Subscription Status */}
@@ -431,7 +420,7 @@ function SubscriptionManagement() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {plans.map(function (plan) {
+          {plans.map((plan) => {
             var isCurrentPlan = plan.priceId === subscription.priceId;
             return (
               <card_1.Card
@@ -458,22 +447,18 @@ function SubscriptionManagement() {
 
                 <card_1.CardContent className="space-y-4">
                   <ul className="space-y-2">
-                    {plan.features.map(function (feature, index) {
-                      return (
-                        <li key={index} className="flex items-center gap-2 text-sm">
-                          <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
-                          {feature}
-                        </li>
-                      );
-                    })}
+                    {plan.features.map((feature, index) => (
+                      <li key={index} className="flex items-center gap-2 text-sm">
+                        <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />
+                        {feature}
+                      </li>
+                    ))}
                   </ul>
 
                   <separator_1.Separator />
 
                   <button_1.Button
-                    onClick={function () {
-                      return handleSubscribe(plan.priceId);
-                    }}
+                    onClick={() => handleSubscribe(plan.priceId)}
                     disabled={isLoading || isCurrentPlan || !plan.priceId}
                     className="w-full"
                     variant={plan.popular ? "default" : "outline"}

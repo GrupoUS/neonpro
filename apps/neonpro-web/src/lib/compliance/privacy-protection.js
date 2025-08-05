@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Privacy Protection Framework
  * Epic 10 - Story 10.4: Healthcare Compliance Computer Vision (Privacy Protection)
@@ -13,26 +12,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -52,13 +51,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -80,9 +79,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -154,7 +151,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createprivacyProtectionManager =
   exports.ConsentValidationSchema =
@@ -165,7 +162,7 @@ var logger_1 = require("@/lib/utils/logger");
 var client_1 = require("@/lib/supabase/client");
 var crypto_js_1 = require("crypto-js");
 // Main Privacy Protection Manager
-var PrivacyProtectionManager = /** @class */ (function () {
+var PrivacyProtectionManager = /** @class */ (() => {
   function PrivacyProtectionManager() {
     this.supabase = (0, client_1.createClient)();
     this.privacyProfiles = new Map();
@@ -427,9 +424,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
             return [4 /*yield*/, this.getPrivacyProfile(patientId)];
           case 1:
             profile = _a.sent();
-            consent = profile.consentRecords.find(function (c) {
-              return c.id === consentId;
-            });
+            consent = profile.consentRecords.find((c) => c.id === consentId);
             if (!consent) {
               throw new Error("Consent record ".concat(consentId, " not found"));
             }
@@ -668,7 +663,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
         switch (_a.label) {
           case 0:
             profile = this.privacyProfiles.get(patientId);
-            if (!!profile) return [3 /*break*/, 2];
+            if (profile) return [3 /*break*/, 2];
             return [
               4 /*yield*/,
               this.supabase
@@ -695,7 +690,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
   PrivacyProtectionManager.prototype.generatePrivacyNotices = function (patientId) {
     return __awaiter(this, void 0, void 0, function () {
       var notices;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         notices = [];
         // General privacy notice
         notices.push({
@@ -730,7 +725,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
       });
     });
   };
-  PrivacyProtectionManager.prototype.generateRetentionSchedule = function (patientId) {
+  PrivacyProtectionManager.prototype.generateRetentionSchedule = (patientId) => {
     var dataCategories = [
       {
         category: "personal",
@@ -788,7 +783,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
     reason,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement consent withdrawal processing
         // This would include stopping processing, notifying relevant systems, etc.
         logger_1.logger.info("Processing consent withdrawal for patient ".concat(patientId));
@@ -796,7 +791,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
       });
     });
   };
-  PrivacyProtectionManager.prototype.getProcessingTimeForRequest = function (requestType) {
+  PrivacyProtectionManager.prototype.getProcessingTimeForRequest = (requestType) => {
     var processingTimes = {
       access: 15, // 15 days
       portability: 15,
@@ -870,7 +865,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
   };
   PrivacyProtectionManager.prototype.fulfillAccessRequest = function (request, profile) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate comprehensive data export for the patient
         request.responseDetails = "Complete data export generated and delivered";
         request.fulfillmentMethod = "secure_download_link";
@@ -880,7 +875,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
   };
   PrivacyProtectionManager.prototype.fulfillPortabilityRequest = function (request, profile) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate portable data format
         request.responseDetails = "Data exported in machine-readable format";
         request.fulfillmentMethod = "structured_data_export";
@@ -890,7 +885,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
   };
   PrivacyProtectionManager.prototype.fulfillRectificationRequest = function (request, profile) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Process data correction request
         request.responseDetails = "Data corrections applied as requested";
         request.fulfillmentMethod = "direct_update";
@@ -900,7 +895,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
   };
   PrivacyProtectionManager.prototype.fulfillErasureRequest = function (request, profile) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Process data deletion request
         request.responseDetails = "Data deletion completed per request";
         request.fulfillmentMethod = "secure_deletion";
@@ -910,7 +905,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
   };
   PrivacyProtectionManager.prototype.fulfillRestrictionRequest = function (request, profile) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Process processing restriction request
         request.responseDetails = "Processing restrictions applied as requested";
         request.fulfillmentMethod = "access_restriction";
@@ -920,7 +915,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
   };
   PrivacyProtectionManager.prototype.fulfillObjectionRequest = function (request, profile) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Process objection to processing
         request.responseDetails = "Processing objection acknowledged and processed";
         request.fulfillmentMethod = "processing_cessation";
@@ -928,10 +923,9 @@ var PrivacyProtectionManager = /** @class */ (function () {
       });
     });
   };
-  PrivacyProtectionManager.prototype.generateReversibilityKey = function () {
-    return crypto_js_1.default.lib.WordArray.random(32).toString();
-  };
-  PrivacyProtectionManager.prototype.calculateDataUtility = function (level) {
+  PrivacyProtectionManager.prototype.generateReversibilityKey = () =>
+    crypto_js_1.default.lib.WordArray.random(32).toString();
+  PrivacyProtectionManager.prototype.calculateDataUtility = (level) => {
     var utilityMap = {
       none: 1.0,
       pseudonymized: 0.9,
@@ -941,7 +935,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
     };
     return utilityMap[level] || 0.5;
   };
-  PrivacyProtectionManager.prototype.calculatePrivacyLevel = function (level) {
+  PrivacyProtectionManager.prototype.calculatePrivacyLevel = (level) => {
     var privacyMap = {
       none: 0.0,
       pseudonymized: 0.6,
@@ -951,7 +945,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
     };
     return privacyMap[level] || 0.5;
   };
-  PrivacyProtectionManager.prototype.calculateReidentificationRisk = function (level) {
+  PrivacyProtectionManager.prototype.calculateReidentificationRisk = (level) => {
     var riskMap = {
       none: 1.0,
       pseudonymized: 0.4,
@@ -961,7 +955,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
     };
     return riskMap[level] || 0.5;
   };
-  PrivacyProtectionManager.prototype.calculateInformationLoss = function (level) {
+  PrivacyProtectionManager.prototype.calculateInformationLoss = (level) => {
     var lossMap = {
       none: 0.0,
       pseudonymized: 0.1,
@@ -971,22 +965,20 @@ var PrivacyProtectionManager = /** @class */ (function () {
     };
     return lossMap[level] || 0.3;
   };
-  PrivacyProtectionManager.prototype.assessAnonymizationRisk = function (status) {
-    return {
-      overallRisk: "low",
-      riskFactors: ["Limited dataset size", "Structured anonymization"],
-      mitigationMeasures: ["Regular risk assessment", "Access monitoring"],
-      assessmentDate: new Date().toISOString(),
-      assessor: "system_automated",
-      nextAssessmentDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-    };
-  };
+  PrivacyProtectionManager.prototype.assessAnonymizationRisk = (status) => ({
+    overallRisk: "low",
+    riskFactors: ["Limited dataset size", "Structured anonymization"],
+    mitigationMeasures: ["Regular risk assessment", "Access monitoring"],
+    assessmentDate: new Date().toISOString(),
+    assessor: "system_automated",
+    nextAssessmentDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+  });
   PrivacyProtectionManager.prototype.assessPatientPrivacyCompliance = function (
     profile,
     regulations,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implement privacy compliance assessment
         return [
           2 /*return*/,
@@ -1004,56 +996,45 @@ var PrivacyProtectionManager = /** @class */ (function () {
       });
     });
   };
-  PrivacyProtectionManager.prototype.generatePrivacyComplianceSummary = function (data) {
-    return {
-      totalPatients: data.length,
-      compliantPatients: data.filter(function (d) {
-        return d.complianceAssessment.overallCompliance === "compliant";
-      }).length,
-      nonCompliantPatients: data.filter(function (d) {
-        return d.complianceAssessment.overallCompliance === "non_compliant";
-      }).length,
-      complianceRate:
-        data.length > 0
-          ? (data.filter(function (d) {
-              return d.complianceAssessment.overallCompliance === "compliant";
-            }).length /
-              data.length) *
-            100
-          : 0,
-      criticalIssues: data.flatMap(function (d) {
-        return d.complianceAssessment.issues.filter(function (i) {
-          return i.severity === "critical";
-        });
-      }).length,
-    };
-  };
+  PrivacyProtectionManager.prototype.generatePrivacyComplianceSummary = (data) => ({
+    totalPatients: data.length,
+    compliantPatients: data.filter((d) => d.complianceAssessment.overallCompliance === "compliant")
+      .length,
+    nonCompliantPatients: data.filter(
+      (d) => d.complianceAssessment.overallCompliance === "non_compliant",
+    ).length,
+    complianceRate:
+      data.length > 0
+        ? (data.filter((d) => d.complianceAssessment.overallCompliance === "compliant").length /
+            data.length) *
+          100
+        : 0,
+    criticalIssues: data.flatMap((d) =>
+      d.complianceAssessment.issues.filter((i) => i.severity === "critical"),
+    ).length,
+  });
   PrivacyProtectionManager.prototype.generatePrivacyRecommendations = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            "Regular consent validation and renewal",
-            "Enhanced data anonymization for research purposes",
-            "Improved data subject rights request processing",
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          "Regular consent validation and renewal",
+          "Enhanced data anonymization for research purposes",
+          "Improved data subject rights request processing",
+        ],
+      ]);
     });
   };
   PrivacyProtectionManager.prototype.generatePrivacyNextActions = function (data) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          [
-            "Review and update privacy notices",
-            "Conduct privacy impact assessments",
-            "Implement enhanced access controls",
-          ],
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        [
+          "Review and update privacy notices",
+          "Conduct privacy impact assessments",
+          "Implement enhanced access controls",
+        ],
+      ]);
     });
   };
   // Database operations
@@ -1068,7 +1049,7 @@ var PrivacyProtectionManager = /** @class */ (function () {
           case 1:
             data = _a.sent().data;
             if (data) {
-              data.forEach(function (record) {
+              data.forEach((record) => {
                 _this.privacyProfiles.set(record.patient_id, record.profile_data);
               });
             }
@@ -1079,24 +1060,23 @@ var PrivacyProtectionManager = /** @class */ (function () {
   };
   PrivacyProtectionManager.prototype.validatePrivacySettings = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.info("Validating privacy protection settings...");
         return [2 /*return*/];
       });
     });
   };
   PrivacyProtectionManager.prototype.startPrivacyMonitoring = function () {
-    var _this = this;
     setInterval(
-      function () {
-        _this.performPeriodicPrivacyCheck();
+      () => {
+        this.performPeriodicPrivacyCheck();
       },
       24 * 60 * 60 * 1000,
     ); // Daily monitoring
   };
   PrivacyProtectionManager.prototype.performPeriodicPrivacyCheck = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         logger_1.logger.info("Performing periodic privacy compliance check...");
         return [2 /*return*/];
       });
@@ -1176,7 +1156,5 @@ exports.ConsentValidationSchema = zod_1.z.object({
   consentVersion: zod_1.z.string().min(1),
 });
 // Export singleton instance
-var createprivacyProtectionManager = function () {
-  return new PrivacyProtectionManager();
-};
+var createprivacyProtectionManager = () => new PrivacyProtectionManager();
 exports.createprivacyProtectionManager = createprivacyProtectionManager;

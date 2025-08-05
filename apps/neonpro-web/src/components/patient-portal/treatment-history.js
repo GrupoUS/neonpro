@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TreatmentHistory = TreatmentHistory;
 var react_1 = require("react");
@@ -46,8 +45,8 @@ function TreatmentHistory() {
     selectedTreatment = _b[0],
     setSelectedTreatment = _b[1];
   // Sample enhanced data - in production, this would come from API
-  var enhancedTreatments = treatmentHistory.map(function (treatment) {
-    return __assign(__assign({}, treatment), {
+  var enhancedTreatments = treatmentHistory.map((treatment) =>
+    __assign(__assign({}, treatment), {
       service_name: "Harmonização Facial",
       professional_name: "Dra. Marina Silva",
       progress_percentage: 85,
@@ -70,9 +69,9 @@ function TreatmentHistory() {
           taken_at: new Date().toISOString(),
         },
       ],
-    });
-  });
-  var getStatusBadge = function (status) {
+    }),
+  );
+  var getStatusBadge = (status) => {
     var badges = {
       in_progress: { label: "Em Andamento", color: "bg-blue-100 text-blue-800" },
       completed: { label: "Concluído", color: "bg-green-100 text-green-800" },
@@ -81,38 +80,33 @@ function TreatmentHistory() {
     };
     return badges[status] || badges.in_progress;
   };
-  var getSatisfactionStars = function (score) {
-    return Array.from({ length: 5 }, function (_, i) {
-      return (
-        <lucide_react_1.Star
-          key={i}
-          className={"w-4 h-4 ".concat(
-            i < score ? "fill-yellow-400 text-yellow-400" : "text-gray-300",
-          )}
-        />
-      );
-    });
-  };
+  var getSatisfactionStars = (score) =>
+    Array.from({ length: 5 }, (_, i) => (
+      <lucide_react_1.Star
+        key={i}
+        className={"w-4 h-4 ".concat(
+          i < score ? "fill-yellow-400 text-yellow-400" : "text-gray-300",
+        )}
+      />
+    ));
   if (isLoading) {
     return (
       <div className="space-y-4">
         <div className="animate-pulse space-y-4">
-          {__spreadArray([], Array(3), true).map(function (_, i) {
-            return (
-              <card_1.Card key={i} className="medical-card">
-                <card_1.CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-muted rounded-lg"></div>
-                    <div className="flex-1 space-y-2">
-                      <div className="h-5 bg-muted rounded w-1/3"></div>
-                      <div className="h-4 bg-muted rounded w-2/3"></div>
-                      <div className="h-4 bg-muted rounded w-1/2"></div>
-                    </div>
+          {__spreadArray([], Array(3), true).map((_, i) => (
+            <card_1.Card key={i} className="medical-card">
+              <card_1.CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-muted rounded-lg"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-5 bg-muted rounded w-1/3"></div>
+                    <div className="h-4 bg-muted rounded w-2/3"></div>
+                    <div className="h-4 bg-muted rounded w-1/2"></div>
                   </div>
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+                </div>
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -160,7 +154,7 @@ function TreatmentHistory() {
       {/* Treatment Timeline */}
       <div className="space-y-6">
         {enhancedTreatments.length > 0
-          ? enhancedTreatments.map(function (treatment, index) {
+          ? enhancedTreatments.map((treatment, index) => {
               var badge = getStatusBadge("in_progress");
               return (
                 <card_1.Card key={treatment.id} className="medical-card">
@@ -246,25 +240,23 @@ function TreatmentHistory() {
                                 <div className="space-y-4">
                                   <h4 className="font-semibold">Evolução Fotográfica</h4>
                                   <div className="grid grid-cols-2 gap-4">
-                                    {treatment.photos.map(function (photo) {
-                                      return (
-                                        <div key={photo.id} className="space-y-2">
-                                          <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
-                                            <lucide_react_1.Image className="w-12 h-12 text-muted-foreground" />
-                                          </div>
-                                          <div className="text-center">
-                                            <p className="text-sm font-medium">{photo.caption}</p>
-                                            <p className="text-xs text-muted-foreground">
-                                              {(0, date_fns_1.format)(
-                                                (0, date_fns_1.parseISO)(photo.taken_at),
-                                                "d 'de' MMM",
-                                                { locale: locale_1.ptBR },
-                                              )}
-                                            </p>
-                                          </div>
+                                    {treatment.photos.map((photo) => (
+                                      <div key={photo.id} className="space-y-2">
+                                        <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
+                                          <lucide_react_1.Image className="w-12 h-12 text-muted-foreground" />
                                         </div>
-                                      );
-                                    })}
+                                        <div className="text-center">
+                                          <p className="text-sm font-medium">{photo.caption}</p>
+                                          <p className="text-xs text-muted-foreground">
+                                            {(0, date_fns_1.format)(
+                                              (0, date_fns_1.parseISO)(photo.taken_at),
+                                              "d 'de' MMM",
+                                              { locale: locale_1.ptBR },
+                                            )}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    ))}
                                   </div>
                                 </div>
 

@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NEONPRO_PLANS = void 0;
 // Subscription plans for NeonPro

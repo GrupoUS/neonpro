@@ -2,18 +2,17 @@
 // NeonPro - Sistema de Automação de Compliance LGPD - Phase 3 Task 3.2
 // Quality Standard: ≥9.5/10 (BMad Enhanced)
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,7 +132,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PatientDataProcessingTransparencyDashboard;
 var react_1 = require("react");
@@ -149,7 +146,6 @@ var sonner_1 = require("sonner");
 var date_fns_1 = require("date-fns");
 var locale_1 = require("date-fns/locale");
 function PatientDataProcessingTransparencyDashboard(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     _b = _a.viewMode,
     viewMode = _b === void 0 ? "patient" : _b,
@@ -168,16 +164,13 @@ function PatientDataProcessingTransparencyDashboard(_a) {
     refreshing = _g[0],
     setRefreshing = _g[1];
   // Load dashboard data
-  (0, react_1.useEffect)(
-    function () {
-      loadTransparencyData();
-    },
-    [patientId],
-  );
-  var loadTransparencyData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    loadTransparencyData();
+  }, [patientId]);
+  var loadTransparencyData = () =>
+    __awaiter(this, void 0, void 0, function () {
       var mockData;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           setLoading(true);
           mockData = {
@@ -334,10 +327,9 @@ function PatientDataProcessingTransparencyDashboard(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var refreshData = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var refreshData = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setRefreshing(true);
@@ -350,10 +342,9 @@ function PatientDataProcessingTransparencyDashboard(_a) {
         }
       });
     });
-  };
-  var handleRightExercise = function (rightType) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleRightExercise = (rightType) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // In production, this would call the privacy rights manager
           sonner_1.toast.success(
@@ -365,10 +356,9 @@ function PatientDataProcessingTransparencyDashboard(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var exportTransparencyReport = function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var exportTransparencyReport = () =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         try {
           // In production, this would generate a comprehensive transparency report
           sonner_1.toast.success("Relatório de transparência gerado com sucesso");
@@ -378,18 +368,17 @@ function PatientDataProcessingTransparencyDashboard(_a) {
         return [2 /*return*/];
       });
     });
-  };
-  var getScoreColor = function (score) {
+  var getScoreColor = (score) => {
     if (score >= 9) return "text-green-600";
     if (score >= 7) return "text-yellow-600";
     return "text-red-600";
   };
-  var getScoreBadgeVariant = function (score) {
+  var getScoreBadgeVariant = (score) => {
     if (score >= 9) return "default";
     if (score >= 7) return "secondary";
     return "destructive";
   };
-  var getRiskLevelColor = function (level) {
+  var getRiskLevelColor = (level) => {
     switch (level) {
       case "low":
         return "text-green-600";
@@ -401,7 +390,7 @@ function PatientDataProcessingTransparencyDashboard(_a) {
         return "text-gray-600";
     }
   };
-  var getComplianceStatusIcon = function (status) {
+  var getComplianceStatusIcon = (status) => {
     switch (status) {
       case "compliant":
         return <lucide_react_1.CheckCircle className="h-4 w-4 text-green-600" />;
@@ -575,30 +564,26 @@ function PatientDataProcessingTransparencyDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {dashboardData.recentActivities.slice(0, 5).map(function (activity, index) {
-                  return (
-                    <div key={index} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {getComplianceStatusIcon(activity.complianceStatus)}
-                        <div>
-                          <div className="font-medium">{activity.description}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {(0, date_fns_1.format)(activity.timestamp, "dd/MM/yyyy 'às' HH:mm", {
-                              locale: locale_1.ptBR,
-                            })}
-                          </div>
+                {dashboardData.recentActivities.slice(0, 5).map((activity, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {getComplianceStatusIcon(activity.complianceStatus)}
+                      <div>
+                        <div className="font-medium">{activity.description}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {(0, date_fns_1.format)(activity.timestamp, "dd/MM/yyyy 'às' HH:mm", {
+                            locale: locale_1.ptBR,
+                          })}
                         </div>
                       </div>
-                      <badge_1.Badge
-                        variant={
-                          activity.complianceStatus === "compliant" ? "default" : "secondary"
-                        }
-                      >
-                        {activity.complianceStatus === "compliant" ? "Conforme" : "Atenção"}
-                      </badge_1.Badge>
                     </div>
-                  );
-                })}
+                    <badge_1.Badge
+                      variant={activity.complianceStatus === "compliant" ? "default" : "secondary"}
+                    >
+                      {activity.complianceStatus === "compliant" ? "Conforme" : "Atenção"}
+                    </badge_1.Badge>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -618,77 +603,73 @@ function PatientDataProcessingTransparencyDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {dashboardData.processingActivities.map(function (activity, index) {
-                  return (
-                    <div key={index} className="border rounded-lg p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <h4 className="font-medium">{activity.description}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            Base legal: {activity.legalBasis}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <badge_1.Badge
-                            variant={getScoreBadgeVariant(activity.complianceScore)}
-                            className={getRiskLevelColor(activity.riskLevel)}
-                          >
-                            {activity.riskLevel === "low"
-                              ? "Baixo Risco"
-                              : activity.riskLevel === "medium"
-                                ? "Médio Risco"
-                                : "Alto Risco"}
-                          </badge_1.Badge>
-                          <badge_1.Badge variant="outline">
-                            Score: {activity.complianceScore}/10
-                          </badge_1.Badge>
-                        </div>
+                {dashboardData.processingActivities.map((activity, index) => (
+                  <div key={index} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h4 className="font-medium">{activity.description}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Base legal: {activity.legalBasis}
+                        </p>
                       </div>
-
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="font-medium">Categorias de dados:</span>
-                          <div className="text-muted-foreground">
-                            {activity.dataCategories.join(", ")}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="font-medium">Frequência:</span>
-                          <div className="text-muted-foreground">{activity.frequency}</div>
-                        </div>
-                        <div>
-                          <span className="font-medium">Última atividade:</span>
-                          <div className="text-muted-foreground">
-                            {(0, date_fns_1.format)(activity.lastActivity, "dd/MM/yyyy", {
-                              locale: locale_1.ptBR,
-                            })}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">Pode recusar:</span>
-                          <badge_1.Badge variant={activity.canOptOut ? "default" : "secondary"}>
-                            {activity.canOptOut ? "Sim" : "Não"}
-                          </badge_1.Badge>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <badge_1.Badge
+                          variant={getScoreBadgeVariant(activity.complianceScore)}
+                          className={getRiskLevelColor(activity.riskLevel)}
+                        >
+                          {activity.riskLevel === "low"
+                            ? "Baixo Risco"
+                            : activity.riskLevel === "medium"
+                              ? "Médio Risco"
+                              : "Alto Risco"}
+                        </badge_1.Badge>
+                        <badge_1.Badge variant="outline">
+                          Score: {activity.complianceScore}/10
+                        </badge_1.Badge>
                       </div>
-
-                      {activity.canOptOut && (
-                        <div className="pt-2 border-t">
-                          <button_1.Button
-                            variant="outline"
-                            size="sm"
-                            onClick={function () {
-                              return handleRightExercise("objection");
-                            }}
-                          >
-                            <lucide_react_1.Settings className="h-4 w-4 mr-2" />
-                            Gerenciar Consentimento
-                          </button_1.Button>
-                        </div>
-                      )}
                     </div>
-                  );
-                })}
+
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-medium">Categorias de dados:</span>
+                        <div className="text-muted-foreground">
+                          {activity.dataCategories.join(", ")}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="font-medium">Frequência:</span>
+                        <div className="text-muted-foreground">{activity.frequency}</div>
+                      </div>
+                      <div>
+                        <span className="font-medium">Última atividade:</span>
+                        <div className="text-muted-foreground">
+                          {(0, date_fns_1.format)(activity.lastActivity, "dd/MM/yyyy", {
+                            locale: locale_1.ptBR,
+                          })}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">Pode recusar:</span>
+                        <badge_1.Badge variant={activity.canOptOut ? "default" : "secondary"}>
+                          {activity.canOptOut ? "Sim" : "Não"}
+                        </badge_1.Badge>
+                      </div>
+                    </div>
+
+                    {activity.canOptOut && (
+                      <div className="pt-2 border-t">
+                        <button_1.Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRightExercise("objection")}
+                        >
+                          <lucide_react_1.Settings className="h-4 w-4 mr-2" />
+                          Gerenciar Consentimento
+                        </button_1.Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -708,87 +689,79 @@ function PatientDataProcessingTransparencyDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {dashboardData.thirdPartySharing.map(function (sharing, index) {
-                  return (
-                    <div key={index} className="border rounded-lg p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <h4 className="font-medium flex items-center gap-2">
-                            {sharing.recipient}
-                            <lucide_react_1.Globe className="h-4 w-4 text-muted-foreground" />
-                          </h4>
-                          <p className="text-sm text-muted-foreground">{sharing.purpose}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <badge_1.Badge
-                            variant={sharing.status === "active" ? "default" : "secondary"}
-                          >
-                            {sharing.status === "active" ? "Ativo" : "Inativo"}
-                          </badge_1.Badge>
-                          <badge_1.Badge variant="outline">
-                            {sharing.recipientType === "processor" ? "Processador" : "Controlador"}
-                          </badge_1.Badge>
-                        </div>
+                {dashboardData.thirdPartySharing.map((sharing, index) => (
+                  <div key={index} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h4 className="font-medium flex items-center gap-2">
+                          {sharing.recipient}
+                          <lucide_react_1.Globe className="h-4 w-4 text-muted-foreground" />
+                        </h4>
+                        <p className="text-sm text-muted-foreground">{sharing.purpose}</p>
                       </div>
-
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="font-medium">Dados compartilhados:</span>
-                          <div className="text-muted-foreground">
-                            {sharing.dataShared.join(", ")}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="font-medium">Localização:</span>
-                          <div className="text-muted-foreground">{sharing.location}</div>
-                        </div>
-                        <div>
-                          <span className="font-medium">Data do compartilhamento:</span>
-                          <div className="text-muted-foreground">
-                            {(0, date_fns_1.format)(sharing.sharingDate, "dd/MM/yyyy", {
-                              locale: locale_1.ptBR,
-                            })}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium">Pode recusar:</span>
-                          <badge_1.Badge variant={sharing.canOptOut ? "default" : "secondary"}>
-                            {sharing.canOptOut ? "Sim" : "Não"}
-                          </badge_1.Badge>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <badge_1.Badge
+                          variant={sharing.status === "active" ? "default" : "secondary"}
+                        >
+                          {sharing.status === "active" ? "Ativo" : "Inativo"}
+                        </badge_1.Badge>
+                        <badge_1.Badge variant="outline">
+                          {sharing.recipientType === "processor" ? "Processador" : "Controlador"}
+                        </badge_1.Badge>
                       </div>
+                    </div>
 
+                    <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="font-medium text-sm">Salvaguardas implementadas:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {sharing.safeguards.map(function (safeguard, i) {
-                            return (
-                              <badge_1.Badge key={i} variant="outline" className="text-xs">
-                                <lucide_react_1.Lock className="h-3 w-3 mr-1" />
-                                {safeguard}
-                              </badge_1.Badge>
-                            );
+                        <span className="font-medium">Dados compartilhados:</span>
+                        <div className="text-muted-foreground">{sharing.dataShared.join(", ")}</div>
+                      </div>
+                      <div>
+                        <span className="font-medium">Localização:</span>
+                        <div className="text-muted-foreground">{sharing.location}</div>
+                      </div>
+                      <div>
+                        <span className="font-medium">Data do compartilhamento:</span>
+                        <div className="text-muted-foreground">
+                          {(0, date_fns_1.format)(sharing.sharingDate, "dd/MM/yyyy", {
+                            locale: locale_1.ptBR,
                           })}
                         </div>
                       </div>
-
-                      {sharing.canOptOut && (
-                        <div className="pt-2 border-t">
-                          <button_1.Button
-                            variant="outline"
-                            size="sm"
-                            onClick={function () {
-                              return handleRightExercise("objection");
-                            }}
-                          >
-                            <lucide_react_1.Settings className="h-4 w-4 mr-2" />
-                            Recusar Compartilhamento
-                          </button_1.Button>
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">Pode recusar:</span>
+                        <badge_1.Badge variant={sharing.canOptOut ? "default" : "secondary"}>
+                          {sharing.canOptOut ? "Sim" : "Não"}
+                        </badge_1.Badge>
+                      </div>
                     </div>
-                  );
-                })}
+
+                    <div>
+                      <span className="font-medium text-sm">Salvaguardas implementadas:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {sharing.safeguards.map((safeguard, i) => (
+                          <badge_1.Badge key={i} variant="outline" className="text-xs">
+                            <lucide_react_1.Lock className="h-3 w-3 mr-1" />
+                            {safeguard}
+                          </badge_1.Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    {sharing.canOptOut && (
+                      <div className="pt-2 border-t">
+                        <button_1.Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRightExercise("objection")}
+                        >
+                          <lucide_react_1.Settings className="h-4 w-4 mr-2" />
+                          Recusar Compartilhamento
+                        </button_1.Button>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -808,7 +781,7 @@ function PatientDataProcessingTransparencyDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="grid gap-4 md:grid-cols-2">
-                {Object.entries(dashboardData.rights).map(function (_a) {
+                {Object.entries(dashboardData.rights).map((_a) => {
                   var rightKey = _a[0],
                     right = _a[1];
                   return (
@@ -845,9 +818,7 @@ function PatientDataProcessingTransparencyDashboard(_a) {
                         <button_1.Button
                           variant="outline"
                           size="sm"
-                          onClick={function () {
-                            return handleRightExercise(rightKey);
-                          }}
+                          onClick={() => handleRightExercise(rightKey)}
                           className="w-full"
                         >
                           <lucide_react_1.User className="h-4 w-4 mr-2" />
@@ -871,7 +842,7 @@ function PatientDataProcessingTransparencyDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {Object.entries(dashboardData.privacySettings).map(function (_a) {
+                {Object.entries(dashboardData.privacySettings).map((_a) => {
                   var setting = _a[0],
                     enabled = _a[1];
                   return (
@@ -921,42 +892,38 @@ function PatientDataProcessingTransparencyDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-3">
-                {dashboardData.recentActivities.map(function (activity, index) {
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div className="flex items-center gap-3">
-                        {getComplianceStatusIcon(activity.complianceStatus)}
-                        <div>
-                          <div className="font-medium">{activity.description}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {(0, date_fns_1.format)(
-                              activity.timestamp,
-                              "dd/MM/yyyy 'às' HH:mm:ss",
-                              { locale: locale_1.ptBR },
-                            )}
-                          </div>
+                {dashboardData.recentActivities.map((activity, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border rounded-lg"
+                  >
+                    <div className="flex items-center gap-3">
+                      {getComplianceStatusIcon(activity.complianceStatus)}
+                      <div>
+                        <div className="font-medium">{activity.description}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {(0, date_fns_1.format)(activity.timestamp, "dd/MM/yyyy 'às' HH:mm:ss", {
+                            locale: locale_1.ptBR,
+                          })}
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <badge_1.Badge
-                          variant={
-                            activity.complianceStatus === "compliant" ? "default" : "secondary"
-                          }
-                        >
-                          {activity.complianceStatus === "compliant" ? "Conforme" : "Atenção"}
-                        </badge_1.Badge>
-                        {viewMode === "admin" && (
-                          <button_1.Button variant="ghost" size="sm">
-                            <lucide_react_1.ExternalLink className="h-4 w-4" />
-                          </button_1.Button>
-                        )}
-                      </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center gap-2">
+                      <badge_1.Badge
+                        variant={
+                          activity.complianceStatus === "compliant" ? "default" : "secondary"
+                        }
+                      >
+                        {activity.complianceStatus === "compliant" ? "Conforme" : "Atenção"}
+                      </badge_1.Badge>
+                      {viewMode === "admin" && (
+                        <button_1.Button variant="ghost" size="sm">
+                          <lucide_react_1.ExternalLink className="h-4 w-4" />
+                        </button_1.Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

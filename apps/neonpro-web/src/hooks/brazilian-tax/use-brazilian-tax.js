@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Brazilian Tax Hooks
  * React hooks for CNPJ validation, tax calculation, and compliance features
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,10 +146,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -161,7 +158,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useCNPJValidation = useCNPJValidation;
 exports.useTaxCalculation = useTaxCalculation;
@@ -175,7 +172,6 @@ var tax_calculator_v2_1 = require("../../lib/services/brazilian-tax/tax-calculat
  * Hook for CNPJ validation and consultation
  */
 function useCNPJValidation() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       cnpj: "",
       isValid: false,
@@ -186,57 +182,59 @@ function useCNPJValidation() {
     }),
     validationState = _a[0],
     setValidationState = _a[1];
-  var validateCNPJ = (0, react_1.useCallback)(function (cnpj) {
+  var validateCNPJ = (0, react_1.useCallback)((cnpj) => {
     var validation = (0, cnpj_validator_1.validateCNPJFormat)(cnpj);
-    setValidationState(function (prev) {
-      return __assign(__assign({}, prev), {
+    setValidationState((prev) =>
+      __assign(__assign({}, prev), {
         cnpj: cnpj,
         isValid: validation.valid,
         errors: validation.errors || [],
-      });
-    });
+      }),
+    );
     return validation;
   }, []);
-  var consultCNPJ = (0, react_1.useCallback)(function (cnpj) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var result_1, error_1, errorMessage_1;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            if (!cnpj) return [2 /*return*/];
-            setValidationState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: true, errors: [] });
-            });
-            _a.label = 1;
-          case 1:
-            _a.trys.push([1, 3, , 4]);
-            return [4 /*yield*/, cnpj_consultation_1.default.consultCNPJ(cnpj)];
-          case 2:
-            result_1 = _a.sent();
-            setValidationState(function (prev) {
-              return __assign(__assign({}, prev), {
-                isLoading: false,
-                consultationResult: result_1,
-                companyData: result_1.success ? result_1.data || null : null,
-                errors: result_1.errors || [],
-              });
-            });
-            return [2 /*return*/, result_1];
-          case 3:
-            error_1 = _a.sent();
-            errorMessage_1 = error_1 instanceof Error ? error_1.message : "Erro na consulta";
-            setValidationState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: false, errors: [errorMessage_1] });
-            });
-            return [2 /*return*/, null];
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var consultCNPJ = (0, react_1.useCallback)(
+    (cnpj) =>
+      __awaiter(this, void 0, void 0, function () {
+        var result_1, error_1, errorMessage_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              if (!cnpj) return [2 /*return*/];
+              setValidationState((prev) =>
+                __assign(__assign({}, prev), { isLoading: true, errors: [] }),
+              );
+              _a.label = 1;
+            case 1:
+              _a.trys.push([1, 3, , 4]);
+              return [4 /*yield*/, cnpj_consultation_1.default.consultCNPJ(cnpj)];
+            case 2:
+              result_1 = _a.sent();
+              setValidationState((prev) =>
+                __assign(__assign({}, prev), {
+                  isLoading: false,
+                  consultationResult: result_1,
+                  companyData: result_1.success ? result_1.data || null : null,
+                  errors: result_1.errors || [],
+                }),
+              );
+              return [2 /*return*/, result_1];
+            case 3:
+              error_1 = _a.sent();
+              errorMessage_1 = error_1 instanceof Error ? error_1.message : "Erro na consulta";
+              setValidationState((prev) =>
+                __assign(__assign({}, prev), { isLoading: false, errors: [errorMessage_1] }),
+              );
+              return [2 /*return*/, null];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   var formatAndValidate = (0, react_1.useCallback)(
-    function (cnpj) {
+    (cnpj) => {
       var formatted = (0, cnpj_validator_1.formatCNPJ)(cnpj);
       var validation = validateCNPJ(formatted);
       return {
@@ -246,7 +244,7 @@ function useCNPJValidation() {
     },
     [validateCNPJ],
   );
-  var clearValidation = (0, react_1.useCallback)(function () {
+  var clearValidation = (0, react_1.useCallback)(() => {
     setValidationState({
       cnpj: "",
       isValid: false,
@@ -267,7 +265,6 @@ function useCNPJValidation() {
  * Hook for tax calculations
  */
 function useTaxCalculation() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       isLoading: false,
       result: null,
@@ -276,70 +273,70 @@ function useTaxCalculation() {
     }),
     calculationState = _a[0],
     setCalculationState = _a[1];
-  var calculateTaxes = (0, react_1.useCallback)(function (request) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var result_2, errorMessage_2;
-      return __generator(this, function (_a) {
-        setCalculationState(function (prev) {
-          return __assign(__assign({}, prev), { isLoading: true, errors: [] });
+  var calculateTaxes = (0, react_1.useCallback)(
+    (request) =>
+      __awaiter(this, void 0, void 0, function () {
+        var result_2, errorMessage_2;
+        return __generator(this, (_a) => {
+          setCalculationState((prev) =>
+            __assign(__assign({}, prev), { isLoading: true, errors: [] }),
+          );
+          try {
+            result_2 = tax_calculator_v2_1.default.calculateTaxes(request);
+            setCalculationState((prev) =>
+              __assign(__assign({}, prev), {
+                isLoading: false,
+                result: result_2,
+                history: __spreadArray([result_2], prev.history.slice(0, 9), true),
+              }),
+            );
+            return [2 /*return*/, result_2];
+          } catch (error) {
+            errorMessage_2 = error instanceof Error ? error.message : "Erro no cálculo";
+            setCalculationState((prev) =>
+              __assign(__assign({}, prev), { isLoading: false, errors: [errorMessage_2] }),
+            );
+            return [2 /*return*/, null];
+          }
+          return [2 /*return*/];
         });
-        try {
-          result_2 = tax_calculator_v2_1.default.calculateTaxes(request);
-          setCalculationState(function (prev) {
-            return __assign(__assign({}, prev), {
-              isLoading: false,
-              result: result_2,
-              history: __spreadArray([result_2], prev.history.slice(0, 9), true),
-            });
-          });
-          return [2 /*return*/, result_2];
-        } catch (error) {
-          errorMessage_2 = error instanceof Error ? error.message : "Erro no cálculo";
-          setCalculationState(function (prev) {
-            return __assign(__assign({}, prev), { isLoading: false, errors: [errorMessage_2] });
-          });
-          return [2 /*return*/, null];
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  var batchCalculate = (0, react_1.useCallback)(function (requests) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var results, errorMessage_3;
-      return __generator(this, function (_a) {
-        setCalculationState(function (prev) {
-          return __assign(__assign({}, prev), { isLoading: true, errors: [] });
+      }),
+    [],
+  );
+  var batchCalculate = (0, react_1.useCallback)(
+    (requests) =>
+      __awaiter(this, void 0, void 0, function () {
+        var results, errorMessage_3;
+        return __generator(this, (_a) => {
+          setCalculationState((prev) =>
+            __assign(__assign({}, prev), { isLoading: true, errors: [] }),
+          );
+          try {
+            results = tax_calculator_v2_1.default.batchCalculateTaxes(requests);
+            setCalculationState((prev) => __assign(__assign({}, prev), { isLoading: false }));
+            return [2 /*return*/, results];
+          } catch (error) {
+            errorMessage_3 = error instanceof Error ? error.message : "Erro no cálculo em lote";
+            setCalculationState((prev) =>
+              __assign(__assign({}, prev), { isLoading: false, errors: [errorMessage_3] }),
+            );
+            return [2 /*return*/, null];
+          }
+          return [2 /*return*/];
         });
-        try {
-          results = tax_calculator_v2_1.default.batchCalculateTaxes(requests);
-          setCalculationState(function (prev) {
-            return __assign(__assign({}, prev), { isLoading: false });
-          });
-          return [2 /*return*/, results];
-        } catch (error) {
-          errorMessage_3 = error instanceof Error ? error.message : "Erro no cálculo em lote";
-          setCalculationState(function (prev) {
-            return __assign(__assign({}, prev), { isLoading: false, errors: [errorMessage_3] });
-          });
-          return [2 /*return*/, null];
-        }
-        return [2 /*return*/];
-      });
-    });
-  }, []);
-  var estimateAnnualTax = (0, react_1.useCallback)(function (monthlyRevenue, regime, serviceType) {
+      }),
+    [],
+  );
+  var estimateAnnualTax = (0, react_1.useCallback)((monthlyRevenue, regime, serviceType) => {
     try {
       return tax_calculator_v2_1.default.estimateAnnualTax(monthlyRevenue, regime, serviceType);
     } catch (error) {
       var errorMessage_4 = error instanceof Error ? error.message : "Erro na estimativa";
-      setCalculationState(function (prev) {
-        return __assign(__assign({}, prev), { errors: [errorMessage_4] });
-      });
+      setCalculationState((prev) => __assign(__assign({}, prev), { errors: [errorMessage_4] }));
       return null;
     }
   }, []);
-  var clearCalculations = (0, react_1.useCallback)(function () {
+  var clearCalculations = (0, react_1.useCallback)(() => {
     setCalculationState({
       isLoading: false,
       result: null,
@@ -358,7 +355,6 @@ function useTaxCalculation() {
  * Hook for Brazilian tax compliance features
  */
 function useBrazilianTaxCompliance() {
-  var _this = this;
   var _a = (0, react_1.useState)({
       isLoading: false,
       healthcareCNAEValid: false,
@@ -373,7 +369,7 @@ function useBrazilianTaxCompliance() {
     }),
     complianceState = _a[0],
     setComplianceState = _a[1];
-  var checkHealthcareCNAE = (0, react_1.useCallback)(function (cnae) {
+  var checkHealthcareCNAE = (0, react_1.useCallback)((cnae) => {
     var healthcareCNAEs = [
       "8610-1", // Atividades de atendimento hospitalar
       "8630-5", // Atividades de atenção ambulatorial
@@ -385,22 +381,18 @@ function useBrazilianTaxCompliance() {
       "4771-7", // Comércio varejista de produtos farmacêuticos
       "4772-5", // Comércio varejista de cosméticos
     ];
-    var isValid = healthcareCNAEs.some(function (code) {
-      return cnae.startsWith(code.replace("-", ""));
-    });
-    setComplianceState(function (prev) {
-      return __assign(__assign({}, prev), { healthcareCNAEValid: isValid });
-    });
+    var isValid = healthcareCNAEs.some((code) => cnae.startsWith(code.replace("-", "")));
+    setComplianceState((prev) => __assign(__assign({}, prev), { healthcareCNAEValid: isValid }));
     return isValid;
   }, []);
   var validateCompliance = (0, react_1.useCallback)(
-    function (companyData) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (companyData) =>
+      __awaiter(this, void 0, void 0, function () {
         var cnpjValid_1, healthcareValid_1, regimeTributario_1, errorMessage_5;
-        return __generator(this, function (_a) {
-          setComplianceState(function (prev) {
-            return __assign(__assign({}, prev), { isLoading: true, errors: [] });
-          });
+        return __generator(this, (_a) => {
+          setComplianceState((prev) =>
+            __assign(__assign({}, prev), { isLoading: true, errors: [] }),
+          );
           try {
             cnpjValid_1 = (0, cnpj_validator_1.validateCNPJFormat)(companyData.cnpj).valid;
             healthcareValid_1 = checkHealthcareCNAE(companyData.atividade_principal.code);
@@ -410,8 +402,8 @@ function useBrazilianTaxCompliance() {
             } else if (companyData.capital_social > 1000000) {
               regimeTributario_1 = "lucro_presumido";
             }
-            setComplianceState(function (prev) {
-              return __assign(__assign({}, prev), {
+            setComplianceState((prev) =>
+              __assign(__assign({}, prev), {
                 isLoading: false,
                 healthcareCNAEValid: healthcareValid_1,
                 regimeTributario: regimeTributario_1,
@@ -421,8 +413,8 @@ function useBrazilianTaxCompliance() {
                   inscricao_municipal_valid: true, // Would need additional validation
                   simples_nacional_active: regimeTributario_1 === "simples_nacional",
                 },
-              });
-            });
+              }),
+            );
             return [
               2 /*return*/,
               {
@@ -433,18 +425,17 @@ function useBrazilianTaxCompliance() {
             ];
           } catch (error) {
             errorMessage_5 = error instanceof Error ? error.message : "Erro na validação";
-            setComplianceState(function (prev) {
-              return __assign(__assign({}, prev), { isLoading: false, errors: [errorMessage_5] });
-            });
+            setComplianceState((prev) =>
+              __assign(__assign({}, prev), { isLoading: false, errors: [errorMessage_5] }),
+            );
             return [2 /*return*/, null];
           }
           return [2 /*return*/];
         });
-      });
-    },
+      }),
     [checkHealthcareCNAE],
   );
-  var clearCompliance = (0, react_1.useCallback)(function () {
+  var clearCompliance = (0, react_1.useCallback)(() => {
     setComplianceState({
       isLoading: false,
       healthcareCNAEValid: false,
@@ -468,22 +459,21 @@ function useBrazilianTaxCompliance() {
  * Master hook that combines all Brazilian tax functionality
  */
 function useBrazilianTax() {
-  var _this = this;
   var cnpjValidation = useCNPJValidation();
   var taxCalculation = useTaxCalculation();
   var compliance = useBrazilianTaxCompliance();
   var _a = (0, react_1.useState)(false),
     isInitialized = _a[0],
     setIsInitialized = _a[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     // Initialization logic if needed
     setIsInitialized(true);
   }, []);
   var validateAndCalculate = (0, react_1.useCallback)(
-    function (cnpj, serviceType, serviceValue) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (cnpj, serviceType, serviceValue) =>
+      __awaiter(this, void 0, void 0, function () {
         var cnpjResult, complianceResult, taxRequest, taxResult;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [4 /*yield*/, cnpjValidation.consultCNPJ(cnpj)];
@@ -520,18 +510,14 @@ function useBrazilianTax() {
               ];
           }
         });
-      });
-    },
+      }),
     [cnpjValidation, taxCalculation, compliance],
   );
-  var resetAll = (0, react_1.useCallback)(
-    function () {
-      cnpjValidation.clearValidation();
-      taxCalculation.clearCalculations();
-      compliance.clearCompliance();
-    },
-    [cnpjValidation, taxCalculation, compliance],
-  );
+  var resetAll = (0, react_1.useCallback)(() => {
+    cnpjValidation.clearValidation();
+    taxCalculation.clearCalculations();
+    compliance.clearCompliance();
+  }, [cnpjValidation, taxCalculation, compliance]);
   return {
     cnpj: cnpjValidation,
     tax: taxCalculation,

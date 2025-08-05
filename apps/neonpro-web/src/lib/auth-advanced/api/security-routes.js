@@ -1,17 +1,16 @@
-"use strict";
 // Security API Routes
 // Story 1.4: Session Management & Security Implementation
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SecurityRoutes = void 0;
 exports.createSecurityRoutes = createSecurityRoutes;
@@ -142,7 +139,7 @@ var utils_1 = require("../utils");
 /**
  * Security API route handlers
  */
-var SecurityRoutes = /** @class */ (function () {
+var SecurityRoutes = /** @class */ (() => {
   function SecurityRoutes(securityMonitor, sessionManager, deviceManager) {
     this.securityMonitor = securityMonitor;
     this.sessionManager = sessionManager;
@@ -293,12 +290,7 @@ var SecurityRoutes = /** @class */ (function () {
           case 1:
             authResult = _b.sent();
             if (authResult) return [2 /*return*/, authResult];
-            return [
-              4 /*yield*/,
-              request.json().catch(function () {
-                return {};
-              }),
-            ];
+            return [4 /*yield*/, request.json().catch(() => ({}))];
           case 2:
             body = _b.sent();
             (_a = body.reason), (reason = _a === void 0 ? "admin_dismissed" : _a);
@@ -838,7 +830,7 @@ var SecurityRoutes = /** @class */ (function () {
     });
   };
   // Helper methods
-  SecurityRoutes.prototype.getClientIP = function (request) {
+  SecurityRoutes.prototype.getClientIP = (request) => {
     var forwarded = request.headers.get("x-forwarded-for");
     var realIP = request.headers.get("x-real-ip");
     if (forwarded) {
@@ -877,14 +869,14 @@ var SecurityRoutes = /** @class */ (function () {
       });
     });
   };
-  SecurityRoutes.prototype.getRiskLevel = function (riskScore) {
+  SecurityRoutes.prototype.getRiskLevel = (riskScore) => {
     if (riskScore >= 80) return "critical";
     if (riskScore >= 60) return "high";
     if (riskScore >= 40) return "medium";
     if (riskScore >= 20) return "low";
     return "minimal";
   };
-  SecurityRoutes.prototype.getSecurityRecommendations = function (riskScore, riskLevel) {
+  SecurityRoutes.prototype.getSecurityRecommendations = (riskScore, riskLevel) => {
     var recommendations = [];
     if (riskLevel === "critical") {
       recommendations.push(

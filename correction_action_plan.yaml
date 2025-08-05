@@ -1,0 +1,296 @@
+# CORRECTION ACTION PLAN - NeonPro APEX Framework v4.0
+# Based on ACTIVE analysis: TypeScript, Biome, Build
+# Generated: 2025-01-22
+# Target: 85% error reduction in 4-6 hours
+
+metadata:
+  total_issues_identified: "258+ errors/warnings"
+  build_status: "FAILING (2/6 packages)"
+  priority_levels: 4
+  estimated_completion: "4-6 hours"
+  expected_reduction: "85%+"
+
+## ═════════════════════════════════════════════════════════════════
+## 🔴 PRIORITY 1: CRITICAL BUILD-BREAKING ERRORS (45 tasks)
+## ═════════════════════════════════════════════════════════════════
+
+prioritized_backlog:
+
+  # ───────── P1: CRITICAL INFRASTRUCTURE ─────────
+  - task_id: "P1-INFRA-01"
+    description: "Fix Prisma schema configuration for @neonpro/web build"
+    files_to_change: 
+      - "apps/neonpro-web/package.json"
+      - "prisma/schema.prisma" 
+    priority: 1
+    type: "infrastructure"
+    estimated_time: "30 minutes"
+    impact: "Enables web app build"
+    
+  - task_id: "P1-EXPORTS-01"
+    description: "Add missing healthcare utility exports"
+    files_to_change:
+      - "apps/neonpro-api/src/utils/healthcare.ts"
+    priority: 1
+    type: "architecture"
+    estimated_time: "45 minutes"
+    missing_exports:
+      - "calculateBrazilianTaxes"
+      - "formatCurrency"
+      - "validateCNPJ"
+    impact: "Fixes 3 import errors in billing.ts"
+
+  # ───────── P1: FASTIFY BILLING ERRORS (35+ errors) ─────────
+  - task_id: "P1-BILLING-01"
+    description: "Fix Fastify context errors in billing.ts - Part 1"
+    files_to_change:
+      - "apps/neonpro-api/src/routes/billing.ts"
+    priority: 1
+    type: "architecture"
+    estimated_time: "90 minutes"
+    specific_fixes:
+      - "Add proper Fastify plugin wrapper"
+      - "Fix 'fastify' is not defined errors (15+ instances)"
+      - "Add type annotations for request/reply parameters"
+    impact: "Fixes 35+ critical compilation errors"
+    
+  - task_id: "P1-BILLING-02"
+    description: "Fix user type assertions in billing.ts"
+    files_to_change:
+      - "apps/neonpro-api/src/routes/billing.ts"
+    priority: 1
+    type: "types"
+    estimated_time: "45 minutes"
+    specific_fixes:
+      - "Add (request.user as HealthcareUser) type assertions"
+      - "Fix tenantId/userId property access (6 instances)"
+    impact: "Resolves user object type errors"
+
+  # ───────── P1: TYPE ASSERTION FAILURES ─────────  
+  - task_id: "P1-TYPES-01"
+    description: "Fix logging interface property errors"
+    files_to_change:
+      - "apps/neonpro-api/src/plugins/logging.ts"
+      - "apps/neonpro-api/src/jobs/job-manager.ts"
+    priority: 1
+    type: "types"
+    estimated_time: "60 minutes"
+    specific_fixes:
+      - "Add 'jobId' property to logging interface"
+      - "Add 'patientId' and 'recordId' properties"
+      - "Fix Object literal known properties errors"
+    impact: "Fixes 8 interface errors"
+    
+  - task_id: "P1-TYPES-02"  
+    description: "Fix rate-limiting union type access"
+    files_to_change:
+      - "apps/neonpro-api/src/plugins/rate-limiting.ts"
+    priority: 1
+    type: "types"
+    estimated_time: "45 minutes"
+    specific_fixes:
+      - "Add type guards for request.user access"
+      - "Fix emergencyOverride property access"
+      - "Fix blockDuration property access"
+    impact: "Fixes 7 property access errors"
+
+## ═════════════════════════════════════════════════════════════════
+## 🟠 PRIORITY 2: HIGH RUNTIME ISSUES (25 tasks)
+## ═════════════════════════════════════════════════════════════════
+
+  # ───────── P2: PLUGIN DECORATOR ISSUES ─────────
+  - task_id: "P2-PLUGINS-01"
+    description: "Fix Fastify decorator type signatures"
+    files_to_change:
+      - "apps/neonpro-api/src/plugins/supabase.ts"
+      - "apps/neonpro-api/src/plugins/audit.ts"
+    priority: 2
+    type: "integration"  
+    estimated_time: "75 minutes"
+    specific_fixes:
+      - "Fix checkDatabaseHealth decorator signature"
+      - "Update return type to match expected interface"
+      - "Add proper decorator type definitions"
+    impact: "Fixes 5 decorator errors"
+    
+  - task_id: "P2-PLUGINS-02"
+    description: "Fix database pool configuration"
+    files_to_change:
+      - "apps/neonpro-api/src/plugins/database-pool.ts" 
+    priority: 2
+    type: "integration"
+    estimated_time: "30 minutes"
+    specific_fixes:
+      - "Fix acquireTimeoutMillis vs idleTimeoutMillis property"
+    impact: "Fixes pool configuration error"
+    
+  # ───────── P2: EDGE SERVICES TYPE ISSUES ─────────
+  - task_id: "P2-EDGE-01"
+    description: "Fix edge services type compatibility"
+    files_to_change:
+      - "apps/neonpro-api/src/integrations/edge-services.ts"
+    priority: 2
+    type: "types"
+    estimated_time: "60 minutes"
+    specific_fixes:
+      - "Fix unknown to T | undefined assignment"
+      - "Fix ArrayBufferLike to BinaryLike conversion"
+      - "Add proper type guards and assertions"
+    impact: "Fixes 3 type compatibility errors"
+    
+  # ───────── P2: JOB MANAGER FIXES ─────────
+  - task_id: "P2-JOBS-01"
+    description: "Fix job manager KeepJobs type errors"
+    files_to_change:
+      - "apps/neonpro-api/src/jobs/job-manager.ts"
+    priority: 2
+    type: "types"
+    estimated_time: "45 minutes"
+    specific_fixes:
+      - "Fix number to KeepJobs type conversion"
+      - "Update job retention configuration types"
+    impact: "Fixes 2 type compatibility errors"
+
+## ═════════════════════════════════════════════════════════════════
+## 🟡 PRIORITY 3: MEDIUM CODE QUALITY (15 tasks)
+## ═════════════════════════════════════════════════════════════════
+
+  # ───────── P3: TEST CONFIGURATION ─────────
+  - task_id: "P3-TESTS-01"
+    description: "Configure Jest types for test files"
+    files_to_change:
+      - "apps/neonpro-api/package.json"
+      - "apps/neonpro-api/tsconfig.json"
+      - "apps/neonpro-api/jest.config.js"
+    priority: 3
+    type: "configuration"
+    estimated_time: "45 minutes"
+    specific_fixes:
+      - "Add @types/jest dependency"
+      - "Configure Jest types in tsconfig"
+      - "Fix global test setup types"
+    impact: "Fixes 15+ test-related errors"
+    
+  # ───────── P3: MONITORING PLUGIN ─────────
+  - task_id: "P3-MONITORING-01" 
+    description: "Fix monitoring plugin reference errors"
+    files_to_change:
+      - "apps/neonpro-api/src/plugins/monitoring.ts"
+    priority: 3
+    type: "integration"
+    estimated_time: "30 minutes"
+    specific_fixes:
+      - "Fix monitoringPlugin undefined reference"
+      - "Fix Promise array length access"
+    impact: "Fixes 2 monitoring errors"
+    
+  # ───────── P3: REDIS CACHE FIXES ─────────
+  - task_id: "P3-REDIS-01"
+    description: "Fix Redis cache type issues"
+    files_to_change:
+      - "apps/neonpro-api/src/plugins/redis-cache.ts"
+    priority: 3
+    type: "types"
+    estimated_time: "30 minutes"
+    specific_fixes:
+      - "Fix number to boolean assignment"  
+      - "Fix undefined index type usage"
+      - "Add proper this type annotation"
+    impact: "Fixes 3 Redis-related errors"
+
+## ═════════════════════════════════════════════════════════════════
+## 🔵 PRIORITY 4: LOW STYLE & FORMATTING (173 tasks)
+## ═════════════════════════════════════════════════════════════════
+
+  # ───────── P4: BIOME AUTOMATED FIXES ─────────
+  - task_id: "P4-BIOME-01"
+    description: "Apply Biome automated formatting fixes"
+    files_to_change: ["apps/neonpro-api/src/**/*.ts"]
+    priority: 4
+    type: "formatting"
+    estimated_time: "15 minutes"
+    automation: "npx biome check . --apply"
+    impact: "Fixes ~100 formatting issues"
+    
+  - task_id: "P4-BIOME-02" 
+    description: "Fix template literal preferences"
+    files_to_change:
+      - "apps/neonpro-api/src/plugins/logging.ts"
+    priority: 4
+    type: "style"
+    estimated_time: "10 minutes"
+    specific_fixes:
+      - "Convert string concatenation to template literals"
+    impact: "Fixes 1 style error"
+    
+  - task_id: "P4-BIOME-03"
+    description: "Remove non-null assertions" 
+    files_to_change:
+      - "apps/neonpro-api/src/index.ts"
+    priority: 4
+    type: "style"
+    estimated_time: "15 minutes"
+    specific_fixes:
+      - "Replace ! assertions with proper null checks"
+      - "Add environment variable validation"
+    impact: "Fixes 3 non-null assertion errors"
+    
+  - task_id: "P4-BIOME-04"
+    description: "Fix unused parameters (50+ instances)"
+    files_to_change: ["apps/neonpro-api/src/**/*.ts"]
+    priority: 4
+    type: "style"
+    estimated_time: "20 minutes"
+    automation: "Prefix unused params with underscore"
+    impact: "Fixes 50+ unused parameter warnings"
+
+## ═════════════════════════════════════════════════════════════════
+## 🎯 EXECUTION WORKFLOW & VALIDATION
+## ═════════════════════════════════════════════════════════════════
+
+execution_workflow:
+  phase_1_critical: "Execute P1 tasks (45 tasks) - 4 hours"
+  phase_1_validation: "turbo type-check - expect 70% error reduction"
+  phase_2_high: "Execute P2 tasks (25 tasks) - 3 hours" 
+  phase_2_validation: "turbo build - expect successful compilation"
+  phase_3_medium: "Execute P3 tasks (15 tasks) - 2 hours"
+  phase_3_validation: "turbo type-check - expect 95% error reduction"
+  phase_4_style: "Execute P4 tasks (173 tasks) - 1 hour"
+  phase_4_validation: "biome check - expect clean code standards"
+
+validation_criteria:
+  build_success: "turbo build must pass for all 6 packages"
+  type_errors: "Reduce from 85+ to <10 errors"
+  biome_issues: "Reduce from 173 to <20 warnings"
+  automated_validation: "All tools pass without errors"
+
+success_metrics:
+  error_reduction_target: "85%+"
+  build_status_target: "6/6 packages building successfully"
+  code_quality_target: "9.5/10"
+  completion_time_target: "4-6 hours maximum"
+
+## ═════════════════════════════════════════════════════════════════
+## 🔧 TOOLS CONFIGURATION FIXES NEEDED
+## ═════════════════════════════════════════════════════════════════
+
+configuration_tasks:
+  eslint_migration:
+    description: "Migrate ESLint to v9 configuration"
+    estimated_time: "30 minutes"
+    priority: "post-correction"
+    
+  prisma_configuration:
+    description: "Configure Prisma schema path properly"
+    estimated_time: "15 minutes"
+    priority: "P1 (included above)"
+    
+  jest_types:
+    description: "Add Jest type definitions"
+    estimated_time: "15 minutes"
+    priority: "P3 (included above)"
+
+## ═════════════════════════════════════════════════════════════════
+## END OF CORRECTION ACTION PLAN
+## Total Tasks: 258+ issues → Target: <40 remaining issues (85% reduction)
+## ═════════════════════════════════════════════════════════════════

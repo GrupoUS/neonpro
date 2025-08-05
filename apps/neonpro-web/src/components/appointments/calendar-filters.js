@@ -1,22 +1,21 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -25,7 +24,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalendarFilters = CalendarFilters;
 var react_1 = require("react");
@@ -122,48 +121,38 @@ var statusTypes = [
 var datePresets = [
   {
     label: "Hoje",
-    getValue: function () {
-      return {
-        start: (0, moment_1.default)().startOf("day").toDate(),
-        end: (0, moment_1.default)().endOf("day").toDate(),
-      };
-    },
+    getValue: () => ({
+      start: (0, moment_1.default)().startOf("day").toDate(),
+      end: (0, moment_1.default)().endOf("day").toDate(),
+    }),
   },
   {
     label: "Esta Semana",
-    getValue: function () {
-      return {
-        start: (0, moment_1.default)().startOf("week").toDate(),
-        end: (0, moment_1.default)().endOf("week").toDate(),
-      };
-    },
+    getValue: () => ({
+      start: (0, moment_1.default)().startOf("week").toDate(),
+      end: (0, moment_1.default)().endOf("week").toDate(),
+    }),
   },
   {
     label: "Este Mês",
-    getValue: function () {
-      return {
-        start: (0, moment_1.default)().startOf("month").toDate(),
-        end: (0, moment_1.default)().endOf("month").toDate(),
-      };
-    },
+    getValue: () => ({
+      start: (0, moment_1.default)().startOf("month").toDate(),
+      end: (0, moment_1.default)().endOf("month").toDate(),
+    }),
   },
   {
     label: "Próxima Semana",
-    getValue: function () {
-      return {
-        start: (0, moment_1.default)().add(1, "week").startOf("week").toDate(),
-        end: (0, moment_1.default)().add(1, "week").endOf("week").toDate(),
-      };
-    },
+    getValue: () => ({
+      start: (0, moment_1.default)().add(1, "week").startOf("week").toDate(),
+      end: (0, moment_1.default)().add(1, "week").endOf("week").toDate(),
+    }),
   },
   {
     label: "Próximo Mês",
-    getValue: function () {
-      return {
-        start: (0, moment_1.default)().add(1, "month").startOf("month").toDate(),
-        end: (0, moment_1.default)().add(1, "month").endOf("month").toDate(),
-      };
-    },
+    getValue: () => ({
+      start: (0, moment_1.default)().add(1, "month").startOf("month").toDate(),
+      end: (0, moment_1.default)().add(1, "month").endOf("month").toDate(),
+    }),
   },
 ];
 function CalendarFilters(_a) {
@@ -179,84 +168,66 @@ function CalendarFilters(_a) {
     searchQuery = _c[0],
     setSearchQuery = _c[1];
   // Update local filters when props change
-  react_1.default.useEffect(
-    function () {
-      setLocalFilters(filters);
-    },
-    [filters],
-  );
+  react_1.default.useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
   // Filter professionals based on search
-  var filteredProfessionals = professionals.filter(function (prof) {
-    return (
+  var filteredProfessionals = professionals.filter(
+    (prof) =>
       prof.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      prof.specialization.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  });
+      prof.specialization.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
   // Toggle service type filter
-  var toggleServiceType = function (serviceType) {
-    setLocalFilters(function (prev) {
-      return __assign(__assign({}, prev), {
+  var toggleServiceType = (serviceType) => {
+    setLocalFilters((prev) =>
+      __assign(__assign({}, prev), {
         serviceTypes: prev.serviceTypes.includes(serviceType)
-          ? prev.serviceTypes.filter(function (s) {
-              return s !== serviceType;
-            })
+          ? prev.serviceTypes.filter((s) => s !== serviceType)
           : __spreadArray(__spreadArray([], prev.serviceTypes, true), [serviceType], false),
-      });
-    });
+      }),
+    );
   };
   // Toggle status filter
-  var toggleStatus = function (status) {
-    setLocalFilters(function (prev) {
-      return __assign(__assign({}, prev), {
+  var toggleStatus = (status) => {
+    setLocalFilters((prev) =>
+      __assign(__assign({}, prev), {
         statuses: prev.statuses.includes(status)
-          ? prev.statuses.filter(function (s) {
-              return s !== status;
-            })
+          ? prev.statuses.filter((s) => s !== status)
           : __spreadArray(__spreadArray([], prev.statuses, true), [status], false),
-      });
-    });
+      }),
+    );
   };
   // Toggle professional filter
-  var toggleProfessional = function (professionalId) {
-    setLocalFilters(function (prev) {
-      return __assign(__assign({}, prev), {
+  var toggleProfessional = (professionalId) => {
+    setLocalFilters((prev) =>
+      __assign(__assign({}, prev), {
         professionals: prev.professionals.includes(professionalId)
-          ? prev.professionals.filter(function (p) {
-              return p !== professionalId;
-            })
+          ? prev.professionals.filter((p) => p !== professionalId)
           : __spreadArray(__spreadArray([], prev.professionals, true), [professionalId], false),
-      });
-    });
+      }),
+    );
   };
   // Set date range
-  var setDateRange = function (range) {
-    setLocalFilters(function (prev) {
-      return __assign(__assign({}, prev), { dateRange: range });
-    });
+  var setDateRange = (range) => {
+    setLocalFilters((prev) => __assign(__assign({}, prev), { dateRange: range }));
   };
   // Clear specific filter
-  var clearServiceTypes = function () {
-    setLocalFilters(function (prev) {
-      return __assign(__assign({}, prev), { serviceTypes: [] });
-    });
+  var clearServiceTypes = () => {
+    setLocalFilters((prev) => __assign(__assign({}, prev), { serviceTypes: [] }));
   };
-  var clearStatuses = function () {
-    setLocalFilters(function (prev) {
-      return __assign(__assign({}, prev), { statuses: [] });
-    });
+  var clearStatuses = () => {
+    setLocalFilters((prev) => __assign(__assign({}, prev), { statuses: [] }));
   };
-  var clearProfessionals = function () {
-    setLocalFilters(function (prev) {
-      return __assign(__assign({}, prev), { professionals: [] });
-    });
+  var clearProfessionals = () => {
+    setLocalFilters((prev) => __assign(__assign({}, prev), { professionals: [] }));
   };
-  var clearDateRange = function () {
-    setLocalFilters(function (prev) {
-      return __assign(__assign({}, prev), { dateRange: { start: null, end: null } });
-    });
+  var clearDateRange = () => {
+    setLocalFilters((prev) =>
+      __assign(__assign({}, prev), { dateRange: { start: null, end: null } }),
+    );
   };
   // Clear all filters
-  var clearAllFilters = function () {
+  var clearAllFilters = () => {
     var emptyFilters = {
       serviceTypes: [],
       statuses: [],
@@ -266,7 +237,7 @@ function CalendarFilters(_a) {
     setLocalFilters(emptyFilters);
   };
   // Apply filters
-  var applyFilters = function () {
+  var applyFilters = () => {
     onFiltersChange(localFilters);
     onClose();
   };
@@ -329,33 +300,29 @@ function CalendarFilters(_a) {
             </card_1.CardHeader>
             <card_1.CardContent className="pt-0">
               <div className="grid grid-cols-2 gap-3">
-                {serviceTypes.map(function (service) {
-                  return (
-                    <div
-                      key={service.value}
-                      className={(0, utils_1.cn)(
-                        "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
-                        localFilters.serviceTypes.includes(service.value)
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:bg-muted/50",
-                      )}
-                      onClick={function () {
-                        return toggleServiceType(service.value);
-                      }}
-                    >
-                      <checkbox_1.Checkbox
-                        checked={localFilters.serviceTypes.includes(service.value)}
-                        readOnly
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2">
-                          <div className={(0, utils_1.cn)("w-3 h-3 rounded-full", service.color)} />
-                          <span className="font-medium text-sm">{service.label}</span>
-                        </div>
+                {serviceTypes.map((service) => (
+                  <div
+                    key={service.value}
+                    className={(0, utils_1.cn)(
+                      "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
+                      localFilters.serviceTypes.includes(service.value)
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:bg-muted/50",
+                    )}
+                    onClick={() => toggleServiceType(service.value)}
+                  >
+                    <checkbox_1.Checkbox
+                      checked={localFilters.serviceTypes.includes(service.value)}
+                      readOnly
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2">
+                        <div className={(0, utils_1.cn)("w-3 h-3 rounded-full", service.color)} />
+                        <span className="font-medium text-sm">{service.label}</span>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -383,33 +350,29 @@ function CalendarFilters(_a) {
             </card_1.CardHeader>
             <card_1.CardContent className="pt-0">
               <div className="grid grid-cols-2 gap-3">
-                {statusTypes.map(function (status) {
-                  return (
-                    <div
-                      key={status.value}
-                      className={(0, utils_1.cn)(
-                        "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
-                        localFilters.statuses.includes(status.value)
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:bg-muted/50",
-                      )}
-                      onClick={function () {
-                        return toggleStatus(status.value);
-                      }}
-                    >
-                      <checkbox_1.Checkbox
-                        checked={localFilters.statuses.includes(status.value)}
-                        readOnly
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2">
-                          <div className={(0, utils_1.cn)("w-3 h-3 rounded-full", status.color)} />
-                          <span className="font-medium text-sm">{status.label}</span>
-                        </div>
+                {statusTypes.map((status) => (
+                  <div
+                    key={status.value}
+                    className={(0, utils_1.cn)(
+                      "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
+                      localFilters.statuses.includes(status.value)
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:bg-muted/50",
+                    )}
+                    onClick={() => toggleStatus(status.value)}
+                  >
+                    <checkbox_1.Checkbox
+                      checked={localFilters.statuses.includes(status.value)}
+                      readOnly
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2">
+                        <div className={(0, utils_1.cn)("w-3 h-3 rounded-full", status.color)} />
+                        <span className="font-medium text-sm">{status.label}</span>
                       </div>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -442,56 +405,50 @@ function CalendarFilters(_a) {
                 <input_1.Input
                   placeholder="Buscar profissional..."
                   value={searchQuery}
-                  onChange={function (e) {
-                    return setSearchQuery(e.target.value);
-                  }}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
                 />
               </div>
 
               {/* Professionals List */}
               <div className="max-h-40 overflow-y-auto space-y-2">
-                {filteredProfessionals.map(function (professional) {
-                  return (
-                    <div
-                      key={professional.id}
-                      className={(0, utils_1.cn)(
-                        "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
-                        localFilters.professionals.includes(professional.id)
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:bg-muted/50",
-                      )}
-                      onClick={function () {
-                        return toggleProfessional(professional.id);
-                      }}
-                    >
-                      <checkbox_1.Checkbox
-                        checked={localFilters.professionals.includes(professional.id)}
-                        readOnly
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center space-x-2">
-                          <div
-                            className="w-3 h-3 rounded-full flex-shrink-0"
-                            style={{ backgroundColor: professional.color }}
-                          />
-                          <div className="min-w-0">
-                            <p className="font-medium text-sm truncate">{professional.name}</p>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {professional.specialization}
-                            </p>
-                          </div>
+                {filteredProfessionals.map((professional) => (
+                  <div
+                    key={professional.id}
+                    className={(0, utils_1.cn)(
+                      "flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors",
+                      localFilters.professionals.includes(professional.id)
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:bg-muted/50",
+                    )}
+                    onClick={() => toggleProfessional(professional.id)}
+                  >
+                    <checkbox_1.Checkbox
+                      checked={localFilters.professionals.includes(professional.id)}
+                      readOnly
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-2">
+                        <div
+                          className="w-3 h-3 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: professional.color }}
+                        />
+                        <div className="min-w-0">
+                          <p className="font-medium text-sm truncate">{professional.name}</p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {professional.specialization}
+                          </p>
                         </div>
                       </div>
-                      <badge_1.Badge
-                        variant={professional.availability ? "default" : "secondary"}
-                        className="text-xs"
-                      >
-                        {professional.availability ? "Ativo" : "Inativo"}
-                      </badge_1.Badge>
                     </div>
-                  );
-                })}
+                    <badge_1.Badge
+                      variant={professional.availability ? "default" : "secondary"}
+                      className="text-xs"
+                    >
+                      {professional.availability ? "Ativo" : "Inativo"}
+                    </badge_1.Badge>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>
@@ -520,21 +477,17 @@ function CalendarFilters(_a) {
             <card_1.CardContent className="pt-0 space-y-4">
               {/* Quick Presets */}
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                {datePresets.map(function (preset, index) {
-                  return (
-                    <button_1.Button
-                      key={index}
-                      variant="outline"
-                      size="sm"
-                      onClick={function () {
-                        return setDateRange(preset.getValue());
-                      }}
-                      className="text-xs"
-                    >
-                      {preset.label}
-                    </button_1.Button>
-                  );
-                })}
+                {datePresets.map((preset, index) => (
+                  <button_1.Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setDateRange(preset.getValue())}
+                    className="text-xs"
+                  >
+                    {preset.label}
+                  </button_1.Button>
+                ))}
               </div>
 
               <separator_1.Separator />
@@ -550,13 +503,13 @@ function CalendarFilters(_a) {
                         ? (0, moment_1.default)(localFilters.dateRange.start).format("YYYY-MM-DD")
                         : ""
                     }
-                    onChange={function (e) {
+                    onChange={(e) => {
                       var startDate = e.target.value ? new Date(e.target.value) : null;
-                      setLocalFilters(function (prev) {
-                        return __assign(__assign({}, prev), {
+                      setLocalFilters((prev) =>
+                        __assign(__assign({}, prev), {
                           dateRange: __assign(__assign({}, prev.dateRange), { start: startDate }),
-                        });
-                      });
+                        }),
+                      );
                     }}
                   />
                 </div>
@@ -569,13 +522,13 @@ function CalendarFilters(_a) {
                         ? (0, moment_1.default)(localFilters.dateRange.end).format("YYYY-MM-DD")
                         : ""
                     }
-                    onChange={function (e) {
+                    onChange={(e) => {
                       var endDate = e.target.value ? new Date(e.target.value) : null;
-                      setLocalFilters(function (prev) {
-                        return __assign(__assign({}, prev), {
+                      setLocalFilters((prev) =>
+                        __assign(__assign({}, prev), {
                           dateRange: __assign(__assign({}, prev.dateRange), { end: endDate }),
-                        });
-                      });
+                        }),
+                      );
                     }}
                     min={
                       localFilters.dateRange.start

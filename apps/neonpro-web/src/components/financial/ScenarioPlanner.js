@@ -3,32 +3,31 @@
  * Interface para planejamento de cenários financeiros
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -48,13 +47,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -76,9 +75,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -150,10 +147,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -162,7 +159,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScenarioPlanner = ScenarioPlanner;
 var react_1 = require("react");
@@ -237,14 +234,14 @@ function ScenarioPlanner(_a) {
             <dialog_1.DialogContent className="max-w-2xl">
               <CreateScenarioForm
                 userId={userId}
-                onSuccess={function () {
+                onSuccess={() => {
                   setShowCreateDialog(false);
                   toast({
                     title: "Cenário criado com sucesso",
                     description: "O novo cenário foi criado e está sendo processado.",
                   });
                 }}
-                onError={function (error) {
+                onError={(error) => {
                   toast({
                     title: "Erro ao criar cenário",
                     description: error,
@@ -268,21 +265,19 @@ function ScenarioPlanner(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-2">
-              {riskAlerts.map(function (alert, index) {
-                return (
-                  <div
-                    key={index}
-                    className={"flex items-center p-2 rounded-md ".concat(
-                      alert.type === "danger"
-                        ? "bg-red-100 text-red-800"
-                        : "bg-yellow-100 text-yellow-800",
-                    )}
-                  >
-                    <lucide_react_1.AlertCircle className="w-4 h-4 mr-2" />
-                    <span className="text-sm">{alert.message}</span>
-                  </div>
-                );
-              })}
+              {riskAlerts.map((alert, index) => (
+                <div
+                  key={index}
+                  className={"flex items-center p-2 rounded-md ".concat(
+                    alert.type === "danger"
+                      ? "bg-red-100 text-red-800"
+                      : "bg-yellow-100 text-yellow-800",
+                  )}
+                >
+                  <lucide_react_1.AlertCircle className="w-4 h-4 mr-2" />
+                  <span className="text-sm">{alert.message}</span>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>
@@ -340,22 +335,20 @@ function ScenariosGrid(_a) {
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {__spreadArray([], Array(6), true).map(function (_, i) {
-          return (
-            <card_1.Card key={i} className="animate-pulse">
-              <card_1.CardHeader className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-              </card_1.CardHeader>
-              <card_1.CardContent>
-                <div className="space-y-2">
-                  <div className="h-3 bg-gray-200 rounded"></div>
-                  <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+        {__spreadArray([], Array(6), true).map((_, i) => (
+          <card_1.Card key={i} className="animate-pulse">
+            <card_1.CardHeader className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            </card_1.CardHeader>
+            <card_1.CardContent>
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200 rounded"></div>
+                <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
     );
   }
@@ -378,26 +371,18 @@ function ScenariosGrid(_a) {
   }
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {scenarios.map(function (scenario) {
-        return (
-          <ScenarioCard
-            key={scenario.id}
-            scenario={scenario}
-            isActive={activeScenario === scenario.id}
-            isSelected={selectedScenarios.includes(scenario.id)}
-            comparisonMode={comparisonMode}
-            onSelect={function () {
-              return onSelectScenario(scenario.id);
-            }}
-            onToggleSelection={function () {
-              return onToggleSelection(scenario.id);
-            }}
-            onDelete={function () {
-              return onDeleteScenario(scenario.id);
-            }}
-          />
-        );
-      })}
+      {scenarios.map((scenario) => (
+        <ScenarioCard
+          key={scenario.id}
+          scenario={scenario}
+          isActive={activeScenario === scenario.id}
+          isSelected={selectedScenarios.includes(scenario.id)}
+          comparisonMode={comparisonMode}
+          onSelect={() => onSelectScenario(scenario.id)}
+          onToggleSelection={() => onToggleSelection(scenario.id)}
+          onDelete={() => onDeleteScenario(scenario.id)}
+        />
+      ))}
     </div>
   );
 }
@@ -416,7 +401,7 @@ function ScenarioCard(_a) {
     _b === void 0
       ? void 0
       : _b.risk_level) || "medium";
-  var getRiskColor = function (level) {
+  var getRiskColor = (level) => {
     switch (level) {
       case "low":
         return "text-green-600 bg-green-100";
@@ -430,7 +415,7 @@ function ScenarioCard(_a) {
         return "text-gray-600 bg-gray-100";
     }
   };
-  var getRiskIcon = function (level) {
+  var getRiskIcon = (level) => {
     switch (level) {
       case "low":
         return <lucide_react_1.CheckCircle2 className="w-4 h-4" />;
@@ -537,7 +522,7 @@ function ScenarioCard(_a) {
             <button_1.Button
               variant="outline"
               size="sm"
-              onClick={function (e) {
+              onClick={(e) => {
                 e.stopPropagation();
                 onDelete();
               }}
@@ -551,7 +536,6 @@ function ScenarioCard(_a) {
   );
 }
 function CreateScenarioForm(_a) {
-  var _this = this;
   var _b, _c;
   var userId = _a.userId,
     onSuccess = _a.onSuccess,
@@ -574,10 +558,10 @@ function CreateScenarioForm(_a) {
     }),
     formData = _e[0],
     setFormData = _e[1];
-  var handleSubmit = function (e) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleSubmit = (e) =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             e.preventDefault();
@@ -606,7 +590,6 @@ function CreateScenarioForm(_a) {
         }
       });
     });
-  };
   return (
     <>
       <dialog_1.DialogHeader>
@@ -623,11 +606,9 @@ function CreateScenarioForm(_a) {
             <input_1.Input
               id="name"
               value={formData.name || ""}
-              onChange={function (e) {
-                return setFormData(function (prev) {
-                  return __assign(__assign({}, prev), { name: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setFormData((prev) => __assign(__assign({}, prev), { name: e.target.value }))
+              }
               placeholder="Ex: Expansão Q1 2024"
               required
             />
@@ -638,11 +619,9 @@ function CreateScenarioForm(_a) {
             <textarea_1.Textarea
               id="description"
               value={formData.description || ""}
-              onChange={function (e) {
-                return setFormData(function (prev) {
-                  return __assign(__assign({}, prev), { description: e.target.value });
-                });
-              }}
+              onChange={(e) =>
+                setFormData((prev) => __assign(__assign({}, prev), { description: e.target.value }))
+              }
               placeholder="Descreva o cenário que você deseja analisar..."
               rows={3}
             />
@@ -659,15 +638,15 @@ function CreateScenarioForm(_a) {
                     ? void 0
                     : _b.start_date) || ""
                 }
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), {
+                onChange={(e) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), {
                       projection_period: __assign(__assign({}, prev.projection_period), {
                         start_date: e.target.value,
                       }),
-                    });
-                  });
-                }}
+                    }),
+                  )
+                }
                 required
               />
             </div>
@@ -682,15 +661,15 @@ function CreateScenarioForm(_a) {
                     ? void 0
                     : _c.end_date) || ""
                 }
-                onChange={function (e) {
-                  return setFormData(function (prev) {
-                    return __assign(__assign({}, prev), {
+                onChange={(e) =>
+                  setFormData((prev) =>
+                    __assign(__assign({}, prev), {
                       projection_period: __assign(__assign({}, prev.projection_period), {
                         end_date: e.target.value,
                       }),
-                    });
-                  });
-                }}
+                    }),
+                  )
+                }
                 required
               />
             </div>
@@ -698,13 +677,7 @@ function CreateScenarioForm(_a) {
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <button_1.Button
-            type="button"
-            variant="outline"
-            onClick={function () {
-              return onError("Cancelado");
-            }}
-          >
+          <button_1.Button type="button" variant="outline" onClick={() => onError("Cancelado")}>
             Cancelar
           </button_1.Button>
           <button_1.Button type="submit" disabled={isLoading}>
@@ -731,18 +704,16 @@ function ScenarioAnalysis(_a) {
   if (isLoading) {
     return (
       <div className="space-y-4">
-        {__spreadArray([], Array(3), true).map(function (_, i) {
-          return (
-            <card_1.Card key={i} className="animate-pulse">
-              <card_1.CardContent className="p-6">
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                  <div className="h-8 bg-gray-200 rounded"></div>
-                </div>
-              </card_1.CardContent>
-            </card_1.Card>
-          );
-        })}
+        {__spreadArray([], Array(3), true).map((_, i) => (
+          <card_1.Card key={i} className="animate-pulse">
+            <card_1.CardContent className="p-6">
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                <div className="h-8 bg-gray-200 rounded"></div>
+              </div>
+            </card_1.CardContent>
+          </card_1.Card>
+        ))}
       </div>
     );
   }
@@ -868,9 +839,7 @@ function ScenarioAnalysis(_a) {
                 <recharts_1.XAxis dataKey="date" />
                 <recharts_1.YAxis />
                 <recharts_1.Tooltip
-                  formatter={function (value) {
-                    return ["R$ ".concat(value.toLocaleString()), ""];
-                  }}
+                  formatter={(value) => ["R$ ".concat(value.toLocaleString()), ""]}
                 />
                 <recharts_1.Area
                   type="monotone"
@@ -942,7 +911,7 @@ function ScenarioAnalysis(_a) {
                 <div>
                   <label_1.Label>Resultados do Teste de Stress</label_1.Label>
                   <div className="mt-2 space-y-2">
-                    {riskData.stress_test_results.map(function (test, index) {
+                    {riskData.stress_test_results.map((test, index) => {
                       var _a;
                       return (
                         <div
@@ -981,14 +950,12 @@ function ScenarioAnalysis(_a) {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-2">
-              {scenario.results.recommendations.map(function (rec, index) {
-                return (
-                  <div key={index} className="flex items-start p-3 bg-blue-50 rounded-md">
-                    <lucide_react_1.CheckCircle2 className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                    <span className="text-sm text-blue-800">{rec}</span>
-                  </div>
-                );
-              })}
+              {scenario.results.recommendations.map((rec, index) => (
+                <div key={index} className="flex items-start p-3 bg-blue-50 rounded-md">
+                  <lucide_react_1.CheckCircle2 className="w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+                  <span className="text-sm text-blue-800">{rec}</span>
+                </div>
+              ))}
             </div>
           </card_1.CardContent>
         </card_1.Card>

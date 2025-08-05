@@ -4,32 +4,31 @@
  * Story 6.1: Real-time Stock Tracking + Barcode/QR Integration
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -49,13 +48,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -77,9 +76,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -151,10 +148,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -163,14 +160,13 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.useInventory = useInventory;
 var inventory_1 = require("@/lib/supabase/inventory");
 var inventory_2 = require("@/lib/types/inventory");
 var react_1 = require("react");
 function useInventory(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -207,143 +203,143 @@ function useInventory(options) {
   var alertsChannel = (0, react_1.useRef)(null);
   var alertInterval = (0, react_1.useRef)(null);
   // Load inventory items with filters
-  var loadInventoryItems = (0, react_1.useCallback)(function (filters) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response_1, error_1;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, 3, 4]);
-            setIsLoading(true);
-            setState(function (prev) {
-              return __assign(__assign({}, prev), { loading: true, error: null });
-            });
-            return [4 /*yield*/, (0, inventory_1.getInventoryItems)(filters)];
-          case 1:
-            response_1 = _a.sent();
-            if (response_1.success) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
-                  items: response_1.data,
+  var loadInventoryItems = (0, react_1.useCallback)(
+    (filters) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response_1, error_1;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, 3, 4]);
+              setIsLoading(true);
+              setState((prev) => __assign(__assign({}, prev), { loading: true, error: null }));
+              return [4 /*yield*/, (0, inventory_1.getInventoryItems)(filters)];
+            case 1:
+              response_1 = _a.sent();
+              if (response_1.success) {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
+                    items: response_1.data,
+                    loading: false,
+                    lastUpdated: new Date().toISOString(),
+                  }),
+                );
+              } else {
+                throw new Error(response_1.message || "Failed to load inventory items");
+              }
+              return [3 /*break*/, 4];
+            case 2:
+              error_1 = _a.sent();
+              console.error("Error loading inventory items:", error_1);
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   loading: false,
-                  lastUpdated: new Date().toISOString(),
-                });
-              });
-            } else {
-              throw new Error(response_1.message || "Failed to load inventory items");
-            }
-            return [3 /*break*/, 4];
-          case 2:
-            error_1 = _a.sent();
-            console.error("Error loading inventory items:", error_1);
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                loading: false,
-                error: error_1 instanceof Error ? error_1.message : "Unknown error",
-              });
-            });
-            return [3 /*break*/, 4];
-          case 3:
-            setIsLoading(false);
-            return [7 /*endfinally*/];
-          case 4:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+                  error: error_1 instanceof Error ? error_1.message : "Unknown error",
+                }),
+              );
+              return [3 /*break*/, 4];
+            case 3:
+              setIsLoading(false);
+              return [7 /*endfinally*/];
+            case 4:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Load categories
-  var loadCategories = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response_2, error_2;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, (0, inventory_1.getInventoryCategories)()];
-          case 1:
-            response_2 = _a.sent();
-            if (response_2.success) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { categories: response_2.data });
-              });
-            }
-            return [3 /*break*/, 3];
-          case 2:
-            error_2 = _a.sent();
-            console.error("Error loading categories:", error_2);
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var loadCategories = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response_2, error_2;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, (0, inventory_1.getInventoryCategories)()];
+            case 1:
+              response_2 = _a.sent();
+              if (response_2.success) {
+                setState((prev) => __assign(__assign({}, prev), { categories: response_2.data }));
+              }
+              return [3 /*break*/, 3];
+            case 2:
+              error_2 = _a.sent();
+              console.error("Error loading categories:", error_2);
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Load locations
-  var loadLocations = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response_3, error_3;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, (0, inventory_1.getInventoryLocations)()];
-          case 1:
-            response_3 = _a.sent();
-            if (response_3.success) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { locations: response_3.data });
-              });
-            }
-            return [3 /*break*/, 3];
-          case 2:
-            error_3 = _a.sent();
-            console.error("Error loading locations:", error_3);
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var loadLocations = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response_3, error_3;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, (0, inventory_1.getInventoryLocations)()];
+            case 1:
+              response_3 = _a.sent();
+              if (response_3.success) {
+                setState((prev) => __assign(__assign({}, prev), { locations: response_3.data }));
+              }
+              return [3 /*break*/, 3];
+            case 2:
+              error_3 = _a.sent();
+              console.error("Error loading locations:", error_3);
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Load alerts
-  var loadAlerts = (0, react_1.useCallback)(function () {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response_4, error_4;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [
-              4 /*yield*/,
-              (0, inventory_1.getStockAlerts)({
-                status: inventory_2.AlertStatus.ACTIVE,
-                limit: 50,
-              }),
-            ];
-          case 1:
-            response_4 = _a.sent();
-            if (response_4.success) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), { alerts: response_4.data });
-              });
-            }
-            return [3 /*break*/, 3];
-          case 2:
-            error_4 = _a.sent();
-            console.error("Error loading alerts:", error_4);
-            return [3 /*break*/, 3];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var loadAlerts = (0, react_1.useCallback)(
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        var response_4, error_4;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [
+                4 /*yield*/,
+                (0, inventory_1.getStockAlerts)({
+                  status: inventory_2.AlertStatus.ACTIVE,
+                  limit: 50,
+                }),
+              ];
+            case 1:
+              response_4 = _a.sent();
+              if (response_4.success) {
+                setState((prev) => __assign(__assign({}, prev), { alerts: response_4.data }));
+              }
+              return [3 /*break*/, 3];
+            case 2:
+              error_4 = _a.sent();
+              console.error("Error loading alerts:", error_4);
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Refresh all data
   var refreshData = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
@@ -364,8 +360,7 @@ function useInventory(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       loadInventoryItems,
       loadCategories,
@@ -378,10 +373,10 @@ function useInventory(options) {
   );
   // Update stock level
   var updateStock = (0, react_1.useCallback)(
-    function (itemId, quantity, movementType, locationId, options) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (itemId, quantity, movementType, locationId, options) =>
+      __awaiter(this, void 0, void 0, function () {
         var response, error_5;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               _a.trys.push([0, 6, 7, 8]);
@@ -424,11 +419,11 @@ function useInventory(options) {
             case 6:
               error_5 = _a.sent();
               console.error("Error updating stock:", error_5);
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
+              setState((prev) =>
+                __assign(__assign({}, prev), {
                   error: error_5 instanceof Error ? error_5.message : "Unknown error",
-                });
-              });
+                }),
+              );
               return [2 /*return*/, false];
             case 7:
               setIsUpdating(false);
@@ -437,8 +432,7 @@ function useInventory(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       loadInventoryItems,
       loadAlerts,
@@ -448,92 +442,96 @@ function useInventory(options) {
     ],
   );
   // Scan barcode
-  var scanBarcode = (0, react_1.useCallback)(function (barcodeValue) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, error_6;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, (0, inventory_1.getInventoryItemByBarcode)(barcodeValue)];
-          case 1:
-            response = _a.sent();
-            if (response.success && response.data) {
-              return [
-                2 /*return*/,
-                {
-                  success: true,
-                  item: response.data,
-                  message: "Item found successfully",
-                },
-              ];
-            } else {
+  var scanBarcode = (0, react_1.useCallback)(
+    (barcodeValue) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, error_6;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, (0, inventory_1.getInventoryItemByBarcode)(barcodeValue)];
+            case 1:
+              response = _a.sent();
+              if (response.success && response.data) {
+                return [
+                  2 /*return*/,
+                  {
+                    success: true,
+                    item: response.data,
+                    message: "Item found successfully",
+                  },
+                ];
+              } else {
+                return [
+                  2 /*return*/,
+                  {
+                    success: false,
+                    message: "Item not found for this barcode",
+                  },
+                ];
+              }
+              return [3 /*break*/, 3];
+            case 2:
+              error_6 = _a.sent();
+              console.error("Error scanning barcode:", error_6);
               return [
                 2 /*return*/,
                 {
                   success: false,
-                  message: "Item not found for this barcode",
+                  message: error_6 instanceof Error ? error_6.message : "Unknown error",
                 },
               ];
-            }
-            return [3 /*break*/, 3];
-          case 2:
-            error_6 = _a.sent();
-            console.error("Error scanning barcode:", error_6);
-            return [
-              2 /*return*/,
-              {
-                success: false,
-                message: error_6 instanceof Error ? error_6.message : "Unknown error",
-              },
-            ];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Start barcode session
-  var startSession = (0, react_1.useCallback)(function (sessionType, locationId) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response_5, error_7;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, (0, inventory_1.createBarcodeSession)(sessionType, locationId)];
-          case 1:
-            response_5 = _a.sent();
-            if (response_5.success && response_5.data) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
-                  activeSessions: __spreadArray(
-                    __spreadArray([], prev.activeSessions, true),
-                    [response_5.data],
-                    false,
-                  ),
-                });
-              });
-              return [2 /*return*/, response_5.data];
-            }
-            return [2 /*return*/, null];
-          case 2:
-            error_7 = _a.sent();
-            console.error("Error starting session:", error_7);
-            return [2 /*return*/, null];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
+  var startSession = (0, react_1.useCallback)(
+    (sessionType, locationId) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response_5, error_7;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, (0, inventory_1.createBarcodeSession)(sessionType, locationId)];
+            case 1:
+              response_5 = _a.sent();
+              if (response_5.success && response_5.data) {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
+                    activeSessions: __spreadArray(
+                      __spreadArray([], prev.activeSessions, true),
+                      [response_5.data],
+                      false,
+                    ),
+                  }),
+                );
+                return [2 /*return*/, response_5.data];
+              }
+              return [2 /*return*/, null];
+            case 2:
+              error_7 = _a.sent();
+              console.error("Error starting session:", error_7);
+              return [2 /*return*/, null];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
   // Add scan to session
   var addScanToSession = (0, react_1.useCallback)(
-    function (sessionId, barcodeValue) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (sessionId, barcodeValue) =>
+      __awaiter(this, void 0, void 0, function () {
         var scanResult, response, error_8;
         var _a;
-        return __generator(this, function (_b) {
+        return __generator(this, (_b) => {
           switch (_b.label) {
             case 0:
               _b.trys.push([0, 3, , 4]);
@@ -564,150 +562,139 @@ function useInventory(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [scanBarcode],
   );
   // End session
-  var endSession = (0, react_1.useCallback)(function (sessionId, notes) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, error_9;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, (0, inventory_1.completeBarcodeSession)(sessionId, notes)];
-          case 1:
-            response = _a.sent();
-            if (response.success) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
-                  activeSessions: prev.activeSessions.filter(function (session) {
-                    return session.id !== sessionId;
+  var endSession = (0, react_1.useCallback)(
+    (sessionId, notes) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, error_9;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, (0, inventory_1.completeBarcodeSession)(sessionId, notes)];
+            case 1:
+              response = _a.sent();
+              if (response.success) {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
+                    activeSessions: prev.activeSessions.filter(
+                      (session) => session.id !== sessionId,
+                    ),
                   }),
-                });
-              });
-              return [2 /*return*/, true];
-            }
-            return [2 /*return*/, false];
-          case 2:
-            error_9 = _a.sent();
-            console.error("Error ending session:", error_9);
-            return [2 /*return*/, false];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  // Resolve alert
-  var resolveAlert = (0, react_1.useCallback)(function (alertId, notes) {
-    return __awaiter(_this, void 0, void 0, function () {
-      var response, error_10;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            _a.trys.push([0, 2, , 3]);
-            return [4 /*yield*/, (0, inventory_1.resolveStockAlert)(alertId, notes)];
-          case 1:
-            response = _a.sent();
-            if (response.success) {
-              setState(function (prev) {
-                return __assign(__assign({}, prev), {
-                  alerts: prev.alerts.filter(function (alert) {
-                    return alert.id !== alertId;
-                  }),
-                });
-              });
-              return [2 /*return*/, true];
-            }
-            return [2 /*return*/, false];
-          case 2:
-            error_10 = _a.sent();
-            console.error("Error resolving alert:", error_10);
-            return [2 /*return*/, false];
-          case 3:
-            return [2 /*return*/];
-        }
-      });
-    });
-  }, []);
-  // Filter setters
-  var setLocationFilter = (0, react_1.useCallback)(function (locationId) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { selectedLocation: locationId });
-    });
-  }, []);
-  var setCategoryFilter = (0, react_1.useCallback)(function (categoryId) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { selectedCategory: categoryId });
-    });
-  }, []);
-  var setSearchQuery = (0, react_1.useCallback)(function (query) {
-    setState(function (prev) {
-      return __assign(__assign({}, prev), { searchQuery: query });
-    });
-  }, []);
-  // Real-time connection management
-  var reconnect = (0, react_1.useCallback)(
-    function () {
-      if (enableRealTime) {
-        setupRealTimeSubscriptions();
-      }
-    },
-    [enableRealTime],
-  );
-  // Setup real-time subscriptions
-  var setupRealTimeSubscriptions = (0, react_1.useCallback)(
-    function () {
-      try {
-        setState(function (prev) {
-          return __assign(__assign({}, prev), {
-            connectionStatus: inventory_2.ConnectionStatus.RECONNECTING,
-          });
-        });
-        // Subscribe to inventory updates
-        inventoryChannel.current = (0, inventory_1.subscribeToInventoryUpdates)(function (payload) {
-          console.log("Inventory update received:", payload);
-          // Refresh data when changes occur
-          refreshData();
-          setState(function (prev) {
-            return __assign(__assign({}, prev), {
-              lastUpdated: new Date().toISOString(),
-              connectionStatus: inventory_2.ConnectionStatus.CONNECTED,
-            });
-          });
-        });
-        // Subscribe to new alerts
-        alertsChannel.current = (0, inventory_1.subscribeToStockAlerts)(function (payload) {
-          console.log("New alert received:", payload);
-          // Add new alert to state
-          if (payload.eventType === "INSERT" && payload.new) {
-            setState(function (prev) {
-              return __assign(__assign({}, prev), {
-                alerts: __spreadArray([payload.new], prev.alerts, true),
-              });
-            });
+                );
+                return [2 /*return*/, true];
+              }
+              return [2 /*return*/, false];
+            case 2:
+              error_9 = _a.sent();
+              console.error("Error ending session:", error_9);
+              return [2 /*return*/, false];
+            case 3:
+              return [2 /*return*/];
           }
         });
-        setState(function (prev) {
-          return __assign(__assign({}, prev), {
-            connectionStatus: inventory_2.ConnectionStatus.CONNECTED,
-          });
-        });
-      } catch (error) {
-        console.error("Error setting up real-time subscriptions:", error);
-        setState(function (prev) {
-          return __assign(__assign({}, prev), {
-            connectionStatus: inventory_2.ConnectionStatus.ERROR,
-          });
-        });
-      }
-    },
-    [refreshData],
+      }),
+    [],
   );
+  // Resolve alert
+  var resolveAlert = (0, react_1.useCallback)(
+    (alertId, notes) =>
+      __awaiter(this, void 0, void 0, function () {
+        var response, error_10;
+        return __generator(this, (_a) => {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2, , 3]);
+              return [4 /*yield*/, (0, inventory_1.resolveStockAlert)(alertId, notes)];
+            case 1:
+              response = _a.sent();
+              if (response.success) {
+                setState((prev) =>
+                  __assign(__assign({}, prev), {
+                    alerts: prev.alerts.filter((alert) => alert.id !== alertId),
+                  }),
+                );
+                return [2 /*return*/, true];
+              }
+              return [2 /*return*/, false];
+            case 2:
+              error_10 = _a.sent();
+              console.error("Error resolving alert:", error_10);
+              return [2 /*return*/, false];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      }),
+    [],
+  );
+  // Filter setters
+  var setLocationFilter = (0, react_1.useCallback)((locationId) => {
+    setState((prev) => __assign(__assign({}, prev), { selectedLocation: locationId }));
+  }, []);
+  var setCategoryFilter = (0, react_1.useCallback)((categoryId) => {
+    setState((prev) => __assign(__assign({}, prev), { selectedCategory: categoryId }));
+  }, []);
+  var setSearchQuery = (0, react_1.useCallback)((query) => {
+    setState((prev) => __assign(__assign({}, prev), { searchQuery: query }));
+  }, []);
+  // Real-time connection management
+  var reconnect = (0, react_1.useCallback)(() => {
+    if (enableRealTime) {
+      setupRealTimeSubscriptions();
+    }
+  }, [enableRealTime]);
+  // Setup real-time subscriptions
+  var setupRealTimeSubscriptions = (0, react_1.useCallback)(() => {
+    try {
+      setState((prev) =>
+        __assign(__assign({}, prev), {
+          connectionStatus: inventory_2.ConnectionStatus.RECONNECTING,
+        }),
+      );
+      // Subscribe to inventory updates
+      inventoryChannel.current = (0, inventory_1.subscribeToInventoryUpdates)((payload) => {
+        console.log("Inventory update received:", payload);
+        // Refresh data when changes occur
+        refreshData();
+        setState((prev) =>
+          __assign(__assign({}, prev), {
+            lastUpdated: new Date().toISOString(),
+            connectionStatus: inventory_2.ConnectionStatus.CONNECTED,
+          }),
+        );
+      });
+      // Subscribe to new alerts
+      alertsChannel.current = (0, inventory_1.subscribeToStockAlerts)((payload) => {
+        console.log("New alert received:", payload);
+        // Add new alert to state
+        if (payload.eventType === "INSERT" && payload.new) {
+          setState((prev) =>
+            __assign(__assign({}, prev), {
+              alerts: __spreadArray([payload.new], prev.alerts, true),
+            }),
+          );
+        }
+      });
+      setState((prev) =>
+        __assign(__assign({}, prev), {
+          connectionStatus: inventory_2.ConnectionStatus.CONNECTED,
+        }),
+      );
+    } catch (error) {
+      console.error("Error setting up real-time subscriptions:", error);
+      setState((prev) =>
+        __assign(__assign({}, prev), {
+          connectionStatus: inventory_2.ConnectionStatus.ERROR,
+        }),
+      );
+    }
+  }, [refreshData]);
   // Cleanup real-time subscriptions
-  var cleanupSubscriptions = (0, react_1.useCallback)(function () {
+  var cleanupSubscriptions = (0, react_1.useCallback)(() => {
     if (inventoryChannel.current) {
       inventoryChannel.current.unsubscribe();
       inventoryChannel.current = null;
@@ -722,7 +709,7 @@ function useInventory(options) {
     }
   }, []);
   // Initialize hook
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     if (autoLoadData) {
       refreshData();
     }
@@ -731,29 +718,26 @@ function useInventory(options) {
     }
     // Setup alert refresh interval
     alertInterval.current = setInterval(loadAlerts, alertRefreshInterval);
-    return function () {
+    return () => {
       cleanupSubscriptions();
     };
   }, []);
   // Update filters effect
-  (0, react_1.useEffect)(
-    function () {
-      if (autoLoadData) {
-        loadInventoryItems({
-          category_id: state.selectedCategory,
-          location_id: state.selectedLocation,
-          search: state.searchQuery,
-        });
-      }
-    },
-    [
-      state.selectedCategory,
-      state.selectedLocation,
-      state.searchQuery,
-      autoLoadData,
-      loadInventoryItems,
-    ],
-  );
+  (0, react_1.useEffect)(() => {
+    if (autoLoadData) {
+      loadInventoryItems({
+        category_id: state.selectedCategory,
+        location_id: state.selectedLocation,
+        search: state.searchQuery,
+      });
+    }
+  }, [
+    state.selectedCategory,
+    state.selectedLocation,
+    state.searchQuery,
+    autoLoadData,
+    loadInventoryItems,
+  ]);
   return {
     state: state,
     isLoading: isLoading,

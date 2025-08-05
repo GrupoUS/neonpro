@@ -1,19 +1,18 @@
-"use strict";
 /**
  * PIX Integration for Brazilian Instant Payments
  * Implements PIX payment processing with QR code generation and real-time status tracking
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -33,13 +32,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -61,9 +60,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -135,14 +132,14 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.pixIntegration = exports.PixIntegration = exports.PixPaymentStatus = void 0;
 exports.createPixIntegration = createPixIntegration;
 var client_1 = require("@/lib/supabase/client");
 var crypto_1 = require("crypto");
 var PixPaymentStatus;
-(function (PixPaymentStatus) {
+((PixPaymentStatus) => {
   PixPaymentStatus["PENDING"] = "pending";
   PixPaymentStatus["PAID"] = "paid";
   PixPaymentStatus["EXPIRED"] = "expired";
@@ -153,7 +150,7 @@ var PixPaymentStatus;
  * PIX Payment Integration Service
  * Handles Brazilian instant payment processing
  */
-var PixIntegration = /** @class */ (function () {
+var PixIntegration = /** @class */ (() => {
   function PixIntegration(config) {
     this.supabase = (0, client_1.createClient)();
     this.config = config;
@@ -405,14 +402,14 @@ var PixIntegration = /** @class */ (function () {
   /**
    * Format PIX key for QR code
    */
-  PixIntegration.prototype.formatPixKey = function (pixKey) {
+  PixIntegration.prototype.formatPixKey = (pixKey) => {
     var keyData = "0014".concat(pixKey);
     return "".concat(String(keyData.length).padStart(2, "0")).concat(keyData);
   };
   /**
    * Format additional data for QR code
    */
-  PixIntegration.prototype.formatAdditionalData = function (txId, description) {
+  PixIntegration.prototype.formatAdditionalData = (txId, description) => {
     var txIdField = "05".concat(String(txId.length).padStart(2, "0")).concat(txId);
     var descField = description
       ? "02".concat(String(description.length).padStart(2, "0")).concat(description)
@@ -423,7 +420,7 @@ var PixIntegration = /** @class */ (function () {
   /**
    * Calculate CRC16 for PIX QR code
    */
-  PixIntegration.prototype.calculateCRC16 = function (data) {
+  PixIntegration.prototype.calculateCRC16 = (data) => {
     // CRC16-CCITT implementation for PIX
     var crc = 0xffff;
     for (var i = 0; i < data.length; i++) {
@@ -443,7 +440,7 @@ var PixIntegration = /** @class */ (function () {
    */
   PixIntegration.prototype.generateQRCodeImage = function (qrCodeData) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In production, use a QR code generation library like 'qrcode'
         // For now, return a placeholder base64 image
         return [
@@ -456,15 +453,14 @@ var PixIntegration = /** @class */ (function () {
   /**
    * Generate unique payment ID
    */
-  PixIntegration.prototype.generatePaymentId = function () {
-    return "pix_".concat(crypto_1.default.randomUUID().replace(/-/g, ""));
-  };
+  PixIntegration.prototype.generatePaymentId = () =>
+    "pix_".concat(crypto_1.default.randomUUID().replace(/-/g, ""));
   /**
    * Register webhook for payment status updates
    */
   PixIntegration.prototype.registerWebhook = function (paymentId) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // In production, register webhook with PIX provider
         console.log("Webhook registered for payment ".concat(paymentId));
         return [2 /*return*/];
@@ -557,7 +553,7 @@ var PixIntegration = /** @class */ (function () {
    */
   PixIntegration.prototype.sendPaymentConfirmation = function (payment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation would use the existing email service
         console.log("Payment confirmation sent for ".concat(payment.id));
         return [2 /*return*/];

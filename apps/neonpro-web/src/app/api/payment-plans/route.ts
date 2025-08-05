@@ -2,11 +2,11 @@
 // Story 6.1 - Task 3: Installment Management System
 // API endpoints for payment plan management
 
-import type { NextRequest, NextResponse } from "next/server";
-import type { createClient } from "@/lib/supabase/server";
 import type { cookies } from "next/headers";
+import type { NextRequest, NextResponse } from "next/server";
 import type { z } from "zod";
 import type { getInstallmentManager } from "@/lib/payments/installments/installment-manager";
+import type { createClient } from "@/lib/supabase/server";
 
 // Validation schemas
 const createPaymentPlanSchema = z.object({
@@ -233,7 +233,7 @@ export async function PUT(request: NextRequest) {
         );
         break;
 
-      case "update":
+      case "update": {
         if (!updateData) {
           return NextResponse.json(
             { error: "Update data is required for update action" },
@@ -246,6 +246,7 @@ export async function PUT(request: NextRequest) {
           paymentPlanIds.map((id) => installmentManager.modifyPaymentPlan(id, validatedUpdateData)),
         );
         break;
+      }
 
       default:
         return NextResponse.json(

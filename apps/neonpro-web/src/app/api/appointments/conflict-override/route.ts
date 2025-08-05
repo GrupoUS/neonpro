@@ -1,5 +1,4 @@
-﻿import type { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
+﻿import { type NextRequest, NextResponse } from "next/server";
 
 // =============================================
 // NeonPro Conflict Override API

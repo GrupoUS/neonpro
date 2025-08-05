@@ -7,18 +7,17 @@
  * @author APEX Master Developer
  */
 
-import React, { useState, useEffect } from "react";
-import type { Camera, Upload, Eye, Shield, BarChart3, Settings } from "lucide-react";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
+import type { BarChart3, Camera, Eye, Settings, Shield, Upload } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useToast } from "@/components/ui/use-toast";
-
-// Import photo recognition components
-import type { PhotoUpload } from "./photo-upload";
 import type { IdentityVerification } from "./identity-verification";
 import type { PhotoGallery } from "./photo-gallery";
+// Import photo recognition components
+import type { PhotoUpload } from "./photo-upload";
 import type { PrivacyControls } from "./privacy-controls";
 
 interface PhotoRecognitionSystemProps {
@@ -161,7 +160,7 @@ export function PhotoRecognitionSystem({
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   const formatDate = (dateString: string) => {
@@ -446,7 +445,7 @@ export function PhotoRecognitionSystem({
 }
 
 // Export individual components for standalone use
-export { PhotoUpload, IdentityVerification, PhotoGallery, PrivacyControls };
+export type { PhotoUpload, IdentityVerification, PhotoGallery, PrivacyControls };
 
 // Export types for external use
 export type { PhotoRecognitionSystemProps };

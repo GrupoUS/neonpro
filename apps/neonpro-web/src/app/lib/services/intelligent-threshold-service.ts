@@ -180,8 +180,7 @@ export class IntelligentThresholdService {
 
     // Apply variability and seasonal factors
     const variabilityFactor = Math.sqrt(
-      demandStats.variance * baseParams.lead_time_days +
-        Math.pow(avgDailyDemand, 2) * leadTimeVariability,
+      demandStats.variance * baseParams.lead_time_days + avgDailyDemand ** 2 * leadTimeVariability,
     );
 
     // Service level of 95% (z-score = 1.645)
@@ -404,8 +403,7 @@ export class IntelligentThresholdService {
 
     const values = demandHistory.map((d) => d.quantity);
     const average = values.reduce((sum, val) => sum + val, 0) / values.length;
-    const variance =
-      values.reduce((sum, val) => sum + Math.pow(val - average, 2), 0) / values.length;
+    const variance = values.reduce((sum, val) => sum + (val - average) ** 2, 0) / values.length;
     const standardDeviation = Math.sqrt(variance);
 
     return { average, variance, standardDeviation };
@@ -452,10 +450,9 @@ export class IntelligentThresholdService {
 
     const leadTimes = data.map((d) => d.average_lead_time_days);
     const avg = leadTimes.reduce((sum, val) => sum + val, 0) / leadTimes.length;
-    const variance =
-      leadTimes.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / leadTimes.length;
+    const variance = leadTimes.reduce((sum, val) => sum + (val - avg) ** 2, 0) / leadTimes.length;
 
-    return variance / Math.pow(avg, 2); // Coefficient of variation
+    return variance / avg ** 2; // Coefficient of variation
   }
 
   private async calculatePredictiveForecast(historicalData: any[], period: string, date: Date) {

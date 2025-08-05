@@ -5,6 +5,25 @@
 
 "use client";
 
+import type {
+  Activity,
+  AlertCircle,
+  Calendar,
+  Camera,
+  CheckCircle,
+  Clock,
+  Download,
+  FileText,
+  Filter,
+  MessageSquare,
+  Share2,
+  Star,
+  Stethoscope,
+  Timer,
+  TrendingUp,
+  User,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -31,25 +50,6 @@ import type {
   TimelineFilter,
 } from "@/lib/patients/medical-timeline";
 import type { cn } from "@/lib/utils";
-import type {
-  Activity,
-  AlertCircle,
-  Calendar,
-  Camera,
-  CheckCircle,
-  Clock,
-  Download,
-  FileText,
-  Filter,
-  MessageSquare,
-  Share2,
-  Star,
-  Stethoscope,
-  Timer,
-  TrendingUp,
-  User,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface MedicalTimelineProps {
   patientId: string;

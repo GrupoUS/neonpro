@@ -11,32 +11,31 @@
  * - Performance optimized with caching
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,7 +155,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usePermissions = usePermissions;
 exports.useClinicalPermissions = useClinicalPermissions;
@@ -177,7 +174,6 @@ var use_toast_1 = require("@/hooks/use-toast");
  * Healthcare Permissions Hook with CFM Compliance
  */
 function usePermissions(options) {
-  var _this = this;
   if (options === void 0) {
     options = {};
   }
@@ -217,51 +213,39 @@ function usePermissions(options) {
   var refreshTimer = (0, react_1.useRef)();
   var subscriptionRef = (0, react_1.useRef)();
   // Initialize RBAC engine
-  (0, react_1.useEffect)(
-    function () {
-      if (supabase && !rbacEngine.current) {
-        rbacEngine.current = new rbac_1.HealthcareRBACEngine(supabase);
-      }
-    },
-    [supabase],
-  );
+  (0, react_1.useEffect)(() => {
+    if (supabase && !rbacEngine.current) {
+      rbacEngine.current = new rbac_1.HealthcareRBACEngine(supabase);
+    }
+  }, [supabase]);
   // Load user permissions on session change
-  (0, react_1.useEffect)(
-    function () {
-      if (user === null || user === void 0 ? void 0 : user.id) {
-        loadUserPermissions();
-      } else {
-        resetPermissions();
-      }
-    },
-    [user === null || user === void 0 ? void 0 : user.id],
-  );
+  (0, react_1.useEffect)(() => {
+    if (user === null || user === void 0 ? void 0 : user.id) {
+      loadUserPermissions();
+    } else {
+      resetPermissions();
+    }
+  }, [user === null || user === void 0 ? void 0 : user.id]);
   // Setup real-time subscriptions
-  (0, react_1.useEffect)(
-    function () {
-      if (realtime && (user === null || user === void 0 ? void 0 : user.id)) {
-        var unsubscribe = subscribeToUpdates();
-        return unsubscribe;
-      }
-    },
-    [realtime, user === null || user === void 0 ? void 0 : user.id],
-  );
+  (0, react_1.useEffect)(() => {
+    if (realtime && (user === null || user === void 0 ? void 0 : user.id)) {
+      var unsubscribe = subscribeToUpdates();
+      return unsubscribe;
+    }
+  }, [realtime, user === null || user === void 0 ? void 0 : user.id]);
   // Setup auto-refresh
-  (0, react_1.useEffect)(
-    function () {
-      if (refreshInterval > 0) {
-        refreshTimer.current = setInterval(function () {
-          refreshPermissions();
-        }, refreshInterval);
-        return function () {
-          if (refreshTimer.current) {
-            clearInterval(refreshTimer.current);
-          }
-        };
-      }
-    },
-    [refreshInterval],
-  );
+  (0, react_1.useEffect)(() => {
+    if (refreshInterval > 0) {
+      refreshTimer.current = setInterval(() => {
+        refreshPermissions();
+      }, refreshInterval);
+      return () => {
+        if (refreshTimer.current) {
+          clearInterval(refreshTimer.current);
+        }
+      };
+    }
+  }, [refreshInterval]);
   // ============================================================================
   // CORE PERMISSION FUNCTIONS
   // ============================================================================
@@ -269,11 +253,11 @@ function usePermissions(options) {
    * Load user permissions and context
    */
   var loadUserPermissions = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
         var _a, roleData, roleError, context, permissions, err_1;
         var _b, _c, _d, _e, _f, _g;
-        return __generator(this, function (_h) {
+        return __generator(this, (_h) => {
           switch (_h.label) {
             case 0:
               if (!(user === null || user === void 0 ? void 0 : user.id) || !rbacEngine.current)
@@ -364,18 +348,17 @@ function usePermissions(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [user === null || user === void 0 ? void 0 : user.id, supabase],
   );
   /**
    * Check single permission
    */
   var checkPermission = (0, react_1.useCallback)(
-    function (permission, context) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (permission, context) =>
+      __awaiter(this, void 0, void 0, function () {
         var cacheKey, cached, result, err_2;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (!(user === null || user === void 0 ? void 0 : user.id) || !rbacEngine.current) {
@@ -446,8 +429,7 @@ function usePermissions(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       user === null || user === void 0 ? void 0 : user.id,
       userContext === null || userContext === void 0 ? void 0 : userContext.role,
@@ -458,34 +440,29 @@ function usePermissions(options) {
    * Check multiple permissions
    */
   var checkPermissions = (0, react_1.useCallback)(
-    function (permissions, context) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (permissions, context) =>
+      __awaiter(this, void 0, void 0, function () {
         var results;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               return [
                 4 /*yield*/,
-                Promise.all(
-                  permissions.map(function (permission) {
-                    return checkPermission(permission, context);
-                  }),
-                ),
+                Promise.all(permissions.map((permission) => checkPermission(permission, context))),
               ];
             case 1:
               results = _a.sent();
               return [2 /*return*/, results];
           }
         });
-      });
-    },
+      }),
     [checkPermission],
   );
   /**
    * Check if user has permission (sync)
    */
   var hasPermission = (0, react_1.useCallback)(
-    function (permission, context) {
+    (permission, context) => {
       // For sync checks, use effective permissions as baseline
       return effectivePermissions.includes(permission);
     },
@@ -495,22 +472,14 @@ function usePermissions(options) {
    * Check if user has any of the permissions (sync)
    */
   var hasAnyPermission = (0, react_1.useCallback)(
-    function (permissions, context) {
-      return permissions.some(function (permission) {
-        return hasPermission(permission, context);
-      });
-    },
+    (permissions, context) => permissions.some((permission) => hasPermission(permission, context)),
     [hasPermission],
   );
   /**
    * Check if user has all permissions (sync)
    */
   var hasAllPermissions = (0, react_1.useCallback)(
-    function (permissions, context) {
-      return permissions.every(function (permission) {
-        return hasPermission(permission, context);
-      });
-    },
+    (permissions, context) => permissions.every((permission) => hasPermission(permission, context)),
     [hasPermission],
   );
   // ============================================================================
@@ -520,10 +489,10 @@ function usePermissions(options) {
    * Request emergency override for permission
    */
   var requestEmergencyOverride = (0, react_1.useCallback)(
-    function (permission, reason) {
-      return __awaiter(_this, void 0, void 0, function () {
+    (permission, reason) =>
+      __awaiter(this, void 0, void 0, function () {
         var logError, err_3;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               if (
@@ -590,8 +559,7 @@ function usePermissions(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [
       user === null || user === void 0 ? void 0 : user.id,
       allowEmergencyOverride,
@@ -607,9 +575,9 @@ function usePermissions(options) {
    * Refresh permissions from server
    */
   var refreshPermissions = (0, react_1.useCallback)(
-    function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
+    () =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               clearCache();
@@ -619,74 +587,67 @@ function usePermissions(options) {
               return [2 /*return*/];
           }
         });
-      });
-    },
+      }),
     [loadUserPermissions],
   );
   /**
    * Clear permission cache
    */
-  var clearCache = (0, react_1.useCallback)(function () {
+  var clearCache = (0, react_1.useCallback)(() => {
     permissionCache.current = {};
   }, []);
   /**
    * Reset permissions state
    */
-  var resetPermissions = (0, react_1.useCallback)(
-    function () {
-      setUserContext(null);
-      setEffectivePermissions([]);
-      setLastUpdated(null);
-      clearCache();
-    },
-    [clearCache],
-  );
+  var resetPermissions = (0, react_1.useCallback)(() => {
+    setUserContext(null);
+    setEffectivePermissions([]);
+    setLastUpdated(null);
+    clearCache();
+  }, [clearCache]);
   /**
    * Subscribe to real-time permission updates
    */
-  var subscribeToUpdates = (0, react_1.useCallback)(
-    function () {
-      if (!(user === null || user === void 0 ? void 0 : user.id) || subscriptionRef.current)
-        return function () {};
-      var subscription = supabase
-        .channel("permissions-".concat(user.id))
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "user_roles",
-            filter: "user_id=eq.".concat(user.id),
-          },
-          function (payload) {
-            console.log("Permission update received:", payload);
-            refreshPermissions();
-          },
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-            table: "medical_licenses",
-            filter: "user_id=eq.".concat(user.id),
-          },
-          function (payload) {
-            console.log("Medical license update received:", payload);
-            refreshPermissions();
-          },
-        )
-        .subscribe();
-      subscriptionRef.current = subscription;
-      return function () {
-        if (subscriptionRef.current) {
-          supabase.removeChannel(subscriptionRef.current);
-          subscriptionRef.current = null;
-        }
-      };
-    },
-    [user === null || user === void 0 ? void 0 : user.id, supabase, refreshPermissions],
-  );
+  var subscribeToUpdates = (0, react_1.useCallback)(() => {
+    if (!(user === null || user === void 0 ? void 0 : user.id) || subscriptionRef.current)
+      return () => {};
+    var subscription = supabase
+      .channel("permissions-".concat(user.id))
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "user_roles",
+          filter: "user_id=eq.".concat(user.id),
+        },
+        (payload) => {
+          console.log("Permission update received:", payload);
+          refreshPermissions();
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "medical_licenses",
+          filter: "user_id=eq.".concat(user.id),
+        },
+        (payload) => {
+          console.log("Medical license update received:", payload);
+          refreshPermissions();
+        },
+      )
+      .subscribe();
+    subscriptionRef.current = subscription;
+    return () => {
+      if (subscriptionRef.current) {
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
+      }
+    };
+  }, [user === null || user === void 0 ? void 0 : user.id, supabase, refreshPermissions]);
   // ============================================================================
   // COMPUTED VALUES
   // ============================================================================
@@ -751,23 +712,22 @@ function usePermissions(options) {
  * Clinical Permissions Hook - For medical procedures and patient care
  */
 function useClinicalPermissions(patientId) {
-  var _this = this;
   var permissions = usePermissions({
     allowEmergencyOverride: true,
     realtime: true,
   });
   var checkClinicalPermission = (0, react_1.useCallback)(
-    function (permission) {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          return [2 /*return*/, permissions.checkPermission(permission, { patientId: patientId })];
-        });
-      });
-    },
+    (permission) =>
+      __awaiter(this, void 0, void 0, function () {
+        return __generator(this, (_a) => [
+          2 /*return*/,
+          permissions.checkPermission(permission, { patientId: patientId }),
+        ]);
+      }),
     [permissions.checkPermission, patientId],
   );
   var canAccessPatient = (0, react_1.useCallback)(
-    function (targetPatientId) {
+    (targetPatientId) => {
       var id = targetPatientId || patientId;
       return permissions.hasAnyPermission(["patient.read.own", "patient.read.clinic"], {
         patientId: id,
@@ -776,7 +736,7 @@ function useClinicalPermissions(patientId) {
     [permissions.hasAnyPermission, patientId],
   );
   var canPerformProcedure = (0, react_1.useCallback)(
-    function (procedureType) {
+    (procedureType) => {
       if (procedureType === void 0) {
         procedureType = "general";
       }
@@ -785,7 +745,7 @@ function useClinicalPermissions(patientId) {
     [permissions.hasPermission],
   );
   var canPrescribe = (0, react_1.useCallback)(
-    function (type) {
+    (type) => {
       if (type === void 0) {
         type = "standard";
       }
@@ -809,7 +769,7 @@ function useAdministrativePermissions() {
     realtime: true,
   });
   var canManageScheduling = (0, react_1.useCallback)(
-    function (scope) {
+    (scope) => {
       if (scope === void 0) {
         scope = "own";
       }
@@ -819,21 +779,15 @@ function useAdministrativePermissions() {
   );
   var canProcessBilling = (0, react_1.useCallback)(),
     boolean;
-  {
-    return permissions.hasPermission("billing.process.standard");
-  }
+  return permissions.hasPermission("billing.process.standard");
   [permissions.hasPermission];
   var canManageUsers = (0, react_1.useCallback)(),
     boolean;
-  {
-    return permissions.hasPermission("system.manage.users");
-  }
+  return permissions.hasPermission("system.manage.users");
   [permissions.hasPermission];
   var canConfigureClinic = (0, react_1.useCallback)(),
     boolean;
-  {
-    return permissions.hasPermission("system.configure.clinic");
-  }
+  return permissions.hasPermission("system.configure.clinic");
   [permissions.hasPermission];
   return __assign(__assign({}, permissions), {
     canManageScheduling: canManageScheduling,
@@ -853,27 +807,19 @@ function useCompliancePermissions() {
   });
   var canAccessAuditLogs = (0, react_1.useCallback)(),
     boolean;
-  {
-    return permissions.hasPermission("audit.access.clinic");
-  }
+  return permissions.hasPermission("audit.access.clinic");
   [permissions.hasPermission];
   var canGenerateReports = (0, react_1.useCallback)(
-    function (type) {
-      return permissions.hasPermission("compliance.report.".concat(type));
-    },
+    (type) => permissions.hasPermission("compliance.report.".concat(type)),
     [permissions.hasPermission],
   );
   var canValidateLicenses = (0, react_1.useCallback)(),
     boolean;
-  {
-    return permissions.hasPermission("license.validate.cfm");
-  }
+  return permissions.hasPermission("license.validate.cfm");
   [permissions.hasPermission];
   var canMonitorLicenses = (0, react_1.useCallback)(),
     boolean;
-  {
-    return permissions.hasPermission("license.monitor.expiration");
-  }
+  return permissions.hasPermission("license.monitor.expiration");
   [permissions.hasPermission];
   return __assign(__assign({}, permissions), {
     canAccessAuditLogs: canAccessAuditLogs,

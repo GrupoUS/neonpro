@@ -6,15 +6,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -24,7 +24,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -34,13 +34,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -53,8 +53,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -62,9 +62,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -75,9 +73,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -136,46 +134,41 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
-var _this = this;
+  });
 // Mock global fetch for API testing
 global.fetch = jest.fn();
-describe("Business Dashboard API Integration - Story 8.1", function () {
-  beforeEach(function () {
+describe("Business Dashboard API Integration - Story 8.1", () => {
+  beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
     global.fetch.mockClear();
   });
-  describe("API Performance (<1s Load)", function () {
-    it("should fetch KPIs data within performance budget", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  describe("API Performance (<1s Load)", () => {
+    it("should fetch KPIs data within performance budget", () =>
+      __awaiter(this, void 0, void 0, function () {
         var startTime, response, data, endTime, duration;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = performance.now();
               global.fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          totalRevenue: 125000.0,
-                          totalAppointments: 850,
-                          conversionRate: 0.2875,
-                          newPatients: 120,
-                          averageTicket: 147.06,
-                          retentionRate: 0.82,
-                          nps: 8.5,
-                          cac: 75.0,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        totalRevenue: 125000.0,
+                        totalAppointments: 850,
+                        conversionRate: 0.2875,
+                        newPatients: 120,
+                        averageTicket: 147.06,
+                        retentionRate: 0.82,
+                        nps: 8.5,
+                        cac: 75.0,
+                      },
+                    ]);
+                  }),
                 headers: new Headers({ "content-type": "application/json" }),
               });
               return [4 /*yield*/, fetch("/api/dashboard/kpis")];
@@ -193,45 +186,40 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should fetch charts data within performance budget", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+      }));
+    it("should fetch charts data within performance budget", () =>
+      __awaiter(this, void 0, void 0, function () {
         var startTime, response, data, endTime, duration;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               startTime = performance.now();
               global.fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          revenueChart: [
-                            { month: "Jan", revenue: 15000, appointments: 120 },
-                            { month: "Feb", revenue: 18000, appointments: 140 },
-                            { month: "Mar", revenue: 22000, appointments: 160 },
-                          ],
-                          conversionFunnel: [
-                            { stage: "Visitantes", value: 2500 },
-                            { stage: "Leads", value: 850 },
-                            { stage: "Agendamentos", value: 245 },
-                            { stage: "Conversões", value: 120 },
-                          ],
-                          procedureDistribution: [
-                            { procedure: "Limpeza", count: 320, revenue: 24000 },
-                            { procedure: "Botox", count: 85, revenue: 34000 },
-                            { procedure: "Preenchimento", count: 45, revenue: 22500 },
-                          ],
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        revenueChart: [
+                          { month: "Jan", revenue: 15000, appointments: 120 },
+                          { month: "Feb", revenue: 18000, appointments: 140 },
+                          { month: "Mar", revenue: 22000, appointments: 160 },
+                        ],
+                        conversionFunnel: [
+                          { stage: "Visitantes", value: 2500 },
+                          { stage: "Leads", value: 850 },
+                          { stage: "Agendamentos", value: 245 },
+                          { stage: "Conversões", value: 120 },
+                        ],
+                        procedureDistribution: [
+                          { procedure: "Limpeza", count: 320, revenue: 24000 },
+                          { procedure: "Botox", count: 85, revenue: 34000 },
+                          { procedure: "Preenchimento", count: 45, revenue: 22500 },
+                        ],
+                      },
+                    ]);
+                  }),
                 headers: new Headers({ "content-type": "application/json" }),
               });
               return [4 /*yield*/, fetch("/api/dashboard/charts")];
@@ -250,39 +238,34 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("API Data Validation", function () {
-    it("should validate KPIs data structure", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  describe("API Data Validation", () => {
+    it("should validate KPIs data structure", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock successful KPIs API response
               global.fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          totalRevenue: 125000.0,
-                          totalAppointments: 850,
-                          conversionRate: 0.2875,
-                          newPatients: 120,
-                          averageTicket: 147.06,
-                          retentionRate: 0.82,
-                          nps: 8.5,
-                          cac: 75.0,
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        totalRevenue: 125000.0,
+                        totalAppointments: 850,
+                        conversionRate: 0.2875,
+                        newPatients: 120,
+                        averageTicket: 147.06,
+                        retentionRate: 0.82,
+                        nps: 8.5,
+                        cac: 75.0,
+                      },
+                    ]);
+                  }),
                 headers: new Headers({ "content-type": "application/json" }),
               });
               return [4 /*yield*/, fetch("/api/dashboard/kpis")];
@@ -312,41 +295,36 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate charts data structure", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+      }));
+    it("should validate charts data structure", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock successful charts API response
               global.fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          revenueChart: [
-                            { month: "Jan", revenue: 15000, appointments: 120 },
-                            { month: "Feb", revenue: 18000, appointments: 140 },
-                          ],
-                          conversionFunnel: [
-                            { stage: "Visitantes", value: 2500 },
-                            { stage: "Leads", value: 850 },
-                          ],
-                          procedureDistribution: [
-                            { procedure: "Limpeza", count: 320, revenue: 24000 },
-                            { procedure: "Botox", count: 85, revenue: 34000 },
-                          ],
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        revenueChart: [
+                          { month: "Jan", revenue: 15000, appointments: 120 },
+                          { month: "Feb", revenue: 18000, appointments: 140 },
+                        ],
+                        conversionFunnel: [
+                          { stage: "Visitantes", value: 2500 },
+                          { stage: "Leads", value: 850 },
+                        ],
+                        procedureDistribution: [
+                          { procedure: "Limpeza", count: 320, revenue: 24000 },
+                          { procedure: "Botox", count: 85, revenue: 34000 },
+                        ],
+                      },
+                    ]);
+                  }),
                 headers: new Headers({ "content-type": "application/json" }),
               });
               return [4 /*yield*/, fetch("/api/dashboard/charts")];
@@ -375,34 +353,29 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("API Error Handling", function () {
-    it("should handle KPIs API errors gracefully", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  describe("API Error Handling", () => {
+    it("should handle KPIs API errors gracefully", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock failed KPIs API response
               global.fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 500,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Internal Server Error",
-                          message: "Database connection failed",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Internal Server Error",
+                        message: "Database connection failed",
+                      },
+                    ]);
+                  }),
                 headers: new Headers({ "content-type": "application/json" }),
               });
               return [4 /*yield*/, fetch("/api/dashboard/kpis")];
@@ -418,32 +391,27 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle charts API errors gracefully", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+      }));
+    it("should handle charts API errors gracefully", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock failed charts API response
               global.fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 404,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Not Found",
-                          message: "Charts data not available",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Not Found",
+                        message: "Charts data not available",
+                      },
+                    ]);
+                  }),
                 headers: new Headers({ "content-type": "application/json" }),
               });
               return [4 /*yield*/, fetch("/api/dashboard/charts")];
@@ -459,34 +427,29 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("API Security & Authentication", function () {
-    it("should require authentication for KPIs endpoint", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  describe("API Security & Authentication", () => {
+    it("should require authentication for KPIs endpoint", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock unauthorized response
               global.fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 401,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Unauthorized",
-                          message: "Authentication required",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Unauthorized",
+                        message: "Authentication required",
+                      },
+                    ]);
+                  }),
                 headers: new Headers({ "content-type": "application/json" }),
               });
               return [4 /*yield*/, fetch("/api/dashboard/kpis")];
@@ -500,32 +463,27 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should validate user permissions for dashboard access", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+      }));
+    it("should validate user permissions for dashboard access", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response, data;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock forbidden response
               global.fetch.mockResolvedValueOnce({
                 ok: false,
                 status: 403,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [
-                        2 /*return*/,
-                        {
-                          error: "Forbidden",
-                          message: "Insufficient permissions for dashboard access",
-                        },
-                      ];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [
+                      2 /*return*/,
+                      {
+                        error: "Forbidden",
+                        message: "Insufficient permissions for dashboard access",
+                      },
+                    ]);
+                  }),
                 headers: new Headers({ "content-type": "application/json" }),
               });
               return [4 /*yield*/, fetch("/api/dashboard/charts")];
@@ -539,27 +497,22 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
-  describe("API Caching & Performance", function () {
-    it("should support cache headers for performance", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+  describe("API Caching & Performance", () => {
+    it("should support cache headers for performance", () =>
+      __awaiter(this, void 0, void 0, function () {
         var response;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock response with cache headers
               global.fetch.mockResolvedValueOnce({
                 ok: true,
-                json: function () {
-                  return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                      return [2 /*return*/, { totalRevenue: 125000 }];
-                    });
-                  });
-                },
+                json: () =>
+                  __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, (_a) => [2 /*return*/, { totalRevenue: 125000 }]);
+                  }),
                 headers: new Headers({
                   "content-type": "application/json",
                   "cache-control": "public, max-age=300",
@@ -574,46 +527,35 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               return [2 /*return*/];
           }
         });
-      });
-    });
-    it("should handle concurrent requests efficiently", function () {
-      return __awaiter(_this, void 0, void 0, function () {
+      }));
+    it("should handle concurrent requests efficiently", () =>
+      __awaiter(this, void 0, void 0, function () {
         var startTime, promises, responses, endTime, duration;
-        var _this = this;
-        return __generator(this, function (_a) {
+        return __generator(this, (_a) => {
           switch (_a.label) {
             case 0:
               // Mock multiple concurrent responses
               global.fetch
                 .mockResolvedValueOnce({
                   ok: true,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [2 /*return*/, { totalRevenue: 125000 }];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [2 /*return*/, { totalRevenue: 125000 }]);
+                    }),
                 })
                 .mockResolvedValueOnce({
                   ok: true,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [2 /*return*/, { revenueChart: [] }];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [2 /*return*/, { revenueChart: [] }]);
+                    }),
                 })
                 .mockResolvedValueOnce({
                   ok: true,
-                  json: function () {
-                    return __awaiter(_this, void 0, void 0, function () {
-                      return __generator(this, function (_a) {
-                        return [2 /*return*/, { alerts: [] }];
-                      });
-                    });
-                  },
+                  json: () =>
+                    __awaiter(this, void 0, void 0, function () {
+                      return __generator(this, (_a) => [2 /*return*/, { alerts: [] }]);
+                    }),
                 });
               startTime = performance.now();
               promises = [
@@ -627,16 +569,11 @@ describe("Business Dashboard API Integration - Story 8.1", function () {
               endTime = performance.now();
               duration = endTime - startTime;
               expect(responses).toHaveLength(3);
-              expect(
-                responses.every(function (r) {
-                  return r.ok;
-                }),
-              ).toBe(true);
+              expect(responses.every((r) => r.ok)).toBe(true);
               expect(duration).toBeLessThan(2000); // Should handle concurrent requests efficiently
               return [2 /*return*/];
           }
         });
-      });
-    });
+      }));
   });
 });

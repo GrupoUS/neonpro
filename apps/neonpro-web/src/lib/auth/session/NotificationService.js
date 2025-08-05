@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Notification Service - Security Alerts and User Notifications
  *
@@ -14,26 +13,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -53,13 +52,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -81,9 +80,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -155,7 +152,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationService = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -171,7 +168,7 @@ var utils_1 = require("./utils");
  * - Template management and personalization
  * - Delivery tracking and retry logic
  */
-var NotificationService = /** @class */ (function () {
+var NotificationService = /** @class */ (() => {
   function NotificationService(config) {
     this.templates = new Map();
     this.deliveryQueue = [];
@@ -223,9 +220,9 @@ var NotificationService = /** @class */ (function () {
               return [4 /*yield*/, this.getUserNotificationPreferences(userId)];
             case 1:
               userPreferences_1 = _a.sent();
-              allowedChannels = channels.filter(function (channel) {
-                return userPreferences_1.enabledChannels.includes(channel);
-              });
+              allowedChannels = channels.filter((channel) =>
+                userPreferences_1.enabledChannels.includes(channel),
+              );
               if (allowedChannels.length === 0) {
                 return [
                   2 /*return*/,
@@ -644,9 +641,7 @@ var NotificationService = /** @class */ (function () {
                 },
               ];
             }
-            notifications = (data || []).map(function (row) {
-              return _this.convertToNotificationData(row);
-            });
+            notifications = (data || []).map((row) => _this.convertToNotificationData(row));
             return [
               2 /*return*/,
               {
@@ -866,25 +861,26 @@ var NotificationService = /** @class */ (function () {
     });
   };
   NotificationService.prototype.startQueueProcessor = function () {
-    var _this = this;
     // Process queue every 30 seconds
-    setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              if (!(!this.isProcessingQueue && this.deliveryQueue.length > 0))
-                return [3 /*break*/, 2];
-              return [4 /*yield*/, this.processQueue()];
-            case 1:
-              _a.sent();
-              _a.label = 2;
-            case 2:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, 30000);
+    setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                if (!(!this.isProcessingQueue && this.deliveryQueue.length > 0))
+                  return [3 /*break*/, 2];
+                return [4 /*yield*/, this.processQueue()];
+              case 1:
+                _a.sent();
+                _a.label = 2;
+              case 2:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      30000,
+    );
   };
   NotificationService.prototype.processQueue = function () {
     return __awaiter(this, void 0, void 0, function () {
@@ -902,11 +898,7 @@ var NotificationService = /** @class */ (function () {
             batch = this.deliveryQueue.splice(0, batchSize);
             return [
               4 /*yield*/,
-              Promise.all(
-                batch.map(function (notification) {
-                  return _this.processNotification(notification);
-                }),
-              ),
+              Promise.all(batch.map((notification) => _this.processNotification(notification))),
             ];
           case 2:
             _a.sent();
@@ -1030,7 +1022,7 @@ var NotificationService = /** @class */ (function () {
       });
     });
   };
-  NotificationService.prototype.renderTemplate = function (template, data) {
+  NotificationService.prototype.renderTemplate = (template, data) => {
     if (!template) {
       return {
         subject: "Notification",
@@ -1040,7 +1032,7 @@ var NotificationService = /** @class */ (function () {
     var subject = template.subject;
     var body = template.body;
     // Simple template variable replacement
-    Object.entries(data).forEach(function (_a) {
+    Object.entries(data).forEach((_a) => {
       var key = _a[0],
         value = _a[1];
       var placeholder = "{{".concat(key, "}}");
@@ -1080,7 +1072,7 @@ var NotificationService = /** @class */ (function () {
   };
   NotificationService.prototype.deliverEmail = function (notification, content) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Integrate with email service (SendGrid, AWS SES, etc.)
         console.log("Email delivery:", {
           to: notification.userId,
@@ -1093,7 +1085,7 @@ var NotificationService = /** @class */ (function () {
   };
   NotificationService.prototype.deliverPush = function (notification, content) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Integrate with push notification service (FCM, APNs, etc.)
         console.log("Push notification delivery:", {
           to: notification.userId,
@@ -1106,7 +1098,7 @@ var NotificationService = /** @class */ (function () {
   };
   NotificationService.prototype.deliverSMS = function (notification, content) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // TODO: Integrate with SMS service (Twilio, AWS SNS, etc.)
         console.log("SMS delivery:", {
           to: notification.userId,
@@ -1146,24 +1138,22 @@ var NotificationService = /** @class */ (function () {
       });
     });
   };
-  NotificationService.prototype.convertToNotificationData = function (row) {
-    return {
-      id: row.id,
-      userId: row.user_id,
-      type: row.type,
-      priority: row.priority,
-      channels: JSON.parse(row.channels || "[]"),
-      data: JSON.parse(row.data || "{}"),
-      templateId: row.template_id,
-      status: row.status,
-      attempts: row.attempts,
-      maxAttempts: row.max_attempts,
-      createdAt: row.created_at,
-      scheduledAt: row.scheduled_at,
-      deliveredAt: row.delivered_at,
-      readAt: row.read_at,
-    };
-  };
+  NotificationService.prototype.convertToNotificationData = (row) => ({
+    id: row.id,
+    userId: row.user_id,
+    type: row.type,
+    priority: row.priority,
+    channels: JSON.parse(row.channels || "[]"),
+    data: JSON.parse(row.data || "{}"),
+    templateId: row.template_id,
+    status: row.status,
+    attempts: row.attempts,
+    maxAttempts: row.max_attempts,
+    createdAt: row.created_at,
+    scheduledAt: row.scheduled_at,
+    deliveredAt: row.delivered_at,
+    readAt: row.read_at,
+  });
   return NotificationService;
 })();
 exports.NotificationService = NotificationService;

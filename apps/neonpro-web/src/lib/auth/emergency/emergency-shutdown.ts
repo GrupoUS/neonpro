@@ -1,9 +1,9 @@
 // Emergency Shutdown System
 // Immediate termination of all sessions in critical situations
 
-import type { UserSession, SecurityEvent } from "@/types/session";
 import type { SessionConfig } from "@/lib/auth/config/session-config";
 import type { SessionUtils } from "@/lib/auth/utils/session-utils";
+import type { SecurityEvent, UserSession } from "@/types/session";
 
 export interface EmergencyEvent {
   id: string;

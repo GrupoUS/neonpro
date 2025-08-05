@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = EnhancedOAuthDemo;
 var react_1 = require("react");
@@ -154,7 +151,6 @@ var auth_context_1 = require("@/contexts/auth-context");
 var security_audit_logger_1 = require("@/lib/auth/security-audit-logger");
 var SessionManager_1 = require("@/lib/auth/session/SessionManager");
 function EnhancedOAuthDemo() {
-  var _this = this;
   var _a, _b, _c;
   var _d = (0, auth_context_1.useAuth)(),
     user = _d.user,
@@ -180,10 +176,10 @@ function EnhancedOAuthDemo() {
     loading = _j[0],
     setLoading = _j[1];
   // Load audit logs
-  var loadAuditLogs = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadAuditLogs = () =>
+    __awaiter(this, void 0, void 0, function () {
       var logs, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!user) return [2 /*return*/];
@@ -217,12 +213,11 @@ function EnhancedOAuthDemo() {
         }
       });
     });
-  };
   // Load user permissions
-  var loadPermissions = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadPermissions = () =>
+    __awaiter(this, void 0, void 0, function () {
       var userPerms, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!user) return [2 /*return*/];
@@ -243,12 +238,11 @@ function EnhancedOAuthDemo() {
         }
       });
     });
-  };
   // Load session information
-  var loadSessionInfo = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadSessionInfo = () =>
+    __awaiter(this, void 0, void 0, function () {
       var info, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!session) return [2 /*return*/];
@@ -269,12 +263,11 @@ function EnhancedOAuthDemo() {
         }
       });
     });
-  };
   // Test permission checks
-  var testPermissions = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var testPermissions = () =>
+    __awaiter(this, void 0, void 0, function () {
       var tests, results, _i, tests_1, test, granted, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!user) return [2 /*return*/];
@@ -316,12 +309,11 @@ function EnhancedOAuthDemo() {
         }
       });
     });
-  };
   // Handle Google OAuth login
-  var handleGoogleLogin = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleGoogleLogin = () =>
+    __awaiter(this, void 0, void 0, function () {
       var result, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -347,12 +339,11 @@ function EnhancedOAuthDemo() {
         }
       });
     });
-  };
   // Handle logout
-  var handleLogout = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleLogout = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setLoading(true);
@@ -379,19 +370,15 @@ function EnhancedOAuthDemo() {
         }
       });
     });
-  };
   // Load data when user changes
-  (0, react_1.useEffect)(
-    function () {
-      if (user && session) {
-        loadAuditLogs();
-        loadPermissions();
-        loadSessionInfo();
-        testPermissions();
-      }
-    },
-    [user, session],
-  );
+  (0, react_1.useEffect)(() => {
+    if (user && session) {
+      loadAuditLogs();
+      loadPermissions();
+      loadSessionInfo();
+      testPermissions();
+    }
+  }, [user, session]);
   if (!user) {
     return (
       <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
@@ -498,13 +485,11 @@ function EnhancedOAuthDemo() {
                     <ul className="list-disc list-inside text-sm text-gray-600">
                       {((_b = permissions.roles) === null || _b === void 0
                         ? void 0
-                        : _b.map(function (role, index) {
-                            return (
-                              <li key={index}>
-                                {role.name} - {role.description}
-                              </li>
-                            );
-                          })) || <li>Nenhuma role encontrada</li>}
+                        : _b.map((role, index) => (
+                            <li key={index}>
+                              {role.name} - {role.description}
+                            </li>
+                          ))) || <li>Nenhuma role encontrada</li>}
                     </ul>
                   </div>
                   <div className="bg-gray-50 p-3 rounded">
@@ -512,13 +497,11 @@ function EnhancedOAuthDemo() {
                     <ul className="list-disc list-inside text-sm text-gray-600">
                       {((_c = permissions.directPermissions) === null || _c === void 0
                         ? void 0
-                        : _c.map(function (perm, index) {
-                            return (
-                              <li key={index}>
-                                {perm.resource}:{perm.action}
-                              </li>
-                            );
-                          })) || <li>Nenhuma permissão direta</li>}
+                        : _c.map((perm, index) => (
+                            <li key={index}>
+                              {perm.resource}:{perm.action}
+                            </li>
+                          ))) || <li>Nenhuma permissão direta</li>}
                     </ul>
                   </div>
                 </div>
@@ -528,19 +511,17 @@ function EnhancedOAuthDemo() {
           <div>
             <h4 className="font-semibold text-gray-700 mb-3">Teste de Permissões</h4>
             <div className="space-y-2">
-              {permissionChecks.map(function (check, index) {
-                return (
-                  <div
-                    key={index}
-                    className={"p-2 rounded text-sm ".concat(
-                      check.granted ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800",
-                    )}
-                  >
-                    <span className={check.granted ? "✅" : "❌"}></span> {check.resource}:
-                    {check.action}
-                  </div>
-                );
-              })}
+              {permissionChecks.map((check, index) => (
+                <div
+                  key={index}
+                  className={"p-2 rounded text-sm ".concat(
+                    check.granted ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800",
+                  )}
+                >
+                  <span className={check.granted ? "✅" : "❌"}></span> {check.resource}:
+                  {check.action}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -563,34 +544,30 @@ function EnhancedOAuthDemo() {
               </tr>
             </thead>
             <tbody>
-              {auditLogs.map(function (log, index) {
-                return (
-                  <tr key={index} className="border-t">
-                    <td className="px-4 py-2 text-sm text-gray-600">
-                      {new Date(log.timestamp).toLocaleString()}
-                    </td>
-                    <td className="px-4 py-2 text-sm font-medium text-gray-800">
-                      {log.event_type}
-                    </td>
-                    <td className="px-4 py-2 text-sm">
-                      <span
-                        className={"px-2 py-1 rounded text-xs ".concat(
-                          log.severity === "high"
-                            ? "bg-red-100 text-red-800"
-                            : log.severity === "medium"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-green-100 text-green-800",
-                        )}
-                      >
-                        {log.severity}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 text-sm text-gray-600">
-                      {JSON.stringify(log.details, null, 2).substring(0, 100)}...
-                    </td>
-                  </tr>
-                );
-              })}
+              {auditLogs.map((log, index) => (
+                <tr key={index} className="border-t">
+                  <td className="px-4 py-2 text-sm text-gray-600">
+                    {new Date(log.timestamp).toLocaleString()}
+                  </td>
+                  <td className="px-4 py-2 text-sm font-medium text-gray-800">{log.event_type}</td>
+                  <td className="px-4 py-2 text-sm">
+                    <span
+                      className={"px-2 py-1 rounded text-xs ".concat(
+                        log.severity === "high"
+                          ? "bg-red-100 text-red-800"
+                          : log.severity === "medium"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-green-100 text-green-800",
+                      )}
+                    >
+                      {log.severity}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 text-sm text-gray-600">
+                    {JSON.stringify(log.details, null, 2).substring(0, 100)}...
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
 

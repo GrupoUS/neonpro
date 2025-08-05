@@ -4,9 +4,9 @@
  * Part of Story 3.1 - Task 6: System Integration & Search
  */
 
-import type { Patient } from "@/types/patient";
-import type { supabase } from "@/lib/supabase/client";
 import type { logger } from "@/lib/logger";
+import type { supabase } from "@/lib/supabase/client";
+import type { Patient } from "@/types/patient";
 
 export interface TreatmentHistory {
   id: string;
@@ -123,17 +123,17 @@ export class PatientTreatmentIntegration {
    */
   static async generateTreatmentInsights(patientId: string): Promise<TreatmentInsights> {
     try {
-      const treatments = await this.getPatientTreatmentHistory(patientId);
+      const treatments = await PatientTreatmentIntegration.getPatientTreatmentHistory(patientId);
 
       const activeTreatments = treatments.filter((t) => t.status === "active");
       const completedTreatments = treatments.filter((t) => t.status === "completed");
 
       // Calculate averages
-      const avgSatisfaction = this.calculateAverage(
+      const avgSatisfaction = PatientTreatmentIntegration.calculateAverage(
         treatments.filter((t) => t.satisfaction_score).map((t) => t.satisfaction_score!),
       );
 
-      const avgOutcome = this.calculateAverage(
+      const avgOutcome = PatientTreatmentIntegration.calculateAverage(
         treatments.filter((t) => t.outcome_rating).map((t) => t.outcome_rating!),
       );
 
@@ -141,15 +141,22 @@ export class PatientTreatmentIntegration {
       const totalInvestment = treatments.reduce((sum, t) => sum + t.cost_total, 0);
 
       // Find preferred providers and services
-      const providerCounts = this.countOccurrences(treatments.map((t) => t.provider_name));
-      const serviceCounts = this.countOccurrences(treatments.map((t) => t.service_name));
+      const providerCounts = PatientTreatmentIntegration.countOccurrences(
+        treatments.map((t) => t.provider_name),
+      );
+      const serviceCounts = PatientTreatmentIntegration.countOccurrences(
+        treatments.map((t) => t.service_name),
+      );
 
       // Calculate adherence score
-      const adherenceScore = this.calculateAdherenceScore(treatments);
+      const adherenceScore = PatientTreatmentIntegration.calculateAdherenceScore(treatments);
 
       // Generate risk factors and recommendations
-      const riskFactors = this.identifyRiskFactors(treatments);
-      const recommendations = this.generateRecommendations(treatments, riskFactors);
+      const riskFactors = PatientTreatmentIntegration.identifyRiskFactors(treatments);
+      const recommendations = PatientTreatmentIntegration.generateRecommendations(
+        treatments,
+        riskFactors,
+      );
 
       return {
         patient_id: patientId,
@@ -161,11 +168,14 @@ export class PatientTreatmentIntegration {
         total_investment: totalInvestment,
         preferred_providers: Object.keys(providerCounts).slice(0, 3),
         preferred_services: Object.keys(serviceCounts).slice(0, 3),
-        treatment_frequency: this.calculateTreatmentFrequency(treatments),
+        treatment_frequency: PatientTreatmentIntegration.calculateTreatmentFrequency(treatments),
         adherence_score: adherenceScore,
         risk_factors: riskFactors,
         recommendations: recommendations,
-        next_recommended_treatments: await this.getRecommendedTreatments(patientId, treatments),
+        next_recommended_treatments: await PatientTreatmentIntegration.getRecommendedTreatments(
+          patientId,
+          treatments,
+        ),
       };
     } catch (error) {
       logger.error("Error generating treatment insights:", error);
@@ -285,7 +295,7 @@ export class PatientTreatmentIntegration {
       return treatment.completed_sessions / treatment.total_sessions;
     });
 
-    return this.calculateAverage(adherenceScores) * 100;
+    return PatientTreatmentIntegration.calculateAverage(adherenceScores) * 100;
   }
 
   /**
@@ -311,7 +321,7 @@ export class PatientTreatmentIntegration {
     const riskFactors: string[] = [];
 
     // Low adherence
-    const adherenceScore = this.calculateAdherenceScore(treatments);
+    const adherenceScore = PatientTreatmentIntegration.calculateAdherenceScore(treatments);
     if (adherenceScore < 70) {
       riskFactors.push("Low treatment adherence");
     }
@@ -326,7 +336,7 @@ export class PatientTreatmentIntegration {
     const satisfactionScores = treatments
       .filter((t) => t.satisfaction_score)
       .map((t) => t.satisfaction_score!);
-    const avgSatisfaction = this.calculateAverage(satisfactionScores);
+    const avgSatisfaction = PatientTreatmentIntegration.calculateAverage(satisfactionScores);
     if (avgSatisfaction < 3) {
       riskFactors.push("Low treatment satisfaction");
     }
@@ -422,7 +432,7 @@ export class PatientTreatmentIntegration {
       );
 
       if (successfulTreatments.length > 0) {
-        const preferredServices = this.countOccurrences(
+        const preferredServices = PatientTreatmentIntegration.countOccurrences(
           successfulTreatments.map((t) => t.service_name),
         );
 
@@ -441,7 +451,7 @@ export class PatientTreatmentIntegration {
       }
 
       // Based on age and demographics
-      const age = this.calculateAge(patient.date_of_birth);
+      const age = PatientTreatmentIntegration.calculateAge(patient.date_of_birth);
       if (age > 50) {
         recommendations.push("Annual health check-up");
         recommendations.push("Cardiovascular screening");
@@ -475,8 +485,8 @@ export class PatientTreatmentIntegration {
    */
   static async getTreatmentAnalytics(patientId: string) {
     try {
-      const treatments = await this.getPatientTreatmentHistory(patientId);
-      const insights = await this.generateTreatmentInsights(patientId);
+      const treatments = await PatientTreatmentIntegration.getPatientTreatmentHistory(patientId);
+      const insights = await PatientTreatmentIntegration.generateTreatmentInsights(patientId);
 
       return {
         summary: {
@@ -488,9 +498,9 @@ export class PatientTreatmentIntegration {
           total_investment: insights.total_investment,
         },
         trends: {
-          monthly_treatments: this.getMonthlyTreatmentTrend(treatments),
-          satisfaction_trend: this.getSatisfactionTrend(treatments),
-          cost_trend: this.getCostTrend(treatments),
+          monthly_treatments: PatientTreatmentIntegration.getMonthlyTreatmentTrend(treatments),
+          satisfaction_trend: PatientTreatmentIntegration.getSatisfactionTrend(treatments),
+          cost_trend: PatientTreatmentIntegration.getCostTrend(treatments),
         },
         insights,
         recent_treatments: treatments.slice(0, 5),

@@ -11,7 +11,19 @@
 
 "use client";
 
-import type { useState, useEffect } from "react";
+import type {
+  AlertCircle,
+  CheckCircle,
+  Fingerprint,
+  Loader2,
+  Plus,
+  Shield,
+  Smartphone,
+  Trash2,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
+import type { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
   Card,
@@ -22,19 +34,7 @@ import type {
 } from "@/components/ui/card";
 import type { Input } from "@/components/ui/input";
 import type { Label } from "@/components/ui/label";
-import type { Badge } from "@/components/ui/badge";
-import type { Alert, AlertDescription } from "@/components/ui/alert";
-import type {
-  Loader2,
-  Fingerprint,
-  Shield,
-  Smartphone,
-  Trash2,
-  Plus,
-  AlertCircle,
-  CheckCircle,
-} from "lucide-react";
-import type { webAuthnClient, type WebAuthnCapabilities } from "@/lib/auth/webauthn-client";
+import type { WebAuthnCapabilities, webAuthnClient } from "@/lib/auth/webauthn-client";
 
 interface WebAuthnCredential {
   id: string;

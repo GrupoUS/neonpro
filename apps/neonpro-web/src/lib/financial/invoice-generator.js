@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Automated Invoice Generation System
  * Story 4.1: Automated Invoice Generation + Payment Tracking Implementation
@@ -17,26 +16,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -56,13 +55,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -84,9 +83,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -158,11 +155,11 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AutomatedInvoiceGenerator = void 0;
 var client_1 = require("@/lib/supabase/client");
-var AutomatedInvoiceGenerator = /** @class */ (function () {
+var AutomatedInvoiceGenerator = /** @class */ (() => {
   function AutomatedInvoiceGenerator(config) {
     this.supabase = (0, client_1.createClient)();
     this.templates = new Map();
@@ -499,22 +496,16 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   /**
    * Calculate Brazilian taxes
    */
-  AutomatedInvoiceGenerator.prototype.calculateTaxes = function (services, clinicTaxInfo) {
-    var subtotal = services.reduce(function (sum, service) {
-      return sum + service.totalPrice;
-    }, 0);
+  AutomatedInvoiceGenerator.prototype.calculateTaxes = (services, clinicTaxInfo) => {
+    var subtotal = services.reduce((sum, service) => sum + service.totalPrice, 0);
     var issAmount = 0;
     var pisAmount = 0;
     var cofinsAmount = 0;
     var irAmount = 0;
     var csllAmount = 0;
     // Calculate ISS (Imposto Sobre Serviços)
-    var taxableServices = services.filter(function (s) {
-      return s.taxable;
-    });
-    var taxableAmount = taxableServices.reduce(function (sum, service) {
-      return sum + service.totalPrice;
-    }, 0);
+    var taxableServices = services.filter((s) => s.taxable);
+    var taxableAmount = taxableServices.reduce((sum, service) => sum + service.totalPrice, 0);
     if (taxableAmount > 0) {
       issAmount = taxableAmount * (clinicTaxInfo.aliquotaISS / 100);
       // For Simples Nacional, other taxes are included in ISS
@@ -536,11 +527,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
     var totalTaxes = issAmount + pisAmount + cofinsAmount + irAmount + csllAmount;
     // Calculate retentions (when client retains taxes)
     var retentions = {
-      issRetention: services.some(function (s) {
-        return s.issRetention;
-      })
-        ? issAmount
-        : 0,
+      issRetention: services.some((s) => s.issRetention) ? issAmount : 0,
       irRetention: 0, // Would be calculated based on client type
       pisRetention: 0,
       cofinsRetention: 0,
@@ -609,20 +596,14 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
                 },
               },
               servico: {
-                discriminacao: invoice.services
-                  .map(function (s) {
-                    return s.description;
-                  })
-                  .join("; "),
+                discriminacao: invoice.services.map((s) => s.description).join("; "),
                 codigoServico:
                   ((_b = invoice.services[0]) === null || _b === void 0
                     ? void 0
                     : _b.serviceCode) || "1.01", // Default to medical consultation
                 valorServicos: invoice.subtotal,
                 aliquota: clinic.taxInfo.aliquotaISS,
-                issRetido: invoice.services.some(function (s) {
-                  return s.issRetention;
-                }),
+                issRetido: invoice.services.some((s) => s.issRetention),
                 municipioPrestacao: this.config.nfseIntegration.municipalityCode,
               },
               valores: {
@@ -634,9 +615,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
                 valorIr: 0,
                 valorCsll: 0,
                 valorIss: invoice.taxAmount,
-                valorIssRetido: invoice.services.some(function (s) {
-                  return s.issRetention;
-                })
+                valorIssRetido: invoice.services.some((s) => s.issRetention)
                   ? invoice.taxAmount
                   : 0,
                 outrasRetencoes: 0,
@@ -867,9 +846,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
               throw new Error("Failed to fetch invoice data");
             }
             totalInvoices = invoices.length;
-            totalAmount = invoices.reduce(function (sum, inv) {
-              return sum + inv.total_amount;
-            }, 0);
+            totalAmount = invoices.reduce((sum, inv) => sum + inv.total_amount, 0);
             paidAmount = 0;
             pendingAmount = 0;
             overdueAmount = 0;
@@ -878,9 +855,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
             for (_i = 0, invoices_1 = invoices; _i < invoices_1.length; _i++) {
               invoice = invoices_1[_i];
               payments = invoice.invoice_payments || [];
-              invoicePaidAmount = payments.reduce(function (sum, p) {
-                return sum + p.amount;
-              }, 0);
+              invoicePaidAmount = payments.reduce((sum, p) => sum + p.amount, 0);
               if (invoice.status === "paid") {
                 paidAmount += invoice.total_amount;
                 lastPayment = payments[payments.length - 1];
@@ -903,9 +878,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
             }
             averagePaymentTime =
               paymentTimes.length > 0
-                ? paymentTimes.reduce(function (sum, time) {
-                    return sum + time;
-                  }, 0) / paymentTimes.length
+                ? paymentTimes.reduce((sum, time) => sum + time, 0) / paymentTimes.length
                 : 0;
             monthlyData = {};
             for (_b = 0, invoices_2 = invoices; _b < invoices_2.length; _b++) {
@@ -921,14 +894,12 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
               }
             }
             monthlyTrends = Object.entries(monthlyData)
-              .map(function (_a) {
+              .map((_a) => {
                 var month = _a[0],
                   data = _a[1];
                 return __assign({ month: month }, data);
               })
-              .sort(function (a, b) {
-                return a.month.localeCompare(b.month);
-              });
+              .sort((a, b) => a.month.localeCompare(b.month));
             return [
               2 /*return*/,
               {
@@ -953,7 +924,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
     });
   };
   // Private helper methods
-  AutomatedInvoiceGenerator.prototype.initializeConfig = function (config) {
+  AutomatedInvoiceGenerator.prototype.initializeConfig = (config) => {
     var defaultConfig = {
       autoGeneration: {
         enabled: true,
@@ -1012,7 +983,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   };
   AutomatedInvoiceGenerator.prototype.validateNFSeIntegration = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Validate NFSe configuration and connectivity
         console.log("Validating NFSe integration...");
         return [2 /*return*/];
@@ -1021,7 +992,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   };
   AutomatedInvoiceGenerator.prototype.setupPaymentIntegration = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Setup payment gateway integration
         console.log("Setting up payment integration...");
         return [2 /*return*/];
@@ -1030,7 +1001,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   };
   AutomatedInvoiceGenerator.prototype.setupAutoGenerationTriggers = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Setup database triggers for auto-generation
         console.log("Setting up auto-generation triggers...");
         return [2 /*return*/];
@@ -1105,23 +1076,20 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
       });
     });
   };
-  AutomatedInvoiceGenerator.prototype.buildServicesFromTemplate = function (template, appointment) {
-    return template.services.map(function (service, index) {
-      return {
-        id: "service_".concat(index),
-        description: service.description,
-        serviceCode: service.serviceCode,
-        quantity: 1,
-        unitPrice: service.unitPrice,
-        totalPrice: service.unitPrice,
-        taxable: true,
-        issRetention: false,
-      };
-    });
-  };
+  AutomatedInvoiceGenerator.prototype.buildServicesFromTemplate = (template, appointment) =>
+    template.services.map((service, index) => ({
+      id: "service_".concat(index),
+      description: service.description,
+      serviceCode: service.serviceCode,
+      quantity: 1,
+      unitPrice: service.unitPrice,
+      totalPrice: service.unitPrice,
+      taxable: true,
+      issRetention: false,
+    }));
   AutomatedInvoiceGenerator.prototype.buildServicesFromAppointment = function (appointment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Build services based on appointment type and procedures
         return [
           2 /*return*/,
@@ -1178,7 +1146,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
       });
     });
   };
-  AutomatedInvoiceGenerator.prototype.calculateDueDate = function () {
+  AutomatedInvoiceGenerator.prototype.calculateDueDate = () => {
     var dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 30); // 30 days default
     return dueDate;
@@ -1317,7 +1285,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
     options,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for installment invoice generation
         throw new Error("Method not implemented");
       });
@@ -1328,7 +1296,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
     options,
   ) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for single treatment invoice
         throw new Error("Method not implemented");
       });
@@ -1336,7 +1304,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   };
   AutomatedInvoiceGenerator.prototype.callNFSeWebservice = function (request) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for NFSe webservice call
         // This would vary by municipality
         return [
@@ -1400,9 +1368,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
               2 /*return*/,
               (payments === null || payments === void 0
                 ? void 0
-                : payments.reduce(function (sum, payment) {
-                    return sum + payment.amount;
-                  }, 0)) || 0,
+                : payments.reduce((sum, payment) => sum + payment.amount, 0)) || 0,
             ];
         }
       });
@@ -1429,7 +1395,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   };
   AutomatedInvoiceGenerator.prototype.sendPaymentConfirmation = function (invoice, payment) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Implementation for payment confirmation email/SMS
         console.log("Sending payment confirmation for invoice ".concat(invoice.number));
         return [2 /*return*/];
@@ -1438,7 +1404,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   };
   AutomatedInvoiceGenerator.prototype.generatePixCode = function (invoice) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate PIX payment code
         return [2 /*return*/, "PIX_CODE_".concat(invoice.id)];
       });
@@ -1446,7 +1412,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   };
   AutomatedInvoiceGenerator.prototype.generateBoleto = function (invoice) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate boleto URL
         return [2 /*return*/, "https://boleto.example.com/".concat(invoice.id)];
       });
@@ -1454,7 +1420,7 @@ var AutomatedInvoiceGenerator = /** @class */ (function () {
   };
   AutomatedInvoiceGenerator.prototype.generateCardPaymentUrl = function (invoice, method) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Generate card payment URL
         return [2 /*return*/, "https://payment.example.com/".concat(invoice.id)];
       });

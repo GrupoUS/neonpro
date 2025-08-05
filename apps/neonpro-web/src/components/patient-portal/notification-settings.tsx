@@ -1,5 +1,22 @@
 "use client";
 
+import type {
+  AlertCircle,
+  Bell,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  Heart,
+  Mail,
+  MessageSquare,
+  Settings,
+  Shield,
+  Smartphone,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
+import type { useState } from "react";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -21,23 +38,6 @@ import type {
 } from "@/components/ui/select";
 import type { Switch } from "@/components/ui/switch";
 import type { useToast } from "@/components/ui/use-toast";
-import type {
-  AlertCircle,
-  Bell,
-  Calendar,
-  CheckCircle,
-  Clock,
-  CreditCard,
-  Heart,
-  Mail,
-  MessageSquare,
-  Settings,
-  Shield,
-  Smartphone,
-  Volume2,
-  VolumeX,
-} from "lucide-react";
-import type { useState } from "react";
 
 // Tipos para configurações de notificação
 interface NotificationChannel {

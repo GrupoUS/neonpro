@@ -4,10 +4,10 @@
 // =====================================================
 
 import type {
-  ResourceManager,
-  Resource,
-  ResourceType,
   AllocationRequest,
+  Resource,
+  ResourceManager,
+  ResourceType,
 } from "./resource-manager";
 
 // =====================================================

@@ -1,18 +1,17 @@
 // Story 11.2: Risk Factors Management Component
 // Analyze and configure patient risk factors
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -32,13 +31,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -60,9 +59,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -134,7 +131,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = RiskFactorsManagement;
 var react_1 = require("react");
@@ -146,7 +143,6 @@ var progress_1 = require("@/components/ui/progress");
 var icons_1 = require("@/components/ui/icons");
 var use_toast_1 = require("@/hooks/use-toast");
 function RiskFactorsManagement() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     riskFactors = _a[0],
     setRiskFactors = _a[1];
@@ -160,16 +156,13 @@ function RiskFactorsManagement() {
     filter = _d[0],
     setFilter = _d[1];
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      fetchRiskFactors();
-    },
-    [filter],
-  );
-  var fetchRiskFactors = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    fetchRiskFactors();
+  }, [filter]);
+  var fetchRiskFactors = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -207,14 +200,13 @@ function RiskFactorsManagement() {
         }
       });
     });
-  };
-  var getImpactColor = function (impact) {
+  var getImpactColor = (impact) => {
     if (impact >= 0.8) return "text-red-600";
     if (impact >= 0.6) return "text-orange-600";
     if (impact >= 0.4) return "text-yellow-600";
     return "text-green-600";
   };
-  var getRiskBadgeVariant = function (impact) {
+  var getRiskBadgeVariant = (impact) => {
     if (impact >= 0.8) return "destructive";
     if (impact >= 0.6) return "secondary";
     return "outline";
@@ -223,7 +215,7 @@ function RiskFactorsManagement() {
     <div className="space-y-6">
       {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {Object.entries(summary).map(function (_a) {
+        {Object.entries(summary).map((_a) => {
           var factorType = _a[0],
             data = _a[1];
           return (
@@ -292,60 +284,58 @@ function RiskFactorsManagement() {
         <card_1.CardContent>
           {loading
             ? <div className="space-y-4">
-                {Array.from({ length: 8 }).map(function (_, i) {
-                  return <div key={i} className="h-16 bg-muted animate-pulse rounded" />;
-                })}
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="h-16 bg-muted animate-pulse rounded" />
+                ))}
               </div>
             : <div className="space-y-4">
-                {riskFactors.map(function (factor) {
-                  return (
-                    <div
-                      key={factor.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div
-                          className={"w-3 h-3 rounded-full ".concat(
-                            factor.impact_weight >= 0.8
-                              ? "bg-red-500"
-                              : factor.impact_weight >= 0.6
-                                ? "bg-orange-500"
-                                : factor.impact_weight >= 0.4
-                                  ? "bg-yellow-500"
-                                  : "bg-green-500",
-                          )}
-                        />
-                        <div>
-                          <p className="font-medium">{factor.patient.name}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {factor.factor_type.replace("_", " ")} • {factor.factor_value}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <div className="text-right">
-                          <p
-                            className={"text-sm font-medium ".concat(
-                              getImpactColor(factor.impact_weight),
-                            )}
-                          >
-                            {(factor.impact_weight * 100).toFixed(0)}% impact
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {(factor.confidence_score * 100).toFixed(0)}% confidence
-                          </p>
-                        </div>
-                        <badge_1.Badge variant={getRiskBadgeVariant(factor.impact_weight)}>
-                          {factor.impact_weight >= 0.8
-                            ? "High Risk"
+                {riskFactors.map((factor) => (
+                  <div
+                    key={factor.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div
+                        className={"w-3 h-3 rounded-full ".concat(
+                          factor.impact_weight >= 0.8
+                            ? "bg-red-500"
                             : factor.impact_weight >= 0.6
-                              ? "Medium Risk"
-                              : "Low Risk"}
-                        </badge_1.Badge>
+                              ? "bg-orange-500"
+                              : factor.impact_weight >= 0.4
+                                ? "bg-yellow-500"
+                                : "bg-green-500",
+                        )}
+                      />
+                      <div>
+                        <p className="font-medium">{factor.patient.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {factor.factor_type.replace("_", " ")} • {factor.factor_value}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <p
+                          className={"text-sm font-medium ".concat(
+                            getImpactColor(factor.impact_weight),
+                          )}
+                        >
+                          {(factor.impact_weight * 100).toFixed(0)}% impact
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {(factor.confidence_score * 100).toFixed(0)}% confidence
+                        </p>
+                      </div>
+                      <badge_1.Badge variant={getRiskBadgeVariant(factor.impact_weight)}>
+                        {factor.impact_weight >= 0.8
+                          ? "High Risk"
+                          : factor.impact_weight >= 0.6
+                            ? "Medium Risk"
+                            : "Low Risk"}
+                      </badge_1.Badge>
+                    </div>
+                  </div>
+                ))}
 
                 {riskFactors.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
@@ -367,7 +357,7 @@ function RiskFactorsManagement() {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-4">
               <h4 className="font-medium">Factor Weights</h4>
-              {Object.entries(summary).map(function (_a) {
+              {Object.entries(summary).map((_a) => {
                 var factorType = _a[0],
                   data = _a[1];
                 return (

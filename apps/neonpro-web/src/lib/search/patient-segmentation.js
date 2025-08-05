@@ -1,4 +1,3 @@
-"use strict";
 /**
  * AI-Driven Patient Segmentation System
  * Story 3.4: Smart Search + NLP Integration - Task 3
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -136,10 +133,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -148,7 +145,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.patientSegmentation = exports.PatientSegmentation = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -157,7 +154,7 @@ var nlp_engine_1 = require("./nlp-engine");
  * AI-Driven Patient Segmentation System
  * Creates and manages intelligent patient segments
  */
-var PatientSegmentation = /** @class */ (function () {
+var PatientSegmentation = /** @class */ (() => {
   function PatientSegmentation(supabaseUrl, supabaseKey) {
     this.segmentCache = new Map();
     this.cacheExpiry = new Map();
@@ -276,20 +273,12 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Extract demographic criteria from NLP result
    */
-  PatientSegmentation.prototype.extractDemographicCriteria = function (nlpResult) {
+  PatientSegmentation.prototype.extractDemographicCriteria = (nlpResult) => {
     var demographics = {};
     // Age range extraction
-    var ageEntities = nlpResult.entities.filter(function (e) {
-      return e.type === "age" || e.type === "number";
-    });
+    var ageEntities = nlpResult.entities.filter((e) => e.type === "age" || e.type === "number");
     if (ageEntities.length > 0) {
-      var ages = ageEntities
-        .map(function (e) {
-          return parseInt(e.value);
-        })
-        .filter(function (age) {
-          return !isNaN(age);
-        });
+      var ages = ageEntities.map((e) => parseInt(e.value)).filter((age) => !isNaN(age));
       if (ages.length === 1) {
         demographics.ageRange = { min: ages[0] - 5, max: ages[0] + 5 };
       } else if (ages.length >= 2) {
@@ -316,34 +305,22 @@ var PatientSegmentation = /** @class */ (function () {
     };
     var queryLower = nlpResult.normalized.toLowerCase();
     var genderWords = genderKeywords[nlpResult.language] || genderKeywords.pt;
-    if (
-      genderWords.male.some(function (word) {
-        return queryLower.includes(word);
-      })
-    ) {
+    if (genderWords.male.some((word) => queryLower.includes(word))) {
       demographics.gender = ["M"];
-    } else if (
-      genderWords.female.some(function (word) {
-        return queryLower.includes(word);
-      })
-    ) {
+    } else if (genderWords.female.some((word) => queryLower.includes(word))) {
       demographics.gender = ["F"];
     }
     // Location extraction
-    var locationEntities = nlpResult.entities.filter(function (e) {
-      return e.type === "location";
-    });
+    var locationEntities = nlpResult.entities.filter((e) => e.type === "location");
     if (locationEntities.length > 0) {
-      demographics.location = locationEntities.map(function (e) {
-        return e.value;
-      });
+      demographics.location = locationEntities.map((e) => e.value);
     }
     return Object.keys(demographics).length > 0 ? demographics : undefined;
   };
   /**
    * Extract medical criteria from NLP result
    */
-  PatientSegmentation.prototype.extractMedicalCriteria = function (nlpResult) {
+  PatientSegmentation.prototype.extractMedicalCriteria = (nlpResult) => {
     var _a, _b;
     var medical = {};
     // Medical condition keywords
@@ -391,9 +368,7 @@ var PatientSegmentation = /** @class */ (function () {
     var conditions =
       ((_a = conditionKeywords[lang]) === null || _a === void 0
         ? void 0
-        : _a.filter(function (condition) {
-            return queryLower.includes(condition.toLowerCase());
-          })) || [];
+        : _a.filter((condition) => queryLower.includes(condition.toLowerCase()))) || [];
     if (conditions.length > 0) {
       medical.conditions = conditions;
     }
@@ -401,27 +376,21 @@ var PatientSegmentation = /** @class */ (function () {
     var treatments =
       ((_b = treatmentKeywords[lang]) === null || _b === void 0
         ? void 0
-        : _b.filter(function (treatment) {
-            return queryLower.includes(treatment.toLowerCase());
-          })) || [];
+        : _b.filter((treatment) => queryLower.includes(treatment.toLowerCase()))) || [];
     if (treatments.length > 0) {
       medical.treatments = treatments;
     }
     // Extract medication entities
-    var medicationEntities = nlpResult.entities.filter(function (e) {
-      return e.type === "medication";
-    });
+    var medicationEntities = nlpResult.entities.filter((e) => e.type === "medication");
     if (medicationEntities.length > 0) {
-      medical.medications = medicationEntities.map(function (e) {
-        return e.value;
-      });
+      medical.medications = medicationEntities.map((e) => e.value);
     }
     return Object.keys(medical).length > 0 ? medical : undefined;
   };
   /**
    * Extract behavioral criteria from NLP result
    */
-  PatientSegmentation.prototype.extractBehavioralCriteria = function (nlpResult) {
+  PatientSegmentation.prototype.extractBehavioralCriteria = (nlpResult) => {
     var behavioral = {};
     // Visit frequency keywords
     var frequencyKeywords = {
@@ -448,23 +417,13 @@ var PatientSegmentation = /** @class */ (function () {
     var lang = nlpResult.language;
     var keywords = frequencyKeywords[lang] || frequencyKeywords.pt;
     // Determine visit frequency
-    if (
-      keywords.frequent.some(function (word) {
-        return queryLower.includes(word);
-      })
-    ) {
+    if (keywords.frequent.some((word) => queryLower.includes(word))) {
       behavioral.visitFrequency = { min: 4, period: "year" };
-    } else if (
-      keywords.rare.some(function (word) {
-        return queryLower.includes(word);
-      })
-    ) {
+    } else if (keywords.rare.some((word) => queryLower.includes(word))) {
       behavioral.visitFrequency = { max: 1, period: "year" };
     }
     // Extract date entities for last visit
-    var dateEntities = nlpResult.entities.filter(function (e) {
-      return e.type === "date";
-    });
+    var dateEntities = nlpResult.entities.filter((e) => e.type === "date");
     if (dateEntities.length > 0) {
       var date = dateEntities[0].value;
       if (
@@ -486,7 +445,7 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Extract financial criteria from NLP result
    */
-  PatientSegmentation.prototype.extractFinancialCriteria = function (nlpResult) {
+  PatientSegmentation.prototype.extractFinancialCriteria = (nlpResult) => {
     var _a;
     var financial = {};
     // Insurance keywords
@@ -501,30 +460,24 @@ var PatientSegmentation = /** @class */ (function () {
     var insuranceTypes =
       ((_a = insuranceKeywords[lang]) === null || _a === void 0
         ? void 0
-        : _a.filter(function (type) {
-            return queryLower.includes(type.toLowerCase());
-          })) || [];
+        : _a.filter((type) => queryLower.includes(type.toLowerCase()))) || [];
     if (insuranceTypes.length > 0) {
       financial.insuranceTypes = insuranceTypes;
     }
     // Extract payment method entities
-    var paymentEntities = nlpResult.entities.filter(function (e) {
-      return e.type === "payment";
-    });
+    var paymentEntities = nlpResult.entities.filter((e) => e.type === "payment");
     if (paymentEntities.length > 0) {
-      financial.paymentMethods = paymentEntities.map(function (e) {
-        return e.value;
-      });
+      financial.paymentMethods = paymentEntities.map((e) => e.value);
     }
     return Object.keys(financial).length > 0 ? financial : undefined;
   };
   /**
    * Extract custom criteria from NLP result
    */
-  PatientSegmentation.prototype.extractCustomCriteria = function (nlpResult) {
+  PatientSegmentation.prototype.extractCustomCriteria = (nlpResult) => {
     var custom = {};
     // Extract any remaining entities that don't fit standard categories
-    nlpResult.entities.forEach(function (entity) {
+    nlpResult.entities.forEach((entity) => {
       if (!["age", "number", "location", "medication", "date", "payment"].includes(entity.type)) {
         if (!custom[entity.type]) {
           custom[entity.type] = [];
@@ -537,22 +490,14 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Extract tags from NLP result
    */
-  PatientSegmentation.prototype.extractTagsFromNLP = function (nlpResult) {
+  PatientSegmentation.prototype.extractTagsFromNLP = (nlpResult) => {
     var tags = [];
     // Add intent as tag
     if (nlpResult.intent) {
       tags.push(nlpResult.intent);
     }
     // Add entity types as tags
-    var entityTypes = __spreadArray(
-      [],
-      new Set(
-        nlpResult.entities.map(function (e) {
-          return e.type;
-        }),
-      ),
-      true,
-    );
+    var entityTypes = __spreadArray([], new Set(nlpResult.entities.map((e) => e.type)), true);
     tags.push.apply(tags, entityTypes);
     // Add language as tag
     tags.push(nlpResult.language);
@@ -674,7 +619,7 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Build SQL query for segment criteria
    */
-  PatientSegmentation.prototype.buildSegmentQuery = function (criteria, includeInactive) {
+  PatientSegmentation.prototype.buildSegmentQuery = (criteria, includeInactive) => {
     var conditions = [];
     var structuredCriteria = criteria.structuredCriteria;
     // Demographics conditions
@@ -689,20 +634,16 @@ var PatientSegmentation = /** @class */ (function () {
         }
       }
       if (demo.gender && demo.gender.length > 0) {
-        var genderList = demo.gender
-          .map(function (g) {
-            return "'".concat(g, "'");
-          })
-          .join(",");
+        var genderList = demo.gender.map((g) => "'".concat(g, "'")).join(",");
         conditions.push("gender IN (".concat(genderList, ")"));
       }
       if (demo.location && demo.location.length > 0) {
-        var locationConditions = demo.location.map(function (loc) {
-          return "(address ILIKE '%"
+        var locationConditions = demo.location.map((loc) =>
+          "(address ILIKE '%"
             .concat(loc, "%' OR city ILIKE '%")
             .concat(loc, "%' OR state ILIKE '%")
-            .concat(loc, "%')");
-        });
+            .concat(loc, "%')"),
+        );
         conditions.push("(".concat(locationConditions.join(" OR "), ")"));
       }
     }
@@ -860,11 +801,7 @@ var PatientSegmentation = /** @class */ (function () {
         .concat(patient.city || "", " ")
         .concat(patient.state || "")
         .toLowerCase();
-      if (
-        demographics.location.some(function (loc) {
-          return patientLocation_1.includes(loc.toLowerCase());
-        })
-      ) {
+      if (demographics.location.some((loc) => patientLocation_1.includes(loc.toLowerCase()))) {
         score += 10;
         matched.push("location");
       }
@@ -874,21 +811,17 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Score medical criteria
    */
-  PatientSegmentation.prototype.scoreMedical = function (patient, medical) {
+  PatientSegmentation.prototype.scoreMedical = (patient, medical) => {
     var score = 0;
     var maxScore = 0;
     var matched = [];
     // Conditions scoring
     if (medical.conditions && medical.conditions.length > 0) {
       maxScore += 15;
-      var patientConditions_1 = (patient.conditions || []).map(function (c) {
-        return c.toLowerCase();
-      });
-      var matchedConditions = medical.conditions.filter(function (condition) {
-        return patientConditions_1.some(function (pc) {
-          return pc.includes(condition.toLowerCase());
-        });
-      });
+      var patientConditions_1 = (patient.conditions || []).map((c) => c.toLowerCase());
+      var matchedConditions = medical.conditions.filter((condition) =>
+        patientConditions_1.some((pc) => pc.includes(condition.toLowerCase())),
+      );
       if (matchedConditions.length > 0) {
         score += Math.min(15, (matchedConditions.length / medical.conditions.length) * 15);
         matched.push("conditions");
@@ -897,14 +830,10 @@ var PatientSegmentation = /** @class */ (function () {
     // Treatments scoring
     if (medical.treatments && medical.treatments.length > 0) {
       maxScore += 10;
-      var patientTreatments_1 = (patient.treatments || []).map(function (t) {
-        return t.toLowerCase();
-      });
-      var matchedTreatments = medical.treatments.filter(function (treatment) {
-        return patientTreatments_1.some(function (pt) {
-          return pt.includes(treatment.toLowerCase());
-        });
-      });
+      var patientTreatments_1 = (patient.treatments || []).map((t) => t.toLowerCase());
+      var matchedTreatments = medical.treatments.filter((treatment) =>
+        patientTreatments_1.some((pt) => pt.includes(treatment.toLowerCase())),
+      );
       if (matchedTreatments.length > 0) {
         score += Math.min(10, (matchedTreatments.length / medical.treatments.length) * 10);
         matched.push("treatments");
@@ -913,14 +842,10 @@ var PatientSegmentation = /** @class */ (function () {
     // Medications scoring
     if (medical.medications && medical.medications.length > 0) {
       maxScore += 10;
-      var patientMedications_1 = (patient.medications || []).map(function (m) {
-        return m.toLowerCase();
-      });
-      var matchedMedications = medical.medications.filter(function (medication) {
-        return patientMedications_1.some(function (pm) {
-          return pm.includes(medication.toLowerCase());
-        });
-      });
+      var patientMedications_1 = (patient.medications || []).map((m) => m.toLowerCase());
+      var matchedMedications = medical.medications.filter((medication) =>
+        patientMedications_1.some((pm) => pm.includes(medication.toLowerCase())),
+      );
       if (matchedMedications.length > 0) {
         score += Math.min(10, (matchedMedications.length / medical.medications.length) * 10);
         matched.push("medications");
@@ -931,7 +856,7 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Score behavioral criteria
    */
-  PatientSegmentation.prototype.scoreBehavioral = function (patient, behavioral) {
+  PatientSegmentation.prototype.scoreBehavioral = (patient, behavioral) => {
     var score = 0;
     var maxScore = 0;
     var matched = [];
@@ -968,7 +893,7 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Score financial criteria
    */
-  PatientSegmentation.prototype.scoreFinancial = function (patient, financial) {
+  PatientSegmentation.prototype.scoreFinancial = (patient, financial) => {
     var score = 0;
     var maxScore = 0;
     var matched = [];
@@ -977,9 +902,7 @@ var PatientSegmentation = /** @class */ (function () {
       maxScore += 10;
       var patientInsurance_1 = (patient.insurance_type || "").toLowerCase();
       if (
-        financial.insuranceTypes.some(function (type) {
-          return patientInsurance_1.includes(type.toLowerCase());
-        })
+        financial.insuranceTypes.some((type) => patientInsurance_1.includes(type.toLowerCase()))
       ) {
         score += 10;
         matched.push("insurance_type");
@@ -1002,7 +925,7 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Calculate age from birth date
    */
-  PatientSegmentation.prototype.calculateAge = function (birthDate) {
+  PatientSegmentation.prototype.calculateAge = (birthDate) => {
     if (!birthDate) return 0;
     var birth = new Date(birthDate);
     var today = new Date();
@@ -1016,8 +939,8 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Sort segment members
    */
-  PatientSegmentation.prototype.sortSegmentMembers = function (members, sortBy, sortOrder) {
-    return members.sort(function (a, b) {
+  PatientSegmentation.prototype.sortSegmentMembers = (members, sortBy, sortOrder) =>
+    members.sort((a, b) => {
       var comparison = 0;
       switch (sortBy) {
         case "matchScore":
@@ -1034,7 +957,6 @@ var PatientSegmentation = /** @class */ (function () {
       }
       return sortOrder === "desc" ? comparison : -comparison;
     });
-  };
   /**
    * Generate segment insights
    */
@@ -1080,7 +1002,7 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Analyze age distribution
    */
-  PatientSegmentation.prototype.analyzeAgeDistribution = function (members) {
+  PatientSegmentation.prototype.analyzeAgeDistribution = (members) => {
     var ageGroups = {
       "0-18": 0,
       "19-30": 0,
@@ -1088,7 +1010,7 @@ var PatientSegmentation = /** @class */ (function () {
       "46-60": 0,
       "61+": 0,
     };
-    members.forEach(function (member) {
+    members.forEach((member) => {
       var age = member.demographics.age;
       if (age <= 18) ageGroups["0-18"]++;
       else if (age <= 30) ageGroups["19-30"]++;
@@ -1097,26 +1019,24 @@ var PatientSegmentation = /** @class */ (function () {
       else ageGroups["61+"]++;
     });
     return Object.entries(ageGroups)
-      .map(function (_a) {
+      .map((_a) => {
         var range = _a[0],
           count = _a[1];
         return { range: range, count: count };
       })
-      .sort(function (a, b) {
-        return b.count - a.count;
-      });
+      .sort((a, b) => b.count - a.count);
   };
   /**
    * Analyze gender distribution
    */
-  PatientSegmentation.prototype.analyzeGenderDistribution = function (members) {
+  PatientSegmentation.prototype.analyzeGenderDistribution = (members) => {
     var genderCounts = {};
-    members.forEach(function (member) {
+    members.forEach((member) => {
       var gender = member.demographics.gender;
       genderCounts[gender] = (genderCounts[gender] || 0) + 1;
     });
     return Object.entries(genderCounts)
-      .map(function (_a) {
+      .map((_a) => {
         var gender = _a[0],
           count = _a[1];
         return "".concat(gender, ": ").concat(count);
@@ -1126,20 +1046,20 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Analyze condition frequency
    */
-  PatientSegmentation.prototype.analyzeConditionFrequency = function (members) {
+  PatientSegmentation.prototype.analyzeConditionFrequency = (members) => {
     var conditionCounts = {};
-    members.forEach(function (member) {
-      member.medicalSummary.primaryConditions.forEach(function (condition) {
+    members.forEach((member) => {
+      member.medicalSummary.primaryConditions.forEach((condition) => {
         conditionCounts[condition] = (conditionCounts[condition] || 0) + 1;
       });
     });
     return Object.entries(conditionCounts)
-      .sort(function (_a, _b) {
+      .sort((_a, _b) => {
         var a = _a[1];
         var b = _b[1];
         return b - a;
       })
-      .map(function (_a) {
+      .map((_a) => {
         var condition = _a[0];
         return condition;
       });
@@ -1147,21 +1067,20 @@ var PatientSegmentation = /** @class */ (function () {
   /**
    * Calculate average match score
    */
-  PatientSegmentation.prototype.calculateAverageMatchScore = function (members) {
+  PatientSegmentation.prototype.calculateAverageMatchScore = (members) => {
     if (members.length === 0) return 0;
-    var totalScore = members.reduce(function (sum, member) {
-      return sum + member.matchScore;
-    }, 0);
+    var totalScore = members.reduce((sum, member) => sum + member.matchScore, 0);
     return totalScore / members.length;
   };
   /**
    * Calculate average visit frequency
    */
-  PatientSegmentation.prototype.calculateAverageVisitFrequency = function (members) {
+  PatientSegmentation.prototype.calculateAverageVisitFrequency = (members) => {
     if (members.length === 0) return 0;
-    var totalFrequency = members.reduce(function (sum, member) {
-      return sum + member.behavioralMetrics.visitFrequency;
-    }, 0);
+    var totalFrequency = members.reduce(
+      (sum, member) => sum + member.behavioralMetrics.visitFrequency,
+      0,
+    );
     return totalFrequency / members.length;
   };
   /**
@@ -1205,13 +1124,8 @@ var PatientSegmentation = /** @class */ (function () {
     return {
       accuracy: Math.round(avgMatchScore * 100) / 100,
       precision:
-        Math.round(
-          (members.filter(function (m) {
-            return m.matchScore >= 0.8;
-          }).length /
-            members.length) *
-            100,
-        ) / 100,
+        Math.round((members.filter((m) => m.matchScore >= 0.8).length / members.length) * 100) /
+        100,
       recall: Math.round((members.length / (members.length + 10)) * 100) / 100, // Simplified calculation
     };
   };
@@ -1411,66 +1325,49 @@ var PatientSegmentation = /** @class */ (function () {
           case 1:
             segments = _a.sent();
             totalSegments = segments.length;
-            totalPatients = segments.reduce(function (sum, segment) {
-              return sum + segment.patientCount;
-            }, 0);
+            totalPatients = segments.reduce((sum, segment) => sum + segment.patientCount, 0);
             averageSegmentSize_1 = totalSegments > 0 ? totalPatients / totalSegments : 0;
             criteriaFrequency_1 = {};
-            segments.forEach(function (segment) {
+            segments.forEach((segment) => {
               var _a;
               (_a = segment.criteria.tags) === null || _a === void 0
                 ? void 0
-                : _a.forEach(function (tag) {
+                : _a.forEach((tag) => {
                     criteriaFrequency_1[tag] = (criteriaFrequency_1[tag] || 0) + 1;
                   });
             });
             mostCommonCriteria = Object.entries(criteriaFrequency_1)
-              .sort(function (_a, _b) {
+              .sort((_a, _b) => {
                 var a = _a[1];
                 var b = _b[1];
                 return b - a;
               })
               .slice(0, 5)
-              .map(function (_a) {
+              .map((_a) => {
                 var criteria = _a[0];
                 return criteria;
               });
             segmentPerformance = {
-              highPerforming: segments.filter(function (s) {
-                return s.performance.accuracy >= 0.8;
-              }).length,
-              mediumPerforming: segments.filter(function (s) {
-                return s.performance.accuracy >= 0.6 && s.performance.accuracy < 0.8;
-              }).length,
-              lowPerforming: segments.filter(function (s) {
-                return s.performance.accuracy < 0.6;
-              }).length,
+              highPerforming: segments.filter((s) => s.performance.accuracy >= 0.8).length,
+              mediumPerforming: segments.filter(
+                (s) => s.performance.accuracy >= 0.6 && s.performance.accuracy < 0.8,
+              ).length,
+              lowPerforming: segments.filter((s) => s.performance.accuracy < 0.6).length,
             };
             trends = {
               growingSegments: segments
-                .filter(function (s) {
-                  return s.patientCount > averageSegmentSize_1;
-                })
-                .map(function (s) {
-                  return s.criteria.name;
-                }),
+                .filter((s) => s.patientCount > averageSegmentSize_1)
+                .map((s) => s.criteria.name),
               shrinkingSegments: segments
-                .filter(function (s) {
-                  return s.patientCount < averageSegmentSize_1 * 0.5;
-                })
-                .map(function (s) {
-                  return s.criteria.name;
-                }),
+                .filter((s) => s.patientCount < averageSegmentSize_1 * 0.5)
+                .map((s) => s.criteria.name),
               stableSegments: segments
-                .filter(function (s) {
-                  return (
+                .filter(
+                  (s) =>
                     s.patientCount >= averageSegmentSize_1 * 0.5 &&
-                    s.patientCount <= averageSegmentSize_1
-                  );
-                })
-                .map(function (s) {
-                  return s.criteria.name;
-                }),
+                    s.patientCount <= averageSegmentSize_1,
+                )
+                .map((s) => s.criteria.name),
             };
             return [
               2 /*return*/,

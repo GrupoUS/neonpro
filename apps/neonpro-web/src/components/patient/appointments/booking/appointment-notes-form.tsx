@@ -1,13 +1,13 @@
 "use client";
 
+import type { AlertTriangle, Calendar, FileText, MessageSquare, Smartphone } from "lucide-react";
+import type { useRef, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Checkbox } from "@/components/ui/checkbox";
 import type { Label } from "@/components/ui/label";
 import type { Textarea } from "@/components/ui/textarea";
-import type { AlertTriangle, Calendar, FileText, MessageSquare, Smartphone } from "lucide-react";
-import type { useRef, useState } from "react";
 
 interface AppointmentNote {
   id: string;

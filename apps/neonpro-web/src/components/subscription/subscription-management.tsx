@@ -1,5 +1,16 @@
 "use client";
 
+import type {
+  AlertCircle,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  Shield,
+  Users,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Badge } from "@/components/ui/badge";
 import type { Button } from "@/components/ui/button";
@@ -13,17 +24,6 @@ import type {
 import type { Separator } from "@/components/ui/separator";
 import type { useSubscription } from "@/hooks/use-subscription";
 import type { useSubscriptionStatus } from "@/hooks/use-subscription-status";
-import type {
-  AlertCircle,
-  BarChart3,
-  Calendar,
-  CheckCircle,
-  Clock,
-  CreditCard,
-  Shield,
-  Users,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 import type { SubscriptionStatusIndicator } from "./status-indicator";
 
 const plans = [

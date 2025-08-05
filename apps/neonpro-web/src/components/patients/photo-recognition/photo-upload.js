@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PhotoUpload = PhotoUpload;
 /**
@@ -161,7 +158,6 @@ var PHOTO_TYPES = [
   { value: "other", label: "Outro" },
 ];
 function PhotoUpload(_a) {
-  var _this = this;
   var patientId = _a.patientId,
     onUploadSuccess = _a.onUploadSuccess,
     onUploadError = _a.onUploadError,
@@ -198,7 +194,7 @@ function PhotoUpload(_a) {
   var fileInputRef = (0, react_1.useRef)(null);
   var toast = (0, use_toast_1.useToast)().toast;
   var handleFileSelect = (0, react_1.useCallback)(
-    function (file) {
+    (file) => {
       // Validate file type
       if (!allowedTypes.includes(file.type)) {
         toast({
@@ -224,7 +220,7 @@ function PhotoUpload(_a) {
       setUploadResult(null);
       // Create preview
       var reader = new FileReader();
-      reader.onload = function (e) {
+      reader.onload = (e) => {
         var _a;
         setPreviewUrl((_a = e.target) === null || _a === void 0 ? void 0 : _a.result);
       };
@@ -232,27 +228,27 @@ function PhotoUpload(_a) {
     },
     [allowedTypes, maxFileSize, toast],
   );
-  var handleFileInputChange = function (event) {
+  var handleFileInputChange = (event) => {
     var _a;
     var file = (_a = event.target.files) === null || _a === void 0 ? void 0 : _a[0];
     if (file) {
       handleFileSelect(file);
     }
   };
-  var handleDrop = function (event) {
+  var handleDrop = (event) => {
     event.preventDefault();
     var file = event.dataTransfer.files[0];
     if (file) {
       handleFileSelect(file);
     }
   };
-  var handleDragOver = function (event) {
+  var handleDragOver = (event) => {
     event.preventDefault();
   };
-  var uploadPhoto = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var uploadPhoto = () =>
+    __awaiter(this, void 0, void 0, function () {
       var formData, progressInterval, response, error, result, error_1, errorMessage;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedFile) return [2 /*return*/];
@@ -265,10 +261,8 @@ function PhotoUpload(_a) {
             formData.append("photo", selectedFile);
             formData.append("patientId", patientId);
             formData.append("photoType", photoType);
-            progressInterval = setInterval(function () {
-              setUploadProgress(function (prev) {
-                return Math.min(prev + 10, 90);
-              });
+            progressInterval = setInterval(() => {
+              setUploadProgress((prev) => Math.min(prev + 10, 90));
             }, 200);
             return [
               4 /*yield*/,
@@ -284,7 +278,7 @@ function PhotoUpload(_a) {
             response = _a.sent();
             clearInterval(progressInterval);
             setUploadProgress(100);
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.json()];
           case 3:
             error = _a.sent();
@@ -329,8 +323,7 @@ function PhotoUpload(_a) {
         }
       });
     });
-  };
-  var resetUpload = function () {
+  var resetUpload = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
     setUploadResult(null);
@@ -356,13 +349,11 @@ function PhotoUpload(_a) {
               <select_1.SelectValue placeholder="Selecione o tipo de foto" />
             </select_1.SelectTrigger>
             <select_1.SelectContent>
-              {PHOTO_TYPES.map(function (type) {
-                return (
-                  <select_1.SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </select_1.SelectItem>
-                );
-              })}
+              {PHOTO_TYPES.map((type) => (
+                <select_1.SelectItem key={type.value} value={type.value}>
+                  {type.label}
+                </select_1.SelectItem>
+              ))}
             </select_1.SelectContent>
           </select_1.Select>
         </div>
@@ -414,7 +405,7 @@ function PhotoUpload(_a) {
                 <button_1.Button
                   type="button"
                   variant="outline"
-                  onClick={function () {
+                  onClick={() => {
                     var _a;
                     return (_a = fileInputRef.current) === null || _a === void 0
                       ? void 0
@@ -435,9 +426,7 @@ function PhotoUpload(_a) {
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={function () {
-                  return setShowPreview(!showPreview);
-                }}
+                onClick={() => setShowPreview(!showPreview)}
               >
                 {showPreview
                   ? <lucide_react_1.EyeOff className="h-4 w-4" />
@@ -488,9 +477,9 @@ function PhotoUpload(_a) {
                   <div className="text-sm text-amber-600">
                     <p>Qualidade da imagem pode ser melhorada:</p>
                     <ul className="list-disc list-inside">
-                      {uploadResult.metadata.quality.recommendations.map(function (rec, index) {
-                        return <li key={index}>{rec}</li>;
-                      })}
+                      {uploadResult.metadata.quality.recommendations.map((rec, index) => (
+                        <li key={index}>{rec}</li>
+                      ))}
                     </ul>
                   </div>
                 )}

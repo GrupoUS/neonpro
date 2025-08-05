@@ -3,9 +3,9 @@
  * Healthcare staff management with scheduling
  */
 
-import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, adminProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 
 const doctorSchema = z.object({
   name: z.string().min(2).max(100),

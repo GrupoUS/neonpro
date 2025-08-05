@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Objective Measurement System for Medical Image Analysis
  * Provides precise, standardized measurements with clinical accuracy
@@ -6,15 +5,15 @@
  */
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -24,7 +23,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator.throw(value));
         } catch (e) {
           reject(e);
         }
@@ -34,13 +33,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -53,8 +52,8 @@ var __generator =
       g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
     return (
       (g.next = verb(0)),
-      (g["throw"] = verb(1)),
-      (g["return"] = verb(2)),
+      (g.throw = verb(1)),
+      (g.return = verb(2)),
       typeof Symbol === "function" &&
         (g[Symbol.iterator] = function () {
           return this;
@@ -62,9 +61,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -75,9 +72,9 @@ var __generator =
             y &&
               (t =
                 op[0] & 2
-                  ? y["return"]
+                  ? y.return
                   : op[0]
-                    ? y["throw"] || ((t = y["return"]) && t.call(y), 0)
+                    ? y.throw || ((t = y.return) && t.call(y), 0)
                     : y.next) &&
               !(t = t.call(y, op[1])).done)
           )
@@ -136,7 +133,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.objectiveMeasurementSystem =
   exports.ObjectiveMeasurementSystem =
@@ -147,31 +144,31 @@ var tf = require("@tensorflow/tfjs");
 var supabase_js_1 = require("@supabase/supabase-js");
 // Enums
 var MeasurementType;
-(function (MeasurementType) {
-  MeasurementType["AREA"] = "area";
-  MeasurementType["PERIMETER"] = "perimeter";
-  MeasurementType["VOLUME"] = "volume";
-  MeasurementType["DISTANCE"] = "distance";
-  MeasurementType["ANGLE"] = "angle";
-  MeasurementType["INTENSITY"] = "intensity";
-  MeasurementType["TEXTURE"] = "texture";
-  MeasurementType["COLOR"] = "color";
-  MeasurementType["SYMMETRY"] = "symmetry";
-  MeasurementType["ROUGHNESS"] = "roughness";
+((MeasurementType) => {
+  MeasurementType.AREA = "area";
+  MeasurementType.PERIMETER = "perimeter";
+  MeasurementType.VOLUME = "volume";
+  MeasurementType.DISTANCE = "distance";
+  MeasurementType.ANGLE = "angle";
+  MeasurementType.INTENSITY = "intensity";
+  MeasurementType.TEXTURE = "texture";
+  MeasurementType.COLOR = "color";
+  MeasurementType.SYMMETRY = "symmetry";
+  MeasurementType.ROUGHNESS = "roughness";
 })(MeasurementType || (exports.MeasurementType = MeasurementType = {}));
 var MeasurementCategory;
-(function (MeasurementCategory) {
-  MeasurementCategory["DERMATOLOGICAL"] = "dermatological";
-  MeasurementCategory["AESTHETIC"] = "aesthetic";
-  MeasurementCategory["MEDICAL"] = "medical";
-  MeasurementCategory["RECONSTRUCTIVE"] = "reconstructive";
-  MeasurementCategory["COSMETIC"] = "cosmetic";
+((MeasurementCategory) => {
+  MeasurementCategory.DERMATOLOGICAL = "dermatological";
+  MeasurementCategory.AESTHETIC = "aesthetic";
+  MeasurementCategory.MEDICAL = "medical";
+  MeasurementCategory.RECONSTRUCTIVE = "reconstructive";
+  MeasurementCategory.COSMETIC = "cosmetic";
 })(MeasurementCategory || (exports.MeasurementCategory = MeasurementCategory = {}));
 /**
  * Advanced Measurement System for Objective Analysis
  * Provides clinically accurate measurements with standardized protocols
  */
-var ObjectiveMeasurementSystem = /** @class */ (function () {
+var ObjectiveMeasurementSystem = /** @class */ (() => {
   function ObjectiveMeasurementSystem() {
     this.supabase = (0, supabase_js_1.createClient)(
       process.env.SUPABASE_URL,
@@ -189,11 +186,11 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
    * Perform comprehensive objective measurements
    */
   ObjectiveMeasurementSystem.prototype.performMeasurements = function (
-    beforeImage_1,
-    afterImage_1,
-    patientId_1,
-    analysisId_1,
-    treatmentType_1,
+    _beforeImage_1,
+    _afterImage_1,
+    _patientId_1,
+    _analysisId_1,
+    _treatmentType_1,
   ) {
     return __awaiter(
       this,
@@ -216,7 +213,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
         return __generator(this, function (_a) {
           switch (_a.label) {
             case 0:
-              _a.trys.push([0, 8, , 9]);
+              _a.trys.push([0, 8, undefined, 9]);
               protocol = this.getMeasurementProtocol(treatmentType);
               // Perform calibration check
               return [4 /*yield*/, this.ensureCalibration(beforeImage, afterImage)];
@@ -293,7 +290,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
   /**
    * Extract detailed measurements from image
    */
-  ObjectiveMeasurementSystem.prototype.extractMeasurements = function (image, protocol, phase) {
+  ObjectiveMeasurementSystem.prototype.extractMeasurements = function (image, protocol, _phase) {
     return __awaiter(this, void 0, void 0, function () {
       var measurements, _i, _a, measurementSpec, measurement, error_2;
       return __generator(this, function (_b) {
@@ -307,7 +304,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
             measurementSpec = _a[_i];
             _b.label = 2;
           case 2:
-            _b.trys.push([2, 4, , 5]);
+            _b.trys.push([2, 4, undefined, 5]);
             return [4 /*yield*/, this.performSingleMeasurement(image, measurementSpec)];
           case 3:
             measurement = _b.sent();
@@ -366,81 +363,74 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
   // Specific measurement implementations
   ObjectiveMeasurementSystem.prototype.measureArea = function (image, spec) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          tf.tidy(function () {
-            var _a;
-            // Segment region of interest
-            var roi = _this.extractROI(image, spec.region);
-            // Apply thresholding for area calculation
-            var threshold =
-              ((_a = spec.parameters) === null || _a === void 0 ? void 0 : _a.threshold) || 0.5;
-            var binary = tf.greater(tf.mean(roi, 2), threshold);
-            // Count pixels and convert to real-world units
-            var pixelCount = tf.sum(binary.cast("float32")).dataSync()[0];
-            var pixelSize = _this.getPixelSize(spec.region);
-            var area = pixelCount * pixelSize * pixelSize;
-            return {
-              type: MeasurementType.AREA,
-              value: area,
-              unit: "mm²",
-              confidence: _this.calculateMeasurementConfidence(binary, spec),
-              coordinates: spec.region,
-              metadata: {
-                pixelCount: pixelCount,
-                pixelSize: pixelSize,
-                threshold: threshold,
-              },
-            };
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        tf.tidy(() => {
+          var _a;
+          // Segment region of interest
+          var roi = this.extractROI(image, spec.region);
+          // Apply thresholding for area calculation
+          var threshold =
+            ((_a = spec.parameters) === null || _a === void 0 ? void 0 : _a.threshold) || 0.5;
+          var binary = tf.greater(tf.mean(roi, 2), threshold);
+          // Count pixels and convert to real-world units
+          var pixelCount = tf.sum(binary.cast("float32")).dataSync()[0];
+          var pixelSize = this.getPixelSize(spec.region);
+          var area = pixelCount * pixelSize * pixelSize;
+          return {
+            type: MeasurementType.AREA,
+            value: area,
+            unit: "mm²",
+            confidence: this.calculateMeasurementConfidence(binary, spec),
+            coordinates: spec.region,
+            metadata: {
+              pixelCount: pixelCount,
+              pixelSize: pixelSize,
+              threshold: threshold,
+            },
+          };
+        }),
+      ]);
     });
   };
   ObjectiveMeasurementSystem.prototype.measurePerimeter = function (image, spec) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          tf.tidy(function () {
-            var roi = _this.extractROI(image, spec.region);
-            // Edge detection for perimeter
-            var edges = tf.image.sobel(tf.mean(roi, 2, true));
-            var edgePixels = tf.sum(tf.greater(edges, 0.1).cast("float32")).dataSync()[0];
-            var pixelSize = _this.getPixelSize(spec.region);
-            var perimeter = edgePixels * pixelSize;
-            return {
-              type: MeasurementType.PERIMETER,
-              value: perimeter,
-              unit: "mm",
-              confidence: _this.calculateMeasurementConfidence(edges, spec),
-              coordinates: spec.region,
-              metadata: {
-                edgePixels: edgePixels,
-                pixelSize: pixelSize,
-              },
-            };
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        tf.tidy(() => {
+          var roi = this.extractROI(image, spec.region);
+          // Edge detection for perimeter
+          var edges = tf.image.sobel(tf.mean(roi, 2, true));
+          var edgePixels = tf.sum(tf.greater(edges, 0.1).cast("float32")).dataSync()[0];
+          var pixelSize = this.getPixelSize(spec.region);
+          var perimeter = edgePixels * pixelSize;
+          return {
+            type: MeasurementType.PERIMETER,
+            value: perimeter,
+            unit: "mm",
+            confidence: this.calculateMeasurementConfidence(edges, spec),
+            coordinates: spec.region,
+            metadata: {
+              edgePixels: edgePixels,
+              pixelSize: pixelSize,
+            },
+          };
+        }),
+      ]);
     });
   };
   ObjectiveMeasurementSystem.prototype.measureVolume = function (image, spec) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Stereophotogrammetry-based volume estimation
         return [
           2 /*return*/,
-          tf.tidy(function () {
-            var roi = _this.extractROI(image, spec.region);
+          tf.tidy(() => {
+            var roi = this.extractROI(image, spec.region);
             // Estimate depth from intensity gradients
-            var depthMap = _this.estimateDepthMap(roi);
+            var depthMap = this.estimateDepthMap(roi);
             var volumePixels = tf.sum(depthMap).dataSync()[0];
-            var pixelSize = _this.getPixelSize(spec.region);
+            var pixelSize = this.getPixelSize(spec.region);
             var volume = volumePixels * pixelSize * pixelSize * pixelSize;
             return {
               type: MeasurementType.VOLUME,
@@ -469,9 +459,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
         }
         point1 = landmarks[0];
         point2 = landmarks[1];
-        pixelDistance = Math.sqrt(
-          Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2),
-        );
+        pixelDistance = Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
         pixelSize = this.getPixelSize(spec.region);
         realDistance = pixelDistance * pixelSize;
         return [
@@ -527,158 +515,137 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
   };
   ObjectiveMeasurementSystem.prototype.measureIntensity = function (image, spec) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          tf.tidy(function () {
-            var roi = _this.extractROI(image, spec.region);
-            var meanIntensity = tf.mean(roi).dataSync()[0];
-            var stdIntensity = tf.moments(roi).variance.sqrt().dataSync()[0];
-            return {
-              type: MeasurementType.INTENSITY,
-              value: meanIntensity,
-              unit: "intensity",
-              confidence: 1.0 - stdIntensity / meanIntensity, // Lower variance = higher confidence
-              coordinates: spec.region,
-              metadata: {
-                mean: meanIntensity,
-                std: stdIntensity,
-                variance: stdIntensity * stdIntensity,
-              },
-            };
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        tf.tidy(() => {
+          var roi = this.extractROI(image, spec.region);
+          var meanIntensity = tf.mean(roi).dataSync()[0];
+          var stdIntensity = tf.moments(roi).variance.sqrt().dataSync()[0];
+          return {
+            type: MeasurementType.INTENSITY,
+            value: meanIntensity,
+            unit: "intensity",
+            confidence: 1.0 - stdIntensity / meanIntensity, // Lower variance = higher confidence
+            coordinates: spec.region,
+            metadata: {
+              mean: meanIntensity,
+              std: stdIntensity,
+              variance: stdIntensity * stdIntensity,
+            },
+          };
+        }),
+      ]);
     });
   };
   ObjectiveMeasurementSystem.prototype.measureTexture = function (image, spec) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          tf.tidy(function () {
-            var roi = _this.extractROI(image, spec.region);
-            // Calculate texture using Local Binary Pattern (LBP) approximation
-            var gray = tf.mean(roi, 2);
-            var textureScore = _this.calculateTextureScore(gray);
-            return {
-              type: MeasurementType.TEXTURE,
-              value: textureScore,
-              unit: "texture_score",
-              confidence: 0.9,
-              coordinates: spec.region,
-              metadata: {
-                method: "LBP_approximation",
-              },
-            };
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        tf.tidy(() => {
+          var roi = this.extractROI(image, spec.region);
+          // Calculate texture using Local Binary Pattern (LBP) approximation
+          var gray = tf.mean(roi, 2);
+          var textureScore = this.calculateTextureScore(gray);
+          return {
+            type: MeasurementType.TEXTURE,
+            value: textureScore,
+            unit: "texture_score",
+            confidence: 0.9,
+            coordinates: spec.region,
+            metadata: {
+              method: "LBP_approximation",
+            },
+          };
+        }),
+      ]);
     });
   };
   ObjectiveMeasurementSystem.prototype.measureColor = function (image, spec) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          tf.tidy(function () {
-            var roi = _this.extractROI(image, spec.region);
-            // Calculate color statistics
-            var meanColor = tf.mean(roi, [0, 1]).dataSync();
-            var colorVariance = tf.moments(roi, [0, 1]).variance.dataSync();
-            // Calculate color uniformity score
-            var uniformityScore =
-              1.0 -
-              colorVariance.reduce(function (a, b) {
-                return a + b;
-              }, 0) /
-                3;
-            return {
-              type: MeasurementType.COLOR,
-              value: uniformityScore,
-              unit: "uniformity_score",
-              confidence: 0.95,
-              coordinates: spec.region,
-              metadata: {
-                meanColor: Array.from(meanColor),
-                colorVariance: Array.from(colorVariance),
-              },
-            };
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        tf.tidy(() => {
+          var roi = this.extractROI(image, spec.region);
+          // Calculate color statistics
+          var meanColor = tf.mean(roi, [0, 1]).dataSync();
+          var colorVariance = tf.moments(roi, [0, 1]).variance.dataSync();
+          // Calculate color uniformity score
+          var uniformityScore = 1.0 - colorVariance.reduce((a, b) => a + b, 0) / 3;
+          return {
+            type: MeasurementType.COLOR,
+            value: uniformityScore,
+            unit: "uniformity_score",
+            confidence: 0.95,
+            coordinates: spec.region,
+            metadata: {
+              meanColor: Array.from(meanColor),
+              colorVariance: Array.from(colorVariance),
+            },
+          };
+        }),
+      ]);
     });
   };
   ObjectiveMeasurementSystem.prototype.measureSymmetry = function (image, spec) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          tf.tidy(function () {
-            var roi = _this.extractROI(image, spec.region);
-            // Calculate bilateral symmetry
-            var flipped = tf.reverse(roi, [1]); // Flip horizontally
-            var difference = tf.abs(tf.sub(roi, flipped));
-            var symmetryScore = 1.0 - tf.mean(difference).dataSync()[0];
-            return {
-              type: MeasurementType.SYMMETRY,
-              value: symmetryScore,
-              unit: "symmetry_score",
-              confidence: 0.9,
-              coordinates: spec.region,
-              metadata: {
-                method: "bilateral_comparison",
-              },
-            };
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        tf.tidy(() => {
+          var roi = this.extractROI(image, spec.region);
+          // Calculate bilateral symmetry
+          var flipped = tf.reverse(roi, [1]); // Flip horizontally
+          var difference = tf.abs(tf.sub(roi, flipped));
+          var symmetryScore = 1.0 - tf.mean(difference).dataSync()[0];
+          return {
+            type: MeasurementType.SYMMETRY,
+            value: symmetryScore,
+            unit: "symmetry_score",
+            confidence: 0.9,
+            coordinates: spec.region,
+            metadata: {
+              method: "bilateral_comparison",
+            },
+          };
+        }),
+      ]);
     });
   };
   ObjectiveMeasurementSystem.prototype.measureRoughness = function (image, spec) {
     return __awaiter(this, void 0, void 0, function () {
-      var _this = this;
-      return __generator(this, function (_a) {
-        return [
-          2 /*return*/,
-          tf.tidy(function () {
-            var roi = _this.extractROI(image, spec.region);
-            var gray = tf.mean(roi, 2);
-            // Calculate surface roughness using gradient magnitude
-            var _a = tf.grad(gray),
-              gradX = _a[0],
-              gradY = _a[1];
-            var gradMagnitude = tf.sqrt(tf.add(tf.square(gradX), tf.square(gradY)));
-            var roughnessScore = tf.mean(gradMagnitude).dataSync()[0];
-            return {
-              type: MeasurementType.ROUGHNESS,
-              value: roughnessScore,
-              unit: "roughness_score",
-              confidence: 0.85,
-              coordinates: spec.region,
-              metadata: {
-                method: "gradient_magnitude",
-              },
-            };
-          }),
-        ];
-      });
+      return __generator(this, (_a) => [
+        2 /*return*/,
+        tf.tidy(() => {
+          var roi = this.extractROI(image, spec.region);
+          var gray = tf.mean(roi, 2);
+          // Calculate surface roughness using gradient magnitude
+          var _a = tf.grad(gray),
+            gradX = _a[0],
+            gradY = _a[1];
+          var gradMagnitude = tf.sqrt(tf.add(tf.square(gradX), tf.square(gradY)));
+          var roughnessScore = tf.mean(gradMagnitude).dataSync()[0];
+          return {
+            type: MeasurementType.ROUGHNESS,
+            value: roughnessScore,
+            unit: "roughness_score",
+            confidence: 0.85,
+            coordinates: spec.region,
+            metadata: {
+              method: "gradient_magnitude",
+            },
+          };
+        }),
+      ]);
     });
   };
   // Helper methods
-  ObjectiveMeasurementSystem.prototype.extractROI = function (image, region) {
-    return tf.slice(image, [region.y, region.x, 0], [region.height, region.width, -1]);
-  };
-  ObjectiveMeasurementSystem.prototype.getPixelSize = function (region) {
+  ObjectiveMeasurementSystem.prototype.extractROI = (image, region) =>
+    tf.slice(image, [region.y, region.x, 0], [region.height, region.width, -1]);
+  ObjectiveMeasurementSystem.prototype.getPixelSize = (_region) => {
     // This would be calibrated based on known reference objects
     // For now, using a default value
     return 0.1; // mm per pixel
   };
-  ObjectiveMeasurementSystem.prototype.calculateMeasurementConfidence = function (tensor, spec) {
+  ObjectiveMeasurementSystem.prototype.calculateMeasurementConfidence = (tensor, _spec) => {
     // Calculate confidence based on measurement quality
     var variance = tf.moments(tensor).variance.dataSync()[0];
     var mean = tf.mean(tensor).dataSync()[0];
@@ -686,9 +653,9 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
     var cv = Math.sqrt(variance) / mean; // Coefficient of variation
     return Math.max(0.1, 1.0 - cv); // Lower CV = higher confidence
   };
-  ObjectiveMeasurementSystem.prototype.estimateDepthMap = function (image) {
+  ObjectiveMeasurementSystem.prototype.estimateDepthMap = (image) => {
     // Simplified depth estimation from shading
-    return tf.tidy(function () {
+    return tf.tidy(() => {
       var gray = tf.mean(image, 2);
       var _a = tf.grad(gray),
         gradX = _a[0],
@@ -697,7 +664,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
       return gradMagnitude;
     });
   };
-  ObjectiveMeasurementSystem.prototype.detectLandmarks = function (image, spec) {
+  ObjectiveMeasurementSystem.prototype.detectLandmarks = (_image, spec) => {
     // Simplified landmark detection
     // In production, this would use advanced computer vision algorithms
     var landmarks = [];
@@ -726,9 +693,9 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
     });
     return landmarks;
   };
-  ObjectiveMeasurementSystem.prototype.calculateTextureScore = function (grayImage) {
+  ObjectiveMeasurementSystem.prototype.calculateTextureScore = (grayImage) => {
     // Simplified texture calculation using variance
-    return tf.tidy(function () {
+    return tf.tidy(() => {
       var variance = tf.moments(grayImage).variance.dataSync()[0];
       return Math.min(1.0, variance * 10); // Normalize to 0-1 range
     });
@@ -739,17 +706,15 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
     protocol,
   ) {
     var objectiveMeasurements = [];
-    var _loop_1 = function (beforeMeas) {
-      var afterMeas = afterMeasurements.find(function (m) {
-        return m.type === beforeMeas.type;
-      });
+    var _loop_1 = (beforeMeas) => {
+      var afterMeas = afterMeasurements.find((m) => m.type === beforeMeas.type);
       if (afterMeas) {
         var changeValue = afterMeas.value - beforeMeas.value;
         var changePercentage = beforeMeas.value !== 0 ? (changeValue / beforeMeas.value) * 100 : 0;
         objectiveMeasurements.push({
           id: crypto.randomUUID(),
           type: beforeMeas.type,
-          category: this_1.getMeasurementCategory(beforeMeas.type, protocol),
+          category: this.getMeasurementCategory(beforeMeas.type, protocol),
           beforeValue: beforeMeas.value,
           afterValue: afterMeas.value,
           changeValue: changeValue,
@@ -762,11 +727,10 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
             referencePoints: [],
           },
           methodology: protocol.methodology,
-          clinicalRelevance: this_1.calculateClinicalRelevance(beforeMeas.type, changePercentage),
+          clinicalRelevance: this.calculateClinicalRelevance(beforeMeas.type, changePercentage),
         });
       }
     };
-    var this_1 = this;
     for (
       var _i = 0, beforeMeasurements_1 = beforeMeasurements;
       _i < beforeMeasurements_1.length;
@@ -777,7 +741,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
     }
     return objectiveMeasurements;
   };
-  ObjectiveMeasurementSystem.prototype.getMeasurementCategory = function (type, protocol) {
+  ObjectiveMeasurementSystem.prototype.getMeasurementCategory = (_type, protocol) => {
     // Map measurement types to categories based on protocol
     var categoryMap = {
       aesthetic: MeasurementCategory.AESTHETIC,
@@ -788,10 +752,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
     };
     return categoryMap[protocol.category] || MeasurementCategory.MEDICAL;
   };
-  ObjectiveMeasurementSystem.prototype.calculateClinicalRelevance = function (
-    type,
-    changePercentage,
-  ) {
+  ObjectiveMeasurementSystem.prototype.calculateClinicalRelevance = (type, changePercentage) => {
     var _a;
     // Calculate clinical relevance based on measurement type and change magnitude
     var relevanceThresholds =
@@ -847,48 +808,35 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
     return metrics;
   };
   // Standardized metric calculations
-  ObjectiveMeasurementSystem.prototype.calculateSymmetryIndex = function (measurements) {
-    var symmetryMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.SYMMETRY;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateSymmetryIndex = (measurements) => {
+    var symmetryMeasurements = measurements.filter((m) => m.type === MeasurementType.SYMMETRY);
     if (symmetryMeasurements.length === 0) return 0;
     var avgImprovement =
-      symmetryMeasurements.reduce(function (sum, m) {
-        return sum + m.changePercentage;
-      }, 0) / symmetryMeasurements.length;
+      symmetryMeasurements.reduce((sum, m) => sum + m.changePercentage, 0) /
+      symmetryMeasurements.length;
     return Math.max(0, Math.min(100, 50 + avgImprovement)); // Normalize to 0-100 scale
   };
-  ObjectiveMeasurementSystem.prototype.calculateVolumetricChange = function (measurements) {
-    var volumeMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.VOLUME;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateVolumetricChange = (measurements) => {
+    var volumeMeasurements = measurements.filter((m) => m.type === MeasurementType.VOLUME);
     if (volumeMeasurements.length === 0) return 0;
     return (
-      volumeMeasurements.reduce(function (sum, m) {
-        return sum + m.changePercentage;
-      }, 0) / volumeMeasurements.length
+      volumeMeasurements.reduce((sum, m) => sum + m.changePercentage, 0) / volumeMeasurements.length
     );
   };
-  ObjectiveMeasurementSystem.prototype.calculateContourDefinition = function (measurements) {
-    var perimeterMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.PERIMETER;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateContourDefinition = (measurements) => {
+    var perimeterMeasurements = measurements.filter((m) => m.type === MeasurementType.PERIMETER);
     if (perimeterMeasurements.length === 0) return 0;
     var avgChange =
-      perimeterMeasurements.reduce(function (sum, m) {
-        return sum + Math.abs(m.changePercentage);
-      }, 0) / perimeterMeasurements.length;
+      perimeterMeasurements.reduce((sum, m) => sum + Math.abs(m.changePercentage), 0) /
+      perimeterMeasurements.length;
     return Math.min(100, avgChange);
   };
-  ObjectiveMeasurementSystem.prototype.calculateProportionalBalance = function (measurements) {
-    var angleMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.ANGLE;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateProportionalBalance = (measurements) => {
+    var angleMeasurements = measurements.filter((m) => m.type === MeasurementType.ANGLE);
     if (angleMeasurements.length === 0) return 0;
     var avgImprovement =
-      angleMeasurements.reduce(function (sum, m) {
-        return sum + Math.abs(m.changePercentage);
-      }, 0) / angleMeasurements.length;
+      angleMeasurements.reduce((sum, m) => sum + Math.abs(m.changePercentage), 0) /
+      angleMeasurements.length;
     return Math.max(0, 100 - avgImprovement); // Lower angle changes = better balance
   };
   ObjectiveMeasurementSystem.prototype.calculateSkinQualityIndex = function (measurements) {
@@ -896,40 +844,24 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
     var colorScore = this.calculatePigmentationIndex(measurements);
     var roughnessScore =
       measurements
-        .filter(function (m) {
-          return m.type === MeasurementType.ROUGHNESS;
-        })
-        .reduce(function (sum, m) {
-          return sum + (100 - Math.abs(m.changePercentage));
-        }, 0) /
-      Math.max(
-        1,
-        measurements.filter(function (m) {
-          return m.type === MeasurementType.ROUGHNESS;
-        }).length,
-      );
+        .filter((m) => m.type === MeasurementType.ROUGHNESS)
+        .reduce((sum, m) => sum + (100 - Math.abs(m.changePercentage)), 0) /
+      Math.max(1, measurements.filter((m) => m.type === MeasurementType.ROUGHNESS).length);
     return (textureScore + colorScore + roughnessScore) / 3;
   };
-  ObjectiveMeasurementSystem.prototype.calculateTextureUniformity = function (measurements) {
-    var textureMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.TEXTURE;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateTextureUniformity = (measurements) => {
+    var textureMeasurements = measurements.filter((m) => m.type === MeasurementType.TEXTURE);
     if (textureMeasurements.length === 0) return 0;
     var avgImprovement =
-      textureMeasurements.reduce(function (sum, m) {
-        return sum + m.changePercentage;
-      }, 0) / textureMeasurements.length;
+      textureMeasurements.reduce((sum, m) => sum + m.changePercentage, 0) /
+      textureMeasurements.length;
     return Math.max(0, Math.min(100, 50 + avgImprovement));
   };
-  ObjectiveMeasurementSystem.prototype.calculatePigmentationIndex = function (measurements) {
-    var colorMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.COLOR;
-    });
+  ObjectiveMeasurementSystem.prototype.calculatePigmentationIndex = (measurements) => {
+    var colorMeasurements = measurements.filter((m) => m.type === MeasurementType.COLOR);
     if (colorMeasurements.length === 0) return 0;
     var avgImprovement =
-      colorMeasurements.reduce(function (sum, m) {
-        return sum + m.changePercentage;
-      }, 0) / colorMeasurements.length;
+      colorMeasurements.reduce((sum, m) => sum + m.changePercentage, 0) / colorMeasurements.length;
     return Math.max(0, Math.min(100, 50 + avgImprovement));
   };
   ObjectiveMeasurementSystem.prototype.calculateElasticityScore = function (measurements) {
@@ -939,108 +871,83 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
     var volumeScore = Math.abs(this.calculateVolumetricChange(measurements));
     return (textureScore + Math.min(100, volumeScore)) / 2;
   };
-  ObjectiveMeasurementSystem.prototype.calculateHealingProgress = function (measurements) {
-    var areaMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.AREA;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateHealingProgress = (measurements) => {
+    var areaMeasurements = measurements.filter((m) => m.type === MeasurementType.AREA);
     if (areaMeasurements.length === 0) return 0;
     // Healing typically involves area reduction
     var avgAreaReduction =
-      areaMeasurements.reduce(function (sum, m) {
-        return sum + Math.max(0, -m.changePercentage);
-      }, 0) / areaMeasurements.length;
+      areaMeasurements.reduce((sum, m) => sum + Math.max(0, -m.changePercentage), 0) /
+      areaMeasurements.length;
     return Math.min(100, avgAreaReduction);
   };
-  ObjectiveMeasurementSystem.prototype.calculateInflammationReduction = function (measurements) {
-    var intensityMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.INTENSITY;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateInflammationReduction = (measurements) => {
+    var intensityMeasurements = measurements.filter((m) => m.type === MeasurementType.INTENSITY);
     if (intensityMeasurements.length === 0) return 0;
     // Inflammation reduction typically shows as intensity decrease
     var avgIntensityReduction =
-      intensityMeasurements.reduce(function (sum, m) {
-        return sum + Math.max(0, -m.changePercentage);
-      }, 0) / intensityMeasurements.length;
+      intensityMeasurements.reduce((sum, m) => sum + Math.max(0, -m.changePercentage), 0) /
+      intensityMeasurements.length;
     return Math.min(100, avgIntensityReduction);
   };
-  ObjectiveMeasurementSystem.prototype.calculateLesionSize = function (measurements) {
-    var areaMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.AREA;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateLesionSize = (measurements) => {
+    var areaMeasurements = measurements.filter((m) => m.type === MeasurementType.AREA);
     if (areaMeasurements.length === 0) return 0;
-    return (
-      areaMeasurements.reduce(function (sum, m) {
-        return sum + m.afterValue;
-      }, 0) / areaMeasurements.length
-    );
+    return areaMeasurements.reduce((sum, m) => sum + m.afterValue, 0) / areaMeasurements.length;
   };
-  ObjectiveMeasurementSystem.prototype.calculateScarVisibility = function (measurements) {
-    var textureMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.TEXTURE;
-    });
-    var colorMeasurements = measurements.filter(function (m) {
-      return m.type === MeasurementType.COLOR;
-    });
+  ObjectiveMeasurementSystem.prototype.calculateScarVisibility = (measurements) => {
+    var textureMeasurements = measurements.filter((m) => m.type === MeasurementType.TEXTURE);
+    var colorMeasurements = measurements.filter((m) => m.type === MeasurementType.COLOR);
     var textureScore =
       textureMeasurements.length > 0
-        ? textureMeasurements.reduce(function (sum, m) {
-            return sum + (100 - Math.abs(m.changePercentage));
-          }, 0) / textureMeasurements.length
+        ? textureMeasurements.reduce((sum, m) => sum + (100 - Math.abs(m.changePercentage)), 0) /
+          textureMeasurements.length
         : 50;
     var colorScore =
       colorMeasurements.length > 0
-        ? colorMeasurements.reduce(function (sum, m) {
-            return sum + (100 - Math.abs(m.changePercentage));
-          }, 0) / colorMeasurements.length
+        ? colorMeasurements.reduce((sum, m) => sum + (100 - Math.abs(m.changePercentage)), 0) /
+          colorMeasurements.length
         : 50;
     return (textureScore + colorScore) / 2;
   };
-  ObjectiveMeasurementSystem.prototype.calculateOverallImprovement = function (measurements) {
+  ObjectiveMeasurementSystem.prototype.calculateOverallImprovement = (measurements) => {
     if (measurements.length === 0) return 0;
-    var weightedSum = measurements.reduce(function (sum, m) {
+    var weightedSum = measurements.reduce((sum, m) => {
       var weight = m.clinicalRelevance;
       var improvement = Math.abs(m.changePercentage);
       return sum + improvement * weight;
     }, 0);
-    var totalWeight = measurements.reduce(function (sum, m) {
-      return sum + m.clinicalRelevance;
-    }, 0);
+    var totalWeight = measurements.reduce((sum, m) => sum + m.clinicalRelevance, 0);
     return totalWeight > 0 ? weightedSum / totalWeight : 0;
   };
-  ObjectiveMeasurementSystem.prototype.calculateTreatmentResponse = function (measurements) {
+  ObjectiveMeasurementSystem.prototype.calculateTreatmentResponse = (measurements) => {
     // Treatment response based on confidence-weighted improvements
     if (measurements.length === 0) return 0;
-    var weightedSum = measurements.reduce(function (sum, m) {
+    var weightedSum = measurements.reduce((sum, m) => {
       var weight = m.confidence;
       var improvement = Math.abs(m.changePercentage);
       return sum + improvement * weight;
     }, 0);
-    var totalWeight = measurements.reduce(function (sum, m) {
-      return sum + m.confidence;
-    }, 0);
+    var totalWeight = measurements.reduce((sum, m) => sum + m.confidence, 0);
     return totalWeight > 0 ? weightedSum / totalWeight : 0;
   };
-  ObjectiveMeasurementSystem.prototype.predictPatientSatisfaction = function (measurements) {
+  ObjectiveMeasurementSystem.prototype.predictPatientSatisfaction = (measurements) => {
     // Predict patient satisfaction based on visible improvements
-    var visibleImprovements = measurements.filter(function (m) {
-      return (
+    var visibleImprovements = measurements.filter(
+      (m) =>
         m.type === MeasurementType.AREA ||
         m.type === MeasurementType.COLOR ||
         m.type === MeasurementType.TEXTURE ||
-        m.type === MeasurementType.SYMMETRY
-      );
-    });
+        m.type === MeasurementType.SYMMETRY,
+    );
     if (visibleImprovements.length === 0) return 50; // Neutral prediction
     var avgImprovement =
-      visibleImprovements.reduce(function (sum, m) {
-        return sum + Math.abs(m.changePercentage);
-      }, 0) / visibleImprovements.length;
+      visibleImprovements.reduce((sum, m) => sum + Math.abs(m.changePercentage), 0) /
+      visibleImprovements.length;
     // Convert to satisfaction score (0-100)
     return Math.min(100, Math.max(0, 50 + avgImprovement * 2));
   };
   // Protocol and calibration management
   ObjectiveMeasurementSystem.prototype.initializeMeasurementProtocols = function () {
-    var _this = this;
     // Initialize standard measurement protocols for different treatment types
     var protocols = [
       {
@@ -1128,8 +1035,8 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
         ],
       },
     ];
-    protocols.forEach(function (protocol) {
-      _this.measurementProtocols.set(protocol.id, protocol);
+    protocols.forEach((protocol) => {
+      this.measurementProtocols.set(protocol.id, protocol);
     });
   };
   ObjectiveMeasurementSystem.prototype.getMeasurementProtocol = function (treatmentType) {
@@ -1149,7 +1056,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 2, , 3]);
+            _b.trys.push([0, 2, undefined, 3]);
             return [4 /*yield*/, this.supabase.from("measurement_calibration").select("*")];
           case 1:
             (_a = _b.sent()), (data = _a.data), (error = _a.error);
@@ -1160,7 +1067,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
             }
             data === null || data === void 0
               ? void 0
-              : data.forEach(function (calibration) {
+              : data.forEach((calibration) => {
                   _this.calibrationData.set(calibration.id, {
                     pixelSize: calibration.pixel_size,
                     referenceObject: calibration.reference_object,
@@ -1188,7 +1095,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
       accuracy: 0.95,
     });
   };
-  ObjectiveMeasurementSystem.prototype.ensureCalibration = function (beforeImage, afterImage) {
+  ObjectiveMeasurementSystem.prototype.ensureCalibration = function (_beforeImage, _afterImage) {
     return __awaiter(this, void 0, void 0, function () {
       var calibration, daysSinceCalibration;
       return __generator(this, function (_a) {
@@ -1211,7 +1118,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
-            _a.trys.push([0, 2, , 3]);
+            _a.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase.from("measurement_results").insert({
@@ -1253,7 +1160,7 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
-            _b.trys.push([0, 2, , 3]);
+            _b.trys.push([0, 2, undefined, 3]);
             return [
               4 /*yield*/,
               this.supabase
@@ -1271,20 +1178,18 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
               2 /*return*/,
               (data === null || data === void 0
                 ? void 0
-                : data.map(function (row) {
-                    return {
-                      id: row.id,
-                      patientId: row.patient_id,
-                      analysisId: row.analysis_id,
-                      measurements: row.measurements,
-                      comparisonScore: row.comparison_score,
-                      clinicalSignificance: row.clinical_significance,
-                      standardizedMetrics: row.standardized_metrics,
-                      qualityAssurance: row.quality_assurance,
-                      timestamp: new Date(row.created_at),
-                      validationStatus: row.validation_status,
-                    };
-                  })) || [],
+                : data.map((row) => ({
+                    id: row.id,
+                    patientId: row.patient_id,
+                    analysisId: row.analysis_id,
+                    measurements: row.measurements,
+                    comparisonScore: row.comparison_score,
+                    clinicalSignificance: row.clinical_significance,
+                    standardizedMetrics: row.standardized_metrics,
+                    qualityAssurance: row.quality_assurance,
+                    timestamp: new Date(row.created_at),
+                    validationStatus: row.validation_status,
+                  }))) || [],
             ];
           case 2:
             error_5 = _b.sent();
@@ -1327,11 +1232,11 @@ var ObjectiveMeasurementSystem = /** @class */ (function () {
 })();
 exports.ObjectiveMeasurementSystem = ObjectiveMeasurementSystem;
 // Supporting classes
-var QualityController = /** @class */ (function () {
+var QualityController = /** @class */ (() => {
   function QualityController() {}
   QualityController.prototype.performQA = function (measurements, beforeImage, afterImage) {
     return __awaiter(this, void 0, void 0, function () {
-      var validationChecks, passedChecks, totalChecks;
+      var validationChecks, _passedChecks, _totalChecks;
       return __generator(this, function (_a) {
         validationChecks = [];
         // Check measurement consistency
@@ -1348,10 +1253,8 @@ var QualityController = /** @class */ (function () {
           confidence: 0.92,
           details: "Images meet quality standards for accurate measurement",
         });
-        passedChecks = validationChecks.filter(function (check) {
-          return check.passed;
-        }).length;
-        totalChecks = validationChecks.length;
+        _passedChecks = validationChecks.filter((check) => check.passed).length;
+        _totalChecks = validationChecks.length;
         return [
           2 /*return*/,
           {
@@ -1365,58 +1268,50 @@ var QualityController = /** @class */ (function () {
       });
     });
   };
-  QualityController.prototype.checkConsistency = function (measurements) {
+  QualityController.prototype.checkConsistency = (measurements) => {
     // Check if measurements are within expected ranges
-    return measurements.every(function (m) {
-      return m.confidence > 0.8;
-    });
+    return measurements.every((m) => m.confidence > 0.8);
   };
-  QualityController.prototype.checkImageQuality = function (beforeImage, afterImage) {
+  QualityController.prototype.checkImageQuality = (_beforeImage, _afterImage) => {
     // Check image quality metrics
     return true; // Simplified for now
   };
   return QualityController;
 })();
-var StatisticalAnalyzer = /** @class */ (function () {
+var StatisticalAnalyzer = /** @class */ (() => {
   function StatisticalAnalyzer() {}
   StatisticalAnalyzer.prototype.calculateComparisonScore = function (measurements) {
     return __awaiter(this, void 0, void 0, function () {
       var weightedSum, totalWeight;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         if (measurements.length === 0) return [2 /*return*/, 0];
-        weightedSum = measurements.reduce(function (sum, m) {
+        weightedSum = measurements.reduce((sum, m) => {
           var weight = m.confidence * m.clinicalRelevance;
           var improvement = Math.abs(m.changePercentage);
           return sum + improvement * weight;
         }, 0);
-        totalWeight = measurements.reduce(function (sum, m) {
-          return sum + m.confidence * m.clinicalRelevance;
-        }, 0);
+        totalWeight = measurements.reduce((sum, m) => sum + m.confidence * m.clinicalRelevance, 0);
         return [2 /*return*/, totalWeight > 0 ? Math.min(100, weightedSum / totalWeight) : 0];
       });
     });
   };
   return StatisticalAnalyzer;
 })();
-var ClinicalValidator = /** @class */ (function () {
+var ClinicalValidator = /** @class */ (() => {
   function ClinicalValidator() {}
-  ClinicalValidator.prototype.assessSignificance = function (measurements, treatmentType) {
+  ClinicalValidator.prototype.assessSignificance = function (measurements, _treatmentType) {
     return __awaiter(this, void 0, void 0, function () {
       var progressIndicators, overallSignificance;
-      return __generator(this, function (_a) {
-        progressIndicators = measurements.map(function (m) {
-          return {
-            metric: "".concat(m.type, "_change"),
-            currentValue: m.afterValue,
-            targetValue: m.beforeValue * 1.2, // 20% improvement target
-            progressPercentage: Math.abs(m.changePercentage),
-            trend: m.changeValue > 0 ? "improving" : m.changeValue < 0 ? "declining" : "stable",
-          };
-        });
+      return __generator(this, (_a) => {
+        progressIndicators = measurements.map((m) => ({
+          metric: "".concat(m.type, "_change"),
+          currentValue: m.afterValue,
+          targetValue: m.beforeValue * 1.2, // 20% improvement target
+          progressPercentage: Math.abs(m.changePercentage),
+          trend: m.changeValue > 0 ? "improving" : m.changeValue < 0 ? "declining" : "stable",
+        }));
         overallSignificance =
-          measurements.reduce(function (sum, m) {
-            return sum + m.clinicalRelevance;
-          }, 0) / measurements.length;
+          measurements.reduce((sum, m) => sum + m.clinicalRelevance, 0) / measurements.length;
         return [
           2 /*return*/,
           {
@@ -1439,9 +1334,9 @@ var ClinicalValidator = /** @class */ (function () {
       });
     });
   };
-  ClinicalValidator.prototype.validateMeasurements = function (measurementId, groundTruth) {
+  ClinicalValidator.prototype.validateMeasurements = function (_measurementId, _groundTruth) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Validate measurements against ground truth
         return [
           2 /*return*/,

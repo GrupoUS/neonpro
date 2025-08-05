@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RegulatoryDocumentsList = RegulatoryDocumentsList;
 var badge_1 = require("@/components/ui/badge");
@@ -148,7 +145,6 @@ var locale_1 = require("date-fns/locale");
 var lucide_react_1 = require("lucide-react");
 var react_1 = require("react");
 function RegulatoryDocumentsList(_a) {
-  var _this = this;
   var onCreateDocument = _a.onCreateDocument,
     onEditDocument = _a.onEditDocument,
     onViewDocument = _a.onViewDocument;
@@ -176,7 +172,7 @@ function RegulatoryDocumentsList(_a) {
   var _f = (0, use_regulatory_categories_1.useRegulatoryCategories)(),
     categories = _f.categories,
     authorities = _f.authorities;
-  var getStatusBadgeVariant = function (status) {
+  var getStatusBadgeVariant = (status) => {
     switch (status) {
       case "valid":
         return "default";
@@ -190,7 +186,7 @@ function RegulatoryDocumentsList(_a) {
         return "secondary";
     }
   };
-  var getDaysUntilExpiration = function (expirationDate) {
+  var getDaysUntilExpiration = (expirationDate) => {
     if (!expirationDate) return null;
     var expiration = new Date(expirationDate);
     var now = new Date();
@@ -198,9 +194,9 @@ function RegulatoryDocumentsList(_a) {
     var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
-  var handleDeleteDocument = function (id) {
-    return __awaiter(_this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+  var handleDeleteDocument = (id) =>
+    __awaiter(this, void 0, void 0, function () {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!window.confirm("Tem certeza que deseja excluir este documento?"))
@@ -214,7 +210,6 @@ function RegulatoryDocumentsList(_a) {
         }
       });
     });
-  };
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -241,9 +236,7 @@ function RegulatoryDocumentsList(_a) {
                 <input_1.Input
                   placeholder="Buscar por tipo, número ou nome do arquivo..."
                   value={search}
-                  onChange={function (e) {
-                    return setSearch(e.target.value);
-                  }}
+                  onChange={(e) => setSearch(e.target.value)}
                   className="pl-8"
                 />
               </div>
@@ -268,13 +261,11 @@ function RegulatoryDocumentsList(_a) {
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
                   <select_1.SelectItem value="">Todas as categorias</select_1.SelectItem>
-                  {categories.map(function (category) {
-                    return (
-                      <select_1.SelectItem key={category.id} value={category.name}>
-                        {category.name}
-                      </select_1.SelectItem>
-                    );
-                  })}
+                  {categories.map((category) => (
+                    <select_1.SelectItem key={category.id} value={category.name}>
+                      {category.name}
+                    </select_1.SelectItem>
+                  ))}
                 </select_1.SelectContent>
               </select_1.Select>
             </div>
@@ -310,7 +301,7 @@ function RegulatoryDocumentsList(_a) {
                 </card_1.CardContent>
               </card_1.Card>
             : <>
-                {documents.map(function (document) {
+                {documents.map((document) => {
                   var daysUntilExpiration = getDaysUntilExpiration(document.expiration_date);
                   var isExpiring = (0, regulatory_documents_1.isDocumentExpiring)(document);
                   var isExpired = (0, regulatory_documents_1.isDocumentExpired)(document);
@@ -388,9 +379,7 @@ function RegulatoryDocumentsList(_a) {
                               <button_1.Button
                                 variant="outline"
                                 size="sm"
-                                onClick={function () {
-                                  return onViewDocument(document.id);
-                                }}
+                                onClick={() => onViewDocument(document.id)}
                               >
                                 Ver
                               </button_1.Button>
@@ -399,9 +388,7 @@ function RegulatoryDocumentsList(_a) {
                               <button_1.Button
                                 variant="outline"
                                 size="sm"
-                                onClick={function () {
-                                  return onEditDocument(document.id);
-                                }}
+                                onClick={() => onEditDocument(document.id)}
                                 data-testid="edit-document-button"
                               >
                                 Editar
@@ -410,9 +397,7 @@ function RegulatoryDocumentsList(_a) {
                             <button_1.Button
                               variant="outline"
                               size="sm"
-                              onClick={function () {
-                                return handleDeleteDocument(document.id);
-                              }}
+                              onClick={() => handleDeleteDocument(document.id)}
                               data-testid="delete-document-button"
                               className="text-destructive hover:text-destructive"
                             >

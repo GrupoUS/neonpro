@@ -6,32 +6,31 @@
  * for safe enhancement implementation with rollback capability.
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -51,13 +50,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -79,9 +78,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -153,7 +150,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FeatureFlagManager = FeatureFlagManager;
 var react_1 = require("react");
@@ -167,7 +164,6 @@ var progress_1 = require("@/components/ui/progress");
 var lucide_react_1 = require("lucide-react");
 var sonner_1 = require("sonner");
 function FeatureFlagManager() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     flags = _a[0],
     setFlags = _a[1];
@@ -184,14 +180,14 @@ function FeatureFlagManager() {
     isCreating = _e[0],
     setIsCreating = _e[1];
   // Load feature flags on component mount
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadFeatureFlags();
     loadRolloutPlans();
   }, []);
-  var loadFeatureFlags = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadFeatureFlags = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -219,11 +215,10 @@ function FeatureFlagManager() {
         }
       });
     });
-  };
-  var loadRolloutPlans = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadRolloutPlans = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -247,11 +242,10 @@ function FeatureFlagManager() {
         }
       });
     });
-  };
-  var toggleFlag = function (flagId, enabled) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var toggleFlag = (flagId, enabled) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -266,13 +260,11 @@ function FeatureFlagManager() {
           case 1:
             response = _a.sent();
             if (response.ok) {
-              setFlags(function (prev) {
-                return prev.map(function (flag) {
-                  return flag.id === flagId
-                    ? __assign(__assign({}, flag), { enabled: enabled })
-                    : flag;
-                });
-              });
+              setFlags((prev) =>
+                prev.map((flag) =>
+                  flag.id === flagId ? __assign(__assign({}, flag), { enabled: enabled }) : flag,
+                ),
+              );
               sonner_1.toast.success("Feature flag ".concat(enabled ? "enabled" : "disabled"));
             } else {
               throw new Error("Failed to update feature flag");
@@ -288,11 +280,10 @@ function FeatureFlagManager() {
         }
       });
     });
-  };
-  var updateRolloutPercentage = function (flagId, percentage) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var updateRolloutPercentage = (flagId, percentage) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -307,13 +298,13 @@ function FeatureFlagManager() {
           case 1:
             response = _a.sent();
             if (response.ok) {
-              setFlags(function (prev) {
-                return prev.map(function (flag) {
-                  return flag.id === flagId
+              setFlags((prev) =>
+                prev.map((flag) =>
+                  flag.id === flagId
                     ? __assign(__assign({}, flag), { rollout_percentage: percentage })
-                    : flag;
-                });
-              });
+                    : flag,
+                ),
+              );
               sonner_1.toast.success("Rollout updated to ".concat(percentage, "%"));
             } else {
               throw new Error("Failed to update rollout percentage");
@@ -329,11 +320,10 @@ function FeatureFlagManager() {
         }
       });
     });
-  };
-  var quickRollout = function (flagId, percentage) {
+  var quickRollout = (flagId, percentage) => {
     updateRolloutPercentage(flagId, percentage);
   };
-  var getStatusBadge = function (flag) {
+  var getStatusBadge = (flag) => {
     if (!flag.enabled) {
       return <badge_1.Badge variant="secondary">Disabled</badge_1.Badge>;
     }
@@ -345,7 +335,7 @@ function FeatureFlagManager() {
     }
     return <badge_1.Badge variant="secondary">Gradual ({flag.rollout_percentage}%)</badge_1.Badge>;
   };
-  var getEnvironmentBadge = function (environment) {
+  var getEnvironmentBadge = (environment) => {
     var variants = {
       development: "outline",
       staging: "secondary",
@@ -378,11 +368,7 @@ function FeatureFlagManager() {
             Manage feature flags, gradual rollouts, and A/B testing for safe enhancement deployment
           </p>
         </div>
-        <button_1.Button
-          onClick={function () {
-            return setIsCreating(true);
-          }}
-        >
+        <button_1.Button onClick={() => setIsCreating(true)}>
           <lucide_react_1.Flag className="h-4 w-4 mr-2" />
           Create Flag
         </button_1.Button>
@@ -404,111 +390,92 @@ function FeatureFlagManager() {
                   <p className="text-muted-foreground mb-4">
                     Create your first feature flag to start managing gradual rollouts
                   </p>
-                  <button_1.Button
-                    onClick={function () {
-                      return setIsCreating(true);
-                    }}
-                  >
+                  <button_1.Button onClick={() => setIsCreating(true)}>
                     Create First Flag
                   </button_1.Button>
                 </card_1.CardContent>
               </card_1.Card>
             : <div className="grid gap-4">
-                {flags.map(function (flag) {
-                  return (
-                    <card_1.Card key={flag.id}>
-                      <card_1.CardHeader>
-                        <div className="flex justify-between items-start">
-                          <div className="space-y-1">
-                            <card_1.CardTitle className="text-lg">{flag.name}</card_1.CardTitle>
-                            <card_1.CardDescription>{flag.description}</card_1.CardDescription>
-                            <div className="flex gap-2">
-                              {getEnvironmentBadge(flag.environment)}
-                              {getStatusBadge(flag)}
-                              {flag.epic_id && (
-                                <badge_1.Badge variant="outline">Epic {flag.epic_id}</badge_1.Badge>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <label_1.Label htmlFor={"toggle-".concat(flag.id)} className="text-sm">
-                              {flag.enabled ? "Enabled" : "Disabled"}
-                            </label_1.Label>
-                            <switch_1.Switch
-                              id={"toggle-".concat(flag.id)}
-                              checked={flag.enabled}
-                              onCheckedChange={function (enabled) {
-                                return toggleFlag(flag.id, enabled);
-                              }}
-                            />
+                {flags.map((flag) => (
+                  <card_1.Card key={flag.id}>
+                    <card_1.CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <card_1.CardTitle className="text-lg">{flag.name}</card_1.CardTitle>
+                          <card_1.CardDescription>{flag.description}</card_1.CardDescription>
+                          <div className="flex gap-2">
+                            {getEnvironmentBadge(flag.environment)}
+                            {getStatusBadge(flag)}
+                            {flag.epic_id && (
+                              <badge_1.Badge variant="outline">Epic {flag.epic_id}</badge_1.Badge>
+                            )}
                           </div>
                         </div>
-                      </card_1.CardHeader>
-                      <card_1.CardContent>
-                        {flag.enabled && (
-                          <div className="space-y-4">
-                            <div>
-                              <div className="flex justify-between items-center mb-2">
-                                <label_1.Label className="text-sm font-medium">
-                                  Rollout Percentage
-                                </label_1.Label>
-                                <span className="text-sm text-muted-foreground">
-                                  {flag.rollout_percentage}%
-                                </span>
-                              </div>
-                              <progress_1.Progress
-                                value={flag.rollout_percentage}
-                                className="mb-2"
-                              />
-                              <div className="flex gap-2">
-                                <button_1.Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={function () {
-                                    return quickRollout(flag.id, 0);
-                                  }}
-                                  disabled={flag.rollout_percentage === 0}
-                                >
-                                  0%
-                                </button_1.Button>
-                                <button_1.Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={function () {
-                                    return quickRollout(flag.id, 10);
-                                  }}
-                                  disabled={flag.rollout_percentage === 10}
-                                >
-                                  10%
-                                </button_1.Button>
-                                <button_1.Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={function () {
-                                    return quickRollout(flag.id, 50);
-                                  }}
-                                  disabled={flag.rollout_percentage === 50}
-                                >
-                                  50%
-                                </button_1.Button>
-                                <button_1.Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={function () {
-                                    return quickRollout(flag.id, 100);
-                                  }}
-                                  disabled={flag.rollout_percentage === 100}
-                                >
-                                  100%
-                                </button_1.Button>
-                              </div>
+                        <div className="flex items-center space-x-2">
+                          <label_1.Label htmlFor={"toggle-".concat(flag.id)} className="text-sm">
+                            {flag.enabled ? "Enabled" : "Disabled"}
+                          </label_1.Label>
+                          <switch_1.Switch
+                            id={"toggle-".concat(flag.id)}
+                            checked={flag.enabled}
+                            onCheckedChange={(enabled) => toggleFlag(flag.id, enabled)}
+                          />
+                        </div>
+                      </div>
+                    </card_1.CardHeader>
+                    <card_1.CardContent>
+                      {flag.enabled && (
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between items-center mb-2">
+                              <label_1.Label className="text-sm font-medium">
+                                Rollout Percentage
+                              </label_1.Label>
+                              <span className="text-sm text-muted-foreground">
+                                {flag.rollout_percentage}%
+                              </span>
+                            </div>
+                            <progress_1.Progress value={flag.rollout_percentage} className="mb-2" />
+                            <div className="flex gap-2">
+                              <button_1.Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => quickRollout(flag.id, 0)}
+                                disabled={flag.rollout_percentage === 0}
+                              >
+                                0%
+                              </button_1.Button>
+                              <button_1.Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => quickRollout(flag.id, 10)}
+                                disabled={flag.rollout_percentage === 10}
+                              >
+                                10%
+                              </button_1.Button>
+                              <button_1.Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => quickRollout(flag.id, 50)}
+                                disabled={flag.rollout_percentage === 50}
+                              >
+                                50%
+                              </button_1.Button>
+                              <button_1.Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => quickRollout(flag.id, 100)}
+                                disabled={flag.rollout_percentage === 100}
+                              >
+                                100%
+                              </button_1.Button>
                             </div>
                           </div>
-                        )}
-                      </card_1.CardContent>
-                    </card_1.Card>
-                  );
-                })}
+                        </div>
+                      )}
+                    </card_1.CardContent>
+                  </card_1.Card>
+                ))}
               </div>}
         </tabs_1.TabsContent>
 
@@ -530,21 +497,19 @@ function FeatureFlagManager() {
                     </p>
                   </div>
                 : <div className="space-y-4">
-                    {rolloutPlans.map(function (plan) {
-                      return (
-                        <div key={plan.id} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-center">
-                            <div>
-                              <h4 className="font-medium">Target: {plan.target_percentage}%</h4>
-                              <p className="text-sm text-muted-foreground">
-                                Started: {new Date(plan.start_date).toLocaleDateString()}
-                              </p>
-                            </div>
-                            <badge_1.Badge>{plan.status}</badge_1.Badge>
+                    {rolloutPlans.map((plan) => (
+                      <div key={plan.id} className="border rounded-lg p-4">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h4 className="font-medium">Target: {plan.target_percentage}%</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Started: {new Date(plan.start_date).toLocaleDateString()}
+                            </p>
                           </div>
+                          <badge_1.Badge>{plan.status}</badge_1.Badge>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>}
             </card_1.CardContent>
           </card_1.Card>

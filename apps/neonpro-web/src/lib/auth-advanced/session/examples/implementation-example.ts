@@ -3,11 +3,11 @@
 // NeonPro - Session Management & Security
 // ============================================================================
 
-import type { SessionSystem } from "../index";
 import type { createClient } from "@supabase/supabase-js";
 import Redis from "ioredis";
 import type { NextRequest, NextResponse } from "next/server";
-import type { UserSession, SessionConfig, DeviceFingerprint, SessionLocation } from "../types";
+import type { SessionSystem } from "../index";
+import type { DeviceFingerprint, SessionConfig, SessionLocation, UserSession } from "../types";
 
 // ============================================================================
 // CONFIGURATION SETUP

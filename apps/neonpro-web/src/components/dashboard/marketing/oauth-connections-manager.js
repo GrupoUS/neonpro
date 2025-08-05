@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,10 +143,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -158,7 +155,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OAuthConnectionsManager = OAuthConnectionsManager;
 var react_1 = require("react");
@@ -210,7 +207,6 @@ var PLATFORM_CONFIGS = [
   },
 ];
 function OAuthConnectionsManager() {
-  var _this = this;
   var _a = (0, react_1.useState)([]),
     connections = _a[0],
     setConnections = _a[1];
@@ -232,14 +228,14 @@ function OAuthConnectionsManager() {
   var _g = (0, react_1.useState)(null),
     connectingPlatform = _g[0],
     setConnectingPlatform = _g[1];
-  (0, react_1.useEffect)(function () {
+  (0, react_1.useEffect)(() => {
     loadConnections();
     loadStats();
   }, []);
-  var loadConnections = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadConnections = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, 5, 6]);
@@ -267,11 +263,10 @@ function OAuthConnectionsManager() {
         }
       });
     });
-  };
-  var loadStats = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadStats = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 4, , 5]);
@@ -295,11 +290,10 @@ function OAuthConnectionsManager() {
         }
       });
     });
-  };
-  var initiateOAuthFlow = function (platform) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var initiateOAuthFlow = (platform) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, data, error_3;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setConnectingPlatform(platform);
@@ -337,11 +331,10 @@ function OAuthConnectionsManager() {
         }
       });
     });
-  };
-  var refreshConnection = function (connectionId, platform) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var refreshConnection = (connectionId, platform) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_4;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             setRefreshing(connectionId);
@@ -378,11 +371,10 @@ function OAuthConnectionsManager() {
         }
       });
     });
-  };
-  var toggleSync = function (connectionId, enabled) {
-    return __awaiter(_this, void 0, void 0, function () {
+  var toggleSync = (connectionId, enabled) =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_5;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -397,13 +389,13 @@ function OAuthConnectionsManager() {
           case 1:
             response = _a.sent();
             if (response.ok) {
-              setConnections(function (prev) {
-                return prev.map(function (conn) {
-                  return conn.id === connectionId
+              setConnections((prev) =>
+                prev.map((conn) =>
+                  conn.id === connectionId
                     ? __assign(__assign({}, conn), { sync_enabled: enabled })
-                    : conn;
-                });
-              });
+                    : conn,
+                ),
+              );
               sonner_1.toast.success(
                 "Sync ".concat(enabled ? "enabled" : "disabled", " successfully"),
               );
@@ -421,11 +413,10 @@ function OAuthConnectionsManager() {
         }
       });
     });
-  };
-  var deleteConnection = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var deleteConnection = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, error_6;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedConnection) return [2 /*return*/];
@@ -467,8 +458,7 @@ function OAuthConnectionsManager() {
         }
       });
     });
-  };
-  var getStatusBadge = function (status) {
+  var getStatusBadge = (status) => {
     switch (status) {
       case "active":
         return (
@@ -495,7 +485,7 @@ function OAuthConnectionsManager() {
         return <badge_1.Badge variant="secondary">Inactive</badge_1.Badge>;
     }
   };
-  var getTokenExpirationStatus = function (expiresAt) {
+  var getTokenExpirationStatus = (expiresAt) => {
     if (!expiresAt) return null;
     var now = new Date();
     var expiration = new Date(expiresAt);
@@ -511,19 +501,16 @@ function OAuthConnectionsManager() {
     var daysUntilExpiration = Math.round(hoursUntilExpiration / 24);
     return <div className="text-sm text-gray-500">Expires in {daysUntilExpiration} days</div>;
   };
-  var getPlatformConfig = function (platform) {
-    return PLATFORM_CONFIGS.find(function (config) {
-      return config.platform === platform;
-    });
-  };
+  var getPlatformConfig = (platform) =>
+    PLATFORM_CONFIGS.find((config) => config.platform === platform);
   if (loading) {
     return (
       <div className="space-y-4">
         <div className="h-8 bg-gray-200 rounded animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {__spreadArray([], Array(4), true).map(function (_, i) {
-            return <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />;
-          })}
+          {__spreadArray([], Array(4), true).map((_, i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded animate-pulse" />
+          ))}
         </div>
       </div>
     );
@@ -593,10 +580,8 @@ function OAuthConnectionsManager() {
         </card_1.CardHeader>
         <card_1.CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {PLATFORM_CONFIGS.map(function (config) {
-              var isConnected = connections.some(function (conn) {
-                return conn.platform === config.platform;
-              });
+            {PLATFORM_CONFIGS.map((config) => {
+              var isConnected = connections.some((conn) => conn.platform === config.platform);
               var Icon = config.icon;
               return (
                 <card_1.Card
@@ -623,9 +608,7 @@ function OAuthConnectionsManager() {
                         </badge_1.Badge>
                       : <button_1.Button
                           size="sm"
-                          onClick={function () {
-                            return initiateOAuthFlow(config.platform);
-                          }}
+                          onClick={() => initiateOAuthFlow(config.platform)}
                           disabled={connectingPlatform === config.platform}
                           className="w-full"
                         >
@@ -653,7 +636,7 @@ function OAuthConnectionsManager() {
           </card_1.CardHeader>
           <card_1.CardContent>
             <div className="space-y-4">
-              {connections.map(function (connection) {
+              {connections.map((connection) => {
                 var config = getPlatformConfig(connection.platform);
                 if (!config) return null;
                 var Icon = config.icon;
@@ -700,9 +683,7 @@ function OAuthConnectionsManager() {
                         <span className="text-sm text-gray-600">Sync</span>
                         <switch_1.Switch
                           checked={connection.sync_enabled}
-                          onCheckedChange={function (enabled) {
-                            return toggleSync(connection.id, enabled);
-                          }}
+                          onCheckedChange={(enabled) => toggleSync(connection.id, enabled)}
                         />
                       </div>
 
@@ -714,9 +695,7 @@ function OAuthConnectionsManager() {
                         </dropdown_menu_1.DropdownMenuTrigger>
                         <dropdown_menu_1.DropdownMenuContent align="end">
                           <dropdown_menu_1.DropdownMenuItem
-                            onClick={function () {
-                              return refreshConnection(connection.id, connection.platform);
-                            }}
+                            onClick={() => refreshConnection(connection.id, connection.platform)}
                             disabled={refreshing === connection.id}
                           >
                             <lucide_react_1.RefreshCw
@@ -736,7 +715,7 @@ function OAuthConnectionsManager() {
                           </dropdown_menu_1.DropdownMenuItem>
                           <separator_1.Separator />
                           <dropdown_menu_1.DropdownMenuItem
-                            onClick={function () {
+                            onClick={() => {
                               setSelectedConnection(connection);
                               setShowDeleteDialog(true);
                             }}
@@ -772,12 +751,7 @@ function OAuthConnectionsManager() {
             </dialog_1.DialogDescription>
           </dialog_1.DialogHeader>
           <dialog_1.DialogFooter>
-            <button_1.Button
-              variant="outline"
-              onClick={function () {
-                return setShowDeleteDialog(false);
-              }}
-            >
+            <button_1.Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
               Cancel
             </button_1.Button>
             <button_1.Button variant="destructive" onClick={deleteConnection}>

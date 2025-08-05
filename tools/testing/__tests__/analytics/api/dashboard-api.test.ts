@@ -1,4 +1,4 @@
-import { describe, expect, test, beforeEach, afterEach, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, expect, jest, test } from "@jest/globals";
 import { NextRequest } from "next/server";
 import { GET, POST } from "@/app/api/analytics/dashboard/route";
 import { createClient } from "@/utils/supabase/server";
@@ -162,7 +162,7 @@ describe("Analytics Dashboard API Routes", () => {
 
       // Act
       const responses = await Promise.all(requests);
-      const lastResponse = responses[responses.length - 1];
+      const _lastResponse = responses[responses.length - 1];
 
       // Assert
       // At least one request should be rate limited (this is implementation-dependent)

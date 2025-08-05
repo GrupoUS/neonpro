@@ -5,32 +5,31 @@
  * Quality: ≥9.5/10 (VOIDBEAST + Unified System enforced)
  */
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var stripe_js_1 = require("@stripe/stripe-js");
@@ -187,13 +184,12 @@ var cardPaymentSchema = zod_1.z.object({
   patientId: zod_1.z.string().uuid().optional(),
 });
 // Utility functions
-var formatCurrency = function (amount) {
-  return new Intl.NumberFormat("pt-BR", {
+var formatCurrency = (amount) =>
+  new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
   }).format(amount / 100);
-};
-var isValidCPF = function (cpf) {
+var isValidCPF = (cpf) => {
   cpf = cpf.replace(/[^\d]/g, "");
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
   var sum = 0;
@@ -211,7 +207,7 @@ var isValidCPF = function (cpf) {
   if (remainder === 10 || remainder === 11) remainder = 0;
   return remainder === parseInt(cpf.charAt(10));
 };
-var isValidCNPJ = function (cnpj) {
+var isValidCNPJ = (cnpj) => {
   cnpj = cnpj.replace(/[^\d]/g, "");
   if (cnpj.length !== 14) return false;
   var weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -230,11 +226,11 @@ var isValidCNPJ = function (cnpj) {
   var digit2 = remainder < 2 ? 0 : 11 - remainder;
   return digit1 === parseInt(cnpj.charAt(12)) && digit2 === parseInt(cnpj.charAt(13));
 };
-var isValidDocument = function (document) {
+var isValidDocument = (document) => {
   var cleanDoc = document.replace(/[^\d]/g, "");
   return cleanDoc.length === 11 ? isValidCPF(cleanDoc) : isValidCNPJ(cleanDoc);
 };
-var isValidEmail = function (email) {
+var isValidEmail = (email) => {
   var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
@@ -255,7 +251,7 @@ var cardElementOptions = {
   hidePostalCode: true,
 };
 // Payment Form Component
-var PaymentForm = function (_a) {
+var PaymentForm = (_a) => {
   var _b;
   var amount = _a.amount,
     description = _a.description,
@@ -309,7 +305,7 @@ var PaymentForm = function (_a) {
     ? Math.ceil(totalWithInterest / formData.installments)
     : amount;
   // Validate form
-  var validateForm = function () {
+  var validateForm = () => {
     var newErrors = {};
     if (!formData.customer.name.trim()) {
       newErrors.name = "Nome é obrigatório";
@@ -334,8 +330,8 @@ var PaymentForm = function (_a) {
     return Object.keys(newErrors).length === 0;
   };
   // Handle form submission
-  var handleSubmit = function (event) {
-    return __awaiter(void 0, void 0, void 0, function () {
+  var handleSubmit = (event) =>
+    __awaiter(void 0, void 0, void 0, function () {
       var response,
         errorData,
         _a,
@@ -348,7 +344,7 @@ var PaymentForm = function (_a) {
         error_1,
         errorMessage;
       var _c;
-      return __generator(this, function (_d) {
+      return __generator(this, (_d) => {
         switch (_d.label) {
           case 0:
             event.preventDefault();
@@ -379,7 +375,7 @@ var PaymentForm = function (_a) {
             ];
           case 2:
             response = _d.sent();
-            if (!!response.ok) return [3 /*break*/, 4];
+            if (response.ok) return [3 /*break*/, 4];
             return [4 /*yield*/, response.json()];
           case 3:
             errorData = _d.sent();
@@ -447,21 +443,20 @@ var PaymentForm = function (_a) {
         }
       });
     });
-  };
   // Handle card element changes
-  var handleCardChange = function (event) {
+  var handleCardChange = (event) => {
     setCardComplete(event.complete);
     setCardError(event.error ? event.error.message : null);
   };
   // Update form data
-  var updateFormData = function (field, value) {
-    setFormData(function (prev) {
+  var updateFormData = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), ((_a = {}), (_a[field] = value), _a));
     });
   };
-  var updateCustomerData = function (field, value) {
-    setFormData(function (prev) {
+  var updateCustomerData = (field, value) => {
+    setFormData((prev) => {
       var _a;
       return __assign(__assign({}, prev), {
         customer: __assign(__assign({}, prev.customer), ((_a = {}), (_a[field] = value), _a)),
@@ -516,9 +511,7 @@ var PaymentForm = function (_a) {
                   id="name"
                   type="text"
                   value={formData.customer.name}
-                  onChange={function (e) {
-                    return updateCustomerData("name", e.target.value);
-                  }}
+                  onChange={(e) => updateCustomerData("name", e.target.value)}
                   placeholder="Digite o nome completo"
                   className={errors.name ? "border-red-500" : ""}
                 />
@@ -531,9 +524,7 @@ var PaymentForm = function (_a) {
                   id="email"
                   type="email"
                   value={formData.customer.email}
-                  onChange={function (e) {
-                    return updateCustomerData("email", e.target.value);
-                  }}
+                  onChange={(e) => updateCustomerData("email", e.target.value)}
                   placeholder="Digite o e-mail"
                   className={errors.email ? "border-red-500" : ""}
                 />
@@ -546,9 +537,7 @@ var PaymentForm = function (_a) {
                   id="document"
                   type="text"
                   value={formData.customer.document}
-                  onChange={function (e) {
-                    return updateCustomerData("document", e.target.value);
-                  }}
+                  onChange={(e) => updateCustomerData("document", e.target.value)}
                   placeholder="Digite o CPF ou CNPJ"
                   className={errors.document ? "border-red-500" : ""}
                 />
@@ -561,9 +550,7 @@ var PaymentForm = function (_a) {
                   id="phone"
                   type="tel"
                   value={formData.customer.phone}
-                  onChange={function (e) {
-                    return updateCustomerData("phone", e.target.value);
-                  }}
+                  onChange={(e) => updateCustomerData("phone", e.target.value)}
                   placeholder="(11) 99999-9999"
                 />
               </div>
@@ -582,17 +569,13 @@ var PaymentForm = function (_a) {
                 value={
                   (_b = formData.installments) === null || _b === void 0 ? void 0 : _b.toString()
                 }
-                onValueChange={function (value) {
-                  return updateFormData("installments", parseInt(value));
-                }}
+                onValueChange={(value) => updateFormData("installments", parseInt(value))}
               >
                 <select_1.SelectTrigger>
                   <select_1.SelectValue placeholder="Selecione o parcelamento" />
                 </select_1.SelectTrigger>
                 <select_1.SelectContent>
-                  {Array.from({ length: 12 }, function (_, i) {
-                    return i + 1;
-                  }).map(function (installment) {
+                  {Array.from({ length: 12 }, (_, i) => i + 1).map((installment) => {
                     var installmentAmountCalc =
                       installment === 1
                         ? amount
@@ -622,9 +605,7 @@ var PaymentForm = function (_a) {
               <checkbox_1.Checkbox
                 id="savePaymentMethod"
                 checked={formData.savePaymentMethod}
-                onCheckedChange={function (checked) {
-                  return updateFormData("savePaymentMethod", checked);
-                }}
+                onCheckedChange={(checked) => updateFormData("savePaymentMethod", checked)}
               />
               <label_1.Label htmlFor="savePaymentMethod" className="text-sm">
                 Salvar dados do cartão para próximos pagamentos
@@ -741,7 +722,7 @@ var PaymentForm = function (_a) {
   );
 };
 // Main Component with Stripe Provider
-var CardPaymentForm = function (props) {
+var CardPaymentForm = (props) => {
   var options = {
     appearance: {
       theme: "stripe",

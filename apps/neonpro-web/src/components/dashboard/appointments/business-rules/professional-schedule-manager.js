@@ -1,30 +1,29 @@
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -44,13 +43,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -72,9 +71,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -146,7 +143,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProfessionalScheduleManager = ProfessionalScheduleManager;
 var badge_1 = require("@/components/ui/badge");
@@ -169,7 +166,6 @@ var DAYS_OF_WEEK = [
   { value: 6, label: "Sábado", short: "Sáb" },
 ];
 function ProfessionalScheduleManager(_a) {
-  var _this = this;
   var professionalId = _a.professionalId,
     _b = _a.professionalName,
     professionalName = _b === void 0 ? "Professional" : _b,
@@ -197,16 +193,13 @@ function ProfessionalScheduleManager(_a) {
     globalSettings = _g[0],
     setGlobalSettings = _g[1];
   // Initialize schedules for all days if not exist
-  (0, react_1.useEffect)(
-    function () {
-      initializeSchedules();
-    },
-    [professionalId, clinicId],
-  );
-  var initializeSchedules = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    initializeSchedules();
+  }, [professionalId, clinicId]);
+  var initializeSchedules = () =>
+    __awaiter(this, void 0, void 0, function () {
       var response, existingSchedules, defaultSchedules, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 5, 6, 7]);
@@ -221,25 +214,23 @@ function ProfessionalScheduleManager(_a) {
             setSchedules(existingSchedules);
             return [3 /*break*/, 4];
           case 3:
-            defaultSchedules = DAYS_OF_WEEK.map(function (day) {
-              return {
-                id: "temp-".concat(day.value),
-                professional_id: professionalId,
-                clinic_id: clinicId,
-                day_of_week: day.value,
-                start_time: day.value >= 1 && day.value <= 5 ? "08:00" : "09:00", // Earlier start on weekdays
-                end_time: day.value >= 1 && day.value <= 5 ? "18:00" : "17:00",
-                break_start_time: "12:00",
-                break_end_time: "13:00",
-                is_available: day.value >= 1 && day.value <= 5, // Only weekdays available by default
-                max_appointments_per_hour: 4,
-                buffer_minutes_between: 15,
-                min_booking_notice_hours: 2,
-                max_booking_days_ahead: 90,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-              };
-            });
+            defaultSchedules = DAYS_OF_WEEK.map((day) => ({
+              id: "temp-".concat(day.value),
+              professional_id: professionalId,
+              clinic_id: clinicId,
+              day_of_week: day.value,
+              start_time: day.value >= 1 && day.value <= 5 ? "08:00" : "09:00", // Earlier start on weekdays
+              end_time: day.value >= 1 && day.value <= 5 ? "18:00" : "17:00",
+              break_start_time: "12:00",
+              break_end_time: "13:00",
+              is_available: day.value >= 1 && day.value <= 5, // Only weekdays available by default
+              max_appointments_per_hour: 4,
+              buffer_minutes_between: 15,
+              min_booking_notice_hours: 2,
+              max_booking_days_ahead: 90,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            }));
             setSchedules(defaultSchedules);
             _a.label = 4;
           case 4:
@@ -257,40 +248,37 @@ function ProfessionalScheduleManager(_a) {
         }
       });
     });
-  };
-  var updateSchedule = function (dayOfWeek, updates) {
-    setSchedules(function (prev) {
-      return prev.map(function (schedule) {
-        return schedule.day_of_week === dayOfWeek
+  var updateSchedule = (dayOfWeek, updates) => {
+    setSchedules((prev) =>
+      prev.map((schedule) =>
+        schedule.day_of_week === dayOfWeek
           ? __assign(__assign(__assign({}, schedule), updates), {
               updated_at: new Date().toISOString(),
             })
-          : schedule;
-      });
-    });
+          : schedule,
+      ),
+    );
   };
-  var saveSchedules = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var saveSchedules = () =>
+    __awaiter(this, void 0, void 0, function () {
       var config, response, error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, 3, 4]);
             setIsSaving(true);
             config = {
               professional_id: professionalId,
-              schedules: schedules.map(function (s) {
-                return {
-                  day_of_week: s.day_of_week,
-                  start_time: s.start_time,
-                  end_time: s.end_time,
-                  break_start_time: s.break_start_time,
-                  break_end_time: s.break_end_time,
-                  is_available: s.is_available,
-                  max_appointments_per_hour: s.max_appointments_per_hour,
-                  buffer_minutes_between: s.buffer_minutes_between,
-                };
-              }),
+              schedules: schedules.map((s) => ({
+                day_of_week: s.day_of_week,
+                start_time: s.start_time,
+                end_time: s.end_time,
+                break_start_time: s.break_start_time,
+                break_end_time: s.break_end_time,
+                is_available: s.is_available,
+                max_appointments_per_hour: s.max_appointments_per_hour,
+                buffer_minutes_between: s.buffer_minutes_between,
+              })),
               default_settings: globalSettings,
             };
             return [
@@ -324,15 +312,12 @@ function ProfessionalScheduleManager(_a) {
         }
       });
     });
-  };
-  var copyScheduleToAll = function (sourceDay) {
-    var sourceSchedule = schedules.find(function (s) {
-      return s.day_of_week === sourceDay;
-    });
+  var copyScheduleToAll = (sourceDay) => {
+    var sourceSchedule = schedules.find((s) => s.day_of_week === sourceDay);
     if (!sourceSchedule) return;
-    setSchedules(function (prev) {
-      return prev.map(function (schedule) {
-        return __assign(__assign({}, schedule), {
+    setSchedules((prev) =>
+      prev.map((schedule) =>
+        __assign(__assign({}, schedule), {
           start_time: sourceSchedule.start_time,
           end_time: sourceSchedule.end_time,
           break_start_time: sourceSchedule.break_start_time,
@@ -340,9 +325,9 @@ function ProfessionalScheduleManager(_a) {
           max_appointments_per_hour: sourceSchedule.max_appointments_per_hour,
           buffer_minutes_between: sourceSchedule.buffer_minutes_between,
           updated_at: new Date().toISOString(),
-        });
-      });
-    });
+        }),
+      ),
+    );
     sonner_1.toast.success("Horário copiado para todos os dias");
   };
   if (isLoading) {
@@ -374,10 +359,8 @@ function ProfessionalScheduleManager(_a) {
 
           <tabs_1.TabsContent value="schedule" className="space-y-4">
             <div className="grid gap-4">
-              {DAYS_OF_WEEK.map(function (day) {
-                var schedule = schedules.find(function (s) {
-                  return s.day_of_week === day.value;
-                });
+              {DAYS_OF_WEEK.map((day) => {
+                var schedule = schedules.find((s) => s.day_of_week === day.value);
                 if (!schedule) return null;
                 return (
                   <card_1.Card
@@ -395,18 +378,16 @@ function ProfessionalScheduleManager(_a) {
                         <div className="flex items-center gap-2">
                           <switch_1.Switch
                             checked={schedule.is_available}
-                            onCheckedChange={function (checked) {
-                              return updateSchedule(day.value, {
+                            onCheckedChange={(checked) =>
+                              updateSchedule(day.value, {
                                 is_available: checked,
-                              });
-                            }}
+                              })
+                            }
                           />
                           <button_1.Button
                             variant="ghost"
                             size="sm"
-                            onClick={function () {
-                              return copyScheduleToAll(day.value);
-                            }}
+                            onClick={() => copyScheduleToAll(day.value)}
                             title="Copiar para todos os dias"
                           >
                             <lucide_react_1.Plus className="h-3 w-3" />
@@ -424,11 +405,11 @@ function ProfessionalScheduleManager(_a) {
                               id={"start-".concat(day.value)}
                               type="time"
                               value={schedule.start_time}
-                              onChange={function (e) {
-                                return updateSchedule(day.value, {
+                              onChange={(e) =>
+                                updateSchedule(day.value, {
                                   start_time: e.target.value,
-                                });
-                              }}
+                                })
+                              }
                             />
                           </div>
                           <div>
@@ -437,11 +418,11 @@ function ProfessionalScheduleManager(_a) {
                               id={"end-".concat(day.value)}
                               type="time"
                               value={schedule.end_time}
-                              onChange={function (e) {
-                                return updateSchedule(day.value, {
+                              onChange={(e) =>
+                                updateSchedule(day.value, {
                                   end_time: e.target.value,
-                                });
-                              }}
+                                })
+                              }
                             />
                           </div>
                           <div>
@@ -452,11 +433,11 @@ function ProfessionalScheduleManager(_a) {
                               id={"break-start-".concat(day.value)}
                               type="time"
                               value={schedule.break_start_time || ""}
-                              onChange={function (e) {
-                                return updateSchedule(day.value, {
+                              onChange={(e) =>
+                                updateSchedule(day.value, {
                                   break_start_time: e.target.value || undefined,
-                                });
-                              }}
+                                })
+                              }
                             />
                           </div>
                           <div>
@@ -467,11 +448,11 @@ function ProfessionalScheduleManager(_a) {
                               id={"break-end-".concat(day.value)}
                               type="time"
                               value={schedule.break_end_time || ""}
-                              onChange={function (e) {
-                                return updateSchedule(day.value, {
+                              onChange={(e) =>
+                                updateSchedule(day.value, {
                                   break_end_time: e.target.value || undefined,
-                                });
-                              }}
+                                })
+                              }
                             />
                           </div>
                         </div>
@@ -502,13 +483,13 @@ function ProfessionalScheduleManager(_a) {
                         min="0"
                         max="168"
                         value={globalSettings.min_booking_notice_hours}
-                        onChange={function (e) {
-                          return setGlobalSettings(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setGlobalSettings((prev) =>
+                            __assign(__assign({}, prev), {
                               min_booking_notice_hours: parseInt(e.target.value) || 0,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                     <div>
@@ -519,13 +500,13 @@ function ProfessionalScheduleManager(_a) {
                         min="1"
                         max="365"
                         value={globalSettings.max_booking_days_ahead}
-                        onChange={function (e) {
-                          return setGlobalSettings(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setGlobalSettings((prev) =>
+                            __assign(__assign({}, prev), {
                               max_booking_days_ahead: parseInt(e.target.value) || 1,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                     <div>
@@ -538,13 +519,13 @@ function ProfessionalScheduleManager(_a) {
                         min="0"
                         max="120"
                         value={globalSettings.buffer_minutes_between}
-                        onChange={function (e) {
-                          return setGlobalSettings(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setGlobalSettings((prev) =>
+                            __assign(__assign({}, prev), {
                               buffer_minutes_between: parseInt(e.target.value) || 0,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                     <div>
@@ -555,13 +536,13 @@ function ProfessionalScheduleManager(_a) {
                         min="1"
                         max="20"
                         value={globalSettings.max_appointments_per_hour}
-                        onChange={function (e) {
-                          return setGlobalSettings(function (prev) {
-                            return __assign(__assign({}, prev), {
+                        onChange={(e) =>
+                          setGlobalSettings((prev) =>
+                            __assign(__assign({}, prev), {
                               max_appointments_per_hour: parseInt(e.target.value) || 1,
-                            });
-                          });
-                        }}
+                            }),
+                          )
+                        }
                       />
                     </div>
                   </div>
@@ -579,12 +560,7 @@ function ProfessionalScheduleManager(_a) {
                   <div className="space-y-2 text-sm">
                     <p>
                       <strong>Dias disponíveis:</strong>{" "}
-                      {
-                        schedules.filter(function (s) {
-                          return s.is_available;
-                        }).length
-                      }{" "}
-                      de 7
+                      {schedules.filter((s) => s.is_available).length} de 7
                     </p>
                     <p>
                       <strong>Aviso mínimo:</strong> {globalSettings.min_booking_notice_hours} horas

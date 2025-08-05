@@ -3,13 +3,13 @@
 // Story 1.4 - OAuth Google Integration Enhancement
 // Created: 2025-07-22
 
-import type { createClient } from "@/lib/supabase/server";
 import type { NextRequest, NextResponse } from "next/server";
 import type {
-  ROLE_HIERARCHY,
-  checkPermission,
   canManageTargetRole,
+  checkPermission,
+  ROLE_HIERARCHY,
 } from "@/app/api/roles/permissions/route";
+import type { createClient } from "@/lib/supabase/server";
 
 export interface RoleValidationOptions {
   requiredRole?: string[];

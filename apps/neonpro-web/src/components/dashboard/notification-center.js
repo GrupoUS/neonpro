@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationCenter = NotificationCenter;
 var react_1 = require("react");
@@ -173,7 +170,7 @@ function NotificationItem(_a) {
   var Icon = notificationIcons[notification.type] || lucide_react_1.Bell;
   var isRead = !!notification.read_at;
   var isExpired = notification.expires_at && new Date(notification.expires_at) < new Date();
-  var handleClick = function () {
+  var handleClick = () => {
     if (!isRead) {
       onRead(notification.id);
     }
@@ -265,7 +262,7 @@ function NotificationItem(_a) {
               <dropdown_menu_1.DropdownMenuContent align="end">
                 {!isRead && (
                   <dropdown_menu_1.DropdownMenuItem
-                    onClick={function (e) {
+                    onClick={(e) => {
                       e.stopPropagation();
                       onRead(notification.id);
                     }}
@@ -275,7 +272,7 @@ function NotificationItem(_a) {
                   </dropdown_menu_1.DropdownMenuItem>
                 )}
                 <dropdown_menu_1.DropdownMenuItem
-                  onClick={function (e) {
+                  onClick={(e) => {
                     e.stopPropagation();
                     onDelete(notification.id);
                   }}
@@ -293,7 +290,6 @@ function NotificationItem(_a) {
   );
 }
 function NotificationCenter(_a) {
-  var _this = this;
   var className = _a.className,
     _b = _a.variant,
     variant = _b === void 0 ? "popover" : _b,
@@ -317,24 +313,22 @@ function NotificationCenter(_a) {
     getNotificationsByType = _f.getNotificationsByType,
     getUnreadNotifications = _f.getUnreadNotifications;
   // Filter notifications
-  var filteredNotifications = (function () {
+  var filteredNotifications = (() => {
     var filtered = notifications;
     if (showOnlyUnread) {
       filtered = getUnreadNotifications();
     }
     if (filterType !== "all") {
-      filtered = filtered.filter(function (notif) {
-        return notif.type === filterType;
-      });
+      filtered = filtered.filter((notif) => notif.type === filterType);
     }
     return filtered;
   })();
   var isEmpty = filteredNotifications.length === 0;
   var hasUnread = unreadCount > 0;
-  var handleMarkAllRead = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleMarkAllRead = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -351,11 +345,10 @@ function NotificationCenter(_a) {
         }
       });
     });
-  };
-  var handleRefresh = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleRefresh = () =>
+    __awaiter(this, void 0, void 0, function () {
       var error_2;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2, , 3]);
@@ -372,53 +365,43 @@ function NotificationCenter(_a) {
         }
       });
     });
-  };
-  var NotificationList = function () {
-    return (
-      <div className="space-y-1">
-        {isLoading
-          ? <div className="flex justify-center p-4">
-              <lucide_react_1.RefreshCw className="h-4 w-4 animate-spin" />
+  var NotificationList = () => (
+    <div className="space-y-1">
+      {isLoading
+        ? <div className="flex justify-center p-4">
+            <lucide_react_1.RefreshCw className="h-4 w-4 animate-spin" />
+          </div>
+        : error
+          ? <div className="text-center p-4 text-red-600">
+              <p className="text-sm">{error}</p>
+              <button_1.Button variant="outline" size="sm" onClick={handleRefresh} className="mt-2">
+                Tentar novamente
+              </button_1.Button>
             </div>
-          : error
-            ? <div className="text-center p-4 text-red-600">
-                <p className="text-sm">{error}</p>
-                <button_1.Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRefresh}
-                  className="mt-2"
-                >
-                  Tentar novamente
-                </button_1.Button>
+          : isEmpty
+            ? <div className="text-center p-6">
+                <lucide_react_1.Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground">
+                  {showOnlyUnread ? "Nenhuma notificação não lida" : "Nenhuma notificação"}
+                </p>
               </div>
-            : isEmpty
-              ? <div className="text-center p-6">
-                  <lucide_react_1.Bell className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">
-                    {showOnlyUnread ? "Nenhuma notificação não lida" : "Nenhuma notificação"}
-                  </p>
-                </div>
-              : <scroll_area_1.ScrollArea className={"".concat(maxHeight)}>
-                  {filteredNotifications.map(function (notification, index) {
-                    return (
-                      <div key={notification.id}>
-                        <NotificationItem
-                          notification={notification}
-                          onRead={markAsRead}
-                          onDelete={deleteNotification}
-                          compact={variant === "popover"}
-                        />
-                        {index < filteredNotifications.length - 1 && (
-                          <separator_1.Separator className="my-1" />
-                        )}
-                      </div>
-                    );
-                  })}
-                </scroll_area_1.ScrollArea>}
-      </div>
-    );
-  };
+            : <scroll_area_1.ScrollArea className={"".concat(maxHeight)}>
+                {filteredNotifications.map((notification, index) => (
+                  <div key={notification.id}>
+                    <NotificationItem
+                      notification={notification}
+                      onRead={markAsRead}
+                      onDelete={deleteNotification}
+                      compact={variant === "popover"}
+                    />
+                    {index < filteredNotifications.length - 1 && (
+                      <separator_1.Separator className="my-1" />
+                    )}
+                  </div>
+                ))}
+              </scroll_area_1.ScrollArea>}
+    </div>
+  );
   if (variant === "popover") {
     return (
       <popover_1.Popover>
@@ -500,39 +483,27 @@ function NotificationCenter(_a) {
                 <dropdown_menu_1.DropdownMenuLabel>
                   Tipo de notificação
                 </dropdown_menu_1.DropdownMenuLabel>
-                <dropdown_menu_1.DropdownMenuItem
-                  onClick={function () {
-                    return setFilterType("all");
-                  }}
-                >
+                <dropdown_menu_1.DropdownMenuItem onClick={() => setFilterType("all")}>
                   Todas
                 </dropdown_menu_1.DropdownMenuItem>
                 <dropdown_menu_1.DropdownMenuItem
-                  onClick={function () {
-                    return setFilterType("appointment_confirmed");
-                  }}
+                  onClick={() => setFilterType("appointment_confirmed")}
                 >
                   Confirmações
                 </dropdown_menu_1.DropdownMenuItem>
                 <dropdown_menu_1.DropdownMenuItem
-                  onClick={function () {
-                    return setFilterType("appointment_reminder");
-                  }}
+                  onClick={() => setFilterType("appointment_reminder")}
                 >
                   Lembretes
                 </dropdown_menu_1.DropdownMenuItem>
                 <dropdown_menu_1.DropdownMenuItem
-                  onClick={function () {
-                    return setFilterType("appointment_cancelled");
-                  }}
+                  onClick={() => setFilterType("appointment_cancelled")}
                 >
                   Cancelamentos
                 </dropdown_menu_1.DropdownMenuItem>
                 <dropdown_menu_1.DropdownMenuSeparator />
                 <dropdown_menu_1.DropdownMenuItem
-                  onClick={function () {
-                    return setShowOnlyUnread(!showOnlyUnread);
-                  }}
+                  onClick={() => setShowOnlyUnread(!showOnlyUnread)}
                 >
                   {showOnlyUnread ? "Mostrar todas" : "Apenas não lidas"}
                 </dropdown_menu_1.DropdownMenuItem>

@@ -11,17 +11,8 @@
  * - Rate limiting and throttling
  */
 
-import type { createClient } from "@supabase/supabase-js";
-import crypto from "crypto";
-import type {
-  BaseEvent,
-  WebhookEndpoint,
-  EventDelivery,
-  WebhookStatus,
-  RetryStrategy,
-  WebhookValidationResult,
-  WebhookSystemConfig,
-} from "./types";
+import crypto from "node:crypto";
+import type { BaseEvent, EventDelivery, WebhookEndpoint, WebhookValidationResult } from "./types";
 
 interface WebhookManagerConfig {
   supabaseUrl: string;
@@ -796,12 +787,11 @@ export class WebhookManager {
       if (retryStrategy) {
         switch (retryStrategy.strategy) {
           case "exponential":
-            delayMs = retryStrategy.delayMs * Math.pow(2, delivery.attempts - 1);
+            delayMs = retryStrategy.delayMs * 2 ** (delivery.attempts - 1);
             break;
           case "linear":
             delayMs = retryStrategy.delayMs * delivery.attempts;
             break;
-          case "fixed":
           default:
             delayMs = retryStrategy.delayMs;
             break;

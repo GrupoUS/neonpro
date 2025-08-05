@@ -1,6 +1,6 @@
-import React from "react";
-import Link from "next/link";
 import type { ChevronRight, Home } from "lucide-react";
+import Link from "next/link";
+import React from "react";
 import type { cn } from "@/lib/utils";
 
 interface BreadcrumbItem {

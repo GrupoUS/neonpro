@@ -1,5 +1,15 @@
 "use client";
 
+import type {
+  Activity,
+  AlertTriangle,
+  BarChart3,
+  PieChart,
+  Target,
+  TrendingUp,
+  Users,
+} from "lucide-react";
+import type { useEffect, useState } from "react";
 import type { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Button } from "@/components/ui/button";
 import type {
@@ -19,16 +29,6 @@ import type {
   TableRow,
 } from "@/components/ui/table";
 import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type {
-  Activity,
-  AlertTriangle,
-  BarChart3,
-  PieChart,
-  Target,
-  TrendingUp,
-  Users,
-} from "lucide-react";
-import type { useEffect, useState } from "react";
 
 interface SegmentPerformance {
   id: string;

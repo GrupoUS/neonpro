@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Session Management System - Main Entry Point
  *
@@ -7,20 +6,20 @@
  */
 var __extends =
   (this && this.__extends) ||
-  (function () {
-    var extendStatics = function (d, b) {
+  (() => {
+    var extendStatics = (d, b) => {
       extendStatics =
         Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array &&
-          function (d, b) {
+          ((d, b) => {
             d.__proto__ = b;
-          }) ||
-        function (d, b) {
-          for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-        };
+          })) ||
+        ((d, b) => {
+          for (var p in b) if (Object.hasOwn(b, p)) d[p] = b[p];
+        });
       return extendStatics(d, b);
     };
-    return function (d, b) {
+    return (d, b) => {
       if (typeof b !== "function" && b !== null)
         throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
       extendStatics(d, b);
@@ -35,26 +34,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -74,13 +73,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -102,9 +101,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -176,7 +173,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultSessionConfig = exports.SessionError = exports.SessionSystem = void 0;
 var events_1 = require("events");
@@ -187,11 +184,9 @@ var audit_logger_1 = require("./audit-logger");
 var types_1 = require("./types");
 Object.defineProperty(exports, "SessionError", {
   enumerable: true,
-  get: function () {
-    return types_1.SessionError;
-  },
+  get: () => types_1.SessionError,
 });
-var SessionSystem = /** @class */ (function (_super) {
+var SessionSystem = /** @class */ ((_super) => {
   __extends(SessionSystem, _super);
   function SessionSystem(supabase, config) {
     var _this = _super.call(this) || this;
@@ -315,7 +310,7 @@ var SessionSystem = /** @class */ (function (_super) {
             ];
           case 2:
             securityValidation = _a.sent();
-            if (!!securityValidation.isAllowed) return [3 /*break*/, 4];
+            if (securityValidation.isAllowed) return [3 /*break*/, 4];
             return [
               4 /*yield*/,
               this.auditLogger.logSecurityEvent({
@@ -360,7 +355,7 @@ var SessionSystem = /** @class */ (function (_super) {
             ];
           case 6:
             deviceValidation = _a.sent();
-            if (!!deviceValidation.isValid) return [3 /*break*/, 8];
+            if (deviceValidation.isValid) return [3 /*break*/, 8];
             return [
               4 /*yield*/,
               this.auditLogger.logSecurityEvent({
@@ -497,7 +492,7 @@ var SessionSystem = /** @class */ (function (_super) {
             ];
           case 3:
             securityValidation = _a.sent();
-            if (!!securityValidation.isAllowed) return [3 /*break*/, 6];
+            if (securityValidation.isAllowed) return [3 /*break*/, 6];
             return [
               4 /*yield*/,
               this.auditLogger.logSecurityEvent({
@@ -546,7 +541,7 @@ var SessionSystem = /** @class */ (function (_super) {
             ];
           case 7:
             deviceValidation = _a.sent();
-            if (!!deviceValidation.isValid) return [3 /*break*/, 9];
+            if (deviceValidation.isValid) return [3 /*break*/, 9];
             return [
               4 /*yield*/,
               this.auditLogger.logSecurityEvent({
@@ -1209,31 +1204,30 @@ var SessionSystem = /** @class */ (function (_super) {
   // PRIVATE METHODS
   // ============================================================================
   SessionSystem.prototype.setupEventHandlers = function () {
-    var _this = this;
     // Session Manager events
-    this.sessionManager.on("session_expired", function (data) {
-      _this.emit("session_expired", data);
+    this.sessionManager.on("session_expired", (data) => {
+      this.emit("session_expired", data);
     });
-    this.sessionManager.on("concurrent_session_detected", function (data) {
-      _this.emit("concurrent_session_detected", data);
+    this.sessionManager.on("concurrent_session_detected", (data) => {
+      this.emit("concurrent_session_detected", data);
     });
     // Security Monitor events
-    this.securityMonitor.on("threat_detected", function (data) {
-      _this.emit("threat_detected", data);
+    this.securityMonitor.on("threat_detected", (data) => {
+      this.emit("threat_detected", data);
     });
-    this.securityMonitor.on("ip_blocked", function (data) {
-      _this.emit("security_ip_blocked", data);
+    this.securityMonitor.on("ip_blocked", (data) => {
+      this.emit("security_ip_blocked", data);
     });
     // Device Manager events
-    this.deviceManager.on("device_registered", function (data) {
-      _this.emit("device_registered", data);
+    this.deviceManager.on("device_registered", (data) => {
+      this.emit("device_registered", data);
     });
-    this.deviceManager.on("device_blocked", function (data) {
-      _this.emit("device_blocked", data);
+    this.deviceManager.on("device_blocked", (data) => {
+      this.emit("device_blocked", data);
     });
     // Audit Logger events
-    this.auditLogger.on("critical_event", function (data) {
-      _this.emit("critical_audit_event", data);
+    this.auditLogger.on("critical_event", (data) => {
+      this.emit("critical_audit_event", data);
     });
   };
   SessionSystem.prototype.validateConfig = function () {
@@ -1259,17 +1253,14 @@ var SessionSystem = /** @class */ (function (_super) {
   };
   SessionSystem.prototype.initializeDatabase = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        return [2 /*return*/];
-      });
+      return __generator(this, (_a) => [2 /*return*/]);
     });
   };
   SessionSystem.prototype.startBackgroundTasks = function () {
-    var _this = this;
     // Start session cleanup task
     setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_18;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -1287,14 +1278,13 @@ var SessionSystem = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       5 * 60 * 1000,
     ); // Every 5 minutes
     // Start maintenance task
     setInterval(
-      function () {
-        return __awaiter(_this, void 0, void 0, function () {
+      () =>
+        __awaiter(this, void 0, void 0, function () {
           var error_19;
           return __generator(this, function (_a) {
             switch (_a.label) {
@@ -1312,8 +1302,7 @@ var SessionSystem = /** @class */ (function (_super) {
                 return [2 /*return*/];
             }
           });
-        });
-      },
+        }),
       24 * 60 * 60 * 1000,
     ); // Daily
   };
@@ -1322,13 +1311,13 @@ var SessionSystem = /** @class */ (function (_super) {
       throw new types_1.SessionError("Session system not initialized", "SYSTEM_ERROR");
     }
   };
-  SessionSystem.prototype.sanitizeConfig = function (config) {
+  SessionSystem.prototype.sanitizeConfig = (config) => {
     // Remove sensitive information from config for logging
     var sanitized = __assign({}, config);
     // Remove any sensitive fields here
     return sanitized;
   };
-  SessionSystem.prototype.getConfigChanges = function (oldConfig, newConfig) {
+  SessionSystem.prototype.getConfigChanges = (oldConfig, newConfig) => {
     var changes = [];
     // Compare configurations and identify changes
     if (oldConfig.sessionTimeout !== newConfig.sessionTimeout) {
@@ -1340,7 +1329,7 @@ var SessionSystem = /** @class */ (function (_super) {
     // Add more comparisons as needed
     return changes;
   };
-  SessionSystem.prototype.determineSystemHealth = function (errorRate, avgResponseTime) {
+  SessionSystem.prototype.determineSystemHealth = (errorRate, avgResponseTime) => {
     if (errorRate > 10 || avgResponseTime > 5000) {
       return "critical";
     }

@@ -10,39 +10,35 @@
  * @created 2024
  */
 
-// Core Session Management
-export { UnifiedSessionSystem } from "./UnifiedSessionSystem";
-export { SessionManager } from "./SessionManager";
-export { DeviceManager } from "./DeviceManager";
-export { SecurityEventLogger } from "./SecurityEventLogger";
-export { NotificationService } from "./NotificationService";
-export { DataCleanupService } from "./DataCleanupService";
-
-// Configuration and Types
-export * from "./config";
-export * from "./types";
-export * from "./utils";
-
-// React Hooks
-export { useSession } from "./hooks/useSession";
-export { useDeviceManagement } from "./hooks/useDeviceManagement";
-export { useSecurityMonitoring } from "./hooks/useSecurityMonitoring";
-export { useNotifications } from "./hooks/useNotifications";
-export { useDataCleanup } from "./hooks/useDataCleanup";
-
+// Component Collections
+export {
+  defaultSessionConfig,
+  ManagementComponents,
+  SessionComponents,
+  StatusComponents,
+} from "../../../components/auth/session";
+export { DeviceManagement } from "../../../components/auth/session/DeviceManagement";
+export { SecurityDashboard } from "../../../components/auth/session/SecurityDashboard";
 // React Components
 export { SessionStatus } from "../../../components/auth/session/SessionStatus";
 export { SessionWarning } from "../../../components/auth/session/SessionWarning";
-export { DeviceManagement } from "../../../components/auth/session/DeviceManagement";
-export { SecurityDashboard } from "../../../components/auth/session/SecurityDashboard";
-
-// Component Collections
-export {
-  SessionComponents,
-  StatusComponents,
-  ManagementComponents,
-  defaultSessionConfig,
-} from "../../../components/auth/session";
+// Configuration and Types
+export * from "./config";
+export { DataCleanupService } from "./DataCleanupService";
+export { DeviceManager } from "./DeviceManager";
+export { useDataCleanup } from "./hooks/useDataCleanup";
+export { useDeviceManagement } from "./hooks/useDeviceManagement";
+export { useNotifications } from "./hooks/useNotifications";
+export { useSecurityMonitoring } from "./hooks/useSecurityMonitoring";
+// React Hooks
+export { useSession } from "./hooks/useSession";
+export { NotificationService } from "./NotificationService";
+export { SecurityEventLogger } from "./SecurityEventLogger";
+export { SessionManager } from "./SessionManager";
+export * from "./types";
+// Core Session Management
+export { UnifiedSessionSystem } from "./UnifiedSessionSystem";
+export * from "./utils";
 
 // API Utilities
 export const API_ENDPOINTS = {
@@ -61,17 +57,17 @@ export class SessionManagementFactory {
    * Get or create the singleton instance of UnifiedSessionSystem
    */
   static getInstance(): UnifiedSessionSystem {
-    if (!this.instance) {
-      this.instance = new UnifiedSessionSystem();
+    if (!SessionManagementFactory.instance) {
+      SessionManagementFactory.instance = new UnifiedSessionSystem();
     }
-    return this.instance;
+    return SessionManagementFactory.instance;
   }
 
   /**
    * Reset the singleton instance (useful for testing)
    */
   static resetInstance(): void {
-    this.instance = null;
+    SessionManagementFactory.instance = null;
   }
 
   /**
@@ -217,25 +213,25 @@ export default sessionManager;
  * Re-export commonly used types for convenience
  */
 export type {
-  SessionData,
-  DeviceInfo,
-  SecurityEvent,
-  NotificationData,
-  SessionConfig,
-  DeviceConfig,
-  SecurityConfig,
-  NotificationConfig,
-  CleanupConfig,
-  SessionActivity,
   AuditLog,
-  SessionMetrics,
-  DeviceMetrics,
-  SecurityMetrics,
-  NotificationMetrics,
-  CleanupMetrics,
-  SessionContextType,
-  DeviceContextType,
-  SecurityContextType,
-  NotificationContextType,
+  CleanupConfig,
   CleanupContextType,
+  CleanupMetrics,
+  DeviceConfig,
+  DeviceContextType,
+  DeviceInfo,
+  DeviceMetrics,
+  NotificationConfig,
+  NotificationContextType,
+  NotificationData,
+  NotificationMetrics,
+  SecurityConfig,
+  SecurityContextType,
+  SecurityEvent,
+  SecurityMetrics,
+  SessionActivity,
+  SessionConfig,
+  SessionContextType,
+  SessionData,
+  SessionMetrics,
 } from "./types";

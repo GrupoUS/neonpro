@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Communication System - Automated Communication Hub
  * Story 2.3: Automated Communication System
@@ -10,41 +9,38 @@
 var __createBinding =
   (this && this.__createBinding) ||
   (Object.create
-    ? function (o, m, k, k2) {
+    ? (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         var desc = Object.getOwnPropertyDescriptor(m, k);
         if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
           desc = {
             enumerable: true,
-            get: function () {
-              return m[k];
-            },
+            get: () => m[k],
           };
         }
         Object.defineProperty(o, k2, desc);
       }
-    : function (o, m, k, k2) {
+    : (o, m, k, k2) => {
         if (k2 === undefined) k2 = k;
         o[k2] = m[k];
       });
 var __exportStar =
   (this && this.__exportStar) ||
-  function (m, exports) {
+  ((m, exports) => {
     for (var p in m)
-      if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p))
-        __createBinding(exports, m, p);
-  };
+      if (p !== "default" && !Object.hasOwn(exports, p)) __createBinding(exports, m, p);
+  });
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -64,13 +60,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -92,9 +88,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -166,7 +160,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.communicationSystem =
   exports.CommunicationSystem =
@@ -185,69 +179,53 @@ __exportStar(require("./types"), exports);
 var communication_service_1 = require("./communication-service");
 Object.defineProperty(exports, "CommunicationService", {
   enumerable: true,
-  get: function () {
-    return communication_service_1.CommunicationService;
-  },
+  get: () => communication_service_1.CommunicationService,
 });
 // Communication providers
 var sms_provider_1 = require("./providers/sms-provider");
 Object.defineProperty(exports, "SMSProvider", {
   enumerable: true,
-  get: function () {
-    return sms_provider_1.SMSProvider;
-  },
+  get: () => sms_provider_1.SMSProvider,
 });
 var email_provider_1 = require("./providers/email-provider");
 Object.defineProperty(exports, "EmailProvider", {
   enumerable: true,
-  get: function () {
-    return email_provider_1.EmailProvider;
-  },
+  get: () => email_provider_1.EmailProvider,
 });
 var whatsapp_provider_1 = require("./providers/whatsapp-provider");
 Object.defineProperty(exports, "WhatsAppProvider", {
   enumerable: true,
-  get: function () {
-    return whatsapp_provider_1.WhatsAppProvider;
-  },
+  get: () => whatsapp_provider_1.WhatsAppProvider,
 });
 // Template engine
 var template_engine_1 = require("./template-engine");
 Object.defineProperty(exports, "TemplateEngine", {
   enumerable: true,
-  get: function () {
-    return template_engine_1.TemplateEngine;
-  },
+  get: () => template_engine_1.TemplateEngine,
 });
 // No-show prediction
 var no_show_predictor_1 = require("./no-show-predictor");
 Object.defineProperty(exports, "NoShowPredictor", {
   enumerable: true,
-  get: function () {
-    return no_show_predictor_1.NoShowPredictor;
-  },
+  get: () => no_show_predictor_1.NoShowPredictor,
 });
 // Waitlist management
 var waitlist_manager_1 = require("./waitlist-manager");
 Object.defineProperty(exports, "WaitlistManager", {
   enumerable: true,
-  get: function () {
-    return waitlist_manager_1.WaitlistManager;
-  },
+  get: () => waitlist_manager_1.WaitlistManager,
 });
 // Analytics and insights
 var analytics_1 = require("./analytics");
 Object.defineProperty(exports, "CommunicationAnalytics", {
   enumerable: true,
-  get: function () {
-    return analytics_1.CommunicationAnalytics;
-  },
+  get: () => analytics_1.CommunicationAnalytics,
 });
 /**
  * Main communication system factory
  * Creates and configures the complete communication system
  */
-var CommunicationSystem = /** @class */ (function () {
+var CommunicationSystem = /** @class */ (() => {
   function CommunicationSystem() {
     this.service = new CommunicationService();
     this.analytics = new CommunicationAnalytics();
@@ -289,7 +267,7 @@ var CommunicationSystem = /** @class */ (function () {
   CommunicationSystem.prototype.getHealthStatus = function () {
     return __awaiter(this, void 0, void 0, function () {
       var errors, providers, allProvidersHealthy, status_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         try {
           errors = [];
           providers = {};
@@ -341,16 +319,8 @@ var CommunicationSystem = /** @class */ (function () {
               2 /*return*/,
               {
                 processed: results.length,
-                failed: results.filter(function (r) {
-                  return !r.success;
-                }).length,
-                errors: results
-                  .filter(function (r) {
-                    return !r.success;
-                  })
-                  .map(function (r) {
-                    return r.error || "Unknown error";
-                  }),
+                failed: results.filter((r) => !r.success).length,
+                errors: results.filter((r) => !r.success).map((r) => r.error || "Unknown error"),
               },
             ];
           case 2:
@@ -387,19 +357,11 @@ var CommunicationSystem = /** @class */ (function () {
             return [
               2 /*return*/,
               {
-                notified: results.filter(function (r) {
-                  return r.notification_sent;
-                }).length,
-                failed: results.filter(function (r) {
-                  return !r.notification_sent;
-                }).length,
+                notified: results.filter((r) => r.notification_sent).length,
+                failed: results.filter((r) => !r.notification_sent).length,
                 errors: results
-                  .filter(function (r) {
-                    return !r.notification_sent;
-                  })
-                  .map(function (r) {
-                    return r.error || "Unknown error";
-                  }),
+                  .filter((r) => !r.notification_sent)
+                  .map((r) => r.error || "Unknown error"),
               },
             ];
           case 2:

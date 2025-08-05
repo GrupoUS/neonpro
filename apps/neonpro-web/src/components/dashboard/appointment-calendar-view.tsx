@@ -1,36 +1,36 @@
 "use client";
 
-import type { useState, useMemo } from "react";
 import type {
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
+  addHours,
   eachDayOfInterval,
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  format,
   isSameDay,
   isSameMonth,
   isToday,
-  addHours,
   startOfDay,
-  endOfDay,
+  startOfMonth,
+  startOfWeek,
 } from "date-fns";
 import type { pt } from "date-fns/locale";
-import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type {
+  Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
   Clock,
-  User,
-  Calendar as CalendarIcon,
   Grid3x3,
   List,
+  User,
 } from "lucide-react";
-import type { cn } from "@/lib/utils";
+import type { useMemo, useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Appointment } from "@/hooks/use-appointments-manager";
+import type { cn } from "@/lib/utils";
 
 interface AppointmentCalendarViewProps {
   appointments: Appointment[];

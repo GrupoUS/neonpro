@@ -1,4 +1,3 @@
-"use strict";
 // Marketing ROI Types
 // Generated for NeonPro - FASE 4
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -13,7 +12,7 @@ exports.TreatmentROIFiltersSchema =
     void 0;
 var zod_1 = require("zod");
 var CampaignStatus;
-(function (CampaignStatus) {
+((CampaignStatus) => {
   CampaignStatus["DRAFT"] = "draft";
   CampaignStatus["ACTIVE"] = "active";
   CampaignStatus["PAUSED"] = "paused";
@@ -21,7 +20,7 @@ var CampaignStatus;
   CampaignStatus["CANCELLED"] = "cancelled";
 })(CampaignStatus || (exports.CampaignStatus = CampaignStatus = {}));
 var MarketingChannel;
-(function (MarketingChannel) {
+((MarketingChannel) => {
   MarketingChannel["EMAIL"] = "email";
   MarketingChannel["SOCIAL"] = "social";
   MarketingChannel["SEARCH"] = "search";
@@ -32,7 +31,7 @@ var MarketingChannel;
   MarketingChannel["ORGANIC"] = "organic";
 })(MarketingChannel || (exports.MarketingChannel = MarketingChannel = {}));
 var ROIMetricType;
-(function (ROIMetricType) {
+((ROIMetricType) => {
   ROIMetricType["REVENUE"] = "revenue";
   ROIMetricType["CONVERSION"] = "conversion";
   ROIMetricType["COST_PER_ACQUISITION"] = "cost_per_acquisition";
@@ -40,7 +39,7 @@ var ROIMetricType;
   ROIMetricType["RETURN_ON_AD_SPEND"] = "return_on_ad_spend";
 })(ROIMetricType || (exports.ROIMetricType = ROIMetricType = {}));
 var AlertType;
-(function (AlertType) {
+((AlertType) => {
   AlertType["PERFORMANCE"] = "performance";
   AlertType["BUDGET"] = "budget";
   AlertType["CONVERSION"] = "conversion";

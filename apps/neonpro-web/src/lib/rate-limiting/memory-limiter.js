@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Memory-based Rate Limiter Implementation
  * Simple in-memory rate limiting for development and small-scale production
@@ -8,26 +7,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -47,13 +46,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -75,9 +74,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -149,7 +146,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rateLimiter = exports.MemoryRateLimiter = void 0;
 exports.createRateLimitIdentifier = createRateLimitIdentifier;
@@ -162,13 +159,12 @@ var rateLimitStore = {};
 /**
  * Memory-based rate limiter class
  */
-var MemoryRateLimiter = /** @class */ (function () {
+var MemoryRateLimiter = /** @class */ (() => {
   function MemoryRateLimiter() {
-    var _this = this;
     // Clean up expired entries every 5 minutes
     this.cleanupInterval = setInterval(
-      function () {
-        _this.cleanup();
+      () => {
+        this.cleanup();
       },
       5 * 60 * 1000,
     );
@@ -179,7 +175,7 @@ var MemoryRateLimiter = /** @class */ (function () {
   MemoryRateLimiter.prototype.checkRateLimit = function (identifier, config) {
     return __awaiter(this, void 0, void 0, function () {
       var now, key, entry;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         now = Date.now();
         key = "rate_limit:".concat(identifier);
         entry = rateLimitStore[key];
@@ -243,7 +239,7 @@ var MemoryRateLimiter = /** @class */ (function () {
   /**
    * Get rate limit configuration for endpoint and user
    */
-  MemoryRateLimiter.prototype.getRateLimitConfig = function (endpoint, userRole) {
+  MemoryRateLimiter.prototype.getRateLimitConfig = (endpoint, userRole) => {
     // Get base config
     var baseConfig = config_1.RATE_LIMIT_CONFIGS[endpoint] || config_1.RATE_LIMIT_CONFIGS.default;
     // Apply role-based multiplier
@@ -258,13 +254,11 @@ var MemoryRateLimiter = /** @class */ (function () {
   /**
    * Check if IP is whitelisted
    */
-  MemoryRateLimiter.prototype.isWhitelisted = function (ip) {
-    return config_1.RATE_LIMIT_WHITELIST.includes(ip);
-  };
+  MemoryRateLimiter.prototype.isWhitelisted = (ip) => config_1.RATE_LIMIT_WHITELIST.includes(ip);
   /**
    * Clean up expired entries
    */
-  MemoryRateLimiter.prototype.cleanup = function () {
+  MemoryRateLimiter.prototype.cleanup = () => {
     var now = Date.now();
     for (var key in rateLimitStore) {
       var entry = rateLimitStore[key];
@@ -280,7 +274,7 @@ var MemoryRateLimiter = /** @class */ (function () {
   MemoryRateLimiter.prototype.resetRateLimit = function (identifier) {
     return __awaiter(this, void 0, void 0, function () {
       var key;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         key = "rate_limit:".concat(identifier);
         delete rateLimitStore[key];
         return [2 /*return*/];
@@ -293,7 +287,7 @@ var MemoryRateLimiter = /** @class */ (function () {
   MemoryRateLimiter.prototype.getRateLimitStatus = function (identifier, config) {
     return __awaiter(this, void 0, void 0, function () {
       var now, key, entry;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         now = Date.now();
         key = "rate_limit:".concat(identifier);
         entry = rateLimitStore[key];

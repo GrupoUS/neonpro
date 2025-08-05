@@ -6,12 +6,11 @@
  * and performance optimization.
  */
 
+import { type NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { CohortAnalyzer } from "@/lib/analytics/advanced/cohort-analyzer";
 import { ForecastingEngine } from "@/lib/analytics/advanced/forecasting-engine";
-import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 
 // Validation schemas
 const CohortAnalysisRequestSchema = z.object({
@@ -392,7 +391,7 @@ export async function GET(request: NextRequest) {
 
 // Helper Functions - Statistical calculations and data processing
 
-function processAnalyticsDataForStatistics(rawData: any[], metrics: string[]) {
+function processAnalyticsDataForStatistics(rawData: any[], _metrics: string[]) {
   // Group data by date and calculate daily metrics
   const dailyData = rawData.reduce(
     (acc, event) => {
@@ -439,7 +438,7 @@ function processAnalyticsDataForStatistics(rawData: any[], metrics: string[]) {
   });
 }
 
-async function calculateCorrelations(data: any[], metrics: string[], confidenceLevel: number) {
+async function calculateCorrelations(data: any[], metrics: string[], _confidenceLevel: number) {
   const correlations = [];
 
   for (let i = 0; i < metrics.length; i++) {
@@ -447,8 +446,8 @@ async function calculateCorrelations(data: any[], metrics: string[], confidenceL
       const metric1 = metrics[i];
       const metric2 = metrics[j];
 
-      const values1 = data.map((d) => d[metric1]).filter((v) => !isNaN(v));
-      const values2 = data.map((d) => d[metric2]).filter((v) => !isNaN(v));
+      const values1 = data.map((d) => d[metric1]).filter((v) => !Number.isNaN(v));
+      const values2 = data.map((d) => d[metric2]).filter((v) => !Number.isNaN(v));
 
       if (values1.length > 2 && values2.length > 2) {
         const correlation = calculatePearsonCorrelation(values1, values2);
@@ -511,17 +510,17 @@ async function performRegressionAnalysis(
   data: any[],
   dependent: string,
   independent: string[],
-  confidenceLevel: number,
+  _confidenceLevel: number,
 ) {
-  const y = data.map((d) => d[dependent]).filter((v) => !isNaN(v));
-  const X = data.map((d) => independent.map((metric) => d[metric] || 0));
+  const y = data.map((d) => d[dependent]).filter((v) => !Number.isNaN(v));
+  const _X = data.map((d) => independent.map((metric) => d[metric] || 0));
 
   if (y.length < independent.length + 2) {
     return null;
   }
 
   // Simple regression implementation (placeholder)
-  const meanY = y.reduce((sum, val) => sum + val, 0) / y.length;
+  const _meanY = y.reduce((sum, val) => sum + val, 0) / y.length;
   const rSquared = Math.max(0.3, Math.random() * 0.7); // Placeholder: 30-100%
 
   return {
@@ -534,7 +533,7 @@ async function performRegressionAnalysis(
       significance: Math.random() > 0.5,
     })),
     residuals: y.map(() => (Math.random() - 0.5) * 0.2),
-    predictions: y.map((actual, i) => ({
+    predictions: y.map((actual, _i) => ({
       actual,
       predicted: actual * (0.8 + Math.random() * 0.4),
       residual: (Math.random() - 0.5) * 0.2,
@@ -546,11 +545,10 @@ async function performSignificanceTests(data: any[], metrics: string[], confiden
   const tests = [];
 
   for (const metric of metrics) {
-    const values = data.map((d) => d[metric]).filter((v) => !isNaN(v));
+    const values = data.map((d) => d[metric]).filter((v) => !Number.isNaN(v));
     if (values.length > 5) {
       const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
-      const variance =
-        values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / (values.length - 1);
+      const variance = values.reduce((sum, v) => sum + (v - mean) ** 2, 0) / (values.length - 1);
       const standardError = Math.sqrt(variance / values.length);
       const tStatistic = mean / standardError;
       const pValue = 2 * (1 - studentTCDF(Math.abs(tStatistic), values.length - 1));
@@ -586,11 +584,11 @@ async function assessDataQuality(data: any[], includeOutliers: boolean) {
   const outliers = [];
   if (includeOutliers && data.length > 0) {
     for (const key of Object.keys(data[0]).filter((k) => k !== "date")) {
-      const values = data.map((d) => d[key]).filter((v) => !isNaN(v));
+      const values = data.map((d) => d[key]).filter((v) => !Number.isNaN(v));
       if (values.length > 0) {
         const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
         const stdDev = Math.sqrt(
-          values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length,
+          values.reduce((sum, v) => sum + (v - mean) ** 2, 0) / values.length,
         );
 
         values.forEach((value) => {

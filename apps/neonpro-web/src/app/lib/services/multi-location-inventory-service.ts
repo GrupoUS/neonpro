@@ -1,22 +1,22 @@
-import type { createClient } from "@/lib/supabase/client";
 import type {
-  InventoryItem,
   CreateInventoryItem,
-  UpdateInventoryItem,
-  InventoryStock,
   CreateInventoryStock,
-  UpdateInventoryStock,
-  StockTransfer,
-  CreateStockTransfer,
-  UpdateStockTransfer,
-  StockTransaction,
   CreateStockTransaction,
+  CreateStockTransfer,
   InventoryFilters,
-  StockTransferFilters,
-  StockTransactionFilters,
-  LocationStockSummary,
+  InventoryItem,
   InventoryMovementSummary,
+  InventoryStock,
+  LocationStockSummary,
+  StockTransaction,
+  StockTransactionFilters,
+  StockTransfer,
+  StockTransferFilters,
+  UpdateInventoryItem,
+  UpdateInventoryStock,
+  UpdateStockTransfer,
 } from "@/app/lib/types/inventory";
+import type { createClient } from "@/lib/supabase/client";
 
 export class MultiLocationInventoryService {
   // Supabase client created per method for proper request context

@@ -5,18 +5,17 @@
 // Author: VoidBeast V4.0 (BMad Method Implementation)
 // =====================================================================================
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -36,13 +35,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -64,9 +63,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -138,10 +135,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -150,7 +147,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = FinancialReportingDashboard;
 var react_1 = require("react");
@@ -166,10 +163,6 @@ var sonner_1 = require("sonner");
 var financial_reporting_1 = require("@/lib/types/financial-reporting");
 var analytics_core_1 = require("@/lib/financial/analytics-core");
 function FinancialReportingDashboard(_a) {
-  // =====================================================================================
-  // STATE MANAGEMENT
-  // =====================================================================================
-  var _this = this;
   var clinicId = _a.clinicId,
     _b = _a.className,
     className = _b === void 0 ? "" : _b;
@@ -191,83 +184,70 @@ function FinancialReportingDashboard(_a) {
   var _h = (0, react_1.useState)(null),
     lastUpdated = _h[0],
     setLastUpdated = _h[1];
-  var analyticsCore = (0, react_1.useState)(function () {
-    return new analytics_core_1.FinancialAnalyticsCore();
-  })[0];
+  var analyticsCore = (0, react_1.useState)(() => new analytics_core_1.FinancialAnalyticsCore())[0];
   // =====================================================================================
   // DATA FETCHING AND REFRESH LOGIC
   // =====================================================================================
-  var fetchDashboardData = (0, react_1.useCallback)(
-    function () {
-      var args_1 = [];
-      for (var _i = 0; _i < arguments.length; _i++) {
-        args_1[_i] = arguments[_i];
+  var fetchDashboardData = (0, react_1.useCallback)(() => {
+    var args_1 = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+      args_1[_i] = arguments[_i];
+    }
+    return __awaiter(this, __spreadArray([], args_1, true), void 0, function (showLoading) {
+      var data, error_1;
+      if (showLoading === void 0) {
+        showLoading = true;
       }
-      return __awaiter(_this, __spreadArray([], args_1, true), void 0, function (showLoading) {
-        var data, error_1;
-        if (showLoading === void 0) {
-          showLoading = true;
+      return __generator(this, (_a) => {
+        switch (_a.label) {
+          case 0:
+            _a.trys.push([0, 2, 3, 4]);
+            if (showLoading) setLoading(true);
+            setRefreshing(true);
+            return [4 /*yield*/, analyticsCore.generateDashboardData(clinicId)];
+          case 1:
+            data = _a.sent();
+            setDashboardData(data);
+            setLastUpdated(new Date());
+            if (!showLoading) {
+              sonner_1.toast.success("Dashboard atualizado com sucesso");
+            }
+            return [3 /*break*/, 4];
+          case 2:
+            error_1 = _a.sent();
+            console.error("Error fetching dashboard data:", error_1);
+            sonner_1.toast.error("Erro ao carregar dados do dashboard");
+            return [3 /*break*/, 4];
+          case 3:
+            setLoading(false);
+            setRefreshing(false);
+            return [7 /*endfinally*/];
+          case 4:
+            return [2 /*return*/];
         }
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 2, 3, 4]);
-              if (showLoading) setLoading(true);
-              setRefreshing(true);
-              return [4 /*yield*/, analyticsCore.generateDashboardData(clinicId)];
-            case 1:
-              data = _a.sent();
-              setDashboardData(data);
-              setLastUpdated(new Date());
-              if (!showLoading) {
-                sonner_1.toast.success("Dashboard atualizado com sucesso");
-              }
-              return [3 /*break*/, 4];
-            case 2:
-              error_1 = _a.sent();
-              console.error("Error fetching dashboard data:", error_1);
-              sonner_1.toast.error("Erro ao carregar dados do dashboard");
-              return [3 /*break*/, 4];
-            case 3:
-              setLoading(false);
-              setRefreshing(false);
-              return [7 /*endfinally*/];
-            case 4:
-              return [2 /*return*/];
-          }
-        });
       });
-    },
-    [clinicId, analyticsCore],
-  );
+    });
+  }, [clinicId, analyticsCore]);
   // Auto-refresh effect
-  (0, react_1.useEffect)(
-    function () {
-      fetchDashboardData();
-      if (autoRefresh) {
-        var interval_1 = setInterval(function () {
-          fetchDashboardData(false);
-        }, financial_reporting_1.DASHBOARD_REFRESH_INTERVALS.FINANCIAL_OVERVIEW);
-        return function () {
-          return clearInterval(interval_1);
-        };
-      }
-    },
-    [fetchDashboardData, autoRefresh],
-  );
+  (0, react_1.useEffect)(() => {
+    fetchDashboardData();
+    if (autoRefresh) {
+      var interval_1 = setInterval(() => {
+        fetchDashboardData(false);
+      }, financial_reporting_1.DASHBOARD_REFRESH_INTERVALS.FINANCIAL_OVERVIEW);
+      return () => clearInterval(interval_1);
+    }
+  }, [fetchDashboardData, autoRefresh]);
   // =====================================================================================
   // UTILITY FUNCTIONS
   // =====================================================================================
-  var formatCurrency = function (value) {
-    return new Intl.NumberFormat("pt-BR", {
+  var formatCurrency = (value) =>
+    new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
-  };
-  var formatPercentage = function (value) {
-    return "".concat(value.toFixed(2), "%");
-  };
-  var getTrendIcon = function (trend) {
+  var formatPercentage = (value) => "".concat(value.toFixed(2), "%");
+  var getTrendIcon = (trend) => {
     switch (trend) {
       case "up":
         return <lucide_react_1.TrendingUp className="h-4 w-4" />;
@@ -277,7 +257,7 @@ function FinancialReportingDashboard(_a) {
         return <lucide_react_1.Activity className="h-4 w-4" />;
     }
   };
-  var getTrendColor = function (trend, color) {
+  var getTrendColor = (trend, color) => {
     if (trend === "stable") return "text-muted-foreground";
     return color === "green" ? "text-green-600" : "text-red-600";
   };
@@ -300,19 +280,17 @@ function FinancialReportingDashboard(_a) {
 
         {/* Loading skeleton */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map(function (_, i) {
-            return (
-              <card_1.Card key={i}>
-                <card_1.CardHeader className="space-y-0 pb-2">
-                  <div className="h-4 bg-muted animate-pulse rounded" />
-                </card_1.CardHeader>
-                <card_1.CardContent>
-                  <div className="h-8 bg-muted animate-pulse rounded mb-2" />
-                  <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
-                </card_1.CardContent>
-              </card_1.Card>
-            );
-          })}
+          {Array.from({ length: 6 }).map((_, i) => (
+            <card_1.Card key={i}>
+              <card_1.CardHeader className="space-y-0 pb-2">
+                <div className="h-4 bg-muted animate-pulse rounded" />
+              </card_1.CardHeader>
+              <card_1.CardContent>
+                <div className="h-8 bg-muted animate-pulse rounded mb-2" />
+                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+              </card_1.CardContent>
+            </card_1.Card>
+          ))}
         </div>
       </div>
     );
@@ -327,11 +305,7 @@ function FinancialReportingDashboard(_a) {
             Não foi possível carregar os dados do dashboard. Tente novamente.
           </alert_1.AlertDescription>
         </alert_1.Alert>
-        <button_1.Button
-          onClick={function () {
-            return fetchDashboardData();
-          }}
-        >
+        <button_1.Button onClick={() => fetchDashboardData()}>
           <lucide_react_1.RefreshCw className="mr-2 h-4 w-4" />
           Tentar Novamente
         </button_1.Button>
@@ -367,13 +341,7 @@ function FinancialReportingDashboard(_a) {
             </select_1.SelectContent>
           </select_1.Select>
 
-          <button_1.Button
-            variant="outline"
-            size="sm"
-            onClick={function () {
-              return setAutoRefresh(!autoRefresh);
-            }}
-          >
+          <button_1.Button variant="outline" size="sm" onClick={() => setAutoRefresh(!autoRefresh)}>
             <lucide_react_1.Activity
               className={"mr-2 h-4 w-4 ".concat(
                 autoRefresh ? "text-green-600" : "text-muted-foreground",
@@ -385,9 +353,7 @@ function FinancialReportingDashboard(_a) {
           <button_1.Button
             variant="outline"
             size="sm"
-            onClick={function () {
-              return fetchDashboardData(false);
-            }}
+            onClick={() => fetchDashboardData(false)}
             disabled={refreshing}
           >
             <lucide_react_1.RefreshCw
@@ -406,18 +372,16 @@ function FinancialReportingDashboard(_a) {
       {/* Financial Alerts */}
       {dashboardData.alerts && dashboardData.alerts.length > 0 && (
         <div className="space-y-2">
-          {dashboardData.alerts.map(function (alert, index) {
-            return (
-              <alert_1.Alert
-                key={index}
-                variant={alert.type === "danger" ? "destructive" : "default"}
-              >
-                <lucide_react_1.AlertTriangle className="h-4 w-4" />
-                <alert_1.AlertTitle>{alert.title}</alert_1.AlertTitle>
-                <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
-              </alert_1.Alert>
-            );
-          })}
+          {dashboardData.alerts.map((alert, index) => (
+            <alert_1.Alert
+              key={index}
+              variant={alert.type === "danger" ? "destructive" : "default"}
+            >
+              <lucide_react_1.AlertTriangle className="h-4 w-4" />
+              <alert_1.AlertTitle>{alert.title}</alert_1.AlertTitle>
+              <alert_1.AlertDescription>{alert.message}</alert_1.AlertDescription>
+            </alert_1.Alert>
+          ))}
         </div>
       )}
 
@@ -664,32 +628,30 @@ function FinancialReportingDashboard(_a) {
             </card_1.CardDescription>
           </card_1.CardHeader>
           <card_1.CardContent className="space-y-4">
-            {dashboardData.recommendations.map(function (rec, index) {
-              return (
-                <div key={index} className="border rounded-lg p-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium">{rec.title}</h4>
-                    <badge_1.Badge
-                      variant={
-                        rec.priority === "high"
-                          ? "destructive"
-                          : rec.priority === "medium"
-                            ? "default"
-                            : "secondary"
-                      }
-                    >
-                      {rec.priority === "high"
-                        ? "Alta"
+            {dashboardData.recommendations.map((rec, index) => (
+              <div key={index} className="border rounded-lg p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-medium">{rec.title}</h4>
+                  <badge_1.Badge
+                    variant={
+                      rec.priority === "high"
+                        ? "destructive"
                         : rec.priority === "medium"
-                          ? "Média"
-                          : "Baixa"}
-                    </badge_1.Badge>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{rec.description}</p>
-                  <p className="text-xs font-medium text-green-600">{rec.expected_impact}</p>
+                          ? "default"
+                          : "secondary"
+                    }
+                  >
+                    {rec.priority === "high"
+                      ? "Alta"
+                      : rec.priority === "medium"
+                        ? "Média"
+                        : "Baixa"}
+                  </badge_1.Badge>
                 </div>
-              );
-            })}
+                <p className="text-xs text-muted-foreground">{rec.description}</p>
+                <p className="text-xs font-medium text-green-600">{rec.expected_impact}</p>
+              </div>
+            ))}
           </card_1.CardContent>
         </card_1.Card>
       )}

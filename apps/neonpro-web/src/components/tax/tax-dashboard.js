@@ -1,32 +1,31 @@
 // Brazilian Tax Dashboard Component
 // Story 5.5: Main dashboard for Brazilian tax management
 "use client";
-"use strict";
 var __assign =
   (this && this.__assign) ||
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -46,13 +45,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -74,9 +73,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -148,7 +145,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = TaxDashboard;
 var react_1 = require("react");
@@ -159,7 +156,6 @@ var button_1 = require("@/components/ui/button");
 var lucide_react_1 = require("lucide-react");
 var utils_1 = require("@/lib/utils");
 function TaxDashboard(_a) {
-  var _this = this;
   var clinicId = _a.clinicId;
   var _b = (0, react_1.useState)(null),
     statistics = _b[0],
@@ -178,10 +174,10 @@ function TaxDashboard(_a) {
     }),
     dateRange = _e[0],
     setDateRange = _e[1];
-  var loadStatistics = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var loadStatistics = () =>
+    __awaiter(this, void 0, void 0, function () {
       var params, response, data, err_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 3, 4, 5]);
@@ -217,14 +213,10 @@ function TaxDashboard(_a) {
         }
       });
     });
-  };
-  (0, react_1.useEffect)(
-    function () {
-      loadStatistics();
-    },
-    [clinicId, dateRange],
-  );
-  var getStatusColor = function (status) {
+  (0, react_1.useEffect)(() => {
+    loadStatistics();
+  }, [clinicId, dateRange]);
+  var getStatusColor = (status) => {
     switch (status) {
       case "authorized":
         return "bg-green-100 text-green-800";
@@ -238,7 +230,7 @@ function TaxDashboard(_a) {
         return "bg-gray-100 text-gray-800";
     }
   };
-  var getStatusIcon = function (status) {
+  var getStatusIcon = (status) => {
     switch (status) {
       case "authorized":
         return lucide_react_1.CheckCircle;
@@ -299,21 +291,17 @@ function TaxDashboard(_a) {
           <input
             type="date"
             value={dateRange.start}
-            onChange={function (e) {
-              return setDateRange(function (prev) {
-                return __assign(__assign({}, prev), { start: e.target.value });
-              });
-            }}
+            onChange={(e) =>
+              setDateRange((prev) => __assign(__assign({}, prev), { start: e.target.value }))
+            }
             className="px-3 py-2 border rounded-md"
           />
           <input
             type="date"
             value={dateRange.end}
-            onChange={function (e) {
-              return setDateRange(function (prev) {
-                return __assign(__assign({}, prev), { end: e.target.value });
-              });
-            }}
+            onChange={(e) =>
+              setDateRange((prev) => __assign(__assign({}, prev), { end: e.target.value }))
+            }
             className="px-3 py-2 border rounded-md"
           />
           <button_1.Button onClick={loadStatistics} variant="outline">
@@ -407,7 +395,7 @@ function TaxDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {Object.entries(statistics.nfe_statistics.by_status).map(function (_a) {
+                {Object.entries(statistics.nfe_statistics.by_status).map((_a) => {
                   var status = _a[0],
                     count = _a[1];
                   var Icon = getStatusIcon(status);
@@ -436,12 +424,12 @@ function TaxDashboard(_a) {
             <card_1.CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Object.entries(statistics.tax_summary.breakdown)
-                  .filter(function (_a) {
+                  .filter((_a) => {
                     var _ = _a[0],
                       value = _a[1];
                     return value > 0;
                   })
-                  .map(function (_a) {
+                  .map((_a) => {
                     var tax = _a[0],
                       value = _a[1];
                     return (
@@ -477,33 +465,30 @@ function TaxDashboard(_a) {
             </card_1.CardHeader>
             <card_1.CardContent>
               <div className="space-y-4">
-                {statistics.nfe_statistics.by_month.map(function (month) {
-                  return (
-                    <div
-                      key={month.month}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                    >
-                      <div>
-                        <p className="font-medium">
-                          {new Date(month.month + "-01").toLocaleDateString("pt-BR", {
-                            year: "numeric",
-                            month: "long",
-                          })}
-                        </p>
-                        <p className="text-sm text-muted-foreground">{month.count} NFes emitidas</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-lg font-semibold">
-                          {(0, utils_1.formatCurrency)(month.value)}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Média:{" "}
-                          {(0, utils_1.formatCurrency)(month.value / Math.max(month.count, 1))}
-                        </p>
-                      </div>
+                {statistics.nfe_statistics.by_month.map((month) => (
+                  <div
+                    key={month.month}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium">
+                        {new Date(month.month + "-01").toLocaleDateString("pt-BR", {
+                          year: "numeric",
+                          month: "long",
+                        })}
+                      </p>
+                      <p className="text-sm text-muted-foreground">{month.count} NFes emitidas</p>
                     </div>
-                  );
-                })}
+                    <div className="text-right">
+                      <p className="text-lg font-semibold">
+                        {(0, utils_1.formatCurrency)(month.value)}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Média: {(0, utils_1.formatCurrency)(month.value / Math.max(month.count, 1))}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </card_1.CardContent>
           </card_1.Card>

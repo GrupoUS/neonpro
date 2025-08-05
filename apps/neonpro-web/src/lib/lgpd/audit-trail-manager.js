@@ -1,4 +1,3 @@
-"use strict";
 /**
  * LGPD Audit Trail Manager
  * Story 1.5: LGPD Compliance Automation
@@ -11,26 +10,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -50,13 +49,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -78,9 +77,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -152,7 +149,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createauditTrailManager =
   exports.AuditTrailManager =
@@ -167,7 +164,7 @@ var consent_automation_manager_1 = require("./consent-automation-manager");
  * LGPD Audit Event Types
  */
 var LGPDAuditEventType;
-(function (LGPDAuditEventType) {
+((LGPDAuditEventType) => {
   LGPDAuditEventType["DATA_ACCESS"] = "data_access";
   LGPDAuditEventType["DATA_MODIFICATION"] = "data_modification";
   LGPDAuditEventType["DATA_DELETION"] = "data_deletion";
@@ -188,7 +185,7 @@ var LGPDAuditEventType;
  * LGPD Audit Severity Levels
  */
 var LGPDAuditSeverity;
-(function (LGPDAuditSeverity) {
+((LGPDAuditSeverity) => {
   LGPDAuditSeverity["INFO"] = "info";
   LGPDAuditSeverity["WARNING"] = "warning";
   LGPDAuditSeverity["ERROR"] = "error";
@@ -197,7 +194,7 @@ var LGPDAuditSeverity;
 /**
  * LGPD Audit Trail Manager
  */
-var AuditTrailManager = /** @class */ (function () {
+var AuditTrailManager = /** @class */ (() => {
   function AuditTrailManager() {
     this.supabase = (0, client_1.createClient)();
     this.auditLogger = new security_audit_logger_1.SecurityAuditLogger();
@@ -687,40 +684,32 @@ var AuditTrailManager = /** @class */ (function () {
             eventsBySeverity_1 = {};
             dataTypeCounts_1 = {};
             // Initialize counters
-            Object.values(LGPDAuditEventType).forEach(function (type) {
-              return (eventsByType_1[type] = 0);
-            });
-            Object.values(LGPDAuditSeverity).forEach(function (severity) {
-              return (eventsBySeverity_1[severity] = 0);
-            });
-            Object.values(consent_automation_manager_1.LGPDDataType).forEach(function (type) {
-              return (dataTypeCounts_1[type] = 0);
-            });
+            Object.values(LGPDAuditEventType).forEach((type) => (eventsByType_1[type] = 0));
+            Object.values(LGPDAuditSeverity).forEach(
+              (severity) => (eventsBySeverity_1[severity] = 0),
+            );
+            Object.values(consent_automation_manager_1.LGPDDataType).forEach(
+              (type) => (dataTypeCounts_1[type] = 0),
+            );
             // Count events
-            auditEvents.forEach(function (event) {
+            auditEvents.forEach((event) => {
               eventsByType_1[event.eventType]++;
               eventsBySeverity_1[event.severity]++;
               dataTypeCounts_1[event.dataType]++;
             });
-            compliantEvents = auditEvents.filter(function (e) {
-              return e.complianceStatus === "compliant";
-            }).length;
+            compliantEvents = auditEvents.filter((e) => e.complianceStatus === "compliant").length;
             complianceRate =
               auditEvents.length > 0 ? (compliantEvents / auditEvents.length) * 100 : 100;
             recentViolations = auditEvents
-              .filter(function (e) {
-                return e.complianceStatus === "non_compliant";
-              })
+              .filter((e) => e.complianceStatus === "non_compliant")
               .slice(0, 10);
             completedRequests =
               (requests === null || requests === void 0
                 ? void 0
-                : requests.filter(function (r) {
-                    return r.status === "completed";
-                  })) || [];
+                : requests.filter((r) => r.status === "completed")) || [];
             averageResponseTime =
               completedRequests.length > 0
-                ? completedRequests.reduce(function (sum, req) {
+                ? completedRequests.reduce((sum, req) => {
                     if (req.completedAt && req.submittedAt) {
                       return (
                         sum +
@@ -734,14 +723,12 @@ var AuditTrailManager = /** @class */ (function () {
                 : 0;
             riskScore = this.calculateRiskScore(auditEvents, requests || []);
             topDataTypes = Object.entries(dataTypeCounts_1)
-              .map(function (_a) {
+              .map((_a) => {
                 var dataType = _a[0],
                   count = _a[1];
                 return { dataType: dataType, count: count };
               })
-              .sort(function (a, b) {
-                return b.count - a.count;
-              })
+              .sort((a, b) => b.count - a.count)
               .slice(0, 5);
             return [
               2 /*return*/,
@@ -756,9 +743,7 @@ var AuditTrailManager = /** @class */ (function () {
                   pending:
                     (requests === null || requests === void 0
                       ? void 0
-                      : requests.filter(function (r) {
-                          return r.status === "pending";
-                        }).length) || 0,
+                      : requests.filter((r) => r.status === "pending").length) || 0,
                   completed: completedRequests.length,
                   averageResponseTime: averageResponseTime,
                 },
@@ -835,7 +820,7 @@ var AuditTrailManager = /** @class */ (function () {
   /**
    * Get legal basis for processing purpose
    */
-  AuditTrailManager.prototype.getLegalBasisForPurpose = function (purpose) {
+  AuditTrailManager.prototype.getLegalBasisForPurpose = (purpose) => {
     var _a;
     var legalBasisMap =
       ((_a = {}),
@@ -858,20 +843,18 @@ var AuditTrailManager = /** @class */ (function () {
   /**
    * Calculate risk score based on audit events
    */
-  AuditTrailManager.prototype.calculateRiskScore = function (auditEvents, dataSubjectRequests) {
+  AuditTrailManager.prototype.calculateRiskScore = (auditEvents, dataSubjectRequests) => {
     var riskScore = 0;
     // Base risk from non-compliant events
-    var nonCompliantEvents = auditEvents.filter(function (e) {
-      return e.complianceStatus === "non_compliant";
-    });
+    var nonCompliantEvents = auditEvents.filter((e) => e.complianceStatus === "non_compliant");
     riskScore += nonCompliantEvents.length * 10;
     // Risk from critical/error events
-    var criticalEvents = auditEvents.filter(function (e) {
-      return e.severity === LGPDAuditSeverity.CRITICAL || e.severity === LGPDAuditSeverity.ERROR;
-    });
+    var criticalEvents = auditEvents.filter(
+      (e) => e.severity === LGPDAuditSeverity.CRITICAL || e.severity === LGPDAuditSeverity.ERROR,
+    );
     riskScore += criticalEvents.length * 5;
     // Risk from overdue data subject requests
-    var overdueRequests = dataSubjectRequests.filter(function (r) {
+    var overdueRequests = dataSubjectRequests.filter((r) => {
       if (r.status === "completed") return false;
       var daysSinceSubmission =
         (Date.now() - new Date(r.submittedAt).getTime()) / (1000 * 60 * 60 * 24);
@@ -884,7 +867,7 @@ var AuditTrailManager = /** @class */ (function () {
   /**
    * Calculate compliance score
    */
-  AuditTrailManager.prototype.calculateComplianceScore = function (analytics) {
+  AuditTrailManager.prototype.calculateComplianceScore = (analytics) => {
     var score = 100;
     // Deduct for non-compliance
     score -= 100 - analytics.complianceRate;
@@ -898,7 +881,7 @@ var AuditTrailManager = /** @class */ (function () {
   /**
    * Generate compliance recommendations
    */
-  AuditTrailManager.prototype.generateComplianceRecommendations = function (analytics) {
+  AuditTrailManager.prototype.generateComplianceRecommendations = (analytics) => {
     var recommendations = [];
     if (analytics.complianceRate < 95) {
       recommendations.push("Revisar processos de conformidade para reduzir eventos não conformes");
@@ -971,7 +954,5 @@ var AuditTrailManager = /** @class */ (function () {
 })();
 exports.AuditTrailManager = AuditTrailManager;
 // Export singleton instance
-var createauditTrailManager = function () {
-  return new AuditTrailManager();
-};
+var createauditTrailManager = () => new AuditTrailManager();
 exports.createauditTrailManager = createauditTrailManager;

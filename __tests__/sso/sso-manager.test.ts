@@ -1,8 +1,8 @@
 // SSO Manager Tests
 // Story 1.3: SSO Integration - Core Manager Testing
 
-import { SSOManager } from "@/lib/auth/sso/sso-manager";
 import { createClient } from "@supabase/supabase-js";
+import { SSOManager } from "@/lib/auth/sso/sso-manager";
 
 // Mock Supabase
 jest.mock("@supabase/supabase-js", () => ({

@@ -1,15 +1,5 @@
 "use client";
 
-import type { Badge } from "@/components/ui/badge";
-import type { Button } from "@/components/ui/button";
-import type { Card, CardContent } from "@/components/ui/card";
-import type {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import type { ScrollArea } from "@/components/ui/scroll-area";
-import type { ErrorMessage } from "@/hooks/use-error-handling";
 import type { format } from "date-fns";
 import type { ptBR } from "date-fns/locale";
 import type {
@@ -26,6 +16,16 @@ import type {
   X,
 } from "lucide-react";
 import type { useState } from "react";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
+import type { Card, CardContent } from "@/components/ui/card";
+import type {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import type { ScrollArea } from "@/components/ui/scroll-area";
+import type { ErrorMessage } from "@/hooks/use-error-handling";
 
 // =============================================
 // NeonPro Error Messages Display

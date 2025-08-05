@@ -1,4 +1,3 @@
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = ProfilePage;
 var profile_sync_manager_1 = require("@/components/profile/profile-sync-manager");

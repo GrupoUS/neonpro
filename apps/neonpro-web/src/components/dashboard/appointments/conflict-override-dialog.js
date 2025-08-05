@@ -1,17 +1,16 @@
 // Conflict Override Dialog Component with Manager Approval Workflow
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -31,13 +30,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -59,9 +58,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -133,7 +130,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConflictOverrideDialog = ConflictOverrideDialog;
 var react_1 = require("react");
@@ -183,7 +180,6 @@ var OVERRIDE_REASONS = [
   },
 ];
 function ConflictOverrideDialog(_a) {
-  var _this = this;
   var open = _a.open,
     onOpenChange = _a.onOpenChange,
     conflictDetails = _a.conflictDetails,
@@ -203,18 +199,15 @@ function ConflictOverrideDialog(_a) {
     requestConflictOverride = _e.requestConflictOverride,
     checkOverridePermissions = _e.checkOverridePermissions;
   var toast = (0, use_toast_1.useToast)().toast;
-  (0, react_1.useEffect)(
-    function () {
-      if (open) {
-        checkOverridePermissions();
-      }
-    },
-    [open, checkOverridePermissions],
-  );
-  var handleSubmitOverride = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  (0, react_1.useEffect)(() => {
+    if (open) {
+      checkOverridePermissions();
+    }
+  }, [open, checkOverridePermissions]);
+  var handleSubmitOverride = () =>
+    __awaiter(this, void 0, void 0, function () {
       var overrideRequest, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!conflictDetails) return [2 /*return*/];
@@ -263,8 +256,7 @@ function ConflictOverrideDialog(_a) {
         }
       });
     });
-  };
-  var getImpactSeverity = function (minutes) {
+  var getImpactSeverity = (minutes) => {
     if (minutes <= 30) return { level: "low", color: "bg-green-100 text-green-800" };
     if (minutes <= 120) return { level: "medium", color: "bg-yellow-100 text-yellow-800" };
     return { level: "high", color: "bg-red-100 text-red-800" };
@@ -335,32 +327,30 @@ function ConflictOverrideDialog(_a) {
                 </card_1.CardHeader>
                 <card_1.CardContent>
                   <div className="space-y-3">
-                    {conflictDetails.affected_appointments.map(function (appointment) {
-                      return (
-                        <div
-                          key={appointment.id}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                        >
-                          <div className="flex items-center gap-3">
-                            <lucide_react_1.User className="h-4 w-4 text-gray-600" />
-                            <div>
-                              <p className="font-medium">{appointment.patient_name}</p>
-                              <p className="text-sm text-gray-600">{appointment.service_name}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-medium">
-                              {(0, dayjs_1.default)(appointment.original_time).format(
-                                "DD/MM/YYYY HH:mm",
-                              )}
-                            </p>
-                            <badge_1.Badge variant="secondary" className="text-xs">
-                              Reagendamento Necessário
-                            </badge_1.Badge>
+                    {conflictDetails.affected_appointments.map((appointment) => (
+                      <div
+                        key={appointment.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      >
+                        <div className="flex items-center gap-3">
+                          <lucide_react_1.User className="h-4 w-4 text-gray-600" />
+                          <div>
+                            <p className="font-medium">{appointment.patient_name}</p>
+                            <p className="text-sm text-gray-600">{appointment.service_name}</p>
                           </div>
                         </div>
-                      );
-                    })}
+                        <div className="text-right">
+                          <p className="text-sm font-medium">
+                            {(0, dayjs_1.default)(appointment.original_time).format(
+                              "DD/MM/YYYY HH:mm",
+                            )}
+                          </p>
+                          <badge_1.Badge variant="secondary" className="text-xs">
+                            Reagendamento Necessário
+                          </badge_1.Badge>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </card_1.CardContent>
               </card_1.Card>
@@ -395,26 +385,20 @@ function ConflictOverrideDialog(_a) {
                         <label_1.Label htmlFor="reason">Motivo Principal</label_1.Label>
                         <select_1.Select
                           value={selectedReason}
-                          onValueChange={function (value) {
-                            return setSelectedReason(value);
-                          }}
+                          onValueChange={(value) => setSelectedReason(value)}
                         >
                           <select_1.SelectTrigger>
                             <select_1.SelectValue placeholder="Selecione o motivo" />
                           </select_1.SelectTrigger>
                           <select_1.SelectContent>
-                            {OVERRIDE_REASONS.map(function (reason) {
-                              return (
-                                <select_1.SelectItem key={reason.value} value={reason.value}>
-                                  <div>
-                                    <div className="font-medium">{reason.label}</div>
-                                    <div className="text-xs text-gray-500">
-                                      {reason.description}
-                                    </div>
-                                  </div>
-                                </select_1.SelectItem>
-                              );
-                            })}
+                            {OVERRIDE_REASONS.map((reason) => (
+                              <select_1.SelectItem key={reason.value} value={reason.value}>
+                                <div>
+                                  <div className="font-medium">{reason.label}</div>
+                                  <div className="text-xs text-gray-500">{reason.description}</div>
+                                </div>
+                              </select_1.SelectItem>
+                            ))}
                           </select_1.SelectContent>
                         </select_1.Select>
                       </div>
@@ -426,9 +410,7 @@ function ConflictOverrideDialog(_a) {
                         <textarea_1.Textarea
                           id="reason-text"
                           value={reasonText}
-                          onChange={function (e) {
-                            return setReasonText(e.target.value);
-                          }}
+                          onChange={(e) => setReasonText(e.target.value)}
                           placeholder="Forneça uma justificativa detalhada para este override, incluindo quaisquer circunstâncias especiais ou considerações médicas..."
                           rows={4}
                           className="mt-1"
@@ -542,12 +524,7 @@ function ConflictOverrideDialog(_a) {
         </tabs_1.Tabs>
 
         <div className="flex justify-end gap-2 pt-4 border-t">
-          <button_1.Button
-            variant="outline"
-            onClick={function () {
-              return onOpenChange(false);
-            }}
-          >
+          <button_1.Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </button_1.Button>
 

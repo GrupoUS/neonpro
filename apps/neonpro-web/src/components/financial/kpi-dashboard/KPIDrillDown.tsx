@@ -1,6 +1,49 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import type { format } from "date-fns";
+import type { ptBR } from "date-fns/locale";
+import type {
+  AlertTriangle,
+  ArrowLeft,
+  BarChart3,
+  Calendar,
+  CheckCircle,
+  Clock,
+  DollarSign,
+  Download,
+  Eye,
+  Filter,
+  LineChart as LineChartIcon,
+  MapPin,
+  PieChart as PieChartIcon,
+  Share,
+  Stethoscope,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import React, { useMemo, useState } from "react";
+import type {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import type { Badge } from "@/components/ui/badge";
+import type { Button } from "@/components/ui/button";
 import type {
   Card,
   CardContent,
@@ -8,12 +51,9 @@ import type {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Button } from "@/components/ui/button";
-import type { Badge } from "@/components/ui/badge";
-import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { Progress } from "@/components/ui/progress";
 import type { ScrollArea } from "@/components/ui/scroll-area";
 import type { Separator } from "@/components/ui/separator";
-import type { Progress } from "@/components/ui/progress";
 import type {
   Table,
   TableBody,
@@ -22,47 +62,7 @@ import type {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
-} from "recharts";
-import type {
-  ArrowLeft,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Users,
-  Calendar,
-  MapPin,
-  Stethoscope,
-  Target,
-  BarChart3,
-  PieChart as PieChartIcon,
-  LineChart as LineChartIcon,
-  Download,
-  Share,
-  Filter,
-  Eye,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Zap,
-} from "lucide-react";
-import type { format } from "date-fns";
-import type { ptBR } from "date-fns/locale";
+import type { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { cn } from "@/lib/utils";
 import type { KPI, KPIAlert } from "./hooks/useFinancialKPIs";
 

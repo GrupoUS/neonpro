@@ -3,8 +3,7 @@
  * Comprehensive testing for performance monitoring system
  */
 
-import React from "react";
-import { render, screen, fireEvent, waitFor, act, cleanup } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 // Mock web-vitals with proper function references
@@ -17,10 +16,10 @@ jest.mock("web-vitals", () => ({
   getINP: jest.fn(),
 }));
 
+import { getCLS, getFCP, getFID, getINP, getLCP, getTTFB } from "web-vitals";
+import PerformanceDashboard from "@/components/dashboard/performance-dashboard";
 // Import components after mocking
 import { PerformanceMonitor } from "@/lib/performance/integration";
-import PerformanceDashboard from "@/components/dashboard/performance-dashboard";
-import { getCLS, getFID, getFCP, getLCP, getTTFB, getINP } from "web-vitals";
 
 // Mock fetch globally
 const mockFetch = jest.fn();
@@ -119,7 +118,7 @@ describe("Performance Monitoring Integration", () => {
 
   afterEach(() => {
     // Clean up environment variable
-    delete process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING;
+    process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_TRACKING = undefined;
     cleanup();
   });
 

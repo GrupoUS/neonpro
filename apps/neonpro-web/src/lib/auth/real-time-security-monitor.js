@@ -1,4 +1,3 @@
-"use strict";
 /**
  * Real-Time Security Monitor
  * Story 1.4 - Task 5: Real-time security monitoring and alerting
@@ -16,26 +15,26 @@ var __assign =
   function () {
     __assign =
       Object.assign ||
-      function (t) {
+      ((t) => {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
           s = arguments[i];
-          for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+          for (var p in s) if (Object.hasOwn(s, p)) t[p] = s[p];
         }
         return t;
-      };
+      });
     return __assign.apply(this, arguments);
   };
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -55,13 +54,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -83,9 +82,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -157,10 +154,10 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 var __spreadArray =
   (this && this.__spreadArray) ||
-  function (to, from, pack) {
+  ((to, from, pack) => {
     if (pack || arguments.length === 2)
       for (var i = 0, l = from.length, ar; i < l; i++) {
         if (ar || !(i in from)) {
@@ -169,7 +166,7 @@ var __spreadArray =
         }
       }
     return to.concat(ar || Array.prototype.slice.call(from));
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RealTimeSecurityMonitor = void 0;
 var supabase_js_1 = require("@supabase/supabase-js");
@@ -275,7 +272,7 @@ var DEFAULT_CONFIG = {
     anonymizationEnabled: true,
   },
 };
-var RealTimeSecurityMonitor = /** @class */ (function () {
+var RealTimeSecurityMonitor = /** @class */ (() => {
   function RealTimeSecurityMonitor(supabaseUrl, supabaseKey, activityDetector, customConfig) {
     this.connectedClients = new Set();
     this.alertCooldowns = new Map();
@@ -807,44 +804,45 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
   };
   // Private methods
   RealTimeSecurityMonitor.prototype.startMetricsCollection = function () {
-    var _this = this;
-    this.metricsInterval = setInterval(function () {
-      return __awaiter(_this, void 0, void 0, function () {
-        var metrics, error_10;
-        return __generator(this, function (_a) {
-          switch (_a.label) {
-            case 0:
-              _a.trys.push([0, 4, , 5]);
-              return [4 /*yield*/, this.getCurrentMetrics()];
-            case 1:
-              metrics = _a.sent();
-              // Store metrics
-              return [4 /*yield*/, this.storeMetrics(metrics)];
-            case 2:
-              // Store metrics
-              _a.sent();
-              // Check thresholds
-              return [4 /*yield*/, this.checkThresholds(metrics)];
-            case 3:
-              // Check thresholds
-              _a.sent();
-              // Broadcast to clients
-              this.broadcastToClients("metrics_update", metrics);
-              return [3 /*break*/, 5];
-            case 4:
-              error_10 = _a.sent();
-              console.error("Metrics collection failed:", error_10);
-              return [3 /*break*/, 5];
-            case 5:
-              return [2 /*return*/];
-          }
-        });
-      });
-    }, this.config.metricsInterval * 1000);
+    this.metricsInterval = setInterval(
+      () =>
+        __awaiter(this, void 0, void 0, function () {
+          var metrics, error_10;
+          return __generator(this, function (_a) {
+            switch (_a.label) {
+              case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, this.getCurrentMetrics()];
+              case 1:
+                metrics = _a.sent();
+                // Store metrics
+                return [4 /*yield*/, this.storeMetrics(metrics)];
+              case 2:
+                // Store metrics
+                _a.sent();
+                // Check thresholds
+                return [4 /*yield*/, this.checkThresholds(metrics)];
+              case 3:
+                // Check thresholds
+                _a.sent();
+                // Broadcast to clients
+                this.broadcastToClients("metrics_update", metrics);
+                return [3 /*break*/, 5];
+              case 4:
+                error_10 = _a.sent();
+                console.error("Metrics collection failed:", error_10);
+                return [3 /*break*/, 5];
+              case 5:
+                return [2 /*return*/];
+            }
+          });
+        }),
+      this.config.metricsInterval * 1000,
+    );
   };
   RealTimeSecurityMonitor.prototype.initializeWebSocket = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // WebSocket server initialization would go here
         // This is a placeholder for the actual WebSocket implementation
         console.log("WebSocket server initialized for real-time monitoring");
@@ -882,7 +880,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
       });
     });
   };
-  RealTimeSecurityMonitor.prototype.setupActivityDetectorIntegration = function () {
+  RealTimeSecurityMonitor.prototype.setupActivityDetectorIntegration = () => {
     // This would integrate with the SuspiciousActivityDetector
     // to automatically create incidents from suspicious activities
     console.log("Activity detector integration set up");
@@ -1017,7 +1015,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
   };
   RealTimeSecurityMonitor.prototype.getBlockedIPsCount = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would query a blocked IPs table
         // For now, return a placeholder value
         return [2 /*return*/, 0];
@@ -1026,7 +1024,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
   };
   RealTimeSecurityMonitor.prototype.getAverageResponseTime = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would calculate average API response time
         // For now, return a placeholder value
         return [2 /*return*/, 150]; // ms
@@ -1035,7 +1033,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
   };
   RealTimeSecurityMonitor.prototype.getSystemLoad = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would get actual system metrics
         // For now, return placeholder values
         return [
@@ -1051,7 +1049,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
   };
   RealTimeSecurityMonitor.prototype.getNetworkTraffic = function () {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // This would get actual network metrics
         // For now, return placeholder values
         return [
@@ -1120,10 +1118,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
             if (!this.config.alertingEnabled) {
               return [2 /*return*/];
             }
-            (_i = 0),
-              (_a = this.config.thresholds.filter(function (t) {
-                return t.isEnabled;
-              }));
+            (_i = 0), (_a = this.config.thresholds.filter((t) => t.isEnabled));
             _b.label = 1;
           case 1:
             if (!(_i < _a.length)) return [3 /*break*/, 7];
@@ -1154,7 +1149,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
       });
     });
   };
-  RealTimeSecurityMonitor.prototype.getMetricValue = function (metrics, metricName) {
+  RealTimeSecurityMonitor.prototype.getMetricValue = (metrics, metricName) => {
     var parts = metricName.split(".");
     var value = metrics;
     for (var _i = 0, parts_1 = parts; _i < parts_1.length; _i++) {
@@ -1163,7 +1158,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
     }
     return value;
   };
-  RealTimeSecurityMonitor.prototype.compareValues = function (value, operator, threshold) {
+  RealTimeSecurityMonitor.prototype.compareValues = (value, operator, threshold) => {
     switch (operator) {
       case "gt":
         return value > threshold;
@@ -1232,13 +1227,14 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
           case 1:
             incident_1 = _b.sent();
             _loop_1 = function (action) {
-              return __generator(this, function (_c) {
+              return __generator(this, (_c) => {
                 switch (_c.label) {
                   case 0:
                     if (!(action.delay > 0)) return [3 /*break*/, 1];
-                    setTimeout(function () {
-                      return _this.executeThresholdAction(action, incident_1);
-                    }, action.delay * 1000);
+                    setTimeout(
+                      () => _this.executeThresholdAction(action, incident_1),
+                      action.delay * 1000,
+                    );
                     return [3 /*break*/, 3];
                   case 1:
                     return [4 /*yield*/, this_1.executeThresholdAction(action, incident_1)];
@@ -1336,7 +1332,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
   };
   RealTimeSecurityMonitor.prototype.sendEmailAlert = function (recipient, incident) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Email sending implementation would go here
         console.log(
           "Email alert sent to ".concat(recipient, " for incident ").concat(incident.incidentId),
@@ -1347,7 +1343,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
   };
   RealTimeSecurityMonitor.prototype.sendWebhookAlert = function (url, incident) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Webhook sending implementation would go here
         console.log(
           "Webhook alert sent to ".concat(url, " for incident ").concat(incident.incidentId),
@@ -1358,7 +1354,7 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
   };
   RealTimeSecurityMonitor.prototype.escalateIncident = function (incident, target) {
     return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         // Incident escalation implementation would go here
         console.log("Incident ".concat(incident.incidentId, " escalated to ").concat(target));
         return [2 /*return*/];
@@ -1460,45 +1456,41 @@ var RealTimeSecurityMonitor = /** @class */ (function () {
       });
     });
   };
-  RealTimeSecurityMonitor.prototype.mapDatabaseToMetrics = function (data) {
-    return {
-      timestamp: new Date(data.timestamp),
-      activeUsers: data.active_users,
-      activeSessions: data.active_sessions,
-      failedLogins: data.failed_logins,
-      suspiciousActivities: data.suspicious_activities,
-      blockedIPs: data.blocked_ips,
-      averageResponseTime: data.average_response_time,
-      systemLoad: data.system_load,
-      networkTraffic: data.network_traffic,
-      securityEvents: data.security_events,
-    };
-  };
-  RealTimeSecurityMonitor.prototype.mapDatabaseToIncident = function (data) {
-    return {
-      incidentId: data.incident_id,
-      type: data.type,
-      severity: data.severity,
-      title: data.title,
-      description: data.description,
-      detectedAt: new Date(data.detected_at),
-      resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
-      status: data.status,
-      assignedTo: data.assigned_to,
-      metrics: data.metrics,
-      alerts: data.alerts,
-      evidence: data.evidence,
-      timeline: data.timeline,
-      impact: data.impact,
-      response: data.response,
-    };
-  };
-  RealTimeSecurityMonitor.prototype.calculateSystemUptime = function (timeRange) {
+  RealTimeSecurityMonitor.prototype.mapDatabaseToMetrics = (data) => ({
+    timestamp: new Date(data.timestamp),
+    activeUsers: data.active_users,
+    activeSessions: data.active_sessions,
+    failedLogins: data.failed_logins,
+    suspiciousActivities: data.suspicious_activities,
+    blockedIPs: data.blocked_ips,
+    averageResponseTime: data.average_response_time,
+    systemLoad: data.system_load,
+    networkTraffic: data.network_traffic,
+    securityEvents: data.security_events,
+  });
+  RealTimeSecurityMonitor.prototype.mapDatabaseToIncident = (data) => ({
+    incidentId: data.incident_id,
+    type: data.type,
+    severity: data.severity,
+    title: data.title,
+    description: data.description,
+    detectedAt: new Date(data.detected_at),
+    resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
+    status: data.status,
+    assignedTo: data.assigned_to,
+    metrics: data.metrics,
+    alerts: data.alerts,
+    evidence: data.evidence,
+    timeline: data.timeline,
+    impact: data.impact,
+    response: data.response,
+  });
+  RealTimeSecurityMonitor.prototype.calculateSystemUptime = (timeRange) => {
     // This would calculate actual system uptime
     // For now, return a placeholder value (99.9%)
     return 0.999;
   };
-  RealTimeSecurityMonitor.prototype.calculateAlertsTriggered = function (timeRange) {
+  RealTimeSecurityMonitor.prototype.calculateAlertsTriggered = (timeRange) => {
     // This would count actual alerts triggered
     // For now, return a placeholder value
     return 0;

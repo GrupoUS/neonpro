@@ -1,4 +1,3 @@
-"use strict";
 // Regulatory Documents API Types
 // Based on Story 12.1 - Gestão de Documentação Regulatória
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -32,7 +31,7 @@ exports.PriorityLabels = {
   critical: "Crítica",
 };
 // Utility functions for status checks
-var isDocumentExpiring = function (doc) {
+var isDocumentExpiring = (doc) => {
   if (!doc.expiration_date) return false;
   var expirationDate = new Date(doc.expiration_date);
   var now = new Date();
@@ -42,14 +41,14 @@ var isDocumentExpiring = function (doc) {
   return daysUntilExpiration <= 30 && daysUntilExpiration > 0;
 };
 exports.isDocumentExpiring = isDocumentExpiring;
-var isDocumentExpired = function (doc) {
+var isDocumentExpired = (doc) => {
   if (!doc.expiration_date) return false;
   var expirationDate = new Date(doc.expiration_date);
   var now = new Date();
   return expirationDate < now;
 };
 exports.isDocumentExpired = isDocumentExpired;
-var getDocumentStatusColor = function (status) {
+var getDocumentStatusColor = (status) => {
   switch (status) {
     case "valid":
       return "text-green-600";
@@ -64,7 +63,7 @@ var getDocumentStatusColor = function (status) {
   }
 };
 exports.getDocumentStatusColor = getDocumentStatusColor;
-var getAlertPriorityColor = function (priority) {
+var getAlertPriorityColor = (priority) => {
   switch (priority) {
     case "low":
       return "text-blue-600";

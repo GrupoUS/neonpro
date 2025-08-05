@@ -4,6 +4,7 @@
 
 "use client";
 
+import type { Info, Keyboard } from "lucide-react";
 import type { Badge } from "@/components/ui/badge";
 import type {
   Dialog,
@@ -14,7 +15,6 @@ import type {
 } from "@/components/ui/dialog";
 import type { Separator } from "@/components/ui/separator";
 import type { useKeyboardShortcuts } from "@/hooks/appointments/use-keyboard-shortcuts";
-import type { Info, Keyboard } from "lucide-react";
 
 interface KeyboardShortcutsHelpProps {
   isOpen: boolean;

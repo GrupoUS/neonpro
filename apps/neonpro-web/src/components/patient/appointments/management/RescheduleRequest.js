@@ -1,16 +1,15 @@
 "use client";
-"use strict";
 var __awaiter =
   (this && this.__awaiter) ||
-  function (thisArg, _arguments, P, generator) {
+  ((thisArg, _arguments, P, generator) => {
     function adopt(value) {
       return value instanceof P
         ? value
-        : new P(function (resolve) {
+        : new P((resolve) => {
             resolve(value);
           });
     }
-    return new (P || (P = Promise))(function (resolve, reject) {
+    return new (P || (P = Promise))((resolve, reject) => {
       function fulfilled(value) {
         try {
           step(generator.next(value));
@@ -30,13 +29,13 @@ var __awaiter =
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
-  };
+  });
 var __generator =
   (this && this.__generator) ||
-  function (thisArg, body) {
+  ((thisArg, body) => {
     var _ = {
         label: 0,
-        sent: function () {
+        sent: () => {
           if (t[0] & 1) throw t[1];
           return t[1];
         },
@@ -58,9 +57,7 @@ var __generator =
       g
     );
     function verb(n) {
-      return function (v) {
-        return step([n, v]);
-      };
+      return (v) => step([n, v]);
     }
     function step(op) {
       if (f) throw new TypeError("Generator is already executing.");
@@ -132,7 +129,7 @@ var __generator =
       if (op[0] & 5) throw op[1];
       return { value: op[0] ? op[1] : void 0, done: true };
     }
-  };
+  });
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RescheduleRequest = RescheduleRequest;
 var alert_1 = require("@/components/ui/alert");
@@ -179,7 +176,6 @@ var TIME_SLOTS = [
   "17:00",
 ];
 function RescheduleRequest(_a) {
-  var _this = this;
   var appointmentId = _a.appointmentId,
     appointment = _a.appointment,
     open = _a.open,
@@ -210,26 +206,21 @@ function RescheduleRequest(_a) {
   var canReschedule = appointment.can_reschedule;
   var hoursUntil = appointment.hours_until_appointment;
   // Load available slots when date changes
-  (0, react_1.useEffect)(
-    function () {
-      if (selectedDate && appointment.service_id) {
-        setLoadingSlots(true);
-        // Simulate API call to get available slots
-        setTimeout(function () {
-          // In real implementation, this would check professional availability
-          var mockAvailableSlots = TIME_SLOTS.filter(function (_, index) {
-            return Math.random() > 0.3;
-          });
-          setAvailableSlots(mockAvailableSlots);
-          setLoadingSlots(false);
-        }, 500);
-      } else {
-        setAvailableSlots([]);
-      }
-    },
-    [selectedDate, appointment.service_id],
-  );
-  var formatAppointmentDateTime = function (date, time) {
+  (0, react_1.useEffect)(() => {
+    if (selectedDate && appointment.service_id) {
+      setLoadingSlots(true);
+      // Simulate API call to get available slots
+      setTimeout(() => {
+        // In real implementation, this would check professional availability
+        var mockAvailableSlots = TIME_SLOTS.filter((_, index) => Math.random() > 0.3);
+        setAvailableSlots(mockAvailableSlots);
+        setLoadingSlots(false);
+      }, 500);
+    } else {
+      setAvailableSlots([]);
+    }
+  }, [selectedDate, appointment.service_id]);
+  var formatAppointmentDateTime = (date, time) => {
     try {
       var dateTime = (0, date_fns_1.parseISO)("".concat(date, "T").concat(time));
       return {
@@ -240,14 +231,14 @@ function RescheduleRequest(_a) {
       return { date: date, time: time };
     }
   };
-  var handleDateSelect = function (date) {
+  var handleDateSelect = (date) => {
     setSelectedDate(date);
     setSelectedTime(""); // Reset time when date changes
   };
-  var handleConfirm = function () {
-    return __awaiter(_this, void 0, void 0, function () {
+  var handleConfirm = () =>
+    __awaiter(this, void 0, void 0, function () {
       var formattedDate, finalReason, error_1;
-      return __generator(this, function (_a) {
+      return __generator(this, (_a) => {
         switch (_a.label) {
           case 0:
             if (!selectedDate || !selectedTime || (!selectedReason && !customReason))
@@ -283,8 +274,7 @@ function RescheduleRequest(_a) {
         }
       });
     });
-  };
-  var handleCancel = function () {
+  var handleCancel = () => {
     setSelectedDate(undefined);
     setSelectedTime("");
     setSelectedReason("");
@@ -295,15 +285,12 @@ function RescheduleRequest(_a) {
   var minDate = (0, date_fns_1.addDays)(new Date(), 2); // 48h minimum
   var maxDate = (0, date_fns_1.addDays)(new Date(), 90);
   // Disable Sundays (common for clinics)
-  var isDateDisabled = function (date) {
-    return (
-      date.getDay() === 0 ||
-      !(0, date_fns_1.isAfter)(
-        date,
-        (0, date_fns_1.startOfDay)((0, date_fns_1.addDays)(new Date(), 1)),
-      )
+  var isDateDisabled = (date) =>
+    date.getDay() === 0 ||
+    !(0, date_fns_1.isAfter)(
+      date,
+      (0, date_fns_1.startOfDay)((0, date_fns_1.addDays)(new Date(), 1)),
     );
-  };
   var _j = formatAppointmentDateTime(appointment.appointment_date, appointment.appointment_time),
     date = _j.date,
     time = _j.time;
@@ -431,13 +418,11 @@ function RescheduleRequest(_a) {
                                 ? "Nenhum horário disponível"
                                 : "Selecione uma data primeiro"}
                             </select_1.SelectItem>
-                          : availableSlots.map(function (slot) {
-                              return (
-                                <select_1.SelectItem key={slot} value={slot}>
-                                  {slot}
-                                </select_1.SelectItem>
-                              );
-                            })}
+                          : availableSlots.map((slot) => (
+                              <select_1.SelectItem key={slot} value={slot}>
+                                {slot}
+                              </select_1.SelectItem>
+                            ))}
                     </select_1.SelectContent>
                   </select_1.Select>
                   <div className="text-xs text-muted-foreground">
@@ -456,13 +441,11 @@ function RescheduleRequest(_a) {
                     <select_1.SelectValue placeholder="Selecione o motivo" />
                   </select_1.SelectTrigger>
                   <select_1.SelectContent>
-                    {RESCHEDULE_REASONS.map(function (reason) {
-                      return (
-                        <select_1.SelectItem key={reason} value={reason}>
-                          {reason}
-                        </select_1.SelectItem>
-                      );
-                    })}
+                    {RESCHEDULE_REASONS.map((reason) => (
+                      <select_1.SelectItem key={reason} value={reason}>
+                        {reason}
+                      </select_1.SelectItem>
+                    ))}
                   </select_1.SelectContent>
                 </select_1.Select>
 
@@ -478,9 +461,7 @@ function RescheduleRequest(_a) {
                       id="customReason"
                       placeholder="Descreva o motivo do reagendamento..."
                       value={customReason}
-                      onChange={function (e) {
-                        return setCustomReason(e.target.value);
-                      }}
+                      onChange={(e) => setCustomReason(e.target.value)}
                       rows={3}
                     />
                   </div>
